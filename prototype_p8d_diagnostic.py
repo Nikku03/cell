@@ -104,7 +104,8 @@ def main():
     print(f"    Training time: {time.time()-t0:.1f}s")
 
     # Capture training stability metric
-    train_losses = [h[0] for h in hist]
+    # hist is {'train': [...], 'val': [...]}, not a list of tuples.
+    train_losses = list(hist['train'])
     train_loss_ratio = max(train_losses[20:]) / (min(train_losses[20:]) + 1e-9)
     print(f"    Train loss oscillation ratio (epoch 20+): {train_loss_ratio:.2e}")
 
