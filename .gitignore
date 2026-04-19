@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Data directories (the Luthey-Schulten repo is big; re-clone it rather than
+# commit it)
+data/
+!data/.gitkeep
+
+# Outputs and caches
+outputs/
+*.log
+*.tmp
+
+# Secrets — never commit any of these
+.env
+.env.*
+*.pem
+*.key
+*credentials*
+*secret*
+*token*
+.github_token
+gh_token.txt
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
