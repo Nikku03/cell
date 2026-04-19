@@ -1,5 +1,6 @@
 numpy>=1.24
 python-libsbml>=5.19
+torch>=2.0      # needed by prototype_p7_learned_rates.py
 # Optional, only needed if you want to experiment with cobra-based loading
 # (currently unused because COBRA rejects the iMB155_NoH2O.xml file)
 # cobra>=0.29
