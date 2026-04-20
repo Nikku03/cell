@@ -34,7 +34,7 @@ from layer2_field.fast_dynamics import FastEventSimulator as EventSimulator
 # ============================================================================
 # Config
 # ============================================================================
-OUTPUT_DIR = Path('/home/claude/cell_sim/data/real_syn3a_movie')
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / 'data' / 'real_syn3a_movie'
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SCALE_FACTOR = 0.02
