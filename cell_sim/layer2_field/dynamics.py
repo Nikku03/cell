@@ -79,6 +79,10 @@ class TransitionRule:
     rate_source: str = 'default'
     can_fire: Optional[Callable] = None
     apply: Optional[Callable] = None
+    # Optional structured spec enabling the FastEventSimulator to bypass the
+    # can_fire Python closure and compute propensity via vectorized numpy.
+    # None => fall back to closure.
+    compiled_spec: Optional[dict] = None
 
 
 @dataclass

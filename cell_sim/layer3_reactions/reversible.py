@@ -207,7 +207,7 @@ def _build_one_direction_rule(
             f'{rxn_name}{"(rev)" if direction == "rev" else ""}: {sstr} {tag} {pstr} (by {state.proteins[enzyme_id].gene_id})',
         )
 
-    return TransitionRule(
+    rule = TransitionRule(
         name=name,
         participants=substrate_ids,
         rate=float(kcat),
@@ -215,6 +215,22 @@ def _build_one_direction_rule(
         can_fire=can_fire,
         apply=apply,
     )
+    # Structured spec for the FastEventSimulator. Captures exactly the
+    # data can_fire reads. Any mismatch between this and can_fire produces
+    # non-identical event sequences, so keep them in sync.
+    rule.compiled_spec = {
+        'kind': 'mm',                                  # dispatch tag
+        'rxn_name': rxn_name,
+        'direction': direction,
+        'substrates': [(sid, float(st)) for sid, st in substrates.items()],
+        'products':   [(sid, float(st)) for sid, st in products.items()],
+        'enzyme_loci': list(all_enzymes),
+        'kcat': float(kcat),
+        'Km': {s: float(v) for s, v in Km.items()},
+        'include_saturation': bool(include_saturation),
+        'substrate_ids_for_sat': substrate_ids,        # order matters for determinism
+    }
+    return rule
 
 
 # ============================================================================
