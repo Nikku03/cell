@@ -84,18 +84,21 @@ Four files, each adds a layer of biological realism:
   K_m for every substrate and product. Also loads the 56-species
   medium composition.
 
-- `coupled.py` — Priority 1. Every catalysis event decrements
-  substrate counts and increments product counts with correct
-  stoichiometry. Metabolites classified into countable (integer) and
-  infinite reservoir (water, H+, extracellular) buckets.
+- `coupled.py` — metabolite utilities. Manages counts, mM↔molecule
+  conversion, and the infinite-reservoir list (water, H+,
+  extracellular nutrients). Rules from both `reversible.py` and
+  `gene_expression.py` call into it to read and mutate metabolite
+  state during event firing. An earlier Priority 1 simulator
+  (forward-only stoichiometric coupling) lived here but was superseded
+  by `reversible.py`; the file is now pure utilities.
 
-- `reversible.py` — Priority 1.5. Builds forward + reverse rules per
-  reaction using Michaelis-Menten saturation factors. Medium species
+- `reversible.py` — the main simulator. Builds forward + reverse rules
+  per reaction using Michaelis-Menten saturation factors. Medium species
   registered as buffered reservoirs. This is the version where the
-  simulator can run for seconds of simulated time without substrate
-  exhaustion.
+  simulator runs stably at biological steady state for seconds of
+  simulated time.
 
-- `gene_expression.py` — Priority 2. Transcription, translation, mRNA
+- `gene_expression.py` — adds transcription, translation, mRNA
   degradation, protein degradation events using the Gene Expression
   sheet rates (85 nt/s transcription, 12 aa/s translation, 88 nt/s
   degradation).
@@ -162,8 +165,8 @@ cell_sim/
 ├── layer3_reactions/
 │   ├── sbml_parser.py        # Syn3A_updated.xml reader
 │   ├── kinetics.py           # kcat_fwd, kcat_rev, Km extractor
-│   ├── coupled.py            # Priority 1 (stoichiometric)
-│   ├── reversible.py         # Priority 1.5 (reversible MM + medium)
+│   ├── coupled.py            # metabolite utilities (counts, mM↔N, reservoirs)
+│   ├── reversible.py         # main simulator: reversible MM + medium uptake
 │   └── gene_expression.py    # Priority 2 (central dogma)
 ├── routing/controller.py     # skeleton only; not used in main path
 ├── tests/                    # 5 render scripts, one per priority level

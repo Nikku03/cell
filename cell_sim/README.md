@@ -44,11 +44,10 @@ Incremental build log, in rough chronological order:
       annotations, real initial counts (455 proteins, 158,828 total
       molecules at t=0)
 - [x] Layer 2: event-driven Gillespie simulator with per-molecule identity
-- [x] Layer 3 stoichiometry: every catalysis event properly consumes
-      substrates and produces products via SBML-parsed reactions
 - [x] Layer 3 reversibility: forward + reverse rules per reaction with
       proper Michaelis-Menten saturation (k_cat_fwd, k_cat_rev, K_m for
-      every substrate/product)
+      every substrate/product) — every catalysis event now moves real
+      metabolites with correct stoichiometry from the SBML model
 - [x] Medium uptake: 58 transport reactions with 56 buffered extracellular
       species
 - [x] Gene expression: transcription, translation, mRNA degradation,
@@ -118,10 +117,16 @@ Each produces an MP4. Pick one based on what you want to see:
 - `tests/render_movie.py` — generic toy demo (3 fake proteins, 4 rules)
 - `tests/render_real_syn3a.py` — real Syn3A identities, enzymes turn
   over but metabolites don't couple
-- `tests/render_coupled.py` — Priority 1: stoichiometric coupling
-- `tests/render_priority_15.py` — Priority 1.5: reversibility +
-  medium uptake
-- `tests/render_priority_2.py` — Priority 2: full central dogma
+- `tests/render_priority_15.py` — **the recommended simulation**:
+  reversible Michaelis-Menten, medium uptake, steady-state metabolism
+- `tests/render_priority_2.py` — adds transcription, translation, mRNA
+  degradation on top of 1.5
+
+An earlier `render_coupled.py` (forward-only stoichiometric coupling,
+"Priority 1") was superseded by `render_priority_15.py` and has been
+removed. The utility infrastructure it built on (metabolite counts,
+mM ↔ molecule conversion, infinite-reservoir handling) lives in
+`layer3_reactions/coupled.py` and is shared by the surviving renders.
 
 ### Resource expectations
 
@@ -130,9 +135,11 @@ In-container CPU-only benchmarks at `scale_factor=0.02` (2,726 molecules):
 | Script | Sim time | Wall time | Events | Events/s |
 |-------|---------:|----------:|-------:|---------:|
 | render_real_syn3a.py | 0.5 s | ~15 s | 41 k | 2,700 |
-| render_coupled.py    | 0.2 s | ~140 s | 194 k | 1,400 |
 | render_priority_15.py| 1.0 s | ~100 s | 83 k  | 850 |
 | render_priority_2.py | 1.5 s | ~400 s+ | 150 k | 380 |
+
+(On Colab CPU these are ~2-4× faster; render_priority_2.py finishes in
+~75 s on a free-tier Colab instance.)
 
 Expect 5-10× speedup on a decent GPU (or with Numba / Cython — not yet
 done). The Luthey-Schulten model on their Delta supercomputer reports
@@ -155,8 +162,8 @@ cell_sim/
 ├── layer3_reactions/  # Metabolic + GEX coupling
 │   ├── sbml_parser.py
 │   ├── kinetics.py
-│   ├── coupled.py
-│   ├── reversible.py
+│   ├── coupled.py        # metabolite utilities (counts, mM↔N, reservoirs)
+│   ├── reversible.py     # main simulator: reversible MM + medium uptake
 │   └── gene_expression.py
 ├── routing/
 │   └── controller.py

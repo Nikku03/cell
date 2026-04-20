@@ -145,3 +145,33 @@ time. We're at roughly 2.8 minutes of simulated biological time per
 hour of wall time on this CPU baseline — about three orders of
 magnitude slower per simulated second, which is expected for
 unoptimized Python running at ~1% of real-scale molecules.
+
+## Phase 6 — Priority 1 deprecated (late April 2026)
+
+Priority 1 was removed from the active codebase. Priority 1.5 turned
+out to be a strict superset: same catalysis events, same stoichiometry,
+but with reversibility and medium uptake added. Priority 1 on its own
+was misleading as a deliverable because substrate pools drained to zero
+in ~200 ms when the full simulator would hold steady state.
+
+What was removed:
+- `tests/render_coupled.py` — the Priority 1 renderer
+- `build_coupled_catalysis_rules()` and `make_coupled_catalysis_rule()`
+  in `layer3_reactions/coupled.py` — the naive forward-only rule builders
+- The Priority 1 section of `cell_sim_colab.ipynb`
+- The Priority 1 row of the benchmark table and references in README
+
+What was kept:
+- `layer3_reactions/coupled.py` — now pure metabolite utilities
+  (count/mM conversion, `initialize_metabolites`, `get_species_count`,
+  `update_species_count`, `INFINITE_SPECIES`). These are shared
+  infrastructure used by both `reversible.py` and `gene_expression.py`,
+  so the file stays; only the Priority 1 rule builders were stripped.
+  The file went from 401 lines to 131.
+- Phase 3 above — the historical record. Priority 1 existed as a real
+  build step and it's worth keeping that accurate in the log. The
+  current state is "superseded by Priority 1.5", not "never existed".
+
+The user-visible change for people running the notebook: three cells
+fewer and faster end-to-end run, since Priority 1.5 already does
+everything Priority 1 did and more.
