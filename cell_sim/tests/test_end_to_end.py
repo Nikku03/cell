@@ -46,7 +46,7 @@ def run_survival_test(
     duration_s: float = 60.0,
     glucose_perturbation: float = 0.0,
     atp_threshold_mM: float = 0.5,
-    output_dir: Path = Path('/home/claude/cell_sim/data/survival_test'),
+    output_dir: Path = Path(__file__).resolve().parent.parent / 'data' / 'survival_test',
 ):
     """
     Run the survival-under-glucose-depletion test.
@@ -214,7 +214,7 @@ if __name__ == "__main__":
     print("\n\n### Test 2: Glucose = 5 mM (normal, control) ###\n")
     r2 = run_survival_test(
         glucose_perturbation=5.0, duration_s=10.0,
-        output_dir=Path('/home/claude/cell_sim/data/survival_control'),
+        output_dir=Path(__file__).resolve().parent.parent / 'data' / 'survival_control',
     )
 
     print("\n" + "=" * 60)

@@ -37,7 +37,7 @@ from layer3_reactions.coupled import (
 )
 
 # Config
-OUTPUT_DIR = Path('/home/claude/cell_sim/data/priority_15_movie')
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / 'data' / 'priority_15_movie'
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SCALE_FACTOR = 0.02

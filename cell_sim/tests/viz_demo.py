@@ -16,7 +16,7 @@ from collections import defaultdict, Counter
 from layer0_genome.parser import build_cell_spec, Protein
 from layer2_field.dynamics import CellState, EventSimulator, make_example_rules
 
-OUT = Path('/home/claude/cell_sim/data/event_demo')
+OUT = Path(__file__).resolve().parent.parent / 'data' / 'event_demo'
 OUT.mkdir(parents=True, exist_ok=True)
 
 # ===== Build cell =====

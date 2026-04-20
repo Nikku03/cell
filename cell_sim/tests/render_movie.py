@@ -33,7 +33,7 @@ from layer2_field.dynamics import CellState, EventSimulator, make_example_rules
 # ============================================================================
 # Config
 # ============================================================================
-OUTPUT_DIR = Path('/home/claude/cell_sim/data/event_demo')
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / 'data' / 'event_demo'
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SIM_DURATION_S = 2.0       # simulated cell time
