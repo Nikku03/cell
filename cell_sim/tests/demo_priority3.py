@@ -37,7 +37,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import numpy as np
 
 from layer0_genome.syn3a_real import build_real_syn3a_cellspec
-from layer2_field.dynamics import CellState, EventSimulator
+from layer2_field.dynamics import CellState
+from layer2_field.fast_dynamics import FastEventSimulator as EventSimulator
 from layer2_field.real_syn3a_rules import (
     populate_real_syn3a, make_folding_rule, make_complex_formation_rules,
 )

@@ -59,7 +59,12 @@ class FastEventSimulator:
                 self._species_to_idx[sid] = len(self._species_order)
                 self._species_order.append(sid)
             return self._species_to_idx[sid]
-        for sid in state.metabolite_counts:
+
+        # state.metabolite_counts is only populated by initialize_metabolites.
+        # Scripts that run without metabolites (e.g. Real Syn3A baseline with
+        # only folding + simple catalysis) won't have this attribute.
+        metabolite_counts = getattr(state, 'metabolite_counts', {}) or {}
+        for sid in metabolite_counts:
             _register(sid)
         for rule in rules:
             if rule.compiled_spec is None:
@@ -71,15 +76,16 @@ class FastEventSimulator:
 
         self._n_species = len(self._species_order)
         self._counts = np.zeros(self._n_species, dtype=np.int64)
-        for sid, c in state.metabolite_counts.items():
+        for sid, c in metabolite_counts.items():
             self._counts[self._species_to_idx[sid]] = c
         self._is_infinite = np.zeros(self._n_species, dtype=bool)
-        for sid in state.metabolite_infinite:
+        metabolite_infinite = getattr(state, 'metabolite_infinite', set()) or set()
+        for sid in metabolite_infinite:
             idx = self._species_to_idx.get(sid)
             if idx is not None:
                 self._is_infinite[idx] = True
         self._inf_value = COUNTABLE_THRESHOLD * 10
-        self._vol_L = state.metabolite_volume_L
+        self._vol_L = getattr(state, 'metabolite_volume_L', 1.0)
 
         # ------------------------------------------------------------------
         # Partition rules: compiled-MM vs python-closure
@@ -234,10 +240,12 @@ class FastEventSimulator:
         # rules). Compiled MM fires update self._counts in-place in _apply,
         # so no sync is needed between MM-only event runs.
         if self._counts_dirty:
-            for sid, c in self.state.metabolite_counts.items():
-                idx = self._species_to_idx.get(sid)
-                if idx is not None:
-                    self._counts[idx] = c
+            mc = getattr(self.state, 'metabolite_counts', None)
+            if mc is not None:
+                for sid, c in mc.items():
+                    idx = self._species_to_idx.get(sid)
+                    if idx is not None:
+                        self._counts[idx] = c
             self._counts_dirty = False
 
         # --- vectorised compiled-rule propensities ---
@@ -379,18 +387,20 @@ class FastEventSimulator:
             # by re-reading only those species from the dict. This is O(few)
             # instead of O(n_species) and preserves exact dict semantics
             # (including the clamp-to-zero in update_species_count).
-            touched_idx: List[int] = []
-            for j in range(self.C_sub_idx.shape[1]):
-                if self.C_sub_mask[k, j]:
-                    touched_idx.append(int(self.C_sub_idx[k, j]))
-            for j in range(self.C_prd_idx.shape[1]):
-                if self.C_prd_mask[k, j]:
-                    touched_idx.append(int(self.C_prd_idx[k, j]))
-            for idx in set(touched_idx):
-                if self._is_infinite[idx]:
-                    continue
-                sid = self._species_order[idx]
-                self._counts[idx] = self.state.metabolite_counts.get(sid, 0)
+            mc = getattr(self.state, 'metabolite_counts', None)
+            if mc is not None:
+                touched_idx: List[int] = []
+                for j in range(self.C_sub_idx.shape[1]):
+                    if self.C_sub_mask[k, j]:
+                        touched_idx.append(int(self.C_sub_idx[k, j]))
+                for j in range(self.C_prd_idx.shape[1]):
+                    if self.C_prd_mask[k, j]:
+                        touched_idx.append(int(self.C_prd_idx[k, j]))
+                for idx in set(touched_idx):
+                    if self._is_infinite[idx]:
+                        continue
+                    sid = self._species_order[idx]
+                    self._counts[idx] = mc.get(sid, 0)
         else:
             cands = self._cands_scratch[rule_idx]
             if cands is None or rule.apply is None:

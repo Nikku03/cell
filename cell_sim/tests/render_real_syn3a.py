@@ -28,12 +28,13 @@ from layer2_field.real_syn3a_rules import (
     build_real_syn3a_cellspec, populate_real_syn3a, build_enzyme_map,
     make_folding_rule, make_catalysis_rules, make_complex_formation_rules,
 )
-from layer2_field.dynamics import CellState, EventSimulator
+from layer2_field.dynamics import CellState
+from layer2_field.fast_dynamics import FastEventSimulator as EventSimulator
 
 # ============================================================================
 # Config
 # ============================================================================
-OUTPUT_DIR = Path(__file__).resolve().parent.parent / 'data' / 'real_syn3a_movie'
+OUTPUT_DIR = Path('/home/claude/cell_sim/data/real_syn3a_movie')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SCALE_FACTOR = 0.02

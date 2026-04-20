@@ -26,7 +26,8 @@ from matplotlib.patches import Circle
 from matplotlib.animation import FFMpegWriter
 from collections import defaultdict, deque, Counter
 
-from layer2_field.dynamics import CellState, EventSimulator
+from layer2_field.dynamics import CellState
+from layer2_field.fast_dynamics import FastEventSimulator as EventSimulator
 from layer2_field.real_syn3a_rules import (
     populate_real_syn3a, make_folding_rule, make_complex_formation_rules,
 )
