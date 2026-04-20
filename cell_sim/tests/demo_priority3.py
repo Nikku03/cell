@@ -163,7 +163,12 @@ def summarize(label, run_result):
         novel_consumed = NOVEL_INITIAL_COUNT - novel_final
         print(f'\n  Novel substrate ({info.name}):')
         print(f'    SMILES:             {info.smiles[:60]}{"..." if len(info.smiles)>60 else ""}')
-        print(f'    Nearest known:      thymidine (Tanimoto {info.kcat_estimate.similarity:.3f})')
+        sim = info.kcat_estimate.similarity
+        nearest = info.kcat_estimate.nearest_known_substrate or '(no structural match)'
+        if sim is not None:
+            print(f'    Nearest known:      {nearest[:40]}  (Tanimoto {sim:.3f})')
+        else:
+            print(f'    Nearest known:      (n/a — MACE backend uses atomic physics, not similarity)')
         print(f'    k_cat estimate:     {info.kcat_estimate.kcat_per_s:.3f} /s '
               f'(source: {info.kcat_estimate.source})')
         print(f'    Reference k_cat:    {19.26} /s (thymidine at TMDK1)')
