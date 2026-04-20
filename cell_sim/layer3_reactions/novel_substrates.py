@@ -263,12 +263,41 @@ def add_novel_substrate(
 
 
 def _infer_reaction_class(rxn: SBMLReaction) -> str:
-    """Crude classification of reaction chemistry from its stoichiometry."""
+    """
+    Classify reaction chemistry from its stoichiometry.
+
+    The goal is to bucket reactions so that k_cat prediction by structural
+    similarity only compares apples to apples. The key distinction we
+    enforce:
+
+    - Transport reactions (substrate crosses compartment boundary but is
+      otherwise unchanged) are NOT lumped with catalytic reactions, even
+      if both consume ATP. This was the #1 source of prediction error
+      in benchmark v1: ABC transporters and kinases on the same substrate
+      have Tanimoto=1.0 but wildly different k_cats.
+    """
     reactants = set(rxn.reactants)
     products = set(rxn.products)
+
+    # Transport: any species appears as both extracellular reactant and
+    # intracellular product (or vice versa). BiGG convention: _e suffix
+    # for extracellular, _c for cytoplasmic.
+    def _compartments(ids):
+        return set(sid[-2:] for sid in ids)
+
+    r_compartments = _compartments(reactants)
+    p_compartments = _compartments(products)
+    if ('_e' in r_compartments and '_c' in p_compartments) or \
+       ('_c' in r_compartments and '_e' in p_compartments):
+        if 'M_atp_c' in reactants and 'M_adp_c' in products:
+            return 'transport_atp'          # ABC-type
+        return 'transport_passive'          # facilitated / symporter / antiporter
+
+    # Catalytic reactions (same-compartment substrate transformation)
     if 'M_atp_c' in reactants and 'M_adp_c' in products:
         return 'phospho_transfer'
-    if 'M_nad_c' in reactants or 'M_nadh_c' in reactants:
+    if ('M_nad_c' in reactants or 'M_nadh_c' in reactants
+        or 'M_nadp_c' in reactants or 'M_nadph_c' in reactants):
         return 'oxidoreductase'
     if 'M_h2o_c' in reactants:
         return 'hydrolase'
