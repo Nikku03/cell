@@ -102,19 +102,28 @@ def initialize_gene_expression_state(
     rnap_count: int = DEFAULT_RNAP_COUNT,
     ribosome_count: int = DEFAULT_RIBOSOME_COUNT,
     degradosome_count: int = DEFAULT_DEGRADOSOME_COUNT,
+    seed: int = 42,
 ):
     """
     Add mRNA counts, shared-pool counts (NTP, AA), and machinery counts
     to the state.
+
+    `seed` controls the stochastic rounding of fractional mRNA counts. Must
+    match the EventSimulator seed for bit-identical reproducibility across
+    runs. The previous behaviour (np.random.random()) pulled from the
+    global RNG and caused ~0.1% drift in Priority 2 totals between runs
+    with the same sim seed.
     """
-    # mRNA counts per gene
+    rng = np.random.default_rng(seed)
+
+    # mRNA counts per gene (iterate in sorted order for determinism)
     state.mrna_counts: Dict[str, int] = {}
     raw_counts = load_initial_mrna_counts(scale_factor=scale_factor)
     total_mrnas = 0
-    for locus in state.spec.proteins:
+    for locus in sorted(state.spec.proteins):
         avg = raw_counts.get(locus, 0.0)
-        # Round stochastically
-        count = int(np.floor(avg)) + (1 if np.random.random() < (avg - np.floor(avg)) else 0)
+        # Round stochastically, deterministically
+        count = int(np.floor(avg)) + (1 if rng.random() < (avg - np.floor(avg)) else 0)
         state.mrna_counts[locus] = count
         total_mrnas += count
 

@@ -46,7 +46,7 @@ from layer3_reactions.gene_expression import (
 )
 
 # Config
-OUTPUT_DIR = Path(__file__).resolve().parent.parent / 'data' / 'priority_2_movie'
+OUTPUT_DIR = Path('/home/claude/cell_sim/data/priority_2_movie')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SCALE_FACTOR = 0.02
@@ -115,10 +115,9 @@ print(f'  Metabolites: {len(state.metabolite_counts)}')
 print(f'  mRNAs: {gex_stats["mrnas"]} | RNAPs: {gex_stats["rnap_free"]} | '
       f'Ribosomes: {gex_stats["ribosome_free"]}')
 
-# Select top-expressed genes for GEX rules
+# Select top-expressed genes for GEX rules (locus name as deterministic tiebreaker)
 top_genes = sorted(state.spec.proteins,
-                    key=lambda g: state.mrna_counts.get(g, 0),
-                    reverse=True)[:N_TOP_GENES]
+                    key=lambda g: (-state.mrna_counts.get(g, 0), g))[:N_TOP_GENES]
 
 gex_rules = []
 for g in top_genes:

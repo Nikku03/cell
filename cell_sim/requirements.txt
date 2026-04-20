@@ -3,17 +3,19 @@ numpy>=1.24
 pandas>=2.0
 
 # File formats
-openpyxl>=3.1        # .xlsx reading for kinetic_params, initial_concentrations
-biopython>=1.81      # GenBank parsing for syn3A.gb
+openpyxl>=3.1
+biopython>=1.81
 
 # Visualization
 matplotlib>=3.7
 
-# Optional: Layer 1 ML physics (MACE-OFF)
-# Uncomment if you want to enable atomic-resolution k_cat estimation.
-# These are heavy dependencies (PyTorch + CUDA + e3nn) so leave them
-# commented by default.
+# Priority 3 — Layer 1 atomic engine
+rdkit>=2023.9        # structural similarity backend (always-available)
+ase>=3.22            # atomic simulation environment (for MACE backend)
+
+# Optional — MACE-OFF backend (for real atomic physics on GPU)
+# Uncomment if you want the MACE backend. Heavy deps (PyTorch + e3nn).
+# On CPU-only environments the similarity backend is the default.
 # torch>=2.0
 # e3nn>=0.5
-# mace-torch>=0.3      # the MACE-OFF foundation model wrapper
-# ase>=3.22            # atomistic simulation environment
+# mace-torch>=0.3
