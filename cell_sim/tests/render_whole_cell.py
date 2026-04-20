@@ -20,6 +20,9 @@ Flags (environment variables, all optional):
   WC_SEED        RNG seed (default: 42)
   WC_USE_RUST    set to '1' to use RustBackedFastEventSimulator
   WC_CHECKPOINT  set to '1' to pickle state at end for resume
+  WC_WITH_UPTAKE set to '0' to disable the nutrient-uptake patch
+                 (default: '1' = patch ON, which fills in GLCpts, O2t,
+                 FAt, GLYCt, etc. and synthetic nucleobase importers)
 
 Wall time expectations (Colab High-RAM CPU):
   2%  scale, 1s bio :   ~4s
@@ -58,6 +61,7 @@ from layer3_reactions.reversible import (
 from layer3_reactions.coupled import (
     initialize_metabolites, get_species_count, count_to_mM,
 )
+from layer3_reactions.nutrient_uptake import build_missing_transport_rules
 
 
 # ----------------------------------------------------------------------
@@ -69,6 +73,7 @@ T_END      = float(os.environ.get('WC_T_END', '1.0'))
 SEED       = int(os.environ.get('WC_SEED', '42'))
 USE_RUST   = os.environ.get('WC_USE_RUST', '0') == '1'
 CHECKPOINT = os.environ.get('WC_CHECKPOINT', '0') == '1'
+WITH_UPTAKE = os.environ.get('WC_WITH_UPTAKE', '1') == '1'   # on by default
 
 OUT_DIR = Path(__file__).resolve().parent.parent / 'data' / 'whole_cell'
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -123,6 +128,14 @@ def build_sim():
     medium = load_medium()
     rev_rules, _ = build_reversible_catalysis_rules(sbml, kinetics)
 
+    # Missing nutrient uptake rules (GLCpts, GLYCt, O2t, FAt, CHOLt, TAGt,
+    # and synthetic nucleobase imports). These fill in k_cats that the
+    # Luthey-Schulten kinetic database doesn't provide but which the cell
+    # needs to avoid starving. See layer3_reactions/nutrient_uptake.py.
+    uptake_rules = []
+    if WITH_UPTAKE:
+        uptake_rules = build_missing_transport_rules(sbml, kinetics)
+
     state = CellState(spec)
     populate_real_syn3a(state, counts, scale_factor=SCALE, max_per_gene=MAX_PER)
     initialize_metabolites(state, sbml,
@@ -131,6 +144,7 @@ def build_sim():
 
     rules = ([make_folding_rule(20.0)]
              + rev_rules
+             + uptake_rules
              + make_complex_formation_rules(complexes, 0.05))
 
     n_prot = sum(len(v) for v in state.proteins_by_state.values())
@@ -138,6 +152,7 @@ def build_sim():
     print(f'  proteins        = {n_prot:>10,}')
     print(f'  metabolites     = {n_metab:>10,}')
     print(f'  rules           = {len(rules):>10,}')
+    print(f'  uptake patch    = {"ON (" + str(len(uptake_rules)) + " extra rules)" if WITH_UPTAKE else "OFF"}')
 
     SimClass, sim_name = pick_simulator_class()
     print(f'  simulator       = {sim_name}')

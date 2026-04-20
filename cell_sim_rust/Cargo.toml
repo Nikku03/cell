@@ -1,6 +1,6 @@
 [package]
 name = "cell_sim_rust"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Chhillar (Nikku03) <research@localhost>"]
 description = "Rust hot-path for cell_sim FastEventSimulator"

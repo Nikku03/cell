@@ -1,185 +1,239 @@
-# Dark Manifold Virtual Cell
+# cell_sim
 
-Prototype series exploring physics-shaped neural architectures for
-cell simulation. Two parallel tracks: a **cell-simulator substrate**
-(P0–P10) and a **neural-architecture investigation** (P11–P14).
+Event-driven simulator for the JCVI-Syn3A minimal cell, with atomic-physics-backed k_cat prediction for substrates outside the measured kinetic database.
 
-Both tracks are now at honest intermediate milestones. This README
-summarizes what was built, what works, and what remains open.
+Built on real Syn3A data from the [Luthey-Schulten Lab](https://github.com/Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation): 458 genes, 455 measured protein counts, 24 known complexes, 160 reactions with k_cat, full metabolic SBML.
 
 ---
 
-## The central bet
+## What this simulator does
 
-Standard biochemical simulation is expensive (ODE integration with
-hundreds of species per cell) or inaccurate (coarse stoichiometric
-models). The bet behind this project: **a neural network whose
-architecture reflects physics — locality, conservation, unitarity,
-field-theoretic structure — learns biology from much less data than a
-generic network**.
+**Four simulation modes, increasing in biological scope:**
 
-Two complementary things need to be true for the bet to pay off:
-1. Physics-shaped networks can in fact be trained on biochemical data
-   and produce accurate dynamics (cell-simulator track).
-2. The physics-shaped inductive biases are genuinely load-bearing —
-   they beat matched-capacity unconstrained baselines (architecture
-   track).
+1. **Real Syn3A baseline** — 458 proteins turning over at measured k_cat values, folding kinetics, 24 known protein complexes assembling from their subunits.
+2. **Priority 1.5** — add reversible Michaelis-Menten kinetics and medium uptake. Full central metabolism reaches steady state.
+3. **Priority 2** — add transcription, translation, and mRNA degradation. Central dogma operating on 30 top-expressed genes.
+4. **Priority 3** — compute k_cat for novel substrates (drugs, probes) directly from their SMILES string, with no measured kinetic data required. Two backends: structural similarity (fast, calibrated) or atomic physics via MACE-OFF (experimental).
+
+All four modes run end-to-end in a single Colab notebook in under 10 minutes.
 
 ---
 
-## Track 1 — Cell-simulator substrate (P0 → P10)
+## Headline results (all reproduced in the Colab notebook)
 
-**What's built:** a compartment-aware spatial simulator of *Mycoplasma
-Syn3A* with real biochemistry, real kinetics, open boundaries,
-homeostasis, and learned rate prediction plugged into the spatial
-simulator.
+### 1. Fast simulator, bit-identical to Python reference
 
-| Prototype | What it validates | Status |
-|---|---|---|
-| P0  | Atom conservation via subspace projection | 15 orders of magnitude enforcement |
-| P1  | Stamp+flavor embeddings, balanced reactions | 5/5 tests pass, exactly zero drift |
-| P2  | Load real Syn3A SBML (304 species, 244 reactions) | 83/244 balanced as written (implicit proton convention) |
-| P2b | Auto-rebalance with H⁺ and H₂O | 242/242 reactions balanced after rebalancing |
-| P3b | Compartment-aware stamp subspace | Transport visibly moves mass with global conservation intact |
-| P4  | Liebermeister convenience kinetics, well-mixed | Central carbon stable; passes stiff-reaction tests |
-| P4b | Kinetics coupled to spatial Ψ field | 3/4 pass, stiffness mitigated by rate cap |
-| P5  | Boundary fluxes via medium buffering | Self-sustaining cell achieved |
-| P6  | Cytoplasmic cofactor buffering for physiological state | ATP converges toward 3.65 mM; central metabolism stable |
-| P7  | First learned rate predictor (glycolysis, MLP) | Baseline training loop works; trajectory error ~5% |
-| P7b | Tuned learned predictor | Trajectory error 0.40%, rate error 3.93% |
-| P8  | Permutation-invariant network (cross-reaction generalization) | Scenario 1: 47% zero-shot on held-out reactions. Scenario 2: full Syn3A scale not yet converged. |
-| P9  | LSODA stiff integration | ATP reaches 91% of setpoint; ~50× faster than explicit Euler |
-| P10 | Learned rates in spatial simulator (hybrid) | 0.85% trajectory match to pure-hand-coded baseline |
+Priority 1.5, 2% scale, 1.0 s biological time, seed=42:
 
-**Overall track completeness: ~62%** against "universal cell simulator
-from small data." The pieces not yet built: full Syn3A learned-rate
-convergence, multi-organism training, atomic-resolution query
-mechanism.
-
----
-
-## Track 2 — Neural-architecture investigation (P11 → P15)
-
-**What's investigated:** does each architectural primitive proposed
-by the Dark Manifold design individually outperform a matched-parameter
-baseline on a target PDE where the constraint is supposedly relevant?
-
-| Prototype | Architectural constraint | Target PDE | Result |
+| Simulator | Events | Wall time | Speedup |
 |---|---|---|---|
-| P11 | Local field evolution (3×3 conv + periodic padding) | Fisher-KPP | **PASS** — 0.87% rollout error |
-| P12 | Explicit gauge/connection factorization | Gauged complex Ginzburg-Landau | **NULL** — baseline absorbed gauge implicitly; learned A collapsed to near-constant |
-| P13 | Structural unitary evolution | 2D Schrödinger | **PASS, strong** — 3× better accuracy than baseline; renormalized baseline doesn't close the gap |
-| P14 | Retrieval-augmented memory bank | Parameter-inference Ginzburg-Landau | **NULL** — attention collapsed to uniform; task wasn't memory-hungry |
-| P15 | Mixture-of-K rules / rule discovery | Multi-regime reaction-diffusion | **NULL** — mode collapse; rule-region agreement at chance level |
+| Python `EventSimulator` | 83,049 | 49 s | 1.0x |
+| `FastEventSimulator` (vectorised numpy) | **83,049** | **4.3 s** | **11.4x** |
 
-**Detailed findings:** [`DARK_MANIFOLD_FINDINGS.md`](DARK_MANIFOLD_FINDINGS.md)
+Every event fires in the same order, every metabolite count matches exactly. The speedup comes from three stacked optimisations: compiled rule specs, padded 2D numpy arrays for all MM propensities in a single pass per step, and a Python-rule propensity cache that's valid across 99%+ of events. See [docs/PHASE1_RESULTS.md](docs/PHASE1_RESULTS.md).
 
-**Emergent principle (three-null pattern):** **monolithic structural
-invariants** (P11 every-layer conv, P13 every-step unitarity) are load-
-bearing. **Modular factorizations** (P12 gauge channels, P14 memory
-retrieval, P15 K-rule mixture) consistently get absorbed by the
-baseline's implicit capacity and never receive gradient signal to do
-work. Three consecutive null results on modular mechanisms is no longer
-coincidence — it's a coherent architectural lesson.
+Priority 2 (with gene expression): 114,548 events in **7.0 s** wall (was 76 s) — same 10.8x speedup, same bit-identical guarantee.
 
-**Overall track completeness: ~35%** against the original Dark Manifold
-architecture. Two primitives validated; three filed as null results
-with a shared diagnosis. The track has reached a natural stopping point.
+### 2. Leave-one-out k_cat prediction on 143 Syn3A reactions
+
+For each reaction with a measured k_cat, hide it from the reference set and predict it from the remaining 142 via Morgan-2 Tanimoto similarity:
+
+| Metric | Value |
+|---|---|
+| Median fold-error | **4.96x** |
+| 90th-percentile fold-error | 158x |
+| Within 2x | 16% (23/143) |
+| Within 5x | **50%** (72/143) |
+| Within 10x | **64%** (92/143) |
+
+**The method knows when it's unreliable.** Fold-error as a function of Tanimoto similarity to nearest reference:
+
+| Tanimoto band | n | Median fold-error |
+|---|---|---|
+| ≥ 0.9 | 3 | **1.72x** |
+| 0.7 – 0.9 | 26 | **2.37x** |
+| 0.5 – 0.7 | 58 | 3.46x |
+| 0.3 – 0.5 | 18 | 5.44x |
+| < 0.3 | 21 | 26.0x |
+
+75% of predictions land in the Tanimoto ≥ 0.5 regime where accuracy is 2–5x. This is what makes the architecture useful for organisms without measured kinetic data — most reactions have a structurally similar analog in the reference set.
+
+Per-class breakdown:
+
+| Class | n | Median fold-error | Within 5x |
+|---|---|---|---|
+| transport_passive | 20 | 3.13x | 80% |
+| transport_atp | 33 | 3.73x | 64% |
+| phospho_transfer | 20 | 3.89x | 50% |
+| hydrolase | 10 | 7.35x | 50% |
+| isomerase (catch-all) | 55 | 9.09x | 36% |
+| oxidoreductase | 5 | 157.86x | 0% |
+
+See [data/priority3_benchmark.csv](data/priority3_benchmark.csv) for per-reaction results and [data/priority3_benchmark_scatter.png](data/priority3_benchmark_scatter.png) for the log-log scatter.
+
+### 3. Novel substrate demonstration: BrdU and AZT
+
+The Priority 3 demo adds **5-bromo-2′-deoxyuridine (BrdU)** — a real DNA proliferation tracer — to the cell at 100,000 molecules. No entry in the input kinetic database; the simulator must compute everything from its SMILES.
+
+Similarity backend prediction:
+- Nearest known substrate: **thymidine** (Tanimoto 0.733)
+- Predicted k_cat: **10.36 /s** (thymidine measured: 19.26 /s)
+- Result: **8 novel catalysis events** in 300 ms via TMDK1 (thymidine kinase), producing BrdU-monophosphate
+- Biological impact: ~100 fewer events in other ATP-dependent reactions (competition)
+
+Equivalent AZT (azidothymidine) demo produces 6 novel events at predicted k_cat 8.56 /s (Tanimoto 0.667 to thymidine).
+
+Neither compound exists in the input data. The simulator accepted them as valid substrates, computed physically reasonable rates, and fired correct stoichiometry against real Syn3A enzyme instances.
+
+### 4. A finding about atomic-physics-from-scratch
+
+When the same BrdU demo runs with `backend_name='mace'` (MACE-OFF bond-dissociation energy → Eyring rate), MACE predicts **k_cat = 65,848 /s** — 3,420× higher than thymidine's measured rate. In simulation this causes runaway phosphorylation: TMDK1 fires 69,816 times in 300 ms, consuming 99.9% of cellular ATP.
+
+This is a limitation of uncalibrated atomic physics as a k_cat predictor, not a bug in the simulator. The event machinery faithfully executed what the physics module asked for. A naive MACE BDE → Hammond → Eyring mapping, without per-substrate calibration against measured kinetics, is dangerous. Structural similarity remains the defensible default.
+
+Full benchmarking of MACE vs similarity across all 143 reactions is future work.
 
 ---
 
-## Getting started
+## Quick start
 
-### Setup
+### Option A — Colab (recommended)
+
+Open [`cell_sim_colab.ipynb`](cell_sim_colab.ipynb) in Google Colab. Runtime → Change runtime type → High-RAM CPU. Run all. Total runtime ≈ 10 minutes.
+
+The notebook produces three MP4 videos (Real Syn3A, Priority 1.5, Priority 2), the BrdU and AZT demonstrations, an interactive Priority 1.5 flux chart, and the 143-reaction benchmark with scatter plot.
+
+### Option B — Local
 
 ```bash
+git clone https://github.com/Nikku03/cell.git
+cd cell/cell_sim
+
+# Clone the upstream data
+mkdir -p data
+cd data && git clone --depth 1 https://github.com/Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation.git
+cd ..
+
+# Install Python deps
 pip install -r requirements.txt
-git clone --depth 1 https://github.com/Luthey-Schulten-Lab/Minimal_Cell.git \
-  data/Minimal_Cell
+sudo apt-get install -y ffmpeg        # for MP4 rendering
+
+# Sanity check: fast simulator vs Python reference
+python tests/test_fast_equivalence.py
+# Expected: ~10x speedup, 4699 events MATCH
+
+# Run each simulation mode
+python tests/render_real_syn3a.py      # ~25 s
+python tests/render_priority_15.py     # ~30 s
+python tests/render_priority_2.py      # ~30 s
+python tests/demo_priority3.py         # ~4 s (similarity backend)
+
+# Reproduce the 143-reaction benchmark
+python tests/benchmark_priority3.py    # ~3 s, writes data/priority3_benchmark.csv
 ```
-
-Required: numpy, python-libsbml, scipy, torch. Nothing exotic.
-
-### Running
-
-Cell-simulator track (order matters; some prototypes import earlier ones):
-
-```bash
-python prototype_p0.py             # fast, ~2s
-python prototype_p3b_stamps.py     # ~10s
-python prototype_p6_physiological.py   # ~2min; ATP convergence demo
-python prototype_p10_learned_spatial.py  # ~3min; learned rates in spatial sim
-```
-
-Architecture track (standalone, any order):
-
-```bash
-python prototype_p11_neural_pde.py # ~1min; neural PDE baseline
-python prototype_p13_unitary.py    # ~1min; unitary evolution
-python prototype_p12_gauge.py      # null result, reproducible
-python prototype_p14_memory.py     # null result, reproducible
-```
-
-Or use [`DMVC_Colab.ipynb`](DMVC_Colab.ipynb) for a clean top-to-bottom
-Colab run with explanations between cells.
 
 ---
 
-## Files
+## Architecture
+
+Four layers, in increasing order of abstraction:
 
 ```
-prototype_p0.py ... prototype_p10_learned_spatial.py   Cell-simulator track
-prototype_p11_neural_pde.py ... prototype_p14_memory.py   Architecture track
-NOTES_P12_null.md, NOTES_P14_null.md   Contemporaneous notes on null results
-DARK_MANIFOLD_FINDINGS.md   Consolidated architecture-track findings
-DMVC_Colab.ipynb    End-to-end Colab notebook for the cell simulator
-requirements.txt, .gitignore, README.md
+layer0_genome/        Syn3A genome, proteins, initial counts, complex definitions
+layer1_atomic/        Atomic physics: SMILES -> k_cat
+                      - SimilarityBackend: RDKit Morgan fingerprints + Tanimoto
+                      - MACEBackend (optional): MACE-OFF BDE -> Eyring
+layer2_field/         Gillespie simulator + rule system
+                      - dynamics.py: reference Python EventSimulator
+                      - fast_dynamics.py: 10x vectorised drop-in replacement
+                      - next_reaction_dynamics.py: Gibson-Bruck reference impl
+layer3_reactions/     Rule builders
+                      - reversible.py: reversible Michaelis-Menten from SBML
+                      - gene_expression.py: transcription / translation / degradation
+                      - novel_substrates.py: Priority 3 novel substrate pipeline
+                      - metabolite_smiles.py: 146 curated Syn3A metabolite SMILES
+                      - sbml_parser.py: custom SBML parser for the Luthey-Schulten model
+tests/                End-to-end scripts that produce MP4s and text output
 ```
 
-Total: 18 Python files, ~7 000 lines of code. Runs on a laptop CPU.
+Rules are `TransitionRule` dataclasses carrying a `can_fire` callback and an optional `compiled_spec` dict. Rules with a `compiled_spec` (all reversible MM rules) go through the vectorised path in `FastEventSimulator`; rules without it (folding, complex formation, gene expression, novel substrates) run via Python closure. The hybrid architecture means new rule kinds can be added without touching the simulator.
 
 ---
 
-## Honest caveats
+## Reproducing paper-ready claims
 
-Read before concluding anything from this repo:
+| Claim | How to verify | Expected output |
+|---|---|---|
+| 10x simulator speedup, bit-identical | `python tests/test_fast_equivalence.py` | `MATCH`, 8-10x speedup |
+| 64% of reactions within 10x via similarity | `python tests/benchmark_priority3.py` | median 4.96x, within_5x=72, within_10x=92 |
+| Novel substrate fires real catalysis | `python tests/demo_priority3.py` | 8 novel events, k_cat 10.36/s |
+| Full Priority 1.5 biology | `python tests/render_priority_15.py` | 83,049 events, ATP Δ -20,538 |
+| Full central dogma (Priority 2) | `python tests/render_priority_2.py` | 114,548 events, 41 transcription, 66 translation |
 
-- The cell-simulator track uses an explicit-Euler rate cap for stiff
-  kinetics in P4b–P10. P9 demonstrates LSODA is faster and more accurate
-  but hasn't been retrofit everywhere. Not production-quality.
-- About 10 polymerization reactions with large stoichiometric
-  coefficients are excluded from the kinetic loop. Convenience
-  kinetics does not handle them regardless of integrator choice.
-- Cytoplasmic cofactor buffering in P6 is a modeling shortcut
-  representing homeostatic control systems we don't explicitly model.
-- The learned rate predictors in P7, P7b, P8, P10 are trained on
-  well-mixed synthetic data. Training on real experimental
-  trajectories would be a different project.
-- All architecture-track tests use small grids (16×16 to 32×32) and
-  modest networks (~20k parameters). Scaling behavior not
-  characterized.
-- The P12 and P14 null results are specific to their experimental
-  setups. Different setups (smaller baselines, non-Markovian tasks,
-  richer gauge variation) could yield different results. Each null
-  flags a place where more careful experimental design could yield
-  a real answer.
+Every number above is deterministic at `seed=42`.
 
 ---
 
-## Status
+## Known limitations
 
-**Cell-simulator track:** ready for continued development toward
-multi-organism training and full-Syn3A learned kinetics.
+**Uncalibrated MACE backend.** The `MACEBackend` passes MACE-OFF bond-dissociation energies through an Eyring rate equation without per-substrate calibration. Observed overprediction of 3,000× on BrdU. The similarity backend is the defensible default; MACE is an active research direction.
 
-**Architecture track:** at a natural pause point. Two clear positives,
-two diagnosed nulls, one emergent principle. The honest next step
-would be either:
-- continue with P15 (rule discovery) carefully designed to require
-  the rule-discovery mechanism,
-- OR redo P12/P14 with experimental designs that provably stress
-  their respective mechanisms,
-- OR return to the cell-simulator track and apply the validated
-  architectural primitives (P11-style local evolution, P13-style
-  unitarity) inside it.
+**Next-reaction method not faster in Python.** `NextReactionSimulator` (Gibson-Bruck) is provided as a reference implementation but runs 4× slower than `FastEventSimulator` on Syn3A due to dense cofactor dependencies (ATP connects 68 rules, H2O 49, H+ 35). The algorithmic savings don't cover the Python per-update overhead. The correct implementation is preserved for eventual Rust port. See [docs/PHASE2_RESULTS.md](docs/PHASE2_RESULTS.md).
 
-No path is forced. Each represents a different research prioritization.
+**Isomerase class is a catch-all.** Reaction classification is a crude 6-bucket partition inferred from SBML stoichiometry (phospho_transfer / oxidoreductase / hydrolase / transport_atp / transport_passive / isomerase). The isomerase bucket lumps EC 2-6 together, which explains its 9.09x median fold-error — mixed reaction chemistries in one pool. A finer EC classification would probably tighten the similarity benchmark numbers.
+
+**One organism.** All benchmarks are on Syn3A. Whether the architecture and its accuracy claims transfer to M. pneumoniae (next candidate: iJW145) or E. coli is an open experimental question.
+
+**Scale factor = 2%.** Default configuration runs at 2% of full Syn3A molecule counts to stay under Colab's memory/time budget. Physics is unchanged; only stochastic noise is larger. Full-scale (100%) simulation is performance-tested but not routinely run in the notebook.
+
+---
+
+## Data sources
+
+- **Genome, proteomics, kinetics, SBML**: [Luthey-Schulten Lab — Minimal_Cell_ComplexFormation](https://github.com/Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation). Cloned as upstream data at setup time. Not redistributed here.
+- **Metabolite SMILES**: curated by hand against KEGG / ChEBI / BiGG for 146 Syn3A small molecules. Committed in [`layer3_reactions/metabolite_smiles.py`](cell_sim/layer3_reactions/metabolite_smiles.py).
+- **MACE-OFF model weights**: downloaded at first use from [ACEsuit/mace-off](https://github.com/ACEsuit/mace-off). Distributed under Academic Software License.
+
+---
+
+## Project status
+
+**Working and benchmarked:**
+- Fast event-driven simulator (10x vectorised, bit-identical to Python)
+- Priority 1 / 1.5 / 2 / 3 pipelines end-to-end
+- 143-reaction similarity benchmark with per-class and Tanimoto-stratified fold-error distributions
+- Novel substrate integration via SMILES (BrdU, AZT demonstrated)
+- Colab notebook reproducing every claim in ~10 minutes
+
+**Active research:**
+- MACE vs similarity benchmark on all 143 reactions (requires GPU; initial results suggest similarity outperforms uncalibrated MACE)
+- τ-leaping for another 30-100x speedup on metabolism-heavy runs
+- Port to M. pneumoniae
+
+**Future:**
+- Rust core via pyo3 for additional 10-30x speedup
+- Methods paper draft
+
+---
+
+## Contact
+
+Open an issue on this repository or reach out via GitHub.
+
+---
+
+## Citation
+
+If you use this simulator in your work:
+
+```
+@software{cell_sim_2025,
+  author       = {Chhillar (Naresh)},
+  title        = {cell_sim: event-driven simulator for JCVI-Syn3A with
+                  atomic-physics k_cat prediction},
+  url          = {https://github.com/Nikku03/cell},
+  year         = {2025}
+}
+```
+
+Please also cite the upstream Luthey-Schulten Minimal_Cell_ComplexFormation repository whose data this simulator builds on.
