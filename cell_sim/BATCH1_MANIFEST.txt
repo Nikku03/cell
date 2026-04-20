@@ -1,0 +1,45 @@
+cell_sim — Batch 1 of 2: simulator core
+========================================
+
+This tarball contains 13 of 26 files. Extract alongside Batch 2 to
+assemble the full repo.
+
+Extraction:
+    tar -xzf cell_sim_batch1.tar.gz
+    tar -xzf cell_sim_batch2.tar.gz   # merges into the same cell_sim/ directory
+
+Files in this batch (13):
+
+Top level (5):
+    cell_sim/README.md
+    cell_sim/requirements.txt
+    cell_sim/setup.sh                  (execute to clone data + install deps)
+    cell_sim/.gitignore
+    cell_sim/cell_sim_colab.ipynb
+
+docs/ (2):
+    cell_sim/docs/DESIGN.md
+    cell_sim/docs/BUILD_LOG.md
+
+layer0_genome/ (2):
+    cell_sim/layer0_genome/parser.py        (generic/synthetic parser)
+    cell_sim/layer0_genome/syn3a_real.py    (real Syn3A loader)
+
+layer1_atomic/ (1):
+    cell_sim/layer1_atomic/engine.py        (MACE-OFF stub)
+
+layer2_field/ (2):
+    cell_sim/layer2_field/dynamics.py       (Gillespie simulator)
+    cell_sim/layer2_field/real_syn3a_rules.py
+
+routing/ (1):
+    cell_sim/routing/controller.py          (skeleton; not in main path)
+
+What's NOT in this batch (see Batch 2):
+    - cell_sim/layer3_reactions/   (6 files: metabolic coupling + GEX)
+    - cell_sim/tests/              (7 render/test scripts)
+
+After extracting both batches:
+    cd cell_sim
+    bash setup.sh
+    python tests/render_priority_15.py

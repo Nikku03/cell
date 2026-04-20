@@ -1,0 +1,42 @@
+cell_sim — Batch 2 of 2: reaction coupling + tests
+===================================================
+
+This tarball contains 13 of 26 files. Extract alongside Batch 1 to
+assemble the full repo.
+
+Extraction:
+    tar -xzf cell_sim_batch1.tar.gz
+    tar -xzf cell_sim_batch2.tar.gz   # merges into the same cell_sim/ directory
+
+Files in this batch (13):
+
+layer3_reactions/ (6) — the metabolic/GEX coupling layer:
+    cell_sim/layer3_reactions/network.py        (generic ODE network)
+    cell_sim/layer3_reactions/sbml_parser.py    (Syn3A_updated.xml reader)
+    cell_sim/layer3_reactions/kinetics.py       (kcat_fwd/rev, Km loader)
+    cell_sim/layer3_reactions/coupled.py        (Priority 1: stoichiometry)
+    cell_sim/layer3_reactions/reversible.py     (Priority 1.5: reversible MM + uptake)
+    cell_sim/layer3_reactions/gene_expression.py (Priority 2: central dogma)
+
+tests/ (7) — demos and render scripts:
+    cell_sim/tests/render_movie.py          (generic toy demo)
+    cell_sim/tests/render_real_syn3a.py     (real identities, no coupling)
+    cell_sim/tests/render_coupled.py        (Priority 1 MP4)
+    cell_sim/tests/render_priority_15.py    (Priority 1.5 MP4)
+    cell_sim/tests/render_priority_2.py     (Priority 2 MP4)
+    cell_sim/tests/test_end_to_end.py       (early pipeline test)
+    cell_sim/tests/viz_demo.py              (basic plotting demo)
+
+What's NOT in this batch (see Batch 1):
+    - top-level configs (README, requirements, setup.sh, .gitignore, notebook)
+    - cell_sim/docs/
+    - cell_sim/layer0_genome/
+    - cell_sim/layer1_atomic/
+    - cell_sim/layer2_field/
+    - cell_sim/routing/
+
+Running the renders (in recommended order, easiest to hardest):
+    python tests/render_real_syn3a.py     (~90 s wall, 0.5 s simulated)
+    python tests/render_priority_15.py    (~100 s wall, 1.0 s simulated)
+    python tests/render_coupled.py        (~150 s wall, 0.2 s simulated)
+    python tests/render_priority_2.py     (~400 s wall, 1.5 s simulated)

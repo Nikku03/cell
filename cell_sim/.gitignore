@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+
+# Cloned upstream data (rehydrated at runtime)
+data/Minimal_Cell_ComplexFormation/
+
+# Simulation outputs
+data/event_demo/
+data/coupled_movie/
+data/real_syn3a_movie/
+data/priority_15_movie/
+data/priority_2_movie/
+data/survival_*/
+data/*.fasta
+
+# Generated MP4s and previews
+*.mp4
+*_preview.png
+cell_sim.tar.gz
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Virtual env
+venv/
+.venv/
+env/
+
+# Backup files
+*.bak
+*~
