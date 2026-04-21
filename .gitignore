@@ -16,6 +16,7 @@ data/
 outputs/*.csv
 outputs/*.png
 outputs/*.tmp
+outputs/.wt_*.pkl
 *.log
 *.tmp
 
@@ -45,3 +46,7 @@ memory_bank/index/concept_graph.json
 
 # Local patch backups (not for the remote)
 patches/
+
+# Rust build artifacts (cell_sim_rust)
+cell_sim_rust/target/
+cell_sim_rust/Cargo.lock

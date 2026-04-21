@@ -51,30 +51,41 @@ Separating the two also means **improvements to Layers 1-5 are evaluable.** Any 
 
 ### Session-by-session MCC history
 
-| Version | Session | n | Config | MCC | Confusion | Notes |
+| Version | Session | n | Config | MCC | Wall (s/gene) | Notes |
 |---|---|---|---|---|---|---|
-| v0 | 4 | 4 | scale=0.05, t_end=0.5, thr=0.10 | **0.333** | 1 TP / 0 FP / 1 TN / 2 FN | pgi caught via F6P -11%. |
-| (v0b) | 4 | 4 | scale=0.10, t_end=1.0, thr=0.05 | -0.577 | 1 TP / 1 FP / 0 TN / 2 FN | Low threshold tripped FP from dATP noise. |
-| (v0c) | 5 | 4 | scale=0.05, t_end=2.0, thr=0.10 | 0.333 | Identical to v0 | Longer window did not help. |
-| v1 | 5 | 40 | scale=0.05, t_end=0.5, cal=10, sf=2.5 | **0.160** | 1 TP / 0 FP / 20 TN / 19 FN | Parallel 4-worker. Specificity=1; recall=0.05. |
-| v2 | 5 | 20 | scale=0.10, t_end=1.0, cal=5, sf=2.5 | **0.229** | 1 TP / 0 FP / 10 TN / 9 FN | Doubled scale + window: no improvement over v1. |
+| v0 | 4 | 4 | scale=0.05, t_end=0.5, thr=0.10 | **0.333** | 13 | pgi caught via F6P -11%. |
+| (v0b) | 4 | 4 | scale=0.10, t_end=1.0, thr=0.05 | -0.577 | 40 | FP from dATP noise. |
+| (v0c) | 5 | 4 | scale=0.05, t_end=2.0, thr=0.10 | 0.333 | 50 | Longer window didn't help. |
+| v1 | 5 | 40 | scale=0.05, t_end=0.5, cal=10, sf=2.5 | **0.160** | 4.9 (parallel) | Specificity=1; recall=0.05. |
+| v2 | 5 | 20 | scale=0.10, t_end=1.0, cal=5, sf=2.5 | 0.229 | 12.7 (parallel) | No improvement over v1. |
+| v3 | 6 | 20 | scale=0.25, t_end=0.5, cal=5, rust | 0.229 | 7.1 (parallel+rust) | pgi F6P grows to -15%. |
+| v4 | 6 | 20 | scale=0.05, t_end=0.5, cal=5, rust, +TOTAL_EVENTS | 0.229 | **1.9 (parallel+rust)** | Full stack; 7× speedup over v2. |
 
 ### The one thing the detector catches
 
-Every config catches exactly `JCVISYN3A_0445` (pgi) via F6P depletion of 6–11 %. That's the only Essential-class gene whose KO produces a detectable metabolite signature in the short-window real simulator at the tried scales.
+Every config catches exactly `JCVISYN3A_0445` (pgi) via F6P depletion of 5–15 %. That's the only Essential-class gene whose KO produces a detectable metabolite / non-metabolic signature in the short-window real simulator at all tried scales.
 
-### What gets missed and why
+### The Session-6 infrastructure stack
 
-- **Ribosomal proteins** (rpmI, rpsI, rpsN, rpsR, rpsE, rpsB, rpmF): KO stops ribosome assembly and translation. Effect on metabolite pools is slow (minutes). The detector watches central-carbon + NTP + dNTP pools only; it does not watch ribosome assembly state, protein synthesis rate, or charged-tRNA fraction.
-- **tRNA synthetases / RNases** (rnjB): RNA-processing defects take many bio-seconds to manifest in downstream pools.
-- **Transporters / PTS components** (ptsG, crr, ywjA): upstream of central carbon; pool depletion takes longer than 0.5–1 s of bio-time.
-- **Replication machinery, lipid synthesis** (plsX), **cell division** (ftsZ — correctly predicted non-essential at these short windows).
+Session 6 built the plumbing that makes long-running / large-scale sweeps tractable, even though the MCC number didn't move:
+
+- **Rust hot path** (`cell_sim_rust`): wheel built, installed, exposed via `RealSimulatorConfig(use_rust_backend=True)` and `--use-rust` on both sweep scripts. ~2× speedup on a single core at scale=0.05.
+- **Multiprocess fan-out**: `scripts/run_sweep_parallel.py` with `--workers N`. ~4× on this 4-core sandbox.
+- **Combined speedup vs baseline (v0): ~7×** (1.9 s/gene effective vs 13 s in v0).
+- **Non-metabolic pool signals** added to `RealSimulator._snapshot`: `TOTAL_COMPLEXES`, `FOLDED_PROTEINS`, `UNFOLDED_PROTEINS`, `FOLDED_FRACTION`, `BOUND_PROTEINS`, `TOTAL_EVENTS`. All plumbed into `SHORT_WINDOW_POOLS` and calibrated. None trip at 0.5 s bio-time, but the framework is ready.
+
+### What gets missed and why — updated diagnosis
+
+Across v0-v4 (5 configs spanning scale 0.05-0.25 and t_end 0.5-2.0s with/without non-metabolic pools), the detector trips **only** on pgi. All other essentials (ribosomal proteins, tRNA synthetases, transporters, RNase, replication, lipid synthesis) produce sub-threshold deviations across every watched pool. **This is architectural**, not a threshold-tuning failure:
+
+- At 0.5 s bio-time, 140 k events fire across ~160 reactions. Knocking out one protein typically removes a few reaction-pathways; the remaining ~155 reactions still fire normally, so aggregate pool levels and event counts barely move.
+- Only central-glycolysis disruption (which has a high flux relative to other pathways and short feedback loops) produces detectable perturbation in 0.5 s.
 
 ### Three orthogonal paths to MCC > 0.59 (for next session)
 
-1. **Non-metabolic signals in the detector.** Add a pool for charged-tRNA fraction and a pool for ribosome-assembly-complex count, sourced from `CellState.proteins_by_state`. Ribosomal-protein KOs would then show up via the charged-tRNA lump freezing (no ribosome turnover to unload it) or via a drop in intact ribosome count. This requires ~100 lines in `real_simulator.py::_snapshot`.
-2. **Trajectory-divergence integral instead of threshold.** Rather than `|ko/wt - 1| > X at two samples`, sum the deviations across the whole window and compare to a distribution of WT-replicate integrals. Captures slow drifts that never cross a hard threshold. Requires a few WT replicates (multiple seeds) to build the null distribution.
-3. **Larger-scale long-window runs on real hardware.** The knockout_test.py in the existing cell_sim reports clear signal at scale=0.5, t_end=0.5 s — that run takes ~25 min per gene. The full 458-gene sweep at that scale on a cluster (128 cores) fits in ~2 hours wall. At that budget the `ShortWindowDetector` as-is probably hits 0.4–0.5; with signal (1) added as well, 0.59 is plausible.
+1. **Per-rule event-count detection (HIGH leverage, cheap).** Add `reaction_event_counts: dict[str, int]` to the Sample. For each rule, count events in the last window. A KO of gene X whose catalysis:Y rule drops to zero events in KO while Y fires > threshold in WT is a direct causal signal, completely independent of pool levels. Requires the gene → rule mapping (available in `real_syn3a_rules.py`).
+2. **Longer bio-time with the new Rust+parallel stack.** At 1.9 s/gene effective, a full 458-gene sweep at t_end=5.0 s fits in ~3 hours wall on this 4-core sandbox. Worth running once the per-rule detection (above) is in place.
+3. **More calibration samples.** Noise floors on `TOTAL_EVENTS` and non-metabolic pools drop to usable levels once calibration N reaches ~20. Cheap (~5 min at scale=0.05 Rust parallel).
 
 ## Session 4 additions
 

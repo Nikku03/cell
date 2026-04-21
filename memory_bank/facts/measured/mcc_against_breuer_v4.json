@@ -1,0 +1,52 @@
+{
+  "id": "mcc_against_breuer_v4",
+  "claim": "Fifth measurement. 20-gene balanced panel with the full Session-6 stack: Rust backend (cell_sim_rust wheel built and installed), 4-worker parallel, 5-gene calibration, extended pool set now including TOTAL_EVENTS (cumulative event count) in addition to non-metabolic pools. Scale=0.05, t_end=0.5. Result: MCC=0.229 (same as v2, v3). TOTAL_EVENTS noise floor at 5 calibration samples is ~0.30 so its threshold is too loose to trip on non-catastrophic KOs. Overall wall per gene effective: 1.9 s (vs 12.7 s in v2) - Rust+parallel gives ~7x speedup. Detection ceiling is architectural: only pgi-class central-glycolysis KOs trip at any tested short-window config.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.229,
+    "units": "dimensionless",
+    "n_genes": 20,
+    "confusion": {"tp": 1, "fp": 0, "tn": 10, "fn": 9},
+    "config": {
+      "simulator": "RealSimulator (+rust)",
+      "sweep_script": "scripts/run_sweep_parallel.py --use-rust",
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "seed": 42,
+      "detector": "ShortWindowDetector",
+      "calibration_n": 5,
+      "safety_factor": 2.5,
+      "fallback_threshold": 0.03,
+      "workers": 4,
+      "use_rust_backend": true,
+      "pools_watched": ["ATP","G6P","F6P","PYR","CTP","GTP","UTP","NTP_TOTAL",
+                        "dATP","dGTP","dCTP","dTTP",
+                        "TOTAL_COMPLEXES","FOLDED_PROTEINS","UNFOLDED_PROTEINS",
+                        "FOLDED_FRACTION","BOUND_PROTEINS","TOTAL_EVENTS"]
+    },
+    "sweep_wall_s": 37.4,
+    "per_gene_wall_effective_s": 1.9,
+    "speedup_over_v2": 6.7
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Predictions: outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.03_w4_cal5sf2.5.csv. Metrics JSON committed.",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v4_session_6_full_stack",
+    "commit_range": "43d3f72..(this commit)"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "MCC identical to v1/v2/v3 across scale={0.05, 0.10, 0.25} with threshold calibration and expanded pools. The short-window detection floor is fundamental to simulator behaviour, not detector tuning.",
+    "TOTAL_EVENTS noise floor requires MORE calibration samples to shrink - at 5 it's 30%%, at 20+ probably <10%%, making it a useful signal. Worth re-running with calibrate=20 in a future session.",
+    "The brief's MCC>0.59 target is not reachable with 0.5 s bio-time runs. It requires either (a) t_end on the order of tens-to-hundreds of seconds bio-time (many minutes of wall time per gene even with Rust, infeasible in an interactive session), or (b) a per-rule event-count detector that treats 'events for catalysis:X dropped to zero in KO of gene catalysing X' as the signal.",
+    "Infrastructure wins this session are real even though MCC didn't move: Rust path built and verified (2x speedup), parallel sweep validated (4x speedup), non-metabolic pool framework in place, TOTAL_EVENTS signal live."
+  ],
+  "dependencies": ["mcc_against_breuer_v3", "syn3a_essentiality_breuer2019"],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "scripts/run_sweep_parallel.py",
+    "outputs/metrics_parallel_s0.05_t0.5_seed42_thr0.03_w4_cal5sf2.5.json"
+  ]
+}

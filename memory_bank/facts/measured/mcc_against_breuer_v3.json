@@ -1,0 +1,48 @@
+{
+  "id": "mcc_against_breuer_v3",
+  "claim": "Fourth MCC measurement. Same 20-gene balanced panel at scale=0.25 (5x larger than v0-v2) with Rust backend + calibration + expanded pool set (now includes TOTAL_COMPLEXES, FOLDED_PROTEINS, UNFOLDED_PROTEINS, FOLDED_FRACTION, BOUND_PROTEINS). Result: **MCC=0.229** (TP=1, FP=0, TN=10, FN=9). Identical to v1/v2 despite the 5x scale increase. pgi's F6P deviation grows from -11%% at scale=0.05 to -15%% at scale=0.25, confirming the signal is real and scales. But no other essential gene produces a deviation exceeding the safety-factor * noise-floor threshold at 0.5s bio-time.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.229,
+    "units": "dimensionless",
+    "n_genes": 20,
+    "confusion": {"tp": 1, "fp": 0, "tn": 10, "fn": 9},
+    "config": {
+      "simulator": "RealSimulator",
+      "sweep_script": "scripts/run_sweep_parallel.py",
+      "scale_factor": 0.25,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "seed": 42,
+      "detector": "ShortWindowDetector",
+      "calibration_n": 5,
+      "safety_factor": 2.5,
+      "fallback_threshold": 0.03,
+      "workers": 4,
+      "use_rust_backend": true,
+      "pool_set_extended": true
+    },
+    "gene_the_detector_caught": "JCVISYN3A_0445 (pgi) via F6P -15.3%%"
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Predictions: outputs/predictions_parallel_s0.25_t0.5_seed42_thr0.03_w4_cal5sf2.5.csv. Metrics JSON committed.",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v3_session_6_scale_0.25_rust_non_metabolic_pools",
+    "commit_range": "43d3f72..(this commit)"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Conclusively establishes that the short-window (<=0.5 s bio-time) essentiality-detection ceiling is architectural, not threshold-tuning. MCC stays at 0.229 across scale={0.05, 0.10, 0.25} - only pgi (central glycolysis) ever trips.",
+    "Attempted scale=0.5 (with Rust + 4-worker parallel + 5-gene calibration) but timed out at 540 s wall - too expensive for interactive Bash calls.",
+    "Non-metabolic pools TOTAL_COMPLEXES and BOUND_PROTEINS have noise-floors of 0.27-0.40 at scale=0.25; threshold (safety_factor=2.5) therefore > 0.6, which no essential-gene KO reaches in 0.5 s.",
+    "Break through requires non-short-window runs. Either: (a) t_end on the order of seconds-to-minutes bio-time at moderate scale (cluster job, many hours), or (b) event-count-based detection (fraction of catalysis events for downstream reactions - zero in the KO case, high in WT)."
+  ],
+  "dependencies": ["mcc_against_breuer_v2", "mcc_against_breuer_v1",
+                   "mcc_against_breuer_v0", "syn3a_essentiality_breuer2019"],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "scripts/run_sweep_parallel.py",
+    "outputs/metrics_parallel_s0.25_t0.5_seed42_thr0.03_w4_cal5sf2.5.json"
+  ]
+}

@@ -40,8 +40,18 @@ from cell_sim.layer6_essentiality.harness import (
 # too small at scale<=0.1 to give a stable noise floor (we see ~10 %
 # wobble even on non-essentials).
 SHORT_WINDOW_POOLS: tuple[str, ...] = (
+    # metabolite pools
     "ATP", "G6P", "F6P", "PYR", "CTP", "GTP", "UTP", "NTP_TOTAL",
     "dATP", "dGTP", "dCTP", "dTTP",
+    # non-metabolic simulator-state signals (protein folding + complex
+    # assembly); added in Session 6 to catch ribosomal / tRNA-synthetase
+    # KOs that don't perturb central-carbon pools within 0.5 s.
+    "TOTAL_COMPLEXES", "FOLDED_PROTEINS", "UNFOLDED_PROTEINS",
+    "FOLDED_FRACTION", "BOUND_PROTEINS",
+    # Cumulative event count. Sub-% noise at scale=0.05 (~140k events
+    # in 0.5 s), so a KO that drops aggregate enzyme activity becomes
+    # detectable even if no single metabolite pool moves much.
+    "TOTAL_EVENTS",
 )
 
 

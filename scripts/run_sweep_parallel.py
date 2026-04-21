@@ -67,6 +67,7 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str) -> None:
     rs_cfg = RealSimulatorConfig(
         scale_factor=cfg_dict["scale"],
         seed=cfg_dict["seed"],
+        use_rust_backend=cfg_dict.get("use_rust_backend", False),
     )
     _worker_sim = RealSimulator(rs_cfg)
     with open(wt_pickle_path, "rb") as fh:
@@ -109,6 +110,7 @@ def _compute_wt(cfg_dict: dict) -> Trajectory:
     )
     sim = RealSimulator(RealSimulatorConfig(
         scale_factor=cfg_dict["scale"], seed=cfg_dict["seed"],
+        use_rust_backend=cfg_dict.get("use_rust_backend", False),
     ))
     return sim.run([], t_end_s=cfg_dict["t_end_s"],
                    sample_dt_s=cfg_dict["dt_s"])
@@ -125,6 +127,7 @@ def _calibrate_thresholds(
     )
     sim = RealSimulator(RealSimulatorConfig(
         scale_factor=cfg_dict["scale"], seed=cfg_dict["seed"],
+        use_rust_backend=cfg_dict.get("use_rust_backend", False),
     ))
     nons = [lt for lt, lab in labels.items()
             if lab.essentiality == EssentialityClass.NONESSENTIAL]
@@ -190,6 +193,9 @@ def main() -> int:
     p.add_argument("--threshold", type=float, default=0.10)
     p.add_argument("--calibrate", type=int, default=0)
     p.add_argument("--safety-factor", type=float, default=2.0)
+    p.add_argument("--use-rust", action="store_true",
+                   help="Use the Rust-backed FastEventSimulator "
+                        "(cell_sim_rust). ~2x speedup at scale=0.05.")
     p.add_argument("--out-dir", default="outputs")
     args = p.parse_args()
 
@@ -214,6 +220,7 @@ def main() -> int:
         "threshold": args.threshold,
         "threshold_payload": args.threshold,  # becomes dict after calibrate
         "safety_factor": args.safety_factor,
+        "use_rust_backend": args.use_rust,
     }
 
     t_setup = time.time()

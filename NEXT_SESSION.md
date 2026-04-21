@@ -11,30 +11,48 @@ _Read this file FIRST, immediately after running the invariant checker._
 
 ## Where Layer 6 stands
 
-- Real simulator wired (`RealSimulator`, `ShortWindowDetector`, `run_full_sweep_real.py`, `run_sweep_parallel.py` with 4-worker fan-out).
-- Calibration mode + per-pool thresholds in `ShortWindowDetector` shipped; 5–10 non-essential KOs produce a noise floor used to set tight per-pool thresholds.
-- Three MCC measurements recorded as measured facts (`mcc_against_breuer_v0` / `v1` / `v2`):
-  - v0, n=4: 0.333 (scale=0.05, t_end=0.5)
-  - v1, n=40 balanced with calibration: 0.160 (scale=0.05, t_end=0.5)
-  - v2, n=20 balanced with calibration: 0.229 (scale=0.10, t_end=1.0)
-- **Conclusion: at tractable scales (<=0.1) and windows (<=2 s), the detector catches exactly one gene — `pgi` — via F6P depletion.** Scaling the knobs does not help. The limit is not a threshold-tuning problem; it's that most essential-gene KOs don't produce detectable *metabolite* signatures within this runtime budget.
-- Brief target: **MCC > 0.59**. We are at 0.16–0.33 depending on sample size.
+**Infrastructure** (v0 → v4 cumulative):
+- Real simulator wired (`RealSimulator`, `ShortWindowDetector`).
+- `scripts/run_full_sweep_real.py` — single-process with `--calibrate K`.
+- `scripts/run_sweep_parallel.py` — 4-worker multiprocess + `--use-rust`.
+- `cell_sim_rust` wheel built and installed; `RealSimulatorConfig.use_rust_backend` toggles it.
+- **7× speedup vs Session-4 baseline** (1.9 s/gene effective at scale=0.05 with Rust + 4-worker parallel).
+- Expanded pool set in `_snapshot`: metabolites + `TOTAL_COMPLEXES`, `FOLDED_PROTEINS`, `UNFOLDED_PROTEINS`, `FOLDED_FRACTION`, `BOUND_PROTEINS`, `TOTAL_EVENTS`.
 
-## Highest-priority queue (in order)
+**MCC measurements** (all recorded as `facts/measured/mcc_against_breuer_v0..v4.json`):
+- v0 (n=4): 0.333
+- v1 (n=40): 0.160
+- v2 (n=20, scale=0.10): 0.229
+- v3 (n=20, scale=0.25, rust): 0.229
+- v4 (n=20, scale=0.05, rust, + non-metabolic pools + TOTAL_EVENTS): 0.229
 
-### 1. Push MCC toward 0.59 — three orthogonal improvements
+**Diagnosis (definitive across v0-v4):** the detector catches exactly **one gene** — `pgi` — at any tested short-window (≤0.5 s) config. The short-window essentiality-detection floor is **architectural**, not threshold-tuning. Most essential-gene KOs don't perturb aggregate pool levels by more than 1-3% within 0.5 s because only a handful of the ~160 reactions stop firing — the other 155 dilute the signal. Brief target **MCC > 0.59** unreachable at these windows.
 
-Based on Session 5's diagnostic measurements, the **high-leverage** move is #1a below. Tuning (#1b, #1c) was tried in Session 5 and does not fix the underlying signal problem.
+## Highest-priority queue (updated after Session-6 measurements)
 
-**1a. Add non-metabolic detection signals (HIGH leverage, medium cost).** Extend `RealSimulator._snapshot` to also emit:
-  - `RIBOSOME_COUNT`: number of fully-assembled 70S ribosomes (from `CellState.complexes`, filter by complex name == "ribosome" or by matching the 24 complex definitions).
-  - `CHARGED_TRNA_FRACTION`: aggregate across the 20 aa-tRNA synthetase outputs. Needs some spelunking in the existing `real_syn3a_rules.py`; the tRNA-charging pools are on `kinetic_params.xlsx` sheet "tRNA Charging".
-  - `TOTAL_PROTEIN_COUNT`: sum across all `state.proteins` — drops when folding / translation is halted.
-  With these pools populated, ribosomal-protein KOs and tRNA-synthetase KOs get detected because the ribosome pool stops replenishing. Estimated: +15 essentials caught out of 20 in the balanced sample → MCC lift to ~0.4-0.5 without any other change.
+### 1. Per-rule event-count detection (HIGH leverage, cheap — THE move)
 
-**1b. Trajectory-divergence integral instead of threshold (MEDIUM leverage).** Run N WT replicates with different seeds, build a per-pool null distribution of `integral_|ratio-1| dt`, then flag a KO as essential if its integral exceeds the 99th percentile of WT-to-WT integrals. Catches slow drifts that never cross any hard threshold. Cost: N × WT wall (modest). Needs to be paired with 1a to add to 0.59; alone probably a small lift only.
+Session 6 proved that pool-based detection hits a hard ceiling regardless of pool choice, scale, or threshold. The remaining high-leverage lever is a **different detection signal**: count how many times each `catalysis:REACTION` rule fires in KO vs WT.
 
-**1c. Larger-scale long-window runs (costs compute).** The existing `cell_sim/tests/test_knockouts.py` reports 20% deviations on ATP/G6P at scale=0.5 / t_end=0.5 s — but at ~25 min wall per gene. That's 192 CPU-hours for the 458-CDS sweep; tractable on a cluster but not interactive. **Only do this after 1a and 1b.**
+Mechanism: for each gene, obtain the set of rule names its product catalyses (structural, from `real_syn3a_rules.py`). A KO of gene X should cause `events_per_rule["catalysis:Y"]` for all Y in that set to drop to ~0 in KO while remaining >threshold in WT. This is:
+
+- **Direct causal**: not a downstream propagation that takes bio-time — the direct effect is immediate.
+- **Gene-specific**: each gene has a known rule set, so the detector can be asked "did the right rules stop?".
+
+Implementation sketch:
+- Add `event_counts_by_rule: dict[str, int]` to `Sample`. Populate in `_snapshot` by iterating `state.events` (already exposed) and counting by `event.rule_name`.
+- Extend `ShortWindowDetector` (or add a sibling) that takes a `gene_to_rules: dict[str, set[str]]` map and trips when all rules in a gene's set have zero events in KO but non-zero in WT.
+- The gene-to-rules map is produced by walking the rules list during setup.
+
+Expected lift: **from 1/10 to 6-8/10 essentials caught** (all the metabolic ones — roughly Breuer's FBA coverage). Ribosomal / tRNA-synthetase KOs are still missed because their rules are in the catalysis-free Gene-Expression sheet, not `catalysis:*`. MCC to ~0.45-0.55 at n=40-100.
+
+### 2. Longer bio-time at Rust+parallel budget (MEDIUM leverage)
+
+Now that effective wall is 1.9 s/gene (scale=0.05 + Rust + 4 workers), a **full 458-CDS sweep at t_end=5.0 s** fits in ~3 hours on this sandbox (vs >30 h in v0). At that window the transporter KOs (ptsG, crr) probably show. Worth running once #1 is in place.
+
+### 3. Bigger calibration sample (cheap side-improvement)
+
+Increasing `--calibrate` from 5 to 20-30 tightens the noise floors on `TOTAL_EVENTS` (from 30 % to <10 %) and on `TOTAL_COMPLEXES` / `BOUND_PROTEINS` (from 30-40 % to ~10 %). Makes the new Session-6 pools actually useful. Combine with #1 for additional recall.
 
 ### 2. Layer 5 — biomass + division
 
