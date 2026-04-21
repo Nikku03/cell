@@ -13,7 +13,9 @@ data/
 !data/.gitkeep
 
 # Outputs and caches
-outputs/
+outputs/*.csv
+outputs/*.png
+outputs/*.tmp
 *.log
 *.tmp
 

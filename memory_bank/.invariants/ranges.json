@@ -17,6 +17,7 @@
     "chromosome_length_bp":        {"min": 10000, "max": 100000000, "units": "bp"},
     "oric_position_bp":            {"min": 0,     "max": 100000000, "units": "bp"},
     "gene_count_total":            {"min": 1,     "max": 100000, "units": "genes"},
+    "mcc_binary_quasi_positive":   {"min": -1.0,  "max": 1.0,    "units": "dimensionless"},
     "concentration_M":             {"min": 1e-12, "max": 1.0,    "units": "M"},
     "mass_Da":                     {"min": 1.0,   "max": 1e7,    "units": "Da"},
     "temperature_C":               {"min": 0.0,   "max": 100.0,  "units": "C"},

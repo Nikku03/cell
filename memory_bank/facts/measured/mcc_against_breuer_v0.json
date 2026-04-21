@@ -1,0 +1,46 @@
+{
+  "id": "mcc_against_breuer_v0",
+  "claim": "First end-to-end MCC measurement of the Layer 6 essentiality pipeline against Breuer 2019 labels. Run on the 4-gene reference panel (pgi, ptsG, ftsZ, JCVISYN3A_0305) with the real FastEventSimulator at scale=0.05, t_end=0.5s, ShortWindowDetector threshold=0.10. Result: MCC=0.333 (TP=1, FP=0, TN=1, FN=2). Below the brief's 0.59 target, expected for v0 - the short bio-time window doesn't let upstream-of-glycolysis transporter knockouts (ptsG) propagate.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.333,
+    "units": "dimensionless",
+    "n_genes": 4,
+    "confusion": {"tp": 1, "fp": 0, "tn": 1, "fn": 2},
+    "config": {
+      "simulator": "RealSimulator",
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "seed": 42,
+      "detector": "ShortWindowDetector",
+      "deviation_threshold": 0.10
+    },
+    "secondary_run": {
+      "scale": 0.10,
+      "t_end_s": 1.0,
+      "threshold": 0.05,
+      "mcc": -0.577,
+      "note": "Lower threshold tripped a false positive on ftsZ from dATP noise. Confirms thresholds need per-pool tuning, not a single global value."
+    }
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Predictions output: outputs/predictions_real_s0.05_t0.5_seed42_thr0.1.csv (gitignored). Metrics: outputs/metrics_real_s0.05_t0.5_seed42_thr0.1.json (committed). Reproducible via 'python scripts/run_full_sweep_real.py --reference-panel'.",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v0_session_3_real_simulator",
+    "commit_range": "ba58794..(this commit)"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "n=4 only - reference panel for plumbing validation, not a full sweep.",
+    "MCC=0.333 is below the brief's >0.59 target. Achieving the target requires either (a) longer t_end_s so upstream KOs (e.g. transporters) propagate, (b) larger scale_factor so the noise floor drops, or (c) a smarter per-pool threshold based on a noise-floor calibration run over Breuer-non-essential genes.",
+    "Single-process runs at the v0 config: ~13s/gene wall. Full 458-gene sweep ~100 minutes. Practical path forward is multi-process partitioning of the gene list."
+  ],
+  "dependencies": ["syn3a_essentiality_breuer2019", "syn3a_gene_table"],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "scripts/run_full_sweep_real.py",
+    "outputs/metrics_real_s0.05_t0.5_seed42_thr0.1.json"
+  ]
+}

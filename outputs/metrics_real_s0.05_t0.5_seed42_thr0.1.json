@@ -1,0 +1,24 @@
+{
+  "config": {
+    "reference_panel": true,
+    "max_genes": null,
+    "all": false,
+    "balanced": false,
+    "scale": 0.05,
+    "t_end_s": 0.5,
+    "dt_s": 0.05,
+    "seed": 42,
+    "threshold": 0.1,
+    "out_dir": "outputs"
+  },
+  "n": 4,
+  "tp": 1,
+  "fp": 0,
+  "tn": 1,
+  "fn": 2,
+  "mcc": 0.3333333333333333,
+  "precision": 1.0,
+  "recall": 0.3333333333333333,
+  "specificity": 1.0,
+  "accuracy": 0.5
+}

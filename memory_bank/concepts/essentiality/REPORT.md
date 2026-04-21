@@ -46,7 +46,16 @@ Separating the two also means **improvements to Layers 1-5 are evaluable.** Any 
 
 ## Validation target from the brief (Layer 6)
 
-- MCC > 0.59 against Breuer 2019 with `{Essential, Quasiessential}` as positive. **Not yet measured** (blocked on real-simulator wiring).
+- MCC > 0.59 against Breuer 2019 with `{Essential, Quasiessential}` as positive.
+- **First measurement (Session 4):** MCC = **0.333** on the 4-gene reference panel (pgi, ptsG, ftsZ, JCVISYN3A_0305) at scale=0.05, t_end=0.5 s, threshold=0.10. TP=1, FP=0, TN=1, FN=2. **Below the target** but the pipeline runs end-to-end against real-simulator trajectories and produces real numbers. See `memory_bank/facts/measured/mcc_against_breuer_v0.json`.
+- A secondary run at scale=0.10, t_end=1.0, threshold=0.05 hit MCC = -0.577 because the lower threshold introduced a false-positive on `ftsZ` from dATP stochastic noise. **Confirms** thresholds need per-pool calibration, not a single global value.
+
+## Session 4 additions
+
+- `cell_sim/layer6_essentiality/real_simulator.py` — `RealSimulator` Protocol implementation wrapping `FastEventSimulator` + `populate_real_syn3a` + reversible MM rules + nutrient-uptake patches. Caches heavy setup (SBML parse, kinetics, base CellSpec) across knockouts.
+- `cell_sim/layer6_essentiality/short_window_detector.py` — `ShortWindowDetector` purpose-built for sub-second runs: bidirectional `|ko/wt - 1| > X` with two-consecutive confirmation. Catches both substrate buildup AND product depletion.
+- `scripts/run_full_sweep_real.py` — runnable sweep script with `--reference-panel`, `--max-genes N --balanced`, and `--all` modes; emits `outputs/predictions_*.csv` + `outputs/metrics_*.json`.
+- `cell_sim/tests/test_layer6_short_window_detector.py` — 8 new tests including a `RealSimulator` smoke test (skipped when data not staged).
 
 ## Handoff
 
