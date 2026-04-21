@@ -1,0 +1,17 @@
+{
+  "id": "thornburg_2026_cell",
+  "citation": "Thornburg, Z.R., Maytin, A., Kwon, J., Brier, T.A., Gilbert, B.R., Fu, E., Gao, Y.-L., Quenneville, J., Wu, T., Li, H., Long, T., Pezeshkian, W., Sun, L., Glass, J.I., Mehta, A.P., Ha, T., Luthey-Schulten, Z. Bringing the genetically minimal cell to life on a computer in 4D. Cell (2026).",
+  "doi": "10.1016/j.cell.2026.02.009",
+  "preprint_doi": "10.1101/2025.06.10.658899",
+  "type": "peer_reviewed_paper",
+  "organism": "JCVI-Syn3A",
+  "authority": "primary",
+  "url": "https://www.cell.com/cell/fulltext/S0092-8674(26)00174-1",
+  "preprint_url": "https://www.biorxiv.org/content/10.1101/2025.06.10.658899v1",
+  "notes": "Direct follow-up to Thornburg 2022. Presents a 4D (3D spatial + time) whole-cell model that simulates the ENTIRE 105-minute Syn3A cell cycle, including all 493 genes, full metabolic network, ribosome biogenesis, chromosome dynamics (DNA replication), and morphological growth + division. Runs on Lattice Microbes software; one cell cycle takes ~6 days of wall time on 2 GPUs (one dedicated to DNA replication, one for everything else). Validation: matches experimentally measured origin:terminus ratio, doubling time, mRNA half-lives, protein distributions, and ribosome counts. Cell division is reported as symmetrical. Does NOT report MCC vs Breuer 2019 - the validation paradigm is matching experimental measurements, not essentiality prediction.",
+  "caveats": [
+    "Full text was not reachable from the sandbox (Cell.com, bioRxiv, Illinois news pages all 403 on curl + WebFetch). Facts extracted via WebSearch summaries of multiple independent news articles and the bioRxiv abstract. Any quantitative parameter values beyond the ones listed in 'notes' need the user to either fetch the PDF locally and hand me extracted numbers, or wait until the sandbox can reach these domains.",
+    "Reports 493 genes; our CP016816.2 parse gave 496 gene features (458 CDS + 38 RNA). May be due to definition (CDS-only vs all features), pseudogene exclusion, or use of an earlier annotation. Recorded as separate uncertainty fact syn3a_gene_count_thornburg2026_discrepancy.",
+    "The 6-day-per-cycle 2-GPU runtime reinforces this project's CPU-first position: running a single full cell cycle at their fidelity is infeasible on our budget. Our Syn3A work stays at the short-window essentiality regime; Thornburg 2026 is the gold standard for whole-cell *dynamics*, not essentiality prediction."
+  ]
+}

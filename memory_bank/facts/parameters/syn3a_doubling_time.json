@@ -1,24 +1,25 @@
 {
   "id": "syn3a_doubling_time",
-  "claim": "JCVI-Syn3A has a doubling time of approximately 2 hours in rich SP4 medium at 37 C.",
+  "claim": "JCVI-Syn3A has a measured doubling time of 105 minutes (6,300 s) in rich medium at 37 C.",
   "value": {
     "parameter": "doubling_time_s",
-    "number": 7200,
+    "number": 6300,
     "units": "s"
   },
-  "source": "thornburg_2022_cell",
-  "source_detail": "Thornburg 2022, abstract and throughout; used as the simulation target doubling time.",
+  "source": "thornburg_2026_cell",
+  "source_detail": "Thornburg 2026 (Cell) reports 105 min as both the measured experimental doubling time and the 4D-WCM-simulated cell-cycle length. Supersedes the earlier Thornburg-2022-era 'approximately 2 h' value (7,200 s).",
   "context": {
     "entity": "whole_cell",
     "organism": "JCVI-Syn3A",
-    "medium": "SP4_rich",
+    "medium": "rich",
     "temperature_C": 37,
     "pH": 7.4
   },
   "confidence": "measured",
   "caveats": [
-    "Real doubling time distribution in cultures is broad; 2 h is the median/target.",
-    "Depends on medium composition - growth in depleted or defined media is slower."
+    "Measured for population median / single-cell average; individual cell doubling times have a broad distribution.",
+    "Dependent on medium composition - slower in depleted or defined media.",
+    "Supersedes the earlier value of 7,200 s (2 h) from Thornburg 2022. The brief's 2 +- 0.5 h validation envelope for Layer 5 comfortably covers this 105 min / 1.75 h."
   ],
   "dependencies": [],
   "last_verified": "2026-04-21",

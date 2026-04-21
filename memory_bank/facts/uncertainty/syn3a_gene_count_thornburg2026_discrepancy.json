@@ -1,0 +1,27 @@
+{
+  "id": "syn3a_gene_count_thornburg2026_discrepancy",
+  "claim": "Thornburg 2026 (Cell) reports the Syn3A genome as having 493 genes, while our own CP016816.2 parse (syn3a_gene_count) gave 496 gene features (458 CDS + 38 RNA). The 3-gene difference is unexplained from the news-digest level of detail we have - it may be a definition choice (CDS only vs all gene features), pseudogene exclusion, or use of an earlier GenBank revision.",
+  "value": {
+    "parameter": "syn3a_gene_count_discrepancy",
+    "thornburg_2026_count": 493,
+    "our_cp016816_2_count": 496,
+    "delta": 3,
+    "resolution": "pending_fulltext_access"
+  },
+  "source": "thornburg_2026_cell",
+  "source_detail": "Multiple news digests of the March 2026 Cell paper cite '493 genes on a single circular chromosome' for Syn3A. Our own parse of CP016816.2 (SHA-256 f1d1d19b3624c8391deff73ab60627478df89cd55dfafdfb67d0df14a7680fdf) via Biopython counted 496 `gene` features. Full text was not reachable from the sandbox; the methodology section of the Cell paper will reveal whether 493 is a CDS-minus-pseudogenes count, a filtered CDS+RNA count, or a CP016816.1 artefact.",
+  "context": {
+    "entity": "syn3a_genome",
+    "organism": "JCVI-Syn3A",
+    "our_genbank_revision": "CP016816.2"
+  },
+  "confidence": "inferred",
+  "caveats": [
+    "Does NOT invalidate the existing syn3a_gene_count fact (which is our own measurement of CP016816.2 and remains correct for that record).",
+    "Does flag a possible definition mismatch that Layer 6 validation code should be aware of: if we ever compare per-gene predictions to a published Thornburg 2026 per-gene table, we must reconcile which 3 genes are in one set and not the other.",
+    "Resolvable in one paragraph of the Cell methods section; blocker is just fetch access from this sandbox."
+  ],
+  "dependencies": ["syn3a_gene_count"],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}
