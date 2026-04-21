@@ -1,0 +1,25 @@
+{
+  "id": "syn3a_active_rnap_fraction_early_cycle",
+  "claim": "In the Thornburg 2026 4D whole-cell model of JCVI-Syn3A, approximately 34%% of RNA polymerase holoenzymes (63 of 187 on average) are actively transcribing early in the cell cycle; the remainder transiently bind / unbind genes.",
+  "value": {
+    "parameter": "active_rnap_fraction",
+    "number": 0.34,
+    "units": "dimensionless"
+  },
+  "source": "thornburg_2026_cell",
+  "source_detail": "Reported as an emergent prediction of the 4DWCM spatial simulation, not a directly-measured experimental value. Arises from RDME diffusion + gene-binding kinetics in the spatial model.",
+  "context": {
+    "entity": "syn3a_transcription_machinery",
+    "organism": "JCVI-Syn3A",
+    "stage": "cell_cycle_early"
+  },
+  "confidence": "inferred",
+  "caveats": [
+    "This is a SIMULATED value from Thornburg 2026's 4DWCM, not an experimental measurement. Confidence is 'inferred' pending direct measurement (e.g. single-molecule tracking of RNAP in live Syn3A).",
+    "Fraction likely varies across cell-cycle phase and from cell to cell; 0.34 is a mean early-cycle value.",
+    "Extracted from WebSearch snippets in Session 11."
+  ],
+  "dependencies": ["syn3a_rnap_count_per_cell"],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}

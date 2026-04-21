@@ -1,0 +1,10 @@
+{
+  "id": "pezeshkian_2024_natcomm_freedts",
+  "citation": "Pezeshkian, W., Pleijnik, M.R., Barrero, G.B., Marrink, S.J. Membrane morphology simulation with FreeDTS. Nature Communications (2024).",
+  "doi": "10.1038/s41467-024-44819-w",
+  "type": "peer_reviewed_paper",
+  "organism": null,
+  "authority": "secondary",
+  "url": "https://www.nature.com/articles/s41467-024-44819-w",
+  "notes": "FreeDTS (Dynamically Triangulated Surface) membrane simulator used in Thornburg 2026 to model Syn3A's membrane morphology as it grows and divides. The input_data/ of Minimal_Cell_4DWCM contains a 6.1 MB oneParamMulder-local_min.json that is almost certainly a FreeDTS state file. Not directly on our Layer-6 critical path, but register for citation completeness."
+}

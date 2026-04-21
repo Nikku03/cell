@@ -1,0 +1,11 @@
+{
+  "id": "gilbert_2023_frontiers_chromosome",
+  "citation": "Gilbert, B.R., Thornburg, Z.R., Brier, T.A., et al. Dynamics of chromosome organization in a minimal bacterial cell. Frontiers in Cell and Developmental Biology 11:1214962 (2023).",
+  "doi": "10.3389/fcell.2023.1214962",
+  "type": "peer_reviewed_paper",
+  "organism": "JCVI-Syn3A",
+  "authority": "primary",
+  "url": "https://www.frontiersin.org/journals/cell-and-developmental-biology/articles/10.3389/fcell.2023.1214962/full",
+  "pmc_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10445541/",
+  "notes": "Defines the chromosome polymer model reused in Thornburg 2026: Worm-Like Chain homopolymer at 10 bp per bead, giving ~54,300 beads for the 543 kbp Syn3A chromosome. Excluded-volume interactions between DNA strands and between DNA and boundary. SMC (condensin-like) loop extrusion modelled by anchoring one loop bead and progressively updating a 'hinge' to extrude hundreds-to-thousands of bp per loop. Topoisomerase action resolves topology via alternating loop updates + energy minimization + Brownian Dynamics steps. Simulated in LAMMPS + Kokkos GPU via the lab's btree_chromo_gpu tool. Not directly on our Layer-6 critical path - we don't model chromosome topology - but registering here for citation completeness and in case future simulator-biology work (Session 11+) wants a chromosome representation."
+}

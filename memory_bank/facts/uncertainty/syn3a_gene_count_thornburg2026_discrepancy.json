@@ -1,15 +1,22 @@
 {
   "id": "syn3a_gene_count_thornburg2026_discrepancy",
-  "claim": "Thornburg 2026 (Cell) reports the Syn3A genome as having 493 genes, while our own CP016816.2 parse (syn3a_gene_count) gave 496 gene features (458 CDS + 38 RNA). The 3-gene difference is unexplained from the news-digest level of detail we have - it may be a definition choice (CDS only vs all gene features), pseudogene exclusion, or use of an earlier GenBank revision.",
+  "claim": "Thornburg 2026 (Cell) reports JCVI-Syn3A as having 493 genes total = 452 protein-coding + 41 RNA, whereas our independent parse of CP016816.2 gave 496 total = 458 CDS + 38 RNA. The 3-gene net difference decomposes into 6 more CDS in our count (pseudogenes / untranslated features we did not filter) and 3 fewer RNA features in our count.",
   "value": {
     "parameter": "syn3a_gene_count_discrepancy",
-    "thornburg_2026_count": 493,
-    "our_cp016816_2_count": 496,
-    "delta": 3,
-    "resolution": "pending_fulltext_access"
+    "thornburg_2026_total": 493,
+    "thornburg_2026_cds": 452,
+    "thornburg_2026_rna": 41,
+    "our_cp016816_2_total": 496,
+    "our_cp016816_2_cds": 458,
+    "our_cp016816_2_rna": 38,
+    "cds_delta": -6,
+    "rna_delta": 3,
+    "net_delta": -3,
+    "resolution": "partial_via_subagent_research_session_11",
+    "likely_explanation": "Thornburg 2026 / Breuer 2019 use a curated subset of CP016816.2 CDS (excluding ~6 pseudogenes or uncharacterised features). The RNA count discrepancy of +3 is harder to explain; may be classification differences on ncRNA vs tmRNA vs misc_RNA, or a different GenBank revision."
   },
   "source": "thornburg_2026_cell",
-  "source_detail": "Multiple news digests of the March 2026 Cell paper cite '493 genes on a single circular chromosome' for Syn3A. Our own parse of CP016816.2 (SHA-256 f1d1d19b3624c8391deff73ab60627478df89cd55dfafdfb67d0df14a7680fdf) via Biopython counted 496 `gene` features. Full text was not reachable from the sandbox; the methodology section of the Cell paper will reveal whether 493 is a CDS-minus-pseudogenes count, a filtered CDS+RNA count, or a CP016816.1 artefact.",
+  "source_detail": "452 protein-coding + 41 RNA count extracted from WebSearch snippets of the Thornburg 2026 paper via Session 11's deep-research subagent. Breuer 2019 uses 155 metabolic enzymes within the 452 CDS as the iMB155 FBA scope. Our 496 / 458 / 38 counts come from Biopython parsing of CP016816.2 in Session 3 (SHA-256 f1d1d19b3624c8391deff73ab60627478df89cd55dfafdfb67d0df14a7680fdf).",
   "context": {
     "entity": "syn3a_genome",
     "organism": "JCVI-Syn3A",
@@ -17,9 +24,9 @@
   },
   "confidence": "inferred",
   "caveats": [
-    "Does NOT invalidate the existing syn3a_gene_count fact (which is our own measurement of CP016816.2 and remains correct for that record).",
-    "Does flag a possible definition mismatch that Layer 6 validation code should be aware of: if we ever compare per-gene predictions to a published Thornburg 2026 per-gene table, we must reconcile which 3 genes are in one set and not the other.",
-    "Resolvable in one paragraph of the Cell methods section; blocker is just fetch access from this sandbox."
+    "Our syn3a_gene_count fact (458 CDS / 38 RNA / 496 total) remains accurate for CP016816.2 as-parsed. This fact documents why Thornburg 2026's numbers differ, not a correction.",
+    "Layer 6 uses Breuer 2019 labels directly (455 labelled genes, from the same 452-CDS subset); our per-gene predictions map cleanly onto Breuer's set. The 6 CDS Thornburg excludes are NOT in our Layer 6 panel either - they are presumably pseudogenes that Breuer 2019 also excluded.",
+    "The +3 RNA count discrepancy (41 vs 38) is tracked but does not affect our Layer 6 work since RNA genes aren't in the Breuer-2019 essentiality labels we use."
   ],
   "dependencies": ["syn3a_gene_count"],
   "last_verified": "2026-04-21",

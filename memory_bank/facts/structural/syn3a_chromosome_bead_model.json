@@ -1,0 +1,27 @@
+{
+  "id": "syn3a_chromosome_bead_model",
+  "claim": "In the Luthey-Schulten lab's chromosome simulations (Gilbert 2023, Thornburg 2026 4DWCM), the 543,379 bp JCVI-Syn3A chromosome is represented as a worm-like-chain polymer with ~54,300 beads at 10 bp per bead.",
+  "value": {
+    "parameter": "chromosome_polymer_model",
+    "resolution_bp_per_bead": 10,
+    "approximate_bead_count": 54300,
+    "chromosome_length_bp": 543379,
+    "polymer_type": "worm_like_chain"
+  },
+  "source": "gilbert_2023_frontiers_chromosome",
+  "source_detail": "Gilbert et al. 2023 establishes the 10-bp-per-bead WLC polymer with excluded volume + SMC-like loop extrusion + topoisomerase action. Thornburg 2026 inherits the model unchanged. Simulated in LAMMPS with Kokkos GPU acceleration (btree_chromo_gpu).",
+  "context": {
+    "entity": "syn3a_chromosome",
+    "organism": "JCVI-Syn3A",
+    "simulator": "LAMMPS_Kokkos_GPU"
+  },
+  "confidence": "inferred",
+  "caveats": [
+    "Modelling choice, not a measurement. The 10 bp / bead discretisation is a trade-off between polymer detail and BD simulation tractability.",
+    "Not directly relevant to our CPU-only essentiality predictor (which does not model chromosome topology). Recorded for citation completeness in case future work wants a chromosome representation.",
+    "Extracted from WebSearch snippets in Session 11."
+  ],
+  "dependencies": ["syn3a_chromosome_length"],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}

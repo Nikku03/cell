@@ -1,0 +1,14 @@
+{
+  "id": "bianchi_2022_jpcb_proteomics",
+  "citation": "Bianchi, D.M., Pelletier, J.F., Hutchison, C.A. III, Glass, J.I., Luthey-Schulten, Z., et al. Toward the Complete Functional Characterization of a Minimal Bacterial Proteome. Journal of Physical Chemistry B (2022).",
+  "doi": "10.1021/acs.jpcb.2c04188",
+  "type": "peer_reviewed_paper",
+  "organism": "JCVI-Syn3A",
+  "authority": "primary",
+  "url": "https://pubs.acs.org/doi/10.1021/acs.jpcb.2c04188",
+  "pubmed_id": "36048731",
+  "notes": "Per-gene proteomic reference used by Thornburg 2022 + 2026 as the initial-protein-copy-number source. Our staged initial_concentrations.xlsx 'Comparative Proteomics' sheet (455 rows of Locus_Tag / Gene_Name / Gene_Product / Protein_Length / Exp.Ptn.Cnt / Essentiality / Primary_Function / ...) is the distilled form of this paper's measurements. The 'Essentiality' column that powers our Layer 6 ground truth (syn3a_essentiality_breuer2019) originally comes from Hutchison 2016 transposon data, but the measured per-gene copy-number column comes from this paper.",
+  "caveats": [
+    "We have not separately verified that our staged 'Exp.Ptn.Cnt' column matches Bianchi 2022's published table. If future Layer 1/3 work needs per-gene copy-number validation with error bars, the original paper's supplementary table is the better source than the Luthey-Schulten distillation."
+  ]
+}

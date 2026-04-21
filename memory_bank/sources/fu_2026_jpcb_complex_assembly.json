@@ -1,0 +1,15 @@
+{
+  "id": "fu_2026_jpcb_complex_assembly",
+  "citation": "Fu, E., Thornburg, Z.R. et al. Assembly of Macromolecular Complexes in the Whole-Cell Model of a Minimal Cell. Journal of Physical Chemistry B 130(1):11-32 (2026).",
+  "doi": "10.1021/acs.jpcb.5c04532",
+  "type": "peer_reviewed_paper",
+  "organism": "JCVI-Syn3A",
+  "authority": "primary",
+  "url": "https://pubs.acs.org/doi/10.1021/acs.jpcb.5c04532",
+  "pmc_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12794154/",
+  "notes": "Incorporates 21 macromolecular complexes (ribosome, RNAP, degradosome, ABC transporters, ATP synthase, etc.) into the Luthey-Schulten whole-cell model with explicit assembly kinetics. The 4DWCM (Thornburg 2026) inherits these complex-formation rates directly. Supersedes the earlier Minimal_Cell_ComplexFormation data our project staged in Session 3, which had 24 complexes but without the assembly-kinetics refinements. Same JPC-B DOI as the upstream github.com/Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation repo's stated publication.",
+  "caveats": [
+    "Full text not reached from the sandbox in Session 11 - fact identification relied on WebSearch snippets. Per-complex stoichiometries + assembly rates would be a high-value future ingest.",
+    "The 21 vs 24 complex count difference vs our staged complex_formation.xlsx needs reconciliation - the 2026 paper may have refined the set."
+  ]
+}

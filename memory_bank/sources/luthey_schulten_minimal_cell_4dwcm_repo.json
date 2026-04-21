@@ -1,0 +1,16 @@
+{
+  "id": "luthey_schulten_minimal_cell_4dwcm_repo",
+  "citation": "Luthey-Schulten Lab. Minimal_Cell_4DWCM: 4D whole-cell model of JCVI-Syn3A. GitHub repository. Code for Thornburg et al. 2026, Cell.",
+  "doi": "10.5281/zenodo.15579158",
+  "type": "github_repository",
+  "organism": "JCVI-Syn3A",
+  "authority": "primary",
+  "url": "https://github.com/Luthey-Schulten-Lab/Minimal_Cell_4DWCM",
+  "zenodo_mirror": "https://zenodo.org/records/15579158",
+  "notes": "Public code + data release for the 2026 Cell paper (Thornburg et al., 'Bringing the genetically minimal cell to life on a computer in 4D'). Contains input_data/ with refined kinetic parameters vs the 2022-era Minimal_Cell_ComplexFormation repo: - kinetic_params.xlsx is 85 KB (vs our staged 59 KB 2022 version) - implies refined k_cat / Km tables. - initial_concentrations.xlsx is 86 KB (vs our 164 KB) - likely a different column layout. - iMB155_noUnqATP_lipdiomics_wPUNP5_noNBtransport.xml - NEW variant of Breuer's iMB155 with lipidomics extensions, ATP uniqueness dropped, and transport restrictions. - syn3A.gb - same 1,180,612 bytes SHA-unverified but byte-identical size to the 2022 repo file we have staged. - LargeSubunit.xlsx - 50S ribosome subunit definition (new). - loop_params.txt, in_BD_lengths_LAMMPS_test.txt - chromosome Brownian-dynamics parameters. - oneParamMulder-local_min.json (6.1 MB) - FreeDTS membrane shape data. - protein_metabolites.xlsx / protein_metabolites_frac.csv - new protein-bound metabolite tables. Depends on Lattice Microbes, odecell, btree_chromo_gpu (lab-internal), sc_chain_generation, FreeDTS. Reached from sandbox via GitHub public API in Session 11.",
+  "caveats": [
+    "Staging these data files into our project is a future-session task (Session 11+). Would supersede the Minimal_Cell_ComplexFormation input_data we staged in Session 3. Kinetic-parameter differences need explicit diff + citation trail before either version is used as ground truth.",
+    "The 2 * NVIDIA A100 / 4-6 day runtime of the Whole_Cell_Minimal_Cell.py entry point is infeasible on our project's CPU budget. We use this repo as a reference data source, not an executable we invoke.",
+    "License file not inspected in this session - assume research-share; do not redistribute input data without checking LICENSE."
+  ]
+}

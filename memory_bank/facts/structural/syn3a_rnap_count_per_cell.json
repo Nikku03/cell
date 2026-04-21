@@ -1,0 +1,25 @@
+{
+  "id": "syn3a_rnap_count_per_cell",
+  "claim": "JCVI-Syn3A has approximately 187 RNA polymerase (RNAP) holoenzymes per cell.",
+  "value": {
+    "parameter": "rnap_count_per_cell",
+    "number": 187,
+    "units": "molecules_per_cell"
+  },
+  "source": "thornburg_2026_cell",
+  "source_detail": "Thornburg 2026 reports 187 RNA polymerases per cell as a measured input parameter (sourced from Bianchi 2022 quantitative proteomics of Syn3A). Their 4DWCM spatial simulation additionally predicts that ~34%% of those 187 RNAP are actively transcribing on average early in the cell cycle, with the rest diffusing on/off genes.",
+  "context": {
+    "entity": "syn3a_cell",
+    "organism": "JCVI-Syn3A",
+    "stage": "cell_cycle_early"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Single-cell proteomics has measurement noise; per-cell count varies across replicates.",
+    "'RNA polymerase' here is the holoenzyme - alpha2 * beta * beta' * sigma. Counting by sigma factor would give a different number.",
+    "Extracted from WebSearch snippets of the Thornburg 2026 paper in Session 11; the full paper's supplementary tables will have tighter error bars."
+  ],
+  "dependencies": [],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}

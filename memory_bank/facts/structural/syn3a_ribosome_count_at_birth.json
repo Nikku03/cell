@@ -1,0 +1,25 @@
+{
+  "id": "syn3a_ribosome_count_at_birth",
+  "claim": "JCVI-Syn3A has approximately 500 ribosomes per cell at birth (newly divided, early cell cycle).",
+  "value": {
+    "parameter": "ribosome_count_per_cell",
+    "number": 500,
+    "units": "molecules_per_cell"
+  },
+  "source": "thornburg_2026_cell",
+  "source_detail": "Thornburg 2026 initialises the 4DWCM with approximately 500 ribosomes per cell at birth, consistent with cryo-electron tomography counts of Syn3A ribosomes (uniformly distributed throughout the cytoplasm). Precursor source: Bianchi 2022 quantitative proteomics + cryo-ET.",
+  "context": {
+    "entity": "syn3a_translation_machinery",
+    "organism": "JCVI-Syn3A",
+    "stage": "cell_cycle_start"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Approximate value (~500); actual measurement has cell-to-cell variability + measurement error from cryo-ET counting.",
+    "Thornburg 2026's simulation grows the ribosome pool over the cycle via ribosome-biogenesis kinetics; 500 is the initial-state value only.",
+    "Extracted from WebSearch snippets in Session 11."
+  ],
+  "dependencies": [],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}

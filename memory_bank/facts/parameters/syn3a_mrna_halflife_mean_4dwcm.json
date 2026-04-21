@@ -1,0 +1,26 @@
+{
+  "id": "syn3a_mrna_halflife_mean_4dwcm",
+  "claim": "Thornburg 2026's 4D whole-cell model predicts a mean/median mRNA half-life of approximately 3.63 min across all 452 protein-coding genes of JCVI-Syn3A.",
+  "value": {
+    "parameter": "half_life_s",
+    "number": 218,
+    "units": "s"
+  },
+  "source": "thornburg_2026_cell",
+  "source_detail": "Reported as emergent 4DWCM-level property. 3.63 min = 218 s. The paper's prior (Thornburg 2022) used a ~2 min half-life extrapolated from Mycoplasma gallisepticum; the 2026 result suggests Syn3A-specific mRNA is longer-lived. Per-gene distribution of half-lives is available in the Zenodo release (10.5281/zenodo.15579158) but not extracted in Session 11.",
+  "context": {
+    "entity": "syn3a_mrna_pool",
+    "organism": "JCVI-Syn3A",
+    "aggregation": "median_across_452_protein_coding_genes"
+  },
+  "confidence": "inferred",
+  "caveats": [
+    "This is a SIMULATED value from Thornburg 2026's model, not a direct experimental Syn3A measurement. The authors explicitly flag genome-wide Syn3A mRNA half-life measurement as an open experimental gap.",
+    "Per-gene variance is not captured by this single number; some mRNAs may have half-lives 10x shorter or longer.",
+    "Supersedes the implicit ~2 min value we'd have used from Thornburg 2022 if we had recorded it. Layer 1 code that treats all mRNAs with a single half-life should use this value.",
+    "Extracted from WebSearch snippets in Session 11."
+  ],
+  "dependencies": [],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}
