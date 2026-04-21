@@ -1,6 +1,6 @@
 # PROJECT_STATUS — SYN3A Whole-Cell Simulator
 
-_This file is the authoritative snapshot of project state. It is updated at the end of every session and read at the start of every session. If this file is out of date, no work proceeds until it is reconciled._
+_This file is the authoritative snapshot of project state. Updated at the end of every session, read at the start. If out of date, reconcile before doing work._
 
 ## The Goal (unchanging)
 
@@ -10,61 +10,65 @@ Build a biologically accurate, computationally cheap Syn3A whole-cell simulator 
 
 | Layer | Name | Phase | Status |
 |-------|------|-------|--------|
-| 0 | Genome | Phase A complete (awaiting user sign-off for Phase B) | summary in memory_bank/concepts/dna/PHASE_A_SUMMARY.md |
-| 1 | Transcription machinery | not started | — |
-| 2 | Translation machinery | not started | — |
-| 3 | Protein folding + complex assembly | not started | — |
-| 4 | Metabolism | not started | — |
-| 5 | Biomass + division | not started | — |
-| 6 | Knockout + essentiality analysis | not started | — |
+| 0 | Genome | complete (A-E) | Genome API + 12 validation tests passing; facts cited and stamped. |
+| 1 | Transcription machinery | partial | existing `cell_sim/` code + kinetic data covers it at Thornburg-lumped level; no memory-bank citation trail yet. |
+| 2 | Translation machinery | partial | same as Layer 1; ribosome is a pool, not a tracked complex. |
+| 3 | Protein folding + complex assembly | partial | complex_formation.xlsx loaded by existing rules; 25 complexes defined with stoichiometry. |
+| 4 | Metabolism | partial | Syn3A_updated.xml + kinetic_params.xlsx loaded by existing rules; 6 transporter k_cats patched without citation yet. |
+| 5 | Biomass + division | not started | no biomass accumulation / division logic anywhere. |
+| 6 | Essentiality analysis | design + labels + MCC + harness skeleton with MockSimulator; real simulator backend not yet wired | |
 
-Phase codes: A = Literature survey, B = Design, C = Implementation, D = Validation, E = Layer report.
+Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Implementation, D = Validation, E = Layer report.
 
 ## Memory Bank
 
-- Directory tree: created (`memory_bank/facts`, `memory_bank/concepts`, `memory_bank/sources`, `memory_bank/index`, `memory_bank/.invariants`).
-- Invariant checker: `memory_bank/.invariants/check.py` (runs from repo root, rebuilds `memory_bank/index/facts.sqlite` on success).
-- Range limits config: `memory_bank/.invariants/ranges.json`.
-- Facts: 3 (`syn3a_doubling_time`, `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`).
-- Sources: 4 (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`).
+- Facts: **8**
+  - `syn3a_doubling_time`, `syn3a_chromosome_length`, `syn3a_gene_count`, `syn3a_gene_table`, `syn3a_oric_position`, `syn3a_essentiality_breuer2019`, `syn3a_gene_count_dispute` (resolved), `syn3a_chromosome_length_pending` (resolved).
+- Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
+- Invariant checker: `OK`.
+- Data files (tracked): `memory_bank/data/syn3a_gene_table.csv` (496 rows), `memory_bank/data/syn3a_essentiality_breuer2019.csv` (455 rows).
+- Data files (local only, gitignored): 5 Luthey-Schulten input files under `cell_sim/data/Minimal_Cell_ComplexFormation/input_data/` — SHAs recorded in `memory_bank/data/STAGING.md`.
 
-## Existing Code (pre-brief)
+## New code in this session (Session 3)
 
-The repository already contains prior work in `cell_sim/` (including the event-driven engine at `cell_sim/layer2_field/fast_dynamics.py`) and `cell_sim_rust/`. Per the brief section 8, we reuse these rather than rewrite. A detailed inventory of which components we will carry forward vs. replace is scheduled for early in Layer 0 Phase A.
+- `cell_sim/layer0_genome/genome.py` — Layer 0 API (frozen `Genome` + `Gene`; memory-bank-backed).
+- `cell_sim/layer6_essentiality/` — `labels.py`, `metrics.py`, `harness.py`, `sweep.py`.
+- `cell_sim/tests/test_layer0_genome.py` (12 tests) + `test_layer6_essentiality.py` (13 tests). All 25 pass in 0.23 s.
 
-## Validation Targets (repeated here for convenience)
+Existing `cell_sim/layer0_genome/parser.py`, `syn3a_real.py`, `cell_sim/layer2_field/*`, `cell_sim/layer3_reactions/*`, and `cell_sim_rust/` are untouched.
+
+## Validation Targets (reference)
 
 - Layer 0-3: measured steady-state protein counts (Thornburg 2022) within 2x for 90% of genes.
-- Layer 4: measured central-carbon metabolite concentrations within 2x.
+- Layer 4: central-carbon metabolite concentrations within 2x.
 - Layer 5: biomass doubling in 2 +/- 0.5 h.
-- Layer 6: MCC > 0.59 vs Breuer 2019.
+- Layer 6: **MCC > 0.59** vs Breuer 2019. **Not yet measured** — blocked on wiring the real simulator into `KnockoutHarness`.
 
 ## Performance Targets
 
-- >= 10x real-time on one CPU core (pure Python).
+- >= 10x real-time on one CPU core.
 - >= 100x real-time with Rust hot paths.
 - No GPU required for normal operation.
 
 ## Session Log
 
+### Session 3 — 2026-04-21 — Layer 0 complete + Layer 6 skeleton
+- Staged the five Luthey-Schulten input files (syn3A.gb, kinetic_params.xlsx, initial_concentrations.xlsx, complex_formation.xlsx, Syn3A_updated.xml) from the public GitHub repo into `cell_sim/data/Minimal_Cell_ComplexFormation/input_data/` (gitignored). SHAs in `STAGING.md`.
+- Parsed CP016816.2: **543,379 bp circular, 496 gene features (458 CDS + 29 tRNA + 6 rRNA + 2 ncRNA + 1 tmRNA), oriC at position 1**. Published 4 structural facts and a `syn3a_gene_table.csv`.
+- Built Layer 0 `Genome` API + 12 validation tests. All pass. DESIGN.md + REPORT.md written.
+- Extracted Breuer 2019 essentiality labels from `Comparative Proteomics` sheet (270 Essential / 113 Quasi / 72 Nonessential = 455 labeled CDS).
+- Wrote Layers 1-5 TRIAGE doc (no re-implementation this session).
+- Built Layer 6: labels loader, MCC metrics (pure Python), KnockoutHarness + FailureDetector with 7 failure modes and two-consecutive-sample confirmation, run_sweep orchestrator, and 13 unit tests exercising the full logic against a MockSimulator. Real simulator backend deferred.
+- Committed 4 session-3 commits onto `claude/syn3a-whole-cell-simulator-REjHC`.
+- Autonomously resolved the four Phase A open questions with my recommended defaults; recorded in `memory_bank/concepts/dna/DECISIONS.md` for user reversal if desired.
+- Total tests: 25 pass.
+
 ### Session 2 — 2026-04-21 — Layer 0 Phase A
-- Ran pre-flight invariant check (`OK`).
-- Inventoried all of `cell_sim/` and `cell_sim_rust/` via an Explore subagent. Result: `memory_bank/concepts/dna/EXISTING_CODE_INVENTORY.md`. Verdicts: 15 keep-asis, 6 adapt, 4 skip, 0 replace. No file needs to be thrown away.
-- Registered three canonical sources: `genbank_cp016816`, `hutchison_2016_science`, `breuer_2019_elife`.
-- Found gene-count disagreement across sources (452 / 493 / 496 / 473). Recorded as `facts/uncertainty/syn3a_gene_count_dispute.json` with all four candidate numbers and their provenance. Recorded chromosome length as pending (`facts/uncertainty/syn3a_chromosome_length_pending.json`) because the GenBank file is not on disk.
-- Identified the main Phase B blocker: the Luthey-Schulten data files (`syn3A.gb`, kinetics / proteomics / complexes Excel files) that the existing `cell_sim/layer0_genome/syn3a_real.py` expects are not committed. Four open questions for the user are listed at the bottom of `PHASE_A_SUMMARY.md`.
-- Final invariant check `OK` (3 facts, 4 sources). Commit pending; push still blocked on GitHub auth from previous sessions.
+- Inventoried `cell_sim/` and `cell_sim_rust/` (see `EXISTING_CODE_INVENTORY.md`). 15 keep-asis, 6 adapt, 4 skip, 0 replace.
+- Registered canonical sources; flagged gene-count dispute and chromosome-length as uncertainty facts pending GenBank staging.
 
 ### Session 1 — 2026-04-21 — scaffolding
-- Read the project brief; confirmed working branch `claude/syn3a-whole-cell-simulator-REjHC`.
-- Created `memory_bank/` directory tree per brief section 4.1.
-- Wrote `memory_bank/.invariants/check.py` implementing all seven invariants from brief section 4.3 (required fields, source resolvability, dependency existence, parameter-range check, contradiction detection, `used_by` file existence, staleness warning). Checker rebuilds `memory_bank/index/facts.sqlite` on success.
-- Wrote `memory_bank/.invariants/ranges.json` with physical ranges covering the parameter types we expect in Layers 0-6.
-- Wrote example source `memory_bank/sources/thornburg_2022_cell.json` and example fact `memory_bank/facts/parameters/syn3a_doubling_time.json` to exercise the fact format end-to-end.
-- Wrote this file, `NEXT_SESSION.md`, and `FUTURE_WORK.md`.
-- Ran invariant checker; confirmed it passes on the example fact.
-- Committed to `claude/syn3a-whole-cell-simulator-REjHC`.
-- Did **not** read any biology papers (brief section 10 rule).
+- memory_bank tree + invariant checker + ranges.json + example fact + example source + session tracking files.
 
 ## Next
 
