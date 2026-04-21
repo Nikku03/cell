@@ -35,3 +35,8 @@ gh_token.txt
 
 # Jupyter
 .ipynb_checkpoints/
+
+# memory_bank auto-generated indexes (rebuilt by check.py)
+memory_bank/index/*.sqlite
+memory_bank/index/*.faiss
+memory_bank/index/concept_graph.json

@@ -1,0 +1,29 @@
+{
+  "_comment": "Physical/biological range limits for fact-file parameter values. Values outside these ranges are rejected by the invariant checker. Ranges are deliberately loose - they catch unit errors and typos, not biological edge cases.",
+  "parameters": {
+    "k_cat_per_s":        {"min": 1e-3,  "max": 1e7,   "units": "1/s"},
+    "km_M":               {"min": 1e-9,  "max": 1e1,   "units": "M"},
+    "ki_M":               {"min": 1e-9,  "max": 1e1,   "units": "M"},
+    "keq_dimensionless":  {"min": 1e-12, "max": 1e12,  "units": "dimensionless"},
+    "transcription_rate_nt_per_s": {"min": 1.0,  "max": 100.0, "units": "nt/s"},
+    "translation_rate_aa_per_s":   {"min": 1.0,  "max": 50.0,  "units": "aa/s"},
+    "protein_copies_per_cell":     {"min": 0.0,  "max": 1e6,   "units": "molecules/cell"},
+    "mrna_copies_per_cell":        {"min": 0.0,  "max": 1e5,   "units": "molecules/cell"},
+    "half_life_s":                 {"min": 1.0,  "max": 1e6,   "units": "s"},
+    "doubling_time_s":             {"min": 600.0, "max": 86400.0, "units": "s"},
+    "cell_volume_L":               {"min": 1e-17, "max": 1e-14, "units": "L"},
+    "gene_length_nt":              {"min": 30,    "max": 10000,  "units": "nt"},
+    "protein_length_aa":           {"min": 10,    "max": 3500,   "units": "aa"},
+    "concentration_M":             {"min": 1e-12, "max": 1.0,    "units": "M"},
+    "mass_Da":                     {"min": 1.0,   "max": 1e7,    "units": "Da"},
+    "temperature_C":               {"min": 0.0,   "max": 100.0,  "units": "C"},
+    "pH":                          {"min": 0.0,   "max": 14.0,   "units": "dimensionless"}
+  },
+  "confidence_levels": ["measured", "inferred", "estimated", "assumed"],
+  "required_fact_fields": [
+    "id", "claim", "value", "source", "source_detail",
+    "context", "confidence", "caveats", "dependencies",
+    "last_verified", "used_by"
+  ],
+  "stale_days": 90
+}

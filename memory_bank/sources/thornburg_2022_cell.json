@@ -1,0 +1,10 @@
+{
+  "id": "thornburg_2022_cell",
+  "citation": "Thornburg, Z.R., Bianchi, D.M., Brier, T.A., et al. Fundamental behaviors emerge from simulations of a living minimal cell. Cell 185, 345-360.e28 (2022).",
+  "doi": "10.1016/j.cell.2021.12.025",
+  "type": "peer_reviewed_paper",
+  "organism": "JCVI-Syn3A",
+  "authority": "primary",
+  "notes": "Most complete published whole-cell simulation of Syn3A. Source of many parameter values we will use - k_cats, Kms, initial protein counts, complex stoichiometries, ribosome + RNAP counts. Always prefer Thornburg 2022 values when available.",
+  "url": "https://www.cell.com/cell/fulltext/S0092-8674(21)01488-4"
+}
