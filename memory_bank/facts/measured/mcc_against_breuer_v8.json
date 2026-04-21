@@ -1,0 +1,61 @@
+{
+  "id": "mcc_against_breuer_v8",
+  "claim": "Ninth MCC measurement. The one scale * t_end corner never measured in Sessions 4-9: scale=0.5 (10x the v0 baseline), t_end=1.0 s. Ensemble per_rule_with_pool_confirm, n=40 balanced, calibration=10, seed=42 (simulator) / panel_seed=42. Result: MCC = 0.060.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.05986843400892497,
+    "units": "dimensionless",
+    "n_genes": 40,
+    "confusion": {
+      "tp": 5,
+      "fp": 4,
+      "tn": 16,
+      "fn": 15
+    },
+    "config": {
+      "reference_panel": false,
+      "max_genes": 40,
+      "all": false,
+      "balanced": true,
+      "workers": 12,
+      "scale": 0.5,
+      "t_end_s": 1.0,
+      "dt_s": 0.05,
+      "seed": 42,
+      "panel_seed": 42,
+      "threshold": 0.1,
+      "calibrate": 10,
+      "safety_factor": 2.5,
+      "use_rust": true,
+      "detector": "ensemble",
+      "min_wt_events": 20,
+      "ensemble_policy": "per_rule_with_pool_confirm",
+      "min_confidence": 0.15,
+      "min_pool_dev": 0.05,
+      "rule_necessity_only": false,
+      "out_dir": "outputs"
+    },
+    "sweep_wall_s": 169.7286398410797
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Predictions: outputs/metrics_parallel_s0.5_t1.0_seed42_thr0.1_w12_cal10sf2.5_ensemble-per_rule_with_pool_confirm.json.",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v8_session_10_scale_0.5_t_1.0"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Higher scale reduces stochastic noise on pool deviations, which may tighten the FP/TP separation. Whether that actually lifts MCC above v4's 0.229 is what this measurement checks.",
+    "scale=0.5 is the same scale the existing test_knockouts.py uses and is close to the biological cell.",
+    "If MCC > 0.3 here, the path forward is running this config at full 458-CDS scope (~2 h wall on the same machine). If MCC <= 0.2, the architectural diagnosis from Session 9 also holds at higher scale - simulator biology is the bottleneck."
+  ],
+  "dependencies": [
+    "mcc_against_breuer_v4",
+    "mcc_against_breuer_v7"
+  ],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "scripts/run_colab_bc.py",
+    "notebooks/colab_bc_sweep.ipynb"
+  ]
+}

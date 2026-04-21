@@ -1,0 +1,43 @@
+{
+  "config": {
+    "reference_panel": false,
+    "max_genes": 40,
+    "all": false,
+    "balanced": true,
+    "workers": 12,
+    "scale": 0.05,
+    "t_end_s": 0.5,
+    "dt_s": 0.05,
+    "seed": 1,
+    "panel_seed": 42,
+    "threshold": 0.1,
+    "calibrate": 0,
+    "safety_factor": 2.0,
+    "use_rust": true,
+    "detector": "per-rule",
+    "min_wt_events": 20,
+    "ensemble_policy": "per_rule_with_pool_confirm",
+    "min_confidence": 0.15,
+    "min_pool_dev": 0.02,
+    "rule_necessity_only": false,
+    "out_dir": "outputs"
+  },
+  "n": 40,
+  "tp": 5,
+  "fp": 3,
+  "tn": 17,
+  "fn": 15,
+  "mcc": 0.125,
+  "precision": 0.625,
+  "recall": 0.25,
+  "specificity": 0.85,
+  "accuracy": 0.55,
+  "sweep_wall_s": 16.855404376983643,
+  "gene_to_rules_summary": {
+    "genes_with_rules": 114,
+    "total_rule_pairs": 421,
+    "min_rules": 1,
+    "avg_rules": 3.69,
+    "max_rules": 19
+  }
+}
