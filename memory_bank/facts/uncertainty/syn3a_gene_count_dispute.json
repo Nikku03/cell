@@ -1,0 +1,29 @@
+{
+  "id": "syn3a_gene_count_dispute",
+  "claim": "The total gene count of JCVI-Syn3A is reported inconsistently across sources (roughly 452 protein-coding genes vs ~493 total annotated features vs 496 in the existing simulator code). Needs resolution by parsing the authoritative GenBank record CP016816.",
+  "value": {
+    "parameter": "syn3a_gene_count",
+    "options": [
+      {"number": 452, "interpretation": "protein-coding genes only (Breuer 2019 metabolic-model coverage)", "source": "breuer_2019_elife"},
+      {"number": 493, "interpretation": "total annotated features including RNA genes (project brief)", "source": "project_brief_section_1"},
+      {"number": 496, "interpretation": "count quoted in existing simulator code docstring", "source": "cell_sim/layer0_genome/syn3a_real.py"},
+      {"number": 473, "interpretation": "count for Syn3.0 precursor (before 19 genes were restored to make Syn3A)", "source": "hutchison_2016_science"}
+    ],
+    "resolution": "pending_genbank_parse"
+  },
+  "source": "genbank_cp016816",
+  "source_detail": "Ground truth is CP016816's feature table. We have not staged the file on disk yet.",
+  "context": {
+    "entity": "syn3a_genome",
+    "organism": "JCVI-Syn3A"
+  },
+  "confidence": "inferred",
+  "caveats": [
+    "Different counts may all be internally consistent under different definitions (protein-coding vs total annotated vs CDS-with-locus-tag).",
+    "'Gene' vs 'CDS' vs 'feature' distinction must be made explicit once we parse the GenBank file.",
+    "CP016816 has multiple revisions; revision used must be pinned."
+  ],
+  "dependencies": [],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}

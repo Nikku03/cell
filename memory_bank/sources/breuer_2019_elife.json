@@ -1,0 +1,10 @@
+{
+  "id": "breuer_2019_elife",
+  "citation": "Breuer, M., Earnest, T.M., Merryman, C., et al. Essential metabolism for a minimal cell. eLife 8, e36842 (2019).",
+  "doi": "10.7554/eLife.36842",
+  "type": "peer_reviewed_paper",
+  "organism": "JCVI-Syn3A",
+  "authority": "primary",
+  "notes": "iMB155 flux-balance metabolic model of Syn3A; our Layer 4 (metabolism) anchor. Provides the curated gene-protein-reaction mapping and FBA-based essentiality predictions. Our Layer 6 target (MCC > 0.59 against Breuer 2019 essentiality labels) comes from this paper - 0.59 is Breuer's own FBA MCC that we are trying to match or beat.",
+  "url": "https://elifesciences.org/articles/36842"
+}

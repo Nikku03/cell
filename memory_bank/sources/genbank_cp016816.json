@@ -1,0 +1,14 @@
+{
+  "id": "genbank_cp016816",
+  "citation": "NCBI GenBank record CP016816: Mycoplasma mycoides JCVI-Syn3A, complete genome.",
+  "doi": null,
+  "type": "genbank_record",
+  "organism": "JCVI-Syn3A",
+  "authority": "primary",
+  "notes": "Authoritative genome sequence + feature table for JCVI-Syn3A. Source for chromosome length, gene coordinates, locus tags, gene names, strand, and product annotations. Different record revisions exist (e.g. CP016816.1, CP016816.2); the latest revision should be pinned and recorded when the file is staged. The existing cell_sim/layer0_genome/syn3a_real.py code expects a GenBank file at cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb.",
+  "caveats": [
+    "We have not yet staged the GenBank file on disk; all derived facts (gene count, chromosome length, locus tags) are pending that staging.",
+    "Record version number must be pinned (CP016816.X) when the file is ingested."
+  ],
+  "url": "https://www.ncbi.nlm.nih.gov/nuccore/CP016816"
+}

@@ -10,7 +10,7 @@ Build a biologically accurate, computationally cheap Syn3A whole-cell simulator 
 
 | Layer | Name | Phase | Status |
 |-------|------|-------|--------|
-| 0 | Genome | not started | scaffolding phase |
+| 0 | Genome | Phase A complete (awaiting user sign-off for Phase B) | summary in memory_bank/concepts/dna/PHASE_A_SUMMARY.md |
 | 1 | Transcription machinery | not started | — |
 | 2 | Translation machinery | not started | — |
 | 3 | Protein folding + complex assembly | not started | — |
@@ -25,8 +25,8 @@ Phase codes: A = Literature survey, B = Design, C = Implementation, D = Validati
 - Directory tree: created (`memory_bank/facts`, `memory_bank/concepts`, `memory_bank/sources`, `memory_bank/index`, `memory_bank/.invariants`).
 - Invariant checker: `memory_bank/.invariants/check.py` (runs from repo root, rebuilds `memory_bank/index/facts.sqlite` on success).
 - Range limits config: `memory_bank/.invariants/ranges.json`.
-- Facts: 1 (`syn3a_doubling_time`).
-- Sources: 1 (`thornburg_2022_cell`).
+- Facts: 3 (`syn3a_doubling_time`, `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`).
+- Sources: 4 (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`).
 
 ## Existing Code (pre-brief)
 
@@ -46,6 +46,14 @@ The repository already contains prior work in `cell_sim/` (including the event-d
 - No GPU required for normal operation.
 
 ## Session Log
+
+### Session 2 — 2026-04-21 — Layer 0 Phase A
+- Ran pre-flight invariant check (`OK`).
+- Inventoried all of `cell_sim/` and `cell_sim_rust/` via an Explore subagent. Result: `memory_bank/concepts/dna/EXISTING_CODE_INVENTORY.md`. Verdicts: 15 keep-asis, 6 adapt, 4 skip, 0 replace. No file needs to be thrown away.
+- Registered three canonical sources: `genbank_cp016816`, `hutchison_2016_science`, `breuer_2019_elife`.
+- Found gene-count disagreement across sources (452 / 493 / 496 / 473). Recorded as `facts/uncertainty/syn3a_gene_count_dispute.json` with all four candidate numbers and their provenance. Recorded chromosome length as pending (`facts/uncertainty/syn3a_chromosome_length_pending.json`) because the GenBank file is not on disk.
+- Identified the main Phase B blocker: the Luthey-Schulten data files (`syn3A.gb`, kinetics / proteomics / complexes Excel files) that the existing `cell_sim/layer0_genome/syn3a_real.py` expects are not committed. Four open questions for the user are listed at the bottom of `PHASE_A_SUMMARY.md`.
+- Final invariant check `OK` (3 facts, 4 sources). Commit pending; push still blocked on GitHub auth from previous sessions.
 
 ### Session 1 — 2026-04-21 — scaffolding
 - Read the project brief; confirmed working branch `claude/syn3a-whole-cell-simulator-REjHC`.

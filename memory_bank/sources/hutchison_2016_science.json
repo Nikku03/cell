@@ -1,0 +1,10 @@
+{
+  "id": "hutchison_2016_science",
+  "citation": "Hutchison, C.A. III, Chuang, R.-Y., Noskov, V.N., et al. Design and synthesis of a minimal bacterial genome. Science 351, aad6253 (2016).",
+  "doi": "10.1126/science.aad6253",
+  "type": "peer_reviewed_paper",
+  "organism": "JCVI-Syn3A",
+  "authority": "primary",
+  "notes": "Original design + synthesis of JCVI-Syn3.0 / Syn3A. Source for the canonical gene list (transposon-derived essential/non-essential/quasi-essential classification), genome design rationale, and initial characterization. JCVI-Syn3A is the Syn3.0 derivative with 19 genes restored to improve morphology; this is the strain all downstream simulation work uses.",
+  "url": "https://www.science.org/doi/10.1126/science.aad6253"
+}
