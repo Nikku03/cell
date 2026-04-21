@@ -62,6 +62,8 @@ Separating the two also means **improvements to Layers 1-5 are evaluable.** Any 
 | v4 | 6 | 20 | ShortWindow +non-metabolic +TOTAL_EVENTS, rust | 0.229 | **1.9** | Full ShortWindow stack. |
 | v5 | 7 | 40 | **PerRule** min_wt=20, rust | **0.125** | 1.7 | 5 TP / 3 FP / 17 TN / 15 FN. |
 | v5-ref | 7 | 4 | PerRule (reference panel) | 0.577 | 2.5 | pgi + ptsG caught; sample-size noise. |
+| v6a | 8 | 40 | Ensemble per_rule_with_pool_confirm min_pool_dev=0.02 | 0.125 | 1.8 | Identical to v5; pool floor too permissive. |
+| v6b | 8 | 40 | Ensemble AND + rule-necessity-only | 0.160 | 1.8 | 1 TP (pgi) / 0 FP; AND collapses to ShortWindow-only. |
 
 ### What each detector family catches
 
@@ -85,15 +87,24 @@ Across v0-v4 (5 configs spanning scale 0.05-0.25 and t_end 0.5-2.0s with/without
 - At 0.5 s bio-time, 140 k events fire across ~160 reactions. Knocking out one protein typically removes a few reaction-pathways; the remaining ~155 reactions still fire normally, so aggregate pool levels and event counts barely move.
 - Only central-glycolysis disruption (which has a high flux relative to other pathways and short feedback loops) produces detectable perturbation in 0.5 s.
 
-### Three paths to MCC > 0.59 (updated after Session 7)
+### Paths to MCC > 0.59 — updated after Session 8
 
-Path #1 has been tried (v5). The remaining paths:
+Session 8 tried path #1 (ensemble) and path #3 (rule-necessity weighting) on a balanced n=40 panel. Neither lifted MCC above the detector ceiling:
 
-1. **Ensemble: require both detectors to agree** (Session 8 top lever). AND the per-rule signal with a weak pool-deviation signal. Drops the 3 FPs from v5 (they catalyse rules but don't perturb central carbon because Breuer redundancy provides alternate paths). Keeps the 5 TPs (they do perturb pools). Predicted lift to MCC ~0.3–0.4 on n=40 balanced; still capped by non-catalytic essentials being invisible at short windows.
-2. **Longer bio-time run** (Path A, committed compute). At 1.7 s/gene in Rust+parallel, a 458-gene sweep at t_end=5.0 s is ~3 h wall. At that window, transporter and translation-adjacent KOs may start producing pool signatures. Pair with ensemble.
-3. **Rule-necessity weighting.** For each rule, count how many genes catalyse it. `PerRuleDetector` should only trip on genes whose silenced rules have NO alternate catalysers (the "uniquely-required" set). Addresses the v5 FP mechanism directly. Orthogonal to detector fusion; can combine.
+- **Ensemble per_rule_with_pool_confirm** (v6a, MCC=0.125): identical to v5. At scale=0.05 the stochastic pool noise on Breuer-Nonessential KOs trivially exceeds any realistic `min_pool_dev`, so the confirmation gate doesn't discriminate.
+- **Ensemble AND + rule-necessity-only** (v6b, MCC=0.160): collapses to pgi-only. The AND gate needs `ShortWindowDetector` to also fire with threshold-calibrated deviation; only pgi does. The rule-necessity-only filter did trim `gene_to_rules` from 114 genes but didn't save any TPs because the v5 TPs' rules are already uniquely catalysed in the simulator's rule set.
 
-Architectural limit that no short-window detector can cross: **non-catalytic essentials (ribosomal proteins, tRNA synthetases, translation factors, replication machinery) do not perturb pools or catalysis events in ≤0.5 s**. Reaching those requires Path #2's longer bio-time, not better detectors.
+**Diagnostic takeaway from Session 8**: FP catalytic KOs (0034, 0228/lpdA, 0732/deoC) and TP catalytic KOs (0445/pgi, 0727/tpiA, 0419, 0813, 0729) show max_pool_dev in the same 0.167–1.00 range. There is no short-window pool-confirmation gate that separates them. The v5 false-positive mechanism is not fixable by detector composition — it's a simulator-biology gap (missing pathway redundancy).
+
+**The remaining path is #2**: longer bio-time runs. At 1.7 s/gene in Rust + 4-worker, a 458-gene sweep at t_end=5.0 s takes ~3 h wall on this sandbox. At that window:
+
+- Transporter KOs (ptsG, crr) should start producing G6P depletion.
+- Protein-level depletion of KO'd genes begins to meaningfully affect their catalytic subsystems.
+- For some ribosomal KOs, the reduction in ribosome-complex formation rate may become visible via `TOTAL_COMPLEXES` drift.
+
+This is a compute commitment, not a detector fix. Session 9 should **run it on a reference panel first** (n=4, ~10 min) to confirm the signal strengthens before committing to the full sweep.
+
+Architectural limit unchanged: **non-catalytic essentials** (ribosomal proteins, tRNA synthetases, translation factors, replication machinery) may remain invisible even at t_end=5 s if the simulator's ribosome / translation dynamics don't collapse in that window. That is the second, deeper gap that Layer 1/2 work (currently partial) would have to close.
 
 ## Session 4 additions
 

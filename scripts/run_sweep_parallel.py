@@ -83,6 +83,36 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str,
             gene_to_rules=gene_to_rules,
             min_wt_events=cfg_dict.get("min_wt_events", 20),
         )
+    elif detector_kind == "ensemble":
+        from cell_sim.layer6_essentiality.per_rule_detector import (
+            PerRuleDetector,
+        )
+        from cell_sim.layer6_essentiality.short_window_detector import (
+            ShortWindowDetector,
+        )
+        from cell_sim.layer6_essentiality.ensemble_detector import (
+            EnsembleDetector, EnsemblePolicy,
+        )
+        assert gene_to_rules is not None, \
+            "ensemble detector requires gene_to_rules map"
+        pr = PerRuleDetector(
+            wt=wt,
+            gene_to_rules=gene_to_rules,
+            min_wt_events=cfg_dict.get("min_wt_events", 20),
+        )
+        sw = ShortWindowDetector(
+            wt=wt,
+            deviation_threshold=cfg_dict["threshold_payload"],
+            fallback_threshold=cfg_dict["threshold"],
+        )
+        _worker_detector = EnsembleDetector(
+            per_rule=pr,
+            short_window=sw,
+            policy=EnsemblePolicy(cfg_dict.get("ensemble_policy",
+                                               "per_rule_with_pool_confirm")),
+            min_confidence=cfg_dict.get("min_confidence", 0.15),
+            min_pool_dev=cfg_dict.get("min_pool_dev", 0.02),
+        )
     else:
         from cell_sim.layer6_essentiality.short_window_detector import (
             ShortWindowDetector,
@@ -103,7 +133,8 @@ def _worker_predict(item: tuple[str, str]) -> dict:
         t_end_s=_worker_cfg["t_end_s"],
         sample_dt_s=_worker_cfg["dt_s"],
     )
-    if _worker_cfg.get("detector") == "per-rule":
+    detector_kind = _worker_cfg.get("detector")
+    if detector_kind in ("per-rule", "ensemble"):
         mode, t_fail, conf, evidence = _worker_detector.detect_for_gene(lt, ko)
     else:
         mode, t_fail, conf, evidence = _worker_detector.detect(ko)
@@ -215,15 +246,24 @@ def main() -> int:
                    help="Use the Rust-backed FastEventSimulator "
                         "(cell_sim_rust). ~2x speedup at scale=0.05.")
     p.add_argument("--detector",
-                   choices=["short-window", "per-rule"],
+                   choices=["short-window", "per-rule", "ensemble"],
                    default="short-window",
-                   help="Which detector to use. 'per-rule' watches "
-                        "per-rule event counts (direct catalytic "
-                        "signal); 'short-window' watches pool "
-                        "deviations.")
+                   help="short-window: pool-deviation (v0-v4). "
+                        "per-rule: per-rule event counts (v5). "
+                        "ensemble: compose both detectors.")
     p.add_argument("--min-wt-events", type=int, default=20,
                    help="PerRuleDetector: minimum WT event count per "
                         "rule before it counts as 'should be firing'.")
+    p.add_argument("--ensemble-policy",
+                   choices=["and", "or_high_confidence",
+                            "per_rule_with_pool_confirm"],
+                   default="per_rule_with_pool_confirm")
+    p.add_argument("--min-confidence", type=float, default=0.15)
+    p.add_argument("--min-pool-dev", type=float, default=0.02)
+    p.add_argument("--rule-necessity-only", action="store_true",
+                   help="Restrict per-rule/ensemble detector to rules "
+                        "with no alternate catalyser (addresses the v5 "
+                        "false-positive mechanism).")
     p.add_argument("--out-dir", default="outputs")
     args = p.parse_args()
 
@@ -231,6 +271,10 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     cal_tag = f"_cal{args.calibrate}sf{args.safety_factor}" if args.calibrate else ""
     det_tag = f"_{args.detector}"
+    if args.detector == "ensemble":
+        det_tag += f"-{args.ensemble_policy}"
+    if args.rule_necessity_only:
+        det_tag += "_uniqueonly"
     tag = (f"parallel_s{args.scale}_t{args.t_end_s}_seed{args.seed}"
            f"_thr{args.threshold}_w{args.workers}{cal_tag}{det_tag}")
     pred_csv = out_dir / f"predictions_{tag}.csv"
@@ -252,6 +296,9 @@ def main() -> int:
         "use_rust_backend": args.use_rust,
         "detector": args.detector,
         "min_wt_events": args.min_wt_events,
+        "ensemble_policy": args.ensemble_policy,
+        "min_confidence": args.min_confidence,
+        "min_pool_dev": args.min_pool_dev,
     }
 
     t_setup = time.time()
@@ -263,21 +310,39 @@ def main() -> int:
     per_pool_thresholds = None
     gene_to_rules = None
     gene_to_rules_summary = None
-    if args.detector == "per-rule":
+    needs_gene_map = args.detector in ("per-rule", "ensemble")
+    if needs_gene_map:
         from cell_sim.layer6_essentiality.real_simulator import (
             RealSimulator, RealSimulatorConfig,
         )
-        from cell_sim.layer6_essentiality.gene_rule_map import summarise
-        print("[per-rule] building gene -> rules map...")
+        from cell_sim.layer6_essentiality.gene_rule_map import (
+            summarise, unique_rules_per_gene,
+        )
+        print(f"[{args.detector}] building gene -> rules map...")
         setup_sim = RealSimulator(RealSimulatorConfig(
             scale_factor=cfg_dict["scale"], seed=cfg_dict["seed"],
             use_rust_backend=cfg_dict.get("use_rust_backend", False),
         ))
         gene_to_rules = setup_sim.build_gene_to_rules_map()
+        if args.rule_necessity_only:
+            before = len(gene_to_rules)
+            gene_to_rules = unique_rules_per_gene(gene_to_rules)
+            print(f"[{args.detector}] rule-necessity-only: {before} -> "
+                  f"{len(gene_to_rules)} genes with uniquely-required rules")
         gene_to_rules_summary = summarise(gene_to_rules)
-        print(f"[per-rule] {gene_to_rules_summary}")
-        if args.calibrate > 0:
-            print("[per-rule] --calibrate ignored (no threshold tuning needed)")
+        print(f"[{args.detector}] {gene_to_rules_summary}")
+
+    if args.detector == "ensemble" and args.calibrate > 0:
+        thresholds, calibration_floor = _calibrate_thresholds(
+            cfg_dict, wt, labels, args.calibrate,
+        )
+        per_pool_thresholds = thresholds
+        cfg_dict["threshold_payload"] = thresholds
+        print(f"[calibrate] ensemble per-pool thresholds: " + ", ".join(
+            f"{k}:{v:.3f}" for k, v in sorted(thresholds.items())
+        ))
+    elif args.detector == "per-rule" and args.calibrate > 0:
+        print("[per-rule] --calibrate ignored (no threshold tuning needed)")
     elif args.calibrate > 0:
         thresholds, calibration_floor = _calibrate_thresholds(
             cfg_dict, wt, labels, args.calibrate,

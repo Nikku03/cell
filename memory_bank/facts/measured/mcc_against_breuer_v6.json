@@ -1,0 +1,69 @@
+{
+  "id": "mcc_against_breuer_v6",
+  "claim": "Seventh MCC measurement (Session 8, ensemble detector). Two policies tested on balanced n=40 panel at scale=0.05, t_end=0.5 s, Rust + 4-worker, with 10-gene calibration. Neither beats prior detectors. v6a (per_rule_with_pool_confirm, min_pool_dev=0.02) equals v5 exactly (MCC=0.125). v6b (AND policy + --rule-necessity-only) collapses to pgi-only (MCC=0.160, same as v1/v4). Diagnosis: at scale=0.05 the simulator's stochastic pool noise on Breuer-Nonessential KOs is >2%, so any permissive pool-confirm gate lets the v5 FPs through; any stricter gate (AND threshold-calibrated) kills the v5 TPs because their pool deviations are not consistently above the calibrated pool thresholds. The simulator's metabolic response to catalytic-gene knockouts at short windows does not cleanly separate Breuer-essential from Breuer-nonessential.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.125,
+    "units": "dimensionless",
+    "n_genes": 40,
+    "best_variant": "v6a_ensemble_per_rule_with_pool_confirm",
+    "best_mcc": 0.125,
+    "variants": {
+      "v6a_ensemble_per_rule_with_pool_confirm": {
+        "mcc": 0.125,
+        "confusion": {"tp": 5, "fp": 3, "tn": 17, "fn": 15},
+        "config": {
+          "detector": "ensemble",
+          "policy": "per_rule_with_pool_confirm",
+          "min_pool_dev": 0.02,
+          "rule_necessity_only": false
+        },
+        "note": "Identical to v5 PerRule alone - pool noise at scale=0.05 trivially exceeds 2% even on nonessentials, so the confirmation gate is a no-op."
+      },
+      "v6b_ensemble_and_uniqueonly": {
+        "mcc": 0.160,
+        "confusion": {"tp": 1, "fp": 0, "tn": 20, "fn": 19},
+        "config": {
+          "detector": "ensemble",
+          "policy": "and",
+          "rule_necessity_only": true
+        },
+        "note": "Only pgi survives. AND policy requires both PerRule fire AND ShortWindow fire above calibrated per-pool thresholds. ShortWindow only trips for pgi (as in v1-v4). The rule-necessity-only filter additionally reduces gene_to_rules from 114 to ~90 genes but doesn't rescue any new TPs."
+      }
+    },
+    "config_common": {
+      "simulator": "RealSimulator (+rust)",
+      "sweep_script": "scripts/run_sweep_parallel.py --detector ensemble",
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "seed": 42,
+      "workers": 4,
+      "calibration_n": 10,
+      "safety_factor": 2.0,
+      "use_rust_backend": true
+    }
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Predictions CSVs: outputs/predictions_parallel_*_ensemble-*.csv. Metrics JSONs: outputs/metrics_parallel_*_ensemble-*.json. Reproducible via the two commands in NEXT_SESSION.md (ensemble per_rule_with_pool_confirm and ensemble and --rule-necessity-only).",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v6_session_8_ensemble",
+    "commit_range": "9ea4d51..(this commit)"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Neither ensemble variant beats v0's MCC=0.333 or improves on v5's 0.125.",
+    "The key diagnostic finding of Session 8: at scale=0.05 + t_end=0.5 s, the simulator's pool response on catalytic KOs does NOT cleanly separate Breuer-essential from Breuer-nonessential. FPs (0034, 0228, 0732) show max_pool_dev in the same 0.167-1.00 range as TPs (0445, 0727, 0419, 0813, 0729). The v5 false-positive mechanism is therefore not fixable by any short-window pool-confirmation gate - they would require either (a) longer bio-time for Breuer's redundant pathways to actually mask the KOs in the simulator (which means the simulator has to model those redundancies, which it currently doesn't), or (b) simulator upgrade to add pathway redundancy.",
+    "The rule-necessity-only filter (unique_rules_per_gene helper) trimmed 114 genes to a smaller set of uniquely-required rules but didn't change the MCC result meaningfully in the AND policy - 0034/0228/0732 all catalyse at least one rule with no alternate in the current rule set (so they remain in the filtered map).",
+    "Path to MCC > 0.59 now clearly requires Path A (longer bio-time, tens of seconds to minutes). Detector-side optimisation in the 0.5 s regime is exhausted across ShortWindow, PerRule, ensemble policies, and rule-necessity filtering."
+  ],
+  "dependencies": ["mcc_against_breuer_v5", "syn3a_essentiality_breuer2019"],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "cell_sim/layer6_essentiality/ensemble_detector.py",
+    "scripts/run_sweep_parallel.py",
+    "outputs/metrics_parallel_s0.05_t0.5_seed42_thr0.1_w4_cal10sf2.0_ensemble-per_rule_with_pool_confirm.json",
+    "outputs/metrics_parallel_s0.05_t0.5_seed42_thr0.1_w4_cal10sf2.0_ensemble-and_uniqueonly.json"
+  ]
+}

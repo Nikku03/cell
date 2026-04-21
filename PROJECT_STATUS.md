@@ -16,15 +16,15 @@ Build a biologically accurate, computationally cheap Syn3A whole-cell simulator 
 | 3 | Protein folding + complex assembly | partial | complex_formation.xlsx loaded by existing rules; 24 complexes defined with stoichiometry. |
 | 4 | Metabolism | partial | Syn3A_updated.xml + kinetic_params.xlsx loaded by existing rules; 6 transporter k_cats patched without citation yet. |
 | 5 | Biomass + division | not started | no biomass accumulation / division logic anywhere. |
-| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 6 MCC measurements (v0-v5). Best balanced-panel MCC = 0.229 (v2/v3/v4); best reference-panel MCC = 0.577 (v5 per-rule detector on n=4, sample-size noise). Target 0.59 blocked by biological-redundancy FPs (per-rule) + non-catalytic essentials uncatchable at short windows. |
+| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 7 MCC measurements (v0-v6). Best balanced-panel MCC = 0.229 (v2/v3/v4). Detector-side optimisation at scale=0.05 + t_end=0.5 s exhausted across ShortWindow, PerRule, ensemble (AND / OR / pool-confirm), and rule-necessity filtering. Path to 0.59 now diagnosed as requiring Path A (longer bio-time runs). |
 
 Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Implementation, D = Validation, E = Layer report.
 
 ## Memory Bank
 
-- Facts: **14**
+- Facts: **15**
   - structural (6): `syn3a_doubling_time`, `syn3a_chromosome_length`, `syn3a_gene_count`, `syn3a_gene_table`, `syn3a_oric_position`, `syn3a_essentiality_breuer2019`.
-  - measured (6): `mcc_against_breuer_v0`, `v1`, `v2`, `v3`, `v4`, `v5`.
+  - measured (7): `mcc_against_breuer_v0`, `v1`, `v2`, `v3`, `v4`, `v5`, `v6`.
   - resolved uncertainty (2): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`.
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
 - Invariant checker: `OK`.
@@ -36,7 +36,7 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Layer 0-3: measured steady-state protein counts (Thornburg 2022) within 2x for 90% of genes.
 - Layer 4: central-carbon metabolite concentrations within 2x.
 - Layer 5: biomass doubling in 2 +/- 0.5 h.
-- Layer 6: **MCC > 0.59** vs Breuer 2019. Measurements so far (all at scale=0.05 + t_end=0.5 s unless noted): v0 MCC=0.333 (n=4), v1=0.160 (n=40 ShortWindow+cal), v2=0.229 (n=20 scale=0.10), v3=0.229 (n=20 scale=0.25+rust), v4=0.229 (n=20 +non-metabolic pools), **v5=0.125 (n=40 PerRule) / 0.577 (n=4 PerRule reference panel)**. ShortWindowDetector hits an architectural ceiling (only pgi trips). PerRuleDetector (Session 7) catches 5 metabolic essentials but false-positives on 3 Breuer-nonessential catalytic genes because the simulator doesn't model Breuer's pathway redundancy; it remains architecturally unable to catch non-catalytic essentials (ribosomal, tRNA synthetase, replication). See `memory_bank/concepts/essentiality/REPORT.md` for the full history and the path-to-0.59 roadmap.
+- Layer 6: **MCC > 0.59** vs Breuer 2019. Measurements (all at scale=0.05 + t_end=0.5 s unless noted): v0=0.333 (n=4), v1=0.160 (n=40 ShortWindow+cal), v2=0.229 (n=20 scale=0.10), v3=0.229 (n=20 scale=0.25+rust), v4=0.229 (n=20 +non-metabolic pools), v5=0.125 (n=40 PerRule), **v6=0.125 (n=40 ensemble-per-rule-with-pool-confirm) / 0.160 (n=40 ensemble-AND-+-rule-necessity-only)**. All three detector families (pool-deviation, per-rule event counts, ensembles of the two with or without rule-necessity filtering) have now hit the same short-window ceiling. Path to 0.59 requires Path A (longer bio-time runs, committed compute) — detector-side optimisation at 0.5 s bio-time is exhausted.
 
 ## Performance Targets
 
@@ -46,6 +46,16 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
+
+### Session 8 — 2026-04-21 — Ensemble detector + rule-necessity filter + path-A diagnosis
+- **Deliverable**: `cell_sim/layer6_essentiality/ensemble_detector.py` with three policies (`AND`, `OR_HIGH_CONFIDENCE`, `PER_RULE_WITH_POOL_CONFIRM`). Composes `PerRuleDetector` + `ShortWindowDetector`.
+- Added `unique_rules_per_gene` / `invert_to_rule_catalysers` helpers in `gene_rule_map.py` for rule-necessity weighting.
+- Wired `--detector ensemble`, `--ensemble-policy`, `--min-confidence`, `--min-pool-dev`, `--rule-necessity-only` into `run_sweep_parallel.py`. Per-rule/ensemble workers receive the gene-to-rules map via `Pool.initargs`.
+- 7 new tests (`test_layer6_ensemble_detector.py`): rule-necessity helpers (inverse map, unique filter), ensemble AND policy (fires + refuses), ensemble per_rule_with_pool_confirm (fires + abstains on flat pools + abstains when PerRule abstains). Total: **49 passing**.
+- **v6a measurement**: ensemble per_rule_with_pool_confirm + min_pool_dev=0.02, n=40 balanced → MCC = 0.125. Identical to v5 PerRule alone; 2% pool floor is trivially exceeded by stochastic noise at scale=0.05.
+- **v6b measurement**: ensemble AND + rule-necessity-only, n=40 balanced → MCC = 0.160. Collapses to pgi-only (same as v1/v4) because ShortWindow trips only on pgi.
+- **Diagnostic finding (the real Session-8 result)**: FP catalytic KOs (0034, 0228, 0732) and TP catalytic KOs (0445, 0727, 0419, 0813, 0729) show max_pool_dev in the same 0.167–1.00 range. No short-window pool-confirm gate can separate them. The v5 FP mechanism is not fixable by detector composition in the ≤0.5 s bio-time regime — the simulator lacks the biological pathway redundancy that would let Breuer's nonessentials actually compensate for the KO.
+- v6 fact recorded both variants honestly; the path to MCC > 0.59 is now unambiguously Path A (longer bio-time runs), not further detector composition.
 
 ### Session 7 — 2026-04-21 — Per-rule event-count detection + Session-6 reconciliation
 - **Deliverable 1**: reconciled `PROJECT_STATUS.md` and `NEXT_SESSION.md` with the actual Session-6 state (both files had drifted to Session-4 content with duplicate NEXT_SESSION headings). One commit: `010255c`.

@@ -60,3 +60,39 @@ def summarise(mapping: dict[str, set[str]]) -> dict:
         "avg_rules": round(sum(counts) / len(counts), 2),
         "max_rules": max(counts),
     }
+
+
+def invert_to_rule_catalysers(
+    gene_to_rules: dict[str, set[str]],
+) -> dict[str, set[str]]:
+    """Return ``{rule_name: {locus_tag, ...}}`` - the inverse of the
+    gene->rules map. Used to answer 'how many genes catalyse this rule'
+    for rule-necessity weighting."""
+    rule_to_genes: dict[str, set[str]] = {}
+    for locus, rules in gene_to_rules.items():
+        for rule_name in rules:
+            rule_to_genes.setdefault(rule_name, set()).add(locus)
+    return rule_to_genes
+
+
+def unique_rules_per_gene(
+    gene_to_rules: dict[str, set[str]],
+) -> dict[str, set[str]]:
+    """For each gene, return the subset of its rules that have NO
+    other catalyser. Genes whose every rule has alternate catalysers
+    are absent from the result.
+
+    This directly addresses the v5 false-positive mechanism: a gene
+    whose enzyme activity is redundantly covered by another gene
+    should not be called essential even if its own rules go silent in
+    KO (the redundant gene still catalyses them). Feed the result to
+    ``PerRuleDetector.gene_to_rules`` to only consider uniquely-
+    required rules."""
+    rule_to_genes = invert_to_rule_catalysers(gene_to_rules)
+    out: dict[str, set[str]] = {}
+    for locus, rules in gene_to_rules.items():
+        unique = {r for r in rules
+                  if len(rule_to_genes.get(r, set())) <= 1}
+        if unique:
+            out[locus] = unique
+    return out
