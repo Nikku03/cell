@@ -2,99 +2,77 @@
 
 _Read this file FIRST, immediately after running the invariant checker._
 
-## Pre-flight (every session)
+## Pre-flight
 
 1. `python memory_bank/.invariants/check.py` — must print `OK`.
-2. Read `PROJECT_STATUS.md` — confirm Session 8 state is current.
-3. Read `memory_bank/concepts/essentiality/REPORT.md` for the MCC history + updated paths.
-4. Read `memory_bank/facts/measured/mcc_against_breuer_v6.json` for the latest honest result.
+2. Read `PROJECT_STATUS.md`.
+3. Read `memory_bank/concepts/essentiality/REPORT.md` for the full MCC history (v0–v7).
+4. Read `memory_bank/facts/measured/mcc_against_breuer_v7.json` for the latest honest result + the Path-A falsification.
 5. Read this file.
 
-## Where Layer 6 stands (end of Session 8)
+## Where Layer 6 stands (end of Session 9)
 
-**Infrastructure (v0 → v6 cumulative):**
-- `RealSimulator` (Python + Rust via `--use-rust`) wraps the existing `FastEventSimulator`.
-- Three detectors shipped:
-  - `ShortWindowDetector` — bidirectional pool deviation with calibration.
-  - `PerRuleDetector` — direct causal, watches per-rule event counts.
-  - `EnsembleDetector` — composes both with 3 policies (AND, OR_HIGH_CONFIDENCE, PER_RULE_WITH_POOL_CONFIRM).
-- `scripts/run_sweep_parallel.py` — 4-worker multiprocess, `--use-rust`, `--detector {short-window|per-rule|ensemble}`, `--ensemble-policy`, `--min-confidence`, `--min-pool-dev`, `--rule-necessity-only`, `--calibrate K`.
-- Gene-to-rules inversion (`invert_to_rule_catalysers`) and rule-necessity filter (`unique_rules_per_gene`) in `gene_rule_map.py`.
+**MCC history (final, after the detector + bio-time exploration):**
 
-**MCC measurements** (`facts/measured/mcc_against_breuer_v0..v6.json`):
+| Version | Detector | t_end | MCC | Note |
+|---|---|---|---|---|
+| v0 | ShortWindow | 0.5 | **0.333** (best balanced-panel MCC ever) | n=4; pgi. |
+| v1–v4 | ShortWindow variants | 0.5 | 0.160 – 0.229 | pgi only; ceiling. |
+| v5 | PerRule | 0.5 | 0.125 | 5 TP + 3 FP on catalytic nonessentials. |
+| v6a/b | Ensemble | 0.5 | 0.125 / 0.160 | Composition can't separate FP/TP. |
+| v7-ref | Ensemble pool_confirm | **5.0** | 0.577 | n=4 only; sample-size optimism. |
+| v7 | Ensemble pool_confirm | **5.0** | **0.000** | n=20 balanced. Path A falsified. |
 
-| Version | n | Detector / config | MCC |
-|---|---|---|---|
-| v0 | 4 | ShortWindow | **0.333** (best) |
-| v1 | 40 | ShortWindow + cal10 | 0.160 |
-| v2 | 20 | ShortWindow scale=0.10 | 0.229 |
-| v3 | 20 | ShortWindow scale=0.25, rust | 0.229 |
-| v4 | 20 | ShortWindow + non-metabolic + TOTAL_EVENTS | 0.229 |
-| v5 | 40 | PerRule | 0.125 |
-| v6a | 40 | Ensemble per_rule_with_pool_confirm | 0.125 |
-| v6b | 40 | Ensemble AND + rule-necessity-only | 0.160 |
+**Status of the brief target (MCC > 0.59):** unreached. The detector-side and bio-time-side levers are both now measured and exhausted. Further MCC improvement requires **simulator-biology upgrades**, not detector composition.
 
-**Three architectural walls, all measured:**
-1. ShortWindow ceiling: only pgi-class central glycolysis visible at ≤0.5 s.
-2. PerRule FP floor: Breuer-nonessential catalytic genes (0034, lpdA, deoC) have their rules go silent in KO — biologically they're nonessential because of pathway redundancy the simulator doesn't model.
-3. Ensemble-fusion cannot fix (2): TP and FP catalytic KOs produce overlapping pool deviations at short windows.
+**Why v7 falsified Path A:** at t_end=5.0 s the simulator's pool deviations grow for BOTH TPs and FPs. Transport-KO 0034's `max_pool_dev` rose from ~1.0 at 0.5 s to **13.3** at 5.0 s because the upstream metabolite accumulates unboundedly in the simulator — a real cell would either consume it via alternate enzymes or cap it via diffusion equilibrium, neither of which the simulator models.
 
-**Session 8 conclusion**: detector-side optimisation at 0.5 s bio-time is exhausted. Path to MCC > 0.59 requires longer bio-time runs (Path A).
+## Session-10 queue
 
-## Session-9 queue (in execution order)
+Detector + bio-time work is **done**. The remaining options are deeper:
 
-### 1. Longer-window reference panel — confirm the signal strengthens
+### 1. Layers 1/2 — citation + parameter audit (PREREQUISITE for any MCC lift)
 
-Before committing compute for a full sweep, measure whether t_end=5.0 s actually produces stronger discrimination on the 4-gene panel (pgi, ptsG, ftsZ, 0305). Expected wall: 4 genes × ~2 min = 8 min serial (single WT + 4 KO). With Rust + 4-worker, ~3 min parallel.
+Before any simulator-biology work, establish the memory-bank citation trail on what already exists. Walk `cell_sim/layer3_reactions/gene_expression.py` + the `tRNA Charging` and `Gene Expression` sheets in `kinetic_params.xlsx`; convert each parameter into a `facts/parameters/*.json` with the Thornburg 2022 or Breuer 2019 citation it came from.
 
-```bash
-python scripts/run_sweep_parallel.py \
-    --reference-panel \
-    --workers 4 --use-rust \
-    --scale 0.05 --t-end-s 5.0 \
-    --detector ensemble --ensemble-policy per_rule_with_pool_confirm \
-    --min-pool-dev 0.05 \
-    --out-dir outputs
-```
+Why first: any change to translation dynamics needs to know which parameter values are measured vs. lumped vs. estimated. Currently those distinctions aren't recorded.
 
-**Go/no-go criterion**: if `max_pool_dev` on the 3 non-essentials drops below 0.05 while on the essentials stays above 0.05, the longer window is working. If it doesn't separate, don't commit the full sweep — the simulator's pool dynamics may saturate even at 5 s.
+### 2. Pathway-redundancy annotation in the rule set
 
-### 2. IF #1 succeeds: balanced n=40 at t_end=5.0 s
+For each catalysis rule in `build_reversible_catalysis_rules`, annotate (or compute from SBML gene-association) the full set of alternate-enzyme genes. Emit a `rule_to_alternates: dict[str, set[str]]` map alongside the existing `gene_to_rules`. Then modify `PerRuleDetector` to only trip on a gene's rule if (a) the rule goes silent AND (b) no alternate-enzyme gene is present and active. This addresses the v5/v6 FP mechanism structurally.
 
-```bash
-python scripts/run_sweep_parallel.py \
-    --max-genes 40 --balanced \
-    --calibrate 10 \
-    --workers 4 --use-rust \
-    --scale 0.05 --t-end-s 5.0 \
-    --detector ensemble --ensemble-policy per_rule_with_pool_confirm \
-    --min-pool-dev 0.05 \
-    --out-dir outputs
-```
+Orthogonal to #3; can combine.
 
-Wall budget: ~25 min (51 KOs × ~30 s each / 4 workers). Record as v7 fact. **Honest prediction**: MCC 0.2–0.35 — better than v6 because some transporter KOs (ptsG, crr) become visible, but still below 0.59 because non-catalytic essentials (ribosomal proteins) probably remain invisible until Layer 1/2 get proper translation dynamics.
+### 3. Explicit sink for accumulating pools
 
-### 3. IF #1 fails (pool saturation at 5 s): try scale=0.25
+Add a configurable drain/sink term to `_build_state_and_rules` that caps the upper bound on any pool at `k_sink * (pool - medium_equilibrium)`. Tuned against the non-essential calibration run. This addresses the v7 FP mechanism (transporter-KO metabolite blow-up) without requiring a full pathway-redundancy model.
 
-Same structure at scale=0.25 t_end=1.0 s. Higher copy numbers reduce stochastic noise on nonessentials, so min_pool_dev can be tightened. Compute cost: ~10x the scale=0.05 baseline.
+Less principled than #2 but much cheaper. Pairs with #2.
 
-### 4. Layers 1/2 citations (ground work for future MCC lift)
+### 4. Secondary ground-truth: Hutchison 2016 transposon labels
 
-Independent of the MCC work, start putting memory-bank citations on the Layer 1/2 parameters already in `cell_sim/layer3_reactions/gene_expression.py` + the tRNA charging sheet. These are prerequisites if we eventually need proper ribosome/translation dynamics to catch the non-catalytic essentials.
+Register Hutchison 2016's transposon-derived essentiality classes as a second labels source. Report MCC against both; flag genes where the two sources disagree. Does not lift MCC against Breuer but gives an orthogonal validation signal for simulator-biology work.
 
-## Deferred (not for session 9)
+### Not recommended
+
+- More detector variants at the current simulator fidelity. Eight measurements across five detector families hit the same ceiling. More variants are unlikely to help and risk theatre.
+- A full 458-CDS sweep at t_end=5.0 s. v7's n=20 result makes the 3-hour compute commitment unjustified.
+- Pivoting the project. Brief section 11 forbids it; diagnosis is solid; the remaining work is simulator-biology, not a rework.
+
+## Deferred (not for session 10)
 
 - Layer 5 (biomass + division).
-- Hutchison 2016 secondary labels.
 - Multi-gene / synthetic-lethal knockouts.
 - Neural-net anything.
+- Rust-side simulator changes (Python side has the needed surface area).
 
 ## Done-elsewhere (do NOT re-do)
 
 - `cell_sim_rust` extension (Session 6).
 - `PerRuleDetector` + gene-to-rules map (Session 7).
 - `EnsembleDetector` + `unique_rules_per_gene` + `--rule-necessity-only` (Session 8).
+- Longer-window sweeps at scale=0.05 (Session 9 — falsified).
 
 ## Git state
 
-Session 1–8 commits on `origin/claude/syn3a-whole-cell-simulator-REjHC`. PAT in `/tmp/.gh_tkn`; revoke when work concludes.
+Session 1–9 commits on `origin/claude/syn3a-whole-cell-simulator-REjHC`. PAT at `/tmp/.gh_tkn` for pushing from the sandbox. Revoke when done.

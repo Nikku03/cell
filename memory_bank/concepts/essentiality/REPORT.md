@@ -64,6 +64,8 @@ Separating the two also means **improvements to Layers 1-5 are evaluable.** Any 
 | v5-ref | 7 | 4 | PerRule (reference panel) | 0.577 | 2.5 | pgi + ptsG caught; sample-size noise. |
 | v6a | 8 | 40 | Ensemble per_rule_with_pool_confirm min_pool_dev=0.02 | 0.125 | 1.8 | Identical to v5; pool floor too permissive. |
 | v6b | 8 | 40 | Ensemble AND + rule-necessity-only | 0.160 | 1.8 | 1 TP (pgi) / 0 FP; AND collapses to ShortWindow-only. |
+| v7-ref | 9 | 4 | Ensemble pool_confirm, **t_end=5.0 s** | 0.577 | 15.9 | pgi + ptsG caught; pool_dev strengthens. |
+| v7 | 9 | 20 | Ensemble pool_confirm, min_pool_dev=0.10, **t_end=5.0 s** | **0.000** | 12.7 | 3 TP / 3 FP / 7 TN / 7 FN. Path A falsified - FP pools grow too. |
 
 ### What each detector family catches
 
@@ -96,15 +98,15 @@ Session 8 tried path #1 (ensemble) and path #3 (rule-necessity weighting) on a b
 
 **Diagnostic takeaway from Session 8**: FP catalytic KOs (0034, 0228/lpdA, 0732/deoC) and TP catalytic KOs (0445/pgi, 0727/tpiA, 0419, 0813, 0729) show max_pool_dev in the same 0.167–1.00 range. There is no short-window pool-confirmation gate that separates them. The v5 false-positive mechanism is not fixable by detector composition — it's a simulator-biology gap (missing pathway redundancy).
 
-**The remaining path is #2**: longer bio-time runs. At 1.7 s/gene in Rust + 4-worker, a 458-gene sweep at t_end=5.0 s takes ~3 h wall on this sandbox. At that window:
+**Path #2 tried in Session 9 (v7), FALSIFIED.** Longer bio-time at scale=0.05 (t_end=5.0 s, 10× the short-window baseline) gave MCC=0.000 on n=20 balanced. The transporter FP (0034) pool deviation went from ~1.0 at 0.5 s to 13.3 at 5.0 s — longer time lets FP pool responses grow unbounded (the simulator's upstream metabolite accumulates without consumers or diffusion caps that a real cell has).
 
-- Transporter KOs (ptsG, crr) should start producing G6P depletion.
-- Protein-level depletion of KO'd genes begins to meaningfully affect their catalytic subsystems.
-- For some ribosomal KOs, the reduction in ribosome-complex formation rate may become visible via `TOTAL_COMPLEXES` drift.
+**Remaining honest path: simulator-biology upgrades.** Three candidate directions for future sessions, all multi-session commitments:
 
-This is a compute commitment, not a detector fix. Session 9 should **run it on a reference panel first** (n=4, ~10 min) to confirm the signal strengthens before committing to the full sweep.
+1. **Pathway-redundancy modelling.** Annotate the SBML / kinetic rules with the set of alternate-enzyme genes for each reaction, then adjust the detector OR the simulator so that Breuer-Nonessential catalytic genes whose rule is knocked out but whose alternate is preserved don't score as essential. Simulator-side fix requires the actual alternate pathways in the rule set, which currently they aren't.
+2. **Explicit biological sinks and diffusion equilibria** on the metabolite pools so that upstream accumulation in transport KOs is self-limiting (as it is in real cells). Without this, transport-gene FPs will always dominate at longer bio-times.
+3. **Proper Layer 1/2 translation dynamics** with explicit ribosome complex state and charged-tRNA pools. Without this, non-catalytic essentials (the 15 FN class in v5/v6/v7) remain architecturally invisible at any window.
 
-Architectural limit unchanged: **non-catalytic essentials** (ribosomal proteins, tRNA synthetases, translation factors, replication machinery) may remain invisible even at t_end=5 s if the simulator's ribosome / translation dynamics don't collapse in that window. That is the second, deeper gap that Layer 1/2 work (currently partial) would have to close.
+Each of these is a bespoke simulator-layer project. Brief honesty: the detector-side work from Sessions 4–9 is now **done** — eight measurements across five detector families and two bio-time regimes all cap out below the 0.333 v0 value. Further detector variations at the current simulator fidelity are unlikely to help.
 
 ## Session 4 additions
 

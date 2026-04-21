@@ -1,0 +1,79 @@
+{
+  "id": "mcc_against_breuer_v7",
+  "claim": "Eighth MCC measurement (Session 9, Path A attempt). n=20 balanced panel at scale=0.05, t_end=5.0 s (10x the short-window baseline), ensemble per_rule_with_pool_confirm with min_pool_dev=0.10. Result: MCC=0.000 (TP=3, FP=3, TN=7, FN=7). The longer window does NOT improve discrimination - pool deviations grow for both TPs AND FPs. Specifically, transporter-KO 0034 shows max_pool_dev=13.3 at t_end=5.0 s (up from ~1.0 at t_end=0.5 s) because its upstream metabolite accumulates unboundedly in the simulator. **Path-A falsified at scale=0.05**: extending bio-time does not close the simulator-biology gap because the simulator lacks the biological consumers / pathway redundancy that mask a KO's effect in a real cell.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.000,
+    "units": "dimensionless",
+    "n_genes": 20,
+    "confusion": {"tp": 3, "fp": 3, "tn": 7, "fn": 7},
+    "reference_panel_side_result": {
+      "n": 4,
+      "mcc": 0.577,
+      "confusion": {"tp": 2, "fp": 0, "tn": 1, "fn": 1},
+      "note": "pgi + ptsG caught; ftsZ correctly negative; 0305 (Quasi) missed (no catalytic rules). Similar to v5-ref because per-rule detection is t_end-independent for uniquely-catalysed rules."
+    },
+    "config": {
+      "simulator": "RealSimulator (+rust)",
+      "sweep_script": "scripts/run_sweep_parallel.py --detector ensemble",
+      "detector": "EnsembleDetector",
+      "policy": "per_rule_with_pool_confirm",
+      "min_pool_dev": 0.10,
+      "scale_factor": 0.05,
+      "t_end_s": 5.0,
+      "sample_dt_s": 0.05,
+      "seed": 42,
+      "workers": 4,
+      "use_rust_backend": true
+    },
+    "true_positives": [
+      {"locus_tag": "JCVISYN3A_0445", "max_pool_dev": 0.589,
+       "silenced": "catalysis:PGI + PGI:rev"},
+      {"locus_tag": "JCVISYN3A_0727", "max_pool_dev": 1.000,
+       "silenced": "catalysis:TPI + TPI:rev"},
+      {"locus_tag": "JCVISYN3A_0419", "max_pool_dev": 0.167,
+       "silenced": "catalysis:ACPPAT"}
+    ],
+    "false_positives": [
+      {"locus_tag": "JCVISYN3A_0034", "max_pool_dev": 13.318,
+       "silenced": "catalysis:ADEt_syn + CHOLt etc (+9 more)",
+       "interpretation": "Transport KO makes an upstream metabolite accumulate unboundedly in the simulator at t_end=5.0 s - in a real cell, either the metabolite would be consumed by alternate pathways or diffusion equilibrium would cap its rise. Simulator models neither."},
+      {"locus_tag": "JCVISYN3A_0228", "gene_name": "lpdA",
+       "max_pool_dev": 0.167, "silenced": "PDH_E3 + reverse",
+       "interpretation": "Same 0.167 as at t_end=0.5 s; time-independent."},
+      {"locus_tag": "JCVISYN3A_0732", "gene_name": "deoC",
+       "max_pool_dev": 0.167, "silenced": "DRPA + reverse",
+       "interpretation": "Same 0.167 as at t_end=0.5 s; time-independent."}
+    ],
+    "wall_stats": {
+      "sweep_wall_s": 254.7,
+      "per_gene_wall_effective_s": 12.7,
+      "baseline_v4_per_gene_s": 1.9,
+      "slowdown_factor": 6.7,
+      "note": "10x bio-time gives 6.7x wall-time at scale=0.05 (sub-linear: setup amortised across longer run)."
+    }
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Predictions: outputs/predictions_parallel_s0.05_t5.0_seed42_thr0.1_w4_ensemble-per_rule_with_pool_confirm.csv. Metrics JSON committed.",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v7_session_9_path_a_t_end_5s",
+    "commit_range": "5a30749..(this commit)"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Below every prior balanced-panel MCC. Reporting as measured - no post-hoc explanations to inflate.",
+    "Path A (longer bio-time) is falsified at scale=0.05. It does not help because the simulator lacks biological pathway redundancy - extending time just lets the FP pool deviations grow alongside the TP ones. This was the explicit hypothesis queued from Session 8.",
+    "The full 458-gene sweep at t_end=5.0 s (estimated 3 h wall in Session 8 NEXT_SESSION) was NOT run - the n=20 result makes that commitment unjustified.",
+    "Honest path to MCC > 0.59 now requires a simulator biology upgrade: pathway-redundancy modelling so that Breuer-Nonessential catalytic genes' KOs are absorbed by alternate enzymes. That is a multi-session simulator commitment, not a detector-side fix.",
+    "Reference-panel n=4 result is still optimistic at 0.577 - matches v5-ref because PerRule is the component doing the work. When scaled to a balanced n=20 with a realistic ratio of catalytic vs non-catalytic genes, the signal dilutes.",
+    "The n=20 sample is approximately 50/50 Essential/Nonessential; of the 10 Essential, only ~3 (pgi, tpiA, ACPPAT-catalyser) have catalysis rules that uniquely identify them. The other 7 Essentials are non-catalytic (ribosomal, tRNA, replication) and architecturally invisible to this detector family - same as v5. The cap on achievable MCC given the current detector + simulator is bounded by this ratio."
+  ],
+  "dependencies": ["mcc_against_breuer_v6", "mcc_against_breuer_v5",
+                   "syn3a_essentiality_breuer2019"],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "scripts/run_sweep_parallel.py",
+    "outputs/metrics_parallel_s0.05_t5.0_seed42_thr0.1_w4_ensemble-per_rule_with_pool_confirm.json"
+  ]
+}

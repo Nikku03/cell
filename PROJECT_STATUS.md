@@ -16,15 +16,15 @@ Build a biologically accurate, computationally cheap Syn3A whole-cell simulator 
 | 3 | Protein folding + complex assembly | partial | complex_formation.xlsx loaded by existing rules; 24 complexes defined with stoichiometry. |
 | 4 | Metabolism | partial | Syn3A_updated.xml + kinetic_params.xlsx loaded by existing rules; 6 transporter k_cats patched without citation yet. |
 | 5 | Biomass + division | not started | no biomass accumulation / division logic anywhere. |
-| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 7 MCC measurements (v0-v6). Best balanced-panel MCC = 0.229 (v2/v3/v4). Detector-side optimisation at scale=0.05 + t_end=0.5 s exhausted across ShortWindow, PerRule, ensemble (AND / OR / pool-confirm), and rule-necessity filtering. Path to 0.59 now diagnosed as requiring Path A (longer bio-time runs). |
+| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 8 MCC measurements (v0-v7). Best balanced-panel MCC = 0.229 (v2/v3/v4); v7 at t_end=5.0 s gave 0.000 — Path A (longer window) **falsified** because the simulator lacks biological pathway redundancy, so FP pool deviations grow with bio-time alongside TPs. Detector-side and bio-time-side optimisation both exhausted. Reaching MCC > 0.59 now requires simulator-biology upgrades (pathway redundancy / complete translation dynamics). |
 
 Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Implementation, D = Validation, E = Layer report.
 
 ## Memory Bank
 
-- Facts: **15**
+- Facts: **16**
   - structural (6): `syn3a_doubling_time`, `syn3a_chromosome_length`, `syn3a_gene_count`, `syn3a_gene_table`, `syn3a_oric_position`, `syn3a_essentiality_breuer2019`.
-  - measured (7): `mcc_against_breuer_v0`, `v1`, `v2`, `v3`, `v4`, `v5`, `v6`.
+  - measured (8): `mcc_against_breuer_v0`, `v1`, `v2`, `v3`, `v4`, `v5`, `v6`, `v7`.
   - resolved uncertainty (2): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`.
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
 - Invariant checker: `OK`.
@@ -46,6 +46,13 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
+
+### Session 9 — 2026-04-21 — Path A attempt; longer-window falsified
+- Ran the go/no-go reference panel at t_end=5.0 s (ensemble per_rule_with_pool_confirm, min_pool_dev=0.05). Result: pool deviations DO strengthen for the 2 catchable TPs (pgi 0.50→0.59, ptsG caught at 0.17), n=4 MCC=0.577. Decision: commit to n=20 balanced at the same config.
+- **v7 measurement**: n=20 balanced at t_end=5.0 s, ensemble per_rule_with_pool_confirm min_pool_dev=0.10 → MCC = **0.000** (TP=3, FP=3, TN=7, FN=7). Longer bio-time *does not help* — it lets FP pool deviations grow too (0034 transporter-KO max_pool_dev went from ~1.0 at 0.5 s to 13.3 at 5.0 s, because the upstream metabolite accumulates unboundedly in the simulator without the biological consumers / diffusion equilibrium that would cap it in a real cell).
+- **Path A falsified** at scale=0.05. Session 8 predicted 0.2–0.35 honestly; measured 0.000. Not running the full 458-gene sweep at t_end=5.0 s — no justification for the 3-hour compute commitment.
+- Diagnosis for MCC > 0.59: the simulator-biology gap is the real bottleneck, not any detector-side variable. Pathway redundancy, proper translation dynamics, or per-pathway dilution modelling is required in the simulator before detector changes can close the remaining distance.
+- 1 commit: TBD. Pushed to origin.
 
 ### Session 8 — 2026-04-21 — Ensemble detector + rule-necessity filter + path-A diagnosis
 - **Deliverable**: `cell_sim/layer6_essentiality/ensemble_detector.py` with three policies (`AND`, `OR_HIGH_CONFIDENCE`, `PER_RULE_WITH_POOL_CONFIRM`). Composes `PerRuleDetector` + `ShortWindowDetector`.
