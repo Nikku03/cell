@@ -51,19 +51,23 @@ Separating the two also means **improvements to Layers 1-5 are evaluable.** Any 
 
 ### Session-by-session MCC history
 
-| Version | Session | n | Config | MCC | Wall (s/gene) | Notes |
+| Version | Session | n | Detector / config | MCC | Wall (s/gene) | Notes |
 |---|---|---|---|---|---|---|
-| v0 | 4 | 4 | scale=0.05, t_end=0.5, thr=0.10 | **0.333** | 13 | pgi caught via F6P -11%. |
-| (v0b) | 4 | 4 | scale=0.10, t_end=1.0, thr=0.05 | -0.577 | 40 | FP from dATP noise. |
-| (v0c) | 5 | 4 | scale=0.05, t_end=2.0, thr=0.10 | 0.333 | 50 | Longer window didn't help. |
-| v1 | 5 | 40 | scale=0.05, t_end=0.5, cal=10, sf=2.5 | **0.160** | 4.9 (parallel) | Specificity=1; recall=0.05. |
-| v2 | 5 | 20 | scale=0.10, t_end=1.0, cal=5, sf=2.5 | 0.229 | 12.7 (parallel) | No improvement over v1. |
-| v3 | 6 | 20 | scale=0.25, t_end=0.5, cal=5, rust | 0.229 | 7.1 (parallel+rust) | pgi F6P grows to -15%. |
-| v4 | 6 | 20 | scale=0.05, t_end=0.5, cal=5, rust, +TOTAL_EVENTS | 0.229 | **1.9 (parallel+rust)** | Full stack; 7× speedup over v2. |
+| v0 | 4 | 4 | ShortWindow scale=0.05, t_end=0.5, thr=0.10 | **0.333** | 13 | pgi via F6P -11%. |
+| (v0b) | 4 | 4 | ShortWindow scale=0.10, t_end=1.0, thr=0.05 | -0.577 | 40 | FP from dATP noise. |
+| (v0c) | 5 | 4 | ShortWindow scale=0.05, t_end=2.0, thr=0.10 | 0.333 | 50 | Longer window didn't help. |
+| v1 | 5 | 40 | ShortWindow cal=10, sf=2.5 | **0.160** | 4.9 | Specificity=1; recall=0.05. |
+| v2 | 5 | 20 | ShortWindow scale=0.10, t_end=1.0, cal=5 | 0.229 | 12.7 | No improvement over v1. |
+| v3 | 6 | 20 | ShortWindow scale=0.25, rust, cal=5 | 0.229 | 7.1 | pgi F6P grows to -15%. |
+| v4 | 6 | 20 | ShortWindow +non-metabolic +TOTAL_EVENTS, rust | 0.229 | **1.9** | Full ShortWindow stack. |
+| v5 | 7 | 40 | **PerRule** min_wt=20, rust | **0.125** | 1.7 | 5 TP / 3 FP / 17 TN / 15 FN. |
+| v5-ref | 7 | 4 | PerRule (reference panel) | 0.577 | 2.5 | pgi + ptsG caught; sample-size noise. |
 
-### The one thing the detector catches
+### What each detector family catches
 
-Every config catches exactly `JCVISYN3A_0445` (pgi) via F6P depletion of 5–15 %. That's the only Essential-class gene whose KO produces a detectable metabolite / non-metabolic signature in the short-window real simulator at all tried scales.
+**ShortWindowDetector** (v0–v4): catches exactly `JCVISYN3A_0445` (pgi) via F6P depletion of 5–15 %, regardless of scale / window / pool set / threshold. The only Essential-class gene whose KO produces a detectable metabolite / non-metabolic signature in ≤0.5 s bio-time at tractable scales.
+
+**PerRuleDetector** (v5, Session 7): catches 5 of 20 balanced-panel essentials at n=40 — the metabolic subset (pgi, tpiA, plsX area, 0813, 0729) — via direct "catalysis rule stops firing" signal. **Also produces 3 FPs** on Breuer-nonessential catalytic genes (lpdA, deoC, 0034 transport system) because the simulator lacks the pathway redundancy that Breuer's nonessentiality labels account for. Architecturally misses all 15 non-catalytic essentials in the panel (ribosomal proteins, tRNA factors, replication). Net MCC=0.125 at n=40, worse than v4 ShortWindow = 0.229.
 
 ### The Session-6 infrastructure stack
 
@@ -81,11 +85,15 @@ Across v0-v4 (5 configs spanning scale 0.05-0.25 and t_end 0.5-2.0s with/without
 - At 0.5 s bio-time, 140 k events fire across ~160 reactions. Knocking out one protein typically removes a few reaction-pathways; the remaining ~155 reactions still fire normally, so aggregate pool levels and event counts barely move.
 - Only central-glycolysis disruption (which has a high flux relative to other pathways and short feedback loops) produces detectable perturbation in 0.5 s.
 
-### Three orthogonal paths to MCC > 0.59 (for next session)
+### Three paths to MCC > 0.59 (updated after Session 7)
 
-1. **Per-rule event-count detection (HIGH leverage, cheap).** Add `reaction_event_counts: dict[str, int]` to the Sample. For each rule, count events in the last window. A KO of gene X whose catalysis:Y rule drops to zero events in KO while Y fires > threshold in WT is a direct causal signal, completely independent of pool levels. Requires the gene → rule mapping (available in `real_syn3a_rules.py`).
-2. **Longer bio-time with the new Rust+parallel stack.** At 1.9 s/gene effective, a full 458-gene sweep at t_end=5.0 s fits in ~3 hours wall on this 4-core sandbox. Worth running once the per-rule detection (above) is in place.
-3. **More calibration samples.** Noise floors on `TOTAL_EVENTS` and non-metabolic pools drop to usable levels once calibration N reaches ~20. Cheap (~5 min at scale=0.05 Rust parallel).
+Path #1 has been tried (v5). The remaining paths:
+
+1. **Ensemble: require both detectors to agree** (Session 8 top lever). AND the per-rule signal with a weak pool-deviation signal. Drops the 3 FPs from v5 (they catalyse rules but don't perturb central carbon because Breuer redundancy provides alternate paths). Keeps the 5 TPs (they do perturb pools). Predicted lift to MCC ~0.3–0.4 on n=40 balanced; still capped by non-catalytic essentials being invisible at short windows.
+2. **Longer bio-time run** (Path A, committed compute). At 1.7 s/gene in Rust+parallel, a 458-gene sweep at t_end=5.0 s is ~3 h wall. At that window, transporter and translation-adjacent KOs may start producing pool signatures. Pair with ensemble.
+3. **Rule-necessity weighting.** For each rule, count how many genes catalyse it. `PerRuleDetector` should only trip on genes whose silenced rules have NO alternate catalysers (the "uniquely-required" set). Addresses the v5 FP mechanism directly. Orthogonal to detector fusion; can combine.
+
+Architectural limit that no short-window detector can cross: **non-catalytic essentials (ribosomal proteins, tRNA synthetases, translation factors, replication machinery) do not perturb pools or catalysis events in ≤0.5 s**. Reaching those requires Path #2's longer bio-time, not better detectors.
 
 ## Session 4 additions
 

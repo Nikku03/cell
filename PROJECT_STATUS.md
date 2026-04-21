@@ -16,15 +16,15 @@ Build a biologically accurate, computationally cheap Syn3A whole-cell simulator 
 | 3 | Protein folding + complex assembly | partial | complex_formation.xlsx loaded by existing rules; 24 complexes defined with stoichiometry. |
 | 4 | Metabolism | partial | Syn3A_updated.xml + kinetic_params.xlsx loaded by existing rules; 6 transporter k_cats patched without citation yet. |
 | 5 | Biomass + division | not started | no biomass accumulation / division logic anywhere. |
-| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 5 MCC measurements (v0-v4); **best measured MCC = 0.333** (target 0.59). Ceiling diagnosed as architectural for short-window pool-based detection. |
+| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 6 MCC measurements (v0-v5). Best balanced-panel MCC = 0.229 (v2/v3/v4); best reference-panel MCC = 0.577 (v5 per-rule detector on n=4, sample-size noise). Target 0.59 blocked by biological-redundancy FPs (per-rule) + non-catalytic essentials uncatchable at short windows. |
 
 Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Implementation, D = Validation, E = Layer report.
 
 ## Memory Bank
 
-- Facts: **13**
+- Facts: **14**
   - structural (6): `syn3a_doubling_time`, `syn3a_chromosome_length`, `syn3a_gene_count`, `syn3a_gene_table`, `syn3a_oric_position`, `syn3a_essentiality_breuer2019`.
-  - measured (5): `mcc_against_breuer_v0`, `v1`, `v2`, `v3`, `v4`.
+  - measured (6): `mcc_against_breuer_v0`, `v1`, `v2`, `v3`, `v4`, `v5`.
   - resolved uncertainty (2): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`.
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
 - Invariant checker: `OK`.
@@ -36,7 +36,7 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Layer 0-3: measured steady-state protein counts (Thornburg 2022) within 2x for 90% of genes.
 - Layer 4: central-carbon metabolite concentrations within 2x.
 - Layer 5: biomass doubling in 2 +/- 0.5 h.
-- Layer 6: **MCC > 0.59** vs Breuer 2019. **Best measurement to date: 0.333** on the v0 4-gene reference panel (scale=0.05, t_end=0.5 s, threshold=0.10). Larger balanced samples (v1-v4, n=20-40) all measured 0.160–0.229. The detector trips on exactly one gene (pgi) across every tested config; ceiling is architectural for short-window (≤0.5 s) pool-based detection. See `memory_bank/concepts/essentiality/REPORT.md` for the MCC history table and the three-path roadmap.
+- Layer 6: **MCC > 0.59** vs Breuer 2019. Measurements so far (all at scale=0.05 + t_end=0.5 s unless noted): v0 MCC=0.333 (n=4), v1=0.160 (n=40 ShortWindow+cal), v2=0.229 (n=20 scale=0.10), v3=0.229 (n=20 scale=0.25+rust), v4=0.229 (n=20 +non-metabolic pools), **v5=0.125 (n=40 PerRule) / 0.577 (n=4 PerRule reference panel)**. ShortWindowDetector hits an architectural ceiling (only pgi trips). PerRuleDetector (Session 7) catches 5 metabolic essentials but false-positives on 3 Breuer-nonessential catalytic genes because the simulator doesn't model Breuer's pathway redundancy; it remains architecturally unable to catch non-catalytic essentials (ribosomal, tRNA synthetase, replication). See `memory_bank/concepts/essentiality/REPORT.md` for the full history and the path-to-0.59 roadmap.
 
 ## Performance Targets
 
@@ -46,6 +46,20 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
+
+### Session 7 — 2026-04-21 — Per-rule event-count detection + Session-6 reconciliation
+- **Deliverable 1**: reconciled `PROJECT_STATUS.md` and `NEXT_SESSION.md` with the actual Session-6 state (both files had drifted to Session-4 content with duplicate NEXT_SESSION headings). One commit: `010255c`.
+- **Deliverable 2**: per-rule event-count detection shipped.
+  - `cell_sim/layer6_essentiality/gene_rule_map.py` — extracts `{locus_tag: {rule_name, ...}}` from rule objects' `compiled_spec.enzyme_loci`.
+  - `cell_sim/layer6_essentiality/per_rule_detector.py` — `PerRuleDetector(wt, gene_to_rules, min_wt_events)`. Trips `CATALYSIS_SILENCED` iff every rule in a gene's set has ≥`min_wt_events` in WT and 0 in KO. Safe refusals on WT-under-threshold and partial-silence cases.
+  - `Sample` dataclass now carries `event_counts_by_rule: dict[str, int] | None`; `RealSimulator._snapshot` populates it via a single `Counter` pass over `state.events`.
+  - `FailureMode.CATALYSIS_SILENCED` added.
+  - `scripts/run_sweep_parallel.py --detector {short-window|per-rule} --min-wt-events N`. Per-rule detector builds the gene-to-rules map in the main process and ships it to workers via `initargs`. Calibration is skipped for per-rule (no thresholds to tune).
+  - 9 new unit tests in `test_layer6_per_rule_detector.py`; total 42 passing.
+- **v5 measurement**: n=40 balanced → **MCC=0.125** (TP=5, FP=3, TN=17, FN=15). Below v4 (0.229). The 3 FPs are Breuer-nonessential catalytic genes (JCVISYN3A_0034 transport system, lpdA/0228 PDH_E3, deoC/0732 DRPA) whose rules the simulator runs but Breuer labels as nonessential due to pathway redundancy the simulator doesn't model. 15 FN are non-catalytic essentials (ribosomal, tRNA, replication) which have zero rules in `gene_to_rules` and the detector correctly refuses to call. Side-result: on the 4-gene reference panel MCC=0.577, but n=4 is sample-size noise.
+- Infrastructure works as designed. Mismatch with Breuer labels is real biology, not a bug.
+- Gene-to-rules map covers 114 / 458 CDS (~25%), avg 3.7 rules/gene, max 19 rules/gene.
+- Sweep effective wall: 1.7 s/gene (Rust + 4-worker). 67.6 s total for n=40.
 
 ### Session 6 — 2026-04-21 — Rust hot path + non-metabolic pool signals + diagnostic ceiling
 - Built `cell_sim_rust` wheel from source via `maturin build --release`. Installed and wired into `RealSimulator` via `RealSimulatorConfig.use_rust_backend` + `--use-rust` flag on `run_sweep_parallel.py`. ~2× speedup at scale=0.05.

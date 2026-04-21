@@ -53,15 +53,13 @@ _worker_detector = None
 _worker_cfg: dict = {}
 
 
-def _worker_init(cfg_dict: dict, wt_pickle_path: str) -> None:
+def _worker_init(cfg_dict: dict, wt_pickle_path: str,
+                 gene_to_rules: dict | None = None) -> None:
     """Per-process setup. Each worker builds its own RealSimulator and
     loads the shared WT trajectory from disk."""
     global _worker_sim, _worker_detector, _worker_cfg
     from cell_sim.layer6_essentiality.real_simulator import (
         RealSimulator, RealSimulatorConfig,
-    )
-    from cell_sim.layer6_essentiality.short_window_detector import (
-        ShortWindowDetector,
     )
     _worker_cfg = cfg_dict
     rs_cfg = RealSimulatorConfig(
@@ -72,11 +70,28 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str) -> None:
     _worker_sim = RealSimulator(rs_cfg)
     with open(wt_pickle_path, "rb") as fh:
         wt = pickle.load(fh)
-    _worker_detector = ShortWindowDetector(
-        wt=wt,
-        deviation_threshold=cfg_dict["threshold_payload"],
-        fallback_threshold=cfg_dict["threshold"],
-    )
+
+    detector_kind = cfg_dict.get("detector", "short-window")
+    if detector_kind == "per-rule":
+        from cell_sim.layer6_essentiality.per_rule_detector import (
+            PerRuleDetector,
+        )
+        assert gene_to_rules is not None, \
+            "per-rule detector requires gene_to_rules map"
+        _worker_detector = PerRuleDetector(
+            wt=wt,
+            gene_to_rules=gene_to_rules,
+            min_wt_events=cfg_dict.get("min_wt_events", 20),
+        )
+    else:
+        from cell_sim.layer6_essentiality.short_window_detector import (
+            ShortWindowDetector,
+        )
+        _worker_detector = ShortWindowDetector(
+            wt=wt,
+            deviation_threshold=cfg_dict["threshold_payload"],
+            fallback_threshold=cfg_dict["threshold"],
+        )
 
 
 def _worker_predict(item: tuple[str, str]) -> dict:
@@ -88,7 +103,10 @@ def _worker_predict(item: tuple[str, str]) -> dict:
         t_end_s=_worker_cfg["t_end_s"],
         sample_dt_s=_worker_cfg["dt_s"],
     )
-    mode, t_fail, conf, evidence = _worker_detector.detect(ko)
+    if _worker_cfg.get("detector") == "per-rule":
+        mode, t_fail, conf, evidence = _worker_detector.detect_for_gene(lt, ko)
+    else:
+        mode, t_fail, conf, evidence = _worker_detector.detect(ko)
     wall = time.time() - t0
     pred = Prediction(
         locus_tag=lt, gene_name=gn,
@@ -196,14 +214,25 @@ def main() -> int:
     p.add_argument("--use-rust", action="store_true",
                    help="Use the Rust-backed FastEventSimulator "
                         "(cell_sim_rust). ~2x speedup at scale=0.05.")
+    p.add_argument("--detector",
+                   choices=["short-window", "per-rule"],
+                   default="short-window",
+                   help="Which detector to use. 'per-rule' watches "
+                        "per-rule event counts (direct catalytic "
+                        "signal); 'short-window' watches pool "
+                        "deviations.")
+    p.add_argument("--min-wt-events", type=int, default=20,
+                   help="PerRuleDetector: minimum WT event count per "
+                        "rule before it counts as 'should be firing'.")
     p.add_argument("--out-dir", default="outputs")
     args = p.parse_args()
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     cal_tag = f"_cal{args.calibrate}sf{args.safety_factor}" if args.calibrate else ""
+    det_tag = f"_{args.detector}"
     tag = (f"parallel_s{args.scale}_t{args.t_end_s}_seed{args.seed}"
-           f"_thr{args.threshold}_w{args.workers}{cal_tag}")
+           f"_thr{args.threshold}_w{args.workers}{cal_tag}{det_tag}")
     pred_csv = out_dir / f"predictions_{tag}.csv"
     metrics_json = out_dir / f"metrics_{tag}.json"
 
@@ -221,6 +250,8 @@ def main() -> int:
         "threshold_payload": args.threshold,  # becomes dict after calibrate
         "safety_factor": args.safety_factor,
         "use_rust_backend": args.use_rust,
+        "detector": args.detector,
+        "min_wt_events": args.min_wt_events,
     }
 
     t_setup = time.time()
@@ -230,7 +261,24 @@ def main() -> int:
 
     calibration_floor = None
     per_pool_thresholds = None
-    if args.calibrate > 0:
+    gene_to_rules = None
+    gene_to_rules_summary = None
+    if args.detector == "per-rule":
+        from cell_sim.layer6_essentiality.real_simulator import (
+            RealSimulator, RealSimulatorConfig,
+        )
+        from cell_sim.layer6_essentiality.gene_rule_map import summarise
+        print("[per-rule] building gene -> rules map...")
+        setup_sim = RealSimulator(RealSimulatorConfig(
+            scale_factor=cfg_dict["scale"], seed=cfg_dict["seed"],
+            use_rust_backend=cfg_dict.get("use_rust_backend", False),
+        ))
+        gene_to_rules = setup_sim.build_gene_to_rules_map()
+        gene_to_rules_summary = summarise(gene_to_rules)
+        print(f"[per-rule] {gene_to_rules_summary}")
+        if args.calibrate > 0:
+            print("[per-rule] --calibrate ignored (no threshold tuning needed)")
+    elif args.calibrate > 0:
         thresholds, calibration_floor = _calibrate_thresholds(
             cfg_dict, wt, labels, args.calibrate,
         )
@@ -255,7 +303,7 @@ def main() -> int:
     with ctx.Pool(
         processes=args.workers,
         initializer=_worker_init,
-        initargs=(cfg_dict, str(wt_pickle)),
+        initargs=(cfg_dict, str(wt_pickle), gene_to_rules),
     ) as pool:
         for i, row in enumerate(pool.imap_unordered(_worker_predict, targets), 1):
             lt = row["locus_tag"]
@@ -296,6 +344,8 @@ def main() -> int:
         if calibration_floor is not None:
             payload["calibration_floor"] = calibration_floor
             payload["per_pool_thresholds"] = per_pool_thresholds
+        if gene_to_rules_summary is not None:
+            payload["gene_to_rules_summary"] = gene_to_rules_summary
         with metrics_json.open("w") as fh:
             json.dump(payload, fh, indent=2)
         print(f"\n=== MCC vs Breuer 2019 (binary, quasi=positive, n={m.n}) ===")

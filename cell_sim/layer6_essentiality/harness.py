@@ -29,6 +29,10 @@ class FailureMode(str, Enum):
     TRANSCRIPTION_STALL = "transcription_stall"
     MEMBRANE_INTEGRITY = "membrane_integrity"
     DNA_REPLICATION_BLOCKED = "dna_replication_blocked"
+    # Session 7: per-rule event-count signal. Trips when all rules
+    # catalysed by a knocked-out gene stop firing, regardless of whether
+    # metabolite pools move.
+    CATALYSIS_SILENCED = "catalysis_silenced"
 
 
 # Metabolites worth watching under knockouts. Names match the
@@ -56,6 +60,11 @@ THRESHOLDS: dict[str, float] = {
 class Sample:
     t_s: float
     pools: dict[str, float]    # metabolite / pool counts
+    # Session 7: cumulative count of sim events keyed by rule name
+    # (e.g. "catalysis:PGI" -> 7888). Populated by RealSimulator._snapshot
+    # from state.events. None on synthetic Sample objects used by tests
+    # that don't exercise the per-rule detector.
+    event_counts_by_rule: dict[str, int] | None = None
 
 
 @dataclass(frozen=True, slots=True)

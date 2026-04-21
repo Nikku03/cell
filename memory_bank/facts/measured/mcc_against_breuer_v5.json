@@ -1,0 +1,88 @@
+{
+  "id": "mcc_against_breuer_v5",
+  "claim": "Sixth MCC measurement, first with the per-rule event-count detector (Session 7). Balanced n=40 sweep at scale=0.05, t_end=0.5s, Rust + 4-worker parallel. Result: MCC=0.125 (TP=5, FP=3, TN=17, FN=15). LOWER than v4 (0.229), not higher. The per-rule detector catches more metabolic essentials than the ShortWindowDetector (5 vs 1) but also picks up 3 false positives on Breuer-nonessential catalytic genes (0034, 0228/lpdA, 0732/deoC), and misses all non-catalytic essentials (15 FN, mostly ribosomal / tRNA synthetase / replication). Side-result: on the 4-gene reference panel (pgi, ptsG, ftsZ, 0305) the detector hits MCC=0.577 - close to the brief's 0.59 - but that n=4 number is sample-size noise.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.125,
+    "units": "dimensionless",
+    "n_genes": 40,
+    "confusion": {"tp": 5, "fp": 3, "tn": 17, "fn": 15},
+    "config": {
+      "simulator": "RealSimulator (+rust)",
+      "sweep_script": "scripts/run_sweep_parallel.py --detector per-rule",
+      "detector": "PerRuleDetector",
+      "min_wt_events": 20,
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "seed": 42,
+      "workers": 4,
+      "use_rust_backend": true,
+      "calibration_n_ignored": 10
+    },
+    "reference_panel_side_result": {
+      "n": 4,
+      "mcc": 0.577,
+      "confusion": {"tp": 2, "fp": 0, "tn": 1, "fn": 1},
+      "note": "pgi + ptsG correctly caught via catalysis_silenced; ftsZ correctly returns no_catalytic_rules; 0305 (Quasiessential) has no catalytic rules so is missed. Close to brief target but n=4 is not a meaningful measurement."
+    },
+    "gene_to_rules_map_summary": {
+      "genes_with_rules": 114,
+      "total_rule_pairs": 421,
+      "min_rules": 1,
+      "avg_rules": 3.69,
+      "max_rules": 19,
+      "note": "114 / 458 CDS have at least one catalysis:* rule (the 'metabolic enzymes' subset)."
+    },
+    "true_positives_caught": [
+      "JCVISYN3A_0445 (pgi, via PGI + PGI:rev)",
+      "JCVISYN3A_0727 (tpiA, via TPI + TPI:rev)",
+      "JCVISYN3A_0419 (plsX area, via ACPPAT)",
+      "JCVISYN3A_0813 (via UDPG4E + UDPG4E:rev)",
+      "JCVISYN3A_0729 (via PGM + PGM:rev)"
+    ],
+    "false_positives": [
+      {"locus_tag": "JCVISYN3A_0034",
+       "evidence": "silenced CHOLt, ADEt_syn, etc (12 transport rules)",
+       "breuer_call": "Nonessential",
+       "interpretation": "transport system with biological redundancy not in the simulator model"},
+      {"locus_tag": "JCVISYN3A_0228",
+       "gene_name": "lpdA",
+       "evidence": "silenced PDH_E3 + reverse",
+       "breuer_call": "Nonessential",
+       "interpretation": "pyruvate dehydrogenase subunit; conditionally required"},
+      {"locus_tag": "JCVISYN3A_0732",
+       "gene_name": "deoC",
+       "evidence": "silenced DRPA + reverse",
+       "breuer_call": "Nonessential",
+       "interpretation": "deoxyribose-phosphate aldolase; nucleotide salvage alternate"}
+    ],
+    "sweep_wall_s": 67.6,
+    "per_gene_wall_effective_s": 1.7
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Predictions: outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_cal10sf2.0_per-rule.csv. Metrics: outputs/metrics_parallel_s0.05_t0.5_seed42_thr0.1_w4_cal10sf2.0_per-rule.json. Reproducible via: python scripts/run_sweep_parallel.py --max-genes 40 --balanced --calibrate 10 --workers 4 --use-rust --scale 0.05 --t-end-s 0.5 --detector per-rule",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v5_session_7_per_rule_detector",
+    "commit_range": "010255c..(this commit)"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "MCC=0.125 is below the predicted 0.35-0.45 range from NEXT_SESSION. Reporting the honest number rather than inventing post-hoc explanations to inflate it.",
+    "The 3 false positives are biologically real signals from the simulator but biologically wrong against Breuer: the simulator treats each catalysis rule as essential for its reaction's products, but Breuer's labels account for pathway redundancy (alternate enzymes, salvage pathways) that the simulator does not model.",
+    "15 of 20 essentials in the balanced panel are missed because they are non-catalytic (ribosomal proteins 0199/0257/0637/0658/0025/0372/0518/0775, translation factors 0669/0528, etc). The PerRuleDetector is architecturally incapable of catching these - they do not appear in catalysis:* rules at all. This is expected behaviour per the detector's design doc.",
+    "Reconciling the per-rule false-positive mismatch with Breuer requires either: (a) modelling pathway redundancy in the simulator (alternate enzymes, backup pathways), or (b) a rule-scoring function that weights rules by their unique necessity (e.g. 'only gene catalysing this reaction' vs 'one of N enzymes'), or (c) composing the per-rule detector with a secondary signal that requires downstream-pool-disruption confirmation.",
+    "Non-catalytic essentials (ribosomal, tRNA synthetase, replication) remain architecturally uncatchable by ANY short-window detector. The fix is Path A from REPORT.md: longer bio-time runs where ribosome/translation pool collapse becomes visible. That's a compute commitment outside the current interactive session budget.",
+    "Side-result: on the 4-gene reference panel the detector hits MCC=0.577, near the 0.59 target. That is optimistic sampling; the balanced n=40 number is the honest one."
+  ],
+  "dependencies": ["mcc_against_breuer_v4", "syn3a_essentiality_breuer2019",
+                   "syn3a_gene_table"],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "cell_sim/layer6_essentiality/per_rule_detector.py",
+    "cell_sim/layer6_essentiality/gene_rule_map.py",
+    "scripts/run_sweep_parallel.py",
+    "outputs/metrics_parallel_s0.05_t0.5_seed42_thr0.1_w4_cal10sf2.0_per-rule.json"
+  ]
+}

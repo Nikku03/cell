@@ -145,6 +145,18 @@ class RealSimulator(Simulator):
         self._extra_rules = extra_rules
         self._setup_done = True
 
+    def build_gene_to_rules_map(self) -> dict[str, set[str]]:
+        """Extract the ``{locus_tag: {rule_name, ...}}`` mapping from
+        the cached rules. Used by the per-rule detector. Safe to call
+        after :meth:`_ensure_setup` has run; this method triggers setup
+        lazily if needed."""
+        from cell_sim.layer6_essentiality.gene_rule_map import (
+            build_gene_to_rules,
+        )
+        self._ensure_setup()
+        rules = list(self._rev_rules or []) + list(self._extra_rules or [])
+        return build_gene_to_rules(rules)
+
     # ----- per-run state build -----
     def _build_state_and_rules(self, knockout: tuple[str, ...]):
         from layer2_field.dynamics import CellState
@@ -319,7 +331,17 @@ def _snapshot(state, get_species_count, *, t: float) -> Sample:
     except Exception:
         pass
 
-    return Sample(t_s=t, pools=pools)
+    # Session 7: per-rule event counts. Populated at each sample so the
+    # PerRuleDetector has direct access to "did rule X fire in this
+    # run?". Cheap - single Counter pass over the event log.
+    event_counts: dict[str, int] | None = None
+    try:
+        from collections import Counter
+        event_counts = dict(Counter(e.rule_name for e in state.events))
+    except Exception:
+        event_counts = None
+
+    return Sample(t_s=t, pools=pools, event_counts_by_rule=event_counts)
 
 
 def _max_per_for_scale(scale: float) -> int:
