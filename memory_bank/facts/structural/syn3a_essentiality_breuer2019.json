@@ -1,0 +1,46 @@
+{
+  "id": "syn3a_essentiality_breuer2019",
+  "claim": "Per-gene essentiality classification for 455 Syn3A genes from Breuer 2019 (as redistributed in the Luthey-Schulten Minimal_Cell_ComplexFormation Comparative Proteomics sheet). Three classes: Essential (270), Quasiessential (113), Nonessential (72).",
+  "value": {
+    "parameter": "essentiality_labels",
+    "data_file": "memory_bank/data/syn3a_essentiality_breuer2019.csv",
+    "n_rows": 455,
+    "columns": [
+      "locus_tag",
+      "gene_name",
+      "gene_product",
+      "essentiality",
+      "primary_function"
+    ],
+    "label_values": [
+      "Essential",
+      "Quasiessential",
+      "Nonessential"
+    ],
+    "class_counts": {
+      "Essential": 270,
+      "Quasiessential": 113,
+      "Nonessential": 72
+    }
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Labels were extracted from the 'Comparative Proteomics' sheet of initial_concentrations.xlsx (SHA-256 cbddd55af04f4ba7ac1309851aa0f4225f1ff74f3e78333992ec721aa3530dea) in the Luthey-Schulten Minimal_Cell_ComplexFormation repo; that file is Luthey-Schulten's distillation of Breuer 2019 Fig. 4 / Supp. Table. Both sources are cited because the file is staged locally but the underlying science is Breuer 2019.",
+  "context": {
+    "entity": "syn3a_genes",
+    "organism": "JCVI-Syn3A",
+    "genbank_revision": "CP016816.2"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Only 455 of the 458 CDS are labeled (3 CDS from CP016816.2 have no label in this sheet); Layer 6 must decide how to handle unlabeled genes (drop vs. treat as unknown).",
+    "Original Breuer 2019 paper reports 452 genes in their metabolic FBA model - that is a subset of this table; the broader 455 includes non-metabolic essentials (e.g. ribosomal proteins) whose essentiality comes from Hutchison 2016 transposon data rather than the FBA model.",
+    "For binary MCC, a conventional mapping is {Essential, Quasiessential} -> positive, {Nonessential} -> negative. This yields 383 positives / 72 negatives.",
+    "Breuer 2019's reported FBA MCC of 0.59 is against this three-class mapping; match the mapping carefully when benchmarking."
+  ],
+  "dependencies": [],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "cell_sim/layer6_essentiality/labels.py",
+    "cell_sim/tests/test_layer6_essentiality.py"
+  ]
+}
