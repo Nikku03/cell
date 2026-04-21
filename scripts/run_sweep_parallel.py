@@ -207,6 +207,7 @@ def _select_genes(genome, labels, args):
             ("JCVISYN3A_0522", "ftsZ"),
             ("JCVISYN3A_0305", ""),
         ]
+    panel_seed = args.panel_seed if args.panel_seed is not None else args.seed
     eligible = [
         (g.locus_tag, g.gene_name) for g in genome.cds_genes()
         if g.locus_tag in labels
@@ -217,11 +218,11 @@ def _select_genes(genome, labels, args):
                if labels[t[0]].essentiality == EssentialityClass.ESSENTIAL]
         non = [t for t in eligible
                if labels[t[0]].essentiality == EssentialityClass.NONESSENTIAL]
-        rng = random.Random(args.seed)
+        rng = random.Random(panel_seed)
         rng.shuffle(ess); rng.shuffle(non)
         return ess[:per] + non[:per]
     if args.max_genes:
-        rng = random.Random(args.seed)
+        rng = random.Random(panel_seed)
         rng.shuffle(eligible)
         return eligible[:args.max_genes]
     return eligible
@@ -239,6 +240,11 @@ def main() -> int:
     p.add_argument("--t-end-s", type=float, default=0.5)
     p.add_argument("--dt-s", type=float, default=0.05)
     p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--panel-seed", type=int, default=None,
+                   help="Separate seed for gene-panel selection. If "
+                        "unset, defaults to --seed. Use this to vary "
+                        "the simulator RNG across replicates while "
+                        "holding the gene panel fixed.")
     p.add_argument("--threshold", type=float, default=0.10)
     p.add_argument("--calibrate", type=int, default=0)
     p.add_argument("--safety-factor", type=float, default=2.0)
