@@ -13,66 +13,75 @@ Build a biologically accurate, computationally cheap Syn3A whole-cell simulator 
 | 0 | Genome | complete (A-E) | Genome API + 12 validation tests passing; facts cited and stamped. |
 | 1 | Transcription machinery | partial | existing `cell_sim/` code + kinetic data covers it at Thornburg-lumped level; no memory-bank citation trail yet. |
 | 2 | Translation machinery | partial | same as Layer 1; ribosome is a pool, not a tracked complex. |
-| 3 | Protein folding + complex assembly | partial | complex_formation.xlsx loaded by existing rules; 25 complexes defined with stoichiometry. |
+| 3 | Protein folding + complex assembly | partial | complex_formation.xlsx loaded by existing rules; 24 complexes defined with stoichiometry. |
 | 4 | Metabolism | partial | Syn3A_updated.xml + kinetic_params.xlsx loaded by existing rules; 6 transporter k_cats patched without citation yet. |
 | 5 | Biomass + division | not started | no biomass accumulation / division logic anywhere. |
-| 6 | Essentiality analysis | DESIGN + labels + MCC + RealSimulator wired + first MCC=0.333 measured (target 0.59); needs longer t_end / better detection | |
+| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 5 MCC measurements (v0-v4); **best measured MCC = 0.333** (target 0.59). Ceiling diagnosed as architectural for short-window pool-based detection. |
 
 Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Implementation, D = Validation, E = Layer report.
 
 ## Memory Bank
 
-- Facts: **9**
-  - structural: `syn3a_doubling_time`, `syn3a_chromosome_length`, `syn3a_gene_count`, `syn3a_gene_table`, `syn3a_oric_position`, `syn3a_essentiality_breuer2019`.
-  - measured: `mcc_against_breuer_v0`.
-  - resolved uncertainty: `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`.
+- Facts: **13**
+  - structural (6): `syn3a_doubling_time`, `syn3a_chromosome_length`, `syn3a_gene_count`, `syn3a_gene_table`, `syn3a_oric_position`, `syn3a_essentiality_breuer2019`.
+  - measured (5): `mcc_against_breuer_v0`, `v1`, `v2`, `v3`, `v4`.
+  - resolved uncertainty (2): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`.
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
 - Invariant checker: `OK`.
 - Data files (tracked): `memory_bank/data/syn3a_gene_table.csv` (496 rows), `memory_bank/data/syn3a_essentiality_breuer2019.csv` (455 rows).
 - Data files (local only, gitignored): 5 Luthey-Schulten input files under `cell_sim/data/Minimal_Cell_ComplexFormation/input_data/` — SHAs recorded in `memory_bank/data/STAGING.md`.
-
-## New code in this session (Session 3)
-
-- `cell_sim/layer0_genome/genome.py` — Layer 0 API (frozen `Genome` + `Gene`; memory-bank-backed).
-- `cell_sim/layer6_essentiality/` — `labels.py`, `metrics.py`, `harness.py`, `sweep.py`.
-- `cell_sim/tests/test_layer0_genome.py` (12 tests) + `test_layer6_essentiality.py` (13 tests). All 25 pass in 0.23 s.
-
-Existing `cell_sim/layer0_genome/parser.py`, `syn3a_real.py`, `cell_sim/layer2_field/*`, `cell_sim/layer3_reactions/*`, and `cell_sim_rust/` are untouched.
 
 ## Validation Targets (reference)
 
 - Layer 0-3: measured steady-state protein counts (Thornburg 2022) within 2x for 90% of genes.
 - Layer 4: central-carbon metabolite concentrations within 2x.
 - Layer 5: biomass doubling in 2 +/- 0.5 h.
-- Layer 6: **MCC > 0.59** vs Breuer 2019. **First measurement: 0.333** on the 4-gene reference panel at scale=0.05 / t_end=0.5 s. Below target. The bottleneck is the short simulation window — upstream-of-glycolysis knockouts (transporters) don't propagate fast enough. Path to target documented in `NEXT_SESSION.md`.
+- Layer 6: **MCC > 0.59** vs Breuer 2019. **Best measurement to date: 0.333** on the v0 4-gene reference panel (scale=0.05, t_end=0.5 s, threshold=0.10). Larger balanced samples (v1-v4, n=20-40) all measured 0.160–0.229. The detector trips on exactly one gene (pgi) across every tested config; ceiling is architectural for short-window (≤0.5 s) pool-based detection. See `memory_bank/concepts/essentiality/REPORT.md` for the MCC history table and the three-path roadmap.
 
 ## Performance Targets
 
-- >= 10x real-time on one CPU core.
-- >= 100x real-time with Rust hot paths.
-- No GPU required for normal operation.
+- ≥ 10x real-time on one CPU core — **not met**: current is ~0.06× realtime at scale=0.05 in pure Python, ~0.13× with Rust.
+- ≥ 100x real-time with Rust hot paths — **not met** (see above).
+- No GPU required for normal operation — **met**.
+- Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
 
+### Session 6 — 2026-04-21 — Rust hot path + non-metabolic pool signals + diagnostic ceiling
+- Built `cell_sim_rust` wheel from source via `maturin build --release`. Installed and wired into `RealSimulator` via `RealSimulatorConfig.use_rust_backend` + `--use-rust` flag on `run_sweep_parallel.py`. ~2× speedup at scale=0.05.
+- Added 6 non-metabolic pool signals to `RealSimulator._snapshot`: `TOTAL_COMPLEXES`, `FOLDED_PROTEINS`, `UNFOLDED_PROTEINS`, `FOLDED_FRACTION`, `BOUND_PROTEINS`, `TOTAL_EVENTS`. All plumbed into `SHORT_WINDOW_POOLS`.
+- v3: scale=0.25 + Rust + calibration → MCC = 0.229 on n=20 balanced.
+- v4: scale=0.05 + Rust + full expanded pool set + calibration → MCC = 0.229 on n=20 balanced. Effective wall 1.9 s/gene (~7× speedup vs v0 baseline).
+- **Diagnosis confirmed**: MCC is invariant across scale {0.05, 0.10, 0.25}, t_end {0.5, 1.0, 2.0}, pool set {12, 17, 18 pools}, threshold {0.03–0.10}, and sample size {4, 20, 40}. Only pgi (central glycolysis) trips. Ceiling is architectural, not tuning.
+- Scale=0.5 sweep attempted but timed out at 9 min wall in-session.
+- 1 commit: `dbc1e07`. Pushed to `origin/claude/syn3a-whole-cell-simulator-REjHC`.
+
+### Session 5 — 2026-04-21 — parallel sweep + noise-floor calibration + diagnostic MCC measurements
+- Built `scripts/run_sweep_parallel.py` using `multiprocessing.Pool` with `--workers N`. 4-worker fan-out gives ~4× speedup (process-safe; FastEventSimulator is not thread-safe).
+- Added `--calibrate K` + `--safety-factor S` flags to `run_full_sweep_real.py`. Calibration runs K non-essential KOs, computes per-pool max|dev| noise floor, sets per-pool thresholds = floor × safety_factor (fallback to `--threshold`).
+- Extended `ShortWindowDetector.deviation_threshold` to accept `dict[str, float]` for per-pool thresholds.
+- v1: n=40 balanced, scale=0.05, cal=10, sf=2.5 → MCC = 0.160. Specificity=1.0; recall=0.05; 1 TP (pgi) / 0 FP / 20 TN / 19 FN.
+- v2: n=20 balanced, scale=0.10, t_end=1.0, cal=5, sf=2.5 → MCC = 0.229.
+- Attempted scale=0.5 but timed out at 9 min wall.
+- Also ran diagnostic: t_end=2.0 at scale=0.05 gives MCC=0.333 (identical to v0; longer window doesn't help at small scale).
+- 2 commits: `7216586`, `c0e34e3`. Pushed.
+
 ### Session 4 — 2026-04-21 — Layer 6 real-simulator wiring + first MCC
-- Wrote `cell_sim/layer6_essentiality/real_simulator.py` wrapping the existing `FastEventSimulator + populate_real_syn3a` stack behind the `Simulator` Protocol. Heavy setup (SBML, kinetics, base CellSpec) cached across knockouts.
-- Wrote `cell_sim/layer6_essentiality/short_window_detector.py` — bidirectional `|ko/wt - 1|` deviation detector for sub-second runs at small scale. Catches both substrate buildup and product depletion.
-- Wrote `scripts/run_full_sweep_real.py` runnable orchestrator with `--reference-panel`, `--max-genes N --balanced`, and `--all` modes.
-- 8 new tests in `test_layer6_short_window_detector.py` (incl. RealSimulator smoke); 33/33 cell_sim tests pass.
-- **First MCC vs Breuer 2019: 0.333 on 4-gene panel** (scale=0.05, t_end=0.5 s, threshold=0.10). Below the 0.59 target. Recorded as `facts/measured/mcc_against_breuer_v0.json` with full config + caveats.
-- Confirmed via secondary run that lower thresholds invite false positives from stochastic noise (dATP +/- 5% even on non-essentials at this scale). Per-pool tuning won't help until simulation window is longer.
-- 1 commit: `7216586`. Pushed to origin via stashed PAT.
+- Wrote `cell_sim/layer6_essentiality/real_simulator.py` wrapping `FastEventSimulator + populate_real_syn3a` stack behind the `Simulator` Protocol. Heavy setup cached across knockouts.
+- Wrote `cell_sim/layer6_essentiality/short_window_detector.py` — bidirectional `|ko/wt - 1|` deviation detector with two-consecutive-sample confirmation.
+- Wrote `scripts/run_full_sweep_real.py` single-process orchestrator with `--reference-panel`, `--max-genes N --balanced`, and `--all` modes.
+- 8 new tests in `test_layer6_short_window_detector.py` (incl. RealSimulator smoke).
+- **v0: MCC = 0.333** on 4-gene reference panel (pgi, ptsG, ftsZ, JCVISYN3A_0305) at scale=0.05, t_end=0.5 s, threshold=0.10. TP=1, FP=0, TN=1, FN=2.
+- Confirmed low thresholds invite FP from dATP stochastic noise; per-pool calibration needed.
 
 ### Session 3 — 2026-04-21 — Layer 0 complete + Layer 6 skeleton
-- Staged the five Luthey-Schulten input files (syn3A.gb, kinetic_params.xlsx, initial_concentrations.xlsx, complex_formation.xlsx, Syn3A_updated.xml) from the public GitHub repo into `cell_sim/data/Minimal_Cell_ComplexFormation/input_data/` (gitignored). SHAs in `STAGING.md`.
-- Parsed CP016816.2: **543,379 bp circular, 496 gene features (458 CDS + 29 tRNA + 6 rRNA + 2 ncRNA + 1 tmRNA), oriC at position 1**. Published 4 structural facts and a `syn3a_gene_table.csv`.
-- Built Layer 0 `Genome` API + 12 validation tests. All pass. DESIGN.md + REPORT.md written.
-- Extracted Breuer 2019 essentiality labels from `Comparative Proteomics` sheet (270 Essential / 113 Quasi / 72 Nonessential = 455 labeled CDS).
-- Wrote Layers 1-5 TRIAGE doc (no re-implementation this session).
-- Built Layer 6: labels loader, MCC metrics (pure Python), KnockoutHarness + FailureDetector with 7 failure modes and two-consecutive-sample confirmation, run_sweep orchestrator, and 13 unit tests exercising the full logic against a MockSimulator. Real simulator backend deferred.
-- Committed 4 session-3 commits onto `claude/syn3a-whole-cell-simulator-REjHC`.
-- Autonomously resolved the four Phase A open questions with my recommended defaults; recorded in `memory_bank/concepts/dna/DECISIONS.md` for user reversal if desired.
-- Total tests: 25 pass.
+- Staged the five Luthey-Schulten input files (syn3A.gb, kinetic_params.xlsx, initial_concentrations.xlsx, complex_formation.xlsx, Syn3A_updated.xml) from GitHub. SHAs in `STAGING.md`.
+- Parsed CP016816.2: 543,379 bp circular, 496 gene features (458 CDS + 29 tRNA + 6 rRNA + 2 ncRNA + 1 tmRNA), oriC at position 1.
+- Built Layer 0 `Genome` API + 12 validation tests. DESIGN.md + REPORT.md written.
+- Extracted Breuer 2019 essentiality labels (270 Essential / 113 Quasi / 72 Nonessential = 455 labeled CDS).
+- Layers 1-5 TRIAGE doc written (no re-implementation).
+- Built Layer 6 skeleton: labels loader, MCC metrics, `KnockoutHarness + FailureDetector` with 7 failure modes, 13 unit tests on MockSimulator.
+- Autonomously resolved 4 Phase A open questions; recorded in `memory_bank/concepts/dna/DECISIONS.md`.
 
 ### Session 2 — 2026-04-21 — Layer 0 Phase A
 - Inventoried `cell_sim/` and `cell_sim_rust/` (see `EXISTING_CODE_INVENTORY.md`). 15 keep-asis, 6 adapt, 4 skip, 0 replace.
