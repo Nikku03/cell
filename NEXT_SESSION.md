@@ -11,28 +11,30 @@ _Read this file FIRST, immediately after running the invariant checker._
 
 ## Where Layer 6 stands
 
-- Real simulator wired (`RealSimulator`, `ShortWindowDetector`, `run_full_sweep_real.py`).
-- First MCC measurement: **0.333** on the 4-gene reference panel at scale=0.05, t_end=0.5 s.
-- Brief target: **MCC > 0.59**.
-- Bottleneck identified: the 0.5 s simulation window is too short for upstream-of-glycolysis knockouts (e.g. transporters like `ptsG`) to propagate to detectable metabolite changes. Lower thresholds invite false positives from dATP / NADH stochastic noise.
+- Real simulator wired (`RealSimulator`, `ShortWindowDetector`, `run_full_sweep_real.py`, `run_sweep_parallel.py` with 4-worker fan-out).
+- Calibration mode + per-pool thresholds in `ShortWindowDetector` shipped; 5–10 non-essential KOs produce a noise floor used to set tight per-pool thresholds.
+- Three MCC measurements recorded as measured facts (`mcc_against_breuer_v0` / `v1` / `v2`):
+  - v0, n=4: 0.333 (scale=0.05, t_end=0.5)
+  - v1, n=40 balanced with calibration: 0.160 (scale=0.05, t_end=0.5)
+  - v2, n=20 balanced with calibration: 0.229 (scale=0.10, t_end=1.0)
+- **Conclusion: at tractable scales (<=0.1) and windows (<=2 s), the detector catches exactly one gene — `pgi` — via F6P depletion.** Scaling the knobs does not help. The limit is not a threshold-tuning problem; it's that most essential-gene KOs don't produce detectable *metabolite* signatures within this runtime budget.
+- Brief target: **MCC > 0.59**. We are at 0.16–0.33 depending on sample size.
 
 ## Highest-priority queue (in order)
 
 ### 1. Push MCC toward 0.59 — three orthogonal improvements
 
-Pick whichever is cheapest first; combine if needed.
+Based on Session 5's diagnostic measurements, the **high-leverage** move is #1a below. Tuning (#1b, #1c) was tried in Session 5 and does not fix the underlying signal problem.
 
-**1a. Longer simulation window (single-process; only requires patience).** Re-run the reference panel at t_end_s = 5.0 s with the same scale=0.05. Wall: ~2.5 min/gene → ~10 min for the panel. If `ptsG` now shows F6P depletion, the longer window is enough. If it does, run the full sweep at the same config (~38 hours single-process — needs multiprocessing, see §1c).
+**1a. Add non-metabolic detection signals (HIGH leverage, medium cost).** Extend `RealSimulator._snapshot` to also emit:
+  - `RIBOSOME_COUNT`: number of fully-assembled 70S ribosomes (from `CellState.complexes`, filter by complex name == "ribosome" or by matching the 24 complex definitions).
+  - `CHARGED_TRNA_FRACTION`: aggregate across the 20 aa-tRNA synthetase outputs. Needs some spelunking in the existing `real_syn3a_rules.py`; the tRNA-charging pools are on `kinetic_params.xlsx` sheet "tRNA Charging".
+  - `TOTAL_PROTEIN_COUNT`: sum across all `state.proteins` — drops when folding / translation is halted.
+  With these pools populated, ribosomal-protein KOs and tRNA-synthetase KOs get detected because the ribosome pool stops replenishing. Estimated: +15 essentials caught out of 20 in the balanced sample → MCC lift to ~0.4-0.5 without any other change.
 
-**1b. Better detection with a noise-floor calibration step.** Add a `--calibrate K` mode to `run_full_sweep_real.py` that:
-  - Picks K Breuer-non-essential genes at random.
-  - Runs them as a calibration set.
-  - Computes `noise_floor[pool] = max(|ko/wt - 1|)` per pool from those K runs (helper already exists: `short_window_detector.calibrate_noise_floor`).
-  - Sets per-pool thresholds = `noise_floor[pool] * safety_factor` (start with `safety_factor = 2.0`).
-  - Then runs the actual sweep with those thresholds.
-This costs K × 13 s upfront and should improve specificity dramatically.
+**1b. Trajectory-divergence integral instead of threshold (MEDIUM leverage).** Run N WT replicates with different seeds, build a per-pool null distribution of `integral_|ratio-1| dt`, then flag a KO as essential if its integral exceeds the 99th percentile of WT-to-WT integrals. Catches slow drifts that never cross any hard threshold. Cost: N × WT wall (modest). Needs to be paired with 1a to add to 0.59; alone probably a small lift only.
 
-**1c. Multiprocess fan-out.** The existing `RealSimulator` is not thread-safe (the `FastEventSimulator` shares numpy buffers). Multiprocess is fine: each worker holds its own `RealSimulator` instance. Add `scripts/run_sweep_parallel.py` that uses `multiprocessing.Pool` to run N workers, each handling 1/N of the gene list, then merge the CSVs and compute MCC. On a 16-core CPU the 458-gene full sweep at scale=0.05 / t_end=0.5 s drops from ~100 min to ~7 min wall.
+**1c. Larger-scale long-window runs (costs compute).** The existing `cell_sim/tests/test_knockouts.py` reports 20% deviations on ATP/G6P at scale=0.5 / t_end=0.5 s — but at ~25 min wall per gene. That's 192 CPU-hours for the 458-CDS sweep; tractable on a cluster but not interactive. **Only do this after 1a and 1b.**
 
 ### 2. Layer 5 — biomass + division
 

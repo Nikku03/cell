@@ -46,9 +46,35 @@ Separating the two also means **improvements to Layers 1-5 are evaluable.** Any 
 
 ## Validation target from the brief (Layer 6)
 
-- MCC > 0.59 against Breuer 2019 with `{Essential, Quasiessential}` as positive.
-- **First measurement (Session 4):** MCC = **0.333** on the 4-gene reference panel (pgi, ptsG, ftsZ, JCVISYN3A_0305) at scale=0.05, t_end=0.5 s, threshold=0.10. TP=1, FP=0, TN=1, FN=2. **Below the target** but the pipeline runs end-to-end against real-simulator trajectories and produces real numbers. See `memory_bank/facts/measured/mcc_against_breuer_v0.json`.
-- A secondary run at scale=0.10, t_end=1.0, threshold=0.05 hit MCC = -0.577 because the lower threshold introduced a false-positive on `ftsZ` from dATP stochastic noise. **Confirms** thresholds need per-pool calibration, not a single global value.
+- **Target:** MCC > 0.59 against Breuer 2019 with `{Essential, Quasiessential}` as positive.
+- **Best measurement so far: MCC = 0.333** on the 4-gene reference panel (Session 4, v0). Larger samples produce lower MCC because more essential genes expose a fundamental sensitivity floor.
+
+### Session-by-session MCC history
+
+| Version | Session | n | Config | MCC | Confusion | Notes |
+|---|---|---|---|---|---|---|
+| v0 | 4 | 4 | scale=0.05, t_end=0.5, thr=0.10 | **0.333** | 1 TP / 0 FP / 1 TN / 2 FN | pgi caught via F6P -11%. |
+| (v0b) | 4 | 4 | scale=0.10, t_end=1.0, thr=0.05 | -0.577 | 1 TP / 1 FP / 0 TN / 2 FN | Low threshold tripped FP from dATP noise. |
+| (v0c) | 5 | 4 | scale=0.05, t_end=2.0, thr=0.10 | 0.333 | Identical to v0 | Longer window did not help. |
+| v1 | 5 | 40 | scale=0.05, t_end=0.5, cal=10, sf=2.5 | **0.160** | 1 TP / 0 FP / 20 TN / 19 FN | Parallel 4-worker. Specificity=1; recall=0.05. |
+| v2 | 5 | 20 | scale=0.10, t_end=1.0, cal=5, sf=2.5 | **0.229** | 1 TP / 0 FP / 10 TN / 9 FN | Doubled scale + window: no improvement over v1. |
+
+### The one thing the detector catches
+
+Every config catches exactly `JCVISYN3A_0445` (pgi) via F6P depletion of 6–11 %. That's the only Essential-class gene whose KO produces a detectable metabolite signature in the short-window real simulator at the tried scales.
+
+### What gets missed and why
+
+- **Ribosomal proteins** (rpmI, rpsI, rpsN, rpsR, rpsE, rpsB, rpmF): KO stops ribosome assembly and translation. Effect on metabolite pools is slow (minutes). The detector watches central-carbon + NTP + dNTP pools only; it does not watch ribosome assembly state, protein synthesis rate, or charged-tRNA fraction.
+- **tRNA synthetases / RNases** (rnjB): RNA-processing defects take many bio-seconds to manifest in downstream pools.
+- **Transporters / PTS components** (ptsG, crr, ywjA): upstream of central carbon; pool depletion takes longer than 0.5–1 s of bio-time.
+- **Replication machinery, lipid synthesis** (plsX), **cell division** (ftsZ — correctly predicted non-essential at these short windows).
+
+### Three orthogonal paths to MCC > 0.59 (for next session)
+
+1. **Non-metabolic signals in the detector.** Add a pool for charged-tRNA fraction and a pool for ribosome-assembly-complex count, sourced from `CellState.proteins_by_state`. Ribosomal-protein KOs would then show up via the charged-tRNA lump freezing (no ribosome turnover to unload it) or via a drop in intact ribosome count. This requires ~100 lines in `real_simulator.py::_snapshot`.
+2. **Trajectory-divergence integral instead of threshold.** Rather than `|ko/wt - 1| > X at two samples`, sum the deviations across the whole window and compare to a distribution of WT-replicate integrals. Captures slow drifts that never cross a hard threshold. Requires a few WT replicates (multiple seeds) to build the null distribution.
+3. **Larger-scale long-window runs on real hardware.** The knockout_test.py in the existing cell_sim reports clear signal at scale=0.5, t_end=0.5 s — that run takes ~25 min per gene. The full 458-gene sweep at that scale on a cluster (128 cores) fits in ~2 hours wall. At that budget the `ShortWindowDetector` as-is probably hits 0.4–0.5; with signal (1) added as well, 0.59 is plausible.
 
 ## Session 4 additions
 

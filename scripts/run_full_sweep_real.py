@@ -55,6 +55,8 @@ from cell_sim.layer6_essentiality.short_window_detector import (
     ShortWindowDetector, calibrate_noise_floor,
 )
 
+from cell_sim.layer6_essentiality.harness import Trajectory  # noqa: E402
+
 
 REFERENCE_PANEL = [
     ("JCVISYN3A_0445", "pgi"),    # essential per Breuer
@@ -62,6 +64,38 @@ REFERENCE_PANEL = [
     ("JCVISYN3A_0522", "ftsZ"),   # nonessential
     ("JCVISYN3A_0305", ""),       # nonessential
 ]
+
+
+def _calibrate_thresholds(
+    sim: RealSimulator,
+    wt: Trajectory,
+    labels: dict,
+    k: int,
+    seed: int,
+    t_end_s: float,
+    sample_dt_s: float,
+    safety_factor: float,
+    floor_threshold: float,
+) -> tuple[dict[str, float], dict[str, float]]:
+    """Run K Breuer-non-essential KOs, compute per-pool noise floor,
+    return (thresholds, raw_floor). Thresholds = max(floor * safety, floor_threshold)."""
+    nons = [lt for lt, lab in labels.items()
+            if lab.essentiality == EssentialityClass.NONESSENTIAL]
+    rng = random.Random(seed ^ 0xC0DE)
+    rng.shuffle(nons)
+    pick = nons[:k]
+    print(f"[calibrate] running {len(pick)} non-essential KOs for noise-floor...")
+    trajs = []
+    for i, lt in enumerate(pick, 1):
+        t0 = time.time()
+        ko = sim.run([lt], t_end_s=t_end_s, sample_dt_s=sample_dt_s)
+        print(f"[calibrate] {i}/{len(pick)} {lt} wall={time.time()-t0:.1f}s")
+        trajs.append(ko)
+    floor = calibrate_noise_floor(wt, trajs)
+    thresholds = {
+        p: max(floor[p] * safety_factor, floor_threshold) for p in floor
+    }
+    return thresholds, floor
 
 
 def _select_genes(
@@ -134,12 +168,19 @@ def main() -> int:
                    default=int(os.environ.get("RS_SEED", "42")))
     p.add_argument("--threshold", type=float,
                    default=float(os.environ.get("RS_THRESHOLD", "0.10")))
+    p.add_argument("--calibrate", type=int, default=0,
+                   help="Before the sweep, run K non-essential KOs and use "
+                        "the per-pool noise-floor * safety-factor as "
+                        "per-pool thresholds.")
+    p.add_argument("--safety-factor", type=float, default=2.0,
+                   help="Calibration safety factor.")
     p.add_argument("--out-dir", default="outputs")
     args = p.parse_args()
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    tag = f"real_s{args.scale}_t{args.t_end_s}_seed{args.seed}_thr{args.threshold}"
+    cal_tag = f"_cal{args.calibrate}sf{args.safety_factor}" if args.calibrate else ""
+    tag = f"real_s{args.scale}_t{args.t_end_s}_seed{args.seed}_thr{args.threshold}{cal_tag}"
     pred_csv = out_dir / f"predictions_{tag}.csv"
     metrics_json = out_dir / f"metrics_{tag}.json"
 
@@ -156,7 +197,29 @@ def main() -> int:
     wt = sim.run([], t_end_s=args.t_end_s, sample_dt_s=args.dt_s)
     print(f"[wt] {time.time()-t0:.1f}s, {len(wt.samples)} samples")
 
-    detector = ShortWindowDetector(wt=wt, deviation_threshold=args.threshold)
+    threshold_payload = args.threshold
+    calibration_floor = None
+    if args.calibrate > 0:
+        thresholds, calibration_floor = _calibrate_thresholds(
+            sim, wt, labels,
+            k=args.calibrate, seed=args.seed,
+            t_end_s=args.t_end_s, sample_dt_s=args.dt_s,
+            safety_factor=args.safety_factor,
+            floor_threshold=args.threshold,
+        )
+        threshold_payload = thresholds
+        print(f"[calibrate] noise floor: " + ", ".join(
+            f"{k}:{v:.3f}" for k, v in sorted(calibration_floor.items())
+        ))
+        print(f"[calibrate] thresholds:  " + ", ".join(
+            f"{k}:{v:.3f}" for k, v in sorted(thresholds.items())
+        ))
+
+    detector = ShortWindowDetector(
+        wt=wt,
+        deviation_threshold=threshold_payload,
+        fallback_threshold=args.threshold,
+    )
     rows: list[dict] = []
     t_total = time.time()
     for i, (lt, gn) in enumerate(targets, 1):
@@ -193,8 +256,12 @@ def main() -> int:
         y_pred = {r["locus_tag"]: int(r["essential"]) for r in rows
                   if r["locus_tag"] in y_true}
         m = evaluate_binary(y_true, y_pred)
+        payload = {"config": vars(args), **m.as_dict()}
+        if calibration_floor is not None:
+            payload["calibration_floor"] = calibration_floor
+            payload["per_pool_thresholds"] = threshold_payload if isinstance(threshold_payload, dict) else None
         with metrics_json.open("w") as fh:
-            json.dump({"config": vars(args), **m.as_dict()}, fh, indent=2)
+            json.dump(payload, fh, indent=2)
         print(f"\n=== MCC vs Breuer 2019 (binary, quasi=positive, n={m.n}) ===")
         print(f"  TP={m.tp} FP={m.fp} TN={m.tn} FN={m.fn}")
         print(f"  MCC={m.mcc:.3f}  precision={m.precision:.3f}  "

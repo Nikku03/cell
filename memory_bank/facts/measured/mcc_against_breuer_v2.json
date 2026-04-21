@@ -1,0 +1,45 @@
+{
+  "id": "mcc_against_breuer_v2",
+  "claim": "Third MCC measurement. Balanced 20-gene sweep at doubled scale (0.1) and doubled bio-time (1.0 s) via parallel sweep script + calibration. Result: MCC=0.229 (TP=1, FP=0, TN=10, FN=9). Same MCC as the v0 4-gene panel; confirms that scaling up scale or t_end in tractable ranges does NOT improve recall. The detector only catches central-glycolysis disruption (pgi) regardless of config. Recall floor is fundamental to what 0.5 - 1 s at <=10%% scale can reveal in the metabolite pools.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.229,
+    "units": "dimensionless",
+    "n_genes": 20,
+    "confusion": {"tp": 1, "fp": 0, "tn": 10, "fn": 9},
+    "config": {
+      "simulator": "RealSimulator",
+      "sweep_script": "scripts/run_sweep_parallel.py",
+      "scale_factor": 0.1,
+      "t_end_s": 1.0,
+      "sample_dt_s": 0.05,
+      "seed": 42,
+      "detector": "ShortWindowDetector",
+      "calibration_n": 5,
+      "safety_factor": 2.5,
+      "fallback_threshold": 0.03,
+      "workers": 4
+    },
+    "gene_the_detector_caught": "JCVISYN3A_0445 (pgi) via F6P -6.8%%"
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Predictions: outputs/predictions_parallel_s0.1_t1.0_seed42_thr0.03_w4_cal5sf2.5.csv. Metrics JSON committed.",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v2_session_5_scale_0.1_t_1.0",
+    "commit_range": "c0e34e3..(this commit)"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Tried scale=0.5 (the knockout-test canonical value) but timed out at 9 minutes - runtime prohibitive for the interactive budget.",
+    "MCC does not improve from v0 (0.333 at n=4) or v1 (0.160 at n=40) to v2 (0.229 at n=20); the apparent differences are sample-size noise, not signal. The underlying predictor catches exactly one gene class (central glycolysis via F6P depletion) regardless of the scale / t_end knobs in the tried range.",
+    "The path to MCC > 0.59 requires changes beyond detector tuning: (1) simulate LONGER (minutes of bio-time, needs a faster simulator), OR (2) add non-metabolic signals (protein-complex assembly failure, translation rate, tRNA charging), OR (3) use a fundamentally different detection strategy (integrate trajectory divergence over time, not a threshold on peak deviation)."
+  ],
+  "dependencies": ["mcc_against_breuer_v1", "mcc_against_breuer_v0",
+                   "syn3a_essentiality_breuer2019"],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "scripts/run_sweep_parallel.py",
+    "outputs/metrics_parallel_s0.1_t1.0_seed42_thr0.03_w4_cal5sf2.5.json"
+  ]
+}

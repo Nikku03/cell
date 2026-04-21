@@ -49,14 +49,27 @@ SHORT_WINDOW_POOLS: tuple[str, ...] = (
 class ShortWindowDetector:
     """Bidirectional deviation detector for short-window real runs.
 
-    Default threshold of 0.10 catches the pgi-KO F6P depletion (~11 %)
-    on the reference panel while staying above non-essential noise
-    (~3 %) at scale 0.05 + seed 42 + t_end 0.5 s. Tune for higher
-    scales by reducing the threshold."""
+    ``deviation_threshold`` may be either a single ``float`` (global
+    threshold applied to every pool) or a ``dict[str, float]`` with
+    per-pool thresholds. Pools missing from the dict fall back to
+    ``fallback_threshold``.
+
+    Default 0.10 catches the pgi-KO F6P depletion (~11 %) on the
+    reference panel while staying above non-essential noise (~3 %)
+    at scale 0.05 + seed 42 + t_end 0.5 s. Tune with
+    :func:`calibrate_noise_floor` for higher scales / longer windows.
+    """
 
     wt: Trajectory
-    deviation_threshold: float = 0.10
+    deviation_threshold: float | dict[str, float] = 0.10
     pools: tuple[str, ...] = field(default_factory=lambda: SHORT_WINDOW_POOLS)
+    fallback_threshold: float = 0.10
+
+    def _threshold_for(self, pool: str) -> float:
+        thr = self.deviation_threshold
+        if isinstance(thr, dict):
+            return float(thr.get(pool, self.fallback_threshold))
+        return float(thr)
 
     def detect(self, ko: Trajectory) -> tuple[FailureMode, float | None, float, str]:
         """Return ``(mode, time_s, confidence, evidence)``.
@@ -65,7 +78,7 @@ class ShortWindowDetector:
         that tripped, e.g. ``"F6P -0.11"``. Empty if nothing tripped.
         """
         n = min(len(self.wt.samples), len(ko.samples))
-        prev: dict[str, tuple[float, float]] = {}  # pool -> (t_first, signed_dev)
+        prev: dict[str, tuple[float, float]] = {}
         for idx in range(n):
             wt_s = self.wt.samples[idx]
             ko_s = ko.samples[idx]
@@ -76,10 +89,10 @@ class ShortWindowDetector:
                 if w is None or k is None or w <= 0:
                     continue
                 dev = (k - w) / w
-                if abs(dev) >= self.deviation_threshold:
+                thr = self._threshold_for(pool)
+                if abs(dev) >= thr:
                     if pool in prev:
                         t_first, dev_first = prev[pool]
-                        # Same direction trip on consecutive samples confirms.
                         if (dev_first > 0) == (dev > 0):
                             mode = _mode_for_pool(pool, dev)
                             confidence = min(1.0, max(abs(dev_first), abs(dev)))

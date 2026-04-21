@@ -1,0 +1,52 @@
+{
+  "id": "mcc_against_breuer_v1",
+  "claim": "Second MCC measurement of the Layer 6 essentiality pipeline against Breuer 2019 labels. Run on a balanced 40-gene subset (20 Essential, 20 Nonessential) at scale=0.05, t_end=0.5s, with 10-gene noise-floor calibration and per-pool thresholds (safety_factor=2.5). Parallel: 4 workers, 4.9 s/gene effective wall. Result: MCC=0.160 (TP=1, FP=0, TN=20, FN=19). Specificity=1.00, but recall only 0.05 - the detector catches pgi (central glycolysis) but not ribosomal proteins, tRNA synthetases, transporters, or replication machinery because their knockouts don't produce detectable metabolite signatures within 0.5 s bio-time at 5 %% scale.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.160,
+    "units": "dimensionless",
+    "n_genes": 40,
+    "confusion": {"tp": 1, "fp": 0, "tn": 20, "fn": 19},
+    "config": {
+      "simulator": "RealSimulator",
+      "sweep_script": "scripts/run_sweep_parallel.py",
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "seed": 42,
+      "detector": "ShortWindowDetector",
+      "calibration_n": 10,
+      "safety_factor": 2.5,
+      "fallback_threshold": 0.04,
+      "workers": 4
+    },
+    "calibration_noise_floor": {
+      "ATP": 0.066, "CTP": 0.003, "F6P": 0.004, "G6P": 0.001,
+      "GTP": 0.003, "NTP_TOTAL": 0.039, "PYR": 0.001, "UTP": 0.002,
+      "dATP": 0.058, "dCTP": 0.047, "dGTP": 0.073, "dTTP": 0.024
+    },
+    "gene_the_detector_caught": "JCVISYN3A_0445 (pgi) via F6P -6.3%%"
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Predictions: outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.04_w4_cal10sf2.5.csv. Metrics JSON committed. Reproducible via 'python scripts/run_sweep_parallel.py --max-genes 40 --balanced --calibrate 10 --workers 4 --threshold 0.04 --safety-factor 2.5'.",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v1_session_5_parallel_calibrated",
+    "commit_range": "c0e34e3..(this commit)"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Specificity is perfect (no false positives) but recall is only 0.05 - 19/20 essentials missed.",
+    "The missed essentials span ribosomal proteins (rpmI, rpsI, rpsN, rpsR, rpsE, rpsB...), ribonucleases (rnjB), glycolytic enzymes (tpiA), PTS components (crr), lipid biosynthesis (plsX), unknown transporters (ywjA).",
+    "Detector design only watches central-carbon + NTP + dNTP pools. Ribosomal / translation / replication signals are not monitored. Translational-stall signature via charged-tRNA-fraction is defined but not populated by RealSimulator because the existing FastEventSimulator doesn't expose charged tRNA pools as a named species.",
+    "Longer t_end (tried 2.0 s) did NOT improve recall - metabolic deviations saturate quickly at small scale. The fix is either (a) dramatically higher scale (e.g., full 1.0 scale with t_end in minutes - infeasible on the current simulator), or (b) non-metabolic signals: protein-complex-assembly failure, protein count collapse over longer windows, translation rate.",
+    "MCC_v1 (0.160) is lower than MCC_v0 (0.333) because the larger balanced sample exposes the recall floor. v0's 0.333 was n=4 noise."
+  ],
+  "dependencies": ["syn3a_essentiality_breuer2019", "syn3a_gene_table",
+                   "mcc_against_breuer_v0"],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "scripts/run_sweep_parallel.py",
+    "outputs/metrics_parallel_s0.05_t0.5_seed42_thr0.04_w4_cal10sf2.5.json"
+  ]
+}
