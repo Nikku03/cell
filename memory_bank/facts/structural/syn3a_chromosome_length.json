@@ -21,5 +21,8 @@
   ],
   "dependencies": [],
   "last_verified": "2026-04-21",
-  "used_by": []
+  "used_by": [
+    "cell_sim/layer0_genome/genome.py",
+    "cell_sim/tests/test_layer0_genome.py"
+  ]
 }

@@ -18,7 +18,12 @@
     "Position 1 is the conventional placement, not an experimentally mapped ORI footprint; CP016816.2 does not include an explicit `rep_origin` feature.",
     "The functional oriC footprint (DnaA boxes, DnaA binding region) likely spans ~100-300 bp around position 1; treat 'position 1' as a point estimate of the origin, not its full extent."
   ],
-  "dependencies": ["syn3a_chromosome_length"],
+  "dependencies": [
+    "syn3a_chromosome_length"
+  ],
   "last_verified": "2026-04-21",
-  "used_by": []
+  "used_by": [
+    "cell_sim/layer0_genome/genome.py",
+    "cell_sim/tests/test_layer0_genome.py"
+  ]
 }

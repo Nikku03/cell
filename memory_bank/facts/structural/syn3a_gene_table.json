@@ -5,7 +5,17 @@
     "parameter": "gene_table",
     "data_file": "memory_bank/data/syn3a_gene_table.csv",
     "n_rows": 496,
-    "columns": ["locus_tag","gene_name","feature_type","start_1based","end","strand","length_bp","product","protein_id"]
+    "columns": [
+      "locus_tag",
+      "gene_name",
+      "feature_type",
+      "start_1based",
+      "end",
+      "strand",
+      "length_bp",
+      "product",
+      "protein_id"
+    ]
   },
   "source": "genbank_cp016816",
   "source_detail": "Built by the parsing script in Session 3 (see commit history). Input: cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb (SHA-256 f1d1d19b3624c8391deff73ab60627478df89cd55dfafdfb67d0df14a7680fdf). Coordinates use GenBank 1-based inclusive convention.",
@@ -21,7 +31,13 @@
     "Genes spanning the origin (wrapping the circular chromosome) are represented with their GenBank location; downstream code must handle circularity.",
     "Pseudogenes and split genes are not separately flagged - refer to the raw GenBank qualifiers for full detail."
   ],
-  "dependencies": ["syn3a_chromosome_length", "syn3a_gene_count"],
+  "dependencies": [
+    "syn3a_chromosome_length",
+    "syn3a_gene_count"
+  ],
   "last_verified": "2026-04-21",
-  "used_by": []
+  "used_by": [
+    "cell_sim/layer0_genome/genome.py",
+    "cell_sim/tests/test_layer0_genome.py"
+  ]
 }
