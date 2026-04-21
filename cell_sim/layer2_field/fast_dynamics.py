@@ -278,10 +278,11 @@ class FastEventSimulator:
             # Cache for _apply reuse
             self._last_saturation = saturation
 
-            # n_effective = max(1, min(100, round(E * sat))) — matches
-            # reversible.py:177 exactly.
+            # n_effective = max(1, min(10000, round(E * sat))) — matches
+            # reversible.py:MAX_TOKENS exactly. Raised from 100 so high-abundance
+            # enzymes (PGI ~400 copies, PTAr ~300 copies) don't throttle at full scale.
             n_eff = np.clip(np.round(self.C_enzyme_counts * saturation),
-                             1, 100).astype(np.int64)
+                             1, 10000).astype(np.int64)
 
             # Valid rule = have enzyme AND at least one unit of substrate
             valid = (self.C_enzyme_counts > 0) & (min_avail >= 1.0)

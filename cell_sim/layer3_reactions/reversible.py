@@ -145,7 +145,7 @@ def _build_one_direction_rule(
     substrate_ids = list(substrates.keys())
     all_enzymes = list(enzyme_loci)
 
-    MAX_TOKENS = 100
+    MAX_TOKENS = 10000   # raised from 100 to allow high-abundance enzymes to scale at full cell sizes
 
     def can_fire(state):
         enzyme_instances = []
