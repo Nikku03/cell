@@ -1,0 +1,27 @@
+{
+  "id": "syn3a_gene_table",
+  "claim": "Complete gene table for JCVI-Syn3A parsed from CP016816.2: one row per `gene` feature with locus_tag, gene name, feature subtype (CDS/tRNA/rRNA/ncRNA/tmRNA), start/end coordinates (1-based inclusive), strand, length, product, and protein_id.",
+  "value": {
+    "parameter": "gene_table",
+    "data_file": "memory_bank/data/syn3a_gene_table.csv",
+    "n_rows": 496,
+    "columns": ["locus_tag","gene_name","feature_type","start_1based","end","strand","length_bp","product","protein_id"]
+  },
+  "source": "genbank_cp016816",
+  "source_detail": "Built by the parsing script in Session 3 (see commit history). Input: cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb (SHA-256 f1d1d19b3624c8391deff73ab60627478df89cd55dfafdfb67d0df14a7680fdf). Coordinates use GenBank 1-based inclusive convention.",
+  "context": {
+    "entity": "syn3a_genome",
+    "organism": "JCVI-Syn3A",
+    "genbank_revision": "CP016816.2",
+    "coordinate_system": "1_based_inclusive"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Coordinates are 1-based inclusive (GenBank convention). Code that uses 0-based half-open intervals (BED / Python slicing) must convert: start_0 = start_1based - 1, end stays.",
+    "Genes spanning the origin (wrapping the circular chromosome) are represented with their GenBank location; downstream code must handle circularity.",
+    "Pseudogenes and split genes are not separately flagged - refer to the raw GenBank qualifiers for full detail."
+  ],
+  "dependencies": ["syn3a_chromosome_length", "syn3a_gene_count"],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}

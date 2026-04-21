@@ -4,7 +4,8 @@
   "value": {
     "parameter": "chromosome_length_bp_approximate",
     "approximate_number": 543000,
-    "resolution": "pending_genbank_parse"
+    "resolution": "resolved_by_syn3a_chromosome_length",
+    "resolution_detail": "CP016816.2 parsed 2026-04-21: 543,379 bp circular. Prior approximate 543000 is now replaced by the exact measured value. See facts/structural/syn3a_chromosome_length.json."
   },
   "source": "genbank_cp016816",
   "source_detail": "Approximate value cited in cell_sim/layer0_genome/syn3a_real.py docstring ('syn3A.gb: NCBI GenBank accession CP016816, 543 kbp, 496 genes'). Exact value must come from the GenBank record itself once staged.",
@@ -18,7 +19,7 @@
     "Approximate only - do not use as simulator input until the exact length is extracted from CP016816.",
     "Chromosome topology (circular) is the standard assumption for bacterial genomes but must be confirmed from the GenBank record."
   ],
-  "dependencies": [],
+  "dependencies": ["syn3a_chromosome_length"],
   "last_verified": "2026-04-21",
   "used_by": []
 }

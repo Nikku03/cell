@@ -1,0 +1,24 @@
+{
+  "id": "syn3a_oric_position",
+  "claim": "The origin of replication (oriC) of JCVI-Syn3A is at position 1 of CP016816.2, coincident with the start of dnaA (JCVISYN3A_0001).",
+  "value": {
+    "parameter": "oric_position_bp",
+    "number": 1,
+    "units": "bp"
+  },
+  "source": "genbank_cp016816",
+  "source_detail": "CP016816.2 follows the standard bacterial GenBank convention of placing the replication origin near position 1. JCVISYN3A_0001 is dnaA (Chromosomal replication initiator protein, product qualifier 'Chromosomal replication initiator protein') and its CDS spans 1..1353 on the forward strand. dnaA binding sites are the canonical oriC anchor in bacteria.",
+  "context": {
+    "entity": "syn3a_chromosome",
+    "organism": "JCVI-Syn3A",
+    "genbank_revision": "CP016816.2"
+  },
+  "confidence": "inferred",
+  "caveats": [
+    "Position 1 is the conventional placement, not an experimentally mapped ORI footprint; CP016816.2 does not include an explicit `rep_origin` feature.",
+    "The functional oriC footprint (DnaA boxes, DnaA binding region) likely spans ~100-300 bp around position 1; treat 'position 1' as a point estimate of the origin, not its full extent."
+  ],
+  "dependencies": ["syn3a_chromosome_length"],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}

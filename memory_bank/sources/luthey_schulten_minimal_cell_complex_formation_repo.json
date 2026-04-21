@@ -1,0 +1,14 @@
+{
+  "id": "luthey_schulten_minimal_cell_complex_formation_repo",
+  "citation": "Luthey-Schulten Lab. Minimal_Cell_ComplexFormation: Spatially homogeneous whole-cell model (WCM) of the genetically minimal cell Syn3A, incorporating complex formation processes. GitHub repository.",
+  "doi": "10.1021/acs.jpcb.5c04532",
+  "type": "github_repository",
+  "organism": "JCVI-Syn3A",
+  "authority": "primary",
+  "notes": "Source of the canonical Syn3A input data files used by cell_sim/layer0_genome/syn3a_real.py: syn3A.gb (CP016816.2), kinetic_params.xlsx, initial_concentrations.xlsx, complex_formation.xlsx, Syn3A_updated.xml. Published in JPC B 2024. Repo has no LICENSE file at the root as of staging (2026-04-21) - data is therefore kept local-only in cell_sim/data/Minimal_Cell_ComplexFormation/input_data/ and never committed to nikku03/cell (excluded by .gitignore 'data/' rule).",
+  "url": "https://github.com/Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation",
+  "caveats": [
+    "No explicit LICENSE file at repo root as of 2026-04-21; we treat the files as research-share and stage locally without redistribution.",
+    "Revision pin: file SHA-256s recorded in memory_bank/data/STAGING.md."
+  ]
+}

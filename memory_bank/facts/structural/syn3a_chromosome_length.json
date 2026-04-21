@@ -1,0 +1,25 @@
+{
+  "id": "syn3a_chromosome_length",
+  "claim": "JCVI-Syn3A (CP016816.2) has a circular chromosome of 543,379 base pairs.",
+  "value": {
+    "parameter": "chromosome_length_bp",
+    "number": 543379,
+    "units": "bp"
+  },
+  "source": "genbank_cp016816",
+  "source_detail": "Parsed from the GenBank file staged at cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb (SHA-256 f1d1d19b3624c8391deff73ab60627478df89cd55dfafdfb67d0df14a7680fdf, sourced from Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation). Record id: CP016816.2. Description: 'Synthetic bacterium JCVI-Syn3A chromosome, complete genome'.",
+  "context": {
+    "entity": "syn3a_chromosome",
+    "organism": "JCVI-Syn3A",
+    "topology": "circular",
+    "genbank_revision": "CP016816.2"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Measured from the CP016816.2 record; earlier revision CP016816.1 may differ slightly.",
+    "Supersedes the prior uncertainty fact syn3a_chromosome_length_pending (id kept for traceability)."
+  ],
+  "dependencies": [],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}

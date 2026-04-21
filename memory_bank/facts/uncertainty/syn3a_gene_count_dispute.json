@@ -9,7 +9,8 @@
       {"number": 496, "interpretation": "count quoted in existing simulator code docstring", "source": "cell_sim/layer0_genome/syn3a_real.py"},
       {"number": 473, "interpretation": "count for Syn3.0 precursor (before 19 genes were restored to make Syn3A)", "source": "hutchison_2016_science"}
     ],
-    "resolution": "pending_genbank_parse"
+    "resolution": "resolved_by_syn3a_gene_count",
+    "resolution_detail": "CP016816.2 parsed 2026-04-21: 496 total gene features (458 CDS + 29 tRNA + 6 rRNA + 2 ncRNA + 1 tmRNA). 452 is Breuer 2019's metabolic-model coverage (subset of CDS). See facts/structural/syn3a_gene_count.json."
   },
   "source": "genbank_cp016816",
   "source_detail": "Ground truth is CP016816's feature table. We have not staged the file on disk yet.",
@@ -23,7 +24,7 @@
     "'Gene' vs 'CDS' vs 'feature' distinction must be made explicit once we parse the GenBank file.",
     "CP016816 has multiple revisions; revision used must be pinned."
   ],
-  "dependencies": [],
+  "dependencies": ["syn3a_gene_count"],
   "last_verified": "2026-04-21",
   "used_by": []
 }

@@ -1,0 +1,31 @@
+{
+  "id": "syn3a_gene_count",
+  "claim": "JCVI-Syn3A (CP016816.2) encodes 496 genes total: 458 protein-coding (CDS), 29 tRNA, 6 rRNA, 2 ncRNA, 1 tmRNA.",
+  "value": {
+    "parameter": "gene_count_total",
+    "number": 496,
+    "units": "genes",
+    "breakdown": {
+      "CDS": 458,
+      "tRNA": 29,
+      "rRNA": 6,
+      "ncRNA": 2,
+      "tmRNA": 1
+    }
+  },
+  "source": "genbank_cp016816",
+  "source_detail": "Counted `gene` and child feature types in CP016816.2 (file SHA-256 f1d1d19b3624c8391deff73ab60627478df89cd55dfafdfb67d0df14a7680fdf). The 458 CDS count resolves the 452-vs-493-vs-496 dispute tracked in facts/uncertainty/syn3a_gene_count_dispute.json: 452 is Breuer 2019's metabolic-model coverage (subset of CDS), 493 is total genes minus a few classifications we now see as CDS, 496 is the true annotated gene feature count in CP016816.2.",
+  "context": {
+    "entity": "syn3a_genome",
+    "organism": "JCVI-Syn3A",
+    "genbank_revision": "CP016816.2"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Counts are of `gene` features in CP016816.2; definitions that count only protein-coding CDS give 458, not 496.",
+    "Breuer 2019 reports coverage of 452 protein-coding genes - this is a subset of the 458 CDS (some CDS have no metabolic function and are not in the FBA model)."
+  ],
+  "dependencies": [],
+  "last_verified": "2026-04-21",
+  "used_by": []
+}
