@@ -16,16 +16,18 @@ Build a biologically accurate, computationally cheap Syn3A whole-cell simulator 
 | 3 | Protein folding + complex assembly | partial | complex_formation.xlsx loaded by existing rules; 24 complexes defined with stoichiometry. |
 | 4 | Metabolism | partial | Syn3A_updated.xml + kinetic_params.xlsx loaded by existing rules; 6 transporter k_cats patched without citation yet. |
 | 5 | Biomass + division | not started | no biomass accumulation / division logic anywhere. |
-| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 8 MCC measurements (v0-v7). Best balanced-panel MCC = 0.229 (v2/v3/v4); v7 at t_end=5.0 s gave 0.000 — Path A (longer window) **falsified** because the simulator lacks biological pathway redundancy, so FP pool deviations grow with bio-time alongside TPs. Detector-side and bio-time-side optimisation both exhausted. Reaching MCC > 0.59 now requires simulator-biology upgrades (pathway redundancy / complete translation dynamics). |
+| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 9 MCC measurements (v0-v8) + 5-seed replicates summary. **Best mean MCC = 0.112 ± 0.029 (PerRule / Ensemble pool_confirm)**. All pool-based ShortWindow variants: 0.064 ± 0.088 across seeds (previous single-seed 0.160 was cherry-picked luck). v8 at scale=0.5 + t_end=1.0: 0.060 (TP=5, FP=4). Detector-side + bio-time-side + higher-scale optimisation now all measured — the ceiling is simulator-biology. |
 
 Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Implementation, D = Validation, E = Layer report.
 
 ## Memory Bank
 
-- Facts: **16**
-  - structural (6): `syn3a_doubling_time`, `syn3a_chromosome_length`, `syn3a_gene_count`, `syn3a_gene_table`, `syn3a_oric_position`, `syn3a_essentiality_breuer2019`.
-  - measured (8): `mcc_against_breuer_v0`, `v1`, `v2`, `v3`, `v4`, `v5`, `v6`, `v7`.
-  - resolved uncertainty (2): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`.
+- Facts: **24**
+  - structural (9): doubling time, chromosome length, gene count, gene table, oriC, Breuer 2019 labels, RNAP count per cell, ribosome count at birth, chromosome bead model.
+  - parameters (2): active RNAP fraction, mRNA half-life mean.
+  - measured (10): `mcc_against_breuer_v0..v8` + `mcc_replicates_summary`.
+  - resolved uncertainty (3): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`, `syn3a_gene_count_thornburg2026_discrepancy`.
+- Sources: **11** (Thornburg 2022 + 2026 Cell, Hutchison 2016, Breuer 2019, GenBank CP016816, Luthey-Schulten ComplexFormation + 4DWCM repos, Fu 2026 JPC-B, Gilbert 2023 Frontiers, Bianchi 2022 JPC-B, Pezeshkian 2024 Nat Commun).
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
 - Invariant checker: `OK`.
 - Data files (tracked): `memory_bank/data/syn3a_gene_table.csv` (496 rows), `memory_bank/data/syn3a_essentiality_breuer2019.csv` (455 rows).
@@ -46,6 +48,20 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
+
+### Session 10 — 2026-04-21 — Colab multi-seed replicates + v8 higher-scale + Thornburg 2026 integration
+- Wrote `scripts/run_colab_bc.py` and `notebooks/colab_bc_sweep.ipynb` to offload Block B (5-seed replicates × 5 detector configs on balanced n=40) and Block C (scale=0.5, t_end=1.0, n=40) to a Colab L4 VM. Gene panel held fixed via new `--panel-seed` flag; only simulator RNG varies across replicates.
+- Fixed over-broad root `.gitignore` that was hiding `memory_bank/data/*.csv` from commits; CSVs now tracked.
+- Ran the notebook on Colab L4: 25 replicate sweeps + 1 higher-scale sweep in ~90 min wall.
+- **v8 (scale=0.5, t_end=1.0, ensemble pool_confirm)**: MCC = **0.060** (TP=5, FP=4, TN=16, FN=15). Higher scale added one more FP (4 vs 3) without recovering any essentials. Confirms Session-9 diagnosis at yet another config.
+- **Replicates summary (`mcc_replicates_summary`)** with gene panel fixed at seed=42, 5 simulator seeds {42,1,2,3,4}:
+  - `v5_per_rule` / `v6a_ensemble_pool_confirm`: MCC = **0.112 ± 0.029** (tightest, structural signal)
+  - `v1_shortwindow_cal` / `v4_shortwindow_nonmetabolic` / `v6b_ensemble_and_unique`: MCC = **0.064 ± 0.088** (wide variance)
+  - Previously-reported single-seed 0.160 for v1 / v6b was cherry-picked: the across-seed mean is 0.064.
+- **Key measurement-hygiene insight**: per-rule detectors are much lower variance than pool-based ones (0.029 vs 0.088). That's because per-rule is a structural signal, pool-based rides stochastic metabolite fluctuations.
+- In parallel: integrated Thornburg et al. 2026 Cell paper via WebSearch + deep-research subagent. 5 new sources registered (4DWCM repo, Zenodo 15579158, Fu 2026 JPC-B, Gilbert 2023 Frontiers chromosome, Bianchi 2022 JPC-B, Pezeshkian 2024 Nat Commun). 5 new parameter/structural facts (RNAP count 187, active RNAP fraction 0.34, ribosome count at birth ~500, mRNA half-life mean 3.63 min, chromosome 10 bp/bead model). `syn3a_doubling_time` updated 7200 s → 6300 s (105 min measured). Gene-count discrepancy resolved: Thornburg 2026 uses 452 CDS + 41 RNA = 493, our parse gave 458 + 38 = 496 — does not affect Layer 6 because Breuer labels are the intersection.
+- Confirmed via subagent: **Thornburg 2026 does NOT report knockout MCC**. Our Layer 6 work remains unique territory.
+- Commits: `8f19f5d` (notebook), `5bc078f` (gitignore fix), `0ff69a1` + `8a38488` (Thornburg 2026), `f6bb7c2` (Colab sweep results). Pushed to origin.
 
 ### Session 9 — 2026-04-21 — Path A attempt; longer-window falsified
 - Ran the go/no-go reference panel at t_end=5.0 s (ensemble per_rule_with_pool_confirm, min_pool_dev=0.05). Result: pool deviations DO strengthen for the 2 catchable TPs (pgi 0.50→0.59, ptsG caught at 0.17), n=4 MCC=0.577. Decision: commit to n=20 balanced at the same config.

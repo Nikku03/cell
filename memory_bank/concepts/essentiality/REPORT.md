@@ -66,6 +66,22 @@ Separating the two also means **improvements to Layers 1-5 are evaluable.** Any 
 | v6b | 8 | 40 | Ensemble AND + rule-necessity-only | 0.160 | 1.8 | 1 TP (pgi) / 0 FP; AND collapses to ShortWindow-only. |
 | v7-ref | 9 | 4 | Ensemble pool_confirm, **t_end=5.0 s** | 0.577 | 15.9 | pgi + ptsG caught; pool_dev strengthens. |
 | v7 | 9 | 20 | Ensemble pool_confirm, min_pool_dev=0.10, **t_end=5.0 s** | **0.000** | 12.7 | 3 TP / 3 FP / 7 TN / 7 FN. Path A falsified - FP pools grow too. |
+| v8 | 10 | 40 | Ensemble pool_confirm, **scale=0.5, t_end=1.0 s** (Colab) | **0.060** | ~4 | 5 TP / 4 FP / 16 TN / 15 FN. Higher scale adds one more FP; doesn't break ceiling. |
+| **replicates** | 10 | 40 × 5 seeds | multiple configs, panel_seed=42 | see below | ~1.8 each | **Error bars on everything** |
+
+### Replicates summary (Session 10, panel fixed at seed=42)
+
+Run as Block B of the Colab notebook. 5 simulator seeds × 5 detector configs × balanced n=40. Gene panel held fixed so only the simulator RNG varies.
+
+| Config | Mean MCC | Std | Min | Max | Interpretation |
+|---|---|---|---|---|---|
+| v5 PerRule | **0.112** | **0.029** | 0.060 | 0.125 | Per-rule signal is structural → low variance. |
+| v6a Ensemble pool_confirm | **0.112** | **0.029** | 0.060 | 0.125 | Equivalent to v5 at this min_pool_dev. |
+| v1 ShortWindow cal | 0.064 | 0.088 | 0.000 | 0.160 | High variance — pool noise dominates. |
+| v4 ShortWindow +non-metabolic | 0.064 | 0.088 | 0.000 | 0.160 | Same as v1; non-metabolic pools didn't help. |
+| v6b Ensemble AND + unique-only | 0.064 | 0.088 | 0.000 | 0.160 | AND gate collapses back to ShortWindow behaviour. |
+
+**Key finding from replicates:** the previously-reported single-seed v1 / v6b value of 0.160 was lucky cherry-picking. Across 5 seeds the mean is 0.064. Only the per-rule-based configs (v5 / v6a) produce low-variance scores ≈ 0.112. Best honest single-number summary of this whole detector sweep: **MCC = 0.11 ± 0.03 on n=40 balanced, short-window, scale=0.05.**
 
 ### What each detector family catches
 
