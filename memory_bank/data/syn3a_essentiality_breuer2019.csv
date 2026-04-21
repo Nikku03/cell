@@ -1,0 +1,456 @@
+locus_tag,gene_name,gene_product,essentiality,primary_function
+JCVISYN3A_0001,dnaA,Chromosomal replication initiator protein,Essential,Genetic Information Processing
+JCVISYN3A_0002,dnaN,DNA polymerase III subunit beta,Essential,Genetic Information Processing
+JCVISYN3A_0003,rnmV,Ribonuclease M5,Quasiessential,Genetic Information Processing
+JCVISYN3A_0004,ksgA,16S rRNA (adenine(1518)-N(6)/adenine(1519)-N(6))- dimethyltransferase,Nonessential,Genetic Information Processing
+JCVISYN3A_0005,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0006,gyrB,DNA gyrase subunit B,Essential,Genetic Information Processing
+JCVISYN3A_0007,gyrA,DNA gyrase subunit A,Essential,Genetic Information Processing
+JCVISYN3A_0008,rnsD; uptD,Nucleoside ABC transporter permease,Essential,Metabolism
+JCVISYN3A_0009,rnsC; uptD,Nucleoside ABC transporter permease,Essential,Metabolism
+JCVISYN3A_0010,rnsA; uptA,Nucleoside ABC transporter ATP-binding protein,Essential,Metabolism
+JCVISYN3A_0011,rnsB; uptB,Nucleoside ABC transporter substrate-binding protein,Essential,Metabolism
+JCVISYN3A_0012,metRS,Methionine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0918,hisB,Imidazoleglycerol-phosphate dehydratase,Nonessential,Metabolism
+JCVISYN3A_0913,tetM,Tetracycline resistance ribosomal protection protein,Nonessential,Human Diseases
+JCVISYN3A_0025,rpsR,30S ribosomal protein S18,Essential,Genetic Information Processing
+JCVISYN3A_0026,priB,Single-stranded DNA-binding protein,Essential,Genetic Information Processing
+JCVISYN3A_0027,rpsF,30S ribosomal protein S6,Essential,Genetic Information Processing
+JCVISYN3A_0029,acpD; azoR,FMN reductase/NADH-azoreductase,Essential,Metabolism
+JCVISYN3A_0030,,Uncharacterized ABC transporter ATP-binding protein,Essential,Metabolism
+JCVISYN3A_0033,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0034,,Uncharacterized efflux ABC transporter permease,Nonessential,Metabolism
+JCVISYN3A_0039,ftsH,Membrane anchored AAA+ protease,Essential,Cellular Processes
+JCVISYN3A_0040,tilS,tRNA lysidine(34) synthetase,Essential,Genetic Information Processing
+JCVISYN3A_0042,,Uncharacterized transcriptional regulator,Quasiessential,Genetic Information Processing
+JCVISYN3A_0043,yabD,Uncharacterized methyltransferase,Nonessential,Unclear
+JCVISYN3A_0044,holA,DNA polymerase III subunit delta,Essential,Genetic Information Processing
+JCVISYN3A_0045,tmk,dTMP kinase,Essential,Metabolism
+JCVISYN3A_0046,recR,Recombination protein,Quasiessential,Genetic Information Processing
+JCVISYN3A_0047,dnaX,DNA polymerase III subunit gamma and tau,Essential,Genetic Information Processing
+JCVISYN3A_0054,ahpC,Uncharacterized peroxiredoxin,Nonessential,Metabolism
+JCVISYN3A_0060,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0061,serRS,Serine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0063,dusB,Uncharacterized tRNA dihydrouridine synthase,Nonessential,Genetic Information Processing
+JCVISYN3A_0064,lysRS,Lysine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0065,trxA,Thioredoxin,Essential,Metabolism
+JCVISYN3A_0066,dumP,dUMP phosphatase ,Quasiessential,Metabolism
+JCVISYN3A_0076,asnRS,Asparagine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0077,,Low specificity hydrolase ,Quasiessential,Unclear
+JCVISYN3A_0079,tsaD,tRNA (adenosine(37)-N6)-threonylcarbamoyltransferase complex transferase subunit D,Essential,Genetic Information Processing
+JCVISYN3A_0080,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0081,mnmE; trmE,tRNA uridine(34) 5-carboxymethylaminomethyl synthesis GTPase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0082,rpsT,30S ribosomal protein S20,Quasiessential,Genetic Information Processing
+JCVISYN3A_0094,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0095,secA,Preprotein translocase subunit A,Essential,Genetic Information Processing
+JCVISYN3A_0097,yycJ,Flap endonuclease and 5' exonuclease ,Quasiessential,Genetic Information Processing
+JCVISYN3A_0105,xseB,Exodeoxyribonuclease VII small subunit,Nonessential,Genetic Information Processing
+JCVISYN3A_0106,xseA,Exodeoxyribonuclease VII large subunit,Nonessential,Genetic Information Processing
+JCVISYN3A_0107,nusB,Transcription antitermination factor,Quasiessential,Genetic Information Processing
+JCVISYN3A_0108,,Uncharacterized lipoprotein,Quasiessential,Unclear
+JCVISYN3A_0109,nfo,Deoxyribonuclease IV,Quasiessential,Genetic Information Processing
+JCVISYN3A_0113,bcsA,Glycolipid synthase A,Essential,Metabolism
+JCVISYN3A_0114,bcsB; cps,Glycolipid synthase B,Essential,Metabolism
+JCVISYN3A_0115,galU; gtaB,UTP--glucose-1-phosphate uridylyltransferase,Essential,Metabolism
+JCVISYN3A_0116,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0117,plsY,Acyl-phosphate glycerol 3-phosphate acyltransferase,Essential,Metabolism
+JCVISYN3A_0126,gluRS,Glutamate--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0127,,Uncharacterized phosphohydrolase,Nonessential,Unclear
+JCVISYN3A_0128,rpoE,DNA-directed RNA polymerase subunit delta,Quasiessential,Genetic Information Processing
+JCVISYN3A_0129,pyrG,CTP synthase,Essential,Metabolism
+JCVISYN3A_0131,fbaA,"Fructose-1,6-bisphosphate aldolase",Essential,Metabolism
+JCVISYN3A_0132,ietA,Toxin-antitoxin AAA ATPase,Essential,Cellular Processes
+JCVISYN3A_0133,ietS,Toxin-antitoxin serine protease,Nonessential,Cellular Processes
+JCVISYN3A_0137,rpmE,50S ribosomal protein L31,Essential,Genetic Information Processing
+JCVISYN3A_0138,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0139,ytqI; orn,NanoRNAse,Quasiessential,Metabolism
+JCVISYN3A_0140,tdk,Thymidine kinase,Essential,Metabolism
+JCVISYN3A_0141,prfA,Peptide chain release factor 1,Essential,Genetic Information Processing
+JCVISYN3A_0142,prmC,"Protein-(glutamine-N5) methyltransferase, release factor-specific",Quasiessential,Genetic Information Processing
+JCVISYN3A_0143,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0144,tsaC,tRNA (adenosine(37)-N6)-threonylcarbamoyltransferase complex transferase subunit,Essential,Genetic Information Processing
+JCVISYN3A_0145,,Uncharacterized acetyltransferase,Essential,Unclear
+JCVISYN3A_0146,ywnG-like,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0147,clsA,Cardiolipin synthase,Essential,Metabolism
+JCVISYN3A_0148,rpsL,30S ribosomal protein S12,Essential,Genetic Information Processing
+JCVISYN3A_0149,rpsG,30S ribosomal protein S7,Essential,Genetic Information Processing
+JCVISYN3A_0150,fusA,Translation elongation factor G,Essential,Genetic Information Processing
+JCVISYN3A_0151,tuf,Translation elongation factor Tu,Essential,Genetic Information Processing
+JCVISYN3A_0163,alaRS,Alanine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0164,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0165,amiC,Oligopeptide ABC transporter permease,Quasiessential,Metabolism
+JCVISYN3A_0166,oppC,Oligopeptide ABC transporter permease,Quasiessential,Metabolism
+JCVISYN3A_0167,amiE,Oligopeptide ABC transporter ATP-binding protein,Quasiessential,Metabolism
+JCVISYN3A_0168,amiF,Oligopeptide ABC transporter ATP-binding protein,Quasiessential,Metabolism
+JCVISYN3A_0169,amiA,Oligopeptide ABC transporter substrate-binding protein,Quasiessential,Metabolism
+JCVISYN3A_0195,potC,Spermidine/putrescine ABC transporter permease,Quasiessential,Metabolism
+JCVISYN3A_0196,potB,Spermidine/putrescine ABC transporter permease,Quasiessential,Metabolism
+JCVISYN3A_0197,potA,Spermidine/putrescine ABC transporter ATP-binding protein,Quasiessential,Metabolism
+JCVISYN3A_0198,rplT,50S ribosomal protein L20,Essential,Genetic Information Processing
+JCVISYN3A_0199,rpmI,50S ribosomal protein L35,Essential,Genetic Information Processing
+JCVISYN3A_0200,infC,Translation initiation factor IF-3,Essential,Genetic Information Processing
+JCVISYN3A_0201,def,Peptide deformylase,Essential,Genetic Information Processing
+JCVISYN3A_0202,rsmD,16S rRNA (guanine(966)-N(2))-methyltransferase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0203,gmk,Guanylate kinase,Essential,Metabolism
+JCVISYN3A_0213,eno,Phosphopyruvate hydratase,Essential,Metabolism
+JCVISYN3A_0214,pgpA,Phosphatidylglycerophosphatase,Quasiessential,Metabolism
+JCVISYN3A_0215,yrrK; yqgF,Pre-16S rRNA nuclease ,Essential,Genetic Information Processing
+JCVISYN3A_0216,hptA,Hypoxanthine phosphoribosyltransferase,Quasiessential,Metabolism
+JCVISYN3A_0218,glpK,Glycerol kinase,Essential,Metabolism
+JCVISYN3A_0220,pfkA,6-Phosphofructokinase,Essential,Metabolism
+JCVISYN3A_0221,pyk,Pyruvate kinase,Essential,Metabolism
+JCVISYN3A_0222,thrRS,Threonine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0227,pdhC,Branched-chain alpha-keto acid dehydrogenase subunit E2,Nonessential,Metabolism
+JCVISYN3A_0228,lpdA,Dihydrolipoyl dehydrogenase,Nonessential,Metabolism
+JCVISYN3A_0229,pta,Phosphate acetyltransferase,Essential,Metabolism
+JCVISYN3A_0230,ackA,Acetate kinase,Essential,Metabolism
+JCVISYN3A_0233,ptsI,ptsI: Phosphoenolpyruvate--protein phosphotransferase,Essential,Metabolism
+JCVISYN3A_0234,crr,PTS glucose transporter subunit IIA,Essential,Metabolism
+JCVISYN3A_0235,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0238,rpsD,30S ribosomal protein S4,Essential,Genetic Information Processing
+JCVISYN3A_0239,-/ezrA,Uncharacterized protein/FtsZ filament regulator,Nonessential,Unclear
+JCVISYN3A_0240,thiI,tRNA 4-thiouridine(8) synthase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0247,ysxC; yihA,Ribosome biogenesis GTP-binding protein,Essential,Genetic Information Processing
+JCVISYN3A_0248,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0249,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0250,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0253,greA,Transcription elongation factor,Essential,Genetic Information Processing
+JCVISYN3A_0254,uvrC,Excinuclease ABC subunit C,Quasiessential,Genetic Information Processing
+JCVISYN3A_0257,rnjB,RNase J family beta-CASP ribonuclease,Essential,Genetic Information Processing
+JCVISYN3A_0259,nadK,NAD(+) kinase,Essential,Metabolism
+JCVISYN3A_0260,valRS,Valine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0262,rpe,Ribulose-phosphate 3-epimerase,Quasiessential,Metabolism
+JCVISYN3A_0263,rsgA; engC,Ribosome small subunit-dependent GTPase A,Quasiessential,Genetic Information Processing
+JCVISYN3A_0264,prkC; stkP,Uncharacterized serine/threonine protein kinase,Quasiessential,Metabolism
+JCVISYN3A_0270,tsaE; yjeE,tRNA (N6-adenosine(37)-N6)-threonylcarbamoyltransferase complex ATPase,Essential,Genetic Information Processing
+JCVISYN3A_0271,tsaB; yeaZ,tRNA N6-adenosine(37)-N6-threonylcarbamoyltransferase complex dimerization subunit,Essential,Genetic Information Processing
+JCVISYN3A_0281,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0282,proRS,Proline--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0283,rnhA,Double-stranded RNA binding RNase HI,Essential,Genetic Information Processing
+JCVISYN3A_0285,lepA; EF4,Elongation factor 4,Quasiessential,Genetic Information Processing
+JCVISYN3A_0286,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0287,aspRS,Aspartate--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0288,hisRS,Histidine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0289,rbfA,Ribosome-binding factor A,Quasiessential,Genetic Information Processing
+JCVISYN3A_0290,truB,tRNA pseudouridine(55) synthase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0291,ribF,FAD synthetase,Essential,Metabolism
+JCVISYN3A_0294,rpsO,30S ribosomal protein S15,Quasiessential,Genetic Information Processing
+JCVISYN3A_0296,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0297,infB,Translation initiation factor IF-2,Essential,Genetic Information Processing
+JCVISYN3A_0298,-/ylxR,Uncharacterized L7Ae family protein/Transcription Termination Nucleic Acid Binding,Quasiessential,Unclear
+JCVISYN3A_0299,ylxR/ylxQ,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0300,nusA,Transcription termination/antitermination protein NusA,Essential,Genetic Information Processing
+JCVISYN3A_0301,rimP,Ribosome assembly cofactor,Quasiessential,Genetic Information Processing
+JCVISYN3A_0302,fre,Flavin reductase,Essential,Metabolism
+JCVISYN3A_0303,polC,PolC-type DNA polymerase III,Essential,Genetic Information Processing
+JCVISYN3A_0304,cdsA,Phosphatidate cytidylyltransferase,Essential,Metabolism
+JCVISYN3A_0305,pepP,Prolidase ,Quasiessential,Genetic Information Processing
+JCVISYN3A_0308,trpRS,Tryptophan--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0314,ecfS,Uncharacterized ECF transporter S component,Essential,Metabolism
+JCVISYN3A_0315,-/ynzC-like,Uncharacterized protein/DNA Damage Control,Quasiessential,Unclear
+JCVISYN3A_0316,tkt,Transketolase,Quasiessential,Metabolism
+JCVISYN3A_0317,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0325,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0326,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0327,scpA,Chromosome segregation protein A,Essential,Genetic Information Processing
+JCVISYN3A_0328,scpB,Chromosome segregation protein B,Essential,Genetic Information Processing
+JCVISYN3A_0329,rluB,Uncharacterized pseudouridine synthase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0330,dgk,Deoxyguanosine kinase,Nonessential,Metabolism
+JCVISYN3A_0332,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0338,,Uncharacterized lipoprotein,Essential,Unclear
+JCVISYN3A_0344,ppa,Inorganic diphosphatase,Essential,Metabolism
+JCVISYN3A_0345,ecfS,Uncharacterized ECF transporter S component,Essential,Metabolism
+JCVISYN3A_0346,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0347,cmk,Cytidylate kinase,Quasiessential,Metabolism
+JCVISYN3A_0348,engA,Ribosome biogenesis GTPase,Essential,Genetic Information Processing
+JCVISYN3A_0350,hupA,DNA-binding protein,Essential,Genetic Information Processing
+JCVISYN3A_0352,-/dnaD-like,Uncharacterized protein/DNA Replication Machinery,Essential,Unclear
+JCVISYN3A_0353,gpsB,Cell division DivIVA/GpsB protein ,Quasiessential,Cellular Processes
+JCVISYN3A_0359,rny,Ribonuclease Y,Essential,Genetic Information Processing
+JCVISYN3A_0360,ffh,Signal recognition particle protein,Essential,Genetic Information Processing
+JCVISYN3A_0361,rlmH,23S rRNA (pseudouridine(1915)-N3)-methyltransferase,Nonessential,Genetic Information Processing
+JCVISYN3A_0362,rpsP,30S ribosomal protein S16,Essential,Genetic Information Processing
+JCVISYN3A_0363,rimM,16S rRNA processing protein,Essential,Genetic Information Processing
+JCVISYN3A_0364,trmD,tRNA (guanosine(37)-N1)-methyltransferase,Essential,Genetic Information Processing
+JCVISYN3A_0365,rplS,50S ribosomal protein L19,Essential,Genetic Information Processing
+JCVISYN3A_0366,ylqF; rbgA,L16-binding dependent 50S subunit-maturation GTPase,Essential,Genetic Information Processing
+JCVISYN3A_0371,ywjA,Flippase A,Essential,Metabolism
+JCVISYN3A_0372,ywjA,Flippase B,Essential,Metabolism
+JCVISYN3A_0373,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0375,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0376,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0377,obgE,Ribosome GTPase,Essential,Genetic Information Processing
+JCVISYN3A_0378,nadE,NAD(+) synthase,Essential,Metabolism
+JCVISYN3A_0379,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0380,nadD,Nicotinate (nicotinamide) nucleotide adenylyltransferase,Essential,Metabolism
+JCVISYN3A_0381,mtnN,5'-Methylthioadenosine nucleosidase,Nonessential,Metabolism
+JCVISYN3A_0382,dnk,Deoxynucleoside kinase,Nonessential,Metabolism
+JCVISYN3A_0387,mnmA,tRNA 2-thiouridine(34) synthase,Essential,Genetic Information Processing
+JCVISYN3A_0388,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0389,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0390,fmt,Methionyl-tRNA formyltransferase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0391,efp,Elongation factor P,Quasiessential,Genetic Information Processing
+JCVISYN3A_0392,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0394,lon,Endopeptidase La,Quasiessential,Genetic Information Processing
+JCVISYN3A_0398,,Uncharacterized lipoprotein,Quasiessential,Unclear
+JCVISYN3A_0399,,Uncharacterized efflux ABC transporter permease,Quasiessential,Metabolism
+JCVISYN3A_0400,thiJ/thiJ-like,Uncharacterized protease/Protein deglycase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0401,,Uncharacterized peptidase,Nonessential,Metabolism
+JCVISYN3A_0402,ybeY,rRNA maturation RNase,Essential,Genetic Information Processing
+JCVISYN3A_0403,era,Ribosome GTPase,Essential,Genetic Information Processing
+JCVISYN3A_0404,recO,DNA repair protein,Nonessential,Genetic Information Processing
+JCVISYN3A_0405,glyRS,Glycine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0406,dnaG,DNA primase,Essential,Genetic Information Processing
+JCVISYN3A_0407,rpoD,RNA polymerase subunit sigma,Essential,Genetic Information Processing
+JCVISYN3A_0408,trmK; yqfN,tRNA (m1A22) methyltransferase ,Quasiessential,Genetic Information Processing
+JCVISYN3A_0409,folE/yqfO-like,Uncharacterized protein/GTP cyclohydrolase,Quasiessential,Unclear
+JCVISYN3A_0410,cshB,Degradosome RNA helicase ,Quasiessential,Genetic Information Processing
+JCVISYN3A_0411,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0412,secDF,Preprotein translocase subunit DF,Essential,Genetic Information Processing
+JCVISYN3A_0413,apt,Adenine phosphoribosyltransferase,Essential,Metabolism
+JCVISYN3A_0414,relA,"Guanosine-3',5'-bis(diphosphate) 3'-pyrophosphohydrolase",Quasiessential,Metabolism
+JCVISYN3A_0415,smc,Chromosome segregation protein,Essential,Genetic Information Processing
+JCVISYN3A_0416,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0418,rnc,Ribonuclease III,Essential,Genetic Information Processing
+JCVISYN3A_0419,plsX,Phosphate acyltransferase,Essential,Metabolism
+JCVISYN3A_0420,fakA,Fatty acid kinase subunit A,Essential,Metabolism
+JCVISYN3A_0421,-/yloU,Uncharacterized protein/lipid synthesis regulation,Quasiessential,Unclear
+JCVISYN3A_0422,rpmB,50S ribosomal protein L28,Quasiessential,Genetic Information Processing
+JCVISYN3A_0424,-/yqgC-like,Uncharacterized protein/Unknown - B. subtilis ortholog,Essential,Unclear
+JCVISYN3A_0425,pstS,Phosphate ABC transporter substrate-binding protein,Essential,Metabolism
+JCVISYN3A_0426,pstA,Phosphate ABC transporter permease,Essential,Metabolism
+JCVISYN3A_0427,pstB,Phosphate ABC transporter ATP-binding protein,Essential,Metabolism
+JCVISYN3A_0428,phoU,Phosphate transport system regulatory protein,Essential,Metabolism
+JCVISYN3A_0429,ftsY,Signal recognition particle-docking protein,Essential,Genetic Information Processing
+JCVISYN3A_0430,-/ylxM,Uncharacterized DNA-binding protein/effector of translocation SRP,Essential,Unclear
+JCVISYN3A_0431,ymdB/ymdB,Uncharacterized metallophosphoesterase/Damage Control phosphoesterase,Essential,Unclear
+JCVISYN3A_0432,metK,Methionine adenosyltransferase,Essential,Metabolism
+JCVISYN3A_0433,cutC/cutC-like,Uncharacterized protein/Copper Homeostasis Regulator,Nonessential,Metabolism
+JCVISYN3A_0434,rlmFO,23S rRNA (uridine(1939)-m5)-methyltransferase,Nonessential,Genetic Information Processing
+JCVISYN3A_0435,manA,Mannose-6-phosphate isomerase,Nonessential,Metabolism
+JCVISYN3A_0437,yhaM,Putative 3'-5' exoribonuclease,Essential,Genetic Information Processing
+JCVISYN3A_0438,hinT,Uncharacterized protein,Nonessential,Metabolism
+JCVISYN3A_0439,,Uncharacterized lipoprotein,Essential,Unclear
+JCVISYN3A_0440,,Uncharacterized lipoprotein,Essential,Unclear
+JCVISYN3A_0441,iscS,Cysteine desulfurase,Essential,Metabolism
+JCVISYN3A_0442,iscU,Iron-sulfur cluster assembly scaffold protein,Essential,Metabolism
+JCVISYN3A_0443,yggN,5-Formyltetrahydrofolate cyclo-ligase,Essential,Metabolism
+JCVISYN3A_0444,pepO,Oligopeptidase ,Quasiessential,Genetic Information Processing
+JCVISYN3A_0445,pgi,Glucose-6-phosphate isomerase,Essential,Metabolism
+JCVISYN3A_0447,dut,dUTP diphosphatase,Essential,Genetic Information Processing
+JCVISYN3A_0448,spoU,Uncharacterized rRNA methyltransferase,Essential,Genetic Information Processing
+JCVISYN3A_0451,gapdh,Glyceraldehyde-3-phosphate dehydrogenase,Essential,Metabolism
+JCVISYN3A_0452,parE,DNA topoisomerase IV subunit B,Essential,Genetic Information Processing
+JCVISYN3A_0453,parC,DNA topoisomerase IV subunit A,Essential,Genetic Information Processing
+JCVISYN3A_0475,ldh,L-lactate dehydrogenase,Essential,Metabolism
+JCVISYN3A_0478,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0479,,Uncharacterized peptidase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0481,,Uncharacterized lipoprotein,Nonessential,Unclear
+JCVISYN3A_0482,rpsU,30S ribosomal protein S21,Essential,Genetic Information Processing
+JCVISYN3A_0154,pepA; CARP,Uncharacterized peptidase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0493,dapE,Low specificity dipeptidase ,Quasiessential,Unclear
+JCVISYN3A_0494,nanE,N-acetylmannosamine-6-phosphate 2-epimerase,Nonessential,Metabolism
+JCVISYN3A_0495,nanK,Uncharacterized kinase,Nonessential,Metabolism
+JCVISYN3A_0499,rpmA,50S ribosomal protein L27,Essential,Genetic Information Processing
+JCVISYN3A_0500,prp;ysxB,Maturation protease for ribosomal protein L27,Essential,Genetic Information Processing
+JCVISYN3A_0501,rplU,50S ribosomal protein L21,Essential,Genetic Information Processing
+JCVISYN3A_0503,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0504,rsmI,16S rRNA (cytidine(1402)-2'-O)-methyltransferase,Nonessential,Genetic Information Processing
+JCVISYN3A_0930,rpmG,50S ribosomal protein L33,Nonessential,Genetic Information Processing
+JCVISYN3A_0505,,Uncharacterized lipoprotein,Nonessential,Unclear
+JCVISYN3A_0511,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0512,plsC,Acyl-phosphate glycerol 3-phosphate acyltransferase,Essential,Metabolism
+JCVISYN3A_0513,acpS,ACP synthase,Essential,Metabolism
+JCVISYN3A_0515,dctD,Cytidine deaminase,Quasiessential,Metabolism
+JCVISYN3A_0516,-/yqgP-gplG,Uncharacterized protein/membrane protease,Quasiessential,Unclear
+JCVISYN3A_0517,rluD,Uncharacterized RNA pseudouridine synthase,Nonessential,Genetic Information Processing
+JCVISYN3A_0518,lspA,Lipoprotein signal peptidase,Essential,Genetic Information Processing
+JCVISYN3A_0519,ileRS,Isoleucine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0520,,Uncharacterized hydrolase,Nonessential,Unclear
+JCVISYN3A_0521,sepF,Cell division protein,Nonessential,Cellular Processes
+JCVISYN3A_0522,ftsZ,Cell division protein,Nonessential,Cellular Processes
+JCVISYN3A_0523,ftsA,Cell division protein,Nonessential,Cellular Processes
+JCVISYN3A_0524,rsmH; mraW,16S rRNA (cytosine(1402)-N(4))-methyltransferase,Nonessential,Genetic Information Processing
+JCVISYN3A_0525,mraZ,Cell division/cell wall cluster transcriptional repressor,Nonessential,Genetic Information Processing
+JCVISYN3A_0526,rpmF,50S ribosomal protein L32,Essential,Genetic Information Processing
+JCVISYN3A_0527,-/ylbN,Uncharacterized protein/23S rRNA regulator,Nonessential,Unclear
+JCVISYN3A_0528,pheRS,Phenylalanine--tRNA ligase subunit beta,Essential,Metabolism
+JCVISYN3A_0529,pheS,Phenylalanine--tRNA ligase subunit alpha,Essential,Metabolism
+JCVISYN3A_0530,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0535,argRS,Arginine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0536,frr,Ribosome recycling factor,Essential,Genetic Information Processing
+JCVISYN3A_0537,pyrH,UMP kinase,Essential,Metabolism
+JCVISYN3A_0538,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0539,tsf,Translation elongation factor Ts,Essential,Genetic Information Processing
+JCVISYN3A_0540,rpsB,30S ribosomal protein S2,Essential,Genetic Information Processing
+JCVISYN3A_0541,dnaJ,Molecular chaperone,Essential,Genetic Information Processing
+JCVISYN3A_0542,dnaK,Molecular chaperone,Essential,Genetic Information Processing
+JCVISYN3A_0543,grpE,Nucleotide exchange factor,Essential,Genetic Information Processing
+JCVISYN3A_0544,hrcA,Heat-inducible transcription repressor,Essential,Genetic Information Processing
+JCVISYN3A_0545,clpB,ATP-dependent Clp protease subunit B,Essential,Genetic Information Processing
+JCVISYN3A_0548,trmL; cspR,tRNA (cytidine(34)-2'-O)-methyltransferase,Nonessential,Genetic Information Processing
+JCVISYN3A_0549,rgdB,Non-canonical purine NTP pyrophosphatase,Nonessential,Metabolism
+JCVISYN3A_0931,met14p,Adenylyl-sulfate kinase,Nonessential,Metabolism
+JCVISYN3A_0592,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0593,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0599,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0600,rnjA,Ribonuclease J,Essential,Genetic Information Processing
+JCVISYN3A_0601,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0604,lemA/lemA-gacS,"Uncharacterized protein/two component sensor, membrane",Nonessential,Unclear
+JCVISYN3A_0605,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0606,pgk,Phosphoglycerate kinase,Essential,Metabolism
+JCVISYN3A_0607,gapDH,Type I glyceraldehyde-3-phosphate dehydrogenase,Essential,Metabolism
+JCVISYN3A_0608,dnaI,Primosomal protein,Essential,Genetic Information Processing
+JCVISYN3A_0609,dnaB,Chromosome replication initiation protein,Essential,Genetic Information Processing
+JCVISYN3A_0610,mutM,DNA-formamidopyrimidine glycosylase,Nonessential,Genetic Information Processing
+JCVISYN3A_0611,polA,DNA polymerase I,Essential,Genetic Information Processing
+JCVISYN3A_0612,dnaE,DNA polymerase III subunit alpha,Essential,Genetic Information Processing
+JCVISYN3A_0613,tyrRS,Tyrosine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0614,pncB,Nicotinate phosphoribosyltransferase,Essential,Metabolism
+JCVISYN3A_0615,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0616,fakB,Fatty acid binding protein,Essential,Metabolism
+JCVISYN3A_0617,fakB,Fatty acid binding protein,Quasiessential,Metabolism
+JCVISYN3A_0620,perR,Uncharacterized transcriptional regulator,Nonessential,Genetic Information Processing
+JCVISYN3A_0621,acpA,Acyl carrier protein,Essential,Metabolism
+JCVISYN3A_0622,,Uncharacterized lipoprotein,Nonessential,Unclear
+JCVISYN3A_0623,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0634,leuRS,Leucine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0636,,Uncharacterized lipoprotein,Essential,Unclear
+JCVISYN3A_0637,rpsI,30S ribosomal protein S9,Essential,Genetic Information Processing
+JCVISYN3A_0638,rplM,50S ribosomal protein L13,Essential,Genetic Information Processing
+JCVISYN3A_0639,,Uncharacterized efflux ABC transporter permease,Essential,Metabolism
+JCVISYN3A_0640,truA,tRNA pseudouridine(38-40) synthase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0641,ecfT,ECF transporter T component,Essential,Metabolism
+JCVISYN3A_0642,ecfA,ECF transporter ATPase,Essential,Metabolism
+JCVISYN3A_0643,ecfA,ECF transporter ATPase,Essential,Metabolism
+JCVISYN3A_0644,rplQ,50S ribosomal protein L17,Essential,Genetic Information Processing
+JCVISYN3A_0645,rpoA,DNA-directed RNA polymerase subunit alpha,Essential,Genetic Information Processing
+JCVISYN3A_0646,rpsK,30S ribosomal protein S11,Essential,Genetic Information Processing
+JCVISYN3A_0647,rpsM,30S ribosomal protein S13,Essential,Genetic Information Processing
+JCVISYN3A_0648,rpmJ,50S ribosomal protein L36,Essential,Genetic Information Processing
+JCVISYN3A_0649,infA,Translation initiation factor IF-1,Essential,Genetic Information Processing
+JCVISYN3A_0650,map,Type I methionyl aminopeptidase,Essential,Genetic Information Processing
+JCVISYN3A_0651,adk,Adenylate kinase,Essential,Metabolism
+JCVISYN3A_0652,secY,Preprotein translocase subunit,Essential,Genetic Information Processing
+JCVISYN3A_0653,rplO,50S ribosomal protein L15,Quasiessential,Genetic Information Processing
+JCVISYN3A_0654,rpsE,30S ribosomal protein S5,Essential,Genetic Information Processing
+JCVISYN3A_0655,rplR,50S ribosomal protein L18,Essential,Genetic Information Processing
+JCVISYN3A_0656,rplF,50S ribosomal protein L6,Essential,Genetic Information Processing
+JCVISYN3A_0657,rpsH,30S ribosomal protein S8,Essential,Genetic Information Processing
+JCVISYN3A_0658,rpsN,30S ribosomal protein S14,Essential,Genetic Information Processing
+JCVISYN3A_0659,rplE,50S ribosomal protein L5,Essential,Genetic Information Processing
+JCVISYN3A_0660,rplX,50S ribosomal protein L24,Essential,Genetic Information Processing
+JCVISYN3A_0661,rplN,50S ribosomal protein L14,Essential,Genetic Information Processing
+JCVISYN3A_0662,rpsQ,30S ribosomal protein S17,Essential,Genetic Information Processing
+JCVISYN3A_0663,rpmC,50S ribosomal protein L29,Essential,Genetic Information Processing
+JCVISYN3A_0664,rplP,50S ribosomal protein L16,Essential,Genetic Information Processing
+JCVISYN3A_0665,rpsC,30S ribosomal protein S3,Essential,Genetic Information Processing
+JCVISYN3A_0666,rplV,50S ribosomal protein L22,Essential,Genetic Information Processing
+JCVISYN3A_0667,rpsS,30S ribosomal protein S19,Essential,Genetic Information Processing
+JCVISYN3A_0668,rplB,50S ribosomal protein L2,Essential,Genetic Information Processing
+JCVISYN3A_0669,rplW,50S ribosomal protein L23,Essential,Genetic Information Processing
+JCVISYN3A_0670,rplD,50S ribosomal protein L4,Essential,Genetic Information Processing
+JCVISYN3A_0671,rplC,50S ribosomal protein L3,Essential,Genetic Information Processing
+JCVISYN3A_0672,rpsJ,30S ribosomal protein S10,Essential,Genetic Information Processing
+JCVISYN3A_0684,folD,"Bifunctional 5,10-methylene-tetrahydrofolate dehydrogenase/5,10-methylene-tetrahydrofolate cyclohydrolase",Quasiessential,Metabolism
+JCVISYN3A_0685,ktrD,Sodium transporter,Essential,Metabolism
+JCVISYN3A_0686,ktrC,Potassium transporter,Essential,Metabolism
+JCVISYN3A_0687,gatB,Glutamyl-tRNA amidotransferase subunit B,Essential,Genetic Information Processing
+JCVISYN3A_0688,gatA,Glutamyl-tRNA amidotransferase subunit A,Essential,Genetic Information Processing
+JCVISYN3A_0689,gatC,Glutamyl-tRNA amidotransferase subunit C,Essential,Genetic Information Processing
+JCVISYN3A_0690,ligA,DNA ligase (NAD(+)),Essential,Genetic Information Processing
+JCVISYN3A_0691,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0692,rluC,Uncharacterized pseudouridine synthase,Nonessential,Genetic Information Processing
+JCVISYN3A_0693,,Uncharacterized protease,Essential,Genetic Information Processing
+JCVISYN3A_0694,ptsH,ptsH: Phosphocarrier protein,Essential,Metabolism
+JCVISYN3A_0695,pcrA,ATP-dependent DNA helicase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0696,,Uncharacterized transporter,Essential,Metabolism
+JCVISYN3A_0697,,Uncharacterized glycosyl transferase,Quasiessential,Metabolism
+JCVISYN3A_0706,thiP,Thiamine ABC transporter permease,Quasiessential,Metabolism
+JCVISYN3A_0707,thiQ,Thiamine ABC transporter ATP-binding protein,Quasiessential,Metabolism
+JCVISYN3A_0708,thiB,Thiamine ABC transporter substrate-binding protein,Quasiessential,Metabolism
+JCVISYN3A_0710,,Low specificity hydrolase ,Quasiessential,Unclear
+JCVISYN3A_0726,nagB,Glucosamine-6-phosphate deaminase,Nonessential,Metabolism
+JCVISYN3A_0727,tpiA,Triose-phosphate isomerase,Essential,Metabolism
+JCVISYN3A_0728,ycsE; YitU; ywtE,Low specificity hydrolase ,Nonessential,Unclear
+JCVISYN3A_0729,pgm,"Phosphoglycerate mutase (2,3-diphosphoglycerate-independent)",Essential,Metabolism
+JCVISYN3A_0730,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0732,deoC,Deoxyribose-phosphate aldolase,Nonessential,Metabolism
+JCVISYN3A_0733,deoB,Phosphopentomutase,Essential,Metabolism
+JCVISYN3A_0747,punA,Purine-nucleoside phosphorylase,Quasiessential,Metabolism
+JCVISYN3A_0771,nrdE,Ribonucleotide-diphosphate reductase subunit alpha,Quasiessential,Genetic Information Processing
+JCVISYN3A_0772,nrdI,Ribonucleotide reductase assembly protein,Essential,Metabolism
+JCVISYN3A_0773,nrdF,Ribonucleoside-diphosphate reductase subunit beta,Quasiessential,Genetic Information Processing
+JCVISYN3A_0774,secG,Preprotein translocase subunit,Quasiessential,Genetic Information Processing
+JCVISYN3A_0775,rnr,Ribonuclease R,Essential,Genetic Information Processing
+JCVISYN3A_0776,smpB,SsrA-binding protein,Essential,Genetic Information Processing
+JCVISYN3A_0777,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0778,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0779,ptsG,PTS sugar transporter,Essential,Metabolism
+JCVISYN3A_0787,mgtA,Magnesium-translocating P-type ATPase,Essential,Metabolism
+JCVISYN3A_0789,atpC,F1 ATP synthase subunit epsilon,Essential,Metabolism
+JCVISYN3A_0790,atpD,F1 ATP synthase subunit beta,Essential,Metabolism
+JCVISYN3A_0791,atpG,F1 ATP synthase subunit gamma,Essential,Metabolism
+JCVISYN3A_0792,atpA,F1 ATP synthase subunit alpha,Essential,Metabolism
+JCVISYN3A_0793,atpH,F1 ATP synthase subunit delta,Essential,Metabolism
+JCVISYN3A_0794,atpF,F0 ATP synthase subunit B,Essential,Metabolism
+JCVISYN3A_0795,atpE,F0 ATP synthase subunit C,Essential,Metabolism
+JCVISYN3A_0796,atpB,F0 ATP synthase subunit A,Essential,Metabolism
+JCVISYN3A_0797,atpI,Uncharacterized protein/Chaperon for ATP Synthase C-ring formation,Essential,Unclear
+JCVISYN3A_0798,upp,Uracil phosphoribosyltransferase,Essential,Metabolism
+JCVISYN3A_0799,glyA,Serine hydroxymethyltransferase,Quasiessential,Metabolism
+JCVISYN3A_0800,rpiB,Ribose 5-phosphate isomerase B,Quasiessential,Metabolism
+JCVISYN3A_0803,rpoC,DNA-directed RNA polymerase subunit beta',Essential,Genetic Information Processing
+JCVISYN3A_0804,rpoB,DNA-directed RNA polymerase subunit beta,Essential,Genetic Information Processing
+JCVISYN3A_0805,-/fic,"Uncharacterized protein/Filamentation, Protein Adenylation",Essential,Unclear
+JCVISYN3A_0806,rplG,50S ribosomal protein L7/L12,Essential,Genetic Information Processing
+JCVISYN3A_0807,rplJ,50S ribosomal protein L10,Essential,Genetic Information Processing
+JCVISYN3A_0809,rplA,50S ribosomal protein L1,Quasiessential,Genetic Information Processing
+JCVISYN3A_0810,rplK,50S ribosomal protein L11,Quasiessential,Genetic Information Processing
+JCVISYN3A_0813,galE,UDP-glucose 4-epimerase GalE,Essential,Metabolism
+JCVISYN3A_0814,glf,UDP-galactopyranose mutase,Essential,Metabolism
+JCVISYN3A_0817,whiA/whiA,"Uncharacterized DNA-binding protein/Cell Division, Chromosome Segregation Regulation",Quasiessential,Genetic Information Processing
+JCVISYN3A_0818,lgt,Diacylglyceryl transferase,Essential,Metabolism
+JCVISYN3A_0819,trx,Thioredoxin-disulfide reductase,Essential,Metabolism
+JCVISYN3A_0820,lgt,Diacylglyceryl transferase,Essential,Metabolism
+JCVISYN3A_0821,hpr; ptsH,HPr(Ser) kinase/phosphatase,Nonessential,Metabolism
+JCVISYN3A_0822,ecfS,ecsF / folate ,Quasiessential,Metabolism
+JCVISYN3A_0823,folC,Dihydrofolate synthase,Quasiessential,Metabolism
+JCVISYN3A_0824,uvrA,Excinuclease ABC subunit A,Quasiessential,Genetic Information Processing
+JCVISYN3A_0825,uvrB,Excinuclease ABC subunit B,Quasiessential,Genetic Information Processing
+JCVISYN3A_0826,yqeN,DNA polymerase III subunit delta,Essential,Genetic Information Processing
+JCVISYN3A_0827,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0830,-/yqxA-like,Uncharacterized protein/Growth factor,Nonessential,Unclear
+JCVISYN3A_0831,prs,Phosphoribosylpyrophosphate synthetase,Essential,Metabolism
+JCVISYN3A_0832,pth,Aminoacyl-tRNA hydrolase,Essential,Genetic Information Processing
+JCVISYN3A_0833,rplI,50S ribosomal protein L9,Quasiessential,Genetic Information Processing
+JCVISYN3A_0834,dnaC,Replicative DNA helicase,Essential,Genetic Information Processing
+JCVISYN3A_0835,,Uncharacterized lipoprotein,Essential,Unclear
+JCVISYN3A_0836,ecfS,Uncharacterized ECF transporter S component,Essential,Metabolism
+JCVISYN3A_0837,cysRS,Cysteine--tRNA ligase,Essential,Metabolism
+JCVISYN3A_0838,rlmB,23S rRNA (guanosine(2251)-2'-O)-methyltransferase,Nonessential,Genetic Information Processing
+JCVISYN3A_0932,rpmG,50S ribosomal protein L33,Quasiessential,Genetic Information Processing
+JCVISYN3A_0839,secE,Preprotein translocase subunit,Essential,Genetic Information Processing
+JCVISYN3A_0840,nusG,Antitermination protein,Quasiessential,Genetic Information Processing
+JCVISYN3A_0851,,Uncharacterized lipoprotein,Nonessential,Unclear
+JCVISYN3A_0852,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0853,,Uncharacterized protein,Nonessential,Unclear
+JCVISYN3A_0859,topA,DNA topoisomerase I,Essential,Genetic Information Processing
+JCVISYN3A_0870,,Uncharacterized C4-dicarboxylate ABC transporter,Quasiessential,Metabolism
+JCVISYN3A_0872,ychF/ychF,Uncharacterized ATPase/Ribosome Binding Factor ATPase,Quasiessential,Genetic Information Processing
+JCVISYN3A_0873,,Uncharacterized protein,Quasiessential,Unclear
+JCVISYN3A_0874,rsmG,16S rRNA (guanine(527)-N(7))-methyltransferase,Nonessential,Genetic Information Processing
+JCVISYN3A_0875,pgsA,CDP-diacylglycerol--glycerol-3-phosphate 3-phosphatidyltransferase,Essential,Metabolism
+JCVISYN3A_0876,,Uncharacterized amino acid permease,Nonessential,Metabolism
+JCVISYN3A_0877,fmnP; ribU,Riboflavin ECF transporter S component ,Essential,Metabolism
+JCVISYN3A_0878,-/gabP,Uncharacterized amino acid permease/amino acid transporter,Quasiessential,Metabolism
+JCVISYN3A_0879,corA,magnesium-importing ATPase ,Essential,Metabolism
+JCVISYN3A_0881,,Uncharacterized MFS transporter,Essential,Metabolism
+JCVISYN3A_0885,mnmG; gidA,tRNA uridine(34) 5-carboxymethylaminomethyl synthesis enzyme,Quasiessential,Genetic Information Processing
+JCVISYN3A_0886,gltP,Proton-glutamate symporter,Quasiessential,Metabolism
+JCVISYN3A_0887,cdr,Coenzyme A Disulfide Reductase,Quasiessential,Metabolism
+JCVISYN3A_0906,,Uncharacterized protein,Essential,Unclear
+JCVISYN3A_0907,,Low specificity hydrolase ,Quasiessential,Unclear
+JCVISYN3A_0908,yidC,Membrane protein insertase,Essential,Genetic Information Processing
+JCVISYN3A_0909,rnpA,Ribonuclease P protein component,Essential,Genetic Information Processing
+JCVISYN3A_0910,rpmH,50S ribosomal protein L34,Quasiessential,Genetic Information Processing

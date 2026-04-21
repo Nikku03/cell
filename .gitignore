@@ -7,10 +7,11 @@ __pycache__/
 venv/
 env/
 
-# Data directories (the Luthey-Schulten repo is big; re-clone it rather than
-# commit it)
-data/
-!data/.gitkeep
+# Luthey-Schulten input data (the upstream repo is ~1.8 MB binary; re-stage
+# it rather than redistribute - see memory_bank/data/STAGING.md). Narrowly
+# scoped - do NOT use a bare `data/` pattern because that would also ignore
+# memory_bank/data/*.csv (the small derived reference tables we DO commit).
+cell_sim/data/Minimal_Cell_ComplexFormation/
 
 # Outputs and caches
 outputs/*.csv
