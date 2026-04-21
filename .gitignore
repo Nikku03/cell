@@ -40,3 +40,6 @@ gh_token.txt
 memory_bank/index/*.sqlite
 memory_bank/index/*.faiss
 memory_bank/index/concept_graph.json
+
+# Local patch backups (not for the remote)
+patches/
