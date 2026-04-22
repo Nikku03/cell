@@ -184,26 +184,36 @@ def _maybe_form_bonds(
         return 0
     iu = iu[close]
     ju = ju[close]
+    r = np.sqrt(r2[close])
 
     # Lazy import to avoid a circular: integrator <- force_field <- atom_unit
-    # and molecule_builder also imports atom_unit. Safe here since it's only
-    # used when dynamic bonding is enabled.
+    # and molecule_builder also imports atom_unit.
     from .molecule_builder import _bond_length as _bond_length_for_pair
 
+    # Only form a bond if the instantaneous separation is within
+    # ``bond_form_ratio * r0_pair`` — this prevents bonds from being
+    # created at lengths that are already past the break threshold,
+    # which would otherwise cause a form/break ping-pong every step.
+    # Ratio is chosen just under the break_fraction so a freshly-formed
+    # bond has room to breathe.
+    form_ratio = min(1.2, max(1.0, cfg.bond_break_fraction - 0.3))
+
     # Loop only over the surviving candidates — usually a tiny subset.
-    for i, j in zip(iu.tolist(), ju.tolist()):
-        ai = atoms[i]
-        aj = atoms[j]
+    for idx, (i_raw, j_raw) in enumerate(zip(iu.tolist(), ju.tolist())):
+        ai = atoms[i_raw]
+        aj = atoms[j_raw]
         if ai.valence_remaining <= 0 or aj.valence_remaining <= 0:
             continue
         if frozenset((ai.atom_id, aj.atom_id)) in bonded_ids:
             continue
         if not pair_is_bondable(ai.element, aj.element):
             continue
-        # Pick an element-pair-specific equilibrium length so that newly
-        # formed bonds are at the RIGHT length, not stretched to near the
-        # break threshold.
         r0 = _bond_length_for_pair(ai.element, aj.element)
+        # Skip if the atoms are further apart than a comfortably-bonded
+        # pair would be — this is the main safeguard against form/break
+        # thrashing.
+        if float(r[idx]) > form_ratio * r0:
+            continue
         bond = ai.form_bond(
             aj,
             kind=cfg.bond_form_kind,
