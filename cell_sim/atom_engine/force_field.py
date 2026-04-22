@@ -196,9 +196,11 @@ def compute_forces(
         ax = cfg.axial_attractor_axis
         ramp = min(1.0, t_ps / max(cfg.axial_attractor_ramp_ps, 1e-6))
         strength = cfg.axial_attractor_strength_kj_per_nm * ramp
-        # Constant-magnitude pull toward the midplane (axis=0). Atoms with
-        # positive coordinate feel -strength; negative feel +strength. A
-        # smooth tanh avoids a step at the midplane.
+        # Force = -strength * sign(z) scaled by tanh(z / 0.5 nm). The tanh
+        # has two effects: (1) continuous zero-crossing at z=0, and
+        # (2) naturally weakens when |z| is already small (atoms near the
+        # midplane are barely pulled), so once the two vesicles have met
+        # the field stops compressing the contact zone.
         coord = pos[:, ax]
         forces[:, ax] -= strength * np.tanh(coord / 0.5)
 
