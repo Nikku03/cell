@@ -13,6 +13,13 @@ import pytest
 
 from cell_sim.atom_engine.atom_soup import SoupSpec, build_soup
 from cell_sim.atom_engine.atom_unit import AtomUnit, BondType
+from cell_sim.atom_engine.chemistry_demo import ChemistryConfig, run_chemistry
+from cell_sim.atom_engine.molecule_builder import (
+    LIBRARY,
+    build_mixture,
+    canonical_formula,
+    classify_molecules,
+)
 from cell_sim.atom_engine.element import Element, default_valence, pair_is_bondable
 from cell_sim.atom_engine.fission_demo import FissionConfig, run_fission
 from cell_sim.atom_engine.force_field import (
@@ -325,6 +332,50 @@ def test_rust_lj_matches_numpy_lj():
     finally:
         ff_mod._HAS_RUST_LJ = original
     assert np.allclose(f_np, f_rust, atol=1e-7)
+
+
+def test_molecule_library_templates_have_valid_bonds():
+    """Every template in LIBRARY must reference only in-range atom indices
+    and use only bondable element pairs."""
+    from cell_sim.atom_engine.element import pair_is_bondable
+    for name, tmpl in LIBRARY.items():
+        n = len(tmpl.atoms)
+        assert n >= 2, f"{name}: must have at least 2 atoms"
+        for i, j, _kind, _r0, _k in tmpl.bonds:
+            assert 0 <= i < n and 0 <= j < n, f"{name}: bond OOB"
+            assert pair_is_bondable(tmpl.atoms[i][0], tmpl.atoms[j][0]), \
+                f"{name}: non-bondable pair {tmpl.atoms[i][0]}-{tmpl.atoms[j][0]}"
+
+
+def test_build_mixture_preserves_composition():
+    atoms, bonds = build_mixture(
+        {"H2O": 5, "CH4": 3, "NH3": 2}, radius_nm=2.0, seed=1,
+    )
+    formulas = classify_molecules(atoms)
+    assert formulas.get("H2O", 0) == 5
+    assert formulas.get("CH4", 0) == 3
+    assert formulas.get("H3N", 0) == 2   # Hill system: N before H alphabetically? no:
+    # Actually Hill ordering puts C, H first, then rest alphabetically.
+    # For NH3 (no C, no H at start of sort — H is first by Hill if no C):
+    # NH3 → "H3N" via Hill.
+    # Double-check: we expect "H3N".
+    # Total atom count: 5*3 + 3*5 + 2*4 = 15 + 15 + 8 = 38
+    assert len(atoms) == 38
+
+
+def test_canonical_formula_uses_hill_order():
+    # Build a small methanol-like fragment manually: C, H, H, H, O, H
+    elements = [0, 1, 1, 1, 4, 1]  # indices into a list of atoms with these elems
+    from cell_sim.atom_engine.element import Element
+    atoms = [
+        AtomUnit.create(Element.C, (0, 0, 0)),
+        AtomUnit.create(Element.H, (0, 0, 0)),
+        AtomUnit.create(Element.H, (0, 0, 0)),
+        AtomUnit.create(Element.H, (0, 0, 0)),
+        AtomUnit.create(Element.O, (0, 0, 0)),
+        AtomUnit.create(Element.H, (0, 0, 0)),
+    ]
+    assert canonical_formula(list(range(6)), atoms) == "CH4O"
 
 
 def test_atom_soup_respects_composition_and_temperature():

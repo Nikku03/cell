@@ -102,9 +102,13 @@ _ALLOWED_COVALENT_PAIRS: set[tuple[Element, Element]] = {
     (Element.C, Element.C), (Element.C, Element.H), (Element.C, Element.N),
     (Element.C, Element.O), (Element.C, Element.S), (Element.C, Element.P),
     (Element.N, Element.H), (Element.N, Element.O), (Element.N, Element.N),
-    (Element.O, Element.H), (Element.O, Element.P), (Element.O, Element.S),
+    (Element.O, Element.H), (Element.O, Element.O),  # O-O for O2, peroxides
+    (Element.O, Element.P), (Element.O, Element.S),
     (Element.P, Element.O), (Element.P, Element.H),
     (Element.S, Element.H), (Element.S, Element.S),
+    # Homonuclear diatomics of H (H2) — chemistry allows H-H even though
+    # Syn3A biology doesn't care.
+    (Element.H, Element.H),
     # Coarse tail-tail "bonds" (not chemistry; express chain connectivity).
     (Element.COARSE_HEAD, Element.COARSE_TAIL),
     (Element.COARSE_TAIL, Element.COARSE_TAIL),
