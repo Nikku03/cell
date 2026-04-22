@@ -62,35 +62,31 @@ class SimState:
 
 
 def _gather_positions(atoms: Sequence[AtomUnit]) -> np.ndarray:
-    arr = np.empty((len(atoms), 3), dtype=np.float64)
-    for i, a in enumerate(atoms):
-        arr[i, 0] = a.position[0]
-        arr[i, 1] = a.position[1]
-        arr[i, 2] = a.position[2]
-    return arr
+    # np.array over a list of 3-lists is faster than per-atom indexed writes.
+    return np.array([a.position for a in atoms], dtype=np.float64)
 
 
 def _gather_velocities(atoms: Sequence[AtomUnit]) -> np.ndarray:
-    arr = np.empty((len(atoms), 3), dtype=np.float64)
-    for i, a in enumerate(atoms):
-        arr[i, 0] = a.velocity[0]
-        arr[i, 1] = a.velocity[1]
-        arr[i, 2] = a.velocity[2]
-    return arr
+    return np.array([a.velocity for a in atoms], dtype=np.float64)
 
 
 def _scatter_positions(atoms: Sequence[AtomUnit], pos: np.ndarray) -> None:
+    # tolist() turns numpy rows into cheap Python lists in one C call.
+    rows = pos.tolist()
     for i, a in enumerate(atoms):
-        a.position[0] = float(pos[i, 0])
-        a.position[1] = float(pos[i, 1])
-        a.position[2] = float(pos[i, 2])
+        p = rows[i]
+        a.position[0] = p[0]
+        a.position[1] = p[1]
+        a.position[2] = p[2]
 
 
 def _scatter_velocities(atoms: Sequence[AtomUnit], vel: np.ndarray) -> None:
+    rows = vel.tolist()
     for i, a in enumerate(atoms):
-        a.velocity[0] = float(vel[i, 0])
-        a.velocity[1] = float(vel[i, 1])
-        a.velocity[2] = float(vel[i, 2])
+        v = rows[i]
+        a.velocity[0] = v[0]
+        a.velocity[1] = v[1]
+        a.velocity[2] = v[2]
 
 
 def _gather_masses(atoms: Sequence[AtomUnit]) -> np.ndarray:

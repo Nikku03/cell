@@ -21,6 +21,149 @@ import numpy as np
 from .atom_unit import AtomUnit, Bond
 from .element import Element, props
 
+# ---------- Optional Numba acceleration -------------------------------
+try:
+    from numba import njit
+    _HAS_NUMBA = True
+except ImportError:
+    _HAS_NUMBA = False
+
+
+if _HAS_NUMBA:
+    @njit(cache=True)
+    def _build_neighbor_list_numba(pos, cutoff):
+        """Counting-sort spatial hash, JIT-compiled.
+
+        Two-pass: (1) count atoms per cell + count pairs per atom, then
+        (2) allocate exact output arrays + fill. Avoids dynamic lists
+        and set lookups that kill Numba throughput.
+        """
+        n = pos.shape[0]
+        cutoff2 = cutoff * cutoff
+
+        # Bounding box.
+        min_x = pos[0, 0]
+        min_y = pos[0, 1]
+        min_z = pos[0, 2]
+        max_x = min_x
+        max_y = min_y
+        max_z = min_z
+        for i in range(1, n):
+            x = pos[i, 0]
+            y = pos[i, 1]
+            z = pos[i, 2]
+            if x < min_x: min_x = x
+            if y < min_y: min_y = y
+            if z < min_z: min_z = z
+            if x > max_x: max_x = x
+            if y > max_y: max_y = y
+            if z > max_z: max_z = z
+        min_x -= cutoff
+        min_y -= cutoff
+        min_z -= cutoff
+
+        sx = int((max_x - min_x) / cutoff) + 2
+        sy = int((max_y - min_y) / cutoff) + 2
+        sz = int((max_z - min_z) / cutoff) + 2
+        n_cells = sx * sy * sz
+
+        # Cell index per atom + per-cell count.
+        cell_idx = np.empty(n, dtype=np.int64)
+        cell_count = np.zeros(n_cells, dtype=np.int64)
+        for i in range(n):
+            ix = int((pos[i, 0] - min_x) / cutoff)
+            iy = int((pos[i, 1] - min_y) / cutoff)
+            iz = int((pos[i, 2] - min_z) / cutoff)
+            c = (ix * sy + iy) * sz + iz
+            cell_idx[i] = c
+            cell_count[c] += 1
+
+        # Prefix sum for cell starts.
+        cell_start = np.zeros(n_cells + 1, dtype=np.int64)
+        for c in range(n_cells):
+            cell_start[c + 1] = cell_start[c] + cell_count[c]
+
+        # Counting-sort atoms into cells.
+        write_pos = cell_start[:n_cells].copy()
+        sorted_atom = np.empty(n, dtype=np.int64)
+        for i in range(n):
+            c = cell_idx[i]
+            sorted_atom[write_pos[c]] = i
+            write_pos[c] += 1
+
+        # Pass 1: count pairs.
+        n_pairs = 0
+        for i in range(n):
+            ci = cell_idx[i]
+            iz = ci % sz
+            rem = ci // sz
+            iy = rem % sy
+            ix = rem // sy
+            pxi = pos[i, 0]
+            pyi = pos[i, 1]
+            pzi = pos[i, 2]
+            for dx in range(-1, 2):
+                nx = ix + dx
+                if nx < 0 or nx >= sx:
+                    continue
+                for dy in range(-1, 2):
+                    ny = iy + dy
+                    if ny < 0 or ny >= sy:
+                        continue
+                    for dz in range(-1, 2):
+                        nz = iz + dz
+                        if nz < 0 or nz >= sz:
+                            continue
+                        c = (nx * sy + ny) * sz + nz
+                        for k in range(cell_start[c], cell_start[c + 1]):
+                            j = sorted_atom[k]
+                            if j <= i:
+                                continue
+                            dxp = pos[j, 0] - pxi
+                            dyp = pos[j, 1] - pyi
+                            dzp = pos[j, 2] - pzi
+                            if dxp * dxp + dyp * dyp + dzp * dzp < cutoff2:
+                                n_pairs += 1
+
+        # Pass 2: fill exact arrays.
+        pair_i = np.empty(n_pairs, dtype=np.int64)
+        pair_j = np.empty(n_pairs, dtype=np.int64)
+        idx = 0
+        for i in range(n):
+            ci = cell_idx[i]
+            iz = ci % sz
+            rem = ci // sz
+            iy = rem % sy
+            ix = rem // sy
+            pxi = pos[i, 0]
+            pyi = pos[i, 1]
+            pzi = pos[i, 2]
+            for dx in range(-1, 2):
+                nx = ix + dx
+                if nx < 0 or nx >= sx:
+                    continue
+                for dy in range(-1, 2):
+                    ny = iy + dy
+                    if ny < 0 or ny >= sy:
+                        continue
+                    for dz in range(-1, 2):
+                        nz = iz + dz
+                        if nz < 0 or nz >= sz:
+                            continue
+                        c = (nx * sy + ny) * sz + nz
+                        for k in range(cell_start[c], cell_start[c + 1]):
+                            j = sorted_atom[k]
+                            if j <= i:
+                                continue
+                            dxp = pos[j, 0] - pxi
+                            dyp = pos[j, 1] - pyi
+                            dzp = pos[j, 2] - pzi
+                            if dxp * dxp + dyp * dyp + dzp * dzp < cutoff2:
+                                pair_i[idx] = i
+                                pair_j[idx] = j
+                                idx += 1
+        return pair_i, pair_j
+
 # ---------- LJ special-pair modifiers ---------------------------------
 
 # Hydrophobic tails like each other more than LB says; tails avoid solvent.
@@ -105,8 +248,8 @@ def build_neighbor_list(pos: np.ndarray, cutoff: float) -> tuple[np.ndarray, np.
     (i < j) whose positions are within ``cutoff``. Expected O(N) for
     roughly-uniform density.
 
-    Does not include the bonded/distance check — caller filters further.
-    The returned pairs are guaranteed to have ||pos[j] - pos[i]|| < cutoff.
+    Uses a Numba-JIT counting-sort implementation when available; falls
+    back to a pure-Python dict-based spatial hash otherwise.
     """
     n = pos.shape[0]
     if n < 2:
@@ -115,6 +258,11 @@ def build_neighbor_list(pos: np.ndarray, cutoff: float) -> tuple[np.ndarray, np.
         iu, ju = np.triu_indices(n, k=1)
         return iu.astype(np.int64), ju.astype(np.int64)
 
+    if _HAS_NUMBA:
+        return _build_neighbor_list_numba(np.ascontiguousarray(pos, dtype=np.float64),
+                                          float(cutoff))
+
+    # --- pure-Python fallback ---
     cell = cutoff
     min_c = pos.min(axis=0) - cell
     cell_idx = np.floor((pos - min_c) / cell).astype(np.int64)
@@ -231,12 +379,14 @@ def compute_forces(
         r2 = np.einsum("ij,ij->i", dvec, dvec)             # (M,)
         keep = (r2 > 1e-8) & (r2 < cutoff2)
         if bonded_set:
-            # Exclude bonded pairs via set membership.
-            keys = [(int(a), int(b)) for a, b in zip(iu, ju)]
-            keep &= np.fromiter(
-                (k not in bonded_set for k in keys),
-                dtype=bool, count=len(keys),
+            # Encode bonded pairs as single ints (i * n + j). Vectorized
+            # exclusion via np.isin beats a Python set-lookup per pair.
+            bonded_codes = np.fromiter(
+                (i * n + j for (i, j) in bonded_set),
+                dtype=np.int64, count=len(bonded_set),
             )
+            pair_codes = iu.astype(np.int64) * n + ju.astype(np.int64)
+            keep &= ~np.isin(pair_codes, bonded_codes)
         iu = iu[keep]
         ju = ju[keep]
         dvec = dvec[keep]
