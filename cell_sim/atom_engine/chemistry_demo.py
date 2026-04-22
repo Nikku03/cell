@@ -37,12 +37,18 @@ class ChemistryConfig:
     use_neighbor_list: bool = True
     neighbor_skin_nm: float = 0.3
     neighbor_rebuild_every: int = 10
-    # Dynamic bonding
+    # Dynamic bonding — default to a SOFT toy-chemistry bond (k = 5e4
+    # kJ/mol/nm^2, bond energy ~90 kJ/mol) instead of a realistic
+    # stiff covalent bond (k = 3e5, ~400 kJ/mol). Soft bonds let the
+    # system explore break -> reform cycles at 3000 K within a few ps.
+    # Use ``bond_k_kj_per_nm2`` to override both the initial and
+    # dynamically-formed bond stiffness.
     bond_form_distance_nm: float = 0.17
-    bond_form_k_kj_per_nm2: float = 3.0e5
+    bond_form_k_kj_per_nm2: float = 5.0e4
     bond_form_r0_nm: float = 0.12
     bond_break_fraction: float = 1.5
     bond_form_kind: BondType = BondType.COVALENT_SINGLE
+    initial_bond_k_kj_per_nm2: Optional[float] = 5.0e4
     # Run
     equilibration_steps: int = 500
     steps: int = 20_000
@@ -78,6 +84,7 @@ def run_chemistry(
         cfg.composition,
         radius_nm=cfg.radius_nm,
         temperature_K=cfg.target_temperature_K,
+        bond_k_kj_per_nm2=cfg.initial_bond_k_kj_per_nm2,
     )
     state = SimState(atoms=atoms, bonds=bonds)
 

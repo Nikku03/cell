@@ -207,15 +207,14 @@ def build_mixture(
     temperature_K: float = 300.0,
     seed: Optional[int] = 42,
     min_center_separation_nm: float = 0.4,
+    bond_k_kj_per_nm2: Optional[float] = None,
 ) -> tuple[list[AtomUnit], list[Bond]]:
     """Place ``count`` copies of each named template in a sphere.
 
-    Each copy is randomly rotated. Molecule centers are chosen by
-    rejection sampling so that no two centers are closer than
-    ``min_center_separation_nm``. MB velocities at T, with a small
-    same-velocity kick applied to every atom of a given molecule so
-    the molecule initially translates as a unit (reduces launch-time
-    internal strain).
+    ``bond_k_kj_per_nm2`` overrides the default bond spring constant
+    (3e5 kJ/mol/nm^2) for every newly-built bond. Lower values make the
+    toy more reactive at fixed T, which is useful for demonstrating
+    chemistry that would otherwise require unrealistic temperatures.
     """
     rng = np.random.default_rng(seed)
     centers: list[np.ndarray] = []
@@ -286,7 +285,12 @@ def build_mixture(
             ai = atom_objs[i]
             aj = atom_objs[j]
             r0 = _bond_length(ai.element, aj.element, r0_override)
-            k = k_override if k_override is not None else _DEFAULT_BOND_K
+            if k_override is not None:
+                k = k_override
+            elif bond_k_kj_per_nm2 is not None:
+                k = bond_k_kj_per_nm2
+            else:
+                k = _DEFAULT_BOND_K
             bond = ai.form_bond(
                 aj, kind=kind, t_ps=0.0,
                 equilibrium_length_nm=r0,

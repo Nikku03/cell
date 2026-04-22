@@ -45,6 +45,10 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--equilibration-steps", type=int, default=500)
     p.add_argument("--steps", type=int, default=20_000)
     p.add_argument("--report-every", type=int, default=2000)
+    p.add_argument("--bond-k", type=float, default=5.0e4,
+                   help="Spring constant for initial and reformed bonds "
+                        "(kJ/mol/nm^2). Default 5e4 gives soft toy "
+                        "chemistry; 3e5 is realistic covalent stiffness.")
     p.add_argument("--out", type=str, default=None)
     return p.parse_args()
 
@@ -59,6 +63,8 @@ def main() -> int:
         equilibration_steps=args.equilibration_steps,
         steps=args.steps,
         report_every=args.report_every,
+        bond_form_k_kj_per_nm2=args.bond_k,
+        initial_bond_k_kj_per_nm2=args.bond_k,
     )
 
     def progress(msg: str) -> None:
