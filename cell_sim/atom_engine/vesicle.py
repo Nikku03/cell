@@ -164,6 +164,47 @@ def _zero_net_momentum(atoms: list[AtomUnit]) -> None:
 # ---------- diagnostics -----------------------------------------------
 
 
+def build_two_vesicles(
+    spec: VesicleSpec,
+    z_offset_nm: float = 4.0,
+) -> tuple[list[AtomUnit], list[Bond]]:
+    """Build two identical vesicles centered at z = +offset and z = -offset.
+
+    Returns a combined (atoms, bonds) where each vesicle's atoms carry
+    distinct ``parent_molecule`` tags ("vesicle_upper" / "vesicle_lower"),
+    which makes it trivial to tell which atom started on which side.
+    """
+    upper_spec = VesicleSpec(
+        n_per_leaflet=spec.n_per_leaflet,
+        radius_nm=spec.radius_nm,
+        bilayer_thickness_nm=spec.bilayer_thickness_nm,
+        temperature_K=spec.temperature_K,
+        bond_k_kj_per_nm2=spec.bond_k_kj_per_nm2,
+        bond_r0_nm=spec.bond_r0_nm,
+        parent_molecule="vesicle_upper",
+        seed=spec.seed,
+    )
+    lower_spec = VesicleSpec(
+        n_per_leaflet=spec.n_per_leaflet,
+        radius_nm=spec.radius_nm,
+        bilayer_thickness_nm=spec.bilayer_thickness_nm,
+        temperature_K=spec.temperature_K,
+        bond_k_kj_per_nm2=spec.bond_k_kj_per_nm2,
+        bond_r0_nm=spec.bond_r0_nm,
+        parent_molecule="vesicle_lower",
+        seed=(spec.seed + 1) if spec.seed is not None else None,
+    )
+    upper_atoms, upper_bonds = build_vesicle(upper_spec)
+    lower_atoms, lower_bonds = build_vesicle(lower_spec)
+    for a in upper_atoms:
+        a.position[2] += z_offset_nm
+    for a in lower_atoms:
+        a.position[2] -= z_offset_nm
+    atoms = upper_atoms + lower_atoms
+    bonds = upper_bonds + lower_bonds
+    return atoms, bonds
+
+
 def count_connected_components(atoms: list[AtomUnit],
                                bonds: list[Bond],
                                link_cutoff_nm: float = 0.7) -> int:
@@ -253,3 +294,16 @@ def is_bimodal_along_axis(atoms: list[AtomUnit], axis: int = 2,
     plus = float(np.mean(coords > neck_halfwidth_nm))
     minus = float(np.mean(coords < -neck_halfwidth_nm))
     return neck < 0.05 and plus > 0.3 and minus > 0.3
+
+
+def vesicle_com_separation(atoms: list[AtomUnit], axis: int = 2) -> float:
+    """Distance between centers of mass of atoms tagged ``vesicle_upper`` vs.
+    ``vesicle_lower`` along ``axis``. Zero once they fully interpenetrate.
+    """
+    upper = [a for a in atoms if a.parent_molecule == "vesicle_upper"]
+    lower = [a for a in atoms if a.parent_molecule == "vesicle_lower"]
+    if not upper or not lower:
+        return 0.0
+    u = sum(a.mass_da * a.position[axis] for a in upper) / sum(a.mass_da for a in upper)
+    l = sum(a.mass_da * a.position[axis] for a in lower) / sum(a.mass_da for a in lower)
+    return abs(u - l)

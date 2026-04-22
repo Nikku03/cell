@@ -35,11 +35,18 @@ _HEAD_TAIL_EPS_FACTOR = 0.3
 class ForceFieldConfig:
     lj_cutoff_nm: float = 1.2
     kT_kj_per_mol: float = 2.49                 # 300 K in kJ/mol
+    # --- fission driver: radial constriction along axis ---
     use_constriction: bool = False
     constriction_axis: int = 2                  # 0=x, 1=y, 2=z
     constriction_width_nm: float = 2.0          # Gaussian half-width along axis
     constriction_k_kj_per_nm2: float = 50.0     # radial spring strength
     constriction_ramp_ps: float = 100.0         # ramp k from 0 at t=0
+    # --- fusion driver: directional axial attractor toward the midplane ---
+    use_axial_attractor: bool = False
+    axial_attractor_axis: int = 2               # usually same axis
+    axial_attractor_strength_kj_per_nm: float = 0.1   # constant per-atom pull
+    axial_attractor_ramp_ps: float = 20.0       # ramp strength from 0 at t=0
+    # --- safety ---
     max_force_kj_per_nm: float = 2.0e4          # per-atom force cap
 
 
@@ -183,6 +190,17 @@ def compute_forces(
         fvec = (mag / r)[:, None] * dvec                   # force on j
         np.add.at(forces, ju, fvec)
         np.add.at(forces, iu, -fvec)
+
+    # --- optional axial attractor (fusion driver) ---
+    if cfg.use_axial_attractor:
+        ax = cfg.axial_attractor_axis
+        ramp = min(1.0, t_ps / max(cfg.axial_attractor_ramp_ps, 1e-6))
+        strength = cfg.axial_attractor_strength_kj_per_nm * ramp
+        # Constant-magnitude pull toward the midplane (axis=0). Atoms with
+        # positive coordinate feel -strength; negative feel +strength. A
+        # smooth tanh avoids a step at the midplane.
+        coord = pos[:, ax]
+        forces[:, ax] -= strength * np.tanh(coord / 0.5)
 
     # --- optional radial constriction (fission driver) ---
     if cfg.use_constriction:

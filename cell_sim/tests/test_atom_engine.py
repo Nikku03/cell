@@ -22,11 +22,14 @@ from cell_sim.atom_engine.integrator import (
     run,
     step,
 )
+from cell_sim.atom_engine.fusion_demo import FusionConfig, run_fusion
 from cell_sim.atom_engine.vesicle import (
     VesicleSpec,
+    build_two_vesicles,
     build_vesicle,
     count_connected_components,
     equatorial_split_metric,
+    vesicle_com_separation,
 )
 
 
@@ -198,6 +201,21 @@ def test_equatorial_metric_is_near_one_for_uniform_vesicle():
 # ---------- Fission (slow-ish integration test) -----------------------
 
 
+def test_two_vesicles_are_initially_two_components():
+    spec = VesicleSpec(n_per_leaflet=80, radius_nm=2.0,
+                       bilayer_thickness_nm=0.9, seed=7)
+    atoms, bonds = build_two_vesicles(spec, z_offset_nm=3.5)
+    assert len(atoms) == 2 * 4 * spec.n_per_leaflet
+    # Each vesicle tagged by parent_molecule
+    tags = {a.parent_molecule for a in atoms}
+    assert tags == {"vesicle_upper", "vesicle_lower"}
+    # Pre-fusion COM separation should be ~2 * z_offset = 7 nm
+    sep = vesicle_com_separation(atoms, axis=2)
+    assert 6.0 < sep < 8.0
+    # Two connected components before any MD.
+    assert count_connected_components(atoms, bonds) == 2
+
+
 @pytest.mark.slow
 def test_fission_runs_without_blowing_up():
     """Short fission run — we don't require a full pinch-off here (that's
@@ -221,3 +239,30 @@ def test_fission_runs_without_blowing_up():
     assert len(result.neck_fraction) > 0
     # The atom count is preserved
     assert result.n_atoms == 4 * cfg.vesicle.n_per_leaflet
+
+
+@pytest.mark.slow
+def test_fusion_field_only_runs_without_blowing_up():
+    """Short fusion run. We require that the two vesicles either reach
+    contact OR stay numerically stable; we do not demand full merge in
+    this quick test (that's the runnable demo)."""
+    spec = VesicleSpec(n_per_leaflet=50, radius_nm=1.8,
+                       bilayer_thickness_nm=0.8, seed=11)
+    cfg = FusionConfig(
+        vesicle=spec,
+        z_offset_nm=2.6,
+        equilibration_steps=200,
+        production_steps=1500,
+        report_every=500,
+        attractor_strength_kj_per_nm=5.0,
+        attractor_ramp_ps=2.0,
+    )
+    state, result = run_fusion(cfg)
+    T = current_temperature_K(state.atoms)
+    assert math.isfinite(T)
+    assert 0.0 < T < 2000.0
+    assert result.n_atoms == 2 * 4 * spec.n_per_leaflet
+    assert result.initial_components == 2
+    # COM separation should decrease monotonically on average
+    if len(result.com_separation_nm) >= 2:
+        assert result.com_separation_nm[-1] <= result.com_separation_nm[0] + 0.2
