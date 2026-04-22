@@ -1,0 +1,210 @@
+{
+  "config": {
+    "temperatures": [
+      300.0,
+      1500.0,
+      3000.0
+    ],
+    "radius": 1.2,
+    "steps": 15000,
+    "dt": 0.001,
+    "report_every": 3000,
+    "seed": 42,
+    "out": "/tmp/reactions.json"
+  },
+  "runs": [
+    {
+      "T_target_K": 300.0,
+      "n_atoms": 60,
+      "total_bonds_formed": 1,
+      "total_bonds_broken": 1,
+      "net_live_bonds": 0,
+      "final_temperature_K": 300.44556827709516,
+      "valence_violations": 0,
+      "duplicate_bonds": 0,
+      "illegal_pairs": 0,
+      "elapsed_s": 34.96906661987305,
+      "steps_per_s": 428.9505397171638,
+      "trajectory": {
+        "t_ps": [
+          2.9999999999997806,
+          6.000000000000338,
+          9.000000000000451,
+          11.999999999998789,
+          14.999999999997126
+        ],
+        "temperature_K": [
+          309.18259783917756,
+          292.0616733869264,
+          309.87913014641197,
+          283.24743640707953,
+          300.44556827709516
+        ],
+        "live_bonds": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumulative_formed": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "cumulative_broken": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "molecule_count": [
+          60,
+          60,
+          60,
+          60,
+          60
+        ],
+        "largest_molecule_size": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "T_target_K": 1500.0,
+      "n_atoms": 60,
+      "total_bonds_formed": 5,
+      "total_bonds_broken": 2,
+      "net_live_bonds": 3,
+      "final_temperature_K": 1504.7703255629333,
+      "valence_violations": 0,
+      "duplicate_bonds": 0,
+      "illegal_pairs": 0,
+      "elapsed_s": 34.6084041595459,
+      "steps_per_s": 433.4207359244159,
+      "trajectory": {
+        "t_ps": [
+          2.9999999999997806,
+          6.000000000000338,
+          9.000000000000451,
+          11.999999999998789,
+          14.999999999997126
+        ],
+        "temperature_K": [
+          1490.1236288211405,
+          1527.0779068759236,
+          1460.2732626062686,
+          1330.544022860559,
+          1504.7703255629333
+        ],
+        "live_bonds": [
+          0,
+          1,
+          1,
+          1,
+          3
+        ],
+        "cumulative_formed": [
+          1,
+          2,
+          3,
+          3,
+          5
+        ],
+        "cumulative_broken": [
+          1,
+          1,
+          2,
+          2,
+          2
+        ],
+        "molecule_count": [
+          60,
+          59,
+          59,
+          59,
+          57
+        ],
+        "largest_molecule_size": [
+          1,
+          2,
+          2,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "T_target_K": 3000.0,
+      "n_atoms": 60,
+      "total_bonds_formed": 45,
+      "total_bonds_broken": 42,
+      "net_live_bonds": 3,
+      "final_temperature_K": 2908.5165926539125,
+      "valence_violations": 0,
+      "duplicate_bonds": 0,
+      "illegal_pairs": 0,
+      "elapsed_s": 32.40763449668884,
+      "steps_per_s": 462.8538994887943,
+      "trajectory": {
+        "t_ps": [
+          2.9999999999997806,
+          6.000000000000338,
+          9.000000000000451,
+          11.999999999998789,
+          14.999999999997126
+        ],
+        "temperature_K": [
+          2880.4635192209284,
+          2903.693227586998,
+          2892.675142290881,
+          2966.7405908138326,
+          2908.5165926539125
+        ],
+        "live_bonds": [
+          5,
+          7,
+          9,
+          7,
+          3
+        ],
+        "cumulative_formed": [
+          10,
+          20,
+          30,
+          37,
+          45
+        ],
+        "cumulative_broken": [
+          5,
+          13,
+          21,
+          30,
+          42
+        ],
+        "molecule_count": [
+          55,
+          53,
+          51,
+          53,
+          57
+        ],
+        "largest_molecule_size": [
+          3,
+          3,
+          3,
+          3,
+          2
+        ]
+      }
+    }
+  ],
+  "audit_passed": true
+}
