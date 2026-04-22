@@ -16,16 +16,16 @@ Build a biologically accurate, computationally cheap Syn3A whole-cell simulator 
 | 3 | Protein folding + complex assembly | partial | complex_formation.xlsx loaded by existing rules; 24 complexes defined with stoichiometry. |
 | 4 | Metabolism | partial | Syn3A_updated.xml + kinetic_params.xlsx loaded by existing rules; 6 transporter k_cats patched without citation yet. |
 | 5 | Biomass + division | not started | no biomass accumulation / division logic anywhere. |
-| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 9 MCC measurements (v0-v8) + 5-seed replicates summary. **Best mean MCC = 0.112 ± 0.029 (PerRule / Ensemble pool_confirm)**. All pool-based ShortWindow variants: 0.064 ± 0.088 across seeds (previous single-seed 0.160 was cherry-picked luck). v8 at scale=0.5 + t_end=1.0: 0.060 (TP=5, FP=4). Detector-side + bio-time-side + higher-scale optimisation now all measured — the ceiling is simulator-biology. |
+| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 10 MCC measurements (v0-v9) + replicates summary. **Best mean MCC = 0.125 ± 0.000 (v9 RedundancyAwareDetector, seed-invariant)**. Detector-design space exhausted. Remaining gap localised to iMB155 pathway-completeness (3 persistent FPs: cholesterol/acetaldehyde/lipoylation have no alternate producers in the simulator's metabolic reconstruction). |
 
 Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Implementation, D = Validation, E = Layer report.
 
 ## Memory Bank
 
-- Facts: **24**
+- Facts: **25**
   - structural (9): doubling time, chromosome length, gene count, gene table, oriC, Breuer 2019 labels, RNAP count per cell, ribosome count at birth, chromosome bead model.
   - parameters (2): active RNAP fraction, mRNA half-life mean.
-  - measured (10): `mcc_against_breuer_v0..v8` + `mcc_replicates_summary`.
+  - measured (11): `mcc_against_breuer_v0..v9` + `mcc_replicates_summary`.
   - resolved uncertainty (3): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`, `syn3a_gene_count_thornburg2026_discrepancy`.
 - Sources: **11** (Thornburg 2022 + 2026 Cell, Hutchison 2016, Breuer 2019, GenBank CP016816, Luthey-Schulten ComplexFormation + 4DWCM repos, Fu 2026 JPC-B, Gilbert 2023 Frontiers, Bianchi 2022 JPC-B, Pezeshkian 2024 Nat Commun).
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
@@ -48,6 +48,17 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
+
+### Session 11 — 2026-04-21 — Rule-alternates detector + metabolite sink + v9
+- **Deliverable 1 — `RedundancyAwareDetector`**: new detector that trips only when a silenced gene's products actually lose production capacity (summing events × stoichiometry across ALL catalysing rules, not just the gene's own). Addresses the v5/v6 FP mechanism structurally. Code: `cell_sim/layer6_essentiality/redundancy_aware_detector.py` (150 lines) + helpers `build_metabolite_producers` / `build_rule_products` in `gene_rule_map.py`. 9 new unit tests (total 58 passing).
+- **Deliverable 2 — Metabolite sink**: first-order drain rules that fire above `tolerance × initial_count`. Addresses the v7 transporter-KO pool-blowup mechanism. Code: `cell_sim/layer6_essentiality/metabolite_sink.py` + `RealSimulatorConfig.enable_metabolite_sinks` flag. Off by default.
+- **v9 measurement** — 5-seed replicates on the same balanced n=40 panel at scale=0.05 + t_end=0.5 s:
+  - **MCC = 0.125 ± 0.000** — **identical across all 5 seeds**. Structural (production-collapse) signal is deterministic at n=40.
+  - Same 5 TPs as v5 (pgi, tpiA, plsX-area, 0813, 0729) but with quantitative production-collapse evidence (e.g. pgi's F6P goes from 7894 → 8 events).
+  - Same 3 FPs as v5/v6: **0034** (cholesterol, no alternate source in iMB155), **deoC / 0732** (acetaldehyde, unique DRPA source in iMB155), **lpdA / 0228** (PdhC lipoylation, lipA/lipB alternates missing from iMB155).
+  - Same 15 FNs — all non-catalytic (ribosomal, tRNA, translation factors). Architecturally uncatchable without explicit complex-assembly dynamics.
+- **Scientific finding**: the detector-design space is confirmed exhausted. The remaining gap to MCC > 0.59 localises to **iMB155 reconstruction incompleteness** (missing alternate pathways for cholesterol / acetaldehyde / lipoylation). Closing it requires simulator-biology work (add missing reactions to iMB155 or substitute an updated SBML), not detector changes.
+- Best-ever balanced-panel MCC updated from 0.112 ± 0.029 (v5/v6a) to **0.125 ± 0.000** (v9). Predicted 0.22 ± 0.04 in the Session 10 planning doc was too optimistic; the detector worked but the simulator limits what can be caught.
 
 ### Session 10 — 2026-04-21 — Colab multi-seed replicates + v8 higher-scale + Thornburg 2026 integration
 - Wrote `scripts/run_colab_bc.py` and `notebooks/colab_bc_sweep.ipynb` to offload Block B (5-seed replicates × 5 detector configs on balanced n=40) and Block C (scale=0.5, t_end=1.0, n=40) to a Colab L4 VM. Gene panel held fixed via new `--panel-seed` flag; only simulator RNG varies across replicates.

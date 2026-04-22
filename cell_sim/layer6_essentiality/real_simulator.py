@@ -95,6 +95,14 @@ class RealSimulatorConfig:
     # Gives roughly 2x speedup at scale=0.05 on a single core; more at
     # higher scales where the propensity inner loop dominates.
     use_rust_backend: bool = False
+    # Session 11: optional first-order sink rules that drain metabolites
+    # accumulating above `sink_tolerance * initial_count`. Addresses the
+    # v7 transporter-KO pool-blowup failure mode without affecting WT
+    # dynamics. Defaults to False so existing measurements are not
+    # silently altered.
+    enable_metabolite_sinks: bool = False
+    sink_k_per_s: float = 100.0
+    sink_tolerance: float = 3.0
 
 
 class RealSimulator(Simulator):
@@ -207,6 +215,17 @@ class RealSimulator(Simulator):
                 self.cfg.complex_assembly_rate_per_uM_per_s,
             )
         )
+        if self.cfg.enable_metabolite_sinks:
+            from cell_sim.layer6_essentiality.metabolite_sink import (
+                SinkConfig, make_metabolite_sink_rules,
+            )
+            rules += make_metabolite_sink_rules(
+                state,
+                SinkConfig(
+                    k_sink_per_s=self.cfg.sink_k_per_s,
+                    tolerance=self.cfg.sink_tolerance,
+                ),
+            )
         return state, rules
 
     # ----- Simulator protocol -----

@@ -66,13 +66,39 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str,
         scale_factor=cfg_dict["scale"],
         seed=cfg_dict["seed"],
         use_rust_backend=cfg_dict.get("use_rust_backend", False),
+        enable_metabolite_sinks=cfg_dict.get("enable_sinks", False),
+        sink_k_per_s=cfg_dict.get("sink_k_per_s", 100.0),
+        sink_tolerance=cfg_dict.get("sink_tolerance", 3.0),
     )
     _worker_sim = RealSimulator(rs_cfg)
     with open(wt_pickle_path, "rb") as fh:
         wt = pickle.load(fh)
 
     detector_kind = cfg_dict.get("detector", "short-window")
-    if detector_kind == "per-rule":
+    if detector_kind == "redundancy-aware":
+        from cell_sim.layer6_essentiality.redundancy_aware_detector import (
+            RedundancyAwareDetector,
+        )
+        from cell_sim.layer6_essentiality.gene_rule_map import (
+            build_metabolite_producers, build_rule_products,
+        )
+        assert gene_to_rules is not None, \
+            "redundancy-aware detector requires gene_to_rules map"
+        # Worker rebuilds producers/products map from its own RealSimulator.
+        _worker_sim._ensure_setup()
+        all_rules = list(_worker_sim._rev_rules or []) + \
+                    list(_worker_sim._extra_rules or [])
+        metabolite_producers = build_metabolite_producers(all_rules)
+        rule_products = build_rule_products(all_rules)
+        _worker_detector = RedundancyAwareDetector(
+            wt=wt,
+            gene_to_rules=gene_to_rules,
+            metabolite_producers=metabolite_producers,
+            rule_products=rule_products,
+            min_wt_production=cfg_dict.get("redundancy_min_wt_production", 20),
+            drop_threshold=cfg_dict.get("redundancy_drop_threshold", 0.30),
+        )
+    elif detector_kind == "per-rule":
         from cell_sim.layer6_essentiality.per_rule_detector import (
             PerRuleDetector,
         )
@@ -134,7 +160,7 @@ def _worker_predict(item: tuple[str, str]) -> dict:
         sample_dt_s=_worker_cfg["dt_s"],
     )
     detector_kind = _worker_cfg.get("detector")
-    if detector_kind in ("per-rule", "ensemble"):
+    if detector_kind in ("per-rule", "ensemble", "redundancy-aware"):
         mode, t_fail, conf, evidence = _worker_detector.detect_for_gene(lt, ko)
     else:
         mode, t_fail, conf, evidence = _worker_detector.detect(ko)
@@ -252,11 +278,15 @@ def main() -> int:
                    help="Use the Rust-backed FastEventSimulator "
                         "(cell_sim_rust). ~2x speedup at scale=0.05.")
     p.add_argument("--detector",
-                   choices=["short-window", "per-rule", "ensemble"],
+                   choices=["short-window", "per-rule", "ensemble",
+                            "redundancy-aware"],
                    default="short-window",
                    help="short-window: pool-deviation (v0-v4). "
                         "per-rule: per-rule event counts (v5). "
-                        "ensemble: compose both detectors.")
+                        "ensemble: compose both detectors. "
+                        "redundancy-aware (v9+): like per-rule but "
+                        "abstains when silenced products are still "
+                        "produced by alternate catalysis rules.")
     p.add_argument("--min-wt-events", type=int, default=20,
                    help="PerRuleDetector: minimum WT event count per "
                         "rule before it counts as 'should be firing'.")
@@ -270,6 +300,19 @@ def main() -> int:
                    help="Restrict per-rule/ensemble detector to rules "
                         "with no alternate catalyser (addresses the v5 "
                         "false-positive mechanism).")
+    p.add_argument("--redundancy-drop-threshold", type=float, default=0.30,
+                   help="redundancy-aware only: KO trips only if a "
+                        "product's total production drops below this "
+                        "fraction of WT.")
+    p.add_argument("--redundancy-min-wt-production", type=int, default=20,
+                   help="redundancy-aware only: minimum WT total "
+                        "production events for a product to count.")
+    p.add_argument("--enable-sinks", action="store_true",
+                   help="Add first-order metabolite sinks that drain "
+                        "pools above tolerance*initial. Addresses v7 "
+                        "transporter-KO blowups.")
+    p.add_argument("--sink-k-per-s", type=float, default=100.0)
+    p.add_argument("--sink-tolerance", type=float, default=3.0)
     p.add_argument("--out-dir", default="outputs")
     args = p.parse_args()
 
@@ -305,6 +348,11 @@ def main() -> int:
         "ensemble_policy": args.ensemble_policy,
         "min_confidence": args.min_confidence,
         "min_pool_dev": args.min_pool_dev,
+        "redundancy_drop_threshold": args.redundancy_drop_threshold,
+        "redundancy_min_wt_production": args.redundancy_min_wt_production,
+        "enable_sinks": args.enable_sinks,
+        "sink_k_per_s": args.sink_k_per_s,
+        "sink_tolerance": args.sink_tolerance,
     }
 
     t_setup = time.time()
@@ -316,7 +364,9 @@ def main() -> int:
     per_pool_thresholds = None
     gene_to_rules = None
     gene_to_rules_summary = None
-    needs_gene_map = args.detector in ("per-rule", "ensemble")
+    needs_gene_map = args.detector in (
+        "per-rule", "ensemble", "redundancy-aware",
+    )
     if needs_gene_map:
         from cell_sim.layer6_essentiality.real_simulator import (
             RealSimulator, RealSimulatorConfig,

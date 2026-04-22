@@ -1,0 +1,84 @@
+{
+  "id": "mcc_against_breuer_v9",
+  "claim": "Tenth MCC measurement (Session 11, RedundancyAwareDetector). 5-seed replicates on balanced n=40 at scale=0.05 + t_end=0.5 s with Rust + 4-worker parallel. Gene panel fixed at seed=42, simulator seeds {42, 1, 2, 3, 4}. Result: MCC = 0.125 +- 0.000 (IDENTICAL across all 5 seeds). Mean marginally above v5 PerRule (0.112 +- 0.029), variance dramatically lower. Honest diagnosis: the redundancy-aware detector works as designed (abstains when simulator alternate producers maintain product throughput) but iMB155 is missing biological redundancy that Breuer's Nonessential labels encode (cholesterol transport, acetaldehyde sinks, PDH lipoylation), so the 3 v5/v6 FPs persist (0034, deoC/0732, lpdA/0228). Detector-design space is confirmed exhausted at the current simulator fidelity; the remaining gap is simulator-biology.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.125,
+    "units": "dimensionless",
+    "n_genes": 40,
+    "n_replicates": 5,
+    "mcc": {
+      "mean": 0.125,
+      "std": 0.000,
+      "min": 0.125,
+      "max": 0.125,
+      "values": [0.125, 0.125, 0.125, 0.125, 0.125]
+    },
+    "confusion": {"tp": 5, "fp": 3, "tn": 17, "fn": 15},
+    "config": {
+      "simulator": "RealSimulator (+rust)",
+      "sweep_script": "scripts/run_sweep_parallel.py --detector redundancy-aware",
+      "detector": "RedundancyAwareDetector",
+      "min_wt_production": 20,
+      "drop_threshold": 0.30,
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "simulator_seeds": [42, 1, 2, 3, 4],
+      "panel_seed": 42,
+      "workers": 4,
+      "use_rust_backend": true,
+      "enable_sinks": false
+    },
+    "true_positives": [
+      {"locus_tag": "JCVISYN3A_0445", "evidence": "M_f6p_c production 7894 -> 8 (ratio 0.001)"},
+      {"locus_tag": "JCVISYN3A_0727", "evidence": "M_g3p_c production 5274 -> 1446 (ratio 0.274)"},
+      {"locus_tag": "JCVISYN3A_0419", "evidence": "M_ACP_R_c production 35 -> 0 (ratio 0.000)"},
+      {"locus_tag": "JCVISYN3A_0813", "evidence": "M_udpgal_c production 248 -> 2 (ratio 0.008)"},
+      {"locus_tag": "JCVISYN3A_0729", "evidence": "M_2pg_c production 2606 -> 2 (ratio 0.001)"}
+    ],
+    "false_positives": [
+      {"locus_tag": "JCVISYN3A_0034",
+       "evidence": "M_chsterol_c production 1261 -> 0",
+       "breuer_call": "Nonessential",
+       "why_simulator_flags_essential": "iMB155 has no alternate cholesterol source; real cells either don't require cholesterol at all (Syn3A doesn't make it) OR scavenge it from medium. The simulator treats it as gene-0034 exclusive."},
+      {"locus_tag": "JCVISYN3A_0732",
+       "gene_name": "deoC",
+       "evidence": "M_acald_c production 942 -> 0",
+       "breuer_call": "Nonessential",
+       "why_simulator_flags_essential": "DRPA is the only acetaldehyde source in iMB155; in real cells acetaldehyde is a minor metabolite with multiple sources / sinks not captured in the FBA model."},
+      {"locus_tag": "JCVISYN3A_0228",
+       "gene_name": "lpdA",
+       "evidence": "M_lpl_PdhC_c production 112 -> 3",
+       "breuer_call": "Nonessential",
+       "why_simulator_flags_essential": "PDH_E3 (lpdA) is the only lipoylation rule for PdhC in iMB155; in real cells lipoylation is redundantly covered by LipA/LipB/LplA."}
+    ],
+    "sweep_wall_s": 76.6,
+    "per_gene_wall_effective_s": 1.9
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible via 'python scripts/run_sweep_parallel.py --max-genes 40 --balanced --workers 4 --use-rust --scale 0.05 --t-end-s 0.5 --detector redundancy-aware --seed <S> --panel-seed 42' for S in {42, 1, 2, 3, 4}. Metrics JSONs per seed in outputs/metrics_parallel_s0.05_t0.5_seed<S>_thr0.1_w4_redundancy-aware.json.",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v9_session_11_redundancy_aware",
+    "commit_range": "9e68ed9..(this commit)"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "MCC exactly 0.125 across all 5 seeds - the redundancy-aware detector operates on aggregate event counts and is effectively seed-invariant at n=40. This is a GOOD property (low variance) but means single-seed measurements are now reliable indicators rather than lucky draws.",
+    "v9 does NOT beat v5 PerRule in mean MCC (both 0.12 rounded). The predicted 0.22 +- 0.04 from the Session 10 planning document was too optimistic; the 3 FPs remain because the simulator genuinely treats those genes' products as non-redundant.",
+    "Diagnostic value: v9 localises the FP mechanism to iMB155 reconstruction incompleteness (missing alternate pathways for cholesterol/acetaldehyde/lipoylation), not to detector design. This rules out detector-side fixes as a path to 0.59 and elevates 'fix iMB155' to the top of the Session-12+ queue.",
+    "Metabolite sinks were NOT enabled for v9 (t_end=0.5 s is below the regime where they matter). Sinks remain available via --enable-sinks for future longer-window runs.",
+    "15 FNs remain unchanged from v5 - all non-catalytic essentials (ribosomal, tRNA synthetase, translation factors). Architecturally uncatchable without explicit complex-assembly dynamics (planned for Session 12+).",
+    "Best honest single-number summary after Session 11: MCC = 0.12 on n=40 balanced, essentially seed-invariant for structural detectors, and bounded above by iMB155 pathway completeness."
+  ],
+  "dependencies": [
+    "mcc_against_breuer_v5", "mcc_against_breuer_v6",
+    "mcc_replicates_summary", "syn3a_essentiality_breuer2019"
+  ],
+  "last_verified": "2026-04-21",
+  "used_by": [
+    "cell_sim/layer6_essentiality/redundancy_aware_detector.py",
+    "scripts/run_sweep_parallel.py"
+  ]
+}

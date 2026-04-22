@@ -1,6 +1,6 @@
 {
   "id": "mcc_replicates_summary",
-  "claim": "Multi-seed (5 replicate) MCC measurement for all Session 4-8 detector configs on a fixed balanced n=40 panel. Gene panel seed fixed at 42; simulator seeds {42, 1, 2, 3, 4}. Each config's MCC is reported as mean +/- std across the 5 replicates so the Session-to-Session comparisons in the REPORT history table can be read with error bars. Run on a Colab VM via notebooks/colab_bc_sweep.ipynb.",
+  "claim": "Multi-seed (5 replicate) MCC measurement for all Session 4-8 detector configs on a fixed balanced n=40 panel. Gene panel seed fixed at 42; simulator seeds {42, 1, 2, 3, 4}. Each config's MCC is reported as mean +/- std across the 5 replicates so the Session-to-Session comparisons in the REPORT history table can be read with error bars. Run on a Colab VM via notebooks/colab_bc_sweep.ipynb. Updated in Session 11 with v9_redundancy_aware (5 replicates, MCC=0.125 +- 0.000).",
   "value": {
     "parameter": "mcc_replicates_summary",
     "n_panel": 40,
@@ -203,10 +203,41 @@
           "outputs/metrics_parallel_s0.05_t0.5_seed4_thr0.1_w12_cal10sf2.5_ensemble-and_uniqueonly.json"
         ],
         "mean_wall_s": 60.96435623168945
+      },
+      "v9_redundancy_aware": {
+        "name": "v9_redundancy_aware",
+        "n_replicates": 5,
+        "seeds": [
+          42,
+          1,
+          2,
+          3,
+          4
+        ],
+        "mcc": {
+          "mean": 0.125,
+          "std": 0.0,
+          "min": 0.125,
+          "max": 0.125,
+          "values": [
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125
+          ]
+        },
+        "confusion_mean": {
+          "tp": 5,
+          "fp": 3,
+          "tn": 17,
+          "fn": 15
+        },
+        "note": "Seed-invariant: structural production-collapse signal is deterministic at n=40. Lowest-variance detector measured to date."
       }
     },
-    "best_config": "v5_per_rule",
-    "best_mean_mcc": 0.11197368680178499
+    "best_config": "v9_redundancy_aware",
+    "best_mean_mcc": 0.125
   },
   "source": "breuer_2019_elife",
   "source_detail": "Reproducible via 'python scripts/run_colab_bc.py --configs b --seeds 42 1 2 3 4 --workers 12' on any machine with cell_sim_rust installed + Luthey-Schulten data staged.",

@@ -96,3 +96,38 @@ def unique_rules_per_gene(
         if unique:
             out[locus] = unique
     return out
+
+
+def build_metabolite_producers(rules: Iterable) -> dict[str, list[tuple[str, float]]]:
+    """Return ``{metabolite_id: [(rule_name, stoichiometry), ...]}``
+    listing every catalysis rule that adds mass to each metabolite.
+
+    Used by the redundancy-aware detector: if gene G's rules go silent
+    but the metabolite M they produced still gets made by alternate
+    rules (other genes' catalysis), the simulator's overall production
+    of M is unchanged and G should NOT be called essential for M.
+
+    Only Michaelis-Menten catalysis rules are considered (the only ones
+    whose ``compiled_spec`` carries ``products``)."""
+    out: dict[str, list[tuple[str, float]]] = {}
+    for rule in rules:
+        spec = getattr(rule, "compiled_spec", None)
+        if not spec or spec.get("kind") != "mm":
+            continue
+        for product, stoich in spec.get("products") or ():
+            out.setdefault(product, []).append((rule.name, float(stoich)))
+    return out
+
+
+def build_rule_products(rules: Iterable) -> dict[str, list[tuple[str, float]]]:
+    """Return ``{rule_name: [(metabolite_id, stoichiometry), ...]}``
+    - the inverse view of ``build_metabolite_producers``."""
+    out: dict[str, list[tuple[str, float]]] = {}
+    for rule in rules:
+        spec = getattr(rule, "compiled_spec", None)
+        if not spec or spec.get("kind") != "mm":
+            continue
+        out[rule.name] = [
+            (p, float(s)) for p, s in (spec.get("products") or ())
+        ]
+    return out

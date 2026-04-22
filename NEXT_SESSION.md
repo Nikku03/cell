@@ -6,73 +6,83 @@ _Read this file FIRST, immediately after running the invariant checker._
 
 1. `python memory_bank/.invariants/check.py` — must print `OK`.
 2. Read `PROJECT_STATUS.md`.
-3. Read `memory_bank/concepts/essentiality/REPORT.md` for the full MCC history (v0–v7).
-4. Read `memory_bank/facts/measured/mcc_against_breuer_v7.json` for the latest honest result + the Path-A falsification.
+3. Read `memory_bank/concepts/essentiality/REPORT.md` for full MCC history (v0–v9).
+4. Read `memory_bank/facts/measured/mcc_against_breuer_v9.json` for the latest honest result + diagnosis.
 5. Read this file.
 
-## Where Layer 6 stands (end of Session 9)
+## Where Layer 6 stands (end of Session 11)
 
-**MCC history (final, after the detector + bio-time exploration):**
+**Detector-design space: EXHAUSTED.**
 
-| Version | Detector | t_end | MCC | Note |
-|---|---|---|---|---|
-| v0 | ShortWindow | 0.5 | **0.333** (best balanced-panel MCC ever) | n=4; pgi. |
-| v1–v4 | ShortWindow variants | 0.5 | 0.160 – 0.229 | pgi only; ceiling. |
-| v5 | PerRule | 0.5 | 0.125 | 5 TP + 3 FP on catalytic nonessentials. |
-| v6a/b | Ensemble | 0.5 | 0.125 / 0.160 | Composition can't separate FP/TP. |
-| v7-ref | Ensemble pool_confirm | **5.0** | 0.577 | n=4 only; sample-size optimism. |
-| v7 | Ensemble pool_confirm | **5.0** | **0.000** | n=20 balanced. Path A falsified. |
+| Version | Detector | MCC (n=40, 5 seeds) | Notes |
+|---|---|---|---|
+| v1 / v4 / v6b | ShortWindow variants | 0.064 ± 0.088 | High-variance pool noise. |
+| v5 / v6a | PerRule / Ensemble pool_confirm | 0.112 ± 0.029 | Structural; medium variance. |
+| **v9** | **RedundancyAwareDetector** | **0.125 ± 0.000** | **Deterministic; current best.** |
 
-**Status of the brief target (MCC > 0.59):** unreached. The detector-side and bio-time-side levers are both now measured and exhausted. Further MCC improvement requires **simulator-biology upgrades**, not detector composition.
+All detector variants plateau at the same 3 FPs (0034, deoC, lpdA) and 15 FNs (ribosomal / tRNA / translation). Session 11's v9 confirmed that the remaining MCC gap is **not a detection problem** — it is a **simulator biology incompleteness problem**.
 
-**Why v7 falsified Path A:** at t_end=5.0 s the simulator's pool deviations grow for BOTH TPs and FPs. Transport-KO 0034's `max_pool_dev` rose from ~1.0 at 0.5 s to **13.3** at 5.0 s because the upstream metabolite accumulates unboundedly in the simulator — a real cell would either consume it via alternate enzymes or cap it via diffusion equilibrium, neither of which the simulator models.
+## Session-12 queue (in execution order)
 
-## Session-10 queue
+### 1. Fix iMB155 pathway incompleteness (the real bottleneck)
 
-Detector + bio-time work is **done**. The remaining options are deeper:
+**Three specific FPs diagnosed in v9:**
 
-### 1. Layers 1/2 — citation + parameter audit (PREREQUISITE for any MCC lift)
+| Gene | Breuer call | Simulator issue | Fix |
+|---|---|---|---|
+| **JCVISYN3A_0034** | Nonessential | iMB155 makes `M_chsterol_c` only via 0034's transport reactions. | Either: (a) add `chsterol_scavenge` or `chsterol_medium_passive_import` pseudo-reaction, (b) mark cholesterol as `metabolite_infinite` in state (sourced from medium), OR (c) remove cholesterol from the biomass equation entirely — Syn3A doesn't synthesise cholesterol. |
+| **JCVISYN3A_0732 (deoC)** | Nonessential | iMB155's DRPA is the sole acetaldehyde source. | Either add alternate acetaldehyde sources (PDH byproduct is one) or mark acald as conditionally infinite. |
+| **JCVISYN3A_0228 (lpdA)** | Nonessential | iMB155 has only PDH_E3 producing lipoylated PdhC. | Add `lipA` / `lipB` / `lplA` alternate lipoylation rules. These genes exist in Syn3A (check `syn3a_gene_table`) but may lack catalysis rules in the 2022-era `kinetic_params.xlsx`. |
 
-Before any simulator-biology work, establish the memory-bank citation trail on what already exists. Walk `cell_sim/layer3_reactions/gene_expression.py` + the `tRNA Charging` and `Gene Expression` sheets in `kinetic_params.xlsx`; convert each parameter into a `facts/parameters/*.json` with the Thornburg 2022 or Breuer 2019 citation it came from.
+Each fix is a SBML/kinetic-params annotation, not new simulator code. Expected: drops all 3 FPs → MCC ≈ 0.19–0.22 ± 0.03 on the same panel. Honest prediction (not a promise).
 
-Why first: any change to translation dynamics needs to know which parameter values are measured vs. lumped vs. estimated. Currently those distinctions aren't recorded.
+**Implementation sketch:**
+- Add a new fact `facts/parameters/imb155_pathway_patches.json` listing each added reaction with its rationale and source citation.
+- Add a helper `cell_sim/layer3_reactions/imb155_patches.py` that builds the patched rules and folds them into `_extra_rules`.
+- Re-run v9 sweep → record as v10.
 
-### 2. Pathway-redundancy annotation in the rule set
+### 2. Ingest Thornburg 2026's refined `kinetic_params.xlsx` (4DWCM repo)
 
-For each catalysis rule in `build_reversible_catalysis_rules`, annotate (or compute from SBML gene-association) the full set of alternate-enzyme genes. Emit a `rule_to_alternates: dict[str, set[str]]` map alongside the existing `gene_to_rules`. Then modify `PerRuleDetector` to only trip on a gene's rule if (a) the rule goes silent AND (b) no alternate-enzyme gene is present and active. This addresses the v5/v6 FP mechanism structurally.
+Their 85 KB version vs our staged 59 KB 2022 version has refined k_cat / Km for ~30 reactions. Pull via:
 
-Orthogonal to #3; can combine.
+```bash
+curl -sS -o cell_sim/data/Minimal_Cell_ComplexFormation/input_data/kinetic_params_4dwcm.xlsx \
+    https://raw.githubusercontent.com/Luthey-Schulten-Lab/Minimal_Cell_4DWCM/main/input_data/kinetic_params.xlsx
+```
 
-### 3. Explicit sink for accumulating pools
+Diff sheet-by-sheet against our staged file. For each changed parameter, promote to a proper `facts/parameters/*.json` with Thornburg 2026 citation. Sharpens metabolic timing without changing detector behaviour.
 
-Add a configurable drain/sink term to `_build_state_and_rules` that caps the upper bound on any pool at `k_sink * (pool - medium_equilibrium)`. Tuned against the non-essential calibration run. This addresses the v7 FP mechanism (transporter-KO metabolite blow-up) without requiring a full pathway-redundancy model.
+### 3. Explicit ribosome complex (addresses the 15 FN wall)
 
-Less principled than #2 but much cheaper. Pairs with #2.
+Still the biggest remaining MCC lever. Currently blocked by needing to compose the 50S subunits from `LargeSubunit.xlsx` (4DWCM repo) and the 30S subunits from `complex_formation.xlsx`. Add a complex-formation rule that requires all ~55 subunits to be present; KO of any subunit halts new ribosome assembly.
 
-### 4. Secondary ground-truth: Hutchison 2016 transposon labels
+Estimate: +2 sessions of code, +1 session of tuning. Would catch 5–7 of 15 ribosomal FNs → MCC toward 0.25–0.30.
 
-Register Hutchison 2016's transposon-derived essentiality classes as a second labels source. Report MCC against both; flag genes where the two sources disagree. Does not lift MCC against Breuer but gives an orthogonal validation signal for simulator-biology work.
+### 4. Multi-seed replicates as the default
 
-### Not recommended
+Session 10's Block B found single-seed MCC numbers are unreliable. The `--panel-seed` flag now exists. Sweep-level default should be `--seeds 42 1 2 3 4` with aggregated fact output. One-line change to `run_sweep_parallel.py`.
 
-- More detector variants at the current simulator fidelity. Eight measurements across five detector families hit the same ceiling. More variants are unlikely to help and risk theatre.
-- A full 458-CDS sweep at t_end=5.0 s. v7's n=20 result makes the 3-hour compute commitment unjustified.
-- Pivoting the project. Brief section 11 forbids it; diagnosis is solid; the remaining work is simulator-biology, not a rework.
+## The honest ceiling bound
 
-## Deferred (not for session 10)
+Path A tried (v7): falsified. Higher scale tried (v8): no help. All detector variants tried (v0–v9): plateau at 0.125.
 
-- Layer 5 (biomass + division).
-- Multi-gene / synthetic-lethal knockouts.
-- Neural-net anything.
-- Rust-side simulator changes (Python side has the needed surface area).
+**Reachable with simulator-biology fixes (Sessions 12–14):**
+- #1 iMB155 patches: MCC ≈ 0.19–0.22
+- #1 + #3 ribosome complex: MCC ≈ 0.30–0.35
 
-## Done-elsewhere (do NOT re-do)
+**Not reachable without one of:**
+- Full Thornburg 2026 simulator (2 A100 × 6 days per replicate — infeasible)
+- ML surrogate trained on their 50 simulated cells + Breuer labels — forbidden by brief without new justification
+- Rewriting iMB155 as a complete SBML (multi-month project; probably needs a metabolic modeller)
 
-- `cell_sim_rust` extension (Session 6).
-- `PerRuleDetector` + gene-to-rules map (Session 7).
-- `EnsembleDetector` + `unique_rules_per_gene` + `--rule-necessity-only` (Session 8).
-- Longer-window sweeps at scale=0.05 (Session 9 — falsified).
+**Realistic ceiling for this project: MCC ≈ 0.35**. If you want 0.59, the brief goal needs revision (the current v2 proposal: "MCC > 0.40 with interpretability and sub-2s/gene inference").
 
-## Git state
+## Deferred / done-elsewhere
 
-Session 1–9 commits on `origin/claude/syn3a-whole-cell-simulator-REjHC`. PAT at `/tmp/.gh_tkn` for pushing from the sandbox. Revoke when done.
+- `cell_sim_rust` extension (Session 6), `PerRuleDetector` (Session 7), `EnsembleDetector` (Session 8), Path-A attempt (Session 9), Colab replicates (Session 10), `RedundancyAwareDetector` + metabolite sink (Session 11) — all shipped.
+- Layer 5 (biomass + division) — still not the bottleneck; detection is.
+- Hutchison 2016 secondary labels — cheap to add but doesn't lift MCC.
+
+## Git
+
+Session 1–11 commits on `origin/claude/syn3a-whole-cell-simulator-REjHC`. PAT in `/tmp/.gh_tkn`. Revoke when done.
