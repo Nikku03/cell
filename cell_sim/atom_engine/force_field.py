@@ -29,6 +29,15 @@ except ImportError:
     _HAS_NUMBA = False
 
 
+# ---------- Optional Rust acceleration --------------------------------
+try:
+    import cell_sim_rust as _rust
+    _HAS_RUST_LJ = hasattr(_rust, "lj_forces")
+except ImportError:
+    _rust = None
+    _HAS_RUST_LJ = False
+
+
 if _HAS_NUMBA:
     @njit(cache=True)
     def _build_neighbor_list_numba(pos, cutoff):
@@ -415,46 +424,58 @@ def compute_forces(
         dvec = dvec[keep]
         r2 = r2[keep]
     if iu.size:
-        r = np.sqrt(r2)
-
-        sig = 0.5 * (sigmas[iu] + sigmas[ju])
-        eps = np.sqrt(epsilons[iu] * epsilons[ju])
-
-        # Element-pair modifiers. Skip the mask work entirely when no
-        # coarse pseudo-elements are present — real organic soups never
-        # have them so this saves ~5 ms/step at N=10000.
         max_elem = int(elem_codes.max()) if elem_codes.size else 0
-        if max_elem >= 100:         # any COARSE_* pseudo-element?
-            TAIL = Element.COARSE_TAIL.value
-            SOLV = Element.COARSE_SOLVENT.value
-            HEAD = Element.COARSE_HEAD.value
-            ei = elem_codes[iu]
-            ej = elem_codes[ju]
-            m_tt = (ei == TAIL) & (ej == TAIL)
-            m_ts = ((ei == TAIL) & (ej == SOLV)) | ((ei == SOLV) & (ej == TAIL))
-            m_ht = ((ei == HEAD) & (ej == TAIL)) | ((ei == TAIL) & (ej == HEAD))
-            eps = np.where(m_tt, eps * _TAIL_TAIL_EPS_BOOST, eps)
-            eps = np.where(m_ts, eps * _TAIL_WATER_EPS_PENALTY, eps)
-            eps = np.where(m_ht, eps * _HEAD_TAIL_EPS_FACTOR, eps)
+        has_coarse = max_elem >= 100       # any COARSE_* pseudo-element?
 
-        sr = sig / r
-        sr6 = sr ** 6
-        sr12 = sr6 * sr6
-        mag = 24.0 * eps * (2.0 * sr12 - sr6) / r          # + outward (repulsive)
+        if _HAS_RUST_LJ:
+            # Rust kernel handles the whole distance/eps/force math plus
+            # the scatter in one tight loop. ~5x faster than numpy +
+            # bincount at N=10000.
+            forces += _rust.lj_forces(
+                np.ascontiguousarray(pos, dtype=np.float64),
+                np.ascontiguousarray(iu, dtype=np.int64),
+                np.ascontiguousarray(ju, dtype=np.int64),
+                np.ascontiguousarray(sigmas, dtype=np.float64),
+                np.ascontiguousarray(epsilons, dtype=np.float64),
+                np.ascontiguousarray(elem_codes, dtype=np.int32),
+                float(cutoff),
+                bool(has_coarse),
+            )
+        else:
+            # Pure-NumPy fallback.
+            r = np.sqrt(r2)
 
-        # Force on j from each pair. np.bincount accumulates duplicates
-        # much faster than np.add.at (buffered reduction vs
-        # unbuffered element-wise ufunc).
-        factor = mag / r
-        fx = factor * dvec[:, 0]
-        fy = factor * dvec[:, 1]
-        fz = factor * dvec[:, 2]
-        forces[:, 0] += (np.bincount(ju, weights=fx, minlength=n)
-                         - np.bincount(iu, weights=fx, minlength=n))
-        forces[:, 1] += (np.bincount(ju, weights=fy, minlength=n)
-                         - np.bincount(iu, weights=fy, minlength=n))
-        forces[:, 2] += (np.bincount(ju, weights=fz, minlength=n)
-                         - np.bincount(iu, weights=fz, minlength=n))
+            sig = 0.5 * (sigmas[iu] + sigmas[ju])
+            eps = np.sqrt(epsilons[iu] * epsilons[ju])
+
+            if has_coarse:
+                TAIL = Element.COARSE_TAIL.value
+                SOLV = Element.COARSE_SOLVENT.value
+                HEAD = Element.COARSE_HEAD.value
+                ei = elem_codes[iu]
+                ej = elem_codes[ju]
+                m_tt = (ei == TAIL) & (ej == TAIL)
+                m_ts = ((ei == TAIL) & (ej == SOLV)) | ((ei == SOLV) & (ej == TAIL))
+                m_ht = ((ei == HEAD) & (ej == TAIL)) | ((ei == TAIL) & (ej == HEAD))
+                eps = np.where(m_tt, eps * _TAIL_TAIL_EPS_BOOST, eps)
+                eps = np.where(m_ts, eps * _TAIL_WATER_EPS_PENALTY, eps)
+                eps = np.where(m_ht, eps * _HEAD_TAIL_EPS_FACTOR, eps)
+
+            sr = sig / r
+            sr6 = sr ** 6
+            sr12 = sr6 * sr6
+            mag = 24.0 * eps * (2.0 * sr12 - sr6) / r
+
+            factor = mag / r
+            fx = factor * dvec[:, 0]
+            fy = factor * dvec[:, 1]
+            fz = factor * dvec[:, 2]
+            forces[:, 0] += (np.bincount(ju, weights=fx, minlength=n)
+                             - np.bincount(iu, weights=fx, minlength=n))
+            forces[:, 1] += (np.bincount(ju, weights=fy, minlength=n)
+                             - np.bincount(iu, weights=fy, minlength=n))
+            forces[:, 2] += (np.bincount(ju, weights=fz, minlength=n)
+                             - np.bincount(iu, weights=fz, minlength=n))
 
     # --- optional axial attractor (fusion driver) ---
     if cfg.use_axial_attractor:

@@ -302,6 +302,31 @@ def test_neighbor_list_forces_match_full_forces():
     assert np.allclose(f_full, f_nl, atol=1e-8)
 
 
+def test_rust_lj_matches_numpy_lj():
+    """Regardless of whether cell_sim_rust is loaded, the forces from
+    compute_forces must match the pure-NumPy reference (which we force
+    by setting ``_HAS_RUST_LJ=False`` on the module at import time in
+    this test)."""
+    import cell_sim.atom_engine.force_field as ff_mod
+    rng = np.random.default_rng(7)
+    atoms = []
+    for _ in range(200):
+        p = tuple(rng.uniform(-2.0, 2.0, size=3))
+        atoms.append(AtomUnit.create(Element.C, position=p,
+                                     velocity=(0.0, 0.0, 0.0)))
+    cfg = ForceFieldConfig(lj_cutoff_nm=0.9, use_neighbor_list=True,
+                           neighbor_skin_nm=0.0)
+    original = ff_mod._HAS_RUST_LJ
+    try:
+        ff_mod._HAS_RUST_LJ = False
+        f_np = compute_forces(atoms, [], t_ps=0.0, cfg=cfg)
+        ff_mod._HAS_RUST_LJ = original
+        f_rust = compute_forces(atoms, [], t_ps=0.0, cfg=cfg)
+    finally:
+        ff_mod._HAS_RUST_LJ = original
+    assert np.allclose(f_np, f_rust, atol=1e-7)
+
+
 def test_atom_soup_respects_composition_and_temperature():
     spec = SoupSpec(
         composition={Element.H: 10, Element.C: 4, Element.O: 2},

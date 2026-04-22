@@ -532,14 +532,114 @@ fn banker_round_to_i64(x: f64) -> i64 {
 
 
 // ---------------------------------------------------------------------
+// Lennard-Jones force kernel for the AtomUnit MD engine (Session 13+)
+// ---------------------------------------------------------------------
+//
+// Takes pre-computed pair index arrays (iu, ju) and per-atom LJ params
+// (sigma, epsilon, element_code), returns the (N, 3) force array. Pair
+// exclusion by bonded-set is handled by the caller before passing in
+// the pair arrays, which is cheap with np.isin.
+//
+// Units are the same as the Python path: nm, kJ/mol, Da. Elementwise
+// pair modifiers (tail-tail boost, tail-water penalty, head-tail
+// reduction) match _effective_lj in force_field.py.
+
+const COARSE_TAIL_CODE: i32 = 101;
+const COARSE_SOLVENT_CODE: i32 = 102;
+const COARSE_HEAD_CODE: i32 = 100;
+const TAIL_TAIL_BOOST: f64 = 1.4;
+const TAIL_WATER_PENALTY: f64 = 0.1;
+const HEAD_TAIL_FACTOR: f64 = 0.3;
+
+#[pyfunction]
+#[allow(clippy::too_many_arguments, non_snake_case)]
+fn lj_forces<'py>(
+    py: Python<'py>,
+    pos: PyReadonlyArray2<f64>,
+    iu: PyReadonlyArray1<i64>,
+    ju: PyReadonlyArray1<i64>,
+    sigmas: PyReadonlyArray1<f64>,
+    epsilons: PyReadonlyArray1<f64>,
+    elem_codes: PyReadonlyArray1<i32>,
+    cutoff: f64,
+    has_coarse: bool,
+) -> PyResult<Py<numpy::PyArray2<f64>>> {
+    let pos_a = pos.as_array();
+    let iu_s = iu.as_slice()?;
+    let ju_s = ju.as_slice()?;
+    let sig_s = sigmas.as_slice()?;
+    let eps_s = epsilons.as_slice()?;
+    let codes_s = elem_codes.as_slice()?;
+
+    let n = pos_a.shape()[0];
+    let m = iu_s.len();
+    let cutoff2 = cutoff * cutoff;
+
+    // Output forces, zero-initialised.
+    let mut forces = ndarray::Array2::<f64>::zeros((n, 3));
+
+    for p in 0..m {
+        let i = iu_s[p] as usize;
+        let j = ju_s[p] as usize;
+        let dx = pos_a[[j, 0]] - pos_a[[i, 0]];
+        let dy = pos_a[[j, 1]] - pos_a[[i, 1]];
+        let dz = pos_a[[j, 2]] - pos_a[[i, 2]];
+        let r2 = dx * dx + dy * dy + dz * dz;
+        if r2 <= 1e-8 || r2 >= cutoff2 {
+            continue;
+        }
+        let r = r2.sqrt();
+        let sig = 0.5 * (sig_s[i] + sig_s[j]);
+        let mut eps = (eps_s[i].max(0.0) * eps_s[j].max(0.0)).sqrt();
+
+        if has_coarse {
+            let ci = codes_s[i];
+            let cj = codes_s[j];
+            if ci == COARSE_TAIL_CODE && cj == COARSE_TAIL_CODE {
+                eps *= TAIL_TAIL_BOOST;
+            } else if (ci == COARSE_TAIL_CODE && cj == COARSE_SOLVENT_CODE)
+                || (ci == COARSE_SOLVENT_CODE && cj == COARSE_TAIL_CODE)
+            {
+                eps *= TAIL_WATER_PENALTY;
+            } else if (ci == COARSE_HEAD_CODE && cj == COARSE_TAIL_CODE)
+                || (ci == COARSE_TAIL_CODE && cj == COARSE_HEAD_CODE)
+            {
+                eps *= HEAD_TAIL_FACTOR;
+            }
+        }
+
+        let sr = sig / r;
+        let sr2 = sr * sr;
+        let sr6 = sr2 * sr2 * sr2;
+        let sr12 = sr6 * sr6;
+        let mag = 24.0 * eps * (2.0 * sr12 - sr6) / r;
+        let factor = mag / r;
+        let fx = factor * dx;
+        let fy = factor * dy;
+        let fz = factor * dz;
+        // Force on j: + (mag / r) * dvec; force on i: -that.
+        forces[[j, 0]] += fx;
+        forces[[j, 1]] += fy;
+        forces[[j, 2]] += fz;
+        forces[[i, 0]] -= fx;
+        forces[[i, 1]] -= fy;
+        forces[[i, 2]] -= fz;
+    }
+
+    Ok(forces.into_pyarray_bound(py).unbind())
+}
+
+
+// ---------------------------------------------------------------------
 // Extension module entrypoint
 // ---------------------------------------------------------------------
 
 #[pymodule]
 fn cell_sim_rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(compute_propensities, m)?)?;
+    m.add_function(wrap_pyfunction!(lj_forces, m)?)?;
     m.add_class::<SimCore>()?;
-    m.add("__version__", "0.2.0")?;
+    m.add("__version__", "0.2.1")?;
     m.add("AVOGADRO", AVOGADRO)?;
     m.add("MAX_N_EFFECTIVE", MAX_N_EFFECTIVE)?;
     Ok(())
