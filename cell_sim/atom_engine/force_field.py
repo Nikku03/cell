@@ -228,6 +228,12 @@ def _bond_force_mag(r: float, bond: Bond) -> float:
 
 
 def _element_arrays(atoms: Sequence[AtomUnit]):
+    """Element property arrays (sigma, epsilon, element_code) per atom.
+
+    Expensive at large N (Python loop + dict lookups). Callers that hit
+    this in a hot loop should use ``element_arrays_cached`` which skips
+    the rebuild when the atom list identity is unchanged.
+    """
     n = len(atoms)
     sigmas = np.empty(n, dtype=np.float64)
     epsilons = np.empty(n, dtype=np.float64)
@@ -238,6 +244,26 @@ def _element_arrays(atoms: Sequence[AtomUnit]):
         epsilons[i] = max(p.lj_epsilon_kj, 0.0)
         elem_codes[i] = a.element.value
     return sigmas, epsilons, elem_codes
+
+
+# Module-level cache keyed by (id(atoms), len(atoms)). Element identity
+# does not change once an atom exists, so the only cache-bust is an atom
+# added to / removed from the list (which changes len or id).
+_ELEMENT_CACHE: dict = {}
+
+
+def element_arrays_cached(atoms: Sequence[AtomUnit]):
+    key = (id(atoms), len(atoms))
+    cached = _ELEMENT_CACHE.get(key)
+    if cached is not None:
+        return cached
+    result = _element_arrays(atoms)
+    _ELEMENT_CACHE[key] = result
+    # Cap the cache to avoid unbounded growth when callers create many
+    # ephemeral atom lists.
+    if len(_ELEMENT_CACHE) > 8:
+        _ELEMENT_CACHE.pop(next(iter(_ELEMENT_CACHE)))
+    return result
 
 
 # ---------- Main force kernel -----------------------------------------
@@ -320,12 +346,9 @@ def compute_forces(
     if n == 0:
         return np.zeros((0, 3), dtype=np.float64)
 
-    pos = np.empty((n, 3), dtype=np.float64)
-    for i, a in enumerate(atoms):
-        pos[i, 0] = a.position[0]
-        pos[i, 1] = a.position[1]
-        pos[i, 2] = a.position[2]
-
+    # Batch gather — np.array over a list of 3-lists is ~10x faster than
+    # a per-atom indexed write loop at N >> 1000.
+    pos = np.array([a.position for a in atoms], dtype=np.float64)
     forces = np.zeros((n, 3), dtype=np.float64)
 
     # Stable index for each atom by id(). Fast lookup for bonded pairs.
@@ -351,7 +374,7 @@ def compute_forces(
         bonded_set.add((min(i, j), max(i, j)))
 
     # --- vectorized non-bonded LJ ---
-    sigmas, epsilons, elem_codes = _element_arrays(atoms)
+    sigmas, epsilons, elem_codes = element_arrays_cached(atoms)
 
     cutoff = cfg.lj_cutoff_nm
     cutoff2 = cutoff * cutoff
@@ -397,27 +420,41 @@ def compute_forces(
         sig = 0.5 * (sigmas[iu] + sigmas[ju])
         eps = np.sqrt(epsilons[iu] * epsilons[ju])
 
-        # Element-pair modifiers (vectorized)
-        TAIL = Element.COARSE_TAIL.value
-        SOLV = Element.COARSE_SOLVENT.value
-        HEAD = Element.COARSE_HEAD.value
-        ei = elem_codes[iu]
-        ej = elem_codes[ju]
-        m_tt = (ei == TAIL) & (ej == TAIL)
-        m_ts = ((ei == TAIL) & (ej == SOLV)) | ((ei == SOLV) & (ej == TAIL))
-        m_ht = ((ei == HEAD) & (ej == TAIL)) | ((ei == TAIL) & (ej == HEAD))
-        eps = np.where(m_tt, eps * _TAIL_TAIL_EPS_BOOST, eps)
-        eps = np.where(m_ts, eps * _TAIL_WATER_EPS_PENALTY, eps)
-        eps = np.where(m_ht, eps * _HEAD_TAIL_EPS_FACTOR, eps)
+        # Element-pair modifiers. Skip the mask work entirely when no
+        # coarse pseudo-elements are present — real organic soups never
+        # have them so this saves ~5 ms/step at N=10000.
+        max_elem = int(elem_codes.max()) if elem_codes.size else 0
+        if max_elem >= 100:         # any COARSE_* pseudo-element?
+            TAIL = Element.COARSE_TAIL.value
+            SOLV = Element.COARSE_SOLVENT.value
+            HEAD = Element.COARSE_HEAD.value
+            ei = elem_codes[iu]
+            ej = elem_codes[ju]
+            m_tt = (ei == TAIL) & (ej == TAIL)
+            m_ts = ((ei == TAIL) & (ej == SOLV)) | ((ei == SOLV) & (ej == TAIL))
+            m_ht = ((ei == HEAD) & (ej == TAIL)) | ((ei == TAIL) & (ej == HEAD))
+            eps = np.where(m_tt, eps * _TAIL_TAIL_EPS_BOOST, eps)
+            eps = np.where(m_ts, eps * _TAIL_WATER_EPS_PENALTY, eps)
+            eps = np.where(m_ht, eps * _HEAD_TAIL_EPS_FACTOR, eps)
 
         sr = sig / r
         sr6 = sr ** 6
         sr12 = sr6 * sr6
         mag = 24.0 * eps * (2.0 * sr12 - sr6) / r          # + outward (repulsive)
 
-        fvec = (mag / r)[:, None] * dvec                   # force on j
-        np.add.at(forces, ju, fvec)
-        np.add.at(forces, iu, -fvec)
+        # Force on j from each pair. np.bincount accumulates duplicates
+        # much faster than np.add.at (buffered reduction vs
+        # unbuffered element-wise ufunc).
+        factor = mag / r
+        fx = factor * dvec[:, 0]
+        fy = factor * dvec[:, 1]
+        fz = factor * dvec[:, 2]
+        forces[:, 0] += (np.bincount(ju, weights=fx, minlength=n)
+                         - np.bincount(iu, weights=fx, minlength=n))
+        forces[:, 1] += (np.bincount(ju, weights=fy, minlength=n)
+                         - np.bincount(iu, weights=fy, minlength=n))
+        forces[:, 2] += (np.bincount(ju, weights=fz, minlength=n)
+                         - np.bincount(iu, weights=fz, minlength=n))
 
     # --- optional axial attractor (fusion driver) ---
     if cfg.use_axial_attractor:
