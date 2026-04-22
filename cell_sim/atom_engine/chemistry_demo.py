@@ -37,6 +37,11 @@ class ChemistryConfig:
     use_neighbor_list: bool = True
     neighbor_skin_nm: float = 0.3
     neighbor_rebuild_every: int = 10
+    # Shrink LJ sigma for reactive elements so atoms can actually reach
+    # bond-forming distance through the LJ core. 0.3 = sigma / 3, which
+    # puts the LJ well roughly at 0.08-0.10 nm for H/C/N/O — same order
+    # as their covalent bond lengths.
+    reactive_sigma_scale: float = 0.3
     # Dynamic bonding — default to a SOFT toy-chemistry bond (k = 5e4
     # kJ/mol/nm^2, bond energy ~90 kJ/mol) instead of a realistic
     # stiff covalent bond (k = 3e5, ~400 kJ/mol). Soft bonds let the
@@ -103,6 +108,7 @@ def run_chemistry(
         confinement_k_kj_per_nm2=cfg.confinement_k_kj_per_nm2,
         use_neighbor_list=cfg.use_neighbor_list,
         neighbor_skin_nm=cfg.neighbor_skin_nm,
+        reactive_sigma_scale=cfg.reactive_sigma_scale,
     )
     int_cfg_eq = IntegratorConfig(
         dt_ps=cfg.dt_ps,

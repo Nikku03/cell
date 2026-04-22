@@ -205,6 +205,14 @@ class ForceFieldConfig:
     # --- neighbor list (required for N >> a few thousand) ---
     use_neighbor_list: bool = False
     neighbor_skin_nm: float = 0.3               # padding added to cutoff when building
+    # --- reactive chemistry mode ---
+    # Scale LJ sigma for atoms of reactive elements (H/C/N/O/P/S) by
+    # this factor. Default 1.0 = OPLS-style sigma, appropriate when
+    # atoms sit at their saturated valence (vesicles, membrane demos).
+    # Values < 1.0 shrink the LJ core so atoms can approach within
+    # bond-forming distance; required for any dynamic-bonding demo to
+    # form new cross-element bonds.
+    reactive_sigma_scale: float = 1.0
     # --- safety ---
     max_force_kj_per_nm: float = 2.0e4          # per-atom force cap
 
@@ -384,6 +392,15 @@ def compute_forces(
 
     # --- vectorized non-bonded LJ ---
     sigmas, epsilons, elem_codes = element_arrays_cached(atoms)
+    if cfg.reactive_sigma_scale != 1.0:
+        # Reactive elements: H=1, C=6, N=7, O=8, P=15, S=16. Shrink sigma
+        # so atoms can approach within bond-forming distance. Coarse
+        # pseudo-elements (code >= 100) keep their membrane sigmas.
+        reactive_mask = (
+            (elem_codes == 1) | (elem_codes == 6) | (elem_codes == 7)
+            | (elem_codes == 8) | (elem_codes == 15) | (elem_codes == 16)
+        )
+        sigmas = np.where(reactive_mask, sigmas * cfg.reactive_sigma_scale, sigmas)
 
     cutoff = cfg.lj_cutoff_nm
     cutoff2 = cutoff * cutoff
