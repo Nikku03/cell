@@ -23,7 +23,7 @@ import numpy as np
 
 from .atom_unit import AtomUnit, Bond, BondType
 from .element import pair_is_bondable
-from .force_field import ForceFieldConfig, compute_forces
+from .force_field import ForceFieldConfig, build_neighbor_list, compute_forces
 
 
 @dataclass
@@ -37,6 +37,9 @@ class IntegratorConfig:
     bond_form_kind: BondType = BondType.COVALENT_SINGLE
     bond_form_k_kj_per_nm2: float = 2.0e4
     bond_form_r0_nm: float = 0.15
+    # Neighbor-list scheduler: rebuild every N steps when the force field
+    # has use_neighbor_list=True. 0 disables (caller manages the list).
+    neighbor_rebuild_every: int = 10
     # Callback invoked each step with (t_ps, n_bonds_formed, n_bonds_broken).
     step_callback: Optional[callable] = None
 
@@ -49,6 +52,10 @@ class SimState:
     step: int = 0
     events_bonds_formed: int = 0
     events_bonds_broken: int = 0
+    # Cached neighbor list (iu, ju). Rebuilt by the integrator when stale.
+    _neighbor_iu: Optional[np.ndarray] = None
+    _neighbor_ju: Optional[np.ndarray] = None
+    _neighbor_built_at_step: int = -1
 
 
 # ---------- array views onto atom state -------------------------------
@@ -130,9 +137,20 @@ def _maybe_break_bonds(state: SimState, break_fraction: float) -> int:
     return broken
 
 
-def _maybe_form_bonds(state: SimState, cfg: IntegratorConfig) -> int:
-    """Form bonds between unbonded pairs within form_distance. O(N^2) naive."""
+def _maybe_form_bonds(
+    state: SimState,
+    cfg: IntegratorConfig,
+    neighbor_pairs: Optional[tuple[np.ndarray, np.ndarray]] = None,
+) -> int:
+    """Form bonds between unbonded pairs within form_distance.
+
+    Uses the cached neighbor list (if any) to restrict the candidate set;
+    otherwise falls back to the full upper triangle.
+    """
     atoms = state.atoms
+    n = len(atoms)
+    if n < 2:
+        return 0
     formed = 0
     bonded_ids = {
         frozenset((b.a.atom_id, b.b.atom_id))
@@ -140,34 +158,45 @@ def _maybe_form_bonds(state: SimState, cfg: IntegratorConfig) -> int:
     }
     r_max = cfg.bond_form_distance_nm
     r_max2 = r_max * r_max
-    n = len(atoms)
-    for i in range(n):
+
+    if neighbor_pairs is not None:
+        iu, ju = neighbor_pairs
+    else:
+        iu, ju = np.triu_indices(n, k=1)
+
+    if iu.size == 0:
+        return 0
+
+    pos = _gather_positions(atoms)
+    d = pos[ju] - pos[iu]
+    r2 = np.einsum("ij,ij->i", d, d)
+    close = r2 < r_max2
+    if not close.any():
+        return 0
+    iu = iu[close]
+    ju = ju[close]
+
+    # Loop only over the surviving candidates — usually a tiny subset.
+    for i, j in zip(iu.tolist(), ju.tolist()):
         ai = atoms[i]
-        if ai.valence_remaining <= 0:
+        aj = atoms[j]
+        if ai.valence_remaining <= 0 or aj.valence_remaining <= 0:
             continue
-        for j in range(i + 1, n):
-            aj = atoms[j]
-            if aj.valence_remaining <= 0:
-                continue
-            if frozenset((ai.atom_id, aj.atom_id)) in bonded_ids:
-                continue
-            if not pair_is_bondable(ai.element, aj.element):
-                continue
-            dx = ai.position[0] - aj.position[0]
-            dy = ai.position[1] - aj.position[1]
-            dz = ai.position[2] - aj.position[2]
-            if dx * dx + dy * dy + dz * dz > r_max2:
-                continue
-            bond = ai.form_bond(
-                aj,
-                kind=cfg.bond_form_kind,
-                t_ps=state.t_ps,
-                equilibrium_length_nm=cfg.bond_form_r0_nm,
-                spring_constant_kj_per_nm2=cfg.bond_form_k_kj_per_nm2,
-            )
-            state.bonds.append(bond)
-            formed += 1
-            state.events_bonds_formed += 1
+        if frozenset((ai.atom_id, aj.atom_id)) in bonded_ids:
+            continue
+        if not pair_is_bondable(ai.element, aj.element):
+            continue
+        bond = ai.form_bond(
+            aj,
+            kind=cfg.bond_form_kind,
+            t_ps=state.t_ps,
+            equilibrium_length_nm=cfg.bond_form_r0_nm,
+            spring_constant_kj_per_nm2=cfg.bond_form_k_kj_per_nm2,
+        )
+        state.bonds.append(bond)
+        bonded_ids.add(frozenset((ai.atom_id, aj.atom_id)))
+        formed += 1
+        state.events_bonds_formed += 1
     return formed
 
 
@@ -184,8 +213,28 @@ def step(
     can pass it in as `forces_prev` on the next step."""
     dt = int_cfg.dt_ps
     atoms = state.atoms
+
+    def _neighbors() -> Optional[tuple[np.ndarray, np.ndarray]]:
+        if not ff_cfg.use_neighbor_list:
+            return None
+        every = max(1, int_cfg.neighbor_rebuild_every)
+        stale = (
+            state._neighbor_iu is None
+            or (state.step - state._neighbor_built_at_step) >= every
+            or state._neighbor_built_at_step < 0
+        )
+        if stale:
+            pos_arr = _gather_positions(atoms)
+            cutoff_with_skin = ff_cfg.lj_cutoff_nm + ff_cfg.neighbor_skin_nm
+            state._neighbor_iu, state._neighbor_ju = build_neighbor_list(
+                pos_arr, cutoff_with_skin
+            )
+            state._neighbor_built_at_step = state.step
+        return (state._neighbor_iu, state._neighbor_ju)
+
     if forces_prev is None:
-        forces_prev = compute_forces(atoms, state.bonds, state.t_ps, ff_cfg)
+        forces_prev = compute_forces(atoms, state.bonds, state.t_ps, ff_cfg,
+                                     neighbor_pairs=_neighbors())
 
     masses = _gather_masses(atoms)[:, None]              # (N, 1)
     vel = _gather_velocities(atoms)
@@ -199,7 +248,8 @@ def step(
     state.t_ps += dt
     state.step += 1
 
-    forces_new = compute_forces(atoms, state.bonds, state.t_ps, ff_cfg)
+    forces_new = compute_forces(atoms, state.bonds, state.t_ps, ff_cfg,
+                                 neighbor_pairs=_neighbors())
 
     # Second half-step velocity.
     vel += 0.5 * dt * forces_new / masses
@@ -216,7 +266,7 @@ def step(
     broken = _maybe_break_bonds(state, int_cfg.bond_break_fraction)
     formed = 0
     if int_cfg.dynamic_bonding:
-        formed = _maybe_form_bonds(state, int_cfg)
+        formed = _maybe_form_bonds(state, int_cfg, neighbor_pairs=_neighbors())
 
     if int_cfg.step_callback is not None:
         int_cfg.step_callback(state.t_ps, formed, broken)

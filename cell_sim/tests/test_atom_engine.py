@@ -15,7 +15,11 @@ from cell_sim.atom_engine.atom_soup import SoupSpec, build_soup
 from cell_sim.atom_engine.atom_unit import AtomUnit, BondType
 from cell_sim.atom_engine.element import Element, default_valence, pair_is_bondable
 from cell_sim.atom_engine.fission_demo import FissionConfig, run_fission
-from cell_sim.atom_engine.force_field import ForceFieldConfig, compute_forces
+from cell_sim.atom_engine.force_field import (
+    ForceFieldConfig,
+    build_neighbor_list,
+    compute_forces,
+)
 from cell_sim.atom_engine.integrator import (
     IntegratorConfig,
     SimState,
@@ -261,6 +265,41 @@ def test_fission_runs_without_blowing_up():
     assert len(result.neck_fraction) > 0
     # The atom count is preserved
     assert result.n_atoms == 4 * cfg.vesicle.n_per_leaflet
+
+
+def test_neighbor_list_matches_full_on2():
+    """The spatial-hash neighbor list must return the same pair set (after
+    distance filtering) as the brute-force upper triangle."""
+    rng = np.random.default_rng(0)
+    n = 300
+    pos = rng.uniform(-2.0, 2.0, size=(n, 3))
+    cutoff = 0.9
+    iu, ju = build_neighbor_list(pos, cutoff)
+    # Brute force
+    all_iu, all_ju = np.triu_indices(n, k=1)
+    d = pos[all_ju] - pos[all_iu]
+    r2 = (d * d).sum(-1)
+    mask = r2 < cutoff * cutoff
+    expected = {(int(a), int(b)) for a, b in zip(all_iu[mask], all_ju[mask])}
+    got = {(int(a), int(b)) for a, b in zip(iu, ju)}
+    assert got == expected
+
+
+def test_neighbor_list_forces_match_full_forces():
+    """The LJ forces produced via the neighbor-list path must be numerically
+    close to the full O(N^2) path. Use a random soup and no bonds."""
+    rng = np.random.default_rng(2)
+    atoms = []
+    for i in range(120):
+        p = tuple(rng.uniform(-1.5, 1.5, size=3))
+        atoms.append(AtomUnit.create(Element.C, position=p,
+                                     velocity=(0.0, 0.0, 0.0)))
+    cfg_full = ForceFieldConfig(lj_cutoff_nm=0.9, use_neighbor_list=False)
+    cfg_nl = ForceFieldConfig(lj_cutoff_nm=0.9, use_neighbor_list=True,
+                              neighbor_skin_nm=0.0)
+    f_full = compute_forces(atoms, [], t_ps=0.0, cfg=cfg_full)
+    f_nl = compute_forces(atoms, [], t_ps=0.0, cfg=cfg_nl)
+    assert np.allclose(f_full, f_nl, atol=1e-8)
 
 
 def test_atom_soup_respects_composition_and_temperature():

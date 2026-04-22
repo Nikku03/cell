@@ -50,6 +50,9 @@ class ForceFieldConfig:
     use_confinement: bool = False
     confinement_radius_nm: float = 2.0          # walls start here
     confinement_k_kj_per_nm2: float = 2.0e3     # wall spring constant
+    # --- neighbor list (required for N >> a few thousand) ---
+    use_neighbor_list: bool = False
+    neighbor_skin_nm: float = 0.3               # padding added to cutoff when building
     # --- safety ---
     max_force_kj_per_nm: float = 2.0e4          # per-atom force cap
 
@@ -97,18 +100,73 @@ def _element_arrays(atoms: Sequence[AtomUnit]):
 # ---------- Main force kernel -----------------------------------------
 
 
+def build_neighbor_list(pos: np.ndarray, cutoff: float) -> tuple[np.ndarray, np.ndarray]:
+    """Spatial-hash neighbor list. Returns (iu, ju) arrays of pair indices
+    (i < j) whose positions are within ``cutoff``. Expected O(N) for
+    roughly-uniform density.
+
+    Does not include the bonded/distance check — caller filters further.
+    The returned pairs are guaranteed to have ||pos[j] - pos[i]|| < cutoff.
+    """
+    n = pos.shape[0]
+    if n < 2:
+        return (np.empty(0, dtype=np.int64), np.empty(0, dtype=np.int64))
+    if n < 128:
+        iu, ju = np.triu_indices(n, k=1)
+        return iu.astype(np.int64), ju.astype(np.int64)
+
+    cell = cutoff
+    min_c = pos.min(axis=0) - cell
+    cell_idx = np.floor((pos - min_c) / cell).astype(np.int64)
+
+    grid: dict[tuple, list[int]] = {}
+    for i in range(n):
+        k = (int(cell_idx[i, 0]), int(cell_idx[i, 1]), int(cell_idx[i, 2]))
+        grid.setdefault(k, []).append(i)
+
+    cutoff2 = cutoff * cutoff
+    pair_i: list[int] = []
+    pair_j: list[int] = []
+    offsets = [(dx, dy, dz)
+               for dx in (-1, 0, 1)
+               for dy in (-1, 0, 1)
+               for dz in (-1, 0, 1)]
+    for key, cell_atoms in grid.items():
+        for dx, dy, dz in offsets:
+            nk = (key[0] + dx, key[1] + dy, key[2] + dz)
+            nbrs = grid.get(nk)
+            if nbrs is None:
+                continue
+            for i in cell_atoms:
+                for j in nbrs:
+                    if j <= i:
+                        continue
+                    d = pos[j] - pos[i]
+                    if d @ d < cutoff2:
+                        pair_i.append(i)
+                        pair_j.append(j)
+    return (np.asarray(pair_i, dtype=np.int64),
+            np.asarray(pair_j, dtype=np.int64))
+
+
 def compute_forces(
     atoms: Sequence[AtomUnit],
     bonds: Iterable[Bond],
     t_ps: float,
     cfg: ForceFieldConfig,
-    neighbor_pairs: Iterable[tuple[int, int]] | None = None,
+    neighbor_pairs: (Iterable[tuple[int, int]]
+                    | tuple[np.ndarray, np.ndarray]
+                    | None) = None,
 ) -> np.ndarray:
     """Compute total force on each atom. Returns (N, 3) array, kJ/mol/nm.
 
-    LJ is evaluated fully vectorized across the upper triangle. For N up to
-    ~3000 this is ~10-30 ms per step on a laptop — fast enough for a
-    fission demo.
+    Two paths:
+      - ``neighbor_pairs=None`` + ``cfg.use_neighbor_list=False``: full
+        O(N^2) pair enumeration via ``np.triu_indices``. Fast up to a
+        few thousand atoms; allocates O(N^2) memory so it is hard-capped.
+      - ``neighbor_pairs`` provided OR ``cfg.use_neighbor_list=True``:
+        only the given pairs (or pairs found by the internal spatial-hash
+        neighbor list) are evaluated. Required for N in the 10 000+ range.
     """
     n = len(atoms)
     if n == 0:
@@ -125,8 +183,9 @@ def compute_forces(
     # Stable index for each atom by id(). Fast lookup for bonded pairs.
     id_to_idx = {id(a): i for i, a in enumerate(atoms)}
 
-    # --- bonded forces (sparse) ---
-    bond_mask = np.zeros((n, n), dtype=bool)
+    # --- bonded forces (sparse) — also collect the bonded-pair set for
+    # exclusion from the LJ calculation.
+    bonded_set: set[tuple[int, int]] = set()
     live_bonds = [b for b in bonds if b.death_time_ps is None]
     for bond in live_bonds:
         i = id_to_idx.get(id(bond.a))
@@ -141,33 +200,48 @@ def compute_forces(
         f = (mag / r) * d
         forces[i] -= f
         forces[j] += f
-        bond_mask[i, j] = True
-        bond_mask[j, i] = True
+        bonded_set.add((min(i, j), max(i, j)))
 
     # --- vectorized non-bonded LJ ---
     sigmas, epsilons, elem_codes = _element_arrays(atoms)
 
-    # All pairs (upper triangle)
-    iu, ju = np.triu_indices(n, k=1)
-
-    # Vector from i to j
-    dvec = pos[ju] - pos[iu]                               # (M, 3)
-    r2 = np.einsum("ij,ij->i", dvec, dvec)                 # (M,)
-
     cutoff = cfg.lj_cutoff_nm
     cutoff2 = cutoff * cutoff
 
-    keep = (r2 > 1e-8) & (r2 < cutoff2) & ~bond_mask[iu, ju]
-    if neighbor_pairs is not None:
-        pair_set = {(min(i, j), max(i, j)) for i, j in neighbor_pairs}
-        nb_keep = np.array([(i, j) in pair_set for i, j in zip(iu, ju)], dtype=bool)
-        keep &= nb_keep
+    # Pick the pair source: explicit argument > config flag > full O(N^2).
+    if neighbor_pairs is None and cfg.use_neighbor_list:
+        iu, ju = build_neighbor_list(pos, cutoff)
+    elif neighbor_pairs is None:
+        iu, ju = np.triu_indices(n, k=1)
+    elif isinstance(neighbor_pairs, tuple) and len(neighbor_pairs) == 2 \
+            and isinstance(neighbor_pairs[0], np.ndarray):
+        iu, ju = neighbor_pairs          # already array form
+    else:
+        pairs = list(neighbor_pairs)
+        if pairs:
+            arr = np.asarray(pairs, dtype=np.int64)
+            iu = np.minimum(arr[:, 0], arr[:, 1])
+            ju = np.maximum(arr[:, 0], arr[:, 1])
+        else:
+            iu = np.empty(0, dtype=np.int64)
+            ju = np.empty(0, dtype=np.int64)
 
-    iu = iu[keep]
-    ju = ju[keep]
     if iu.size:
+        dvec = pos[ju] - pos[iu]                           # (M, 3)
+        r2 = np.einsum("ij,ij->i", dvec, dvec)             # (M,)
+        keep = (r2 > 1e-8) & (r2 < cutoff2)
+        if bonded_set:
+            # Exclude bonded pairs via set membership.
+            keys = [(int(a), int(b)) for a, b in zip(iu, ju)]
+            keep &= np.fromiter(
+                (k not in bonded_set for k in keys),
+                dtype=bool, count=len(keys),
+            )
+        iu = iu[keep]
+        ju = ju[keep]
         dvec = dvec[keep]
         r2 = r2[keep]
+    if iu.size:
         r = np.sqrt(r2)
 
         sig = 0.5 * (sigmas[iu] + sigmas[ju])

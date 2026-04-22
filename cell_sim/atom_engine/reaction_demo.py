@@ -42,6 +42,9 @@ class ReactionConfig:
     use_confinement: bool = True
     confinement_k_kj_per_nm2: float = 2.0e3
     max_force_kj_per_nm: float = 2.0e4
+    use_neighbor_list: bool = False
+    neighbor_skin_nm: float = 0.3
+    neighbor_rebuild_every: int = 10
     # Dynamic bonding
     bond_form_distance_nm: float = 0.2
     bond_form_k_kj_per_nm2: float = 2.0e4
@@ -160,6 +163,8 @@ def run_reactions(
         use_confinement=cfg.use_confinement,
         confinement_radius_nm=cfg.soup.radius_nm,
         confinement_k_kj_per_nm2=cfg.confinement_k_kj_per_nm2,
+        use_neighbor_list=cfg.use_neighbor_list,
+        neighbor_skin_nm=cfg.neighbor_skin_nm,
     )
     int_cfg = IntegratorConfig(
         dt_ps=cfg.dt_ps,
@@ -171,6 +176,7 @@ def run_reactions(
         bond_form_r0_nm=cfg.bond_form_r0_nm,
         bond_break_fraction=cfg.bond_break_fraction,
         bond_form_kind=cfg.bond_form_kind,
+        neighbor_rebuild_every=cfg.neighbor_rebuild_every,
     )
 
     if progress is not None:

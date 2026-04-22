@@ -44,12 +44,37 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--out", type=str, default=None,
                    help="Path to write per-temperature JSON summary.")
+    # Composition override — useful for the 10k-atom organic run.
+    p.add_argument("--n-h", type=int, default=None, help="Override H count.")
+    p.add_argument("--n-c", type=int, default=None, help="Override C count.")
+    p.add_argument("--n-n", type=int, default=None, help="Override N count.")
+    p.add_argument("--n-o", type=int, default=None, help="Override O count.")
+    # Performance
+    p.add_argument("--use-neighbor-list", action="store_true",
+                   help="Enable the spatial-hash neighbor list "
+                        "(required for N >> a few thousand).")
+    p.add_argument("--neighbor-rebuild-every", type=int, default=10)
+    p.add_argument("--neighbor-skin-nm", type=float, default=0.3)
     return p.parse_args()
+
+
+def _composition(args: argparse.Namespace) -> dict:
+    comp = dict(DEFAULT_COMPOSITION)
+    if args.n_h is not None:
+        comp[Element.H] = args.n_h
+    if args.n_c is not None:
+        comp[Element.C] = args.n_c
+    if args.n_n is not None:
+        comp[Element.N] = args.n_n
+    if args.n_o is not None:
+        comp[Element.O] = args.n_o
+    # Drop zero entries so build_soup doesn't iterate over them.
+    return {e: c for e, c in comp.items() if c > 0}
 
 
 def _run_one(T: float, args: argparse.Namespace, progress) -> dict:
     soup = SoupSpec(
-        composition=DEFAULT_COMPOSITION,
+        composition=_composition(args),
         radius_nm=args.radius,
         temperature_K=T,
         seed=args.seed,
@@ -60,6 +85,9 @@ def _run_one(T: float, args: argparse.Namespace, progress) -> dict:
         target_temperature_K=T,
         steps=args.steps,
         report_every=args.report_every,
+        use_neighbor_list=args.use_neighbor_list,
+        neighbor_rebuild_every=args.neighbor_rebuild_every,
+        neighbor_skin_nm=args.neighbor_skin_nm,
     )
     t0 = time.time()
     state, result = run_reactions(cfg, progress=progress)
