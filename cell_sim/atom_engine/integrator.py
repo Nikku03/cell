@@ -32,8 +32,12 @@ class IntegratorConfig:
     thermostat_tau_ps: float = 1.0
     target_temperature_K: float = 300.0
     dynamic_bonding: bool = False            # whether to form/break bonds
-    bond_form_distance_nm: float = 0.18
-    bond_break_fraction: float = 1.5          # break if r > 1.5 * r0
+    # Pair must be within ``bond_form_distance_nm`` to be CONSIDERED for
+    # bonding (outer gate). The actual form decision then uses a
+    # pair-specific check: form iff ``r < bond_form_ratio * r0_pair``.
+    bond_form_distance_nm: float = 0.20
+    bond_form_ratio: float = 1.3
+    bond_break_fraction: float = 1.8          # break if r > bond_break_fraction * r0
     bond_form_kind: BondType = BondType.COVALENT_SINGLE
     bond_form_k_kj_per_nm2: float = 2.0e4
     bond_form_r0_nm: float = 0.15
@@ -191,12 +195,9 @@ def _maybe_form_bonds(
     from .molecule_builder import _bond_length as _bond_length_for_pair
 
     # Only form a bond if the instantaneous separation is within
-    # ``bond_form_ratio * r0_pair`` — this prevents bonds from being
-    # created at lengths that are already past the break threshold,
-    # which would otherwise cause a form/break ping-pong every step.
-    # Ratio is chosen just under the break_fraction so a freshly-formed
-    # bond has room to breathe.
-    form_ratio = min(1.2, max(1.0, cfg.bond_break_fraction - 0.3))
+    # ``cfg.bond_form_ratio * r0_pair``. Keeping form_ratio < break_fraction
+    # by a comfortable margin prevents form/break ping-pong.
+    form_ratio = cfg.bond_form_ratio
 
     # Loop only over the surviving candidates — usually a tiny subset.
     for idx, (i_raw, j_raw) in enumerate(zip(iu.tolist(), ju.tolist())):

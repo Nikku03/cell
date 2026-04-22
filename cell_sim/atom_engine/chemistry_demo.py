@@ -43,10 +43,11 @@ class ChemistryConfig:
     # system explore break -> reform cycles at 3000 K within a few ps.
     # Use ``bond_k_kj_per_nm2`` to override both the initial and
     # dynamically-formed bond stiffness.
-    bond_form_distance_nm: float = 0.17
+    bond_form_distance_nm: float = 0.20     # outer gate (neighbor pre-filter)
+    bond_form_ratio: float = 1.3             # form if r < form_ratio * r0_pair
     bond_form_k_kj_per_nm2: float = 5.0e4
     bond_form_r0_nm: float = 0.12
-    bond_break_fraction: float = 1.5
+    bond_break_fraction: float = 1.8         # break if r > 1.8 * r0_pair
     bond_form_kind: BondType = BondType.COVALENT_SINGLE
     initial_bond_k_kj_per_nm2: Optional[float] = 5.0e4
     # Run
@@ -117,6 +118,7 @@ def run_chemistry(
         target_temperature_K=cfg.target_temperature_K,
         dynamic_bonding=True,
         bond_form_distance_nm=cfg.bond_form_distance_nm,
+        bond_form_ratio=cfg.bond_form_ratio,
         bond_form_k_kj_per_nm2=cfg.bond_form_k_kj_per_nm2,
         bond_form_r0_nm=cfg.bond_form_r0_nm,
         bond_break_fraction=cfg.bond_break_fraction,
