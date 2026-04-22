@@ -68,7 +68,8 @@ Separating the two also means **improvements to Layers 1-5 are evaluable.** Any 
 | v7 | 9 | 20 | Ensemble pool_confirm, min_pool_dev=0.10, **t_end=5.0 s** | **0.000** | 12.7 | 3 TP / 3 FP / 7 TN / 7 FN. Path A falsified - FP pools grow too. |
 | v8 | 10 | 40 | Ensemble pool_confirm, **scale=0.5, t_end=1.0 s** (Colab) | **0.060** | ~4 | 5 TP / 4 FP / 16 TN / 15 FN. Higher scale adds one more FP; doesn't break ceiling. |
 | **replicates** | 10 | 40 × 5 seeds | multiple configs, panel_seed=42 | see below | ~1.8 each | **Error bars on everything** |
-| v9 | 11 | 40 × 5 seeds | **RedundancyAwareDetector** (production-collapse) | **0.125 ± 0.000** | 1.9 | 5 TP / 3 FP / 17 TN / 15 FN, identical across all 5 seeds. |
+| v9 | 11 | 40 × 5 seeds | **RedundancyAwareDetector** (production-collapse) | **0.125 ± 0.000** | 1.9 | 5 TP / 3 FP / 17 TN / 15 FN, identical across all 5 sim seeds at panel=42. |
+| v9-robust | 12 | 40 × 2 panels × up to 7 seeds (Colab) | RedundancyAwareDetector, 2 panels | **0.123 ± 0.020** | ~1.5 (L4) | Overall honest number across panels. Panel 42 stays 0.125±0.000; panel 400 gives 0.119±0.041 (boundary-gene variance). |
 
 ### Replicates summary (Session 10, panel fixed at seed=42)
 
@@ -87,7 +88,7 @@ Run as Block B of the Colab notebook. 5 simulator seeds × 5 detector configs ×
 
 **Session-11 diagnostic (v9):** The RedundancyAwareDetector checks whether any product of a gene's silenced rules actually loses total production capacity in the KO (summing over all alternate producers). v9 gives MCC = 0.125 ± 0.000 — deterministic across 5 seeds, marginally above v5's 0.112, but nowhere near 0.59. The same 3 FPs persist (0034 cholesterol, deoC acetaldehyde, lpdA lipoylation) because **iMB155 itself lacks alternate-pathway redundancy for those metabolites** — the detector correctly finds their products non-redundant in the simulator, but the simulator is the one missing biology.
 
-**Best honest single-number summary after Session 11: MCC = 0.125 on n=40 balanced, essentially seed-invariant for structural detectors, bounded above by iMB155 pathway completeness.**
+**Best honest single-number summary after Session 12: MCC = 0.123 ± 0.020 on n=40 balanced (Colab, 10 runs over 2 panels).** v9 is deterministic at a fixed panel but has boundary-gene variance across different panel draws. Bounded above by iMB155 pathway completeness.
 
 ### What each detector family catches
 

@@ -16,16 +16,16 @@ Build a biologically accurate, computationally cheap Syn3A whole-cell simulator 
 | 3 | Protein folding + complex assembly | partial | complex_formation.xlsx loaded by existing rules; 24 complexes defined with stoichiometry. |
 | 4 | Metabolism | partial | Syn3A_updated.xml + kinetic_params.xlsx loaded by existing rules; 6 transporter k_cats patched without citation yet. |
 | 5 | Biomass + division | not started | no biomass accumulation / division logic anywhere. |
-| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 10 MCC measurements (v0-v9) + replicates summary. **Best mean MCC = 0.125 ± 0.000 (v9 RedundancyAwareDetector, seed-invariant)**. Detector-design space exhausted. Remaining gap localised to iMB155 pathway-completeness (3 persistent FPs: cholesterol/acetaldehyde/lipoylation have no alternate producers in the simulator's metabolic reconstruction). |
+| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 10 MCC measurements (v0-v9) + replicates + v9 robustness. **Best honest MCC = 0.123 ± 0.020** (v9 RedundancyAwareDetector across 2 different 40-gene panels, 10 total runs via Colab). Panel 42 reproduces exactly (0.125, std=0.000); panel 400 introduces boundary-gene variance (0.119 ± 0.041). Detector-design space exhausted; iMB155 pathway-completeness is the bottleneck. |
 
 Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Implementation, D = Validation, E = Layer report.
 
 ## Memory Bank
 
-- Facts: **25**
+- Facts: **26**
   - structural (9): doubling time, chromosome length, gene count, gene table, oriC, Breuer 2019 labels, RNAP count per cell, ribosome count at birth, chromosome bead model.
   - parameters (2): active RNAP fraction, mRNA half-life mean.
-  - measured (11): `mcc_against_breuer_v0..v9` + `mcc_replicates_summary`.
+  - measured (12): `mcc_against_breuer_v0..v9` + `mcc_replicates_summary` + `mcc_v9_robustness`.
   - resolved uncertainty (3): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`, `syn3a_gene_count_thornburg2026_discrepancy`.
 - Sources: **11** (Thornburg 2022 + 2026 Cell, Hutchison 2016, Breuer 2019, GenBank CP016816, Luthey-Schulten ComplexFormation + 4DWCM repos, Fu 2026 JPC-B, Gilbert 2023 Frontiers, Bianchi 2022 JPC-B, Pezeshkian 2024 Nat Commun).
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
@@ -48,6 +48,16 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
+
+### Session 12 — 2026-04-22 — v9 Colab reproduction + panel-seed robustness
+- Added `notebooks/colab_v9_run.ipynb` — reproduces v9 (5 sim seeds × panel=42) and runs a panel-seed robustness block (up to 5 panels × 3 seeds). GitHub push-protection correctly caught a literal PAT I left in notebook markdown; amended commit without the token.
+- **Colab run (L4, 8 vCPU, partial — user interrupted after panel 400)**: 10 total runs across 2 panels.
+  - **Panel 42 (7 runs)**: MCC = 0.125 ± 0.000 — reproduces sandbox v9 exactly. 5 TP / 3 FP / 17 TN / 15 FN across every run.
+  - **Panel 400 (3 runs)**: MCC = 0.119 ± 0.041 — different gene draw exposes boundary-gene variance. Mean TP/FP/TN/FN = 2.3 / 1.0 / 19.0 / 17.7 (non-integer means confirm per-seed variation).
+  - **Overall (10 runs, 2 panels): MCC = 0.123 ± 0.020** — the honest project-wide v9 number.
+- **New scientific finding**: v9 is deterministic at a fixed panel but introduces real variance across panels when gene samples include catalytic genes whose product-collapse ratios sit near `drop_threshold=0.30`. Panel 400's seed-to-seed MCC std of 0.041 came from one or two boundary genes flipping call direction. This nuances the Session-11 "seed-invariant" claim.
+- Recorded as `mcc_v9_robustness` measured fact. PROJECT_STATUS and REPORT updated with the 0.123 ± 0.020 number.
+- Commits: `a32ccf0` (notebook, rewritten after secret-scan catch → `916b548`) + `6561e72` (Colab results). Pushed.
 
 ### Session 11 — 2026-04-21 — Rule-alternates detector + metabolite sink + v9
 - **Deliverable 1 — `RedundancyAwareDetector`**: new detector that trips only when a silenced gene's products actually lose production capacity (summing events × stoichiometry across ALL catalysing rules, not just the gene's own). Addresses the v5/v6 FP mechanism structurally. Code: `cell_sim/layer6_essentiality/redundancy_aware_detector.py` (150 lines) + helpers `build_metabolite_producers` / `build_rule_products` in `gene_rule_map.py`. 9 new unit tests (total 58 passing).
