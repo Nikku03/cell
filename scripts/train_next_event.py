@@ -28,12 +28,17 @@ from cell_sim.atom_engine.atom_soup import SoupSpec, build_soup
 from cell_sim.atom_engine.element import Element
 from cell_sim.atom_engine.force_field import ForceFieldConfig
 from cell_sim.atom_engine.integrator import IntegratorConfig, SimState
-from cell_sim.atom_engine.ml_dataset import TrajectoryCollector
+from cell_sim.atom_engine.ml_dataset import (
+    REACTION_CLASSES,
+    TrajectoryCollector,
+)
 from cell_sim.atom_engine.ml_model import (
     HeuristicBaseline,
     TrainConfig,
     evaluate,
     train_atom_gnn,
+    train_force_surrogate,
+    train_reaction_classifier,
 )
 
 
@@ -76,6 +81,96 @@ def collect(n_trajectories: int,
                  f"{positive}/{total} positive labels "
                  f"({positive / max(total, 1):.1%})")
     return all_snaps
+
+
+def _mcc(tp: int, tn: int, fp: int, fn: int) -> float:
+    """Matthews correlation coefficient. Returns 0 if the denominator
+    is zero (undefined), which matches the Breuer 2019 detector code
+    elsewhere in the repo."""
+    import math as _m
+    num = tp * tn - fp * fn
+    denom = _m.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+    if denom == 0:
+        return 0.0
+    return num / denom
+
+
+def _cell_essentiality(train, val) -> dict:
+    """Treat each snapshot as a 'cell state' and predict whether it
+    belongs to the 'high-activity' class (reactive chemistry proxy for
+    essentiality). Features: pooled per-atom embedding (summary stats)
+    + fraction of atoms with valence remaining. Classifier: logistic
+    regression via torch, trained from scratch.
+
+    This is a PROOF OF CONCEPT, not a real Breuer-2019 MCC readout.
+    The point is to show that the atom-engine ML outputs plug into a
+    cell-level binary classification exactly the same way the earlier
+    detector framework does.
+    """
+    import torch
+    import torch.nn as nn
+
+    def _summarise(snap):
+        # Summary features per snapshot:
+        # [mean speed, max speed, fraction_valence_free, edge_density,
+        #  n_bonded_edges, n_proximity_edges]
+        nf = snap.node_features
+        speed = nf[:, 7]   # speed col (see extract_node_features)
+        val_free = (nf[:, 6] > 0.0).mean()
+        n_edges = snap.edges.shape[0]
+        # bonded edges have edge_features[:, 3] == 1.0
+        n_bonded = int((snap.edge_features[:, 3] == 1.0).sum())
+        n_prox = n_edges - n_bonded
+        return np.array([
+            speed.mean(), speed.max(), val_free,
+            n_edges / max(nf.shape[0], 1),
+            n_bonded / max(nf.shape[0], 1),
+            n_prox / max(nf.shape[0], 1),
+        ], dtype=np.float32)
+
+    def _label(snap):
+        # "Essential" = above-median bond formation rate.
+        return int(snap.labels.sum())
+
+    X_train = np.stack([_summarise(s) for s in train])
+    y_train_raw = np.array([_label(s) for s in train], dtype=np.float32)
+    X_val = np.stack([_summarise(s) for s in val])
+    y_val_raw = np.array([_label(s) for s in val], dtype=np.float32)
+
+    # Binarise at median of training set.
+    thresh = float(np.median(y_train_raw))
+    y_train = (y_train_raw > thresh).astype(np.float32)
+    y_val = (y_val_raw > thresh).astype(np.float32)
+
+    # Simple logistic regression.
+    model = nn.Sequential(
+        nn.Linear(X_train.shape[1], 16), nn.ReLU(),
+        nn.Linear(16, 1),
+    )
+    opt = torch.optim.Adam(model.parameters(), lr=1e-2)
+    Xt = torch.tensor(X_train)
+    yt = torch.tensor(y_train)
+    for _ in range(100):
+        opt.zero_grad()
+        logits = model(Xt).squeeze(-1)
+        loss = nn.functional.binary_cross_entropy_with_logits(logits, yt)
+        loss.backward()
+        opt.step()
+    with torch.no_grad():
+        train_pred = (torch.sigmoid(model(Xt).squeeze(-1)).numpy() > 0.5).astype(np.float32)
+        Xv = torch.tensor(X_val)
+        val_pred = (torch.sigmoid(model(Xv).squeeze(-1)).numpy() > 0.5).astype(np.float32)
+    tp = int(((val_pred == 1) & (y_val == 1)).sum())
+    tn = int(((val_pred == 0) & (y_val == 0)).sum())
+    fp = int(((val_pred == 1) & (y_val == 0)).sum())
+    fn = int(((val_pred == 0) & (y_val == 1)).sum())
+    return {
+        "train_acc": float((train_pred == y_train).mean()),
+        "val_acc": float((val_pred == y_val).mean()),
+        "val_mcc": _mcc(tp, tn, fp, fn),
+        "val_positive_rate": float(y_val.mean()),
+        "threshold_bond_count": thresh,
+    }
 
 
 def _parse_args() -> argparse.Namespace:
@@ -138,8 +233,42 @@ def main() -> int:
             return _t.sigmoid(logits).numpy()
 
     gs = evaluate(val, gnn_predict)
-    print(f"GNN (final): AUC={gs['auc']:.3f} acc={gs['acc']:.3f} "
+    print(f"GNN next-event: AUC={gs['auc']:.3f} acc={gs['acc']:.3f} "
           f"pos_rate={gs['positive_rate']:.3f}")
+
+    # --- Move 2: reaction-type predictor ---
+    print("\n=== Move 2: reaction-type multiclass ===")
+    rxn_model, rxn_hist = train_reaction_classifier(
+        train, val, train_cfg,
+        progress=lambda m: print(f"[rxn] {m}"),
+    )
+    # Summarize class distribution on val events
+    from collections import Counter
+    event_count = Counter()
+    for s in val:
+        for lbl in s.reaction_labels:
+            if lbl != REACTION_CLASSES.index("none"):
+                event_count[REACTION_CLASSES[int(lbl)]] += 1
+    print(f"val event distribution: {dict(event_count)}")
+
+    # --- Move 3: neural surrogate force field ---
+    print("\n=== Move 3: force surrogate ===")
+    train_pairs = [(s, s.forces_gt) for s in train if s.forces_gt is not None]
+    val_pairs = [(s, s.forces_gt) for s in val if s.forces_gt is not None]
+    force_model, force_hist = train_force_surrogate(
+        train_pairs, val_pairs, train_cfg,
+        progress=lambda m: print(f"[ff] {m}"),
+    )
+
+    # --- Move 4: cell-level essentiality readout (proof of concept) ---
+    print("\n=== Move 4: cell-level essentiality readout ===")
+    # Aggregate per-snapshot features into a single vector and classify
+    # whether that SNAPSHOT shows "essential" reactive activity
+    # (proxy: > threshold bond formations per atom in horizon window).
+    cell_results = _cell_essentiality(train, val)
+    print(f"cell essentiality proxy: train_acc={cell_results['train_acc']:.3f} "
+          f"val_acc={cell_results['val_acc']:.3f} "
+          f"val_mcc={cell_results['val_mcc']:.3f}")
 
     if args.out:
         out_path = Path(args.out)
@@ -151,9 +280,13 @@ def main() -> int:
             "horizon": args.horizon,
             "train_snapshots": len(train),
             "val_snapshots": len(val),
-            "baseline": bs,
-            "gnn": gs,
-            "training_history": history,
+            "move1_baseline": bs,
+            "move1_gnn": gs,
+            "move1_training_history": history,
+            "move2_reaction_history": rxn_hist,
+            "move2_event_distribution": dict(event_count),
+            "move3_force_history": force_hist,
+            "move4_cell_essentiality": cell_results,
         }, indent=2))
         print(f"summary: {out_path}")
 

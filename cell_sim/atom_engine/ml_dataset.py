@@ -26,8 +26,9 @@ import numpy as np
 
 from .atom_unit import AtomUnit, Bond, BondType
 from .element import Element, default_valence
-from .force_field import ForceFieldConfig
+from .force_field import ForceFieldConfig, compute_forces
 from .integrator import IntegratorConfig, SimState, step
+from .molecule_builder import classify_molecules, canonical_formula
 
 # Element codes we expose to the model. COARSE_* pseudo-elements are
 # excluded; if the soup contains one, it gets a zero one-hot vector.
@@ -65,8 +66,8 @@ def extract_node_features(atoms: list[AtomUnit]) -> np.ndarray:
 def extract_bond_edges(atoms: list[AtomUnit],
                        bonds: list[Bond]) -> tuple[np.ndarray, np.ndarray]:
     """Return (E, 2) edges (undirected, each pair duplicated i->j and j->i
-    for message-passing convenience) and (E, 3) edge features:
-    [current_length_nm, is_single, is_double_or_higher].
+    for message-passing convenience) and (E, 4) edge features:
+    [current_length_nm, is_single, is_double_or_higher, is_bonded=1].
     """
     id_to_idx = {id(a): i for i, a in enumerate(atoms)}
     e_pairs: list[tuple[int, int]] = []
@@ -85,16 +86,101 @@ def extract_bond_edges(atoms: list[AtomUnit],
         is_single = 1.0 if b.kind is BondType.COVALENT_SINGLE else 0.0
         is_multi = 1.0 if b.kind in (BondType.COVALENT_DOUBLE,
                                      BondType.COVALENT_TRIPLE) else 0.0
-        feat = [r, is_single, is_multi]
+        feat = [r, is_single, is_multi, 1.0]      # last = is_bonded
         e_pairs.append((i, j))
         e_feat.append(feat)
-        e_pairs.append((j, i))   # reverse direction
+        e_pairs.append((j, i))
         e_feat.append(feat)
     if not e_pairs:
         return (np.zeros((0, 2), dtype=np.int32),
-                np.zeros((0, 3), dtype=np.float32))
+                np.zeros((0, 4), dtype=np.float32))
     return (np.asarray(e_pairs, dtype=np.int32),
             np.asarray(e_feat, dtype=np.float32))
+
+
+def extract_proximity_edges(atoms: list[AtomUnit],
+                            bonds: list[Bond],
+                            cutoff_nm: float = 0.35) -> tuple[np.ndarray,
+                                                               np.ndarray]:
+    """Return (E, 2) edges and (E, 4) features for UNBONDED atom pairs
+    within ``cutoff_nm``. Edge feature vector:
+    [current_length_nm, is_single=0, is_multi=0, is_bonded=0].
+
+    These proximity edges give the GNN visibility into atoms that could
+    PLAUSIBLY form a bond in the near future, not just those already
+    bonded — a critical signal for next-event prediction.
+    """
+    n = len(atoms)
+    if n < 2:
+        return (np.zeros((0, 2), dtype=np.int32),
+                np.zeros((0, 4), dtype=np.float32))
+    pos = np.array([a.position for a in atoms], dtype=np.float64)
+    bonded_pairs: set[tuple[int, int]] = set()
+    id_to_idx = {id(a): i for i, a in enumerate(atoms)}
+    for b in bonds:
+        if b.death_time_ps is not None:
+            continue
+        i = id_to_idx.get(id(b.a))
+        j = id_to_idx.get(id(b.b))
+        if i is None or j is None:
+            continue
+        bonded_pairs.add((min(i, j), max(i, j)))
+
+    c2 = cutoff_nm * cutoff_nm
+    # Use broadcasting for small N; for N > ~500 this would need a
+    # neighbor list, but snapshots stay small.
+    d = pos[None, :, :] - pos[:, None, :]
+    r2 = np.einsum("ijk,ijk->ij", d, d)
+    iu, ju = np.triu_indices(n, k=1)
+    mask = (r2[iu, ju] < c2) & (r2[iu, ju] > 1e-8)
+    iu = iu[mask]
+    ju = ju[mask]
+    r2_kept = r2[iu, ju]
+    # Filter out pairs that are already bonded.
+    keep = np.array([(int(a), int(b)) not in bonded_pairs
+                     for a, b in zip(iu, ju)], dtype=bool)
+    iu = iu[keep]
+    ju = ju[keep]
+    r2_kept = r2_kept[keep]
+    if iu.size == 0:
+        return (np.zeros((0, 2), dtype=np.int32),
+                np.zeros((0, 4), dtype=np.float32))
+    r = np.sqrt(r2_kept).astype(np.float32)
+    # Duplicate each pair for both directions.
+    iu2 = np.concatenate([iu, ju])
+    ju2 = np.concatenate([ju, iu])
+    r2a = np.concatenate([r, r])
+    edges = np.stack([iu2, ju2], axis=1).astype(np.int32)
+    feats = np.zeros((iu2.size, 4), dtype=np.float32)
+    feats[:, 0] = r2a
+    # is_single=0, is_multi=0, is_bonded=0 → remain zero
+    return edges, feats
+
+
+def extract_all_edges(atoms: list[AtomUnit], bonds: list[Bond],
+                      proximity_cutoff_nm: float = 0.35
+                      ) -> tuple[np.ndarray, np.ndarray]:
+    """Concatenate bond edges + proximity edges with a shared feature
+    schema."""
+    e_b, f_b = extract_bond_edges(atoms, bonds)
+    e_p, f_p = extract_proximity_edges(atoms, bonds,
+                                       cutoff_nm=proximity_cutoff_nm)
+    if e_b.size == 0:
+        return e_p, f_p
+    if e_p.size == 0:
+        return e_b, f_b
+    return (np.concatenate([e_b, e_p], axis=0),
+            np.concatenate([f_b, f_p], axis=0))
+
+
+# Set of product molecules we track as classes for reaction-type
+# prediction. Any other formula → class 0 ("other"). Class 1 = "no event".
+REACTION_CLASSES: list[str] = [
+    "other", "none", "H2", "O2", "N2", "H2O", "HO", "NH", "CH",
+    "CH2", "CH3", "CH4", "CO", "CO2", "NH3",
+]
+REACTION_CLASS_TO_IDX = {c: i for i, c in enumerate(REACTION_CLASSES)}
+N_REACTION_CLASSES = len(REACTION_CLASSES)
 
 
 @dataclass
@@ -102,8 +188,17 @@ class Snapshot:
     node_features: np.ndarray
     edges: np.ndarray
     edge_features: np.ndarray
-    labels: np.ndarray            # filled in after horizon simulation
-    snapshot_id: int
+    labels: np.ndarray            # binary: forms-bond-in-horizon
+    # Multiclass: formula of the molecule this atom becomes part of
+    # at the time it (first) forms a bond within the horizon.
+    # 1 = "none" (no bond event). 0 = "other" (a product not in the
+    # enumerated list).
+    reaction_labels: np.ndarray = None
+    # (N, 3) per-atom force vector from the reference ``compute_forces``
+    # at the time of the snapshot — used as the training target for the
+    # neural surrogate force field (Move 3).
+    forces_gt: Optional[np.ndarray] = None
+    snapshot_id: int = 0
 
 
 @dataclass
@@ -138,6 +233,7 @@ class TrajectoryCollector:
         pending: list[tuple[Snapshot, set[int], int]] = []
         forces = None
         next_snapshot_step = 0
+        from .molecule_builder import _connected_components_by_live_bonds
 
         for k in range(n_steps):
             forces = step(state, ff_cfg, int_cfg, forces)
@@ -166,10 +262,28 @@ class TrajectoryCollector:
                         new_form_events.append((j, i if i is not None else -1))
 
             # Update pending snapshots' labels.
+            # For reaction_labels we need to know which molecule the
+            # atom just joined — take the connected-components formula
+            # AFTER this step's events fired.
+            if new_form_events:
+                comps = _connected_components_by_live_bonds(atoms)
+                idx_to_formula: dict[int, str] = {}
+                for group in comps:
+                    f = canonical_formula(group, atoms)
+                    for idx in group:
+                        idx_to_formula[idx] = f
+            else:
+                idx_to_formula = {}
+
             for snap, atoms_already_flagged, _ in pending:
                 for (atom_idx, _partner) in new_form_events:
                     if atom_idx not in atoms_already_flagged:
                         snap.labels[atom_idx] = 1
+                        f = idx_to_formula.get(atom_idx, "other")
+                        cls_idx = REACTION_CLASS_TO_IDX.get(
+                            f, REACTION_CLASS_TO_IDX["other"]
+                        )
+                        snap.reaction_labels[atom_idx] = cls_idx
                         atoms_already_flagged.add(atom_idx)
 
             # Decrement horizons and retire.
@@ -184,13 +298,20 @@ class TrajectoryCollector:
             # Take a new snapshot?
             if k == next_snapshot_step:
                 node_f = extract_node_features(atoms)
-                edges, edge_f = extract_bond_edges(atoms, state.bonds)
+                edges, edge_f = extract_all_edges(atoms, state.bonds)
                 labels = np.zeros(n, dtype=np.int8)
+                rlabels = np.full(n, REACTION_CLASS_TO_IDX["none"],
+                                  dtype=np.int8)
+                # Ground-truth forces for the surrogate FF target.
+                forces_gt = compute_forces(atoms, state.bonds,
+                                            state.t_ps, ff_cfg)
                 snap = Snapshot(
                     node_features=node_f,
                     edges=edges,
                     edge_features=edge_f,
                     labels=labels,
+                    reaction_labels=rlabels,
+                    forces_gt=forces_gt.astype(np.float32),
                     snapshot_id=trajectory_id * 100000 + k,
                 )
                 pending.append((snap, set(), self.horizon))
