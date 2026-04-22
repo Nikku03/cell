@@ -11,6 +11,7 @@ import math
 import numpy as np
 import pytest
 
+from cell_sim.atom_engine.atom_soup import SoupSpec, build_soup
 from cell_sim.atom_engine.atom_unit import AtomUnit, BondType
 from cell_sim.atom_engine.element import Element, default_valence, pair_is_bondable
 from cell_sim.atom_engine.fission_demo import FissionConfig, run_fission
@@ -23,6 +24,11 @@ from cell_sim.atom_engine.integrator import (
     step,
 )
 from cell_sim.atom_engine.fusion_demo import FusionConfig, run_fusion
+from cell_sim.atom_engine.reaction_demo import (
+    ReactionConfig,
+    audit_stability,
+    run_reactions,
+)
 from cell_sim.atom_engine.vesicle import (
     VesicleSpec,
     build_two_vesicles,
@@ -255,6 +261,102 @@ def test_fission_runs_without_blowing_up():
     assert len(result.neck_fraction) > 0
     # The atom count is preserved
     assert result.n_atoms == 4 * cfg.vesicle.n_per_leaflet
+
+
+def test_atom_soup_respects_composition_and_temperature():
+    spec = SoupSpec(
+        composition={Element.H: 10, Element.C: 4, Element.O: 2},
+        radius_nm=1.0, temperature_K=500.0, seed=5,
+    )
+    atoms = build_soup(spec)
+    assert len(atoms) == 16
+    counts = {}
+    for a in atoms:
+        counts[a.element] = counts.get(a.element, 0) + 1
+    assert counts == {Element.H: 10, Element.C: 4, Element.O: 2}
+    # No pre-existing bonds.
+    assert all(len(a.bonds) == 0 for a in atoms)
+    # Atoms inside the sphere.
+    for a in atoms:
+        r2 = sum(x * x for x in a.position)
+        assert r2 <= spec.radius_nm ** 2 + 1e-6
+
+
+def test_audit_stability_catches_no_issues_on_fresh_soup():
+    atoms = build_soup(SoupSpec(composition={Element.C: 5, Element.H: 10}, seed=1))
+    audit = audit_stability(atoms)
+    assert audit["valence_violations"] == 0
+    assert audit["duplicate_bonds"] == 0
+    assert audit["illegal_pairs"] == 0
+
+
+@pytest.mark.slow
+def test_reactions_preserve_conservation_and_valence():
+    """Short reaction run must preserve atom count, respect valence, only
+    form bondable pairs, and produce at least some bonds at 2000 K."""
+    cfg = ReactionConfig(
+        soup=SoupSpec(
+            composition={Element.H: 20, Element.C: 6, Element.O: 3, Element.N: 2},
+            radius_nm=1.0, temperature_K=2000.0, seed=7,
+        ),
+        dt_ps=0.001,
+        target_temperature_K=2000.0,
+        steps=3000,
+        report_every=3000,
+    )
+    state, result = run_reactions(cfg)
+    # Atom count preserved.
+    assert len(state.atoms) == result.n_atoms == 31
+    # Total mass preserved (sanity — no atom destruction).
+    total_mass = sum(a.mass_da for a in state.atoms)
+    assert math.isclose(total_mass, 20 * 1.008 + 6 * 12.011 + 3 * 15.999 + 2 * 14.007,
+                        rel_tol=1e-9)
+    # Stability audit passes.
+    assert result.valence_violations == 0
+    assert result.duplicate_bonds == 0
+    assert result.illegal_pairs == 0
+    # At 2000 K something reactive should happen.
+    assert result.total_bonds_formed > 0
+    # Temperature finite and bounded.
+    assert math.isfinite(result.final_temperature_K)
+    assert 0.0 < result.final_temperature_K < 10000.0
+
+
+@pytest.mark.slow
+def test_reactions_are_cold_enough_to_be_quiet_at_low_T():
+    """At 200 K atoms barely approach bond_form_distance, so reaction
+    rate should be far lower than at high T."""
+    low_cfg = ReactionConfig(
+        soup=SoupSpec(
+            composition={Element.H: 20, Element.C: 6},
+            radius_nm=1.0, temperature_K=200.0, seed=3,
+        ),
+        dt_ps=0.001,
+        target_temperature_K=200.0,
+        steps=2000,
+        report_every=2000,
+    )
+    hot_cfg = ReactionConfig(
+        soup=SoupSpec(
+            composition={Element.H: 20, Element.C: 6},
+            radius_nm=1.0, temperature_K=3000.0, seed=3,
+        ),
+        dt_ps=0.001,
+        target_temperature_K=3000.0,
+        steps=2000,
+        report_every=2000,
+    )
+    _, low = run_reactions(low_cfg)
+    _, hot = run_reactions(hot_cfg)
+    # Hot system reacts more (formed + broken events).
+    assert (hot.total_bonds_formed + hot.total_bonds_broken) > (
+        low.total_bonds_formed + low.total_bonds_broken
+    )
+    # Both runs still pass the stability audit.
+    for r in (low, hot):
+        assert r.valence_violations == 0
+        assert r.duplicate_bonds == 0
+        assert r.illegal_pairs == 0
 
 
 @pytest.mark.slow

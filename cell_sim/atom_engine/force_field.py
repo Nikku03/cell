@@ -46,6 +46,10 @@ class ForceFieldConfig:
     axial_attractor_axis: int = 2               # usually same axis
     axial_attractor_strength_kj_per_nm: float = 0.1   # constant per-atom pull
     axial_attractor_ramp_ps: float = 20.0       # ramp strength from 0 at t=0
+    # --- soft spherical confinement (keeps an atom soup from flying apart) ---
+    use_confinement: bool = False
+    confinement_radius_nm: float = 2.0          # walls start here
+    confinement_k_kj_per_nm2: float = 2.0e3     # wall spring constant
     # --- safety ---
     max_force_kj_per_nm: float = 2.0e4          # per-atom force cap
 
@@ -203,6 +207,15 @@ def compute_forces(
         # the field stops compressing the contact zone.
         coord = pos[:, ax]
         forces[:, ax] -= strength * np.tanh(coord / 0.5)
+
+    # --- soft spherical confinement wall ---
+    if cfg.use_confinement:
+        r = np.linalg.norm(pos, axis=1)
+        out = r > cfg.confinement_radius_nm
+        if out.any():
+            radial_unit = pos[out] / np.maximum(r[out], 1e-9)[:, None]
+            excess = (r[out] - cfg.confinement_radius_nm)[:, None]
+            forces[out] -= cfg.confinement_k_kj_per_nm2 * excess * radial_unit
 
     # --- optional radial constriction (fission driver) ---
     if cfg.use_constriction:
