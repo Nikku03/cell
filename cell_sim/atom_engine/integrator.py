@@ -154,11 +154,13 @@ def _maybe_form_bonds(
     state: SimState,
     cfg: IntegratorConfig,
     neighbor_pairs: Optional[tuple[np.ndarray, np.ndarray]] = None,
+    pos: Optional[np.ndarray] = None,
 ) -> int:
     """Form bonds between unbonded pairs within form_distance.
 
     Uses the cached neighbor list (if any) to restrict the candidate set;
-    otherwise falls back to the full upper triangle.
+    otherwise falls back to the full upper triangle. Callers that already
+    have a positions array can pass it in to skip the regather.
     """
     atoms = state.atoms
     n = len(atoms)
@@ -180,7 +182,8 @@ def _maybe_form_bonds(
     if iu.size == 0:
         return 0
 
-    pos = _gather_positions(atoms)
+    if pos is None:
+        pos = _gather_positions(atoms)
     d = pos[ju] - pos[iu]
     r2 = np.einsum("ij,ij->i", d, d)
     close = r2 < r_max2
@@ -243,7 +246,8 @@ def step(
     dt = int_cfg.dt_ps
     atoms = state.atoms
 
-    def _neighbors() -> Optional[tuple[np.ndarray, np.ndarray]]:
+    def _neighbors(pos_for_rebuild: Optional[np.ndarray] = None
+                   ) -> Optional[tuple[np.ndarray, np.ndarray]]:
         if not ff_cfg.use_neighbor_list:
             return None
         every = max(1, int_cfg.neighbor_rebuild_every)
@@ -253,7 +257,8 @@ def step(
             or state._neighbor_built_at_step < 0
         )
         if stale:
-            pos_arr = _gather_positions(atoms)
+            pos_arr = (pos_for_rebuild if pos_for_rebuild is not None
+                       else _gather_positions(atoms))
             cutoff_with_skin = ff_cfg.lj_cutoff_nm + ff_cfg.neighbor_skin_nm
             state._neighbor_iu, state._neighbor_ju = build_neighbor_list(
                 pos_arr, cutoff_with_skin
@@ -261,13 +266,14 @@ def step(
             state._neighbor_built_at_step = state.step
         return (state._neighbor_iu, state._neighbor_ju)
 
-    if forces_prev is None:
-        forces_prev = compute_forces(atoms, state.bonds, state.t_ps, ff_cfg,
-                                     neighbor_pairs=_neighbors())
-
     masses = _cached_masses(state)[:, None]              # (N, 1)
     vel = _gather_velocities(atoms)
     pos = _gather_positions(atoms)
+
+    if forces_prev is None:
+        forces_prev = compute_forces(atoms, state.bonds, state.t_ps, ff_cfg,
+                                     neighbor_pairs=_neighbors(pos),
+                                     pos=pos)
 
     # Half-step velocity + full position update.
     vel += 0.5 * dt * forces_prev / masses
@@ -278,7 +284,8 @@ def step(
     state.step += 1
 
     forces_new = compute_forces(atoms, state.bonds, state.t_ps, ff_cfg,
-                                 neighbor_pairs=_neighbors())
+                                 neighbor_pairs=_neighbors(pos),
+                                 pos=pos)
 
     # Second half-step velocity.
     vel += 0.5 * dt * forces_new / masses
@@ -295,7 +302,9 @@ def step(
     broken = _maybe_break_bonds(state, int_cfg.bond_break_fraction)
     formed = 0
     if int_cfg.dynamic_bonding:
-        formed = _maybe_form_bonds(state, int_cfg, neighbor_pairs=_neighbors())
+        formed = _maybe_form_bonds(state, int_cfg,
+                                   neighbor_pairs=_neighbors(pos),
+                                   pos=pos)
 
     if int_cfg.step_callback is not None:
         int_cfg.step_callback(state.t_ps, formed, broken)

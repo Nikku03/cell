@@ -45,6 +45,11 @@ class ReactionConfig:
     use_neighbor_list: bool = False
     neighbor_skin_nm: float = 0.3
     neighbor_rebuild_every: int = 10
+    # Shrink LJ sigma for H/C/N/O/P/S so atoms can reach bond-forming
+    # distance. Without this, LJ repulsion at sigma ~= 0.25-0.35 nm
+    # prevents atoms from closing to r0 ~= 0.1 nm where a bond is
+    # allowed to form.
+    reactive_sigma_scale: float = 0.3
     # Dynamic bonding
     bond_form_distance_nm: float = 0.2
     bond_form_k_kj_per_nm2: float = 2.0e4
@@ -165,6 +170,7 @@ def run_reactions(
         confinement_k_kj_per_nm2=cfg.confinement_k_kj_per_nm2,
         use_neighbor_list=cfg.use_neighbor_list,
         neighbor_skin_nm=cfg.neighbor_skin_nm,
+        reactive_sigma_scale=cfg.reactive_sigma_scale,
     )
     int_cfg = IntegratorConfig(
         dt_ps=cfg.dt_ps,

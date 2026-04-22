@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Iterable, Sequence
+from typing import Iterable, Optional, Sequence
 
 import numpy as np
 
@@ -348,6 +348,7 @@ def compute_forces(
     neighbor_pairs: (Iterable[tuple[int, int]]
                     | tuple[np.ndarray, np.ndarray]
                     | None) = None,
+    pos: Optional[np.ndarray] = None,
 ) -> np.ndarray:
     """Compute total force on each atom. Returns (N, 3) array, kJ/mol/nm.
 
@@ -364,8 +365,10 @@ def compute_forces(
         return np.zeros((0, 3), dtype=np.float64)
 
     # Batch gather — np.array over a list of 3-lists is ~10x faster than
-    # a per-atom indexed write loop at N >> 1000.
-    pos = np.array([a.position for a in atoms], dtype=np.float64)
+    # a per-atom indexed write loop at N >> 1000. Callers that already
+    # have a positions array can pass it in to skip this step.
+    if pos is None:
+        pos = np.array([a.position for a in atoms], dtype=np.float64)
     forces = np.zeros((n, 3), dtype=np.float64)
 
     # Stable index for each atom by id(). Fast lookup for bonded pairs.
@@ -424,30 +427,20 @@ def compute_forces(
             ju = np.empty(0, dtype=np.int64)
 
     if iu.size:
-        dvec = pos[ju] - pos[iu]                           # (M, 3)
-        r2 = np.einsum("ij,ij->i", dvec, dvec)             # (M,)
-        keep = (r2 > 1e-8) & (r2 < cutoff2)
-        if bonded_set:
-            # Encode bonded pairs as single ints (i * n + j). Vectorized
-            # exclusion via np.isin beats a Python set-lookup per pair.
-            bonded_codes = np.fromiter(
-                (i * n + j for (i, j) in bonded_set),
-                dtype=np.int64, count=len(bonded_set),
-            )
-            pair_codes = iu.astype(np.int64) * n + ju.astype(np.int64)
-            keep &= ~np.isin(pair_codes, bonded_codes)
-        iu = iu[keep]
-        ju = ju[keep]
-        dvec = dvec[keep]
-        r2 = r2[keep]
-    if iu.size:
         max_elem = int(elem_codes.max()) if elem_codes.size else 0
         has_coarse = max_elem >= 100       # any COARSE_* pseudo-element?
 
         if _HAS_RUST_LJ:
-            # Rust kernel handles the whole distance/eps/force math plus
-            # the scatter in one tight loop. ~5x faster than numpy +
-            # bincount at N=10000.
+            # Rust path: let the kernel do distance cutoff + bonded
+            # exclusion itself — saves the Python-side einsum,
+            # np.isin, and 4 masked-slice allocations per call.
+            bonded_codes_sorted = None
+            if bonded_set:
+                bonded_codes_sorted = np.fromiter(
+                    (i * n + j for (i, j) in bonded_set),
+                    dtype=np.int64, count=len(bonded_set),
+                )
+                bonded_codes_sorted.sort()
             forces += _rust.lj_forces(
                 np.ascontiguousarray(pos, dtype=np.float64),
                 np.ascontiguousarray(iu, dtype=np.int64),
@@ -457,42 +450,54 @@ def compute_forces(
                 np.ascontiguousarray(elem_codes, dtype=np.int32),
                 float(cutoff),
                 bool(has_coarse),
+                bonded_codes_sorted,
             )
         else:
-            # Pure-NumPy fallback.
-            r = np.sqrt(r2)
-
-            sig = 0.5 * (sigmas[iu] + sigmas[ju])
-            eps = np.sqrt(epsilons[iu] * epsilons[ju])
-
-            if has_coarse:
-                TAIL = Element.COARSE_TAIL.value
-                SOLV = Element.COARSE_SOLVENT.value
-                HEAD = Element.COARSE_HEAD.value
-                ei = elem_codes[iu]
-                ej = elem_codes[ju]
-                m_tt = (ei == TAIL) & (ej == TAIL)
-                m_ts = ((ei == TAIL) & (ej == SOLV)) | ((ei == SOLV) & (ej == TAIL))
-                m_ht = ((ei == HEAD) & (ej == TAIL)) | ((ei == TAIL) & (ej == HEAD))
-                eps = np.where(m_tt, eps * _TAIL_TAIL_EPS_BOOST, eps)
-                eps = np.where(m_ts, eps * _TAIL_WATER_EPS_PENALTY, eps)
-                eps = np.where(m_ht, eps * _HEAD_TAIL_EPS_FACTOR, eps)
-
-            sr = sig / r
-            sr6 = sr ** 6
-            sr12 = sr6 * sr6
-            mag = 24.0 * eps * (2.0 * sr12 - sr6) / r
-
-            factor = mag / r
-            fx = factor * dvec[:, 0]
-            fy = factor * dvec[:, 1]
-            fz = factor * dvec[:, 2]
-            forces[:, 0] += (np.bincount(ju, weights=fx, minlength=n)
-                             - np.bincount(iu, weights=fx, minlength=n))
-            forces[:, 1] += (np.bincount(ju, weights=fy, minlength=n)
-                             - np.bincount(iu, weights=fy, minlength=n))
-            forces[:, 2] += (np.bincount(ju, weights=fz, minlength=n)
-                             - np.bincount(iu, weights=fz, minlength=n))
+            # Pure-NumPy fallback — do the distance / bond filter in Python.
+            dvec = pos[ju] - pos[iu]
+            r2 = np.einsum("ij,ij->i", dvec, dvec)
+            keep = (r2 > 1e-8) & (r2 < cutoff2)
+            if bonded_set:
+                bonded_codes = np.fromiter(
+                    (i * n + j for (i, j) in bonded_set),
+                    dtype=np.int64, count=len(bonded_set),
+                )
+                pair_codes = iu.astype(np.int64) * n + ju.astype(np.int64)
+                keep &= ~np.isin(pair_codes, bonded_codes)
+            iu = iu[keep]
+            ju = ju[keep]
+            dvec = dvec[keep]
+            r2 = r2[keep]
+            if iu.size:
+                r = np.sqrt(r2)
+                sig = 0.5 * (sigmas[iu] + sigmas[ju])
+                eps = np.sqrt(epsilons[iu] * epsilons[ju])
+                if has_coarse:
+                    TAIL = Element.COARSE_TAIL.value
+                    SOLV = Element.COARSE_SOLVENT.value
+                    HEAD = Element.COARSE_HEAD.value
+                    ei = elem_codes[iu]
+                    ej = elem_codes[ju]
+                    m_tt = (ei == TAIL) & (ej == TAIL)
+                    m_ts = ((ei == TAIL) & (ej == SOLV)) | ((ei == SOLV) & (ej == TAIL))
+                    m_ht = ((ei == HEAD) & (ej == TAIL)) | ((ei == TAIL) & (ej == HEAD))
+                    eps = np.where(m_tt, eps * _TAIL_TAIL_EPS_BOOST, eps)
+                    eps = np.where(m_ts, eps * _TAIL_WATER_EPS_PENALTY, eps)
+                    eps = np.where(m_ht, eps * _HEAD_TAIL_EPS_FACTOR, eps)
+                sr = sig / r
+                sr6 = sr ** 6
+                sr12 = sr6 * sr6
+                mag = 24.0 * eps * (2.0 * sr12 - sr6) / r
+                factor = mag / r
+                fx = factor * dvec[:, 0]
+                fy = factor * dvec[:, 1]
+                fz = factor * dvec[:, 2]
+                forces[:, 0] += (np.bincount(ju, weights=fx, minlength=n)
+                                 - np.bincount(iu, weights=fx, minlength=n))
+                forces[:, 1] += (np.bincount(ju, weights=fy, minlength=n)
+                                 - np.bincount(iu, weights=fy, minlength=n))
+                forces[:, 2] += (np.bincount(ju, weights=fz, minlength=n)
+                                 - np.bincount(iu, weights=fz, minlength=n))
 
     # --- optional axial attractor (fusion driver) ---
     if cfg.use_axial_attractor:

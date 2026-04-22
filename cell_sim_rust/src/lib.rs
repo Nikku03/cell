@@ -563,6 +563,7 @@ fn lj_forces<'py>(
     elem_codes: PyReadonlyArray1<i32>,
     cutoff: f64,
     has_coarse: bool,
+    bonded_codes_sorted: Option<PyReadonlyArray1<i64>>,
 ) -> PyResult<Py<numpy::PyArray2<f64>>> {
     let pos_a = pos.as_array();
     let iu_s = iu.as_slice()?;
@@ -570,6 +571,9 @@ fn lj_forces<'py>(
     let sig_s = sigmas.as_slice()?;
     let eps_s = epsilons.as_slice()?;
     let codes_s = elem_codes.as_slice()?;
+    // Bonded pairs are encoded as (min(i,j) * n + max(i,j)) and passed in
+    // sorted; Rust does a binary search per candidate pair to exclude.
+    let bonded_codes_owned = bonded_codes_sorted.as_ref().map(|x| x.as_slice().unwrap());
 
     let n = pos_a.shape()[0];
     let m = iu_s.len();
@@ -581,6 +585,13 @@ fn lj_forces<'py>(
     for p in 0..m {
         let i = iu_s[p] as usize;
         let j = ju_s[p] as usize;
+        if let Some(codes) = bonded_codes_owned {
+            let (lo_atom, hi_atom) = if i < j { (i, j) } else { (j, i) };
+            let code = (lo_atom as i64) * (n as i64) + (hi_atom as i64);
+            if codes.binary_search(&code).is_ok() {
+                continue;
+            }
+        }
         let dx = pos_a[[j, 0]] - pos_a[[i, 0]];
         let dy = pos_a[[j, 1]] - pos_a[[i, 1]];
         let dz = pos_a[[j, 2]] - pos_a[[i, 2]];
