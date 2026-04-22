@@ -185,6 +185,11 @@ def _maybe_form_bonds(
     iu = iu[close]
     ju = ju[close]
 
+    # Lazy import to avoid a circular: integrator <- force_field <- atom_unit
+    # and molecule_builder also imports atom_unit. Safe here since it's only
+    # used when dynamic bonding is enabled.
+    from .molecule_builder import _bond_length as _bond_length_for_pair
+
     # Loop only over the surviving candidates — usually a tiny subset.
     for i, j in zip(iu.tolist(), ju.tolist()):
         ai = atoms[i]
@@ -195,11 +200,15 @@ def _maybe_form_bonds(
             continue
         if not pair_is_bondable(ai.element, aj.element):
             continue
+        # Pick an element-pair-specific equilibrium length so that newly
+        # formed bonds are at the RIGHT length, not stretched to near the
+        # break threshold.
+        r0 = _bond_length_for_pair(ai.element, aj.element)
         bond = ai.form_bond(
             aj,
             kind=cfg.bond_form_kind,
             t_ps=state.t_ps,
-            equilibrium_length_nm=cfg.bond_form_r0_nm,
+            equilibrium_length_nm=r0,
             spring_constant_kj_per_nm2=cfg.bond_form_k_kj_per_nm2,
         )
         state.bonds.append(bond)
