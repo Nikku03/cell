@@ -29,6 +29,8 @@ from .vesicle import (
     VesicleSpec,
     build_two_vesicles,
     count_connected_components,
+    intermixing_fraction,
+    tagged_components,
     vesicle_com_separation,
 )
 
@@ -60,12 +62,16 @@ class FusionConfig:
 class FusionResult:
     t_ps: list[float] = field(default_factory=list)
     temperature_K: list[float] = field(default_factory=list)
-    n_components: list[int] = field(default_factory=list)
+    n_components: list[int] = field(default_factory=list)         # raw tail-link cutoff
+    n_tagged_components: list[int] = field(default_factory=list)  # by parent_molecule
+    intermix: list[float] = field(default_factory=list)
     com_separation_nm: list[float] = field(default_factory=list)
     initial_components: int = 0
     final_components: int = 0
+    initial_tagged_components: int = 0
+    final_tagged_components: int = 0
     contact_time_ps: Optional[float] = None   # first time com sep < 2 * R
-    merge_time_ps: Optional[float] = None     # first time comps == 1
+    merge_time_ps: Optional[float] = None     # first time tagged comps == 1
     completed_fusion: bool = False
     bonds_formed: int = 0
     bonds_broken: int = 0
@@ -82,6 +88,7 @@ def run_fusion(
     result = FusionResult(
         n_atoms=len(atoms),
         initial_components=count_connected_components(atoms, bonds),
+        initial_tagged_components=tagged_components(atoms),
     )
 
     # Equilibration: no field, just let each vesicle relax at target T.
@@ -127,21 +134,35 @@ def run_fusion(
             T = current_temperature_K(state.atoms)
             sep = vesicle_com_separation(state.atoms, axis=2)
             nc = count_connected_components(state.atoms, state.bonds)
+            ntc = tagged_components(state.atoms)
+            mix = intermixing_fraction(state.atoms)
             result.t_ps.append(t)
             result.temperature_K.append(T)
             result.n_components.append(nc)
+            result.n_tagged_components.append(ntc)
+            result.intermix.append(mix)
             result.com_separation_nm.append(sep)
             if progress is not None:
                 progress(f"prod step {k + 1}/{cfg.production_steps} "
                          f"t={t:.1f} ps  T={T:.1f} K  "
-                         f"sep={sep:.2f} nm  comps={nc}")
+                         f"sep={sep:.2f} nm  tagged_comps={ntc}  "
+                         f"mix={mix:.2f}")
             if result.contact_time_ps is None and sep < contact_threshold_nm:
                 result.contact_time_ps = t
-            if result.merge_time_ps is None and nc == 1:
+            if result.merge_time_ps is None and ntc == 1:
                 result.merge_time_ps = t
 
     result.bonds_formed = state.events_bonds_formed
     result.bonds_broken = state.events_bonds_broken
     result.final_components = count_connected_components(state.atoms, state.bonds)
-    result.completed_fusion = result.final_components == 1 and result.initial_components == 2
+    result.final_tagged_components = tagged_components(state.atoms)
+    # Success: the two originally-distinct populations have merged into a
+    # single tagged component AND at least 10% of atoms have a neighbor
+    # of the opposite parent_molecule.
+    final_mix = intermixing_fraction(state.atoms)
+    result.completed_fusion = bool(
+        result.initial_tagged_components == 2
+        and result.final_tagged_components == 1
+        and final_mix > 0.1
+    )
     return state, result

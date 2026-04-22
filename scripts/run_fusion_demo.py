@@ -75,16 +75,19 @@ def main() -> int:
 
     progress(f"done in {elapsed:.1f} s "
              f"({cfg.production_steps / max(elapsed, 1e-6):.0f} steps/s)")
-    progress(f"initial_components={result.initial_components} "
-             f"final_components={result.final_components}")
+    progress(f"raw components (strict tail cutoff): "
+             f"{result.initial_components} -> {result.final_components}")
+    progress(f"tagged components (by parent_molecule): "
+             f"{result.initial_tagged_components} -> "
+             f"{result.final_tagged_components}")
     progress(f"bonds_broken={result.bonds_broken} "
              f"bonds_formed={result.bonds_formed}")
     if result.contact_time_ps is not None:
         progress(f"contact at t={result.contact_time_ps:.2f} ps")
     if result.merge_time_ps is not None:
-        progress(f"single-component at t={result.merge_time_ps:.2f} ps")
+        progress(f"tagged-populations merged at t={result.merge_time_ps:.2f} ps")
     if result.completed_fusion:
-        progress("FUSION COMPLETED (two vesicles -> one component)")
+        progress("FUSION COMPLETED (tagged populations merged + intermixed)")
     else:
         progress("fusion did NOT complete")
 
@@ -92,6 +95,8 @@ def main() -> int:
         "n_atoms": result.n_atoms,
         "initial_components": result.initial_components,
         "final_components": result.final_components,
+        "initial_tagged_components": result.initial_tagged_components,
+        "final_tagged_components": result.final_tagged_components,
         "contact_time_ps": result.contact_time_ps,
         "merge_time_ps": result.merge_time_ps,
         "completed_fusion": result.completed_fusion,
@@ -103,6 +108,8 @@ def main() -> int:
             "t_ps": result.t_ps,
             "temperature_K": result.temperature_K,
             "n_components": result.n_components,
+            "n_tagged_components": result.n_tagged_components,
+            "intermix": result.intermix,
             "com_separation_nm": result.com_separation_nm,
         },
         "config": {

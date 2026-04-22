@@ -307,3 +307,75 @@ def vesicle_com_separation(atoms: list[AtomUnit], axis: int = 2) -> float:
     u = sum(a.mass_da * a.position[axis] for a in upper) / sum(a.mass_da for a in upper)
     l = sum(a.mass_da * a.position[axis] for a in lower) / sum(a.mass_da for a in lower)
     return abs(u - l)
+
+
+def intermixing_fraction(atoms: list[AtomUnit],
+                         cutoff_nm: float = 0.8) -> float:
+    """Fraction of atoms that have at least one neighbor of a *different*
+    parent_molecule tag within ``cutoff_nm``.
+
+    0 when two tagged populations are fully separated; rises toward ~1 if
+    they interpenetrate completely. A successful field-only fusion should
+    drive this from 0 at t=0 to a nonzero plateau once the membranes
+    contact and merge.
+    """
+    if not atoms:
+        return 0.0
+    pos = np.array([a.position for a in atoms], dtype=np.float64)
+    tags = np.array([a.parent_molecule for a in atoms])
+    n = len(atoms)
+    c2 = cutoff_nm * cutoff_nm
+    mixed = np.zeros(n, dtype=bool)
+    for i in range(n):
+        d = pos - pos[i]
+        r2 = np.einsum("ij,ij->i", d, d)
+        neighbors = np.where((r2 < c2) & (tags != tags[i]))[0]
+        if neighbors.size > 0:
+            mixed[i] = True
+    return float(mixed.mean())
+
+
+def tagged_components(atoms: list[AtomUnit], cutoff_nm: float = 0.8) -> int:
+    """Union-find over parent_molecule groups linked by proximity.
+
+    Each unique ``parent_molecule`` starts as its own component. Two
+    components merge if any atom of one is within ``cutoff_nm`` of any
+    atom of the other. Returns the resulting component count.
+
+    This is robust to bilayer fragmentation under the strict tail-tail
+    cutoff — it measures whether the originally-distinct populations
+    have mixed, not whether each is still a perfect connected bilayer.
+    """
+    if not atoms:
+        return 0
+    tags = [a.parent_molecule for a in atoms]
+    unique_tags = sorted(set(tags))
+    tag_to_root = {t: i for i, t in enumerate(unique_tags)}
+    parent = list(range(len(unique_tags)))
+
+    def find(i: int) -> int:
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    def union(i: int, j: int) -> None:
+        ri, rj = find(i), find(j)
+        if ri != rj:
+            parent[ri] = rj
+
+    pos = np.array([a.position for a in atoms], dtype=np.float64)
+    c2 = cutoff_nm * cutoff_nm
+    n = len(atoms)
+    # For every pair whose tags differ AND are within cutoff, union the tags.
+    for i in range(n):
+        d = pos[i + 1:] - pos[i]
+        r2 = np.einsum("ij,ij->i", d, d)
+        near = np.where(r2 < c2)[0]
+        for k in near:
+            j = i + 1 + int(k)
+            if tags[j] != tags[i]:
+                union(tag_to_root[tags[i]], tag_to_root[tags[j]])
+
+    roots = {find(i) for i in range(len(unique_tags))}
+    return len(roots)

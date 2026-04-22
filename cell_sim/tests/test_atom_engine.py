@@ -29,6 +29,8 @@ from cell_sim.atom_engine.vesicle import (
     build_vesicle,
     count_connected_components,
     equatorial_split_metric,
+    intermixing_fraction,
+    tagged_components,
     vesicle_com_separation,
 )
 
@@ -212,8 +214,22 @@ def test_two_vesicles_are_initially_two_components():
     # Pre-fusion COM separation should be ~2 * z_offset = 7 nm
     sep = vesicle_com_separation(atoms, axis=2)
     assert 6.0 < sep < 8.0
-    # Two connected components before any MD.
-    assert count_connected_components(atoms, bonds) == 2
+    # Two tagged components before any MD; intermix is 0.
+    assert tagged_components(atoms) == 2
+    assert intermixing_fraction(atoms) == 0.0
+
+
+def test_tagged_components_merges_on_overlap():
+    """Two tagged populations within cutoff merge into one tagged component."""
+    a = AtomUnit.create(Element.COARSE_HEAD, position=(0.0, 0.0, 0.0),
+                        parent_molecule="vesicle_upper")
+    b = AtomUnit.create(Element.COARSE_HEAD, position=(0.5, 0.0, 0.0),
+                        parent_molecule="vesicle_lower")
+    # With cutoff 0.8 nm, a-b separation of 0.5 nm triggers a merge.
+    assert tagged_components([a, b], cutoff_nm=0.8) == 1
+    assert intermixing_fraction([a, b], cutoff_nm=0.8) == 1.0
+    # With a tight 0.3 nm cutoff, they stay separate.
+    assert tagged_components([a, b], cutoff_nm=0.3) == 2
 
 
 @pytest.mark.slow
@@ -262,7 +278,7 @@ def test_fusion_field_only_runs_without_blowing_up():
     assert math.isfinite(T)
     assert 0.0 < T < 2000.0
     assert result.n_atoms == 2 * 4 * spec.n_per_leaflet
-    assert result.initial_components == 2
+    assert result.initial_tagged_components == 2
     # COM separation should decrease monotonically on average
     if len(result.com_separation_nm) >= 2:
         assert result.com_separation_nm[-1] <= result.com_separation_nm[0] + 0.2
