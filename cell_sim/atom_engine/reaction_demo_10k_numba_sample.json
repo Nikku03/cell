@@ -1,0 +1,94 @@
+{
+  "config": {
+    "temperatures": [
+      2000.0
+    ],
+    "radius": 8.0,
+    "steps": 1500,
+    "dt": 0.001,
+    "report_every": 250,
+    "seed": 42,
+    "out": "/tmp/reactions_10k_final.json",
+    "n_h": 6000,
+    "n_c": 2500,
+    "n_n": 500,
+    "n_o": 1000,
+    "use_neighbor_list": true,
+    "neighbor_rebuild_every": 10,
+    "neighbor_skin_nm": 0.3
+  },
+  "runs": [
+    {
+      "T_target_K": 2000.0,
+      "n_atoms": 10000,
+      "total_bonds_formed": 330,
+      "total_bonds_broken": 104,
+      "net_live_bonds": 226,
+      "final_temperature_K": 1993.5477881567526,
+      "valence_violations": 0,
+      "duplicate_bonds": 0,
+      "illegal_pairs": 0,
+      "elapsed_s": 158.25715899467468,
+      "steps_per_s": 9.4782442041088,
+      "trajectory": {
+        "t_ps": [
+          0.25000000000000017,
+          0.5000000000000003,
+          0.7500000000000006,
+          1.0000000000000007,
+          1.2499999999999731,
+          1.4999999999999456
+        ],
+        "temperature_K": [
+          2101.5184557543685,
+          2023.1151217103027,
+          1999.6857652154858,
+          1993.046700826592,
+          1984.9642462847264,
+          1993.5477881567526
+        ],
+        "live_bonds": [
+          71,
+          109,
+          142,
+          167,
+          200,
+          226
+        ],
+        "cumulative_formed": [
+          150,
+          193,
+          227,
+          258,
+          297,
+          330
+        ],
+        "cumulative_broken": [
+          79,
+          84,
+          85,
+          91,
+          97,
+          104
+        ],
+        "molecule_count": [
+          9929,
+          9891,
+          9858,
+          9833,
+          9800,
+          9774
+        ],
+        "largest_molecule_size": [
+          2,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      }
+    }
+  ],
+  "audit_passed": true
+}
