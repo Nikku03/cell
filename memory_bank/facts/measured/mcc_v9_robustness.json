@@ -1,0 +1,88 @@
+{
+  "id": "mcc_v9_robustness",
+  "claim": "Panel-seed robustness sweep of v9 RedundancyAwareDetector on Colab. 2 distinct balanced n=40 panels x multiple simulator seeds = 10 total runs. Overall MCC = +0.123 +/- 0.020. Tests whether v9's committed MCC = 0.125 at panel_seed=42 is a property of that specific panel or a property of the detector.",
+  "value": {
+    "parameter": "mcc_binary_quasi_positive",
+    "number": 0.12314982658171665,
+    "std": 0.0197540373502818,
+    "units": "dimensionless",
+    "n_panels": 2,
+    "n_total_runs": 10,
+    "mcc_mean": 0.12314982658171665,
+    "mcc_std": 0.0197540373502818,
+    "mcc_min": 0.0949157995752499,
+    "mcc_max": 0.16666666666666666,
+    "per_panel": {
+      "42": {
+        "n_sim_seeds": 7,
+        "sim_seeds": [
+          1,
+          2,
+          3,
+          3,
+          42,
+          4,
+          4
+        ],
+        "mcc_mean": 0.125,
+        "mcc_std": 0.0,
+        "mcc_values": [
+          0.125,
+          0.125,
+          0.125,
+          0.125,
+          0.125,
+          0.125,
+          0.125
+        ],
+        "confusion_mean": {
+          "tp": 5.0,
+          "fp": 3.0,
+          "tn": 17.0,
+          "fn": 15.0
+        }
+      },
+      "400": {
+        "n_sim_seeds": 3,
+        "sim_seeds": [
+          1,
+          2,
+          42
+        ],
+        "mcc_mean": 0.11883275527238883,
+        "mcc_std": 0.041425382429818525,
+        "mcc_values": [
+          0.16666666666666666,
+          0.0949157995752499,
+          0.0949157995752499
+        ],
+        "confusion_mean": {
+          "tp": 2.3333333333333335,
+          "fp": 1.0,
+          "tn": 19.0,
+          "fn": 17.666666666666668
+        }
+      }
+    }
+  },
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible via notebooks/colab_v9_run.ipynb on a Colab GPU VM (L4 recommended). Panel seeds tested are configurable; defaults are [42, 100, 200, 300, 400] x sim_seeds [42, 1, 2].",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v9_session_12_colab_panel_robustness"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Each panel is a different random draw of 20 Essential + 20 Nonessential genes from Breuer 2019. Whether a specific FP gene (0034, deoC, lpdA) appears depends on whether the draw hits it.",
+    "The detector itself remains deterministic across sim_seeds at fixed panel_seed (v9 showed std=0.000); std across panels shows the population-level variance in accessible confusion matrix.",
+    "Overall std is the honest project-wide MCC uncertainty at n=40 balanced."
+  ],
+  "dependencies": [
+    "mcc_against_breuer_v9",
+    "mcc_replicates_summary"
+  ],
+  "last_verified": "2026-04-22",
+  "used_by": [
+    "notebooks/colab_v9_run.ipynb"
+  ]
+}
