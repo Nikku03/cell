@@ -43,3 +43,11 @@ Recommended: **L4 instance** — cheapest useful option, 8 vCPUs, ~55 min total.
 - One new data point (v8, scale=0.5) → closes the last unmeasured corner of the config grid.
 
 Per the brief: this is measurement hygiene, not a pivot.
+
+## `colab_v9_run.ipynb`
+
+Reproduces v9 (5 simulator seeds × panel_seed=42, expected MCC=0.125 all 5) and runs a **panel-seed robustness sweep** (5 different random 40-gene panels × 3 simulator seeds = 15 runs). The robustness sweep is the genuinely new datapoint: it shows whether v9's MCC=0.125 is detector-generic or just a property of the panel_seed=42 draw.
+
+Output: `memory_bank/facts/measured/mcc_v9_robustness.json` with per-panel MCC mean±std and overall mean±std across all 20 runs.
+
+Runtime: ~15 min (A100 GPU runtime, 12 vCPU) / ~25 min (L4, 8 vCPU). Same setup cells as `colab_bc_sweep.ipynb` (1–7); v9-specific logic in cells 8–11.
