@@ -1,0 +1,49 @@
+{
+  "id": "alphafold_extractor",
+  "claim": "AlphaFoldExtractor subclasses BatchedFeatureExtractor to fetch AlphaFold-DB predicted structures (AF-{UNIPROT_ID}-F1-model_v4.pdb) and extract 9 structural descriptors per Syn3A CDS: mean pLDDT, std pLDDT, disorder fraction (pLDDT<50), helix / sheet / coil composition via Ramachandran torsion bins, sequence length, radius of gyration, and a has_structure boolean. biopython is imported lazily inside _ensure_loaded. Missing structures (404 from AFDB, unmapped UniProt IDs, parse failures) produce an NaN row with has_structure=0.0 rather than raising. The cache parquet is not populated by this session; the Colab notebook fetches all structures and writes cell_sim/features/cache/alphafold_db.parquet.",
+  "value": {
+    "module_path": "cell_sim/features/extractors/alphafold_extractor.py",
+    "class_name": "AlphaFoldExtractor",
+    "name": "alphafold_db",
+    "version": "0.1.0",
+    "feature_cols_count": 9,
+    "feature_cols": [
+      "af_plddt_mean",
+      "af_plddt_std",
+      "af_disorder_fraction",
+      "af_helix_fraction",
+      "af_sheet_fraction",
+      "af_coil_fraction",
+      "af_sequence_length",
+      "af_radius_of_gyration_angstrom",
+      "af_has_structure"
+    ],
+    "cache_parquet_path": "cell_sim/features/cache/alphafold_db.parquet",
+    "expected_parquet_size_approx_kb": 100,
+    "populated_yet": false,
+    "tests_path": "cell_sim/tests/test_alphafold_extractor.py",
+    "test_count": 6
+  },
+  "source": "internal_infrastructure",
+  "source_detail": "Session 14. Verifiable by reading the module + running 6 sandbox-safe tests. Structures themselves come from the AlphaFold Protein Structure Database (EBI-EMBL) — Varadi et al. 2024 Nucleic Acids Research — fetched on demand by the extractor at run time. The AFDB structures are NOT registered as a first-class memory_bank source; they are external read-only data that the extractor pulls via HTTP.",
+  "context": {
+    "entity": "cell_sim_alphafold_extractor",
+    "version": "v0.1.0_session_14",
+    "commit_range": "TBD — filled in once Session 14 push lands."
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Cache parquet is empty until the Colab notebook runs. Until then the feature block is NaN for every locus_tag.",
+    "Secondary-structure classification is a torsion-bin proxy for DSSP (the AlphaFold-DB does not ship DSSP data, and DSSP itself is optional in typical Colab envs). Helix / sheet / coil fractions should be treated as ~10-15% noisier than DSSP; they are ordinal features, not precise ones. A follow-up session can wire in the full DSSP parser if warranted by downstream MCC.",
+    "AFDB coverage of Syn3A UniProt IDs is expected to be ~80-90%; rows without coverage are NaN-filled with has_structure=0.0.",
+    "No MCC measurement is claimed. A follow-up measured fact will document any detector built on top of these features.",
+    "Network is required to populate; the extractor retries 3x with backoff on transient failures and records 404s as missing-structure (permanent, no retry)."
+  ],
+  "dependencies": ["feature_cache_infrastructure"],
+  "last_verified": "2026-04-23",
+  "used_by": [
+    "cell_sim/features/extractors/alphafold_extractor.py",
+    "cell_sim/tests/test_alphafold_extractor.py",
+    "notebooks/populate_tier1_cache.ipynb"
+  ]
+}

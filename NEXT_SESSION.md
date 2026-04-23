@@ -22,18 +22,21 @@ _Read this file FIRST, immediately after running the invariant checker._
 
 All detector variants plateau at the same 3 FPs (0034, deoC, lpdA) and 15 FNs (ribosomal / tRNA / translation). Session 11's v9 confirmed that the remaining MCC gap is **not a detection problem** — it is a **simulator biology incompleteness problem**.
 
-## Session-14 top priority — populate the feature cache
+## Session-15 top priority — run the Tier-1 populate notebook, then measure
 
-### 0. Populate feature cache with ESM-2 (650M) embeddings for all 452 Syn3A CDS
+### 0. Run `notebooks/populate_tier1_cache.ipynb` on Colab Pro
 
-**New top-priority item, added in Session 13.** The feature-cache infrastructure built this session (`cell_sim/features/`) is ready to consume parquet files but has nothing cached yet. The highest-leverage populater is ESM-2 650M embeddings, one 1280-dim vector per CDS:
+**New top-priority item, refreshed in Session 14.** Session 14 landed all three extractor subclasses (`ESM2Extractor`, `AlphaFoldExtractor`, `MaceOffExtractor`), their sandbox-safe tests (17), and the populate notebook itself — but the cache is still empty. Session 15 is the user-side execution + verification pass:
 
-- Separate session; requires `torch` + `transformers` install. NOT attempted this session — the plumbing session's hard limits forbid pulling in heavy ML deps.
-- Subclass `BatchedFeatureExtractor`, name = `"esm2_650M"`, version = `"0.1.0"`, feature_cols = `[f"esm2_650M_dim_{i}" for i in range(1280)]`.
-- Inputs: DataFrame with `locus_tag` + `sequence` columns sourced from `cell_sim/layer0_genome/genome.py` (protein sequences already parsed from CP016816.2).
-- Wall-time estimate: 452 CDS at batch_size=32 on a single L4 GPU → ~2 minutes.
-- Output parquet: ~2.2 MB. Cache hit: instant (200 ms join with the sweep).
-- Once cached, a follow-up detector session can compare essentials vs nonessentials in ESM-2 embedding space (e.g. cosine similarity to known-essential ortholog embeddings, or a trivial linear classifier on the balanced-40 panel) without re-running the LM.
+1. Open `notebooks/populate_tier1_cache.ipynb` on Colab Pro (A100 preferred, T4 fallback).
+2. Run cells 1-8 to install deps, clone the repo at the current HEAD, load Syn3A CDS sequences, and execute the three extractors. Expected wall time: ~20-40 minutes total (ESM-2 ~2 min, AlphaFold ~15-30 min network-bound, MACE-OFF ~5 min).
+3. Pick an `OUTPUT_MODE` in cell 9:
+   - `drive` — Google Drive mount
+   - `download` — four browser download prompts
+   - `github_pat` — fully automated `git add -f` + commit + push via `$GITHUB_PAT`
+4. Verify cell 10's summary block: three parquets tracked in `manifest.json`, SHAs match, row counts sane. Paste the summary back for review.
+5. Once the parquets are on `origin`, open a follow-up PR that flips each of the three `populated_yet: false` flags in `memory_bank/facts/structural/{esm2,alphafold,mace_off}_extractor.json` and adds the real `sha256` fields.
+6. Only after the cache is populated, measure the baseline ensemble MCC with an XGBoost classifier on the cached feature join — that's the first honest Tier-1 MCC number. Record as `mcc_against_breuer_v11_tier1_xgb.json`.
 
 ### 1. Fix iMB155 pathway incompleteness (the real bottleneck)
 

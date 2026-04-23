@@ -49,6 +49,20 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 
 ## Session Log
 
+### Session 14 — 2026-04-23 — Tier-1 extractor classes + Colab populate notebook (no MCC)
+- **Scope**: pure plumbing on the sandbox side. Subclassed the Session-13 `BatchedFeatureExtractor` three times and shipped a Colab notebook that populates the cache on GPU. No pretrained model was executed in the sandbox. No detector in `cell_sim/layer6_essentiality/` was modified.
+- **New module `cell_sim/features/extractors/`** (~450 lines impl + ~300 lines tests):
+  - `esm2_extractor.py` — `ESM2Extractor` for `facebook/esm2_t33_650M_UR50D`. 1280 `esm2_650M_dim_{i}` float columns per CDS. Lazy-imports torch + transformers inside `_ensure_loaded`; empty input short-circuits before any heavy import (verified by `test_empty_input_returns_empty_frame`).
+  - `alphafold_extractor.py` — `AlphaFoldExtractor` fetches `AF-{UNIPROT}-F1-model_v4.pdb` from EBI-EMBL, parses with biopython to emit 9 descriptors (pLDDT mean/std, disorder fraction, helix/sheet/coil fractions via torsion bins, length, Rg, has_structure). Lazy biopython import; 3× retry + backoff on transient network failures; 404 → no-structure NaN row.
+  - `mace_off_extractor.py` — `MaceOffExtractor` wraps the existing `cell_sim.layer1_atomic.engine.MACEBackend` without re-implementing any BDE / Eyring / Hammond math. Aggregates per-substrate k_cat estimates into 7 per-locus summary stats so the output matches the `FeatureRegistry.locus_tag` index contract.
+- **Colab notebook `notebooks/populate_tier1_cache.ipynb`** (10 cells, ~420 lines of JSON):
+  - Cells install GPU-side deps, clone the repo, load CDS sequences from the GenBank file, run each extractor, refresh the manifest, and offer three output paths (Drive / direct download / GitHub PAT push — user picks via `OUTPUT_MODE` at top of cell 9). The PAT path uses `git add -f` on the parquets so the gitignore rule stays general.
+- **Tests**: 17 extractor tests (6 + 6 + 5) + 8 notebook-validation tests = **25 new, all pass in < 1 s**. Notebook tests cover: valid JSON, correct cell count, code/markdown ordering, no saved outputs at commit time, references to the three extractor class names, three output modes exposed, and no embedded model weights.
+- **Memory bank**: 3 new structural facts (`esm2_extractor`, `alphafold_extractor`, `mace_off_extractor`). Each declares the module path, feature columns, expected parquet path / size, `populated_yet: false`, and a caveat that the cache is empty until the notebook runs. `confidence: measured` (verifiable by reading the module + running the tests). `source: internal_infrastructure` (registered in Session 13).
+- **Dependencies**: no new line in `cell_sim/requirements.txt`. Added a 6-line comment there pointing at the notebook for the GPU-side stack. Explicitly did NOT add torch / transformers / mace-torch / e3nn / biopython to the repo requirements — those live in the Colab install cell only.
+- **Session totals**: 147 (pre-session) + 17 (extractor) + 8 (notebook) = **172 tests passing**. 33 facts / 12 sources / invariant checker OK.
+- **Explicit non-claims**: no MCC measurement, no detector change. The notebook is ready for user execution; parquets will be pushed in a separate follow-up commit once the notebook runs.
+
 ### Session 13 — 2026-04-23 — Feature-cache infrastructure (plumbing, no MCC)
 - **Scope**: pure infrastructure for per-gene pretrained-model feature caching. No pretrained models were downloaded or run. No MCC measurement made. No detector in `cell_sim/layer6_essentiality/` was modified.
 - **New module `cell_sim/features/`** (~500 lines of impl, 350 lines of tests):

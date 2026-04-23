@@ -7,6 +7,13 @@ openpyxl>=3.1
 biopython>=1.81
 pyarrow>=14.0        # parquet backend for cell_sim/features/ cache layer
 
+# ML extractors (ESM-2, AlphaFold, MACE-OFF) have separate runtime deps —
+# see notebooks/populate_tier1_cache.ipynb. Those deps (torch, transformers,
+# biopython, mace-torch, e3nn) are installed on the GPU side (Colab) only,
+# not at the sandbox level. The extractors in cell_sim/features/extractors/
+# import them lazily inside _ensure_loaded(), so the base package stays
+# importable without them.
+
 # Visualization
 matplotlib>=3.7
 

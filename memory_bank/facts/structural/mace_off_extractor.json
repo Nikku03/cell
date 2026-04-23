@@ -1,0 +1,49 @@
+{
+  "id": "mace_off_extractor",
+  "claim": "MaceOffExtractor subclasses BatchedFeatureExtractor to aggregate BDE-derived effective k_cat estimates from the existing cell_sim.layer1_atomic.engine.MACEBackend across an enzyme's substrate set. For each (enzyme, substrate) pair in the input DataFrame, the wrapper calls MACEBackend.estimate_kcat and aggregates per locus_tag into 7 summary features: mean / std / min / max k_cat, substrate count, mean confidence, and has_estimate. Heavy deps (mace-torch, torch, rdkit, ase, e3nn) load lazily through MACEBackend._ensure_loaded. The cache parquet is not populated by this session; the Colab notebook runs the wrapper on GPU and writes cell_sim/features/cache/mace_off_kcat.parquet.",
+  "value": {
+    "module_path": "cell_sim/features/extractors/mace_off_extractor.py",
+    "class_name": "MaceOffExtractor",
+    "name": "mace_off_kcat",
+    "version": "0.1.0",
+    "feature_cols_count": 7,
+    "feature_cols": [
+      "mace_kcat_mean_per_s",
+      "mace_kcat_std_per_s",
+      "mace_kcat_min_per_s",
+      "mace_kcat_max_per_s",
+      "mace_n_substrates",
+      "mace_mean_confidence",
+      "mace_has_estimate"
+    ],
+    "cache_parquet_path": "cell_sim/features/cache/mace_off_kcat.parquet",
+    "expected_parquet_size_approx_kb": 500,
+    "populated_yet": false,
+    "tests_path": "cell_sim/tests/test_mace_off_extractor.py",
+    "test_count": 5,
+    "wraps": "cell_sim.layer1_atomic.engine.MACEBackend"
+  },
+  "source": "internal_infrastructure",
+  "source_detail": "Session 14. Verifiable by reading the module + running 5 sandbox-safe tests. The wrapper does NOT re-implement the BDE / Eyring / Hammond math — that already lives in MACEBackend.estimate_kcat since a prior session. External weights: mace-off23_small from the mace-torch package (Batatia et al. 2023). Those weights are NOT registered as a memory_bank source; the extractor is transparent plumbing around the existing layer1_atomic interface.",
+  "context": {
+    "entity": "cell_sim_mace_off_extractor",
+    "version": "v0.1.0_session_14",
+    "commit_range": "TBD — filled in once Session 14 push lands."
+  },
+  "confidence": "measured",
+  "caveats": [
+    "The parquet is empty until the Colab notebook runs.",
+    "Per-substrate detail is aggregated into per-enzyme summary stats so the output satisfies the FeatureRegistry locus_tag index contract. A follow-up session can publish a separate sidecar source (e.g. 'mace_off_per_substrate') if the joint detector stack needs it.",
+    "The Syn3A SBML does not carry SMILES strings; the notebook's bootstrap passes species IDs as placeholders and relies on MACEBackend.estimate_kcat to return the 'mace_bde_failed' source for un-parseable strings. Rows with no usable BDE are skipped in aggregation — mace_has_estimate ends up 0.0 for those genes. A future session can plug in a curated species-to-SMILES map from KEGG or ChEBI and cite it properly.",
+    "No MCC measurement is claimed by this fact.",
+    "mace-off23_small downloads ~100 MB of weights on first call (inside MACEBackend._ensure_loaded). This happens on the Colab GPU, not in the sandbox."
+  ],
+  "dependencies": ["feature_cache_infrastructure"],
+  "last_verified": "2026-04-23",
+  "used_by": [
+    "cell_sim/features/extractors/mace_off_extractor.py",
+    "cell_sim/tests/test_mace_off_extractor.py",
+    "cell_sim/layer1_atomic/engine.py",
+    "notebooks/populate_tier1_cache.ipynb"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": "esm2_extractor",
+  "claim": "ESM2Extractor subclasses BatchedFeatureExtractor to compute mean-pooled 1280-dimensional per-protein embeddings from the pretrained facebook/esm2_t33_650M_UR50D weights. Heavy deps (torch, transformers) are imported inside _ensure_loaded — module-top imports are clean. Output contract is a DataFrame indexed by locus_tag with 1280 esm2_650M_dim_{i} float columns. The cache parquet is not populated by this session; the Colab notebook notebooks/populate_tier1_cache.ipynb runs the extractor on GPU and writes cell_sim/features/cache/esm2_650M.parquet.",
+  "value": {
+    "module_path": "cell_sim/features/extractors/esm2_extractor.py",
+    "class_name": "ESM2Extractor",
+    "name": "esm2_650M",
+    "version": "0.1.0",
+    "feature_cols_count": 1280,
+    "feature_cols_first": "esm2_650M_dim_0",
+    "feature_cols_last": "esm2_650M_dim_1279",
+    "cache_parquet_path": "cell_sim/features/cache/esm2_650M.parquet",
+    "expected_parquet_size_approx_mb": 2.3,
+    "populated_yet": false,
+    "tests_path": "cell_sim/tests/test_esm2_extractor.py",
+    "test_count": 6
+  },
+  "source": "internal_infrastructure",
+  "source_detail": "Session 14. The extractor is verifiable by reading the module + running the 6 sandbox-safe tests in cell_sim/tests/test_esm2_extractor.py. Pretrained weights cited in the module docstring: Lin et al. 2023 Science 379:1123, 'Evolutionary-scale prediction of atomic-level protein structure' (ESM-2 family); facebook/esm2_t33_650M_UR50D on HuggingFace Hub (~650M parameters, 33 layers, 1280 embedding dim). Those external weights are NOT registered as a memory_bank source — the fact only documents the wrapper API.",
+  "context": {
+    "entity": "cell_sim_esm2_extractor",
+    "version": "v0.1.0_session_14",
+    "commit_range": "TBD — will be filled in once Session 14 push lands."
+  },
+  "confidence": "measured",
+  "caveats": [
+    "The cache parquet is empty until the Colab notebook is run. Callers that join with this source before population get an NaN block (FeatureRegistry.join_features contract).",
+    "The module is pure plumbing; no MCC measurement is claimed here. A follow-up fact (facts/measured/mcc_with_tier1_features.json) will document any classifier built on top of the cached embeddings.",
+    "ESM-2 context window is 1024 tokens. The longest known Syn3A CDS is ~900 aa, so truncation should not fire in practice; it is handled with a warning path in the extractor if it does.",
+    "The extractor's write_cache() uses the default path cell_sim/features/cache/ unless the caller passes cache_dir. Users who put parquets elsewhere must register them via FeatureRegistry with the correct parquet_path."
+  ],
+  "dependencies": ["feature_cache_infrastructure"],
+  "last_verified": "2026-04-23",
+  "used_by": [
+    "cell_sim/features/extractors/esm2_extractor.py",
+    "cell_sim/tests/test_esm2_extractor.py",
+    "notebooks/populate_tier1_cache.ipynb"
+  ]
+}
