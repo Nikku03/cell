@@ -586,6 +586,204 @@ ATOM     23  OXT LYS A   1       3.268  -1.626   0.000  1.00  0.00           O
 ATOM     24  HXT LYS A   1       3.577  -2.547   0.000  1.00  0.00           H
 END
 """,
+    # Arginine (neutral form — NH rather than NH2+). Side chain
+    # CB-CG-CD-NE-CZ(=NH1)(-NH2). Coordinates place the guanidinium
+    # roughly planar around CZ.
+    "ARG": """\
+ATOM      1  N   ARG A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  ARG A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  ARG A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  ARG A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  ARG A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  ARG A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 ARG A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 ARG A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  ARG A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  HG1 ARG A   1       3.887   1.794  -1.218  1.00  0.00           H
+ATOM     11  HG2 ARG A   1       3.887   0.258  -0.329  1.00  0.00           H
+ATOM     12  CD  ARG A   1       4.047   0.000  -2.436  1.00  0.00           C
+ATOM     13  HD1 ARG A   1       3.677  -1.024  -2.436  1.00  0.00           H
+ATOM     14  HD2 ARG A   1       3.677   0.512  -3.325  1.00  0.00           H
+ATOM     15  NE  ARG A   1       5.547   0.000  -2.436  1.00  0.00           N
+ATOM     16  HE  ARG A   1       5.997  -0.896  -2.436  1.00  0.00           H
+ATOM     17  CZ  ARG A   1       6.287   1.100  -2.436  1.00  0.00           C
+ATOM     18 NH1  ARG A   1       5.697   2.287  -2.436  1.00  0.00           N
+ATOM     19 HH11 ARG A   1       4.697   2.287  -2.436  1.00  0.00           H
+ATOM     20 HH12 ARG A   1       6.187   3.167  -2.436  1.00  0.00           H
+ATOM     21 NH2  ARG A   1       7.617   1.100  -2.436  1.00  0.00           N
+ATOM     22 HH21 ARG A   1       8.127   1.970  -2.436  1.00  0.00           H
+ATOM     23 HH22 ARG A   1       8.127   0.230  -2.436  1.00  0.00           H
+ATOM     24  C   ARG A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     25  O   ARG A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     26  OXT ARG A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     27  HXT ARG A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Histidine (HIS-E tautomer: H on NE2). Imidazole ring:
+    # CG-ND1-CE1-NE2-CD2 back to CG. Ring is planar (z all equal);
+    # C-N / C-C bonds ~1.34 A.
+    "HIS": """\
+ATOM      1  N   HIS A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  HIS A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  HIS A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  HIS A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  HIS A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  HIS A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 HIS A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 HIS A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  HIS A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  ND1 HIS A   1       4.587   1.550  -1.218  1.00  0.00           N
+ATOM     11  CE1 HIS A   1       5.887   0.950  -1.218  1.00  0.00           C
+ATOM     12  HE1 HIS A   1       6.767   1.580  -1.218  1.00  0.00           H
+ATOM     13  NE2 HIS A   1       5.697  -0.430  -1.218  1.00  0.00           N
+ATOM     14  HE2 HIS A   1       6.377  -1.180  -1.218  1.00  0.00           H
+ATOM     15  CD2 HIS A   1       4.367  -0.470  -1.218  1.00  0.00           C
+ATOM     16  HD2 HIS A   1       3.887  -1.440  -1.218  1.00  0.00           H
+ATOM     17  C   HIS A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     18  O   HIS A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     19  OXT HIS A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     20  HXT HIS A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Phenylalanine. Benzene ring side chain: CG-CD1-CE1-CZ-CE2-CD2.
+    # Regular hexagon, C-C ~1.40 A, C-H 1.09 A. Ring planar in xy plane.
+    "PHE": """\
+ATOM      1  N   PHE A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  PHE A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  PHE A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  PHE A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  PHE A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  PHE A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 PHE A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 PHE A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  PHE A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  CD1 PHE A   1       4.217   1.970  -1.218  1.00  0.00           C
+ATOM     11  HD1 PHE A   1       3.657   2.899  -1.218  1.00  0.00           H
+ATOM     12  CE1 PHE A   1       5.617   1.970  -1.218  1.00  0.00           C
+ATOM     13  HE1 PHE A   1       6.167   2.900  -1.218  1.00  0.00           H
+ATOM     14  CZ  PHE A   1       6.317   0.770  -1.218  1.00  0.00           C
+ATOM     15  HZ  PHE A   1       7.417   0.770  -1.218  1.00  0.00           H
+ATOM     16  CE2 PHE A   1       5.617  -0.430  -1.218  1.00  0.00           C
+ATOM     17  HE2 PHE A   1       6.167  -1.360  -1.218  1.00  0.00           H
+ATOM     18  CD2 PHE A   1       4.217  -0.430  -1.218  1.00  0.00           C
+ATOM     19  HD2 PHE A   1       3.657  -1.360  -1.218  1.00  0.00           H
+ATOM     20  C   PHE A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     21  O   PHE A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     22  OXT PHE A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     23  HXT PHE A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Tyrosine. PHE + hydroxyl on CZ. Same hexagon, replace HZ with OH.
+    "TYR": """\
+ATOM      1  N   TYR A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  TYR A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  TYR A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  TYR A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  TYR A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  TYR A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 TYR A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 TYR A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  TYR A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  CD1 TYR A   1       4.217   1.970  -1.218  1.00  0.00           C
+ATOM     11  HD1 TYR A   1       3.657   2.899  -1.218  1.00  0.00           H
+ATOM     12  CE1 TYR A   1       5.617   1.970  -1.218  1.00  0.00           C
+ATOM     13  HE1 TYR A   1       6.167   2.900  -1.218  1.00  0.00           H
+ATOM     14  CZ  TYR A   1       6.317   0.770  -1.218  1.00  0.00           C
+ATOM     15  OH  TYR A   1       7.677   0.770  -1.218  1.00  0.00           O
+ATOM     16  HH  TYR A   1       7.977   1.668  -1.218  1.00  0.00           H
+ATOM     17  CE2 TYR A   1       5.617  -0.430  -1.218  1.00  0.00           C
+ATOM     18  HE2 TYR A   1       6.167  -1.360  -1.218  1.00  0.00           H
+ATOM     19  CD2 TYR A   1       4.217  -0.430  -1.218  1.00  0.00           C
+ATOM     20  HD2 TYR A   1       3.657  -1.360  -1.218  1.00  0.00           H
+ATOM     21  C   TYR A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     22  O   TYR A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     23  OXT TYR A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     24  HXT TYR A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Isoleucine. Beta-branched with both a methyl (CG2) and ethyl
+    # (CG1-CD1) extension from CB.
+    "ILE": """\
+ATOM      1  N   ILE A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  ILE A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  ILE A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  ILE A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  ILE A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  ILE A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB  ILE A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  CG1 ILE A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM      9  HG11 ILE A   1       3.887   1.794  -1.218  1.00  0.00           H
+ATOM     10  HG12 ILE A   1       3.887   0.258  -0.329  1.00  0.00           H
+ATOM     11  CD1 ILE A   1       4.047   0.000  -2.436  1.00  0.00           C
+ATOM     12  HD11 ILE A   1       5.137   0.000  -2.436  1.00  0.00           H
+ATOM     13  HD12 ILE A   1       3.677  -1.024  -2.436  1.00  0.00           H
+ATOM     14  HD13 ILE A   1       3.677   0.512  -3.325  1.00  0.00           H
+ATOM     15  CG2 ILE A   1       1.487   0.000  -2.550  1.00  0.00           C
+ATOM     16  HG21 ILE A   1       1.857   1.024  -2.550  1.00  0.00           H
+ATOM     17  HG22 ILE A   1       0.397   0.000  -2.550  1.00  0.00           H
+ATOM     18  HG23 ILE A   1       1.857  -0.512  -3.439  1.00  0.00           H
+ATOM     19  C   ILE A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     20  O   ILE A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     21  OXT ILE A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     22  HXT ILE A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Tryptophan. Indole = benzene fused to pyrrole. Bicyclic planar.
+    # Pyrrole: CG-CD1-NE1-CE2-CD2-CG. Benzene: CD2-CE2-CZ2-CH2-CZ3-CE3-CD2.
+    # Shared edge is CD2-CE2.
+    "TRP": """\
+ATOM      1  N   TRP A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  TRP A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  TRP A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  TRP A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  TRP A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  TRP A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 TRP A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 TRP A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  TRP A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  CD1 TRP A   1       4.407   1.770  -1.218  1.00  0.00           C
+ATOM     11  HD1 TRP A   1       4.167   2.830  -1.218  1.00  0.00           H
+ATOM     12  NE1 TRP A   1       5.717   1.230  -1.218  1.00  0.00           N
+ATOM     13  HE1 TRP A   1       6.527   1.820  -1.218  1.00  0.00           H
+ATOM     14  CE2 TRP A   1       5.667  -0.150  -1.218  1.00  0.00           C
+ATOM     15  CD2 TRP A   1       4.337  -0.470  -1.218  1.00  0.00           C
+ATOM     16  CE3 TRP A   1       3.897  -1.820  -1.218  1.00  0.00           C
+ATOM     17  HE3 TRP A   1       2.827  -2.000  -1.218  1.00  0.00           H
+ATOM     18  CZ3 TRP A   1       4.847  -2.830  -1.218  1.00  0.00           C
+ATOM     19  HZ3 TRP A   1       4.527  -3.873  -1.218  1.00  0.00           H
+ATOM     20  CH2 TRP A   1       6.217  -2.500  -1.218  1.00  0.00           C
+ATOM     21  HH2 TRP A   1       6.947  -3.310  -1.218  1.00  0.00           H
+ATOM     22  CZ2 TRP A   1       6.637  -1.170  -1.218  1.00  0.00           C
+ATOM     23  HZ2 TRP A   1       7.697  -0.940  -1.218  1.00  0.00           H
+ATOM     24  C   TRP A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     25  O   TRP A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     26  OXT TRP A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     27  HXT TRP A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Proline. 5-ring closes from N through CA-CB-CG-CD back to N.
+    # Secondary amine: only ONE H on the ring N. Uses pyrrolidine
+    # geometry with ~75 deg bond angles forcing ring closure.
+    "PRO": """\
+ATOM      1  N   PRO A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H   PRO A   1      -0.870   0.500   0.000  1.00  0.00           H
+ATOM      3  CA  PRO A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      4  HA  PRO A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      5  CB  PRO A   1       1.987   1.414   0.000  1.00  0.00           C
+ATOM      6  HB1 PRO A   1       2.780   1.560   0.740  1.00  0.00           H
+ATOM      7  HB2 PRO A   1       2.447   1.560  -0.980  1.00  0.00           H
+ATOM      8  CG  PRO A   1       0.930   2.500   0.000  1.00  0.00           C
+ATOM      9  HG1 PRO A   1       1.280   3.290   0.670  1.00  0.00           H
+ATOM     10  HG2 PRO A   1       0.830   2.930  -1.000  1.00  0.00           H
+ATOM     11  CD  PRO A   1      -0.320   1.700   0.500  1.00  0.00           C
+ATOM     12  HD1 PRO A   1      -1.100   2.350   0.900  1.00  0.00           H
+ATOM     13  HD2 PRO A   1      -0.690   1.080   1.320  1.00  0.00           H
+ATOM     14  C   PRO A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     15  O   PRO A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     16  OXT PRO A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     17  HXT PRO A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
     # Note on nucleotides (A/T/G/C/U): aromatic ring geometry needs
     # careful coordinate tabulation (planar 5/6-membered fused rings
     # with bond lengths ~0.14 nm). Out of scope for this first

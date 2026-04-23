@@ -907,3 +907,50 @@ def test_pdb_importer_loads_glu_gln_lys():
     assert len(load_residue("GLU").atoms) == 19
     assert len(load_residue("GLN").atoms) == 20
     assert len(load_residue("LYS").atoms) == 24
+
+
+def test_pdb_importer_loads_arg_his_phe_tyr():
+    """ARG/HIS/PHE/TYR load with expected atom counts and ring closure
+    (aromatic residues have bonds >= atoms because of the cycle)."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    arg = load_residue("ARG")
+    assert len(arg.atoms) == 27
+    his = load_residue("HIS")
+    assert len(his.atoms) == 20
+    # Imidazole ring means bonds count == atoms count (one cycle).
+    assert len(his.bonds) == 20
+    phe = load_residue("PHE")
+    assert len(phe.atoms) == 23
+    assert len(phe.bonds) == 23
+    tyr = load_residue("TYR")
+    assert len(tyr.atoms) == 24
+    assert len(tyr.bonds) == 24
+
+
+def test_all_20_standard_amino_acids_load():
+    """Full coverage: every standard amino acid (and HOH) loads from
+    the PDB importer without error and produces a non-empty
+    atoms/bonds/angles graph."""
+    from cell_sim.atom_engine.pdb_importer import STANDARD_RESIDUES_PDB, load_residue
+    expected = {"ALA", "ARG", "ASN", "ASP", "CYS", "GLN", "GLU", "GLY",
+                "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER",
+                "THR", "TRP", "TYR", "VAL", "HOH"}
+    assert set(STANDARD_RESIDUES_PDB.keys()) == expected, \
+        f"missing residues: {expected - set(STANDARD_RESIDUES_PDB.keys())}"
+    for name in sorted(expected):
+        s = load_residue(name)
+        assert len(s.atoms) >= 3, f"{name} has too few atoms"
+        assert len(s.bonds) >= 2, f"{name} has too few bonds"
+    # Aromatic + cyclic residues have bonds >= atoms (cycle closure).
+    his = load_residue("HIS")
+    phe = load_residue("PHE")
+    tyr = load_residue("TYR")
+    trp = load_residue("TRP")
+    pro = load_residue("PRO")
+    assert len(his.bonds) == len(his.atoms)
+    assert len(phe.bonds) == len(phe.atoms)
+    assert len(tyr.bonds) == len(tyr.atoms)
+    # TRP is bicyclic → bonds = atoms + 1
+    assert len(trp.bonds) == len(trp.atoms) + 1
+    # PRO is cyclic → bonds = atoms
+    assert len(pro.bonds) == len(pro.atoms)
