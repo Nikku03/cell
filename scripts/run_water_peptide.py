@@ -46,6 +46,12 @@ def _parse_args():
                    help="Cubic box side length (nm) when --pbc is set. "
                         "1.0 nm at 30 water gives ~rho=30/nm^3, close "
                         "to real liquid water (33/nm^3).")
+    p.add_argument("--shake", action="store_true",
+                   help="Enable SHAKE bond constraints. Required for "
+                        "dt > 0.3 fs at realistic bond stiffnesses.")
+    p.add_argument("--dt-ps", type=float, default=None,
+                   help="Override the default timestep (ps). With SHAKE, "
+                        "1-2 fs is safe; without, keep to 0.2 fs.")
     p.add_argument("--out", type=str, default=None)
     return p.parse_args()
 
@@ -62,7 +68,10 @@ def main() -> int:
             temperature_K=args.temperature,
             use_pbc=args.pbc,
             pbc_box_nm=args.pbc_box_nm,
+            use_shake=args.shake,
         )
+        if args.dt_ps is not None:
+            water_cfg.dt_ps = args.dt_ps
         _, water_res = run_water_box(
             water_cfg, progress=lambda m: print(f"[water] {m}"),
         )

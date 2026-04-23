@@ -53,6 +53,14 @@ class IntegratorConfig:
     # for which dynamic bonding is DISABLED. Used to simulate "knockouts"
     # of specific reaction chemistries without changing the engine.
     disabled_pairs: Optional[frozenset] = None
+    # SHAKE bond constraints (Phase 1).
+    # When True, every "constrained" bond (see SimState.constrained_bonds)
+    # is held at its equilibrium length via one-pass SHAKE after the
+    # position update. This eliminates the fast bond-vibration mode
+    # and lets dt go from 0.2 fs to 1-2 fs.
+    shake: bool = False
+    shake_tolerance_nm: float = 1e-4
+    shake_max_iter: int = 200
     # Thermostat choice (Physics Upgrade 3).
     #   "berendsen" — velocity rescale toward target T. Fast to equilibrate,
     #                 incorrect canonical sampling (known: "flying ice-cube"
@@ -75,6 +83,11 @@ class SimState:
     angles: list[AngleBond] = field(default_factory=list)
     # 4-body proper dihedral terms.
     dihedrals: list[DihedralBond] = field(default_factory=list)
+    # SHAKE constraint list: (atom_idx_i, atom_idx_j, r0). Populated
+    # once from a bond list via ``build_shake_constraints`` so we don't
+    # re-scan the bond graph every step.
+    shake_pairs: Optional[np.ndarray] = None      # (Nc, 2) int64
+    shake_r0_sq: Optional[np.ndarray] = None      # (Nc,) float64
     t_ps: float = 0.0
     step: int = 0
     events_bonds_formed: int = 0
@@ -160,6 +173,89 @@ def current_temperature_K(atoms: Sequence[AtomUnit]) -> float:
 
 
 # ---------- bond event kernels ----------------------------------------
+
+
+def build_shake_constraints(
+    atoms: list[AtomUnit],
+    bonds: list[Bond],
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return (pairs, r0_sq) for use as SHAKE constraints. One entry
+    per live covalent bond; rigid at the bond's equilibrium_length_nm.
+
+    Calling this once after ``build_mixture`` is enough unless new
+    bonds are formed dynamically.
+    """
+    id_to_idx = {id(a): i for i, a in enumerate(atoms)}
+    pairs = []
+    r0s = []
+    for b in bonds:
+        if b.death_time_ps is not None:
+            continue
+        i = id_to_idx.get(id(b.a))
+        j = id_to_idx.get(id(b.b))
+        if i is None or j is None:
+            continue
+        pairs.append((i, j))
+        r0s.append(float(b.equilibrium_length_nm))
+    if not pairs:
+        return (np.empty((0, 2), dtype=np.int64),
+                np.empty(0, dtype=np.float64))
+    arr = np.array(pairs, dtype=np.int64)
+    r0sq = np.array(r0s, dtype=np.float64) ** 2
+    return arr, r0sq
+
+
+def _apply_shake(
+    pos: np.ndarray,
+    prev_pos: np.ndarray,
+    masses: np.ndarray,                    # (N,) not (N, 1)
+    shake_pairs: np.ndarray,
+    shake_r0_sq: np.ndarray,
+    box_l: Optional[float] = None,
+    tol_nm: float = 1e-4,
+    max_iter: int = 200,
+) -> np.ndarray:
+    """Constrain ``pos`` so every (i, j) pair satisfies
+    ``|pos[i] - pos[j]| = r0`` by iteratively projecting along the
+    reference (pre-update) bond direction.
+
+    Standard textbook SHAKE iteration (Ryckaert, Ciccotti, Berendsen
+    1977). Converges in a handful of iterations for realistic geometry.
+    """
+    from .force_field import minimum_image
+    if shake_pairs.size == 0:
+        return pos
+    tol_sq = tol_nm * tol_nm
+    n_pairs = shake_pairs.shape[0]
+    inv_m = 1.0 / masses
+    for _iter in range(max_iter):
+        max_err = 0.0
+        for p in range(n_pairs):
+            i, j = int(shake_pairs[p, 0]), int(shake_pairs[p, 1])
+            r0_sq = float(shake_r0_sq[p])
+            d = pos[j] - pos[i]
+            if box_l is not None:
+                d = d - box_l * np.round(d / box_l)
+            d2 = float(d @ d)
+            diff = d2 - r0_sq
+            if abs(diff) < tol_sq:
+                continue
+            # Reference vector = pre-update bond direction
+            d_ref = prev_pos[j] - prev_pos[i]
+            if box_l is not None:
+                d_ref = d_ref - box_l * np.round(d_ref / box_l)
+            dot = float(d @ d_ref)
+            if abs(dot) < 1e-12:
+                continue
+            lam = diff / (2.0 * dot * (inv_m[i] + inv_m[j]))
+            delta = lam * d_ref
+            pos[i] += inv_m[i] * delta
+            pos[j] -= inv_m[j] * delta
+            if abs(diff) > max_err:
+                max_err = abs(diff)
+        if max_err < tol_sq:
+            break
+    return pos
 
 
 def _rule_name_for_pair(elem_a, elem_b) -> str:
@@ -325,7 +421,29 @@ def step(
 
     # Half-step velocity + full position update.
     vel += 0.5 * dt * forces_prev / masses
+    # Preserve pre-update positions for SHAKE projection before we
+    # advance them.
+    prev_pos = pos.copy() if int_cfg.shake else None
     pos += dt * vel
+
+    # SHAKE: enforce bond-length constraints by projecting along the
+    # pre-update bond direction. Velocity update follows from the
+    # position change (Verlet form: v += (pos_new - pos_old) / dt - v,
+    # equivalent to v = (pos_new - prev_pos) / dt minus the integrator
+    # half-step we already applied).
+    if int_cfg.shake and state.shake_pairs is not None \
+            and state.shake_pairs.size:
+        pos_before_shake = pos.copy()
+        _apply_shake(
+            pos, prev_pos, masses[:, 0],
+            state.shake_pairs, state.shake_r0_sq,
+            box_l=(float(ff_cfg.pbc_box_nm) if ff_cfg.use_pbc else None),
+            tol_nm=int_cfg.shake_tolerance_nm,
+            max_iter=int_cfg.shake_max_iter,
+        )
+        # Correct the velocity to match the constrained position.
+        vel += (pos - pos_before_shake) / dt
+
     # Under PBC, wrap positions back into [-L/2, L/2] after each
     # displacement step so minimum-image distance math is valid.
     if ff_cfg.use_pbc:

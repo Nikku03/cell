@@ -145,6 +145,33 @@ def test_harmonic_bond_pulls_stretched_atoms_inward():
 # ---------- Integrator energy & temperature ---------------------------
 
 
+def test_shake_holds_bond_length_at_large_dt():
+    """SHAKE should keep an O-H bond at its equilibrium 0.096 nm even
+    when using a 2 fs timestep — the regime where unconstrained
+    harmonic bonds would oscillate violently."""
+    from cell_sim.atom_engine.integrator import build_shake_constraints
+    o = AtomUnit.create(Element.O, position=(0.0, 0.0, 0.0),
+                        velocity=(0, 0, 0))
+    h = AtomUnit.create(Element.H, position=(0.096, 0.0, 0.0),
+                        velocity=(0.5, 0.0, 0.0))   # along the bond
+    bond = o.form_bond(h, kind=BondType.COVALENT_SINGLE, t_ps=0.0,
+                       equilibrium_length_nm=0.096,
+                       spring_constant_kj_per_nm2=3e5)
+    state = SimState(atoms=[o, h], bonds=[bond])
+    state.shake_pairs, state.shake_r0_sq = build_shake_constraints(
+        [o, h], [bond]
+    )
+    ff = ForceFieldConfig(lj_cutoff_nm=0.0)
+    ic = IntegratorConfig(dt_ps=0.002, target_temperature_K=300.0,
+                          shake=True, thermostat="berendsen",
+                          thermostat_tau_ps=1e9)   # effectively no-op
+    run(state, n_steps=200, ff_cfg=ff, int_cfg=ic)
+    r = np.linalg.norm(
+        np.array(h.position) - np.array(o.position)
+    )
+    assert abs(r - 0.096) < 5e-4, f"bond drifted to {r:.4f} nm"
+
+
 def test_langevin_thermostat_reaches_target_T():
     """With Langevin thermostat at gamma=5/ps and target T=300 K, a
     purely-nonbonded soup should equilibrate to within ~20% of 300 K

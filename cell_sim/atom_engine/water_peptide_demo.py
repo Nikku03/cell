@@ -30,7 +30,13 @@ import numpy as np
 
 from .atom_unit import AngleBond
 from .force_field import ForceFieldConfig
-from .integrator import IntegratorConfig, SimState, current_temperature_K, step
+from .integrator import (
+    IntegratorConfig,
+    SimState,
+    build_shake_constraints,
+    current_temperature_K,
+    step,
+)
 from .molecule_builder import build_mixture
 
 
@@ -52,6 +58,9 @@ class WaterBoxConfig:
     # auto-disabled.
     use_pbc: bool = False
     pbc_box_nm: float = 2.0
+    # SHAKE bond constraints. With shake=True the caller can safely
+    # raise dt_ps to 1-2 fs without blowing up stiff bonds.
+    use_shake: bool = False
 
 
 @dataclass
@@ -207,6 +216,10 @@ def run_water_box(
     )
     state = SimState(atoms=atoms, bonds=bonds, angles=angles,
                      dihedrals=dihedrals)
+    if cfg.use_shake:
+        state.shake_pairs, state.shake_r0_sq = build_shake_constraints(
+            atoms, bonds
+        )
     result = WaterBoxResult(n_atoms=len(atoms))
 
     if cfg.use_pbc:
@@ -238,12 +251,15 @@ def run_water_box(
         target_temperature_K=cfg.temperature_K,
         thermostat="langevin",
         langevin_gamma_inv_ps=cfg.langevin_gamma_inv_ps,
+        shake=cfg.use_shake,
     )
 
     if progress is not None:
         pbc_str = (f" PBC L={cfg.pbc_box_nm:.2f} nm (rho="
                    f"{cfg.n_water / (cfg.pbc_box_nm ** 3):.1f}/nm^3)"
                    if cfg.use_pbc else " confinement")
+        if cfg.use_shake:
+            pbc_str += " +SHAKE"
         progress(f"water box: {cfg.n_water} waters ({len(atoms)} atoms), "
                  f"T={cfg.temperature_K:.0f} K,{pbc_str} "
                  f"Langevin gamma={cfg.langevin_gamma_inv_ps} /ps, "
