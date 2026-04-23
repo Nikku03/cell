@@ -564,6 +564,7 @@ fn lj_forces<'py>(
     cutoff: f64,
     has_coarse: bool,
     bonded_codes_sorted: Option<PyReadonlyArray1<i64>>,
+    box_l: Option<f64>,
 ) -> PyResult<Py<numpy::PyArray2<f64>>> {
     let pos_a = pos.as_array();
     let iu_s = iu.as_slice()?;
@@ -592,9 +593,15 @@ fn lj_forces<'py>(
                 continue;
             }
         }
-        let dx = pos_a[[j, 0]] - pos_a[[i, 0]];
-        let dy = pos_a[[j, 1]] - pos_a[[i, 1]];
-        let dz = pos_a[[j, 2]] - pos_a[[i, 2]];
+        let mut dx = pos_a[[j, 0]] - pos_a[[i, 0]];
+        let mut dy = pos_a[[j, 1]] - pos_a[[i, 1]];
+        let mut dz = pos_a[[j, 2]] - pos_a[[i, 2]];
+        // Minimum-image wrap under PBC.
+        if let Some(l) = box_l {
+            dx -= l * (dx / l).round();
+            dy -= l * (dy / l).round();
+            dz -= l * (dz / l).round();
+        }
         let r2 = dx * dx + dy * dy + dz * dz;
         if r2 <= 1e-8 || r2 >= cutoff2 {
             continue;

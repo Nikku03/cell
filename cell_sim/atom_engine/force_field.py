@@ -723,14 +723,9 @@ def compute_forces(
         max_elem = int(elem_codes.max()) if elem_codes.size else 0
         has_coarse = max_elem >= 100       # any COARSE_* pseudo-element?
 
-        if _HAS_RUST_LJ and not use_pbc_box:
-            # Rust path: let the kernel do distance cutoff + bonded
-            # exclusion itself — saves the Python-side einsum,
-            # np.isin, and 4 masked-slice allocations per call.
-            # Gated off under PBC until the Rust kernel learns
-            # minimum-image wrapping; the NumPy fallback handles PBC
-            # correctly and is still fast enough for a few thousand
-            # atoms.
+        if _HAS_RUST_LJ:
+            # Rust path: LJ math + distance cutoff + bonded exclusion
+            # + minimum-image wrap under PBC, all in one tight loop.
             bonded_codes_sorted = None
             if bonded_set:
                 bonded_codes_sorted = np.fromiter(
@@ -748,6 +743,7 @@ def compute_forces(
                 float(cutoff),
                 bool(has_coarse),
                 bonded_codes_sorted,
+                (float(box_l) if use_pbc_box else None),
             )
         else:
             # Pure-NumPy fallback — do the distance / bond filter in Python.

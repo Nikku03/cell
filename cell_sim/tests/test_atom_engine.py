@@ -420,6 +420,29 @@ def test_coulomb_ion_pair_attraction():
     assert np.isclose(np.linalg.norm(delta[0]), expected, rtol=3e-2)
 
 
+def test_rust_pbc_matches_numpy_pbc():
+    """Under PBC, forces from the Rust lj_forces kernel must match the
+    pure-NumPy PBC fallback within numerical tolerance."""
+    import cell_sim.atom_engine.force_field as ff_mod
+    rng = np.random.default_rng(11)
+    atoms = []
+    for _ in range(80):
+        p = tuple(rng.uniform(-0.8, 0.8, size=3))
+        atoms.append(AtomUnit.create(Element.C, position=p,
+                                     velocity=(0, 0, 0)))
+    cfg = ForceFieldConfig(lj_cutoff_nm=0.6, use_pbc=True, pbc_box_nm=1.6,
+                           use_neighbor_list=False)
+    original = ff_mod._HAS_RUST_LJ
+    try:
+        ff_mod._HAS_RUST_LJ = False
+        f_np = compute_forces(atoms, [], 0.0, cfg)
+        ff_mod._HAS_RUST_LJ = original
+        f_rust = compute_forces(atoms, [], 0.0, cfg)
+    finally:
+        ff_mod._HAS_RUST_LJ = original
+    assert np.allclose(f_np, f_rust, atol=1e-6)
+
+
 def test_pbc_neighbor_list_finds_wrap_pairs():
     """Two atoms at x=0.1 and x=1.9 in a 2 nm cubic PBC box are
     apparently 1.8 nm apart but only 0.2 nm apart under minimum-image.
