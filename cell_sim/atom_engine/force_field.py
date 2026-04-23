@@ -205,6 +205,14 @@ class ForceFieldConfig:
     # --- neighbor list (required for N >> a few thousand) ---
     use_neighbor_list: bool = False
     neighbor_skin_nm: float = 0.3               # padding added to cutoff when building
+    # --- periodic boundary conditions (cubic box only) ---
+    # When use_pbc = True, atom positions are wrapped to [-L/2, L/2]
+    # on every integrator step and pair displacements use the minimum-
+    # image convention. L must be > 2 * lj_cutoff_nm for correctness.
+    # PBC is mutually exclusive with the spherical confinement wall —
+    # enable one or the other.
+    use_pbc: bool = False
+    pbc_box_nm: float = 3.0                     # cubic box side length L
     # --- reactive chemistry mode ---
     # Scale LJ sigma for atoms of reactive elements (H/C/N/O/P/S) by
     # this factor. Default 1.0 = OPLS-style sigma, appropriate when
@@ -298,7 +306,23 @@ def element_arrays_cached(atoms: Sequence[AtomUnit]):
 # ---------- Main force kernel -----------------------------------------
 
 
-def build_neighbor_list(pos: np.ndarray, cutoff: float) -> tuple[np.ndarray, np.ndarray]:
+def minimum_image(dvec: np.ndarray, box_l: float) -> np.ndarray:
+    """Wrap displacement vectors to the nearest periodic image.
+    ``dvec`` can be (M, 3) or a single (3,) vector; returns the same
+    shape with each component in [-L/2, L/2]."""
+    return dvec - box_l * np.round(dvec / box_l)
+
+
+def wrap_positions(pos: np.ndarray, box_l: float) -> np.ndarray:
+    """Wrap positions into [-L/2, L/2] cubic box. In-place on the
+    supplied array AND returns it."""
+    pos -= box_l * np.round(pos / box_l)
+    return pos
+
+
+def build_neighbor_list(pos: np.ndarray, cutoff: float,
+                        box_l: Optional[float] = None
+                        ) -> tuple[np.ndarray, np.ndarray]:
     """Spatial-hash neighbor list. Returns (iu, ju) arrays of pair indices
     (i < j) whose positions are within ``cutoff``. Expected O(N) for
     roughly-uniform density.
@@ -357,6 +381,7 @@ def _compute_angle_forces(
     angles: Iterable[AngleBond],
     pos: np.ndarray,
     forces: np.ndarray,
+    box_l: Optional[float] = None,
 ) -> None:
     """Add harmonic 3-body angle forces to ``forces`` in place.
 
@@ -381,6 +406,9 @@ def _compute_angle_forces(
             continue
         r_ji = pos[ii] - pos[ij]
         r_jk = pos[ik] - pos[ij]
+        if box_l is not None:
+            r_ji = minimum_image(r_ji, box_l)
+            r_jk = minimum_image(r_jk, box_l)
         n_ji = float(np.linalg.norm(r_ji))
         n_jk = float(np.linalg.norm(r_jk))
         if n_ji < 1e-6 or n_jk < 1e-6:
@@ -406,6 +434,7 @@ def _compute_dihedral_forces(
     dihedrals: Iterable[DihedralBond],
     pos: np.ndarray,
     forces: np.ndarray,
+    box_l: Optional[float] = None,
 ) -> None:
     """Add periodic 4-body dihedral forces in place.
 
@@ -424,6 +453,10 @@ def _compute_dihedral_forces(
         b1 = pos[ij] - pos[ii]
         b2 = pos[ik] - pos[ij]
         b3 = pos[il] - pos[ik]
+        if box_l is not None:
+            b1 = minimum_image(b1, box_l)
+            b2 = minimum_image(b2, box_l)
+            b3 = minimum_image(b3, box_l)
         n1 = np.cross(b1, b2)
         n2 = np.cross(b2, b3)
         n1_norm = float(np.linalg.norm(n1))
@@ -493,12 +526,17 @@ def compute_forces(
     # exclusion from the LJ calculation.
     bonded_set: set[tuple[int, int]] = set()
     live_bonds = [b for b in bonds if b.death_time_ps is None]
+    # Precompute pbc state for bonded / angle / dihedral paths
+    _pbc_on = bool(cfg.use_pbc)
+    _pbc_L = float(cfg.pbc_box_nm) if _pbc_on else None
     for bond in live_bonds:
         i = id_to_idx.get(id(bond.a))
         j = id_to_idx.get(id(bond.b))
         if i is None or j is None:
             continue
         d = pos[j] - pos[i]
+        if _pbc_on:
+            d = minimum_image(d, _pbc_L)
         r = float(np.linalg.norm(d))
         if r < 1e-6:
             continue
@@ -510,7 +548,7 @@ def compute_forces(
 
     # --- 3-body angle bends (Physics Upgrade 2) ---
     if angles:
-        _compute_angle_forces(atoms, angles, pos, forces)
+        _compute_angle_forces(atoms, angles, pos, forces, box_l=_pbc_L)
         # 1-3 non-bonded exclusions: the i-k endpoints of an angle are
         # separated by 2 bonds and should not interact via LJ / Coulomb.
         # Standard MD convention. Without this the "1-3 LJ" term fights
@@ -523,7 +561,7 @@ def compute_forces(
 
     # --- 4-body proper dihedrals ---
     if dihedrals:
-        _compute_dihedral_forces(atoms, dihedrals, pos, forces)
+        _compute_dihedral_forces(atoms, dihedrals, pos, forces, box_l=_pbc_L)
 
     # --- vectorized non-bonded LJ ---
     sigmas, epsilons, elem_codes = element_arrays_cached(atoms)
@@ -541,7 +579,13 @@ def compute_forces(
     cutoff2 = cutoff * cutoff
 
     # Pick the pair source: explicit argument > config flag > full O(N^2).
-    if neighbor_pairs is None and cfg.use_neighbor_list:
+    # Under PBC, we force the full O(N^2) path until the neighbor list
+    # is made PBC-aware. N < ~2000 is still tractable this way.
+    use_pbc_box = bool(cfg.use_pbc)
+    box_l = float(cfg.pbc_box_nm) if use_pbc_box else None
+    if use_pbc_box:
+        iu, ju = np.triu_indices(n, k=1)
+    elif neighbor_pairs is None and cfg.use_neighbor_list:
         iu, ju = build_neighbor_list(pos, cutoff)
     elif neighbor_pairs is None:
         iu, ju = np.triu_indices(n, k=1)
@@ -562,10 +606,14 @@ def compute_forces(
         max_elem = int(elem_codes.max()) if elem_codes.size else 0
         has_coarse = max_elem >= 100       # any COARSE_* pseudo-element?
 
-        if _HAS_RUST_LJ:
+        if _HAS_RUST_LJ and not use_pbc_box:
             # Rust path: let the kernel do distance cutoff + bonded
             # exclusion itself — saves the Python-side einsum,
             # np.isin, and 4 masked-slice allocations per call.
+            # Gated off under PBC until the Rust kernel learns
+            # minimum-image wrapping; the NumPy fallback handles PBC
+            # correctly and is still fast enough for a few thousand
+            # atoms.
             bonded_codes_sorted = None
             if bonded_set:
                 bonded_codes_sorted = np.fromiter(
@@ -587,6 +635,8 @@ def compute_forces(
         else:
             # Pure-NumPy fallback — do the distance / bond filter in Python.
             dvec = pos[ju] - pos[iu]
+            if use_pbc_box:
+                dvec = minimum_image(dvec, box_l)
             r2 = np.einsum("ij,ij->i", dvec, dvec)
             keep = (r2 > 1e-8) & (r2 < cutoff2)
             if bonded_set:
@@ -670,6 +720,8 @@ def compute_forces(
                 qi = charges[iu_coulomb]
                 qj = charges[ju_coulomb]
                 dvec_c = pos[ju_coulomb] - pos[iu_coulomb]
+                if use_pbc_box:
+                    dvec_c = minimum_image(dvec_c, box_l)
                 r2_c = np.einsum("ij,ij->i", dvec_c, dvec_c)
                 keep_c = (r2_c > 1e-8) & (r2_c < cutoff2)
             if keep_c.any():
@@ -682,15 +734,27 @@ def compute_forces(
                 # vectorised:  factor = k_e * q_i * q_j / r^3,
                 # force_vec = factor * dvec.
                 k_e = cfg.coulomb_k_kj_nm_per_e2
-                factor = (k_e * qi[keep_c] * qj[keep_c]) / (r_c * r2_c)
-                # Per-pair magnitude cap prevents blowups at overlap.
-                fmag = np.abs(factor) * r_c
+                # Short-range softening: replace r^2 with r^2 + r_soft^2
+                # in the denominator. Becomes the bare Coulomb r^-2 law
+                # for r >> r_soft (0.05 nm) and smoothly caps at a
+                # finite force as r -> 0. Prevents the runaway
+                # blow-ups observed at dense PBC conditions when
+                # thermal fluctuations briefly push two opposite
+                # charges to near contact.
+                r_soft = 0.05
+                soft_r2 = r2_c + r_soft * r_soft
+                soft_r = np.sqrt(soft_r2)
+                factor = (k_e * qi[keep_c] * qj[keep_c]) / (soft_r * soft_r2)
+                # Per-pair magnitude cap is now much less frequent but
+                # kept as a final safety net. fmag = |factor| * soft_r
+                # because fvec = factor * dvec and |dvec| ~ soft_r.
+                fmag = np.abs(factor) * soft_r
                 over = fmag > cfg.coulomb_max_force_kj_per_nm
                 if over.any():
                     factor = np.where(over,
                                       np.sign(factor)
                                       * cfg.coulomb_max_force_kj_per_nm
-                                      / r_c,
+                                      / soft_r,
                                       factor)
                 fvec = factor[:, None] * dvec_c
                 forces[:, 0] += (np.bincount(ju_c, weights=fvec[:, 0],

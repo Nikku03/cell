@@ -23,7 +23,12 @@ import numpy as np
 
 from .atom_unit import AngleBond, AtomUnit, Bond, BondType, DihedralBond
 from .element import pair_is_bondable
-from .force_field import ForceFieldConfig, build_neighbor_list, compute_forces
+from .force_field import (
+    ForceFieldConfig,
+    build_neighbor_list,
+    compute_forces,
+    wrap_positions,
+)
 
 
 @dataclass
@@ -321,6 +326,10 @@ def step(
     # Half-step velocity + full position update.
     vel += 0.5 * dt * forces_prev / masses
     pos += dt * vel
+    # Under PBC, wrap positions back into [-L/2, L/2] after each
+    # displacement step so minimum-image distance math is valid.
+    if ff_cfg.use_pbc:
+        wrap_positions(pos, float(ff_cfg.pbc_box_nm))
     _scatter_positions(atoms, pos)
 
     state.t_ps += dt

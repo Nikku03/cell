@@ -46,6 +46,12 @@ class WaterBoxConfig:
     langevin_gamma_inv_ps: float = 5.0
     min_center_separation_nm: float = 0.45
     seed: int = 42
+    # Periodic boundary conditions. When enabled, ``pbc_box_nm``
+    # defines the cubic box side L and the simulation uses
+    # minimum-image distance math everywhere. Confinement wall is
+    # auto-disabled.
+    use_pbc: bool = False
+    pbc_box_nm: float = 2.0
 
 
 @dataclass
@@ -183,23 +189,50 @@ def run_water_box(
     progress: Optional[Callable[[str], None]] = None,
 ) -> tuple[SimState, WaterBoxResult]:
     import time
+    # Under PBC, force the sphere radius to fit inside the cubic box
+    # so initial positions aren't wrapped across two images at once.
+    # Also tighten min_center_separation to a realistic water diameter
+    # (~0.3 nm) so liquid densities actually fit.
+    place_radius = cfg.radius_nm
+    place_min_sep = cfg.min_center_separation_nm
+    if cfg.use_pbc:
+        place_radius = 0.45 * cfg.pbc_box_nm
+        place_min_sep = 0.30
     atoms, bonds, angles, dihedrals = build_mixture(
         {"H2O": cfg.n_water},
-        radius_nm=cfg.radius_nm,
+        radius_nm=place_radius,
         temperature_K=cfg.temperature_K,
         seed=cfg.seed,
-        min_center_separation_nm=cfg.min_center_separation_nm,
+        min_center_separation_nm=place_min_sep,
     )
     state = SimState(atoms=atoms, bonds=bonds, angles=angles,
                      dihedrals=dihedrals)
     result = WaterBoxResult(n_atoms=len(atoms))
 
-    ff = ForceFieldConfig(
-        lj_cutoff_nm=1.0, use_confinement=True,
-        confinement_radius_nm=cfg.radius_nm,
-        use_neighbor_list=True,
-        use_coulomb=True,
-    )
+    if cfg.use_pbc:
+        ff = ForceFieldConfig(
+            lj_cutoff_nm=min(1.0, 0.4 * cfg.pbc_box_nm),
+            use_confinement=False,
+            use_neighbor_list=False,            # O(N^2) with PBC
+            use_coulomb=True,
+            use_pbc=True, pbc_box_nm=cfg.pbc_box_nm,
+        )
+        # After mixture build, wrap positions into [-L/2, L/2] so
+        # minimum-image is valid from step 0.
+        from .force_field import wrap_positions as _wrap
+        pos0 = np.array([a.position for a in atoms])
+        _wrap(pos0, cfg.pbc_box_nm)
+        for i, a in enumerate(atoms):
+            a.position[0] = float(pos0[i, 0])
+            a.position[1] = float(pos0[i, 1])
+            a.position[2] = float(pos0[i, 2])
+    else:
+        ff = ForceFieldConfig(
+            lj_cutoff_nm=1.0, use_confinement=True,
+            confinement_radius_nm=cfg.radius_nm,
+            use_neighbor_list=True,
+            use_coulomb=True,
+        )
     int_cfg = IntegratorConfig(
         dt_ps=cfg.dt_ps,
         target_temperature_K=cfg.temperature_K,
@@ -208,8 +241,11 @@ def run_water_box(
     )
 
     if progress is not None:
+        pbc_str = (f" PBC L={cfg.pbc_box_nm:.2f} nm (rho="
+                   f"{cfg.n_water / (cfg.pbc_box_nm ** 3):.1f}/nm^3)"
+                   if cfg.use_pbc else " confinement")
         progress(f"water box: {cfg.n_water} waters ({len(atoms)} atoms), "
-                 f"T={cfg.temperature_K:.0f} K, "
+                 f"T={cfg.temperature_K:.0f} K,{pbc_str} "
                  f"Langevin gamma={cfg.langevin_gamma_inv_ps} /ps, "
                  f"dt={cfg.dt_ps} ps, {cfg.steps} steps")
     t0 = time.time()

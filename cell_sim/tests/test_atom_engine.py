@@ -386,9 +386,11 @@ def test_coulomb_ion_pair_attraction():
     assert delta[1, 0] < 0.0
     # Magnitudes equal and opposite.
     assert np.allclose(delta[0], -delta[1])
-    # Magnitude close to the analytical value (might be capped).
+    # Magnitude close to the analytical value. The soft-core term
+    # r_soft = 0.05 nm shifts the long-range limit by ~1.5% at
+    # r = 0.5 nm, so we use a 3% tolerance.
     expected = 138.935 * 1.0 / 0.25
-    assert np.isclose(np.linalg.norm(delta[0]), expected, rtol=1e-2)
+    assert np.isclose(np.linalg.norm(delta[0]), expected, rtol=3e-2)
 
 
 def test_rust_lj_matches_numpy_lj():

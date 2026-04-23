@@ -38,6 +38,14 @@ def _parse_args():
     p.add_argument("--water-steps", type=int, default=4000)
     p.add_argument("--glycine-steps", type=int, default=3000)
     p.add_argument("--temperature", type=float, default=300.0)
+    p.add_argument("--pbc", action="store_true",
+                   help="Use periodic boundary conditions for the "
+                        "water demo (liquid-density box). Disables "
+                        "spherical confinement.")
+    p.add_argument("--pbc-box-nm", type=float, default=1.0,
+                   help="Cubic box side length (nm) when --pbc is set. "
+                        "1.0 nm at 30 water gives ~rho=30/nm^3, close "
+                        "to real liquid water (33/nm^3).")
     p.add_argument("--out", type=str, default=None)
     return p.parse_args()
 
@@ -52,6 +60,8 @@ def main() -> int:
             n_water=args.n_water,
             steps=args.water_steps,
             temperature_K=args.temperature,
+            use_pbc=args.pbc,
+            pbc_box_nm=args.pbc_box_nm,
         )
         _, water_res = run_water_box(
             water_cfg, progress=lambda m: print(f"[water] {m}"),
