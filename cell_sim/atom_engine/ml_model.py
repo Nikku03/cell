@@ -344,12 +344,35 @@ def train_force_surrogate(
     from the existing ``compute_forces`` path so the GNN has a supervised
     target. After training, ``AtomGNN.predict_forces`` can be dropped in
     as a fast approximate force field.
+
+    The model learns forces in STANDARDISED space (zero-mean, unit-std
+    over the training data) — raw forces span several orders of
+    magnitude so unscaled MSE is dominated by a few large outliers.
+    The normalising scale/shift is stored on the model so inference
+    can un-scale back to kJ/mol/nm.
     """
     torch.manual_seed(cfg.seed)
     device = cfg.device
     model = AtomGNN(hidden=cfg.hidden, n_rounds=cfg.n_rounds).to(device)
     opt = torch.optim.Adam(model.parameters(), lr=cfg.lr)
-    loss_fn = nn.MSELoss()
+    loss_fn = nn.SmoothL1Loss()            # more robust to outliers than MSE
+
+    # Compute force statistics over the training set (pooled over atoms
+    # and xyz components). Clip extreme LJ spikes before stats so a
+    # handful of near-overlap configurations don't destroy the scale.
+    CLIP = 1000.0
+    all_train = []
+    for _snap, f_gt in pairs:
+        all_train.append(np.clip(f_gt.astype(np.float64), -CLIP, CLIP))
+    flat = np.concatenate([a.reshape(-1) for a in all_train])
+    force_mean = float(flat.mean())
+    force_std = float(flat.std() + 1e-6)
+    model.register_buffer("force_mean",
+                          torch.tensor(force_mean, device=device))
+    model.register_buffer("force_std",
+                          torch.tensor(force_std, device=device))
+    if progress is not None:
+        progress(f"force normaliser: mean={force_mean:.3f} std={force_std:.2f}")
 
     history = {"train_loss": [], "val_mse": [], "val_r2": []}
     for epoch in range(cfg.epochs):
@@ -366,50 +389,44 @@ def train_force_surrogate(
                 nf = torch.tensor(snap.node_features, device=device)
                 e = torch.tensor(snap.edges.astype(np.int64), device=device)
                 ef = torch.tensor(snap.edge_features, device=device)
-                y = torch.tensor(forces_gt.astype(np.float32), device=device)
-                # Clip ground truth to a sane range — LJ can produce
-                # huge forces for atoms that happen to overlap and the
-                # raw MSE would be dominated by a few outliers.
-                y = torch.clamp(y, min=-200.0, max=200.0)
-                pred = model.predict_forces(nf, e, ef)
-                batch_loss = batch_loss + loss_fn(pred, y)
+                y_raw = np.clip(forces_gt.astype(np.float32), -CLIP, CLIP)
+                y = torch.tensor(y_raw, device=device)
+                y_norm = (y - model.force_mean) / model.force_std
+                pred_norm = model.predict_forces(nf, e, ef)
+                batch_loss = batch_loss + loss_fn(pred_norm, y_norm)
             batch_loss = batch_loss / len(bidx)
             batch_loss.backward()
             opt.step()
             total_loss += float(batch_loss.item())
             n_batches += 1
 
+        # Validation — evaluate in raw force space.
         model.eval()
-        mse_sum = 0.0
-        ss_res = 0.0
-        ss_tot = 0.0
-        ymean_numer = 0.0
-        ymean_denom = 0
-        # First pass: compute mean ground truth
-        for snap, forces_gt in val_pairs:
-            y_clip = np.clip(forces_gt.astype(np.float32), -200.0, 200.0)
-            ymean_numer += y_clip.sum()
-            ymean_denom += y_clip.size
-        ymean = ymean_numer / max(ymean_denom, 1)
+        all_pred = []
+        all_y = []
         with torch.no_grad():
             for snap, forces_gt in val_pairs:
                 nf = torch.tensor(snap.node_features, device=device)
                 e = torch.tensor(snap.edges.astype(np.int64), device=device)
                 ef = torch.tensor(snap.edge_features, device=device)
-                pred = model.predict_forces(nf, e, ef).cpu().numpy()
-                y = np.clip(forces_gt.astype(np.float32), -200.0, 200.0)
-                mse_sum += float(((pred - y) ** 2).mean())
-                ss_res += float(((pred - y) ** 2).sum())
-                ss_tot += float(((y - ymean) ** 2).sum())
-        mse = mse_sum / max(len(val_pairs), 1)
+                pred_norm = model.predict_forces(nf, e, ef)
+                pred = pred_norm * model.force_std + model.force_mean
+                y_raw = np.clip(forces_gt.astype(np.float32), -CLIP, CLIP)
+                all_pred.append(pred.cpu().numpy())
+                all_y.append(y_raw)
+        pred_cat = np.concatenate([a.reshape(-1) for a in all_pred])
+        y_cat = np.concatenate([a.reshape(-1) for a in all_y])
+        mse = float(((pred_cat - y_cat) ** 2).mean())
+        ss_res = float(((pred_cat - y_cat) ** 2).sum())
+        ss_tot = float(((y_cat - y_cat.mean()) ** 2).sum())
         r2 = 1.0 - ss_res / max(ss_tot, 1e-9)
         history["train_loss"].append(total_loss / max(n_batches, 1))
         history["val_mse"].append(mse)
         history["val_r2"].append(r2)
         if progress is not None:
             progress(f"epoch {epoch+1:2d}/{cfg.epochs} "
-                     f"loss={history['train_loss'][-1]:.3f} "
-                     f"val_mse={mse:.3f} val_r2={r2:.3f}")
+                     f"loss={history['train_loss'][-1]:.4f} "
+                     f"val_mse={mse:.2f} val_r2={r2:.3f}")
     return model, history
 
 
