@@ -233,6 +233,16 @@ class ForceFieldConfig:
     # Soft cap: at very short range (r << sigma) Coulomb + LJ both
     # blow up; cap the absolute force contribution.
     coulomb_max_force_kj_per_nm: float = 2.0e4
+    # Reaction-field Coulomb (Barker-Watts). Replaces the bare 1/r with
+    #   U_rf(r) = k_e q_i q_j * (1/r + krf*r^2 - crf)
+    # where krf = (eps_rf - 1) / (2*eps_rf + 1) / rc^3 and crf is set so
+    # U(rc) = 0. F_rf(r) = k_e q_i q_j * (1/r^2 - 2*krf*r). This gives a
+    # smooth zero-energy cutoff plus implicit dielectric screening, which
+    # is the single biggest stability unlock for dense polar liquids.
+    # When enabled, the softcore r_soft is NOT used (RF handles short-
+    # range fine given reasonable thermal conditions).
+    use_reaction_field: bool = False
+    reaction_field_eps: float = 78.5             # water dielectric at 298 K
     # --- safety ---
     max_force_kj_per_nm: float = 2.0e4          # per-atom force cap
 
@@ -613,6 +623,7 @@ def compute_forces(
     pos: Optional[np.ndarray] = None,
     angles: Optional[Iterable[AngleBond]] = None,
     dihedrals: Optional[Iterable[DihedralBond]] = None,
+    which: str = "all",
 ) -> np.ndarray:
     """Compute total force on each atom. Returns (N, 3) array, kJ/mol/nm.
 
@@ -623,7 +634,20 @@ def compute_forces(
       - ``neighbor_pairs`` provided OR ``cfg.use_neighbor_list=True``:
         only the given pairs (or pairs found by the internal spatial-hash
         neighbor list) are evaluated. Required for N in the 10 000+ range.
+
+    ``which`` selects a force subset for RESPA multi-time-stepping:
+      - ``"all"`` (default): every term.
+      - ``"fast"``: bonded terms only (harmonic bonds, angles, dihedrals).
+        Cheap. Bonded-set is still populated for the LJ exclusion in a
+        paired ``"slow"`` call, but LJ/Coulomb forces are NOT computed.
+      - ``"slow"``: non-bonded LJ + Coulomb + confinement + axial +
+        constriction. Bonded terms are skipped. Bonded-pair exclusions
+        still evaluated by walking the bond list.
     """
+    if which not in ("all", "fast", "slow"):
+        raise ValueError(f"compute_forces: which must be 'all'/'fast'/'slow', got {which!r}")
+    _do_bonded = which in ("all", "fast")
+    _do_nonbonded = which in ("all", "slow")
     n = len(atoms)
     if n == 0:
         return np.zeros((0, 3), dtype=np.float64)
@@ -650,21 +674,23 @@ def compute_forces(
         j = id_to_idx.get(id(bond.b))
         if i is None or j is None:
             continue
-        d = pos[j] - pos[i]
-        if _pbc_on:
-            d = minimum_image(d, _pbc_L)
-        r = float(np.linalg.norm(d))
-        if r < 1e-6:
-            continue
-        mag = _bond_force_mag(r, bond)    # + pulls j toward i
-        f = (mag / r) * d
-        forces[i] -= f
-        forces[j] += f
+        if _do_bonded:
+            d = pos[j] - pos[i]
+            if _pbc_on:
+                d = minimum_image(d, _pbc_L)
+            r = float(np.linalg.norm(d))
+            if r >= 1e-6:
+                mag = _bond_force_mag(r, bond)    # + pulls j toward i
+                f = (mag / r) * d
+                forces[i] -= f
+                forces[j] += f
+        # Always record exclusion set — "slow" calls still need it.
         bonded_set.add((min(i, j), max(i, j)))
 
     # --- 3-body angle bends (Physics Upgrade 2) ---
     if angles:
-        _compute_angle_forces(atoms, angles, pos, forces, box_l=_pbc_L)
+        if _do_bonded:
+            _compute_angle_forces(atoms, angles, pos, forces, box_l=_pbc_L)
         # 1-3 non-bonded exclusions: the i-k endpoints of an angle are
         # separated by 2 bonds and should not interact via LJ / Coulomb.
         # Standard MD convention. Without this the "1-3 LJ" term fights
@@ -676,10 +702,21 @@ def compute_forces(
                 bonded_set.add((min(ii, kk), max(ii, kk)))
 
     # --- 4-body proper dihedrals ---
-    if dihedrals:
+    if dihedrals and _do_bonded:
         _compute_dihedral_forces(atoms, dihedrals, pos, forces, box_l=_pbc_L)
 
     # --- vectorized non-bonded LJ ---
+    # Fast path: a bonded-only call ("fast" in RESPA) can skip all the
+    # pair enumeration, LJ/Coulomb, and external-potential work below.
+    if not _do_nonbonded:
+        # Safety cap still applies so runaway bonded forces can't
+        # destabilise the integrator mid-RESPA inner step.
+        norms = np.linalg.norm(forces, axis=1)
+        mask = norms > cfg.max_force_kj_per_nm
+        if mask.any():
+            forces[mask] *= (cfg.max_force_kj_per_nm / norms[mask])[:, None]
+        return forces
+
     sigmas, epsilons, elem_codes = element_arrays_cached(atoms)
     if cfg.reactive_sigma_scale != 1.0:
         # Reactive elements: H=1, C=6, N=7, O=8, P=15, S=16. Shrink sigma
@@ -719,13 +756,31 @@ def compute_forces(
             iu = np.empty(0, dtype=np.int64)
             ju = np.empty(0, dtype=np.int64)
 
+    # Pre-gather charges once; reused by both Rust combined path and the
+    # NumPy Coulomb fallback.
+    coulomb_on = bool(cfg.use_coulomb)
+    charges_arr = None
+    if coulomb_on:
+        charges_arr = np.array([a.partial_charge for a in atoms],
+                                dtype=np.float64)
+        if not np.any(charges_arr != 0.0):
+            coulomb_on = False
+    # Reaction-field krf from dielectric. Precomputed once.
+    rf_on = bool(cfg.use_reaction_field)
+    if rf_on:
+        eps_rf = float(cfg.reaction_field_eps)
+        krf = (eps_rf - 1.0) / ((2.0 * eps_rf + 1.0) * cutoff ** 3)
+    else:
+        krf = 0.0
+
     if iu.size:
         max_elem = int(elem_codes.max()) if elem_codes.size else 0
         has_coarse = max_elem >= 100       # any COARSE_* pseudo-element?
 
         if _HAS_RUST_LJ:
-            # Rust path: LJ math + distance cutoff + bonded exclusion
-            # + minimum-image wrap under PBC, all in one tight loop.
+            # Rust path: LJ math + (optional) reaction-field Coulomb +
+            # distance cutoff + bonded exclusion + minimum-image wrap
+            # under PBC, all in one tight loop.
             bonded_codes_sorted = None
             if bonded_set:
                 bonded_codes_sorted = np.fromiter(
@@ -744,7 +799,18 @@ def compute_forces(
                 bool(has_coarse),
                 bonded_codes_sorted,
                 (float(box_l) if use_pbc_box else None),
+                (np.ascontiguousarray(charges_arr, dtype=np.float64)
+                 if coulomb_on else None),
+                (float(cfg.coulomb_k_kj_nm_per_e2) if coulomb_on else None),
+                (bool(rf_on) if coulomb_on else None),
+                (float(krf) if coulomb_on else None),
+                (0.05 if coulomb_on else None),
+                (float(cfg.coulomb_max_force_kj_per_nm) if coulomb_on else None),
             )
+            # Coulomb is now handled inside Rust; the separate Python
+            # Coulomb block below will short-circuit.
+            if coulomb_on:
+                coulomb_on = False
         else:
             # Pure-NumPy fallback — do the distance / bond filter in Python.
             dvec = pos[ju] - pos[iu]
@@ -794,81 +860,63 @@ def compute_forces(
                 forces[:, 2] += (np.bincount(ju, weights=fz, minlength=n)
                                  - np.bincount(iu, weights=fz, minlength=n))
 
-    # --- Coulomb electrostatics (Physics Upgrade 1) ---
-    # Added AFTER the LJ block so it uses the already-filtered pair
-    # indices (iu, ju) that exclude bonded pairs. Same neighbor list,
-    # same cutoff. Charge-neutral soups see a zero contribution; polar
-    # soups (water, ions) see the expected Coulombic dynamics.
-    if cfg.use_coulomb and iu.size:
-        charges = np.array([a.partial_charge for a in atoms],
-                           dtype=np.float64)
-        # Only evaluate for pairs where at least one atom has nonzero
-        # charge — the common case in a neutral organic soup is that
-        # most pairs contribute nothing and we can skip the full array
-        # math. Conservative: run it on all pairs, but short-circuit
-        # when the max |q| is zero.
-        if np.any(charges != 0.0):
-            # Bonded pairs must be excluded from Coulomb too (1-2
-            # exclusion). When the Rust LJ path is taken, iu/ju still
-            # contain bonded pairs (Rust handles them internally), so
-            # we must filter here.
-            if bonded_set:
-                keep_bonded = np.fromiter(
-                    ((int(a), int(b)) not in bonded_set
-                     for a, b in zip(iu, ju)),
-                    dtype=bool, count=iu.size,
-                )
-                iu_coulomb = iu[keep_bonded]
-                ju_coulomb = ju[keep_bonded]
-            else:
-                iu_coulomb = iu
-                ju_coulomb = ju
-            if iu_coulomb.size == 0:
-                qi = np.empty(0, dtype=np.float64)
-                qj = qi
-                dvec_c = np.empty((0, 3), dtype=np.float64)
-                r2_c = np.empty(0, dtype=np.float64)
-                keep_c = np.empty(0, dtype=bool)
-            else:
-                qi = charges[iu_coulomb]
-                qj = charges[ju_coulomb]
-                dvec_c = pos[ju_coulomb] - pos[iu_coulomb]
-                if use_pbc_box:
-                    dvec_c = minimum_image(dvec_c, box_l)
-                r2_c = np.einsum("ij,ij->i", dvec_c, dvec_c)
-                keep_c = (r2_c > 1e-8) & (r2_c < cutoff2)
+    # --- Coulomb electrostatics (NumPy fallback only) ---
+    # When the Rust kernel is available (the common case), Coulomb is
+    # absorbed into the same pair loop as LJ and this block is skipped.
+    # For the NumPy-only build we evaluate Coulomb here with the same
+    # filtered pair arrays that LJ just consumed.
+    if coulomb_on and iu.size:
+        # Bonded-pair exclusion via packed integer codes (O(P) NumPy
+        # instead of the old O(P) Python loop).
+        if bonded_set:
+            bonded_codes = np.fromiter(
+                (i * n + j for (i, j) in bonded_set),
+                dtype=np.int64, count=len(bonded_set),
+            )
+            bonded_codes.sort()
+            pair_codes = iu.astype(np.int64) * n + ju.astype(np.int64)
+            keep_b = ~np.isin(pair_codes, bonded_codes,
+                               assume_unique=False)
+            iu_c0 = iu[keep_b]
+            ju_c0 = ju[keep_b]
+        else:
+            iu_c0 = iu
+            ju_c0 = ju
+        if iu_c0.size:
+            dvec_c = pos[ju_c0] - pos[iu_c0]
+            if use_pbc_box:
+                dvec_c = minimum_image(dvec_c, box_l)
+            r2_c = np.einsum("ij,ij->i", dvec_c, dvec_c)
+            keep_c = (r2_c > 1e-8) & (r2_c < cutoff2)
             if keep_c.any():
-                iu_c = iu_coulomb[keep_c]
-                ju_c = ju_coulomb[keep_c]
+                iu_c = iu_c0[keep_c]
+                ju_c = ju_c0[keep_c]
                 dvec_c = dvec_c[keep_c]
                 r2_c = r2_c[keep_c]
                 r_c = np.sqrt(r2_c)
-                # F on j = k_e * q_i * q_j / r^2 along unit(r_ij);
-                # vectorised:  factor = k_e * q_i * q_j / r^3,
-                # force_vec = factor * dvec.
                 k_e = cfg.coulomb_k_kj_nm_per_e2
-                # Short-range softening: replace r^2 with r^2 + r_soft^2
-                # in the denominator. Becomes the bare Coulomb r^-2 law
-                # for r >> r_soft (0.05 nm) and smoothly caps at a
-                # finite force as r -> 0. Prevents the runaway
-                # blow-ups observed at dense PBC conditions when
-                # thermal fluctuations briefly push two opposite
-                # charges to near contact.
-                r_soft = 0.05
-                soft_r2 = r2_c + r_soft * r_soft
-                soft_r = np.sqrt(soft_r2)
-                factor = (k_e * qi[keep_c] * qj[keep_c]) / (soft_r * soft_r2)
-                # Per-pair magnitude cap is now much less frequent but
-                # kept as a final safety net. fmag = |factor| * soft_r
-                # because fvec = factor * dvec and |dvec| ~ soft_r.
-                fmag = np.abs(factor) * soft_r
-                over = fmag > cfg.coulomb_max_force_kj_per_nm
-                if over.any():
-                    factor = np.where(over,
-                                      np.sign(factor)
-                                      * cfg.coulomb_max_force_kj_per_nm
-                                      / soft_r,
-                                      factor)
+                qi = charges_arr[iu_c]
+                qj = charges_arr[ju_c]
+                if rf_on:
+                    # factor = k_e q_i q_j (1/r^3 - 2*krf)
+                    factor = (k_e * qi * qj) * (
+                        1.0 / (r_c * r2_c) - 2.0 * krf
+                    )
+                else:
+                    # Soft-core: r^2 -> r^2 + r_soft^2 in denominator
+                    r_soft = 0.05
+                    soft_r2 = r2_c + r_soft * r_soft
+                    soft_r = np.sqrt(soft_r2)
+                    factor = (k_e * qi * qj) / (soft_r * soft_r2)
+                    fmag = np.abs(factor) * soft_r
+                    over = fmag > cfg.coulomb_max_force_kj_per_nm
+                    if over.any():
+                        factor = np.where(
+                            over,
+                            np.sign(factor)
+                            * cfg.coulomb_max_force_kj_per_nm / soft_r,
+                            factor,
+                        )
                 fvec = factor[:, None] * dvec_c
                 forces[:, 0] += (np.bincount(ju_c, weights=fvec[:, 0],
                                              minlength=n)

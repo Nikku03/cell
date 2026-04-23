@@ -565,6 +565,18 @@ fn lj_forces<'py>(
     has_coarse: bool,
     bonded_codes_sorted: Option<PyReadonlyArray1<i64>>,
     box_l: Option<f64>,
+    // Optional Coulomb extension: when charges is Some, LJ + reaction-field
+    // Coulomb are accumulated in a single pair traversal. All five Coulomb
+    // args must be passed together or not at all.
+    charges: Option<PyReadonlyArray1<f64>>,
+    coulomb_k_kj_nm_per_e2: Option<f64>,
+    // Reaction-field parameters. When use_rf is true, the Coulomb force
+    // uses the Barker-Watts shifted form with krf derived from the solvent
+    // dielectric; when false, plain 1/r^2 with soft-core at r_soft.
+    use_rf: Option<bool>,
+    krf: Option<f64>,                // precomputed: (eps-1)/(2*eps+1)/rc^3
+    r_soft: Option<f64>,             // soft-core radius used when use_rf=false
+    coulomb_max_force: Option<f64>,  // absolute cap on |F_coul|
 ) -> PyResult<Py<numpy::PyArray2<f64>>> {
     let pos_a = pos.as_array();
     let iu_s = iu.as_slice()?;
@@ -572,6 +584,14 @@ fn lj_forces<'py>(
     let sig_s = sigmas.as_slice()?;
     let eps_s = epsilons.as_slice()?;
     let codes_s = elem_codes.as_slice()?;
+    let charges_s = charges.as_ref().map(|x| x.as_slice().unwrap());
+    let k_e = coulomb_k_kj_nm_per_e2.unwrap_or(0.0);
+    let rf_on = use_rf.unwrap_or(false);
+    let krf_v = krf.unwrap_or(0.0);
+    let r_soft_v = r_soft.unwrap_or(0.05);
+    let r_soft_sq = r_soft_v * r_soft_v;
+    let fmax = coulomb_max_force.unwrap_or(2.0e4);
+    let do_coulomb = charges_s.is_some() && k_e != 0.0;
     // Bonded pairs are encoded as (min(i,j) * n + max(i,j)) and passed in
     // sorted; Rust does a binary search per candidate pair to exclude.
     let bonded_codes_owned = bonded_codes_sorted.as_ref().map(|x| x.as_slice().unwrap());
@@ -586,13 +606,11 @@ fn lj_forces<'py>(
     for p in 0..m {
         let i = iu_s[p] as usize;
         let j = ju_s[p] as usize;
-        if let Some(codes) = bonded_codes_owned {
+        let bonded_excluded = if let Some(codes) = bonded_codes_owned {
             let (lo_atom, hi_atom) = if i < j { (i, j) } else { (j, i) };
             let code = (lo_atom as i64) * (n as i64) + (hi_atom as i64);
-            if codes.binary_search(&code).is_ok() {
-                continue;
-            }
-        }
+            codes.binary_search(&code).is_ok()
+        } else { false };
         let mut dx = pos_a[[j, 0]] - pos_a[[i, 0]];
         let mut dy = pos_a[[j, 1]] - pos_a[[i, 1]];
         let mut dz = pos_a[[j, 2]] - pos_a[[i, 2]];
@@ -607,35 +625,73 @@ fn lj_forces<'py>(
             continue;
         }
         let r = r2.sqrt();
-        let sig = 0.5 * (sig_s[i] + sig_s[j]);
-        let mut eps = (eps_s[i].max(0.0) * eps_s[j].max(0.0)).sqrt();
+        // factor accumulates the per-pair scalar that multiplies dvec to
+        // give the force on j. LJ and Coulomb contributions are summed.
+        let mut factor = 0.0_f64;
 
-        if has_coarse {
-            let ci = codes_s[i];
-            let cj = codes_s[j];
-            if ci == COARSE_TAIL_CODE && cj == COARSE_TAIL_CODE {
-                eps *= TAIL_TAIL_BOOST;
-            } else if (ci == COARSE_TAIL_CODE && cj == COARSE_SOLVENT_CODE)
-                || (ci == COARSE_SOLVENT_CODE && cj == COARSE_TAIL_CODE)
-            {
-                eps *= TAIL_WATER_PENALTY;
-            } else if (ci == COARSE_HEAD_CODE && cj == COARSE_TAIL_CODE)
-                || (ci == COARSE_TAIL_CODE && cj == COARSE_HEAD_CODE)
-            {
-                eps *= HEAD_TAIL_FACTOR;
+        if !bonded_excluded {
+            let sig = 0.5 * (sig_s[i] + sig_s[j]);
+            let mut eps = (eps_s[i].max(0.0) * eps_s[j].max(0.0)).sqrt();
+
+            if has_coarse {
+                let ci = codes_s[i];
+                let cj = codes_s[j];
+                if ci == COARSE_TAIL_CODE && cj == COARSE_TAIL_CODE {
+                    eps *= TAIL_TAIL_BOOST;
+                } else if (ci == COARSE_TAIL_CODE && cj == COARSE_SOLVENT_CODE)
+                    || (ci == COARSE_SOLVENT_CODE && cj == COARSE_TAIL_CODE)
+                {
+                    eps *= TAIL_WATER_PENALTY;
+                } else if (ci == COARSE_HEAD_CODE && cj == COARSE_TAIL_CODE)
+                    || (ci == COARSE_TAIL_CODE && cj == COARSE_HEAD_CODE)
+                {
+                    eps *= HEAD_TAIL_FACTOR;
+                }
+            }
+
+            let sr = sig / r;
+            let sr2 = sr * sr;
+            let sr6 = sr2 * sr2 * sr2;
+            let sr12 = sr6 * sr6;
+            let mag = 24.0 * eps * (2.0 * sr12 - sr6) / r;
+            // |fvec| = |mag|, fvec = (mag/r) * dvec, so LJ contribution to
+            // the per-pair factor is (mag / r).
+            factor += mag / r;
+        }
+
+        // Coulomb contribution (reaction-field or soft-core). Bonded pairs
+        // are ALSO excluded from Coulomb (standard 1-2/1-3 rule).
+        if do_coulomb && !bonded_excluded {
+            let q_prod = charges_s.unwrap()[i] * charges_s.unwrap()[j];
+            if q_prod != 0.0 {
+                // Coulomb factor = force per unit dvec on j.
+                let coul_factor = if rf_on {
+                    // F = k_e * q_i * q_j * (1/r^3 - 2*krf) * dvec
+                    k_e * q_prod * (1.0 / (r * r * r) - 2.0 * krf_v)
+                } else {
+                    // Soft-core: replace r^2 -> r^2 + r_soft^2 in denominator
+                    let soft_r2 = r2 + r_soft_sq;
+                    let soft_r = soft_r2.sqrt();
+                    let f = k_e * q_prod / (soft_r * soft_r2);
+                    // Absolute-force cap as in Python path.
+                    let fmag = f.abs() * soft_r;
+                    if fmag > fmax {
+                        f.signum() * fmax / soft_r
+                    } else {
+                        f
+                    }
+                };
+                factor += coul_factor;
             }
         }
 
-        let sr = sig / r;
-        let sr2 = sr * sr;
-        let sr6 = sr2 * sr2 * sr2;
-        let sr12 = sr6 * sr6;
-        let mag = 24.0 * eps * (2.0 * sr12 - sr6) / r;
-        let factor = mag / r;
+        if factor == 0.0 {
+            continue;
+        }
         let fx = factor * dx;
         let fy = factor * dy;
         let fz = factor * dz;
-        // Force on j: + (mag / r) * dvec; force on i: -that.
+        // Force on j: + factor * dvec; force on i: -that.
         forces[[j, 0]] += fx;
         forces[[j, 1]] += fy;
         forces[[j, 2]] += fz;

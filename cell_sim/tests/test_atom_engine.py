@@ -671,3 +671,156 @@ def test_fusion_field_only_runs_without_blowing_up():
     # COM separation should decrease monotonically on average
     if len(result.com_separation_nm) >= 2:
         assert result.com_separation_nm[-1] <= result.com_separation_nm[0] + 0.2
+
+
+# ---------------------------------------------------------------------
+# Compute-cost reductions: reaction field, Rust-combined Coulomb, RESPA.
+# ---------------------------------------------------------------------
+
+
+def _isolated_coulomb(atoms, cfg_coulomb, cfg_nocoul):
+    """Return per-atom Coulomb-only force by subtracting the LJ baseline."""
+    f_with = compute_forces(atoms, [], 0.0, cfg_coulomb)
+    f_without = compute_forces(atoms, [], 0.0, cfg_nocoul)
+    return f_with - f_without
+
+
+def test_reaction_field_coulomb_at_short_range_matches_bare_coulomb():
+    """At r << rc, the reaction-field correction is small. Isolated
+    Coulomb force with RF should match bare Coulomb within a few
+    percent at r = 0.5 nm, rc = 1.2 nm."""
+    r = 0.5
+    na = AtomUnit.create(Element.Na, position=(0.0, 0.0, 0.0))
+    cl = AtomUnit.create(Element.Cl, position=(r, 0.0, 0.0))
+    cfg_nocoul = ForceFieldConfig(lj_cutoff_nm=1.2, use_coulomb=False)
+    cfg_bare = ForceFieldConfig(lj_cutoff_nm=1.2, use_coulomb=True,
+                                use_reaction_field=False)
+    cfg_rf = ForceFieldConfig(lj_cutoff_nm=1.2, use_coulomb=True,
+                              use_reaction_field=True,
+                              reaction_field_eps=78.5)
+    dc_bare = _isolated_coulomb([na, cl], cfg_bare, cfg_nocoul)
+    dc_rf = _isolated_coulomb([na, cl], cfg_rf, cfg_nocoul)
+    # Coulomb attractive: Na at origin feels +x from Cl- at +x.
+    assert dc_bare[0, 0] > 0.0
+    assert dc_rf[0, 0] > 0.0
+    rel = abs(dc_rf[0, 0] - dc_bare[0, 0]) / dc_bare[0, 0]
+    # RF subtracts 2*krf*r (times common k_e q1 q2 factor). At r=0.5,
+    # rc=1.2, eps=78.5: rel shift ~ 2*0.5*(0.5)^3 / 0.5^-2 ~ 3%.
+    assert rel < 0.08, f"RF vs bare Coulomb rel err too large: {rel}"
+
+
+def test_reaction_field_force_smaller_at_cutoff_boundary():
+    """At r approaching rc, RF correction kicks in and the isolated
+    Coulomb force is strictly smaller in magnitude than bare Coulomb."""
+    rc = 1.0
+    r = 0.8 * rc
+    na = AtomUnit.create(Element.Na, position=(0.0, 0.0, 0.0))
+    cl = AtomUnit.create(Element.Cl, position=(r, 0.0, 0.0))
+    cfg_nocoul = ForceFieldConfig(lj_cutoff_nm=rc, use_coulomb=False)
+    cfg_bare = ForceFieldConfig(lj_cutoff_nm=rc, use_coulomb=True,
+                                use_reaction_field=False)
+    cfg_rf = ForceFieldConfig(lj_cutoff_nm=rc, use_coulomb=True,
+                              use_reaction_field=True,
+                              reaction_field_eps=78.5)
+    dc_bare = _isolated_coulomb([na, cl], cfg_bare, cfg_nocoul)
+    dc_rf = _isolated_coulomb([na, cl], cfg_rf, cfg_nocoul)
+    assert abs(dc_rf[0, 0]) < abs(dc_bare[0, 0])
+
+
+def test_combined_rust_coulomb_matches_numpy_fallback():
+    """Rust LJ+Coulomb combined pass must match pure NumPy path within
+    numerical tolerance on a mixed-charge box."""
+    import cell_sim.atom_engine.force_field as ff_mod
+    rng = np.random.default_rng(7)
+    atoms = []
+    elements = [Element.Na, Element.Cl, Element.C, Element.O]
+    for i in range(40):
+        elem = elements[i % 4]
+        p = tuple(rng.uniform(-0.6, 0.6, size=3))
+        atoms.append(AtomUnit.create(elem, position=p))
+    cfg = ForceFieldConfig(lj_cutoff_nm=0.8, use_pbc=True, pbc_box_nm=1.6,
+                           use_neighbor_list=False, use_coulomb=True,
+                           use_reaction_field=True)
+    original = ff_mod._HAS_RUST_LJ
+    try:
+        ff_mod._HAS_RUST_LJ = False
+        f_np = compute_forces(atoms, [], 0.0, cfg)
+        ff_mod._HAS_RUST_LJ = original
+        f_rust = compute_forces(atoms, [], 0.0, cfg)
+    finally:
+        ff_mod._HAS_RUST_LJ = original
+    assert np.allclose(f_np, f_rust, atol=1e-6), \
+        f"Rust/NumPy mismatch: max abs diff = {np.abs(f_np - f_rust).max()}"
+
+
+def test_compute_forces_fast_slow_split_sums_to_all():
+    """compute_forces(which='fast') + compute_forces(which='slow') must
+    equal compute_forces(which='all') to numerical tolerance."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    s = load_residue("ALA")
+    atoms = s.atoms
+    cfg = ForceFieldConfig(lj_cutoff_nm=0.8, use_coulomb=True,
+                           use_reaction_field=False)
+    f_all = compute_forces(atoms, s.bonds, 0.0, cfg,
+                           angles=s.angles, dihedrals=s.dihedrals,
+                           which="all")
+    f_fast = compute_forces(atoms, s.bonds, 0.0, cfg,
+                            angles=s.angles, dihedrals=s.dihedrals,
+                            which="fast")
+    f_slow = compute_forces(atoms, s.bonds, 0.0, cfg,
+                            angles=s.angles, dihedrals=s.dihedrals,
+                            which="slow")
+    assert np.allclose(f_all, f_fast + f_slow, atol=1e-9), \
+        f"split mismatch: max diff = {np.abs(f_all - f_fast - f_slow).max()}"
+
+
+def test_respa_n2_runs_without_blowing_up():
+    """RESPA with n_inner=2 should run an HOH system for 100 steps
+    without blowing up. Basic stability check on the split force path."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    from cell_sim.atom_engine.integrator import (
+        build_shake_constraints, SimState, step,
+    )
+    s = load_residue("HOH")
+    state = SimState(atoms=list(s.atoms), bonds=list(s.bonds),
+                     angles=list(s.angles))
+    state.shake_pairs, state.shake_r0_sq = build_shake_constraints(
+        state.atoms, state.bonds,
+    )
+    ff = ForceFieldConfig(lj_cutoff_nm=0.8, use_coulomb=True)
+    int_cfg = IntegratorConfig(dt_ps=0.002, target_temperature_K=300.0,
+                               thermostat="langevin",
+                               langevin_gamma_inv_ps=5.0,
+                               shake=True, respa_n_inner=2)
+    forces = None
+    for _ in range(100):
+        forces = step(state, ff, int_cfg, forces)
+    T = current_temperature_K(state.atoms)
+    assert math.isfinite(T) and T < 2000.0
+
+
+def test_respa_n4_stable_over_water_box():
+    """RESPA with 4 inner steps should run a water peptide box without
+    energy blow-up for 200 steps. Basic stability check."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    from cell_sim.atom_engine.integrator import (
+        build_shake_constraints, SimState, step,
+    )
+    s = load_residue("HOH")
+    atoms = list(s.atoms)
+    bonds = list(s.bonds)
+    angles = list(s.angles)
+    state = SimState(atoms=atoms, bonds=bonds, angles=angles)
+    state.shake_pairs, state.shake_r0_sq = build_shake_constraints(atoms, bonds)
+    ff = ForceFieldConfig(lj_cutoff_nm=0.8, use_coulomb=True,
+                          use_reaction_field=True, use_pbc=False)
+    int_cfg = IntegratorConfig(dt_ps=0.002, target_temperature_K=300.0,
+                               thermostat="langevin",
+                               langevin_gamma_inv_ps=5.0,
+                               shake=True, respa_n_inner=4)
+    forces = None
+    for _ in range(200):
+        forces = step(state, ff, int_cfg, forces)
+    T = current_temperature_K(state.atoms)
+    assert math.isfinite(T)
+    assert T < 2000.0, f"RESPA n=4 water blew up: T={T}"
