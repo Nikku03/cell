@@ -383,50 +383,75 @@ def _compute_angle_forces(
     forces: np.ndarray,
     box_l: Optional[float] = None,
 ) -> None:
-    """Add harmonic 3-body angle forces to ``forces`` in place.
+    """Vectorised 3-body bend forces.
 
-    For angle (i, j, k) with j the vertex, the force on each endpoint
-    is the gradient of ``U = 0.5 k (theta - theta_0)^2`` with respect
-    to that atom's position. Derivation:
-
-        cos(theta) = (r_ji . r_jk) / (|r_ji| |r_jk|)
-        theta      = acos(cos_theta)
-        dU/dtheta  = k (theta - theta_0)
-        grad theta = -1/sin(theta) * grad cos(theta)
-
-    We use the standard bend-force expression (see e.g. GROMACS
-    manual section 4.2.2) for numerical stability.
+    Gathers (i, j, k) indices, theta_0, and k_theta from all angles
+    into NumPy arrays, then computes every bend in one broadcasted
+    pass. Much faster than the previous per-angle Python loop when
+    there are hundreds of angle terms (peptides, proteins).
     """
+    ang_list = list(angles)
+    if not ang_list:
+        return
     id_to_idx = {id(a): i for i, a in enumerate(atoms)}
-    for ang in angles:
-        ii = id_to_idx.get(id(ang.i))
-        ij = id_to_idx.get(id(ang.j))
-        ik = id_to_idx.get(id(ang.k))
-        if ii is None or ij is None or ik is None:
+    ii = np.empty(len(ang_list), dtype=np.int64)
+    ij = np.empty(len(ang_list), dtype=np.int64)
+    ik = np.empty(len(ang_list), dtype=np.int64)
+    theta_0 = np.empty(len(ang_list), dtype=np.float64)
+    k_theta = np.empty(len(ang_list), dtype=np.float64)
+    n_ok = 0
+    for ang in ang_list:
+        a = id_to_idx.get(id(ang.i))
+        b = id_to_idx.get(id(ang.j))
+        c = id_to_idx.get(id(ang.k))
+        if a is None or b is None or c is None:
             continue
-        r_ji = pos[ii] - pos[ij]
-        r_jk = pos[ik] - pos[ij]
-        if box_l is not None:
-            r_ji = minimum_image(r_ji, box_l)
-            r_jk = minimum_image(r_jk, box_l)
-        n_ji = float(np.linalg.norm(r_ji))
-        n_jk = float(np.linalg.norm(r_jk))
-        if n_ji < 1e-6 or n_jk < 1e-6:
-            continue
-        u_ji = r_ji / n_ji
-        u_jk = r_jk / n_jk
-        cos_t = float(np.clip(u_ji @ u_jk, -0.999999, 0.999999))
-        theta = float(np.arccos(cos_t))
-        sin_t = float(np.sqrt(max(1.0 - cos_t * cos_t, 1e-12)))
-        k_theta = ang.k_theta_kj_per_mol_rad2
-        prefactor = k_theta * (theta - ang.theta_0_rad) / sin_t
-        # Forces on endpoint atoms (standard bend expression).
-        f_i = (prefactor / n_ji) * (u_jk - cos_t * u_ji)
-        f_k = (prefactor / n_jk) * (u_ji - cos_t * u_jk)
-        f_j = -(f_i + f_k)
-        forces[ii] += f_i
-        forces[ij] += f_j
-        forces[ik] += f_k
+        ii[n_ok] = a
+        ij[n_ok] = b
+        ik[n_ok] = c
+        theta_0[n_ok] = ang.theta_0_rad
+        k_theta[n_ok] = ang.k_theta_kj_per_mol_rad2
+        n_ok += 1
+    if n_ok == 0:
+        return
+    ii = ii[:n_ok]; ij = ij[:n_ok]; ik = ik[:n_ok]
+    theta_0 = theta_0[:n_ok]; k_theta = k_theta[:n_ok]
+
+    r_ji = pos[ii] - pos[ij]
+    r_jk = pos[ik] - pos[ij]
+    if box_l is not None:
+        r_ji = minimum_image(r_ji, box_l)
+        r_jk = minimum_image(r_jk, box_l)
+    n_ji = np.linalg.norm(r_ji, axis=1)
+    n_jk = np.linalg.norm(r_jk, axis=1)
+    # Guard against degenerate geometries.
+    safe = (n_ji > 1e-6) & (n_jk > 1e-6)
+    u_ji = np.divide(r_ji, np.maximum(n_ji, 1e-12)[:, None],
+                     where=safe[:, None], out=np.zeros_like(r_ji))
+    u_jk = np.divide(r_jk, np.maximum(n_jk, 1e-12)[:, None],
+                     where=safe[:, None], out=np.zeros_like(r_jk))
+    cos_t = np.clip(np.einsum("ij,ij->i", u_ji, u_jk),
+                    -0.999999, 0.999999)
+    theta = np.arccos(cos_t)
+    sin_t = np.sqrt(np.maximum(1.0 - cos_t * cos_t, 1e-12))
+    prefactor = np.where(safe, k_theta * (theta - theta_0) / sin_t, 0.0)
+    f_i = (prefactor / np.maximum(n_ji, 1e-12))[:, None] * (
+        u_jk - cos_t[:, None] * u_ji
+    )
+    f_k = (prefactor / np.maximum(n_jk, 1e-12))[:, None] * (
+        u_ji - cos_t[:, None] * u_jk
+    )
+    f_j = -(f_i + f_k)
+    n = forces.shape[0]
+    forces[:, 0] += (np.bincount(ii, weights=f_i[:, 0], minlength=n)
+                     + np.bincount(ij, weights=f_j[:, 0], minlength=n)
+                     + np.bincount(ik, weights=f_k[:, 0], minlength=n))
+    forces[:, 1] += (np.bincount(ii, weights=f_i[:, 1], minlength=n)
+                     + np.bincount(ij, weights=f_j[:, 1], minlength=n)
+                     + np.bincount(ik, weights=f_k[:, 1], minlength=n))
+    forces[:, 2] += (np.bincount(ii, weights=f_i[:, 2], minlength=n)
+                     + np.bincount(ij, weights=f_j[:, 2], minlength=n)
+                     + np.bincount(ik, weights=f_k[:, 2], minlength=n))
 
 
 def _compute_dihedral_forces(
@@ -436,54 +461,82 @@ def _compute_dihedral_forces(
     forces: np.ndarray,
     box_l: Optional[float] = None,
 ) -> None:
-    """Add periodic 4-body dihedral forces in place.
+    """Vectorised 4-body periodic dihedral forces.
 
-    ``U = k (1 + cos(n*phi - phi_0))`` with phi defined by the i-j-k-l
-    atoms. Force derivation uses the b1/b2/b3 convention (see e.g.
-    Allen & Tildesley, Computer Simulation of Liquids, Eq. 4.23).
+    ``U = k_phi * (1 + cos(n*phi - phi_0))``. Uses the Bekker 1996
+    gradient decomposition, computed in one broadcasted pass over
+    all dihedrals at once.
     """
+    dih_list = list(dihedrals)
+    if not dih_list:
+        return
     id_to_idx = {id(a): i for i, a in enumerate(atoms)}
-    for dih in dihedrals:
-        ii = id_to_idx.get(id(dih.i))
-        ij = id_to_idx.get(id(dih.j))
-        ik = id_to_idx.get(id(dih.k))
-        il = id_to_idx.get(id(dih.l))
-        if ii is None or ij is None or ik is None or il is None:
+    ii = np.empty(len(dih_list), dtype=np.int64)
+    ij = np.empty(len(dih_list), dtype=np.int64)
+    ik = np.empty(len(dih_list), dtype=np.int64)
+    il = np.empty(len(dih_list), dtype=np.int64)
+    mult = np.empty(len(dih_list), dtype=np.float64)
+    phi0 = np.empty(len(dih_list), dtype=np.float64)
+    k_phi = np.empty(len(dih_list), dtype=np.float64)
+    n_ok = 0
+    for dih in dih_list:
+        a = id_to_idx.get(id(dih.i))
+        b = id_to_idx.get(id(dih.j))
+        c = id_to_idx.get(id(dih.k))
+        d = id_to_idx.get(id(dih.l))
+        if a is None or b is None or c is None or d is None:
             continue
-        b1 = pos[ij] - pos[ii]
-        b2 = pos[ik] - pos[ij]
-        b3 = pos[il] - pos[ik]
-        if box_l is not None:
-            b1 = minimum_image(b1, box_l)
-            b2 = minimum_image(b2, box_l)
-            b3 = minimum_image(b3, box_l)
-        n1 = np.cross(b1, b2)
-        n2 = np.cross(b2, b3)
-        n1_norm = float(np.linalg.norm(n1))
-        n2_norm = float(np.linalg.norm(n2))
-        b2_norm = float(np.linalg.norm(b2))
-        if n1_norm < 1e-9 or n2_norm < 1e-9 or b2_norm < 1e-9:
-            continue
-        cos_phi = float(np.clip((n1 @ n2) / (n1_norm * n2_norm),
-                                -0.999999, 0.999999))
-        sin_phi = float(np.dot(np.cross(n1, n2), b2) /
-                        (n1_norm * n2_norm * b2_norm))
-        phi = float(np.arctan2(sin_phi, cos_phi))
-        # dU/dphi
-        dudphi = -dih.n * dih.k_phi_kj_per_mol * np.sin(
-            dih.n * phi - dih.phi_0_rad
+        ii[n_ok] = a; ij[n_ok] = b; ik[n_ok] = c; il[n_ok] = d
+        mult[n_ok] = dih.n
+        phi0[n_ok] = dih.phi_0_rad
+        k_phi[n_ok] = dih.k_phi_kj_per_mol
+        n_ok += 1
+    if n_ok == 0:
+        return
+    ii = ii[:n_ok]; ij = ij[:n_ok]; ik = ik[:n_ok]; il = il[:n_ok]
+    mult = mult[:n_ok]; phi0 = phi0[:n_ok]; k_phi = k_phi[:n_ok]
+
+    b1 = pos[ij] - pos[ii]
+    b2 = pos[ik] - pos[ij]
+    b3 = pos[il] - pos[ik]
+    if box_l is not None:
+        b1 = minimum_image(b1, box_l)
+        b2 = minimum_image(b2, box_l)
+        b3 = minimum_image(b3, box_l)
+    n1 = np.cross(b1, b2)
+    n2 = np.cross(b2, b3)
+    n1n = np.linalg.norm(n1, axis=1)
+    n2n = np.linalg.norm(n2, axis=1)
+    b2n = np.linalg.norm(b2, axis=1)
+    safe = (n1n > 1e-9) & (n2n > 1e-9) & (b2n > 1e-9)
+    inv_n1n = np.where(safe, 1.0 / np.maximum(n1n, 1e-12), 0.0)
+    inv_n2n = np.where(safe, 1.0 / np.maximum(n2n, 1e-12), 0.0)
+    cos_phi = np.clip(np.einsum("ij,ij->i", n1, n2) * inv_n1n * inv_n2n,
+                       -0.999999, 0.999999)
+    sin_phi = np.einsum("ij,ij->i", np.cross(n1, n2), b2) \
+        * inv_n1n * inv_n2n * np.where(safe, 1.0 / np.maximum(b2n, 1e-12), 0.0)
+    phi = np.arctan2(sin_phi, cos_phi)
+    dudphi = -mult * k_phi * np.sin(mult * phi - phi0)
+
+    # Bekker 1996 decomposition.
+    f_i = -(dudphi * b2n / np.maximum(n1n ** 2, 1e-18))[:, None] * n1
+    f_l = (dudphi * b2n / np.maximum(n2n ** 2, 1e-18))[:, None] * n2
+    b1_dot_b2 = np.einsum("ij,ij->i", b1, b2)
+    b3_dot_b2 = np.einsum("ij,ij->i", b3, b2)
+    b2_sq = np.maximum(b2n ** 2, 1e-18)
+    t1 = (-b1_dot_b2 / b2_sq)[:, None] * f_i
+    t2 = (b3_dot_b2 / b2_sq)[:, None] * f_l
+    f_j = -f_i + t1 - t2
+    f_k = -f_l - t1 + t2
+
+    n = forces.shape[0]
+    for axis in range(3):
+        forces[:, axis] += (
+            np.bincount(ii, weights=f_i[:, axis], minlength=n)
+            + np.bincount(ij, weights=f_j[:, axis], minlength=n)
+            + np.bincount(ik, weights=f_k[:, axis], minlength=n)
+            + np.bincount(il, weights=f_l[:, axis], minlength=n)
         )
-        # Gradient using the standard formula: see Bekker 1996.
-        f_i = -(dudphi * b2_norm / (n1_norm ** 2)) * n1
-        f_l = (dudphi * b2_norm / (n2_norm ** 2)) * n2
-        t1 = (-np.dot(b1, b2) / (b2_norm ** 2)) * f_i
-        t2 = (np.dot(b3, b2) / (b2_norm ** 2)) * f_l
-        f_j = -f_i + t1 - t2
-        f_k = -f_l - t1 + t2
-        forces[ii] += f_i
-        forces[ij] += f_j
-        forces[ik] += f_k
-        forces[il] += f_l
 
 
 def compute_forces(
