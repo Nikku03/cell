@@ -1,0 +1,49 @@
+{
+  "id": "feature_cache_infrastructure",
+  "claim": "Infrastructure for per-gene pretrained-model feature caching. Provides FeatureRegistry (load/join cached features from parquet, SHA256-validated), CachedFeatureManifest (write/verify cache integrity), and BatchedFeatureExtractor (abstract base for GPU-batched pretrained-model inference). No pretrained model weights are loaded in this fact — it documents the cache API that future facts (ESM-2, AlphaFold, MACE-OFF embeddings) will populate.",
+  "value": {
+    "module_path": "cell_sim/features/",
+    "files_added": [
+      "cell_sim/features/__init__.py",
+      "cell_sim/features/feature_registry.py",
+      "cell_sim/features/cache_manifest.py",
+      "cell_sim/features/batched_inference.py",
+      "cell_sim/features/cache/manifest.json",
+      "cell_sim/features/cache/.gitkeep",
+      "cell_sim/tests/test_features_registry.py",
+      "cell_sim/tests/test_features_manifest.py"
+    ],
+    "cache_dir": "cell_sim/features/cache/ (gitignored except manifest.json + .gitkeep)",
+    "tests_added": 24,
+    "tests_total": 147,
+    "pretrained_models_loaded": 0,
+    "api_summary": {
+      "FeatureRegistry": "declare sources, check cached state, load one or join many as a single DataFrame indexed by locus_tag",
+      "CachedFeatureManifest": "sources dict keyed by source name, each with sha256 / version / rows / created_at; verify() recomputes SHA against the stored hash",
+      "BatchedFeatureExtractor": "abstract base class; subclasses implement extract(inputs, config) and inherit write_cache() which writes the parquet + updates the manifest"
+    },
+    "dependencies_added": [
+      "pyarrow (new) — required for pandas.DataFrame.to_parquet / read_parquet; added to cell_sim/requirements.txt with a one-line rationale comment. pandas was already present."
+    ]
+  },
+  "source": "internal_infrastructure",
+  "source_detail": "Session 13 scaffold, commit range documented in PROJECT_STATUS.md. No external citation; this is a repo-internal API.",
+  "context": {
+    "entity": "cell_sim_features_module",
+    "version": "v0.1.0_session_13",
+    "commit_range": "TBD — will be filled into PROJECT_STATUS after the final push."
+  },
+  "confidence": "measured",
+  "caveats": [
+    "This fact documents the API only. No pretrained model has been integrated yet. Subsequent sessions will add ESM-2, AlphaFold-DB lookup, and enable MACE-OFF; each will write its own measured fact (e.g. facts/parameters/esm2_650M_feature_table.json) once the parquet is populated and the downstream detector sweep has been re-measured.",
+    "Parquet IO requires pyarrow; this session installed it and added it to cell_sim/requirements.txt. The tests would fail on an environment without pyarrow — not because any feature-cache code imports pyarrow directly, but because pandas.read_parquet / to_parquet silently delegates to it.",
+    "batched_inference.BatchedFeatureExtractor is an abstract base only; no torch / transformers / mace / e3nn / biopython / rdkit / huggingface_hub imports at module load. A subclass in a future session will import its own heavy deps inside extract() — the same lazy pattern cell_sim/layer1_atomic/engine.py::MACEBackend already uses.",
+    "This session produced no MCC measurement. It is pure plumbing. The claim in this fact is about the API, not about Breuer 2019 accuracy."
+  ],
+  "dependencies": [],
+  "last_verified": "2026-04-23",
+  "used_by": [
+    "cell_sim/tests/test_features_registry.py",
+    "cell_sim/tests/test_features_manifest.py"
+  ]
+}

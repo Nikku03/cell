@@ -49,6 +49,18 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 
 ## Session Log
 
+### Session 13 — 2026-04-23 — Feature-cache infrastructure (plumbing, no MCC)
+- **Scope**: pure infrastructure for per-gene pretrained-model feature caching. No pretrained models were downloaded or run. No MCC measurement made. No detector in `cell_sim/layer6_essentiality/` was modified.
+- **New module `cell_sim/features/`** (~500 lines of impl, 350 lines of tests):
+  - `feature_registry.py` — `FeatureRegistry` / `FeatureSource`: declare parquet-backed feature tables, check cached state, load with SHA-256 validation, join multiple sources as a single DataFrame indexed by `locus_tag`. `join_features` is pure — missing sources become NaN columns; never triggers an extraction.
+  - `cache_manifest.py` — `CachedFeatureManifest`: SHA-256 authority for the cache dir. `add()` computes + records, `verify()` recomputes + compares, `save()` writes atomically via sibling `.tmp`. Handles missing / malformed manifest files gracefully (empty manifest, clear `ValueError` respectively).
+  - `batched_inference.py` — abstract `BatchedFeatureExtractor` base class + `BatchedInferenceConfig` dataclass. Zero model imports at module load; subclasses (future sessions) import `torch`/`transformers`/etc. inside their own `extract()` method, mirroring the `MACEBackend._ensure_loaded` pattern in `cell_sim/layer1_atomic/engine.py`. Default `write_cache()` writes the parquet + updates the manifest with the producer's version tag.
+  - `cache/manifest.json` committed empty (`{"sources": {}}`); `cache/.gitkeep` committed; all other cache-dir contents gitignored.
+- **Tests**: 24 new (11 manifest + 13 registry), all pass in ~0.5s. Baseline was 123 passing; post-session total **147 passing**. One pre-existing collection error on `test_end_to_end.py` (matplotlib missing) is unchanged by this work.
+- **Invariant checker**: 30 facts / 12 sources / OK. Added a new `internal_infrastructure` source to cover the new `feature_cache_infrastructure` structural fact; without it the brief's suggested `source: "internal_infrastructure"` value would have failed the sources-must-be-registered check.
+- **Dependencies**: added `pyarrow>=14.0` to `cell_sim/requirements.txt` (one line, comment says why). `pandas.to_parquet` / `read_parquet` delegate to pyarrow; this was the only missing piece needed to run the new tests.
+- **Explicit non-claims**: this session produces no improvement against Breuer 2019. MCC remains at the v10b-session number. No ESM-2, AlphaFold, or MACE-OFF weights were touched.
+
 ### Session 12 — 2026-04-22 — v9 Colab reproduction + panel-seed robustness
 - Added `notebooks/colab_v9_run.ipynb` — reproduces v9 (5 sim seeds × panel=42) and runs a panel-seed robustness block (up to 5 panels × 3 seeds). GitHub push-protection correctly caught a literal PAT I left in notebook markdown; amended commit without the token.
 - **Colab run (L4, 8 vCPU, partial — user interrupted after panel 400)**: 10 total runs across 2 panels.

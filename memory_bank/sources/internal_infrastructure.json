@@ -1,0 +1,8 @@
+{
+  "id": "internal_infrastructure",
+  "citation": "Repo-internal. This source covers facts that document APIs, schemas, data layouts, and test-harness design decisions made within cell_sim itself. Every such fact is verifiable by reading the referenced files + running the referenced tests; no external citation is appropriate.",
+  "type": "repo_internal",
+  "authority": "primary",
+  "notes": "Use sparingly. An 'internal' source is appropriate for plumbing / infrastructure claims (e.g. 'feature_cache_infrastructure has this API, enforced by these tests'). For scientific claims about Syn3A biology or measurement results, cite an external source (breuer_2019_elife, thornburg_2022_cell, etc.) instead.",
+  "url": "https://github.com/Nikku03/cell"
+}

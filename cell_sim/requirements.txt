@@ -5,6 +5,7 @@ pandas>=2.0
 # File formats
 openpyxl>=3.1
 biopython>=1.81
+pyarrow>=14.0        # parquet backend for cell_sim/features/ cache layer
 
 # Visualization
 matplotlib>=3.7

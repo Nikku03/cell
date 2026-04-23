@@ -51,3 +51,10 @@ patches/
 # Rust build artifacts (cell_sim_rust)
 cell_sim_rust/target/
 cell_sim_rust/Cargo.lock
+
+# Feature cache — contains per-gene pretrained-model embeddings, usually
+# large parquet files. Only the manifest (for integrity tracking) and
+# the .gitkeep (so the empty cache dir survives) are tracked.
+cell_sim/features/cache/*
+!cell_sim/features/cache/manifest.json
+!cell_sim/features/cache/.gitkeep
