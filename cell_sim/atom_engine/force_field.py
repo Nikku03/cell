@@ -18,7 +18,7 @@ from typing import Iterable, Optional, Sequence
 
 import numpy as np
 
-from .atom_unit import AngleBond, AtomUnit, Bond
+from .atom_unit import AngleBond, AtomUnit, Bond, DihedralBond
 from .element import Element, props
 
 # ---------- Optional Numba acceleration -------------------------------
@@ -401,6 +401,58 @@ def _compute_angle_forces(
         forces[ik] += f_k
 
 
+def _compute_dihedral_forces(
+    atoms: Sequence[AtomUnit],
+    dihedrals: Iterable[DihedralBond],
+    pos: np.ndarray,
+    forces: np.ndarray,
+) -> None:
+    """Add periodic 4-body dihedral forces in place.
+
+    ``U = k (1 + cos(n*phi - phi_0))`` with phi defined by the i-j-k-l
+    atoms. Force derivation uses the b1/b2/b3 convention (see e.g.
+    Allen & Tildesley, Computer Simulation of Liquids, Eq. 4.23).
+    """
+    id_to_idx = {id(a): i for i, a in enumerate(atoms)}
+    for dih in dihedrals:
+        ii = id_to_idx.get(id(dih.i))
+        ij = id_to_idx.get(id(dih.j))
+        ik = id_to_idx.get(id(dih.k))
+        il = id_to_idx.get(id(dih.l))
+        if ii is None or ij is None or ik is None or il is None:
+            continue
+        b1 = pos[ij] - pos[ii]
+        b2 = pos[ik] - pos[ij]
+        b3 = pos[il] - pos[ik]
+        n1 = np.cross(b1, b2)
+        n2 = np.cross(b2, b3)
+        n1_norm = float(np.linalg.norm(n1))
+        n2_norm = float(np.linalg.norm(n2))
+        b2_norm = float(np.linalg.norm(b2))
+        if n1_norm < 1e-9 or n2_norm < 1e-9 or b2_norm < 1e-9:
+            continue
+        cos_phi = float(np.clip((n1 @ n2) / (n1_norm * n2_norm),
+                                -0.999999, 0.999999))
+        sin_phi = float(np.dot(np.cross(n1, n2), b2) /
+                        (n1_norm * n2_norm * b2_norm))
+        phi = float(np.arctan2(sin_phi, cos_phi))
+        # dU/dphi
+        dudphi = -dih.n * dih.k_phi_kj_per_mol * np.sin(
+            dih.n * phi - dih.phi_0_rad
+        )
+        # Gradient using the standard formula: see Bekker 1996.
+        f_i = -(dudphi * b2_norm / (n1_norm ** 2)) * n1
+        f_l = (dudphi * b2_norm / (n2_norm ** 2)) * n2
+        t1 = (-np.dot(b1, b2) / (b2_norm ** 2)) * f_i
+        t2 = (np.dot(b3, b2) / (b2_norm ** 2)) * f_l
+        f_j = -f_i + t1 - t2
+        f_k = -f_l - t1 + t2
+        forces[ii] += f_i
+        forces[ij] += f_j
+        forces[ik] += f_k
+        forces[il] += f_l
+
+
 def compute_forces(
     atoms: Sequence[AtomUnit],
     bonds: Iterable[Bond],
@@ -411,6 +463,7 @@ def compute_forces(
                     | None) = None,
     pos: Optional[np.ndarray] = None,
     angles: Optional[Iterable[AngleBond]] = None,
+    dihedrals: Optional[Iterable[DihedralBond]] = None,
 ) -> np.ndarray:
     """Compute total force on each atom. Returns (N, 3) array, kJ/mol/nm.
 
@@ -467,6 +520,10 @@ def compute_forces(
             kk = id_to_idx.get(id(ang.k))
             if ii is not None and kk is not None and ii != kk:
                 bonded_set.add((min(ii, kk), max(ii, kk)))
+
+    # --- 4-body proper dihedrals ---
+    if dihedrals:
+        _compute_dihedral_forces(atoms, dihedrals, pos, forces)
 
     # --- vectorized non-bonded LJ ---
     sigmas, epsilons, elem_codes = element_arrays_cached(atoms)

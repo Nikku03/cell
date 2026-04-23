@@ -21,7 +21,7 @@ from typing import Optional, Sequence
 
 import numpy as np
 
-from .atom_unit import AngleBond, AtomUnit, Bond, BondType
+from .atom_unit import AngleBond, AtomUnit, Bond, BondType, DihedralBond
 from .element import pair_is_bondable
 from .force_field import ForceFieldConfig, build_neighbor_list, compute_forces
 
@@ -68,6 +68,8 @@ class SimState:
     # 3-body angle terms (Physics Upgrade 2). Populated by molecule
     # templates or by a post-hoc auto-angle pass on the bond graph.
     angles: list[AngleBond] = field(default_factory=list)
+    # 4-body proper dihedral terms.
+    dihedrals: list[DihedralBond] = field(default_factory=list)
     t_ps: float = 0.0
     step: int = 0
     events_bonds_formed: int = 0
@@ -313,7 +315,8 @@ def step(
     if forces_prev is None:
         forces_prev = compute_forces(atoms, state.bonds, state.t_ps, ff_cfg,
                                      neighbor_pairs=_neighbors(pos),
-                                     pos=pos, angles=state.angles or None)
+                                     pos=pos, angles=state.angles or None,
+                                     dihedrals=state.dihedrals or None)
 
     # Half-step velocity + full position update.
     vel += 0.5 * dt * forces_prev / masses

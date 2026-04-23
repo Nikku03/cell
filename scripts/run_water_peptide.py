@@ -64,6 +64,7 @@ def main() -> int:
             "mean_oh_nm": water_res.mean_oh_nm,
             "mean_hoh_deg": water_res.mean_hoh_deg,
             "mean_nearest_oo_nm": water_res.mean_nearest_oo_nm,
+            "hbonds_per_water": water_res.hbonds_per_water,
             "elapsed_s": water_res.elapsed_s,
         }
 

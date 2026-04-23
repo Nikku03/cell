@@ -430,7 +430,7 @@ def test_molecule_library_templates_have_valid_bonds():
 
 
 def test_build_mixture_preserves_composition():
-    atoms, bonds, angles = build_mixture(
+    atoms, bonds, angles, dihedrals = build_mixture(
         {"H2O": 5, "CH4": 3, "NH3": 2}, radius_nm=2.0, seed=1,
     )
     formulas = classify_molecules(atoms)

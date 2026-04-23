@@ -20,7 +20,7 @@ from typing import Optional
 
 import numpy as np
 
-from .atom_unit import AngleBond, AtomUnit, Bond, BondType
+from .atom_unit import AngleBond, AtomUnit, Bond, BondType, DihedralBond
 from .element import Element, mass
 
 _K_B_KJ_PER_MOL_K = 0.00831446
@@ -69,6 +69,11 @@ class MoleculeTemplate:
     # Optional 3-body angle constraints: (i, j, k, theta_0_rad, k_theta).
     # j is the vertex. Used by the angle force (Physics Upgrade 2).
     angles: Optional[list[tuple[int, int, int, float, float]]] = None
+    # Optional 4-body periodic dihedrals:
+    # (i, j, k, l, n, phi_0_rad, k_phi_kj_per_mol).
+    dihedrals: Optional[
+        list[tuple[int, int, int, int, int, float, float]]
+    ] = None
 
     @property
     def radius_nm(self) -> float:
@@ -271,11 +276,256 @@ GLYCINE = MoleculeTemplate(
 )
 
 
+# ---- Alanine (neutral): H2N-CH(CH3)-COOH. 13 atoms.
+_aNH1 = (_gN[0] + 0.05, 0.087, 0.0)
+_aNH2 = (_gN[0] + 0.05, -0.043, 0.075)
+_aCaH = (0.0, -0.089, 0.063)
+_aCB = (0.0, 0.089, 0.120)
+_aCBH1 = (0.089, 0.110, 0.170)
+_aCBH2 = (-0.089, 0.110, 0.170)
+_aCBH3 = (0.0, 0.020, 0.210)
+
+ALANINE = MoleculeTemplate(
+    name="alanine", formula="C3H7NO2",
+    atoms=[
+        (Element.N, _gN),        # 0
+        (Element.H, _aNH1),      # 1
+        (Element.H, _aNH2),      # 2
+        (Element.C, _gCa),       # 3 alpha-C
+        (Element.H, _aCaH),      # 4 alpha-H
+        (Element.C, _aCB),       # 5 beta-C (methyl)
+        (Element.H, _aCBH1),     # 6
+        (Element.H, _aCBH2),     # 7
+        (Element.H, _aCBH3),     # 8
+        (Element.C, _gC),        # 9 carbonyl C
+        (Element.O, _gO_carbonyl),  # 10 =O
+        (Element.O, _gO_hydroxyl),  # 11 -O-
+        (Element.H, _gOH),       # 12 hydroxyl H
+    ],
+    bonds=[
+        (0, 1, _S, 0.101, None), (0, 2, _S, 0.101, None),
+        (0, 3, _S, 0.147, None),
+        (3, 4, _S, 0.109, None),
+        (3, 5, _S, 0.154, None),
+        (5, 6, _S, 0.109, None), (5, 7, _S, 0.109, None),
+        (5, 8, _S, 0.109, None),
+        (3, 9, _S, 0.153, None),
+        (9, 10, BondType.COVALENT_DOUBLE, 0.123, None),
+        (9, 11, _S, 0.134, None),
+        (11, 12, _S, 0.096, None),
+    ],
+    partial_charges=[
+        -0.35, +0.18, +0.18,
+         0.02, +0.05,
+         0.00, +0.03, +0.03, +0.03,
+        +0.50, -0.45, -0.50, +0.42,
+    ],
+    angles=[
+        (1, 0, 2, math.radians(107.0), 400.0),
+        (1, 0, 3, math.radians(109.5), 400.0),
+        (2, 0, 3, math.radians(109.5), 400.0),
+        (0, 3, 4, math.radians(109.5), 400.0),
+        (0, 3, 5, math.radians(109.5), 400.0),
+        (0, 3, 9, math.radians(109.5), 500.0),
+        (4, 3, 5, math.radians(109.5), 400.0),
+        (4, 3, 9, math.radians(109.5), 400.0),
+        (5, 3, 9, math.radians(109.5), 400.0),
+        (3, 5, 6, math.radians(109.5), 400.0),
+        (3, 5, 7, math.radians(109.5), 400.0),
+        (3, 5, 8, math.radians(109.5), 400.0),
+        (6, 5, 7, math.radians(109.5), 400.0),
+        (6, 5, 8, math.radians(109.5), 400.0),
+        (7, 5, 8, math.radians(109.5), 400.0),
+        (3, 9, 10, math.radians(120.0), 500.0),
+        (3, 9, 11, math.radians(110.0), 500.0),
+        (10, 9, 11, math.radians(125.0), 500.0),
+        (9, 11, 12, math.radians(105.0), 500.0),
+    ],
+)
+
+
+# ---- Serine (neutral): H2N-CH(CH2OH)-COOH. 14 atoms.
+_sCB = (0.0, 0.089, 0.120)
+_sCBH1 = (0.089, 0.110, 0.170)
+_sCBH2 = (-0.089, 0.110, 0.170)
+_sOG = (0.0, 0.020, 0.250)
+_sOGH = (0.060, -0.030, 0.290)
+
+SERINE = MoleculeTemplate(
+    name="serine", formula="C3H7NO3",
+    atoms=[
+        (Element.N, _gN),        # 0
+        (Element.H, _aNH1),      # 1
+        (Element.H, _aNH2),      # 2
+        (Element.C, _gCa),       # 3 alpha-C
+        (Element.H, _aCaH),      # 4 alpha-H
+        (Element.C, _sCB),       # 5 beta-C
+        (Element.H, _sCBH1),     # 6
+        (Element.H, _sCBH2),     # 7
+        (Element.O, _sOG),       # 8 side-chain O
+        (Element.H, _sOGH),      # 9 side-chain O-H
+        (Element.C, _gC),        # 10 carbonyl C
+        (Element.O, _gO_carbonyl), # 11 =O
+        (Element.O, _gO_hydroxyl), # 12 -O-
+        (Element.H, _gOH),       # 13 carboxyl O-H
+    ],
+    bonds=[
+        (0, 1, _S, 0.101, None), (0, 2, _S, 0.101, None),
+        (0, 3, _S, 0.147, None),
+        (3, 4, _S, 0.109, None),
+        (3, 5, _S, 0.154, None),
+        (5, 6, _S, 0.109, None), (5, 7, _S, 0.109, None),
+        (5, 8, _S, 0.143, None),
+        (8, 9, _S, 0.096, None),
+        (3, 10, _S, 0.153, None),
+        (10, 11, BondType.COVALENT_DOUBLE, 0.123, None),
+        (10, 12, _S, 0.134, None),
+        (12, 13, _S, 0.096, None),
+    ],
+    partial_charges=[
+        -0.35, +0.18, +0.18,
+         0.05, +0.05,
+         0.05, +0.03, +0.03,
+        -0.60, +0.42,
+        +0.50, -0.45, -0.50, +0.42,
+    ],
+    angles=[
+        (1, 0, 2, math.radians(107.0), 400.0),
+        (1, 0, 3, math.radians(109.5), 400.0),
+        (2, 0, 3, math.radians(109.5), 400.0),
+        (0, 3, 4, math.radians(109.5), 400.0),
+        (0, 3, 5, math.radians(109.5), 400.0),
+        (0, 3, 10, math.radians(109.5), 500.0),
+        (4, 3, 5, math.radians(109.5), 400.0),
+        (4, 3, 10, math.radians(109.5), 400.0),
+        (5, 3, 10, math.radians(109.5), 400.0),
+        (3, 5, 6, math.radians(109.5), 400.0),
+        (3, 5, 7, math.radians(109.5), 400.0),
+        (3, 5, 8, math.radians(109.5), 400.0),
+        (6, 5, 8, math.radians(109.5), 400.0),
+        (7, 5, 8, math.radians(109.5), 400.0),
+        (5, 8, 9, math.radians(105.0), 500.0),
+        (3, 10, 11, math.radians(120.0), 500.0),
+        (3, 10, 12, math.radians(110.0), 500.0),
+        (11, 10, 12, math.radians(125.0), 500.0),
+        (10, 12, 13, math.radians(105.0), 500.0),
+    ],
+)
+
+
+# ---- Gly-Gly dipeptide (pre-formed peptide bond). 17 atoms.
+_dCa1 = (0.0, 0.0, 0.0)
+_dN1 = (0.147, 0.0, 0.0)
+_dNH1a = (_dN1[0] + 0.05, 0.087, 0.0)
+_dNH1b = (_dN1[0] + 0.05, -0.043, 0.075)
+_dCaH1a = (0.0, 0.089, 0.063)
+_dCaH1b = (0.0, -0.089, 0.063)
+_dC1 = (-0.153, 0.0, 0.0)
+_dO1 = (-0.153, 0.123, 0.0)
+_dN2 = (-0.153 - 0.133, -0.020, 0.0)
+_dN2H = (_dN2[0] - 0.05, 0.080, 0.0)
+_dCa2 = (_dN2[0] - 0.147, 0.0, 0.0)
+_dCaH2a = (_dCa2[0], 0.089, 0.063)
+_dCaH2b = (_dCa2[0], -0.089, 0.063)
+_dC2 = (_dCa2[0] - 0.153, 0.0, 0.0)
+_dO2a = (_dC2[0] - 0.123, 0.104, 0.0)
+_dO2b = (_dC2[0] - 0.123, -0.104, 0.0)
+_dO2H = (_dO2b[0] - 0.05, _dO2b[1] - 0.05, 0.0)
+
+GLYCYL_GLYCINE = MoleculeTemplate(
+    name="glycyl_glycine", formula="C4H8N2O3",
+    atoms=[
+        (Element.N, _dN1),    # 0
+        (Element.H, _dNH1a),  # 1
+        (Element.H, _dNH1b),  # 2
+        (Element.C, _dCa1),   # 3
+        (Element.H, _dCaH1a), # 4
+        (Element.H, _dCaH1b), # 5
+        (Element.C, _dC1),    # 6 carbonyl of residue 1
+        (Element.O, _dO1),    # 7
+        (Element.N, _dN2),    # 8 peptide N
+        (Element.H, _dN2H),   # 9 peptide H
+        (Element.C, _dCa2),   # 10
+        (Element.H, _dCaH2a), # 11
+        (Element.H, _dCaH2b), # 12
+        (Element.C, _dC2),    # 13
+        (Element.O, _dO2a),   # 14
+        (Element.O, _dO2b),   # 15
+        (Element.H, _dO2H),   # 16
+    ],
+    bonds=[
+        (0, 1, _S, 0.101, None), (0, 2, _S, 0.101, None),
+        (0, 3, _S, 0.147, None),
+        (3, 4, _S, 0.109, None), (3, 5, _S, 0.109, None),
+        (3, 6, _S, 0.153, None),
+        (6, 7, BondType.COVALENT_DOUBLE, 0.123, None),
+        (6, 8, _S, 0.133, None),         # peptide bond
+        (8, 9, _S, 0.101, None),
+        (8, 10, _S, 0.147, None),
+        (10, 11, _S, 0.109, None), (10, 12, _S, 0.109, None),
+        (10, 13, _S, 0.153, None),
+        (13, 14, BondType.COVALENT_DOUBLE, 0.123, None),
+        (13, 15, _S, 0.134, None),
+        (15, 16, _S, 0.096, None),
+    ],
+    partial_charges=[
+        -0.35, +0.18, +0.18,
+         0.02, +0.05, +0.05,
+        +0.50, -0.50,
+        -0.40, +0.25,
+         0.02, +0.05, +0.05,
+        +0.50, -0.45, -0.50, +0.42,
+    ],
+    angles=[
+        (1, 0, 2, math.radians(107.0), 400.0),
+        (1, 0, 3, math.radians(109.5), 400.0),
+        (2, 0, 3, math.radians(109.5), 400.0),
+        (0, 3, 4, math.radians(109.5), 400.0),
+        (0, 3, 5, math.radians(109.5), 400.0),
+        (0, 3, 6, math.radians(109.5), 500.0),
+        (4, 3, 5, math.radians(109.5), 400.0),
+        (4, 3, 6, math.radians(109.5), 400.0),
+        (5, 3, 6, math.radians(109.5), 400.0),
+        (3, 6, 7, math.radians(120.0), 500.0),
+        (3, 6, 8, math.radians(116.0), 500.0),
+        (7, 6, 8, math.radians(124.0), 500.0),
+        (6, 8, 9, math.radians(120.0), 500.0),
+        (6, 8, 10, math.radians(122.0), 500.0),
+        (9, 8, 10, math.radians(118.0), 500.0),
+        (8, 10, 11, math.radians(109.5), 400.0),
+        (8, 10, 12, math.radians(109.5), 400.0),
+        (8, 10, 13, math.radians(109.5), 500.0),
+        (11, 10, 12, math.radians(109.5), 400.0),
+        (11, 10, 13, math.radians(109.5), 400.0),
+        (12, 10, 13, math.radians(109.5), 400.0),
+        (10, 13, 14, math.radians(120.0), 500.0),
+        (10, 13, 15, math.radians(110.0), 500.0),
+        (14, 13, 15, math.radians(125.0), 500.0),
+        (13, 15, 16, math.radians(105.0), 500.0),
+    ],
+    # Backbone psi (N-Ca1-C-N-peptide) and phi (C-N-peptide-Ca2-C)
+    # dihedrals + the peptide omega (Ca1-C-N-Ca2) held at 180 deg
+    # so the peptide bond stays planar. Standard AMBER/OPLS forms
+    # with multiplicity 2 and small barriers.
+    dihedrals=[
+        # psi: N(0)-Ca1(3)-C1(6)-N2(8)
+        (0, 3, 6, 8, 2, math.radians(0.0), 2.0),
+        # omega: Ca1(3)-C1(6)-N2(8)-Ca2(10) at 180 deg, stiff
+        (3, 6, 8, 10, 2, math.radians(180.0), 30.0),
+        # phi: C1(6)-N2(8)-Ca2(10)-C2(13)
+        (6, 8, 10, 13, 2, math.radians(0.0), 2.0),
+    ],
+)
+
+
 LIBRARY: dict[str, MoleculeTemplate] = {
     "H2": H2, "O2": O2, "N2": N2,
     "H2O": H2O, "CH4": CH4, "NH3": NH3,
     "CO": CO, "CO2": CO2,
     "glycine": GLYCINE, "Gly": GLYCINE, "C2H5NO2": GLYCINE,
+    "alanine": ALANINE, "Ala": ALANINE, "C3H7NO2": ALANINE,
+    "serine": SERINE, "Ser": SERINE, "C3H7NO3": SERINE,
+    "glycyl_glycine": GLYCYL_GLYCINE, "GlyGly": GLYCYL_GLYCINE,
 }
 
 
@@ -309,7 +559,7 @@ def build_mixture(
     seed: Optional[int] = 42,
     min_center_separation_nm: float = 0.4,
     bond_k_kj_per_nm2: Optional[float] = None,
-) -> tuple[list[AtomUnit], list[Bond], list[AngleBond]]:
+) -> tuple[list[AtomUnit], list[Bond], list[AngleBond], list[DihedralBond]]:
     """Place ``count`` copies of each named template in a sphere.
 
     ``bond_k_kj_per_nm2`` overrides the default bond spring constant
@@ -364,6 +614,7 @@ def build_mixture(
     atoms: list[AtomUnit] = []
     bonds: list[Bond] = []
     angles_out: list[AngleBond] = []
+    dihedrals_out: list[DihedralBond] = []
     for idx, (template, center) in enumerate(zip(plan, centers)):
         tag = f"{template.name}#{idx}"
         R = _random_rotation_matrix(rng)
@@ -411,9 +662,17 @@ def build_mixture(
                     theta_0_rad=float(theta_0),
                     k_theta_kj_per_mol_rad2=float(k_theta),
                 ))
+        if template.dihedrals:
+            for i, j, k_dh, l, n, phi_0, k_phi in template.dihedrals:
+                dihedrals_out.append(DihedralBond(
+                    i=atom_objs[i], j=atom_objs[j],
+                    k=atom_objs[k_dh], l=atom_objs[l],
+                    n=int(n), phi_0_rad=float(phi_0),
+                    k_phi_kj_per_mol=float(k_phi),
+                ))
 
     _zero_net_momentum(atoms)
-    return atoms, bonds, angles_out
+    return atoms, bonds, angles_out, dihedrals_out
 
 
 def _zero_net_momentum(atoms: list[AtomUnit]) -> None:

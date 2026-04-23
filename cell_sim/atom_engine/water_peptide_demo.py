@@ -55,6 +55,7 @@ class WaterBoxResult:
     mean_oh_nm: list[float] = field(default_factory=list)
     mean_hoh_deg: list[float] = field(default_factory=list)
     mean_nearest_oo_nm: list[float] = field(default_factory=list)
+    hbonds_per_water: list[float] = field(default_factory=list)
     n_atoms: int = 0
     elapsed_s: float = 0.0
 
@@ -104,19 +105,93 @@ def _mean_nearest_oo(atoms) -> float:
     return float(np.mean(np.sqrt(nearest2)))
 
 
+def count_hbonds(
+    atoms,
+    bonds,
+    r_cutoff_nm: float = 0.35,
+    angle_cutoff_deg: float = 30.0,
+) -> tuple[int, float]:
+    """Count water-water hydrogen bonds.
+
+    A hydrogen bond is defined here as an O-H...O geometry where:
+      - donor hydrogen and acceptor oxygen are on DIFFERENT water
+        molecules (different parent_molecule tags);
+      - the donor-O to acceptor-O distance < r_cutoff_nm (0.35 nm);
+      - the O-H...O angle deviates from 180 deg by <=
+        angle_cutoff_deg.
+
+    Returns ``(n_hbonds, hbonds_per_water)``. Real liquid water sits
+    around 3.5 H-bonds per water; at our dilute box density and short
+    runs we expect something lower.
+    """
+    from .element import Element
+    # Index donors (H atoms bonded to an O, grouped by molecule tag) and
+    # acceptors (all water O atoms).
+    id_to = {id(a): i for i, a in enumerate(atoms)}
+    o_atoms = [(i, a) for i, a in enumerate(atoms) if a.element is Element.O]
+    # For each H atom bonded to an O, record (h_idx, its O partner).
+    h_donors: list[tuple[int, int]] = []
+    for bond in bonds:
+        if bond.death_time_ps is not None:
+            continue
+        a, b = bond.a, bond.b
+        if {a.element, b.element} != {Element.O, Element.H}:
+            continue
+        if a.element is Element.H:
+            h, o = a, b
+        else:
+            h, o = b, a
+        if not h.parent_molecule.startswith(("water", "H2O")):
+            continue
+        h_idx = id_to[id(h)]
+        o_idx = id_to[id(o)]
+        h_donors.append((h_idx, o_idx))
+    if not h_donors:
+        return 0, 0.0
+    n_water = max(1, len({atoms[o_idx].parent_molecule
+                          for _, o_idx in h_donors}))
+    cos_min = math.cos(math.radians(180.0 - angle_cutoff_deg))
+    r_cut2 = r_cutoff_nm * r_cutoff_nm
+    n_hb = 0
+    for h_idx, o_donor in h_donors:
+        h_pos = np.array(atoms[h_idx].position)
+        od_pos = np.array(atoms[o_donor].position)
+        for acc_idx, acc_atom in o_atoms:
+            if acc_atom.parent_molecule == atoms[h_idx].parent_molecule:
+                continue
+            a_pos = np.array(acc_atom.position)
+            r_oo = a_pos - od_pos
+            if r_oo @ r_oo > r_cut2:
+                continue
+            v1 = h_pos - od_pos
+            v2 = a_pos - h_pos
+            n1 = np.linalg.norm(v1)
+            n2 = np.linalg.norm(v2)
+            if n1 < 1e-6 or n2 < 1e-6:
+                continue
+            # Angle at H: donor-O -> H -> acceptor. Close to 180 for a
+            # real H-bond (H points at the acceptor).
+            cos_ohd = (v1 @ v2) / (n1 * n2)
+            if cos_ohd >= cos_min:      # close enough to 180 deg
+                n_hb += 1
+                break                   # each donor H counts once
+    return n_hb, n_hb / n_water
+
+
 def run_water_box(
     cfg: WaterBoxConfig,
     progress: Optional[Callable[[str], None]] = None,
 ) -> tuple[SimState, WaterBoxResult]:
     import time
-    atoms, bonds, angles = build_mixture(
+    atoms, bonds, angles, dihedrals = build_mixture(
         {"H2O": cfg.n_water},
         radius_nm=cfg.radius_nm,
         temperature_K=cfg.temperature_K,
         seed=cfg.seed,
         min_center_separation_nm=cfg.min_center_separation_nm,
     )
-    state = SimState(atoms=atoms, bonds=bonds, angles=angles)
+    state = SimState(atoms=atoms, bonds=bonds, angles=angles,
+                     dihedrals=dihedrals)
     result = WaterBoxResult(n_atoms=len(atoms))
 
     ff = ForceFieldConfig(
@@ -146,15 +221,18 @@ def run_water_box(
             mean_oh, _ = _o_h_bond_stats(state.atoms, state.bonds)
             mean_hoh, _ = _hoh_angle_stats(state.atoms, state.angles)
             mean_oo = _mean_nearest_oo(state.atoms)
+            _, hb_per = count_hbonds(state.atoms, state.bonds)
             result.t_ps.append(state.t_ps)
             result.temperature_K.append(T)
             result.mean_oh_nm.append(mean_oh)
             result.mean_hoh_deg.append(mean_hoh)
             result.mean_nearest_oo_nm.append(mean_oo)
+            result.hbonds_per_water.append(hb_per)
             if progress is not None:
                 progress(f"step {k+1}/{cfg.steps} t={state.t_ps:.2f} ps "
                          f"T={T:.0f} K  OH={mean_oh:.3f} nm  "
-                         f"HOH={mean_hoh:.1f} deg  <d_OO>={mean_oo:.3f} nm")
+                         f"HOH={mean_hoh:.1f} deg  <d_OO>={mean_oo:.3f} nm  "
+                         f"HB/water={hb_per:.2f}")
     result.elapsed_s = time.time() - t0
     return state, result
 
@@ -232,14 +310,15 @@ def run_glycine_in_water(
     progress: Optional[Callable[[str], None]] = None,
 ) -> tuple[SimState, GlycineResult]:
     import time
-    atoms, bonds, angles = build_mixture(
+    atoms, bonds, angles, dihedrals = build_mixture(
         {"glycine": cfg.n_glycine, "H2O": cfg.n_water},
         radius_nm=cfg.radius_nm,
         temperature_K=cfg.temperature_K,
         seed=cfg.seed,
         min_center_separation_nm=cfg.min_center_separation_nm,
     )
-    state = SimState(atoms=atoms, bonds=bonds, angles=angles)
+    state = SimState(atoms=atoms, bonds=bonds, angles=angles,
+                     dihedrals=dihedrals)
     result = GlycineResult(n_atoms=len(atoms))
 
     ff = ForceFieldConfig(

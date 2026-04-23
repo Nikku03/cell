@@ -81,6 +81,26 @@ class Bond:
 
 
 @dataclass(eq=False, slots=True)
+class DihedralBond:
+    """4-body periodic dihedral around the j-k bond (i-j-k-l).
+
+    ``U = k_phi * (1 + cos(n*phi - phi_0))``
+
+    Matches the standard OPLS / AMBER "proper" dihedral form. ``n``
+    is the multiplicity (1, 2, or 3 typical), ``phi_0`` the phase
+    (0 or pi), ``k_phi`` in kJ/mol. The backbone psi (N-Ca-C-N) and
+    phi (C-N-Ca-C) dihedrals use this with multiplicity 1 or 2.
+    """
+    i: "AtomUnit"
+    j: "AtomUnit"
+    k: "AtomUnit"
+    l: "AtomUnit"
+    n: int
+    phi_0_rad: float
+    k_phi_kj_per_mol: float
+
+
+@dataclass(eq=False, slots=True)
 class AngleBond:
     """3-body harmonic angle on the i-j-k bend (j is the vertex).
 
