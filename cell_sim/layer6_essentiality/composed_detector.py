@@ -1,5 +1,5 @@
-"""ComposedDetector: OR the structural complex-assembly signal with any
-trajectory-based detector.
+"""ComposedDetector: OR the structural complex-assembly signal,
+annotation-class signal, and any trajectory-based detector.
 
 Design rationale:
 
@@ -11,21 +11,29 @@ Design rationale:
   rule for a rule-silencing detector to watch and no pool that
   visibly drops on a sub-second simulation window.
 
-* The structural ``ComplexAssemblyDetector`` is the complement: it
-  catches exactly that non-catalytic cohort (ribosomal subunits,
-  RNA polymerase, ATP synthase, SecYEGDF, primary ABC transporters,
-  etc.) via known-complex subunit membership. Alone it scores
-  MCC 0.26 on the full Breuer set at precision 0.97.
+* The structural ``ComplexAssemblyDetector`` is the complement for
+  multi-protein essentials: ribosomal subunits, RNA polymerase, ATP
+  synthase, SecYEGDF, primary ABC transporters. MCC 0.26 full
+  Breuer, precision 0.97.
+
+* The ``AnnotationClassDetector`` is the complement for single-gene
+  essentials matching known bacterial essential-class keywords:
+  aminoacyl-tRNA synthetases, translation factors, signal
+  peptidases, flippases, primary RNA-processing nucleases,
+  DNA replication core. MCC 0.22 full Breuer, precision 1.00.
 
 The composition rule:
 
-  essential(gene) := structural_says_essential(gene)
+  essential(gene) := complex_says_essential(gene)
+                     OR annotation_says_essential(gene)
                      OR trajectory_says_essential(gene)
 
-High-confidence detectors fire; abstentions fall through. Failure
-mode is reported from whichever detector fired, with structural
-taking precedence when both fire (the structural signal is more
-informative for the non-catalytic cohort).
+Abstentions fall through to the next signal. Confidence is the max
+of the firing detectors. Failure mode follows the highest-confidence
+fire.
+
+All inputs are bundled repo data (``complex_formation.xlsx``,
+``syn3a_gene_table.csv``, SBML). Zero API / network / per-run cost.
 """
 from __future__ import annotations
 
@@ -35,6 +43,9 @@ from typing import Optional, Protocol
 from cell_sim.layer6_essentiality.harness import FailureMode, Trajectory
 from cell_sim.layer6_essentiality.complex_assembly_detector import (
     ComplexAssemblyDetector,
+)
+from cell_sim.layer6_essentiality.annotation_class_detector import (
+    AnnotationClassDetector,
 )
 
 
@@ -48,9 +59,14 @@ class TrajectoryDetector(Protocol):
 
 @dataclass
 class ComposedDetector:
-    """OR-composition of a structural detector + a trajectory detector."""
+    """OR-composition of complex + annotation + trajectory detectors.
+
+    ``annotation`` is optional for backwards compatibility; when None,
+    behaves as a two-way compose (complex OR trajectory).
+    """
     structural: ComplexAssemblyDetector
     trajectory: TrajectoryDetector
+    annotation: Optional[AnnotationClassDetector] = None
 
     def detect_for_gene(
         self,
@@ -58,23 +74,36 @@ class ComposedDetector:
         ko: Trajectory,
     ) -> tuple[FailureMode, Optional[float], float, str]:
         s_mode, s_t, s_conf, s_ev = self.structural.detect_for_gene(locus_tag, ko)
+        if self.annotation is not None:
+            a_mode, a_t, a_conf, a_ev = self.annotation.detect_for_gene(
+                locus_tag, ko
+            )
+        else:
+            a_mode, a_t, a_conf, a_ev = FailureMode.NONE, None, 0.0, "ann_off"
         t_mode, t_t, t_conf, t_ev = self.trajectory.detect_for_gene(locus_tag, ko)
 
-        s_fires = s_mode != FailureMode.NONE
-        t_fires = t_mode != FailureMode.NONE
-
-        if s_fires and t_fires:
-            # Both agree; report the higher-confidence one.
-            if s_conf >= t_conf:
-                return (s_mode, s_t if s_t is not None else t_t,
-                        s_conf, f"cx+traj[{s_ev} & {t_ev}]")
-            return (t_mode, t_t if t_t is not None else s_t,
-                    t_conf, f"traj+cx[{t_ev} & {s_ev}]")
-        if s_fires:
-            return s_mode, s_t, s_conf, f"cx_only[{s_ev}]"
-        if t_fires:
-            return t_mode, t_t, t_conf, f"traj_only[{t_ev}]"
-        return FailureMode.NONE, None, 0.0, f"no_signal[cx:{s_ev}|traj:{t_ev}]"
+        fires = [
+            ("cx", s_mode, s_t, s_conf, s_ev),
+            ("ann", a_mode, a_t, a_conf, a_ev),
+            ("traj", t_mode, t_t, t_conf, t_ev),
+        ]
+        firing = [f for f in fires if f[1] != FailureMode.NONE]
+        if not firing:
+            return (FailureMode.NONE, None, 0.0,
+                    f"no_signal[cx:{s_ev}|ann:{a_ev}|traj:{t_ev}]")
+        firing.sort(key=lambda f: f[3], reverse=True)
+        best = firing[0]
+        tag = best[0]
+        mode = best[1]
+        t_fail = best[2]
+        conf = best[3]
+        ev = best[4]
+        if len(firing) == 1:
+            suffix = f"{tag}_only[{ev}]"
+        else:
+            suffix = (f"{tag}+" + "+".join(f[0] for f in firing[1:])
+                      + f"[{ev}]")
+        return mode, t_fail, conf, suffix
 
 
 __all__ = ["ComposedDetector", "TrajectoryDetector"]

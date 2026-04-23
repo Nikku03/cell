@@ -1,0 +1,62 @@
+{
+  "id": "mcc_against_breuer_v10",
+  "claim": "Eleventh MCC measurement. ComposedDetector = ComplexAssemblyDetector (known-complex subunit lookup from bundled complex_formation.xlsx) OR AnnotationClassDetector (bacterial essential-class keyword rules on syn3a_gene_table.csv product strings) OR PerRuleDetector (trajectory-based catalysis-silencing). All three signals are bundled offline data; zero API / network cost per run. Result: MCC = 0.700 on standard balanced n=40 panel at seed=42, first single-run measurement above the 0.59 brief target.",
+  "confidence": "measured",
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible via 'python scripts/run_sweep_parallel.py --max-genes 40 --balanced --workers 4 --use-rust --scale 0.05 --t-end-s 0.5 --detector composed --seed 42 --panel-seed 42'. Prediction CSV at outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed.csv.",
+  "last_verified": "2026-04-23",
+  "context": {
+    "commit_range": "2e2f6e2..(this commit)",
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v10_composed_complex_plus_annotation"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v9",
+    "mcc_against_breuer_v5",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "cell_sim/layer6_essentiality/complex_assembly_detector.py",
+    "cell_sim/layer6_essentiality/annotation_class_detector.py",
+    "cell_sim/layer6_essentiality/composed_detector.py",
+    "scripts/run_sweep_parallel.py"
+  ],
+  "value": {
+    "mcc": 0.700,
+    "precision": 0.850,
+    "recall": 0.850,
+    "specificity": 0.850,
+    "confusion": {"tp": 17, "fp": 3, "tn": 17, "fn": 3},
+    "delta_over_v9": 0.575,
+    "config": {
+      "detector": "composed (ComplexAssembly + AnnotationClass + PerRule)",
+      "panel_seed": 42,
+      "sim_seed": 42,
+      "n_genes": 40,
+      "balanced": true,
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "use_rust_backend": true,
+      "workers": 4,
+      "threshold": 0.1
+    },
+    "standalone_mccs": {
+      "complex_assembly_only_full_breuer": 0.260,
+      "annotation_class_only_full_breuer": 0.221,
+      "per_rule_baseline_v9_balanced40": 0.125
+    },
+    "false_positives": [
+      {"locus": "JCVISYN3A_0034", "reason": "iMB155 missing alt-cholesterol-pathway"},
+      {"locus": "JCVISYN3A_0228", "reason": "iMB155 missing PDH_E3 lipoylation alt"},
+      {"locus": "JCVISYN3A_0732", "reason": "iMB155 missing acetaldehyde sink / alt DRPA"}
+    ]
+  },
+  "caveats": [
+    "The 3 false positives are all carry-over from v5/v9 and are known architectural gaps in the iMB155 metabolic reconstruction (missing alternate pathways for cholesterol, acetaldehyde, PDH lipoylation). They are unaffected by detector design and would only clear with a network fix.",
+    "Both new detectors (complex + annotation) are prior-knowledge lookups with no simulation dependence. Their contribution is orthogonal to the trajectory signal, which is why OR-composition works cleanly rather than averaging or AND'ing.",
+    "Single-seed result. The structural + annotation priors are deterministic so seed-variance should be low; recommend a 5-seed replicate run to confirm like v5/v9 did.",
+    "All data used is bundled in the repo (complex_formation.xlsx, syn3a_gene_table.csv, Breuer 2019 CSV). No network calls, no API keys, no recurring cost per run.",
+    "Brief target was MCC > 0.59. v10 exceeds it by 0.11 on this single-seed run."
+  ]
+}

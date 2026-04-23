@@ -140,15 +140,18 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str,
             min_pool_dev=cfg_dict.get("min_pool_dev", 0.02),
         )
     elif detector_kind == "composed":
-        # ComplexAssemblyDetector OR'd with PerRule. Structural signal
-        # catches ribosomal / tRNA-synthetase / translation-factor
-        # essentials that the metabolic detectors cannot see; the
-        # trajectory detector handles metabolic essentials.
+        # Structural (ComplexAssembly) + annotation-class priors OR'd
+        # with a trajectory PerRule detector. Structural and annotation
+        # priors are constant-time dict lookups; PerRule does the
+        # simulation-dependent catalysis-silenced call.
         from cell_sim.layer6_essentiality.per_rule_detector import (
             PerRuleDetector,
         )
         from cell_sim.layer6_essentiality.complex_assembly_detector import (
             ComplexAssemblyDetector,
+        )
+        from cell_sim.layer6_essentiality.annotation_class_detector import (
+            AnnotationClassDetector,
         )
         from cell_sim.layer6_essentiality.composed_detector import (
             ComposedDetector,
@@ -163,6 +166,7 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str,
         )
         _worker_detector = ComposedDetector(
             structural=ComplexAssemblyDetector(),
+            annotation=AnnotationClassDetector(),
             trajectory=pr,
         )
     else:
