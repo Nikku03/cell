@@ -107,13 +107,23 @@ def main() -> int:
     wt_traj = sim.run([], t_end_s=args.t_end_s, sample_dt_s=args.dt_s)
     print(f"[wt] {time.time() - t0:.1f} s, {len(wt_traj.samples)} samples")
 
-    # Build gene -> rules map from the same simulator so rule names
-    # line up with what the trajectories actually emit.
+    # Build gene -> rules map + metabolite production maps from the
+    # same simulator so rule names line up with what the trajectories
+    # actually emit.
     print("\n[setup] building gene->rules map...")
     gene_to_rules = sim.build_gene_to_rules_map()
     rule_coverage = sum(1 for g in targets if gene_to_rules.get(g))
     print(f"[setup] {rule_coverage}/{len(targets)} targets have "
           f"catalytic rules (PerRule can only score these)")
+
+    from cell_sim.layer6_essentiality.gene_rule_map import (
+        build_metabolite_producers,
+        build_rule_products,
+    )
+    sim._ensure_setup()      # private but needed to access cached rules
+    rules_all = list(sim._rev_rules or []) + list(sim._extra_rules or [])
+    metabolite_producers = build_metabolite_producers(rules_all)
+    rule_products = build_rule_products(rules_all)
 
     sw = ShortWindowDetector(
         wt=wt_traj, deviation_threshold=args.sw_threshold,
@@ -131,6 +141,8 @@ def main() -> int:
     )
     ra = RedundancyAwareDetector(
         wt=wt_traj, gene_to_rules=gene_to_rules,
+        metabolite_producers=metabolite_producers,
+        rule_products=rule_products,
     )
 
     preds = {
