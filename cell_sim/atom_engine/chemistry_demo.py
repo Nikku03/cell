@@ -86,13 +86,13 @@ def run_chemistry(
     cfg: ChemistryConfig,
     progress: Optional[Callable[[str], None]] = None,
 ) -> tuple[SimState, ChemistryResult]:
-    atoms, bonds = build_mixture(
+    atoms, bonds, angles = build_mixture(
         cfg.composition,
         radius_nm=cfg.radius_nm,
         temperature_K=cfg.target_temperature_K,
         bond_k_kj_per_nm2=cfg.initial_bond_k_kj_per_nm2,
     )
-    state = SimState(atoms=atoms, bonds=bonds)
+    state = SimState(atoms=atoms, bonds=bonds, angles=angles)
 
     result = ChemistryResult(
         n_atoms=len(atoms),

@@ -20,7 +20,7 @@ from typing import Optional
 
 import numpy as np
 
-from .atom_unit import AtomUnit, Bond, BondType
+from .atom_unit import AngleBond, AtomUnit, Bond, BondType
 from .element import Element, mass
 
 _K_B_KJ_PER_MOL_K = 0.00831446
@@ -62,6 +62,13 @@ class MoleculeTemplate:
     # Each bond entry: (i, j, kind, r0 override, k override). ``None`` for
     # r0/k uses the default bond length / _DEFAULT_BOND_K.
     bonds: list[tuple[int, int, BondType, Optional[float], Optional[float]]]
+    # Optional per-atom partial charges (same length as atoms). ``None``
+    # means "use element default partial_charge". Used by the Coulomb
+    # force (Physics Upgrade 1).
+    partial_charges: Optional[list[float]] = None
+    # Optional 3-body angle constraints: (i, j, k, theta_0_rad, k_theta).
+    # j is the vertex. Used by the angle force (Physics Upgrade 2).
+    angles: Optional[list[tuple[int, int, int, float, float]]] = None
 
     @property
     def radius_nm(self) -> float:
@@ -103,7 +110,10 @@ N2 = MoleculeTemplate(
     bonds=[(0, 1, BondType.COVALENT_TRIPLE, 0.110, None)],
 )
 
-# Water: O at origin, two H's at 104.5° with O-H = 0.096 nm
+# Water: O at origin, two H's at 104.5 deg with O-H = 0.096 nm.
+# TIP3P-style charges (O = -0.834 e, H = +0.417 e) + H-O-H angle
+# constraint at 104.52 deg. Enables realistic H-bonding via the
+# Coulomb + angle physics upgrades.
 _theta = math.radians(104.5 / 2)
 _oh = 0.096
 H2O = MoleculeTemplate(
@@ -114,6 +124,14 @@ H2O = MoleculeTemplate(
         (Element.H, (-_oh * math.sin(_theta), _oh * math.cos(_theta), 0.0)),
     ],
     bonds=[(0, 1, _S, None, None), (0, 2, _S, None, None)],
+    partial_charges=[-0.834, 0.417, 0.417],
+    angles=[(1, 0, 2, math.radians(104.52), 8000.0)],   # stiff H-O-H bend
+                                                         # (8000 chosen to
+                                                         # win against the
+                                                         # 200 kJ/mol LJ
+                                                         # repulsion
+                                                         # between H-H on
+                                                         # the same water)
 )
 
 # Methane: C at origin, 4 H at tetrahedral vertices with C-H = 0.109 nm
@@ -171,10 +189,93 @@ CO2 = MoleculeTemplate(
 )
 
 
+# Glycine (neutral form, NH2-CH2-COOH): the simplest amino acid.
+# 10 atoms. The zwitterionic NH3+/COO- form would be more biological
+# but would require a formal-charge > default_valence for N, which the
+# current AtomUnit valence model doesn't support cleanly.
+#
+# Indices and connectivity:
+#   0  N   (amine nitrogen)
+#   1  H   (on N)
+#   2  H   (on N)
+#   3  C   (alpha carbon)
+#   4  H   (alpha-H)
+#   5  H   (alpha-H)
+#   6  C   (carbonyl C)
+#   7  O   (=O, carbonyl)
+#   8  O   (-O-H, hydroxyl)
+#   9  H   (hydroxyl H)
+_gN = (+0.147, 0.0, 0.0)
+_gCa = (0.0, 0.0, 0.0)
+_gC = (-0.153, 0.0, 0.0)
+_gO_carbonyl = (-0.153 - 0.123, 0.104, 0.0)
+_gO_hydroxyl = (-0.153 - 0.123, -0.104, 0.0)
+_gOH = (_gO_hydroxyl[0] + 0.096, _gO_hydroxyl[1] - 0.05, 0.0)
+# Two H's on amine N (sp3, ~109 deg)
+_nh = 0.101
+_gNH1 = (_gN[0] + 0.05, 0.087, 0.0)
+_gNH2 = (_gN[0] + 0.05, -0.043, 0.075)
+# Alpha-C hydrogens (sp3): up and down, ~0.109 nm.
+_gCaH1 = (0.0, 0.089, 0.063)
+_gCaH2 = (0.0, -0.089, 0.063)
+
+GLYCINE = MoleculeTemplate(
+    name="glycine", formula="C2H5NO2",
+    atoms=[
+        (Element.N, _gN),           # 0 amine N
+        (Element.H, _gNH1),         # 1
+        (Element.H, _gNH2),         # 2
+        (Element.C, _gCa),          # 3 alpha-C
+        (Element.H, _gCaH1),        # 4
+        (Element.H, _gCaH2),        # 5
+        (Element.C, _gC),           # 6 carbonyl C
+        (Element.O, _gO_carbonyl),  # 7 =O
+        (Element.O, _gO_hydroxyl),  # 8 -O-
+        (Element.H, _gOH),          # 9 O-H
+    ],
+    bonds=[
+        (0, 1, _S, 0.101, None),       # N-H
+        (0, 2, _S, 0.101, None),
+        (0, 3, _S, 0.147, None),       # N-Ca
+        (3, 4, _S, 0.109, None),       # Ca-H
+        (3, 5, _S, 0.109, None),
+        (3, 6, _S, 0.153, None),       # Ca-C
+        (6, 7, BondType.COVALENT_DOUBLE, 0.123, None),   # C=O
+        (6, 8, _S, 0.134, None),       # C-O
+        (8, 9, _S, 0.096, None),       # O-H hydroxyl
+    ],
+    partial_charges=[
+        -0.35, +0.18, +0.18,           # N, 2x H on N
+        +0.02, +0.05, +0.05,            # Ca, 2x H on alpha
+        +0.50, -0.45, -0.50, +0.42,     # C, =O, -O-, O-H
+    ],
+    angles=[
+        # H-N-H, H-N-Ca (sp3 at N, ~109 deg)
+        (1, 0, 2, math.radians(107.0), 400.0),
+        (1, 0, 3, math.radians(109.5), 400.0),
+        (2, 0, 3, math.radians(109.5), 400.0),
+        # sp3 at Ca
+        (0, 3, 4, math.radians(109.5), 400.0),
+        (0, 3, 5, math.radians(109.5), 400.0),
+        (0, 3, 6, math.radians(109.5), 500.0),     # backbone N-Ca-C
+        (4, 3, 5, math.radians(109.5), 400.0),
+        (4, 3, 6, math.radians(109.5), 400.0),
+        (5, 3, 6, math.radians(109.5), 400.0),
+        # sp2 trigonal at carbonyl C
+        (3, 6, 7, math.radians(120.0), 500.0),
+        (3, 6, 8, math.radians(110.0), 500.0),
+        (7, 6, 8, math.radians(125.0), 500.0),
+        # sp3 at hydroxyl O (C-O-H)
+        (6, 8, 9, math.radians(105.0), 500.0),
+    ],
+)
+
+
 LIBRARY: dict[str, MoleculeTemplate] = {
     "H2": H2, "O2": O2, "N2": N2,
     "H2O": H2O, "CH4": CH4, "NH3": NH3,
     "CO": CO, "CO2": CO2,
+    "glycine": GLYCINE, "Gly": GLYCINE, "C2H5NO2": GLYCINE,
 }
 
 
@@ -208,7 +309,7 @@ def build_mixture(
     seed: Optional[int] = 42,
     min_center_separation_nm: float = 0.4,
     bond_k_kj_per_nm2: Optional[float] = None,
-) -> tuple[list[AtomUnit], list[Bond]]:
+) -> tuple[list[AtomUnit], list[Bond], list[AngleBond]]:
     """Place ``count`` copies of each named template in a sphere.
 
     ``bond_k_kj_per_nm2`` overrides the default bond spring constant
@@ -262,6 +363,7 @@ def build_mixture(
     # Build atoms + bonds.
     atoms: list[AtomUnit] = []
     bonds: list[Bond] = []
+    angles_out: list[AngleBond] = []
     for idx, (template, center) in enumerate(zip(plan, centers)):
         tag = f"{template.name}#{idx}"
         R = _random_rotation_matrix(rng)
@@ -270,7 +372,7 @@ def build_mixture(
             temperature_K, rng,
         )
         atom_objs: list[AtomUnit] = []
-        for elem, rel_pos in template.atoms:
+        for a_i, (elem, rel_pos) in enumerate(template.atoms):
             p = R @ np.array(rel_pos) + center
             v = com_vel + 0.3 * _mb_velocity(mass(elem), temperature_K, rng)
             atom = AtomUnit.create(
@@ -279,6 +381,9 @@ def build_mixture(
                 velocity=(float(v[0]), float(v[1]), float(v[2])),
                 parent_molecule=tag,
             )
+            # Apply template partial charge if given.
+            if template.partial_charges is not None:
+                atom.partial_charge = float(template.partial_charges[a_i])
             atoms.append(atom)
             atom_objs.append(atom)
         for i, j, kind, r0_override, k_override in template.bonds:
@@ -297,9 +402,18 @@ def build_mixture(
                 spring_constant_kj_per_nm2=k,
             )
             bonds.append(bond)
+        # Angles (3-body). Template indices are per-molecule and we
+        # resolve them to the atom objects just created.
+        if template.angles:
+            for i, j, k_ang, theta_0, k_theta in template.angles:
+                angles_out.append(AngleBond(
+                    i=atom_objs[i], j=atom_objs[j], k=atom_objs[k_ang],
+                    theta_0_rad=float(theta_0),
+                    k_theta_kj_per_mol_rad2=float(k_theta),
+                ))
 
     _zero_net_momentum(atoms)
-    return atoms, bonds
+    return atoms, bonds, angles_out
 
 
 def _zero_net_momentum(atoms: list[AtomUnit]) -> None:

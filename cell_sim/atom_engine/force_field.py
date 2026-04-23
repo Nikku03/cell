@@ -458,6 +458,15 @@ def compute_forces(
     # --- 3-body angle bends (Physics Upgrade 2) ---
     if angles:
         _compute_angle_forces(atoms, angles, pos, forces)
+        # 1-3 non-bonded exclusions: the i-k endpoints of an angle are
+        # separated by 2 bonds and should not interact via LJ / Coulomb.
+        # Standard MD convention. Without this the "1-3 LJ" term fights
+        # the angle constraint and pushes angles to 180 deg.
+        for ang in angles:
+            ii = id_to_idx.get(id(ang.i))
+            kk = id_to_idx.get(id(ang.k))
+            if ii is not None and kk is not None and ii != kk:
+                bonded_set.add((min(ii, kk), max(ii, kk)))
 
     # --- vectorized non-bonded LJ ---
     sigmas, epsilons, elem_codes = element_arrays_cached(atoms)
@@ -579,18 +588,36 @@ def compute_forces(
         # math. Conservative: run it on all pairs, but short-circuit
         # when the max |q| is zero.
         if np.any(charges != 0.0):
-            qi = charges[iu]
-            qj = charges[ju]
-            # r is already defined from the LJ block above when there
-            # were pairs; recompute locally to avoid depending on
-            # branch state.
-            dvec_c = pos[ju] - pos[iu]
-            r2_c = np.einsum("ij,ij->i", dvec_c, dvec_c)
-            # Re-filter at cutoff + small numerical epsilon.
-            keep_c = (r2_c > 1e-8) & (r2_c < cutoff2)
+            # Bonded pairs must be excluded from Coulomb too (1-2
+            # exclusion). When the Rust LJ path is taken, iu/ju still
+            # contain bonded pairs (Rust handles them internally), so
+            # we must filter here.
+            if bonded_set:
+                keep_bonded = np.fromiter(
+                    ((int(a), int(b)) not in bonded_set
+                     for a, b in zip(iu, ju)),
+                    dtype=bool, count=iu.size,
+                )
+                iu_coulomb = iu[keep_bonded]
+                ju_coulomb = ju[keep_bonded]
+            else:
+                iu_coulomb = iu
+                ju_coulomb = ju
+            if iu_coulomb.size == 0:
+                qi = np.empty(0, dtype=np.float64)
+                qj = qi
+                dvec_c = np.empty((0, 3), dtype=np.float64)
+                r2_c = np.empty(0, dtype=np.float64)
+                keep_c = np.empty(0, dtype=bool)
+            else:
+                qi = charges[iu_coulomb]
+                qj = charges[ju_coulomb]
+                dvec_c = pos[ju_coulomb] - pos[iu_coulomb]
+                r2_c = np.einsum("ij,ij->i", dvec_c, dvec_c)
+                keep_c = (r2_c > 1e-8) & (r2_c < cutoff2)
             if keep_c.any():
-                iu_c = iu[keep_c]
-                ju_c = ju[keep_c]
+                iu_c = iu_coulomb[keep_c]
+                ju_c = ju_coulomb[keep_c]
                 dvec_c = dvec_c[keep_c]
                 r2_c = r2_c[keep_c]
                 r_c = np.sqrt(r2_c)
