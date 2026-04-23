@@ -320,6 +320,63 @@ def wrap_positions(pos: np.ndarray, box_l: float) -> np.ndarray:
     return pos
 
 
+def _build_neighbor_list_pbc(pos: np.ndarray, cutoff: float,
+                              box_l: float
+                              ) -> tuple[np.ndarray, np.ndarray]:
+    """Spatial-hash neighbor list with periodic wrap. Atoms assumed
+    already wrapped into [-L/2, L/2]. Cells wrap on all three axes.
+    """
+    n = pos.shape[0]
+    # Ensure positions are wrapped into [-L/2, L/2] before cell
+    # assignment. The integrator wraps every step, but direct
+    # callers (tests, tools) may not, so be defensive.
+    wrapped = pos - box_l * np.round(pos / box_l)
+    # Shift so positions are in [0, L] for integer cell assignment.
+    shifted = wrapped + 0.5 * box_l
+    pos = wrapped    # use wrapped positions for all downstream dvec math
+    cell_size = cutoff
+    n_cells = max(1, int(box_l / cell_size))
+    actual_cell = box_l / n_cells
+    ix = np.clip(np.floor(shifted[:, 0] / actual_cell).astype(np.int64),
+                 0, n_cells - 1)
+    iy = np.clip(np.floor(shifted[:, 1] / actual_cell).astype(np.int64),
+                 0, n_cells - 1)
+    iz = np.clip(np.floor(shifted[:, 2] / actual_cell).astype(np.int64),
+                 0, n_cells - 1)
+
+    grid: dict[tuple[int, int, int], list[int]] = {}
+    for i in range(n):
+        k = (int(ix[i]), int(iy[i]), int(iz[i]))
+        grid.setdefault(k, []).append(i)
+
+    cutoff2 = cutoff * cutoff
+    pair_i: list[int] = []
+    pair_j: list[int] = []
+    offsets = [(dx, dy, dz)
+               for dx in (-1, 0, 1)
+               for dy in (-1, 0, 1)
+               for dz in (-1, 0, 1)]
+    for key, cell_atoms in grid.items():
+        for dx, dy, dz in offsets:
+            nk = ((key[0] + dx) % n_cells,
+                  (key[1] + dy) % n_cells,
+                  (key[2] + dz) % n_cells)
+            nbrs = grid.get(nk)
+            if nbrs is None:
+                continue
+            for i in cell_atoms:
+                for j in nbrs:
+                    if j <= i:
+                        continue
+                    d = pos[j] - pos[i]
+                    d -= box_l * np.round(d / box_l)
+                    if d @ d < cutoff2:
+                        pair_i.append(i)
+                        pair_j.append(j)
+    return (np.asarray(pair_i, dtype=np.int64),
+            np.asarray(pair_j, dtype=np.int64))
+
+
 def build_neighbor_list(pos: np.ndarray, cutoff: float,
                         box_l: Optional[float] = None
                         ) -> tuple[np.ndarray, np.ndarray]:
@@ -336,6 +393,12 @@ def build_neighbor_list(pos: np.ndarray, cutoff: float,
     if n < 128:
         iu, ju = np.triu_indices(n, k=1)
         return iu.astype(np.int64), ju.astype(np.int64)
+
+    if box_l is not None:
+        return _build_neighbor_list_pbc(
+            np.ascontiguousarray(pos, dtype=np.float64),
+            float(cutoff), float(box_l),
+        )
 
     if _HAS_NUMBA:
         return _build_neighbor_list_numba(np.ascontiguousarray(pos, dtype=np.float64),
@@ -632,11 +695,12 @@ def compute_forces(
     cutoff2 = cutoff * cutoff
 
     # Pick the pair source: explicit argument > config flag > full O(N^2).
-    # Under PBC, we force the full O(N^2) path until the neighbor list
-    # is made PBC-aware. N < ~2000 is still tractable this way.
     use_pbc_box = bool(cfg.use_pbc)
     box_l = float(cfg.pbc_box_nm) if use_pbc_box else None
-    if use_pbc_box:
+    if use_pbc_box and cfg.use_neighbor_list:
+        iu, ju = build_neighbor_list(pos, cutoff + cfg.neighbor_skin_nm,
+                                      box_l=box_l)
+    elif use_pbc_box:
         iu, ju = np.triu_indices(n, k=1)
     elif neighbor_pairs is None and cfg.use_neighbor_list:
         iu, ju = build_neighbor_list(pos, cutoff)

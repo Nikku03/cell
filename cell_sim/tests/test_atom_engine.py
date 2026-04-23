@@ -420,6 +420,31 @@ def test_coulomb_ion_pair_attraction():
     assert np.isclose(np.linalg.norm(delta[0]), expected, rtol=3e-2)
 
 
+def test_pbc_neighbor_list_finds_wrap_pairs():
+    """Two atoms at x=0.1 and x=1.9 in a 2 nm cubic PBC box are
+    apparently 1.8 nm apart but only 0.2 nm apart under minimum-image.
+    The PBC neighbor list must include that pair."""
+    pos = np.array([[0.1, 0.0, 0.0],
+                    [1.9, 0.0, 0.0]], dtype=np.float64)
+    # Two atoms so we fall into the N < 128 path returning full triu.
+    iu, ju = build_neighbor_list(pos, cutoff=0.5, box_l=2.0)
+    # Two-atom path always returns the single pair.
+    assert iu.size == 1 and int(iu[0]) == 0 and int(ju[0]) == 1
+    # Now test with enough atoms to trigger the spatial-hash path.
+    rng = np.random.default_rng(0)
+    extra = rng.uniform(-1.0, 1.0, size=(200, 3))
+    pos_big = np.concatenate([pos, extra], axis=0)
+    iu, ju = build_neighbor_list(pos_big, cutoff=0.3, box_l=2.0)
+    # Pair (0, 1) must appear (apparent distance 1.8 nm, image 0.2 nm).
+    found = False
+    for a, b in zip(iu, ju):
+        pair = (int(a), int(b))
+        if pair == (0, 1) or pair == (1, 0):
+            found = True
+            break
+    assert found, "PBC neighbor list missed the wrap pair (0, 1)"
+
+
 def test_rust_lj_matches_numpy_lj():
     """Regardless of whether cell_sim_rust is loaded, the forces from
     compute_forces must match the pure-NumPy reference (which we force
