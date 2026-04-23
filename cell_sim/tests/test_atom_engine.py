@@ -935,7 +935,7 @@ def test_all_20_standard_amino_acids_load():
     expected = {"ALA", "ARG", "ASN", "ASP", "CYS", "GLN", "GLU", "GLY",
                 "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER",
                 "THR", "TRP", "TYR", "VAL", "HOH"}
-    assert set(STANDARD_RESIDUES_PDB.keys()) == expected, \
+    assert expected.issubset(set(STANDARD_RESIDUES_PDB.keys())), \
         f"missing residues: {expected - set(STANDARD_RESIDUES_PDB.keys())}"
     for name in sorted(expected):
         s = load_residue(name)
@@ -954,3 +954,25 @@ def test_all_20_standard_amino_acids_load():
     assert len(trp.bonds) == len(trp.atoms) + 1
     # PRO is cyclic → bonds = atoms
     assert len(pro.bonds) == len(pro.atoms)
+
+
+def test_pdb_importer_loads_nucleobases():
+    """The 5 nucleobase templates (ADE/GUA/CYT/THY/URA) load with
+    correct ring topology: purines bicyclic (bonds = atoms+1),
+    pyrimidines monocyclic (bonds = atoms)."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    # Purines
+    for name in ("ADE", "GUA"):
+        s = load_residue(name)
+        extra = len(s.bonds) - (len(s.atoms) - 1)
+        assert extra == 2, f"{name} is bicyclic, expected 2 rings, got {extra}"
+    # Pyrimidines
+    for name in ("CYT", "THY", "URA"):
+        s = load_residue(name)
+        extra = len(s.bonds) - (len(s.atoms) - 1)
+        assert extra == 1, f"{name} is monocyclic, expected 1 ring, got {extra}"
+    # Thymine has a methyl group that uracil doesn't.
+    thy = load_residue("THY")
+    ura = load_residue("URA")
+    assert len(thy.atoms) - len(ura.atoms) == 3, \
+        f"THY should have 3 more atoms than URA (CH3 - H), got {len(thy.atoms) - len(ura.atoms)}"

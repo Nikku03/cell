@@ -784,12 +784,107 @@ ATOM     16  OXT PRO A   1       3.268  -1.626   0.000  1.00  0.00           O
 ATOM     17  HXT PRO A   1       3.577  -2.547   0.000  1.00  0.00           H
 END
 """,
-    # Note on nucleotides (A/T/G/C/U): aromatic ring geometry needs
-    # careful coordinate tabulation (planar 5/6-membered fused rings
-    # with bond lengths ~0.14 nm). Out of scope for this first
-    # importer pass; future work is to parse a real PDB file of a
-    # solved nucleotide (e.g. the RCSB ATP ligand record) rather
-    # than hand-coding.
+    # --- Nucleobases (free bases, no sugar/phosphate) ---
+    # Purines: bicyclic, imidazole fused to pyrimidine ring.
+    # Pyrimidines: monocyclic 6-membered ring.
+    # All planar in the xy plane. Standard-PDB free-base tautomers.
+
+    # Adenine. Purine with NH2 at C6. Imidazole (N9-C8-N7-C5-C4) fused
+    # with pyrimidine (N1-C2-N3-C4-C5-C6) at the C4-C5 edge. Planar.
+    "ADE": """\
+HETATM    1  N9  ADE A   1       0.000   0.000   0.000  1.00  0.00           N
+HETATM    2  H9  ADE A   1      -0.710  -0.720   0.000  1.00  0.00           H
+HETATM    3  C8  ADE A   1       1.080  -0.680   0.000  1.00  0.00           C
+HETATM    4  H8  ADE A   1       1.140  -1.760   0.000  1.00  0.00           H
+HETATM    5  N7  ADE A   1       2.300  -0.100   0.000  1.00  0.00           N
+HETATM    6  C5  ADE A   1       2.000   1.300   0.000  1.00  0.00           C
+HETATM    7  C4  ADE A   1       0.620   1.260   0.000  1.00  0.00           C
+HETATM    8  N3  ADE A   1      -0.380   2.160   0.000  1.00  0.00           N
+HETATM    9  C2  ADE A   1       0.060   3.460   0.000  1.00  0.00           C
+HETATM   10  H2  ADE A   1      -0.760   4.170   0.000  1.00  0.00           H
+HETATM   11  N1  ADE A   1       1.400   3.500   0.000  1.00  0.00           N
+HETATM   12  C6  ADE A   1       2.420   2.580   0.000  1.00  0.00           C
+HETATM   13  N6  ADE A   1       3.720   2.620   0.000  1.00  0.00           N
+HETATM   14  HN61 ADE A   1       4.230   3.490   0.000  1.00  0.00           H
+HETATM   15  HN62 ADE A   1       4.230   1.750   0.000  1.00  0.00           H
+END
+""",
+
+    # Guanine. Purine with =O at C6 and NH2 at C2.
+    "GUA": """\
+HETATM    1  N9  GUA A   1       0.000   0.000   0.000  1.00  0.00           N
+HETATM    2  H9  GUA A   1      -0.040  -1.000   0.000  1.00  0.00           H
+HETATM    3  C8  GUA A   1       1.290   0.100   0.000  1.00  0.00           C
+HETATM    4  H8  GUA A   1       1.930  -0.770   0.000  1.00  0.00           H
+HETATM    5  N7  GUA A   1       1.780   1.300   0.000  1.00  0.00           N
+HETATM    6  C5  GUA A   1       0.770   2.200   0.000  1.00  0.00           C
+HETATM    7  C6  GUA A   1       0.810   3.610   0.000  1.00  0.00           C
+HETATM    8  O6  GUA A   1       1.820   4.320   0.000  1.00  0.00           O
+HETATM    9  N1  GUA A   1      -0.470   4.180   0.000  1.00  0.00           N
+HETATM   10  H1  GUA A   1      -0.510   5.200   0.000  1.00  0.00           H
+HETATM   11  C2  GUA A   1      -1.650   3.430   0.000  1.00  0.00           C
+HETATM   12  N2  GUA A   1      -2.830   4.090   0.000  1.00  0.00           N
+HETATM   13  HN21 GUA A   1      -3.710   3.580   0.000  1.00  0.00           H
+HETATM   14  HN22 GUA A   1      -2.830   5.110   0.000  1.00  0.00           H
+HETATM   15  N3  GUA A   1      -1.720   2.090   0.000  1.00  0.00           N
+HETATM   16  C4  GUA A   1      -0.510   1.560   0.000  1.00  0.00           C
+END
+""",
+
+    # Cytosine. Pyrimidine: 6-ring with N1-C2(=O)-N3-C4(NH2)-C5-C6.
+    "CYT": """\
+HETATM    1  N1  CYT A   1       0.000   0.000   0.000  1.00  0.00           N
+HETATM    2  H1  CYT A   1      -0.040  -1.000   0.000  1.00  0.00           H
+HETATM    3  C2  CYT A   1      -1.220   0.690   0.000  1.00  0.00           C
+HETATM    4  O2  CYT A   1      -2.310   0.130   0.000  1.00  0.00           O
+HETATM    5  N3  CYT A   1      -1.170   2.040   0.000  1.00  0.00           N
+HETATM    6  C4  CYT A   1       0.050   2.640   0.000  1.00  0.00           C
+HETATM    7  N4  CYT A   1       0.100   3.990   0.000  1.00  0.00           N
+HETATM    8  HN41 CYT A   1       1.010   4.430   0.000  1.00  0.00           H
+HETATM    9  HN42 CYT A   1      -0.780   4.480   0.000  1.00  0.00           H
+HETATM   10  C5  CYT A   1       1.300   1.900   0.000  1.00  0.00           C
+HETATM   11  H5  CYT A   1       2.260   2.410   0.000  1.00  0.00           H
+HETATM   12  C6  CYT A   1       1.270   0.590   0.000  1.00  0.00           C
+HETATM   13  H6  CYT A   1       2.190   0.030   0.000  1.00  0.00           H
+END
+""",
+
+    # Thymine. Pyrimidine with methyl at C5 (distinguishes from U).
+    "THY": """\
+HETATM    1  N1  THY A   1       0.000   0.000   0.000  1.00  0.00           N
+HETATM    2  H1  THY A   1      -0.040  -1.000   0.000  1.00  0.00           H
+HETATM    3  C2  THY A   1      -1.220   0.690   0.000  1.00  0.00           C
+HETATM    4  O2  THY A   1      -2.310   0.130   0.000  1.00  0.00           O
+HETATM    5  N3  THY A   1      -1.170   2.040   0.000  1.00  0.00           N
+HETATM    6  H3  THY A   1      -2.070   2.530   0.000  1.00  0.00           H
+HETATM    7  C4  THY A   1       0.050   2.640   0.000  1.00  0.00           C
+HETATM    8  O4  THY A   1       0.100   3.870   0.000  1.00  0.00           O
+HETATM    9  C5  THY A   1       1.300   1.900   0.000  1.00  0.00           C
+HETATM   10  C5M THY A   1       2.620   2.610   0.000  1.00  0.00           C
+HETATM   11  HM51 THY A   1       2.530   3.690   0.000  1.00  0.00           H
+HETATM   12  HM52 THY A   1       3.180   2.280   0.880  1.00  0.00           H
+HETATM   13  HM53 THY A   1       3.180   2.280  -0.880  1.00  0.00           H
+HETATM   14  C6  THY A   1       1.270   0.590   0.000  1.00  0.00           C
+HETATM   15  H6  THY A   1       2.190   0.030   0.000  1.00  0.00           H
+END
+""",
+
+    # Uracil. Thymine without the methyl (H instead of CH3 at C5).
+    "URA": """\
+HETATM    1  N1  URA A   1       0.000   0.000   0.000  1.00  0.00           N
+HETATM    2  H1  URA A   1      -0.040  -1.000   0.000  1.00  0.00           H
+HETATM    3  C2  URA A   1      -1.220   0.690   0.000  1.00  0.00           C
+HETATM    4  O2  URA A   1      -2.310   0.130   0.000  1.00  0.00           O
+HETATM    5  N3  URA A   1      -1.170   2.040   0.000  1.00  0.00           N
+HETATM    6  H3  URA A   1      -2.070   2.530   0.000  1.00  0.00           H
+HETATM    7  C4  URA A   1       0.050   2.640   0.000  1.00  0.00           C
+HETATM    8  O4  URA A   1       0.100   3.870   0.000  1.00  0.00           O
+HETATM    9  C5  URA A   1       1.300   1.900   0.000  1.00  0.00           C
+HETATM   10  H5  URA A   1       2.260   2.410   0.000  1.00  0.00           H
+HETATM   11  C6  URA A   1       1.270   0.590   0.000  1.00  0.00           C
+HETATM   12  H6  URA A   1       2.190   0.030   0.000  1.00  0.00           H
+END
+""",
 }
 
 
