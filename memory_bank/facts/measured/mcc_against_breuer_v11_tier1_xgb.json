@@ -1,0 +1,92 @@
+{
+  "id": "mcc_against_breuer_v11_tier1_xgb",
+  "claim": "Thirteenth MCC measurement: Tier1XgbDetector trained on four feature slices (esm2_only 1280-dim, priors_only 3-dim, esm2_plus_priors 1283-dim, stacked 1299-dim) with 5-fold stratified CV at split_seed=42. HONEST NEGATIVE RESULT: no XGBoost variant beats the v10b priors-union rule baseline on either the full 455-gene set (aggregated MCC: esm2_only 0.241, priors_only 0.211, esm2_plus_priors 0.197, stacked 0.217 vs v10b-rule 0.364) or the balanced-40 panel (esm2_only 0.402, priors_only 0.000, esm2_plus_priors 0.603, stacked 0.551 vs v10b-rule 0.800). Only ESM-2 embeddings are populated; AlphaFold-DB and MACE-OFF parquets are empty because Syn3A's synthetic taxonomy (taxid 2144189) is absent from UniProt and no curated SMILES map exists yet. This measurement closes Session-15 item 0c (Tier-1 XGBoost baseline) with a falsification: learned features on ESM-2 alone do not lift MCC on this 5.3:1-imbalanced benchmark; the remaining MCC gap lives in the simulator-biology incompleteness (iMB155 pathways + ribosome assembly), not in the detector family.",
+  "confidence": "measured",
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible via 'python scripts/run_tier1_sweep.py --cache-dir cell_sim/features/cache --trajectory-csv outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v10a.csv --panel-seed 42 --n-panel 40 --cv-split-seed 42 --n-splits 5 --out outputs/tier1_sweep_v11.json'. Elapsed 15.0s on the 4-core reference box. Full JSON preserved at outputs/tier1_sweep_v11.json.",
+  "last_verified": "2026-04-23",
+  "context": {
+    "commit_range": "ebbfdff..(this commit)",
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v11_tier1_xgb"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v10b_full",
+    "session_14_populate",
+    "feature_cache_infrastructure",
+    "esm2_extractor",
+    "alphafold_extractor",
+    "mace_off_extractor",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "cell_sim/layer6_essentiality/tier1_xgb_detector.py",
+    "scripts/run_tier1_sweep.py",
+    "cell_sim/tests/test_tier1_xgb_detector.py"
+  ],
+  "value": {
+    "full_455": {
+      "n_genes": 455,
+      "n_pos": 383,
+      "n_neg": 72,
+      "label_scheme": "binary; Quasiessential -> positive",
+      "priors_union_reference_mcc": 0.364,
+      "xgb_aggregated_mcc": {
+        "esm2_only": 0.241,
+        "priors_only": 0.211,
+        "esm2_plus_priors": 0.197,
+        "stacked": 0.217
+      },
+      "xgb_aggregated_confusion": {
+        "esm2_only": {"tp": 340, "fp": 47, "tn": 25, "fn": 43},
+        "priors_only": {"tp": 112, "fp": 3, "tn": 69, "fn": 271},
+        "esm2_plus_priors": {"tp": 332, "fp": 48, "tn": 24, "fn": 51},
+        "stacked": {"tp": 334, "fp": 47, "tn": 25, "fn": 49}
+      },
+      "best_xgb_vs_v10b_priors_union_delta": -0.123
+    },
+    "balanced_40": {
+      "n_panel": 40,
+      "n_pos": 20,
+      "n_neg": 20,
+      "panel_seed": 42,
+      "label_scheme": "binary; strict Essential vs Nonessential",
+      "priors_union_reference_mcc": 0.800,
+      "xgb_aggregated_mcc": {
+        "esm2_only": 0.402,
+        "priors_only": 0.000,
+        "esm2_plus_priors": 0.603,
+        "stacked": 0.551
+      },
+      "xgb_aggregated_confusion": {
+        "esm2_only": {"tp": 13, "fp": 5, "tn": 15, "fn": 7},
+        "priors_only": {"tp": 12, "fp": 12, "tn": 8, "fn": 8},
+        "esm2_plus_priors": {"tp": 15, "fp": 3, "tn": 17, "fn": 5},
+        "stacked": {"tp": 15, "fp": 4, "tn": 16, "fn": 5}
+      },
+      "best_xgb_vs_v10b_priors_union_delta": -0.197
+    },
+    "cache_availability": {
+      "esm2_650M": "populated; 455 rows x 1280 dims; zero NaN; sha 0d572640...",
+      "alphafold_db": "empty parquet (0 rows x 9 dims); Syn3A taxid 2144189 not in UniProt",
+      "mace_off_kcat": "empty parquet (0 rows x 7 dims); no curated SMILES map for SBML species"
+    },
+    "xgb_config": {
+      "n_estimators": 200,
+      "max_depth": 3,
+      "reg_alpha": 1.0,
+      "reg_lambda": 2.0,
+      "n_splits": 5,
+      "cv_split_seed": 42,
+      "tree_method": "hist"
+    }
+  },
+  "caveats": [
+    "Honest negative result. The v10b rule baseline (MCC 0.364 full / 0.800 balanced) remains unbeaten by any Tier-1 XGBoost slice. The new ML path did NOT produce a lift.",
+    "Why ML fails here (likely): (a) class imbalance 5.3:1 on the full set; XGBoost's default calibration biases toward the majority positive class, inflating TP at the cost of catastrophic FP growth (47-48 FP vs v10b's 6 FP). (b) Only 455 labeled rows for 1280 ESM-2 features -> tree models overfit despite reg_alpha/reg_lambda. (c) The priors the rule stack uses already cover the easy signal; the remaining loci are precisely the ones ESM-2 alone can't disambiguate.",
+    "priors_only XGBoost collapses to MCC 0.000 on the balanced-40 panel because the 3-dim feature space puts 8 positives and 8 negatives in the identical (0,0,0) cell; XGBoost trains on 32 rows per fold which is too few to recover any split. The v10b rule 'union' decision on the same features scores 0.800 because it is union-over-priors, not a learned threshold.",
+    "AlphaFold-DB and MACE-OFF parquets are empty by design until Session-15 items 0a (UniProt mapping for taxid 2144189) and 0b (BiGG -> SMILES map) land. Populating either should push 'stacked' above esm2_plus_priors; populating both might finally cross the v10b floor.",
+    "The test suite covers the detector end-to-end (13 new tests, 185 total passing). The CV smoke test skips gracefully if xgboost or scikit-learn aren't installed.",
+    "Implication for roadmap: the honest next lever is simulator-biology (Session-15 items 1 ribosome complex + iMB155 patches), NOT more detector engineering. The Tier-1 feature path stays worth completing (AlphaFold + MACE populate) because structural + kinetic features address the 15 translation-machinery FNs that ESM-2 embeddings alone cannot."
+  ]
+}

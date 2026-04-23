@@ -45,13 +45,9 @@ Syn3A's SBML (`Syn3A_updated.xml`) encodes metabolites as BiGG-style species IDs
 3. Edit notebook cell 7 to load `SUBSTRATE_SMILES_MAP = dict(zip(csv["species_id"], csv["smiles"]))` and flip `HAVE_CURATED_SMILES_MAP = True`.
 4. Re-run cell 7. Expected ≥ 60% of the 356 SBML reactions will have SMILES for every substrate; MACE-OFF writes real BDE-derived k_cat aggregates for those enzymes.
 
-### 0c. Baseline Tier-1 MCC (XGBoost on cached features)
+### 0c. Baseline Tier-1 MCC (XGBoost on cached features)  — **CLOSED in Session 15 (negative result)**
 
-Only useful after at least 0a or 0b lands (ESM-2 alone will carry a measurable signal, but the joint feature space is what we really want to benchmark). Steps:
-
-1. New detector `cell_sim/layer6_essentiality/tier1_xgb_detector.py`. Takes `FeatureRegistry`, joins the three cached sources for the balanced n=40 panel + the full 455 set, trains XGBoost with 5-fold CV on Breuer labels.
-2. Record as `memory_bank/facts/measured/mcc_against_breuer_v11_tier1_xgb.json`.
-3. Honest null hypothesis: v10b stack was MCC 0.364 on the full set. Tier-1 ESM-2-only should beat that by some margin if the embeddings carry useful essentiality signal. Tier-1 with AlphaFold + MACE populated should do better still. Report deltas, no MCC claim up front.
+Landed as `cell_sim/layer6_essentiality/tier1_xgb_detector.py` + `scripts/run_tier1_sweep.py` + `memory_bank/facts/measured/mcc_against_breuer_v11_tier1_xgb.json`. Honest finding: **no Tier-1 XGBoost slice beats the v10b rule baseline on either set.** The FULL-455 and BALANCED-40 sweep outputs are persisted in `outputs/tier1_sweep_v11.json`. Best XGB aggregated MCC: 0.241 (esm2_only) on FULL vs v10b 0.364; 0.603 (esm2_plus_priors) on BALANCED vs v10b 0.800. Diagnosis: 5.3:1 class imbalance + 455 labels vs 1280-dim ESM-2 + priors already cover the easy signal -> ML overfits or collapses. Re-visit this fact **after** 0a and 0b land — the hypothesis is that structural + kinetic features are what address the 15 translation-machinery FNs that ESM-2 alone cannot. The null hypothesis (learned features dominate rules on this benchmark) is now falsified; a positive re-run would need to beat 0.364 FULL / 0.800 BALANCED to be worth publishing.
 
 ### 1. Fix iMB155 pathway incompleteness (the real bottleneck)
 

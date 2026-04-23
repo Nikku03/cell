@@ -22,10 +22,10 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 
 ## Memory Bank
 
-- Facts: **26**
-  - structural (9): doubling time, chromosome length, gene count, gene table, oriC, Breuer 2019 labels, RNAP count per cell, ribosome count at birth, chromosome bead model.
-  - parameters (2): active RNAP fraction, mRNA half-life mean.
-  - measured (12): `mcc_against_breuer_v0..v9` + `mcc_replicates_summary` + `mcc_v9_robustness`.
+- Facts: **35**
+  - structural (12): chromosome length, gene count, gene table, oriC, Breuer 2019 labels, RNAP count per cell, ribosome count at birth, chromosome bead model, feature_cache_infrastructure, esm2_extractor, alphafold_extractor, mace_off_extractor.
+  - parameters (3): active RNAP fraction, doubling time, mRNA half-life mean.
+  - measured (17): `mcc_against_breuer_v0..v10b_full` + `mcc_against_breuer_v11_tier1_xgb` + `mcc_replicates_summary` + `mcc_v9_robustness` + `session_14_populate`.
   - resolved uncertainty (3): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`, `syn3a_gene_count_thornburg2026_discrepancy`.
 - Sources: **11** (Thornburg 2022 + 2026 Cell, Hutchison 2016, Breuer 2019, GenBank CP016816, Luthey-Schulten ComplexFormation + 4DWCM repos, Fu 2026 JPC-B, Gilbert 2023 Frontiers, Bianchi 2022 JPC-B, Pezeshkian 2024 Nat Commun).
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
@@ -48,6 +48,22 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
+
+### Session 15 — 2026-04-23 — Tier-1 XGBoost baseline (honest negative result)
+- **Scope**: closed Session-15 item 0c. Built the Tier-1 XGBoost detector + measurement script, ran 5-fold stratified CV on four feature slices against Breuer 2019, and recorded an honest negative fact. No detector change to production; the v10b composed stack remains the best MCC on disk. AlphaFold-DB and MACE-OFF parquets are still empty by design (items 0a and 0b remain open).
+- **New module `cell_sim/layer6_essentiality/tier1_xgb_detector.py`** (~330 lines):
+  - `PriorFeatureSet` — builds the three-prior (complex, annotation, trajectory) binary matrix used by the v10b rule stack.
+  - `PriorsUnionDetector` — reproduces v10b's rule-union decision for an apples-to-apples reference on identical gene orderings.
+  - `Tier1FeatureBundle` + `Tier1XgbDetector` — carries ESM-2 (1280), AlphaFold (9, NaN), MACE (7, NaN), priors (3) blocks; dispatches four feature slices (`esm2_only` / `priors_only` / `esm2_plus_priors` / `stacked`). 5-fold stratified CV with `split_seed=42`, `n_estimators=200`, `max_depth=3`, `reg_alpha=1.0`, `reg_lambda=2.0`, `tree_method="hist"`.
+  - `default_registry` / `build_feature_bundle` / `build_balanced_panel` / `load_breuer_labels` / `mcc` / `confusion` — helpers used by both the detector and the sweep script.
+- **New script `scripts/run_tier1_sweep.py`** (~210 lines): runs FULL-455 + BALANCED-40 measurements, writes JSON + markdown table. Fixed-seed CV, 15 s wall on the reference box.
+- **Measurement (`outputs/tier1_sweep_v11.json`)** — 5-fold stratified CV, aggregated MCCs:
+  - FULL 455 (Quasi = positive, n_pos=383, n_neg=72): priors-union rule **0.364** / esm2_only 0.241 / priors_only 0.211 / esm2_plus_priors 0.197 / stacked 0.217
+  - BALANCED 40 (strict, n_pos=20, n_neg=20): priors-union rule **0.800** / esm2_only 0.402 / priors_only 0.000 / esm2_plus_priors 0.603 / stacked 0.551
+  - Honest finding: no Tier-1 XGBoost slice beats the v10b rule baseline on either set. Best FULL XGB is -0.123 below v10b; best BALANCED XGB is -0.197 below v10b. ESM-2 features inflate TP at the cost of catastrophic FP growth (47-48 FP vs rule's 6 FP on the full set). Class imbalance 5.3:1 + only 455 labels for 1280 features + rule priors already covering the easy signal = ML overfits or collapses.
+- **Tests**: 13 new unit tests in `cell_sim/tests/test_tier1_xgb_detector.py` (MCC textbook formula, label schemes, balanced panel determinism, prior matrix, priors-union MCC/precision floor, feature bundle NaN handling, feature slice dispatch, CV smoke test with graceful xgboost/sklearn skips). **185/185 tests passing.**
+- **Memory bank**: 1 new measured fact `mcc_against_breuer_v11_tier1_xgb.json` records the honest negative finding + diagnosis. **35 facts / 12 sources / invariant checker OK.**
+- **Implication for the roadmap**: detector-engineering is exhausted at the rule-level (v10b) AND at the learned-model level (v11). Remaining MCC lift has to come from simulator-biology (Session-15 items 1 ribosome complex + iMB155 pathway patches) or from completing the Tier-1 feature stack (items 0a AlphaFold mapping + 0b SMILES map). The learned path stays worth completing because structural + kinetic features address the 15 translation-machinery FNs that ESM-2 embeddings alone cannot.
 
 ### Session 14 (populate pass) — 2026-04-23 — Colab GPU run of populate_tier1_cache.ipynb
 - **Scope**: user-side run of the Session-14 notebook on a Colab A100-class GPU (NVIDIA RTX PRO 6000 Blackwell, 95 GB VRAM), then `git add -f` + push of the three parquets. Commit `ebbfdff` on `claude/syn3a-whole-cell-simulator-REjHC`. No sandbox-side MCC measurement.
