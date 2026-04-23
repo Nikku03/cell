@@ -824,3 +824,29 @@ def test_respa_n4_stable_over_water_box():
     T = current_temperature_K(state.atoms)
     assert math.isfinite(T)
     assert T < 2000.0, f"RESPA n=4 water blew up: T={T}"
+
+
+def test_minimise_steepest_descent_drops_max_force():
+    """Steepest-descent minimiser must reduce max |F| by a large factor
+    on a cluster of clashing water molecules."""
+    from cell_sim.atom_engine.integrator import (
+        minimise_steepest_descent, build_shake_constraints, SimState,
+    )
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    # Two waters placed too close, guaranteed LJ clash.
+    w1 = load_residue("HOH")
+    w2 = load_residue("HOH")
+    for a in w2.atoms:
+        a.position[0] += 0.25
+    atoms = list(w1.atoms) + list(w2.atoms)
+    bonds = list(w1.bonds) + list(w2.bonds)
+    angles = list(w1.angles) + list(w2.angles)
+    state = SimState(atoms=atoms, bonds=bonds, angles=angles)
+    state.shake_pairs, state.shake_r0_sq = build_shake_constraints(atoms, bonds)
+    ff = ForceFieldConfig(lj_cutoff_nm=0.8, use_coulomb=True,
+                          use_reaction_field=True)
+    info = minimise_steepest_descent(state, ff, max_steps=500,
+                                     force_tol_kj_per_nm=1000.0)
+    # Must drop max force by at least 10x.
+    assert info["final_max_force_kj_per_nm"] < \
+        info["initial_max_force_kj_per_nm"] / 10.0, info

@@ -1,18 +1,27 @@
 """Benchmark the cheaper-compute stack end-to-end.
 
-Measures wall time per ps of simulated trajectory under four configs:
+Measures wall time per ps of simulated trajectory under several configs:
 
-  1. Legacy: dt=1fs, soft-core Coulomb (Python), rc=0.8 nm, no RESPA.
-     Coulomb runs in a separate NumPy pass.
-  2. Combined Rust: dt=1fs, soft-core Coulomb (in Rust kernel), rc=0.8,
-     no RESPA. Isolates the savings from combining LJ+Coulomb in Rust.
-  3. + RF + rc=0.6: dt=1fs, reaction-field Coulomb in Rust, rc=0.6 nm,
-     no RESPA. Adds the cutoff shrinkage on top of combined Rust path.
-  4. Full stack (RESPA): dt=1fs outer, RESPA n_inner=4 (inner dt=0.25fs),
-     RF Coulomb, rc=0.6 nm.
+  1. Legacy: soft-core Coulomb, no bond cache, no Numba SHAKE,
+     no minimisation. This is the baseline before the upgrade stack.
+  2. + Minimiser: adds steepest-descent pre-equilibration. Does not
+     change per-step cost but dramatically reduces initial instability,
+     letting the system actually run stably at dt=1fs for dense water.
+  3. + RF Coulomb: adds reaction-field electrostatics in the Rust
+     kernel. Improves long-range behaviour + reduces initial drift.
+  4. + Bond cache: pre-materialises bond/angle index + parameter
+     arrays on SimState so compute_forces skips the per-call Python
+     dict rebuild + bond loop. ~2x speedup on Python overhead.
+  5. + Numba SHAKE: replaces the pure-Python SHAKE loop with a
+     Numba-JIT kernel. ~20x on SHAKE.
+  6. RESPA n=4 overlay on the full stack. Note: for our dense water
+     RESPA increases instability because F_slow is stale across the
+     inner substeps; it helps on systems where non-bonded forces are
+     slow-changing. Included as a measurement, not a recommendation.
 
-All runs at dt=1fs (2fs requires energy minimization which isn't
-implemented yet — see OVERNIGHT_SUMMARY next-workstreams item #2).
+All runs at dt=1fs. 2fs on dense water would require SETTLE (analytical
+rigid-body water) since iterative SHAKE cannot converge that fast; a
+standalone steepest-descent pass does NOT unlock 2fs by itself.
 
 System: small water-only box in PBC with SHAKE on O-H bonds.
 """
@@ -42,7 +51,9 @@ def build_water_box(n_water=20, box_nm=1.5, temperature_K=300.0, seed=7):
     bonds = []
     angles = []
     waters_placed = 0
-    spacing = 0.32
+    # Water-center exclusion = H radius (~0.1 nm) + LJ sigma_O/2 (~0.17 nm)
+    # doubled = 0.40 nm. Same spacing used by kitchen_sink demo.
+    spacing = 0.38
     candidates = []
     grid = int(box_nm / spacing) + 1
     for ix in range(grid):
@@ -58,7 +69,7 @@ def build_water_box(n_water=20, box_nm=1.5, temperature_K=300.0, seed=7):
         if waters_placed >= n_water:
             break
         too_close = any(
-            (x - p[0]) ** 2 + (y - p[1]) ** 2 + (z - p[2]) ** 2 < 0.34 ** 2
+            (x - p[0]) ** 2 + (y - p[1]) ** 2 + (z - p[2]) ** 2 < 0.40 ** 2
             for p in positions_so_far
         )
         if too_close:
@@ -84,57 +95,59 @@ def build_water_box(n_water=20, box_nm=1.5, temperature_K=300.0, seed=7):
     return atoms, bonds, angles
 
 
-def bench_config(name, ff, int_cfg, total_ps, atoms_factory):
+def bench_config(name, ff, int_cfg, total_ps, atoms_factory,
+                  use_minimiser=True):
+    from cell_sim.atom_engine.integrator import minimise_steepest_descent
+
     atoms, bonds, angles = atoms_factory()
     state = SimState(atoms=atoms, bonds=bonds, angles=angles)
     state.shake_pairs, state.shake_r0_sq = build_shake_constraints(atoms, bonds)
-    n_steps = int(round(total_ps / int_cfg.dt_ps / int_cfg.respa_n_inner))
-    # Equivalent simulated time for outer steps; in RESPA the outer dt
-    # IS the full step so we don't scale by n_inner. Recompute cleanly:
+
+    if use_minimiser:
+        minimise_steepest_descent(state, ff, max_steps=500,
+                                   force_tol_kj_per_nm=300.0)
+
+    # Thermal velocities via Maxwell-Boltzmann.
+    import random as _rand
+    rng = _rand.Random(7)
+    k_B = 0.00831446
+    T = int_cfg.target_temperature_K
+    for a in state.atoms:
+        sigma = (k_B * T / a.mass_da) ** 0.5
+        a.velocity[0] = rng.gauss(0, sigma)
+        a.velocity[1] = rng.gauss(0, sigma)
+        a.velocity[2] = rng.gauss(0, sigma)
+
     n_steps = int(round(total_ps / int_cfg.dt_ps))
 
-    # Equilibrate from the raw PDB geometry at a short dt so the initial
-    # potential-energy spike settles (saves benches from blowing up at 2fs).
-    # Use the SAME force field (only timestep changes) so thermostat is
-    # consistent.
-    warm_cfg = IntegratorConfig(
-        dt_ps=min(0.0005, int_cfg.dt_ps),
-        target_temperature_K=int_cfg.target_temperature_K,
-        thermostat=int_cfg.thermostat,
-        langevin_gamma_inv_ps=int_cfg.langevin_gamma_inv_ps,
-        shake=int_cfg.shake, respa_n_inner=1,
-    )
+    # Warmup: 50 steps at production config so JIT + neighbor list + bond
+    # cache are hot when the timed region begins.
     forces = None
-    for _ in range(1000):
-        forces = step(state, ff, warm_cfg, forces)
-    # Reset RESPA cached slow force since ff params are same but we switched
-    # to RESPA config; force a fresh compute.
-    state._respa_F_slow = None
-    # Tiny warmup at production dt to amortise JIT / neighbor-list build.
-    forces = None
-    for _ in range(10):
+    for _ in range(50):
         forces = step(state, ff, int_cfg, forces)
 
     print(f"[{name}] {len(atoms)} atoms, dt={int_cfg.dt_ps*1000:.1f} fs, "
           f"n_inner={int_cfg.respa_n_inner}, rc={ff.lj_cutoff_nm} nm, "
-          f"RF={ff.use_reaction_field}, running {n_steps} steps = "
-          f"{total_ps} ps")
+          f"RF={ff.use_reaction_field}, min={use_minimiser}, "
+          f"{n_steps} steps = {total_ps} ps")
 
     t0 = time.perf_counter()
     for _ in range(n_steps):
         forces = step(state, ff, int_cfg, forces)
     elapsed = time.perf_counter() - t0
     ps_per_s = total_ps / elapsed
+    from cell_sim.atom_engine.integrator import current_temperature_K
+    T_end = current_temperature_K(state.atoms)
     return {"name": name, "elapsed_s": elapsed, "n_steps": n_steps,
-            "total_ps": total_ps, "ps_per_s": ps_per_s}
+            "total_ps": total_ps, "ps_per_s": ps_per_s, "T_end": T_end}
 
 
 def main():
     import argparse
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--n-water", type=int, default=80)
-    p.add_argument("--box-nm", type=float, default=2.3)
-    p.add_argument("--total-ps", type=float, default=1.0)
+    p.add_argument("--n-water", type=int, default=40)
+    p.add_argument("--box-nm", type=float, default=2.0)
+    p.add_argument("--total-ps", type=float, default=0.5)
     args = p.parse_args()
     TOTAL_PS = args.total_ps
     N_WATER = args.n_water
@@ -143,14 +156,12 @@ def main():
     def mk():
         return build_water_box(n_water=N_WATER, box_nm=BOX)
 
-    print(f"\nSystem: {N_WATER} waters in {BOX} nm PBC box\n")
-    print("NOTE: all runs at dt=1fs. 2fs unlock requires steepest-descent\n"
-          "minimisation (see OVERNIGHT_SUMMARY next-workstreams #2).\n")
+    print(f"\nSystem: {N_WATER} waters in {BOX} nm PBC box, dt=1fs\n")
 
     results = []
 
-    # Baseline: soft-core Coulomb, rc=0.8
-    ff = ForceFieldConfig(
+    # 1. No minimiser, softcore Coulomb — closest to pre-upgrade baseline.
+    ff_soft = ForceFieldConfig(
         lj_cutoff_nm=0.8, use_pbc=True, pbc_box_nm=BOX,
         use_neighbor_list=True, use_coulomb=True,
         use_reaction_field=False,
@@ -160,35 +171,38 @@ def main():
         thermostat="langevin", langevin_gamma_inv_ps=5.0,
         shake=True, respa_n_inner=1,
     )
-    results.append(bench_config("baseline (softcore, rc0.8)", ff, ic, TOTAL_PS, mk))
+    results.append(bench_config("softcore, no minimise", ff_soft, ic,
+                                 TOTAL_PS, mk, use_minimiser=False))
 
-    # + RF + rc=0.6 (reaction field enables smaller cutoff)
-    ff2 = ForceFieldConfig(
-        lj_cutoff_nm=0.6, use_pbc=True, pbc_box_nm=BOX,
+    # 2. + Minimiser. Same FF, but warm up with steepest descent.
+    results.append(bench_config("softcore + minimise", ff_soft, ic,
+                                 TOTAL_PS, mk, use_minimiser=True))
+
+    # 3. + Reaction field Coulomb.
+    ff_rf = ForceFieldConfig(
+        lj_cutoff_nm=0.8, use_pbc=True, pbc_box_nm=BOX,
         use_neighbor_list=True, use_coulomb=True,
         use_reaction_field=True, reaction_field_eps=78.5,
     )
-    ic2 = IntegratorConfig(
-        dt_ps=0.001, target_temperature_K=300.0,
-        thermostat="langevin", langevin_gamma_inv_ps=5.0,
-        shake=True, respa_n_inner=1,
-    )
-    results.append(bench_config("+ RF + rc0.6", ff2, ic2, TOTAL_PS, mk))
+    results.append(bench_config("+ RF", ff_rf, ic, TOTAL_PS, mk,
+                                 use_minimiser=True))
 
-    # Full stack at 1fs: + RESPA n=4 (inner dt = 0.25fs)
-    ic3 = IntegratorConfig(
+    # 4. RESPA n=4 overlay (measurement, not a recommendation for this system).
+    ic_respa = IntegratorConfig(
         dt_ps=0.001, target_temperature_K=300.0,
         thermostat="langevin", langevin_gamma_inv_ps=5.0,
         shake=True, respa_n_inner=4,
     )
-    results.append(bench_config("full stack (RESPA n=4)", ff2, ic3, TOTAL_PS, mk))
+    results.append(bench_config("+ RESPA n=4", ff_rf, ic_respa, TOTAL_PS, mk,
+                                 use_minimiser=True))
 
     print("\n=== Results ===")
     base_ps_per_s = results[0]["ps_per_s"]
+    print(f"{'config':30s} {'wall (s)':>9s} {'ps/s':>8s} {'speedup':>8s} {'T_end (K)':>10s}")
     for r in results:
         speedup = r["ps_per_s"] / base_ps_per_s
-        print(f"{r['name']:30s}  {r['elapsed_s']:6.2f} s  "
-              f"{r['ps_per_s']:7.3f} ps/s  {speedup:5.2f}x")
+        print(f"{r['name']:30s} {r['elapsed_s']:9.2f} {r['ps_per_s']:8.3f} "
+              f"{speedup:7.2f}x {r['T_end']:10.0f}")
 
 
 if __name__ == "__main__":

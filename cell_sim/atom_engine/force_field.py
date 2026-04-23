@@ -449,6 +449,98 @@ def build_neighbor_list(pos: np.ndarray, cutoff: float,
             np.asarray(pair_j, dtype=np.int64))
 
 
+def _apply_angle_forces_cached(cache, pos: np.ndarray, forces: np.ndarray,
+                                 box_l: Optional[float]) -> None:
+    """Same math as ``_compute_angle_forces`` but fed pre-gathered
+    index + parameter arrays from ``BondCache``. No Python iteration
+    over AngleBond objects, no id() lookups."""
+    ii = cache.angle_i
+    ij = cache.angle_j
+    ik = cache.angle_k
+    theta_0 = cache.angle_theta0
+    k_theta = cache.angle_kth
+    r_ji = pos[ii] - pos[ij]
+    r_jk = pos[ik] - pos[ij]
+    if box_l is not None:
+        r_ji = minimum_image(r_ji, box_l)
+        r_jk = minimum_image(r_jk, box_l)
+    n_ji = np.linalg.norm(r_ji, axis=1)
+    n_jk = np.linalg.norm(r_jk, axis=1)
+    safe = (n_ji > 1e-6) & (n_jk > 1e-6)
+    u_ji = np.divide(r_ji, np.maximum(n_ji, 1e-12)[:, None],
+                     where=safe[:, None], out=np.zeros_like(r_ji))
+    u_jk = np.divide(r_jk, np.maximum(n_jk, 1e-12)[:, None],
+                     where=safe[:, None], out=np.zeros_like(r_jk))
+    cos_t = np.clip(np.einsum("ij,ij->i", u_ji, u_jk),
+                    -0.999999, 0.999999)
+    theta = np.arccos(cos_t)
+    sin_t = np.sqrt(np.maximum(1.0 - cos_t * cos_t, 1e-12))
+    prefactor = np.where(safe, k_theta * (theta - theta_0) / sin_t, 0.0)
+    f_i = (prefactor / np.maximum(n_ji, 1e-12))[:, None] * (
+        u_jk - cos_t[:, None] * u_ji
+    )
+    f_k = (prefactor / np.maximum(n_jk, 1e-12))[:, None] * (
+        u_ji - cos_t[:, None] * u_jk
+    )
+    f_j = -(f_i + f_k)
+    n = forces.shape[0]
+    for axis in range(3):
+        forces[:, axis] += (np.bincount(ii, weights=f_i[:, axis], minlength=n)
+                            + np.bincount(ij, weights=f_j[:, axis], minlength=n)
+                            + np.bincount(ik, weights=f_k[:, axis], minlength=n))
+
+
+def _apply_dihedral_forces_cached(cache, pos: np.ndarray, forces: np.ndarray,
+                                   box_l: Optional[float]) -> None:
+    """Cached variant of ``_compute_dihedral_forces``. Same math over
+    precomputed index arrays."""
+    ii = cache.dih_i
+    ij = cache.dih_j
+    ik = cache.dih_k
+    il = cache.dih_l
+    mult = cache.dih_n
+    phi0 = cache.dih_phi0
+    k_phi = cache.dih_kphi
+    b1 = pos[ij] - pos[ii]
+    b2 = pos[ik] - pos[ij]
+    b3 = pos[il] - pos[ik]
+    if box_l is not None:
+        b1 = minimum_image(b1, box_l)
+        b2 = minimum_image(b2, box_l)
+        b3 = minimum_image(b3, box_l)
+    n1 = np.cross(b1, b2)
+    n2 = np.cross(b2, b3)
+    n1n = np.linalg.norm(n1, axis=1)
+    n2n = np.linalg.norm(n2, axis=1)
+    b2n = np.linalg.norm(b2, axis=1)
+    safe = (n1n > 1e-9) & (n2n > 1e-9) & (b2n > 1e-9)
+    inv_n1n = np.where(safe, 1.0 / np.maximum(n1n, 1e-12), 0.0)
+    inv_n2n = np.where(safe, 1.0 / np.maximum(n2n, 1e-12), 0.0)
+    cos_phi = np.clip(np.einsum("ij,ij->i", n1, n2) * inv_n1n * inv_n2n,
+                       -0.999999, 0.999999)
+    sin_phi = np.einsum("ij,ij->i", np.cross(n1, n2), b2) \
+        * inv_n1n * inv_n2n * np.where(safe, 1.0 / np.maximum(b2n, 1e-12), 0.0)
+    phi = np.arctan2(sin_phi, cos_phi)
+    dudphi = -mult * k_phi * np.sin(mult * phi - phi0)
+    f_i = -(dudphi * b2n / np.maximum(n1n ** 2, 1e-18))[:, None] * n1
+    f_l = (dudphi * b2n / np.maximum(n2n ** 2, 1e-18))[:, None] * n2
+    b1_dot_b2 = np.einsum("ij,ij->i", b1, b2)
+    b3_dot_b2 = np.einsum("ij,ij->i", b3, b2)
+    b2_sq = np.maximum(b2n ** 2, 1e-18)
+    t1 = (-b1_dot_b2 / b2_sq)[:, None] * f_i
+    t2 = (b3_dot_b2 / b2_sq)[:, None] * f_l
+    f_j = -f_i + t1 - t2
+    f_k = -f_l - t1 + t2
+    n = forces.shape[0]
+    for axis in range(3):
+        forces[:, axis] += (
+            np.bincount(ii, weights=f_i[:, axis], minlength=n)
+            + np.bincount(ij, weights=f_j[:, axis], minlength=n)
+            + np.bincount(ik, weights=f_k[:, axis], minlength=n)
+            + np.bincount(il, weights=f_l[:, axis], minlength=n)
+        )
+
+
 def _compute_angle_forces(
     atoms: Sequence[AtomUnit],
     angles: Iterable[AngleBond],
@@ -624,6 +716,7 @@ def compute_forces(
     angles: Optional[Iterable[AngleBond]] = None,
     dihedrals: Optional[Iterable[DihedralBond]] = None,
     which: str = "all",
+    bond_cache: Optional[object] = None,
 ) -> np.ndarray:
     """Compute total force on each atom. Returns (N, 3) array, kJ/mol/nm.
 
@@ -659,51 +752,83 @@ def compute_forces(
         pos = np.array([a.position for a in atoms], dtype=np.float64)
     forces = np.zeros((n, 3), dtype=np.float64)
 
-    # Stable index for each atom by id(). Fast lookup for bonded pairs.
-    id_to_idx = {id(a): i for i, a in enumerate(atoms)}
-
-    # --- bonded forces (sparse) — also collect the bonded-pair set for
-    # exclusion from the LJ calculation.
-    bonded_set: set[tuple[int, int]] = set()
-    live_bonds = [b for b in bonds if b.death_time_ps is None]
     # Precompute pbc state for bonded / angle / dihedral paths
     _pbc_on = bool(cfg.use_pbc)
     _pbc_L = float(cfg.pbc_box_nm) if _pbc_on else None
-    for bond in live_bonds:
-        i = id_to_idx.get(id(bond.a))
-        j = id_to_idx.get(id(bond.b))
-        if i is None or j is None:
-            continue
-        if _do_bonded:
-            d = pos[j] - pos[i]
+
+    # ---- FAST BONDED PATH (cache-based) ----
+    # When a BondCache is supplied and its size matches the current atom
+    # count, the whole bonded + angle + dihedral stack runs over cached
+    # numpy arrays with zero Python-level atom iteration. This is the
+    # RESPA inner-step hot path.
+    if (bond_cache is not None
+            and getattr(bond_cache, "n_atoms", None) == n):
+        if _do_bonded and bond_cache.bond_i.size:
+            # Vectorised harmonic bond force: for each bond,
+            #   f_j = +k (r - r0) * (dvec / r),   f_i = -f_j
+            bi = bond_cache.bond_i
+            bj = bond_cache.bond_j
+            d = pos[bj] - pos[bi]
             if _pbc_on:
                 d = minimum_image(d, _pbc_L)
-            r = float(np.linalg.norm(d))
-            if r >= 1e-6:
-                mag = _bond_force_mag(r, bond)    # + pulls j toward i
-                f = (mag / r) * d
-                forces[i] -= f
-                forces[j] += f
-        # Always record exclusion set — "slow" calls still need it.
-        bonded_set.add((min(i, j), max(i, j)))
+            r = np.sqrt(np.einsum("ij,ij->i", d, d))
+            safe = r > 1e-6
+            mag = np.where(safe,
+                           -bond_cache.bond_k * (r - bond_cache.bond_r0),
+                           0.0)
+            factor = np.where(safe, mag / np.maximum(r, 1e-12), 0.0)
+            fx = factor * d[:, 0]
+            fy = factor * d[:, 1]
+            fz = factor * d[:, 2]
+            forces[:, 0] += (np.bincount(bj, weights=fx, minlength=n)
+                             - np.bincount(bi, weights=fx, minlength=n))
+            forces[:, 1] += (np.bincount(bj, weights=fy, minlength=n)
+                             - np.bincount(bi, weights=fy, minlength=n))
+            forces[:, 2] += (np.bincount(bj, weights=fz, minlength=n)
+                             - np.bincount(bi, weights=fz, minlength=n))
+        if _do_bonded and bond_cache.angle_i.size:
+            _apply_angle_forces_cached(bond_cache, pos, forces, _pbc_L)
+        if _do_bonded and bond_cache.dih_i.size:
+            _apply_dihedral_forces_cached(bond_cache, pos, forces, _pbc_L)
 
-    # --- 3-body angle bends (Physics Upgrade 2) ---
-    if angles:
-        if _do_bonded:
-            _compute_angle_forces(atoms, angles, pos, forces, box_l=_pbc_L)
-        # 1-3 non-bonded exclusions: the i-k endpoints of an angle are
-        # separated by 2 bonds and should not interact via LJ / Coulomb.
-        # Standard MD convention. Without this the "1-3 LJ" term fights
-        # the angle constraint and pushes angles to 180 deg.
-        for ang in angles:
-            ii = id_to_idx.get(id(ang.i))
-            kk = id_to_idx.get(id(ang.k))
-            if ii is not None and kk is not None and ii != kk:
-                bonded_set.add((min(ii, kk), max(ii, kk)))
+        # The cache's sorted pair-code array IS the exclusion set for
+        # subsequent LJ/Coulomb; no bonded_set dict needed.
+        bonded_codes_sorted_from_cache = bond_cache.bonded_pair_codes_sorted
+        bonded_set = None   # signal "use cache" to LJ/Coulomb blocks
+    else:
+        bonded_codes_sorted_from_cache = None
+        # Stable index for each atom by id(). Fast lookup for bonded pairs.
+        id_to_idx = {id(a): i for i, a in enumerate(atoms)}
+        bonded_set = set()
+        live_bonds = [b for b in bonds if b.death_time_ps is None]
+        for bond in live_bonds:
+            i = id_to_idx.get(id(bond.a))
+            j = id_to_idx.get(id(bond.b))
+            if i is None or j is None:
+                continue
+            if _do_bonded:
+                d = pos[j] - pos[i]
+                if _pbc_on:
+                    d = minimum_image(d, _pbc_L)
+                r = float(np.linalg.norm(d))
+                if r >= 1e-6:
+                    mag = _bond_force_mag(r, bond)
+                    f = (mag / r) * d
+                    forces[i] -= f
+                    forces[j] += f
+            bonded_set.add((min(i, j), max(i, j)))
 
-    # --- 4-body proper dihedrals ---
-    if dihedrals and _do_bonded:
-        _compute_dihedral_forces(atoms, dihedrals, pos, forces, box_l=_pbc_L)
+        if angles:
+            if _do_bonded:
+                _compute_angle_forces(atoms, angles, pos, forces, box_l=_pbc_L)
+            for ang in angles:
+                ii = id_to_idx.get(id(ang.i))
+                kk = id_to_idx.get(id(ang.k))
+                if ii is not None and kk is not None and ii != kk:
+                    bonded_set.add((min(ii, kk), max(ii, kk)))
+
+        if dihedrals and _do_bonded:
+            _compute_dihedral_forces(atoms, dihedrals, pos, forces, box_l=_pbc_L)
 
     # --- vectorized non-bonded LJ ---
     # Fast path: a bonded-only call ("fast" in RESPA) can skip all the
@@ -781,13 +906,16 @@ def compute_forces(
             # Rust path: LJ math + (optional) reaction-field Coulomb +
             # distance cutoff + bonded exclusion + minimum-image wrap
             # under PBC, all in one tight loop.
-            bonded_codes_sorted = None
-            if bonded_set:
-                bonded_codes_sorted = np.fromiter(
-                    (i * n + j for (i, j) in bonded_set),
-                    dtype=np.int64, count=len(bonded_set),
-                )
-                bonded_codes_sorted.sort()
+            if bonded_codes_sorted_from_cache is not None:
+                bonded_codes_sorted = bonded_codes_sorted_from_cache
+            else:
+                bonded_codes_sorted = None
+                if bonded_set:
+                    bonded_codes_sorted = np.fromiter(
+                        (i * n + j for (i, j) in bonded_set),
+                        dtype=np.int64, count=len(bonded_set),
+                    )
+                    bonded_codes_sorted.sort()
             forces += _rust.lj_forces(
                 np.ascontiguousarray(pos, dtype=np.float64),
                 np.ascontiguousarray(iu, dtype=np.int64),
@@ -818,13 +946,17 @@ def compute_forces(
                 dvec = minimum_image(dvec, box_l)
             r2 = np.einsum("ij,ij->i", dvec, dvec)
             keep = (r2 > 1e-8) & (r2 < cutoff2)
-            if bonded_set:
-                bonded_codes = np.fromiter(
+            _bs_codes = None
+            if bonded_codes_sorted_from_cache is not None:
+                _bs_codes = bonded_codes_sorted_from_cache
+            elif bonded_set:
+                _bs_codes = np.fromiter(
                     (i * n + j for (i, j) in bonded_set),
                     dtype=np.int64, count=len(bonded_set),
                 )
+            if _bs_codes is not None and _bs_codes.size:
                 pair_codes = iu.astype(np.int64) * n + ju.astype(np.int64)
-                keep &= ~np.isin(pair_codes, bonded_codes)
+                keep &= ~np.isin(pair_codes, _bs_codes)
             iu = iu[keep]
             ju = ju[keep]
             dvec = dvec[keep]
@@ -866,16 +998,18 @@ def compute_forces(
     # For the NumPy-only build we evaluate Coulomb here with the same
     # filtered pair arrays that LJ just consumed.
     if coulomb_on and iu.size:
-        # Bonded-pair exclusion via packed integer codes (O(P) NumPy
-        # instead of the old O(P) Python loop).
-        if bonded_set:
-            bonded_codes = np.fromiter(
+        _bs_codes = None
+        if bonded_codes_sorted_from_cache is not None:
+            _bs_codes = bonded_codes_sorted_from_cache
+        elif bonded_set:
+            _bs_codes = np.fromiter(
                 (i * n + j for (i, j) in bonded_set),
                 dtype=np.int64, count=len(bonded_set),
             )
-            bonded_codes.sort()
+            _bs_codes.sort()
+        if _bs_codes is not None and _bs_codes.size:
             pair_codes = iu.astype(np.int64) * n + ju.astype(np.int64)
-            keep_b = ~np.isin(pair_codes, bonded_codes,
+            keep_b = ~np.isin(pair_codes, _bs_codes,
                                assume_unique=False)
             iu_c0 = iu[keep_b]
             ju_c0 = ju[keep_b]
