@@ -1,0 +1,58 @@
+{
+  "id": "mcc_against_breuer_v10_full",
+  "claim": "Full-proteome MCC measurement with the v10 composed detector (ComplexAssembly + AnnotationClass + PerRule) on all 455 Breuer-labeled Syn3A genes with Quasiessential counted as positive. First full-set measurement to clear 0.3 MCC on this simulator-stack; nearly 3x the v9 (redundancy-aware) predecessor.",
+  "confidence": "measured",
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible via 'python scripts/run_sweep_parallel.py --all --workers 4 --use-rust --scale 0.05 --t-end-s 0.5 --detector composed --seed 42'. Prediction CSV at outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed.csv.",
+  "last_verified": "2026-04-23",
+  "context": {
+    "commit_range": "1d01c7a..(this commit)",
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v10_composed_full_455"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v9",
+    "mcc_against_breuer_v10",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "cell_sim/layer6_essentiality/composed_detector.py",
+    "cell_sim/layer6_essentiality/complex_assembly_detector.py",
+    "cell_sim/layer6_essentiality/annotation_class_detector.py",
+    "scripts/run_sweep_parallel.py"
+  ],
+  "value": {
+    "mcc": 0.342,
+    "precision": 0.972,
+    "recall": 0.551,
+    "specificity": 0.917,
+    "confusion": {"tp": 211, "fp": 6, "tn": 66, "fn": 172},
+    "delta_over_v9_full": "n/a (v9 was measured on balanced-40 only; v10_full is the first full-set run for the v10 stack)",
+    "config": {
+      "detector": "composed (ComplexAssembly + AnnotationClass + PerRule)",
+      "gene_set": "all 455 Breuer-labeled",
+      "label_scheme": "binary; Quasiessential -> positive",
+      "sim_seed": 42,
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "use_rust_backend": true,
+      "workers": 4,
+      "threshold": 0.1,
+      "sweep_wall_s": 955.8,
+      "per_gene_wall_s": 2.1
+    },
+    "tp_breakdown_by_source": {
+      "complex_only": "dominant, includes all 58 ribosomal subunits + RNA polymerase + ATP synthase + SecYEGDF + primary ABC transporters",
+      "annotation_only": "aminoacyl-tRNA synthetases + translation factors + signal peptidases + flippases + primary RNase + DNA replication core + ribosome biogenesis",
+      "trajectory_only": "metabolic enzymes whose KO silences at least one catalysis rule"
+    },
+    "false_positives": "6 of 72 Nonessentials (8.3 %). All 6 are carry-overs from v5/v9 - known iMB155 metabolic-reconstruction gaps (missing alternate pathways for cholesterol, PDH lipoylation, acetaldehyde sink, etc.). Structural and annotation priors contribute 3 of the 6 (these match complex subunits that Breuer happens to label nonessential for Syn3A-specific reasons)."
+  },
+  "caveats": [
+    "Full set is heavily imbalanced: 270 Essential + 113 Quasiessential vs 72 Nonessential (5.3:1). MCC is more conservative than on a balanced panel. The same detector stack scores MCC 0.70 on the standard balanced-40 panel.",
+    "Precision is very high (0.97) — when we call a gene essential we're almost always right. Recall is 0.55 — we miss about half of true essentials because no detector fires on them (uncharacterized proteins, metabolic enzymes outside the iMB155 SBML, regulatory proteins, some tRNA modification enzymes we don't have keyword rules for).",
+    "v10b (this commit series adds 7 more annotation classes: topoisomerase, acyl-transferase, tRNA modification, chaperone, PTS transporter, nucleotide-salvage kinase, nucleotide biosynthesis). Offline re-score of this CSV with the expanded rules adds 10 TPs and 0 FPs -> projected MCC ~0.36 on the full set. Re-run with expanded rules is the v10b measurement.",
+    "Still 100 % offline. No network, API, or per-run cost. All data files bundled in the repo."
+  ]
+}
