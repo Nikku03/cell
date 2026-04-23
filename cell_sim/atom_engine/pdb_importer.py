@@ -306,6 +306,183 @@ ATOM      2  H1  HOH A   1       0.076   0.059   0.000  1.00  0.00           H
 ATOM      3  H2  HOH A   1      -0.019   0.094   0.000  1.00  0.00           H
 END
 """,
+    # Serine: Ala + beta-hydroxyl
+    "SER": """\
+ATOM      1  N   SER A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  SER A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  SER A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  SER A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  SER A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  SER A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 SER A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 SER A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  OG  SER A   1       3.417   0.820  -1.220  1.00  0.00           O
+ATOM     10  HG  SER A   1       3.720   1.730  -1.220  1.00  0.00           H
+ATOM     11  C   SER A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     12  O   SER A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     13  OXT SER A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     14  HXT SER A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Valine (branched aliphatic)
+    "VAL": """\
+ATOM      1  N   VAL A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  VAL A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  VAL A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  VAL A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  VAL A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  VAL A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB  VAL A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  CG1 VAL A   1       1.493   0.066  -2.490  1.00  0.00           C
+ATOM      9  HG11 VAL A   1       1.877   0.593  -3.367  1.00  0.00           H
+ATOM     10  HG12 VAL A   1       1.877  -0.958  -2.490  1.00  0.00           H
+ATOM     11  HG13 VAL A   1       0.403   0.066  -2.490  1.00  0.00           H
+ATOM     12  CG2 VAL A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     13  HG21 VAL A   1       3.887   1.794  -1.218  1.00  0.00           H
+ATOM     14  HG22 VAL A   1       3.887   0.258  -2.107  1.00  0.00           H
+ATOM     15  HG23 VAL A   1       3.887   0.258  -0.329  1.00  0.00           H
+ATOM     16  C   VAL A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     17  O   VAL A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     18  OXT VAL A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     19  HXT VAL A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Leucine
+    "LEU": """\
+ATOM      1  N   LEU A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  LEU A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  LEU A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  LEU A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  LEU A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  LEU A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 LEU A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 LEU A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  LEU A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  HG  LEU A   1       3.887   1.794  -1.218  1.00  0.00           H
+ATOM     11  CD1 LEU A   1       4.047   0.066  -2.490  1.00  0.00           C
+ATOM     12  HD11 LEU A   1       4.431   0.593  -3.367  1.00  0.00           H
+ATOM     13  HD12 LEU A   1       4.431  -0.958  -2.490  1.00  0.00           H
+ATOM     14  HD13 LEU A   1       2.957   0.066  -2.490  1.00  0.00           H
+ATOM     15  CD2 LEU A   1       4.047   0.066   0.054  1.00  0.00           C
+ATOM     16  HD21 LEU A   1       4.431   0.593   0.931  1.00  0.00           H
+ATOM     17  HD22 LEU A   1       4.431  -0.958   0.054  1.00  0.00           H
+ATOM     18  HD23 LEU A   1       5.137   0.066   0.054  1.00  0.00           H
+ATOM     19  C   LEU A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     20  O   LEU A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     21  OXT LEU A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     22  HXT LEU A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Threonine: Ala + beta-hydroxyl + beta-methyl
+    "THR": """\
+ATOM      1  N   THR A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  THR A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  THR A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  THR A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  THR A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  THR A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB  THR A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  OG1 THR A   1       3.417   0.820  -1.220  1.00  0.00           O
+ATOM      9  HG1 THR A   1       3.720   1.730  -1.220  1.00  0.00           H
+ATOM     10  CG2 THR A   1       1.493   0.066  -2.490  1.00  0.00           C
+ATOM     11  HG21 THR A   1       1.877   0.593  -3.367  1.00  0.00           H
+ATOM     12  HG22 THR A   1       1.877  -0.958  -2.490  1.00  0.00           H
+ATOM     13  HG23 THR A   1       0.403   0.066  -2.490  1.00  0.00           H
+ATOM     14  C   THR A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     15  O   THR A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     16  OXT THR A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     17  HXT THR A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Cysteine (S-H)
+    "CYS": """\
+ATOM      1  N   CYS A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  CYS A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  CYS A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  CYS A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  CYS A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  CYS A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 CYS A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 CYS A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  SG  CYS A   1       3.817   0.820  -1.220  1.00  0.00           S
+ATOM     10  HG  CYS A   1       4.170   1.950  -1.220  1.00  0.00           H
+ATOM     11  C   CYS A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     12  O   CYS A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     13  OXT CYS A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     14  HXT CYS A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Methionine (C-C-C-S-C thioether)
+    "MET": """\
+ATOM      1  N   MET A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  MET A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  MET A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  MET A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  MET A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  MET A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 MET A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 MET A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  MET A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  HG1 MET A   1       3.887   1.794  -1.218  1.00  0.00           H
+ATOM     11  HG2 MET A   1       3.887   0.258  -2.107  1.00  0.00           H
+ATOM     12  SD  MET A   1       4.247   0.000   0.260  1.00  0.00           S
+ATOM     13  CE  MET A   1       6.077   0.000   0.000  1.00  0.00           C
+ATOM     14  HE1 MET A   1       6.440   0.509   0.895  1.00  0.00           H
+ATOM     15  HE2 MET A   1       6.440   0.509  -0.895  1.00  0.00           H
+ATOM     16  HE3 MET A   1       6.440  -1.024   0.000  1.00  0.00           H
+ATOM     17  C   MET A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     18  O   MET A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     19  OXT MET A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     20  HXT MET A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Asparagine: CH2-C(=O)-NH2 side chain
+    "ASN": """\
+ATOM      1  N   ASN A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  ASN A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  ASN A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  ASN A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  ASN A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  ASN A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 ASN A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 ASN A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  ASN A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  OD1 ASN A   1       4.147   1.800  -1.218  1.00  0.00           O
+ATOM     11  ND2 ASN A   1       4.217  -0.400  -1.218  1.00  0.00           N
+ATOM     12  HD21 ASN A   1       5.227  -0.400  -1.218  1.00  0.00           H
+ATOM     13  HD22 ASN A   1       3.677  -1.250  -1.218  1.00  0.00           H
+ATOM     14  C   ASN A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     15  O   ASN A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     16  OXT ASN A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     17  HXT ASN A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Aspartate (neutral COOH form — simplest protonation)
+    "ASP": """\
+ATOM      1  N   ASP A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  ASP A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  ASP A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  ASP A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  ASP A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  ASP A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 ASP A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 ASP A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  ASP A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  OD1 ASP A   1       4.147   1.800  -1.218  1.00  0.00           O
+ATOM     11  OD2 ASP A   1       4.117  -0.400  -1.218  1.00  0.00           O
+ATOM     12  HD2 ASP A   1       5.107  -0.400  -1.218  1.00  0.00           H
+ATOM     13  C   ASP A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     14  O   ASP A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     15  OXT ASP A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     16  HXT ASP A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Note on nucleotides (A/T/G/C/U): aromatic ring geometry needs
+    # careful coordinate tabulation (planar 5/6-membered fused rings
+    # with bond lengths ~0.14 nm). Out of scope for this first
+    # importer pass; future work is to parse a real PDB file of a
+    # solved nucleotide (e.g. the RCSB ATP ligand record) rather
+    # than hand-coding.
 }
 
 
