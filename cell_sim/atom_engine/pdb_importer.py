@@ -869,6 +869,71 @@ HETATM   15  H6  THY A   1       2.190   0.030   0.000  1.00  0.00           H
 END
 """,
 
+    # --- DNA / RNA sugar backbones ---
+    # Deoxyribose: 5-membered furanose ring with -H at C2' (DNA).
+    # Ring: C1'-O4'-C4'-C3'-C2'-C1'. Free 1'-OH and 3'-OH; C5' extends
+    # to 5'-OH (for a full nucleotide the terminal Hs are replaced by
+    # base-N or phosphate-O linkages).
+    "DRB": """\
+HETATM    1  C1' DRB A   1       0.000   0.000   0.000  1.00  0.00           C
+HETATM    2  H1' DRB A   1       0.540  -0.800   0.540  1.00  0.00           H
+HETATM    3  O4' DRB A   1      -0.300   1.400   0.000  1.00  0.00           O
+HETATM    4  C4' DRB A   1       1.000   2.100  -0.100  1.00  0.00           C
+HETATM    5  H4' DRB A   1       1.300   2.400  -1.100  1.00  0.00           H
+HETATM    6  C3' DRB A   1       2.100   1.200   0.500  1.00  0.00           C
+HETATM    7  H3' DRB A   1       2.600   1.700   1.340  1.00  0.00           H
+HETATM    8  C2' DRB A   1       1.450   0.000   1.200  1.00  0.00           C
+HETATM    9  H2'1 DRB A   1       1.700   0.100   2.260  1.00  0.00           H
+HETATM   10  H2'2 DRB A   1       1.700  -0.950   0.720  1.00  0.00           H
+HETATM   11  C5' DRB A   1       0.900   3.350   0.800  1.00  0.00           C
+HETATM   12  H5'1 DRB A   1       1.870   3.840   0.900  1.00  0.00           H
+HETATM   13  H5'2 DRB A   1       0.260   4.000   0.200  1.00  0.00           H
+HETATM   14  O5' DRB A   1       0.340   3.100   2.100  1.00  0.00           O
+HETATM   15  HO5' DRB A   1       0.900   3.700   2.640  1.00  0.00           H
+HETATM   16  O3' DRB A   1       3.100   0.800  -0.400  1.00  0.00           O
+HETATM   17  HO3' DRB A   1       3.700   1.600  -0.600  1.00  0.00           H
+HETATM   18  H1'B DRB A   1      -0.900  -0.150  -0.640  1.00  0.00           H
+END
+""",
+
+    # Ribose: like deoxyribose but with -OH at C2' (RNA).
+    "RIB": """\
+HETATM    1  C1' RIB A   1       0.000   0.000   0.000  1.00  0.00           C
+HETATM    2  H1' RIB A   1       0.540  -0.800   0.540  1.00  0.00           H
+HETATM    3  O4' RIB A   1      -0.300   1.400   0.000  1.00  0.00           O
+HETATM    4  C4' RIB A   1       1.000   2.100  -0.100  1.00  0.00           C
+HETATM    5  H4' RIB A   1       1.300   2.400  -1.100  1.00  0.00           H
+HETATM    6  C3' RIB A   1       2.100   1.200   0.500  1.00  0.00           C
+HETATM    7  H3' RIB A   1       2.600   1.700   1.340  1.00  0.00           H
+HETATM    8  C2' RIB A   1       1.450   0.000   1.200  1.00  0.00           C
+HETATM    9  H2' RIB A   1       1.700  -0.950   0.720  1.00  0.00           H
+HETATM   10  O2' RIB A   1       1.900  -0.100   2.550  1.00  0.00           O
+HETATM   11  HO2' RIB A   1       2.670  -0.680   2.600  1.00  0.00           H
+HETATM   12  C5' RIB A   1       0.900   3.350   0.800  1.00  0.00           C
+HETATM   13  H5'1 RIB A   1       1.870   3.840   0.900  1.00  0.00           H
+HETATM   14  H5'2 RIB A   1       0.260   4.000   0.200  1.00  0.00           H
+HETATM   15  O5' RIB A   1       0.340   3.100   2.100  1.00  0.00           O
+HETATM   16  HO5' RIB A   1       0.900   3.700   2.640  1.00  0.00           H
+HETATM   17  O3' RIB A   1       3.100   0.800  -0.400  1.00  0.00           O
+HETATM   18  HO3' RIB A   1       3.700   1.600  -0.600  1.00  0.00           H
+HETATM   19  H1'B RIB A   1      -0.900  -0.150  -0.640  1.00  0.00           H
+END
+""",
+
+    # Phosphate group (monohydrogen phosphate HPO4^2-): P(=O)(O-)(O-)(OH).
+    # Links to 3' or 5' of a sugar via O3'/O5' replacement of one of
+    # the outer O-H bonds.
+    "PO4": """\
+HETATM    1  P   PO4 A   1       0.000   0.000   0.000  1.00  0.00           P
+HETATM    2  OP1 PO4 A   1       0.000   1.500   0.000  1.00  0.00           O
+HETATM    3  OP2 PO4 A   1       1.450  -0.450   0.000  1.00  0.00           O
+HETATM    4  OP3 PO4 A   1      -0.750  -0.450   1.300  1.00  0.00           O
+HETATM    5  HP3 PO4 A   1      -0.300  -0.300   2.150  1.00  0.00           H
+HETATM    6  OP4 PO4 A   1      -0.750  -0.450  -1.300  1.00  0.00           O
+HETATM    7  HP4 PO4 A   1      -0.300  -0.300  -2.150  1.00  0.00           H
+END
+""",
+
     # Uracil. Thymine without the methyl (H instead of CH3 at C5).
     "URA": """\
 HETATM    1  N1  URA A   1       0.000   0.000   0.000  1.00  0.00           N

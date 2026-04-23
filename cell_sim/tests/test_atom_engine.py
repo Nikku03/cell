@@ -1099,3 +1099,24 @@ def test_rigid_body_quaternion_preserves_bond_lengths_at_all_dt():
             f"dt={dt_fs}fs: |OH| = {d_oh}"
         assert abs(d_hh - 0.1518124) < 1e-5, \
             f"dt={dt_fs}fs: |HH| = {d_hh}"
+
+
+def test_pdb_importer_loads_sugar_and_phosphate_templates():
+    """Deoxyribose (DRB), ribose (RIB), and phosphate (PO4) building
+    blocks load with correct ring topology."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    drb = load_residue("DRB")
+    # Furanose ring: C1'-O4'-C4'-C3'-C2' closes back to C1'.
+    # bonds = atoms (5-member ring).
+    assert len(drb.bonds) - (len(drb.atoms) - 1) == 1, \
+        f"DRB ring not closed: bonds={len(drb.bonds)}, atoms={len(drb.atoms)}"
+    rib = load_residue("RIB")
+    # Same ring topology; one extra O (2'-OH) + 1 H compared to DRB.
+    assert len(rib.bonds) - (len(rib.atoms) - 1) == 1, \
+        f"RIB ring not closed"
+    assert len(rib.atoms) == len(drb.atoms) + 1, \
+        f"RIB should have 1 more atom than DRB (2'-OH vs 2'-H)"
+    po4 = load_residue("PO4")
+    # Monohydrogen phosphate: 1 P + 4 O + 2 H = 7 atoms, 6 bonds, acyclic.
+    assert len(po4.atoms) == 7
+    assert len(po4.bonds) == 6
