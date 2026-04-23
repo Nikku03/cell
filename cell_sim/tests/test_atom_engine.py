@@ -850,3 +850,37 @@ def test_minimise_steepest_descent_drops_max_force():
     # Must drop max force by at least 10x.
     assert info["final_max_force_kj_per_nm"] < \
         info["initial_max_force_kj_per_nm"] / 10.0, info
+
+
+def test_hoh_template_has_correct_geometry():
+    """Water PDB template must place H atoms at ~0.096 nm from O and
+    H-H at ~0.152 nm. Regression guard for the 10x-too-small bug where
+    Angstrom values had been pre-multiplied by 0.1 in the template
+    string."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    s = load_residue("HOH")
+    o = np.array(s.atoms[0].position)
+    h1 = np.array(s.atoms[1].position)
+    h2 = np.array(s.atoms[2].position)
+    assert np.isclose(np.linalg.norm(h1 - o), 0.096, atol=1e-3)
+    assert np.isclose(np.linalg.norm(h2 - o), 0.096, atol=1e-3)
+    # H-H distance at 104.5 deg: 2 * 0.096 * sin(52.25 deg) = 0.1518
+    assert np.isclose(np.linalg.norm(h1 - h2), 0.1518, atol=1e-3)
+
+
+def test_make_waters_rigid_adds_hh_constraints_and_removes_angles():
+    """make_waters_rigid must add H-H SHAKE pairs for every HOH triple
+    and drop the matching harmonic angle so it doesn't fight SHAKE."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    from cell_sim.atom_engine.integrator import SimState, make_waters_rigid
+    s = load_residue("HOH")
+    state = SimState(atoms=list(s.atoms), bonds=list(s.bonds),
+                     angles=list(s.angles))
+    assert len(state.angles) == 1        # HOH angle present
+    n_rigid = make_waters_rigid(state)
+    assert n_rigid == 1
+    assert state.shake_pairs.shape[0] == 3   # 2 OH + 1 HH
+    assert len(state.angles) == 0            # HOH angle removed
+    # HH distance constraint at expected value
+    hh_r0 = np.sqrt(state.shake_r0_sq[2])
+    assert np.isclose(hh_r0, 0.1518, atol=1e-3)

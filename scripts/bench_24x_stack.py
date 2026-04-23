@@ -51,9 +51,9 @@ def build_water_box(n_water=20, box_nm=1.5, temperature_K=300.0, seed=7):
     bonds = []
     angles = []
     waters_placed = 0
-    # Water-center exclusion = H radius (~0.1 nm) + LJ sigma_O/2 (~0.17 nm)
-    # doubled = 0.40 nm. Same spacing used by kitchen_sink demo.
-    spacing = 0.38
+    # Water-center exclusion = ~2x (O-H bond 0.096 nm) + LJ sigma_O 0.315 nm
+    # = 0.51 nm. Use 0.60 nm to avoid initial LJ clashes at water orientation.
+    spacing = 0.58
     candidates = []
     grid = int(box_nm / spacing) + 1
     for ix in range(grid):
@@ -69,7 +69,7 @@ def build_water_box(n_water=20, box_nm=1.5, temperature_K=300.0, seed=7):
         if waters_placed >= n_water:
             break
         too_close = any(
-            (x - p[0]) ** 2 + (y - p[1]) ** 2 + (z - p[2]) ** 2 < 0.40 ** 2
+            (x - p[0]) ** 2 + (y - p[1]) ** 2 + (z - p[2]) ** 2 < 0.60 ** 2
             for p in positions_so_far
         )
         if too_close:

@@ -299,11 +299,13 @@ ATOM     12  OXT ALA A   1       3.268  -1.626   0.000  1.00  0.00           O
 ATOM     13  HXT ALA A   1       3.577  -2.547   0.000  1.00  0.00           H
 END
 """,
-    # Water (TIP3P-like geometry in a PDB ATOM block)
+    # Water (TIP3P-like geometry in a PDB ATOM block).
+    # PDB coords are in Angstroms; |O-H| = 0.96 A, HOH angle = 104.5 deg.
+    # H1, H2 placed symmetrically so |H1-H2| = 2*0.96*sin(52.25°) = 1.518 A.
     "HOH": """\
 ATOM      1  O   HOH A   1       0.000   0.000   0.000  1.00  0.00           O
-ATOM      2  H1  HOH A   1       0.076   0.059   0.000  1.00  0.00           H
-ATOM      3  H2  HOH A   1      -0.019   0.094   0.000  1.00  0.00           H
+ATOM      2  H1  HOH A   1       0.759   0.588   0.000  1.00  0.00           H
+ATOM      3  H2  HOH A   1      -0.759   0.588   0.000  1.00  0.00           H
 END
 """,
     # Serine: Ala + beta-hydroxyl

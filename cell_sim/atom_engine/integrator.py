@@ -16,6 +16,7 @@ preserved without any fixed time grid.
 """
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from typing import Optional, Sequence
 
@@ -312,12 +313,23 @@ def compile_bond_cache(state: "SimState") -> BondCache:
 def build_shake_constraints(
     atoms: list[AtomUnit],
     bonds: list[Bond],
+    angles: Optional[list[AngleBond]] = None,
+    rigid_water: bool = True,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Return (pairs, r0_sq) for use as SHAKE constraints. One entry
-    per live covalent bond; rigid at the bond's equilibrium_length_nm.
+    """Return (pairs, r0_sq) for use as SHAKE constraints.
 
-    Calling this once after ``build_mixture`` is enough unless new
-    bonds are formed dynamically.
+    One entry per live covalent bond by default. When ``angles`` is
+    supplied AND ``rigid_water`` is True, H-X-H angle triples
+    (primarily H-O-H waters) are ALSO added as third-edge constraints
+    on the (H, H) pair.
+
+    The caller is responsible for removing the matching H-X-H angle
+    terms from the angle list (or calling ``make_waters_rigid``), since
+    a rigid triangle + harmonic angle spring would oscillate. Use
+    ``make_waters_rigid(state, ...)`` for the full drop-in setup.
+
+    r_HH from the law of cosines:
+        r_HH^2 = r_OH1^2 + r_OH2^2 - 2*r_OH1*r_OH2*cos(theta_0)
     """
     id_to_idx = {id(a): i for i, a in enumerate(atoms)}
     pairs = []
@@ -331,12 +343,86 @@ def build_shake_constraints(
             continue
         pairs.append((i, j))
         r0s.append(float(b.equilibrium_length_nm))
+
+    if angles and rigid_water:
+        bond_len_by_pair: dict[tuple[int, int], float] = {}
+        for b in bonds:
+            if b.death_time_ps is not None:
+                continue
+            i = id_to_idx.get(id(b.a))
+            j = id_to_idx.get(id(b.b))
+            if i is None or j is None:
+                continue
+            key = (min(i, j), max(i, j))
+            bond_len_by_pair[key] = float(b.equilibrium_length_nm)
+
+        for ang in angles:
+            if ang.i.element.name != "H" or ang.k.element.name != "H":
+                continue
+            ii = id_to_idx.get(id(ang.i))
+            kk = id_to_idx.get(id(ang.k))
+            jj = id_to_idx.get(id(ang.j))
+            if ii is None or kk is None or jj is None:
+                continue
+            r_OH1 = bond_len_by_pair.get((min(ii, jj), max(ii, jj)))
+            r_OH2 = bond_len_by_pair.get((min(kk, jj), max(kk, jj)))
+            if r_OH1 is None or r_OH2 is None:
+                continue
+            cos_t = math.cos(ang.theta_0_rad)
+            r_HH_sq = r_OH1 ** 2 + r_OH2 ** 2 - 2.0 * r_OH1 * r_OH2 * cos_t
+            pairs.append((ii, kk))
+            r0s.append(math.sqrt(max(r_HH_sq, 0.0)))
+
     if not pairs:
         return (np.empty((0, 2), dtype=np.int64),
                 np.empty(0, dtype=np.float64))
     arr = np.array(pairs, dtype=np.int64)
     r0sq = np.array(r0s, dtype=np.float64) ** 2
     return arr, r0sq
+
+
+def make_waters_rigid(state: "SimState") -> int:
+    """One-call setup for rigid-water simulations.
+
+    1. Builds SHAKE constraint list including H-H edges for every
+       H-O-H angle triple (``rigid_water=True`` path of
+       ``build_shake_constraints``).
+    2. Removes the matching harmonic H-O-H angle terms from
+       ``state.angles`` so they don't fight the SHAKE constraint.
+    3. Invalidates ``state._bond_cache`` so subsequent compute_forces
+       calls rebuild from the new angle list.
+
+    Returns the number of water triangles made rigid.
+
+    KNOWN LIMITATION: iterative SHAKE on water triangles injects
+    kinetic energy even when bond-length errors are within
+    tolerance — the pairwise Lagrange-multiplier updates for the
+    three coupled constraints are not fully orthogonal, so a small
+    amount of energy leaks in per step. On a dense water box this
+    drives T well above the thermostat setpoint. A full 2 fs unlock
+    requires SETTLE (analytical rigid-body water, Miyamoto-Kollman
+    1992) or RATTLE (mass-weighted velocity correction). This
+    function sets up the geometry that SETTLE will consume; the
+    SETTLE kernel itself is deferred to a follow-up change.
+    """
+    shake_pairs, shake_r0_sq = build_shake_constraints(
+        state.atoms, state.bonds,
+        angles=state.angles, rigid_water=True,
+    )
+    state.shake_pairs = shake_pairs
+    state.shake_r0_sq = shake_r0_sq
+
+    n_rigid = 0
+    if state.angles:
+        kept = []
+        for ang in state.angles:
+            if ang.i.element.name == "H" and ang.k.element.name == "H":
+                n_rigid += 1
+                continue
+            kept.append(ang)
+        state.angles = kept
+    state._bond_cache = None
+    return n_rigid
 
 
 try:
