@@ -22,21 +22,36 @@ _Read this file FIRST, immediately after running the invariant checker._
 
 All detector variants plateau at the same 3 FPs (0034, deoC, lpdA) and 15 FNs (ribosomal / tRNA / translation). Session 11's v9 confirmed that the remaining MCC gap is **not a detection problem** — it is a **simulator biology incompleteness problem**.
 
-## Session-15 top priority — run the Tier-1 populate notebook, then measure
+## Session-15 top priority — close the two Tier-1 data gaps, then measure
 
-### 0. Run `notebooks/populate_tier1_cache.ipynb` on Colab Pro
+Session 14's populate pass landed ESM-2 (real 1280-dim embeddings, all 455 CDS) plus two empty-by-design parquets for AlphaFold-DB and MACE-OFF. Commit `ebbfdff` carries the SHAs; `memory_bank/facts/measured/session_14_populate.json` records the outcome. The two empty parquets came from *data-availability gaps*, not extraction bugs:
 
-**New top-priority item, refreshed in Session 14.** Session 14 landed all three extractor subclasses (`ESM2Extractor`, `AlphaFoldExtractor`, `MaceOffExtractor`), their sandbox-safe tests (17), and the populate notebook itself — but the cache is still empty. Session 15 is the user-side execution + verification pass:
+### 0a. Fix AlphaFold-DB coverage (taxid 2144189 not in UniProt)
 
-1. Open `notebooks/populate_tier1_cache.ipynb` on Colab Pro (A100 preferred, T4 fallback).
-2. Run cells 1-8 to install deps, clone the repo at the current HEAD, load Syn3A CDS sequences, and execute the three extractors. Expected wall time: ~20-40 minutes total (ESM-2 ~2 min, AlphaFold ~15-30 min network-bound, MACE-OFF ~5 min).
-3. Pick an `OUTPUT_MODE` in cell 9:
-   - `drive` — Google Drive mount
-   - `download` — four browser download prompts
-   - `github_pat` — fully automated `git add -f` + commit + push via `$GITHUB_PAT`
-4. Verify cell 10's summary block: three parquets tracked in `manifest.json`, SHAs match, row counts sane. Paste the summary back for review.
-5. Once the parquets are on `origin`, open a follow-up PR that flips each of the three `populated_yet: false` flags in `memory_bank/facts/structural/{esm2,alphafold,mace_off}_extractor.json` and adds the real `sha256` fields.
-6. Only after the cache is populated, measure the baseline ensemble MCC with an XGBoost classifier on the cached feature join — that's the first honest Tier-1 MCC number. Record as `mcc_against_breuer_v11_tier1_xgb.json`.
+JCVI-Syn3A is a synthetic organism and UniProt has not imported its proteome — four query routes all returned zero rows in the Session-14 run. AFDB keys on UniProt accessions, so without a mapping there's nothing to fetch. Fix:
+
+1. Download the Luthey-Schulten 4DWCM supplement — the authors had to solve the same mapping problem for their own work. Likely candidate path in that repo: a CSV or JSON cross-referencing Syn3A NCBI protein accessions (`AVX*`) to UniProt accessions from the parent *M. mycoides capri* proteome.
+2. Alternative: manually construct the mapping via NCBI BioProject `PRJNA331011` cross-references + UniProt's *M. mycoides capri* entries.
+3. Persist the mapping as `memory_bank/data/syn3a_ncbi_to_uniprot.csv` + a pointer fact in `memory_bank/facts/structural/`.
+4. Re-run `notebooks/populate_tier1_cache.ipynb` cell 6 — it already calls a UniProt stream and will populate real pLDDT / SS / Rg features once the map lands. Expected coverage: ≥ 80% of the 455 CDS if the parent-proteome mapping is reused.
+5. `git add -f` the refilled `alphafold_db.parquet` + updated `manifest.json` + update the `populated_yet_content_status` in the AlphaFold fact.
+
+### 0b. Fix MACE-OFF SMILES map
+
+Syn3A's SBML (`Syn3A_updated.xml`) encodes metabolites as BiGG-style species IDs (`M_atp_c`, `M_h2o_c`, ...). MACE-OFF needs real SMILES. Notebook cell 7 carries a `HAVE_CURATED_SMILES_MAP=False` guard that skips the backend entirely today. Fix:
+
+1. Build `memory_bank/data/syn3a_species_smiles.csv` mapping every species ID in the SBML to a canonical SMILES. Primary source: KEGG COMPOUND (free bulk download + SBML annotation has `bqbiol:is` cross-refs to `kegg.compound:Cxxxxx` that can be followed). Fallback for metabolites KEGG doesn't cover: ChEBI.
+2. Register the CSV via a pointer fact in `memory_bank/facts/structural/`.
+3. Edit notebook cell 7 to load `SUBSTRATE_SMILES_MAP = dict(zip(csv["species_id"], csv["smiles"]))` and flip `HAVE_CURATED_SMILES_MAP = True`.
+4. Re-run cell 7. Expected ≥ 60% of the 356 SBML reactions will have SMILES for every substrate; MACE-OFF writes real BDE-derived k_cat aggregates for those enzymes.
+
+### 0c. Baseline Tier-1 MCC (XGBoost on cached features)
+
+Only useful after at least 0a or 0b lands (ESM-2 alone will carry a measurable signal, but the joint feature space is what we really want to benchmark). Steps:
+
+1. New detector `cell_sim/layer6_essentiality/tier1_xgb_detector.py`. Takes `FeatureRegistry`, joins the three cached sources for the balanced n=40 panel + the full 455 set, trains XGBoost with 5-fold CV on Breuer labels.
+2. Record as `memory_bank/facts/measured/mcc_against_breuer_v11_tier1_xgb.json`.
+3. Honest null hypothesis: v10b stack was MCC 0.364 on the full set. Tier-1 ESM-2-only should beat that by some margin if the embeddings carry useful essentiality signal. Tier-1 with AlphaFold + MACE populated should do better still. Report deltas, no MCC claim up front.
 
 ### 1. Fix iMB155 pathway incompleteness (the real bottleneck)
 

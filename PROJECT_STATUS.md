@@ -49,6 +49,15 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 
 ## Session Log
 
+### Session 14 (populate pass) — 2026-04-23 — Colab GPU run of populate_tier1_cache.ipynb
+- **Scope**: user-side run of the Session-14 notebook on a Colab A100-class GPU (NVIDIA RTX PRO 6000 Blackwell, 95 GB VRAM), then `git add -f` + push of the three parquets. Commit `ebbfdff` on `claude/syn3a-whole-cell-simulator-REjHC`. No sandbox-side MCC measurement.
+- **ESM-2 (650M)** landed fully populated: 455 CDS × 1280 dims, zero NaN, `sha256=0d5726…`, ~18 s of inference. This is the real deliverable.
+- **AlphaFold-DB** landed empty by design. JCVI-Syn3A (taxid `2144189`, "synthetic bacterium JCVI-Syn3A") is not indexed in UniProt — the populate notebook verified this by trying four different query routes (direct search, `xref:embl-CP016816`, proteome-name match, `organism_id:2144189` stream) and getting zero rows each time. The parquet has 455 rows of NaN + `af_has_structure=0.0`; `sha256=6ebc5c…`. Session 15 TODO: wire in a curated NCBI-accession → UniProt map (candidate: Luthey-Schulten 4DWCM supplement).
+- **MACE-OFF** landed empty by design. Syn3A's SBML encodes metabolites as BiGG-style species IDs (`M_atp_c`, etc.), not SMILES. Notebook cell 7 now carries a `HAVE_CURATED_SMILES_MAP=False` guard that skips the backend entirely rather than pass species IDs as SMILES. Parquet: 455 rows of NaN + `mace_has_estimate=0.0`, `sha256=9db2b8…`. Session 15 TODO: wire in a curated species → SMILES map (KEGG or ChEBI) and flip the guard.
+- **Manifest integrity**: sandbox-side FeatureRegistry.load SHA-verified all three sources; `join_features` on a 3-locus query returned the expected (3, 1296) DataFrame with correct NaN handling for an unknown locus.
+- **Notebook stability work**: commits `a0252ea`, `9626eef`, `214d04e`, `6540f49` all landed mid-run to fix (respectively) the mace-torch × e3nn pin conflict, upstream-data staging, UniProt REST fallback, and finally the error-free end-to-end rewrite that the user triggered after hitting the `GITHUB_PAT` RuntimeError and the UniProt-empty-result confusion. `172/172` tests still pass.
+- **New memory-bank entries**: 3 structural facts flipped `populated_yet: true` with real SHAs + content-status callouts + Session-15 TODOs; 1 new measured fact `session_14_populate.json` records the commit, parquet SHAs, FeatureRegistry contract check, and downstream caveats.
+
 ### Session 14 — 2026-04-23 — Tier-1 extractor classes + Colab populate notebook (no MCC)
 - **Scope**: pure plumbing on the sandbox side. Subclassed the Session-13 `BatchedFeatureExtractor` three times and shipped a Colab notebook that populates the cache on GPU. No pretrained model was executed in the sandbox. No detector in `cell_sim/layer6_essentiality/` was modified.
 - **New module `cell_sim/features/extractors/`** (~450 lines impl + ~300 lines tests):

@@ -1,6 +1,6 @@
 {
   "id": "alphafold_extractor",
-  "claim": "AlphaFoldExtractor subclasses BatchedFeatureExtractor to fetch AlphaFold-DB predicted structures (AF-{UNIPROT_ID}-F1-model_v4.pdb) and extract 9 structural descriptors per Syn3A CDS: mean pLDDT, std pLDDT, disorder fraction (pLDDT<50), helix / sheet / coil composition via Ramachandran torsion bins, sequence length, radius of gyration, and a has_structure boolean. biopython is imported lazily inside _ensure_loaded. Missing structures (404 from AFDB, unmapped UniProt IDs, parse failures) produce an NaN row with has_structure=0.0 rather than raising. The cache parquet is not populated by this session; the Colab notebook fetches all structures and writes cell_sim/features/cache/alphafold_db.parquet.",
+  "claim": "AlphaFoldExtractor subclasses BatchedFeatureExtractor to fetch AlphaFold-DB predicted structures and extract 9 structural descriptors per Syn3A CDS. Cache parquet in commit ebbfdff is REGISTERED BUT EMPTY (455 rows, af_has_structure=0 for every row, all other 8 columns NaN) because JCVI-Syn3A (taxid 2144189, 'synthetic bacterium JCVI-Syn3A') is not indexed in UniProt and AFDB keys are UniProt accessions. Four UniProt query routes (direct search, xref:embl-CP016816, proteome name, organism_id stream) each returned zero rows. The parquet is deliberately tracked by the manifest so Session 15 can swap in real values via a curated UniProt mapping (e.g. from the Luthey-Schulten 4DWCM supplement) without touching the FeatureRegistry contract.",
   "value": {
     "module_path": "cell_sim/features/extractors/alphafold_extractor.py",
     "class_name": "AlphaFoldExtractor",
@@ -19,8 +19,16 @@
       "af_has_structure"
     ],
     "cache_parquet_path": "cell_sim/features/cache/alphafold_db.parquet",
-    "expected_parquet_size_approx_kb": 100,
-    "populated_yet": false,
+    "cache_parquet_size_bytes": 9284,
+    "populated_yet": true,
+    "populated_at": "2026-04-23T20:56:05Z",
+    "populated_commit": "ebbfdff",
+    "cache_rows": 455,
+    "cache_structures_found": 0,
+    "cache_has_structure_sum": 0,
+    "cache_nan_cells": 3640,
+    "cache_sha256": "6ebc5cdd5858e3bb13210c65543b8986c14f6689d4957eaa3667aa8b35908bd6",
+    "cache_content_status": "empty by design: JCVI-Syn3A not indexed in UniProt; every row has af_has_structure=0.0 and all 8 numeric columns NaN",
     "tests_path": "cell_sim/tests/test_alphafold_extractor.py",
     "test_count": 6
   },
@@ -33,11 +41,11 @@
   },
   "confidence": "measured",
   "caveats": [
-    "Cache parquet is empty until the Colab notebook runs. Until then the feature block is NaN for every locus_tag.",
-    "Secondary-structure classification is a torsion-bin proxy for DSSP (the AlphaFold-DB does not ship DSSP data, and DSSP itself is optional in typical Colab envs). Helix / sheet / coil fractions should be treated as ~10-15% noisier than DSSP; they are ordinal features, not precise ones. A follow-up session can wire in the full DSSP parser if warranted by downstream MCC.",
-    "AFDB coverage of Syn3A UniProt IDs is expected to be ~80-90%; rows without coverage are NaN-filled with has_structure=0.0.",
-    "No MCC measurement is claimed. A follow-up measured fact will document any detector built on top of these features.",
-    "Network is required to populate; the extractor retries 3x with backoff on transient failures and records 404s as missing-structure (permanent, no retry)."
+    "Cache parquet populated in commit ebbfdff but CONTENT IS EMPTY: 455 rows of NaN + af_has_structure=0.0 for every CDS. Reason documented in the claim: JCVI-Syn3A (taxid 2144189) is a synthetic organism not indexed in UniProt. AFDB URLs key on UniProt accessions.",
+    "The extractor's code path was exercised end-to-end on Colab — the zero-structures outcome reflects data availability, not an extraction bug. The extractor's retry / 404 / biopython-parse paths remain correct for any organism whose proteins ARE in UniProt.",
+    "Session 15 TODO: wire in a curated NCBI-protein-accession -> UniProt mapping for Syn3A (candidates: the Luthey-Schulten 4DWCM supplement, or a manually-curated CSV from NCBI BioProject PRJNA331011 cross-references). Once that mapping exists, re-running cell 6 of notebooks/populate_tier1_cache.ipynb fills in real pLDDT / SS / Rg features in place.",
+    "Secondary-structure classification in this extractor is a torsion-bin proxy for DSSP; when the cache is populated with real structures in a future session, helix / sheet / coil fractions should be treated as ordinal and ~10-15% noisier than DSSP.",
+    "No MCC measurement is claimed. A follow-up measured fact will document any detector built on top of these features."
   ],
   "dependencies": ["feature_cache_infrastructure"],
   "last_verified": "2026-04-23",

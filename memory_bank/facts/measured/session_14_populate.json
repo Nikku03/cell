@@ -1,0 +1,79 @@
+{
+  "id": "session_14_populate",
+  "claim": "Session 14 populate-pass outcome: Colab A100 run of notebooks/populate_tier1_cache.ipynb committed three Tier-1 parquets + a manifest.json update to cell_sim/features/cache/ as commit ebbfdff on branch claude/syn3a-whole-cell-simulator-REjHC. ESM-2 landed real 1280-dim embeddings for all 455 Syn3A CDS (zero NaN). AlphaFold-DB and MACE-OFF parquets landed empty by design — documented data-availability gaps, not extraction bugs. FeatureRegistry SHA-verifies all three and join_features returns correctly-shaped blocks.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Commit ebbfdff on claude/syn3a-whole-cell-simulator-REjHC. SHAs recomputed in-sandbox via hashlib streaming over each parquet and cross-checked against cell_sim/features/cache/manifest.json. FeatureRegistry.load() passes SHA validation for all three sources; FeatureRegistry.join_features() on a 3-locus query returns a (3, 1296) DataFrame with correct NaN handling for an unknown locus_tag.",
+  "context": {
+    "entity": "cell_sim_features_cache",
+    "version": "tier1_populated_session_14",
+    "commit_range": "e213e0f..ebbfdff"
+  },
+  "dependencies": [
+    "feature_cache_infrastructure",
+    "esm2_extractor",
+    "alphafold_extractor",
+    "mace_off_extractor"
+  ],
+  "used_by": [
+    "cell_sim/features/cache/manifest.json",
+    "cell_sim/features/cache/esm2_650M.parquet",
+    "cell_sim/features/cache/alphafold_db.parquet",
+    "cell_sim/features/cache/mace_off_kcat.parquet",
+    "notebooks/populate_tier1_cache.ipynb"
+  ],
+  "value": {
+    "commit": "ebbfdff",
+    "branch": "claude/syn3a-whole-cell-simulator-REjHC",
+    "parquets": {
+      "esm2_650M": {
+        "rows": 455,
+        "columns": 1280,
+        "size_bytes": 3887431,
+        "sha256": "0d572640598534198f56d7fdb05f3e3b47aa7ea72c4f8577d9872a0066d16175",
+        "nan_cells": 0,
+        "content_status": "real embeddings for every Syn3A CDS; full information content",
+        "extraction_wall_s_approx": 18.1,
+        "gpu_used": "NVIDIA RTX PRO 6000 Blackwell Server Edition (95 GB VRAM)"
+      },
+      "alphafold_db": {
+        "rows": 455,
+        "columns": 9,
+        "size_bytes": 9284,
+        "sha256": "6ebc5cdd5858e3bb13210c65543b8986c14f6689d4957eaa3667aa8b35908bd6",
+        "nan_cells": 3640,
+        "has_structure_sum": 0,
+        "content_status": "empty by design — JCVI-Syn3A (taxid 2144189) has no UniProt proteome; 4 UniProt query routes all returned zero rows",
+        "session_15_todo": "wire in a curated NCBI-protein-accession -> UniProt mapping (candidate: Luthey-Schulten 4DWCM supplement)"
+      },
+      "mace_off_kcat": {
+        "rows": 455,
+        "columns": 7,
+        "size_bytes": 8248,
+        "sha256": "9db2b8f96cc772f45fd75ff6eccc26b55bca258b502749a9b7fcb68024b36375",
+        "nan_cells": 2730,
+        "has_estimate_sum": 0,
+        "content_status": "empty by design — Syn3A SBML uses BiGG species IDs not SMILES; notebook cell 7 HAVE_CURATED_SMILES_MAP=False guard skips the backend entirely",
+        "session_15_todo": "wire in a curated species -> SMILES map (candidates: KEGG, ChEBI) and flip HAVE_CURATED_SMILES_MAP to True"
+      }
+    },
+    "manifest_state": {
+      "tracked_sources": ["alphafold_db", "esm2_650M", "mace_off_kcat"],
+      "all_sha_verified": true,
+      "manifest_path": "cell_sim/features/cache/manifest.json"
+    },
+    "downstream_contract_check": {
+      "FeatureRegistry_load_esm2_650M": "ok — returns (455, 1280) DataFrame indexed by locus_tag",
+      "FeatureRegistry_load_alphafold_db": "ok — returns (455, 9) DataFrame indexed by locus_tag",
+      "FeatureRegistry_load_mace_off_kcat": "ok — returns (455, 7) DataFrame indexed by locus_tag",
+      "FeatureRegistry_join_features_3_loci": "ok — returns (3, 1296) with correct NaN for unknown locus JCVISYN3A_9999"
+    }
+  },
+  "caveats": [
+    "Two of three sources are empty-by-design. Any Session-15 classifier built on these features is effectively an ESM-2-only classifier until AlphaFold-DB and MACE-OFF parquets are refilled with curated mappings.",
+    "No MCC measurement is claimed. This fact records a populate-pass outcome only. The first honest MCC number on Tier-1 features comes in a follow-up session and gets recorded as mcc_against_breuer_v11_tier1.json (or similar).",
+    "Zero pretrained weights were committed to the repo. ESM-2 and MACE-OFF weights were pulled from HuggingFace Hub at Colab runtime; AFDB PDBs were never fetched because no UniProt IDs were resolvable.",
+    "Reproduction: re-run notebooks/populate_tier1_cache.ipynb on any Colab GPU runtime. ESM-2 deterministic (same SHA expected); the other two remain empty until curated mappings land."
+  ],
+  "last_verified": "2026-04-23"
+}

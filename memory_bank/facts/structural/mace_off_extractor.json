@@ -1,6 +1,6 @@
 {
   "id": "mace_off_extractor",
-  "claim": "MaceOffExtractor subclasses BatchedFeatureExtractor to aggregate BDE-derived effective k_cat estimates from the existing cell_sim.layer1_atomic.engine.MACEBackend across an enzyme's substrate set. For each (enzyme, substrate) pair in the input DataFrame, the wrapper calls MACEBackend.estimate_kcat and aggregates per locus_tag into 7 summary features: mean / std / min / max k_cat, substrate count, mean confidence, and has_estimate. Heavy deps (mace-torch, torch, rdkit, ase, e3nn) load lazily through MACEBackend._ensure_loaded. The cache parquet is not populated by this session; the Colab notebook runs the wrapper on GPU and writes cell_sim/features/cache/mace_off_kcat.parquet.",
+  "claim": "MaceOffExtractor subclasses BatchedFeatureExtractor to aggregate BDE-derived effective k_cat estimates from the existing cell_sim.layer1_atomic.engine.MACEBackend across an enzyme's substrate set. Cache parquet in commit ebbfdff is REGISTERED BUT EMPTY (455 rows, mace_has_estimate=0.0 for every row, all other 6 columns NaN) because Syn3A's SBML encodes metabolites as BiGG-style species IDs (M_atp_c, M_h2o_c, ...) not SMILES, and MACE-OFF needs real SMILES to compute BDEs. Notebook cell 7 now carries a HAVE_CURATED_SMILES_MAP=False guard that skips the backend entirely rather than pass species IDs as SMILES (which would produce thousands of RDKit parse errors and a 155-row-mostly-NaN parquet). The empty parquet is deliberately tracked by the manifest so Session 15 can swap in a curated species->SMILES map (KEGG / ChEBI) without touching the FeatureRegistry contract.",
   "value": {
     "module_path": "cell_sim/features/extractors/mace_off_extractor.py",
     "class_name": "MaceOffExtractor",
@@ -17,8 +17,15 @@
       "mace_has_estimate"
     ],
     "cache_parquet_path": "cell_sim/features/cache/mace_off_kcat.parquet",
-    "expected_parquet_size_approx_kb": 500,
-    "populated_yet": false,
+    "cache_parquet_size_bytes": 8248,
+    "populated_yet": true,
+    "populated_at": "2026-04-23T20:56:05Z",
+    "populated_commit": "ebbfdff",
+    "cache_rows": 455,
+    "cache_has_estimate_sum": 0,
+    "cache_nan_cells": 2730,
+    "cache_sha256": "9db2b8f96cc772f45fd75ff6eccc26b55bca258b502749a9b7fcb68024b36375",
+    "cache_content_status": "empty by design: no curated SBML species -> SMILES map yet; every row has mace_has_estimate=0.0 and all 6 numeric columns NaN",
     "tests_path": "cell_sim/tests/test_mace_off_extractor.py",
     "test_count": 5,
     "wraps": "cell_sim.layer1_atomic.engine.MACEBackend"
@@ -32,11 +39,11 @@
   },
   "confidence": "measured",
   "caveats": [
-    "The parquet is empty until the Colab notebook runs.",
-    "Per-substrate detail is aggregated into per-enzyme summary stats so the output satisfies the FeatureRegistry locus_tag index contract. A follow-up session can publish a separate sidecar source (e.g. 'mace_off_per_substrate') if the joint detector stack needs it.",
-    "The Syn3A SBML does not carry SMILES strings; the notebook's bootstrap passes species IDs as placeholders and relies on MACEBackend.estimate_kcat to return the 'mace_bde_failed' source for un-parseable strings. Rows with no usable BDE are skipped in aggregation — mace_has_estimate ends up 0.0 for those genes. A future session can plug in a curated species-to-SMILES map from KEGG or ChEBI and cite it properly.",
-    "No MCC measurement is claimed by this fact.",
-    "mace-off23_small downloads ~100 MB of weights on first call (inside MACEBackend._ensure_loaded). This happens on the Colab GPU, not in the sandbox."
+    "Cache parquet populated in commit ebbfdff but CONTENT IS EMPTY: 455 rows of NaN + mace_has_estimate=0.0 for every CDS. Reason documented in the claim: Syn3A's SBML uses BiGG species IDs (M_atp_c, ...) not SMILES, and MACE-OFF needs real SMILES.",
+    "Notebook cell 7 currently has HAVE_CURATED_SMILES_MAP=False which skips the backend entirely. When Session 15 provides a curated species->SMILES map (KEGG or ChEBI), flipping the flag to True reinvokes MaceOffExtractor.extract and populates the parquet with real BDE-derived k_cat aggregates.",
+    "Per-substrate detail is aggregated into per-enzyme summary stats so the output satisfies the FeatureRegistry locus_tag index contract. A future session can publish a separate sidecar source (e.g. 'mace_off_per_substrate') if the joint detector stack needs it.",
+    "mace-off23_small weights (~100 MB) are NOT in the repo; they download inside MACEBackend._ensure_loaded on the Colab GPU when the curated SMILES map is available.",
+    "No MCC measurement is claimed by this fact."
   ],
   "dependencies": ["feature_cache_infrastructure"],
   "last_verified": "2026-04-23",

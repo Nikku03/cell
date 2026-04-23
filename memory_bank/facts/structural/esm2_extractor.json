@@ -1,6 +1,6 @@
 {
   "id": "esm2_extractor",
-  "claim": "ESM2Extractor subclasses BatchedFeatureExtractor to compute mean-pooled 1280-dimensional per-protein embeddings from the pretrained facebook/esm2_t33_650M_UR50D weights. Heavy deps (torch, transformers) are imported inside _ensure_loaded — module-top imports are clean. Output contract is a DataFrame indexed by locus_tag with 1280 esm2_650M_dim_{i} float columns. The cache parquet is not populated by this session; the Colab notebook notebooks/populate_tier1_cache.ipynb runs the extractor on GPU and writes cell_sim/features/cache/esm2_650M.parquet.",
+  "claim": "ESM2Extractor subclasses BatchedFeatureExtractor to compute mean-pooled 1280-dimensional per-protein embeddings from the pretrained facebook/esm2_t33_650M_UR50D weights. Heavy deps (torch, transformers) are imported inside _ensure_loaded — module-top imports are clean. Output contract is a DataFrame indexed by locus_tag with 1280 esm2_650M_dim_{i} float columns. Cache parquet populated via notebooks/populate_tier1_cache.ipynb on a Colab A100-class GPU in commit ebbfdff: 455 Syn3A CDS × 1280 dims, zero NaN cells, sha256=0d572640598534198f56d7fdb05f3e3b47aa7ea72c4f8577d9872a0066d16175.",
   "value": {
     "module_path": "cell_sim/features/extractors/esm2_extractor.py",
     "class_name": "ESM2Extractor",
@@ -10,8 +10,14 @@
     "feature_cols_first": "esm2_650M_dim_0",
     "feature_cols_last": "esm2_650M_dim_1279",
     "cache_parquet_path": "cell_sim/features/cache/esm2_650M.parquet",
-    "expected_parquet_size_approx_mb": 2.3,
-    "populated_yet": false,
+    "cache_parquet_size_bytes": 3887431,
+    "populated_yet": true,
+    "populated_at": "2026-04-23T20:56:05Z",
+    "populated_commit": "ebbfdff",
+    "cache_rows": 455,
+    "cache_nan_cells": 0,
+    "cache_sha256": "0d572640598534198f56d7fdb05f3e3b47aa7ea72c4f8577d9872a0066d16175",
+    "cache_content_status": "fully populated; every Syn3A CDS has a real 1280-dim ESM-2 embedding",
     "tests_path": "cell_sim/tests/test_esm2_extractor.py",
     "test_count": 6
   },
@@ -24,9 +30,9 @@
   },
   "confidence": "measured",
   "caveats": [
-    "The cache parquet is empty until the Colab notebook is run. Callers that join with this source before population get an NaN block (FeatureRegistry.join_features contract).",
-    "The module is pure plumbing; no MCC measurement is claimed here. A follow-up fact (facts/measured/mcc_with_tier1_features.json) will document any classifier built on top of the cached embeddings.",
-    "ESM-2 context window is 1024 tokens. The longest known Syn3A CDS is ~900 aa, so truncation should not fire in practice; it is handled with a warning path in the extractor if it does.",
+    "Populated in commit ebbfdff after a Colab A100 run (~18 s of inference for all 455 CDS). SHA-verifiable against the manifest.",
+    "No MCC measurement is claimed here. A follow-up measured fact (facts/measured/mcc_with_tier1_features.json) will document any classifier built on top of these embeddings.",
+    "ESM-2 context window is 1024 tokens. The longest Syn3A CDS is ~900 aa, so truncation did not fire in this run; the extractor carries a warning path if it does on other genomes.",
     "The extractor's write_cache() uses the default path cell_sim/features/cache/ unless the caller passes cache_dir. Users who put parquets elsewhere must register them via FeatureRegistry with the correct parquet_path."
   ],
   "dependencies": ["feature_cache_infrastructure"],
