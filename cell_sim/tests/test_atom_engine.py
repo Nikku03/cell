@@ -976,3 +976,78 @@ def test_pdb_importer_loads_nucleobases():
     ura = load_residue("URA")
     assert len(thy.atoms) - len(ura.atoms) == 3, \
         f"THY should have 3 more atoms than URA (CH3 - H), got {len(thy.atoms) - len(ura.atoms)}"
+
+
+def test_settle_preserves_bond_lengths_exactly():
+    """SETTLE must hold O-H and H-H distances to machine precision
+    regardless of the Verlet step's unconstrained advance."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    from cell_sim.atom_engine.integrator import (
+        SimState, build_shake_constraints, build_settle_waters,
+        _apply_settle,
+    )
+    s = load_residue("HOH")
+    state = SimState(atoms=list(s.atoms), bonds=list(s.bonds),
+                     angles=list(s.angles))
+    state.shake_pairs, state.shake_r0_sq = build_shake_constraints(
+        state.atoms, state.bonds,
+    )
+    n = build_settle_waters(state)
+    assert n == 1
+    # Apply a large unconstrained displacement — SETTLE must still
+    # restore rigid geometry.
+    pos = np.array([a.position for a in state.atoms], dtype=np.float64)
+    vel = np.zeros_like(pos)
+    masses = np.array([a.mass_da for a in state.atoms], dtype=np.float64)
+    # Random kick on one H atom
+    pos[1, 0] += 0.02     # 20 pm displacement
+    pos[1, 1] += 0.01
+    _apply_settle(pos, pos.copy(), vel, masses,
+                   state._settle_water_idx,
+                   state._settle_water_r_oh,
+                   state._settle_water_r_hh,
+                   dt=0.002, box_l=None)
+    r_OH1 = np.linalg.norm(pos[1] - pos[0])
+    r_OH2 = np.linalg.norm(pos[2] - pos[0])
+    r_HH = np.linalg.norm(pos[1] - pos[2])
+    assert abs(r_OH1 - 0.096) < 1e-8, f"|OH1| drift: {r_OH1}"
+    assert abs(r_OH2 - 0.096) < 1e-8, f"|OH2| drift: {r_OH2}"
+    assert abs(r_HH - 0.1518124) < 1e-6, f"|HH| drift: {r_HH}"
+
+
+def test_settle_preserves_com_position_and_momentum():
+    """SETTLE must preserve the center-of-mass position of the rigid
+    water (it only rotates) and preserve linear momentum."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    from cell_sim.atom_engine.integrator import (
+        SimState, build_shake_constraints, build_settle_waters,
+        _apply_settle,
+    )
+    s = load_residue("HOH")
+    state = SimState(atoms=list(s.atoms), bonds=list(s.bonds),
+                     angles=list(s.angles))
+    state.shake_pairs, state.shake_r0_sq = build_shake_constraints(
+        state.atoms, state.bonds,
+    )
+    build_settle_waters(state)
+    pos = np.array([a.position for a in state.atoms], dtype=np.float64)
+    vel = np.array([[1.0, 0.5, -0.2]] * 3, dtype=np.float64)   # uniform drift
+    masses = np.array([a.mass_da for a in state.atoms], dtype=np.float64)
+    M = masses.sum()
+    com_before = (masses[:, None] * pos).sum(axis=0) / M
+    p_before = (masses[:, None] * vel).sum(axis=0)
+    # Advance
+    prev = pos.copy()
+    pos = pos + 0.002 * vel
+    _apply_settle(pos, prev, vel, masses,
+                   state._settle_water_idx,
+                   state._settle_water_r_oh,
+                   state._settle_water_r_hh,
+                   dt=0.002, box_l=None)
+    com_after = (masses[:, None] * pos).sum(axis=0) / M
+    p_after = (masses[:, None] * vel).sum(axis=0)
+    # COM should have advanced by 0.002 * (uniform v)
+    expected_com = com_before + 0.002 * np.array([1.0, 0.5, -0.2])
+    assert np.allclose(com_after, expected_com, atol=1e-8)
+    # Linear momentum preserved
+    assert np.allclose(p_before, p_after, atol=1e-8)

@@ -123,6 +123,12 @@ class SimState:
     # by ``compile_bond_cache`` and invalidated when the atom/bond graph
     # mutates (bond break/form events).
     _bond_cache: Optional[object] = None
+    # SETTLE rigid-water arrays. Populated by ``build_settle_waters``.
+    # When present, each water triple (O, H1, H2) is handled by the
+    # analytical SETTLE kernel instead of iterative SHAKE.
+    _settle_water_idx: Optional[np.ndarray] = None   # (N_w, 3) int64
+    _settle_water_r_oh: Optional[np.ndarray] = None  # (N_w,) float64
+    _settle_water_r_hh: Optional[np.ndarray] = None  # (N_w,) float64
 
 
 # ---------- array views onto atom state -------------------------------
@@ -274,7 +280,9 @@ def compile_bond_cache(state: "SimState") -> BondCache:
         di.append(i); dj.append(j); dk.append(k); dl.append(l)
         dn.append(d.n); dp0.append(d.phi_0_rad); dkp.append(d.k_phi_kj_per_mol)
 
-    # Pair exclusion codes: 1-2 from bonds + 1-3 from angle endpoints.
+    # Pair exclusion codes: 1-2 from bonds + 1-3 from angle endpoints
+    # + H-H from every SETTLE water (the H-O-H angle was removed but
+    # the H pair must still be excluded from LJ / Coulomb).
     pair_codes_set = set()
     for i, j in zip(bi, bj):
         a, b = (i, j) if i < j else (j, i)
@@ -284,6 +292,12 @@ def compile_bond_cache(state: "SimState") -> BondCache:
             continue
         a, b = (i, k) if i < k else (k, i)
         pair_codes_set.add(a * n + b)
+    if state._settle_water_idx is not None:
+        for w in range(state._settle_water_idx.shape[0]):
+            h1 = int(state._settle_water_idx[w, 1])
+            h2 = int(state._settle_water_idx[w, 2])
+            a, b = (h1, h2) if h1 < h2 else (h2, h1)
+            pair_codes_set.add(a * n + b)
     pair_codes_sorted = np.array(sorted(pair_codes_set), dtype=np.int64)
 
     cache = BondCache(
@@ -666,6 +680,268 @@ def _maybe_form_bonds(
     return formed
 
 
+# ---------- SETTLE: analytical rigid-body water ------------------------
+
+
+def build_settle_waters(state: "SimState") -> int:
+    """Scan the bond + angle graph for water triples (O bonded to two
+    H's with an H-O-H angle) and populate ``state._settle_waters`` with
+    index triples + equilibrium distances. Also REMOVES the matching
+    O-H bonds from SHAKE (they are now handled by SETTLE) and drops
+    the H-O-H angle harmonic term.
+
+    Returns the number of rigid waters registered.
+    """
+    atoms = state.atoms
+    bonds = state.bonds
+    angles = state.angles or []
+
+    id_to_idx = {id(a): i for i, a in enumerate(atoms)}
+    # O-H bonds by vertex O -> list[(H_idx, r_OH)]
+    oh_bonds: dict[int, list[tuple[int, float]]] = {}
+    bond_handle_by_key: dict[tuple[int, int], object] = {}
+    for b in bonds:
+        if b.death_time_ps is not None:
+            continue
+        i = id_to_idx.get(id(b.a))
+        j = id_to_idx.get(id(b.b))
+        if i is None or j is None:
+            continue
+        # Normalise to O-H orientation.
+        ea = atoms[i].element.name
+        eb = atoms[j].element.name
+        if ea == "O" and eb == "H":
+            o_idx, h_idx = i, j
+        elif eb == "O" and ea == "H":
+            o_idx, h_idx = j, i
+        else:
+            continue
+        oh_bonds.setdefault(o_idx, []).append(
+            (h_idx, float(b.equilibrium_length_nm))
+        )
+        key = (min(o_idx, h_idx), max(o_idx, h_idx))
+        bond_handle_by_key[key] = b
+
+    # Find waters: O with exactly 2 H bonds and the H-O-H angle.
+    water_records = []
+    consumed_bond_keys: set[tuple[int, int]] = set()
+    consumed_angle_ids: set[int] = set()
+    for o_idx, hs in oh_bonds.items():
+        if len(hs) != 2:
+            continue
+        h1_idx, r_oh1 = hs[0]
+        h2_idx, r_oh2 = hs[1]
+        # Require O has no other heavy neighbours (pure water, not Ser/Thr etc.).
+        non_h_neighbours = 0
+        for b in bonds:
+            if b.death_time_ps is not None:
+                continue
+            i = id_to_idx.get(id(b.a))
+            j = id_to_idx.get(id(b.b))
+            if i is None or j is None:
+                continue
+            if i == o_idx or j == o_idx:
+                other = j if i == o_idx else i
+                if atoms[other].element.name != "H":
+                    non_h_neighbours += 1
+        if non_h_neighbours != 0:
+            continue
+        # Find the H-O-H angle to extract theta_0 (and mark for removal).
+        theta0 = None
+        for ang in angles:
+            ii = id_to_idx.get(id(ang.i))
+            jj = id_to_idx.get(id(ang.j))
+            kk = id_to_idx.get(id(ang.k))
+            if jj != o_idx:
+                continue
+            if {ii, kk} == {h1_idx, h2_idx}:
+                theta0 = ang.theta_0_rad
+                consumed_angle_ids.add(id(ang))
+                break
+        if theta0 is None:
+            theta0 = math.radians(104.5)       # standard HOH fallback
+        r_HH = math.sqrt(r_oh1 ** 2 + r_oh2 ** 2
+                         - 2.0 * r_oh1 * r_oh2 * math.cos(theta0))
+        # Use the average O-H for the rigid reference — real water
+        # templates should be symmetric anyway.
+        r_OH = 0.5 * (r_oh1 + r_oh2)
+        water_records.append((o_idx, h1_idx, h2_idx, r_OH, r_HH))
+        consumed_bond_keys.add((min(o_idx, h1_idx), max(o_idx, h1_idx)))
+        consumed_bond_keys.add((min(o_idx, h2_idx), max(o_idx, h2_idx)))
+
+    if not water_records:
+        state._settle_water_idx = None
+        state._settle_water_r_oh = None
+        state._settle_water_r_hh = None
+        return 0
+
+    n_waters = len(water_records)
+    idx = np.empty((n_waters, 3), dtype=np.int64)
+    r_oh = np.empty(n_waters, dtype=np.float64)
+    r_hh = np.empty(n_waters, dtype=np.float64)
+    for i, (o, h1, h2, ro, rh) in enumerate(water_records):
+        idx[i, 0] = o
+        idx[i, 1] = h1
+        idx[i, 2] = h2
+        r_oh[i] = ro
+        r_hh[i] = rh
+    state._settle_water_idx = idx
+    state._settle_water_r_oh = r_oh
+    state._settle_water_r_hh = r_hh
+
+    # Remove consumed O-H pairs from SHAKE.
+    if state.shake_pairs is not None and state.shake_pairs.size:
+        keep_mask = np.ones(state.shake_pairs.shape[0], dtype=bool)
+        for p in range(state.shake_pairs.shape[0]):
+            i, j = int(state.shake_pairs[p, 0]), int(state.shake_pairs[p, 1])
+            key = (min(i, j), max(i, j))
+            if key in consumed_bond_keys:
+                keep_mask[p] = False
+        state.shake_pairs = state.shake_pairs[keep_mask]
+        state.shake_r0_sq = state.shake_r0_sq[keep_mask]
+
+    # Zero harmonic spring constants on SETTLE-managed O-H bonds — SETTLE
+    # now enforces the bond length analytically, so the harmonic term is
+    # both redundant and actively harmful (it pulls atoms AWAY from the
+    # SETTLE-projected r_OH if the minimiser left them at a different
+    # equilibrium due to competing non-bonded forces). Bonds stay in
+    # state.bonds for LJ/Coulomb exclusion bookkeeping.
+    for b in bonds:
+        if b.death_time_ps is not None:
+            continue
+        i = id_to_idx.get(id(b.a))
+        j = id_to_idx.get(id(b.b))
+        if i is None or j is None:
+            continue
+        key = (min(i, j), max(i, j))
+        if key in consumed_bond_keys:
+            b.spring_constant_kj_per_nm2 = 0.0
+
+    # Remove consumed angles from state.angles.
+    if angles:
+        state.angles = [a for a in angles if id(a) not in consumed_angle_ids]
+
+    # Invalidate bond cache so rebuilt state reflects angle removal.
+    state._bond_cache = None
+
+    return n_waters
+
+
+def _apply_settle(
+    pos: np.ndarray,
+    prev_pos: np.ndarray,
+    vel: np.ndarray,
+    masses: np.ndarray,
+    settle_idx: np.ndarray,         # (N_w, 3): (O, H1, H2) per water
+    r_oh: np.ndarray,               # (N_w,)
+    r_hh: np.ndarray,               # (N_w,)
+    dt: float,
+    box_l: Optional[float] = None,
+) -> None:
+    """Analytical SETTLE: rotate each rigid water so its atom positions
+    best match the unconstrained advance while preserving rigid shape
+    and COM momentum. Velocities are then projected onto the rigid-body
+    motion subspace (linear COM velocity + angular velocity) so they
+    cannot push the triangle off the constraint manifold.
+
+    Modifies ``pos`` and ``vel`` in place.
+    """
+    n_w = settle_idx.shape[0]
+    if n_w == 0:
+        return
+
+    # For each water, perform Kabsch-style rotation.
+    # Canonical rigid triangle (in its own COM frame):
+    #   O at (0, 0, 0) pre-COM-shift
+    #   H1 at (d_HH/2, -y, 0), H2 at (-d_HH/2, -y, 0)
+    #   where y = sqrt(d_OH^2 - (d_HH/2)^2)
+    # (place O above the H-H baseline so OH points up in the frame).
+    # NB: we don't bother minimum-imaging within a water — atoms bonded
+    # in the same molecule are always within 1 nm of each other, so
+    # PBC wrap isn't an issue at typical box sizes (>= 2 nm).
+
+    for w in range(n_w):
+        iO = int(settle_idx[w, 0])
+        iH1 = int(settle_idx[w, 1])
+        iH2 = int(settle_idx[w, 2])
+        mO = masses[iO]
+        mH = masses[iH1]
+        mTotal = mO + 2.0 * mH
+
+        # Canonical reference positions (rigid geometry).
+        d_OH = r_oh[w]
+        d_HH = r_hh[w]
+        y = math.sqrt(max(d_OH ** 2 - 0.25 * d_HH ** 2, 0.0))
+        a_ref = np.array([0.0, 0.0, 0.0])
+        b_ref = np.array([0.5 * d_HH, -y, 0.0])
+        c_ref = np.array([-0.5 * d_HH, -y, 0.0])
+        com_ref = (mO * a_ref + mH * (b_ref + c_ref)) / mTotal
+        a_ref -= com_ref
+        b_ref -= com_ref
+        c_ref -= com_ref
+
+        # Unconstrained positions (from Verlet advance).
+        ra = pos[iO]
+        rb = pos[iH1]
+        rc = pos[iH2]
+        com_new = (mO * ra + mH * (rb + rc)) / mTotal
+        a_unc = ra - com_new
+        b_unc = rb - com_new
+        c_unc = rc - com_new
+
+        # Mass-weighted cross-covariance H = sum_i m_i * ref_i * unc_i^T
+        H = (mO * np.outer(a_ref, a_unc)
+             + mH * np.outer(b_ref, b_unc)
+             + mH * np.outer(c_ref, c_unc))
+        U, S, Vt = np.linalg.svd(H)
+        # Sign correction to avoid reflection.
+        d = np.sign(np.linalg.det(Vt.T @ U.T))
+        D = np.eye(3)
+        D[2, 2] = d
+        R = Vt.T @ D @ U.T
+
+        # Rigid triangle placed at new COM.
+        a_new = R @ a_ref
+        b_new = R @ b_ref
+        c_new = R @ c_ref
+        pos[iO] = com_new + a_new
+        pos[iH1] = com_new + b_new
+        pos[iH2] = com_new + c_new
+
+        # Velocity projection: v_i = v_com + omega x (r_i - r_com).
+        # Compute v_com and omega from current (unconstrained) velocities
+        # plus the rigid-body inertia tensor.
+        v_com = (mO * vel[iO] + mH * (vel[iH1] + vel[iH2])) / mTotal
+        # Position vectors from the constrained (rigid) COM.
+        dOv = pos[iO] - com_new
+        dH1v = pos[iH1] - com_new
+        dH2v = pos[iH2] - com_new
+        # Relative velocities (from COM).
+        u_O = vel[iO] - v_com
+        u_H1 = vel[iH1] - v_com
+        u_H2 = vel[iH2] - v_com
+        # Total angular momentum (in the COM frame).
+        L = (mO * np.cross(dOv, u_O)
+             + mH * np.cross(dH1v, u_H1)
+             + mH * np.cross(dH2v, u_H2))
+        # Inertia tensor: I = sum m_i (|r_i|^2 * I3 - r_i r_i^T)
+        def _inertia_add(r, m):
+            r2 = r @ r
+            return m * (r2 * np.eye(3) - np.outer(r, r))
+        I = (_inertia_add(dOv, mO)
+             + _inertia_add(dH1v, mH)
+             + _inertia_add(dH2v, mH))
+        try:
+            omega = np.linalg.solve(I, L)
+        except np.linalg.LinAlgError:
+            # Degenerate (collinear atoms): fall back to pseudo-inverse.
+            omega = np.linalg.pinv(I) @ L
+        # Project velocities onto rigid-body motion.
+        vel[iO] = v_com + np.cross(omega, dOv)
+        vel[iH1] = v_com + np.cross(omega, dH1v)
+        vel[iH2] = v_com + np.cross(omega, dH2v)
+
+
 # ---------- Steepest-descent energy minimisation ----------------------
 
 
@@ -896,21 +1172,32 @@ def _step_respa(
     pbc_on = bool(ff_cfg.use_pbc)
     box_l = float(ff_cfg.pbc_box_nm) if pbc_on else None
 
+    settle_on = (state._settle_water_idx is not None
+                 and state._settle_water_idx.size > 0)
+
     # 2. n_inner velocity-Verlet sub-steps with F_fast.
     for _k in range(n_in):
         vel += 0.5 * dt_in * F_fast / masses
-        prev_pos = pos.copy() if shake_on else None
+        prev_pos_in = pos.copy() if (shake_on or settle_on) else None
         pos = pos + dt_in * vel
         if shake_on:
             pos_before_shake = pos.copy()
             _apply_shake(
-                pos, prev_pos, masses[:, 0],
+                pos, prev_pos_in, masses[:, 0],
                 state.shake_pairs, state.shake_r0_sq,
                 box_l=box_l,
                 tol_nm=int_cfg.shake_tolerance_nm,
                 max_iter=int_cfg.shake_max_iter,
             )
             vel += (pos - pos_before_shake) / dt_in
+        if settle_on:
+            _apply_settle(
+                pos, prev_pos_in, vel, masses[:, 0],
+                state._settle_water_idx,
+                state._settle_water_r_oh,
+                state._settle_water_r_hh,
+                dt_in, box_l=box_l,
+            )
         if pbc_on:
             wrap_positions(pos, box_l)
         F_fast = compute_forces(
@@ -1050,6 +1337,22 @@ def step(
         )
         # Correct the velocity to match the constrained position.
         vel += (pos - pos_before_shake) / dt
+
+    # SETTLE: analytical rigid-body water. Runs AFTER SHAKE so any O-H
+    # bonds that survived (non-water Ser, Thr, etc.) are already fixed.
+    # SETTLE rotates the water triangle to best fit the unconstrained
+    # step while preserving rigid shape + COM, then projects velocities
+    # onto rigid-body motion so no energy is injected.
+    if state._settle_water_idx is not None and state._settle_water_idx.size:
+        _apply_settle(
+            pos, prev_pos if prev_pos is not None else pos, vel,
+            masses[:, 0],
+            state._settle_water_idx,
+            state._settle_water_r_oh,
+            state._settle_water_r_hh,
+            dt,
+            box_l=(float(ff_cfg.pbc_box_nm) if ff_cfg.use_pbc else None),
+        )
 
     # Under PBC, wrap positions back into [-L/2, L/2] after each
     # displacement step so minimum-image distance math is valid.
