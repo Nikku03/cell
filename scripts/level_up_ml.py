@@ -36,6 +36,7 @@ from cell_sim.atom_engine.ml_model import (
     evaluate,
     train_atom_gnn,
     train_force_surrogate,
+    train_force_surrogate_equivariant,
     train_reaction_classifier,
 )
 from cell_sim.atom_engine.neural_force_field import NeuralForceField
@@ -197,15 +198,15 @@ def main() -> int:
     _rxn, rxn_hist = train_reaction_classifier(
         train, val, rxn_cfg, progress=lambda m: print(f"[rxn] {m}"))
 
-    # === Move 3: FORCE SURROGATE, FIXED ===
-    print("\n=== Move 3: force surrogate (normalised) ===")
+    # === Move 3: EQUIVARIANT FORCE SURROGATE ===
+    print("\n=== Move 3: equivariant force surrogate ===")
     train_pairs = [(s, s.forces_gt) for s in train if s.forces_gt is not None]
     val_pairs = [(s, s.forces_gt) for s in val if s.forces_gt is not None]
     print(f"  pairs: train={len(train_pairs)} val={len(val_pairs)}")
     force_cfg = TrainConfig(epochs=args.force_epochs, hidden=args.hidden,
                             seed=args.seed, lr=1e-3)
-    force_model, force_hist = train_force_surrogate(
-        train_pairs, val_pairs, force_cfg,
+    force_model, force_hist = train_force_surrogate_equivariant(
+        train_pairs, val_pairs, force_cfg, force_clip=100.0,
         progress=lambda m: print(f"[ff] {m}"))
 
     # === Move 4 (kept from earlier) ===

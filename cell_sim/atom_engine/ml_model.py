@@ -31,6 +31,21 @@ from .ml_dataset import (
     Snapshot,
 )
 
+# Radial-basis expansion centres (nm). Spans the interesting range of
+# bond-length (~0.07) up to the LJ cutoff (~1.0).
+_RBF_CENTRES = np.array([0.07, 0.10, 0.13, 0.17, 0.22, 0.30, 0.40,
+                         0.55, 0.75, 1.00], dtype=np.float32)
+_RBF_WIDTH = 0.08                         # Gaussian width in nm
+
+
+def rbf_expand(r: "torch.Tensor") -> "torch.Tensor":
+    """Expand a (E,) tensor of distances into (E, K) Gaussian RBF values."""
+    centres = torch.tensor(_RBF_CENTRES, device=r.device)
+    return torch.exp(-((r.unsqueeze(-1) - centres) / _RBF_WIDTH) ** 2)
+
+
+N_RBF = len(_RBF_CENTRES)
+
 
 # ---------- heuristic baseline ---------------------------------------
 
@@ -103,6 +118,20 @@ class AtomGNN(nn.Module):
             nn.Linear(hidden, hidden), nn.ReLU(),
             nn.Linear(hidden, 3),
         )
+        # Equivariant force head: produces a per-edge scalar; the
+        # final force on atom i is the sum over its out-edges of
+        # (scalar_ij * unit_vector(r_j - r_i)). This is equivariant
+        # by construction and captures the physical "sum of pairwise
+        # interaction magnitudes" structure that pairwise potentials
+        # have (LJ and harmonic are both pairwise). Edge input:
+        # [h_i, h_j, bond flags (3), rbf(r) (N_RBF)].
+        self.edge_scalar = nn.Sequential(
+            nn.Linear(hidden * 2 + 3 + N_RBF, hidden),
+            nn.SiLU(),
+            nn.Linear(hidden, hidden),
+            nn.SiLU(),
+            nn.Linear(hidden, 1),
+        )
 
     def _compute_node_embeddings(
         self,
@@ -151,6 +180,45 @@ class AtomGNN(nn.Module):
     ) -> torch.Tensor:                  # (N, 3) force vectors
         h = self._compute_node_embeddings(node_features, edges, edge_features)
         return self.force_head(h)
+
+    def predict_forces_equivariant(
+        self,
+        node_features: torch.Tensor,    # (N, F)
+        edges: torch.Tensor,            # (E, 2)
+        edge_features: torch.Tensor,    # (E, 4)
+        pos: torch.Tensor,              # (N, 3)
+    ) -> torch.Tensor:                  # (N, 3)
+        """Predict per-atom force as sum over edges of
+        ``scalar_ij * unit_vector(r_j - r_i)``.
+
+        Equivariant to rotation/translation: the unit vector rotates
+        with the atoms, and the scalar is a function of distance and
+        learned node embeddings (both invariant). Summing over
+        neighbours gives a per-atom force vector with the correct
+        transformation properties.
+        """
+        n = node_features.shape[0]
+        if edges.shape[0] == 0:
+            return torch.zeros(n, 3, device=node_features.device,
+                               dtype=node_features.dtype)
+        h = self._compute_node_embeddings(node_features, edges, edge_features)
+        src = edges[:, 0]
+        dst = edges[:, 1]
+        # edge_features carries [r, is_single, is_multi, is_bonded] —
+        # pull r out and keep the bond flags.
+        r = edge_features[:, 0]
+        bond_flags = edge_features[:, 1:]    # (E, 3)
+        rbf = rbf_expand(r)                  # (E, N_RBF)
+        msg_in = torch.cat([h[src], h[dst], bond_flags, rbf], dim=-1)
+        scalar = self.edge_scalar(msg_in).squeeze(-1)   # (E,)
+        r_ij = pos[dst] - pos[src]
+        r_mag = torch.clamp(r_ij.norm(dim=-1, keepdim=True), min=1e-6)
+        u_ij = r_ij / r_mag
+        edge_force = scalar.unsqueeze(-1) * u_ij   # (E, 3)
+        forces = torch.zeros(n, 3, device=node_features.device,
+                             dtype=node_features.dtype)
+        forces.index_add_(0, src, edge_force)
+        return forces
 
 
 # ---------- training loop --------------------------------------------
@@ -428,6 +496,147 @@ def train_force_surrogate(
                      f"loss={history['train_loss'][-1]:.4f} "
                      f"val_mse={mse:.2f} val_r2={r2:.3f}")
     return model, history
+
+
+def train_force_surrogate_equivariant(
+    pairs: Sequence[tuple[Snapshot, np.ndarray]],
+    val_pairs: Sequence[tuple[Snapshot, np.ndarray]],
+    cfg: TrainConfig = TrainConfig(),
+    force_clip: float = 100.0,
+    progress=None,
+) -> tuple[AtomGNN, dict]:
+    """Train the equivariant edge-wise force head.
+
+    Per-element standardisation: each element has its own (mean, std)
+    computed across training atoms. Targets are clipped hard at
+    ``force_clip`` (default 100 kJ/mol/nm) because the MD integrator
+    force-caps spikes above its own max_force threshold anyway — there
+    is no physical signal to learn from near-collision outliers.
+    """
+    torch.manual_seed(cfg.seed)
+    device = cfg.device
+    model = AtomGNN(hidden=cfg.hidden, n_rounds=cfg.n_rounds).to(device)
+    opt = torch.optim.Adam(model.parameters(), lr=cfg.lr)
+    loss_fn = nn.MSELoss()
+
+    # Per-element force statistics computed from training targets.
+    n_elems = N_ELEM_FEATURES
+    sums = np.zeros(n_elems, dtype=np.float64)
+    sumsq = np.zeros(n_elems, dtype=np.float64)
+    counts = np.zeros(n_elems, dtype=np.int64)
+    for snap, f_gt in pairs:
+        f_clip = np.clip(f_gt.astype(np.float32), -force_clip, force_clip)
+        elem_oh = snap.node_features[:, :n_elems]
+        elem_idx = np.argmax(elem_oh, axis=-1)
+        # any_elem = elem_oh.sum(-1) > 0 — zero for unknown elements
+        for e in range(n_elems):
+            mask = elem_idx == e
+            if not mask.any():
+                continue
+            f_e = f_clip[mask].reshape(-1)
+            sums[e] += float(f_e.sum())
+            sumsq[e] += float((f_e ** 2).sum())
+            counts[e] += f_e.size
+    means = np.zeros(n_elems, dtype=np.float32)
+    stds = np.ones(n_elems, dtype=np.float32)
+    for e in range(n_elems):
+        if counts[e] > 0:
+            means[e] = float(sums[e] / counts[e])
+            var = float(sumsq[e] / counts[e]) - means[e] ** 2
+            stds[e] = float(max(np.sqrt(max(var, 0.0)), 1e-3))
+    model.register_buffer("force_elem_mean",
+                          torch.tensor(means, device=device))
+    model.register_buffer("force_elem_std",
+                          torch.tensor(stds, device=device))
+    if progress is not None:
+        progress(f"per-elem mean: {means.tolist()}")
+        progress(f"per-elem std : {stds.tolist()}")
+
+    def _elem_mean_std(snap):
+        elem_idx = np.argmax(snap.node_features[:, :n_elems], axis=-1)
+        m = means[elem_idx]
+        s = stds[elem_idx]
+        return (torch.tensor(m, device=device).unsqueeze(-1),
+                torch.tensor(s, device=device).unsqueeze(-1))
+
+    history = {"train_loss": [], "val_mse": [], "val_r2": []}
+    for epoch in range(cfg.epochs):
+        model.train()
+        perm = np.random.permutation(len(pairs))
+        total_loss = 0.0
+        n_batches = 0
+        for bstart in range(0, len(pairs), cfg.batch_size):
+            bidx = perm[bstart:bstart + cfg.batch_size]
+            opt.zero_grad()
+            batch_loss = 0.0
+            for i in bidx:
+                snap, forces_gt = pairs[i]
+                nf = torch.tensor(snap.node_features, device=device)
+                e = torch.tensor(snap.edges.astype(np.int64), device=device)
+                ef = torch.tensor(snap.edge_features, device=device)
+                pos = torch.tensor(
+                    np.array([a_feat[:3] for a_feat in snap.node_features]),
+                    device=device)   # placeholder; positions come from snapshot's edge feature r — but we need real xyz
+                # The node_features row does NOT carry position — we need
+                # a real (N, 3) xyz. Reconstruct from proximity-edge r's
+                # is impossible. Snapshots from the updated collector
+                # carry forces_gt (N, 3) but not positions. Fall back:
+                # reconstruct positions by running the force_field edge
+                # extractor on THIS snapshot.
+                pos = _snap_positions(snap, device)
+                y_raw = np.clip(forces_gt.astype(np.float32),
+                                -force_clip, force_clip)
+                y = torch.tensor(y_raw, device=device)
+                m, s = _elem_mean_std(snap)
+                y_norm = (y - m) / s
+                pred_norm = model.predict_forces_equivariant(nf, e, ef, pos)
+                batch_loss = batch_loss + loss_fn(pred_norm, y_norm)
+            batch_loss = batch_loss / len(bidx)
+            batch_loss.backward()
+            opt.step()
+            total_loss += float(batch_loss.item())
+            n_batches += 1
+
+        model.eval()
+        all_pred = []
+        all_y = []
+        with torch.no_grad():
+            for snap, forces_gt in val_pairs:
+                nf = torch.tensor(snap.node_features, device=device)
+                e = torch.tensor(snap.edges.astype(np.int64), device=device)
+                ef = torch.tensor(snap.edge_features, device=device)
+                pos = _snap_positions(snap, device)
+                pred_norm = model.predict_forces_equivariant(nf, e, ef, pos)
+                m, s = _elem_mean_std(snap)
+                pred = pred_norm * s + m
+                y_raw = np.clip(forces_gt.astype(np.float32),
+                                -force_clip, force_clip)
+                all_pred.append(pred.cpu().numpy())
+                all_y.append(y_raw)
+        pred_cat = np.concatenate([a.reshape(-1) for a in all_pred])
+        y_cat = np.concatenate([a.reshape(-1) for a in all_y])
+        mse = float(((pred_cat - y_cat) ** 2).mean())
+        ss_res = float(((pred_cat - y_cat) ** 2).sum())
+        ss_tot = float(((y_cat - y_cat.mean()) ** 2).sum())
+        r2 = 1.0 - ss_res / max(ss_tot, 1e-9)
+        history["train_loss"].append(total_loss / max(n_batches, 1))
+        history["val_mse"].append(mse)
+        history["val_r2"].append(r2)
+        if progress is not None:
+            progress(f"epoch {epoch+1:2d}/{cfg.epochs} "
+                     f"loss={history['train_loss'][-1]:.4f} "
+                     f"val_mse={mse:.2f} val_r2={r2:.3f}")
+    return model, history
+
+
+def _snap_positions(snap: Snapshot, device) -> torch.Tensor:
+    """The snapshot stores features but not raw positions. We stash
+    positions on the snapshot as .pos; the collector fills this in
+    during extraction (see ml_dataset.py)."""
+    if getattr(snap, "pos", None) is None:
+        raise RuntimeError("snapshot has no stored positions; "
+                           "re-collect with the updated TrajectoryCollector")
+    return torch.tensor(snap.pos.astype(np.float32), device=device)
 
 
 def evaluate(

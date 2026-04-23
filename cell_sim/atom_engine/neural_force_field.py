@@ -15,7 +15,7 @@ import numpy as np
 import torch
 
 from .atom_unit import AtomUnit, Bond
-from .ml_dataset import extract_all_edges, extract_node_features
+from .ml_dataset import N_ELEM_FEATURES, extract_all_edges, extract_node_features
 
 
 @dataclass
@@ -32,6 +32,7 @@ class NeuralForceField:
     model: torch.nn.Module
     max_force_kj_per_nm: float = 2.0e4
     device: str = "cpu"
+    mode: str = "equivariant"   # "equivariant" or "mlp" (legacy)
 
     def __call__(
         self,
@@ -49,14 +50,32 @@ class NeuralForceField:
         nf_t = torch.tensor(nf, device=self.device)
         e_t = torch.tensor(e.astype(np.int64), device=self.device)
         ef_t = torch.tensor(ef, device=self.device)
+        pos_t = torch.tensor(pos.astype(np.float32), device=self.device)
         self.model.eval()
         with torch.no_grad():
-            pred_norm = self.model.predict_forces(nf_t, e_t, ef_t)
-            if hasattr(self.model, "force_std"):
-                pred = pred_norm * self.model.force_std + self.model.force_mean
+            if self.mode == "equivariant":
+                pred_norm = self.model.predict_forces_equivariant(
+                    nf_t, e_t, ef_t, pos_t
+                )
+                # Per-element un-normalisation.
+                if hasattr(self.model, "force_elem_mean"):
+                    elem_idx = np.argmax(
+                        nf[:, :N_ELEM_FEATURES], axis=-1
+                    )
+                    m = self.model.force_elem_mean.cpu().numpy()[elem_idx]
+                    s = self.model.force_elem_std.cpu().numpy()[elem_idx]
+                    pred = (pred_norm.cpu().numpy()
+                            * s[:, None] + m[:, None])
+                else:
+                    pred = pred_norm.cpu().numpy()
             else:
-                pred = pred_norm
-            forces = pred.cpu().numpy().astype(np.float64)
+                pred_norm = self.model.predict_forces(nf_t, e_t, ef_t)
+                if hasattr(self.model, "force_std"):
+                    pred = (pred_norm * self.model.force_std
+                            + self.model.force_mean).cpu().numpy()
+                else:
+                    pred = pred_norm.cpu().numpy()
+            forces = pred.astype(np.float64)
         # Cap per-atom magnitude.
         norms = np.linalg.norm(forces, axis=1)
         mask = norms > self.max_force_kj_per_nm

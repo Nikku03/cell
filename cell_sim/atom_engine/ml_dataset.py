@@ -198,6 +198,10 @@ class Snapshot:
     # at the time of the snapshot — used as the training target for the
     # neural surrogate force field (Move 3).
     forces_gt: Optional[np.ndarray] = None
+    # (N, 3) per-atom xyz positions at the time of the snapshot.
+    # Needed by the equivariant force head (requires atom positions to
+    # build per-edge unit vectors).
+    pos: Optional[np.ndarray] = None
     snapshot_id: int = 0
 
 
@@ -305,6 +309,8 @@ class TrajectoryCollector:
                 # Ground-truth forces for the surrogate FF target.
                 forces_gt = compute_forces(atoms, state.bonds,
                                             state.t_ps, ff_cfg)
+                pos_now = np.array([a.position for a in atoms],
+                                   dtype=np.float32)
                 snap = Snapshot(
                     node_features=node_f,
                     edges=edges,
@@ -312,6 +318,7 @@ class TrajectoryCollector:
                     labels=labels,
                     reaction_labels=rlabels,
                     forces_gt=forces_gt.astype(np.float32),
+                    pos=pos_now,
                     snapshot_id=trajectory_id * 100000 + k,
                 )
                 pending.append((snap, set(), self.horizon))
