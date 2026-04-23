@@ -139,6 +139,32 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str,
             min_confidence=cfg_dict.get("min_confidence", 0.15),
             min_pool_dev=cfg_dict.get("min_pool_dev", 0.02),
         )
+    elif detector_kind == "composed":
+        # ComplexAssemblyDetector OR'd with PerRule. Structural signal
+        # catches ribosomal / tRNA-synthetase / translation-factor
+        # essentials that the metabolic detectors cannot see; the
+        # trajectory detector handles metabolic essentials.
+        from cell_sim.layer6_essentiality.per_rule_detector import (
+            PerRuleDetector,
+        )
+        from cell_sim.layer6_essentiality.complex_assembly_detector import (
+            ComplexAssemblyDetector,
+        )
+        from cell_sim.layer6_essentiality.composed_detector import (
+            ComposedDetector,
+        )
+        assert gene_to_rules is not None, \
+            "composed detector requires gene_to_rules map for its " \
+            "trajectory sub-detector"
+        pr = PerRuleDetector(
+            wt=wt,
+            gene_to_rules=gene_to_rules,
+            min_wt_events=cfg_dict.get("min_wt_events", 20),
+        )
+        _worker_detector = ComposedDetector(
+            structural=ComplexAssemblyDetector(),
+            trajectory=pr,
+        )
     else:
         from cell_sim.layer6_essentiality.short_window_detector import (
             ShortWindowDetector,
@@ -160,7 +186,8 @@ def _worker_predict(item: tuple[str, str]) -> dict:
         sample_dt_s=_worker_cfg["dt_s"],
     )
     detector_kind = _worker_cfg.get("detector")
-    if detector_kind in ("per-rule", "ensemble", "redundancy-aware"):
+    if detector_kind in ("per-rule", "ensemble", "redundancy-aware",
+                          "composed"):
         mode, t_fail, conf, evidence = _worker_detector.detect_for_gene(lt, ko)
     else:
         mode, t_fail, conf, evidence = _worker_detector.detect(ko)
@@ -279,14 +306,18 @@ def main() -> int:
                         "(cell_sim_rust). ~2x speedup at scale=0.05.")
     p.add_argument("--detector",
                    choices=["short-window", "per-rule", "ensemble",
-                            "redundancy-aware"],
+                            "redundancy-aware", "composed"],
                    default="short-window",
                    help="short-window: pool-deviation (v0-v4). "
                         "per-rule: per-rule event counts (v5). "
                         "ensemble: compose both detectors. "
                         "redundancy-aware (v9+): like per-rule but "
                         "abstains when silenced products are still "
-                        "produced by alternate catalysis rules.")
+                        "produced by alternate catalysis rules. "
+                        "composed (v10+): OR the known-complex-subunit "
+                        "structural signal with per-rule; catches "
+                        "ribosomal / translation-machinery essentials "
+                        "that metabolic detectors cannot see.")
     p.add_argument("--min-wt-events", type=int, default=20,
                    help="PerRuleDetector: minimum WT event count per "
                         "rule before it counts as 'should be firing'.")
@@ -365,7 +396,7 @@ def main() -> int:
     gene_to_rules = None
     gene_to_rules_summary = None
     needs_gene_map = args.detector in (
-        "per-rule", "ensemble", "redundancy-aware",
+        "per-rule", "ensemble", "redundancy-aware", "composed",
     )
     if needs_gene_map:
         from cell_sim.layer6_essentiality.real_simulator import (
