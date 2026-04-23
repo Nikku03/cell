@@ -39,7 +39,10 @@ from cell_sim.atom_engine.integrator import (
     IntegratorConfig,
     SimState,
     build_shake_constraints,
+    build_settle_waters,
+    compile_bond_cache,
     current_temperature_K,
+    minimise_steepest_descent,
     step,
 )
 from cell_sim.atom_engine.pdb_importer import load_residue
@@ -73,6 +76,17 @@ def main() -> int:
     p.add_argument("--dt-ps", type=float, default=0.001)
     p.add_argument("--report-every", type=int, default=1000)
     p.add_argument("--out", type=str, default=None)
+    p.add_argument("--minimise", action="store_true", default=True,
+                    help="Run steepest-descent pre-equilibration (default on).")
+    p.add_argument("--no-minimise", dest="minimise", action="store_false")
+    p.add_argument("--rigid-water", action="store_true", default=False,
+                    help="Use SETTLE analytical rigid HOH. Only reliable at "
+                         "dt <= 0.5 fs currently (Kabsch rotation drift at "
+                         "larger dt). Off by default.")
+    p.add_argument("--reaction-field", action="store_true", default=True,
+                    help="Use reaction-field Coulomb (default on).")
+    p.add_argument("--no-reaction-field", dest="reaction_field",
+                    action="store_false")
     args = p.parse_args()
 
     # Build the system: one ALA + one SER + N waters.
@@ -94,7 +108,7 @@ def main() -> int:
     import random as _r
     rng = _r.Random(7)
     waters_placed = 0
-    spacing = 0.33
+    spacing = 0.55
     positions_so_far = [a.position for a in atoms]
     L = args.pbc_box_nm
     grid = int(L / spacing) + 1
@@ -107,15 +121,16 @@ def main() -> int:
                 z = -0.5 * L + spacing * (iz + 0.5)
                 candidates.append((x, y, z))
     rng.shuffle(candidates)
-    # Water exclusion radius needs to cover the template extent
-    # (~0.1 nm to the farthest H) plus LJ sigma (~0.3 nm) to avoid
-    # overlap at placement time. 0.4 nm is conservative.
+    # Water exclusion radius: H atoms stick out ~0.096 nm from O, and
+    # LJ sigma_O ~ 0.315 nm means O-O minimum usefully at ~0.3 nm. A
+    # 0.58 nm center-to-center keeps atoms out of each other's LJ core
+    # under the corrected HOH template.
     for (x, y, z) in candidates:
         if waters_placed >= args.n_water:
             break
         too_close = False
         for p in positions_so_far:
-            if (x - p[0]) ** 2 + (y - p[1]) ** 2 + (z - p[2]) ** 2 < 0.40 ** 2:
+            if (x - p[0]) ** 2 + (y - p[1]) ** 2 + (z - p[2]) ** 2 < 0.58 ** 2:
                 too_close = True
                 break
         if too_close:
@@ -143,11 +158,19 @@ def main() -> int:
                      dihedrals=dihedrals)
     state.shake_pairs, state.shake_r0_sq = build_shake_constraints(atoms, bonds)
 
+    # Register waters for SETTLE (analytical rigid-body) if requested.
+    # Removes the O-H pairs from SHAKE, zeros their harmonic springs,
+    # drops the HOH angle bend, and adds H-H to the 1-3 exclusion set.
+    n_rigid_water = 0
+    if args.rigid_water:
+        n_rigid_water = build_settle_waters(state)
+
     ff = ForceFieldConfig(
         lj_cutoff_nm=min(0.8, 0.4 * args.pbc_box_nm),
         use_confinement=False,
         use_neighbor_list=True,
         use_coulomb=True,
+        use_reaction_field=args.reaction_field,
         use_pbc=True,
         pbc_box_nm=args.pbc_box_nm,
     )
@@ -159,9 +182,26 @@ def main() -> int:
         shake=True,
     )
 
+    # Steepest-descent pre-equilibration so the initial T overshoot
+    # that used to blow the system up on raw PDB coordinates is gone.
+    if args.minimise:
+        print("\nminimising initial geometry ...")
+        info = minimise_steepest_descent(state, ff, max_steps=800,
+                                          force_tol_kj_per_nm=300.0,
+                                          verbose=False)
+        print(f"  minimiser: iters={info['iterations']}, "
+              f"converged={info['converged']}, "
+              f"max_F = {info['initial_max_force_kj_per_nm']:.1f} "
+              f"-> {info['final_max_force_kj_per_nm']:.1f}")
+    # Pre-build the bonded-force cache so the first step doesn't pay
+    # the build cost during the timed region.
+    compile_bond_cache(state)
+
     print(f"\nsystem: {len(atoms)} atoms, {len(bonds)} bonds, "
           f"{len(angles)} angles, {len(dihedrals)} dihedrals, "
           f"SHAKE pairs = {state.shake_pairs.shape[0]}, "
+          f"SETTLE waters = {n_rigid_water}, "
+          f"RF Coulomb = {args.reaction_field}, "
           f"PBC L = {args.pbc_box_nm:.2f} nm")
 
     traj = {

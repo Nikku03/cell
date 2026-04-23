@@ -33,8 +33,11 @@ from .force_field import ForceFieldConfig
 from .integrator import (
     IntegratorConfig,
     SimState,
+    build_settle_waters,
     build_shake_constraints,
+    compile_bond_cache,
     current_temperature_K,
+    minimise_steepest_descent,
     step,
 )
 from .molecule_builder import build_mixture
@@ -61,6 +64,20 @@ class WaterBoxConfig:
     # SHAKE bond constraints. With shake=True the caller can safely
     # raise dt_ps to 1-2 fs without blowing up stiff bonds.
     use_shake: bool = False
+    # Steepest-descent pre-equilibration before dynamics. Removes the
+    # initial potential-energy spike that would otherwise inject
+    # thousands of K on step 0. Safe default.
+    minimise: bool = True
+    # SETTLE analytical rigid-body water. Replaces iterative SHAKE on
+    # the three H-O-H constraints with a non-iterative Kabsch rotation.
+    # At dt = 0.5 fs gives machine-precision bond preservation. At
+    # larger dt, Kabsch rotation drift accumulates and the system
+    # heats up. Off by default until the symplectic quaternion
+    # integrator lands.
+    use_settle: bool = False
+    # Reaction-field Coulomb. Smoother cutoff, implicit dielectric
+    # screening — default ON for dense polar liquids.
+    use_reaction_field: bool = True
 
 
 @dataclass
@@ -220,6 +237,12 @@ def run_water_box(
         state.shake_pairs, state.shake_r0_sq = build_shake_constraints(
             atoms, bonds
         )
+    # SETTLE replaces iterative SHAKE on H-O-H triangles. Safe-default
+    # to only run when SHAKE is also on (otherwise the rigid-body path
+    # isn't consistent with the non-constrained step).
+    n_settle = 0
+    if cfg.use_settle and cfg.use_shake:
+        n_settle = build_settle_waters(state)
     result = WaterBoxResult(n_atoms=len(atoms))
 
     if cfg.use_pbc:
@@ -228,6 +251,7 @@ def run_water_box(
             use_confinement=False,
             use_neighbor_list=False,            # O(N^2) with PBC
             use_coulomb=True,
+            use_reaction_field=cfg.use_reaction_field,
             use_pbc=True, pbc_box_nm=cfg.pbc_box_nm,
         )
         # After mixture build, wrap positions into [-L/2, L/2] so
@@ -245,7 +269,22 @@ def run_water_box(
             confinement_radius_nm=cfg.radius_nm,
             use_neighbor_list=True,
             use_coulomb=True,
+            use_reaction_field=cfg.use_reaction_field,
         )
+
+    if cfg.minimise:
+        if progress:
+            progress("minimising initial geometry ...")
+        info = minimise_steepest_descent(state, ff, max_steps=800,
+                                          force_tol_kj_per_nm=300.0,
+                                          verbose=False)
+        if progress:
+            progress(f"minimise: max_F = {info['initial_max_force_kj_per_nm']:.1f}"
+                     f" -> {info['final_max_force_kj_per_nm']:.1f} "
+                     f"(converged={info['converged']})")
+    compile_bond_cache(state)
+    if progress and n_settle:
+        progress(f"SETTLE: {n_settle} rigid water(s)")
     int_cfg = IntegratorConfig(
         dt_ps=cfg.dt_ps,
         target_temperature_K=cfg.temperature_K,
