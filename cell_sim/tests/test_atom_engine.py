@@ -420,6 +420,19 @@ def test_coulomb_ion_pair_attraction():
     assert np.isclose(np.linalg.norm(delta[0]), expected, rtol=3e-2)
 
 
+def test_pdb_importer_loads_standard_residue():
+    """The PDB importer should load ALA with 13 atoms, reasonable
+    bonds, and nonzero partial charges."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    s = load_residue("ALA")
+    assert len(s.atoms) == 13
+    assert len(s.bonds) >= 10          # all heavy-atom + H bonds
+    assert len(s.angles) > 0           # auto-generated
+    # Backbone N should be charged negative.
+    n_atom = next(a for a in s.atoms if a.element.name == "N")
+    assert n_atom.partial_charge < -0.1
+
+
 def test_rust_pbc_matches_numpy_pbc():
     """Under PBC, forces from the Rust lj_forces kernel must match the
     pure-NumPy PBC fallback within numerical tolerance."""
