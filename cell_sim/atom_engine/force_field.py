@@ -18,7 +18,7 @@ from typing import Iterable, Optional, Sequence
 
 import numpy as np
 
-from .atom_unit import AtomUnit, Bond
+from .atom_unit import AngleBond, AtomUnit, Bond
 from .element import Element, props
 
 # ---------- Optional Numba acceleration -------------------------------
@@ -213,6 +213,18 @@ class ForceFieldConfig:
     # bond-forming distance; required for any dynamic-bonding demo to
     # form new cross-element bonds.
     reactive_sigma_scale: float = 1.0
+    # --- Coulomb electrostatics (Physics Upgrade 1) ---
+    # When enabled, AtomUnit.partial_charge drives pairwise Coulomb
+    # forces in addition to LJ. Uses
+    #   F_ij = k_e * q_i * q_j / r_ij^2  (along r_ij)
+    # with k_e = 138.935 kJ*nm/(mol*e^2) — the standard MD Coulomb
+    # constant so that q in units of elementary charge and r in nm
+    # yield energy in kJ/mol.
+    use_coulomb: bool = False
+    coulomb_k_kj_nm_per_e2: float = 138.935
+    # Soft cap: at very short range (r << sigma) Coulomb + LJ both
+    # blow up; cap the absolute force contribution.
+    coulomb_max_force_kj_per_nm: float = 2.0e4
     # --- safety ---
     max_force_kj_per_nm: float = 2.0e4          # per-atom force cap
 
@@ -340,6 +352,55 @@ def build_neighbor_list(pos: np.ndarray, cutoff: float) -> tuple[np.ndarray, np.
             np.asarray(pair_j, dtype=np.int64))
 
 
+def _compute_angle_forces(
+    atoms: Sequence[AtomUnit],
+    angles: Iterable[AngleBond],
+    pos: np.ndarray,
+    forces: np.ndarray,
+) -> None:
+    """Add harmonic 3-body angle forces to ``forces`` in place.
+
+    For angle (i, j, k) with j the vertex, the force on each endpoint
+    is the gradient of ``U = 0.5 k (theta - theta_0)^2`` with respect
+    to that atom's position. Derivation:
+
+        cos(theta) = (r_ji . r_jk) / (|r_ji| |r_jk|)
+        theta      = acos(cos_theta)
+        dU/dtheta  = k (theta - theta_0)
+        grad theta = -1/sin(theta) * grad cos(theta)
+
+    We use the standard bend-force expression (see e.g. GROMACS
+    manual section 4.2.2) for numerical stability.
+    """
+    id_to_idx = {id(a): i for i, a in enumerate(atoms)}
+    for ang in angles:
+        ii = id_to_idx.get(id(ang.i))
+        ij = id_to_idx.get(id(ang.j))
+        ik = id_to_idx.get(id(ang.k))
+        if ii is None or ij is None or ik is None:
+            continue
+        r_ji = pos[ii] - pos[ij]
+        r_jk = pos[ik] - pos[ij]
+        n_ji = float(np.linalg.norm(r_ji))
+        n_jk = float(np.linalg.norm(r_jk))
+        if n_ji < 1e-6 or n_jk < 1e-6:
+            continue
+        u_ji = r_ji / n_ji
+        u_jk = r_jk / n_jk
+        cos_t = float(np.clip(u_ji @ u_jk, -0.999999, 0.999999))
+        theta = float(np.arccos(cos_t))
+        sin_t = float(np.sqrt(max(1.0 - cos_t * cos_t, 1e-12)))
+        k_theta = ang.k_theta_kj_per_mol_rad2
+        prefactor = k_theta * (theta - ang.theta_0_rad) / sin_t
+        # Forces on endpoint atoms (standard bend expression).
+        f_i = (prefactor / n_ji) * (u_jk - cos_t * u_ji)
+        f_k = (prefactor / n_jk) * (u_ji - cos_t * u_jk)
+        f_j = -(f_i + f_k)
+        forces[ii] += f_i
+        forces[ij] += f_j
+        forces[ik] += f_k
+
+
 def compute_forces(
     atoms: Sequence[AtomUnit],
     bonds: Iterable[Bond],
@@ -349,6 +410,7 @@ def compute_forces(
                     | tuple[np.ndarray, np.ndarray]
                     | None) = None,
     pos: Optional[np.ndarray] = None,
+    angles: Optional[Iterable[AngleBond]] = None,
 ) -> np.ndarray:
     """Compute total force on each atom. Returns (N, 3) array, kJ/mol/nm.
 
@@ -392,6 +454,10 @@ def compute_forces(
         forces[i] -= f
         forces[j] += f
         bonded_set.add((min(i, j), max(i, j)))
+
+    # --- 3-body angle bends (Physics Upgrade 2) ---
+    if angles:
+        _compute_angle_forces(atoms, angles, pos, forces)
 
     # --- vectorized non-bonded LJ ---
     sigmas, epsilons, elem_codes = element_arrays_cached(atoms)
@@ -498,6 +564,63 @@ def compute_forces(
                                  - np.bincount(iu, weights=fy, minlength=n))
                 forces[:, 2] += (np.bincount(ju, weights=fz, minlength=n)
                                  - np.bincount(iu, weights=fz, minlength=n))
+
+    # --- Coulomb electrostatics (Physics Upgrade 1) ---
+    # Added AFTER the LJ block so it uses the already-filtered pair
+    # indices (iu, ju) that exclude bonded pairs. Same neighbor list,
+    # same cutoff. Charge-neutral soups see a zero contribution; polar
+    # soups (water, ions) see the expected Coulombic dynamics.
+    if cfg.use_coulomb and iu.size:
+        charges = np.array([a.partial_charge for a in atoms],
+                           dtype=np.float64)
+        # Only evaluate for pairs where at least one atom has nonzero
+        # charge — the common case in a neutral organic soup is that
+        # most pairs contribute nothing and we can skip the full array
+        # math. Conservative: run it on all pairs, but short-circuit
+        # when the max |q| is zero.
+        if np.any(charges != 0.0):
+            qi = charges[iu]
+            qj = charges[ju]
+            # r is already defined from the LJ block above when there
+            # were pairs; recompute locally to avoid depending on
+            # branch state.
+            dvec_c = pos[ju] - pos[iu]
+            r2_c = np.einsum("ij,ij->i", dvec_c, dvec_c)
+            # Re-filter at cutoff + small numerical epsilon.
+            keep_c = (r2_c > 1e-8) & (r2_c < cutoff2)
+            if keep_c.any():
+                iu_c = iu[keep_c]
+                ju_c = ju[keep_c]
+                dvec_c = dvec_c[keep_c]
+                r2_c = r2_c[keep_c]
+                r_c = np.sqrt(r2_c)
+                # F on j = k_e * q_i * q_j / r^2 along unit(r_ij);
+                # vectorised:  factor = k_e * q_i * q_j / r^3,
+                # force_vec = factor * dvec.
+                k_e = cfg.coulomb_k_kj_nm_per_e2
+                factor = (k_e * qi[keep_c] * qj[keep_c]) / (r_c * r2_c)
+                # Per-pair magnitude cap prevents blowups at overlap.
+                fmag = np.abs(factor) * r_c
+                over = fmag > cfg.coulomb_max_force_kj_per_nm
+                if over.any():
+                    factor = np.where(over,
+                                      np.sign(factor)
+                                      * cfg.coulomb_max_force_kj_per_nm
+                                      / r_c,
+                                      factor)
+                fvec = factor[:, None] * dvec_c
+                forces[:, 0] += (np.bincount(ju_c, weights=fvec[:, 0],
+                                             minlength=n)
+                                 - np.bincount(iu_c, weights=fvec[:, 0],
+                                               minlength=n))
+                forces[:, 1] += (np.bincount(ju_c, weights=fvec[:, 1],
+                                             minlength=n)
+                                 - np.bincount(iu_c, weights=fvec[:, 1],
+                                               minlength=n))
+                forces[:, 2] += (np.bincount(ju_c, weights=fvec[:, 2],
+                                             minlength=n)
+                                 - np.bincount(iu_c, weights=fvec[:, 2],
+                                               minlength=n))
 
     # --- optional axial attractor (fusion driver) ---
     if cfg.use_axial_attractor:

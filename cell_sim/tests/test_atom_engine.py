@@ -145,6 +145,26 @@ def test_harmonic_bond_pulls_stretched_atoms_inward():
 # ---------- Integrator energy & temperature ---------------------------
 
 
+def test_langevin_thermostat_reaches_target_T():
+    """With Langevin thermostat at gamma=5/ps and target T=300 K, a
+    purely-nonbonded soup should equilibrate to within ~20% of 300 K
+    after a few hundred steps."""
+    rng = np.random.default_rng(7)
+    atoms = []
+    for _ in range(40):
+        pos = tuple(rng.uniform(-1.0, 1.0, size=3))
+        atoms.append(AtomUnit.create(Element.C, position=pos,
+                                     velocity=(0.0, 0.0, 0.0)))
+    state = SimState(atoms=atoms, bonds=[])
+    ff = ForceFieldConfig(lj_cutoff_nm=1.5)
+    ic = IntegratorConfig(dt_ps=0.002, target_temperature_K=300.0,
+                          thermostat="langevin",
+                          langevin_gamma_inv_ps=5.0)
+    run(state, n_steps=600, ff_cfg=ff, int_cfg=ic)
+    T = current_temperature_K(state.atoms)
+    assert 200.0 < T < 400.0, f"T={T} outside 200-400 K band"
+
+
 def test_integrator_maintains_temperature_roughly():
     rng = np.random.default_rng(0)
     atoms = []
@@ -307,6 +327,68 @@ def test_neighbor_list_forces_match_full_forces():
     f_full = compute_forces(atoms, [], t_ps=0.0, cfg=cfg_full)
     f_nl = compute_forces(atoms, [], t_ps=0.0, cfg=cfg_nl)
     assert np.allclose(f_full, f_nl, atol=1e-8)
+
+
+def test_angle_bend_restores_to_equilibrium():
+    """Water-like H-O-H angle bent to 90 deg should see a restoring
+    force on the H atoms pushing them AWAY from each other (toward the
+    104.5 deg equilibrium)."""
+    import math as _m
+    from cell_sim.atom_engine.atom_unit import AngleBond
+    o = AtomUnit.create(Element.O, position=(0.0, 0.0, 0.0),
+                        velocity=(0, 0, 0))
+    # H atoms at +x and +y: angle = 90 deg
+    h1 = AtomUnit.create(Element.H, position=(0.096, 0.0, 0.0),
+                         velocity=(0, 0, 0))
+    h2 = AtomUnit.create(Element.H, position=(0.0, 0.096, 0.0),
+                         velocity=(0, 0, 0))
+    angle = AngleBond(
+        i=h1, j=o, k=h2,
+        theta_0_rad=_m.radians(104.5),
+        k_theta_kj_per_mol_rad2=500.0,
+    )
+    # lj_cutoff_nm=0 disables LJ entirely so we can isolate the angle
+    # term. Real runs include LJ alongside.
+    cfg = ForceFieldConfig(lj_cutoff_nm=0.0)
+    forces = compute_forces([o, h1, h2], [], t_ps=0.0, cfg=cfg,
+                            angles=[angle])
+    # h1 is at +x, should be pushed toward -y (opening toward h2)
+    # h2 is at +y, should be pushed toward -x
+    # O at origin should feel the opposite (central atom balances).
+    # Net: actual < 104.5 (= 90), so restoring force OPENS the angle.
+    # h1 moves in -y direction; h2 moves in -x direction.
+    assert forces[1, 1] < 0.0, f"h1 should be pushed -y, got {forces[1]}"
+    assert forces[2, 0] < 0.0, f"h2 should be pushed -x, got {forces[2]}"
+    # Net force sums to zero (Newton's third law).
+    net = forces.sum(axis=0)
+    assert np.allclose(net, 0.0, atol=1e-9), f"net force nonzero: {net}"
+
+
+def test_coulomb_ion_pair_attraction():
+    """Na+ and Cl- at r=0.5 nm should feel an attractive Coulomb force
+    toward each other. Magnitude = k_e |q_Na q_Cl| / r^2 =
+    138.935 * 1 / 0.25 = 555.74 kJ/mol/nm in the radial direction."""
+    na = AtomUnit.create(Element.Na, position=(0.0, 0.0, 0.0),
+                         velocity=(0, 0, 0))
+    cl = AtomUnit.create(Element.Cl, position=(0.5, 0.0, 0.0),
+                         velocity=(0, 0, 0))
+    # Check default charges are set via element.partial_charge
+    assert na.partial_charge == 1.0
+    assert cl.partial_charge == -1.0
+    cfg_no_coulomb = ForceFieldConfig(lj_cutoff_nm=1.2, use_coulomb=False)
+    cfg_coulomb = ForceFieldConfig(lj_cutoff_nm=1.2, use_coulomb=True)
+    f_no = compute_forces([na, cl], [], t_ps=0.0, cfg=cfg_no_coulomb)
+    f_c = compute_forces([na, cl], [], t_ps=0.0, cfg=cfg_coulomb)
+    delta = f_c - f_no
+    # Na+ pulled toward +x (toward Cl-); Cl- pulled toward -x.
+    # Pre-cap expected magnitude: 138.935 * 1*1 / (0.5^2) = 555.7
+    assert delta[0, 0] > 0.0
+    assert delta[1, 0] < 0.0
+    # Magnitudes equal and opposite.
+    assert np.allclose(delta[0], -delta[1])
+    # Magnitude close to the analytical value (might be capped).
+    expected = 138.935 * 1.0 / 0.25
+    assert np.isclose(np.linalg.norm(delta[0]), expected, rtol=1e-2)
 
 
 def test_rust_lj_matches_numpy_lj():

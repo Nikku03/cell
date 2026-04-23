@@ -21,7 +21,7 @@ from typing import Optional, Sequence
 
 import numpy as np
 
-from .atom_unit import AtomUnit, Bond, BondType
+from .atom_unit import AngleBond, AtomUnit, Bond, BondType
 from .element import pair_is_bondable
 from .force_field import ForceFieldConfig, build_neighbor_list, compute_forces
 
@@ -48,6 +48,15 @@ class IntegratorConfig:
     # for which dynamic bonding is DISABLED. Used to simulate "knockouts"
     # of specific reaction chemistries without changing the engine.
     disabled_pairs: Optional[frozenset] = None
+    # Thermostat choice (Physics Upgrade 3).
+    #   "berendsen" — velocity rescale toward target T. Fast to equilibrate,
+    #                 incorrect canonical sampling (known: "flying ice-cube"
+    #                 issue). Original integrator default.
+    #   "langevin"  — SDE with friction gamma and Gaussian white noise.
+    #                 Correct NVT sampling. Required for condensed-phase
+    #                 chemistry where velocity distribution matters.
+    thermostat: str = "berendsen"
+    langevin_gamma_inv_ps: float = 1.0   # friction coefficient (1/ps)
     # Callback invoked each step with (t_ps, n_bonds_formed, n_bonds_broken).
     step_callback: Optional[callable] = None
 
@@ -56,6 +65,9 @@ class IntegratorConfig:
 class SimState:
     atoms: list[AtomUnit]
     bonds: list[Bond] = field(default_factory=list)
+    # 3-body angle terms (Physics Upgrade 2). Populated by molecule
+    # templates or by a post-hoc auto-angle pass on the bond graph.
+    angles: list[AngleBond] = field(default_factory=list)
     t_ps: float = 0.0
     step: int = 0
     events_bonds_formed: int = 0
@@ -301,7 +313,7 @@ def step(
     if forces_prev is None:
         forces_prev = compute_forces(atoms, state.bonds, state.t_ps, ff_cfg,
                                      neighbor_pairs=_neighbors(pos),
-                                     pos=pos)
+                                     pos=pos, angles=state.angles or None)
 
     # Half-step velocity + full position update.
     vel += 0.5 * dt * forces_prev / masses
@@ -313,18 +325,40 @@ def step(
 
     forces_new = compute_forces(atoms, state.bonds, state.t_ps, ff_cfg,
                                  neighbor_pairs=_neighbors(pos),
-                                 pos=pos)
+                                 pos=pos, angles=state.angles or None)
 
     # Second half-step velocity.
     vel += 0.5 * dt * forces_new / masses
 
-    # Berendsen thermostat (scale all velocities).
-    t_now = _temperature_from_arrays(vel, masses[:, 0])
-    if t_now <= 0.0:
-        t_now = 1.0
-    tau = max(int_cfg.thermostat_tau_ps, 1e-3)
-    lam = (1.0 + (dt / tau) * (int_cfg.target_temperature_K / t_now - 1.0)) ** 0.5
-    vel *= lam
+    if int_cfg.thermostat == "langevin":
+        # Langevin thermostat (Physics Upgrade 3). OVRVO-style discrete
+        # update applied after the Verlet half-step:
+        #     v <- exp(-gamma*dt) v + sigma_v * N(0,I)
+        # with ``sigma_v = sqrt(kT/m * (1 - exp(-2 gamma dt)))``.
+        # Correctly samples the canonical ensemble for conservative
+        # systems; replaces Berendsen's multiplicative rescale which
+        # produces the wrong velocity distribution.
+        k_B = 0.00831446
+        T_target = int_cfg.target_temperature_K
+        gamma = int_cfg.langevin_gamma_inv_ps
+        c1 = float(np.exp(-gamma * dt))
+        # kT/m per atom -> (N, 1)
+        m_col = masses[:, 0:1]
+        sigma2 = (k_B * T_target / m_col) * (1.0 - c1 * c1)
+        sigma = np.sqrt(np.maximum(sigma2, 0.0))
+        rng = np.random.default_rng(state.step + 12345)
+        noise = rng.standard_normal(vel.shape)
+        vel = c1 * vel + sigma * noise
+    else:
+        # Berendsen thermostat (default, fast equilibration, incorrect
+        # NVT but adequate for deterministic MD demos).
+        t_now = _temperature_from_arrays(vel, masses[:, 0])
+        if t_now <= 0.0:
+            t_now = 1.0
+        tau = max(int_cfg.thermostat_tau_ps, 1e-3)
+        lam = (1.0 + (dt / tau)
+               * (int_cfg.target_temperature_K / t_now - 1.0)) ** 0.5
+        vel *= lam
     _scatter_velocities(atoms, vel)
 
     broken = _maybe_break_bonds(state, int_cfg.bond_break_fraction)

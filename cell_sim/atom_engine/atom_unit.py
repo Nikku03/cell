@@ -81,6 +81,25 @@ class Bond:
 
 
 @dataclass(eq=False, slots=True)
+class AngleBond:
+    """3-body harmonic angle on the i-j-k bend (j is the vertex).
+
+    ``U = 0.5 * k_theta * (theta - theta_0)^2`` where
+    ``cos(theta) = (r_ji . r_jk) / (|r_ji| |r_jk|)``.
+
+    ``theta_0_rad`` is in radians; ``k_theta_kj_per_mol_rad2`` in
+    kJ/(mol·rad²). Typical organic values: k ~ 400-700, theta_0 =
+    109.47 deg (sp3 carbon), 104.5 deg (water O), 107 deg (NH3 N),
+    120 deg (sp2 trigonal).
+    """
+    i: "AtomUnit"
+    j: "AtomUnit"                 # central atom (vertex)
+    k: "AtomUnit"
+    theta_0_rad: float
+    k_theta_kj_per_mol_rad2: float
+
+
+@dataclass(eq=False, slots=True)
 class AtomEvent:
     """An event in an atom's history. Timestamp is simulation time in ps."""
     kind: str                         # "bond_formed" | "bond_broken" | "reaction" | "created"
