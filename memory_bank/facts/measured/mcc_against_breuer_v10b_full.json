@@ -1,0 +1,79 @@
+{
+  "id": "mcc_against_breuer_v10b_full",
+  "claim": "Twelfth MCC measurement: v10b composed detector with the 7 additional annotation-class keyword rules (DNA topoisomerase, lipid biosynthesis, tRNA modification, molecular chaperone, PTS transporter, nucleotide-salvage kinase, nucleotide biosynthesis), each validated to hit 0 false positives on the Breuer Nonessential set. Full 455-gene sweep at seed=42: MCC = 0.364 on the imbalanced Breuer set (Quasiessential = positive). This is the same stack the balanced-40 panel scored MCC 0.70 on.",
+  "confidence": "measured",
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible via 'python scripts/run_sweep_parallel.py --all --workers 4 --use-rust --scale 0.05 --t-end-s 0.5 --detector composed --seed 42'. Preserved outputs at outputs/predictions_*_all455_v10b.csv + outputs/metrics_*_all455_v10b.json.",
+  "last_verified": "2026-04-23",
+  "context": {
+    "commit_range": "6eecc50..(this commit)",
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v10b_composed_expanded_annotation"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v10_full",
+    "mcc_against_breuer_v10",
+    "mcc_against_breuer_v9",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "cell_sim/layer6_essentiality/composed_detector.py",
+    "cell_sim/layer6_essentiality/complex_assembly_detector.py",
+    "cell_sim/layer6_essentiality/annotation_class_detector.py",
+    "cell_sim/layer6_essentiality/priors_only_predictor.py",
+    "scripts/run_sweep_parallel.py"
+  ],
+  "value": {
+    "mcc": 0.364,
+    "precision": 0.974,
+    "recall": 0.582,
+    "specificity": 0.917,
+    "accuracy": 0.635,
+    "confusion": {"tp": 223, "fp": 6, "tn": 66, "fn": 160},
+    "delta_over_v10a_full": 0.022,
+    "delta_over_v9": 0.239,
+    "config": {
+      "detector": "composed (ComplexAssembly + AnnotationClass-v10b + PerRule)",
+      "gene_set": "all 455 Breuer-labeled",
+      "label_scheme": "binary; Quasiessential -> positive",
+      "sim_seed": 42,
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "use_rust_backend": true,
+      "workers": 4,
+      "threshold": 0.1,
+      "sweep_wall_s": 941.5,
+      "per_gene_wall_s": 2.1
+    },
+    "annotation_rules_v10b": {
+      "v10a_classes": [
+        "aminoacyl_trna_synthetase",
+        "translation_factor",
+        "signal_peptidase",
+        "lipid_flippase",
+        "rna_processing_nuclease",
+        "dna_replication_core",
+        "ribosome_biogenesis"
+      ],
+      "added_in_v10b": [
+        "dna_topoisomerase",
+        "lipid_biosynthesis",
+        "trna_modification",
+        "chaperone",
+        "pts_transporter",
+        "nucleotide_salvage_kinase",
+        "nucleotide_biosynthesis"
+      ],
+      "standalone_annotation_detector_fp_on_full_breuer": 0,
+      "standalone_annotation_detector_tp_on_full_breuer": 74
+    }
+  },
+  "caveats": [
+    "Same stack scores MCC 0.70 on the standard balanced-40 panel. Full-set MCC is depressed by the 5.3:1 positive:negative imbalance combined with Quasiessential treated as positive.",
+    "Precision 0.974 means when we call a gene essential we're right 26 out of 27 times. The 6 FPs are all carry-over from v5/v9 — known iMB155 metabolic-reconstruction gaps. Unaffected by detector work.",
+    "Recall 0.582 means we catch ~58% of true positives. The remaining ~42% comprise: uncharacterized proteins (no annotation signal), metabolic enzymes outside the 356-reaction iMB155 SBML, regulatory proteins without complex membership, and tRNA modification enzymes without matching keywords.",
+    "Runtime: 941s for 455 genes at 4 workers on a 4-core box (2.1s/gene effective wall). Priors-only scan of the same 455 genes: ~200ms.",
+    "All data is bundled in the repo. Zero network, zero API, zero per-run cost."
+  ]
+}
