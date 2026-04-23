@@ -1,1 +1,22 @@
-{"sources": {}}
+{
+  "sources": {
+    "alphafold_db": {
+      "created_at": "2026-04-23T20:56:05Z",
+      "rows": 455,
+      "sha256": "6ebc5cdd5858e3bb13210c65543b8986c14f6689d4957eaa3667aa8b35908bd6",
+      "version": "0.1.0"
+    },
+    "esm2_650M": {
+      "created_at": "2026-04-23T20:56:05Z",
+      "rows": 455,
+      "sha256": "0d572640598534198f56d7fdb05f3e3b47aa7ea72c4f8577d9872a0066d16175",
+      "version": "0.1.0"
+    },
+    "mace_off_kcat": {
+      "created_at": "2026-04-23T20:56:05Z",
+      "rows": 455,
+      "sha256": "9db2b8f96cc772f45fd75ff6eccc26b55bca258b502749a9b7fcb68024b36375",
+      "version": "0.1.0"
+    }
+  }
+}
