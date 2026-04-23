@@ -106,7 +106,8 @@ def main() -> int:
     pr = PerRuleDetector(wt=wt_traj, gene_to_rules=gene_to_rules,
                          min_wt_events=args.min_wt_events)
     ens = EnsembleDetector(
-        short_window=sw, per_rule=pr, policy=EnsemblePolicy.OR,
+        short_window=sw, per_rule=pr,
+        policy=EnsemblePolicy.OR_HIGH_CONFIDENCE,
     )
 
     preds_sw: dict[str, int] = {}
@@ -142,7 +143,7 @@ def main() -> int:
     m_ens = evaluate_binary(labels, preds_ens)
     print("\n=== MCC results ===")
     for name, m in [("ShortWindow", m_sw), ("PerRule", m_pr),
-                    ("Ensemble(OR)", m_ens)]:
+                    ("Ensemble(OR_HIGH_CONFIDENCE)", m_ens)]:
         print(f"  {name:14s}: MCC={m.mcc:+.3f} "
               f"acc={m.accuracy:.3f} "
               f"tp={m.tp} fp={m.fp} tn={m.tn} fn={m.fn}")
