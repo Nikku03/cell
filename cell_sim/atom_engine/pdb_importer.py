@@ -142,20 +142,50 @@ def load_pdb(
     text = path.read_text()
 
     # Parse ATOM / HETATM.
+    # The strict PDB column layout (atom name at cols 13-16, coords at
+    # 31-38/39-46/47-54) breaks when hand-written templates misalign a
+    # 4-character atom name (HD21, HE21, HG11, ...) by one column,
+    # which shifts the coord field and causes float() to fail silently.
+    # We fall back to whitespace-split parsing: for well-formed ATOM
+    # records (our templates + most real PDB files) the tokens are
+    # [ATOM, serial, atom_name, resname, chain, resseq, x, y, z,
+    #  occupancy, tempfactor, element?]. That parse is robust to the
+    # column-alignment bug without giving up on real PDB files.
     raw_atoms: list[dict] = []
     for line in text.splitlines():
         if not (line.startswith("ATOM") or line.startswith("HETATM")):
             continue
-        # Columns per the PDB specification (fixed-width).
-        atom_name = line[12:16]
-        resname = line[17:20]
+        # Try strict fixed-width first; fall back to split-based on any
+        # parse error so hand-written templates work.
+        atom_name = line[12:16] if len(line) >= 16 else ""
+        resname = line[17:20] if len(line) >= 20 else ""
+        x = y = z = None
         try:
-            x = float(line[30:38]) * 0.1   # PDB angstrom -> nm
+            x = float(line[30:38]) * 0.1
             y = float(line[38:46]) * 0.1
             z = float(line[46:54]) * 0.1
-        except ValueError:
-            continue
+        except (ValueError, IndexError):
+            pass
         element_field = line[76:78] if len(line) >= 78 else ""
+
+        if x is None or y is None or z is None:
+            # Whitespace-split fallback.
+            toks = line.split()
+            # toks: ATOM, serial, name, resname, chain?, resseq, x, y, z, occ, temp, [element]
+            if len(toks) < 9:
+                continue
+            try:
+                # x,y,z are the 3rd-to-last coord triple before occupancy
+                # and tempfactor. Walk back from the end.
+                x = float(toks[-6]) * 0.1
+                y = float(toks[-5]) * 0.1
+                z = float(toks[-4]) * 0.1
+            except (ValueError, IndexError):
+                continue
+            atom_name = toks[2]
+            resname = toks[3]
+            if len(toks) >= 12 and all(c.isalpha() for c in toks[-1]):
+                element_field = toks[-1]
         elem = _parse_element(atom_name, element_field)
         raw_atoms.append({
             "atom_name": atom_name,
@@ -477,6 +507,83 @@ ATOM     13  C   ASP A   1       1.988  -1.418   0.000  1.00  0.00           C
 ATOM     14  O   ASP A   1       1.188  -2.356   0.000  1.00  0.00           O
 ATOM     15  OXT ASP A   1       3.268  -1.626   0.000  1.00  0.00           O
 ATOM     16  HXT ASP A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Glutamate (neutral COOH form) — ASP + extra CH2 in side chain.
+    "GLU": """\
+ATOM      1  N   GLU A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  GLU A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  GLU A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  GLU A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  GLU A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  GLU A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 GLU A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 GLU A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  GLU A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  HG1 GLU A   1       3.887   1.794  -1.218  1.00  0.00           H
+ATOM     11  HG2 GLU A   1       3.887   0.258  -0.329  1.00  0.00           H
+ATOM     12  CD  GLU A   1       4.047   0.000  -2.436  1.00  0.00           C
+ATOM     13  OE1 GLU A   1       3.247  -0.938  -2.436  1.00  0.00           O
+ATOM     14  OE2 GLU A   1       5.327  -0.208  -2.436  1.00  0.00           O
+ATOM     15  HE2 GLU A   1       5.636  -1.129  -2.436  1.00  0.00           H
+ATOM     16  C   GLU A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     17  O   GLU A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     18  OXT GLU A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     19  HXT GLU A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Glutamine — ASN + extra CH2 in side chain (same shape as GLU
+    # but with NH2 in place of OH).
+    "GLN": """\
+ATOM      1  N   GLN A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  GLN A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  GLN A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  GLN A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  GLN A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  GLN A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 GLN A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 GLN A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  GLN A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  HG1 GLN A   1       3.887   1.794  -1.218  1.00  0.00           H
+ATOM     11  HG2 GLN A   1       3.887   0.258  -0.329  1.00  0.00           H
+ATOM     12  CD  GLN A   1       4.047   0.000  -2.436  1.00  0.00           C
+ATOM     13  OE1 GLN A   1       3.247  -0.938  -2.436  1.00  0.00           O
+ATOM     14  NE2 GLN A   1       5.397  -0.208  -2.436  1.00  0.00           N
+ATOM     15  HE21 GLN A   1       5.696  -1.158  -2.436  1.00  0.00           H
+ATOM     16  HE22 GLN A   1       6.097   0.510  -2.436  1.00  0.00           H
+ATOM     17  C   GLN A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     18  O   GLN A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     19  OXT GLN A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     20  HXT GLN A   1       3.577  -2.547   0.000  1.00  0.00           H
+END
+""",
+    # Lysine (neutral NH2 form — simpler than the +1 protonated NH3+).
+    # Side chain: CB-CG-CD-CE-NZ (H2), 4 carbons then primary amine.
+    "LYS": """\
+ATOM      1  N   LYS A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  H1  LYS A   1      -0.340   0.940   0.000  1.00  0.00           H
+ATOM      3  H2  LYS A   1      -0.340  -0.470   0.814  1.00  0.00           H
+ATOM      4  CA  LYS A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      5  HA  LYS A   1       1.821   0.509   0.895  1.00  0.00           H
+ATOM      6  CB  LYS A   1       1.987   0.770  -1.218  1.00  0.00           C
+ATOM      7  HB1 LYS A   1       1.617   1.794  -1.218  1.00  0.00           H
+ATOM      8  HB2 LYS A   1       1.617   0.258  -2.107  1.00  0.00           H
+ATOM      9  CG  LYS A   1       3.517   0.770  -1.218  1.00  0.00           C
+ATOM     10  HG1 LYS A   1       3.887   1.794  -1.218  1.00  0.00           H
+ATOM     11  HG2 LYS A   1       3.887   0.258  -0.329  1.00  0.00           H
+ATOM     12  CD  LYS A   1       4.047   0.000  -2.436  1.00  0.00           C
+ATOM     13  HD1 LYS A   1       3.677  -1.024  -2.436  1.00  0.00           H
+ATOM     14  HD2 LYS A   1       3.677   0.512  -3.325  1.00  0.00           H
+ATOM     15  CE  LYS A   1       5.577   0.000  -2.436  1.00  0.00           C
+ATOM     16  HE1 LYS A   1       5.947   1.024  -2.436  1.00  0.00           H
+ATOM     17  HE2 LYS A   1       5.947  -0.512  -1.547  1.00  0.00           H
+ATOM     18  NZ  LYS A   1       6.107  -0.770  -3.654  1.00  0.00           N
+ATOM     19  HZ1 LYS A   1       5.737  -1.694  -3.654  1.00  0.00           H
+ATOM     20  HZ2 LYS A   1       7.117  -0.770  -3.654  1.00  0.00           H
+ATOM     21  C   LYS A   1       1.988  -1.418   0.000  1.00  0.00           C
+ATOM     22  O   LYS A   1       1.188  -2.356   0.000  1.00  0.00           O
+ATOM     23  OXT LYS A   1       3.268  -1.626   0.000  1.00  0.00           O
+ATOM     24  HXT LYS A   1       3.577  -2.547   0.000  1.00  0.00           H
 END
 """,
     # Note on nucleotides (A/T/G/C/U): aromatic ring geometry needs

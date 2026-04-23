@@ -884,3 +884,26 @@ def test_make_waters_rigid_adds_hh_constraints_and_removes_angles():
     # HH distance constraint at expected value
     hh_r0 = np.sqrt(state.shake_r0_sq[2])
     assert np.isclose(hh_r0, 0.1518, atol=1e-3)
+
+
+def test_pdb_importer_loads_4char_atom_names():
+    """Regression guard: 4-character atom names (HD21, HG11, HE21...)
+    must load correctly. Prior to the robust-parser change, these
+    overflowed the strict column slice and got silently dropped when
+    the x-coordinate column parse failed."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    # VAL has HG11-HG13 and HG21-HG23 (6 total 4-char hydrogen names).
+    s = load_residue("VAL")
+    assert len(s.atoms) == 19, \
+        f"VAL should load 19 atoms (all 6 methyl Hs present), got {len(s.atoms)}"
+    # ASN has HD21/HD22.
+    s = load_residue("ASN")
+    assert len(s.atoms) == 17
+
+
+def test_pdb_importer_loads_glu_gln_lys():
+    """GLU/GLN/LYS side chains load with expected atom + bond counts."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    assert len(load_residue("GLU").atoms) == 19
+    assert len(load_residue("GLN").atoms) == 20
+    assert len(load_residue("LYS").atoms) == 24
