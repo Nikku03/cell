@@ -44,6 +44,10 @@ class IntegratorConfig:
     # Neighbor-list scheduler: rebuild every N steps when the force field
     # has use_neighbor_list=True. 0 disables (caller manages the list).
     neighbor_rebuild_every: int = 10
+    # Essentiality integration: set of (element_a, element_b) frozensets
+    # for which dynamic bonding is DISABLED. Used to simulate "knockouts"
+    # of specific reaction chemistries without changing the engine.
+    disabled_pairs: Optional[frozenset] = None
     # Callback invoked each step with (t_ps, n_bonds_formed, n_bonds_broken).
     step_callback: Optional[callable] = None
 
@@ -56,6 +60,12 @@ class SimState:
     step: int = 0
     events_bonds_formed: int = 0
     events_bonds_broken: int = 0
+    # Cumulative bond-formed counts keyed by a canonical element-pair
+    # rule name ("bond:C-H", "bond:H-O", ...). Used by the essentiality
+    # bridge to populate Sample.event_counts_by_rule in the existing
+    # detector framework.
+    events_formed_by_rule: dict = field(default_factory=dict)
+    events_broken_by_rule: dict = field(default_factory=dict)
     # Cached neighbor list (iu, ju). Rebuilt by the integrator when stale.
     _neighbor_iu: Optional[np.ndarray] = None
     _neighbor_ju: Optional[np.ndarray] = None
@@ -133,6 +143,12 @@ def current_temperature_K(atoms: Sequence[AtomUnit]) -> float:
 # ---------- bond event kernels ----------------------------------------
 
 
+def _rule_name_for_pair(elem_a, elem_b) -> str:
+    """Canonical 'bond:X-Y' rule name for an element pair (sorted)."""
+    names = sorted([elem_a.name, elem_b.name])
+    return f"bond:{names[0]}-{names[1]}"
+
+
 def _maybe_break_bonds(state: SimState, break_fraction: float) -> int:
     broken = 0
     for bond in list(state.bonds):
@@ -143,9 +159,13 @@ def _maybe_break_bonds(state: SimState, break_fraction: float) -> int:
         dz = bond.b.position[2] - bond.a.position[2]
         r = (dx * dx + dy * dy + dz * dz) ** 0.5
         if r > 0.0 and r > break_fraction * bond.equilibrium_length_nm:
+            rule = _rule_name_for_pair(bond.a.element, bond.b.element)
             bond.a.break_bond(bond, state.t_ps, reason=f"overstretched r={r:.3f}nm")
             broken += 1
             state.events_bonds_broken += 1
+            state.events_broken_by_rule[rule] = (
+                state.events_broken_by_rule.get(rule, 0) + 1
+            )
     state.bonds = [b for b in state.bonds if b.death_time_ps is None]
     return broken
 
@@ -202,6 +222,7 @@ def _maybe_form_bonds(
     # by a comfortable margin prevents form/break ping-pong.
     form_ratio = cfg.bond_form_ratio
 
+    disabled = cfg.disabled_pairs
     # Loop only over the surviving candidates — usually a tiny subset.
     for idx, (i_raw, j_raw) in enumerate(zip(iu.tolist(), ju.tolist())):
         ai = atoms[i_raw]
@@ -211,6 +232,9 @@ def _maybe_form_bonds(
         if frozenset((ai.atom_id, aj.atom_id)) in bonded_ids:
             continue
         if not pair_is_bondable(ai.element, aj.element):
+            continue
+        # Essentiality knockout: this pair is disabled for this run.
+        if disabled is not None and frozenset([ai.element, aj.element]) in disabled:
             continue
         r0 = _bond_length_for_pair(ai.element, aj.element)
         # Skip if the atoms are further apart than a comfortably-bonded
@@ -229,6 +253,10 @@ def _maybe_form_bonds(
         bonded_ids.add(frozenset((ai.atom_id, aj.atom_id)))
         formed += 1
         state.events_bonds_formed += 1
+        rule = _rule_name_for_pair(ai.element, aj.element)
+        state.events_formed_by_rule[rule] = (
+            state.events_formed_by_rule.get(rule, 0) + 1
+        )
     return formed
 
 
