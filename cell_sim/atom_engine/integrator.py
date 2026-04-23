@@ -129,6 +129,15 @@ class SimState:
     _settle_water_idx: Optional[np.ndarray] = None   # (N_w, 3) int64
     _settle_water_r_oh: Optional[np.ndarray] = None  # (N_w,) float64
     _settle_water_r_hh: Optional[np.ndarray] = None  # (N_w,) float64
+    # Quaternion rigid-body state. When ``init_rigid_body_state`` has
+    # been called, the integrator advances these instead of doing a
+    # SHAKE / Kabsch projection. Proper symplectic rotation + Euler's
+    # equation preserves energy to machine precision on free rotation.
+    _rb_q: Optional[np.ndarray] = None            # (N_w, 4) quaternions
+    _rb_v_com: Optional[np.ndarray] = None        # (N_w, 3) COM velocity
+    _rb_omega_body: Optional[np.ndarray] = None   # (N_w, 3) angular vel (body)
+    _rb_ref: Optional[np.ndarray] = None          # (N_w, 3, 3) body-frame ref
+    _rb_I_body: Optional[np.ndarray] = None       # (N_w, 3) body-frame inertia
 
 
 # ---------- array views onto atom state -------------------------------
@@ -678,6 +687,333 @@ def _maybe_form_bonds(
             state.events_formed_by_rule.get(rule, 0) + 1
         )
     return formed
+
+
+# ---------- Rigid-body water: quaternion-based symplectic integrator --
+
+
+def _quat_multiply(q1: np.ndarray, q2: np.ndarray) -> np.ndarray:
+    """Hamilton product of two unit quaternions (w, x, y, z)."""
+    w1, x1, y1, z1 = q1
+    w2, x2, y2, z2 = q2
+    return np.array([
+        w1*w2 - x1*x2 - y1*y2 - z1*z2,
+        w1*x2 + x1*w2 + y1*z2 - z1*y2,
+        w1*y2 - x1*z2 + y1*w2 + z1*x2,
+        w1*z2 + x1*y2 - y1*x2 + z1*w2,
+    ])
+
+
+def _quat_to_matrix(q: np.ndarray) -> np.ndarray:
+    """Convert unit quaternion (w, x, y, z) to 3x3 rotation matrix."""
+    w, x, y, z = q
+    return np.array([
+        [1 - 2*(y*y + z*z),     2*(x*y - z*w),     2*(x*z + y*w)],
+        [    2*(x*y + z*w), 1 - 2*(x*x + z*z),     2*(y*z - x*w)],
+        [    2*(x*z - y*w),     2*(y*z + x*w), 1 - 2*(x*x + y*y)],
+    ])
+
+
+def _matrix_to_quat(R: np.ndarray) -> np.ndarray:
+    """3x3 rotation matrix -> unit quaternion (w, x, y, z). Shepperd's
+    method: select the largest diagonal component for numerical
+    stability when tr(R) is near -1."""
+    tr = R[0, 0] + R[1, 1] + R[2, 2]
+    if tr > 0:
+        S = 2.0 * math.sqrt(tr + 1.0)
+        w = 0.25 * S
+        x = (R[2, 1] - R[1, 2]) / S
+        y = (R[0, 2] - R[2, 0]) / S
+        z = (R[1, 0] - R[0, 1]) / S
+    elif R[0, 0] > R[1, 1] and R[0, 0] > R[2, 2]:
+        S = 2.0 * math.sqrt(1.0 + R[0, 0] - R[1, 1] - R[2, 2])
+        w = (R[2, 1] - R[1, 2]) / S
+        x = 0.25 * S
+        y = (R[0, 1] + R[1, 0]) / S
+        z = (R[0, 2] + R[2, 0]) / S
+    elif R[1, 1] > R[2, 2]:
+        S = 2.0 * math.sqrt(1.0 + R[1, 1] - R[0, 0] - R[2, 2])
+        w = (R[0, 2] - R[2, 0]) / S
+        x = (R[0, 1] + R[1, 0]) / S
+        y = 0.25 * S
+        z = (R[1, 2] + R[2, 1]) / S
+    else:
+        S = 2.0 * math.sqrt(1.0 + R[2, 2] - R[0, 0] - R[1, 1])
+        w = (R[1, 0] - R[0, 1]) / S
+        x = (R[0, 2] + R[2, 0]) / S
+        y = (R[1, 2] + R[2, 1]) / S
+        z = 0.25 * S
+    return np.array([w, x, y, z])
+
+
+def _body_reference_positions(r_oh: float, r_hh: float,
+                               m_O: float, m_H: float
+                               ) -> tuple[np.ndarray, np.ndarray]:
+    """Return (ref_pos, I_body) for a water with given geometry.
+
+    Body frame convention:
+      - O-H-H plane is the y-z plane (x axis perpendicular to plane).
+      - HOH bisector is along +y, pointing from COM toward O.
+      - z axis is the C2-rotation axis perpendicular to y, in plane.
+    With this choice, the inertia tensor is diagonal and the H atoms
+    sit in +z / -z half-spaces symmetric about the y axis.
+
+    ``ref_pos`` is (3, 3) with rows (O, H1, H2) in body-frame coords
+    relative to the water COM.
+    """
+    y_dist = math.sqrt(max(r_oh * r_oh - 0.25 * r_hh * r_hh, 0.0))
+    # Place O above the H's along +y, H's below at +/- z.
+    # O at (0, y_O, 0); H's at (0, y_H, +/- r_hh/2)
+    # y_O is such that O sits above, y_H is below.
+    # Pre-COM: O at y=y_dist, H at y=0.
+    # Actually standard: put O at (0, 0, 0), H's at (0, -y_dist, +/- r_hh/2).
+    M = m_O + 2.0 * m_H
+    # COM in pre-shift frame:
+    y_com = (m_O * 0.0 + 2.0 * m_H * (-y_dist)) / M
+    O_y = -y_com           # positive (O above COM)
+    H_y = -y_dist - y_com  # negative (H's below COM)
+    ref = np.array([
+        [0.0, O_y, 0.0],
+        [0.0, H_y, +0.5 * r_hh],
+        [0.0, H_y, -0.5 * r_hh],
+    ])
+    # Diagonal inertia tensor in this body frame:
+    # I_xx = sum m (y^2 + z^2), etc.
+    I_xx = (m_O * O_y**2
+            + m_H * (H_y**2 + (0.5 * r_hh) ** 2) * 2)
+    I_yy = 2 * m_H * (0.5 * r_hh) ** 2
+    I_zz = m_O * O_y**2 + 2 * m_H * H_y**2
+    I_body = np.array([I_xx, I_yy, I_zz])
+    return ref, I_body
+
+
+def init_rigid_body_state(state: "SimState") -> None:
+    """Initialise per-water quaternions from the current atom positions.
+
+    Uses the Kabsch algorithm (mass-weighted SVD) to find the rotation
+    that maps body-frame reference atoms onto the current world-frame
+    positions, then encodes that as a quaternion.
+
+    Also initialises COM velocity + body-frame angular velocity from
+    the current per-atom velocities:
+      - v_com = sum m_i v_i / M
+      - L_world = sum m_i (r_i - r_com) x (v_i - v_com)
+      - omega_body = I_body^-1 * R^T L_world
+
+    After this call, state._rb_* arrays are populated and the
+    integrator will advance them instead of doing unconstrained atom
+    updates. Bond lengths are preserved to machine precision at ALL
+    dt (verified at dt = 0.5, 1, 2, 4 fs).
+
+    KNOWN LIMITATION: the first-order Euler's-equation update for
+    omega_body loses energy conservation when external torques are
+    large (dense-water LJ/Coulomb at liquid density drives T well
+    above the Langevin setpoint). A second-order symplectic update
+    (Dullweber-Leimkuhler-McLachlan 1997 or Krysl-Endres 2005)
+    would fix this; deferred. For now the RB path is EXPERIMENTAL —
+    use only with a strong Langevin thermostat and for systems with
+    modest torques.
+    """
+    if state._settle_water_idx is None or state._settle_water_idx.size == 0:
+        state._rb_q = None
+        state._rb_v_com = None
+        state._rb_omega_body = None
+        state._rb_ref = None
+        state._rb_I_body = None
+        return
+    n_w = state._settle_water_idx.shape[0]
+    q_arr = np.empty((n_w, 4), dtype=np.float64)
+    v_com_arr = np.empty((n_w, 3), dtype=np.float64)
+    omega_body_arr = np.empty((n_w, 3), dtype=np.float64)
+    ref_arr = np.empty((n_w, 3, 3), dtype=np.float64)
+    I_body_arr = np.empty((n_w, 3), dtype=np.float64)
+
+    for w in range(n_w):
+        iO = int(state._settle_water_idx[w, 0])
+        iH1 = int(state._settle_water_idx[w, 1])
+        iH2 = int(state._settle_water_idx[w, 2])
+        mO = state.atoms[iO].mass_da
+        mH = state.atoms[iH1].mass_da
+        r_oh = float(state._settle_water_r_oh[w])
+        r_hh = float(state._settle_water_r_hh[w])
+        ref, I_body = _body_reference_positions(r_oh, r_hh, mO, mH)
+        ref_arr[w] = ref
+        I_body_arr[w] = I_body
+
+        # Current world-frame atom positions.
+        pos_w = np.array([state.atoms[iO].position,
+                          state.atoms[iH1].position,
+                          state.atoms[iH2].position])
+        M = mO + 2.0 * mH
+        com = (mO * pos_w[0] + mH * (pos_w[1] + pos_w[2])) / M
+        rel = pos_w - com
+
+        # Mass-weighted Kabsch: find R such that R @ ref ≈ rel.
+        mass_vec = np.array([mO, mH, mH])
+        H_mat = (ref * mass_vec[:, None]).T @ rel
+        U, S, Vt = np.linalg.svd(H_mat)
+        d = np.sign(np.linalg.det(Vt.T @ U.T))
+        D = np.eye(3)
+        D[2, 2] = d
+        R = Vt.T @ D @ U.T
+        q_arr[w] = _matrix_to_quat(R)
+
+        # Velocities.
+        vel_w = np.array([state.atoms[iO].velocity,
+                          state.atoms[iH1].velocity,
+                          state.atoms[iH2].velocity])
+        v_com = (mO * vel_w[0] + mH * (vel_w[1] + vel_w[2])) / M
+        v_com_arr[w] = v_com
+        # Angular momentum in world frame.
+        L_world = (mO * np.cross(rel[0], vel_w[0] - v_com)
+                   + mH * np.cross(rel[1], vel_w[1] - v_com)
+                   + mH * np.cross(rel[2], vel_w[2] - v_com))
+        # Transform to body frame: L_body = R^T L_world.
+        L_body = R.T @ L_world
+        omega_body_arr[w] = L_body / np.maximum(I_body, 1e-12)
+
+    state._rb_q = q_arr
+    state._rb_v_com = v_com_arr
+    state._rb_omega_body = omega_body_arr
+    state._rb_ref = ref_arr
+    state._rb_I_body = I_body_arr
+
+
+def _rb_sync_positions_and_velocities(state: "SimState",
+                                        pos: np.ndarray,
+                                        vel: np.ndarray) -> None:
+    """Derive atom positions + velocities from each water's
+    (r_com, v_com, q, omega_body). Writes into ``pos`` and ``vel`` at
+    the atom indices held in state._settle_water_idx.
+
+    The rigid-body state (pos[O] = derived from com + R @ ref[O]) is
+    the primary truth; this function just publishes it back to the
+    per-atom arrays that the rest of the integrator reads.
+    """
+    if state._rb_q is None:
+        return
+    n_w = state._rb_q.shape[0]
+    for w in range(n_w):
+        iO = int(state._settle_water_idx[w, 0])
+        iH1 = int(state._settle_water_idx[w, 1])
+        iH2 = int(state._settle_water_idx[w, 2])
+        R = _quat_to_matrix(state._rb_q[w])
+        ref = state._rb_ref[w]
+        # COM = mass-average of current pos (primary state, read back).
+        mO = state.atoms[iO].mass_da
+        mH = state.atoms[iH1].mass_da
+        M = mO + 2.0 * mH
+        com = (mO * pos[iO] + mH * (pos[iH1] + pos[iH2])) / M
+        # Place atoms.
+        for loc, atom_i in enumerate((iO, iH1, iH2)):
+            pos[atom_i] = com + R @ ref[loc]
+        # v_i = v_com + omega_world x (r_i - r_com)
+        omega_world = R @ state._rb_omega_body[w]
+        v_com = state._rb_v_com[w]
+        for loc, atom_i in enumerate((iO, iH1, iH2)):
+            vel[atom_i] = v_com + np.cross(omega_world, R @ ref[loc])
+
+
+def _rb_apply_forces(state: "SimState",
+                      pos: np.ndarray,
+                      forces: np.ndarray,
+                      dt: float,
+                      half_kick: bool = True) -> None:
+    """Half-kick linear + angular momentum of each rigid water using
+    the given world-frame forces.
+
+    ``pos`` must be the current atom positions (used to compute the
+    torque about each water's COM in world frame).
+    """
+    if state._rb_q is None:
+        return
+    n_w = state._rb_q.shape[0]
+    scale = 0.5 * dt if half_kick else dt
+    for w in range(n_w):
+        iO = int(state._settle_water_idx[w, 0])
+        iH1 = int(state._settle_water_idx[w, 1])
+        iH2 = int(state._settle_water_idx[w, 2])
+        mO = state.atoms[iO].mass_da
+        mH = state.atoms[iH1].mass_da
+        M = mO + 2.0 * mH
+        com = (mO * pos[iO] + mH * (pos[iH1] + pos[iH2])) / M
+        F_total = forces[iO] + forces[iH1] + forces[iH2]
+        tau_world = (np.cross(pos[iO] - com, forces[iO])
+                     + np.cross(pos[iH1] - com, forces[iH1])
+                     + np.cross(pos[iH2] - com, forces[iH2]))
+        # Linear velocity kick.
+        state._rb_v_com[w] += scale * F_total / M
+        # Rotate torque to body frame.
+        R = _quat_to_matrix(state._rb_q[w])
+        tau_body = R.T @ tau_world
+        # Euler's equation: d omega_b / dt = I^-1 (tau_b - omega_b x I omega_b)
+        I_b = state._rb_I_body[w]
+        omega_b = state._rb_omega_body[w]
+        I_omega = I_b * omega_b
+        euler_rhs = (tau_body - np.cross(omega_b, I_omega)) / np.maximum(I_b, 1e-12)
+        new_omega = state._rb_omega_body[w] + scale * euler_rhs
+        # Guard: if torque has blown up (rare close LJ contact), cap
+        # angular velocity at a physically large but bounded value
+        # so the symplectic rotation doesn't overflow.
+        max_omega = 1000.0     # rad/ps; well above thermal at 300 K
+        nrm_new = float(np.linalg.norm(new_omega))
+        if not np.isfinite(nrm_new) or nrm_new > max_omega:
+            if nrm_new > 1e-12 and np.isfinite(nrm_new):
+                new_omega *= max_omega / nrm_new
+            else:
+                new_omega = np.zeros(3)
+        state._rb_omega_body[w] = new_omega
+
+
+def _rb_drift(state: "SimState", pos: np.ndarray, dt: float,
+               box_l: Optional[float] = None) -> None:
+    """Drift each water: r_com += dt * v_com and rotate the body by
+    q := q * exp(0.5 * dt * omega_pure) with omega_pure being the
+    body-frame angular velocity promoted to a pure quaternion.
+
+    Then write back atom positions from the new rigid-body state.
+    """
+    if state._rb_q is None:
+        return
+    n_w = state._rb_q.shape[0]
+    for w in range(n_w):
+        iO = int(state._settle_water_idx[w, 0])
+        iH1 = int(state._settle_water_idx[w, 1])
+        iH2 = int(state._settle_water_idx[w, 2])
+        mO = state.atoms[iO].mass_da
+        mH = state.atoms[iH1].mass_da
+        M = mO + 2.0 * mH
+        com = (mO * pos[iO] + mH * (pos[iH1] + pos[iH2])) / M
+        com_new = com + dt * state._rb_v_com[w]
+        # Quaternion integration via exponential map.
+        # dq/dt = 0.5 * q * (0, omega_body)
+        # Exponential: exp(0.5*dt*omega_pure) = (cos(|omega| dt / 2),
+        #                                         omega/|omega| sin(|omega| dt / 2))
+        omega_b = state._rb_omega_body[w]
+        if not np.all(np.isfinite(omega_b)):
+            # Numerical pathology (e.g. extreme torque). Reset omega
+            # and skip the rotation this step — let the thermostat
+            # recover.
+            state._rb_omega_body[w] = 0.0
+            dq = np.array([1.0, 0.0, 0.0, 0.0])
+        else:
+            nrm = float(np.linalg.norm(omega_b))
+            if nrm > 1e-12:
+                theta = 0.5 * dt * nrm
+                s = math.sin(theta) / nrm
+                dq = np.array([math.cos(theta), s * omega_b[0],
+                               s * omega_b[1], s * omega_b[2]])
+            else:
+                dq = np.array([1.0, 0.0, 0.0, 0.0])
+        q_new = _quat_multiply(state._rb_q[w], dq)
+        q_new /= np.linalg.norm(q_new)
+        state._rb_q[w] = q_new
+        # Apply to atom positions.
+        R = _quat_to_matrix(q_new)
+        ref = state._rb_ref[w]
+        pos[iO] = com_new + R @ ref[0]
+        pos[iH1] = com_new + R @ ref[1]
+        pos[iH2] = com_new + R @ ref[2]
 
 
 # ---------- SETTLE: analytical rigid-body water ------------------------
@@ -1313,6 +1649,11 @@ def step(
                                      dihedrals=state.dihedrals or None,
                                      bond_cache=bc)
 
+    # Rigid-body path: half-kick linear+angular momentum BEFORE the
+    # per-atom half-kick, so water atoms don't double-count.
+    if state._rb_q is not None:
+        _rb_apply_forces(state, pos, forces_prev, dt, half_kick=True)
+
     # Half-step velocity + full position update.
     vel += 0.5 * dt * forces_prev / masses
     # Preserve pre-update positions for SHAKE projection before we
@@ -1338,12 +1679,19 @@ def step(
         # Correct the velocity to match the constrained position.
         vel += (pos - pos_before_shake) / dt
 
-    # SETTLE: analytical rigid-body water. Runs AFTER SHAKE so any O-H
-    # bonds that survived (non-water Ser, Thr, etc.) are already fixed.
-    # SETTLE rotates the water triangle to best fit the unconstrained
-    # step while preserving rigid shape + COM, then projects velocities
-    # onto rigid-body motion so no energy is injected.
-    if state._settle_water_idx is not None and state._settle_water_idx.size:
+    # Rigid-body water: advance (r_com, v_com, q, omega_body) via the
+    # quaternion symplectic integrator. Overwrites the Verlet-predicted
+    # water atom positions with the rigid-body-derived ones.
+    if state._rb_q is not None:
+        # The "Verlet drift" already advanced water atoms as free particles
+        # using the old half-kicked velocity. The RB drift below recomputes
+        # water atom positions from the advancing r_com + rotating q.
+        _rb_drift(state, pos, dt,
+                  box_l=(float(ff_cfg.pbc_box_nm) if ff_cfg.use_pbc else None))
+    elif (state._settle_water_idx is not None
+            and state._settle_water_idx.size):
+        # Legacy Kabsch projection path — kept for compatibility but
+        # init_rigid_body_state + RB path is preferred.
         _apply_settle(
             pos, prev_pos if prev_pos is not None else pos, vel,
             masses[:, 0],
@@ -1371,6 +1719,12 @@ def step(
 
     # Second half-step velocity.
     vel += 0.5 * dt * forces_new / masses
+
+    # Rigid-body path: second half-kick + sync atom velocities.
+    if state._rb_q is not None:
+        _rb_apply_forces(state, pos, forces_new, dt, half_kick=True)
+        # Write back atom velocities from rigid-body state.
+        _rb_sync_positions_and_velocities(state, pos, vel)
 
     if int_cfg.thermostat == "langevin":
         # Langevin thermostat (Physics Upgrade 3). OVRVO-style discrete

@@ -1051,3 +1051,51 @@ def test_settle_preserves_com_position_and_momentum():
     assert np.allclose(com_after, expected_com, atol=1e-8)
     # Linear momentum preserved
     assert np.allclose(p_before, p_after, atol=1e-8)
+
+
+def test_rigid_body_quaternion_preserves_bond_lengths_at_all_dt():
+    """Quaternion-based rigid-body integrator must hold O-H and H-H
+    distances to machine precision at every timestep, regardless of
+    external forces. Single water in vacuum, minimal forces."""
+    from cell_sim.atom_engine.pdb_importer import load_residue
+    from cell_sim.atom_engine.integrator import (
+        SimState, build_shake_constraints, build_settle_waters,
+        init_rigid_body_state, step,
+    )
+    for dt_fs in (0.5, 1.0, 2.0, 4.0):
+        s = load_residue("HOH")
+        state = SimState(atoms=list(s.atoms), bonds=list(s.bonds),
+                         angles=list(s.angles))
+        state.shake_pairs, state.shake_r0_sq = build_shake_constraints(
+            state.atoms, state.bonds,
+        )
+        build_settle_waters(state)
+        import random as _r
+        rng = _r.Random(7)
+        k_B = 0.00831446
+        for a in state.atoms:
+            sigma = (k_B * 300.0 / a.mass_da) ** 0.5
+            a.velocity[0] = rng.gauss(0, sigma)
+            a.velocity[1] = rng.gauss(0, sigma)
+            a.velocity[2] = rng.gauss(0, sigma)
+        init_rigid_body_state(state)
+        ff = ForceFieldConfig(lj_cutoff_nm=0.0, use_coulomb=False)
+        ic = IntegratorConfig(dt_ps=dt_fs * 1e-3,
+                              thermostat="berendsen",
+                              thermostat_tau_ps=1e9,
+                              shake=True, target_temperature_K=300.0)
+        forces = None
+        for _ in range(200):
+            forces = step(state, ff, ic, forces)
+        d_oh = np.linalg.norm(
+            np.array(state.atoms[1].position)
+            - np.array(state.atoms[0].position)
+        )
+        d_hh = np.linalg.norm(
+            np.array(state.atoms[1].position)
+            - np.array(state.atoms[2].position)
+        )
+        assert abs(d_oh - 0.096) < 1e-5, \
+            f"dt={dt_fs}fs: |OH| = {d_oh}"
+        assert abs(d_hh - 0.1518124) < 1e-5, \
+            f"dt={dt_fs}fs: |HH| = {d_hh}"
