@@ -1,0 +1,31 @@
+locus_tag,gene_name,essential,time_to_failure_s,failure_mode,confidence,evidence,true_class
+JCVISYN3A_0445,pgi,1,0.25,essential_metabolite_depletion,0.3333,UNFOLDED_PROTEINS -0.200->-0.333,Essential
+JCVISYN3A_0199,rpmI,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Essential
+JCVISYN3A_0257,rnjB,1,0.05,essential_metabolite_depletion,0.1250,BOUND_PROTEINS -0.125->-0.100,Essential
+JCVISYN3A_0727,tpiA,1,0.25,essential_metabolite_depletion,0.3333,UNFOLDED_PROTEINS -0.200->-0.333,Essential
+JCVISYN3A_0637,rpsI,0,,none,0.0000,,Essential
+JCVISYN3A_0234,crr,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Essential
+JCVISYN3A_0419,plsX,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Essential
+JCVISYN3A_0658,rpsN,0,,none,0.0000,,Essential
+JCVISYN3A_0025,rpsR,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Essential
+JCVISYN3A_0372,ywjA,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Essential
+JCVISYN3A_0669,rplW,0,,none,0.0000,,Essential
+JCVISYN3A_0528,pheRS,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Essential
+JCVISYN3A_0009,rnsC; uptD,1,0.05,essential_metabolite_depletion,0.1250,BOUND_PROTEINS -0.125->-0.100,Essential
+JCVISYN3A_0813,galE,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Essential
+JCVISYN3A_0775,rnr,0,,none,0.0000,,Essential
+JCVISYN3A_0248,,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
+JCVISYN3A_0034,,1,0.05,essential_metabolite_depletion,0.4000,BOUND_PROTEINS -0.250->-0.400,Nonessential
+JCVISYN3A_0732,deoC,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
+JCVISYN3A_0228,lpdA,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
+JCVISYN3A_0838,rlmB,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
+JCVISYN3A_0623,,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
+JCVISYN3A_0504,rsmI,0,,none,0.0000,,Nonessential
+JCVISYN3A_0361,rlmH,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
+JCVISYN3A_0080,,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
+JCVISYN3A_0852,,0,,none,0.0000,,Nonessential
+JCVISYN3A_0622,,0,,none,0.0000,,Nonessential
+JCVISYN3A_0517,rluD,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
+JCVISYN3A_0601,,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
+JCVISYN3A_0227,pdhC,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
+JCVISYN3A_0527,,1,0.25,essential_metabolite_depletion,0.1667,UNFOLDED_PROTEINS -0.100->-0.167,Nonessential
