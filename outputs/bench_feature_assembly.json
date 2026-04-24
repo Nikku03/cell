@@ -1,0 +1,29 @@
+{
+  "pandas_pyarrow": {
+    "n_iter": 10,
+    "mean_s": 0.0671382945999767,
+    "median_s": 0.07000271200001862,
+    "stdev_s": 0.006513469962262659,
+    "min_s": 0.057487311999921076,
+    "max_s": 0.07401572300000225
+  },
+  "polars": {
+    "n_iter": 10,
+    "mean_s": 0.0519648464999591,
+    "median_s": 0.038075075500046296,
+    "stdev_s": 0.03210349479667735,
+    "min_s": 0.03008596899985605,
+    "max_s": 0.12023811600010959
+  },
+  "polars_speedup_factor": 1.2919944755351012,
+  "pandas_fastparquet": "not_installed",
+  "config": {
+    "n_rows": 455,
+    "esm_cols": 1280,
+    "ef_cols": 8,
+    "mace_cols": 7,
+    "nan_fraction": 0.05,
+    "n_iter": 10,
+    "seed": 42
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "status": "AWAITING_COLAB",
+  "model_id": "facebook/esm2_t33_650M_UR50D",
+  "batch_sizes": [
+    8,
+    16,
+    32,
+    64
+  ],
+  "n_sequences": 32,
+  "avg_sequence_length": 300,
+  "synthetic_seed": 42,
+  "device_probe": {
+    "cuda": false,
+    "device_name": null,
+    "torch_version": "2.11.0+cu130"
+  },
+  "colab_invocation": {
+    "cell_0": "!pip install -q transformers>=4.40 biopython>=1.83 pandas>=2 pyarrow>=14",
+    "cell_1": "!git clone --branch claude/syn3a-whole-cell-simulator-REjHC https://github.com/Nikku03/cell.git /content/cell\n%cd /content/cell\nimport sys\nsys.path.insert(0, '/content/cell')",
+    "cell_2": "!python scripts/bench_esm2_batch.py --out outputs/bench_esm2_batch_plan.json"
+  },
+  "notes_for_reviewer": [
+    "Warm-up batch (size 1) is run once before timed batches so tokenizer/model load isn't charged to any scan point.",
+    "torch.cuda.synchronize is called before and after each timed region.",
+    "Sequences are synthetic random AA; length distribution is Gaussian around 300 residues to approximate Syn3A's protein length distribution.",
+    "fp16 LM + fp32 trunk mixed-precision is used for ESM-2 alone (no structure prediction, so the pLDDT fp16 issue doesn't apply here)."
+  ],
+  "cpu_refused_reason": "ESM-2 650M fp32 CPU forward pass on 300-residue protein takes tens of seconds; a CPU batch-size scan would take hours and would not reflect the GPU inference pattern being evaluated. Run on Colab GPU instead."
+}

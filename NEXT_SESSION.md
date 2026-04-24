@@ -10,6 +10,17 @@ _Read this file FIRST, immediately after running the invariant checker._
 4. Read `memory_bank/facts/measured/mcc_against_breuer_v9.json` for the latest honest result + diagnosis.
 5. Read this file.
 
+## Session 19 — Run ESM-2 Colab benchmarks (queued, no decisions yet)
+
+Two of Session 18's five optimization benchmarks require GPU and could not be measured in sandbox. Execute the plans on Colab Pro A100, paste back the numbers, decide integration after.
+
+1. `outputs/bench_esm2_batch_plan.json` — batch-size sensitivity (8 / 16 / 32 / 64) on ESM-2 650M, 32 synthetic sequences ~300 aa. Output writes into the same JSON (`measurements` section) when GPU is detected; the script is self-aware.
+2. `outputs/bench_esm2_sizes_plan.json` — ESM-2 150M (640-dim) vs 650M (1280-dim) on all 452 Syn3A CDS. Requires a one-line `ESM2Extractor` change to accept a `model_id` kwarg (see `blocking_codechange` in the plan) before the 150M embedding runs. Once `cell_sim/features/cache/esm2_150M.parquet` exists, retrain Tier-1 XGBoost in sandbox with that feature file and compare to the current falsified 650M numbers (tier1_only 0.145, union 0.443).
+
+Decision rules are in the plan files so a non-ambiguous "integrate" or "skip" call can be made from the Colab output alone.
+
+After Session 19, also worth deciding: the XGBoost `gpu_hist` tree-method benchmark is currently recorded as a published-estimate (2-10x) — a 3-minute Colab run overwrites that with a real number. Script: `scripts/bench_xgboost_treemethod.py`, invocation unchanged, it auto-detects CUDA.
+
 ## Where Layer 6 stands (end of Session 11)
 
 **Detector-design space: EXHAUSTED.**
