@@ -76,6 +76,23 @@ PATCHED_LOCI: frozenset[str] = frozenset((
 ))
 
 
+# v13 discovered that replacing compiled-MM rules with single-token
+# ungated python-closure rules drops effective propensity by ~factor-E
+# (where E is the original enzyme count in WT). That slowdown
+# cascaded through the metabolic network: NNATr's WT event count
+# dropped from 25 to 14, falling below the PerRuleDetector's
+# min_wt_events=20 threshold, which made the v12 sweep regress
+# JCVISYN3A_0380 (nadD, Essential) from TP -> FN.
+#
+# Fix: each patched rule fires at N tokens per step instead of 1, so
+# propensity is ``kcat * N * saturation`` — roughly matches a
+# fixed-size enzyme pool. 20 is the single-cell average for
+# Mycoplasma transporter / catalytic proteins at scale=0.05. A
+# higher value would bias WT dynamics; a lower value reintroduces
+# the regression.
+_UNGATED_TOKEN_COUNT: int = 20
+
+
 def _build_ungated_rule(
     name: str,
     substrates: list,
@@ -87,10 +104,13 @@ def _build_ungated_rule(
 ) -> TransitionRule:
     """Build a python-closure MM rule that fires without enzyme gating.
 
-    The rule's propensity is ``kcat × saturation`` (no enzyme-count
-    multiplier). Per-step firing is a single token; the simulator's
-    Gillespie loop handles cumulative rate over sim time. This
-    matches a single active catalyst at Michaelis-Menten saturation.
+    Propensity is ``kcat × N × saturation`` where
+    ``N = _UNGATED_TOKEN_COUNT`` (fixed at 20 — see module
+    docstring). This restores rule activity to roughly what the
+    compiled-MM enzyme-gated path would produce at a typical
+    Mycoplasma transporter/catalytic enzyme pool size, preventing
+    the v12 NNATr regression where network slowdown dropped
+    unrelated rules below the PerRuleDetector WT threshold.
 
     The returned rule has ``compiled_spec = None`` on purpose:
 
@@ -121,7 +141,7 @@ def _build_ungated_rule(
             sat = 1.0
         if sat <= 0:
             return []
-        return [(None, sat)]
+        return [(None, sat)] * _UNGATED_TOKEN_COUNT
 
     def apply(state, cands, rng):
         if not cands:

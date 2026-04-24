@@ -155,6 +155,74 @@ def test_v13_trna_class_hit_counts():
     assert hits.get("trna_thiolation") == 2
 
 
+def test_v14_new_classes_each_zero_fp():
+    """All 30 v14 classes must be 0-FP on the full Breuer set.
+    Total standalone annotation detector TP must reach 112 with
+    precision 1.0."""
+    r = ann_eval()
+    assert r["fp"] == 0
+    assert r["precision"] == 1.0
+    assert r["tp"] >= 112, f"expected at least 112 TPs, got {r['tp']}"
+
+
+def test_v14_specific_class_captures():
+    """Spot-check that v14 classes fire on their canonical target
+    genes. If one of these fails, a pattern got broken during a
+    refactor."""
+    d = AnnotationClassDetector()
+    targets = {
+        "protein_deformylation": "JCVISYN3A_0201",           # def
+        "translation_initiation_formyltransferase":
+            "JCVISYN3A_0390",                                # fmt
+        "methionine_aminopeptidase": "JCVISYN3A_0650",       # map
+        "signal_recognition_particle": "JCVISYN3A_0360",     # ffh
+        "methionine_adenosyltransferase": "JCVISYN3A_0432",  # metK
+        "nad_biosynthesis": "JCVISYN3A_0378",                # nadE
+        "dna_ligase": "JCVISYN3A_0690",                      # ligA
+        "glycolysis_gapdh": "JCVISYN3A_0451",                # gapdh
+        "ribosome_gtpase": "JCVISYN3A_0377",                 # obgE
+        "ctp_synthase": "JCVISYN3A_0129",                    # pyrG
+        "excinuclease": "JCVISYN3A_0254",                    # uvrC
+        "rrna_maturation": "JCVISYN3A_0402",                 # ybeY
+        "ribosome_binding_factor": "JCVISYN3A_0289",         # rbfA
+        "acp_synthase": "JCVISYN3A_0513",                    # acpS
+        "trna_uridine_carboxymethylaminomethyl":
+            "JCVISYN3A_0081",                                # mnmE
+        "membrane_protein_insertase": "JCVISYN3A_0908",      # yidC
+        "iron_sulfur_cluster": "JCVISYN3A_0442",             # iscU
+        "cysteine_desulfurase": "JCVISYN3A_0441",            # iscS
+        "thioredoxin_reductase": "JCVISYN3A_0819",           # trx
+        "adenine_salvage_prt": "JCVISYN3A_0413",             # apt
+        "uracil_salvage_prt": "JCVISYN3A_0798",              # upp
+        "aaa_protease": "JCVISYN3A_0039",                    # ftsH
+        "clp_protease": "JCVISYN3A_0545",                    # clpB
+        "ribonuclease_hi": "JCVISYN3A_0283",                 # rnhA
+        "ribonuclease_m5": "JCVISYN3A_0003",                 # rnmV
+        "formyltetrahydrofolate_cyclo_ligase":
+            "JCVISYN3A_0443",                                # yggN
+        "ribose_5_phosphate_isomerase": "JCVISYN3A_0800",    # rpiB
+        "phosphatidylglycerol_synthase": "JCVISYN3A_0875",   # pgsA
+        "glycolipid_synthase": "JCVISYN3A_0113",             # bcsA
+    }
+    for klass, locus in targets.items():
+        mode, _, conf, ev = d.detect_for_gene(locus)
+        assert mode != FailureMode.NONE, f"{locus} ({klass}) abstained"
+        assert conf == 0.8
+        assert klass in ev, (
+            f"{locus} matched wrong class; ev={ev}"
+        )
+
+
+def test_v14_dna_polymerase_i_now_caught():
+    """v14 broadens dna_replication_core to catch polA (DNA polymerase
+    I) on top of the existing 'DNA polymerase III' matches."""
+    d = AnnotationClassDetector()
+    mode, _, conf, ev = d.detect_for_gene("JCVISYN3A_0611")  # polA
+    assert mode == FailureMode.DNA_REPLICATION_BLOCKED
+    assert conf == 0.8
+    assert "dna_replication_core" in ev
+
+
 # ---------- PriorsOnlyPredictor ----------
 
 def test_priors_only_predictor_flags_expected_essentials():
