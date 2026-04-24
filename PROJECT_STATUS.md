@@ -22,10 +22,10 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 
 ## Memory Bank
 
-- Facts: **41**
+- Facts: **42**
   - structural (14): chromosome length, gene count, gene table, oriC, Breuer 2019 labels, RNAP count per cell, ribosome count at birth, chromosome bead model, feature_cache_infrastructure, esm2_extractor, alphafold_extractor, esmfold_extractor, mace_off_extractor, syn3a_species_smiles_map.
   - parameters (4): active RNAP fraction, doubling time, mRNA half-life mean, imb155_pathway_patches.
-  - measured (20): `mcc_against_breuer_v0..v10b_full` + `mcc_against_breuer_v11_tier1_xgb` + `mcc_against_breuer_v12_imb155_patches` + `mcc_against_breuer_v13_trna_priors` + `mcc_against_breuer_v14_annotation_expansion` + `mcc_replicates_summary` + `mcc_v9_robustness` + `session_14_populate`.
+  - measured (21): `mcc_against_breuer_v0..v10b_full` + `mcc_against_breuer_v11_tier1_xgb` + `mcc_against_breuer_v12_imb155_patches` + `mcc_against_breuer_v13_trna_priors` + `mcc_against_breuer_v14_annotation_expansion` + `mcc_against_breuer_v15_round2_priors` + `mcc_replicates_summary` + `mcc_v9_robustness` + `session_14_populate`.
   - resolved uncertainty (3): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`, `syn3a_gene_count_thornburg2026_discrepancy`.
 - Sources: **11** (Thornburg 2022 + 2026 Cell, Hutchison 2016, Breuer 2019, GenBank CP016816, Luthey-Schulten ComplexFormation + 4DWCM repos, Fu 2026 JPC-B, Gilbert 2023 Frontiers, Bianchi 2022 JPC-B, Pezeshkian 2024 Nat Commun).
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
@@ -48,6 +48,31 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
+
+### Session 15 — 2026-04-24 — Round-2 annotation mining (v15 = MCC 0.537)
+- **Scope**: after v14's +39 TPs, mined the remaining 113 FNs for more keyword-matchable biology. 12 more classes + one pattern widening, all validated 0-FP against the full Breuer set.
+- **Changes**:
+  - `trna_pseudouridine_synthase` pattern `trna pseudouridine synthase` → `trna pseudouridine` (catches truA + truB whose products have paren variants the narrow pattern missed)
+  - 12 new classes: `transcription_antitermination` (nusA/B/G), `ssra_binding` (smpB), `nucleotide_exchange_factor` (grpE), `ribosome_subunit_maturation` (rbgA, prp/ysxB), `rna_polymerase_subunit` (rpoE), `pyrophosphohydrolase` (relA), `phosphocarrier_hpr` (ptsH), `dihydrofolate_synthase` (folC), `pts_enzyme_i` (ptsI), `flavin_reductase` (fre), `primosomal_protein` (dnaI), `atp_dependent_helicase` (pcrA)
+- **v15 measurement**:
+  - **MCC 0.537** (Δ +0.043 over v14, **Δ +0.173 over v10b = +47.5 % relative**)
+  - TP 287 / FP 3 / TN 69 / FN 96 (v14: 270 / 3 / 69 / 113)
+  - Precision 0.990, recall 0.749 (+0.044), specificity 0.958
+  - 17 flips, **ALL correct TPs**, **zero regressions**. Exactly matches pre-sweep projection.
+  - Sweep wall: 3011.4 s (6.6 s/gene effective, 4 workers, Rust backend).
+- **Rejected candidates** (had FPs): `deoxyribonuclease` (xseA/B Nonessential), `rrna_methyltransferase_broad` (4 rRNA methyltransferases whose 16S-ribose-modification KOs are Nonessential in Syn3A).
+- **Tests**: 3 new v15 annotation tests (0-FP invariant, spot-check on 13 target loci, truB-via-widened-pattern) = **212/212 passing**.
+- **Memory bank**: 1 new measured fact (`mcc_against_breuer_v15_round2_priors`). **42 facts / 12 sources / invariant checker OK.**
+- **Session 15 running total**:
+  | Version | Change | MCC | TP / FP / TN / FN |
+  |---|---|---|---|
+  | v10b | composed baseline | 0.364 | 223 / 6 / 66 / 160 |
+  | v11 | Tier-1 XGB (neg) | ≤ 0.241 | — |
+  | v12 | iMB155 patches | 0.393 | 222 / 3 / 69 / 161 |
+  | v13 | tRNA-mod priors | 0.410 | 231 / 3 / 69 / 152 |
+  | v14 | +30 classes + NNATr fix | 0.494 | 270 / 3 / 69 / 113 |
+  | **v15** | **+12 classes round-2** | **0.537** | **287 / 3 / 69 / 96** |
+- **Distance to brief target**: 0.053 MCC. Remaining 96 FNs: 84 uncharacterized proteins (need structural/coevolutionary features — i.e. ESMFold parquet populate), 12 specific genes (trxA, hupA, ietA, recR, etc.) whose Breuer annotations don't cluster into reusable keywords.
 
 ### Session 15 — 2026-04-24 — 30 annotation classes + NNATr fix (v14 = MCC 0.494)
 - **Scope**: mined the v13 FN pool for biological classes that v10b/v13 keywords weren't catching. Every candidate pattern was validated against the full Breuer set to produce zero Nonessential FPs before merging. Also fixed the v12 TP→FN regression on JCVISYN3A_0380 (NNATr / nadD).

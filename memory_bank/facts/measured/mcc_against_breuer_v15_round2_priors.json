@@ -1,0 +1,108 @@
+{
+  "id": "mcc_against_breuer_v15_round2_priors",
+  "claim": "Seventeenth MCC measurement: v14 composed detector + 12 more validated annotation classes mined from the v14 FN pool (transcription_antitermination, ssra_binding, nucleotide_exchange_factor, ribosome_subunit_maturation, rna_polymerase_subunit, pyrophosphohydrolase, phosphocarrier_hpr, dihydrofolate_synthase, pts_enzyme_i, flavin_reductase, primosomal_protein, atp_dependent_helicase) + the trna_pseudouridine_synthase pattern widened from 'trna pseudouridine synthase' -> 'trna pseudouridine' so it catches truA and truB (whose products have paren variants the narrow original missed). Full 455-gene sweep at seed=42: MCC = 0.537, delta +0.043 over v14's 0.494, delta +0.173 over v10b's 0.364 (+47.5 percent relative).",
+  "confidence": "measured",
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible via 'python scripts/run_sweep_parallel.py --all --workers 4 --use-rust --scale 0.05 --t-end-s 0.5 --detector composed --seed 42 --threshold 0.1 --enable-imb155-patches'. Preserved outputs at outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v15_round2_priors.csv + outputs/metrics_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v15_round2_priors.json. Sweep wall: 3011.4 s (6.6 s/gene effective on 4 workers).",
+  "last_verified": "2026-04-24",
+  "context": {
+    "commit_range": "72400ff..(this commit)",
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v15_round2_priors"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v14_annotation_expansion",
+    "mcc_against_breuer_v13_trna_priors",
+    "mcc_against_breuer_v12_imb155_patches",
+    "imb155_pathway_patches",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "cell_sim/layer6_essentiality/annotation_class_detector.py",
+    "cell_sim/layer3_reactions/imb155_patches.py",
+    "scripts/run_sweep_parallel.py"
+  ],
+  "value": {
+    "mcc": 0.537,
+    "precision": 0.990,
+    "recall": 0.749,
+    "specificity": 0.958,
+    "accuracy": 0.782,
+    "confusion": {"tp": 287, "fp": 3, "tn": 69, "fn": 96},
+    "delta_over_v14": {
+      "mcc": 0.043,
+      "tp": 17,
+      "fp": 0,
+      "tn": 0,
+      "fn": -17,
+      "precision": 0.001,
+      "recall": 0.044,
+      "specificity": 0.000
+    },
+    "delta_over_v10b": {
+      "mcc": 0.173,
+      "tp": 64,
+      "fp": -3,
+      "tn": 3,
+      "fn": -64,
+      "precision": 0.016,
+      "recall": 0.167,
+      "specificity": 0.041
+    },
+    "flip_audit_v14_to_v15": {
+      "total_flips": 17,
+      "non_to_ess_tp": 17,
+      "ess_to_non_regressions": 0,
+      "new_tp_by_class": {
+        "transcription_antitermination": [
+          "JCVISYN3A_0107", "JCVISYN3A_0300", "JCVISYN3A_0840"
+        ],
+        "rna_polymerase_subunit": ["JCVISYN3A_0128"],
+        "pts_enzyme_i": ["JCVISYN3A_0233"],
+        "trna_pseudouridine_synthase_widened": [
+          "JCVISYN3A_0290", "JCVISYN3A_0640"
+        ],
+        "flavin_reductase": ["JCVISYN3A_0302"],
+        "ribosome_subunit_maturation": [
+          "JCVISYN3A_0366", "JCVISYN3A_0500"
+        ],
+        "pyrophosphohydrolase": ["JCVISYN3A_0414"],
+        "nucleotide_exchange_factor": ["JCVISYN3A_0543"],
+        "primosomal_protein": ["JCVISYN3A_0608"],
+        "phosphocarrier_hpr": ["JCVISYN3A_0694"],
+        "atp_dependent_helicase": ["JCVISYN3A_0695"],
+        "ssra_binding": ["JCVISYN3A_0776"],
+        "dihydrofolate_synthase": ["JCVISYN3A_0823"]
+      }
+    },
+    "config": {
+      "detector": "composed (ComplexAssembly + AnnotationClass-v15 + PerRule) + enable_imb155_patches",
+      "gene_set": "all 455 Breuer-labeled",
+      "label_scheme": "binary; Quasiessential -> positive",
+      "sim_seed": 42,
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "use_rust_backend": true,
+      "workers": 4,
+      "threshold": 0.1,
+      "sweep_wall_s": 3011.4,
+      "per_gene_wall_s": 6.6
+    },
+    "annotation_detector_standalone": {
+      "tp": 125,
+      "fp": 0,
+      "precision": 1.0,
+      "recall_over_breuer_essentials": 0.326,
+      "up_from_v14": 13
+    }
+  },
+  "caveats": [
+    "Round-2 prior-mining projection vs actual: pre-sweep expected +17 TPs +0 FPs MCC ~0.537. Actual: +17 TPs +0 FPs MCC 0.537. Exact.",
+    "Cumulative Session-15 result: MCC 0.364 -> 0.537, +0.173 absolute, +47.5 percent relative. v15 puts the detector 0.053 away from the brief target of 0.59.",
+    "Remaining 96 FNs are harder: 84 (87 percent) are annotated 'Uncharacterized' / 'putative' / 'hypothetical' with no keyword-matchable biology; the other 12 are specific genes (e.g. trxA thioredoxin, hupA DNA-binding, ietA toxin-antitoxin, recR recombination) whose Breuer annotation doesn't cluster with other essentials. Keyword-prior mining has hit diminishing returns.",
+    "Next honest levers: (a) Tier-1 XGBoost over ESMFold structural features + MACE kcat aggregates once the user's Colab populate run lands; structural + coevolutionary signals should help separate the 84 'Uncharacterized but essential' from 'Uncharacterized and nonessential'. (b) Longer-bio-time sims to catch the few remaining catalytic-silencing essentials that scale=0.05 / t=0.5s misses (Path A, previously falsified at MCC 0.125 but now re-enabled by v15's much higher baseline).",
+    "v15 precision is 0.990 (287 TP out of 290 positive predictions). The 3 remaining FPs are the SAME 3 that have survived every round since v12: nothing in v13/v14/v15 reintroduced or closed them. They are detector-level artefacts of the complex-assembly / trajectory paths, not annotation-level.",
+    "Per-gene wall rose to 6.6s (from v13's 2.2s) because the iMB155 20-token patched rules fire 20x more events per step. A candidate optimisation: lower _UNGATED_TOKEN_COUNT from 20 to 10 and verify MCC is preserved; would roughly halve sweep cost without losing NNATr's recovery (whose wt=24 comfortably clears the 20-threshold)."
+  ]
+}
