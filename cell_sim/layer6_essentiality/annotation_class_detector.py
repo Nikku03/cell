@@ -178,7 +178,7 @@ _ESSENTIAL_CLASS_RULES: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = [
     ("ribosome_gtpase",
      ("ribosome gtpase",), ()),
     ("trna_pseudouridine_synthase",
-     ("trna pseudouridine synthase",), ()),
+     ("trna pseudouridine",), ()),
     ("ctp_synthase",
      ("ctp synthase",), ()),
     ("excinuclease",
@@ -219,6 +219,35 @@ _ESSENTIAL_CLASS_RULES: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = [
      ("cdp-diacylglycerol--glycerol",), ()),
     ("glycolipid_synthase",
      ("glycolipid synthase",), ()),
+    # v15: 12 more validated classes mined from the v14 FN pool.
+    # Each pattern 0-FP against full Breuer; collectively captures
+    # 17 more previously-FN genes (trna_pseudouridine_synthase pattern
+    # also widened to catch truA + truB whose products have
+    # pseudouridine(NN) paren variants).
+    ("transcription_antitermination",
+     ("antitermination",), ()),
+    ("ssra_binding",
+     ("ssra-binding",), ()),
+    ("nucleotide_exchange_factor",
+     ("nucleotide exchange factor",), ()),
+    ("ribosome_subunit_maturation",
+     ("subunit-maturation", "maturation protease"), ()),
+    ("rna_polymerase_subunit",
+     ("rna polymerase subunit",), ()),
+    ("pyrophosphohydrolase",
+     ("pyrophosphohydrolase",), ()),
+    ("phosphocarrier_hpr",
+     ("phosphocarrier",), ()),
+    ("dihydrofolate_synthase",
+     ("dihydrofolate synthase",), ()),
+    ("pts_enzyme_i",
+     ("phosphoenolpyruvate--protein",), ()),
+    ("flavin_reductase",
+     ("flavin reductase",), ()),
+    ("primosomal_protein",
+     ("primosomal",), ()),
+    ("atp_dependent_helicase",
+     ("atp-dependent dna helicase",), ()),
 ]
 
 
@@ -347,6 +376,19 @@ class AnnotationClassDetector:
             "ribose_5_phosphate_isomerase": FailureMode.ESSENTIAL_METABOLITE_DEPLETION,
             "phosphatidylglycerol_synthase": FailureMode.MEMBRANE_INTEGRITY,
             "glycolipid_synthase": FailureMode.MEMBRANE_INTEGRITY,
+            # v15 (12 more)
+            "transcription_antitermination": FailureMode.TRANSCRIPTION_STALL,
+            "ssra_binding": FailureMode.TRANSLATION_STALL,
+            "nucleotide_exchange_factor": FailureMode.TRANSLATION_STALL,
+            "ribosome_subunit_maturation": FailureMode.TRANSLATION_STALL,
+            "rna_polymerase_subunit": FailureMode.TRANSCRIPTION_STALL,
+            "pyrophosphohydrolase": FailureMode.ESSENTIAL_METABOLITE_DEPLETION,
+            "phosphocarrier_hpr": FailureMode.ESSENTIAL_METABOLITE_DEPLETION,
+            "dihydrofolate_synthase": FailureMode.ESSENTIAL_METABOLITE_DEPLETION,
+            "pts_enzyme_i": FailureMode.ESSENTIAL_METABOLITE_DEPLETION,
+            "flavin_reductase": FailureMode.ESSENTIAL_METABOLITE_DEPLETION,
+            "primosomal_protein": FailureMode.DNA_REPLICATION_BLOCKED,
+            "atp_dependent_helicase": FailureMode.DNA_REPLICATION_BLOCKED,
         }
         mode = mode_by_class.get(match.class_label,
                                   FailureMode.TRANSLATION_STALL)

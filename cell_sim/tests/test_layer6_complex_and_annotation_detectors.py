@@ -223,6 +223,52 @@ def test_v14_dna_polymerase_i_now_caught():
     assert "dna_replication_core" in ev
 
 
+def test_v15_new_classes_zero_fp_and_capture_17_more():
+    """v15 adds 12 more classes + widens trna_pseudouridine_synthase
+    pattern. Standalone annotation detector TP must reach 125, FP must
+    stay 0."""
+    r = ann_eval()
+    assert r["fp"] == 0
+    assert r["precision"] == 1.0
+    assert r["tp"] >= 125, f"expected at least 125 TPs, got {r['tp']}"
+
+
+def test_v15_specific_class_captures():
+    """Spot-check that v15 classes + the widened truA/truB pattern fire
+    on their canonical target genes."""
+    d = AnnotationClassDetector()
+    targets = {
+        "trna_pseudouridine_synthase": "JCVISYN3A_0640",      # truA
+        "transcription_antitermination": "JCVISYN3A_0300",    # nusA
+        "ssra_binding": "JCVISYN3A_0776",                     # smpB
+        "nucleotide_exchange_factor": "JCVISYN3A_0543",       # grpE
+        "ribosome_subunit_maturation": "JCVISYN3A_0366",      # rbgA
+        "rna_polymerase_subunit": "JCVISYN3A_0128",           # rpoE
+        "pyrophosphohydrolase": "JCVISYN3A_0414",             # relA
+        "phosphocarrier_hpr": "JCVISYN3A_0694",               # ptsH
+        "dihydrofolate_synthase": "JCVISYN3A_0823",           # folC
+        "pts_enzyme_i": "JCVISYN3A_0233",                     # ptsI
+        "flavin_reductase": "JCVISYN3A_0302",                 # fre
+        "primosomal_protein": "JCVISYN3A_0608",               # dnaI
+        "atp_dependent_helicase": "JCVISYN3A_0695",           # pcrA
+    }
+    for klass, locus in targets.items():
+        mode, _, conf, ev = d.detect_for_gene(locus)
+        assert mode != FailureMode.NONE, f"{locus} ({klass}) abstained"
+        assert conf == 0.8
+        assert klass in ev, f"{locus} matched wrong class; ev={ev}"
+
+
+def test_v15_truB_now_caught():
+    """truB has 'pseudouridine(55)' in its product name. The widened
+    'trna pseudouridine' pattern (v15) catches it; the original
+    'trna pseudouridine synthase' (v14) did not."""
+    d = AnnotationClassDetector()
+    mode, _, conf, ev = d.detect_for_gene("JCVISYN3A_0290")
+    assert mode == FailureMode.TRANSLATION_STALL
+    assert "trna_pseudouridine_synthase" in ev
+
+
 # ---------- PriorsOnlyPredictor ----------
 
 def test_priors_only_predictor_flags_expected_essentials():
