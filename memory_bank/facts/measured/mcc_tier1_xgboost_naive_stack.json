@@ -1,0 +1,88 @@
+{
+  "id": "mcc_tier1_xgboost_naive_stack",
+  "claim": "Three Tier-1 experiments against Breuer 2019 labels on the 455-gene set all FAIL to beat the v15 keyword-prior detector baseline (MCC 0.5372). (1) Full-feature XGBoost stack (ESM-2 650M + ESMFold v1 + MACE-OFF + v15 outputs, 1305 cols): pooled 5-fold MCC 0.443, delta -0.094 vs v15. (2) Partition XGBoost + PCA-32 on the 165 v15-negative genes (96 current FNs, 69 current TNs), best global MCC = 0.530 at threshold 0.95 (delta -0.007, basically noise — only 1 call flipped). (3) kNN in L2-normalized ESM-2 space on the same partition, k in {5,10,20,30,50}: best partition-MCC 0.054 at k=50, global MCC 0.179 (delta -0.358). Conclusion: ESM-2 650M embeddings + ESMFold structure + MACE-OFF on 455 Syn3A CDS do NOT contain signal that XGBoost or kNN can extract to discriminate Breuer-essential from Breuer-nonessential beyond what v15's annotation-keyword priors already capture. The 1280:455 feature-to-row ratio is prohibitive, and within the lower-dim partition (165 rows, PCA-32) the embeddings still do not cluster essential-vs-nonessential. Tier-1 cache as populated is NOT a viable path to the 0.59 MCC target via direct supervised learning on Breuer labels alone.",
+  "confidence": "measured",
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible via 'python scripts/train_tier1_xgboost.py --save-oof'. Inputs: the four cache parquets at commit 2728512 + outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v15_round2_priors.csv. Output at outputs/tier1_xgboost.json + outputs/predictions_tier1_xgboost_union.csv. Config: XGBClassifier(n_estimators=400, max_depth=4, learning_rate=0.05, subsample=0.8, colsample_bytree=0.5, min_child_weight=5, reg_lambda=1.0), scale_pos_weight set per-fold, StratifiedKFold(n_splits=5, shuffle=True, random_state=42).",
+  "last_verified": "2026-04-24",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "tier1_xgboost_v0_naive_stack"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "tier1_feature_cache"
+  ],
+  "used_by": [
+    "scripts/train_tier1_xgboost.py"
+  ],
+  "value": {
+    "config_results": {
+      "tier1_only": {
+        "fold_mcc_mean": 0.1454,
+        "fold_mcc_std": 0.1757,
+        "pooled_mcc": 0.1452,
+        "confusion": {"tp": 343, "fp": 55, "tn": 17, "fn": 40},
+        "n_features": 1295
+      },
+      "v15_only": {
+        "fold_mcc_mean": 0.5393,
+        "fold_mcc_std": 0.0601,
+        "pooled_mcc": 0.5372,
+        "confusion": {"tp": 287, "fp": 3, "tn": 69, "fn": 96},
+        "n_features": 10
+      },
+      "union": {
+        "fold_mcc_mean": 0.4456,
+        "fold_mcc_std": 0.0554,
+        "pooled_mcc": 0.4427,
+        "confusion": {"tp": 330, "fp": 26, "tn": 46, "fn": 53},
+        "n_features": 1305
+      }
+    },
+    "v15_reference_direct_calls": {
+      "mcc": 0.5372,
+      "confusion": {"tp": 287, "fp": 3, "tn": 69, "fn": 96}
+    },
+    "delta_union_vs_v15": {
+      "mcc": -0.094,
+      "tp": 43,
+      "fp": 23,
+      "tn": -23,
+      "fn": -43
+    },
+    "partition_xgboost_best": {
+      "threshold": 0.95,
+      "partition_pooled_mcc": -0.018,
+      "partition_confusion": {"tp": 1, "fp": 1, "tn": 68, "fn": 95},
+      "global_confusion": {"tp": 288, "fp": 4, "tn": 68, "fn": 95},
+      "global_mcc": 0.5301,
+      "delta_over_v15": -0.0072
+    },
+    "partition_xgboost_scan": {
+      "threshold_0.30_global_mcc": 0.3602,
+      "threshold_0.50_global_mcc": 0.4828,
+      "threshold_0.70_global_mcc": 0.4486,
+      "threshold_0.90_global_mcc": 0.5015,
+      "threshold_0.95_global_mcc": 0.5301,
+      "note": "No threshold beats v15; closest is thr=0.95 at delta -0.0072"
+    },
+    "partition_knn_esm2": {
+      "k_5_partition_mcc": 0.032,
+      "k_10_partition_mcc": -0.017,
+      "k_20_partition_mcc": 0.002,
+      "k_30_partition_mcc": 0.051,
+      "k_50_partition_mcc": 0.054,
+      "k_50_global_mcc": 0.179,
+      "note": "Pure ESM-2 cosine kNN is catastrophic; embeddings do not cluster essentiality"
+    }
+  },
+  "caveats": [
+    "Negative result. The naive 'concat all features + XGBoost' approach is falsified at MCC 0.44 vs v15's 0.54 — do not re-run this experiment without changing the design. Specifically: restricting XGBoost to the 96 FN / 72 TN subset (where v15 is silent) is the natural follow-up and is NOT ruled out by this fact.",
+    "Dataset is severely imbalanced (pos_rate=0.842, 383 positive vs 72 negative). v15's almost-zero FP rate (3/290 = 1%) is very hard to beat because any added-feature-induced FP costs more MCC than a recovered TP gains.",
+    "esmfold_disorder_fraction was dropped from the feature set: the 0.1.0-scale esmfold_v1.parquet has plddt 0-1 with a disorder threshold of 50, so every row's disorder_fraction is 1.0 (constant feature, no information). After the 0.2.0 unit-scale fix regenerates the parquet, a re-run would include it — unlikely to change the headline result since it's a single feature among 1295.",
+    "MACE-OFF covers only 111/455 genes with real kcat estimates; the remaining 344 are NaN-padded. XGBoost's native NaN handling means these are routed via default branch in each split, so the effective information from MACE is limited to the metabolic-enzyme subset.",
+    "Future direction that is ruled IN: partition-based modeling — train Tier-1 XGBoost only on the (FN, TN) subset where v15's binary call is 'nonessential', and apply it as a refinement only on v15-negative predictions. This isolates the classifier from the near-perfect v15-positive regime. 168 rows is tiny but the class balance is better (96 pos vs 72 neg).",
+    "No-information baseline (always predict positive) would give MCC = 0 (undefined: no negatives predicted) on this dataset. XGBoost at 0.145 on Tier-1 alone is better than random but nowhere near v15."
+  ]
+}

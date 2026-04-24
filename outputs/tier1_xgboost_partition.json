@@ -1,0 +1,191 @@
+{
+  "v15_baseline": {
+    "mcc": 0.5372320940435067,
+    "confusion": {
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    }
+  },
+  "n_pca": 32,
+  "xgb_params": {
+    "n_estimators": 200,
+    "max_depth": 3,
+    "learning_rate": 0.05,
+    "subsample": 0.8,
+    "colsample_bytree": 0.7,
+    "min_child_weight": 3,
+    "reg_lambda": 2.0,
+    "objective": "binary:logistic",
+    "tree_method": "hist",
+    "eval_metric": "logloss",
+    "random_state": 42,
+    "n_jobs": 4
+  },
+  "partition_size": 165,
+  "partition_positives": 96,
+  "partition_negatives": 69,
+  "threshold_scan": [
+    {
+      "threshold": 0.3,
+      "partition_pooled_mcc": 0.24035495834957135,
+      "partition_confusion": {
+        "tp": 88,
+        "fp": 51,
+        "tn": 18,
+        "fn": 8
+      },
+      "global_tp": 375,
+      "global_fp": 54,
+      "global_tn": 18,
+      "global_fn": 8,
+      "global_mcc": 0.360245584403701,
+      "delta_over_v15": -0.17698650963980567
+    },
+    {
+      "threshold": 0.4,
+      "partition_pooled_mcc": 0.19644195806436882,
+      "partition_confusion": {
+        "tp": 78,
+        "fp": 44,
+        "tn": 25,
+        "fn": 18
+      },
+      "global_tp": 365,
+      "global_fp": 47,
+      "global_tn": 25,
+      "global_fn": 18,
+      "global_mcc": 0.37456691285267474,
+      "delta_over_v15": -0.16266518119083195
+    },
+    {
+      "threshold": 0.5,
+      "partition_pooled_mcc": 0.2833341312460805,
+      "partition_confusion": {
+        "tp": 70,
+        "fp": 31,
+        "tn": 38,
+        "fn": 26
+      },
+      "global_tp": 357,
+      "global_fp": 34,
+      "global_tn": 38,
+      "global_fn": 26,
+      "global_mcc": 0.48277386106968084,
+      "delta_over_v15": -0.05445823297382585
+    },
+    {
+      "threshold": 0.6,
+      "partition_pooled_mcc": 0.1402958318733777,
+      "partition_confusion": {
+        "tp": 54,
+        "fp": 29,
+        "tn": 40,
+        "fn": 42
+      },
+      "global_tp": 341,
+      "global_fp": 32,
+      "global_tn": 40,
+      "global_fn": 42,
+      "global_mcc": 0.4233863743381893,
+      "delta_over_v15": -0.11384571970531737
+    },
+    {
+      "threshold": 0.7,
+      "partition_pooled_mcc": 0.10448966485787865,
+      "partition_confusion": {
+        "tp": 39,
+        "fp": 21,
+        "tn": 48,
+        "fn": 57
+      },
+      "global_tp": 326,
+      "global_fp": 24,
+      "global_tn": 48,
+      "global_fn": 57,
+      "global_mcc": 0.44857379641125483,
+      "delta_over_v15": -0.08865829763225186
+    },
+    {
+      "threshold": 0.8,
+      "partition_pooled_mcc": 0.0792361557040703,
+      "partition_confusion": {
+        "tp": 23,
+        "fp": 12,
+        "tn": 57,
+        "fn": 73
+      },
+      "global_tp": 310,
+      "global_fp": 15,
+      "global_tn": 57,
+      "global_fn": 73,
+      "global_mcc": 0.4855953789552194,
+      "delta_over_v15": -0.051636715088287266
+    },
+    {
+      "threshold": 0.85,
+      "partition_pooled_mcc": -0.01354479066416898,
+      "partition_confusion": {
+        "tp": 13,
+        "fp": 10,
+        "tn": 59,
+        "fn": 83
+      },
+      "global_tp": 300,
+      "global_fp": 13,
+      "global_tn": 59,
+      "global_fn": 83,
+      "global_mcc": 0.4747611502004917,
+      "delta_over_v15": -0.06247094384301499
+    },
+    {
+      "threshold": 0.9,
+      "partition_pooled_mcc": -0.042131581102864024,
+      "partition_confusion": {
+        "tp": 5,
+        "fp": 5,
+        "tn": 64,
+        "fn": 91
+      },
+      "global_tp": 292,
+      "global_fp": 8,
+      "global_tn": 64,
+      "global_fn": 91,
+      "global_mcc": 0.501549983761195,
+      "delta_over_v15": -0.03568211028231172
+    },
+    {
+      "threshold": 0.95,
+      "partition_pooled_mcc": -0.01837362305062346,
+      "partition_confusion": {
+        "tp": 1,
+        "fp": 1,
+        "tn": 68,
+        "fn": 95
+      },
+      "global_tp": 288,
+      "global_fp": 4,
+      "global_tn": 68,
+      "global_fn": 95,
+      "global_mcc": 0.5300792867489555,
+      "delta_over_v15": -0.0071528072945511445
+    }
+  ],
+  "best": {
+    "threshold": 0.95,
+    "partition_pooled_mcc": -0.01837362305062346,
+    "partition_confusion": {
+      "tp": 1,
+      "fp": 1,
+      "tn": 68,
+      "fn": 95
+    },
+    "global_tp": 288,
+    "global_fp": 4,
+    "global_tn": 68,
+    "global_fn": 95,
+    "global_mcc": 0.5300792867489555,
+    "delta_over_v15": -0.0071528072945511445
+  }
+}
