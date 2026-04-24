@@ -153,6 +153,8 @@ class ESMFoldExtractor(BatchedFeatureExtractor):
         # from_pretrained — keeps the user-facing error consistent.
         lm_dtype = _resolve_torch_dtype(config.dtype, torch)
 
+        _patch_compute_tm_if_needed()
+
         tokenizer = AutoTokenizer.from_pretrained(self._MODEL_ID)
         model = EsmForProteinFolding.from_pretrained(
             self._MODEL_ID,
@@ -236,6 +238,62 @@ class ESMFoldExtractor(BatchedFeatureExtractor):
 
 
 # ---- helpers ----
+
+
+_COMPUTE_TM_PATCHED = False
+
+
+def _patch_compute_tm_if_needed() -> None:
+    """Guard against a known upstream bug in ``transformers``'
+    ``openfold_utils.loss.compute_tm``: when ``ptm_logits`` contain
+    NaN or Inf (common with fp16 language-model activations on some
+    inputs), the line ``argmax = (weighted == torch.max(weighted))
+    .nonzero()[0]`` indexes an empty tensor and raises
+    ``IndexError: index 0 is out of bounds for dimension 0 with
+    size 0`` — which aborts ``forward`` before a PDB string is
+    returned.
+
+    We only consume pLDDT + 3D coords from the PDB in
+    ``_features_from_pdb``; the PTM score is unused. Returning a NaN
+    scalar on the failure path keeps inference flowing and has no
+    effect on the 9 downstream features.
+
+    Patches BOTH the source module (``openfold_utils.loss``) and the
+    binding already imported into ``modeling_esmfold`` — the latter
+    is necessary because ``modeling_esmfold`` did
+    ``from .openfold_utils.loss import compute_tm`` at its import
+    time, which binds a distinct name in its own namespace.
+    """
+    global _COMPUTE_TM_PATCHED
+    if _COMPUTE_TM_PATCHED:
+        return
+    import torch  # noqa: WPS433
+    try:
+        from transformers.models.esm.openfold_utils import (  # noqa: WPS433
+            loss as _ofu_loss,
+        )
+        import transformers.models.esm.modeling_esmfold as _esmfold_mod  # noqa: WPS433
+    except ImportError:
+        # transformers not installed yet (sandbox) — nothing to patch.
+        return
+
+    _orig = _ofu_loss.compute_tm
+
+    def _safe(logits, residue_weights=None, max_bin=31, no_bins=64,
+              eps=1e-8, **kwargs):
+        try:
+            return _orig(logits, residue_weights, max_bin, no_bins,
+                         eps, **kwargs)
+        except (IndexError, RuntimeError):
+            return torch.tensor(
+                float("nan"),
+                device=logits.device,
+                dtype=logits.dtype,
+            )
+
+    _ofu_loss.compute_tm = _safe
+    _esmfold_mod.compute_tm = _safe
+    _COMPUTE_TM_PATCHED = True
 
 
 def _rename_af_to_esmfold(af_row: dict[str, float]) -> dict[str, float]:
