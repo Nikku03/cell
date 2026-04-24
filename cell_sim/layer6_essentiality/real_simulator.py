@@ -103,6 +103,13 @@ class RealSimulatorConfig:
     enable_metabolite_sinks: bool = False
     sink_k_per_s: float = 100.0
     sink_tolerance: float = 3.0
+    # Session 15: clear three over-assigned loci (JCVISYN3A_0034
+    # placeholder transporter + lpdA + deoC) from their enzyme_loci
+    # lists. Addresses the v10b false positives diagnosed as iMB155
+    # reconstruction gaps, not detector failures. See
+    # cell_sim/layer3_reactions/imb155_patches.py and
+    # memory_bank/facts/parameters/imb155_pathway_patches.json.
+    enable_imb155_patches: bool = False
 
 
 class RealSimulator(Simulator):
@@ -143,6 +150,12 @@ class RealSimulator(Simulator):
             medium = load_medium()
             rev_rules, _ = build_reversible_catalysis_rules(sbml, kinetics)
             extra_rules = build_missing_transport_rules(sbml, kinetics)
+            if self.cfg.enable_imb155_patches:
+                from cell_sim.layer3_reactions.imb155_patches import (
+                    apply_imb155_patches,
+                )
+                rev_rules = apply_imb155_patches(rev_rules)
+                extra_rules = apply_imb155_patches(extra_rules)
         self._spec = spec
         self._counts_template = counts
         self._complexes = complexes

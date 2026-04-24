@@ -26,15 +26,21 @@ All detector variants plateau at the same 3 FPs (0034, deoC, lpdA) and 15 FNs (r
 
 Session 14's populate pass landed ESM-2 (real 1280-dim embeddings, all 455 CDS) plus two empty-by-design parquets for AlphaFold-DB and MACE-OFF. Commit `ebbfdff` carries the SHAs; `memory_bank/facts/measured/session_14_populate.json` records the outcome. The two empty parquets came from *data-availability gaps*, not extraction bugs:
 
-### 0a. Fix AlphaFold-DB coverage (taxid 2144189 not in UniProt)
+### 0a. Structural features — PIVOT from AlphaFold-DB to ESMFold
 
-JCVI-Syn3A is a synthetic organism and UniProt has not imported its proteome — four query routes all returned zero rows in the Session-14 run. AFDB keys on UniProt accessions, so without a mapping there's nothing to fetch. Fix:
+**Session-15 finding (verified):** the Luthey-Schulten 4DWCM upstream repo does NOT contain a UniProt cross-reference CSV — its `input_data/` directory lists 14 files (`syn3A.gb`, `kinetic_params.xlsx`, `Syn3A_updated.xml`, `LargeSubunit.xlsx`, `iMB155_noUnqATP_lipdiomics_wPUNP5_noNBtransport.xml`, `protein_metabolites.xlsx`, etc.) and none maps the `AVX*` NCBI accessions to UniProt entries. The 4DWCM authors used their own local structure pipeline, not AFDB. Additionally the sandbox's network allowlist blocks `rest.uniprot.org` and `www.ebi.ac.uk`, so live queries can only run from Colab. Combined with the Session-14 finding that 4 different UniProt queries for taxid `2144189` all returned zero rows, the original AFDB path is doubly blocked.
 
-1. Download the Luthey-Schulten 4DWCM supplement — the authors had to solve the same mapping problem for their own work. Likely candidate path in that repo: a CSV or JSON cross-referencing Syn3A NCBI protein accessions (`AVX*`) to UniProt accessions from the parent *M. mycoides capri* proteome.
-2. Alternative: manually construct the mapping via NCBI BioProject `PRJNA331011` cross-references + UniProt's *M. mycoides capri* entries.
-3. Persist the mapping as `memory_bank/data/syn3a_ncbi_to_uniprot.csv` + a pointer fact in `memory_bank/facts/structural/`.
-4. Re-run `notebooks/populate_tier1_cache.ipynb` cell 6 — it already calls a UniProt stream and will populate real pLDDT / SS / Rg features once the map lands. Expected coverage: ≥ 80% of the 455 CDS if the parent-proteome mapping is reused.
-5. `git add -f` the refilled `alphafold_db.parquet` + updated `manifest.json` + update the `populated_yet_content_status` in the AlphaFold fact.
+**Recommended pivot**: replace `alphafold_extractor.py` with an `esmfold_extractor.py` that calls `transformers.EsmForProteinFolding` directly on the CDS amino-acid sequence. Same 9-feature schema (pLDDT mean/std, disorder fraction, helix/sheet/coil fractions, length, Rg, has_structure). No UniProt mapping needed; ESMFold takes sequence in, returns structure+confidence.
+
+Steps:
+
+1. New module `cell_sim/features/extractors/esmfold_extractor.py` — mirror ESM2Extractor's lazy-load pattern; use `EsmForProteinFolding.from_pretrained("facebook/esmfold_v1")`. Input: CDS AA sequences. Output: same 9 cols as the AlphaFold schema so downstream consumers (Tier1 bundle, XGB detector) need no changes.
+2. Retire `alphafold_extractor.py` OR keep it as a (working) path for when a UniProt map is later provided; add a new `esmfold_v1` source to the default registry.
+3. Update `notebooks/populate_tier1_cache.ipynb` cell 6: replace the UniProt/AFDB block with a single ESMFold run. VRAM footprint on ESMFold v1 is ~24 GB at full precision, ~12 GB at fp16 — the Blackwell GPU the user ran Session 14 on has 95 GB, so fp32 is fine.
+4. Delete `memory_bank/facts/structural/alphafold_extractor.json` in favour of `esmfold_extractor.json` (same schema, different source citation).
+5. Re-run notebook; expect 100% coverage (every CDS has a sequence), ~10 s/protein on GPU → 455 × 10 s ≈ 75 min wall. Push refilled parquet.
+
+Expected lift on MCC: replaces 455 rows of all-NaN with 455 rows of real structural features. The Tier-1 XGBoost `stacked` slice then has meaningful data; Session-15's v11 fact records that XGBoost was below v10b largely because the 9-dim AlphaFold block was all NaN (featureless). With real ESMFold features, the honest prediction is ~+0.05 on the balanced-40 panel, unclear on FULL-455. Needs a v13 measurement.
 
 ### 0b. Fix MACE-OFF SMILES map
 
@@ -49,22 +55,9 @@ Syn3A's SBML (`Syn3A_updated.xml`) encodes metabolites as BiGG-style species IDs
 
 Landed as `cell_sim/layer6_essentiality/tier1_xgb_detector.py` + `scripts/run_tier1_sweep.py` + `memory_bank/facts/measured/mcc_against_breuer_v11_tier1_xgb.json`. Honest finding: **no Tier-1 XGBoost slice beats the v10b rule baseline on either set.** The FULL-455 and BALANCED-40 sweep outputs are persisted in `outputs/tier1_sweep_v11.json`. Best XGB aggregated MCC: 0.241 (esm2_only) on FULL vs v10b 0.364; 0.603 (esm2_plus_priors) on BALANCED vs v10b 0.800. Diagnosis: 5.3:1 class imbalance + 455 labels vs 1280-dim ESM-2 + priors already cover the easy signal -> ML overfits or collapses. Re-visit this fact **after** 0a and 0b land — the hypothesis is that structural + kinetic features are what address the 15 translation-machinery FNs that ESM-2 alone cannot. The null hypothesis (learned features dominate rules on this benchmark) is now falsified; a positive re-run would need to beat 0.364 FULL / 0.800 BALANCED to be worth publishing.
 
-### 1. Fix iMB155 pathway incompleteness (the real bottleneck)
+### 1. iMB155 pathway patches — **LANDED in Session 15 (Item 1)**
 
-**Three specific FPs diagnosed in v9:**
-
-| Gene | Breuer call | Simulator issue | Fix |
-|---|---|---|---|
-| **JCVISYN3A_0034** | Nonessential | iMB155 makes `M_chsterol_c` only via 0034's transport reactions. | Either: (a) add `chsterol_scavenge` or `chsterol_medium_passive_import` pseudo-reaction, (b) mark cholesterol as `metabolite_infinite` in state (sourced from medium), OR (c) remove cholesterol from the biomass equation entirely — Syn3A doesn't synthesise cholesterol. |
-| **JCVISYN3A_0732 (deoC)** | Nonessential | iMB155's DRPA is the sole acetaldehyde source. | Either add alternate acetaldehyde sources (PDH byproduct is one) or mark acald as conditionally infinite. |
-| **JCVISYN3A_0228 (lpdA)** | Nonessential | iMB155 has only PDH_E3 producing lipoylated PdhC. | Add `lipA` / `lipB` / `lplA` alternate lipoylation rules. These genes exist in Syn3A (check `syn3a_gene_table`) but may lack catalysis rules in the 2022-era `kinetic_params.xlsx`. |
-
-Each fix is a SBML/kinetic-params annotation, not new simulator code. Expected: drops all 3 FPs → MCC ≈ 0.19–0.22 ± 0.03 on the same panel. Honest prediction (not a promise).
-
-**Implementation sketch:**
-- Add a new fact `facts/parameters/imb155_pathway_patches.json` listing each added reaction with its rationale and source citation.
-- Add a helper `cell_sim/layer3_reactions/imb155_patches.py` that builds the patched rules and folds them into `_extra_rules`.
-- Re-run v9 sweep → record as v10.
+Patch shipped as `cell_sim/layer3_reactions/imb155_patches.py` + RealSimulatorConfig flag `enable_imb155_patches`. Clears three over-assigned loci (`JCVISYN3A_0034` placeholder, `JCVISYN3A_0228` lpdA, `JCVISYN3A_0732` deoC) from their `enzyme_loci` lists. When the sole catalyser was the patched locus, the rule is replaced with a python-closure variant that fires at `kcat × saturation` without enzyme gating. The PerRuleDetector's `gene_to_rules[<patched_locus>]` becomes empty, returning `no_catalytic_rules` for the KO — FP is closed by removing the detector signal, not by manipulating event counts. 11 unit tests plus fact `memory_bank/facts/parameters/imb155_pathway_patches.json`. Measurement lands as `mcc_against_breuer_v12_imb155_patches.json`.
 
 ### 2. Ingest Thornburg 2026's refined `kinetic_params.xlsx` (4DWCM repo)
 
@@ -77,11 +70,30 @@ curl -sS -o cell_sim/data/Minimal_Cell_ComplexFormation/input_data/kinetic_param
 
 Diff sheet-by-sheet against our staged file. For each changed parameter, promote to a proper `facts/parameters/*.json` with Thornburg 2026 citation. Sharpens metabolic timing without changing detector behaviour.
 
-### 3. Explicit ribosome complex (addresses the 15 FN wall)
+### 3. Ribosome complex — **SUPERSEDED by FN re-audit (Session 15)**
 
-Still the biggest remaining MCC lever. Currently blocked by needing to compose the 50S subunits from `LargeSubunit.xlsx` (4DWCM repo) and the 30S subunits from `complex_formation.xlsx`. Add a complex-formation rule that requires all ~55 subunits to be present; KO of any subunit halts new ribosome assembly.
+The "15 FN wall" claim from Session 11 is **outdated**. Running the FN categorisation against `outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v10a.csv` (v10a = v10b's trajectory base) gives:
 
-Estimate: +2 sessions of code, +1 session of tuning. Would catch 5–7 of 15 ribosomal FNs → MCC toward 0.25–0.30.
+| FN category | Count | Mechanism today |
+|---|---|---|
+| Ribosomal proteins (rps*/rpm*/rpl*) | **1** (prp/ysxB, maturation protease only) | already caught by `ComplexAssemblyDetector` via complex_formation.xlsx membership; `make_complex_formation_rules` gates Ribosome assembly on all 58 subunits |
+| tRNA / aminoacyl / modification enzymes | 11 (tilS, tsaB/C/D/E, trmD, mnmA, gatA/B/C, ribF) | missed by all three priors + PerRule |
+| Translation factors (EF-Tu, IF, RF, etc.) | 0 | all caught by `translation_factor` annotation prior |
+| Uncharacterised / membrane / metabolic | 86 | no catalysis signal; no complex membership; no annotation match |
+
+**Implication**: the existing complex-formation machinery already implements the ribosome gate. Adding an "explicit ribosome rule" duplicates what's shipping. The real remaining tractable lever is the 11 tRNA-modification FNs.
+
+**New Item 3 proposal — add tRNA-modification complex priors:**
+
+- Three annotated multi-subunit complexes in this FN cluster:
+  - **tsaBCDE** (JCVISYN3A_0079 / 0144 / 0270 / 0271) — tRNA threonylcarbamoyltransferase complex
+  - **gatABC** (JCVISYN3A_0687 / 0688 / 0689) — glutamyl-tRNA amidotransferase
+  - Standalone essentials: **tilS** (0040), **trmD** (0364), **mnmA** (0387), **ribF** (0291)
+- Add these as new `ComplexAssemblyKB` entries (for the 2 multi-subunit ones) and as new annotation keywords (`trna_threonylcarbamoylation`, `trna_amidation`, `trna_lysidine`, `trna_methylation`, `trna_thiolation`, `fad_biosynthesis`) for the standalone ones.
+- Expected lift: closes 8-11 of 98 FNs without introducing FPs (all 11 are Breuer-Essential). Honest prediction: +0.03 to +0.05 on the full 455 MCC.
+- Implementation: add rows to `cell_sim/layer6_essentiality/complex_assembly_detector.py::_BUILTIN_COMPLEX_KB` and new keyword classes to `annotation_class_detector.py::_CLASS_RULES`. ~40 lines of code, ~8 tests, no new simulator module. A single session.
+
+Estimate: 1 session (not 3+). Measurable via existing sweep script.
 
 ### 4. Multi-seed replicates as the default
 

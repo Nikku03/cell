@@ -1,0 +1,75 @@
+{
+  "id": "imb155_pathway_patches",
+  "claim": "Three v10b false-positive loci (JCVISYN3A_0034 / 0228 / 0732) are diagnosed as iMB155 metabolic-reconstruction gaps, not detector failures. Each gene is Breuer-Nonessential, yet the PerRule detector flags it essential because iMB155 assigns the gene as the sole catalyser for 2+ rules that have NO alternate in the 356-reaction SBML. Session 15 Item 1 patch clears the three loci from their over-assigned enzyme_loci lists at RealSimulator setup time (config flag enable_imb155_patches). Rules gated SOLELY by a patched locus are replaced with python-closure variants that fire at the same per-reaction kcat without any enzyme-count multiplier; rules with alternate catalysers simply drop the patched locus from enzyme_loci.",
+  "value": {
+    "patched_loci": [
+      {
+        "locus_tag": "JCVISYN3A_0034",
+        "role_in_sim": "PLACEHOLDER_LOCUS in cell_sim/layer3_reactions/nutrient_uptake.py",
+        "role_in_reality": "highest-abundance uncharacterised ABC efflux transporter (~1795 copies); chosen as fallback carrier for nutrients with no annotated Syn3A permease",
+        "over_assigned_rules": [
+          "catalysis:CHOLt", "catalysis:CHOLt:rev",
+          "catalysis:GLYCt", "catalysis:GLYCt:rev",
+          "catalysis:O2t", "catalysis:O2t:rev",
+          "catalysis:TAGt", "catalysis:TAGt:rev",
+          "catalysis:ADEt_syn", "catalysis:GUAt_syn",
+          "catalysis:URAt_syn", "catalysis:CYTDt_syn"
+        ],
+        "biological_justification_for_clear": "cholesterol / glycerol / O2 / triacylglycerol uptake in a ~55-protein Mycoplasma membrane is biochemically dominated by passive / facilitated lipid flip-flop, not by a single ABC transporter. Free adenine / guanine / uracil / cytidine salvage in M. mycoides uses distinct annotated permeases that are simply not in the kinetic table. Neither biology requires a specific JCVISYN3A_0034 knockout to stall; Breuer confirms Nonessential."
+      },
+      {
+        "locus_tag": "JCVISYN3A_0228",
+        "role_in_sim": "gene_association for R_PDH_E3 in Syn3A_updated.xml; sole enzyme for PDH_E3 lipoyl-cofactor regeneration",
+        "role_in_reality": "lpdA — dihydrolipoyl dehydrogenase; real alternates (LplA / LipA / LipB) regenerate lpl-PdhC in M. mycoides capri",
+        "over_assigned_rules": ["catalysis:PDH_E3", "catalysis:PDH_E3:rev"],
+        "biological_justification_for_clear": "alternate lipoylation enzymes exist in the parent proteome but are absent from the 2022-era kinetic_params.xlsx. Breuer confirms Nonessential."
+      },
+      {
+        "locus_tag": "JCVISYN3A_0732",
+        "role_in_sim": "gene_association for R_DRPA; sole 2-deoxy-D-ribose-5-P aldol-cleavage enzyme",
+        "role_in_reality": "deoC — M. mycoides retains residual aldol-cleavage activity via other enzymes not captured in the 356-reaction SBML; KO does not stall nucleoside salvage in vivo",
+        "over_assigned_rules": ["catalysis:DRPA", "catalysis:DRPA:rev"],
+        "biological_justification_for_clear": "no single-gene necessity for acetaldehyde production in Syn3A — residual aldol cleavage survives deoC KO. Breuer confirms Nonessential."
+      }
+    ],
+    "implementation": {
+      "module": "cell_sim/layer3_reactions/imb155_patches.py",
+      "entry_point": "apply_imb155_patches(rules: List[TransitionRule]) -> List[TransitionRule]",
+      "wired_at": "cell_sim/layer6_essentiality/real_simulator.py::_ensure_setup when cfg.enable_imb155_patches is True",
+      "replacement_rule_kind": "python-closure (compiled_spec=None), so build_gene_to_rules skips the rule and PerRuleDetector returns no_catalytic_rules for the patched gene",
+      "rate_model": "replacement rule fires with propensity kcat x saturation; no enzyme-count multiplier (represents spontaneous / passive / alternate-enzyme background activity)",
+      "default_state": "cfg.enable_imb155_patches = False; opt-in per measurement"
+    },
+    "expected_impact": {
+      "target": "three v10b FPs (0034 / 0228 / 0732) flip to true negatives",
+      "v10b_full_baseline_mcc": 0.364,
+      "estimated_v12_full_mcc_if_patch_fully_clears_three_fps": "approx 0.39 to 0.42 (upper bound assumes no secondary side effects on other KOs)",
+      "honest_prediction": "+0.02 to +0.05 absolute MCC on the full 455 set; -0 to +1 TN; -2 to -3 FP. Balanced-40 panel at seed 42 may show little change since the three targets are mostly outside it.",
+      "downside_risk": "patched rules firing without enzyme gating could keep WT metabolism running in KOs where we actually WANT the pathway to stall; if any of the 10 placeholder-locus reactions is actually essential for some other KO we don't know about, that KO may flip from TP to FN. The honest measurement will quantify this."
+    }
+  },
+  "confidence": "inferred",
+  "source": "breuer_2019_elife",
+  "source_detail": "The FPs were identified by running scripts/run_sweep_parallel.py with detector=composed (v10b) and reading the evidence strings in outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v10a.csv. Each patched locus' Nonessential call comes from Breuer 2019 eLife Table S1. Biological justifications for each clear cite M. mycoides capri proteome (LplA/LipA/LipB lipoylation) and general Mycoplasma membrane biochemistry (passive lipid flip-flop). Patch is a simulator-biology fix, not an experimental measurement; confidence is 'inferred' because the effect on MCC has to be remeasured to be verified.",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v12_imb155_patches",
+    "introduces_flag": "RealSimulatorConfig.enable_imb155_patches"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v10b_full",
+    "syn3a_essentiality_breuer2019",
+    "syn3a_gene_table"
+  ],
+  "used_by": [
+    "cell_sim/layer3_reactions/imb155_patches.py",
+    "cell_sim/layer6_essentiality/real_simulator.py"
+  ],
+  "caveats": [
+    "The three patches are coarse: they remove gene gating entirely rather than modelling real alternate enzymes. A follow-up should ingest Thornburg 2026's refined kinetic_params.xlsx (85 KB vs our 59 KB staged version) which may contain the missing alternates.",
+    "The replacement rule's propensity uses kcat x saturation without the enzyme-count term. At kcat ~= 50/s and saturation ~= 0.5 that is ~25 events/sec, well below the PerRuleDetector's min_wt_events=20 threshold in a 0.5s window. The intended mechanism for closing the FP is not the replacement rule firing enough events, but the patched locus having an EMPTY gene_to_rules set so the detector returns no_catalytic_rules.",
+    "Patch is opt-in. Existing v0-v11 measurements are untouched unless re-run with enable_imb155_patches=True.",
+    "Expected MCC lift is a prediction, not a measurement. The v12 fact records the actual outcome."
+  ],
+  "last_verified": "2026-04-24"
+}

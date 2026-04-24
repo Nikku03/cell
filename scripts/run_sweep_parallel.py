@@ -69,6 +69,7 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str,
         enable_metabolite_sinks=cfg_dict.get("enable_sinks", False),
         sink_k_per_s=cfg_dict.get("sink_k_per_s", 100.0),
         sink_tolerance=cfg_dict.get("sink_tolerance", 3.0),
+        enable_imb155_patches=cfg_dict.get("enable_imb155_patches", False),
     )
     _worker_sim = RealSimulator(rs_cfg)
     with open(wt_pickle_path, "rb") as fh:
@@ -217,6 +218,9 @@ def _compute_wt(cfg_dict: dict) -> Trajectory:
     sim = RealSimulator(RealSimulatorConfig(
         scale_factor=cfg_dict["scale"], seed=cfg_dict["seed"],
         use_rust_backend=cfg_dict.get("use_rust_backend", False),
+        enable_imb155_patches=cfg_dict.get(
+            "enable_imb155_patches", False,
+        ),
     ))
     return sim.run([], t_end_s=cfg_dict["t_end_s"],
                    sample_dt_s=cfg_dict["dt_s"])
@@ -234,6 +238,9 @@ def _calibrate_thresholds(
     sim = RealSimulator(RealSimulatorConfig(
         scale_factor=cfg_dict["scale"], seed=cfg_dict["seed"],
         use_rust_backend=cfg_dict.get("use_rust_backend", False),
+        enable_imb155_patches=cfg_dict.get(
+            "enable_imb155_patches", False,
+        ),
     ))
     nons = [lt for lt, lab in labels.items()
             if lab.essentiality == EssentialityClass.NONESSENTIAL]
@@ -348,6 +355,13 @@ def main() -> int:
                         "transporter-KO blowups.")
     p.add_argument("--sink-k-per-s", type=float, default=100.0)
     p.add_argument("--sink-tolerance", type=float, default=3.0)
+    p.add_argument("--enable-imb155-patches", action="store_true",
+                   help="Clear the three over-assigned loci "
+                        "(JCVISYN3A_0034 placeholder + lpdA + deoC) "
+                        "from their enzyme_loci lists. Addresses the "
+                        "three v10b metabolic false positives. See "
+                        "memory_bank/facts/parameters/"
+                        "imb155_pathway_patches.json.")
     p.add_argument("--out-dir", default="outputs")
     args = p.parse_args()
 
@@ -388,6 +402,7 @@ def main() -> int:
         "enable_sinks": args.enable_sinks,
         "sink_k_per_s": args.sink_k_per_s,
         "sink_tolerance": args.sink_tolerance,
+        "enable_imb155_patches": args.enable_imb155_patches,
     }
 
     t_setup = time.time()
