@@ -105,11 +105,13 @@ Path A tried (v7): falsified. Higher scale tried (v8): no help. All detector var
 
 **Landed so far:**
 - v10b composed stack: MCC 0.364 (full 455) / 0.800 (balanced 40)
-- v12 iMB155 patches: **MCC 0.393** (+0.029 over v10b, three target FPs closed)
+- v12 iMB155 patches: MCC 0.393 (+0.029 over v10b, three target FPs closed)
+- v13 tRNA-mod priors: **MCC 0.410** (+0.017 over v12, +0.046 over v10b, 9 TP gains, zero FP, zero collateral regressions)
 
 **Reachable with remaining simulator-biology fixes:**
-- New Item 3 (tRNA-modification keyword priors — 8 closures): MCC ≈ 0.42–0.44
-- New Item 0a (ESMFold structural features + Tier-1 XGBoost re-measure): unclear on full-455; likely +0.03–0.07 on balanced-40
+- ESMFold-backed structural features (item 0a, notebook cell 6 rewired, needs Colab run): unclear on full-455; likely +0.03–0.07 on balanced-40 when stacked-XGB re-measures
+- Add ComplexAssemblyKB entries for tsaBCDE and gatABC as heteromers (currently caught by keywords): minimal gain, small tech debt paydown
+- Ribosome explicit-rule: NOT a remaining lever (simulator already gates ribosome assembly on all 58 subunits via make_complex_formation_rules)
 
 **Not reachable without one of:**
 - Full Thornburg 2026 simulator (2 A100 × 6 days per replicate — infeasible)

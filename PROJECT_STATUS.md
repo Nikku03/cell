@@ -22,10 +22,10 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 
 ## Memory Bank
 
-- Facts: **37**
-  - structural (12): chromosome length, gene count, gene table, oriC, Breuer 2019 labels, RNAP count per cell, ribosome count at birth, chromosome bead model, feature_cache_infrastructure, esm2_extractor, alphafold_extractor, mace_off_extractor.
+- Facts: **39**
+  - structural (13): chromosome length, gene count, gene table, oriC, Breuer 2019 labels, RNAP count per cell, ribosome count at birth, chromosome bead model, feature_cache_infrastructure, esm2_extractor, alphafold_extractor, esmfold_extractor, mace_off_extractor.
   - parameters (4): active RNAP fraction, doubling time, mRNA half-life mean, imb155_pathway_patches.
-  - measured (18): `mcc_against_breuer_v0..v10b_full` + `mcc_against_breuer_v11_tier1_xgb` + `mcc_against_breuer_v12_imb155_patches` + `mcc_replicates_summary` + `mcc_v9_robustness` + `session_14_populate`.
+  - measured (19): `mcc_against_breuer_v0..v10b_full` + `mcc_against_breuer_v11_tier1_xgb` + `mcc_against_breuer_v12_imb155_patches` + `mcc_against_breuer_v13_trna_priors` + `mcc_replicates_summary` + `mcc_v9_robustness` + `session_14_populate`.
   - resolved uncertainty (3): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`, `syn3a_gene_count_thornburg2026_discrepancy`.
 - Sources: **11** (Thornburg 2022 + 2026 Cell, Hutchison 2016, Breuer 2019, GenBank CP016816, Luthey-Schulten ComplexFormation + 4DWCM repos, Fu 2026 JPC-B, Gilbert 2023 Frontiers, Bianchi 2022 JPC-B, Pezeshkian 2024 Nat Commun).
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
@@ -48,6 +48,32 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
+
+### Session 15 — 2026-04-24 — tRNA-modification priors + ESMFold pivot (v13 = MCC 0.410)
+- **Scope**: closed Session-15 items 0a (ESMFold extractor replacing AFDB) and 3 (tRNA-modification keyword priors replacing the obsolete "explicit ribosome rule"). Landed a second MCC lift on top of the v12 iMB155 result — cumulative Session-15 delta over v10b is **+0.046 absolute, +12.6 % relative**.
+- **New annotation classes** in `cell_sim/layer6_essentiality/annotation_class_detector.py::_ESSENTIAL_CLASS_RULES`:
+  - `trna_threonylcarbamoylation` — matches tsaBCDE complex (4 loci: 0079 / 0144 / 0270 / 0271)
+  - `trna_amidation` — matches gatABC complex (3 loci: 0687 / 0688 / 0689)
+  - `trna_thiolation` — matches mnmA + 0240 (2 loci)
+  - All 9 new loci are Breuer Essential / Quasi; zero Nonessential matches (precision held at 0.987).
+- **v13 measurement**:
+  - **MCC 0.410** (Δ +0.017 over v12, **Δ +0.046 over v10b**)
+  - TP 231 / FP 3 / TN 69 / FN 152 (v12: 222 / 3 / 69 / 161)
+  - Precision 0.987 (flat), recall 0.603 (Δ +0.023), specificity 0.958 (flat)
+  - All 9 flips correct TPs; zero FPs introduced; no collateral regressions.
+  - Sweep wall: 999.0 s (2.2 s/gene effective, 4 workers, Rust backend).
+- **New module `cell_sim/features/extractors/esmfold_extractor.py`** (~240 lines): `ESMFoldExtractor` uses `facebook/esmfold_v1` which consumes AA sequence directly — bypasses the UniProt indexing gap that blocked the AFDB path for Syn3A. Output schema mirrors `AlphaFoldExtractor` with an `esmfold_` prefix; PDB parsing delegated to the existing `_features_from_pdb` helper. 8 sandbox-safe tests.
+- **Notebook `notebooks/populate_tier1_cache.ipynb` cell 6 rewritten**: was a UniProt REST stream → AFDB fetch that returned zero rows for Syn3A; now calls `ESMFoldExtractor.extract(...)` on the sequences already loaded in cell 4. Expected Colab runtime: 15-75 min on A100 / Blackwell-class GPU at fp16.
+- **Tests**: 2 new tRNA tests + 8 new ESMFold tests = 10 new, **206/206 passing**.
+- **Memory bank**: 1 new structural fact (`esmfold_extractor.json`) + 1 new measured fact (`mcc_against_breuer_v13_trna_priors.json`). **39 facts / 12 sources / invariant checker OK.**
+- **Session 15 cumulative summary**:
+  | Version | Change | MCC (full 455) | TP / FP / TN / FN |
+  |---|---|---|---|
+  | v10b | composed stack baseline | 0.364 | 223 / 6 / 66 / 160 |
+  | v11 | Tier-1 XGB (honest negative) | ≤ 0.241 | — |
+  | v12 | + iMB155 patches | **0.393** (+0.029) | 222 / 3 / 69 / 161 |
+  | v13 | + tRNA-mod priors | **0.410** (+0.017) | 231 / 3 / 69 / 152 |
+- **Net Session-15 result**: +0.046 MCC on the full benchmark via two correctly-diagnosed simulator-biology fixes (iMB155 over-assignments) + one annotation-KB extension (tRNA-modification classes). Zero detector-design changes. All lift came from biology the v10b stack was previously blind to.
 
 ### Session 15 — 2026-04-24 — iMB155 pathway patches + FN re-audit (v12 = MCC 0.393)
 - **Scope**: closed Session-15 item 1 (iMB155 pathway patches) and landed a +0.029 MCC lift on the full 455-gene Breuer benchmark. Pivoted items 0a (ESMFold replaces AFDB; UniProt route blocked from sandbox) and 3 (ribosome complex already implemented; real FN class is tRNA modification) with updated plans in `NEXT_SESSION.md`.

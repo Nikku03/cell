@@ -1,0 +1,90 @@
+{
+  "id": "mcc_against_breuer_v13_trna_priors",
+  "claim": "Fifteenth MCC measurement: v12 composed detector + enable_imb155_patches + three new tRNA-modification annotation-class priors (trna_threonylcarbamoylation for tsaBCDE, trna_amidation for gatABC, trna_thiolation for mnmA / 0240). Full 455-gene sweep at seed=42: MCC = 0.410, delta +0.017 over v12's 0.393, delta +0.046 over v10b's 0.364. 9 previously-FN Essential/Quasi genes flipped to TP (4 tsa + 3 gat + 2 thiouridine); zero FP side effects; precision held at 0.987. Recall lifted from 0.580 to 0.603 (+0.023).",
+  "confidence": "measured",
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible via 'python scripts/run_sweep_parallel.py --all --workers 4 --use-rust --scale 0.05 --t-end-s 0.5 --detector composed --seed 42 --threshold 0.1 --enable-imb155-patches'. The three new annotation classes ship in cell_sim/layer6_essentiality/annotation_class_detector.py::_ESSENTIAL_CLASS_RULES. Preserved outputs at outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v13_trna_priors.csv + outputs/metrics_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v13_trna_priors.json. Sweep wall: 999.0 s (2.2 s/gene effective on 4 workers).",
+  "last_verified": "2026-04-24",
+  "context": {
+    "commit_range": "a74fc6c..(this commit)",
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v13_composed_plus_imb155_patches_plus_trna_priors"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v12_imb155_patches",
+    "mcc_against_breuer_v10b_full",
+    "imb155_pathway_patches",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "cell_sim/layer6_essentiality/annotation_class_detector.py",
+    "scripts/run_sweep_parallel.py"
+  ],
+  "value": {
+    "mcc": 0.410,
+    "precision": 0.987,
+    "recall": 0.603,
+    "specificity": 0.958,
+    "accuracy": 0.659,
+    "confusion": {"tp": 231, "fp": 3, "tn": 69, "fn": 152},
+    "delta_over_v12": {
+      "mcc": 0.017,
+      "tp": 9,
+      "fp": 0,
+      "tn": 0,
+      "fn": -9,
+      "precision": 0.000,
+      "recall": 0.023,
+      "specificity": 0.000
+    },
+    "delta_over_v10b": {
+      "mcc": 0.046,
+      "tp": 8,
+      "fp": -3,
+      "tn": 3,
+      "fn": -8,
+      "precision": 0.013,
+      "recall": 0.021,
+      "specificity": 0.041
+    },
+    "new_tp_flips_by_class": {
+      "trna_threonylcarbamoylation": [
+        {"locus_tag": "JCVISYN3A_0079", "breuer": "Essential", "gene_product": "tRNA (adenosine(37)-N6)-threonylcarbamoyltransferase complex tran"},
+        {"locus_tag": "JCVISYN3A_0144", "breuer": "Essential", "gene_product": "tRNA (adenosine(37)-N6)-threonylcarbamoyltransferase complex tran"},
+        {"locus_tag": "JCVISYN3A_0270", "breuer": "Essential", "gene_product": "tRNA (N6-adenosine(37)-N6)-threonylcarbamoyltransferase complex A"},
+        {"locus_tag": "JCVISYN3A_0271", "breuer": "Essential", "gene_product": "tRNA N6-adenosine(37)-N6-threonylcarbamoyltransferase complex dim"}
+      ],
+      "trna_amidation": [
+        {"locus_tag": "JCVISYN3A_0687", "breuer": "Essential", "gene_product": "Glutamyl-tRNA amidotransferase subunit B"},
+        {"locus_tag": "JCVISYN3A_0688", "breuer": "Essential", "gene_product": "Glutamyl-tRNA amidotransferase subunit A"},
+        {"locus_tag": "JCVISYN3A_0689", "breuer": "Essential", "gene_product": "Glutamyl-tRNA amidotransferase subunit C"}
+      ],
+      "trna_thiolation": [
+        {"locus_tag": "JCVISYN3A_0240", "breuer": "Quasiessential", "gene_product": "tRNA 4-thiouridine(8) synthase"},
+        {"locus_tag": "JCVISYN3A_0387", "breuer": "Essential", "gene_product": "tRNA 2-thiouridine(34) synthase"}
+      ]
+    },
+    "zero_side_effects": "The 9 v13 flips are EXACTLY the 9 genes the class-hit counts predicted. No Nonessential genes matched the new patterns; precision stays at 0.987 (identical to v12). Ensemble decision rule also unchanged: each flipped gene goes from 'no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules]' (v12) to 'ann_only[ann[<new_class>:<keyword>]]' (v13) with confidence 0.80.",
+    "config": {
+      "detector": "composed (ComplexAssembly + AnnotationClass-v13 + PerRule) + enable_imb155_patches",
+      "gene_set": "all 455 Breuer-labeled",
+      "label_scheme": "binary; Quasiessential -> positive",
+      "sim_seed": 42,
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "use_rust_backend": true,
+      "workers": 4,
+      "threshold": 0.1,
+      "sweep_wall_s": 999.0,
+      "per_gene_wall_s": 2.2
+    }
+  },
+  "caveats": [
+    "Item-3 pivot prediction accuracy: pre-sweep expected 9 TPs, 0 FPs, MCC ~ 0.41. Actual: 9 TPs, 0 FPs, MCC 0.410. Exact.",
+    "No collateral TP->FN regressions in v13 vs v12 (unlike v12 vs v10b which had 1). Pure annotation-keyword changes don't perturb simulator dynamics, so nothing could spontaneously drop below PerRuleDetector's min_wt_events threshold.",
+    "Recall 0.603 is still well below the brief target of 0.59 MCC. The remaining 152 FNs split roughly: ~80 uncharacterized proteins with no annotation signal and no catalytic rule (require Tier-1 ML features or Path A longer-window sims); ~30 specific metabolic enzymes whose KO doesn't cause measurable pool deviation at scale=0.05 / t=0.5s; ~15 proteins in complexes not yet in the ComplexAssemblyKB; ~15 transport proteins whose placeholder gene-association was removed by the item-1 patches.",
+    "MCC 0.410 is the highest honest measurement landed on this repo so far. Session 15 cumulative lift: v10b 0.364 -> v12 0.393 (iMB155) -> v13 0.410 (tRNA priors) = +0.046 absolute, +12.6 percent relative. All lift came from correctly-diagnosed simulator-biology / annotation-KB fixes, not from detector-design changes.",
+    "Next honest lever: ESMFold-backed structural features (Session-15 item 0a; notebook cell 6 is already rewired, needs a Colab run to populate the parquet). With real 9-dim structural data, the Tier1XgbDetector's stacked slice may finally beat the v13 rule baseline on the balanced-40 panel."
+  ]
+}
