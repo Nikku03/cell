@@ -124,7 +124,22 @@ class ESMFoldExtractor(BatchedFeatureExtractor):
         """Load ``facebook/esmfold_v1`` the first time ``extract`` is
         called with non-empty input. Imports ``torch``,
         ``transformers``, and ``biopython`` inside the method — never
-        at module import time."""
+        at module import time.
+
+        ESMFold needs a mixed-precision load: the ESM-2 language model
+        is fine in fp16, but the structure trunk collapses under pure
+        fp16 (attention tensors go size-0, producing IndexError during
+        ``infer_pdb``). The official HuggingFace recipe is:
+
+          * load at fp32,
+          * move to GPU,
+          * explicitly cast ``model.esm`` to half,
+          * call ``model.trunk.set_chunk_size(64)`` for memory.
+
+        ``config.dtype`` controls ONLY the language model's dtype;
+        the trunk always stays at fp32. ``config.dtype == "float32"``
+        keeps even the language model at fp32 (slower but safest).
+        """
         if self._model is not None:
             return
         import torch  # noqa: WPS433
@@ -134,14 +149,26 @@ class ESMFoldExtractor(BatchedFeatureExtractor):
         )
 
         device = config.resolve_device()
-        torch_dtype = _resolve_torch_dtype(config.dtype, torch)
+        # Validate the dtype string even though we don't pass it to
+        # from_pretrained — keeps the user-facing error consistent.
+        lm_dtype = _resolve_torch_dtype(config.dtype, torch)
+
         tokenizer = AutoTokenizer.from_pretrained(self._MODEL_ID)
         model = EsmForProteinFolding.from_pretrained(
             self._MODEL_ID,
             low_cpu_mem_usage=True,
-            torch_dtype=torch_dtype,
         )
-        model = model.to(device).eval()
+        model = model.to(device)
+        if device == "cuda":
+            # Official recipe: LM in fp16 / bf16, trunk in fp32.
+            if lm_dtype == torch.float16:
+                model.esm = model.esm.half()
+            elif lm_dtype == torch.bfloat16:
+                model.esm = model.esm.bfloat16()
+            # Else float32: leave model.esm in fp32.
+            torch.backends.cuda.matmul.allow_tf32 = True
+            model.trunk.set_chunk_size(64)
+        model = model.eval()
 
         self._tokenizer = tokenizer
         self._model = model
