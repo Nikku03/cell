@@ -36,6 +36,9 @@ from cell_sim.features.extractors.esm2_extractor import ESM2Extractor
 from cell_sim.features.extractors.alphafold_extractor import (
     AlphaFoldExtractor,
 )
+from cell_sim.features.extractors.esmfold_extractor import (
+    ESMFoldExtractor,
+)
 from cell_sim.features.extractors.mace_off_extractor import (
     MaceOffExtractor,
 )
@@ -43,5 +46,6 @@ from cell_sim.features.extractors.mace_off_extractor import (
 __all__ = [
     "ESM2Extractor",
     "AlphaFoldExtractor",
+    "ESMFoldExtractor",
     "MaceOffExtractor",
 ]

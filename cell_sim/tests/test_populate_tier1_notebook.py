@@ -68,12 +68,19 @@ def test_notebook_has_no_saved_outputs():
 
 def test_notebook_references_three_extractors():
     """The notebook must import each of ESM2Extractor,
-    AlphaFoldExtractor, MaceOffExtractor at least once."""
+    ESMFoldExtractor, MaceOffExtractor at least once.
+
+    Session 15 pivoted the structure-feature backend from AFDB to
+    ESMFold (see memory_bank/facts/structural/esmfold_extractor.json);
+    the populate notebook no longer references AlphaFoldExtractor.
+    """
     nb = _load()
     text = "\n".join(
         "".join(cell["source"]) for cell in nb["cells"]
     )
-    for name in ("ESM2Extractor", "AlphaFoldExtractor", "MaceOffExtractor"):
+    for name in (
+        "ESM2Extractor", "ESMFoldExtractor", "MaceOffExtractor",
+    ):
         assert name in text, f"notebook does not reference {name}"
 
 

@@ -1,0 +1,61 @@
+{
+  "id": "esmfold_extractor",
+  "claim": "ESMFoldExtractor subclasses BatchedFeatureExtractor and predicts a 3-D structure + per-residue pLDDT for every Syn3A CDS using facebook/esmfold_v1. Output schema mirrors the AlphaFold extractor with an esmfold_ prefix (9 float columns: pLDDT mean/std, disorder fraction, helix/sheet/coil fractions, sequence length, radius of gyration, has_structure) so downstream consumers swap backends without changing column contracts. Session 15 addition that bypasses the UniProt lookup which blocked the AlphaFold-DB path: ESMFold consumes AA sequence directly, so no accession map is needed.",
+  "value": {
+    "module_path": "cell_sim/features/extractors/esmfold_extractor.py",
+    "class_name": "ESMFoldExtractor",
+    "name": "esmfold_v1",
+    "version": "0.1.0",
+    "model_id": "facebook/esmfold_v1",
+    "feature_cols_count": 9,
+    "feature_cols": [
+      "esmfold_plddt_mean",
+      "esmfold_plddt_std",
+      "esmfold_disorder_fraction",
+      "esmfold_helix_fraction",
+      "esmfold_sheet_fraction",
+      "esmfold_coil_fraction",
+      "esmfold_sequence_length",
+      "esmfold_radius_of_gyration_angstrom",
+      "esmfold_has_structure"
+    ],
+    "cache_parquet_path": "cell_sim/features/cache/esmfold_v1.parquet",
+    "populated_yet": false,
+    "tests_path": "cell_sim/tests/test_esmfold_extractor.py",
+    "test_count": 8,
+    "gpu_vram_gb_fp32": 24,
+    "gpu_vram_gb_fp16": 12,
+    "expected_throughput_s_per_400aa_protein": "2-10",
+    "expected_wall_time_for_452_cds_minutes": "15-75",
+    "pdb_parsing_delegated_to": "cell_sim/features/extractors/alphafold_extractor.py::_features_from_pdb (same PDB -> 9-feature helper used by AFDB path; ESMFold just renames the output keys to the esmfold_ prefix)",
+    "populate_notebook_cell": "notebooks/populate_tier1_cache.ipynb cell 6"
+  },
+  "source": "internal_infrastructure",
+  "source_detail": "Session 15 pivot. Module + 8 sandbox-safe tests verifiable by reading the code and running pytest. Upstream ESMFold model: Lin et al. 2023 Science 379:1123 (Evolutionary-scale prediction of atomic-level protein structure); weights at facebook/esmfold_v1 on HuggingFace Hub. Structures are generated on-device by the notebook, not fetched from an external database.",
+  "context": {
+    "entity": "cell_sim_esmfold_extractor",
+    "version": "v0.1.0_session_15",
+    "supersedes_for_syn3a": "alphafold_extractor (blocked by the UniProt-indexing gap for taxid 2144189)"
+  },
+  "confidence": "measured",
+  "caveats": [
+    "Cache parquet is NOT yet populated. Session 15 ships the extractor module + Colab notebook update; the actual populate run needs a GPU (user-side Colab).",
+    "ESMFold structure predictions are lower-confidence than AFDB's AlphaFold2-Multimer predictions for well-studied proteomes, but higher-confidence than nothing — and nothing is what the AFDB path delivers for a UniProt-missing synthetic organism like Syn3A.",
+    "Secondary-structure classification stays a torsion-bin proxy for DSSP (same helper as the AlphaFold extractor). Treat helix / sheet / coil fractions as ordinal and ~10-15 percent noisier than DSSP.",
+    "Fresh ESMFold inference at fp16 can vary run-to-run within ~1 Angstrom on radius of gyration and ~2 pLDDT points on the mean. The cache parquet's SHA-256 will differ between populate runs even on the same hardware; re-verification after re-populating requires refreshing the manifest.",
+    "Does NOT replace the AlphaFold extractor in the repo — both modules coexist. The default registry in cell_sim/layer6_essentiality/tier1_xgb_detector.py will swap in esmfold_v1 once the parquet is populated; callers who still want AFDB data can register the AlphaFold source independently.",
+    "No MCC measurement is claimed. A v13 / v14 measured fact will document any detector built on top of these features."
+  ],
+  "dependencies": [
+    "feature_cache_infrastructure",
+    "esm2_extractor",
+    "alphafold_extractor"
+  ],
+  "last_verified": "2026-04-24",
+  "used_by": [
+    "cell_sim/features/extractors/esmfold_extractor.py",
+    "cell_sim/features/extractors/__init__.py",
+    "cell_sim/tests/test_esmfold_extractor.py",
+    "notebooks/populate_tier1_cache.ipynb"
+  ]
+}

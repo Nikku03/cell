@@ -119,6 +119,42 @@ def test_annotation_detector_zero_fp_on_breuer():
     assert r["precision"] == 1.0
 
 
+def test_v13_trna_modification_classes_match_expected_loci():
+    """v13 adds trna_threonylcarbamoylation (tsaBCDE),
+    trna_amidation (gatABC), and trna_thiolation (mnmA + 0240).
+    Each must fire on the expected loci with confidence 0.8 and
+    produce zero Nonessential FPs."""
+    d = AnnotationClassDetector()
+    expected = {
+        "trna_threonylcarbamoylation": [
+            "JCVISYN3A_0079", "JCVISYN3A_0144",
+            "JCVISYN3A_0270", "JCVISYN3A_0271",
+        ],
+        "trna_amidation": [
+            "JCVISYN3A_0687", "JCVISYN3A_0688", "JCVISYN3A_0689",
+        ],
+        "trna_thiolation": ["JCVISYN3A_0387", "JCVISYN3A_0240"],
+    }
+    for klass, loci in expected.items():
+        for lt in loci:
+            mode, _, conf, ev = d.detect_for_gene(lt)
+            assert mode == FailureMode.TRANSLATION_STALL, (
+                f"{lt} ({klass}) returned mode {mode}"
+            )
+            assert conf == 0.8, f"{lt} conf {conf} != 0.8"
+            assert klass in ev, f"{lt} evidence missing class: {ev}"
+
+
+def test_v13_trna_class_hit_counts():
+    """Breuer-wide hit counts for the 3 new classes must match the
+    validated set: 4 + 3 + 2 = 9 new TPs, 0 FPs."""
+    r = ann_eval()
+    hits = r["class_hits"]
+    assert hits.get("trna_threonylcarbamoylation") == 4
+    assert hits.get("trna_amidation") == 3
+    assert hits.get("trna_thiolation") == 2
+
+
 # ---------- PriorsOnlyPredictor ----------
 
 def test_priors_only_predictor_flags_expected_essentials():

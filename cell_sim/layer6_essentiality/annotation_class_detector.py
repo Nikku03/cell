@@ -137,6 +137,22 @@ _ESSENTIAL_CLASS_RULES: list[tuple[str, tuple[str, ...], tuple[str, ...]]] = [
      ("phosphoribosylpyrophosphate", "fad synthetase",
       "dutp diphosphatase", "dutp pyrophosphatase"),
      ()),
+    # v13: three more tRNA-modification classes that catch 9 Breuer
+    # Essential / Quasi genes (tsaBCDE threonylcarbamoyltransferase
+    # complex, gatABC glutamyl-tRNA amidotransferase, mnmA + 0240
+    # thiouridine synthases) with zero Nonessential false positives.
+    # Validated against the full Breuer 2019 label set.
+    ("trna_threonylcarbamoylation",
+     ("threonylcarbamoyl",),
+     ()),
+    ("trna_amidation",
+     ("glutamyl-trna amidotransferase",
+      "asp-trna amidotransferase",
+      "aspartyl/glutamyl-trna"),
+     ()),
+    ("trna_thiolation",
+     ("thiouridine",),
+     ()),
 ]
 
 
@@ -227,6 +243,9 @@ class AnnotationClassDetector:
             "dna_topoisomerase": FailureMode.DNA_REPLICATION_BLOCKED,
             "ribosome_biogenesis": FailureMode.TRANSLATION_STALL,
             "trna_modification": FailureMode.TRANSLATION_STALL,
+            "trna_threonylcarbamoylation": FailureMode.TRANSLATION_STALL,
+            "trna_amidation": FailureMode.TRANSLATION_STALL,
+            "trna_thiolation": FailureMode.TRANSLATION_STALL,
             "chaperone": FailureMode.TRANSLATION_STALL,
             "pts_transporter": FailureMode.ESSENTIAL_METABOLITE_DEPLETION,
             "nucleotide_salvage_kinase": FailureMode.ESSENTIAL_METABOLITE_DEPLETION,
