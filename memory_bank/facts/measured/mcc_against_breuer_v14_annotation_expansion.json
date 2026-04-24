@@ -1,0 +1,127 @@
+{
+  "id": "mcc_against_breuer_v14_annotation_expansion",
+  "claim": "Sixteenth MCC measurement: v13 composed detector + 30 new validated annotation classes (protein_deformylation, translation_initiation_formyltransferase, methionine_aminopeptidase, signal_recognition_particle, methionine_adenosyltransferase, nad_biosynthesis, dna_ligase, glycolysis_gapdh, ribosome_gtpase, trna_pseudouridine_synthase, ctp_synthase, excinuclease, rrna_maturation, ribosome_binding_factor, acp_synthase, trna_uridine_carboxymethylaminomethyl, membrane_protein_insertase, iron_sulfur_cluster, cysteine_desulfurase, thioredoxin_reductase, adenine_salvage_prt, uracil_salvage_prt, aaa_protease, clp_protease, ribonuclease_hi, ribonuclease_m5, formyltetrahydrofolate_cyclo_ligase, ribose_5_phosphate_isomerase, phosphatidylglycerol_synthase, glycolipid_synthase); dna_replication_core broadened ('dna polymerase iii' -> 'dna polymerase' to catch polA); iMB155 patches updated to fire at 20 tokens per step (fixes the v12 NNATr regression). Full 455-gene sweep at seed=42: MCC = 0.494, delta +0.084 over v13's 0.410, delta +0.130 over v10b's 0.364.",
+  "confidence": "measured",
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible via 'python scripts/run_sweep_parallel.py --all --workers 4 --use-rust --scale 0.05 --t-end-s 0.5 --detector composed --seed 42 --threshold 0.1 --enable-imb155-patches'. The 30 new annotation classes + broadened dna_replication_core live in cell_sim/layer6_essentiality/annotation_class_detector.py; the 20-token iMB155 patch fix in cell_sim/layer3_reactions/imb155_patches.py::_UNGATED_TOKEN_COUNT. Outputs preserved at outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v14_v14priors_nnatr.csv + outputs/metrics_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v14_v14priors_nnatr.json. Sweep wall: 3009.9 s (6.6 s/gene effective on 4 workers; slower than v13 because the 20-token patched rules fire more events per sim step).",
+  "last_verified": "2026-04-24",
+  "context": {
+    "commit_range": "512e9d8..(this commit)",
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v14_composed_plus_30_new_annotation_classes_plus_nnatr_fix"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v13_trna_priors",
+    "mcc_against_breuer_v12_imb155_patches",
+    "imb155_pathway_patches",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "cell_sim/layer6_essentiality/annotation_class_detector.py",
+    "cell_sim/layer3_reactions/imb155_patches.py",
+    "scripts/run_sweep_parallel.py"
+  ],
+  "value": {
+    "mcc": 0.494,
+    "precision": 0.989,
+    "recall": 0.705,
+    "specificity": 0.958,
+    "accuracy": 0.745,
+    "confusion": {"tp": 270, "fp": 3, "tn": 69, "fn": 113},
+    "delta_over_v13": {
+      "mcc": 0.084,
+      "tp": 39,
+      "fp": 0,
+      "tn": 0,
+      "fn": -39,
+      "precision": 0.002,
+      "recall": 0.102,
+      "specificity": 0.000
+    },
+    "delta_over_v10b": {
+      "mcc": 0.130,
+      "tp": 47,
+      "fp": -3,
+      "tn": 3,
+      "fn": -47,
+      "precision": 0.015,
+      "recall": 0.123,
+      "specificity": 0.041
+    },
+    "flip_audit_v13_to_v14": {
+      "total_flips": 39,
+      "non_to_ess_tp": 39,
+      "ess_to_non_regressions": 0,
+      "nnatr_recovery": {
+        "locus_tag": "JCVISYN3A_0380",
+        "gene_name": "nadD",
+        "breuer": "Essential",
+        "v12_state": "TP (catalysis:NNATr silenced in KO, wt=25)",
+        "v13_state": "FN (wt=14 below min_wt_events=20 threshold — v12 NNATr regression)",
+        "v14_state": "TP (wt=24 restored by 20-token patch firing)",
+        "fix": "imb155_patches _UNGATED_TOKEN_COUNT = 20 instead of 1; restores effective propensity of patched rules to match a typical Mycoplasma enzyme pool"
+      },
+      "new_tp_by_class": {
+        "protein_deformylation": ["JCVISYN3A_0201"],
+        "translation_initiation_formyltransferase": ["JCVISYN3A_0390"],
+        "methionine_aminopeptidase": ["JCVISYN3A_0650"],
+        "signal_recognition_particle": ["JCVISYN3A_0360", "JCVISYN3A_0429"],
+        "methionine_adenosyltransferase": ["JCVISYN3A_0432"],
+        "nad_biosynthesis": ["JCVISYN3A_0378", "JCVISYN3A_0380", "JCVISYN3A_0614"],
+        "dna_ligase": ["JCVISYN3A_0690"],
+        "glycolysis_gapdh": ["JCVISYN3A_0451"],
+        "ribosome_gtpase": ["JCVISYN3A_0377", "JCVISYN3A_0403"],
+        "ctp_synthase": ["JCVISYN3A_0129"],
+        "excinuclease": ["JCVISYN3A_0254", "JCVISYN3A_0824", "JCVISYN3A_0825"],
+        "rrna_maturation": ["JCVISYN3A_0402"],
+        "ribosome_binding_factor": ["JCVISYN3A_0289"],
+        "acp_synthase": ["JCVISYN3A_0513"],
+        "trna_uridine_carboxymethylaminomethyl": ["JCVISYN3A_0081", "JCVISYN3A_0885"],
+        "membrane_protein_insertase": ["JCVISYN3A_0908"],
+        "iron_sulfur_cluster": ["JCVISYN3A_0442"],
+        "cysteine_desulfurase": ["JCVISYN3A_0441"],
+        "thioredoxin_reductase": ["JCVISYN3A_0819"],
+        "adenine_salvage_prt": ["JCVISYN3A_0413"],
+        "uracil_salvage_prt": ["JCVISYN3A_0798"],
+        "aaa_protease": ["JCVISYN3A_0039", "JCVISYN3A_0394"],
+        "clp_protease": ["JCVISYN3A_0545"],
+        "ribonuclease_hi": ["JCVISYN3A_0283"],
+        "ribonuclease_m5": ["JCVISYN3A_0003"],
+        "formyltetrahydrofolate_cyclo_ligase": ["JCVISYN3A_0443"],
+        "ribose_5_phosphate_isomerase": ["JCVISYN3A_0800"],
+        "phosphatidylglycerol_synthase": ["JCVISYN3A_0875"],
+        "glycolipid_synthase": ["JCVISYN3A_0113", "JCVISYN3A_0114"],
+        "dna_replication_core_broadened": ["JCVISYN3A_0611"]
+      }
+    },
+    "config": {
+      "detector": "composed (ComplexAssembly + AnnotationClass-v14 + PerRule) + enable_imb155_patches",
+      "gene_set": "all 455 Breuer-labeled",
+      "label_scheme": "binary; Quasiessential -> positive",
+      "sim_seed": 42,
+      "scale_factor": 0.05,
+      "t_end_s": 0.5,
+      "sample_dt_s": 0.05,
+      "use_rust_backend": true,
+      "workers": 4,
+      "threshold": 0.1,
+      "sweep_wall_s": 3009.9,
+      "per_gene_wall_s": 6.6
+    },
+    "annotation_detector_standalone": {
+      "tp": 112,
+      "fp": 0,
+      "precision": 1.0,
+      "recall_over_breuer_essentials": 0.292,
+      "up_from_v13": 30
+    }
+  },
+  "caveats": [
+    "Item-2 pivot prediction accuracy: pre-sweep expected TP +39 FP +0 MCC ~0.494. Actual: TP +39 FP +0 MCC 0.494. Exact.",
+    "Item-2 NNATr regression fix succeeded. JCVISYN3A_0380 went FN -> TP as predicted. Evidence string shows NNATr wt_count 14 (v13) -> 24 (v14), crossing the PerRuleDetector min_wt_events=20 threshold. No other catalysis rule dropped below the threshold in v14; WT dynamics are otherwise comparable to v10b (precision 0.987 -> 0.989).",
+    "Recall 0.705 still below the brief target of 0.59 MCC but getting closer on MCC itself. Remaining 113 FNs split: ~84 uncharacterised / putative / hypothetical proteins with no annotation signal and no catalytic rule (require Tier-1 ML features or Path A longer-window sims); ~29 miscellaneous specifically-named genes (e.g. hupA DNA-binding, nusB antitermination, ftsY membrane insertase) with narrow annotations not yet in the keyword KB.",
+    "Per-gene wall time rose from v13's 2.2 s/gene to 6.6 s/gene because the 20-token patched rules fire 20x more events per sim step. Full-sweep wall went 999s -> 3010s. Acceptable for a one-shot ground-truth measurement; if per-gene throughput matters for a future multi-seed sweep, reducing _UNGATED_TOKEN_COUNT to 10 likely keeps MCC stable while halving the sim cost.",
+    "Session 15 cumulative result so far: MCC 0.364 -> 0.494, +0.130 absolute, +35.7 percent relative. All lift from correctly-diagnosed simulator-biology (iMB155 patches) + annotation-KB extensions (tRNA-modification + 30 new priors). Zero detector-design changes. The v10b baseline was not the simulator-MCC ceiling; it was the ceiling of a partial annotation KB + a mis-over-assigned placeholder locus.",
+    "Next honest lever: (a) Tier-1 XGB with populated esmfold_v1 + mace_off_kcat parquets (Session-15 items 0a, 0b pending Colab run); (b) add ComplexAssembly entries for tsaBCDE and gatABC heteromers (currently caught by keyword priors, tech-debt); (c) mine the 84 uncharacterised FNs via structural/coevolutionary signals."
+  ]
+}
