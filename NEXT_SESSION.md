@@ -103,9 +103,13 @@ Session 10's Block B found single-seed MCC numbers are unreliable. The `--panel-
 
 Path A tried (v7): falsified. Higher scale tried (v8): no help. All detector variants tried (v0–v9): plateau at 0.125.
 
-**Reachable with simulator-biology fixes (Sessions 12–14):**
-- #1 iMB155 patches: MCC ≈ 0.19–0.22
-- #1 + #3 ribosome complex: MCC ≈ 0.30–0.35
+**Landed so far:**
+- v10b composed stack: MCC 0.364 (full 455) / 0.800 (balanced 40)
+- v12 iMB155 patches: **MCC 0.393** (+0.029 over v10b, three target FPs closed)
+
+**Reachable with remaining simulator-biology fixes:**
+- New Item 3 (tRNA-modification keyword priors — 8 closures): MCC ≈ 0.42–0.44
+- New Item 0a (ESMFold structural features + Tier-1 XGBoost re-measure): unclear on full-455; likely +0.03–0.07 on balanced-40
 
 **Not reachable without one of:**
 - Full Thornburg 2026 simulator (2 A100 × 6 days per replicate — infeasible)

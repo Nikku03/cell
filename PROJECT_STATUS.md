@@ -22,10 +22,10 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 
 ## Memory Bank
 
-- Facts: **35**
+- Facts: **37**
   - structural (12): chromosome length, gene count, gene table, oriC, Breuer 2019 labels, RNAP count per cell, ribosome count at birth, chromosome bead model, feature_cache_infrastructure, esm2_extractor, alphafold_extractor, mace_off_extractor.
-  - parameters (3): active RNAP fraction, doubling time, mRNA half-life mean.
-  - measured (17): `mcc_against_breuer_v0..v10b_full` + `mcc_against_breuer_v11_tier1_xgb` + `mcc_replicates_summary` + `mcc_v9_robustness` + `session_14_populate`.
+  - parameters (4): active RNAP fraction, doubling time, mRNA half-life mean, imb155_pathway_patches.
+  - measured (18): `mcc_against_breuer_v0..v10b_full` + `mcc_against_breuer_v11_tier1_xgb` + `mcc_against_breuer_v12_imb155_patches` + `mcc_replicates_summary` + `mcc_v9_robustness` + `session_14_populate`.
   - resolved uncertainty (3): `syn3a_gene_count_dispute`, `syn3a_chromosome_length_pending`, `syn3a_gene_count_thornburg2026_discrepancy`.
 - Sources: **11** (Thornburg 2022 + 2026 Cell, Hutchison 2016, Breuer 2019, GenBank CP016816, Luthey-Schulten ComplexFormation + 4DWCM repos, Fu 2026 JPC-B, Gilbert 2023 Frontiers, Bianchi 2022 JPC-B, Pezeshkian 2024 Nat Commun).
 - Sources: **5** (`thornburg_2022_cell`, `hutchison_2016_science`, `breuer_2019_elife`, `genbank_cp016816`, `luthey_schulten_minimal_cell_complex_formation_repo`).
@@ -48,6 +48,22 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
 ## Session Log
+
+### Session 15 — 2026-04-24 — iMB155 pathway patches + FN re-audit (v12 = MCC 0.393)
+- **Scope**: closed Session-15 item 1 (iMB155 pathway patches) and landed a +0.029 MCC lift on the full 455-gene Breuer benchmark. Pivoted items 0a (ESMFold replaces AFDB; UniProt route blocked from sandbox) and 3 (ribosome complex already implemented; real FN class is tRNA modification) with updated plans in `NEXT_SESSION.md`.
+- **New module `cell_sim/layer3_reactions/imb155_patches.py`** (~180 lines): `apply_imb155_patches(rules)` clears three over-assigned loci (`JCVISYN3A_0034` placeholder transporter, lpdA 0228, deoC 0732) from `enzyme_loci`. Rules gated solely by a patched locus are replaced with python-closure variants (no `compiled_spec`) so `build_gene_to_rules` drops them from the PerRuleDetector's map. Opt-in via `RealSimulatorConfig.enable_imb155_patches` + `run_sweep_parallel.py --enable-imb155-patches`.
+- **v12 measurement (honest positive result)**:
+  - **MCC 0.393** (Δ +0.029 over v10b's 0.364)
+  - TP 222 / FP **3** / TN 69 / FN 161 (v10b: 223 / 6 / 66 / 160)
+  - Precision 0.987 (Δ +0.013), specificity 0.958 (Δ +0.041), recall flat at 0.580
+  - **All 3 target FPs closed correctly** (0034 / 0228 / 0732 → Nonessential)
+  - **1 collateral regression**: JCVISYN3A_0380 (NNATr, true Essential) flipped TP → FN. Cause: patched rules fire at `kcat × saturation` without the enzyme-count multiplier, slowing overall metabolism by ~40 %; NNATr's WT event count dropped from 25 to 14 (below the detector's min_wt_events=20 threshold). Documented fix candidates in the v12 fact.
+  - Sweep wall: 739.6 s (1.6 s/gene effective, 4 workers, Rust backend).
+- **Tests**: 11 new unit tests in `cell_sim/tests/test_imb155_patches.py` (7 synthetic + 4 real-SBML integration). **196/196 tests passing.**
+- **Memory bank**: 1 new parameters fact (`imb155_pathway_patches.json`) + 1 new measured fact (`mcc_against_breuer_v12_imb155_patches.json`). **37 facts / 12 sources / invariant checker OK.**
+- **Item 0a findings (pivot documented, implementation deferred)**: listed the Luthey-Schulten 4DWCM `input_data/` directory via GitHub API — no UniProt cross-reference CSV exists. Combined with sandbox allowlist blocking `rest.uniprot.org` and `www.ebi.ac.uk`, the AFDB path is doubly blocked. Honest pivot: replace `alphafold_extractor.py` with `esmfold_extractor.py` (same 9-feature schema; ESMFold takes sequence in, returns structure + pLDDT; ~24 GB VRAM on fp16, runs on the user's Colab Blackwell). `NEXT_SESSION.md` updated with the new plan.
+- **Item 3 FN re-audit (pivot documented, implementation deferred)**: categorised the 98 v10a FNs. Ribosomal proteins: **1** (a maturation protease), not 15 — `make_complex_formation_rules` already gates the Ribosome complex on all 58 subunits; `ComplexAssemblyDetector` catches ribosomal KOs via the complex_formation.xlsx KB. Real remaining tractable FNs: **8 tRNA-modification genes** (mnmA / tsaB/C/D/E / gatA/B/C) the v10b `_ESSENTIAL_CLASS_RULES` don't match. New item 3 proposal: add `trna_threonylcarbamoylation` / `trna_amidation` / `trna_thiolation` classes. Smaller scope (~40 lines + validation) than original.
+- **Net implication**: item 1 showed that simulator-biology fixes DO lift MCC when diagnosed correctly; the v10b ceiling is not a detector-design problem. The 2 remaining items are now more concrete and each sized to one session.
 
 ### Session 15 — 2026-04-23 — Tier-1 XGBoost baseline (honest negative result)
 - **Scope**: closed Session-15 item 0c. Built the Tier-1 XGBoost detector + measurement script, ran 5-fold stratified CV on four feature slices against Breuer 2019, and recorded an honest negative fact. No detector change to production; the v10b composed stack remains the best MCC on disk. AlphaFold-DB and MACE-OFF parquets are still empty by design (items 0a and 0b remain open).
