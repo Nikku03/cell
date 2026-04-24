@@ -7,21 +7,21 @@
       "version": "0.1.0"
     },
     "esm2_650M": {
-      "created_at": "2026-04-24T07:26:44Z",
+      "created_at": "2026-04-24T18:13:15Z",
       "rows": 455,
-      "sha256": "d440842f6d5988d33c79fa6c93b6560b84a8763d0968e57028aa8e03ba67e7a9",
+      "sha256": "0d572640598534198f56d7fdb05f3e3b47aa7ea72c4f8577d9872a0066d16175",
       "version": "0.1.0"
     },
     "esmfold_v1": {
-      "created_at": "2026-04-24T08:33:56Z",
+      "created_at": "2026-04-24T19:02:12Z",
       "rows": 455,
-      "sha256": "018c2ce1d2a36cf42c77dcfde537bc04d7dc2a6b0139ce55c0ec33269ab90b18",
+      "sha256": "e706f58a156594f036aef32a56c437205dd17f4d906cf8ca49d0277f2d4741cb",
       "version": "0.1.0"
     },
     "mace_off_kcat": {
-      "created_at": "2026-04-24T08:33:56Z",
+      "created_at": "2026-04-24T19:02:52Z",
       "rows": 455,
-      "sha256": "9db2b8f96cc772f45fd75ff6eccc26b55bca258b502749a9b7fcb68024b36375",
+      "sha256": "6c8377db42a3dfe9963ee0befbddf62acff6bf52ca07484a96a3e05cd0c9b5a3",
       "version": "0.1.0"
     }
   }
