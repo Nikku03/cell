@@ -45,7 +45,7 @@ def test_module_import_cheap():
 def test_extractor_metadata():
     ex = ESMFoldExtractor()
     assert ex.name == "esmfold_v1"
-    assert ex.version == "0.1.0"
+    assert ex.version == "0.2.0"
     assert len(ex.feature_cols) == 9
     expected = {
         "esmfold_plddt_mean",

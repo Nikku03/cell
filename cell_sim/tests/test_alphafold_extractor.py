@@ -89,6 +89,52 @@ def test_feature_cols_match_contract():
     assert list(out.columns) == ex.feature_cols
 
 
+def test_plddt_scale_factor_rescales_mean_and_disorder():
+    """``plddt_scale_factor`` multiplies every per-residue pLDDT
+    before mean / std / disorder stats are computed. AFDB keeps the
+    default 1.0 (already 0-100); ESMFold passes 100.0 to promote
+    0-1 values onto the 0-100 scale."""
+    from cell_sim.features.extractors.alphafold_extractor import (
+        _features_from_pdb,
+    )
+    pdb = (
+        "MODEL        1\n"
+        "ATOM      1  CA  ALA A   1       0.000   0.000   0.000  "
+        "1.00  30.00           C\n"
+        "ATOM      2  CA  ALA A   2       3.800   0.000   0.000  "
+        "1.00  70.00           C\n"
+        "ATOM      3  CA  ALA A   3       7.600   0.000   0.000  "
+        "1.00  90.00           C\n"
+        "TER\nENDMDL\nEND\n"
+    ).encode("utf-8")
+
+    # Default scale: pLDDT stays 30 / 70 / 90 -> mean 63.3, one residue
+    # below the 50 threshold => disorder_fraction = 1/3.
+    row_default = _features_from_pdb(pdb)
+    assert abs(row_default["af_plddt_mean"] - (30 + 70 + 90) / 3) < 1e-6
+    assert abs(row_default["af_disorder_fraction"] - 1.0 / 3.0) < 1e-6
+
+    # 0.01x scale: 0.3 / 0.7 / 0.9 -> all < 50 => disorder = 1.0.
+    row_shrunk = _features_from_pdb(pdb, plddt_scale_factor=0.01)
+    assert abs(row_shrunk["af_plddt_mean"] - 0.6333) < 1e-3
+    assert row_shrunk["af_disorder_fraction"] == 1.0
+
+    # 100x scale from 0-1 raw values simulates the ESMFold path.
+    pdb_small = (
+        "MODEL        1\n"
+        "ATOM      1  CA  ALA A   1       0.000   0.000   0.000  "
+        "1.00   0.30           C\n"
+        "ATOM      2  CA  ALA A   2       3.800   0.000   0.000  "
+        "1.00   0.70           C\n"
+        "ATOM      3  CA  ALA A   3       7.600   0.000   0.000  "
+        "1.00   0.90           C\n"
+        "TER\nENDMDL\nEND\n"
+    ).encode("utf-8")
+    row_esmfold = _features_from_pdb(pdb_small, plddt_scale_factor=100.0)
+    assert abs(row_esmfold["af_plddt_mean"] - (30 + 70 + 90) / 3) < 1e-4
+    assert abs(row_esmfold["af_disorder_fraction"] - 1.0 / 3.0) < 1e-6
+
+
 def test_registered_with_registry(tmp_path):
     reg = FeatureRegistry(cache_dir=tmp_path)
     ex = AlphaFoldExtractor()

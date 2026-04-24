@@ -107,7 +107,10 @@ class ESMFoldExtractor(BatchedFeatureExtractor):
     """
 
     name = "esmfold_v1"
-    version = "0.1.0"
+    # 0.2.0: pLDDT rescaled 0-1 -> 0-100 to match AFDB units and fix
+    # a disorder_fraction bug where the 50.0 threshold was hit by
+    # every residue (pLDDT max was ~0.99 on the old scale).
+    version = "0.2.0"
     feature_cols = list(_FEATURE_COLS)
 
     _MODEL_ID = "facebook/esmfold_v1"
@@ -214,7 +217,14 @@ class ESMFoldExtractor(BatchedFeatureExtractor):
                 rows.append(_no_structure_row())
                 continue
             try:
-                af_row = _features_from_pdb(pdb_str.encode("utf-8"))
+                # ESMFold's HF port writes pLDDT on the 0-1 scale
+                # (unlike AFDB which writes 0-100). Passing 100.0 as
+                # the scale factor brings per-residue pLDDT onto the
+                # 0-100 scale the shared helper assumes for its mean
+                # and disorder-threshold (50.0) computations.
+                af_row = _features_from_pdb(
+                    pdb_str.encode("utf-8"), plddt_scale_factor=100.0,
+                )
             except Exception:  # noqa: BLE001 — parse failures → NaN
                 rows.append(_no_structure_row())
                 continue

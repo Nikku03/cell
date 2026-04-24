@@ -182,11 +182,21 @@ class AlphaFoldExtractor(BatchedFeatureExtractor):
 # ---- PDB parsing helpers ----
 
 
-def _features_from_pdb(pdb_bytes: bytes) -> dict[str, float]:
+def _features_from_pdb(
+    pdb_bytes: bytes, plddt_scale_factor: float = 1.0,
+) -> dict[str, float]:
     """Parse a PDB byte-blob and compute the 9 feature values.
 
     Imports biopython lazily; must only be called after
     ``_ensure_loaded``.
+
+    ``plddt_scale_factor`` is multiplied into every per-residue pLDDT
+    before the downstream stats (mean, std, disorder-fraction) are
+    computed. AFDB writes pLDDT on the 0-100 scale so the default of
+    1.0 is correct; ESMFold's HuggingFace port writes pLDDT on the
+    0-1 scale, so the ESMFold extractor passes 100.0 here to bring
+    the units in line with the 50.0 disorder threshold the rest of
+    this function assumes.
     """
     import io
     from Bio.PDB import PDBParser  # noqa: WPS433 — lazy
@@ -209,7 +219,9 @@ def _features_from_pdb(pdb_bytes: bytes) -> dict[str, float]:
                 ca = residue["CA"]
                 ca_coords.append(tuple(ca.get_coord()))
                 # AFDB embeds pLDDT as the B-factor of each atom.
-                plddts.append(float(ca.get_bfactor()))
+                plddts.append(
+                    float(ca.get_bfactor()) * plddt_scale_factor
+                )
                 # Torsion-angle based SS call; simple proxy for DSSP.
                 phi, psi = _phi_psi_for_residue(residues, i)
                 phi_psi.append((phi, psi))
