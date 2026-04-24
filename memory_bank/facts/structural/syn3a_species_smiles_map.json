@@ -1,0 +1,58 @@
+{
+  "id": "syn3a_species_smiles_map",
+  "claim": "Curated map of Syn3A SBML species IDs (BiGG-style M_<id>_<c|e>) to canonical SMILES for the small molecules that appear in the iMB155 metabolic network. Hand-built because the Syn3A SBML carries no bqbiol:is cross-references (verified: zero rdf:resource tags) and the MetaNetX / BiGG / UniProt APIs are blocked by the sandbox allowlist. Covers 48 unique BiGG IDs x 88 species_id rows (c + e compartments), focusing on the inorganics, 20 proteogenic amino acids + homocysteine, nucleobases, simple sugars, glycerol, and core central-carbon + fermentation end products. Enables MACEOffExtractor to populate real BDE-derived kcat aggregates for the reactions whose substrates are fully in this map.",
+  "value": {
+    "data_path": "memory_bank/data/syn3a_species_smiles.csv",
+    "schema": {
+      "species_id": "SBML species identifier (e.g. M_atp_c)",
+      "bigg_id": "BiGG canonical identifier without compartment suffix (e.g. atp)",
+      "smiles": "Canonical SMILES string",
+      "notes": "Human-readable name / disambiguation"
+    },
+    "coverage": {
+      "unique_bigg_ids_mapped": 48,
+      "species_id_rows": 88,
+      "sbml_species_total": 308,
+      "sbml_unique_bigg_ids_total": 226,
+      "estimated_reaction_coverage": "partial: roughly 15-25 percent of iMB155 reactions have ALL substrates mapped (amino-acid metabolism, glycolysis entry, fermentation, nucleobase salvage). Central-carbon mid-stream (e.g. f6p, fdp, g3p, dhap, 13dpg, 3pg, 2pg, pep), nucleotide-phosphate species (atp, adp, amp, gtp, gdp, gmp, ...), cofactors (nad / nadp / fad / coa), and complex lipids remain unmapped."
+    },
+    "categories_covered": [
+      "inorganics (h, h2o, pi, ppi, co2, o2, nh3, na1, k, cl, ca2, mg2)",
+      "all 20 proteogenic L-amino acids + homocysteine",
+      "simple sugars (glc__D, gam, man) + glyc + glyc3p + gam6p",
+      "nucleobases (ade, gua, ura)",
+      "C2/C3 organic acids (ac, acald, pyr, lac__L, pep, for)"
+    ],
+    "categories_excluded": [
+      "tRNA species (alatrna, argtrna, ... and the trnaXxx stems): macromolecules — MACE-OFF is a small-molecule backend and cannot compute BDE for them",
+      "Protein / DNA / RNA / biomass / ACP / PdhC / dUTPase: macromolecular placeholders in the SBML",
+      "Complex lipids (pc, pg, pa, clpn, sm, 12dgr, 1ag3p, galfur12dgr, cdpdag, tag): multi-variant acyl-chain species; need chain-specific SMILES to be meaningful",
+      "Central-carbon phosphorylated intermediates (f6p, fdp, 13dpg, 3pg, 2pg, g3p, dhap, g6p, g1p): deferred pending confirmed source of canonical SMILES (each has a well-known SMILES; deferred to avoid propagating a typo through the MACE BDE pipeline)",
+      "Nucleotide mono/di/triphosphates (atp, adp, amp, gtp, ...): deferred for the same reason",
+      "Cofactors (coa, nad/nadh, nadp/nadph, fad, fmn, amet, ahcys, thmpp, pydx5p, ribflv): deferred for the same reason"
+    ]
+  },
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Hand-curated from standard BiGG identifiers. SMILES for amino acids follow IUPAC (L-stereochemistry specified as @ / @@ at the C-alpha). Inorganics use standard charged/uncharged forms. Cross-referenced against the SBML species list via cell_sim/layer3_reactions/sbml_parser.py::parse_sbml. No network fetch at build time.",
+  "context": {
+    "entity": "syn3a_metabolome",
+    "version": "v0.1.0_session_15_partial",
+    "session_added": "Session 15 Item 0b (initial partial)"
+  },
+  "caveats": [
+    "Partial coverage: 48/226 unique metabolites mapped. The deferred categories (phosphorylated central-carbon intermediates, nucleotide phosphates, cofactors) cover many more reactions — adding them in a follow-up session would raise reaction coverage past 50 percent.",
+    "SMILES are canonical but not necessarily the EXACT tautomer or protonation state iMB155 assumes. MACE-OFF's BDE calculation is relatively insensitive to protonation (bond dissociation is a homolytic-cleavage energy, computed on the neutral bonded form), so minor protonation disagreements should not materially affect aggregated kcat estimates.",
+    "Stereochemistry is encoded where applicable (L-amino acids, alpha-D-glucose, D-mannose, L-lactate, glycerol-3-P). Uncharged forms used throughout; cofactor metal coordination not represented.",
+    "Extending this map is a straightforward next-session task. Every added BiGG id increases MACE-OFF reaction coverage roughly linearly until lipid / cofactor bottlenecks dominate."
+  ],
+  "dependencies": [
+    "syn3a_gene_table",
+    "mace_off_extractor"
+  ],
+  "last_verified": "2026-04-24",
+  "used_by": [
+    "cell_sim/features/extractors/mace_off_extractor.py",
+    "notebooks/populate_tier1_cache.ipynb"
+  ]
+}
