@@ -112,8 +112,10 @@ def main() -> int:
     pu_conf = confusion(y_full, pu_pred)
 
     xgb_results = {}
-    for slice_name in ("esm2_only", "priors_only", "esm2_plus_priors",
-                        "stacked"):
+    for slice_name in (
+        "esm2_only", "priors_only", "esm2_plus_priors",
+        "esmfold_plus_priors", "structure_plus_priors", "stacked",
+    ):
         det = Tier1XgbDetector(feature_slice=slice_name)
         xgb_results[slice_name] = det.cv_score(
             bundle_full, y_full,
@@ -146,8 +148,10 @@ def main() -> int:
     pu_conf_panel = confusion(y_panel, pu_pred_panel)
 
     xgb_panel = {}
-    for slice_name in ("esm2_only", "priors_only", "esm2_plus_priors",
-                        "stacked"):
+    for slice_name in (
+        "esm2_only", "priors_only", "esm2_plus_priors",
+        "esmfold_plus_priors", "structure_plus_priors", "stacked",
+    ):
         det = Tier1XgbDetector(feature_slice=slice_name)
         xgb_panel[slice_name] = det.cv_score(
             bundle_panel, y_panel,

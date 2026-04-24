@@ -120,10 +120,11 @@ def test_priors_union_beats_random():
     assert mcc(y, p) > 0.10
 
 
-def test_default_registry_declares_three_sources(tmp_path):
+def test_default_registry_declares_four_sources(tmp_path):
     reg = default_registry(cache_dir=tmp_path)
-    assert set(reg.list_sources()) == {"esm2_650M", "alphafold_db",
-                                        "mace_off_kcat"}
+    assert set(reg.list_sources()) == {
+        "esm2_650M", "alphafold_db", "esmfold_v1", "mace_off_kcat",
+    }
     # Nothing cached in tmp_path.
     for n in reg.list_sources():
         assert reg.is_cached(n) is False
@@ -141,8 +142,9 @@ def test_feature_bundle_nan_block_when_source_missing(tmp_path):
     # ESM-2 block: 2x1280 all NaN.
     assert bundle.esm2.shape == (2, 1280)
     assert np.isnan(bundle.esm2).all()
-    # AlphaFold: 2x9.
+    # AlphaFold: 2x9, ESMFold: 2x9 (both NaN until populated).
     assert bundle.alphafold.shape == (2, 9)
+    assert bundle.esmfold.shape == (2, 9)
     # MACE: 2x7.
     assert bundle.mace.shape == (2, 7)
     # Priors still populated.
@@ -158,18 +160,27 @@ def test_tier1_xgb_detector_metadata():
 
 
 def test_tier1_xgb_detector_feature_slice_dispatch():
-    """_slice() must route the right columns per feature_slice."""
+    """_slice() must route the right columns per feature_slice.
+
+    The synthetic bundle has esm2 width 4 (not 1280) to keep the
+    test cheap — actual dim counts for each slice are computed
+    from the bundle, not hard-coded.
+    """
     bundle = Tier1FeatureBundle(
         locus_tags=["a", "b"],
         esm2=np.arange(2 * 4, dtype=np.float32).reshape(2, 4),
         alphafold=np.full((2, 9), np.nan, dtype=np.float32),
+        esmfold=np.full((2, 9), np.nan, dtype=np.float32),
         mace=np.full((2, 7), np.nan, dtype=np.float32),
         priors=np.array([[1, 0, 1], [0, 1, 0]], dtype=np.float32),
     )
     assert Tier1XgbDetector(feature_slice="esm2_only")._slice(bundle).shape == (2, 4)
     assert Tier1XgbDetector(feature_slice="priors_only")._slice(bundle).shape == (2, 3)
     assert Tier1XgbDetector(feature_slice="esm2_plus_priors")._slice(bundle).shape == (2, 7)
-    assert Tier1XgbDetector(feature_slice="stacked")._slice(bundle).shape == (2, 23)
+    assert Tier1XgbDetector(feature_slice="esmfold_plus_priors")._slice(bundle).shape == (2, 12)
+    assert Tier1XgbDetector(feature_slice="structure_plus_priors")._slice(bundle).shape == (2, 21)
+    # stacked = esm2(4) + af(9) + esmfold(9) + mace(7) + priors(3) = 32
+    assert Tier1XgbDetector(feature_slice="stacked")._slice(bundle).shape == (2, 32)
 
 
 def test_tier1_xgb_detector_cv_score_runs_on_priors_only(tmp_path):

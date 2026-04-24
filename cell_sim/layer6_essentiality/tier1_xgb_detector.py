@@ -161,7 +161,8 @@ class Tier1FeatureBundle:
     FeatureRegistry + PriorFeatureSet."""
     locus_tags: list[str]
     esm2: np.ndarray                   # (n, 1280) or (n, 0)
-    alphafold: np.ndarray              # (n, 9) — may be all NaN
+    alphafold: np.ndarray              # (n, 9) — may be all NaN (Session-14 placeholder)
+    esmfold: np.ndarray                # (n, 9) — Session-15 backend; NaN until populate
     mace: np.ndarray                   # (n, 7) — may be all NaN
     priors: np.ndarray                 # (n, 3) cx/an/traj binaries
 
@@ -169,7 +170,9 @@ class Tier1FeatureBundle:
     def stacked(self) -> np.ndarray:
         """All columns side-by-side. NaN columns come through
         naturally; tree learners tolerate NaN."""
-        return np.column_stack([self.esm2, self.alphafold, self.mace, self.priors])
+        return np.column_stack([
+            self.esm2, self.alphafold, self.esmfold, self.mace, self.priors,
+        ])
 
     @property
     def esm2_only(self) -> np.ndarray:
@@ -183,16 +186,28 @@ class Tier1FeatureBundle:
     def esm2_plus_priors(self) -> np.ndarray:
         return np.column_stack([self.esm2, self.priors])
 
+    @property
+    def esmfold_plus_priors(self) -> np.ndarray:
+        return np.column_stack([self.esmfold, self.priors])
+
+    @property
+    def structure_plus_priors(self) -> np.ndarray:
+        """Both structural sources + priors. AlphaFold stays NaN on
+        Syn3A (UniProt blocked); ESMFold carries the real signal once
+        the parquet is populated."""
+        return np.column_stack([self.alphafold, self.esmfold, self.priors])
+
 
 def build_feature_bundle(
     locus_tags: list[str],
     registry: FeatureRegistry,
     priors: PriorFeatureSet,
 ) -> Tier1FeatureBundle:
-    """Load / join the three cached parquets for ``locus_tags`` and
+    """Load / join the four cached parquets for ``locus_tags`` and
     attach the prior binaries."""
-    sources = [s for s in ("esm2_650M", "alphafold_db", "mace_off_kcat")
-               if s in registry.list_sources()]
+    sources = [s for s in (
+        "esm2_650M", "alphafold_db", "esmfold_v1", "mace_off_kcat",
+    ) if s in registry.list_sources()]
     if sources:
         joined = registry.join_features(locus_tags, sources=sources)
     else:
@@ -209,6 +224,7 @@ def build_feature_bundle(
         locus_tags=list(locus_tags),
         esm2=_block("esm2_650M_dim_", 1280),
         alphafold=_block("af_", 9),
+        esmfold=_block("esmfold_", 9),
         mace=_block("mace_", 7),
         priors=priors.matrix(locus_tags),
     )
@@ -256,10 +272,12 @@ class Tier1XgbDetector:
     """XGBoost classifier over a chosen Tier-1 feature slice.
 
     ``feature_slice`` picks one of:
-      - ``"esm2_only"``         — 1280 dims
-      - ``"priors_only"``       — 3 dims
-      - ``"esm2_plus_priors"``  — 1283 dims
-      - ``"stacked"``           — 1299 dims (all three parquets + priors)
+      - ``"esm2_only"``             — 1280 dims
+      - ``"priors_only"``           — 3 dims
+      - ``"esm2_plus_priors"``      — 1283 dims
+      - ``"esmfold_plus_priors"``   — 12 dims (9 structural + 3 priors)
+      - ``"structure_plus_priors"`` — 21 dims (af 9 + esmfold 9 + priors 3)
+      - ``"stacked"``               — 1308 dims (every block)
     """
     feature_slice: str = "esm2_plus_priors"
     n_estimators: int = 200
@@ -278,6 +296,8 @@ class Tier1XgbDetector:
             "esm2_only": bundle.esm2_only,
             "priors_only": bundle.priors_only,
             "esm2_plus_priors": bundle.esm2_plus_priors,
+            "esmfold_plus_priors": bundle.esmfold_plus_priors,
+            "structure_plus_priors": bundle.structure_plus_priors,
             "stacked": bundle.stacked,
         }[self.feature_slice]
 
@@ -350,7 +370,15 @@ _DEFAULT_CACHE_DIR = Path("cell_sim/features/cache")
 
 
 def default_registry(cache_dir: Path = _DEFAULT_CACHE_DIR) -> FeatureRegistry:
-    """Register the three Session-14 sources on a fresh FeatureRegistry."""
+    """Register the four feature sources on a fresh FeatureRegistry.
+
+    Session 14 shipped esm2_650M + alphafold_db + mace_off_kcat.
+    Session 15 added esmfold_v1 after the AFDB path was blocked by
+    the UniProt-indexing gap for Syn3A (taxid 2144189). The
+    alphafold_db entry is kept for backward compatibility and for
+    future use on other organisms; for Syn3A the parquet is
+    effectively NaN and esmfold_v1 carries the real signal.
+    """
     reg = FeatureRegistry(cache_dir=cache_dir)
     reg.register(FeatureSource(
         name="esm2_650M",
@@ -368,6 +396,21 @@ def default_registry(cache_dir: Path = _DEFAULT_CACHE_DIR) -> FeatureRegistry:
             "af_helix_fraction", "af_sheet_fraction", "af_coil_fraction",
             "af_sequence_length", "af_radius_of_gyration_angstrom",
             "af_has_structure",
+        ],
+        version="0.1.0",
+    ))
+    reg.register(FeatureSource(
+        name="esmfold_v1",
+        parquet_path=cache_dir / "esmfold_v1.parquet",
+        expected_sha256=None,
+        feature_cols=[
+            "esmfold_plddt_mean", "esmfold_plddt_std",
+            "esmfold_disorder_fraction",
+            "esmfold_helix_fraction", "esmfold_sheet_fraction",
+            "esmfold_coil_fraction",
+            "esmfold_sequence_length",
+            "esmfold_radius_of_gyration_angstrom",
+            "esmfold_has_structure",
         ],
         version="0.1.0",
     ))
