@@ -21,7 +21,7 @@ import pandas as pd
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
-def _confusion_mcc(pred_csv: Path) -> dict:
+def _confusion_mcc_from_csv(pred_csv: Path) -> dict:
     df = pd.read_csv(pred_csv)
     y_true = df["true_class"].isin(["Essential", "Quasiessential"]).astype(int)
     y_pred = df["essential"].astype(int)
@@ -41,6 +41,40 @@ def _confusion_mcc(pred_csv: Path) -> dict:
     }
 
 
+def _confusion_mcc_from_json(metrics_json: Path) -> dict:
+    import json as _json
+    d = _json.loads(metrics_json.read_text())
+    # run_sweep_parallel.py writes tp/fp/tn/fn/mcc at the top level.
+    return {
+        "tp": int(d["tp"]),
+        "fp": int(d["fp"]),
+        "tn": int(d["tn"]),
+        "fn": int(d["fn"]),
+        "mcc": float(d["mcc"]),
+        "precision": float(d["precision"]),
+        "recall": float(d["recall"]),
+        "specificity": float(d["specificity"]),
+    }
+
+
+def _confusion_mcc(pred_csv: Path) -> dict:
+    """Prefer the predictions CSV (can recompute confusion & recheck)
+    but fall back to the metrics JSON if the CSV is missing or empty —
+    the metrics JSON is what run_sweep_parallel.py emits alongside
+    the CSV and contains the same confusion counts."""
+    if pred_csv.exists() and pred_csv.stat().st_size > 0:
+        return _confusion_mcc_from_csv(pred_csv)
+    metrics_json = pred_csv.with_name(
+        pred_csv.name.replace("predictions_", "metrics_")
+                .replace(".csv", ".json"),
+    )
+    if metrics_json.exists() and metrics_json.stat().st_size > 0:
+        return _confusion_mcc_from_json(metrics_json)
+    raise FileNotFoundError(
+        f"neither {pred_csv} nor {metrics_json} available"
+    )
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
@@ -54,10 +88,10 @@ def main() -> int:
     replicates = {}
     for seed in (42, 1, 2):
         path = REPO_ROOT / f"{prefix}{seed}{suffix}"
-        if not path.exists():
-            print(f"MISSING: {path}")
-            continue
-        replicates[f"seed_{seed}"] = _confusion_mcc(path)
+        try:
+            replicates[f"seed_{seed}"] = _confusion_mcc(path)
+        except FileNotFoundError as exc:
+            print(f"skipping seed={seed}: {exc}")
 
     if len(replicates) < 2:
         print("need at least 2 replicates; abort")

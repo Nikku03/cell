@@ -1,0 +1,456 @@
+locus_tag,gene_name,essential,time_to_failure_s,failure_mode,confidence,evidence,true_class
+JCVISYN3A_0004,ksgA,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0001,dnaA,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'chromosomal replication initiator']],Essential
+JCVISYN3A_0003,rnmV,1,0.0,translation_stall,0.8000,ann_only[ann[ribonuclease_m5:'ribonuclease m5']],Quasiessential
+JCVISYN3A_0002,dnaN,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'dna polymerase']],Essential
+JCVISYN3A_0007,gyrA,1,0.0,translation_stall,0.9000,cx_only[cx[Gyrasex2(init=122)]],Essential
+JCVISYN3A_0005,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0006,gyrB,1,0.0,translation_stall,0.9000,cx_only[cx[Gyrasex2(init=122)]],Essential
+JCVISYN3A_0008,rnsD; uptD,1,0.0,translation_stall,0.9000,cx_only[cx[rnsBACDx1(init=145)]],Essential
+JCVISYN3A_0009,rnsC; uptD,1,0.0,translation_stall,0.9000,cx_only[cx[rnsBACDx1(init=145)]],Essential
+JCVISYN3A_0010,rnsA; uptA,1,0.0,translation_stall,0.9000,cx_only[cx[rnsBACDx1(init=145)]],Essential
+JCVISYN3A_0011,rnsB; uptB,1,0.0,translation_stall,0.9000,cx_only[cx[rnsBACDx1(init=145)]],Essential
+JCVISYN3A_0012,metRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0025,rpsR,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0918,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0913,tetM,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0026,priB,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'single-stranded dna-binding']],Essential
+JCVISYN3A_0027,rpsF,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0029,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0030,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0033,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0039,ftsH,1,0.0,translation_stall,0.8000,ann_only[ann[aaa_protease:'aaa+ protease']],Essential
+JCVISYN3A_0034,,0,,none,0.0000,"no_signal[cx:cx_none|ann:ann_none|traj:partial_silence: catalysis:ADEt_syn[wt=223,ko=210],catalysis:CHOLt[wt=492,ko=485],catalysis:CHOLt:rev[wt=523,ko=523]]",Nonessential
+JCVISYN3A_0040,tilS,1,0.0,translation_stall,0.8000,ann_only[ann[trna_modification:'trna lysidine']],Essential
+JCVISYN3A_0042,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0043,yabD,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0045,tmk,1,0.49999999999999994,catalysis_silenced,1.0000,traj+ann[silenced: catalysis:TMPK:rev[wt=37]],Essential
+JCVISYN3A_0044,holA,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'dna polymerase']],Essential
+JCVISYN3A_0046,recR,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0047,dnaX,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'dna polymerase']],Essential
+JCVISYN3A_0054,ahpC,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0061,serRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0060,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0063,dusB,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0064,lysRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0065,trxA,0,,none,0.0000,"no_signal[cx:cx_none|ann:ann_none|traj:partial_silence: catalysis:TRDR[wt=63,ko=37],catalysis:TRDR:rev[wt=75,ko=47]]",Essential
+JCVISYN3A_0066,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0076,asnRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0077,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0079,tsaD,1,0.0,translation_stall,0.8000,ann_only[ann[trna_threonylcarbamoylation:'threonylcarbamoyl']],Essential
+JCVISYN3A_0080,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0081,mnmE; trmE,1,0.0,translation_stall,0.8000,ann_only[ann[trna_uridine_carboxymethylaminomethyl:'5-carboxymethylaminomethyl']],Quasiessential
+JCVISYN3A_0082,rpsT,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Quasiessential
+JCVISYN3A_0094,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0095,secA,1,0.0,membrane_integrity,0.8000,ann_only[ann[signal_peptidase:'preprotein translocase']],Essential
+JCVISYN3A_0097,yycJ,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0105,xseB,1,0.0,translation_stall,0.9000,cx_only[cx[ExoVIIx4(init=10)]],Nonessential
+JCVISYN3A_0106,xseA,1,0.0,translation_stall,0.9000,cx_only[cx[ExoVIIx24(init=10)]],Nonessential
+JCVISYN3A_0107,nusB,1,0.0,transcription_stall,0.8000,ann_only[ann[transcription_antitermination:'antitermination']],Quasiessential
+JCVISYN3A_0108,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0109,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0113,bcsA,1,0.0,membrane_integrity,0.8000,ann_only[ann[glycolipid_synthase:'glycolipid synthase']],Essential
+JCVISYN3A_0114,bcsB; cps,1,0.0,membrane_integrity,0.8000,ann_only[ann[glycolipid_synthase:'glycolipid synthase']],Essential
+JCVISYN3A_0115,galU; gtaB,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:GALU[wt=106],catalysis:GALU:rev[wt=49]]",Essential
+JCVISYN3A_0116,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0117,plsY,1,0.49999999999999994,catalysis_silenced,1.0000,traj+ann[silenced: catalysis:APG3PAT[wt=37]],Essential
+JCVISYN3A_0126,gluRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0127,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0128,rpoE,1,0.0,transcription_stall,0.8000,ann_only[ann[rna_polymerase_subunit:'rna polymerase subunit']],Quasiessential
+JCVISYN3A_0129,pyrG,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[ctp_synthase:'ctp synthase']],Essential
+JCVISYN3A_0131,fbaA,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:FBA[wt=464],catalysis:FBA:rev[wt=66]]",Essential
+JCVISYN3A_0132,ietA,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0137,rpmE,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0133,ietS,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0138,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0139,ytqI; orn,0,,none,0.0000,"no_signal[cx:cx_none|ann:ann_none|traj:wt_under_threshold: catalysis:BPNT[wt=8],catalysis:BPNT:rev[wt=0]]",Quasiessential
+JCVISYN3A_0140,tdk,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:DURIK1[wt=74],catalysis:TMDK1[wt=81]]",Essential
+JCVISYN3A_0141,prfA,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'release factor']],Essential
+JCVISYN3A_0142,prmC,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'release factor']],Quasiessential
+JCVISYN3A_0144,tsaC,1,0.0,translation_stall,0.8000,ann_only[ann[trna_threonylcarbamoylation:'threonylcarbamoyl']],Essential
+JCVISYN3A_0143,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0145,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0146,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0148,rpsL,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0149,rpsG,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0147,clsA,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:CLPNS[wt=417]],Essential
+JCVISYN3A_0150,,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'elongation factor']],Essential
+JCVISYN3A_0151,,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'elongation factor']],Essential
+JCVISYN3A_0164,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0163,alaRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0165,amiC,1,0.0,translation_stall,0.9000,cx_only[cx[aaABCx1(init=241)]],Quasiessential
+JCVISYN3A_0166,,1,0.0,translation_stall,0.9000,cx_only[cx[aaABCx1(init=241)]],Quasiessential
+JCVISYN3A_0167,amiE,1,0.0,translation_stall,0.9000,cx_only[cx[aaABCx1(init=241)]],Quasiessential
+JCVISYN3A_0168,amiF,1,0.0,translation_stall,0.9000,cx_only[cx[aaABCx1(init=241)]],Quasiessential
+JCVISYN3A_0169,amiA,1,0.0,translation_stall,0.9000,cx_only[cx[aaABCx1(init=241)]],Quasiessential
+JCVISYN3A_0195,potC,1,0.0,translation_stall,0.9000,cx_only[cx[sprmABCx1(init=104)]],Quasiessential
+JCVISYN3A_0196,potB,1,0.0,translation_stall,0.9000,cx_only[cx[sprmABCx1(init=104)]],Quasiessential
+JCVISYN3A_0197,potA,1,0.0,translation_stall,0.9000,cx_only[cx[sprmABCx2(init=104)]],Quasiessential
+JCVISYN3A_0199,rpmI,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0198,rplT,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0200,infC,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'initiation factor']],Essential
+JCVISYN3A_0201,def,1,0.0,translation_stall,0.8000,ann_only[ann[protein_deformylation:'peptide deformylase']],Essential
+JCVISYN3A_0202,rsmD,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0203,gmk,1,0.49999999999999994,catalysis_silenced,1.0000,"traj+ann[silenced: catalysis:DGK1[wt=434],catalysis:DGK1:rev[wt=408],catalysis:GK1[wt=2776] (+1 more)]",Essential
+JCVISYN3A_0213,eno,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:ENO[wt=189]],Essential
+JCVISYN3A_0214,pgpA,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:PGPP[wt=190]],Quasiessential
+JCVISYN3A_0215,yrrK; yqgF,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0216,hptA,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:GUAPRT[wt=48]],Quasiessential
+JCVISYN3A_0218,glpK,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:GLYK[wt=19791],catalysis:GLYK:rev[wt=273]]",Essential
+JCVISYN3A_0220,pfkA,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:PFK[wt=674]],Essential
+JCVISYN3A_0221,pyk,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:PYK[wt=425],catalysis:PYK2[wt=37],catalysis:PYK3[wt=112] (+4 more)]",Essential
+JCVISYN3A_0222,thrRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0227,pdhC,0,,none,0.0000,"no_signal[cx:cx_none|ann:ann_none|traj:wt_under_threshold: catalysis:PDH_acald[wt=2],catalysis:PDH_acald:rev[wt=4]]",Nonessential
+JCVISYN3A_0228,lpdA,0,,none,0.0000,"no_signal[cx:cx_none|ann:ann_none|traj:partial_silence: catalysis:PDH_E3[wt=1082,ko=1118],catalysis:PDH_E3:rev[wt=1174,ko=1201]]",Nonessential
+JCVISYN3A_0229,pta,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:PTAr[wt=2307],catalysis:PTAr:rev[wt=7432]]",Essential
+JCVISYN3A_0230,ackA,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:ACKr[wt=2292],catalysis:ACKr:rev[wt=349]]",Essential
+JCVISYN3A_0233,ptsI,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[pts_enzyme_i:'phosphoenolpyruvate--protein']],Essential
+JCVISYN3A_0234,crr,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[pts_transporter:'pts glucose transporter']],Essential
+JCVISYN3A_0235,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0238,rpsD,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0239,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0240,thiI,1,0.0,translation_stall,0.8000,ann_only[ann[trna_thiolation:'thiouridine']],Quasiessential
+JCVISYN3A_0247,ysxC; yihA,1,0.0,translation_stall,0.8000,ann_only[ann[ribosome_biogenesis:'ribosome biogenesis']],Essential
+JCVISYN3A_0248,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0249,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0250,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0254,uvrC,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[excinuclease:'excinuclease']],Quasiessential
+JCVISYN3A_0253,greA,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'elongation factor']],Essential
+JCVISYN3A_0257,rnjB,1,0.0,translation_stall,0.9000,cx_only[cx[Degradosomex1(init=120)]],Essential
+JCVISYN3A_0259,nadK,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:NADHK:rev[wt=52],catalysis:NADK:rev[wt=57]]",Essential
+JCVISYN3A_0262,rpe,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:RPE[wt=675],catalysis:RPE:rev[wt=694]]",Quasiessential
+JCVISYN3A_0260,valRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0263,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0271,tsaB; yeaZ,1,0.0,translation_stall,0.8000,ann_only[ann[trna_threonylcarbamoylation:'threonylcarbamoyl']],Essential
+JCVISYN3A_0270,tsaE; yjeE,1,0.0,translation_stall,0.8000,ann_only[ann[trna_threonylcarbamoylation:'threonylcarbamoyl']],Essential
+JCVISYN3A_0264,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0281,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0282,proRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0283,rnhA,1,0.0,transcription_stall,0.8000,ann_only[ann[ribonuclease_hi:'rnase h']],Essential
+JCVISYN3A_0286,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0285,lepA; EF4,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'elongation factor']],Quasiessential
+JCVISYN3A_0287,aspRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0288,hisRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0289,rbfA,1,0.0,translation_stall,0.8000,ann_only[ann[ribosome_binding_factor:'ribosome-binding factor']],Quasiessential
+JCVISYN3A_0290,truB,1,0.0,translation_stall,0.8000,ann_only[ann[trna_pseudouridine_synthase:'trna pseudouridine']],Quasiessential
+JCVISYN3A_0294,rpsO,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Quasiessential
+JCVISYN3A_0291,ribF,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[nucleotide_biosynthesis:'fad synthetase']],Essential
+JCVISYN3A_0296,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0297,infB,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'initiation factor']],Essential
+JCVISYN3A_0298,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0299,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0300,nusA,1,0.0,transcription_stall,0.8000,ann_only[ann[transcription_antitermination:'antitermination']],Essential
+JCVISYN3A_0301,rimP,1,0.0,translation_stall,0.8000,ann_only[ann[ribosome_biogenesis:'ribosome assembly']],Quasiessential
+JCVISYN3A_0302,fre,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[flavin_reductase:'flavin reductase']],Essential
+JCVISYN3A_0303,polC,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'dna polymerase']],Essential
+JCVISYN3A_0304,cdsA,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:DASYN[wt=25]],Essential
+JCVISYN3A_0305,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0308,trpRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0314,ecfS,1,0.0,translation_stall,0.9000,cx_only[cx[nacECFx1(init=150)]],Essential
+JCVISYN3A_0315,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0316,tkt,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:TKT2[wt=100]],Quasiessential
+JCVISYN3A_0317,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0325,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0326,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0327,scpA,1,0.0,translation_stall,0.9000,cx_only[cx[SMCx1(init=101)]],Essential
+JCVISYN3A_0328,scpB,1,0.0,translation_stall,0.9000,cx_only[cx[SMCx2(init=101)]],Essential
+JCVISYN3A_0329,rluB,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0330,dgk,0,,none,0.0000,"no_signal[cx:cx_none|ann:ann_none|traj:wt_under_threshold: catalysis:DADNK[wt=16],catalysis:DADNK:rev[wt=0],catalysis:DCYTK[wt=16]]",Nonessential
+JCVISYN3A_0332,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0344,ppa,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:PPA[wt=2823]],Essential
+JCVISYN3A_0338,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0345,ecfS,1,0.0,translation_stall,0.9000,cx_only[cx[p5pECFx1(init=10)]],Essential
+JCVISYN3A_0346,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0347,cmk,1,0.49999999999999994,catalysis_silenced,1.0000,"traj+ann[silenced: catalysis:CYTK1[wt=90],catalysis:CYTK1:rev[wt=24]]",Quasiessential
+JCVISYN3A_0348,engA,1,0.0,translation_stall,0.8000,ann_only[ann[ribosome_biogenesis:'ribosome biogenesis']],Essential
+JCVISYN3A_0350,hupA,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0352,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0353,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0359,,1,0.0,translation_stall,0.9000,cx_only[cx[Degradosomex1(init=120)]],Essential
+JCVISYN3A_0360,ffh,1,0.0,translation_stall,0.8000,ann_only[ann[signal_recognition_particle:'signal recognition particle']],Essential
+JCVISYN3A_0361,rlmH,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0362,rpsP,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0363,rimM,1,0.0,translation_stall,0.8000,ann_only[ann[ribosome_biogenesis:'rrna processing']],Essential
+JCVISYN3A_0364,trmD,1,0.0,translation_stall,0.8000,ann_only[ann[trna_modification:'trna (guanosine']],Essential
+JCVISYN3A_0365,rplS,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0366,ylqF; rbgA,1,0.0,translation_stall,0.8000,ann_only[ann[ribosome_subunit_maturation:'subunit-maturation']],Essential
+JCVISYN3A_0371,ywjA,1,0.0,membrane_integrity,0.8000,ann_only[ann[lipid_flippase:'flippase']],Essential
+JCVISYN3A_0372,ywjA,1,0.0,membrane_integrity,0.8000,ann_only[ann[lipid_flippase:'flippase']],Essential
+JCVISYN3A_0375,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0373,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0376,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0377,obgE,1,0.0,translation_stall,0.8000,ann_only[ann[ribosome_gtpase:'ribosome gtpase']],Essential
+JCVISYN3A_0378,nadE,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[nad_biosynthesis:'nad(+) synthase']],Essential
+JCVISYN3A_0380,nadD,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[nad_biosynthesis:'nicotinate']],Essential
+JCVISYN3A_0379,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0381,mtnN,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0382,dnk,0,,none,0.0000,"no_signal[cx:cx_none|ann:ann_none|traj:wt_under_threshold: catalysis:DADNK[wt=16],catalysis:DADNK:rev[wt=0],catalysis:DCYTK[wt=16]]",Nonessential
+JCVISYN3A_0387,mnmA,1,0.0,translation_stall,0.8000,ann_only[ann[trna_thiolation:'thiouridine']],Essential
+JCVISYN3A_0389,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0388,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0390,fmt,1,0.0,translation_stall,0.8000,ann_only[ann[translation_initiation_formyltransferase:'methionyl-trna formyltransferase']],Quasiessential
+JCVISYN3A_0391,efp,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'elongation factor']],Quasiessential
+JCVISYN3A_0392,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0394,lon,1,0.0,translation_stall,0.8000,ann_only[ann[aaa_protease:'endopeptidase la']],Quasiessential
+JCVISYN3A_0398,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0399,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0400,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0401,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0402,ybeY,1,0.0,translation_stall,0.8000,ann_only[ann[rrna_maturation:'rrna maturation']],Essential
+JCVISYN3A_0403,era,1,0.0,translation_stall,0.8000,ann_only[ann[ribosome_gtpase:'ribosome gtpase']],Essential
+JCVISYN3A_0404,recO,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0405,glyRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0406,dnaG,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'dna primase']],Essential
+JCVISYN3A_0407,rpoD,1,0.0,translation_stall,0.9000,cx+ann[cx[RNAPx1(init=93)]],Essential
+JCVISYN3A_0408,trmK; yqfN,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0409,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0410,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0411,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0412,,1,0.0,translation_stall,0.9000,cx_only[cx[SecYEGDFx1(init=66)]],Essential
+JCVISYN3A_0413,apt,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[adenine_salvage_prt:'adenine phosphoribosyl']],Essential
+JCVISYN3A_0414,relA,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[pyrophosphohydrolase:'pyrophosphohydrolase']],Quasiessential
+JCVISYN3A_0415,smc,1,0.0,translation_stall,0.9000,cx_only[cx[SMCx2(init=101)]],Essential
+JCVISYN3A_0416,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0418,,1,0.0,transcription_stall,0.8000,ann_only[ann[rna_processing_nuclease:'ribonuclease iii']],Essential
+JCVISYN3A_0419,plsX,1,0.49999999999999994,catalysis_silenced,1.0000,traj+ann[silenced: catalysis:ACPPAT[wt=48]],Essential
+JCVISYN3A_0420,fakA,1,0.0,translation_stall,0.9000,"cx_only[cx[Fak1x1(init=103),Fak2x1(init=103)]]",Essential
+JCVISYN3A_0421,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0422,rpmB,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Quasiessential
+JCVISYN3A_0425,pstS,1,0.0,translation_stall,0.9000,cx_only[cx[piABCx1(init=123)]],Essential
+JCVISYN3A_0424,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0426,pstA,1,0.0,translation_stall,0.9000,cx_only[cx[piABCx1(init=123)]],Essential
+JCVISYN3A_0427,pstB,1,0.0,translation_stall,0.9000,cx_only[cx[piABCx2(init=123)]],Essential
+JCVISYN3A_0428,phoU,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0429,ftsY,1,0.0,translation_stall,0.8000,ann_only[ann[signal_recognition_particle:'signal recognition particle']],Essential
+JCVISYN3A_0430,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0431,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0432,metK,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[methionine_adenosyltransferase:'methionine adenosyltransferase']],Essential
+JCVISYN3A_0433,cutC,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0434,rlmFO,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0437,yhaM,1,0.0,translation_stall,0.9000,cx_only[cx[Degradosomex1(init=120)]],Essential
+JCVISYN3A_0435,manA,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0438,hinT,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0439,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0440,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0442,iscU,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[iron_sulfur_cluster:'iron-sulfur cluster']],Essential
+JCVISYN3A_0441,iscS,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[cysteine_desulfurase:'cysteine desulfurase']],Essential
+JCVISYN3A_0443,yggN,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[formyltetrahydrofolate_cyclo_ligase:'5-formyltetrahydrofolate cyclo-ligase']],Essential
+JCVISYN3A_0444,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0445,pgi,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:PGI[wt=7754],catalysis:PGI:rev[wt=5739]]",Essential
+JCVISYN3A_0448,,1,0.0,translation_stall,0.8000,ann_only[ann[trna_modification:'rrna methyltransferase']],Essential
+JCVISYN3A_0447,dut,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[nucleotide_biosynthesis:'dutp diphosphatase']],Essential
+JCVISYN3A_0451,gapdh,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[glycolysis_gapdh:'glyceraldehyde-3-phosphate dehydrogenase']],Essential
+JCVISYN3A_0452,parE,1,0.0,translation_stall,0.9000,cx+ann[cx[TopoIVx2(init=78)]],Essential
+JCVISYN3A_0453,parC,1,0.0,translation_stall,0.9000,cx+ann[cx[TopoIVx2(init=78)]],Essential
+JCVISYN3A_0475,ldh,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:LDH_L[wt=1180],catalysis:LDH_L:rev[wt=219]]",Essential
+JCVISYN3A_0478,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0479,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0481,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0482,rpsU,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0154,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0493,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0494,nanE,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0495,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0499,rpmA,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0500,prp;ysxB,1,0.0,translation_stall,0.8000,ann_only[ann[ribosome_subunit_maturation:'maturation protease']],Essential
+JCVISYN3A_0501,rplU,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0503,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0504,rsmI,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0930,rpmG,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Nonessential
+JCVISYN3A_0505,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0511,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0512,plsC,1,0.49999999999999994,catalysis_silenced,1.0000,traj+ann[silenced: catalysis:AGPAT[wt=416]],Essential
+JCVISYN3A_0513,acpS,1,0.0,membrane_integrity,0.8000,ann_only[ann[acp_synthase:'acp synthase']],Essential
+JCVISYN3A_0515,dctD,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:DCMPDA[wt=45]],Quasiessential
+JCVISYN3A_0516,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0517,rluD,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0518,lspA,1,0.0,membrane_integrity,0.8000,ann_only[ann[signal_peptidase:'signal peptidase']],Essential
+JCVISYN3A_0519,ileRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0520,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0521,sepF,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0522,ftsZ,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0523,ftsA,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0524,rsmH; mraW,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0525,mraZ,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0526,rpmF,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0527,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0529,pheS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0528,pheRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0530,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0535,argRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0536,frr,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'recycling factor']],Essential
+JCVISYN3A_0537,pyrH,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:UMPK[wt=584]],Essential
+JCVISYN3A_0539,tsf,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'elongation factor']],Essential
+JCVISYN3A_0538,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0540,rpsB,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0542,dnaK,1,0.0,translation_stall,0.8000,ann_only[ann[chaperone:'molecular chaperone']],Essential
+JCVISYN3A_0543,grpE,1,0.0,translation_stall,0.8000,ann_only[ann[nucleotide_exchange_factor:'nucleotide exchange factor']],Essential
+JCVISYN3A_0541,dnaJ,1,0.0,translation_stall,0.8000,ann_only[ann[chaperone:'molecular chaperone']],Essential
+JCVISYN3A_0544,hrcA,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0545,clpB,1,0.0,translation_stall,0.8000,ann_only[ann[clp_protease:'clp protease subunit']],Essential
+JCVISYN3A_0548,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0549,rgdB,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0931,met14p,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0592,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0593,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0599,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0600,rnjA,1,0.0,translation_stall,0.9000,cx_only[cx[Degradosomex1(init=120)]],Essential
+JCVISYN3A_0601,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0604,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0605,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0606,pgk,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:PGK[wt=732],catalysis:PGK2[wt=28],catalysis:PGK3[wt=820] (+1 more)]",Essential
+JCVISYN3A_0607,gapDH,1,0.49999999999999994,catalysis_silenced,1.0000,"traj+ann[silenced: catalysis:GAPD[wt=1511],catalysis:GAPD:rev[wt=42]]",Essential
+JCVISYN3A_0608,dnaI,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[primosomal_protein:'primosomal']],Essential
+JCVISYN3A_0609,dnaB,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'replication initiation']],Essential
+JCVISYN3A_0610,mutM,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0611,polA,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'dna polymerase']],Essential
+JCVISYN3A_0612,dnaE,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'dna polymerase']],Essential
+JCVISYN3A_0613,tyrRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0614,pncB,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[nad_biosynthesis:'nicotinate']],Essential
+JCVISYN3A_0615,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0616,fakB,1,0.0,translation_stall,0.9000,cx_only[cx[Fak1x1(init=103)]],Essential
+JCVISYN3A_0617,fakB,1,0.0,translation_stall,0.9000,cx_only[cx[Fak2x1(init=103)]],Quasiessential
+JCVISYN3A_0620,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0622,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0621,acpA,1,0.0,membrane_integrity,0.8000,ann_only[ann[lipid_biosynthesis:'acyl carrier']],Essential
+JCVISYN3A_0623,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0634,leuRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0636,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0637,rpsI,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0638,rplM,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0639,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0640,truA,1,0.0,translation_stall,0.8000,ann_only[ann[trna_pseudouridine_synthase:'trna pseudouridine']],Quasiessential
+JCVISYN3A_0641,ecfT,1,0.0,translation_stall,0.9000,"cx_only[cx[ribflECFx1(init=10),p5pECFx1(init=10),5fthfECFx1(init=10),...]]",Essential
+JCVISYN3A_0642,ecfA,1,0.0,translation_stall,0.9000,"cx_only[cx[ribflECFx1(init=10),p5pECFx1(init=10),5fthfECFx1(init=10),...]]",Essential
+JCVISYN3A_0643,ecfA,1,0.0,translation_stall,0.9000,"cx_only[cx[ribflECFx1(init=10),p5pECFx1(init=10),5fthfECFx1(init=10),...]]",Essential
+JCVISYN3A_0644,rplQ,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0645,rpoA,1,0.0,translation_stall,0.9000,cx+ann[cx[RNAPx2(init=93)]],Essential
+JCVISYN3A_0646,rpsK,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0647,rpsM,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0648,rpmJ,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0650,map,1,0.0,translation_stall,0.8000,ann_only[ann[methionine_aminopeptidase:'methionyl aminopeptidase']],Essential
+JCVISYN3A_0649,infA,1,0.0,translation_stall,0.8000,ann_only[ann[translation_factor:'initiation factor']],Essential
+JCVISYN3A_0651,adk,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:ADK1[wt=949],catalysis:ADK1:rev[wt=3162]]",Essential
+JCVISYN3A_0652,secY,1,0.0,translation_stall,0.9000,cx+ann[cx[SecYEGDFx1(init=66)]],Essential
+JCVISYN3A_0653,rplO,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Quasiessential
+JCVISYN3A_0654,rpsE,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0655,rplR,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0656,rplF,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0657,rpsH,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0658,rpsN,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0659,rplE,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0660,rplX,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0661,rplN,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0663,rpmC,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0662,rpsQ,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0664,rplP,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0665,rpsC,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0666,rplV,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0667,rpsS,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0668,rplB,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0669,rplW,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0670,rplD,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0671,rplC,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0672,rpsJ,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0684,folD,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:MTHFC[wt=365],catalysis:MTHFC:rev[wt=50]]",Quasiessential
+JCVISYN3A_0685,natA,1,0.0,translation_stall,0.9000,cx_only[cx[KtrCDx2(init=38)]],Essential
+JCVISYN3A_0686,trkA,1,0.0,translation_stall,0.9000,cx_only[cx[KtrCDx8(init=38)]],Essential
+JCVISYN3A_0687,gatB,1,0.0,translation_stall,0.8000,ann_only[ann[trna_amidation:'glutamyl-trna amidotransferase']],Essential
+JCVISYN3A_0688,gatA,1,0.0,translation_stall,0.8000,ann_only[ann[trna_amidation:'glutamyl-trna amidotransferase']],Essential
+JCVISYN3A_0689,gatC,1,0.0,translation_stall,0.8000,ann_only[ann[trna_amidation:'glutamyl-trna amidotransferase']],Essential
+JCVISYN3A_0690,ligA,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_ligase:'dna ligase']],Essential
+JCVISYN3A_0691,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0692,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0693,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0695,pcrA,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[atp_dependent_helicase:'atp-dependent dna helicase']],Quasiessential
+JCVISYN3A_0694,ptsH,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[phosphocarrier_hpr:'phosphocarrier']],Essential
+JCVISYN3A_0696,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0697,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:wt_under_threshold: catalysis:DAGGALT[wt=4]],Quasiessential
+JCVISYN3A_0706,thiB,1,0.0,translation_stall,0.9000,cx_only[cx[thmppABCx1(init=20)]],Quasiessential
+JCVISYN3A_0707,thiQ,1,0.0,translation_stall,0.9000,cx_only[cx[thmppABCx2(init=20)]],Quasiessential
+JCVISYN3A_0708,thiB,1,0.0,translation_stall,0.9000,cx_only[cx[thmppABCx1(init=20)]],Quasiessential
+JCVISYN3A_0710,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0726,nagB,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0727,tpiA,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:TPI[wt=4015],catalysis:TPI:rev[wt=278]]",Essential
+JCVISYN3A_0728,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0729,pgm,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:PGM[wt=2615],catalysis:PGM:rev[wt=42]]",Essential
+JCVISYN3A_0730,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0733,deoB,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:PPM[wt=58],catalysis:PPM2[wt=1765]]",Essential
+JCVISYN3A_0732,deoC,0,,none,0.0000,"no_signal[cx:cx_none|ann:ann_none|traj:partial_silence: catalysis:DRPA[wt=3958,ko=3939],catalysis:DRPA:rev[wt=347,ko=351]]",Nonessential
+JCVISYN3A_0747,punA,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:PUNP1:rev[wt=64],catalysis:PUNP2:rev[wt=58],catalysis:PUNP3:rev[wt=55] (+3 more)]",Quasiessential
+JCVISYN3A_0771,nrdE,1,0.0,translation_stall,0.9000,cx_only[cx[RNDRx2(init=50)]],Quasiessential
+JCVISYN3A_0772,nrdI,1,0.0,translation_stall,0.9000,cx_only[cx[RNDRx1(init=50)]],Essential
+JCVISYN3A_0773,nrdF,1,0.0,translation_stall,0.9000,cx_only[cx[RNDRx2(init=50)]],Quasiessential
+JCVISYN3A_0774,secG,1,0.0,translation_stall,0.9000,cx+ann[cx[SecYEGDFx1(init=66)]],Quasiessential
+JCVISYN3A_0775,rnr,1,0.0,transcription_stall,0.8000,ann_only[ann[rna_processing_nuclease:'ribonuclease r']],Essential
+JCVISYN3A_0776,smpB,1,0.0,translation_stall,0.8000,ann_only[ann[ssra_binding:'ssra-binding']],Essential
+JCVISYN3A_0777,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0778,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0779,ptsG,1,0.49999999999999994,catalysis_silenced,1.0000,traj+ann[silenced: catalysis:GLCpts[wt=201]],Essential
+JCVISYN3A_0787,mgtA,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:MG2abc[wt=482]],Essential
+JCVISYN3A_0790,atpD,1,0.0,translation_stall,0.9000,cx_only[cx[ATPSynthasex3(init=108)]],Essential
+JCVISYN3A_0789,atpC,1,0.0,translation_stall,0.9000,cx_only[cx[ATPSynthasex1(init=108)]],Essential
+JCVISYN3A_0791,atpG,1,0.0,translation_stall,0.9000,cx_only[cx[ATPSynthasex1(init=108)]],Essential
+JCVISYN3A_0792,atpA,1,0.0,translation_stall,0.9000,cx_only[cx[ATPSynthasex3(init=108)]],Essential
+JCVISYN3A_0793,atpD,1,0.0,translation_stall,0.9000,cx_only[cx[ATPSynthasex1(init=108)]],Essential
+JCVISYN3A_0794,atpF,1,0.0,translation_stall,0.9000,cx_only[cx[ATPSynthasex2(init=108)]],Essential
+JCVISYN3A_0795,atpE,1,0.0,translation_stall,0.9000,cx_only[cx[ATPSynthasex10(init=108)]],Essential
+JCVISYN3A_0796,atpB,1,0.0,translation_stall,0.9000,cx_only[cx[ATPSynthasex1(init=108)]],Essential
+JCVISYN3A_0797,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0798,upp,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[uracil_salvage_prt:'uracil phosphoribosyl']],Essential
+JCVISYN3A_0799,glyA,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:GHMT[wt=547],catalysis:GHMT:rev[wt=92]]",Quasiessential
+JCVISYN3A_0800,rpiB,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[ribose_5_phosphate_isomerase:'ribose 5-phosphate isomerase']],Quasiessential
+JCVISYN3A_0803,rpoC,1,0.0,translation_stall,0.9000,cx+ann[cx[RNAPx1(init=93)]],Essential
+JCVISYN3A_0804,rpoB,1,0.0,translation_stall,0.9000,cx+ann[cx[RNAPx1(init=93)]],Essential
+JCVISYN3A_0805,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0806,rplG,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0807,rplJ,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Essential
+JCVISYN3A_0809,rplA,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Quasiessential
+JCVISYN3A_0810,rplK,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Quasiessential
+JCVISYN3A_0813,galE,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:UDPG4E[wt=236],catalysis:UDPG4E:rev[wt=814]]",Essential
+JCVISYN3A_0814,glf,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:UDPGALM[wt=66]],Essential
+JCVISYN3A_0817,whiA,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0818,lgt,1,0.0,membrane_integrity,0.8000,ann_only[ann[lipid_biosynthesis:'diacylglyceryl transferase']],Essential
+JCVISYN3A_0819,trx,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[thioredoxin_reductase:'thioredoxin-disulfide reductase']],Essential
+JCVISYN3A_0820,lgt,1,0.0,membrane_integrity,0.8000,ann_only[ann[lipid_biosynthesis:'diacylglyceryl transferase']],Essential
+JCVISYN3A_0822,ecfS,1,0.0,translation_stall,0.9000,cx_only[cx[5fthfECFx1(init=10)]],Quasiessential
+JCVISYN3A_0821,hpr; ptsH,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0823,folC,1,0.0,essential_metabolite_depletion,0.8000,ann_only[ann[dihydrofolate_synthase:'dihydrofolate synthase']],Quasiessential
+JCVISYN3A_0824,uvrA,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[excinuclease:'excinuclease']],Quasiessential
+JCVISYN3A_0825,uvrB,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[excinuclease:'excinuclease']],Quasiessential
+JCVISYN3A_0826,yqeN,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'dna polymerase']],Essential
+JCVISYN3A_0827,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0830,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0831,prs,1,0.49999999999999994,catalysis_silenced,1.0000,"traj+ann[silenced: catalysis:PRPPS[wt=110],catalysis:PRPPS:rev[wt=48]]",Essential
+JCVISYN3A_0832,pth,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'aminoacyl-tRNA']],Essential
+JCVISYN3A_0833,rplI,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Quasiessential
+JCVISYN3A_0834,dnaC,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_replication_core:'replicative dna helicase']],Essential
+JCVISYN3A_0835,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0836,ecfS,1,0.0,translation_stall,0.9000,cx_only[cx[coaECFx1(init=10)]],Essential
+JCVISYN3A_0837,cysRS,1,0.0,translation_stall,0.8000,ann_only[ann[aminoacyl_trna_synthetase:'tRNA ligase']],Essential
+JCVISYN3A_0838,rlmB,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0932,rpmG,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Quasiessential
+JCVISYN3A_0839,secE,1,0.0,translation_stall,0.9000,cx+ann[cx[SecYEGDFx1(init=66)]],Essential
+JCVISYN3A_0840,nusG,1,0.0,transcription_stall,0.8000,ann_only[ann[transcription_antitermination:'antitermination']],Quasiessential
+JCVISYN3A_0851,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0852,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0853,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0859,topA,1,0.0,dna_replication_blocked,0.8000,ann_only[ann[dna_topoisomerase:'dna topoisomerase']],Essential
+JCVISYN3A_0870,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0872,ychF,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0873,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0874,rsmG,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0875,pgsA,1,0.0,membrane_integrity,0.8000,ann_only[ann[phosphatidylglycerol_synthase:'cdp-diacylglycerol--glycerol']],Essential
+JCVISYN3A_0876,,0,,none,0.0000,"no_signal[cx:cx_none|ann:ann_none|traj:partial_silence: catalysis:ALAt2r[wt=113,ko=73],catalysis:ARGt2r[wt=77,ko=45],catalysis:ASNt2r[wt=146,ko=71]]",Nonessential
+JCVISYN3A_0877,,1,0.0,translation_stall,0.9000,cx_only[cx[ribflECFx1(init=10)]],Essential
+JCVISYN3A_0878,,0,,none,0.0000,"no_signal[cx:cx_none|ann:ann_none|traj:partial_silence: catalysis:ALAt2r[wt=113,ko=67],catalysis:ARGt2r[wt=77,ko=45],catalysis:ASNt2r[wt=146,ko=85]]",Quasiessential
+JCVISYN3A_0879,corA,1,0.49999999999999994,catalysis_silenced,1.0000,traj_only[silenced: catalysis:CA2abc[wt=217]],Essential
+JCVISYN3A_0881,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0885,mnmG; gidA,1,0.0,translation_stall,0.8000,ann_only[ann[trna_uridine_carboxymethylaminomethyl:'5-carboxymethylaminomethyl']],Quasiessential
+JCVISYN3A_0886,gltP,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:ASPt2pr[wt=116],catalysis:GLUt2pr[wt=39]]",Quasiessential
+JCVISYN3A_0887,cdr,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0906,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Essential
+JCVISYN3A_0907,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
+JCVISYN3A_0908,yidC,1,0.0,membrane_integrity,0.8000,ann_only[ann[membrane_protein_insertase:'membrane protein insertase']],Essential
+JCVISYN3A_0909,rnpA,1,0.0,transcription_stall,0.8000,ann_only[ann[rna_processing_nuclease:'ribonuclease p']],Essential
+JCVISYN3A_0910,rpmH,1,0.0,translation_stall,0.9000,cx_only[cx[Ribosomex1(init=500)]],Quasiessential
