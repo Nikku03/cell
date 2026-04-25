@@ -10,27 +10,18 @@ _Read this file FIRST, immediately after running the invariant checker._
 4. Read `memory_bank/facts/measured/mcc_against_breuer_v9.json` for the latest honest result + diagnosis.
 5. Read this file.
 
-## Session 22 — Toxicity-prediction Gate B measurement (NEW PRIORITY)
+## Toxicity-prediction direction — HALTED at Session 22 (negative finding)
 
-A new research direction was proposed in Session 21: mechanism-aware toxicity prediction from whole-cell simulation. Spec at the top of the session-21 commit. Viability assessed as **provisional GO**, gated on a single Colab notebook that measures whether ChEMBL has enough inhibitor data for Syn3A's drug-target enzymes.
+Session 22's Gate B Colab notebook completed and halted the project per the spec's "stop and document negative findings" rule. **0 of 155 SBML metabolic enzymes are canonical Mycoplasma-active antibiotic targets** — all relevant drug classes (macrolides / tetracyclines / pleuromutilins / lincosamides / aminoglycosides / fluoroquinolones / sulfonamides / trimethoprim) target Layer 1-2 machinery (ribosome, gyrase, RNA polymerase, folA, folP) that is not in the metabolic SBML the spec scoped Layer-3 inhibition to.
 
-Build `notebooks/toxicity_gate_b_assessment.ipynb` (~1 day, ~30 min Colab wall):
-1. Pull UniProt orthology for the 155 Syn3A SBML-associated genes via M. genitalium G37 / M. pneumoniae M129 reference proteomes (Colab has full internet — same pattern as the curate notebook the user discovered fails from sandbox).
-2. For each Syn3A locus, query ChEMBL for inhibitor counts at IC50 / Ki / Kd evidence levels.
-3. Produce `memory_bank/data/toxicity/syn3a_enzyme_inhibitor_coverage.csv` with one row per Syn3A locus: `(locus_tag, uniprot_accession, chembl_target_id, n_inhibitors_strong, n_inhibitors_weak, mean_pchembl)`.
-4. Headline number: how many of the 155 Syn3A SBML enzymes have ≥ 5 inhibitors with documented IC50.
+Recorded as `memory_bank/facts/measured/toxicity_gate_b_halted_negative_finding.json`. Sessions 23-27 (validation-set assembly, inhibition.py implementation, etc.) are NOT queued — they require user authorization following one of the alternative paths in the halt fact (expand to Layer 2 / narrow / pivot organism).
 
-Decision rule for whether implementation begins:
+If the user authorizes a new direction:
+- **Path B (expand to Layer 2):** Read `cell_sim/layer3_reactions/gene_expression.py` (546 lines covering transcription + translation). Design ribosome-inhibition kinetics. 3-6 weeks FTE. Real scope expansion vs original spec.
+- **Path C (narrow):** Curate the 3-5 compounds against met-tRNA-ligase / dTMP-kinase / asn-tRNA-ligase. Below the spec's ≥30 floor, so requires explicit user agreement that "narrow contribution" is acceptable.
+- **Path D (pivot organism):** Multi-week SBML adaptation to *E. coli* iML1515 or similar. Effectively starts a new project.
 
-| Gate B outcome | Action |
-|---|---|
-| ≥ 30 Syn3A enzymes with ≥ 5 inhibitors each | Proceed to Session 23 (validation set assembly) |
-| 10-30 enzymes | Proceed but scope down to a "narrow validation set"; tell the user the implications |
-| < 10 enzymes | Halt. Document negative finding. Do not implement. |
-
-Full 7-session roadmap (only relevant if Gate B passes) in `memory_bank/concepts/toxicity/VIABILITY.md`. Sessions 23-27 cover validation-set curation, Layer 3 inhibition kinetics, Layer 6 toxicity readout, end-to-end MCC measurement, and writeup.
-
-The essentiality work continues in parallel — toxicity is additive. v15 essentiality MCC must remain reproducible at every step.
+Until then, the prior queued work stands.
 
 ## Session 20 — Multi-organism essentiality predictor (DEFERRED)
 

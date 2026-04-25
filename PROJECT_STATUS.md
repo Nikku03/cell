@@ -77,6 +77,26 @@ Three viability gates evaluated:
 
 Existing 235 tests pass. v15 essentiality predictions unchanged. Branch unchanged.
 
+## Session 22 — Toxicity-prediction Gate B HALTED (negative finding)
+
+The Gate B Colab notebook ran successfully; the result halts the toxicity-prediction direction at metabolic-only scope.
+
+**Of 155 Syn3A SBML-encoded enzymes, ZERO are canonical Mycoplasma-active antibiotic targets.** Pattern-matched against gene names + product descriptions for: ribosomal proteins (0 hits), RNA polymerase (0), DNA gyrase (0), DHPS / folP (0), FabI (0), thymidylate synthase (0), isoleucyl-tRNA ligase / mupirocin target (0). The 3 "folate" hits (folC / folD / yggN) are folate-biosynthesis adjacent but NOT the canonical trimethoprim or sulfonamide targets.
+
+Every Mycoplasma-active drug class (macrolides, tetracyclines, pleuromutilins, lincosamides, aminoglycosides, fluoroquinolones, sulfonamides, trimethoprim) targets molecular machinery that lives in the simulator's Layer 1-2 (gene_expression.py — transcription / translation), not Layer 3 (metabolic SBML). The original spec explicitly scoped to "modify Layer 3 reaction rates", so the toxicity work as scoped has no validation set.
+
+A secondary methodological issue surfaced: the Gate B notebook mapped to M. genitalium / M. pneumoniae UniProt accessions (P47-prefix), but ChEMBL indexes targets by the assayed organism (typically *E. coli* or human). Re-running with E. coli orthology would close that cross-reference gap, but does NOT change the primary finding — the SBML simply doesn't encode the genes the validation drugs act on.
+
+**Decision: HALT toxicity work as originally scoped.** Per the research spec: *"If at any point a session reveals the direction is infeasible (e.g., insufficient compound-target data, no validation set, fundamental simulator limitation), the appropriate action is to stop, document the negative result, and surface the finding to the user."* Recorded as `memory_bank/facts/measured/toxicity_gate_b_halted_negative_finding.json`.
+
+Three paths forward documented but require user authorization:
+- **A. Halt** (recommended) — declare "metabolic-only mechanistic toxicity prediction is infeasible for Mycoplasma" as the contribution
+- **B. Expand to Layer 2** (3-6 weeks FTE) — add inhibition to gene_expression.py to bring ribosome-targeting drugs into scope
+- **C. Narrow validation** — 3-5 compounds against met-tRNA / dTMP kinase / asn-tRNA enzymes; below the spec's ≥30 minimum
+- **D. Pivot organism** — adopt a simulator with broader SBML coverage (4-8 wk per organism)
+
+Existing 235 tests pass. v15 essentiality predictions unchanged. Branch unchanged.
+
 ## Session Log
 
 ### Session 15 — 2026-04-24 — v15 multi-seed replicates (zero variance, MCC 0.5372 exact on seeds 42/1/2)

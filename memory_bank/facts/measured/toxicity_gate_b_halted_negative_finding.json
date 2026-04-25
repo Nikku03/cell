@@ -1,0 +1,84 @@
+{
+  "id": "toxicity_gate_b_halted_negative_finding",
+  "claim": "Session 22 Gate B measurement halts the toxicity-prediction research direction at metabolic-only scope. Of 155 Syn3A SBML-encoded gene-associated enzymes, 0 are canonical Mycoplasma-active antibiotic targets. Every active drug class against Mycoplasma (macrolides, tetracyclines, pleuromutilins, lincosamides, aminoglycosides via the ribosome; fluoroquinolones via DNA gyrase; sulfonamides + trimethoprim via folate biosynthesis enzymes folP / folA) targets molecular machinery that is NOT in the metabolic SBML — it lives in the simulator's Layer 1-2 (transcription / translation / replication) layers, which the original spec explicitly scoped out by directing 'modify Layer 3 reaction rates'. Even the small set of metabolic enzymes that ARE drug targets in some organism (dTMP kinase, methionine-tRNA ligase, asparaginyl-tRNA ligase, thioredoxin) only support 1-2 candidate compounds each — far below the spec's >= 30-compound minimum validation set. The Gate B Colab notebook also exposed a secondary methodological issue: ChEMBL indexes targets by assayed organism (typically E. coli or human), so M. genitalium UniProt accessions return 0 ChEMBL target hits. Re-mapping to E. coli orthologs would fix that cross-reference issue, but does NOT change the primary finding — the SBML simply does not encode the genes the validation drugs act on. Decision: HALT toxicity work as originally scoped. Three paths forward (expand scope to Layer 2 translation inhibition, narrow to the 1-2 metabolic-target compounds, or pivot organism) are documented but require user authorization before any next session.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via memory_bank/data/toxicity/syn3a_enzyme_inhibitor_coverage.csv (commit cf58dee). Diagnosis: pandas filtering on the 'product_description' column for canonical antibiotic-target keywords yields 0 hits for ribosomal / RNA polymerase / DNA gyrase / DHPS / FabI / thymidylate-synthase / mupirocin-target. The 3 'dhfr / folA' regex hits (folC, folD, yggN) are folate biosynthesis enzymes but NOT the trimethoprim / sulfonamide canonical targets. The 0/155 ChEMBL coverage is a real artifact of mapping to M. genitalium (UniProt P47-prefix accessions, organism_id 243273) which is rarely the assayed organism in published bioassays.",
+  "last_verified": "2026-04-25",
+  "context": {
+    "entity": "toxicity_prediction_research_direction",
+    "version": "gate_b_halted_v0.1.0"
+  },
+  "dependencies": [
+    "toxicity_viability_assessment",
+    "syn3a_essentiality_breuer2019",
+    "mcc_against_breuer_v15_round2_priors"
+  ],
+  "used_by": [
+    "memory_bank/data/toxicity/syn3a_enzyme_inhibitor_coverage.csv",
+    "notebooks/toxicity_gate_b_assessment.ipynb"
+  ],
+  "value": {
+    "sbml_enzymes_total": 155,
+    "uniprot_mapped": 105,
+    "uniprot_unmapped": 50,
+    "chembl_target_mapped": 0,
+    "enzymes_with_strong_inhibitors_ge_5": 0,
+    "decision": "HALT",
+    "decision_band": "HALT_LESS_THAN_10",
+    "primary_cause": "metabolic SBML excludes canonical antibiotic targets (ribosome, DNA gyrase, RNA polymerase, folA, folP)",
+    "secondary_cause": "ChEMBL targets indexed by assayed organism (E. coli / human), not Mycoplasma orthologs",
+    "drug_target_keyword_hunt": {
+      "dhfr_or_folA_for_trimethoprim": {
+        "hits": 3,
+        "comment": "folC / folD / yggN — folate-biosynthesis adjacent but NOT canonical DHFR; tritmethoprim binds folA which is absent from SBML"
+      },
+      "dhps_or_folP_for_sulfonamides": {"hits": 0},
+      "fabI_for_triclosan": {"hits": 0},
+      "thymidylate_synthase": {"hits": 0},
+      "ribosomal_anything": {"hits": 0},
+      "rna_polymerase": {"hits": 0},
+      "dna_gyrase": {"hits": 0},
+      "isoleucyl_trna_for_mupirocin": {"hits": 0}
+    },
+    "metabolic_enzymes_with_some_drug_target_history": {
+      "dtmp_kinase": "in SBML; inhibited by 5-FdU and analogs; ~1 compound class",
+      "methionine_trna_ligase": "in SBML; inhibited by REP3123-class compounds; rare clinical use",
+      "asparaginyl_trna_ligase": "in SBML; ICL670 / halofuginone derivatives in research",
+      "thioredoxin": "in SBML; some research compounds, no clinical Mycoplasma drugs",
+      "comment": "even summed, supports 3-5 distinct drug compounds — far below spec's >=30"
+    },
+    "paths_forward": {
+      "A_halt_metabolic_only": {
+        "description": "Stop. Document negative finding. Treat 'metabolic-only mechanistic toxicity prediction is infeasible for Mycoplasma' as the contribution. The negative result is itself publishable.",
+        "cost_weeks": 0,
+        "recommendation_rank": 1
+      },
+      "B_expand_to_layer_2": {
+        "description": "Add inhibition kinetics to Layer 2 (gene_expression.py — transcription / translation / ribosome). Brings ribosome-targeting antibiotics into scope. Requires modeling ribosome stoichiometry under inhibitor load + connecting reduced translation rate to existing metabolic readouts.",
+        "cost_weeks": "3-6, full-time-equivalent; 2-3 months part-time",
+        "scope_change_severity": "major (deviates from original spec)",
+        "recommendation_rank": 2
+      },
+      "C_narrow_metabolic_validation": {
+        "description": "Continue toxicity work but only with the 3-5 metabolic enzymes that ARE drug targets (dTMP kinase, met-tRNA ligase, asn-tRNA ligase, thioredoxin). Validation set caps at ~5 compounds.",
+        "cost_weeks": "1-2",
+        "scope_change_severity": "spec violation (below the >=30-compound minimum)",
+        "recommendation_rank": 3
+      },
+      "D_pivot_organism": {
+        "description": "Apply the methodology to a different simulated organism whose metabolic SBML covers more drug targets (E. coli iML1515 might, but adapting that simulator is the same 4-8 weeks per organism the critic flagged earlier).",
+        "cost_weeks": "8-16",
+        "recommendation_rank": 4
+      }
+    }
+  },
+  "caveats": [
+    "The Gate B notebook's UniProt mapping was to M. genitalium / M. pneumoniae, which is the wrong choice for ChEMBL coverage — ChEMBL targets are typically the assayed-organism's protein (E. coli, human). Re-running with E. coli orthology would close the cross-reference gap. BUT it would NOT change the primary finding: the SBML simply does not encode ribosomal, gyrase, RNA-polymerase, or folA / folP genes regardless of which organism's UniProt we map to.",
+    "The 0/155 number is the worst case. In practice 3-5 metabolic enzymes have SOME inhibitor data (dTMP kinase, tRNA synthetases) but none have validation sets close to the spec's 30-compound floor.",
+    "Path B (Layer 2 inhibition) is feasible in principle — gene_expression.py models translation explicitly. The cost is real: 3-6 weeks full-time equivalent. The user is undergrad-with-internship-deadline, so this is on the edge of the realistic time horizon.",
+    "Path C is below the spec's hard non-negotiable ('Do not skip validation. A toxicity predictor without experimental ground truth is not a contribution. The validation dataset must be assembled before any predictive results are claimed'). 5 compounds is not 30.",
+    "Path D involves the multi-organism simulator adaptation that the earlier session priced at 4-8 weeks per organism. It also abandons most of the existing Syn3A work.",
+    "Per the research spec's own instruction: 'If at any point a session reveals the direction is infeasible ... the appropriate action is to stop, document the negative result, and surface the finding to the user.' That is exactly what this fact does. The negative finding is the deliverable."
+  ]
+}
