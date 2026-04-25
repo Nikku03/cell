@@ -61,6 +61,22 @@ Pure engineering-diligence pair of sessions: measure which claimed optimizations
 
 Headline: of five claimed optimizations, **one is integrated and works (Rust 1.86×)**, **one is already configured optimally (bs=16)**, **three are not worth integrating at current dataset scale**. **No scientific direction changed across either session.** The negative result on 150M (worse MCC despite half the params) is also data: it confirms the Session-17 falsification — row count, not embedding dim, is the bottleneck. The 150M parquet is preserved on the branch for whenever the multi-organism corpus lands.
 
+## Session 21 — Toxicity-prediction viability assessment (no implementation)
+
+New research direction proposed: extend the existing simulator into a mechanism-aware toxicity predictor (SMILES + concentration → binary toxicity + mechanism trace, validated against published Mycoplasma MIC data). Per the spec's explicit instruction, **this session is viability assessment only**; no simulator code was touched.
+
+Three viability gates evaluated:
+
+| Gate | Question | Status |
+|---|---|---|
+| A | Does the simulator's Layer 3 rate-law architecture support an additive inhibition layer that's identity at `[I]=0`? | **PASS** — `mm_saturation_factor` in `reversible.py` is the clean injection point; competitive / non-competitive / uncompetitive K_i terms all reduce to identity at zero inhibitor concentration |
+| B | Does compound-target data with traceable provenance exist for Mycoplasma-relevant enzymes? | **PROVISIONAL PASS** — every relevant database is sandbox-blocked (ChEMBL, BindingDB, PubChem, DrugBank); literature estimate is 30-40 of 155 SBML genes are conserved drug targets with hundreds of inhibitors each, but needs Colab measurement (Session 22) |
+| C | Is there a validation dataset of ≥ 30 compound-toxicity pairs for Mycoplasma? | **PROVISIONAL PASS** — literature estimate 50-80 antibiotics with documented MIC across 8 active drug classes; β-lactams + glycopeptides MUST be excluded (Mycoplasma has no cell wall) |
+
+**Decision: provisional GO with a measurement gate before implementation.** Session 22 is a single Colab notebook that measures Gate B; if < 10 Syn3A enzymes have ≥ 5 ChEMBL inhibitors with documented IC50, the project halts and that negative result is the contribution. Full plan + 7-session roadmap in `memory_bank/concepts/toxicity/VIABILITY.md`.
+
+Existing 235 tests pass. v15 essentiality predictions unchanged. Branch unchanged.
+
 ## Session Log
 
 ### Session 15 — 2026-04-24 — v15 multi-seed replicates (zero variance, MCC 0.5372 exact on seeds 42/1/2)

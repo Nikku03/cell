@@ -1,0 +1,94 @@
+{
+  "id": "toxicity_viability_assessment",
+  "claim": "Session 21 viability assessment for the toxicity-prediction research direction. Three viability gates evaluated. Gate A (simulator architecture supports additive inhibition layer): PASS — cell_sim/layer3_reactions/reversible.py computes catalysis rates as kcat * mm_saturation_factor, providing a clean injection point for competitive / non-competitive / uncompetitive K_i terms that reduce to identity at zero inhibitor concentration. Gate B (compound-target data coverage): PROVISIONAL_PASS pending Session 22 Colab measurement — every relevant database (ChEMBL, BindingDB, PubChem, DrugBank, OpenFDA) returns HTTP 403 from the Claude Code sandbox; only raw.githubusercontent.com is reachable, so all compound-target curation must happen Colab-side. Coverage estimate from literature: of the 155 Syn3A SBML gene-associated reactions, ~30-40 enzymes are conserved bacterial drug targets that should have hundreds-to-thousands of ChEMBL inhibitor entries each, but the locus_tag -> UniProt -> ChEMBL_target join needs explicit measurement. Gate C (validation dataset >= 30 Mycoplasma compound-MIC pairs): PROVISIONAL_PASS — Mycoplasma is well-studied; conservative literature estimate is 50-80 antibiotics with published MIC against M. pneumoniae or M. genitalium, comfortably above the spec's 30-compound minimum but below the 100-compound 'strong result' floor. Beta-lactams and glycopeptides MUST be excluded from the validation set because Mycoplasma intrinsically rejects them (no cell wall) — including them would inflate true-negatives artificially. Decision: provisional GO with a Gate B measurement gate before any implementation. If Gate B comes back below 10 Syn3A enzymes with traceable inhibitor data, the project does not proceed and the negative finding is itself the deliverable.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible by reading cell_sim/layer3_reactions/reversible.py (lines 48-72 + 132-180) for Gate A architecture; running scripts/bench_rust_vs_python.py-style network probes for sandbox reachability tests; SBML inventory via parse_sbml on Syn3A_updated.xml. Full assessment at memory_bank/concepts/toxicity/VIABILITY.md.",
+  "last_verified": "2026-04-25",
+  "context": {
+    "entity": "toxicity_prediction_research_direction",
+    "version": "viability_v0.1.0"
+  },
+  "dependencies": [
+    "syn3a_essentiality_breuer2019",
+    "mcc_against_breuer_v15_round2_priors",
+    "bench_available_optimizations"
+  ],
+  "used_by": [
+    "memory_bank/concepts/toxicity/VIABILITY.md"
+  ],
+  "value": {
+    "gate_a_architecture": {
+      "status": "PASS",
+      "injection_point": "cell_sim/layer3_reactions/reversible.py: mm_saturation_factor (line 48) + _build_one_direction_rule (line 132)",
+      "rate_law": "kcat * mm_saturation_factor; saturation_factor = product(c_i/(c_i + K_m_i))",
+      "additive_inhibition_supported": true,
+      "regression_invariant": "at [I]=0 the new code path must produce identical event sequences to the current version; verifiable by replaying v15 sweep + asserting bit-identical confusion matrix (tp=287 fp=3 tn=69 fn=96)",
+      "estimated_implementation_cost_days": 1
+    },
+    "gate_b_compound_target_data": {
+      "status": "PROVISIONAL_PASS",
+      "sandbox_reachable_databases": [],
+      "sandbox_blocked_databases": [
+        "ebi.ac.uk/chembl",
+        "bindingdb.org",
+        "pubchem.ncbi.nlm.nih.gov/rest",
+        "go.drugbank.com",
+        "api.fda.gov"
+      ],
+      "colab_reachable_assumed_databases": [
+        "chembl",
+        "bindingdb",
+        "pubchem",
+        "drugbank_open"
+      ],
+      "syn3a_sbml_unique_genes": 155,
+      "syn3a_sbml_reactions_total": 356,
+      "estimated_drug_target_conserved_enzymes": "30-40 of 155",
+      "needs_colab_measurement_session_22": true,
+      "go_no_go_threshold_n_enzymes_with_inhibitor_data": {
+        "proceed_full": ">=30",
+        "proceed_narrow_scope": "10-30",
+        "halt_project": "<10"
+      }
+    },
+    "gate_c_validation_set": {
+      "status": "PROVISIONAL_PASS",
+      "estimated_mycoplasma_active_antibiotics": "50-80",
+      "spec_minimum_compounds": 30,
+      "spec_strong_result_compounds": 100,
+      "active_drug_classes_count": 8,
+      "candidate_sources": [
+        "Hannan_2000_M_pneumoniae_MIC_table",
+        "Bebear_2011_M_genitalium_susceptibility_review",
+        "Waites_2017_Clin_Microbiol_Rev",
+        "CO-ADD",
+        "PubChem_BioAssay"
+      ],
+      "spec_glass_2017_reference_status": "LIKELY_TYPO — Glass 2006 PNAS exists; no Glass 2017 minimal-cell paper located. User should verify before relying on it."
+    },
+    "structural_caveats": {
+      "beta_lactams_and_glycopeptides": "MUST EXCLUDE from validation set — Mycoplasma has no cell wall, so these are intrinsically inactive; including them would inflate true-negatives without testing the simulator's mechanism predictions",
+      "membrane_disruptors": "polymyxin-class compounds bypass the metabolic network; cannot be mechanistically predicted without a membrane-biophysics model — flag as known-failure-mode category",
+      "cross_organism_ki_transfer": "published K_i typically measured on E. coli or human enzymes, not Mycoplasma orthologs; will be a source of error in MCC",
+      "mic_unit_conversion": "MICs are ug/mL; simulator uses mM; need a single canonical conversion path with unit tests"
+    },
+    "sessions_ahead_if_gate_b_passes": {
+      "session_22": "Gate B measurement (Colab notebook): syn3a_enzyme_inhibitor_coverage.csv + headline number",
+      "session_23": "Validation set assembly (Colab): Mycoplasma MIC table for >= 30 compounds with cited sources",
+      "session_24": "cell_sim/layer3_reactions/inhibition.py + zero-inhibitor regression test that v15 sweep reproduces bit-identical",
+      "session_25": "Toxicity readout layer in Layer 6 + first end-to-end prediction",
+      "session_26": "Run validation set; compute MCC + mechanism-agreement scores",
+      "session_27": "Writeup, cleanup, portfolio packaging",
+      "estimated_total_effort_weeks": "2-3 part-time"
+    }
+  },
+  "caveats": [
+    "This is an ASSESSMENT, not a measurement of toxicity-prediction accuracy. No simulator code was modified. No compound-target data was fetched. The headline numbers (30-40 conserved drug-target enzymes, 50-80 Mycoplasma-active antibiotics) come from literature familiarity, not from a database query — Session 22's Colab notebook turns these estimates into measurements.",
+    "Sandbox reachability was probed at one point in time (April 2026). If the proxy configuration changes the situation could improve, but the standing assumption is that Colab-side curation is required.",
+    "The spec's reference to 'Glass 2017' could not be located by the assessor. Glass et al. 2006 PNAS (the M. genitalium minimal-genome paper) and the JCVI Syn3.0 papers (Hutchison 2016, Breuer 2019) are real and accessible; a 2017 follow-up specifically on compound screening of minimal cells is not. Flag for the user to verify before relying on it as a validation source.",
+    "Three viability gates is the minimum framing. There are additional risks (kinetic-parameter cross-organism transfer, MIC unit conversion, toxicity-threshold circular tuning) that are real but not blocking — they're documented in VIABILITY.md as risks to manage during implementation, not viability gates.",
+    "If Gate B (Session 22 Colab measurement) returns < 10 Syn3A enzymes with usable inhibitor data, the project halts. That negative result is itself the contribution — 'mechanism-aware toxicity prediction is not viable for Syn3A given current ChEMBL coverage of conserved Mycoplasma enzyme orthologs.' Document and stop.",
+    "The 'minimum publishable result' floor (MCC >= 0.40 with >= 30 compounds, plus 3 mechanism-agreement case studies) is the appropriate target for a part-time 3-4 month student project. The 'strong result' floor (MCC >= 0.55 with >= 100 compounds + Pearson r >= 0.5 with MIC) is closer to a multi-month full-time effort and should not be the v1 goal."
+  ]
+}

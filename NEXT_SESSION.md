@@ -10,7 +10,33 @@ _Read this file FIRST, immediately after running the invariant checker._
 4. Read `memory_bank/facts/measured/mcc_against_breuer_v9.json` for the latest honest result + diagnosis.
 5. Read this file.
 
-## Session 20 — Multi-organism essentiality predictor (HIGHEST PRIORITY)
+## Session 22 — Toxicity-prediction Gate B measurement (NEW PRIORITY)
+
+A new research direction was proposed in Session 21: mechanism-aware toxicity prediction from whole-cell simulation. Spec at the top of the session-21 commit. Viability assessed as **provisional GO**, gated on a single Colab notebook that measures whether ChEMBL has enough inhibitor data for Syn3A's drug-target enzymes.
+
+Build `notebooks/toxicity_gate_b_assessment.ipynb` (~1 day, ~30 min Colab wall):
+1. Pull UniProt orthology for the 155 Syn3A SBML-associated genes via M. genitalium G37 / M. pneumoniae M129 reference proteomes (Colab has full internet — same pattern as the curate notebook the user discovered fails from sandbox).
+2. For each Syn3A locus, query ChEMBL for inhibitor counts at IC50 / Ki / Kd evidence levels.
+3. Produce `memory_bank/data/toxicity/syn3a_enzyme_inhibitor_coverage.csv` with one row per Syn3A locus: `(locus_tag, uniprot_accession, chembl_target_id, n_inhibitors_strong, n_inhibitors_weak, mean_pchembl)`.
+4. Headline number: how many of the 155 Syn3A SBML enzymes have ≥ 5 inhibitors with documented IC50.
+
+Decision rule for whether implementation begins:
+
+| Gate B outcome | Action |
+|---|---|
+| ≥ 30 Syn3A enzymes with ≥ 5 inhibitors each | Proceed to Session 23 (validation set assembly) |
+| 10-30 enzymes | Proceed but scope down to a "narrow validation set"; tell the user the implications |
+| < 10 enzymes | Halt. Document negative finding. Do not implement. |
+
+Full 7-session roadmap (only relevant if Gate B passes) in `memory_bank/concepts/toxicity/VIABILITY.md`. Sessions 23-27 cover validation-set curation, Layer 3 inhibition kinetics, Layer 6 toxicity readout, end-to-end MCC measurement, and writeup.
+
+The essentiality work continues in parallel — toxicity is additive. v15 essentiality MCC must remain reproducible at every step.
+
+## Session 20 — Multi-organism essentiality predictor (DEFERRED)
+
+The spec for Session 20 (multi-organism transfer learning to address the Tier-1 falsification) is still queued. Current state: data curation Colab notebook exists but DEG URLs went stale; pivoted plan was manual download from OGEE web UI + upload to Colab via `files.upload()`. User can resume this whenever they're ready; it's deferred behind Session 22 because the toxicity direction has a more time-pressured pitch (internship applications) per the spec.
+
+## Earlier Session 20 plan
 
 Session 17 falsified the Tier-1 XGBoost stack on 455 Syn3A rows; Session 19 confirmed model size isn't the bottleneck (150M ships at 0.098 / 0.362, 650M ships at 0.145 / 0.443 — both well below v15's 0.537). **Row count is the bottleneck.** This session pulls public bacterial essentiality data so the 1280:455 ratio becomes 1280:~10,000.
 
