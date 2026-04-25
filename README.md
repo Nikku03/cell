@@ -1,239 +1,121 @@
-# cell_sim
+# Predicting gene essentiality in a minimal bacterium
 
-Event-driven simulator for the JCVI-Syn3A minimal cell, with atomic-physics-backed k_cat prediction for substrates outside the measured kinetic database.
+I'm **Naresh Chhillar**, a third-year biomedical sciences student at York University.
 
-Built on real Syn3A data from the [Luthey-Schulten Lab](https://github.com/Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation): 458 genes, 455 measured protein counts, 24 known complexes, 160 reactions with k_cat, full metabolic SBML.
+Over the past several months I built a fast computational simulator of *Mycoplasma mycoides* JCVI-Syn3A — the smallest viable bacterium ever assembled in a lab — and used it to predict which of its 455 genes are essential for cell survival. Predictions are scored against the published wet-lab knockout study by Breuer et al. (2019, *eLife*).
 
----
+This is the GitHub home for that project.
 
-## What this simulator does
+## What I built
 
-**Four simulation modes, increasing in biological scope:**
+A three-layer pipeline that simulates a single bacterial cell stochastically (Gillespie chemistry on a 356-reaction metabolic network), runs an in-silico knockout for every gene, and decides whether each knockout would kill the cell. The decision uses a "vote of seven" detector framework — three detectors look at simulator outputs (metabolite pool changes, reaction firing patterns, parallel-pathway redundancy) and four use biological knowledge sources (protein complex membership, gene annotations). All 455 knockout simulations run in about 50 minutes on a 4-core laptop.
 
-1. **Real Syn3A baseline** — 458 proteins turning over at measured k_cat values, folding kinetics, 24 known protein complexes assembling from their subunits.
-2. **Priority 1.5** — add reversible Michaelis-Menten kinetics and medium uptake. Full central metabolism reaches steady state.
-3. **Priority 2** — add transcription, translation, and mRNA degradation. Central dogma operating on 30 top-expressed genes.
-4. **Priority 3** — compute k_cat for novel substrates (drugs, probes) directly from their SMILES string, with no measured kinetic data required. Two backends: structural similarity (fast, calibrated) or atomic physics via MACE-OFF (experimental).
+## What I found
 
-All four modes run end-to-end in a single Colab notebook in under 10 minutes.
+- **Matthews Correlation Coefficient = 0.537** against Breuer 2019's experimental labels on all 455 Syn3A genes. This is comparable to but does not exceed Breuer's own FBA-based benchmark (MCC 0.59).
+- **287 true positives, 3 false positives, 69 true negatives, 96 false negatives** — precision is essentially perfect (0.990); the gap is recall (0.749).
+- **The same 3 false-positive genes have persisted from version 12 onwards** (tracked in `memory_bank/facts/measured/mcc_against_breuer_v15_round2_priors.json`). They're the cleanest wet-lab targets in this work — see "What this taught me" below.
+- **Multi-seed reproducibility verified** — the same simulator at three different RNG seeds produces bit-identical confusion matrices (zero variance).
+- **Three documented negative results** make the positive number more credible — see `RESULTS.md` for full diagnoses.
 
----
+## How it compares to existing work
 
-## Headline results (all reproduced in the Colab notebook)
+| Approach | Reference | Speed | MCC on Breuer panel |
+|---|---|---|---:|
+| FBA + curated gene-protein-reaction map | Breuer 2019 | seconds (steady-state) | 0.59 |
+| Well-stirred Gillespie | Thornburg 2022 | hours per cell cycle | not measured on this panel |
+| 4D whole-cell model | Thornburg 2026 | days per cell cycle | not measured on this panel |
+| **This work** (event-driven Gillespie + 7-detector vote) | — | **6.6 s/gene; ~50 min full panel** | **0.537** |
 
-### 1. Fast simulator, bit-identical to Python reference
+The honest framing: this is a **fast** approach that reaches **comparable but not better** accuracy than the existing FBA benchmark. The speed comes from the Rust hot path (1.86× faster than pure Python, measured) and 4-worker parallelism; the missing 0.05 MCC reflects detector-design choices rather than simulator fidelity.
 
-Priority 1.5, 2% scale, 1.0 s biological time, seed=42:
+## Visual summary
 
-| Simulator | Events | Wall time | Speedup |
-|---|---|---|---|
-| Python `EventSimulator` | 83,049 | 49 s | 1.0x |
-| `FastEventSimulator` (vectorised numpy) | **83,049** | **4.3 s** | **11.4x** |
+Three figures sit under `figures/`:
 
-Every event fires in the same order, every metabolite count matches exactly. The speedup comes from three stacked optimisations: compiled rule specs, padded 2D numpy arrays for all MM propensities in a single pass per step, and a Python-rule propensity cache that's valid across 99%+ of events. See [docs/PHASE1_RESULTS.md](docs/PHASE1_RESULTS.md).
+- **MCC progression** — how the score evolved across detector versions v0 → v15
+- **Detector contributions** — isolated MCC per detector; shows that knowledge-based priors carry the v15 result
+- **Confusion-matrix grid** — visualises that false positives stayed flat at 3 from v12 onwards while true positives grew
 
-Priority 2 (with gene expression): 114,548 events in **7.0 s** wall (was 76 s) — same 10.8x speedup, same bit-identical guarantee.
+The data is checked in as CSVs and the matplotlib generation scripts are also committed; running `python figures/scripts/plot_mcc_progression.py` produces the PNG/PDF locally. See `figures/README.md` for details.
 
-### 2. Leave-one-out k_cat prediction on 143 Syn3A reactions
+## What this taught me, and why I'm applying for wet-lab positions
 
-For each reaction with a measured k_cat, hide it from the reference set and predict it from the remaining 142 via Morgan-2 Tanimoto similarity:
+This project sits at the boundary between computational prediction and experimental biology, and what I learned most clearly is that **the predictions need wet-lab tests to mean anything**. Three concrete examples from this work that would be testable at the bench:
 
-| Metric | Value |
+1. **The 3 stubborn false positives.** Three Syn3A genes are persistently called essential by every detector version since v12, but Breuer 2019 labels them nonessential. Either the simulator has a bug for those genes, or Breuer's labels sit at the boundary of what their growth assay could resolve. A single-gene knockout repeat in the JCVI-Syn3A line — checking growth rate at 36 °C across three independent biological replicates — would tell which it is. That's a one-week wet-lab experiment.
+
+2. **The 96 false negatives, especially the "Uncharacterized" pool.** 84 of the 96 misses are genes annotated only as "Uncharacterized" / "putative" / "hypothetical" — the keyword-prior detectors can't help by construction. A targeted reverse-genetics approach (CRISPRi knockdown of the candidate set in *M. genitalium* as a more tractable proxy organism) would identify which of these are genuinely essential and let the simulator's knowledge base be expanded.
+
+3. **The trxA / hupA / recR specific failures.** These 3 genes are functionally characterised (thioredoxin, DNA-binding HU protein, recombination-repair RecR) but the simulator doesn't capture their essentiality — likely because the failure manifests on biological timescales longer than the 0.5-second simulated window. A growth-curve experiment at varying simulation times, ideally with single-cell tracking, would tell us how long after knockout these failures actually appear.
+
+Each of these is the kind of computational-prediction-meets-bench-experiment work I want to do during a wet-lab internship. The simulator generates testable hypotheses; the wet lab is where they get answered. I'd rather contribute to one of those experiments than write a fourth detector version.
+
+## Repo structure
+
+| Path | What's there |
 |---|---|
-| Median fold-error | **4.96x** |
-| 90th-percentile fold-error | 158x |
-| Within 2x | 16% (23/143) |
-| Within 5x | **50%** (72/143) |
-| Within 10x | **64%** (92/143) |
+| `cell_sim/` | The simulator (~10,400 lines): Layer 0 genome → Layer 2 Gillespie → Layer 3 reactions → Layer 6 detectors |
+| `cell_sim/layer6_essentiality/composed_detector.py` | The v15 essentiality detector — current best |
+| `cell_sim/features/cache/` | Tier-1 ML features (ESM-2, ESMFold, MACE-OFF) for downstream work |
+| `scripts/run_sweep_parallel.py` | Driver for the full 455-gene knockout sweep |
+| `memory_bank/facts/measured/` | 47 fact JSONs, one per measurement; every claim traces here |
+| `memory_bank/.invariants/check.py` | Validates the fact graph; runs in <1 s |
+| `figures/` | Plot-ready CSV data + matplotlib scripts |
+| `RESULTS.md` | Longer scientific summary |
+| `PROJECT_STATUS.md` | Current state + session log |
 
-**The method knows when it's unreliable.** Fold-error as a function of Tanimoto similarity to nearest reference:
-
-| Tanimoto band | n | Median fold-error |
-|---|---|---|
-| ≥ 0.9 | 3 | **1.72x** |
-| 0.7 – 0.9 | 26 | **2.37x** |
-| 0.5 – 0.7 | 58 | 3.46x |
-| 0.3 – 0.5 | 18 | 5.44x |
-| < 0.3 | 21 | 26.0x |
-
-75% of predictions land in the Tanimoto ≥ 0.5 regime where accuracy is 2–5x. This is what makes the architecture useful for organisms without measured kinetic data — most reactions have a structurally similar analog in the reference set.
-
-Per-class breakdown:
-
-| Class | n | Median fold-error | Within 5x |
-|---|---|---|---|
-| transport_passive | 20 | 3.13x | 80% |
-| transport_atp | 33 | 3.73x | 64% |
-| phospho_transfer | 20 | 3.89x | 50% |
-| hydrolase | 10 | 7.35x | 50% |
-| isomerase (catch-all) | 55 | 9.09x | 36% |
-| oxidoreductase | 5 | 157.86x | 0% |
-
-See [data/priority3_benchmark.csv](data/priority3_benchmark.csv) for per-reaction results and [data/priority3_benchmark_scatter.png](data/priority3_benchmark_scatter.png) for the log-log scatter.
-
-### 3. Novel substrate demonstration: BrdU and AZT
-
-The Priority 3 demo adds **5-bromo-2′-deoxyuridine (BrdU)** — a real DNA proliferation tracer — to the cell at 100,000 molecules. No entry in the input kinetic database; the simulator must compute everything from its SMILES.
-
-Similarity backend prediction:
-- Nearest known substrate: **thymidine** (Tanimoto 0.733)
-- Predicted k_cat: **10.36 /s** (thymidine measured: 19.26 /s)
-- Result: **8 novel catalysis events** in 300 ms via TMDK1 (thymidine kinase), producing BrdU-monophosphate
-- Biological impact: ~100 fewer events in other ATP-dependent reactions (competition)
-
-Equivalent AZT (azidothymidine) demo produces 6 novel events at predicted k_cat 8.56 /s (Tanimoto 0.667 to thymidine).
-
-Neither compound exists in the input data. The simulator accepted them as valid substrates, computed physically reasonable rates, and fired correct stoichiometry against real Syn3A enzyme instances.
-
-### 4. A finding about atomic-physics-from-scratch
-
-When the same BrdU demo runs with `backend_name='mace'` (MACE-OFF bond-dissociation energy → Eyring rate), MACE predicts **k_cat = 65,848 /s** — 3,420× higher than thymidine's measured rate. In simulation this causes runaway phosphorylation: TMDK1 fires 69,816 times in 300 ms, consuming 99.9% of cellular ATP.
-
-This is a limitation of uncalibrated atomic physics as a k_cat predictor, not a bug in the simulator. The event machinery faithfully executed what the physics module asked for. A naive MACE BDE → Hammond → Eyring mapping, without per-substrate calibration against measured kinetics, is dangerous. Structural similarity remains the defensible default.
-
-Full benchmarking of MACE vs similarity across all 143 reactions is future work.
-
----
-
-## Quick start
-
-### Option A — Colab (recommended)
-
-Open [`cell_sim_colab.ipynb`](cell_sim_colab.ipynb) in Google Colab. Runtime → Change runtime type → High-RAM CPU. Run all. Total runtime ≈ 10 minutes.
-
-The notebook produces three MP4 videos (Real Syn3A, Priority 1.5, Priority 2), the BrdU and AZT demonstrations, an interactive Priority 1.5 flux chart, and the 143-reaction benchmark with scatter plot.
-
-### Option B — Local
+## How to reproduce the headline number
 
 ```bash
 git clone https://github.com/Nikku03/cell.git
-cd cell/cell_sim
+cd cell
+pip install -r cell_sim/requirements.txt
 
-# Clone the upstream data
-mkdir -p data
-cd data && git clone --depth 1 https://github.com/Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation.git
-cd ..
+# Stage the upstream Luthey-Schulten input data (gitignored, fetched once).
+python -c "
+import urllib.request, os
+os.makedirs('cell_sim/data/Minimal_Cell_ComplexFormation/input_data', exist_ok=True)
+for f in ('syn3A.gb', 'kinetic_params.xlsx', 'initial_concentrations.xlsx',
+          'complex_formation.xlsx', 'Syn3A_updated.xml'):
+    urllib.request.urlretrieve(
+        f'https://raw.githubusercontent.com/Luthey-Schulten-Lab/'
+        f'Minimal_Cell_ComplexFormation/master/input_data/{f}',
+        f'cell_sim/data/Minimal_Cell_ComplexFormation/input_data/{f}',
+    )
+"
 
-# Install Python deps
-pip install -r requirements.txt
-sudo apt-get install -y ffmpeg        # for MP4 rendering
-
-# Sanity check: fast simulator vs Python reference
-python tests/test_fast_equivalence.py
-# Expected: ~10x speedup, 4699 events MATCH
-
-# Run each simulation mode
-python tests/render_real_syn3a.py      # ~25 s
-python tests/render_priority_15.py     # ~30 s
-python tests/render_priority_2.py      # ~30 s
-python tests/demo_priority3.py         # ~4 s (similarity backend)
-
-# Reproduce the 143-reaction benchmark
-python tests/benchmark_priority3.py    # ~3 s, writes data/priority3_benchmark.csv
+# Run the v15 sweep on all 455 Breuer-labelled genes (~50 min on 4 workers).
+python scripts/run_sweep_parallel.py \
+    --all --workers 4 --use-rust \
+    --scale 0.05 --t-end-s 0.5 --detector composed \
+    --seed 42 --threshold 0.1 --enable-imb155-patches
 ```
 
----
+Expected output: predictions CSV + metrics JSON under `outputs/`, with confusion `tp=287 fp=3 tn=69 fn=96` and MCC 0.5372.
 
-## Architecture
+## Citations & credits
 
-Four layers, in increasing order of abstraction:
+This project depends on open work from several research groups:
 
-```
-layer0_genome/        Syn3A genome, proteins, initial counts, complex definitions
-layer1_atomic/        Atomic physics: SMILES -> k_cat
-                      - SimilarityBackend: RDKit Morgan fingerprints + Tanimoto
-                      - MACEBackend (optional): MACE-OFF BDE -> Eyring
-layer2_field/         Gillespie simulator + rule system
-                      - dynamics.py: reference Python EventSimulator
-                      - fast_dynamics.py: 10x vectorised drop-in replacement
-                      - next_reaction_dynamics.py: Gibson-Bruck reference impl
-layer3_reactions/     Rule builders
-                      - reversible.py: reversible Michaelis-Menten from SBML
-                      - gene_expression.py: transcription / translation / degradation
-                      - novel_substrates.py: Priority 3 novel substrate pipeline
-                      - metabolite_smiles.py: 146 curated Syn3A metabolite SMILES
-                      - sbml_parser.py: custom SBML parser for the Luthey-Schulten model
-tests/                End-to-end scripts that produce MP4s and text output
-```
+- **Luthey-Schulten Lab (UIUC)** — `Minimal_Cell_ComplexFormation` repo provides the curated SBML + kinetic parameters + protein complex data that underpin Layers 1-3.
+- **Breuer et al. 2019, *eLife*** — the experimental gene essentiality labels that everything in this work is scored against.
+- **Hutchison et al. 2016, *Science*** — the JCVI-Syn3.0 minimal cell paper itself.
+- **Meta AI** — `facebook/esm2_t33_650M_UR50D` for ESM-2 protein embeddings; `facebook/esmfold_v1` for structure prediction.
+- **Cambridge / Oxford MACE-OFF developers** — the foundation model used for substrate-bond-energy estimation.
+- **Anthropic** — Claude Code was used as a development assistant throughout the project. All scientific decisions, biological interpretations, and final results are mine; tooling helped with implementation, debugging, and documentation drafts.
 
-Rules are `TransitionRule` dataclasses carrying a `can_fire` callback and an optional `compiled_spec` dict. Rules with a `compiled_spec` (all reversible MM rules) go through the vectorised path in `FastEventSimulator`; rules without it (folding, complex formation, gene expression, novel substrates) run via Python closure. The hybrid architecture means new rule kinds can be added without touching the simulator.
+## Status & limitations
 
----
-
-## Reproducing paper-ready claims
-
-| Claim | How to verify | Expected output |
-|---|---|---|
-| 10x simulator speedup, bit-identical | `python tests/test_fast_equivalence.py` | `MATCH`, 8-10x speedup |
-| 64% of reactions within 10x via similarity | `python tests/benchmark_priority3.py` | median 4.96x, within_5x=72, within_10x=92 |
-| Novel substrate fires real catalysis | `python tests/demo_priority3.py` | 8 novel events, k_cat 10.36/s |
-| Full Priority 1.5 biology | `python tests/render_priority_15.py` | 83,049 events, ATP Δ -20,538 |
-| Full central dogma (Priority 2) | `python tests/render_priority_2.py` | 114,548 events, 41 transcription, 66 translation |
-
-Every number above is deterministic at `seed=42`.
-
----
-
-## Known limitations
-
-**Uncalibrated MACE backend.** The `MACEBackend` passes MACE-OFF bond-dissociation energies through an Eyring rate equation without per-substrate calibration. Observed overprediction of 3,000× on BrdU. The similarity backend is the defensible default; MACE is an active research direction.
-
-**Next-reaction method not faster in Python.** `NextReactionSimulator` (Gibson-Bruck) is provided as a reference implementation but runs 4× slower than `FastEventSimulator` on Syn3A due to dense cofactor dependencies (ATP connects 68 rules, H2O 49, H+ 35). The algorithmic savings don't cover the Python per-update overhead. The correct implementation is preserved for eventual Rust port. See [docs/PHASE2_RESULTS.md](docs/PHASE2_RESULTS.md).
-
-**Isomerase class is a catch-all.** Reaction classification is a crude 6-bucket partition inferred from SBML stoichiometry (phospho_transfer / oxidoreductase / hydrolase / transport_atp / transport_passive / isomerase). The isomerase bucket lumps EC 2-6 together, which explains its 9.09x median fold-error — mixed reaction chemistries in one pool. A finer EC classification would probably tighten the similarity benchmark numbers.
-
-**One organism.** All benchmarks are on Syn3A. Whether the architecture and its accuracy claims transfer to M. pneumoniae (next candidate: iJW145) or E. coli is an open experimental question.
-
-**Scale factor = 2%.** Default configuration runs at 2% of full Syn3A molecule counts to stay under Colab's memory/time budget. Physics is unchanged; only stochastic noise is larger. Full-scale (100%) simulation is performance-tested but not routinely run in the notebook.
-
----
-
-## Data sources
-
-- **Genome, proteomics, kinetics, SBML**: [Luthey-Schulten Lab — Minimal_Cell_ComplexFormation](https://github.com/Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation). Cloned as upstream data at setup time. Not redistributed here.
-- **Metabolite SMILES**: curated by hand against KEGG / ChEBI / BiGG for 146 Syn3A small molecules. Committed in [`layer3_reactions/metabolite_smiles.py`](cell_sim/layer3_reactions/metabolite_smiles.py).
-- **MACE-OFF model weights**: downloaded at first use from [ACEsuit/mace-off](https://github.com/ACEsuit/mace-off). Distributed under Academic Software License.
-
----
-
-## Project status
-
-**Working and benchmarked:**
-- Fast event-driven simulator (10x vectorised, bit-identical to Python)
-- Priority 1 / 1.5 / 2 / 3 pipelines end-to-end
-- 143-reaction similarity benchmark with per-class and Tanimoto-stratified fold-error distributions
-- Novel substrate integration via SMILES (BrdU, AZT demonstrated)
-- Colab notebook reproducing every claim in ~10 minutes
-
-**Active research:**
-- MACE vs similarity benchmark on all 143 reactions (requires GPU; initial results suggest similarity outperforms uncalibrated MACE)
-- τ-leaping for another 30-100x speedup on metabolism-heavy runs
-- Port to M. pneumoniae
-
-**Future:**
-- Rust core via pyo3 for additional 10-30x speedup
-- Methods paper draft
-
----
+- **Headline MCC 0.537** does not exceed Breuer 2019's FBA at 0.59. The remaining gap is documented in `RESULTS.md`.
+- **Single-organism validation only.** The detector stack (especially the annotation-keyword priors and iMB155 metabolic patches) is heavily Syn3A-tuned and would need re-mining for any other bacterium.
+- **Layer 5 (biomass + division) is not implemented.** This is whole-cell scope creep that the project deliberately deferred.
+- **The Tier-1 ML feature cache exists but the supervised XGBoost detector built on it underperforms v15** — see `RESULTS.md` for the falsification trail.
+- **Toxicity prediction was attempted (Sessions 21-22) and halted** when the metabolic SBML turned out not to encode any canonical antibiotic targets. The negative finding is recorded as a measured fact.
 
 ## Contact
 
-Open an issue on this repository or reach out via GitHub.
-
----
-
-## Citation
-
-If you use this simulator in your work:
-
-```
-@software{cell_sim_2025,
-  author       = {Chhillar (Naresh)},
-  title        = {cell_sim: event-driven simulator for JCVI-Syn3A with
-                  atomic-physics k_cat prediction},
-  url          = {https://github.com/Nikku03/cell},
-  year         = {2025}
-}
-```
-
-Please also cite the upstream Luthey-Schulten Minimal_Cell_ComplexFormation repository whose data this simulator builds on.
+**Naresh Chhillar**
+Third-year B.Sc., Biomedical Sciences
+York University, Toronto, ON, Canada
+Email: _<your-email-here>_

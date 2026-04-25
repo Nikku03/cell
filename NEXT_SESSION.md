@@ -2,13 +2,21 @@
 
 _Read this file FIRST, immediately after running the invariant checker._
 
-## Pre-flight
+## Status: SHIP-APPLICATIONS MODE
+
+**Next: ship internship applications.** The repo is presentation-ready as of Session 24 (`README.md`, `RESULTS.md`, `figures/`, reorganized `PROJECT_STATUS.md`, structural fact `repo_presentation_v1.json`). Deferred research directions remain open for later but should NOT trigger new Codex sessions unless a specific application question requires it.
+
+If a new session is needed for an application-driven reason (e.g. a recruiter asks "can you show this on N=2 organisms?"), one of the deferred directions below can be reactivated. Otherwise the project is in polish-and-iterate mode and the user owns README/RESULTS/figures iteration directly.
+
+## Pre-flight (if a session does run)
 
 1. `python memory_bank/.invariants/check.py` — must print `OK`.
-2. Read `PROJECT_STATUS.md`.
-3. Read `memory_bank/concepts/essentiality/REPORT.md` for full MCC history (v0–v9).
-4. Read `memory_bank/facts/measured/mcc_against_breuer_v9.json` for the latest honest result + diagnosis.
+2. Read `PROJECT_STATUS.md` (current state on top now).
+3. Read `RESULTS.md` for the headline numbers.
+4. Read `memory_bank/facts/measured/mcc_against_breuer_v15_round2_priors.json` for the canonical headline result.
 5. Read this file.
+
+## Deferred research directions (none active; require explicit user authorization)
 
 ## Toxicity-prediction direction — HALTED at Session 22 (negative finding)
 

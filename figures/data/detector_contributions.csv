@@ -1,0 +1,8 @@
+detector_name,role,isolated_mcc,isolated_panel,with_others_mcc,note
+ShortWindow,trajectory_pool_deviation,0.064,40,not_in_v15,replaced by RedundancyAware
+PerRule,trajectory_event_count,0.125,40,part_of_v15_composed,kept as one of three voters in v15
+RedundancyAware,trajectory_with_pathway_redundancy,0.125,40,not_in_v15,deterministic; superseded by composed
+ComplexAssembly,knowledge_complex_subunits,not_measured_alone,455,part_of_v15_composed,covers ribosome + RNA pol + ATP synthase + 21 more
+AnnotationClass,knowledge_keyword_priors,not_measured_alone,455,part_of_v15_composed,30+ classes mined from Syn3A FN pool
+Composed_v15,union_of_three,0.537,455,headline,ComplexAssembly UNION AnnotationClass UNION PerRule
+Tier1_XGBoost,supervised_ML_on_features,0.145,455,worse_than_v15,falsified at 1280:455 feature:row ratio

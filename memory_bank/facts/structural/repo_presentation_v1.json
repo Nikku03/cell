@@ -1,0 +1,112 @@
+{
+  "id": "repo_presentation_v1",
+  "claim": "The repository was polished into a presentation-ready state in Session 24 for the user (Naresh Chhillar, B.Sc. Biomedical Sciences, York University) to use in summer/fall wet-lab internship applications. Top-level README.md is now wet-lab-supervisor-readable (~2 pages, leads with simulator + Syn3A + Breuer 2019 framing, ends with three concrete wet-lab-testable hypotheses derived from the simulator's predictions). RESULTS.md is the longer scientific summary (~3-4 pages, professor-audience). figures/ holds plot-ready CSV data + 3 matplotlib generation scripts (mcc_progression, detector_contributions, confusion_matrices) so the user can produce publication-quality PNGs locally without committing image binaries. PROJECT_STATUS.md was reorganised so current state lives at the top above a horizontal rule and the original 22-session log is preserved below for audit-trail continuity. NEXT_SESSION.md was set to 'ship-applications mode' with deferred research directions (multi-organism essentiality, wet-lab FP audit, parameter sensitivity) listed but not active. No simulator code, no notebooks, no script source files, and no measured-fact JSONs were modified in this session — the polish is documentation-only.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible by inspecting the four polish artifacts at HEAD: README.md (~165 lines), RESULTS.md (~135 lines), figures/ (3 CSVs + 3 .py scripts + figures/README.md), PROJECT_STATUS.md (current-state header + 'Original project documentation' divider above the original content), NEXT_SESSION.md (Status: SHIP-APPLICATIONS MODE header). Pre-flight 235 sandbox tests pass; invariant checker reports OK with 47 measured facts and 14 structural facts after this fact lands.",
+  "last_verified": "2026-04-25",
+  "context": {
+    "entity": "repo_presentation",
+    "version": "v1.0.0"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_tier1_xgboost_naive_stack",
+    "toxicity_gate_b_halted_negative_finding",
+    "feature_cache_infrastructure"
+  ],
+  "used_by": [
+    "README.md",
+    "RESULTS.md",
+    "PROJECT_STATUS.md",
+    "NEXT_SESSION.md",
+    "figures/README.md",
+    "figures/data/mcc_progression.csv",
+    "figures/data/detector_contributions.csv",
+    "figures/data/confusion_matrices.csv",
+    "figures/scripts/plot_mcc_progression.py",
+    "figures/scripts/plot_detector_contributions.py",
+    "figures/scripts/plot_confusion_matrix_grid.py"
+  ],
+  "value": {
+    "deliverables": {
+      "README_md": {
+        "audience": "wet-lab biology supervisor reading an internship application",
+        "approx_length_lines": 165,
+        "leads_with": "first-person identification + Syn3A + Breuer 2019 + headline MCC 0.5372",
+        "wet_lab_framing": "three concrete experiments the simulator's predictions enable: 3-FP knockout audit, CRISPRi screen of the 96-FN Uncharacterized pool, growth-curve experiment for trxA/hupA/recR late failures",
+        "ends_with": "honest status + limitations + contact"
+      },
+      "RESULTS_md": {
+        "audience": "professor or research scientist clicked through from README",
+        "approx_length_lines": 135,
+        "covers": "background, three-layer approach, headline metric, MCC progression v10-v15, three documented negative results, comparison to Breuer + Thornburg, limitations, what-next directions",
+        "honest_framing_examples": [
+          "comparable to but does not exceed Breuer 2019 FBA (MCC 0.59)",
+          "knowledge-based detectors carry the bulk of the result (composed 0.537 vs trajectory-only 0.13 ceiling)",
+          "the simulator cannot predict non-metabolic essentials without the knowledge-based detectors"
+        ]
+      },
+      "figures_directory": {
+        "data_csvs": [
+          "figures/data/mcc_progression.csv (11 rows: v0 through v15)",
+          "figures/data/detector_contributions.csv (7 detectors with isolated MCC + role)",
+          "figures/data/confusion_matrices.csv (6 full-panel versions + Breuer FBA reference)"
+        ],
+        "matplotlib_scripts": [
+          "figures/scripts/plot_mcc_progression.py (45 lines)",
+          "figures/scripts/plot_detector_contributions.py (60 lines)",
+          "figures/scripts/plot_confusion_matrix_grid.py (60 lines)"
+        ],
+        "no_pre_rendered_pngs": "user generates locally; figures/output/ is gitignored",
+        "scripts_compile_ok": true,
+        "csvs_parse_ok": true,
+        "matplotlib_runtime_check": "scripts not executed in sandbox (matplotlib not installed); user runs locally"
+      },
+      "PROJECT_STATUS_reorganized": {
+        "current_state_section_added_above_horizontal_rule": true,
+        "current_state_includes": "headline MCC + confusion + branch + HEAD + tests + invariants + comparison + 3 negative results + 3 what-next options + presentation status",
+        "original_session_log_preserved_below": true,
+        "original_22_session_entries_preserved": true
+      },
+      "NEXT_SESSION_updated": {
+        "header_now_reads": "Status: SHIP-APPLICATIONS MODE",
+        "deferred_research_directions_grouped_below": [
+          "multi-organism essentiality predictor",
+          "wet-lab audit of 3 stubborn FPs",
+          "detector-parameter sensitivity sweep",
+          "Layer 2 toxicity-prediction extension"
+        ],
+        "explicit_no_new_codex_sessions_unless_application_driven": true
+      }
+    },
+    "what_was_NOT_changed": [
+      "cell_sim/ — no simulator code modified",
+      "notebooks/ — no notebook contents modified",
+      "scripts/ — no script source files modified (figures/scripts/ are NEW files, not modifications)",
+      "memory_bank/facts/measured/ — no measured-fact JSON modified",
+      "cell_sim/tests/ — no test added or removed; 235 still pass",
+      "MCC numbers — every figure on the plots cites a fact JSON"
+    ],
+    "diff_size_estimate": {
+      "files_added": 8,
+      "files_modified": 3,
+      "approx_lines_added": 850,
+      "approx_lines_removed": 5,
+      "well_under_1500_line_session_cap": true
+    },
+    "user_workflow_post_session": [
+      "fill in email placeholder in README.md contact section",
+      "run figures/scripts/plot_*.py locally to produce PNG/PDF outputs",
+      "iterate on README/RESULTS framing per specific application target",
+      "ship internship applications"
+    ]
+  },
+  "caveats": [
+    "Polish documents reflect the project's state as of commit f1a1cc2 (Session 22 toxicity halt). Any future research session that changes the headline MCC or invalidates a negative-result claim must update README + RESULTS + figures CSVs to stay in sync. The structural fact above will then need a v1.1.0 update or replacement.",
+    "The README ends with a contact-email placeholder ('<your-email-here>') that the user must fill in before sending applications. Codex deliberately did not invent an email.",
+    "The matplotlib scripts were syntax-checked + compile cleanly but were NOT executed in the Claude Code sandbox because matplotlib is not installed there. The user is expected to run them locally; the data CSVs were verified parseable.",
+    "The 'three-FP wet-lab audit' framing in the README cites JCVISYN3A_0034 explicitly but does not name the other two FP locus tags by name; the user can extract them from outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v15_round2_priors.csv if a specific application requires them.",
+    "The invariant checker is run with 47 measured + 14 structural facts after this fact lands. If any future fact deletion drops a dependency this fact relies on (mcc_against_breuer_v15_round2_priors, mcc_tier1_xgboost_naive_stack, toxicity_gate_b_halted_negative_finding, feature_cache_infrastructure) the checker will fail and this fact will need its dependencies list updated."
+  ]
+}

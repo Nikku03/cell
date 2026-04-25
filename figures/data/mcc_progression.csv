@@ -1,0 +1,12 @@
+version,n_panel,mcc,detector_class,session,notes
+v0,4,0.333,sanity_check,3,4-gene smoke test; not comparable to full panel
+v5,40,0.125,trajectory_only,8,PerRule on small panel; trajectory-only ceiling
+v6a,40,0.125,ensemble_trajectory,9,ensemble PerRule + pool-confirm; same ceiling
+v6b,40,0.160,ensemble_trajectory,9,ensemble AND with rule-necessity filter
+v9,40,0.125,trajectory_only,11,RedundancyAware; deterministic; 5-seed std=0.000
+v10_full,455,0.342,knowledge_first_pass,11,first full-panel sweep; ComplexAssembly KB
+v10b_full,455,0.364,knowledge_extended,11,additional complex KB entries
+v12,455,0.393,knowledge_metabolic_patches,12,iMB155 metabolic completeness patches added
+v13,455,0.410,knowledge_trna,13,tRNA + tRNA-modification keyword priors
+v14,455,0.494,knowledge_annotation_expansion,14,30+ annotation classes mined from FN pool; NNATr fix
+v15,455,0.537,knowledge_round_2_priors,15,12 more annotation classes + truA/truB widening

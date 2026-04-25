@@ -1,6 +1,42 @@
 # PROJECT_STATUS — SYN3A Whole-Cell Simulator
 
-_This file is the authoritative snapshot of project state. Updated at the end of every session, read at the start. If out of date, reconcile before doing work._
+_Current state on top; full session log below the horizontal rule._
+
+# Current state (as of Session 24)
+
+**Headline:** v15 composed detector reaches **MCC 0.5372** on the full 455-gene Breuer panel. Confusion: `tp=287, fp=3, tn=69, fn=96`. Precision 0.990, recall 0.749, specificity 0.958. Multi-seed verified bit-identical at seeds {42, 1, 2}. Source: `memory_bank/facts/measured/mcc_against_breuer_v15_round2_priors.json`.
+
+**Branch:** `claude/syn3a-whole-cell-simulator-REjHC`. HEAD at the start of this session: `f1a1cc2`.
+
+**Tests:** 235 passing in the sandbox suite (excluding `test_end_to_end.py` / `test_esm2_extractor.py` / `test_mace_off_extractor.py` which need optional GPU/matplotlib deps). Invariant checker passes with 47 facts, 12 sources.
+
+**Comparison to existing work:** matches but does not exceed the Breuer 2019 FBA benchmark (MCC 0.59) on the same labels. Faster by orders of magnitude than the Thornburg 2022 / 2026 whole-cell models.
+
+## Three documented negative results
+
+These bound the search and make the positive number more credible. Full diagnoses in `RESULTS.md`.
+
+- **Tier-1 ML stacking falsified.** ESM-2 (1280 dims) + ESMFold + MACE features over 455 rows do not exceed v15's keyword priors. Three independent attempts (full XGBoost stack, partition + PCA, kNN) all confirm. Smaller embedding (ESM-2 150M, 640 dims) loses to 650M, confirming row count not embedding dim is the bottleneck.
+- **Path A longer-bio-time amplifies false positives.** Extending the simulation window from 0.5 s to 5.0 s grew FPs faster than TPs, because the simulator lacks proper metabolite consumption sinks and concentration caps; perturbations that should equilibrate instead drift.
+- **Toxicity-prediction extension halted.** Gate B viability check found 0 of 155 SBML enzymes match canonical Mycoplasma-active antibiotic targets — every active drug class targets molecular machinery (ribosome, gyrase, RNA polymerase, folA, folP) outside the metabolic network. Negative finding recorded as `toxicity_gate_b_halted_negative_finding.json`.
+
+## What's next (three honest options)
+
+1. **Multi-organism essentiality predictor.** Pulling labelled essentiality data for *E. coli* / *B. subtilis* / *M. pneumoniae* / *M. genitalium* / Syn3A into one ~10,100-row matrix changes the supervised-learning regime. Curation Colab notebook exists but DEG flat-file URLs went stale; replacing them is the unblocking step.
+2. **Wet-lab audit of the 3 stubborn false positives.** Single-gene knockout at 36 °C, three biological replicates per gene, ~1 week. Resolves whether the simulator has a bug or Breuer's labels are at the assay boundary.
+3. **Detector-parameter sensitivity sweep.** Several hyperparameters (`min_wt_events`, `_UNGATED_TOKEN_COUNT`, saturation thresholds) chosen by pilot runs and not systematically swept. Pure-compute task that doesn't need new wet-lab data.
+
+A fourth direction — extending Layer 2 (`gene_expression.py`) with translation-inhibition kinetics to revive the toxicity work — is documented but at substantial scope expansion (3–6 weeks FTE) and not recommended without external pull.
+
+## Presentation status
+
+Repo polished for internship applications in Session 24. Top-level `README.md` is wet-lab-supervisor-readable; `RESULTS.md` is the longer scientific summary; `figures/` carries plot-ready CSV data + matplotlib scripts. See `memory_bank/facts/structural/repo_presentation_v1.json`.
+
+---
+
+# Original project documentation + session log
+
+_Everything below this line is the original PROJECT_STATUS, preserved for audit-trail continuity._
 
 ## The Goal (unchanging)
 

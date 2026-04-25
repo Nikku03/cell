@@ -58,3 +58,4 @@ cell_sim_rust/Cargo.lock
 cell_sim/features/cache/*
 !cell_sim/features/cache/manifest.json
 !cell_sim/features/cache/.gitkeep
+figures/output/
