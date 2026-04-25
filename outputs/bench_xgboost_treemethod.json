@@ -6,29 +6,36 @@
   "n_estimators": 400,
   "max_depth": 4,
   "gpu_probe": {
-    "available": false
+    "available": true,
+    "device_name": "NVIDIA RTX PRO 6000 Blackwell Server Edition"
   },
   "cpu_hist": {
     "tree_method": "hist",
     "device": "cpu",
-    "wall_s": 12.537207777000049,
-    "fold_mcc_mean": 0.24712840063911373,
-    "fold_mcc_std": 0.12132684268155794,
-    "pooled_mcc": 0.2405095943821101,
+    "wall_s": 7.35144810700001,
+    "fold_mcc_mean": 0.2760735026936364,
+    "fold_mcc_std": 0.14941073624104592,
+    "pooled_mcc": 0.2704278558506835,
     "pooled_confusion": {
-      "tp": 340,
-      "fp": 47,
-      "tn": 25,
-      "fn": 43
+      "tp": 344,
+      "fp": 46,
+      "tn": 26,
+      "fn": 39
     }
   },
-  "gpu_hist": "AWAITING_GPU",
-  "gpu_published_estimate": {
-    "range_speedup_x": [
-      2,
-      10
-    ],
-    "source": "xgboost release notes + dmlc/xgboost benchmark suite 2023-2024; typical speedup for small-matrix hist (n<=10k rows) is 2-5x, with 10x seen on larger datasets (n>=100k). Our matrix is 455 rows so gains are expected at the low end.",
-    "note": "No measurement produced in-sandbox; this is a published-estimate placeholder. Measure on Colab and overwrite with a measured number."
-  }
+  "gpu_hist": {
+    "tree_method": "hist",
+    "device": "cuda",
+    "wall_s": 2.89570138900001,
+    "fold_mcc_mean": 0.21541304767126465,
+    "fold_mcc_std": 0.08975605821120168,
+    "pooled_mcc": 0.2139548374084537,
+    "pooled_confusion": {
+      "tp": 343,
+      "fp": 50,
+      "tn": 22,
+      "fn": 40
+    }
+  },
+  "gpu_speedup_factor": 2.538745236275461
 }

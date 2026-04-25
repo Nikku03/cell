@@ -1,5 +1,5 @@
 {
-  "status": "AWAITING_COLAB",
+  "status": "MEASURED",
   "model_id": "facebook/esm2_t33_650M_UR50D",
   "batch_sizes": [
     8,
@@ -11,9 +11,10 @@
   "avg_sequence_length": 300,
   "synthetic_seed": 42,
   "device_probe": {
-    "cuda": false,
-    "device_name": null,
-    "torch_version": "2.11.0+cu130"
+    "cuda": true,
+    "device_name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "torch_version": "2.10.0+cu128",
+    "vram_gib": 95.0
   },
   "colab_invocation": {
     "cell_0": "!pip install -q transformers>=4.40 biopython>=1.83 pandas>=2 pyarrow>=14",
@@ -26,5 +27,47 @@
     "Sequences are synthetic random AA; length distribution is Gaussian around 300 residues to approximate Syn3A's protein length distribution.",
     "fp16 LM + fp32 trunk mixed-precision is used for ESM-2 alone (no structure prediction, so the pLDDT fp16 issue doesn't apply here)."
   ],
-  "cpu_refused_reason": "ESM-2 650M fp32 CPU forward pass on 300-residue protein takes tens of seconds; a CPU batch-size scan would take hours and would not reflect the GPU inference pattern being evaluated. Run on Colab GPU instead."
+  "measurements": {
+    "8": {
+      "batch_size": 8,
+      "wall_s": 0.22220857699994667,
+      "throughput_seq_per_s": 144.00884264700403,
+      "feats_shape": [
+        32,
+        1280
+      ]
+    },
+    "16": {
+      "batch_size": 16,
+      "wall_s": 0.12936153800001193,
+      "throughput_seq_per_s": 247.36873490169117,
+      "feats_shape": [
+        32,
+        1280
+      ]
+    },
+    "32": {
+      "batch_size": 32,
+      "wall_s": 0.14567566800002396,
+      "throughput_seq_per_s": 219.66605981168206,
+      "feats_shape": [
+        32,
+        1280
+      ]
+    },
+    "64": {
+      "batch_size": 64,
+      "wall_s": 0.14499122799998077,
+      "throughput_seq_per_s": 220.7030069433183,
+      "feats_shape": [
+        32,
+        1280
+      ]
+    }
+  },
+  "best_batch_size": "16",
+  "throughput_range_seq_per_s": [
+    144.00884264700403,
+    247.36873490169117
+  ]
 }

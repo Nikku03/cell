@@ -1,5 +1,5 @@
 {
-  "status": "AWAITING_COLAB",
+  "status": "MEASURED",
   "models": [
     {
       "model_id": "facebook/esm2_t30_150M_UR50D",
@@ -49,5 +49,26 @@
     "The 650M baseline numbers come from memory_bank/facts/measured/mcc_tier1_xgboost_naive_stack.json.",
     "The 150M result is NOT yet measured. This fact file is a plan, not a conclusion.",
     "A meaningful positive result would be 150M tier1_only MCC in [0.12, 0.18] combined with 4-6x faster inference. A meaningful negative would be a collapse below 0.08."
-  ]
+  ],
+  "measurements": {
+    "esm2_150M": {
+      "model_id": "facebook/esm2_t30_150M_UR50D",
+      "embedding_dim": 640,
+      "wall_s": 2.016738771000007,
+      "throughput_seq_per_s": 225.6117681391064,
+      "parquet": "cell_sim/features/cache/esm2_150M.parquet",
+      "sha256": "873e2ff09cf25af186f6e85cdd89e1bcf1ff0aee26f68c5a7dfcd8b3ce5b2d7f",
+      "rows": 455
+    },
+    "esm2_650M": {
+      "model_id": "facebook/esm2_t33_650M_UR50D",
+      "embedding_dim": 1280,
+      "wall_s": 3.8258091949999766,
+      "throughput_seq_per_s": 118.92908841210593,
+      "parquet": "cell_sim/features/cache/esm2_650M.parquet",
+      "sha256": "394777c0e88e10df7585f711ee25b929f299c893c3d55cd1f5ab020d93e423f4",
+      "rows": 455
+    }
+  },
+  "inference_speedup_150M_vs_650M": 1.89702764186109
 }
