@@ -10,16 +10,36 @@ _Read this file FIRST, immediately after running the invariant checker._
 4. Read `memory_bank/facts/measured/mcc_against_breuer_v9.json` for the latest honest result + diagnosis.
 5. Read this file.
 
-## Session 19 — Run ESM-2 Colab benchmarks (queued, no decisions yet)
+## Session 20 — Multi-organism essentiality predictor (HIGHEST PRIORITY)
 
-Two of Session 18's five optimization benchmarks require GPU and could not be measured in sandbox. Execute the plans on Colab Pro A100, paste back the numbers, decide integration after.
+Session 17 falsified the Tier-1 XGBoost stack on 455 Syn3A rows; Session 19 confirmed model size isn't the bottleneck (150M ships at 0.098 / 0.362, 650M ships at 0.145 / 0.443 — both well below v15's 0.537). **Row count is the bottleneck.** This session pulls public bacterial essentiality data so the 1280:455 ratio becomes 1280:~10,000.
 
-1. `outputs/bench_esm2_batch_plan.json` — batch-size sensitivity (8 / 16 / 32 / 64) on ESM-2 650M, 32 synthetic sequences ~300 aa. Output writes into the same JSON (`measurements` section) when GPU is detected; the script is self-aware.
-2. `outputs/bench_esm2_sizes_plan.json` — ESM-2 150M (640-dim) vs 650M (1280-dim) on all 452 Syn3A CDS. Requires a one-line `ESM2Extractor` change to accept a `model_id` kwarg (see `blocking_codechange` in the plan) before the 150M embedding runs. Once `cell_sim/features/cache/esm2_150M.parquet` exists, retrain Tier-1 XGBoost in sandbox with that feature file and compare to the current falsified 650M numbers (tier1_only 0.145, union 0.443).
+Data targets (all public CSV / TSV downloads, no whole-cell models needed):
+- *E. coli* K-12 (DEG / Keio collection) — ~4,300 genes, binary essentiality
+- *B. subtilis* 168 (Commichau 2013 / DEG) — ~4,200 genes
+- *M. pneumoniae* M129 (Lluch-Senar 2015) — ~700 genes
+- *M. genitalium* G37 (Glass 2006) — ~480 genes
+- Syn3A (Breuer 2019) — 455 genes (we already have this)
 
-Decision rules are in the plan files so a non-ambiguous "integrate" or "skip" call can be made from the Colab output alone.
+Total: ~10,100 labeled (protein sequence → binary essentiality) pairs.
 
-After Session 19, also worth deciding: the XGBoost `gpu_hist` tree-method benchmark is currently recorded as a published-estimate (2-10x) — a 3-minute Colab run overwrites that with a real number. Script: `scripts/bench_xgboost_treemethod.py`, invocation unchanged, it auto-detects CUDA.
+Workflow:
+1. Curate data pulls into `memory_bank/data/multiorg_essentiality_*.csv` (one per organism). Document source + access date in each file's header.
+2. Pull NCBI protein sequences for each organism's essentiality-labeled set into a unified FASTA.
+3. Embed via ESM-2 650M on Colab GPU. Use bs=16 (Session 19 confirmed optimal). 4-6 hour wall time on A100 for 10k proteins.
+4. Save merged parquet `cell_sim/features/cache/esm2_650M_multiorg.parquet`.
+5. In sandbox: train XGBoost with leave-one-organism-out CV (train on 4 orgs, test on the 5th). Headline metric: held-out Syn3A MCC vs v15's 0.537.
+
+Decision rule for integration into Layer 6 detector stack:
+- If multi-org Syn3A held-out MCC ≥ 0.55 → integrate as a new detector
+- If 0.45 ≤ MCC < 0.55 → useful as one input to an ensemble; needs more data or feature engineering
+- If MCC < 0.45 → falsified at multi-org scale, look elsewhere
+
+This is the path the user named the "universal cell simulator goal" of the project. Sequence-only embeddings + multi-org labels is universal-by-construction — no Syn3A-specific priors leak in.
+
+## (Optional, not blocking) `OrganismConfig` refactor
+
+If/when Session 20 succeeds and the project decides to validate the simulator (not just the predictor) on a second organism, the prerequisite is pulling every Syn3A path constant out of cell_sim into an OrganismConfig dataclass. ~1 day of mechanical work. Defer until needed.
 
 ## Where Layer 6 stands (end of Session 11)
 

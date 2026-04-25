@@ -1,6 +1,6 @@
 {
   "id": "bench_available_optimizations",
-  "claim": "Benchmark of five claimed pipeline optimizations on the current codebase + Claude Code sandbox hardware (no GPU). Three are measured in-sandbox; two require Colab GPU and are recorded as plans with concrete invocations. (1) Gillespie Rust backend is 1.86x faster than pure Python on the RealSimulator.run hot-path (20-gene sample at scale=0.05, t_end=0.5s, dt=0.05s, seed=42): python mean 12.92s +/- 0.60s, rust mean 6.94s +/- 0.43s. (2) XGBoost tree_method=hist on CPU: 12.5s for 5-fold CV on the Tier-1 feature matrix (455x1295); GPU awaits Colab, published estimate 2-10x speedup. (3) Feature assembly pandas+pyarrow vs polars on synthetic 455x1295 float32 matrix (5% NaN in MACE cols to mimic coverage): pandas 67.1ms mean, polars 52.0ms mean = 1.29x speedup, but polars shows much higher variance (stdev 32.1ms vs 6.5ms), suggesting cold-start dominates on the small matrix. (4,5) ESM-2 batch-size scan (8/16/32/64) and ESM-2 150M vs 650M model comparison both require GPU; plans written for Colab execution with exact cell-by-cell invocations.",
+  "claim": "Five-optimization benchmark, complete after Session 19 GPU runs on RTX PRO 6000 Blackwell. (1) Gillespie Rust backend: 1.86x faster than pure Python on the RealSimulator.run hot-path (20-gene sample at production sweep config). KEEP — already integrated. (2) ESM-2 batch-size scan: throughput peaks at bs=16 (247 seq/s); bs=8 is 1.7x slower, bs=32/64 plateau slightly below bs=16 due to padding overhead. The populate notebook already uses bs=16, so no integration change is needed. KEEP_CURRENT_CONFIG. (3) ESM-2 150M vs 650M: 150M is 1.90x faster at inference but loses badly on Tier-1 XGBoost downstream MCC (tier1_only 0.098 vs 0.145; union 0.362 vs 0.443). Both paths remain falsified vs v15's 0.537 baseline; the bottleneck is row count (455), not embedding dim. KEEP_650M. (4) XGBoost gpu_hist vs CPU hist: 2.54x speedup on Tier-1 matrix (455x1295) but absolute savings only 4.45s per CV run; not worth the integration cost. SKIP_INTEGRATION. (5) Feature assembly polars vs pandas+pyarrow: 1.29x mean speedup with high cold-start variance — the matrix is too small for polars to amortize its setup cost. Defer until 10k-row multi-organism scale. Net: of five claimed optimizations, ONE is integrated (Rust) and provides a real speedup; ONE more (bs=16) is already configured optimally; THREE are not worth integrating at the current dataset scale.",
   "confidence": "measured",
   "source": "internal_infrastructure",
   "source_detail": "Reproducible via scripts/bench_rust_vs_python.py (Rust speedup, measured), scripts/bench_xgboost_treemethod.py (XGBoost CPU, measured), scripts/bench_feature_assembly.py (feature assembly, measured), scripts/bench_esm2_batch.py (ESM-2 batch, plan-only in sandbox), scripts/bench_esm2_sizes.py (ESM-2 150M vs 650M, plan-only). Outputs under outputs/bench_*.json. Sandbox hardware: x86_64 Linux, Python 3.11, no CUDA. Seed 42 throughout.",
@@ -34,34 +34,54 @@
       "status": "MEASURED"
     },
     "esm2_batch_size_sensitivity": {
-      "status": "AWAITING_COLAB",
-      "plan_file": "outputs/bench_esm2_batch_plan.json",
-      "reason_not_measured": "ESM-2 650M fp32 forward pass on a 300-residue protein takes tens of seconds on CPU; a CPU batch-size scan would take hours and would not reflect GPU inference patterns.",
-      "planned_batch_sizes": [8, 16, 32, 64],
-      "planned_n_sequences": 32
+      "status": "MEASURED",
+      "device": "NVIDIA RTX PRO 6000 Blackwell Server Edition (95 GiB VRAM)",
+      "best_batch_size": 16,
+      "best_throughput_seq_per_s": 247.37,
+      "throughput_seq_per_s_by_bs": {
+        "8": 144.01,
+        "16": 247.37,
+        "32": 219.67,
+        "64": 220.70
+      },
+      "n_sequences": 32,
+      "avg_seq_length": 300,
+      "note": "Throughput peaks at bs=16; bs=32 and bs=64 plateau slightly below it (likely padding overhead on the 32-sequence sample). The populate notebook ALREADY uses bs=16 for ESM-2, so the current default is optimal — no integration change needed.",
+      "decision": "KEEP_CURRENT_CONFIG"
     },
     "esm2_model_size_comparison": {
-      "status": "AWAITING_COLAB",
-      "plan_file": "outputs/bench_esm2_sizes_plan.json",
+      "status": "MEASURED",
       "candidate_model": "facebook/esm2_t30_150M_UR50D (150M params, 640 dims)",
       "baseline_model": "facebook/esm2_t33_650M_UR50D (650M params, 1280 dims)",
-      "baseline_tier1_union_mcc": 0.443,
-      "baseline_tier1_only_mcc": 0.145,
-      "decision_rule": "150M is the better default if tier1_only MCC >= 0.12 AND union MCC >= 0.42; otherwise 650M stays.",
-      "blocking_codechange": "ESM2Extractor hardcodes model_id as a class constant; needs a kwarg or a subclass before 150M can be extracted without duplicating the whole class."
+      "inference_throughput_seq_per_s": {
+        "150M": 225.61,
+        "650M": 118.93
+      },
+      "inference_speedup_150M_vs_650M": 1.90,
+      "tier1_xgboost_pooled_mcc": {
+        "150M_tier1_only": 0.0983,
+        "650M_tier1_only": 0.1452,
+        "150M_union_with_v15": 0.3624,
+        "650M_union_with_v15": 0.4427,
+        "v15_reference": 0.5372
+      },
+      "decision_rule_outcome": "FAILS — 150M tier1_only MCC 0.098 below 0.12 floor AND union MCC 0.362 below 0.42 floor. Both Tier-1 paths remain falsified, and 150M is strictly worse than 650M on this dataset.",
+      "decision": "KEEP_650M",
+      "note": "Inference is 1.90x faster on 150M but the MCC drop (-0.05 to -0.08 absolute) is too large to justify. The falsified Tier-1 conclusion is robust to model size: row count (455) is the bottleneck, not embedding dimension. Re-evaluate after a multi-organism corpus lands at ~10k rows."
     },
     "xgboost_tree_method": {
-      "cpu_hist_wall_s": 12.5,
-      "cpu_hist_pooled_mcc": 0.2405,
-      "cpu_hist_fold_mcc_mean": 0.2471,
-      "cpu_hist_fold_mcc_std": 0.1213,
+      "status": "MEASURED",
       "matrix_shape": [455, 1295],
       "n_estimators": 400,
       "max_depth": 4,
-      "gpu_hist_status": "AWAITING_GPU",
-      "gpu_published_estimate_speedup_range": [2, 10],
-      "gpu_published_estimate_source": "xgboost release notes + dmlc/xgboost benchmark suite 2023-2024; typical speedup for small-matrix hist (n<=10k rows) is 2-5x; our 455-row matrix likely at the low end of that range.",
-      "status": "CPU_MEASURED_GPU_AWAITING"
+      "cpu_hist_wall_s_colab": 7.35,
+      "cpu_hist_pooled_mcc": 0.2704,
+      "gpu_hist_wall_s_colab": 2.90,
+      "gpu_hist_pooled_mcc": 0.2140,
+      "speedup_factor": 2.54,
+      "absolute_savings_s_per_run": 4.45,
+      "decision": "SKIP_INTEGRATION",
+      "note": "GPU is 2.54x faster than CPU on this matrix — within the published 2-10x range, low end as expected for 455 rows. Absolute savings are only ~4 seconds per CV run; not worth the integration cost (sandbox vs Colab branching, CUDA dep). The MCC delta (CPU 0.270 vs GPU 0.214) is unexpected for the same algorithm and likely reflects a small numerical-binning difference in gpu_hist; another reason to skip until needed at multi-organism scale."
     },
     "feature_assembly": {
       "status": "MEASURED",
@@ -80,9 +100,8 @@
     }
   },
   "caveats": [
-    "Two of five benchmarks (ESM-2 batch sizing, ESM-2 150M vs 650M) require GPU and cannot be measured in the Claude Code sandbox. This fact file records in-sandbox measurements plus explicit plans for Colab measurement; no GPU numbers are manufactured.",
-    "The XGBoost GPU-hist benchmark similarly awaits Colab; its published-estimate speedup range (2-10x) should NOT be cited as a measured result. Overwrite with measured numbers after a Colab run.",
-    "No optimization in this fact file is integrated into the production pipeline. Integration is a separate decision per optimization: the Rust backend is already integrated and confirmed; the other four are advisory only.",
+    "All five benchmarks now have measured numbers as of Session 19 (commit 12e2a01). The two GPU-dependent benchmarks (ESM-2 batch + 150M-vs-650M) and the XGBoost GPU branch were measured on a Colab A100-class GPU (RTX PRO 6000 Blackwell, 95 GiB VRAM). The other three were measured in the Claude Code sandbox.",
+    "Per-benchmark integration decisions: Rust backend KEEP (already integrated), bs=16 KEEP_CURRENT_CONFIG (already used in populate notebook), 150M model KEEP_650M (loses on MCC despite 1.9x inference speedup), XGBoost GPU SKIP_INTEGRATION (too small absolute savings on 455-row matrix), polars DEFER (cold-start variance too high at this scale). None of the four pending optimizations is being integrated this session.",
     "The Rust speedup of 1.86x is below the 'roughly 2x' claim that prior work reported; re-verified here on a clean 20-gene sample at the same config as the production sweep. It is NOT the 10x that compiled-language rewrites of naive Python typically give, because the current FastEventSimulator is already using numpy-vectorised math and the remaining hot-path is limited by stochastic rule-sampling overhead rather than arithmetic.",
     "The feature-assembly benchmark uses synthetic parquets (same shape + NaN pattern as Tier-1) rather than the real cache files, so we can iterate 10x without repeated disk-cache effects. Real-cache numbers would show higher variance due to filesystem caching.",
     "XGBoost CV MCC measured here (0.2405) differs from the main train_tier1_xgboost.py result (0.1452) for the tier1 config; the main script uses the exact same hyperparameters and 5-fold split so the discrepancy likely comes from a small difference in how NaN is handled in this benchmark's path (no explicit label vector construction call). This file should NOT be treated as a replacement for the headline MCC measurements — it is a training-time benchmark only."

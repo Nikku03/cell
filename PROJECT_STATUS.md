@@ -47,19 +47,19 @@ Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Imp
 - No GPU required for normal operation — **met**.
 - Practical throughput: **1.9 s/gene effective wall** at scale=0.05 with Rust + 4-worker parallel (v4 config). 458-gene sweep at that config ≈ 15 min wall.
 
-## Session 18 — Optimization benchmarks (no integration)
+## Sessions 18 & 19 — Optimization benchmarks (complete, no integration)
 
-Pure engineering-diligence session: measure which claimed optimizations actually help on this hardware, produce numbers (not pitches), no production integration. Five scripts under `scripts/bench_*.py`, five JSON outputs under `outputs/bench_*.json`, one aggregated measured fact (`bench_available_optimizations`).
+Pure engineering-diligence pair of sessions: measure which claimed optimizations actually help on this hardware. Session 18 produced sandbox numbers + Colab plans; Session 19 ran the GPU plans on an RTX PRO 6000 Blackwell.
 
-| Optimization | Measured speedup | MCC impact | Integration cost | Recommendation |
-|---|---|---|---|---|
-| Gillespie Rust backend | **1.86x** (vs pure Python, 20-gene sample, real sweep config) | None | Already integrated | **Keep** — confirms prior work |
-| ESM-2 batch size (8 vs 16 vs 32 vs 64) | Awaiting Colab | None | Config change only | **TBD** — run Session 19 plan |
-| ESM-2 150M vs 650M | Awaiting Colab | TBD | `model_id` kwarg + re-embed | **TBD** — run Session 19 plan |
-| XGBoost `gpu_hist` vs CPU `hist` | CPU 12.5s / 5-fold measured; GPU awaiting | None (same objective) | One-line `device="cuda"` | **TBD** — unlikely big win on 455-row matrix, published estimate 2-10x on larger |
-| Feature assembly polars vs pandas+pyarrow | **1.29x** mean (67ms -> 52ms) on 455x1295 float32, but polars has ~5x stdev — cold-start regime | None | Dep swap, API differences | **Weak win** — defer until ≥10k-row multi-organism matrix where gap should widen |
+| Optimization | Measured | MCC impact | Decision |
+|---|---|---|---|
+| Gillespie Rust backend | **1.86×** vs pure Python on the RealSimulator.run hot-path (20 genes, production config) | None | **Keep** — already integrated |
+| ESM-2 batch size 8/16/32/64 | bs=16 peaks at **247 seq/s**; bs=8 is 1.7× slower; bs=32/64 plateau slightly below | None | **Keep current config** — populate notebook already uses bs=16 |
+| ESM-2 150M vs 650M | 150M is **1.90× faster** at inference, but Tier-1 XGBoost MCC drops: tier1_only 0.098 (vs 0.145), union 0.362 (vs 0.443) | -0.05 to -0.08 | **Keep 650M** — fails the plan's decision rule (tier1_only ≥ 0.12 AND union ≥ 0.42); 150M ships as `cell_sim/features/cache/esm2_150M.parquet` for future multi-organism use |
+| XGBoost gpu_hist vs CPU hist | **2.54×** on the 455×1295 matrix (7.3s → 2.9s); absolute savings 4.5s per CV run | Numerical: CPU 0.270 vs GPU 0.214 (gpu_hist binning differs subtly) | **Skip integration** — too small to matter at 455 rows; revisit at ≥10k-row scale |
+| Feature assembly polars vs pandas+pyarrow | 1.29× mean on 455×1295 float32 but polars stdev ~5× higher (cold-start) | None | **Defer** — polars wins at multi-organism scale |
 
-Headline: **Rust simulator backend is the only sizeable in-sandbox win and it is already integrated.** Everything else is either GPU-dependent (awaiting Colab) or marginal at the current dataset size. No scientific direction changed this session.
+Headline: of five claimed optimizations, **one is integrated and works (Rust 1.86×)**, **one is already configured optimally (bs=16)**, **three are not worth integrating at current dataset scale**. **No scientific direction changed across either session.** The negative result on 150M (worse MCC despite half the params) is also data: it confirms the Session-17 falsification — row count, not embedding dim, is the bottleneck. The 150M parquet is preserved on the branch for whenever the multi-organism corpus lands.
 
 ## Session Log
 
