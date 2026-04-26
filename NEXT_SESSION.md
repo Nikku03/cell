@@ -2,11 +2,31 @@
 
 _Read this file FIRST, immediately after running the invariant checker._
 
-## Status: SHIP-APPLICATIONS MODE
+## Status: PILOT-SCOPED RESEARCH + SHIP-APPLICATIONS MODE
 
-**Next: ship internship applications.** The repo is presentation-ready as of Session 24 (`README.md`, `RESULTS.md`, `figures/`, reorganized `PROJECT_STATUS.md`, structural fact `repo_presentation_v1.json`). Deferred research directions remain open for later but should NOT trigger new Codex sessions unless a specific application question requires it.
+Session 26 ran the synthetic-lethality pilot screen and ended with a NARROW_SCOPE decision: the methodology works (Invariants 1-3 pass, halt criteria pass) but the paralog vs random separation at 2.0 % vs 0.0 % is too low to justify the full 105k-pair screen.
 
-If a new session is needed for an application-driven reason (e.g. a recruiter asks "can you show this on N=2 organisms?"), one of the deferred directions below can be reactivated. Otherwise the project is in polish-and-iterate mode and the user owns README/RESULTS/figures iteration directly.
+**Three options for what to do next** — picking is the user's call:
+
+### Option 1 — Narrow synth-lethality pilot v2 (recommended for science)
+
+Re-run the pilot at higher signal-to-noise. Filter pair selection to:
+
+- both single-knockouts non-essential at v15 (so the synth-lethal denominator is the full sample, not 36 % of it)
+- ESM-2 cosine in the 0.85-0.95 band (not 0.95-1.0, which sits on essential-family duplicates)
+- shared metabolic neighborhood (substrate / product overlap within 1 reaction step) for the test arm
+
+Target ~500 pairs. If paralog rate >= 10 % and random rate <= 2 %, full screen is justified. Same compute pattern as Session 26 (~1 hour wall on 4 workers).
+
+### Option 2 — Ship applications + park research
+
+Defer both the synth-lethality v2 pilot and the multi-organism / OrganismConfig / toxicity-Layer-2 directions. The project is presentation-ready and the synth-lethality pilot adds a concrete wet-lab-testable hypothesis (JCVISYN3A_0876 × _0878) for the README's "What this taught me" section. No more Codex sessions until a specific application question drives one.
+
+### Option 3 — Treat the pilot as a documented negative methodology result
+
+Same pattern as the toxicity halt: write up "event-driven Gillespie + composed detector at 0.5 s simulation window does not produce paralog vs random synthetic-lethality separation at the pilot density tested" as the contribution. Useful framing for an application that wants to see methodological honesty rather than positive results.
+
+If you don't pick, default is Option 2 (ship applications). Re-engaging research directions is fine after applications go out.
 
 ## Pre-flight (if a session does run)
 

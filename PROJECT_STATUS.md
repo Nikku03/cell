@@ -2,23 +2,24 @@
 
 _Current state on top; full session log below the horizontal rule._
 
-# Current state (as of Session 24)
+# Current state (as of Session 26)
 
 **Headline:** v15 composed detector reaches **MCC 0.5372** on the full 455-gene Breuer panel. Confusion: `tp=287, fp=3, tn=69, fn=96`. Precision 0.990, recall 0.749, specificity 0.958. Multi-seed verified bit-identical at seeds {42, 1, 2}. Source: `memory_bank/facts/measured/mcc_against_breuer_v15_round2_priors.json`.
 
-**Branch:** `claude/syn3a-whole-cell-simulator-REjHC`. HEAD at the start of this session: `f1a1cc2`.
+**Branch:** `claude/syn3a-whole-cell-simulator-REjHC`. HEAD at the start of Session 26: `8df8fb0`.
 
-**Tests:** 235 passing in the sandbox suite (excluding `test_end_to_end.py` / `test_esm2_extractor.py` / `test_mace_off_extractor.py` which need optional GPU/matplotlib deps). Invariant checker passes with 47 facts, 12 sources.
+**Tests:** 249 passing in the sandbox suite (235 baseline + 14 Session-26 pairwise harness tests; excludes `test_end_to_end.py` / `test_esm2_extractor.py` / `test_mace_off_extractor.py` which need optional GPU/matplotlib deps). Invariant checker passes with 49 facts, 12 sources.
 
 **Comparison to existing work:** matches but does not exceed the Breuer 2019 FBA benchmark (MCC 0.59) on the same labels. Faster by orders of magnitude than the Thornburg 2022 / 2026 whole-cell models.
 
-## Three documented negative results
+## Documented negative results
 
 These bound the search. Full diagnoses in `RESULTS.md`.
 
 - **Tier-1 ML stacking falsified.** ESM-2 (1280 dims) + ESMFold + MACE features over 455 rows do not exceed v15's keyword priors. Three independent attempts (full XGBoost stack, partition + PCA, kNN) all confirm. Smaller embedding (ESM-2 150M, 640 dims) loses to 650M, confirming row count not embedding dim is the bottleneck.
 - **Path A longer-bio-time amplifies false positives.** Extending the simulation window from 0.5 s to 5.0 s grew FPs faster than TPs, because the simulator lacks proper metabolite consumption sinks and concentration caps; perturbations that should equilibrate instead drift.
 - **Toxicity-prediction extension halted.** Gate B viability check found 0 of 155 SBML enzymes match canonical Mycoplasma-active antibiotic targets — every active drug class targets molecular machinery (ribosome, gyrase, RNA polymerase, folA, folP) outside the metabolic network. Negative finding recorded as `toxicity_gate_b_halted_negative_finding.json`.
+- **Synthetic-lethality pilot — methodology works, signal-to-noise too low at pilot density.** 196 biologically-curated pairs across 5 categories (paralog / same-pathway / random / transporter-substrate / manual). Session-26 viability invariants 1-3 all pass; halt criteria (Cat-B < 15 %, Cat-C < 10 %) all pass. But paralog synth-lethality rate 2.0 % (1/50) does not separate from random baseline 0.0 % (0/41). Single hit is biologically interpretable: paralogous unannotated transporters JCVISYN3A_0876 × _0878 (cos 0.996), joint silences 18 amino-acid transport rules. Decision: **NARROW_SCOPE** — full 105k-pair screen NOT justified at this sampling density. Recorded as `synthlet_pilot_v0.json`.
 
 ## What's next (three honest options)
 
@@ -30,7 +31,7 @@ A fourth direction — extending Layer 2 (`gene_expression.py`) with translation
 
 ## Presentation status
 
-Repo polished for internship applications in Session 24. Top-level `README.md` is wet-lab-supervisor-readable; `RESULTS.md` is the longer scientific summary; `figures/` carries plot-ready CSV data + matplotlib scripts. See `memory_bank/facts/structural/repo_presentation_v1.json`.
+Repo polished for internship applications in Session 24-25. Top-level `README.md` is wet-lab-supervisor-readable; `RESULTS.md` is the longer scientific summary; `figures/` carries plot-ready CSV data + matplotlib scripts. See `memory_bank/facts/structural/repo_presentation_v1.json`. Session 26's synthetic-lethality pilot adds a wet-lab-testable hypothesis (the JCVISYN3A_0876 × _0878 paralog pair) to the README's existing "What this taught me" list.
 
 ---
 

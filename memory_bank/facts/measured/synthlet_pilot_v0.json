@@ -1,0 +1,90 @@
+{
+  "id": "synthlet_pilot_v0",
+  "claim": "Pilot synthetic-lethality screen on 196 biologically-curated gene pairs (5 categories) using the v15 composed detector framework. The methodology is technically sound — Session-26 Invariants 1-3 all pass, and Categories B (same-pathway) and C (random) stay safely below the spec's halt thresholds (0.0 % each vs 15 % / 10 % caps). But the signal is weak: only 1 of 50 paralog pairs (2.0 %) flags as synthetic-lethal, which does not meaningfully separate from the 0/41 random-pair baseline. The single hit (JCVISYN3A_0876 x JCVISYN3A_0878) is biologically interpretable — paralogous unannotated genes at ESM-2 cosine 0.996 whose joint knockout silences 18 amino-acid transport rules (ALAt2r, ARGt2r, ASNt2r and 15 others). 0876 is Breuer-Nonessential and 0878 is Breuer-Quasiessential, consistent with a redundant-paralog pair where losing both starves amino-acid uptake. Decision: NARROW_SCOPE — do not run the full ~105k-pair screen at the current sampling density. The paralog category was dominated by pairs of essential-family paralogs (38 % of A-pairs had at least one already-essential gene, 42 % the other), so most paralog pairs cannot be synthetic-lethal by definition. A focused next pilot on paralogs that BOTH single knockouts call non-essential, plus shared metabolic neighborhood, would have the right denominator.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via scripts/synthlet_pilot_pairs.py (pair selection) + scripts/run_synthlet_pilot.py (execution). Output: outputs/synthlet/pilot_predictions.csv (196 rows). Input: outputs/synthlet/pilot_pairs.csv (196 pairs across 5 categories). Wall: 1680 s (28 min) on 4 workers, well within the 90 min cap. Config matches v15 exactly (scale 0.05, t_end 0.5 s, dt 0.05 s, seed 42, Rust on, iMB155 patches on, min_wt_events 20). Invariants 1+2 verified by cell_sim/tests/test_pairwise_harness.py (14 tests pass); Invariant 3 (v15 reproducibility on 20-gene sample) verified by scripts/run_synthlet_pilot.py --verify-only with 20/20 matches written to outputs/synthlet/viability_check.txt.",
+  "last_verified": "2026-04-26",
+  "context": {
+    "entity": "synthetic_lethality_screen",
+    "version": "pilot_v0.1.0"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "feature_cache_infrastructure",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "scripts/synthlet_pilot_pairs.py",
+    "scripts/run_synthlet_pilot.py",
+    "notebooks/synthlet_pilot_analysis.ipynb"
+  ],
+  "value": {
+    "n_pairs_total": 196,
+    "n_unique_loci_simulated": 153,
+    "wall_clock_s": 1680,
+    "wall_clock_minutes": 28,
+    "viability_invariants": {
+      "invariant_1_self_pair_equals_single": "PASS (5/5 sample genes, MockSimulator)",
+      "invariant_2_symmetry": "PASS (5/5 sample pairs, MockSimulator)",
+      "invariant_3_v15_reproducibility_on_20_gene_sample": "PASS (20/20)",
+      "all_existing_tests_pass": true,
+      "test_count_after": 249,
+      "test_count_before": 235
+    },
+    "category_a_paralogs_synthlet_rate": 0.02,
+    "category_b_same_pathway_synthlet_rate": 0.00,
+    "category_c_random_synthlet_rate": 0.00,
+    "category_d_transporter_substrate_synthlet_rate": 0.00,
+    "category_e_manual_synthlet_rate": 0.00,
+    "halt_check": {
+      "category_b_cap_15pct": "PASS (0.0 %)",
+      "category_c_cap_10pct": "PASS (0.0 %)",
+      "wall_cap_90min": "PASS (28 min)"
+    },
+    "category_a_breakdown": {
+      "n": 50,
+      "n_pair_essential": 23,
+      "n_single_a_essential": 19,
+      "n_single_b_essential": 21,
+      "n_synth_lethal": 1,
+      "rate_pair_essential": 0.46,
+      "rate_synth_lethal": 0.02
+    },
+    "synth_lethal_denominator_across_pilot": {
+      "n_pairs_with_both_singles_nonessential": 70,
+      "out_of_total": 196,
+      "fraction_eligible": 0.357,
+      "note": "Synthetic-lethality is only defined when both single knockouts are non-essential. Most A-paralog pairs picked by ESM-2 cosine sit on essential gene families (ribosomal, RNA pol, translation factors), so the denominator was small; the 1/50 hit rate is closer to 1/20 against the eligible denominator."
+    },
+    "top_predictions": [
+      {
+        "category": "A_paralog",
+        "locus_a": "JCVISYN3A_0876",
+        "locus_b": "JCVISYN3A_0878",
+        "esm2_cosine": 0.996,
+        "single_a_essential": 0,
+        "single_b_essential": 0,
+        "pair_essential": 1,
+        "pair_mode": "catalysis_silenced",
+        "pair_confidence": 1.0,
+        "breuer_a_class": "Nonessential",
+        "breuer_b_class": "Quasiessential",
+        "mechanism": "joint knockout silences 18 amino-acid transport catalysis rules (ALAt2r, ARGt2r, ASNt2r + 15 more); single knockouts silence subsets but do not cross the detector's threshold; consistent with paralogous amino-acid transporters where one substitutes for the other under each single knockout.",
+        "wet_lab_followup": "double knockout in Syn3A; measure growth at 36 C across three independent biological replicates. If 0876 alone grows fine, 0878 alone shows mild defect (per Breuer Quasiessential), but 0876+0878 fails to grow, the synthetic-lethal prediction is confirmed."
+      }
+    ],
+    "go_no_go_full_screen": "NARROW_SCOPE",
+    "rationale": "Paralog synth-lethality rate 2.0 % does not meaningfully separate from the 0.0 % random baseline at this sampling density. The methodology works (Invariants 1-3 pass, halt criteria pass, single hit is biologically interpretable) but the signal-to-noise ratio is too low to justify a 105k-pair screen. The right next step is a narrower pilot: ~500 pairs filtered to (a) both single-knockouts non-essential at v15, (b) shared metabolic-neighborhood metabolite, (c) ESM-2 cosine in the 0.85-0.95 band (the very-high-cosine top of the distribution overlaps too heavily with self-similar paralogs of essentials). If a focused screen produces >= 10 % synth-lethality rate vs <= 2 % random control, the full screen becomes proportionate."
+  },
+  "caveats": [
+    "Pilot screen on 196 of approximately 105,000 possible pairs (C(458, 2) on the full Syn3A gene set). Per-category synthetic-lethality rates are pilot-scale point estimates with wide confidence intervals — 1/50 = 2.0 % is consistent with anything from 0.05 % to 11 % at 95 % confidence (Wilson interval).",
+    "No wet-lab validation. The single synthetic-lethal call (JCVISYN3A_0876 x JCVISYN3A_0878) is a simulator-derived hypothesis. Its biological credibility comes from the mechanism trace (18 amino-acid transport rules silenced jointly) plus the Breuer-2019 single-knockout calls (Nonessential + Quasiessential), but the actual double-knockout phenotype has not been measured.",
+    "Category B (same-pathway sequential pairs) is a deliberate negative control. Its 0.0 % rate is reassuring but partly trivial: 86 % of B-pairs have one gene already essential, so the synth-lethal denominator excludes most of them. Category B's role as a negative control would be more informative if filtered to pairs where both singles are non-essential.",
+    "Category C (random non-essential pairs) showed 0 / 0 / 0 across single-A, single-B, and pair essentiality — every pair was non-essential at all three measurement points. This is the cleanest baseline rate but also tells us the simulator does not flag random non-essential joint knockouts as essential, period.",
+    "Category D (transporter-substrate) and E (manual) sat at 100 % / 80 % pair_essential rates respectively because most pairs in those categories had at least one Breuer-essential gene; their 0 % synth-lethal rates reflect the eligibility issue, not a methodology gap.",
+    "The simulator's known limitations (Layer 5 not implemented, ~75 % knowledge-based detector weight at v15, 0.5 s biological-time window) carry over to pairwise predictions. A pair flagged synth-lethal here may reflect the same detector-noise patterns that produce v15's 3 stubborn false positives at single-knockout level.",
+    "If the user wants to proceed without the narrow pilot, the alternative is to publish this as a NEGATIVE result for the methodology: 'event-driven Gillespie + composed detector at 0.5 s simulation window does not produce paralog-vs-random synthetic-lethality separation at the pilot density tested'. That negative is itself informative for what works and what doesn't in mechanism-aware double-knockout prediction.",
+    "Compute: 28 min wall on 4 workers for 349 tasks (153 singles + 196 pairs). Per-task average 19 s, well above the v15 single-knockout 6.6 s/gene because pair simulations spend more wall time in detector evaluation (the composed detector runs detect_for_gene twice per pair, once per locus, on the joint trajectory)."
+  ]
+}
