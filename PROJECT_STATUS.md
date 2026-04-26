@@ -14,7 +14,7 @@ _Current state on top; full session log below the horizontal rule._
 
 ## Three documented negative results
 
-These bound the search and make the positive number more credible. Full diagnoses in `RESULTS.md`.
+These bound the search. Full diagnoses in `RESULTS.md`.
 
 - **Tier-1 ML stacking falsified.** ESM-2 (1280 dims) + ESMFold + MACE features over 455 rows do not exceed v15's keyword priors. Three independent attempts (full XGBoost stack, partition + PCA, kNN) all confirm. Smaller embedding (ESM-2 150M, 640 dims) loses to 650M, confirming row count not embedding dim is the bottleneck.
 - **Path A longer-bio-time amplifies false positives.** Extending the simulation window from 0.5 s to 5.0 s grew FPs faster than TPs, because the simulator lacks proper metabolite consumption sinks and concentration caps; perturbations that should equilibrate instead drift.
@@ -26,7 +26,7 @@ These bound the search and make the positive number more credible. Full diagnose
 2. **Wet-lab audit of the 3 stubborn false positives.** Single-gene knockout at 36 °C, three biological replicates per gene, ~1 week. Resolves whether the simulator has a bug or Breuer's labels are at the assay boundary.
 3. **Detector-parameter sensitivity sweep.** Several hyperparameters (`min_wt_events`, `_UNGATED_TOKEN_COUNT`, saturation thresholds) chosen by pilot runs and not systematically swept. Pure-compute task that doesn't need new wet-lab data.
 
-A fourth direction — extending Layer 2 (`gene_expression.py`) with translation-inhibition kinetics to revive the toxicity work — is documented but at substantial scope expansion (3–6 weeks FTE) and not recommended without external pull.
+A fourth direction — extending Layer 2 (`gene_expression.py`) with translation-inhibition kinetics to revive the toxicity work — is documented as a 3-6 week full-time-equivalent scope expansion and not recommended without external pull.
 
 ## Presentation status
 

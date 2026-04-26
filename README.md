@@ -2,9 +2,9 @@
 
 I'm **Naresh Chhillar**, a third-year biomedical sciences student at York University.
 
-Over the past several months I built a fast computational simulator of *Mycoplasma mycoides* JCVI-Syn3A — the smallest viable bacterium ever assembled in a lab — and used it to predict which of its 455 genes are essential for cell survival. Predictions are scored against the published wet-lab knockout study by Breuer et al. (2019, *eLife*).
+Over the past several months I built an event-driven simulator of *Mycoplasma mycoides* JCVI-Syn3A — the smallest viable bacterium ever assembled in a lab — and used it to predict which of its 455 genes are essential for cell survival. Predictions are scored against the published wet-lab knockout study by Breuer et al. (2019, *eLife*). Headline result: **MCC 0.5372** on all 455 genes, comparable to the FBA benchmark in Breuer 2019 (MCC 0.59).
 
-This is the GitHub home for that project.
+I'm applying for wet-lab internships because the predictions this project generates need bench experiments to mean anything; this repo is the work that led me to that conclusion.
 
 ## What I built
 
@@ -17,6 +17,20 @@ A three-layer pipeline that simulates a single bacterial cell stochastically (Gi
 - **The same 3 false-positive genes have persisted from version 12 onwards** (tracked in `memory_bank/facts/measured/mcc_against_breuer_v15_round2_priors.json`). They're the cleanest wet-lab targets in this work — see "What this taught me" below.
 - **Multi-seed reproducibility verified** — the same simulator at three different RNG seeds produces bit-identical confusion matrices (zero variance).
 - **Three documented negative results** make the positive number more credible — see `RESULTS.md` for full diagnoses.
+
+## What this project does that others don't
+
+- **Cross-language and cross-environment integration.** I built the simulator in Python with a Rust hot path (PyO3) for the Gillespie inner loop, integrated three pretrained protein models (ESM-2 for 1280-dim sequence embeddings, ESMFold for structure prediction, MACE-OFF for substrate bond-energy estimation) as feature extractors, and split execution between local CPU (the simulator) and Colab GPU (the embeddings). The pipeline runs end-to-end. The Rust hot path is 1.86× faster than pure Python on the production sweep — useful but not dramatic; the ML features didn't improve essentiality MCC on Syn3A's 455 genes.
+
+- **Reproducibility infrastructure.** Every measurement in this repo is backed by a JSON fact file under `memory_bank/facts/measured/` that pins the result to a reproducible script, a commit, and a SHA256-validated data cache where applicable. An invariant checker (`memory_bank/.invariants/check.py`) validates the full fact graph in under a second; it currently passes with 47 measured + 14 structural facts. I built this primarily so I could resume work cleanly across sessions; whether it would help another researcher pick the project up is untested.
+
+- **Documented negative results.** Three independent extension attempts — Tier-1 ML feature stacking, longer biological-time simulation, and a toxicity-prediction extension — were each evaluated rigorously and halted with diagnostic detail when the data said stop, rather than dropped silently or quietly buried. Each result is informative about what doesn't work; none of the three turned into a positive contribution.
+
+- **Methodological combination on one evaluation framework.** Stochastic whole-cell simulation, a multi-detector ensemble (3 trajectory-based + 4 knowledge-based detectors), and pretrained-ML feature stacking are all evaluated against the same Breuer 2019 panel using the same MCC measurement. The integration is in one configuration that I haven't seen elsewhere — but the data also shows that on Syn3A's 455-gene set the components are not strongly complementary; the trajectory and ML pieces underperform the knowledge-based priors.
+
+- **Position on the speed-fidelity tradeoff.** The full 458-gene sweep takes about 50 minutes on a 4-core CPU. That sits between Breuer 2019's seconds-scale FBA (steady-state only, no temporal information) and the Thornburg 2026 4D whole-cell model (much richer biology, GPU-days of compute). I haven't yet used this niche for an application that the other tools couldn't address — having the speed available isn't the same as having found the right question for it.
+
+- **Scope discipline across long-running development.** Twenty-two sessions over several months, with a measurable deliverable per session (an MCC number, a feature parquet, a falsification, a notebook). When the data said a direction was over — Tier-1 ML in Session 17, toxicity prediction in Session 22 — I halted and documented the negative result in the same commit. This is process, not science; I list it because the artifact reflects it and reviewers may notice.
 
 ## How it compares to existing work
 

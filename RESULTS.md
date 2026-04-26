@@ -1,6 +1,6 @@
 # Results: gene essentiality prediction in Syn3A
 
-This is a longer scientific summary of the project, intended for readers who want more depth than the README. It cites the underlying fact JSONs at `memory_bank/facts/measured/` so any specific number can be re-verified.
+This is a longer scientific summary of the project. It expands on the README and cites the underlying fact JSONs at `memory_bank/facts/measured/` so any specific number can be re-verified. I built the simulator, ran 22 development sessions of measurements + falsifications, and reached MCC 0.5372 on the full 455-gene Breuer panel — comparable to but not exceeding the FBA benchmark (0.59). The trajectory and the documented dead ends are below.
 
 ## Background and motivation
 
@@ -8,7 +8,7 @@ This is a longer scientific summary of the project, intended for readers who wan
 
 Predicting essentiality computationally matters because exhaustive knockout screens are slow and expensive, and the predictions encode mechanistic understanding that pure phenotype data does not. If a model says "gene X is essential because pathway Y collapses 30 seconds after knockout," that is a testable hypothesis, not just a yes/no answer. This project asks whether a fast event-driven simulation, paired with a small set of biology-aware detectors, can reproduce Breuer 2019's labels at a useful accuracy.
 
-The honest answer, after 22 development sessions: **it gets close but does not exceed the existing FBA-based benchmark**. The trajectory of how the work got there is itself the most interesting part.
+The answer, after 22 development sessions: **the result is close to but does not exceed the existing FBA-based benchmark**. The trajectory of how the work got there, including the directions that were tried and ruled out, is in the rest of this document.
 
 ## Approach: three integrated layers
 
@@ -99,11 +99,39 @@ A separate research direction was scoped to extend the simulator into a mechanis
 | Approach | Mechanism | Speed | MCC vs Breuer panel |
 |---|---|---|---:|
 | **Breuer 2019 FBA** | Steady-state flux balance on the same SBML | seconds | 0.59 |
-| **Thornburg 2022 well-stirred Gillespie** | Whole-cell stochastic dynamics, comprehensive | hours per cell cycle | not measured on this panel |
+| **Thornburg 2022 well-stirred Gillespie** | Whole-cell stochastic dynamics | hours per cell cycle | not measured on this panel |
 | **Thornburg 2026 4D whole-cell model** | Spatial + atomistic + chromosome model | days per cell cycle | not measured on this panel |
 | **This work** | Event-driven Gillespie + 7-detector vote | 6.6 s/gene; 50 min full panel | **0.537** |
 
 The relevant comparison is Breuer 2019. This work is **fast** (a knockout sweep that takes a workday to design and minutes to run, not a multi-day simulation), but **does not exceed** the static-FBA accuracy. The accuracy gap (0.053 MCC) sits in the false-negative pool — the simulator and detector framework miss 96 essential genes that Breuer's labels mark essential, and 84 of those 96 carry "Uncharacterized" annotations that the keyword-prior detectors cannot resolve without external information.
+
+## What this project does that others don't
+
+This section names the configurations and practices in this work that I haven't seen combined elsewhere. Each item also names what's unrealized or limited about it; I'd rather a reader assess the work accurately than be sold on it.
+
+### Cross-language, cross-environment integration in one pipeline
+
+I built the simulator in Python (~10,400 lines under `cell_sim/`), wrote a Rust hot path for the Gillespie inner loop (`cell_sim/layer2_field/rust_dynamics.py` wrapping the PyO3 binding), integrated three pretrained protein models as feature extractors (ESM-2 650M for 1280-dim sequence embeddings, ESMFold v1 for structure prediction with pLDDT in the 0-100 scale after a unit-fix in Session 17, MACE-OFF for substrate bond-energy estimation), and split execution between local CPU for the simulator and Colab GPU for the embeddings via parquet-cache hand-off. The end-to-end pipeline runs and is reproducible from the commit history. The Rust hot path is **1.86× faster** than pure Python on the production sweep config (20-gene sample, scale 0.05, t_end 0.5 s, seed 42; measured Session 18) — useful but not dramatic, because the Python path is already numpy-vectorised. The ML-feature integration produces the cache and verifies it, but the supervised-learning detector built on top of the cache **does not improve essentiality MCC** on Syn3A's 455 rows; the negative result is recorded as `mcc_tier1_xgboost_naive_stack.json`.
+
+### Reproducibility infrastructure as a first-class concern
+
+`memory_bank/facts/measured/` holds 47 JSON fact files, one per measurement. Each fact pins a specific numerical claim to a reproducible script invocation, a commit, and (where applicable) a SHA256-validated parquet under `cell_sim/features/cache/manifest.json`. An invariant checker at `memory_bank/.invariants/check.py` validates the dependency graph between facts, the source-citation completeness, the physical-range bounds on parameter values, and the existence of every code path that a fact's `used_by` field references — all in under one second. This was built for my own use: I wanted to be able to resume work cleanly after kernel-state loss, distinguish "this MCC was measured" from "this MCC was estimated" without ambiguity, and keep the provenance trail intact across long-running development. Whether the same infrastructure would help another researcher pick the project up is untested — nobody other than me has tried.
+
+### Documented negative results
+
+Three independent extension attempts were each evaluated rigorously and halted with a measured-fact JSON when the data said stop, not silently dropped. (1) **Tier-1 ML stacking** (Session 17): three configurations of XGBoost over ESM-2 + ESMFold + MACE features on the Breuer 455-row dataset all underperformed v15's keyword priors; pooled MCC 0.443 union, 0.145 features-only, 0.530 partition. The 1280:455 feature-to-row ratio is the diagnosed cause. (2) **Path A longer biological time** (Session 9): extending the simulation window from 0.5 s to 5.0 s grew false positives faster than it recovered true positives, because the simulator lacks proper metabolite-consumption sinks at longer windows. (3) **Toxicity-prediction extension** (Sessions 21-22): the Gate B viability check found 0 of 155 SBML enzymes match canonical Mycoplasma-active antibiotic targets, halting the project before any predictive results were claimed. Each negative result is informative for what doesn't work; none of the three turned into a positive contribution to MCC.
+
+### Methodological combination on a single evaluation framework
+
+Stochastic whole-cell simulation, a multi-detector ensemble (`ShortWindow` + `PerRule` + `RedundancyAware` for trajectory analysis, `ComplexAssembly` + `AnnotationClass` for biological priors), and pretrained-ML feature stacking (ESM-2 + ESMFold + MACE) are all evaluated against the same Breuer 2019 labels using the same MCC measurement, with the same train/eval pipeline. I haven't seen this specific configuration in the cited prior work — Breuer used FBA + curated GPR mapping; Thornburg used well-stirred Gillespie without the ML stack. The data also shows the components are **not strongly complementary** on Syn3A's 455-gene set: trajectory-only detectors plateau at MCC ~0.13, ML stacking actively hurts (0.443 union vs v15's 0.537), and the knowledge-based priors carry the bulk of the result. The integration is in a configuration I haven't seen elsewhere; the scientific finding from that integration is mostly null.
+
+### Position on the speed-fidelity tradeoff
+
+A full 458-gene knockout sweep at production config (scale 0.05, t_end 0.5 s, 4 workers, Rust on) completes in about **50 minutes on a 4-core CPU** — 6.6 s effective per gene. That sits between Breuer 2019's seconds-scale FBA (steady-state only, no temporal trajectory information) and the Thornburg 2026 4D whole-cell model (much richer biology with chromosome dynamics + spatial fields, GPU-days of compute per cell cycle). I have not yet used this niche for an application that the other tools couldn't address — having a fast knockout-screening pipeline available is not the same as having found the right question for it. Possible uses (parameter sensitivity sweeps, synthetic-lethality screens, time-resolved failure-mode characterisation) are all named in `RESULTS.md`'s "What I would do next" section but unrealized in this codebase.
+
+### Scope discipline across long-running development
+
+Twenty-two sessions over several months, with a measurable deliverable per session: an MCC number, a feature parquet, a falsification, a Colab notebook. When the data said a direction was over (Tier-1 ML in Session 17, toxicity prediction in Session 22), I halted that direction and documented the negative result in the same commit instead of letting it sprawl into adjacent experiments. `PROJECT_STATUS.md`'s session log preserves all 22 entries verbatim. This is a process observation, not a scientific finding — I list it because the artifact reflects it and a careful reader will see it.
 
 ## Limitations
 
@@ -124,7 +152,7 @@ Three honest directions, in roughly decreasing expected payoff per unit effort:
 
 3. **Parameter sensitivity analysis.** Several detector hyperparameters (`min_wt_events`, `_UNGATED_TOKEN_COUNT`, the saturation thresholds) were chosen by a small number of pilot runs and not systematically swept. A coarse grid search would tell us whether the v15 result is robust to detector tuning or whether it sits on a sharp local maximum. This is a pure-compute task that doesn't require new wet-lab data.
 
-A fourth direction — extending the simulator to model ribosome-targeting antibiotic toxicity by adding inhibition kinetics to Layer 2 (`gene_expression.py`) — would resurrect the toxicity work that halted in Session 22, but at substantial scope expansion (3-6 weeks full-time-equivalent). Documented but not recommended without an external pull from a collaborator interested in computational toxicology.
+A fourth direction — extending the simulator to model ribosome-targeting antibiotic toxicity by adding inhibition kinetics to Layer 2 (`gene_expression.py`) — would resurrect the toxicity work that halted in Session 22 at an estimated 3-6 weeks full-time-equivalent. Documented but not recommended without an external pull from a collaborator interested in computational toxicology.
 
 ## Reproducibility
 
