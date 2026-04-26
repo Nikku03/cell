@@ -103,6 +103,44 @@ class Prediction:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class PairPrediction:
+    """Prediction for a pairwise (joint) knockout.
+
+    The fields mirror :class:`Prediction` but carry both loci. The
+    ``essential`` field is True iff the joint-knockout trajectory
+    triggers the failure detector at the same threshold the single-
+    knockout path uses; the simulator side is purely additive (the
+    knockout list is passed as ``[locus_a, locus_b]`` instead of
+    ``[locus_a]``), and when ``locus_a == locus_b`` the resulting
+    prediction is bit-identical to :meth:`KnockoutHarness.predict`.
+    Verified by Session-26 Invariant 1.
+    """
+    locus_tag_a: str
+    locus_tag_b: str
+    gene_name_a: str
+    gene_name_b: str
+    essential: bool
+    time_to_failure_s: float | None
+    failure_mode: FailureMode
+    confidence: float
+
+    def as_row(self) -> dict:
+        return {
+            "locus_tag_a": self.locus_tag_a,
+            "locus_tag_b": self.locus_tag_b,
+            "gene_name_a": self.gene_name_a,
+            "gene_name_b": self.gene_name_b,
+            "essential": int(self.essential),
+            "time_to_failure_s": (
+                "" if self.time_to_failure_s is None
+                else self.time_to_failure_s
+            ),
+            "failure_mode": self.failure_mode.value,
+            "confidence": f"{self.confidence:.4f}",
+        }
+
+
 class Simulator(Protocol):
     """Anything that can produce a Trajectory given a knockout list."""
     def run(self, knockout: Iterable[str], *, t_end_s: float,
@@ -223,6 +261,70 @@ class KnockoutHarness:
         return Prediction(
             locus_tag=locus_tag,
             gene_name=gene_name,
+            essential=essential,
+            time_to_failure_s=t_fail,
+            failure_mode=mode,
+            confidence=conf,
+        )
+
+    # ------------------------------------------------------------------
+    # Session 26: pairwise (synthetic-lethality) extension.
+    # PURELY ADDITIVE — does not touch ``predict`` above. When called with
+    # the same locus twice the joint knockout list collapses (the
+    # simulator pops both occurrences from the same name) and the
+    # produced trajectory is bit-identical to the single-knockout case;
+    # this is the regression invariant the Session-26 tests assert.
+    # ------------------------------------------------------------------
+    def predict_pair(
+        self,
+        locus_tag_a: str,
+        locus_tag_b: str,
+        gene_name_a: str = "",
+        gene_name_b: str = "",
+    ) -> PairPrediction:
+        """Predict the essentiality of a joint (pairwise) gene knockout.
+
+        Parameters
+        ----------
+        locus_tag_a, locus_tag_b
+            The two loci to knock out. Order is irrelevant for the
+            simulator (the knockout tuple is sorted before use); the
+            order is preserved in the returned :class:`PairPrediction`
+            only for downstream traceability.
+        gene_name_a, gene_name_b
+            Optional human-readable gene names recorded on the row.
+
+        Notes
+        -----
+        Implementation reuses ``ko_simulator.run([a, b], ...)``: the
+        underlying simulator already accepts an iterable of knockouts
+        and removes every named protein from the cell state at setup
+        time. The detector is the same pool-ratio
+        :class:`FailureDetector` the single-knockout path uses; the
+        detector is gene-agnostic, so the joint trajectory feeds it
+        without any detector code change.
+
+        When ``locus_tag_a == locus_tag_b``, the simulator's knockout
+        tuple collapses to a single entry (the ``set`` of removed
+        protein IDs is keyed by ``gene_id`` and an idempotent membership
+        test, see ``real_simulator.py:_build_state_and_rules``); the
+        produced trajectory and therefore the prediction is identical
+        to ``self.predict(locus_tag_a, gene_name_a)``. Session 26
+        Invariant 1 asserts this on five sample genes.
+        """
+        wt = self.ensure_wt()
+        ko = self.ko_simulator.run(
+            [locus_tag_a, locus_tag_b],
+            t_end_s=self.t_end_s,
+            sample_dt_s=self.sample_dt_s,
+        )
+        mode, t_fail, conf = FailureDetector(wt=wt).detect(ko)
+        essential = mode != FailureMode.NONE
+        return PairPrediction(
+            locus_tag_a=locus_tag_a,
+            locus_tag_b=locus_tag_b,
+            gene_name_a=gene_name_a,
+            gene_name_b=gene_name_b,
             essential=essential,
             time_to_failure_s=t_fail,
             failure_mode=mode,

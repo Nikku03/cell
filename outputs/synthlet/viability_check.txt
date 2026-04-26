@@ -1,0 +1,29 @@
+Session 26 Invariant 3 — v15 reproducibility on 20-gene sample
+============================================================
+config: {'scale': 0.05, 'seed': 42, 't_end_s': 0.5, 'dt_s': 0.05, 'use_rust_backend': True, 'enable_imb155_patches': True, 'min_wt_events': 20}
+
+locus               this  v15_ref mode                          
+JCVISYN3A_0647         1        1 translation_stall              OK
+JCVISYN3A_0804         1        1 translation_stall              OK
+JCVISYN3A_0389         0        0 none                           OK
+JCVISYN3A_0691         0        0 none                           OK
+JCVISYN3A_0362         1        1 translation_stall              OK
+JCVISYN3A_0415         1        1 translation_stall              OK
+JCVISYN3A_0493         0        0 none                           OK
+JCVISYN3A_0345         1        1 translation_stall              OK
+JCVISYN3A_0285         1        1 translation_stall              OK
+JCVISYN3A_0541         1        1 translation_stall              OK
+JCVISYN3A_0095         1        1 membrane_integrity             OK
+JCVISYN3A_0614         1        1 essential_metabolite_depletion OK
+JCVISYN3A_0382         0        0 none                           OK
+JCVISYN3A_0419         1        1 catalysis_silenced             OK
+JCVISYN3A_0416         0        0 none                           OK
+JCVISYN3A_0200         1        1 translation_stall              OK
+JCVISYN3A_0007         1        1 translation_stall              OK
+JCVISYN3A_0517         0        0 none                           OK
+JCVISYN3A_0475         1        1 catalysis_silenced             OK
+JCVISYN3A_0372         1        1 membrane_integrity             OK
+
+matches:  20/20
+mismatches: 0/20
+INVARIANT 3: PASS
