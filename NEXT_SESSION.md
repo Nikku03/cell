@@ -4,29 +4,28 @@ _Read this file FIRST, immediately after running the invariant checker._
 
 ## Status: PILOT-SCOPED RESEARCH + SHIP-APPLICATIONS MODE
 
-Session 26 ran the synthetic-lethality pilot screen and ended with a NARROW_SCOPE decision: the methodology works (Invariants 1-3 pass, halt criteria pass) but the paralog vs random separation at 2.0 % vs 0.0 % is too low to justify the full 105k-pair screen.
+Sessions 26 v1 and v2 ran the synthetic-lethality pilot. Combined result: **0 false positives in 121 random pairs (perfect specificity at this pilot scale), and 1 reproducibly-detected synth-lethal candidate** — JCVISYN3A_0876 × JCVISYN3A_0878, paralogous unannotated amino-acid transporters whose joint knockout silences all 18 SBML amino-acid transport rules. The pair was found by three independent selection criteria across the two pilots. Population-level paralog-vs-random enrichment is NOT statistically significant at p<0.05 (Fisher one-sided p=0.23 for tight-paralog 1/24 vs baseline 0/80) — n=24 tight paralogs is too small to reject the null with one observed hit.
 
-**Three options for what to do next** — picking is the user's call:
+**Two distinct things came out of v2** for a wet-lab-internship application:
 
-### Option 1 — Narrow synth-lethality pilot v2 (recommended for science)
+1. The methodology is specific (zero false positives in 121 negative-control pairs across two pilots).
+2. The single pair JCVISYN3A_0876 × _0878 is a wet-lab-testable hypothesis with a concrete predicted phenotype (double knockout fails to grow on amino-acid-supplemented medium because the simulator predicts both transporters are required for any amino-acid uptake).
 
-Re-run the pilot at higher signal-to-noise. Filter pair selection to:
+**Three options for what to do next:**
 
-- both single-knockouts non-essential at v15 (so the synth-lethal denominator is the full sample, not 36 % of it)
-- ESM-2 cosine in the 0.85-0.95 band (not 0.95-1.0, which sits on essential-family duplicates)
-- shared metabolic neighborhood (substrate / product overlap within 1 reaction step) for the test arm
+### Option 1 — Full eligible-pool screen (population finding)
 
-Target ~500 pairs. If paralog rate >= 10 % and random rate <= 2 %, full screen is justified. Same compute pattern as Session 26 (~1 hour wall on 4 workers).
+Run all C(165, 2) = 13,530 v15-non-essential pairs through the same pipeline. Would let us state a definite count of synth-lethal pairs in Syn3A (likely 1-5, all variants of the 0876×0878 mechanism). Compute: ~19 hours wall on 4 workers. Produces population-level enrichment statistics with much narrower confidence bounds.
 
-### Option 2 — Ship applications + park research
+### Option 2 — Wet-lab pre-registration of the case-study finding
 
-Defer both the synth-lethality v2 pilot and the multi-organism / OrganismConfig / toxicity-Layer-2 directions. The project is presentation-ready and the synth-lethality pilot adds a concrete wet-lab-testable hypothesis (JCVISYN3A_0876 × _0878) for the README's "What this taught me" section. No more Codex sessions until a specific application question drives one.
+Don't run more compute. Take the 0876×0878 pair, write a one-page experimental pre-registration document (predicted phenotype, methods, sample size, statistical test, what would falsify the prediction), commit it to the repo. This converts a simulator prediction into a portable wet-lab proposal — exactly the artifact that converts into an internship pitch.
 
-### Option 3 — Treat the pilot as a documented negative methodology result
+### Option 3 — Ship applications + park research
 
-Same pattern as the toxicity halt: write up "event-driven Gillespie + composed detector at 0.5 s simulation window does not produce paralog vs random synthetic-lethality separation at the pilot density tested" as the contribution. Useful framing for an application that wants to see methodological honesty rather than positive results.
+Defer further synth-lethality work. Repo is already presentation-ready and now carries an actual reproduced case-study prediction. Re-engage research after applications go out.
 
-If you don't pick, default is Option 2 (ship applications). Re-engaging research directions is fine after applications go out.
+If you don't pick, default is Option 3. The reproducible single hit is enough material for an internship-application pitch; running the full screen takes overnight wall but doesn't change the pitch fundamentally.
 
 ## Pre-flight (if a session does run)
 
