@@ -1,0 +1,9 @@
+JCVISYN3A_0876 x _0878 — robustness check across seeds + t_end
+================================================================
+seed=42   t_end=0.5s  single_a=none                       single_b=none                       pair=catalysis_silenced        (conf=1.000)  wall=79s
+seed=1    t_end=0.5s  single_a=none                       single_b=none                       pair=catalysis_silenced        (conf=1.000)  wall=77s
+seed=2    t_end=0.5s  single_a=none                       single_b=none                       pair=catalysis_silenced        (conf=1.000)  wall=79s
+seed=7    t_end=0.5s  single_a=none                       single_b=none                       pair=catalysis_silenced        (conf=1.000)  wall=82s
+seed=123  t_end=0.5s  single_a=none                       single_b=none                       pair=catalysis_silenced        (conf=1.000)  wall=82s
+
+verdict: pair was essential in 5/5 of (seed, t_end) configurations tested.
