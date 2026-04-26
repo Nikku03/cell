@@ -1,0 +1,250 @@
+locus_a,locus_b,category,biological_rationale
+JCVISYN3A_0439,JCVISYN3A_0835,A2_paralog_tight,ESM-2 cosine 0.997 (v15-nonessential pool)
+JCVISYN3A_0876,JCVISYN3A_0878,A2_paralog_tight,ESM-2 cosine 0.996 (v15-nonessential pool)
+JCVISYN3A_0033,JCVISYN3A_0636,A2_paralog_tight,ESM-2 cosine 0.996 (v15-nonessential pool)
+JCVISYN3A_0439,JCVISYN3A_0440,A2_paralog_tight,ESM-2 cosine 0.996 (v15-nonessential pool)
+JCVISYN3A_0034,JCVISYN3A_0399,A2_paralog_tight,ESM-2 cosine 0.996 (v15-nonessential pool)
+JCVISYN3A_0398,JCVISYN3A_0636,A2_paralog_tight,ESM-2 cosine 0.996 (v15-nonessential pool)
+JCVISYN3A_0164,JCVISYN3A_0296,A2_paralog_tight,ESM-2 cosine 0.995 (v15-nonessential pool)
+JCVISYN3A_0077,JCVISYN3A_0728,A2_paralog_tight,ESM-2 cosine 0.994 (v15-nonessential pool)
+JCVISYN3A_0399,JCVISYN3A_0639,A2_paralog_tight,ESM-2 cosine 0.994 (v15-nonessential pool)
+JCVISYN3A_0440,JCVISYN3A_0835,A2_paralog_tight,ESM-2 cosine 0.994 (v15-nonessential pool)
+JCVISYN3A_0033,JCVISYN3A_0398,A2_paralog_tight,ESM-2 cosine 0.994 (v15-nonessential pool)
+JCVISYN3A_0248,JCVISYN3A_0538,A2_paralog_tight,ESM-2 cosine 0.993 (v15-nonessential pool)
+JCVISYN3A_0373,JCVISYN3A_0530,A2_paralog_tight,ESM-2 cosine 0.992 (v15-nonessential pool)
+JCVISYN3A_0146,JCVISYN3A_0530,A2_paralog_tight,ESM-2 cosine 0.992 (v15-nonessential pool)
+JCVISYN3A_0066,JCVISYN3A_0728,A2_paralog_tight,ESM-2 cosine 0.992 (v15-nonessential pool)
+JCVISYN3A_0108,JCVISYN3A_0439,A2_paralog_tight,ESM-2 cosine 0.992 (v15-nonessential pool)
+JCVISYN3A_0034,JCVISYN3A_0639,A2_paralog_tight,ESM-2 cosine 0.991 (v15-nonessential pool)
+JCVISYN3A_0439,JCVISYN3A_0505,A2_paralog_tight,ESM-2 cosine 0.991 (v15-nonessential pool)
+JCVISYN3A_0286,JCVISYN3A_0373,A2_paralog_tight,ESM-2 cosine 0.991 (v15-nonessential pool)
+JCVISYN3A_0296,JCVISYN3A_0827,A2_paralog_tight,ESM-2 cosine 0.991 (v15-nonessential pool)
+JCVISYN3A_0108,JCVISYN3A_0835,A2_paralog_tight,ESM-2 cosine 0.991 (v15-nonessential pool)
+JCVISYN3A_0164,JCVISYN3A_0601,A2_paralog_tight,ESM-2 cosine 0.990 (v15-nonessential pool)
+JCVISYN3A_0296,JCVISYN3A_0601,A2_paralog_tight,ESM-2 cosine 0.990 (v15-nonessential pool)
+JCVISYN3A_0066,JCVISYN3A_0077,A2_paralog_tight,ESM-2 cosine 0.990 (v15-nonessential pool)
+JCVISYN3A_0728,JCVISYN3A_0907,A2_paralog_loose,ESM-2 cosine 0.990 (v15-nonessential pool)
+JCVISYN3A_0346,JCVISYN3A_0530,A2_paralog_loose,ESM-2 cosine 0.990 (v15-nonessential pool)
+JCVISYN3A_0505,JCVISYN3A_0835,A2_paralog_loose,ESM-2 cosine 0.989 (v15-nonessential pool)
+JCVISYN3A_0326,JCVISYN3A_0530,A2_paralog_loose,ESM-2 cosine 0.989 (v15-nonessential pool)
+JCVISYN3A_0440,JCVISYN3A_0505,A2_paralog_loose,ESM-2 cosine 0.989 (v15-nonessential pool)
+JCVISYN3A_0108,JCVISYN3A_0440,A2_paralog_loose,ESM-2 cosine 0.989 (v15-nonessential pool)
+JCVISYN3A_0296,JCVISYN3A_0538,A2_paralog_loose,ESM-2 cosine 0.989 (v15-nonessential pool)
+JCVISYN3A_0077,JCVISYN3A_0710,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0033,JCVISYN3A_0439,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0146,JCVISYN3A_0373,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0440,JCVISYN3A_0636,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0296,JCVISYN3A_0478,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0326,JCVISYN3A_0373,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0034,JCVISYN3A_0479,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0250,JCVISYN3A_0346,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0439,JCVISYN3A_0636,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0373,JCVISYN3A_0777,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0330,JCVISYN3A_0382,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0033,JCVISYN3A_0440,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0346,JCVISYN3A_0373,A2_paralog_loose,ESM-2 cosine 0.988 (v15-nonessential pool)
+JCVISYN3A_0346,JCVISYN3A_0827,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0164,JCVISYN3A_0235,A2_paralog_loose,ESM-2 cosine 0.985 (v15-nonessential pool)
+JCVISYN3A_0379,JCVISYN3A_0599,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0778,JCVISYN3A_0852,A2_paralog_loose,ESM-2 cosine 0.986 (v15-nonessential pool)
+JCVISYN3A_0398,JCVISYN3A_0835,A2_paralog_loose,ESM-2 cosine 0.983 (v15-nonessential pool)
+JCVISYN3A_0286,JCVISYN3A_0326,A2_paralog_loose,ESM-2 cosine 0.983 (v15-nonessential pool)
+JCVISYN3A_0346,JCVISYN3A_0623,A2_paralog_loose,ESM-2 cosine 0.983 (v15-nonessential pool)
+JCVISYN3A_0138,JCVISYN3A_0827,A2_paralog_loose,ESM-2 cosine 0.981 (v15-nonessential pool)
+JCVISYN3A_0143,JCVISYN3A_0827,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0516,JCVISYN3A_0827,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0033,JCVISYN3A_0108,A2_paralog_loose,ESM-2 cosine 0.985 (v15-nonessential pool)
+JCVISYN3A_0398,JCVISYN3A_0827,A2_paralog_loose,ESM-2 cosine 0.986 (v15-nonessential pool)
+JCVISYN3A_0296,JCVISYN3A_0479,A2_paralog_loose,ESM-2 cosine 0.981 (v15-nonessential pool)
+JCVISYN3A_0005,JCVISYN3A_0827,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0346,JCVISYN3A_0777,A2_paralog_loose,ESM-2 cosine 0.985 (v15-nonessential pool)
+JCVISYN3A_0325,JCVISYN3A_0691,A2_paralog_loose,ESM-2 cosine 0.986 (v15-nonessential pool)
+JCVISYN3A_0143,JCVISYN3A_0346,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0116,JCVISYN3A_0827,A2_paralog_loose,ESM-2 cosine 0.983 (v15-nonessential pool)
+JCVISYN3A_0248,JCVISYN3A_0296,A2_paralog_loose,ESM-2 cosine 0.987 (v15-nonessential pool)
+JCVISYN3A_0250,JCVISYN3A_0530,A2_paralog_loose,ESM-2 cosine 0.985 (v15-nonessential pool)
+JCVISYN3A_0143,JCVISYN3A_0164,A2_paralog_loose,ESM-2 cosine 0.985 (v15-nonessential pool)
+JCVISYN3A_0478,JCVISYN3A_0622,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0530,JCVISYN3A_0623,A2_paralog_loose,ESM-2 cosine 0.985 (v15-nonessential pool)
+JCVISYN3A_0164,JCVISYN3A_0379,A2_paralog_loose,ESM-2 cosine 0.984 (v15-nonessential pool)
+JCVISYN3A_0778,JCVISYN3A_0830,A2_paralog_loose,ESM-2 cosine 0.985 (v15-nonessential pool)
+JCVISYN3A_0538,JCVISYN3A_0778,A2_paralog_loose,ESM-2 cosine 0.981 (v15-nonessential pool)
+JCVISYN3A_0116,JCVISYN3A_0777,A2_paralog_loose,ESM-2 cosine 0.986 (v15-nonessential pool)
+JCVISYN3A_0033,JCVISYN3A_0835,A2_paralog_loose,ESM-2 cosine 0.987 (v15-nonessential pool)
+JCVISYN3A_0235,JCVISYN3A_0379,A2_paralog_loose,ESM-2 cosine 0.987 (v15-nonessential pool)
+JCVISYN3A_0296,JCVISYN3A_0516,A2_paralog_loose,ESM-2 cosine 0.983 (v15-nonessential pool)
+JCVISYN3A_0286,JCVISYN3A_0346,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0164,JCVISYN3A_0248,A2_paralog_loose,ESM-2 cosine 0.987 (v15-nonessential pool)
+JCVISYN3A_0601,JCVISYN3A_0778,A2_paralog_loose,ESM-2 cosine 0.985 (v15-nonessential pool)
+JCVISYN3A_0388,JCVISYN3A_0827,A2_paralog_loose,ESM-2 cosine 0.985 (v15-nonessential pool)
+JCVISYN3A_0143,JCVISYN3A_0479,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0146,JCVISYN3A_0346,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0479,JCVISYN3A_0827,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0033,JCVISYN3A_0479,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0249,JCVISYN3A_0296,A2_paralog_loose,ESM-2 cosine 0.982 (v15-nonessential pool)
+JCVISYN3A_0164,JCVISYN3A_0830,A2_paralog_loose,ESM-2 cosine 0.983 (v15-nonessential pool)
+JCVISYN3A_0305,JCVISYN3A_0381,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0381,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0444,JCVISYN3A_0479,B2_shared_substrate,shared SBML reactant metabolite (M_ala4_c); v15-nonessential pool
+JCVISYN3A_0381,JCVISYN3A_0479,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0493,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0139,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0133,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0444,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0305,JCVISYN3A_0133,B2_shared_substrate,shared SBML reactant metabolite (M_ala4_c); v15-nonessential pool
+JCVISYN3A_0495,JCVISYN3A_0330,B2_shared_substrate,shared SBML reactant metabolite (M_atp_c); v15-nonessential pool
+JCVISYN3A_0227,JCVISYN3A_0479,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0305,JCVISYN3A_0139,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0330,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_atp_c); v15-nonessential pool
+JCVISYN3A_0493,JCVISYN3A_0305,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0495,JCVISYN3A_0382,B2_shared_substrate,shared SBML reactant metabolite (M_atp_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0495,B2_shared_substrate,shared SBML reactant metabolite (M_atp_c); v15-nonessential pool
+JCVISYN3A_0726,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0493,JCVISYN3A_0479,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0330,B2_shared_substrate,shared SBML reactant metabolite (M_atp_c); v15-nonessential pool
+JCVISYN3A_0133,JCVISYN3A_0444,B2_shared_substrate,shared SBML reactant metabolite (M_ala4_c); v15-nonessential pool
+JCVISYN3A_0878,JCVISYN3A_0876,B2_shared_substrate,shared SBML reactant metabolite (M_ala__L_e); v15-nonessential pool
+JCVISYN3A_0305,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0305,JCVISYN3A_0479,B2_shared_substrate,shared SBML reactant metabolite (M_ala4_c); v15-nonessential pool
+JCVISYN3A_0493,JCVISYN3A_0139,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0133,JCVISYN3A_0381,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0493,JCVISYN3A_0444,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0305,JCVISYN3A_0444,B2_shared_substrate,shared SBML reactant metabolite (M_ala4_c); v15-nonessential pool
+JCVISYN3A_0139,JCVISYN3A_0381,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0479,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0139,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0726,JCVISYN3A_0444,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0493,JCVISYN3A_0726,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0305,JCVISYN3A_0726,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_atp_c); v15-nonessential pool
+JCVISYN3A_0495,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_atp_c); v15-nonessential pool
+JCVISYN3A_0726,JCVISYN3A_0139,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0382,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_atp_c); v15-nonessential pool
+JCVISYN3A_0726,JCVISYN3A_0381,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0133,JCVISYN3A_0726,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0133,JCVISYN3A_0479,B2_shared_substrate,shared SBML reactant metabolite (M_ala4_c); v15-nonessential pool
+JCVISYN3A_0493,JCVISYN3A_0401,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0444,JCVISYN3A_0381,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0133,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0726,JCVISYN3A_0479,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0493,JCVISYN3A_0381,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0381,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0444,JCVISYN3A_0139,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0382,B2_shared_substrate,shared SBML reactant metabolite (M_atp_c); v15-nonessential pool
+JCVISYN3A_0133,JCVISYN3A_0139,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0305,JCVISYN3A_0401,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0139,JCVISYN3A_0479,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0444,JCVISYN3A_0227,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0726,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0493,JCVISYN3A_0133,B2_shared_substrate,shared SBML reactant metabolite (M_h2o_c); v15-nonessential pool
+JCVISYN3A_0305,JCVISYN3A_0878,C2_shared_product,shared SBML product metabolite (M_ala__L_c); v15-nonessential pool
+JCVISYN3A_0726,JCVISYN3A_0330,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0435,JCVISYN3A_0726,C2_shared_product,shared SBML product metabolite (M_f6p_c); v15-nonessential pool
+JCVISYN3A_0878,JCVISYN3A_0479,C2_shared_product,shared SBML product metabolite (M_ala__L_c); v15-nonessential pool
+JCVISYN3A_0697,JCVISYN3A_0878,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0878,JCVISYN3A_0330,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0697,JCVISYN3A_0330,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0305,JCVISYN3A_0876,C2_shared_product,shared SBML product metabolite (M_ala__L_c); v15-nonessential pool
+JCVISYN3A_0479,JCVISYN3A_0876,C2_shared_product,shared SBML product metabolite (M_ala__L_c); v15-nonessential pool
+JCVISYN3A_0228,JCVISYN3A_0876,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0495,JCVISYN3A_0876,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0697,JCVISYN3A_0382,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0878,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0878,JCVISYN3A_0444,C2_shared_product,shared SBML product metabolite (M_ala__L_c); v15-nonessential pool
+JCVISYN3A_0697,JCVISYN3A_0227,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0878,JCVISYN3A_0495,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0228,JCVISYN3A_0495,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0697,JCVISYN3A_0876,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0401,JCVISYN3A_0228,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0697,JCVISYN3A_0495,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0878,JCVISYN3A_0228,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0228,JCVISYN3A_0382,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0726,JCVISYN3A_0495,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0726,JCVISYN3A_0876,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0444,JCVISYN3A_0876,C2_shared_product,shared SBML product metabolite (M_ala__L_c); v15-nonessential pool
+JCVISYN3A_0382,JCVISYN3A_0876,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0228,JCVISYN3A_0330,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0697,JCVISYN3A_0726,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0878,JCVISYN3A_0227,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0228,JCVISYN3A_0726,C2_shared_product,shared SBML product metabolite (M_h_c); v15-nonessential pool
+JCVISYN3A_0133,JCVISYN3A_0878,C2_shared_product,shared SBML product metabolite (M_ala__L_c); v15-nonessential pool
+JCVISYN3A_0164,JCVISYN3A_0400,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0424,JCVISYN3A_0431,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0381,JCVISYN3A_0853,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0080,JCVISYN3A_0623,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0777,JCVISYN3A_0887,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0399,JCVISYN3A_0887,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0004,JCVISYN3A_0143,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0835,JCVISYN3A_0887,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0350,JCVISYN3A_0696,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0043,JCVISYN3A_0623,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0853,JCVISYN3A_0931,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0046,JCVISYN3A_0853,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0601,JCVISYN3A_0918,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0495,JCVISYN3A_0853,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0029,JCVISYN3A_0346,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0248,JCVISYN3A_0887,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0033,JCVISYN3A_0350,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0063,JCVISYN3A_0622,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0286,JCVISYN3A_0874,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0623,JCVISYN3A_0913,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0034,JCVISYN3A_0887,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0054,JCVISYN3A_0440,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0143,JCVISYN3A_0361,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0063,JCVISYN3A_0479,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0263,JCVISYN3A_0777,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0696,JCVISYN3A_0918,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0494,JCVISYN3A_0505,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0399,JCVISYN3A_0400,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0143,JCVISYN3A_0298,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0623,JCVISYN3A_0931,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0286,JCVISYN3A_0872,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0435,JCVISYN3A_0601,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0439,JCVISYN3A_0493,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0346,JCVISYN3A_0400,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0593,JCVISYN3A_0821,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0296,JCVISYN3A_0732,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0605,JCVISYN3A_0874,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0440,JCVISYN3A_0495,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0227,JCVISYN3A_0593,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0154,JCVISYN3A_0853,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0732,JCVISYN3A_0852,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0228,JCVISYN3A_0505,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0281,JCVISYN3A_0838,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0732,JCVISYN3A_0777,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0435,JCVISYN3A_0440,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0033,JCVISYN3A_0887,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0215,JCVISYN3A_0346,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0605,JCVISYN3A_0726,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0004,JCVISYN3A_0439,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0350,JCVISYN3A_0398,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0063,JCVISYN3A_0503,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0373,JCVISYN3A_0433,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0063,JCVISYN3A_0379,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0326,JCVISYN3A_0692,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0376,JCVISYN3A_0493,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0440,JCVISYN3A_0692,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0029,JCVISYN3A_0623,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0777,JCVISYN3A_0874,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0004,JCVISYN3A_0777,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0305,JCVISYN3A_0332,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0332,JCVISYN3A_0400,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0248,JCVISYN3A_0726,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0296,JCVISYN3A_0350,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0033,JCVISYN3A_0692,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0388,JCVISYN3A_0726,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0029,JCVISYN3A_0286,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0143,JCVISYN3A_0874,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0434,JCVISYN3A_0439,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0080,JCVISYN3A_0732,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0511,JCVISYN3A_0838,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0326,JCVISYN3A_0913,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0605,JCVISYN3A_0838,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0593,JCVISYN3A_0872,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0525,JCVISYN3A_0593,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0329,JCVISYN3A_0346,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0376,JCVISYN3A_0732,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0409,JCVISYN3A_0439,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0054,JCVISYN3A_0146,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0697,JCVISYN3A_0732,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
+JCVISYN3A_0326,JCVISYN3A_0525,D2_random_baseline,"negative control: no shared SBML metabolite, ESM-2 cosine < 0.88"
