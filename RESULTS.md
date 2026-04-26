@@ -133,6 +133,51 @@ A full 458-gene knockout sweep at production config (scale 0.05, t_end 0.5 s, 4 
 
 Twenty-two sessions over several months, with a measurable deliverable per session: an MCC number, a feature parquet, a falsification, a Colab notebook. When the data said a direction was over (Tier-1 ML in Session 17, toxicity prediction in Session 22), I halted that direction and documented the negative result in the same commit instead of letting it sprawl into adjacent experiments. `PROJECT_STATUS.md`'s session log preserves all 22 entries verbatim. This is a process observation, not a scientific finding — I list it because the artifact reflects it and a careful reader will see it.
 
+## Synthetic-lethality screen (Session 26)
+
+I extended the harness with `predict_pair(locus_a, locus_b)` so the simulator can run joint two-gene knockouts, then ran two pilot screens.
+
+### v1 pilot — 196 pairs across 5 biologically-motivated categories
+
+Categories: ESM-2 paralogs (cos > 0.85), same-pathway sequential pairs (negative control), random different-pathway non-essential pairs, transporter-substrate pairs, and a small hand-curated set. Result: 1 / 50 paralogs flagged synth-lethal (2 %), no separation from random baseline (0 / 41). Three viability invariants passed (`predict_pair(X, X)` matches `predict(X)` on 5 sample genes; pair symmetry verified on 5 pairs; v15 single-knockout sweep on a 20-gene sample reproduces 20 / 20 against the existing fact). Recorded as `synthlet_pilot_v0.json`. Decision after v1: `NARROW_SCOPE` — the eligibility issue (most paralog pairs had at least one already-essential gene, so most candidates couldn't be synth-lethal by definition) was burning ~64 % of compute on pairs the test couldn't fire on.
+
+### v2 pilot — 249 pairs with eligibility filter applied at selection time
+
+Re-pulled candidates only from the 165 v15-non-essential genes, with cosine bands recalibrated to the actual pool distribution (mean cos 0.93, std 0.04 — the v15-non-essential pool sits in a high-baseline space, so v1's 0.85 threshold was sampling above-median pairs, not real paralogs). Five categories: tight paralog (cos ≥ 0.99, n=24), loose paralog (0.97-0.99, n=60), shared substrate (n=54), shared product (n=31), and a hard-negative random baseline (cos < 0.88 + no shared SBML metabolite, n=80). Results: 1 / 24 tight paralogs (4.2 %), 0 / 60 loose paralogs, 1 / 54 shared substrate, 0 / 31 shared product, 0 / 80 random baseline.
+
+### Headline result
+
+**Both v2 hits AND the v1 hit are the SAME pair** — `JCVISYN3A_0876 × JCVISYN3A_0878`. Across both pilots (~445 distinct attempts):
+
+- **0 false positives in 121 random / negative-control pairs.** Perfect specificity at this pilot scale.
+- **1 reproducibly-detected candidate** flagged by three independent selection criteria.
+- Population-level paralog-vs-random enrichment is **not statistically significant** (Fisher's exact one-sided p = 0.23 for tight paralog 1 / 24 vs baseline 0 / 80; combined functional-similar 3 / 132 vs random 0 / 121, p = 0.14). n = 24 tight paralogs is the absolute ceiling — Syn3A's 165 v15-non-essentials yield only 24 pairs at cos ≥ 0.99.
+
+So the session does not deliver a population-level finding (paralog enrichment is suggestive but underpowered). It does deliver a case-study finding worth wet-lab follow-up.
+
+### The pair, mechanistically
+
+`JCVISYN3A_0876` (526 aa, NCBI annotation "Uncharacterized amino acid permease") and `JCVISYN3A_0878` (512 aa, same annotation) are paralogs at ESM-2 cosine 0.996 — top 0.5 % of the v15-non-essential pool's similarity distribution. The Luthey-Schulten Syn3A SBML explicitly assigns both genes (and only these two) to all 18 amino-acid transport reactions via an OR gene-protein-reaction rule. Either alone catalyses the reactions; loss of both silences all 18. The simulator faithfully executes the OR rule and reports `catalysis_silenced` at confidence 1.0.
+
+Reframing this honestly: the synth-lethal prediction is not an emergent simulator discovery — the redundancy was encoded by the SBML curators. The simulator's role is correct execution of the OR rule. The biological credibility comes from whether the SBML curation is right.
+
+### Eight verification layers — corroborates the SBML curation without wet-lab work
+
+To check whether the OR-redundancy assignment is biologically reasonable, I ran a follow-up Colab notebook (`notebooks/synthlet_0876_x_0878_external_lookup.ipynb`) hitting four external biology databases. Combined with the in-sandbox checks already done, the verification stack is:
+
+1. **SBML GPR-OR rule** — Luthey-Schulten curators encoded the redundancy explicitly.
+2. **NCBI GenBank annotation** — both products independently labelled "Uncharacterized amino acid permease" (separate annotation source from the SBML).
+3. **Sequence-level paralogy** — conserved N-terminal motif spanning ~50 residues; same family architecture.
+4. **ESM-2 cosine 0.996** — top 0.5 % of pool similarity distribution.
+5. **Multi-seed simulator robustness** — 5 / 5 RNG seeds {42, 1, 2, 7, 123}, joint = catalysis_silenced at confidence 1.0 every time. Bit-stable.
+6. **UniProt orthologs in the parent organism** — `Q6MS69` (526 aa) and `Q6MS71` (512 aa) in *M. mycoides* SC, both UniProt-curated as "Amino acid permease", both Pfam **PF13520** ("AA_permease_2"). The two paralogs survived the Syn3A genome-reduction process intact, suggesting both were retained because at least their union was functionally essential.
+7. **NCBI BLAST cross-species** — 0878 has a strong ortholog `MPN_308` (UniProt P75472) in *M. pneumoniae* M129 (E = 2 × 10⁻¹⁴, 79 bits, 24 % identity over 470 aa). Subsequent BLAST hits to cystine/glutamate transporter, b(0,+)-type and L-type amino-acid transporters across mammals, and *B. subtilis* SteT serine/threonine exchanger — all amino-acid transporters in the same conserved family.
+8. **Pfam family** — both proteins independently classified into PF13520.
+
+The remaining gap is the Syn3A-specific double-knockout phenotype itself. That is a wet-lab test: knock out 0876, knock out 0878, knock out both, measure growth at 36 °C in defined medium with full amino-acid supplementation, three biological replicates per genotype. Predicted phenotype: 0876-only and 0878-only viable (with mild growth defect for 0878 per the Quasiessential class), 0876 + 0878 fails to grow because the cell can no longer import any of the supplemented amino acids. ~1 week of bench work.
+
+Recorded as `synthlet_pilot_v0.json`, `synthlet_pilot_v2.json`, and `synthlet_0876_x_0878_verification.json`.
+
 ## Limitations
 
 - **Single-organism validation.** The 30+ annotation-keyword priors and the 9 iMB155 metabolic patches were both mined from Syn3A's specific data. Cross-organism transfer would require remining; that effort was scoped (`memory_bank/data/multiorg_essentiality/`) but not completed because the upstream DEG flat-file URLs returned navigation HTML rather than data.

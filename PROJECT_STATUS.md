@@ -8,9 +8,11 @@ _Current state on top; full session log below the horizontal rule._
 
 **Branch:** `claude/syn3a-whole-cell-simulator-REjHC`. HEAD at the start of Session 26: `8df8fb0`.
 
-**Tests:** 249 passing in the sandbox suite (235 baseline + 14 Session-26 pairwise harness tests; excludes `test_end_to_end.py` / `test_esm2_extractor.py` / `test_mace_off_extractor.py` which need optional GPU/matplotlib deps). Invariant checker passes with 50 facts, 12 sources.
+**Tests:** 249 passing in the sandbox suite (235 baseline + 14 Session-26 pairwise harness tests; excludes `test_end_to_end.py` / `test_esm2_extractor.py` / `test_mace_off_extractor.py` which need optional GPU/matplotlib deps). Invariant checker passes with 52 facts, 12 sources.
 
 **Comparison to existing work:** matches but does not exceed the Breuer 2019 FBA benchmark (MCC 0.59) on the same labels. Faster by orders of magnitude than the Thornburg 2022 / 2026 whole-cell models.
+
+**Case-study synth-lethal prediction (Session 26):** `JCVISYN3A_0876 × JCVISYN3A_0878` flagged synthetic-lethal across two pilot screens (~445 attempts) by three independent selection criteria, with 0 false positives in 121 random-pair negative controls. The pair is corroborated by an 8-layer external verification stack: SBML curation, NCBI GenBank annotation, sequence-level paralogy, ESM-2 cosine 0.996, multi-seed simulator robustness (5/5 seeds), UniProt orthologs Q6MS69/Q6MS71 in *M. mycoides* SC (both Pfam PF13520), NCBI BLAST cross-species (0878 → MPN_308 in *M. pneumoniae*, E=2e-14), and Pfam family PF13520 ("AA_permease_2"). Population-level paralog-vs-random enrichment is NOT statistically significant (Fisher one-sided p=0.23) — n=24 tight paralogs is the absolute ceiling. Wet-lab follow-up: double knockout in Syn3A, ~1 week. Source facts: `synthlet_pilot_v0.json`, `synthlet_pilot_v2.json`, `synthlet_0876_x_0878_verification.json`.
 
 ## Documented negative results
 
@@ -22,13 +24,14 @@ These bound the search. Full diagnoses in `RESULTS.md`.
 - **Synthetic-lethality pilot v1 — methodology works, signal-to-noise too low at pilot density.** 196 biologically-curated pairs across 5 categories (paralog / same-pathway / random / transporter-substrate / manual). Session-26 viability invariants 1-3 all pass; halt criteria (Cat-B < 15 %, Cat-C < 10 %) all pass. But paralog synth-lethality rate 2.0 % (1/50) does not separate from random baseline 0.0 % (0/41). Recorded as `synthlet_pilot_v0.json`.
 - **Synthetic-lethality pilot v2 — case-study finding, no population-level enrichment.** Re-ran with the eligibility filter applied at pair-selection time (both genes must be v15-non-essential) and ESM-2 cosine bands recalibrated to the actual pool distribution (mean 0.93, std 0.04). 249 pairs across 5 categories. Tight paralog (cos≥0.99) 1/24 = 4.2 %; loose paralog (0.97-0.99) 0/60 = 0 %; shared substrate 1/54 = 1.85 %; shared product 0/31; random baseline (cos<0.88 + no shared metabolite) 0/80. Both v2 hits AND the v1 hit are the same pair: **JCVISYN3A_0876 × JCVISYN3A_0878**, paralogous unannotated proteins (ESM-2 cosine 0.996) whose joint knockout silences all 18 amino-acid transport rules in the SBML. Combined v1+v2: 0 false positives in 121 random pairs (perfect specificity at this scale); 1 reproducible candidate identified by three independent selection criteria. Fisher's exact one-sided p = 0.23 (A2_tight vs D2_baseline) — NOT statistically significant for population enrichment, but the pair itself is a wet-lab-testable case-study finding. Recorded as `synthlet_pilot_v2.json`.
 
-## What's next (three honest options)
+## What's next (four honest options)
 
-1. **Multi-organism essentiality predictor.** Pulling labelled essentiality data for *E. coli* / *B. subtilis* / *M. pneumoniae* / *M. genitalium* / Syn3A into one ~10,100-row matrix changes the supervised-learning regime. Curation Colab notebook exists but DEG flat-file URLs went stale; replacing them is the unblocking step.
+1. **Wet-lab double-knockout test of `JCVISYN3A_0876 × _0878`.** Three biological replicates per genotype (single, single, double, wild-type) on defined medium with full amino-acid supplementation; growth at 36 °C; ~1 week of bench work. The most concrete single experiment this work points at, with 8 layers of computational corroboration backing it.
 2. **Wet-lab audit of the 3 stubborn false positives.** Single-gene knockout at 36 °C, three biological replicates per gene, ~1 week. Resolves whether the simulator has a bug or Breuer's labels are at the assay boundary.
-3. **Detector-parameter sensitivity sweep.** Several hyperparameters (`min_wt_events`, `_UNGATED_TOKEN_COUNT`, saturation thresholds) chosen by pilot runs and not systematically swept. Pure-compute task that doesn't need new wet-lab data.
+3. **Multi-organism essentiality predictor.** Pulling labelled essentiality data for *E. coli* / *B. subtilis* / *M. pneumoniae* / *M. genitalium* / Syn3A into one ~10,100-row matrix changes the supervised-learning regime. Curation Colab notebook exists but DEG flat-file URLs went stale; replacing them is the unblocking step.
+4. **Full eligible-pool synth-lethality screen.** All C(165, 2) = 13,530 v15-non-essential pairs through the same pipeline. ~19 h wall on 4 workers. Likely returns 1-5 unique synth-lethal pairs (most being variants of 0876 × 0878), with much narrower confidence bounds on population-level enrichment.
 
-A fourth direction — extending Layer 2 (`gene_expression.py`) with translation-inhibition kinetics to revive the toxicity work — is documented as a 3-6 week full-time-equivalent scope expansion and not recommended without external pull.
+A fifth direction — extending Layer 2 (`gene_expression.py`) with translation-inhibition kinetics to revive the toxicity work — is documented as a 3-6 week full-time-equivalent scope expansion and not recommended without external pull.
 
 ## Presentation status
 

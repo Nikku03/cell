@@ -14,9 +14,10 @@ A three-layer pipeline that simulates a single bacterial cell stochastically (Gi
 
 - **Matthews Correlation Coefficient = 0.537** against Breuer 2019's experimental labels on all 455 Syn3A genes. This is comparable to but does not exceed Breuer's own FBA-based benchmark (MCC 0.59).
 - **287 true positives, 3 false positives, 69 true negatives, 96 false negatives** — precision is essentially perfect (0.990); the gap is recall (0.749).
-- **The same 3 false-positive genes have persisted from version 12 onwards** (tracked in `memory_bank/facts/measured/mcc_against_breuer_v15_round2_priors.json`). They're the cleanest wet-lab targets in this work — see "What this taught me" below.
+- **The same 3 false-positive genes have persisted from version 12 onwards** (tracked in `memory_bank/facts/measured/mcc_against_breuer_v15_round2_priors.json`). They're a wet-lab target in this work — see "What this taught me" below.
 - **Multi-seed reproducibility verified** — the same simulator at three different RNG seeds produces bit-identical confusion matrices (zero variance).
-- **Three documented negative results** make the positive number more credible — see `RESULTS.md` for full diagnoses.
+- **Reproducibly-detected synthetic-lethal pair: `JCVISYN3A_0876 × JCVISYN3A_0878`.** I extended the harness for pairwise knockouts and ran two pilot screens (~445 distinct pairs total). The same pair was flagged by three independent selection criteria with confidence 1.0, against zero false positives in 121 random-pair negative controls. The pair is corroborated by an 8-layer external verification stack including UniProt-curated orthologs in *M. mycoides* SC (Q6MS69 + Q6MS71, Pfam family PF13520 "AA_permease_2") and a strong NCBI BLAST hit to *M. pneumoniae* MPN_308 (E=2e-14). Population-level paralog-vs-random enrichment is NOT statistically significant (Fisher one-sided p=0.23) — n=24 tight paralogs is too small. The pair itself is a wet-lab-testable double-knockout hypothesis.
+- **Three documented negative results** are recorded as measured facts — see `RESULTS.md` for full diagnoses.
 
 ## What this project does that others don't
 
@@ -55,13 +56,15 @@ The data is checked in as CSVs and the matplotlib generation scripts are also co
 
 ## What this taught me, and why I'm applying for wet-lab positions
 
-This project sits at the boundary between computational prediction and experimental biology, and what I learned most clearly is that **the predictions need wet-lab tests to mean anything**. Three concrete examples from this work that would be testable at the bench:
+This project sits at the boundary between computational prediction and experimental biology, and what I learned most clearly is that **the predictions need wet-lab tests to mean anything**. Four concrete experiments from this work that would be testable at the bench:
 
-1. **The 3 stubborn false positives.** Three Syn3A genes are persistently called essential by every detector version since v12, but Breuer 2019 labels them nonessential. Either the simulator has a bug for those genes, or Breuer's labels sit at the boundary of what their growth assay could resolve. A single-gene knockout repeat in the JCVI-Syn3A line — checking growth rate at 36 °C across three independent biological replicates — would tell which it is. That's a one-week wet-lab experiment.
+1. **The reproducible synthetic-lethal pair `JCVISYN3A_0876 × JCVISYN3A_0878`.** Across 445 distinct pair attempts in two pilot screens, the same pair was flagged synthetic-lethal by three independent selection criteria, against zero false positives in 121 random-pair controls. Each gene alone is dispensable (0876 Nonessential, 0878 Quasiessential per Breuer 2019); under joint knockout the simulator silences all 18 amino-acid transport reactions. The two genes have UniProt-curated orthologs in *M. mycoides* SC (Q6MS69 + Q6MS71, both "Amino acid permease", both Pfam PF13520 "AA_permease_2"), and 0878 has a strong BLAST hit to *M. pneumoniae* MPN_308 (E=2e-14). The wet-lab test: double-knockout in JCVI-Syn3A, growth at 36 °C in defined medium with full amino-acid supplementation, three biological replicates. Predicted phenotype: 0876-only and 0878-only viable (mild defect for 0878), but 0876 + 0878 fails to grow because amino-acid uptake collapses. ~1 week of bench work.
 
-2. **The 96 false negatives, especially the "Uncharacterized" pool.** 84 of the 96 misses are genes annotated only as "Uncharacterized" / "putative" / "hypothetical" — the keyword-prior detectors can't help by construction. A targeted reverse-genetics approach (CRISPRi knockdown of the candidate set in *M. genitalium* as a more tractable proxy organism) would identify which of these are genuinely essential and let the simulator's knowledge base be expanded.
+2. **The 3 stubborn false positives.** Three Syn3A genes are persistently called essential by every detector version since v12, but Breuer 2019 labels them nonessential. Either the simulator has a bug for those genes, or Breuer's labels sit at the boundary of what their growth assay could resolve. A single-gene knockout repeat in the JCVI-Syn3A line — checking growth rate at 36 °C across three independent biological replicates — would tell which it is.
 
-3. **The trxA / hupA / recR specific failures.** These 3 genes are functionally characterised (thioredoxin, DNA-binding HU protein, recombination-repair RecR) but the simulator doesn't capture their essentiality — likely because the failure manifests on biological timescales longer than the 0.5-second simulated window. A growth-curve experiment at varying simulation times, ideally with single-cell tracking, would tell us how long after knockout these failures actually appear.
+3. **The 96 false negatives, especially the "Uncharacterized" pool.** 84 of the 96 misses are genes annotated only as "Uncharacterized" / "putative" / "hypothetical" — the keyword-prior detectors can't help by construction. A targeted reverse-genetics approach (CRISPRi knockdown of the candidate set in *M. genitalium* as a more tractable proxy organism) would identify which of these are genuinely essential and let the simulator's knowledge base be expanded.
+
+4. **The trxA / hupA / recR specific failures.** These 3 genes are functionally characterised (thioredoxin, DNA-binding HU protein, recombination-repair RecR) but the simulator doesn't capture their essentiality — likely because the failure manifests on biological timescales longer than the 0.5-second simulated window. A growth-curve experiment at varying simulation times, ideally with single-cell tracking, would tell us how long after knockout these failures actually appear.
 
 Each of these is the kind of computational-prediction-meets-bench-experiment work I want to do during a wet-lab internship. The simulator generates testable hypotheses; the wet lab is where they get answered. I'd rather contribute to one of those experiments than write a fourth detector version.
 
@@ -71,9 +74,11 @@ Each of these is the kind of computational-prediction-meets-bench-experiment wor
 |---|---|
 | `cell_sim/` | The simulator (~10,400 lines): Layer 0 genome → Layer 2 Gillespie → Layer 3 reactions → Layer 6 detectors |
 | `cell_sim/layer6_essentiality/composed_detector.py` | The v15 essentiality detector — current best |
+| `cell_sim/layer6_essentiality/harness.py` | Knockout harness with both single and pairwise (synth-lethality) modes |
 | `cell_sim/features/cache/` | Tier-1 ML features (ESM-2, ESMFold, MACE-OFF) for downstream work |
 | `scripts/run_sweep_parallel.py` | Driver for the full 455-gene knockout sweep |
-| `memory_bank/facts/measured/` | 47 fact JSONs, one per measurement; every claim traces here |
+| `scripts/synthlet_pilot_v2_pairs.py` + `scripts/run_synthlet_pilot.py` | Synth-lethality screening pipeline |
+| `memory_bank/facts/measured/` | 52 fact JSONs, one per measurement; every claim traces here |
 | `memory_bank/.invariants/check.py` | Validates the fact graph; runs in <1 s |
 | `figures/` | Plot-ready CSV data + matplotlib scripts |
 | `RESULTS.md` | Longer scientific summary |
