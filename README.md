@@ -122,7 +122,8 @@ This project depends on open work from several research groups:
 - **Hutchison et al. 2016, *Science*** — the JCVI-Syn3.0 minimal cell paper itself.
 - **Meta AI** — `facebook/esm2_t33_650M_UR50D` for ESM-2 protein embeddings; `facebook/esmfold_v1` for structure prediction.
 - **Cambridge / Oxford MACE-OFF developers** — the foundation model used for substrate-bond-energy estimation.
-- **Anthropic** — Claude Code was used as a development assistant throughout the project. All scientific decisions, biological interpretations, and final results are mine; tooling helped with implementation, debugging, and documentation drafts.
+
+**Anthropic.** I used Claude Code (Anthropic's coding assistant) as a development tool throughout this project. The scientific decisions are mine: when to halt directions that weren't working (Tier-1 ML stacking in Session 17, toxicity prediction at Gate B in Session 22, the v1 synthetic-lethality pilot's NARROW_SCOPE call after the eligibility issue surfaced); which experiments mattered (re-running the synth-lethality pilot in v2 with an eligibility filter applied at selection time; running 8 cheap external verification layers on the 0876 × 0878 pair instead of committing to the 19-hour full screen; shipping at MCC 0.537 rather than chasing Breuer's 0.59 brief by piling on more Syn3A-specific priors); and how to interpret the results (the SBML reframing of the 0876 × 0878 synthetic-lethal finding from "emergent simulator discovery" to "the simulator faithfully executing a curator-supplied OR rule, with the biological credibility coming from the SBML curation itself"). The AI helped me write code faster, debug stuck pipelines, draft documentation, and cross-check my reasoning against the existing fact graph. What one undergraduate can build with this kind of assistance is larger than it was five years ago, and I tried to use that productively while keeping the scientific judgement human.
 
 ## Status & limitations
 
