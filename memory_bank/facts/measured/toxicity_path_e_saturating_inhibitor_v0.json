@@ -1,0 +1,119 @@
+{
+  "id": "toxicity_path_e_saturating_inhibitor_v0",
+  "claim": "Path E reframes the toxicity-prediction direction halted at Gate B (Session 22) as a saturating-inhibitor analysis on already-computed v15 single-knockout predictions. Treats compound that fully inhibits enzyme X as equivalent to knockout of gene X — bypasses the need to extend Layer 2 with kinetic inhibition rate laws. Identifies 6 SBML-encoded enzymes that ARE canonical antibiotic drug targets (contradicting Gate B's '0 of 155' claim, which was triggered by a too-narrow regex pattern in the Session-22 notebook): JCVISYN3A_0519 (ileRS / mupirocin target), JCVISYN3A_0634 (leuRS / tavaborole target), JCVISYN3A_0012 (metRS / REP3123 target), JCVISYN3A_0045 (tmk / dTMP-kinase nucleoside-analog target), JCVISYN3A_0076 (asnRS / tirandamycin-family target), JCVISYN3A_0819 (trxB thioredoxin-disulfide reductase / auranofin target). All six are v15-essential AND Breuer-essential. The Path E saturating-inhibitor verdict is CONSISTENT for all six — the simulator predicts cell death under saturating inhibition, matching the Breuer single-knockout phenotype. The next step is per-compound published-MIC lookup against Mycoplasma species (notebooks/toxicity_path_e_mic_lookup.ipynb, Colab) to compare predicted-toxic concentration ranges against literature MIC values.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible by inspecting cell_sim/data/Minimal_Cell_ComplexFormation/input_data/Syn3A_updated.xml + cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb against the v15 prediction CSV (outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v15_round2_priors.csv). Output: outputs/toxicity/path_e_targets.csv (6 rows). The drug-target enzyme list was identified via gene-name + product-description regex against documented antibiotic targets in primary literature (Mupirocin: Hughes 1980 Antibiot; tavaborole / GSK2251052: Hernandez 2013 ACS Chem Biol; REP3123: Critchley 2009 J Antimicrob Chemother; auranofin: Harbut 2015 PNAS; dTMP kinase + asnRS: review-level coverage in Pohane 2018 Front Microbiol).",
+  "last_verified": "2026-04-26",
+  "context": {
+    "entity": "toxicity_prediction_research_direction",
+    "version": "path_e_v0.1.0"
+  },
+  "dependencies": [
+    "toxicity_gate_b_halted_negative_finding",
+    "mcc_against_breuer_v15_round2_priors",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "outputs/toxicity/path_e_targets.csv",
+    "notebooks/toxicity_path_e_mic_lookup.ipynb"
+  ],
+  "value": {
+    "n_drug_target_enzymes_in_sbml": 6,
+    "drug_target_enzymes": [
+      {
+        "locus": "JCVISYN3A_0519",
+        "gene": "ileRS",
+        "enzyme": "isoleucyl-tRNA synthetase",
+        "sbml_reaction": "ILETRS",
+        "v15_essential": 1,
+        "v15_failure_mode": "translation_stall",
+        "breuer_class": "Essential",
+        "canonical_drug": "Mupirocin (pseudomonic acid A)",
+        "drug_class": "FDA-approved topical antibiotic",
+        "mechanism": "Competitive ileRS inhibitor; freezes the enzyme in the isoleucyl-AMP-bound state",
+        "path_e_verdict": "CONSISTENT (essential by both v15 and Breuer; saturating mupirocin predicted toxic)"
+      },
+      {
+        "locus": "JCVISYN3A_0634",
+        "gene": "leuRS",
+        "enzyme": "leucyl-tRNA synthetase",
+        "sbml_reaction": "LEUTRS",
+        "v15_essential": 1,
+        "v15_failure_mode": "translation_stall",
+        "breuer_class": "Essential",
+        "canonical_drug": "Tavaborole (AN2690), GSK2251052/AN3365",
+        "drug_class": "Phase II/III benzoxaborole antibiotics",
+        "mechanism": "Bind the editing site of leuRS via a covalent enzyme-tRNA-drug adduct",
+        "path_e_verdict": "CONSISTENT"
+      },
+      {
+        "locus": "JCVISYN3A_0012",
+        "gene": "metRS",
+        "enzyme": "methionyl-tRNA synthetase",
+        "sbml_reaction": "METTRS",
+        "v15_essential": 1,
+        "v15_failure_mode": "translation_stall",
+        "breuer_class": "Essential",
+        "canonical_drug": "REP3123",
+        "drug_class": "Phase II antibiotic for C. difficile",
+        "mechanism": "Class I MetRS active-site inhibitor",
+        "path_e_verdict": "CONSISTENT"
+      },
+      {
+        "locus": "JCVISYN3A_0045",
+        "gene": "tmk",
+        "enzyme": "dTMP kinase",
+        "sbml_reaction": "TMPK",
+        "v15_essential": 1,
+        "v15_failure_mode": "catalysis_silenced",
+        "breuer_class": "Essential",
+        "canonical_drug": "TMPK-targeted nucleoside analogs (research-stage; e.g. anti-mycobacterial 5-bromo-2'-deoxyuridine 5'-monophosphate analogs)",
+        "drug_class": "Anti-bacterial in development",
+        "mechanism": "Substrate-mimetic inhibition of dTMP -> dTDP phosphorylation",
+        "path_e_verdict": "CONSISTENT"
+      },
+      {
+        "locus": "JCVISYN3A_0076",
+        "gene": "asnRS",
+        "enzyme": "asparaginyl-tRNA synthetase",
+        "sbml_reaction": "ASNTRS",
+        "v15_essential": 1,
+        "v15_failure_mode": "translation_stall",
+        "breuer_class": "Essential",
+        "canonical_drug": "Tirandamycin family",
+        "drug_class": "Anti-bacterial in development",
+        "mechanism": "Active-site inhibitors of asnRS",
+        "path_e_verdict": "CONSISTENT"
+      },
+      {
+        "locus": "JCVISYN3A_0819",
+        "gene": "trxB",
+        "enzyme": "thioredoxin-disulfide reductase",
+        "sbml_reaction": "TRDR",
+        "v15_essential": 1,
+        "v15_failure_mode": "essential_metabolite_depletion",
+        "breuer_class": "Essential",
+        "canonical_drug": "Auranofin",
+        "drug_class": "Repurposed FDA-approved anti-rheumatic with antibacterial activity",
+        "mechanism": "Au(I)-mediated thioredoxin reductase inhibition",
+        "path_e_verdict": "CONSISTENT"
+      }
+    ],
+    "gate_b_correction": {
+      "gate_b_claim": "0 of 155 SBML enzymes match canonical Mycoplasma-active antibiotic targets",
+      "actual_count": 6,
+      "regex_issue": "Session 22's drug-target keyword search used patterns like 'isoleucyl|ileS' which missed Syn3A's 'ileRS' / 'Isoleucine--tRNA ligase' product descriptions. A broader pattern set ('isoleucine--tRNA|ileRS|Ile-tRNA') correctly identifies the canonical mupirocin target.",
+      "implication": "Gate B's halt finding was over-conservative. The metabolic-only toxicity-prediction direction has 6 viable single-target case studies, not zero. The original spec's >=30 compound floor for a population-level finding is still out of reach (most compounds against these targets are research-stage with limited Mycoplasma MIC data), but case-study findings analogous to the synth-lethality 0876 x 0878 result ARE viable here."
+    },
+    "next_step": "notebooks/toxicity_path_e_mic_lookup.ipynb (Colab) — for each of the 6 drugs, fetch published MIC values against Mycoplasma species from ChEMBL bioactivity + PubChem BioAssay; the most concrete per-compound case study is mupirocin (well-documented MIC against M. pneumoniae and M. genitalium in clinical microbiology literature)."
+  },
+  "caveats": [
+    "Path E is a SATURATING-inhibitor approximation — it treats 'compound that fully inhibits enzyme X' as equivalent to 'knockout of gene X'. This is a reasonable approximation only when (a) the compound reaches its target, (b) the inhibition is effectively complete at the dosed concentration, and (c) no off-target effects dominate. None of those is guaranteed in vivo. The approximation breaks down for partial inhibitors or compounds with poor membrane permeability — common limitations for Mycoplasma-species pharmacology because Mycoplasma lacks a cell wall but also lacks classical Gram-negative outer-membrane porins.",
+    "All six Path-E predictions are 'CONSISTENT' because the simulator already correctly calls these genes essential (they're conserved drug targets, well-annotated, in the v15 detector's knowledge base via the AnnotationClass priors). This means Path E does NOT independently corroborate the simulator — it just confirms the simulator's existing single-knockout calls translate correctly under the saturating-inhibitor model. The interesting next step (the Colab MIC lookup) is whether the predicted-toxic concentration ranges actually match published Mycoplasma MICs.",
+    "The Gate B halt fact (synthlet_gate_b_halted_negative_finding.json) remains the contemporaneous record of Session 22's decision-making and is preserved verbatim. The current fact (toxicity_path_e_saturating_inhibitor_v0) supersedes Gate B's '0/155' headline by surfacing the regex issue, but does NOT delete or modify Gate B — that would be revisionism. Both facts are valid: Gate B was honestly recorded given its inputs; Path E corrects the input set.",
+    "The 6 listed drug-target enzymes are NOT the complete set of Syn3A drug targets — they are the metabolic-network subset that's in the SBML. Outside the SBML (e.g. ribosomal proteins for macrolides/tetracyclines, DNA gyrase for fluoroquinolones, RNA polymerase for rifamycins), more drug targets exist in Layer 1-2 territory. Extending Path E to those targets requires the Layer 2 work that the original toxicity spec proposed (Path B, 3-6 weeks FTE).",
+    "Mycoplasma-specific MIC data is patchy in public databases. Mupirocin and auranofin are well-studied; REP3123, tavaborole, tirandamycin, and TMPK-targeted nucleoside analogs have limited Mycoplasma data. The Colab MIC lookup notebook is expected to return concrete numbers for 2-3 of the 6 compounds, not all six. That's a substantial fraction but not population-level coverage.",
+    "JCVISYN3A_0065 (trxA, thioredoxin) is Breuer-essential but v15 calls it non-essential (one of the 96 FNs). It is NOT included in the Path E target list because the v15-essential constraint isn't met. If the v15 detector were corrected to include trxA (e.g. via a thioredoxin annotation prior in v16), that would add a 7th drug target with auranofin as the inhibitor."
+  ]
+}
