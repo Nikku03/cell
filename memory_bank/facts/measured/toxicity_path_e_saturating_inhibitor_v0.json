@@ -171,7 +171,49 @@
       },
       "implication": "Path E's per-target Mycoplasma MIC numbers cannot be retrieved from ChEMBL at any granularity beyond whole-cell organism-level (which v3 will probe). The data exists in primary clinical-microbiology literature (Hannan 2000 M. pneumoniae MIC tables, Bebear 2011 M. genitalium susceptibility review, Waites 2017 Clin Microbiol Rev) but is not indexed in ChEMBL. Hand-curation from those primary sources is the only remaining automation-amenable path; otherwise the validation requires a wet-lab inhibitor-treatment experiment in Syn3A or a Mycoplasma proxy organism."
     },
-    "next_step_after_v2": "notebooks/toxicity_path_e_mic_lookup_v3.ipynb — query the 6 organism-level Mycoplasma targets (one per species) cross-referenced with the 4 ChEMBL-resolved compounds (Mupirocin, Tavaborole, REP3123, Auranofin). 24 (target, compound) intersections, ~1 minute wall. Tells us whether ChEMBL has ANY whole-cell Mycoplasma MIC data on these compounds at species resolution. If empty: the only path to MIC numbers is hand-curation of primary clinical-microbiology literature."
+    "next_step_after_v2": "notebooks/toxicity_path_e_mic_lookup_v3.ipynb — query the 6 organism-level Mycoplasma targets (one per species) cross-referenced with the 4 ChEMBL-resolved compounds (Mupirocin, Tavaborole, REP3123, Auranofin). 24 (target, compound) intersections, ~1 minute wall. Tells us whether ChEMBL has ANY whole-cell Mycoplasma MIC data on these compounds at species resolution. If empty: the only path to MIC numbers is hand-curation of primary clinical-microbiology literature.",
+    "v3_lookup_results": {
+      "notebook": "notebooks/toxicity_path_e_mic_lookup_v3.ipynb",
+      "output": "outputs/toxicity/path_e_mic_lookup_v3_organism_level.json",
+      "status": "DEFINITIVE_NULL_ACROSS_ENTIRE_MATRIX",
+      "n_pairs_total": 24,
+      "n_pairs_with_activity_records": 0,
+      "tested_organisms": [
+        {"chembl": "CHEMBL612966", "organism": "Mycoplasma mycoides subsp. mycoides SC"},
+        {"chembl": "CHEMBL613225", "organism": "Mycoplasma putrefaciens"},
+        {"chembl": "CHEMBL615053", "organism": "Metamycoplasma hominis"},
+        {"chembl": "CHEMBL5465479", "organism": "Mesomycoplasma hyopneumoniae"},
+        {"chembl": "CHEMBL5465480", "organism": "Mesomycoplasma hyorhinis"},
+        {"chembl": "CHEMBL5465483", "organism": "Mycoplasma genitalium"}
+      ],
+      "tested_compounds": [
+        {"chembl": "CHEMBL719", "name": "Mupirocin"},
+        {"chembl": "CHEMBL443052", "name": "Tavaborole"},
+        {"chembl": "CHEMBL4297370", "name": "REP3123"},
+        {"chembl": "CHEMBL1366", "name": "Auranofin"}
+      ],
+      "interpretation": "ChEMBL has no whole-cell MIC activity records for any of the 4 canonical Path-E compounds against any of the 6 Mycoplasma species in its database. Combined with v2's 0-of-11 protein-level result, this is the COMPLETE picture: ChEMBL has zero Mycoplasma drug-bioactivity data on Mupirocin, Tavaborole, REP3123, or Auranofin at any granularity. This is a database-coverage gap, not a query syntax issue. Mupirocin against M. pneumoniae has multiple published MIC values in clinical microbiology (Hannan 2000, etc.) but those values are not in ChEMBL — they live only in the primary-paper text or supplementary tables.",
+      "implication": "Path E's per-compound MIC verification CANNOT be automated through ChEMBL or PubChem. The two remaining options for MIC validation are: (a) hand-curation of primary clinical-microbiology literature (Hannan 2000, Bebear 2011, Waites 2017 reviews provide structured tables for the well-studied compounds; ~1-2 hours of focused literature search per compound), or (b) direct wet-lab MIC measurement in Syn3A or a Mycoplasma proxy organism."
+    },
+    "path_e_final_status": {
+      "what_path_e_delivered": [
+        "6 SBML drug-target enzymes identified (correcting Gate B's '0 of 155' regex error to '6 of 155').",
+        "All 6 v15 single-knockout predictions agree with the saturating-inhibitor model (CONSISTENT for all 6 enzymes).",
+        "Layer 1 sequence-level conservation verified: 5 of 6 enzymes have direct UniProt-curated orthologs in M. mycoides SC, M. genitalium G37, and M. pneumoniae M129 with matching Pfam families.",
+        "All 4 ChEMBL-resolved canonical drugs (Mupirocin, Tavaborole, REP3123, Auranofin) are real bona-fide antibiotics with hundreds of bioactivity records in OTHER organisms.",
+        "Honest negative result on database-automated Mycoplasma MIC verification: ChEMBL has no protein-level OR whole-cell Mycoplasma data for these compounds."
+      ],
+      "what_path_e_did_NOT_deliver": [
+        "Per-compound numerical MIC values against Mycoplasma species — those exist in primary literature but not in any structured database we can query automatically.",
+        "Wet-lab confirmation of the predicted toxicity — the simulator-derived predictions remain hypotheses pending experimental test.",
+        "A population-level statistical claim about Mycoplasma drug-target predictability — we have 6 case-study targets, not the >=30-compound validation set the original toxicity research spec required."
+      ],
+      "fallback_paths_if_continuing": [
+        "Hand-curate Mycoplasma MICs from Hannan 2000, Bebear 2011, Waites 2017. ~1-2 hours per well-studied compound (Mupirocin and Auranofin probably yield concrete numbers; the others are research-stage). Slower but reliable.",
+        "Write a wet-lab pre-registration document for one specific (drug, target) experiment — e.g., mupirocin treatment of Syn3A culture at varying concentrations, growth-rate readout. Converts the simulator prediction into a portable wet-lab proposal.",
+        "Pivot Path E to a better-covered organism (E. coli iML1515 or S. aureus iSA840) where ChEMBL has rich protein-level + organism-level bioactivity data. Breaks Syn3A scope but answers the methodology question definitively."
+      ]
+    }
   },
   "caveats": [
     "Path E is a SATURATING-inhibitor approximation — it treats 'compound that fully inhibits enzyme X' as equivalent to 'knockout of gene X'. This is a reasonable approximation only when (a) the compound reaches its target, (b) the inhibition is effectively complete at the dosed concentration, and (c) no off-target effects dominate. None of those is guaranteed in vivo. The approximation breaks down for partial inhibitors or compounds with poor membrane permeability — common limitations for Mycoplasma-species pharmacology because Mycoplasma lacks a cell wall but also lacks classical Gram-negative outer-membrane porins.",
