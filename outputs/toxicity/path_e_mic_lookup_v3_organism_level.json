@@ -1,0 +1,280 @@
+{
+  "organism_targets": [
+    {
+      "cross_references": [],
+      "organism": "Mycoplasma mycoides subsp. mycoides SC",
+      "pref_name": "Mycoplasma mycoides subsp. mycoides SC",
+      "species_group_flag": false,
+      "target_chembl_id": "CHEMBL612966",
+      "target_components": [],
+      "target_type": "ORGANISM",
+      "tax_id": 44101
+    },
+    {
+      "cross_references": [],
+      "organism": "Mycoplasma putrefaciens",
+      "pref_name": "Mycoplasma putrefaciens",
+      "species_group_flag": false,
+      "target_chembl_id": "CHEMBL613225",
+      "target_components": [],
+      "target_type": "ORGANISM",
+      "tax_id": 2123
+    },
+    {
+      "cross_references": [],
+      "organism": "Metamycoplasma hominis",
+      "pref_name": "Metamycoplasma hominis",
+      "species_group_flag": false,
+      "target_chembl_id": "CHEMBL615053",
+      "target_components": [],
+      "target_type": "ORGANISM",
+      "tax_id": 2098
+    },
+    {
+      "cross_references": [],
+      "organism": "Mesomycoplasma hyopneumoniae",
+      "pref_name": "Mesomycoplasma hyopneumoniae",
+      "species_group_flag": false,
+      "target_chembl_id": "CHEMBL5465479",
+      "target_components": [],
+      "target_type": "ORGANISM",
+      "tax_id": 2099
+    },
+    {
+      "cross_references": [],
+      "organism": "Mesomycoplasma hyorhinis",
+      "pref_name": "Mesomycoplasma hyorhinis",
+      "species_group_flag": false,
+      "target_chembl_id": "CHEMBL5465480",
+      "target_components": [],
+      "target_type": "ORGANISM",
+      "tax_id": 2100
+    },
+    {
+      "cross_references": [],
+      "organism": "Mycoplasma genitalium",
+      "pref_name": "Mycoplasma genitalium",
+      "species_group_flag": false,
+      "target_chembl_id": "CHEMBL5465483",
+      "target_components": [],
+      "target_type": "ORGANISM",
+      "tax_id": 2097
+    }
+  ],
+  "compounds": [
+    {
+      "chembl_id": "CHEMBL719",
+      "name": "Mupirocin"
+    },
+    {
+      "chembl_id": "CHEMBL443052",
+      "name": "Tavaborole"
+    },
+    {
+      "chembl_id": "CHEMBL4297370",
+      "name": "REP3123"
+    },
+    {
+      "chembl_id": "CHEMBL1366",
+      "name": "Auranofin"
+    }
+  ],
+  "matrix": [
+    {
+      "target_chembl_id": "CHEMBL612966",
+      "organism": "Mycoplasma mycoides subsp. mycoides SC",
+      "compound_chembl_id": "CHEMBL719",
+      "compound_name": "Mupirocin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL612966",
+      "organism": "Mycoplasma mycoides subsp. mycoides SC",
+      "compound_chembl_id": "CHEMBL443052",
+      "compound_name": "Tavaborole",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL612966",
+      "organism": "Mycoplasma mycoides subsp. mycoides SC",
+      "compound_chembl_id": "CHEMBL4297370",
+      "compound_name": "REP3123",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL612966",
+      "organism": "Mycoplasma mycoides subsp. mycoides SC",
+      "compound_chembl_id": "CHEMBL1366",
+      "compound_name": "Auranofin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL613225",
+      "organism": "Mycoplasma putrefaciens",
+      "compound_chembl_id": "CHEMBL719",
+      "compound_name": "Mupirocin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL613225",
+      "organism": "Mycoplasma putrefaciens",
+      "compound_chembl_id": "CHEMBL443052",
+      "compound_name": "Tavaborole",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL613225",
+      "organism": "Mycoplasma putrefaciens",
+      "compound_chembl_id": "CHEMBL4297370",
+      "compound_name": "REP3123",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL613225",
+      "organism": "Mycoplasma putrefaciens",
+      "compound_chembl_id": "CHEMBL1366",
+      "compound_name": "Auranofin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL615053",
+      "organism": "Metamycoplasma hominis",
+      "compound_chembl_id": "CHEMBL719",
+      "compound_name": "Mupirocin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL615053",
+      "organism": "Metamycoplasma hominis",
+      "compound_chembl_id": "CHEMBL443052",
+      "compound_name": "Tavaborole",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL615053",
+      "organism": "Metamycoplasma hominis",
+      "compound_chembl_id": "CHEMBL4297370",
+      "compound_name": "REP3123",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL615053",
+      "organism": "Metamycoplasma hominis",
+      "compound_chembl_id": "CHEMBL1366",
+      "compound_name": "Auranofin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465479",
+      "organism": "Mesomycoplasma hyopneumoniae",
+      "compound_chembl_id": "CHEMBL719",
+      "compound_name": "Mupirocin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465479",
+      "organism": "Mesomycoplasma hyopneumoniae",
+      "compound_chembl_id": "CHEMBL443052",
+      "compound_name": "Tavaborole",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465479",
+      "organism": "Mesomycoplasma hyopneumoniae",
+      "compound_chembl_id": "CHEMBL4297370",
+      "compound_name": "REP3123",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465479",
+      "organism": "Mesomycoplasma hyopneumoniae",
+      "compound_chembl_id": "CHEMBL1366",
+      "compound_name": "Auranofin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465480",
+      "organism": "Mesomycoplasma hyorhinis",
+      "compound_chembl_id": "CHEMBL719",
+      "compound_name": "Mupirocin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465480",
+      "organism": "Mesomycoplasma hyorhinis",
+      "compound_chembl_id": "CHEMBL443052",
+      "compound_name": "Tavaborole",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465480",
+      "organism": "Mesomycoplasma hyorhinis",
+      "compound_chembl_id": "CHEMBL4297370",
+      "compound_name": "REP3123",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465480",
+      "organism": "Mesomycoplasma hyorhinis",
+      "compound_chembl_id": "CHEMBL1366",
+      "compound_name": "Auranofin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465483",
+      "organism": "Mycoplasma genitalium",
+      "compound_chembl_id": "CHEMBL719",
+      "compound_name": "Mupirocin",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465483",
+      "organism": "Mycoplasma genitalium",
+      "compound_chembl_id": "CHEMBL443052",
+      "compound_name": "Tavaborole",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465483",
+      "organism": "Mycoplasma genitalium",
+      "compound_chembl_id": "CHEMBL4297370",
+      "compound_name": "REP3123",
+      "n_activities": 0,
+      "activities": []
+    },
+    {
+      "target_chembl_id": "CHEMBL5465483",
+      "organism": "Mycoplasma genitalium",
+      "compound_chembl_id": "CHEMBL1366",
+      "compound_name": "Auranofin",
+      "n_activities": 0,
+      "activities": []
+    }
+  ],
+  "summary": {
+    "n_pairs_total": 24,
+    "n_pairs_with_activity": 0
+  }
+}
