@@ -1,0 +1,91 @@
+{
+  "config": {
+    "scale_factor": 0.05,
+    "t_end_s": 0.5,
+    "dt_s": 0.05,
+    "seed": 42,
+    "use_rust_backend": false,
+    "n_samples_per_knockout": 5
+  },
+  "per_run": {
+    "gex_off": [
+      {
+        "knockout": [],
+        "wall_s": 14.846129655838013,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0445"
+        ],
+        "wall_s": 13.393760204315186,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0779"
+        ],
+        "wall_s": 14.953953504562378,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0522"
+        ],
+        "wall_s": 14.727233409881592,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0305"
+        ],
+        "wall_s": 14.670242309570312,
+        "n_samples": 11
+      }
+    ],
+    "gex_on": [
+      {
+        "knockout": [],
+        "wall_s": 52.888829708099365,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0445"
+        ],
+        "wall_s": 47.83640503883362,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0779"
+        ],
+        "wall_s": 53.79388093948364,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0522"
+        ],
+        "wall_s": 52.74920439720154,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0305"
+        ],
+        "wall_s": 53.77912473678589,
+        "n_samples": 11
+      }
+    ],
+    "gex_off_setup_wall_s": 1.0595552921295166,
+    "gex_on_setup_wall_s": 0.7162458896636963
+  },
+  "summary": {
+    "gex_off_total_wall_s": 72.59131908416748,
+    "gex_on_total_wall_s": 261.04744482040405,
+    "slowdown_ratio": 3.5961248275117756,
+    "gex_off_mean_per_run_s": 14.518263816833496,
+    "gex_on_mean_per_run_s": 52.20948896408081
+  }
+}

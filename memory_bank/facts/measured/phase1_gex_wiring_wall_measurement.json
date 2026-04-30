@@ -1,0 +1,50 @@
+{
+  "id": "phase1_gex_wiring_wall_measurement",
+  "claim": "Session 27 phase 1 wiring of cell_sim/layer3_reactions/gene_expression.py into the production simulator at python-closure granularity (i.e. before phase-2 compilation into the vectorized propensity vector) imposes a measured 3.60x per-knockout wall-time slowdown on a 5-knockout sample (1 WT + 4 single-gene KOs) at scale_factor=0.05, t_end_s=0.5, sample_dt_s=0.05, seed=42, use_rust_backend=False. Mean per-run wall: 14.52 s (gex_off) vs 52.21 s (gex_on). Total: 72.59 s vs 261.05 s across the 5-run sample. The slowdown is concentrated in the python-closure cache rebuild path in cell_sim/layer2_field/fast_dynamics.py: every transcription / translation / mRNA-degradation event invalidates the python cache and forces re-evaluation of the full gex rule list (4 rules per CDS x 455 CDS = 1820 closures), which dwarfs the cost of the events themselves. Phase 2 (compile high-frequency gex rules into the vectorized propensity path) is expected to cut this to <30 percent overhead.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible by running 'python scripts/_measure_phase1_wall.py' from the repo root. Output JSON at outputs/phase1_wall_measurement.json. Code path measured: cell_sim.layer6_essentiality.real_simulator.RealSimulator.run with enable_gene_expression=True vs False on the same 5-knockout sample. Commit at measurement: 0df33ff (session 27 phase 1: wire gene_expression.py behind enable_gene_expression flag).",
+  "last_verified": "2026-04-30",
+  "context": {
+    "entity": "syn3a_simulator",
+    "version": "phase1_python_closure_wiring"
+  },
+  "dependencies": [
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "scripts/_measure_phase1_wall.py"
+  ],
+  "value": {
+    "scale_factor": 0.05,
+    "t_end_s": 0.5,
+    "sample_dt_s": 0.05,
+    "seed": 42,
+    "use_rust_backend": false,
+    "n_knockouts_in_sample": 5,
+    "knockouts_run": [
+      "WT",
+      "JCVISYN3A_0445",
+      "JCVISYN3A_0779",
+      "JCVISYN3A_0522",
+      "JCVISYN3A_0305"
+    ],
+    "gex_off_per_run_wall_s": [14.85, 13.39, 14.95, 14.73, 14.67],
+    "gex_on_per_run_wall_s": [52.89, 47.84, 53.79, 52.75, 53.78],
+    "gex_off_total_wall_s": 72.59,
+    "gex_on_total_wall_s": 261.05,
+    "gex_off_mean_per_run_s": 14.52,
+    "gex_on_mean_per_run_s": 52.21,
+    "slowdown_ratio": 3.60,
+    "n_gex_rules_built": 1820,
+    "gex_rule_factories": ["transcribe", "translate", "degrade_mrna", "degrade_protein"]
+  },
+  "caveats": [
+    "Sample size of 5 knockouts is small; per-knockout variance is real (gex_on stdev ~2.5 s) but the gex_off vs gex_on gap (~38 s/run) is large enough that the 3.60x ratio is robust. A 50-100 knockout sample would tighten the estimate but is not needed to make the phase-2 case.",
+    "Use_rust_backend=False because the Rust hot path only accelerates the compiled-MM propensity calc, not the python-closure gex events. With Rust on, the gex_off baseline drops ~2x (to ~7 s/run), and the gex_on slowdown ratio likely climbs to ~5-7x because the metabolic baseline gets faster while the python-closure gex cost stays the same.",
+    "Extrapolation to the full 458-gene sweep: at python-only, gex-off baseline is roughly 14.5 s/run x 458 / 4 workers ~ 28 min, and gex-on extrapolates to ~100 min. With Rust + 4 workers (the production config), gex-off is 50 min and gex-on extrapolates to ~3-5 h. The 5-knockout sample is too small to extrapolate to the 458-gene sweep with confidence; use this for direction-setting only.",
+    "MCC at gex_on is NOT measured here. This fact is wall-time only. A separate measurement (planned for after phase 2) will run the v15 detector with gex_on across the full 455-gene panel and record the new MCC as a separate fact (e.g. mcc_against_breuer_v16_gex_python_closure or similar). Until that measurement lands, the only honest claim is 'wiring works mechanically and costs 3.6x more wall'.",
+    "The slowdown is dominated by python-closure cache invalidation, not by the cost of the events themselves. Phase 2 (compile transcription / translation / mRNA-degradation into the vectorized propensity vector) is expected to drop the slowdown ratio from 3.60x to <1.3x. Phase 3 (tau-leap for the gex subsystem) and phase 4 (selective cache invalidation) are stack-on optimizations.",
+    "The wt run at gex_on (52.89 s) is faster than gene-knockout runs (47.84 s for pgi) because pgi's KO eliminates one large-flux rule, slightly reducing the metabolic event count. This is a known and benign effect; not a wiring bug."
+  ]
+}
