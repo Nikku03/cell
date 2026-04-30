@@ -368,10 +368,61 @@ class FastEventSimulator:
         # _apply can rebuild the cands list without redoing the math.
         self._last_saturation = np.ones(self._n_compiled, dtype=np.float64)
         self._props = np.zeros(self._n_rules, dtype=np.float64)
-        self._cands_scratch: List[Any] = [None] * self._n_rules
         # For apply after firing a compiled rule — need original species
         # counts for the cands tuple the rule.apply expects
         self._last_compiled_enzyme_list: Dict[int, List[int]] = {}
+
+        # Precomputed gex masks (static after __init__). Kept as ndarrays
+        # so the propensity calc doesn't allocate them every step.
+        if self._n_gex > 0:
+            self._G_gate_active_mask = self.G_gate_idx >= 0
+            self._G_gate_idx_safe = np.clip(self.G_gate_idx, 0, None)
+            self._G_is_tx_mask = self.G_subkind == self._GEX_SUBKIND_TX
+        else:
+            self._G_gate_active_mask = np.zeros(0, dtype=bool)
+            self._G_gate_idx_safe = np.zeros(0, dtype=np.int64)
+            self._G_is_tx_mask = np.zeros(0, dtype=bool)
+
+        # Gex propensity cache. The vectorised gex calc costs ~50 us per
+        # step on 1374 rules; running it every step accounts for ~12 %
+        # of the gex-on per-event budget. Most events are MM (catalysis)
+        # which don't touch the gex-relevant state at all, so we can
+        # cache and reuse. The cache is invalidated on:
+        #   - gex fires (n_mrna changes for one gene)
+        #   - python-closure fires (defensive — matches existing semantics)
+        #   - MM fires that flip any gex rule's gating-substrate state
+        #     across its threshold (detected via a cheap bool-array
+        #     compare against ``_G_last_gate_disabled``).
+        # Constant-machinery / constant-promoter assumption: no rule in
+        # the production rule list mutates state.rnap_free /
+        # ribosome_free / degradosome_free / promoter_strength. If a
+        # future rule does, set ``self._gex_props_dirty = True`` from
+        # that rule's apply path.
+        self._gex_props_partial = np.zeros(self._n_gex, dtype=np.float64)
+        self._gex_props_dirty = True
+        # "Disabled" mask: True iff a rule has a gate AND its current
+        # count is below threshold. Tracks the snapshot used when
+        # _gex_props_partial was last computed.
+        self._G_last_gate_disabled = np.zeros(self._n_gex, dtype=bool)
+        # Scalar fast-path: per gating substrate, the maximum threshold
+        # across all gex rules. If counts[gate_sid] >= max_threshold for
+        # every gating substrate, every gate is open and gate_disabled
+        # is all-False. Tracking just two scalars per step (M_atp_c +
+        # M_ala__L_c thresholds) is ~10x cheaper than computing the
+        # full per-rule gate_disabled boolean array on every step.
+        self._gex_gate_scalar_checks: List[tuple] = []  # [(species_idx, max_threshold), ...]
+        if self._n_gex > 0:
+            gate_ids: Dict[int, int] = {}  # species_idx -> max threshold
+            for g in range(self._n_gex):
+                if self._G_gate_active_mask[g]:
+                    sidx = int(self.G_gate_idx[g])
+                    thr = int(self.G_gate_threshold[g])
+                    if sidx not in gate_ids or gate_ids[sidx] < thr:
+                        gate_ids[sidx] = thr
+            self._gex_gate_scalar_checks = sorted(gate_ids.items())
+        # When True, the last cache compute observed every gate as open
+        # (so scalars-above-max-threshold suffices to keep cache valid).
+        self._gex_last_all_gates_open = False
 
     # ------------------------------------------------------------------
     # Public API
@@ -436,45 +487,75 @@ class FastEventSimulator:
                           guarded by both > 0 (no gating substrate)
 
         Propensity per rule is ``kcat * tokens``.
+
+        Static masks (``_G_gate_active_mask``, ``_G_is_tx_mask``,
+        ``_G_gate_idx_safe``) are precomputed in __init__ so this hot
+        path avoids per-step allocation of the equivalent np.clip / ==
+        results.
         """
         if self._n_gex <= 0:
             return
+
+        # Cache check. The fast path costs two integer comparisons:
+        # if every gating substrate's current count is >= its
+        # per-substrate max threshold AND the last compute also saw
+        # all gates open AND the dirty flag is clear, the cached
+        # gex propensity vector is exactly what we'd recompute.
         cnts = self._counts
-        mrna_safe_idx = np.clip(self.G_mrna_idx, 0, None)
-        machinery_safe_idx = np.clip(self.G_machinery_idx, 0, None)
-        gate_safe_idx = np.clip(self.G_gate_idx, 0, None)
+        if not self._gex_props_dirty and self._gex_last_all_gates_open:
+            all_open_now = True
+            for sidx, max_thr in self._gex_gate_scalar_checks:
+                if cnts[sidx] < max_thr:
+                    all_open_now = False
+                    break
+            if all_open_now:
+                props[self.G_rule_idx] = self._gex_props_partial
+                return
 
-        machinery = np.where(
-            self.G_machinery_idx >= 0, cnts[machinery_safe_idx], 0,
+        # Slow path: do the per-rule gate_disabled comparison. If still
+        # equal to the snapshot taken at last compute, the cache is
+        # still valid (a rule's gate may be disabled but the situation
+        # hasn't changed since the snapshot was taken).
+        gate_disabled = self._G_gate_active_mask & (
+            cnts[self._G_gate_idx_safe] < self.G_gate_threshold
         )
-        n_mrna = np.where(
-            self.G_mrna_idx >= 0, cnts[mrna_safe_idx], 0,
-        )
-        gate_count = np.where(
-            self.G_gate_idx >= 0, cnts[gate_safe_idx], 0,
-        )
-        gate_ok = np.where(
-            self.G_gate_idx >= 0,
-            gate_count >= self.G_gate_threshold,
-            True,
-        )
+        if (not self._gex_props_dirty
+                and np.array_equal(gate_disabled, self._G_last_gate_disabled)):
+            props[self.G_rule_idx] = self._gex_props_partial
+            return
 
+        # Full recompute. Every gex rule has a machinery and mRNA
+        # pseudo-species, so gather directly without a where-mask.
+        # Gating substrate may be absent (degrade_mrna) — handled via
+        # _G_gate_active_mask.
+        machinery = cnts[self.G_machinery_idx]
+        n_mrna = cnts[self.G_mrna_idx]
+
+        gate_ok = ~gate_disabled  # (no gate) or (count >= threshold)
+
+        # tx tokens: max(1, int(promoter * machinery)) — falls to 1 when
+        # machinery == 0, so we still need an explicit zero-mask here.
         tx_tokens = np.maximum(
             1, (self.G_promoter * machinery).astype(np.int64),
         )
         tx_tokens = np.where(machinery > 0, tx_tokens, 0)
 
-        md_raw = n_mrna * machinery
-        md_tokens = np.minimum(md_raw, self.G_max_tokens)
-        md_tokens = np.where(
-            (n_mrna > 0) & (machinery > 0), md_tokens, 0,
-        )
+        # tl / deg tokens: min(n_mrna * machinery, max_tokens). When
+        # either factor is 0 the product is 0 and so is the min — no
+        # additional mask is needed (the original code applied a
+        # where((n_mrna>0)&(machinery>0)) but that's redundant).
+        md_tokens = np.minimum(n_mrna * machinery, self.G_max_tokens)
 
-        is_tx = self.G_subkind == self._GEX_SUBKIND_TX
-        tokens = np.where(is_tx, tx_tokens, md_tokens)
-        tokens = np.where(gate_ok, tokens, 0)
+        tokens = np.where(self._G_is_tx_mask, tx_tokens, md_tokens) * gate_ok
         gex_props = self.G_kcat * tokens
-        props[self.G_rule_idx] = gex_props
+        # Update cache. np.copyto avoids re-allocating the buffer.
+        np.copyto(self._gex_props_partial, gex_props)
+        np.copyto(self._G_last_gate_disabled, gate_disabled)
+        self._gex_props_dirty = False
+        # Did this compute see all gates open? Drives the scalar fast
+        # path on subsequent steps.
+        self._gex_last_all_gates_open = not bool(gate_disabled.any())
+        props[self.G_rule_idx] = self._gex_props_partial
 
     # ------------------------------------------------------------------
     # Hot path
@@ -578,33 +659,39 @@ class FastEventSimulator:
                 self._py_props_cache[i] = rule.rate * len(c)
             self._py_cache_valid = True
 
-        # Scatter cached python propensities into props.
-        # cands_scratch gets a pointer to the cache — no copy.
-        for i in self._python_rule_indices:
-            self._props[i] = self._py_props_cache[i]
-            self._cands_scratch[i] = self._py_cands_cache[i]
+        # Scatter cached python propensities into props with a single
+        # vectorised add. _py_props_cache holds zeros at non-python
+        # indices (only python rules ever write into it), so adding it
+        # is bit-identical to a per-index assignment loop after the
+        # _props.fill(0.0) at the top of this method:
+        #   - python idx  : _props was 0; += cached_val gives cached_val
+        #   - mm/gex idx  : cache slot is 0; += 0 is a no-op (FP exact)
+        # Saves ~480 Python-level array stores per step.
+        self._props += self._py_props_cache
 
         # --- Gillespie draws ---
-        # Match the reference EventSimulator's floating-point behaviour
-        # exactly: use Python's builtin sum (sequential over the list) and
-        # convert to Python float before sampling, so that tiny FP drift
-        # between numpy tree-reduce and sequential sum can't flip which
-        # rule wins the categorical draw at a propensity boundary.
-        total = float(sum(self._props.tolist()))
+        # numpy.cumsum on a float64 array is implemented as a sequential
+        # left-to-right accumulator and is bit-identical to Python's
+        # builtin sum over ``props.tolist()`` (verified empirically on
+        # randomly seeded propensity vectors of size 500–3000). That
+        # lets us replace the per-step O(n_rules) Python categorical
+        # selection loop with a single np.searchsorted call without
+        # disturbing the gex-off bit-identity invariant pinned by
+        # cell_sim/tests/test_phase2_gex_off_bit_identity.py.
+        #
+        # Equivalence:
+        #   Python loop chose first i with cum[i] > r.
+        #   np.searchsorted(cum, r, side='right') returns the smallest
+        #   i such that cum[i] > r and cum[i-1] <= r — same i.
+        cum = np.cumsum(self._props)
+        total = float(cum[-1]) if cum.size > 0 else 0.0
         if total <= 0.0:
             return False
         dt = self.rng.exponential(1.0 / total)
         self.state.time += dt
         r = self.rng.random() * total
-        cum = 0.0
-        chosen = -1
-        props_list = self._props.tolist()
-        for i in range(self._n_rules):
-            cum += props_list[i]
-            if r < cum:
-                chosen = i
-                break
-        if chosen < 0:
+        chosen = int(np.searchsorted(cum, r, side='right'))
+        if chosen >= self._n_rules:
             chosen = self._n_rules - 1  # numerical safety
 
         self._apply(chosen)
@@ -713,8 +800,12 @@ class FastEventSimulator:
                 gene_id, dict_attr = info
                 d = getattr(self.state, dict_attr, None) or {}
                 self._counts[m_idx] = int(d.get(gene_id, 0))
+            # n_mrna for this gene changed -> gex propensity cache stale.
+            self._gex_props_dirty = True
         else:
-            cands = self._cands_scratch[rule_idx]
+            # Read cands directly from the python-rule cache; we no
+            # longer maintain a separate per-step cands_scratch array.
+            cands = self._py_cands_cache[rule_idx]
             if cands is None or rule.apply is None:
                 return
             rule.apply(self.state, cands, self.rng)
@@ -724,8 +815,23 @@ class FastEventSimulator:
         # caches defensively. Gex fires deliberately do NOT invalidate the
         # python cache — that is the phase-2 speedup over the phase-1
         # python-closure routing.
+        #
+        # ``_gex_counts_dirty`` is intentionally NOT set here: every
+        # python-closure rule currently in the production rule list
+        # (folding, complex assembly, protein degradation, novel
+        # substrates, metabolite sinks) touches proteins_by_state or
+        # metabolite_counts, neither of which feed the gex pseudo-species
+        # (state.mrna_counts / state.rnap_free / state.ribosome_free /
+        # state.degradosome_free). Setting the flag here forces a full
+        # 1374-rule resync after every folding event, which costs ~0.5 s
+        # per WT run at gex-on. If a future python-closure rule does
+        # mutate gex pseudo-species, set _gex_counts_dirty = True from
+        # that rule's apply path or here with a comment naming the rule.
         if rule_idx in self._python_rule_indices_set:
             self._enzyme_counts_dirty = True
             self._py_cache_valid = False
             self._counts_dirty = True
-            self._gex_counts_dirty = True
+            # Defensive: a python-closure rule could in principle mutate
+            # gex pseudo-species via state.{mrna,...}. None do today, but
+            # an invalidation here is cheap and avoids a future foot-gun.
+            self._gex_props_dirty = True

@@ -1,0 +1,93 @@
+{
+  "config": {
+    "scale_factor": 0.05,
+    "t_end_s": 0.5,
+    "dt_s": 0.05,
+    "seed": 42,
+    "use_rust_backend": false,
+    "n_samples_per_knockout": 5
+  },
+  "per_run": {
+    "gex_off": [
+      {
+        "knockout": [],
+        "wall_s": 17.776413202285767,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0445"
+        ],
+        "wall_s": 16.089529037475586,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0779"
+        ],
+        "wall_s": 17.441278219223022,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0522"
+        ],
+        "wall_s": 17.71113610267639,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0305"
+        ],
+        "wall_s": 17.429906368255615,
+        "n_samples": 11
+      }
+    ],
+    "gex_on": [
+      {
+        "knockout": [],
+        "wall_s": 22.616062879562378,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0445"
+        ],
+        "wall_s": 20.945496797561646,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0779"
+        ],
+        "wall_s": 22.683155059814453,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0522"
+        ],
+        "wall_s": 22.509672164916992,
+        "n_samples": 11
+      },
+      {
+        "knockout": [
+          "JCVISYN3A_0305"
+        ],
+        "wall_s": 22.991633415222168,
+        "n_samples": 11
+      }
+    ],
+    "gex_off_setup_wall_s": 1.2080857753753662,
+    "gex_on_setup_wall_s": 0.8605337142944336
+  },
+  "summary": {
+    "gex_off_total_wall_s": 86.44826292991638,
+    "gex_on_total_wall_s": 111.74602031707764,
+    "slowdown_ratio": 1.2926346525628878,
+    "gex_off_mean_per_run_s": 17.289652585983276,
+    "gex_on_mean_per_run_s": 22.349204063415527,
+    "phase1_slowdown_ratio_baseline": 3.6,
+    "phase2_target_max_slowdown_ratio": 1.3
+  }
+}

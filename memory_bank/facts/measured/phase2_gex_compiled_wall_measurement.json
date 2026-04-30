@@ -1,0 +1,67 @@
+{
+  "id": "phase2_gex_compiled_wall_measurement",
+  "claim": "Session 28 phase 2 compilation of cell_sim/layer3_reactions/gene_expression.py rules into the FastEventSimulator's vectorised compiled-spec path drops the gex-on per-run wall-time slowdown from the phase-1 measurement of 3.60x (memory_bank/facts/measured/phase1_gex_wiring_wall_measurement.json) to 1.29x, on the same 5-knockout sample (1 WT + 4 single-gene KOs) at scale_factor=0.05, t_end_s=0.5, sample_dt_s=0.05, seed=42, use_rust_backend=False. Mean per-run wall: 17.29 s (gex_off) vs 22.35 s (gex_on). Total: 86.45 s vs 111.75 s. Hits the FUTURE_WORK.md success criterion (<1.30x). The gex-off path remains byte-identical to the phase-1 layout, verified by cell_sim/tests/test_phase2_gex_off_bit_identity.py at every commit in the phase-2 chain.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible by running 'python scripts/_measure_phase2_wall.py' from the repo root. Output JSON at outputs/phase2_wall_measurement.json. Code path measured: cell_sim.layer6_essentiality.real_simulator.RealSimulator.run with enable_gene_expression=True vs False on the same 5-knockout sample. Phase-2 commits on claude/syn3a-whole-cell-simulator-REjHC: 9273d57 (step 2: vectorised gex partition), d1de4fe (step 3: factories emit compiled_spec), 2dad436 (step 4: rust backend mirror via shared helpers), and a chain of micro-optimisations described in the value.optimisation_chain block below.",
+  "last_verified": "2026-04-30",
+  "context": {
+    "entity": "syn3a_simulator",
+    "version": "phase2_compiled_gex_with_caching"
+  },
+  "dependencies": [
+    "phase1_gex_wiring_wall_measurement",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "scripts/_measure_phase2_wall.py"
+  ],
+  "value": {
+    "scale_factor": 0.05,
+    "t_end_s": 0.5,
+    "sample_dt_s": 0.05,
+    "seed": 42,
+    "use_rust_backend": false,
+    "n_knockouts_in_sample": 5,
+    "knockouts_run": [
+      "WT",
+      "JCVISYN3A_0445",
+      "JCVISYN3A_0779",
+      "JCVISYN3A_0522",
+      "JCVISYN3A_0305"
+    ],
+    "gex_off_per_run_wall_s": [17.78, 16.09, 17.44, 17.71, 17.43],
+    "gex_on_per_run_wall_s": [22.62, 20.95, 22.68, 22.51, 22.99],
+    "gex_off_total_wall_s": 86.45,
+    "gex_on_total_wall_s": 111.75,
+    "gex_off_mean_per_run_s": 17.29,
+    "gex_on_mean_per_run_s": 22.35,
+    "slowdown_ratio": 1.29,
+    "phase1_slowdown_ratio": 3.60,
+    "improvement_vs_phase1": 2.79,
+    "phase2_target_max_slowdown_ratio": 1.30,
+    "criterion_met": true,
+    "n_gex_compiled_rules": 1374,
+    "n_gex_python_closure_rules_kept": 458,
+    "gex_compiled_subkinds": ["transcribe", "translate", "degrade_mrna"],
+    "gex_python_closure_subkinds": ["degrade_protein"],
+    "optimisation_chain": [
+      {"after_commit": "step2_vectorised_partition", "ratio": 3.10, "note": "Move gex from python-closure to dedicated vectorised partition; py cache no longer thrashed on gex events but the per-step categorical sampling loop still scales as O(n_rules)."},
+      {"after_commit": "step_searchsorted", "ratio": 2.51, "note": "Replace the O(n_rules) Python sampling loop with np.cumsum + np.searchsorted; bit-identical for gex-off."},
+      {"after_commit": "step_vectorised_py_scatter", "ratio": 1.70, "note": "Replace per-iteration python-rule props scatter with self._props += self._py_props_cache; drop the per-step cands_scratch rebuild and read cands directly from _py_cands_cache at apply time."},
+      {"after_commit": "step_remove_spurious_gex_dirty", "ratio": 1.57, "note": "Stop setting _gex_counts_dirty on python-closure fires (folding/complex/protein_degrade/etc never mutate state.mrna_counts or machinery scalars)."},
+      {"after_commit": "step_slim_gex_props_formula", "ratio": 1.47, "note": "Drop redundant where-masks in the gex propensity formula (n_mrna * machinery already gives 0 when either is 0; only tx needs the rnap>0 mask)."},
+      {"after_commit": "step_gex_props_caching", "ratio": 1.34, "note": "Cache the gex propensity vector and recompute only on (a) gex/python fires, (b) per-rule gating-substrate threshold flips."},
+      {"after_commit": "step_scalar_gate_fast_path", "ratio": 1.29, "note": "Add a 2-scalar-comparison fast path: if every gating substrate's count is at least its per-substrate max threshold AND the previous compute observed all gates open AND the dirty flag is clear, skip the per-rule gate_disabled allocation entirely."}
+    ]
+  },
+  "caveats": [
+    "Sample size of 5 knockouts is the same as the phase-1 measurement, kept identical for direct comparison. Per-knockout variance is ~1 s/run; the gex_off vs gex_on gap (~5 s/run) is large enough that the 1.29x ratio is robust against noise but not deeply tight.",
+    "Use_rust_backend=False matches the phase-1 measurement. With Rust on, the absolute walls drop ~2x but the gex_off baseline drops more than gex_on (the gex propensity calc stays in Python under both backends), so the slowdown ratio under Rust is expected to be higher than 1.29x. A separate Rust+gex-on measurement should be made before claiming the criterion holds for the full Rust-backed sweep.",
+    "The 1.29x ratio is at the FUTURE_WORK.md success criterion (<1.30x) but only barely. Optimisations beyond this point (compiling protein-degradation, fine-grained python-closure cache invalidation) were considered and deferred — protein-degradation in particular still consumes ~7% of gex-on cumulative time via repeated can_fire calls on python-cache invalidation by folding events. The prompt explicitly held protein-degradation as python-closure ('low rate, touches protein-instance buckets, not worth the refactor').",
+    "Gex-on bit-identity vs the slow EventSimulator reference is NOT verified by an existing test fixture. The cell_sim/tests/test_fast_equivalence.py suite exercises Priority-1.5 (folding + complex assembly + reversible catalysis) without gene expression. The wiring tests (test_gene_expression_wiring.py) check that gex events fire and respect KO filters but do not pin trajectories. A future commit could add a gex-on fixture for end-to-end equivalence checks.",
+    "The gex propensity cache assumes machinery scalars (state.rnap_free, ribosome_free, degradosome_free) and promoter strengths are constant across a run. This holds for every rule in the production rule list today; if a future rule mutates them, set self._gex_props_dirty = True from that rule's apply path or the cache will be stale.",
+    "MCC at gex_on is NOT measured here. This fact is wall-time only. A separate measurement (planned step 7) will run the v15 detector with gex_on across the full 455-gene panel and record the new MCC as a separate fact (mcc_against_breuer_v16_gex_compiled or similar). The honest comparison is 'v15 = MCC 0.5372 without gex; v16 = MCC X with gex' as two separate measurements.",
+    "Extrapolation to the full 458-gene sweep at scale=0.05 with Rust + 4 workers (the production config used in mcc_v15_replicates): gex_off ~50 min (unchanged from phase 1); gex_on extrapolates to ~65 min via 1.29x scaling. A pre-flight check on a 10-20 knockout sample under Rust would tighten this estimate before committing to a 458-gene sweep."
+  ]
+}

@@ -138,17 +138,17 @@ class RustBackedFastEventSimulator(FastEventSimulator):
         # rule indices. No-op when _n_gex == 0.
         self._compute_gex_props_into(self._props)
 
-        # Rebuild cands_scratch for python-closure rules (needed by _apply
-        # when a python-rule fires). Compiled rules ignore cands_scratch.
-        for i in self._python_rule_indices:
-            self._cands_scratch[i] = self._py_cands_cache[i]
+        # NOTE: FastEventSimulator dropped its per-step cands_scratch
+        # rebuild loop in favour of reading cands from _py_cands_cache
+        # at apply time. The Rust path inherits the same _apply, so no
+        # explicit cands_scratch rebuild is needed here either.
 
         # ---- Gillespie draws in Python (preserves RNG bit-identity) ----
-        # Recompute total with Python sum over Python list, to match
-        # FastEventSimulator's FP semantics exactly. Rust's sum is
-        # bit-identical in practice, but using Python sum here makes
-        # equivalence robust to future Rust refactors.
-        total = float(sum(props.tolist()))
+        # numpy.cumsum on float64 is sequential left-to-right and
+        # bit-identical to Python's builtin sum + cumulative-loop, which
+        # is what FastEventSimulator uses. Same selection semantics.
+        cum = np.cumsum(self._props)
+        total = float(cum[-1]) if cum.size > 0 else 0.0
         if total <= 0.0:
             return False
 
@@ -156,16 +156,8 @@ class RustBackedFastEventSimulator(FastEventSimulator):
         self.state.time += dt
         r = self.rng.random() * total
 
-        # Cumsum selection — same float-list iteration as FastEventSimulator.
-        cum = 0.0
-        chosen = -1
-        props_list = props.tolist()
-        for i in range(self._n_rules):
-            cum += props_list[i]
-            if r < cum:
-                chosen = i
-                break
-        if chosen < 0:
+        chosen = int(np.searchsorted(cum, r, side='right'))
+        if chosen >= self._n_rules:
             chosen = self._n_rules - 1  # numerical safety
 
         # Apply (inherited from FastEventSimulator, handles both compiled
