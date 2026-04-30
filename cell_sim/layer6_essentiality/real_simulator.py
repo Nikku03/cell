@@ -110,6 +110,24 @@ class RealSimulatorConfig:
     # cell_sim/layer3_reactions/imb155_patches.py and
     # memory_bank/facts/parameters/imb155_pathway_patches.json.
     enable_imb155_patches: bool = False
+    # Session 27 phase 1: wire cell_sim.layer3_reactions.gene_expression
+    # into the production simulator. When True, transcription, translation,
+    # mRNA degradation, and protein degradation rules are added for every
+    # CDS in the spec. Defaults to False so existing measurements
+    # (v0..v15) remain bit-identical. With this flag True the rules are
+    # python-closure rules in the FastEventSimulator (each tx / translate
+    # event invalidates the python-rule cache); phase 2 of the
+    # universal-sim path will move the high-frequency rules into the
+    # compiled propensity vector.
+    enable_gene_expression: bool = False
+    # Initial-condition scale factor for mRNA counts and free-machinery
+    # pools (RNAP / ribosome / degradosome). Decoupled from
+    # ``scale_factor`` because mRNA counts in the Luthey-Schulten input
+    # data are already very small (<3 per gene); multiplying by 0.05
+    # rounds nearly all of them to 0 and there is no visible
+    # transcription signal at the production scale. 0.1 keeps a workable
+    # mRNA + machinery count without ballooning the metabolic state.
+    gene_expression_scale_factor: float = 0.1
 
 
 class RealSimulator(Simulator):
@@ -131,6 +149,13 @@ class RealSimulator(Simulator):
         self._medium = None
         self._rev_rules = None
         self._extra_rules = None
+        # Session 27 phase 1: gene-expression rules cached at setup time
+        # when ``cfg.enable_gene_expression`` is True. The list contains
+        # 4 rules per CDS: transcription, translation, mRNA degradation,
+        # protein degradation. Each rule's ``participants[0]`` is the
+        # locus tag, used in ``_build_state_and_rules`` to filter out
+        # rules for the knocked-out gene.
+        self._gex_rules: list | None = None
 
     # ----- one-time heavy setup -----
     def _ensure_setup(self) -> None:
@@ -164,6 +189,12 @@ class RealSimulator(Simulator):
         self._medium = medium
         self._rev_rules = rev_rules
         self._extra_rules = extra_rules
+        if self.cfg.enable_gene_expression:
+            from layer3_reactions.gene_expression import (
+                build_gene_expression_rules,
+            )
+            with contextlib.redirect_stdout(io.StringIO()):
+                self._gex_rules = build_gene_expression_rules(spec)
         self._setup_done = True
 
     def build_gene_to_rules_map(self) -> dict[str, set[str]]:
@@ -228,6 +259,31 @@ class RealSimulator(Simulator):
                 self.cfg.complex_assembly_rate_per_uM_per_s,
             )
         )
+        if self.cfg.enable_gene_expression:
+            from layer3_reactions.gene_expression import (
+                initialize_gene_expression_state,
+            )
+            with contextlib.redirect_stdout(io.StringIO()):
+                initialize_gene_expression_state(
+                    state,
+                    scale_factor=self.cfg.gene_expression_scale_factor,
+                    seed=self.cfg.seed,
+                )
+            # Honour the knockout. Without this, transcription would still
+            # fire at the floor promoter strength (0.1) and translation
+            # would consume any pre-existing mRNA for the knocked-out
+            # gene to create new protein instances.
+            for tag in knockout:
+                if tag in state.mrna_counts:
+                    state.mrna_counts[tag] = 0
+                if tag in state.promoter_strength:
+                    state.promoter_strength[tag] = 0.0
+            ko_set = set(knockout)
+            gex_rules_for_run = [
+                r for r in (self._gex_rules or [])
+                if not (r.participants and r.participants[0] in ko_set)
+            ]
+            rules = rules + gex_rules_for_run
         if self.cfg.enable_metabolite_sinks:
             from cell_sim.layer6_essentiality.metabolite_sink import (
                 SinkConfig, make_metabolite_sink_rules,

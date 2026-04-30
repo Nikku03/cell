@@ -70,6 +70,8 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str,
         sink_k_per_s=cfg_dict.get("sink_k_per_s", 100.0),
         sink_tolerance=cfg_dict.get("sink_tolerance", 3.0),
         enable_imb155_patches=cfg_dict.get("enable_imb155_patches", False),
+        enable_gene_expression=cfg_dict.get("enable_gene_expression", False),
+        gene_expression_scale_factor=cfg_dict.get("gex_scale_factor", 0.1),
     )
     _worker_sim = RealSimulator(rs_cfg)
     with open(wt_pickle_path, "rb") as fh:
@@ -221,6 +223,12 @@ def _compute_wt(cfg_dict: dict) -> Trajectory:
         enable_imb155_patches=cfg_dict.get(
             "enable_imb155_patches", False,
         ),
+        enable_gene_expression=cfg_dict.get(
+            "enable_gene_expression", False,
+        ),
+        gene_expression_scale_factor=cfg_dict.get(
+            "gex_scale_factor", 0.1,
+        ),
     ))
     return sim.run([], t_end_s=cfg_dict["t_end_s"],
                    sample_dt_s=cfg_dict["dt_s"])
@@ -240,6 +248,12 @@ def _calibrate_thresholds(
         use_rust_backend=cfg_dict.get("use_rust_backend", False),
         enable_imb155_patches=cfg_dict.get(
             "enable_imb155_patches", False,
+        ),
+        enable_gene_expression=cfg_dict.get(
+            "enable_gene_expression", False,
+        ),
+        gene_expression_scale_factor=cfg_dict.get(
+            "gex_scale_factor", 0.1,
         ),
     ))
     nons = [lt for lt, lab in labels.items()
@@ -362,6 +376,21 @@ def main() -> int:
                         "three v10b metabolic false positives. See "
                         "memory_bank/facts/parameters/"
                         "imb155_pathway_patches.json.")
+    p.add_argument("--enable-gene-expression", action="store_true",
+                   help="Wire transcription, translation, mRNA "
+                        "degradation, and protein degradation rules "
+                        "from cell_sim.layer3_reactions.gene_expression "
+                        "into the production simulator. Default off so "
+                        "v0..v15 measurements remain bit-identical. "
+                        "With this flag on, a new MCC (v16-with-gex) "
+                        "should be measured as a separate fact rather "
+                        "than overwriting v15.")
+    p.add_argument("--gex-scale-factor", type=float, default=0.1,
+                   help="Initial-condition scale for mRNA counts and "
+                        "free RNAP / ribosome / degradosome pools. "
+                        "Decoupled from --scale because mRNA counts in "
+                        "the input data are <3/gene and would round to "
+                        "0 at scale=0.05.")
     p.add_argument("--out-dir", default="outputs")
     args = p.parse_args()
 
@@ -373,8 +402,9 @@ def main() -> int:
         det_tag += f"-{args.ensemble_policy}"
     if args.rule_necessity_only:
         det_tag += "_uniqueonly"
+    gex_tag = "_gex" if args.enable_gene_expression else ""
     tag = (f"parallel_s{args.scale}_t{args.t_end_s}_seed{args.seed}"
-           f"_thr{args.threshold}_w{args.workers}{cal_tag}{det_tag}")
+           f"_thr{args.threshold}_w{args.workers}{cal_tag}{det_tag}{gex_tag}")
     pred_csv = out_dir / f"predictions_{tag}.csv"
     metrics_json = out_dir / f"metrics_{tag}.json"
 
@@ -403,6 +433,8 @@ def main() -> int:
         "sink_k_per_s": args.sink_k_per_s,
         "sink_tolerance": args.sink_tolerance,
         "enable_imb155_patches": args.enable_imb155_patches,
+        "enable_gene_expression": args.enable_gene_expression,
+        "gex_scale_factor": args.gex_scale_factor,
     }
 
     t_setup = time.time()
