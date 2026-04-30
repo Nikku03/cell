@@ -1,0 +1,72 @@
+{
+  "id": "mcc_against_breuer_v16_gex_compiled",
+  "claim": "Session 28 phase-2 gex-on MCC measurement: running the v15 detector stack (composed: ComplexAssembly + AnnotationClass + PerRule, with iMB155 patches, threshold 0.1) on the full 455-gene Breuer panel at scale=0.05, t_end_s=0.5, seed=42 with ``--enable-gene-expression`` (compiled-gex partition active) yields TP=286, FP=3, TN=69, FN=97, MCC=0.5345578057087662. This is a 0.0027 drop versus the v15 gex-off measurement (TP=287, FP=3, TN=69, FN=96, MCC=0.5372320940435067, see mcc_against_breuer_v15_round2_priors and mcc_v15_replicates). The single shifted prediction is a previously-detected essential gene now predicted nonessential under gex-on; the FP and TN counts are unchanged. Sweep wall: 5294.47 s (88.2 min) at 4 workers with the Rust backend, vs 3011 s for v15 — a 1.76x slowdown under Rust, larger than the 1.29x measured at python-only in phase2_gex_compiled_wall_measurement (because the Rust backend accelerates the MM propensity calc but leaves the gex propensity calc in Python-vectorised numpy, so gex's relative cost grows when the metabolic core gets faster).",
+  "confidence": "measured",
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible with: 'python scripts/run_sweep_parallel.py --all --workers 4 --use-rust --scale 0.05 --t-end-s 0.5 --detector composed --seed 42 --threshold 0.1 --enable-imb155-patches --enable-gene-expression --out-dir outputs/phase2_v16_gex_on'. Predictions CSV preserved at outputs/phase2_v16_gex_on/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_gex.csv; metrics JSON at outputs/phase2_v16_gex_on/metrics_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_gex.json. Phase-2 commits on claude/syn3a-whole-cell-simulator-REjHC: 9273d57 (step 2 vectorised gex partition), d1de4fe (step 3 factories emit compiled_spec), 2dad436 (step 4 rust backend mirror), 1346476 (step 5 wall measurement + optimisation chain). Single-seed measurement; multi-seed replicates not run in this session.",
+  "last_verified": "2026-04-30",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v16_gex_compiled_phase2"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_v15_replicates",
+    "phase1_gex_wiring_wall_measurement",
+    "phase2_gex_compiled_wall_measurement",
+    "imb155_pathway_patches",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [],
+  "value": {
+    "n_genes": 455,
+    "tp": 286,
+    "fp": 3,
+    "tn": 69,
+    "fn": 97,
+    "mcc": 0.5345578057087662,
+    "precision": 0.9896193771626297,
+    "recall": 0.7467362924281984,
+    "specificity": 0.9583333333333334,
+    "accuracy": 0.7802197802197802,
+    "sweep_wall_s": 5294.47,
+    "config": {
+      "scale": 0.05,
+      "t_end_s": 0.5,
+      "dt_s": 0.05,
+      "seed": 42,
+      "use_rust_backend": true,
+      "workers": 4,
+      "detector": "composed",
+      "threshold": 0.1,
+      "enable_imb155_patches": true,
+      "enable_gene_expression": true,
+      "gex_scale_factor": 0.1
+    },
+    "comparison_to_v15_gex_off": {
+      "v15_mcc": 0.5372320940435067,
+      "v16_mcc": 0.5345578057087662,
+      "delta_mcc": -0.0026742883347405,
+      "v15_confusion": {"tp": 287, "fp": 3, "tn": 69, "fn": 96},
+      "v16_confusion": {"tp": 286, "fp": 3, "tn": 69, "fn": 97},
+      "n_predictions_flipped": 1,
+      "flip_direction": "TP -> FN (one previously-essential predicted-essential gene now predicted-nonessential under gex-on)"
+    },
+    "wall_comparison_to_v15": {
+      "v15_sweep_wall_s": 3011.0,
+      "v16_sweep_wall_s": 5294.47,
+      "wall_ratio": 1.76,
+      "phase2_python_only_ratio": 1.29,
+      "interpretation": "Under Rust + 4 workers the gex-on overhead is ~1.76x rather than the 1.29x measured at python-only on the 5-knockout sample. The Rust backend accelerates the MM propensity calc but the gex propensity calc remains in Python-vectorised numpy, so gex's relative cost grows when the metabolic core gets faster. Predicted in the phase2 wall fact's caveat block."
+    }
+  },
+  "caveats": [
+    "Single-seed measurement (seed=42). v15 was bit-identical across seeds {1, 2, 42} per mcc_v15_replicates; whether v16 retains that property under gex-on is not measured here. Multi-seed replicates would tighten the v15-vs-v16 comparison and are a candidate for a follow-up commit.",
+    "Gex-on does NOT improve detection on the v15 detector stack. The 0.0027 MCC drop is small (within plausible single-seed noise across nearby parameter configs) but it's a real drop, not a wash: one prediction flipped from TP to FN. The detector's signal at scale=0.05 / t_end=0.5 is dominated by metabolic-pool perturbations and annotation-class priors, neither of which directly benefits from gex modeling. With enable_gene_expression=True the simulator runs more events (transcription / translation / mRNA degradation events compete with metabolic events for stochastic sampling slots) and the catalysis-event count drops slightly per run; that thinning of catalysis trajectories is the most likely cause of the single TP -> FN flip.",
+    "Wall-time slowdown under the production Rust + 4-worker config (1.76x) exceeds the FUTURE_WORK <1.30x success criterion measured at python-only. The fact phase2_gex_compiled_wall_measurement.json's caveat block called this out explicitly; the criterion is met only when the comparison is apples-to-apples (both backends matched). A separate phase 3 optimisation could move the gex propensity calc into Rust, which is the bottleneck under Rust+gex-on.",
+    "The flipped gene (TP -> FN) is not identified individually in this fact. Diff against v15's predictions CSV is preserved in the v16 predictions CSV; a small follow-up script could enumerate per-gene differences and attach the locus tag for clarity.",
+    "The v15 measurement (mcc_v15_replicates) used the same scale / t-end / seed config and produced bit-identical replicates across three seeds. v16's single-seed measurement matches that config except for the new --enable-gene-expression flag. No other parameter changed.",
+    "v15's predictor is biology-first and largely deterministic at the prior level (ComplexAssembly + AnnotationClass cover ~70 percent of essential genes). The trajectory-dependent PerRuleDetector decisions are the only seed-sensitive component; under gex-on those decisions remain stable for ~99.7 percent of genes (286/287 TPs preserved + all FPs/TNs).",
+    "This measurement is the v16 endpoint for gex-on under the v15 detector. A v17 measurement could iterate the detector stack to actually USE the gex events (e.g. a TranscriptionStallDetector that watches transcribe-event rate per gene), which would justify the wall-time cost. The honest framing of the current state: 'phase 2 plumbed gene expression into the production simulator at the wall-time target; the existing v15 detector ignores it, so the v15 vs v16 MCC comparison is essentially a robustness check, not a quality improvement.'"
+  ]
+}
