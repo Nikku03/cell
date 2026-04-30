@@ -396,6 +396,87 @@ class FastEventSimulator:
         }
 
     # ------------------------------------------------------------------
+    # Compiled-gex helpers (shared with RustBackedFastEventSimulator)
+    # ------------------------------------------------------------------
+    def _maybe_sync_gex_pseudo_counts(self) -> None:
+        """Re-pull gex pseudo-species counts from ``state`` if the dirty
+        flag is set. No-op when _n_gex == 0."""
+        if not (self._gex_counts_dirty and self._n_gex > 0):
+            return
+        for dict_attr in self._gex_mrna_dict_attrs:
+            d = getattr(self.state, dict_attr, None) or {}
+            for g in range(self._n_gex):
+                info = self._gex_mrna_state_for_g[g]
+                if info is None:
+                    continue
+                gene_id, attr = info
+                if attr != dict_attr:
+                    continue
+                m_idx = int(self.G_mrna_idx[g])
+                if m_idx >= 0:
+                    self._counts[m_idx] = int(d.get(gene_id, 0))
+        for pid, attr in self._gex_machinery_attr_for_pid.items():
+            idx = self._species_to_idx.get(pid)
+            if idx is not None:
+                self._counts[idx] = int(getattr(self.state, attr, 0))
+        self._gex_counts_dirty = False
+
+    def _compute_gex_props_into(self, props: np.ndarray) -> None:
+        """Vectorised gex propensity calc. Scatters into ``props`` at the
+        gex rule indices. No-op when _n_gex == 0.
+
+        Token formula matches the python closures in
+        ``cell_sim/layer3_reactions/gene_expression.py`` exactly:
+
+          transcribe   : tokens = max(1, int(promoter * machinery))
+                          guarded by machinery > 0 and gating substrate
+          translate    : tokens = min(n_mrna * machinery, max_tokens)
+                          guarded by both > 0 and gating substrate
+          degrade_mrna : tokens = min(n_mrna * machinery, max_tokens)
+                          guarded by both > 0 (no gating substrate)
+
+        Propensity per rule is ``kcat * tokens``.
+        """
+        if self._n_gex <= 0:
+            return
+        cnts = self._counts
+        mrna_safe_idx = np.clip(self.G_mrna_idx, 0, None)
+        machinery_safe_idx = np.clip(self.G_machinery_idx, 0, None)
+        gate_safe_idx = np.clip(self.G_gate_idx, 0, None)
+
+        machinery = np.where(
+            self.G_machinery_idx >= 0, cnts[machinery_safe_idx], 0,
+        )
+        n_mrna = np.where(
+            self.G_mrna_idx >= 0, cnts[mrna_safe_idx], 0,
+        )
+        gate_count = np.where(
+            self.G_gate_idx >= 0, cnts[gate_safe_idx], 0,
+        )
+        gate_ok = np.where(
+            self.G_gate_idx >= 0,
+            gate_count >= self.G_gate_threshold,
+            True,
+        )
+
+        tx_tokens = np.maximum(
+            1, (self.G_promoter * machinery).astype(np.int64),
+        )
+        tx_tokens = np.where(machinery > 0, tx_tokens, 0)
+
+        md_raw = n_mrna * machinery
+        md_tokens = np.minimum(md_raw, self.G_max_tokens)
+        md_tokens = np.where(
+            (n_mrna > 0) & (machinery > 0), md_tokens, 0,
+        )
+
+        is_tx = self.G_subkind == self._GEX_SUBKIND_TX
+        tokens = np.where(is_tx, tx_tokens, md_tokens)
+        tokens = np.where(gate_ok, tokens, 0)
+        gex_props = self.G_kcat * tokens
+        props[self.G_rule_idx] = gex_props
+
+    # ------------------------------------------------------------------
     # Hot path
     # ------------------------------------------------------------------
     def _step(self) -> bool:
@@ -428,24 +509,7 @@ class FastEventSimulator:
         # a non-gex code path may have mutated state.mrna_counts /
         # state.{rnap,ribosome,degradosome}_free. Skipped entirely when
         # _n_gex == 0 (the gex-off invariant).
-        if self._gex_counts_dirty and self._n_gex > 0:
-            for dict_attr in self._gex_mrna_dict_attrs:
-                d = getattr(self.state, dict_attr, None) or {}
-                for g in range(self._n_gex):
-                    info = self._gex_mrna_state_for_g[g]
-                    if info is None:
-                        continue
-                    gene_id, attr = info
-                    if attr != dict_attr:
-                        continue
-                    m_idx = int(self.G_mrna_idx[g])
-                    if m_idx >= 0:
-                        self._counts[m_idx] = int(d.get(gene_id, 0))
-            for pid, attr in self._gex_machinery_attr_for_pid.items():
-                idx = self._species_to_idx.get(pid)
-                if idx is not None:
-                    self._counts[idx] = int(getattr(self.state, attr, 0))
-            self._gex_counts_dirty = False
+        self._maybe_sync_gex_pseudo_counts()
 
         # --- vectorised compiled-rule propensities ---
         self._props.fill(0.0)
@@ -492,54 +556,7 @@ class FastEventSimulator:
 
         # --- vectorised compiled-gex propensities ---
         # No-op when _n_gex == 0 (gex-off path).
-        if self._n_gex > 0:
-            cnts = self._counts
-            mrna_safe_idx = np.clip(self.G_mrna_idx, 0, None)
-            machinery_safe_idx = np.clip(self.G_machinery_idx, 0, None)
-            gate_safe_idx = np.clip(self.G_gate_idx, 0, None)
-
-            machinery = np.where(
-                self.G_machinery_idx >= 0, cnts[machinery_safe_idx], 0,
-            )
-            n_mrna = np.where(
-                self.G_mrna_idx >= 0, cnts[mrna_safe_idx], 0,
-            )
-            gate_count = np.where(
-                self.G_gate_idx >= 0, cnts[gate_safe_idx], 0,
-            )
-            gate_ok = np.where(
-                self.G_gate_idx >= 0,
-                gate_count >= self.G_gate_threshold,
-                True,
-            )
-
-            # Subkind dispatch — token formula matches the python closures
-            # in cell_sim/layer3_reactions/gene_expression.py exactly:
-            #   transcribe : tokens = max(1, int(promoter * machinery))
-            #                with the rule firing only if machinery > 0
-            #                and the gating substrate is available.
-            #   translate  : tokens = min(n_mrna * machinery, max_tokens)
-            #                with the rule firing only if both > 0 and
-            #                the gating substrate is available.
-            #   degrade_mrna: tokens = min(n_mrna * machinery, max_tokens)
-            #                with the rule firing only if both > 0
-            #                (no gating substrate).
-            tx_tokens = np.maximum(
-                1, (self.G_promoter * machinery).astype(np.int64),
-            )
-            tx_tokens = np.where(machinery > 0, tx_tokens, 0)
-
-            md_raw = n_mrna * machinery
-            md_tokens = np.minimum(md_raw, self.G_max_tokens)
-            md_tokens = np.where(
-                (n_mrna > 0) & (machinery > 0), md_tokens, 0,
-            )
-
-            is_tx = self.G_subkind == self._GEX_SUBKIND_TX
-            tokens = np.where(is_tx, tx_tokens, md_tokens)
-            tokens = np.where(gate_ok, tokens, 0)
-            gex_props = self.G_kcat * tokens
-            self._props[self.G_rule_idx] = gex_props
+        self._compute_gex_props_into(self._props)
 
         # --- python-closure fallback (cached) ---
         # These rules' propensities only change after another python-rule

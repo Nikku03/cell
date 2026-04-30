@@ -83,6 +83,14 @@ class RustBackedFastEventSimulator(FastEventSimulator):
                         self._counts[idx] = c
             self._counts_dirty = False
 
+        # ---- sync gex pseudo-species counts if dirty (same as Python Fast) ----
+        # Phase 2: gex pseudo-species (per-gene mRNA + free-machinery
+        # scalars) live in self._counts alongside metabolites. The Rust
+        # extension only operates on the MM tables; gex propensities are
+        # computed in Python (vectorised numpy) and scattered into props
+        # after the Rust call below.
+        self._maybe_sync_gex_pseudo_counts()
+
         # ---- refresh python-closure rule cache (same as Python Fast) ----
         if not self._py_cache_valid:
             for i in self._python_rule_indices:
@@ -113,14 +121,22 @@ class RustBackedFastEventSimulator(FastEventSimulator):
             self._py_props_cache,
         )
 
-        if total <= 0.0:
-            return False
+        # Note: ``total`` here is the Rust-side total over compiled-MM +
+        # python-closure cache only. We add gex contributions below and
+        # recompute the total in Python before sampling — so this short
+        # circuit is OK only if both gex props and Rust-computed props
+        # are zero. Rather than gate on it, fall through and let the
+        # Python re-sum + zero-check below decide whether to bail.
 
         # Keep the returned propensity vector and saturation visible in
         # `self._props` / `self._last_saturation` so `_apply` (inherited)
         # and external observers see the same surface as FastEventSimulator.
         self._props = props
         self._last_saturation = saturation
+
+        # Phase 2: scatter gex propensities into self._props at the gex
+        # rule indices. No-op when _n_gex == 0.
+        self._compute_gex_props_into(self._props)
 
         # Rebuild cands_scratch for python-closure rules (needed by _apply
         # when a python-rule fires). Compiled rules ignore cands_scratch.
