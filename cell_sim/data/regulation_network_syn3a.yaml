@@ -1,0 +1,97 @@
+# Syn3A Regulation Network Configuration
+#
+# Status: SCHEMA ONLY. No regulatory entries are populated.
+#
+# Phase R1 (current): infrastructure-only. The four lists below are
+# intentionally empty. The loader at
+# cell_sim/layer4_regulation/network_loader.py treats this state as
+# valid and the simulator runs with regulation disabled. The v15 and
+# v16 essentiality MCC measurements do NOT depend on this file.
+#
+# Phase R2 (future, separate session): biological curation. Each entry
+# added below requires the three provenance fields documented under
+# "Per-entry provenance" and at least the kinetic keys documented in
+# the per-section schema. The loader rejects partial entries.
+#
+# Curation source — TBD. Candidate sources for a future curation pass:
+#   * Mycoplasma RegulonDB equivalent — no comprehensive resource
+#     currently exists for Mycoplasma / JCVI-Syn3A.
+#   * Lluch-Senar et al. 2015 (M. pneumoniae transcriptomics +
+#     essentiality) — closest analog; many regulatory inferences in
+#     supplementary tables.
+#   * JCVI synthesis papers (Hutchison 2016, Pelletier 2021) for
+#     architectural notes on what regulation Syn3A retained.
+#   * Sigma factor identification by sequence homology against
+#     B. subtilis SigA / SigH or M. genitalium homologs (BLAST + Pfam).
+#   * Riboswitch identification by Infernal scans against Rfam.
+#
+# Per-entry provenance (REQUIRED for every populated entry)
+# ---------------------------------------------------------
+#   source       : free-form string identifying the paper, database
+#                  accession, or curation note that justifies the
+#                  kinetic parameters for this entry.
+#   confidence   : one of {measured, inferred, placeholder}.
+#                  - measured: rate constants come directly from a
+#                    published in vitro / in vivo measurement on
+#                    Syn3A or a close homolog.
+#                  - inferred: rate constants extrapolated from a
+#                    related organism (e.g. M. pneumoniae) without
+#                    direct Syn3A data.
+#                  - placeholder: rate constants are synthetic / order-
+#                    of-magnitude. NOT acceptable in production.
+#   curated_on   : ISO date the entry was added (YYYY-MM-DD).
+#
+# Until each entry has these three fields, the loader will reject it
+# with a RegulationConfigError. Do not work around the check by
+# inventing values; if the data is not curated, leave the entry out.
+#
+# Per-section schema
+# ------------------
+# transcription_factors:
+#   - tf_locus: JCVISYN3A_XXXX
+#     target_genes: [JCVISYN3A_YYYY, JCVISYN3A_ZZZZ]
+#     k_bind:   <1/s>      # forward rate prefactor
+#     k_unbind: <1/s>      # reverse rate
+#     polarity: activator | repressor   # Phase R2 — not enforced in R1
+#     source:       <provenance>
+#     confidence:   <measured|inferred|placeholder>
+#     curated_on:   YYYY-MM-DD
+#
+# sigma_factors:
+#   - sigma_locus: JCVISYN3A_XXXX
+#     gene_class:  housekeeping | stress | sporulation | <other>
+#     competition_factor: <[0, 1]>
+#     initial_free_count: <int>
+#     source:       <provenance>
+#     confidence:   <measured|inferred|placeholder>
+#     curated_on:   YYYY-MM-DD
+#
+# riboswitches:
+#   - gene_locus:        JCVISYN3A_XXXX
+#     ligand_metabolite: M_xxx_c                # SBML id
+#     k_fold:   <1/s>
+#     k_unfold: <1/s>
+#     initial_folded_fraction: <[0, 1]>
+#     source:       <provenance>
+#     confidence:   <measured|inferred|placeholder>
+#     curated_on:   YYYY-MM-DD
+#
+# two_component_systems:
+#   - sensor_locus:               JCVISYN3A_XXXX
+#     response_regulator_locus:   JCVISYN3A_YYYY
+#     k_phos:   <1/s>
+#     k_dephos: <1/s>
+#     initial_phos_state: 0 | 1
+#     source:       <provenance>
+#     confidence:   <measured|inferred|placeholder>
+#     curated_on:   YYYY-MM-DD
+#
+# ============================================================================
+
+transcription_factors: []
+
+sigma_factors: []
+
+riboswitches: []
+
+two_component_systems: []

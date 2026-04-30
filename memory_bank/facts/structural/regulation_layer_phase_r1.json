@@ -1,0 +1,54 @@
+{
+  "id": "regulation_layer_phase_r1",
+  "claim": "Regulation layer infrastructure (Phase R1) created in cell_sim/layer4_regulation/ with rule factory scaffolding for TF binding, sigma factor competition, riboswitch folding, and two-component signaling. The regulation network configuration file (cell_sim/data/regulation_network_syn3a.yaml) is intentionally empty pending future biological curation. No regulation rules are wired into the production essentiality sweep. No MCC claim is made for this phase. The four rule factories raise a BiologyNotCurated warning when invoked without an explicit source_citation argument; tests suppress the warning to verify only the architectural contract.",
+  "confidence": "assumed",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via the new test suite at cell_sim/tests/test_regulation_infrastructure.py (13 tests, all passing). The bit-identity gex-off regression test at cell_sim/tests/test_phase2_gex_off_bit_identity.py continues to pass under RUN_PHASE2_REGRESSION=1, confirming v15 and v16 baselines are unaffected by the new layer. Confidence value is 'assumed' rather than the spec's suggested 'implemented' because the invariant checker (memory_bank/.invariants/check.py + ranges.json) restricts confidence to {measured, inferred, estimated, assumed}; 'assumed' is the closest match for placeholder kinetic parameters that have not been measured.",
+  "last_verified": "2026-04-30",
+  "context": {
+    "entity": "regulation_layer",
+    "version": "phase_r1"
+  },
+  "value": {
+    "n_rule_factories": 4,
+    "rule_factory_names": [
+      "make_tf_binding_rule",
+      "make_sigma_competition_rule",
+      "make_riboswitch_rule",
+      "make_two_component_signaling_rule"
+    ],
+    "n_pseudo_species_types": 5,
+    "pseudo_species_prefixes": [
+      "_tf_bound:",
+      "_promoter_state:",
+      "_sigma_class:",
+      "_riboswitch_state:",
+      "_phos_state:"
+    ],
+    "n_curated_regulatory_entries": 0,
+    "yaml_config_status": "empty_schema_only",
+    "yaml_config_path": "cell_sim/data/regulation_network_syn3a.yaml",
+    "production_integration": false,
+    "mcc_claim": null,
+    "n_new_tests": 13,
+    "test_baseline_before": 269,
+    "test_baseline_after": 282
+  },
+  "caveats": [
+    "Phase R1 produces infrastructure only. The four regulation rule factories work syntactically but have not been called with biologically-curated parameters. No regulatory entries exist in cell_sim/data/regulation_network_syn3a.yaml.",
+    "The simulator's production sweep does not invoke the regulation layer. v15 and v16 MCC values (mcc_against_breuer_v15_round2_priors, mcc_against_breuer_v16_gex_compiled) are unchanged from prior measurements. The Phase 2 gex-off bit-identity regression test passes, confirming this.",
+    "Wiring regulation into production requires (a) curating regulation_network_syn3a.yaml from real Syn3A regulatory data, (b) extending real_simulator.py to invoke initialize_regulation_state when an enable_regulation flag is set, (c) measuring v17 MCC and comparing to v16. None of these are part of Phase R1; see Phase R2 in FUTURE_WORK.md for the curation checklist.",
+    "The 'BiologyNotCurated' warning class exists explicitly to flag any future use of the rule factories with placeholder data. This is not a bug; it is a required safety check. Production code (Phase R2 wiring) MUST pass source_citation so the warning never fires.",
+    "The YAML loader at cell_sim/layer4_regulation/network_loader.py rejects any populated entry that is missing source / confidence / curated_on provenance fields. This is intentional and unmovable: the loader cannot be coaxed into accepting placeholder biology by editing the YAML alone.",
+    "Confidence value 'assumed' rather than 'implemented' because the invariant checker's allowed list does not include 'implemented'. The deviation from the session brief is documented in source_detail above and in the commit message; the substance ('this is infrastructure, not biology') is preserved.",
+    "Total diff for this phase is well under the 2500-line cap: ~840 lines of new code + ~280 lines of tests + ~80 lines of YAML schema documentation."
+  ],
+  "dependencies": [
+    "mcc_against_breuer_v16_gex_compiled",
+    "mcc_against_breuer_v15_round2_priors"
+  ],
+  "used_by": [
+    "cell_sim/tests/test_regulation_infrastructure.py",
+    "cell_sim/layer4_regulation/regulation.py"
+  ]
+}
