@@ -52,12 +52,14 @@ Build a biologically accurate, computationally cheap Syn3A whole-cell simulator 
 | Layer | Name | Phase | Status |
 |-------|------|-------|--------|
 | 0 | Genome | complete (A-E) | Genome API + 12 validation tests passing; facts cited and stamped. |
-| 1 | Transcription machinery | partial | existing `cell_sim/` code + kinetic data covers it at Thornburg-lumped level; no memory-bank citation trail yet. |
-| 2 | Translation machinery | partial | same as Layer 1; ribosome is a pool, not a tracked complex. |
-| 3 | Protein folding + complex assembly | partial | complex_formation.xlsx loaded by existing rules; 24 complexes defined with stoichiometry. |
-| 4 | Metabolism | partial | Syn3A_updated.xml + kinetic_params.xlsx loaded by existing rules; 6 transporter k_cats patched without citation yet. |
+| 1 | Transcription machinery | **built, NOT wired** | `gene_expression.make_transcription_rule` + `make_mrna_degradation_rule` exist in `cell_sim/layer3_reactions/gene_expression.py`. Not imported by `real_simulator.py`; not invoked during the production sweep. The `transcription_stall` failure-mode tag in v15 outputs is a detector-assigned label from `AnnotationClassDetector`, not a simulator-derived signal. |
+| 2 | Translation machinery | **built, NOT wired** | `gene_expression.make_translation_rule` + `make_protein_degradation_rule` exist in the same module. Not imported by `real_simulator.py`. The `translation_stall` failure-mode tag is also detector-assigned, not simulator-derived. |
+| 3 | Protein folding + complex assembly | **wired** | complex_formation.xlsx loaded; 24 complexes encoded with stoichiometry; `ComplexAssemblyDetector` runs in production. |
+| 4 | Metabolism | **wired** | Syn3A_updated.xml + kinetic_params.xlsx loaded; 356 reactions + 308 species; `build_reversible_catalysis_rules` + `build_missing_transport_rules` + `imb155_patches` all run during the sweep. |
 | 5 | Biomass + division | not started | no biomass accumulation / division logic anywhere. |
-| 6 | Essentiality analysis | RealSimulator wired (Python + Rust), parallel sweep, 10 MCC measurements (v0-v9) + replicates + v9 robustness. **Best honest MCC = 0.123 ± 0.020** (v9 RedundancyAwareDetector across 2 different 40-gene panels, 10 total runs via Colab). Panel 42 reproduces exactly (0.125, std=0.000); panel 400 introduces boundary-gene variance (0.119 ± 0.041). Detector-design space exhausted; iMB155 pathway-completeness is the bottleneck. |
+| 6 | Essentiality analysis | wired | `RealSimulator` runs (Python + Rust hot path), parallel sweep, v15 composed detector reaches **MCC 0.5372** on the full 455-gene Breuer panel. |
+
+**Scope-coverage summary:** of the 13 cellular processes commonly modelled in whole-cell simulators, **4 are wired** into the production sweep that produced MCC 0.5372 (metabolism, complex assembly, transport, protein folding), **4 are built but not wired** (transcription, translation, mRNA degradation, protein degradation — all in `gene_expression.py`), and **5 are absent entirely** (regulation, DNA replication, cell division, biomass accumulation, spatial structure). Of the seven failure-mode tags the detector reports, only `catalysis_silenced` and `essential_metabolite_depletion` come from simulator dynamics; the rest are categorical labels from knowledge-based detectors. See the "What runs vs what doesn't" table in `RESULTS.md` for the full accounting.
 
 Phase codes (for the layers we gate): A = Literature survey, B = Design, C = Implementation, D = Validation, E = Layer report.
 
@@ -143,7 +145,7 @@ Existing 235 tests pass. v15 essentiality predictions unchanged. Branch unchange
 ### Session 15 — 2026-04-24 — v15 multi-seed replicates (zero variance, MCC 0.5372 exact on seeds 42/1/2)
 - **Scope**: quantify sim-seed variance on the Session-15 v15 detector before relying on 0.537 as a reported number. Three seeds (42, 1, 2) run end-to-end on the full 455-gene set.
 - **Result**: **bit-identical confusion matrices and MCC values across all 3 seeds**. TP=287, FP=3, TN=69, FN=96, MCC=0.5372320940435067 for every replicate. Standard deviation: 0.0000.
-- **Interpretation**: v15's detector decisions are dominated by deterministic annotation-class + complex-KB priors; the trajectory-dependent PerRuleDetector decisions sit comfortably inside their decision regions (event counts 3–5× the min_wt_events=20 threshold under the v14 20-token patch config), so sim RNG noise doesn't flip any rule into or out of the silenced-class verdict. Seed invariance is a feature of THIS detector design, not of the simulator itself — earlier detectors (v7 / v9) had substantial sim-seed variance on the same simulator.
+- **Interpretation**: v15's detector decisions are dominated by deterministic annotation-class + complex-KB priors; the trajectory-dependent PerRuleDetector decisions sit comfortably inside their decision regions (event counts 3–5× the min_wt_events=20 threshold under the v14 20-token patch config), so sim RNG noise doesn't flip any rule into or out of the silenced-class verdict. Seed invariance is a feature of THIS detector design, not of the simulator itself — earlier detectors (v7 / v9) had real sim-seed variance on the same simulator.
 - **Caveats**: the seed=1 predictions CSV was destroyed by a self-inflicted file-watching monitor bug (aggregator falls back to the metrics JSON, which preserved the confusion counts). Seed=42 and seed=2 CSVs are preserved in the repo.
 - **Memory bank**: 1 new measured fact (`mcc_v15_replicates`). **43 facts / 12 sources / invariant checker OK.**
 

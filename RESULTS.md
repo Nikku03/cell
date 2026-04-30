@@ -16,7 +16,31 @@ The answer, after 22 development sessions: **the result is close to but does not
 
 The cell is represented as a vector of integer molecule counts per species (308 species in total). Reactions fire stochastically using the Gillespie algorithm — the next event is sampled from a propensity distribution proportional to current counts, time advances by an exponential random variable, the event applies, and the loop repeats. The simulator implements 356 reactions parsed from the Luthey-Schulten lab's Syn3A SBML model, with reversible Michaelis-Menten kinetics and proper saturation factors (`mm_saturation_factor` in `cell_sim/layer3_reactions/reversible.py`). A Rust port of the hot path runs **1.86× faster than the pure-Python reference** on the production sweep workload (measured in Session 18 across 20 genes; below the "roughly 2×" claim from prior work but on the same side, and consistent across reruns).
 
-The scope is metabolism + transcription + translation + protein turnover. **Cell division and biomass accumulation are not modelled** — that's the deferred Layer 5. For a 0.5-second simulated window, the reduced scope is appropriate; for whole-cell-cycle modelling it's a known gap.
+**The actual scope of the production sweep is metabolism + complex assembly only.** Transcription, translation, mRNA degradation, and protein degradation rule factories live in `cell_sim/layer3_reactions/gene_expression.py` but are not wired into `real_simulator._build_state_and_rules`; they are not invoked anywhere in the pipeline that produced the headline MCC. Cell division, biomass accumulation, regulation, DNA replication, and spatial structure are not implemented at all. The 0.5-second simulated window plus the metabolic + complex-assembly scope is what the v15 detectors actually consume; everything else in the failure-mode taxonomy comes from knowledge-based priors, not simulator dynamics. See "What runs vs what doesn't" below.
+
+### What runs vs what doesn't (scope-coverage table)
+
+This is the honest accounting of which cellular processes contribute to the v15 prediction and where each one's signal originates. "Wired" = code is reachable from `real_simulator.py` during the production sweep. "Built, not wired" = a working module exists in the codebase but is not invoked by the pipeline that produced the headline MCC. "Absent" = no code, in any form.
+
+| Cellular process | Status | Where the signal comes from |
+|---|---|---|
+| Metabolic flux (356 reactions, 308 species) | Wired | Simulator dynamics (Gillespie + reversible MM) |
+| Protein folding (chaperone-dependent) | Wired | Simulator dynamics |
+| Protein complex assembly (24 complexes) | Wired | Simulator dynamics + `ComplexAssemblyDetector` knowledge base |
+| Transport (active + passive) | Wired | Simulator dynamics + `build_missing_transport_rules` patches |
+| Transcription | Built, not wired | `gene_expression.make_transcription_rule` (line 164) is not imported by `real_simulator.py`; failure-mode labels like `transcription_stall` are assigned by `AnnotationClassDetector` keyword priors, not by simulator dynamics |
+| Translation | Built, not wired | Same; `translation_stall` is a detector-assigned categorical tag |
+| mRNA degradation | Built, not wired | Same |
+| Protein degradation | Built, not wired | Same |
+| Regulation (transcription factors, riboswitches, sigma factors) | Absent | No code |
+| DNA replication | Absent | No code; `dna_replication_blocked` failure-mode tag is detector-assigned via gene annotations |
+| Cell division | Absent | No code |
+| Biomass accumulation | Absent | No code (deferred Layer 5) |
+| Spatial structure (chromosome geometry, membrane, ribosome positioning) | Absent | No code |
+
+Of the 13 cellular processes commonly modelled in whole-cell simulators: **4 are wired into the production sweep, 4 are built in the codebase but not connected to it, and 5 are absent entirely.** The v15 MCC of 0.537 is achieved without ever firing a transcription or translation event in the simulator — those failure modes are caught (when they are caught) by knowledge-based detectors keyed on gene annotations, not by simulated dynamics.
+
+**Failure-mode label provenance.** The detector framework reports seven failure-mode categories on each prediction. Of those, only `catalysis_silenced` and `essential_metabolite_depletion` come from simulator dynamics (rule firing counts and pool-deviation measurements respectively). The remaining tags — `translation_stall`, `dna_replication_blocked`, `membrane_integrity`, `transcription_stall`, and the residual `unknown` — are categorical labels assigned by detectors that key on gene annotations, not signals derived from anything the simulator computed. A reader looking at a per-gene failure trace should not assume the simulator dynamically modelled the failure mode named in the trace; they should check whether the label came from `PerRuleDetector` (simulator-derived) or from `AnnotationClassDetector` / `ComplexAssemblyDetector` (priors-derived).
 
 ### Layer 2: Detector framework
 
@@ -123,7 +147,7 @@ Three independent extension attempts were each evaluated rigorously and halted w
 
 ### Methodological combination on a single evaluation framework
 
-Stochastic whole-cell simulation, a multi-detector ensemble (`ShortWindow` + `PerRule` + `RedundancyAware` for trajectory analysis, `ComplexAssembly` + `AnnotationClass` for biological priors), and pretrained-ML feature stacking (ESM-2 + ESMFold + MACE) are all evaluated against the same Breuer 2019 labels using the same MCC measurement, with the same train/eval pipeline. I haven't seen this specific configuration in the cited prior work — Breuer used FBA + curated GPR mapping; Thornburg used well-stirred Gillespie without the ML stack. The data also shows the components are **not strongly complementary** on Syn3A's 455-gene set: trajectory-only detectors plateau at MCC ~0.13, ML stacking actively hurts (0.443 union vs v15's 0.537), and the knowledge-based priors carry the bulk of the result. The integration is in a configuration I haven't seen elsewhere; the scientific finding from that integration is mostly null.
+Stochastic metabolic-network simulation (Gillespie on the 356-reaction SBML plus 24 protein complexes), a multi-detector ensemble (`ShortWindow` + `PerRule` + `RedundancyAware` for trajectory analysis, `ComplexAssembly` + `AnnotationClass` for biological priors), and pretrained-ML feature stacking (ESM-2 + ESMFold + MACE) are all evaluated against the same Breuer 2019 labels using the same MCC measurement, with the same train/eval pipeline. I haven't seen this specific configuration in the cited prior work — Breuer used FBA + curated GPR mapping; Thornburg used well-stirred Gillespie at full whole-cell scope (transcription + translation + replication + division included) without the ML stack. The data also shows the components are **not strongly complementary** on Syn3A's 455-gene set: trajectory-only detectors plateau at MCC ~0.13, ML stacking actively hurts (0.443 union vs v15's 0.537), and the knowledge-based priors carry the bulk of the result. The integration is in a configuration I haven't seen elsewhere; the scientific finding from that integration is mostly null.
 
 ### Position on the speed-fidelity tradeoff
 
@@ -183,8 +207,9 @@ Recorded as `synthlet_pilot_v0.json`, `synthlet_pilot_v2.json`, and `synthlet_08
 - **Single-organism validation.** The 30+ annotation-keyword priors and the 9 iMB155 metabolic patches were both mined from Syn3A's specific data. Cross-organism transfer would require remining; that effort was scoped (`memory_bank/data/multiorg_essentiality/`) but not completed because the upstream DEG flat-file URLs returned navigation HTML rather than data.
 - **Trajectory-only detectors hit MCC ~0.13 ceiling** measured across multiple detector designs (`ShortWindow`, `PerRule`, `RedundancyAware`). The simulator's stochastic dynamics carry less essentiality signal than the existing biological knowledge bases do for this dataset size.
 - **Knowledge-based detectors carry the bulk of the result.** The composed v15 detector reaches 0.537; the trajectory components alone reach ~0.13. This is the honest credit assignment — the headline number is mostly an artifact of careful annotation mining, not of the simulator's stochastic core.
-- **The simulator cannot predict non-metabolic essentials** that depend on protein-machinery integrity (e.g. ribosomal proteins fail through translation collapse, not metabolic shutdown) without the gene-expression-layer detectors in the composed vote. Roughly 75% of Breuer-essential genes are caught only because of the knowledge-based path, not the simulation per se.
-- **Layer 5 (biomass + division) is not implemented.** Cell-cycle phenotypes are out of scope.
+- **Failure-mode labels are not all simulator-derived.** Of the seven failure-mode tags the detector framework reports, only `catalysis_silenced` and `essential_metabolite_depletion` come from simulator dynamics. `translation_stall`, `dna_replication_blocked`, `membrane_integrity`, `transcription_stall`, and the `unknown` residual are categorical tags assigned by `AnnotationClassDetector` / `ComplexAssemblyDetector` keyed on gene annotations. A reader inspecting a per-gene failure trace should not assume the simulator dynamically modelled the named failure mode — for the four detector-assigned tags, the simulator was never asked.
+- **The simulator cannot predict non-metabolic essentials** (ribosomal proteins, tRNA-modification enzymes, transcription factors, etc.) from dynamics alone, because transcription, translation, and protein turnover are not wired into the production sweep — `gene_expression.py` is built but unused. Roughly 75 % of Breuer-essential genes are caught only because of the knowledge-based detectors, not because the simulator simulated their failure.
+- **Several cellular processes are absent entirely from the codebase**: regulation, DNA replication, cell division, biomass accumulation (deferred Layer 5), spatial structure. Cell-cycle phenotypes are out of scope.
 - **3 stubborn false positives never audited** at the wet-lab level. They are the cleanest hypothesis this project produces — see the README for the proposed experiment.
 
 ## What I would do next if continuing
