@@ -1,0 +1,40 @@
+{
+  "id": "regulation_curation_phase_r2a",
+  "claim": "Regulation candidate data acquired from local Syn3A GenBank annotation (CP016816.2) and staged in memory_bank/staging/regulation_curation/. Acquired counts: 1 sigma factor (rpoD / JCVISYN3A_0407), 3 transcription factors (mraZ / JCVISYN3A_0525 plus two uncharacterized regulators at JCVISYN3A_0042 and JCVISYN3A_0620), 0 riboswitches, 0 two-component systems. All entries are machine-acquired and labeled confidence: candidate, awaiting human review before any promotion to the production regulation_network_syn3a.yaml. The production YAML is unchanged (still empty). No biological accuracy claim is made for individual candidates.",
+  "confidence": "assumed",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via `python scripts/acquire_regulation_candidates.py` from the repo root. Acquisition queries documented in memory_bank/staging/regulation_curation/acquisition_log.md including the network probe transcript that recorded HTTP 403 host_not_allowed responses from EBI, Pfam, Rfam, NCBI, and UniProt. The strict Pfam HMM and Rfam Infernal acquisition paths described in the session brief were unavailable in the acquisition sandbox (no hmmscan/cmscan/blastp installed; no Pfam-A.hmm or Rfam.cm on disk; bio-database hosts blocked at the proxy). The fallback channel was local GenBank annotation parsing — every candidate carries provenance_channel='genbank_annotation' plus the GenBank protein_id, RefSeq or SwissProt /inference= xref, and verbatim /product= string. e_value is null for every candidate (annotation parsing yields no HMM E-value); a Phase R2b reviewer must judge candidates on annotation provenance alone.",
+  "last_verified": "2026-04-30",
+  "context": {
+    "entity": "regulation_layer",
+    "version": "phase_r2a"
+  },
+  "value": {
+    "n_sigma_factor_candidates": 1,
+    "n_transcription_factor_candidates": 3,
+    "n_riboswitch_candidates": 0,
+    "n_two_component_candidates": 0,
+    "production_yaml_modified": false,
+    "human_review_required": true,
+    "acquisition_channel": "genbank_annotation",
+    "strict_pfam_path_attempted_and_blocked": true,
+    "n_cds_features_scanned": 458,
+    "genbank_accession": "CP016816.2",
+    "staging_dir": "memory_bank/staging/regulation_curation/"
+  },
+  "caveats": [
+    "All staged entries are unreviewed candidates. Promotion to the production YAML requires biological judgment about which are credible. The Phase R2b review session has the explicit rubric documented in memory_bank/staging/regulation_curation/README.md.",
+    "Acquisition channel is local GenBank annotation, not the strict Pfam HMM / Rfam Infernal pipeline the session brief specified. The strict path was blocked at the proxy (HTTP 403 host_not_allowed for EBI / Pfam / Rfam / NCBI / UniProt; hmmer / infernal / blast not installed). Probe transcript preserved in memory_bank/staging/regulation_curation/acquisition_log.md. A future session with EBI / Pfam network access can re-run the strict path and may surface additional candidates the annotation channel misses.",
+    "Cross-species inference: every candidate's /inference= xref points to a non-Syn3A reference protein (Mycoplasma capri or related Mycoplasma species). Cross-species transferability is variable; pseudogenization in the JCVI minimization may have left annotated regulators that no longer function.",
+    "Riboswitches: zero candidates. This channel cannot recover them by construction (riboswitches are 5' UTR RNA-structure features, not CDS annotations). The empty riboswitch_candidates.yaml is committed with a documented rationale rather than skipped silently.",
+    "Two-component systems: zero candidates. Consistent with the minimal Mycoplasma expectation. A future strict-Pfam run against the histidine-kinase (PF07568 / PF00512 / PF02518) and response-regulator (PF00072) families would let us distinguish 'really absent' from 'present but missed by annotation keyword match'.",
+    "TF count of 3 is below the spec's 5-15 expected range. Two of the three are 'Uncharacterized transcriptional regulator' annotations from JCVI; only mraZ has a specific characterized function. The shortfall is consistent with Mycoplasma genome reduction having stripped most canonical TF families. The strict HMM path would likely surface a small additional set (e.g. WhiA, YebC family) that the keyword-match channel cannot find.",
+    "Target gene prediction (TF -> target gene mapping) is NOT included. ChIP-seq data does not exist for Syn3A; comparative genomics inference is Phase R2b curation work. Every TF candidate has target_genes_predicted=[].",
+    "Confidence value 'assumed' rather than 'inferred' or 'measured' because the invariant checker's allowed list is {measured, inferred, estimated, assumed} and 'assumed' is the closest match for unreviewed machine-acquired candidates. The substance — these are candidates, not biology — is preserved across all entries via the per-entry confidence: candidate field."
+  ],
+  "dependencies": ["regulation_layer_phase_r1"],
+  "used_by": [
+    "scripts/acquire_regulation_candidates.py",
+    "memory_bank/staging/regulation_curation/README.md"
+  ]
+}

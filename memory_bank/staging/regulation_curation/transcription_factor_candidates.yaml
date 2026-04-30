@@ -1,0 +1,70 @@
+# Phase R2a staged regulation candidates — transcription factors
+#
+# Status: MACHINE-ACQUIRED, AWAITING HUMAN REVIEW.
+# Acquisition method: GenBank annotation parsing (CP016816.2 /product= keyword match against {transcriptional regulator, helix-turn-helix, MerR/LysR/TetR/AraC/Fur/Spx family, ...}; histidine kinase / sensor kinase / response regulator hits excluded — those are in two_component_candidates.yaml). Strict HTH/Pfam HMM path (PF00126 / PF00165 / PF01047 / PF13411 / PF03466) unavailable — see acquisition_log.md.
+# Candidate count: 3
+#
+# Every entry below carries confidence: candidate. The Phase R2b
+# review session promotes credible entries (with rewritten
+# confidence: measured | inferred) to the production YAML at
+# cell_sim/data/regulation_network_syn3a.yaml. Reject the rest.
+#
+# Provenance fields:
+#   provenance_channel : how this candidate was acquired
+#                        (genbank_annotation | pfam_hmm | rfam_cm)
+#   protein_id         : GenBank /protein_id (always)
+#   inference_xref     : GenBank /inference (RefSeq or SwissProt)
+#   product_annotation : verbatim /product string
+#   e_value            : null when not from an HMM/BLAST search
+#
+# Re-run via: python scripts/acquire_regulation_candidates.py
+# ============================================================================
+
+# Target gene prediction is NOT performed in Phase R2a (target_genes_predicted is always []). ChIP-seq data does not exist for Syn3A; comparative genomics inference is Phase R2b curation work.
+
+candidates:
+- candidate_id: 'JCVISYN3A_0042'
+  tf_locus: 'JCVISYN3A_0042'
+  gene_name: null
+  matched_keyword: 'transcriptional regulator'
+  product_annotation: 'Uncharacterized transcriptional regulator'
+  protein_length_aa: 275
+  genbank_accession: 'CP016816.2'
+  protein_id: 'AVX54592.1'
+  inference_xref: 'EXISTENCE: similar to AA sequence:RefSeq:WP_013729196.1'
+  provenance_channel: 'genbank_annotation'
+  predicted_class: 'unspecified'
+  target_genes_predicted: []
+  e_value: null
+  confidence: 'candidate'
+
+- candidate_id: 'JCVISYN3A_0525'
+  tf_locus: 'JCVISYN3A_0525'
+  gene_name: 'mraZ'
+  matched_keyword: 'transcriptional repressor'
+  product_annotation: 'Cell division/cell wall cluster transcriptional repressor'
+  protein_length_aa: 133
+  genbank_accession: 'CP016816.2'
+  protein_id: 'AVX54841.1'
+  inference_xref: 'EXISTENCE: similar to AA sequence:SwissProt:Q6MT21.1'
+  provenance_channel: 'genbank_annotation'
+  predicted_class: 'unspecified'
+  target_genes_predicted: []
+  e_value: null
+  confidence: 'candidate'
+
+- candidate_id: 'JCVISYN3A_0620'
+  tf_locus: 'JCVISYN3A_0620'
+  gene_name: null
+  matched_keyword: 'transcriptional regulator'
+  product_annotation: 'Uncharacterized transcriptional regulator'
+  protein_length_aa: 154
+  genbank_accession: 'CP016816.2'
+  protein_id: 'AVX54880.1'
+  inference_xref: 'EXISTENCE: similar to AA sequence:RefSeq:WP_011387508.1'
+  provenance_channel: 'genbank_annotation'
+  predicted_class: 'unspecified'
+  target_genes_predicted: []
+  e_value: null
+  confidence: 'candidate'
+

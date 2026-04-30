@@ -1,0 +1,24 @@
+# Phase R2a staged regulation candidates — riboswitches
+#
+# Status: MACHINE-ACQUIRED, AWAITING HUMAN REVIEW.
+# Acquisition method: Strict Rfam Infernal cmscan path unavailable: cmscan is not installed in the acquisition sandbox; rfam.org and EBI Rfam FTP both blocked at proxy (HTTP 403 host_not_allowed). The GenBank annotation channel cannot recover riboswitches because they are RNA-structure features in 5' UTRs, not CDS annotations. Skipping with zero candidates is the honest outcome at this phase. See acquisition_log.md for the proxy probe transcript.
+# Candidate count: 0
+#
+# Every entry below carries confidence: candidate. The Phase R2b
+# review session promotes credible entries (with rewritten
+# confidence: measured | inferred) to the production YAML at
+# cell_sim/data/regulation_network_syn3a.yaml. Reject the rest.
+#
+# Provenance fields:
+#   provenance_channel : how this candidate was acquired
+#                        (genbank_annotation | pfam_hmm | rfam_cm)
+#   protein_id         : GenBank /protein_id (always)
+#   inference_xref     : GenBank /inference (RefSeq or SwissProt)
+#   product_annotation : verbatim /product string
+#   e_value            : null when not from an HMM/BLAST search
+#
+# Re-run via: python scripts/acquire_regulation_candidates.py
+# ============================================================================
+
+# Zero candidates acquired by this channel.
+candidates: []
