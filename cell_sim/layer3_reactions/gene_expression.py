@@ -73,6 +73,24 @@ DEFAULT_DEGRADOSOME_COUNT = 120
 
 
 # ============================================================================
+# Phase 2: compiled-spec pseudo-species ids
+# ============================================================================
+# These ids are recognised by ``cell_sim.layer2_field.fast_dynamics`` as
+# state-backed scalar counters that live alongside metabolites in the
+# vectorised _counts array. The factories below set them on each rule's
+# ``compiled_spec`` so the FastEventSimulator can compute gex propensities
+# without a per-event python-closure cache rebuild.
+GEX_PSEUDO_RNAP = '_GEX_RNAP_FREE'
+GEX_PSEUDO_RIBOSOME = '_GEX_RIBOSOME_FREE'
+GEX_PSEUDO_DEGRADOSOME = '_GEX_DEGRADOSOME_FREE'
+
+
+def _gex_mrna_pseudo_id(gene_id: str) -> str:
+    """Stable pseudo-species id for a gene's mRNA counter."""
+    return f'_GEX_MRNA__{gene_id}'
+
+
+# ============================================================================
 # mRNA State — added to CellState
 # ============================================================================
 def load_initial_mrna_counts(scale_factor: float = 1.0) -> Dict[str, float]:
@@ -223,7 +241,7 @@ def make_transcription_rule(
     # Rate: events per sec per "token". Each token represents one active RNAP-gene pair.
     # Per-token completion rate = 1 / elongation_time.
     rate = 1.0 / elongation_time
-    return TransitionRule(
+    rule = TransitionRule(
         name=name,
         participants=[gene_id],
         rate=rate,
@@ -231,6 +249,25 @@ def make_transcription_rule(
         can_fire=can_fire,
         apply=apply,
     )
+    # Phase 2 compiled-spec. The simulator vectorises propensity from
+    # these keys; the apply closure above still runs on each fire.
+    # promoter_strength is intentionally omitted — the simulator pulls
+    # it from state.promoter_strength[gene_id] at construction time, so
+    # KO zeroing in real_simulator._build_state_and_rules is honoured.
+    rule.compiled_spec = {
+        'kind': 'gex',
+        'subkind': 'transcribe',
+        'gene_id': gene_id,
+        'kcat': float(rate),
+        'machinery_pseudo_id': GEX_PSEUDO_RNAP,
+        'machinery_state_attr': 'rnap_free',
+        'mrna_pseudo_id': _gex_mrna_pseudo_id(gene_id),
+        'mrna_state_dict_attr': 'mrna_counts',
+        'gating_substrate_id': 'M_atp_c',
+        'gating_threshold': int(length_nt // 4),
+        'max_tokens': 10000,
+    }
+    return rule
 
 
 # ============================================================================
@@ -287,7 +324,7 @@ def make_translation_rule(
             f'protein({gene_id}) synthesized ({length_aa}aa, cost ~{gtp_cost} GTP)')
 
     rate = 1.0 / elongation_time
-    return TransitionRule(
+    rule = TransitionRule(
         name=name,
         participants=[gene_id],
         rate=rate,
@@ -295,6 +332,20 @@ def make_translation_rule(
         can_fire=can_fire,
         apply=apply,
     )
+    rule.compiled_spec = {
+        'kind': 'gex',
+        'subkind': 'translate',
+        'gene_id': gene_id,
+        'kcat': float(rate),
+        'machinery_pseudo_id': GEX_PSEUDO_RIBOSOME,
+        'machinery_state_attr': 'ribosome_free',
+        'mrna_pseudo_id': _gex_mrna_pseudo_id(gene_id),
+        'mrna_state_dict_attr': 'mrna_counts',
+        'gating_substrate_id': 'M_ala__L_c',
+        'gating_threshold': max(1, int(length_aa // 20)),
+        'max_tokens': 100,
+    }
+    return rule
 
 
 # ============================================================================
@@ -323,7 +374,7 @@ def make_mrna_degradation_rule(gene_id: str, gene_length_nt: int) -> TransitionR
             f'degrade_mrna:{gene_id}', [gene_id],
             f'mRNA({gene_id}) degraded ({length_nt}nt recycled)')
 
-    return TransitionRule(
+    rule = TransitionRule(
         name=name,
         participants=[gene_id],
         rate=k_degrade,
@@ -331,6 +382,19 @@ def make_mrna_degradation_rule(gene_id: str, gene_length_nt: int) -> TransitionR
         can_fire=can_fire,
         apply=apply,
     )
+    rule.compiled_spec = {
+        'kind': 'gex',
+        'subkind': 'degrade_mrna',
+        'gene_id': gene_id,
+        'kcat': float(k_degrade),
+        'machinery_pseudo_id': GEX_PSEUDO_DEGRADOSOME,
+        'machinery_state_attr': 'degradosome_free',
+        'mrna_pseudo_id': _gex_mrna_pseudo_id(gene_id),
+        'mrna_state_dict_attr': 'mrna_counts',
+        # Degradation does not gate on a metabolite substrate.
+        'max_tokens': 50,
+    }
+    return rule
 
 
 # ============================================================================

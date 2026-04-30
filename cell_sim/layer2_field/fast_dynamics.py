@@ -263,7 +263,22 @@ class FastEventSimulator:
                         f"{rules[self._gex_rule_indices[g]].name!r}"
                     )
                 self.G_kcat[g] = float(spec['kcat'])
-                self.G_promoter[g] = float(spec.get('promoter_strength', 0.0))
+                # Promoter strength is resolved here (not in the rule
+                # factory) because state.promoter_strength is set up at
+                # initialize_gene_expression_state time, after the rules
+                # are built. Knockouts zero state.promoter_strength[ko]
+                # before this constructor runs, so the lookup honours
+                # the active KO. Falls back to spec['promoter_strength']
+                # for synthetic / test rules that bake their own.
+                gene_id_for_promoter = spec.get('gene_id')
+                spec_promoter = spec.get('promoter_strength')
+                if (gene_id_for_promoter is not None
+                        and spec_promoter is None
+                        and spec['subkind'] == 'transcribe'):
+                    ps = getattr(state, 'promoter_strength', None) or {}
+                    self.G_promoter[g] = float(ps.get(gene_id_for_promoter, 0.0))
+                else:
+                    self.G_promoter[g] = float(spec_promoter or 0.0)
                 self.G_max_tokens[g] = int(spec.get('max_tokens', 10000))
                 gate_pid = spec.get('gating_substrate_id')
                 if gate_pid:
