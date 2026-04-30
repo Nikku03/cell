@@ -2,6 +2,12 @@
 
 _Read this file FIRST, immediately after running the invariant checker._
 
+## ⚠️ MAIN-BRANCH FREEZE (active)
+
+A portfolio snapshot was tagged at commit `412bb74` as `v1.0-applications` (and as the branch `portfolio-snapshot-2026-04`) for in-flight internship-application emails. **Do NOT push to `main` going forward.** The bare repo URL `github.com/Nikku03/cell` must keep serving the snapshot's README/RESULTS so application links stay consistent.
+
+Development continues on `claude/syn3a-whole-cell-simulator-REjHC`. Push only to that branch. To unfreeze main later (e.g. after the application cycle), the user will say so explicitly.
+
 ## Status: PILOT-SCOPED RESEARCH + SHIP-APPLICATIONS MODE
 
 Sessions 26 v1 and v2 ran the synthetic-lethality pilot. Combined result: **0 false positives in 121 random pairs (perfect specificity at this pilot scale), and 1 reproducibly-detected synth-lethal candidate** — JCVISYN3A_0876 × JCVISYN3A_0878, paralogous unannotated amino-acid transporters whose joint knockout silences all 18 SBML amino-acid transport rules. The pair was found by three independent selection criteria across the two pilots. Population-level paralog-vs-random enrichment is NOT statistically significant at p<0.05 (Fisher one-sided p=0.23 for tight-paralog 1/24 vs baseline 0/80) — n=24 tight paralogs is too small to reject the null with one observed hit.
