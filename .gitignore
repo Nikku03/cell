@@ -21,6 +21,12 @@ outputs/.wt_*.pkl
 *.log
 *.tmp
 
+# Per-run output subdirs created by sweep / measurement scripts.
+# The final predictions CSV and metrics JSON are added explicitly
+# (git add -f <file>) when a measurement is finalised.
+outputs/phase2_smoke/
+outputs/phase2_v16_gex_on/
+
 # Secrets — never commit any of these
 .env
 .env.*
