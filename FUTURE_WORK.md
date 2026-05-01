@@ -108,17 +108,40 @@ Following the synthesis at `experiments/quantum_biology_speculation/SYNTHESIS.md
 
 **Caveat worth flagging in any downstream work:** Syn3A's medium has K⁺ nearly equal inside (10 mM) and outside (12.67 mM), unlike typical bacteria (200 mM in / 5 mM out). The GHK Vmem at the simulator's resting state is therefore small (single-digit positive mV) rather than the canonical bacterial −100 to −180 mV. This is a feature of JCVI-Syn3A's engineered minimal medium, not a bug. Bacterial-default permeability ratios (P_K=1, P_Na=0.04, P_Cl=0.45) are placeholders; Syn3A has no measured ion permeabilities.
 
-### Phase B2 — Bioelectric dynamics (future session)
+### Phase B2 — DONE (session 33)
 
-Add voltage-gated ion-flux rules with real feedback: ion-channel rules that fire at rates dependent on Vmem; ion fluxes that change `metabolite_counts`; Vmem updates from the new counts. This is a real refactor of the simulator dynamics, larger than B1 and roughly the size of the gex Phase 2 vectorization work.
+Single voltage-gated K+ leak rule wired behind the same `enable_bioelectric` flag (commit `178b8bc`). Each fire moves one K+ ion in the direction that reduces |Vmem - E_K|; token count proportional to driving force, capped at 100. Bit-identity at flag-off preserved (the rule is added to the rule list only when the flag is on; rule import lives inside the conditional). 6 new tests; 302 sandbox tests passing.
 
-Bit-identity at flag-off remains the contract. Voltage-gated rules at flag-off must be either absent from the rule list or no-op; the `_step` propensity-vector path stays unchanged.
+**Honest correction surfaced by B2 tests:** the Phase B1 docs claimed Vmem at Syn3A defaults is "small positive (single-digit positive mV)". That was wrong. Including the Cl- gradient (19.9 mM out / 0 in) in the GHK denominator with P_Cl=0.45 flips the sign — the actual Vmem is around −10 mV (small negative). The B1 fact, B1 module docstrings still say "small positive"; treating that as known-stale narrative.
 
-### Phase B3 — Measurement (future session)
+### Phase B3 — DONE (session 33)
 
-Wire `VMEM_MV` and the bioelectric feature extractor into a v17 detector variant. Run the full Breuer 2019 panel sweep at flag-on with the v17 detector and record MCC as a separate fact. **Realistic expected outcome:** v17 MCC ≈ v16 MCC ± stochastic noise. The synthesis says bioelectric edge is bigger in multi-cell systems; Syn3A is single-compartment, so the expected lift is small. The honest scientific result if v17 = v16 ± noise is informative ("classical bioelectric features add little signal at single-cell scale"), not a failure. If v17 > v16 by a measurable margin, that's a real lift; if v17 < v16, that's evidence the feature confused the detector.
+**v17 = v16 exactly.** Full 455-gene Breuer 2019 sweep at scale=0.05, t_end=0.5, seed=42 with `--enable-gene-expression --enable-bioelectric` produces TP=286, FP=3, TN=69, FN=97, MCC=0.5345578057087662 — bit-identical to v16's confusion matrix and MCC to all 16 decimal places. The K+ leak rule did not change a single per-gene prediction. Recorded in `memory_bank/facts/measured/mcc_against_breuer_v17_bioelectric.json`.
 
-**Phase order is intentional.** B1 makes the observable durable. B2 makes the dynamics real. B3 measures what was already structurally possible. Each session-sized; each falsifiable on its own terms.
+This is a stronger null than the realistic-expected "v17 ≈ v16 ± noise"; it's "v17 = v16 exactly." The K+ leak rule perturbs ion counts (M_k_c drifts by hundreds of ions per 0.5 s window) but the v15 detector's decision surface is dominated by features that don't depend on K+ count or Vmem (annotation-class priors + complex-assembly priors + per-rule silenced-rule decisions). The perturbation flows through the simulator but doesn't reach the predictions.
+
+**This does not refute classical bioelectric.** Three things would change the picture:
+
+1. A **bioelectric-aware detector** that explicitly consumes VMEM_MV-derived features (Phase B3 used the v15 detector unmodified; VMEM_MV is in pools but not in the detector's watched set). Phase B4 candidate.
+2. A **multi-cell setup** where gap-junction-mediated bioelectric communication matters. Levin's published work is on collective cellular intelligence; Syn3A is single-compartment.
+3. **More aggressive bioelectric dynamics**: Na+ / Cl- channels (Phase B2 was K+-only) + proton motive force pumping (the F1F0 H+ ATPase is not modeled in cell_sim at all). Phase B2.5 candidate.
+
+**Wall cost:** v17 is ~10% slower than v16 (5827 s vs 5294 s on 4 workers Rust). The K+ leak rule fires ~16 tokens per can_fire at resting Vmem and stays in the python-closure path; vectorizing it (Phase B2-vectorize) could recover most of that.
+
+**The Phase R/B arc summary:**
+
+| Phase | What | MCC outcome |
+|---|---|---|
+| R1 | regulation infrastructure (4 rule factories) | no measurement |
+| R2a | regulation candidate acquisition (4 candidates staged) | no measurement |
+| R2b | regulation curation review (rpoD + mraZ promoted) | no measurement |
+| B1 | bioelectric Vmem observable | no measurement |
+| B2 | voltage-gated K+ leak dynamics | no measurement |
+| **B3** | **v17 sweep at gex+bio on** | **v17 = v16 = 0.5346 (zero shift)** |
+
+Both regulation and bioelectric layers now have working infrastructure but make no detectable contribution to v15-stack MCC at the Syn3A single-cell scale. This is the calibrated honest outcome — neither layer is refuted as biology, but neither buys signal that the v15 biology-first detector wasn't already extracting from annotation priors and per-rule silencing.
+
+
 
 
 

@@ -1,0 +1,81 @@
+{
+  "id": "mcc_against_breuer_v17_bioelectric",
+  "claim": "Phase B3 v17 measurement: running the v15 detector stack (composed: ComplexAssembly + AnnotationClass + PerRule, with iMB155 patches, threshold 0.1) on the full 455-gene Breuer panel at scale=0.05, t_end_s=0.5, seed=42 with both --enable-gene-expression AND --enable-bioelectric (Phase B1 Vmem observable + Phase B2 voltage-gated K+ leak rule active) yields TP=286, FP=3, TN=69, FN=97, MCC=0.5345578057087662. This is BIT-IDENTICAL to the v16 confusion matrix and MCC (TP=286, FP=3, TN=69, FN=97, MCC=0.5345578057087662). The K+ leak rule perturbation did not change a single per-gene prediction. Sweep wall: 5826.93 s (97.1 min) at 4 workers Rust — about 10 percent slower than v16's 5294 s (88 min) due to the additional rule firings. The honest scientific result is that classical bioelectric features at this network density add zero discrimination signal to the v15 detector at single-cell scale; this is consistent with both the synthesis prediction (experiments/quantum_biology_speculation/SYNTHESIS.md) and with the broader Levin-lab framing that bioelectric edge is bigger in multi-cell systems than in isolated cells.",
+  "confidence": "measured",
+  "source": "breuer_2019_elife",
+  "source_detail": "Reproducible with: 'python scripts/run_sweep_parallel.py --all --workers 4 --use-rust --scale 0.05 --t-end-s 0.5 --detector composed --seed 42 --threshold 0.1 --enable-imb155-patches --enable-gene-expression --enable-bioelectric --out-dir outputs/phase_b3_v17_full'. Predictions CSV preserved at outputs/phase_b3_v17_full/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_gex_bio.csv; metrics JSON at outputs/phase_b3_v17_full/metrics_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_gex_bio.json. Phase B1 commit 4a8e9bb (bioelectric observable layer) + Phase B2 commit 178b8bc (voltage-gated K+ leak rule) + Phase B3 prep f67596d (sweep flag wiring) + d5e10f6 (gitignore for sweep output dir) all on claude/syn3a-whole-cell-simulator-REjHC. Single-seed measurement.",
+  "last_verified": "2026-05-01",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v17_bioelectric_phase_b3"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v16_gex_compiled",
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_v15_replicates",
+    "bioelectric_layer_phase_b1"
+  ],
+  "used_by": [
+    "outputs/phase_b3_v17_full/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_gex_bio.csv",
+    "outputs/phase_b3_v17_full/metrics_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_gex_bio.json"
+  ],
+  "value": {
+    "n_genes": 455,
+    "tp": 286,
+    "fp": 3,
+    "tn": 69,
+    "fn": 97,
+    "mcc": 0.5345578057087662,
+    "precision": 0.9896193771626297,
+    "recall": 0.7467362924281984,
+    "specificity": 0.9583333333333334,
+    "accuracy": 0.7802197802197802,
+    "sweep_wall_s": 5826.93,
+    "config": {
+      "scale": 0.05,
+      "t_end_s": 0.5,
+      "dt_s": 0.05,
+      "seed": 42,
+      "use_rust_backend": true,
+      "workers": 4,
+      "detector": "composed",
+      "threshold": 0.1,
+      "enable_imb155_patches": true,
+      "enable_gene_expression": true,
+      "gex_scale_factor": 0.1,
+      "enable_bioelectric": true
+    },
+    "comparison_to_v16": {
+      "v16_mcc": 0.5345578057087662,
+      "v17_mcc": 0.5345578057087662,
+      "delta_mcc": 0.0,
+      "v16_confusion": {"tp": 286, "fp": 3, "tn": 69, "fn": 97},
+      "v17_confusion": {"tp": 286, "fp": 3, "tn": 69, "fn": 97},
+      "n_predictions_flipped": 0,
+      "interpretation": "v17 is bit-identical to v16 in confusion matrix and MCC. The K+ leak rule perturbation flowed through the simulator but did not change which genes the v15 detector classifies as essential / nonessential."
+    },
+    "comparison_to_v15": {
+      "v15_mcc": 0.5372320940435067,
+      "v17_mcc": 0.5345578057087662,
+      "delta_mcc": -0.0026742883347405,
+      "v15_confusion": {"tp": 287, "fp": 3, "tn": 69, "fn": 96},
+      "v17_confusion": {"tp": 286, "fp": 3, "tn": 69, "fn": 97},
+      "n_predictions_flipped": 1,
+      "flip_direction": "TP -> FN (same single flip as v15 -> v16; bioelectric did not introduce or repair any further flips)"
+    },
+    "wall_comparison_to_v16": {
+      "v16_sweep_wall_s": 5294.47,
+      "v17_sweep_wall_s": 5826.93,
+      "wall_ratio": 1.10,
+      "interpretation": "v17 is ~10 percent slower than v16 because the K+ leak rule fires ~16 tokens per can_fire at resting Vmem ~ -10 mV, contributing ~hundreds of additional events per simulated 0.5 s window. The dynamic perturbation reaches the simulator state but does not propagate to a different detector decision."
+    }
+  },
+  "caveats": [
+    "Single-seed measurement (seed=42). v15 was bit-identical across seeds {1, 2, 42}; v16 was single-seed; v17 is single-seed. Whether v17 retains the v15 cross-seed bit-identity property under bioelectric on is not measured here.",
+    "v17 = v16 exactly. This is not a noisy null; it's a clean null. The Phase B2 K+ leak rule perturbs ion counts (M_k_c moves by hundreds of ions per 0.5 s window), but the v15 detector's decision surface (annotation-class priors + complex-assembly priors + per-rule silenced-rule decisions) is dominated by features that do NOT depend on K+ count or Vmem. So the perturbation flows through the simulator without affecting predictions. This is informative: it tells us that under the v15 detector at this network density, classical bioelectric features add zero signal.",
+    "The bioelectric framework is not refuted by this measurement. Three things would change the picture: (a) a bioelectric-aware detector that explicitly consumes VMEM_MV-derived features (Phase B3 used the v15 detector unmodified, so VMEM_MV in pools is not consumed); (b) a multi-cell setup where bioelectric communication via gap junctions matters (Levin's published work is on multi-cell collective intelligence; Syn3A is single-cell); (c) more aggressive bioelectric dynamics (Phase B2 ships only K+ leak; Na+ / Cl- channels and proton motive force pumping are deferred to Phase B2.5+).",
+    "The K+ leak rate constant (100 /s/mV) is a placeholder. A different rate could in principle perturb the simulator more aggressively and either (a) start affecting predictions or (b) destabilize trajectories. The current rate was tuned to give measurable but bounded K+ count drift (~ percent-level over 0.5 s) without runaway. Phase B2.5 / B3 with calibrated rates is future work.",
+    "Confidence value 'measured' is correct here: this is a real MCC measurement against a real reference label set (Breuer 2019), reproducible from the predictions CSV, with all flags + seeds documented.",
+    "The 10 percent wall slowdown is the cost of the additional K+ leak rule events. Under Rust the cost is dominated by the Python-closure rule's can_fire / apply path (the K+ leak is a closure rule, not a compiled-spec rule). A future Phase B2-vectorize could move it into the compiled propensity vector to recover some of the wall."
+  ]
+}
