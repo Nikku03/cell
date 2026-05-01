@@ -72,6 +72,7 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str,
         enable_imb155_patches=cfg_dict.get("enable_imb155_patches", False),
         enable_gene_expression=cfg_dict.get("enable_gene_expression", False),
         gene_expression_scale_factor=cfg_dict.get("gex_scale_factor", 0.1),
+        enable_bioelectric=cfg_dict.get("enable_bioelectric", False),
     )
     _worker_sim = RealSimulator(rs_cfg)
     with open(wt_pickle_path, "rb") as fh:
@@ -229,6 +230,7 @@ def _compute_wt(cfg_dict: dict) -> Trajectory:
         gene_expression_scale_factor=cfg_dict.get(
             "gex_scale_factor", 0.1,
         ),
+        enable_bioelectric=cfg_dict.get("enable_bioelectric", False),
     ))
     return sim.run([], t_end_s=cfg_dict["t_end_s"],
                    sample_dt_s=cfg_dict["dt_s"])
@@ -255,6 +257,7 @@ def _calibrate_thresholds(
         gene_expression_scale_factor=cfg_dict.get(
             "gex_scale_factor", 0.1,
         ),
+        enable_bioelectric=cfg_dict.get("enable_bioelectric", False),
     ))
     nons = [lt for lt, lab in labels.items()
             if lab.essentiality == EssentialityClass.NONESSENTIAL]
@@ -391,6 +394,15 @@ def main() -> int:
                         "Decoupled from --scale because mRNA counts in "
                         "the input data are <3/gene and would round to "
                         "0 at scale=0.05.")
+    p.add_argument("--enable-bioelectric", action="store_true",
+                   help="Phase B1+B2 bioelectric layer: derived "
+                        "Goldman-Hodgkin-Katz Vmem observable in pools "
+                        "(VMEM_MV) plus the voltage-gated K+ leak rule. "
+                        "Default off so v0..v16 measurements remain "
+                        "bit-identical. With this flag on, a new MCC "
+                        "(v17-with-bioelectric) should be measured as "
+                        "a separate fact rather than overwriting v15 / "
+                        "v16. See cell_sim/layer5_bioelectric/.")
     p.add_argument("--out-dir", default="outputs")
     args = p.parse_args()
 
@@ -403,8 +415,9 @@ def main() -> int:
     if args.rule_necessity_only:
         det_tag += "_uniqueonly"
     gex_tag = "_gex" if args.enable_gene_expression else ""
+    bio_tag = "_bio" if args.enable_bioelectric else ""
     tag = (f"parallel_s{args.scale}_t{args.t_end_s}_seed{args.seed}"
-           f"_thr{args.threshold}_w{args.workers}{cal_tag}{det_tag}{gex_tag}")
+           f"_thr{args.threshold}_w{args.workers}{cal_tag}{det_tag}{gex_tag}{bio_tag}")
     pred_csv = out_dir / f"predictions_{tag}.csv"
     metrics_json = out_dir / f"metrics_{tag}.json"
 
@@ -435,6 +448,7 @@ def main() -> int:
         "enable_imb155_patches": args.enable_imb155_patches,
         "enable_gene_expression": args.enable_gene_expression,
         "gex_scale_factor": args.gex_scale_factor,
+        "enable_bioelectric": args.enable_bioelectric,
     }
 
     t_setup = time.time()
