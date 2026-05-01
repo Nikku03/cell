@@ -19,6 +19,15 @@
 #
 # Re-run via: python scripts/acquire_regulation_candidates.py
 # ============================================================================
+#
+# Phase R2b annotation (2026-04-30): deferral_decision blocks have been
+# appended in-place to JCVISYN3A_0042 and JCVISYN3A_0620. JCVISYN3A_0525
+# (mraZ) was PROMOTED to the production YAML and is left without a
+# deferral_decision block — see r2b_review_log.md for the audit trail.
+# Re-running scripts/acquire_regulation_candidates.py will overwrite
+# this file and the deferral blocks will be lost; reapply from
+# r2b_review_log.md if that happens.
+# ============================================================================
 
 # Target gene prediction is NOT performed in Phase R2a (target_genes_predicted is always []). ChIP-seq data does not exist for Syn3A; comparative genomics inference is Phase R2b curation work.
 
@@ -37,6 +46,22 @@ candidates:
   target_genes_predicted: []
   e_value: null
   confidence: 'candidate'
+  deferral_decision:
+    decision: defer
+    reviewed_on: 2026-04-30
+    reviewed_by: Naresh Chhillar
+    rationale: |
+      HTH motif is present in the protein architecture (predicted_class flagged the
+      product as a transcriptional regulator), indicating structural compatibility
+      with DNA-binding regulator function. However, the gene is annotated as
+      "Uncharacterized transcriptional regulator" in the JCVI Syn3A annotation, and
+      no target genes have been mapped through ChIP-seq, transcriptomics, or
+      comparative genomics. Promoting this entry without target information would
+      add a regulator with no defined regulatory effect — it could not contribute
+      to simulator dynamics. Promotion is deferred until either (a) a future
+      curation session maps candidate target genes via comparative genomics, or
+      (b) experimental data from related organisms surfaces.
+    next_review_trigger: target_gene_mapping_session
 
 - candidate_id: 'JCVISYN3A_0525'
   tf_locus: 'JCVISYN3A_0525'
@@ -67,4 +92,20 @@ candidates:
   target_genes_predicted: []
   e_value: null
   confidence: 'candidate'
+  deferral_decision:
+    decision: defer
+    reviewed_on: 2026-04-30
+    reviewed_by: Naresh Chhillar
+    rationale: |
+      HTH motif is present in the protein architecture (predicted_class flagged the
+      product as a transcriptional regulator), indicating structural compatibility
+      with DNA-binding regulator function. However, the gene is annotated as
+      "Uncharacterized transcriptional regulator" in the JCVI Syn3A annotation, and
+      no target genes have been mapped through ChIP-seq, transcriptomics, or
+      comparative genomics. Promoting this entry without target information would
+      add a regulator with no defined regulatory effect — it could not contribute
+      to simulator dynamics. Promotion is deferred until either (a) a future
+      curation session maps candidate target genes via comparative genomics, or
+      (b) experimental data from related organisms surfaces.
+    next_review_trigger: target_gene_mapping_session
 

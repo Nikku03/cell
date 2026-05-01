@@ -53,34 +53,35 @@ Phase R2 was deliberately split into two passes so machine work and human work h
 - No production integration; `real_simulator.py` is untouched.
 - No MCC measurement.
 
-### Phase R2b — Regulation curation review (next session, human-driven)
+### Phase R2b — DONE (session 31)
 
-Phase R2a (single session-30 commit, see git log) staged regulation candidates in `memory_bank/staging/regulation_curation/`. Phase R2b is the human review session.
+Reviewed 4 candidates from R2a staging. Promoted `rpoD / JCVISYN3A_0407` (sigma factor, housekeeping) and `mraZ / JCVISYN3A_0525` (TF, dcw cluster) to the production YAML at confidence: `inferred`. Deferred `JCVISYN3A_0042` and `JCVISYN3A_0620` (uncharacterized HTH-containing TFs) — both have `deferral_decision` blocks appended in staging with `next_review_trigger: target_gene_mapping_session`.
 
-For each candidate file, the reviewer must:
+Production YAML now has 2 entries (1 sigma, 1 TF). Riboswitches and two-component systems remain `[]`. Decision audit trail in `memory_bank/staging/regulation_curation/r2b_review_log.md`. Fact: `memory_bank/facts/structural/regulation_curation_phase_r2b.json`.
 
-1. **Read the candidate's source provenance.** What is the JCVI annotator's product string? What does the RefSeq / SwissProt xref say about the closest characterized homolog? Is it a Mycoplasma sequence or a distant homolog?
-2. **Apply biological judgment.** Is this candidate credible for Syn3A specifically? Genome reduction can leave pseudogenes that match Pfam HMMs but no longer function.
-3. **Decide promotion or rejection.** Promoted entries move from staging to `cell_sim/data/regulation_network_syn3a.yaml` with `confidence` labels appropriate to the evidence (`measured` for direct experimental evidence on Syn3A or a very close homolog; `inferred` for sequence-based inference with a credible reference; otherwise reject).
-4. **Document the decision.** Each promotion or rejection logged with reasoning. A reviewer six months from now must be able to reconstruct the call.
+**Why no `measured`:** both promotions rest on cross-species sequence homology + the JCVI annotator's gene name, not direct ChIP-seq / biochemical pull-down on Syn3A. `inferred` is the honest ceiling.
 
-This is research work, not engineering. Allow 4–8 hours of focused review per candidate file. Don't rush; rejected candidates are better than incorrectly promoted ones.
+### Phase R3 — Optional regulation wiring (future session)
 
-**Phase R2b candidate priorities (from R2a output):**
+With 2 inferred-confidence entries in the production YAML, regulation can be wired into `real_simulator.py` behind an `enable_regulation: bool = False` flag.
 
-- `rpoD / JCVISYN3A_0407` — canonical housekeeping sigma 70. Strongest promotion candidate; conserved across all bacteria; JCVI's annotation is unambiguous.
-- `mraZ / JCVISYN3A_0525` — well-characterized cell-division-cluster repressor. Probably promotable as `inferred` based on SwissProt xref.
-- `JCVISYN3A_0042` and `JCVISYN3A_0620` — uncharacterized regulators. Promotion would require reading the RefSeq xref's source organism characterization; probably best deferred.
-- Two-component systems: zero acquired. The reviewer may want to re-run the strict Pfam HMM channel from a future session with EBI access before concluding "really absent vs. annotation-channel limitation."
+1. **Bit-identity test** at flag-off (must equal v16 baseline; reuses the existing Phase 2 regression test machinery).
+2. **Measure v17 MCC** at flag-on. Realistic expectation: v17 MCC ≈ v16 MCC (~0.535) ± stochastic noise, because:
+   - A single housekeeping sigma factor with no competition produces no differential transcription dynamics.
+   - A single TF with no defined targets has no regulatory effect.
+   - The v15 detector stack ignores regulatory state entirely.
+3. **Document the result** as a new fact, regardless of whether MCC moves.
 
-**Phase R3 — wiring + measurement (after R2b completes):**
+Phase R3 is **optional**. The honest scientific result is that Syn3A's minimal regulation does not contribute substantial essentiality signal at this network density, and demonstrating this through measurement is reasonable but not strictly necessary. The Phase R3 wiring will also need to decide what `parameters_status: not_specified` means at runtime — either supply default kinetics or treat absent kinetics as a no-op.
 
-Once at least the most credible 1–3 entries are in the production YAML with `measured` / `inferred` confidence:
+### Phase R2a-strict — Optional (resolves the two-component zero)
 
-1. **Wire into `real_simulator.py`** behind `enable_regulation: bool = False` flag.
-2. **Bit-identity test** at flag-off (must equal v16 baseline).
-3. **Measure v17 MCC** at flag-on.
-4. **Document the result** as a new fact, regardless of whether MCC moves.
+Re-run R2a candidate acquisition with strict Pfam HMM search rather than the keyword channel that R2a fell back to. Specifically:
 
-Realistic time estimate for R2b + R3 (curation + integration + measurement): 4–8 weeks of focused work. The curation phase is the bottleneck and is research work, not engineering.
+- Sigma: `PF00140` / `PF00309` / `PF08281`.
+- TF: `PF00126` / `PF00165` / `PF01047` / `PF13411` / `PF03466`.
+- Two-component: `PF07568` (HisKA) / `PF00072` (Response_reg) — the priority case.
+- Riboswitch: Rfam Infernal `cmscan` against riboswitch families.
+
+Requires a network-enabled environment with EBI / Pfam / Rfam reachable (the R2a sandbox had all these blocked at the proxy with HTTP 403 `host_not_allowed`; see `memory_bank/staging/regulation_curation/acquisition_log.md`). If a strict search returns zero two-component candidates the absence in Syn3A is biologically supported. If candidates appear, they go into staging for an R2b-style review pass.
 

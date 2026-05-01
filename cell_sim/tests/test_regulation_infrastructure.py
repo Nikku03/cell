@@ -246,20 +246,48 @@ def test_initialize_regulation_state_with_empty_config_is_noop(capsys):
 # ---------------------------------------------------------------------
 
 
-def test_default_yaml_exists_and_loads_empty():
+def test_default_yaml_exists_and_loads():
+    """The production YAML must exist, parse cleanly through the
+    Phase R1 loader, and reflect the current curation state.
+
+    Phase R1 shipped this file empty (all four lists ``[]``).
+    Phase R2b promoted 2 entries: 1 sigma factor (rpoD /
+    JCVISYN3A_0407) and 1 transcription factor (mraZ /
+    JCVISYN3A_0525); both at confidence: inferred. Riboswitches
+    and two-component systems remain empty pending future
+    curation. See memory_bank/facts/structural/
+    regulation_curation_phase_r2b.json for the audit trail.
+    """
     from cell_sim.layer4_regulation import (
         DEFAULT_NETWORK_YAML_PATH, load_regulation_network,
     )
 
     assert DEFAULT_NETWORK_YAML_PATH.exists(), (
-        f"Phase R1 ships an empty regulation network YAML at "
-        f"{DEFAULT_NETWORK_YAML_PATH}; the file is missing."
+        f"Production regulation YAML missing at {DEFAULT_NETWORK_YAML_PATH}."
     )
     cfg = load_regulation_network()
-    assert cfg.is_empty()
-    assert cfg.total_entries() == 0
-    assert cfg.transcription_factors == []
-    assert cfg.sigma_factors == []
+
+    # Sigma: exactly the rpoD entry from R2b, confidence inferred.
+    assert len(cfg.sigma_factors) == 1, (
+        f"expected 1 sigma factor (rpoD), got {len(cfg.sigma_factors)}"
+    )
+    sigma = cfg.sigma_factors[0]
+    assert sigma["sigma_locus"] == "JCVISYN3A_0407"
+    assert sigma["gene_class"] == "housekeeping"
+    assert sigma["confidence"] == "inferred"
+    assert sigma["curated_on"] == "2026-04-30" or sigma["curated_on"]
+
+    # TF: exactly the mraZ entry from R2b, confidence inferred,
+    # target_genes intentionally empty (target inference deferred).
+    assert len(cfg.transcription_factors) == 1, (
+        f"expected 1 TF (mraZ), got {len(cfg.transcription_factors)}"
+    )
+    tf = cfg.transcription_factors[0]
+    assert tf["tf_locus"] == "JCVISYN3A_0525"
+    assert tf["target_genes"] == []
+    assert tf["confidence"] == "inferred"
+
+    # Riboswitches and two-component systems remain empty.
     assert cfg.riboswitches == []
     assert cfg.two_component_systems == []
 

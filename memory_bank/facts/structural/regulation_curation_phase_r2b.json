@@ -1,0 +1,41 @@
+{
+  "id": "regulation_curation_phase_r2b",
+  "claim": "Phase R2b human curation of regulation candidates: 2 of 4 Phase R2a candidates promoted to the production YAML at cell_sim/data/regulation_network_syn3a.yaml (rpoD / JCVISYN3A_0407 as housekeeping sigma factor, mraZ / JCVISYN3A_0525 as cell-division transcription factor), 2 deferred in staging with documented deferral_decision blocks (JCVISYN3A_0042 and JCVISYN3A_0620, both uncharacterized HTH-containing TF candidates with no target genes mapped). Production YAML now contains 2 entries at confidence: inferred. No candidate was promoted at confidence: measured because no direct experimental evidence (ChIP-seq, biochemical pull-down, in-vitro binding) exists for these regulators in Syn3A specifically; both entries rest on cross-species sequence homology plus the JCVI annotator's gene name. Riboswitch and two-component lists remain empty. The two-component zero result is provisional pending a future strict-Pfam re-acquisition (the Phase R2a sandbox had EBI/Pfam blocked).",
+  "confidence": "inferred",
+  "source": "internal_infrastructure",
+  "source_detail": "Curation decisions documented in memory_bank/staging/regulation_curation/r2b_review_log.md. Each promoted entry in the production YAML carries (annotation_source, homology_source, source) provenance fields plus confidence: inferred and curated_on: 2026-04-30 and curated_by: Naresh Chhillar. The production YAML loader at cell_sim/layer4_regulation/network_loader.py round-trips both entries cleanly; sandbox test suite remains at 281 passing. The two deferred candidates carry deferral_decision blocks with rationale and next_review_trigger fields appended in-place in transcription_factor_candidates.yaml. Source string 'internal_infrastructure' rather than a public-database source because the curation decisions themselves are the artefact recorded by this fact; the underlying biological evidence is the GenBank annotation + SwissProt cross-references already cited inside each promoted entry.",
+  "last_verified": "2026-04-30",
+  "context": {
+    "entity": "regulation_layer",
+    "version": "phase_r2b"
+  },
+  "value": {
+    "candidates_reviewed": 4,
+    "promoted_to_production": 2,
+    "deferred_in_staging": 2,
+    "production_yaml_entries": 2,
+    "production_yaml_sigma_count": 1,
+    "production_yaml_tf_count": 1,
+    "production_yaml_riboswitch_count": 0,
+    "production_yaml_two_component_count": 0,
+    "production_yaml_confidence_levels": ["inferred"],
+    "two_component_systems_detected": 0,
+    "two_component_methodology_caveat": "keyword channel only; strict Pfam search not yet performed",
+    "promoted_loci": ["JCVISYN3A_0407", "JCVISYN3A_0525"],
+    "deferred_loci": ["JCVISYN3A_0042", "JCVISYN3A_0620"]
+  },
+  "caveats": [
+    "All promoted entries are at confidence: inferred. None of them have direct experimental evidence in Syn3A specifically; both rest on cross-species sequence homology + the JCVI annotator's gene name.",
+    "Target gene mapping is incomplete: rpoD has no explicit target list (housekeeping is implicitly all genes), mraZ has empty target list (comparative-genomics inference deferred).",
+    "Two-component system zero result may be a methodology artifact rather than a biological finding. The Phase R2a acquisition channel was keyword-based GenBank annotation parsing because the strict Pfam HMM path was unreachable in that sandbox (proxy denial). A future R2a-strict session with EBI / Pfam network access would resolve this.",
+    "A simulator wired to use this regulation network would not produce meaningful regulatory dynamics due to sparseness; this is consistent with Syn3A's known minimal regulation. Phase R3 wiring is optional and the realistic expectation is v17 MCC ≈ v16 MCC ± stochastic noise.",
+    "The two production-YAML entries carry parameters_status: not_specified. Phase R3 wiring will need to either supply default kinetic parameters or treat absent kinetics as a no-op; the current curation does not pretend to have those numbers.",
+    "Re-running scripts/acquire_regulation_candidates.py would overwrite transcription_factor_candidates.yaml and clobber the deferral_decision blocks. The header of that file documents the risk; the deferral content can be reapplied from r2b_review_log.md if it happens.",
+    "Confidence value 'inferred' for this fact (rather than 'measured' or 'assumed') because the curation decision rests on sequence-homology inference + annotation review, not direct measurement and not arbitrary assumption."
+  ],
+  "dependencies": ["regulation_curation_phase_r2a", "regulation_layer_phase_r1"],
+  "used_by": [
+    "cell_sim/data/regulation_network_syn3a.yaml",
+    "memory_bank/staging/regulation_curation/r2b_review_log.md"
+  ]
+}

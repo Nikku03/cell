@@ -88,9 +88,41 @@
 #
 # ============================================================================
 
-transcription_factors: []
+transcription_factors:
+  - tf_locus: JCVISYN3A_0525
+    target_genes: []
+    pfam_family: PF02381
+    annotation_source: 'JCVI Syn3A GenBank annotation (CP016816.2) — gene named "mraZ"'
+    homology_source: 'SwissProt MraZ family — characterized in E. coli and B. subtilis as a regulator of the dcw (division and cell wall) gene cluster'
+    source: 'JCVI Syn3A GenBank annotation CP016816.2 (gene mraZ, /protein_id=AVX54841.1, /inference RefSeq SwissProt Q6MT21.1) + SwissProt MraZ family characterization in E. coli / B. subtilis as dcw cluster regulator'
+    confidence: inferred
+    curated_on: 2026-04-30
+    curated_by: Naresh Chhillar
+    notes: |
+      Functional inference is from sequence homology and gene-name conservation. In
+      reference organisms, MraZ regulates the dcw cluster (FtsZ, FtsA, FtsW, MurC-G,
+      etc.). Whether MraZ regulates the analogous genes in Syn3A is not directly
+      established. Target gene list is intentionally empty — comparative-genomics
+      target inference is deferred to a future session.
+    parameters_status: not_specified
 
-sigma_factors: []
+sigma_factors:
+  - sigma_locus: JCVISYN3A_0407
+    gene_class: housekeeping
+    pfam_family: PF00140
+    annotation_source: 'JCVI Syn3A GenBank annotation (CP016816.2) — gene named "rpoD"'
+    homology_source: 'SwissProt sigma-70 family'
+    source: 'JCVI Syn3A GenBank annotation CP016816.2 (gene rpoD, /protein_id=AVX54771.1, /inference RefSeq WP_013447807.1) + SwissProt sigma-70 family homology'
+    confidence: inferred
+    curated_on: 2026-04-30
+    curated_by: Naresh Chhillar
+    notes: |
+      Single canonical sigma factor in Syn3A's minimal genome. Functional inference is
+      from sequence homology to characterized sigma-70 family members; direct ChIP-seq
+      or biochemical characterization in Syn3A has not been performed. The "housekeeping"
+      gene_class assignment reflects the absence of alternative sigma factors in Syn3A
+      and the universal role of sigma-70 in housekeeping transcription across bacteria.
+    parameters_status: not_specified
 
 riboswitches: []
 
