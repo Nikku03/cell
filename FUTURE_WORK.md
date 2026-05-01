@@ -91,3 +91,34 @@ A followup smoke test (single session-32 commit on `claude/syn3a-whole-cell-simu
 
 The full Dark Manifold concept (4D spacetime field with dark matter coupling, quantum fluctuations as sampling, superposition collapse, cognitive scaffold) **remains untested**. Building and testing it would be a multi-month research project, not a smoke test, and is not currently planned.
 
+## Bioelectric layer (session 33+)
+
+Following the synthesis at `experiments/quantum_biology_speculation/SYNTHESIS.md` — which concluded that classical bioelectric (Levin lab) is the published-evidence-supported framework for cellular computation, while quantum frameworks (Orch OR, cellular quantum coprocessor) are not — the project is taking a small, calibrated step in that direction. Same R1 → R2 → R3 staging pattern as the regulation track.
+
+### Phase B1 — DONE (session 33)
+
+**Status:** landed in session 33 as a single commit on `claude/syn3a-whole-cell-simulator-REjHC`. Adds `cell_sim/layer5_bioelectric/` with a Goldman-Hodgkin-Katz (GHK) Vmem estimator and a small feature extractor, plus a single conditional injection of `pools["VMEM_MV"]` into trajectory snapshots when `RealSimulatorConfig.enable_bioelectric` is True.
+
+**Explicit non-deliverables:**
+
+- No new dynamics rules. The simulator's `_step` / `_apply` paths are not touched.
+- No production wiring beyond the snapshot pool injection. The v15 / v16 detector stack does not consume `VMEM_MV`; that's Phase B3.
+- No MCC measurement. Phase B1 is observable-only.
+- `enable_bioelectric` defaults False; flag-off behavior is bit-identical to v15 / v16 (verified by `test_phase2_gex_off_bit_identity`).
+
+**Caveat worth flagging in any downstream work:** Syn3A's medium has K⁺ nearly equal inside (10 mM) and outside (12.67 mM), unlike typical bacteria (200 mM in / 5 mM out). The GHK Vmem at the simulator's resting state is therefore small (single-digit positive mV) rather than the canonical bacterial −100 to −180 mV. This is a feature of JCVI-Syn3A's engineered minimal medium, not a bug. Bacterial-default permeability ratios (P_K=1, P_Na=0.04, P_Cl=0.45) are placeholders; Syn3A has no measured ion permeabilities.
+
+### Phase B2 — Bioelectric dynamics (future session)
+
+Add voltage-gated ion-flux rules with real feedback: ion-channel rules that fire at rates dependent on Vmem; ion fluxes that change `metabolite_counts`; Vmem updates from the new counts. This is a real refactor of the simulator dynamics, larger than B1 and roughly the size of the gex Phase 2 vectorization work.
+
+Bit-identity at flag-off remains the contract. Voltage-gated rules at flag-off must be either absent from the rule list or no-op; the `_step` propensity-vector path stays unchanged.
+
+### Phase B3 — Measurement (future session)
+
+Wire `VMEM_MV` and the bioelectric feature extractor into a v17 detector variant. Run the full Breuer 2019 panel sweep at flag-on with the v17 detector and record MCC as a separate fact. **Realistic expected outcome:** v17 MCC ≈ v16 MCC ± stochastic noise. The synthesis says bioelectric edge is bigger in multi-cell systems; Syn3A is single-compartment, so the expected lift is small. The honest scientific result if v17 = v16 ± noise is informative ("classical bioelectric features add little signal at single-cell scale"), not a failure. If v17 > v16 by a measurable margin, that's a real lift; if v17 < v16, that's evidence the feature confused the detector.
+
+**Phase order is intentional.** B1 makes the observable durable. B2 makes the dynamics real. B3 measures what was already structurally possible. Each session-sized; each falsifiable on its own terms.
+
+
+

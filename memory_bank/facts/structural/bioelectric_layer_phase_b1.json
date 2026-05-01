@@ -1,0 +1,51 @@
+{
+  "id": "bioelectric_layer_phase_b1",
+  "claim": "Bioelectric observable layer (Phase B1) created in cell_sim/layer5_bioelectric/. Adds a Goldman-Hodgkin-Katz (GHK) Vmem estimator and a feature extractor, plus a single conditional injection of pools['VMEM_MV'] into trajectory snapshots when RealSimulatorConfig.enable_bioelectric is True. The flag defaults False; flag-off behavior is bit-identical to the v15 / v16 baselines (verified by the existing Phase 2 gex-off bit-identity regression test). The simulator's _step / _apply paths are NOT touched. No new dynamics rules are added; no MCC measurement is performed. Phase B1 is the smallest possible step toward a Levin-style bioelectric layer: get a derived membrane-voltage observable into the trajectory snapshots so a future Phase B3 detector variant can use it as a feature.",
+  "confidence": "assumed",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via the new test suite cell_sim/tests/test_bioelectric_infrastructure.py (15 tests, all passing). Sandbox suite went from 281 to 296 passing with the additions; the 281 baseline is unchanged. Bit-identity regression test_gex_off_bit_identity_against_committed_baseline at RUN_PHASE2_REGRESSION=1: 2/2 PASS in 80 s. Confidence value 'assumed' rather than 'measured' because Phase B1 is infrastructure with placeholder permeability ratios (P_K=1, P_Na=0.04, P_Cl=0.45 from B. subtilis-like bacterial defaults; Syn3A has no measured ion permeabilities). Extracellular reference concentrations come from the published Luthey-Schulten Syn3A simulation medium at cell_sim/data/Minimal_Cell_ComplexFormation/input_data/initial_concentrations.xlsx ('Simulation Medium' sheet: K=12.67mM, Na=19.38mM, Cl=19.90mM).",
+  "last_verified": "2026-05-01",
+  "context": {
+    "entity": "bioelectric_layer",
+    "version": "phase_b1"
+  },
+  "value": {
+    "n_pseudo_pools_added": 1,
+    "pseudo_pools": ["VMEM_MV"],
+    "n_simulator_dynamics_changes": 0,
+    "n_new_transition_rules": 0,
+    "production_yaml_modified": false,
+    "v15_v16_bit_identity_preserved": true,
+    "n_new_tests": 15,
+    "test_baseline_before": 281,
+    "test_baseline_after": 296,
+    "expected_vmem_at_syn3a_resting_mv_range": [-30.0, 30.0],
+    "expected_vmem_at_syn3a_resting_typical_mv": 7.0,
+    "extracellular_concentrations_mM": {
+      "K": 12.67,
+      "Na": 19.38,
+      "Cl": 19.90
+    },
+    "default_permeability_ratios": {
+      "P_K": 1.00,
+      "P_Na": 0.04,
+      "P_Cl": 0.45
+    }
+  },
+  "caveats": [
+    "Permeability ratios are placeholders. Syn3A has no measured ion-channel permeabilities. Defaults come from B. subtilis-like bacterial values. A future Phase B2 / B3 effort would either fit them from simulator outputs or absorb them into a calibrated detector.",
+    "Syn3A's medium has K+ nearly equal inside (10 mM) and outside (12.67 mM), unlike typical bacteria with strong K+ gradients (200 mM in / 5 mM out). As a result, the GHK-derived Vmem at the simulator's resting state is small (single-digit positive mV) rather than the canonical bacterial -100 to -180 mV. This is a feature of JCVI-Syn3A's engineered minimal medium, not a bug. Any detector using Vmem as an essentiality feature must not assume a canonical bacterial baseline.",
+    "Intracellular Cl- is 0 in the Luthey-Schulten Syn3A initialization (the 'Intracellular Metabolites' sheet does not include Cl-). The estimator clamps [Cl-]_i to a 1e-6 mM floor to keep the GHK denominator finite; this is a workaround for missing data, not a measurement.",
+    "No proton motive force (PMF) contribution. Real bacterial Vmem is dominated by the F1F0 H+ ATPase. The Luthey-Schulten Syn3A model holds H+ at a sentinel infinity in metabolite_counts and does not track an explicit H+ gradient. Adding PMF as a Vmem driver is Phase B2 (dynamics) work; Phase B1 reports the GHK-from-K+/Na+/Cl- estimate without PMF.",
+    "The bioelectric framework here is classical, not quantum. The 'quantum biology speculation synthesis' note at experiments/quantum_biology_speculation/SYNTHESIS.md documents why classical bioelectric (Levin lab) is the published-evidence-supported framework for cellular computation; quantum frameworks are not. This layer is the scoped engineering follow-up to that synthesis.",
+    "Phase B1 produces NO MCC measurement. Wiring Vmem features into a v17 detector and measuring against v16 is Phase B3 work. The realistic expected outcome (per the synthesis) is marginal MCC improvement at most — Syn3A is single-compartment, and bioelectric edge is bigger in multi-cell systems. The honest scientific result if v17 ~= v16 ± noise is informative ('classical bioelectric features add little signal at single-cell scale'), not a failure.",
+    "Confidence value 'assumed' is the best fit in the invariant checker's allowed set {measured, inferred, estimated, assumed} for placeholder kinetic parameters. The GHK formula itself is well-established (Hille 2001); the parameter VALUES are bacterial defaults, not Syn3A measurements."
+  ],
+  "dependencies": ["regulation_layer_phase_r1"],
+  "used_by": [
+    "cell_sim/layer5_bioelectric/bioelectric.py",
+    "cell_sim/layer5_bioelectric/detector_features.py",
+    "cell_sim/tests/test_bioelectric_infrastructure.py",
+    "cell_sim/layer6_essentiality/real_simulator.py"
+  ]
+}

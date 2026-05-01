@@ -128,6 +128,18 @@ class RealSimulatorConfig:
     # transcription signal at the production scale. 0.1 keeps a workable
     # mRNA + machinery count without ballooning the metabolic state.
     gene_expression_scale_factor: float = 0.1
+    # Session 33 phase B1: derived membrane-voltage observable. When
+    # True, ``_snapshot()`` computes a Goldman-Hodgkin-Katz Vmem from
+    # the existing K+/Na+/Cl- intracellular counts and adds
+    # ``pools["VMEM_MV"]`` to each sample. The simulator's _step /
+    # _apply paths are NOT touched; flag-off behavior is bit-identical
+    # to v15 / v16 baselines (enforced by the existing Phase 2
+    # regression test). Phase B2 (future) will add voltage-gated
+    # ion-flux dynamics with real feedback. Phase B3 (future) will
+    # measure whether v17 detector features derived from VMEM_MV
+    # improve MCC against the v16 baseline. See
+    # cell_sim/layer5_bioelectric/ and FUTURE_WORK.md.
+    enable_bioelectric: bool = False
 
 
 class RealSimulator(Simulator):
@@ -325,25 +337,34 @@ class RealSimulator(Simulator):
         state, rules = self._build_state_and_rules(ko)
         sim = _SimCls(state, rules, mode="gillespie", seed=self.cfg.seed)
 
-        samples: list[Sample] = [_snapshot(state, get_species_count, t=0.0)]
+        bio = bool(self.cfg.enable_bioelectric)
+        samples: list[Sample] = [_snapshot(state, get_species_count, t=0.0,
+                                           enable_bioelectric=bio)]
         next_sample = sample_dt_s
         chunk = self.cfg.chunk_dt_s
         while state.time < t_end_s:
             target = min(state.time + chunk, t_end_s)
             sim.run_until(t_end=target, max_events=self.cfg.max_events_per_chunk)
             while next_sample <= state.time and next_sample <= t_end_s + 1e-9:
-                samples.append(_snapshot(state, get_species_count, t=next_sample))
+                samples.append(_snapshot(state, get_species_count,
+                                          t=next_sample,
+                                          enable_bioelectric=bio))
                 next_sample += sample_dt_s
         # Always include a final-sample at t_end if not already.
         if not samples or samples[-1].t_s < t_end_s - 1e-9:
-            samples.append(_snapshot(state, get_species_count, t=t_end_s))
+            samples.append(_snapshot(state, get_species_count, t=t_end_s,
+                                      enable_bioelectric=bio))
         return Trajectory(tuple(samples))
 
 
 # ---- helpers -------------------------------------------------------------
 
 
-def _snapshot(state, get_species_count, *, t: float) -> Sample:
+def _snapshot(
+    state, get_species_count, *,
+    t: float,
+    enable_bioelectric: bool = False,
+) -> Sample:
     pools: dict[str, float] = {}
     for key, sid in _POOL_KEY_TO_SPECIES.items():
         try:
@@ -428,6 +449,20 @@ def _snapshot(state, get_species_count, *, t: float) -> Sample:
         event_counts = dict(Counter(e.rule_name for e in state.events))
     except Exception:
         event_counts = None
+
+    # Session 33 phase B1: bioelectric observable. Flag-off: not added,
+    # snapshot is bit-identical to v15 / v16 baselines. Flag-on: derived
+    # GHK Vmem from existing K+/Na+/Cl- intracellular counts, with
+    # literature reference extracellular concentrations and bacterial
+    # default permeability ratios. See cell_sim/layer5_bioelectric/.
+    if enable_bioelectric:
+        try:
+            from cell_sim.layer5_bioelectric.bioelectric import (
+                estimate_vmem_mv,
+            )
+            pools["VMEM_MV"] = float(estimate_vmem_mv(state))
+        except Exception:
+            pass
 
     return Sample(t_s=t, pools=pools, event_counts_by_rule=event_counts)
 
