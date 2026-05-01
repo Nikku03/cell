@@ -307,6 +307,17 @@ class RealSimulator(Simulator):
                     tolerance=self.cfg.sink_tolerance,
                 ),
             )
+        if self.cfg.enable_bioelectric:
+            # Phase B2: voltage-gated K+ leak rule. Single global rule
+            # (no per-gene scaling). The rule fires only when Vmem
+            # deviates from E_K beyond a small dead band, so its
+            # contribution to total propensity is bounded. Bit-identity
+            # at flag-off is preserved by NOT importing this module
+            # unless the flag is on.
+            from cell_sim.layer5_bioelectric.dynamics import (
+                build_bioelectric_rules,
+            )
+            rules += build_bioelectric_rules(state)
         return state, rules
 
     # ----- Simulator protocol -----

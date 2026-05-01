@@ -62,13 +62,25 @@ from cell_sim.layer5_bioelectric.detector_features import (
     BioelectricFeatures,
     extract_bioelectric_features,
 )
+from cell_sim.layer5_bioelectric.dynamics import (
+    K_LEAK_DEAD_BAND_MV,
+    K_LEAK_RATE_PER_S_PER_MV,
+    K_LEAK_TOKEN_CAP,
+    build_bioelectric_rules,
+    make_voltage_gated_K_leak_rule,
+)
 
 __all__ = [
     "BioelectricEstimatorConfig",
     "BioelectricFeatures",
     "DEFAULT_PERMEABILITY",
     "DEFAULT_REFERENCE_EXTRACELLULAR_MM",
+    "K_LEAK_DEAD_BAND_MV",
+    "K_LEAK_RATE_PER_S_PER_MV",
+    "K_LEAK_TOKEN_CAP",
+    "build_bioelectric_rules",
     "estimate_vmem_mv",
     "extract_bioelectric_features",
+    "make_voltage_gated_K_leak_rule",
     "nernst_potential_mv",
 ]
