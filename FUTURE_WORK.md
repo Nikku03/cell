@@ -85,3 +85,9 @@ Re-run R2a candidate acquisition with strict Pfam HMM search rather than the key
 
 Requires a network-enabled environment with EBI / Pfam / Rfam reachable (the R2a sandbox had all these blocked at the proxy with HTTP 403 `host_not_allowed`; see `memory_bank/staging/regulation_curation/acquisition_log.md`). If a strict search returns zero two-component candidates the absence in Syn3A is biologically supported. If candidates appear, they go into staging for an R2b-style review pass.
 
+## Dark Manifold salvage — followup status (session 32)
+
+A followup smoke test (single session-32 commit on `claude/syn3a-whole-cell-simulator-REjHC`, see git log) re-evaluated SIREN and HNN at increased training data densities. Results: SIREN's 500-point salvage failure was data-sparsity (SIREN-ω30 wins at 500 000 points by 2.1× test MSE); HNN's damped-oscillator failure persists 1 500–8 400× across all four data conditions tested, confirming a structural failure (Hamiltonian dynamics conserve energy by construction; cannot represent dissipation). Per-run measurements at `experiments/dark_manifold_salvage_followup/results/{siren,hnn}_results.csv`. Calibrated writeup at `experiments/dark_manifold_salvage_followup/FINDINGS.md`. Memory bank fact: `dark_manifold_salvage_followup`.
+
+The full Dark Manifold concept (4D spacetime field with dark matter coupling, quantum fluctuations as sampling, superposition collapse, cognitive scaffold) **remains untested**. Building and testing it would be a multi-month research project, not a smoke test, and is not currently planned.
+
