@@ -26,6 +26,7 @@ outputs/.wt_*.pkl
 # (git add -f <file>) when a measurement is finalised.
 outputs/phase2_smoke/
 outputs/phase2_v16_gex_on/
+outputs/phase_b3_v17_full/
 
 # Secrets — never commit any of these
 .env
