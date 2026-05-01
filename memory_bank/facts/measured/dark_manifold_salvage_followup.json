@@ -1,0 +1,55 @@
+{
+  "id": "dark_manifold_salvage_followup",
+  "claim": "Re-tested SIREN and Hamiltonian Neural Network at increased training data densities to follow up on the original April 2026 Dark Manifold salvage tests. SIREN tested at [500, 5000, 50000, 500000] training points on a 3D synthetic metabolite field; HNN tested at [100, 1000, 10000, 100000] state-deriv samples on harmonic + damped oscillators. SIREN's 500-point failure (test MSE 4.04e-2 SIREN-omega30 vs 4.94e-3 MLP-ReLU) reproduces and resolves at higher data: at 500000 points SIREN-omega30 reaches test MSE 1.45e-3 vs MLP-ReLU 3.12e-3 (2.1x SIREN win) and gradient cosine 0.694 vs 0.185. HNN's damped-oscillator failure persists structurally: trajectory MSE on damped sits at ~0.19 across all four data conditions while MLP improves with data, yielding HNN/MLP ratios of 1100x at n=100, 8300x at n=1000, 8400x at n=10000, 1500x at n=100000. SIREN failure was data-sparsity; HNN damped failure is structural (Hamiltonian dynamics conserve energy by construction; cannot represent dissipation regardless of data). The full Dark Manifold concept (4D spacetime field, dark matter coupling, quantum fluctuations, superposition collapse) was NOT tested in this session and remains untested.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible from the repo root via 'python experiments/dark_manifold_salvage_followup/siren_data_scaling_test.py' and 'python experiments/dark_manifold_salvage_followup/hnn_data_scaling_test.py'. Synthetic data generators and model initializations are deterministic given seed=42. Per-run measurements preserved at experiments/dark_manifold_salvage_followup/results/{siren,hnn}_results.csv. Plots at experiments/dark_manifold_salvage_followup/results/plots/{siren,hnn}_data_scaling.png. CPU-only PyTorch 2.11.0 was installed from PyPI to satisfy the spec's premise that PyTorch is available; no other new dependencies were introduced. Each (model, condition) cell runs under the spec's 5-minute wall-time cap (longest observed: SIREN-omega30 at n_train=5000, 48.6 s).",
+  "last_verified": "2026-05-01",
+  "context": {
+    "entity": "dark_manifold_salvage",
+    "version": "followup_v1"
+  },
+  "value": {
+    "siren_best_data_condition": "500000 points: SIREN-omega30 test_mse=1.45e-3 vs MLP-ReLU 3.12e-3 (2.15x win); Fourier-MLP 3.99e-4 (7.83x win)",
+    "siren_test_mse_at_max_data_mlp_relu": 0.0031200635712593794,
+    "siren_test_mse_at_max_data_siren_omega30": 0.0014526641461998224,
+    "siren_test_mse_at_max_data_fourier_mlp": 0.00039864645805209875,
+    "siren_test_mse_at_min_data_mlp_relu": 0.004937999881803989,
+    "siren_test_mse_at_min_data_siren_omega30": 0.040388889610767365,
+    "siren_failure_reproduces_at_n500": true,
+    "siren_resolves_at_n500000": true,
+    "hnn_dissipative_failure_persists": true,
+    "hnn_traj_mse_damped_at_n100": 0.3212483691313258,
+    "hnn_traj_mse_damped_at_n100000": 0.18890829557153127,
+    "mlp_traj_mse_damped_at_n100000": 0.00012578241466932574,
+    "hnn_traj_mse_ratio_damped_at_n100000": 1501.9,
+    "hnn_traj_mse_ratio_damped_at_n1000": 8313.2,
+    "hnn_traj_mse_ratio_damped_at_n10000": 8383.7,
+    "hnn_harmonic_works": true,
+    "hnn_traj_mse_harmonic_at_n100000_hnn": 9.35069828234977e-05,
+    "hnn_traj_mse_harmonic_at_n100000_mlp": 0.00028426527709353997,
+    "data_conditions_siren": [500, 5000, 50000, 500000],
+    "data_conditions_hnn": [100, 1000, 10000, 100000],
+    "n_models_siren": 4,
+    "n_models_hnn": 2,
+    "models_siren": ["MLP-ReLU", "Fourier-MLP", "SIREN-w10", "SIREN-w30"],
+    "models_hnn": ["MLP", "HNN"],
+    "production_simulator_modified": false,
+    "v15_v16_unchanged": true
+  },
+  "caveats": [
+    "These tests evaluate two specific neural network techniques (SIREN, HNN) — not the Dark Manifold concept itself, which was never built. The Dark Manifold's central claims (4D spacetime field with dark matter coupling, quantum fluctuations as sampling mechanism, superposition with geodesic collapse) remain untested.",
+    "SIREN and HNN are previously-validated techniques in their proper domains (signal representation, conservative dynamics). Their failure or success in this test domain does not refute their general utility.",
+    "Cell biology is fundamentally data-sparse compared to the highest data conditions tested here. The crossover where SIREN beats MLP on this synthetic test is between 50000 and 500000 points; cell-biology training sets typically expose 100s to 10000s of measured points per quantity. SIREN's 500-point salvage failure is the realistic cell-data scale, and SIREN losing there is the relevant data point for cell-biology applicability.",
+    "The HNN test uses synthetic dynamical systems (harmonic + damped oscillator), not real cell trajectories. Real cell dynamics are overwhelmingly dissipative; an HNN-shaped layer would import exactly the wrong inductive bias regardless of training-set size.",
+    "Step budgets were fixed (3000 for SIREN, 2000 for HNN) rather than trained to convergence. At very high data conditions an MLP may not have reached its true asymptote within the step budget. The relative comparison across conditions is the load-bearing measurement; absolute numbers would shift with longer training.",
+    "Hyperparameters (width, depth, learning rate, batch size, omega_0) were fixed at reasonable defaults from the SIREN paper and standard practice. Tuning each model would change absolute numbers; the cross-condition pattern is robust.",
+    "The original April 2026 salvage report cited 14x HNN/MLP failure ratio on damped; this followup measures 1500-8400x. The discrepancy is because the original cited a less-converged MLP baseline; HNN's traj_mse floor is consistent with the original (~0.19 here)."
+  ],
+  "dependencies": [],
+  "used_by": [
+    "experiments/dark_manifold_salvage_followup/siren_data_scaling_test.py",
+    "experiments/dark_manifold_salvage_followup/hnn_data_scaling_test.py",
+    "experiments/dark_manifold_salvage_followup/FINDINGS.md"
+  ]
+}
