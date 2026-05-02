@@ -1,34 +1,60 @@
 {
-  "method": "dark_manifold_100gene_knockout_sweep",
+  "method": "dark_manifold_100gene_knockout_sweep_dual_organism",
   "rollout_steps": 100,
   "n_dm_genes": 102,
   "n_dm_mets": 74,
-  "n_genes_mapped_to_syn3a": 36,
-  "n_genes_with_breuer_label": 36,
-  "breuer_essential_in_subset": 36,
-  "breuer_nonessential_in_subset": 0,
-  "best_atp_drop": {
-    "threshold": 0.0,
-    "mcc": 0.0,
-    "tp": 36,
-    "fp": 0,
-    "tn": 0,
-    "fn": 0,
-    "precision": 1.0,
-    "recall": 1.0
-  },
-  "best_ec_drop": {
-    "threshold": 0.0,
-    "mcc": 0.0
+  "n_dm_genes_mapped_syn3a": 36,
+  "n_dm_genes_mapped_mpne": 42,
+  "organisms": {
+    "syn3a": {
+      "organism": "syn3a",
+      "label_source": "Breuer 2019 eLife",
+      "mapped": 36,
+      "matched_essential": 36,
+      "matched_nonessential": 0,
+      "recall_at_zero": 1.0,
+      "recall_at_median_atp_drop": 0.5,
+      "median_atp_drop_across_dm_genes": 0.11277282238006592,
+      "top_K_precision": 0.3611111111111111,
+      "top_K_overlap": 13,
+      "top_K": 36,
+      "mcc": null,
+      "mcc_status": "undetermined_single_class_subset",
+      "mcc_threshold": null,
+      "tp": 36,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0
+    },
+    "mpne": {
+      "organism": "mpne",
+      "label_source": "Lluch-Senar 2015 MSB",
+      "mapped": 42,
+      "matched_essential": 42,
+      "matched_nonessential": 0,
+      "recall_at_zero": 1.0,
+      "recall_at_median_atp_drop": 0.4523809523809524,
+      "median_atp_drop_across_dm_genes": 0.11277282238006592,
+      "top_K_precision": 0.38095238095238093,
+      "top_K_overlap": 16,
+      "top_K": 42,
+      "mcc": null,
+      "mcc_status": "undetermined_single_class_subset",
+      "mcc_threshold": null,
+      "tp": 42,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0
+    }
   },
   "baselines": {
-    "v15_syn3a": 0.5372,
+    "v15_syn3a_biology_first": 0.5372,
     "v18_xgboost_syn3a_held_out": 0.1376
   },
   "caveats": [
-    "Dark Manifold trained on FBA-synthetic ground truth, not measured biology",
-    "GAP_ANALYSIS.md flags hub-gene wrong-sign predictions (groEL, rpoB, dnaA)",
-    "Threshold tuned post-hoc on the same data; report best-MCC at any threshold",
-    "Only 36 of 102 DM genes map cleanly to Syn3A locus tags via /gene field"
+    "Dark Manifold 102-gene set is curated around central metabolism + tRNA synthetases + ribosomal core + ATP synthase + transcription core, which are essential by design in any minimal-cell organism. Joining to ground-truth essentiality on either Syn3A or M. pneumoniae produces a single-class matched subset (100 percent essential), so binary MCC is mathematically undefined.",
+    "Recall-at-K and top-K precision are reported as alternative metrics that work on single-class subsets. They measure whether the model ranks matched essentials above or near the cohort median.",
+    "Dark Manifold trained on FBA-synthetic ground truth (cell-simulation/dark_manifold_100gene.py MetabolicGroundTruth class), not measured biology. The internal 0.95+ gene correlation is correlation against the FBA model, not against measured experimental data.",
+    "cell-simulation/GAP_ANALYSIS.md flags hub-gene wrong-sign predictions (groEL, rpoB, dnaA all wrong direction) and W_reg learned to be 100 percent zeros. Those known issues are present in the loaded checkpoint."
   ]
 }
