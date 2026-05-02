@@ -1,0 +1,45 @@
+{
+  "id": "mcc_against_breuer_v20_dark_manifold_undetermined",
+  "claim": "Phase v20 attempted to validate the Nikku03/cell-simulation Dark Manifold v2.1 100-gene model (dark_manifold_100gene.pt, ~293k parameters) against the Breuer 2019 Syn3A essentiality labels via the per-gene knockout sweep + |atp_drop| / |ec_drop| threshold-MCC pipeline in notebooks/dark_manifold_validation.ipynb. The validation produced an UNDETERMINED MCC because the joined dataset is single-class. Of the 102 Dark Manifold genes, 36 mapped to JCVISYN3A locus tags via the GenBank /gene qualifier, but ALL 36 of those mapped genes are labeled essential in Breuer 2019 (Essential or Quasi-essential collapsed to 1; the Breuer panel has 72 nonessential genes in total but the Dark Manifold's 102-gene set covers central metabolism + tRNA synthetases + ribosomal core, which are exactly the gene classes that ARE essential). With zero nonessential examples in the matched subset, MCC is mathematically undefined and the threshold-sweep degenerates to 'predict everything essential' (TP=36, FP=0, TN=0, FN=0). This is a coverage failure of the validation experiment, not a model performance failure. The Dark Manifold's MCC against Breuer 2019 cannot be measured on this gene subset and is recorded as v20 = UNDETERMINED.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via notebooks/dark_manifold_validation.ipynb on Colab (commit 25063be). Output JSON preserved at outputs/dark_manifold_validation.json (commit 0e15f3d) with full per-gene atp_drop / ec_drop, threshold sweep, and confusion matrix at the degenerate-best threshold. Model checkpoint: Nikku03/cell-simulation dark_manifold_100gene.pt. Labels: memory_bank/data/multiorg_essentiality/labels.csv (Breuer 2019 / Syn3A subset, 455 rows). GenBank gene-name to JCVISYN3A locus tag mapping: cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb /gene qualifier (Luthey-Schulten Lab Syn3A reference).",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v20_dark_manifold_undetermined"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_against_breuer_v18_multiorg_xgb_loocv",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "notebooks/dark_manifold_validation.ipynb",
+    "outputs/dark_manifold_validation.json"
+  ],
+  "value": {
+    "method": "dark_manifold_100gene_knockout_sweep",
+    "rollout_steps": 100,
+    "n_dm_genes": 102,
+    "n_dm_mets": 74,
+    "n_genes_mapped_to_syn3a_locus": 36,
+    "n_genes_with_breuer_label": 36,
+    "breuer_essential_in_subset": 36,
+    "breuer_nonessential_in_subset": 0,
+    "mcc": null,
+    "mcc_status": "undetermined_single_class_subset",
+    "best_atp_drop_threshold_pseudo_mcc": 0.0,
+    "best_ec_drop_threshold_pseudo_mcc": 0.0,
+    "v15_baseline_for_context": 0.5372,
+    "v18_baseline_for_context": 0.1376
+  },
+  "caveats": [
+    "MCC is mathematically undefined when one class has zero examples. The notebook's MCC computation falls back to 0.0 when pred.sum() is 0 or len(pred); this is reported but should NOT be interpreted as 'the model has zero predictive power'. The model's predictive power on this gene subset is simply not measurable from this experiment.",
+    "Coverage failure root cause: the Dark Manifold's 102 genes are biased toward well-characterized central metabolism (glycolysis, PPP, nucleotide synthesis), tRNA synthetases (all 20), ribosomal core (rpsA-B, rplA-B), energy metabolism (atpA-H), and transcription core (rpoA-D). These are EXACTLY the gene classes that are essential in any minimal-cell organism. Breuer 2019's 72 nonessential genes are concentrated in regulatory, transport, and uncharacterized categories that the Dark Manifold did not include in its 100-gene curated set.",
+    "Of the 102 Dark Manifold genes, only 36 mapped to JCVISYN3A locus tags via the GenBank /gene qualifier. The remaining 66 either use gene-name conventions that don't match Syn3A's annotation (e.g., the Dark Manifold uses E. coli-style 'pyk' but Syn3A's GenBank /gene field may have a different short name), or correspond to genes that exist in M. pneumoniae / E. coli but were omitted from the JCVI minimal-genome design.",
+    "To turn this into a real validation, three options exist: (1) hand-curate the gene-name to locus-tag mapping more aggressively to recover more of the 66 unmapped genes, accepting that the matched set may still be heavily essential-biased; (2) use a different ground-truth dataset that covers the Dark Manifold's specific gene set with both classes (e.g., M. pneumoniae transposon essentiality from Lluch-Senar 2015, which we already have at memory_bank/data/multiorg_essentiality/labels.csv organism=mpne); (3) train the Dark Manifold on a more-balanced gene set that includes nonessentials before validating.",
+    "Dark Manifold trained on FBA-synthetic ground truth (cell-simulation/dark_manifold_100gene.py MetabolicGroundTruth class), not measured biology. The internal correlation claims (gene_corr=0.95+, atp_corr=0.68, sign_accuracy=0.75 per the .pt file's 'results' dict) are correlations against the FBA model's predictions, not against measured experimental data. The FBA model itself has Matthews correlation 0.59 against transposon essentiality data per cell-simulation/GAP_ANALYSIS.md.",
+    "The threshold-MCC sweep tunes the threshold post-hoc on the same data being scored. When MCC is well-defined this is reportable as 'best-achievable MCC at any threshold'; when MCC is undefined, the post-hoc tuning is a non-issue because the metric itself can't be computed. Confidence: measured at the experimental level (the experiment was real and reproducible) but the result is a class-coverage observation, not a model-quality measurement."
+  ]
+}
