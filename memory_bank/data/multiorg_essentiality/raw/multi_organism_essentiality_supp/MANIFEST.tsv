@@ -1,0 +1,17 @@
+study_key	pmid	pmcid	doi	matched_genbank_accession	status	supp_zip	notes
+goodall_2018_ecoli	29463657	PMC5821084	10.1128/mBio.02096-17	U00096.3	MISSING	-	OA tgz path 404; ASM landing 403; PMC bin/ blocked by reCAPTCHA. Browser download required.
+koo_2017_bsubtilis	28189581	PMC5400513	10.1016/j.cels.2016.12.013	AL009126.3	MISSING	-	Not OA; EPMC supp empty; Cell Press 403. Browser/institutional access required.
+christen_2011_ccrescentus	21878915	PMC3202797	10.1038/msb.2011.58	CP001340.1	OK	christen_2011_ccrescentus_PMC3202797.zip	1.0 MB. Contains msb201158-s2.xls (essentiality call table).
+akerley_2002_hinfluenzae	-	-	10.1073/pnas.012602299	L42023.1	MISSING	-	DOI did not resolve cleanly in EPMC; PNAS 403. Akerley et al. 2002 PNAS 99:966 supp.
+chaudhuri_2009_saureus	19570206	PMC2721850	10.1186/1471-2164-10-291	BA000018.3	OK	chaudhuri_2009_saureus_PMC2721850.zip	303 KB. 1471-2164-10-291-S1.xls is the main essentiality output.
+lee_2015_paeruginosa	25848053	PMC4413342	10.1073/pnas.1422186112	AE004091.2	MISSING	-	Not OA; EPMC supp empty; PNAS 403. PMC bin/ name pnas.1422186112.sd01.xlsx.
+weiss_2007_ftularensis	-	-	10.1073/pnas.0701860104	AJ749949.2	MISSING	-	DOI failed to resolve in EPMC. PNAS 403. Weiss 2007 PNAS 104:6037.
+salama_2004_hpylori	15547264	PMC529078	10.1128/JB.186.23.7926-7935.2004	AE000511.1	MISSING	-	Not OA; EPMC supp empty; ASM 403.
+dejesus_2017_mtuberculosis	28096490	PMC5241402	10.1128/mBio.02133-16	AL123456.3	OK	dejesus_2017_mtuberculosis_PMC5241402.zip	4.0 MB. mbo002173137st2.xlsx is the H37Rv per-gene essentiality call table (Himar1 TRANSIT output).
+vanopijnen_2009_spneumoniae	19767758	PMC2957483	10.1038/nmeth.1377	AE005672.3	PARTIAL	vanopijnen_2009_spneumoniae_PMC2957483.zip	130 KB. PMC archive only has the SI PDF (NIHMS143284-supplement-01.pdf); the xls Tn-seq output is not in the PMC bundle.
+gallagher_2015_abaumannii	-	-	10.1128/mBio.01660-15	CP008706.1	MISSING	-	Real DOI is mBio 6:e01659-15; first EPMC hit was wrong paper. ASM 403.
+barquist_2013_styphimurium	23470992	PMC3632133	10.1093/nar/gkt148	AE006468.2	OK	barquist_2013_styphimurium_PMC3632133.zip	1.5 MB. supp_gkt148_nar-02998-f-2012-File007.xlsx is the cross-strain TraDIS essential calls.
+bachman_2015_kpneumoniae	26060277	PMC4462621	10.1128/mBio.00775-15	CP008827.1	OK	bachman_2015_kpneumoniae_PMC4462621.zip	3.4 MB. mbo003152358sd1.xlsx + sd2.xls + sd3.xlsx are fitness data sheets.
+chao_2013_vcholerae	-	-	10.1073/pnas.1219850110	AE003852.1	MISSING	-	DOI failed to resolve in EPMC. Real Chao 2013 essentiality is mostly in Cameron 2008 PNAS or in Mandlik 2011 (TraDIS V. cholerae). Verify the right citation before retry.
+glass_2006_mgenitalium	16407165	PMC1324956	10.1073/pnas.0510013103	L43967.2	MISSING	-	Not OA; PMC landing reCAPTCHA-walled; PNAS 403. The minimal-bacterium gene table is the main supp.
+deberardinis_2008_abaylyi	18319726	PMC2290942	10.1038/msb.2008.10	CR543861.1	OK	deberardinis_2008_abaylyi_PMC2290942.zip	808 KB. msb200810-s2.xls is the primary deletion mutant phenotype table.
