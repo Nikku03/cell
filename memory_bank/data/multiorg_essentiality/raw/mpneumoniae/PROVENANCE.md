@@ -32,3 +32,24 @@ generalization track. Per-source provenance and gap notes below.
   (complex formation, primary source). Same 403 / no PMC mirror.
 - **Hayflick medium recipe** — Phase D1 row 5. Spec says hand-typed from
   review papers; not a download target.
+
+
+## kuhner_2009/
+
+- **kuhner_2009_som.pdf** — Kühner 2009 *Science* "Proteome organization in
+  a genome-reduced bacterium" (`10.1126/science.1176343`) Supporting
+  Online Material PDF. Source: live science.org returns Cloudflare 403,
+  but the file `kuehner.som.pdf` is archived at the Internet Archive
+  Wayback Machine (capture timestamp 20231012235905). Fetched via
+  `https://web.archive.org/web/20231012235905id_/...`. 2.2 MB, PDF 1.6.
+  Phase D1 row 4 primary source (complex formation, ~200 complexes,
+  Table S2 listed inside the PDF).
+
+## Still missing after Wayback search
+
+- **Yus 2009** (`10.1126/science.1177263`) SOM — Wayback CDX shows only
+  302-redirect captures (filename `yus-som.revision.1.pdf`); the actual
+  PDF bytes were never archived. Live science.org returns 403. Browser
+  download from an institution with Science.org access is required.
+- **Yus 2009 supplementary tables S1–S6** — same situation; not
+  individually archived.
