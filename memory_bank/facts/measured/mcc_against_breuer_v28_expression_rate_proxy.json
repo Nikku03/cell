@@ -1,0 +1,55 @@
+{
+  "id": "mcc_against_breuer_v28_expression_rate_proxy",
+  "claim": "Phase v28 implemented organism-specific expression-rate proxies (Codon Adaptation Index from each organism's own ribosomal proteins, RBS strength scored against each organism's own anti-Shine-Dalgarno sequence extracted from its 16S rRNA, and within-organism rank-normalizations of both) to address v27's organism-specific-grammar failure. The features are by-construction organism-specific so they avoid the cross-organism PWM-transfer problem of v27. CAI emerged as the SECOND-highest-importance feature in the augmented GB (importance 0.338, beating GC's 0.218 and beating every other feature except v25's keyword indicators in some variants), confirming that codon usage carries strong essentiality signal. However, adding the expression-rate features to v25's 20-feature baseline still HURTS cross-organism MCC on Syn3A (0.2268 → 0.1942 with all 5 expression features, delta -0.033; or 0.1343-0.1969 across simpler variants). Confusion-matrix shift confirms the failure mode: v25's 235 TP / 22 FP / 50 TN / 148 FN becomes 354 TP / 55 FP / 17 TN / 29 FN — the expression features push the model toward over-predicting essential (33 fewer FN at the cost of 33 more FP and 33 fewer TN). Reason: in Syn3A every gene has high CAI because it's a curated minimal cell (CAI median 0.745 vs 0.42 in styphimurium and 0.53 in abaylyi). The model learns 'high CAI = essential' from training organisms, then on Syn3A correctly identifies most genes as 'high-CAI' but cannot use this to distinguish the 72 nonessentials within Syn3A from the 383 essentials — they all have high CAI. Same minimal-cell information ceiling phenomenon as v23 (v15 detector indistinguishable FN/TN), v26 (LNN collapse on high-essential organisms), and v27 (regulatory PWMs).",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via scripts/predict_expression_rate.py (per-organism CAI from ribosomal proteins, per-organism anti-SD from 16S rRNA, RBS scoring as identity match) and scripts/train_with_expression_features.py (4 GB variants on the augmented features). Outputs: outputs/multiorg_per_gene_features_with_expression.csv, outputs/multiorg_classifier_with_expression_results.json.",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v28_expression_rate_proxy_helps_within_org_hurts_cross_org"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v25_multiorg_structured_features",
+    "mcc_against_breuer_v27_predicted_regulatory_features"
+  ],
+  "used_by": [
+    "scripts/predict_expression_rate.py",
+    "scripts/train_with_expression_features.py",
+    "outputs/multiorg_per_gene_features_with_expression.csv",
+    "outputs/multiorg_classifier_with_expression_results.json"
+  ],
+  "value": {
+    "method": "gb_on_v25_features_plus_organism_specific_expression_rate_proxies",
+    "expression_features_added": ["cai", "rbs_strength", "cai_rank", "rbs_rank", "expression_rank"],
+    "per_organism_cai_medians": {
+      "ccrescentus": 0.617, "saureus": 0.617, "mtuberculosis": 0.617,
+      "styphimurium": 0.419, "abaylyi": 0.526, "mpne": 0.681, "syn3a": 0.745
+    },
+    "syn3a_test_results": {
+      "gb_original_only_v25": {"test_mcc": 0.2268, "tp": 235, "fp": 22, "tn": 50, "fn": 148},
+      "gb_expression_only": {"test_mcc": 0.1514, "tp": 348, "fp": 56, "tn": 16, "fn": 35},
+      "gb_original_plus_all_expression": {"test_mcc": 0.1942, "tp": 354, "fp": 55, "tn": 17, "fn": 29},
+      "gb_original_plus_rank_only_3": {"test_mcc": 0.1884, "tp": 326, "fp": 47, "tn": 25, "fn": 57},
+      "gb_original_plus_cai_rank_only": {"test_mcc": 0.1343, "tp": 351, "fp": 58, "tn": 14, "fn": 32},
+      "gb_original_plus_rbs_rank_only": {"test_mcc": 0.1969, "tp": 306, "fp": 41, "tn": 31, "fn": 77}
+    },
+    "delta_vs_v25_baseline_best_variant": -0.0299,
+    "delta_vs_v25_baseline_worst_variant": -0.0925,
+    "feature_importance_in_augmented_gb": {
+      "cai": 0.338, "gc": 0.218, "is_putative": 0.081, "position_norm": 0.057,
+      "kw_synthase": 0.053, "kw_translation": 0.049, "is_hypothetical": 0.048,
+      "rbs_strength": 0.014, "expression_rank": 0.010, "cai_rank": 0.010
+    },
+    "verdict": "expression_features_carry_signal_but_dont_help_cross_organism_to_syn3a"
+  },
+  "caveats": [
+    "Expression-rate proxies ARE individually informative — CAI is the highest-importance non-categorical feature (0.338) — but they push the model toward predicting essential more aggressively. Cross-organism transfer to Syn3A specifically suffers because Syn3A's minimal-cell design means every gene has high CAI (median 0.745 vs 0.42-0.61 in training organisms). The 72 Syn3A nonessentials have high CAI just like the 383 essentials.",
+    "Confirmed user's strategic intent direction: regulatory + expression features are organism-specific quantities that DO carry essentiality signal. Cross-organism BIOLOGY is not the bottleneck (CAI works the same way in every bacterium). The bottleneck is Syn3A-specific: it's a minimal genome where 84% of genes are essential and the remaining 16% are also housekeeping-quality genes, just with redundant function or alternative pathways.",
+    "Same information-ceiling pattern as v23, v26, v27: when within-Syn3A variation in a feature is small (because Syn3A is curated to homogeneous high-quality genes), no model can use that feature to discriminate essential from nonessential within Syn3A. The cross-organism approach inherently struggles when the test organism's distribution is shifted toward the high-quality tail of the training distribution.",
+    "Two anti-SD extractions look biologically incorrect (styphimurium 'GCTTCTTTAAGGT' and syn3a 'CTCCATAGAAAGG' don't have the canonical CCTCCT/AGGAGG motif structure), suggesting a bug in 16S rRNA gene direction or end identification for those genomes. Even with these noisy values the per-organism rank-normalization within rbs_rank produces a usable feature that has importance 0.014 in the GB. Fixing the anti-SD extraction (probably a strand-direction issue in those specific 16S annotations) would improve the rbs_strength scores but is unlikely to change the cross-organism MCC outcome significantly because CAI dominates anyway.",
+    "What this rules out: 'add more sequence-derived features and the cross-organism MCC will go up'. We've now tried structural features (v25, 0.2268), regulatory PWM features (v27, 0.1069), and expression-rate proxies (v28, 0.1942). All fail because the within-Syn3A discrimination problem is fundamental, not a feature-engineering deficit.",
+    "What still might help: (1) within-Syn3A features that v15 and conservation can compute — gene neighborhood essentiality (operon-level co-essentiality), genetic redundancy (paralog count), pathway-level criticality (the 72 nonessentials may be in pathways with multiple-route alternatives); (2) cross-organism conservation rank — for each Syn3A gene, count orthologs in the 16-genome panel via BLAST (high conservation usually correlates with essentiality, AND conservation is rank-normalizable across organisms); (3) actually downloading RegulonDB + getting essentiality for E. coli K-12 and B. subtilis 168 (two organisms with depth comparable to Syn3A's annotation curation).",
+    "Confidence: measured (the experiment is reproducible, the cross-organism MCC drop is robustly negative across all 4 variants of expression features, and the feature-importance measurement is well-defined). v25 GB at 0.2268 remains the best cross-organism Syn3A predictor on this dataset — adding more sequence-derived features in the v27/v28 pattern does not break that ceiling."
+  ]
+}

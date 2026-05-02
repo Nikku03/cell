@@ -1,0 +1,127 @@
+{
+  "method": "gb_on_v25_features_plus_organism_specific_expression_proxies",
+  "expression_features": [
+    "cai",
+    "rbs_strength",
+    "cai_rank",
+    "rbs_rank",
+    "expression_rank"
+  ],
+  "expression_feature_description": {
+    "cai": "Codon Adaptation Index against organism's ribosomal proteins",
+    "rbs_strength": "identity match score vs organism-specific anti-SD template",
+    "cai_rank": "within-organism rank of CAI [0,1]",
+    "rbs_rank": "within-organism rank of rbs_strength [0,1]",
+    "expression_rank": "mean(cai_rank, rbs_rank)"
+  },
+  "training_organisms": [
+    "ccrescentus",
+    "saureus",
+    "mtuberculosis",
+    "styphimurium",
+    "abaylyi",
+    "mpne"
+  ],
+  "test_organism": "syn3a",
+  "results": {
+    "gb_original": {
+      "label": "GB original 20 (v25 reproduction)",
+      "best_threshold": 0.75,
+      "train_mcc": 0.5647472164503012,
+      "test_mcc": 0.22675008819825707,
+      "tp": 235,
+      "fp": 22,
+      "tn": 50,
+      "fn": 148
+    },
+    "gb_expression_only": {
+      "label": "GB expression features only (5)",
+      "best_threshold": 0.75,
+      "train_mcc": 0.509096790729207,
+      "test_mcc": 0.1513648807454608,
+      "tp": 348,
+      "fp": 56,
+      "tn": 16,
+      "fn": 35
+    },
+    "gb_all_features": {
+      "label": "GB original 20 + expression 5",
+      "best_threshold": 0.65,
+      "train_mcc": 0.6314801896250025,
+      "test_mcc": 0.1941827889388542,
+      "tp": 354,
+      "fp": 55,
+      "tn": 17,
+      "fn": 29
+    }
+  },
+  "top_15_feature_importances": [
+    {
+      "feature": "cai",
+      "importance": 0.3378577711128376
+    },
+    {
+      "feature": "gc",
+      "importance": 0.2183612715699315
+    },
+    {
+      "feature": "is_putative",
+      "importance": 0.08071426905515594
+    },
+    {
+      "feature": "position_norm",
+      "importance": 0.05668397910252935
+    },
+    {
+      "feature": "kw_synthase",
+      "importance": 0.05271362214185011
+    },
+    {
+      "feature": "kw_translation",
+      "importance": 0.048832490975124335
+    },
+    {
+      "feature": "is_hypothetical",
+      "importance": 0.04808206545421283
+    },
+    {
+      "feature": "operon_run_length",
+      "importance": 0.033023335034413626
+    },
+    {
+      "feature": "log_length_bp",
+      "importance": 0.031023146701599807
+    },
+    {
+      "feature": "kw_replication",
+      "importance": 0.018432857451772137
+    },
+    {
+      "feature": "rbs_strength",
+      "importance": 0.013792540873030973
+    },
+    {
+      "feature": "rbs_rank",
+      "importance": 0.010544940461948284
+    },
+    {
+      "feature": "expression_rank",
+      "importance": 0.009770108885132002
+    },
+    {
+      "feature": "cai_rank",
+      "importance": 0.009460513603564553
+    },
+    {
+      "feature": "upstream_gc",
+      "importance": 0.008341321741197722
+    }
+  ],
+  "baselines": {
+    "v15_within_organism": 0.5372,
+    "v24_mpne_to_syn3a_annotation": 0.2034,
+    "v25_gb_6orgs_original": 0.2268,
+    "v27_gb_with_regulatory_pwms": 0.1069
+  },
+  "delta_vs_v25_baseline": -0.03261721106114579
+}
