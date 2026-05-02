@@ -1,0 +1,162 @@
+{
+  "method": "simulator_v15_features_plus_online_ml_classifier",
+  "baselines": {
+    "v15_mcc": 0.5372320940435067,
+    "v15_confusion": {
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    }
+  },
+  "cv_method": "class_weighted_logistic_regression",
+  "features": [
+    "confidence",
+    "log_time_to_failure",
+    "has_failure_time",
+    "fm_none",
+    "fm_translation_stall",
+    "fm_catalysis_silenced",
+    "fm_essential_metabolite_depletion",
+    "fm_dna_replication_blocked",
+    "fm_membrane_integrity",
+    "fm_transcription_stall",
+    "has_cv_signal",
+    "has_ann_signal",
+    "has_traj_signal",
+    "is_no_signal",
+    "is_ann_only",
+    "is_composed",
+    "evidence_len",
+    "v15_call",
+    "log_length_bp",
+    "is_hypothetical",
+    "is_uncharacterized",
+    "is_putative",
+    "kw_replication",
+    "kw_transcription",
+    "kw_translation",
+    "kw_atp",
+    "kw_membrane",
+    "kw_synthase",
+    "kw_kinase",
+    "kw_dehydrogenase",
+    "gc_content"
+  ],
+  "n_features": 31,
+  "n_genes": 455,
+  "class_balance": {
+    "essential": 383,
+    "nonessential": 72
+  },
+  "online_learning": {
+    "n_seeds": 5,
+    "streaming_mccs": [
+      0.46943384129358134,
+      0.49506574948201065,
+      0.40856882594166166,
+      0.39995039715806036,
+      0.43462295631323866
+    ],
+    "final_pass_mccs": [
+      0.5399255378828439,
+      0.5399255378828439,
+      0.5399255378828439,
+      0.5399255378828439,
+      0.5399255378828439
+    ],
+    "mean_streaming_mcc": 0.4415283540377105,
+    "std_streaming_mcc": 0.03607689132472575,
+    "mean_final_pass_mcc": 0.5399255378828439,
+    "mean_curve_10pts": [
+      {
+        "fraction": 0.0,
+        "mean_n_seen": 39.6,
+        "mean_mcc": 0.08253604542274798,
+        "std_mcc": 0.2047148407844367
+      },
+      {
+        "fraction": 0.1111111111111111,
+        "mean_n_seen": 85.4,
+        "mean_mcc": 0.08905112061646317,
+        "std_mcc": 0.0896894849849896
+      },
+      {
+        "fraction": 0.2222222222222222,
+        "mean_n_seen": 131.4,
+        "mean_mcc": 0.25095476910146985,
+        "std_mcc": 0.049970364052161674
+      },
+      {
+        "fraction": 0.3333333333333333,
+        "mean_n_seen": 177.4,
+        "mean_mcc": 0.2956970971067686,
+        "std_mcc": 0.03950592151098728
+      },
+      {
+        "fraction": 0.4444444444444444,
+        "mean_n_seen": 223.4,
+        "mean_mcc": 0.3538039230704792,
+        "std_mcc": 0.03702458992395529
+      },
+      {
+        "fraction": 0.5555555555555556,
+        "mean_n_seen": 270.2,
+        "mean_mcc": 0.37989998312145057,
+        "std_mcc": 0.03867503730502691
+      },
+      {
+        "fraction": 0.6666666666666666,
+        "mean_n_seen": 316.2,
+        "mean_mcc": 0.4072879870857646,
+        "std_mcc": 0.0449925076187545
+      },
+      {
+        "fraction": 0.7777777777777778,
+        "mean_n_seen": 362.2,
+        "mean_mcc": 0.4162636233998091,
+        "std_mcc": 0.03812642770429871
+      },
+      {
+        "fraction": 0.8888888888888888,
+        "mean_n_seen": 408.2,
+        "mean_mcc": 0.4374386578423213,
+        "std_mcc": 0.04046615480474193
+      },
+      {
+        "fraction": 1.0,
+        "mean_n_seen": 455.0,
+        "mean_mcc": 0.4415283540377105,
+        "std_mcc": 0.03607689132472575
+      }
+    ]
+  },
+  "cv_5fold": {
+    "method": "class_weighted_logistic_regression",
+    "per_fold_mcc": [
+      0.5581061326067935,
+      0.47675561702757835,
+      0.5932167886681659,
+      0.5380502306311755,
+      0.44089957695076776
+    ],
+    "pooled_mcc": 0.5176509957517937,
+    "pooled_confusion": {
+      "tp": 301,
+      "fp": 9,
+      "tn": 63,
+      "fn": 82
+    }
+  },
+  "cv_5fold_logreg": {
+    "pooled_mcc": 0.5176509957517937
+  },
+  "cv_5fold_gradient_boosting": {
+    "pooled_mcc": 0.40810021882921327
+  },
+  "delta_vs_v15": {
+    "streaming_online": -0.09570374000579618,
+    "cv_5fold": -0.01958109829171295
+  },
+  "verdict": "parity_or_worse"
+}

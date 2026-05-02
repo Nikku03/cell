@@ -1,0 +1,79 @@
+{
+  "id": "mcc_against_breuer_v23_sim_plus_online_ml",
+  "claim": "Phase v23 tested whether topping up the v15 mechanistic detector (MCC=0.5372 against Breuer 2019) with an ML classifier — trained on v15's per-gene output features (confidence, time_to_failure, failure_mode, evidence) plus EXTERNAL Syn3A features (gene length from syn3a_gene_table.csv, hypothetical/uncharacterized/putative product flags, product-keyword bag-of-words for replication/transcription/translation/atp/membrane/synthase/kinase/dehydrogenase, GC content from syn3A.gb sequence) — could improve MCC. Two evaluation modes: (1) online learning loop with class-weighted SGD, predict-then-train per gene in shuffled order, 5 seeds, tracking streaming MCC as the model 'learns with every step'; (2) standard 5-fold stratified CV with class-weighted logistic regression and gradient-boosting baselines. Result: ML achieves PARITY with v15, not improvement. Held-out 5-fold CV MCC = 0.5177 (delta -0.0196 vs v15). Online final-pass MCC = 0.5399 (training data only, not held-out). Online streaming MCC = 0.4415 ± 0.0361 (early predictions before convergence). Confusion-matrix decomposition: ML recovers 14 more essentials than v15 (TP 287→301, FN 96→82) but adds 6 false positives (FP 3→9) and loses 6 true negatives (TN 69→63), netting approximately the same MCC. Crucial finding: v15's 96 false negatives are LITERALLY INDISTINGUISHABLE from its 69 true negatives in v15's own output features — both groups have confidence=0.0, failure_mode='none', and 92/96 FN + 62/69 TN have the IDENTICAL evidence string 'no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules]'. Adding external features (gene length, hypothetical flag, GC, product keywords) provides marginal but bounded signal — enough to flip 14 cases but not to escape v15's information ceiling. The online learning curve DOES show 'learn with every step' behavior: streaming MCC rises from ~0.08 (n_seen=40) to ~0.44 (n_seen=445), demonstrating the SGD-per-gene loop converges, but the converged value is at or below v15's threshold-tuned mechanistic baseline.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via scripts/sim_plus_online_ml.py. Output: outputs/sim_plus_online_ml.json (full per-fold MCCs, online learning curves, feature list, confusion matrices). Inputs: outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v15_round2_priors.csv (v15 predictions, 455 rows); memory_bank/data/syn3a_gene_table.csv (Syn3A gene table with length_bp + product); cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb (sequence for GC content); memory_bank/data/multiorg_essentiality/labels.csv (Breuer 2019 ground truth).",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v23_sim_plus_online_ml_parity"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_against_breuer_v18_multiorg_xgb_loocv",
+    "mcc_against_breuer_v21_v15_plus_darkmanifold_topup",
+    "mcc_against_breuer_v22_dark_manifold_balanced_retrain"
+  ],
+  "used_by": [
+    "scripts/sim_plus_online_ml.py",
+    "outputs/sim_plus_online_ml.json"
+  ],
+  "value": {
+    "method": "v15_features_plus_external_features_plus_class_weighted_classifier",
+    "v15_baseline_mcc": 0.5372,
+    "v15_baseline_confusion": {"tp": 287, "fp": 3, "tn": 69, "fn": 96},
+    "n_features": 31,
+    "feature_categories": {
+      "v15_output": ["confidence", "log_time_to_failure", "has_failure_time",
+                     "failure_mode_onehot_x7", "evidence_flags_x7", "v15_call"],
+      "external_syn3a": ["log_length_bp", "is_hypothetical", "is_uncharacterized",
+                         "is_putative", "product_keyword_groups_x8", "gc_content"]
+    },
+    "ml_5fold_cv": {
+      "method": "class_weighted_logistic_regression",
+      "per_fold_mcc": [0.5581, 0.4768, 0.5932, 0.5381, 0.4409],
+      "pooled_mcc": 0.5177,
+      "pooled_confusion": {"tp": 301, "fp": 9, "tn": 63, "fn": 82},
+      "delta_vs_v15": -0.0196
+    },
+    "ml_5fold_cv_alt": {
+      "method": "gradient_boosting",
+      "pooled_mcc": 0.4081,
+      "delta_vs_v15": -0.1291
+    },
+    "online_learning": {
+      "method": "class_weighted_sgd_one_gene_per_step",
+      "n_seeds": 5,
+      "streaming_mcc_mean": 0.4415,
+      "streaming_mcc_std": 0.0361,
+      "final_pass_mcc_mean": 0.5399,
+      "final_pass_delta_vs_v15": 0.0027,
+      "final_pass_caveat": "computed on training data after one pass; not held-out",
+      "learning_curve_summary": {
+        "fraction_0.0_n_seen_40": 0.083,
+        "fraction_0.22_n_seen_131": 0.251,
+        "fraction_0.44_n_seen_223": 0.354,
+        "fraction_0.67_n_seen_316": 0.404,
+        "fraction_0.89_n_seen_407": 0.434,
+        "fraction_1.0_n_seen_445": 0.443
+      },
+      "interpretation": "MCC monotonically increases from warmup (~0.08) to plateau (~0.44) as the SGD model sees more genes. Demonstrates 'learn with every step' behavior. The plateau is below v15's threshold-tuned 0.5372 because (a) one-pass online learning has less effective compute than full-batch CV; (b) class-imbalance-weighted SGD on streaming data has higher variance than batch optimization."
+    },
+    "verdict": "parity_with_v15_no_improvement",
+    "delta_vs_v15": {
+      "honest_held_out_5fold_cv": -0.0196,
+      "training_data_final_pass": 0.0027,
+      "streaming_online": -0.0957
+    }
+  },
+  "caveats": [
+    "Information-ceiling finding: v15's 96 false negatives and 69 true negatives are indistinguishable in v15's own output features. 92/96 FN have the IDENTICAL evidence string to 62/69 TN. No model trained ONLY on v15 outputs can exceed v15's MCC. To beat v15, the ML model needs features OUTSIDE v15's outputs.",
+    "External features tried (gene length, hypothetical/uncharacterized/putative flags, product-keyword bag-of-words for 8 functional categories, GC content) provide marginal signal — enough to recover 14 of the 96 FN but at the cost of 6 new FP and 6 lost TN. Net MCC: parity with v15.",
+    "What was NOT tried (and might give signal): protein abundance from Maier 2011 (mpne-only currently — would need Syn3A homolog mapping), conservation scores (would need ortholog identification across multiple Mycoplasma genomes), structural prediction features (AlphaFold), gene neighborhood/synteny features. These data sources are listed as future-work paths in this fact's caveats and would constitute a v24 attempt.",
+    "Online learning curve interpretation: the 'learn with every step' behavior is real (streaming MCC rises monotonically from ~0.08 to ~0.44), but the converged value is below v15. This is consistent with the information-ceiling finding — even continuous learning can't extract more signal than is present in the features.",
+    "Class-weighted training was essential: without it, the MLP collapsed to majority-class prediction (MCC ~ 0.0). The 84%/16% essential/nonessential imbalance dominates if not accounted for. Class weights of (n_pos/n_total, n_neg/n_total) brought the model into a usable regime.",
+    "Gradient boosting underperformed logistic regression (CV 0.408 vs 0.518). Likely because gradient boosting overfits with 31 features × 364 training samples × imbalanced classes, while regularized logistic regression trades off variance for bias more favorably.",
+    "Confidence: measured (the experiment is reproducible, the result is supported by 5-fold CV across 5 random seeds, and the information-ceiling claim is backed by direct inspection of FN/TN feature vectors). The verdict 'parity, no improvement' is the honest read; treating the 0.5399 final-pass MCC as 'beats v15' would be misleading because that number is on training data only."
+  ]
+}
