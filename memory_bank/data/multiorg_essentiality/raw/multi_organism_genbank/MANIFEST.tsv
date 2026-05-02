@@ -1,0 +1,17 @@
+shortname	accession	essentiality_study	status	size_bytes
+ecoli_K12_MG1655	U00096.3	Goodall 2018 mBio (TraDIS)	OK	11720889
+bsubtilis_168	AL009126.3	Koo 2017 Cell Syst	OK	11473047
+ccrescentus_NA1000	CP001340.1	Christen 2011 MSB	OK	9196282
+hinfluenzae_Rd_KW20	L42023.1	Akerley 2002 PNAS	OK	4100322
+saureus_N315	BA000018.3	Chaudhuri 2009 BMC Genomics	OK	5774204
+paeruginosa_PAO1	AE004091.2	Lee 2015 PNAS	OK	13978327
+ftularensis_SCHU_S4	AJ749949.2	Weiss 2007 PNAS	OK	5018638
+hpylori_26695	AE000511.1	Salama 2004 PNAS	OK	3683960
+mtuberculosis_H37Rv	AL123456.3	DeJesus 2017 mBio (Himar1)	OK	14174611
+spneumoniae_TIGR4	AE005672.3	van Opijnen 2009 Nat Methods (Tn-seq)	OK	4778203
+abaumannii_AB5075	CP008706.1	Wang 2014; Gallagher 2015	OK	8209888
+styphimurium_LT2	AE006468.2	Barquist 2013 NAR (TraDIS)	OK	12107454
+kpneumoniae_KPNIH1	CP008827.1	Bachman 2015 mBio	OK	12658007
+vcholerae_N16961_chr1	AE003852.1	Chao 2013 PNAS	OK	6461463
+mgenitalium_G37	L43967.2	Glass 2006 PNAS (Tn screen)	OK	1308221
+abaylyi_ADP1	CR543861.1	de Berardinis 2008 MSB	OK	9592400
