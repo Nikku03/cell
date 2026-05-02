@@ -1,0 +1,86 @@
+{
+  "id": "mcc_against_breuer_v22_dark_manifold_balanced_retrain",
+  "claim": "Phase v22 retrained the Dark Manifold from scratch on a BALANCED gene set (102 essentials + 50 nonessential gene names sampled from Breuer 2019 / Lluch-Senar 2015 labels.csv) with three GAP_ANALYSIS-derived fixes: (1) W_reg sparse-Gaussian initialisation (density 5%) instead of all-zeros so gradients can flow from epoch 0; (2) knockout-magnitude loss term |ΔATP_pred − ΔATP_gt|^2 added to the next-step MSE so the model is supervised on terminal KO behaviour, not just trajectory dynamics; (3) 3× loss weight on hub genes (rpoB, fusA, rpoA, rpoC, rpoD, rpsA, rpsB, rplA, rplB) targeting the wrong-sign predictions called out in cell-simulation/GAP_ANALYSIS.md. Trained 600 epochs / batch 256 on Colab GPU. The expanded synthetic ground truth keeps the new nonessentials inert (zero stoichiometric coupling), so KO of a nonessential produces a small ATP drop while KO of an essential produces a large one. Validation against Breuer 2019 Syn3A produces a MEASURED binary MCC = 0.4487 at |atp_drop| threshold 0.320 (TP=37, FP=2, TN=2, FN=2 on 43 mapped genes — 39 essential + 4 nonessential matched). Mean |atp_drop| on synthetic essentials (3.28) is ~2× that on synthetic nonessentials (1.66), confirming the model learned the discriminative signal. Top-K precision 0.949 vs chance baseline 0.907 (delta +0.042). v22 closes the v20-v20b coverage gap (UNDETERMINED → at-chance → measured) but the resulting MCC is below v15's 0.5372 and the matched-nonessential subset (n=4) is statistically thin. M. pneumoniae arm produced 0 mapped genes due to the Colab clone missing cell_sim/data/Mycoplasma_pneumoniae/input_data/mpneumoniae_M129_NC_000912.gb (path not present in the shallow-cloned branch tree); separate fix needed before mpne MCC can be measured.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via notebooks/dark_manifold_retrain.ipynb on Colab (commit 690285a). Output JSON: outputs/dark_manifold_retrain_v22.json (commit cf4ad14). Trained from scratch on Colab GPU; checkpoint not committed to repo. Inputs: Nikku03/cell-simulation dark_manifold_100gene.py architecture (modified inline by the notebook); memory_bank/data/multiorg_essentiality/labels.csv (Breuer 2019 Syn3A + Lluch-Senar 2015 mpne); cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb (Luthey-Schulten Lab Syn3A reference, GenBank /gene qualifier).",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v22_dark_manifold_balanced_retrain"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_against_breuer_v18_multiorg_xgb_loocv",
+    "mcc_against_breuer_v20_dark_manifold_undetermined",
+    "mcc_against_breuer_v20b_dark_manifold_dual_organism",
+    "mcc_against_breuer_v21_v15_plus_darkmanifold_topup"
+  ],
+  "used_by": [
+    "notebooks/dark_manifold_retrain.ipynb",
+    "outputs/dark_manifold_retrain_v22.json"
+  ],
+  "value": {
+    "method": "dark_manifold_v22_balanced_retrain",
+    "n_dm_genes": 152,
+    "n_dm_essential": 102,
+    "n_dm_nonessential": 50,
+    "n_dm_mets": 74,
+    "rollout_steps": 100,
+    "training": {
+      "n_epochs": 600,
+      "batch_size": 256,
+      "final_loss": 0.00226,
+      "mean_atp_drop_essentials": 3.282,
+      "mean_atp_drop_nonessentials": 1.657,
+      "essential_to_nonessential_signal_ratio": 1.98
+    },
+    "fixes_applied": [
+      "gene set expanded with 50 nonessential gene names",
+      "W_reg sparse-Gaussian init (density 5%, std 0.1) instead of zeros",
+      "KO-magnitude loss |dATP_pred - dATP_gt|^2 (weight 0.05)",
+      "3x loss weight on hub genes",
+      "KO trajectories generated for every gene"
+    ],
+    "syn3a": {
+      "label_source": "Breuer 2019 eLife",
+      "mapped": 43,
+      "matched_essential": 39,
+      "matched_nonessential": 4,
+      "mcc": 0.4487,
+      "mcc_threshold_abs_atp_drop": 0.3197,
+      "tp": 37, "fp": 2, "tn": 2, "fn": 2,
+      "precision": 0.949,
+      "recall": 0.949,
+      "specificity": 0.500,
+      "mcc_status": "measured",
+      "top_K": 39,
+      "top_K_overlap": 37,
+      "top_K_precision": 0.949,
+      "top_K_chance_baseline": 0.907,
+      "top_K_delta_vs_chance": 0.042
+    },
+    "mpne": {
+      "label_source": "Lluch-Senar 2015 MSB",
+      "mapped": 0,
+      "note": "no overlap — mpneumoniae_M129_NC_000912.gb not present in Colab clone of the dev branch"
+    },
+    "baseline_comparison": {
+      "v15_syn3a_biology_first_mcc": 0.5372,
+      "v18_xgboost_syn3a_held_out_mcc": 0.1376,
+      "v20_dark_manifold_undetermined_mcc": null,
+      "v20b_dark_manifold_top_K_delta": 0.0082,
+      "v21_v15_plus_dm_topup_mcc": 0.5372,
+      "v22_dark_manifold_retrain_mcc": 0.4487,
+      "rank": "v15 > v22 > v18 (v20/v20b/v21 not directly comparable)"
+    }
+  },
+  "caveats": [
+    "Below v15: v22's 0.4487 < v15's 0.5372. The Dark Manifold standalone is still not the best Syn3A essentiality predictor on this dataset. The retrain demonstrates the validation pipeline produces a defined MCC (closing the v20 UNDETERMINED gap) but does not close the v15-v22 performance gap.",
+    "Statistical thinness on the negative class: matched_nonessential = 4. Confidence interval on MCC is wide. With 4 negatives, a single label flip changes specificity by 25% and shifts MCC by ~0.1. Treat the 0.4487 number as the central estimate, not a tight bound.",
+    "M. pneumoniae arm regressed from v20b (42 mapped) to v22 (0 mapped). Cause: the Colab clone of the cell repo at commit 690285a did not include cell_sim/data/Mycoplasma_pneumoniae/input_data/mpneumoniae_M129_NC_000912.gb (the file is in the working tree of the dev branch but evidently not in the shallow-clone tree as built by the notebook). Independent issue from the retrain itself; can be fixed by including the mpne GenBank explicitly in the notebook's clone step.",
+    "Synthetic ground truth: the discriminative signal the model learned is partly the construction artefact 'in synthetic kinetic network = essential; outside = nonessential', not pure biological signal. The 4 mapped nonessentials happened to also be biological nonessentials, so the synthetic-essential / synthetic-nonessential distinction aligns with the biological-essential / biological-nonessential distinction on this small overlap. Robustness across larger nonessential sets is unverified.",
+    "Hub-gene 3x loss weighting was applied but per-gene wrong-sign rates on hub genes were not reported by the validation cell. To verify the P0 fix, a follow-up validation should compute |sign(pred) − sign(gt)| on rpoB/fusA/rpoA/rpoC specifically.",
+    "v21 negative-result interpretation strengthens here: the Dark Manifold's 102 essentials are exactly v15's TP set, so even a perfect Dark Manifold standalone classifier on those genes adds nothing to v15. The path to MCC > 0.5372 lies in either (a) expanding the model's gene-set coverage to v15's FN classes (uncharacterized, transport, regulatory) or (b) building a different ML signal that complements v15 in those classes."
+  ]
+}
