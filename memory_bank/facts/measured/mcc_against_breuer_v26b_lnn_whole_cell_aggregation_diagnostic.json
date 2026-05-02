@@ -1,0 +1,55 @@
+{
+  "id": "mcc_against_breuer_v26b_lnn_whole_cell_aggregation_diagnostic",
+  "claim": "Phase v26b verified the user's hypothesis that the v26 LNN's 99.3% essential prediction on Syn3A might reflect whole-cell context aggregation through the ContextAwareTau module's h_global = mean(h) over the current organism's genes. Method: re-train v26's full LNN deterministically, then forward Syn3A genes through it but INJECT a foreign organism's h_global at the ContextAwareTau step instead of computing it from Syn3A's own genes. Result: whole-cell context affects CONFIDENCE but not BINARY DIRECTION on Syn3A. With Syn3A's own context the LNN predicts 99.6% essential and 95% of probabilities exceed 0.9. Substituting low-essential organism contexts (ccrescentus 13% ess training, mtb 14%, styphimurium 5%, abaylyi 10%) drops the %>0.9 to 39-51% and pulls the minimum probability from 0.34 down to 0.12. But %essential_predicted (probs >= 0.5) only drops slightly to 96-99.6% — the binary collapse persists across ALL injected contexts including a zero-vector neutral context. Sanity check on training organisms: low-essential ones (ccrescentus 13%→pred 15%, mtb 14%→20%, styphimurium 5%→18%, abaylyi 10%→25%) are well-calibrated; high-essential ones (mpne 70%→pred 98%, saureus 88%→100%) collapse the same way Syn3A does. The LNN exhibits TWO REGIMES: well-calibrated below ~60% true-essentiality, fully-collapsed above ~70%. The mechanism is therefore NOT 'whole-cell context dominating per-gene features' but rather 'per-gene features are insufficient to distinguish essential from nonessential genes in minimal-cell organisms (Syn3A 84% ess, saureus 88%, mpne 70%)' — Syn3A's 72 nonessentials are feature-indistinguishable from its 383 essentials at the 340-feature representation level used. The whole-cell context modulates absolute confidence but the relative ranking is determined by per-gene features, and on minimal cells those features all look essential.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via scripts/verify_lnn_whole_cell_aggregation.py. Re-trains the v26 full LNN with deterministic seed 42, then runs forward inference with foreign h_global injected. Outputs %ess_predicted, %>0.9, median prob, min prob, and MCC for each (test_organism × injected_context) pair.",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v26b_lnn_whole_cell_aggregation_verification"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v26_lnn_cross_organism",
+    "mcc_against_breuer_v25_multiorg_structured_features",
+    "mcc_against_breuer_v23_sim_plus_online_ml"
+  ],
+  "used_by": [
+    "scripts/verify_lnn_whole_cell_aggregation.py"
+  ],
+  "value": {
+    "method": "foreign_h_global_injection_on_held_out_syn3a",
+    "injection_table": {
+      "syn3a_own_context_84pct_ess": {"pct_ess_pred": 99.6, "pct_above_0.9": 95.2, "min_prob": 0.343, "median_prob": 0.975, "mcc": -0.029},
+      "saureus_88pct_ess_train": {"pct_ess_pred": 99.6, "pct_above_0.9": 94.9, "min_prob": 0.336, "median_prob": 0.974, "mcc": -0.029},
+      "mpne_70pct_ess_train": {"pct_ess_pred": 99.6, "pct_above_0.9": 94.9, "min_prob": 0.341, "median_prob": 0.975, "mcc": -0.029},
+      "ccrescentus_13pct_ess_train": {"pct_ess_pred": 99.6, "pct_above_0.9": 51.0, "min_prob": 0.204, "median_prob": 0.904, "mcc": -0.029},
+      "mtuberculosis_14pct_ess_train": {"pct_ess_pred": 99.6, "pct_above_0.9": 47.9, "min_prob": 0.192, "median_prob": 0.891, "mcc": -0.029},
+      "styphimurium_5pct_ess_train": {"pct_ess_pred": 96.5, "pct_above_0.9": 38.7, "min_prob": 0.119, "median_prob": 0.862, "mcc": -0.050},
+      "abaylyi_10pct_ess_train": {"pct_ess_pred": 97.6, "pct_above_0.9": 47.7, "min_prob": 0.117, "median_prob": 0.892, "mcc": -0.029},
+      "zero_vector_neutral": {"pct_ess_pred": 99.6, "pct_above_0.9": 47.0, "min_prob": 0.193, "median_prob": 0.889, "mcc": -0.029}
+    },
+    "per_organism_sanity_with_own_context": {
+      "ccrescentus_13pct_truth": {"pct_ess_pred": 15, "pct_above_0.9": 2, "mcc": 0.332},
+      "mtuberculosis_14pct_truth": {"pct_ess_pred": 20, "pct_above_0.9": 2, "mcc": 0.356},
+      "styphimurium_5pct_truth": {"pct_ess_pred": 18, "pct_above_0.9": 3, "mcc": 0.261},
+      "abaylyi_10pct_truth": {"pct_ess_pred": 25, "pct_above_0.9": 4, "mcc": 0.324},
+      "mpne_70pct_truth": {"pct_ess_pred": 98, "pct_above_0.9": 73, "mcc": 0.177},
+      "saureus_88pct_truth": {"pct_ess_pred": 100, "pct_above_0.9": 81, "mcc": 0.000},
+      "syn3a_84pct_truth": {"pct_ess_pred": 100, "pct_above_0.9": 95, "mcc": -0.029}
+    },
+    "two_regimes_pattern": {
+      "low_essential_below_60pct": "well-calibrated, MCC 0.26-0.36",
+      "high_essential_above_70pct": "collapsed to predict-everything-essential, MCC 0.0 ± 0.18"
+    },
+    "verdict": "whole_cell_context_modulates_confidence_but_does_not_explain_99pct_essentiality_collapse"
+  },
+  "caveats": [
+    "User's hypothesis was sharp and partially correct. The whole-cell context aggregation IS happening — substituting a low-essential organism's h_global drops Syn3A predictions' %>0.9 from 95% to 39-51% (a 50-percentage-point shift), and the minimum predicted probability drops from 0.34 to 0.12. But none of these substitutions push the binary-decision threshold (probs >= 0.5) below ~96% essential — the underlying per-gene feature scores are too high.",
+    "The actual mechanism: per-gene feature similarity, not whole-cell aggregation. Syn3A's 72 nonessentials and its 383 essentials look ALMOST IDENTICAL in the 340-feature representation (20 scalar + 64 3-mer + 256 4-mer). All Syn3A genes encode for housekeeping functions because Syn3A is a curated minimal cell — even its 'removable' genes are biologically interesting. The LNN trained on diverse bacteria correctly recognizes 'looks like a housekeeping gene' but doesn't have features that distinguish 'essential housekeeping' from 'removable housekeeping'.",
+    "Connection to v23 information-ceiling finding: v23 showed v15's 96 false negatives are indistinguishable from its 69 true negatives in v15's output features. v26b shows the same phenomenon at the cross-organism level: Syn3A's nonessentials are indistinguishable from its essentials in the multi-organism feature space. The bottleneck is consistently feature representation, not model architecture.",
+    "Why the two regimes exist: the LNN's loss is class-weighted but the predictor is shared across organisms. With low-essential organisms in the loss, the model learns 'most genes are not essential' as a baseline; per-gene features push specific genes above the threshold. For high-essential organisms (saureus 88%, mpne 70%, syn3a 84%), most genes already have features above the baseline, so the model returns 'everything essential' — there's no signal to push specific genes back below threshold.",
+    "Implications for next steps: changing the LNN architecture won't fix this. Adding a per-organism normalization layer might calibrate the predictions but won't add discriminative information. The path forward is FEATURES that distinguish essential from removable housekeeping: protein abundance (Maier 2011 mpne), conservation across bacteria (count of orthologs in the 16-genome panel we have), AlphaFold pLDDT (well-folded proteins skew essential), or RegulonDB-style explicit regulator counts (genes regulated by master regulators are often essential).",
+    "Confidence: measured (the diagnostic is reproducible via scripts/verify_lnn_whole_cell_aggregation.py with deterministic seed; the substitution test cleanly separates whole-cell-context effects from per-gene-feature effects). The verdict 'context modulates confidence but doesn't explain collapse' is the precise finding; the user's hypothesis was directionally correct but the magnitude is smaller than expected."
+  ]
+}
