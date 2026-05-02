@@ -1,0 +1,145 @@
+{
+  "method": "gb_on_v25_features_plus_mmseqs2_rbh_conservation_features",
+  "n_features_original": 20,
+  "n_features_conservation": 22,
+  "conservation_feature_keys": [
+    "n_orthologs_total",
+    "n_orthologs_within_mollicutes",
+    "paralog_count_internal",
+    "mean_identity_to_orthologs",
+    "has_ortholog_in_abaumannii",
+    "has_ortholog_in_abaylyi",
+    "has_ortholog_in_bsubtilis",
+    "has_ortholog_in_ccrescentus",
+    "has_ortholog_in_ecoli",
+    "has_ortholog_in_ftularensis",
+    "has_ortholog_in_hinfluenzae",
+    "has_ortholog_in_hpylori",
+    "has_ortholog_in_kpneumoniae",
+    "has_ortholog_in_mgenitalium",
+    "has_ortholog_in_mpne",
+    "has_ortholog_in_mtuberculosis",
+    "has_ortholog_in_paeruginosa",
+    "has_ortholog_in_saureus",
+    "has_ortholog_in_spneumoniae",
+    "has_ortholog_in_styphimurium",
+    "has_ortholog_in_syn3a",
+    "has_ortholog_in_vcholerae"
+  ],
+  "training_organisms": [
+    "ccrescentus",
+    "saureus",
+    "mtuberculosis",
+    "styphimurium",
+    "abaylyi",
+    "mpne"
+  ],
+  "test_organism": "syn3a",
+  "results": {
+    "gb_original_only": {
+      "label": "GB original 20 (v25 baseline)",
+      "best_threshold": 0.75,
+      "train_mcc": 0.5647472164503012,
+      "test_mcc": 0.22675008819825707,
+      "tp": 235,
+      "fp": 22,
+      "tn": 50,
+      "fn": 148
+    },
+    "gb_conservation_only": {
+      "label": "GB conservation features only",
+      "best_threshold": 0.65,
+      "train_mcc": 0.5254529405220968,
+      "test_mcc": 0.1537142852802207,
+      "tp": 203,
+      "fp": 23,
+      "tn": 49,
+      "fn": 180
+    },
+    "gb_all_features": {
+      "label": "GB original 20 + conservation",
+      "best_threshold": 0.75,
+      "train_mcc": 0.658028534126816,
+      "test_mcc": 0.18402455880206217,
+      "tp": 276,
+      "fp": 35,
+      "tn": 37,
+      "fn": 107
+    }
+  },
+  "per_confusion_class_lift_v25_to_v29": {
+    "fixed_v25_FN_to_TP": 56,
+    "fixed_v25_FP_to_TN": 4,
+    "introduced_TN_to_FP": 17,
+    "introduced_TP_to_FN": 15
+  },
+  "top_15_feature_importances": [
+    {
+      "feature": "n_orthologs_total",
+      "importance": 0.15341166578081203
+    },
+    {
+      "feature": "gc",
+      "importance": 0.13555110078620167
+    },
+    {
+      "feature": "has_ortholog_in_bsubtilis",
+      "importance": 0.13090504804730368
+    },
+    {
+      "feature": "is_putative",
+      "importance": 0.109172100520946
+    },
+    {
+      "feature": "has_ortholog_in_ftularensis",
+      "importance": 0.08211193811881473
+    },
+    {
+      "feature": "paralog_count_internal",
+      "importance": 0.05007332085786
+    },
+    {
+      "feature": "position_norm",
+      "importance": 0.039841070702932434
+    },
+    {
+      "feature": "has_ortholog_in_styphimurium",
+      "importance": 0.03684741199072334
+    },
+    {
+      "feature": "has_ortholog_in_syn3a",
+      "importance": 0.03521447518803403
+    },
+    {
+      "feature": "is_hypothetical",
+      "importance": 0.030952380138186346
+    },
+    {
+      "feature": "mean_identity_to_orthologs",
+      "importance": 0.029458405615694763
+    },
+    {
+      "feature": "operon_run_length",
+      "importance": 0.02604290072927229
+    },
+    {
+      "feature": "kw_synthase",
+      "importance": 0.025172281159743005
+    },
+    {
+      "feature": "has_ortholog_in_abaumannii",
+      "importance": 0.025161485764623275
+    },
+    {
+      "feature": "log_length_bp",
+      "importance": 0.024781442568184583
+    }
+  ],
+  "baselines": {
+    "v15_within_organism": 0.5372,
+    "v25_gb_6orgs_original": 0.2268,
+    "v27_gb_with_regulatory_pwms": 0.1069,
+    "v28_gb_with_expression_features": 0.1942
+  },
+  "delta_vs_v25_baseline": -0.04277544119793783
+}
