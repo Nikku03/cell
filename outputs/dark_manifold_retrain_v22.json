@@ -1,0 +1,63 @@
+{
+  "method": "dark_manifold_v22_balanced_retrain_dual_organism",
+  "rollout_steps": 100,
+  "n_dm_genes": 152,
+  "n_dm_essential": 102,
+  "n_dm_nonessential": 50,
+  "n_dm_mets": 74,
+  "fixes_applied": [
+    "gene set expanded with ~50 nonessential gene names from Breuer/Lluch-Senar labels",
+    "W_reg initialised with sparse Gaussian noise (density 5%) instead of zeros",
+    "knockout-magnitude loss term: |\u0394ATP_pred - \u0394ATP_gt|^2",
+    "3x loss weight on hub genes (rpoB, fusA, rpo*, rpsA, rpsB, rplA, rplB)",
+    "KO trajectories generated for ALL genes (not every 5th)"
+  ],
+  "training": {
+    "n_epochs": 600,
+    "batch_size": 256,
+    "final_loss": 0.0022581934463232756,
+    "mean_atp_drop_essentials": 3.2818505717258826,
+    "mean_atp_drop_nonessentials": 1.6574789237976075
+  },
+  "organisms": {
+    "syn3a": {
+      "organism": "syn3a",
+      "label_source": "Breuer 2019 eLife",
+      "mapped": 43,
+      "matched_essential": 39,
+      "matched_nonessential": 4,
+      "mcc": 0.44871794871794873,
+      "mcc_threshold": 0.3196754455566406,
+      "tp": 37,
+      "fp": 2,
+      "tn": 2,
+      "fn": 2,
+      "mcc_status": "measured",
+      "top_K": 39,
+      "top_K_overlap": 37,
+      "top_K_precision": 0.9487179487179487,
+      "top_K_chance_baseline": 0.9069767441860465,
+      "top_K_delta_vs_chance": 0.04174120453190222
+    },
+    "mpne": {
+      "organism": "mpne",
+      "mapped": 0,
+      "note": "no overlap"
+    }
+  },
+  "baselines": {
+    "v15_syn3a_biology_first": 0.5372,
+    "v18_xgboost_syn3a_held_out": 0.1376,
+    "v20_dark_manifold_undetermined": null,
+    "v20b_dark_manifold_dual_organism_top_K_delta": {
+      "syn3a": 0.0082,
+      "mpne": -0.0308
+    }
+  },
+  "caveats": [
+    "Synthetic ground truth: nonessentials are inert by construction in the synthetic ground truth (no stoichiometric coupling). The model learns \"in network = essential, out of network = nonessential\". Any MCC > 0 reflects this design AND the magnitude/regulatory signal \u2014 not pure biological signal. The result is reportable as a validation-pipeline correctness check, not a biology benchmark.",
+    "Hub-gene wrong-sign issue (P0 in GAP_ANALYSIS.md) is partially addressed via 3x loss weight on the magnitude term, not eliminated.",
+    "W_reg sparse init only addresses the symptom (zero gradient flow); the deeper issue is that the original loss did not depend on regulatory dynamics. Adding the magnitude loss creates a downstream gradient through W_reg via gene_dynamics.",
+    "Training data is still entirely synthetic (FBA-style ground-truth simulation). Real-biology validation would require coupling to mechanistic simulators (parked)."
+  ]
+}
