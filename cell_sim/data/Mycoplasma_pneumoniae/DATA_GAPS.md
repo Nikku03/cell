@@ -78,26 +78,43 @@ fires. Hayflick medium is rich in glucose, amino acids,
 nucleosides, fatty acids — all needed for any growth-mode
 simulation.
 
-## Gap 4 — non-ribosomal complex formation
+## Gap 4 — non-ribosomal complex formation [RESOLVED, partial]
 
 **Schema location:** `complex_formation.xlsx`, `Complexes` sheet
-(currently has only 1 row: Ribosome).
+(now 105 rows; was 1).
 
-**Why:** Kühner et al. 2009, Science, "Proteome organization in a
-genome-reduced bacterium" (DOI `10.1126/science.1176343`) is the
-canonical source for M. pneumoniae multi-protein complex
-membership (~200 complexes catalogued). science.org returns HTTP
-403 (Cloudflare) from the acquisition sandbox; no PMC mirror.
+**Status:** Substantively resolved via Kühner 2009 SOM Table S5
+(literature-curated complexes), recovered from the Internet Archive
+Wayback Machine (`kuhner_2009_som.pdf`, commit `01dc08c`).
 
-**Where the values would come from:** Kühner 2009 supplementary
-materials (browser download required) and/or the paper's data
-deposited at the project's own repository.
+**Coverage achieved:**
 
-**Effect on the simulator:** Folding + complex-assembly rules
-populate. With most complexes missing, ComplexAssemblyDetector
-predictions on M. pneumoniae would fall back to AnnotationClass
-priors only — losing the largest single source of v15's MCC lift
-on Syn3A.
+* 27 heteromultimeric complexes vs the paper's stated 31 — 87%
+  coverage (the missing 3–4 may be in PDF text the vision-read
+  missed at page boundaries; not a blocker, can be filled later).
+* 78 homomultimeric complexes — matches paper's stated 78 exactly,
+  100% coverage.
+* Each row carries provenance: source citation (Expasy or specific
+  PMID), organism evidence (M. pneumoniae direct vs by similarity
+  vs cross-species homology), and per-subunit MPN locus tags.
+* The Maier 2011 Ribosome composite row was replaced by Kühner's
+  full ribosomal-protein-by-protein listing (51 r-protein members)
+  inside the new "Ribosome complex" entry.
+
+**Residual gap (soft, not runtime-blocking):**
+
+`Init. Count` column is blank for every Kühner-derived row.
+Kühner 2009 catalogs membership but not absolute complex copy
+numbers. Phase D2.5 should populate it from either (a) the smallest
+member-protein abundance in Maier 2011 Table S2 (the limiting-subunit
+heuristic Luthey-Schulten uses for Syn3A), or (b) literature
+complex-abundance values where available.
+
+**Source:** `kuhner_2009_som.pdf` Table S5 (pages 89–95 of the SOM
+PDF), transcribed by vision-reading rendered PNGs at 200 dpi.
+`pdftotext -layout` mangled the multi-line cells; vision parsing
+worked cleanly. `scripts/integrate_kuhner_complexes.py` is the
+reproducible emitter.
 
 ## Gap 5 — mRNA copy numbers per gene
 
@@ -145,13 +162,15 @@ M. pneumoniae) directly rather than median-from-subunits.
 | 1. Km/kcat | `kinetic_params.xlsx` Value/Units | empty | BRENDA + Yus 2009 (proxy-blocked) | **runtime-blocking** |
 | 2. Intracellular metabolites | `initial_concentrations.xlsx` Intracellular | empty | Yus 2009 (Cloudflare) | **runtime-blocking** |
 | 3. Medium | `initial_concentrations.xlsx` Simulation Medium | empty | Hayflick recipe (manual) | **runtime-blocking** |
-| 4. Non-ribosomal complexes | `complex_formation.xlsx` Complexes | 1 row only | Kühner 2009 (Cloudflare) | important — degrades MCC, doesn't block run |
+| 4. Non-ribosomal complexes | `complex_formation.xlsx` Complexes | **105 rows (was 1) — RESOLVED via Kühner 2009 Wayback** | residual: Init. Count blank | low |
 | 5. mRNA copies | `initial_concentrations.xlsx` mRNA Count | empty | Maier S8 + calibration | important for gex-on |
-| 6. Ribosome n/d rows | `complex_formation.xlsx` Init. Count | populated by median | Maier S7 has 3 n/d | low — usable approximation |
+| 6. Ribosome n/d rows | `complex_formation.xlsx` Init. Count | superseded by Kühner full r-protein listing | — | resolved |
 
 **Bottom line:** to actually run cell_sim on M. pneumoniae, gaps
-1, 2, and 3 are all blocking. Gaps 4 and 5 degrade prediction
-quality. Gap 6 is acceptable as-is. Filling gaps 1–3 requires
-either browser downloads of Yus 2009 + Kühner 2009 + manual
-Hayflick recipe entry, or per-EC BRENDA queries against a
-network-enabled environment.
+1, 2, and 3 are still blocking. Gap 4 (non-ribosomal complexes)
+is now resolved via Kühner 2009 Wayback recovery — 105 complexes
+with provenance, including 51-subunit Ribosome. Gap 5 (mRNA copies)
+matters once gex-on is enabled. Gap 6 is now superseded by
+the Kühner per-r-protein listing. Filling gaps 1–3 still requires
+either browser downloads of Yus 2009 + manual Hayflick recipe
+entry, or per-EC BRENDA queries against a network-enabled environment.
