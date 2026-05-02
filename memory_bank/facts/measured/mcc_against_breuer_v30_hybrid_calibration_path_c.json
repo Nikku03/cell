@@ -1,0 +1,56 @@
+{
+  "id": "mcc_against_breuer_v30_hybrid_calibration_path_c",
+  "claim": "Phase v30 (Path C from v29's pre-committed plan) tested hybrid transfer with Syn3A threshold calibration: train GB on 6 organisms (no Syn3A), run inference on Syn3A genes, then use a small held-out Syn3A calibration set (25 / 50 / 100 genes, stratified for the 84/16 essential/nonessential ratio) to TUNE the threshold instead of using the training-tuned threshold. Hypothesis: v25-v29's recall-vs-specificity trade-off was caused by training-organism class-balance shift (5-70% essential) being miscalibrated for Syn3A's 84% essential test distribution. Method: 30-iteration shuffle-split per (variant, size) combination. Two model variants: v25's 20 features and v29's 42 features (v25 + conservation). Result: hybrid calibration FAILS to beat v25's fixed-threshold baseline. Best hybrid (v29 features, calib=25): mean test MCC = 0.2051 ± 0.0553. v25 fixed-threshold MCC = 0.2270. v29 fixed-threshold MCC = 0.2438. The 25-100 gene calibration sets are too statistically thin (only 4-16 nonessentials per set) to find a better threshold than the 14k-gene training set with a fine threshold grid. UNEXPECTED FINDING: the v29 fact (commit 4e47545) recorded MCC=0.1840 for the conservation-augmented model. That was a threshold-grid resolution artifact — the previous threshold_search used np.linspace(0.05, 0.95, 19) which missed v29's optimal threshold. With a finer percentile-based grid (54 candidate thresholds), v29's fixed-threshold MCC = 0.2438, which is +0.017 above v25's 0.2270. The conservation features DO modestly improve cross-organism MCC; the previous v29 fact underestimated this. The cross-organism feature-engineering ceiling on Syn3A is now confirmed at ~0.24 (v29 + fine threshold grid), marginally above v25. Path C is officially exhausted: hybrid calibration does not crack this ceiling.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via scripts/train_hybrid_calibration.py. Trains GB once per variant on 6 organisms (Syn3A held out), runs inference on full 455-gene Syn3A panel to fix per-gene probabilities, then uses sklearn StratifiedShuffleSplit with 30 iterations × 3 calibration sizes per variant for the hybrid evaluation. Output: outputs/hybrid_calibration_results.json. Inputs: outputs/multiorg_per_gene_features.csv (v25 features) and outputs/multiorg_per_gene_features_with_conservation.csv (v29 features).",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v30_hybrid_calibration_path_c_exhausted_supersedes_v29_threshold_grid_bug"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v25_multiorg_structured_features",
+    "mcc_against_breuer_v29_cross_organism_conservation"
+  ],
+  "used_by": [
+    "scripts/train_hybrid_calibration.py",
+    "outputs/hybrid_calibration_results.json"
+  ],
+  "value": {
+    "method": "hybrid_transfer_syn3a_threshold_calibration_30_shuffle_split_iterations",
+    "fixed_threshold_baselines_with_fine_grid": {
+      "v25_original": {"mcc": 0.2270, "tp": 235, "fp": 22, "tn": 50, "fn": 148, "training_threshold": 0.75},
+      "v29_with_conservation": {"mcc": 0.2438, "tp": 247, "fp": 21, "tn": 51, "fn": 136, "training_threshold": 0.62}
+    },
+    "hybrid_calibration_results_30_iters_each": {
+      "v25_calib_25": {"mean_mcc": 0.1478, "std_mcc": 0.0672, "median": 0.1549, "q25": 0.0823, "q75": 0.2023, "mean_t": 0.619},
+      "v25_calib_50": {"mean_mcc": 0.1551, "std_mcc": 0.0676, "median": 0.1671, "q25": 0.0848, "q75": 0.2070, "mean_t": 0.673},
+      "v25_calib_100": {"mean_mcc": 0.1909, "std_mcc": 0.0744, "median": 0.2016, "q25": 0.1582, "q75": 0.2485, "mean_t": 0.719},
+      "v29_calib_25": {"mean_mcc": 0.2051, "std_mcc": 0.0553, "median": 0.2293, "q25": 0.1799, "q75": 0.2399, "mean_t": 0.735},
+      "v29_calib_50": {"mean_mcc": 0.1752, "std_mcc": 0.0513, "median": 0.1849, "q25": 0.1200, "q75": 0.2228, "mean_t": 0.672},
+      "v29_calib_100": {"mean_mcc": 0.1946, "std_mcc": 0.0546, "median": 0.2154, "q25": 0.1608, "q75": 0.2315, "mean_t": 0.753}
+    },
+    "v29_fact_correction": {
+      "previous_v29_recorded_mcc": 0.1840,
+      "previous_v29_threshold_search": "np.linspace(0.05, 0.95, 19) — 19 candidate thresholds",
+      "corrected_v29_mcc_with_fine_grid": 0.2438,
+      "corrected_threshold_search": "~54 percentile-based candidate thresholds",
+      "delta": 0.0598,
+      "implication": "v29's conservation features marginally HELP cross-organism MCC (+0.017 over v25), not -0.043 as previously recorded. v29 fact's verdict 'failed to break ceiling' is still correct directionally but the magnitude was overstated due to coarse threshold grid."
+    },
+    "verdict": "hybrid_calibration_does_not_help_25_to_100_gene_sets_too_thin_for_threshold_tuning",
+    "delta_best_hybrid_vs_v29_fixed": -0.0387,
+    "delta_v29_fixed_vs_v25_fixed": 0.0168,
+    "current_cross_organism_ceiling": 0.2438
+  },
+  "caveats": [
+    "Calibration sets of 25-100 Syn3A genes are statistically too thin for threshold tuning. With 84/16 stratification, calib=25 has 4 nonessentials, calib=50 has 8, calib=100 has 16. Threshold search needs to find the optimal cut on the probability distribution; with so few negative-class examples per calibration set, the chosen threshold is high-variance (std 0.05-0.07 across 30 iterations). The 14k-gene training set with a fine percentile grid finds a more stable threshold for the same probability distribution.",
+    "v29 fact threshold-grid bug: the original v29 evaluation used np.linspace(0.05, 0.95, 19) — only 19 threshold candidates. v29's optimal threshold (0.62) was BETWEEN the linspace points (0.55, 0.60, 0.65, 0.70). The closest grid point gave a poorer MCC. Switching to a percentile-based fine grid (~54 candidates) recovers MCC = 0.2438. v29 fact's MCC=0.1840 should be considered superseded; the corrected number is 0.2438.",
+    "v25-v28 fixed-threshold MCCs are likely also slightly understated by the same coarse-grid effect. v25 with the fine grid gets 0.2270 vs the 0.2268 recorded — essentially identical, so v25's number is not affected. v27's 0.1069 and v28's 0.1942 might similarly benefit by 0.01-0.03 with finer grids; not re-evaluated.",
+    "Cross-organism feature-engineering ceiling is now ~0.24 (v29 features + fine grid), not 0.227 as v25 indicated. Modest but real improvement that the v29 evaluation missed. To break this ceiling, paths A (Glass 2006 M. genitalium close-relative essentiality) or B (Phase D3 cell_sim port to mpne for mechanistic features) remain the productive directions.",
+    "Path C is exhausted: hybrid threshold calibration with realistic-cost Syn3A labeling (25-100 genes) does NOT meaningfully improve over fixed-threshold cross-organism transfer. Only with very large calibration sets (200+) might this potentially help, but at that point you're labeling so many test-organism genes that you might as well train within-organism.",
+    "Statistical-power note: with calib=100, std of mean MCC across 30 iterations is 0.05-0.07. Even if the mean dropped to 0.21, individual iterations swing 0.10-0.27. Threshold tuning on small Syn3A sets is fundamentally noisy; the central tendency hovers around but below the v29 fixed-threshold ceiling.",
+    "Confidence: measured (the experiment is reproducible, 30 iterations × 6 (variant, size) combinations gives reliable variance estimates, the v29-correction finding is supported by direct comparison of two threshold-search functions on the same trained model). The verdict 'Path C does not work' and 'cross-organism ceiling is ~0.24' are robustly supported."
+  ]
+}

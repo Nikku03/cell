@@ -1,0 +1,151 @@
+{
+  "method": "hybrid_transfer_with_syn3a_threshold_calibration_shuffle_split",
+  "training_organisms": [
+    "ccrescentus",
+    "saureus",
+    "mtuberculosis",
+    "styphimurium",
+    "abaylyi",
+    "mpne"
+  ],
+  "test_organism": "syn3a",
+  "n_iterations_per_split": 30,
+  "calibration_sizes_tested": [
+    25,
+    50,
+    100
+  ],
+  "fixed_threshold_baselines": {
+    "v25_original": {
+      "mcc": 0.22700768401902394,
+      "threshold": 0.7444433971864104,
+      "tp": 240,
+      "fp": 23,
+      "tn": 49,
+      "fn": 143
+    },
+    "v29_with_conservation": {
+      "mcc": 0.2437676878142406,
+      "threshold": 0.738117530475887,
+      "tp": 279,
+      "fp": 30,
+      "tn": 42,
+      "fn": 104
+    }
+  },
+  "hybrid_results": {
+    "v25_original__calib_25": {
+      "mean_mcc": 0.14775803126969583,
+      "std_mcc": 0.06722527873091311,
+      "median_mcc": 0.15492914212773706,
+      "min_mcc": 0.03514613625006315,
+      "max_mcc": 0.2670419720165949,
+      "q25_mcc": 0.08234154650065913,
+      "q75_mcc": 0.20234521190443577,
+      "mean_threshold": 0.6191650728460075,
+      "std_threshold": 0.17037350082728303,
+      "mean_confusion": {
+        "tp": 277.43333333333334,
+        "fp": 40.666666666666664,
+        "tn": 27.333333333333332,
+        "fn": 84.56666666666666
+      }
+    },
+    "v25_original__calib_50": {
+      "mean_mcc": 0.15510381370048404,
+      "std_mcc": 0.06759387634324067,
+      "median_mcc": 0.16709188346630888,
+      "min_mcc": 0.042034299223814235,
+      "max_mcc": 0.252756859332843,
+      "q25_mcc": 0.08477257971170889,
+      "q75_mcc": 0.20704614202296884,
+      "mean_threshold": 0.6730123535651092,
+      "std_threshold": 0.1495619968356573,
+      "mean_confusion": {
+        "tp": 238.86666666666667,
+        "fp": 32.833333333333336,
+        "tn": 31.166666666666668,
+        "fn": 102.13333333333334
+      }
+    },
+    "v25_original__calib_100": {
+      "mean_mcc": 0.1908913299678664,
+      "std_mcc": 0.07436833192038039,
+      "median_mcc": 0.20163607505820902,
+      "min_mcc": 0.006918728052814177,
+      "max_mcc": 0.27961858579517257,
+      "q25_mcc": 0.15820833782388605,
+      "q75_mcc": 0.2484687826717602,
+      "mean_threshold": 0.7190821984029246,
+      "std_threshold": 0.10668383587895741,
+      "mean_confusion": {
+        "tp": 196.26666666666668,
+        "fp": 22.933333333333334,
+        "tn": 33.06666666666667,
+        "fn": 102.73333333333333
+      }
+    },
+    "v29_with_conservation__calib_25": {
+      "mean_mcc": 0.20513021660160807,
+      "std_mcc": 0.0553468167060873,
+      "median_mcc": 0.22928240824852347,
+      "min_mcc": 0.024395714943659396,
+      "max_mcc": 0.26982346890489,
+      "q25_mcc": 0.17985715766530913,
+      "q75_mcc": 0.23990862346745376,
+      "mean_threshold": 0.7347045694349812,
+      "std_threshold": 0.14584949477247933,
+      "mean_confusion": {
+        "tp": 258.1333333333333,
+        "fp": 31.866666666666667,
+        "tn": 36.13333333333333,
+        "fn": 103.86666666666666
+      }
+    },
+    "v29_with_conservation__calib_50": {
+      "mean_mcc": 0.1752005192709237,
+      "std_mcc": 0.051275941150008914,
+      "median_mcc": 0.1849260107982065,
+      "min_mcc": 0.105302942396779,
+      "max_mcc": 0.26246786235445224,
+      "q25_mcc": 0.11995486168009241,
+      "q75_mcc": 0.22280486664491667,
+      "mean_threshold": 0.6722864806499237,
+      "std_threshold": 0.16611809913912912,
+      "mean_confusion": {
+        "tp": 267.3,
+        "fp": 38.233333333333334,
+        "tn": 25.766666666666666,
+        "fn": 73.7
+      }
+    },
+    "v29_with_conservation__calib_100": {
+      "mean_mcc": 0.19460419930758405,
+      "std_mcc": 0.054641519428197276,
+      "median_mcc": 0.21544946197571369,
+      "min_mcc": 0.06276438790824193,
+      "max_mcc": 0.2604156041584697,
+      "q25_mcc": 0.16083785915738102,
+      "q75_mcc": 0.2314763249774756,
+      "mean_threshold": 0.7527855802947542,
+      "std_threshold": 0.1622961300719739,
+      "mean_confusion": {
+        "tp": 203.03333333333333,
+        "fp": 25.033333333333335,
+        "tn": 30.966666666666665,
+        "fn": 95.96666666666667
+      }
+    }
+  },
+  "baselines": {
+    "v15_within_organism": 0.5372,
+    "v25_gb_6orgs_original_fixed_threshold": 0.2268,
+    "v27_gb_with_regulatory_pwms": 0.1069,
+    "v28_gb_with_expression_features": 0.1942,
+    "v29_gb_with_conservation_features": 0.184
+  },
+  "best_hybrid_variant": "v29_with_conservation",
+  "best_calibration_size": 25,
+  "best_mean_mcc": 0.20513021660160807,
+  "delta_vs_v25_baseline": -0.02166978339839193
+}
