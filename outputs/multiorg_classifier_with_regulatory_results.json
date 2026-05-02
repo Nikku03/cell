@@ -1,0 +1,179 @@
+{
+  "method": "gb_on_v25_features_plus_predicted_regulatory_motifs_from_salmonella_pwms",
+  "n_features_original": 20,
+  "n_features_regulatory_predicted": 50,
+  "regulatory_feature_keys": [
+    "minus_35_signal_score",
+    "TF_CRP_score",
+    "TF_ArgR_dist",
+    "minus_10_signal_score",
+    "TF_ArgR_score",
+    "TF_GlpR_dist",
+    "minus_35_signal_dist",
+    "ribosome_binding_site_dist",
+    "TF_PurR_dist",
+    "TF_AraC_dist",
+    "TF_OmpR_dist",
+    "TF_TyrR_present",
+    "predicted_tf_count",
+    "TF_NarL_present",
+    "TF_LexA_dist",
+    "TF_FIS_score",
+    "TF_FNR_score",
+    "minus_35_signal_present",
+    "TF_CRP_dist",
+    "TF_GlpR_score",
+    "TF_Lrp_score",
+    "TF_CRP_present",
+    "TF_FIS_present",
+    "ribosome_binding_site_score",
+    "TF_NarL_dist",
+    "minus_10_signal_dist",
+    "TF_TyrR_dist",
+    "TF_AraC_score",
+    "TF_AraC_present",
+    "TF_FIS_dist",
+    "TF_IHF_score",
+    "TF_Lrp_dist",
+    "TF_TyrR_score",
+    "minus_10_signal_present",
+    "ribosome_binding_site_present",
+    "TF_FNR_present",
+    "TF_IHF_present",
+    "TF_ArgR_present",
+    "TF_LexA_present",
+    "TF_OmpR_score",
+    "TF_GlpR_present",
+    "TF_Lrp_present",
+    "TF_NarL_score",
+    "TF_OmpR_present",
+    "TF_PurR_score",
+    "has_promoter_pair",
+    "TF_PurR_present",
+    "TF_IHF_dist",
+    "TF_FNR_dist",
+    "TF_LexA_score"
+  ],
+  "training_organisms": [
+    "ccrescentus",
+    "saureus",
+    "mtuberculosis",
+    "styphimurium",
+    "abaylyi",
+    "mpne"
+  ],
+  "test_organism": "syn3a",
+  "train_size": 14101,
+  "test_size": 455,
+  "results": {
+    "gb_original_only": {
+      "label": "GB original 20 features (v25 reproduction)",
+      "best_threshold": 0.75,
+      "train_mcc": 0.5647472164503012,
+      "test_mcc": 0.22675008819825707,
+      "tp": 235,
+      "fp": 22,
+      "tn": 50,
+      "fn": 148
+    },
+    "gb_regulatory_only": {
+      "label": "GB regulatory features only",
+      "best_threshold": 0.5499999999999999,
+      "train_mcc": 0.41365301864240095,
+      "test_mcc": 0.03191667473340308,
+      "tp": 224,
+      "fp": 39,
+      "tn": 33,
+      "fn": 159
+    },
+    "gb_all_features": {
+      "label": "GB original + predicted regulatory",
+      "best_threshold": 0.7,
+      "train_mcc": 0.5825027268500019,
+      "test_mcc": 0.10686806739878764,
+      "tp": 366,
+      "fp": 64,
+      "tn": 8,
+      "fn": 17
+    },
+    "logreg_all_features": {
+      "label": "LogReg original + predicted regulatory",
+      "best_threshold": 0.7,
+      "train_mcc": 0.42633927438838487,
+      "test_mcc": 0.07945342314523042,
+      "tp": 378,
+      "fp": 69,
+      "tn": 3,
+      "fn": 5
+    }
+  },
+  "top_15_feature_importances_all_features_gb": [
+    {
+      "feature": "gc",
+      "importance": 0.2516895861262373
+    },
+    {
+      "feature": "is_putative",
+      "importance": 0.1804587656236327
+    },
+    {
+      "feature": "kw_translation",
+      "importance": 0.12140054416733405
+    },
+    {
+      "feature": "is_hypothetical",
+      "importance": 0.06430533927428171
+    },
+    {
+      "feature": "kw_synthase",
+      "importance": 0.04868973352693577
+    },
+    {
+      "feature": "operon_run_length",
+      "importance": 0.042650926396450864
+    },
+    {
+      "feature": "position_norm",
+      "importance": 0.0400773479968038
+    },
+    {
+      "feature": "log_length_bp",
+      "importance": 0.031690667161391975
+    },
+    {
+      "feature": "kw_replication",
+      "importance": 0.023680488610536704
+    },
+    {
+      "feature": "TF_NarL_score",
+      "importance": 0.011937741074307354
+    },
+    {
+      "feature": "ribosome_binding_site_dist",
+      "importance": 0.011548046449194275
+    },
+    {
+      "feature": "TF_OmpR_dist",
+      "importance": 0.007717385077826382
+    },
+    {
+      "feature": "TF_FIS_score",
+      "importance": 0.007476377131307035
+    },
+    {
+      "feature": "minus_10_signal_score",
+      "importance": 0.007387694784734463
+    },
+    {
+      "feature": "ribosome_binding_site_score",
+      "importance": 0.007249183587343942
+    }
+  ],
+  "baselines": {
+    "v15_within_organism": 0.5372,
+    "v24_mpne_to_syn3a_annotation": 0.2034,
+    "v25_gb_6orgs_original_only": 0.2268,
+    "v18_xgboost_esm2": 0.1376
+  },
+  "delta_vs_v25_gb_baseline": -0.11993193260121236
+}

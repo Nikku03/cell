@@ -1,0 +1,76 @@
+{
+  "id": "mcc_against_breuer_v27_predicted_regulatory_features",
+  "claim": "Phase v27 implemented the user-proposed strategy: train motif scanners (PWMs) on Salmonella LT2's RegulonDB-enriched GenBank annotation (the only one of our 16 GenBanks with /regulatory and /protein_bind features — 3965 ribosome binding sites, 256 minus_10 signals, 256 minus_35 signals, 397 protein-binding sites covering 14 major TFs), then apply those PWMs to score upstream regions in all 16 organisms uniformly to predict regulatory features that aren't explicitly labeled. Result: cross-organism MCC on Syn3A DROPPED from v25's 0.2268 (original 20 features) to 0.1069 (original 20 + 50 predicted regulatory features) — delta -0.1199. PWMs trained on Salmonella's labels DID validate well on Salmonella SELF for the RBS class (precision=0.848, recall=0.804) but showed near-zero precision on the other regulatory classes (-10 signal P=0.066, -35 signal P=0.062, most TFs P=0.001-0.020) because the underlying motifs are short (6-9bp) and abundant by chance in any 200bp upstream window. Cross-organism application failed worse: the predicted regulatory features for non-Salmonella organisms are largely noise because regulatory grammar is organism-specific (Mycoplasma's GC=30% sequences score the Salmonella GC=52%-trained PWMs differently than Mycoplasma's actual regulatory elements would). Top-15 feature importances from the augmented GB confirm: the original features (gc, is_putative, kw_translation, is_hypothetical, kw_synthase, operon_run_length, position_norm, log_length_bp, kw_replication) dominate with importances 0.03-0.25; regulatory features rank 10-15 with importances 0.007-0.012, contributing more noise than signal. The user-proposed strategy is biologically motivated but bottlenecked by motif-grammar specificity to organism background composition; PWMs trained on one bacterium do not generalize to phylogenetically distant ones.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via scripts/predict_regulatory_features.py (extracts Salmonella's labeled regulatory positions, builds PWMs via Bio.motifs from labeled sequences, scans 200bp upstream of every CDS in all 16 GenBanks for each PWM, calibrates per-PWM threshold at 80% recall on Salmonella self) and scripts/train_with_regulatory_features.py (4 GB+LogReg variants on the augmented features). Outputs: outputs/multiorg_per_gene_features_with_regulatory.csv, outputs/regulatory_motif_validation.json, outputs/multiorg_classifier_with_regulatory_results.json.",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v27_predicted_regulatory_features_hurt_cross_organism"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v25_multiorg_structured_features",
+    "mcc_against_breuer_v26_lnn_cross_organism",
+    "mcc_against_breuer_v26b_lnn_whole_cell_aggregation_diagnostic"
+  ],
+  "used_by": [
+    "scripts/predict_regulatory_features.py",
+    "scripts/train_with_regulatory_features.py",
+    "outputs/multiorg_per_gene_features_with_regulatory.csv",
+    "outputs/regulatory_motif_validation.json",
+    "outputs/multiorg_classifier_with_regulatory_results.json"
+  ],
+  "value": {
+    "method": "salmonella_pwm_train_apply_to_16_organisms_then_gb_classify",
+    "n_features_original": 20,
+    "n_features_regulatory_added": 50,
+    "pwm_validation_on_salmonella_self": {
+      "ribosome_binding_site": {"precision": 0.848, "recall": 0.804, "tp": 2931, "fp": 525, "tn": 269, "fn": 714, "verdict": "trustworthy"},
+      "minus_10_signal": {"precision": 0.066, "recall": 0.803, "verdict": "noisy_high_recall_low_precision"},
+      "minus_35_signal": {"precision": 0.062, "recall": 0.803, "verdict": "noisy_high_recall_low_precision"},
+      "TF_CRP": {"precision": 0.010, "recall": 0.810, "verdict": "noise"},
+      "TF_FNR": {"precision": 0.007, "recall": 0.818, "verdict": "noise"},
+      "TF_IHF": {"precision": 0.001, "recall": 1.000, "verdict": "noise"},
+      "TF_FIS_n1": {"precision": 0.500, "recall": 1.000, "verdict": "too_few_samples"},
+      "TF_PurR": {"precision": 0.182, "recall": 0.800, "verdict": "moderate"},
+      "TF_GlpR": {"precision": 0.167, "recall": 1.000, "verdict": "moderate"},
+      "TF_TyrR": {"precision": 0.118, "recall": 0.857, "verdict": "moderate"},
+      "TF_LexA": {"precision": 0.105, "recall": 0.800, "verdict": "moderate"}
+    },
+    "syn3a_test_results": {
+      "gb_original_only_v25": {"test_mcc": 0.2268, "tp": 235, "fp": 22, "tn": 50, "fn": 148},
+      "gb_regulatory_only": {"test_mcc": 0.0319, "tp": 224, "fp": 39, "tn": 33, "fn": 159},
+      "gb_original_plus_regulatory": {"test_mcc": 0.1069, "tp": 366, "fp": 64, "tn": 8, "fn": 17},
+      "logreg_original_plus_regulatory": {"test_mcc": 0.0795, "tp": 378, "fp": 69, "tn": 3, "fn": 5}
+    },
+    "delta_vs_v25_gb_baseline": -0.1199,
+    "verdict": "predicted_regulatory_features_added_noise_not_signal_to_cross_organism_transfer",
+    "top_15_feature_importances_augmented_gb": {
+      "gc": 0.2517,
+      "is_putative": 0.1805,
+      "kw_translation": 0.1214,
+      "is_hypothetical": 0.0643,
+      "kw_synthase": 0.0487,
+      "operon_run_length": 0.0427,
+      "position_norm": 0.0401,
+      "log_length_bp": 0.0317,
+      "kw_replication": 0.0237,
+      "TF_NarL_score": 0.0119,
+      "ribosome_binding_site_dist": 0.0115,
+      "TF_OmpR_dist": 0.0077,
+      "TF_FIS_score": 0.0075,
+      "minus_10_signal_score": 0.0074,
+      "ribosome_binding_site_score": 0.0072
+    }
+  },
+  "caveats": [
+    "PWM cross-organism transfer is fundamentally bottlenecked by sequence-background composition. Salmonella has 52% GC content; Mycoplasma has 30%. PWMs trained on Salmonella are scored against Mycoplasma backgrounds via log-odds vs uniform — but the actual background frequencies differ. Even if Mycoplasma RBSes follow the same Shine-Dalgarno consensus, the score distributions look different because the random-background expected frequency is different.",
+    "Even Salmonella's own PWM precision is poor for short motifs. The -10 box (TATAAT) and -35 box (TTGACA) are 6 bp; in a 200bp upstream window there are ~190 possible positions, so chance hits are abundant. Per-PWM precision on Salmonella's own labeled positions: -10 = 0.066, -35 = 0.062. The labeled positions ARE detected (recall ~0.8) but so are 14× as many false positives. For cross-organism prediction this means: the predicted promoter features are mostly noise.",
+    "The RBS PWM (P=0.85, R=0.80 on Salmonella self) is the only motif that generalizes well numerically, but biology cuts both ways: Mycoplasma RBSes are weaker / shorter than enterobacterial ones (well-documented in the literature — Mycoplasma uses an alternative AUG-context recognition mechanism with degraded Shine-Dalgarno), so Salmonella's RBS PWM systematically under-detects them. v27's confusion-matrix shift (TP up by +131 from 235 to 366, FP up by +42, TN down by -42 from 50 to 8) shows the model is now MORE eager to call essential — the RBS feature pushes prediction up but doesn't carry organism-discriminative signal.",
+    "What WOULD have worked: per-organism PWM training. Build Salmonella PWMs from Salmonella labels, apply only to Salmonella; build Mycoplasma PWMs from observable Mycoplasma sequence patterns near start codons (anti-Shine-Dalgarno region of 16S rRNA tells you the species-specific RBS consensus). This was not done because it requires per-organism analysis pipelines outside the current scope.",
+    "What COULD still help: download and integrate RegulonDB (E. coli K-12) and SubtiWiki (B. subtilis 168) curated regulatory data. We have GenBanks for both organisms but no essentiality (Goodall 2018 ecoli + Koo 2017 bsubtilis are MISSING in the data acquisition per the supp MANIFEST.tsv). With RegulonDB+Keio for E. coli (hypothetical Phase 7), we'd have 2 organisms with rich regulatory annotation as training data; cross-organism transfer should improve.",
+    "User's strategic intent was correct: use organism with rich regulatory labels to bootstrap predictions for organisms without labels. The execution requires either (a) per-organism PWM calibration, (b) species-specific motif models, or (c) a deep neural network that learns organism-conditioned motif representations. Naive PWM transfer with a single Salmonella-trained model fails because regulatory grammar varies across phylogenetic distance.",
+    "Confidence: measured (the experiment is reproducible, the validation on Salmonella self is well-defined, the cross-organism MCC drop is robustly negative across all model variants tried). The v25 GB at 0.2268 remains the best cross-organism Syn3A predictor on this 14k-gene multi-bacterial dataset; v27's predicted regulatory features added noise rather than signal."
+  ]
+}
