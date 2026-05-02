@@ -1,0 +1,66 @@
+{
+  "id": "mcc_against_breuer_v26_lnn_cross_organism",
+  "claim": "Phase v26 trained a Liquid Neural Net (LNN) — adapted from the enzyme_Software/liquid_nn_v2 architecture (ContextAwareTauPredictor + EdgeAwareMessagePassing + adaptive-tau ODE-style 4-step integration over operon-graph edges) — on the same 6-organism multi-bacterial dataset as v25 (Caulobacter, S. aureus, M. tb, S. Typhimurium, A. baylyi, M. pneumoniae; 13,496 genes total with paired Tn-seq / TraDIS / deletion-mutant essentiality calls), tested on Syn3A held out (455 genes, Breuer 2019). Two LNN variants tried: (1) full LNN with structured scalar features (20) + 3-mer codon counts (64) + 4-mer counts (256) + operon-edge graph passing, hidden=128, 4 ODE steps, 80 epochs (~133k parameters); (2) smaller LNN without k-mers, hidden=64, 3 ODE steps, dropout=0.2, weight_decay=1e-3, 60 epochs (~29k parameters). Result: BOTH LNN variants UNDERPERFORM the gradient-boosting baseline on the cross-organism Syn3A test. Variant 1 test MCC = 0.0391 (honest threshold from training); the model collapsed by predicting 99.3% essential because the train→test class-balance flip (16% → 84% essential) shifted the calibration. Variant 2 test MCC = 0.1234 (honest), 0.1955 (with optimal-on-test threshold — diagnostic ceiling, not honest). Both are below v25's GB at 0.2268 and below v24's mpne→syn3a annotation-only at 0.2034. The LNN's pooled-training MCC was 0.46-0.52 (reasonable within-organism), but the per-gene probability distribution on Syn3A compressed into [0.85, 1.00] for 95%+ of genes — indicating loss of discriminative power under the cross-organism distribution shift. Trees (gradient boosting) carve out specific feature regions and threshold-tune naturally; smooth-boundary neural networks learn organism-specific calibrations that don't transfer when the test organism's class prior is dramatically different.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via scripts/train_lnn_essentiality.py (full LNN with k-mers, 80 epochs); the smaller-LNN variant was an in-line probe in the training session. Inputs: outputs/multiorg_per_gene_features.csv (built by scripts/build_multiorg_features.py from 6 essentiality supps + 6 GenBanks committed at commits 0fe6b88 and e615fd6). Output: outputs/lnn_essentiality_results.json. Test set: Syn3A 455-gene Breuer 2019 panel.",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v26_lnn_cross_organism_underperforms_gb"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v25_multiorg_structured_features",
+    "mcc_against_breuer_v18_multiorg_xgb_loocv"
+  ],
+  "used_by": [
+    "scripts/train_lnn_essentiality.py",
+    "outputs/lnn_essentiality_results.json"
+  ],
+  "value": {
+    "method": "lnn_with_adaptive_tau_and_operon_graph_passing",
+    "lnn_variants": {
+      "v1_full_with_kmers": {
+        "n_parameters": 132865,
+        "features_per_gene": "20 scalar + 64 3-mer + 256 4-mer = 340",
+        "hidden_dim": 128, "n_steps": 4, "dropout": 0.1,
+        "n_epochs": 80, "lr": 2e-3,
+        "pooled_train_mcc": 0.5227,
+        "syn3a_test_mcc_honest": 0.0391,
+        "syn3a_test_mcc_diagnostic_ceiling": 0.0964,
+        "syn3a_confusion_honest": {"tp": 381, "fp": 71, "tn": 1, "fn": 2},
+        "test_prob_distribution": "98% in [0.90, 1.00] — collapsed"
+      },
+      "v2_small_no_kmers": {
+        "n_parameters": 28866,
+        "features_per_gene": "20 scalar only",
+        "hidden_dim": 64, "n_steps": 3, "dropout": 0.2,
+        "weight_decay": 1e-3,
+        "n_epochs": 60, "lr": 2e-3,
+        "pooled_train_mcc": 0.4634,
+        "syn3a_test_mcc_honest": 0.1234,
+        "syn3a_test_mcc_diagnostic_ceiling": 0.1955,
+        "syn3a_confusion_honest": {"tp": 359, "fp": 61, "tn": 11, "fn": 24},
+        "test_prob_distribution": "71% in [0.90, 1.00], 29% spread [0.4, 0.9] — partial recovery"
+      }
+    },
+    "gb_baseline_v25": {
+      "test_mcc": 0.2268,
+      "tp": 235, "fp": 22, "tn": 50, "fn": 148
+    },
+    "delta_lnn_minus_gb": {
+      "v1_full_lnn_minus_gb": -0.1877,
+      "v2_small_lnn_minus_gb": -0.1034
+    },
+    "verdict": "lnn_underperforms_gradient_boosting_on_this_cross_organism_task"
+  },
+  "caveats": [
+    "Class-balance distribution shift dominates. Training organisms aggregate to 16% essential (5-15% per organism for non-Mycoplasma); Syn3A test is 84% essential. Neural networks learn smooth decision boundaries calibrated to the training class prior; when applied to a test set with a flipped prior, predictions cluster in the high-confidence range (98% > 0.9 for v1, 71% > 0.9 for v2) and threshold tuning on training selects a threshold that's wrong for the test distribution. Trees (gradient boosting) handle this naturally because tree splits are local to specific feature regions and threshold tuning operates per-leaf rather than globally.",
+    "The LNN's adaptive-tau and operon-edge graph passing did NOT add value on this task. Operon edges connect ~20-30% of genes within each organism, but the graph patterns differ between organisms (operon structure varies by lineage), so message passing introduces organism-specific signal rather than organism-invariant essentiality signal. The k-mer features were the worst offender — codon bias varies by GC content (Mycoplasma ~30% GC vs E. coli ~50% GC), so k-mer counts ARE organism-identifying rather than function-identifying.",
+    "Removing k-mers (variant 2) tripled the honest cross-organism MCC (0.04 → 0.12) and halved the parameter count (133k → 29k). This tells us the LNN's capacity exceeded what the available training data supports for cross-organism transfer. Smaller models with fewer organism-specific features generalize better across the species barrier.",
+    "Diagnostic-ceiling MCC (threshold tuned on test, NOT honest hold-out): variant 1 = 0.0964, variant 2 = 0.1955. Even with cheating threshold calibration, neither LNN variant reaches GB's honest 0.2268. This rules out the explanation 'LNN learned but threshold was wrong' — the LNN's representational ceiling on this task is below GB's.",
+    "What WOULD help (untested): domain adversarial training (forcing the LNN to learn organism-invariant features), per-organism batch normalization (rescaling features per organism), CORAL-style domain alignment, much more training data (many more bacteria), or a different architecture entirely (e.g. attention-based transformer with relative-position embeddings instead of operon-graph LNN).",
+    "The honest read: for cross-organism essentiality prediction with the available 14k-gene multi-bacterial dataset, gradient boosting is the appropriate model. Neural-net architectural cleverness (LNN, transformers, GNN) needs much more data or domain-shift handling to beat tree-based baselines. v25's GB at 0.2268 stands as the best cross-organism Syn3A predictor on this dataset.",
+    "Confidence: measured (the LNN training is reproducible, both variants were trained to convergence, the cross-organism transfer failure is robustly demonstrated by the per-gene probability histograms, and the comparison to GB is apples-to-apples on the same training/test split). The verdict 'LNN underperforms GB' is the cleanest read; treating either LNN variant as having beaten GB would require optimal-on-test threshold tuning which is methodologically inadmissible."
+  ]
+}

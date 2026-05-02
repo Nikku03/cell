@@ -1,0 +1,57 @@
+{
+  "method": "lnn_with_adaptive_tau_and_operon_graph_passing",
+  "architecture": {
+    "encoder": "scalar(20)+3mer(64)+4mer(256) -> 128",
+    "graph": "same-strand neighbor within 100bp (operon proxy)",
+    "lnn_steps": 4,
+    "tau_min": 0.1,
+    "tau_max": 2.0,
+    "hidden": 128,
+    "n_parameters": 119938
+  },
+  "training": {
+    "organisms": [
+      "ccrescentus",
+      "saureus",
+      "mtuberculosis",
+      "styphimurium",
+      "abaylyi",
+      "mpne"
+    ],
+    "n_genes_total": 14008,
+    "n_essential_total": 2195,
+    "epochs": 80,
+    "lr": 0.002,
+    "weight_decay": 0.0001,
+    "final_loss": 0.24832053424448847,
+    "pooled_train_mcc": 0.5226922132709464,
+    "best_threshold": 0.7999999999999999,
+    "per_org_train_mcc": {
+      "ccrescentus": 0.35692557781765777,
+      "saureus": -0.006753674153942566,
+      "mtuberculosis": 0.30179243628130226,
+      "styphimurium": 0.31708589540198273,
+      "abaylyi": 0.3404570574670922,
+      "mpne": 0.2626337404532638
+    }
+  },
+  "test": {
+    "organism": "syn3a",
+    "n_genes": 455,
+    "n_essential": 383,
+    "n_nonessential": 72,
+    "test_mcc": 0.03908430745483203,
+    "tp": 381,
+    "fp": 71,
+    "tn": 1,
+    "fn": 2
+  },
+  "baselines": {
+    "v25_gb_6orgs": 0.2268,
+    "v24_mpne_to_syn3a_annotation": 0.2034,
+    "v18_xgboost_esm2_cross_organism": 0.1376,
+    "v15_within_organism": 0.5372
+  },
+  "delta_vs_v25_gb": -0.18771569254516796,
+  "delta_vs_v24": -0.16431569254516798
+}
