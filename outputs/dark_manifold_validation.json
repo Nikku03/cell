@@ -1,0 +1,34 @@
+{
+  "method": "dark_manifold_100gene_knockout_sweep",
+  "rollout_steps": 100,
+  "n_dm_genes": 102,
+  "n_dm_mets": 74,
+  "n_genes_mapped_to_syn3a": 36,
+  "n_genes_with_breuer_label": 36,
+  "breuer_essential_in_subset": 36,
+  "breuer_nonessential_in_subset": 0,
+  "best_atp_drop": {
+    "threshold": 0.0,
+    "mcc": 0.0,
+    "tp": 36,
+    "fp": 0,
+    "tn": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0
+  },
+  "best_ec_drop": {
+    "threshold": 0.0,
+    "mcc": 0.0
+  },
+  "baselines": {
+    "v15_syn3a": 0.5372,
+    "v18_xgboost_syn3a_held_out": 0.1376
+  },
+  "caveats": [
+    "Dark Manifold trained on FBA-synthetic ground truth, not measured biology",
+    "GAP_ANALYSIS.md flags hub-gene wrong-sign predictions (groEL, rpoB, dnaA)",
+    "Threshold tuned post-hoc on the same data; report best-MCC at any threshold",
+    "Only 36 of 102 DM genes map cleanly to Syn3A locus tags via /gene field"
+  ]
+}
