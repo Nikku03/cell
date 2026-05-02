@@ -1,0 +1,91 @@
+{
+  "method": "multiorg_classifier_train_6orgs_test_syn3a",
+  "features": [
+    "log_length_bp",
+    "gc",
+    "upstream_gc",
+    "upstream_at_skew",
+    "position_norm",
+    "operon_run_length",
+    "is_hypothetical",
+    "is_uncharacterized",
+    "is_putative",
+    "kw_replication",
+    "kw_transcription",
+    "kw_translation",
+    "kw_atp",
+    "kw_membrane",
+    "kw_synthase",
+    "kw_kinase",
+    "kw_dehydrogenase",
+    "kw_protease",
+    "kw_rrna",
+    "kw_chaperone"
+  ],
+  "train_organisms": [
+    "ccrescentus",
+    "saureus",
+    "mtuberculosis",
+    "styphimurium",
+    "abaylyi",
+    "mpne"
+  ],
+  "test_organism": "syn3a",
+  "train_size": 14101,
+  "test_size": 455,
+  "train_class_balance": {
+    "essential": 2199,
+    "nonessential": 11902
+  },
+  "test_class_balance": {
+    "essential": 383,
+    "nonessential": 72
+  },
+  "results": {
+    "logreg_6orgs_to_syn3a": {
+      "label": "LogReg 6-org -> syn3a",
+      "best_threshold": 0.65,
+      "train_mcc": 0.4215119311434001,
+      "test_mcc": 0.02367732139823997,
+      "tp": 380,
+      "fp": 71,
+      "tn": 1,
+      "fn": 3
+    },
+    "gb_6orgs_to_syn3a": {
+      "label": "GB 6-org -> syn3a",
+      "best_threshold": 0.75,
+      "train_mcc": 0.5647472164503012,
+      "test_mcc": 0.22675008819825707,
+      "tp": 235,
+      "fp": 22,
+      "tn": 50,
+      "fn": 148
+    },
+    "logreg_mpne_only_to_syn3a": {
+      "label": "LogReg mpne-only -> syn3a",
+      "best_threshold": 0.39999999999999997,
+      "train_mcc": 0.47552619122706885,
+      "test_mcc": 0.16729571275599808,
+      "tp": 135,
+      "fp": 10,
+      "tn": 62,
+      "fn": 248
+    },
+    "logreg_5orgs_no_mpne_to_syn3a": {
+      "label": "LogReg 5-org (no mpne) -> syn3a",
+      "best_threshold": 0.65,
+      "train_mcc": 0.37066457697157956,
+      "test_mcc": 0.13197272960486991,
+      "tp": 375,
+      "fp": 66,
+      "tn": 6,
+      "fn": 8
+    }
+  },
+  "baselines": {
+    "v15_within_organism": 0.5372,
+    "v18_xgboost_esm2_cross_organism": 0.1376,
+    "v24_mpne_to_syn3a_annotation_only": 0.2034
+  }
+}
