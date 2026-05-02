@@ -157,14 +157,14 @@ M. pneumoniae) directly rather than median-from-subunits.
 
 ## Summary table
 
-| Gap | Schema | Status | Blocker | Severity |
-|---|---|---|---|---|
-| 1. Km/kcat | `kinetic_params.xlsx` Value/Units | empty | BRENDA + Yus 2009 (proxy-blocked) | **runtime-blocking** |
-| 2. Intracellular metabolites | `initial_concentrations.xlsx` Intracellular | empty | Yus 2009 (Cloudflare) | **runtime-blocking** |
-| 3. Medium | `initial_concentrations.xlsx` Simulation Medium | empty | Hayflick recipe (manual) | **runtime-blocking** |
-| 4. Non-ribosomal complexes | `complex_formation.xlsx` Complexes | **105 rows (was 1) — RESOLVED via Kühner 2009 Wayback** | residual: Init. Count blank | low |
-| 5. mRNA copies | `initial_concentrations.xlsx` mRNA Count | empty | Maier S8 + calibration | important for gex-on |
-| 6. Ribosome n/d rows | `complex_formation.xlsx` Init. Count | superseded by Kühner full r-protein listing | — | resolved |
+| Gap | Schema | Status | Severity |
+|---|---|---|---|
+| 1. Km/kcat | `kinetic_params.xlsx` Value/Units | **populated with bacterial defaults (Km=0.1mM, kcat=100/s)** — `Parameter Type` = `BACTERIAL_DEFAULT` flag | calibration-debt; runs but predictions weakened |
+| 2. Intracellular metabolites | `initial_concentrations.xlsx` Intracellular | **populated with Bennett 2009 E. coli proxy** (~80 metabolites) — `confidence: assumed` | calibration-debt; runs |
+| 3. Medium | `initial_concentrations.xlsx` Simulation Medium | **populated with Syn3A medium proxy** (56 entries) | calibration-debt; runs |
+| 4. Non-ribosomal complexes | `complex_formation.xlsx` Complexes | 105 rows from Kühner 2009; 100/105 with Init. Count from Maier limiting-subunit | resolved |
+| 5. mRNA copies | `initial_concentrations.xlsx` mRNA Count | empty (would need Maier S8 calibration) | important for gex-on; not blocking gex-off |
+| 6. Ribosome n/d rows | `complex_formation.xlsx` Init. Count | superseded by Kühner full r-protein listing + Maier limiting-subunit | resolved |
 
 **Bottom line:** to actually run cell_sim on M. pneumoniae, gaps
 1, 2, and 3 are still blocking. Gap 4 (non-ribosomal complexes)
