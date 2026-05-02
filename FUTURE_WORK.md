@@ -141,6 +141,33 @@ This is a stronger null than the realistic-expected "v17 ≈ v16 ± noise"; it's
 
 Both regulation and bioelectric layers now have working infrastructure but make no detectable contribution to v15-stack MCC at the Syn3A single-cell scale. This is the calibrated honest outcome — neither layer is refuted as biology, but neither buys signal that the v15 biology-first detector wasn't already extracting from annotation priors and per-rule silencing.
 
+## Cross-organism validation (session 33-34)
+
+The "real held-out test" the project named in past sessions: train on one organism, predict on another. Required pulling cross-organism data into the repo by hand because the sandbox proxy blocks NCBI/EBI/eLife.
+
+**Data integrated:**
+- M. pneumoniae M129 (Lluch-Senar 2015 MSB) → `labels.csv` (737 rows) + `sequences.fasta` (593 sequences after RefSeq reannotation losses + smORF gaps; 80.5% coverage)
+- ESM-2 650M embeddings re-run on Colab T4 → `cell_sim/features/cache/esm2_650M_multiorg.parquet` (1048 × 1280)
+
+**v18 measurement (new fact: `mcc_against_breuer_v18_multiorg_xgb_loocv`):**
+
+Leave-one-organism-out CV on (Syn3A + M. pneumoniae) using ESM-2 650M + XGBoost:
+
+| Held-out organism | n_train | n_test | MCC |
+|---|---|---|---|
+| M. pneumoniae | 455 | 593 | +0.1070 |
+| **Syn3A** | **593** | **455** | **+0.1376** |
+
+vs v15 baseline 0.5372 → **delta −0.3996**. Decision band per script: `FALSIFIED` (its `<0.45` threshold for "look elsewhere").
+
+**Honest reading:** ESM-2 embeddings + XGBoost do not transfer essentiality predictions across organisms at this data scale. The v15 detector's MCC=0.5372 on Syn3A is achieved by biology-first priors (annotation-class, complex-assembly, iMB155 patches) that DO encode organism-specific information. Sequence embeddings alone discard that signal. Both held-out MCCs are barely above chance.
+
+This does NOT mean cross-organism essentiality prediction is impossible — it means ESM-2 + XGBoost at ~500 train rows isn't the right tool. Richer features (Pfam family, GO category, pathway membership, complex membership), more organisms, or a model that explicitly transfers biology priors across organisms are all candidate next steps. None of them are session-sized; each is its own research question.
+
+**E. coli / B. subtilis / M. genitalium remain to be integrated** (per the original Session 20 dataset spec). Same pattern as M. pneumoniae: paper-supplementary table → `labels.csv` rows; NCBI GenBank → `sequences.fasta` sequences; re-run embed notebook on Colab. Each adds ~500–4000 training rows. With all five organisms, the LOOCV would have ~2000–8000 rows per fold — a more robust test than the two-organism case.
+
+Until then, the v18 fact is the honest answer to the cross-organism question for the data we have: at this scale, with this feature set, the v15 detector does not generalize.
+
 
 
 

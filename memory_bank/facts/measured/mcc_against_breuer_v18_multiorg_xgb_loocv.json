@@ -1,0 +1,63 @@
+{
+  "id": "mcc_against_breuer_v18_multiorg_xgb_loocv",
+  "claim": "Cross-organism leave-one-organism-out (LOOCV) test of an ESM-2 650M + XGBoost essentiality predictor on the (Syn3A + M. pneumoniae) labeled dataset. Headline result: Syn3A held-out MCC = 0.1376 when training on M. pneumoniae's 593 ESM-2 embedded protein-coding genes and predicting Syn3A's 455 genes. Vs the v15 keyword-prior baseline of 0.5372, this is a delta of -0.3996 — well below the script's INTEGRATE band (>=0.55) and below its ENSEMBLE band (>=0.45). The script reports decision_band=FALSIFIED. The reverse direction (train Syn3A, test M. pneumoniae) gets MCC=0.1070. Both numbers are barely above chance (chance MCC ~ 0.0). Conclusion: ESM-2 embeddings + XGBoost do NOT transfer essentiality predictions across organisms at this data scale (~500 train rows per organism). The v15 detector's MCC=0.5372 on Syn3A specifically is achieved by biology-first priors (annotation-class + complex-assembly) that DO encode organism-specific information; sequence embeddings alone do not capture what makes those priors work cross-organism.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible end-to-end via: (1) labels.csv with Syn3A (Breuer 2019) + M. pneumoniae (Lluch-Senar 2015) rows at memory_bank/data/multiorg_essentiality/labels.csv (1192 rows, commit 0ef09d3); (2) sequences.fasta with the corresponding 1048 protein sequences at memory_bank/data/multiorg_essentiality/sequences.fasta (commit e96f489); (3) ESM-2 650M embeddings parquet at cell_sim/features/cache/esm2_650M_multiorg.parquet (1048 x 1280, commit 716ffb3 from Colab T4 GPU run); (4) `python scripts/train_multiorg_xgboost.py --out outputs/multiorg_xgboost_loocv.json`. Full output JSON preserved at outputs/multiorg_xgboost_loocv.json with per-fold confusion matrices, top features, training wall times, and XGBoost hyperparameters.",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v18_multiorg_xgb_loocv"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_against_breuer_v16_gex_compiled",
+    "mcc_against_breuer_v17_bioelectric",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "scripts/train_multiorg_xgboost.py",
+    "outputs/multiorg_xgboost_loocv.json"
+  ],
+  "value": {
+    "method": "leave_one_organism_out_cv",
+    "model": "xgboost_classifier",
+    "features": "esm2_650M_per_protein_mean_pool",
+    "n_features": 1280,
+    "n_organisms": 2,
+    "organisms": ["syn3a", "mpne"],
+    "n_total_rows": 1048,
+    "syn3a_held_out_mcc": 0.13758544573348785,
+    "syn3a_held_out_confusion": {"tp": 301, "fp": 45, "tn": 27, "fn": 82},
+    "syn3a_held_out_precision": 0.8699,
+    "syn3a_held_out_recall": 0.7859,
+    "syn3a_held_out_n_train": 593,
+    "syn3a_held_out_n_test": 455,
+    "mpne_held_out_mcc": 0.10704537784170440,
+    "mpne_held_out_confusion": {"tp": 402, "fp": 153, "tn": 18, "fn": 20},
+    "mpne_held_out_n_train": 455,
+    "mpne_held_out_n_test": 593,
+    "v15_syn3a_baseline_mcc": 0.5372,
+    "delta_over_v15": -0.39961455426651216,
+    "decision_band": "FALSIFIED",
+    "decision_band_thresholds": {
+      "INTEGRATE": ">= 0.55",
+      "ENSEMBLE": ">= 0.45 and < 0.55",
+      "FALSIFIED": "< 0.45"
+    },
+    "syn3a_essentiality_data_source": "breuer_2019_elife",
+    "mpne_essentiality_data_source": "lluch_senar_2015_msb",
+    "mpne_coverage": "593 of 737 mpne loci have a sequence + embedding (80.5 percent); 144 orphans dropped silently in the join",
+    "production_simulator_modified": false,
+    "v15_v16_v17_unchanged": true
+  },
+  "caveats": [
+    "Two-organism dataset only (Syn3A + M. pneumoniae). The original Session 20 plan called for five organisms (Syn3A, M. pneumoniae, M. genitalium, B. subtilis, E. coli). With more organisms, LOOCV would have more training data per held-out fold and the test would be more robust. The two-organism case is the smallest non-trivial cross-organism setup.",
+    "Class imbalance is severe and asymmetric across organisms: Syn3A is 84.2 percent essential (383/455); M. pneumoniae is 71.2 percent essential (422/593). XGBoost with default decision threshold 0.5 produces high precision but middling recall on Syn3A held-out (Pr=0.870, Re=0.786), and the inverse pattern on M. pneumoniae (Pr=0.724, Re=0.953). Decision threshold tuning could shift the trade-off but would not fix the fundamental MCC ceiling the embeddings impose.",
+    "ESM-2 650M is a generic protein language model. It encodes sequence context but not organism-specific gene context, regulatory architecture, complex membership, or pathway position. The v15 detector's biology-first priors (AnnotationClass + ComplexAssembly + iMB155 patches) ARE organism-specific in those exact ways. Cross-organism transfer fails not because cross-organism essentiality has no signal, but because ESM-2 embeddings discard the signal that v15 captures.",
+    "The 144 M. pneumoniae label orphans (loci in labels.csv but no sequence in the GenBank) drop silently. Recovering them (via Lluch-Senar Supplementary File S1 ZIP for smORFs, plus older NCBI annotations for the reannotation losses) would add ~20 percent more training data for the mpne fold but is unlikely to rescue the cross-organism MCC from the 0.10-0.14 floor.",
+    "v15 vs v18 are different methodologies, not directly comparable as 'better predictors'. v15 is a hand-engineered biology-first ensemble with full simulator state access; v18 is a statistical model on protein embeddings only. The v15 number (0.5372) was MEASURED on Syn3A's own training set (the same 455 genes used for v15's prior development); v18's 0.1376 is MEASURED on Syn3A genes the trainer never saw. v18's number is therefore a more conservative estimate of generalization. v15's number is a within-distribution upper bound on what biology-first priors can do for Syn3A specifically.",
+    "Decision band 'FALSIFIED' is the script's pre-registered category for MCC < 0.45 and reflects the project's Session 20 decision rule. The label is honest but accidentally connotes 'wrong'; the more careful reading is 'this approach does not lift over v15 at the data scale and feature set tested'. ESM-2 + XGBoost on protein sequences alone is a baseline; richer features (Pfam family, GO category, complex membership, expression level) could shift the result. None of those have been tested cross-organism in this measurement.",
+    "Single random seed (42). Multi-seed replicates would tighten the +/-0.02 noise floor; not run."
+  ]
+}
