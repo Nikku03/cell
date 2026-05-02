@@ -1,0 +1,68 @@
+{
+  "method": "v15_plus_darkmanifold_topup_fusion",
+  "baseline": {
+    "rule": "v15_only",
+    "mcc": 0.5372320940435067,
+    "tp": 287,
+    "fp": 3,
+    "tn": 69,
+    "fn": 96
+  },
+  "overlap_size": 36,
+  "overlap_summary": {
+    "true_essential": 36,
+    "true_nonessential": 0,
+    "v15_pred_essential": 36,
+    "v15_pred_nonessential": 0
+  },
+  "rules": [
+    {
+      "rule": "A_v15_only",
+      "threshold": null,
+      "mcc": 0.5372320940435067,
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    },
+    {
+      "rule": "B_OR",
+      "threshold": 0.0,
+      "mcc": 0.5372320940435067,
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    },
+    {
+      "rule": "C_DM_override",
+      "threshold": 0.0,
+      "mcc": 0.5372320940435067,
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    },
+    {
+      "rule": "D_weighted",
+      "threshold": 0.0,
+      "alpha": 0.0,
+      "mcc": 0.5372320940435067,
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    }
+  ],
+  "best_rule": {
+    "rule": "A_v15_only",
+    "threshold": null,
+    "mcc": 0.5372320940435067,
+    "tp": 287,
+    "fp": 3,
+    "tn": 69,
+    "fn": 96
+  },
+  "delta_vs_v15": 0.0,
+  "verdict": "no_improvement_over_v15"
+}

@@ -1,0 +1,54 @@
+{
+  "id": "mcc_against_breuer_v21_v15_plus_darkmanifold_topup",
+  "claim": "Phase v21 tested whether the Dark Manifold v2.1 100-gene model (Nikku03/cell-simulation, dark_manifold_100gene.pt) could top up v15 (the highest-MCC essentiality predictor at 0.5372 against Breuer 2019 Syn3A) via late-fusion of the Dark Manifold's per-gene |atp_drop| signal with v15's binary calls. Four fusion rules were swept on the 36 overlapping JCVISYN3A locus tags (the genes in both the Dark Manifold's 102-gene set and Breuer's 455-gene labelled set): (A) v15-only baseline; (B) OR rule (predict essential if v15==1 OR |atp_drop| >= t); (C) DM override on overlap; (D) weighted-score fusion sweeping alpha and threshold. ALL FOUR rules return MCC=0.5372 — delta = 0.0000 vs the v15 baseline. Top-up does NOT improve MCC. The reason is structural: all 36 overlap genes are labelled essential by Breuer AND already correctly called essential by v15 (TP). The Dark Manifold's gene set is a strict subset of v15's existing TP set, so fusion can only confirm v15's correct calls or override them into incorrect calls — it cannot recover any of v15's 96 false negatives, which are concentrated in gene categories (uncharacterized, transport, regulatory) that the Dark Manifold's curated central-metabolism + tRNA + ribosomal-core gene set does not cover. v21 = MEASURED null (no improvement) with a clear structural explanation.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via scripts/v15_dm_fusion.py. Output: outputs/v15_dm_fusion.json + outputs/v15_dm_fusion_overlap_detail.csv. Inputs: outputs/predictions_parallel_s0.05_t0.5_seed42_thr0.1_w4_composed_all455_v15_round2_priors.csv (v15 predictions, 455 rows); Nikku03/cell-simulation dark_manifold_100gene.pt (Dark Manifold v2.1 checkpoint). KO sweep is 102 genes x 100 rollout steps on CPU, reproducible deterministically.",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v21_v15_plus_dm_topup_no_improvement"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_against_breuer_v20_dark_manifold_undetermined",
+    "mcc_against_breuer_v20b_dark_manifold_dual_organism"
+  ],
+  "used_by": [
+    "scripts/v15_dm_fusion.py",
+    "outputs/v15_dm_fusion.json",
+    "outputs/v15_dm_fusion_overlap_detail.csv"
+  ],
+  "value": {
+    "method": "v15_plus_darkmanifold_topup_fusion",
+    "v15_baseline_mcc": 0.5372,
+    "v15_baseline_confusion": {"tp": 287, "fp": 3, "tn": 69, "fn": 96},
+    "overlap_size": 36,
+    "overlap_summary": {
+      "true_essential": 36,
+      "true_nonessential": 0,
+      "v15_pred_essential": 36,
+      "v15_pred_nonessential": 0,
+      "v15_correct_on_overlap": 36,
+      "v15_wrong_on_overlap": 0,
+      "fixable_FN_candidates_in_overlap": 0
+    },
+    "rules_swept": [
+      "A_v15_only",
+      "B_OR_rule",
+      "C_DM_override_on_overlap",
+      "D_weighted_score"
+    ],
+    "best_rule_overall": "A_v15_only",
+    "best_mcc": 0.5372,
+    "delta_vs_v15": 0.0,
+    "verdict": "no_improvement"
+  },
+  "caveats": [
+    "Structural ceiling: Dark Manifold's 102-gene set was curated around central metabolism + tRNA synthetases + ribosomal core + ATP synthase + transcription core. v15 already calls every one of those classes essential with high confidence (its 96 false negatives are concentrated elsewhere — uncharacterized genes, transport, regulatory). Late-fusion can only act on the overlap, and the overlap is exactly the region where v15 is already perfect. The result is robust across all four fusion rules tried; it is NOT a tuning artefact.",
+    "v15's 96 false negatives are the gain headroom. To bump MCC above 0.5372, an ML signal would need coverage of those 96 specific locus tags — none of which are in the Dark Manifold's gene list. Future top-up attempts should screen for gene-set overlap with v15's FN before running the fusion sweep.",
+    "The fusion sweep is post-hoc threshold-tuned on the same data being scored (no held-out split). Even with that liberty, MCC does not exceed 0.5372 — strengthening the negative result. A held-out split would only confirm the same conclusion since none of the rules pull above baseline even on the training fold.",
+    "This negative result complements v20 (UNDETERMINED) and v20b (at-chance ranking on single-class subsets): all three v20+ phases reflect the same root cause — the Dark Manifold's gene-set bias toward known essentials means it has no information to add about the genes that v15 currently misclassifies.",
+    "Confidence: measured (the experiment is real, reproducible, and the result is supported by an exhaustive 4-rule sweep over the overlap). The claim is strictly that top-up does not improve MCC for THIS specific Dark Manifold checkpoint on THIS specific gene overlap; it does not generalize to any future ML model with broader gene-set coverage."
+  ]
+}
