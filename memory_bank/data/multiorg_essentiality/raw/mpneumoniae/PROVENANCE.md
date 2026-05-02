@@ -53,3 +53,14 @@ generalization track. Per-source provenance and gap notes below.
   download from an institution with Science.org access is required.
 - **Yus 2009 supplementary tables S1–S6** — same situation; not
   individually archived.
+
+## sabio_rk_kinetics/
+
+- **sabio_raw_dump.tsv** + curated TSVs — Km/kcat per EC for the 158
+  EC numbers that appear in iJW145 reactions, fetched via SABIO-RK
+  REST. 138/158 EC have data; 70/306 SBML reactions get populated
+  rows (23 % coverage). See `sabio_rk_kinetics/README.md` for the
+  pipeline, organism-rank scheme, and caveats.
+- Phase D1 row 1 (Km/kcat) — partial. Direct M. pneumoniae values
+  exist for only 3 EC; the rest fall back through Mycoplasma genus
+  → E. coli → other prokaryotes.

@@ -1,0 +1,146 @@
+ec_number	km_value	km_unit	km_substrate	km_organism	km_organism_rank	km_n_at_rank	km_n_total	kcat_value	kcat_unit	kcat_organism	kcat_organism_rank	kcat_n_at_rank	kcat_n_total
+1.1.1.17	6e-05	M	NAD+	Streptococcus mutans	5	18	18	125.0	s^(-1)	Aspergillus fumigatus	5	4	4
+1.1.1.2	0.009	M	1-Pentanol	Escherichia coli	3	11	371	0.003333333	s^(-1)	Escherichia coli	3	11	127
+1.1.1.21	0.0026	M	D-Glucuronate	Oryctolagus cuniculus	5	286	469	10.2	s^(-1)	Candida intermedia	5	178	351
+1.1.1.27	0.001	M	Pyruvate	Lactococcus lactis subsp. lactis	4	81	500	30.0	s^(-1)	Toxoplasma gondii	5	175	193
+1.1.1.372	1.8e-05	M	Glyceraldehyde	Homo sapiens	6	3	3	3.06	s^(-1)	Homo sapiens	6	2	2
+1.1.1.72	0.0009	M	Diacetyl	Trichoderma reesei	5	14	14	11.0	s^(-1)	Trichoderma reesei	5	10	10
+1.1.3.21	0.0055	M	sn-Glycerol 3-phosphate	Mycoplasma pneumoniae	0	4	7	4.2	s^(-1)	Mycoplasma pneumoniae	0	3	5
+1.17.4.1	3.5e-07	M	Reduced glutaredoxin	Escherichia coli	3	2	9						0
+1.2.1.10	0.000561	M	NADP+	Burkholderia xenovorans LB400	5	25	25	11.2	s^(-1)	Burkholderia xenovorans LB400	5	11	11
+1.2.1.12	0.00089	M	D-Glyceraldehyde 3-phosphate	Escherichia coli	3	30	251	0.1	s^(-1)	Escherichia coli	3	19	64
+1.2.1.59	0.0057	M	NAD+	Bacillus subtilis	4	2	18	8.0	s^(-1)	Bacillus subtilis	4	2	2
+1.2.4.1	0.000321	M	Pyruvate	Escherichia coli	3	4	43	0.91	s^(-1)	Geobacillus stearothermophilus	5	24	24
+1.2.4.1 2.3.1.12 1.8.1.4	0.000531	M	Pyruvate	Escherichia coli	3	15	105	28.89	s^(-1)	Escherichia coli	3	12	12
+1.2.4.1 2.3.1.61 1.8.1.4	0.000308	M	2-Keto-4-hydroxyglutarate	Escherichia coli	3	2	4						0
+1.2.4.2 2.3.1.61 1.8.1.4	1.05e-05	M	2-Oxoglutarate	Escherichia coli	3	3	79	30.0	s^(-1)	Homo sapiens	6	1	1
+1.2.4.4 2.3.1.168 1.8.1.4	2.5e-05	M	Coenzyme A	Homo sapiens	6	20	20						0
+1.4.4.2 1.8.1.4 2.1.2.10	0.003	M	Glycine	Canis familiaris	5	2	4						0
+1.4.4.2 2.1.2.10 1.8.1.4	2.2e-06	M	H protein	Pisum sativum	5	1	1						0
+1.5.1.3	3e-06	M	NADPH	Escherichia coli	3	130	330	4.5	s^(-1)	Escherichia coli	3	104	233
+1.5.1.5	0.0003	M	NADP+	Escherichia coli	3	1	15	113.0	s^(-1)	Photobacterium phosphoreum	5	5	5
+1.8.1.4	0.0001412	M	NAD+	Escherichia coli	3	4	78	95.2	s^(-1)	Escherichia coli	3	4	26
+1.8.1.9	3.6e-06	M	Oxidized thioredoxin	Escherichia coli	3	3	34	20.83333	s^(-1)	Escherichia coli	3	2	47
+2.1.1.37	6.9e-08	M	5-Methylcytosine (in DNA)	Haemophilus parahaemolyticus	5	12	12	0.02333333	s^(-1)	Haemophilus parahaemolyticus	5	6	6
+2.1.1.45	5.8e-05	M	dUMP	Escherichia coli	3	34	343	0.39	s^(-1)	Escherichia coli	3	26	232
+2.1.2.1	0.00015	M	L-Serine	Escherichia coli	3	26	122	4.296667	s^(-1)	Escherichia coli	3	23	86
+2.1.2.9	7.2e-07	M	L-Methionyl-tRNA(Met)	Enterococcus faecalis	5	12	12						0
+2.1.3.3	0.0023	M	Carbamoyl phosphate	Mycoplasma arthritidis	1	3	312	1.333333	s^(-1)	Escherichia coli	3	17	61
+2.2.1.1	0.01	M	Glyceraldehyde	Escherichia coli	3	13	114	0.0186	s^(-1)	Spinacia oleracea	5	2	10
+2.3.1.12	0.005	M	Dihydrolipoamide	Enterococcus faecalis	5	2	2						0
+2.3.1.15	0.000152	M	sn-Glycerol 3-phosphate	Escherichia coli	3	30	56						0
+2.3.1.51	2.63e-05	M	1-Palmitoylglycerol 3-phosphate	Mus musculus	6	19	19						0
+2.3.1.8	0.0017	M	Acetyl phosphate	Escherichia coli	3	10	38	1.56	s^(-1)	Escherichia coli	3	16	44
+2.4.2.1	0.00011	M	Adenine	Escherichia coli	3	10	125	1.44	s^(-1)	Plasmodium falciparum	5	3	44
+2.4.2.22	9.08e-05	M	Hypoxanthine	Escherichia coli	3	4	6	112.0	s^(-1)	Escherichia coli	3	4	4
+2.4.2.3	0.000213	M	5-Fluorouridine	Homo sapiens	6	20	20						0
+2.4.2.4	0.000433	M	5-Fluorodeoxyuridine	Homo sapiens	6	18	18						0
+2.4.2.7	3e-07	M	Adenine	Mycoplasma mycoides	1	1	12						0
+2.4.2.8	3.24e-05	M	5-Phospho-alpha-D-ribose 1-diphosphate	Trypanosoma cruzi	5	47	74	3.98	s^(-1)	Thermoanaerobacter tengcongensis	5	39	50
+2.4.2.9	2e-05	M	5-Phospho-alpha-D-ribose 1-diphosphate	Escherichia coli	3	10	19	0.05	s^(-1)	Escherichia coli	3	4	5
+2.5.1.6	0.00016	M	ATP	Escherichia coli	3	52	55	0.25	s^(-1)	Escherichia coli	3	14	14
+2.7.1.11	0.0008	M	D-Fructose 6-phosphate	Escherichia coli	3	148	411	45.0	s^(-1)	Escherichia coli	3	29	64
+2.7.1.113	2e-05	M	Deoxyguanosine	Mycoplasma mycoides	1	3	37	0.61	s^(-1)	Mycoplasma mycoides	1	1	8
+2.7.1.145	4.7e-06	M	Thymidine	Drosophila melanogaster	5	40	40	16.5	s^(-1)	Drosophila melanogaster	5	9	9
+2.7.1.15	3.5e-05	M	2-Deoxy-D-ribose	Bos taurus	5	3	10						0
+2.7.1.191	1.03e-05	M	D-Mannose 6-phosphate	Streptococcus pyogenes	5	9	9						0
+2.7.1.197	6.6e-05	M	D-Mannitol	Escherichia coli	3	1	1						0
+2.7.1.199	3e-05	M	alpha-Methyl-D-glucopyranoside	Bacillus subtilis	4	4	23						0
+2.7.1.21	2e-05	M	Thymidine	Human herpesvirus 1	5	80	125	0.06	s^(-1)	Human herpesvirus 1	5	76	77
+2.7.1.23	0.002	M	NAD+	Escherichia coli	3	6	27	125.0	s^(-1)	Escherichia coli	3	2	10
+2.7.1.24	0.000645	M	Dephospho-CoA	Escherichia coli	3	4	13	12.0	s^(-1)	Escherichia coli	3	2	4
+2.7.1.26	1.52e-08	M	Riboflavin	Arabidopsis thaliana	5	5	5	0.419	s^(-1)	Arabidopsis thaliana	5	5	5
+2.7.1.29	0.00011	M	ATP	Citrobacter freundii	5	17	17	5.0	s^(-1)	Citrobacter freundii	5	11	11
+2.7.1.30	0.000286	M	ATP	Arabidopsis thaliana	5	16	16						0
+2.7.1.32	0.00035	M	ATP	Homo sapiens	6	9	9	71.5	s^(-1)	Homo sapiens	6	6	6
+2.7.1.33	0.000124	M	N-Heptylpantothenamide	Escherichia coli	3	18	52	1.14	s^(-1)	Escherichia coli	3	4	20
+2.7.1.35	4.66e-05	M	Pyridoxal	Bacillus subtilis	4	1	14	0.032	s^(-1)	Bacillus subtilis	4	1	6
+2.7.1.40	0.00024	M	ADP	Escherichia coli	3	18	451	130.0	s^(-1)	Escherichia coli	3	20	167
+2.7.1.48	0.00033	M	Cytidine	Arabidopsis thaliana	5	3	12						0
+2.7.1.56	0.000333	M	ATP	Pseudomonas doudoroffii	5	10	10						0
+2.7.1.74	0.000146	M	2'-Deoxycytidine	Mycoplasma mycoides	1	3	64	1.23	s^(-1)	Mycoplasma mycoides	1	1	9
+2.7.1.76	2.1e-05	M	CTP	Mycoplasma mycoides	1	11	41	0.84	s^(-1)	Mycoplasma mycoides	1	5	11
+2.7.1.86	0.00213	M	NADH	Escherichia coli	3	2	10						0
+2.7.2.1	6e-05	M	GTP	Escherichia coli	3	12	152	216.0	s^(-1)	Methanosarcina thermophila	5	137	137
+2.7.2.10	0.000547	M	3-Phospho-D-glycerate	Entamoeba histolytica	5	40	40						0
+2.7.2.15	0.00233	M	Propanoate	Salmonella typhimurium	5	3	3	125.0	s^(-1)	Salmonella typhimurium	5	2	2
+2.7.2.2	0.0002	M	ADP	Mycoplasma arthritidis	1	3	45	730.0	s^(-1)	Enterococcus faecalis	5	2	2
+2.7.2.3	0.00024	M	ATP	Escherichia coli	3	1	561	555.0	s^(-1)	Escherichia coli	3	8	173
+2.7.3.9	9e-05	M	Phosphoenolpyruvate	Escherichia coli	3	25	39	0.2133333	s^(-1)	Escherichia coli	3	25	25
+2.7.4.11	0.000454	M	dAMP	Homo sapiens	6	2	2						0
+2.7.4.14	0.00036	M	1-beta-D-Arabinofuranosylcytosine 5'-monophosphate	Escherichia coli	3	9	70	217.0	s^(-1)	Dictyostelium discoideum	5	4	14
+2.7.4.22	0.00024	M	ATP	Escherichia coli	3	31	64	175.0	s^(-1)	Streptococcus pneumoniae	5	24	24
+2.7.4.25	0.0019	M	UMP	Escherichia coli	3	23	26	0.73	s^(-1)	Escherichia coli	3	23	26
+2.7.4.3	9.2e-05	M	ADP	Escherichia coli	3	14	117	0.07333333	s^(-1)	Bacillus subtilis	4	10	46
+2.7.4.4	0.00094	M	CMP	Homo sapiens	6	3	3						0
+2.7.4.8	5.06e-05	M	ATP	Arabidopsis thaliana	5	2	18	3.9	s^(-1)	Arabidopsis thaliana	5	2	10
+2.7.4.9	4e-05	M	ATP	Escherichia coli	3	2	11	10.5	s^(-1)	Escherichia coli	3	1	2
+2.7.6.1	0.000138	M	D-Ribose 5-phosphate	Escherichia coli	3	2	67						0
+2.7.7.1	0.0007	M	Nicotinamide nucleotide	Escherichia coli	3	2	102	0.6	s^(-1)	Methanothermobacter thermautotrophicus	5	16	62
+2.7.7.15	0.00081	M	Choline phosphate	Pisum sativum	5	9	17						0
+2.7.7.18	6.77e-05	M	Nicotinate D-ribonucleotide	Homo sapiens	6	14	14	6.9	s^(-1)	Homo sapiens	6	14	14
+2.7.7.2	6.3e-05	M	Riboflavin-5-phosphate	Methanocaldococcus jannaschii	5	3	9	0.0036	s^(-1)	Homo sapiens	6	1	1
+2.7.7.3	4.71e-05	M	N-Pentylpantothenamide 4-phosphate	Escherichia coli	3	3	15	12.3	s^(-1)	Escherichia coli	3	3	8
+2.7.7.41	0.00026	M	dCTP	Bacillus subtilis	4	3	3						0
+2.7.7.64	0.00043	M	alpha-D-Galactose 1-phosphate	Cucumis melo	5	12	12						0
+2.7.7.9	7e-05	M	UTP	Escherichia coli	3	7	182						0
+2.7.8.41	0.001	M	Phosphatidylglycerol	Saccharomyces cerevisiae	6	2	2						0
+2.7.8.5	0.00032	M	sn-Glycerol 3-phosphate	Escherichia coli	3	2	8						0
+2.7.8.7	2.266e-05	M	Apo-[acyl-carrier protein]	Bacillus subtilis	4	19	47	0.5223333	s^(-1)	Bacillus subtilis	4	19	40
+3.1.3.1	1.76e-05	M	4-Nitrophenyl phosphate	Escherichia coli	3	85	154	3.8	s^(-1)	Escherichia coli	3	85	85
+3.1.3.2	9e-06	M	3'-CMP	Escherichia coli	3	20	143	27.0	s^(-1)	Escherichia coli	3	20	71
+3.1.3.4	0.00015	M	Sphinganine 1-phosphate	Rattus norvegicus	6	9	9						0
+3.1.3.5	2.6e-06	M	5'-AMP	Mycoplasma fermentans	1	10	126	4.9	s^(-1)	Escherichia coli	3	19	24
+3.1.3.7	3.2e-05	M	Adenosine 3',5'-bisphosphate	Mycoplasma pneumoniae	0	1	19	0.75	s^(-1)	Mycoplasma pneumoniae	0	1	4
+3.1.3.89	0.00209	M	4-Nitrophenyl phosphate	Escherichia coli	3	1	6	1.1	s^(-1)	Saccharomyces cerevisiae	6	5	5
+3.1.3.91	4.8e-05	M	CMP	Drosophila melanogaster	5	3	6	6.3	s^(-1)	Drosophila melanogaster	5	3	6
+3.1.3.97	1.4e-05	M	Cytidine bisphosphate	Chromobacterium violaceum	5	12	12	7.1	s^(-1)	Chromobacterium violaceum	5	12	12
+3.1.4.2	0.0004	M	Glycerophosphoglycerol	Escherichia coli	3	7	11						0
+3.1.4.46	0.0002	M	Glycerophosphoglycerol	Escherichia coli	3	5	5						0
+3.5.3.6	0.0003	M	L-Arginine	Mycoplasma arginini	1	12	28	29.0	s^(-1)	Mycoplasma arthritidis	1	1	14
+3.5.4.5	5.1e-05	M	2'-Deoxycytidine	Homo sapiens	6	23	23						0
+3.5.4.9	7.4e-05	M	5,10-Methenyltetrahydrofolate	Oryctolagus cuniculus	5	3	3	8700.0	s^(-1)	Sus scrofa	5	2	2
+3.6.1.1	2.33e-05	M	Mg2+	Vigna radiata	5	32	39	314.6	s^(-1)	Chlamydomonas reinhardtii	5	23	23
+3.6.1.15	0.00033	M	ATP	SARS coronavirus	5	12	18	10.5	s^(-1)	SARS coronavirus	5	12	18
+3.6.1.5	9.5e-05	M	ADP	Sus scrofa	5	22	85	0.039	s^(-1)	Arabidopsis thaliana	5	5	16
+3.6.1.8	0.00037	M	dATP	Escherichia coli	3	5	27	0.9633333	s^(-1)	Escherichia coli	3	5	27
+4.1.1.85	0.0005	M	3-Dehydro-L-gulonate 6-phosphate	Escherichia coli	3	23	23	1.4	s^(-1)	Escherichia coli	3	23	23
+4.1.2.13	0.00023	M	D-Fructose 1,6-bisphosphate	Escherichia coli	3	81	464	1.5	s^(-1)	Escherichia coli	3	76	229
+4.1.2.4	0.057	M	2-Deoxy-D-ribose	Escherichia coli	3	8	18	0.21	s^(-1)	Escherichia coli	3	8	8
+4.2.1.11	0.0001	M	2-Phospho-D-glycerate	Escherichia coli	3	2	344	107.5	s^(-1)	Bacillus subtilis	4	1	58
+5.1.3.1	0.0039	M	D-Ribulose 5-phosphate	Escherichia coli	3	4	9	240.0	s^(-1)	Escherichia coli	3	4	15
+5.1.3.2	0.00014	M	UDP-D-galactose	Escherichia coli	3	3	47	23.9	s^(-1)	Escherichia coli	3	6	32
+5.1.3.4	9.1e-05	M	L-Ribulose 5-phosphate	Escherichia coli	3	17	17	0.737	s^(-1)	Escherichia coli	3	22	22
+5.3.1.1	0.0028	M	Glycerone phosphate	Escherichia coli	3	2	131	866.6667	s^(-1)	Oryctolagus cuniculus	5	80	89
+5.3.1.6	0.00089	M	D-Ribose 5-phosphate	Escherichia coli	3	13	23	52.0	s^(-1)	Escherichia coli	3	5	15
+5.3.1.8	0.0021	M	D-Mannose 6-phosphate	Pseudomonas aeruginosa	5	19	23	0.076	s^(-1)	Pseudomonas aeruginosa	5	1	2
+5.3.1.9	0.003	M	D-Glucose 6-phosphate	Escherichia coli	3	2	254	16.0	s^(-1)	Geobacillus stearothermophilus	5	55	66
+5.4.2.11	0.0002	M	3-Phospho-D-glycerate	Escherichia coli	3	2	100	330.0	s^(-1)	Escherichia coli	3	2	31
+5.4.2.12	0.00021	M	3-Phospho-D-glycerate	Escherichia coli	3	2	21	22.0	s^(-1)	Escherichia coli	3	2	10
+5.4.2.2	4.25e-05	M	alpha-D-Glucose 1-phosphate	Bacillus subtilis	4	13	118	135.0	s^(-1)	Acetobacter xylinus	5	3	13
+5.4.2.7	0.00013	M	alpha-D-Ribose 1-phosphate	Homo sapiens	6	19	19						0
+6.1.1.1	3.76e-05	M	L-beta-(5-Hydroxy-2-pyridyl)-alanine	Escherichia coli	3	4	27	0.74	s^(-1)	Escherichia coli	3	4	23
+6.1.1.10	1e-06	M	tRNA(Met)	Enterococcus faecalis	5	15	15	0.0174	s^(-1)	Acanthamoeba polyphaga mimivirus	5	3	3
+6.1.1.12	2.2e-05	M	L-Aspartate	Escherichia coli	3	2	118	6.8	s^(-1)	Escherichia coli	3	2	76
+6.1.1.14	5.5e-06	M	tRNA(Gly)	Homo sapiens	6	6	6	0.09	s^(-1)	Homo sapiens	6	4	4
+6.1.1.15	0.00029	M	L-Proline	Escherichia coli	3	5	35	1.7	s^(-1)	Escherichia coli	3	5	33
+6.1.1.16	0.00037	M	ATP	Escherichia coli	3	39	56	0.35	s^(-1)	Escherichia coli	3	39	39
+6.1.1.17	2.3e-07	M	L-Glutamate	Escherichia coli	3	22	33	6.5	s^(-1)	Escherichia coli	3	24	35
+6.1.1.19	3.4e-06	M	L-Arginine	Escherichia coli	3	6	90	1.1	s^(-1)	Cricetulus griseus	5	72	84
+6.1.1.2	7.4e-05	M	L-Tryptophan	Escherichia coli	3	43	54	2.0	s^(-1)	Escherichia coli	3	43	50
+6.1.1.20	1.9e-06	M	L-Phenylalanine	Escherichia coli	3	1	2						0
+6.1.1.21	2e-05	M	L-Histidine	Escherichia coli	3	37	55	1.0	s^(-1)	Escherichia coli	3	36	36
+6.1.1.23	2.76e-06	M	tRNA(Asn)	Chlamydia trachomatis	5	2	2						0
+6.1.1.24	6.5e-07	M	tRNA(Gln)	Bacillus subtilis	4	3	3	0.04	s^(-1)	Bacillus subtilis	4	3	3
+6.1.1.3	0.000387	M	ATP	Escherichia coli	3	4	4	90.0	s^(-1)	Escherichia coli	3	4	4
+6.1.1.5	0.0004	M	ATP	Escherichia coli	3	6	15	2.64	s^(-1)	Pseudomonas fluorescens	5	3	3
+6.1.1.6	8.8e-05	M	ATP	Bacillus subtilis	4	4	19	5.3	s^(-1)	Cricetulus griseus	5	11	15
+6.1.1.9	4.7e-05	M	L-Valine	Escherichia coli	3	10	30	1.5	s^(-1)	Escherichia coli	3	12	37
+6.3.1.5	0.00028	M	Deamino-NAD+	Bacillus subtilis	4	5	5						0
+6.3.3.2	0.0001645	M	5-Formyltetrahydrofolate	Mycoplasma pneumoniae	0	6	12	1.0	s^(-1)	Mycoplasma pneumoniae	0	6	7
+6.3.4.16 2.1.3.3	0.013	M	L-Ornithine	Homo sapiens	6	4	4						0
+6.3.4.21	3.82e-05	M	5-Phospho-alpha-D-ribose 1-diphosphate	Homo sapiens	6	4	4	0.25	s^(-1)	Homo sapiens	6	4	4
+6.3.4.3	9.4e-05	M	ATP	Pisum sativum	5	14	14	4.4	s^(-1)	Leishmania major	5	3	3
+6.3.5.1	0.0004	M	ATP	Homo sapiens	6	11	11						0
+6.3.5.7	2.51e-05	M	L-Glutamine	Streptococcus pyogenes	5	7	7	0.3	s^(-1)	Streptococcus pyogenes	5	10	10
+7.1.2.2	0.00095	M	ATP	Bacillus subtilis	4	2	9	300.0	s^(-1)	Saccharomyces cerevisiae	6	1	1

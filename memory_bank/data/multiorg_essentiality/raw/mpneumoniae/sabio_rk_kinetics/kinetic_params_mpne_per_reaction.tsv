@@ -1,0 +1,102 @@
+rxn_id	kegg_rid	rxn_name	ec_number	km_value	km_unit	km_substrate	km_organism	kcat_value	kcat_unit	kcat_organism	source
+RR00106	R00150	ATP:carbamate phosphotransferase	2.7.2.2	0.0002	M	ADP	Mycoplasma arthritidis	730.0	s^(-1)	Enterococcus faecalis	SABIO-RK
+RR00111	R00158	ATP:UMP phosphotransferase	2.7.4.14	0.00036	M	1-beta-D-Arabinofuranosylcytosine 5'-monophosphate	Escherichia coli	217.0	s^(-1)	Dictyostelium discoideum	SABIO-RK
+RR00111	R00158	ATP:UMP phosphotransferase	2.7.4.22	0.00024	M	ATP	Escherichia coli	175.0	s^(-1)	Streptococcus pneumoniae	SABIO-RK
+RR00111	R00158	ATP:UMP phosphotransferase	2.7.4.4	0.00094	M	CMP	Homo sapiens				SABIO-RK
+RR00146	R00289	UTP:alpha-D-glucose-1-phosphate uridylyltransferase	2.7.7.64	0.00043	M	alpha-D-Galactose 1-phosphate	Cucumis melo				SABIO-RK
+RR00146	R00289	UTP:alpha-D-glucose-1-phosphate uridylyltransferase	2.7.7.9	7e-05	M	UTP	Escherichia coli				SABIO-RK
+RR00147	R00291	UDPglucose 4-epimerase	5.1.3.2	0.00014	M	UDP-D-galactose	Escherichia coli	23.9	s^(-1)	Escherichia coli	SABIO-RK
+RR00157	R00315	ATP:acetate phosphotransferase	2.7.2.1	6e-05	M	GTP	Escherichia coli	216.0	s^(-1)	Methanosarcina thermophila	SABIO-RK
+RR00157	R00315	ATP:acetate phosphotransferase	2.7.2.15	0.00233	M	Propanoate	Salmonella typhimurium	125.0	s^(-1)	Salmonella typhimurium	SABIO-RK
+RR00171	R00332	ATP:GMP phosphotransferase	2.7.4.8	5.06e-05	M	ATP	Arabidopsis thaliana	3.9	s^(-1)	Arabidopsis thaliana	SABIO-RK
+RR00268	R00512	ATP:CMP phosphotransferase	2.7.4.14	0.00036	M	1-beta-D-Arabinofuranosylcytosine 5'-monophosphate	Escherichia coli	217.0	s^(-1)	Dictyostelium discoideum	SABIO-RK
+RR00268	R00512	ATP:CMP phosphotransferase	2.7.4.25	0.0019	M	UMP	Escherichia coli	0.73	s^(-1)	Escherichia coli	SABIO-RK
+RR00275	R11519	Formate:NAD+ oxidoreductase	1.3.7.13								SABIO-RK_no_data
+RR00362	R00658	2-Phospho-D-glycerate hydro-lyase	4.2.1.11	0.0001	M	2-Phospho-D-glycerate	Escherichia coli	107.5	s^(-1)	Bacillus subtilis	SABIO-RK
+RR00404	R00703	(S)-Lactate:NAD+ oxidoreductase	1.1.1.27	0.001	M	Pyruvate	Lactococcus lactis subsp. lactis	30.0	s^(-1)	Toxoplasma gondii	SABIO-RK
+RR00452	R00758	D-Mannitol-1-phosphate:NAD+ 5-oxidoreductase	1.1.1.17	6e-05	M	NAD+	Streptococcus mutans	125.0	s^(-1)	Aspergillus fumigatus	SABIO-RK
+RR00464	R02740	D-Glucose-6-phosphate ketol-isomerase	5.3.1.9	0.003	M	D-Glucose 6-phosphate	Escherichia coli	16.0	s^(-1)	Geobacillus stearothermophilus	SABIO-RK
+RR00465	R01819	D-Mannose-6-phosphate ketol-isomerase	5.3.1.8	0.0021	M	D-Mannose 6-phosphate	Pseudomonas aeruginosa	0.076	s^(-1)	Pseudomonas aeruginosa	SABIO-RK
+RR00521	R00846	sn-Glycerol-3-phosphate:oxygen 2-oxidoreductase	1.1.3.21	0.0055	M	sn-Glycerol 3-phosphate	Mycoplasma pneumoniae	4.2	s^(-1)	Mycoplasma pneumoniae	SABIO-RK
+RR00590	R00936	5,6,7,8-Tetrahydrofolate:NAD+ oxidoreductase	1.5.1.3	3e-06	M	NADPH	Escherichia coli	4.5	s^(-1)	Escherichia coli	SABIO-RK
+RR00598	R00945	5,10-Methylenetetrahydrofolate:glycine hydroxymethyltransferase	2.1.2.1	0.00015	M	L-Serine	Escherichia coli	4.296667	s^(-1)	Escherichia coli	SABIO-RK
+RR00617	R00966	UMP:pyrophosphate phosphoribosyltransferase	2.4.2.9	2e-05	M	5-Phospho-alpha-D-ribose 1-diphosphate	Escherichia coli	0.05	s^(-1)	Escherichia coli	SABIO-RK
+RR00652	R01015	D-Glyceraldehyde-3-phosphate ketol-isomerase	5.3.1.1	0.0028	M	Glycerone phosphate	Escherichia coli	866.6667	s^(-1)	Oryctolagus cuniculus	SABIO-RK
+RR00662	R01030	sn-Glycero-3-phosphocholine glycerophosphohydrolase	3.1.4.2	0.0004	M	Glycerophosphoglycerol	Escherichia coli				SABIO-RK
+RR00662	R01030	sn-Glycero-3-phosphocholine glycerophosphohydrolase	3.1.4.46	0.0002	M	Glycerophosphoglycerol	Escherichia coli				SABIO-RK
+RR00667	R01041	Glycerol:NAD+ oxidoreductase	1.1.1.2	0.009	M	1-Pentanol	Escherichia coli	0.003333333	s^(-1)	Escherichia coli	SABIO-RK
+RR00667	R01041	Glycerol:NAD+ oxidoreductase	1.1.1.21	0.0026	M	D-Glucuronate	Oryctolagus cuniculus	10.2	s^(-1)	Candida intermedia	SABIO-RK
+RR00667	R01041	Glycerol:NAD+ oxidoreductase	1.1.1.372	1.8e-05	M	Glyceraldehyde	Homo sapiens	3.06	s^(-1)	Homo sapiens	SABIO-RK
+RR00667	R01041	Glycerol:NAD+ oxidoreductase	1.1.1.72	0.0009	M	Diacetyl	Trichoderma reesei	11.0	s^(-1)	Trichoderma reesei	SABIO-RK
+RR00681	R01056	D-Ribose-5-phosphate ketol-isomerase	5.3.1.6	0.00089	M	D-Ribose 5-phosphate	Escherichia coli	52.0	s^(-1)	Escherichia coli	SABIO-RK
+RR00682	R01057	D-Ribose 1,5-phosphomutase	5.4.2.2	4.25e-05	M	alpha-D-Glucose 1-phosphate	Bacillus subtilis	135.0	s^(-1)	Acetobacter xylinus	SABIO-RK
+RR00682	R01057	D-Ribose 1,5-phosphomutase	5.4.2.7	0.00013	M	alpha-D-Ribose 1-phosphate	Homo sapiens				SABIO-RK
+RR00685	R01061	D-Glyceraldehyde-3-phosphate:NAD+ oxidoreductase(phosphorylating)	1.2.1.12	0.00089	M	D-Glyceraldehyde 3-phosphate	Escherichia coli	0.1	s^(-1)	Escherichia coli	SABIO-RK
+RR00685	R01061	D-Glyceraldehyde-3-phosphate:NAD+ oxidoreductase(phosphorylating)	1.2.1.59	0.0057	M	NAD+	Bacillus subtilis	8.0	s^(-1)	Bacillus subtilis	SABIO-RK
+RR00689	R01067	transketolase	2.2.1.1	0.01	M	Glyceraldehyde	Escherichia coli	0.0186	s^(-1)	Spinacia oleracea	SABIO-RK
+RR00690	R01068	D-Fructose-1,6-bisphosphate D-glyceraldehyde-3-phosphate-lyase	4.1.2.13	0.00023	M	D-Fructose 1,6-bisphosphate	Escherichia coli	1.5	s^(-1)	Escherichia coli	SABIO-RK
+RR00771	R01220	5,10-Methylenetetrahydrofolate:NADP+ oxidoreductase	1.5.1.5	0.0003	M	NADP+	Escherichia coli	113.0	s^(-1)	Photobacterium phosphoreum	SABIO-RK
+RR00779	R01229	GMP:pyrophosphate phosphoribosyltransferase	2.4.2.22	9.08e-05	M	Hypoxanthine	Escherichia coli	112.0	s^(-1)	Escherichia coli	SABIO-RK
+RR00779	R01229	GMP:pyrophosphate phosphoribosyltransferase	2.4.2.8	3.24e-05	M	5-Phospho-alpha-D-ribose 1-diphosphate	Trypanosoma cruzi	3.98	s^(-1)	Thermoanaerobacter tengcongensis	SABIO-RK
+RR00902	R01655	5,10-Methenyltetrahydrofolate 5-hydrolase(decyclizing)	3.5.4.9	7.4e-05	M	5,10-Methenyltetrahydrofolate	Oryctolagus cuniculus	8700.0	s^(-1)	Sus scrofa	SABIO-RK
+RR00910	R01665	ATP:dCMP phosphotransferase	2.7.4.14	0.00036	M	1-beta-D-Arabinofuranosylcytosine 5'-monophosphate	Escherichia coli	217.0	s^(-1)	Dictyostelium discoideum	SABIO-RK
+RR00910	R01665	ATP:dCMP phosphotransferase	2.7.4.25	0.0019	M	UMP	Escherichia coli	0.73	s^(-1)	Escherichia coli	SABIO-RK
+RR00952	R01724	Nicotinate D-ribonucleotide:pyrophosphate phosphoribosyltransferase	6.3.4.21	3.82e-05	M	5-Phospho-alpha-D-ribose 1-diphosphate	Homo sapiens	0.25	s^(-1)	Homo sapiens	SABIO-RK
+RR01018	R08575	Sedoheptulose-7-phosphate:D-glyceraldehyde-3-phosphateglyceronetransferase	2.2.1.2								SABIO-RK_no_data
+RR01052	R01876	Uridine:orthophosphate ribosyltransferase	2.4.2.2								SABIO-RK_no_data
+RR01052	R01876	Uridine:orthophosphate ribosyltransferase	2.4.2.3	0.000213	M	5-Fluorouridine	Homo sapiens				SABIO-RK
+RR01146	R02089	ATP:deoxyadenosine 5&apos;-phosphotransferase	2.7.1.145	4.7e-06	M	Thymidine	Drosophila melanogaster	16.5	s^(-1)	Drosophila melanogaster	SABIO-RK
+RR01146	R02089	ATP:deoxyadenosine 5&apos;-phosphotransferase	2.7.1.76	2.1e-05	M	CTP	Mycoplasma mycoides	0.84	s^(-1)	Mycoplasma mycoides	SABIO-RK
+RR01147	R02090	ATP:dGMP phosphotransferase	2.7.4.12								SABIO-RK_no_data
+RR01147	R02090	ATP:dGMP phosphotransferase	2.7.4.8	5.06e-05	M	ATP	Arabidopsis thaliana	3.9	s^(-1)	Arabidopsis thaliana	SABIO-RK
+RR01151	R02094	ATP:dTMP phosphotransferase	2.7.4.12								SABIO-RK_no_data
+RR01151	R02094	ATP:dTMP phosphotransferase	2.7.4.9	4e-05	M	ATP	Escherichia coli	10.5	s^(-1)	Escherichia coli	SABIO-RK
+RR01155	R02098	ATP:dUMP phosphotransferase	2.7.4.4	0.00094	M	CMP	Homo sapiens				SABIO-RK
+RR01155	R02098	ATP:dUMP phosphotransferase	2.7.4.9	4e-05	M	ATP	Escherichia coli	10.5	s^(-1)	Escherichia coli	SABIO-RK
+RR01158	R02101	5,10-Methylenetetrahydrofolate:dUMP C-methyltransferase	2.1.1.45	5.8e-05	M	dUMP	Escherichia coli	0.39	s^(-1)	Escherichia coli	SABIO-RK
+RR01184	R02147	Guanosine:orthophosphate ribosyltransferase	2.4.2.1	0.00011	M	Adenine	Escherichia coli	1.44	s^(-1)	Plasmodium falciparum	SABIO-RK
+RR01184	R02147	Guanosine:orthophosphate ribosyltransferase	2.4.2.15								SABIO-RK_no_data
+RR01236	R02235	Dihydrofolate:NAD+ oxidoreductase	1.5.1.3	3e-06	M	NADPH	Escherichia coli	4.5	s^(-1)	Escherichia coli	SABIO-RK
+RR01416	R02484	Deoxyuridine:orthophosphate ribosyltransferase	2.4.2.2								SABIO-RK_no_data
+RR01416	R02484	Deoxyuridine:orthophosphate ribosyltransferase	2.4.2.3	0.000213	M	5-Fluorouridine	Homo sapiens				SABIO-RK
+RR01416	R02484	Deoxyuridine:orthophosphate ribosyltransferase	2.4.2.4	0.000433	M	5-Fluorodeoxyuridine	Homo sapiens				SABIO-RK
+RR01475	R02557	Deoxyadenosine:orthophosphate ribosyltransferase	2.4.2.1	0.00011	M	Adenine	Escherichia coli	1.44	s^(-1)	Plasmodium falciparum	SABIO-RK
+RR01487	R02569	Acetyl-CoA:dihydrolipoamide S-acetyltransferase	2.3.1.12	0.005	M	Dihydrolipoamide	Enterococcus faecalis				SABIO-RK
+RR01592	R02749	2-Deoxy-D-ribose 1-phosphate 1,5-phosphomutase	5.4.2.7	0.00013	M	alpha-D-Ribose 1-phosphate	Homo sapiens				SABIO-RK
+RR01850	R03244	L-Xylose 5-phosphate 3-epimerase	5.1.3.22								SABIO-RK_no_data
+RR03195	R05850	L-ribulose-5-phosphate 4-epimerase	5.1.3.4	9.1e-05	M	L-Ribulose 5-phosphate	Escherichia coli	0.737	s^(-1)	Escherichia coli	SABIO-RK
+RR03512	R00190	AMP:pyrophosphate phosphoribosyltransferase	2.4.2.7	3e-07	M	Adenine	Mycoplasma mycoides				SABIO-RK
+RR03544	R00228	Acetaldehyde:NAD+ oxidoreductase (CoA-acetylating)	1.2.1.10	0.000561	M	NADP+	Burkholderia xenovorans LB400	11.2	s^(-1)	Burkholderia xenovorans LB400	SABIO-RK
+RR03546	R00230	Acetyl-CoA:orthophosphate acetyltransferase	2.3.1.8	0.0017	M	Acetyl phosphate	Escherichia coli	1.56	s^(-1)	Escherichia coli	SABIO-RK
+RR03649	R01398	Carbamoyl-phosphate:L-ornithine carbamoyltransferase	2.1.3.3	0.0023	M	Carbamoyl phosphate	Mycoplasma arthritidis	1.333333	s^(-1)	Escherichia coli	SABIO-RK
+RR03675	R01512	ATP:3-phospho-D-glycerate 1-phosphotransferase	2.7.2.3	0.00024	M	ATP	Escherichia coli	555.0	s^(-1)	Escherichia coli	SABIO-RK
+RR03680	R01517	GTP:3-phospho-D-glycerate 1-phosphotransferase	2.7.2.10	0.000547	M	3-Phospho-D-glycerate	Entamoeba histolytica				SABIO-RK
+RR03681	R01518	2-Phospho-D-glycerate 2,3-phosphomutase	5.4.2.11	0.0002	M	3-Phospho-D-glycerate	Escherichia coli	330.0	s^(-1)	Escherichia coli	SABIO-RK
+RR03681	R01518	2-Phospho-D-glycerate 2,3-phosphomutase	5.4.2.12	0.00021	M	3-Phospho-D-glycerate	Escherichia coli	22.0	s^(-1)	Escherichia coli	SABIO-RK
+RR03691	R01529	D-Ribulose-5-phosphate 3-epimerase	5.1.3.1	0.0039	M	D-Ribulose 5-phosphate	Escherichia coli	240.0	s^(-1)	Escherichia coli	SABIO-RK
+RR03698	R01547	ATP:dAMP phosphotransferase	2.7.4.11	0.000454	M	dAMP	Homo sapiens				SABIO-RK
+RR03698	R01547	ATP:dAMP phosphotransferase	2.7.4.3	9.2e-05	M	ADP	Escherichia coli	0.07333333	s^(-1)	Bacillus subtilis	SABIO-RK
+RR03709	R01561	Adenosine:orthophosphate ribosyltransferase	2.4.2.1	0.00011	M	Adenine	Escherichia coli	1.44	s^(-1)	Plasmodium falciparum	SABIO-RK
+RR03717	R01570	Thymidine:orthophosphate deoxyribosyltransferase	2.4.2.2								SABIO-RK_no_data
+RR03717	R01570	Thymidine:orthophosphate deoxyribosyltransferase	2.4.2.4	0.000433	M	5-Fluorodeoxyuridine	Homo sapiens				SABIO-RK
+RR03769	R01641	Sedoheptulose-7-phosphate:D-glyceraldehyde-3-phosphateglycolaldehyde transferase	2.2.1.1	0.01	M	Glyceraldehyde	Escherichia coli	0.0186	s^(-1)	Spinacia oleracea	SABIO-RK
+RR03808	R01967	ATP:deoxyguanosine 5&apos;-phosphotransferase	2.7.1.113	2e-05	M	Deoxyguanosine	Mycoplasma mycoides	0.61	s^(-1)	Mycoplasma mycoides	SABIO-RK
+RR03808	R01967	ATP:deoxyguanosine 5&apos;-phosphotransferase	2.7.1.145	4.7e-06	M	Thymidine	Drosophila melanogaster	16.5	s^(-1)	Drosophila melanogaster	SABIO-RK
+RR03810	R01969	Deoxyguanosine:orthophosphate ribosyltransferase	2.4.2.1	0.00011	M	Adenine	Escherichia coli	1.44	s^(-1)	Plasmodium falciparum	SABIO-RK
+RR03810	R01969	Deoxyguanosine:orthophosphate ribosyltransferase	2.4.2.4	0.000433	M	5-Fluorodeoxyuridine	Homo sapiens				SABIO-RK
+RR03873	R03005	ATP:nicotinamide-nucleotide adenylyltransferase	2.7.7.1	0.0007	M	Nicotinamide nucleotide	Escherichia coli	0.6	s^(-1)	Methanothermobacter thermautotrophicus	SABIO-RK
+RR03873	R03005	ATP:nicotinamide-nucleotide adenylyltransferase	2.7.7.18	6.77e-05	M	Nicotinate D-ribonucleotide	Homo sapiens	6.9	s^(-1)	Homo sapiens	SABIO-RK
+RR04369	R02016	TRDR	1.8.1.9	3.6e-06	M	Oxidized thioredoxin	Escherichia coli	20.83333	s^(-1)	Escherichia coli	SABIO-RK
+RR08593	R00086	ATP synthase (four protons for one ATP)	3.6.1.15	0.00033	M	ATP	SARS coronavirus	10.5	s^(-1)	SARS coronavirus	SABIO-RK
+RR08593	R00086	ATP synthase (four protons for one ATP)	3.6.1.5	9.5e-05	M	ADP	Sus scrofa	0.039	s^(-1)	Arabidopsis thaliana	SABIO-RK
+RR08593	R00086	ATP synthase (four protons for one ATP)	3.6.1.8	0.00037	M	dATP	Escherichia coli	0.9633333	s^(-1)	Escherichia coli	SABIO-RK
+RR08593	R00086	ATP synthase (four protons for one ATP)	7.1.2.2	0.00095	M	ATP	Bacillus subtilis	300.0	s^(-1)	Saccharomyces cerevisiae	SABIO-RK
+RR08879	R00127	adenylate kinase	2.7.4.3	9.2e-05	M	ADP	Escherichia coli	0.07333333	s^(-1)	Bacillus subtilis	SABIO-RK
+RR08939	R00959	phosphoglucomutase	5.4.2.2	4.25e-05	M	alpha-D-Glucose 1-phosphate	Bacillus subtilis	135.0	s^(-1)	Acetobacter xylinus	SABIO-RK
+RR08939	R00959	phosphoglucomutase	5.4.2.5								SABIO-RK_no_data
+RR09342	R01698	2-oxoglutarate dehydrogenase, lipoamidedehydrogenase compone	1.8.1.4	0.0001412	M	NAD+	Escherichia coli	95.2	s^(-1)	Escherichia coli	SABIO-RK
+RR09769	R07677	ascorbate hydrolase									no_ec_in_KEGG
+RR09795	R01512	dATP:3-phospho-D-glycerate 1-phosphotransferase	2.7.2.3	0.00024	M	ATP	Escherichia coli	555.0	s^(-1)	Escherichia coli	SABIO-RK
+RR09796	R01517	dGTP:3-phospho-D-glycerate 1-phosphotransferase	2.7.2.10	0.000547	M	3-Phospho-D-glycerate	Entamoeba histolytica				SABIO-RK
+RR09857	R01309	phosphatidylcholine avylhydrolase (Mpn)	3.1.1.5								SABIO-RK_no_data
+RR09889	R00281	NADH oxidase (H2O-forming)									no_ec_in_KEGG
