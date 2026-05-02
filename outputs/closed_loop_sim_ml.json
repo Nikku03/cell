@@ -1,0 +1,235 @@
+{
+  "method": "closed_loop_cell_sim_plus_online_ml_dual_organism",
+  "syn3a_phase_A": {
+    "n_genes": 455,
+    "features_used": [
+      "adp_drop_abs",
+      "atp_adp_ratio_ko",
+      "atp_adp_ratio_wt",
+      "atp_drop_abs",
+      "atp_drop_frac",
+      "confidence",
+      "events_drop_frac",
+      "fm_catalysis_silenced",
+      "fm_dna_replication_blocked",
+      "fm_essential_metabolite_depletion",
+      "fm_membrane_integrity",
+      "fm_none",
+      "fm_transcription_stall",
+      "fm_translation_stall",
+      "folded_fraction_drop",
+      "folded_fraction_ko",
+      "gc",
+      "has_ann_signal",
+      "has_cv_signal",
+      "has_traj_signal",
+      "has_ttf",
+      "is_hypothetical",
+      "is_putative",
+      "is_uncharacterized",
+      "kw_atp",
+      "kw_dehydrogenase",
+      "kw_kinase",
+      "kw_membrane",
+      "kw_replication",
+      "kw_synthase",
+      "kw_transcription",
+      "kw_translation",
+      "log_length_bp",
+      "log_ttf",
+      "n_samples",
+      "nadh_ko",
+      "ntp_total_drop",
+      "ntp_total_ko",
+      "total_complexes_ko",
+      "total_events_ko",
+      "total_events_wt",
+      "v15_call"
+    ],
+    "class_balance": {
+      "essential": 383,
+      "nonessential": 72
+    },
+    "v15_live_mcc": 0.5049609702033635,
+    "v15_live_confusion": {
+      "tp": 286,
+      "fp": 6,
+      "tn": 66,
+      "fn": 97
+    },
+    "ml_streaming_mcc": 0.42342378808995496,
+    "ml_streaming_curve": [
+      {
+        "n_seen": 21,
+        "mcc": 0.10526315789473684
+      },
+      {
+        "n_seen": 35,
+        "mcc": 0.16339011369947534
+      },
+      {
+        "n_seen": 49,
+        "mcc": 0.20672455764868078
+      },
+      {
+        "n_seen": 63,
+        "mcc": 0.2458445859472208
+      },
+      {
+        "n_seen": 77,
+        "mcc": 0.25190968137948344
+      },
+      {
+        "n_seen": 91,
+        "mcc": 0.28136571693556883
+      },
+      {
+        "n_seen": 105,
+        "mcc": 0.31936744575832954
+      },
+      {
+        "n_seen": 119,
+        "mcc": 0.34641765170613964
+      },
+      {
+        "n_seen": 133,
+        "mcc": 0.37042982032592353
+      },
+      {
+        "n_seen": 147,
+        "mcc": 0.38889406258846126
+      },
+      {
+        "n_seen": 161,
+        "mcc": 0.4018187817080398
+      },
+      {
+        "n_seen": 175,
+        "mcc": 0.3990639971934755
+      },
+      {
+        "n_seen": 189,
+        "mcc": 0.4221247026082562
+      },
+      {
+        "n_seen": 203,
+        "mcc": 0.41442123593368524
+      },
+      {
+        "n_seen": 217,
+        "mcc": 0.4167849446134351
+      },
+      {
+        "n_seen": 231,
+        "mcc": 0.39818120916371086
+      },
+      {
+        "n_seen": 245,
+        "mcc": 0.3850377735191843
+      },
+      {
+        "n_seen": 259,
+        "mcc": 0.4005625917595525
+      },
+      {
+        "n_seen": 273,
+        "mcc": 0.39525387204844364
+      },
+      {
+        "n_seen": 287,
+        "mcc": 0.4122971914782249
+      },
+      {
+        "n_seen": 301,
+        "mcc": 0.41175522173715834
+      },
+      {
+        "n_seen": 315,
+        "mcc": 0.41746406966335153
+      },
+      {
+        "n_seen": 329,
+        "mcc": 0.4226590456651154
+      },
+      {
+        "n_seen": 343,
+        "mcc": 0.42740551229112933
+      },
+      {
+        "n_seen": 357,
+        "mcc": 0.4318792822962483
+      },
+      {
+        "n_seen": 371,
+        "mcc": 0.42666778143770445
+      },
+      {
+        "n_seen": 385,
+        "mcc": 0.42233933373593424
+      },
+      {
+        "n_seen": 399,
+        "mcc": 0.4239516435820714
+      },
+      {
+        "n_seen": 413,
+        "mcc": 0.42546139279261525
+      },
+      {
+        "n_seen": 427,
+        "mcc": 0.4318840114813738
+      },
+      {
+        "n_seen": 441,
+        "mcc": 0.42294819419699947
+      },
+      {
+        "n_seen": 455,
+        "mcc": 0.42342378808995496
+      }
+    ],
+    "ml_5fold_cv_mcc": 0.5155621412551643,
+    "ml_5fold_per_fold": [
+      0.42737857001421126,
+      0.35165880032459024,
+      0.5827492350357049,
+      0.627585959087226,
+      0.6032396093724196
+    ],
+    "delta_vs_v15_streaming": -0.08153718211340855,
+    "delta_vs_v15_cv": 0.010601171051800806
+  },
+  "cross_organism_phase_C": {
+    "feature_subset": "annotation_only",
+    "feature_keys": [
+      "log_length_bp",
+      "gc",
+      "is_hypothetical",
+      "is_uncharacterized",
+      "is_putative",
+      "kw_replication",
+      "kw_transcription",
+      "kw_translation",
+      "kw_atp",
+      "kw_membrane",
+      "kw_synthase",
+      "kw_kinase",
+      "kw_dehydrogenase"
+    ],
+    "syn3a_n_train": 455,
+    "mpne_n_test": 614,
+    "mpne_class_balance": {
+      "essential": 427,
+      "nonessential": 187
+    },
+    "syn3a_train_threshold": 0.5499999999999999,
+    "syn3a_train_mcc_for_threshold_tuning": 0.2937951355558655,
+    "syn3a_to_mpne_cross_mcc": 0.20338453052595568,
+    "syn3a_plus_mpne_combined_cv_mpne_portion_mcc": 0.32355648821308003
+  },
+  "caveats": [
+    "Phase A re-runs cell_sim live (~50+ min). Each gene gets a fresh Gillespie KO + v15 detector pass; the ML observes one gene at a time and updates with class-weighted SGD before moving to the next.",
+    "Phase B/C use ONLY annotation features for the cross-organism evaluation. cell_sim does not currently run on M. pneumoniae (Phase D3 gap) so trajectory + knowledge-based detector features are not available for mpne.",
+    "The cross-organism MCC is bounded by what annotation features alone can predict. Below v18 XGBoost cross-organism (which used ESM-2 protein embeddings \u2014 a much richer cross-organism signal than annotation flags)."
+  ]
+}
