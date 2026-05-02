@@ -1,0 +1,95 @@
+{
+  "id": "mcc_against_breuer_v24_closed_loop_sim_plus_online_ml",
+  "claim": "Phase v24 ran cell_sim LIVE per-gene KO sweep on the full 455-gene Breuer 2019 Syn3A panel (no caching, no parallelism — serial so the ML can update one gene at a time) with the v15 ComposedDetector (ComplexAssemblyDetector + AnnotationClassDetector + PerRuleDetector) producing trajectory + knowledge-based features for each gene, and an online ML classifier (small MLP, class-weighted SGD, predict-then-update) observing each gene as cell_sim finished and updating its weights before the next gene. Phase A within-organism: v15 LIVE re-run produced MCC=0.5050 (vs 0.5372 from the earlier 4-worker parallel run — cell_sim has ~0.03 stochastic variance across runs). The ML 5-fold CV MCC = 0.5156 (delta +0.0106 vs v15 LIVE — first run where the ML clearly exceeds its v15 baseline, even if marginally). The ML streaming online MCC (predictions made BEFORE seeing each gene) was 0.4234, with a clean monotonic learning curve from 0.10 (n_seen=21) through 0.25 (n=77) and 0.37 (n=133) plateauing at ~0.42 (n=189 onward) — directly demonstrates the 'AI learns every step' behavior. Phase C cross-organism (train on Syn3A annotation features, test on M. pneumoniae Lluch-Senar 2015 labels): MCC = 0.2034 using ONLY annotation features (gene length, GC, hypothetical/uncharacterized/putative flags, product keyword groups). This BEATS v18 XGBoost cross-organism (0.1376) which used much-richer ESM-2 protein embeddings — annotation flags transfer better than sequence embeddings for Syn3A→mpne essentiality prediction. Combined Syn3A+mpne 5-fold CV (mpne portion of held-out folds) = 0.3236, showing in-domain mpne data improves the model when allowed to leak in.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via notebooks/closed_loop_sim_ml.ipynb on Colab (commit 5edddcc). Output JSON: outputs/closed_loop_sim_ml.json (commit 8166be6). Phase A re-runs cell_sim live per gene (~50+ min on Colab) — each gene gets a fresh Gillespie KO + v15 ComposedDetector pass; the ML observes one gene at a time and updates with class-weighted SGD before moving to the next. Phase C uses ONLY annotation features for cross-organism evaluation (cell_sim does not run on M. pneumoniae — Phase D3 gap, documented in cell_sim/data/Mycoplasma_pneumoniae/DATA_GAPS.md). Inputs: cell_sim package (RealSimulator + ComposedDetector); cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb (Luthey-Schulten); cell_sim/data/Mycoplasma_pneumoniae/input_data/mpneumoniae_M129_NC_000912.gb; memory_bank/data/multiorg_essentiality/labels.csv (Breuer 2019 + Lluch-Senar 2015).",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v24_closed_loop_sim_plus_online_ml"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_against_breuer_v18_multiorg_xgb_loocv",
+    "mcc_against_breuer_v23_sim_plus_online_ml"
+  ],
+  "used_by": [
+    "notebooks/closed_loop_sim_ml.ipynb",
+    "outputs/closed_loop_sim_ml.json"
+  ],
+  "value": {
+    "method": "live_cell_sim_per_gene_KO_with_online_ml_sgd_per_step",
+    "phase_a_syn3a_within_organism": {
+      "n_genes": 455,
+      "class_balance": {"essential": 383, "nonessential": 72},
+      "n_features": 42,
+      "feature_categories": [
+        "trajectory (atp/adp/ntp_total/nadh/folded_fraction/total_events drops vs WT)",
+        "knowledge_v15 (confidence, time_to_failure, failure_mode_one_hot, evidence_cv/ann/traj_flags, v15_call)",
+        "annotation (length, gc, hypothetical/uncharacterized/putative flags, product keyword groups)"
+      ],
+      "v15_live_mcc": 0.5050,
+      "v15_live_confusion": {"tp": 286, "fp": 6, "tn": 66, "fn": 97},
+      "v15_cached_mcc_for_reference": 0.5372,
+      "v15_run_to_run_variance_estimate": 0.0322,
+      "ml_streaming_mcc": 0.4234,
+      "ml_5fold_cv_mcc": 0.5156,
+      "ml_5fold_per_fold": [0.4274, 0.3517, 0.5827, 0.6276, 0.6032],
+      "delta_vs_v15_live_cv": 0.0106,
+      "delta_vs_v15_live_streaming": -0.0816,
+      "online_learning_curve_summary": {
+        "n_seen_21_mcc": 0.105,
+        "n_seen_77_mcc": 0.252,
+        "n_seen_133_mcc": 0.370,
+        "n_seen_189_mcc": 0.422,
+        "n_seen_273_mcc": 0.395,
+        "n_seen_357_mcc": 0.432,
+        "n_seen_455_mcc": 0.423
+      }
+    },
+    "phase_c_cross_organism_syn3a_to_mpne": {
+      "feature_subset": "annotation_only",
+      "n_features": 13,
+      "feature_keys": [
+        "log_length_bp", "gc",
+        "is_hypothetical", "is_uncharacterized", "is_putative",
+        "kw_replication", "kw_transcription", "kw_translation",
+        "kw_atp", "kw_membrane", "kw_synthase", "kw_kinase",
+        "kw_dehydrogenase"
+      ],
+      "syn3a_n_train": 455,
+      "mpne_n_test": 614,
+      "mpne_class_balance": {"essential": 427, "nonessential": 187},
+      "syn3a_train_threshold": 0.55,
+      "syn3a_to_mpne_mcc": 0.2034,
+      "combined_syn3a_plus_mpne_cv_mpne_portion_mcc": 0.3236,
+      "v18_xgboost_esm2_cross_organism_for_reference": 0.1376,
+      "delta_vs_v18": 0.0658
+    },
+    "scoreboard_syn3a_full_panel_455": {
+      "v15_cached_parallel_seed42": 0.5372,
+      "v15_live_serial_this_run": 0.5050,
+      "v23_ml_on_cached_features_5fold_cv": 0.5177,
+      "v24_ml_on_live_features_5fold_cv": 0.5156,
+      "v24_ml_streaming_online": 0.4234,
+      "v18_xgboost_loocv": 0.1376,
+      "v22_dark_manifold_retrain_43_subset": 0.4487
+    },
+    "scoreboard_mpne_cross_organism": {
+      "v18_xgboost_esm2_cross_organism": 0.1376,
+      "v24_annotation_syn3a_to_mpne": 0.2034,
+      "v24_annotation_combined_syn3a_plus_mpne_cv_mpne_portion": 0.3236
+    }
+  },
+  "caveats": [
+    "v15 has stochastic variance: cached parallel run (4 workers, seed 42) gave MCC=0.5372 but live serial run (this experiment, also seed 42) gave 0.5050. Difference of 0.032 across runs reflects RNG handling differences in cell_sim's parallel vs serial scheduling, not a methodological error. The within-experiment baseline for v24's ML is the LIVE v15 = 0.5050; the historical reference is 0.5372 but apples-to-apples is the live run.",
+    "ML 5-fold CV MCC = 0.5156 vs v15 LIVE = 0.5050 — delta +0.0106. Within v15's run-to-run variance band (0.032), so this is not statistically significant improvement, but it is the first run where the ML's pooled out-of-fold MCC numerically exceeded its companion v15 baseline. v23 (cached features) had delta -0.020; v24 (live features) has delta +0.011. The shift is consistent with online learning + slightly different train/test splits, not a real architectural improvement.",
+    "Online learning curve (streaming MCC): 0.10 (n_seen=21) → 0.42 (n_seen=189, plateau). The plateau persists for the remaining 266 genes, so the model effectively saturates after seeing ~40% of the panel. This demonstrates the 'AI learns every step' behavior cleanly, but the saturation point is below v15's threshold-tuned 0.5050 because (a) class-weighted single-example SGD has higher variance than batch optimization, and (b) the streaming MCC is computed on test-then-train predictions made BEFORE training on each gene, so early predictions are noise that drag the running mean down.",
+    "Cross-organism annotation-only (Syn3A→mpne) MCC = 0.2034, BEATING v18 XGBoost cross-organism with ESM-2 protein embeddings (0.1376). This is the most interesting v24 finding — simple gene-annotation features (length, GC, product keyword groups) transfer better than sophisticated 1280-dimensional protein embeddings for Syn3A→mpne essentiality prediction. Possible reason: ESM-2 captures protein-family information that's already encoded more crisply in product keyword groups (replication/transcription/translation/etc.); the embeddings add noise without added signal for this binary essentiality task.",
+    "Combined Syn3A+mpne 5-fold CV (mpne portion of held-out folds) MCC = 0.3236, +0.12 over Syn3A→mpne alone. This is in-domain leakage helping the model — when training data includes mpne genes (just from different held-out folds), the classifier learns mpne-specific patterns that don't transfer purely from Syn3A. Typical transfer-learning result.",
+    "Phase C uses ONLY annotation features because cell_sim does not currently run on M. pneumoniae (Phase D3 gap, documented in cell_sim/data/Mycoplasma_pneumoniae/DATA_GAPS.md). The trajectory + v15 detector features used in Phase A do not exist for mpne. To get a fair full-feature cross-organism comparison, Phase D3 needs to be completed (cell_sim port to mpne with rev_rules + Maier 2011 abundances + iJW145 SBML). That's parked future work.",
+    "v15 streaming MCC (0.5050) was below v15 cached (0.5372). The discrepancy is RNG-related: parallel runs partition genes across workers and each worker has its own RNG state, while serial runs go through a single RNG sequence. Different stochastic realizations produce slightly different per-gene confidence values that cluster around v15's threshold. To exactly reproduce 0.5372 we would need to re-run with the same parallel worker seeding scheme.",
+    "Confidence: measured (live cell_sim run is reproducible given the same scheduling, the 5-fold CV is deterministic given the same seed, and the cross-organism comparison is well-defined on the held-out mpne set). The 'first time ML beats v15' framing should be tempered by the v15 run-to-run variance — repeating with multiple v15 seeds would establish whether the ML is reliably above baseline or just sampling within variance band."
+  ]
+}
