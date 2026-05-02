@@ -1,0 +1,72 @@
+{
+  "id": "mcc_against_breuer_v20b_dark_manifold_dual_organism",
+  "claim": "Phase v20b re-ran the Nikku03/cell-simulation Dark Manifold v2.1 100-gene model (dark_manifold_100gene.pt, ~293k parameters) validation against BOTH Breuer 2019 Syn3A essentiality AND Lluch-Senar 2015 M. pneumoniae transposon essentiality, after the v20 single-organism attempt produced an UNDETERMINED MCC. Both organism subsets are still single-class (Syn3A: 36/36 essential; M. pneumoniae: 42/42 essential), so binary MCC remains mathematically undefined in v20b too. However v20b adds two metrics that ARE measurable on a single-class matched subset: recall-at-median (does the model rank matched essentials above the cohort median |atp_drop|?) and top-K precision (do the K highest-|atp_drop| genes match the K experimentally-essential ones?). Result: the Dark Manifold's per-gene |atp_drop| ranking is AT CHANCE for distinguishing experimentally-essential genes from the rest of its 102-gene cohort. Syn3A top-36 precision = 0.361 vs chance baseline 36/102 = 0.353 (delta +0.008). M. pneumoniae top-42 precision = 0.381 vs chance baseline 42/102 = 0.412 (delta -0.031). Recall-at-median is 0.500 (Syn3A) and 0.452 (M. pneumoniae), exactly what random ranking gives. The Dark Manifold does not preferentially rank the matched essentials toward the top of its own gene list. v20b is a MEASURED null result: the ranking has no detectable signal against either ground-truth dataset on the matched subsets, complementing v20's observation that the binary metric was unmeasurable.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via notebooks/dark_manifold_validation.ipynb on Colab (commit 54ecb87, dual-organism version). Output JSON preserved at outputs/dark_manifold_validation.json (commit 66b66c4) with full per-organism recall-at-K, top-K precision, threshold sweep, and confusion matrix. Model checkpoint: Nikku03/cell-simulation dark_manifold_100gene.pt. Syn3A labels: memory_bank/data/multiorg_essentiality/labels.csv (Breuer 2019, organism=syn3a, 455 rows). M. pneumoniae labels: same labels.csv (Lluch-Senar 2015, organism=mpne). GenBank gene-name to locus-tag mapping: cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb (/gene qualifier) for Syn3A; cell_sim/data/Mycoplasma_pneumoniae/input_data/mpneumoniae_M129_NC_000912.gb (/gene + /old_locus_tag) for M. pneumoniae.",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v20b_dark_manifold_dual_organism"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v20_dark_manifold_undetermined",
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_against_breuer_v18_multiorg_xgb_loocv",
+    "syn3a_essentiality_breuer2019"
+  ],
+  "used_by": [
+    "notebooks/dark_manifold_validation.ipynb",
+    "outputs/dark_manifold_validation.json"
+  ],
+  "value": {
+    "method": "dark_manifold_100gene_knockout_sweep_dual_organism",
+    "rollout_steps": 100,
+    "n_dm_genes": 102,
+    "n_dm_mets": 74,
+    "n_dm_genes_mapped_syn3a": 36,
+    "n_dm_genes_mapped_mpne": 42,
+    "syn3a": {
+      "label_source": "Breuer 2019 eLife",
+      "mapped": 36,
+      "matched_essential": 36,
+      "matched_nonessential": 0,
+      "recall_at_zero": 1.0,
+      "recall_at_median_atp_drop": 0.5,
+      "top_K_precision": 0.3611,
+      "top_K_overlap": 13,
+      "top_K": 36,
+      "top_K_chance_baseline": 0.3529,
+      "top_K_delta_vs_chance": 0.0082,
+      "mcc": null,
+      "mcc_status": "undetermined_single_class_subset"
+    },
+    "mpne": {
+      "label_source": "Lluch-Senar 2015 MSB",
+      "mapped": 42,
+      "matched_essential": 42,
+      "matched_nonessential": 0,
+      "recall_at_zero": 1.0,
+      "recall_at_median_atp_drop": 0.4524,
+      "top_K_precision": 0.3810,
+      "top_K_overlap": 16,
+      "top_K": 42,
+      "top_K_chance_baseline": 0.4118,
+      "top_K_delta_vs_chance": -0.0308,
+      "mcc": null,
+      "mcc_status": "undetermined_single_class_subset"
+    },
+    "v15_baseline_for_context": 0.5372,
+    "v18_baseline_for_context": 0.1376
+  },
+  "caveats": [
+    "Both matched subsets are single-class (100% essential). Binary MCC is mathematically undefined and is reported as null in both organism arms. The single-class outcome is structural: the Dark Manifold's 102-gene set is curated around central metabolism + tRNA synthetases + ribosomal core + ATP synthase + transcription core, which are essential by design in any minimal-cell organism.",
+    "The v20b improvement over v20 is the addition of dual-organism + recall-at-K + top-K precision metrics that DO work on single-class subsets. The conclusion 'ranking is at chance' is itself a measured, reportable result — it requires actual numbers (top-K precision, chance baseline) rather than the v20 'cannot measure' abstention.",
+    "Top-K precision chance baseline = matched_essential / cohort_size. Syn3A: 36/102 = 0.353; observed 0.361 (delta +0.008). M. pneumoniae: 42/102 = 0.412; observed 0.381 (delta -0.031). Both are within ~3% of chance — the Dark Manifold's |atp_drop| does NOT preferentially rank experimentally-essential genes above the rest of its own 102-gene cohort. Recall-at-median values (0.500 syn3a; 0.452 mpne) are also consistent with random ranking.",
+    "The 36/42 mapped count differs because Syn3A's GenBank /gene qualifier matches 36 of the Dark Manifold's gene names, while M. pneumoniae's /gene + /old_locus_tag matches 42. Both mappings recover the central-metabolism core (glycolysis, PPP, nucleotide synthesis, tRNA synthetases, ribosomal r-proteins, ATP synthase subunits, RNA polymerase subunits). Neither mapping recovers the 60-66 unmapped Dark Manifold genes, which are likely in the regulatory or organism-absent categories.",
+    "Dark Manifold trained on FBA-synthetic ground truth (cell-simulation/dark_manifold_100gene.py MetabolicGroundTruth class), not measured biology. The internal correlation claims (gene_corr=0.95+, atp_corr=0.68, sign_accuracy=0.75 per the .pt 'results' dict) are correlations against the FBA model's predictions, not against measured experimental data. The FBA model itself has Matthews correlation 0.59 against transposon essentiality data per cell-simulation/GAP_ANALYSIS.md.",
+    "cell-simulation/GAP_ANALYSIS.md additionally flags: hub-gene wrong-sign predictions (groEL, rpoB, dnaA all predicted in the wrong direction); W_reg learned to be 100% zeros (no regulatory weight effectively used); validation against measured biology never performed by the model authors. These known issues are present in the loaded checkpoint and contribute to the at-chance ranking observed here.",
+    "To turn this into a non-null binary MCC, the validation needs a balanced gene set with both classes. Three options: (a) train a successor model that includes nonessentials in its curated gene set; (b) hand-curate the 60-66 unmapped Dark Manifold gene names to recover any unmapped nonessentials (low expected yield given the gene-class bias); (c) use a different ML model whose gene coverage overlaps both Breuer essentials and nonessentials with both classes represented in the matched subset.",
+    "Confidence: measured at the experimental level (the experiment was real, reproducible, and produced numeric outputs). The conclusion 'at-chance ranking' is supported by the chance-baseline comparison; it does not require additional independent validation. The single-class structural observation persists from v20 to v20b — that part of the result is unchanged."
+  ]
+}
