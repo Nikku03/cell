@@ -182,29 +182,56 @@ class HyperbolicMemoryBank(nn.Module):
         self.memory[indices] = ball
         self.populated[indices] = True
 
-    def retrieve(self, query: torch.Tensor) -> torch.Tensor:
+    def retrieve(self, query: torch.Tensor, chunk_size: int = 512
+                  ) -> torch.Tensor:
         """Retrieve top-k closest memories (hyperbolic distance) for each
         query. query: [N, H] in Euclidean space.
-        Returns: [N, H] Euclidean retrieved-memory vectors."""
+        Returns: [N, H] Euclidean retrieved-memory vectors.
+
+        Memory-efficient: distances are computed in query chunks of
+        `chunk_size` to avoid the [N, M, H] broadcast tensor that would
+        otherwise blow VRAM at large N or M (e.g. N=14000 batched genes ×
+        M=8192 memory slots × H=128 → 58 GB at float32). Algebraically:
+        ||x - y||^2 = ||x||^2 + ||y||^2 - 2⟨x, y⟩, computed via matmul."""
         if not self.populated.any():
             return torch.zeros_like(query)
 
         q_ball = _exp_map_zero(query, c=self.c)              # [N, H]
-        # Only consider populated slots
-        active_idx = self.populated.nonzero(as_tuple=False).squeeze(-1)  # [M_active]
-        active_mem = self.memory[active_idx]                  # [M_active, H]
+        active_idx = self.populated.nonzero(as_tuple=False).squeeze(-1)
+        active_mem = self.memory[active_idx]                  # [M, H]
 
-        N = q_ball.size(0); M = active_mem.size(0)
-        q_b = q_ball.unsqueeze(1).expand(N, M, self.hidden)
-        m_b = active_mem.unsqueeze(0).expand(N, M, self.hidden)
-        dist = _hyperbolic_distance(q_b, m_b, c=self.c)       # [N, M]
+        N = q_ball.size(0); M = active_mem.size(0); H = self.hidden
+        sqrt_c = self.c ** 0.5
+        eps = 1e-5
 
+        # Pre-compute target norms once
+        m_norm = (active_mem ** 2).sum(dim=-1)               # [M]
+        m_norm_clamped = m_norm.clamp(max=1.0 / self.c - eps)
+
+        out = torch.zeros_like(query)
         k = min(self.retrieval_k, M)
-        topk_dist, topk_local = dist.topk(k, dim=-1, largest=False)
-        weights = torch.softmax(-topk_dist, dim=-1)           # [N, k]
-        retrieved_ball = active_mem[topk_local]                # [N, k, H]
-        retrieved = (weights.unsqueeze(-1) * retrieved_ball).sum(dim=1)  # [N, H]
-        return retrieved
+
+        for start in range(0, N, chunk_size):
+            end = min(start + chunk_size, N)
+            qc = q_ball[start:end]                           # [chunk, H]
+            chunk = qc.size(0)
+            q_norm = (qc ** 2).sum(dim=-1, keepdim=True)     # [chunk, 1]
+            q_norm_clamped = q_norm.squeeze(-1).clamp(max=1.0 / self.c - eps)
+
+            # ||q - m||^2 = ||q||^2 + ||m||^2 - 2 q·m
+            cross = qc @ active_mem.T                        # [chunk, M]
+            sqdist = (q_norm + m_norm.unsqueeze(0) - 2.0 * cross).clamp(min=0)
+
+            denom = ((1.0 - self.c * q_norm_clamped).unsqueeze(-1)
+                     * (1.0 - self.c * m_norm_clamped).unsqueeze(0)) + eps
+            arg = (1.0 + 2.0 * self.c * sqdist / denom).clamp(min=1.0 + eps)
+            dist = torch.acosh(arg) / sqrt_c                 # [chunk, M]
+
+            topk_dist, topk_local = dist.topk(k, dim=-1, largest=False)
+            weights = torch.softmax(-topk_dist, dim=-1)      # [chunk, k]
+            retrieved_ball = active_mem[topk_local]          # [chunk, k, H]
+            out[start:end] = (weights.unsqueeze(-1) * retrieved_ball).sum(dim=1)
+        return out
 
 
 # ──────────── self-test ────────────
