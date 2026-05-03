@@ -17,9 +17,7 @@
     "mcc_against_breuer_v32_lnn_pairwise_ranking_loss_lambda_5000"
   ],
   "used_by": [
-    "notebooks/closed_loop_sim_ml.ipynb",
-    "outputs/committee_simulator_lnn_results.json",
-    "cell_sim/layer_ml/checkpoints/essentiality_lnn_committee.pt"
+    "notebooks/closed_loop_sim_ml.ipynb"
   ],
   "value": {
     "method": "committee_voting_v15_simulator_plus_lnn_cross_org_no_syn3a_plus_gb_cross_org",
