@@ -49,6 +49,16 @@ class MultimodalEncoderConfig:
     seq_channels_per_kernel: int = 32
     seq_vocab_size: int = 5     # A, C, G, T, N/pad
 
+    # High-dim pattern capacity: optional multi-head self-attention over the
+    # batch of gene embeddings. Each gene attends to every other gene in the
+    # batch, augmenting the edge-graph message-passing in LiquidStep with
+    # full all-pairs attention. Helps capture organism-wide patterns
+    # (e.g. operonic neighbours, paralog clusters) the edge graph misses.
+    use_multi_head_attention: bool = False
+    attention_heads: int = 8
+    attention_layers: int = 2
+    attention_ff_mult: int = 2
+
 
 class SequenceEncoder(nn.Module):
     """Per-gene CNN encoder over raw nucleotide tokens.
@@ -202,6 +212,24 @@ class MultimodalEncoder(nn.Module):
             nn.Linear(H, H),
         )
 
+        # Optional multi-head self-attention block (Transformer encoder).
+        # Treats the batch of N gene embeddings as a length-N token sequence
+        # so every gene can attend to every other gene in the same forward call.
+        if cfg.use_multi_head_attention:
+            attn_layer = nn.TransformerEncoderLayer(
+                d_model=H,
+                nhead=cfg.attention_heads,
+                dim_feedforward=H * cfg.attention_ff_mult,
+                dropout=cfg.dropout,
+                activation='gelu',
+                batch_first=True,
+                norm_first=True,
+            )
+            self.attention = nn.TransformerEncoder(attn_layer,
+                                                    num_layers=cfg.attention_layers)
+        else:
+            self.attention = None
+
     def forward(self, batch: dict) -> torch.Tensor:
         # Mandatory branches
         s = self.scalar_branch(batch['scalar'])
@@ -240,7 +268,12 @@ class MultimodalEncoder(nn.Module):
         ], dim=-1)
 
         combined = torch.cat([s, r, ki, k, flags], dim=-1)
-        return self.combiner(combined)
+        h = self.combiner(combined)
+
+        if self.attention is not None:
+            # [N, H] -> [1, N, H] -> attend -> [N, H]
+            h = self.attention(h.unsqueeze(0)).squeeze(0)
+        return h
 
 
 # ──────────── self-test ────────────
@@ -350,6 +383,20 @@ def _self_test():
     # Output should not be wildly different from the unpadded version
     print(f'  padded sequence output: mean={out_padded.mean().item():.3f} '
           f'(masked 118/128 positions to pad)')
+
+    # ── multi-head self-attention mode ──
+    print('  ── multi-head self-attention mode ──')
+    attn_cfg = MultimodalEncoderConfig(hidden=64, use_multi_head_attention=True,
+                                        attention_heads=4, attention_layers=2)
+    attn_enc = MultimodalEncoder(attn_cfg)
+    attn_params = sum(p.numel() for p in attn_enc.parameters())
+    print(f'  attn-mode params: {attn_params:,}')
+    out_attn = attn_enc(batch)
+    assert out_attn.shape == (N, attn_cfg.hidden)
+    out_attn.sum().backward()
+    print(f'  attn forward: shape={tuple(out_attn.shape)}, '
+          f'mean={out_attn.mean().item():.3f}, std={out_attn.std().item():.3f}')
+    print('  attn backward: ok')
 
     print('  ALL PASS')
 
