@@ -1,0 +1,139 @@
+{
+  "method": "ppi_predictor_cross_organism",
+  "holdout": "syn3a",
+  "train_orgs": [
+    "styphimurium",
+    "ccrescentus",
+    "saureus",
+    "mtuberculosis",
+    "abaylyi",
+    "mgenitalium",
+    "mpne"
+  ],
+  "epochs": 60,
+  "neg_per_pos": 1.0,
+  "config": {
+    "hidden": 128,
+    "dropout": 0.1,
+    "cross_attn_heads": 8,
+    "cross_attn_layers": 2,
+    "head_hidden": 256,
+    "encoder_cfg": {
+      "n_scalar": 20,
+      "n_regulatory": 50,
+      "n_kinetic": 4,
+      "n_kmer3": 64,
+      "n_kmer4": 256,
+      "hidden": 128,
+      "dropout": 0.1,
+      "use_sequence_encoder": true,
+      "seq_max_len": 2048,
+      "seq_embed_dim": 32,
+      "seq_kernel_sizes": [
+        3,
+        5,
+        7,
+        9
+      ],
+      "seq_channels_per_kernel": 32,
+      "seq_vocab_size": 5,
+      "use_multi_head_attention": true,
+      "attention_heads": 8,
+      "attention_layers": 2,
+      "attention_ff_mult": 2
+    }
+  },
+  "n_params": 763457,
+  "final_loss": NaN,
+  "evals": {
+    "syn3a": {
+      "organism": "syn3a",
+      "mcc_at_best_t": 0.8015207626102907,
+      "best_t": 0.28839444637298584,
+      "auc": 0.9557788393766153,
+      "ap": 0.9584852402034854,
+      "tp": 1040,
+      "fp": 135,
+      "tn": 995,
+      "fn": 90,
+      "n_pos": 1130,
+      "n_neg": 1130
+    },
+    "styphimurium": {
+      "organism": "styphimurium",
+      "mcc_at_best_t": 0.6628708074822929,
+      "best_t": 0.5489894604682922,
+      "auc": 0.910115123119079,
+      "ap": 0.9267707183633468,
+      "tp": 2218,
+      "fp": 137,
+      "tn": 3133,
+      "fn": 1052,
+      "n_pos": 3270,
+      "n_neg": 3270
+    },
+    "ccrescentus": {
+      "organism": "ccrescentus",
+      "mcc_at_best_t": 0.0,
+      "auc": NaN,
+      "ap": NaN,
+      "n_pos": 0,
+      "n_neg": 0
+    },
+    "saureus": {
+      "organism": "saureus",
+      "mcc_at_best_t": 0.0,
+      "auc": NaN,
+      "ap": NaN,
+      "n_pos": 0,
+      "n_neg": 0
+    },
+    "mtuberculosis": {
+      "organism": "mtuberculosis",
+      "mcc_at_best_t": 0.7223428975125338,
+      "best_t": 0.444476664066315,
+      "auc": 0.9251758772669232,
+      "ap": 0.9399797959409754,
+      "tp": 1815,
+      "fp": 185,
+      "tn": 2088,
+      "fn": 458,
+      "n_pos": 2273,
+      "n_neg": 2273
+    },
+    "abaylyi": {
+      "organism": "abaylyi",
+      "mcc_at_best_t": 0.0,
+      "auc": NaN,
+      "ap": NaN,
+      "n_pos": 0,
+      "n_neg": 0
+    },
+    "mgenitalium": {
+      "organism": "mgenitalium",
+      "mcc_at_best_t": 0.878293760342109,
+      "best_t": 0.5,
+      "auc": 0.9722338535432726,
+      "ap": 0.9798529241624517,
+      "tp": 1558,
+      "fp": 19,
+      "tn": 1743,
+      "fn": 204,
+      "n_pos": 1762,
+      "n_neg": 1762
+    },
+    "mpne": {
+      "organism": "mpne",
+      "mcc_at_best_t": 0.8585075039535263,
+      "best_t": 0.48604095578193673,
+      "auc": 0.9700249521134521,
+      "ap": 0.9769666072639416,
+      "tp": 2462,
+      "fp": 89,
+      "tn": 2684,
+      "fn": 311,
+      "n_pos": 2773,
+      "n_neg": 2773
+    }
+  }
+}
