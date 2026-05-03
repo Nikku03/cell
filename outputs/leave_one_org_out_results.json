@@ -1,0 +1,187 @@
+{
+  "method": "leave_one_org_out_lnn_with_sequence_encoder",
+  "mode": "sequence",
+  "epochs_per_fold": 60,
+  "always_in_training": [
+    "syn3a",
+    "mgenitalium"
+  ],
+  "holdouts_evaluated": [
+    "styphimurium",
+    "ccrescentus",
+    "saureus",
+    "mtuberculosis",
+    "abaylyi",
+    "mpne"
+  ],
+  "config": {
+    "n_scalar": 20,
+    "n_regulatory": 50,
+    "n_kinetic": 4,
+    "n_kmer3": 64,
+    "n_kmer4": 256,
+    "hidden": 128,
+    "n_liquid_steps": 3,
+    "edge_dim": 2,
+    "tau_min": 0.1,
+    "tau_max": 2.0,
+    "dt": 0.2,
+    "dropout": 0.1,
+    "memory_size": 1024,
+    "memory_retrieval_k": 8,
+    "memory_curvature": 1.0,
+    "n_regulator_proxy_classes": 3,
+    "use_sequence_encoder": true,
+    "seq_max_len": 2048,
+    "seq_embed_dim": 32,
+    "seq_kernel_sizes": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "seq_channels_per_kernel": 32
+  },
+  "fold_results": {
+    "styphimurium": {
+      "organism": "styphimurium",
+      "mcc": 0.33614338674024274,
+      "threshold": 0.7501791536808015,
+      "tp": 35,
+      "fp": 26,
+      "tn": 2822,
+      "fn": 123,
+      "n_essential": 158,
+      "n_nonessential": 2848,
+      "train_time_s": 41.048036336898804,
+      "final_loss": 0.12542796081730298,
+      "train_org_mccs": {
+        "ccrescentus": 0.4594014066443502,
+        "saureus": 0.7178496329798744,
+        "mtuberculosis": 0.45770649157989024,
+        "abaylyi": 0.498401747313859,
+        "mpne": 0.7569086500776688,
+        "syn3a": 0.6463405983281983,
+        "mgenitalium": 0.6379541339404466
+      }
+    },
+    "ccrescentus": {
+      "organism": "ccrescentus",
+      "mcc": 0.3060566148299877,
+      "threshold": 0.803599601984024,
+      "tp": 118,
+      "fp": 99,
+      "tn": 3035,
+      "fn": 362,
+      "n_essential": 480,
+      "n_nonessential": 3134,
+      "train_time_s": 34.45244121551514,
+      "final_loss": 0.12636613047548703,
+      "train_org_mccs": {
+        "styphimurium": 0.49026010259654274,
+        "saureus": 0.7310903681098996,
+        "mtuberculosis": 0.44771921266540604,
+        "abaylyi": 0.46929956738847967,
+        "mpne": 0.7227390964386472,
+        "syn3a": 0.7166074620838415,
+        "mgenitalium": 0.672372557344646
+      }
+    },
+    "saureus": {
+      "organism": "saureus",
+      "mcc": 0.12835487939204362,
+      "threshold": 0.34903394103050234,
+      "tp": 272,
+      "fp": 30,
+      "tn": 19,
+      "fn": 77,
+      "n_essential": 349,
+      "n_nonessential": 49,
+      "train_time_s": 44.21785807609558,
+      "final_loss": 0.12587526706712587,
+      "train_org_mccs": {
+        "styphimurium": 0.49750808544320874,
+        "ccrescentus": 0.4803439002495076,
+        "mtuberculosis": 0.47179383498242033,
+        "abaylyi": 0.47589842221556367,
+        "mpne": 0.811190541051003,
+        "syn3a": 0.6964877468015013,
+        "mgenitalium": 0.7203641353358684
+      }
+    },
+    "mtuberculosis": {
+      "organism": "mtuberculosis",
+      "mcc": 0.260807472042412,
+      "threshold": 0.7067634129524231,
+      "tp": 125,
+      "fp": 155,
+      "tn": 2853,
+      "fn": 364,
+      "n_essential": 489,
+      "n_nonessential": 3008,
+      "train_time_s": 35.17486596107483,
+      "final_loss": 0.12659867107868195,
+      "train_org_mccs": {
+        "styphimurium": 0.491853898743925,
+        "ccrescentus": 0.45237001690125334,
+        "saureus": 0.8004799170876662,
+        "abaylyi": 0.48215563788565285,
+        "mpne": 0.7940089476017851,
+        "syn3a": 0.7019431451586577,
+        "mgenitalium": 0.7071415300572621
+      }
+    },
+    "abaylyi": {
+      "organism": "abaylyi",
+      "mcc": 0.27715327473305196,
+      "threshold": 0.6244398355484009,
+      "tp": 89,
+      "fp": 142,
+      "tn": 2452,
+      "fn": 204,
+      "n_essential": 293,
+      "n_nonessential": 2594,
+      "train_time_s": 37.0036039352417,
+      "final_loss": 0.1309784704021045,
+      "train_org_mccs": {
+        "styphimurium": 0.47932041152632454,
+        "ccrescentus": 0.46474731828525373,
+        "saureus": 0.8004799170876662,
+        "mtuberculosis": 0.480447957515789,
+        "mpne": 0.7799086843531984,
+        "syn3a": 0.6878342026730285,
+        "mgenitalium": 0.6942544424884671
+      }
+    },
+    "mpne": {
+      "organism": "mpne",
+      "mcc": 0.2736582830929965,
+      "threshold": 0.6732035112380982,
+      "tp": 136,
+      "fp": 12,
+      "tn": 175,
+      "fn": 291,
+      "n_essential": 427,
+      "n_nonessential": 187,
+      "train_time_s": 43.59957218170166,
+      "final_loss": 0.12392559088766575,
+      "train_org_mccs": {
+        "styphimurium": 0.46336817193905017,
+        "ccrescentus": 0.4694466084893104,
+        "saureus": 0.8004799170876662,
+        "mtuberculosis": 0.49522729805487065,
+        "abaylyi": 0.5142256899126916,
+        "syn3a": 0.7680592441434329,
+        "mgenitalium": 0.7986932138780724
+      }
+    }
+  },
+  "mean_test_mcc": 0.26369565180512244,
+  "std_test_mcc": 0.06538215019200888,
+  "baselines": {
+    "v15_within_organism_syn3a": 0.5372,
+    "v25_gb_cross_org_syn3a": 0.227,
+    "v32_lnn_phase1_in_domain_syn3a": 0.5347,
+    "v33_committee_v15_alone": 0.505
+  }
+}
