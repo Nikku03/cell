@@ -40,6 +40,7 @@ FEATURES_BASE = ROOT / 'outputs/multiorg_per_gene_features.csv'
 FEATURES_REGULATORY = ROOT / 'outputs/multiorg_per_gene_features_with_regulatory.csv'
 FEATURES_CONSERVATION = ROOT / 'outputs/multiorg_per_gene_features_with_conservation.csv'
 FEATURES_EXPRESSION = ROOT / 'outputs/multiorg_per_gene_features_with_expression.csv'
+FEATURES_PPI = ROOT / 'outputs/ppi_features_per_gene.csv'
 
 GB_PATHS = {
     'ccrescentus': GB_DIR / 'ccrescentus_NA1000_CP001340.1.gb',
@@ -61,6 +62,18 @@ SCALAR_FEATURES = [
     'kw_atp', 'kw_membrane', 'kw_synthase', 'kw_kinase',
     'kw_dehydrogenase', 'kw_protease', 'kw_rrna', 'kw_chaperone',
 ]
+
+# Path A: PPI-derived per-gene aggregates from the PPIPredictor cross-attention
+# pair head. Computed by `scripts/score_ppi_features.py`. Cross-org PPI signal
+# only weakly transfers (MCC ~0.48), but per-gene degree/max-score is a useful
+# new feature channel for the in-domain LNN. Set via `include_ppi=True` in
+# `load_organism_batches`.
+PPI_SCALAR_FEATURES = [
+    'ppi_degree_high',   # count of partners with predicted_prob >= 0.7
+    'ppi_degree_mid',    # count of partners with predicted_prob >= 0.5
+    'ppi_max_score',     # highest predicted PPI prob involving this gene
+]
+SCALAR_FEATURES_WITH_PPI = SCALAR_FEATURES + PPI_SCALAR_FEATURES
 
 # 50 regulatory feature columns (from v27): organized as
 # {RBS, -10, -35, 14_TFs} × {score, present, dist} ≈ 51, plus the special
@@ -210,9 +223,16 @@ def _extract_organism_data(organism: str, features_df: pd.DataFrame
 def _build_organism_batch(organism: str,
                             features_df: pd.DataFrame,
                             regulatory_df: pd.DataFrame | None,
-                            include_kinetic: bool = True
+                            include_kinetic: bool = True,
+                            scalar_feature_list: list[str] = SCALAR_FEATURES,
                             ) -> dict | None:
-    """Assemble a single multimodal batch for an organism."""
+    """Assemble a single multimodal batch for an organism.
+
+    `scalar_feature_list` controls which columns from features_df are
+    pulled into the per-gene scalar tensor. Pass `SCALAR_FEATURES_WITH_PPI`
+    when you want the PPI-derived columns appended (Path A); requires
+    features_df to already contain those columns (merged from the PPI CSV).
+    """
     org_data = _extract_organism_data(organism, features_df)
     if org_data is None: return None
     cdses = org_data['cdses']
@@ -220,12 +240,12 @@ def _build_organism_batch(organism: str,
     feat_lookup = features_df[features_df.organism == organism].set_index('locus_tag')
 
     # 1. Scalar features
-    scalar = np.zeros((len(cdses), len(SCALAR_FEATURES)), dtype=np.float32)
+    scalar = np.zeros((len(cdses), len(scalar_feature_list)), dtype=np.float32)
     for i, c in enumerate(cdses):
         if c['locus_tag'] in feat_lookup.index:
             row = feat_lookup.loc[c['locus_tag']]
             if isinstance(row, pd.DataFrame): row = row.iloc[0]
-            for j, fname in enumerate(SCALAR_FEATURES):
+            for j, fname in enumerate(scalar_feature_list):
                 v = row.get(fname, 0.0)
                 scalar[i, j] = float(v) if pd.notna(v) else 0.0
 
@@ -303,10 +323,18 @@ def _build_organism_batch(organism: str,
 
 def load_organism_batches(organisms: list[str],
                             include_regulatory: bool = True,
+                            include_ppi: bool = False,
                             verbose: bool = True
                             ) -> dict[str, dict]:
     """Load per-organism batches for a list of organisms. Returns a dict
-    {organism_name: batch_dict}."""
+    {organism_name: batch_dict}.
+
+    `include_ppi`: when True and `outputs/ppi_features_per_gene.csv` exists,
+    appends the 3 PPI scalar features (Path A) to the per-gene scalar
+    tensor. Caller's `MultimodalEncoderConfig.n_scalar` must be set to
+    `len(SCALAR_FEATURES_WITH_PPI)` (= 23) instead of `len(SCALAR_FEATURES)`
+    (= 20) to match.
+    """
     if verbose:
         print(f'[data_loader] loading features...')
     if FEATURES_CONSERVATION.exists():
@@ -320,14 +348,37 @@ def load_organism_batches(organisms: list[str],
     if include_regulatory and FEATURES_REGULATORY.exists():
         regulatory_df = pd.read_csv(FEATURES_REGULATORY)
 
+    scalar_feature_list = SCALAR_FEATURES
+    if include_ppi:
+        if not FEATURES_PPI.exists():
+            raise FileNotFoundError(
+                f'include_ppi=True but {FEATURES_PPI} missing — run '
+                f'`python scripts/score_ppi_features.py` first.')
+        ppi_df = pd.read_csv(FEATURES_PPI)
+        # Merge PPI columns into features_df (left join; missing -> NaN -> 0)
+        features_df = features_df.merge(
+            ppi_df[['organism', 'locus_tag'] + PPI_SCALAR_FEATURES],
+            on=['organism', 'locus_tag'], how='left',
+        )
+        for col in PPI_SCALAR_FEATURES:
+            features_df[col] = features_df[col].fillna(0.0)
+        scalar_feature_list = SCALAR_FEATURES_WITH_PPI
+
     if verbose:
         print(f'  base features: {len(features_df)} rows, {len(features_df.columns)} cols')
         if regulatory_df is not None:
             print(f'  regulatory features: {len(regulatory_df)} rows')
+        if include_ppi:
+            print(f'  PPI features merged: '
+                  f'{len(features_df.dropna(subset=PPI_SCALAR_FEATURES))} rows '
+                  f'(scalar dim now {len(scalar_feature_list)})')
 
     batches = {}
     for org in organisms:
-        b = _build_organism_batch(org, features_df, regulatory_df)
+        b = _build_organism_batch(
+            org, features_df, regulatory_df,
+            scalar_feature_list=scalar_feature_list,
+        )
         if b is None:
             if verbose: print(f'  {org}: skipped (data missing)')
             continue
