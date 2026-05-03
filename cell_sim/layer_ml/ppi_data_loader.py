@@ -64,40 +64,52 @@ def random_negative_pairs(gene_batch: dict, positive_set: set,
 
 def build_ppi_batch(organism: str, gene_batch: dict, ppi_df: pd.DataFrame,
                      n_random_negatives_per_positive: float = 1.0,
+                     min_total_neg_per_pos: float = 1.0,
                      seed: int = 42) -> dict:
-    """Convert a per-organism positive PPI table into a pair batch ready for
-    PPIPredictor. Adds random negatives so the binary head can learn."""
+    """Convert a per-organism PPI table into a pair batch ready for
+    PPIPredictor.
+
+    Negatives behaviour:
+      - All label=0 rows in `ppi_df` for this organism are kept as curated
+        negatives (Negatome, paralog hard negatives, etc).
+      - Random negatives are added only to reach `min_total_neg_per_pos`
+        ratio. If curated negatives already exceed that, no randoms added.
+      - `n_random_negatives_per_positive` is now an UPPER bound on the
+        random additions (defaults to 1.0 = up to 1:1 random:positive).
+    """
     rng = np.random.default_rng(seed)
     locus_to_idx = _build_locus_to_idx(gene_batch)
 
-    # Filter to this organism + present in the gene batch
     sub = ppi_df[ppi_df.organism == organism].copy()
     sub = sub[sub.locus_a.isin(locus_to_idx) & sub.locus_b.isin(locus_to_idx)]
-
-    # Canonicalize ordering (a < b lexicographically) for de-duplication and
-    # for the negative-sampling membership check.
     a_arr = np.minimum(sub.locus_a.values, sub.locus_b.values)
     b_arr = np.maximum(sub.locus_a.values, sub.locus_b.values)
     sub = sub.assign(locus_a=a_arr, locus_b=b_arr).drop_duplicates(
         subset=['locus_a', 'locus_b'])
 
-    pos_pairs = list(zip(sub.locus_a, sub.locus_b))
-    pos_labels = sub.label.values.astype(int)
-    pos_sources = sub.source.values.tolist()
+    pos_mask = sub.label == 1
+    pos_pairs = list(zip(sub[pos_mask].locus_a, sub[pos_mask].locus_b))
+    neg_pairs = list(zip(sub[~pos_mask].locus_a, sub[~pos_mask].locus_b))
+    pos_sources = sub[pos_mask].source.values.tolist()
+    neg_sources = sub[~pos_mask].source.values.tolist()
 
-    # Build the positive set (label==1 only) for negative-sample exclusion.
-    positive_set = set((a, b) for (a, b), lab in zip(pos_pairs, pos_labels)
-                        if lab == 1)
+    n_pos = len(pos_pairs)
+    n_curated_neg = len(neg_pairs)
+    positive_set = set(pos_pairs)
 
-    # Optional random negatives
-    n_pos = int((pos_labels == 1).sum())
-    n_random_neg = int(round(n_pos * n_random_negatives_per_positive))
-    rand_neg = random_negative_pairs(gene_batch, positive_set, n_random_neg,
-                                       rng=rng)
+    # Decide how many random negatives to add.
+    target_total_neg = int(round(n_pos * min_total_neg_per_pos))
+    n_random_neg_target = max(0, target_total_neg - n_curated_neg)
+    n_random_neg_target = min(n_random_neg_target,
+                                int(round(n_pos * n_random_negatives_per_positive)))
 
-    all_pairs = pos_pairs + rand_neg
-    all_labels = list(pos_labels) + [0] * len(rand_neg)
-    all_sources = pos_sources + ['random_negative'] * len(rand_neg)
+    rand_neg = (random_negative_pairs(gene_batch, positive_set,
+                                        n_random_neg_target, rng=rng)
+                  if n_random_neg_target > 0 else [])
+
+    all_pairs = pos_pairs + neg_pairs + rand_neg
+    all_labels = ([1] * n_pos + [0] * n_curated_neg + [0] * len(rand_neg))
+    all_sources = pos_sources + neg_sources + ['random_negative'] * len(rand_neg)
 
     idx_a = torch.tensor([locus_to_idx[a] for a, _ in all_pairs],
                           dtype=torch.long)
@@ -115,13 +127,14 @@ def build_ppi_batch(organism: str, gene_batch: dict, ppi_df: pd.DataFrame,
         'locus_to_idx': locus_to_idx,
         'n_positive': n_pos,
         'n_random_negative': len(rand_neg),
-        'n_curated_negative': int((pos_labels == 0).sum()),
+        'n_curated_negative': n_curated_neg,
     }
 
 
 def load_ppi_batches(organisms: list[str],
                       ppi_csv: Path = DEFAULT_PPI_CSV,
                       n_random_negatives_per_positive: float = 1.0,
+                      min_total_neg_per_pos: float = 1.0,
                       verbose: bool = True,
                       seed: int = 42,
                       gene_batches: dict | None = None) -> dict:
@@ -149,14 +162,17 @@ def load_ppi_batches(organisms: list[str],
         out[org] = build_ppi_batch(
             org, gene_batches[org], ppi_df,
             n_random_negatives_per_positive=n_random_negatives_per_positive,
+            min_total_neg_per_pos=min_total_neg_per_pos,
             seed=seed + i,
         )
         if verbose:
             b = out[org]
-            n_p = int((b['labels'] == 1).sum())
-            n_n = int((b['labels'] == 0).sum())
+            n_p = b['n_positive']
+            n_cur = b['n_curated_negative']
+            n_rand = b['n_random_negative']
             print(f'  ppi_batch[{org}] N_genes={len(b["gene_batch"]["locus_tags"])} '
-                  f'P={len(b["labels"])} ({n_p} pos / {n_n} neg)')
+                  f'P={len(b["labels"])} ({n_p} pos / {n_cur} curated_neg / '
+                  f'{n_rand} random_neg)')
     return out
 
 
