@@ -1,0 +1,40 @@
+{
+  "method": "lnn_cross_org_no_syn3a_plus_live_v15_simulator_no_committee",
+  "syn3a_panel_size": 455,
+  "syn3a_class_balance": {
+    "essential": 383,
+    "nonessential": 72
+  },
+  "v15_simulator_alone": {
+    "mcc": 0.5049609702033635,
+    "tp": 286,
+    "fp": 6,
+    "tn": 66,
+    "fn": 97
+  },
+  "lnn_cross_org_no_syn3a": {
+    "at_t_0.5_honest": {
+      "mcc": 0.08066305304283371,
+      "tp": 175,
+      "fp": 25,
+      "tn": 47,
+      "fn": 208
+    },
+    "at_test_tuned_t_diagnostic": {
+      "mcc": 0.14031447772624217,
+      "best_t": 0.7390277004241944,
+      "tp": 70,
+      "fp": 3,
+      "tn": 69,
+      "fn": 313,
+      "caveat": "tuned on test - upper bound only"
+    }
+  },
+  "baselines": {
+    "v15_cached_parallel_reference": 0.5372,
+    "v25_gb_cross_org": 0.227,
+    "v32_lnn_in_domain": 0.535,
+    "v33_committee_best": 0.495
+  },
+  "note": "No committee voting in this notebook \u2014 v33 showed it dilutes signal."
+}
