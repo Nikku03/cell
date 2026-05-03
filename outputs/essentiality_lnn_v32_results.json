@@ -1,0 +1,420 @@
+{
+  "method": "multimodal_lnn_with_hyperbolic_memory_and_ewc_continual",
+  "config": {
+    "n_scalar": 20,
+    "n_regulatory": 50,
+    "n_kinetic": 4,
+    "n_kmer3": 64,
+    "n_kmer4": 256,
+    "hidden": 128,
+    "n_liquid_steps": 3,
+    "edge_dim": 2,
+    "tau_min": 0.1,
+    "tau_max": 2.0,
+    "dt": 0.2,
+    "dropout": 0.1,
+    "memory_size": 512,
+    "memory_retrieval_k": 8,
+    "memory_curvature": 1.0,
+    "n_regulator_proxy_classes": 3
+  },
+  "n_parameters": 415047,
+  "phase_1": {
+    "organisms": [
+      "styphimurium",
+      "syn3a"
+    ],
+    "epochs": 80,
+    "final_loss": 0.20242906361818314,
+    "evals": {
+      "styphimurium": {
+        "organism": "styphimurium",
+        "mcc": 0.42199993412356757,
+        "threshold": 0.7677222728729246,
+        "tp": 62,
+        "fp": 59,
+        "tn": 2789,
+        "fn": 96,
+        "n_genes": 3006,
+        "n_essential": 158,
+        "n_nonessential": 2848,
+        "probs_range": [
+          0.17964857816696167,
+          0.8763588666915894
+        ]
+      },
+      "syn3a": {
+        "organism": "syn3a",
+        "mcc": 0.5347361951147932,
+        "threshold": 0.36576636910438537,
+        "tp": 360,
+        "fp": 31,
+        "tn": 41,
+        "fn": 23,
+        "n_genes": 455,
+        "n_essential": 383,
+        "n_nonessential": 72,
+        "probs_range": [
+          0.21506769955158234,
+          0.8609225153923035
+        ]
+      },
+      "ccrescentus": {
+        "organism": "ccrescentus",
+        "mcc": 0.2923288324960101,
+        "threshold": 0.7496249330043793,
+        "tp": 114,
+        "fp": 103,
+        "tn": 3031,
+        "fn": 366,
+        "n_genes": 3614,
+        "n_essential": 480,
+        "n_nonessential": 3134,
+        "probs_range": [
+          0.19985151290893555,
+          0.8639847636222839
+        ]
+      },
+      "saureus": {
+        "organism": "saureus",
+        "mcc": 0.2610310287930213,
+        "threshold": 0.5039273095130921,
+        "tp": 286,
+        "fp": 24,
+        "tn": 25,
+        "fn": 63,
+        "n_genes": 398,
+        "n_essential": 349,
+        "n_nonessential": 49,
+        "probs_range": [
+          0.26451489329338074,
+          0.8772050142288208
+        ]
+      },
+      "mtuberculosis": {
+        "organism": "mtuberculosis",
+        "mcc": 0.11475762605464607,
+        "threshold": 0.5646004295349121,
+        "tp": 439,
+        "fp": 2288,
+        "tn": 720,
+        "fn": 50,
+        "n_genes": 3497,
+        "n_essential": 489,
+        "n_nonessential": 3008,
+        "probs_range": [
+          0.2208680659532547,
+          0.8459756970405579
+        ]
+      },
+      "abaylyi": {
+        "organism": "abaylyi",
+        "mcc": 0.32456896070635094,
+        "threshold": 0.7599726247787475,
+        "tp": 85,
+        "fp": 89,
+        "tn": 2505,
+        "fn": 208,
+        "n_genes": 2887,
+        "n_essential": 293,
+        "n_nonessential": 2594,
+        "probs_range": [
+          0.19781897962093353,
+          0.878612756729126
+        ]
+      },
+      "mpne": {
+        "organism": "mpne",
+        "mcc": 0.11607680554231313,
+        "threshold": 0.7085325300693512,
+        "tp": 53,
+        "fp": 9,
+        "tn": 178,
+        "fn": 374,
+        "n_genes": 614,
+        "n_essential": 427,
+        "n_nonessential": 187,
+        "probs_range": [
+          0.22262060642242432,
+          0.8439356088638306
+        ]
+      }
+    }
+  },
+  "phase_2": {
+    "organisms": [
+      "ccrescentus",
+      "saureus",
+      "mtuberculosis",
+      "abaylyi",
+      "mpne"
+    ],
+    "epochs_per_org": 12,
+    "ewc_lambda": 5000.0,
+    "per_org_results": {
+      "ccrescentus": {
+        "on_new_org": {
+          "organism": "ccrescentus",
+          "mcc": 0.3470262366004804,
+          "threshold": 0.7071750164031982,
+          "tp": 196,
+          "fp": 238,
+          "tn": 2896,
+          "fn": 284,
+          "n_genes": 3614,
+          "n_essential": 480,
+          "n_nonessential": 3134,
+          "probs_range": [
+            0.2749902904033661,
+            0.8918580412864685
+          ]
+        },
+        "prev_orgs_mcc": {
+          "styphimurium": 0.3783194632294235,
+          "syn3a": 0.5042485060943758,
+          "saureus": 0.21132432917586905,
+          "mtuberculosis": 0.1747447320492295,
+          "abaylyi": 0.26560901373213974,
+          "mpne": 0.19829468791226398
+        },
+        "final_loss": 0.30366456508636475,
+        "wall_s": 123.20058178901672
+      },
+      "saureus": {
+        "on_new_org": {
+          "organism": "saureus",
+          "mcc": 0.39817724535374965,
+          "threshold": 0.5439612889289855,
+          "tp": 318,
+          "fp": 24,
+          "tn": 25,
+          "fn": 31,
+          "n_genes": 398,
+          "n_essential": 349,
+          "n_nonessential": 49,
+          "probs_range": [
+            0.41187581419944763,
+            0.777829647064209
+          ]
+        },
+        "prev_orgs_mcc": {
+          "styphimurium": 0.34217641146958144,
+          "syn3a": 0.46677733222525797,
+          "ccrescentus": 0.28493647315397647,
+          "mtuberculosis": 0.11829714091670185,
+          "abaylyi": 0.2898364857256704,
+          "mpne": 0.048163936418112965
+        },
+        "final_loss": 0.33636999130249023,
+        "wall_s": 25.32688546180725
+      },
+      "mtuberculosis": {
+        "on_new_org": {
+          "organism": "mtuberculosis",
+          "mcc": 0.2578679711554167,
+          "threshold": 0.6007916450500488,
+          "tp": 290,
+          "fp": 759,
+          "tn": 2249,
+          "fn": 199,
+          "n_genes": 3497,
+          "n_essential": 489,
+          "n_nonessential": 3008,
+          "probs_range": [
+            0.3243815004825592,
+            0.8014911413192749
+          ]
+        },
+        "prev_orgs_mcc": {
+          "styphimurium": 0.3539855393503199,
+          "syn3a": 0.5174154170997557,
+          "ccrescentus": 0.3363491147498606,
+          "saureus": 0.2713506582528788,
+          "abaylyi": 0.268733660516457,
+          "mpne": 0.17116055664318774
+        },
+        "final_loss": 0.36136937141418457,
+        "wall_s": 126.86827826499939
+      },
+      "abaylyi": {
+        "on_new_org": {
+          "organism": "abaylyi",
+          "mcc": 0.3365580960790971,
+          "threshold": 0.48510420203208926,
+          "tp": 143,
+          "fp": 262,
+          "tn": 2332,
+          "fn": 150,
+          "n_genes": 2887,
+          "n_essential": 293,
+          "n_nonessential": 2594,
+          "probs_range": [
+            0.23853716254234314,
+            0.7407473921775818
+          ]
+        },
+        "prev_orgs_mcc": {
+          "styphimurium": 0.4068310077962397,
+          "syn3a": 0.48277386106968084,
+          "ccrescentus": 0.3396055721217379,
+          "saureus": 0.31631145596202936,
+          "mtuberculosis": 0.20621353589287703,
+          "mpne": 0.10056367597898201
+        },
+        "final_loss": 0.2816024422645569,
+        "wall_s": 108.4288239479065
+      },
+      "mpne": {
+        "on_new_org": {
+          "organism": "mpne",
+          "mcc": 0.5034750829225301,
+          "threshold": 0.5921685588359833,
+          "tp": 334,
+          "fp": 47,
+          "tn": 140,
+          "fn": 93,
+          "n_genes": 614,
+          "n_essential": 427,
+          "n_nonessential": 187,
+          "probs_range": [
+            0.2829989790916443,
+            0.8669341206550598
+          ]
+        },
+        "prev_orgs_mcc": {
+          "styphimurium": 0.2304171258540868,
+          "syn3a": 0.3075862204459791,
+          "ccrescentus": 0.21161144407185042,
+          "saureus": 0.0949194354018935,
+          "mtuberculosis": 0.1979052417382972,
+          "abaylyi": 0.2246991962216631
+        },
+        "final_loss": 0.28064438700675964,
+        "wall_s": 36.148346185684204
+      }
+    }
+  },
+  "final_evals": {
+    "styphimurium": {
+      "organism": "styphimurium",
+      "mcc": 0.2304171258540868,
+      "threshold": 0.8216874778270722,
+      "tp": 25,
+      "fp": 36,
+      "tn": 2812,
+      "fn": 133,
+      "n_genes": 3006,
+      "n_essential": 158,
+      "n_nonessential": 2848,
+      "probs_range": [
+        0.22668825089931488,
+        0.8660828471183777
+      ]
+    },
+    "syn3a": {
+      "organism": "syn3a",
+      "mcc": 0.3075862204459791,
+      "threshold": 0.416462584733963,
+      "tp": 240,
+      "fp": 15,
+      "tn": 57,
+      "fn": 143,
+      "n_genes": 455,
+      "n_essential": 383,
+      "n_nonessential": 72,
+      "probs_range": [
+        0.2324794977903366,
+        0.8179945945739746
+      ]
+    },
+    "ccrescentus": {
+      "organism": "ccrescentus",
+      "mcc": 0.21161144407185042,
+      "threshold": 0.814869737625122,
+      "tp": 126,
+      "fp": 236,
+      "tn": 2898,
+      "fn": 354,
+      "n_genes": 3614,
+      "n_essential": 480,
+      "n_nonessential": 3134,
+      "probs_range": [
+        0.2847161889076233,
+        0.8854448795318604
+      ]
+    },
+    "saureus": {
+      "organism": "saureus",
+      "mcc": 0.0949194354018935,
+      "threshold": 0.7835896301269532,
+      "tp": 24,
+      "fp": 0,
+      "tn": 49,
+      "fn": 325,
+      "n_genes": 398,
+      "n_essential": 349,
+      "n_nonessential": 49,
+      "probs_range": [
+        0.27534541487693787,
+        0.856178879737854
+      ]
+    },
+    "mtuberculosis": {
+      "organism": "mtuberculosis",
+      "mcc": 0.1979052417382972,
+      "threshold": 0.8022637629508972,
+      "tp": 220,
+      "fp": 620,
+      "tn": 2388,
+      "fn": 269,
+      "n_genes": 3497,
+      "n_essential": 489,
+      "n_nonessential": 3008,
+      "probs_range": [
+        0.28575238585472107,
+        0.8710973262786865
+      ]
+    },
+    "abaylyi": {
+      "organism": "abaylyi",
+      "mcc": 0.2246991962216631,
+      "threshold": 0.6069048571586609,
+      "tp": 154,
+      "fp": 539,
+      "tn": 2055,
+      "fn": 139,
+      "n_genes": 2887,
+      "n_essential": 293,
+      "n_nonessential": 2594,
+      "probs_range": [
+        0.2327844649553299,
+        0.8676864504814148
+      ]
+    },
+    "mpne": {
+      "organism": "mpne",
+      "mcc": 0.5034750829225301,
+      "threshold": 0.5921685588359833,
+      "tp": 334,
+      "fp": 47,
+      "tn": 140,
+      "fn": 93,
+      "n_genes": 614,
+      "n_essential": 427,
+      "n_nonessential": 187,
+      "probs_range": [
+        0.2829989790916443,
+        0.8669341206550598
+      ]
+    }
+  },
+  "syn3a_phase1_mcc": 0.5347361951147932,
+  "syn3a_final_mcc": 0.3075862204459791,
+  "syn3a_forgetting": 0.2271499746688141,
+  "baselines": {
+    "v15_within_organism": 0.5372,
+    "v25_gb_cross_organism": 0.227,
+    "v29_gb_with_conservation": 0.2438,
+    "v26_lnn_naive_cross_organism": 0.1234
+  }
+}

@@ -47,8 +47,8 @@ from cell_sim.layer_ml.continual_learning import EWCRegularizer
 from cell_sim.layer_ml.data_loader import load_organism_batches
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / 'outputs/essentiality_lnn_results.json'
-CHECKPOINT = ROOT / 'cell_sim/layer_ml/checkpoints/essentiality_lnn.pt'
+OUT = ROOT / 'outputs/essentiality_lnn_v32_results.json'
+CHECKPOINT = ROOT / 'cell_sim/layer_ml/checkpoints/essentiality_lnn_v32.pt'
 
 PHASE_1_ORGS = ['styphimurium', 'syn3a']
 PHASE_2_ORGS = ['ccrescentus', 'saureus', 'mtuberculosis', 'abaylyi', 'mpne']
@@ -56,9 +56,17 @@ ALL_ORGS = PHASE_1_ORGS + PHASE_2_ORGS
 
 PHASE_1_EPOCHS = 80
 PHASE_2_EPOCHS_PER_ORG = 12   # short Phase 2 to limit forgetting under EWC
-EWC_LAMBDA = 1500.0           # stronger EWC penalty - first run at 200 forgot
+EWC_LAMBDA = 5000.0           # v32: stronger EWC penalty (was 1500 in v31)
 LR = 1e-3
 SEED = 42
+
+# v32: dual loss = pairwise ranking (organism-agnostic) + small BCE anchor.
+# This decouples "predict relative essentiality" (organism-invariant) from
+# "predict absolute class prior" (organism-specific).
+LOSS_RANKING_WEIGHT = 1.0
+LOSS_BCE_ANCHOR_WEIGHT = 0.1
+RANKING_MARGIN = 0.5
+RANKING_N_PAIRS = 300
 
 
 def threshold_search(y_true, probs):
@@ -84,7 +92,9 @@ def class_weights(y: torch.Tensor) -> tuple[float, float]:
 
 def weighted_bce(logits: torch.Tensor, target: torch.Tensor,
                   has_label: torch.Tensor) -> torch.Tensor:
-    """Class-weighted BCE; only applied to genes with has_label=1."""
+    """Class-weighted BCE; only applied to genes with has_label=1.
+    Used as a SMALL ANCHOR in v32 (weight 0.1) to keep the absolute logit
+    scale stable; the main learning signal is now ranking_loss."""
     mask = has_label.to(torch.bool)
     if mask.sum() == 0:
         return torch.tensor(0.0, device=logits.device)
@@ -95,6 +105,36 @@ def weighted_bce(logits: torch.Tensor, target: torch.Tensor,
                             torch.tensor(w0, device=l.device))
     raw = F.binary_cross_entropy_with_logits(l, t, reduction='none')
     return (raw * weights * 2.0).mean()
+
+
+def pairwise_ranking_loss(logits: torch.Tensor, target: torch.Tensor,
+                            has_label: torch.Tensor,
+                            n_pairs: int = 300, margin: float = 0.5
+                            ) -> torch.Tensor:
+    """Within-organism pairwise margin ranking loss.
+
+    For each batch (one organism), sample N_pairs of (essential, nonessential)
+    genes and require essential's logit > nonessential's logit by at least
+    `margin`. Translation-invariant: the organism's class prior cannot
+    bias the predictions because the loss only sees logit DIFFERENCES.
+
+    This is the core change in v32 vs v31: forces the LNN to learn
+    organism-agnostic 'feature -> relative essentiality' rather than
+    'feature -> absolute essentiality calibrated to this organism's
+    class rate'."""
+    mask = has_label.to(torch.bool)
+    if mask.sum() < 2:
+        return torch.tensor(0.0, device=logits.device)
+    l = logits[mask]; t = target[mask]
+    pos_idx = (t == 1).nonzero(as_tuple=True)[0]
+    neg_idx = (t == 0).nonzero(as_tuple=True)[0]
+    if pos_idx.numel() == 0 or neg_idx.numel() == 0:
+        return torch.tensor(0.0, device=logits.device)
+    n = min(n_pairs, pos_idx.numel(), neg_idx.numel())
+    pos_sample = pos_idx[torch.randint(pos_idx.numel(), (n,), device=l.device)]
+    neg_sample = neg_idx[torch.randint(neg_idx.numel(), (n,), device=l.device)]
+    diff = l[pos_sample] - l[neg_sample]
+    return F.relu(margin - diff).mean()
 
 
 def regulator_proxy_loss(reg_logits: torch.Tensor,
@@ -155,14 +195,22 @@ def evaluate_one(model, batch, name='', t_override=None):
 def train_epoch(model, opt, batches, ewc=None, lambda_ewc=0.0,
                   reg_proxy_weight: float = 0.1):
     """One training epoch over a list of organism batches. Each batch is
-    one organism's genes (batch size = N_genes_in_organism)."""
+    one organism's genes (batch size = N_genes_in_organism).
+
+    v32: dual essentiality loss = ranking_loss (organism-agnostic, the main
+    learning signal) + bce_anchor (small weight, keeps logit scale stable)."""
     model.train()
     losses = []
     for batch in batches:
         opt.zero_grad()
         out = model(batch, store_memory=True)
-        ess_loss = weighted_bce(out['essentiality'],
-                                  batch['labels'], batch['has_label'])
+        # v32: pairwise ranking loss (organism-agnostic) + small BCE anchor
+        rank_loss = pairwise_ranking_loss(
+            out['essentiality'], batch['labels'], batch['has_label'],
+            n_pairs=RANKING_N_PAIRS, margin=RANKING_MARGIN)
+        bce_anchor = weighted_bce(out['essentiality'],
+                                    batch['labels'], batch['has_label'])
+        ess_loss = LOSS_RANKING_WEIGHT * rank_loss + LOSS_BCE_ANCHOR_WEIGHT * bce_anchor
         reg_loss = regulator_proxy_loss(out['regulator_proxy'],
                                           batch['regulatory'],
                                           batch['regulatory_mask'])
@@ -178,11 +226,18 @@ def train_epoch(model, opt, batches, ewc=None, lambda_ewc=0.0,
 
 def make_consolidate_loss_fn(reg_proxy_weight: float = 0.1):
     """Return a loss function for EWC consolidation that uses the same
-    structure as training (essentiality + regulator-proxy)."""
+    dual essentiality structure as training (ranking + small BCE anchor)
+    plus regulator-proxy. Critical: Fisher info must be computed on the
+    SAME loss the training uses, otherwise EWC anchors the wrong weights."""
     def loss_fn(model, batch):
         out = model(batch, store_memory=False)
-        return (weighted_bce(out['essentiality'],
-                                batch['labels'], batch['has_label'])
+        rank_loss = pairwise_ranking_loss(
+            out['essentiality'], batch['labels'], batch['has_label'],
+            n_pairs=RANKING_N_PAIRS, margin=RANKING_MARGIN)
+        bce_anchor = weighted_bce(out['essentiality'],
+                                    batch['labels'], batch['has_label'])
+        return (LOSS_RANKING_WEIGHT * rank_loss
+                + LOSS_BCE_ANCHOR_WEIGHT * bce_anchor
                 + reg_proxy_weight * regulator_proxy_loss(
                     out['regulator_proxy'],
                     batch['regulatory'],
