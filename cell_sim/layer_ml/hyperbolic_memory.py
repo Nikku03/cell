@@ -91,12 +91,15 @@ class HyperbolicMemoryBank(nn.Module):
     """
 
     def __init__(self, hidden: int, memory_size: int = 512,
-                 retrieval_k: int = 8, curvature: float = 1.0):
+                 retrieval_k: int = 8, curvature: float = 1.0,
+                 growable: bool = False, max_size: int = 65536):
         super().__init__()
         self.hidden = int(hidden)
         self.memory_size = int(memory_size)
         self.retrieval_k = int(retrieval_k)
         self.c = float(curvature)
+        self.growable = bool(growable)
+        self.max_size = int(max_size)
 
         # Memory slots in the Poincaré ball. Initialized at origin.
         self.register_buffer('memory',
@@ -104,7 +107,7 @@ class HyperbolicMemoryBank(nn.Module):
         # Populated mask — only retrieve from slots we've actually written.
         self.register_buffer('populated',
                               torch.zeros(self.memory_size, dtype=torch.bool))
-        # Circular write pointer.
+        # Circular write pointer (used in non-growable mode).
         self.register_buffer('write_pos', torch.zeros(1, dtype=torch.long))
 
     def reset(self):
@@ -118,23 +121,66 @@ class HyperbolicMemoryBank(nn.Module):
         return int(self.populated.sum().item())
 
     @torch.no_grad()
+    def _resize(self, new_size: int):
+        """Grow the bank to new_size, preserving existing contents.
+        Cheaper than re-creating because PyTorch's buffer machinery just
+        needs the tensor reassigned; gradient flow doesn't pass through
+        buffers anyway."""
+        new_size = min(new_size, self.max_size)
+        if new_size <= self.memory_size:
+            return
+        device = self.memory.device
+        dtype = self.memory.dtype
+
+        new_mem = torch.zeros(new_size, self.hidden, dtype=dtype, device=device)
+        new_pop = torch.zeros(new_size, dtype=torch.bool, device=device)
+        new_mem[:self.memory_size] = self.memory
+        new_pop[:self.memory_size] = self.populated
+
+        # Replace the buffers (PyTorch allows this for non-parameters)
+        self.memory = new_mem
+        self.populated = new_pop
+        self.memory_size = new_size
+
+    @torch.no_grad()
     def store(self, h: torch.Tensor):
-        """Write a batch of new states into the bank using a circular write
-        pointer. h is in Euclidean space; we exp-map into the ball before
-        writing."""
+        """Write a batch of new states.
+        - growable=False: circular FIFO with write pointer.
+        - growable=True : append at the end; resize bank when full (2× growth)."""
         if h.dim() == 1:
             h = h.unsqueeze(0)
         n = h.size(0)
         if n == 0: return
         ball = _exp_map_zero(h.detach(), c=self.c)
-        K = self.memory_size
-        pos = int(self.write_pos.item())
-        # Indices to write: (pos + 0..n-1) mod K
-        indices = torch.tensor([(pos + i) % K for i in range(n)],
-                                device=self.memory.device, dtype=torch.long)
+
+        if self.growable:
+            n_pop = int(self.populated.sum().item())
+            needed = n_pop + n
+            if needed > self.memory_size and self.memory_size < self.max_size:
+                # Grow: at least double, but enough to fit the new batch
+                target = max(needed + 64, self.memory_size * 2)
+                self._resize(target)
+            # If we hit max_size, fall back to overwriting the oldest
+            # slots (the front of the buffer).
+            if n_pop + n > self.memory_size:
+                # Truncate: write the latest n entries cyclically
+                excess = (n_pop + n) - self.memory_size
+                indices = torch.tensor(
+                    [(i + excess) % self.memory_size for i in range(n_pop, n_pop + n)],
+                    device=self.memory.device, dtype=torch.long)
+            else:
+                indices = torch.arange(n_pop, n_pop + n,
+                                        device=self.memory.device, dtype=torch.long)
+        else:
+            # Circular FIFO replacement
+            K = self.memory_size
+            pos = int(self.write_pos.item())
+            indices = torch.tensor([(pos + i) % K for i in range(n)],
+                                     device=self.memory.device, dtype=torch.long)
+            self.write_pos[0] = (pos + n) % K
+
         self.memory[indices] = ball
         self.populated[indices] = True
-        self.write_pos[0] = (pos + n) % K
 
     def retrieve(self, query: torch.Tensor) -> torch.Tensor:
         """Retrieve top-k closest memories (hyperbolic distance) for each
@@ -218,6 +264,22 @@ def _self_test():
     r = bank.retrieve(q)
     assert r.abs().sum().item() == 0
     print('  reset: bank cleared')
+
+    # Growable mode: bank should expand instead of overwriting
+    print('  ── growable mode ──')
+    bank_g = HyperbolicMemoryBank(hidden=H, memory_size=32,
+                                    retrieval_k=4, growable=True, max_size=512)
+    print(f'  growable bank starts at size {bank_g.memory_size}')
+    for _ in range(5):
+        bank_g.store(torch.randn(20, H) * 0.3)
+    print(f'  after 5x20 stores: size={bank_g.memory_size}, '
+          f'populated={bank_g.n_populated}')
+    assert bank_g.memory_size > 32
+    assert bank_g.n_populated == 100
+    # Should still retrieve
+    r = bank_g.retrieve(torch.randn(3, H) * 0.3)
+    assert r.shape == (3, H)
+    print('  growable retrieve: ok')
 
     print('  ALL PASS')
 
