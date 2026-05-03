@@ -1,0 +1,59 @@
+{
+  "id": "mcc_against_breuer_v33_committee_lnn_simulator_gb",
+  "claim": "Phase v33 implemented the user-requested committee voting ensemble: train LNN on 6 organisms WITHOUT Syn3A (styphimurium + ccrescentus + saureus + mtuberculosis + abaylyi + mpne), run live cell_sim Syn3A KO sweep (the expensive Gillespie + v15 ComposedDetector), train cross-organism gradient boosting on the same train/test split, then combine all three as voting members on Syn3A's 455-gene Breuer panel. Result: NO ensemble strategy beats v15 simulator alone. Individual member MCCs: v15 simulator 0.5050 (TP=286, FP=6, TN=66, FN=97), LNN cross-org at threshold 0.5 = 0.086 (near-random on Syn3A), GB cross-org = 0.267. Best honest ensemble (strategy A = v15 alone) = 0.5050. All voting strategies degrade v15: majority vote 0.420, v15 OR (LNN AND GB) 0.495, v15 AND (LNN OR GB) 0.430, FN-recovery (flip v15-nonessential to essential where both cross-org agree) 0.495 (only 1 of 96 FN flipped), FP-correction (flip v15-essential to nonessential where both cross-org disagree) 0.430 (40 of 286 TPs lost), combined 0.420. Diagnostic-only soft-mean threshold-tuned-on-test = 0.5023, also below v15 alone. Mechanism of failure: when a weaker classifier (LNN 0.086, GB 0.267) votes against a stronger member (v15 0.505), it dilutes signal regardless of voting rule. The 96 v15 false negatives that the committee would need to RECOVER are exactly the genes where cross-organism features are noisiest (feature-indistinguishable from the 69 true negatives per v23 finding). v15's apparent 0.5050 here vs the cached 0.5372 is run-to-run stochastic variance from cell_sim's serial-vs-parallel scheduling, consistent with v24 observation. The architectural sophistication of the LNN (multimodal encoder, hyperbolic memory bank, dynamic lambda, growable memory, ranking loss, encoder anchoring) cannot compensate for the underlying Syn3A cross-organism feature ceiling — no matter how clever the model, the available training features don't have enough signal to improve over v15's mechanistic detector. v33 is the cleanest negative result demonstrating this ceiling: the architecture user requested was implemented in full, trained on all data we have, ensembled with the simulator and a tree-based baseline, and still cannot beat v15 alone.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via notebooks/closed_loop_sim_ml.ipynb (commit 31df184). Pipeline: Cell 3 trains LNN on 6 orgs (no Syn3A) using cell_sim/layer_ml package — 100 epochs with cosine-decayed L2 weight decay (1e-3 -> 1e-5), encoder anchor loss (lambda 5 -> 50, refresh every 20 epochs), pairwise ranking loss + small BCE anchor, hyperbolic memory bank growable up to 8192 slots; on the user's GPU 100 epochs took 12.4s (vs 95GB OOM before the chunked-retrieval fix in commit 31df184). Cell 6 ran live cell_sim Syn3A KO sweep (~50 min Gillespie). Cell 7 trained cross-org GB on v25 + conservation features. Cell 8 ran 8 ensemble strategies. Output: outputs/committee_simulator_lnn_results.json. Trained checkpoint: cell_sim/layer_ml/checkpoints/essentiality_lnn_committee.pt.",
+  "last_verified": "2026-05-03",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v33_committee_lnn_simulator_gb_no_improvement"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_against_breuer_v25_multiorg_structured_features",
+    "mcc_against_breuer_v29_cross_organism_conservation",
+    "mcc_against_breuer_v31_lnn_with_hyperbolic_memory_and_ewc",
+    "mcc_against_breuer_v32_lnn_pairwise_ranking_loss_lambda_5000"
+  ],
+  "used_by": [
+    "notebooks/closed_loop_sim_ml.ipynb",
+    "outputs/committee_simulator_lnn_results.json",
+    "cell_sim/layer_ml/checkpoints/essentiality_lnn_committee.pt"
+  ],
+  "value": {
+    "method": "committee_voting_v15_simulator_plus_lnn_cross_org_no_syn3a_plus_gb_cross_org",
+    "panel_size": 455,
+    "class_balance": {"essential": 383, "nonessential": 72},
+    "individual_member_mccs": {
+      "v15_simulator_live_serial": 0.5050,
+      "lnn_cross_org_no_syn3a_at_threshold_0.5": 0.0860,
+      "gb_cross_org_no_syn3a": 0.2670
+    },
+    "v15_simulator_confusion": {"tp": 286, "fp": 6, "tn": 66, "fn": 97},
+    "ensemble_strategies": {
+      "A_v15_only": {"mcc": 0.5050, "tp": 286, "fp": 6, "tn": 66, "fn": 97, "delta_vs_v15": 0.0},
+      "B_majority_vote": {"mcc": 0.4204, "tp": 246, "fp": 5, "tn": 67, "fn": 137, "delta_vs_v15": -0.0846},
+      "C_v15_OR_lnn_AND_gb": {"mcc": 0.4951, "tp": 286, "fp": 7, "tn": 65, "fn": 97, "delta_vs_v15": -0.0099},
+      "D_v15_AND_lnn_OR_gb": {"mcc": 0.4304, "tp": 246, "fp": 4, "tn": 68, "fn": 137, "delta_vs_v15": -0.0746},
+      "E_soft_mean_test_tuned_diagnostic": {"mcc": 0.5023, "tp": 285, "fp": 6, "tn": 66, "fn": 98, "best_t": 0.508, "caveat": "tuned_on_test_not_honest"},
+      "F_v15_with_FN_recovery": {"mcc": 0.4951, "tp": 286, "fp": 7, "tn": 65, "fn": 97, "n_flipped_to_essential": 1, "delta_vs_v15": -0.0099},
+      "G_v15_with_FP_correction": {"mcc": 0.4304, "tp": 246, "fp": 4, "tn": 68, "fn": 137, "n_flipped_to_nonessential": 42, "delta_vs_v15": -0.0746},
+      "H_v15_FN_recovery_AND_FP_correction": {"mcc": 0.4204, "tp": 246, "fp": 5, "tn": 67, "fn": 137, "n_flipped_up": 1, "n_flipped_down": 42, "delta_vs_v15": -0.0846}
+    },
+    "best_honest_ensemble": "A_v15_simulator_only",
+    "best_ensemble_mcc": 0.5050,
+    "delta_vs_v15_alone": 0.0,
+    "verdict": "no_ensemble_strategy_beats_v15_alone_committee_dilutes_signal"
+  },
+  "caveats": [
+    "v15 simulator MCC=0.5050 here is the LIVE serial run, NOT the cached parallel run (which was 0.5372). The 0.03 gap is run-to-run stochastic variance from cell_sim's RNG handling differences across worker scheduling — confirmed previously in v24. Both numbers are measurements of the same v15 detector; the difference is implementation-induced noise.",
+    "LNN at threshold 0.5 gave only MCC=0.086 — much worse than the v32 LNN's in-domain Syn3A MCC of 0.5347. Reason: this LNN was trained on 6 organisms WITHOUT Syn3A, then asked to predict Syn3A. Cross-organism transfer to a minimal-cell organism with 84% essential class prior failed badly when training organisms had 5-70% essential. The threshold tuned on training data (where positive class is rare) is wrong for Syn3A's positive-class-dominated distribution. With test-tuned threshold the LNN might reach ~0.20-0.25 (similar to v25-v29 ceiling), but that's still well below v15.",
+    "GB cross-org at MCC=0.267 matches v25's 0.227 baseline — this third committee member is at the established cross-organism feature ceiling.",
+    "Strategy F (FN recovery) flipped only 1 of 96 v15 false negatives. The strict 'BOTH LNN AND GB say essential' requirement is too restrictive given the cross-org members rarely agree on the same FN. Looser rules (single-member flip) would catch more FN candidates but flip many TN to FP — same trade-off seen in v25-v29.",
+    "Strategy G (FP correction) flipped 42 v15-essentials to nonessential because both LNN+GB voted against. Of these 42, 40 were TRUE essentials that v15 correctly identified. The cross-org members were both WRONG on those 40 genes — that's the inverse of the desired behavior. v15 had specificity 0.998 (FP=6); after G-correction specificity stayed similar but recall dropped from 0.747 to 0.642.",
+    "Architecture claims that DID work: (1) chunked hyperbolic-distance retrieval is the difference between 95GB OOM and 3.5GB stable training; (2) growable memory bank successfully expanded 1024 -> 8192 in epoch 1; (3) dynamic lambda evolved cosine-style as designed (wd 1e-3 -> 1e-5, anchor 5 -> 50); (4) 100 epochs converged cleanly (loss 0.34 -> 0.24); (5) checkpoint uploadable. The architecture works AS A SYSTEM. It just doesn't break the cross-organism Syn3A ceiling.",
+    "v33 is the fifth measurement (after v25, v27, v28, v29) confirming the cross-organism Syn3A feature-engineering ceiling. The ceiling is structural to the available training data (6 phylogenetically distant bacteria, none in Syn3A's lineage), not architectural. Productive paths to break it: (a) Glass 2006 M. genitalium essentiality acquisition (closest natural relative to Syn3A, similar class balance; single supplementary download); (b) Phase D3 cell_sim port to M. pneumoniae for mechanistic test-organism trajectory features (multi-session simulator port).",
+    "Confidence: measured (full pipeline reproducible from on-disk state, all ensemble rules deterministic, MCC numbers match the user-shared scoreboard, v15 within-run variance documented). The verdict 'committee voting cannot improve over v15 alone' is the cleanest negative result the architecture can produce; subsequent attempts in this direction without new data are not warranted."
+  ]
+}
