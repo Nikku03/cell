@@ -1,21 +1,29 @@
-"""Leave-one-organism-out cross-organism essentiality with Syn3A always
-in training, optionally using nucleotide-level sequence features.
+"""Leave-one-organism-out cross-organism essentiality with Syn3A and
+M. genitalium always in training, optionally using nucleotide-level
+sequence features.
 
-For each of the 6 non-Syn3A organisms (Salmonella, Caulobacter, S.aureus,
-M.tuberculosis, A.baylyi, M.pneumoniae), train an LNN on the OTHER 5
-organisms PLUS Syn3A, then test on the held-out one. Reports MCC per
-fold and aggregated across folds.
+For each of the 6 holdout-candidate organisms (Salmonella, Caulobacter,
+S.aureus, M.tuberculosis, A.baylyi, M.pneumoniae), train an LNN on the
+OTHER 5 holdout candidates PLUS Syn3A and M. genitalium, then test on
+the held-out one. Reports MCC per fold and aggregated across folds.
 
 Why Syn3A in training: Syn3A is a curated minimal genome containing
 core essential genes that overlap with most bacteria. Including it as
 a training organism gives the model "core essentiality" patterns that
 should help predict essentials in any organism.
 
-Why leave-one-out on the others (not Syn3A): the previous experiments
-held Syn3A out and showed cross-org transfer to a minimal-cell organism
-with 84% essential class is hard. Holding out a more typical organism
-(5-15% essential like Caulobacter, M.tb, A.baylyi) tests the architecture
-on a more standard cross-org transfer task.
+Why M. genitalium in training: Syn3A was derived from M. genitalium G37
+by gene-by-gene reduction. Glass et al. 2006 transposon mutagenesis
+gives essentiality calls for ~482 M. genitalium genes (~79% essential).
+Including the closest natural-genome analogue to Syn3A doubles the
+high-essentiality-fraction training signal without contaminating the
+held-out tests with simulator-derived Syn3A label noise.
+
+Why leave-one-out on the others (not Syn3A or M. genitalium): the
+previous experiments held Syn3A out and showed cross-org transfer to a
+minimal-cell organism with 84% essential class is hard. Holding out a
+more typical organism (5-15% essential like Caulobacter, M.tb, A.baylyi)
+tests the architecture on a more standard cross-org transfer task.
 
 Usage
 -----
@@ -51,9 +59,9 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'outputs/leave_one_org_out_results.json'
 
 ALL_ORGS = ['styphimurium', 'ccrescentus', 'saureus', 'mtuberculosis',
-            'abaylyi', 'mpne', 'syn3a']
-HOLDOUT_CANDIDATES = [o for o in ALL_ORGS if o != 'syn3a']
-ALWAYS_IN_TRAINING = ['syn3a']
+            'abaylyi', 'mgenitalium', 'mpne', 'syn3a']
+ALWAYS_IN_TRAINING = ['syn3a', 'mgenitalium']
+HOLDOUT_CANDIDATES = [o for o in ALL_ORGS if o not in ALWAYS_IN_TRAINING]
 
 LR = 1e-3
 RANKING_MARGIN = 0.5
@@ -211,7 +219,7 @@ def main():
           f'mode={"sequence" if args.seq else "kmer"}, '
           f'epochs/fold={args.epochs}')
 
-    print('\n[1] loading data for all 7 organisms...')
+    print(f'\n[1] loading data for all {len(ALL_ORGS)} organisms...')
     all_batches = load_organism_batches(ALL_ORGS, verbose=True)
     for org, b in all_batches.items():
         for k, v in b.items():
@@ -227,7 +235,7 @@ def main():
 
     holdout_list = ([args.holdout] if args.holdout else HOLDOUT_CANDIDATES)
     print(f'\n[2] running leave-one-org-out across {len(holdout_list)} folds '
-          f'(Syn3A always in training)...')
+          f'(always in training: {ALWAYS_IN_TRAINING})...')
 
     fold_results = {}
     for fold_i, held_out in enumerate(holdout_list):

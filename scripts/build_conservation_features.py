@@ -9,7 +9,7 @@ Plan
 3. For each protein in (organism, locus_tag), compute:
      - n_orthologs_total (count of OTHER organisms with at least one hit
        passing e-value < 1e-5, coverage > 50%, identity > 30%)
-     - n_orthologs_within_mollicutes (subset: mpne, syn3a)
+     - n_orthologs_within_mollicutes (subset: mpne, syn3a, mgenitalium)
      - paralog_count_internal (hits within same organism, excluding self)
      - mean_identity_to_orthologs (numeric)
      - 16 binary phyletic-profile features
@@ -191,13 +191,17 @@ def step3_build_conservation_features(meta: dict) -> dict:
 
     print(f'  RBH ortholog pairs: {len(rbh_pairs):,}')
 
+    # Index RBH pairs by query (org, locus) so per-gene lookup is O(1) instead
+    # of O(|rbh_pairs|).
+    rbh_by_query = defaultdict(list)
+    for (qo, ql, to, tl) in rbh_pairs:
+        rbh_by_query[(qo, ql)].append((to, tl))
+
     # Per-gene conservation features
     organisms_list = sorted(GB_PATHS.keys())
     feats = {}
     for (org, locus) in meta:
-        # Find all RBH partners for this gene
-        partners = [(to, tl) for (qo, ql, to, tl) in rbh_pairs
-                     if qo == org and ql == locus]
+        partners = rbh_by_query.get((org, locus), [])
         partner_orgs = {to for to, _ in partners}
 
         n_total = len(partner_orgs)

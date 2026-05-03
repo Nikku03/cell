@@ -211,6 +211,30 @@ def parse_deberardinis_abaylyi() -> pd.DataFrame:
     return df[['organism', 'locus_tag', 'gene_name', 'essential']]
 
 
+def parse_glass_mgenitalium() -> pd.DataFrame:
+    """Glass et al. 2006 PNAS minimal-bacterium gene table.
+    Each row is one M. genitalium gene; the 'Disrupted in current study'
+    column contains the gene's own locus when it WAS disrupted (= non-
+    essential), NaN when no disruptant was recovered (= essential).
+    Total: 482 genes, 381 essential (79%) / 101 non-essential.
+
+    Locus normalization: supp uses 'MG001' but our GenBank uses 'MG_001'.
+    We transform to the underscore form to match downstream pipeline."""
+    p = _unzip('glass_2006_mgenitalium_PMC1324956.zip') / '10013Table2.xls'
+    df = pd.read_excel(p)
+    df = df.rename(columns={'Locus': 'locus_raw',
+                              'Gene Symbol': 'gene_name'})
+    df['organism'] = 'mgenitalium'
+    # MG001 -> MG_001 to match GenBank locus_tag
+    df['locus_tag'] = df['locus_raw'].astype(str).str.strip().str.replace(
+        r'^MG(\d+)$', r'MG_\1', regex=True)
+    df['gene_name'] = df['gene_name'].fillna('').astype(str)
+    df = df[df['locus_tag'].str.startswith('MG_')]
+    # Essential = NOT disrupted in current study (NaN means couldn't disrupt)
+    df['essential'] = df['Disrupted in current study'].isna().astype(int)
+    return df[['organism', 'locus_tag', 'gene_name', 'essential']]
+
+
 def parse_mpne_syn3a_from_labels() -> pd.DataFrame:
     df = pd.read_csv(ROOT / 'memory_bank/data/multiorg_essentiality/labels.csv')
     df = df[df['organism'].isin(['mpne', 'syn3a'])].copy()
@@ -228,6 +252,7 @@ def _genbank_for(organism: str) -> Path:
         'mtuberculosis': 'mtuberculosis_H37Rv_AL123456.3.gb',
         'styphimurium': 'styphimurium_LT2_AE006468.2.gb',
         'abaylyi': 'abaylyi_ADP1_CR543861.1.gb',
+        'mgenitalium': 'mgenitalium_G37_L43967.2.gb',
         'mpne': '../mpneumoniae_M129_NC_000912.gb',
         'syn3a': None,  # special-cased below
     }
@@ -346,6 +371,7 @@ def main():
         ('dejesus_mtb', parse_dejesus_mtb),
         ('barquist_styphimurium', parse_barquist_styphimurium),
         ('deberardinis_abaylyi', parse_deberardinis_abaylyi),
+        ('glass_mgenitalium', parse_glass_mgenitalium),
     ]
     ess_frames = []
     for name, fn in parsers:
@@ -369,7 +395,7 @@ def main():
     print('\n[2] extracting GenBank features per organism...')
     feature_lookup = {}  # (organism, locus_tag) -> features
     for org in ['ccrescentus', 'saureus', 'mtuberculosis', 'styphimurium',
-                'abaylyi', 'mpne', 'syn3a']:
+                'abaylyi', 'mgenitalium', 'mpne', 'syn3a']:
         gb = _genbank_for(org)
         if gb is None:
             if org == 'syn3a':

@@ -47,6 +47,7 @@ GB_PATHS = {
     'mtuberculosis': GB_DIR / 'mtuberculosis_H37Rv_AL123456.3.gb',
     'styphimurium': GB_DIR / 'styphimurium_LT2_AE006468.2.gb',
     'abaylyi': GB_DIR / 'abaylyi_ADP1_CR543861.1.gb',
+    'mgenitalium': GB_DIR / 'mgenitalium_G37_L43967.2.gb',
     'mpne': ROOT / 'memory_bank/data/multiorg_essentiality/raw/mpneumoniae_M129_NC_000912.gb',
     'syn3a': ROOT / 'cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb',
 }
