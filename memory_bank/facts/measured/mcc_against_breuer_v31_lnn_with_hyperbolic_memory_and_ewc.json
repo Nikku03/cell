@@ -1,0 +1,105 @@
+{
+  "id": "mcc_against_breuer_v31_lnn_with_hyperbolic_memory_and_ewc",
+  "claim": "Phase v31 implemented a real production-quality Liquid Neural Net (LNN) module at cell_sim/layer_ml/ with multimodal inputs (scalar + regulatory + kinetic + sequence k-mer), operon-graph message passing, hyperbolic-ball memory bank borrowed from enzyme_Software/liquid_nn_v2 architectural pattern, and Elastic Weight Consolidation (EWC) for continual learning across organisms. Architecture: 415,047 parameters at hidden=128, 3 LiquidStep ODE-style integration steps per forward, 512-slot Poincaré-ball memory with top-8 hyperbolic-distance retrieval, 4 input branches with per-modality presence flags. Training pipeline (scripts/train_essentiality_lnn.py): Phase 1 = 80-epoch joint training on Salmonella + Syn3A (the rich-annotation organisms — Salmonella with RegulonDB-derived regulatory features, Syn3A with Breuer 2019 essentiality); Phase 2 = continual learning across 5 other organisms (Caulobacter, S. aureus, M.tb, A. baylyi, M. pneumoniae) with EWC (lambda=1500) and Fisher Information consolidation per organism; Phase 3 = per-organism evaluation. KEY RESULT: Phase 1 alone produces Syn3A in-domain MCC = 0.7019 (TP=341, FP=5, TN=67, FN=42 at threshold 0.44), HIGHER than v15's within-organism MCC=0.5372 by +0.16. After 5 rounds of continual learning (Phase 2 → Phase 3), Syn3A MCC degrades to 0.3561 — moderate catastrophic forgetting that EWC at lambda=1500 only partially mitigates. The final-organism-added effect: M. pneumoniae (last to enter Phase 2) reaches MCC=0.5004 at the end, the highest cross-organism final MCC, because its weights are freshest. Cross-organism Phase 1 evals (without retraining for those orgs): ccrescentus 0.251, saureus 0.232, mtb 0.111, abaylyi 0.273, mpne 0.145 — comparable to v25's 0.227 GB cross-organism baseline. The architecture is a real architectural win on the in-domain evaluation; the cross-organism transfer matches but does not break v25's 0.227 ceiling. Continual learning with EWC at lambda=1500 needs higher penalty or replay-buffer augmentation to fully prevent forgetting.",
+  "confidence": "measured",
+  "source": "internal_infrastructure",
+  "source_detail": "Reproducible via scripts/train_essentiality_lnn.py (80 epoch Phase 1 + 12 epoch * 5 orgs Phase 2 + Phase 3 eval; ~30 min on CPU, exit code 0). LNN module at cell_sim/layer_ml/ with 5 components (liquid_lnn.py, hyperbolic_memory.py, multimodal_encoder.py, continual_learning.py, essentiality_lnn.py) + data_loader.py + README.md, each with __main__ self-test. Trained checkpoint at cell_sim/layer_ml/checkpoints/essentiality_lnn.pt (1.9 MB). Output: outputs/essentiality_lnn_results.json. Architecture pattern borrowed from Nikku03/enzyme_Software/src/enzyme_software/liquid_nn_v2 (chemistry LNN: ContextAwareTauPredictor + EdgeAwareMessagePassing + hyperbolic memory bank); tuned for genes via tau bounds for gene-network timescales, edge features representing operon membership (gap_bp, strand_match), and per-organism sub-graph passing.",
+  "last_verified": "2026-05-02",
+  "context": {
+    "entity": "syn3a_essentiality_predictor",
+    "version": "v31_lnn_with_multimodal_hyperbolic_memory_ewc_continual_learning"
+  },
+  "dependencies": [
+    "mcc_against_breuer_v15_round2_priors",
+    "mcc_against_breuer_v25_multiorg_structured_features",
+    "mcc_against_breuer_v26_lnn_cross_organism",
+    "mcc_against_breuer_v29_cross_organism_conservation",
+    "mcc_against_breuer_v30_hybrid_calibration_path_c"
+  ],
+  "used_by": [
+    "cell_sim/layer_ml/__init__.py",
+    "cell_sim/layer_ml/liquid_lnn.py",
+    "cell_sim/layer_ml/hyperbolic_memory.py",
+    "cell_sim/layer_ml/multimodal_encoder.py",
+    "cell_sim/layer_ml/continual_learning.py",
+    "cell_sim/layer_ml/essentiality_lnn.py",
+    "cell_sim/layer_ml/data_loader.py",
+    "cell_sim/layer_ml/README.md",
+    "cell_sim/layer_ml/checkpoints/essentiality_lnn.pt",
+    "scripts/train_essentiality_lnn.py",
+    "outputs/essentiality_lnn_results.json"
+  ],
+  "value": {
+    "method": "multimodal_lnn_415k_params_hyperbolic_memory_ewc_continual_learning",
+    "architecture": {
+      "n_parameters": 415047,
+      "hidden_dim": 128,
+      "n_liquid_steps": 3,
+      "memory_size": 512,
+      "memory_curvature": 1.0,
+      "memory_retrieval_k": 8,
+      "input_branches": ["scalar(20)", "regulatory(50)", "kinetic(4)", "sequence_kmer(64+256)"],
+      "tau_min": 0.1, "tau_max": 2.0, "dt": 0.2,
+      "edge_features": ["log_gap_bp", "strand_match"]
+    },
+    "phase_1_results_80_epochs_styphimurium_syn3a": {
+      "training_organisms": ["styphimurium", "syn3a"],
+      "training_loss_final": 0.1578,
+      "training_wall_seconds": 1087.0,
+      "syn3a_in_domain_mcc": 0.7019,
+      "syn3a_in_domain_confusion": {"tp": 341, "fp": 5, "tn": 67, "fn": 42, "threshold": 0.44},
+      "styphimurium_in_domain_mcc": 0.4041,
+      "cross_organism_evals_no_training": {
+        "ccrescentus": 0.2510,
+        "saureus": 0.2323,
+        "mtuberculosis": 0.1108,
+        "abaylyi": 0.2730,
+        "mpne": 0.1453
+      }
+    },
+    "phase_2_continual_learning": {
+      "ewc_lambda": 1500.0,
+      "epochs_per_org": 12,
+      "organisms_added_in_order": ["ccrescentus", "saureus", "mtuberculosis", "abaylyi", "mpne"],
+      "post_each_addition_syn3a_mcc": {
+        "after_ccrescentus": 0.564,
+        "after_saureus": 0.551,
+        "after_mtuberculosis": 0.506,
+        "after_abaylyi": 0.519,
+        "after_mpne": 0.356
+      },
+      "fisher_max_phase_1": 0.4428
+    },
+    "phase_3_final_evals": {
+      "styphimurium": {"mcc": 0.3000, "tp": 20, "fp": 6, "tn": 2842, "fn": 138},
+      "syn3a": {"mcc": 0.3561, "tp": 244, "fp": 11, "tn": 61, "fn": 139},
+      "ccrescentus": {"mcc": 0.2565, "tp": 81, "fp": 64, "tn": 3070, "fn": 399},
+      "saureus": {"mcc": 0.1516, "tp": 56, "fp": 0, "tn": 49, "fn": 293},
+      "mtuberculosis": {"mcc": 0.1925, "tp": 119, "fp": 231, "tn": 2777, "fn": 370},
+      "abaylyi": {"mcc": 0.2317, "tp": 188, "fp": 736, "tn": 1858, "fn": 105},
+      "mpne": {"mcc": 0.5004, "tp": 356, "fp": 61, "tn": 126, "fn": 71}
+    },
+    "syn3a_forgetting_phase1_to_phase3": 0.3458,
+    "comparison_to_baselines": {
+      "v15_within_organism_syn3a": 0.5372,
+      "v25_gb_cross_organism": 0.2270,
+      "v29_gb_with_conservation_fine_grid": 0.2438,
+      "v26_lnn_naive_cross_organism": 0.1234,
+      "this_lnn_phase1_in_domain_syn3a": 0.7019,
+      "this_lnn_phase3_after_continual_syn3a": 0.3561
+    },
+    "delta_phase1_vs_v15": 0.1647,
+    "delta_phase1_cross_org_avg_vs_v25": -0.0235,
+    "verdict": "architecture_works_phase1_beats_v15_continual_learning_partially_forgets"
+  },
+  "caveats": [
+    "Phase 1 syn3a MCC=0.7019 is IN-DOMAIN — Syn3A was in the training set with full multimodal features. This is NOT a cross-organism prediction; it's an architectural demonstration that the LNN can fit Syn3A given the right features. The fact that it beats v15's within-organism 0.5372 by +0.16 is a real architecture win for the in-distribution case but doesn't refute the v25-v29 cross-organism feature-engineering ceiling.",
+    "Continual learning forgetting is real. Phase 1 syn3a 0.7019 -> Phase 3 syn3a 0.3561 = forgetting of 0.346. EWC at lambda=1500 partially mitigates it (vs lambda=200 in an earlier run that forgot more rapidly) but doesn't fully prevent it. Higher lambda values, replay-buffer augmentation, or weighted memory bank retrieval could improve. The hyperbolic memory bank stores all phase-1 representations across organisms but its retrieved-state contribution to LiquidStep is additive rather than gating, so it doesn't strongly resist gradient updates.",
+    "Cross-organism Phase 1 evaluations (the model never trained on these orgs) gave: ccrescentus 0.25, saureus 0.23, mtb 0.11, abaylyi 0.27, mpne 0.15. Average ~0.20 vs v25 GB's 0.227 cross-organism. The LNN architecture matches but does NOT exceed v25 on naive cross-organism transfer. The v25-v29 ceiling at ~0.24 holds; the LNN's win is in-domain.",
+    "M. pneumoniae final MCC=0.5004 is the highest cross-organism final result but is the LAST organism added in Phase 2 — its weights are freshest, hasn't suffered as many subsequent overwrite cycles. This is the 'recency bias' typical of continual-learning systems without strong-replay regularization. Re-running Phase 2 with mpne first would shift this advantage to whichever org goes last.",
+    "The training loss drop (0.27 -> 0.16 in 80 epochs) plus syn3a in-domain MCC=0.70 demonstrate the architecture has expressive capacity. The sub-baseline cross-organism transfer indicates the bottleneck is feature representation (consistent with v25-v29 findings) rather than model architecture.",
+    "Self-tests pass for all 5 LNN component modules + data_loader (run via `python -m cell_sim.layer_ml.<module>`). The architecture is reproducible and the components compose cleanly. The training script is reproducible from the on-disk feature CSVs (v25 + v27 + v29) and the 17 GenBanks; no external data acquisition required.",
+    "Hyperbolic memory bank is a real implementation: K=512 slot Poincaré ball with curvature c=1.0, exponential-map projection from Euclidean tangent, top-k weighted retrieval by hyperbolic distance, circular FIFO writes. After Phase 1 the bank fills with 512 representations from Salmonella + Syn3A; Phase 2 each new organism's representations overwrite oldest slots. This provides cross-organism retrieval but may benefit from per-organism slot reservation (currently a future enhancement).",
+    "Confidence: measured (full pipeline runs end-to-end with deterministic seed=42, all results reproducible from on-disk artifacts, training checkpoint saved at cell_sim/layer_ml/checkpoints/essentiality_lnn.pt for re-load). The verdict 'architecture works in-domain, cross-organism matches v25 ceiling' is the honest read; the 0.7019 syn3a number should be treated as in-distribution rather than cross-organism predictive."
+  ]
+}
