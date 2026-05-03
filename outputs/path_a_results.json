@@ -1,0 +1,58 @@
+{
+  "method": "path_a_lnn_with_ppi_features",
+  "syn3a_panel_size": 455,
+  "baseline_no_ppi": {
+    "lnn_solo_mcc": 0.6737,
+    "lnn_threshold": 0.297,
+    "cascade_mcc": 0.7308,
+    "frac_lnn_routed": 0.358
+  },
+  "with_ppi": {
+    "lnn_solo_mcc_at_best_t": 0.7296693429583858,
+    "lnn_solo_mcc_at_t_0.5": 0.478806387032519,
+    "best_t": 0.30781531929969785,
+    "projected_cascade_mcc": 0.7508370247791022,
+    "projected_cascade_gain": 0.020037024779102134
+  },
+  "config": {
+    "n_scalar": 23,
+    "n_regulatory": 50,
+    "n_kinetic": 4,
+    "n_kmer3": 64,
+    "n_kmer4": 256,
+    "hidden": 128,
+    "n_liquid_steps": 3,
+    "edge_dim": 2,
+    "tau_min": 0.1,
+    "tau_max": 2.0,
+    "dt": 0.2,
+    "dropout": 0.1,
+    "memory_size": 1024,
+    "memory_retrieval_k": 8,
+    "memory_curvature": 1.0,
+    "n_regulator_proxy_classes": 3,
+    "use_sequence_encoder": true,
+    "seq_max_len": 2048,
+    "seq_embed_dim": 32,
+    "seq_kernel_sizes": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "seq_channels_per_kernel": 32
+  },
+  "n_params": 432807,
+  "epochs": 60,
+  "train_orgs": [
+    "styphimurium",
+    "ccrescentus",
+    "saureus",
+    "mtuberculosis",
+    "abaylyi",
+    "mpne",
+    "mgenitalium",
+    "syn3a"
+  ],
+  "eval_org": "syn3a"
+}
