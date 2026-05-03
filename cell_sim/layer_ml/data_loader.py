@@ -92,6 +92,18 @@ def _organism_locus(organism: str, f) -> str | None:
     return locus
 
 
+def _seq_to_tokens(seq: str, max_len: int = 2048) -> tuple[np.ndarray, int]:
+    """Token-encode a nucleotide sequence with padding.
+    Vocab: A=0, C=1, G=2, T=3, N/pad=4.
+    Returns (tokens [max_len], real_length)."""
+    nuc_to_idx = {'A': 0, 'C': 1, 'G': 2, 'T': 3}
+    tokens = np.full(max_len, 4, dtype=np.int64)  # 4 = pad
+    L = min(len(seq), max_len)
+    for i in range(L):
+        tokens[i] = nuc_to_idx.get(seq[i], 4)
+    return tokens, L
+
+
 def _kmer_counts(seq: str, k: int) -> np.ndarray:
     """Normalized k-mer count vector. seq must be uppercase ACGT-only."""
     if len(seq) < k:
@@ -164,12 +176,22 @@ def _extract_organism_data(organism: str, features_df: pd.DataFrame
     edge_attr = (np.array(attr, dtype=np.float32)
                   if attr else np.zeros((0, 2), dtype=np.float32))
 
-    # K-mer features per gene
+    # K-mer features per gene (compressed sequence summary)
     kmer3 = np.zeros((len(cdses), 64), dtype=np.float32)
     kmer4 = np.zeros((len(cdses), 256), dtype=np.float32)
     for i, c in enumerate(cdses):
         kmer3[i] = _kmer_counts(c['seq'], 3)
         kmer4[i] = _kmer_counts(c['seq'], 4)
+
+    # Raw nucleotide tokens (for the SequenceEncoder option). Padded to
+    # max_seq_len; per-gene real lengths kept separately.
+    max_seq_len = 2048
+    seq_tokens = np.full((len(cdses), max_seq_len), 4, dtype=np.int64)
+    seq_lengths = np.zeros(len(cdses), dtype=np.int64)
+    for i, c in enumerate(cdses):
+        toks, L = _seq_to_tokens(c['seq'], max_len=max_seq_len)
+        seq_tokens[i] = toks
+        seq_lengths[i] = L
 
     return {
         'organism': organism,
@@ -179,6 +201,8 @@ def _extract_organism_data(organism: str, features_df: pd.DataFrame
         'edge_attr': edge_attr,
         'kmer3': kmer3,
         'kmer4': kmer4,
+        'seq_tokens': seq_tokens,
+        'seq_lengths': seq_lengths,
     }
 
 
@@ -266,6 +290,8 @@ def _build_organism_batch(organism: str,
         'kinetic_mask': torch.tensor(kinetic_mask, dtype=torch.float32),
         'kmer3': torch.tensor(org_data['kmer3'], dtype=torch.float32),
         'kmer4': torch.tensor(org_data['kmer4'], dtype=torch.float32),
+        'seq_tokens': torch.tensor(org_data['seq_tokens'], dtype=torch.long),
+        'seq_lengths': torch.tensor(org_data['seq_lengths'], dtype=torch.long),
         'edge_index': torch.tensor(org_data['edge_index'], dtype=torch.long),
         'edge_attr': torch.tensor(org_data['edge_attr'], dtype=torch.float32),
         'labels': torch.tensor(labels, dtype=torch.float32),

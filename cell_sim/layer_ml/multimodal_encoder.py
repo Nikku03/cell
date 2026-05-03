@@ -40,6 +40,86 @@ class MultimodalEncoderConfig:
     hidden: int = 128
     dropout: float = 0.1
 
+    # Sequence encoder option (when True, replaces kmer3+kmer4 branches with a
+    # per-gene CNN over raw nucleotide tokens — keeps positional information).
+    use_sequence_encoder: bool = False
+    seq_max_len: int = 2048
+    seq_embed_dim: int = 32
+    seq_kernel_sizes: tuple = (3, 5, 7, 9)
+    seq_channels_per_kernel: int = 32
+    seq_vocab_size: int = 5     # A, C, G, T, N/pad
+
+
+class SequenceEncoder(nn.Module):
+    """Per-gene CNN encoder over raw nucleotide tokens.
+
+    Token vocab (token id -> nucleotide):
+      0 = A, 1 = C, 2 = G, 3 = T, 4 = N/pad
+
+    Architecture:
+      embedding: vocab(5) -> embed_dim(32)
+      multi-scale Conv1d: kernel sizes (3, 5, 7, 9), each producing 32 channels
+      mask out padded positions before pooling
+      global max-pool per channel
+      concat -> Linear -> output_dim
+
+    Output: [N, output_dim] fixed-size embedding per gene.
+
+    Padded positions (token id = 4) get masked to a very negative value
+    BEFORE max pooling so they can't contribute to the pooled signal.
+    Embedding for token 4 is also explicitly zeroed via padding_idx.
+    """
+
+    def __init__(self, embed_dim: int = 32, output_dim: int = 64,
+                 kernel_sizes=(3, 5, 7, 9), channels_per_kernel: int = 32,
+                 max_len: int = 2048, vocab_size: int = 5,
+                 pad_token: int = 4, dropout: float = 0.1):
+        super().__init__()
+        self.embed_dim = embed_dim
+        self.output_dim = output_dim
+        self.max_len = max_len
+        self.pad_token = pad_token
+
+        self.token_embed = nn.Embedding(vocab_size, embed_dim,
+                                          padding_idx=pad_token)
+        self.convs = nn.ModuleList([
+            nn.Conv1d(embed_dim, channels_per_kernel, k, padding=k // 2)
+            for k in kernel_sizes
+        ])
+        total_conv_dim = channels_per_kernel * len(kernel_sizes)
+        self.proj = nn.Sequential(
+            nn.Linear(total_conv_dim, output_dim),
+            nn.LayerNorm(output_dim),
+            nn.SiLU(),
+            nn.Dropout(dropout),
+        )
+
+    def forward(self, tokens: torch.Tensor,
+                lengths: torch.Tensor | None = None) -> torch.Tensor:
+        """tokens: [N, L] int64 with values in 0..vocab_size-1.
+        lengths: [N] optional real lengths. If None, infer from token!=pad.
+        Returns: [N, output_dim]."""
+        # tokens: [N, L]; embed: [N, L, embed_dim] -> [N, embed_dim, L] for conv1d
+        h = self.token_embed(tokens).transpose(1, 2)
+
+        # Build per-position mask: 1 = real, 0 = pad
+        if lengths is not None:
+            arange = torch.arange(tokens.size(1), device=tokens.device)
+            mask = (arange.unsqueeze(0) < lengths.unsqueeze(1)).to(h.dtype)
+        else:
+            mask = (tokens != self.pad_token).to(h.dtype)
+        mask = mask.unsqueeze(1)  # [N, 1, L] for broadcasting
+
+        feats = []
+        for conv in self.convs:
+            f = F.relu(conv(h))                    # [N, C, L]
+            # Mask padded positions before max-pooling
+            f = f.masked_fill(mask == 0, -1e9)
+            pooled = F.adaptive_max_pool1d(f, 1).squeeze(-1)  # [N, C]
+            feats.append(pooled)
+        h = torch.cat(feats, dim=-1)              # [N, total_conv_dim]
+        return self.proj(h)
+
 
 class _Branch(nn.Module):
     """Generic feature-branch encoder with missing-data masking.
@@ -100,7 +180,19 @@ class MultimodalEncoder(nn.Module):
         self.scalar_branch = _Branch(cfg.n_scalar, b, cfg.dropout)
         self.regulatory_branch = _Branch(cfg.n_regulatory, b, cfg.dropout)
         self.kinetic_branch = _Branch(cfg.n_kinetic, b, cfg.dropout)
-        self.kmer_branch = _Branch(cfg.n_kmer3 + cfg.n_kmer4, b, cfg.dropout)
+        if cfg.use_sequence_encoder:
+            # Sequence-level encoder (CNN over raw nucleotides)
+            self.sequence_branch = SequenceEncoder(
+                embed_dim=cfg.seq_embed_dim, output_dim=b,
+                kernel_sizes=cfg.seq_kernel_sizes,
+                channels_per_kernel=cfg.seq_channels_per_kernel,
+                max_len=cfg.seq_max_len, vocab_size=cfg.seq_vocab_size,
+                dropout=cfg.dropout,
+            )
+            self.kmer_branch = None
+        else:
+            self.kmer_branch = _Branch(cfg.n_kmer3 + cfg.n_kmer4, b, cfg.dropout)
+            self.sequence_branch = None
 
         self.combiner = nn.Sequential(
             nn.Linear(4 * b + 4, H),
@@ -113,8 +205,20 @@ class MultimodalEncoder(nn.Module):
     def forward(self, batch: dict) -> torch.Tensor:
         # Mandatory branches
         s = self.scalar_branch(batch['scalar'])
-        kmer_in = torch.cat([batch['kmer3'], batch['kmer4']], dim=-1)
-        k = self.kmer_branch(kmer_in)
+
+        # Sequence vs k-mer branch (mutually exclusive at construction time)
+        if self.sequence_branch is not None:
+            seq_tokens = batch.get('seq_tokens')
+            if seq_tokens is None:
+                # No sequence in batch — fall back to zeros so the rest still works
+                k = torch.zeros(batch['scalar'].size(0), self.cfg.hidden // 4,
+                                device=batch['scalar'].device)
+            else:
+                k = self.sequence_branch(seq_tokens, batch.get('seq_lengths'))
+        else:
+            kmer_in = torch.cat([batch['kmer3'], batch['kmer4']], dim=-1)
+            k = self.kmer_branch(kmer_in)
+
         # Optional / masked branches
         r_mask = batch.get('regulatory_mask',
                             torch.ones(batch['scalar'].size(0),
@@ -132,7 +236,7 @@ class MultimodalEncoder(nn.Module):
             torch.ones(N, device=device),                # scalar always present
             r_mask.to(torch.float32),                    # regulatory mask
             ki_mask.to(torch.float32),                   # kinetic mask
-            torch.ones(N, device=device),                # kmer always present
+            torch.ones(N, device=device),                # sequence/kmer always present
         ], dim=-1)
 
         combined = torch.cat([s, r, ki, k, flags], dim=-1)
@@ -195,6 +299,57 @@ def _self_test():
     out_min = enc(batch_min)
     assert out_min.shape == (N, cfg.hidden)
     print(f'  all-modalities-missing forward: shape ok, mean={out_min.mean().item():.3f}')
+
+    # ── sequence encoder mode ──
+    print('  ── sequence encoder mode ──')
+    seq_cfg = MultimodalEncoderConfig(hidden=64, use_sequence_encoder=True,
+                                        seq_max_len=512)
+    seq_enc = MultimodalEncoder(seq_cfg)
+    seq_params = sum(p.numel() for p in seq_enc.parameters())
+    print(f'  seq-mode params: {seq_params:,}')
+
+    # Dummy nucleotide tokens (vocab 0-4: A, C, G, T, N/pad)
+    seq_batch = {
+        'scalar': torch.randn(N, seq_cfg.n_scalar),
+        'regulatory': torch.randn(N, seq_cfg.n_regulatory),
+        'regulatory_mask': torch.ones(N),
+        'kinetic': torch.zeros(N, seq_cfg.n_kinetic),
+        'kinetic_mask': torch.zeros(N),
+        'seq_tokens': torch.randint(0, 4, (N, seq_cfg.seq_max_len)),
+        'seq_lengths': torch.randint(50, seq_cfg.seq_max_len, (N,)),
+    }
+    # Pad some positions explicitly to test masking
+    for i in range(N):
+        L = seq_batch['seq_lengths'][i].item()
+        seq_batch['seq_tokens'][i, L:] = 4
+
+    out_seq = seq_enc(seq_batch)
+    print(f'  forward: shape={tuple(out_seq.shape)}, '
+          f'mean={out_seq.mean().item():.3f}, std={out_seq.std().item():.3f}')
+    assert out_seq.shape == (N, seq_cfg.hidden)
+
+    # Backward through sequence encoder
+    out_seq.sum().backward()
+    print('  backward through sequence encoder: ok')
+
+    # Just the SequenceEncoder in isolation
+    se = SequenceEncoder(embed_dim=16, output_dim=32, max_len=128,
+                          kernel_sizes=(3, 5))
+    tok = torch.randint(0, 5, (8, 128))
+    out_se = se(tok)
+    assert out_se.shape == (8, 32)
+    print(f'  SequenceEncoder alone: out shape {tuple(out_se.shape)}, '
+          f'params={sum(p.numel() for p in se.parameters())}')
+
+    # Padded sequence: real_length=10, rest is pad
+    tok_padded = torch.full((4, 128), 4, dtype=torch.long)
+    tok_padded[:, :10] = torch.randint(0, 4, (4, 10))
+    lengths = torch.tensor([10, 10, 10, 10])
+    out_padded = se(tok_padded, lengths)
+    assert out_padded.shape == (4, 32)
+    # Output should not be wildly different from the unpadded version
+    print(f'  padded sequence output: mean={out_padded.mean().item():.3f} '
+          f'(masked 118/128 positions to pad)')
 
     print('  ALL PASS')
 

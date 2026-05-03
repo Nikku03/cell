@@ -61,6 +61,12 @@ class LNNConfig:
     memory_retrieval_k: int = 8
     memory_curvature: float = 1.0
     n_regulator_proxy_classes: int = 3  # RBS / -10 / -35 (per-position score)
+    # Sequence encoder option (replaces kmer branch with CNN over raw nucleotides)
+    use_sequence_encoder: bool = False
+    seq_max_len: int = 2048
+    seq_embed_dim: int = 32
+    seq_kernel_sizes: tuple = (3, 5, 7, 9)
+    seq_channels_per_kernel: int = 32
 
 
 class EssentialityLNN(nn.Module):
@@ -92,6 +98,11 @@ class EssentialityLNN(nn.Module):
             n_kmer4=cfg.n_kmer4,
             hidden=cfg.hidden,
             dropout=cfg.dropout,
+            use_sequence_encoder=cfg.use_sequence_encoder,
+            seq_max_len=cfg.seq_max_len,
+            seq_embed_dim=cfg.seq_embed_dim,
+            seq_kernel_sizes=cfg.seq_kernel_sizes,
+            seq_channels_per_kernel=cfg.seq_channels_per_kernel,
         )
         self.encoder = MultimodalEncoder(enc_cfg)
 
