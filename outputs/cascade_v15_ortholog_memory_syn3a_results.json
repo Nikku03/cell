@@ -1,0 +1,76 @@
+{
+  "method": "cascade_v15_ortholog_memory_syn3a_held_out",
+  "target": "syn3a",
+  "ref_orgs": [
+    "abaylyi",
+    "ccrescentus",
+    "mgenitalium",
+    "mpne",
+    "mtuberculosis",
+    "saureus",
+    "styphimurium"
+  ],
+  "cascade_threshold": 0.5,
+  "additive_threshold": 0.7,
+  "best_additive_threshold": 0.85,
+  "best_additive_mcc": 0.5256786915665512,
+  "memory_top_k": 10,
+  "ortholog_blend_weight": 0.7,
+  "best_strategy": "B_additive",
+  "components": {
+    "v15_alone": {
+      "name": "v15_alone",
+      "mcc": 0.5372320940435067,
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    },
+    "ortholog_alone": {
+      "name": "ortholog_alone",
+      "mcc": 0.11631819403867846,
+      "tp": 343,
+      "fp": 57,
+      "tn": 15,
+      "fn": 40
+    },
+    "memory_kNN_alone": {
+      "name": "memory_kNN_alone",
+      "mcc": 0.10538767378465975,
+      "tp": 332,
+      "fp": 55,
+      "tn": 17,
+      "fn": 51
+    },
+    "fallback_combined": {
+      "name": "fallback_alone",
+      "mcc": 0.09833740212752128,
+      "tp": 334,
+      "fp": 56,
+      "tn": 16,
+      "fn": 49
+    },
+    "CASCADE_A_gating": {
+      "name": "CASCADE_A_gating",
+      "mcc": 0.47070666195529376,
+      "tp": 302,
+      "fp": 14,
+      "tn": 58,
+      "fn": 81
+    },
+    "CASCADE_B_additive": {
+      "name": "CASCADE_B_additive_t0.7",
+      "mcc": 0.515779747156181,
+      "tp": 297,
+      "fp": 8,
+      "tn": 64,
+      "fn": 86
+    }
+  },
+  "baselines": {
+    "v15_simulator_alone": 0.505,
+    "lnn_cascade_with_syn3a_in_training": 0.768,
+    "lnn_cross_org_syn3a_held_out": 0.26,
+    "ortholog_prior_only_syn3a_held_out": 0.302
+  }
+}
