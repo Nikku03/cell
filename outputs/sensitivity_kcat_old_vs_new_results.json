@@ -1,0 +1,23 @@
+{
+  "method": "kcat_sensitivity_old_vs_new",
+  "old_kcats_mcc": 0.5372320940435067,
+  "old_kcats_confusion": {
+    "tp": 287,
+    "fp": 3,
+    "tn": 69,
+    "fn": 96
+  },
+  "new_kcats_mcc": 0.5372320940435067,
+  "new_kcats_confusion": {
+    "tp": 287,
+    "fp": 3,
+    "tn": 69,
+    "fn": 96
+  },
+  "delta_mcc": 0.0,
+  "n_flipped": 0,
+  "frac_flipped": 0.0,
+  "flipped_loci": [],
+  "verdict": "NEUTRAL \u2014 kcat patches change few calls; v15 MCC ~unchanged",
+  "note": "Compares cached v15 predictions at the OLD kcats (commit pre-24369a5: GLCpts=500, FAt=50, ADEt=20 etc) vs this run at the NEW literature-grounded kcats (commit 24369a5: GLCpts=200, FAt=15, ADEt=8 etc)."
+}
