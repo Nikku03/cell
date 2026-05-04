@@ -1,0 +1,97 @@
+{
+  "method": "kcat_patch_sensitivity_static",
+  "n_genes_total": 455,
+  "n_patched_rule_names": 15,
+  "n_patched_rules_in_built_list": 15,
+  "n_patched_rules_cleared_by_imb155": 0,
+  "cleared_rules": [],
+  "sensitivity_label_counts": {
+    "no_catalysis_rules": 344,
+    "no_patched_dependency": 109,
+    "partially_patched": 1,
+    "fully_patched": 1
+  },
+  "flagged_loci": [
+    "JCVISYN3A_0616",
+    "JCVISYN3A_0779"
+  ],
+  "flagged_loci_per_rule": {
+    "catalysis:FAt:rev": [
+      "JCVISYN3A_0616"
+    ],
+    "catalysis:TAGt": [],
+    "catalysis:CYTDt_syn": [],
+    "catalysis:CHOLt": [],
+    "catalysis:GLYCt:rev": [],
+    "catalysis:GLCpts": [
+      "JCVISYN3A_0779"
+    ],
+    "catalysis:O2t:rev": [],
+    "catalysis:CHOLt:rev": [],
+    "catalysis:ADEt_syn": [],
+    "catalysis:FAt": [
+      "JCVISYN3A_0616"
+    ],
+    "catalysis:TAGt:rev": [],
+    "catalysis:URAt_syn": [],
+    "catalysis:GLYCt": [],
+    "catalysis:GUAt_syn": [],
+    "catalysis:O2t": []
+  },
+  "dynamic_results": [
+    {
+      "perturbation": "baseline_1.0x",
+      "locus_tag": "JCVISYN3A_0616",
+      "failed": false,
+      "v15_call": 1,
+      "v15_conf": 0.9,
+      "failure_mode": "translation_stall",
+      "wall_time_s": 38.84
+    },
+    {
+      "perturbation": "baseline_1.0x",
+      "locus_tag": "JCVISYN3A_0779",
+      "failed": false,
+      "v15_call": 1,
+      "v15_conf": 1.0,
+      "failure_mode": "catalysis_silenced",
+      "wall_time_s": 39.01
+    },
+    {
+      "perturbation": "kcat_0.5x",
+      "locus_tag": "JCVISYN3A_0616",
+      "failed": false,
+      "v15_call": 1,
+      "v15_conf": 0.9,
+      "failure_mode": "translation_stall",
+      "wall_time_s": 39.11
+    },
+    {
+      "perturbation": "kcat_0.5x",
+      "locus_tag": "JCVISYN3A_0779",
+      "failed": false,
+      "v15_call": 1,
+      "v15_conf": 1.0,
+      "failure_mode": "catalysis_silenced",
+      "wall_time_s": 39.21
+    },
+    {
+      "perturbation": "kcat_1.5x",
+      "locus_tag": "JCVISYN3A_0616",
+      "failed": false,
+      "v15_call": 1,
+      "v15_conf": 0.9,
+      "failure_mode": "translation_stall",
+      "wall_time_s": 38.69
+    },
+    {
+      "perturbation": "kcat_1.5x",
+      "locus_tag": "JCVISYN3A_0779",
+      "failed": false,
+      "v15_call": 1,
+      "v15_conf": 1.0,
+      "failure_mode": "catalysis_silenced",
+      "wall_time_s": 40.98
+    }
+  ]
+}
