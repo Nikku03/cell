@@ -41,6 +41,7 @@ FEATURES_REGULATORY = ROOT / 'outputs/multiorg_per_gene_features_with_regulatory
 FEATURES_CONSERVATION = ROOT / 'outputs/multiorg_per_gene_features_with_conservation.csv'
 FEATURES_EXPRESSION = ROOT / 'outputs/multiorg_per_gene_features_with_expression.csv'
 FEATURES_PPI = ROOT / 'outputs/ppi_features_per_gene.csv'
+FEATURES_ORTHOLOG_PRIOR = ROOT / 'outputs/ortholog_prior_features_per_gene.csv'
 
 GB_PATHS = {
     'ccrescentus': GB_DIR / 'ccrescentus_NA1000_CP001340.1.gb',
@@ -74,6 +75,20 @@ PPI_SCALAR_FEATURES = [
     'ppi_max_score',     # highest predicted PPI prob involving this gene
 ]
 SCALAR_FEATURES_WITH_PPI = SCALAR_FEATURES + PPI_SCALAR_FEATURES
+
+# Ortholog-prior feature channel: leave-one-out ortholog mean essentiality
+# from the 7 OTHER organisms (each gene's prior excludes its own organism's
+# labels — no leakage). Computed by scripts/score_ortholog_prior_feature.py.
+# Standalone ortholog predictor: mean cross-org MCC 0.420 (commit 97bd0f6).
+# Strong cross-org signal — much stronger than PPI features, which actively
+# hurt cross-org transfer (commit 988f9ed).
+ORTHOLOG_PRIOR_FEATURES = [
+    'ortholog_prior',    # mean essentiality of RBH partners (0.5 if none)
+    'n_orthologs',       # count of labeled RBH partners (0 if none)
+]
+SCALAR_FEATURES_WITH_ORTH = SCALAR_FEATURES + ORTHOLOG_PRIOR_FEATURES
+SCALAR_FEATURES_WITH_PPI_AND_ORTH = (SCALAR_FEATURES + PPI_SCALAR_FEATURES
+                                          + ORTHOLOG_PRIOR_FEATURES)
 
 # 50 regulatory feature columns (from v27): organized as
 # {RBS, -10, -35, 14_TFs} × {score, present, dist} ≈ 51, plus the special
@@ -324,6 +339,7 @@ def _build_organism_batch(organism: str,
 def load_organism_batches(organisms: list[str],
                             include_regulatory: bool = True,
                             include_ppi: bool = False,
+                            include_ortholog_prior: bool = False,
                             verbose: bool = True
                             ) -> dict[str, dict]:
     """Load per-organism batches for a list of organisms. Returns a dict
@@ -331,9 +347,19 @@ def load_organism_batches(organisms: list[str],
 
     `include_ppi`: when True and `outputs/ppi_features_per_gene.csv` exists,
     appends the 3 PPI scalar features (Path A) to the per-gene scalar
-    tensor. Caller's `MultimodalEncoderConfig.n_scalar` must be set to
-    `len(SCALAR_FEATURES_WITH_PPI)` (= 23) instead of `len(SCALAR_FEATURES)`
-    (= 20) to match.
+    tensor. (PPI features hurt cross-org generalization — see commit
+    988f9ed; useful only for in-domain interpolation.)
+
+    `include_ortholog_prior`: when True and
+    `outputs/ortholog_prior_features_per_gene.csv` exists, appends the 2
+    ortholog-prior scalar features. Computed leave-one-out per organism,
+    so safe for cross-org training.
+
+    Set caller's `MultimodalEncoderConfig.n_scalar` to match:
+      base only:           20
+      + PPI:                23
+      + ortholog prior:     22
+      + PPI + ortholog:     25
     """
     if verbose:
         print(f'[data_loader] loading features...')
@@ -348,21 +374,36 @@ def load_organism_batches(organisms: list[str],
     if include_regulatory and FEATURES_REGULATORY.exists():
         regulatory_df = pd.read_csv(FEATURES_REGULATORY)
 
-    scalar_feature_list = SCALAR_FEATURES
+    scalar_feature_list = list(SCALAR_FEATURES)
     if include_ppi:
         if not FEATURES_PPI.exists():
             raise FileNotFoundError(
                 f'include_ppi=True but {FEATURES_PPI} missing — run '
                 f'`python scripts/score_ppi_features.py` first.')
         ppi_df = pd.read_csv(FEATURES_PPI)
-        # Merge PPI columns into features_df (left join; missing -> NaN -> 0)
         features_df = features_df.merge(
             ppi_df[['organism', 'locus_tag'] + PPI_SCALAR_FEATURES],
             on=['organism', 'locus_tag'], how='left',
         )
         for col in PPI_SCALAR_FEATURES:
             features_df[col] = features_df[col].fillna(0.0)
-        scalar_feature_list = SCALAR_FEATURES_WITH_PPI
+        scalar_feature_list = scalar_feature_list + PPI_SCALAR_FEATURES
+
+    if include_ortholog_prior:
+        if not FEATURES_ORTHOLOG_PRIOR.exists():
+            raise FileNotFoundError(
+                f'include_ortholog_prior=True but {FEATURES_ORTHOLOG_PRIOR} '
+                f'missing — run '
+                f'`python scripts/score_ortholog_prior_feature.py` first.')
+        orth_df = pd.read_csv(FEATURES_ORTHOLOG_PRIOR)
+        features_df = features_df.merge(
+            orth_df[['organism', 'locus_tag'] + ORTHOLOG_PRIOR_FEATURES],
+            on=['organism', 'locus_tag'], how='left',
+        )
+        # Missing values -> neutral defaults (0.5 prior, 0 partners)
+        features_df['ortholog_prior'] = features_df['ortholog_prior'].fillna(0.5)
+        features_df['n_orthologs'] = features_df['n_orthologs'].fillna(0)
+        scalar_feature_list = scalar_feature_list + ORTHOLOG_PRIOR_FEATURES
 
     if verbose:
         print(f'  base features: {len(features_df)} rows, {len(features_df.columns)} cols')
@@ -370,8 +411,12 @@ def load_organism_batches(organisms: list[str],
             print(f'  regulatory features: {len(regulatory_df)} rows')
         if include_ppi:
             print(f'  PPI features merged: '
-                  f'{len(features_df.dropna(subset=PPI_SCALAR_FEATURES))} rows '
-                  f'(scalar dim now {len(scalar_feature_list)})')
+                  f'{len(features_df.dropna(subset=PPI_SCALAR_FEATURES))} rows')
+        if include_ortholog_prior:
+            print(f'  ortholog-prior features merged: '
+                  f'{(features_df.n_orthologs > 0).sum()} rows have orthologs')
+        print(f'  scalar feature dim: {len(scalar_feature_list)} '
+              f'({scalar_feature_list[-3:]})')
 
     batches = {}
     for org in organisms:
