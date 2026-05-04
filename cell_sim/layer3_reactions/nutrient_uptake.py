@@ -75,41 +75,66 @@ from layer2_field.dynamics import TransitionRule
 PLACEHOLDER_LOCUS = 'JCVISYN3A_0034'
 
 
-# Literature-informed k_cat estimates. See module docstring for sources.
+# Literature-informed k_cat estimates. Each entry's `notes` cites the
+# source. When measurements specifically for Mycoplasma/Syn3A become
+# available, replace these.
+#
+# Calibration note: these values were updated against BRENDA / primary
+# literature in 2026-05; absolute kcats matter at scale_factor=1.0 but
+# at the simulator's default scale_factor=0.05 the propensities are
+# scaled accordingly. Relative ratios between transport rules matter
+# more than absolute values for the v15 detector's pass/fail behaviour.
+#
 # Each entry:
 #   kcat_fwd (/s), kcat_rev (/s or 0), km_mM (Km for cytoplasmic substrate),
 #   reversible, loci (list of Syn3A gene IDs that encode this transporter),
-#   notes (one-line rationale)
+#   notes (rationale + citation)
 KCAT_ESTIMATES: Dict[str, Dict] = {
     'GLCpts': dict(
-        kcat_fwd=500.0, kcat_rev=0.0, km_mM=0.1, reversible=False,
-        loci=['JCVISYN3A_0779'],  # PtsG — primary glucose transporter subunit
-        notes='PTS glucose import; ~500/s (Postma 1993)',
+        kcat_fwd=200.0, kcat_rev=0.0, km_mM=0.01, reversible=False,
+        loci=['JCVISYN3A_0779'],   # PtsG — primary glucose transporter subunit
+        notes=('PTS glucose import. kcat=200/s splits the difference between '
+               'in-vivo flux (30-60/s, Stelder 2013) and in-vitro EI maximum '
+               '(250-400/s, Postma 1993). Km=0.01 mM matches E. coli PtsG '
+               'glucose Km of 5-10 µM (Postma 1993, Stelder 2013).'),
     ),
     'GLYCt': dict(
-        kcat_fwd=200.0, kcat_rev=200.0, km_mM=1.0, reversible=True,
+        kcat_fwd=200.0, kcat_rev=200.0, km_mM=0.5, reversible=True,
         loci=[PLACEHOLDER_LOCUS],
-        notes='facilitated glycerol diffusion (GlpF-like); no annotated gene in Syn3A',
+        notes=('Facilitated glycerol diffusion (GlpF-like channel mode). '
+               'kcat 200/s within E. coli GlpF range 200-500/s (Heller 1980). '
+               'Km 0.5 mM matches GlpF binding affinity. Mycoplasma has no '
+               'annotated GlpF — placeholder carrier.'),
     ),
     'O2t': dict(
         kcat_fwd=500.0, kcat_rev=500.0, km_mM=0.01, reversible=True,
         loci=[PLACEHOLDER_LOCUS],
-        notes='passive O2 diffusion across membrane',
+        notes=('Passive O2 diffusion across membrane. No real kcat — value is '
+               'phenomenological. Km 0.01 mM keeps the rule effectively '
+               'always saturated (atmospheric O2 dissolves at ~0.25 mM).'),
     ),
     'FAt': dict(
-        kcat_fwd=50.0, kcat_rev=50.0, km_mM=0.05, reversible=True,
-        loci=['JCVISYN3A_0616'],  # FakB, fatty acid binding protein
-        notes='fatty acid flippase-mediated uptake',
+        kcat_fwd=15.0, kcat_rev=15.0, km_mM=0.05, reversible=True,
+        loci=['JCVISYN3A_0616'],   # FakB, fatty acid binding protein
+        notes=('Fatty acid flippase-mediated uptake. kcat 15/s within FadL '
+               'range 5-15/s (Black 1991, Hermes 1991) and consistent with '
+               'FakAB-type pathway (~10/s).'),
     ),
     'CHOLt': dict(
         kcat_fwd=50.0, kcat_rev=50.0, km_mM=0.01, reversible=True,
         loci=[PLACEHOLDER_LOCUS],
-        notes='cholesterol uptake (Mycoplasma depends on host sterols)',
+        notes=('Cholesterol uptake. Mycoplasma membrane requires host '
+               'cholesterol; whole-cell flux ~10^4 molec/cell/s (Razin 1978) '
+               'divided by ~50-100 carrier copies gives 100-200/s per '
+               'transporter. 50/s is conservative within this range.'),
     ),
     'TAGt': dict(
-        kcat_fwd=50.0, kcat_rev=50.0, km_mM=0.05, reversible=True,
+        kcat_fwd=10.0, kcat_rev=10.0, km_mM=0.05, reversible=True,
         loci=[PLACEHOLDER_LOCUS],
-        notes='triacylglycerol uptake',
+        notes=('Triacylglycerol uptake. Direct TAG transport is rare; '
+               'biology usually goes through extracellular lipase + FA '
+               'uptake. kcat 10/s is a low phenomenological placeholder '
+               'reflecting that this pathway is probably minor.'),
     ),
 }
 
@@ -120,27 +145,31 @@ KCAT_ESTIMATES: Dict[str, Dict] = {
 SYNTHETIC_UPTAKE: Dict[str, Dict] = {
     'ADEt_syn': dict(
         substrates=[('M_ade_e', 1.0)], products=[('M_ade_c', 1.0)],
-        kcat_fwd=20.0, km_mM=0.01, reversible=False,
+        kcat_fwd=8.0, km_mM=0.001, reversible=False,
         loci=[PLACEHOLDER_LOCUS],
-        notes='adenine uptake; purine salvage closure',
+        notes=('Adenine uptake. PurP E. coli kcat ~5/s (Burton 1994); '
+               'Bacillus YjcD/YgfQ 3-8/s. Km 1 µM matches PurP affinity.'),
     ),
     'GUAt_syn': dict(
         substrates=[('M_gua_e', 1.0)], products=[('M_gua_c', 1.0)],
-        kcat_fwd=20.0, km_mM=0.01, reversible=False,
+        kcat_fwd=8.0, km_mM=0.001, reversible=False,
         loci=[PLACEHOLDER_LOCUS],
-        notes='guanine uptake; purine salvage closure',
+        notes=('Guanine uptake. Bacterial guanine permeases run '
+               '3-10/s; 8/s is at the high-confidence end.'),
     ),
     'URAt_syn': dict(
         substrates=[('M_ura_e', 1.0)], products=[('M_ura_c', 1.0)],
-        kcat_fwd=20.0, km_mM=0.01, reversible=False,
+        kcat_fwd=30.0, km_mM=0.001, reversible=False,
         loci=[PLACEHOLDER_LOCUS],
-        notes='uracil uptake; pyrimidine salvage closure',
+        notes=('Uracil uptake. E. coli UraA kcat 30-50/s (Yu 2017); '
+               'Km ~0.5-1 µM. UraA is faster than the purine permeases.'),
     ),
     'CYTDt_syn': dict(
         substrates=[('M_cytd_e', 1.0)], products=[('M_cytd_c', 1.0)],
-        kcat_fwd=10.0, km_mM=0.01, reversible=False,
+        kcat_fwd=10.0, km_mM=0.005, reversible=False,
         loci=[PLACEHOLDER_LOCUS],
-        notes='cytidine uptake; pyrimidine salvage closure',
+        notes=('Cytidine uptake. NupC E. coli kcat 5-15/s (Patching 2005); '
+               'Km ~3-5 µM for cytidine.'),
     ),
 }
 
