@@ -60,6 +60,9 @@ class LNNConfig:
     memory_size: int = 512
     memory_retrieval_k: int = 8
     memory_curvature: float = 1.0
+    use_memory_bank: bool = True   # set False for parametric-only model
+                                     # (drops the hyperbolic memory retrieval +
+                                     # storage; helps prevent memorization)
     n_regulator_proxy_classes: int = 3  # RBS / -10 / -35 (per-position score)
     # Sequence encoder option (replaces kmer branch with CNN over raw nucleotides)
     use_sequence_encoder: bool = False
@@ -120,13 +123,19 @@ class EssentialityLNN(nn.Module):
         ])
 
         # Hyperbolic memory bank (shared across steps; each step retrieves
-        # from the same bank, only the LAST hidden state is stored back)
-        self.memory = HyperbolicMemoryBank(
-            hidden=cfg.hidden,
-            memory_size=cfg.memory_size,
-            retrieval_k=cfg.memory_retrieval_k,
-            curvature=cfg.memory_curvature,
-        )
+        # from the same bank, only the LAST hidden state is stored back).
+        # Disabled when cfg.use_memory_bank is False — drops the
+        # nearest-neighbor lookup that's the most explicit memorization
+        # mechanism. The model must then rely on parametric pattern learning.
+        if cfg.use_memory_bank:
+            self.memory = HyperbolicMemoryBank(
+                hidden=cfg.hidden,
+                memory_size=cfg.memory_size,
+                retrieval_k=cfg.memory_retrieval_k,
+                curvature=cfg.memory_curvature,
+            )
+        else:
+            self.memory = None
 
         # Heads
         self.essentiality_head = nn.Sequential(
@@ -162,7 +171,10 @@ class EssentialityLNN(nn.Module):
                                 torch.zeros(0, self.cfg.edge_dim,
                                              device=h.device))
         for step_module in self.liquid_steps:
-            h_memory = self.memory.retrieve(h)
+            if self.memory is not None:
+                h_memory = self.memory.retrieve(h)
+            else:
+                h_memory = torch.zeros_like(h)
             h = step_module(h, h0, edge_index, edge_attr, h_memory=h_memory)
 
         # 3. Heads
@@ -171,7 +183,7 @@ class EssentialityLNN(nn.Module):
 
         # 4. Memory storage (continual learning: this batch's final
         # representations become available to future batches)
-        if store_memory and self.training:
+        if store_memory and self.training and self.memory is not None:
             self.memory.store(h.detach())
 
         return {
@@ -183,7 +195,8 @@ class EssentialityLNN(nn.Module):
     def reset_memory(self):
         """Clear the memory bank (e.g. between training phases or for eval-
         only forward passes that should not leak training memory)."""
-        self.memory.reset()
+        if self.memory is not None:
+            self.memory.reset()
 
 
 # ──────────── self-test ────────────
