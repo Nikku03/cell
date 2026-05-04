@@ -1,0 +1,183 @@
+{
+  "method": "cascade_three_way_v15_lnn_orth_syn3a_held_out",
+  "target": "syn3a",
+  "ref_orgs": [
+    "abaylyi",
+    "ccrescentus",
+    "mgenitalium",
+    "mpne",
+    "mtuberculosis",
+    "saureus",
+    "styphimurium"
+  ],
+  "all_strategies": {
+    "v15_alone": {
+      "name": "v15_alone",
+      "mcc": 0.5372320940435067,
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    },
+    "lnn_alone": {
+      "name": "cross_org_LNN(t=0.75)",
+      "mcc": 0.1329475777942898,
+      "tp": 66,
+      "fp": 3,
+      "tn": 69,
+      "fn": 317
+    },
+    "orth_alone": {
+      "name": "ortholog_prior_alone",
+      "mcc": 0.11631819403867846,
+      "tp": 343,
+      "fp": 57,
+      "tn": 15,
+      "fn": 40
+    },
+    "A_gating_alpha=0.0_lnn+1.0_orth": {
+      "name": "A_gating_alpha=0.0_lnn+1.0_orth",
+      "mcc": 0.29529206064784447,
+      "tp": 375,
+      "fp": 58,
+      "tn": 14,
+      "fn": 8
+    },
+    "A_gating_alpha=0.3_lnn+0.7_orth": {
+      "name": "A_gating_alpha=0.3_lnn+0.7_orth",
+      "mcc": 0.4029623253421541,
+      "tp": 313,
+      "fp": 24,
+      "tn": 48,
+      "fn": 70
+    },
+    "A_gating_alpha=0.5_lnn+0.5_orth": {
+      "name": "A_gating_alpha=0.5_lnn+0.5_orth",
+      "mcc": 0.4205074401718188,
+      "tp": 312,
+      "fp": 22,
+      "tn": 50,
+      "fn": 71
+    },
+    "A_gating_alpha=0.7_lnn+0.3_orth": {
+      "name": "A_gating_alpha=0.7_lnn+0.3_orth",
+      "mcc": 0.37961894780577427,
+      "tp": 309,
+      "fp": 25,
+      "tn": 47,
+      "fn": 74
+    },
+    "A_gating_alpha=1.0_lnn+0.0_orth": {
+      "name": "A_gating_alpha=1.0_lnn+0.0_orth",
+      "mcc": 0.3628821529317404,
+      "tp": 307,
+      "fp": 26,
+      "tn": 46,
+      "fn": 76
+    },
+    "B_additive_lnn>=0.5_orth>=0.5": {
+      "name": "B_additive_lnn>=0.5_orth>=0.5",
+      "mcc": 0.32666506991738403,
+      "tp": 319,
+      "fp": 33,
+      "tn": 39,
+      "fn": 64
+    },
+    "B_additive_lnn>=0.7_orth>=0.7": {
+      "name": "B_additive_lnn>=0.7_orth>=0.7",
+      "mcc": 0.4718031161994974,
+      "tp": 299,
+      "fp": 13,
+      "tn": 59,
+      "fn": 84
+    },
+    "B_additive_lnn>=0.8_orth>=0.8": {
+      "name": "B_additive_lnn>=0.8_orth>=0.8",
+      "mcc": 0.5058599834691234,
+      "tp": 297,
+      "fp": 9,
+      "tn": 63,
+      "fn": 86
+    },
+    "B_additive_lnn>=0.7_orth>=0.85": {
+      "name": "B_additive_lnn>=0.7_orth>=0.85",
+      "mcc": 0.4818159625230426,
+      "tp": 299,
+      "fp": 12,
+      "tn": 60,
+      "fn": 84
+    },
+    "B_additive_lnn>=0.85_orth>=0.85": {
+      "name": "B_additive_lnn>=0.85_orth>=0.85",
+      "mcc": 0.5355575869081001,
+      "tp": 297,
+      "fp": 6,
+      "tn": 66,
+      "fn": 86
+    },
+    "C_2of3_lnn>=0.5_orth>=0.5": {
+      "name": "C_2of3_lnn>=0.5_orth>=0.5",
+      "mcc": 0.3738552440141119,
+      "tp": 228,
+      "fp": 6,
+      "tn": 66,
+      "fn": 155
+    },
+    "C_2of3_lnn>=0.6_orth>=0.5": {
+      "name": "C_2of3_lnn>=0.6_orth>=0.5",
+      "mcc": 0.3713103943329394,
+      "tp": 216,
+      "fp": 4,
+      "tn": 68,
+      "fn": 167
+    },
+    "C_2of3_lnn>=0.7_orth>=0.5": {
+      "name": "C_2of3_lnn>=0.7_orth>=0.5",
+      "mcc": 0.38578980451256767,
+      "tp": 207,
+      "fp": 1,
+      "tn": 71,
+      "fn": 176
+    },
+    "D_avg_v15=0.5_lnn=0.25_orth=0.25": {
+      "name": "D_avg_v15=0.5_lnn=0.25_orth=0.25",
+      "mcc": 0.5372320940435067,
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    },
+    "D_avg_v15=0.6_lnn=0.2_orth=0.2": {
+      "name": "D_avg_v15=0.6_lnn=0.2_orth=0.2",
+      "mcc": 0.5372320940435067,
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    },
+    "D_avg_v15=0.4_lnn=0.3_orth=0.3": {
+      "name": "D_avg_v15=0.4_lnn=0.3_orth=0.3",
+      "mcc": 0.5266468879827904,
+      "tp": 283,
+      "fp": 3,
+      "tn": 69,
+      "fn": 100
+    },
+    "D_avg_v15=0.7_lnn=0.15_orth=0.15": {
+      "name": "D_avg_v15=0.7_lnn=0.15_orth=0.15",
+      "mcc": 0.5372320940435067,
+      "tp": 287,
+      "fp": 3,
+      "tn": 69,
+      "fn": 96
+    }
+  },
+  "best_strategy": "v15_alone",
+  "best_mcc": 0.5372320940435067,
+  "baselines": {
+    "v15_alone": 0.5372,
+    "lnn_cascade_in_domain_memorized": 0.768,
+    "cross_org_lnn_alone_honest": 0.1329475777942898,
+    "ortholog_alone_honest": 0.11631819403867846
+  }
+}
