@@ -1,0 +1,178 @@
+{
+  "method": "cascade_three_way_v15_transfer_lnn_fold_ortholog",
+  "target": "mtuberculosis",
+  "n_target_genes": 3497,
+  "n_essential": 489,
+  "n_nonessential": 3008,
+  "lnn_checkpoint": "lnn_leave_one_org_out.pt",
+  "lnn_fold": "mtuberculosis",
+  "v15_transfer_coverage": 130,
+  "ortholog_prior_coverage": 936,
+  "best_strategy": "ortholog_prior_alone",
+  "best_mcc": 0.49293014831672216,
+  "best_confusion": {
+    "tp": 201,
+    "fp": 78,
+    "tn": 2930,
+    "fn": 288
+  },
+  "all_strategies": {
+    "v15_transfer_subset": {
+      "name": "v15_transfer_subset_n=130",
+      "mcc": 0.3793369150327909,
+      "tp": 90,
+      "fp": 28,
+      "tn": 10,
+      "fn": 2
+    },
+    "v15_transfer_full": {
+      "name": "v15_transfer_full_panel_default_0",
+      "mcc": 0.33562321388095473,
+      "tp": 90,
+      "fp": 28,
+      "tn": 2980,
+      "fn": 399
+    },
+    "lnn_alone": {
+      "name": "cross_org_LNN(t=0.75)",
+      "mcc": 0.2595035558345335,
+      "tp": 77,
+      "fp": 51,
+      "tn": 2957,
+      "fn": 412
+    },
+    "orth_alone": {
+      "name": "ortholog_prior_alone",
+      "mcc": 0.49293014831672216,
+      "tp": 201,
+      "fp": 78,
+      "tn": 2930,
+      "fn": 288
+    },
+    "A_gating_alpha=0.0": {
+      "name": "A_gating_alpha=0.0",
+      "mcc": -0.02958882487632685,
+      "tp": 384,
+      "fp": 2462,
+      "tn": 546,
+      "fn": 105
+    },
+    "A_gating_alpha=0.3": {
+      "name": "A_gating_alpha=0.3",
+      "mcc": 0.18815456550892498,
+      "tp": 312,
+      "fp": 1117,
+      "tn": 1891,
+      "fn": 177
+    },
+    "A_gating_alpha=0.5": {
+      "name": "A_gating_alpha=0.5",
+      "mcc": 0.19464680176020474,
+      "tp": 318,
+      "fp": 1125,
+      "tn": 1883,
+      "fn": 171
+    },
+    "A_gating_alpha=0.7": {
+      "name": "A_gating_alpha=0.7",
+      "mcc": 0.20874864436121499,
+      "tp": 334,
+      "fp": 1159,
+      "tn": 1849,
+      "fn": 155
+    },
+    "A_gating_alpha=1.0": {
+      "name": "A_gating_alpha=1.0",
+      "mcc": 0.20545967404189405,
+      "tp": 370,
+      "fp": 1385,
+      "tn": 1623,
+      "fn": 119
+    },
+    "B_additive_lnn>=0.5_orth>=0.5": {
+      "name": "B_additive_lnn>=0.5_orth>=0.5",
+      "mcc": 0.23971011943286144,
+      "tp": 397,
+      "fp": 1403,
+      "tn": 1605,
+      "fn": 92
+    },
+    "B_additive_lnn>=0.7_orth>=0.7": {
+      "name": "B_additive_lnn>=0.7_orth>=0.7",
+      "mcc": 0.36236886183512695,
+      "tp": 207,
+      "fp": 232,
+      "tn": 2776,
+      "fn": 282
+    },
+    "B_additive_lnn>=0.85_orth>=0.85": {
+      "name": "B_additive_lnn>=0.85_orth>=0.85",
+      "mcc": 0.4220951982839244,
+      "tp": 146,
+      "fp": 52,
+      "tn": 2956,
+      "fn": 343
+    },
+    "C_2of3_lnn>=0.5_orth>=0.5": {
+      "name": "C_2of3_lnn>=0.5_orth>=0.5",
+      "mcc": 0.46070808162665466,
+      "tp": 174,
+      "fp": 64,
+      "tn": 2944,
+      "fn": 315
+    },
+    "C_2of3_lnn>=0.6_orth>=0.5": {
+      "name": "C_2of3_lnn>=0.6_orth>=0.5",
+      "mcc": 0.44597796594317496,
+      "tp": 154,
+      "fp": 47,
+      "tn": 2961,
+      "fn": 335
+    },
+    "C_2of3_lnn>=0.7_orth>=0.5": {
+      "name": "C_2of3_lnn>=0.7_orth>=0.5",
+      "mcc": 0.41299565256403514,
+      "tp": 122,
+      "fp": 27,
+      "tn": 2981,
+      "fn": 367
+    },
+    "D_avg_v15=0.5_lnn=0.25_orth=0.25": {
+      "name": "D_avg_v15=0.5_lnn=0.25_orth=0.25",
+      "mcc": 0.193989289002088,
+      "tp": 317,
+      "fp": 1122,
+      "tn": 1886,
+      "fn": 172
+    },
+    "D_avg_v15=0.4_lnn=0.3_orth=0.3": {
+      "name": "D_avg_v15=0.4_lnn=0.3_orth=0.3",
+      "mcc": 0.193989289002088,
+      "tp": 317,
+      "fp": 1122,
+      "tn": 1886,
+      "fn": 172
+    },
+    "D_avg_v15=0.3_lnn=0.35_orth=0.35": {
+      "name": "D_avg_v15=0.3_lnn=0.35_orth=0.35",
+      "mcc": 0.19373478101834551,
+      "tp": 317,
+      "fp": 1123,
+      "tn": 1885,
+      "fn": 172
+    },
+    "D_avg_v15=0.2_lnn=0.4_orth=0.4": {
+      "name": "D_avg_v15=0.2_lnn=0.4_orth=0.4",
+      "mcc": 0.1911469280571363,
+      "tp": 315,
+      "fp": 1122,
+      "tn": 1886,
+      "fn": 174
+    }
+  },
+  "reference_baselines": {
+    "v15_simulator_in_domain_syn3a": 0.5372,
+    "cross_org_LNN_mean_5_folds": 0.34,
+    "ortholog_prior_mean_cross_org": 0.42
+  }
+}
