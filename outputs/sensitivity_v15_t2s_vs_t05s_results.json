@@ -1,0 +1,30 @@
+{
+  "method": "v15_sweep_t_end_2s",
+  "t_end_s": 2.0,
+  "dt_s": 0.2,
+  "use_rust": true,
+  "n_workers": 11,
+  "wall_time_min": 93.8162124435107,
+  "old_kcats_t05s_mcc": 0.5372320940435067,
+  "new_kcats_t2s_mcc": 0.5300792867489555,
+  "delta_mcc": -0.0071528072945511445,
+  "old_confusion": {
+    "tp": 287,
+    "fp": 3,
+    "tn": 69,
+    "fn": 96
+  },
+  "new_confusion": {
+    "tp": 288,
+    "fp": 4,
+    "tn": 68,
+    "fn": 95
+  },
+  "n_flipped": 2,
+  "essential_to_nonessential_flips": 0,
+  "nonessential_to_essential_flips": 2,
+  "flipped_loci": [
+    "JCVISYN3A_0139",
+    "JCVISYN3A_0227"
+  ]
+}
