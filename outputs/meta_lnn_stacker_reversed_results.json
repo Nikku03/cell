@@ -1,0 +1,70 @@
+{
+  "method": "meta_lnn_logreg_stacker_REVERSED_loo",
+  "reversed_holdouts": [
+    "syn3a",
+    "mgenitalium",
+    "mpne"
+  ],
+  "training_pool": [
+    "styphimurium",
+    "ccrescentus",
+    "saureus",
+    "mtuberculosis",
+    "abaylyi"
+  ],
+  "note": "Held-out targets have NO honest LNN signal (no syn3a/mgen/mpne folds in checkpoint). v15 is in-domain for syn3a, RBH-transferred for mgen/mpne.",
+  "pooled_mcc": 0.38972784911675373,
+  "mean_org_mcc": 0.3757948116726773,
+  "pooled_confusion": {
+    "tp": 812,
+    "fp": 84,
+    "tn": 269,
+    "fn": 360
+  },
+  "per_org": {
+    "syn3a": {
+      "n": 455,
+      "best_threshold": 0.95,
+      "mcc": 0.3168575782732185,
+      "precision": 0.9666666666666667,
+      "recall": 0.5300261096605744,
+      "tp": 203,
+      "fp": 7,
+      "tn": 65,
+      "fn": 180,
+      "train_prevalence": 0.1738718625262161,
+      "test_prevalence": 0.8417582417582418,
+      "prevalence_shift": 0.6678863792320257
+    },
+    "mgenitalium": {
+      "n": 456,
+      "best_threshold": 0.95,
+      "mcc": 0.24626228015076468,
+      "precision": 0.8537313432835821,
+      "recall": 0.7900552486187845,
+      "tp": 286,
+      "fp": 49,
+      "tn": 45,
+      "fn": 76,
+      "train_prevalence": 0.17530446549391068,
+      "test_prevalence": 0.793859649122807,
+      "prevalence_shift": 0.6185551836288964
+    },
+    "mpne": {
+      "n": 614,
+      "best_threshold": 0.95,
+      "mcc": 0.5642645765940487,
+      "precision": 0.9202279202279202,
+      "recall": 0.7564402810304449,
+      "tp": 323,
+      "fp": 28,
+      "tn": 159,
+      "fn": 104,
+      "train_prevalence": 0.17275338530980713,
+      "test_prevalence": 0.6954397394136808,
+      "prevalence_shift": 0.5226863541038737
+    }
+  },
+  "forward_baseline_pooled": 0.5,
+  "forward_baseline_mean": 0.46
+}
