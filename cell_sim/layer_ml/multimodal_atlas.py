@@ -43,6 +43,12 @@ def collect_concept_activations(model, batches: dict, traj_lookup: dict,
 
     for org, batch in batches.items():
         N = len(batch['locus_tags'])
+        # Move batch tensors to device so the static branch compute matches
+        # the model's parameters' device. (Bug fix: previously only traj/
+        # know/has_traj were moved; the batch dict — which feeds the static
+        # encoder — stayed on CPU and tripped a device mismatch.)
+        batch_dev = {k: (v.to(device) if isinstance(v, torch.Tensor) else v)
+                       for k, v in batch.items()}
         # Per-gene trajectory tensor
         T = model.cfg.traj_n_steps
         D = model.cfg.traj_input_dim
@@ -53,13 +59,19 @@ def collect_concept_activations(model, batches: dict, traj_lookup: dict,
         for i, lt in enumerate(batch['locus_tags']):
             t = traj_lookup.get((org, lt))
             if t is not None:
-                traj[i] = torch.as_tensor(t, dtype=torch.float32)
+                # Truncate / pad if cached trajectory shape differs from model config
+                t_arr = np.asarray(t, dtype=np.float32)
+                Tn, Dn = t_arr.shape
+                tt = min(Tn, T); dd = min(Dn, D)
+                traj[i, :tt, :dd] = torch.as_tensor(t_arr[:tt, :dd])
                 has_traj[i] = 1.0
             kf = know_lookup.get((org, lt))
             if kf is not None:
-                know[i] = torch.as_tensor(kf, dtype=torch.float32)
+                kf_arr = np.asarray(kf, dtype=np.float32)
+                kk = min(kf_arr.shape[0], K_d)
+                know[i, :kk] = torch.as_tensor(kf_arr[:kk])
         with torch.no_grad():
-            out = model(batch, traj=traj.to(device), know=know.to(device),
+            out = model(batch_dev, traj=traj.to(device), know=know.to(device),
                           has_traj=has_traj.to(device), store_memory=False)
             preds = torch.sigmoid(out['essentiality']).cpu().numpy()
 
