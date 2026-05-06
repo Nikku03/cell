@@ -53,10 +53,36 @@ ESMFOLD_URL = 'https://api.esmatlas.com/foldSequence/v1/pdb/'
 ESMFOLD_MAX_LEN = 400         # API ceiling
 
 
+def _ensure_data_dir():
+    """The Luthey-Schulten data dir is typically a symlink to a sibling
+    repo that must be cloned separately. If the genbank is missing,
+    clone the LS repo + symlink (matches the multimodal notebook Cell 1
+    setup so this script also self-bootstraps in fresh Colab sessions)."""
+    if GENBANK.exists():
+        return
+    import os, subprocess
+    target = ROOT / 'cell_sim/data/Minimal_Cell_ComplexFormation'
+    ls_repo = Path('/content/Minimal_Cell_ComplexFormation')
+    if not ls_repo.exists():
+        print(f'  cloning Luthey-Schulten data repo to {ls_repo}...')
+        subprocess.run([
+            'git', 'clone', '--depth', '1',
+            'https://github.com/Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation.git',
+            str(ls_repo),
+        ], check=True)
+    if target.is_symlink() or target.exists():
+        try: target.unlink()
+        except IsADirectoryError: pass
+    target.parent.mkdir(parents=True, exist_ok=True)
+    os.symlink(str(ls_repo), str(target))
+    print(f'  symlinked {target} -> {ls_repo}')
+
+
 # ───────────────────────── stage: extract ─────────────────────────
 def extract_proteins() -> list[dict]:
     """Parse syn3A.gb and return a list of dicts with locus_tag, gene_name,
     protein_id, sequence."""
+    _ensure_data_dir()
     from Bio import SeqIO
     rec = next(SeqIO.parse(str(GENBANK), 'genbank'))
     out = []
