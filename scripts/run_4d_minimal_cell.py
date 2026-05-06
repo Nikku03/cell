@@ -227,6 +227,7 @@ def main():
         args.out,
         positions=traj['positions'],
         species_id=traj['species_id'],
+        persistent_id=traj['persistent_id'],
         counts=traj['counts'],
         t_ns=traj['t_ns'],
         rxn_events=traj['rxn_events'],

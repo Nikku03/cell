@@ -128,17 +128,29 @@ class Reaction:
 # ---------------------------------------------------------------------------
 @dataclass
 class CellState:
-    """Mutable state of the cell. Arrays grow / shrink as reactions fire."""
+    """Mutable state of the cell. Arrays grow / shrink as reactions fire.
+
+    ``persistent_id`` is the key invariant for downstream consumers (training
+    pair matchers, single-particle trackers). Each particle gets a unique
+    int64 ID at creation; that ID stays attached for the particle's lifetime
+    even as reactions reshuffle internal indices. When a particle is
+    destroyed its ID disappears from the state; new IDs are minted from
+    ``next_persistent_id`` for spawned products.
+    """
     pos: np.ndarray                          # (N, 3) nm
     species_id: np.ndarray                   # (N,) int32
     mass: np.ndarray                         # (N,) Da (informational)
     sigma: np.ndarray                        # (N,) nm
     epsilon: np.ndarray                      # (N,) kJ/mol
     diffusion: np.ndarray                    # (N,) nm²/ns — Brownian dynamics primary
+    persistent_id: np.ndarray                # (N,) int64 — stable across frames
+    next_persistent_id: int = 0              # counter for next minted ID
     # Polymer chain — list of arrays of indices in chain order. Each chain
     # contributes (len-1) FENE bonds and (len-2) bending terms.
+    # Indices here are CURRENT internal slots, not persistent_ids; they are
+    # remapped whenever fire_reactions removes particles.
     chains: list[np.ndarray] = field(default_factory=list)
-    # Complex restraints — list of (i, j) index pairs.
+    # Complex restraints — list of (i, j) index pairs (current slots, remapped).
     complex_pairs: np.ndarray = field(default_factory=lambda:
                                       np.empty((0, 2), dtype=np.int64))
     t_ns: float = 0.0
@@ -224,12 +236,16 @@ def initial_state(species_table: list[SpeciesEntry],
     sigma = np.array(sig_list, dtype=np.float64)
     epsilon = np.array(eps_list, dtype=np.float64)
     diffusion = np.array(diff_list, dtype=np.float64)
+    n_total = pos.shape[0]
+    persistent_id = np.arange(n_total, dtype=np.int64)
 
     cp_arr = (np.array(complex_pairs, dtype=np.int64)
               if complex_pairs else np.empty((0, 2), dtype=np.int64))
 
     return CellState(pos=pos, species_id=species_id, mass=mass,
                      sigma=sigma, epsilon=epsilon, diffusion=diffusion,
+                     persistent_id=persistent_id,
+                     next_persistent_id=n_total,
                      chains=chain_arrays, complex_pairs=cp_arr)
 
 
@@ -502,6 +518,7 @@ def fire_reactions(state: CellState, reactions: list[Reaction],
     state.sigma = state.sigma[keep_mask]
     state.epsilon = state.epsilon[keep_mask]
     state.diffusion = state.diffusion[keep_mask]
+    state.persistent_id = state.persistent_id[keep_mask]
     # Index remap for chains and complex_pairs
     old_to_new = -np.ones(keep_mask.size, dtype=np.int64)
     old_to_new[keep_mask] = np.arange(keep_mask.sum())
@@ -527,12 +544,18 @@ def fire_reactions(state: CellState, reactions: list[Reaction],
         sp_eps = np.array([species_table[s].epsilon_kj_per_mol for s in spawn_sids])
         sp_diff = np.array([species_table[s].diffusion_nm2_per_ns
                               for s in spawn_sids])
+        # Mint new persistent IDs for products
+        sp_pid = np.arange(state.next_persistent_id,
+                            state.next_persistent_id + len(spawn_pos),
+                            dtype=np.int64)
+        state.next_persistent_id += len(spawn_pos)
         state.pos = np.concatenate([state.pos, sp_arr])
         state.species_id = np.concatenate([state.species_id, sp_sid])
         state.mass = np.concatenate([state.mass, sp_mass])
         state.sigma = np.concatenate([state.sigma, sp_sig])
         state.epsilon = np.concatenate([state.epsilon, sp_eps])
         state.diffusion = np.concatenate([state.diffusion, sp_diff])
+        state.persistent_id = np.concatenate([state.persistent_id, sp_pid])
     # Invalidate pair list (indices changed)
     state._pair_iu = None
     return n_events
@@ -562,6 +585,7 @@ def run(state: CellState, config: CellPhysicsConfig,
     n_max = int(state.n() * 1.5) + 100
     pos_log = np.full((n_frames, n_max, 3), np.nan, dtype=np.float32)
     sid_log = np.full((n_frames, n_max), -1, dtype=np.int16)
+    pid_log = np.full((n_frames, n_max), -1, dtype=np.int64)
     counts_log = np.zeros((n_frames, n_species_vocab), dtype=np.int32)
     t_log = np.zeros(n_frames, dtype=np.float32)
     rxn_log = np.zeros(n_frames, dtype=np.int32)
@@ -571,6 +595,7 @@ def run(state: CellState, config: CellPhysicsConfig,
         slot = min(n_now, n_max)
         pos_log[idx, :slot] = state.pos[:slot].astype(np.float32)
         sid_log[idx, :slot] = state.species_id[:slot].astype(np.int16)
+        pid_log[idx, :slot] = state.persistent_id[:slot].astype(np.int64)
         counts_log[idx] = np.bincount(state.species_id, minlength=n_species_vocab)
         t_log[idx] = state.t_ns
 
@@ -589,6 +614,7 @@ def run(state: CellState, config: CellPhysicsConfig,
     return {
         'positions': pos_log[:frame_i],
         'species_id': sid_log[:frame_i],
+        'persistent_id': pid_log[:frame_i],
         'counts': counts_log[:frame_i],
         't_ns': t_log[:frame_i],
         'rxn_events': rxn_log[:frame_i],
