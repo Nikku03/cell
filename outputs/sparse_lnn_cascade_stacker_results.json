@@ -1,0 +1,237 @@
+{
+  "method": "sparse_lnn_cascade_stacker_loo_no_ppi",
+  "eval_orgs": [
+    "styphimurium",
+    "ccrescentus",
+    "saureus",
+    "mtuberculosis",
+    "abaylyi"
+  ],
+  "feature_blocks": {
+    "scalar": 30,
+    "static_pat": 128,
+    "traj_pat": 128,
+    "know_pat": 128,
+    "traj_pool": 262
+  },
+  "scalar_columns": [
+    "log_length_bp",
+    "gc",
+    "upstream_gc",
+    "upstream_at_skew",
+    "position_norm",
+    "operon_run_length",
+    "kw_replication",
+    "kw_transcription",
+    "kw_translation",
+    "kw_atp",
+    "kw_membrane",
+    "kw_synthase",
+    "kw_kinase",
+    "kw_dehydrogenase",
+    "kw_protease",
+    "kw_rrna",
+    "kw_chaperone",
+    "is_hypothetical",
+    "is_uncharacterized",
+    "is_putative",
+    "n_orthologs",
+    "ortholog_prior",
+    "has_lnn",
+    "has_v15",
+    "v15_call_filled",
+    "v15_conf",
+    "lnn_prob",
+    "has_pattern",
+    "has_traj_signal",
+    "has_traj_pool"
+  ],
+  "pooled_mcc": 0.5351476136562464,
+  "mean_org_mcc": 0.44421587113333966,
+  "pooled_confusion": {
+    "tp": 912,
+    "fp": 443,
+    "tn": 11468,
+    "fn": 868
+  },
+  "per_org": {
+    "styphimurium": {
+      "n": 3291,
+      "best_threshold": 0.75,
+      "mcc": 0.5289365510874826,
+      "precision": 0.4375,
+      "recall": 0.7125748502994012,
+      "tp": 119,
+      "fp": 153,
+      "tn": 2971,
+      "fn": 48
+    },
+    "ccrescentus": {
+      "n": 3614,
+      "best_threshold": 0.6,
+      "mcc": 0.5402797359563044,
+      "precision": 0.7008797653958945,
+      "recall": 0.4979166666666667,
+      "tp": 239,
+      "fp": 102,
+      "tn": 3032,
+      "fn": 241
+    },
+    "saureus": {
+      "n": 402,
+      "best_threshold": 0.9,
+      "mcc": 0.12596144997462586,
+      "precision": 0.9120370370370371,
+      "recall": 0.5612535612535613,
+      "tp": 197,
+      "fp": 19,
+      "tn": 32,
+      "fn": 154
+    },
+    "mtuberculosis": {
+      "n": 3497,
+      "best_threshold": 0.5499999999999999,
+      "mcc": 0.5026097719836617,
+      "precision": 0.7295373665480427,
+      "recall": 0.41922290388548056,
+      "tp": 205,
+      "fp": 76,
+      "tn": 2932,
+      "fn": 284
+    },
+    "abaylyi": {
+      "n": 2887,
+      "best_threshold": 0.9,
+      "mcc": 0.5232918466646238,
+      "precision": 0.6204081632653061,
+      "recall": 0.5187713310580204,
+      "tp": 152,
+      "fp": 93,
+      "tn": 2501,
+      "fn": 141
+    }
+  },
+  "scalar_feature_importance_last_fold": {
+    "ortholog_prior": 2.3644623855485616,
+    "lnn_prob": 1.547492590327348,
+    "kw_replication": 0.954289490545463,
+    "kw_synthase": 0.8742421651467384,
+    "gc": -0.8493497275113862,
+    "kw_atp": 0.8336047595469427,
+    "is_putative": -0.7971559170545937,
+    "has_v15": -0.7438742859242854,
+    "has_traj_signal": -0.7438742859242854,
+    "upstream_gc": 0.6183784299353613,
+    "n_orthologs": 0.5909889765332376,
+    "kw_kinase": 0.5414508558519344,
+    "is_hypothetical": -0.5161632931062732,
+    "has_lnn": -0.5087470179699505,
+    "has_pattern": -0.5087470179699505,
+    "v15_call_filled": 0.5081156094147944,
+    "kw_chaperone": 0.47598841068043524,
+    "kw_transcription": -0.4004414540251914,
+    "kw_translation": 0.30621384856110706,
+    "kw_rrna": -0.27083694743248404,
+    "is_uncharacterized": 0.24885404553565427,
+    "kw_protease": -0.21763558651606943,
+    "v15_conf": 0.18296403075121184,
+    "kw_dehydrogenase": -0.08270855562455294,
+    "upstream_at_skew": 0.04632890198711113,
+    "log_length_bp": 0.04149720508151063,
+    "operon_run_length": 0.03976663934460378,
+    "kw_membrane": -0.037238746356977284,
+    "position_norm": 0.03586892765485738,
+    "has_traj_pool": 0.005414173145284189
+  },
+  "top_static_patterns_last_fold": [
+    {
+      "pattern": 119,
+      "coef": -3.274792824101787
+    },
+    {
+      "pattern": 28,
+      "coef": -2.966648182399261
+    },
+    {
+      "pattern": 96,
+      "coef": 1.8416677758645303
+    },
+    {
+      "pattern": 10,
+      "coef": 1.7015461627007868
+    },
+    {
+      "pattern": 40,
+      "coef": 1.1060764878518254
+    },
+    {
+      "pattern": 11,
+      "coef": 0.7323769944844687
+    },
+    {
+      "pattern": 100,
+      "coef": 0.6884213242500847
+    },
+    {
+      "pattern": 91,
+      "coef": -0.153406465310686
+    },
+    {
+      "pattern": 123,
+      "coef": -0.11038218237257227
+    },
+    {
+      "pattern": 112,
+      "coef": -0.04701616725883694
+    },
+    {
+      "pattern": 122,
+      "coef": -0.043879560826371254
+    },
+    {
+      "pattern": 0,
+      "coef": 0.0
+    },
+    {
+      "pattern": 1,
+      "coef": 0.0
+    },
+    {
+      "pattern": 2,
+      "coef": 0.0
+    },
+    {
+      "pattern": 3,
+      "coef": 0.0
+    },
+    {
+      "pattern": 4,
+      "coef": 0.0
+    },
+    {
+      "pattern": 5,
+      "coef": 0.0
+    },
+    {
+      "pattern": 6,
+      "coef": 0.0
+    },
+    {
+      "pattern": 7,
+      "coef": 0.0
+    },
+    {
+      "pattern": 8,
+      "coef": 0.0
+    }
+  ],
+  "baselines": {
+    "meta_lnn_stacker_with_ppi_mean": 0.46,
+    "rule_based_router_mean": 0.443,
+    "ortholog_prior_mean_cross_org": 0.42
+  },
+  "caveats": [
+    "pattern activations come from a multimodal model that may have seen all orgs at train time; the cascade head therefore carries some leakage. Treat this as an upper bound on what the pattern bottleneck contributes on top of the honest cross-org features (ortholog + v15-transfer + scalar).",
+    "PPI features deliberately excluded per Path B."
+  ]
+}
