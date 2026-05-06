@@ -1,0 +1,8 @@
+layer,modules,functions,classes,total_lines,imports_out,imports_in
+other,73,585,119,27494,5,186
+scripts,71,327,7,18337,252,0
+tests,38,361,5,10301,164,0
+data,13,118,2,7592,0,0
+layer6_essentiality,18,88,37,3650,2,178
+layer_ml,12,75,21,3347,0,51
+layer3_reactions,11,48,8,3074,2,10
