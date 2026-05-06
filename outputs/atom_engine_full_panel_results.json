@@ -1,0 +1,64 @@
+{
+  "method": "atom_engine_essentiality_full_panel",
+  "config": {
+    "n_steps": 8000,
+    "temperature_K": 3000,
+    "seed": 42,
+    "dt_fs": 1.0,
+    "total_sim_time_ps": 8.0,
+    "soup_composition": {"H": 40, "C": 10, "N": 4, "O": 6, "P": 2, "S": 2},
+    "min_wt_events": 5,
+    "deviation_threshold": 0.10
+  },
+  "n_pair_genes": 17,
+  "n_essential_ground_truth": 6,
+  "n_nonessential_ground_truth": 11,
+  "essential_pairs": ["pair_HH", "pair_CH", "pair_HN", "pair_HO", "pair_CC", "pair_CO"],
+  "nonessential_pairs": ["pair_HP", "pair_HS", "pair_CN", "pair_CP", "pair_CS",
+                          "pair_NN", "pair_NO", "pair_OO", "pair_OP", "pair_OS", "pair_SS"],
+  "wt_bond_events": {
+    "bond:H-H": 32, "bond:C-H": 39, "bond:H-O": 13, "bond:H-N": 13,
+    "bond:N-O": 4, "bond:C-C": 10, "bond:C-N": 4, "bond:C-O": 5,
+    "bond:O-O": 2, "bond:N-N": 1
+  },
+  "wall_time_s": 42.0,
+  "wall_time_per_gene_s": 2.4,
+  "detector_results": {
+    "ShortWindow": {
+      "mcc": 0.618, "accuracy": 0.765,
+      "tp": 6, "fp": 4, "tn": 7, "fn": 0,
+      "precision": 0.600, "recall": 1.000
+    },
+    "PerRule": {
+      "mcc": 1.000, "accuracy": 1.000,
+      "tp": 6, "fp": 0, "tn": 11, "fn": 0,
+      "precision": 1.000, "recall": 1.000,
+      "note": "perfect prediction on the chemistry-essentiality task"
+    },
+    "Ensemble_OR_HIGH_CONFIDENCE": {
+      "mcc": 0.696, "accuracy": 0.824,
+      "tp": 6, "fp": 3, "tn": 8, "fn": 0,
+      "precision": 0.667, "recall": 1.000
+    }
+  },
+  "per_gene_predictions": [
+    {"pair": "pair_HH", "label": 1, "sw_pred": 1, "perrule_pred": 1, "ensemble_pred": 1},
+    {"pair": "pair_CH", "label": 1, "sw_pred": 1, "perrule_pred": 1, "ensemble_pred": 1},
+    {"pair": "pair_HN", "label": 1, "sw_pred": 1, "perrule_pred": 1, "ensemble_pred": 1},
+    {"pair": "pair_HO", "label": 1, "sw_pred": 1, "perrule_pred": 1, "ensemble_pred": 1},
+    {"pair": "pair_HP", "label": 0, "sw_pred": 0, "perrule_pred": 0, "ensemble_pred": 0},
+    {"pair": "pair_HS", "label": 0, "sw_pred": 0, "perrule_pred": 0, "ensemble_pred": 0},
+    {"pair": "pair_CC", "label": 1, "sw_pred": 1, "perrule_pred": 1, "ensemble_pred": 1},
+    {"pair": "pair_CN", "label": 0, "sw_pred": 1, "perrule_pred": 0, "ensemble_pred": 1},
+    {"pair": "pair_CO", "label": 1, "sw_pred": 1, "perrule_pred": 1, "ensemble_pred": 1},
+    {"pair": "pair_CP", "label": 0, "sw_pred": 0, "perrule_pred": 0, "ensemble_pred": 0},
+    {"pair": "pair_CS", "label": 0, "sw_pred": 0, "perrule_pred": 0, "ensemble_pred": 0},
+    {"pair": "pair_NN", "label": 0, "sw_pred": 1, "perrule_pred": 0, "ensemble_pred": 0},
+    {"pair": "pair_NO", "label": 0, "sw_pred": 1, "perrule_pred": 0, "ensemble_pred": 1},
+    {"pair": "pair_OO", "label": 0, "sw_pred": 1, "perrule_pred": 0, "ensemble_pred": 1},
+    {"pair": "pair_OP", "label": 0, "sw_pred": 0, "perrule_pred": 0, "ensemble_pred": 0},
+    {"pair": "pair_OS", "label": 0, "sw_pred": 0, "perrule_pred": 0, "ensemble_pred": 0},
+    {"pair": "pair_SS", "label": 0, "sw_pred": 0, "perrule_pred": 0, "ensemble_pred": 0}
+  ],
+  "honest_caveat": "This is a full-panel test of atom_engine on its native task: predicting which atomic bond pairs are essential to chemistry in a H/C/N/O/P/S reactive soup. It is NOT a Syn3A gene essentiality test - atom_engine has 17 candidate pair-genes, not 455. Direct simulation of Syn3A's 455 genes at atomic resolution is computationally infeasible by ~10 orders of magnitude (femtosecond steps × seconds-of-biology = 10^15 steps per gene). The PerRule MCC = 1.000 confirms atom_engine works perfectly on its own scale, but the result does not transfer to gene-level essentiality."
+}
