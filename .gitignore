@@ -21,6 +21,11 @@ outputs/.wt_*.pkl
 *.log
 *.tmp
 
+# CellGNN rollout + smoke-test checkpoint — users regenerate these by
+# running the notebook; not worth carrying in the repo.
+outputs/cell_gnn_rollout.npz
+cell_sim/atom_engine/checkpoints/cell_gnn_smoke.pt
+
 # Per-run output subdirs created by sweep / measurement scripts.
 # The final predictions CSV and metrics JSON are added explicitly
 # (git add -f <file>) when a measurement is finalised.
