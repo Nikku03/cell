@@ -44,7 +44,8 @@ TRAJ_NPZ = ROOT / 'outputs/syn3a_trajectories_t2.0s.npz'
 OUT_JSON = ROOT / 'outputs/sparse_lnn_cascade_stacker_results.json'
 OUT_CSV = ROOT / 'outputs/sparse_lnn_cascade_stacker_per_gene.csv'
 
-LOO_ORGS = ['styphimurium', 'ccrescentus', 'saureus', 'mtuberculosis', 'abaylyi']
+LOO_ORGS = ['styphimurium', 'ccrescentus', 'saureus', 'mtuberculosis', 'abaylyi',
+            'syn3a']
 N_PATTERNS = 128
 KW_FEATURES = ['kw_replication', 'kw_transcription', 'kw_translation',
                'kw_atp', 'kw_membrane', 'kw_synthase', 'kw_kinase',
@@ -269,12 +270,23 @@ def main():
     tn, fp, fn, tp = confusion_matrix(y_all, p_all, labels=[0, 1]).ravel()
     mean_mcc = float(np.mean([r['mcc'] for r in per_org_results.values()]))
 
+    # Cross-org-only mean (excluding syn3a — leakage caveat)
+    cross_org_keys = [o for o in LOO_ORGS if o != 'syn3a']
+    cross_org_mcc = float(np.mean([per_org_results[o]['mcc']
+                                    for o in cross_org_keys
+                                    if o in per_org_results]))
+
     print(f'\n[7] AGGREGATE (no-PPI cascade stacker):')
-    print(f'  POOLED MCC across 5 LOO orgs:  {pooled_mcc:+.4f}  '
+    print(f'  POOLED MCC across {len(LOO_ORGS)} LOO orgs: {pooled_mcc:+.4f}  '
           f'(TP={tp} FP={fp} TN={tn} FN={fn})')
-    print(f'  MEAN per-org MCC:              {mean_mcc:+.4f}')
+    print(f'  MEAN per-org MCC (all):         {mean_mcc:+.4f}')
+    print(f'  MEAN per-org MCC (5 cross-org): {cross_org_mcc:+.4f}  '
+          f'[honest, no syn3a leakage]')
+    if 'syn3a' in per_org_results:
+        print(f'  Syn3A in-domain MCC:           {per_org_results["syn3a"]["mcc"]:+.4f}  '
+              f'[leaks via SparseConceptLNN training]')
     print(f'  vs meta_lnn_stacker w/ PPI:    +0.460')
-    print(f'  Δ (no-PPI − w/ PPI):           {mean_mcc - 0.460:+.4f}')
+    print(f'  Δ (no-PPI − w/ PPI):           {cross_org_mcc - 0.460:+.4f}')
 
     # Top scalar-block coefficients (last fold)
     coefs = clf.coef_[0]
@@ -302,6 +314,8 @@ def main():
         'scalar_columns': scalar_cols,
         'pooled_mcc': float(pooled_mcc),
         'mean_org_mcc': float(mean_mcc),
+        'mean_org_mcc_cross_org_only': float(cross_org_mcc),
+        'syn3a_in_domain_mcc': float(per_org_results.get('syn3a', {}).get('mcc', float('nan'))),
         'pooled_confusion': {'tp': int(tp), 'fp': int(fp),
                               'tn': int(tn), 'fn': int(fn)},
         'per_org': per_org_results,

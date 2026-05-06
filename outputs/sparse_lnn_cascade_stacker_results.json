@@ -5,7 +5,8 @@
     "ccrescentus",
     "saureus",
     "mtuberculosis",
-    "abaylyi"
+    "abaylyi",
+    "syn3a"
   ],
   "feature_blocks": {
     "scalar": 30,
@@ -46,13 +47,15 @@
     "has_traj_signal",
     "has_traj_pool"
   ],
-  "pooled_mcc": 0.5351476136562464,
-  "mean_org_mcc": 0.44421587113333966,
+  "pooled_mcc": 0.5510008381477861,
+  "mean_org_mcc": 0.4206375233955375,
+  "mean_org_mcc_cross_org_only": 0.44421587113333966,
+  "syn3a_in_domain_mcc": 0.3027457847065268,
   "pooled_confusion": {
-    "tp": 912,
-    "fp": 443,
-    "tn": 11468,
-    "fn": 868
+    "tp": 1124,
+    "fp": 453,
+    "tn": 11530,
+    "fn": 1039
   },
   "per_org": {
     "styphimurium": {
@@ -109,84 +112,95 @@
       "fp": 93,
       "tn": 2501,
       "fn": 141
+    },
+    "syn3a": {
+      "n": 455,
+      "best_threshold": 0.9,
+      "mcc": 0.3027457847065268,
+      "precision": 0.954954954954955,
+      "recall": 0.5535248041775457,
+      "tp": 212,
+      "fp": 10,
+      "tn": 62,
+      "fn": 171
     }
   },
   "scalar_feature_importance_last_fold": {
-    "ortholog_prior": 2.3644623855485616,
-    "lnn_prob": 1.547492590327348,
-    "kw_replication": 0.954289490545463,
-    "kw_synthase": 0.8742421651467384,
-    "gc": -0.8493497275113862,
-    "kw_atp": 0.8336047595469427,
-    "is_putative": -0.7971559170545937,
-    "has_v15": -0.7438742859242854,
-    "has_traj_signal": -0.7438742859242854,
-    "upstream_gc": 0.6183784299353613,
-    "n_orthologs": 0.5909889765332376,
-    "kw_kinase": 0.5414508558519344,
-    "is_hypothetical": -0.5161632931062732,
-    "has_lnn": -0.5087470179699505,
-    "has_pattern": -0.5087470179699505,
-    "v15_call_filled": 0.5081156094147944,
-    "kw_chaperone": 0.47598841068043524,
-    "kw_transcription": -0.4004414540251914,
-    "kw_translation": 0.30621384856110706,
-    "kw_rrna": -0.27083694743248404,
-    "is_uncharacterized": 0.24885404553565427,
-    "kw_protease": -0.21763558651606943,
-    "v15_conf": 0.18296403075121184,
-    "kw_dehydrogenase": -0.08270855562455294,
-    "upstream_at_skew": 0.04632890198711113,
-    "log_length_bp": 0.04149720508151063,
-    "operon_run_length": 0.03976663934460378,
-    "kw_membrane": -0.037238746356977284,
-    "position_norm": 0.03586892765485738,
-    "has_traj_pool": 0.005414173145284189
+    "ortholog_prior": 2.7234096757939485,
+    "lnn_prob": 1.5530962514770756,
+    "is_putative": -1.1802507270843403,
+    "kw_atp": 1.1792951037912858,
+    "upstream_gc": 1.1196981941286663,
+    "kw_replication": 0.9096342549868065,
+    "kw_synthase": 0.8099374828016875,
+    "is_hypothetical": -0.7055556679946561,
+    "n_orthologs": 0.56728391139807,
+    "gc": -0.5496867375692177,
+    "kw_chaperone": 0.5389743203613256,
+    "has_v15": -0.5233212582967689,
+    "has_traj_signal": -0.5233212582967689,
+    "has_lnn": -0.5161811600308325,
+    "has_pattern": -0.5161811600308325,
+    "kw_kinase": 0.5034219716267506,
+    "kw_transcription": -0.4700642531889123,
+    "kw_protease": -0.3738273286273517,
+    "kw_translation": 0.35254483540033277,
+    "kw_rrna": -0.2971252580176737,
+    "v15_call_filled": -0.19715148652537703,
+    "position_norm": 0.1056922845660354,
+    "kw_dehydrogenase": -0.09906861417862742,
+    "v15_conf": -0.05429684233319985,
+    "kw_membrane": -0.05217013719891317,
+    "operon_run_length": 0.0476697845111388,
+    "is_uncharacterized": 0.035586215756376924,
+    "log_length_bp": 0.03442203668878523,
+    "upstream_at_skew": 0.013250519667321102,
+    "has_traj_pool": 0.0
   },
   "top_static_patterns_last_fold": [
     {
       "pattern": 119,
-      "coef": -3.274792824101787
+      "coef": -3.3321782140687035
     },
     {
       "pattern": 28,
-      "coef": -2.966648182399261
-    },
-    {
-      "pattern": 96,
-      "coef": 1.8416677758645303
-    },
-    {
-      "pattern": 10,
-      "coef": 1.7015461627007868
+      "coef": -2.541359740672843
     },
     {
       "pattern": 40,
-      "coef": 1.1060764878518254
+      "coef": 1.1726026685557593
     },
     {
       "pattern": 11,
-      "coef": 0.7323769944844687
+      "coef": 1.1715941881760714
+    },
+    {
+      "pattern": 10,
+      "coef": 1.1373199516366177
     },
     {
       "pattern": 100,
-      "coef": 0.6884213242500847
+      "coef": 1.071539942100035
+    },
+    {
+      "pattern": 96,
+      "coef": 0.6882844546825521
     },
     {
       "pattern": 91,
-      "coef": -0.153406465310686
-    },
-    {
-      "pattern": 123,
-      "coef": -0.11038218237257227
-    },
-    {
-      "pattern": 112,
-      "coef": -0.04701616725883694
+      "coef": 0.16464755638781498
     },
     {
       "pattern": 122,
-      "coef": -0.043879560826371254
+      "coef": 0.11766212725871025
+    },
+    {
+      "pattern": 123,
+      "coef": -0.08347876424432421
+    },
+    {
+      "pattern": 112,
+      "coef": -0.05341965293161988
     },
     {
       "pattern": 0,
