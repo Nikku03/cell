@@ -1,0 +1,51 @@
+{
+  "method": "multimodal_sparse_concept_lnn",
+  "stage1_mean_mcc": 0.15008597565461315,
+  "stage2_mean_mcc": 0.3339635282226344,
+  "delta_mcc": 0.18387755256802127,
+  "has_trajectory_signal": true,
+  "stage1_per_org": {
+    "styphimurium": {
+      "mcc": 0.11239604376061085
+    },
+    "ccrescentus": {
+      "mcc": 0.25197481291101653
+    },
+    "saureus": {
+      "mcc": 0.0627953407675792
+    },
+    "mtuberculosis": {
+      "mcc": 0.21991637801600575
+    },
+    "abaylyi": {
+      "mcc": 0.10334730281785344
+    }
+  },
+  "stage2_per_org": {
+    "styphimurium": {
+      "mcc": 0.3859352511337271
+    },
+    "ccrescentus": {
+      "mcc": 0.4013678718197886
+    },
+    "saureus": {
+      "mcc": 0.1517143652157779
+    },
+    "mtuberculosis": {
+      "mcc": 0.37888601965537017
+    },
+    "abaylyi": {
+      "mcc": 0.35191413328850807
+    }
+  },
+  "best_fold": "ccrescentus",
+  "config": {
+    "hidden": 256,
+    "K_patterns": 128,
+    "top_k": 5,
+    "traj_T": 5,
+    "traj_D": 262,
+    "t_end_s": 2.0,
+    "dt_s": 0.5
+  }
+}
