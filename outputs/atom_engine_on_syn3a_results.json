@@ -1,0 +1,31 @@
+{
+  "method": "atom_engine_chemistry_pair_verdict_via_gene_to_rules_bridge",
+  "atom_engine_essential_pairs": [
+    "CC",
+    "CH",
+    "CO",
+    "HH",
+    "HN",
+    "HO"
+  ],
+  "atom_engine_nonessential_pairs": [
+    "CN",
+    "CP",
+    "CS",
+    "HP",
+    "HS",
+    "NN",
+    "NO",
+    "OO",
+    "OP",
+    "OS",
+    "SS"
+  ],
+  "panel_size": 455,
+  "n_essential": 383,
+  "n_with_catalysis_rules": 111,
+  "n_with_atom_signal": 111,
+  "lenient_full_panel_mcc": 0.1902039674065698,
+  "strict_full_panel_mcc": 0.1902039674065698,
+  "honest_caveat": "This is the most generous bridge possible: it maps Syn3A genes to atom_engine bond-pair verdicts via the metabolite chemical formulas in the v15 simulator. The expected weakness is that atom_engine's essential pairs (HH/CH/HN/HO/CC/CO) cover the elemental composition of nearly every metabolite in biological chemistry, so the bridge produces near-trivial predictions."
+}

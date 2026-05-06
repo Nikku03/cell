@@ -1,0 +1,456 @@
+locus_tag,true_essential,has_catalysis_rules,n_rules,ae_pred_lenient,ae_pred_strict,evidence,ae_pred_lenient_filled,ae_pred_strict_filled
+JCVISYN3A_0001,1,False,0,,,no_rules,0,0
+JCVISYN3A_0002,1,False,0,,,no_rules,0,0
+JCVISYN3A_0003,1,False,0,,,no_rules,0,0
+JCVISYN3A_0004,0,False,0,,,no_rules,0,0
+JCVISYN3A_0005,0,False,0,,,no_rules,0,0
+JCVISYN3A_0006,1,False,0,,,no_rules,0,0
+JCVISYN3A_0007,1,False,0,,,no_rules,0,0
+JCVISYN3A_0008,1,True,7,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0009,1,True,7,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0010,1,True,7,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0011,1,True,7,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0012,1,False,0,,,no_rules,0,0
+JCVISYN3A_0025,1,False,0,,,no_rules,0,0
+JCVISYN3A_0026,1,False,0,,,no_rules,0,0
+JCVISYN3A_0027,1,False,0,,,no_rules,0,0
+JCVISYN3A_0029,1,False,0,,,no_rules,0,0
+JCVISYN3A_0030,1,False,0,,,no_rules,0,0
+JCVISYN3A_0033,1,False,0,,,no_rules,0,0
+JCVISYN3A_0034,0,False,0,,,no_rules,0,0
+JCVISYN3A_0039,1,False,0,,,no_rules,0,0
+JCVISYN3A_0040,1,False,0,,,no_rules,0,0
+JCVISYN3A_0042,1,False,0,,,no_rules,0,0
+JCVISYN3A_0043,0,False,0,,,no_rules,0,0
+JCVISYN3A_0044,1,False,0,,,no_rules,0,0
+JCVISYN3A_0045,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0046,1,False,0,,,no_rules,0,0
+JCVISYN3A_0047,1,False,0,,,no_rules,0,0
+JCVISYN3A_0054,0,False,0,,,no_rules,0,0
+JCVISYN3A_0060,1,False,0,,,no_rules,0,0
+JCVISYN3A_0061,1,False,0,,,no_rules,0,0
+JCVISYN3A_0063,0,False,0,,,no_rules,0,0
+JCVISYN3A_0064,1,False,0,,,no_rules,0,0
+JCVISYN3A_0065,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0066,1,False,0,,,no_rules,0,0
+JCVISYN3A_0076,1,False,0,,,no_rules,0,0
+JCVISYN3A_0077,1,False,0,,,no_rules,0,0
+JCVISYN3A_0079,1,False,0,,,no_rules,0,0
+JCVISYN3A_0080,0,False,0,,,no_rules,0,0
+JCVISYN3A_0081,1,False,0,,,no_rules,0,0
+JCVISYN3A_0082,1,False,0,,,no_rules,0,0
+JCVISYN3A_0094,0,False,0,,,no_rules,0,0
+JCVISYN3A_0095,1,False,0,,,no_rules,0,0
+JCVISYN3A_0097,1,False,0,,,no_rules,0,0
+JCVISYN3A_0105,0,False,0,,,no_rules,0,0
+JCVISYN3A_0106,0,False,0,,,no_rules,0,0
+JCVISYN3A_0107,1,False,0,,,no_rules,0,0
+JCVISYN3A_0108,1,False,0,,,no_rules,0,0
+JCVISYN3A_0109,1,False,0,,,no_rules,0,0
+JCVISYN3A_0113,1,False,0,,,no_rules,0,0
+JCVISYN3A_0114,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0115,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0116,1,False,0,,,no_rules,0,0
+JCVISYN3A_0117,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0126,1,False,0,,,no_rules,0,0
+JCVISYN3A_0127,0,False,0,,,no_rules,0,0
+JCVISYN3A_0128,1,False,0,,,no_rules,0,0
+JCVISYN3A_0129,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0131,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0132,1,False,0,,,no_rules,0,0
+JCVISYN3A_0133,0,False,0,,,no_rules,0,0
+JCVISYN3A_0137,1,False,0,,,no_rules,0,0
+JCVISYN3A_0138,1,False,0,,,no_rules,0,0
+JCVISYN3A_0139,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0140,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0141,1,False,0,,,no_rules,0,0
+JCVISYN3A_0142,1,False,0,,,no_rules,0,0
+JCVISYN3A_0143,1,False,0,,,no_rules,0,0
+JCVISYN3A_0144,1,False,0,,,no_rules,0,0
+JCVISYN3A_0145,1,False,0,,,no_rules,0,0
+JCVISYN3A_0146,1,False,0,,,no_rules,0,0
+JCVISYN3A_0147,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0148,1,False,0,,,no_rules,0,0
+JCVISYN3A_0149,1,False,0,,,no_rules,0,0
+JCVISYN3A_0150,1,False,0,,,no_rules,0,0
+JCVISYN3A_0151,1,False,0,,,no_rules,0,0
+JCVISYN3A_0154,1,False,0,,,no_rules,0,0
+JCVISYN3A_0163,1,False,0,,,no_rules,0,0
+JCVISYN3A_0164,1,False,0,,,no_rules,0,0
+JCVISYN3A_0165,1,True,19,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0166,1,True,19,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0167,1,True,19,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0168,1,True,19,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0169,1,True,19,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0195,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0196,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0197,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0198,1,False,0,,,no_rules,0,0
+JCVISYN3A_0199,1,False,0,,,no_rules,0,0
+JCVISYN3A_0200,1,False,0,,,no_rules,0,0
+JCVISYN3A_0201,1,False,0,,,no_rules,0,0
+JCVISYN3A_0202,1,False,0,,,no_rules,0,0
+JCVISYN3A_0203,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0213,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0214,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0215,1,False,0,,,no_rules,0,0
+JCVISYN3A_0216,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0218,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0220,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0221,1,True,18,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0222,1,False,0,,,no_rules,0,0
+JCVISYN3A_0227,0,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0228,0,False,0,,,no_rules,0,0
+JCVISYN3A_0229,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0230,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0233,1,False,0,,,no_rules,0,0
+JCVISYN3A_0234,1,False,0,,,no_rules,0,0
+JCVISYN3A_0235,1,False,0,,,no_rules,0,0
+JCVISYN3A_0238,1,False,0,,,no_rules,0,0
+JCVISYN3A_0239,0,False,0,,,no_rules,0,0
+JCVISYN3A_0240,1,False,0,,,no_rules,0,0
+JCVISYN3A_0247,1,False,0,,,no_rules,0,0
+JCVISYN3A_0248,0,False,0,,,no_rules,0,0
+JCVISYN3A_0249,1,False,0,,,no_rules,0,0
+JCVISYN3A_0250,0,False,0,,,no_rules,0,0
+JCVISYN3A_0253,1,False,0,,,no_rules,0,0
+JCVISYN3A_0254,1,False,0,,,no_rules,0,0
+JCVISYN3A_0257,1,False,0,,,no_rules,0,0
+JCVISYN3A_0259,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0260,1,False,0,,,no_rules,0,0
+JCVISYN3A_0262,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0263,1,False,0,,,no_rules,0,0
+JCVISYN3A_0264,1,False,0,,,no_rules,0,0
+JCVISYN3A_0270,1,False,0,,,no_rules,0,0
+JCVISYN3A_0271,1,False,0,,,no_rules,0,0
+JCVISYN3A_0281,1,False,0,,,no_rules,0,0
+JCVISYN3A_0282,1,False,0,,,no_rules,0,0
+JCVISYN3A_0283,1,False,0,,,no_rules,0,0
+JCVISYN3A_0285,1,False,0,,,no_rules,0,0
+JCVISYN3A_0286,1,False,0,,,no_rules,0,0
+JCVISYN3A_0287,1,False,0,,,no_rules,0,0
+JCVISYN3A_0288,1,False,0,,,no_rules,0,0
+JCVISYN3A_0289,1,False,0,,,no_rules,0,0
+JCVISYN3A_0290,1,False,0,,,no_rules,0,0
+JCVISYN3A_0291,1,True,3,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0294,1,False,0,,,no_rules,0,0
+JCVISYN3A_0296,1,False,0,,,no_rules,0,0
+JCVISYN3A_0297,1,False,0,,,no_rules,0,0
+JCVISYN3A_0298,1,False,0,,,no_rules,0,0
+JCVISYN3A_0299,1,False,0,,,no_rules,0,0
+JCVISYN3A_0300,1,False,0,,,no_rules,0,0
+JCVISYN3A_0301,1,False,0,,,no_rules,0,0
+JCVISYN3A_0302,1,False,0,,,no_rules,0,0
+JCVISYN3A_0303,1,False,0,,,no_rules,0,0
+JCVISYN3A_0304,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0305,1,False,0,,,no_rules,0,0
+JCVISYN3A_0308,1,False,0,,,no_rules,0,0
+JCVISYN3A_0314,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0315,1,False,0,,,no_rules,0,0
+JCVISYN3A_0316,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0317,1,False,0,,,no_rules,0,0
+JCVISYN3A_0325,1,False,0,,,no_rules,0,0
+JCVISYN3A_0326,0,False,0,,,no_rules,0,0
+JCVISYN3A_0327,1,False,0,,,no_rules,0,0
+JCVISYN3A_0328,1,False,0,,,no_rules,0,0
+JCVISYN3A_0329,1,False,0,,,no_rules,0,0
+JCVISYN3A_0330,0,True,6,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0332,1,False,0,,,no_rules,0,0
+JCVISYN3A_0338,1,False,0,,,no_rules,0,0
+JCVISYN3A_0344,1,True,2,1.0,1.0,"essential_pairs:['HH', 'HO']",1,1
+JCVISYN3A_0345,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0346,0,False,0,,,no_rules,0,0
+JCVISYN3A_0347,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0348,1,False,0,,,no_rules,0,0
+JCVISYN3A_0350,1,False,0,,,no_rules,0,0
+JCVISYN3A_0352,1,False,0,,,no_rules,0,0
+JCVISYN3A_0353,1,False,0,,,no_rules,0,0
+JCVISYN3A_0359,1,False,0,,,no_rules,0,0
+JCVISYN3A_0360,1,False,0,,,no_rules,0,0
+JCVISYN3A_0361,0,False,0,,,no_rules,0,0
+JCVISYN3A_0362,1,False,0,,,no_rules,0,0
+JCVISYN3A_0363,1,False,0,,,no_rules,0,0
+JCVISYN3A_0364,1,False,0,,,no_rules,0,0
+JCVISYN3A_0365,1,False,0,,,no_rules,0,0
+JCVISYN3A_0366,1,False,0,,,no_rules,0,0
+JCVISYN3A_0371,1,False,0,,,no_rules,0,0
+JCVISYN3A_0372,1,False,0,,,no_rules,0,0
+JCVISYN3A_0373,1,False,0,,,no_rules,0,0
+JCVISYN3A_0375,0,False,0,,,no_rules,0,0
+JCVISYN3A_0376,1,False,0,,,no_rules,0,0
+JCVISYN3A_0377,1,False,0,,,no_rules,0,0
+JCVISYN3A_0378,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0379,1,False,0,,,no_rules,0,0
+JCVISYN3A_0380,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0381,0,False,0,,,no_rules,0,0
+JCVISYN3A_0382,0,True,6,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0387,1,False,0,,,no_rules,0,0
+JCVISYN3A_0388,1,False,0,,,no_rules,0,0
+JCVISYN3A_0389,1,False,0,,,no_rules,0,0
+JCVISYN3A_0390,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0391,1,False,0,,,no_rules,0,0
+JCVISYN3A_0392,1,False,0,,,no_rules,0,0
+JCVISYN3A_0394,1,False,0,,,no_rules,0,0
+JCVISYN3A_0398,1,False,0,,,no_rules,0,0
+JCVISYN3A_0399,1,False,0,,,no_rules,0,0
+JCVISYN3A_0400,1,False,0,,,no_rules,0,0
+JCVISYN3A_0401,0,False,0,,,no_rules,0,0
+JCVISYN3A_0402,1,False,0,,,no_rules,0,0
+JCVISYN3A_0403,1,False,0,,,no_rules,0,0
+JCVISYN3A_0404,0,False,0,,,no_rules,0,0
+JCVISYN3A_0405,1,False,0,,,no_rules,0,0
+JCVISYN3A_0406,1,False,0,,,no_rules,0,0
+JCVISYN3A_0407,1,False,0,,,no_rules,0,0
+JCVISYN3A_0408,1,False,0,,,no_rules,0,0
+JCVISYN3A_0409,1,False,0,,,no_rules,0,0
+JCVISYN3A_0410,1,False,0,,,no_rules,0,0
+JCVISYN3A_0411,0,False,0,,,no_rules,0,0
+JCVISYN3A_0412,1,False,0,,,no_rules,0,0
+JCVISYN3A_0413,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0414,1,False,0,,,no_rules,0,0
+JCVISYN3A_0415,1,False,0,,,no_rules,0,0
+JCVISYN3A_0416,1,False,0,,,no_rules,0,0
+JCVISYN3A_0418,1,False,0,,,no_rules,0,0
+JCVISYN3A_0419,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0420,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0421,1,False,0,,,no_rules,0,0
+JCVISYN3A_0422,1,False,0,,,no_rules,0,0
+JCVISYN3A_0424,1,False,0,,,no_rules,0,0
+JCVISYN3A_0425,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0426,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0427,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0428,1,False,0,,,no_rules,0,0
+JCVISYN3A_0429,1,False,0,,,no_rules,0,0
+JCVISYN3A_0430,1,False,0,,,no_rules,0,0
+JCVISYN3A_0431,1,False,0,,,no_rules,0,0
+JCVISYN3A_0432,1,False,0,,,no_rules,0,0
+JCVISYN3A_0433,0,False,0,,,no_rules,0,0
+JCVISYN3A_0434,0,False,0,,,no_rules,0,0
+JCVISYN3A_0435,0,False,0,,,no_rules,0,0
+JCVISYN3A_0437,1,False,0,,,no_rules,0,0
+JCVISYN3A_0438,0,False,0,,,no_rules,0,0
+JCVISYN3A_0439,1,False,0,,,no_rules,0,0
+JCVISYN3A_0440,1,False,0,,,no_rules,0,0
+JCVISYN3A_0441,1,False,0,,,no_rules,0,0
+JCVISYN3A_0442,1,False,0,,,no_rules,0,0
+JCVISYN3A_0443,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0444,1,False,0,,,no_rules,0,0
+JCVISYN3A_0445,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0447,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0448,1,False,0,,,no_rules,0,0
+JCVISYN3A_0451,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0452,1,False,0,,,no_rules,0,0
+JCVISYN3A_0453,1,False,0,,,no_rules,0,0
+JCVISYN3A_0475,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0478,1,False,0,,,no_rules,0,0
+JCVISYN3A_0479,1,False,0,,,no_rules,0,0
+JCVISYN3A_0481,0,False,0,,,no_rules,0,0
+JCVISYN3A_0482,1,False,0,,,no_rules,0,0
+JCVISYN3A_0493,1,False,0,,,no_rules,0,0
+JCVISYN3A_0494,0,False,0,,,no_rules,0,0
+JCVISYN3A_0495,0,False,0,,,no_rules,0,0
+JCVISYN3A_0499,1,False,0,,,no_rules,0,0
+JCVISYN3A_0500,1,False,0,,,no_rules,0,0
+JCVISYN3A_0501,1,False,0,,,no_rules,0,0
+JCVISYN3A_0503,1,False,0,,,no_rules,0,0
+JCVISYN3A_0504,0,False,0,,,no_rules,0,0
+JCVISYN3A_0505,0,False,0,,,no_rules,0,0
+JCVISYN3A_0511,1,False,0,,,no_rules,0,0
+JCVISYN3A_0512,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0513,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0515,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0516,1,False,0,,,no_rules,0,0
+JCVISYN3A_0517,0,False,0,,,no_rules,0,0
+JCVISYN3A_0518,1,False,0,,,no_rules,0,0
+JCVISYN3A_0519,1,False,0,,,no_rules,0,0
+JCVISYN3A_0520,0,False,0,,,no_rules,0,0
+JCVISYN3A_0521,0,False,0,,,no_rules,0,0
+JCVISYN3A_0522,0,False,0,,,no_rules,0,0
+JCVISYN3A_0523,0,False,0,,,no_rules,0,0
+JCVISYN3A_0524,0,False,0,,,no_rules,0,0
+JCVISYN3A_0525,0,False,0,,,no_rules,0,0
+JCVISYN3A_0526,1,False,0,,,no_rules,0,0
+JCVISYN3A_0527,0,False,0,,,no_rules,0,0
+JCVISYN3A_0528,1,False,0,,,no_rules,0,0
+JCVISYN3A_0529,1,False,0,,,no_rules,0,0
+JCVISYN3A_0530,1,False,0,,,no_rules,0,0
+JCVISYN3A_0535,1,False,0,,,no_rules,0,0
+JCVISYN3A_0536,1,False,0,,,no_rules,0,0
+JCVISYN3A_0537,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0538,0,False,0,,,no_rules,0,0
+JCVISYN3A_0539,1,False,0,,,no_rules,0,0
+JCVISYN3A_0540,1,False,0,,,no_rules,0,0
+JCVISYN3A_0541,1,False,0,,,no_rules,0,0
+JCVISYN3A_0542,1,False,0,,,no_rules,0,0
+JCVISYN3A_0543,1,False,0,,,no_rules,0,0
+JCVISYN3A_0544,1,False,0,,,no_rules,0,0
+JCVISYN3A_0545,1,False,0,,,no_rules,0,0
+JCVISYN3A_0548,0,False,0,,,no_rules,0,0
+JCVISYN3A_0549,0,False,0,,,no_rules,0,0
+JCVISYN3A_0592,1,False,0,,,no_rules,0,0
+JCVISYN3A_0593,0,False,0,,,no_rules,0,0
+JCVISYN3A_0599,0,False,0,,,no_rules,0,0
+JCVISYN3A_0600,1,False,0,,,no_rules,0,0
+JCVISYN3A_0601,0,False,0,,,no_rules,0,0
+JCVISYN3A_0604,0,False,0,,,no_rules,0,0
+JCVISYN3A_0605,0,False,0,,,no_rules,0,0
+JCVISYN3A_0606,1,True,8,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0607,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0608,1,False,0,,,no_rules,0,0
+JCVISYN3A_0609,1,False,0,,,no_rules,0,0
+JCVISYN3A_0610,0,False,0,,,no_rules,0,0
+JCVISYN3A_0611,1,False,0,,,no_rules,0,0
+JCVISYN3A_0612,1,False,0,,,no_rules,0,0
+JCVISYN3A_0613,1,False,0,,,no_rules,0,0
+JCVISYN3A_0614,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0615,1,False,0,,,no_rules,0,0
+JCVISYN3A_0616,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0617,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0620,0,False,0,,,no_rules,0,0
+JCVISYN3A_0621,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0622,0,False,0,,,no_rules,0,0
+JCVISYN3A_0623,0,False,0,,,no_rules,0,0
+JCVISYN3A_0634,1,False,0,,,no_rules,0,0
+JCVISYN3A_0636,1,False,0,,,no_rules,0,0
+JCVISYN3A_0637,1,False,0,,,no_rules,0,0
+JCVISYN3A_0638,1,False,0,,,no_rules,0,0
+JCVISYN3A_0639,1,False,0,,,no_rules,0,0
+JCVISYN3A_0640,1,False,0,,,no_rules,0,0
+JCVISYN3A_0641,1,True,5,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0642,1,True,5,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0643,1,True,5,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0644,1,False,0,,,no_rules,0,0
+JCVISYN3A_0645,1,False,0,,,no_rules,0,0
+JCVISYN3A_0646,1,False,0,,,no_rules,0,0
+JCVISYN3A_0647,1,False,0,,,no_rules,0,0
+JCVISYN3A_0648,1,False,0,,,no_rules,0,0
+JCVISYN3A_0649,1,False,0,,,no_rules,0,0
+JCVISYN3A_0650,1,False,0,,,no_rules,0,0
+JCVISYN3A_0651,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0652,1,False,0,,,no_rules,0,0
+JCVISYN3A_0653,1,False,0,,,no_rules,0,0
+JCVISYN3A_0654,1,False,0,,,no_rules,0,0
+JCVISYN3A_0655,1,False,0,,,no_rules,0,0
+JCVISYN3A_0656,1,False,0,,,no_rules,0,0
+JCVISYN3A_0657,1,False,0,,,no_rules,0,0
+JCVISYN3A_0658,1,False,0,,,no_rules,0,0
+JCVISYN3A_0659,1,False,0,,,no_rules,0,0
+JCVISYN3A_0660,1,False,0,,,no_rules,0,0
+JCVISYN3A_0661,1,False,0,,,no_rules,0,0
+JCVISYN3A_0662,1,False,0,,,no_rules,0,0
+JCVISYN3A_0663,1,False,0,,,no_rules,0,0
+JCVISYN3A_0664,1,False,0,,,no_rules,0,0
+JCVISYN3A_0665,1,False,0,,,no_rules,0,0
+JCVISYN3A_0666,1,False,0,,,no_rules,0,0
+JCVISYN3A_0667,1,False,0,,,no_rules,0,0
+JCVISYN3A_0668,1,False,0,,,no_rules,0,0
+JCVISYN3A_0669,1,False,0,,,no_rules,0,0
+JCVISYN3A_0670,1,False,0,,,no_rules,0,0
+JCVISYN3A_0671,1,False,0,,,no_rules,0,0
+JCVISYN3A_0672,1,False,0,,,no_rules,0,0
+JCVISYN3A_0684,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0685,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0686,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0687,1,False,0,,,no_rules,0,0
+JCVISYN3A_0688,1,False,0,,,no_rules,0,0
+JCVISYN3A_0689,1,False,0,,,no_rules,0,0
+JCVISYN3A_0690,1,False,0,,,no_rules,0,0
+JCVISYN3A_0691,1,False,0,,,no_rules,0,0
+JCVISYN3A_0692,0,False,0,,,no_rules,0,0
+JCVISYN3A_0693,1,False,0,,,no_rules,0,0
+JCVISYN3A_0694,1,False,0,,,no_rules,0,0
+JCVISYN3A_0695,1,False,0,,,no_rules,0,0
+JCVISYN3A_0696,1,False,0,,,no_rules,0,0
+JCVISYN3A_0697,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0706,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0707,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0708,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0710,1,False,0,,,no_rules,0,0
+JCVISYN3A_0726,0,False,0,,,no_rules,0,0
+JCVISYN3A_0727,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0728,0,False,0,,,no_rules,0,0
+JCVISYN3A_0729,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0730,1,False,0,,,no_rules,0,0
+JCVISYN3A_0732,0,False,0,,,no_rules,0,0
+JCVISYN3A_0733,1,True,6,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0747,1,True,10,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0771,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0772,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0773,1,True,4,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0774,1,False,0,,,no_rules,0,0
+JCVISYN3A_0775,1,False,0,,,no_rules,0,0
+JCVISYN3A_0776,1,False,0,,,no_rules,0,0
+JCVISYN3A_0777,1,False,0,,,no_rules,0,0
+JCVISYN3A_0778,1,False,0,,,no_rules,0,0
+JCVISYN3A_0779,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0787,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0789,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0790,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0791,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0792,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0793,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0794,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0795,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0796,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0797,1,False,0,,,no_rules,0,0
+JCVISYN3A_0798,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0799,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0800,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HO']",1,1
+JCVISYN3A_0803,1,False,0,,,no_rules,0,0
+JCVISYN3A_0804,1,False,0,,,no_rules,0,0
+JCVISYN3A_0805,1,False,0,,,no_rules,0,0
+JCVISYN3A_0806,1,False,0,,,no_rules,0,0
+JCVISYN3A_0807,1,False,0,,,no_rules,0,0
+JCVISYN3A_0809,1,False,0,,,no_rules,0,0
+JCVISYN3A_0810,1,False,0,,,no_rules,0,0
+JCVISYN3A_0813,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0814,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0817,1,False,0,,,no_rules,0,0
+JCVISYN3A_0818,1,False,0,,,no_rules,0,0
+JCVISYN3A_0819,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0820,1,False,0,,,no_rules,0,0
+JCVISYN3A_0821,0,False,0,,,no_rules,0,0
+JCVISYN3A_0822,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0823,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0824,1,False,0,,,no_rules,0,0
+JCVISYN3A_0825,1,False,0,,,no_rules,0,0
+JCVISYN3A_0826,1,False,0,,,no_rules,0,0
+JCVISYN3A_0827,1,False,0,,,no_rules,0,0
+JCVISYN3A_0830,0,False,0,,,no_rules,0,0
+JCVISYN3A_0831,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0832,1,False,0,,,no_rules,0,0
+JCVISYN3A_0833,1,False,0,,,no_rules,0,0
+JCVISYN3A_0834,1,False,0,,,no_rules,0,0
+JCVISYN3A_0835,1,False,0,,,no_rules,0,0
+JCVISYN3A_0836,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0837,1,False,0,,,no_rules,0,0
+JCVISYN3A_0838,0,False,0,,,no_rules,0,0
+JCVISYN3A_0839,1,False,0,,,no_rules,0,0
+JCVISYN3A_0840,1,False,0,,,no_rules,0,0
+JCVISYN3A_0851,0,False,0,,,no_rules,0,0
+JCVISYN3A_0852,0,False,0,,,no_rules,0,0
+JCVISYN3A_0853,0,False,0,,,no_rules,0,0
+JCVISYN3A_0859,1,False,0,,,no_rules,0,0
+JCVISYN3A_0870,1,False,0,,,no_rules,0,0
+JCVISYN3A_0872,1,False,0,,,no_rules,0,0
+JCVISYN3A_0873,1,False,0,,,no_rules,0,0
+JCVISYN3A_0874,0,False,0,,,no_rules,0,0
+JCVISYN3A_0875,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0876,0,True,18,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0877,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0878,1,True,18,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0879,1,True,1,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0881,1,False,0,,,no_rules,0,0
+JCVISYN3A_0885,1,False,0,,,no_rules,0,0
+JCVISYN3A_0886,1,True,2,1.0,1.0,"essential_pairs:['CC', 'CH', 'CO', 'HH', 'HN', 'HO']",1,1
+JCVISYN3A_0887,1,False,0,,,no_rules,0,0
+JCVISYN3A_0906,1,False,0,,,no_rules,0,0
+JCVISYN3A_0907,1,False,0,,,no_rules,0,0
+JCVISYN3A_0908,1,False,0,,,no_rules,0,0
+JCVISYN3A_0909,1,False,0,,,no_rules,0,0
+JCVISYN3A_0910,1,False,0,,,no_rules,0,0
+JCVISYN3A_0913,0,False,0,,,no_rules,0,0
+JCVISYN3A_0918,0,False,0,,,no_rules,0,0
+JCVISYN3A_0930,0,False,0,,,no_rules,0,0
+JCVISYN3A_0931,0,False,0,,,no_rules,0,0
+JCVISYN3A_0932,1,False,0,,,no_rules,0,0
