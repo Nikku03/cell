@@ -67,3 +67,4 @@ cell_sim/features/cache/*
 !cell_sim/features/cache/.gitkeep
 figures/output/
 outputs/synthlet/.wt_*.pkl
+outputs/syn3a_pdbs/
