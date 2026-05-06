@@ -1,0 +1,356 @@
+{
+  "method": "atom_engine_chemistry_validator",
+  "description": "NOT an essentiality predictor; validates that the chemistry catalysed by a gene is recognized by atom_engine's bond-pair physics.",
+  "atom_essential_pairs": [
+    "CC",
+    "CH",
+    "CO",
+    "HH",
+    "HN",
+    "HO"
+  ],
+  "atom_nonessential_pairs": [
+    "CN",
+    "CP",
+    "CS",
+    "HP",
+    "HS",
+    "NN",
+    "NO",
+    "OO",
+    "OP",
+    "OS",
+    "SS"
+  ],
+  "n_genes_validated": 5,
+  "reports": [
+    {
+      "locus_tag": "JCVISYN3A_0445",
+      "has_catalysis_rules": true,
+      "n_rules": 2,
+      "n_rules_with_chemistry_data": 2,
+      "all_bond_pairs_touched": [
+        "CC",
+        "CH",
+        "CO",
+        "CP",
+        "HH",
+        "HO",
+        "HP",
+        "OO",
+        "OP",
+        "PP"
+      ],
+      "atom_essential_pairs_in_chemistry": [
+        "CC",
+        "CH",
+        "CO",
+        "HH",
+        "HO"
+      ],
+      "atom_nonessential_pairs_in_chemistry": [
+        "CP",
+        "HP",
+        "OO",
+        "OP"
+      ],
+      "rules": [
+        {
+          "rule_name": "catalysis:PGI",
+          "reactants": [],
+          "products": [
+            "M_f6p_c"
+          ],
+          "metabolites_with_formula": [
+            {
+              "metabolite": "M_f6p_c",
+              "formula": "C6H11O9P"
+            }
+          ],
+          "bond_pairs_touched": [
+            "CC",
+            "CH",
+            "CO",
+            "CP",
+            "HH",
+            "HO",
+            "HP",
+            "OO",
+            "OP",
+            "PP"
+          ],
+          "atom_essential_pairs_present": [
+            "CC",
+            "CH",
+            "CO",
+            "HH",
+            "HO"
+          ],
+          "atom_nonessential_pairs_present": [
+            "CP",
+            "HP",
+            "OO",
+            "OP"
+          ],
+          "has_essential_chemistry": true
+        },
+        {
+          "rule_name": "catalysis:PGI:rev",
+          "reactants": [],
+          "products": [
+            "M_g6p_c"
+          ],
+          "metabolites_with_formula": [
+            {
+              "metabolite": "M_g6p_c",
+              "formula": "C6H11O9P"
+            }
+          ],
+          "bond_pairs_touched": [
+            "CC",
+            "CH",
+            "CO",
+            "CP",
+            "HH",
+            "HO",
+            "HP",
+            "OO",
+            "OP",
+            "PP"
+          ],
+          "atom_essential_pairs_present": [
+            "CC",
+            "CH",
+            "CO",
+            "HH",
+            "HO"
+          ],
+          "atom_nonessential_pairs_present": [
+            "CP",
+            "HP",
+            "OO",
+            "OP"
+          ],
+          "has_essential_chemistry": true
+        }
+      ],
+      "chemistry_plausibility": 0.9,
+      "active_chemistry_density": 0.5,
+      "plausibility_summary": "2/2 rules have chemistry data; 90% of 10 touched bond pairs are atom-engine-classified; 50% are in the active-chemistry set."
+    },
+    {
+      "locus_tag": "JCVISYN3A_0727",
+      "has_catalysis_rules": true,
+      "n_rules": 2,
+      "n_rules_with_chemistry_data": 2,
+      "all_bond_pairs_touched": [
+        "CC",
+        "CH",
+        "CO",
+        "CP",
+        "HH",
+        "HO",
+        "HP",
+        "OO",
+        "OP",
+        "PP"
+      ],
+      "atom_essential_pairs_in_chemistry": [
+        "CC",
+        "CH",
+        "CO",
+        "HH",
+        "HO"
+      ],
+      "atom_nonessential_pairs_in_chemistry": [
+        "CP",
+        "HP",
+        "OO",
+        "OP"
+      ],
+      "rules": [
+        {
+          "rule_name": "catalysis:TPI",
+          "reactants": [],
+          "products": [
+            "M_g3p_c"
+          ],
+          "metabolites_with_formula": [
+            {
+              "metabolite": "M_g3p_c",
+              "formula": "C3H5O6P"
+            }
+          ],
+          "bond_pairs_touched": [
+            "CC",
+            "CH",
+            "CO",
+            "CP",
+            "HH",
+            "HO",
+            "HP",
+            "OO",
+            "OP",
+            "PP"
+          ],
+          "atom_essential_pairs_present": [
+            "CC",
+            "CH",
+            "CO",
+            "HH",
+            "HO"
+          ],
+          "atom_nonessential_pairs_present": [
+            "CP",
+            "HP",
+            "OO",
+            "OP"
+          ],
+          "has_essential_chemistry": true
+        },
+        {
+          "rule_name": "catalysis:TPI:rev",
+          "reactants": [],
+          "products": [
+            "M_dhap_c"
+          ],
+          "metabolites_with_formula": [
+            {
+              "metabolite": "M_dhap_c",
+              "formula": "C3H5O6P"
+            }
+          ],
+          "bond_pairs_touched": [
+            "CC",
+            "CH",
+            "CO",
+            "CP",
+            "HH",
+            "HO",
+            "HP",
+            "OO",
+            "OP",
+            "PP"
+          ],
+          "atom_essential_pairs_present": [
+            "CC",
+            "CH",
+            "CO",
+            "HH",
+            "HO"
+          ],
+          "atom_nonessential_pairs_present": [
+            "CP",
+            "HP",
+            "OO",
+            "OP"
+          ],
+          "has_essential_chemistry": true
+        }
+      ],
+      "chemistry_plausibility": 0.9,
+      "active_chemistry_density": 0.5,
+      "plausibility_summary": "2/2 rules have chemistry data; 90% of 10 touched bond pairs are atom-engine-classified; 50% are in the active-chemistry set."
+    },
+    {
+      "locus_tag": "JCVISYN3A_0034",
+      "has_catalysis_rules": false,
+      "n_rules": 0,
+      "n_rules_with_chemistry_data": 0,
+      "rules": [],
+      "plausibility_summary": "NO_SIGNAL: no metabolite formula data for any of this gene's rules, OR gene has no catalysis rules. Validator cannot say anything about chemistry plausibility.",
+      "chemistry_plausibility": null,
+      "active_chemistry_density": null
+    },
+    {
+      "locus_tag": "JCVISYN3A_0001",
+      "has_catalysis_rules": false,
+      "n_rules": 0,
+      "n_rules_with_chemistry_data": 0,
+      "rules": [],
+      "plausibility_summary": "NO_SIGNAL: no metabolite formula data for any of this gene's rules, OR gene has no catalysis rules. Validator cannot say anything about chemistry plausibility.",
+      "chemistry_plausibility": null,
+      "active_chemistry_density": null
+    },
+    {
+      "locus_tag": "JCVISYN3A_0779",
+      "has_catalysis_rules": true,
+      "n_rules": 1,
+      "n_rules_with_chemistry_data": 1,
+      "all_bond_pairs_touched": [
+        "CC",
+        "CH",
+        "CO",
+        "CP",
+        "HH",
+        "HO",
+        "HP",
+        "OO",
+        "OP",
+        "PP"
+      ],
+      "atom_essential_pairs_in_chemistry": [
+        "CC",
+        "CH",
+        "CO",
+        "HH",
+        "HO"
+      ],
+      "atom_nonessential_pairs_in_chemistry": [
+        "CP",
+        "HP",
+        "OO",
+        "OP"
+      ],
+      "rules": [
+        {
+          "rule_name": "catalysis:GLCpts",
+          "reactants": [],
+          "products": [
+            "M_g6p_c",
+            "M_pyr_c"
+          ],
+          "metabolites_with_formula": [
+            {
+              "metabolite": "M_g6p_c",
+              "formula": "C6H11O9P"
+            },
+            {
+              "metabolite": "M_pyr_c",
+              "formula": "C3H3O3"
+            }
+          ],
+          "bond_pairs_touched": [
+            "CC",
+            "CH",
+            "CO",
+            "CP",
+            "HH",
+            "HO",
+            "HP",
+            "OO",
+            "OP",
+            "PP"
+          ],
+          "atom_essential_pairs_present": [
+            "CC",
+            "CH",
+            "CO",
+            "HH",
+            "HO"
+          ],
+          "atom_nonessential_pairs_present": [
+            "CP",
+            "HP",
+            "OO",
+            "OP"
+          ],
+          "has_essential_chemistry": true
+        }
+      ],
+      "chemistry_plausibility": 0.9,
+      "active_chemistry_density": 0.5,
+      "plausibility_summary": "1/1 rules have chemistry data; 90% of 10 touched bond pairs are atom-engine-classified; 50% are in the active-chemistry set."
+    }
+  ]
+}
