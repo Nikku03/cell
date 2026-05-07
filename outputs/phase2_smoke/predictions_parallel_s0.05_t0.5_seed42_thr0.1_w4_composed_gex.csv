@@ -1,0 +1,5 @@
+locus_tag,gene_name,essential,time_to_failure_s,failure_mode,confidence,evidence,true_class
+JCVISYN3A_0445,pgi,1,0.49999999999999994,catalysis_silenced,1.0000,"traj_only[silenced: catalysis:PGI[wt=7571],catalysis:PGI:rev[wt=5618]]",Essential
+JCVISYN3A_0779,ptsG,1,0.49999999999999994,catalysis_silenced,1.0000,traj+ann[silenced: catalysis:GLCpts[wt=196]],Essential
+JCVISYN3A_0522,ftsZ,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Nonessential
+JCVISYN3A_0305,,0,,none,0.0000,no_signal[cx:cx_none|ann:ann_none|traj:no_catalytic_rules],Quasiessential
