@@ -1,17 +1,19 @@
-"""Build the species×species reaction graph from iMB155.
+"""Build the species×species reaction graph from iMB155 (COBRA JSON) or
+the local Syn3A_updated.xml (SBML XML). The Luthey-Schulten simulator
+emits trajectories using `M_atp_c`-style metabolite IDs; iMB155's COBRA
+JSON sometimes uses bare `atp_c` (no `M_` prefix). Multiple alias
+conventions are tried so the graph builder works regardless of which
+SBML source is supplied.
 
-Reads the COBRA-format JSON (`lsdata.get('cobra_imb155')`) — much easier
-than parsing SBML XML and identical content. For every reaction r we
-enumerate all unordered pairs (s_i, s_j) of metabolites that participate
-in r and emit a directed edge in each direction with attributes
-`(stoich_i, stoich_j, sign, |stoich_i*stoich_j|)`.
+For every reaction r we enumerate all unordered pairs (s_i, s_j) of
+metabolites that participate in r and emit a directed edge in each
+direction with attributes `(stoich_i, stoich_j, sign, |stoich_i*stoich_j|)`.
 
 The 8572 rows of counts_and_fluxes are a superset of the SBML
 metabolites — proteins, mRNAs, complexes, and cost accumulators are
-not in iMB155. Unmatched rows get a self-loop with `is_self=1` so
-downstream message passing falls back to a per-node MLP for them
-(same behaviour as the v0 baseline). This makes the graph prior
-helpful where it can be helpful and harmless where it can't.
+not in any flux-balance model. Unmatched rows get a self-loop with
+`is_self=1` so downstream message passing falls back to a per-node
+MLP for them (same behaviour as the v0 baseline).
 
 Output is a torch dict savable via `torch.save`:
     {
@@ -26,6 +28,8 @@ Output is a torch dict savable via `torch.save`:
 from __future__ import annotations
 
 import json
+import re
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -34,6 +38,142 @@ import numpy as np
 import torch
 
 
+# ---------------------------------------------------------------------------
+# Parsers
+# ---------------------------------------------------------------------------
+def parse_cobra_reactions(
+    cobra_json_path: Path,
+) -> Tuple[List[str], Dict[str, Dict[str, float]]]:
+    """COBRA JSON -> (metabolite_ids, {rxn_id: {met_id: signed_stoich}})."""
+    with open(cobra_json_path) as f:
+        model = json.load(f)
+    met_ids = [m['id'] for m in model.get('metabolites', [])]
+    reactions = {}
+    for r in model.get('reactions', []):
+        reactions[r['id']] = dict(r.get('metabolites', {}))
+    return met_ids, reactions
+
+
+def parse_sbml_reactions(
+    sbml_xml_path: Path,
+) -> Tuple[List[str], Dict[str, Dict[str, float]]]:
+    """SBML XML -> (species_ids, {rxn_id: {species_id: signed_stoich}}).
+
+    Reactants get negative sign, products positive, matching COBRA. Uses
+    only the stdlib xml.etree.ElementTree so libsbml isn't required.
+    """
+    tree = ET.parse(sbml_xml_path)
+    root = tree.getroot()
+    m = re.match(r'\{(.*)\}', root.tag)
+    ns = m.group(1) if m else ''
+    def t(name: str) -> str:
+        return f'{{{ns}}}{name}' if ns else name
+
+    species_ids = [s.get('id') for s in root.iter(t('species'))]
+    reactions: Dict[str, Dict[str, float]] = {}
+    for rxn in root.iter(t('reaction')):
+        rid = rxn.get('id')
+        if rid is None:
+            continue
+        stoich: Dict[str, float] = {}
+        for child in rxn:
+            cname = child.tag.split('}')[-1]
+            if cname not in ('listOfReactants', 'listOfProducts'):
+                continue
+            sign = -1.0 if cname == 'listOfReactants' else +1.0
+            for sref in child:
+                sid = sref.get('species')
+                if sid is None or sid == 'None':
+                    continue
+                try:
+                    s = float(sref.get('stoichiometry', '1'))
+                except (TypeError, ValueError):
+                    s = 1.0
+                stoich[sid] = sign * s
+        if stoich:
+            reactions[rid] = stoich
+    return species_ids, reactions
+
+
+def parse_reactions_auto(
+    path: Path,
+) -> Tuple[List[str], Dict[str, Dict[str, float]]]:
+    """Dispatch by file extension. .json -> COBRA, .xml -> SBML."""
+    p = Path(path)
+    suffix = p.suffix.lower()
+    if suffix in ('.json',):
+        return parse_cobra_reactions(p)
+    if suffix in ('.xml', '.sbml'):
+        return parse_sbml_reactions(p)
+    raise ValueError(f'unrecognized reaction model file: {p}')
+
+
+# ---------------------------------------------------------------------------
+# Alias matching — handle the M_*_c vs *_c convention divergence
+# ---------------------------------------------------------------------------
+def _alias_candidates(row_name: str):
+    """Yield possible SBML IDs for a given row name. Order matters —
+    earlier candidates win in a tie."""
+    yield row_name                                  # direct
+    if not row_name.startswith('M_'):
+        yield f'M_{row_name}'                       # add prefix
+    if row_name.startswith('M_'):
+        yield row_name[2:]                          # strip prefix
+
+
+def _build_alias_map(
+    row_names: List[str], sbml_set: set,
+) -> Dict[str, str]:
+    """For each row, pick the first alias candidate that hits sbml_set.
+    Returns {row_name: matched_sbml_id}."""
+    out: Dict[str, str] = {}
+    for r in row_names:
+        for cand in _alias_candidates(r):
+            if cand in sbml_set:
+                out[r] = cand
+                break
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Diagnostic — what conventions appear in this row list?
+# ---------------------------------------------------------------------------
+def diagnose_row_matching(
+    row_names: List[str], reaction_model_path: Path,
+) -> dict:
+    """Run the multi-convention match against the model and return a
+    structured report. Useful when n_sbml_match comes back small and
+    you don't know whether the convention or the data is at fault."""
+    import collections
+    sbml_ids, _ = parse_reactions_auto(reaction_model_path)
+    sbml_set = set(sbml_ids)
+    prefixes = collections.Counter(r.split('_')[0] for r in row_names)
+    alias_map = _build_alias_map(row_names, sbml_set)
+    examples = {p: [r for r in row_names if r.startswith(p + '_') or r == p][:3]
+                for p in [k for k, _ in prefixes.most_common(15)]}
+    by_alias_rule = {
+        'direct':      sum(1 for r in row_names if r in sbml_set),
+        'add_M_':      sum(1 for r in row_names
+                           if (not r.startswith('M_')) and f'M_{r}' in sbml_set),
+        'strip_M_':    sum(1 for r in row_names
+                           if r.startswith('M_') and r[2:] in sbml_set),
+    }
+    return {
+        'n_rows':            len(row_names),
+        'n_sbml_species':    len(sbml_set),
+        'n_total_match':     len(alias_map),
+        'matches_per_rule':  by_alias_rule,
+        'top_prefixes':      dict(prefixes.most_common(15)),
+        'examples_by_prefix': examples,
+        'sample_sbml_ids':   sbml_ids[:10],
+        'sample_unmatched':  [r for r in row_names
+                              if r not in alias_map][:10],
+    }
+
+
+# ---------------------------------------------------------------------------
+# Graph construction
+# ---------------------------------------------------------------------------
 @dataclass
 class SpeciesGraph:
     edge_index: torch.Tensor       # (2, E) long
@@ -56,31 +196,27 @@ class SpeciesGraph:
         return int((self.edge_kind == 0).sum().item())
 
 
-def parse_cobra_reactions(cobra_json_path: Path) -> Tuple[List[str], Dict[str, Dict[str, float]]]:
-    """Return (metabolite_ids, reaction_id -> {met_id: stoich})."""
-    with open(cobra_json_path) as f:
-        model = json.load(f)
-    met_ids = [m['id'] for m in model.get('metabolites', [])]
-    reactions = {}
-    for r in model.get('reactions', []):
-        reactions[r['id']] = dict(r.get('metabolites', {}))
-    return met_ids, reactions
-
-
 def build_species_graph(
     row_names: List[str],
-    cobra_json_path: Path,
+    reaction_model_path: Path,
 ) -> SpeciesGraph:
-    """Construct the SpeciesGraph for the given row order.
+    """Construct a SpeciesGraph for the given row order.
 
-    `row_names` is the species list of one counts_and_fluxes replicate
-    (length 8572 in the Luthey-Schulten data). The function maps each
-    row name to an SBML metabolite id via exact string match. If your
-    naming differs you'll need an aliasing pass before calling this.
+    `reaction_model_path` may be a COBRA JSON (.json) or an SBML XML
+    (.xml/.sbml). Multi-convention aliasing handles M_*_c vs *_c
+    divergence. Unmatched rows get a self-loop only.
     """
-    met_ids, reactions = parse_cobra_reactions(Path(cobra_json_path))
-    name_to_idx = {n: i for i, n in enumerate(row_names)}
-    sbml_set = set(met_ids)
+    sbml_ids, reactions = parse_reactions_auto(Path(reaction_model_path))
+    sbml_set = set(sbml_ids)
+    alias = _build_alias_map(row_names, sbml_set)        # row -> sbml_id
+
+    # Reverse: sbml_id -> row index. Multiple rows could alias to the
+    # same sbml_id in pathological cases; keep the first.
+    sbml_to_row_idx: Dict[str, int] = {}
+    for i, r in enumerate(row_names):
+        sid = alias.get(r)
+        if sid is not None and sid not in sbml_to_row_idx:
+            sbml_to_row_idx[sid] = i
 
     src_list, dst_list = [], []
     attrs: List[List[float]] = []
@@ -89,16 +225,16 @@ def build_species_graph(
 
     # SBML edges from co-occurrence in reactions
     for rxn_id, stoich in reactions.items():
-        species_in_rxn = [(s, st) for s, st in stoich.items()
-                          if s in name_to_idx and s in sbml_set]
+        species_in_rxn = [(sid, st) for sid, st in stoich.items()
+                          if sid in sbml_to_row_idx]
         for a in range(len(species_in_rxn)):
             for b in range(len(species_in_rxn)):
                 if a == b:
                     continue
                 sid_a, st_a = species_in_rxn[a]
                 sid_b, st_b = species_in_rxn[b]
-                i = name_to_idx[sid_a]
-                j = name_to_idx[sid_b]
+                i = sbml_to_row_idx[sid_a]
+                j = sbml_to_row_idx[sid_b]
                 src_list.append(i); dst_list.append(j)
                 prod = float(st_a) * float(st_b)
                 attrs.append([float(st_a), float(st_b),
@@ -108,7 +244,7 @@ def build_species_graph(
                 kinds.append(0)
                 rxn_ids.append(rxn_id)
 
-    # Self-loop on every node (SBML-matched and unmatched alike)
+    # Self-loop on every node (matched and unmatched alike)
     for i in range(len(row_names)):
         src_list.append(i); dst_list.append(i)
         attrs.append([0.0, 0.0, 0.0, 0.0, 1.0])           # is_self=1
@@ -118,7 +254,7 @@ def build_species_graph(
     edge_index = torch.tensor([src_list, dst_list], dtype=torch.long)
     edge_attr  = torch.tensor(attrs, dtype=torch.float32)
     edge_kind  = torch.tensor(kinds, dtype=torch.long)
-    sbml_match = torch.tensor([n in sbml_set for n in row_names],
+    sbml_match = torch.tensor([r in alias for r in row_names],
                                dtype=torch.bool)
     return SpeciesGraph(
         edge_index=edge_index,

@@ -27,9 +27,10 @@ Metric definitions
 Runs
 ----
 
-| id | date     | model       | cfg                                                         | train_mse | val_mse | val_r2 | median_r2_top100 | rollout_drift | notes |
-|----|----------|-------------|-------------------------------------------------------------|-----------|---------|--------|------------------|---------------|-------|
-| M0 | 2026-05-07 | MLP_baseline | hidden=1024, n_blocks=2, lr=3e-4, bs=256, epochs=2, no buffered shuffle | 0.0308    | 0.0303  | -0.62  | **-0.502**       | ~10³          | floor. trained on Colab T4. checkpoint: count_dynamics_v0.pt. |
+| id  | date       | model        | cfg                                                                     | train_mse | val_mse | val_r2 | median_r2_top100 | rollout_drift | notes |
+|-----|------------|--------------|-------------------------------------------------------------------------|-----------|---------|--------|------------------|---------------|-------|
+| M0  | 2026-05-07 | MLP_baseline | hidden=1024, n_blocks=2, lr=3e-4, bs=256, epochs=2, buffered_shuffle=F  | 0.0308    | 0.0303  | -0.62  | **-0.502**       | ~10³          | floor. checkpoint: count_dynamics_v0.pt. |
+| M0a | 2026-05-07 | MLP_baseline | as M0 but buffered_shuffle=T, buffer_size=3                             | 0.0307    | 0.0312  | -0.64  | -0.785           | ~10³          | regression. 3 replicates is not enough buffer to be IID-ish — gradient sees ~3 correlated runs at a time, slightly worse than the natural per-replicate-block traversal. Default flipped back to False. Worth retrying with buffer_size=10+ if A100 RAM allows. |
 
 Planned slots (delete once filled, don't pre-fill numbers)
 ----------------------------------------------------------

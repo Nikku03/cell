@@ -42,8 +42,11 @@ class TrainConfig:
     log_every: int = 200
     species_filter: Optional[List[str]] = None
     # Cross-replicate buffered shuffler vs sequential per-replicate.
-    # Default True since SGD on correlated batches is the v0 weakness.
-    buffered_shuffle: bool = True
+    # Default False — empirically (M0a in EXPERIMENTS.md) buffer_size=3
+    # made median R² on top-100 worse vs sequential iteration, probably
+    # because 3 replicates aren't enough to be IID-ish. Bigger buffers
+    # may help but cost memory; off by default until that's measured.
+    buffered_shuffle: bool = False
     buffer_size: int = 3
 
 

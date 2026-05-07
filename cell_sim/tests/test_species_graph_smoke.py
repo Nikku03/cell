@@ -122,6 +122,100 @@ def test_graph_summary_reports_expected_stats(tmp_path):
     assert s['unique_reactions'] == 2
 
 
+def test_sbml_xml_parser_matches_cobra_format(tmp_path):
+    """SBML XML output must come back in the same shape as the COBRA
+    parser so build_species_graph can dispatch by extension."""
+    xml_text = """<?xml version="1.0"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core">
+  <model id="test">
+    <listOfSpecies>
+      <species id="M_atp_c"/>
+      <species id="M_adp_c"/>
+      <species id="M_pi_c"/>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction id="R_test">
+        <listOfReactants>
+          <speciesReference species="M_atp_c" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_adp_c" stoichiometry="1"/>
+          <speciesReference species="M_pi_c" stoichiometry="1"/>
+        </listOfProducts>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>"""
+    p = tmp_path / 'mini.xml'
+    p.write_text(xml_text)
+    from cell_sim.lgnn.data.species_graph import parse_sbml_reactions
+    species, rxns = parse_sbml_reactions(p)
+    assert species == ['M_atp_c', 'M_adp_c', 'M_pi_c']
+    assert set(rxns) == {'R_test'}
+    # Reactants signed negative, products positive
+    assert rxns['R_test'] == {'M_atp_c': -1.0, 'M_adp_c': 1.0, 'M_pi_c': 1.0}
+
+
+def test_alias_matching_handles_M_prefix(tmp_path):
+    """Rows like `atp_c` (no M_ prefix) should match SBML's `M_atp_c`."""
+    xml_text = """<?xml version="1.0"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core">
+  <model id="test">
+    <listOfSpecies><species id="M_atp_c"/><species id="M_adp_c"/></listOfSpecies>
+    <listOfReactions>
+      <reaction id="R_x">
+        <listOfReactants><speciesReference species="M_atp_c" stoichiometry="1"/></listOfReactants>
+        <listOfProducts><speciesReference species="M_adp_c" stoichiometry="1"/></listOfProducts>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>"""
+    p = tmp_path / 'mini.xml'
+    p.write_text(xml_text)
+    # Rows use bare convention
+    rows = ['atp_c', 'adp_c', 'unrelated_thing']
+    g = build_species_graph(rows, p)
+    # 2 SBML edges (atp_c ↔ adp_c via R_x) + 3 self-loops
+    assert g.n_sbml_edges == 2
+    assert (g.edge_kind == 1).sum() == 3
+    # Both metabolite rows should be marked matched
+    assert g.sbml_match.tolist() == [True, True, False]
+
+
+def test_diagnose_reports_sensible_stats(tmp_path):
+    cobra = tmp_path / 'mini.json'
+    write_fake_cobra(cobra)
+    rows = ['A', 'B', 'C', 'PM_dummy', 'cost_paid']
+    from cell_sim.lgnn.data.species_graph import diagnose_row_matching
+    rep = diagnose_row_matching(rows, cobra)
+    assert rep['n_rows'] == 5
+    assert rep['n_total_match'] == 3
+    assert rep['matches_per_rule']['direct'] == 3
+    assert 'PM' in rep['top_prefixes']
+
+
+def test_real_local_sbml_parses_and_aliases(tmp_path):
+    """Sanity check on the actual Syn3A_updated.xml in the repo —
+    it must give nonzero matches for canonical metabolite names like
+    M_atp_c regardless of which prefix convention the rows use.
+    """
+    sbml = (Path(__file__).resolve().parent.parent
+            / 'data' / 'Minimal_Cell_ComplexFormation'
+            / 'input_data' / 'Syn3A_updated.xml')
+    assert sbml.exists(), f'{sbml} missing — repo state changed'
+    # Both prefix conventions should match
+    rows_M = ['M_atp_c', 'M_adp_c', 'M_pi_c', 'PM_garbage']
+    g = build_species_graph(rows_M, sbml)
+    assert g.sbml_match[:3].all()
+    assert not g.sbml_match[3]
+    assert g.n_sbml_edges > 0           # ATP/ADP/Pi all co-occur in many reactions
+
+    rows_bare = ['atp_c', 'adp_c', 'pi_c', 'PM_garbage']
+    g2 = build_species_graph(rows_bare, sbml)
+    assert g2.sbml_match[:3].all()
+    assert g2.n_sbml_edges == g.n_sbml_edges
+
+
 if __name__ == '__main__':
     with tempfile.TemporaryDirectory() as d:
         tp = Path(d)
@@ -130,4 +224,8 @@ if __name__ == '__main__':
         test_edge_attributes_carry_stoichiometry(tp)
         test_save_and_load_roundtrip(tp)
         test_graph_summary_reports_expected_stats(tp)
+        test_sbml_xml_parser_matches_cobra_format(tp)
+        test_alias_matching_handles_M_prefix(tp)
+        test_diagnose_reports_sensible_stats(tp)
+        test_real_local_sbml_parses_and_aliases(tp)
     print('OK: species-graph smoke tests passed.')
