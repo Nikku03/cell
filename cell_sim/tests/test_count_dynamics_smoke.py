@@ -64,7 +64,22 @@ def test_replicate_to_log1p_array_shape_and_dtype():
     arr = replicate_to_log1p_array(fake.load_replicate(1))
     assert arr.shape == (10, 8), arr.shape
     assert arr.dtype == np.float32, arr.dtype
-    assert (arr >= 0).all(), 'log1p of nonneg counts should be nonneg'
+    assert np.isfinite(arr).all(), 'transform must produce no NaN/inf'
+
+
+def test_replicate_to_log1p_handles_nan_and_negatives():
+    """Real Drive data has NaN in idle-flux rows and negatives in
+    reverse-direction flux rows. Both must yield finite numbers."""
+    df = pd.DataFrame(
+        np.array([[1.0, 2.0, np.nan, 3.0],
+                  [-5.0, -7.0, np.nan, 0.0],
+                  [np.inf, -np.inf, np.nan, 1e6]], dtype=np.float32),
+        index=['count_a', 'flux_b', 'crazy_c'],
+        columns=[0.0, 1.0, 2.0, 3.0],
+    )
+    arr = replicate_to_log1p_array(df)
+    assert arr.shape == (4, 3)
+    assert np.isfinite(arr).all(), arr
 
 
 def test_dataset_yields_correct_shape():

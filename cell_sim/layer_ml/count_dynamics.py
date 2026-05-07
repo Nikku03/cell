@@ -41,12 +41,23 @@ from torch.utils.data import IterableDataset, DataLoader
 def replicate_to_log1p_array(df) -> np.ndarray:
     """Take a (n_species, n_timepoints) DataFrame from
     `lsdata.load_replicate` and return an ndarray of shape
-    (n_timepoints, n_species) in float32, log1p-transformed.
+    (n_timepoints, n_species) in float32, signed-log1p-transformed.
 
-    Always copies — the in-place log1p below would otherwise alias back
-    into the DataFrame and double-transform on the next call."""
+    The 8572 rows of counts_and_fluxes are a mix of species counts
+    (non-negative integers) and reaction fluxes (signed floats, sometimes
+    NaN where a reaction was idle). Plain log1p NaN-poisons the whole
+    batch, so we use sign(x)·log1p(|x|), which is the symmetric extension
+    that handles negatives, and replace NaN with 0 (an idle flux is 0).
+
+    Always copies — the in-place transform below would otherwise alias
+    back into the DataFrame and double-transform on the next call.
+    """
     arr = np.ascontiguousarray(df.to_numpy(dtype=np.float32, copy=True).T)
+    np.nan_to_num(arr, copy=False, nan=0.0, posinf=0.0, neginf=0.0)
+    sign = np.sign(arr)
+    np.abs(arr, out=arr)
     np.log1p(arr, out=arr)
+    np.multiply(arr, sign, out=arr)
     return arr
 
 
@@ -273,12 +284,20 @@ def evaluate(model: nn.Module, cfg: TrainConfig, lsdata_module,
 @torch.no_grad()
 def predict_step(model: nn.Module, x_count: np.ndarray,
                   device: Optional[torch.device] = None) -> np.ndarray:
-    """One forward step: integer counts -> next-second integer counts."""
+    """One forward step: counts (or signed fluxes) -> next-second values.
+
+    Inverse of the signed-log1p used in `replicate_to_log1p_array`. Output
+    is clipped to integer ≥ 0 — appropriate for the count rows. Flux rows
+    will be quantised to the nearest integer; if the caller cares about
+    fractional flux predictions they should call the model directly and
+    apply sign(y)·expm1(|y|) themselves.
+    """
     if device is None:
         device = next(model.parameters()).device
-    x_log = np.log1p(x_count.astype(np.float32))
+    x = x_count.astype(np.float32)
+    x_log = np.sign(x) * np.log1p(np.abs(x))
     t = torch.from_numpy(x_log).to(device).unsqueeze(0)
     dx = model(t).squeeze(0).cpu().numpy()
     next_log = x_log + dx
-    next_count = np.expm1(next_log)
-    return np.clip(np.round(next_count), 0, None).astype(np.int64)
+    next_val = np.sign(next_log) * np.expm1(np.abs(next_log))
+    return np.clip(np.round(next_val), 0, None).astype(np.int64)
