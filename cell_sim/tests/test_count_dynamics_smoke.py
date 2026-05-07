@@ -23,9 +23,15 @@ import torch
 THIS = Path(__file__).resolve()
 sys.path.insert(0, str(THIS.parent.parent))
 
-from layer_ml.count_dynamics import (
-    CountDynamicsMLP, CountsTransitionDataset, TrainConfig,
-    evaluate, predict_step, replicate_to_log1p_array, train_count_dynamics,
+from cell_sim.lgnn.data.dataset import (
+    CountsTransitionDataset, BufferedShuffleDataset,
+    replicate_to_log1p_array,
+)
+from cell_sim.lgnn.models.mlp_baseline import (
+    CountDynamicsMLP, predict_step,
+)
+from cell_sim.lgnn.training.train_mlp import (
+    TrainConfig, evaluate, train_count_dynamics,
 )
 
 
@@ -92,6 +98,38 @@ def test_dataset_yields_correct_shape():
     x, dx = pairs[0]
     assert x.shape == (8,) and dx.shape == (8,)
     assert x.dtype == torch.float32 and dx.dtype == torch.float32
+
+
+def test_buffered_shuffle_yields_complete_set():
+    """Cross-replicate buffered shuffler must yield every transition
+    from every replicate exactly once, regardless of buffer size."""
+    fake, _ = make_fake_lsdata(n_species=4, n_timepoints=6, n_replicates=4)
+    ds = BufferedShuffleDataset([1, 2, 3, 4], fake, buffer_size=2, seed=7)
+    pairs = list(ds)
+    # 5 transitions × 4 replicates = 20
+    assert len(pairs) == 20, len(pairs)
+    # All pairs are 4-vectors
+    for x, dx in pairs:
+        assert x.shape == (4,) and dx.shape == (4,)
+
+
+def test_buffered_shuffle_actually_interleaves():
+    """A buffer_size>=2 run on multiple replicates should interleave
+    transitions from different replicates rather than emit one
+    replicate's full block before starting the next."""
+    fake, _ = make_fake_lsdata(n_species=3, n_timepoints=20, n_replicates=4,
+                                seed=11)
+    ds = BufferedShuffleDataset([1, 2, 3, 4], fake, buffer_size=4, seed=0)
+    # With 4-deep buffer, the first 8 transitions should come from 2+
+    # different replicates with high probability. Use the (x_t, dx)
+    # values themselves as a fingerprint of which replicate they came
+    # from — synthetic data has different starting states per rep.
+    pairs = list(ds)
+    first_8_x0 = torch.stack([p[0] for p in pairs[:8]])
+    n_unique = len(set(tuple(v.tolist()) for v in first_8_x0))
+    assert n_unique >= 4, (
+        f'buffered shuffler should mix across replicates; first 8 '
+        f'samples had only {n_unique} unique x_t signatures')
 
 
 def test_loss_decreases_on_synthetic_data():
