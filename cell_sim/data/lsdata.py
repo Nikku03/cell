@@ -37,6 +37,13 @@ import pandas as pd
 DEFAULT_ROOT = Path('/content/drive/MyDrive/Luthey-Schulten-Lab-Minimal_Cell-db048ac')
 ROOT = Path(os.environ.get('LSDATA_ROOT', DEFAULT_ROOT))
 
+# When set, load_replicate reads from this dir's parquet first and only
+# falls back to the tarball if the parquet file is missing. One-time
+# conversion (`to_parquet(i, dir)` for i in 1..50) takes the slow Drive
+# read off the per-epoch hot path.
+PARQUET_CACHE = Path(os.environ['LSDATA_PARQUET_CACHE']) \
+    if 'LSDATA_PARQUET_CACHE' in os.environ else None
+
 COUNTS_FLUXES_TAR = ROOT / 'MinCell_counts_and_fluxes.tar.gz'
 N_REPLICATES = 50
 TIMEPOINTS_PER_REPLICATE = 7201  # 0..7200 s, 1 s sampling
@@ -146,6 +153,10 @@ def load_replicate(
     """
     Load replicate `i` as a DataFrame indexed by species name, columns = time.
 
+    If `LSDATA_PARQUET_CACHE` is set and `<cache>/counts_and_fluxes.{i}.parquet`
+    exists, that's read instead of streaming the tarball. Use `to_parquet`
+    to populate the cache once.
+
     Parameters
     ----------
     species : optional list of species names to keep. If given, only those
@@ -153,6 +164,16 @@ def load_replicate(
         speedup when you only need a few hundred of the 8572 rows).
     time_start, time_end : float seconds, inclusive. Subsets the columns.
     """
+    if PARQUET_CACHE is not None:
+        parq = PARQUET_CACHE / f'counts_and_fluxes.{i}.parquet'
+        if parq.exists():
+            df = pd.read_parquet(parq)
+            if species is not None:
+                df = df.loc[[s for s in species if s in df.index]]
+            keep = [c for c in df.columns
+                    if time_start <= float(c) <= time_end]
+            return df[keep]
+
     member = _replicate_member(i)
     species_set = set(species) if species is not None else None
 
