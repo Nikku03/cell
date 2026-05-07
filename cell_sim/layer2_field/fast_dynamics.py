@@ -88,20 +88,35 @@ class FastEventSimulator:
         self._vol_L = getattr(state, 'metabolite_volume_L', 1.0)
 
         # ------------------------------------------------------------------
-        # Partition rules: compiled-MM vs python-closure
+        # Partition rules: compiled-MM vs vectorised-gex vs python-closure
         # ------------------------------------------------------------------
         self._compiled_rule_indices: List[int] = []
+        self._gex_rule_indices: List[int] = []
         self._python_rule_indices: List[int] = []
         specs = []
+        gex_buckets: Dict[str, List[tuple]] = {
+            'transcribe': [], 'translate': [],
+            'mrna_degrade': [], 'protein_degrade': [],
+        }
         for i, rule in enumerate(rules):
             spec = rule.compiled_spec
-            if spec is not None and spec.get('kind') == 'mm':
+            kind = spec.get('kind') if isinstance(spec, dict) else None
+            if kind == 'mm':
                 self._compiled_rule_indices.append(i)
                 specs.append(spec)
+            elif kind == 'gex':
+                op = spec.get('op')
+                if op in gex_buckets:
+                    gex_buckets[op].append((i, rule, spec))
+                    self._gex_rule_indices.append(i)
+                else:
+                    self._python_rule_indices.append(i)
             else:
                 self._python_rule_indices.append(i)
         self._python_rule_indices_set = set(self._python_rule_indices)
+        self._gex_rule_indices_set = set(self._gex_rule_indices)
         self._n_compiled = len(self._compiled_rule_indices)
+        self._n_gex = len(self._gex_rule_indices)
 
         # ------------------------------------------------------------------
         # Flatten every compiled rule into padded 2D arrays
@@ -188,6 +203,79 @@ class FastEventSimulator:
         self._rule_to_k: Dict[int, int] = {
             int(self.C_rule_idx[k]): k for k in range(self._n_compiled)
         }
+
+        # ------------------------------------------------------------------
+        # Flatten gene-expression rules into per-op numpy arrays.
+        # Per-op arrays let one numpy expression compute every gene's
+        # propensity at once. Rate values are computed with the same
+        # two-step `1.0 / (length / k)` order the python factories use,
+        # so the float64 results match bit-exactly.
+        # ------------------------------------------------------------------
+        # transcribe
+        tx_bucket = gex_buckets['transcribe']
+        self._gex_tx_rule_idx = np.array([t[0] for t in tx_bucket], dtype=np.int64)
+        self._gex_tx_genes    = [t[2]['gene'] for t in tx_bucket]
+        tx_lens = np.array(
+            [max(100, int(t[2]['length_nt'])) for t in tx_bucket], dtype=np.int64,
+        )
+        self._gex_tx_length_nt = tx_lens
+        self._gex_tx_ntp_cost  = tx_lens // 4
+        if tx_lens.size:
+            self._gex_tx_rate = 1.0 / (tx_lens.astype(np.float64) / 85.0)
+        else:
+            self._gex_tx_rate = np.zeros(0, dtype=np.float64)
+
+        # translate
+        tl_bucket = gex_buckets['translate']
+        self._gex_tl_rule_idx = np.array([t[0] for t in tl_bucket], dtype=np.int64)
+        self._gex_tl_genes    = [t[2]['gene'] for t in tl_bucket]
+        tl_lens = np.array(
+            [max(10, int(t[2]['length_aa'])) for t in tl_bucket], dtype=np.int64,
+        )
+        self._gex_tl_length_aa = tl_lens
+        self._gex_tl_ala_cost  = tl_lens // 20
+        if tl_lens.size:
+            self._gex_tl_rate = 1.0 / (tl_lens.astype(np.float64) / 12.0)
+        else:
+            self._gex_tl_rate = np.zeros(0, dtype=np.float64)
+
+        # mrna_degrade
+        md_bucket = gex_buckets['mrna_degrade']
+        self._gex_md_rule_idx = np.array([t[0] for t in md_bucket], dtype=np.int64)
+        self._gex_md_genes    = [t[2]['gene'] for t in md_bucket]
+        md_lens = np.array(
+            [max(100, int(t[2]['length_nt'])) for t in md_bucket], dtype=np.int64,
+        )
+        if md_lens.size:
+            self._gex_md_rate = 88.0 / md_lens.astype(np.float64)
+        else:
+            self._gex_md_rate = np.zeros(0, dtype=np.float64)
+
+        # protein_degrade — pre-compute the proteins_by_state keys
+        pd_bucket = gex_buckets['protein_degrade']
+        self._gex_pd_rule_idx = np.array([t[0] for t in pd_bucket], dtype=np.int64)
+        self._gex_pd_genes    = [t[2]['gene'] for t in pd_bucket]
+        self._gex_pd_native_keys   = [f'{g}:native'   for g in self._gex_pd_genes]
+        self._gex_pd_unfolded_keys = [f'{g}:unfolded' for g in self._gex_pd_genes]
+        if pd_bucket:
+            self._gex_pd_rate = np.array(
+                [np.log(2.0) / float(t[2]['half_life_s']) for t in pd_bucket],
+                dtype=np.float64,
+            )
+        else:
+            self._gex_pd_rate = np.zeros(0, dtype=np.float64)
+
+        # global-rule-idx -> gex bucket info, for _apply
+        # value = (op, row_in_bucket)
+        self._gex_rule_to_op_row: Dict[int, tuple] = {}
+        for op, idx_arr in (
+            ('transcribe',       self._gex_tx_rule_idx),
+            ('translate',        self._gex_tl_rule_idx),
+            ('mrna_degrade',     self._gex_md_rule_idx),
+            ('protein_degrade',  self._gex_pd_rule_idx),
+        ):
+            for row, gi in enumerate(idx_arr.tolist()):
+                self._gex_rule_to_op_row[int(gi)] = (op, row)
 
         # Cache the per-rule saturation we just computed in _step, so
         # _apply can rebuild the cands list without redoing the math.
@@ -291,6 +379,72 @@ class FastEventSimulator:
             # Scatter into full rule-indexed propensity vector
             self._props[self.C_rule_idx] = compiled_props
 
+        # --- vectorised gene-expression propensities ---
+        # No cache: every gex event changes mrna_counts / protein_state /
+        # metabolite counts that some other gex propensity reads, so the
+        # whole table must be recomputed. The numpy kernels below handle
+        # ~2000 rules in ~10 vectorised ops, beating ~2000 dict-walking
+        # python closures by 50-100x.
+        if self._n_gex > 0:
+            mc = getattr(self.state, 'metabolite_counts', None) or {}
+            atp_count = mc.get('M_atp_c', 0)
+            ala_count = mc.get('M_ala__L_c', 0)
+            rnap_free = int(getattr(self.state, 'rnap_free', 0))
+            ribo_free = int(getattr(self.state, 'ribosome_free', 0))
+            deg_free  = int(getattr(self.state, 'degradosome_free', 0))
+            mrna_counts_dict = getattr(self.state, 'mrna_counts', {}) or {}
+            promoter_dict    = getattr(self.state, 'promoter_strength', {}) or {}
+            pbs              = self.state.proteins_by_state
+
+            # transcribe
+            if self._gex_tx_rule_idx.size:
+                ps = np.array(
+                    [promoter_dict.get(g, 0.1) for g in self._gex_tx_genes],
+                    dtype=np.float64,
+                )
+                tokens = np.where(
+                    (rnap_free > 0) & (atp_count >= self._gex_tx_ntp_cost),
+                    np.maximum(1, (ps * rnap_free).astype(np.int64)),
+                    0,
+                ).astype(np.int64)
+                self._props[self._gex_tx_rule_idx] = self._gex_tx_rate * tokens
+
+            # translate
+            if self._gex_tl_rule_idx.size:
+                n_mrna = np.array(
+                    [mrna_counts_dict.get(g, 0) for g in self._gex_tl_genes],
+                    dtype=np.int64,
+                )
+                tokens = np.where(
+                    (n_mrna > 0) & (ribo_free > 0) & (ala_count >= self._gex_tl_ala_cost),
+                    np.minimum(n_mrna * ribo_free, 100),
+                    0,
+                ).astype(np.int64)
+                self._props[self._gex_tl_rule_idx] = self._gex_tl_rate * tokens
+
+            # mrna_degrade
+            if self._gex_md_rule_idx.size:
+                n_mrna = np.array(
+                    [mrna_counts_dict.get(g, 0) for g in self._gex_md_genes],
+                    dtype=np.int64,
+                )
+                tokens = np.where(
+                    (n_mrna > 0) & (deg_free > 0),
+                    np.minimum(n_mrna * deg_free, 50),
+                    0,
+                ).astype(np.int64)
+                self._props[self._gex_md_rule_idx] = self._gex_md_rate * tokens
+
+            # protein_degrade
+            if self._gex_pd_rule_idx.size:
+                tokens = np.array(
+                    [len(pbs.get(nk, ())) + len(pbs.get(uk, ()))
+                     for nk, uk in zip(self._gex_pd_native_keys,
+                                       self._gex_pd_unfolded_keys)],
+                    dtype=np.int64,
+                )
+                self._props[self._gex_pd_rule_idx] = self._gex_pd_rate * tokens
+
         # --- python-closure fallback (cached) ---
         # These rules' propensities only change after another python-rule
         # event fires. Between such events (99.3% of steps for Priority 1.5)
@@ -346,9 +500,49 @@ class FastEventSimulator:
     # ------------------------------------------------------------------
     # Apply
     # ------------------------------------------------------------------
+    def _gex_rebuild_cands(self, rule_idx: int) -> Optional[list]:
+        """Rebuild the cands list a gex rule's `apply` expects, using only
+        the same state fields can_fire would have read."""
+        op_row = self._gex_rule_to_op_row.get(rule_idx)
+        if op_row is None:
+            return None
+        op, row = op_row
+        state = self.state
+        if op == 'transcribe':
+            gene = self._gex_tx_genes[row]
+            S = state.promoter_strength.get(gene, 0.1)
+            return [('tx', S)] * max(1, int(S * state.rnap_free))
+        if op == 'translate':
+            gene = self._gex_tl_genes[row]
+            n_mrna = state.mrna_counts.get(gene, 0)
+            return [('tl',)] * min(n_mrna * state.ribosome_free, 100)
+        if op == 'mrna_degrade':
+            gene = self._gex_md_genes[row]
+            n = state.mrna_counts.get(gene, 0)
+            return [('deg',)] * min(n * state.degradosome_free, 50)
+        if op == 'protein_degrade':
+            nk = self._gex_pd_native_keys[row]
+            uk = self._gex_pd_unfolded_keys[row]
+            pbs = state.proteins_by_state
+            return list(pbs.get(nk, ())) + list(pbs.get(uk, ()))
+        return None
+
     def _apply(self, rule_idx: int) -> None:
         rule = self.rules[rule_idx]
         spec = rule.compiled_spec
+
+        if spec is not None and spec.get('kind') == 'gex':
+            cands = self._gex_rebuild_cands(rule_idx)
+            if cands and rule.apply is not None:
+                rule.apply(self.state, cands, self.rng)
+            # gex events change metabolite counts (NTP/AA pools), protein
+            # states (translate adds an unfolded protein, protein_degrade
+            # removes one), and mrna_counts. Invalidate every cache that
+            # depends on these so the next step reads fresh values.
+            self._enzyme_counts_dirty = True
+            self._py_cache_valid = False
+            self._counts_dirty = True
+            return
 
         if spec is not None and spec.get('kind') == 'mm':
             # O(1) lookup; avoid np.where

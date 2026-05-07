@@ -230,6 +230,12 @@ def make_transcription_rule(
         rate_source='literature_kozo',
         can_fire=can_fire,
         apply=apply,
+        compiled_spec={
+            'kind': 'gex',
+            'op': 'transcribe',
+            'gene': gene_id,
+            'length_nt': length_nt,
+        },
     )
 
 
@@ -294,6 +300,12 @@ def make_translation_rule(
         rate_source='literature_kozo',
         can_fire=can_fire,
         apply=apply,
+        compiled_spec={
+            'kind': 'gex',
+            'op': 'translate',
+            'gene': gene_id,
+            'length_aa': length_aa,
+        },
     )
 
 
@@ -330,6 +342,12 @@ def make_mrna_degradation_rule(gene_id: str, gene_length_nt: int) -> TransitionR
         rate_source='literature',
         can_fire=can_fire,
         apply=apply,
+        compiled_spec={
+            'kind': 'gex',
+            'op': 'mrna_degrade',
+            'gene': gene_id,
+            'length_nt': length_nt,
+        },
     )
 
 
@@ -369,6 +387,12 @@ def make_protein_degradation_rule(gene_id: str, half_life_s: float = PROTEIN_HAL
         rate_source='literature_median',
         can_fire=can_fire,
         apply=apply,
+        compiled_spec={
+            'kind': 'gex',
+            'op': 'protein_degrade',
+            'gene': gene_id,
+            'half_life_s': half_life_s,
+        },
     )
 
 
