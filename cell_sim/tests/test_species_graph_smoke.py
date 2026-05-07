@@ -42,9 +42,11 @@ def write_fake_cobra(path: Path):
 def test_graph_basic_topology(tmp_path):
     cobra = tmp_path / 'mini.json'
     write_fake_cobra(cobra)
-    # 5 rows: 3 SBML matches + 2 unmatched
+    # 5 rows: 3 SBML matches + 2 unmatched. PM_dummy has alpha locus
+    # so it won't trigger the simulator-edge regex; cost_paid has no
+    # underscore-digit pattern at all.
     rows = ['A', 'B', 'C', 'PM_dummy', 'cost_paid']
-    g = build_species_graph(rows, cobra)
+    g = build_species_graph(rows, cobra, include_simulator_edges=False)
 
     # R1 has 2 species → 2 directed pairs (A,B) (B,A)
     # R2 has 3 species → 6 directed pairs (B,C) (B,A) (C,B) (C,A) (A,B) (A,C)
@@ -60,7 +62,7 @@ def test_unmatched_rows_have_only_self_loops(tmp_path):
     cobra = tmp_path / 'mini.json'
     write_fake_cobra(cobra)
     rows = ['A', 'B', 'C', 'PM_dummy', 'cost_paid']
-    g = build_species_graph(rows, cobra)
+    g = build_species_graph(rows, cobra, include_simulator_edges=False)
     # Find node index of PM_dummy
     idx_pm = rows.index('PM_dummy')
     # All edges where dst == idx_pm
@@ -76,7 +78,7 @@ def test_edge_attributes_carry_stoichiometry(tmp_path):
     cobra = tmp_path / 'mini.json'
     write_fake_cobra(cobra)
     rows = ['A', 'B', 'C']
-    g = build_species_graph(rows, cobra)
+    g = build_species_graph(rows, cobra, include_simulator_edges=False)
     # Find the (A→B) edge from R1.  Stoich A=-1, B=+1 → product = -1, sign=-1.
     a_idx, b_idx = 0, 1
     mask = (g.edge_index[0] == a_idx) & (g.edge_index[1] == b_idx) & (g.edge_kind == 0)
@@ -98,7 +100,7 @@ def test_save_and_load_roundtrip(tmp_path):
     cobra = tmp_path / 'mini.json'
     write_fake_cobra(cobra)
     rows = ['A', 'B', 'C', 'PM_dummy', 'cost_paid']
-    g = build_species_graph(rows, cobra)
+    g = build_species_graph(rows, cobra, include_simulator_edges=False)
     pth = tmp_path / 'graph.pt'
     save_species_graph(g, pth)
     g2 = load_species_graph(pth)
@@ -114,12 +116,71 @@ def test_graph_summary_reports_expected_stats(tmp_path):
     cobra = tmp_path / 'mini.json'
     write_fake_cobra(cobra)
     rows = ['A', 'B', 'C', 'PM_dummy']
-    g = build_species_graph(rows, cobra)
+    g = build_species_graph(rows, cobra, include_simulator_edges=False)
     s = graph_summary(g)
     assert s['n_nodes'] == 4
     assert s['n_sbml_match'] == 3
     assert s['n_sbml_unmatched'] == 1
-    assert s['unique_reactions'] == 2
+    assert s['edges_per_kind']['SBML'] == 8
+    assert s['edges_per_kind']['SELF_LOOP'] == 4
+
+
+def test_simulator_edges_link_central_dogma(tmp_path):
+    """A locus with G_, R_, and PM_ rows must produce transcription
+    + translation simulator edges between them."""
+    from cell_sim.lgnn.data.species_graph import (
+        build_simulator_edges, simulator_edge_summary, EdgeKind,
+    )
+    rows = ['G_0001', 'R_0001', 'P_0001', 'RP_0001', 'RPM_0001',
+             'PM_0001', 'DM_0001', 'D_0001',
+             'M_atp_c',                # metabolite — no locus
+             'chromosome',             # outside the template
+             'cost_paid']              # outside the template
+    edges = build_simulator_edges(rows)
+    # 8 patterns × 1 pair each × 2 directions = 16 edges (1 locus, 1 row each)
+    assert len(edges) == 16, len(edges)
+    # All EdgeKinds in the result must be valid simulator kinds
+    kinds_seen = {k for _, _, k, _ in edges}
+    assert EdgeKind.TRANSCRIPTION in kinds_seen
+    assert EdgeKind.TRANSLATION in kinds_seen
+    assert EdgeKind.DEGRADATION in kinds_seen
+    assert EdgeKind.TRANSLOCATION in kinds_seen
+    # Spot-check: G_0001 and RP_0001 are linked (transcription)
+    g_idx = rows.index('G_0001')
+    rp_idx = rows.index('RP_0001')
+    edge_pairs = {(s, d) for s, d, _, _ in edges}
+    assert (g_idx, rp_idx) in edge_pairs
+    assert (rp_idx, g_idx) in edge_pairs
+
+    # summary fn agrees
+    s = simulator_edge_summary(rows)
+    assert s['n_loci_seen'] == 1
+    assert s['n_loci_with_G_R_P_all'] == 1
+    assert s['total_simulator_edges'] == 16
+
+
+def test_simulator_edges_skip_metabolites_with_short_digit_runs(tmp_path):
+    """M_3pg_c, M_2pg_c etc. must NOT match the locus regex."""
+    from cell_sim.lgnn.data.species_graph import build_simulator_edges
+    rows = ['M_3pg_c', 'M_2pg_c', 'M_atp_c', 'M_13dpg_c']
+    edges = build_simulator_edges(rows)
+    assert edges == []                    # nothing should link
+
+
+def test_full_graph_with_simulator_edges(tmp_path):
+    """Build a graph with both SBML metabolite edges AND simulator
+    central-dogma edges. Counts should add (no overlap)."""
+    cobra = tmp_path / 'mini.json'
+    write_fake_cobra(cobra)
+    rows = ['A', 'B', 'C', 'G_0001', 'RP_0001', 'R_0001']
+    g = build_species_graph(rows, cobra, include_simulator_edges=True)
+    s = graph_summary(g)
+    # SBML edges from R1 (A-B pair = 2) + R2 (A,B,C triplet = 6) = 8
+    assert s['edges_per_kind']['SBML'] == 8
+    # 6 self-loops (one per row)
+    assert s['edges_per_kind']['SELF_LOOP'] == 6
+    # Simulator: G↔RP, RP↔R = 2 patterns × 1 pair × 2 dirs = 4 transcription edges
+    assert s['edges_per_kind']['TRANSCRIPTION'] == 4
 
 
 def test_sbml_xml_parser_matches_cobra_format(tmp_path):
@@ -205,13 +266,13 @@ def test_real_local_sbml_parses_and_aliases(tmp_path):
     assert sbml.exists(), f'{sbml} missing — repo state changed'
     # Both prefix conventions should match
     rows_M = ['M_atp_c', 'M_adp_c', 'M_pi_c', 'PM_garbage']
-    g = build_species_graph(rows_M, sbml)
+    g = build_species_graph(rows_M, sbml, include_simulator_edges=False)
     assert g.sbml_match[:3].all()
     assert not g.sbml_match[3]
     assert g.n_sbml_edges > 0           # ATP/ADP/Pi all co-occur in many reactions
 
     rows_bare = ['atp_c', 'adp_c', 'pi_c', 'PM_garbage']
-    g2 = build_species_graph(rows_bare, sbml)
+    g2 = build_species_graph(rows_bare, sbml, include_simulator_edges=False)
     assert g2.sbml_match[:3].all()
     assert g2.n_sbml_edges == g.n_sbml_edges
 
@@ -224,6 +285,9 @@ if __name__ == '__main__':
         test_edge_attributes_carry_stoichiometry(tp)
         test_save_and_load_roundtrip(tp)
         test_graph_summary_reports_expected_stats(tp)
+        test_simulator_edges_link_central_dogma(tp)
+        test_simulator_edges_skip_metabolites_with_short_digit_runs(tp)
+        test_full_graph_with_simulator_edges(tp)
         test_sbml_xml_parser_matches_cobra_format(tp)
         test_alias_matching_handles_M_prefix(tp)
         test_diagnose_reports_sensible_stats(tp)

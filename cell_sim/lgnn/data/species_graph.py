@@ -1,9 +1,12 @@
 """Build the species×species reaction graph from iMB155 (COBRA JSON) or
-the local Syn3A_updated.xml (SBML XML). The Luthey-Schulten simulator
-emits trajectories using `M_atp_c`-style metabolite IDs; iMB155's COBRA
-JSON sometimes uses bare `atp_c` (no `M_` prefix). Multiple alias
-conventions are tried so the graph builder works regardless of which
-SBML source is supplied.
+the local Syn3A_updated.xml (SBML XML), plus *simulator-template edges*
+that link gene/mRNA/protein/complex rows along the central-dogma chain
+defined in the Luthey-Schulten Lattice Microbes simulator.
+
+The Luthey-Schulten simulator emits trajectories using `M_atp_c`-style
+metabolite IDs; iMB155's COBRA JSON sometimes uses bare `atp_c`. Multiple
+alias conventions are tried so the graph builder works regardless of
+which SBML source is supplied.
 
 For every reaction r we enumerate all unordered pairs (s_i, s_j) of
 metabolites that participate in r and emit a directed edge in each
@@ -11,15 +14,21 @@ direction with attributes `(stoich_i, stoich_j, sign, |stoich_i*stoich_j|)`.
 
 The 8572 rows of counts_and_fluxes are a superset of the SBML
 metabolites — proteins, mRNAs, complexes, and cost accumulators are
-not in any flux-balance model. Unmatched rows get a self-loop with
-`is_self=1` so downstream message passing falls back to a per-node
-MLP for them (same behaviour as the v0 baseline).
+not in any flux-balance model. Two extensions handle this:
+
+  1. Unmatched rows that share a locus number with other rows along
+     the simulator's central-dogma template (G_xxxx, R_xxxx, P_xxxx,
+     RP_xxxx, RPM_xxxx, PM_xxxx, DM_xxxx, D_xxxx) get *simulator
+     edges* between adjacent stages of the chain. Pattern source:
+     cell_sim/data/Minimal_Cell_ComplexFormation/programs/rxns_CME.py.
+  2. Anything still unmatched gets a self-loop with `is_self=1` so
+     downstream message passing falls back to a per-node MLP.
 
 Output is a torch dict savable via `torch.save`:
     {
       'edge_index'  : (2, E)   long, [src; dst]
       'edge_attr'   : (E, 5)   float, [stoich_i, stoich_j, sign, mag, is_self]
-      'edge_kind'   : (E,)     long, 0=sbml, 1=self_loop
+      'edge_kind'   : (E,)     long; values defined in EdgeKind below
       'row_names'   : list[str], length = n_nodes
       'sbml_match'  : (n_nodes,) bool, True where the row matched an SBML id
       'reaction_id' : list[str|None], length E   -- None for self-loops
@@ -31,11 +40,22 @@ import json
 import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
+from enum import IntEnum
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
+
+
+class EdgeKind(IntEnum):
+    """Routing tag for the GNN's hetero-edge message MLPs."""
+    SBML            = 0
+    SELF_LOOP       = 1
+    TRANSCRIPTION   = 2
+    TRANSLATION     = 3
+    TRANSLOCATION   = 4
+    DEGRADATION     = 5
 
 
 # ---------------------------------------------------------------------------
@@ -198,16 +218,25 @@ class SpeciesGraph:
 
 def build_species_graph(
     row_names: List[str],
-    reaction_model_path: Path,
+    reaction_model_path: Optional[Path] = None,
+    include_simulator_edges: bool = True,
 ) -> SpeciesGraph:
     """Construct a SpeciesGraph for the given row order.
 
     `reaction_model_path` may be a COBRA JSON (.json) or an SBML XML
-    (.xml/.sbml). Multi-convention aliasing handles M_*_c vs *_c
-    divergence. Unmatched rows get a self-loop only.
+    (.xml/.sbml). When None, only simulator + self-loop edges are
+    emitted. Multi-convention aliasing handles M_*_c vs *_c divergence.
+
+    `include_simulator_edges=True` adds central-dogma chain edges
+    (transcription/translation/translocation/degradation) between rows
+    that share a locus number along the simulator's template — this is
+    what gives the ~6900 protein/mRNA/complex rows real connectivity.
     """
-    sbml_ids, reactions = parse_reactions_auto(Path(reaction_model_path))
-    sbml_set = set(sbml_ids)
+    if reaction_model_path is not None:
+        sbml_ids, reactions = parse_reactions_auto(Path(reaction_model_path))
+        sbml_set = set(sbml_ids)
+    else:
+        sbml_ids, reactions, sbml_set = [], {}, set()
     alias = _build_alias_map(row_names, sbml_set)        # row -> sbml_id
 
     # Reverse: sbml_id -> row index. Multiple rows could alias to the
@@ -241,14 +270,22 @@ def build_species_graph(
                               float(np.sign(prod)),
                               float(abs(prod)),
                               0.0])                       # is_self=0
-                kinds.append(0)
+                kinds.append(int(EdgeKind.SBML))
                 rxn_ids.append(rxn_id)
+
+    # Simulator central-dogma edges (transcription/translation/etc)
+    if include_simulator_edges:
+        for i, j, kind, label in build_simulator_edges(row_names):
+            src_list.append(i); dst_list.append(j)
+            attrs.append([0.0, 0.0, 0.0, 0.0, 0.0])       # no stoich
+            kinds.append(int(kind))
+            rxn_ids.append(label)
 
     # Self-loop on every node (matched and unmatched alike)
     for i in range(len(row_names)):
         src_list.append(i); dst_list.append(i)
         attrs.append([0.0, 0.0, 0.0, 0.0, 1.0])           # is_self=1
-        kinds.append(1)
+        kinds.append(int(EdgeKind.SELF_LOOP))
         rxn_ids.append(None)
 
     edge_index = torch.tensor([src_list, dst_list], dtype=torch.long)
@@ -264,6 +301,88 @@ def build_species_graph(
         sbml_match=sbml_match,
         reaction_id=rxn_ids,
     )
+
+
+# ---------------------------------------------------------------------------
+# Simulator-template edges — central-dogma chain from rxns_CME.py
+# ---------------------------------------------------------------------------
+# Pattern: <prefix>_<locus>[_<state>] e.g., G_0001, RP_0001_C1.
+# Locus must be 3+ digits so we don't false-match metabolites like
+# M_3pg_c (3-phosphoglycerate) where the digit is part of the chemical
+# name, not a JCVISYN3A locus tag.
+_LOCUS_RE = re.compile(r'^([A-Za-z][A-Za-z]*?)_(\d{3,})(_.+)?$')
+
+# Each tuple: (from_prefix, to_prefix, EdgeKind, human_label).
+# Both directions are emitted per pair.
+_CENTRAL_DOGMA_PATTERNS = [
+    ('G',   'RP',  EdgeKind.TRANSCRIPTION, 'sim:rnap_binding'),
+    ('RP',  'R',   EdgeKind.TRANSCRIPTION, 'sim:transcription_elongation'),
+    ('R',   'RPM', EdgeKind.TRANSLATION,   'sim:ribosome_binding'),
+    ('RPM', 'P',   EdgeKind.TRANSLATION,   'sim:translation_elongation'),
+    ('RPM', 'PM',  EdgeKind.TRANSLATION,   'sim:translation_elongation_membrane'),
+    ('P',   'PM',  EdgeKind.TRANSLOCATION, 'sim:membrane_insertion'),
+    ('R',   'DM',  EdgeKind.DEGRADATION,   'sim:degradosome_binding'),
+    ('DM',  'D',   EdgeKind.DEGRADATION,   'sim:mrna_degradation'),
+]
+
+
+def extract_locus_groups(
+    row_names: List[str],
+) -> Dict[str, Dict[str, List[int]]]:
+    """{locus: {prefix: [row_index, ...]}}.
+
+    Multiple states per (prefix, locus) pair (e.g. RP_0001 + RP_0001_C1)
+    accumulate in the same list.
+    """
+    groups: Dict[str, Dict[str, List[int]]] = {}
+    for i, r in enumerate(row_names):
+        m = _LOCUS_RE.match(r)
+        if m is None:
+            continue
+        prefix, locus = m.group(1), m.group(2)
+        groups.setdefault(locus, {}).setdefault(prefix, []).append(i)
+    return groups
+
+
+def build_simulator_edges(row_names: List[str]):
+    """(src, dst, EdgeKind, label) tuples for every central-dogma pair
+    between rows that share a locus tag. Symmetric — both directions."""
+    groups = extract_locus_groups(row_names)
+    out = []
+    for locus, prefix_to_indices in groups.items():
+        for from_p, to_p, kind, label in _CENTRAL_DOGMA_PATTERNS:
+            from_indices = prefix_to_indices.get(from_p, [])
+            to_indices   = prefix_to_indices.get(to_p, [])
+            for i in from_indices:
+                for j in to_indices:
+                    if i == j:
+                        continue
+                    out.append((i, j, kind, label))
+                    out.append((j, i, kind, label))
+    return out
+
+
+def simulator_edge_summary(row_names: List[str]) -> dict:
+    """Per-pattern edge counts + locus stats."""
+    groups = extract_locus_groups(row_names)
+    by_pattern = {label: 0 for *_, label in _CENTRAL_DOGMA_PATTERNS}
+    for locus, prefix_to_indices in groups.items():
+        for from_p, to_p, kind, label in _CENTRAL_DOGMA_PATTERNS:
+            n_from = len(prefix_to_indices.get(from_p, []))
+            n_to   = len(prefix_to_indices.get(to_p, []))
+            by_pattern[label] += n_from * n_to * 2     # both directions
+    n_loci = len(groups)
+    n_loci_with_full_chain = sum(
+        1 for _, p2i in groups.items()
+        if all(p in p2i for p in ('G', 'R', 'P'))
+    )
+    return {
+        'n_loci_seen':              n_loci,
+        'n_loci_with_G_R_P_all':    n_loci_with_full_chain,
+        'edges_per_pattern':        by_pattern,
+        'total_simulator_edges':    sum(by_pattern.values()),
+        'sample_loci':              sorted(groups)[:10],
+    }
 
 
 def save_species_graph(g: SpeciesGraph, path: Path) -> Path:
@@ -293,28 +412,27 @@ def load_species_graph(path: Path) -> SpeciesGraph:
 
 
 def graph_summary(g: SpeciesGraph) -> dict:
-    """Quick stats for sanity-checking a freshly-built graph."""
-    sbml_edges = (g.edge_kind == 0).sum().item()
-    self_edges = (g.edge_kind == 1).sum().item()
+    """Edge counts per EdgeKind + per-node connectivity stats."""
+    n_per_kind = {k.name: int((g.edge_kind == int(k)).sum().item())
+                  for k in EdgeKind}
     matched_nodes = int(g.sbml_match.sum().item())
-    # Per-node SBML degree (excluding self-loops)
-    sbml_mask = g.edge_kind == 0
-    if sbml_edges > 0:
-        dst_sbml = g.edge_index[1][sbml_mask]
-        deg = torch.bincount(dst_sbml, minlength=g.n_nodes)
+    # Non-self-loop in-degree per node
+    non_self_mask = g.edge_kind != int(EdgeKind.SELF_LOOP)
+    if non_self_mask.any():
+        dst = g.edge_index[1][non_self_mask]
+        deg = torch.bincount(dst, minlength=g.n_nodes)
     else:
         deg = torch.zeros(g.n_nodes, dtype=torch.long)
-    matched_deg = deg[g.sbml_match]
+    n_orphans = int((deg == 0).sum().item())          # only self-loop
     return {
-        'n_nodes':            g.n_nodes,
-        'n_sbml_match':       matched_nodes,
-        'n_sbml_unmatched':   g.n_nodes - matched_nodes,
-        'n_sbml_edges':       sbml_edges,
-        'n_self_loops':       self_edges,
-        'mean_sbml_degree':   float(deg.float().mean()),
-        'matched_node_mean_degree': (float(matched_deg.float().mean())
-                                      if matched_nodes > 0 else 0.0),
-        'matched_node_max_degree':  (int(matched_deg.max())
-                                      if matched_nodes > 0 else 0),
-        'unique_reactions':   len({r for r in g.reaction_id if r is not None}),
+        'n_nodes':                  g.n_nodes,
+        'n_sbml_match':             matched_nodes,
+        'n_sbml_unmatched':         g.n_nodes - matched_nodes,
+        'edges_per_kind':           n_per_kind,
+        'n_total_edges':            g.n_edges,
+        'mean_in_degree_excl_self': float(deg.float().mean()),
+        'max_in_degree_excl_self':  int(deg.max()) if g.n_nodes > 0 else 0,
+        'n_orphan_nodes':           n_orphans,
+        'unique_reactions':         len({r for r in g.reaction_id
+                                          if r is not None}),
     }
