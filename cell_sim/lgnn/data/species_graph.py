@@ -56,6 +56,7 @@ class EdgeKind(IntEnum):
     TRANSLATION     = 3
     TRANSLOCATION   = 4
     DEGRADATION     = 5
+    FLUX_COUPLING   = 6      # F_<rxn> ↔ each species in rxn — see communicate.py:216
 
 
 # ---------------------------------------------------------------------------
@@ -281,6 +282,38 @@ def build_species_graph(
             kinds.append(int(kind))
             rxn_ids.append(label)
 
+    # Flux↔species coupling edges. The simulator writes one flux row
+    # per metabolic reaction r as F_<r> (period-averaged) and an
+    # optional F_<r>_end (end-of-step). For every SBML reaction whose
+    # flux row is present, link the flux row to each participating
+    # species (both directions, same EdgeKind for now). Directionality
+    # discussion: a flux is a rate so flux→species is the causal
+    # direction (rate determines next species count); species→flux is
+    # the rate-law direction (upstream concentrations set the rate).
+    # Both are real and the GNN's hetero-MLP can learn the asymmetry
+    # from this single edge type. Split into two EdgeKinds later if a
+    # directed message-passing variant is added.
+    name_to_idx = {n: i for i, n in enumerate(row_names)}
+    for rxn_id, stoich in reactions.items():
+        for flux_name in (f'F_{rxn_id}', f'F_{rxn_id}_end'):
+            flux_idx = name_to_idx.get(flux_name)
+            if flux_idx is None:
+                continue
+            for sid in stoich:
+                spec_idx = sbml_to_row_idx.get(sid)
+                if spec_idx is None or spec_idx == flux_idx:
+                    continue
+                # flux → species
+                src_list.append(flux_idx); dst_list.append(spec_idx)
+                attrs.append([0.0, 0.0, 0.0, 0.0, 0.0])
+                kinds.append(int(EdgeKind.FLUX_COUPLING))
+                rxn_ids.append(f'flux:{rxn_id}')
+                # species → flux
+                src_list.append(spec_idx); dst_list.append(flux_idx)
+                attrs.append([0.0, 0.0, 0.0, 0.0, 0.0])
+                kinds.append(int(EdgeKind.FLUX_COUPLING))
+                rxn_ids.append(f'flux:{rxn_id}')
+
     # Self-loop on every node (matched and unmatched alike)
     for i in range(len(row_names)):
         src_list.append(i); dst_list.append(i)
@@ -382,6 +415,35 @@ def simulator_edge_summary(row_names: List[str]) -> dict:
         'edges_per_pattern':        by_pattern,
         'total_simulator_edges':    sum(by_pattern.values()),
         'sample_loci':              sorted(groups)[:10],
+    }
+
+
+def flux_edge_summary(
+    row_names: List[str],
+    reaction_model_path: Path,
+) -> dict:
+    """How many SBML reactions have an F_<rxn_id> row? Diagnostic for
+    the flux-coupling layer — if low, the metabolic outputs are still
+    orphan in the graph."""
+    name_set = set(row_names)
+    _, reactions = parse_reactions_auto(Path(reaction_model_path))
+    n_avg, n_end, n_with_either, samples = 0, 0, 0, []
+    for rxn_id in reactions:
+        has_avg = f'F_{rxn_id}' in name_set
+        has_end = f'F_{rxn_id}_end' in name_set
+        n_avg += int(has_avg)
+        n_end += int(has_end)
+        if has_avg or has_end:
+            n_with_either += 1
+            if len(samples) < 8:
+                samples.append((rxn_id, has_avg, has_end))
+    return {
+        'n_sbml_reactions':       len(reactions),
+        'n_with_F_avg_row':       n_avg,
+        'n_with_F_end_row':       n_end,
+        'n_reactions_covered':    n_with_either,
+        'sample_with_flux_rows':  samples,
+        'n_unmatched_reactions':  len(reactions) - n_with_either,
     }
 
 

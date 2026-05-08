@@ -183,6 +183,49 @@ def test_full_graph_with_simulator_edges(tmp_path):
     assert s['edges_per_kind']['TRANSCRIPTION'] == 4
 
 
+def test_flux_edges_couple_F_rxn_to_species(tmp_path):
+    """For each SBML reaction r whose F_<r> row is present, the graph
+    must contain bidirectional FLUX_COUPLING edges between F_<r> and
+    every species in r."""
+    cobra = tmp_path / 'mini.json'
+    write_fake_cobra(cobra)
+    # F_R1 is present (R1: A↔B → 2 species → 4 directed edges)
+    # F_R2_end is present (R2: A,B,C → 3 species → 6 directed edges)
+    # F_NOT_A_REACTION is present but has no SBML reaction → 0 edges
+    rows = ['A', 'B', 'C', 'F_R1', 'F_R2_end', 'F_NOT_A_REACTION']
+    g = build_species_graph(rows, cobra, include_simulator_edges=False)
+    s = graph_summary(g)
+    assert s['edges_per_kind']['FLUX_COUPLING'] == 4 + 6, \
+        s['edges_per_kind']
+    # Hand-verify: F_R1 ↔ A, F_R1 ↔ B should both exist
+    flux_idx = rows.index('F_R1')
+    a_idx = rows.index('A')
+    edges = set(zip(g.edge_index[0].tolist(), g.edge_index[1].tolist()))
+    assert (flux_idx, a_idx) in edges
+    assert (a_idx, flux_idx) in edges
+    # F_NOT_A_REACTION should have no flux edges (only self-loop)
+    nar_idx = rows.index('F_NOT_A_REACTION')
+    nar_kind_set = {g.edge_kind[i].item()
+                    for i in range(g.n_edges)
+                    if g.edge_index[0][i].item() == nar_idx
+                       or g.edge_index[1][i].item() == nar_idx}
+    assert nar_kind_set == {1}     # only SELF_LOOP
+
+
+def test_flux_edges_summary_counts_match(tmp_path):
+    """flux_edge_summary should agree with what build_species_graph
+    actually emits."""
+    from cell_sim.lgnn.data.species_graph import flux_edge_summary
+    cobra = tmp_path / 'mini.json'
+    write_fake_cobra(cobra)
+    rows = ['A', 'B', 'C', 'F_R1', 'F_R2_end']
+    rep = flux_edge_summary(rows, cobra)
+    assert rep['n_sbml_reactions'] == 2
+    assert rep['n_with_F_avg_row'] == 1       # F_R1 only
+    assert rep['n_with_F_end_row'] == 1       # F_R2_end only
+    assert rep['n_reactions_covered'] == 2    # both reactions covered
+
+
 def test_sbml_xml_parser_matches_cobra_format(tmp_path):
     """SBML XML output must come back in the same shape as the COBRA
     parser so build_species_graph can dispatch by extension."""
@@ -288,6 +331,8 @@ if __name__ == '__main__':
         test_simulator_edges_link_central_dogma(tp)
         test_simulator_edges_skip_metabolites_with_short_digit_runs(tp)
         test_full_graph_with_simulator_edges(tp)
+        test_flux_edges_couple_F_rxn_to_species(tp)
+        test_flux_edges_summary_counts_match(tp)
         test_sbml_xml_parser_matches_cobra_format(tp)
         test_alias_matching_handles_M_prefix(tp)
         test_diagnose_reports_sensible_stats(tp)
