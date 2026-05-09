@@ -48,12 +48,17 @@ def _segment_softmax(
     n_nodes: int,
 ) -> torch.Tensor:
     """logit: (B, E), dst: (E,) long. Returns α: (B, E), softmax over
-    edges sharing the same destination index. -inf logits → α=0."""
+    edges sharing the same destination index. -inf logits → α=0.
+    All helper tensors take logit's dtype so this works under bf16
+    autocast (scatter_reduce requires matching dtypes).
+    """
     B = logit.shape[0]
     device = logit.device
+    dtype = logit.dtype
     dst_b = dst.unsqueeze(0).expand(B, -1)               # (B, E)
 
-    max_per_node = torch.full((B, n_nodes), -float('inf'), device=device)
+    max_per_node = torch.full((B, n_nodes), -float('inf'),
+                                device=device, dtype=dtype)
     max_per_node = max_per_node.scatter_reduce(
         1, dst_b, logit, reduce='amax', include_self=True,
     )
@@ -63,7 +68,7 @@ def _segment_softmax(
     max_per_edge = max_per_node.gather(1, dst_b)         # (B, E)
     exp_logit = (logit - max_per_edge).exp()             # 0 where logit=-inf
 
-    sum_per_node = torch.zeros(B, n_nodes, device=device)
+    sum_per_node = torch.zeros(B, n_nodes, device=device, dtype=dtype)
     sum_per_node.index_add_(1, dst, exp_logit)
     sum_per_edge = sum_per_node.gather(1, dst_b)
     return exp_logit / (sum_per_edge + 1e-12)
@@ -142,13 +147,13 @@ class _AttentionGNNLayer(nn.Module):
         alpha = _segment_softmax(logit, dst, N)                      # (B, E)
         weighted = msg * alpha.unsqueeze(-1)                         # (B, E, h)
 
-        agg = torch.zeros(B, N, H, device=device)
+        agg = torch.zeros(B, N, H, device=device, dtype=msg.dtype)
         agg.index_add_(1, dst, weighted)
         h_new = self.norm(h + agg)
 
         # Entropy per (batch, dst): -Σ α log α
         a_log_a = alpha * (alpha + 1e-12).log()
-        ent_per_node = torch.zeros(B, N, device=device)
+        ent_per_node = torch.zeros(B, N, device=device, dtype=alpha.dtype)
         ent_per_node.index_add_(1, dst, -a_log_a)
 
         return h_new, ent_per_node
@@ -213,7 +218,7 @@ class CellGNNv1Axis2(nn.Module):
             edge_mask = None
 
         total_entropy = torch.zeros(x.shape[0], self.n_nodes,
-                                     device=x.device)
+                                     device=x.device, dtype=h.dtype)
         for layer in self.layers:
             if self.use_checkpoint and self.training:
                 h, ent = ckpt.checkpoint(
