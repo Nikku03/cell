@@ -135,3 +135,49 @@ class BufferedShuffleDataset(IterableDataset):
                 new_idx = list(range(arr.shape[0] - 1))
                 rng.shuffle(new_idx)
                 buffer[slot] = [arr, new_idx]
+
+
+class CountsRolloutDataset(IterableDataset):
+    """Yields (x_t, X_window) where X_window has shape (max_k+1, S).
+
+    The window is the actual signed-log1p state at t, t+1, ..., t+max_k.
+    Multi-step rollout training uses these to compare predicted state
+    against ground truth at each rollout step. The training loop slices
+    x_window[:, :k_current+1] when k_current < max_k (curriculum).
+
+    Storage: O(max_k+1) more memory per yielded sample than the
+    transition dataset. With max_k=10 and B=256, batch is
+    256 × 11 × 8572 × 4B ≈ 96 MB — fine for T4/L4.
+    """
+
+    def __init__(self, replicate_indices: Sequence[int],
+                 lsdata_module,
+                 species_filter: Optional[Sequence[str]] = None,
+                 max_k: int = 10,
+                 shuffle_within_replicate: bool = True,
+                 seed: int = 0):
+        super().__init__()
+        self.replicate_indices = list(replicate_indices)
+        self.lsdata = lsdata_module
+        self.species_filter = (list(species_filter)
+                                if species_filter is not None else None)
+        self.max_k = int(max_k)
+        self.shuffle = shuffle_within_replicate
+        self.seed = seed
+
+    def __iter__(self) -> Iterator:
+        rng = np.random.default_rng(self.seed)
+        for rep_i in self.replicate_indices:
+            df = self.lsdata.load_replicate(rep_i, species=self.species_filter)
+            arr = replicate_to_log1p_array(df)             # (T, S)
+            n_valid = arr.shape[0] - self.max_k - 1
+            if n_valid <= 0:
+                continue
+            order = np.arange(n_valid)
+            if self.shuffle:
+                rng.shuffle(order)
+            for j in order:
+                x_t = arr[j]
+                x_window = arr[j: j + self.max_k + 1]      # (max_k+1, S)
+                yield (torch.from_numpy(x_t),
+                       torch.from_numpy(x_window))
