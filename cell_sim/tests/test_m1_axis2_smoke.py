@@ -121,16 +121,11 @@ def test_attention_entropy_zero_when_one_edge_per_dst():
         g, _ = _build_tiny_graph(Path(d))
     model = CellGNNv1Axis2(g, hidden=16, n_layers=1, use_checkpoint=False)
     x = torch.randn(2, g.n_nodes)
-    # Run forward and extract per-node entropy from the layer directly
     h = model.input_proj(x.unsqueeze(-1))
     _, ent_per_node = model.layers[0](
         h, model.edge_index, model.edge_attr,
-        model.kind_offsets, edge_mask=None,
+        model.edge_kind, edge_mask=None,
     )
-    # Find rows with no edges (orphans in tiny graph) — entropy = 0
-    # F_R1 has a few SBML-flux edges; A, B, C have SBML edges; the
-    # G_/RP_/etc rows have 1-2 chain edges plus self. Just verify
-    # entropy is a sensible non-negative scalar per (batch, node).
     assert ent_per_node.shape == (2, g.n_nodes)
     assert (ent_per_node >= -1e-6).all()
 
