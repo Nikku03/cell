@@ -76,6 +76,7 @@ class M1Axis2TrainConfig:
     max_k: int = 10
 
     use_checkpoint: bool = True
+    use_bf16: bool = False             # mixed-precision autocast (~2× on Blackwell)
 
     # Wall-clock budget alarm (soft warning, doesn't kill training)
     wall_clock_budget_s: float = 6 * 3600.0
@@ -138,6 +139,16 @@ def train_m1_axis2(cfg: M1Axis2TrainConfig,
                    'rollout': 0.0, 'attn': 0.0}
         n_batches = 0
         t0 = time.time()
+        # bf16 autocast context. No GradScaler needed (bf16 has fp32-level
+        # exponent range, no underflow risk like fp16). On Blackwell this
+        # gives ~2× compute throughput AND halves activation memory, which
+        # is what makes use_checkpoint=False viable at k=10 + B=256.
+        if cfg.use_bf16 and device.type == 'cuda':
+            autocast_ctx = lambda: torch.amp.autocast('cuda', dtype=torch.bfloat16)
+        else:
+            from contextlib import nullcontext
+            autocast_ctx = nullcontext
+
         for step, (x, x_window) in enumerate(loader):
             x = x.to(device, non_blocking=True)
             x_window = x_window.to(device, non_blocking=True)   # (B, max_k+1, S)
@@ -145,37 +156,38 @@ def train_m1_axis2(cfg: M1Axis2TrainConfig,
             # Truncate window to k_cur+1 timepoints
             x_w = x_window[:, : k_cur + 1, :]
 
-            # 1. Multi-step rollout on the full graph. Capture step-0
-            # prediction for L_full_singlestep + attention entropy.
-            x_pred = x_w[:, 0, :]
-            attn_entropy = None
-            L_rollout = 0.0
-            L_full_ss = None
-            for s in range(k_cur):
-                if s == 0:
-                    dx, ent = model(
-                        x_pred, return_attention_entropy=True,
-                    )
-                    attn_entropy = ent
-                else:
-                    dx = model(x_pred)
-                x_pred = x_pred + dx
-                target = x_w[:, s + 1, :]
-                step_mse = mse(x_pred, target)
-                if s == 0:
-                    L_full_ss = step_mse
-                L_rollout = L_rollout + (cfg.rollout_gamma ** s) * step_mse
-            L_rollout = L_rollout / k_cur
+            with autocast_ctx():
+                # 1. Multi-step rollout on the full graph. Capture step-0
+                # prediction for L_full_singlestep + attention entropy.
+                x_pred = x_w[:, 0, :]
+                attn_entropy = None
+                L_rollout = 0.0
+                L_full_ss = None
+                for s in range(k_cur):
+                    if s == 0:
+                        dx, ent = model(
+                            x_pred, return_attention_entropy=True,
+                        )
+                        attn_entropy = ent
+                    else:
+                        dx = model(x_pred)
+                    x_pred = x_pred + dx
+                    target = x_w[:, s + 1, :]
+                    step_mse = mse(x_pred, target)
+                    if s == 0:
+                        L_full_ss = step_mse
+                    L_rollout = L_rollout + (cfg.rollout_gamma ** s) * step_mse
+                L_rollout = L_rollout / k_cur
 
-            # 2. Single-step dropout pass on the full input
-            dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
-            L_drop_ss = mse(x + dx_drop, x_w[:, 1, :])
+                # 2. Single-step dropout pass on the full input
+                dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
+                L_drop_ss = mse(x + dx_drop, x_w[:, 1, :])
 
-            # 3. Combined loss
-            L = (L_full_ss
-                 + cfg.lambda_dropout * L_drop_ss
-                 + cfg.lambda_rollout * L_rollout
-                 + cfg.lambda_attn    * attn_entropy)
+                # 3. Combined loss
+                L = (L_full_ss
+                     + cfg.lambda_dropout * L_drop_ss
+                     + cfg.lambda_rollout * L_rollout
+                     + cfg.lambda_attn    * attn_entropy)
 
             opt.zero_grad(set_to_none=True)
             L.backward()
