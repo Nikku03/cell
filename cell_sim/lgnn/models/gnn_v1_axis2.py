@@ -66,7 +66,10 @@ def _segment_softmax(
                                 torch.zeros_like(max_per_node),
                                 max_per_node)
     max_per_edge = max_per_node.gather(1, dst_b)         # (B, E)
-    exp_logit = (logit - max_per_edge).exp()             # 0 where logit=-inf
+    # `.exp()` is autocast-promoted to fp32 for numerical stability; after
+    # max-subtraction the values are in [0, 1] so casting back to source
+    # dtype is safe and lets index_add_ stay dtype-consistent.
+    exp_logit = (logit - max_per_edge).exp().to(dtype)
 
     sum_per_node = torch.zeros(B, n_nodes, device=device, dtype=dtype)
     sum_per_node.index_add_(1, dst, exp_logit)
@@ -151,8 +154,9 @@ class _AttentionGNNLayer(nn.Module):
         agg.index_add_(1, dst, weighted)
         h_new = self.norm(h + agg)
 
-        # Entropy per (batch, dst): -Σ α log α
-        a_log_a = alpha * (alpha + 1e-12).log()
+        # Entropy per (batch, dst): -Σ α log α  (.log() autocast-promotes
+        # to fp32; cast back to alpha.dtype so index_add_ matches.)
+        a_log_a = (alpha * (alpha + 1e-12).log()).to(alpha.dtype)
         ent_per_node = torch.zeros(B, N, device=device, dtype=alpha.dtype)
         ent_per_node.index_add_(1, dst, -a_log_a)
 
