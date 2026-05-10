@@ -397,9 +397,17 @@ def evaluate_memorization(model: nn.Module,
         x_pert = x_eval.clone()
         x_pert[:, idx_t] = x_pert[:, idx_t] * (1 + noise)
         pred_pert = x_pert + model(x_pert)
-        sq_pert = (pred_pert - pred_unpert).pow(2).mean().item()
-        sq_unpert = pred_unpert.var().item() + 1e-12
-        perturbation_results[f'eps={eps:.2f}'] = sq_pert / sq_unpert
+        # Lipschitz-style ratio: ‖Δpred‖² / ‖Δinput‖². A model that
+        # actually responds to input changes has ratio ~1 (linear-ish);
+        # a constant-output model has ratio ~0; a chaotic model has
+        # ratio >> 1. Was previously divided by pred_unpert.var(),
+        # which a constant-output model passes (0/eps ≈ 0) — defeats
+        # the memorization detector.
+        delta_input  = (x_pert - x_eval).pow(2).mean().item()
+        delta_output = (pred_pert - pred_unpert).pow(2).mean().item()
+        perturbation_results[f'eps={eps:.2f}'] = (
+            delta_output / max(delta_input, 1e-12)
+        )
 
     return {
         'within_replicate_mse_ratio':       float(ratio_time),
