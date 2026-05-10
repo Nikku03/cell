@@ -69,7 +69,14 @@ class M1Axis2FastTrainConfig:
     species_filter: Optional[List[str]] = None
 
     edge_dropout_p: float = 0.07
-    lambda_dropout: float = 0.1              # was 0.5 — too dominant pre-fit
+    lambda_dropout: float = 0.1              # peak; was 0.5
+    # Same warmup-then-ramp shape as λ_attn. Applying counterfactual
+    # dropout pressure before the model has fit the supervised target
+    # encourages the optimizer to find a degenerate "ignore the dropped
+    # edges" solution — same failure mode as the attention collapse,
+    # different mechanism.
+    lambda_dropout_warmup_steps: int = 2000
+    lambda_dropout_ramp_steps: int = 2000
 
     # Attention sparsity penalty + warmup. Applying λ_attn from step 0
     # collapses attention onto self-loops before the model knows which
@@ -115,9 +122,9 @@ def _k_for_epoch(curriculum: tuple, epoch: int) -> int:
     return int(curriculum[min(epoch, len(curriculum) - 1)])
 
 
-def _lambda_attn_at(global_step: int, peak: float,
-                     warmup_steps: int, ramp_steps: int) -> float:
-    """Warmup-then-ramp schedule for the attention entropy penalty.
+def _warmup_ramp(global_step: int, peak: float,
+                  warmup_steps: int, ramp_steps: int) -> float:
+    """Warmup-then-ramp schedule shared by λ_attn and λ_dropout.
     Returns 0 for global_step < warmup_steps, then ramps linearly to
     peak over the next ramp_steps, then stays at peak."""
     if global_step < warmup_steps:
@@ -125,6 +132,10 @@ def _lambda_attn_at(global_step: int, peak: float,
     if global_step < warmup_steps + ramp_steps:
         return peak * (global_step - warmup_steps) / max(ramp_steps, 1)
     return peak
+
+
+# Backward-compat alias for older test imports.
+_lambda_attn_at = _warmup_ramp
 
 
 def _torch_dtype(name: str) -> torch.dtype:
@@ -319,28 +330,28 @@ def train_m1_axis2_fast(
             dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
             L_drop_ss = mse(x + dx_drop, x_w[:, 1, :])
 
-            # 3. Combined loss with λ_attn warmup schedule.
-            # L_full_ss is the s=0 component of L_rollout (same target).
-            # When skip_rollout_at_k1 is False at k=1, L_rollout collapses
-            # to L_full_ss exactly. When k>1, L_full_ss is *redundant
-            # weight* on s=0 since it's already in L_rollout's first
-            # term. So we drop L_full_ss from the total loss; it's
-            # tracked as a metric only.
-            cur_lambda_attn = _lambda_attn_at(
+            # 3. Combined loss. Warmup schedules on λ_attn AND λ_dropout
+            # to prevent either regularizer from biting before the model
+            # has learned which edges matter.
+            cur_lambda_attn = _warmup_ramp(
                 global_step, cfg.lambda_attn,
                 cfg.lambda_attn_warmup_steps,
                 cfg.lambda_attn_ramp_steps,
             )
-            # When skip_rollout_at_k1 zeros out L_rollout at k=1, restore
-            # L_full_ss as the supervised term so the model still trains
-            # on single-step (otherwise the supervised gradient signal
-            # is gone entirely at k=1).
+            cur_lambda_dropout = _warmup_ramp(
+                global_step, cfg.lambda_dropout,
+                cfg.lambda_dropout_warmup_steps,
+                cfg.lambda_dropout_ramp_steps,
+            )
+            # Use L_rollout as the supervised term (per Bug 3 fix). At
+            # k=1 with skip_rollout_at_k1, L_rollout is zeroed — restore
+            # L_full_ss so we still get a supervised gradient signal.
             if eff_lambda_rollout == 0.0:
                 supervised = L_full_ss
             else:
                 supervised = eff_lambda_rollout * L_rollout
             L = (supervised
-                 + cfg.lambda_dropout * L_drop_ss
+                 + cur_lambda_dropout * L_drop_ss
                  + cur_lambda_attn    * attn_entropy)
 
             opt.zero_grad(set_to_none=True)
@@ -367,6 +378,7 @@ def train_m1_axis2_fast(
                       f'  rollout={vals["rollout"]:.4f}'
                       f'  attn={vals["attn_entropy"]:.3f}'
                       f'  λa={cur_lambda_attn:.1e}'
+                      f'  λd={cur_lambda_dropout:.1e}'
                       f'  {n_seen/wall:.0f} s/s')
 
             if (time.time() - train_t0) > cfg.wall_clock_budget_s:
@@ -376,9 +388,9 @@ def train_m1_axis2_fast(
         epoch_wall = time.time() - t_epoch
         history['samples_per_sec'].append(n_seen / max(epoch_wall, 1e-6))
         history['lambda_attn_end_of_epoch'].append(
-            _lambda_attn_at(global_step, cfg.lambda_attn,
-                              cfg.lambda_attn_warmup_steps,
-                              cfg.lambda_attn_ramp_steps)
+            _warmup_ramp(global_step, cfg.lambda_attn,
+                          cfg.lambda_attn_warmup_steps,
+                          cfg.lambda_attn_ramp_steps)
         )
         for k, v in run.items():
             history.setdefault(f'train_{k}', []).append(
