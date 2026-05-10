@@ -75,7 +75,8 @@ class M1Axis2TrainConfig:
     lambda_rollout: float = 1.0
     max_k: int = 10
 
-    use_checkpoint: bool = True
+    use_checkpoint: bool = False       # consistent with fast trainer; flip on
+                                       #   only if memory pressure forces it
     use_bf16: bool = False             # mixed-precision autocast (~2× on Blackwell)
 
     # Wall-clock budget alarm (soft warning, doesn't kill training)
