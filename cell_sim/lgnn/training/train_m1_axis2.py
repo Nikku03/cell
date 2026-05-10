@@ -122,7 +122,8 @@ def train_m1_axis2(cfg: M1Axis2TrainConfig,
     history = {
         'train_total': [], 'train_full_ss': [], 'train_drop_ss': [],
         'train_rollout': [], 'train_attn_entropy': [],
-        'val_singlestep_mse': [], 'val_rollout_mse': [],
+        'val_singlestep_mse': [], 'val_rollout_mse_avg': [],
+        'val_mse_per_step': [],
         'k_per_epoch': [],
     }
     best_val = float('inf')
@@ -246,9 +247,12 @@ def train_m1_axis2(cfg: M1Axis2TrainConfig,
         val = evaluate(model, cfg, lsdata_module, graph, device,
                        k_eval=k_cur)
         history['val_singlestep_mse'].append(val['mse_singlestep'])
-        history['val_rollout_mse'].append(val['mse_rollout'])
+        history['val_rollout_mse_avg'].append(val['mse_rollout_avg'])
+        history['val_mse_per_step'].append(val['mse_per_step'])
+        per_step_str = ' '.join(f'{m:.4f}' for m in val['mse_per_step'])
         print(f'  ep{epoch}  val_mse_singlestep={val["mse_singlestep"]:.4f}'
-              f'  val_mse_rollout(k={k_cur})={val["mse_rollout"]:.4f}')
+              f'  val_mse_per_step(k={k_cur})=[{per_step_str}]'
+              f'  avg={val["mse_rollout_avg"]:.4f}')
 
         if val['mse_singlestep'] < best_val:
             best_val = val['mse_singlestep']
@@ -259,7 +263,8 @@ def train_m1_axis2(cfg: M1Axis2TrainConfig,
                     'cfg': cfg.__dict__,
                     'epoch': epoch,
                     'val_mse_singlestep': val['mse_singlestep'],
-                    'val_mse_rollout': val['mse_rollout'],
+                    'val_mse_rollout_avg': val['mse_rollout_avg'],
+                    'val_mse_per_step': val['mse_per_step'],
                     'k_at_save': k_cur,
                 }, checkpoint_path)
 
@@ -293,8 +298,12 @@ def evaluate(model: nn.Module,
         pin_memory=(cfg.num_workers > 0 and torch.cuda.is_available()),
     )
 
-    sq_ss, n_ss = 0.0, 0
-    sq_roll, n_roll = 0.0, 0
+    # Per-step accumulators so we can report MSE at each rollout
+    # position. The previously-named `mse_rollout` (average across all
+    # positions) is preserved as `mse_rollout_avg` but isn't directly
+    # cross-run-comparable for different k_eval values.
+    sq_per_step = [0.0] * k_eval
+    n_per_step = [0] * k_eval
     for x, x_window in loader:
         x = x.to(device, non_blocking=True)
         x_window = x_window.to(device, non_blocking=True)
@@ -305,14 +314,15 @@ def evaluate(model: nn.Module,
             x_pred = x_pred + dx
             target = x_window[:, s + 1, :]
             err2 = (x_pred - target).pow(2)
-            if s == 0:
-                sq_ss += err2.sum().item()
-                n_ss  += err2.numel()
-            sq_roll += err2.sum().item()
-            n_roll  += err2.numel()
+            sq_per_step[s] += err2.sum().item()
+            n_per_step[s]  += err2.numel()
+    mse_per_step = [
+        sq_per_step[s] / max(n_per_step[s], 1) for s in range(k_eval)
+    ]
     return {
-        'mse_singlestep': sq_ss / max(n_ss, 1),
-        'mse_rollout':    sq_roll / max(n_roll, 1),
+        'mse_singlestep':  mse_per_step[0] if mse_per_step else 0.0,
+        'mse_per_step':    mse_per_step,
+        'mse_rollout_avg': sum(mse_per_step) / max(len(mse_per_step), 1),
     }
 
 

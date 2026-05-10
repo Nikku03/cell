@@ -258,7 +258,8 @@ def train_m1_axis2_fast(
     history = {
         'train_total': [], 'train_full_ss': [], 'train_drop_ss': [],
         'train_rollout': [], 'train_attn_entropy': [],
-        'val_singlestep_mse': [], 'val_rollout_mse': [],
+        'val_singlestep_mse': [], 'val_rollout_mse_avg': [],
+        'val_mse_per_step': [],
         'k_per_epoch': [], 'samples_per_sec': [],
         'lambda_attn_end_of_epoch': [],
     }
@@ -326,13 +327,12 @@ def train_m1_axis2_fast(
                 gamma_sum += w
             L_rollout = L_rollout / max(gamma_sum, 1e-12)
 
-            # 2. Single-step dropout pass
-            dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
-            L_drop_ss = mse(x + dx_drop, x_w[:, 1, :])
-
-            # 3. Combined loss. Warmup schedules on λ_attn AND λ_dropout
-            # to prevent either regularizer from biting before the model
-            # has learned which edges matter.
+            # 3. Compute warmup schedules first so we can skip the
+            # dropout forward pass entirely while λ_dropout=0 (during
+            # the first lambda_dropout_warmup_steps batches). The
+            # dropout-pass forward+backward is ~one full forward of
+            # cost; multiplying its output by 0 still does the compute,
+            # so we conditionally skip when its weight is 0.
             cur_lambda_attn = _warmup_ramp(
                 global_step, cfg.lambda_attn,
                 cfg.lambda_attn_warmup_steps,
@@ -343,6 +343,18 @@ def train_m1_axis2_fast(
                 cfg.lambda_dropout_warmup_steps,
                 cfg.lambda_dropout_ramp_steps,
             )
+
+            # 2. Single-step dropout pass — skip when λ_dropout=0.
+            if cur_lambda_dropout > 0.0:
+                dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
+                L_drop_ss = mse(x + dx_drop, x_w[:, 1, :])
+                drop_term = cur_lambda_dropout * L_drop_ss
+            else:
+                # No-op for the loss; track L_full_ss as placeholder so
+                # the running['drop_ss'] metric stays well-defined.
+                L_drop_ss = L_full_ss.detach()
+                drop_term = torch.zeros((), device=device,
+                                          dtype=L_full_ss.dtype)
             # Use L_rollout as the supervised term (per Bug 3 fix). At
             # k=1 with skip_rollout_at_k1, L_rollout is zeroed — restore
             # L_full_ss so we still get a supervised gradient signal.
@@ -351,8 +363,8 @@ def train_m1_axis2_fast(
             else:
                 supervised = eff_lambda_rollout * L_rollout
             L = (supervised
-                 + cur_lambda_dropout * L_drop_ss
-                 + cur_lambda_attn    * attn_entropy)
+                 + drop_term
+                 + cur_lambda_attn * attn_entropy)
 
             opt.zero_grad(set_to_none=True)
             L.backward()
@@ -399,10 +411,13 @@ def train_m1_axis2_fast(
 
         val = evaluate_fast(model, val_data, cfg, device, k_eval=k_cur)
         history['val_singlestep_mse'].append(val['mse_singlestep'])
-        history['val_rollout_mse'].append(val['mse_rollout'])
+        history['val_rollout_mse_avg'].append(val['mse_rollout_avg'])
+        history['val_mse_per_step'].append(val['mse_per_step'])
+        per_step_str = ' '.join(f'{m:.4f}' for m in val['mse_per_step'])
         print(f'  ep{epoch} done in {epoch_wall:.1f}s  '
               f'val_ss={val["mse_singlestep"]:.4f}  '
-              f'val_roll(k={k_cur})={val["mse_rollout"]:.4f}  '
+              f'val_per_step(k={k_cur})=[{per_step_str}]  '
+              f'avg={val["mse_rollout_avg"]:.4f}  '
               f'{n_seen/epoch_wall:.0f} s/s')
 
         if val['mse_singlestep'] < best_val:
@@ -414,7 +429,8 @@ def train_m1_axis2_fast(
                     'cfg': cfg.__dict__,
                     'epoch': epoch,
                     'val_mse_singlestep': val['mse_singlestep'],
-                    'val_mse_rollout': val['mse_rollout'],
+                    'val_mse_rollout_avg': val['mse_rollout_avg'],
+                    'val_mse_per_step': val['mse_per_step'],
                     'k_at_save': k_cur,
                 }, checkpoint_path)
 
@@ -434,17 +450,28 @@ def evaluate_fast(
     device: torch.device,
     k_eval: int = 4,
 ) -> dict:
-    """Single-step + k-step rollout val MSE on the preloaded val tensor.
+    """Single-step + per-position rollout MSE on the preloaded val tensor.
+
+    Returns:
+        mse_singlestep    -- MSE at rollout step s=0 (matches M1's metric)
+        mse_per_step      -- list of length k_eval, MSE at each s in 0..k_eval-1
+                              (cross-run-comparable: pick the s you care about)
+        mse_rollout_avg   -- average of mse_per_step across all positions
+                              (NOT cross-run-comparable for different k_eval —
+                               equals mse_singlestep at k_eval=1, dilutes to
+                               include later-step error at higher k_eval)
+
     No DataLoader; iterate windows on-GPU. Native dtype throughout —
-    if model is bf16, inputs and accumulators stay in bf16."""
+    if model is bf16, inputs and accumulators stay in bf16.
+    """
     model.eval()
     model_dtype = next(model.parameters()).dtype
     R, T, S = val_data.shape
     n_valid = T - k_eval - 1
-    sq_ss = torch.zeros((), device=device, dtype=torch.float32)
-    n_ss = 0
-    sq_roll = torch.zeros((), device=device, dtype=torch.float32)
-    n_roll = 0
+    # Per-step accumulators so we can report MSE at each rollout position.
+    sq_per_step = [torch.zeros((), device=device, dtype=torch.float32)
+                    for _ in range(k_eval)]
+    n_per_step = [0] * k_eval
 
     for rep in range(R):
         for s_start in range(0, n_valid, cfg.batch_size):
@@ -460,12 +487,15 @@ def evaluate_fast(
                 dx = model(x_pred)
                 x_pred = x_pred + dx
                 err2 = (x_pred - x_w[:, s + 1, :]).pow(2).float()
-                if s == 0:
-                    sq_ss += err2.sum()
-                    n_ss  += err2.numel()
-                sq_roll += err2.sum()
-                n_roll  += err2.numel()
+                sq_per_step[s] += err2.sum()
+                n_per_step[s]  += err2.numel()
+
+    mse_per_step = [
+        float(sq_per_step[s].item()) / max(n_per_step[s], 1)
+        for s in range(k_eval)
+    ]
     return {
-        'mse_singlestep': float(sq_ss.item()) / max(n_ss, 1),
-        'mse_rollout':    float(sq_roll.item()) / max(n_roll, 1),
+        'mse_singlestep':  mse_per_step[0] if mse_per_step else 0.0,
+        'mse_per_step':    mse_per_step,
+        'mse_rollout_avg': sum(mse_per_step) / max(len(mse_per_step), 1),
     }

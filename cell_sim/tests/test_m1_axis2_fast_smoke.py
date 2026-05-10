@@ -25,6 +25,42 @@ from cell_sim.lgnn.training.train_m1_axis2_fast import (
 )
 
 
+def test_evaluate_fast_returns_per_step_breakdown():
+    """Bug 4 fix: evaluate_fast returns mse_per_step list of length
+    k_eval, mse_singlestep equals mse_per_step[0], and mse_rollout_avg
+    equals the average. Confirms cross-run-comparable per-step semantics."""
+    import numpy as np
+    from cell_sim.lgnn.training.train_m1_axis2_fast import (
+        evaluate_fast, M1Axis2FastTrainConfig,
+    )
+    from cell_sim.lgnn.data.species_graph import build_species_graph
+    from cell_sim.lgnn.models.gnn_v1_axis2 import CellGNNv1Axis2
+
+    rows = ['A', 'B', 'C',
+            'G_0001', 'RP_0001', 'R_0001', 'RPM_0001',
+            'P_0001', 'PM_0001', 'DM_0001', 'D_0001',
+            'F_R1']
+    with tempfile.TemporaryDirectory() as d:
+        cobra = Path(d) / 'mini.json'
+        _write_fake_cobra(cobra)
+        g = build_species_graph(rows, cobra, include_simulator_edges=True)
+    n_t = 30
+    val_data = torch.randn(1, n_t, g.n_nodes, dtype=torch.float32)
+
+    model = CellGNNv1Axis2(g, hidden=16, n_layers=2,
+                            use_checkpoint=False).to(torch.float32)
+    cfg = M1Axis2FastTrainConfig(
+        n_species=g.n_nodes, batch_size=4, device='cpu', use_bf16=False,
+    )
+    out = evaluate_fast(model, val_data, cfg, torch.device('cpu'), k_eval=3)
+    assert 'mse_per_step' in out
+    assert len(out['mse_per_step']) == 3
+    assert out['mse_singlestep'] == out['mse_per_step'][0]
+    assert abs(
+        out['mse_rollout_avg'] - sum(out['mse_per_step']) / 3
+    ) < 1e-6
+
+
 def test_lambda_attn_warmup_then_ramp():
     """0 during warmup, linear ramp to peak, then constant at peak."""
     peak, w, r = 1e-4, 100, 100
