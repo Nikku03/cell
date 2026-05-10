@@ -183,10 +183,13 @@ def train_m1_axis2(cfg: M1Axis2TrainConfig,
                 dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
                 L_drop_ss = mse(x + dx_drop, x_w[:, 1, :])
 
-                # 3. Combined loss
-                L = (L_full_ss
+                # 3. Combined loss. L_full_ss is the s=0 component of
+                # L_rollout — including both double-counts the single-
+                # step gradient. Use L_rollout as the supervised term;
+                # at k=1 this collapses to L_full_ss (so it's still
+                # supervised, just no longer double-weighted).
+                L = (cfg.lambda_rollout * L_rollout
                      + cfg.lambda_dropout * L_drop_ss
-                     + cfg.lambda_rollout * L_rollout
                      + cfg.lambda_attn    * attn_entropy)
 
             opt.zero_grad(set_to_none=True)

@@ -312,15 +312,28 @@ def train_m1_axis2_fast(
             dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
             L_drop_ss = mse(x + dx_drop, x_w[:, 1, :])
 
-            # 3. Combined loss with λ_attn warmup schedule
+            # 3. Combined loss with λ_attn warmup schedule.
+            # L_full_ss is the s=0 component of L_rollout (same target).
+            # When skip_rollout_at_k1 is False at k=1, L_rollout collapses
+            # to L_full_ss exactly. When k>1, L_full_ss is *redundant
+            # weight* on s=0 since it's already in L_rollout's first
+            # term. So we drop L_full_ss from the total loss; it's
+            # tracked as a metric only.
             cur_lambda_attn = _lambda_attn_at(
                 global_step, cfg.lambda_attn,
                 cfg.lambda_attn_warmup_steps,
                 cfg.lambda_attn_ramp_steps,
             )
-            L = (L_full_ss
+            # When skip_rollout_at_k1 zeros out L_rollout at k=1, restore
+            # L_full_ss as the supervised term so the model still trains
+            # on single-step (otherwise the supervised gradient signal
+            # is gone entirely at k=1).
+            if eff_lambda_rollout == 0.0:
+                supervised = L_full_ss
+            else:
+                supervised = eff_lambda_rollout * L_rollout
+            L = (supervised
                  + cfg.lambda_dropout * L_drop_ss
-                 + eff_lambda_rollout * L_rollout
                  + cur_lambda_attn    * attn_entropy)
 
             opt.zero_grad(set_to_none=True)
