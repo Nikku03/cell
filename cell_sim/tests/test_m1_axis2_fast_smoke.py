@@ -21,8 +21,22 @@ sys.path.insert(0, str(THIS.parent.parent.parent))
 from cell_sim.lgnn.data.species_graph import build_species_graph
 from cell_sim.lgnn.training.train_m1_axis2_fast import (
     M1Axis2FastTrainConfig, _gather_windows, _index_iterator,
-    preload_to_gpu, train_m1_axis2_fast,
+    _lambda_attn_at, preload_to_gpu, train_m1_axis2_fast,
 )
+
+
+def test_lambda_attn_warmup_then_ramp():
+    """0 during warmup, linear ramp to peak, then constant at peak."""
+    peak, w, r = 1e-4, 100, 100
+    assert _lambda_attn_at(0,    peak, w, r) == 0.0
+    assert _lambda_attn_at(99,   peak, w, r) == 0.0
+    assert _lambda_attn_at(100,  peak, w, r) == 0.0           # ramp starts strictly after
+    assert _lambda_attn_at(150,  peak, w, r) == peak * 0.5    # 50 / 100 of ramp
+    assert _lambda_attn_at(200,  peak, w, r) == peak          # ramp complete
+    assert _lambda_attn_at(1000, peak, w, r) == peak          # stays at peak
+    # Edge cases
+    assert _lambda_attn_at(0, peak, 0, r) == 0.0              # 0/r at the very start
+    assert _lambda_attn_at(0, peak, 0, 0) == peak             # zero ramp jumps
 
 
 def _write_fake_cobra(path: Path):

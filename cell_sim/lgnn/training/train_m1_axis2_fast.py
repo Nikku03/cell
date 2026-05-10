@@ -69,13 +69,28 @@ class M1Axis2FastTrainConfig:
     species_filter: Optional[List[str]] = None
 
     edge_dropout_p: float = 0.07
-    lambda_dropout: float = 0.5
-    lambda_attn: float = 1e-3
+    lambda_dropout: float = 0.1              # was 0.5 — too dominant pre-fit
+
+    # Attention sparsity penalty + warmup. Applying λ_attn from step 0
+    # collapses attention onto self-loops before the model knows which
+    # edges matter (verified: every PM row produced identical weights
+    # 0.821/0.142/0.037 on self/RPM/P_TC after the constant-λ run).
+    # Schedule:
+    #   step < warmup           : λ = 0   (attention learns shape unconstrained)
+    #   warmup ≤ step < +ramp   : λ ramps linearly 0 → peak
+    #   step ≥ warmup + ramp    : λ = peak
+    lambda_attn: float = 1e-4                # peak; was 1e-3 (10× too high)
+    lambda_attn_warmup_steps: int = 2000
+    lambda_attn_ramp_steps: int = 2000
 
     k_curriculum: tuple = DEFAULT_K_CURRICULUM
     rollout_gamma: float = 0.95
     lambda_rollout: float = 1.0
     max_k: int = 4
+    # When k_cur == 1, L_rollout collapses to L_full_singlestep (same
+    # target, redundant gradient). Skip rollout for those epochs so
+    # the supervised single-step loss isn't double-counted.
+    skip_rollout_at_k1: bool = True
 
     use_checkpoint: bool = False             # Blackwell-class default
     use_bf16: bool = True
@@ -98,6 +113,18 @@ def _device(name: str) -> torch.device:
 
 def _k_for_epoch(curriculum: tuple, epoch: int) -> int:
     return int(curriculum[min(epoch, len(curriculum) - 1)])
+
+
+def _lambda_attn_at(global_step: int, peak: float,
+                     warmup_steps: int, ramp_steps: int) -> float:
+    """Warmup-then-ramp schedule for the attention entropy penalty.
+    Returns 0 for global_step < warmup_steps, then ramps linearly to
+    peak over the next ramp_steps, then stays at peak."""
+    if global_step < warmup_steps:
+        return 0.0
+    if global_step < warmup_steps + ramp_steps:
+        return peak * (global_step - warmup_steps) / max(ramp_steps, 1)
+    return peak
 
 
 def _torch_dtype(name: str) -> torch.dtype:
@@ -222,13 +249,21 @@ def train_m1_axis2_fast(
         'train_rollout': [], 'train_attn_entropy': [],
         'val_singlestep_mse': [], 'val_rollout_mse': [],
         'k_per_epoch': [], 'samples_per_sec': [],
+        'lambda_attn_end_of_epoch': [],
     }
     best_val = float('inf')
     train_t0 = time.time()
+    global_step = 0           # persists across epochs for λ_attn schedule
 
     for epoch in range(cfg.n_epochs):
         k_cur = _k_for_epoch(cfg.k_curriculum, epoch)
         history['k_per_epoch'].append(k_cur)
+        # When k_cur == 1, L_rollout duplicates L_full_singlestep. Skip
+        # rollout this epoch (set effective λ to 0) so the supervised
+        # gradient isn't double-weighted while the model is still
+        # learning single-step.
+        eff_lambda_rollout = (0.0 if (k_cur == 1 and cfg.skip_rollout_at_k1)
+                                else cfg.lambda_rollout)
 
         gen = torch.Generator(device=device).manual_seed(cfg.seed + epoch)
 
@@ -277,15 +312,21 @@ def train_m1_axis2_fast(
             dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
             L_drop_ss = mse(x + dx_drop, x_w[:, 1, :])
 
-            # 3. Combined loss
+            # 3. Combined loss with λ_attn warmup schedule
+            cur_lambda_attn = _lambda_attn_at(
+                global_step, cfg.lambda_attn,
+                cfg.lambda_attn_warmup_steps,
+                cfg.lambda_attn_ramp_steps,
+            )
             L = (L_full_ss
                  + cfg.lambda_dropout * L_drop_ss
-                 + cfg.lambda_rollout * L_rollout
-                 + cfg.lambda_attn    * attn_entropy)
+                 + eff_lambda_rollout * L_rollout
+                 + cur_lambda_attn    * attn_entropy)
 
             opt.zero_grad(set_to_none=True)
             L.backward()
             opt.step()
+            global_step += 1
 
             # On-GPU accumulation — no .item() in hot loop
             run['total']        += L.detach().float()
@@ -305,6 +346,7 @@ def train_m1_axis2_fast(
                       f'  drop_ss={vals["drop_ss"]:.4f}'
                       f'  rollout={vals["rollout"]:.4f}'
                       f'  attn={vals["attn_entropy"]:.3f}'
+                      f'  λa={cur_lambda_attn:.1e}'
                       f'  {n_seen/wall:.0f} s/s')
 
             if (time.time() - train_t0) > cfg.wall_clock_budget_s:
@@ -313,6 +355,11 @@ def train_m1_axis2_fast(
 
         epoch_wall = time.time() - t_epoch
         history['samples_per_sec'].append(n_seen / max(epoch_wall, 1e-6))
+        history['lambda_attn_end_of_epoch'].append(
+            _lambda_attn_at(global_step, cfg.lambda_attn,
+                              cfg.lambda_attn_warmup_steps,
+                              cfg.lambda_attn_ramp_steps)
+        )
         for k, v in run.items():
             history.setdefault(f'train_{k}', []).append(
                 float(v.item()) / max(n_batches, 1)
