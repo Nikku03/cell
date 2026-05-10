@@ -61,6 +61,11 @@ class M1Axis2TrainConfig:
     seed: int = 42
     log_every: int = 100
     species_filter: Optional[List[str]] = None
+    # DataLoader workers — was hard-coded to 0, single-threaded data
+    # prep on the main thread was the original 189 s/s bottleneck.
+    # 4 workers + pin_memory hides per-batch host work behind GPU
+    # compute. Use 0 for synchronous debugging.
+    num_workers: int = 4
 
     # Axis 2: counterfactual edge dropout
     edge_dropout_p: float = 0.07
@@ -133,7 +138,12 @@ def train_m1_axis2(cfg: M1Axis2TrainConfig,
             shuffle_within_replicate=True,
             seed=cfg.seed + epoch,
         )
-        loader = DataLoader(ds, batch_size=cfg.batch_size, num_workers=0)
+        loader = DataLoader(
+            ds, batch_size=cfg.batch_size,
+            num_workers=cfg.num_workers,
+            pin_memory=(cfg.num_workers > 0 and torch.cuda.is_available()),
+            persistent_workers=(cfg.num_workers > 0),
+        )
 
         model.train()
         running = {'total': 0.0, 'full_ss': 0.0, 'drop_ss': 0.0,
@@ -277,7 +287,11 @@ def evaluate(model: nn.Module,
         shuffle_within_replicate=False,
         seed=cfg.seed,
     )
-    loader = DataLoader(ds, batch_size=cfg.batch_size, num_workers=0)
+    loader = DataLoader(
+        ds, batch_size=cfg.batch_size,
+        num_workers=cfg.num_workers,
+        pin_memory=(cfg.num_workers > 0 and torch.cuda.is_available()),
+    )
 
     sq_ss, n_ss = 0.0, 0
     sq_roll, n_roll = 0.0, 0
