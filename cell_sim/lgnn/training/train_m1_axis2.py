@@ -159,10 +159,13 @@ def train_m1_axis2(cfg: M1Axis2TrainConfig,
             with autocast_ctx():
                 # 1. Multi-step rollout on the full graph. Capture step-0
                 # prediction for L_full_singlestep + attention entropy.
+                # Normalize by sum-of-gammas so weights are a convex
+                # combination (was /k_cur which broke γ-discounting).
                 x_pred = x_w[:, 0, :]
                 attn_entropy = None
                 L_rollout = 0.0
                 L_full_ss = None
+                gamma_sum = 0.0
                 for s in range(k_cur):
                     if s == 0:
                         dx, ent = model(
@@ -176,8 +179,10 @@ def train_m1_axis2(cfg: M1Axis2TrainConfig,
                     step_mse = mse(x_pred, target)
                     if s == 0:
                         L_full_ss = step_mse
-                    L_rollout = L_rollout + (cfg.rollout_gamma ** s) * step_mse
-                L_rollout = L_rollout / k_cur
+                    w = cfg.rollout_gamma ** s
+                    L_rollout = L_rollout + w * step_mse
+                    gamma_sum += w
+                L_rollout = L_rollout / max(gamma_sum, 1e-12)
 
                 # 2. Single-step dropout pass on the full input
                 dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)

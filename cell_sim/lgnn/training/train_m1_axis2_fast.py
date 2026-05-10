@@ -287,11 +287,16 @@ def train_m1_axis2_fast(
             ).to(model_dtype)
             x = x_w[:, 0, :]                                   # (B, S)
 
-            # 1. Multi-step rollout (k_cur forwards on full graph)
+            # 1. Multi-step rollout (k_cur forwards on full graph).
+            # Normalize by sum-of-gammas so weights form a proper
+            # convex combination (else the dividing-by-k_cur made
+            # rollout near-uniform regardless of γ — defeated the
+            # whole point of discounting later steps).
             x_pred = x
             attn_entropy = None
             L_rollout = torch.zeros((), device=device, dtype=model_dtype)
             L_full_ss = None
+            gamma_sum = 0.0
             for s in range(k_cur):
                 if s == 0:
                     dx, ent = model(
@@ -305,8 +310,10 @@ def train_m1_axis2_fast(
                 step_mse = mse(x_pred, target)
                 if s == 0:
                     L_full_ss = step_mse
-                L_rollout = L_rollout + (cfg.rollout_gamma ** s) * step_mse
-            L_rollout = L_rollout / k_cur
+                w = cfg.rollout_gamma ** s
+                L_rollout = L_rollout + w * step_mse
+                gamma_sum += w
+            L_rollout = L_rollout / max(gamma_sum, 1e-12)
 
             # 2. Single-step dropout pass
             dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
