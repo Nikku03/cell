@@ -121,6 +121,12 @@ class _AttentionGNNLayer(nn.Module):
             nn.SiLU(),
             nn.Linear(attn_hidden, 1),
         )
+        # Unconditional self-update: every node always gets a learned
+        # transformation of its own current hidden, regardless of which
+        # cross-edges the attention layer chose. This removes self-loops
+        # from the softmax competition (where they always won via
+        # entropy-collapse) and gives self-state a guaranteed channel.
+        self.self_mlp = nn.Linear(hidden, hidden)
         self.norm = nn.LayerNorm(hidden)
 
     def _msg_logit_chunk(
@@ -188,17 +194,26 @@ class _AttentionGNNLayer(nn.Module):
                 msg[:, start:end] = msg_c
                 logit[:, start:end] = logit_c
 
+        # Mask self-loops out of the attention softmax. They always won
+        # the entropy-collapse race (constant input → reliably high
+        # logit → 82% attention concentration measured on PM rows in
+        # round 1). Self-update is delivered unconditionally below via
+        # self_mlp so we don't lose the channel.
+        is_self_loop = (edge_kind == int(EdgeKind.SELF_LOOP))         # (E,)
+        to_mask = is_self_loop
         if edge_mask is not None:
-            logit = logit.masked_fill(
-                ~edge_mask.bool().unsqueeze(0), float('-inf'),
-            )
+            to_mask = to_mask | (~edge_mask.bool())
+        logit = logit.masked_fill(to_mask.unsqueeze(0), float('-inf'))
 
         alpha = _segment_softmax(logit, dst, N)                      # (B, E)
         weighted = msg * alpha.unsqueeze(-1)                         # (B, E, h)
 
         agg = torch.zeros(B, N, H, device=device, dtype=msg.dtype)
         agg.index_add_(1, dst, weighted)
-        h_new = self.norm(h + agg)
+        # Unconditional self-update: a learned linear transform of h
+        # added to every node, regardless of cross-edge attention.
+        h_self = self.self_mlp(h)                                    # (B, N, h)
+        h_new = self.norm(h + agg + h_self)
 
         # Entropy per (batch, dst): -Σ α log α  (.log() autocast-promotes
         # to fp32; cast back to alpha.dtype so index_add_ matches.)

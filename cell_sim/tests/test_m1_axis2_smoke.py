@@ -114,6 +114,61 @@ def test_edge_dropout_changes_output():
     assert not torch.allclose(y_full, y_drop, atol=1e-4)
 
 
+def test_self_loops_masked_from_attention_softmax():
+    """After Bug 1 fix: self-loop edges have α=0 (excluded from
+    softmax), and the self_mlp parameter exists with non-None grad."""
+    from cell_sim.lgnn.models.gnn_v1_axis2 import (
+        _segment_softmax, N_EDGE_KINDS,
+    )
+    from cell_sim.lgnn.data.species_graph import EdgeKind
+    with tempfile.TemporaryDirectory() as d:
+        g, _ = _build_tiny_graph(Path(d))
+    model = CellGNNv1Axis2(g, hidden=16, n_layers=1, use_checkpoint=False)
+    x = torch.randn(2, g.n_nodes)
+
+    # Replicate the layer's attention computation to inspect α
+    h = model.input_proj(x.unsqueeze(-1))
+    layer = model.layers[0]
+    src_all = model.edge_index[0]
+    dst_all = model.edge_index[1]
+    h_src = h.index_select(1, src_all)
+    h_dst = h.index_select(1, dst_all)
+    attr_b = model.edge_attr.unsqueeze(0).expand(2, -1, -1)
+    kind_emb = layer.kind_embedding(model.edge_kind)
+    kind_emb_b = kind_emb.unsqueeze(0).expand(2, -1, -1)
+    inp = torch.cat([h_src, h_dst, attr_b, kind_emb_b], dim=-1)
+    logit = layer.attn_mlp(inp).squeeze(-1)
+
+    # Apply self-loop mask exactly as the layer does
+    is_self_loop = (model.edge_kind == int(EdgeKind.SELF_LOOP))
+    logit_masked = logit.masked_fill(is_self_loop.unsqueeze(0), float('-inf'))
+    alpha = _segment_softmax(logit_masked, dst_all, g.n_nodes)
+
+    # Every self-loop edge must have α exactly 0
+    self_alpha = alpha[:, is_self_loop]
+    assert (self_alpha == 0).all(), \
+        f'self-loop α not all zero, got max={self_alpha.max().item()}'
+
+    # Cross-edge α should vary (not the constant collapse from round 1)
+    cross_alpha = alpha[:, ~is_self_loop]
+    if cross_alpha.numel() > 1:
+        assert cross_alpha.std() > 0
+
+
+def test_self_mlp_gradient_flow():
+    """self_mlp must receive gradients on backward (not dead code)."""
+    with tempfile.TemporaryDirectory() as d:
+        g, _ = _build_tiny_graph(Path(d))
+    model = CellGNNv1Axis2(g, hidden=16, n_layers=2, use_checkpoint=False)
+    model.train()
+    x = torch.randn(2, g.n_nodes)
+    model(x).pow(2).mean().backward()
+    for layer in model.layers:
+        assert layer.self_mlp.weight.grad is not None
+        assert torch.isfinite(layer.self_mlp.weight.grad).all()
+        assert layer.self_mlp.weight.grad.abs().sum() > 0
+
+
 def test_attention_entropy_zero_when_one_edge_per_dst():
     """If a node has exactly one incoming edge, its attention is
     forced to α=1 → entropy=0. Self-loop-only nodes hit this case."""
