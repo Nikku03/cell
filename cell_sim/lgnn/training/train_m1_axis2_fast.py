@@ -198,18 +198,24 @@ def train_m1_axis2_fast(
         use_checkpoint=cfg.use_checkpoint,
         edge_chunk_size=cfg.edge_chunk_size,
     ).to(device)
+    # Native bf16: convert model params/buffers to bf16 so the entire
+    # forward runs in bf16 without autocast's fp32↔bf16 cast overhead
+    # at every Linear boundary. Was the dominant cost in the autocast
+    # path — autocast_ctx wrapped autocast over a fp32 model and forced
+    # cast-on-every-op. Native bf16 keeps activations, params, and data
+    # in one dtype.
+    if cfg.use_bf16 and device.type == 'cuda':
+        model = model.to(torch.bfloat16)
+    model_dtype = next(model.parameters()).dtype
+
     print(f'M1+axis2_fast: {count_parameters(model):,} parameters'
           f'  (hidden={cfg.hidden}, n_layers={cfg.n_layers},'
-          f'  ckpt={cfg.use_checkpoint}, bf16={cfg.use_bf16})')
+          f'  ckpt={cfg.use_checkpoint}, dtype={model_dtype})')
     print(f'k-curriculum: {cfg.k_curriculum}   max_k: {cfg.max_k}')
 
     opt = torch.optim.AdamW(model.parameters(), lr=cfg.lr,
                               weight_decay=cfg.weight_decay)
     mse = nn.MSELoss()
-
-    autocast_ctx = ((lambda: torch.amp.autocast('cuda', dtype=torch.bfloat16))
-                     if (cfg.use_bf16 and device.type == 'cuda')
-                     else nullcontext)
 
     history = {
         'train_total': [], 'train_full_ss': [], 'train_drop_ss': [],
@@ -239,44 +245,43 @@ def train_m1_axis2_fast(
         for rep_idx, t_idx in _index_iterator(
             R, n_valid, cfg.batch_size, gen, device,
         ):
-            # Single-window gather on GPU
-            x_w = _gather_windows(train_data, rep_idx, t_idx, k_cur + 1)
-            # Cast to fp32 for the model: input_proj expects fp32 weights;
-            # autocast handles internal compute in bf16.
-            x_w = x_w.to(torch.float32)
+            # Single-window gather on GPU; cast to model dtype so the
+            # forward stays in one dtype (bf16 if use_bf16 else fp32).
+            x_w = _gather_windows(
+                train_data, rep_idx, t_idx, k_cur + 1,
+            ).to(model_dtype)
             x = x_w[:, 0, :]                                   # (B, S)
 
-            with autocast_ctx():
-                # 1. Multi-step rollout (k_cur forwards on full graph)
-                x_pred = x
-                attn_entropy = None
-                L_rollout = torch.zeros((), device=device)
-                L_full_ss = None
-                for s in range(k_cur):
-                    if s == 0:
-                        dx, ent = model(
-                            x_pred, return_attention_entropy=True,
-                        )
-                        attn_entropy = ent
-                    else:
-                        dx = model(x_pred)
-                    x_pred = x_pred + dx
-                    target = x_w[:, s + 1, :]
-                    step_mse = mse(x_pred, target)
-                    if s == 0:
-                        L_full_ss = step_mse
-                    L_rollout = L_rollout + (cfg.rollout_gamma ** s) * step_mse
-                L_rollout = L_rollout / k_cur
+            # 1. Multi-step rollout (k_cur forwards on full graph)
+            x_pred = x
+            attn_entropy = None
+            L_rollout = torch.zeros((), device=device, dtype=model_dtype)
+            L_full_ss = None
+            for s in range(k_cur):
+                if s == 0:
+                    dx, ent = model(
+                        x_pred, return_attention_entropy=True,
+                    )
+                    attn_entropy = ent
+                else:
+                    dx = model(x_pred)
+                x_pred = x_pred + dx
+                target = x_w[:, s + 1, :]
+                step_mse = mse(x_pred, target)
+                if s == 0:
+                    L_full_ss = step_mse
+                L_rollout = L_rollout + (cfg.rollout_gamma ** s) * step_mse
+            L_rollout = L_rollout / k_cur
 
-                # 2. Single-step dropout pass
-                dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
-                L_drop_ss = mse(x + dx_drop, x_w[:, 1, :])
+            # 2. Single-step dropout pass
+            dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
+            L_drop_ss = mse(x + dx_drop, x_w[:, 1, :])
 
-                # 3. Combined loss
-                L = (L_full_ss
-                     + cfg.lambda_dropout * L_drop_ss
-                     + cfg.lambda_rollout * L_rollout
-                     + cfg.lambda_attn    * attn_entropy)
+            # 3. Combined loss
+            L = (L_full_ss
+                 + cfg.lambda_dropout * L_drop_ss
+                 + cfg.lambda_rollout * L_rollout
+                 + cfg.lambda_attn    * attn_entropy)
 
             opt.zero_grad(set_to_none=True)
             L.backward()
@@ -313,8 +318,7 @@ def train_m1_axis2_fast(
                 float(v.item()) / max(n_batches, 1)
             )
 
-        val = evaluate_fast(model, val_data, cfg, device, k_eval=k_cur,
-                             autocast_ctx=autocast_ctx)
+        val = evaluate_fast(model, val_data, cfg, device, k_eval=k_cur)
         history['val_singlestep_mse'].append(val['mse_singlestep'])
         history['val_rollout_mse'].append(val['mse_rollout'])
         print(f'  ep{epoch} done in {epoch_wall:.1f}s  '
@@ -350,11 +354,12 @@ def evaluate_fast(
     cfg: M1Axis2FastTrainConfig,
     device: torch.device,
     k_eval: int = 4,
-    autocast_ctx=nullcontext,
 ) -> dict:
     """Single-step + k-step rollout val MSE on the preloaded val tensor.
-    No DataLoader; iterate windows on-GPU."""
+    No DataLoader; iterate windows on-GPU. Native dtype throughout —
+    if model is bf16, inputs and accumulators stay in bf16."""
     model.eval()
+    model_dtype = next(model.parameters()).dtype
     R, T, S = val_data.shape
     n_valid = T - k_eval - 1
     sq_ss = torch.zeros((), device=device, dtype=torch.float32)
@@ -367,20 +372,20 @@ def evaluate_fast(
             s_end = min(s_start + cfg.batch_size, n_valid)
             t_idx = torch.arange(s_start, s_end, device=device)
             rep_idx = torch.full_like(t_idx, rep)
-            x_w = _gather_windows(val_data, rep_idx, t_idx, k_eval + 1)
-            x_w = x_w.to(torch.float32)
+            x_w = _gather_windows(
+                val_data, rep_idx, t_idx, k_eval + 1,
+            ).to(model_dtype)
 
-            with autocast_ctx():
-                x_pred = x_w[:, 0, :]
-                for s in range(k_eval):
-                    dx = model(x_pred)
-                    x_pred = x_pred + dx
-                    err2 = (x_pred - x_w[:, s + 1, :]).pow(2)
-                    if s == 0:
-                        sq_ss += err2.sum().float()
-                        n_ss  += err2.numel()
-                    sq_roll += err2.sum().float()
-                    n_roll  += err2.numel()
+            x_pred = x_w[:, 0, :]
+            for s in range(k_eval):
+                dx = model(x_pred)
+                x_pred = x_pred + dx
+                err2 = (x_pred - x_w[:, s + 1, :]).pow(2).float()
+                if s == 0:
+                    sq_ss += err2.sum()
+                    n_ss  += err2.numel()
+                sq_roll += err2.sum()
+                n_roll  += err2.numel()
     return {
         'mse_singlestep': float(sq_ss.item()) / max(n_ss, 1),
         'mse_rollout':    float(sq_roll.item()) / max(n_roll, 1),
