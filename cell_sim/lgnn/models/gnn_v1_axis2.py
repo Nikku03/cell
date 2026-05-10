@@ -96,6 +96,13 @@ class _AttentionGNNLayer(nn.Module):
 
     Then logits over each destination's incoming edges are
     softmax-normalized into α, msg ← α · msg, aggregated.
+
+    `chunk_size` controls edge chunking. When set, edges are processed
+    `chunk_size` at a time and each chunk's MLP forward is wrapped in
+    torch.utils.checkpoint.checkpoint, so the (B, E_chunk, 2H+A+D) input
+    tensor is recomputed during backward instead of retained. Cuts
+    activation memory ~5× per layer at the cost of ~30% backward compute,
+    which lets B return to 128+ without OOM at high rollout k.
     """
 
     def __init__(self, hidden: int, edge_attr_dim: int,
@@ -116,6 +123,26 @@ class _AttentionGNNLayer(nn.Module):
         )
         self.norm = nn.LayerNorm(hidden)
 
+    def _msg_logit_chunk(
+        self,
+        h: torch.Tensor,
+        src_c: torch.Tensor,
+        dst_c: torch.Tensor,
+        attr_c: torch.Tensor,
+        kind_emb_c: torch.Tensor,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Compute (msg, logit) for one edge-chunk. Pure function of
+        the args — safe to wrap in torch.utils.checkpoint."""
+        B = h.shape[0]
+        h_src = h.index_select(1, src_c)                # (B, E_c, h)
+        h_dst = h.index_select(1, dst_c)
+        attr_b = attr_c.unsqueeze(0).expand(B, -1, -1)
+        kind_b = kind_emb_c.unsqueeze(0).expand(B, -1, -1)
+        inp = torch.cat([h_src, h_dst, attr_b, kind_b], dim=-1)
+        msg = self.msg_mlp(inp)                         # (B, E_c, h)
+        logit = self.attn_mlp(inp).squeeze(-1)          # (B, E_c)
+        return msg, logit
+
     def forward(
         self,
         h: torch.Tensor,
@@ -123,24 +150,43 @@ class _AttentionGNNLayer(nn.Module):
         edge_attr: torch.Tensor,
         edge_kind: torch.Tensor,
         edge_mask: Optional[torch.Tensor] = None,
+        chunk_size: Optional[int] = None,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """h: (B, N, hidden), edge_index: (2, E), edge_attr: (E, A),
         edge_kind: (E,) long. edge_mask: optional (E,) float in {0,1}.
+        chunk_size: if set, process edges in chunks under checkpoint.
         Returns (h_new, entropy_per_node)."""
         B, N, H = h.shape
         device = h.device
+        E = int(edge_index.shape[1])
 
-        src = edge_index[0]                                          # (E,)
-        dst = edge_index[1]                                          # (E,)
-        h_src = h.index_select(1, src)                               # (B, E, h)
-        h_dst = h.index_select(1, dst)                               # (B, E, h)
-        attr_b = edge_attr.unsqueeze(0).expand(B, -1, -1)            # (B, E, A)
+        src = edge_index[0]
+        dst = edge_index[1]
         kind_emb = self.kind_embedding(edge_kind)                    # (E, D)
-        kind_emb_b = kind_emb.unsqueeze(0).expand(B, -1, -1)         # (B, E, D)
 
-        inp = torch.cat([h_src, h_dst, attr_b, kind_emb_b], dim=-1)  # (B, E, 2h+A+D)
-        msg = self.msg_mlp(inp)                                      # (B, E, h)
-        logit = self.attn_mlp(inp).squeeze(-1)                       # (B, E)
+        if chunk_size is None or chunk_size >= E:
+            # Single-shot path. Fastest when memory permits.
+            msg, logit = self._msg_logit_chunk(
+                h, src, dst, edge_attr, kind_emb,
+            )
+        else:
+            # Chunked path. Each chunk's MLP forward is checkpointed,
+            # so the (B, E_chunk, 2H+A+D) input tensor isn't retained
+            # for backward. msg/logit outputs ARE retained (small,
+            # constant-size). Compute the full output buffers and fill
+            # them per chunk.
+            msg = torch.empty(B, E, H, device=device, dtype=h.dtype)
+            logit = torch.empty(B, E, device=device, dtype=h.dtype)
+            for start in range(0, E, chunk_size):
+                end = min(start + chunk_size, E)
+                msg_c, logit_c = ckpt.checkpoint(
+                    self._msg_logit_chunk,
+                    h, src[start:end], dst[start:end],
+                    edge_attr[start:end], kind_emb[start:end],
+                    use_reentrant=False,
+                )
+                msg[:, start:end] = msg_c
+                logit[:, start:end] = logit_c
 
         if edge_mask is not None:
             logit = logit.masked_fill(
@@ -178,12 +224,14 @@ class CellGNNv1Axis2(nn.Module):
     def __init__(self, graph: SpeciesGraph,
                  hidden: int = 64,
                  n_layers: int = 3,
-                 use_checkpoint: bool = True):
+                 use_checkpoint: bool = True,
+                 edge_chunk_size: Optional[int] = None):
         super().__init__()
         self.n_nodes = graph.n_nodes
         self.hidden = hidden
         self.n_layers = n_layers
         self.use_checkpoint = use_checkpoint
+        self.edge_chunk_size = edge_chunk_size
         edge_attr_dim = int(graph.edge_attr.shape[1])
 
         # Sort edges by kind for cache-friendliness. With the fused
@@ -228,11 +276,13 @@ class CellGNNv1Axis2(nn.Module):
                 h, ent = ckpt.checkpoint(
                     layer, h,
                     self.edge_index, self.edge_attr, self.edge_kind,
-                    edge_mask, use_reentrant=False,
+                    edge_mask, self.edge_chunk_size,
+                    use_reentrant=False,
                 )
             else:
                 h, ent = layer(h, self.edge_index, self.edge_attr,
-                                self.edge_kind, edge_mask)
+                                self.edge_kind, edge_mask,
+                                chunk_size=self.edge_chunk_size)
             total_entropy = total_entropy + ent
 
         h = self.out_norm(h)

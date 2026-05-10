@@ -80,6 +80,12 @@ class M1Axis2FastTrainConfig:
     use_checkpoint: bool = False             # Blackwell-class default
     use_bf16: bool = True
     preload_dtype: str = 'bfloat16'          # train_data dtype on GPU
+    # When set, _AttentionGNNLayer processes edges in chunks of this
+    # size with checkpointed forward per chunk. Cuts activation memory
+    # ~5× per layer for ~30% backward compute. Required for B≥128
+    # training at k=4 on Blackwell-class GPUs (without it the (B, E,
+    # 2H+A+D) input concat tensor fills VRAM after a few rollout steps).
+    edge_chunk_size: Optional[int] = None
 
     wall_clock_budget_s: float = 1 * 3600.0
 
@@ -190,6 +196,7 @@ def train_m1_axis2_fast(
         hidden=cfg.hidden,
         n_layers=cfg.n_layers,
         use_checkpoint=cfg.use_checkpoint,
+        edge_chunk_size=cfg.edge_chunk_size,
     ).to(device)
     print(f'M1+axis2_fast: {count_parameters(model):,} parameters'
           f'  (hidden={cfg.hidden}, n_layers={cfg.n_layers},'

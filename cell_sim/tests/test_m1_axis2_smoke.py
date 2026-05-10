@@ -130,6 +130,42 @@ def test_attention_entropy_zero_when_one_edge_per_dst():
     assert (ent_per_node >= -1e-6).all()
 
 
+def test_edge_chunking_matches_unchunked_forward():
+    """Chunked forward must produce numerically equivalent output to
+    the unchunked path (modulo float-precision noise) when in eval mode."""
+    with tempfile.TemporaryDirectory() as d:
+        g, _ = _build_tiny_graph(Path(d))
+    torch.manual_seed(0)
+    m_full = CellGNNv1Axis2(g, hidden=16, n_layers=2,
+                             use_checkpoint=False, edge_chunk_size=None)
+    torch.manual_seed(0)
+    m_chunked = CellGNNv1Axis2(g, hidden=16, n_layers=2,
+                                use_checkpoint=False, edge_chunk_size=5)
+    x = torch.randn(3, g.n_nodes)
+    m_full.eval(); m_chunked.eval()
+    y_full = m_full(x)
+    y_chunked = m_chunked(x)
+    assert torch.allclose(y_full, y_chunked, atol=1e-5, rtol=1e-5), \
+        (y_full - y_chunked).abs().max()
+
+
+def test_chunked_forward_gradients_flow_through_msg_mlp():
+    """Chunked path in training mode produces non-None gradients on
+    the message MLP weights (validates the checkpoint plumbing)."""
+    with tempfile.TemporaryDirectory() as d:
+        g, _ = _build_tiny_graph(Path(d))
+    model = CellGNNv1Axis2(g, hidden=16, n_layers=2,
+                            use_checkpoint=False, edge_chunk_size=4)
+    model.train()
+    x = torch.randn(2, g.n_nodes)
+    y = model(x)
+    y.pow(2).mean().backward()
+    for name, p in model.named_parameters():
+        if 'msg_mlp' in name:
+            assert p.grad is not None, f'no grad on {name}'
+            assert torch.isfinite(p.grad).all(), f'non-finite grad on {name}'
+
+
 def test_rollout_dataset_yields_window():
     rows = ['A', 'B', 'C']
     rng = np.random.default_rng(0)
