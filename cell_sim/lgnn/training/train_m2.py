@@ -72,6 +72,13 @@ class M2TrainConfig:
     # CfC hyperparameter
     cfc_tau_min: float = 0.1                 # τ_min in units of Δt (=1s)
 
+    # torch.compile JIT-fuses the many small ops in the layer (index_select,
+    # segment-softmax, CfC sigmoid+broadcast, index_add). Typical 1.5-2×
+    # steady-state speedup on small-model many-kernel workloads. First
+    # forward incurs ~30-60s of compilation overhead.
+    use_compile: bool = False
+    compile_mode: str = 'default'            # 'default' | 'reduce-overhead' | 'max-autotune'
+
     wall_clock_budget_s: float = 2 * 3600.0
 
 
@@ -124,12 +131,25 @@ def train_m2(
     if cfg.use_bf16 and device.type == 'cuda':
         model = model.to(torch.bfloat16)
     model_dtype = next(model.parameters()).dtype
+    n_params = count_parameters(model)
 
-    print(f'M2 (CfC): {count_parameters(model):,} parameters'
+    print(f'M2 (CfC): {n_params:,} parameters'
           f'  (hidden={cfg.hidden}, n_layers={cfg.n_layers},'
           f'  τ_min={cfg.cfc_tau_min}, ckpt={cfg.use_checkpoint},'
           f'  dtype={model_dtype})')
     print(f'k-curriculum: {cfg.k_curriculum}   max_k: {cfg.max_k}')
+
+    # torch.compile after dtype conversion + param counting (so prints
+    # work against the original module). Wraps .forward(); state_dict
+    # still works via _orig_mod attribute forwarding, so checkpoints
+    # stay compatible with non-compiled loads.
+    if cfg.use_compile and device.type == 'cuda':
+        try:
+            model = torch.compile(model, mode=cfg.compile_mode)
+            print(f'  torch.compile enabled (mode={cfg.compile_mode}); '
+                  f'first forward includes ~30-60s compilation overhead')
+        except Exception as e:
+            print(f'  WARNING: torch.compile failed ({e}); continuing uncompiled')
 
     opt = torch.optim.AdamW(model.parameters(), lr=cfg.lr,
                               weight_decay=cfg.weight_decay)
@@ -282,8 +302,12 @@ def train_m2(
             best_val = val['mse_singlestep']
             if checkpoint_path is not None:
                 Path(checkpoint_path).parent.mkdir(parents=True, exist_ok=True)
+                # If model was wrapped by torch.compile, save the
+                # underlying module's state_dict so non-compiled loads
+                # work cleanly.
+                sd_source = getattr(model, '_orig_mod', model)
                 torch.save({
-                    'state_dict': model.state_dict(),
+                    'state_dict': sd_source.state_dict(),
                     'cfg': cfg.__dict__,
                     'epoch': epoch,
                     'val_mse_singlestep': val['mse_singlestep'],
