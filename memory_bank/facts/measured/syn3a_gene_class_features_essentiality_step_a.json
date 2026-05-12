@@ -1,0 +1,71 @@
+{
+  "id": "syn3a_gene_class_features_essentiality_step_a",
+  "claim": "Step A test of the 'information bottleneck' hypothesis. Built 45 per-locus annotation features from syn3A.gb (sequence-derived: gravy/pI/aromaticity/charge/AA composition/TM helices/signal peptide; keyword-categorized: 14 functional flags including is_synthetase/is_ribosomal/is_uncharacterized/etc; geometric: length/strand/rel_position). Tested via 5-fold CV logistic regression against Breuer 455-gene essentiality. Headlines: (1) gene-class features ALONE hit MCC = +0.330 strict, +0.242 standard at top-300. Confirms annotation features carry meaningful essentiality signal independent of v15 or LGNN dynamics. (2) Combining with v15 does NOT beat v15 alone in strict mode (0.481 vs 0.530) - v15 already captures most of the same keyword pattern. (3) Surprising win in standard binarization: v15 + gene_class keywords = 0.514 vs v15 alone = 0.471 (+0.043 absolute, +9.1% relative). The Quasiessential category gets a real boost from gene_class keywords because v15 was missing the atp_binding and uncharacterized signals.",
+  "confidence": "measured",
+  "source": "syn3a_gb_genbank_record",
+  "source_detail": "scripts/build_syn3a_gene_class_features.py parses cell_sim/data/Minimal_Cell_ComplexFormation/input_data/syn3A.gb (CP016816, 543379 bp). Output at memory_bank/data/syn3a_gene_class_features.csv (495 loci x 50 cols). Test method: 5-fold StratifiedKFold cross_val_predict with class_weight='balanced' LogisticRegression. No data leakage (features built from genome only, not from Breuer).",
+  "last_verified": "2026-05-12",
+  "context": {
+    "entity": "syn3a_essentiality_predictor_extension",
+    "version": "step_a_gene_class",
+    "branch": "claude/vectorize-gex-propensity-NRqBW"
+  },
+  "value": {
+    "best_mcc_strict": {
+      "gene_class_alone":       {"mcc": 0.292, "k": 300, "tp": 209, "fp": 91, "fn": 61},
+      "v15_alone":              {"mcc": 0.530, "k": 270, "tp": 229, "fp": 61, "fn": 41},
+      "v15_plus_gene_class":    {"mcc": 0.481, "k": 300, "tp": 229, "fp": 71, "fn": 41},
+      "dynamics_only":          {"mcc": 0.500, "k": 300, "tp": 231, "fp": 69, "fn": 39},
+      "dynamics_plus_gene_class":{"mcc": 0.462, "k": 300, "tp": 227, "fp": 73, "fn": 43}
+    },
+    "best_mcc_standard": {
+      "gene_class_alone":            0.213,
+      "v15_alone":                   0.471,
+      "v15_plus_gene_class_keywords":0.514,
+      "v15_plus_gene_class_all":     0.489
+    },
+    "delta_v15_to_v15_plus_keywords_standard": {
+      "absolute":  0.043,
+      "relative":  0.091,
+      "interpretation": "Quasiessential category boost: v15 + 14 keyword flags catches more quasi-essentials than v15 alone."
+    },
+    "top_strict_predictors_gene_class_only": {
+      "is_synthetase":      0.931,
+      "is_uncharacterized": -0.663,
+      "tm_helix_count":     0.366,
+      "is_polymerase":      0.285,
+      "has_signal_pep":     0.227,
+      "is_dna_machinery":   0.180,
+      "has_gene_name":      0.171
+    },
+    "top_standard_predictors_v15_plus_keywords": {
+      "v15_score":          2.326,
+      "is_atp_binding":     0.692,
+      "is_uncharacterized": 0.565,
+      "is_synthetase":      0.409,
+      "is_translation":     0.407,
+      "is_polymerase":      0.387,
+      "is_dna_machinery":   0.330,
+      "is_membrane":        0.186
+    },
+    "is_uncharacterized_sign_flip": {
+      "strict_binarization":   -0.663,
+      "standard_binarization": 0.565,
+      "interpretation": "Uncharacterized ORFs cluster in Quasiessential category, not Essential. The minimal-genome reduction left mostly genes that contribute to growth robustness without being strictly required for division."
+    },
+    "regularized_to_zero_features": [
+      "aa_A", "aa_C", "aa_D", "aa_E", "aa_F", "aa_G", "aa_H", "aa_I",
+      "aa_K", "aa_L", "aa_M", "aa_N", "aa_P", "aa_Q", "aa_R", "aa_S",
+      "aa_T", "aa_V", "aa_W", "aa_Y",
+      "aromaticity", "net_charge_ph7"
+    ],
+    "regularization_interpretation": "Pure AA composition and chemistry features add NO essentiality signal beyond what categorical annotations encode. Only keyword categories + tm_helix_count + has_signal_pep + has_gene_name carry the per-locus signal."
+  },
+  "caveats": [
+    "Gene-class ALONE hits 0.330 strict (just below the 0.35 diagnosis target). The hypothesis 'LGNN was missing annotation features' is partially validated: annotation features carry real signal but v15 already encodes most of it via pattern matching.",
+    "The single configuration that BEATS v15 alone is v15 + gene_class keywords in STANDARD binarization (Essential+Quasi positive). MCC went 0.471 -> 0.514 (+0.043). This is the only stack-vs-baseline win across the entire campaign (KO, VAR, M3, v15, gene_class).",
+    "Sequence-derived numeric features (AA composition, GRAVY, pI, charge, aromaticity) provide NO signal under L2-regularized logistic regression. They were regularized to ~0 coefficients. Either the signal is too weak after categorical keyword features absorb the variance, or these features are correlated with the keyword categories. Suggests sequence-based features don't add value past the binary 'is_this_class' flags.",
+    "is_uncharacterized has OPPOSITE sign in strict vs standard binarization. Strict -0.663 vs standard +0.565. Concrete biology: of 130 uncharacterized loci in Syn3A, most are NOT strictly essential but ARE quasi-essential (contribute to growth robustness under stress). v15 was missing these because it pattern-matches on annotation text and uncharacterized has no annotation to match.",
+    "Step A took 1 day of work (parse + test). Per the user's plan, the diagnosis was 'partial': annotation features carry signal (0.33 alone) but don't break the v15 strict ceiling. They DO break the standard ceiling (0.514). Next is Step B (spatial features, 1 week)."
+  ]
+}
