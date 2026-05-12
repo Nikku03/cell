@@ -1,0 +1,74 @@
+{
+  "id": "mcc_against_breuer_m2_lgnn_knockout_v1",
+  "claim": "First MCC measurement of the M2 CfC-attention LGNN surrogate's essentiality signal: rank Breuer-labeled loci by autoregressive-rollout divergence under multi-row (gene + mRNA + translation-complex) clamping, compare against the 455-gene Breuer table. T=20 strict-essential top-200 -> MCC = +0.192. Strict-essential top-100 MCC = +0.137, recall = 0.267, precision = 0.720. Top-30 contains tuf, infB, frr, ileRS, gatB, dnaN, dnaK, parE, topA, hupA, priB, rplB/W/R, rpmC/G, rpsD - core translation/replication machinery, all Breuer-essential.",
+  "confidence": "measured",
+  "source": "lgnn_m2_cfc_count_dynamics_gnn_v2_p1_full",
+  "source_detail": "Sweep code: cell_sim/lgnn/microscope/knockout_sweep.py extended with multi_row_knockout_sweep (inline in notebook for this run). Initial state: replicate 1 t=0 signed-log1p. Rollout: 20 unrolled forward passes (5x training horizon; training used k_curriculum=(1,2,4)). Clamp set per locus: G_LLLL_C1, G_LLLL_C2, R_LLLL, R_LLLL_d, RPM_LLLL, all RP_LLLL_*. Wall: 53s on Colab L4 for 490 loci. Outputs at cell_sim/atom_engine/outputs/m2_knockout_sweep_gene_mrna_T20.parquet and m2_knockout_breuer_T20.parquet.",
+  "last_verified": "2026-05-12",
+  "context": {
+    "entity": "m2_cfc_lgnn_knockout_essentiality",
+    "version": "v1",
+    "checkpoint": "/content/drive/MyDrive/cell_count_dynamics/count_dynamics_gnn_v2_p1_full.pt",
+    "graph": "/content/drive/MyDrive/cell_count_dynamics/species_graph_full.pt (45376 edges)"
+  },
+  "dependencies": [
+    "syn3a_essentiality_breuer2019",
+    "lsdata_replicate_species_1",
+    "species_graph_full_pt_45376_edges"
+  ],
+  "used_by": [
+    "cell_sim/atom_engine/outputs/m2_knockout_sweep_gene_mrna_T20.parquet",
+    "cell_sim/atom_engine/outputs/m2_knockout_breuer_T20.parquet",
+    "cell_sim/atom_engine/outputs/locus_to_rows.json"
+  ],
+  "value": {
+    "headline_mcc_t20_strict_top200": 0.192,
+    "natural_threshold_mcc_t20_strict": 0.098,
+    "natural_threshold_mcc_t20_standard": 0.043,
+    "t20_strict": {
+      "top_50":  {"MCC": 0.062, "precision": 0.680, "recall": 0.126, "F1": 0.212, "tp": 34,  "fp": 16, "fn": 236},
+      "top_100": {"MCC": 0.137, "precision": 0.720, "recall": 0.267, "F1": 0.389, "tp": 72,  "fp": 28, "fn": 198},
+      "top_150": {"MCC": 0.152, "precision": 0.700, "recall": 0.389, "F1": 0.500, "tp": 105, "fp": 45, "fn": 165},
+      "top_200": {"MCC": 0.192, "precision": 0.700, "recall": 0.519, "F1": 0.596, "tp": 140, "fp": 60, "fn": 130},
+      "top_250": {"MCC": 0.141, "precision": 0.656, "recall": 0.607, "F1": 0.631, "tp": 164, "fp": 86, "fn": 106},
+      "top_270_natural": {"MCC": 0.098, "precision": 0.633, "recall": 0.633, "F1": 0.633, "tp": 171, "fp": 99, "fn": 99}
+    },
+    "t20_standard_essential_plus_quasi": {
+      "top_50":  {"MCC": 0.018, "precision": 0.860, "recall": 0.112},
+      "top_100": {"MCC": 0.070, "precision": 0.890, "recall": 0.232},
+      "top_150": {"MCC": 0.099, "precision": 0.893, "recall": 0.350},
+      "top_200": {"MCC": 0.117, "precision": 0.890, "recall": 0.465},
+      "top_250": {"MCC": 0.104, "precision": 0.876, "recall": 0.572},
+      "top_383_natural": {"MCC": 0.043, "precision": 0.849, "recall": 0.849}
+    },
+    "t120_strict_for_comparison": {
+      "top_200": {"MCC": 0.084, "precision": 0.640, "recall": 0.474},
+      "top_270_natural": {"MCC": 0.080, "precision": 0.626, "recall": 0.626}
+    },
+    "top30_breuer_breakdown": {
+      "essential": 20,
+      "quasiessential": 4,
+      "nonessential": 6
+    },
+    "config": {
+      "model": "CellGNNv2 (CfC + attention) hidden=64 n_layers=3",
+      "rollout_steps": 20,
+      "training_max_k": 4,
+      "clamp_mode": "gene + mRNA + translation complexes",
+      "n_loci": 490,
+      "n_merged_with_breuer": 455,
+      "n_clamp_rows_per_locus_median": 9,
+      "device": "cuda L4",
+      "wall_clock_s": 52.9
+    }
+  },
+  "caveats": [
+    "Far below the symbolic-detector baseline (mcc_against_breuer_v15_round2_priors: MCC=0.537). The LGNN is not competing with the annotation-class detector on essentiality MCC. Its value is as a differentiable dynamics surrogate that incidentally carries some essentiality signal, not as a primary essentiality predictor.",
+    "T=120 (30x training horizon) showed WT rollout drift: state min went from -2.67 to -74.4 over 120 steps. Spearman rho between T=20 and T=120 rankings = 0.679; top-50 overlap = 26/50. T=20 (5x training horizon) chosen because WT stays stable (final min = -2.48).",
+    "Ranking is partly confounded by clamp-set size: top-30 dominated by 8-row clamps (cytoplasmic protein-coding genes without RPM_*) vs 9-row clamps (genes with membrane translation). Both subclasses appear, but the 8-row subclass clusters higher. divergence_excluding_ko denominator (S - n_clamped) differs by 1, which alone cannot explain the bias - likely the model's downstream propagation is sensitive to which species are pinned.",
+    "Eval set (455 genes) excludes 35 loci that have LGNN row clusters but no Breuer call (uncharacterized accessory ORFs that were absent from the Breuer 2019 supplementary).",
+    "Top-30 false positives are uncharacterized ORFs (0411, 0005, 0080) plus 1 sensor (0604 lemA/gacS) plus 1 metabolic enzyme (0732 deoC) plus 1 DNA glycosylase (0610 mutM). The model treats highly-connected hubs as essential regardless of Breuer category - a known failure mode of degree-based essentiality predictors.",
+    "Standard binarization (Essential + Quasiessential -> positive, the convention used by v15_round2_priors) gives LOWER MCC because base rate is 383/455 = 84% positive, so top-k 'essential' calls are almost guaranteed to land on positives, collapsing precision-recall tradeoff.",
+    "Reproducibility: seed for replicate-1 initial state is deterministic. Sweep is deterministic given checkpoint + initial state + clamp_sets ordering. No bootstrap CI computed yet."
+  ]
+}
