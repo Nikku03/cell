@@ -62,8 +62,26 @@
       "wall_clock_s": 52.9
     }
   },
+  "stacking_followup_2026_05_12": {
+    "claim": "Tested whether the LGNN knockout-divergence signal (MCC=0.192) and the cross-replicate-variance signal (log_snr MCC=0.212) stack with v15_round2_priors (MCC=0.530 strict, 0.537 standard) to produce a composite that beats v15 alone. RESULT: no. Composite LogReg(ko_z, var_z, v15_z) at best k peaks at MCC=0.510 strict / 0.527 standard, BELOW v15 alone (0.530 / 0.537). Adding two noisy weakly-correlated signals (Spearman vs v15: KO=0.226, VAR=0.281) drags precision down by adding FPs that the v15-only ranking already filtered out.",
+    "logreg_coefficients": {
+      "ko_z_weight":  0.099,
+      "var_z_weight": 0.171,
+      "v15_z_weight": 1.085,
+      "v15_dominance_ratio": "v15 weight is 11x KO and 6.3x VAR"
+    },
+    "spearman_correlations": {
+      "ko_var": 0.456,
+      "ko_v15_conf": 0.226,
+      "var_v15_conf": 0.281,
+      "v15_essential_bin_vs_confidence": 1.000
+    },
+    "interpretation": "v15's symbolic detector has already extracted ~all the essentiality signal recoverable from count dynamics. KO and VAR are noisier proxies for the same underlying signal, not orthogonal sources of new biology. The 41 v15 FNs (strict) are the same 84 'uncharacterized but essential' ORFs v15 caveats called out - their dynamics aren't distinctive in KO or VAR either.",
+    "implication": "Further MCC-chasing in the count-dynamics regime is not productive. To push past 0.537 we need signals from outside this regime: spatial features (per-gene membrane distance, mRNA-degradosome encounter rates), sequence features (gene length, codon adaptation, signal-peptide presence), or structural features (ESMFold + MACE kcat aggregates as the v15_round2 caveats already proposed)."
+  },
   "caveats": [
     "Far below the symbolic-detector baseline (mcc_against_breuer_v15_round2_priors: MCC=0.537). The LGNN is not competing with the annotation-class detector on essentiality MCC. Its value is as a differentiable dynamics surrogate that incidentally carries some essentiality signal, not as a primary essentiality predictor.",
+    "Stacking KO + VAR + v15 (logistic regression on z-scored signals) does NOT beat v15 alone: composite peaks at MCC=0.510 strict at top-300 vs v15 alone at 0.530. The two LGNN-style signals add noise rather than orthogonal information at the v15 FN frontier.",
     "T=120 (30x training horizon) showed WT rollout drift: state min went from -2.67 to -74.4 over 120 steps. Spearman rho between T=20 and T=120 rankings = 0.679; top-50 overlap = 26/50. T=20 (5x training horizon) chosen because WT stays stable (final min = -2.48).",
     "Ranking is partly confounded by clamp-set size: top-30 dominated by 8-row clamps (cytoplasmic protein-coding genes without RPM_*) vs 9-row clamps (genes with membrane translation). Both subclasses appear, but the 8-row subclass clusters higher. divergence_excluding_ko denominator (S - n_clamped) differs by 1, which alone cannot explain the bias - likely the model's downstream propagation is sensitive to which species are pinned.",
     "Eval set (455 genes) excludes 35 loci that have LGNN row clusters but no Breuer call (uncharacterized accessory ORFs that were absent from the Breuer 2019 supplementary).",
