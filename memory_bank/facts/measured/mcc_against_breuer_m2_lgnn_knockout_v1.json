@@ -62,6 +62,49 @@
       "wall_clock_s": 52.9
     }
   },
+  "m3_followup_2026_05_12": {
+    "claim": "M3 (Source-1-complete LGNN with multi-task loss + variance channel) was trained to push Source 1 utilization from ~30% to ~85% by using F_* fluxes as separately-weighted supervision (40x), PM/RPM/DM cumulative counters as separately-weighted supervision (5x), and per-species cross-replicate std as a second input channel. Result: M3 is a SUBSTANTIALLY BETTER dynamics surrogate (val_singlestep_mse = 0.0350 vs M2's ~0.06; val_count=0.0429 vs M2's ~0.07; val_flux=0.0001 vs M2's bundled-in ~0.0009) but a WORSE essentiality predictor. Spearman(M3 knockout, M2 knockout) = 0.045 - the two models carry nearly-orthogonal knockout-divergence rankings. M3 captures translation cofactors (infB, tsf, trpRS, efp, gatC, nusA, yidC, secY, rplI, rplO, rpsQ) where M2 captures replication core (dnaN, dnaK, parE, topA, hupA, priB). M3's standalone Breuer MCC = +0.126 strict top-250 (vs M2's 0.192 top-200).",
+    "m3_breuer_mcc_strict": {
+      "top_50":  -0.038,
+      "top_100":  0.022,
+      "top_150":  0.017,
+      "top_200":  0.066,
+      "top_250":  0.126,
+      "top_270_natural": 0.116
+    },
+    "spearman_correlations": {
+      "m3_vs_m2":   0.037,
+      "m3_vs_var":  0.032,
+      "m3_vs_v15":  0.068,
+      "m2_vs_var":  0.456,
+      "m2_vs_v15":  0.226,
+      "var_vs_v15": 0.281
+    },
+    "four_way_stack_results": {
+      "claim": "Tested all combinations of {m2, m3, var, v15} via balanced logistic regression. NOTHING beats v15 alone. Best composite is m3+var+v15 strict at 0.519 vs v15 alone at 0.530. In standard binarization the LGNN signals actively hurt: best composite (m2+m3+var+v15 or m2+var+v15) is 0.527 vs v15 alone at 0.537. Coefficient on m3 in the standard binarization is slightly NEGATIVE (-0.03), meaning the model decided M3 is anti-essential.",
+      "all_combos_strict_best_mcc_at_k": {
+        "v15_alone":                        {"mcc": 0.530, "k": 200},
+        "m2_plus_v15":                      {"mcc": 0.499, "k": 270},
+        "m3_plus_v15":                      {"mcc": 0.491, "k": 300},
+        "var_plus_v15":                     {"mcc": 0.510, "k": 300},
+        "m2_plus_m3_plus_v15":              {"mcc": 0.500, "k": 300},
+        "m2_plus_var_plus_v15":             {"mcc": 0.510, "k": 300},
+        "m3_plus_var_plus_v15":             {"mcc": 0.519, "k": 300},
+        "m2_plus_m3_plus_var_plus_v15":     {"mcc": 0.510, "k": 300}
+      },
+      "all_combos_standard_best_mcc": {
+        "v15_alone":                        0.537,
+        "m2_plus_v15":                      0.502,
+        "m3_plus_v15":                      0.502,
+        "var_plus_v15":                     0.514,
+        "m2_plus_var_plus_v15":             0.527,
+        "m3_plus_var_plus_v15":             0.502,
+        "m2_plus_m3_plus_var_plus_v15":     0.527
+      }
+    },
+    "interpretation": "The v15 ceiling is hard. No amount of dynamics-surrogate-derived signal we have tried (knockout sweep in two model variants, cross-replicate variance) beats v15 alone or even adds productively to it via balanced logistic regression. The reason is that the four signals are not independent in the way that matters: while they have Spearman correlations near zero, they all sample the same underlying 'high-throughput hub' essentiality concept, plus orthogonal NOISE. The noise dominates after the highest-signal predictor (v15) is fit. M3's value is therefore NOT essentiality prediction; it is being a meaningfully better dynamics surrogate for downstream biological-quantity validation (Step 6, Figure 5 reproduction).",
+    "next_use_of_m3": "Step 6 - wrap M3 rollout as a fake WCM_traj, run the lab's WCM_analysis.WCM_ensemble methods, compare against the paper's Figure 5 quantities (ribosome/RNAP/Degradosome counts, mRNA half-life, protein doubling, ori:ter ratio, doubling time, active fractions). This is M3's intended purpose and where its 2x-better single-step MSE matters."
+  },
   "stacking_followup_2026_05_12": {
     "claim": "Tested whether the LGNN knockout-divergence signal (MCC=0.192) and the cross-replicate-variance signal (log_snr MCC=0.212) stack with v15_round2_priors (MCC=0.530 strict, 0.537 standard) to produce a composite that beats v15 alone. RESULT: no. Composite LogReg(ko_z, var_z, v15_z) at best k peaks at MCC=0.510 strict / 0.527 standard, BELOW v15 alone (0.530 / 0.537). Adding two noisy weakly-correlated signals (Spearman vs v15: KO=0.226, VAR=0.281) drags precision down by adding FPs that the v15-only ranking already filtered out.",
     "logreg_coefficients": {
