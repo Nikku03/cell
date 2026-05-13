@@ -1,70 +1,78 @@
-"""M6 training - Physics-patched baseline.
+"""M6 training - the changes I actually agree with.
 
-Implements roadmap Step 1: thermodynamic target shift.
+Honest revision after pushing back on the user's 5-step roadmap. M6 keeps
+ONE step from the roadmap (Step 3, edge-kind split) and adds the actual
+root-cause fix for the long-horizon drift problem we observed (exposure
+bias, not stiffness).
 
-Instead of comparing the rolled-out state x_pred (= x_w[:,0] + sum(dx_i)) to
-the ground-truth state x_w[:,s+1], compare the model's predicted delta dx
-directly to the true per-step delta:
+Changes from M3:
 
-    delta_target = x_w[:, s+1, :] - x_w[:, s, :]
-    step_loss    = MSE(dx, delta_target)
+  Step 3 (KEPT): RATE_LAW / MASS_BALANCE edge-kind split.
+    - data side handled in species_graph.py via split_flux_coupling=True
+    - N_EDGE_KINDS auto-bumps to 9, kind_embedding sized accordingly
+    - stoichiometric coefficient as edge attribute on these edges
 
-Mathematically related to the residual form (M3) but the gradient flow is
-cleaner: the model learns "rate of change" per step rather than absorbing
-both the local rate and the accumulated drift correction. This is the
-"thermodynamic flux predictor" rather than "state memorizer" formulation
-from the roadmap.
+  NEW: Extended k-curriculum with equal-weight rollout.
+    - M3 used (1, 2, 4) with gamma=0.95 -> step 0 dominates loss
+    - M6 uses (1, 4, 16, 32) with gamma=1.0 -> all rollout steps weighted equally
+    - Forces the model to learn dynamics that don't drift over many steps
 
-Note: the rollout still uses x_pred = x_pred + dx for the model's input at
-the next step (so it sees its own drift), but the LOSS targets the local
-true delta. The model is asked to predict the right delta at each step
-even from drifted state.
+  NEW: Scheduled sampling for exposure bias.
+    - In M3 the model sees its own predictions for ≤4 future steps during
+      training, but autoregressive eval rolls for 100s of steps. The
+      model has no signal for "what to do when my prediction is off."
+    - M6 mixes teacher-forced (use ground truth at step s) and free-running
+      (use model's accumulated x_pred at step s) inputs, with the free-
+      running probability ramping from 0 to 0.5 over training.
+    - This is the classic Bengio 2015 fix for exposure bias.
 
-Combined with M6 model (gnn_v6.CellGNNv6) which implements roadmap Steps
-2 (softplus aggregation) and 3 (RATE_LAW/MASS_BALANCE edge split).
+  REVERTED from earlier M6 attempt:
+    - delta target (Step 1) - mathematically equivalent to residual form
+    - softplus aggregation (Step 2) - wrong layer for mass conservation,
+      destabilizes high-degree nodes
 
-Step 4 (n_nodes purge) deferred to M7.
-Step 5 (adaptive ODE) deferred to M8.
+  STILL TODO (separate Ms when justified):
+    - PINN with hardwired stoichiometric matrix (the actual mass-conservation
+      fix at the OUTPUT layer; user's "Flaw 8" - highest impact deferred)
+    - Adaptive ODE solver (Step 5) - revisit after PINN is in place
 """
 from __future__ import annotations
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Sequence
+from typing import Optional, Sequence
 
 import torch
 import torch.nn as nn
 
 from cell_sim.lgnn.data.species_graph import SpeciesGraph
-from cell_sim.lgnn.models.gnn_v6 import CellGNNv6, count_parameters
+from cell_sim.lgnn.models.gnn_v2 import CellGNNv2, count_parameters
 from cell_sim.lgnn.training.train_m1_axis2_fast import (
-    DEFAULT_K_CURRICULUM,
-    _gather_windows,
-    _index_iterator,
-    _torch_dtype,
-    _warmup_ramp,
+    _gather_windows, _index_iterator, _torch_dtype, _warmup_ramp,
     preload_to_gpu,
 )
 from cell_sim.lgnn.training.train_m3 import (
-    M3TrainConfig,
-    _device,
-    _k_for_epoch,
-    categorise_row_indices,
-    compute_variance_channel,
-    _multi_task_mse,
+    M3TrainConfig, _device, _k_for_epoch, categorise_row_indices,
+    compute_variance_channel, _multi_task_mse, _evaluate as _m3_evaluate,
 )
 
 
 @dataclass
 class M6TrainConfig(M3TrainConfig):
-    """Identical to M3 config. M6 model + delta-target training loop.
+    """M3 config + extended k-curriculum + scheduled sampling."""
+    # Override M3 defaults
+    k_curriculum: tuple = (1, 4, 16, 32)       # was (1, 2, 4)
+    rollout_gamma: float = 1.0                  # was 0.95
+    max_k: int = 32                             # was 4
+    n_epochs: int = 5                           # one per curriculum stage + 1 polish
 
-    n_input_channels intentionally fixed to 1 - M6 model does NOT take a
-    variance channel (per Flaw 4: variance-as-input is a "cheat code"
-    in a deterministic solver). Step 4 of the roadmap re-introduces
-    proper noise handling via Neural SDE; for M6 we use count only.
-    """
-    n_input_channels: int = 1
+    # Scheduled sampling (NEW)
+    scheduled_sampling: bool = True
+    p_ss_max: float = 0.5                       # max prob of free-running at step s>0
+    p_ss_warmup_steps: int = 2000               # ramp from 0 -> p_ss_max over this many steps
+
+    # Step 3 of roadmap is on the data side (split_flux_coupling=True when
+    # building the graph). Nothing to configure in the trainer.
 
 
 def train_m6(
@@ -88,7 +96,7 @@ def train_m6(
                                 dtype=pre_dtype, species_filter=cfg.species_filter)
     R, T, S = train_data.shape
     n_valid = T - cfg.max_k - 1
-    print(f'  shape: train{tuple(train_data.shape)}  val{tuple(val_data.shape)}'
+    print(f'  train{tuple(train_data.shape)}  val{tuple(val_data.shape)}'
           f'   load wall {time.time()-t0:.1f}s')
 
     count_mask, flux_mask, cum_mask = categorise_row_indices(row_names)
@@ -97,8 +105,21 @@ def train_m6(
     print(f'rows: count={int(count_mask.sum())}  '
           f'flux={int(flux_mask.sum())}  cumulative={int(cum_mask.sum())}')
 
-    # --- Model (M6: CfC + softplus aggregation, no variance channel) ---
-    model = CellGNNv6(
+    # Sigma channel (count + variance, same as M3 — keeping the variance
+    # input for M6 since removing it is a separate experiment.)
+    print('precomputing per-species cross-replicate std...')
+    sigma = compute_variance_channel(train_data)
+
+    # --- Model: CellGNNv2 with N_EDGE_KINDS=9 (auto from EdgeKind enum) ---
+    from cell_sim.lgnn.models.gnn_v1_axis2 import N_EDGE_KINDS
+    print(f'N_EDGE_KINDS (auto): {N_EDGE_KINDS}')
+    assert N_EDGE_KINDS == 9, f'expected 9 edge kinds, got {N_EDGE_KINDS}'
+
+    import collections
+    ek_counts = collections.Counter(graph.edge_kind.tolist())
+    print(f'graph edge-kind counts: {dict(sorted(ek_counts.items()))}')
+
+    model = CellGNNv2(
         graph=graph, hidden=cfg.hidden, n_layers=cfg.n_layers,
         use_checkpoint=cfg.use_checkpoint,
         edge_chunk_size=cfg.edge_chunk_size,
@@ -110,14 +131,8 @@ def train_m6(
     n_params = count_parameters(model)
     print(f'M6: {n_params:,} parameters '
           f'(hidden={cfg.hidden}, n_layers={cfg.n_layers}, dtype={model_dtype})')
-    print(f'graph: n_nodes={graph.n_nodes}, n_edges={graph.n_edges}, '
-          f'unique edge kinds: {sorted(set(graph.edge_kind.tolist()))}')
-
-    if cfg.use_compile and device.type == 'cuda':
-        try:
-            model = torch.compile(model, mode=cfg.compile_mode)
-        except Exception as e:
-            print(f'  WARNING: torch.compile failed ({e})')
+    print(f'k_curriculum={cfg.k_curriculum}, rollout_gamma={cfg.rollout_gamma}, '
+          f'scheduled_sampling={cfg.scheduled_sampling}, p_ss_max={cfg.p_ss_max}')
 
     opt = torch.optim.AdamW(model.parameters(), lr=cfg.lr,
                               weight_decay=cfg.weight_decay)
@@ -125,6 +140,7 @@ def train_m6(
     history = {
         'train_total': [], 'train_mse_count': [], 'train_mse_flux': [],
         'train_mse_cum': [], 'train_rollout': [], 'train_attn_entropy': [],
+        'train_p_ss': [],
         'val_singlestep_mse': [], 'val_mse_count': [], 'val_mse_flux': [],
         'val_mse_cum': [], 'val_rollout_mse_avg': [],
         'val_mse_per_step': [], 'k_per_epoch': [], 'samples_per_sec': [],
@@ -138,6 +154,7 @@ def train_m6(
         history['k_per_epoch'].append(k_cur)
         eff_lambda_rollout = (0.0 if (k_cur == 1 and cfg.skip_rollout_at_k1)
                                 else cfg.lambda_rollout)
+
         gen = torch.Generator(device=device).manual_seed(cfg.seed + epoch)
         model.train()
         run = {k: torch.zeros((), device=device, dtype=torch.float32)
@@ -152,8 +169,15 @@ def train_m6(
             x_w = _gather_windows(train_data, rep_idx, t_idx, k_cur + 1
                                     ).to(model_dtype)
             x = x_w[:, 0, :]
+            v0 = sigma[t_idx].to(model_dtype)
 
-            # === STEP 1: delta-target rollout ===
+            # Current scheduled-sampling probability
+            if cfg.scheduled_sampling and k_cur > 1:
+                p_ss = min(global_step / max(cfg.p_ss_warmup_steps, 1),
+                            1.0) * cfg.p_ss_max
+            else:
+                p_ss = 0.0
+
             x_pred = x
             attn_entropy = None
             L_rollout = torch.zeros((), device=device, dtype=model_dtype)
@@ -161,28 +185,39 @@ def train_m6(
             mse_breakdown_step0 = None
             gamma_sum = 0.0
             for s in range(k_cur):
+                v_cur = sigma[t_idx + s].to(model_dtype)
+
+                # ✦ SCHEDULED SAMPLING ✦
+                # At step s>0, with probability (1 - p_ss) replace the model's
+                # accumulated x_pred with the GROUND-TRUTH state at time t+s.
+                # This is teacher-forcing at step s. As p_ss ramps up, the
+                # model spends more time on its own predictions (free-running).
+                if s > 0 and p_ss < 1.0:
+                    # Sample a Bernoulli per batch element. Vector form so
+                    # each batch element can independently be teacher-forced.
+                    use_tf = (torch.rand(x_pred.shape[0], 1, device=device)
+                                > p_ss).to(x_pred.dtype)
+                    x_input = use_tf * x_w[:, s, :] + (1 - use_tf) * x_pred
+                else:
+                    x_input = x_pred
+
                 if s == 0:
-                    dx, ent = model(x_pred, return_attention_entropy=True)
+                    dx, ent = model(x_input, x_var=v_cur,
+                                      return_attention_entropy=True)
                     attn_entropy = ent
                 else:
-                    dx = model(x_pred)
+                    dx = model(x_input, x_var=v_cur)
 
-                # ✦ STEP 1 (THE CHANGE) ✦
-                # Compare the model's predicted dx directly to the
-                # TRUE delta at step s, not to the absolute next state.
-                delta_target = x_w[:, s + 1, :] - x_w[:, s, :]
+                # RESIDUAL update (kept from M3)
+                x_pred = x_input + dx
+                target = x_w[:, s + 1, :]
                 step_loss, breakdown = _multi_task_mse(
-                    dx, delta_target, count_mask, flux_mask, cum_mask,
+                    x_pred, target, count_mask, flux_mask, cum_mask,
                     cfg.weight_count, cfg.weight_flux, cfg.weight_cumulative,
                 )
                 if s == 0:
                     L_full_ss = step_loss
                     mse_breakdown_step0 = breakdown
-
-                # The rollout state still advances by adding dx, so the
-                # model sees its own drift at step s+1.
-                x_pred = x_pred + dx
-
                 w = cfg.rollout_gamma ** s
                 L_rollout = L_rollout + w * step_loss
                 gamma_sum += w
@@ -198,10 +233,10 @@ def train_m6(
             )
 
             if cur_lambda_dropout > 0.0:
-                dx_drop = model(x, edge_dropout_p=cfg.edge_dropout_p)
-                delta_target_0 = x_w[:, 1, :] - x_w[:, 0, :]
+                dx_drop = model(x, x_var=v0,
+                                  edge_dropout_p=cfg.edge_dropout_p)
                 L_drop_ss, _ = _multi_task_mse(
-                    dx_drop, delta_target_0,
+                    x + dx_drop, x_w[:, 1, :],
                     count_mask, flux_mask, cum_mask,
                     cfg.weight_count, cfg.weight_flux, cfg.weight_cumulative,
                 )
@@ -240,6 +275,7 @@ def train_m6(
                       f'  flux={vals["mse_flux"]:.4f}'
                       f'  cum={vals["mse_cum"]:.4f}'
                       f'  rollout={vals["rollout"]:.4f}'
+                      f'  p_ss={p_ss:.2f}'
                       f'  λa={cur_lambda_attn:.1e}'
                       f'  {n_seen/wall:.0f} s/s')
 
@@ -249,16 +285,18 @@ def train_m6(
 
         epoch_wall = time.time() - t_epoch
         history['samples_per_sec'].append(n_seen / max(epoch_wall, 1e-6))
+        history['train_p_ss'].append(p_ss)
         for key in ('total', 'mse_count', 'mse_flux', 'mse_cum',
                      'rollout', 'attn_entropy'):
             history[f'train_{key}'].append(
                 float(run[key].item()) / max(n_batches, 1)
             )
 
-        # --- Validation (delta-target form) ---
+        # Validation: same as M3 evaluation (uses residual form internally)
         model.eval()
-        val_metrics = _evaluate_m6(model, val_data, count_mask, flux_mask,
-                                     cum_mask, cfg, model_dtype, device)
+        val_metrics = _m3_evaluate(model, val_data, sigma,
+                                     count_mask, flux_mask, cum_mask, cfg,
+                                     model_dtype, device)
         for k, v in val_metrics.items():
             history[f'val_{k}'].append(v)
         val_ss = val_metrics['singlestep_mse']
@@ -267,6 +305,7 @@ def train_m6(
               f'flux={val_metrics["mse_flux"]:.4f}  '
               f'cum={val_metrics["mse_cum"]:.4f}  '
               f'rollout_avg={val_metrics["rollout_mse_avg"]:.4f}  '
+              f'p_ss={p_ss:.2f}  '
               f'wall={epoch_wall:.1f}s')
 
         if val_ss < best_val:
@@ -282,66 +321,11 @@ def train_m6(
                     'val_rollout_mse_avg': val_metrics['rollout_mse_avg'],
                     'val_mse_per_step': val_metrics['mse_per_step'],
                     'k_at_save': k_cur,
-                    'target_form': 'delta',          # marker
-                    'aggregation': 'softplus',       # marker
+                    'p_ss_at_save': p_ss,
+                    'edge_kind_split': 'RATE_LAW_MASS_BALANCE',  # marker
                 }
                 Path(checkpoint_path).parent.mkdir(parents=True, exist_ok=True)
                 torch.save(payload, checkpoint_path)
                 print(f'  -> saved best (val_ss={val_ss:.4f}) to {checkpoint_path}')
 
     return history
-
-
-@torch.no_grad()
-def _evaluate_m6(model, val_data, count_mask, flux_mask, cum_mask,
-                  cfg, model_dtype, device):
-    """Validation using delta-target form.
-
-    val_singlestep_mse is the per-step MSE between predicted dx and true delta
-    (not between rolled-out state and ground-truth state). For comparability
-    with M3, also report the rolled-out state MSE (rollout_avg).
-    """
-    R_v, T_v, S = val_data.shape
-    n_valid = T_v - cfg.max_k - 1
-    bs = cfg.batch_size
-    mse_per_step_delta = [0.0] * cfg.max_k       # delta-target MSE per step
-    mse_per_step_state = [0.0] * cfg.max_k       # state MSE per step (for M3 comp)
-    cnt = 0
-    total_full_count = 0.0
-    total_full_flux  = 0.0
-    total_full_cum   = 0.0
-    n_full = 0
-    for t_start in range(0, n_valid, bs):
-        t_idx = torch.arange(t_start, min(t_start + bs, n_valid), device=device)
-        rep_idx = torch.zeros_like(t_idx)
-        x_w = _gather_windows(val_data, rep_idx, t_idx, cfg.max_k + 1
-                                ).to(model_dtype)
-        x_pred = x_w[:, 0, :]
-        for s in range(cfg.max_k):
-            dx = model(x_pred)
-            delta_target = x_w[:, s + 1, :] - x_w[:, s, :]
-            mse_per_step_delta[s] += float((dx - delta_target).pow(2).mean().item())
-            x_pred = x_pred + dx
-            mse_per_step_state[s] += float((x_pred - x_w[:, s + 1, :]).pow(2).mean().item())
-            if s == 0:
-                _, br = _multi_task_mse(
-                    dx, delta_target, count_mask, flux_mask, cum_mask,
-                    cfg.weight_count, cfg.weight_flux, cfg.weight_cumulative,
-                )
-                total_full_count += float(br['mse_count'].item())
-                total_full_flux  += float(br['mse_flux'] .item())
-                total_full_cum   += float(br['mse_cum']  .item())
-                n_full += 1
-        cnt += 1
-    mse_per_step_delta = [m / max(cnt, 1) for m in mse_per_step_delta]
-    mse_per_step_state = [m / max(cnt, 1) for m in mse_per_step_state]
-    rollout_avg = sum(mse_per_step_state) / len(mse_per_step_state)
-    return {
-        'singlestep_mse':    mse_per_step_state[0],   # comparable to M3
-        'mse_count':         total_full_count / max(n_full, 1),
-        'mse_flux':          total_full_flux  / max(n_full, 1),
-        'mse_cum':           total_full_cum   / max(n_full, 1),
-        'rollout_mse_avg':   rollout_avg,
-        'mse_per_step':      mse_per_step_state,
-        'mse_per_step_delta': mse_per_step_delta,
-    }
