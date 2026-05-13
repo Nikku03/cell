@@ -192,6 +192,118 @@ Deferred for M9:
 
 ---
 
+---
+
+## Addendum: 3 PINN-prerequisite critiques (post-roadmap)
+
+Three more critiques flagged as prerequisites before implementing the
+M-PINN architecture. My honest verdicts:
+
+### Critique 10: Log-space PINN collision
+
+`Δx = S · v` is a LINEAR operation. The LGNN operates in signed-log1p
+space (counts span 6 orders of magnitude, linear gradients would
+explode). Applying the stoichiometric equation directly in log space is
+mathematically wrong: `log(x) + S · log(v) ≠ log(x + S · v)`.
+
+**Verdict: agree.** The fix is an explicit exponential bridge inside
+the PINN output head:
+```
+v_linear      = signed_expm1(v_log)
+x_linear      = signed_expm1(x_log)
+dx_linear     = S @ v_linear                          # exact, hardwired
+x_next_linear = x_linear + dx_linear
+x_next_log    = signed_log1p(x_next_linear)
+```
+
+**Gradient analysis** (why this is stable): `∂x_next_log/∂v_log =
+(1/x_next_linear) · S · v_linear ≈ S` because `x_next_linear ~
+v_linear` in magnitude for non-tiny species. The exp and log
+derivatives cancel by design.
+
+**Status: IMPLEMENTED** as `cell_sim/lgnn/models/pinn_head.py`
+(class `PINNHead`, helpers `signed_log1p`, `signed_expm1`,
+`build_flux_indices`). Stoichiometric matrix loader at
+`cell_sim/lgnn/data/stoichiometric_matrix.py` (loads from
+`Model/Reaction/StoichiometricMatrix` in any `MinCell_*.lm` and maps
+the 5489 spatial species onto the LGNN's 8572 row order, zero-padding
+the 3083 LGNN-only species like RP_*, PM_*, DM_*).
+
+Unit-tested: roundtrip accuracy 6e-5 fp32, mass conservation
+violation 1.5e-7 for stoichiometry-zero reactions, gradients finite
+and bounded even at log-magnitude 8 (count ~3000).
+
+### Critique 11: Multi-task gradient collision (PINN double-dipping)
+
+Once the PINN enforces `Δx = S · v`, the count target is
+deterministically bound to the flux target. Supervising both
+double-dips the gradient on the same physical mechanism; if the
+training data has Gillespie stochasticity, the count loss can
+actively fight the flux loss.
+
+**Verdict: agree with nuance.** "Remove count loss entirely" is too
+strong — a small count regularization weight helps prevent the model
+from drifting into negative concentrations (which the bridge's expm1
+allows). The right setting for M-PINN training:
+```
+weight_flux       = 1.0    # primary supervision on v
+weight_cumulative = 0.5    # secondary (cumulative counters as observed
+                            # rate counters complementary to F_*)
+weight_count      = 0.05   # regularization only - prevents negative
+                            # predicted counts via x_next_log MSE
+```
+
+This contrasts with M3's `weight_flux=40, weight_count=1,
+weight_cumulative=5`, which was tuned for the non-PINN regime where
+count is the primary signal.
+
+**Status: documented for use in `train_m_pinn.py` when built.** Not
+implemented yet because the PINN training script doesn't exist; this
+config goes in there.
+
+### Critique 12: Bipartite reaction-node mandate (pure topology agnosticism)
+
+Without static features (post-M5 lesson), the only thing teaching the
+model what each species "is" is the graph topology. A direct G → RP
+edge teaches transcription as a two-body topological correlation,
+bypassing ATP/RNAP/nucleotide-pool dependencies. The fix is bipartite:
+gene → [TranscriptionReaction] → transcript, with ATP/GTP/etc.
+connected to the reaction node.
+
+**Verdict: agree in principle, disagree on implementing now.** The
+M-PINN's stoichiometric matrix ALREADY encodes which species are
+substrates and products for each reaction including resources — that's
+literally what S contains. Mass balance correctness is enforced by
+`Δx = S · v` at the output regardless of the GNN's message-passing
+graph topology. The bipartite refactor would improve message-passing
+efficiency (the model would learn faster) but not correctness. Worth
+doing eventually; not a blocker.
+
+**Status: documented; not implemented.** If after training M-PINN we
+find the GNN encoder struggles with resource dependencies, we'll come
+back to this.
+
+---
+
+## Updated tally (12 critiques total)
+
+| # | Source | Verdict | Implemented? |
+|---|--------|---------|--------------|
+| 1 | CfC → Neural ODE | RIGHT (modulo data res.) | No - defer to M-PINN |
+| 2 | Rigid scaffold | RIGHT (modulo simulator) | No - defer |
+| 3 | Absolute vs delta | **WRONG** (already delta via residual) | N/A |
+| 4 | Variance cheat | RIGHT | No - separate experiment |
+| 5 | Softmax mass conservation | DISAGREE for hidden state | No - rejected |
+| 6 | RATE_LAW / MASS_BALANCE | RIGHT | **YES** (M6) |
+| 7 | Forward Euler | RIGHT (subsumed by #1) | No - subsumed |
+| 8 | PINN with hardwired S | RIGHT + highest impact | Scaffolding done, training script pending |
+| 9 | Bipartite reaction nodes | RIGHT (deferred) | No - deferred |
+| 10 | Log-space PINN bridge | RIGHT | **YES** (pinn_head.py) |
+| 11 | PINN loss double-dipping | RIGHT with nuance | Documented for M-PINN config |
+| 12 | Pure-topology bipartite mandate | DISAGREE on doing now | No - deferred |
+
+---
+
 ## How to resume
 
 When user says "implement the critiques" or similar, the next agent should:
