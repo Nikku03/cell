@@ -56,7 +56,12 @@ class EdgeKind(IntEnum):
     TRANSLATION     = 3
     TRANSLOCATION   = 4
     DEGRADATION     = 5
-    FLUX_COUPLING   = 6      # F_<rxn> ↔ each species in rxn — see communicate.py:216
+    FLUX_COUPLING   = 6      # DEPRECATED — kept for back-compat with M3/M5 ckpts.
+                              # Set split_flux_coupling=True to use the new
+                              # RATE_LAW / MASS_BALANCE edge kinds instead.
+    # Causal split of FLUX_COUPLING (roadmap Step 3):
+    RATE_LAW        = 7      # species → flux: concentration drives reaction rate
+    MASS_BALANCE    = 8      # flux → species: rate × stoichiometry alters concentration
 
 
 # ---------------------------------------------------------------------------
@@ -221,6 +226,7 @@ def build_species_graph(
     row_names: List[str],
     reaction_model_path: Optional[Path] = None,
     include_simulator_edges: bool = True,
+    split_flux_coupling: bool = False,
 ) -> SpeciesGraph:
     """Construct a SpeciesGraph for the given row order.
 
@@ -303,15 +309,29 @@ def build_species_graph(
                 spec_idx = sbml_to_row_idx.get(sid)
                 if spec_idx is None or spec_idx == flux_idx:
                     continue
-                # flux → species
+                # Stoichiometric coefficient for this species in this reaction.
+                # Used as the edge attribute on MASS_BALANCE edges so the
+                # model has explicit physics priors on flux → species direction.
+                stoich_coef = float(stoich[sid])
+
+                # flux → species: mass balance (rate × stoichiometry alters count)
                 src_list.append(flux_idx); dst_list.append(spec_idx)
-                attrs.append([0.0, 0.0, 0.0, 0.0, 0.0])
-                kinds.append(int(EdgeKind.FLUX_COUPLING))
+                if split_flux_coupling:
+                    attrs.append([stoich_coef, 0.0, 0.0, 0.0, 0.0])
+                    kinds.append(int(EdgeKind.MASS_BALANCE))
+                else:
+                    attrs.append([0.0, 0.0, 0.0, 0.0, 0.0])
+                    kinds.append(int(EdgeKind.FLUX_COUPLING))
                 rxn_ids.append(f'flux:{rxn_id}')
-                # species → flux
+
+                # species → flux: rate law (concentration drives reaction rate)
                 src_list.append(spec_idx); dst_list.append(flux_idx)
-                attrs.append([0.0, 0.0, 0.0, 0.0, 0.0])
-                kinds.append(int(EdgeKind.FLUX_COUPLING))
+                if split_flux_coupling:
+                    attrs.append([stoich_coef, 0.0, 0.0, 0.0, 0.0])
+                    kinds.append(int(EdgeKind.RATE_LAW))
+                else:
+                    attrs.append([0.0, 0.0, 0.0, 0.0, 0.0])
+                    kinds.append(int(EdgeKind.FLUX_COUPLING))
                 rxn_ids.append(f'flux:{rxn_id}')
 
     # Self-loop on every node (matched and unmatched alike)
