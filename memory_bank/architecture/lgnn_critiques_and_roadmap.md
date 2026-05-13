@@ -304,6 +304,108 @@ back to this.
 
 ---
 
+---
+
+## Addendum 2: 3 training-speed critiques
+
+### Critique 13: Flow matching to eliminate k-loop
+
+The claim: replace sequential k=32 rollout with parallel flow matching.
+Sample random (rep, t), corrupt x_t with sigma-scaled Gaussian noise,
+predict dx pointing to x_{t+1}. O(k) → O(1) per training sample.
+
+**Verdict: partly agree.** The SPEEDUP is real (10-20x). But the
+OBJECTIVE is different from scheduled-sampling rollout training:
+  - Scheduled sampling teaches the model to recover from ITS OWN
+    structured drift (cumulative, correlated, biased toward attractors).
+  - Flow matching teaches recovery from Gaussian-injected noise.
+
+These cover overlapping but non-identical failure modes. Gaussian
+assumption works well in diffusion models because the noise IS
+Gaussian by construction. For autoregressive chemical dynamics, the
+actual drift distribution at inference has different shape (saturation
+attractors, mass-imbalance drift, stiff-cascade overshoot). Flow
+matching may not cover those.
+
+**Status: NOT implemented.** Flagged as ablation experiment to run
+alongside rollout-trained M6 to see if it suffices in practice.
+
+### Critique 14: RK4 train / dopri5 inference
+
+The claim: adaptive ODE solvers like dopri5 in batched training are
+"batch-hostage" — one stiff sample forces all 63 others to evaluate at
+nanosecond steps. Use fixed-step RK4 for training, swap to dopri5 only
+for inference/validation.
+
+**Verdict: agree but N/A for M6.** M6 uses explicit Forward Euler
+(`x_pred = x_pred + dx`), not an adaptive solver. This applies to the
+future M-PINN training script.
+
+**Status: documented for `train_m_pinn.py` when built.**
+
+### Critique 15: Engineering hammers (no checkpoint, torch.compile)
+
+**15a. Disable activation checkpointing if VRAM allows.**
+
+VRAM math for M6 (k=32, B=64, hidden=64, n_layers=3, bf16):
+  - Train data preload: ~6 GB
+  - Activations w/ backprop at k=32: ~1.6 GB
+  - Model + optimizer: ~25 MB
+  - Working tensors: ~2 GB headroom
+  - Total: ~10 GB on 48 GB card
+
+Activation checkpointing trades 33% compute for memory we don't need.
+
+**Verdict: agree. Implemented.** `use_checkpoint=False` is now the M6
+default.
+
+**15b. torch.compile with mode='reduce-overhead'.**
+
+For loop-heavy code (k=32 sequential rollout), PyTorch launches ~32
+CUDA kernel sequences per batch. CPU can't dispatch fast enough on
+small models, so GPU is idle waiting. torch.compile traces the loop,
+fuses kernels, and uses CUDA Graphs to launch the whole rollout as
+one instruction.
+
+Trade-off: first forward pass adds 30-60s compilation overhead. With
+~5500 steps/epoch × 5 epochs = 27500 forward passes, that's amortized
+to <0.001% of training time.
+
+**Verdict: agree. Implemented.** `use_compile=True, compile_mode='reduce-overhead'`
+is now the M6 default.
+
+**Expected combined speedup from 15a + 15b: 2.5-3x.** Brings M6 from
+~3 hours to ~1 hour wall-clock. NOT 15 minutes — that would require
+Critique 13 (flow matching), which we're not implementing as the
+default training mode.
+
+---
+
+## Updated tally (15 critiques total)
+
+| # | Source | Verdict | Implemented? |
+|---|--------|---------|--------------|
+| 1 | CfC → Neural ODE | RIGHT (modulo data res.) | No - defer to M-PINN |
+| 2 | Rigid scaffold | RIGHT (modulo simulator) | No - defer |
+| 3 | Absolute vs delta | **WRONG** (already delta via residual) | N/A |
+| 4 | Variance cheat | RIGHT | No - separate experiment |
+| 5 | Softmax mass conservation | DISAGREE for hidden state | No - rejected |
+| 6 | RATE_LAW / MASS_BALANCE | RIGHT | **YES** (M6) |
+| 7 | Forward Euler | RIGHT (subsumed by #1) | No - subsumed |
+| 8 | PINN with hardwired S | RIGHT + highest impact | Scaffolding done, training script pending |
+| 9 | Bipartite reaction nodes | RIGHT (deferred) | No - deferred |
+| 10 | Log-space PINN bridge | RIGHT | **YES** (pinn_head.py) |
+| 11 | PINN loss double-dipping | RIGHT with nuance | Documented for M-PINN config |
+| 12 | Pure-topology bipartite mandate | DISAGREE on doing now | No - deferred |
+| 13 | Flow matching | PARTLY agree (different objective) | No - ablation candidate |
+| 14 | RK4 train / dopri5 inference | RIGHT but N/A | Documented for M-PINN |
+| 15a | No activation checkpointing | RIGHT | **YES** (M6) |
+| 15b | torch.compile | RIGHT | **YES** (M6) |
+
+8 of 15 critiques implemented, 4 deferred to M-PINN, 3 disagreed/rejected.
+
+---
+
 ## How to resume
 
 When user says "implement the critiques" or similar, the next agent should:

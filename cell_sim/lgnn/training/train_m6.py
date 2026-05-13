@@ -59,7 +59,7 @@ from cell_sim.lgnn.training.train_m3 import (
 
 @dataclass
 class M6TrainConfig(M3TrainConfig):
-    """M3 config + extended k-curriculum + scheduled sampling."""
+    """M3 config + extended k-curriculum + scheduled sampling + speed knobs."""
     # Override M3 defaults
     k_curriculum: tuple = (1, 4, 16, 32)       # was (1, 2, 4)
     rollout_gamma: float = 1.0                  # was 0.95
@@ -69,6 +69,11 @@ class M6TrainConfig(M3TrainConfig):
     # Scheduled sampling (NEW)
     scheduled_sampling: bool = True
     p_ss_max: float = 0.5                       # max prob of free-running at step s>0
+
+    # Speed knobs (validated by VRAM math: M6 fits in ~10 GB on 48 GB card)
+    use_checkpoint: bool = False                # was True - we have VRAM, save 33%
+    use_compile: bool = True                    # was False - 2-3x speedup via CUDA Graphs
+    compile_mode: str = 'reduce-overhead'       # fuses k-step rollout kernels
     p_ss_warmup_steps: int = 2000               # ramp from 0 -> p_ss_max over this many steps
 
     # Step 3 of roadmap is on the data side (split_flux_coupling=True when
