@@ -154,12 +154,19 @@ def load_stoichiometric_matrix_for_pinn(
         if not name.startswith('F_'):
             continue
         rxn_id = name[2:]   # strip 'F_' prefix
-        # Try both with and without "_end" suffix (period-averaged vs end-of-step)
-        candidates = [rxn_id, rxn_id.replace('_end', ''),
-                      rxn_id + '_end' if not rxn_id.endswith('_end') else None]
+        # The .lm reactionConstNames typically carries the SBML 'R_' prefix
+        # (e.g. R_PGI) while the LGNN F_* species drops it (F_PGI). Try the
+        # raw form, with R_ added, and both with/without an '_end' suffix
+        # (period-averaged vs end-of-step bookkeeping).
+        base = rxn_id[:-4] if rxn_id.endswith('_end') else rxn_id
+        candidates: List[str] = []
+        for prefix in ('', 'R_'):
+            for suffix in ('', '_end'):
+                c = f'{prefix}{base}{suffix}'
+                if c not in candidates:
+                    candidates.append(c)
         col = None
         for c in candidates:
-            if c is None: continue
             if c in rxn_idx_by_name:
                 col = rxn_idx_by_name[c]
                 break
