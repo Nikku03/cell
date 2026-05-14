@@ -301,7 +301,19 @@ def build_species_graph(
     # directed message-passing variant is added.
     name_to_idx = {n: i for i, n in enumerate(row_names)}
     for rxn_id, stoich in reactions.items():
-        for flux_name in (f'F_{rxn_id}', f'F_{rxn_id}_end'):
+        # SBML/COBRA convention prefixes reaction IDs with 'R_' (e.g.
+        # 'R_PGI'). The simulator's flux row strips that prefix (e.g.
+        # 'F_PGI'). Try with the prefix stripped, falling back to the raw
+        # id. Dedup to avoid double-counting edges when both yield the
+        # same candidate.
+        rxn_stripped = rxn_id[2:] if rxn_id.startswith('R_') else rxn_id
+        seen = set()
+        candidates = []
+        for r in (rxn_stripped, rxn_id):
+            for v in (f'F_{r}', f'F_{r}_end'):
+                if v not in seen:
+                    seen.add(v); candidates.append(v)
+        for flux_name in candidates:
             flux_idx = name_to_idx.get(flux_name)
             if flux_idx is None:
                 continue
