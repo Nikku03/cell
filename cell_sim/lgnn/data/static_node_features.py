@@ -1,6 +1,6 @@
 """Build per-node static feature tensor for the LGNN.
 
-Five categories of static features:
+Six categories of static features (54 cols total when all enabled):
 
   1. Gene-class (19 cols, per-locus broadcast)
      14 keyword categories + 3 sequence summaries + 2 gene metadata.
@@ -27,7 +27,11 @@ Five categories of static features:
      log1p of |x0[species]| from t=0 of replicate 1. Gives the model a
      per-species scale reference.
 
-Total: 41 static features (when all are enabled).
+  6. Proteomics (13 cols, per-locus broadcast)
+     5 Primary Function one-hot + 6 Localization one-hot + 2 scalar
+     (log Sim. Initial Ptn Cnt, log Exp. Ptn Cnt). Source:
+     `initial_concentrations.xlsx` "Comparative Proteomics" sheet
+     (Breuer 2019 + Cell 2022 annotations bundled with the simulator).
 """
 from __future__ import annotations
 import re
@@ -69,7 +73,39 @@ ROLE_COLS = [
 
 EXTRA_COLS = ['promoter_strength_log', 'log_initial_count']
 
-ALL_STATIC_COLS = GENE_CLASS_COLS + SPATIAL_COLS + ROLE_COLS + EXTRA_COLS
+# 5 categories from Comparative Proteomics sheet's Primary Function column
+PROTEOMICS_FUNCTION_VALUES = (
+    'Genetic Information Processing',
+    'Metabolism',
+    'Cellular Processes',
+    'Human Diseases',
+    'Unclear',
+)
+# 6 categories from Localization column
+PROTEOMICS_LOCALIZATION_VALUES = (
+    'cytoplasm',
+    'trans-membrane',
+    'peripheral membrane',
+    'lipoprotein',
+    'unidentified',
+    'extracellular',
+)
+PROTEOMICS_FUNCTION_COLS = [
+    f'func_{v.replace(" ", "_").lower()}' for v in PROTEOMICS_FUNCTION_VALUES
+]
+PROTEOMICS_LOCALIZATION_COLS = [
+    f'loc_{v.replace(" ", "_").replace("-", "_").lower()}'
+    for v in PROTEOMICS_LOCALIZATION_VALUES
+]
+PROTEOMICS_COLS = (
+    PROTEOMICS_FUNCTION_COLS
+    + PROTEOMICS_LOCALIZATION_COLS
+    + ['proteomics_log_sim_initial_ptn_cnt', 'proteomics_log_exp_ptn_cnt']
+)
+
+ALL_STATIC_COLS = (
+    GENE_CLASS_COLS + SPATIAL_COLS + ROLE_COLS + EXTRA_COLS + PROTEOMICS_COLS
+)
 
 
 def _role_indicators(row_name: str) -> dict:
@@ -86,14 +122,41 @@ def _role_indicators(row_name: str) -> dict:
     }
 
 
+def _read_proteomics_sheet(xlsx_path: str | Path) -> pd.DataFrame:
+    """Load 'Comparative Proteomics' from initial_concentrations.xlsx.
+
+    Row 0 is a citation/source-attribution row, not data — drop it.
+    """
+    df = pd.read_excel(xlsx_path, sheet_name='Comparative Proteomics')
+    df = df.iloc[1:].reset_index(drop=True)
+    df = df.dropna(subset=['Locus Tag']).copy()
+    df['locus_4d'] = df['Locus Tag'].str.replace('JCVISYN3A_', '', regex=False)
+    return df
+
+
+def load_breuer_labels(xlsx_path: str | Path) -> pd.DataFrame:
+    """Return a DataFrame with locus_tag, locus_4d, essential bool from the
+    Comparative Proteomics sheet's Essentiality column. 'Essential' -> True;
+    'Quasiessential' and 'Nonessential' -> False (binary classification).
+    """
+    df = _read_proteomics_sheet(xlsx_path)
+    out = pd.DataFrame({
+        'locus_tag': df['Locus Tag'].astype(str),
+        'locus_4d':  df['locus_4d'].astype(str),
+        'essential': (df['Essentiality'].astype(str) == 'Essential'),
+    })
+    return out.reset_index(drop=True)
+
+
 def build_static_node_features(
     row_names: Sequence[str],
     gene_class_csv: str | Path,
     spatial_parquet: Optional[str | Path] = None,
     initial_state_signed_log1p: Optional[np.ndarray] = None,
+    proteomics_xlsx: Optional[str | Path] = None,
     verbose: bool = True,
 ) -> torch.Tensor:
-    """Compose 41-column static feature tensor in row_names order.
+    """Compose 54-column static feature tensor in row_names order.
 
     Args
     ----
@@ -107,17 +170,22 @@ def build_static_node_features(
                                   to derive promoter_strength (from P_L
                                   cells) and log_initial_count (per-species).
                                   If None, those 2 cols are zero-filled.
+    proteomics_xlsx           : optional path to initial_concentrations.xlsx;
+                                  if given, populates the 13 PROTEOMICS_COLS
+                                  from the Comparative Proteomics sheet.
+                                  If None those cols are zero-filled.
 
     Returns
     -------
-    torch.FloatTensor of shape (N, 41).
+    torch.FloatTensor of shape (N, 54).
     """
     N = len(row_names)
     F_gc = len(GENE_CLASS_COLS)
     F_sp = len(SPATIAL_COLS)
     F_role = len(ROLE_COLS)
     F_extra = len(EXTRA_COLS)
-    F = F_gc + F_sp + F_role + F_extra
+    F_prot = len(PROTEOMICS_COLS)
+    F = F_gc + F_sp + F_role + F_extra + F_prot
 
     out = np.zeros((N, F), dtype=np.float32)
     name_to_idx = {n: i for i, n in enumerate(row_names)}
@@ -207,6 +275,53 @@ def build_static_node_features(
     else:
         if verbose:
             print(f'  promoter + log_init_count: SKIPPED (no initial state)')
+
+    # ----- 6. Proteomics (function/localization/initial counts) -----
+    proteomics_offset = F_gc + F_sp + F_role + F_extra
+    if proteomics_xlsx is not None and Path(proteomics_xlsx).exists():
+        prot = _read_proteomics_sheet(proteomics_xlsx)
+        # function -> one-hot index
+        func_to_idx = {v: i for i, v in enumerate(PROTEOMICS_FUNCTION_VALUES)}
+        loc_to_idx  = {v: i for i, v in enumerate(PROTEOMICS_LOCALIZATION_VALUES)}
+        F_func = len(PROTEOMICS_FUNCTION_VALUES)
+        F_loc  = len(PROTEOMICS_LOCALIZATION_VALUES)
+        prot_lookup: dict[str, np.ndarray] = {}
+        for _, r in prot.iterrows():
+            vec = np.zeros(F_prot, dtype=np.float32)
+            f_str = str(r.get('Primary Function', '')).strip()
+            l_str = str(r.get('Localization', '')).strip()
+            if f_str in func_to_idx:
+                vec[func_to_idx[f_str]] = 1.0
+            if l_str in loc_to_idx:
+                vec[F_func + loc_to_idx[l_str]] = 1.0
+            try:
+                sim_init = float(r.get('Sim. Initial Ptn Cnt', 0) or 0)
+                vec[F_func + F_loc + 0] = float(np.log1p(max(sim_init, 0.0)))
+            except (TypeError, ValueError):
+                pass
+            try:
+                exp_cnt = float(r.get('Exp. Ptn Cnt', 0) or 0)
+                vec[F_func + F_loc + 1] = float(np.log1p(max(exp_cnt, 0.0)))
+            except (TypeError, ValueError):
+                pass
+            prot_lookup[r['locus_4d']] = vec
+
+        matched_prot = 0
+        for i, name in enumerate(row_names):
+            m = _LOCUS_RE.search(name)
+            if m is None:
+                continue
+            locus = m.group(1)
+            if locus in prot_lookup:
+                out[i, proteomics_offset:proteomics_offset + F_prot] = \
+                    prot_lookup[locus]
+                matched_prot += 1
+        if verbose:
+            print(f'  proteomics matched: {matched_prot}/{N} '
+                  f'({100 * matched_prot / N:.1f}%)')
+    else:
+        if verbose:
+            print(f'  proteomics: SKIPPED (no xlsx provided)')
 
     return torch.from_numpy(out)
 
