@@ -61,19 +61,26 @@ from cell_sim.lgnn.training.train_m3 import (
 class M6TrainConfig(M3TrainConfig):
     """M3 config + extended k-curriculum + scheduled sampling + speed knobs."""
     # Override M3 defaults
-    k_curriculum: tuple = (1, 4, 16, 32)       # was (1, 2, 4)
+    k_curriculum: tuple = (1, 4, 8, 16)         # was (1, 4, 16, 32); k=32 OOM'd
     rollout_gamma: float = 1.0                  # was 0.95
-    max_k: int = 32                             # was 4
-    n_epochs: int = 5                           # one per curriculum stage + 1 polish
+    max_k: int = 16                             # was 32 (OOM at k=16 w/ compile)
+    n_epochs: int = 4                           # one per curriculum stage
 
     # Scheduled sampling (NEW)
     scheduled_sampling: bool = True
     p_ss_max: float = 0.5                       # max prob of free-running at step s>0
 
-    # Speed knobs (validated by VRAM math: M6 fits in ~10 GB on 48 GB card)
-    use_checkpoint: bool = False                # was True - we have VRAM, save 33%
-    use_compile: bool = True                    # was False - 2-3x speedup via CUDA Graphs
-    compile_mode: str = 'reduce-overhead'       # fuses k-step rollout kernels
+    # Speed knobs (memory-conservative after observed OOM at k=16 with
+    # torch.compile enabled — CUDA Graph cache wasn't freed across k changes
+    # in the curriculum, holding ~3 GB extra and pushing PyTorch's allocator
+    # past 94 GB on a 94.97 GB card):
+    use_checkpoint: bool = True                 # activation checkpointing on:
+                                                 # recompute fwd during bwd;
+                                                 # saves ~k-fold activation
+                                                 # memory at cost of ~33% wall
+    use_compile: bool = False                   # disabled — memory leak across
+                                                 # k_curriculum changes
+    compile_mode: str = 'reduce-overhead'
     p_ss_warmup_steps: int = 2000               # ramp from 0 -> p_ss_max over this many steps
 
     # Step 3 of roadmap is on the data side (split_flux_coupling=True when
