@@ -397,7 +397,8 @@ def train_m_pinn(
                                        count_mask, cum_mask, cfg, model_dtype,
                                        device)
         for k, v in val_metrics.items():
-            history[f'val_{k}'].append(v)
+            key = f'val_{k}'
+            history.setdefault(key, []).append(v)
         val_ss = val_metrics['singlestep_mse']
         print(f'ep{epoch} k={k_cur} val singlestep_mse={val_ss:.4f}  '
               f'count={val_metrics["mse_count"]:.4f}  '
