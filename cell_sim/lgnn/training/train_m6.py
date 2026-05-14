@@ -80,25 +80,62 @@ class M6TrainConfig(M3TrainConfig):
     # building the graph). Nothing to configure in the trainer.
 
 
+def _maybe_load_or_preload(replicate_indices, lsdata_module, device, dtype,
+                             species_filter, cache_path):
+    """Load preloaded tensor from disk if available, else preload + save.
+
+    On a cold Colab runtime the parquet preload can take ~30 min for 49
+    replicates. Cached load is ~1-2 min (just a torch.load of a 6 GB
+    bfloat16 tensor). Saves enormous wall-clock across retrains.
+    """
+    import time
+    if cache_path is not None and Path(cache_path).exists():
+        t0 = time.time()
+        print(f'  loading cached preload from {cache_path}...')
+        data = torch.load(cache_path, map_location=device, weights_only=False)
+        # Verify shape matches expectation
+        if data.dim() == 3 and data.shape[0] == len(replicate_indices):
+            print(f'  ✓ loaded {tuple(data.shape)} in {time.time()-t0:.1f}s')
+            return data.to(dtype) if data.dtype != dtype else data
+        else:
+            print(f'  cache shape mismatch ({tuple(data.shape)} vs expected '
+                  f'first dim {len(replicate_indices)}); rebuilding')
+    t0 = time.time()
+    data = preload_to_gpu(replicate_indices, lsdata_module, device,
+                            dtype=dtype, species_filter=species_filter)
+    print(f'  preloaded fresh in {time.time()-t0:.1f}s')
+    if cache_path is not None:
+        Path(cache_path).parent.mkdir(parents=True, exist_ok=True)
+        t1 = time.time()
+        torch.save(data.cpu(), cache_path)
+        print(f'  cached to {cache_path} in {time.time()-t1:.1f}s')
+    return data
+
+
 def train_m6(
     cfg: M6TrainConfig,
     lsdata_module,
     graph: SpeciesGraph,
     row_names: Sequence[str],
     checkpoint_path: Optional[Path] = None,
+    train_cache_path: Optional[Path] = None,
+    val_cache_path: Optional[Path] = None,
 ) -> dict:
     device = _device(cfg.device)
     torch.manual_seed(cfg.seed)
     pre_dtype = _torch_dtype(cfg.preload_dtype)
 
-    # --- Preload ---
-    t0 = time.time()
+    # --- Preload (with on-disk cache) ---
     print(f'preloading {len(cfg.train_replicates)} train + '
           f'{len(cfg.val_replicates)} val replicates to {device}...')
-    train_data = preload_to_gpu(cfg.train_replicates, lsdata_module, device,
-                                  dtype=pre_dtype, species_filter=cfg.species_filter)
-    val_data = preload_to_gpu(cfg.val_replicates, lsdata_module, device,
-                                dtype=pre_dtype, species_filter=cfg.species_filter)
+    train_data = _maybe_load_or_preload(
+        cfg.train_replicates, lsdata_module, device, pre_dtype,
+        cfg.species_filter, train_cache_path,
+    )
+    val_data = _maybe_load_or_preload(
+        cfg.val_replicates, lsdata_module, device, pre_dtype,
+        cfg.species_filter, val_cache_path,
+    )
     R, T, S = train_data.shape
     n_valid = T - cfg.max_k - 1
     print(f'  train{tuple(train_data.shape)}  val{tuple(val_data.shape)}'
