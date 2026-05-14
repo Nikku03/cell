@@ -75,7 +75,14 @@ class PINNHead(nn.Module):
                     these positions encodes the reaction rate; the rate head
                     decodes them into log-space v.
     rate_clip    : optional clamp on log-space rate predictions to prevent
-                    expm1 blowup. Default None (no clamp).
+                    expm1 blowup. Default 6.0 -> max |v_linear| ~ exp(6)-1 ~ 400,
+                    well-conditioned for cellular reaction rates.
+    use_residual : if True, also add a per-node residual delta predicted by
+                    a small MLP from the hidden state. This is REQUIRED for
+                    LGNN species not covered by the stoichiometric matrix
+                    (genes, mRNAs, proteins, translation complexes whose
+                    reactions are not in the metabolic S). Without it those
+                    species are frozen during rollout. Default True.
 
     Forward
     -------
@@ -91,7 +98,8 @@ class PINNHead(nn.Module):
 
     def __init__(self, hidden: int, stoich_matrix: torch.Tensor,
                  flux_indices: torch.Tensor,
-                 rate_clip: Optional[float] = 12.0):
+                 rate_clip: Optional[float] = 6.0,
+                 use_residual: bool = True):
         super().__init__()
         n_species, n_reactions = stoich_matrix.shape
         if flux_indices.numel() != n_reactions:
@@ -103,8 +111,23 @@ class PINNHead(nn.Module):
         self.n_reactions = n_reactions
         self.register_buffer('S', stoich_matrix.float())
         self.register_buffer('flux_indices', flux_indices.long())
+        # Mask: True where species has at least one non-zero stoichiometric
+        # entry (i.e., participates in at least one PINN-handled reaction).
+        # Species with all-zero rows need the residual head instead.
+        s_covered = (stoich_matrix.abs().sum(dim=1) > 0).float()
+        self.register_buffer('s_covered_mask', s_covered)        # (n_species,)
         self.rate_head = nn.Linear(hidden, 1)
         self.rate_clip = rate_clip
+
+        self.use_residual = use_residual
+        if use_residual:
+            # Per-species residual delta head: predicts a small additive
+            # correction in signed-log1p space directly. Used primarily for
+            # species the stoichiometric matrix doesn't cover.
+            self.residual_head = nn.Sequential(
+                nn.Linear(hidden, hidden), nn.SiLU(),
+                nn.Linear(hidden, 1),
+            )
 
     def forward(self, x_log: torch.Tensor, h: torch.Tensor
                   ) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -127,12 +150,28 @@ class PINNHead(nn.Module):
         v_linear = signed_expm1(v_log)                          # (B, R)
         x_linear = signed_expm1(x_log)                          # (B, S)
 
-        # 4. Hardwired stoichiometric update: Δx = S · v
-        #    S: (S, R), v_linear: (B, R) -> dx_linear: (B, S)
-        dx_linear = v_linear @ self.S.T                         # (B, S)
-        x_next_linear = x_linear + dx_linear
+        # 4. Hardwired stoichiometric update for PINN-covered species
+        #    S: (S, R), v_linear: (B, R) -> dx_pinn_linear: (B, S)
+        dx_pinn_linear = v_linear @ self.S.T                    # (B, S)
 
-        # 5. Bridge back to log space
+        # 5. Residual delta for species the stoichiometric matrix doesn't
+        #    cover (genes, mRNAs, proteins, translation complexes whose
+        #    reactions aren't in the metabolic S). Without this branch
+        #    those species would be frozen during rollout.
+        if self.use_residual:
+            residual_log_delta = self.residual_head(h).squeeze(-1)  # (B, S)
+            # Apply residual only where the stoichiometric matrix has no
+            # coverage. For PINN-covered species, trust the hardwired physics.
+            mask = self.s_covered_mask.to(x_log.dtype)           # (S,)
+            residual_log_delta = residual_log_delta * (1.0 - mask).unsqueeze(0)
+            residual_linear = signed_expm1(x_log + residual_log_delta) - x_linear
+            dx_total_linear = dx_pinn_linear + residual_linear
+        else:
+            dx_total_linear = dx_pinn_linear
+
+        x_next_linear = x_linear + dx_total_linear
+
+        # 6. Bridge back to log space
         x_next_log = signed_log1p(x_next_linear)                # (B, S)
 
         return x_next_log, v_log

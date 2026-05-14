@@ -46,7 +46,7 @@ import torch
 import torch.nn as nn
 
 from cell_sim.lgnn.data.species_graph import SpeciesGraph
-from cell_sim.lgnn.models.gnn_v2 import CellGNNv2, count_parameters
+from cell_sim.lgnn.models.gnn_v3 import CellGNNv3, count_parameters
 from cell_sim.lgnn.training.train_m1_axis2_fast import (
     _gather_windows, _index_iterator, _torch_dtype, _warmup_ramp,
     preload_to_gpu,
@@ -115,7 +115,7 @@ def train_m6(
     print('precomputing per-species cross-replicate std...')
     sigma = compute_variance_channel(train_data)
 
-    # --- Model: CellGNNv2 with N_EDGE_KINDS=9 (auto from EdgeKind enum) ---
+    # --- Model: CellGNNv3 (2-channel input: count + variance) with N_EDGE_KINDS=9 ---
     from cell_sim.lgnn.models.gnn_v1_axis2 import N_EDGE_KINDS
     print(f'N_EDGE_KINDS (auto): {N_EDGE_KINDS}')
     assert N_EDGE_KINDS == 9, f'expected 9 edge kinds, got {N_EDGE_KINDS}'
@@ -124,8 +124,9 @@ def train_m6(
     ek_counts = collections.Counter(graph.edge_kind.tolist())
     print(f'graph edge-kind counts: {dict(sorted(ek_counts.items()))}')
 
-    model = CellGNNv2(
+    model = CellGNNv3(
         graph=graph, hidden=cfg.hidden, n_layers=cfg.n_layers,
+        n_input_channels=cfg.n_input_channels,
         use_checkpoint=cfg.use_checkpoint,
         edge_chunk_size=cfg.edge_chunk_size,
         cfc_tau_min=cfg.cfc_tau_min,
@@ -135,9 +136,19 @@ def train_m6(
     model_dtype = next(model.parameters()).dtype
     n_params = count_parameters(model)
     print(f'M6: {n_params:,} parameters '
-          f'(hidden={cfg.hidden}, n_layers={cfg.n_layers}, dtype={model_dtype})')
+          f'(hidden={cfg.hidden}, n_layers={cfg.n_layers}, '
+          f'channels={cfg.n_input_channels}, dtype={model_dtype})')
     print(f'k_curriculum={cfg.k_curriculum}, rollout_gamma={cfg.rollout_gamma}, '
           f'scheduled_sampling={cfg.scheduled_sampling}, p_ss_max={cfg.p_ss_max}')
+
+    # torch.compile for the k-step rollout (kernel fusion via CUDA Graphs)
+    if cfg.use_compile and device.type == 'cuda':
+        try:
+            model = torch.compile(model, mode=cfg.compile_mode)
+            print(f'  torch.compile enabled (mode={cfg.compile_mode}); '
+                  f'first forward includes ~30-60s compilation overhead')
+        except Exception as e:
+            print(f'  WARNING: torch.compile failed ({e}); continuing uncompiled')
 
     opt = torch.optim.AdamW(model.parameters(), lr=cfg.lr,
                               weight_decay=cfg.weight_decay)
