@@ -70,8 +70,8 @@ class MPINNTrainConfig(M3TrainConfig):
 
     # k-curriculum (smaller than M6 because PINN's hardwired conservation
     # should make long rollouts more stable; can crank up if it converges)
-    k_curriculum: tuple = (1, 4, 16)
-    rollout_gamma: float = 1.0
+    k_curriculum: tuple = (1, 4, 8, 16)            # last stage may OOM at high
+    rollout_gamma: float = 1.0                       # batch; reduce batch if so
     max_k: int = 16
     n_epochs: int = 4
 
@@ -80,12 +80,13 @@ class MPINNTrainConfig(M3TrainConfig):
     p_ss_max: float = 0.5
     p_ss_warmup_steps: int = 2000
 
-    # Speed defaults match M6
-    use_checkpoint: bool = False
-    use_compile: bool = True
+    # Speed defaults (memory-conservative after M6 OOM showed that
+    # torch.compile + reduce-overhead leaks across k_curriculum changes):
+    use_checkpoint: bool = True                      # activation checkpointing on
+    use_compile: bool = False                        # disabled — memory leak
     compile_mode: str = 'reduce-overhead'
 
-    n_input_channels: int = 1                     # PINN doesn't take variance
+    n_input_channels: int = 1                        # PINN doesn't take variance
 
 
 def _pinn_multi_task_loss(
@@ -141,12 +142,39 @@ def _pinn_multi_task_loss(
     }
 
 
+def _maybe_load_or_preload_mpinn(replicate_indices, lsdata_module, device, dtype,
+                                   species_filter, cache_path):
+    """Same caching pattern as train_m6._maybe_load_or_preload (shared)."""
+    import time
+    if cache_path is not None and Path(cache_path).exists():
+        t0 = time.time()
+        print(f'  loading cached preload from {cache_path}...')
+        data = torch.load(cache_path, map_location=device, weights_only=False)
+        if data.dim() == 3 and data.shape[0] == len(replicate_indices):
+            print(f'  ✓ loaded {tuple(data.shape)} in {time.time()-t0:.1f}s')
+            return data.to(dtype) if data.dtype != dtype else data
+        else:
+            print(f'  cache shape mismatch; rebuilding')
+    t0 = time.time()
+    data = preload_to_gpu(replicate_indices, lsdata_module, device,
+                            dtype=dtype, species_filter=species_filter)
+    print(f'  preloaded fresh in {time.time()-t0:.1f}s')
+    if cache_path is not None:
+        Path(cache_path).parent.mkdir(parents=True, exist_ok=True)
+        t1 = time.time()
+        torch.save(data.cpu(), cache_path)
+        print(f'  cached to {cache_path} in {time.time()-t1:.1f}s')
+    return data
+
+
 def train_m_pinn(
     cfg: MPINNTrainConfig,
     lsdata_module,
     graph: SpeciesGraph,
     row_names: Sequence[str],
     checkpoint_path: Optional[Path] = None,
+    train_cache_path: Optional[Path] = None,
+    val_cache_path: Optional[Path] = None,
 ) -> dict:
     device = _device(cfg.device)
     torch.manual_seed(cfg.seed)
@@ -168,18 +196,20 @@ def train_m_pinn(
           f'flux_indices: {flux_indices.shape[0]}')
     flux_indices = flux_indices.to(device)
 
-    # --- Preload corpus ---
-    t0 = time.time()
+    # --- Preload corpus (with on-disk cache; reuses M6's cache files) ---
     print(f'preloading {len(cfg.train_replicates)} train + '
           f'{len(cfg.val_replicates)} val replicates to {device}...')
-    train_data = preload_to_gpu(cfg.train_replicates, lsdata_module, device,
-                                  dtype=pre_dtype, species_filter=cfg.species_filter)
-    val_data = preload_to_gpu(cfg.val_replicates, lsdata_module, device,
-                                dtype=pre_dtype, species_filter=cfg.species_filter)
+    train_data = _maybe_load_or_preload_mpinn(
+        cfg.train_replicates, lsdata_module, device, pre_dtype,
+        cfg.species_filter, train_cache_path,
+    )
+    val_data = _maybe_load_or_preload_mpinn(
+        cfg.val_replicates, lsdata_module, device, pre_dtype,
+        cfg.species_filter, val_cache_path,
+    )
     R, T, S = train_data.shape
     n_valid = T - cfg.max_k - 1
-    print(f'  shape: train{tuple(train_data.shape)}  val{tuple(val_data.shape)}'
-          f'   load wall {time.time()-t0:.1f}s')
+    print(f'  shape: train{tuple(train_data.shape)}  val{tuple(val_data.shape)}')
 
     count_mask, flux_mask, cum_mask = categorise_row_indices(row_names)
     count_mask = count_mask.to(device); flux_mask = flux_mask.to(device)
