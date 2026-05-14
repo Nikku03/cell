@@ -138,8 +138,7 @@ def train_m6(
     )
     R, T, S = train_data.shape
     n_valid = T - cfg.max_k - 1
-    print(f'  train{tuple(train_data.shape)}  val{tuple(val_data.shape)}'
-          f'   load wall {time.time()-t0:.1f}s')
+    print(f'  train{tuple(train_data.shape)}  val{tuple(val_data.shape)}')
 
     count_mask, flux_mask, cum_mask = categorise_row_indices(row_names)
     count_mask = count_mask.to(device); flux_mask = flux_mask.to(device)
