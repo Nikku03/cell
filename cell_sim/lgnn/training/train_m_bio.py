@@ -64,6 +64,44 @@ class MBioTrainConfig(M3TrainConfig):
     essentiality_fold: int = 0             # which fold's val set to hold out
     essentiality_seed: int = 0
 
+    # === Speed knobs (all default to fast settings; set to None / False to opt
+    # back into M3-style full-coverage training) ===
+
+    # Random-subsample (rep, t) pairs per epoch instead of full enumeration.
+    # 49 reps × 7196 valid t = 352k pairs/epoch in M3; with 20k we hit ~5.7%
+    # of the (rep, t) space per epoch (over 4 epochs ~22% — still strong
+    # gradient signal, ~17x fewer batches). Set to None for full enumeration.
+    samples_per_epoch: Optional[int] = 20_000
+
+    # Run essentiality BCE every N batches instead of every batch. The label
+    # is static so the gradient signal saturates quickly. 1 = every batch.
+    essentiality_every_n_batches: int = 4
+
+
+def _subsample_pair_iterator(
+    R: int, n_valid: int, batch_size: int,
+    generator: torch.Generator, device, n_samples: int,
+):
+    """Like train_m1's _index_iterator, but caps total pairs at n_samples.
+
+    Random sample WITHOUT replacement when n_samples <= R*n_valid; with
+    replacement (uniform random) otherwise. Yields (rep_idx, t_idx) per
+    batch on `device`.
+    """
+    total = R * n_valid
+    if n_samples <= total:
+        perm = torch.randperm(total, generator=generator, device=device)[:n_samples]
+        rep_idx_all = perm // n_valid
+        t_idx_all   = perm %  n_valid
+    else:
+        rep_idx_all = torch.randint(0, R, (n_samples,),
+                                       generator=generator, device=device)
+        t_idx_all = torch.randint(0, n_valid, (n_samples,),
+                                       generator=generator, device=device)
+    for s in range(0, n_samples, batch_size):
+        e = min(s + batch_size, n_samples)
+        yield rep_idx_all[s:e], t_idx_all[s:e]
+
 
 def _binary_classification_metrics(
     logits: torch.Tensor,
@@ -286,11 +324,16 @@ def train_m_bio(
                 for k in ('total', 'mse_count', 'mse_flux', 'mse_cum',
                           'rollout', 'ess_bce')}
         n_batches = 0
+        ess_n_active = 0
         t_epoch = time.time()
         n_seen = 0
 
-        for rep_idx, t_idx in _index_iterator(R, n_valid, cfg.batch_size,
-                                                 gen, device):
+        if cfg.samples_per_epoch is not None:
+            iterator = _subsample_pair_iterator(
+                R, n_valid, cfg.batch_size, gen, device, cfg.samples_per_epoch)
+        else:
+            iterator = _index_iterator(R, n_valid, cfg.batch_size, gen, device)
+        for rep_idx, t_idx in iterator:
             x_w = _gather_windows(train_data, rep_idx, t_idx, k_cur + 1
                                     ).to(model_dtype)
             x = x_w[:, 0, :]
@@ -308,12 +351,19 @@ def train_m_bio(
             L_rollout = L_full_ss
             gamma_sum = 1.0
 
-            # Essentiality BCE on this batch
-            ess_logits = model.predict_essentiality(h)            # (B, n_genes)
-            ess_logits_tr = ess_logits.index_select(1, ess_tr_idx).float()
-            target_b = ess_tr_lab.unsqueeze(0).expand_as(ess_logits_tr)
-            L_ess = nn.functional.binary_cross_entropy_with_logits(
-                ess_logits_tr, target_b)
+            # Essentiality BCE — only on every-N batches (label is static, the
+            # gradient saturates fast). On skip batches, treat as detached zero
+            # so we don't double-count zero in the loss-bookkeeping average.
+            if (n_batches % cfg.essentiality_every_n_batches) == 0:
+                ess_logits = model.predict_essentiality(h)        # (B, n_genes)
+                ess_logits_tr = ess_logits.index_select(1, ess_tr_idx).float()
+                target_b = ess_tr_lab.unsqueeze(0).expand_as(ess_logits_tr)
+                L_ess = nn.functional.binary_cross_entropy_with_logits(
+                    ess_logits_tr, target_b)
+                ess_active = True
+            else:
+                L_ess = torch.zeros((), device=device, dtype=torch.float32)
+                ess_active = False
 
             # Subsequent rollout steps (dynamics only)
             for s in range(1, k_cur):
@@ -334,7 +384,14 @@ def train_m_bio(
                 supervised = L_full_ss
             else:
                 supervised = eff_lambda_rollout * L_rollout
-            L = supervised + cfg.weight_essentiality * L_ess
+            if ess_active:
+                # Scale weight by essentiality_every_n_batches so the *expected*
+                # per-batch contribution stays ≈ weight_essentiality regardless
+                # of how often we apply the BCE.
+                w_eff = cfg.weight_essentiality * cfg.essentiality_every_n_batches
+                L = supervised + w_eff * L_ess
+            else:
+                L = supervised
 
             opt.zero_grad(set_to_none=True)
             L.backward()
@@ -346,19 +403,26 @@ def train_m_bio(
             run['mse_flux']  += mse_breakdown_step0['mse_flux'].float()
             run['mse_cum']   += mse_breakdown_step0['mse_cum'].float()
             run['rollout']   += L_rollout.detach().float()
-            run['ess_bce']   += L_ess.detach().float()
+            if ess_active:
+                # Track only the active batches so the running average reflects
+                # actual essentiality loss, not zeros.
+                run['ess_bce'] += L_ess.detach().float()
+                ess_n_active += 1
             n_batches += 1
             n_seen += int(rep_idx.shape[0])
 
             if n_batches % cfg.log_every == 0:
                 wall = time.time() - t_epoch
-                vals = {k: float(v.item()) / n_batches for k, v in run.items()}
+                vals = {k: float(v.item()) / max(n_batches, 1)
+                          for k, v in run.items() if k != 'ess_bce'}
+                ess_avg = (float(run['ess_bce'].item()) / max(ess_n_active, 1)
+                            if ess_n_active > 0 else float('nan'))
                 print(f'  ep{epoch} k={k_cur} step{n_batches:>5d}'
                       f'  total={vals["total"]:.4f}'
                       f'  count={vals["mse_count"]:.4f}'
                       f'  flux={vals["mse_flux"]:.4f}'
                       f'  cum={vals["mse_cum"]:.4f}'
-                      f'  ess={vals["ess_bce"]:.4f}'
+                      f'  ess={ess_avg:.4f}'
                       f'  {n_seen/wall:.0f} s/s')
 
             if (time.time() - train_t0) > cfg.wall_clock_budget_s:
@@ -367,11 +431,14 @@ def train_m_bio(
 
         epoch_wall = time.time() - t_epoch
         history['samples_per_sec'].append(n_seen / max(epoch_wall, 1e-6))
-        for key in ('total', 'mse_count', 'mse_flux', 'mse_cum',
-                     'rollout', 'ess_bce'):
+        for key in ('total', 'mse_count', 'mse_flux', 'mse_cum', 'rollout'):
             history[f'train_{key}'].append(
                 float(run[key].item()) / max(n_batches, 1)
             )
+        history['train_ess_bce'].append(
+            float(run['ess_bce'].item()) / max(ess_n_active, 1)
+            if ess_n_active > 0 else float('nan')
+        )
 
         # --- Evaluation ---
         model.eval()
