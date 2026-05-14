@@ -25,7 +25,10 @@ import numpy as np
 import pandas as pd
 import torch
 
-_G_LOCUS_RE = re.compile(r'^G_(\d{4})$')
+# The simulator's gene rows are 'G_<locus>' (bare) and 'G_<locus>_C1' /
+# 'G_<locus>_C2' (the two cell-cycle chromosome copies). All variants for
+# the same locus share one essentiality label.
+_G_LOCUS_RE = re.compile(r'^G_(\d{4})(?:_[A-Za-z0-9]+)?$')
 
 
 def extract_gene_row_indices(
