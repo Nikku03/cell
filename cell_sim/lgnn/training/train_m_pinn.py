@@ -60,8 +60,15 @@ from cell_sim.lgnn.training.train_m3 import (
 class MPINNTrainConfig(M3TrainConfig):
     """M-PINN config: PINN architecture + demoted count loss + k-curriculum."""
     # PINN-specific
-    lm_path_for_S: str = ''                      # MUST set: path to MinCell_*.lm
-    rate_clip: float = 12.0                       # log-space v clamp
+    # Path to the stoichiometric-matrix source. Accepts SBML XML or .lm.
+    # SBML is strongly preferred — the .lm trajectory's reactionConstNames
+    # attribute is unreliable (1527 entries vs. 3556 columns) and will yield
+    # zero matched F_<rxn> reactions on Syn3A_updated.
+    lm_path_for_S: str = ''
+    # log-space v clamp. 6.0 -> |v_linear| < ~400, safe under bf16 expm1.
+    # The PINNHead default tightened from 12 -> 6 in last session's audit;
+    # keep the trainer override aligned so we don't reintroduce the risk.
+    rate_clip: float = 6.0
 
     # Flux-primary loss weights (Critique 11)
     weight_flux:       float = 1.0
@@ -182,9 +189,10 @@ def train_m_pinn(
 
     if not cfg.lm_path_for_S:
         raise ValueError(
-            'cfg.lm_path_for_S must be set to a MinCell_*.lm file path. '
-            'The stoichiometric matrix is loaded from '
-            'Model/Reaction/StoichiometricMatrix in that file.'
+            'cfg.lm_path_for_S must be set. Prefer the SBML model '
+            '(cell_sim/data/Minimal_Cell_ComplexFormation/input_data/'
+            'Syn3A_updated.xml); .lm trajectories are accepted but '
+            'unreliable for column mapping.'
         )
 
     # --- Load stoichiometric matrix + F_* index ---
@@ -194,6 +202,12 @@ def train_m_pinn(
     )
     print(f'S_pinn shape: {tuple(S_pinn.shape)}  '
           f'flux_indices: {flux_indices.shape[0]}')
+    if flux_indices.numel() == 0:
+        raise RuntimeError(
+            'S_pinn has zero columns — no F_<rxn> species matched a reaction. '
+            'This makes the flux loss NaN. Point cfg.lm_path_for_S at the '
+            'SBML model (Syn3A_updated.xml) instead of the .lm trajectory.'
+        )
     flux_indices = flux_indices.to(device)
 
     # --- Preload corpus (with on-disk cache; reuses M6's cache files) ---

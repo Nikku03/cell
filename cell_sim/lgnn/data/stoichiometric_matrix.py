@@ -1,27 +1,29 @@
 """Stoichiometric matrix loader for the PINN output head.
 
-Two loaders:
+Two source formats are supported. Pick by file extension via
+load_stoichiometric_matrix_for_pinn(path, row_names):
 
-  load_stoichiometric_matrix:
-    Loads the raw spatial stoichiometric matrix (5489 species, 3556 reactions)
-    from MinCell_*.lm and maps onto the LGNN's 8572-row species order. Returns
-    a (S_lgnn, n_reactions_all) tensor including reactions that don't have
-    F_* tracking.
+  *.xml / *.sbml — SBML metabolic model (Syn3A_updated.xml). Preferred.
+    For each F_<rxn> species in lgnn_row_names that matches an SBML
+    reaction, build a column from that reaction's stoichiometry. The
+    .lm trajectory file is not consulted. This matches how
+    species_graph.py builds the RATE_LAW / MASS_BALANCE edges, so the
+    edge stoichiometry and S_pinn stoichiometry are guaranteed to agree.
 
-  load_stoichiometric_matrix_for_pinn:
-    Specialized for PINN training. Filters to ONLY the reactions that have
-    a corresponding F_<rxn> species in the LGNN row order (so each column
-    of S corresponds to one F_* node whose hidden state will encode that
-    reaction's rate). Returns:
-      S_pinn       : (S_lgnn, n_pinn_reactions) float tensor
-      flux_indices : (n_pinn_reactions,) long tensor — index into row_names
-                      pointing to each reaction's F_* species
-      reaction_ids : list[str] — reaction name per column, for debugging
+  *.lm — Lattice Microbes spatial trajectory. The legacy path used the
+    spatial StoichiometricMatrix and tried to recover the reaction-name
+    index from f['Parameters'].attrs['reactionConstNames']. That attr
+    only holds rate-constant names (1527 entries vs. 3556 S columns),
+    so the mapping is unreliable; we keep the loader for diagnostics.
 
-The spatial simulator tracks 5489 species; our LGNN tracks 8572. Species
-in the LGNN but not in spatial (RP_*, RPM_*, PM_*, DM_*, F_*, M_*) get
-zero-padded rows. Their counts evolve via the central-dogma simulator
-edges in the GNN encoder, not via the PINN's stoichiometric update.
+In both cases the result is:
+    S_pinn       : (S_lgnn, n_pinn_reactions) float tensor — rows in LGNN
+                    order, columns aligned with flux_indices
+    flux_indices : (n_pinn_reactions,) long tensor — index in row_names
+                    of each reaction's F_* species (column order)
+    reaction_ids : list[str] of column reaction names (debug/log)
+    mapped_mask  : (S_lgnn,) bool ndarray — True where the row has at
+                    least one non-zero stoich entry across the F_* set
 """
 from __future__ import annotations
 from pathlib import Path
@@ -104,30 +106,143 @@ def load_stoichiometric_matrix(
 
 
 def load_stoichiometric_matrix_for_pinn(
-    lm_path: str | Path,
+    source_path: str | Path,
     lgnn_row_names: Sequence[str],
 ) -> Tuple[torch.Tensor, torch.Tensor, List[str], np.ndarray]:
-    """Filter the stoichiometric matrix to ONLY reactions with F_* tracking.
+    """Build the PINN S matrix from either an SBML XML or a MinCell_*.lm file.
 
-    For each F_<rxn> species in lgnn_row_names, find the matching column in
-    the full spatial S. The returned S_pinn has columns aligned with the F_*
-    species in the LGNN, so PINNHead can pull hidden state at F_* indices
-    and use it as the rate vector v.
+    Dispatch by suffix:
+      *.xml / *.sbml -> load_stoichiometric_matrix_from_sbml (preferred)
+      *.lm           -> load_stoichiometric_matrix_from_lm   (legacy)
 
     Returns
     -------
     S_pinn       : torch.FloatTensor (S_lgnn, n_pinn_reactions)
-                    Rows in LGNN order, columns aligned with flux_indices.
-                    Rows for species not in spatial are zero-padded.
-                    Rows for F_* species (which are reaction-rate trackers,
-                    not species) are also zero — the PINN doesn't update them
-                    via stoichiometry.
-    flux_indices : torch.LongTensor (n_pinn_reactions,)
-                    Index in lgnn_row_names of each F_* species, in column order
-    reaction_ids : list[str] — reaction name per column (for debug/log)
-    mapped_mask  : (S_lgnn,) bool ndarray, True where the row is mapped
-                    from spatial S (i.e., this species participates in the
-                    PINN-handled reactions)
+    flux_indices : torch.LongTensor (n_pinn_reactions,) — index in
+                    lgnn_row_names of each F_* species (column order)
+    reaction_ids : list[str] — reaction name per column (debug/log)
+    mapped_mask  : (S_lgnn,) bool ndarray — True where the row has any
+                    non-zero stoich entry across the kept reactions
+    """
+    p = Path(source_path)
+    suffix = p.suffix.lower()
+    if suffix in ('.xml', '.sbml'):
+        return load_stoichiometric_matrix_from_sbml(p, lgnn_row_names)
+    if suffix == '.lm':
+        return load_stoichiometric_matrix_from_lm(p, lgnn_row_names)
+    raise ValueError(
+        f'unrecognized stoich source: {p}. Expected .xml/.sbml or .lm'
+    )
+
+
+def load_stoichiometric_matrix_from_sbml(
+    sbml_path: str | Path,
+    lgnn_row_names: Sequence[str],
+) -> Tuple[torch.Tensor, torch.Tensor, List[str], np.ndarray]:
+    """Build (S_lgnn, n_pinn) S directly from SBML — no .lm consulted.
+
+    For each F_<rxn> species in lgnn_row_names that matches an SBML
+    reaction id (with optional R_ prefix and _end suffix, per the
+    simulator's flux-tracker naming convention), produce one column
+    populated with the reaction's stoichiometric coefficients placed at
+    the LGNN row indices of the participating species. Species are
+    matched via the same alias rules as species_graph.py
+    (_alias_candidates: direct / add M_ / strip M_).
+
+    This is the route the trainer should take whenever an SBML model is
+    available — it bypasses the .lm reactionConstNames bug and keeps
+    the PINN's hardwired stoichiometry in lockstep with the GNN's
+    RATE_LAW / MASS_BALANCE edges.
+    """
+    # Local import to avoid a hard module-level dependency cycle:
+    # species_graph imports stoichiometric_matrix in some downstream uses.
+    from cell_sim.lgnn.data.species_graph import (
+        parse_reactions_auto, _build_alias_map,
+    )
+
+    sbml_path = Path(sbml_path)
+    sbml_ids, reactions = parse_reactions_auto(sbml_path)
+    sbml_set = set(sbml_ids)
+    row_alias = _build_alias_map(list(lgnn_row_names), sbml_set)   # row -> sbml_id
+    sbml_to_row_idx = {}
+    for i, r in enumerate(lgnn_row_names):
+        sid = row_alias.get(r)
+        if sid is not None and sid not in sbml_to_row_idx:
+            sbml_to_row_idx[sid] = i
+
+    name_to_idx = {n: i for i, n in enumerate(lgnn_row_names)}
+
+    pinn_columns_stoich: List[dict] = []   # list of {row_idx: coef}
+    flux_indices: List[int] = []
+    reaction_ids: List[str] = []
+    matched_rxns: set = set()
+    for rxn_id, stoich in reactions.items():
+        rxn_stripped = rxn_id[2:] if rxn_id.startswith('R_') else rxn_id
+        # Candidate F_* names — matches species_graph.py's convention.
+        seen: set = set()
+        candidates: List[str] = []
+        for r in (rxn_stripped, rxn_id):
+            for v in (f'F_{r}', f'F_{r}_end'):
+                if v not in seen:
+                    seen.add(v); candidates.append(v)
+        flux_idx = None
+        for flux_name in candidates:
+            j = name_to_idx.get(flux_name)
+            if j is not None:
+                flux_idx = j
+                break
+        if flux_idx is None:
+            continue
+        col_stoich = {}
+        for sid, coef in stoich.items():
+            row_idx = sbml_to_row_idx.get(sid)
+            if row_idx is None or row_idx == flux_idx:
+                continue
+            col_stoich[row_idx] = float(coef)
+        if not col_stoich:
+            # F_<rxn> matched but no species participants resolved — skip
+            continue
+        pinn_columns_stoich.append(col_stoich)
+        flux_indices.append(flux_idx)
+        reaction_ids.append(rxn_id)
+        matched_rxns.add(rxn_id)
+
+    n_lgnn = len(lgnn_row_names)
+    n_pinn = len(flux_indices)
+    S_pinn = np.zeros((n_lgnn, n_pinn), dtype=np.float32)
+    for c, col_stoich in enumerate(pinn_columns_stoich):
+        for r, coef in col_stoich.items():
+            S_pinn[r, c] = coef
+    mapped_mask = (S_pinn != 0).any(axis=1)
+
+    n_fluxes_in_rows = sum(1 for n in lgnn_row_names if n.startswith('F_'))
+    print(f'  SBML: {sbml_path.name}  reactions={len(reactions)}  '
+          f'species={len(sbml_ids)}')
+    print(f'  F_* species in LGNN: {n_fluxes_in_rows}')
+    print(f'  PINN-mapped reactions: {n_pinn}   '
+          f'(rows with non-zero S: {int(mapped_mask.sum())})')
+    if n_pinn == 0:
+        print('  WARNING: zero columns matched — F_<rxn> naming is probably '
+              'inconsistent with SBML. Check `inspect_lm_file` and SBML ids.')
+
+    return (
+        torch.from_numpy(S_pinn),
+        torch.tensor(flux_indices, dtype=torch.long),
+        reaction_ids,
+        mapped_mask,
+    )
+
+
+def load_stoichiometric_matrix_from_lm(
+    lm_path: str | Path,
+    lgnn_row_names: Sequence[str],
+) -> Tuple[torch.Tensor, torch.Tensor, List[str], np.ndarray]:
+    """LEGACY: build PINN S from MinCell_*.lm.
+
+    Kept for diagnostics. The .lm file's reactionConstNames is a rate-
+    constant name list (1527 vs 3556 S columns), so mapping F_<rxn> to
+    an S column from this source is unreliable and yields 0/175 matches
+    on Syn3A_updated. Prefer load_stoichiometric_matrix_from_sbml.
     """
     import h5py
     lm_path = Path(lm_path)
