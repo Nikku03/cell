@@ -141,38 +141,73 @@ def load_stoichiometric_matrix_for_pinn(
               f'entries but S has {n_rxn} columns. Trying to proceed by '
               f'index alone.')
 
-    # Build lookup: reaction_name -> column index in S_spatial
+    # Build lookups
     rxn_idx_by_name = {n: i for i, n in enumerate(reaction_names_all)}
     spatial_idx_by_name = {n: i for i, n in enumerate(spatial_names)}
 
-    # For each F_<rxn> species in LGNN, find its reaction column
-    pinn_columns: List[int] = []      # which spatial S columns correspond to F_*
-    flux_indices: List[int] = []       # which LGNN rows are the F_* species
-    reaction_ids: List[str] = []       # reaction name (debug)
+    # Strategy choice
+    # -----------------
+    # reactionConstNames is unreliable (it carries 1527 rate-constant names
+    # against 3556 S columns in MinCell_*.lm — i.e. it isn't the reaction-name
+    # index we need). So the primary mapping is STRUCTURAL: each F_<rxn>
+    # species is a flux tracker whose row in spatial S has exactly one +1
+    # entry at the column of the reaction it tracks. We discover the column
+    # by reading that row. Name-matching is kept only as a fallback for
+    # any F_* species the structural pass can't resolve.
+
+    pinn_columns: List[int] = []
+    flux_indices: List[int] = []
+    reaction_ids: List[str] = []
     missing_rxns: List[str] = []
+    src_struct = 0
+    src_name = 0
+    used_cols: set[int] = set()
+
     for i, name in enumerate(lgnn_row_names):
         if not name.startswith('F_'):
             continue
-        rxn_id = name[2:]   # strip 'F_' prefix
-        # The .lm reactionConstNames typically carries the SBML 'R_' prefix
-        # (e.g. R_PGI) while the LGNN F_* species drops it (F_PGI). Try the
-        # raw form, with R_ added, and both with/without an '_end' suffix
-        # (period-averaged vs end-of-step bookkeeping).
-        base = rxn_id[:-4] if rxn_id.endswith('_end') else rxn_id
-        candidates: List[str] = []
-        for prefix in ('', 'R_'):
-            for suffix in ('', '_end'):
-                c = f'{prefix}{base}{suffix}'
-                if c not in candidates:
-                    candidates.append(c)
-        col = None
-        for c in candidates:
-            if c in rxn_idx_by_name:
-                col = rxn_idx_by_name[c]
-                break
+        rxn_id = name[2:]
+        col: int | None = None
+
+        # --- Primary: structural lookup via this F_* species' row in S ---
+        sp_row = spatial_idx_by_name.get(name)
+        if sp_row is not None:
+            row = S_spatial[sp_row]
+            nz = np.flatnonzero(row)
+            if nz.size == 1:
+                col = int(nz[0])
+                src_struct += 1
+            elif nz.size > 1:
+                # Multiple non-zero entries: pick the +1 entry if uniquely so
+                plus_ones = [c for c in nz if row[c] == 1]
+                if len(plus_ones) == 1:
+                    col = int(plus_ones[0])
+                    src_struct += 1
+
+        # --- Fallback: name lookup with R_/_end variants ---
+        if col is None:
+            base = rxn_id[:-4] if rxn_id.endswith('_end') else rxn_id
+            cand_list: List[str] = []
+            for prefix in ('', 'R_'):
+                for suffix in ('', '_end'):
+                    c = f'{prefix}{base}{suffix}'
+                    if c not in cand_list:
+                        cand_list.append(c)
+            for c in cand_list:
+                if c in rxn_idx_by_name:
+                    col = rxn_idx_by_name[c]
+                    src_name += 1
+                    break
+
         if col is None:
             missing_rxns.append(name)
             continue
+        if col in used_cols:
+            # Two F_* trackers should not collide on the same reaction column;
+            # if they do, flag and skip the duplicate.
+            missing_rxns.append(f'{name}(dup_col={col})')
+            continue
+        used_cols.add(col)
         pinn_columns.append(col)
         flux_indices.append(i)
         reaction_ids.append(rxn_id)
@@ -180,7 +215,8 @@ def load_stoichiometric_matrix_for_pinn(
     n_pinn_rxn = len(pinn_columns)
     print(f'  spatial S: ({n_sp}, {n_rxn})')
     print(f'  F_* species in LGNN: {len([n for n in lgnn_row_names if n.startswith("F_")])}')
-    print(f'  PINN-mapped reactions: {n_pinn_rxn}')
+    print(f'  PINN-mapped reactions: {n_pinn_rxn}   '
+          f'(structural={src_struct}, by-name={src_name})')
     print(f'  unmappable F_* species: {len(missing_rxns)} '
           f'(first few: {missing_rxns[:5]})')
 
@@ -210,3 +246,56 @@ def load_stoichiometric_matrix_for_pinn(
         reaction_ids,
         mapped_mask,
     )
+
+
+def inspect_lm_file(lm_path: str | Path, max_items: int = 6) -> None:
+    """Print structural info about a MinCell_*.lm file.
+
+    Use this when stoichiometric matrix loading silently misbehaves —
+    it dumps the Parameters attrs, Model/Reaction datasets, and a sample
+    of species/reaction names so we can see what is actually stored.
+    """
+    import h5py
+    lm_path = Path(lm_path)
+    with h5py.File(lm_path, 'r') as f:
+        print(f'== {lm_path.name} ==')
+        if 'Parameters' in f:
+            print('Parameters/ attrs:')
+            for k in f['Parameters'].attrs.keys():
+                v = f['Parameters'].attrs[k]
+                try:
+                    if isinstance(v, bytes):
+                        n = len(v.decode('utf-8', 'replace').split(','))
+                        print(f'  {k}: bytes, comma-split entries={n}')
+                    elif hasattr(v, 'shape'):
+                        print(f'  {k}: array shape={v.shape} dtype={v.dtype}')
+                    else:
+                        print(f'  {k}: {type(v).__name__} = {v!r}'[:120])
+                except Exception as e:
+                    print(f'  {k}: <err {e}>')
+            print('Parameters/ datasets:')
+            for k in f['Parameters'].keys():
+                d = f['Parameters'][k]
+                if hasattr(d, 'shape'):
+                    print(f'  {k}: shape={d.shape} dtype={d.dtype}')
+            if 'SpeciesNames' in f['Parameters']:
+                names = _decode(f['Parameters']['SpeciesNames'][:])
+                fluxes = [n for n in names if n.startswith('F_')]
+                print(f'  total species: {len(names)}, F_*: {len(fluxes)}, '
+                      f'first F_*: {fluxes[:max_items]}')
+        if 'Model' in f and 'Reaction' in f['Model']:
+            print('Model/Reaction/ datasets:')
+            for k in f['Model']['Reaction'].keys():
+                d = f['Model']['Reaction'][k]
+                if hasattr(d, 'shape'):
+                    print(f'  {k}: shape={d.shape} dtype={d.dtype}')
+            S = np.asarray(f['Model']['Reaction']['StoichiometricMatrix'])
+            print(f'  S non-zero entries: {int((S != 0).sum())}/{S.size}')
+            if 'SpeciesNames' in f.get('Parameters', {}):
+                names = _decode(f['Parameters']['SpeciesNames'][:])
+                # Demonstrate structural lookup on the first few F_* species
+                for n in [x for x in names if x.startswith('F_')][:max_items]:
+                    r = S[names.index(n)]
+                    nz = np.flatnonzero(r)
+                    print(f'  {n}: row has {nz.size} non-zero cols, '
+                          f'first few={list(zip(nz[:4].tolist(), r[nz[:4]].tolist()))}')
