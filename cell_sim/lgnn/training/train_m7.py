@@ -117,8 +117,14 @@ class M7TrainConfig(M3TrainConfig):
     scheduled_sampling: bool = True
     p_ss_max: float = 0.5
     p_ss_warmup_steps: int = 2000
-    # (g) Activation checkpointing. Default off at fast preset.
-    use_checkpoint: bool = False
+    # (g) Activation checkpointing. Recomputes layer forwards during backward
+    # instead of storing activations. ~4x memory savings for ~33% wall cost.
+    # Default ON: at bs=256 with the M3 encoder + PINN head + sigma channel,
+    # the k=4 rollout step's edge-message tensors blow past 94 GB without it
+    # (verified empirically — same OOM mode M6 hit before flipping this).
+    # tbptt_window doesn't help here because it only activates when
+    # k_cur > tbptt_window, so the k=4 epoch is full-BPTT.
+    use_checkpoint: bool = True
 
     # ---- k-curriculum: same shape as M6/M-PINN ----
     k_curriculum: tuple = (1, 4, 8, 16)
