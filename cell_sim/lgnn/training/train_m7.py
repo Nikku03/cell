@@ -174,6 +174,17 @@ class M7TrainConfig(M3TrainConfig):
     proteomics_xlsx:        Optional[str] = None
     gene_class_csv:         str = 'memory_bank/data/syn3a_gene_class_features.csv'
 
+    # ---- M7.4 - Tier-2/3 optional extras (each independent + disable-able) ----
+    # Each addition can be toggled separately. If a data file is missing,
+    # the loader emits a warning and returns a zero tensor, so the
+    # training keeps running with that feature group disabled.
+    use_kinetic_priors:        bool = False
+    use_complex_constraints:   bool = False
+    use_medium_features:       bool = False
+    kinetic_params_xlsx:       Optional[str] = None
+    complex_formation_xlsx:    Optional[str] = None
+    medium_xlsx:               Optional[str] = None
+
     # ---- M7.2 - per-stage curriculum knobs for long-horizon training ----
     # If set, these override the scalar samples_per_epoch and
     # truncated_bptt_window for each curriculum stage independently. Lets
@@ -231,9 +242,15 @@ def _build_combined_static_features(
     use_role: bool = True,
     use_spatial: bool = False,
     use_proteomics: bool = False,
+    use_kinetic_priors: bool = False,
+    use_complex_constraints: bool = False,
+    use_medium_features: bool = False,
     spatial_parquet: Optional[str] = None,
     proteomics_xlsx: Optional[str] = None,
     gene_class_csv: Optional[str] = None,
+    kinetic_params_xlsx: Optional[str] = None,
+    complex_formation_xlsx: Optional[str] = None,
+    medium_xlsx: Optional[str] = None,
     verbose: bool = True,
 ) -> Optional[torch.Tensor]:
     """Compose role / spatial / proteomics features into one (N, F) tensor.
@@ -317,11 +334,42 @@ def _build_combined_static_features(
             if verbose:
                 print(f'  + proteomics features: {pr.shape[1]} cols')
 
+    # ---- Tier-2/3 extras ----
+    if use_kinetic_priors:
+        from cell_sim.lgnn.extras.kinetic_priors import build_kinetic_prior_features
+        kp = build_kinetic_prior_features(
+            kinetic_params_xlsx or '', row_names, verbose=verbose,
+        )
+        if kp is not None:
+            parts.append(kp)
+            col_names.extend(['log_kcat', 'log_km'])
+
+    if use_complex_constraints:
+        from cell_sim.lgnn.extras.complex_constraints import (
+            build_complex_membership_features,
+        )
+        cx = build_complex_membership_features(
+            complex_formation_xlsx or '', row_names, verbose=verbose,
+        )
+        if cx is not None:
+            parts.append(cx)
+            col_names.extend([f'in_complex_{j}' for j in range(cx.shape[1])])
+
+    if use_medium_features:
+        from cell_sim.lgnn.extras.medium_features import build_medium_features
+        mf = build_medium_features(
+            medium_xlsx or '', row_names, verbose=verbose,
+        )
+        if mf is not None:
+            parts.append(mf)
+            col_names.extend([f'medium_{j}' for j in range(mf.shape[1])])
+
     if not parts:
         return None
     combined = torch.cat(parts, dim=1)
     if verbose:
-        print(f'  combined static features: shape {tuple(combined.shape)}')
+        print(f'  combined static features: shape {tuple(combined.shape)} '
+              f'({len(col_names)} named cols)')
     return combined
 
 
@@ -479,18 +527,27 @@ def train_m7(
     print('  precomputing per-species cross-replicate sigma...')
     sigma = compute_variance_channel(train_data)              # (T, S)
 
-    # --- Static features (M7.1: role; M7.3: + spatial + proteomics) ---
+    # --- Static features (M7.1 role; M7.3 spatial+proteomics; M7.4 extras) ---
     print(f'  building static features  role={cfg.use_role_features}  '
           f'spatial={cfg.use_spatial_features}  '
-          f'proteomics={cfg.use_proteomics_features}')
+          f'proteomics={cfg.use_proteomics_features}  '
+          f'kinetic={cfg.use_kinetic_priors}  '
+          f'complex={cfg.use_complex_constraints}  '
+          f'medium={cfg.use_medium_features}')
     static_features = _build_combined_static_features(
         row_names=row_names,
         use_role=cfg.use_role_features,
         use_spatial=cfg.use_spatial_features,
         use_proteomics=cfg.use_proteomics_features,
+        use_kinetic_priors=cfg.use_kinetic_priors,
+        use_complex_constraints=cfg.use_complex_constraints,
+        use_medium_features=cfg.use_medium_features,
         spatial_parquet=cfg.spatial_parquet,
         proteomics_xlsx=cfg.proteomics_xlsx,
         gene_class_csv=cfg.gene_class_csv,
+        kinetic_params_xlsx=cfg.kinetic_params_xlsx,
+        complex_formation_xlsx=cfg.complex_formation_xlsx,
+        medium_xlsx=cfg.medium_xlsx,
         verbose=True,
     )
 
