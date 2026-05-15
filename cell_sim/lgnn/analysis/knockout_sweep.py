@@ -30,6 +30,7 @@ import numpy as np
 
 
 _G_LOCUS_RE = re.compile(r'^G_(\d{4})(?:_[A-Za-z0-9]+)?$')
+_LOCUS_ANY_RE = re.compile(r'_(\d{4})(?:_|$)')
 
 
 def _gene_row_indices(row_names: Sequence[str]):
@@ -43,6 +44,27 @@ def _gene_row_indices(row_names: Sequence[str]):
     for i, n in enumerate(row_names):
         m = _G_LOCUS_RE.match(n)
         if m is None:
+            continue
+        out.setdefault(m.group(1), []).append(i)
+    return out
+
+
+def _full_locus_row_indices(row_names: Sequence[str]):
+    """Return {locus_4d: [row_idx, ...]} for ALL rows belonging to a locus.
+
+    Zeros the entire central-dogma chain when knocked out:
+    G_<locus>, R_<locus>, R_<locus>_d, P_<locus>, PM_<locus>,
+    RP_<locus>, RPM_<locus>, D_<locus>, DM_<locus>, etc.
+    Much larger perturbation than gene-only - represents complete
+    removal of all of a gene's products from the cell at t0.
+    """
+    out: Dict[str, List[int]] = {}
+    for i, n in enumerate(row_names):
+        m = _LOCUS_ANY_RE.search(n)
+        if m is None:
+            continue
+        # Skip flux trackers which don't represent gene products
+        if n.startswith('F_'):
             continue
         out.setdefault(m.group(1), []).append(i)
     return out
@@ -79,13 +101,14 @@ def run_knockout_sweep(
     sigma,                          # (T, S) variance channel
     row_names: Sequence[str],
     *,
-    x0_step: int = 0,
-    rollout_steps: int = 50,
+    x0_step: int = 100,
+    rollout_steps: int = 200,
     knockout_loci: Optional[Sequence[str]] = None,
     impact_metric: str = 'l2_drift',
     eval_dtype=None,
     feed_sigma: bool = True,
     log_every: int = 50,
+    knockout_mode: str = 'full_locus',
 ) -> Any:
     """Run a knockout for every gene locus, return a ranked DataFrame.
 
@@ -121,12 +144,26 @@ def run_knockout_sweep(
     if eval_dtype != original_dtype:
         model = model.to(eval_dtype)
 
-    gene_groups = _gene_row_indices(row_names)
+    if knockout_mode == 'full_locus':
+        gene_groups = _full_locus_row_indices(row_names)
+    elif knockout_mode == 'gene_only':
+        gene_groups = _gene_row_indices(row_names)
+    else:
+        raise ValueError(
+            f"unknown knockout_mode {knockout_mode!r}; "
+            f"use 'full_locus' or 'gene_only'"
+        )
     if knockout_loci is not None:
         gene_groups = {k: v for k, v in gene_groups.items()
                        if k in set(knockout_loci)}
     if not gene_groups:
-        raise ValueError('no gene loci to sweep')
+        raise ValueError('no loci to sweep')
+
+    # Report what we're about to do
+    print(f'  knockout_mode: {knockout_mode}')
+    print(f'  loci to sweep: {len(gene_groups)}')
+    avg_rows = sum(len(v) for v in gene_groups.values()) / len(gene_groups)
+    print(f'  avg rows zeroed per knockout: {avg_rows:.1f}')
 
     sbml_mask = None
     if impact_metric == 'sbml_drift' and hasattr(model, 'pinn_head'):
