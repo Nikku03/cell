@@ -158,6 +158,26 @@ class M7TrainConfig(M3TrainConfig):
     # vs mRNAs vs gene rows. Default ON.
     use_role_features: bool = True
 
+    # ---- M7.2 - per-stage curriculum knobs for long-horizon training ----
+    # If set, these override the scalar samples_per_epoch and
+    # truncated_bptt_window for each curriculum stage independently. Lets
+    # you spend lots of compute at low k (cheap, broad coverage) and pay
+    # for high-k rollouts only at the very end with reduced sample budget.
+    # Example:
+    #   k_curriculum             = (1,     4,    32,   128,  512)
+    #   samples_per_epoch_stage  = (20000, 20000, 10000, 5000, 1000)
+    #   tbptt_window_per_stage   = (None,  4,    2,    1,    1)
+    # tbptt=1 in particular cuts long-k cost dramatically: only the last
+    # rollout step backprops (and gets all the cumulative-error gradient
+    # signal); the earlier steps run under torch.no_grad() at ~2x the
+    # forward speed and zero activation memory. Compute at k=512 with
+    # tbptt=1 is closer to ~256x a k=1 step than the ~512x you'd expect
+    # from full BPTT.
+    # If None (default), falls back to the scalar samples_per_epoch /
+    # truncated_bptt_window applied uniformly.
+    samples_per_epoch_per_stage: Optional[tuple] = None
+    tbptt_window_per_stage:      Optional[tuple] = None
+
 
 # ----------------------------------------------------------------------
 # Subsampled (rep, t) iterator (speed lever a)
@@ -417,10 +437,26 @@ def train_m7(
         eff_lambda_rollout = (0.0 if (k_cur == 1 and cfg.skip_rollout_at_k1)
                               else cfg.lambda_rollout)
 
+        # Per-stage overrides: pick the stage-specific samples_per_epoch
+        # and tbptt window if the tuples are set, else fall back to the
+        # scalar fields.
+        if cfg.samples_per_epoch_per_stage is not None:
+            stage_samples = int(cfg.samples_per_epoch_per_stage[
+                min(epoch, len(cfg.samples_per_epoch_per_stage) - 1)
+            ])
+        else:
+            stage_samples = cfg.samples_per_epoch
+        if cfg.tbptt_window_per_stage is not None:
+            stage_tbptt = cfg.tbptt_window_per_stage[
+                min(epoch, len(cfg.tbptt_window_per_stage) - 1)
+            ]
+        else:
+            stage_tbptt = cfg.truncated_bptt_window
+
         # Truncated-BPTT cutoff index: steps with index >= grad_start
         # are computed with grad; earlier steps roll under no_grad.
-        if cfg.truncated_bptt_window is not None and k_cur > cfg.truncated_bptt_window:
-            grad_start = k_cur - cfg.truncated_bptt_window
+        if stage_tbptt is not None and k_cur > stage_tbptt:
+            grad_start = k_cur - stage_tbptt
         else:
             grad_start = 0      # all steps with grad
 
@@ -435,8 +471,12 @@ def train_m7(
         p_ss = 0.0
 
         pair_iter = _subsample_pair_iterator(
-            R, n_valid, cfg.batch_size, gen, device, cfg.samples_per_epoch,
+            R, n_valid, cfg.batch_size, gen, device, stage_samples,
         )
+        if (cfg.samples_per_epoch_per_stage is not None
+                or cfg.tbptt_window_per_stage is not None):
+            print(f'  ep{epoch} stage: k={k_cur}  samples={stage_samples}  '
+                  f'tbptt={stage_tbptt}  grad_start_step={grad_start}')
         for rep_idx, t_idx in pair_iter:
             x_w = _gather_windows(train_data, rep_idx, t_idx, k_cur + 1
                                   ).to(model_dtype)
