@@ -114,6 +114,13 @@ def run_knockout_sweep(
         eval_dtype = next(model.parameters()).dtype
     device = val_data.device
 
+    # If the user requested an eval dtype different from the model's, cast
+    # the WHOLE model to that dtype. Otherwise the input_proj matmul fails
+    # (mat1 and mat2 must match). full_rollout_evaluation does the same.
+    original_dtype = next(model.parameters()).dtype
+    if eval_dtype != original_dtype:
+        model = model.to(eval_dtype)
+
     gene_groups = _gene_row_indices(row_names)
     if knockout_loci is not None:
         gene_groups = {k: v for k, v in gene_groups.items()
