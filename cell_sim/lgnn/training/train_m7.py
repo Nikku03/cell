@@ -158,6 +158,22 @@ class M7TrainConfig(M3TrainConfig):
     # vs mRNAs vs gene rows. Default ON.
     use_role_features: bool = True
 
+    # ---- M7.3 - spatial + proteomics features ----
+    # When enabled, additionally inject:
+    #   spatial   : 12 per-locus columns from the lm-derived parquet
+    #               (distance to membrane, fractions in cytoplasm/DNA/etc.)
+    #   proteomics: 13 per-locus columns from initial_concentrations.xlsx
+    #               (5 function one-hot + 6 localization one-hot + 2 scalar)
+    # M5 broke training with 41 features that included row-uniquely-identifying
+    # gene_class columns (protein length, EC numbers etc.). Spatial + role +
+    # proteomics is 33 cols, all categorical-ish or coarse-continuous, well
+    # below the shortcut threshold.
+    use_spatial_features:    bool = False
+    use_proteomics_features: bool = False
+    spatial_parquet:        Optional[str] = None
+    proteomics_xlsx:        Optional[str] = None
+    gene_class_csv:         str = 'memory_bank/data/syn3a_gene_class_features.csv'
+
     # ---- M7.2 - per-stage curriculum knobs for long-horizon training ----
     # If set, these override the scalar samples_per_epoch and
     # truncated_bptt_window for each curriculum stage independently. Lets
@@ -207,6 +223,106 @@ def _build_role_features(row_names) -> torch.Tensor:
         for j, col in enumerate(ROLE_COLS):
             features[i, j] = float(roles[col])
     return features
+
+
+def _build_combined_static_features(
+    row_names,
+    *,
+    use_role: bool = True,
+    use_spatial: bool = False,
+    use_proteomics: bool = False,
+    spatial_parquet: Optional[str] = None,
+    proteomics_xlsx: Optional[str] = None,
+    gene_class_csv: Optional[str] = None,
+    verbose: bool = True,
+) -> Optional[torch.Tensor]:
+    """Compose role / spatial / proteomics features into one (N, F) tensor.
+
+    Builds only the columns the user enables. Skips the 19 gene_class
+    columns by default - those triggered M5's shortcut-learning failure
+    because protein_length_aa, has_gene_name etc. encoded row identity.
+    Role (8) + spatial (12) + proteomics (13) = 33 cols, comfortably
+    below the M5 threshold.
+
+    The spatial parquet and proteomics xlsx are only consulted if the
+    corresponding `use_*` flag is True AND the path is provided. If a
+    requested file is missing, raises a clear error.
+
+    Returns None when nothing is enabled (model gets dynamic-only input).
+    """
+    parts: list[torch.Tensor] = []
+    col_names: list[str] = []
+
+    if use_role:
+        from cell_sim.lgnn.data.static_node_features import ROLE_COLS
+        role = _build_role_features(row_names)
+        parts.append(role)
+        col_names.extend(ROLE_COLS)
+        if verbose:
+            print(f'  + role features: {role.shape[1]} cols')
+
+    if use_spatial or use_proteomics:
+        # The static_node_features builder produces ALL 54 columns; we
+        # slice afterwards. It requires gene_class_csv to exist even if
+        # we discard those columns - point at the in-repo default.
+        from cell_sim.lgnn.data.static_node_features import (
+            build_static_node_features,
+            ALL_STATIC_COLS, SPATIAL_COLS, PROTEOMICS_COLS,
+        )
+        from pathlib import Path
+
+        gc_csv = gene_class_csv or 'memory_bank/data/syn3a_gene_class_features.csv'
+        if not Path(gc_csv).exists():
+            raise FileNotFoundError(
+                f'gene_class_csv {gc_csv} not found; cannot build full '
+                f'static features. Either generate it via '
+                f'scripts/build_syn3a_gene_class_features.py or disable '
+                f'use_spatial_features / use_proteomics_features.'
+            )
+        if use_spatial and (spatial_parquet is None
+                            or not Path(spatial_parquet).exists()):
+            raise FileNotFoundError(
+                f'use_spatial_features=True but spatial_parquet '
+                f'{spatial_parquet} not found. Run step B (extractor) first.'
+            )
+        if use_proteomics and (proteomics_xlsx is None
+                               or not Path(proteomics_xlsx).exists()):
+            raise FileNotFoundError(
+                f'use_proteomics_features=True but proteomics_xlsx '
+                f'{proteomics_xlsx} not found.'
+            )
+
+        full = build_static_node_features(
+            row_names=row_names,
+            gene_class_csv=gc_csv,
+            spatial_parquet=spatial_parquet if use_spatial else None,
+            proteomics_xlsx=proteomics_xlsx  if use_proteomics else None,
+            initial_state_signed_log1p=None,
+            verbose=verbose,
+        )
+        # full is (N, len(ALL_STATIC_COLS)); slice out the cols we want.
+        col_to_idx = {c: i for i, c in enumerate(ALL_STATIC_COLS)}
+        if use_spatial:
+            sp_idx = [col_to_idx[c] for c in SPATIAL_COLS]
+            sp = full[:, sp_idx].float()
+            parts.append(sp)
+            col_names.extend(SPATIAL_COLS)
+            if verbose:
+                print(f'  + spatial features: {sp.shape[1]} cols')
+        if use_proteomics:
+            pr_idx = [col_to_idx[c] for c in PROTEOMICS_COLS]
+            pr = full[:, pr_idx].float()
+            parts.append(pr)
+            col_names.extend(PROTEOMICS_COLS)
+            if verbose:
+                print(f'  + proteomics features: {pr.shape[1]} cols')
+
+    if not parts:
+        return None
+    combined = torch.cat(parts, dim=1)
+    if verbose:
+        print(f'  combined static features: shape {tuple(combined.shape)}')
+    return combined
 
 
 def _subsample_pair_iterator(
@@ -363,16 +479,20 @@ def train_m7(
     print('  precomputing per-species cross-replicate sigma...')
     sigma = compute_variance_channel(train_data)              # (T, S)
 
-    # --- Static role features (M7.1) ---
-    if cfg.use_role_features:
-        print('  building 8 role indicators per row (M7.1)...')
-        static_features = _build_role_features(row_names)
-        type_counts = static_features.sum(dim=0).long().tolist()
-        from cell_sim.lgnn.data.static_node_features import ROLE_COLS
-        for col, cnt in zip(ROLE_COLS, type_counts):
-            print(f'    {col:32s} -> {cnt:4d} rows')
-    else:
-        static_features = None
+    # --- Static features (M7.1: role; M7.3: + spatial + proteomics) ---
+    print(f'  building static features  role={cfg.use_role_features}  '
+          f'spatial={cfg.use_spatial_features}  '
+          f'proteomics={cfg.use_proteomics_features}')
+    static_features = _build_combined_static_features(
+        row_names=row_names,
+        use_role=cfg.use_role_features,
+        use_spatial=cfg.use_spatial_features,
+        use_proteomics=cfg.use_proteomics_features,
+        spatial_parquet=cfg.spatial_parquet,
+        proteomics_xlsx=cfg.proteomics_xlsx,
+        gene_class_csv=cfg.gene_class_csv,
+        verbose=True,
+    )
 
     # --- Model ---
     model = CellGNNv7Hybrid(

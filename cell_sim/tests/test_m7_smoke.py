@@ -33,7 +33,7 @@ from cell_sim.lgnn.models.gnn_v7_hybrid import (
 from cell_sim.lgnn.models.pinn_head import signed_log1p, signed_expm1
 from cell_sim.lgnn.training.train_m7 import (
     M7TrainConfig, _m7_step_loss, _subsample_pair_iterator,
-    _build_role_features,
+    _build_role_features, _build_combined_static_features,
 )
 from cell_sim.lgnn.eval.full_rollout import full_rollout_evaluation
 
@@ -498,6 +498,48 @@ def test_m7_with_role_features_mass_conservation_preserved():
         f'SBML mass conservation broken with static features; '
         f'max diff = {diff.max().item():.6f}'
     )
+
+
+# ----------------------------------------------------------------------
+# M7.3 - combined static feature builder
+# ----------------------------------------------------------------------
+
+def test_combined_features_role_only_matches_role_builder():
+    """With use_role=True and the other flags off, combined_static should
+    return exactly what _build_role_features returns - byte-equal."""
+    rows = ['G_0001', 'R_0001', 'P_0001', 'PM_0001',
+            'RP_0001', 'D_0001', 'F_R1', 'M_atp_c']
+    role_only = _build_role_features(rows)
+    combined = _build_combined_static_features(
+        rows, use_role=True, use_spatial=False, use_proteomics=False,
+        verbose=False,
+    )
+    assert combined is not None
+    assert combined.shape == role_only.shape
+    assert torch.allclose(combined, role_only)
+
+
+def test_combined_features_returns_none_when_all_off():
+    rows = ['G_0001', 'P_0001']
+    combined = _build_combined_static_features(
+        rows, use_role=False, use_spatial=False, use_proteomics=False,
+        verbose=False,
+    )
+    assert combined is None
+
+
+def test_combined_features_raises_when_spatial_path_missing():
+    """If use_spatial is requested but the parquet path is None or missing,
+    the builder must raise a clear FileNotFoundError."""
+    rows = ['G_0001', 'P_0001']
+    try:
+        _build_combined_static_features(
+            rows, use_role=True, use_spatial=True,
+            spatial_parquet=None, verbose=False,
+        )
+        assert False, 'expected FileNotFoundError'
+    except FileNotFoundError as e:
+        assert 'spatial' in str(e).lower()
 
 
 # ----------------------------------------------------------------------
