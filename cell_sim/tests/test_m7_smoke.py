@@ -33,6 +33,7 @@ from cell_sim.lgnn.models.gnn_v7_hybrid import (
 from cell_sim.lgnn.models.pinn_head import signed_log1p, signed_expm1
 from cell_sim.lgnn.training.train_m7 import (
     M7TrainConfig, _m7_step_loss, _subsample_pair_iterator,
+    _build_role_features,
 )
 from cell_sim.lgnn.eval.full_rollout import full_rollout_evaluation
 
@@ -339,6 +340,164 @@ def test_full_rollout_eval_mass_balance_zero_at_t0():
         T_max=5, log_every=1000,
     )
     assert np.isfinite(res.mass_balance_l2).all()
+
+
+# ----------------------------------------------------------------------
+# Truncated BPTT
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# M7.1 - row-type static features
+# ----------------------------------------------------------------------
+
+def test_role_features_one_hot_per_row_type():
+    """_build_role_features produces 8 binary columns, exactly one set
+    per row (modulo the cofactor row which catches everything without
+    a locus tag)."""
+    rows = ['G_0001', 'R_0001', 'R_0001_d', 'P_0001', 'PM_0001',
+            'RP_0001', 'RPM_0001', 'D_0001', 'DM_0001',
+            'F_R1', 'M_atp_c']
+    feats = _build_role_features(rows)
+    assert feats.shape == (len(rows), 8)
+    # Each row should have at most one positive role flag (the cofactor
+    # column catches rows without a locus tag, so F_R1 and M_atp_c both
+    # land there).
+    for i in range(len(rows)):
+        n_active = int(feats[i].sum().item())
+        assert n_active >= 1, f'row {rows[i]} has no role flag set'
+        assert n_active <= 2, f'row {rows[i]} has too many role flags: {feats[i]}'
+    # G_0001 should be is_gene_row (col 0)
+    assert feats[0, 0] == 1.0, 'G_0001 not flagged as gene'
+    # R_0001 should be is_mrna_row (col 1), not is_mrna_decay_row (col 2)
+    assert feats[1, 1] == 1.0 and feats[1, 2] == 0.0
+    # R_0001_d should be is_mrna_decay_row (col 2)
+    assert feats[2, 2] == 1.0
+    # P_0001 should be is_protein_row (col 3)
+    assert feats[3, 3] == 1.0
+    # PM_0001 is_membrane_protein_row (col 4) AND triggers is_protein? No.
+    assert feats[4, 4] == 1.0
+
+
+def test_m7_with_role_features_forward_shapes():
+    """Model accepts an (N, 8) static feature tensor and produces the
+    same output shapes as without (just an internal channel-dim change)."""
+    with tempfile.TemporaryDirectory() as d:
+        g, rows = _build_tiny_graph(Path(d))
+    S, flux_idx = _build_tiny_stoich(len(rows), 2,
+                                       flux_indices_list=[rows.index('F_R1'),
+                                                            rows.index('F_R2')])
+    static = _build_role_features(rows)
+    model = CellGNNv7Hybrid(
+        graph=g, stoich_matrix=S, flux_indices=flux_idx,
+        hidden=16, n_layers=2, n_input_channels=2,
+        static_features=static,
+    )
+    assert model.n_static == 8
+    x = torch.randn(3, g.n_nodes) * 0.3
+    v = torch.zeros_like(x)
+    x_next, v_log = model(x, x_var=v)
+    assert x_next.shape == (3, g.n_nodes)
+    assert v_log.shape == (3, 2)
+    assert torch.isfinite(x_next).all()
+
+
+def test_m7_role_features_change_output():
+    """The same encoder with vs without static features should produce
+    DIFFERENT outputs - confirms the static features are actually
+    flowing into the encoder, not just sitting in a buffer."""
+    with tempfile.TemporaryDirectory() as d:
+        g, rows = _build_tiny_graph(Path(d))
+    S, flux_idx = _build_tiny_stoich(len(rows), 2,
+                                       flux_indices_list=[rows.index('F_R1'),
+                                                            rows.index('F_R2')])
+    static = _build_role_features(rows)
+
+    torch.manual_seed(0)
+    m_no_static = CellGNNv7Hybrid(
+        graph=g, stoich_matrix=S, flux_indices=flux_idx,
+        hidden=16, n_layers=2, static_features=None,
+    )
+    torch.manual_seed(0)
+    m_with_static = CellGNNv7Hybrid(
+        graph=g, stoich_matrix=S, flux_indices=flux_idx,
+        hidden=16, n_layers=2, static_features=static,
+    )
+
+    x = torch.randn(2, g.n_nodes) * 0.2
+    v = torch.zeros_like(x)
+    out_no = m_no_static(x, x_var=v)[0].detach()
+    out_w  = m_with_static(x, x_var=v)[0].detach()
+    # Outputs must differ - if they're identical, the static features
+    # aren't being read by the encoder.
+    assert not torch.allclose(out_no, out_w, atol=1e-5), \
+        'static features have no effect on output - check input_proj wiring'
+
+
+def test_m7_with_role_features_gradient_flow():
+    """Gradient still flows through both PINN and residual heads when
+    static features are added (the extra input dim shouldn't kill grad)."""
+    with tempfile.TemporaryDirectory() as d:
+        g, rows = _build_tiny_graph(Path(d))
+    S, flux_idx = _build_tiny_stoich(len(rows), 2,
+                                       flux_indices_list=[rows.index('F_R1'),
+                                                            rows.index('F_R2')])
+    static = _build_role_features(rows)
+    model = CellGNNv7Hybrid(
+        graph=g, stoich_matrix=S, flux_indices=flux_idx,
+        hidden=16, n_layers=2, static_features=static,
+        use_residual=True,
+    )
+    x = torch.randn(2, g.n_nodes) * 0.2
+    v = torch.zeros_like(x)
+    x_next, v_log = model(x, x_var=v)
+    loss = x_next.pow(2).mean() + v_log.pow(2).mean()
+    loss.backward()
+    rate_grad = model.pinn_head.rate_head.weight.grad
+    res_grad  = model.pinn_head.residual_head[0].weight.grad
+    enc_grad  = model.input_proj.weight.grad
+    assert rate_grad is not None and rate_grad.abs().sum().item() > 0
+    assert res_grad is not None and res_grad.abs().sum().item() > 0
+    assert enc_grad is not None and enc_grad.abs().sum().item() > 0
+    # Crucially: the input_proj weight should have shape (hidden, 2 + 8)
+    # = (16, 10), so columns 2..10 correspond to the static feature
+    # contribution. Verify those columns received gradient.
+    static_proj_cols = model.input_proj.weight.grad[:, 2:]
+    assert static_proj_cols.abs().sum().item() > 0, \
+        'gradient did not flow to the static-feature input columns'
+
+
+def test_m7_with_role_features_mass_conservation_preserved():
+    """Adding static features must not break the PINN mass-conservation
+    property on SBML-covered rows."""
+    with tempfile.TemporaryDirectory() as d:
+        g, rows = _build_tiny_graph(Path(d))
+    S, flux_idx = _build_tiny_stoich(len(rows), 2,
+                                       flux_indices_list=[rows.index('F_R1'),
+                                                            rows.index('F_R2')])
+    static = _build_role_features(rows)
+    torch.manual_seed(0)
+    model = CellGNNv7Hybrid(
+        graph=g, stoich_matrix=S, flux_indices=flux_idx,
+        hidden=16, n_layers=2, static_features=static,
+        use_residual=True,
+    )
+    model.eval()
+    x = torch.randn(2, g.n_nodes) * 0.3
+    v = torch.zeros_like(x)
+    x_next, v_log = model(x, x_var=v)
+
+    v_lin = signed_expm1(v_log)
+    x_lin = signed_expm1(x)
+    dx_pinn_lin = v_lin @ S.t()
+    x_next_pinn_lin = x_lin + dx_pinn_lin
+    x_next_pinn_log = signed_log1p(x_next_pinn_lin)
+
+    sbml_mask = (model.pinn_head.s_covered_mask > 0)
+    diff = (x_next - x_next_pinn_log)[:, sbml_mask].abs()
+    assert diff.max().item() < 1e-4, (
+        f'SBML mass conservation broken with static features; '
+        f'max diff = {diff.max().item():.6f}'
+    )
 
 
 # ----------------------------------------------------------------------

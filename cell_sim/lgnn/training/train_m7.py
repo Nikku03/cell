@@ -146,10 +146,48 @@ class M7TrainConfig(M3TrainConfig):
     # ablate or to reuse a checkpoint trained without it.
     n_input_channels: int = 2
 
+    # ---- M7.1 - row-type static features ----
+    # Pass 8 one-hot row-type indicators (is_gene / is_mrna / is_protein
+    # / is_membrane_protein / is_translation_complex / is_degradation /
+    # is_mrna_decay / is_cofactor_or_flux) as additional input channels.
+    # Categorical only - the model can learn "this is a protein" vs "this
+    # is an mRNA" but cannot use them to identify individual rows (8 flags
+    # encode 8 types, not 8572 rows). Avoids the M5 shortcut-learning
+    # failure mode while giving the residual head the row-type
+    # discrimination it needs to predict different deltas for proteins
+    # vs mRNAs vs gene rows. Default ON.
+    use_role_features: bool = True
+
 
 # ----------------------------------------------------------------------
 # Subsampled (rep, t) iterator (speed lever a)
 # ----------------------------------------------------------------------
+
+def _build_role_features(row_names) -> torch.Tensor:
+    """Build (N, 8) one-hot row-type indicators.
+
+    Categorical species-type label per row, derived from row name
+    prefix. Used as static input channels in M7.1 so the residual
+    head can differentiate proteins from mRNAs from gene rows from
+    complexes without M5's shortcut-learning failure mode.
+
+    Returns
+    -------
+    torch.FloatTensor of shape (len(row_names), 8) where column j is
+    1.0 if the row matches the j-th category in
+    cell_sim.lgnn.data.static_node_features.ROLE_COLS, else 0.0.
+    """
+    from cell_sim.lgnn.data.static_node_features import (
+        _role_indicators, ROLE_COLS,
+    )
+    N = len(row_names)
+    features = torch.zeros(N, len(ROLE_COLS), dtype=torch.float32)
+    for i, name in enumerate(row_names):
+        roles = _role_indicators(name)
+        for j, col in enumerate(ROLE_COLS):
+            features[i, j] = float(roles[col])
+    return features
+
 
 def _subsample_pair_iterator(
     R: int, n_valid: int, batch_size: int,
@@ -305,6 +343,17 @@ def train_m7(
     print('  precomputing per-species cross-replicate sigma...')
     sigma = compute_variance_channel(train_data)              # (T, S)
 
+    # --- Static role features (M7.1) ---
+    if cfg.use_role_features:
+        print('  building 8 role indicators per row (M7.1)...')
+        static_features = _build_role_features(row_names)
+        type_counts = static_features.sum(dim=0).long().tolist()
+        from cell_sim.lgnn.data.static_node_features import ROLE_COLS
+        for col, cnt in zip(ROLE_COLS, type_counts):
+            print(f'    {col:32s} -> {cnt:4d} rows')
+    else:
+        static_features = None
+
     # --- Model ---
     model = CellGNNv7Hybrid(
         graph=graph,
@@ -312,6 +361,7 @@ def train_m7(
         flux_indices=flux_indices.cpu(),
         hidden=cfg.hidden, n_layers=cfg.n_layers,
         n_input_channels=cfg.n_input_channels,
+        static_features=static_features,
         use_checkpoint=cfg.use_checkpoint,
         edge_chunk_size=cfg.edge_chunk_size,
         cfc_tau_min=cfg.cfc_tau_min,

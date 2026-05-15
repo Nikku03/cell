@@ -77,6 +77,7 @@ class CellGNNv7Hybrid(nn.Module):
         hidden: int = 64,
         n_layers: int = 3,
         n_input_channels: int = 2,
+        static_features: Optional[torch.Tensor] = None,
         use_checkpoint: bool = False,
         edge_chunk_size: Optional[int] = None,
         cfc_tau_min: float = 0.1,
@@ -100,7 +101,22 @@ class CellGNNv7Hybrid(nn.Module):
         self.register_buffer('edge_attr', ea)
         self.register_buffer('edge_kind', ek)
 
-        self.input_proj = nn.Linear(n_input_channels, hidden)
+        # Static per-species categorical features (e.g. row-type indicators).
+        # Constant across batch and time, broadcast at forward. If None,
+        # M7 acts identically to the pre-M7.1 version (n_static=0). The
+        # M5 failure mode (shortcut learning) is mitigated by keeping
+        # n_static small and categorical - 8 role flags can only encode
+        # 8 species types, not 8572 individual rows, so the model can't
+        # use them as a row-identity lookup.
+        if static_features is not None:
+            self.register_buffer('static_features', static_features.float())
+            self.n_static = int(static_features.shape[1])
+        else:
+            self.static_features = None
+            self.n_static = 0
+
+        total_in = n_input_channels + self.n_static
+        self.input_proj = nn.Linear(total_in, hidden)
         self.layers = nn.ModuleList([
             _CfCAttentionGNNLayer(
                 hidden=hidden, edge_attr_dim=edge_attr_dim,
@@ -145,11 +161,19 @@ class CellGNNv7Hybrid(nn.Module):
         """
         B, N = x.shape
         if self.n_input_channels == 1:
-            channels = x.unsqueeze(-1)
+            dyn = x.unsqueeze(-1)
         else:
             if x_var is None:
                 x_var = torch.zeros_like(x)
-            channels = torch.stack([x, x_var], dim=-1)
+            dyn = torch.stack([x, x_var], dim=-1)
+
+        if self.n_static > 0:
+            # static_features: (N, F_static) -> broadcast to (B, N, F_static)
+            static_b = self.static_features.unsqueeze(0).expand(B, -1, -1)
+            static_b = static_b.to(dyn.dtype)
+            channels = torch.cat([dyn, static_b], dim=-1)
+        else:
+            channels = dyn
         h = self.input_proj(channels)
 
         if edge_dropout_p > 0.0 and self.training:
