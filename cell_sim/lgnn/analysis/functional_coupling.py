@@ -136,25 +136,32 @@ def hidden_state_similarity(
     import torch
     import pandas as pd
     model.eval()
-    # Standard M7 forward: get hidden state after encoder
+    # Mirror the model's input-construction logic to avoid shape mismatch
+    # if the model's n_input_channels or static-feature config is unusual.
     with torch.no_grad():
         if x_t.dim() == 1:
             x_t = x_t.unsqueeze(0)
-        h = model.input_proj(
-            torch.cat([
-                x_t.unsqueeze(-1),
-                torch.zeros_like(x_t).unsqueeze(-1),  # zero variance channel
-            ] + (
-                [model.static_features.unsqueeze(0).expand(x_t.shape[0], -1, -1)]
-                if (model.n_static > 0) else []
-            ), dim=-1)
-        )  # (B, N, hidden)
-        # Pass through the 3 message-passing layers
+        x_t = x_t.to(next(model.parameters()).dtype)
+        # Dynamic channels
+        if model.n_input_channels == 1:
+            dyn = x_t.unsqueeze(-1)
+        else:
+            dyn = torch.stack([x_t, torch.zeros_like(x_t)], dim=-1)
+        # Static channels (if model has them)
+        if getattr(model, 'n_static', 0) > 0:
+            static_b = (model.static_features
+                        .unsqueeze(0)
+                        .expand(x_t.shape[0], -1, -1)
+                        .to(dyn.dtype))
+            channels = torch.cat([dyn, static_b], dim=-1)
+        else:
+            channels = dyn
+        h = model.input_proj(channels)
         for layer in model.layers:
             h, _ = layer(h, model.edge_index, model.edge_attr, model.edge_kind,
                           edge_mask=None, chunk_size=model.edge_chunk_size)
         h = model.out_norm(h)
-    H = h.squeeze(0).cpu().numpy()      # (N, hidden)
+    H = h.squeeze(0).float().cpu().numpy()    # (N, hidden)
 
     # Optional filter
     if species_filter is not None:

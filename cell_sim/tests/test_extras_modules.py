@@ -212,3 +212,63 @@ def test_medium_features_handles_missing_file():
     )
     assert out is not None
     assert (out == 0).all()
+
+
+# ----------------------------------------------------------------------
+# Integration test: combined feature builder with multiple extras enabled
+# ----------------------------------------------------------------------
+
+def test_combined_features_with_all_extras_enabled():
+    """Wire kinetic_priors + complex_constraints + medium together with
+    role features. Verify the output shape matches the sum of each
+    module's contribution."""
+    from cell_sim.lgnn.training.train_m7 import _build_combined_static_features
+    with tempfile.TemporaryDirectory() as d:
+        kin = _toy_kinetic_xlsx(Path(d))
+        cx  = _toy_complex_xlsx(Path(d))
+        med = _toy_medium_xlsx(Path(d))
+        rows = _toy_rows()
+        out = _build_combined_static_features(
+            row_names=rows,
+            use_role=True,
+            use_spatial=False,
+            use_proteomics=False,
+            use_kinetic_priors=True,
+            use_complex_constraints=True,
+            use_medium_features=True,
+            kinetic_params_xlsx=str(kin),
+            complex_formation_xlsx=str(cx),
+            medium_xlsx=str(med),
+            verbose=False,
+        )
+    assert out is not None
+    # Expect: role (8) + kinetic (2) + complex (≥1) + medium (4) = 15+
+    assert out.shape[0] == len(rows)
+    assert out.shape[1] >= 15
+    # Check role columns are still correct (col 0 = is_gene_row)
+    g_idx = rows.index('G_0001')
+    assert out[g_idx, 0] == 1.0    # is_gene_row is the first role column
+
+
+def test_combined_features_extras_independent_of_each_other():
+    """A failure to load one extras file should not affect the others."""
+    from cell_sim.lgnn.training.train_m7 import _build_combined_static_features
+    with tempfile.TemporaryDirectory() as d:
+        med = _toy_medium_xlsx(Path(d))
+        rows = _toy_rows()
+        # kinetic_params_xlsx and complex_formation_xlsx are MISSING
+        out = _build_combined_static_features(
+            row_names=rows,
+            use_role=True,
+            use_kinetic_priors=True,
+            use_complex_constraints=True,
+            use_medium_features=True,
+            kinetic_params_xlsx='/nonexistent/kin.xlsx',
+            complex_formation_xlsx='/nonexistent/cx.xlsx',
+            medium_xlsx=str(med),
+            verbose=False,
+        )
+    # Should NOT crash. Should produce a tensor including zeros for the
+    # missing extras and real values for medium and role.
+    assert out is not None
+    assert out.shape[0] == len(rows)
