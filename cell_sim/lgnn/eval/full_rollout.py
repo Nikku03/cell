@@ -81,6 +81,7 @@ def full_rollout_evaluation(
     T_max: int = 7200,
     log_every: int = 500,
     feed_sigma: bool = True,
+    eval_dtype: torch.dtype = torch.float32,
 ) -> RolloutResult:
     """Autoregressively roll the model from val_data[val_replicate_idx, x0_step]
     for T_max steps, then report per-species and per-category R^2 plus
@@ -111,6 +112,14 @@ def full_rollout_evaluation(
     RolloutResult.
     """
     device     = val_data.device
+    # Force fp32 for the rollout. bf16 precision (~3 sig figs) compounds over
+    # thousands of autoregressive steps, especially through the PINNHead's
+    # signed_expm1 bridge for high-count species (proteins ~50k). Empirically
+    # a bf16 model produces NaN after ~200-300 steps. fp32 keeps the rollout
+    # honest at the cost of ~2x memory during eval. Restore at the end.
+    original_dtype = next(model.parameters()).dtype
+    if eval_dtype is not None and eval_dtype != original_dtype:
+        model = model.to(eval_dtype)
     model_dtype = next(model.parameters()).dtype
     R_v, T_v, S = val_data.shape
     if val_replicate_idx >= R_v:

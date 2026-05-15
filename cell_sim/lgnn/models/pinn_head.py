@@ -99,7 +99,8 @@ class PINNHead(nn.Module):
     def __init__(self, hidden: int, stoich_matrix: torch.Tensor,
                  flux_indices: torch.Tensor,
                  rate_clip: Optional[float] = 6.0,
-                 use_residual: bool = True):
+                 use_residual: bool = True,
+                 residual_clip: Optional[float] = 0.5):
         super().__init__()
         n_species, n_reactions = stoich_matrix.shape
         if flux_indices.numel() != n_reactions:
@@ -118,6 +119,15 @@ class PINNHead(nn.Module):
         self.register_buffer('s_covered_mask', s_covered)        # (n_species,)
         self.rate_head = nn.Linear(hidden, 1)
         self.rate_clip = rate_clip
+        # Clamp on the residual head's log-space delta. The residual is
+        # mapped to linear space via signed_expm1(x_log + residual_log_delta),
+        # so a residual of 0.5 means up to a ~65% multiplicative change in
+        # the linear count per step. Anything unbounded here causes rollout
+        # blow-up (proteins with count ~50k explode after ~200 steps in bf16
+        # because the residual delta scales as expm1(x_log) * residual).
+        # 0.5 is a conservative starting point; bump up to 1.0 if you need
+        # more dynamic range for low-count species.
+        self.residual_clip = residual_clip
 
         self.use_residual = use_residual
         if use_residual:
@@ -164,6 +174,13 @@ class PINNHead(nn.Module):
             # coverage. For PINN-covered species, trust the hardwired physics.
             mask = self.s_covered_mask.to(x_log.dtype)           # (S,)
             residual_log_delta = residual_log_delta * (1.0 - mask).unsqueeze(0)
+            # Clamp BEFORE the exp bridge - the residual maps multiplicatively
+            # to linear space (expm1(x_log + r) - expm1(x_log) ~= expm1(x_log)*r
+            # for small r), so an unclamped large r explodes high-count species.
+            if self.residual_clip is not None:
+                residual_log_delta = residual_log_delta.clamp(
+                    -self.residual_clip, self.residual_clip,
+                )
             residual_linear = signed_expm1(x_log + residual_log_delta) - x_linear
             dx_total_linear = dx_pinn_linear + residual_linear
         else:
