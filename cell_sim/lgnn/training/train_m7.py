@@ -196,6 +196,16 @@ class M7TrainConfig(M3TrainConfig):
     large_subunit_xlsx:         Optional[str] = None
     gibbs_csv_path:             Optional[str] = None
 
+    # ---- M7.6 - exclude simulator-initialization timesteps from training ----
+    # The narrate_window analysis revealed that t=0 -> t=1 in the trajectory
+    # data is dominated by simulator initialization artifacts (massive
+    # unexplained residuals on metabolites, negative event counts on flux
+    # rows). Training on these (rep, t<100) pairs corrupts the model's
+    # dynamics with init-only noise. Setting t_skip_initial > 0 excludes
+    # the first N seconds from both training-pair sampling and per-epoch
+    # validation. Default 0 preserves prior behaviour.
+    t_skip_initial: int = 0
+
     # ---- M7.2 - per-stage curriculum knobs for long-horizon training ----
     # If set, these override the scalar samples_per_epoch and
     # truncated_bptt_window for each curriculum stage independently. Lets
@@ -428,20 +438,32 @@ def _subsample_pair_iterator(
     R: int, n_valid: int, batch_size: int,
     generator: torch.Generator, device: torch.device,
     n_samples: Optional[int],
+    t_skip_initial: int = 0,
 ):
     """Yield (rep_idx, t_idx) batches.
 
-    If `n_samples` is None or >= R*n_valid, falls through to the M3
-    full-enumeration permutation. Otherwise samples without replacement
-    when n_samples <= R*n_valid (one random subset per epoch).
+    If `n_samples` is None or >= R*(n_valid - t_skip_initial), falls
+    through to the M3 full-enumeration permutation over the
+    [t_skip_initial, n_valid) range. Otherwise samples without
+    replacement when n_samples <= R*(n_valid - t_skip_initial).
+
+    t_skip_initial excludes early timesteps that may contain simulator
+    initialization artifacts (see narrate_window analysis at t=0).
     """
-    total = R * n_valid
+    n_eff = max(n_valid - t_skip_initial, 1)
+    total = R * n_eff
     if n_samples is None or n_samples >= total:
-        yield from _index_iterator(R, n_valid, batch_size, generator, device)
+        # Full enumeration over (rep, t_offset) where t_offset >= t_skip_initial
+        perm = torch.randperm(total, generator=generator, device=device)
+        rep_idx_all = perm // n_eff
+        t_idx_all = (perm % n_eff) + t_skip_initial
+        for s in range(0, total, batch_size):
+            e = min(s + batch_size, total)
+            yield rep_idx_all[s:e], t_idx_all[s:e]
         return
     perm = torch.randperm(total, generator=generator, device=device)[:n_samples]
-    rep_idx_all = perm // n_valid
-    t_idx_all   = perm %  n_valid
+    rep_idx_all = perm // n_eff
+    t_idx_all = (perm % n_eff) + t_skip_initial
     for s in range(0, n_samples, batch_size):
         e = min(s + batch_size, n_samples)
         yield rep_idx_all[s:e], t_idx_all[s:e]
@@ -706,6 +728,7 @@ def train_m7(
 
         pair_iter = _subsample_pair_iterator(
             R, n_valid, cfg.batch_size, gen, device, stage_samples,
+            t_skip_initial=cfg.t_skip_initial,
         )
         if (cfg.samples_per_epoch_per_stage is not None
                 or cfg.tbptt_window_per_stage is not None):
@@ -905,7 +928,11 @@ def _evaluate_m7(
     total_full_cum   = 0.0
     n_full = 0
 
-    for t_start in range(0, n_valid, bs):
+    # Skip early timesteps in validation too (cfg.t_skip_initial), so
+    # val numbers reflect the model's behaviour on real cell dynamics
+    # rather than being dragged down by simulator-init artifacts at t=0.
+    t_start_lo = getattr(cfg, 't_skip_initial', 0)
+    for t_start in range(t_start_lo, n_valid, bs):
         t_idx = torch.arange(t_start, min(t_start + bs, n_valid), device=device)
         rep_idx = torch.zeros_like(t_idx)
         x_w = _gather_windows(val_data, rep_idx, t_idx, cfg.max_k + 1

@@ -285,6 +285,32 @@ def test_subsample_pair_iterator_count_and_range():
     assert n_full == R * n_valid
 
 
+def test_subsample_pair_iterator_skips_initial_timesteps():
+    """t_skip_initial=10 should make t_idx >= 10 always."""
+    R, n_valid = 4, 50
+    gen = torch.Generator(device='cpu').manual_seed(0)
+    seen_t = set()
+    for rep, t in _subsample_pair_iterator(
+        R, n_valid, batch_size=16,
+        generator=gen, device=torch.device('cpu'),
+        n_samples=None, t_skip_initial=10,
+    ):
+        seen_t.update(t.tolist())
+    assert min(seen_t) >= 10, f'minimum t was {min(seen_t)}, expected >= 10'
+    assert max(seen_t) < n_valid
+
+    # Also test with subsampling
+    gen = torch.Generator(device='cpu').manual_seed(0)
+    seen_t = set()
+    for rep, t in _subsample_pair_iterator(
+        R, n_valid, batch_size=8,
+        generator=gen, device=torch.device('cpu'),
+        n_samples=20, t_skip_initial=10,
+    ):
+        seen_t.update(t.tolist())
+    assert min(seen_t) >= 10
+
+
 # ----------------------------------------------------------------------
 # Full rollout eval
 # ----------------------------------------------------------------------
