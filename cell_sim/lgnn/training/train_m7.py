@@ -185,6 +185,17 @@ class M7TrainConfig(M3TrainConfig):
     complex_formation_xlsx:    Optional[str] = None
     medium_xlsx:               Optional[str] = None
 
+    # ---- M7.5 prep - additional optional extras (prepped but default OFF) ----
+    # Each loader is implemented in cell_sim/lgnn/extras/ and tested in
+    # cell_sim/tests/test_extras_modules.py. Activation is one config
+    # flag flip; the loader handles missing files with a WARNING.
+    use_regulatory_features:    bool = False
+    use_ribosome_subunit:       bool = False
+    use_thermodynamics:         bool = False
+    protein_metabolites_xlsx:   Optional[str] = None
+    large_subunit_xlsx:         Optional[str] = None
+    gibbs_csv_path:             Optional[str] = None
+
     # ---- M7.2 - per-stage curriculum knobs for long-horizon training ----
     # If set, these override the scalar samples_per_epoch and
     # truncated_bptt_window for each curriculum stage independently. Lets
@@ -245,12 +256,18 @@ def _build_combined_static_features(
     use_kinetic_priors: bool = False,
     use_complex_constraints: bool = False,
     use_medium_features: bool = False,
+    use_regulatory_features: bool = False,
+    use_ribosome_subunit: bool = False,
+    use_thermodynamics: bool = False,
     spatial_parquet: Optional[str] = None,
     proteomics_xlsx: Optional[str] = None,
     gene_class_csv: Optional[str] = None,
     kinetic_params_xlsx: Optional[str] = None,
     complex_formation_xlsx: Optional[str] = None,
     medium_xlsx: Optional[str] = None,
+    protein_metabolites_xlsx: Optional[str] = None,
+    large_subunit_xlsx: Optional[str] = None,
+    gibbs_csv_path: Optional[str] = None,
     verbose: bool = True,
 ) -> Optional[torch.Tensor]:
     """Compose role / spatial / proteomics features into one (N, F) tensor.
@@ -363,6 +380,40 @@ def _build_combined_static_features(
         if mf is not None:
             parts.append(mf)
             col_names.extend([f'medium_{j}' for j in range(mf.shape[1])])
+
+    # ---- M7.5 prep extras (default OFF) ----
+    if use_regulatory_features:
+        from cell_sim.lgnn.extras.regulatory_features import (
+            build_regulatory_features, REGULATORY_FEATURE_COLS,
+        )
+        reg = build_regulatory_features(
+            protein_metabolites_xlsx or '', row_names, verbose=verbose,
+        )
+        if reg is not None:
+            parts.append(reg)
+            col_names.extend(REGULATORY_FEATURE_COLS)
+
+    if use_ribosome_subunit:
+        from cell_sim.lgnn.extras.ribosome_subunit import (
+            build_ribosome_subunit_features, RIBOSOME_SUBUNIT_COLS,
+        )
+        rs = build_ribosome_subunit_features(
+            large_subunit_xlsx or '', row_names, verbose=verbose,
+        )
+        if rs is not None:
+            parts.append(rs)
+            col_names.extend(RIBOSOME_SUBUNIT_COLS)
+
+    if use_thermodynamics:
+        from cell_sim.lgnn.extras.thermodynamics import (
+            build_thermodynamics_features, THERMO_FEATURE_COLS,
+        )
+        th = build_thermodynamics_features(
+            gibbs_csv_path or '', row_names, verbose=verbose,
+        )
+        if th is not None:
+            parts.append(th)
+            col_names.extend(THERMO_FEATURE_COLS)
 
     if not parts:
         return None
@@ -542,12 +593,18 @@ def train_m7(
         use_kinetic_priors=cfg.use_kinetic_priors,
         use_complex_constraints=cfg.use_complex_constraints,
         use_medium_features=cfg.use_medium_features,
+        use_regulatory_features=cfg.use_regulatory_features,
+        use_ribosome_subunit=cfg.use_ribosome_subunit,
+        use_thermodynamics=cfg.use_thermodynamics,
         spatial_parquet=cfg.spatial_parquet,
         proteomics_xlsx=cfg.proteomics_xlsx,
         gene_class_csv=cfg.gene_class_csv,
         kinetic_params_xlsx=cfg.kinetic_params_xlsx,
         complex_formation_xlsx=cfg.complex_formation_xlsx,
         medium_xlsx=cfg.medium_xlsx,
+        protein_metabolites_xlsx=cfg.protein_metabolites_xlsx,
+        large_subunit_xlsx=cfg.large_subunit_xlsx,
+        gibbs_csv_path=cfg.gibbs_csv_path,
         verbose=True,
     )
 
