@@ -100,7 +100,8 @@ class PINNHead(nn.Module):
                  flux_indices: torch.Tensor,
                  rate_clip: Optional[float] = 6.0,
                  use_residual: bool = True,
-                 residual_clip: Optional[float] = 0.5):
+                 residual_clip: Optional[float] = 0.5,
+                 x_next_log_clip: Optional[float] = 15.0):
         super().__init__()
         n_species, n_reactions = stoich_matrix.shape
         if flux_indices.numel() != n_reactions:
@@ -128,6 +129,15 @@ class PINNHead(nn.Module):
         # 0.5 is a conservative starting point; bump up to 1.0 if you need
         # more dynamic range for low-count species.
         self.residual_clip = residual_clip
+        # Clamp the predicted next-step log state. Even with residual_clip and
+        # rate_clip enforcing bounded per-step deltas, an autoregressive rollout
+        # over 1000+ steps can accumulate drift that pushes x_log past the
+        # float32 expm1 overflow boundary (~88). Clamping x_next_log to ±15
+        # corresponds to counts in [-3.3M, +3.3M] - generous for any real
+        # cellular species but bulletproof against the runaway. Affects both
+        # training and inference, so the model learns to live within the
+        # bounds rather than relying on inference-only clamping.
+        self.x_next_log_clip = x_next_log_clip
 
         self.use_residual = use_residual
         if use_residual:
@@ -190,6 +200,10 @@ class PINNHead(nn.Module):
 
         # 6. Bridge back to log space
         x_next_log = signed_log1p(x_next_linear)                # (B, S)
+        if self.x_next_log_clip is not None:
+            x_next_log = x_next_log.clamp(
+                -self.x_next_log_clip, self.x_next_log_clip,
+            )
 
         return x_next_log, v_log
 
