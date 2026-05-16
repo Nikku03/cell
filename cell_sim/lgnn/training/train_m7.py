@@ -1040,7 +1040,10 @@ def train_m7(
             R, n_valid, cfg.batch_size, gen, device, stage_samples,
             t_skip_initial=cfg.t_skip_initial,
         )
-        # M7.8 random-anchor stage: figure out warmup range
+        # M7.8 random-anchor stage: figure out warmup range AND adjust
+        # iter count when chunked anchors is on (else we'd run 195
+        # iterations × K anchors-each, giving stage_samples * K total
+        # samples instead of stage_samples).
         if cfg.train_strategy == 'random_anchor':
             if cfg.random_anchor_warmup_max_per_stage:
                 stage_max_warmup = int(cfg.random_anchor_warmup_max_per_stage[
@@ -1048,17 +1051,31 @@ def train_m7(
                 ])
             else:
                 stage_max_warmup = 100
-            # Tighten the safe n_valid for sampling so we have enough
-            # tail room for warmup + horizon
             effective_n_valid = max(
                 1, T - cfg.multi_step_horizon - stage_max_warmup - 1
             )
+            # Compute expected anchors per iter so we hit stage_samples
+            # in (stage_samples / (batch*avgK)) iters instead of all K=100
+            # times more.
+            if cfg.n_anchor_chunks_per_warmup > 1:
+                avg_K = min(cfg.n_anchor_chunks_per_warmup,
+                            max(1, stage_max_warmup // 2))
+                target_samples_per_iter = cfg.batch_size * max(1, avg_K)
+                iter_samples = max(
+                    cfg.batch_size,
+                    int(stage_samples / max(avg_K, 1)),
+                )
+            else:
+                avg_K = 1
+                iter_samples = stage_samples
             pair_iter = _subsample_pair_iterator(
                 R, effective_n_valid, cfg.batch_size, gen, device,
-                stage_samples, t_skip_initial=cfg.t_skip_initial,
+                iter_samples, t_skip_initial=cfg.t_skip_initial,
             )
+            n_iters_est = max(1, iter_samples // cfg.batch_size)
             print(f'  ep{epoch} M7.8 random_anchor: '
                   f'samples={stage_samples}  max_warmup={stage_max_warmup}  '
+                  f'avg_K={avg_K}  iters={n_iters_est}  '
                   f'multi_step_H={cfg.multi_step_horizon}  '
                   f'aux_w={cfg.aux_loss_weight}')
         elif (cfg.samples_per_epoch_per_stage is not None
@@ -1117,7 +1134,11 @@ def train_m7(
                 run['mse_cum']   += breakdown['mse_cum'].float()
                 run['rollout']   += L_aux.detach().float()
                 n_batches += 1
-                if n_batches % cfg.log_every == 0:
+                # In chunked mode, total iters may be small (~2-8) so log
+                # every iter; otherwise honour cfg.log_every.
+                effective_log_every = (1 if cfg.n_anchor_chunks_per_warmup > 1
+                                       else cfg.log_every)
+                if n_batches % effective_log_every == 0:
                     wall = time.time() - t_epoch
                     vals = {k: float(v.item()) / n_batches
                             for k, v in run.items()}
