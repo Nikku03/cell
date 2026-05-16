@@ -251,6 +251,13 @@ class M7TrainConfig(M3TrainConfig):
     multi_step_horizon:                   int = 1
     aux_loss_weight:                      float = 0.5
 
+    # Chunked-anchor amortization: split each long warmup into K
+    # equally-spaced anchors, training at each. n_anchor_chunks=10 means
+    # one 7000-step warmup yields 10 training signals instead of 1 -
+    # an effective 10x speedup. Setting to 1 disables (vanilla random
+    # anchor behaviour).
+    n_anchor_chunks_per_warmup:           int = 1
+
 
 # ----------------------------------------------------------------------
 # Subsampled (rep, t) iterator (speed lever a)
@@ -537,6 +544,11 @@ def _random_anchor_train_step(
                           ).to(model_dtype)
 
     # ---- Phase 1: NO_GRAD warmup with scheduled sampling ----
+    # Disable activation checkpointing during warmup - it's overhead
+    # for no_grad rollouts (no backward to recompute for).
+    _saved_ckpt = getattr(model, 'use_checkpoint', False)
+    if hasattr(model, 'use_checkpoint'):
+        model.use_checkpoint = False
     x_pred = x_w[:, 0, :]
     if warmup_steps > 0:
         with torch.no_grad():
@@ -552,6 +564,11 @@ def _random_anchor_train_step(
                     x_input = x_pred
                 x_next, _ = model(x_input, x_var=v_cur)
                 x_pred = x_next
+
+    # Re-enable checkpointing for the grad forward (we DO need it for
+    # backward to be memory-safe)
+    if hasattr(model, 'use_checkpoint'):
+        model.use_checkpoint = _saved_ckpt
 
     # ---- Phase 2: ONE GRAD forward at the anchor, multi-step prediction ----
     v_anchor = sigma[t_idx + warmup_steps].to(model_dtype)
@@ -581,6 +598,149 @@ def _random_anchor_train_step(
         L_aux_total = L_aux_total / max(H - 1, 1)
 
     return L_primary, L_aux_total, breakdown
+
+
+# ----------------------------------------------------------------------
+# M7.8: Chunked-anchor amortization
+# ----------------------------------------------------------------------
+def _chunked_anchor_train_step(
+    model,
+    train_data,
+    sigma,
+    rep_idx,
+    t_idx,
+    *,
+    warmup_steps: int,
+    n_anchor_chunks: int,
+    multi_step_horizon: int,
+    p_ss: float,
+    flux_indices,
+    count_mask,
+    cum_mask,
+    cfg,
+    model_dtype,
+    opt,
+    aux_weight: float,
+):
+    """Amortize ONE long warmup over `n_anchor_chunks` training anchors.
+
+    Standard random-anchor wastes the warmup rollout: 7000 steps of
+    no-grad forward produce a SINGLE anchor's state for ONE training
+    signal. Chunked amortization treats the warmup as a SEQUENCE of
+    anchor states - we stop at K equally-spaced points along the
+    warmup and do a small grad forward+backward at each. One 7000-step
+    warmup produces K training signals instead of 1, an effective K×
+    speedup. K=10 means 10 anchors per warmup; total samples = K *
+    (n_warmup_batches).
+
+    Each anchor uses the multi_step_horizon=H aux head trick: one grad
+    forward, one backward, H gradient signals (1 primary + H-1 aux).
+
+    Returns the average per-anchor loss across all K anchors. Each
+    anchor's gradient is applied immediately (opt.step()), so the
+    function consumes n_anchor_chunks worth of training samples per
+    call.
+    """
+    H = multi_step_horizon
+    # We need x_w long enough to: roll past the LAST anchor + supply
+    # H targets after it. Last anchor is at t_idx + warmup_steps.
+    window_len = warmup_steps + H + 1
+    x_w = _gather_windows(train_data, rep_idx, t_idx, window_len
+                          ).to(model_dtype)
+
+    # Anchor step positions: K evenly spaced along [warmup_steps/K,  warmup_steps]
+    if n_anchor_chunks <= 1 or warmup_steps == 0:
+        anchor_positions = [warmup_steps]
+    else:
+        chunk_size = max(1, warmup_steps // n_anchor_chunks)
+        anchor_positions = [
+            min((i + 1) * chunk_size, warmup_steps)
+            for i in range(n_anchor_chunks)
+        ]
+
+    # Disable checkpointing during warmup; restore for grad step
+    _saved_ckpt = getattr(model, 'use_checkpoint', False)
+
+    x_pred = x_w[:, 0, :]
+    cur_pos = 0
+    total_primary = torch.zeros((), device=x_pred.device, dtype=torch.float32)
+    total_aux = torch.zeros((), device=x_pred.device, dtype=torch.float32)
+    cumulative_breakdown = None
+    n_anchors_done = 0
+
+    for anchor_pos in anchor_positions:
+        # Phase A: advance NO_GRAD from cur_pos to anchor_pos
+        if anchor_pos > cur_pos:
+            if hasattr(model, 'use_checkpoint'):
+                model.use_checkpoint = False
+            with torch.no_grad():
+                for s in range(cur_pos, anchor_pos):
+                    v_cur = sigma[t_idx + s].to(model_dtype)
+                    if s > 0 and p_ss < 1.0:
+                        use_tf = (torch.rand(
+                            x_pred.shape[0], 1, device=x_pred.device
+                        ) > p_ss).to(x_pred.dtype)
+                        x_input = (use_tf * x_w[:, s, :]
+                                   + (1 - use_tf) * x_pred)
+                    else:
+                        x_input = x_pred
+                    x_next, _ = model(x_input, x_var=v_cur)
+                    x_pred = x_next
+            cur_pos = anchor_pos
+            if hasattr(model, 'use_checkpoint'):
+                model.use_checkpoint = _saved_ckpt
+
+        # Phase B: ONE grad forward at this anchor + multi-step
+        v_anchor = sigma[t_idx + anchor_pos].to(model_dtype)
+        if H > 1:
+            x_next_log, v_log, aux_preds = model(
+                x_pred.detach(), x_var=v_anchor, return_multi_step=True,
+            )
+        else:
+            x_next_log, v_log = model(x_pred.detach(), x_var=v_anchor)
+            aux_preds = None
+
+        primary_target = x_w[:, anchor_pos + 1, :]
+        L_primary, breakdown = _m7_step_loss(
+            x_next_log, v_log, primary_target, flux_indices,
+            count_mask, cum_mask,
+            cfg.weight_count, cfg.weight_flux, cfg.weight_cumulative,
+        )
+        L_aux = torch.zeros((), device=x_pred.device, dtype=model_dtype)
+        if aux_preds is not None:
+            for h_idx in range(H - 1):
+                tgt = x_w[:, anchor_pos + 2 + h_idx, :]
+                L_aux = L_aux + (aux_preds[:, h_idx] - tgt).pow(2).mean()
+            L_aux = L_aux / max(H - 1, 1)
+        L = L_primary + aux_weight * L_aux
+
+        opt.zero_grad(set_to_none=True)
+        L.backward()
+        opt.step()
+
+        total_primary = total_primary + L_primary.detach().float()
+        total_aux     = total_aux + L_aux.detach().float()
+        if cumulative_breakdown is None:
+            cumulative_breakdown = {k: v.detach().float()
+                                    for k, v in breakdown.items()}
+        else:
+            for k in cumulative_breakdown:
+                cumulative_breakdown[k] = cumulative_breakdown[k] \
+                    + breakdown[k].detach().float()
+        n_anchors_done += 1
+
+        # Update x_pred for next chunk (using fresh prediction from same forward)
+        # We need to step forward to give the next chunk a starting state.
+        # Use the multi-step or single-step prediction.
+        x_pred = x_next_log.detach()
+        cur_pos = anchor_pos + 1
+
+    # Average
+    avg_primary = total_primary / max(n_anchors_done, 1)
+    avg_aux = total_aux / max(n_anchors_done, 1)
+    avg_breakdown = {k: v / max(n_anchors_done, 1)
+                     for k, v in (cumulative_breakdown or {}).items()}
+    return avg_primary, avg_aux, avg_breakdown, n_anchors_done
 
 
 # ----------------------------------------------------------------------
@@ -878,33 +1038,50 @@ def train_m7(
                                1.0) * cfg.p_ss_max
                 else:
                     p_ss = 0.0
-                # Sample a warmup length for this batch
                 warmup_steps = int(torch.randint(
                     0, stage_max_warmup + 1, (1,),
                     generator=gen, device=device,
                 ).item())
-                L_primary, L_aux, breakdown = _random_anchor_train_step(
-                    model, train_data, sigma, rep_idx, t_idx,
-                    warmup_steps=warmup_steps,
-                    multi_step_horizon=cfg.multi_step_horizon,
-                    p_ss=p_ss,
-                    flux_indices=flux_indices,
-                    count_mask=count_mask, cum_mask=cum_mask,
-                    cfg=cfg, model_dtype=model_dtype,
-                )
-                L = L_primary + cfg.aux_loss_weight * L_aux
-                opt.zero_grad(set_to_none=True)
-                L.backward()
-                opt.step()
-                global_step += 1
+                if cfg.n_anchor_chunks_per_warmup > 1:
+                    # Chunked amortization: K anchors per warmup
+                    L_primary, L_aux, breakdown, n_anchors = (
+                        _chunked_anchor_train_step(
+                            model, train_data, sigma, rep_idx, t_idx,
+                            warmup_steps=warmup_steps,
+                            n_anchor_chunks=cfg.n_anchor_chunks_per_warmup,
+                            multi_step_horizon=cfg.multi_step_horizon,
+                            p_ss=p_ss,
+                            flux_indices=flux_indices,
+                            count_mask=count_mask, cum_mask=cum_mask,
+                            cfg=cfg, model_dtype=model_dtype,
+                            opt=opt, aux_weight=cfg.aux_loss_weight,
+                        )
+                    )
+                    L = L_primary + cfg.aux_loss_weight * L_aux
+                    global_step += n_anchors
+                    n_seen += int(rep_idx.shape[0]) * n_anchors
+                else:
+                    L_primary, L_aux, breakdown = _random_anchor_train_step(
+                        model, train_data, sigma, rep_idx, t_idx,
+                        warmup_steps=warmup_steps,
+                        multi_step_horizon=cfg.multi_step_horizon,
+                        p_ss=p_ss,
+                        flux_indices=flux_indices,
+                        count_mask=count_mask, cum_mask=cum_mask,
+                        cfg=cfg, model_dtype=model_dtype,
+                    )
+                    L = L_primary + cfg.aux_loss_weight * L_aux
+                    opt.zero_grad(set_to_none=True)
+                    L.backward()
+                    opt.step()
+                    global_step += 1
+                    n_seen += int(rep_idx.shape[0])
                 run['total']     += L.detach().float()
                 run['mse_count'] += breakdown['mse_count'].float()
                 run['mse_flux']  += breakdown['mse_flux'].float()
                 run['mse_cum']   += breakdown['mse_cum'].float()
                 run['rollout']   += L_aux.detach().float()
-                # attn entropy / mb left at zero for this strategy
                 n_batches += 1
-                n_seen += int(rep_idx.shape[0])
                 if n_batches % cfg.log_every == 0:
                     wall = time.time() - t_epoch
                     vals = {k: float(v.item()) / n_batches
