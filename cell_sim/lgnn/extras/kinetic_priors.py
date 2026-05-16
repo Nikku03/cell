@@ -63,64 +63,141 @@ def build_kinetic_prior_features(
         return torch.zeros(len(row_names), 2, dtype=torch.float32)
 
     try:
-        # The Luthey-Schulten kinetic_params.xlsx has multiple sheets.
-        # Try common ones in order.
-        df = None
-        for sheet in (0, 'Kinetic Parameters', 'Sheet1', 'kinetic_params'):
-            try:
-                df = pd.read_excel(xlsx_path, sheet_name=sheet)
-                break
-            except Exception:
-                continue
-        if df is None or len(df) == 0:
-            if verbose:
-                print(f'  WARNING: kinetic_params at {xlsx_path} '
-                      f'has no readable sheet; returning zero tensor')
-            return torch.zeros(len(row_names), 2, dtype=torch.float32)
+        # The Luthey-Schulten kinetic_params_new.xlsx has 10 sheets
+        # (Central, Nucleotide, Lipid, Amino Acid, Cofactor, Transport, ...)
+        # in LONG format: columns are (Reaction Name, Parameter Type,
+        # Value, ...) and each reaction has multiple rows (one per
+        # parameter type like 'Substrate Catalytic Rate Constant',
+        # 'Michaelis Constant'). Load every sheet and concatenate so we
+        # see every subsystem's reactions. Falls back to the legacy
+        # wide-format single-sheet loaders when those don't apply.
+        all_frames = []
+        try:
+            sheet_dict = pd.read_excel(xlsx_path, sheet_name=None)
+        except Exception as e_all:
+            sheet_dict = None
+            legacy_err = e_all
+        if sheet_dict:
+            for s_name, s_df in sheet_dict.items():
+                if s_df is None or len(s_df) == 0:
+                    continue
+                all_frames.append(s_df)
+        if not all_frames:
+            # Fall back to legacy wide-format probe
+            df = None
+            for sheet in (0, 'Kinetic Parameters', 'Sheet1', 'kinetic_params'):
+                try:
+                    df = pd.read_excel(xlsx_path, sheet_name=sheet)
+                    break
+                except Exception:
+                    continue
+            if df is None or len(df) == 0:
+                if verbose:
+                    print(f'  WARNING: kinetic_params at {xlsx_path} '
+                          f'has no readable sheet; returning zero tensor')
+                return torch.zeros(len(row_names), 2, dtype=torch.float32)
+            all_frames = [df]
     except Exception as e:
         if verbose:
             print(f'  WARNING: failed to read {xlsx_path}: {e}')
         return torch.zeros(len(row_names), 2, dtype=torch.float32)
 
-    # Find the reaction-id column (heuristic)
-    rxn_col = None
-    for col in df.columns:
-        cl = str(col).lower()
-        if 'rxn' in cl or 'reaction' in cl or 'rid' in cl:
-            rxn_col = col
-            break
-    if rxn_col is None:
-        rxn_col = df.columns[0]   # last-resort: first column
+    # Detect format. Long format has a 'Parameter Type' column;
+    # values like 'Substrate Catalytic Rate Constant' encode kcat,
+    # 'Michaelis Constant' encodes Km. Wide format has columns
+    # literally named kcat / Km. Some sheets in kinetic_params_new
+    # are long-format kinetics; others (Diffusion Coefficient,
+    # Membrane Surface Area, Gen. Info.) are auxiliary and have
+    # different schemas - they get skipped via the column probe.
+    kin_map: dict = {}
+    n_kcat_rows = 0
+    n_km_rows = 0
+    for df in all_frames:
+        # Locate the reaction-id column
+        rxn_col = None
+        for col in df.columns:
+            cl = str(col).lower()
+            if 'rxn' in cl or 'reaction' in cl or 'rid' in cl:
+                rxn_col = col
+                break
+        if rxn_col is None:
+            # Sheets without a reaction column (e.g. Diffusion Coefficient
+            # which is keyed on species) are not kinetic; skip cleanly.
+            continue
 
-    # Find kcat and Km columns
-    kcat_col = None
-    km_col = None
-    for col in df.columns:
-        cl = str(col).lower().replace(' ', '').replace('_', '')
-        if 'kcat' in cl and kcat_col is None:
-            kcat_col = col
-        if ('km' == cl[:2] or 'k_m' in cl.lower()) and km_col is None:
-            km_col = col
+        # Detect long-format kinetics by Parameter Type + Value pair
+        ptype_col = None
+        value_col = None
+        for col in df.columns:
+            cl = str(col).lower()
+            if ('parameter' in cl or 'param type' in cl) and ptype_col is None:
+                ptype_col = col
+            if cl == 'value' and value_col is None:
+                value_col = col
+        if ptype_col is not None and value_col is not None:
+            # Long-format. Each (rxn, parameter_type) -> value.
+            # We want kcat (forward) and Km. Prefer 'Substrate Catalytic'
+            # over 'Product Catalytic' since the rate head learns v in
+            # the forward direction.
+            for _, r in df.iterrows():
+                rxn_id = str(r[rxn_col]).strip()
+                if not rxn_id or rxn_id == 'nan':
+                    continue
+                ptype = str(r[ptype_col]).strip().lower()
+                try:
+                    val = float(r[value_col])
+                except (TypeError, ValueError):
+                    continue
+                cur_kcat, cur_km = kin_map.get(rxn_id, (0.0, 0.0))
+                # kcat: forward catalytic rate (substrate -> product)
+                if 'substrate' in ptype and 'catalytic' in ptype:
+                    cur_kcat = val
+                    n_kcat_rows += 1
+                # Km: Michaelis constant
+                elif 'michaelis' in ptype or ptype.startswith('km'):
+                    cur_km = val
+                    n_km_rows += 1
+                kin_map[rxn_id] = (cur_kcat, cur_km)
+            continue
+
+        # Wide format: dedicated kcat / Km columns
+        kcat_col = None
+        km_col = None
+        for col in df.columns:
+            cl = str(col).lower().replace(' ', '').replace('_', '')
+            if 'kcat' in cl and kcat_col is None:
+                kcat_col = col
+            if ('km' == cl[:2] or 'k_m' in cl.lower()) and km_col is None:
+                km_col = col
+        if kcat_col is None and km_col is None:
+            continue   # not a kinetics sheet
+        for _, r in df.iterrows():
+            rxn_id = str(r[rxn_col]).strip()
+            if not rxn_id or rxn_id == 'nan':
+                continue
+            try:
+                kcat_val = float(r[kcat_col]) if kcat_col is not None else 0.0
+            except (TypeError, ValueError):
+                kcat_val = 0.0
+            try:
+                km_val = float(r[km_col]) if km_col is not None else 0.0
+            except (TypeError, ValueError):
+                km_val = 0.0
+            kin_map[rxn_id] = (kcat_val, km_val)
+            if kcat_val:
+                n_kcat_rows += 1
+            if km_val:
+                n_km_rows += 1
+
+    if not kin_map:
+        if verbose:
+            print(f'  WARNING: kinetic_params at {xlsx_path} '
+                  f'yielded no parsable rows; returning zero tensor')
+        return torch.zeros(len(row_names), 2, dtype=torch.float32)
 
     if verbose:
-        print(f'  kinetic_params: rxn_col={rxn_col!r}  kcat_col={kcat_col!r}  '
-              f'km_col={km_col!r}')
-
-    # Build reaction-id -> (kcat, km) map
-    kin_map = {}
-    for _, r in df.iterrows():
-        rxn_id = str(r[rxn_col]).strip()
-        if not rxn_id or rxn_id == 'nan':
-            continue
-        try:
-            kcat_val = float(r[kcat_col]) if kcat_col is not None else 0.0
-        except (TypeError, ValueError):
-            kcat_val = 0.0
-        try:
-            km_val = float(r[km_col]) if km_col is not None else 0.0
-        except (TypeError, ValueError):
-            km_val = 0.0
-        kin_map[rxn_id] = (kcat_val, km_val)
+        print(f'  kinetic_params: {len(kin_map)} reactions parsed '
+              f'(kcat rows={n_kcat_rows}, km rows={n_km_rows})')
 
     # Derive flux indices if not provided
     if flux_indices is None:

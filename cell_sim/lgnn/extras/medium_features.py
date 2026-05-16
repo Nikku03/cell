@@ -69,19 +69,33 @@ def build_medium_features(
             print(f'  WARNING: failed to read {xlsx_path}: {e}')
         return torch.zeros(len(row_names), n_features, dtype=torch.float32)
 
-    # Heuristic: find a metabolite-name column and a concentration column
+    # Heuristic: find a metabolite-name column and the final-concentration
+    # column. Prefer 'final' over generic 'conc/mm/molar' so the
+    # 'Final Conc (mM)' column wins against partial 'C5mod Contribution
+    # (mM)' / 'CRML Contribution (mM)' columns in the Luthey-Schulten
+    # Medium.xlsx. The 'Component' name column lacks the 'name/metab/id'
+    # tokens, so fall back to the first column when none matches.
     name_col = None
-    conc_col = None
+    conc_col_final = None       # preferred: 'Final Conc'
+    conc_col_generic = None     # fallback: any 'conc/mm/molar' column
     for col in df.columns:
         cl = str(col).lower()
-        if ('name' in cl or 'metab' in cl or 'id' in cl) and name_col is None:
+        if ('name' in cl or 'metab' in cl or 'id' in cl or 'component' in cl) \
+                and name_col is None:
             name_col = col
-        if ('conc' in cl or 'mm' in cl or 'molar' in cl) and conc_col is None:
-            conc_col = col
+        if 'final' in cl and ('conc' in cl or 'mm' in cl or 'molar' in cl):
+            if conc_col_final is None:
+                conc_col_final = col
+        elif ('conc' in cl or 'mm' in cl or 'molar' in cl) \
+                and conc_col_generic is None:
+            conc_col_generic = col
+    conc_col = conc_col_final or conc_col_generic
     if name_col is None:
         name_col = df.columns[0]
     if conc_col is None:
         conc_col = df.columns[-1]
+    if verbose:
+        print(f'  medium columns: name={name_col!r}  conc={conc_col!r}')
 
     # Aggregate: log of sum-by-category
     aa_metabolites = {'ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly',
