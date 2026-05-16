@@ -83,6 +83,7 @@ class CellGNNv7Hybrid(nn.Module):
         cfc_tau_min: float = 0.1,
         rate_clip: float = 6.0,
         use_residual: bool = True,
+        multi_step_horizon: int = 1,
     ):
         super().__init__()
         self.n_nodes = graph.n_nodes
@@ -133,6 +134,27 @@ class CellGNNv7Hybrid(nn.Module):
             use_residual=use_residual,
         )
 
+        # Multi-step prediction heads (DeepSeek-V3-style MTP, adapted).
+        # Each aux head predicts x at horizon k=2..H, given the encoder
+        # hidden representation. They share the encoder with pinn_head
+        # but compute predictions for future timesteps via a lightweight
+        # linear+tanh delta-from-x mapping. Used in 'random_anchor'
+        # training only; discarded at inference. ~195 extra params for
+        # H=4 (3 heads × 65 params each), no cost when H=1.
+        self.multi_step_horizon = max(1, int(multi_step_horizon))
+        if self.multi_step_horizon > 1:
+            self.aux_heads = nn.ModuleList([
+                nn.Linear(hidden, 1) for _ in range(self.multi_step_horizon - 1)
+            ])
+            # Per-horizon learnable scale so head k can express
+            # horizon-specific delta magnitudes without saturating tanh.
+            self.aux_delta_scale = nn.Parameter(
+                torch.ones(self.multi_step_horizon - 1)
+            )
+        else:
+            self.aux_heads = None
+            self.aux_delta_scale = None
+
     # ------------------------------------------------------------------
     @property
     def s_covered_mask(self) -> torch.Tensor:
@@ -150,6 +172,7 @@ class CellGNNv7Hybrid(nn.Module):
         x_var: Optional[torch.Tensor] = None,
         edge_dropout_p: float = 0.0,
         return_attention_entropy: bool = False,
+        return_multi_step: bool = False,
     ) -> Union[
         Tuple[torch.Tensor, torch.Tensor],
         Tuple[torch.Tensor, torch.Tensor, torch.Tensor],
@@ -200,8 +223,26 @@ class CellGNNv7Hybrid(nn.Module):
         h = self.out_norm(h)
         x_next_log, v_log = self.pinn_head(x, h)
 
+        # Multi-step predictions for horizons 2..H (training-only path)
+        aux_preds = None
+        if return_multi_step and self.aux_heads is not None:
+            # Each head: hidden -> per-node delta (B, N, 1) -> (B, N).
+            # tanh clamps to (-1, 1), scale lets each horizon expand its
+            # range; final prediction = x + scale_k * tanh(head_k(h)).
+            # This is x-relative: small dynamics get small deltas.
+            preds = []
+            for h_idx, head in enumerate(self.aux_heads):
+                delta = head(h).squeeze(-1)                     # (B, N)
+                delta = self.aux_delta_scale[h_idx] * torch.tanh(delta)
+                preds.append(x + delta)
+            aux_preds = torch.stack(preds, dim=1)               # (B, H-1, N)
+
+        if return_attention_entropy and aux_preds is not None:
+            return x_next_log, v_log, total_entropy.mean(), aux_preds
         if return_attention_entropy:
             return x_next_log, v_log, total_entropy.mean()
+        if aux_preds is not None:
+            return x_next_log, v_log, aux_preds
         return x_next_log, v_log
 
 

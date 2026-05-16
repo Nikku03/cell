@@ -226,6 +226,31 @@ class M7TrainConfig(M3TrainConfig):
     samples_per_epoch_per_stage: Optional[tuple] = None
     tbptt_window_per_stage:      Optional[tuple] = None
 
+    # ---- M7.8 - random-anchor warmup + multi-step head ----
+    # New training strategy that decouples *rollout horizon* from
+    # *gradient horizon* by running a no-grad warmup phase to expose
+    # the model to its own predictions at random anchor timesteps,
+    # then a single forward pass that predicts H future timesteps in
+    # parallel via auxiliary heads.
+    #
+    # Set train_strategy='random_anchor' to activate; default 'standard'
+    # preserves the M7.1-7.7 behaviour.
+    #
+    # random_anchor_warmup_max_per_stage: max warmup length to sample from
+    #   per curriculum stage. e.g. (10, 100, 1000, 7000) lets the model
+    #   see anchors from t=10..[10,110,1010,7010]. Picked uniformly per
+    #   batch.
+    # multi_step_horizon: how many future timesteps the auxiliary heads
+    #   should predict (in addition to the standard 1-step prediction).
+    #   H=4 gives 4 parallel predictions for the cost of ~1 forward pass
+    #   plus 1 backward — DeepSeek-V3 MTP-style.
+    # aux_loss_weight: weighting of the auxiliary multi-step loss
+    #   relative to the primary one-step loss.
+    train_strategy:                       str = 'standard'
+    random_anchor_warmup_max_per_stage:   Optional[tuple] = None
+    multi_step_horizon:                   int = 1
+    aux_loss_weight:                      float = 0.5
+
 
 # ----------------------------------------------------------------------
 # Subsampled (rep, t) iterator (speed lever a)
@@ -470,6 +495,95 @@ def _subsample_pair_iterator(
 
 
 # ----------------------------------------------------------------------
+# M7.8: random-anchor + multi-step training step
+# ----------------------------------------------------------------------
+def _random_anchor_train_step(
+    model,
+    train_data,
+    sigma,
+    rep_idx,
+    t_idx,
+    *,
+    warmup_steps: int,
+    multi_step_horizon: int,
+    p_ss: float,
+    flux_indices,
+    count_mask,
+    cum_mask,
+    cfg,
+    model_dtype,
+):
+    """One training step under random-anchor warmup + multi-step prediction.
+
+    1. Gather window [t, t + warmup + H + 1) from train_data.
+    2. With NO_GRAD, roll model forward for `warmup_steps` steps starting
+       from x_w[:, 0]. Use scheduled sampling (mix model output and
+       ground truth at probability p_ss) to expose the model to its own
+       drifted predictions at every warmup step.
+    3. The model's prediction at the anchor (= x_w[:, warmup_steps]) is
+       used as the input to ONE GRAD forward pass with
+       return_multi_step=True. The pinn_head produces x_{t+1} and v_log;
+       the aux_heads produce x_{t+2..t+H}.
+    4. Loss = primary 1-step loss + aux_weight * sum of H-1 multi-step
+       MSE losses. One backward pass back-propagates through ONE forward.
+
+    This decouples rollout horizon (warmup_steps, can be 0..7000) from
+    gradient horizon (one forward pass), giving per-sample compute that
+    is O(warmup_steps) for forward + O(1) for backward.
+    """
+    H = multi_step_horizon
+    window_len = warmup_steps + H + 1
+    x_w = _gather_windows(train_data, rep_idx, t_idx, window_len
+                          ).to(model_dtype)
+
+    # ---- Phase 1: NO_GRAD warmup with scheduled sampling ----
+    x_pred = x_w[:, 0, :]
+    if warmup_steps > 0:
+        with torch.no_grad():
+            for s in range(warmup_steps):
+                v_cur = sigma[t_idx + s].to(model_dtype)
+                if s > 0 and p_ss < 1.0:
+                    # mix model output and ground truth p_ss% of the time
+                    use_tf = (torch.rand(x_pred.shape[0], 1,
+                                         device=x_pred.device) > p_ss
+                              ).to(x_pred.dtype)
+                    x_input = use_tf * x_w[:, s, :] + (1 - use_tf) * x_pred
+                else:
+                    x_input = x_pred
+                x_next, _ = model(x_input, x_var=v_cur)
+                x_pred = x_next
+
+    # ---- Phase 2: ONE GRAD forward at the anchor, multi-step prediction ----
+    v_anchor = sigma[t_idx + warmup_steps].to(model_dtype)
+    if H > 1:
+        x_next_log, v_log, aux_preds = model(
+            x_pred, x_var=v_anchor, return_multi_step=True,
+        )
+    else:
+        x_next_log, v_log = model(x_pred, x_var=v_anchor)
+        aux_preds = None
+
+    # Targets are the actual training data at anchor+1..anchor+H
+    primary_target = x_w[:, warmup_steps + 1, :]
+    L_primary, breakdown = _m7_step_loss(
+        x_next_log, v_log, primary_target, flux_indices,
+        count_mask, cum_mask,
+        cfg.weight_count, cfg.weight_flux, cfg.weight_cumulative,
+    )
+
+    L_aux_total = torch.zeros((), device=x_pred.device, dtype=model_dtype)
+    if aux_preds is not None:
+        for h_idx in range(H - 1):
+            aux_target = x_w[:, warmup_steps + 2 + h_idx, :]
+            L_aux_total = L_aux_total + (
+                aux_preds[:, h_idx] - aux_target
+            ).pow(2).mean()
+        L_aux_total = L_aux_total / max(H - 1, 1)
+
+    return L_primary, L_aux_total, breakdown
+
+
+# ----------------------------------------------------------------------
 # Loss
 # ----------------------------------------------------------------------
 
@@ -643,6 +757,7 @@ def train_m7(
         cfc_tau_min=cfg.cfc_tau_min,
         rate_clip=cfg.rate_clip,
         use_residual=cfg.use_residual,
+        multi_step_horizon=cfg.multi_step_horizon,
     ).to(device)
     if cfg.use_bf16 and device.type == 'cuda':
         model = model.to(torch.bfloat16)
@@ -730,11 +845,82 @@ def train_m7(
             R, n_valid, cfg.batch_size, gen, device, stage_samples,
             t_skip_initial=cfg.t_skip_initial,
         )
-        if (cfg.samples_per_epoch_per_stage is not None
+        # M7.8 random-anchor stage: figure out warmup range
+        if cfg.train_strategy == 'random_anchor':
+            if cfg.random_anchor_warmup_max_per_stage:
+                stage_max_warmup = int(cfg.random_anchor_warmup_max_per_stage[
+                    min(epoch, len(cfg.random_anchor_warmup_max_per_stage) - 1)
+                ])
+            else:
+                stage_max_warmup = 100
+            # Tighten the safe n_valid for sampling so we have enough
+            # tail room for warmup + horizon
+            effective_n_valid = max(
+                1, T - cfg.multi_step_horizon - stage_max_warmup - 1
+            )
+            pair_iter = _subsample_pair_iterator(
+                R, effective_n_valid, cfg.batch_size, gen, device,
+                stage_samples, t_skip_initial=cfg.t_skip_initial,
+            )
+            print(f'  ep{epoch} M7.8 random_anchor: '
+                  f'samples={stage_samples}  max_warmup={stage_max_warmup}  '
+                  f'multi_step_H={cfg.multi_step_horizon}  '
+                  f'aux_w={cfg.aux_loss_weight}')
+        elif (cfg.samples_per_epoch_per_stage is not None
                 or cfg.tbptt_window_per_stage is not None):
             print(f'  ep{epoch} stage: k={k_cur}  samples={stage_samples}  '
                   f'tbptt={stage_tbptt}  grad_start_step={grad_start}')
         for rep_idx, t_idx in pair_iter:
+            # ---- M7.8 random-anchor + multi-step branch ----
+            if cfg.train_strategy == 'random_anchor':
+                if cfg.scheduled_sampling:
+                    p_ss = min(global_step / max(cfg.p_ss_warmup_steps, 1),
+                               1.0) * cfg.p_ss_max
+                else:
+                    p_ss = 0.0
+                # Sample a warmup length for this batch
+                warmup_steps = int(torch.randint(
+                    0, stage_max_warmup + 1, (1,),
+                    generator=gen, device=device,
+                ).item())
+                L_primary, L_aux, breakdown = _random_anchor_train_step(
+                    model, train_data, sigma, rep_idx, t_idx,
+                    warmup_steps=warmup_steps,
+                    multi_step_horizon=cfg.multi_step_horizon,
+                    p_ss=p_ss,
+                    flux_indices=flux_indices,
+                    count_mask=count_mask, cum_mask=cum_mask,
+                    cfg=cfg, model_dtype=model_dtype,
+                )
+                L = L_primary + cfg.aux_loss_weight * L_aux
+                opt.zero_grad(set_to_none=True)
+                L.backward()
+                opt.step()
+                global_step += 1
+                run['total']     += L.detach().float()
+                run['mse_count'] += breakdown['mse_count'].float()
+                run['mse_flux']  += breakdown['mse_flux'].float()
+                run['mse_cum']   += breakdown['mse_cum'].float()
+                run['rollout']   += L_aux.detach().float()
+                # attn entropy / mb left at zero for this strategy
+                n_batches += 1
+                n_seen += int(rep_idx.shape[0])
+                if n_batches % cfg.log_every == 0:
+                    wall = time.time() - t_epoch
+                    vals = {k: float(v.item()) / n_batches
+                            for k, v in run.items()}
+                    print(f'  ep{epoch} ra step{n_batches:>5d}'
+                          f'  total={vals["total"]:.4f}'
+                          f'  count={vals["mse_count"]:.4f}'
+                          f'  flux={vals["mse_flux"]:.4f}'
+                          f'  aux={vals["rollout"]:.4f}'
+                          f'  w={warmup_steps:>4d}  p_ss={p_ss:.2f}'
+                          f'  {n_seen/wall:.0f} s/s')
+                if (time.time() - train_t0) > cfg.wall_clock_budget_s:
+                    print(f'  WARNING: wall-clock budget exceeded')
+                    break
+                continue
+            # ---- Standard (M7.1-7.7) branch unchanged below ----
             x_w = _gather_windows(train_data, rep_idx, t_idx, k_cur + 1
                                   ).to(model_dtype)
             x = x_w[:, 0, :]                            # (B, S)
