@@ -85,17 +85,31 @@ def build_thermodynamics_features(
         return torch.from_numpy(out)
 
     # Build reaction -> (log_keq, sign)
+    # Clip log_K_eq to ±50 so that polymerization/aggregation reactions in
+    # the SBML (which can sum to ΔG of -1000s of kJ/mol from multiple bond
+    # formations) don't produce inf via exp() overflow. log_K=±50
+    # corresponds to K_eq spanning ~22 orders of magnitude in either
+    # direction - still expressive, but bounded.
+    LOG_K_CLIP = 50.0
     rxn_data = {}
+    n_clipped = 0
     for _, r in df.iterrows():
         rxn_id = str(r[rxn_col]).strip()
         try:
             dG = float(r[dg_col])
         except (TypeError, ValueError):
             continue
-        K_eq = np.exp(-dG / (_R_GAS * _T_K))
-        log_K = np.log(max(K_eq, 1e-30))
+        # Compute log(K_eq) directly from -dG/RT to avoid the exp/log
+        # roundtrip that overflows for extreme dG values.
+        log_K_raw = -dG / (_R_GAS * _T_K)
+        log_K = float(np.clip(log_K_raw, -LOG_K_CLIP, LOG_K_CLIP))
+        if abs(log_K_raw) > LOG_K_CLIP:
+            n_clipped += 1
         sign = float(np.sign(-dG))
-        rxn_data[rxn_id] = (float(log_K), sign)
+        rxn_data[rxn_id] = (log_K, sign)
+    if verbose and n_clipped > 0:
+        print(f'  thermodynamics: clipped {n_clipped} extreme log_K values '
+              f'to ±{LOG_K_CLIP} (likely polymerization-type aggregations)')
 
     # Match to F_* rows
     flux_indices = [i for i, n in enumerate(row_names) if n.startswith('F_')]
