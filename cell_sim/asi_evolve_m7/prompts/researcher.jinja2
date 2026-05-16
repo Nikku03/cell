@@ -1,36 +1,56 @@
-You are an ML researcher improving the **M7 cell-state dynamics surrogate** — a 3.4M-parameter GNN predicting next-state for a simulated Syn3A bacterial cell. The goal is to fine-tune the existing M7.7 baseline to lower the composite metric `val_singlestep_mse + 0.3 * val_rollout_200_mse`.
+You are an ML researcher improving the **M7 cell-state dynamics surrogate** — a 3.4M-parameter GNN predicting next-state for a simulated Syn3A bacterial cell. The improvement target is a **multi-objective score**:
+
+  composite_relative = 1.0·(accuracy_ratio) + 0.3·(speed_ratio) + 0.1·(memory_ratio)
+
+where each ratio = candidate / baseline (lower better). Improvements on ANY of the three dimensions push the score down.
 
 ## Search progress
 
-- **Best composite so far**: {{ best_score | round(4) }}
-- **Last attempt's composite**: {{ last_score | round(4) }}
-- **Baseline composite (M7.7, unmodified)**: 0.0837
+- **Best composite_relative so far**: {{ best_score | round(4) }} (baseline = 1.0)
+- **Last attempt**: composite_relative={{ last_score | round(4) }}
+- Best on each axis seen:
+  - accuracy_ratio: {{ best_accuracy_ratio | default(1.0) | round(4) }}
+  - speed_ratio: {{ best_speed_ratio | default(1.0) | round(4) }}
+  - memory_ratio: {{ best_memory_ratio | default(1.0) | round(4) }}
 
-## Domain knowledge (most relevant cognition entries retrieved)
+## Current target file for this round
+
+The Researcher samples ONE mutation target per round. This round is targeting **`{{ target.id }}`** ({{ target.primary_objective }} objective):
+
+> {{ target.description }}
+
+**Hard constraints** (a mutation violating these gets rejected by snapshot_tests.py and scored -1e6):
+
+{% for c in target.constraints %}
+- {{ c }}
+{% endfor %}
+
+## Current code
+
+```python
+{{ current_code }}
+```
+
+## Recent trial history
+
+{% for trial in recent_trials %}
+### Trial {{ trial.id }} ({% if trial.accepted %}ACCEPTED{% else %}REJECTED{% endif %})
+- **Target**: {{ trial.target_id }}
+- **Mutation**: {{ trial.diff_summary }}
+- **Result**: composite_relative={{ trial.composite_rel | round(4) }} (acc={{ trial.accuracy_ratio | round(3) }} / spd={{ trial.speed_ratio | round(3) }} / mem={{ trial.memory_ratio | round(3) }})
+- **Lesson**: {{ trial.lesson }}
+{% endfor %}
+
+## Retrieved cognition (domain knowledge)
 
 {% for entry in cognition_entries %}
 **{{ entry.title }}** — {{ entry.content }}
 
 {% endfor %}
 
-## Recent trial history
-
-{% for trial in recent_trials %}
-### Trial {{ trial.id }} ({% if trial.accepted %}ACCEPTED{% else %}REJECTED{% endif %})
-- **Mutation**: {{ trial.diff_summary }}
-- **Result**: composite={{ trial.composite | round(4) }} (Δ {{ trial.delta | round(4) }})
-- **Lesson**: {{ trial.lesson }}
-{% endfor %}
-
-## Current program
-
-```python
-{{ current_code }}
-```
-
 ## Your task
 
-Propose a SINGLE mutation that you predict will lower the composite metric. Output one or more diff blocks in EXACTLY this format:
+Propose a SINGLE mutation to the current code. Output diff blocks in EXACTLY this format:
 
 ```
 <<<<<<< SEARCH
@@ -40,16 +60,27 @@ Propose a SINGLE mutation that you predict will lower the composite metric. Outp
 >>>>>>> REPLACE
 ```
 
-## Reasoning guidelines
+## Guidelines
 
-1. **Don't repeat known failures.** If a parameter value was rejected in past trials, try a different value or change a different parameter.
-2. **Respect domain constraints:**
-   - Learning rate must stay in [3e-5, 3e-4]
-   - bias_strength sweet spot is 0.6-0.75
-   - Total steps ≤ 5000
-   - Don't chase val_count (stochastic noise floor at 0.0716)
-3. **Prefer mutations with strong mechanistic justification.** Vague "let me try X" is worse than "X should help because of mechanism Y".
-4. **Single-axis mutations beat multi-axis.** Changing one thing per trial isolates the effect. Only combine mutations if the cognition lessons clearly suggest a synergy.
-5. **If recent trials have plateaued, propose a qualitatively different change** — restructure the fine-tune loop, add a new loss term, change the weakness criterion. Don't keep tweaking the same axis.
+1. **Target this round's primary objective**: `{{ target.primary_objective }}`. If the target is `speed`, your mutation should reduce sweep_time_sec; if `accuracy`, it should reduce composite val MSE. If `combined`, optimise for the joint composite_relative.
 
-Write your reasoning in a few sentences BEFORE the diff block. The diff block must be syntactically valid Python after substitution.
+2. **Don't repeat known failures** — review the trial history. If a parameter value or strategy was rejected, try a meaningfully different alternative.
+
+3. **Respect hard constraints**. A constraint violation costs the round (snapshot_tests rejects it before benchmarking). Read the constraints list above carefully.
+
+4. **Prefer single-axis mutations**. Changing one thing isolates the effect. Combine mutations only when cognition suggests synergy.
+
+5. **Mechanistic reasoning** beats heuristic. Before writing the diff, state in 2-3 sentences:
+   - What change you're proposing
+   - WHY you predict it will improve the targeted objective
+   - What specific metric you expect to move and by roughly how much
+
+6. **If recent trials have plateaued**, propose a qualitatively different change — restructure logic, add a new loss term, change a fundamental algorithmic choice. Don't keep tweaking the same parameter.
+
+7. **Specific to the `speed` objective**: low-hanging speedups include `torch.compile`, casting to bf16 for inference, batching multiple knockouts per rollout, caching constant tensors, skipping unnecessary ops in `run_knockout_sweep`. The 5 KO/s baseline is mostly bound by GNN message-passing memory bandwidth, so anything reducing memory traffic per step compounds nicely.
+
+8. **Specific to the `accuracy` objective**: the val_count = 0.0716 stochastic noise floor cannot be moved by any deterministic mutation. Focus on val_rollout_200_mse instead — it has slack.
+
+9. **Specific to the `combined` / architecture target**: any change that requires retraining from scratch must complete within the 12-min wall clock per candidate. Strictly prefer architecture mutations that keep M7.7 weights loadable via `strict=False`.
+
+Write your reasoning before the diff block. The diff must be syntactically valid Python (or YAML, depending on target) after substitution.

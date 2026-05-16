@@ -59,6 +59,18 @@ pipeline:
   judge:
     enabled: false
 
+# Multi-target mutation manifest (M7-Evolve v2)
+# Loaded by main.py to pick which target to mutate each round.
+targets_manifest: "experiments/m7/mutation_targets.yaml"
+
+# Multi-objective weights — passed to full_benchmark.py via env vars.
+# Default below balances accuracy heavily; crank speed up if you want
+# the loop to optimise inference infrastructure instead.
+objectives:
+  weight_accuracy: 1.0
+  weight_speed:    0.3
+  weight_memory:   0.1
+
 cognition:
   storage_dir: "experiments/m7/cognition_data"
   embedding:

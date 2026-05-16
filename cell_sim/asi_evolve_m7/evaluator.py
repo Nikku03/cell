@@ -51,17 +51,28 @@ def evaluate(stdout_path: str) -> dict:
     except json.JSONDecodeError as e:
         return _crash_score(f'metrics JSON parse error: {e}')
 
-    composite = float(metrics.get('composite', float('inf')))
+    # Multi-objective score: lower composite_relative = higher score.
+    # composite_relative is a weighted sum of accuracy/speed/memory
+    # ratios vs baseline, computed by full_benchmark.composite_objective_score.
+    composite_rel = float(metrics.get('composite_relative',
+                                       metrics.get('composite', float('inf'))))
     return {
-        'score': -composite,                # ASI-Evolve maximises score
-        'composite': composite,
-        'val_singlestep_mse': float(metrics.get('val_singlestep_mse',
-                                                 float('inf'))),
-        'val_rollout_200_mse': float(metrics.get('val_rollout_200_mse',
-                                                  float('inf'))),
+        'score': -composite_rel,
+        'composite_relative': composite_rel,
+        # accuracy
+        'composite': float(metrics.get('composite', float('inf'))),
+        'val_singlestep_mse': float(metrics.get('val_singlestep_mse', float('inf'))),
+        'val_rollout_200_mse': float(metrics.get('val_rollout_200_mse', float('inf'))),
         'val_mse_count': float(metrics.get('val_mse_count', float('inf'))),
         'val_mse_flux':  float(metrics.get('val_mse_flux',  float('inf'))),
-        'val_mse_cum':   float(metrics.get('val_mse_cum',   float('inf'))),
+        # speed / memory (set by full_benchmark.py)
+        'sweep_time_sec':  float(metrics.get('sweep_time_sec',  float('inf'))),
+        'sweep_ko_per_sec': float(metrics.get('sweep_ko_per_sec', 0.0)),
+        'peak_memory_gb':  float(metrics.get('peak_memory_gb',  float('inf'))),
+        # ratios for Pareto analysis
+        'accuracy_ratio': float(metrics.get('accuracy_ratio', float('inf'))),
+        'speed_ratio':    float(metrics.get('speed_ratio',    float('inf'))),
+        'memory_ratio':   float(metrics.get('memory_ratio',   float('inf'))),
     }
 
 

@@ -4,18 +4,35 @@ This directory contains the experiment files needed to run
 [GAIR-NLP/ASI-Evolve](https://github.com/GAIR-NLP/ASI-Evolve) on the
 M7 cell-state surrogate as the target task.
 
-## Contents
+## Contents (M7-Evolve v2)
 
 | File | Role |
 |------|------|
-| `initial_program.py` | Starting M7 fine-tune script the Researcher mutates |
-| `evaluator.py` | Parses metrics from candidate stdout, returns score dict |
-| `eval.sh` | Shell wrapper called by ASI-Evolve's Engineer |
+| `initial_program.py` | Starting M7 fine-tune script (one mutation target) |
+| `mutation_targets.yaml` | Manifest of files the Researcher can mutate (fine-tune, inference, architecture, training loop) |
+| `full_benchmark.py` | **Multi-objective benchmark** (accuracy + speed + memory) |
+| `snapshot_tests.py` | Pre-acceptance safety checks; rejects broken mutations in ~30 sec |
+| `evaluator.py` | Parses multi-objective metrics, computes score |
+| `eval.sh` | Three-phase wrapper: run candidate → snapshot tests → full benchmark |
 | `input.md` | Problem description shown to the Researcher LLM |
 | `init_cognition.py` | Seed entries for the cognition store (M7 facts + lessons) |
-| `prompts/researcher.jinja2` | Researcher LLM prompt template |
-| `prompts/analyzer.jinja2` | Analyzer LLM prompt template |
-| `config.yaml` | ASI-Evolve experiment config |
+| `prompts/researcher.jinja2` | Researcher prompt (target-aware, multi-objective) |
+| `prompts/analyzer.jinja2` | Analyzer prompt (5-dimension structured analysis) |
+| `config.yaml` | ASI-Evolve config with multi-target + multi-objective settings |
+
+## What's NEW in v2
+
+Compared to the single-objective fine-tune-only v1:
+
+1. **Multi-target mutation**: the Researcher picks one of FOUR target files each round (weighted random) — fine-tune script, knockout sweep, model architecture, or training loop. Targets the whole stack, not just hyperparameters.
+
+2. **Multi-objective scoring**: every candidate is benchmarked on accuracy + inference speed + peak memory. The composite_relative score is a weighted sum (default 1.0/0.3/0.1) but individual metrics are tracked for Pareto analysis.
+
+3. **Snapshot safety tests**: before spending 5 min on a full benchmark, four ~30s sanity checks (model loads, forward returns valid shape, short rollout doesn't diverge, knockout produces nonzero impact). Broken mutations get rejected fast.
+
+4. **Per-target constraints**: each mutation target has hard constraints in `mutation_targets.yaml` (e.g. "knockout_sweep must keep impact scores within ±5% of baseline"). Snapshot tests enforce these.
+
+5. **Richer cognition + analyzer**: the Analyzer prompt now writes a 5-dimension structured analysis (goal/effect/mechanism/tradeoffs/lesson) instead of the simpler v1 format.
 
 ## Setup recipe (Colab)
 
@@ -34,6 +51,9 @@ cp /content/cell/cell_sim/asi_evolve_m7/eval.sh             experiments/m7/
 cp /content/cell/cell_sim/asi_evolve_m7/input.md            experiments/m7/
 cp /content/cell/cell_sim/asi_evolve_m7/init_cognition.py   experiments/m7/
 cp /content/cell/cell_sim/asi_evolve_m7/config.yaml         experiments/m7/
+cp /content/cell/cell_sim/asi_evolve_m7/full_benchmark.py   experiments/m7/
+cp /content/cell/cell_sim/asi_evolve_m7/snapshot_tests.py   experiments/m7/
+cp /content/cell/cell_sim/asi_evolve_m7/mutation_targets.yaml experiments/m7/
 cp /content/cell/cell_sim/asi_evolve_m7/prompts/*.jinja2    experiments/m7/prompts/
 chmod +x experiments/m7/eval.sh
 
