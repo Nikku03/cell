@@ -1,0 +1,37 @@
+You are analyzing the outcome of an M7 fine-tune experiment for ASI-Evolve.
+
+## What was tried
+
+{{ trial_motivation }}
+
+**Diff applied:**
+```diff
+{{ trial_diff }}
+```
+
+## Result metrics
+
+- val_singlestep_mse: **{{ metrics.val_singlestep_mse | round(4) }}**  (baseline: 0.0589)
+- val_rollout_200_mse: **{{ metrics.val_rollout_200_mse | round(4) }}**  (baseline: 0.0826)
+- val_mse_count: {{ metrics.val_mse_count | round(4) }}  (baseline: 0.0716, NOISE FLOOR)
+- val_mse_flux: {{ metrics.val_mse_flux | round(4) }}  (baseline: 0.0010)
+- **composite: {{ metrics.composite | round(4) }}**  (baseline: 0.0837; best so far: {{ best_score | round(4) }})
+
+## Δ from parent ({{ parent_trial_id }})
+
+{% for key, delta in deltas.items() %}
+- {{ key }}: {{ delta | round(4) }} ({{ "↑" if delta > 0 else "↓" }})
+{% endfor %}
+
+## Your task
+
+Write a structured 4-line analysis:
+
+1. **GOAL** — what this mutation was trying to achieve
+2. **OBSERVED EFFECT** — what actually happened to each metric, especially the directional change in composite
+3. **MECHANISM** — your best guess at WHY this happened (cite a specific mechanism: training dynamics, optimization, biology, etc.)
+4. **LESSON** — one sentence, transferable to future trials, prefixed by `LESSON:`
+
+The lesson will be added to the cognition store and retrieved by future Researcher rounds. Make it specific enough to be actionable (e.g. "lr > 2e-4 destabilizes when fine-tune steps > 3000" rather than "high LR can be unstable").
+
+If the trial was a clear regression (composite ↑ by > 5%), prioritize identifying WHY in the mechanism section so future trials avoid the same trap.

@@ -1,0 +1,91 @@
+# ASI-Evolve config for M7 fine-tune optimization
+#
+# Place this file in ASI-Evolve's experiments/m7/config.yaml AFTER
+# cloning ASI-Evolve. Edit the api section with your LLM credentials
+# (Anthropic or OpenAI; ASI-Evolve uses an OpenAI-compatible client).
+#
+# See README.md in this directory for the full setup recipe.
+experiment_name: "m7_finetune"
+
+api:
+  # Pick ONE provider; the other lines are illustrative
+  # provider: "anthropic"           # if using Anthropic Claude
+  # base_url: "https://api.anthropic.com"
+  # api_key: "sk-ant-..."
+  # model: "claude-sonnet-4-5"
+
+  provider: "openai"
+  base_url: "https://api.openai.com/v1"
+  api_key: "your_openai_api_key_here"
+  model: "gpt-4o"
+  temperature: 0.4
+  top_p: 0.9
+  max_tokens: 8192
+  seed: 42
+  timeout: 600
+  retry_times: 3
+  retry_delay: 5
+
+logging:
+  level: "INFO"
+  console: true
+  wandb:
+    enabled: false                  # turn on once you've configured WANDB_API_KEY
+    offline: false
+    project: "m7-evolve"
+    entity: ""
+
+pipeline:
+  agents:
+    manager: false
+    researcher: true
+    engineer: true
+    analyzer: true
+
+  researcher:
+    diff_based_evolution: true
+    diff_pattern: "<<<<<<< SEARCH\\n(.*?)=======\\n(.*?)>>>>>>> REPLACE"
+    max_code_length: 12000
+
+  max_retries:
+    researcher: 3
+    engineer: 2
+    analyzer: 2
+
+  engineer_timeout: 900             # 15 min per candidate
+  parallel:
+    num_workers: 1                  # bump to 2-4 if GPU has memory headroom
+  sample_n: 3                       # propose 3 candidates per round, keep best
+  judge:
+    enabled: false
+
+cognition:
+  storage_dir: "experiments/m7/cognition_data"
+  embedding:
+    model: "sentence-transformers/all-MiniLM-L6-v2"
+    dimension: 384
+  faiss:
+    index_type: "IP"
+  retrieval:
+    top_k: 5                        # number of cognition entries shown to Researcher
+    score_threshold: 0.25
+  web_search:
+    enabled: false
+
+database:
+  storage_dir: "experiments/m7/database_data"
+  max_size: null
+  embedding:
+    model: "sentence-transformers/all-MiniLM-L6-v2"
+    dimension: 384
+  sampling:
+    algorithm: "island"             # MAP-Elites-style island sampling
+    ucb1_c: 1.414
+    island:
+      num_islands: 4
+      migration_interval: 8
+      migration_rate: 0.1
+      exploration_ratio: 0.25
+      exploitation_ratio: 0.35
+  faiss:
+    index_type: "IP"
