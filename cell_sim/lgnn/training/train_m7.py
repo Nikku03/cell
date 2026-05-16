@@ -255,8 +255,15 @@ class M7TrainConfig(M3TrainConfig):
     # equally-spaced anchors, training at each. n_anchor_chunks=10 means
     # one 7000-step warmup yields 10 training signals instead of 1 -
     # an effective 10x speedup. Setting to 1 disables (vanilla random
-    # anchor behaviour).
+    # anchor behaviour). The implementation caps K at warmup_steps so
+    # short warmups don't produce duplicate anchors.
     n_anchor_chunks_per_warmup:           int = 1
+
+    # Optional path to a previously-trained M7 checkpoint to warm-start
+    # the encoder weights from. Newly added params (aux_heads etc.) keep
+    # their random init via strict=False loading. Saves ~stage-0 worth
+    # of training when going M7.7 -> M7.8.
+    init_from_checkpoint:                 str = ''
 
 
 # ----------------------------------------------------------------------
@@ -648,15 +655,23 @@ def _chunked_anchor_train_step(
     x_w = _gather_windows(train_data, rep_idx, t_idx, window_len
                           ).to(model_dtype)
 
-    # Anchor step positions: K evenly spaced along [warmup_steps/K,  warmup_steps]
+    # Anchor step positions: evenly spaced unique anchors, capped at
+    # warmup_steps so we never produce duplicates. If warmup is short
+    # and K is large (e.g. warmup=6 with K=40), we'd get 40 anchors all
+    # at position 6 with the original formula. The .max(1, K_eff) cap
+    # forces 1..warmup_steps unique anchors instead.
     if n_anchor_chunks <= 1 or warmup_steps == 0:
         anchor_positions = [warmup_steps]
     else:
-        chunk_size = max(1, warmup_steps // n_anchor_chunks)
-        anchor_positions = [
-            min((i + 1) * chunk_size, warmup_steps)
-            for i in range(n_anchor_chunks)
-        ]
+        K_eff = min(n_anchor_chunks, max(1, warmup_steps))
+        if K_eff <= 1:
+            anchor_positions = [warmup_steps]
+        else:
+            anchor_positions = sorted({
+                min((i + 1) * max(1, warmup_steps // K_eff),
+                    warmup_steps)
+                for i in range(K_eff)
+            })
 
     # Disable checkpointing during warmup; restore for grad step
     _saved_ckpt = getattr(model, 'use_checkpoint', False)
@@ -922,6 +937,26 @@ def train_m7(
     if cfg.use_bf16 and device.type == 'cuda':
         model = model.to(torch.bfloat16)
     model_dtype = next(model.parameters()).dtype
+
+    # Warm-start from a pretrained checkpoint (e.g. M7.7 -> M7.8).
+    # Loads with strict=False so that newly added params (aux_heads,
+    # aux_delta_scale) keep their fresh random init while everything
+    # the previous checkpoint already trained (encoder, pinn_head) gets
+    # the head start. Skips silently if path is empty/missing.
+    init_path = getattr(cfg, 'init_from_checkpoint', '')
+    if init_path:
+        try:
+            ckpt = torch.load(init_path, map_location=device, weights_only=False)
+            init_state = ckpt['state_dict'] if isinstance(ckpt, dict) and 'state_dict' in ckpt else ckpt
+            missing, unexpected = model.load_state_dict(init_state, strict=False)
+            n_loaded = sum(1 for k in init_state if k not in unexpected)
+            print(f'  warm-start: loaded {n_loaded} tensors from {init_path}')
+            if missing:
+                print(f'    skipped (newly added in M7.8): {missing[:6]}'
+                      f'{"..." if len(missing) > 6 else ""}')
+        except Exception as e:
+            print(f'  WARNING: failed to warm-start from {init_path}: {e}')
+
     n_params = count_parameters(model)
     print(f'M7: {n_params:,} params  (hidden={cfg.hidden}, '
           f'n_layers={cfg.n_layers}, channels={cfg.n_input_channels}, '
