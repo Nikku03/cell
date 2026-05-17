@@ -179,8 +179,10 @@ def generate_chem_dataset(
     n_atoms_to_displace: tuple[int, ...] = (1, 2, 3),
     displace_dists: tuple[float, ...] = (1.2, 1.8, 2.5, 3.0),
     # RMSD thresholds scaled to small-molecule fluctuations.
+    # bad_th lowered relative to v3-initial so the test set has enough
+    # bad-pose samples for a statistically meaningful rejection rate.
     near_th: float = 0.25,
-    bad_th: float = 0.7,
+    bad_th: float = 0.5,
     energy_cap: float = 1500.0,  # bad poses are above ~300; cap so outliers don't dominate loss
     seed: int = 0,
 ) -> list[ChemConfiguration]:

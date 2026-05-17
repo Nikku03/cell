@@ -20,6 +20,7 @@ class TrainV3Config:
     force_weight: float = 0.05      # forces are bigger numbers in MMFF; downweight
     energy_weight: float = 1.0
     pose_weight: float = 0.3
+    bad_pose_weight: float = 4.0    # up-weight bad-pose samples (class imbalance)
     grad_clip: float = 5.0
     log_every: int = 5
 
@@ -57,6 +58,7 @@ def _loss(
     model: MultiModePotentialV3,
     c: ChemConfiguration,
     ew: float, fw: float, pw: float,
+    bad_pose_weight: float = 1.0,
 ) -> torch.Tensor:
     kw = sample_kwargs(c)
     pos = kw.pop("positions").clone().requires_grad_(True)
@@ -71,7 +73,11 @@ def _loss(
     loss = ew * e_err.pow(2) + fw * f_err.pow(2).mean()
     if c.pose_label != -1:
         target = torch.tensor(float(c.pose_label))
-        loss = loss + pw * F.binary_cross_entropy_with_logits(pose_logit, target)
+        # Up-weight bad-pose samples to counter class imbalance
+        # (far fewer bad poses than near-native by construction).
+        sample_w = 1.0 if c.pose_label == 1 else bad_pose_weight
+        bce = F.binary_cross_entropy_with_logits(pose_logit, target)
+        loss = loss + pw * sample_w * bce
     return loss
 
 
@@ -100,8 +106,11 @@ def train_v3(
             opt.zero_grad()
             losses = []
             for k in perm[b:b + cfg.batch_size]:
-                losses.append(_loss(model, train_set[k],
-                                    cfg.energy_weight, cfg.force_weight, cfg.pose_weight))
+                losses.append(_loss(
+                    model, train_set[k],
+                    cfg.energy_weight, cfg.force_weight, cfg.pose_weight,
+                    bad_pose_weight=cfg.bad_pose_weight,
+                ))
             total = torch.stack(losses).mean()
             total.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip)
