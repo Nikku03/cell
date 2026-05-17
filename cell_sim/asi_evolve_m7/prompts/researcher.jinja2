@@ -74,7 +74,7 @@ You may emit multiple diff blocks if the mutation requires several coordinated c
 5. **Three improvement axes** the composite score rewards:
    - **Accuracy** (weight 1.0): tune the fine-tune hyperparameters, change `TARGET_CATEGORY`, or rewrite `filter_weakness()` to use different criteria.
    - **Speed** (weight 0.3): toggle `USE_TORCH_COMPILE = True`, set `INFERENCE_DTYPE = 'bf16'`, or set `INFERENCE_DISABLE_CHECKPOINT = True`.
-   - **Memory** (weight 0.1): smaller `BATCH_SIZE` at fine-tune, or `INFERENCE_DISABLE_CHECKPOINT = True` + smaller batch.
+   - **Memory** (weight 0.1): `BATCH_SIZE` 32-128 fits A100 40GB; >128 OOMs in fp32 fine-tune. To improve memory_ratio set BATCH_SIZE lower (e.g. 32) while keeping FINE_TUNE_STEPS to stay within wall-time.
 
 6. **Mechanistic reasoning beats heuristic**. Use the <motivation> tag to state:
    - What change you're proposing
