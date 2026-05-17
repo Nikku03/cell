@@ -80,3 +80,53 @@ class STDP:
     def on_post_spike(self, syn: "Synapse") -> None:
         self.potentiate_on_post(syn)
         self.record_post_spike(syn.post)
+
+
+# ----------------------- Homeostatic synaptic scaling -----------------------
+
+@dataclass
+class HomeostaticScaler:
+    """Multiplicative synaptic scaling (Turrigiano-style).
+
+    Periodically nudges each post-synaptic neuron's incoming *excitatory*
+    synapse weights toward keeping that neuron's firing rate near a target.
+    If a neuron is firing too fast, its inputs are scaled down; if too slow,
+    scaled up. The rule is multiplicative (preserves relative weight
+    differences) and slow (smaller per-update changes than STDP).
+
+    `apply` is typically called from the simulation loop every ~100 ms with
+    a spike record for that window.
+    """
+
+    target_rate: float = 5.0       # Hz, neuron-by-neuron set-point
+    gain: float = 0.02             # fraction of the gap to close per call (gentle)
+    g_min: float = 0.001
+    g_max_cap: float = 4.0
+    rate_floor: float = 0.5        # never scale based on rates below this (Hz)
+    factor_clip: float = 0.05      # max per-update weight change is +/-5 %
+
+    def apply(
+        self,
+        neuron_ids: list[int],
+        incoming_excitatory: dict[int, list],   # nid -> [Synapse, ...]
+        record,
+        t_lo: float,
+        t_hi: float,
+    ) -> None:
+        window_ms = t_hi - t_lo
+        for nid in neuron_ids:
+            n_spikes = sum(
+                1 for t, n in zip(record.times, record.neuron_ids)
+                if n == nid and t_lo <= t < t_hi
+            )
+            rate = 1000.0 * n_spikes / window_ms
+            # Skip neurons below the noise floor entirely - their rate
+            # estimate is too noisy and aggressive up-scaling triggers
+            # runaway ignition once noise eventually wakes them.
+            if rate < self.rate_floor:
+                continue
+            ratio = self.target_rate / rate
+            factor = 1.0 + self.gain * (ratio - 1.0)
+            factor = max(1.0 - self.factor_clip, min(1.0 + self.factor_clip, factor))
+            for s in incoming_excitatory.get(nid, []):
+                s.g_max = max(self.g_min, min(self.g_max_cap, s.g_max * factor))
