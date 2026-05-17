@@ -116,6 +116,12 @@ EXACT format (count the angle brackets — there are SEVEN of each marker char):
 
 The system tolerates 4-10 of each marker char if you miscount, but always aim for 7. SEARCH and REPLACE are CASE-SENSITIVE and must be in uppercase. Do not add spaces inside the angle brackets (e.g. `<< <<<<<` is wrong).
 
+## CRITICAL: SEARCH text must match the base code byte-for-byte
+
+The SEARCH text must be COPIED EXACTLY from the base code shown above — same indentation, same spaces around `=`, same trailing whitespace. If the base code has `FINE_TUNE_STEPS = 500`, your SEARCH must be `FINE_TUNE_STEPS = 500` with the same single-space `=`. Do not add or remove whitespace.
+
+If the SEARCH text doesn't exist verbatim in the base code, the diff fails to apply and the candidate scores -1000000. Always re-read the base code variable as written above, and copy that line into your SEARCH block.
+
 You can include 1-5 diff blocks if the mutation requires coordinated changes. **Do NOT write a complete Python file inside <code>**. Full rewrites:
 - Almost always exceed the 32000-char limit and get truncated mid-function
 - Are 10× more likely to introduce syntax errors that crash the candidate immediately

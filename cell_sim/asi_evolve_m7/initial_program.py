@@ -47,22 +47,27 @@ OUTPUT_CKPT  = '/tmp/m7_candidate.pt'
 # ================================================================
 
 # ---- Hyperparameters (safe to tune) ----
-FINE_TUNE_STEPS  = 500     # default minimum. LLM may raise to up to 5000.
-                            # 2000 was too slow on A100 40GB fp32 fine-tune
-                            # (>15 min per candidate; eval.sh times out at 900s).
-BATCH_SIZE       = 64      # 256 OOMs on A100 40GB (fp32 fine-tune + 12GB preload).
-                            # Safe range: 32-128 on A100 40GB, up to 256 on 80GB+.
-LEARNING_RATE    = 1e-4
-BIAS_STRENGTH    = 0.70
-WEIGHT_COUNT     = 0.05
-WEIGHT_FLUX      = 1.0
-WEIGHT_CUM       = 0.5
-TARGET_CATEGORY  = 'all'    # 'all', 'count', 'flux', 'cum', 'transport', 'ribo'
+FINE_TUNE_STEPS = 500
+BATCH_SIZE = 64
+LEARNING_RATE = 1e-4
+BIAS_STRENGTH = 0.70
+WEIGHT_COUNT = 0.05
+WEIGHT_FLUX = 1.0
+WEIGHT_CUM = 0.5
+TARGET_CATEGORY = 'all'
 
 # ---- Inference-speed toggles ----
-USE_TORCH_COMPILE             = False
-INFERENCE_DTYPE               = 'fp32'   # 'fp32' | 'bf16' | 'fp16'
-INFERENCE_DISABLE_CHECKPOINT  = False
+USE_TORCH_COMPILE = False
+INFERENCE_DTYPE = 'fp32'
+INFERENCE_DISABLE_CHECKPOINT = False
+
+# Tunable notes (do NOT include these comment lines in diff SEARCH blocks):
+# - FINE_TUNE_STEPS: 500 minimum, >2000 risks eval timeout
+# - BATCH_SIZE: 256 OOMs A100 40GB; safe 32-128
+# - LEARNING_RATE: safe [3e-5, 3e-4]
+# - BIAS_STRENGTH: sweet 0.6-0.75, >0.85 overfits
+# - TARGET_CATEGORY: all|count|flux|cum|transport|ribo
+# - INFERENCE_DTYPE: fp32|bf16|fp16
 
 
 def patch_model(model):
