@@ -54,8 +54,19 @@ class LIFNeuron:
         self.spiked = False
         self.last_spike_t = -1e9
 
-    def step(self, I_syn: float, dt: float, t: float) -> bool:
-        """Advance one timestep. Returns True iff this step emitted a spike."""
+    def step(
+        self, I_syn: float, dt: float, t: float, g_syn: float = 0.0
+    ) -> bool:
+        """Advance one timestep. Returns True iff this step emitted a spike.
+
+        ``I_syn`` is the net synaptic current at the current V; ``g_syn`` is
+        the *total* synaptic conductance landing on this neuron. Passing
+        g_syn lets us use exponential Euler integration, which is exact for
+        the linear membrane ODE and unconditionally stable even with very
+        large synaptic conductances (where explicit Euler at dt=1 ms blows
+        up). If callers only pass I_syn (g_syn=0), this falls back to the
+        plain explicit step.
+        """
         self.spiked = False
 
         if self.refr_remaining > 0.0:
@@ -63,9 +74,25 @@ class LIFNeuron:
             self.V = self.p.V_reset
             return False
 
-        # Euler integration of tau_m * dV/dt = -(V - V_rest) + R_m * I_syn
-        dV = (-(self.V - self.p.V_rest) + self.p.R_m * I_syn) * (dt / self.p.tau_m)
-        self.V += dV
+        if g_syn > 0.0:
+            # Exponential Euler.  The membrane equation
+            #     tau_m dV/dt = -(V - V_rest) + R_m * I_syn(V)
+            # with conductance-based synapses I_syn(V) = sum g_s (E_s - V) is
+            # linear in V; over a step it has the closed-form solution
+            #     V(t+dt) = V_ss + (V(t) - V_ss) * exp(-dt/tau_eff)
+            # where V_ss and tau_eff depend on the total synaptic conductance.
+            R = self.p.R_m
+            # g_e E_e + g_i E_i = I_syn + g_syn * V  (from I_syn definition)
+            g_E_sum = I_syn + g_syn * self.V
+            V_ss = (self.p.V_rest + R * g_E_sum) / (1.0 + R * g_syn)
+            tau_eff = self.p.tau_m / (1.0 + R * g_syn)
+            self.V = V_ss + (self.V - V_ss) * math.exp(-dt / tau_eff)
+        else:
+            # Explicit Euler fallback (used when no synaptic inputs).
+            dV = (
+                -(self.V - self.p.V_rest) + self.p.R_m * I_syn
+            ) * (dt / self.p.tau_m)
+            self.V += dV
 
         # Optional Gaussian membrane noise (Euler-Maruyama: sigma * sqrt(dt) * Z).
         if self.p.noise_std > 0.0 and self._rng is not None:

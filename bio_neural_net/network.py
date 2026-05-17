@@ -110,9 +110,11 @@ class NeuralCluster:
             spiked_now: list[int] = []
             for i, neu in enumerate(self.neurons):
                 I = ext[i]
+                g_syn = 0.0
                 for s in incoming[i]:
                     I += s.current(t, dt)
-                if neu.step(I, dt, t):
+                    g_syn += s.g  # post-decay conductance, just used by current()
+                if neu.step(I, dt, t, g_syn=g_syn):
                     spiked_now.append(i)
                     record.add(t, i)
 
