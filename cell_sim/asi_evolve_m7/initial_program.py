@@ -47,7 +47,9 @@ OUTPUT_CKPT  = '/tmp/m7_candidate.pt'
 # ================================================================
 
 # ---- Hyperparameters (safe to tune) ----
-FINE_TUNE_STEPS  = 2000
+FINE_TUNE_STEPS  = 500     # default minimum. LLM may raise to up to 5000.
+                            # 2000 was too slow on A100 40GB fp32 fine-tune
+                            # (>15 min per candidate; eval.sh times out at 900s).
 BATCH_SIZE       = 64      # 256 OOMs on A100 40GB (fp32 fine-tune + 12GB preload).
                             # Safe range: 32-128 on A100 40GB, up to 256 on 80GB+.
 LEARNING_RATE    = 1e-4
@@ -152,7 +154,7 @@ def main():
         weight_count=WEIGHT_COUNT,
         weight_flux=WEIGHT_FLUX,
         weight_cumulative=WEIGHT_CUM,
-        log_every=500,
+        log_every=50,
     )
 
     model = _apply_inference_optimizations(model)
