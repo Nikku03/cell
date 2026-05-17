@@ -93,6 +93,62 @@ Respond using ONLY these three XML tags. Put content directly inside the tags �
 
 <name>short_identifier_for_this_mutation</name>
 <motivation>2-4 sentence explanation: what you're changing, why it should help, which axis you expect to improve</motivation>
-<code>{% if diff_based %}your diff blocks here (one or more <<<<<<< SEARCH / >>>>>>> REPLACE pairs){% else %}the complete rewritten Python file here{% endif %}</code>
+<code>your diff blocks here (one or more SEARCH/REPLACE pairs)</code>
 
 No other text outside these three tags. No markdown, no commentary, no headers. Just the three tags.
+
+## THE CONTENTS OF <code> MUST BE DIFF BLOCKS ONLY
+
+The system parses your `<code>` tag for diff blocks in this EXACT format (a hardcoded regex; no flexibility):
+
+```
+<<<<<<< SEARCH
+(the exact lines to find in the base code — character-for-character, including indentation)
+=======
+(the replacement lines)
+>>>>>>> REPLACE
+```
+
+You can include 1-5 diff blocks if the mutation requires coordinated changes. **Do NOT write a complete Python file inside <code>**. Full rewrites:
+- Almost always exceed the 32000-char limit and get truncated mid-function
+- Are 10× more likely to introduce syntax errors that crash the candidate immediately
+- Lose the harness that calls main() and saves the checkpoint — resulting in "candidate did not produce /tmp/m7_candidate.pt" failures with score -1000000
+
+A valid minimal mutation example (mutating one hyperparameter):
+
+```
+<<<<<<< SEARCH
+BIAS_STRENGTH    = 0.70
+=======
+BIAS_STRENGTH    = 0.65
+>>>>>>> REPLACE
+```
+
+A valid 2-block mutation example (changing a hyperparameter AND a hook):
+
+```
+<<<<<<< SEARCH
+INFERENCE_DTYPE               = 'fp32'   # 'fp32' | 'bf16' | 'fp16'
+=======
+INFERENCE_DTYPE               = 'bf16'   # 'fp32' | 'bf16' | 'fp16'
+>>>>>>> REPLACE
+
+<<<<<<< SEARCH
+def patch_model(model):
+    """Mutation hook: monkey-patch model attrs. Default no-op.
+    Examples:
+        model.rate_clip = 8.0
+        model.use_checkpoint = False
+    Must return model.
+    """
+    return model
+=======
+def patch_model(model):
+    """Cast to bf16 + disable checkpoint for inference speedup."""
+    if hasattr(model, 'use_checkpoint'):
+        model.use_checkpoint = False
+    return model
+>>>>>>> REPLACE
+```
+
+If you find yourself writing more than ~50 lines inside `<code>`, you are doing it wrong. Stop and write a single small diff block instead.
