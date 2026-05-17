@@ -300,6 +300,14 @@ def fine_tune_on_weaknesses(
     R_train, T, S = train_data.shape
 
     count_mask, flux_mask, cum_mask = categorise_row_indices(row_names)
+    # Ensure all index tensors live on the same device as the data so
+    # downstream index_select / boolean-mask ops in _m7_step_loss don't
+    # raise "tensors on different devices" (load_m7_with_state returns
+    # flux_indices on CPU by convention).
+    flux_indices = flux_indices.to(device)
+    count_mask = count_mask.to(device) if hasattr(count_mask, 'to') else count_mask
+    flux_mask  = flux_mask.to(device)  if hasattr(flux_mask,  'to') else flux_mask
+    cum_mask   = cum_mask.to(device)   if hasattr(cum_mask,   'to') else cum_mask
 
     model.train()
     # Keep encoder in fp32 for fine-tune stability
@@ -349,6 +357,10 @@ def compute_full_val_metrics(model, val_data, sigma, row_names,
     model = model.eval().to(torch.float32)
     R_val, T, S = val_data.shape
     count_mask, flux_mask, cum_mask = categorise_row_indices(row_names)
+    # Move masks to val_data's device so boolean indexing works
+    count_mask = count_mask.to(val_data.device) if hasattr(count_mask, 'to') else count_mask
+    flux_mask  = flux_mask.to(val_data.device)  if hasattr(flux_mask,  'to') else flux_mask
+    cum_mask   = cum_mask.to(val_data.device)   if hasattr(cum_mask,   'to') else cum_mask
 
     se_total = 0.0
     n_pairs = 0
