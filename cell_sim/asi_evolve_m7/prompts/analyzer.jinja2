@@ -1,44 +1,48 @@
-You are analysing the outcome of an M7-Evolve v2 trial. Your job is to convert this trial's outcome into a transferable lesson for future rounds.
+You are analyzing the outcome of an M7-Evolve trial. Your job is to convert this trial's outcome into a transferable lesson that future Researcher rounds will retrieve from the cognition store.
 
-## Trial summary
+## Task
 
-- **Target**: `{{ trial_target_id }}` (primary objective: {{ trial_target_objective }})
-- **Motivation**: {{ trial_motivation }}
+{{ task_description }}
 
-**Diff applied:**
-```diff
-{{ trial_diff }}
+## This trial's code
+
+```python
+{{ code }}
 ```
 
-## Multi-objective metrics
+## This trial's results
 
-|                       | Candidate    | Baseline     | Δ            | Direction  |
-|-----------------------|--------------|--------------|--------------|------------|
-| **composite_relative**| {{ metrics.composite_relative | round(4) }}    | 1.0000       | {{ deltas.composite_relative | round(4) }}    | {{ "↓ improvement" if deltas.composite_relative < 0 else "↑ regression" }} |
-| accuracy_ratio        | {{ metrics.accuracy_ratio | round(4) }}    | 1.0000       | {{ deltas.accuracy_ratio | round(4) }}    | {{ "↓" if deltas.accuracy_ratio < 0 else "↑" }} |
-| speed_ratio           | {{ metrics.speed_ratio | round(4) }}    | 1.0000       | {{ deltas.speed_ratio | round(4) }}    | {{ "↓" if deltas.speed_ratio < 0 else "↑" }} |
-| memory_ratio          | {{ metrics.memory_ratio | round(4) }}    | 1.0000       | {{ deltas.memory_ratio | round(4) }}    | {{ "↓" if deltas.memory_ratio < 0 else "↑" }} |
-| val_singlestep_mse    | {{ metrics.val_singlestep_mse | round(4) }} | 0.0589 | {{ deltas.val_singlestep_mse | round(4) }} | |
-| val_rollout_200_mse   | {{ metrics.val_rollout_200_mse | round(4) }} | 0.0826 | {{ deltas.val_rollout_200_mse | round(4) }} | |
-| val_mse_count         | {{ metrics.val_mse_count | round(4) }} | 0.0716 (noise floor) | {{ deltas.val_mse_count | round(4) }} | |
-| sweep_ko_per_sec      | {{ metrics.sweep_ko_per_sec | round(2) }} | 3.71 | {{ deltas.sweep_ko_per_sec | round(2) }} | |
-| peak_memory_gb        | {{ metrics.peak_memory_gb | round(2) }} | 4.2 | {{ deltas.peak_memory_gb | round(2) }} | |
+```json
+{{ results }}
+```
+
+{% if best_sampled_node %}
+## Reference: best-performing prior trial (for comparison)
+
+**Name**: {{ best_sampled_node.name }}
+**Score**: {{ best_sampled_node.score }}
+**Motivation**: {{ best_sampled_node.motivation }}
+{% if best_sampled_node.analysis %}
+**Prior analysis**: {{ best_sampled_node.analysis }}
+{% endif %}
+
+{% endif %}
 
 ## Your task
 
-Write a 5-line structured analysis:
+Write a 5-section structured analysis comparing this trial's metrics to the baseline (composite_relative = 1.0, val_singlestep_mse = 0.0589, val_rollout_200_mse = 0.0826, val_mse_count = 0.0716 noise floor, sweep_ko_per_sec ≈ 3.71, peak_memory_gb ≈ 4.2) and to the reference best trial above when present.
 
-1. **GOAL** — what the mutation was trying to achieve. Note which objective dimension it primarily targeted.
-2. **OBSERVED EFFECT** — directional change across each of the three objective dimensions (accuracy / speed / memory). Highlight any unexpected side effects.
-3. **MECHANISM** — best mechanistic explanation. Cite specific training dynamics, GPU memory behaviour, biology, or numerics. Avoid vague "improved performance" — say WHY.
-4. **TRADEOFFS** — what got worse? Multi-objective mutations almost always have a downside. Identify it explicitly even if small.
-5. **LESSON** — one specific, transferable sentence prefixed by `LESSON:`. Make it actionable for future rounds (e.g. "bf16 inference reduces sweep_time_sec by 30% with no accuracy regression up to k=200" rather than "bf16 is faster").
+1. **GOAL** — What this mutation was trying to achieve. Identify which of the three objective dimensions (accuracy / speed / memory) it primarily targeted.
 
-If this was a clear regression (composite_relative ↑ by >5%):
-- Spend extra effort on the MECHANISM section
-- The LESSON should warn future trials away from this combination (e.g. "lr > 2e-4 + bias_strength > 0.85 destabilises")
+2. **OBSERVED EFFECT (per axis)** — For each of accuracy_ratio, speed_ratio, memory_ratio: did it improve (↓), regress (↑), or stay flat? Quote the actual numbers.
 
-If the trial hit a snapshot test failure or crashed:
-- GOAL and TRADEOFFS still apply
-- MECHANISM should diagnose the failure mode (e.g. "rewriting forward signature broke compatibility with PINNHead")
-- LESSON should be the cause: "cannot change forward signature; pinn_head requires (x, h) inputs"
+3. **MECHANISM** — Best mechanistic explanation. Cite a specific cause: training dynamics, gradient signal density, GPU memory bandwidth, biology, numerics, etc. Avoid vague "improved performance" — say WHY it changed.
+
+4. **TRADEOFFS** — What got worse? Multi-objective mutations almost always have a downside (e.g. bf16 inference is faster but loses ~0.001 accuracy). Identify any tradeoff explicitly, even if small.
+
+5. **LESSON** — One specific, transferable sentence prefixed by `LESSON:`. Make it actionable for future Researcher rounds. Specific lessons ("torch.compile with mode='reduce-overhead' reduces sweep_time_sec by 30% with no measurable accuracy regression") beat vague ones ("compile is fast").
+
+Special cases:
+- **Crash / snapshot fail**: GOAL and MECHANISM still apply — explain why the candidate broke. The LESSON should warn future trials away from the failure mode ("changing CellGNNv7Hybrid.forward signature breaks PINNHead compatibility").
+- **Clear regression (composite_relative ↑ > 5%)**: spend extra effort on MECHANISM; the LESSON is high-value because it prevents money-burning repeats.
+- **Marginal change (|Δ| < 1%)**: still write the lesson; small-effect mutations on one axis often have meaningful effects on another that the loop should learn about.

@@ -55,17 +55,19 @@ pipeline:
   engineer_timeout: 900             # 15 min per candidate
   parallel:
     num_workers: 1                  # bump to 2-4 if GPU has memory headroom
-  sample_n: 3                       # propose 3 candidates per round, keep best
+  sample_n: 3                       # show 3 historical nodes to the Researcher
+                                    # (NOTE: this is NOT 3 LLM calls per round;
+                                    # it's the size of context_nodes passed to the prompt)
   judge:
     enabled: false
-
-# Multi-target mutation manifest (M7-Evolve v2)
-# Loaded by main.py to pick which target to mutate each round.
-targets_manifest: "experiments/m7/mutation_targets.yaml"
 
 # Multi-objective weights — passed to full_benchmark.py via env vars.
 # Default below balances accuracy heavily; crank speed up if you want
 # the loop to optimise inference infrastructure instead.
+#
+# These are READ by full_benchmark.py from the environment, so to
+# actually change them you also need to set the env vars when launching:
+#   M7_W_ACCURACY=2.0 M7_W_SPEED=0.5 M7_W_MEMORY=0.1 python main.py ...
 objectives:
   weight_accuracy: 1.0
   weight_speed:    0.3
