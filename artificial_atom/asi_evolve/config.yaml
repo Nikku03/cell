@@ -1,0 +1,77 @@
+# ASI-Evolve config for artificial_atom v3
+# Patch api section in Colab with your real OPENAI_KEY + model.
+
+experiment_name: "artificial_atom_v3"
+
+api:
+  provider: "openai"
+  base_url: "https://api.openai.com/v1"
+  api_key: "your_openai_api_key_here"
+  model: "gpt-5.5"
+  max_completion_tokens: 8192
+  seed: 42
+  timeout: 600
+  retry_times: 3
+  retry_delay: 5
+
+logging:
+  level: "INFO"
+  console: true
+  wandb:
+    enabled: false
+
+pipeline:
+  agents:
+    manager: false
+    researcher: true
+    engineer: true
+    analyzer: true
+
+  researcher:
+    diff_based_evolution: true
+    # Loose regex: 4-10 angle brackets tolerated (LLM miscounts 6 vs 7)
+    diff_pattern: "<{4,10}\\s*SEARCH\\s*\\n(.*?)={4,10}\\s*\\n(.*?)>{4,10}\\s*REPLACE"
+    max_code_length: 32000
+
+  max_retries:
+    researcher: 3
+    engineer: 2
+    analyzer: 2
+
+  engineer_timeout: 1200
+  parallel:
+    num_workers: 1
+  sample_n: 3
+  judge:
+    enabled: false
+
+cognition:
+  storage_dir: "cognition_data"
+  embedding:
+    model: "sentence-transformers/all-MiniLM-L6-v2"
+    dimension: 384
+  faiss:
+    index_type: "IP"
+  retrieval:
+    top_k: 5
+    score_threshold: 0.25
+  web_search:
+    enabled: false
+
+database:
+  storage_dir: "database_data"
+  max_size: null
+  embedding:
+    model: "sentence-transformers/all-MiniLM-L6-v2"
+    dimension: 384
+  sampling:
+    algorithm: "island"
+    ucb1_c: 1.414
+    island:
+      num_islands: 4
+      migration_interval: 8
+      migration_rate: 0.1
+      exploration_ratio: 0.25
+      exploitation_ratio: 0.35
+  faiss:
+    index_type: "IP"

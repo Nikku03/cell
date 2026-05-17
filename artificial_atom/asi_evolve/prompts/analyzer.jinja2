@@ -1,0 +1,80 @@
+You are analyzing the outcome of an artificial_atom v3 evolution trial. Convert this outcome into a transferable lesson for the cognition store.
+
+## Task
+
+{{ task_description }}
+
+## This trial's code
+
+```python
+{{ code }}
+```
+
+## This trial's results
+
+```json
+{{ results }}
+```
+
+{% if best_sampled_node %}
+## Reference: best prior trial
+
+**Name**: {{ best_sampled_node.name }}
+**Score**: {{ best_sampled_node.score }}
+**Motivation**: {{ best_sampled_node.motivation }}
+{% if best_sampled_node.results %}
+**Best trial results:** {{ best_sampled_node.results }}
+{% endif %}
+{% if best_sampled_node.analysis %}
+**Prior analysis**: {{ best_sampled_node.analysis }}
+{% endif %}
+{% endif %}
+
+## Baseline reference (the 8/8 pass run with defaults)
+
+- composite = ~0.70 (= 0 failed + 0.1 * 7 min)
+- checks_passed = 8/8
+- Energy R² = 0.9743
+- Force MAE = 32.85
+- Bad-pose rejection = 0.9792
+- Near-native retention = 0.8962
+- Ensemble OOD ratio = 7.35
+- Wall time ≈ 7-8 min
+
+## Your task
+
+Write a 5-section structured analysis inside the `<analysis>` tag:
+
+1. **GOAL** — what this mutation was trying to achieve. Which axis (pass rate / wall time / metric margin) did it target?
+
+2. **OBSERVED EFFECT** — what actually happened to each axis? Quote specific numbers from the results:
+   - checks_passed (out of 8)
+   - wall_time_sec
+   - composite (lower better)
+   - For any check that failed/regressed, name it explicitly.
+
+3. **MECHANISM** — best mechanistic explanation. Cite training dynamics, capacity, regularization, optimization, physics. Avoid vague reasoning — point at WHAT caused the change.
+
+4. **TRADEOFFS** — what got worse? Even successful mutations usually have a downside (e.g. lower epochs → faster but slightly lower R²). Identify it.
+
+5. **LESSON** — one specific transferable sentence prefixed by `LESSON:`. Examples:
+   - "LESSON: EPOCHS_ENSEMBLE can be reduced to 8 with no impact on the OOD check (still 5.2x ratio)."
+   - "LESSON: N_LAYERS=1 fails Energy R² (drops to 0.78); 2 layers are necessary for current dataset size."
+   - "LESSON: BATCH_SIZE=32 actually slows wall time by 12% due to autograd graph overhead — diminishing returns past 16."
+
+Special cases:
+- **Candidate crashed**: GOAL still applies. MECHANISM should diagnose the crash. LESSON warns against the cause.
+- **All 8 checks failed**: Likely a destructive mutation. Mechanism + lesson MUST identify what specifically broke.
+- **Marginal change**: still write a lesson; small effects compound across the loop.
+
+## REQUIRED RESPONSE FORMAT
+
+Respond with EXACTLY one XML tag, nothing outside it. No markdown, no commentary.
+
+<analysis>
+1. GOAL: ...
+2. OBSERVED EFFECT: ...
+3. MECHANISM: ...
+4. TRADEOFFS: ...
+5. LESSON: ...
+</analysis>
