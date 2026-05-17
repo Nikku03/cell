@@ -59,22 +59,33 @@ You may emit multiple diff blocks if the mutation requires several coordinated c
 
 ## Reasoning guidelines
 
-1. **Don't repeat known failures**. Review the recent trial analyses. If a parameter value or strategy was rejected, try a meaningfully different alternative.
-2. **Respect hard constraints**:
+1. **HARD RULE: mutate ONLY the MUTABLE SECTION** (between `=== BEGIN MUTABLE SECTION ===` and `=== END MUTABLE SECTION ===`). The harness header (imports, path setup) and harness footer (main pipeline, save logic) must be preserved byte-for-byte. The harness depends on a specific set of imported functions (`load_m7_with_state`, `analyze_model_weaknesses`, `fine_tune_on_weaknesses`, `compute_full_val_metrics`) — do NOT import or call anything else from `cell_sim.lgnn.self_improve.iterate`.
+
+2. **HARD RULE: never call `iterate.main()` or any `argparse`-based entrypoint.** That module's `main()` is a CLI tool requiring `--initial` etc. and will crash with usage error if invoked. Use only the four functions listed above.
+
+3. **Don't repeat known failures**. Review the recent trial analyses. If a parameter value or strategy was rejected, try a meaningfully different alternative.
+
+4. **Respect hard constraints**:
    - `LEARNING_RATE` must stay in [3e-5, 3e-4]; values outside this range destabilize the encoder.
    - `BIAS_STRENGTH` sweet spot is 0.6–0.75; above 0.85 the model overfits weak regions.
    - `FINE_TUNE_STEPS` must stay in [500, 5000]; the candidate has a 12-min wall-clock limit.
-   - The script MUST print metrics between `===EVAL_METRICS===` and `===END_EVAL_METRICS===`.
-3. **Three improvement axes** the composite score rewards:
-   - **Accuracy** (weight 1.0): tune the fine-tune loop, weakness selection, loss weights, scheduled-sampling, or target_category filter.
-   - **Speed** (weight 0.3): toggle `USE_TORCH_COMPILE = True`, set `INFERENCE_DTYPE = 'bf16'`, or pre-compute static tensors.
-   - **Memory** (weight 0.1): smaller activations, gradient checkpointing toggle, smaller batch_size at fine-tune time.
-4. **Mechanistic reasoning beats heuristic**. Use the <motivation> tag to state:
+   - The script MUST print metrics between `===EVAL_METRICS===` and `===END_EVAL_METRICS===` (the harness footer already does this).
+
+5. **Three improvement axes** the composite score rewards:
+   - **Accuracy** (weight 1.0): tune the fine-tune hyperparameters, change `TARGET_CATEGORY`, or rewrite `filter_weakness()` to use different criteria.
+   - **Speed** (weight 0.3): toggle `USE_TORCH_COMPILE = True`, set `INFERENCE_DTYPE = 'bf16'`, or set `INFERENCE_DISABLE_CHECKPOINT = True`.
+   - **Memory** (weight 0.1): smaller `BATCH_SIZE` at fine-tune, or `INFERENCE_DISABLE_CHECKPOINT = True` + smaller batch.
+
+6. **Mechanistic reasoning beats heuristic**. Use the <motivation> tag to state:
    - What change you're proposing
    - WHY it will improve the score (specific mechanism)
    - Which axis you expect to move and roughly how much
-5. **Prefer single-axis mutations**. Changing one thing isolates the effect.
-6. **Don't chase val_count below 0.0716** — that's the irreducible stochastic noise floor; every deterministic M7 variant hits it. Target val_rollout_200_mse instead.
+
+7. **Prefer single-axis mutations**. Changing one thing isolates the effect. The simplest valid mutation is changing ONE hyperparameter value (e.g. `BIAS_STRENGTH = 0.65`).
+
+8. **STRONGLY PREFER DIFF MODE**. The system marks `diff_based=True` and the BASE CODE above is the current program. Express your mutation as a `<<<<<<< SEARCH / >>>>>>> REPLACE` block matching the existing line(s) you want to change. Do NOT rewrite the entire file — full rewrites are 5x more likely to introduce bugs that crash the candidate before metrics can be collected.
+
+9. **Don't chase val_count below 0.0716** — that's the irreducible stochastic noise floor; every deterministic M7 variant hits it. Target val_rollout_200_mse instead.
 
 ## REQUIRED RESPONSE FORMAT
 
