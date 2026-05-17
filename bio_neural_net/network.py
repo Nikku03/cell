@@ -116,13 +116,26 @@ class NeuralCluster:
                     spiked_now.append(i)
                     record.add(t, i)
 
+            # Synaptic transmission (queues vesicle releases on the post side).
             for i in spiked_now:
                 for s in outgoing[i]:
                     s.on_pre_spike(t)
-                    if self.stdp is not None:
-                        self.stdp.on_pre_spike(s)
-                if self.stdp is not None:
+
+            # STDP. Weight updates are per synapse, but trace bumps are per
+            # *spike* - bumping inside the per-synapse loop would over-count
+            # by a factor equal to the neuron's fan-in or fan-out.
+            if self.stdp is not None:
+                for i in spiked_now:
+                    for s in outgoing[i]:
+                        self.stdp.depress_on_pre(s)
+                for i in spiked_now:
+                    if outgoing[i]:
+                        self.stdp.record_pre_spike(self.neurons[i])
+                for i in spiked_now:
                     for s in incoming[i]:
-                        self.stdp.on_post_spike(s)
+                        self.stdp.potentiate_on_post(s)
+                for i in spiked_now:
+                    if incoming[i]:
+                        self.stdp.record_post_spike(self.neurons[i])
 
         return record

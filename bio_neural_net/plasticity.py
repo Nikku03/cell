@@ -53,10 +53,30 @@ class STDP:
         for k in list(self._post_traces):
             self._post_traces[k] *= km
 
-    def on_pre_spike(self, syn: "Synapse") -> None:
+    # ---- per-synapse weight updates (no trace bumping) ----
+
+    def depress_on_pre(self, syn: "Synapse") -> None:
+        """Apply the long-term depression term when the pre-synaptic neuron fires."""
         syn.g_max = max(0.0, syn.g_max - self.A_minus * self._post(syn.post))
-        self._pre_traces[id(syn.pre)] = self._pre(syn.pre) + 1.0
+
+    def potentiate_on_post(self, syn: "Synapse") -> None:
+        """Apply the long-term potentiation term when the post-synaptic neuron fires."""
+        syn.g_max = min(self.g_max_cap, syn.g_max + self.A_plus * self._pre(syn.pre))
+
+    # ---- per-spike trace bumps (called once per spike, NOT once per synapse) ----
+
+    def record_pre_spike(self, neuron) -> None:
+        self._pre_traces[id(neuron)] = self._pre(neuron) + 1.0
+
+    def record_post_spike(self, neuron) -> None:
+        self._post_traces[id(neuron)] = self._post(neuron) + 1.0
+
+    # ---- backwards-compatible wrappers ----
+
+    def on_pre_spike(self, syn: "Synapse") -> None:
+        self.depress_on_pre(syn)
+        self.record_pre_spike(syn.pre)
 
     def on_post_spike(self, syn: "Synapse") -> None:
-        syn.g_max = min(self.g_max_cap, syn.g_max + self.A_plus * self._pre(syn.pre))
-        self._post_traces[id(syn.post)] = self._post(syn.post) + 1.0
+        self.potentiate_on_post(syn)
+        self.record_post_spike(syn.post)
