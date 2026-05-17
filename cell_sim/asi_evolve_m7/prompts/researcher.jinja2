@@ -99,7 +99,12 @@ No other text outside these three tags. No markdown, no commentary, no headers. 
 
 ## THE CONTENTS OF <code> MUST BE DIFF BLOCKS ONLY
 
-The system parses your `<code>` tag for diff blocks in this EXACT format (a hardcoded regex; no flexibility):
+The system parses your `<code>` tag for diff blocks. The marker lines use:
+- **7 LESS-THAN signs** followed by ` SEARCH` to start
+- **7 EQUALS signs** to separate find / replace
+- **7 GREATER-THAN signs** followed by ` REPLACE` to end
+
+EXACT format (count the angle brackets — there are SEVEN of each marker char):
 
 ```
 <<<<<<< SEARCH
@@ -108,6 +113,8 @@ The system parses your `<code>` tag for diff blocks in this EXACT format (a hard
 (the replacement lines)
 >>>>>>> REPLACE
 ```
+
+The system tolerates 4-10 of each marker char if you miscount, but always aim for 7. SEARCH and REPLACE are CASE-SENSITIVE and must be in uppercase. Do not add spaces inside the angle brackets (e.g. `<< <<<<<` is wrong).
 
 You can include 1-5 diff blocks if the mutation requires coordinated changes. **Do NOT write a complete Python file inside <code>**. Full rewrites:
 - Almost always exceed the 32000-char limit and get truncated mid-function

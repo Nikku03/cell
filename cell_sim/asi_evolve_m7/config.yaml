@@ -44,8 +44,11 @@ pipeline:
 
   researcher:
     diff_based_evolution: true
-    diff_pattern: "<<<<<<< SEARCH\\n(.*?)=======\\n(.*?)>>>>>>> REPLACE"
-    max_code_length: 32000             # bumped from 12000 - GPT-5 full rewrites
+    # Forgiving diff pattern: accept 4-10 angle brackets / equals signs
+    # so LLM miscounts (e.g. 6 vs 7) don't silently fall back to raw-text-as-code.
+    # The standard format is 7 each; this matches 4-10 of each marker char.
+    diff_pattern: "<{4,10}\\s*SEARCH\\s*\\n(.*?)={4,10}\\s*\\n(.*?)>{4,10}\\s*REPLACE"
+    max_code_length: 32000             # bumped from 12000 — GPT-5 full rewrites
                                         # of initial_program.py run 12-18k chars;
                                         # truncation produces broken Python.
 
