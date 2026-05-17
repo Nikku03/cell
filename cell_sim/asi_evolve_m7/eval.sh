@@ -50,6 +50,9 @@ fi
 # ----------------------------------------------------------------
 echo "[eval] Phase 1: run candidate ($CANDIDATE)" >&2
 rm -f "$CKPT"
+# Set PYTHONPATH so `import cell_sim.*` works no matter where the LLM
+# puts (or removes) sys.path.insert calls in the candidate.
+export PYTHONPATH="/content/cell:${PYTHONPATH}"
 timeout 900 python "$CANDIDATE" > "$LOG" 2>&1
 EXIT=$?
 if [ $EXIT -eq 124 ]; then
