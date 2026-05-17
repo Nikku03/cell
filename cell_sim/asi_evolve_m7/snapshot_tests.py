@@ -43,10 +43,15 @@ def main(checkpoint_path: str) -> None:
 
     # Test 2: forward pass produces correct shape, no NaN
     try:
+        # Match input dtype to the loaded model's dtype (which may be
+        # bf16 or fp32 depending on the saved cfg's use_bf16 flag).
+        # If we pass fp32 inputs to a bf16 model, the input_proj matmul
+        # complains about "mat1 and mat2 must have the same dtype".
+        model_dtype = next(model.parameters()).dtype
         x = torch.randn(2, len(row_names), device=DEVICE,
-                         dtype=torch.float32) * 0.1
+                         dtype=model_dtype) * 0.1
         v = torch.randn(2, len(row_names), device=DEVICE,
-                         dtype=torch.float32).abs() * 0.05
+                         dtype=model_dtype).abs() * 0.05
         with torch.no_grad():
             out = model(x, x_var=v)
         x_next = out[0] if isinstance(out, tuple) else out
@@ -66,9 +71,9 @@ def main(checkpoint_path: str) -> None:
                                map_location=DEVICE, weights_only=False)
         sigma = torch.load(f'{DRIVE_DIR}/sigma_train_reps_1to49.pt',
                             map_location=DEVICE, weights_only=False)
-        x = val_data[0, 100].clone().to(torch.float32)
+        x = val_data[0, 100].clone().to(model_dtype)
         for s in range(10):
-            v_in = sigma[100 + s].unsqueeze(0).to(torch.float32)
+            v_in = sigma[100 + s].unsqueeze(0).to(model_dtype)
             with torch.no_grad():
                 out = model(x.unsqueeze(0), x_var=v_in)
             x = (out[0] if isinstance(out, tuple) else out).squeeze(0)
@@ -85,15 +90,15 @@ def main(checkpoint_path: str) -> None:
         if not groups:
             _fail('no knockout groups found in row_names')
         locus = sorted(groups.keys())[0]
-        x_base = val_data[0, 100].clone().to(torch.float32)
+        x_base = val_data[0, 100].clone().to(model_dtype)
         x_ko = x_base.clone()
         for r in groups[locus]:
             x_ko[r] = 0.0
         with torch.no_grad():
             out_base = model(x_base.unsqueeze(0),
-                              x_var=sigma[100].unsqueeze(0).to(torch.float32))
+                              x_var=sigma[100].unsqueeze(0).to(model_dtype))
             out_ko = model(x_ko.unsqueeze(0),
-                            x_var=sigma[100].unsqueeze(0).to(torch.float32))
+                            x_var=sigma[100].unsqueeze(0).to(model_dtype))
         x_b = (out_base[0] if isinstance(out_base, tuple)
                else out_base).squeeze(0)
         x_k = (out_ko[0] if isinstance(out_ko, tuple)
