@@ -11,12 +11,16 @@ spiking networks different from rate-coded ones:
   - communication is discrete events in time, not continuous activations
   - the neuron has internal state (V, refractory timer) that persists between inputs
   - thresholding is hard (a spike or no spike), not a soft sigmoid
+  - optional Gaussian membrane noise lets a *population* recover sub-threshold
+    signals no single deterministic neuron could detect (stochastic resonance)
 
 All voltages are in millivolts, times in milliseconds, currents in nanoamps.
 """
 
 from __future__ import annotations
 
+import math
+import random as _random
 from dataclasses import dataclass
 
 
@@ -28,15 +32,21 @@ class NeuronParams:
     V_reset: float = -75.0    # post-spike reset (mV)
     R_m: float = 10.0         # membrane resistance (MOhm)
     refractory: float = 2.0   # absolute refractory period (ms)
+    noise_std: float = 0.0    # Gaussian membrane noise, mV / sqrt(ms)
 
 
 class LIFNeuron:
-    def __init__(self, params: NeuronParams | None = None):
+    def __init__(
+        self,
+        params: NeuronParams | None = None,
+        rng: _random.Random | None = None,
+    ):
         self.p = params or NeuronParams()
         self.V = self.p.V_rest
         self.refr_remaining = 0.0
         self.spiked = False
         self.last_spike_t = -1e9  # for STDP traces
+        self._rng = rng
 
     def reset(self) -> None:
         self.V = self.p.V_rest
@@ -56,6 +66,10 @@ class LIFNeuron:
         # Euler integration of tau_m * dV/dt = -(V - V_rest) + R_m * I_syn
         dV = (-(self.V - self.p.V_rest) + self.p.R_m * I_syn) * (dt / self.p.tau_m)
         self.V += dV
+
+        # Optional Gaussian membrane noise (Euler-Maruyama: sigma * sqrt(dt) * Z).
+        if self.p.noise_std > 0.0 and self._rng is not None:
+            self.V += self._rng.gauss(0.0, self.p.noise_std) * math.sqrt(dt)
 
         if self.V >= self.p.V_thresh:
             self.V = self.p.V_reset

@@ -43,7 +43,7 @@ class NeuralCluster:
         self._rng = rng or random.Random(0)
 
     def add_neuron(self, params: NeuronParams | None = None) -> int:
-        self.neurons.append(LIFNeuron(params))
+        self.neurons.append(LIFNeuron(params, rng=self._rng))
         return len(self.neurons) - 1
 
     def add_neurons(self, n: int, params: NeuronParams | None = None) -> list[int]:

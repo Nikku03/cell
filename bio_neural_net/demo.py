@@ -10,7 +10,9 @@ Each demo prints a spike raster (one row per neuron, time runs left to right).
 
 from __future__ import annotations
 
+import math
 import random
+from collections import Counter
 
 from .network import NeuralCluster
 from .neuron import NeuronParams
@@ -210,11 +212,112 @@ def demo_hebbian_pattern() -> None:
     print("time-based synaptic changes. No backpropagation. No teacher signal.")
 
 
+# ----------- demo 5: entropy + cluster recovers a sub-threshold signal -------
+
+def _bin_spikes(times: list[float], duration_ms: float, bin_ms: float) -> list[int]:
+    n_bins = int(duration_ms / bin_ms)
+    counts = [0] * n_bins
+    for t in times:
+        idx = min(n_bins - 1, int(t / bin_ms))
+        counts[idx] += 1
+    return counts
+
+
+def _shannon_entropy_bits(counts: list[int]) -> float:
+    freq = Counter(counts)
+    total = sum(freq.values())
+    h = 0.0
+    for f in freq.values():
+        p = f / total
+        if p > 0:
+            h -= p * math.log2(p)
+    return h
+
+
+def _pearson(xs: list[float], ys: list[float]) -> float:
+    n = len(xs)
+    mx = sum(xs) / n
+    my = sum(ys) / n
+    num = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
+    dx = math.sqrt(sum((x - mx) ** 2 for x in xs))
+    dy = math.sqrt(sum((y - my) ** 2 for y in ys))
+    if dx == 0 or dy == 0:
+        return 0.0
+    return num / (dx * dy)
+
+
+def demo_stochastic_resonance() -> None:
+    section("DEMO 5 — Entropy in the units, signal in the cluster")
+    print(
+        "A weak signal that no deterministic neuron can detect becomes visible\n"
+        "to a *cluster* of stochastic neurons. Each neuron's firing looks like\n"
+        "noise; averaged across the cluster, the population rate tracks the\n"
+        "signal. This is stochastic resonance: entropy at the unit level plus\n"
+        "redundancy at the cluster level recovers information. The brain pays\n"
+        "for it with metabolism and many neurons; it buys robustness to weak,\n"
+        "noisy inputs that a single noiseless detector would simply miss.\n"
+    )
+
+    SIGNAL_HZ = 5.0
+    DURATION = 2000.0
+    BIN_MS = 20.0
+    NOISE = 2.5     # mV / sqrt(ms) - chosen so single noisy neuron sometimes fires
+    N_POP = 30
+
+    # Subthreshold sine current: peak amplitude 1.5 nA -> V_ss peak = -55 mV
+    # (5 mV short of threshold -50). No deterministic neuron will ever fire.
+    def signal(t: float) -> float:
+        return 0.75 * (1.0 + math.sin(2.0 * math.pi * SIGNAL_HZ * t / 1000.0))
+
+    net_det = NeuralCluster(rng=random.Random(101))
+    net_det.add_neuron(NeuronParams(noise_std=0.0))
+    rec_det = net_det.run(DURATION, dt=0.1, external_current=lambda t: [signal(t)])
+
+    net_solo = NeuralCluster(rng=random.Random(102))
+    net_solo.add_neuron(NeuronParams(noise_std=NOISE))
+    rec_solo = net_solo.run(DURATION, dt=0.1, external_current=lambda t: [signal(t)])
+
+    net_pop = NeuralCluster(rng=random.Random(103))
+    net_pop.add_neurons(N_POP, NeuronParams(noise_std=NOISE))
+    rec_pop = net_pop.run(
+        DURATION, dt=0.1, external_current=lambda t: [signal(t)] * N_POP
+    )
+
+    n_bins = int(DURATION / BIN_MS)
+    signal_bins = [signal((k + 0.5) * BIN_MS) for k in range(n_bins)]
+
+    cd = _bin_spikes(rec_det.times, DURATION, BIN_MS)
+    cs = _bin_spikes(rec_solo.times, DURATION, BIN_MS)
+    cp = _bin_spikes(rec_pop.times, DURATION, BIN_MS)
+
+    rows = [
+        ("deterministic single (noise=0)", len(rec_det), cd),
+        (f"noisy single     (noise={NOISE})", len(rec_solo), cs),
+        (f"noisy population (N={N_POP},noise={NOISE})", len(rec_pop), cp),
+    ]
+    print(f"{'condition':<38} {'spikes':>8} {'H[bits]':>10} {'corr(signal)':>14}")
+    print("-" * 74)
+    for label, n_spikes, counts in rows:
+        H = _shannon_entropy_bits(counts)
+        r = _pearson(counts, signal_bins)
+        print(f"{label:<38} {n_spikes:>8} {H:>10.3f} {r:>14.3f}")
+
+    print()
+    print("Reading the table:")
+    print("  - Deterministic neuron sees 0 spikes: signal is sub-threshold by design.")
+    print("  - Noisy single neuron spikes ~Poisson; H is large but corr is modest -")
+    print("    its spikes are mostly noise.")
+    print("  - Noisy population's binned counts cleanly track the sine wave - high")
+    print("    Pearson r against the signal. Entropy in the units became information")
+    print("    at the cluster level.")
+
+
 def main() -> None:
     demo_single_neuron()
     demo_winner_take_all()
     demo_persistent_memory()
     demo_hebbian_pattern()
+    demo_stochastic_resonance()
     print()
 
 
