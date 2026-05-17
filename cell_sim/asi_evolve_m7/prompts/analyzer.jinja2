@@ -6,15 +6,11 @@ You are analyzing the outcome of an M7-Evolve trial. Your job is to convert this
 
 ## This trial's code
 
-```python
 {{ code }}
-```
 
 ## This trial's results
 
-```json
 {{ results }}
-```
 
 {% if best_sampled_node %}
 ## Reference: best-performing prior trial (for comparison)
@@ -22,27 +18,51 @@ You are analyzing the outcome of an M7-Evolve trial. Your job is to convert this
 **Name**: {{ best_sampled_node.name }}
 **Score**: {{ best_sampled_node.score }}
 **Motivation**: {{ best_sampled_node.motivation }}
+{% if best_sampled_node.results %}
+**Best trial results:** {{ best_sampled_node.results }}
+{% endif %}
 {% if best_sampled_node.analysis %}
 **Prior analysis**: {{ best_sampled_node.analysis }}
 {% endif %}
 
 {% endif %}
 
+## Baseline metrics for reference
+
+- composite_relative baseline = 1.0 (lower is better; achieved gains shift this down)
+- val_singlestep_mse baseline = 0.0589
+- val_rollout_200_mse baseline = 0.0826
+- val_mse_count baseline = 0.0716 (STOCHASTIC NOISE FLOOR — cannot improve below this)
+- sweep_ko_per_sec baseline ≈ 3.71
+- peak_memory_gb baseline ≈ 4.2
+
 ## Your task
 
-Write a 5-section structured analysis comparing this trial's metrics to the baseline (composite_relative = 1.0, val_singlestep_mse = 0.0589, val_rollout_200_mse = 0.0826, val_mse_count = 0.0716 noise floor, sweep_ko_per_sec ≈ 3.71, peak_memory_gb ≈ 4.2) and to the reference best trial above when present.
+Write a 5-part structured analysis inside the <analysis> tag:
 
-1. **GOAL** — What this mutation was trying to achieve. Identify which of the three objective dimensions (accuracy / speed / memory) it primarily targeted.
+1. **GOAL** — what this mutation was trying to achieve. Identify which of the three objective dimensions (accuracy / speed / memory) it primarily targeted.
 
-2. **OBSERVED EFFECT (per axis)** — For each of accuracy_ratio, speed_ratio, memory_ratio: did it improve (↓), regress (↑), or stay flat? Quote the actual numbers.
+2. **OBSERVED EFFECT (per axis)** — for each of accuracy_ratio, speed_ratio, memory_ratio: did it improve (↓), regress (↑), or stay flat? Quote the actual numbers from the results.
 
-3. **MECHANISM** — Best mechanistic explanation. Cite a specific cause: training dynamics, gradient signal density, GPU memory bandwidth, biology, numerics, etc. Avoid vague "improved performance" — say WHY it changed.
+3. **MECHANISM** — best mechanistic explanation. Cite a specific cause: training dynamics, gradient signal density, GPU memory bandwidth, biology, numerics, etc. Avoid vague "improved performance" — say WHY it changed.
 
-4. **TRADEOFFS** — What got worse? Multi-objective mutations almost always have a downside (e.g. bf16 inference is faster but loses ~0.001 accuracy). Identify any tradeoff explicitly, even if small.
+4. **TRADEOFFS** — what got worse? Multi-objective mutations almost always have a downside. Identify it explicitly, even if small.
 
-5. **LESSON** — One specific, transferable sentence prefixed by `LESSON:`. Make it actionable for future Researcher rounds. Specific lessons ("torch.compile with mode='reduce-overhead' reduces sweep_time_sec by 30% with no measurable accuracy regression") beat vague ones ("compile is fast").
+5. **LESSON** — one specific, transferable sentence prefixed by `LESSON:`. Make it actionable. Specific lessons ("torch.compile with mode='reduce-overhead' reduces sweep_time_sec by 30% with no accuracy regression") beat vague ones ("compile is fast").
 
 Special cases:
-- **Crash / snapshot fail**: GOAL and MECHANISM still apply — explain why the candidate broke. The LESSON should warn future trials away from the failure mode ("changing CellGNNv7Hybrid.forward signature breaks PINNHead compatibility").
+- **Crash / snapshot fail**: GOAL and MECHANISM still apply — explain why the candidate broke. The LESSON should warn future trials away from the failure mode.
 - **Clear regression (composite_relative ↑ > 5%)**: spend extra effort on MECHANISM; the LESSON is high-value because it prevents money-burning repeats.
 - **Marginal change (|Δ| < 1%)**: still write the lesson; small-effect mutations on one axis often have meaningful effects on another that the loop should learn about.
+
+## REQUIRED RESPONSE FORMAT
+
+Respond with EXACTLY one XML tag. No other text, no markdown, no commentary outside the tag.
+
+<analysis>
+1. GOAL: ...
+2. OBSERVED EFFECT: ...
+3. MECHANISM: ...
+4. TRADEOFFS: ...
+5. LESSON: ...
+</analysis>

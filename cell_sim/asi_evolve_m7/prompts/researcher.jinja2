@@ -10,12 +10,17 @@ where each ratio is candidate_value / baseline. Improvements on ANY of the three
 
 ## Domain knowledge (retrieved from cognition store)
 
+{% if cognition_items %}
 {% for item in cognition_items %}
 - {{ item.content }}
 {% endfor %}
+{% else %}
+(no cognition entries yet — this is an early round)
+{% endif %}
 
 ## Recent trial history (most informative nodes)
 
+{% if context_nodes %}
 {% for node in context_nodes %}
 ### Trial: {{ node.name }}
 **Motivation:** {{ node.motivation }}
@@ -28,60 +33,55 @@ where each ratio is candidate_value / baseline. Improvements on ANY of the three
 {% endif %}
 {% if node.code %}
 **Code excerpt:**
-```python
 {{ node.code }}
-```
 {% endif %}
 
 {% endfor %}
+{% else %}
+(no prior trials — this is the first round)
+{% endif %}
 
-## Current code to mutate
+## Current code to improve
 
-```python
 {{ base_code }}
-```
 
 ## Your task
 
-Propose a SINGLE mutation to the current code. {% if diff_based %}Output diff blocks in EXACTLY this format:
+Propose ONE mutation to the current code. {% if diff_based %}Express the mutation as one or more diff blocks in EXACTLY this format inside the <code> tag:
 
-```
 <<<<<<< SEARCH
-(exact lines from current code)
+(exact lines from the current code, character-for-character)
 =======
 (replacement lines)
 >>>>>>> REPLACE
-```
 
-You may emit multiple diff blocks if the mutation requires several coordinated changes.
-{% else %}
-Output the COMPLETE rewritten program.
-{% endif %}
+You may emit multiple diff blocks if the mutation requires several coordinated changes.{% else %}Provide the COMPLETE rewritten Python file inside the <code> tag.{% endif %}
 
 ## Reasoning guidelines
 
 1. **Don't repeat known failures**. Review the recent trial analyses. If a parameter value or strategy was rejected, try a meaningfully different alternative.
-
-2. **Respect hard constraints** baked into the code:
+2. **Respect hard constraints**:
    - `LEARNING_RATE` must stay in [3e-5, 3e-4]; values outside this range destabilize the encoder.
    - `BIAS_STRENGTH` sweet spot is 0.6–0.75; above 0.85 the model overfits weak regions.
    - `FINE_TUNE_STEPS` must stay in [500, 5000]; the candidate has a 12-min wall-clock limit.
    - The script MUST print metrics between `===EVAL_METRICS===` and `===END_EVAL_METRICS===`.
-
-3. **Three improvement axes** the score rewards:
-   - **Accuracy** (composite val MSE; dominant weight 1.0): mutate the fine-tune loop, weakness selection, loss weights, scheduled-sampling, or target_category filter.
-   - **Speed** (sweep_time_sec; weight 0.3): toggle `USE_TORCH_COMPILE = True`, set `INFERENCE_DTYPE = 'bf16'`, batch the inference benchmark, or pre-compute static tensors.
-   - **Memory** (peak_memory_gb; weight 0.1): smaller activations, gradient checkpointing toggle, smaller batch_size at fine-tune time.
-
-4. **Strong mechanistic reasoning beats heuristic**. Before the diff, state in 2–3 sentences:
+3. **Three improvement axes** the composite score rewards:
+   - **Accuracy** (weight 1.0): tune the fine-tune loop, weakness selection, loss weights, scheduled-sampling, or target_category filter.
+   - **Speed** (weight 0.3): toggle `USE_TORCH_COMPILE = True`, set `INFERENCE_DTYPE = 'bf16'`, or pre-compute static tensors.
+   - **Memory** (weight 0.1): smaller activations, gradient checkpointing toggle, smaller batch_size at fine-tune time.
+4. **Mechanistic reasoning beats heuristic**. Use the <motivation> tag to state:
    - What change you're proposing
-   - WHY you predict it will improve the score (cite a specific mechanism)
-   - Which axis you expect to move and by roughly how much
+   - WHY it will improve the score (specific mechanism)
+   - Which axis you expect to move and roughly how much
+5. **Prefer single-axis mutations**. Changing one thing isolates the effect.
+6. **Don't chase val_count below 0.0716** — that's the irreducible stochastic noise floor; every deterministic M7 variant hits it. Target val_rollout_200_mse instead.
 
-5. **Prefer single-axis mutations**. Changing one thing isolates the effect. Combine only when cognition entries suggest synergy.
+## REQUIRED RESPONSE FORMAT
 
-6. **If recent trials have plateaued**, propose a qualitatively different change — restructure the fine-tune loop, modify the weakness criterion (currently worst-timestep MSE), add a new loss term via the `custom_loss_addon` hook, or activate one of the architecture/inference toggles.
+Respond using ONLY these three XML tags. Put content directly inside the tags — DO NOT use ```python or ``` markdown code fences anywhere in your response. The system parses these tags with a strict regex; markdown will cause the response to be rejected.
 
-7. **Don't chase val_count below 0.0716**. That's the stochastic noise floor; every deterministic M7 variant hits it. Target val_rollout_200_mse and sweep_time_sec instead.
+<name>short_identifier_for_this_mutation</name>
+<motivation>2-4 sentence explanation: what you're changing, why it should help, which axis you expect to improve</motivation>
+<code>{% if diff_based %}your diff blocks here (one or more <<<<<<< SEARCH / >>>>>>> REPLACE pairs){% else %}the complete rewritten Python file here{% endif %}</code>
 
-Write your reasoning before the diff. The diff must produce syntactically valid Python after substitution.
+No other text outside these three tags. No markdown, no commentary, no headers. Just the three tags.
