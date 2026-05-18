@@ -1042,8 +1042,14 @@ def train_m7(
         except Exception as e:
             print(f'  WARNING: torch.compile failed ({e}); continuing uncompiled')
 
-    opt = torch.optim.AdamW(model.parameters(), lr=cfg.lr,
-                            weight_decay=cfg.weight_decay)
+    from cell_sim.lgnn.training.optimizers import build_optimizer
+    opt = build_optimizer(
+        model.parameters(),
+        name=cfg.optimizer_name,
+        lr=cfg.lr,
+        weight_decay=cfg.weight_decay,
+    )
+    print(f'  optimizer: {cfg.optimizer_name}')
 
     # SBML mask for the optional anti-drift term, cached on device.
     # PINNHead's s_covered_mask is float; coerce to bool here.
@@ -1059,6 +1065,29 @@ def train_m7(
         'val_mse_per_step': [], 'k_per_epoch': [], 'samples_per_sec': [],
     }
     best_val = float('inf')
+    # ---- M8 upgrade 3/5: EMA + SWA setup ----
+    # EMA: a running exponential moving average of the model weights,
+    # updated every optimiser step. At eval, swap the EMA weights in
+    # (model.parameters() <- ema_model.parameters()), evaluate, swap
+    # back. Typically +2-5% on val with zero training-time cost.
+    #
+    # SWA: average of model weights over the FINAL swa_n_epochs of
+    # training. Final eval uses these averaged weights. Standard
+    # paper trick that adds ~1-3% on val.
+    ema_model = None
+    swa_model = None
+    if cfg.use_ema or cfg.use_swa:
+        from torch.optim.swa_utils import AveragedModel, get_ema_multi_avg_fn
+        if cfg.use_ema:
+            ema_model = AveragedModel(
+                model,
+                multi_avg_fn=get_ema_multi_avg_fn(cfg.ema_decay),
+            )
+            print(f'  EMA enabled (decay={cfg.ema_decay})')
+        if cfg.use_swa:
+            swa_model = AveragedModel(model)
+            print(f'  SWA enabled (start_epoch={cfg.swa_start_epoch})')
+
     train_t0 = time.time()
     global_step = 0
 
@@ -1191,6 +1220,8 @@ def train_m7(
                     opt.zero_grad(set_to_none=True)
                     L.backward()
                     opt.step()
+                    if ema_model is not None:
+                        ema_model.update_parameters(model)
                     global_step += 1
                     n_seen += int(rep_idx.shape[0])
                 run['total']     += L.detach().float()
@@ -1324,6 +1355,8 @@ def train_m7(
             opt.zero_grad(set_to_none=True)
             L.backward()
             opt.step()
+            if ema_model is not None:
+                ema_model.update_parameters(model)
             global_step += 1
 
             run['total']        += L.detach().float()
@@ -1363,10 +1396,16 @@ def train_m7(
                 float(run[key].item()) / max(n_batches, 1)
             )
 
+        # SWA update at end of epoch (after swa_start_epoch)
+        if swa_model is not None and epoch >= cfg.swa_start_epoch:
+            swa_model.update_parameters(model)
+
         # --- Validation (cheap; uses cfg.max_k k-step rollout on val) ---
-        model.eval()
+        # Use EMA weights if enabled — they typically generalise better.
+        eval_model = ema_model.module if ema_model is not None else model
+        eval_model.eval()
         val_metrics = _evaluate_m7(
-            model, val_data, sigma, flux_indices, count_mask, cum_mask,
+            eval_model, val_data, sigma, flux_indices, count_mask, cum_mask,
             cfg, model_dtype, device,
         )
         for k, v in val_metrics.items():
