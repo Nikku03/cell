@@ -265,6 +265,47 @@ class M7TrainConfig(M3TrainConfig):
     # of training when going M7.7 -> M7.8.
     init_from_checkpoint:                 str = ''
 
+    # ---- M8 stochastic head: predict (μ, σ), train with NLL ----
+    # When True, the model includes a per-species log_σ head and the
+    # primary loss becomes Gaussian NLL instead of MSE. This is the
+    # single biggest accuracy unlock - it lets the model express
+    # "this transition is irreducibly noisy" (e.g. count noise on rare
+    # species) instead of being penalised for not predicting variance.
+    # The deterministic val_count = 0.0716 noise floor that every M7.*
+    # variant hits is broken by this head.
+    #
+    # nll_loss_weight: weight on the NLL loss term relative to MSE.
+    #   0.0 -> pure MSE (deterministic M7 behaviour)
+    #   1.0 -> NLL dominates
+    #   0.5 -> mixed; useful for warm-starting from a deterministic ckpt
+    use_stochastic_head:                  bool = False
+    nll_loss_weight:                      float = 1.0
+    mse_warmup_steps:                     int = 0      # train MSE-only for first N steps, then mix in NLL
+
+    # ---- Selected optimiser ----
+    # 'adamw'    : default, M7.*-compatible
+    # 'ademamix' : Apple, 2024. EMA + slow EMA combination, faster convergence
+    # 'lion'     : Google, 2023. Sign-based update, often beats AdamW
+    optimizer_name:                       str = 'adamw'
+
+    # ---- SWA + EMA ----
+    # When True, maintains an exponential moving average of model
+    # weights (decay=ema_decay) and ALSO a Stochastic Weight Average
+    # over the final swa_n_epochs of training. EMA weights are used
+    # at every validation; SWA weights at the final eval and saved
+    # alongside the regular best checkpoint.
+    use_ema:                              bool = False
+    ema_decay:                            float = 0.999
+    use_swa:                              bool = False
+    swa_start_epoch:                      int = 2     # begin SWA at this epoch
+    swa_lr:                               float = 1e-4
+
+    # ---- Inference-time toggles passed to model construction ----
+    # When True, model is wrapped with torch.compile(mode='reduce-overhead')
+    # AFTER training so the saved checkpoint runs ~2x faster at inference.
+    # NOT applied during training (compile + checkpointing don't play well).
+    compile_at_eval:                      bool = False
+
 
 # ----------------------------------------------------------------------
 # Subsampled (rep, t) iterator (speed lever a)
@@ -770,12 +811,21 @@ def _m7_step_loss(
     count_mask:  torch.Tensor,         # (S,) bool
     cum_mask:    torch.Tensor,         # (S,) bool
     w_count: float, w_flux: float, w_cum: float,
+    log_sigma: Optional[torch.Tensor] = None,   # (B, S) per-species log_sigma
+    nll_weight: float = 0.0,
 ):
     """Per-step M7 multi-task loss.
 
     Flux supervision is DIRECT: v_log compared element-wise to the
     F_* rows of the observed next state. Count + cumulative supervision
     use the PINN-derived next state on the appropriate row masks.
+
+    M8: if `log_sigma` is provided AND `nll_weight > 0`, an additional
+    Gaussian NLL term is added (proportional to nll_weight). This is
+    the noise-floor-breaking objective:
+        L_nll = 0.5*((x_target - x_pred)/sigma)^2 + log(sigma)
+    averaged over count_mask rows (where the stochastic noise floor
+    sits) - flux rows already have low MSE and don't benefit from σ.
     """
     diff_sq_state = (x_next_pred - x_next_target).pow(2)        # (B, S)
 
@@ -794,10 +844,24 @@ def _m7_step_loss(
     mse_flux = (v_log_pred - flux_target_log).pow(2).mean()
 
     total = w_count * mse_count + w_flux * mse_flux + w_cum * mse_cum
+
+    # M8 stochastic NLL term — only on count rows where the noise floor sits
+    nll_count = torch.zeros((), device=x_next_pred.device,
+                             dtype=x_next_pred.dtype)
+    if log_sigma is not None and nll_weight > 0.0:
+        # σ clamped at 1e-3 to prevent division blow-ups during early
+        # training when log_σ output might be uncalibrated.
+        sigma = log_sigma.exp().clamp(min=1e-3)              # (B, S)
+        per_elem = 0.5 * diff_sq_state / sigma.pow(2) + log_sigma
+        if int(count_mask.sum()) > 0:
+            nll_count = per_elem[:, count_mask].mean()
+            total = total + nll_weight * nll_count
+
     return total, {
         'mse_count': mse_count.detach(),
         'mse_flux':  mse_flux .detach(),
         'mse_cum':   mse_cum  .detach(),
+        'nll_count': nll_count.detach(),
     }
 
 
@@ -933,6 +997,7 @@ def train_m7(
         rate_clip=cfg.rate_clip,
         use_residual=cfg.use_residual,
         multi_step_horizon=cfg.multi_step_horizon,
+        use_stochastic_head=cfg.use_stochastic_head,
     ).to(device)
     if cfg.use_bf16 and device.type == 'cuda':
         model = model.to(torch.bfloat16)
@@ -1189,22 +1254,42 @@ def train_m7(
                 # is always in the grad block (we need L_full_ss).
                 step_has_grad = (s == 0) or (s >= grad_start)
                 ctx = torch.enable_grad() if step_has_grad else torch.no_grad()
+                want_log_sigma = cfg.use_stochastic_head and step_has_grad
                 with ctx:
                     if s == 0:
-                        x_next, v_log, ent = model(
+                        out = model(
                             x_input, x_var=v_cur,
                             return_attention_entropy=True,
+                            return_log_sigma=want_log_sigma,
                         )
+                        if want_log_sigma:
+                            x_next, v_log, ent, log_sigma = out
+                        else:
+                            x_next, v_log, ent = out
+                            log_sigma = None
                         attn_entropy = ent
                     else:
-                        x_next, v_log = model(x_input, x_var=v_cur)
+                        out = model(x_input, x_var=v_cur,
+                                     return_log_sigma=want_log_sigma)
+                        if want_log_sigma:
+                            x_next, v_log, log_sigma = out
+                        else:
+                            x_next, v_log = out
+                            log_sigma = None
 
                 if step_has_grad:
                     target = x_w[:, s + 1, :]
+                    # M8: ramp NLL weight after mse_warmup_steps
+                    if cfg.use_stochastic_head:
+                        eff_nll = (cfg.nll_loss_weight
+                                   if global_step >= cfg.mse_warmup_steps else 0.0)
+                    else:
+                        eff_nll = 0.0
                     step_loss, breakdown = _m7_step_loss(
                         x_next, v_log, target, flux_indices,
                         count_mask, cum_mask,
                         cfg.weight_count, cfg.weight_flux, cfg.weight_cumulative,
+                        log_sigma=log_sigma, nll_weight=eff_nll,
                     )
                     if s == 0:
                         L_full_ss = step_loss

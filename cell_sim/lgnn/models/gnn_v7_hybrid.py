@@ -84,6 +84,7 @@ class CellGNNv7Hybrid(nn.Module):
         rate_clip: float = 6.0,
         use_residual: bool = True,
         multi_step_horizon: int = 1,
+        use_stochastic_head: bool = False,
     ):
         super().__init__()
         self.n_nodes = graph.n_nodes
@@ -134,6 +135,18 @@ class CellGNNv7Hybrid(nn.Module):
             use_residual=use_residual,
         )
 
+        # M8: stochastic head producing per-species log_σ. PINNHead
+        # provides the *mean* (mass-conservation invariant); this head
+        # adds variance so the NLL training objective can break the
+        # val_count = 0.0716 deterministic noise floor. When disabled
+        # (default), model behaves identically to M7.* deterministic.
+        self.use_stochastic_head = bool(use_stochastic_head)
+        if self.use_stochastic_head:
+            from cell_sim.lgnn.models.stochastic_head import StochasticHead
+            self.stochastic_head = StochasticHead(hidden=hidden)
+        else:
+            self.stochastic_head = None
+
         # Multi-step prediction heads (DeepSeek-V3-style MTP, adapted).
         # Each aux head predicts x at horizon k=2..H, given the encoder
         # hidden representation. They share the encoder with pinn_head
@@ -173,6 +186,7 @@ class CellGNNv7Hybrid(nn.Module):
         edge_dropout_p: float = 0.0,
         return_attention_entropy: bool = False,
         return_multi_step: bool = False,
+        return_log_sigma: bool = False,
     ) -> Union[
         Tuple[torch.Tensor, torch.Tensor],
         Tuple[torch.Tensor, torch.Tensor, torch.Tensor],
@@ -223,26 +237,40 @@ class CellGNNv7Hybrid(nn.Module):
         h = self.out_norm(h)
         x_next_log, v_log = self.pinn_head(x, h)
 
+        # M8: per-species log_σ (uncertainty). When stochastic_head is None
+        # OR return_log_sigma is False, this branch is a no-op.
+        log_sigma = None
+        if return_log_sigma and self.stochastic_head is not None:
+            log_sigma = self.stochastic_head(h)              # (B, N)
+
         # Multi-step predictions for horizons 2..H (training-only path)
         aux_preds = None
         if return_multi_step and self.aux_heads is not None:
-            # Each head: hidden -> per-node delta (B, N, 1) -> (B, N).
-            # tanh clamps to (-1, 1), scale lets each horizon expand its
-            # range; final prediction = x + scale_k * tanh(head_k(h)).
-            # This is x-relative: small dynamics get small deltas.
             preds = []
             for h_idx, head in enumerate(self.aux_heads):
-                delta = head(h).squeeze(-1)                     # (B, N)
+                delta = head(h).squeeze(-1)                  # (B, N)
                 delta = self.aux_delta_scale[h_idx] * torch.tanh(delta)
                 preds.append(x + delta)
-            aux_preds = torch.stack(preds, dim=1)               # (B, H-1, N)
+            aux_preds = torch.stack(preds, dim=1)            # (B, H-1, N)
 
+        # Return-tuple dispatch — preserves backwards-compatible shapes
+        # for callers that don't pass return_log_sigma. The σ value is
+        # always the LAST element when present.
         if return_attention_entropy and aux_preds is not None:
+            if log_sigma is not None:
+                return (x_next_log, v_log, total_entropy.mean(),
+                        aux_preds, log_sigma)
             return x_next_log, v_log, total_entropy.mean(), aux_preds
         if return_attention_entropy:
+            if log_sigma is not None:
+                return x_next_log, v_log, total_entropy.mean(), log_sigma
             return x_next_log, v_log, total_entropy.mean()
         if aux_preds is not None:
+            if log_sigma is not None:
+                return x_next_log, v_log, aux_preds, log_sigma
             return x_next_log, v_log, aux_preds
+        if log_sigma is not None:
+            return x_next_log, v_log, log_sigma
         return x_next_log, v_log
 
 
