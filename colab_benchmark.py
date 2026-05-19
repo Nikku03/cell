@@ -412,6 +412,7 @@ def one_hot(labels, n_classes):
 class BenchmarkResult:
     naive_acc: float
     integrated_acc: float
+    bypass_acc: float
     gap_pp: float
     n_reservoir: int
     T: int
@@ -544,6 +545,7 @@ def run_benchmark(n_reservoir=2000, T=200,
     return BenchmarkResult(
         naive_acc=naive_acc,
         integrated_acc=integrated_acc,
+        bypass_acc=bypass_acc,
         gap_pp=gap,
         n_reservoir=n_reservoir,
         T=T,
@@ -556,33 +558,61 @@ def run_benchmark(n_reservoir=2000, T=200,
 
 
 # ============================================================
-# RUN
+# RUN (multi-seed: average over N_SEEDS independent runs)
 # ============================================================
 
-# 110 train + 110 test ≈ 5-6 samples per class (20 classes), interpreted as
-# 6/class for symmetry. With multiple shots, the integrated system can
-# compute per-class CENTROIDS (denoised prototypes), which is its real win
-# over single-sample storage.
-result = run_benchmark(
-    n_reservoir=2000,
-    T=200,
-    n_per_class_train=6,    # 120 train samples
-    n_per_class_test=6,     # 120 test samples
-    noise_std=0.4,
-    seed=0,
-    n_dendrite_out=800,
-    n_dendrites=4,
-    k_active=100,
-    ridge=1.0,
-    device=DEVICE,
-)
+import statistics
 
+N_SEEDS = 5
+all_results = []
+for seed in range(N_SEEDS):
+    print(f"\n{'#' * 60}\n# seed {seed}\n{'#' * 60}", flush=True)
+    r = run_benchmark(
+        n_reservoir=2000,
+        T=200,
+        n_per_class_train=6,
+        n_per_class_test=6,
+        noise_std=0.4,
+        seed=seed,
+        n_dendrite_out=800,
+        n_dendrites=4,
+        k_active=100,
+        ridge=1.0,
+        device=DEVICE,
+    )
+    all_results.append(r)
+
+
+def _mean_std(values):
+    m = statistics.mean(values)
+    s = statistics.stdev(values) if len(values) >= 2 else 0.0
+    return m, s
+
+
+naive_m, naive_s = _mean_std([r.naive_acc for r in all_results])
+intg_m, intg_s   = _mean_std([r.integrated_acc for r in all_results])
+byp_m,  byp_s    = _mean_std([r.bypass_acc for r in all_results])
+
+r0 = all_results[0]
 print("\n" + "=" * 60)
-print(f"  N reservoir: {result.n_reservoir}")
-print(f"  T timesteps: {result.T}")
-print(f"  Train: {result.n_train} (6/class), Test: {result.n_test} (6/class)")
-print(f"  Feature extraction: {result.feature_extraction_time_s:.1f}s")
-print(f"  Naive      : {result.naive_acc*100:6.2f}%   (chance = 5%)")
-print(f"  Integrated : {result.integrated_acc*100:6.2f}%")
-print(f"  GAP        : {result.gap_pp:+.2f}pp")
+print(f"  MULTI-SEED RESULTS  ({N_SEEDS} seeds, N={r0.n_reservoir}, T={r0.T}, "
+      f"{r0.n_train//20}/class, centered)")
+print("  " + "-" * 56)
+print(f"  Naive ridge                              : "
+      f"{naive_m*100:6.2f}%  +/- {naive_s*100:.2f}")
+print(f"  Integrated (dendrite + kWTA + cosine)    : "
+      f"{intg_m*100:6.2f}%  +/- {intg_s*100:.2f}")
+print(f"  Bypass (centered -> centroid -> cosine)  : "
+      f"{byp_m*100:6.2f}%  +/- {byp_s*100:.2f}")
+print("  " + "-" * 56)
+print(f"  Chance level                             : {100/20:.2f}%")
+print(f"  Bypass - Naive  : {(byp_m - naive_m)*100:+.2f}pp  "
+      f"({'>' if byp_m > naive_m else '<='} 0)")
+print(f"  Integ. - Naive  : {(intg_m - naive_m)*100:+.2f}pp")
+print(f"  Bypass - Integ. : {(byp_m - intg_m)*100:+.2f}pp")
 print("=" * 60)
+print("\nPer-seed breakdown:")
+print(f"  {'seed':>4} | {'naive':>7} | {'integ':>7} | {'bypass':>7}")
+for i, r in enumerate(all_results):
+    print(f"  {i:>4d} | {r.naive_acc*100:>6.2f}% | "
+          f"{r.integrated_acc*100:>6.2f}% | {r.bypass_acc*100:>6.2f}%")
