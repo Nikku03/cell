@@ -196,6 +196,14 @@ class M7TrainConfig(M3TrainConfig):
     large_subunit_xlsx:         Optional[str] = None
     gibbs_csv_path:             Optional[str] = None
 
+    # ---- M8 upgrade 6/10: ESM-2 protein language model features ----
+    # Pre-computed embeddings keyed by locus_4d, mean-pooled per protein,
+    # projected to esm2_proj_dim via a seeded random projection. Adds
+    # protein representation power without retraining ESM-2 itself.
+    use_esm2_protein_features:  bool = False
+    esm2_embeddings_parquet:    Optional[str] = None
+    esm2_proj_dim:              int = 64
+
     # ---- M7.6 - exclude simulator-initialization timesteps from training ----
     # The narrate_window analysis revealed that t=0 -> t=1 in the trajectory
     # data is dominated by simulator initialization artifacts (massive
@@ -349,6 +357,7 @@ def _build_combined_static_features(
     use_regulatory_features: bool = False,
     use_ribosome_subunit: bool = False,
     use_thermodynamics: bool = False,
+    use_esm2_protein_features: bool = False,
     spatial_parquet: Optional[str] = None,
     proteomics_xlsx: Optional[str] = None,
     gene_class_csv: Optional[str] = None,
@@ -358,6 +367,8 @@ def _build_combined_static_features(
     protein_metabolites_xlsx: Optional[str] = None,
     large_subunit_xlsx: Optional[str] = None,
     gibbs_csv_path: Optional[str] = None,
+    esm2_embeddings_parquet: Optional[str] = None,
+    esm2_proj_dim: int = 64,
     verbose: bool = True,
 ) -> Optional[torch.Tensor]:
     """Compose role / spatial / proteomics features into one (N, F) tensor.
@@ -504,6 +515,19 @@ def _build_combined_static_features(
         if th is not None:
             parts.append(th)
             col_names.extend(THERMO_FEATURE_COLS)
+
+    if use_esm2_protein_features:
+        from cell_sim.lgnn.extras.esm2_protein_features import (
+            build_esm2_protein_features, ESM2_FEATURE_PREFIX,
+        )
+        em = build_esm2_protein_features(
+            esm2_embeddings_parquet or '', row_names,
+            proj_dim=esm2_proj_dim, verbose=verbose,
+        )
+        if em is not None:
+            parts.append(em)
+            col_names.extend([f'{ESM2_FEATURE_PREFIX}_{i}'
+                              for i in range(em.shape[1])])
 
     if not parts:
         return None
@@ -971,6 +995,7 @@ def train_m7(
         use_regulatory_features=cfg.use_regulatory_features,
         use_ribosome_subunit=cfg.use_ribosome_subunit,
         use_thermodynamics=cfg.use_thermodynamics,
+        use_esm2_protein_features=cfg.use_esm2_protein_features,
         spatial_parquet=cfg.spatial_parquet,
         proteomics_xlsx=cfg.proteomics_xlsx,
         gene_class_csv=cfg.gene_class_csv,
@@ -980,6 +1005,8 @@ def train_m7(
         protein_metabolites_xlsx=cfg.protein_metabolites_xlsx,
         large_subunit_xlsx=cfg.large_subunit_xlsx,
         gibbs_csv_path=cfg.gibbs_csv_path,
+        esm2_embeddings_parquet=cfg.esm2_embeddings_parquet,
+        esm2_proj_dim=cfg.esm2_proj_dim,
         verbose=True,
     )
 
