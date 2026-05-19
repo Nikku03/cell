@@ -1,0 +1,83 @@
+You are analyzing the outcome of a snn_scaling reversal evolution trial. Convert this outcome into a transferable lesson for the cognition store.
+
+## Task
+
+{{ task_description }}
+
+## This trial's code
+
+```python
+{{ code }}
+```
+
+## This trial's results
+
+```json
+{{ results }}
+```
+
+{% if best_sampled_node %}
+## Reference: best prior trial
+
+**Name**: {{ best_sampled_node.name }}
+**Score**: {{ best_sampled_node.score }}
+**Motivation**: {{ best_sampled_node.motivation }}
+{% if best_sampled_node.results %}
+**Best trial results:** {{ best_sampled_node.results }}
+{% endif %}
+{% if best_sampled_node.analysis %}
+**Prior analysis**: {{ best_sampled_node.analysis }}
+{% endif %}
+{% endif %}
+
+## Baseline reference (hand-tuned, 3 seeds at full scale)
+
+- best_integrated_cum ≈ +15 (MemRec)
+- naive_cum_mean ≈ −70
+- gap_memrec_naive ≈ +90
+- wall_time ≈ 150 s
+- composite ≈ −15 + 0.25 = −14.7
+
+## Your task
+
+Write a 5-section structured analysis inside the `<analysis>` tag:
+
+1. **GOAL** — what this mutation was trying to achieve. Which axis (best_integrated_cum / wall_time / safety vs naive) did it target?
+
+2. **OBSERVED EFFECT** — what actually happened to each axis? Quote specific numbers from the results:
+   - naive_cum_mean
+   - memrec_cum_mean / cls_cum_mean (and which was best_integrated_agent)
+   - gap_memrec_naive, gap_cls_naive
+   - wall_time_sec
+   - composite (lower better)
+   - sanity_penalty (200 if naive beat best integrated)
+
+3. **MECHANISM** — best mechanistic explanation. Cite recency / capacity / regularisation / reservoir dynamics / cortex consolidation. Avoid vague reasoning — point at WHAT in the system architecture caused the change.
+
+4. **TRADEOFFS** — what got worse? Common patterns:
+   - Faster MemRec_tau → quicker phase recovery but worse within-phase stability
+   - Lower CLS_alpha → more cortex weight → better stationary but stale on reversal
+   - Lower N_RESERVOIR → faster build but lower-dim features
+   - Lower noise_std → easier discrimination but naive baseline catches up
+
+5. **LESSON** — one specific transferable sentence prefixed by `LESSON:`. Examples:
+   - "LESSON: MEMREC_TAU=70 hits +18 cum (best so far); past 80 the win flattens because cortex/CLS overtakes."
+   - "LESSON: TASK_NOISE_STD=0.3 narrows naive vs MemRec gap from +90 to +60 (naive learns the cleaner features faster)."
+   - "LESSON: CLS_HIPPO_TAU=15 with CLS_ALPHA=0.8 underperforms because hippo is too noisy and cortex blend can't compensate."
+
+Special cases:
+- **Candidate crashed**: GOAL still applies. MECHANISM should diagnose the crash. LESSON warns against the cause.
+- **Sanity penalty hit** (naive wins): MECHANISM must identify what specifically broke the integrated agents (often: hyperparameter outside calibration band).
+- **Marginal change** (composite within 1 point of baseline): still write a lesson; small effects compound across the loop.
+
+## REQUIRED RESPONSE FORMAT
+
+Respond with EXACTLY one XML tag, nothing outside it. No markdown, no commentary.
+
+<analysis>
+1. GOAL: ...
+2. OBSERVED EFFECT: ...
+3. MECHANISM: ...
+4. TRADEOFFS: ...
+5. LESSON: ...
+</analysis>

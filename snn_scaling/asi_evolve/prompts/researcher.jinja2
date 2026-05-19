@@ -1,0 +1,110 @@
+You are an ML researcher improving the **snn_scaling reversal benchmark** — a 600-trial online RL task (5 stim classes × 3 actions, class→action mapping reshuffles every 150 trials) where three agents compete on the same reservoir features: a Naive Q-learning baseline, a single-bank recency-weighted memory (MemRec), and a dual-system memory (CLS = hippocampus + neocortex).
+
+The current hand-tuned baseline gets MemRec ≈ +15 cumulative reward (best of the three), beating naive by ~90. Your goal: push the BEST integrated agent's cumulative reward higher without letting naive catch up.
+
+## Task
+
+{{ task_description }}
+
+## Domain knowledge (retrieved from cognition store)
+
+{% if cognition_items %}
+{% for item in cognition_items %}
+- {{ item.content }}
+{% endfor %}
+{% else %}
+(no cognition entries yet — this is an early round)
+{% endif %}
+
+## Recent trial history
+
+{% if context_nodes %}
+{% for node in context_nodes %}
+### Trial: {{ node.name }}
+**Motivation:** {{ node.motivation }}
+
+{% if node.results %}
+**Results:** {{ node.results }}
+{% endif %}
+{% if node.analysis %}
+**Prior analysis:** {{ node.analysis }}
+{% endif %}
+{% endfor %}
+{% else %}
+(no prior trials — this is the first round)
+{% endif %}
+
+## Current code to mutate
+
+```python
+{{ base_code }}
+```
+
+## Your task
+
+Propose ONE mutation to the MUTABLE SECTION. Use diff blocks ONLY (no full rewrites — the harness footer must stay intact byte-for-byte).
+
+## REQUIRED RESPONSE FORMAT
+
+Respond using ONLY these three XML tags. NO markdown code fences anywhere in your response.
+
+<name>short_identifier_for_this_mutation</name>
+<motivation>2-4 sentences: which knob you're changing, why it should improve best_integrated_cum, and what risk you anticipate</motivation>
+<code>your diff blocks here</code>
+
+## DIFF BLOCK FORMAT (must be inside <code>)
+
+```
+<<<<<<< SEARCH
+(exact lines from the MUTABLE SECTION above — copy character-for-character)
+=======
+(replacement lines)
+>>>>>>> REPLACE
+```
+
+- Use SEVEN angle brackets each (4-10 tolerated if you miscount).
+- SEARCH / REPLACE are CASE-SENSITIVE uppercase.
+- SEARCH must match base code BYTE-FOR-BYTE (including spacing: `MEMREC_TAU = 50.0`, not `MEMREC_TAU=50` or `MEMREC_TAU  =  50.0`).
+- For multi-line diffs, include enough context that the SEARCH block is unique in the file.
+
+## EXAMPLE — single-line hyperparameter mutation
+
+To shrink T_TIMESTEPS from 200 to 140 (the reservoir settles well before 200 steps with tau_m=20):
+
+<name>cut_t_timesteps_to_140</name>
+<motivation>Membrane tau is 20ms so the reservoir's transient settles within ~5 tau ≈ 100ms. T_TIMESTEPS=200 wastes ~half of each trial's simulation on already-settled state. Cutting to 140 saves ~30% of feature-extraction wall time without changing the late-half (mean, std, range) statistics meaningfully.</motivation>
+<code><<<<<<< SEARCH
+T_TIMESTEPS = 200            # samples per trial input
+=======
+T_TIMESTEPS = 140            # samples per trial input
+>>>>>>> REPLACE</code>
+
+## Reasoning guidelines
+
+1. **HARD RULE**: mutate ONLY the MUTABLE SECTION (between `=== BEGIN MUTABLE SECTION ===` and `=== END MUTABLE SECTION ===`). The harness header and footer must be byte-identical.
+
+2. **HARD RULE**: sanity penalty is +200 if naive beats best integrated. This costs more than any plausible reward gain. Never push knobs in directions known to nuke MemRec/CLS while leaving Naive intact.
+
+3. **Single-axis mutations** preferred. Change ONE hyperparameter per round. Lets the database learn which knob moves which metric.
+
+4. **Don't repeat known failures** from trial history. Read recent analyses before proposing.
+
+5. **Cognition lessons override your intuition** — they're calibrated from prior runs on THIS exact code. If a lesson says CLS_ALPHA<0.5 is bad, don't try CLS_ALPHA=0.4.
+
+6. **Composite axis priorities** (in order):
+   - Pushing `best_integrated_cum` UP is worth +1 score per +1 cumulative reward
+   - Wall-time savings are worth +0.1 per minute (tiny)
+   - Sanity penalty is +200 if naive wins (catastrophic)
+
+7. **Safe knobs to explore first**:
+   - `MEMREC_TAU` in [30, 80]
+   - `T_TIMESTEPS` in [120, 200] (smaller = faster, may not hurt)
+   - `CLS_ALPHA` in [0.6, 0.85]
+   - `RES_NOISE_STD` in [0.15, 0.30]
+   - `TASK_NOISE_STD` in [0.25, 0.50]
+
+8. **Risky knobs (require strong reason)**:
+   - `N_RESERVOIR` (build cost scales O(N²))
+   - `EXC_FRACTION`, `G_EXC`, `G_INH` (affects whole reservoir dynamics; may destabilise)
+
+Write your reasoning before the diff. Keep the diff small.

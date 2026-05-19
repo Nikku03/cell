@@ -99,8 +99,15 @@ class EpisodicMemory(nn.Module):
         return slot
 
     @torch.no_grad()
-    def read(self, query: torch.Tensor, top_k: int | None = None) -> dict:
+    def read(self, query: torch.Tensor, top_k: int | None = None,
+              recency_tau: float | None = None) -> dict:
         """Retrieve top-K matches for `query`.
+
+        If `recency_tau` is given (and > 0), each stored entry's
+        similarity is additionally multiplied by exp(-(t_global - age) /
+        recency_tau) before the top-K selection. This implements
+        brain-inspired synaptic decay: older entries fade exponentially,
+        which lets the memory adapt to non-stationary environments.
 
         Returns:
           values_topk: (top_k, value_dim)
@@ -131,6 +138,11 @@ class EpisodicMemory(nn.Module):
             sims = (k_n @ q_n.t()).squeeze(-1)        # (n,)
         else:  # dot
             sims = keys @ query                        # (n,)
+
+        if recency_tau is not None and recency_tau > 0:
+            ages = self.ages[:n]
+            recency = torch.exp(-(self.t_global - ages) / recency_tau)
+            sims = sims * recency
 
         top_sims, top_idx = torch.topk(sims, min(top_k, n))
         # If n < top_k, pad with first-slot zeros (won't be used)
