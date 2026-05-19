@@ -61,16 +61,23 @@ class GaussianRBF(nn.Module):
 
 
 def radius_edges(
-    positions: torch.Tensor, r_cut: float
+    positions: torch.Tensor, r_cut: float, box_size: float | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Build an edge list over atom pairs within r_cut, excluding self-pairs.
 
     Returns (edge_dst, edge_src, edge_dist) so that for each edge e:
         message flowing into edge_dst[e] comes from edge_src[e],
         with distance edge_dist[e].
+
+    If `box_size` is given, the minimum-image convention is applied to
+    pair-difference vectors -- distances become PBC-aware. Without it,
+    absolute (non-periodic) distances are used. The box is assumed cubic.
     """
     N = positions.shape[0]
     diff = positions.unsqueeze(0) - positions.unsqueeze(1)   # (N, N, 3)
+    if box_size is not None:
+        # Minimum-image convention: shift each pair difference into [-L/2, L/2]
+        diff = diff - box_size * torch.round(diff / box_size)
     r = torch.linalg.norm(diff, dim=-1)                       # (N, N)
     diag = torch.eye(N, device=positions.device, dtype=torch.bool)
     mask = (r < r_cut) & (~diag)
@@ -160,8 +167,13 @@ class ArtificialAtomPotential(nn.Module):
         self.energy_shift = torch.tensor(float(atomwise_mean))
         self.energy_scale = torch.tensor(float(atomwise_std) if atomwise_std > 0 else 1.0)
 
-    def per_atom_energy(self, positions: torch.Tensor, Z: torch.Tensor) -> torch.Tensor:
-        edge_dst, edge_src, edge_dist = radius_edges(positions, self.cfg.r_cutoff)
+    def per_atom_energy(
+        self, positions: torch.Tensor, Z: torch.Tensor,
+        box_size: float | None = None,
+    ) -> torch.Tensor:
+        edge_dst, edge_src, edge_dist = radius_edges(
+            positions, self.cfg.r_cutoff, box_size=box_size
+        )
         h = self.embed(Z)
         rbf = self.rbf(edge_dist)
         cut = cosine_cutoff(edge_dist, self.cfg.r_cutoff)
@@ -170,15 +182,22 @@ class ArtificialAtomPotential(nn.Module):
         raw = self.out_head(h).squeeze(-1)   # (N,)
         return raw * self.energy_scale + self.energy_shift
 
-    def forward(self, positions: torch.Tensor, Z: torch.Tensor) -> torch.Tensor:
-        return self.per_atom_energy(positions, Z).sum()
+    def forward(
+        self, positions: torch.Tensor, Z: torch.Tensor,
+        box_size: float | None = None,
+    ) -> torch.Tensor:
+        return self.per_atom_energy(positions, Z, box_size=box_size).sum()
 
     def energy_and_forces(
-        self, positions: torch.Tensor, Z: torch.Tensor
+        self, positions: torch.Tensor, Z: torch.Tensor,
+        box_size: float | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        """Convenience: returns (E, F) where F = -dE/dpositions."""
+        """Convenience: returns (E, F) where F = -dE/dpositions.
+
+        If `box_size` is given, distances are minimum-image (PBC).
+        """
         positions = positions.detach().clone().requires_grad_(True)
-        E = self.forward(positions, Z)
+        E = self.forward(positions, Z, box_size=box_size)
         (grad,) = torch.autograd.grad(
             E, positions, create_graph=False, allow_unused=True
         )

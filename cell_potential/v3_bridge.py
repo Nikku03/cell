@@ -61,14 +61,22 @@ def state_to_v3_inputs(state, default_Z: int = 6) -> tuple[torch.Tensor, torch.T
     return positions, Z
 
 
-def v3_force_and_energy(state, model: ArtificialAtomPotential,
-                         default_Z: int = 6) -> tuple[torch.Tensor, torch.Tensor]:
+def v3_force_and_energy(
+    state, model: ArtificialAtomPotential,
+    default_Z: int = 6,
+    use_pbc: bool = False,
+) -> tuple[torch.Tensor, torch.Tensor]:
     """Return (force, energy) from v3 evaluated on a ParticleState.
 
     Forces come from autograd through v3's scalar energy, so they are
     *conservative* by construction (same property as Phase 2's LJ, but
     learned).
+
+    If `use_pbc` is True, distances are computed under the minimum-image
+    convention using `state.box_size`. Otherwise absolute distances are
+    used (v3's original behavior).
     """
     positions, Z = state_to_v3_inputs(state, default_Z=default_Z)
-    E, F = model.energy_and_forces(positions, Z=Z)
+    box = state.box_size if use_pbc else None
+    E, F = model.energy_and_forces(positions, Z=Z, box_size=box)
     return F, E
