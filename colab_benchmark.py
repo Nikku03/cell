@@ -422,18 +422,28 @@ class BenchmarkResult:
     integrated_decision_time_s: float
 
 
-def run_benchmark(n_reservoir=2000, T=200, n_test_per_class=10,
+def run_benchmark(n_reservoir=2000, T=200,
+                  n_per_class_train=6, n_per_class_test=6,
                   noise_std=0.4, seed=0,
                   n_dendrite_out=800, n_dendrites=4, k_active=100,
                   ridge=1.0, device="cpu"):
+    """Run NAIVE (ridge readout) vs INTEGRATED (centroid memory) at the
+    requested shot count. The integrated system computes a PER-CLASS
+    CENTROID across all training samples for that class, then stores
+    one denoised prototype per class. This is the architectural
+    advantage of the memory-based approach when shots > 1: noisy
+    individual samples get averaged into a clean class signature."""
+    n_train = 20 * n_per_class_train
+    n_test = 20 * n_per_class_test
     print(f"\n[benchmark] N_reservoir={n_reservoir}, T={T}, "
-          f"train={20}, test={20*n_test_per_class}, device={device}", flush=True)
+          f"train={n_train} ({n_per_class_train}/class), "
+          f"test={n_test} ({n_per_class_test}/class), device={device}", flush=True)
 
-    print("[1/4] Building 20-class one-shot task...", flush=True)
-    train = make_pattern_task(n_per_class=1, T=T, noise_std=noise_std, seed=seed)
-    test = make_pattern_task(n_per_class=n_test_per_class, T=T, noise_std=noise_std, seed=seed + 99)
+    print("[1/4] Building 20-class task...", flush=True)
+    train = make_pattern_task(n_per_class=n_per_class_train, T=T, noise_std=noise_std, seed=seed)
+    test = make_pattern_task(n_per_class=n_per_class_test, T=T, noise_std=noise_std, seed=seed + 99)
 
-    print(f"[2/4] Building reservoir (N={n_reservoir}, this is the slow part)...", flush=True)
+    print(f"[2/4] Building reservoir (N={n_reservoir})...", flush=True)
     t0 = time.time()
     reservoir = SpikingReservoir(ReservoirConfig(n_reservoir=n_reservoir, seed=seed), device=device)
     print(f"      reservoir built in {time.time()-t0:.1f}s "
@@ -450,9 +460,9 @@ def run_benchmark(n_reservoir=2000, T=200, n_test_per_class=10,
     test_labels = test.labels.to(device=device)
     n_classes = 20
 
-    print("[4/4] Running NAIVE (reservoir + ridge) and INTEGRATED (dendrites + kWTA + memory)...", flush=True)
+    print("[4/4] NAIVE (reservoir + ridge) vs INTEGRATED (dendrites + kWTA + centroid memory)...", flush=True)
 
-    # Naive
+    # Naive: ridge regression on all training samples
     t0 = time.time()
     Y = one_hot(train_labels, n_classes)
     W = train_linear_readout(X_train, Y, ridge=ridge)
@@ -461,7 +471,7 @@ def run_benchmark(n_reservoir=2000, T=200, n_test_per_class=10,
     naive_acc = (naive_pred == test_labels).float().mean().item()
     print(f"      NAIVE      accuracy = {naive_acc*100:.2f}%   ({naive_t*1000:.1f}ms decision)", flush=True)
 
-    # Integrated
+    # Integrated: dendritic projection -> kWTA -> per-class CENTROID -> memory -> cosine top-1
     t0 = time.time()
     dendritic = DendriticFeatureProjection(
         n_in=X_train.shape[1], n_out=n_dendrite_out,
@@ -469,13 +479,23 @@ def run_benchmark(n_reservoir=2000, T=200, n_test_per_class=10,
     )
     Z_train = kwta_top_k(dendritic.forward(X_train), k_active)
     Z_test = kwta_top_k(dendritic.forward(X_test), k_active)
+
+    # Build one centroid per class from the training samples (this is what
+    # makes multi-shot meaningfully different from 1-shot for the memory)
+    centroids = torch.zeros(n_classes, Z_train.shape[1], device=device)
+    for c in range(n_classes):
+        mask = (train_labels == c)
+        if mask.any():
+            centroids[c] = Z_train[mask].mean(dim=0)
+
     memory = EpisodicMemory(MemoryConfig(
-        capacity=Z_train.shape[0], key_dim=n_dendrite_out,
+        capacity=n_classes, key_dim=n_dendrite_out,
         value_dim=n_classes, similarity="cosine", top_k=1,
     ), device=device)
-    for z, label in zip(Z_train, train_labels):
-        memory.write(z, F.one_hot(label, n_classes).float())
+    for c in range(n_classes):
+        memory.write(centroids[c], F.one_hot(torch.tensor(c, device=device), n_classes).float())
         memory.step_time(1.0)
+
     integrated_pred = torch.zeros(Z_test.shape[0], dtype=torch.long, device=device)
     for i, z in enumerate(Z_test):
         out = memory.read(z, top_k=1)
@@ -483,6 +503,15 @@ def run_benchmark(n_reservoir=2000, T=200, n_test_per_class=10,
     integrated_t = time.time() - t0
     integrated_acc = (integrated_pred == test_labels).float().mean().item()
     print(f"      INTEGRATED accuracy = {integrated_acc*100:.2f}%   ({integrated_t*1000:.1f}ms decision)", flush=True)
+
+    # Diagnostic: how separable are the centroids?
+    if Z_train.shape[0] >= n_classes:
+        cn = F.normalize(centroids, dim=-1)
+        sim_matrix = cn @ cn.t()
+        off_diag = sim_matrix - torch.eye(n_classes, device=device)
+        max_cross = off_diag.max().item()
+        mean_cross = (off_diag.sum() / (n_classes * (n_classes - 1))).item()
+        print(f"      [diag] centroid pairwise cosine: mean={mean_cross:.3f}, max={max_cross:.3f}", flush=True)
 
     gap = (integrated_acc - naive_acc) * 100
     print(f"\n[result] GAP: {gap:+.1f}pp  (integrated - naive at same neuron budget)", flush=True)
@@ -505,10 +534,15 @@ def run_benchmark(n_reservoir=2000, T=200, n_test_per_class=10,
 # RUN
 # ============================================================
 
+# 110 train + 110 test ≈ 5-6 samples per class (20 classes), interpreted as
+# 6/class for symmetry. With multiple shots, the integrated system can
+# compute per-class CENTROIDS (denoised prototypes), which is its real win
+# over single-sample storage.
 result = run_benchmark(
-    n_reservoir=2000,    # original spec
-    T=200,                # original spec
-    n_test_per_class=10,  # 200 test samples
+    n_reservoir=2000,
+    T=200,
+    n_per_class_train=6,    # 120 train samples
+    n_per_class_test=6,     # 120 test samples
     noise_std=0.4,
     seed=0,
     n_dendrite_out=800,
@@ -521,7 +555,7 @@ result = run_benchmark(
 print("\n" + "=" * 60)
 print(f"  N reservoir: {result.n_reservoir}")
 print(f"  T timesteps: {result.T}")
-print(f"  Train: {result.n_train} (1/class), Test: {result.n_test} (10/class)")
+print(f"  Train: {result.n_train} (6/class), Test: {result.n_test} (6/class)")
 print(f"  Feature extraction: {result.feature_extraction_time_s:.1f}s")
 print(f"  Naive      : {result.naive_acc*100:6.2f}%   (chance = 5%)")
 print(f"  Integrated : {result.integrated_acc*100:6.2f}%")
