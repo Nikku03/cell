@@ -523,6 +523,21 @@ def run_benchmark(n_reservoir=2000, T=200,
         mean_cross = (off_diag.sum() / (n_classes * (n_classes - 1))).item()
         print(f"      [diag] centroid pairwise cosine: mean={mean_cross:.3f}, max={max_cross:.3f}", flush=True)
 
+    # Ablation: skip dendritic + kWTA; do cosine 1-NN on the centered raw
+    # reservoir features. If this beats the full integrated pipeline, the
+    # dendrite/kWTA stage is mis-tuned for centered features (sigmoid
+    # threshold/gain were set for the old uncentered magnitude) and is
+    # destroying the class signal that centering uncovered.
+    centroids_raw = torch.stack([
+        X_train[train_labels == c].mean(dim=0) if (train_labels == c).any()
+        else torch.zeros(X_train.shape[1], device=device)
+        for c in range(n_classes)
+    ])
+    sims_raw = F.normalize(X_test, dim=-1) @ F.normalize(centroids_raw, dim=-1).t()
+    bypass_acc = (sims_raw.argmax(dim=-1) == test_labels).float().mean().item()
+    print(f"      [ablation] centered feats -> centroid -> cosine 1-NN (no dendrite/kWTA): "
+          f"{bypass_acc*100:.2f}%", flush=True)
+
     gap = (integrated_acc - naive_acc) * 100
     print(f"\n[result] GAP: {gap:+.1f}pp  (integrated - naive at same neuron budget)", flush=True)
 
