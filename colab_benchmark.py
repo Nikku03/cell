@@ -456,6 +456,16 @@ def run_benchmark(n_reservoir=2000, T=200,
     feat_time = time.time() - t0
     print(f"      done in {feat_time:.1f}s; feature dim = {X_train.shape[1]}", flush=True)
 
+    # Subtract train-set common-mode direction from both train and test.
+    # Reservoir features sit near resting potential with a big shared bias;
+    # without centering, cosine similarity is dominated by that bias and all
+    # class signatures look identical (centroid pairwise cosine ~0.97).
+    feat_mean = X_train.mean(dim=0, keepdim=True)
+    X_train = X_train - feat_mean
+    X_test  = X_test  - feat_mean
+    print(f"      [center] ||train_mean||={feat_mean.norm().item():.2f}, "
+          f"X_train std after centering = {X_train.std().item():.4f}", flush=True)
+
     train_labels = train.labels.to(device=device)
     test_labels = test.labels.to(device=device)
     n_classes = 20
