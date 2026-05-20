@@ -13,6 +13,7 @@ implemented as a separate module with its own verification contract:
   dendritic.py          multi-compartment neurons (per-neuron sub-network)
   surrogate.py          surrogate-gradient BPTT training of the SNN itself
   eprop.py              e-prop local online learning (forward-only, no BPTT)
+  rewiring.py           DEEP-R structural plasticity (over-provisioned buffer)
 
 Each module:
   - Exposes a clean PyTorch interface
