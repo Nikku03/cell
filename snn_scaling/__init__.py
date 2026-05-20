@@ -14,6 +14,7 @@ implemented as a separate module with its own verification contract:
   surrogate.py          surrogate-gradient BPTT training of the SNN itself
   eprop.py              e-prop local online learning (forward-only, no BPTT)
   rewiring.py           DEEP-R structural plasticity (over-provisioned buffer)
+  batched.py            batch-vectorised reservoir: B feature passes in parallel
 
 Each module:
   - Exposes a clean PyTorch interface
