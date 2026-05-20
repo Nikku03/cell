@@ -10,17 +10,18 @@
 
 All three agents see identical reservoir features. The task is 5 stimulus classes × 3 actions, with the correct class→action mapping **reshuffled every 150 trials** (4 phases × 150 = 600 trials total). The agent must detect each shift from the reward stream alone.
 
-**Goal**: maximise the BEST integrated agent's mean cumulative reward (whichever of MemRec or CLS wins), without letting the naive baseline beat it.
+**Goal**: maximise the BEST integrated agent's mean cumulative reward (whichever of MemRec, CLS, or EvolvedAgent wins), without letting the naive baseline beat it.
 
-## Baseline values (3 seeds, N=2000, T=200, defaults)
+## Baseline values (3 seeds, N=2000, T=200, defaults with TASK_NOISE_STD=0.25)
 
 | Agent | Mean cumulative reward (max +600) |
 |---|---|
-| Naive Q-learning | ~−70 |
-| MemRec | ~+15 (best) |
-| CLS | ~−5 |
+| Naive Q-learning | ~−40 |
+| MemRec | ~+30 |
+| CLS | ~+25 |
+| EvolvedAgent (default) | ~+30 |
 
-Composite ≈ −15 + 0.1 * (~2.5 min) ≈ −14.7. Aim is to push best_integrated_cum well above +15.
+The defaults already include the confirmed `TASK_NOISE_STD=0.25` win (eval_score ≈ +28 from the first ASI-Evolve run). The job now is to push `best_integrated_cum` past ~+30 — most likely through a structural mutation of the `EvolvedAgent` class, since the numerical-knob landscape is mostly mapped.
 
 ## Score formula (lower is better)
 
@@ -43,7 +44,7 @@ ASI-Evolve sees `eval_score = -composite` (so higher score = better). Each +10 c
 
 ### Task / feature extraction
 - `T_TIMESTEPS` (default 200): how long the reservoir sees each input
-- `TASK_NOISE_STD` (default 0.4): additive noise on inputs
+- `TASK_NOISE_STD` (default 0.25 — already optimized; do not re-tune): additive noise on inputs
 - `N_PER_CLASS_POOL` (default 30): pool of distinct stimuli per class
 
 ### MemRec hyperparameters
@@ -85,7 +86,7 @@ ASI-Evolve sees `eval_score = -composite` (so higher score = better). Each +10 c
 
 1. **Tune `MEMREC_TAU`** in the range [30, 80] — the prior best (50) might not be optimal for this exact reservoir.
 2. **Lower `RES_NOISE_STD`** from 0.2 toward 0.1 — less reservoir noise might improve feature separability.
-3. **Lower `TASK_NOISE_STD`** from 0.4 toward 0.25 — easier task means more signal, but stays informative.
+3. **`TASK_NOISE_STD` is already set to its confirmed optimum (0.25)** — do not re-tune it; lower values stack worse.
 4. **Tune `CLS_ALPHA`** in [0.5, 0.9] to find the sweet spot between hippo (adaptive) and cortex (stable).
 5. **Cut `T_TIMESTEPS`** from 200 toward 120 — most reservoir dynamics settle within ~5τ_m = 100ms, so trimming costs little but speeds up.
 6. **Tune `CLS_CORTEX_THRESHOLD`** — too low → all stimuli collapse into one cluster; too high → no consolidation.

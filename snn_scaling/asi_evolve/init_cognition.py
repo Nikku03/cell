@@ -185,15 +185,14 @@ COGNITION_SEED = [
         ),
     },
     {
-        "title": "Adaptive exploration via Q-variance - untested",
+        "title": "TASK_NOISE_STD is already optimized - do not re-tune it",
         "content": (
-            "Current epsilon is fixed at 0.10. An untested mechanism: "
-            "compute per-action variance over recent retrievals; if high "
-            "(signal of phase boundary or contradictory entries), increase "
-            "epsilon for a few trials to force exploration. This is the "
-            "Actor-Critic-Memory mechanism a prior CLS experiment tried "
-            "but couldn't tune well; might work better integrated directly "
-            "into EvolvedAgent.act()."
+            "TASK_NOISE_STD=0.25 is the confirmed optimum (verified +28, "
+            "+20, +13 across 3 separate runs vs the old 0.4 baseline) and "
+            "is ALREADY baked into the initial_program default. Do not "
+            "propose lowering it further - 0.10-0.20 was tried and stacks "
+            "WORSE than 0.25 alone. Re-proposing TASK_NOISE_STD mutations "
+            "wastes a round."
         ),
     },
 ]

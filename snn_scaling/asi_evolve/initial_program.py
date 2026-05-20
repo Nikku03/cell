@@ -68,7 +68,7 @@ EXC_FRACTION = 0.8
 
 # ---- Task / feature extraction ----
 T_TIMESTEPS = 200            # samples per trial input
-TASK_NOISE_STD = 0.4         # additive Gaussian noise on inputs
+TASK_NOISE_STD = 0.25        # additive Gaussian noise on inputs (0.25 = confirmed optimum, was 0.4)
 N_PER_CLASS_POOL = 30        # 5 * N_PER_CLASS_POOL distinct stimuli in pool
 
 # ---- MemRec hyperparameters ----
