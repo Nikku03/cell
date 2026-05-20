@@ -11,6 +11,7 @@ implemented as a separate module with its own verification contract:
   memory.py             external vector store for retrieval-augmented compute
   distill.py            teacher -> student knowledge distillation
   dendritic.py          multi-compartment neurons (per-neuron sub-network)
+  surrogate.py          surrogate-gradient BPTT training of the SNN itself
 
 Each module:
   - Exposes a clean PyTorch interface
