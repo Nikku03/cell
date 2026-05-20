@@ -63,6 +63,10 @@ ASI-Evolve sees `eval_score = -composite` (so higher score = better). Each +10 c
 ### Naive baseline
 - `NAIVE_LR` (default 0.05), `NAIVE_EPS` (default 0.10)
 
+### Structural canvases (the real "evolve the core" surface)
+- `EvolvedAgent` class — a full mutable agent (4th competitor). Rewrite `.act()`/`.update()`/`__init__` to try new memory/learning algorithms.
+- `evolved_feature_transform(traces)` — the feature extractor the EvolvedAgent sees. **Highest-leverage mutation**: the fixed (mean, std, range) representation capped every prior experiment. A better transform (temporal bins / FFT / derivatives) is the only path to a large gain.
+
 ## Constraints
 
 - **Must complete within 15 minutes** wall-clock (eval.sh timeout).

@@ -185,6 +185,30 @@ COGNITION_SEED = [
         ),
     },
     {
+        "title": "evolved_feature_transform is the highest-leverage mutation",
+        "content": (
+            "Every prior experiment was capped by the feature ceiling: the "
+            "fixed (mean, std, range) representation gives centroid pairwise "
+            "cosine ~0.51, so same-class and cross-class samples are barely "
+            "separable. The evolved_feature_transform function lets the "
+            "EvolvedAgent use a DIFFERENT representation. Temporal bins, "
+            "derivatives, FFT magnitudes, or spike-rate proxies could pull "
+            "out class signal the global mean discards. This is the only "
+            "mutation surface with a path to a LARGE (not incremental) gain."
+        ),
+    },
+    {
+        "title": "Keep centering + L2 in any feature transform",
+        "content": (
+            "Centering (subtract per-feature batch mean) removes the "
+            "reservoir's strong common-mode component near rest potential; "
+            "without it centroid cosine is ~0.97 (useless). L2-normalisation "
+            "makes cosine == dot for memory keys. Any rewrite of "
+            "evolved_feature_transform should keep both as the final two "
+            "steps, or class separability collapses."
+        ),
+    },
+    {
         "title": "TASK_NOISE_STD is already optimized - do not re-tune it",
         "content": (
             "TASK_NOISE_STD=0.25 is the confirmed optimum (verified +28, "

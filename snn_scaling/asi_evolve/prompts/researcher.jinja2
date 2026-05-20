@@ -74,6 +74,21 @@ EvolvedAgent(feat_dim, n_actions, device='cpu', seed=0)
 .update(x: Tensor, a: int, r: float) -> None
 ```
 
+### (3) Mutation of `evolved_feature_transform` — THE HIGHEST-LEVERAGE SURFACE
+
+The MUTABLE section contains `evolved_feature_transform(traces) -> Tensor`. This defines the feature representation the EvolvedAgent sees. The 3 baseline agents are stuck with a FIXED (mean, std, range) representation whose weak class separability (centroid cosine ~0.51) capped EVERY prior experiment. If you can pull more class signal out of the raw reservoir traces, the EvolvedAgent gets a fundamentally better substrate than the baselines — that is the path to a large (not incremental) gain.
+
+`traces` is `(n_samples, T_decimated, N)` — the raw decimated membrane trace per sample. Default just computes (mean, std, range) over time. Things to try:
+- **Temporal bins**: split the time axis into K windows, compute per-window mean → captures temporal structure the global mean discards
+- **Derivatives**: `traces[:, 1:] - traces[:, :-1]` statistics → captures rate-of-change
+- **FFT magnitudes**: `torch.fft.rfft` along time → frequency content
+- **Cross-time covariance** or autocorrelation at a few lags
+- **Spike-rate proxy**: count threshold crossings per neuron
+- **Per-neuron percentiles** instead of mean/std
+- Combinations of the above, with the centering + L2-normalisation kept (it matters — see cognition)
+
+Signature MUST stay `evolved_feature_transform(traces) -> (n_samples, D)` for any `D >= 1`. Torch-only, no new imports.
+
 Ideas the LLM hasn't explored yet:
 - **Per-action memory banks** (3 separate memories, one per action, vs the single bank in baselines)
 - **Adaptive recency** (tau that shrinks after a reward-sign flip → faster phase recovery)

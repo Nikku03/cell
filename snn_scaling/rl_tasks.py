@@ -85,6 +85,48 @@ def extract_centered_features(reservoir, batch: TaskBatch, device: str = "cpu",
     return out
 
 
+@torch.no_grad()
+def extract_features_and_traces(reservoir, batch: TaskBatch, device: str = "cpu",
+                                   decimate: int = 4):
+    """Run the reservoir ONCE per sample and return both:
+
+      features: (n_samples, 3*N) standard (mean, std, range) of late-half
+                membrane V, centered + L2-normalised. Identical recipe to
+                extract_centered_features() - the FIXED feature set used
+                by the baseline agents.
+      traces:   (n_samples, T//decimate, N) decimated raw membrane traces -
+                the raw material a mutable feature transform can operate on
+                (temporal bins, derivatives, FFT, spike proxies, etc.).
+
+    One reservoir pass produces both, so exposing an evolvable feature
+    extractor costs no extra simulation time.
+    """
+    N = reservoir.n
+    n = batch.inputs.shape[0]
+    T = batch.inputs.shape[1]
+    dec_idx = torch.arange(0, T, decimate)
+    feats = torch.zeros(n, 3 * N, device=device)
+    traces = torch.zeros(n, dec_idx.numel(), N, device=device)
+    for i in range(n):
+        drive = _drive_input(N, batch.inputs[i]).to(device=device)
+        Ti = drive.shape[0]
+        Vs = torch.zeros(Ti, N, device=device)
+        reservoir.reset()
+        for k in range(Ti):
+            reservoir.step(drive[k], dt=1.0, t=k * 1.0)
+            Vs[k] = reservoir.cluster.population.V.clone()
+        late = Vs[Ti // 2:]
+        feats[i] = torch.cat([
+            late.mean(dim=0),
+            late.std(dim=0),
+            late.max(dim=0).values - late.min(dim=0).values,
+        ])
+        traces[i] = Vs[dec_idx.to(device=Vs.device)]
+    feats = feats - feats.mean(dim=0, keepdim=True)
+    feats = F.normalize(feats, dim=-1)
+    return feats, traces
+
+
 def make_reversal_phase_maps(n_phases: int = 4, n_classes: int = 5,
                                 n_actions: int = 3, seed: int = 0) -> list[torch.Tensor]:
     """Full reversal: every class gets a fresh random action each phase.

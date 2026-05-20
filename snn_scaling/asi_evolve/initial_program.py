@@ -39,7 +39,7 @@ import torch.nn.functional as F
 from snn_scaling.reservoir import SpikingReservoir, ReservoirConfig
 from snn_scaling.rl_tasks import (
     make_5class_task,
-    extract_centered_features,
+    extract_features_and_traces,
     make_reversal_phase_maps,
 )
 from snn_scaling.rl_agents import (
@@ -104,6 +104,45 @@ EVOLVED_CAPACITY = 600
 # - CLS_CORTEX_THRESHOLD: 0.4-0.8 safe; too low = single cluster, too high = no consolidation
 # - TASK_NOISE_STD: 0.2-0.6 safe; >0.6 makes the task feature-impossible
 # - All epsilons in [0.05, 0.20]
+
+
+# =================================================================
+# evolved_feature_transform: FEATURE-EXTRACTOR MUTATION CANVAS
+# -----------------------------------------------------------------
+# The 3 baseline agents see a FIXED feature set: (mean, std, range) of
+# the late-half membrane trace. That representation has weak class
+# separability (centroid pairwise cosine ~0.51) and capped every prior
+# experiment.
+#
+# This function defines the feature set the EvolvedAgent sees. The
+# Researcher may rewrite it freely - temporal bins, derivatives,
+# FFT magnitudes, spike-rate proxies, cross-neuron covariance, custom
+# normalisation - anything that pulls more class signal out of the raw
+# reservoir trace. This is the single highest-leverage mutation surface:
+# if it cracks the feature ceiling, the whole architecture improves.
+#
+# HARD CONSTRAINTS (the harness footer relies on these):
+#   - function name MUST stay "evolved_feature_transform"
+#   - signature MUST be evolved_feature_transform(traces) -> Tensor
+#       traces: (n_samples, T_decimated, N) raw membrane traces
+#       return: (n_samples, D) feature matrix, any D >= 1
+#   - must be torch-only, no new imports beyond torch / torch.nn.functional
+# =================================================================
+
+def evolved_feature_transform(traces):
+    """traces: (n_samples, T_dec, N) -> (n_samples, D) features.
+
+    Default recipe == the baseline (mean, std, range) over time, centered
+    and L2-normalised. The Researcher should mutate this to extract a
+    richer representation.
+    """
+    mean = traces.mean(dim=1)
+    std = traces.std(dim=1)
+    rng = traces.max(dim=1).values - traces.min(dim=1).values
+    feats = torch.cat([mean, std, rng], dim=-1)
+    feats = feats - feats.mean(dim=0, keepdim=True)
+    feats = F.normalize(feats, dim=-1)
+    return feats
 
 
 # =================================================================
@@ -219,8 +258,20 @@ def _run_one_seed(seed: int, device: str) -> dict:
         seed=seed,
     )
     reservoir = SpikingReservoir(res_cfg, device=device)
-    X = extract_centered_features(reservoir, pool, device=device,
-                                     center=True, l2_normalize=True)
+    # One reservoir pass -> fixed baseline features + raw decimated traces
+    X, traces = extract_features_and_traces(reservoir, pool, device=device)
+
+    # Evolved feature set for the EvolvedAgent (mutable transform). On any
+    # failure, fall back to the fixed baseline features X.
+    evolved_feat_err = None
+    try:
+        Xe = evolved_feature_transform(traces)
+        if not (isinstance(Xe, torch.Tensor) and Xe.dim() == 2
+                and Xe.shape[0] == X.shape[0]):
+            raise ValueError(f"bad shape {tuple(Xe.shape) if hasattr(Xe,'shape') else type(Xe)}")
+    except Exception as e:
+        evolved_feat_err = f"{type(e).__name__}: {e}"
+        Xe = X
 
     phase_maps_cpu = make_reversal_phase_maps(
         n_phases=N_PHASES, n_classes=N_CLASSES, n_actions=N_ACTIONS,
@@ -229,6 +280,7 @@ def _run_one_seed(seed: int, device: str) -> dict:
     phase_maps = [m.to(device=device) for m in phase_maps_cpu]
 
     feat_dim = X.shape[1]
+    evolved_feat_dim = Xe.shape[1]
     naive = NaiveQAgent(feat_dim, N_ACTIONS, lr=NAIVE_LR, eps=NAIVE_EPS,
                           device=device, seed=seed + 100)
     memrec = TimeWeightedMemoryAgent(
@@ -248,12 +300,13 @@ def _run_one_seed(seed: int, device: str) -> dict:
     # Construct EvolvedAgent inside try/except so a broken LLM-written
     # agent doesn't kill the whole run - it just gets a 0 score.
     evolved = None
-    evolved_init_err = None
+    evolved_init_err = evolved_feat_err
     try:
-        evolved = EvolvedAgent(feat_dim, N_ACTIONS,
+        evolved = EvolvedAgent(evolved_feat_dim, N_ACTIONS,
                                  device=device, seed=seed + 100)
     except Exception as e:
-        evolved_init_err = f"{type(e).__name__}: {e}"
+        if evolved_init_err is None:
+            evolved_init_err = f"{type(e).__name__}: {e}"
 
     stim_rng = torch.Generator(device="cpu").manual_seed(seed + 200)
     n_samples = X.shape[0]
@@ -265,7 +318,8 @@ def _run_one_seed(seed: int, device: str) -> dict:
         phase = trial // PHASE_LENGTH
         cmap = phase_maps[phase]
         idx = int(torch.randint(0, n_samples, (1,), generator=stim_rng).item())
-        x = X[idx]
+        x = X[idx]                 # baseline (fixed) features
+        xe = Xe[idx]               # evolved features (mutable transform)
         true_cls = int(pool_labels[idx].item())
         correct_a = int(cmap[true_cls].item())
 
@@ -283,12 +337,13 @@ def _run_one_seed(seed: int, device: str) -> dict:
             else: c_rew += r
 
         # EvolvedAgent: insulated trial loop so internal exceptions
-        # are caught and the trial counts as a random failure.
+        # are caught and the trial counts as a random failure. Uses the
+        # evolved feature vector xe, not the baseline x.
         if evolved is not None:
             try:
-                a = evolved.act(x)
+                a = evolved.act(xe)
                 r = 1.0 if a == correct_a else -1.0
-                evolved.update(x, a, r)
+                evolved.update(xe, a, r)
                 e_cor.append(int(a == correct_a))
                 e_rew += r
             except Exception:
