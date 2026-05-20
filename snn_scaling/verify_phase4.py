@@ -13,13 +13,155 @@ Gates:
 
 from __future__ import annotations
 
+import math
 import time
 
 import torch
 
-from .modular import Module, ModuleSpec, ModularNetwork, TaskRouter
+from .modular import (
+    Module, ModuleSpec, ModularNetwork, TaskRouter,
+    LearnedRouter, train_learned_router,
+)
 from .population import SYN_EXC
 from .verify_phase0 import CheckResult, format_results
+
+
+# ---------------- learned-router synthetic task ----------------
+
+def _make_routing_task(n_modules: int = 8, input_dim: int = 24, top_k: int = 3,
+                        n_per_type: int = 48, centroid_seed: int = 0,
+                        noise_seed: int = 0, noise_std: float = 0.6):
+    """Synthetic routing task for the learned MoE router.
+
+    There are n_modules task types; type t activates the module set
+    [(t+j) % n_modules for j in 0..top_k-1]. This is a balanced design:
+    every module belongs to exactly top_k task types, so balanced load is
+    the correct routing outcome. Inputs are per-type centroids + Gaussian
+    noise. centroid_seed fixes the task geometry; noise_seed draws fresh
+    input samples (train and test share centroids, differ in noise).
+
+    Returns (X, Y, type_ids, module_names, gt_sets).
+    """
+    n_types = n_modules
+    cg = torch.Generator().manual_seed(centroid_seed)
+    centroids = torch.randn(n_types, input_dim, generator=cg)
+    module_names = [f"m{i}" for i in range(n_modules)]
+    gt_sets = [[(t + j) % n_modules for j in range(top_k)]
+               for t in range(n_types)]
+    ng = torch.Generator().manual_seed(noise_seed)
+    X, Y, type_ids = [], [], []
+    for t in range(n_types):
+        y = torch.zeros(n_modules)
+        for m in gt_sets[t]:
+            y[m] = 1.0
+        for _ in range(n_per_type):
+            X.append(centroids[t] + noise_std * torch.randn(input_dim, generator=ng))
+            Y.append(y.clone())
+            type_ids.append(t)
+    return (torch.stack(X), torch.stack(Y), torch.tensor(type_ids),
+            module_names, gt_sets)
+
+
+def check_learned_router_generalizes() -> CheckResult:
+    """A trained LearnedRouter routes UNSEEN input feature vectors to the
+    correct top-k module set, far above a random top-k baseline.
+
+    The static TaskRouter cannot do this at all: it needs an exact
+    task_type key and has no notion of a novel input. The learned gate
+    generalises by similarity in feature space.
+    """
+    n_modules, input_dim, top_k = 8, 24, 3
+    X, Y, _, names, gt = _make_routing_task(
+        n_modules, input_dim, top_k, n_per_type=48,
+        centroid_seed=0, noise_seed=1)
+    Xte, _, tte, _, _ = _make_routing_task(
+        n_modules, input_dim, top_k, n_per_type=24,
+        centroid_seed=0, noise_seed=2)        # same task types, fresh inputs
+    router = LearnedRouter(input_dim, names, top_k, seed=0)
+    train_learned_router(router, X, Y, steps=300, seed=0)
+    routed = router.route(Xte)
+    name_to_idx = {nm: i for i, nm in enumerate(names)}
+    correct = sum(
+        1 for i, r in enumerate(routed)
+        if set(name_to_idx[m] for m in r) == set(gt[int(tte[i])])
+    )
+    acc = correct / len(routed)
+    random_acc = 1.0 / math.comb(n_modules, top_k)
+    passed = acc >= 0.80 and acc > random_acc + 0.5
+    return CheckResult(
+        "learned router routes unseen inputs to the correct top-k set",
+        passed, acc, 0.80,
+        note=f"(held-out routing accuracy {acc*100:.1f}%, "
+             f"random top-{top_k} baseline {random_acc*100:.1f}%)",
+    )
+
+
+def check_learned_router_load_balance() -> CheckResult:
+    """Over many inputs the trained router spreads activation across ALL
+    modules with bounded skew - it does not collapse onto a few
+    favourites (the classic MoE router-collapse failure mode)."""
+    n_modules, input_dim, top_k = 8, 24, 3
+    X, Y, _, names, _ = _make_routing_task(
+        n_modules, input_dim, top_k, n_per_type=48,
+        centroid_seed=0, noise_seed=1)
+    router = LearnedRouter(input_dim, names, top_k, seed=0)
+    train_learned_router(router, X, Y, steps=300, seed=0)
+    Xte, _, _, _, _ = _make_routing_task(
+        n_modules, input_dim, top_k, n_per_type=40,
+        centroid_seed=0, noise_seed=3)
+    routed = router.route(Xte)
+    name_to_idx = {nm: i for i, nm in enumerate(names)}
+    usage = torch.zeros(n_modules)
+    for r in routed:
+        for m in r:
+            usage[name_to_idx[m]] += 1
+    no_dead = bool((usage > 0).all())
+    spread = float(usage.max() / usage.min().clamp_min(1.0))
+    passed = no_dead and spread < 2.5
+    return CheckResult(
+        "learned router balances load across modules (no dead experts)",
+        passed, spread, 2.5,
+        note=f"(per-module usage min={int(usage.min())}, max={int(usage.max())}, "
+             f"max/min ratio {spread:.2f}, dead modules={int((usage == 0).sum())})",
+    )
+
+
+def check_learned_router_drives_modular_net() -> CheckResult:
+    """The learned router's output is a valid active-module list for a
+    real ModularNetwork: stepping the net with the routed set lets
+    exactly those modules fire while the rest are gated off (0 spikes)."""
+    n_modules, input_dim, top_k = 4, 16, 2
+    modules = [Module(ModuleSpec(name=f"m{i}", n_e=60, n_i=15, seed=i))
+               for i in range(n_modules)]
+    net = ModularNetwork(modules)
+    X, Y, _, names, _ = _make_routing_task(
+        n_modules, input_dim, top_k, n_per_type=40,
+        centroid_seed=0, noise_seed=1)
+    router = LearnedRouter(input_dim, names, top_k, seed=0)
+    train_learned_router(router, X, Y, steps=250, seed=0)
+
+    active = router.route_one(X[0])              # top-k module names
+    net.reset()
+    drive = torch.full((75,), 6.0)               # n_e + n_i = 75 per module
+    spikes = {m.spec.name: 0 for m in modules}
+    for k in range(150):
+        out = net.step(
+            dt=1.0, t=k * 1.0,
+            external_currents={nm: drive for nm in active},
+            active_modules=active,
+        )
+        for nm, s in out.items():
+            spikes[nm] += int(s.sum().item())
+    active_set = set(active)
+    inactive_fired = sum(v for nm, v in spikes.items() if nm not in active_set)
+    routed_fired = sum(v for nm, v in spikes.items() if nm in active_set)
+    passed = (len(active) == top_k and inactive_fired == 0 and routed_fired > 0)
+    return CheckResult(
+        "learned router output correctly gates a ModularNetwork",
+        passed, float(inactive_fired), 0.0,
+        note=f"(routed active={active}, routed spikes={routed_fired}, "
+             f"non-routed spikes={inactive_fired})",
+    )
 
 
 def _make_simple_modular_net(device: str = "cpu") -> ModularNetwork:
@@ -187,6 +329,9 @@ def run_all() -> list[CheckResult]:
         check_inter_module_propagation(),
         check_task_router(),
         check_modular_sparsity_reduces_compute(),
+        check_learned_router_generalizes(),
+        check_learned_router_load_balance(),
+        check_learned_router_drives_modular_net(),
     ]
 
 

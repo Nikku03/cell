@@ -23,6 +23,7 @@ from typing import Callable, Optional
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from .population import (
     LIFPopulation,
@@ -251,3 +252,83 @@ class TaskRouter:
         if task_type not in self.mapping:
             raise KeyError(f"unknown task_type: {task_type}")
         return self.mapping[task_type]
+
+
+# ---------------- learned MoE-style router ----------------
+
+class LearnedRouter(nn.Module):
+    """Mixture-of-Experts top-k gate over modules (SparseSpike-GEMM steal).
+
+    The static TaskRouter maps a hard-coded task_type STRING to a module
+    set - it cannot route an input it has not been given an exact key
+    for. The LearnedRouter instead scores every module from an input
+    FEATURE VECTOR via a trained linear gate and activates the top-k
+    highest scorers, so it generalises to unseen inputs by learned
+    similarity. This is the spec's "MoE routing as fan-out": of N expert
+    modules, only top-k are active per input, which both bounds compute
+    and plays the role of sparse cortico-cortical projections.
+
+    route()/route_one() return module-name lists directly usable as the
+    `active_modules` argument of ModularNetwork.step().
+    """
+
+    def __init__(self, input_dim: int, module_names: list[str],
+                 top_k: int, seed: int = 0):
+        super().__init__()
+        torch.manual_seed(seed)
+        self.module_names = list(module_names)
+        self.n_modules = len(self.module_names)
+        if not (0 < top_k <= self.n_modules):
+            raise ValueError(f"top_k must be in 1..{self.n_modules}, got {top_k}")
+        self.top_k = top_k
+        self.input_dim = input_dim
+        self.gate = nn.Linear(input_dim, self.n_modules)
+
+    def scores(self, x: torch.Tensor) -> torch.Tensor:
+        """x: (input_dim,) or (B, input_dim) -> gate scores (B, n_modules)."""
+        if x.dim() == 1:
+            x = x.unsqueeze(0)
+        return self.gate(x)
+
+    @torch.no_grad()
+    def route(self, x: torch.Tensor) -> list[list[str]]:
+        """Return, per input row, the list of top-k module names."""
+        idx = self.scores(x).topk(self.top_k, dim=-1).indices
+        return [[self.module_names[i] for i in row.tolist()] for row in idx]
+
+    @torch.no_grad()
+    def route_one(self, x: torch.Tensor) -> list[str]:
+        """Single input feature vector -> top-k module names."""
+        return self.route(x)[0]
+
+
+def train_learned_router(
+    router: LearnedRouter,
+    X: torch.Tensor,
+    Y: torch.Tensor,
+    steps: int = 300,
+    lr: float = 5e-3,
+    batch_size: int = 64,
+    seed: int = 0,
+) -> list[float]:
+    """Train a LearnedRouter's gate so its top-k matches target module sets.
+
+    X: (n, input_dim) input feature vectors.
+    Y: (n, n_modules) multi-hot target module sets (1.0 = module should be
+       in the active set for that input).
+    Loss: per-module binary cross-entropy on the gate logits. Returns the
+    per-step loss history.
+    """
+    opt = torch.optim.Adam(router.gate.parameters(), lr=lr)
+    g = torch.Generator().manual_seed(seed)
+    n = X.shape[0]
+    history: list[float] = []
+    for _ in range(steps):
+        idx = torch.randint(0, n, (batch_size,), generator=g)
+        scores = router.scores(X[idx])
+        loss = F.binary_cross_entropy_with_logits(scores, Y[idx])
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+        history.append(float(loss.detach()))
+    return history
