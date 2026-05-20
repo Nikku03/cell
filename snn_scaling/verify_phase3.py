@@ -36,6 +36,7 @@ from .reservoir import (
     SpikingReservoir,
     train_linear_readout,
     predict_linear,
+    quantize_ternary,
 )
 from .verify_phase0 import CheckResult, format_results
 
@@ -247,6 +248,80 @@ def check_readout_train_is_fast() -> CheckResult:
     )
 
 
+def check_ternary_readout_classification() -> CheckResult:
+    """A ternary-quantized readout (weights in {-s, 0, +s}, i.e. 2-bit)
+    retains the float readout's sine-vs-noise classification accuracy.
+
+    Each readout is given its own data-derived decision threshold (the
+    midpoint of the per-class training-prediction means), because ternary
+    quantization rescales the output - so this is a fair float-vs-ternary
+    comparison, not one biased by a fixed threshold.
+
+    This verifies the SparseSpike-GEMM 'ternary weights' steal at the one
+    place our architecture has genuine continuous weights: the trained
+    linear readout. Classification depends only on which side of a
+    boundary a sample falls, so it tolerates 2-bit weights well.
+    """
+    lsm = _make_lsm(seed=5)
+    N = lsm.reservoir.n
+    T_per_episode = 400
+    dt = 1.0
+    n_episodes = 60
+    rng = torch.Generator().manual_seed(57)
+    features, labels = [], []
+    for ep in range(n_episodes):
+        is_noise = (ep % 2 == 1)
+        t = torch.arange(T_per_episode, dtype=torch.float32) * dt * 0.001
+        if is_noise:
+            signal = torch.randn(T_per_episode, generator=rng) * 0.7
+        else:
+            phase = torch.rand((), generator=rng).item() * 2 * math.pi
+            freq = 4.0 + 2.0 * torch.rand((), generator=rng).item()
+            signal = torch.sin(2 * math.pi * freq * t + phase)
+        drive = _drive_input(N, signal)
+        Vs = _run_reservoir_collect_V(lsm, drive, dt=dt)
+        late = Vs[T_per_episode // 2:]
+        feat = torch.cat([
+            late.mean(dim=0),
+            late.std(dim=0),
+            late.max(dim=0).values - late.min(dim=0).values,
+        ])
+        features.append(feat)
+        labels.append(1.0 if is_noise else 0.0)
+
+    X = torch.stack(features)
+    y = torch.tensor(labels, dtype=torch.float32).unsqueeze(-1)
+    idx = torch.arange(n_episodes)
+    test_mask = (idx % 5 == 0)
+    train_mask = ~test_mask
+    X_tr, y_tr = X[train_mask], y[train_mask]
+    X_te, y_te = X[test_mask], y[test_mask]
+
+    W = train_linear_readout(X_tr, y_tr, ridge=1.0)
+    W_tern = quantize_ternary(W)
+
+    def _acc(weights: torch.Tensor) -> float:
+        pred_tr = predict_linear(weights, X_tr).squeeze(-1)
+        pred_te = predict_linear(weights, X_te).squeeze(-1)
+        y_tr_flat = y_tr.squeeze(-1)
+        m0 = pred_tr[y_tr_flat < 0.5].mean()
+        m1 = pred_tr[y_tr_flat > 0.5].mean()
+        thresh = 0.5 * (m0 + m1)
+        pred_label = (pred_te > thresh).float()
+        return (pred_label == y_te.squeeze(-1)).float().mean().item()
+
+    acc_float = _acc(W)
+    acc_tern = _acc(W_tern)
+    n_levels = int(torch.unique(W_tern).numel())
+    passed = (acc_tern >= acc_float - 0.15) and (acc_tern >= 0.7) and (n_levels <= 3)
+    return CheckResult(
+        "ternary-quantized (2-bit) readout retains classification accuracy",
+        passed, acc_tern, max(acc_float - 0.15, 0.7),
+        note=f"(float={acc_float*100:.1f}%, ternary={acc_tern*100:.1f}%, "
+             f"weight levels={n_levels})",
+    )
+
+
 # ---------------- runner ----------------
 
 def run_all() -> list[CheckResult]:
@@ -256,6 +331,7 @@ def run_all() -> list[CheckResult]:
         check_input_classification(),
         check_short_term_memory(),
         check_readout_train_is_fast(),
+        check_ternary_readout_classification(),
     ]
 
 

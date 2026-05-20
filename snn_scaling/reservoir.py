@@ -197,6 +197,27 @@ def predict_linear(W: torch.Tensor, features: torch.Tensor) -> torch.Tensor:
     return features @ W
 
 
+def quantize_ternary(W: torch.Tensor) -> torch.Tensor:
+    """BitNet-style ternary quantization of a weight matrix.
+
+    Every weight is snapped to the nearest of three levels {-s, 0, +s},
+    where the shared scale s = mean(|W|). The returned tensor therefore
+    holds at most 3 distinct values and can drop straight into
+    predict_linear in place of the float32 W.
+
+    A spiking substrate's recurrent synapses are already effectively
+    ternary (uniform conductance per E/I kind + zero for absent edges).
+    The one component with genuine continuous weights is the trained
+    linear readout - so this is what "ternary weights" means for our
+    architecture: a 2-bit readout. Classification only depends on which
+    side of a boundary a sample lands, so it tolerates this quantization
+    far better than regression would.
+    """
+    scale = W.abs().mean().clamp_min(1e-12)
+    q = torch.clamp(torch.round(W / scale), -1.0, 1.0)
+    return q * scale
+
+
 # ---------------- end-to-end LSM ----------------
 
 class LiquidStateMachine:
