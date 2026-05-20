@@ -251,6 +251,40 @@ def check_scale_50k_runs_fast() -> CheckResult:
     )
 
 
+def check_stateful_dendrite_integrates() -> CheckResult:
+    """A leaky dendrite (dendrite_leak > 0) integrates a SUSTAINED
+    SUB-THRESHOLD input over time until the accumulated branch state
+    crosses threshold and drives the soma to fire. A stateless dendrite
+    (dendrite_leak = 0) given the identical input never crosses threshold
+    and never fires.
+
+    This is the temporal-integration capability the stateful branch adds:
+    coincidence/accumulation detection that the instantaneous model cannot
+    do. Input 0.12 is below the dendrite half-activation (0.5); with
+    leak=0.85 the branch steady state is 0.12 / (1 - 0.85) = 0.80, above
+    threshold.
+    """
+    base = dict(n_dendrites=1, nonlinearity="sigmoid", dendrite_gain=4.0,
+                dendrite_threshold=0.5, soma_weight=5.0, noise_std=0.0)
+    stateless = DendriticPopulation(1, DendriticParams(dendrite_leak=0.0, **base))
+    stateful = DendriticPopulation(1, DendriticParams(dendrite_leak=0.85, **base))
+    stateless.reset_state()
+    stateful.reset_state()
+    d_in = torch.full((1, 1), 0.12)        # below the instantaneous threshold
+    sl_spikes = 0
+    st_spikes = 0
+    for k in range(400):
+        sl_spikes += int(stateless.step(d_in, dt=1.0, t=k * 1.0).sum().item())
+        st_spikes += int(stateful.step(d_in, dt=1.0, t=k * 1.0).sum().item())
+    # stateful must fire repetitively; stateless must stay completely silent
+    passed = st_spikes > 10 and sl_spikes == 0
+    return CheckResult(
+        "leaky dendrite integrates sub-threshold input; stateless cannot",
+        passed, float(st_spikes - sl_spikes), 10.0,
+        note=f"(stateful spikes={st_spikes}, stateless spikes={sl_spikes})",
+    )
+
+
 # ---------------- runner ----------------
 
 def run_all() -> list[CheckResult]:
@@ -261,6 +295,7 @@ def run_all() -> list[CheckResult]:
         check_synapse_routes_to_dendrite(),
         check_dendritic_xor(),
         check_point_neuron_cannot_xor(),
+        check_stateful_dendrite_integrates(),
         check_scale_50k_runs_fast(),
     ]
 

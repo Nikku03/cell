@@ -23,11 +23,17 @@ This module provides:
   - DendriticCluster: population + synapse banks (mirrors SNNCluster)
   - build_xor_neuron: a 2-dendrite single-neuron preset that computes XOR
 
-The dendrites are stateless in this simplified model (the nonlinearity is
-applied to the instantaneous per-compartment synaptic current). This
-keeps the per-neuron state count to N (the soma V) instead of N · (K+1),
-while still capturing the headline benefit: a nonlinear projection of
-inputs before the soma's linear sum.
+By default the dendrites are stateless (the nonlinearity is applied to
+the instantaneous per-compartment synaptic current). Setting
+`dendrite_leak > 0` turns each branch into a LEAKY ACCUMULATOR:
+
+  d_b   <- dendrite_leak * d_b + input_b      # per-branch integration
+  g_b   = nonlinear((d_b - threshold) * gain) # nonlinearity on the state
+
+so a branch integrates its input over time and can detect temporal
+coincidence (sub-threshold inputs that accumulate). dendrite_leak=0
+recovers the original stateless model exactly. Per-neuron state is then
+N (soma V) + N*K (branch accumulators).
 """
 
 from __future__ import annotations
@@ -69,6 +75,9 @@ class DendriticParams:
     dendrite_gain: float = 4.0             # input scaling before nonlinearity
     dendrite_threshold: float = 0.5        # half-activation point
     soma_weight: float = 1.0               # post-nonlinearity weight into soma
+    dendrite_leak: float = 0.0             # per-branch leaky-accumulator retention;
+                                           # 0.0 = stateless (original model),
+                                           # 0<leak<1 = integrates input over time
 
     def to_neuron_params(self) -> NeuronParams:
         return NeuronParams(
@@ -132,6 +141,15 @@ class DendriticPopulation(nn.Module):
         self.gain = float(params.dendrite_gain)
         self.threshold = float(params.dendrite_threshold)
         self.soma_weight = float(params.soma_weight)
+        self.dendrite_leak = float(params.dendrite_leak)
+
+        # Per-branch leaky accumulator state (N, K). With dendrite_leak=0
+        # this is overwritten by the input each step (stateless, the
+        # original Phase 7 model); with dendrite_leak>0 each branch
+        # integrates its input over time.
+        self.register_buffer(
+            "d", torch.zeros(n_neurons, self.K, dtype=dtype, device=self.device)
+        )
 
     @property
     def V(self) -> torch.Tensor:
@@ -140,6 +158,7 @@ class DendriticPopulation(nn.Module):
     @torch.no_grad()
     def reset_state(self) -> None:
         self.soma.reset_state()
+        self.d.zero_()
 
     @torch.no_grad()
     def dendritic_output(self, d_input: torch.Tensor) -> torch.Tensor:
@@ -155,10 +174,21 @@ class DendriticPopulation(nn.Module):
         t: float = 0.0,
         soma_extra_current: torch.Tensor | None = None,
     ) -> torch.Tensor:
-        """One step. Returns soma spike mask (N,) bool."""
+        """One step. Returns soma spike mask (N,) bool.
+
+        Pipeline:
+          d      <- dendrite_leak * d + d_input      # leaky branch integration
+          d_out  = nonlinear((d - threshold) * gain) # branch nonlinearity
+          I_soma = (d_out * soma_weight).sum(dim=-1)
+          [soma]   standard LIF step
+        With dendrite_leak=0 the first line collapses to d == d_input, i.e.
+        the original stateless behaviour.
+        """
         assert d_input.shape == (self.n, self.K), \
             f"d_input must be (N={self.n}, K={self.K}), got {tuple(d_input.shape)}"
-        d_out = self.dendritic_output(d_input)
+        # Leaky per-branch integration (in place on the registered buffer).
+        self.d.mul_(self.dendrite_leak).add_(d_input)
+        d_out = self.dendritic_output(self.d)
         I_soma = d_out.sum(dim=-1) * self.soma_weight
         if soma_extra_current is not None:
             I_soma = I_soma + soma_extra_current.to(device=self.device, dtype=self.dtype)
