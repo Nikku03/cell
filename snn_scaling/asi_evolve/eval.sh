@@ -35,9 +35,11 @@ if [ ! -f "$CANDIDATE" ]; then
     write_error "candidate file not found at $CANDIDATE"
 fi
 
-# --- Defensive diff-applier ----------------------------------------
+# --- Defensive diff-applier (comment-tolerant) ---------------------
 # If asi_evolve's Engineer step wrote the raw diff to $CANDIDATE
-# instead of applying it, do the application ourselves.
+# instead of applying it, do the application ourselves. Tolerates
+# inline-comment drift in the SEARCH text (a common GPT-5 failure mode
+# where the LLM hallucinates slightly different trailing comments).
 if head -1 "$CANDIDATE" | grep -Eq '^<{4,10}[[:space:]]*SEARCH'; then
     if [ ! -f "$BASE_CODE" ]; then
         write_error "base code missing: $BASE_CODE"
@@ -56,15 +58,54 @@ matches = pat.findall(diff)
 if not matches:
     print(f'no diff blocks found in {diff_path}', file=sys.stderr)
     sys.exit(2)
+
+def strip_inline_comment(line: str) -> str:
+    """Strip trailing inline Python comment (preserves indentation +
+    string-literal #'s by only honouring a # that isn't inside quotes)."""
+    in_s = in_d = False
+    out = []
+    for ch in line:
+        if ch == "'" and not in_d: in_s = not in_s
+        elif ch == '"' and not in_s: in_d = not in_d
+        elif ch == '#' and not in_s and not in_d:
+            break
+        out.append(ch)
+    return ''.join(out).rstrip()
+
+def apply_one(base, search, replace):
+    """Try exact match first; if it fails, retry with inline-comment
+    tolerance (allow base or search to have a different trailing comment
+    on each line). Returns (new_base, mode) or (None, reason)."""
+    if search in base:
+        return base.replace(search, replace, 1), 'exact'
+    # Build a comment-tolerant regex
+    s_lines = search.split('\n')
+    pat_lines = []
+    for ln in s_lines:
+        code = strip_inline_comment(ln)
+        if code == ln:
+            # No comment in SEARCH -> still allow base to have one
+            pat_lines.append(re.escape(code) + r'[ \t]*(?:#[^\n]*)?')
+        else:
+            # SEARCH had a comment -> still escape full line but allow drift
+            pat_lines.append(re.escape(code) + r'[ \t]*(?:#[^\n]*)?')
+    pattern = '\n'.join(pat_lines)
+    m = re.search(pattern, base)
+    if m is None:
+        return None, 'no match (exact or comment-tolerant)'
+    return base[:m.start()] + replace + base[m.end():], 'comment-tolerant'
+
 for i, (search, replace) in enumerate(matches):
-    if search not in base:
-        print(f'SEARCH block {i} not found in base code', file=sys.stderr)
-        print(f'  SEARCH text was:\n{search!r}', file=sys.stderr)
+    new_base, mode = apply_one(base, search, replace)
+    if new_base is None:
+        print(f'SEARCH block {i} not applicable to base:', file=sys.stderr)
+        print(f'  reason: {mode}', file=sys.stderr)
+        print(f'  SEARCH was:\n{search!r}', file=sys.stderr)
         sys.exit(3)
-    base = base.replace(search, replace, 1)
+    base = new_base
+    print(f'[diff-apply] block {i}: matched via {mode}', file=sys.stderr)
 open(diff_path, 'w').write(base)
-print(f'[diff-apply] applied {len(matches)} block(s); '
-      f'output {len(base)} chars to {diff_path}', file=sys.stderr)
+print(f'[diff-apply] wrote {len(base)} chars to {diff_path}', file=sys.stderr)
 PYEOF
     APPLY_EXIT=$?
     if [ $APPLY_EXIT -ne 0 ]; then
@@ -94,5 +135,6 @@ fi
 
 SCORE=$(python -c "import json; print(json.load(open('$RESULTS'))['eval_score'])")
 BEST=$(python -c "import json; print(json.load(open('$RESULTS')).get('best_integrated_cum', '?'))")
-GAP=$(python -c "import json; print(json.load(open('$RESULTS')).get('gap_memrec_naive', '?'))")
-echo "[eval] done; eval_score=$SCORE  best_integrated_cum=$BEST  gap_memrec_naive=$GAP" >&2
+WHO=$(python -c "import json; print(json.load(open('$RESULTS')).get('best_integrated_agent', '?'))")
+EVOL=$(python -c "import json; print(json.load(open('$RESULTS')).get('evolved_cum_mean', '?'))")
+echo "[eval] done; eval_score=$SCORE  best=$WHO ($BEST)  evolved=$EVOL" >&2

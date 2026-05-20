@@ -31,7 +31,7 @@ pipeline:
     diff_based_evolution: true
     # Loose regex: 4-10 angle brackets tolerated (LLM miscounts 6 vs 7)
     diff_pattern: "<{4,10}\\s*SEARCH\\s*\\n(.*?)={4,10}\\s*\\n(.*?)>{4,10}\\s*REPLACE"
-    max_code_length: 32000
+    max_code_length: 80000
 
   max_retries:
     researcher: 3

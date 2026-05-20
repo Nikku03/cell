@@ -1,6 +1,11 @@
-You are an ML researcher improving the **snn_scaling reversal benchmark** — a 600-trial online RL task (5 stim classes × 3 actions, class→action mapping reshuffles every 150 trials) where three agents compete on the same reservoir features: a Naive Q-learning baseline, a single-bank recency-weighted memory (MemRec), and a dual-system memory (CLS = hippocampus + neocortex).
+You are an ML researcher improving the **snn_scaling reversal benchmark** — a 600-trial online RL task (5 stim classes × 3 actions, class→action mapping reshuffles every 150 trials) where FOUR agents compete on the same reservoir features:
 
-The current hand-tuned baseline gets MemRec ≈ +15 cumulative reward (best of the three), beating naive by ~90. Your goal: push the BEST integrated agent's cumulative reward higher without letting naive catch up.
+  - **Naive Q-learning** — linear Q + TD (baseline)
+  - **MemRec** — single-bank recency-weighted episodic memory
+  - **CLS** — dual-system (hippocampus + neocortex consolidation)
+  - **EvolvedAgent** — a fully mutable agent class inside the MUTABLE section that YOU can structurally redesign
+
+The hand-tuned baseline gets MemRec ≈ +15 cumulative reward, beating naive by ~90. The current best evolved run is `TASK_NOISE_STD=0.25` at +28.52. Your goal: push `best_integrated_cum` higher, where `best_integrated` is the BEST of {MemRec, CLS, EvolvedAgent} per round.
 
 ## Task
 
@@ -40,16 +45,52 @@ The current hand-tuned baseline gets MemRec ≈ +15 cumulative reward (best of t
 {{ base_code }}
 ```
 
-## Your task
+## Two kinds of mutations available
 
-Propose ONE mutation to the MUTABLE SECTION. Use diff blocks ONLY (no full rewrites — the harness footer must stay intact byte-for-byte).
+You can do EITHER of these per round:
+
+### (1) Hyperparameter mutation (1-line numerical edit)
+
+Tune one of the ~24 knobs in the constants block. Cheap to verify, but the prior trial history shows the obvious wins (TASK_NOISE_STD, RES_NOISE_STD, MEMREC_TAU) are already explored. **If the recent trials show you re-proposing the same handful of knobs, prefer an unexplored one** from this list:
+
+| Unexplored knob | Default | Why it's worth trying |
+|---|---|---|
+| `CLS_ALPHA` | 0.7 | controls hippo/cortex blend; calibration band [0.6, 0.85] |
+| `CLS_HIPPO_TAU` | 20.0 | hippo recency; safe range [10, 40] |
+| `CLS_CORTEX_THRESHOLD` | 0.6 | cluster joining threshold; safe [0.5, 0.7] |
+| `CLS_CORTEX_LR` | 0.05 | EMA learning rate; safe [0.02, 0.15] |
+| `T_TIMESTEPS` | 200 | feature-extract window; reservoir settles in 100 |
+| `MEMREC_TOP_K` | 10 | retrieval breadth; safe [5, 30] |
+| `EVOLVED_TAU` | 35 | EvolvedAgent recency; default is between MEMREC (50) and CLS hippo (20) |
+| `EVOLVED_TOP_K` | 12 | similar to MEMREC_TOP_K but for EvolvedAgent |
+
+### (2) Structural mutation of `EvolvedAgent` class
+
+The MUTABLE section contains a full `EvolvedAgent` class. You may **rewrite its `.act()`, `.update()`, or `__init__`**, change its internal data structures, or add helper methods — as long as you preserve the three-line interface:
+
+```
+EvolvedAgent(feat_dim, n_actions, device='cpu', seed=0)
+.act(x: Tensor) -> int
+.update(x: Tensor, a: int, r: float) -> None
+```
+
+Ideas the LLM hasn't explored yet:
+- **Per-action memory banks** (3 separate memories, one per action, vs the single bank in baselines)
+- **Adaptive recency** (tau that shrinks after a reward-sign flip → faster phase recovery)
+- **Confidence-gated writes** (only store trials with strong reward signal; reject ambiguous ones)
+- **Hybrid retrieval** (cosine top-k + recency, but blend with a global per-class running mean)
+- **Surprise-driven exploration** (raise eps when retrieved Q variance is high)
+- **Pattern completion via averaging the top-k retrievals' STATES, not just their values**
+- **Different similarity metric**: dot product, learned weighting per-feature
+
+If you choose (2), document the algorithmic change in `<motivation>` so the analyzer can extract a lesson.
 
 ## REQUIRED RESPONSE FORMAT
 
 Respond using ONLY these three XML tags. NO markdown code fences anywhere in your response.
 
 <name>short_identifier_for_this_mutation</name>
-<motivation>2-4 sentences: which knob you're changing, why it should improve best_integrated_cum, and what risk you anticipate</motivation>
+<motivation>2-4 sentences: which knob OR which algorithm you're changing, why it should improve best_integrated_cum, and what risk you anticipate</motivation>
 <code>your diff blocks here</code>
 
 ## DIFF BLOCK FORMAT (must be inside <code>)
@@ -62,49 +103,71 @@ Respond using ONLY these three XML tags. NO markdown code fences anywhere in you
 >>>>>>> REPLACE
 ```
 
-- Use SEVEN angle brackets each (4-10 tolerated if you miscount).
+- Use SEVEN angle brackets each (4-10 tolerated).
 - SEARCH / REPLACE are CASE-SENSITIVE uppercase.
-- SEARCH must match base code BYTE-FOR-BYTE (including spacing: `MEMREC_TAU = 50.0`, not `MEMREC_TAU=50` or `MEMREC_TAU  =  50.0`).
-- For multi-line diffs, include enough context that the SEARCH block is unique in the file.
+- SEARCH must match base code **byte-for-byte** including inline comments and whitespace. **Do not invent trailing comments** that aren't there. (We have a tolerant matcher but it's not magic.)
+- For multi-line diffs (esp. structural mutations of EvolvedAgent.act() / .update()), include enough context that the SEARCH block is unique in the file.
 
 ## EXAMPLE — single-line hyperparameter mutation
 
-To shrink T_TIMESTEPS from 200 to 140 (the reservoir settles well before 200 steps with tau_m=20):
+To tune CLS_ALPHA from 0.7 to 0.75 (slightly more hippo weight, less cortex contamination on reversal):
 
-<name>cut_t_timesteps_to_140</name>
-<motivation>Membrane tau is 20ms so the reservoir's transient settles within ~5 tau ≈ 100ms. T_TIMESTEPS=200 wastes ~half of each trial's simulation on already-settled state. Cutting to 140 saves ~30% of feature-extraction wall time without changing the late-half (mean, std, range) statistics meaningfully.</motivation>
+<name>cls_alpha_to_075</name>
+<motivation>Cognition lesson says CLS_ALPHA<0.5 lets stale cortex Q dominate; the safe band is [0.6, 0.85]. Default 0.7 is mid-band; nudging up to 0.75 reduces cortex influence on the post-reversal trials where stale Q is the failure mode, while keeping enough cortex for stationary stability.</motivation>
 <code><<<<<<< SEARCH
-T_TIMESTEPS = 200            # samples per trial input
+CLS_ALPHA = 0.7              # blend: alpha * hippo + (1-alpha) * cortex
 =======
-T_TIMESTEPS = 140            # samples per trial input
+CLS_ALPHA = 0.75             # blend: alpha * hippo + (1-alpha) * cortex
+>>>>>>> REPLACE</code>
+
+## EXAMPLE — structural mutation of EvolvedAgent
+
+To switch EvolvedAgent's update() to skip storage of low-reward trials (a form of confidence gating):
+
+<name>evolved_skip_shocks</name>
+<motivation>Evolved currently stores every trial. By skipping shocked trials (r<0), the memory contains only "what worked", which makes nearest-neighbour retrieval cleaner on reversal: the agent forgets recent wrong actions faster. Risk: slower adaptation in the FIRST phase (fewer entries early). Counter-risk: faster phase-1+ recovery (no contaminating wrong-action entries).</motivation>
+<code><<<<<<< SEARCH
+    @torch.no_grad()
+    def update(self, x, a, r):
+        # Append + FIFO eviction
+        self.mem_keys.append(x.clone())
+        self.mem_actions.append(int(a))
+        self.mem_rewards.append(float(r))
+        self.mem_ages.append(self.t)
+        self.t += 1
+        if len(self.mem_keys) > self.capacity:
+            self.mem_keys.pop(0); self.mem_actions.pop(0)
+            self.mem_rewards.pop(0); self.mem_ages.pop(0)
+=======
+    @torch.no_grad()
+    def update(self, x, a, r):
+        # Confidence-gated: only commit trials with positive reward
+        self.t += 1
+        if r <= 0:
+            return
+        self.mem_keys.append(x.clone())
+        self.mem_actions.append(int(a))
+        self.mem_rewards.append(float(r))
+        self.mem_ages.append(self.t)
+        if len(self.mem_keys) > self.capacity:
+            self.mem_keys.pop(0); self.mem_actions.pop(0)
+            self.mem_rewards.pop(0); self.mem_ages.pop(0)
 >>>>>>> REPLACE</code>
 
 ## Reasoning guidelines
 
-1. **HARD RULE**: mutate ONLY the MUTABLE SECTION (between `=== BEGIN MUTABLE SECTION ===` and `=== END MUTABLE SECTION ===`). The harness header and footer must be byte-identical.
+1. **HARD RULE**: mutate ONLY the MUTABLE SECTION. Harness header (imports) and footer (`main()`, `_run_one_seed()`) must be byte-identical.
 
-2. **HARD RULE**: sanity penalty is +200 if naive beats best integrated. This costs more than any plausible reward gain. Never push knobs in directions known to nuke MemRec/CLS while leaving Naive intact.
+2. **HARD RULE**: sanity penalty +200 if naive beats best integrated. Catastrophic. Never push knobs in directions known to nuke MemRec/CLS/EvolvedAgent.
 
-3. **Single-axis mutations** preferred. Change ONE hyperparameter per round. Lets the database learn which knob moves which metric.
+3. **HARD RULE**: EvolvedAgent class name + constructor signature + `.act()` / `.update()` interfaces must NOT change. The harness footer constructs and calls these directly.
 
-4. **Don't repeat known failures** from trial history. Read recent analyses before proposing.
+4. **PRIORITY**: If the cognition store has 3+ items suggesting unexplored knobs / mechanisms, try one of those. Re-attempting `TASK_NOISE_STD=0.25` or `RES_NOISE_STD=0.1` for the 4th time adds no information.
 
-5. **Cognition lessons override your intuition** — they're calibrated from prior runs on THIS exact code. If a lesson says CLS_ALPHA<0.5 is bad, don't try CLS_ALPHA=0.4.
+5. **Structural mutations get priority over numerical ones** when the numerical landscape has been mapped (5+ successful hyperparameter trials). The next 10-20× of improvement, if it exists, lives in EvolvedAgent's algorithm, not in the dials.
 
-6. **Composite axis priorities** (in order):
-   - Pushing `best_integrated_cum` UP is worth +1 score per +1 cumulative reward
-   - Wall-time savings are worth +0.1 per minute (tiny)
-   - Sanity penalty is +200 if naive wins (catastrophic)
+6. **Single-axis** preferred. Change one knob OR rewrite one method. Don't both. Lets the database attribute the score change.
 
-7. **Safe knobs to explore first**:
-   - `MEMREC_TAU` in [30, 80]
-   - `T_TIMESTEPS` in [120, 200] (smaller = faster, may not hurt)
-   - `CLS_ALPHA` in [0.6, 0.85]
-   - `RES_NOISE_STD` in [0.15, 0.30]
-   - `TASK_NOISE_STD` in [0.25, 0.50]
+7. **Don't repeat known failures** from trial history. Read recent analyses before proposing.
 
-8. **Risky knobs (require strong reason)**:
-   - `N_RESERVOIR` (build cost scales O(N²))
-   - `EXC_FRACTION`, `G_EXC`, `G_INH` (affects whole reservoir dynamics; may destabilise)
-
-Write your reasoning before the diff. Keep the diff small.
+Write your reasoning before the diff. Keep the diff small unless you're doing a structural mutation.

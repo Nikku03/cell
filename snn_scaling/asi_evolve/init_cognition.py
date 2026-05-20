@@ -139,6 +139,63 @@ COGNITION_SEED = [
             "is harder to learn from."
         ),
     },
+    {
+        "title": "Numerical knobs map quickly; structural changes are the unexplored frontier",
+        "content": (
+            "Round-1 hand-tuning gave best_integrated_cum +28.52 via "
+            "TASK_NOISE_STD=0.25. 15 follow-up numerical mutations couldn't "
+            "beat it. The hyperparameter landscape is shallow. Bigger gains, "
+            "if they exist, live in structural changes to the EvolvedAgent "
+            "class - new memory shape, new retrieval rule, adaptive "
+            "exploration, per-action memory banks - not in tweaking dials."
+        ),
+    },
+    {
+        "title": "EvolvedAgent is the architectural mutation target",
+        "content": (
+            "The MUTABLE SECTION includes a full EvolvedAgent class with "
+            ".act() and .update() methods. The Researcher can rewrite "
+            "these to try new algorithms. The 3 baseline agents (Naive, "
+            "MemRec, CLS) are immutable references. Best_integrated_cum "
+            "is the MAX across {MemRec, CLS, EvolvedAgent}, so a "
+            "well-evolved EvolvedAgent can win even if MemRec also "
+            "improves."
+        ),
+    },
+    {
+        "title": "Per-action memory banks - untested",
+        "content": (
+            "All current agents (MemRec, CLS, EvolvedAgent) use a SINGLE "
+            "memory bank with action stored as a slot index in the value "
+            "vector. An untested alternative: 3 separate memory banks, "
+            "one per action. Retrieval reads the bank for each candidate "
+            "action; decision is argmax of per-bank cosine-weighted means. "
+            "May give cleaner per-action statistics on noisy features."
+        ),
+    },
+    {
+        "title": "Confidence-gated writes - untested",
+        "content": (
+            "Current agents write every trial. An untested alternative: "
+            "only commit trials whose retrieval score (or some confidence "
+            "signal) is high. Stale post-reversal entries get filtered out "
+            "automatically. Risk: under-storage in early phase 0 when no "
+            "history exists for confidence comparison; cold-start may need "
+            "a warmup window."
+        ),
+    },
+    {
+        "title": "Adaptive exploration via Q-variance - untested",
+        "content": (
+            "Current epsilon is fixed at 0.10. An untested mechanism: "
+            "compute per-action variance over recent retrievals; if high "
+            "(signal of phase boundary or contradictory entries), increase "
+            "epsilon for a few trials to force exploration. This is the "
+            "Actor-Critic-Memory mechanism a prior CLS experiment tried "
+            "but couldn't tune well; might work better integrated directly "
+            "into EvolvedAgent.act()."
+        ),
+    },
 ]
 
 
