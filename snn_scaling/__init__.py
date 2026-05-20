@@ -12,6 +12,7 @@ implemented as a separate module with its own verification contract:
   distill.py            teacher -> student knowledge distillation
   dendritic.py          multi-compartment neurons (per-neuron sub-network)
   surrogate.py          surrogate-gradient BPTT training of the SNN itself
+  eprop.py              e-prop local online learning (forward-only, no BPTT)
 
 Each module:
   - Exposes a clean PyTorch interface
