@@ -222,9 +222,23 @@ class SparseSynapses(nn.Module):
         # Running conductance per edge
         self.register_buffer("g", torch.zeros(E, device=device, dtype=dtype))
 
+        # Effective-synaptic-event counter: a synaptic event is a spike
+        # crossing a synapse. This is the hardware-agnostic efficiency
+        # metric the SparseSpike-GEMM design measures energy per. Kept as
+        # a tensor accumulator so deliver_spikes never needs a CPU sync.
+        self.register_buffer("_n_events", torch.zeros((), dtype=torch.long, device=device))
+
     @torch.no_grad()
     def reset_state(self) -> None:
         self.g.zero_()
+        self._n_events.zero_()
+
+    @property
+    def n_synaptic_events(self) -> int:
+        """Total synaptic events (spike-crossing-synapse) since the last
+        reset_state(). Each event is one signed accumulate on real
+        hardware; this count is the substrate's compute/energy proxy."""
+        return int(self._n_events.item())
 
     @torch.no_grad()
     def decay(self, dt: float) -> None:
@@ -242,6 +256,9 @@ class SparseSynapses(nn.Module):
         if self.E == 0:
             return
         fire_e = pre_spiked[self.edge_pre]
+        # Each fired edge is one effective synaptic event (tensor-accumulated,
+        # no CPU sync, so this adds negligible overhead to the hot loop).
+        self._n_events += fire_e.sum()
         # add g_max only where fire_e is True
         self.g.add_(self.g_max * fire_e.to(self.dtype))
 
@@ -266,6 +283,22 @@ class SparseSynapses(nn.Module):
         I_per_post.index_add_(0, self.edge_post, I_per_edge)
         g_per_post.index_add_(0, self.edge_post, self.g)
         return I_per_post, g_per_post
+
+
+# ---------------- efficiency accounting ----------------
+
+def synaptic_event_energy_pj(n_events: int, pj_per_event: float = 0.1) -> float:
+    """Estimate the synaptic-arithmetic energy of a run, in picojoules.
+
+    `n_events` is the hardware-agnostic count (see
+    SparseSynapses.n_synaptic_events). `pj_per_event` is the ONLY
+    hardware assumption: the SparseSpike-GEMM design projects a
+    signed-accumulate synaptic event at roughly 0.05-0.5 pJ on a fused
+    on-chip kernel (vs ~10^4-10^5x more for dense FP16). The default
+    0.1 pJ sits in that projected band. The count itself is exact; the
+    pJ figure is only as good as this per-event assumption.
+    """
+    return float(n_events) * float(pj_per_event)
 
 
 # ---------------- cluster ----------------
