@@ -143,7 +143,7 @@ opt = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
 sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=STEPS)
 gen = torch.Generator().manual_seed(SEED + 1)
 
-t0 = time.time()
+t_start = time.time()
 model.train()
 for step in range(STEPS):
     K = 1 + int((K_MAX - 1) * step / STEPS)               # curriculum
@@ -167,7 +167,7 @@ for step in range(STEPS):
     if step == 0 or (step + 1) % 250 == 0:
         print(f"  step {step+1:5d}  K={K:2d}  rollout MSE {float(loss.detach()):.5f}",
               flush=True)
-print(f"[train] {STEPS} steps in {time.time()-t0:.0f}s")
+print(f"[train] {STEPS} steps in {time.time()-t_start:.0f}s")
 
 
 # ---------------- evaluate ----------------
