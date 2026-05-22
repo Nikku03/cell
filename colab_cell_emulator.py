@@ -134,15 +134,25 @@ def load_gene_types(csv_path):
         return {}
 
 
+def _locus_key(locus):
+    """'0412_C1' -> '0412'.  Strips chromosome-copy / variant suffixes so all
+    species of one gene (both chromosome copies, bound intermediates) share a
+    gene identity and match the gene-table locus numbers."""
+    m = re.match(r"\d+", locus)
+    return m.group(0) if m else locus
+
+
 def build_gene_index(species_names, gene_type_map):
     """Per-species gene-type labelling.  Returns species_type_ids (S,) and the
     locus list (used only for the saved config)."""
     locus_to_idx, locus_list = {}, []
     for name in species_names:
         prefix, locus = parse_species(name)
-        if prefix is not None and locus not in locus_to_idx:
-            locus_to_idx[locus] = len(locus_list)
-            locus_list.append(locus)
+        if prefix is not None:
+            key = _locus_key(locus)
+            if key not in locus_to_idx:
+                locus_to_idx[key] = len(locus_list)
+                locus_list.append(key)
 
     gene_type_ids = np.array(
         [gene_type_map.get(loc, GTYPE_OTHER) for loc in locus_list],
@@ -153,11 +163,13 @@ def build_gene_index(species_names, gene_type_map):
     n_global = 0
     for i, name in enumerate(species_names):
         prefix, locus = parse_species(name)
-        if prefix is not None and locus in locus_to_idx:
-            species_type_ids[i] = gene_type_ids[locus_to_idx[locus]]
-        elif prefix is None:
+        if prefix is not None:
+            species_type_ids[i] = gene_type_ids[locus_to_idx[_locus_key(locus)]]
+        else:
             n_global += 1
+    typed = int((species_type_ids != GTYPE_OTHER).sum()) - n_global
     print(f"[gene_index] {len(locus_list)} genes  {n_global} global species  "
+          f"{typed} species type-labelled  "
           f"example '{species_names[0]}' -> {parse_species(species_names[0])}")
     return species_type_ids, locus_list
 
