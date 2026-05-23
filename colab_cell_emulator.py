@@ -1,27 +1,33 @@
-"""Colab cell: v6 cell-state emulator - two-tier rules + SBML structure + gaps.
+"""Colab cell: v7 cell-state emulator - PhD knowledge phase + multi-lens patterns.
 
-v5 -> v6:
-  1. SEED RULES  an explicit, editable block of rules we KNOW (monotone
-     counters, non-negativity).  Hand-written rules and discovered rules go
-     through the SAME held-out validation gate - a seed rule that fails is
-     reported, never silently trusted.
-  2. RULES FROM INPUT DATA (4DWCM SBML reaction network, Syn3A_updated.xml)
-       - pure-product species (only ever produced)  -> monotone-up candidate
-       - pure-reactant species (only ever consumed)  -> monotone-down candidate
-       - element balances from fbc:chemicalFormula   -> conservation candidates
-     SBML candidates are validated against the trajectory, same gate.
-  3. TWO TIERS
-       Tier 1  RuleSet     - validated, ENFORCED as hard rollout guardrails.
-                             "It shouldn't be wrong": enforced == validated.
-       Tier 2  Hypotheses  - candidates that did NOT fully validate (a law
-                             that almost holds, a drift).  Tracked, scored,
-                             REPORTED, never enforced - so they can be wrong
-                             without corrupting anything.
-  4. MISSING-INFO REPORT  reasons about what the model/rules don't cover:
-     worst-predicted species, element balances that drift (unmodeled flux),
-     SBML<->trajectory coverage mismatch.
+v6 -> v7:
+  1. STARTUP SKIP  drop the first decimated step (t=0->t=60); the simulator's
+     startup transient is non-physical, training and rollout now start from t=60.
+  2. INGEST ALL INPUT FILES  one knowledge phase before training parses every
+     staged 4DWCM input file:
+       Syn3A_updated.xml           - SBML reaction network                (v6)
+       kinetic_params.xlsx         - rate constants, reaction->enzyme map (NEW)
+       initial_concentrations.xlsx - protein/mRNA/metabolite initials     (NEW)
+       complex_formation.xlsx      - protein-complex assembly stoich      (NEW)
+       syn3a_gene_table.csv        - gene-type labels                     (v5)
+  3. SHARP TYPE SEPARATION  KnownRules (input-file facts, deterministic) and
+     DiscoveredPatterns (trajectory regularities, empirical) are DIFFERENT
+     KINDS of objects.  Both feed validation but stay conceptually distinct.
+  4. MULTI-LENS PATTERN DISCOVERY  each lens looks for a different KIND:
+       1D     - per-species monotonicity, bounds                          (v6)
+       2D     - pairwise correlation on deltas (couplings)                (NEW)
+       low-d  - SVD: lowest-variance directions = conservation candidates (NEW)
+       time   - FFT: dominant frequency per species (periodicities)       (NEW)
+       chain  - per-gene central-dogma channel cross-correlation lags     (NEW)
+  5. "PHD" SUMMARY  one comprehensive printout of what the system knows.
+  6. CROSS-VALIDATION  KnownRules vs trajectory: discrepancies surface as
+     missing-info flags (e.g. trajectory t=0 vs xlsx initial counts).
+  7. TWO-TIER (unchanged from v6): Tier 1 enforced as hard guardrails - only
+     the subset that is BOTH validated AND safely enforceable (monotone, bounds).
+     Tier 2 reported - everything else (conservation, couplings, periodicities).
+     "It shouldn't be wrong": enforced is strictly less than discovered.
 
-Run on Colab with Drive mounted, GPU runtime (~10 min).
+Run on Colab with Drive mounted, GPU runtime (~11 min).
 """
 
 import glob
@@ -42,31 +48,38 @@ except ImportError:
     HAS_PANDAS = False
 
 # ── config ───────────────────────────────────────────────────────────────────
-PARQUET_DIR    = ""
-TIME_STRIDE    = 60
-CONTEXT        = 8
-D_MODEL        = 256
-D_TYPE_EMBED   = 16
-N_LAYERS       = 3
-N_HEADS        = 8
-DROPOUT        = 0.1
-N_TRAIN_TRAJ   = 40
-STEPS          = 2000
-K_MAX          = 64
-BATCH          = 32
-LR             = 3e-4
-WEIGHT_DECAY   = 1e-5
-LAMBDA_1STEP   = 1.0
-CLAMP_LO, CLAMP_HI = -0.2, 1.2
-MONO_EPS        = 1e-4       # tolerance for monotone-rule mining
-RULE_COMPLIANCE = 0.999      # held-out compliance threshold for Tier 1
-CONSERVE_DRIFT  = 0.02       # a balance drifting < 2% is "conserved"
-SEED            = 0
-SAVE_DIR        = "/content/drive/MyDrive"
-GENE_TABLE_PATH = "memory_bank/data/syn3a_gene_table.csv"
-# SBML reaction network. If absent, SBML-derived rules are skipped (non-fatal).
-# Re-stage from the Minimal_Cell_ComplexFormation repo or point at your Drive copy.
-SBML_PATH       = "Syn3A_updated.xml"
+PARQUET_DIR         = ""
+TIME_STRIDE         = 60
+SKIP_STARTUP_STEPS  = 1            # NEW v7: drop first decimated step (t=0->t=60)
+CONTEXT             = 8
+D_MODEL             = 256
+D_TYPE_EMBED        = 16
+N_LAYERS            = 3
+N_HEADS             = 8
+DROPOUT             = 0.1
+N_TRAIN_TRAJ        = 40
+STEPS               = 2000
+K_MAX               = 64
+BATCH               = 32
+LR                  = 3e-4
+WEIGHT_DECAY        = 1e-5
+LAMBDA_1STEP        = 1.0
+CLAMP_LO, CLAMP_HI  = -0.2, 1.2
+MONO_EPS            = 1e-4
+RULE_COMPLIANCE     = 0.999
+CONSERVE_DRIFT      = 0.02
+PAIRWISE_TOP_K      = 50           # NEW v7
+PAIRWISE_THRESHOLD  = 0.85         # NEW v7
+CONSERVATION_K      = 8            # NEW v7
+PERIODICITY_TOP_K   = 20           # NEW v7
+GENE_LAG_MAX        = 5            # NEW v7
+SEED                = 0
+SAVE_DIR            = "/content/drive/MyDrive"
+GENE_TABLE_PATH     = "memory_bank/data/syn3a_gene_table.csv"
+SBML_PATH           = "Syn3A_updated.xml"
+KINETICS_PATH       = "kinetic_params.xlsx"             # NEW v7
+INITIAL_CONC_PATH   = "initial_concentrations.xlsx"     # NEW v7
+COMPLEXES_PATH      = "complex_formation.xlsx"          # NEW v7
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 torch.manual_seed(SEED)
@@ -74,13 +87,10 @@ torch.manual_seed(SEED)
 
 # ╔══════════════════════════════════════════════════════════════════════════╗
 # ║  SEED RULES  -  the rules we KNOW.  Edit / extend this block freely.      ║
-# ║  Everything here is still validated on held-out data before it is        ║
-# ║  enforced (Tier 1).  A seed rule that fails validation is reported.       ║
+# ║  Everything here is still validated on held-out data before enforcement.  ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
-SEED_MONOTONE_UP_CHANNELS = {"RPM", "PM", "DM"}   # cumulative made-counters
-SEED_NONNEG               = True                  # all molecule counts >= 0
-# To add a rule: extend a set above, or add an SBML file via SBML_PATH, or
-# append a custom (kind, species, params) entry handled in discover_rules().
+SEED_MONOTONE_UP_CHANNELS = {"RPM", "PM", "DM"}
+SEED_NONNEG               = True
 
 
 # ── species-name parsing ──────────────────────────────────────────────────────
@@ -92,12 +102,8 @@ _CD_PREFIXES = sorted([
     "G", "R", "P", "S", "D",
 ], key=len, reverse=True)
 
-CHAN_NAMES = [
-    "G", "R", "R_d", "RP", "RP_f",
-    "RB", "RB_p", "RB_pe", "RB_cp",
-    "P", "C_P", "P_TC", "S", "D", "DT",
-    "RPM", "PM", "DM",
-]
+CHAN_NAMES = ["G", "R", "R_d", "RP", "RP_f", "RB", "RB_p", "RB_pe", "RB_cp",
+              "P", "C_P", "P_TC", "S", "D", "DT", "RPM", "PM", "DM"]
 N_CHAN = len(CHAN_NAMES)
 CHAN_IDX = {c: i for i, c in enumerate(CHAN_NAMES)}
 
@@ -111,6 +117,12 @@ def parse_species(name):
         if name.startswith(p + "_"):
             return p, name[len(p) + 1:]
     return None, name
+
+
+def _locus_key(locus):
+    """'0412_C1' -> '0412'.  Strips chromosome-copy / variant suffixes."""
+    m = re.match(r"\d+", locus)
+    return m.group(0) if m else locus
 
 
 def load_gene_types(csv_path):
@@ -134,17 +146,8 @@ def load_gene_types(csv_path):
         return {}
 
 
-def _locus_key(locus):
-    """'0412_C1' -> '0412'.  Strips chromosome-copy / variant suffixes so all
-    species of one gene (both chromosome copies, bound intermediates) share a
-    gene identity and match the gene-table locus numbers."""
-    m = re.match(r"\d+", locus)
-    return m.group(0) if m else locus
-
-
 def build_gene_index(species_names, gene_type_map):
-    """Per-species gene-type labelling.  Returns species_type_ids (S,) and the
-    locus list (used only for the saved config)."""
+    """Per-species gene-type labelling. Returns (species_type_ids, locus_list)."""
     locus_to_idx, locus_list = {}, []
     for name in species_names:
         prefix, locus = parse_species(name)
@@ -155,9 +158,7 @@ def build_gene_index(species_names, gene_type_map):
                 locus_list.append(key)
 
     gene_type_ids = np.array(
-        [gene_type_map.get(loc, GTYPE_OTHER) for loc in locus_list],
-        dtype=np.int32)
-
+        [gene_type_map.get(loc, GTYPE_OTHER) for loc in locus_list], dtype=np.int32)
     S = len(species_names)
     species_type_ids = np.full(S, GTYPE_GLOBAL, dtype=np.int32)
     n_global = 0
@@ -174,10 +175,9 @@ def build_gene_index(species_names, gene_type_map):
     return species_type_ids, locus_list
 
 
-# ── SBML parsing (input-data rules) ───────────────────────────────────────────
+# ── SBML parsing ──────────────────────────────────────────────────────────────
 
 def _formula_atoms(formula):
-    """'C10H12N5O13P3' -> {'C':10,'H':12,'N':5,'O':13,'P':3}."""
     atoms = {}
     for el, n in re.findall(r"([A-Z][a-z]?)(\d*)", formula or ""):
         atoms[el] = atoms.get(el, 0) + (int(n) if n else 1)
@@ -185,33 +185,25 @@ def _formula_atoms(formula):
 
 
 def parse_sbml(path):
-    """Parse an SBML L3 (+fbc) reaction network.
-
-    Returns dict {species: {id: {formula, atoms}}, reactions: [...]} or None.
-    Namespace-robust: matches tags / attributes by local name.
-    """
+    """Parse SBML L3 (+fbc). Returns dict or None on failure."""
     try:
         root = ET.parse(path).getroot()
     except Exception as e:
-        print(f"[sbml] could not read {path} ({e}) - SBML rules skipped")
+        print(f"[sbml] read failed ({e}) - SBML rules skipped")
         return None
-
-    def local(tag):
-        return tag.rsplit("}", 1)[-1]
-
-    def attr(elem, name):
-        for k, v in elem.attrib.items():
-            if local(k) == name:
+    def local(tag): return tag.rsplit("}", 1)[-1]
+    def attr(e, n):
+        for k, v in e.attrib.items():
+            if local(k) == n:
                 return v
         return None
-
     species, reactions = {}, []
     for elem in root.iter():
         ln = local(elem.tag)
         if ln == "species":
             sid = attr(elem, "id")
-            formula = attr(elem, "chemicalFormula") or ""
-            species[sid] = {"formula": formula, "atoms": _formula_atoms(formula)}
+            f = attr(elem, "chemicalFormula") or ""
+            species[sid] = {"formula": f, "atoms": _formula_atoms(f)}
         elif ln == "reaction":
             rxn = {"id": attr(elem, "id"),
                    "reversible": attr(elem, "reversible") == "true",
@@ -227,32 +219,22 @@ def parse_sbml(path):
                         rxn[bucket].append((attr(sr, "species"),
                                             float(attr(sr, "stoichiometry") or 1.0)))
             reactions.append(rxn)
-
     print(f"[sbml] parsed {len(species)} species, {len(reactions)} reactions "
           f"({sum(r['reversible'] for r in reactions)} reversible)")
     return {"species": species, "reactions": reactions}
 
 
 def sbml_monotone_candidates(sbml, species_names):
-    """Structural monotonicity from reaction topology.
-
-    pure product (produced, never consumed)  -> can only increase
-    pure reactant (consumed, never produced) -> can only decrease
-    A reversible reaction counts a species as BOTH produced and consumed.
-    Returns (up_idx set, down_idx set) of indices into species_names.
-    """
     if sbml is None:
         return set(), set()
     produced, consumed = set(), set()
     for rxn in sbml["reactions"]:
         for sid, _ in rxn["reactants"]:
             consumed.add(sid)
-            if rxn["reversible"]:
-                produced.add(sid)
+            if rxn["reversible"]: produced.add(sid)
         for sid, _ in rxn["products"]:
             produced.add(sid)
-            if rxn["reversible"]:
-                consumed.add(sid)
+            if rxn["reversible"]: consumed.add(sid)
     name_to_idx = {n: i for i, n in enumerate(species_names)}
     up   = {name_to_idx[s] for s in (produced - consumed) if s in name_to_idx}
     down = {name_to_idx[s] for s in (consumed - produced) if s in name_to_idx}
@@ -261,57 +243,414 @@ def sbml_monotone_candidates(sbml, species_names):
 
 
 def element_balances(sbml, species_names, raw_counts):
-    """Element-conservation candidates from fbc:chemicalFormula.
-
-    For element E, Q_E(t) = sum_s atoms_E(s) * count_s(t) over the metabolite
-    species present in the trajectory.  In a closed system Q_E is conserved;
-    in a growing cell it drifts - that drift IS the missing-info signal.
-
-    raw_counts : (n_traj, T, S) raw (pre-signed-log) counts.
-    Returns list of dicts {element, n_species, drift_frac, conserved}.
-    """
     if sbml is None:
         return []
-    metab_cols, metab_atoms = [], []
+    cols, atoms_list = [], []
     for i, name in enumerate(species_names):
         if name in sbml["species"] and sbml["species"][name]["atoms"]:
-            metab_cols.append(i)
-            metab_atoms.append(sbml["species"][name]["atoms"])
-    if not metab_cols:
+            cols.append(i)
+            atoms_list.append(sbml["species"][name]["atoms"])
+    if not cols:
         print("[sbml] no SBML metabolites matched trajectory species")
         return []
-
-    elements = sorted({e for a in metab_atoms for e in a})
-    E_mat = np.array([[a.get(e, 0) for e in elements] for a in metab_atoms],
-                     dtype=np.float64)                       # (n_metab, n_elem)
-    counts = raw_counts[:, :, metab_cols].astype(np.float64) # (n_traj, T, n_metab)
-    Q = counts @ E_mat                                       # (n_traj, T, n_elem)
-
+    elements = sorted({e for a in atoms_list for e in a})
+    E = np.array([[a.get(e, 0) for e in elements] for a in atoms_list], dtype=np.float64)
+    counts = raw_counts[:, :, cols].astype(np.float64)
+    Q = counts @ E
     out = []
     for j, el in enumerate(elements):
         q = Q[:, :, j]
         mean = q.mean(axis=1)
-        rng  = q.max(axis=1) - q.min(axis=1)
+        rng = q.max(axis=1) - q.min(axis=1)
         drift = float(np.mean(rng / np.clip(np.abs(mean), 1e-9, None)))
-        out.append({"element": el, "n_species": len(metab_cols),
+        out.append({"element": el, "n_species": len(cols),
                     "drift_frac": drift, "conserved": drift < CONSERVE_DRIFT})
-    print(f"[sbml] element balances over {len(metab_cols)} metabolites: "
+    print(f"[sbml] element balances over {len(cols)} metabolites: "
           + ", ".join(f"{d['element']} {d['drift_frac']*100:.1f}%" for d in out))
     return out
 
 
-# ── rule system ───────────────────────────────────────────────────────────────
+# ── NEW v7: xlsx parsers for the rest of the input files ─────────────────────
+
+def parse_kinetics(path):
+    """Parse kinetic_params.xlsx -> {enzymes, n_params, subsystems} or None."""
+    if not HAS_PANDAS:
+        return None
+    try:
+        sheets = ["Central", "Nucleotide", "Lipid", "Cofactor", "Transport"]
+        enzymes, n_params, subsys = {}, 0, {}
+        for sn in sheets:
+            try:
+                df = pd.read_excel(path, sheet_name=sn)
+            except Exception:
+                continue
+            subsys[sn] = len(df)
+            n_params += len(df)
+            for _, row in df.iterrows():
+                if row.get("Parameter Type") == "Eff Enzyme Count":
+                    rxn = str(row.get("Reaction Name", ""))
+                    val = str(row.get("Value", ""))
+                    if rxn and val and val != "nan":
+                        enzymes[rxn] = val
+        print(f"[kinetics] {n_params} parameter rows across {len(subsys)} subsystems, "
+              f"{len(enzymes)} reaction->enzyme mappings")
+        return {"enzymes": enzymes, "n_params": n_params, "subsystems": subsys}
+    except Exception as e:
+        print(f"[kinetics] parse failed ({e}) - skipping kinetics")
+        return None
+
+
+def parse_initial_concentrations(path):
+    """Parse initial_concentrations.xlsx -> {proteins, mRNAs, metabolites, medium}."""
+    if not HAS_PANDAS:
+        return None
+    try:
+        df = pd.read_excel(path, sheet_name="Comparative Proteomics")
+        df["_cnt"] = pd.to_numeric(df.get("Sim. Initial Ptn Cnt"), errors="coerce")
+        proteins = {}
+        for _, r in df.iterrows():
+            tag = str(r.get("Locus Tag", ""))
+            if tag.startswith("JCVISYN3A_") and pd.notna(r["_cnt"]):
+                proteins[tag] = float(r["_cnt"])
+
+        df = pd.read_excel(path, sheet_name="mRNA Count")
+        mRNAs = {}
+        for _, r in df.iterrows():
+            tag = str(r.get("LocusTag", ""))
+            tot = r.get("total")
+            if tag.startswith("JCVISYN3A_") and pd.notna(tot):
+                mRNAs[tag] = float(tot)
+
+        df = pd.read_excel(path, sheet_name="Intracellular Metabolites")
+        metabolites = {f"M_{r['Met ID']}": float(r["Init Conc (mM)"])
+                       for _, r in df.iterrows()
+                       if pd.notna(r.get("Met ID")) and pd.notna(r.get("Init Conc (mM)"))}
+
+        df = pd.read_excel(path, sheet_name="Simulation Medium")
+        medium = {f"M_{r['Met ID']}": float(r["Conc (mM)"])
+                  for _, r in df.iterrows()
+                  if pd.notna(r.get("Met ID")) and pd.notna(r.get("Conc (mM)"))}
+
+        print(f"[initial_conc] {len(proteins)} proteins, {len(mRNAs)} mRNAs, "
+              f"{len(metabolites)} intracellular metabolites, "
+              f"{len(medium)} medium components")
+        return {"proteins": proteins, "mRNAs": mRNAs,
+                "metabolites": metabolites, "medium": medium}
+    except Exception as e:
+        print(f"[initial_conc] parse failed ({e}) - skipping initial conditions")
+        return None
+
+
+def parse_complex_formation(path):
+    """Parse complex_formation.xlsx -> {complexes, predefined} or None."""
+    if not HAS_PANDAS:
+        return None
+    try:
+        df = pd.read_excel(path, sheet_name="Complexes")
+        complexes = []
+        for _, r in df.iterrows():
+            name = str(r.get("Name", ""))
+            genes = str(r.get("Genes Products", ""))
+            stois = str(r.get("Stoichiometries", ""))
+            if not name or genes in ("nan", ""):
+                continue
+            try:
+                gids = [g.strip() for g in genes.split(";")]
+                svs  = [int(s.strip()) for s in stois.split(";")]
+                if len(gids) != len(svs):
+                    continue
+                subunits = list(zip(gids, svs))
+            except Exception:
+                continue
+            ic = r.get("Init. Count")
+            complexes.append({"name": name, "subunits": subunits,
+                              "init_count": float(ic) if pd.notna(ic) else None})
+
+        df = pd.read_excel(path, sheet_name="Predefined Complexes")
+        predefined = {str(r["Name"]): float(r["Init. Count"])
+                      for _, r in df.iterrows()
+                      if pd.notna(r.get("Name")) and pd.notna(r.get("Init. Count"))}
+        print(f"[complexes] {len(complexes)} assembly rules, "
+              f"{len(predefined)} predefined complexes")
+        return {"complexes": complexes, "predefined": predefined}
+    except Exception as e:
+        print(f"[complexes] parse failed ({e}) - skipping complex rules")
+        return None
+
+
+# ── NEW v7: KnownRules (input-file facts) ────────────────────────────────────
+
+class KnownRules:
+    """Facts from input files (deterministic, mechanism-derived).
+
+    Distinct from DiscoveredPatterns: these are NOT empirical regularities
+    mined from data, they are explicit structural facts read from model files.
+    """
+
+    def __init__(self, sbml=None, kinetics=None, initial=None, complexes=None):
+        self.sbml = sbml
+        self.kinetics = kinetics
+        self.initial = initial
+        self.complexes = complexes
+
+    def has_anything(self):
+        return any(v is not None for v in
+                   (self.sbml, self.kinetics, self.initial, self.complexes))
+
+    def summary(self):
+        s = ["KnownRules (from input files):"]
+        if self.sbml is not None:
+            nr = len(self.sbml["reactions"])
+            nrv = sum(r["reversible"] for r in self.sbml["reactions"])
+            ns = sum(1 for v in self.sbml["species"].values() if v["atoms"])
+            s.append(f"    SBML reactions          : {nr}  "
+                     f"({nrv} reversible, {nr-nrv} irreversible)")
+            s.append(f"    SBML species (w/ formula): {ns}")
+        if self.complexes is not None:
+            s.append(f"    Complex assembly rules  : {len(self.complexes['complexes'])}")
+            s.append(f"    Predefined complexes    : {len(self.complexes['predefined'])}")
+        if self.initial is not None:
+            s.append(f"    Initial protein counts  : {len(self.initial['proteins'])}")
+            s.append(f"    Initial mRNA counts     : {len(self.initial['mRNAs'])}")
+            s.append(f"    Intracellular metab. init: {len(self.initial['metabolites'])}")
+            s.append(f"    Simulation medium       : {len(self.initial['medium'])}")
+        if self.kinetics is not None:
+            s.append(f"    Kinetic parameter rows  : {self.kinetics['n_params']}"
+                     f"  ({len(self.kinetics['enzymes'])} reaction->enzyme links)")
+        if not self.has_anything():
+            s.append("    (no input files staged)")
+        return "\n".join(s)
+
+
+# ── NEW v7: multi-dimensional pattern lenses ─────────────────────────────────
+
+def lens_monotone(d_tr, d_va, mono_eps=MONO_EPS):
+    """1D: per-species monotonicity. Returns held-out compliance + empirical candidates."""
+    n_steps_tr = d_tr.shape[0] * d_tr.shape[1]
+    n_steps_va = d_va.shape[0] * d_va.shape[1]
+    dec_tr = (d_tr < -mono_eps).sum(axis=(0, 1)) / n_steps_tr
+    inc_tr = (d_tr >  mono_eps).sum(axis=(0, 1)) / n_steps_tr
+    dec_va = (d_va < -mono_eps).sum(axis=(0, 1)) / n_steps_va
+    inc_va = (d_va >  mono_eps).sum(axis=(0, 1)) / n_steps_va
+    ok_up_va, ok_down_va = 1.0 - dec_va, 1.0 - inc_va
+    emp_up   = set(np.where(dec_tr < (1.0 - RULE_COMPLIANCE))[0].tolist())
+    emp_down = set(np.where(inc_tr < (1.0 - RULE_COMPLIANCE))[0].tolist())
+    return ok_up_va, ok_down_va, emp_up, emp_down
+
+
+def lens_bounds(tr, va, slack=0.1):
+    """1D: per-species bounds. Validated if ALL held-out points are within [lo,hi]."""
+    S = tr.shape[-1]
+    tr_flat = tr.reshape(-1, S)
+    va_flat = va.reshape(-1, S)
+    lo_cand = tr_flat.min(axis=0) - slack
+    hi_cand = tr_flat.max(axis=0) + slack
+    ok = (va_flat >= lo_cand).all(axis=0) & (va_flat <= hi_cand).all(axis=0)
+    return lo_cand, hi_cand, ok
+
+
+def lens_pairwise(d_tr, d_va, top_k=PAIRWISE_TOP_K, threshold=PAIRWISE_THRESHOLD):
+    """2D: pairwise correlation on deltas. Returns top |r| pairs.
+
+    Returns list of (i, j, corr_train, corr_val).  Pairs where either species
+    has near-zero variance are skipped (correlation undefined).
+    """
+    S = d_tr.shape[-1]
+    Xtr = d_tr.reshape(-1, S).astype(np.float32)
+    Xva = d_va.reshape(-1, S).astype(np.float32)
+    sd_tr = Xtr.std(axis=0)
+    sd_va = Xva.std(axis=0)
+    valid = (sd_tr > 1e-6) & (sd_va > 1e-6)
+    if valid.sum() < 2:
+        return []
+    Ztr = (Xtr - Xtr.mean(axis=0)) / (sd_tr + 1e-9)
+    Zva = (Xva - Xva.mean(axis=0)) / (sd_va + 1e-9)
+    Ctr = (Ztr.T @ Ztr) / Xtr.shape[0]
+    np.fill_diagonal(Ctr, 0.0)
+    # restrict to valid pairs
+    Ctr_v = Ctr.copy()
+    Ctr_v[~valid, :] = 0.0
+    Ctr_v[:, ~valid] = 0.0
+    abs_C = np.abs(Ctr_v)
+    n_pick = min(2 * top_k * 4, abs_C.size)
+    flat_idx = np.argpartition(abs_C.ravel(), -n_pick)[-n_pick:]
+    order = np.argsort(-abs_C.ravel()[flat_idx])
+    seen, pairs = set(), []
+    for fi in flat_idx[order]:
+        i, j = int(fi // S), int(fi % S)
+        if i >= j or (i, j) in seen:
+            continue
+        seen.add((i, j))
+        c_tr = float(Ctr[i, j])
+        if abs(c_tr) < threshold:
+            break
+        c_va = float((Zva[:, i] * Zva[:, j]).mean())
+        pairs.append((i, j, c_tr, c_va))
+        if len(pairs) >= top_k:
+            break
+    return pairs
+
+
+def lens_conservation(tr_counts, va_counts, n_candidates=CONSERVATION_K):
+    """Low-d: SVD of standardized counts; smallest singular directions = candidates.
+
+    Returns list of dicts with {singular_value, std_train, std_val, top_species_*}.
+    """
+    n_tr, T, S = tr_counts.shape
+    X_tr = tr_counts.reshape(-1, S).astype(np.float32)
+    X_va = va_counts.reshape(-1, S).astype(np.float32)
+    sd = X_tr.std(axis=0) + 1e-9
+    mu = X_tr.mean(axis=0)
+    Ztr = (X_tr - mu) / sd
+    Zva = (X_va - mu) / sd
+    try:
+        _, s, Vh = np.linalg.svd(Ztr, full_matrices=False)
+    except Exception as e:
+        print(f"[lens] conservation SVD failed ({e})")
+        return []
+    smallest = np.argsort(s)[:n_candidates]
+    out = []
+    for idx in smallest:
+        v = Vh[idx]
+        proj_tr = Ztr @ v
+        proj_va = Zva @ v
+        top = np.argsort(-np.abs(v))[:3]
+        out.append({
+            "singular_value": float(s[idx]),
+            "std_train":      float(proj_tr.std()),
+            "std_val":        float(proj_va.std()),
+            "top_species_idx":    [int(j) for j in top],
+            "top_species_weight": [float(v[j]) for j in top],
+        })
+    return out
+
+
+def lens_periodicity(tr, top_k=PERIODICITY_TOP_K):
+    """Time: FFT power spectrum per species. Returns top species by peak/total ratio."""
+    n_tr, T, S = tr.shape
+    x = tr - tr.mean(axis=1, keepdims=True)
+    fft_vals = np.fft.rfft(x, axis=1)
+    power = (np.abs(fft_vals) ** 2).mean(axis=0)    # (T//2+1, S)
+    if power.shape[0] <= 1:
+        return []
+    peak_idx = power[1:].argmax(axis=0) + 1
+    peak_power = power[peak_idx, np.arange(S)]
+    total = power[1:].sum(axis=0)
+    rel = peak_power / (total + 1e-12)
+    order = np.argsort(-rel)[:top_k]
+    return [(int(i), int(peak_idx[i]), float(rel[i])) for i in order]
+
+
+def lens_gene_chain(tr_active, species_names, max_lag=GENE_LAG_MAX):
+    """Chain: per-gene central-dogma cross-channel lag estimation.
+
+    For each consecutive pair in (G, RP, R, RB, P), find the lag (within
+    [-max_lag, +max_lag]) that maximises cross-correlation, averaged across
+    genes that have both channels.
+    """
+    n_tr, T, S = tr_active.shape
+    chain_pairs = [("G", "RP"), ("RP", "R"), ("R", "RB"), ("RB", "P")]
+    gene_chans = {}
+    for i, name in enumerate(species_names):
+        pre, loc = parse_species(name)
+        if pre in {"G", "R", "RP", "RB", "P"}:
+            gene_chans.setdefault(_locus_key(loc), {})[pre] = i
+
+    result = {}
+    for cf, ct in chain_pairs:
+        lags = []
+        for chans in gene_chans.values():
+            if cf not in chans or ct not in chans:
+                continue
+            xs = tr_active[:, :, chans[cf]].astype(np.float64).mean(axis=0)
+            ys = tr_active[:, :, chans[ct]].astype(np.float64).mean(axis=0)
+            xs = xs - xs.mean(); ys = ys - ys.mean()
+            best_corr, best_lag = -np.inf, 0
+            for lag in range(-max_lag, max_lag + 1):
+                if lag >= 0:
+                    a, b = xs[:T - lag], ys[lag:]
+                else:
+                    a, b = xs[-lag:], ys[:T + lag]
+                if len(a) < 3:
+                    continue
+                na, nb = np.linalg.norm(a), np.linalg.norm(b)
+                if na < 1e-9 or nb < 1e-9:
+                    continue
+                c = float((a * b).sum() / (na * nb))
+                if c > best_corr:
+                    best_corr, best_lag = c, lag
+            lags.append(best_lag)
+        if lags:
+            result[f"{cf}->{ct}"] = {
+                "n_genes":    len(lags),
+                "mean_lag":   float(np.mean(lags)),
+                "median_lag": float(np.median(lags)),
+                "std_lag":    float(np.std(lags)),
+            }
+    return result
+
+
+class DiscoveredPatterns:
+    """Statistical regularities mined from trajectories via multiple lenses.
+
+    Distinct from KnownRules: these are empirical, observational.  Each lens
+    looks for a different KIND of pattern (1D / 2D / low-dim / time / chain).
+    """
+
+    def __init__(self):
+        self.up_frac_va = self.down_frac_va = None
+        self.emp_up    = set()
+        self.emp_down  = set()
+        self.lo_cand   = self.hi_cand = self.bound_ok = None
+        self.pairwise     = []
+        self.conservation = []
+        self.periodicity  = []
+        self.gene_chain   = {}
+
+    @classmethod
+    def from_trajectories(cls, train_X, val_X, train_counts, val_counts, species_names):
+        tr, va = train_X.numpy(), val_X.numpy()
+        d_tr   = np.diff(tr, axis=1)
+        d_va   = np.diff(va, axis=1)
+        p = cls()
+        print("[patterns] 1D monotone lens ...")
+        p.up_frac_va, p.down_frac_va, p.emp_up, p.emp_down = lens_monotone(d_tr, d_va)
+        print("[patterns] 1D bounds lens ...")
+        p.lo_cand, p.hi_cand, p.bound_ok = lens_bounds(tr, va)
+        print("[patterns] 2D pairwise lens ...")
+        p.pairwise = lens_pairwise(d_tr, d_va)
+        print("[patterns] low-d conservation lens ...")
+        p.conservation = lens_conservation(train_counts, val_counts)
+        print("[patterns] time/FFT periodicity lens ...")
+        p.periodicity = lens_periodicity(tr)
+        print("[patterns] gene-chain lag lens ...")
+        p.gene_chain = lens_gene_chain(tr, species_names)
+        return p
+
+    def summary(self, species_names):
+        S = len(species_names)
+        nb = int(self.bound_ok.sum()) if self.bound_ok is not None else 0
+        return "\n".join([
+            "DiscoveredPatterns (multi-lens analysis of trajectories):",
+            f"    Monotone-up candidates      : {len(self.emp_up)}  (1D lens)",
+            f"    Monotone-down candidates    : {len(self.emp_down)}  (1D lens)",
+            f"    Per-species bounds validated: {nb}/{S}  (1D lens)",
+            f"    Pairwise couplings (|r|>{PAIRWISE_THRESHOLD}): {len(self.pairwise)}  (2D lens)",
+            f"    Conservation candidates     : {len(self.conservation)}  (low-d / SVD lens)",
+            f"    Periodic species (top)      : {len(self.periodicity)}  (FFT lens)",
+            f"    Gene-chain lag pairs        : {len(self.gene_chain)}  (chain lens)",
+        ])
+
+
+# ── enforcement: Tier 1 RuleSet + Tier 2 Hypotheses ──────────────────────────
 
 class RuleSet:
     """Tier 1: validated rules, enforced as hard rollout guardrails."""
 
     def __init__(self):
-        self.mono_up_mask   = None   # (S,) bool - must not decrease
-        self.mono_down_mask = None   # (S,) bool - must not increase
-        self.mono_up        = None   # 1-D int tensor (checkpointing)
-        self.mono_down      = None
-        self.lo_bound       = None   # (S,) float
-        self.hi_bound       = None   # (S,) float
+        self.mono_up_mask = self.mono_down_mask = None
+        self.mono_up = self.mono_down = None
+        self.lo_bound = self.hi_bound = None
         self.n_seed = self.n_sbml = self.n_empirical = 0
 
     def to(self, dev):
@@ -323,7 +662,6 @@ class RuleSet:
         return self
 
     def project(self, prev, nxt):
-        """Enforce every rule. prev, nxt: (B, S). Autograd-safe (no in-place)."""
         if self.mono_up_mask is not None:
             nxt = torch.where(self.mono_up_mask.unsqueeze(0),
                               torch.maximum(nxt, prev), nxt)
@@ -338,145 +676,220 @@ class RuleSet:
     def summary(self):
         nu = int(self.mono_up_mask.sum())   if self.mono_up_mask   is not None else 0
         nd = int(self.mono_down_mask.sum()) if self.mono_down_mask is not None else 0
-        return (f"Tier 1 RuleSet: {nu} monotone-up + {nd} monotone-down "
-                f"+ per-species bounds  "
+        nb = "yes" if self.lo_bound is not None else "no"
+        return (f"Tier 1 RuleSet: {nu} monotone-up + {nd} monotone-down + "
+                f"per-species bounds ({nb})  "
                 f"[provenance: {self.n_seed} seed, {self.n_sbml} SBML-backed, "
-                f"{self.n_empirical} data-only]")
+                f"{self.n_empirical} trajectory-only]")
 
 
 class Hypotheses:
-    """Tier 2: candidate rules that did NOT pass validation.
+    """Tier 2: candidates that did NOT pass validation, or are not enforceable.
 
-    Tracked, confidence-scored and REPORTED, but never enforced - so a wrong
-    hypothesis cannot corrupt a rollout.  This is the "something that can be
-    wrong" tier; promote an item to a seed rule only once you trust it.
+    Tracked, confidence-scored and REPORTED, never enforced - so a wrong
+    hypothesis cannot corrupt a rollout.  Promote to a seed rule only once trusted.
     """
 
     def __init__(self):
-        self.items = []   # {kind, detail, score, source}
+        self.items = []
 
     def add(self, kind, detail, score, source):
         self.items.append({"kind": kind, "detail": detail,
-                            "score": score, "source": source})
+                           "score": score, "source": source})
 
-    def summary(self):
+    def summary(self, max_show=20):
         if not self.items:
             return "Tier 2 Hypotheses: none"
         lines = [f"Tier 2 Hypotheses: {len(self.items)} (reported, NOT enforced)"]
-        for h in sorted(self.items, key=lambda x: -x["score"])[:12]:
-            lines.append(f"    [{h['source']:10s}] {h['kind']:14s} "
+        for h in sorted(self.items, key=lambda x: -x["score"])[:max_show]:
+            lines.append(f"    [{h['source']:10s}] {h['kind']:22s} "
                          f"{h['detail']}  (score {h['score']:.3f})")
-        if len(self.items) > 12:
-            lines.append(f"    ... and {len(self.items)-12} more")
+        if len(self.items) > max_show:
+            lines.append(f"    ... and {len(self.items)-max_show} more")
         return "\n".join(lines)
 
 
-def discover_rules(train_X, val_X, species_names, sbml=None):
-    """Mine + validate rules, sort into Tier 1 (RuleSet) and Tier 2 (Hypotheses).
+def build_enforcement(known, patterns, species_names):
+    """Sort the validated subset of KnownRules+DiscoveredPatterns into Tier 1.
+    Everything else (failed monotone, all conservation/pairwise/etc.) -> Tier 2.
 
-    train_X, val_X : (n_traj, T, S) CPU float32 (normalised)
-
-    Every candidate - seed, SBML-derived or empirically mined - is validated
-    on HELD-OUT trajectories at the RULE_COMPLIANCE gate.  Pass -> Tier 1.
-    Fail -> Tier 2.
+    Returns (RuleSet, Hypotheses).
     """
-    tr, va = train_X.numpy(), val_X.numpy()
-    n_tr, T, S = tr.shape
+    rs, hyp = RuleSet(), Hypotheses()
+    S = len(species_names)
 
-    d_tr = np.diff(tr, axis=1)
-    d_va = np.diff(va, axis=1)
-    steps_tr = n_tr * (T - 1)
-    steps_va = va.shape[0] * (T - 1)
-
-    # per-species: fraction of steps that DECREASE / INCREASE
-    dec_tr = (d_tr < -MONO_EPS).sum(axis=(0, 1)) / steps_tr
-    inc_tr = (d_tr >  MONO_EPS).sum(axis=(0, 1)) / steps_tr
-    dec_va = (d_va < -MONO_EPS).sum(axis=(0, 1)) / steps_va
-    inc_va = (d_va >  MONO_EPS).sum(axis=(0, 1)) / steps_va
-    ok_up_va   = 1.0 - dec_va     # compliance with "never decreases"
-    ok_down_va = 1.0 - inc_va     # compliance with "never increases"
-
-    hyp = Hypotheses()
-
-    # ── seed rules: monotone-up channels ─────────────────────────────────
     seed_up = {i for i, nm in enumerate(species_names)
                if parse_species(nm)[0] in SEED_MONOTONE_UP_CHANNELS}
+    sbml_up, sbml_down = sbml_monotone_candidates(known.sbml, species_names)
+    emp_up, emp_down = patterns.emp_up, patterns.emp_down
 
-    # ── SBML structural candidates ───────────────────────────────────────
-    sbml_up, sbml_down = sbml_monotone_candidates(sbml, species_names)
-
-    # ── empirical candidates ─────────────────────────────────────────────
-    emp_up   = set(np.where(dec_tr < (1.0 - RULE_COMPLIANCE))[0].tolist())
-    emp_down = set(np.where(inc_tr < (1.0 - RULE_COMPLIANCE))[0].tolist())
-
-    # ── validate every monotone-up candidate on held-out data ────────────
+    # ── monotone-up ──
     cand_up = seed_up | sbml_up | emp_up
-    val_up  = set()
+    val_up = set()
     for i in cand_up:
-        if ok_up_va[i] >= RULE_COMPLIANCE:
+        if patterns.up_frac_va[i] >= RULE_COMPLIANCE:
             val_up.add(i)
         else:
             src = ("seed" if i in seed_up else
                    "sbml" if i in sbml_up else "trajectory")
             hyp.add("monotone-up", f"'{species_names[i]}' fails held-out "
-                    f"({ok_up_va[i]*100:.2f}% compliant)", ok_up_va[i], src)
+                    f"({patterns.up_frac_va[i]*100:.2f}% compliant)",
+                    patterns.up_frac_va[i], src)
 
-    # monotone-down (SBML + empirical; no seed-down by default)
+    # ── monotone-down ──
     cand_down = sbml_down | emp_down
-    val_down  = set()
+    val_down = set()
     for i in cand_down:
-        if ok_down_va[i] >= RULE_COMPLIANCE and i not in val_up:
+        if patterns.down_frac_va[i] >= RULE_COMPLIANCE and i not in val_up:
             val_down.add(i)
         elif i not in val_up:
             src = "sbml" if i in sbml_down else "trajectory"
             hyp.add("monotone-down", f"'{species_names[i]}' fails held-out "
-                    f"({ok_down_va[i]*100:.2f}% compliant)", ok_down_va[i], src)
+                    f"({patterns.down_frac_va[i]*100:.2f}% compliant)",
+                    patterns.down_frac_va[i], src)
 
-    # ── per-species bounds (validated) ───────────────────────────────────
-    tr_flat, va_flat = tr.reshape(-1, S), va.reshape(-1, S)
-    lo_cand = tr_flat.min(axis=0) - 0.1
-    hi_cand = tr_flat.max(axis=0) + 0.1
-    bound_ok = ((va_flat >= lo_cand).all(axis=0) &
-                (va_flat <= hi_cand).all(axis=0))
+    # ── bounds ──
+    lo, hi, ok = patterns.lo_cand, patterns.hi_cand, patterns.bound_ok
+    rs.lo_bound = torch.from_numpy(np.where(ok, lo, CLAMP_LO).astype(np.float32))
+    rs.hi_bound = torch.from_numpy(np.where(ok, hi, CLAMP_HI).astype(np.float32))
 
-    # ── assemble Tier 1 ──────────────────────────────────────────────────
-    rs = RuleSet()
     up_sorted, down_sorted = sorted(val_up), sorted(val_down)
     rs.mono_up   = torch.tensor(up_sorted,   dtype=torch.long)
     rs.mono_down = torch.tensor(down_sorted, dtype=torch.long)
-    um = torch.zeros(S, dtype=torch.bool)
-    dm = torch.zeros(S, dtype=torch.bool)
+    um = torch.zeros(S, dtype=torch.bool); dm = torch.zeros(S, dtype=torch.bool)
     if up_sorted:   um[rs.mono_up]   = True
     if down_sorted: dm[rs.mono_down] = True
     rs.mono_up_mask, rs.mono_down_mask = um, dm
-    rs.lo_bound = torch.from_numpy(np.where(bound_ok, lo_cand, CLAMP_LO).astype(np.float32))
-    rs.hi_bound = torch.from_numpy(np.where(bound_ok, hi_cand, CLAMP_HI).astype(np.float32))
+    rs.n_seed      = len(val_up & seed_up)
+    rs.n_sbml      = len((val_up & sbml_up) | (val_down & sbml_down))
+    rs.n_empirical = len((val_up | val_down) - seed_up - sbml_up - sbml_down)
 
-    rs.n_seed       = len(val_up & seed_up)
-    rs.n_sbml       = len((val_up & sbml_up) | (val_down & sbml_down))
-    rs.n_empirical  = len((val_up | val_down)
-                          - seed_up - sbml_up - sbml_down)
+    # ── Tier 2: report-only patterns ──
+    for c in patterns.conservation:
+        names_top = [species_names[i] for i in c["top_species_idx"]]
+        wt        = [f"{w:+.2f}" for w in c["top_species_weight"]]
+        detail = "+".join(f"{w} {n}" for w, n in zip(wt, names_top))
+        hyp.add("conservation",
+                f"sigma={c['std_val']:.3f} ≈ {detail}",
+                1.0 / (1.0 + c["std_val"]), "svd")
+    for i, j, c_tr, c_va in patterns.pairwise:
+        kind = "anti-corr" if c_tr < 0 else "corr"
+        hyp.add(f"pairwise-{kind}",
+                f"'{species_names[i]}' <-> '{species_names[j]}' "
+                f"(r_tr={c_tr:+.2f} r_va={c_va:+.2f})",
+                abs(c_va), "trajectory")
+    for i, freq_idx, rel in patterns.periodicity[:8]:
+        hyp.add("periodicity",
+                f"'{species_names[i]}' peak bin {freq_idx} (rel power {rel:.2f})",
+                rel, "fft")
+    for pair, info in patterns.gene_chain.items():
+        hyp.add("gene-chain-lag",
+                f"{pair}: mean lag {info['mean_lag']:+.1f} steps "
+                f"(n={info['n_genes']} genes, std {info['std_lag']:.1f})",
+                1.0 / (1.0 + info["std_lag"]),
+                "trajectory")
 
-    # warn on seed rules that failed
     for i in seed_up - val_up:
-        print(f"[rules] WARNING: seed rule monotone-up '{species_names[i]}' "
-              f"failed held-out validation - moved to Tier 2")
+        print(f"[rules] WARNING: seed monotone '{species_names[i]}' failed validation "
+              f"({patterns.up_frac_va[i]*100:.2f}%) - moved to Tier 2")
 
-    print(f"[rules] monotone-up : {len(cand_up)} candidates -> "
-          f"{len(val_up)} validated (Tier 1)")
-    print(f"[rules] monotone-dn : {len(cand_down)} candidates -> "
-          f"{len(val_down)} validated (Tier 1)")
-    print(f"[rules] bounds      : {int(bound_ok.sum())}/{S} validated (Tier 1)")
+    print(f"[rules] Tier 1: {len(val_up)} mono-up, {len(val_down)} mono-down, "
+          f"{int(ok.sum())}/{S} bounded")
+    print(f"[rules] Tier 2: {len(hyp.items)} hypotheses (reported, not enforced)")
     return rs, hyp
+
+
+# ── cross-validation: KnownRules vs trajectory ───────────────────────────────
+
+def cross_validate_known(known, raw_counts, species_names):
+    """Compare KnownRules against trajectory. Returns dict with discrepancy info."""
+    report = {}
+    if known.initial is not None:
+        t0 = raw_counts[:, 0, :].mean(0)        # mean state at trajectory t=0 (post-startup)
+        loc_to = {"P": {}, "R": {}}
+        for i, nm in enumerate(species_names):
+            pre, loc = parse_species(nm)
+            if pre in loc_to:
+                loc_to[pre].setdefault(_locus_key(loc), i)
+
+        def ratios(target_pre, source_dict):
+            out = []
+            for tag, expected in source_dict.items():
+                key = tag.split("_")[1] if "_" in tag else tag
+                i = loc_to[target_pre].get(key)
+                if i is not None and t0[i] > 0 and expected > 1e-6:
+                    out.append(t0[i] / expected)
+            return out
+
+        rp = ratios("P", known.initial["proteins"])
+        rm = ratios("R", known.initial["mRNAs"])
+        if rp:
+            report["proteins"] = {"n": len(rp),
+                                  "median": float(np.median(rp)),
+                                  "p25": float(np.percentile(rp, 25)),
+                                  "p75": float(np.percentile(rp, 75))}
+        if rm:
+            report["mRNAs"]    = {"n": len(rm),
+                                  "median": float(np.median(rm)),
+                                  "p25": float(np.percentile(rm, 25)),
+                                  "p75": float(np.percentile(rm, 75))}
+
+    if known.complexes is not None:
+        loc_to_p = {}
+        for i, nm in enumerate(species_names):
+            pre, loc = parse_species(nm)
+            if pre == "P":
+                loc_to_p.setdefault(_locus_key(loc), i)
+        tracked = 0
+        for cx in known.complexes["complexes"]:
+            all_in = all(g.strip() in loc_to_p for g, _ in cx["subunits"])
+            if all_in:
+                tracked += 1
+        report["complex_tracking"] = {
+            "n_total":   len(known.complexes["complexes"]),
+            "n_tracked": tracked,
+        }
+    return report
+
+
+# ── PhD summary ──────────────────────────────────────────────────────────────
+
+def phd_summary(known, patterns, ruleset, hyp, cross, species_names):
+    """One comprehensive printout of everything the knowledge phase produced."""
+    print()
+    print("#" * 72)
+    print("#  PHD KNOWLEDGE SUMMARY  -  JCVI-Syn3A whole-cell emulator")
+    print("#" * 72)
+    print()
+    print(known.summary())
+    print()
+    print(patterns.summary(species_names))
+    print()
+    if cross:
+        print("Cross-validation (KnownRules vs trajectory t=0, post-startup):")
+        if "proteins" in cross:
+            r = cross["proteins"]
+            print(f"    Protein initial counts  : {r['n']} matched, "
+                  f"traj/xlsx median {r['median']:.2f} (IQR {r['p25']:.2f}-{r['p75']:.2f})")
+        if "mRNAs" in cross:
+            r = cross["mRNAs"]
+            print(f"    mRNA initial counts     : {r['n']} matched, "
+                  f"traj/xlsx median {r['median']:.2f} (IQR {r['p25']:.2f}-{r['p75']:.2f})")
+        if "complex_tracking" in cross:
+            c = cross["complex_tracking"]
+            print(f"    Complex subunit tracking: {c['n_tracked']}/{c['n_total']} "
+                  "complexes have all subunits in the trajectory")
+    print()
+    print(ruleset.summary())
+    print()
+    print(hyp.summary())
+    print("#" * 72)
 
 
 # ── model ─────────────────────────────────────────────────────────────────────
 
 class DynamicsModel(nn.Module):
-    """Transformer over a CONTEXT-step window -> next-state residual.
-
-    Each timestep token = in_proj(species_values) || mean_gene_type_embed.
-    """
+    """Transformer over a CONTEXT-step window -> next-state residual."""
 
     def __init__(self, S, d_model, n_layers, n_heads, context, dropout,
                  species_type_ids, d_type=D_TYPE_EMBED):
@@ -493,13 +906,13 @@ class DynamicsModel(nn.Module):
         self.encoder = nn.TransformerEncoder(enc, n_layers)
         self.out = nn.Linear(d_model, S)
 
-    def forward(self, ctx):                         # (B, C, S) -> (B, S)
+    def forward(self, ctx):
         B, C, _ = ctx.shape
         h_val = self.in_proj(ctx)
         te = self.type_embed(self.stype).mean(0)
         te = te.unsqueeze(0).unsqueeze(0).expand(B, C, -1)
-        h = torch.cat([h_val, te], dim=-1) + self.ctx_pos
-        h = self.encoder(h)
+        h  = torch.cat([h_val, te], dim=-1) + self.ctx_pos
+        h  = self.encoder(h)
         return ctx[:, -1] + self.out(h[:, -1])
 
 
@@ -509,20 +922,25 @@ def signed_log(x):
     return np.sign(x) * np.log1p(np.abs(x))
 
 
-def load_data():
-    assert HAS_PANDAS, "pandas is required - install it or run on Colab"
+def load_data(skip_startup=True):
+    assert HAS_PANDAS, "pandas required - install or run on Colab"
     pat = (f"{PARQUET_DIR}/counts_and_fluxes*.parquet" if PARQUET_DIR
            else "/content/drive/MyDrive/**/counts_and_fluxes*.parquet")
     files = sorted(glob.glob(pat, recursive=True),
                    key=lambda p: int(p.rsplit(".", 2)[-2]))
-    assert files, "no parquet files found - set PARQUET_DIR"
+    assert files, "no parquet files - set PARQUET_DIR"
     print(f"[data] {len(files)} trajectory files")
     trajs, species_names = [], None
     for f in files:
         df = pd.read_parquet(f)
         if species_names is None:
             species_names = list(df.index)
-        trajs.append(df.to_numpy(dtype=np.float32)[:, ::TIME_STRIDE].T)
+        arr = df.to_numpy(dtype=np.float32)[:, ::TIME_STRIDE].T
+        if skip_startup:
+            arr = arr[SKIP_STARTUP_STEPS:]
+        trajs.append(arr)
+    if skip_startup:
+        print(f"[data] startup skip: dropped first {SKIP_STARTUP_STEPS} decimated step(s)")
     return np.stack(trajs, 0), species_names
 
 
@@ -532,7 +950,7 @@ def r2(pred, true):
     return float(1.0 - ss_res / ss_tot.clamp(min=1e-12))
 
 
-# ── train / eval ──────────────────────────────────────────────────────────────
+# ── training / eval ───────────────────────────────────────────────────────────
 
 def train_model(model, train_X, ruleset):
     opt   = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
@@ -546,8 +964,7 @@ def train_model(model, train_X, ruleset):
         i_t  = torch.randint(0, N, (BATCH,), generator=gen)
         t0_t = torch.randint(0, T - CONTEXT - K, (BATCH,), generator=gen)
         i, ts = i_t.tolist(), t0_t.tolist()
-        ctx   = torch.stack([train_X[i[b], ts[b]:ts[b] + CONTEXT]
-                             for b in range(BATCH)])
+        ctx   = torch.stack([train_X[i[b], ts[b]:ts[b] + CONTEXT] for b in range(BATCH)])
         i_d, t0_d = i_t.to(device), t0_t.to(device)
         losses = []
         prev_last = ctx[:, -1]
@@ -561,7 +978,7 @@ def train_model(model, train_X, ruleset):
             prev_last = nxt
             ctx = torch.cat([ctx[:, 1:], nxt.unsqueeze(1)], dim=1)
         rollout = torch.stack(losses).mean()
-        loss    = rollout + LAMBDA_1STEP * losses[0]
+        loss = rollout + LAMBDA_1STEP * losses[0]
         opt.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -577,7 +994,7 @@ def train_model(model, train_X, ruleset):
 @torch.no_grad()
 def one_step(model, Xset, n=400):
     model.eval()
-    g = torch.Generator().manual_seed(SEED + 2)
+    g  = torch.Generator().manual_seed(SEED + 2)
     nt, Tt, _ = Xset.shape
     i  = torch.randint(0, nt, (n,), generator=g).tolist()
     t0 = torch.randint(0, Tt - CONTEXT - 1, (n,), generator=g).tolist()
@@ -605,19 +1022,12 @@ def full_rollout(model, traj, ruleset):
 @torch.no_grad()
 def analyze_gaps(model, test_X, species_names, species_type_ids,
                  ruleset, hyp, sbml, elem_balances):
-    """Reason about what the model / rules do NOT cover.
-
-    Surfaces three kinds of missing info:
-      - species the trained model predicts worst (needs mechanism we lack),
-      - element balances that drift (unmodeled flux in/out of the pool),
-      - SBML <-> trajectory coverage mismatch.
-    """
+    """Where the model + rules fall short - residuals, drifts, coverage."""
     print()
-    print("#" * 64)
+    print("#" * 72)
     print("#  MISSING-INFO REPORT  -  where the model / rules fall short")
-    print("#" * 64)
+    print("#" * 72)
 
-    # 1. worst-predicted species ------------------------------------------
     S = test_X.shape[2]
     se = torch.zeros(S, device=test_X.device)
     for k in range(test_X.shape[0]):
@@ -627,15 +1037,12 @@ def analyze_gaps(model, test_X, species_names, species_type_ids,
     worst = torch.argsort(se, descending=True)[:15].tolist()
     tname = {GTYPE_PROTEIN: "protein", GTYPE_TRNA: "tRNA", GTYPE_RRNA: "rRNA",
              GTYPE_OTHER: "other", GTYPE_GLOBAL: "global"}
-    print("\n  [1] species the model predicts worst (rollout MSE) - these")
-    print("      most need a rule / mechanism we don't yet have:")
+    print("\n  [1] species the model predicts worst (rollout MSE) - need mechanism we lack:")
     for i in worst:
-        print(f"      {species_names[i]:22s}  MSE {float(se[i]):.4f}  "
+        print(f"      {species_names[i]:24s}  MSE {float(se[i]):.4f}  "
               f"({tname[int(species_type_ids[i])]})")
 
-    # 2. drifting element balances ----------------------------------------
-    print("\n  [2] element balances (SBML) - drift = unmodeled flux into")
-    print("      macromolecules / across the cell boundary:")
+    print("\n  [2] element balances (SBML) - drift = unmodeled flux:")
     if elem_balances:
         for d in sorted(elem_balances, key=lambda x: -x["drift_frac"]):
             tag = "CONSERVED" if d["conserved"] else "drifts"
@@ -644,14 +1051,11 @@ def analyze_gaps(model, test_X, species_names, species_type_ids,
     else:
         print("      (no SBML provided - skipped)")
 
-    # 3. SBML <-> trajectory coverage -------------------------------------
     print("\n  [3] SBML <-> trajectory coverage:")
     if sbml is not None:
-        traj_set = set(species_names)
-        sbml_set = set(sbml["species"])
-        matched  = traj_set & sbml_set
+        traj_set = set(species_names); sbml_set = set(sbml["species"])
         print(f"      SBML species          : {len(sbml_set)}")
-        print(f"      matched in trajectory : {len(matched)}")
+        print(f"      matched in trajectory : {len(traj_set & sbml_set)}")
         print(f"      SBML-only (untracked) : {len(sbml_set - traj_set)}")
         rxn_sp = {s for r in sbml["reactions"]
                   for s, _ in r["reactants"] + r["products"]}
@@ -660,27 +1064,42 @@ def analyze_gaps(model, test_X, species_names, species_type_ids,
     else:
         print("      (no SBML provided - skipped)")
 
-    # 4. Tier 2 hypotheses -------------------------------------------------
     print()
     print("  [4] " + hyp.summary().replace("\n", "\n  "))
-    print("#" * 64)
+    print("#" * 72)
 
 
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def main():
     print(f"[device] {device}")
+    print()
+    print("=" * 72)
+    print("  v7  -  PhD knowledge phase + multi-lens patterns + startup skip")
+    print("=" * 72)
 
-    raw_counts, species_names = load_data()
+    raw_counts, species_names = load_data(skip_startup=True)
     n_traj, T, S_full = raw_counts.shape
-    print(f"[data] {raw_counts.shape}  (traj, time, species)  {T} steps")
+    print(f"[data] {raw_counts.shape}  (traj, time, species)  {T} steps "
+          f"(startup dropped)")
 
-    rng  = np.random.RandomState(SEED)
+    rng = np.random.RandomState(SEED)
     perm = rng.permutation(n_traj)
     train_idx, test_idx = perm[:N_TRAIN_TRAJ], perm[N_TRAIN_TRAJ:]
 
-    raw  = signed_log(raw_counts)
-    dtr  = raw[train_idx]
+    # ── parse every input file ────────────────────────────────────────────
+    print()
+    print("[knowledge] parsing input files ...")
+    sbml      = parse_sbml(SBML_PATH)
+    kinetics  = parse_kinetics(KINETICS_PATH)
+    initial   = parse_initial_concentrations(INITIAL_CONC_PATH)
+    complexes = parse_complex_formation(COMPLEXES_PATH)
+    known = KnownRules(sbml=sbml, kinetics=kinetics,
+                       initial=initial, complexes=complexes)
+
+    # ── normalise trajectories for the model ─────────────────────────────
+    raw = signed_log(raw_counts)
+    dtr = raw[train_idx]
     lo   = np.percentile(dtr, 0.5,  axis=(0, 1))
     hi   = np.percentile(dtr, 99.5, axis=(0, 1))
     span = hi - lo
@@ -696,10 +1115,6 @@ def main():
     gene_type_map = load_gene_types(GENE_TABLE_PATH)
     species_type_ids, locus_list = build_gene_index(species_active, gene_type_map)
 
-    # input-data rules: SBML reaction network
-    sbml = parse_sbml(SBML_PATH)
-    elem_balances = element_balances(sbml, species_active, raw_counts_active)
-
     X       = torch.from_numpy(raw)
     train_X = X[train_idx].to(device)
     test_X  = X[test_idx].to(device)
@@ -709,51 +1124,70 @@ def main():
     persist_r2  = r2(test_X[:, :-1], test_X[:, 1:])
     print(f"[diag] persistence: MSE {persist_mse:.5f}  R^2 {persist_r2:.3f}")
 
-    # ── two-tier rule discovery ───────────────────────────────────────────
-    print("[rules] discovering + validating (seed | SBML | trajectory) ...")
-    ruleset, hyp = discover_rules(train_X.cpu(), test_X.cpu(),
-                                  species_active, sbml)
-    ruleset = ruleset.to(device)
-    print(f"[rules] {ruleset.summary()}")
+    # ── DiscoveredPatterns (multi-lens) ──────────────────────────────────
+    print()
+    print("[knowledge] running multi-lens pattern discovery ...")
+    patterns = DiscoveredPatterns.from_trajectories(
+        train_X.cpu(), test_X.cpu(),
+        raw_counts_active[train_idx], raw_counts_active[test_idx],
+        species_active)
 
-    # ── model ─────────────────────────────────────────────────────────────
+    # ── sort into Tier 1 (enforced) + Tier 2 (reported) ──────────────────
+    ruleset, hyp = build_enforcement(known, patterns, species_active)
+    ruleset = ruleset.to(device)
+
+    # ── cross-validate KnownRules vs trajectory ──────────────────────────
+    cross_report = cross_validate_known(known, raw_counts_active, species_active)
+
+    # ── PhD summary ──────────────────────────────────────────────────────
+    phd_summary(known, patterns, ruleset, hyp, cross_report, species_active)
+
+    # ── model + training ─────────────────────────────────────────────────
+    print()
+    print("=" * 72)
+    print("  TRAINING PHASE")
+    print("=" * 72)
     model = DynamicsModel(S, D_MODEL, N_LAYERS, N_HEADS, CONTEXT, DROPOUT,
                           species_type_ids, d_type=D_TYPE_EMBED).to(device)
     print(f"[model] {sum(p.numel() for p in model.parameters()) / 1e6:.2f}M parameters")
-
     train_model(model, train_X, ruleset)
 
     # ── evaluate ──────────────────────────────────────────────────────────
+    print()
+    print("=" * 72)
+    print("  EVALUATION")
+    print("=" * 72)
     s_mse, s_r2 = one_step(model, test_X)
     roll_r2 = [r2(*full_rollout(model, test_X[k], ruleset))
                for k in range(test_X.shape[0])]
     mean_roll = sum(roll_r2) / len(roll_r2)
-
     print()
-    print("=" * 64)
+    print("=" * 72)
     print(f"  persistence 1-step    : MSE {persist_mse:.5f}  R^2 {persist_r2:.3f}")
     print(f"  model 1-step (test)   : MSE {s_mse:.5f}  R^2 {s_r2:.3f}"
           f"  {'(beats persistence)' if s_mse < persist_mse else '(still worse)'}")
     print(f"  model full rollout    : R^2 {mean_roll:.3f}  "
           f"(min {min(roll_r2):.3f}  max {max(roll_r2):.3f})  <- headline")
-    print(f"  (v4 reference         : rollout R^2 ~0.55)")
-    print("=" * 64)
-    print()
-    print(ruleset.summary())
+    print(f"  (v6 reference         : rollout R^2 ~0.56)")
+    print("=" * 72)
 
-    # ── missing-info report ───────────────────────────────────────────────
     analyze_gaps(model, test_X, species_active, species_type_ids,
-                 ruleset, hyp, sbml, elem_balances)
+                 ruleset, hyp, sbml,
+                 element_balances(sbml, species_active, raw_counts_active))
 
-    # ── generate + save ───────────────────────────────────────────────────
+    # ── generate + save ──────────────────────────────────────────────────
+    print()
+    print("=" * 72)
+    print("  GENERATION (the 51st trajectory)")
+    print("=" * 72)
     gen_norm, _ = full_rollout(model, test_X[0], ruleset)
-    full_seq    = torch.cat([test_X[0, :CONTEXT], gen_norm], 0).cpu().numpy()
-    sl          = full_seq * span + lo
-    gen_counts  = np.maximum(np.sign(sl) * np.expm1(np.abs(sl)), 0.0)
-    print(f"\n[gen] 51st trajectory {gen_counts.shape}  "
+    full_seq = torch.cat([test_X[0, :CONTEXT], gen_norm], 0).cpu().numpy()
+    sl = full_seq * span + lo
+    gen_counts = np.maximum(np.sign(sl) * np.expm1(np.abs(sl)), 0.0)
+    print(f"[gen] 51st trajectory {gen_counts.shape}  "
           f"finite={np.isfinite(gen_counts).all()}  "
           f"count range [{gen_counts.min():.0f}, {gen_counts.max():.0f}]")
-    np.save(f"{SAVE_DIR}/cell_traj_51_v6.npy", gen_counts)
+    np.save(f"{SAVE_DIR}/cell_traj_51_v7.npy", gen_counts)
     torch.save({
         "model": model.state_dict(),
         "lo": lo, "span": span, "active": active,
@@ -764,12 +1198,14 @@ def main():
         "ruleset_lo": ruleset.lo_bound.cpu() if ruleset.lo_bound is not None else None,
         "ruleset_hi": ruleset.hi_bound.cpu() if ruleset.hi_bound is not None else None,
         "hypotheses": hyp.items,
+        "known_rules_summary": known.summary(),
         "config": dict(S=S, d_model=D_MODEL, n_layers=N_LAYERS, n_heads=N_HEADS,
                        context=CONTEXT, time_stride=TIME_STRIDE,
-                       d_type=D_TYPE_EMBED, n_genes=len(locus_list)),
-    }, f"{SAVE_DIR}/cell_emulator_v6.pt")
-    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v6.npy")
-    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v6.pt")
+                       d_type=D_TYPE_EMBED, n_genes=len(locus_list),
+                       skip_startup=SKIP_STARTUP_STEPS),
+    }, f"{SAVE_DIR}/cell_emulator_v7.pt")
+    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v7.npy")
+    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v7.pt")
 
 
 if __name__ == "__main__":
