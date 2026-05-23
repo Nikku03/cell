@@ -1,4 +1,21 @@
-"""Colab cell: v8 cell-state emulator - Liquid GNN (CfC + SBML graph) + PhD knowledge layer.
+"""Colab cell: v9 cell-state emulator - Liquid GNN + PINN head + stochastic head + biology eval.
+
+v8 -> v9:
+  1. PINN HEAD  hardwired mass-balance for SBML-covered species.  GNN predicts
+     per-reaction log-space fluxes v_log;  Δx = S · signed_expm1(v_log) is
+     mass-conserving by construction (log-space bridge handles the wide
+     dynamic range).  Ported from M7's pinn_head.py.
+  2. STOCHASTIC HEAD + NLL LOSS  per-species log_sigma output; training uses
+     Gaussian NLL instead of MSE so the model can express uncertainty
+     where it can't predict precisely - breaks the deterministic noise floor.
+     Ported from M8 upgrade 1/5.
+  3. VARIANCE-WEIGHTED R²  honest metric: median R² over the top-K (200)
+     highest-variance species.  Strips out the thousands of near-constant
+     species that drag mean R² toward zero artificially.
+  4. KNOCKOUT SWEEP vs BREUER 2019  the biology metric: zero each gene's
+     P/R/RP/G species, roll forward 30 steps, rank by trajectory deviation.
+     Compare top-N predicted-essential to Breuer 2019 experimental essentiality
+     calls;  report Matthews correlation coefficient.
 
 v7 -> v8:
   1. ARCHITECTURE: replace the transformer with a Liquid Graph Neural Network,
@@ -94,6 +111,13 @@ LGNN_HIDDEN         = 64           # NEW v8: per-node hidden dim
 LGNN_N_LAYERS       = 3            # NEW v8: number of CfC graph layers
 LGNN_CFC_TAU_MIN    = 0.1          # NEW v8: CfC time-constant minimum
 LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
+USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML species
+USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
+PINN_RATE_CLIP      = 6.0          # NEW v9: log-space rate clip (prevents expm1 blow-up)
+VAR_R2_TOP_K        = 200          # NEW v9: top-K species (by variance) for the honest R²
+KO_N_STEPS          = 30           # NEW v9: rollout length for knockout sweep
+KO_BATCH_SIZE       = 32           # NEW v9: parallel knockouts per batch
+BREUER_PATH         = "memory_bank/data/syn3a_essentiality_breuer2019.csv"
 SEED                = 0
 SAVE_DIR            = "/content/drive/MyDrive"
 GENE_TABLE_PATH     = "memory_bank/data/syn3a_gene_table.csv"
@@ -144,6 +168,26 @@ def _locus_key(locus):
     """'0412_C1' -> '0412'.  Strips chromosome-copy / variant suffixes."""
     m = re.match(r"\d+", locus)
     return m.group(0) if m else locus
+
+
+def load_breuer_essentiality(path):
+    """Load Breuer 2019 essentiality labels — {locus_num: 'Essential'|'Quasiessential'|'Nonessential'}."""
+    if not HAS_PANDAS:
+        print("[breuer] pandas unavailable - skipping knockout sweep")
+        return {}
+    try:
+        df = pd.read_csv(path)
+        out = {}
+        for _, row in df.iterrows():
+            tag = str(row.get("locus_tag", ""))
+            ess = str(row.get("essentiality", ""))
+            if "_" in tag and ess in ("Essential", "Quasiessential", "Nonessential"):
+                out[tag.split("_")[1]] = ess
+        print(f"[breuer] loaded {len(out)} essentiality labels")
+        return out
+    except Exception as e:
+        print(f"[breuer] load failed ({e}) - skipping knockout sweep")
+        return {}
 
 
 def load_gene_types(csv_path):
@@ -986,6 +1030,40 @@ def build_sbml_graph(sbml, species_names):
     return edge_index, edge_weight
 
 
+def build_stoich_matrix(sbml, species_names):
+    """Build the stoichiometric matrix S restricted to SBML species present
+    in our trajectory.  Used by the PINN head's mass-balance bridge.
+
+    Returns:
+        sbml_mask     : (S,) bool   - True where the species is in S
+        sbml_indices  : (n_sbml,)   - full indices of SBML species
+        stoich_matrix : (n_sbml, n_rxn) float — Δx_sbml = S @ v
+    Or (None, None, None) if no SBML overlap.
+    """
+    if sbml is None:
+        return None, None, None
+    name_to_idx = {nm: i for i, nm in enumerate(species_names)}
+    present = [s for s in sbml["species"].keys() if s in name_to_idx]
+    if not present:
+        return None, None, None
+    sbml_idx_map = {s: i for i, s in enumerate(present)}
+    full_indices = [name_to_idx[s] for s in present]
+    n_sbml, n_rxn = len(present), len(sbml["reactions"])
+    S_mat = torch.zeros(n_sbml, n_rxn, dtype=torch.float32)
+    for j, rxn in enumerate(sbml["reactions"]):
+        for sid, stoi in rxn["reactants"]:
+            if sid in sbml_idx_map:
+                S_mat[sbml_idx_map[sid], j] -= stoi
+        for sid, stoi in rxn["products"]:
+            if sid in sbml_idx_map:
+                S_mat[sbml_idx_map[sid], j] += stoi
+    mask = torch.zeros(len(species_names), dtype=torch.bool)
+    mask[torch.tensor(full_indices)] = True
+    print(f"[pinn] stoich matrix: {n_sbml} SBML species × {n_rxn} reactions  "
+          f"({mask.sum().item()}/{len(species_names)} species mass-balanced)")
+    return mask, torch.tensor(full_indices, dtype=torch.long), S_mat
+
+
 class _CfCGraphLayer(nn.Module):
     """Message-passing graph layer with CfC (closed-form continuous-time) update.
 
@@ -1037,16 +1115,92 @@ class _CfCGraphLayer(nn.Module):
         return self.norm(h + h_new)
 
 
-class DynamicsModel(nn.Module):
-    """v8 Liquid Graph Neural Network: SBML graph + CfC node dynamics.
+class PINNHead(nn.Module):
+    """v9: hardwired mass-balance head for SBML-covered species.
 
-    Single-step: takes current state (B, S), returns predicted next state
-    (B, S) as a residual delta on top of the input.
+    The GNN's hidden state at SBML species is pooled to predict per-reaction
+    log-space fluxes v_log.  The stoichiometric matrix S then maps v to
+    species deltas via the log-space bridge:
+
+        v_lin       = signed_expm1(v_log)             (linear-space rates)
+        x_lin       = signed_expm1(x_signedlog)       (linear counts)
+        Δx_lin      = S @ v_lin                       (mass balance, exact)
+        x_next_lin  = clamp(x_lin + Δx_lin, min=0)
+        x_next_sl   = signed_log1p(x_next_lin)        (back to signed-log)
+        x_next_norm = (x_next_sl - lo) / span         (back to normalised)
+
+    Mass conservation is guaranteed by construction for SBML species —
+    no matter how badly v is predicted, S·v respects the stoichiometric
+    ratios the simulator was built from.  Ported from the M7 branch's
+    pinn_head.py with our (x-lo)/span normalisation accounted for.
+    """
+
+    def __init__(self, hidden, sbml_mask, sbml_indices, stoich_matrix,
+                 lo_norm, span_norm, rate_clip=6.0):
+        super().__init__()
+        self.register_buffer("sbml_mask",     sbml_mask)              # (S,) bool
+        self.register_buffer("sbml_indices",  sbml_indices)           # (n_sbml,) long
+        self.register_buffer("stoich_matrix", stoich_matrix.float())  # (n_sbml, n_rxn)
+        lo_t   = torch.as_tensor(lo_norm,   dtype=torch.float32)
+        span_t = torch.as_tensor(span_norm, dtype=torch.float32)
+        self.register_buffer("lo_sbml",   lo_t[sbml_indices])
+        self.register_buffer("span_sbml", span_t[sbml_indices].clamp(min=1e-6))
+        n_rxn = stoich_matrix.shape[1]
+        self.rate_head = nn.Linear(hidden, n_rxn)
+        # Initialise to predict v_log ~ 0 (no change) so PINN starts as identity-ish
+        nn.init.zeros_(self.rate_head.bias)
+        nn.init.normal_(self.rate_head.weight, std=0.01)
+        self.rate_clip = rate_clip
+
+    def forward(self, h, x_norm):
+        # h: (B, S, hidden);  x_norm: (B, S) normalised
+        h_pool = h[:, self.sbml_mask].mean(dim=1)                          # (B, hidden)
+        v_log  = self.rate_head(h_pool).clamp(-self.rate_clip, self.rate_clip)
+        v_lin  = t_signed_expm1(v_log)                                     # (B, n_rxn)
+        x_norm_sbml = x_norm[:, self.sbml_mask]                            # (B, n_sbml)
+        x_sl_sbml   = x_norm_sbml * self.span_sbml + self.lo_sbml
+        x_lin_sbml  = t_signed_expm1(x_sl_sbml)
+        dx_lin      = v_lin @ self.stoich_matrix.T                         # (B, n_sbml)
+        x_next_lin  = (x_lin_sbml + dx_lin).clamp(min=0.0)
+        x_next_sl   = t_signed_log1p(x_next_lin)
+        x_next_norm = (x_next_sl - self.lo_sbml) / self.span_sbml
+        return x_next_norm                                                 # (B, n_sbml)
+
+
+class StochasticHead(nn.Module):
+    """v9: per-species log_sigma output, for NLL training.
+
+    Trained jointly with the mean head, allows the model to express
+    uncertainty (high log_sigma) where it can't predict precisely - which
+    breaks the deterministic MSE noise floor.  Ported from M8 upgrade 1/5
+    in the parallel M7 branch.
+    """
+
+    def __init__(self, hidden):
+        super().__init__()
+        self.head = nn.Linear(hidden, 1)
+        # Init so initial sigma ~ 0.1 (log(0.1) ≈ -2.3)
+        nn.init.constant_(self.head.bias, -2.3)
+        nn.init.zeros_(self.head.weight)
+
+    def forward(self, h):                                                  # (B, S, H) -> (B, S)
+        return self.head(h).squeeze(-1).clamp(-6.0, 2.0)                  # sigma in [exp(-6), exp(2)]
+
+
+class DynamicsModel(nn.Module):
+    """v8 Liquid Graph Neural Network + v9 PINN head + v9 stochastic head.
+
+    Single-step: takes current state (B, S), returns predicted next state.
+    When the stochastic head is enabled, returns (next_state, log_sigma).
     """
 
     def __init__(self, S, hidden, n_layers, species_type_ids,
                  edge_index, edge_weight, cfc_tau_min=0.1, n_type_embed=4,
-                 # accept v7-era kwargs to keep main() backward-compatible
+                 # v9 heads:
+                 use_pinn=False, sbml_mask=None, sbml_indices=None,
+                 stoich_matrix=None, lo_norm=None, span_norm=None,
+                 pinn_rate_clip=PINN_RATE_CLIP, use_stochastic=False,
+                 # backward-compat v7 kwargs (ignored)
                  d_model=None, n_heads=None, context=None, dropout=None,
                  d_type=None):
         super().__init__()
@@ -1055,11 +1209,9 @@ class DynamicsModel(nn.Module):
         self.n_layers = n_layers
         self.register_buffer("edge_index",  edge_index)
         self.register_buffer("edge_weight", edge_weight)
-        # gene-type embedding (kept from v7 — adds biological role context)
         self.type_embed = nn.Embedding(N_GTYPES, n_type_embed)
         self.register_buffer("stype",
                              torch.tensor(species_type_ids, dtype=torch.long))
-        # Per-species input projection: 1 (value) + n_type_embed -> hidden
         self.in_proj = nn.Linear(1 + n_type_embed, hidden)
         self.layers  = nn.ModuleList([
             _CfCGraphLayer(hidden, S, cfc_tau_min=cfc_tau_min)
@@ -1067,24 +1219,60 @@ class DynamicsModel(nn.Module):
         ])
         self.out_norm = nn.LayerNorm(hidden)
         self.out_head = nn.Linear(hidden, 1)
+        # v9: PINN head (optional)
+        self.use_pinn = bool(use_pinn and sbml_mask is not None)
+        if self.use_pinn:
+            self.pinn_head = PINNHead(hidden, sbml_mask, sbml_indices,
+                                      stoich_matrix, lo_norm, span_norm,
+                                      pinn_rate_clip)
+        # v9: stochastic head (optional)
+        self.use_stochastic = bool(use_stochastic)
+        if self.use_stochastic:
+            self.stochastic_head = StochasticHead(hidden)
 
-    def forward(self, x):                     # x: (B, S) -> (B, S)
+    def forward(self, x):                     # x: (B, S)
         B, S = x.shape
-        # per-species input = [value, gene_type_embed]
-        te  = self.type_embed(self.stype).unsqueeze(0).expand(B, -1, -1)  # (B, S, n_type)
-        inp = torch.cat([x.unsqueeze(-1), te], dim=-1)                    # (B, S, 1+n_type)
-        h   = self.in_proj(inp)                                           # (B, S, H)
+        te  = self.type_embed(self.stype).unsqueeze(0).expand(B, -1, -1)
+        inp = torch.cat([x.unsqueeze(-1), te], dim=-1)
+        h   = self.in_proj(inp)
         for layer in self.layers:
             h = layer(h, self.edge_index, self.edge_weight)
         h = self.out_norm(h)
-        delta = self.out_head(h).squeeze(-1)                              # (B, S)
-        return x + delta                                                  # residual
+        delta  = self.out_head(h).squeeze(-1)
+        x_next = x + delta
+        # PINN head overrides SBML species with mass-balanced prediction
+        if self.use_pinn:
+            x_next_sbml = self.pinn_head(h, x)                              # (B, n_sbml)
+            x_pinn_full = torch.zeros_like(x_next)
+            x_pinn_full = x_pinn_full.index_copy(1, self.pinn_head.sbml_indices,
+                                                  x_next_sbml)
+            mask = self.pinn_head.sbml_mask.unsqueeze(0).expand(B, -1)
+            x_next = torch.where(mask, x_pinn_full, x_next)
+        if self.use_stochastic:
+            log_sigma = self.stochastic_head(h)
+            return x_next, log_sigma
+        return x_next
+
+
+def _model_pred(out):
+    """Strip log_sigma from model output if present (stochastic head case)."""
+    return out[0] if isinstance(out, tuple) else out
 
 
 # ── data ──────────────────────────────────────────────────────────────────────
 
 def signed_log(x):
     return np.sign(x) * np.log1p(np.abs(x))
+
+
+def t_signed_log1p(x):
+    """Tensor version of signed_log1p — used by the PINN head's log-space bridge."""
+    return torch.sign(x) * torch.log1p(torch.abs(x))
+
+
+def t_signed_expm1(x):
+    """Inverse of t_signed_log1p."""
+    return torch.sign(x) * torch.expm1(torch.abs(x))
 
 
 def load_data(skip_startup=True):
@@ -1115,6 +1303,31 @@ def r2(pred, true):
     return float(1.0 - ss_res / ss_tot.clamp(min=1e-12))
 
 
+def variance_weighted_r2(pred, true, top_k=VAR_R2_TOP_K):
+    """v9: median per-species R² over the top-K highest-variance species.
+
+    Strips the thousands of near-constant species (which inflate mean R²
+    artificially) and reports only the species the model has to actually
+    predict.  Returns (median_r2, n_used).
+    """
+    if pred.dim() > 2:
+        pred = pred.reshape(-1, pred.shape[-1])
+        true = true.reshape(-1, true.shape[-1])
+    var = true.var(dim=0)                                                  # (S,)
+    top_idx = torch.argsort(var, descending=True)[:top_k]
+    r2_list = []
+    for s in top_idx.tolist():
+        t = true[:, s]; p = pred[:, s]
+        ss_tot = ((t - t.mean()) ** 2).sum()
+        if float(ss_tot) < 1e-9:
+            continue
+        ss_res = ((t - p) ** 2).sum()
+        r2_list.append(float(1.0 - ss_res / ss_tot))
+    if not r2_list:
+        return float("nan"), 0
+    return float(np.median(r2_list)), len(r2_list)
+
+
 # ── training / eval ───────────────────────────────────────────────────────────
 
 def train_model(model, train_X, ruleset):
@@ -1134,10 +1347,20 @@ def train_model(model, train_X, ruleset):
         i_d, t0_d = i_t.to(device), t0_t.to(device)
         losses = []
         prev_state = state
+        use_nll = getattr(model, "use_stochastic", False)
         for k in range(K):
-            pred = model(state)
-            true = train_X[i_d, t0_d + 1 + k]
-            losses.append(F.mse_loss(pred, true))
+            out = model(state)
+            if use_nll:
+                pred, log_sigma = out
+                true = train_X[i_d, t0_d + 1 + k]
+                # Gaussian NLL: 0.5·exp(-2·logσ)·(μ-y)² + logσ  (Kendall & Gal '17)
+                sq_err   = (pred - true) ** 2
+                inv_var  = torch.exp(-2.0 * log_sigma)
+                losses.append(0.5 * (inv_var * sq_err + 2.0 * log_sigma).mean())
+            else:
+                pred = out
+                true = train_X[i_d, t0_d + 1 + k]
+                losses.append(F.mse_loss(pred, true))
             nxt = pred.clamp(CLAMP_LO, CLAMP_HI)
             if step >= STEPS // 4:
                 nxt = ruleset.project(prev_state, nxt)
@@ -1166,18 +1389,18 @@ def one_step(model, Xset, n=400):
     t  = torch.randint(0, Tt - 1, (n,), generator=g).tolist()
     state = torch.stack([Xset[i[b], t[b]]     for b in range(n)])
     nxt   = torch.stack([Xset[i[b], t[b] + 1] for b in range(n)])
-    pred = model(state)
+    pred = _model_pred(model(state))
     return float(F.mse_loss(pred, nxt)), r2(pred, nxt)
 
 
 @torch.no_grad()
 def full_rollout(model, traj, ruleset):
-    """v8: single-step rollout — seed from one frame, generate the rest."""
+    """v8/v9: single-step rollout — seed from one frame, generate the rest."""
     model.eval()
     state = traj[0].unsqueeze(0)        # (1, S)
     preds = []
     for _ in range(traj.shape[0] - 1):
-        p = model(state).clamp(CLAMP_LO, CLAMP_HI)
+        p = _model_pred(model(state)).clamp(CLAMP_LO, CLAMP_HI)
         p = ruleset.project(state, p)
         preds.append(p)
         state = p
@@ -1233,6 +1456,111 @@ def analyze_gaps(model, test_X, species_names, species_type_ids,
 
     print()
     print("  [4] " + hyp.summary().replace("\n", "\n  "))
+    print("#" * 72)
+
+
+# ── v9: knockout sweep (Breuer 2019 essentiality MCC) ────────────────────────
+
+@torch.no_grad()
+def _ko_rollout(model, state, ruleset, n_steps):
+    """Roll forward N steps. state: (B, S). Returns (B, n_steps, S)."""
+    preds = []
+    for _ in range(n_steps):
+        p = _model_pred(model(state)).clamp(CLAMP_LO, CLAMP_HI)
+        p = ruleset.project(state, p)
+        preds.append(p)
+        state = p
+    return torch.stack(preds, dim=1)
+
+
+@torch.no_grad()
+def knockout_sweep(model, ruleset, test_X, species_names, breuer_labels,
+                   n_steps=KO_N_STEPS, batch_size=KO_BATCH_SIZE):
+    """v9: in-silico gene knockouts ranked by trajectory deviation, scored
+    against Breuer 2019 essentiality.
+
+    For each candidate gene: set its P/R/RP/G species to CLAMP_LO in the seed
+    state, roll forward N steps, measure MSE deviation from the unperturbed
+    baseline rollout.  Top-N predicted-essential = experimentally essential
+    set; MCC quantifies overlap.
+    """
+    if not breuer_labels:
+        return None
+    model.eval()
+    gene_cols = {}
+    for i, name in enumerate(species_names):
+        pre, loc = parse_species(name)
+        if pre in {"P", "R", "RP", "G"}:
+            gene_cols.setdefault(_locus_key(loc), []).append(i)
+    candidates = sorted(gene_cols.keys())
+    if not candidates:
+        return None
+
+    seed = test_X[0, 0]                                              # (S,) post-startup seed
+    baseline = _ko_rollout(model, seed.unsqueeze(0), ruleset, n_steps).squeeze(0)
+    impacts = {}
+    for i in range(0, len(candidates), batch_size):
+        batch_loci = candidates[i:i + batch_size]
+        states = seed.unsqueeze(0).expand(len(batch_loci), -1).clone()
+        for b, loc in enumerate(batch_loci):
+            states[b, gene_cols[loc]] = CLAMP_LO                     # knockout = floor
+        ko_trajs = _ko_rollout(model, states, ruleset, n_steps)      # (B, n_steps, S)
+        for b, loc in enumerate(batch_loci):
+            impacts[loc] = float(((baseline - ko_trajs[b]) ** 2).mean())
+    ranking = sorted(impacts.items(), key=lambda x: -x[1])
+
+    # MCC: Essential ∪ Quasiessential vs Nonessential
+    true_e  = {loc for loc, lab in breuer_labels.items()
+               if lab in {"Essential", "Quasiessential"} and loc in impacts}
+    true_n  = {loc for loc, lab in breuer_labels.items()
+               if lab == "Nonessential" and loc in impacts}
+    if not true_e or not true_n:
+        return {"ranking": ranking, "mcc": float("nan"),
+                "n_genes": len(candidates), "n_essential": len(true_e),
+                "n_nonessential": len(true_n)}
+    n_top = len(true_e)
+    pred_top = {loc for loc, _ in ranking[:n_top]}
+    tp = len(pred_top & true_e)
+    fp = len(pred_top & true_n)
+    fn = len(true_e - pred_top)
+    tn = len(true_n - pred_top)
+    denom = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
+    mcc = (tp * tn - fp * fn) / (denom ** 0.5) if denom > 0 else 0.0
+
+    return {
+        "ranking": ranking, "mcc": mcc,
+        "tp": tp, "fp": fp, "fn": fn, "tn": tn,
+        "n_genes": len(candidates),
+        "n_essential": len(true_e),
+        "n_nonessential": len(true_n),
+    }
+
+
+def print_knockout_report(ko, breuer_labels):
+    """Pretty-print the knockout-sweep result."""
+    print()
+    print("#" * 72)
+    print("#  KNOCKOUT SWEEP  -  in-silico essentiality vs Breuer 2019")
+    print("#" * 72)
+    if ko is None:
+        print("  (no Breuer labels available - skipped)")
+        print("#" * 72)
+        return
+    print(f"  {ko['n_genes']} genes tested over {KO_N_STEPS} rollout steps")
+    print(f"  Breuer 2019 labels: {ko['n_essential']} essential, "
+          f"{ko['n_nonessential']} non-essential (in our species set)")
+    if not (ko.get("mcc") == ko.get("mcc")):     # NaN check
+        print("  MCC: undefined (one class empty)")
+    else:
+        print(f"  Confusion: TP={ko['tp']}  FP={ko['fp']}  FN={ko['fn']}  TN={ko['tn']}")
+        print(f"  MCC = {ko['mcc']:+.3f}  "
+              f"({'random' if abs(ko['mcc']) < 0.15 else 'weak' if abs(ko['mcc']) < 0.3 else 'moderate' if abs(ko['mcc']) < 0.5 else 'strong'} agreement)")
+    print()
+    print("  Top 12 predicted-essential genes (by knockout impact):")
+    for loc, impact in ko["ranking"][:12]:
+        lab = breuer_labels.get(loc, "unknown")
+        flag = "✓" if lab in {"Essential", "Quasiessential"} else "✗" if lab == "Nonessential" else "?"
+        print(f"      {flag} JCVISYN3A_{loc}  impact={impact:.4f}  ({lab})")
     print("#" * 72)
 
 
@@ -1313,19 +1641,32 @@ def main():
     # ── model + training ─────────────────────────────────────────────────
     print()
     print("=" * 72)
-    print("  TRAINING PHASE  (v8: Liquid GNN)")
+    print("  TRAINING PHASE  (v9: Liquid GNN + PINN head + stochastic head)")
     print("=" * 72)
     edge_index, edge_weight = build_sbml_graph(sbml, species_active)
     edge_index  = edge_index.to(device)
     edge_weight = edge_weight.to(device)
+    sbml_mask, sbml_indices, stoich_matrix = build_stoich_matrix(sbml, species_active)
+    pinn_active = USE_PINN_HEAD and sbml_mask is not None
+    if pinn_active:
+        sbml_mask     = sbml_mask.to(device)
+        sbml_indices  = sbml_indices.to(device)
+        stoich_matrix = stoich_matrix.to(device)
     model = DynamicsModel(
         S=S, hidden=LGNN_HIDDEN, n_layers=LGNN_N_LAYERS,
         species_type_ids=species_type_ids,
         edge_index=edge_index, edge_weight=edge_weight,
         cfc_tau_min=LGNN_CFC_TAU_MIN, n_type_embed=LGNN_N_TYPE_EMBED,
+        use_pinn=pinn_active, sbml_mask=sbml_mask, sbml_indices=sbml_indices,
+        stoich_matrix=stoich_matrix, lo_norm=lo, span_norm=span,
+        pinn_rate_clip=PINN_RATE_CLIP, use_stochastic=USE_STOCHASTIC_HEAD,
     ).to(device)
-    print(f"[model] LGNN: {sum(p.numel() for p in model.parameters()) / 1e6:.2f}M parameters, "
-          f"{edge_index.shape[1]:,} edges (SBML reactions + self-loops)")
+    n_params = sum(p.numel() for p in model.parameters()) / 1e6
+    head_tags = []
+    if pinn_active:          head_tags.append("PINN")
+    if USE_STOCHASTIC_HEAD:  head_tags.append("stochastic")
+    print(f"[model] LGNN+{('+'.join(head_tags)) if head_tags else 'plain'}: {n_params:.2f}M parameters, "
+          f"{edge_index.shape[1]:,} graph edges")
     train_model(model, train_X, ruleset)
 
     # ── evaluate ──────────────────────────────────────────────────────────
@@ -1334,23 +1675,34 @@ def main():
     print("  EVALUATION")
     print("=" * 72)
     s_mse, s_r2 = one_step(model, test_X)
-    roll_r2 = [r2(*full_rollout(model, test_X[k], ruleset))
-               for k in range(test_X.shape[0])]
+    roll_pairs = [full_rollout(model, test_X[k], ruleset)
+                  for k in range(test_X.shape[0])]
+    roll_r2 = [r2(p, t) for p, t in roll_pairs]
     mean_roll = sum(roll_r2) / len(roll_r2)
+    # v9: variance-weighted R² (median over top-K high-variance species)
+    all_preds = torch.cat([p for p, _ in roll_pairs], 0)
+    all_true  = torch.cat([t for _, t in roll_pairs], 0)
+    var_r2, n_var = variance_weighted_r2(all_preds, all_true, top_k=VAR_R2_TOP_K)
     print()
     print("=" * 72)
-    print(f"  persistence 1-step    : MSE {persist_mse:.5f}  R^2 {persist_r2:.3f}")
-    print(f"  model 1-step (test)   : MSE {s_mse:.5f}  R^2 {s_r2:.3f}"
+    print(f"  persistence 1-step       : MSE {persist_mse:.5f}  R^2 {persist_r2:.3f}")
+    print(f"  model 1-step (test)      : MSE {s_mse:.5f}  R^2 {s_r2:.3f}"
           f"  {'(beats persistence)' if s_mse < persist_mse else '(still worse)'}")
-    print(f"  model full rollout    : R^2 {mean_roll:.3f}  "
-          f"(min {min(roll_r2):.3f}  max {max(roll_r2):.3f})  <- headline")
-    print(f"  (v6 transformer       : rollout R^2 ~0.56)")
-    print(f"  (v7 transformer + cap : rollout R^2 ~0.54)")
+    print(f"  model full rollout       : R^2 {mean_roll:.3f}  "
+          f"(min {min(roll_r2):.3f}  max {max(roll_r2):.3f})  <- mean over all species")
+    print(f"  median R² on top-{n_var} variable species : {var_r2:+.3f}  <- HONEST METRIC")
+    print(f"  (v6 transformer          : rollout R^2 ~0.56,  honest unknown)")
+    print(f"  (v7 transformer + cap    : rollout R^2 ~0.54,  honest unknown)")
     print("=" * 72)
 
     analyze_gaps(model, test_X, species_active, species_type_ids,
                  ruleset, hyp, sbml,
                  element_balances(sbml, species_active, raw_counts_active))
+
+    # ── v9: knockout sweep vs Breuer 2019 essentiality ───────────────────
+    breuer_labels = load_breuer_essentiality(BREUER_PATH)
+    ko = knockout_sweep(model, ruleset, test_X, species_active, breuer_labels)
+    print_knockout_report(ko, breuer_labels)
 
     # ── generate + save ──────────────────────────────────────────────────
     print()
@@ -1364,7 +1716,7 @@ def main():
     print(f"[gen] 51st trajectory {gen_counts.shape}  "
           f"finite={np.isfinite(gen_counts).all()}  "
           f"count range [{gen_counts.min():.0f}, {gen_counts.max():.0f}]")
-    np.save(f"{SAVE_DIR}/cell_traj_51_v8.npy", gen_counts)
+    np.save(f"{SAVE_DIR}/cell_traj_51_v9.npy", gen_counts)
     torch.save({
         "model": model.state_dict(),
         "lo": lo, "span": span, "active": active,
@@ -1378,14 +1730,17 @@ def main():
         "ruleset_hi": ruleset.hi_bound.cpu() if ruleset.hi_bound is not None else None,
         "hypotheses": hyp.items,
         "known_rules_summary": known.summary(),
+        "knockout_sweep": ko,
+        "var_r2_median": var_r2,
         "config": dict(S=S, hidden=LGNN_HIDDEN, n_layers=LGNN_N_LAYERS,
                        cfc_tau_min=LGNN_CFC_TAU_MIN, n_type_embed=LGNN_N_TYPE_EMBED,
                        time_stride=TIME_STRIDE, n_genes=len(locus_list),
                        skip_startup=SKIP_STARTUP_STEPS,
-                       architecture="LGNN_v8"),
-    }, f"{SAVE_DIR}/cell_emulator_v8.pt")
-    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v8.npy")
-    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v8.pt")
+                       use_pinn=pinn_active, use_stochastic=USE_STOCHASTIC_HEAD,
+                       architecture="LGNN_v9"),
+    }, f"{SAVE_DIR}/cell_emulator_v9.pt")
+    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v9.npy")
+    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v9.pt")
 
 
 if __name__ == "__main__":
