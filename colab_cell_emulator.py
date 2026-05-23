@@ -1478,12 +1478,24 @@ def analyze_gaps(model, test_X, species_names, species_type_ids,
 # ── v9: knockout sweep (Breuer 2019 essentiality MCC) ────────────────────────
 
 @torch.no_grad()
-def _ko_rollout(model, state, ruleset, n_steps):
-    """Roll forward N steps. state: (B, S). Returns (B, n_steps, S)."""
+def _ko_rollout(model, state, ko_mask, n_steps):
+    """Roll forward N steps with PERMANENT knockdown of species in ko_mask.
+
+    Two deliberate choices vs the normal eval rollout:
+      - re-apply the knockout at every step (gene deletion is permanent — if we
+        only zero the seed, the model "fills in" the species at step 1 and the
+        perturbation evaporates);
+      - skip ruleset.project, otherwise the bounds rule clamps the knocked-out
+        species back up to its validated training range and the knockout is
+        immediately undone.
+
+    state: (B, S);  ko_mask: (B, S) bool;  returns (B, n_steps, S).
+    """
     preds = []
     for _ in range(n_steps):
         p = _model_pred(model(state)).clamp(CLAMP_LO, CLAMP_HI)
-        p = ruleset.project(state, p)
+        # Permanent knockdown: force every masked species back to floor
+        p = torch.where(ko_mask, torch.full_like(p, CLAMP_LO), p)
         preds.append(p)
         state = p
     return torch.stack(preds, dim=1)
@@ -1495,10 +1507,10 @@ def knockout_sweep(model, ruleset, test_X, species_names, breuer_labels,
     """v9: in-silico gene knockouts ranked by trajectory deviation, scored
     against Breuer 2019 essentiality.
 
-    For each candidate gene: set its P/R/RP/G species to CLAMP_LO in the seed
-    state, roll forward N steps, measure MSE deviation from the unperturbed
-    baseline rollout.  Top-N predicted-essential = experimentally essential
-    set; MCC quantifies overlap.
+    For each candidate gene: build a ko_mask flagging its P/R/RP/G species,
+    apply permanent knockdown for n_steps, measure MSE deviation from the
+    unperturbed baseline rollout.  Top-N predicted-essential = experimentally
+    essential set; MCC quantifies overlap.
     """
     if not breuer_labels:
         return None
@@ -1512,15 +1524,20 @@ def knockout_sweep(model, ruleset, test_X, species_names, breuer_labels,
     if not candidates:
         return None
 
-    seed = test_X[0, 0]                                              # (S,) post-startup seed
-    baseline = _ko_rollout(model, seed.unsqueeze(0), ruleset, n_steps).squeeze(0)
+    S = test_X.shape[2]
+    seed = test_X[0, 0]                                              # (S,)
+    no_ko_mask = torch.zeros(1, S, dtype=torch.bool, device=seed.device)
+    baseline = _ko_rollout(model, seed.unsqueeze(0), no_ko_mask, n_steps).squeeze(0)
+
     impacts = {}
     for i in range(0, len(candidates), batch_size):
         batch_loci = candidates[i:i + batch_size]
-        states = seed.unsqueeze(0).expand(len(batch_loci), -1).clone()
+        ko_mask = torch.zeros(len(batch_loci), S, dtype=torch.bool, device=seed.device)
         for b, loc in enumerate(batch_loci):
-            states[b, gene_cols[loc]] = CLAMP_LO                     # knockout = floor
-        ko_trajs = _ko_rollout(model, states, ruleset, n_steps)      # (B, n_steps, S)
+            ko_mask[b, gene_cols[loc]] = True
+        states = seed.unsqueeze(0).expand(len(batch_loci), -1).clone()
+        states[ko_mask] = CLAMP_LO                                   # initial KO
+        ko_trajs = _ko_rollout(model, states, ko_mask, n_steps)      # (B, n_steps, S)
         for b, loc in enumerate(batch_loci):
             impacts[loc] = float(((baseline - ko_trajs[b]) ** 2).mean())
     ranking = sorted(impacts.items(), key=lambda x: -x[1])
@@ -1562,9 +1579,19 @@ def print_knockout_report(ko, breuer_labels):
         print("  (no Breuer labels available - skipped)")
         print("#" * 72)
         return
-    print(f"  {ko['n_genes']} genes tested over {KO_N_STEPS} rollout steps")
+    print(f"  {ko['n_genes']} genes tested over {KO_N_STEPS} rollout steps "
+          "(permanent knockdown, no rule projection)")
     print(f"  Breuer 2019 labels: {ko['n_essential']} essential, "
           f"{ko['n_nonessential']} non-essential (in our species set)")
+    # Impact distribution diagnostic — tells us whether knockouts moved anything
+    impact_vals = [v for _, v in ko["ranking"]]
+    if impact_vals:
+        print(f"  Impact range: min={min(impact_vals):.2e}  "
+              f"median={impact_vals[len(impact_vals)//2]:.2e}  "
+              f"max={max(impact_vals):.2e}")
+        if max(impact_vals) < 1e-3:
+            print("  WARNING: all impacts < 1e-3 — knockouts barely perturbing "
+                  "the trajectory.  Model is bias-driven, not causally responsive.")
     if not (ko.get("mcc") == ko.get("mcc")):     # NaN check
         print("  MCC: undefined (one class empty)")
     else:
@@ -1576,7 +1603,7 @@ def print_knockout_report(ko, breuer_labels):
     for loc, impact in ko["ranking"][:12]:
         lab = breuer_labels.get(loc, "unknown")
         flag = "✓" if lab in {"Essential", "Quasiessential"} else "✗" if lab == "Nonessential" else "?"
-        print(f"      {flag} JCVISYN3A_{loc}  impact={impact:.4f}  ({lab})")
+        print(f"      {flag} JCVISYN3A_{loc}  impact={impact:.3e}  ({lab})")
     print("#" * 72)
 
 
