@@ -1586,7 +1586,7 @@ def main():
     print(f"[device] {device}")
     print()
     print("=" * 72)
-    print("  v7  -  PhD knowledge phase + multi-lens patterns + startup skip")
+    print("  v9  -  LGNN + PINN head + stochastic head + knockout sweep")
     print("=" * 72)
 
     raw_counts, species_names = load_data(skip_startup=True)
