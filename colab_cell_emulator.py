@@ -1152,10 +1152,15 @@ class PINNHead(nn.Module):
         self.register_buffer("sbml_mask",     sbml_mask)              # (S,) bool
         self.register_buffer("sbml_indices",  sbml_indices)           # (n_sbml,) long
         self.register_buffer("stoich_matrix", stoich_matrix.float())  # (n_sbml, n_rxn)
+        # CPU-side indexing for the per-SBML lo/span: sbml_indices may already
+        # have been .to(cuda)'d by the caller, but lo_norm/span_norm are
+        # numpy/CPU. Force CPU for this one-shot index, then register so
+        # model.to(device) moves them along with everything else.
+        si_cpu = sbml_indices.detach().cpu()
         lo_t   = torch.as_tensor(lo_norm,   dtype=torch.float32)
         span_t = torch.as_tensor(span_norm, dtype=torch.float32)
-        self.register_buffer("lo_sbml",   lo_t[sbml_indices])
-        self.register_buffer("span_sbml", span_t[sbml_indices].clamp(min=1e-6))
+        self.register_buffer("lo_sbml",   lo_t[si_cpu])
+        self.register_buffer("span_sbml", span_t[si_cpu].clamp(min=1e-6))
         n_rxn = stoich_matrix.shape[1]
         self.rate_head = nn.Linear(hidden, n_rxn)
         # Initialise to predict v_log ~ 0 (no change) so PINN starts as identity-ish
