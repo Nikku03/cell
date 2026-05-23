@@ -72,6 +72,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.utils.checkpoint as ckpt
 
 try:
     import pandas as pd
@@ -93,7 +94,7 @@ DROPOUT             = 0.1
 N_TRAIN_TRAJ        = 40
 STEPS               = 2000
 K_MAX               = 64
-BATCH               = 32
+BATCH               = 16           # v9.1: was 32, halved to fit BPTT memory after LGNN switch
 LR                  = 3e-4
 WEIGHT_DECAY        = 1e-5
 LAMBDA_1STEP        = 1.0
@@ -1089,7 +1090,7 @@ class _CfCGraphLayer(nn.Module):
         self.cfc_tau_min = cfc_tau_min
         self.norm     = nn.LayerNorm(hidden)
 
-    def forward(self, h, edge_index, edge_weight):
+    def _forward_impl(self, h, edge_index, edge_weight):
         # h: (B, N, H);  edge_index: (2, E);  edge_weight: (E,)
         B, N, H = h.shape
         src, dst = edge_index[0], edge_index[1]
@@ -1113,6 +1114,16 @@ class _CfCGraphLayer(nn.Module):
         B_p = self.cfc_B.unsqueeze(0)
         h_new = torch.sigmoid(-gate) * A + torch.sigmoid(gate) * B_p
         return self.norm(h + h_new)
+
+    def forward(self, h, edge_index, edge_weight):
+        # v9.1: gradient checkpointing during training cuts memory ~2x by
+        # re-computing the layer's intermediates during backward.  Important
+        # for the K=64 rollout BPTT: without this, the (B, E=9395, H=64)
+        # message tensor × 3 layers × 48 unrolled steps eats >30 GB and OOMs.
+        if self.training and torch.is_grad_enabled():
+            return ckpt.checkpoint(self._forward_impl, h, edge_index, edge_weight,
+                                   use_reentrant=False)
+        return self._forward_impl(h, edge_index, edge_weight)
 
 
 class PINNHead(nn.Module):
