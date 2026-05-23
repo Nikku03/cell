@@ -73,6 +73,7 @@ PAIRWISE_THRESHOLD  = 0.85         # NEW v7
 CONSERVATION_K      = 8            # NEW v7
 PERIODICITY_TOP_K   = 20           # NEW v7
 GENE_LAG_MAX        = 5            # NEW v7
+COUNT_BOUND_SLACK   = 0.1          # NEW v7.1: count-space high-side cap headroom
 SEED                = 0
 SAVE_DIR            = "/content/drive/MyDrive"
 GENE_TABLE_PATH     = "memory_bank/data/syn3a_gene_table.csv"
@@ -438,13 +439,30 @@ def lens_monotone(d_tr, d_va, mono_eps=MONO_EPS):
     return ok_up_va, ok_down_va, emp_up, emp_down
 
 
-def lens_bounds(tr, va, slack=0.1):
-    """1D: per-species bounds. Validated if ALL held-out points are within [lo,hi]."""
+def lens_bounds(tr, va, slack=0.1, lo=None, span=None,
+                raw_counts_tr=None, count_slack=COUNT_BOUND_SLACK):
+    """1D: per-species bounds. Validated if ALL held-out points are within [lo,hi].
+
+    If lo, span and raw_counts_tr are provided, additionally tighten the HIGH
+    side so the un-normalised count cannot exceed train_max * (1 + count_slack).
+    Without this, the 0.1 normalised slack expm1's to a 3-4x count-space
+    inflation (e.g. 110k -> 400k+) — which is what was producing the 2.8M / 3.5M
+    overshoot we saw in v6/v7.
+    """
     S = tr.shape[-1]
     tr_flat = tr.reshape(-1, S)
     va_flat = va.reshape(-1, S)
     lo_cand = tr_flat.min(axis=0) - slack
     hi_cand = tr_flat.max(axis=0) + slack
+    if lo is not None and span is not None and raw_counts_tr is not None:
+        count_max = raw_counts_tr.max(axis=tuple(range(raw_counts_tr.ndim - 1)))
+        count_cap = count_max * (1.0 + count_slack)
+        sl_cap   = np.sign(count_cap) * np.log1p(np.abs(count_cap))
+        hi_count_cap = (sl_cap - lo) / np.where(span > 1e-9, span, 1.0)
+        n_tight  = int((hi_count_cap < hi_cand).sum())
+        hi_cand  = np.minimum(hi_cand, hi_count_cap)
+        print(f"[lens_bounds] count-space cap tightened {n_tight}/{S} species "
+              f"({count_slack*100:.0f}% headroom over train max)")
     ok = (va_flat >= lo_cand).all(axis=0) & (va_flat <= hi_cand).all(axis=0)
     return lo_cand, hi_cand, ok
 
@@ -608,7 +626,8 @@ class DiscoveredPatterns:
         self.gene_chain   = {}
 
     @classmethod
-    def from_trajectories(cls, train_X, val_X, train_counts, val_counts, species_names):
+    def from_trajectories(cls, train_X, val_X, train_counts, val_counts, species_names,
+                          lo=None, span=None):
         tr, va = train_X.numpy(), val_X.numpy()
         d_tr   = np.diff(tr, axis=1)
         d_va   = np.diff(va, axis=1)
@@ -616,7 +635,8 @@ class DiscoveredPatterns:
         print("[patterns] 1D monotone lens ...")
         p.up_frac_va, p.down_frac_va, p.emp_up, p.emp_down = lens_monotone(d_tr, d_va)
         print("[patterns] 1D bounds lens ...")
-        p.lo_cand, p.hi_cand, p.bound_ok = lens_bounds(tr, va)
+        p.lo_cand, p.hi_cand, p.bound_ok = lens_bounds(
+            tr, va, lo=lo, span=span, raw_counts_tr=train_counts)
         print("[patterns] 2D pairwise lens ...")
         p.pairwise = lens_pairwise(d_tr, d_va)
         print("[patterns] low-d conservation lens ...")
@@ -1130,7 +1150,8 @@ def main():
     patterns = DiscoveredPatterns.from_trajectories(
         train_X.cpu(), test_X.cpu(),
         raw_counts_active[train_idx], raw_counts_active[test_idx],
-        species_active)
+        species_active,
+        lo=lo, span=span)
 
     # ── sort into Tier 1 (enforced) + Tier 2 (reported) ──────────────────
     ruleset, hyp = build_enforcement(known, patterns, species_active)
