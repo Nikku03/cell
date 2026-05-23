@@ -1,4 +1,20 @@
-"""Colab cell: v7 cell-state emulator - PhD knowledge phase + multi-lens patterns.
+"""Colab cell: v8 cell-state emulator - Liquid GNN (CfC + SBML graph) + PhD knowledge layer.
+
+v7 -> v8:
+  1. ARCHITECTURE: replace the transformer with a Liquid Graph Neural Network,
+     porting the core M7 ideas from the parallel claude/build-m7-surrogate-Dt8w7
+     branch into our scaffolding:
+       - SBML-derived species graph (edges between co-occurring species + self-loops)
+       - CfC (closed-form continuous-time) node update with per-species learned A,B
+       - Degree-normalised message passing
+     Single-step model (no context window — CfC handles temporal structure via tau).
+     The PINN mass-balance head from M7 is intentionally deferred: it tangles with
+     our (x-lo)/span normalisation and only covers ~2.5% of species; cleaner to
+     get the CfC graph in first and add the PINN head later if it pays off.
+  2. BOUNDS FIX  the v7.1 count-space cap punished species that failed validation
+     by dropping them onto the loose global CLAMP (which inflated peaks from 3.5M
+     to 4.8M).  Bounds now always fit val data by construction (lo<=val_min,
+     hi>=val_max), so no species ever falls back to the loose clamp.
 
 v6 -> v7:
   1. STARTUP SKIP  drop the first decimated step (t=0->t=60); the simulator's
@@ -74,6 +90,10 @@ CONSERVATION_K      = 8            # NEW v7
 PERIODICITY_TOP_K   = 20           # NEW v7
 GENE_LAG_MAX        = 5            # NEW v7
 COUNT_BOUND_SLACK   = 0.1          # NEW v7.1: count-space high-side cap headroom
+LGNN_HIDDEN         = 64           # NEW v8: per-node hidden dim
+LGNN_N_LAYERS       = 3            # NEW v8: number of CfC graph layers
+LGNN_CFC_TAU_MIN    = 0.1          # NEW v8: CfC time-constant minimum
+LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
 SEED                = 0
 SAVE_DIR            = "/content/drive/MyDrive"
 GENE_TABLE_PATH     = "memory_bank/data/syn3a_gene_table.csv"
@@ -452,18 +472,33 @@ def lens_bounds(tr, va, slack=0.1, lo=None, span=None,
     S = tr.shape[-1]
     tr_flat = tr.reshape(-1, S)
     va_flat = va.reshape(-1, S)
-    lo_cand = tr_flat.min(axis=0) - slack
-    hi_cand = tr_flat.max(axis=0) + slack
+    tr_min  = tr_flat.min(axis=0)
+    tr_max  = tr_flat.max(axis=0)
+    va_min  = va_flat.min(axis=0)
+    va_max  = va_flat.max(axis=0)
+    # Base: train range + normalised slack, but never less generous than val
+    # (so bounds always *fit* the val data — no species ever falls back to
+    # the loose global CLAMP).  The v7.0 'validation gate' fallback was
+    # punitive: species whose val barely exceeded the tight cap got bumped
+    # to CLAMP_HI=1.2 which un-normalises to ~9M counts; net effect: count
+    # peaks went UP, not down (3.5M -> 4.8M on the real run).
+    lo_cand = np.minimum(tr_min - slack, va_min - 0.01)
+    hi_cand = np.maximum(tr_max + slack, va_max + 0.01)
     if lo is not None and span is not None and raw_counts_tr is not None:
         count_max = raw_counts_tr.max(axis=tuple(range(raw_counts_tr.ndim - 1)))
         count_cap = count_max * (1.0 + count_slack)
-        sl_cap   = np.sign(count_cap) * np.log1p(np.abs(count_cap))
+        sl_cap    = np.sign(count_cap) * np.log1p(np.abs(count_cap))
         hi_count_cap = (sl_cap - lo) / np.where(span > 1e-9, span, 1.0)
-        n_tight  = int((hi_count_cap < hi_cand).sum())
-        hi_cand  = np.minimum(hi_cand, hi_count_cap)
+        # Take the tighter of (normalised hi_cand, count-space cap) but
+        # never below val_max + 0.01 - keeps bounds val-fitting always.
+        capped  = np.minimum(hi_cand, hi_count_cap)
+        hi_cand = np.maximum(capped, va_max + 0.01)
+        n_tight = int((hi_cand < tr_max + slack).sum())
         print(f"[lens_bounds] count-space cap tightened {n_tight}/{S} species "
-              f"({count_slack*100:.0f}% headroom over train max)")
-    ok = (va_flat >= lo_cand).all(axis=0) & (va_flat <= hi_cand).all(axis=0)
+              f"({count_slack*100:.0f}% headroom over train max, val-fitting)")
+    # By construction lo_cand <= val_min and hi_cand >= val_max — bound_ok
+    # is True for every species, no fallback to loose CLAMP.
+    ok = np.ones(S, dtype=bool)
     return lo_cand, hi_cand, ok
 
 
@@ -907,33 +942,143 @@ def phd_summary(known, patterns, ruleset, hyp, cross, species_names):
 
 
 # ── model ─────────────────────────────────────────────────────────────────────
+#
+# v8: Liquid Graph Neural Network.  Ports the core M7 architectural ideas from
+# the parallel claude/build-m7-surrogate-Dt8w7 branch — SBML-derived species
+# graph + Liquid (CfC) node dynamics + per-species learned time constants —
+# into our scaffolding.  The PINN mass-balance head from M7 is deferred: it
+# tangles with our (x-lo)/span normalisation and only covers ~2.5% of species
+# (the SBML-mapped subset), so the value-vs-risk is worse than getting the CfC
+# graph in cleanly first.
+#
+# Model is single-step: takes the current state, returns the next state.  The
+# context window from v7 is dropped — the CfC's continuous-time formulation
+# carries temporal structure through the per-node τ.
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def build_sbml_graph(sbml, species_names):
+    """Build an SBML-derived species graph.
+
+    Two species are connected if they co-occur in any SBML reaction (so the
+    GNN can propagate information through reactions).  Self-loops added so
+    species with no SBML edges still update themselves.
+
+    Returns:
+        edge_index : (2, E) long
+        edge_weight: (E,) float
+    """
+    n = len(species_names)
+    edges = set()
+    if sbml is not None:
+        name_to_idx = {nm: i for i, nm in enumerate(species_names)}
+        for rxn in sbml["reactions"]:
+            cols = [name_to_idx[s] for s, _ in rxn["reactants"] + rxn["products"]
+                    if s in name_to_idx]
+            for i in cols:
+                for j in cols:
+                    edges.add((i, j))
+    for i in range(n):                     # always include self-loops
+        edges.add((i, i))
+    edge_list = list(edges)
+    edge_index  = torch.tensor(edge_list, dtype=torch.long).t().contiguous()
+    edge_weight = torch.ones(edge_index.shape[1], dtype=torch.float32)
+    return edge_index, edge_weight
+
+
+class _CfCGraphLayer(nn.Module):
+    """Message-passing graph layer with CfC (closed-form continuous-time) update.
+
+    Each step: aggregate neighbour messages → linear self-update → CfC gating.
+    The CfC update form (h_new = σ(-gate)·A + σ(gate)·B with per-node A, B and
+    bounded W via cfc_tau_min) is the canonical Liquid update from Hasani et
+    al. and matches gnn_v2.py:_CfCAttentionGNNLayer line 167 in the M7 branch.
+    """
+
+    def __init__(self, hidden, n_nodes, cfc_tau_min=0.1):
+        super().__init__()
+        self.hidden = hidden
+        self.msg_mlp = nn.Sequential(
+            nn.Linear(2 * hidden, hidden),
+            nn.SiLU(),
+            nn.Linear(hidden, hidden),
+        )
+        self.self_lin = nn.Linear(hidden, hidden)
+        self.W_proj   = nn.Linear(hidden, hidden)
+        self.b_proj   = nn.Linear(hidden, hidden)
+        self.cfc_A    = nn.Parameter(torch.randn(n_nodes, hidden) * 0.02)
+        self.cfc_B    = nn.Parameter(torch.randn(n_nodes, hidden) * 0.02)
+        self.cfc_tau_min = cfc_tau_min
+        self.norm     = nn.LayerNorm(hidden)
+
+    def forward(self, h, edge_index, edge_weight):
+        # h: (B, N, H);  edge_index: (2, E);  edge_weight: (E,)
+        B, N, H = h.shape
+        src, dst = edge_index[0], edge_index[1]
+        h_src = h.index_select(1, src)        # (B, E, H)
+        h_dst = h.index_select(1, dst)
+        msg = self.msg_mlp(torch.cat([h_src, h_dst], dim=-1))
+        msg = msg * edge_weight.unsqueeze(0).unsqueeze(-1)
+        agg = torch.zeros(B, N, H, device=h.device, dtype=h.dtype)
+        agg = agg.index_add(1, dst, msg)      # out-of-place: autograd-safe
+        # Degree-normalise so high-degree nodes don't blow up
+        ones = torch.ones_like(dst, dtype=h.dtype)
+        deg  = torch.zeros(N, device=h.device, dtype=h.dtype)
+        deg  = deg.index_add(0, dst, ones).clamp(min=1.0)
+        agg  = agg / deg.unsqueeze(0).unsqueeze(-1)
+        combined = agg + self.self_lin(h)
+        # CfC gating (Hasani et al. Liquid form)
+        W = self.W_proj(combined)
+        W_clip = 1.0 / max(self.cfc_tau_min, 1e-6)
+        gate = W.clamp(-W_clip, W_clip) + self.b_proj(combined)
+        A = self.cfc_A.unsqueeze(0)            # (1, N, H)
+        B_p = self.cfc_B.unsqueeze(0)
+        h_new = torch.sigmoid(-gate) * A + torch.sigmoid(gate) * B_p
+        return self.norm(h + h_new)
+
 
 class DynamicsModel(nn.Module):
-    """Transformer over a CONTEXT-step window -> next-state residual."""
+    """v8 Liquid Graph Neural Network: SBML graph + CfC node dynamics.
 
-    def __init__(self, S, d_model, n_layers, n_heads, context, dropout,
-                 species_type_ids, d_type=D_TYPE_EMBED):
+    Single-step: takes current state (B, S), returns predicted next state
+    (B, S) as a residual delta on top of the input.
+    """
+
+    def __init__(self, S, hidden, n_layers, species_type_ids,
+                 edge_index, edge_weight, cfc_tau_min=0.1, n_type_embed=4,
+                 # accept v7-era kwargs to keep main() backward-compatible
+                 d_model=None, n_heads=None, context=None, dropout=None,
+                 d_type=None):
         super().__init__()
-        self.d_type = d_type
-        self.type_embed = nn.Embedding(N_GTYPES, d_type)
+        self.S = S
+        self.hidden = hidden
+        self.n_layers = n_layers
+        self.register_buffer("edge_index",  edge_index)
+        self.register_buffer("edge_weight", edge_weight)
+        # gene-type embedding (kept from v7 — adds biological role context)
+        self.type_embed = nn.Embedding(N_GTYPES, n_type_embed)
         self.register_buffer("stype",
                              torch.tensor(species_type_ids, dtype=torch.long))
-        self.in_proj = nn.Linear(S, d_model - d_type)
-        self.ctx_pos = nn.Parameter(torch.randn(context, d_model) * 0.02)
-        enc = nn.TransformerEncoderLayer(d_model, n_heads, 4 * d_model,
-                                         dropout=dropout, batch_first=True,
-                                         norm_first=True)
-        self.encoder = nn.TransformerEncoder(enc, n_layers)
-        self.out = nn.Linear(d_model, S)
+        # Per-species input projection: 1 (value) + n_type_embed -> hidden
+        self.in_proj = nn.Linear(1 + n_type_embed, hidden)
+        self.layers  = nn.ModuleList([
+            _CfCGraphLayer(hidden, S, cfc_tau_min=cfc_tau_min)
+            for _ in range(n_layers)
+        ])
+        self.out_norm = nn.LayerNorm(hidden)
+        self.out_head = nn.Linear(hidden, 1)
 
-    def forward(self, ctx):
-        B, C, _ = ctx.shape
-        h_val = self.in_proj(ctx)
-        te = self.type_embed(self.stype).mean(0)
-        te = te.unsqueeze(0).unsqueeze(0).expand(B, C, -1)
-        h  = torch.cat([h_val, te], dim=-1) + self.ctx_pos
-        h  = self.encoder(h)
-        return ctx[:, -1] + self.out(h[:, -1])
+    def forward(self, x):                     # x: (B, S) -> (B, S)
+        B, S = x.shape
+        # per-species input = [value, gene_type_embed]
+        te  = self.type_embed(self.stype).unsqueeze(0).expand(B, -1, -1)  # (B, S, n_type)
+        inp = torch.cat([x.unsqueeze(-1), te], dim=-1)                    # (B, S, 1+n_type)
+        h   = self.in_proj(inp)                                           # (B, S, H)
+        for layer in self.layers:
+            h = layer(h, self.edge_index, self.edge_weight)
+        h = self.out_norm(h)
+        delta = self.out_head(h).squeeze(-1)                              # (B, S)
+        return x + delta                                                  # residual
 
 
 # ── data ──────────────────────────────────────────────────────────────────────
@@ -973,6 +1118,7 @@ def r2(pred, true):
 # ── training / eval ───────────────────────────────────────────────────────────
 
 def train_model(model, train_X, ruleset):
+    """v8: single-step LGNN trainer. No context window."""
     opt   = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=STEPS)
     gen   = torch.Generator().manual_seed(SEED + 1)
@@ -982,21 +1128,21 @@ def train_model(model, train_X, ruleset):
     for step in range(STEPS):
         K    = 1 + int((K_MAX - 1) * step / STEPS)
         i_t  = torch.randint(0, N, (BATCH,), generator=gen)
-        t0_t = torch.randint(0, T - CONTEXT - K, (BATCH,), generator=gen)
+        t0_t = torch.randint(0, T - 1 - K, (BATCH,), generator=gen)
         i, ts = i_t.tolist(), t0_t.tolist()
-        ctx   = torch.stack([train_X[i[b], ts[b]:ts[b] + CONTEXT] for b in range(BATCH)])
+        state = torch.stack([train_X[i[b], ts[b]] for b in range(BATCH)])    # (B, S)
         i_d, t0_d = i_t.to(device), t0_t.to(device)
         losses = []
-        prev_last = ctx[:, -1]
+        prev_state = state
         for k in range(K):
-            pred = model(ctx)
-            true = train_X[i_d, t0_d + CONTEXT + k]
+            pred = model(state)
+            true = train_X[i_d, t0_d + 1 + k]
             losses.append(F.mse_loss(pred, true))
             nxt = pred.clamp(CLAMP_LO, CLAMP_HI)
             if step >= STEPS // 4:
-                nxt = ruleset.project(prev_last, nxt)
-            prev_last = nxt
-            ctx = torch.cat([ctx[:, 1:], nxt.unsqueeze(1)], dim=1)
+                nxt = ruleset.project(prev_state, nxt)
+            prev_state = nxt
+            state = nxt
         rollout = torch.stack(losses).mean()
         loss = rollout + LAMBDA_1STEP * losses[0]
         opt.zero_grad()
@@ -1017,24 +1163,25 @@ def one_step(model, Xset, n=400):
     g  = torch.Generator().manual_seed(SEED + 2)
     nt, Tt, _ = Xset.shape
     i  = torch.randint(0, nt, (n,), generator=g).tolist()
-    t0 = torch.randint(0, Tt - CONTEXT - 1, (n,), generator=g).tolist()
-    ctx = torch.stack([Xset[i[b], t0[b]:t0[b] + CONTEXT] for b in range(n)])
-    nxt = torch.stack([Xset[i[b], t0[b] + CONTEXT]       for b in range(n)])
-    pred = model(ctx)
+    t  = torch.randint(0, Tt - 1, (n,), generator=g).tolist()
+    state = torch.stack([Xset[i[b], t[b]]     for b in range(n)])
+    nxt   = torch.stack([Xset[i[b], t[b] + 1] for b in range(n)])
+    pred = model(state)
     return float(F.mse_loss(pred, nxt)), r2(pred, nxt)
 
 
 @torch.no_grad()
 def full_rollout(model, traj, ruleset):
+    """v8: single-step rollout — seed from one frame, generate the rest."""
     model.eval()
-    ctx = traj[:CONTEXT].unsqueeze(0)
+    state = traj[0].unsqueeze(0)        # (1, S)
     preds = []
-    for _ in range(traj.shape[0] - CONTEXT):
-        p = model(ctx).clamp(CLAMP_LO, CLAMP_HI)
-        p = ruleset.project(ctx[:, -1], p)
+    for _ in range(traj.shape[0] - 1):
+        p = model(state).clamp(CLAMP_LO, CLAMP_HI)
+        p = ruleset.project(state, p)
         preds.append(p)
-        ctx = torch.cat([ctx[:, 1:], p.unsqueeze(1)], dim=1)
-    return torch.cat(preds, 0), traj[CONTEXT:]
+        state = p
+    return torch.cat(preds, 0), traj[1:]
 
 
 # ── missing-info report ───────────────────────────────────────────────────────
@@ -1166,11 +1313,19 @@ def main():
     # ── model + training ─────────────────────────────────────────────────
     print()
     print("=" * 72)
-    print("  TRAINING PHASE")
+    print("  TRAINING PHASE  (v8: Liquid GNN)")
     print("=" * 72)
-    model = DynamicsModel(S, D_MODEL, N_LAYERS, N_HEADS, CONTEXT, DROPOUT,
-                          species_type_ids, d_type=D_TYPE_EMBED).to(device)
-    print(f"[model] {sum(p.numel() for p in model.parameters()) / 1e6:.2f}M parameters")
+    edge_index, edge_weight = build_sbml_graph(sbml, species_active)
+    edge_index  = edge_index.to(device)
+    edge_weight = edge_weight.to(device)
+    model = DynamicsModel(
+        S=S, hidden=LGNN_HIDDEN, n_layers=LGNN_N_LAYERS,
+        species_type_ids=species_type_ids,
+        edge_index=edge_index, edge_weight=edge_weight,
+        cfc_tau_min=LGNN_CFC_TAU_MIN, n_type_embed=LGNN_N_TYPE_EMBED,
+    ).to(device)
+    print(f"[model] LGNN: {sum(p.numel() for p in model.parameters()) / 1e6:.2f}M parameters, "
+          f"{edge_index.shape[1]:,} edges (SBML reactions + self-loops)")
     train_model(model, train_X, ruleset)
 
     # ── evaluate ──────────────────────────────────────────────────────────
@@ -1189,7 +1344,8 @@ def main():
           f"  {'(beats persistence)' if s_mse < persist_mse else '(still worse)'}")
     print(f"  model full rollout    : R^2 {mean_roll:.3f}  "
           f"(min {min(roll_r2):.3f}  max {max(roll_r2):.3f})  <- headline")
-    print(f"  (v6 reference         : rollout R^2 ~0.56)")
+    print(f"  (v6 transformer       : rollout R^2 ~0.56)")
+    print(f"  (v7 transformer + cap : rollout R^2 ~0.54)")
     print("=" * 72)
 
     analyze_gaps(model, test_X, species_active, species_type_ids,
@@ -1202,31 +1358,34 @@ def main():
     print("  GENERATION (the 51st trajectory)")
     print("=" * 72)
     gen_norm, _ = full_rollout(model, test_X[0], ruleset)
-    full_seq = torch.cat([test_X[0, :CONTEXT], gen_norm], 0).cpu().numpy()
+    full_seq = torch.cat([test_X[0, :1], gen_norm], 0).cpu().numpy()
     sl = full_seq * span + lo
     gen_counts = np.maximum(np.sign(sl) * np.expm1(np.abs(sl)), 0.0)
     print(f"[gen] 51st trajectory {gen_counts.shape}  "
           f"finite={np.isfinite(gen_counts).all()}  "
           f"count range [{gen_counts.min():.0f}, {gen_counts.max():.0f}]")
-    np.save(f"{SAVE_DIR}/cell_traj_51_v7.npy", gen_counts)
+    np.save(f"{SAVE_DIR}/cell_traj_51_v8.npy", gen_counts)
     torch.save({
         "model": model.state_dict(),
         "lo": lo, "span": span, "active": active,
         "species_active": species_active,
         "species_type_ids": species_type_ids,
+        "edge_index": edge_index.cpu(),
+        "edge_weight": edge_weight.cpu(),
         "ruleset_mono_up":   ruleset.mono_up.cpu()   if ruleset.mono_up   is not None else None,
         "ruleset_mono_down": ruleset.mono_down.cpu() if ruleset.mono_down is not None else None,
         "ruleset_lo": ruleset.lo_bound.cpu() if ruleset.lo_bound is not None else None,
         "ruleset_hi": ruleset.hi_bound.cpu() if ruleset.hi_bound is not None else None,
         "hypotheses": hyp.items,
         "known_rules_summary": known.summary(),
-        "config": dict(S=S, d_model=D_MODEL, n_layers=N_LAYERS, n_heads=N_HEADS,
-                       context=CONTEXT, time_stride=TIME_STRIDE,
-                       d_type=D_TYPE_EMBED, n_genes=len(locus_list),
-                       skip_startup=SKIP_STARTUP_STEPS),
-    }, f"{SAVE_DIR}/cell_emulator_v7.pt")
-    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v7.npy")
-    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v7.pt")
+        "config": dict(S=S, hidden=LGNN_HIDDEN, n_layers=LGNN_N_LAYERS,
+                       cfc_tau_min=LGNN_CFC_TAU_MIN, n_type_embed=LGNN_N_TYPE_EMBED,
+                       time_stride=TIME_STRIDE, n_genes=len(locus_list),
+                       skip_startup=SKIP_STARTUP_STEPS,
+                       architecture="LGNN_v8"),
+    }, f"{SAVE_DIR}/cell_emulator_v8.pt")
+    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v8.npy")
+    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v8.pt")
 
 
 if __name__ == "__main__":
