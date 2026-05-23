@@ -1,4 +1,21 @@
-"""Colab cell: v9 cell-state emulator - Liquid GNN + PINN head + stochastic head + biology eval.
+"""Colab cell: v10 (Tier C) cell-state emulator - full-resolution LGNN + richer graph.
+
+v9 -> v10 (Tier C):
+  1. TIME_STRIDE=1  full simulator resolution (7,200 timesteps/traj vs 120).
+     ~60x more starting positions for training; sees fast-cascade dynamics
+     that the 60s stride averaged over.
+  2. RICHER GRAPH  build_full_graph adds central-dogma edges per gene,
+     enzyme->flux edges (from kinetics' 160 reaction->enzyme links), and
+     subunit->complex edges, on top of the SBML-reaction co-occurrence.
+     Without this, ~5,800 non-SBML species had no graph path to anything
+     except themselves — perturbations couldn't propagate.
+  3. STEPS=8,000  4x training-step budget to cover the larger data manifold.
+  4. KO_N_STEPS=300  knockout rollout = 5 min biological at 1s stride,
+     instead of 30s — gives fast cascades time to register.
+  5. LENS_TIME_STRIDE=60  the pattern-discovery lenses subsample to keep the
+     pairwise-correlation / SVD memory at v9 scale.
+  Hardware: this run needs ~80 GB GPU and ~30 GB system RAM (Colab Pro+).
+  Wall-clock: ~80-100 min on H100 / A100 80GB.
 
 v8 -> v9:
   1. PINN HEAD  hardwired mass-balance for SBML-covered species.  GNN predicts
@@ -83,8 +100,12 @@ except ImportError:
 
 # ── config ───────────────────────────────────────────────────────────────────
 PARQUET_DIR         = ""
-TIME_STRIDE         = 60
-SKIP_STARTUP_STEPS  = 1            # NEW v7: drop first decimated step (t=0->t=60)
+TIME_STRIDE         = 1            # v10 Tier C: full-resolution training (was 60)
+LENS_TIME_STRIDE    = 60           # v10: subsample for the lens phase (memory)
+# Drop t=0 and t=1 of the simulator (the unnatural startup transient).  At
+# TIME_STRIDE=1 that's the first 2 decimated steps; at TIME_STRIDE=60 it's the
+# first 1 step (no choice, the stride already swallows seconds 1-59).
+SKIP_STARTUP_STEPS  = max(1, 2 // TIME_STRIDE)
 CONTEXT             = 8
 D_MODEL             = 256
 D_TYPE_EMBED        = 16
@@ -92,7 +113,7 @@ N_LAYERS            = 3
 N_HEADS             = 8
 DROPOUT             = 0.1
 N_TRAIN_TRAJ        = 40
-STEPS               = 2000
+STEPS               = 8000         # v10 Tier C: bumped from 2000 — full-res data has 60x more starts
 K_MAX               = 64
 BATCH               = 16           # v9.1: was 32, halved to fit BPTT memory after LGNN switch
 LR                  = 3e-4
@@ -116,7 +137,7 @@ USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML spec
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 PINN_RATE_CLIP      = 6.0          # NEW v9: log-space rate clip (prevents expm1 blow-up)
 VAR_R2_TOP_K        = 200          # NEW v9: top-K species (by variance) for the honest R²
-KO_N_STEPS          = 30           # NEW v9: rollout length for knockout sweep
+KO_N_STEPS          = 300          # v10 Tier C: 5 min biological at 1s stride (was 30)
 KO_BATCH_SIZE       = 32           # NEW v9: parallel knockouts per batch
 BREUER_PATH         = "memory_bank/data/syn3a_essentiality_breuer2019.csv"
 SEED                = 0
@@ -1031,6 +1052,97 @@ def build_sbml_graph(sbml, species_names):
     return edge_index, edge_weight
 
 
+def build_full_graph(sbml, kinetics, complexes, species_names):
+    """v10 Tier C: SBML co-occurrence + central dogma + enzyme→flux + subunit→complex.
+
+    Five edge sources, all bidirectional in the GNN:
+      1. SBML reaction co-occurrence (v8) — species that appear together in any
+         SBML reaction.
+      2. Central dogma per gene — G ↔ R ↔ P ↔ RP ↔ RB within each locus.
+         Without this, ~5,800 non-SBML species had no path to anything except
+         themselves; perturbations couldn't propagate.
+      3. Enzyme → flux — P_xxxx (the enzyme protein) ↔ F_yyyy (the flux of the
+         reaction it catalyses), from kinetic_params.xlsx's reaction→enzyme map.
+      4. Subunit → complex — each subunit protein ↔ the complex species, from
+         complex_formation.xlsx.
+      5. Self-loops on every node, so isolated species still update themselves.
+
+    Defensive: every added edge is only added if both endpoints actually exist
+    in the species list.  Edge count returned in the print line.
+    """
+    n = len(species_names)
+    name_to_idx = {nm: i for i, nm in enumerate(species_names)}
+    edges = set()
+    n_sbml = n_cd = n_enz = n_cplx = 0
+
+    # 1. SBML reaction co-occurrence
+    if sbml is not None:
+        for rxn in sbml["reactions"]:
+            cols = [name_to_idx[s] for s, _ in rxn["reactants"] + rxn["products"]
+                    if s in name_to_idx]
+            for i in cols:
+                for j in cols:
+                    if (i, j) not in edges:
+                        edges.add((i, j)); n_sbml += 1
+
+    # 2. Central dogma per gene (G, R, R_d, RP, RP_f, RB, RB_p, RB_pe, RB_cp, P, C_P)
+    CD_CHANNELS = {"G", "R", "R_d", "RP", "RP_f",
+                   "RB", "RB_p", "RB_pe", "RB_cp", "P", "C_P"}
+    gene_cd = {}
+    for i, name in enumerate(species_names):
+        pre, loc = parse_species(name)
+        if pre in CD_CHANNELS:
+            gene_cd.setdefault(_locus_key(loc), []).append(i)
+    for locus, members in gene_cd.items():
+        for i in members:
+            for j in members:
+                if i != j and (i, j) not in edges:
+                    edges.add((i, j)); n_cd += 1
+
+    # 3. Enzyme → flux (from kinetics' reaction→enzyme map)
+    if kinetics is not None and "enzymes" in kinetics:
+        for rxn_id, enz in kinetics["enzymes"].items():
+            flux_name = f"F_{rxn_id}"
+            if enz in name_to_idx and flux_name in name_to_idx:
+                a, b = name_to_idx[enz], name_to_idx[flux_name]
+                if (a, b) not in edges:
+                    edges.add((a, b)); n_enz += 1
+                if (b, a) not in edges:
+                    edges.add((b, a)); n_enz += 1
+
+    # 4. Subunit → complex (from complex_formation)
+    if complexes is not None:
+        for cx in complexes["complexes"]:
+            cname = cx["name"]
+            if cname not in name_to_idx:
+                continue
+            cidx = name_to_idx[cname]
+            for gene_id, _stoi in cx["subunits"]:
+                # Try a few naming conventions for the subunit protein
+                for cand in (f"P_{gene_id}", f"P_{gene_id.zfill(4)}", f"P_{gene_id.lstrip('0')}"):
+                    if cand in name_to_idx:
+                        a = name_to_idx[cand]
+                        if (a, cidx) not in edges:
+                            edges.add((a, cidx)); n_cplx += 1
+                        if (cidx, a) not in edges:
+                            edges.add((cidx, a)); n_cplx += 1
+                        break
+
+    # 5. Self-loops
+    n_self = 0
+    for i in range(n):
+        if (i, i) not in edges:
+            edges.add((i, i)); n_self += 1
+
+    edge_list = list(edges)
+    edge_index  = torch.tensor(edge_list, dtype=torch.long).t().contiguous()
+    edge_weight = torch.ones(edge_index.shape[1], dtype=torch.float32)
+    print(f"[graph] full graph: {edge_index.shape[1]:,} edges  "
+          f"(SBML {n_sbml:,} + central-dogma {n_cd:,} + enzyme-flux {n_enz:,} + "
+          f"subunit-complex {n_cplx:,} + self {n_self:,})")
+    return edge_index, edge_weight
+
+
 def build_stoich_matrix(sbml, species_names):
     """Build the stoichiometric matrix S restricted to SBML species present
     in our trajectory.  Used by the PINN head's mass-balance bridge.
@@ -1292,6 +1404,8 @@ def t_signed_expm1(x):
 
 
 def load_data(skip_startup=True):
+    """Load all parquet trajectories.  v10: pre-allocate the stacked array so we
+    don't briefly hold two copies (12 + 12 GB at full resolution)."""
     assert HAS_PANDAS, "pandas required - install or run on Colab"
     pat = (f"{PARQUET_DIR}/counts_and_fluxes*.parquet" if PARQUET_DIR
            else "/content/drive/MyDrive/**/counts_and_fluxes*.parquet")
@@ -1299,18 +1413,22 @@ def load_data(skip_startup=True):
                    key=lambda p: int(p.rsplit(".", 2)[-2]))
     assert files, "no parquet files - set PARQUET_DIR"
     print(f"[data] {len(files)} trajectory files")
-    trajs, species_names = [], None
-    for f in files:
+    species_names = None
+    out = None
+    for fi, f in enumerate(files):
         df = pd.read_parquet(f)
         if species_names is None:
             species_names = list(df.index)
         arr = df.to_numpy(dtype=np.float32)[:, ::TIME_STRIDE].T
         if skip_startup:
             arr = arr[SKIP_STARTUP_STEPS:]
-        trajs.append(arr)
+        if out is None:
+            out = np.empty((len(files), *arr.shape), dtype=np.float32)
+            print(f"[data] pre-allocated {out.nbytes / 1e9:.2f} GB for stacked array")
+        out[fi] = arr
     if skip_startup:
         print(f"[data] startup skip: dropped first {SKIP_STARTUP_STEPS} decimated step(s)")
-    return np.stack(trajs, 0), species_names
+    return out, species_names
 
 
 def r2(pred, true):
@@ -1613,7 +1731,8 @@ def main():
     print(f"[device] {device}")
     print()
     print("=" * 72)
-    print("  v9  -  LGNN + PINN head + stochastic head + knockout sweep")
+    print("  v10 Tier C — full-resolution training + richer graph")
+    print("    (LGNN + PINN head + stochastic head + central-dogma + enzyme-flux + subunit-complex edges)")
     print("=" * 72)
 
     raw_counts, species_names = load_data(skip_startup=True)
@@ -1663,11 +1782,19 @@ def main():
     print(f"[diag] persistence: MSE {persist_mse:.5f}  R^2 {persist_r2:.3f}")
 
     # ── DiscoveredPatterns (multi-lens) ──────────────────────────────────
+    # v10: subsample to LENS_TIME_STRIDE for memory.  At full resolution the
+    # pairwise correlation matrix and the SVD conservation lens would
+    # materialise tensors of (40*7200, 5933) ≈ 6.5 GB — too tight.  Subsampling
+    # by 60 brings it back to current Tier-A scale; statistical patterns are
+    # preserved.
     print()
-    print("[knowledge] running multi-lens pattern discovery ...")
+    lts = LENS_TIME_STRIDE if TIME_STRIDE == 1 else 1
+    print(f"[knowledge] running multi-lens pattern discovery "
+          f"(subsampling by {lts} for memory) ...")
     patterns = DiscoveredPatterns.from_trajectories(
-        train_X.cpu(), test_X.cpu(),
-        raw_counts_active[train_idx], raw_counts_active[test_idx],
+        train_X[:, ::lts].cpu(), test_X[:, ::lts].cpu(),
+        raw_counts_active[train_idx][:, ::lts],
+        raw_counts_active[test_idx][:, ::lts],
         species_active,
         lo=lo, span=span)
 
@@ -1684,9 +1811,9 @@ def main():
     # ── model + training ─────────────────────────────────────────────────
     print()
     print("=" * 72)
-    print("  TRAINING PHASE  (v9: Liquid GNN + PINN head + stochastic head)")
+    print("  TRAINING PHASE  (v10 Tier C: full-res LGNN + PINN + stochastic + richer graph)")
     print("=" * 72)
-    edge_index, edge_weight = build_sbml_graph(sbml, species_active)
+    edge_index, edge_weight = build_full_graph(sbml, kinetics, complexes, species_active)
     edge_index  = edge_index.to(device)
     edge_weight = edge_weight.to(device)
     sbml_mask, sbml_indices, stoich_matrix = build_stoich_matrix(sbml, species_active)
@@ -1734,8 +1861,8 @@ def main():
     print(f"  model full rollout       : R^2 {mean_roll:.3f}  "
           f"(min {min(roll_r2):.3f}  max {max(roll_r2):.3f})  <- mean over all species")
     print(f"  median R² on top-{n_var} variable species : {var_r2:+.3f}  <- HONEST METRIC")
-    print(f"  (v6 transformer          : rollout R^2 ~0.56,  honest unknown)")
-    print(f"  (v7 transformer + cap    : rollout R^2 ~0.54,  honest unknown)")
+    print(f"  (v6 transformer (60s)    : rollout R^2 ~0.56,  honest unknown)")
+    print(f"  (v9 LGNN (60s stride)    : rollout R^2 ~0.64,  honest +0.37)")
     print("=" * 72)
 
     analyze_gaps(model, test_X, species_active, species_type_ids,
@@ -1759,7 +1886,7 @@ def main():
     print(f"[gen] 51st trajectory {gen_counts.shape}  "
           f"finite={np.isfinite(gen_counts).all()}  "
           f"count range [{gen_counts.min():.0f}, {gen_counts.max():.0f}]")
-    np.save(f"{SAVE_DIR}/cell_traj_51_v9.npy", gen_counts)
+    np.save(f"{SAVE_DIR}/cell_traj_51_v10.npy", gen_counts)
     torch.save({
         "model": model.state_dict(),
         "lo": lo, "span": span, "active": active,
@@ -1780,10 +1907,10 @@ def main():
                        time_stride=TIME_STRIDE, n_genes=len(locus_list),
                        skip_startup=SKIP_STARTUP_STEPS,
                        use_pinn=pinn_active, use_stochastic=USE_STOCHASTIC_HEAD,
-                       architecture="LGNN_v9"),
-    }, f"{SAVE_DIR}/cell_emulator_v9.pt")
-    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v9.npy")
-    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v9.pt")
+                       architecture="LGNN_v10_TierC"),
+    }, f"{SAVE_DIR}/cell_emulator_v10.pt")
+    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v10.npy")
+    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v10.pt")
 
 
 if __name__ == "__main__":
