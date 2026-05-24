@@ -184,7 +184,7 @@ LGNN_CFC_TAU_MIN    = 0.1          # NEW v8: CfC time-constant minimum
 LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
 USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML species
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
-USE_TORCH_COMPILE   = False        # NEW v13: torch.compile the model (~1.5x extra, experimental)
+USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 PINN_RATE_CLIP      = 6.0          # NEW v9: log-space rate clip (prevents expm1 blow-up)
 VAR_R2_TOP_K        = 200          # NEW v9: top-K species (by variance) for the honest R²
 KO_N_STEPS          = 300          # v10 Tier C: 5 min biological at 1s stride (was 30)
@@ -2135,8 +2135,11 @@ def main():
     # v13: optional torch.compile for an extra ~1.5x speedup
     if USE_TORCH_COMPILE and device == "cuda":
         try:
-            model = torch.compile(model)
-            print("[model] torch.compile enabled - first training step will be slow (graph capture)")
+            # dynamic=True handles K varying per training step (curriculum) without
+            # forcing recompile each iteration
+            model = torch.compile(model, dynamic=True)
+            print("[model] torch.compile enabled (dynamic shapes) - first training step "
+                  "will be slow (graph capture, ~30-60s)")
         except Exception as e:
             print(f"[model] torch.compile failed ({e}) - running in eager mode")
     train_model(model, train_X, ruleset)
