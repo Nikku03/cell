@@ -188,6 +188,7 @@ USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
 SKIP_TRAINING_IF_LOADED = False    # v13.6: if RESUME loaded weights, skip training (eval-only run)
+CHECKPOINT_EVERY    = 250          # v13.7: write a rolling mid-training checkpoint every N steps (0 to disable)
 PINN_RATE_CLIP      = 6.0          # NEW v9: log-space rate clip (prevents expm1 blow-up)
 VAR_R2_TOP_K        = 200          # NEW v9: top-K species (by variance) for the honest R²
 KO_N_STEPS          = 300          # v10 Tier C: 5 min biological at 1s stride (was 30)
@@ -1790,6 +1791,24 @@ def train_model(model, train_X, ruleset):
                   f"1-step {float(first_loss.detach()):.5f}  "
                   f"rollout {sum(all_loss_means)/len(all_loss_means):.5f}", flush=True)
 
+        # v13.7: rolling mid-training checkpoint so an interrupt mid-run doesn't lose progress
+        if (CHECKPOINT_EVERY > 0
+                and (step + 1) % CHECKPOINT_EVERY == 0
+                and step + 1 < STEPS):
+            try:
+                # If torch.compile wrapped the model, unwrap for state_dict
+                inner = getattr(model, "_orig_mod", model)
+                path = f"{SAVE_DIR}/cell_emulator_v13_latest.pt"
+                torch.save({
+                    "model": inner.state_dict(),
+                    "step":  step + 1,
+                    "config": dict(S=S, hidden=LGNN_HIDDEN, n_layers=LGNN_N_LAYERS,
+                                   architecture="LGNN_v13_intermediate"),
+                }, path)
+                print(f"  [ckpt] step {step+1} -> cell_emulator_v13_latest.pt")
+            except Exception as e:
+                print(f"  [ckpt] save failed: {e}")
+
     print(f"[train] {STEPS} steps in {time.time()-t_start:.0f}s")
 
 
@@ -2167,7 +2186,13 @@ def main():
 
     # v13.6: optional resume from a previous run's checkpoint
     loaded_from_ckpt = False
+    # Prefer the full end-of-run save; fall back to the rolling mid-training save (v13.7)
     ckpt_path = f"{SAVE_DIR}/cell_emulator_v13.pt"
+    if not (RESUME_FROM_CHECKPOINT and os.path.exists(ckpt_path)):
+        latest = f"{SAVE_DIR}/cell_emulator_v13_latest.pt"
+        if RESUME_FROM_CHECKPOINT and os.path.exists(latest):
+            ckpt_path = latest
+            print(f"[checkpoint] no final checkpoint; will try latest mid-training save {latest}")
     if RESUME_FROM_CHECKPOINT:
         if os.path.exists(ckpt_path):
             try:
