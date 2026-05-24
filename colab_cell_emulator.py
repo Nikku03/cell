@@ -441,44 +441,66 @@ def parse_kinetics(path):
 
 
 def parse_initial_concentrations(path):
-    """Parse initial_concentrations.xlsx -> {proteins, mRNAs, metabolites, medium}."""
+    """Parse initial_concentrations.xlsx -> {proteins, mRNAs, metabolites, medium}.
+
+    Handles both the ComplexFormation version (has 'mRNA Count' + 'Protein
+    Metabolites' sheets) and the 4DWCM version (lacks those — they were
+    refactored into separate files).  Each sheet parsed independently so
+    one missing sheet doesn't kill the rest.
+    """
     if not HAS_PANDAS:
         return None
+    proteins, mRNAs, metabolites, medium = {}, {}, {}, {}
+
+    # Proteins (Comparative Proteomics).  4DWCM uses "Exp. Ptn Cnt" instead of
+    # the ComplexFormation version's "Sim. Initial Ptn Cnt".
     try:
         df = pd.read_excel(path, sheet_name="Comparative Proteomics")
-        df["_cnt"] = pd.to_numeric(df.get("Sim. Initial Ptn Cnt"), errors="coerce")
-        proteins = {}
-        for _, r in df.iterrows():
-            tag = str(r.get("Locus Tag", ""))
-            if tag.startswith("JCVISYN3A_") and pd.notna(r["_cnt"]):
-                proteins[tag] = float(r["_cnt"])
+        cnt_col = next((c for c in ("Sim. Initial Ptn Cnt", "Exp. Ptn Cnt")
+                        if c in df.columns), None)
+        if cnt_col:
+            df["_cnt"] = pd.to_numeric(df[cnt_col], errors="coerce")
+            for _, r in df.iterrows():
+                tag = str(r.get("Locus Tag", ""))
+                if tag.startswith("JCVISYN3A_") and pd.notna(r["_cnt"]):
+                    proteins[tag] = float(r["_cnt"])
+    except Exception:
+        pass
 
+    try:
         df = pd.read_excel(path, sheet_name="mRNA Count")
-        mRNAs = {}
         for _, r in df.iterrows():
             tag = str(r.get("LocusTag", ""))
             tot = r.get("total")
             if tag.startswith("JCVISYN3A_") and pd.notna(tot):
                 mRNAs[tag] = float(tot)
+    except Exception:
+        pass   # 4DWCM version doesn't have this sheet — silently skip
 
+    try:
         df = pd.read_excel(path, sheet_name="Intracellular Metabolites")
         metabolites = {f"M_{r['Met ID']}": float(r["Init Conc (mM)"])
                        for _, r in df.iterrows()
                        if pd.notna(r.get("Met ID")) and pd.notna(r.get("Init Conc (mM)"))}
+    except Exception:
+        pass
 
+    try:
         df = pd.read_excel(path, sheet_name="Simulation Medium")
         medium = {f"M_{r['Met ID']}": float(r["Conc (mM)"])
                   for _, r in df.iterrows()
                   if pd.notna(r.get("Met ID")) and pd.notna(r.get("Conc (mM)"))}
+    except Exception:
+        pass
 
-        print(f"[initial_conc] {len(proteins)} proteins, {len(mRNAs)} mRNAs, "
-              f"{len(metabolites)} intracellular metabolites, "
-              f"{len(medium)} medium components")
-        return {"proteins": proteins, "mRNAs": mRNAs,
-                "metabolites": metabolites, "medium": medium}
-    except Exception as e:
-        print(f"[initial_conc] parse failed ({e}) - skipping initial conditions")
+    if not (proteins or mRNAs or metabolites or medium):
+        print(f"[initial_conc] no recognised sheets in {path} — skipping")
         return None
+    print(f"[initial_conc] {len(proteins)} proteins, {len(mRNAs)} mRNAs, "
+          f"{len(metabolites)} intracellular metabolites, "
+          f"{len(medium)} medium components")
+    return {"proteins": proteins, "mRNAs": mRNAs,
+            "metabolites": metabolites, "medium": medium}
 
 
 def parse_complex_formation(path):
@@ -601,13 +623,20 @@ def parse_gibbs(path):
 def parse_largesubunit(path):
     """Parse LargeSubunit.xlsx → list of (substrate, intermediate, product) tuples
     for 50S ribosome assembly.  Adds substrate→product and intermediate→product
-    edges in the graph (the assembly path)."""
+    edges in the graph (the assembly path).
+
+    4DWCM layout: two sheets ('parameters' with Protein/Rate, and 'reactions'
+    with substrate/intermediate/product).  Try 'reactions' first; fall back
+    to the first sheet for legacy single-sheet variants.
+    """
     if not HAS_PANDAS:
         return []
     try:
-        df = pd.read_excel(path)
+        try:
+            df = pd.read_excel(path, sheet_name="reactions")
+        except Exception:
+            df = pd.read_excel(path)               # first sheet for legacy layouts
         tuples = []
-        # Columns mirror kinetic_params.xlsx's LSU Assembly sheet
         for _, row in df.iterrows():
             sub   = str(row.get("substrate", "")).strip()
             inter = str(row.get("intermediate", "")).strip()
