@@ -1409,7 +1409,10 @@ class _CfCGraphLayer(nn.Module):
         h_src = h.index_select(1, src)        # (B, E, H)
         h_dst = h.index_select(1, dst)
         msg = self.msg_mlp(torch.cat([h_src, h_dst], dim=-1))
-        msg = msg * edge_weight.unsqueeze(0).unsqueeze(-1)
+        # v13.3: cast back to h.dtype.  Under BF16 autocast msg is BF16, but
+        # edge_weight is an fp32 buffer, so `msg * edge_weight` gets promoted
+        # to fp32 — the index_add into a BF16 agg below then errors.
+        msg = (msg * edge_weight.unsqueeze(0).unsqueeze(-1)).to(h.dtype)
         agg = torch.zeros(B, N, H, device=h.device, dtype=h.dtype)
         agg = agg.index_add(1, dst, msg)      # out-of-place: autograd-safe
         # Degree-normalise so high-degree nodes don't blow up
