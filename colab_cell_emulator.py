@@ -127,6 +127,7 @@ Run on Colab with Drive mounted, GPU runtime (~11 min).
 """
 
 import glob
+import os
 import re
 import time
 import xml.etree.ElementTree as ET
@@ -185,6 +186,8 @@ LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
 USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML species
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
+RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
+SKIP_TRAINING_IF_LOADED = False    # v13.6: if RESUME loaded weights, skip training (eval-only run)
 PINN_RATE_CLIP      = 6.0          # NEW v9: log-space rate clip (prevents expm1 blow-up)
 VAR_R2_TOP_K        = 200          # NEW v9: top-K species (by variance) for the honest R²
 KO_N_STEPS          = 300          # v10 Tier C: 5 min biological at 1s stride (was 30)
@@ -2161,6 +2164,50 @@ def main():
     if USE_STOCHASTIC_HEAD:  head_tags.append("stochastic")
     print(f"[model] LGNN+{('+'.join(head_tags)) if head_tags else 'plain'}: {n_params:.2f}M parameters, "
           f"{edge_index.shape[1]:,} graph edges")
+
+    # v13.6: optional resume from a previous run's checkpoint
+    loaded_from_ckpt = False
+    ckpt_path = f"{SAVE_DIR}/cell_emulator_v13.pt"
+    if RESUME_FROM_CHECKPOINT:
+        if os.path.exists(ckpt_path):
+            try:
+                ckpt = torch.load(ckpt_path, weights_only=False, map_location=device)
+                cfg = ckpt.get("config", {})
+                # Compatibility gate: only resume if the load-bearing dims match.
+                # (edge_index and sbml_mask buffers may differ from data changes —
+                # those don't matter, we skip them during load.)
+                if (cfg.get("S") == S and cfg.get("hidden") == LGNN_HIDDEN
+                        and cfg.get("n_layers") == LGNN_N_LAYERS):
+                    state = ckpt["model"]
+                    # Strip the torch.compile wrapper prefix if the checkpoint
+                    # was saved from a compiled model
+                    state = {k[10:] if k.startswith("_orig_mod.") else k: v
+                             for k, v in state.items()}
+                    # Skip buffers — graph and SBML masks come from current setup
+                    buf_names = set(dict(model.named_buffers()).keys())
+                    state = {k: v for k, v in state.items() if k not in buf_names}
+                    result = model.load_state_dict(state, strict=False)
+                    if result.unexpected_keys:
+                        print(f"[checkpoint] {len(result.unexpected_keys)} unexpected keys ignored")
+                    if result.missing_keys:
+                        # Only complain about parameter (learnable) misses, not buffers
+                        param_names = set(dict(model.named_parameters()).keys())
+                        missing_params = [k for k in result.missing_keys if k in param_names]
+                        if missing_params:
+                            print(f"[checkpoint] WARNING: {len(missing_params)} params missing "
+                                  "from ckpt (will use random init for them)")
+                    loaded_from_ckpt = True
+                    print(f"[checkpoint] resumed from {ckpt_path}")
+                else:
+                    print(f"[checkpoint] {ckpt_path} architecture mismatch "
+                          f"(want S={S}, hidden={LGNN_HIDDEN}, layers={LGNN_N_LAYERS}; "
+                          f"got S={cfg.get('S')}, hidden={cfg.get('hidden')}, "
+                          f"layers={cfg.get('n_layers')}) — starting fresh")
+            except Exception as e:
+                print(f"[checkpoint] load failed ({e}) — starting fresh")
+        else:
+            print(f"[checkpoint] {ckpt_path} not found — starting fresh")
+
     # v13: optional torch.compile for an extra ~1.5x speedup
     if USE_TORCH_COMPILE and device == "cuda":
         try:
@@ -2171,7 +2218,13 @@ def main():
                   "will be slow (graph capture, ~30-60s)")
         except Exception as e:
             print(f"[model] torch.compile failed ({e}) - running in eager mode")
-    train_model(model, train_X, ruleset)
+
+    if loaded_from_ckpt and SKIP_TRAINING_IF_LOADED:
+        print("[train] SKIPPED — using loaded checkpoint as-is for evaluation")
+    else:
+        if loaded_from_ckpt:
+            print("[train] continuing training from loaded checkpoint")
+        train_model(model, train_X, ruleset)
 
     # ── evaluate ──────────────────────────────────────────────────────────
     print()
