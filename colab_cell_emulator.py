@@ -1,4 +1,17 @@
-"""Colab cell: v10 (Tier C) cell-state emulator - full-resolution LGNN + richer graph.
+"""Colab cell: v11 cell-state emulator - v10 Tier C + three more high-value data sources.
+
+v10 -> v11:
+  Adds three more 4DWCM input files into the graph + KnownRules:
+    - protein_metabolites.xlsx → regulatory P↔M binding edges (a real
+      causation path: when protein knocks out, the metabolites it regulates
+      drift).
+    - gibbs.csv → per-reaction ΔG° (thermodynamics).  Reported in KnownRules;
+      could later weight edges by |ΔG| or constrain PINN flux direction.
+    - LargeSubunit.xlsx → 50S ribosome assembly stages (subunit→intermediate
+      edges).  Niche but exact-physics.
+  ESM-2 protein embeddings (the heaviest M7/M8 idea, ~2.5 GB model download
+  for 650M parameter version) intentionally deferred — provide a separate
+  utility if R²/MCC justifies the cost.
 
 v9 -> v10 (Tier C):
   1. TIME_STRIDE=1  full simulator resolution (7,200 timesteps/traj vs 120).
@@ -147,6 +160,9 @@ SBML_PATH           = "Syn3A_updated.xml"
 KINETICS_PATH       = "kinetic_params.xlsx"             # NEW v7
 INITIAL_CONC_PATH   = "initial_concentrations.xlsx"     # NEW v7
 COMPLEXES_PATH      = "complex_formation.xlsx"          # NEW v7
+PROTEIN_METABOLITES_PATH = "protein_metabolites.xlsx"   # NEW v11: P↔M regulatory binding
+GIBBS_PATH          = "gibbs.csv"                       # NEW v11: per-reaction ΔG°
+LARGESUBUNIT_PATH   = "LargeSubunit.xlsx"               # NEW v11: 50S ribosome assembly
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 torch.manual_seed(SEED)
@@ -465,6 +481,110 @@ def parse_complex_formation(path):
         return None
 
 
+# ── NEW v11: parsers for additional 4DWCM data sources ────────────────────────
+
+def parse_protein_metabolites(path):
+    """Parse protein_metabolites.xlsx → list of {protein, metabolites, reactions}.
+
+    Each row: a protein and the list of metabolites it regulates (binds /
+    catalyses).  Adds P↔M edges in the graph.  Also tries the 'Protein
+    Metabolites' sheet of initial_concentrations.xlsx as a fallback source.
+    """
+    if not HAS_PANDAS:
+        return []
+    try:
+        # try standalone file first, then the sheet in initial_concentrations.xlsx
+        try:
+            df = pd.read_excel(path)
+        except Exception:
+            df = pd.read_excel(INITIAL_CONC_PATH, sheet_name="Protein Metabolites")
+        pairs = []
+        for _, row in df.iterrows():
+            prot = str(row.get("Protein", "")).strip()
+            mets_s = str(row.get("Metabolite IDs", "")).strip()
+            if not prot or prot in ("nan", "") or mets_s in ("nan", ""):
+                continue
+            mets = [m.strip() for m in mets_s.split(",") if m.strip()]
+            if mets:
+                pairs.append({"protein": prot, "metabolites": mets,
+                              "reactions": str(row.get("Reactions", ""))})
+        print(f"[prot_metab] {len(pairs)} protein-metabolite binding records")
+        return pairs
+    except Exception as e:
+        print(f"[prot_metab] load failed ({e}) - skipping P-M edges")
+        return []
+
+
+def parse_gibbs(path):
+    """Parse gibbs.csv → {reaction_id: ΔG° (float)}.
+
+    Tries common column names (reaction/rxn/id for the key; dG/gibbs/delta
+    for the value).  Defensive — returns empty dict if file missing or
+    format unexpected.
+    """
+    if not HAS_PANDAS:
+        return {}
+    try:
+        df = pd.read_csv(path)
+        rxn_col = next((c for c in df.columns
+                        if any(k in c.lower() for k in ("reaction", "rxn", "id"))),
+                       df.columns[0])
+        dg_col = next((c for c in df.columns
+                       if any(k in c.lower() for k in ("dg", "gibbs", "delta", "energy"))
+                       and pd.api.types.is_numeric_dtype(df[c])),
+                      None)
+        if dg_col is None:
+            for c in df.columns:
+                if c != rxn_col and pd.api.types.is_numeric_dtype(df[c]):
+                    dg_col = c
+                    break
+        if dg_col is None:
+            print(f"[gibbs] couldn't find ΔG° numeric column in {list(df.columns)}")
+            return {}
+        out = {}
+        for _, row in df.iterrows():
+            r = str(row[rxn_col]).strip()
+            try:
+                dg = float(row[dg_col])
+                if r and not np.isnan(dg):
+                    out[r] = dg
+            except (TypeError, ValueError):
+                continue
+        if out:
+            vals = list(out.values())
+            print(f"[gibbs] loaded ΔG° for {len(out)} reactions  "
+                  f"(median {np.median(vals):+.1f}, range "
+                  f"[{min(vals):+.1f}, {max(vals):+.1f}])")
+        return out
+    except Exception as e:
+        print(f"[gibbs] load failed ({e}) - skipping thermodynamic priors")
+        return {}
+
+
+def parse_largesubunit(path):
+    """Parse LargeSubunit.xlsx → list of (substrate, intermediate, product) tuples
+    for 50S ribosome assembly.  Adds substrate→product and intermediate→product
+    edges in the graph (the assembly path)."""
+    if not HAS_PANDAS:
+        return []
+    try:
+        df = pd.read_excel(path)
+        tuples = []
+        # Columns mirror kinetic_params.xlsx's LSU Assembly sheet
+        for _, row in df.iterrows():
+            sub   = str(row.get("substrate", "")).strip()
+            inter = str(row.get("intermediate", "")).strip()
+            prod  = str(row.get("product", "")).strip()
+            if (sub and inter and prod
+                    and all(v not in ("nan", "") for v in (sub, inter, prod))):
+                tuples.append((sub, inter, prod))
+        print(f"[largesubunit] {len(tuples)} 50S ribosome assembly steps")
+        return tuples
+    except Exception as e:
+        print(f"[largesubunit] load failed ({e}) - skipping 50S assembly edges")
+        return []
+
+
 # ── NEW v7: KnownRules (input-file facts) ────────────────────────────────────
 
 class KnownRules:
@@ -474,15 +594,21 @@ class KnownRules:
     mined from data, they are explicit structural facts read from model files.
     """
 
-    def __init__(self, sbml=None, kinetics=None, initial=None, complexes=None):
+    def __init__(self, sbml=None, kinetics=None, initial=None, complexes=None,
+                 protein_metabolites=None, gibbs=None, largesubunit=None):
         self.sbml = sbml
         self.kinetics = kinetics
         self.initial = initial
         self.complexes = complexes
+        # v11 additions:
+        self.protein_metabolites = protein_metabolites or []
+        self.gibbs = gibbs or {}
+        self.largesubunit = largesubunit or []
 
     def has_anything(self):
         return any(v is not None for v in
-                   (self.sbml, self.kinetics, self.initial, self.complexes))
+                   (self.sbml, self.kinetics, self.initial, self.complexes)) or \
+               bool(self.protein_metabolites or self.gibbs or self.largesubunit)
 
     def summary(self):
         s = ["KnownRules (from input files):"]
@@ -504,6 +630,18 @@ class KnownRules:
         if self.kinetics is not None:
             s.append(f"    Kinetic parameter rows  : {self.kinetics['n_params']}"
                      f"  ({len(self.kinetics['enzymes'])} reaction->enzyme links)")
+        # v11: new sources
+        if self.protein_metabolites:
+            n_edges = sum(len(r["metabolites"]) for r in self.protein_metabolites)
+            s.append(f"    Protein↔metabolite reg. : {len(self.protein_metabolites)} proteins, "
+                     f"{n_edges} regulatory bindings")
+        if self.gibbs:
+            vals = list(self.gibbs.values())
+            n_neg = sum(1 for v in vals if v < 0)
+            s.append(f"    Gibbs ΔG° (reactions)   : {len(self.gibbs)}  "
+                     f"({n_neg} exergonic, {len(vals)-n_neg} endergonic)")
+        if self.largesubunit:
+            s.append(f"    50S ribosome assembly   : {len(self.largesubunit)} stages")
         if not self.has_anything():
             s.append("    (no input files staged)")
         return "\n".join(s)
@@ -1052,28 +1190,26 @@ def build_sbml_graph(sbml, species_names):
     return edge_index, edge_weight
 
 
-def build_full_graph(sbml, kinetics, complexes, species_names):
-    """v10 Tier C: SBML co-occurrence + central dogma + enzyme→flux + subunit→complex.
+def build_full_graph(sbml, kinetics, complexes, species_names,
+                     protein_metabolites=None, largesubunit=None):
+    """v10 Tier C + v11: SBML + central dogma + enzyme→flux + subunit→complex
+    + protein↔metabolite regulation + 50S ribosome assembly.
 
-    Five edge sources, all bidirectional in the GNN:
-      1. SBML reaction co-occurrence (v8) — species that appear together in any
-         SBML reaction.
-      2. Central dogma per gene — G ↔ R ↔ P ↔ RP ↔ RB within each locus.
-         Without this, ~5,800 non-SBML species had no path to anything except
-         themselves; perturbations couldn't propagate.
-      3. Enzyme → flux — P_xxxx (the enzyme protein) ↔ F_yyyy (the flux of the
-         reaction it catalyses), from kinetic_params.xlsx's reaction→enzyme map.
-      4. Subunit → complex — each subunit protein ↔ the complex species, from
-         complex_formation.xlsx.
-      5. Self-loops on every node, so isolated species still update themselves.
+    Seven edge sources, all bidirectional in the GNN:
+      1. SBML reaction co-occurrence — species in the same reaction
+      2. Central dogma per gene — G ↔ R ↔ P ↔ RP ↔ RB
+      3. Enzyme → flux — P_xxxx ↔ F_yyyy (kinetic_params' reaction→enzyme map)
+      4. Subunit → complex — subunit protein ↔ complex species
+      5. NEW v11: Protein ↔ metabolite — regulatory binding (protein_metabolites.xlsx)
+      6. NEW v11: 50S assembly — ribosomal subunits ↔ assembled intermediates
+      7. Self-loops on every node
 
-    Defensive: every added edge is only added if both endpoints actually exist
-    in the species list.  Edge count returned in the print line.
+    Defensive: every edge is only added if both endpoints exist in species_names.
     """
     n = len(species_names)
     name_to_idx = {nm: i for i, nm in enumerate(species_names)}
     edges = set()
-    n_sbml = n_cd = n_enz = n_cplx = 0
+    n_sbml = n_cd = n_enz = n_cplx = n_pm = n_lsu = 0
 
     # 1. SBML reaction co-occurrence
     if sbml is not None:
@@ -1118,7 +1254,6 @@ def build_full_graph(sbml, kinetics, complexes, species_names):
                 continue
             cidx = name_to_idx[cname]
             for gene_id, _stoi in cx["subunits"]:
-                # Try a few naming conventions for the subunit protein
                 for cand in (f"P_{gene_id}", f"P_{gene_id.zfill(4)}", f"P_{gene_id.lstrip('0')}"):
                     if cand in name_to_idx:
                         a = name_to_idx[cand]
@@ -1128,7 +1263,34 @@ def build_full_graph(sbml, kinetics, complexes, species_names):
                             edges.add((cidx, a)); n_cplx += 1
                         break
 
-    # 5. Self-loops
+    # 5. NEW v11: Protein ↔ metabolite regulatory binding
+    if protein_metabolites:
+        for rec in protein_metabolites:
+            prot = rec["protein"]
+            if prot not in name_to_idx:
+                continue
+            i_p = name_to_idx[prot]
+            for met in rec["metabolites"]:
+                if met not in name_to_idx:
+                    continue
+                i_m = name_to_idx[met]
+                if (i_p, i_m) not in edges:
+                    edges.add((i_p, i_m)); n_pm += 1
+                if (i_m, i_p) not in edges:
+                    edges.add((i_m, i_p)); n_pm += 1
+
+    # 6. NEW v11: 50S ribosome assembly (substrate + intermediate → product)
+    if largesubunit:
+        for sub, inter, prod in largesubunit:
+            for src_name in (sub, inter):
+                if src_name in name_to_idx and prod in name_to_idx:
+                    a, b = name_to_idx[src_name], name_to_idx[prod]
+                    if (a, b) not in edges:
+                        edges.add((a, b)); n_lsu += 1
+                    if (b, a) not in edges:
+                        edges.add((b, a)); n_lsu += 1
+
+    # 7. Self-loops
     n_self = 0
     for i in range(n):
         if (i, i) not in edges:
@@ -1139,7 +1301,8 @@ def build_full_graph(sbml, kinetics, complexes, species_names):
     edge_weight = torch.ones(edge_index.shape[1], dtype=torch.float32)
     print(f"[graph] full graph: {edge_index.shape[1]:,} edges  "
           f"(SBML {n_sbml:,} + central-dogma {n_cd:,} + enzyme-flux {n_enz:,} + "
-          f"subunit-complex {n_cplx:,} + self {n_self:,})")
+          f"subunit-complex {n_cplx:,} + prot-metab {n_pm:,} + LSU {n_lsu:,} + "
+          f"self {n_self:,})")
     return edge_index, edge_weight
 
 
@@ -1760,8 +1923,7 @@ def main():
     print(f"[device] {device}")
     print()
     print("=" * 72)
-    print("  v10 Tier C — full-resolution training + richer graph")
-    print("    (LGNN + PINN head + stochastic head + central-dogma + enzyme-flux + subunit-complex edges)")
+    print("  v11 — v10 Tier C + protein-metabolite + gibbs + LSU ribosome assembly")
     print("=" * 72)
 
     raw_counts, species_names = load_data(skip_startup=True)
@@ -1776,12 +1938,18 @@ def main():
     # ── parse every input file ────────────────────────────────────────────
     print()
     print("[knowledge] parsing input files ...")
-    sbml      = parse_sbml(SBML_PATH)
-    kinetics  = parse_kinetics(KINETICS_PATH)
-    initial   = parse_initial_concentrations(INITIAL_CONC_PATH)
-    complexes = parse_complex_formation(COMPLEXES_PATH)
+    sbml         = parse_sbml(SBML_PATH)
+    kinetics     = parse_kinetics(KINETICS_PATH)
+    initial      = parse_initial_concentrations(INITIAL_CONC_PATH)
+    complexes    = parse_complex_formation(COMPLEXES_PATH)
+    # v11 additional sources (all graceful-skip if file missing):
+    prot_metab   = parse_protein_metabolites(PROTEIN_METABOLITES_PATH)
+    gibbs        = parse_gibbs(GIBBS_PATH)
+    largesubunit = parse_largesubunit(LARGESUBUNIT_PATH)
     known = KnownRules(sbml=sbml, kinetics=kinetics,
-                       initial=initial, complexes=complexes)
+                       initial=initial, complexes=complexes,
+                       protein_metabolites=prot_metab,
+                       gibbs=gibbs, largesubunit=largesubunit)
 
     # ── normalise trajectories for the model ─────────────────────────────
     raw = signed_log(raw_counts)
@@ -1842,7 +2010,9 @@ def main():
     print("=" * 72)
     print("  TRAINING PHASE  (v10 Tier C: full-res LGNN + PINN + stochastic + richer graph)")
     print("=" * 72)
-    edge_index, edge_weight = build_full_graph(sbml, kinetics, complexes, species_active)
+    edge_index, edge_weight = build_full_graph(
+        sbml, kinetics, complexes, species_active,
+        protein_metabolites=prot_metab, largesubunit=largesubunit)
     edge_index  = edge_index.to(device)
     edge_weight = edge_weight.to(device)
     sbml_mask, sbml_indices, stoich_matrix = build_stoich_matrix(sbml, species_active)
@@ -1916,7 +2086,7 @@ def main():
     print(f"[gen] 51st trajectory {gen_counts.shape}  "
           f"finite={np.isfinite(gen_counts).all()}  "
           f"count range [{gen_counts.min():.0f}, {gen_counts.max():.0f}]")
-    np.save(f"{SAVE_DIR}/cell_traj_51_v10.npy", gen_counts)
+    np.save(f"{SAVE_DIR}/cell_traj_51_v11.npy", gen_counts)
     torch.save({
         "model": model.state_dict(),
         "lo": lo, "span": span, "active": active,
@@ -1937,10 +2107,10 @@ def main():
                        time_stride=TIME_STRIDE, n_genes=len(locus_list),
                        skip_startup=SKIP_STARTUP_STEPS,
                        use_pinn=pinn_active, use_stochastic=USE_STOCHASTIC_HEAD,
-                       architecture="LGNN_v10_TierC"),
-    }, f"{SAVE_DIR}/cell_emulator_v10.pt")
-    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v10.npy")
-    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v10.pt")
+                       architecture="LGNN_v11"),
+    }, f"{SAVE_DIR}/cell_emulator_v11.pt")
+    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v11.npy")
+    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v11.pt")
 
 
 if __name__ == "__main__":
