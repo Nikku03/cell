@@ -1,4 +1,19 @@
-"""Colab cell: v11 cell-state emulator - v10 Tier C + three more high-value data sources.
+"""Colab cell: v12 cell-state emulator - speedup + larger training rollout horizon.
+
+v11 -> v12:
+  1. TRUNCATED BPTT  K_MAX raised from 64 -> 256 (4x longer horizon = 4 min
+     biological at 1s stride).  Memory bounded by TBPTT_CHUNK=64 — gradients
+     flow back 64 steps at a time, state .detach()'d between chunks.  Without
+     this, K=256 would need ~280 GB of activations (4x v11's already-tight
+     budget) — TBPTT keeps memory at v11 levels but covers 4x more horizon.
+     Set K_MAX=7000 for full cell cycle coverage (~5-8 hours on Blackwell).
+  2. BF16 AUTOCAST  ~2x speedup on Blackwell / Hopper / A100 — both training
+     and inference paths.  Cast back to fp32 between rollout iterations to
+     keep state numerically clean.  Set USE_BF16=False to disable.
+  3. STEPS halved (8000 -> 2000) since each step now does ~4x more work,
+     keeping total gradient signal roughly constant.
+
+  Estimated time on RTX 6000 Pro Blackwell: ~50 min total (vs v11's ~120 min).
 
 v10 -> v11:
   Adds three more 4DWCM input files into the graph + KnownRules:
@@ -97,6 +112,7 @@ import glob
 import re
 import time
 import xml.etree.ElementTree as ET
+from contextlib import nullcontext
 
 import numpy as np
 import torch
@@ -126,8 +142,10 @@ N_LAYERS            = 3
 N_HEADS             = 8
 DROPOUT             = 0.1
 N_TRAIN_TRAJ        = 40
-STEPS               = 8000         # v10 Tier C: bumped from 2000 — full-res data has 60x more starts
-K_MAX               = 64
+STEPS               = 2000         # v12: was 8000.  With TBPTT and larger K, same total gradient signal.
+K_MAX               = 256          # v12: was 64.  256 steps = ~4 min biological at 1s stride.
+TBPTT_CHUNK         = 64           # v12: gradient flows back this many rollout steps at a time
+USE_BF16            = True         # v12: BF16 autocast on Blackwell/Hopper/A100 — ~2x speedup
 BATCH               = 16           # v9.1: was 32, halved to fit BPTT memory after LGNN switch
 LR                  = 3e-4
 WEIGHT_DECAY        = 1e-5
@@ -1628,53 +1646,103 @@ def variance_weighted_r2(pred, true, top_k=VAR_R2_TOP_K):
 # ── training / eval ───────────────────────────────────────────────────────────
 
 def train_model(model, train_X, ruleset):
-    """v8: single-step LGNN trainer. No context window."""
+    """v12 LGNN trainer with truncated BPTT + optional BF16 autocast.
+
+    Truncated BPTT (TBPTT): rolls forward K steps but backward only flows
+    TBPTT_CHUNK steps at a time (state .detach()'d between chunks).  Memory
+    bounded by TBPTT_CHUNK steps' worth of activations instead of K — so K can
+    grow much larger than v11's 64 without OOM.
+
+    BF16 autocast: ~2x speedup on Blackwell/Hopper/A100.  Loss + ruleset.project
+    cast back to fp32 between rollout iterations to keep state numerically clean.
+    """
     opt   = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=STEPS)
     gen   = torch.Generator().manual_seed(SEED + 1)
     N, T, S = train_X.shape
+    use_nll = getattr(model, "use_stochastic", False)
+
+    def _autocast():
+        if USE_BF16 and device == "cuda":
+            return torch.autocast(device_type="cuda", dtype=torch.bfloat16)
+        return nullcontext()
+
     t_start = time.time()
     model.train()
+    print(f"[train] BF16 autocast: {'ON' if USE_BF16 and device == 'cuda' else 'off'}, "
+          f"TBPTT chunk: {TBPTT_CHUNK}, K_MAX: {K_MAX}, STEPS: {STEPS}")
+
     for step in range(STEPS):
         K    = 1 + int((K_MAX - 1) * step / STEPS)
         i_t  = torch.randint(0, N, (BATCH,), generator=gen)
-        t0_t = torch.randint(0, T - 1 - K, (BATCH,), generator=gen)
+        t0_t = torch.randint(0, max(1, T - 1 - K), (BATCH,), generator=gen)
         i, ts = i_t.tolist(), t0_t.tolist()
         state = torch.stack([train_X[i[b], ts[b]] for b in range(BATCH)])    # (B, S)
         i_d, t0_d = i_t.to(device), t0_t.to(device)
-        losses = []
+
+        opt.zero_grad()
+        first_loss = None
+        chunk_losses = []
         prev_state = state
-        use_nll = getattr(model, "use_stochastic", False)
+        first_chunk = True
+        all_loss_means = []                        # for printing
+
         for k in range(K):
-            out = model(state)
-            if use_nll:
-                pred, log_sigma = out
-                true = train_X[i_d, t0_d + 1 + k]
-                # Gaussian NLL: 0.5·exp(-2·logσ)·(μ-y)² + logσ  (Kendall & Gal '17)
-                sq_err   = (pred - true) ** 2
-                inv_var  = torch.exp(-2.0 * log_sigma)
-                losses.append(0.5 * (inv_var * sq_err + 2.0 * log_sigma).mean())
-            else:
-                pred = out
-                true = train_X[i_d, t0_d + 1 + k]
-                losses.append(F.mse_loss(pred, true))
-            nxt = pred.clamp(CLAMP_LO, CLAMP_HI)
+            with _autocast():
+                out = model(state)
+                if use_nll:
+                    pred, log_sigma = out
+                    true   = train_X[i_d, t0_d + 1 + k]
+                    sq_err = (pred - true) ** 2
+                    inv_var = torch.exp(-2.0 * log_sigma)
+                    loss_k = 0.5 * (inv_var * sq_err + 2.0 * log_sigma).mean()
+                else:
+                    pred = out
+                    true = train_X[i_d, t0_d + 1 + k]
+                    loss_k = F.mse_loss(pred, true)
+            if first_loss is None:
+                first_loss = loss_k
+            chunk_losses.append(loss_k)
+
+            # next state: clamp + project in fp32 between rollout iterations
+            nxt = pred.float().clamp(CLAMP_LO, CLAMP_HI)
             if step >= STEPS // 4:
                 nxt = ruleset.project(prev_state, nxt)
             prev_state = nxt
             state = nxt
-        rollout = torch.stack(losses).mean()
-        loss = rollout + LAMBDA_1STEP * losses[0]
-        opt.zero_grad()
-        loss.backward()
+
+            # TBPTT: backward at end of chunk
+            if (k + 1) % TBPTT_CHUNK == 0 or k == K - 1:
+                chunk_loss = torch.stack(chunk_losses).mean()
+                # Include the LAMBDA_1STEP·first_loss term only in the chunk that
+                # contains first_loss (otherwise its graph is already gone after detach).
+                if first_chunk:
+                    chunk_loss = chunk_loss + LAMBDA_1STEP * first_loss
+                    first_chunk = False
+                chunk_loss.backward()
+                all_loss_means.append(float(chunk_loss.detach()))
+                chunk_losses = []
+                state = state.detach()
+                prev_state = prev_state.detach()
+
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         opt.step()
         sched.step()
+
         if step == 0 or (step + 1) % 250 == 0:
-            print(f"  step {step+1:5d}  K={K:2d}  "
-                  f"1-step {float(losses[0].detach()):.5f}  "
-                  f"rollout {float(rollout.detach()):.5f}", flush=True)
+            print(f"  step {step+1:5d}  K={K:4d}  "
+                  f"1-step {float(first_loss.detach()):.5f}  "
+                  f"rollout {sum(all_loss_means)/len(all_loss_means):.5f}", flush=True)
+
     print(f"[train] {STEPS} steps in {time.time()-t_start:.0f}s")
+
+
+def _eval_autocast():
+    """BF16 autocast for inference paths (eval + KO + generation).  Same speedup
+    as training, no precision concerns because no gradients."""
+    if USE_BF16 and device == "cuda":
+        return torch.autocast(device_type="cuda", dtype=torch.bfloat16)
+    return nullcontext()
 
 
 @torch.no_grad()
@@ -1686,7 +1754,8 @@ def one_step(model, Xset, n=400):
     t  = torch.randint(0, Tt - 1, (n,), generator=g).tolist()
     state = torch.stack([Xset[i[b], t[b]]     for b in range(n)])
     nxt   = torch.stack([Xset[i[b], t[b] + 1] for b in range(n)])
-    pred = _model_pred(model(state))
+    with _eval_autocast():
+        pred = _model_pred(model(state)).float()
     return float(F.mse_loss(pred, nxt)), r2(pred, nxt)
 
 
@@ -1697,7 +1766,8 @@ def full_rollout(model, traj, ruleset):
     state = traj[0].unsqueeze(0)        # (1, S)
     preds = []
     for _ in range(traj.shape[0] - 1):
-        p = _model_pred(model(state)).clamp(CLAMP_LO, CLAMP_HI)
+        with _eval_autocast():
+            p = _model_pred(model(state)).float().clamp(CLAMP_LO, CLAMP_HI)
         p = ruleset.project(state, p)
         preds.append(p)
         state = p
@@ -1708,7 +1778,7 @@ def full_rollout(model, traj, ruleset):
 def full_rollout_batched(model, trajs, ruleset):
     """v10: roll all test trajectories in parallel (one shared time loop).
     7,199 steps × 10 trajs would take ~60 min serially at full resolution;
-    batched, it's a single 7,199-step loop = ~6 min.
+    batched, it's a single 7,199-step loop = ~6 min.  With v12 BF16 ~3 min.
 
     trajs: (n, T, S) tensor of seed trajectories.
     Returns (preds, truth) both shaped (n, T-1, S).
@@ -1717,7 +1787,8 @@ def full_rollout_batched(model, trajs, ruleset):
     state = trajs[:, 0]              # (n, S)
     preds = []
     for _ in range(trajs.shape[1] - 1):
-        p = _model_pred(model(state)).clamp(CLAMP_LO, CLAMP_HI)
+        with _eval_autocast():
+            p = _model_pred(model(state)).float().clamp(CLAMP_LO, CLAMP_HI)
         p = ruleset.project(state, p)
         preds.append(p)
         state = p
@@ -1803,7 +1874,8 @@ def _ko_rollout(model, state, ko_mask, n_steps):
     """
     preds = []
     for _ in range(n_steps):
-        p = _model_pred(model(state)).clamp(CLAMP_LO, CLAMP_HI)
+        with _eval_autocast():
+            p = _model_pred(model(state)).float().clamp(CLAMP_LO, CLAMP_HI)
         # Permanent knockdown: force every masked species back to floor
         p = torch.where(ko_mask, torch.full_like(p, CLAMP_LO), p)
         preds.append(p)
@@ -1923,7 +1995,7 @@ def main():
     print(f"[device] {device}")
     print()
     print("=" * 72)
-    print("  v11 — v10 Tier C + protein-metabolite + gibbs + LSU ribosome assembly")
+    print("  v12 — v11 + truncated BPTT (large K) + BF16 autocast (~2x speedup)")
     print("=" * 72)
 
     raw_counts, species_names = load_data(skip_startup=True)
@@ -2086,7 +2158,7 @@ def main():
     print(f"[gen] 51st trajectory {gen_counts.shape}  "
           f"finite={np.isfinite(gen_counts).all()}  "
           f"count range [{gen_counts.min():.0f}, {gen_counts.max():.0f}]")
-    np.save(f"{SAVE_DIR}/cell_traj_51_v11.npy", gen_counts)
+    np.save(f"{SAVE_DIR}/cell_traj_51_v12.npy", gen_counts)
     torch.save({
         "model": model.state_dict(),
         "lo": lo, "span": span, "active": active,
@@ -2107,10 +2179,10 @@ def main():
                        time_stride=TIME_STRIDE, n_genes=len(locus_list),
                        skip_startup=SKIP_STARTUP_STEPS,
                        use_pinn=pinn_active, use_stochastic=USE_STOCHASTIC_HEAD,
-                       architecture="LGNN_v11"),
-    }, f"{SAVE_DIR}/cell_emulator_v11.pt")
-    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v11.npy")
-    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v11.pt")
+                       architecture="LGNN_v12"),
+    }, f"{SAVE_DIR}/cell_emulator_v12.pt")
+    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v12.npy")
+    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v12.pt")
 
 
 if __name__ == "__main__":
