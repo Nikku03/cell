@@ -314,6 +314,25 @@ class M7TrainConfig(M3TrainConfig):
     # NOT applied during training (compile + checkpointing don't play well).
     compile_at_eval:                      bool = False
 
+    # ---- M8 upgrades 7/9/10 (opt-in architectural swaps) ----
+    # encoder_backbone:
+    #   'cfc'    -> default M7 CfC-Attention layers, uses graph edges
+    #   'mamba2' -> Mamba-2 SSM stack (linear-time, ignores edges)
+    #               requires `pip install mamba-ssm causal-conv1d`
+    encoder_backbone:                     str = 'cfc'
+    # use_moe_residual: replace PINNHead's single-Linear residual head with
+    # an 11-expert MoE statically routed by row-name prefix. Each row goes
+    # to exactly one expert; no learned router. ~450 extra params.
+    use_moe_residual:                     bool = False
+    moe_n_experts:                        int = 11
+    # use_node_flux_head: swap PINNHead for NeuralODEFluxHead which
+    # integrates dx/dt = S·v_θ(x) over [t, t+1] via RK4 (train) / dopri5
+    # (infer). Requires `pip install torchdiffeq`. Slower to train but
+    # may give smoother long-horizon rollouts.
+    use_node_flux_head:                   bool = False
+    node_solver:                          str = 'rk4'
+    node_step_size:                       float = 0.5
+
 
 # ----------------------------------------------------------------------
 # Subsampled (rep, t) iterator (speed lever a)
@@ -1025,6 +1044,12 @@ def train_m7(
         use_residual=cfg.use_residual,
         multi_step_horizon=cfg.multi_step_horizon,
         use_stochastic_head=cfg.use_stochastic_head,
+        encoder_backbone=cfg.encoder_backbone,
+        use_moe_residual=cfg.use_moe_residual,
+        moe_n_experts=cfg.moe_n_experts,
+        use_node_flux_head=cfg.use_node_flux_head,
+        node_solver=cfg.node_solver,
+        node_step_size=cfg.node_step_size,
     ).to(device)
     if cfg.use_bf16 and device.type == 'cuda':
         model = model.to(torch.bfloat16)
@@ -1053,6 +1078,12 @@ def train_m7(
     print(f'M7: {n_params:,} params  (hidden={cfg.hidden}, '
           f'n_layers={cfg.n_layers}, channels={cfg.n_input_channels}, '
           f'use_residual={cfg.use_residual}, dtype={model_dtype})')
+    print(f'  M8 stack  stochastic={cfg.use_stochastic_head}  '
+          f'optimizer={cfg.optimizer_name}  ema={cfg.use_ema}  swa={cfg.use_swa}  '
+          f'esm2={cfg.use_esm2_protein_features}')
+    print(f'  arch swaps  encoder={cfg.encoder_backbone}  '
+          f'moe_residual={cfg.use_moe_residual}  '
+          f'node_flux={cfg.use_node_flux_head}')
     print(f'  k_curriculum={cfg.k_curriculum}  rollout_gamma={cfg.rollout_gamma}  '
           f'scheduled_sampling={cfg.scheduled_sampling}  '
           f'tbptt={cfg.truncated_bptt_window}')

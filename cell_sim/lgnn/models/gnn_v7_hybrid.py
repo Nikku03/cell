@@ -85,6 +85,13 @@ class CellGNNv7Hybrid(nn.Module):
         use_residual: bool = True,
         multi_step_horizon: int = 1,
         use_stochastic_head: bool = False,
+        # ---- M8 upgrades 7/9/10 (opt-in) ----
+        encoder_backbone: str = 'cfc',         # 'cfc' (M7 default) | 'mamba2'
+        use_moe_residual: bool = False,        # swap MLP residual for K-expert MoE
+        moe_n_experts: int = 11,
+        use_node_flux_head: bool = False,      # swap PINNHead for NeuralODEFluxHead
+        node_solver: str = 'rk4',
+        node_step_size: float = 0.5,
     ):
         super().__init__()
         self.n_nodes = graph.n_nodes
@@ -93,6 +100,9 @@ class CellGNNv7Hybrid(nn.Module):
         self.n_input_channels = n_input_channels
         self.use_checkpoint = use_checkpoint
         self.edge_chunk_size = edge_chunk_size
+        self.encoder_backbone = encoder_backbone.lower()
+        self.use_moe_residual = bool(use_moe_residual)
+        self.use_node_flux_head = bool(use_node_flux_head)
         edge_attr_dim = int(graph.edge_attr.shape[1])
 
         sort_idx = torch.argsort(graph.edge_kind, stable=True)
@@ -119,21 +129,79 @@ class CellGNNv7Hybrid(nn.Module):
 
         total_in = n_input_channels + self.n_static
         self.input_proj = nn.Linear(total_in, hidden)
-        self.layers = nn.ModuleList([
-            _CfCAttentionGNNLayer(
-                hidden=hidden, edge_attr_dim=edge_attr_dim,
-                n_nodes=graph.n_nodes, cfc_tau_min=cfc_tau_min,
+
+        # ---- Encoder (M8 upgrade 9: optional Mamba-2 backbone) ----
+        # 'cfc'    : default M7 CfC-Attention layers (uses edge graph)
+        # 'mamba2' : Mamba-2 SSM stack (linear-time, ignores graph edges)
+        if self.encoder_backbone == 'cfc':
+            self.layers = nn.ModuleList([
+                _CfCAttentionGNNLayer(
+                    hidden=hidden, edge_attr_dim=edge_attr_dim,
+                    n_nodes=graph.n_nodes, cfc_tau_min=cfc_tau_min,
+                )
+                for _ in range(n_layers)
+            ])
+            self.mamba_encoder = None
+        elif self.encoder_backbone == 'mamba2':
+            from cell_sim.lgnn.models.mamba_encoder import MambaEncoder
+            self.mamba_encoder = MambaEncoder(
+                hidden=hidden, n_layers=n_layers,
             )
-            for _ in range(n_layers)
-        ])
+            self.layers = None
+        else:
+            raise ValueError(
+                f'unknown encoder_backbone={encoder_backbone!r}; '
+                f"expected 'cfc' or 'mamba2'"
+            )
+
         self.out_norm = nn.LayerNorm(hidden)
-        self.pinn_head = PINNHead(
-            hidden=hidden,
-            stoich_matrix=stoich_matrix,
-            flux_indices=flux_indices,
-            rate_clip=rate_clip,
-            use_residual=use_residual,
-        )
+
+        # ---- Flux head (M8 upgrade 10: optional Neural ODE) ----
+        # NeuralODEFluxHead integrates dx/dt = S·v_θ(x) over [t, t+1] using
+        # RK4 (training) or dopri5 (inference). Same (x, h) -> (x_next, v_log)
+        # contract as PINNHead, so the trainer/forward path is unchanged.
+        if self.use_node_flux_head:
+            from cell_sim.lgnn.models.node_flux_head import NeuralODEFluxHead
+            self.pinn_head = NeuralODEFluxHead(
+                hidden=hidden,
+                stoich_matrix=stoich_matrix,
+                flux_indices=flux_indices,
+                rate_clip=rate_clip,
+                solver=node_solver,
+                step_size=node_step_size,
+            )
+        else:
+            # If MoE residual is on, the PINN head's internal residual is
+            # disabled — the MoE module owns the non-SBML rows.
+            pinn_use_residual = use_residual and not self.use_moe_residual
+            self.pinn_head = PINNHead(
+                hidden=hidden,
+                stoich_matrix=stoich_matrix,
+                flux_indices=flux_indices,
+                rate_clip=rate_clip,
+                use_residual=pinn_use_residual,
+            )
+
+        # ---- M8 upgrade 7: MoE residual head (opt-in) ----
+        # 11 experts statically routed by row-name prefix (G_/R_/P_/PM_/...).
+        # Applied in forward() as an additive log-space delta on non-SBML
+        # rows, replacing PINNHead's single-Linear residual. Backwards
+        # compatible: when use_moe_residual=False the model behaves exactly
+        # as M7.* did.
+        if self.use_moe_residual:
+            from cell_sim.lgnn.models.moe_residual_head import (
+                MoEResidualHead, build_row_to_expert,
+            )
+            row_to_expert = build_row_to_expert(
+                graph.row_names, n_experts=moe_n_experts,
+            )
+            self.moe_residual_head = MoEResidualHead(
+                hidden=hidden,
+                n_experts=moe_n_experts,
+                row_to_expert=row_to_expert,
+            )
+        else:
+            self.moe_residual_head = None
 
         # M8: stochastic head producing per-species log_σ. PINNHead
         # provides the *mean* (mass-conservation invariant); this head
@@ -220,22 +288,41 @@ class CellGNNv7Hybrid(nn.Module):
             edge_mask = None
 
         total_entropy = torch.zeros(B, N, device=x.device, dtype=h.dtype)
-        for layer in self.layers:
-            if self.use_checkpoint and self.training:
-                h, ent = ckpt.checkpoint(
-                    layer, h,
-                    self.edge_index, self.edge_attr, self.edge_kind,
-                    edge_mask, self.edge_chunk_size,
-                    use_reentrant=False,
-                )
-            else:
-                h, ent = layer(h, self.edge_index, self.edge_attr,
-                               self.edge_kind, edge_mask,
-                               chunk_size=self.edge_chunk_size)
+        if self.encoder_backbone == 'mamba2':
+            # Mamba encoder ignores graph edges; entropy returned as zeros
+            h, ent = self.mamba_encoder(h)
             total_entropy = total_entropy + ent
+        else:
+            for layer in self.layers:
+                if self.use_checkpoint and self.training:
+                    h, ent = ckpt.checkpoint(
+                        layer, h,
+                        self.edge_index, self.edge_attr, self.edge_kind,
+                        edge_mask, self.edge_chunk_size,
+                        use_reentrant=False,
+                    )
+                else:
+                    h, ent = layer(h, self.edge_index, self.edge_attr,
+                                   self.edge_kind, edge_mask,
+                                   chunk_size=self.edge_chunk_size)
+                total_entropy = total_entropy + ent
 
         h = self.out_norm(h)
         x_next_log, v_log = self.pinn_head(x, h)
+
+        # M8 upgrade 7: MoE residual on non-SBML rows.
+        # PINNHead's internal residual was disabled at construction when
+        # use_moe_residual=True, so we apply the MoE delta here. Add in
+        # signed-log1p space, masked to non-SBML rows, then re-clamp.
+        if self.moe_residual_head is not None:
+            moe_delta = self.moe_residual_head(h)               # (B, N)
+            non_sbml = 1.0 - self.pinn_head.s_covered_mask.to(x_next_log.dtype)
+            x_next_log = x_next_log + moe_delta * non_sbml.unsqueeze(0)
+            # Re-clamp the way PINNHead would have. NeuralODEFluxHead has
+            # no x_next_log_clip attr, so guard the lookup.
+            x_clip = getattr(self.pinn_head, 'x_next_log_clip', None)
+            if x_clip is not None:
+                x_next_log = x_next_log.clamp(-x_clip, x_clip)
 
         # M8: per-species log_σ (uncertainty). When stochastic_head is None
         # OR return_log_sigma is False, this branch is a no-op.
