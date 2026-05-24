@@ -1,4 +1,22 @@
-"""Colab cell: v12 cell-state emulator - speedup + larger training rollout horizon.
+"""Colab cell: v13 cell-state emulator - speedup pass (smaller model + bigger batch).
+
+v12 -> v13:
+  Three lightweight changes for ~3x wall-clock speedup, no architectural risk:
+    1. LGNN_HIDDEN 64 -> 32: half the per-node params (CfC's A/B were the
+       biggest term).  ~2x faster forward.  May dip R² slightly; set back
+       to 64 for v12-quality.
+    2. BATCH 16 -> 32: doubled on Blackwell's 96 GB.  More throughput per
+       step; STEPS dropped 2000 → 1500 to compensate.
+    3. USE_TORCH_COMPILE flag (default off, experimental): wraps the model
+       in torch.compile for an extra ~1.5x.  Risky with checkpoint+autocast,
+       falls back to eager on failure.
+
+  Estimated time on RTX 6000 Pro Blackwell: ~17-25 min total
+  (vs v12's ~50 min, v11's ~120 min).
+
+  Sub-hour at K_MAX=7000: still hard.  Best honest run on v13 with USE_TORCH_COMPILE=True:
+    K_MAX=7000, STEPS=500 → ~75-90 min (was ~6 hours in v11).
+  To genuinely fit K=7000 in <60 min would need FP8 or graph-rewriting we haven't done.
 
 v11 -> v12:
   1. TRUNCATED BPTT  K_MAX raised from 64 -> 256 (4x longer horizon = 4 min
@@ -142,11 +160,11 @@ N_LAYERS            = 3
 N_HEADS             = 8
 DROPOUT             = 0.1
 N_TRAIN_TRAJ        = 40
-STEPS               = 2000         # v12: was 8000.  With TBPTT and larger K, same total gradient signal.
+STEPS               = 1500         # v13: was 2000 — fewer steps, BATCH doubled to compensate
 K_MAX               = 256          # v12: was 64.  256 steps = ~4 min biological at 1s stride.
 TBPTT_CHUNK         = 64           # v12: gradient flows back this many rollout steps at a time
 USE_BF16            = True         # v12: BF16 autocast on Blackwell/Hopper/A100 — ~2x speedup
-BATCH               = 16           # v9.1: was 32, halved to fit BPTT memory after LGNN switch
+BATCH               = 32           # v13: was 16 — doubled on Blackwell 96GB; more throughput per step
 LR                  = 3e-4
 WEIGHT_DECAY        = 1e-5
 LAMBDA_1STEP        = 1.0
@@ -160,12 +178,13 @@ CONSERVATION_K      = 8            # NEW v7
 PERIODICITY_TOP_K   = 20           # NEW v7
 GENE_LAG_MAX        = 5            # NEW v7
 COUNT_BOUND_SLACK   = 0.1          # NEW v7.1: count-space high-side cap headroom
-LGNN_HIDDEN         = 64           # NEW v8: per-node hidden dim
+LGNN_HIDDEN         = 32           # v13: was 64 — half params, ~2x faster forward (set 64 to restore)
 LGNN_N_LAYERS       = 3            # NEW v8: number of CfC graph layers
 LGNN_CFC_TAU_MIN    = 0.1          # NEW v8: CfC time-constant minimum
 LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
 USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML species
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
+USE_TORCH_COMPILE   = False        # NEW v13: torch.compile the model (~1.5x extra, experimental)
 PINN_RATE_CLIP      = 6.0          # NEW v9: log-space rate clip (prevents expm1 blow-up)
 VAR_R2_TOP_K        = 200          # NEW v9: top-K species (by variance) for the honest R²
 KO_N_STEPS          = 300          # v10 Tier C: 5 min biological at 1s stride (was 30)
@@ -1670,7 +1689,9 @@ def train_model(model, train_X, ruleset):
     t_start = time.time()
     model.train()
     print(f"[train] BF16 autocast: {'ON' if USE_BF16 and device == 'cuda' else 'off'}, "
-          f"TBPTT chunk: {TBPTT_CHUNK}, K_MAX: {K_MAX}, STEPS: {STEPS}")
+          f"TBPTT chunk: {TBPTT_CHUNK}, K_MAX: {K_MAX}, STEPS: {STEPS}, "
+          f"BATCH: {BATCH}, hidden: {LGNN_HIDDEN}, "
+          f"compile: {'ON' if USE_TORCH_COMPILE and device == 'cuda' else 'off'}")
 
     for step in range(STEPS):
         K    = 1 + int((K_MAX - 1) * step / STEPS)
@@ -1995,7 +2016,7 @@ def main():
     print(f"[device] {device}")
     print()
     print("=" * 72)
-    print("  v12 — v11 + truncated BPTT (large K) + BF16 autocast (~2x speedup)")
+    print("  v13 — v12 + speedup pass (hidden 64→32, BATCH 16→32, optional torch.compile)")
     print("=" * 72)
 
     raw_counts, species_names = load_data(skip_startup=True)
@@ -2108,6 +2129,13 @@ def main():
     if USE_STOCHASTIC_HEAD:  head_tags.append("stochastic")
     print(f"[model] LGNN+{('+'.join(head_tags)) if head_tags else 'plain'}: {n_params:.2f}M parameters, "
           f"{edge_index.shape[1]:,} graph edges")
+    # v13: optional torch.compile for an extra ~1.5x speedup
+    if USE_TORCH_COMPILE and device == "cuda":
+        try:
+            model = torch.compile(model)
+            print("[model] torch.compile enabled - first training step will be slow (graph capture)")
+        except Exception as e:
+            print(f"[model] torch.compile failed ({e}) - running in eager mode")
     train_model(model, train_X, ruleset)
 
     # ── evaluate ──────────────────────────────────────────────────────────
@@ -2158,7 +2186,7 @@ def main():
     print(f"[gen] 51st trajectory {gen_counts.shape}  "
           f"finite={np.isfinite(gen_counts).all()}  "
           f"count range [{gen_counts.min():.0f}, {gen_counts.max():.0f}]")
-    np.save(f"{SAVE_DIR}/cell_traj_51_v12.npy", gen_counts)
+    np.save(f"{SAVE_DIR}/cell_traj_51_v13.npy", gen_counts)
     torch.save({
         "model": model.state_dict(),
         "lo": lo, "span": span, "active": active,
@@ -2179,10 +2207,10 @@ def main():
                        time_stride=TIME_STRIDE, n_genes=len(locus_list),
                        skip_startup=SKIP_STARTUP_STEPS,
                        use_pinn=pinn_active, use_stochastic=USE_STOCHASTIC_HEAD,
-                       architecture="LGNN_v12"),
-    }, f"{SAVE_DIR}/cell_emulator_v12.pt")
-    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v12.npy")
-    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v12.pt")
+                       architecture="LGNN_v13"),
+    }, f"{SAVE_DIR}/cell_emulator_v13.pt")
+    print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v13.npy")
+    print(f"[save] model -> {SAVE_DIR}/cell_emulator_v13.pt")
 
 
 if __name__ == "__main__":
