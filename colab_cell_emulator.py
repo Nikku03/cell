@@ -1541,12 +1541,38 @@ def full_rollout(model, traj, ruleset):
     return torch.cat(preds, 0), traj[1:]
 
 
+@torch.no_grad()
+def full_rollout_batched(model, trajs, ruleset):
+    """v10: roll all test trajectories in parallel (one shared time loop).
+    7,199 steps × 10 trajs would take ~60 min serially at full resolution;
+    batched, it's a single 7,199-step loop = ~6 min.
+
+    trajs: (n, T, S) tensor of seed trajectories.
+    Returns (preds, truth) both shaped (n, T-1, S).
+    """
+    model.eval()
+    state = trajs[:, 0]              # (n, S)
+    preds = []
+    for _ in range(trajs.shape[1] - 1):
+        p = _model_pred(model(state)).clamp(CLAMP_LO, CLAMP_HI)
+        p = ruleset.project(state, p)
+        preds.append(p)
+        state = p
+    return torch.stack(preds, dim=1), trajs[:, 1:]   # (n, T-1, S) each
+
+
 # ── missing-info report ───────────────────────────────────────────────────────
 
 @torch.no_grad()
 def analyze_gaps(model, test_X, species_names, species_type_ids,
-                 ruleset, hyp, sbml, elem_balances):
-    """Where the model + rules fall short - residuals, drifts, coverage."""
+                 ruleset, hyp, sbml, elem_balances,
+                 preds_batch=None, truth_batch=None):
+    """Where the model + rules fall short - residuals, drifts, coverage.
+
+    v10: accept pre-computed batched preds/truth from full_rollout_batched to
+    avoid re-rolling the trajectory (which is the eval-phase bottleneck at
+    full resolution: 7,199 steps × 10 trajs).
+    """
     print()
     print("#" * 72)
     print("#  MISSING-INFO REPORT  -  where the model / rules fall short")
@@ -1554,10 +1580,13 @@ def analyze_gaps(model, test_X, species_names, species_type_ids,
 
     S = test_X.shape[2]
     se = torch.zeros(S, device=test_X.device)
-    for k in range(test_X.shape[0]):
-        pred, true = full_rollout(model, test_X[k], ruleset)
-        se += ((pred - true) ** 2).mean(0)
-    se /= test_X.shape[0]
+    if preds_batch is not None and truth_batch is not None:
+        se = ((preds_batch - truth_batch) ** 2).mean(dim=(0, 1))   # (S,)
+    else:
+        for k in range(test_X.shape[0]):
+            pred, true = full_rollout(model, test_X[k], ruleset)
+            se += ((pred - true) ** 2).mean(0)
+        se /= test_X.shape[0]
     worst = torch.argsort(se, descending=True)[:15].tolist()
     tname = {GTYPE_PROTEIN: "protein", GTYPE_TRNA: "tRNA", GTYPE_RRNA: "rRNA",
              GTYPE_OTHER: "other", GTYPE_GLOBAL: "global"}
@@ -1845,13 +1874,13 @@ def main():
     print("  EVALUATION")
     print("=" * 72)
     s_mse, s_r2 = one_step(model, test_X)
-    roll_pairs = [full_rollout(model, test_X[k], ruleset)
-                  for k in range(test_X.shape[0])]
-    roll_r2 = [r2(p, t) for p, t in roll_pairs]
+    # v10: batched rollout — all 10 test trajs in one shared time loop, ~10x faster
+    preds_batch, truth_batch = full_rollout_batched(model, test_X, ruleset)
+    roll_r2 = [r2(preds_batch[k], truth_batch[k]) for k in range(test_X.shape[0])]
     mean_roll = sum(roll_r2) / len(roll_r2)
     # v9: variance-weighted R² (median over top-K high-variance species)
-    all_preds = torch.cat([p for p, _ in roll_pairs], 0)
-    all_true  = torch.cat([t for _, t in roll_pairs], 0)
+    all_preds = preds_batch.reshape(-1, preds_batch.shape[-1])
+    all_true  = truth_batch.reshape(-1, truth_batch.shape[-1])
     var_r2, n_var = variance_weighted_r2(all_preds, all_true, top_k=VAR_R2_TOP_K)
     print()
     print("=" * 72)
@@ -1867,7 +1896,8 @@ def main():
 
     analyze_gaps(model, test_X, species_active, species_type_ids,
                  ruleset, hyp, sbml,
-                 element_balances(sbml, species_active, raw_counts_active))
+                 element_balances(sbml, species_active, raw_counts_active),
+                 preds_batch=preds_batch, truth_batch=truth_batch)
 
     # ── v9: knockout sweep vs Breuer 2019 essentiality ───────────────────
     breuer_labels = load_breuer_essentiality(BREUER_PATH)
