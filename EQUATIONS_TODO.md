@@ -1,5 +1,29 @@
 # Equations to wire into the emulator — build list
 
+---
+
+## v14 — 5-day physics list (consolidated)
+
+Independent of the v13.9 module plan below.  This is the user's
+physics-grounded list (8 items, see chat history for full framing); each
+constraint is implemented as a `nn.Module` extension or a training-loop loss term.
+
+| # | Item | Day | Status | Notes |
+|---|------|-----|--------|-------|
+| #1 | Stoichiometric conservation | – | inherited from v13.9 (cores 1, 3, 4 push updates through S·v) | – |
+| **#2** | ΔG° sign clamp | day 1 | **landed** | k_cat_rev=0 when ΔG° < -10 kJ/mol |
+| **#7** | Ribosome pool cap | day 2 | **landed** | shared-pool MM on translation |
+| **#3** | ATP energy ledger | days 3-4 | **landed** | deficit penalty when net ATP < NGAM floor |
+| **#8-lite** | σ-calibration anchor | day 5 | **landed** | log σ pulled toward empirical std, eval-time calibration metric |
+| #4, #5 | Terminal manifold + doubling | – | deferred — needs full-cell-cycle rollouts in training | – |
+| #6 | Dissipation Lyapunov | – | deferred — proxied by multi-step rollout loss already | – |
+| #8 full | Full FDT coupling | – | deferred — calibration anchor is the lite version | – |
+
+Expected post-Day-5 outcome (untested on Colab yet):
+rollout R² 0.79–0.89, KO MCC 0.30–0.50, element drift 20–30%, wall-clock ~30 min.
+
+---
+
 Strategy: take the rate laws the upstream simulator uses (Luthey-Schulten Minimal_Cell_ComplexFormation), bake them directly into PyTorch modules, replace the LGNN's neural prediction for those reactions with the actual formula. The LGNN keeps the **residual** job — capture whatever the equations don't model (allostery, growth coupling, edge cases).
 
 Each module is gated on a verifiable improvement before we proceed to the next. If a module doesn't move rollout R² meaningfully, we pause and diagnose before adding the next one.

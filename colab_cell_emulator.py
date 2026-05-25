@@ -196,6 +196,8 @@ USE_ATP_LEDGER      = True         # NEW v14 day 3: soft penalty when net ATP pr
 ATP_SPECIES_NAME    = "M_atp_c"    # which species to track for the energy ledger
 ATP_MAINTENANCE_RATE = 4.0e5       # ATP molecules per second per cell — NGAM floor (~5 mmol/g/hr × Syn3A mass)
 LAMBDA_ATP          = 0.01         # auxiliary loss weight for ATP-deficit penalty
+USE_SIGMA_ANCHOR    = True         # NEW v14 day 5: anchor predicted log σ to empirical std, prevents NLL-shrinkage
+LAMBDA_SIGMA_ANCHOR = 0.05         # anchor strength (small — data wins ties)
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -2403,6 +2405,8 @@ class DynamicsModel(nn.Module):
                  # v13.9: equation-wired metabolism
                  metab_tensors=None, metab_dt=1.0, volume_core=None,
                  cd_tensors=None, asm_tensors=None,
+                 # v14 day 5: per-species empirical log σ (sigma calibration anchor)
+                 target_log_sigma=None,
                  # backward-compat v7 kwargs (ignored)
                  d_model=None, n_heads=None, context=None, dropout=None,
                  d_type=None):
@@ -2455,6 +2459,12 @@ class DynamicsModel(nn.Module):
             self.register_buffer("metab_span", span_t)
             zero_norm = (-lo_t / span_t).clamp(CLAMP_LO, CLAMP_HI)
             self.register_buffer("zero_norm", zero_norm)
+        # v14 day 5: σ-anchor — pulls predicted log σ toward observed std,
+        # prevents the NLL-shrinkage mode collapse where σ → 0 to game the loss.
+        if target_log_sigma is not None:
+            self.register_buffer("target_log_sigma",
+                                  torch.as_tensor(target_log_sigma,
+                                                  dtype=torch.float32))
 
     def forward(self, x):                     # x: (B, S) normalised
         B, S = x.shape
@@ -2633,6 +2643,10 @@ def train_model(model, train_X, ruleset, hyp=None):
                       and _inner.metab_core is not None
                       and _inner.metab_core.has_atp)
     atp_ema = 0.0    # running average of net ATP rate, for the train log
+    # v14 day 5: σ-anchor active when target_log_sigma was provided AND stochastic head is on
+    target_log_sigma = getattr(_inner, "target_log_sigma", None)
+    use_sigma_anchor = USE_SIGMA_ANCHOR and use_nll and target_log_sigma is not None
+    sigma_ema = 0.0  # mean predicted log σ, for the train log
 
     def _autocast():
         if USE_BF16 and device == "cuda":
@@ -2647,7 +2661,8 @@ def train_model(model, train_X, ruleset, hyp=None):
           f"compile: {'ON' if USE_TORCH_COMPILE and device == 'cuda' else 'off'}, "
           f"hyp_aux: {'ON' if use_hyp else 'off'}, "
           f"ko_aug: {'ON p=' + str(KO_AUG_PROB) if use_ko_aug else 'off'}, "
-          f"atp_ledger: {'ON floor=' + str(int(ATP_MAINTENANCE_RATE)) if use_atp_ledger else 'off'}")
+          f"atp_ledger: {'ON floor=' + str(int(ATP_MAINTENANCE_RATE)) if use_atp_ledger else 'off'}, "
+          f"sigma_anchor: {'ON λ=' + str(LAMBDA_SIGMA_ANCHOR) if use_sigma_anchor else 'off'}")
     hyp_ema = {}    # v13.8: per-kind running average across training (promotion signal)
 
     for step in range(STEPS):
@@ -2692,6 +2707,13 @@ def train_model(model, train_X, ruleset, hyp=None):
                     sq_err = (pred - true) ** 2
                     inv_var = torch.exp(-2.0 * log_sigma)
                     loss_k = 0.5 * (inv_var * sq_err + 2.0 * log_sigma).mean()
+                    if use_sigma_anchor:
+                        # Pull log σ toward empirical std per species — prevents
+                        # the σ → 0 collapse mode that gives wildly negative NLL
+                        # while leaving MSE worse than persistence.
+                        sigma_anchor = ((log_sigma - target_log_sigma) ** 2).mean()
+                        loss_k = loss_k + LAMBDA_SIGMA_ANCHOR * sigma_anchor
+                        sigma_ema = 0.99 * sigma_ema + 0.01 * float(log_sigma.mean().detach())
                 else:
                     pred = out
                     true = train_X[i_d, t0_d + 1 + k]
@@ -2753,10 +2775,11 @@ def train_model(model, train_X, ruleset, hyp=None):
                 hyp_str = "  hyp[" + " ".join(f"{k}={float(v):.4f}"
                                               for k, v in hyp_ema.items()) + "]"
             atp_str = f"  atp={atp_ema:.2e}/s" if use_atp_ledger else ""
+            sigma_str = f"  log σ={sigma_ema:+.2f}" if use_sigma_anchor else ""
             print(f"  step {step+1:5d}  K={K:4d}  "
                   f"1-step {float(first_loss.detach()):.5f}  "
                   f"rollout {sum(all_loss_means)/len(all_loss_means):.5f}"
-                  f"{hyp_str}{atp_str}", flush=True)
+                  f"{hyp_str}{atp_str}{sigma_str}", flush=True)
 
         # v13.7: rolling mid-training checkpoint so an interrupt mid-run doesn't lose progress
         if (CHECKPOINT_EVERY > 0
@@ -3154,6 +3177,15 @@ def main():
     cd_tensors = None
     if USE_CENTRAL_DOGMA:
         cd_tensors = build_central_dogma_tensors(species_active)
+    # v14 day 5: empirical per-species log σ for the calibration anchor
+    target_log_sigma = None
+    if USE_SIGMA_ANCHOR:
+        train_std = train_X.float().std(dim=(0, 1)).clamp(min=1e-3)
+        target_log_sigma = torch.log(train_std).clamp(-6.0, 2.0)
+        print(f"[sigma_anchor] empirical log σ: "
+              f"median {float(target_log_sigma.median()):+.2f}, "
+              f"range [{float(target_log_sigma.min()):+.2f}, "
+              f"{float(target_log_sigma.max()):+.2f}]")
     # v13.9: build AssemblyCore tensors (complex_formation.xlsx mass-action +
     # 50S ribosome assembly chain from LargeSubunit.xlsx)
     asm_tensors = None
@@ -3171,6 +3203,7 @@ def main():
         metab_tensors=metab_tensors, metab_dt=float(TIME_STRIDE),
         volume_core=volume_core, cd_tensors=cd_tensors,
         asm_tensors=asm_tensors,
+        target_log_sigma=target_log_sigma,
     ).to(device)
     n_params = sum(p.numel() for p in model.parameters()) / 1e6
     head_tags = []
@@ -3279,6 +3312,20 @@ def main():
     print(f"  median R² on top-{n_var} variable species : {var_r2:+.3f}  <- HONEST METRIC")
     print(f"  (v6 transformer (60s)    : rollout R^2 ~0.56,  honest unknown)")
     print(f"  (v9 LGNN (60s stride)    : rollout R^2 ~0.64,  honest +0.37)")
+    # v14 day 5: σ calibration — compare predicted std vs empirical std on test set
+    if USE_STOCHASTIC_HEAD and USE_SIGMA_ANCHOR:
+        sigma_pred  = preds_batch.std(dim=0)          # (T, S) — across trajectories
+        sigma_true  = truth_batch.std(dim=0)
+        # Median over species and time of log10(pred/true) — ideal calibration = 0
+        log_ratio = (sigma_pred.clamp(min=1e-6).log10()
+                     - sigma_true.clamp(min=1e-6).log10())
+        cal_med = float(log_ratio.median())
+        cal_iqr = float((log_ratio.quantile(0.75) - log_ratio.quantile(0.25)))
+        verdict = ("well-calibrated"   if abs(cal_med) < 0.3 else
+                   "under-confident"   if cal_med > 0 else
+                   "over-confident")
+        print(f"  σ calibration            : log10(pred/true) median {cal_med:+.2f}  "
+              f"IQR {cal_iqr:.2f}  ({verdict})")
     print("=" * 72)
 
     analyze_gaps(model, test_X, species_active, species_type_ids,
