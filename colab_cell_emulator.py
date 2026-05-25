@@ -187,6 +187,7 @@ LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
 USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML species
 USE_METABOLISM_CORE = True         # NEW v13.9: replace PINN's neural flux with the bi-bi rate law for ~160 SBML reactions
 USE_VOLUME_CORE     = True         # NEW v13.9: dynamic cell volume from membrane-lipid count (vs constant)
+USE_CENTRAL_DOGMA   = True         # NEW v13.9: first-order tx/tl/mRNA-deg/protein-deg per gene
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -1838,6 +1839,121 @@ class VolumeCore(nn.Module):
         return self.base_volume_l * (lipid_total / self.initial_total)
 
 
+# ── v13.9 CentralDogmaCore: first-order tx / tl / mRNA-deg / protein-deg ─────
+
+# Literature defaults — tuned to give plausible steady states (mRNA ~10/gene,
+# protein ~1000/mRNA).  Per-gene refinement (from syn3A.gb gene lengths)
+# is a future improvement.
+K_TX_DEFAULT      = 0.06               # transcription initiation rate per gene copy (/s)
+K_TL_DEFAULT      = 2.0e-3             # translation initiation rate per mRNA (/s)
+T_HALF_MRNA_S     = 120.0              # mRNA half-life (~2 min, Syn3A literature)
+T_HALF_PROTEIN_S  = 36_000.0           # protein half-life (~10 h)
+
+
+def build_central_dogma_tensors(species_names):
+    """Pair (G, R, P) species by gene locus.
+
+    For each locus that has *all three* of G_<locus>, R_<locus>, P_<locus>
+    species in the trajectory (preferring the _C1 chromosome-copy variant
+    where multiple exist), pack the indices.
+
+    Returns dict with index tensors + coverage_mask, or None.
+    """
+    S = len(species_names)
+    by_locus = {}
+    for i, name in enumerate(species_names):
+        pre, full_locus = parse_species(name)
+        if pre not in ("G", "R", "P") or not full_locus:
+            continue
+        locus = _locus_key(full_locus)
+        if not locus:
+            continue
+        # Prefer _C1 variant; first match otherwise.  Don't overwrite a
+        # _C1 with a non-_C1 hit.
+        d = by_locus.setdefault(locus, {})
+        existing = d.get(pre)
+        if existing is None:
+            d[pre] = (i, full_locus)
+        elif full_locus.endswith("_C1") and not existing[1].endswith("_C1"):
+            d[pre] = (i, full_locus)
+
+    triples = [(d["G"][0], d["R"][0], d["P"][0], locus)
+               for locus, d in by_locus.items()
+               if all(k in d for k in ("G", "R", "P"))]
+    if not triples:
+        print(f"[cdcore] no genes with G+R+P species found in {S} species — disabled")
+        return None
+
+    gene_idx = torch.tensor([t[0] for t in triples], dtype=torch.long)
+    mrna_idx = torch.tensor([t[1] for t in triples], dtype=torch.long)
+    prot_idx = torch.tensor([t[2] for t in triples], dtype=torch.long)
+    cov_mask = torch.zeros(S, dtype=torch.bool)
+    cov_mask[mrna_idx] = True
+    cov_mask[prot_idx] = True
+
+    print(f"[cdcore] {len(triples)} genes wired (G+R+P all present); "
+          f"coverage = {int(cov_mask.sum())} species (mRNA + protein, "
+          f"genes left to LGNN)")
+    return {
+        "gene_idx": gene_idx, "mrna_idx": mrna_idx, "prot_idx": prot_idx,
+        "coverage_mask": cov_mask, "loci": [t[3] for t in triples],
+        "n_genes": len(triples),
+    }
+
+
+class CentralDogmaCore(nn.Module):
+    """First-order tx / tl / decay per gene locus.
+
+    For each gene g with all of (G_g, R_g, P_g) species in the trajectory:
+        d(R_g)/dt = k_tx · G_g       - k_deg_mRNA · R_g
+        d(P_g)/dt = k_tl · R_g       - k_deg_prot · P_g
+
+    Overrides the LGNN's prediction for mRNA + protein species (genes
+    themselves are left to the LGNN — DNA replication is ReplicationCore
+    later).  Frozen-buffer rate constants from literature defaults; can
+    later be made per-gene from syn3A.gb gene lengths.
+
+    NOTE: this is a deliberate simplification of upstream's GIP_rates.py
+    which couples to NTP/aa/ribosome pools.  We're skipping that coupling
+    in v1 — the model has to live with literature-average rates for now.
+    """
+
+    def __init__(self, tensors,
+                 k_tx=K_TX_DEFAULT, k_tl=K_TL_DEFAULT,
+                 t_half_mrna=T_HALF_MRNA_S, t_half_prot=T_HALF_PROTEIN_S):
+        super().__init__()
+        self.register_buffer("gene_idx",      tensors["gene_idx"])
+        self.register_buffer("mrna_idx",      tensors["mrna_idx"])
+        self.register_buffer("prot_idx",      tensors["prot_idx"])
+        self.register_buffer("coverage_mask", tensors["coverage_mask"])
+        self.register_buffer("k_tx",
+                             torch.tensor(float(k_tx), dtype=torch.float32))
+        self.register_buffer("k_tl",
+                             torch.tensor(float(k_tl), dtype=torch.float32))
+        self.register_buffer("k_deg_mrna",
+                             torch.tensor(np.log(2) / float(t_half_mrna),
+                                          dtype=torch.float32))
+        self.register_buffer("k_deg_prot",
+                             torch.tensor(np.log(2) / float(t_half_prot),
+                                          dtype=torch.float32))
+        self.n_genes = tensors["n_genes"]
+
+    def forward(self, state, dt=1.0):
+        """state: (B, S) counts.  Returns delta_state (B, S) counts."""
+        B = state.shape[0]
+        G = state[:, self.gene_idx].clamp(min=0.0)
+        R = state[:, self.mrna_idx].clamp(min=0.0)
+        P = state[:, self.prot_idx].clamp(min=0.0)
+        dR = (self.k_tx * G - self.k_deg_mrna * R) * dt
+        dP = (self.k_tl * R - self.k_deg_prot * P) * dt
+        delta = torch.zeros_like(state)
+        delta = delta.scatter_add(
+            1, self.mrna_idx.unsqueeze(0).expand(B, -1), dR)
+        delta = delta.scatter_add(
+            1, self.prot_idx.unsqueeze(0).expand(B, -1), dP)
+        return delta
+
+
 class _CfCGraphLayer(nn.Module):
     """Message-passing graph layer with CfC (closed-form continuous-time) update.
 
@@ -1994,6 +2110,7 @@ class DynamicsModel(nn.Module):
                  pinn_rate_clip=PINN_RATE_CLIP, use_stochastic=False,
                  # v13.9: equation-wired metabolism
                  metab_tensors=None, metab_dt=1.0, volume_core=None,
+                 cd_tensors=None,
                  # backward-compat v7 kwargs (ignored)
                  d_model=None, n_heads=None, context=None, dropout=None,
                  d_type=None):
@@ -2019,6 +2136,8 @@ class DynamicsModel(nn.Module):
         self.metab_dt = float(metab_dt)
         # v13.9: VolumeCore tracks dynamic cell volume; passed to MetabolismCore each step.
         self.volume_core = volume_core
+        # v13.9: CentralDogmaCore — first-order tx/tl/decay per gene
+        self.cd_core = CentralDogmaCore(cd_tensors) if cd_tensors is not None else None
         # v9: PINN head (optional) — disabled when MetabolismCore is on
         self.use_pinn = bool(use_pinn and sbml_mask is not None
                              and self.metab_core is None)
@@ -2030,8 +2149,9 @@ class DynamicsModel(nn.Module):
         self.use_stochastic = bool(use_stochastic)
         if self.use_stochastic:
             self.stochastic_head = StochasticHead(hidden)
-        # MetabolismCore needs per-species lo/span for normalised <-> count conversion
-        if self.metab_core is not None and lo_norm is not None and span_norm is not None:
+        # Equation-wired cores all need per-species lo/span for normalised <-> count conversion
+        if ((self.metab_core is not None or self.cd_core is not None)
+                and lo_norm is not None and span_norm is not None):
             lo_t   = torch.as_tensor(lo_norm,   dtype=torch.float32)
             span_t = torch.as_tensor(span_norm, dtype=torch.float32).clamp(min=1e-6)
             self.register_buffer("metab_lo",   lo_t)
@@ -2063,6 +2183,17 @@ class DynamicsModel(nn.Module):
             x_norm_metab = x_norm_metab.clamp(CLAMP_LO, CLAMP_HI).to(x_next.dtype)
             mask = self.metab_core.coverage_mask.unsqueeze(0).expand(B, -1)
             x_next = torch.where(mask, x_norm_metab, x_next)
+        # v13.9: CentralDogmaCore overrides mRNA + protein with first-order tx/tl/decay
+        if self.cd_core is not None:
+            x_sl_lin     = x.float() * self.metab_span + self.metab_lo
+            x_count      = t_signed_expm1(x_sl_lin)
+            d_count      = self.cd_core(x_count, dt=self.metab_dt)
+            x_count_next = (x_count + d_count).clamp(min=0.0)
+            x_sl_next    = t_signed_log1p(x_count_next)
+            x_norm_cd    = (x_sl_next - self.metab_lo) / self.metab_span
+            x_norm_cd    = x_norm_cd.clamp(CLAMP_LO, CLAMP_HI).to(x_next.dtype)
+            mask_cd      = self.cd_core.coverage_mask.unsqueeze(0).expand(B, -1)
+            x_next       = torch.where(mask_cd, x_norm_cd, x_next)
         # PINN head overrides SBML species with mass-balanced prediction (disabled when MetabolismCore is on)
         if self.use_pinn:
             x_next_sbml = self.pinn_head(h, x)                              # (B, n_sbml)
@@ -2658,6 +2789,10 @@ def main():
     if USE_VOLUME_CORE and metab_tensors is not None:
         volume_core = build_volume_core(species_active,
                                          raw_counts_active[train_idx, 0])
+    # v13.9: build CentralDogmaCore tensors (per-gene G/R/P triples)
+    cd_tensors = None
+    if USE_CENTRAL_DOGMA:
+        cd_tensors = build_central_dogma_tensors(species_active)
     model = DynamicsModel(
         S=S, hidden=LGNN_HIDDEN, n_layers=LGNN_N_LAYERS,
         species_type_ids=species_type_ids,
@@ -2667,12 +2802,14 @@ def main():
         stoich_matrix=stoich_matrix, lo_norm=lo, span_norm=span,
         pinn_rate_clip=PINN_RATE_CLIP, use_stochastic=USE_STOCHASTIC_HEAD,
         metab_tensors=metab_tensors, metab_dt=float(TIME_STRIDE),
-        volume_core=volume_core,
+        volume_core=volume_core, cd_tensors=cd_tensors,
     ).to(device)
     n_params = sum(p.numel() for p in model.parameters()) / 1e6
     head_tags = []
     if model.metab_core is not None:
         head_tags.append(f"MetabolismCore({model.metab_core.R})")
+    if model.cd_core is not None:
+        head_tags.append(f"CentralDogma({model.cd_core.n_genes})")
     if model.volume_core is not None:
         head_tags.append(f"VolumeCore({int(model.volume_core.lipid_indices.numel())})")
     if model.use_pinn:        head_tags.append("PINN")
@@ -2820,6 +2957,9 @@ def main():
                        use_pinn=model.use_pinn, use_stochastic=USE_STOCHASTIC_HEAD,
                        use_metab_core=model.metab_core is not None,
                        metab_n_reactions=(model.metab_core.R if model.metab_core is not None else 0),
+                       use_cd_core=model.cd_core is not None,
+                       cd_n_genes=(model.cd_core.n_genes if model.cd_core is not None else 0),
+                       use_volume_core=model.volume_core is not None,
                        architecture="LGNN_v13"),
     }, f"{SAVE_DIR}/cell_emulator_v13.pt")
     print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v13.npy")
