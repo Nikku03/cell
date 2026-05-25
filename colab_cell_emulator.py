@@ -418,12 +418,19 @@ def element_balances(sbml, species_names, raw_counts):
 # ── NEW v7: xlsx parsers for the rest of the input files ─────────────────────
 
 def parse_kinetics(path):
-    """Parse kinetic_params.xlsx -> {enzymes, n_params, subsystems} or None."""
+    """Parse kinetic_params.xlsx -> {enzymes, n_params, subsystems, params} or None.
+
+    v13.9: extended to extract the full per-reaction bi-bi parameter table.
+      params[rxn_id] = {kcat_fwd, kcat_rev, km: {species: value},
+                        enzyme, gpr, subsys}
+    Backward-compat: `enzymes` and `n_params` keys preserved for graph code.
+    """
     if not HAS_PANDAS:
         return None
     try:
         sheets = ["Central", "Nucleotide", "Lipid", "Cofactor", "Transport"]
         enzymes, n_params, subsys = {}, 0, {}
+        params = {}
         for sn in sheets:
             try:
                 df = pd.read_excel(path, sheet_name=sn)
@@ -432,14 +439,44 @@ def parse_kinetics(path):
             subsys[sn] = len(df)
             n_params += len(df)
             for _, row in df.iterrows():
-                if row.get("Parameter Type") == "Eff Enzyme Count":
-                    rxn = str(row.get("Reaction Name", ""))
-                    val = str(row.get("Value", ""))
-                    if rxn and val and val != "nan":
-                        enzymes[rxn] = val
+                rxn = str(row.get("Reaction Name", "")).strip()
+                if not rxn or rxn == "nan":
+                    continue
+                pt = str(row.get("Parameter Type", "")).strip()
+                val = row.get("Value")
+                sp = row.get("Related Species")
+                p = params.setdefault(rxn, {
+                    "kcat_fwd": None, "kcat_rev": None, "km": {},
+                    "enzyme": None, "gpr": None, "subsys": sn})
+
+                if pt == "Substrate Catalytic Rate Constant":
+                    try: p["kcat_fwd"] = float(val)
+                    except (ValueError, TypeError): pass
+                elif pt == "Product Catalytic Rate Constant":
+                    try: p["kcat_rev"] = float(val)
+                    except (ValueError, TypeError): pass
+                elif pt == "Michaelis Menten Constant" and sp is not None:
+                    sp_str = str(sp).strip()
+                    if sp_str and sp_str != "nan":
+                        try: p["km"][sp_str] = float(val)
+                        except (ValueError, TypeError): pass
+                elif pt == "Eff Enzyme Count":
+                    val_str = str(val).strip() if val is not None else ""
+                    if val_str and val_str != "nan":
+                        p["enzyme"] = val_str
+                        enzymes[rxn] = val_str
+                elif pt == "GPR rule":
+                    p["gpr"] = str(val) if val is not None else None
+
+        with_kcat = sum(1 for p in params.values() if p["kcat_fwd"] is not None)
+        with_enz  = sum(1 for p in params.values() if p["enzyme"] is not None)
+        with_km   = sum(1 for p in params.values() if p["km"])
         print(f"[kinetics] {n_params} parameter rows across {len(subsys)} subsystems, "
               f"{len(enzymes)} reaction->enzyme mappings")
-        return {"enzymes": enzymes, "n_params": n_params, "subsystems": subsys}
+        print(f"[kinetics] per-reaction coverage: {with_kcat}/{len(params)} k_cat_fwd, "
+              f"{with_enz}/{len(params)} enzymes, {with_km}/{len(params)} K_m sets")
+        return {"enzymes": enzymes, "n_params": n_params,
+                "subsystems": subsys, "params": params}
     except Exception as e:
         print(f"[kinetics] parse failed ({e}) - skipping kinetics")
         return None
@@ -1527,6 +1564,210 @@ def build_stoich_matrix(sbml, species_names):
     print(f"[pinn] stoich matrix: {n_sbml} SBML species × {n_rxn} reactions  "
           f"({mask.sum().item()}/{len(species_names)} species mass-balanced)")
     return mask, torch.tensor(full_indices, dtype=torch.long), S_mat
+
+
+# ── v13.9 MetabolismCore: bi-bi rate law on SBML reactions ───────────────────
+
+NA_AVOGADRO       = 6.02214076e23
+SYN3A_VOLUME_L    = 2.0e-16    # ~0.2 fL, typical JCVI-Syn3A cytoplasmic volume
+
+
+def build_metabolism_tensors(sbml, kinetics, species_names,
+                             volume_l=SYN3A_VOLUME_L):
+    """Pre-compute the tensors MetabolismCore needs.
+
+    Wires every SBML reaction that has (a) a k_cat_fwd, (b) an enzyme listed
+    AND present in the trajectory, (c) at least one substrate present in the
+    trajectory.  Missing K_m values fall back to the global median K_m so the
+    rate law is still defined; track how many fell back vs measured.
+
+    Returns dict with the tensor buffers, the species coverage mask, and the
+    wired / skipped reaction lists.  None if nothing wirable.
+    """
+    if sbml is None or kinetics is None or "params" not in kinetics:
+        return None
+
+    name_to_idx = {nm: i for i, nm in enumerate(species_names)}
+    S = len(species_names)
+
+    all_kms = [v for p in kinetics["params"].values()
+               for v in p["km"].values() if v and v > 0]
+    median_km = float(np.median(all_kms)) if all_kms else 1.0
+
+    wired, skipped = [], []
+    for rxn in sbml["reactions"]:
+        rid = rxn["id"]
+        # SBML reaction IDs are 'R_PGI', kinetic_params.xlsx uses bare 'PGI'.
+        kp = (kinetics["params"].get(rid)
+              or kinetics["params"].get(rid[2:] if rid.startswith("R_") else rid))
+        if kp is None:
+            skipped.append((rid, "no_kinetics_row"))
+            continue
+        if kp["kcat_fwd"] is None:
+            skipped.append((rid, "no_kcat_fwd"))
+            continue
+        if kp["enzyme"] is None:
+            skipped.append((rid, "no_enzyme"))
+            continue
+        if kp["enzyme"] not in name_to_idx:
+            skipped.append((rid, f"enzyme_not_in_traj:{kp['enzyme']}"))
+            continue
+        subs = [(sid, st) for sid, st in rxn["reactants"] if sid in name_to_idx]
+        prods = [(sid, st) for sid, st in rxn["products"] if sid in name_to_idx]
+        if not subs:
+            skipped.append((rid, "no_substrates_in_traj"))
+            continue
+        wired.append((rxn, kp, subs, prods))
+
+    if not wired:
+        print("[metabcore] no reactions wirable — kinetics data too sparse")
+        return None
+
+    R = len(wired)
+    MAX_S = max(len(s) for _, _, s, _ in wired)
+    MAX_P = max((len(p) for _, _, _, p in wired), default=1) or 1
+
+    enzyme_idx  = torch.zeros(R, dtype=torch.long)
+    kcat_fwd    = torch.zeros(R, dtype=torch.float32)
+    kcat_rev    = torch.zeros(R, dtype=torch.float32)
+    sub_idx     = torch.zeros(R, MAX_S, dtype=torch.long)
+    sub_km      = torch.full((R, MAX_S), float("inf"), dtype=torch.float32)
+    sub_stoich  = torch.zeros(R, MAX_S, dtype=torch.float32)
+    prod_idx    = torch.zeros(R, MAX_P, dtype=torch.long)
+    prod_km     = torch.full((R, MAX_P), float("inf"), dtype=torch.float32)
+    prod_stoich = torch.zeros(R, MAX_P, dtype=torch.float32)
+
+    n_km_measured, n_km_fallback = 0, 0
+    for j, (rxn, kp, subs, prods) in enumerate(wired):
+        enzyme_idx[j] = name_to_idx[kp["enzyme"]]
+        kcat_fwd[j]   = float(kp["kcat_fwd"])
+        kcat_rev[j]   = float(kp["kcat_rev"]) if kp["kcat_rev"] is not None else 0.0
+        for k, (sid, st) in enumerate(subs):
+            sub_idx[j, k]    = name_to_idx[sid]
+            sub_stoich[j, k] = float(st)
+            km = kp["km"].get(sid)
+            if km is not None and km > 0:
+                sub_km[j, k] = km; n_km_measured += 1
+            else:
+                sub_km[j, k] = median_km; n_km_fallback += 1
+        for k, (sid, st) in enumerate(prods):
+            prod_idx[j, k]    = name_to_idx[sid]
+            prod_stoich[j, k] = float(st)
+            km = kp["km"].get(sid)
+            if km is not None and km > 0:
+                prod_km[j, k] = km; n_km_measured += 1
+            else:
+                prod_km[j, k] = median_km; n_km_fallback += 1
+
+    # Stoichiometric matrix (S × R): Δstate = stoich @ v
+    stoich = torch.zeros(S, R, dtype=torch.float32)
+    for j, (rxn, _, subs, prods) in enumerate(wired):
+        for sid, st in subs:
+            stoich[name_to_idx[sid], j] -= float(st)
+        for sid, st in prods:
+            stoich[name_to_idx[sid], j] += float(st)
+    coverage_mask = stoich.abs().sum(dim=1) > 0
+
+    print(f"[metabcore] wired {R}/{len(sbml['reactions'])} reactions; "
+          f"skipped {len(skipped)} "
+          f"(top reasons: {dict((r, sum(1 for _, x in skipped if x.startswith(r))) for r in set(x.split(':')[0] for _, x in skipped))})")
+    print(f"[metabcore] K_m: {n_km_measured} measured, "
+          f"{n_km_fallback} fallback (median={median_km:.3g})")
+    print(f"[metabcore] species coverage: {int(coverage_mask.sum())}/{S}")
+
+    return {
+        "enzyme_idx": enzyme_idx,
+        "kcat_fwd": kcat_fwd, "kcat_rev": kcat_rev,
+        "sub_idx": sub_idx, "sub_km": sub_km, "sub_stoich": sub_stoich,
+        "prod_idx": prod_idx, "prod_km": prod_km, "prod_stoich": prod_stoich,
+        "stoich_matrix": stoich, "coverage_mask": coverage_mask,
+        "wired_reactions": [r["id"] for r, _, _, _ in wired],
+        "skipped_reactions": skipped,
+        "median_km": median_km, "volume_l": volume_l,
+    }
+
+
+class MetabolismCore(nn.Module):
+    """Bi-bi (random-order MM) rate law for SBML reactions — direct
+    replacement for the PINN head's neural flux prediction.
+
+    All k_cat, K_m, and enzyme assignments come from kinetic_params.xlsx as
+    frozen buffers; no learnable parameters by default.  Optionally
+    `learnable_rates=True` makes log(k_cat) and log(K_m) trainable for a
+    fine-tune-around-measured-values mode (not used in initial integration).
+
+    Forward signature: state (B, S) [counts] -> (delta_state, fluxes)
+      delta_state: (B, S) per-second count change for wired species
+      fluxes:      (B, R) net flux per wired reaction (mM/s)
+    """
+
+    def __init__(self, tensors, learnable_rates=False):
+        super().__init__()
+        self.register_buffer("enzyme_idx",    tensors["enzyme_idx"])
+        self.register_buffer("sub_idx",       tensors["sub_idx"])
+        self.register_buffer("sub_stoich",    tensors["sub_stoich"])
+        self.register_buffer("prod_idx",      tensors["prod_idx"])
+        self.register_buffer("prod_stoich",   tensors["prod_stoich"])
+        self.register_buffer("stoich_matrix", tensors["stoich_matrix"])
+        self.register_buffer("coverage_mask", tensors["coverage_mask"])
+        self.register_buffer("volume_l",
+                             torch.tensor(tensors["volume_l"], dtype=torch.float32))
+
+        if learnable_rates:
+            self.log_kcat_fwd = nn.Parameter(torch.log(tensors["kcat_fwd"].clamp(min=1e-9)))
+            self.log_kcat_rev = nn.Parameter(torch.log(tensors["kcat_rev"].clamp(min=1e-9)))
+            self.log_sub_km   = nn.Parameter(torch.log(tensors["sub_km"].clamp(min=1e-9)))
+            self.log_prod_km  = nn.Parameter(torch.log(tensors["prod_km"].clamp(min=1e-9)))
+        else:
+            self.register_buffer("kcat_fwd", tensors["kcat_fwd"])
+            self.register_buffer("kcat_rev", tensors["kcat_rev"])
+            self.register_buffer("sub_km",   tensors["sub_km"])
+            self.register_buffer("prod_km",  tensors["prod_km"])
+        self.learnable_rates = learnable_rates
+        self.R = tensors["kcat_fwd"].shape[0]
+
+    def _params(self):
+        if self.learnable_rates:
+            return (torch.exp(self.log_kcat_fwd), torch.exp(self.log_kcat_rev),
+                    torch.exp(self.log_sub_km),  torch.exp(self.log_prod_km))
+        return self.kcat_fwd, self.kcat_rev, self.sub_km, self.prod_km
+
+    def forward(self, state, dt=1.0):
+        """state: (B, S) raw molecular counts.  dt: seconds.
+        Returns (delta_state, fluxes)."""
+        kcat_fwd, kcat_rev, sub_km, prod_km = self._params()
+
+        # Count → mM concentration
+        conc = state / (NA_AVOGADRO * self.volume_l) * 1e3
+
+        sub_conc  = conc[:, self.sub_idx]      # (B, R, MAX_S)
+        prod_conc = conc[:, self.prod_idx]     # (B, R, MAX_P)
+        enz_conc  = conc[:, self.enzyme_idx]   # (B, R)
+
+        sub_conc  = sub_conc.clamp(min=0.0)
+        prod_conc = prod_conc.clamp(min=0.0)
+        enz_conc  = enz_conc.clamp(min=0.0)
+
+        sub_ratio  = sub_conc / sub_km     # padding slots → 0/inf → 0
+        prod_ratio = prod_conc / prod_km
+
+        # Numerator: Π(S/Km)^stoich (padding has stoich=0 → contribution=1)
+        # Use clamp to avoid 0^0 = nan; with stoich=0 the term is forced to 1 anyway.
+        num_fwd = sub_ratio.clamp(min=1e-30).pow(self.sub_stoich).prod(dim=-1)
+        num_rev = prod_ratio.clamp(min=1e-30).pow(self.prod_stoich).prod(dim=-1)
+
+        # Denominator: Π(1+S/Km)^stoich + Π(1+P/Km)^stoich - 1
+        den_sub  = (1.0 + sub_ratio).pow(self.sub_stoich).prod(dim=-1)
+        den_prod = (1.0 + prod_ratio).pow(self.prod_stoich).prod(dim=-1)
+        den = den_sub + den_prod - 1.0
+
+        v = enz_conc * (kcat_fwd * num_fwd - kcat_rev * num_rev) / den.clamp(min=1e-12)
+
+        # Δconc = stoich @ v  (S, R) × (B, R) → (B, S)
+        delta_conc = torch.einsum("sr,br->bs", self.stoich_matrix, v)
+        delta_state = delta_conc * dt * (NA_AVOGADRO * self.volume_l) / 1e3
+
+        return delta_state, v
 
 
 class _CfCGraphLayer(nn.Module):
