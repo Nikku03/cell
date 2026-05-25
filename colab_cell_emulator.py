@@ -191,6 +191,7 @@ USE_CENTRAL_DOGMA   = True         # NEW v13.9: first-order tx/tl/mRNA-deg/prote
 USE_ASSEMBLY_CORE   = True         # NEW v13.9: mass-action complex assembly from complex_formation.xlsx
 USE_KO_AUGMENTATION = True         # NEW v13.9 module 7: random species-zero during training, teaches KO response
 KO_AUG_PROB         = 0.3          # probability per batch element of being knockout-perturbed
+GIBBS_DG_THRESHOLD_KJ = 10.0       # NEW v14 day 1: ΔG° (kJ/mol) below which a reaction is forced irreversible-forward
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -1579,7 +1580,9 @@ SYN3A_VOLUME_L    = 2.0e-16    # ~0.2 fL, typical JCVI-Syn3A cytoplasmic volume
 
 
 def build_metabolism_tensors(sbml, kinetics, species_names,
-                             volume_l=SYN3A_VOLUME_L):
+                             volume_l=SYN3A_VOLUME_L,
+                             gibbs=None,
+                             gibbs_threshold_kj=GIBBS_DG_THRESHOLD_KJ):
     """Pre-compute the tensors MetabolismCore needs.
 
     Wires every SBML reaction that has (a) a k_cat_fwd, (b) an enzyme listed
@@ -1587,9 +1590,22 @@ def build_metabolism_tensors(sbml, kinetics, species_names,
     trajectory.  Missing K_m values fall back to the global median K_m so the
     rate law is still defined; track how many fell back vs measured.
 
+    v14 day 1: when `gibbs` (a dict reaction_id -> ΔG° in kJ/mol) is provided,
+    any reaction with ΔG° < -gibbs_threshold_kj gets its k_cat_rev forced to 0
+    — strongly exergonic reactions become irreversible-forward by construction.
+    Endergonic reactions are left as-is (they may run forward via energetic
+    coupling we're not modelling explicitly).
+
     Returns dict with the tensor buffers, the species coverage mask, and the
     wired / skipped reaction lists.  None if nothing wirable.
     """
+    def lookup_gibbs(rxn_id):
+        if not gibbs:
+            return None
+        if rxn_id in gibbs:
+            return gibbs[rxn_id]
+        bare = rxn_id[2:] if rxn_id.startswith("R_") else rxn_id
+        return gibbs.get(bare)
     if sbml is None or kinetics is None or "params" not in kinetics:
         return None
 
@@ -1644,10 +1660,19 @@ def build_metabolism_tensors(sbml, kinetics, species_names,
     prod_stoich = torch.zeros(R, MAX_P, dtype=torch.float32)
 
     n_km_measured, n_km_fallback = 0, 0
+    n_gibbs_clamped = 0           # reactions forced irreversible by ΔG° sign
+    n_gibbs_unknown = 0           # wired reactions with no ΔG° available
     for j, (rxn, kp, subs, prods) in enumerate(wired):
         enzyme_idx[j] = name_to_idx[kp["enzyme"]]
         kcat_fwd[j]   = float(kp["kcat_fwd"])
         kcat_rev[j]   = float(kp["kcat_rev"]) if kp["kcat_rev"] is not None else 0.0
+        # v14 day 1: thermodynamic sign clamp
+        dg = lookup_gibbs(rxn["id"])
+        if dg is None:
+            n_gibbs_unknown += 1
+        elif dg < -gibbs_threshold_kj and kcat_rev[j] > 0:
+            kcat_rev[j] = 0.0       # strongly exergonic → irreversible forward
+            n_gibbs_clamped += 1
         for k, (sid, st) in enumerate(subs):
             sub_idx[j, k]    = name_to_idx[sid]
             sub_stoich[j, k] = float(st)
@@ -1679,6 +1704,8 @@ def build_metabolism_tensors(sbml, kinetics, species_names,
           f"(top reasons: {dict((r, sum(1 for _, x in skipped if x.startswith(r))) for r in set(x.split(':')[0] for _, x in skipped))})")
     print(f"[metabcore] K_m: {n_km_measured} measured, "
           f"{n_km_fallback} fallback (median={median_km:.3g})")
+    print(f"[metabcore] ΔG° clamp: {n_gibbs_clamped} reactions forced irreversible-forward "
+          f"({n_gibbs_unknown} have no ΔG° data, left reversible)")
     print(f"[metabcore] species coverage: {int(coverage_mask.sum())}/{S}")
 
     return {
@@ -3004,7 +3031,8 @@ def main():
     # bi-bi formula for covered species.  Disabled gracefully if kinetics sparse.
     metab_tensors = None
     if USE_METABOLISM_CORE:
-        metab_tensors = build_metabolism_tensors(sbml, kinetics, species_active)
+        metab_tensors = build_metabolism_tensors(sbml, kinetics, species_active,
+                                                  gibbs=gibbs)
     # v13.9: build VolumeCore from membrane-lipid total at t=0
     volume_core = None
     if USE_VOLUME_CORE and metab_tensors is not None:
