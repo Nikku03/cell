@@ -186,6 +186,7 @@ LGNN_CFC_TAU_MIN    = 0.1          # NEW v8: CfC time-constant minimum
 LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
 USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML species
 USE_METABOLISM_CORE = True         # NEW v13.9: replace PINN's neural flux with the bi-bi rate law for ~160 SBML reactions
+USE_VOLUME_CORE     = True         # NEW v13.9: dynamic cell volume from membrane-lipid count (vs constant)
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -1733,27 +1734,33 @@ class MetabolismCore(nn.Module):
                     torch.exp(self.log_sub_km),  torch.exp(self.log_prod_km))
         return self.kcat_fwd, self.kcat_rev, self.sub_km, self.prod_km
 
-    def forward(self, state, dt=1.0):
+    def forward(self, state, dt=1.0, volume_l=None):
         """state: (B, S) raw molecular counts.  dt: seconds.
+        volume_l: scalar or (B,) tensor of cell volumes in litres.
+                  None → constant SYN3A_VOLUME_L buffer (back-compat).
         Returns (delta_state, fluxes)."""
         kcat_fwd, kcat_rev, sub_km, prod_km = self._params()
+        B = state.shape[0]
 
-        # Count → mM concentration
-        conc = state / (NA_AVOGADRO * self.volume_l) * 1e3
+        # Volume → (B, 1) for broadcast over species
+        if volume_l is None:
+            v_l = self.volume_l.expand(B).unsqueeze(-1)
+        elif volume_l.ndim == 0:
+            v_l = volume_l.expand(B).unsqueeze(-1)
+        else:
+            v_l = volume_l.unsqueeze(-1)
 
-        sub_conc  = conc[:, self.sub_idx]      # (B, R, MAX_S)
-        prod_conc = conc[:, self.prod_idx]     # (B, R, MAX_P)
-        enz_conc  = conc[:, self.enzyme_idx]   # (B, R)
+        # Count → mM concentration (NA · V_l in litres → concentration in mol/L; ×1e3 to mM)
+        conc = state / (NA_AVOGADRO * v_l) * 1e3
 
-        sub_conc  = sub_conc.clamp(min=0.0)
-        prod_conc = prod_conc.clamp(min=0.0)
-        enz_conc  = enz_conc.clamp(min=0.0)
+        sub_conc  = conc[:, self.sub_idx].clamp(min=0.0)    # (B, R, MAX_S)
+        prod_conc = conc[:, self.prod_idx].clamp(min=0.0)   # (B, R, MAX_P)
+        enz_conc  = conc[:, self.enzyme_idx].clamp(min=0.0) # (B, R)
 
-        sub_ratio  = sub_conc / sub_km     # padding slots → 0/inf → 0
+        sub_ratio  = sub_conc / sub_km
         prod_ratio = prod_conc / prod_km
 
-        # Numerator: Π(S/Km)^stoich (padding has stoich=0 → contribution=1)
-        # Use clamp to avoid 0^0 = nan; with stoich=0 the term is forced to 1 anyway.
+        # Numerator: Π(S/Km)^stoich (padding has stoich=0 → ratio^0 = 1)
         num_fwd = sub_ratio.clamp(min=1e-30).pow(self.sub_stoich).prod(dim=-1)
         num_rev = prod_ratio.clamp(min=1e-30).pow(self.prod_stoich).prod(dim=-1)
 
@@ -1764,11 +1771,71 @@ class MetabolismCore(nn.Module):
 
         v = enz_conc * (kcat_fwd * num_fwd - kcat_rev * num_rev) / den.clamp(min=1e-12)
 
-        # Δconc = stoich @ v  (S, R) × (B, R) → (B, S)
-        delta_conc = torch.einsum("sr,br->bs", self.stoich_matrix, v)
-        delta_state = delta_conc * dt * (NA_AVOGADRO * self.volume_l) / 1e3
+        # Δconc = stoich @ v → (B, S); back to count via the same V_l
+        delta_conc  = torch.einsum("sr,br->bs", self.stoich_matrix, v)
+        delta_state = delta_conc * dt * (NA_AVOGADRO * v_l) / 1e3
 
         return delta_state, v
+
+
+# ── v13.9 VolumeCore: dynamic cell volume from membrane-lipid count ──────────
+
+# Heuristic: any SBML species whose name starts with one of these is a
+# membrane component for our purposes. Catches phosphatidic acids, PE, PG,
+# PC, PS, cardiolipins, cholesterol, glycerol-phosphate intermediates.
+LIPID_PREFIXES = ("M_pa_", "M_pe_", "M_pg_", "M_pc_", "M_ps_",
+                  "M_clpn", "M_chsterol", "M_1ag3p", "M_dag", "M_pgp",
+                  "M_cdpdag", "M_glyc3p")
+
+
+def build_volume_core(species_names, raw_counts_t0,
+                      base_volume_l=SYN3A_VOLUME_L):
+    """Build a VolumeCore from the species list + t=0 counts.
+
+    Returns a VolumeCore module, or None if no lipid species are present
+    in this trajectory (caller falls back to constant volume in MetabolismCore).
+    """
+    lipid_idx = [i for i, n in enumerate(species_names)
+                 if any(n.startswith(p) for p in LIPID_PREFIXES)]
+    if not lipid_idx:
+        print(f"[volumecore] no lipid species found in {len(species_names)} "
+              f"species — falling back to constant V={base_volume_l:.2e} L")
+        return None
+    # initial total: mean over training trajectories at t=0
+    arr = np.asarray(raw_counts_t0)
+    initial_total = float(arr[:, lipid_idx].sum(axis=1).mean())
+    if initial_total <= 0:
+        print(f"[volumecore] {len(lipid_idx)} lipid species but t=0 total=0 — "
+              f"falling back to constant V={base_volume_l:.2e} L")
+        return None
+    print(f"[volumecore] tracking {len(lipid_idx)} lipid species, "
+          f"t=0 mean total = {initial_total:.3g}, base V = {base_volume_l:.2e} L")
+    return VolumeCore(lipid_idx, initial_total, base_volume_l)
+
+
+class VolumeCore(nn.Module):
+    """Proxies cell volume from membrane-lipid count:
+        V_L(t) = V_0 * (lipid_total(t) / lipid_total_0)
+
+    Crude — upstream's V follows surface area which follows lipid synthesis.
+    A linear scaling skips the SA→V geometry but captures the doubling.
+    """
+
+    def __init__(self, lipid_indices, initial_lipid_total, base_volume_l):
+        super().__init__()
+        self.register_buffer("lipid_indices",
+                             torch.as_tensor(lipid_indices, dtype=torch.long))
+        self.register_buffer("initial_total",
+                             torch.tensor(float(initial_lipid_total),
+                                          dtype=torch.float32))
+        self.register_buffer("base_volume_l",
+                             torch.tensor(float(base_volume_l),
+                                          dtype=torch.float32))
+
+    def forward(self, state):
+        """state: (B, S) counts → (B,) volume in litres."""
+        lipid_total = state[:, self.lipid_indices].sum(dim=1).clamp(min=1.0)
+        return self.base_volume_l * (lipid_total / self.initial_total)
 
 
 class _CfCGraphLayer(nn.Module):
@@ -1926,7 +1993,7 @@ class DynamicsModel(nn.Module):
                  stoich_matrix=None, lo_norm=None, span_norm=None,
                  pinn_rate_clip=PINN_RATE_CLIP, use_stochastic=False,
                  # v13.9: equation-wired metabolism
-                 metab_tensors=None, metab_dt=1.0,
+                 metab_tensors=None, metab_dt=1.0, volume_core=None,
                  # backward-compat v7 kwargs (ignored)
                  d_model=None, n_heads=None, context=None, dropout=None,
                  d_type=None):
@@ -1950,6 +2017,8 @@ class DynamicsModel(nn.Module):
         # it covers — disable PINN entirely when MetabolismCore is wired in.
         self.metab_core = MetabolismCore(metab_tensors) if metab_tensors is not None else None
         self.metab_dt = float(metab_dt)
+        # v13.9: VolumeCore tracks dynamic cell volume; passed to MetabolismCore each step.
+        self.volume_core = volume_core
         # v9: PINN head (optional) — disabled when MetabolismCore is on
         self.use_pinn = bool(use_pinn and sbml_mask is not None
                              and self.metab_core is None)
@@ -1983,7 +2052,8 @@ class DynamicsModel(nn.Module):
         if self.metab_core is not None:
             x_sl_lin     = x.float() * self.metab_span + self.metab_lo
             x_count      = t_signed_expm1(x_sl_lin)
-            d_count, _   = self.metab_core(x_count, dt=self.metab_dt)
+            v_l = self.volume_core(x_count) if self.volume_core is not None else None
+            d_count, _   = self.metab_core(x_count, dt=self.metab_dt, volume_l=v_l)
             x_count_next = (x_count + d_count).clamp(min=0.0)
             x_sl_next    = t_signed_log1p(x_count_next)
             x_norm_metab = (x_sl_next - self.metab_lo) / self.metab_span
@@ -2583,6 +2653,11 @@ def main():
     metab_tensors = None
     if USE_METABOLISM_CORE:
         metab_tensors = build_metabolism_tensors(sbml, kinetics, species_active)
+    # v13.9: build VolumeCore from membrane-lipid total at t=0
+    volume_core = None
+    if USE_VOLUME_CORE and metab_tensors is not None:
+        volume_core = build_volume_core(species_active,
+                                         raw_counts_active[train_idx, 0])
     model = DynamicsModel(
         S=S, hidden=LGNN_HIDDEN, n_layers=LGNN_N_LAYERS,
         species_type_ids=species_type_ids,
@@ -2592,11 +2667,14 @@ def main():
         stoich_matrix=stoich_matrix, lo_norm=lo, span_norm=span,
         pinn_rate_clip=PINN_RATE_CLIP, use_stochastic=USE_STOCHASTIC_HEAD,
         metab_tensors=metab_tensors, metab_dt=float(TIME_STRIDE),
+        volume_core=volume_core,
     ).to(device)
     n_params = sum(p.numel() for p in model.parameters()) / 1e6
     head_tags = []
     if model.metab_core is not None:
         head_tags.append(f"MetabolismCore({model.metab_core.R})")
+    if model.volume_core is not None:
+        head_tags.append(f"VolumeCore({int(model.volume_core.lipid_indices.numel())})")
     if model.use_pinn:        head_tags.append("PINN")
     if USE_STOCHASTIC_HEAD:   head_tags.append("stochastic")
     print(f"[model] LGNN+{('+'.join(head_tags)) if head_tags else 'plain'}: {n_params:.2f}M parameters, "
