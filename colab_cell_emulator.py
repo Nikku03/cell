@@ -1875,9 +1875,15 @@ class VolumeCore(nn.Module):
 # protein ~1000/mRNA).  Per-gene refinement (from syn3A.gb gene lengths)
 # is a future improvement.
 K_TX_DEFAULT      = 0.06               # transcription initiation rate per gene copy (/s)
-K_TL_DEFAULT      = 2.0e-3             # translation initiation rate per mRNA (/s)
+K_TL_DEFAULT      = 2.0e-3             # translation initiation rate per mRNA (/s) — fallback when no ribosome pool found
 T_HALF_MRNA_S     = 120.0              # mRNA half-life (~2 min, Syn3A literature)
 T_HALF_PROTEIN_S  = 36_000.0           # protein half-life (~10 h)
+
+# v14 day 2: shared-ribosome-pool model
+RIBOSOME_PREFIXES = ("RB_", "RPM_", "C_ribosome", "ribosome")
+K_M_TOTAL_MRNA    = 100.0              # half-saturation of the total-mRNA bottleneck
+K_PER_RIBO        = 1.5e-3             # translation initiation rate per ribosome (/s)
+                                       # calibrated so r_tl_g at typical operating point ≈ K_TL_DEFAULT * mRNA_g
 
 
 def build_central_dogma_tensors(species_names):
@@ -1886,6 +1892,11 @@ def build_central_dogma_tensors(species_names):
     For each locus that has *all three* of G_<locus>, R_<locus>, P_<locus>
     species in the trajectory (preferring the _C1 chromosome-copy variant
     where multiple exist), pack the indices.
+
+    v14 day 2: also identifies ribosome species in the trajectory for the
+    shared-pool translation cap.  Any species matching RIBOSOME_PREFIXES
+    counts toward the pool.  If no ribosomes found, CentralDogmaCore falls
+    back to the independent per-gene K_TL_DEFAULT rate.
 
     Returns dict with index tensors + coverage_mask, or None.
     """
@@ -1921,13 +1932,24 @@ def build_central_dogma_tensors(species_names):
     cov_mask[mrna_idx] = True
     cov_mask[prot_idx] = True
 
+    # v14 day 2: find ribosome species for the shared translation pool
+    ribo_idx = [i for i, n in enumerate(species_names)
+                if any(n.startswith(p) for p in RIBOSOME_PREFIXES)]
     print(f"[cdcore] {len(triples)} genes wired (G+R+P all present); "
           f"coverage = {int(cov_mask.sum())} species (mRNA + protein, "
           f"genes left to LGNN)")
+    if ribo_idx:
+        print(f"[cdcore] ribosome pool: {len(ribo_idx)} species "
+              f"(prefixes {RIBOSOME_PREFIXES}) — shared-pool translation enabled")
+    else:
+        print(f"[cdcore] no ribosome species found — falling back to "
+              f"per-gene independent translation (K_TL_DEFAULT={K_TL_DEFAULT})")
     return {
         "gene_idx": gene_idx, "mrna_idx": mrna_idx, "prot_idx": prot_idx,
         "coverage_mask": cov_mask, "loci": [t[3] for t in triples],
         "n_genes": len(triples),
+        "ribosome_idx": torch.tensor(ribo_idx, dtype=torch.long) if ribo_idx
+                        else torch.zeros(0, dtype=torch.long),
     }
 
 
@@ -1950,7 +1972,8 @@ class CentralDogmaCore(nn.Module):
 
     def __init__(self, tensors,
                  k_tx=K_TX_DEFAULT, k_tl=K_TL_DEFAULT,
-                 t_half_mrna=T_HALF_MRNA_S, t_half_prot=T_HALF_PROTEIN_S):
+                 t_half_mrna=T_HALF_MRNA_S, t_half_prot=T_HALF_PROTEIN_S,
+                 k_per_ribo=K_PER_RIBO, k_m_total_mrna=K_M_TOTAL_MRNA):
         super().__init__()
         self.register_buffer("gene_idx",      tensors["gene_idx"])
         self.register_buffer("mrna_idx",      tensors["mrna_idx"])
@@ -1966,6 +1989,14 @@ class CentralDogmaCore(nn.Module):
         self.register_buffer("k_deg_prot",
                              torch.tensor(np.log(2) / float(t_half_prot),
                                           dtype=torch.float32))
+        # v14 day 2: shared ribosome pool for translation
+        ribo_idx = tensors.get("ribosome_idx", torch.zeros(0, dtype=torch.long))
+        self.register_buffer("ribosome_idx", ribo_idx)
+        self.register_buffer("k_per_ribo",
+                             torch.tensor(float(k_per_ribo), dtype=torch.float32))
+        self.register_buffer("k_m_total_mrna",
+                             torch.tensor(float(k_m_total_mrna), dtype=torch.float32))
+        self.has_ribosome_cap = ribo_idx.numel() > 0
         self.n_genes = tensors["n_genes"]
 
     def forward(self, state, dt=1.0):
@@ -1974,8 +2005,25 @@ class CentralDogmaCore(nn.Module):
         G = state[:, self.gene_idx].clamp(min=0.0)
         R = state[:, self.mrna_idx].clamp(min=0.0)
         P = state[:, self.prot_idx].clamp(min=0.0)
+
+        # mRNA: production by gene transcription, decay first-order
         dR = (self.k_tx * G - self.k_deg_mrna * R) * dt
-        dP = (self.k_tl * R - self.k_deg_prot * P) * dt
+
+        # Translation: shared ribosome pool (saturation in total mRNA).
+        # r_tl_g = (k_per_ribo · R_total · mRNA_g) / (K_m + Σ mRNA_h)
+        # At low total mRNA: linear in mRNA, scales with ribosomes.
+        # At high total mRNA: throughput-bounded by R_total.
+        if self.has_ribosome_cap:
+            # No clamp on ribo_total — if all ribosomes are KO'd, sat=0 → r_tl=0 exactly.
+            # k_m_total_mrna already prevents division by zero on the denominator.
+            ribo_total = state[:, self.ribosome_idx].sum(dim=1).clamp(min=0.0)   # (B,)
+            total_mrna = R.sum(dim=1).clamp(min=0.0)                              # (B,)
+            sat = ribo_total / (self.k_m_total_mrna + total_mrna)                 # (B,)
+            r_tl = self.k_per_ribo * sat.unsqueeze(-1) * R                        # (B, n_genes)
+        else:
+            r_tl = self.k_tl * R
+        dP = (r_tl - self.k_deg_prot * P) * dt
+
         delta = torch.zeros_like(state)
         delta = delta.scatter_add(
             1, self.mrna_idx.unsqueeze(0).expand(B, -1), dR)
