@@ -188,6 +188,7 @@ USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML spec
 USE_METABOLISM_CORE = True         # NEW v13.9: replace PINN's neural flux with the bi-bi rate law for ~160 SBML reactions
 USE_VOLUME_CORE     = True         # NEW v13.9: dynamic cell volume from membrane-lipid count (vs constant)
 USE_CENTRAL_DOGMA   = True         # NEW v13.9: first-order tx/tl/mRNA-deg/protein-deg per gene
+USE_ASSEMBLY_CORE   = True         # NEW v13.9: mass-action complex assembly from complex_formation.xlsx
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -1954,6 +1955,159 @@ class CentralDogmaCore(nn.Module):
         return delta
 
 
+# ── v13.9 AssemblyCore: mass-action complex assembly ──────────────────────────
+
+ASSEMBLY_K_ON_DEFAULT = 1.0e-5     # /s per molecule^stoich, ballpark for protein-protein
+ASSEMBLY_SAFETY_FRAC  = 0.5        # cap rate so it can't drain >50% of smallest pool/dt
+
+
+def _subunit_locus(gene_id):
+    """'JCVISYN3A_0445' -> '0445'.  Returns None for unparseable."""
+    if not gene_id or gene_id in ("nan", ""):
+        return None
+    return gene_id.rsplit("_", 1)[-1] if "_" in gene_id else gene_id
+
+
+def build_assembly_tensors(complexes_data, species_names,
+                           k_on=ASSEMBLY_K_ON_DEFAULT):
+    """Wire complex-assembly reactions from complex_formation.xlsx.
+
+    Each row in `complexes_data["complexes"]` is `{name, subunits, init_count}`
+    where subunits is a list of `(gene_id, stoich)` pairs.
+
+    For each complex with all subunits + the complex itself present in the
+    trajectory species list, register a mass-action assembly reaction:
+        Σ stoich_i · subunit_i  ->  1 · complex,
+        rate = k_on · Π subunit_i^stoich_i
+
+    Subunit name resolution tries several P_<locus> variants; complex name
+    resolution tries the bare name + `C_` prefix variants.  Reports
+    coverage stats so we know how many wired vs skipped.
+    """
+    if complexes_data is None or not complexes_data.get("complexes"):
+        return None
+
+    S = len(species_names)
+    name_to_idx = {n: i for i, n in enumerate(species_names)}
+
+    def find_complex(name):
+        for cand in (name, f"C_{name}", name.replace("-", "_"),
+                     f"C_{name.replace('-', '_')}"):
+            if cand in name_to_idx:
+                return name_to_idx[cand]
+        return None
+
+    def find_subunit(gene_id):
+        loc = _subunit_locus(gene_id)
+        if loc is None:
+            return None
+        for cand in (f"P_{loc}", f"P_{loc}_C1", f"P_{loc}_C2"):
+            if cand in name_to_idx:
+                return name_to_idx[cand]
+        return None
+
+    wired, skipped = [], []
+    for cx in complexes_data["complexes"]:
+        nm = cx["name"]
+        c_idx = find_complex(nm)
+        if c_idx is None:
+            skipped.append((nm, "complex_not_in_traj"))
+            continue
+        sub_idxs, sub_sts = [], []
+        ok = True
+        for gid, st in cx["subunits"]:
+            si = find_subunit(gid)
+            if si is None:
+                ok = False; break
+            sub_idxs.append(si); sub_sts.append(float(st))
+        if not ok or not sub_idxs:
+            skipped.append((nm, "subunit_missing"))
+            continue
+        wired.append((c_idx, sub_idxs, sub_sts, nm))
+
+    if not wired:
+        n_total = len(complexes_data["complexes"])
+        print(f"[asmcore] no assembly reactions wirable "
+              f"(0/{n_total}; e.g. skipped reasons: "
+              f"{set(r for _, r in skipped[:5])})")
+        return None
+
+    R = len(wired)
+    MAX_SUB = max(len(s) for _, s, _, _ in wired)
+    complex_idx = torch.zeros(R, dtype=torch.long)
+    sub_idx     = torch.zeros(R, MAX_SUB, dtype=torch.long)
+    sub_stoich  = torch.zeros(R, MAX_SUB, dtype=torch.float32)
+    k_on_t      = torch.full((R,), float(k_on), dtype=torch.float32)
+
+    for j, (cidx, sidxs, ssts, _) in enumerate(wired):
+        complex_idx[j] = cidx
+        for k, (si, st) in enumerate(zip(sidxs, ssts)):
+            sub_idx[j, k]    = si
+            sub_stoich[j, k] = st
+
+    # Stoichiometric matrix (S × R): -stoich on subunits, +1 on the complex
+    stoich = torch.zeros(S, R, dtype=torch.float32)
+    for j, (cidx, sidxs, ssts, _) in enumerate(wired):
+        for si, st in zip(sidxs, ssts):
+            stoich[si, j] -= st
+        stoich[cidx, j] += 1.0
+    coverage_mask = stoich.abs().sum(dim=1) > 0
+
+    print(f"[asmcore] wired {R}/{len(complexes_data['complexes'])} "
+          f"assembly reactions; coverage = "
+          f"{int(coverage_mask.sum())} species")
+    return {
+        "complex_idx": complex_idx, "sub_idx": sub_idx, "sub_stoich": sub_stoich,
+        "k_on": k_on_t, "stoich_matrix": stoich, "coverage_mask": coverage_mask,
+        "complex_names": [w[3] for w in wired],
+        "skipped": skipped,
+    }
+
+
+class AssemblyCore(nn.Module):
+    """Mass-action complex assembly.
+
+    rate_j = k_on_j · Π (subunit_i^stoich_i)_j
+    Δstate = stoich_matrix · rate · dt
+
+    Includes a per-reaction rate cap so that no subunit pool can be drained
+    by more than ASSEMBLY_SAFETY_FRAC per timestep — protects against Euler
+    overshoot for fast reactions on a long (30s) step.
+    """
+
+    def __init__(self, tensors, safety_frac=ASSEMBLY_SAFETY_FRAC):
+        super().__init__()
+        self.register_buffer("complex_idx",   tensors["complex_idx"])
+        self.register_buffer("sub_idx",       tensors["sub_idx"])
+        self.register_buffer("sub_stoich",    tensors["sub_stoich"])
+        self.register_buffer("k_on",          tensors["k_on"])
+        self.register_buffer("stoich_matrix", tensors["stoich_matrix"])
+        self.register_buffer("coverage_mask", tensors["coverage_mask"])
+        self.safety_frac = float(safety_frac)
+        self.R = tensors["k_on"].shape[0]
+
+    def forward(self, state, dt=1.0):
+        """state: (B, S) counts -> delta_state (B, S) counts."""
+        B = state.shape[0]
+        sub_counts = state[:, self.sub_idx].clamp(min=0.0)        # (B, R, MAX_SUB)
+
+        # Mass-action rate: padding has stoich=0 → x^0=1 (kept), no padding flag needed.
+        sub_terms = sub_counts.clamp(min=1e-30).pow(self.sub_stoich)
+        rates = self.k_on * sub_terms.prod(dim=-1)                 # (B, R)
+
+        # Safety cap: rate · dt · stoich ≤ safety_frac · count
+        # ⇒ rate ≤ safety_frac · count / (dt · stoich)  per substrate slot.
+        # Padding slots (stoich=0) must NOT constrain — set them to +inf.
+        ratio = self.safety_frac * sub_counts / (dt * self.sub_stoich.clamp(min=1e-30))
+        max_per_slot = torch.where(self.sub_stoich > 0, ratio,
+                                    torch.full_like(ratio, float("inf")))
+        max_per_rxn = max_per_slot.min(dim=-1).values
+        rates = torch.minimum(rates, max_per_rxn).clamp(min=0.0)
+
+        delta = torch.einsum("sr,br->bs", self.stoich_matrix, rates) * dt
+        return delta
+
+
 class _CfCGraphLayer(nn.Module):
     """Message-passing graph layer with CfC (closed-form continuous-time) update.
 
@@ -2110,7 +2264,7 @@ class DynamicsModel(nn.Module):
                  pinn_rate_clip=PINN_RATE_CLIP, use_stochastic=False,
                  # v13.9: equation-wired metabolism
                  metab_tensors=None, metab_dt=1.0, volume_core=None,
-                 cd_tensors=None,
+                 cd_tensors=None, asm_tensors=None,
                  # backward-compat v7 kwargs (ignored)
                  d_model=None, n_heads=None, context=None, dropout=None,
                  d_type=None):
@@ -2138,6 +2292,8 @@ class DynamicsModel(nn.Module):
         self.volume_core = volume_core
         # v13.9: CentralDogmaCore — first-order tx/tl/decay per gene
         self.cd_core = CentralDogmaCore(cd_tensors) if cd_tensors is not None else None
+        # v13.9: AssemblyCore — mass-action complex assembly
+        self.asm_core = AssemblyCore(asm_tensors) if asm_tensors is not None else None
         # v9: PINN head (optional) — disabled when MetabolismCore is on
         self.use_pinn = bool(use_pinn and sbml_mask is not None
                              and self.metab_core is None)
@@ -2150,7 +2306,8 @@ class DynamicsModel(nn.Module):
         if self.use_stochastic:
             self.stochastic_head = StochasticHead(hidden)
         # Equation-wired cores all need per-species lo/span for normalised <-> count conversion
-        if ((self.metab_core is not None or self.cd_core is not None)
+        if ((self.metab_core is not None or self.cd_core is not None
+                or self.asm_core is not None)
                 and lo_norm is not None and span_norm is not None):
             lo_t   = torch.as_tensor(lo_norm,   dtype=torch.float32)
             span_t = torch.as_tensor(span_norm, dtype=torch.float32).clamp(min=1e-6)
@@ -2194,6 +2351,17 @@ class DynamicsModel(nn.Module):
             x_norm_cd    = x_norm_cd.clamp(CLAMP_LO, CLAMP_HI).to(x_next.dtype)
             mask_cd      = self.cd_core.coverage_mask.unsqueeze(0).expand(B, -1)
             x_next       = torch.where(mask_cd, x_norm_cd, x_next)
+        # v13.9: AssemblyCore overrides complex + subunit counts via mass-action
+        if self.asm_core is not None:
+            x_sl_lin     = x.float() * self.metab_span + self.metab_lo
+            x_count      = t_signed_expm1(x_sl_lin)
+            d_count      = self.asm_core(x_count, dt=self.metab_dt)
+            x_count_next = (x_count + d_count).clamp(min=0.0)
+            x_sl_next    = t_signed_log1p(x_count_next)
+            x_norm_asm   = (x_sl_next - self.metab_lo) / self.metab_span
+            x_norm_asm   = x_norm_asm.clamp(CLAMP_LO, CLAMP_HI).to(x_next.dtype)
+            mask_asm     = self.asm_core.coverage_mask.unsqueeze(0).expand(B, -1)
+            x_next       = torch.where(mask_asm, x_norm_asm, x_next)
         # PINN head overrides SBML species with mass-balanced prediction (disabled when MetabolismCore is on)
         if self.use_pinn:
             x_next_sbml = self.pinn_head(h, x)                              # (B, n_sbml)
@@ -2793,6 +2961,10 @@ def main():
     cd_tensors = None
     if USE_CENTRAL_DOGMA:
         cd_tensors = build_central_dogma_tensors(species_active)
+    # v13.9: build AssemblyCore tensors (complex_formation.xlsx mass-action)
+    asm_tensors = None
+    if USE_ASSEMBLY_CORE:
+        asm_tensors = build_assembly_tensors(complexes, species_active)
     model = DynamicsModel(
         S=S, hidden=LGNN_HIDDEN, n_layers=LGNN_N_LAYERS,
         species_type_ids=species_type_ids,
@@ -2803,6 +2975,7 @@ def main():
         pinn_rate_clip=PINN_RATE_CLIP, use_stochastic=USE_STOCHASTIC_HEAD,
         metab_tensors=metab_tensors, metab_dt=float(TIME_STRIDE),
         volume_core=volume_core, cd_tensors=cd_tensors,
+        asm_tensors=asm_tensors,
     ).to(device)
     n_params = sum(p.numel() for p in model.parameters()) / 1e6
     head_tags = []
@@ -2810,6 +2983,8 @@ def main():
         head_tags.append(f"MetabolismCore({model.metab_core.R})")
     if model.cd_core is not None:
         head_tags.append(f"CentralDogma({model.cd_core.n_genes})")
+    if model.asm_core is not None:
+        head_tags.append(f"Assembly({model.asm_core.R})")
     if model.volume_core is not None:
         head_tags.append(f"VolumeCore({int(model.volume_core.lipid_indices.numel())})")
     if model.use_pinn:        head_tags.append("PINN")
@@ -2959,6 +3134,8 @@ def main():
                        metab_n_reactions=(model.metab_core.R if model.metab_core is not None else 0),
                        use_cd_core=model.cd_core is not None,
                        cd_n_genes=(model.cd_core.n_genes if model.cd_core is not None else 0),
+                       use_asm_core=model.asm_core is not None,
+                       asm_n_reactions=(model.asm_core.R if model.asm_core is not None else 0),
                        use_volume_core=model.volume_core is not None,
                        architecture="LGNN_v13"),
     }, f"{SAVE_DIR}/cell_emulator_v13.pt")

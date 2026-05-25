@@ -18,7 +18,7 @@ Each module is gated on a verifiable improvement before we proceed to the next. 
 | 1 | **MetabolismCore** — bi-bi rate law, 356 SBML reactions | `kinetic_params.xlsx` (k_cat_fwd/rev, K_m per substrate/product), SBML stoichiometry | PINN head's neural `v_log` prediction | 0.70–0.85 | unchanged | **wired, awaiting Colab** |
 | 2 | **VolumeCore** — dynamic volume per timestep | membrane-lipid count proxy (`LIPID_PREFIXES`) | constant-volume assumption | +0.05–0.15 | – | **wired** |
 | 3 | **CentralDogmaCore** — per-gene tx / tl / mRNA-deg / prot-deg | per-gene G/R/P species; literature k_tx, k_tl, half-lives | LGNN's prediction for mRNA + protein species | +0.10–0.20 | – | **wired** |
-| 4 | **AssemblyCore** — complex assembly + 50S biogenesis (mass-action) | `complex_formation.xlsx`, `LargeSubunit.xlsx` | LGNN's prediction for complex species | +0.05–0.10 | – | not started |
+| 4 | **AssemblyCore** — complex assembly + 50S biogenesis (mass-action) | `complex_formation.xlsx`, `LargeSubunit.xlsx` | LGNN's prediction for complex species | +0.05–0.10 | – | **wired (complex_formation only; LargeSubunit deferred)** |
 | 5 | **TransportCore** — 58 transport reactions (bi-bi) | `kinetic_params.xlsx` Transport sheet | LGNN's prediction for transport species | +0.02–0.05 | – | not started |
 | 6 | **tRNAChargingCore** — 20 aa charging (bi-bi) | `kinetic_params.xlsx` Cofactor sheet | LGNN's prediction for tRNA species | +0.02 | – | not started |
 | 7 | **KnockoutAugmentation** — random species-zero per training batch | – | model trained only on unperturbed data | unchanged | **+0.20–0.40** | not started |
@@ -55,6 +55,30 @@ Before moving to the next module:
 ## Tracking
 
 Each module gets a section below as it lands.
+
+### Module 4 — AssemblyCore
+
+- **Status**: wired (commit v13.9 module 4); LargeSubunit chain deferred.
+- **Approach**: mass-action with safety cap.
+  - rate = `k_on · Π subunit_i^stoich_i`
+  - Per-reaction rate cap: cannot drain > 50% of any subunit pool per step
+    (`ASSEMBLY_SAFETY_FRAC = 0.5`).  Protects against Euler overshoot on
+    fast reactions over a long 30s step.
+- **Coverage**: complexes from `complex_formation.xlsx` where every subunit
+  resolves to a `P_<locus>` species AND the complex name resolves to a
+  trajectory species (tries bare name + `C_<name>` variants).
+- **Default k_on**: 1e-5 /s/molecule^stoich.  Will need calibration against
+  upstream when we know how many complexes wire on real data.
+- **Standalone test** (`/tmp/test_asmcore.py`): 11/11 pass — stoichiometry
+  perfect, safety cap holds at exactly 50%, KO P_0001 zeros C_RNAP rate
+  without affecting C_RIBO, gradients flow.
+- **Bug caught + fixed**: padding slots in the rate-cap calculation
+  were dragging max_per_rxn → 0.  Fixed by setting padding-slot max to +inf
+  via `torch.where(stoich > 0, ratio, inf)`.
+- **Headline result**: pending Colab run.
+- **Deferred**: LargeSubunit.xlsx (32-step 50S assembly chain) — would
+  need a sequential-step graph representation, not the simple "subunits →
+  complex" pattern here.
 
 ### Module 2 — VolumeCore
 
