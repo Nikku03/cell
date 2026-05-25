@@ -189,6 +189,8 @@ USE_METABOLISM_CORE = True         # NEW v13.9: replace PINN's neural flux with 
 USE_VOLUME_CORE     = True         # NEW v13.9: dynamic cell volume from membrane-lipid count (vs constant)
 USE_CENTRAL_DOGMA   = True         # NEW v13.9: first-order tx/tl/mRNA-deg/protein-deg per gene
 USE_ASSEMBLY_CORE   = True         # NEW v13.9: mass-action complex assembly from complex_formation.xlsx
+USE_KO_AUGMENTATION = True         # NEW v13.9 module 7: random species-zero during training, teaches KO response
+KO_AUG_PROB         = 0.3          # probability per batch element of being knockout-perturbed
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -1969,24 +1971,24 @@ def _subunit_locus(gene_id):
 
 
 def build_assembly_tensors(complexes_data, species_names,
-                           k_on=ASSEMBLY_K_ON_DEFAULT):
-    """Wire complex-assembly reactions from complex_formation.xlsx.
+                           k_on=ASSEMBLY_K_ON_DEFAULT, lsu_chain=None):
+    """Wire complex-assembly reactions from complex_formation.xlsx + optionally
+    the 50S ribosome assembly chain from LargeSubunit.xlsx.
 
-    Each row in `complexes_data["complexes"]` is `{name, subunits, init_count}`
-    where subunits is a list of `(gene_id, stoich)` pairs.
-
-    For each complex with all subunits + the complex itself present in the
-    trajectory species list, register a mass-action assembly reaction:
+    From complex_formation.xlsx:
         Σ stoich_i · subunit_i  ->  1 · complex,
         rate = k_on · Π subunit_i^stoich_i
 
-    Subunit name resolution tries several P_<locus> variants; complex name
-    resolution tries the bare name + `C_` prefix variants.  Reports
-    coverage stats so we know how many wired vs skipped.
-    """
-    if complexes_data is None or not complexes_data.get("complexes"):
-        return None
+    From LargeSubunit.xlsx (3-tuples of substrate, intermediate, product):
+        1 · substrate + 1 · intermediate  ->  1 · product
+        rate = k_on · substrate · intermediate
+    (these are sequential 50S biogenesis steps, each producing the next
+    intermediate.)
 
+    Subunit name resolution tries several `P_<locus>` variants; complex name
+    resolution tries the bare name + `C_` prefix variants; LSU intermediates
+    are looked up by exact name.
+    """
     S = len(species_names)
     name_to_idx = {n: i for i, n in enumerate(species_names)}
 
@@ -2007,26 +2009,42 @@ def build_assembly_tensors(complexes_data, species_names,
         return None
 
     wired, skipped = [], []
-    for cx in complexes_data["complexes"]:
-        nm = cx["name"]
-        c_idx = find_complex(nm)
-        if c_idx is None:
-            skipped.append((nm, "complex_not_in_traj"))
-            continue
-        sub_idxs, sub_sts = [], []
-        ok = True
-        for gid, st in cx["subunits"]:
-            si = find_subunit(gid)
-            if si is None:
-                ok = False; break
-            sub_idxs.append(si); sub_sts.append(float(st))
-        if not ok or not sub_idxs:
-            skipped.append((nm, "subunit_missing"))
-            continue
-        wired.append((c_idx, sub_idxs, sub_sts, nm))
+    if complexes_data is not None and complexes_data.get("complexes"):
+        for cx in complexes_data["complexes"]:
+            nm = cx["name"]
+            c_idx = find_complex(nm)
+            if c_idx is None:
+                skipped.append((nm, "complex_not_in_traj"))
+                continue
+            sub_idxs, sub_sts = [], []
+            ok = True
+            for gid, st in cx["subunits"]:
+                si = find_subunit(gid)
+                if si is None:
+                    ok = False; break
+                sub_idxs.append(si); sub_sts.append(float(st))
+            if not ok or not sub_idxs:
+                skipped.append((nm, "subunit_missing"))
+                continue
+            wired.append((c_idx, sub_idxs, sub_sts, nm))
+    n_complex_wired = len(wired)
+
+    # v13.9: 50S assembly chain — each step is substrate + intermediate → product
+    n_lsu_wired = 0
+    if lsu_chain:
+        for sub, inter, prod in lsu_chain:
+            si = name_to_idx.get(sub)
+            ii = name_to_idx.get(inter)
+            pi = name_to_idx.get(prod)
+            if si is None or ii is None or pi is None:
+                skipped.append((f"LSU:{sub}+{inter}→{prod}", "lsu_species_missing"))
+                continue
+            # 1 of each substrate, 1 product
+            wired.append((pi, [si, ii], [1.0, 1.0], f"LSU:{prod}"))
+            n_lsu_wired += 1
 
     if not wired:
-        n_total = len(complexes_data["complexes"])
+        n_total = (len(complexes_data["complexes"]) if complexes_data else 0) + len(lsu_chain or [])
         print(f"[asmcore] no assembly reactions wirable "
               f"(0/{n_total}; e.g. skipped reasons: "
               f"{set(r for _, r in skipped[:5])})")
@@ -2053,8 +2071,9 @@ def build_assembly_tensors(complexes_data, species_names,
         stoich[cidx, j] += 1.0
     coverage_mask = stoich.abs().sum(dim=1) > 0
 
-    print(f"[asmcore] wired {R}/{len(complexes_data['complexes'])} "
-          f"assembly reactions; coverage = "
+    print(f"[asmcore] wired {R} assembly reactions "
+          f"({n_complex_wired} from complex_formation, "
+          f"{n_lsu_wired} from LargeSubunit chain); coverage = "
           f"{int(coverage_mask.sum())} species")
     return {
         "complex_idx": complex_idx, "sub_idx": sub_idx, "sub_stoich": sub_stoich,
@@ -2305,14 +2324,16 @@ class DynamicsModel(nn.Module):
         self.use_stochastic = bool(use_stochastic)
         if self.use_stochastic:
             self.stochastic_head = StochasticHead(hidden)
-        # Equation-wired cores all need per-species lo/span for normalised <-> count conversion
-        if ((self.metab_core is not None or self.cd_core is not None
-                or self.asm_core is not None)
-                and lo_norm is not None and span_norm is not None):
+        # Equation-wired cores all need per-species lo/span for normalised <-> count conversion.
+        # Also used by KnockoutAugmentation in the training loop to compute the
+        # normalised value of count=0 per species (zero_norm = -lo/span).
+        if lo_norm is not None and span_norm is not None:
             lo_t   = torch.as_tensor(lo_norm,   dtype=torch.float32)
             span_t = torch.as_tensor(span_norm, dtype=torch.float32).clamp(min=1e-6)
             self.register_buffer("metab_lo",   lo_t)
             self.register_buffer("metab_span", span_t)
+            zero_norm = (-lo_t / span_t).clamp(CLAMP_LO, CLAMP_HI)
+            self.register_buffer("zero_norm", zero_norm)
 
     def forward(self, x):                     # x: (B, S) normalised
         B, S = x.shape
@@ -2478,6 +2499,11 @@ def train_model(model, train_X, ruleset, hyp=None):
     N, T, S = train_X.shape
     use_nll = getattr(model, "use_stochastic", False)
     use_hyp = hyp is not None and hyp.has_aux_loss()
+    # v13.9 module 7: KO augmentation needs zero_norm (the normalised count=0 value).
+    # Stash via the unwrapped model so it works under torch.compile.
+    _inner = getattr(model, "_orig_mod", model)
+    zero_norm = getattr(_inner, "zero_norm", None)
+    use_ko_aug = USE_KO_AUGMENTATION and zero_norm is not None
 
     def _autocast():
         if USE_BF16 and device == "cuda":
@@ -2490,7 +2516,8 @@ def train_model(model, train_X, ruleset, hyp=None):
           f"TBPTT chunk: {TBPTT_CHUNK}, K_MAX: {K_MAX}, STEPS: {STEPS}, "
           f"BATCH: {BATCH}, hidden: {LGNN_HIDDEN}, "
           f"compile: {'ON' if USE_TORCH_COMPILE and device == 'cuda' else 'off'}, "
-          f"hyp_aux: {'ON' if use_hyp else 'off'}")
+          f"hyp_aux: {'ON' if use_hyp else 'off'}, "
+          f"ko_aug: {'ON p=' + str(KO_AUG_PROB) if use_ko_aug else 'off'}")
     hyp_ema = {}    # v13.8: per-kind running average across training (promotion signal)
 
     for step in range(STEPS):
@@ -2500,6 +2527,21 @@ def train_model(model, train_X, ruleset, hyp=None):
         i, ts = i_t.tolist(), t0_t.tolist()
         state = torch.stack([train_X[i[b], ts[b]] for b in range(BATCH)])    # (B, S)
         i_d, t0_d = i_t.to(device), t0_t.to(device)
+
+        # v13.9 module 7: KO augmentation — knock one random species out per
+        # selected batch element, then keep it down through the K-step rollout.
+        # Teaches the model that when a species is gone in the input it stays
+        # gone in the output (and lets the equation cores propagate the
+        # downstream effect for free).
+        ko_b_idx, ko_sp_idx = None, None
+        if use_ko_aug:
+            perturb = torch.rand(BATCH, device=state.device) < KO_AUG_PROB
+            if perturb.any():
+                ko_b_idx  = perturb.nonzero(as_tuple=True)[0]
+                ko_sp_idx = torch.randint(0, S, (ko_b_idx.shape[0],),
+                                          device=state.device)
+                state = state.clone()
+                state[ko_b_idx, ko_sp_idx] = zero_norm[ko_sp_idx]
 
         opt.zero_grad()
         first_loss = None
@@ -2514,12 +2556,18 @@ def train_model(model, train_X, ruleset, hyp=None):
                 if use_nll:
                     pred, log_sigma = out
                     true   = train_X[i_d, t0_d + 1 + k]
+                    if ko_b_idx is not None:
+                        true = true.clone()
+                        true[ko_b_idx, ko_sp_idx] = zero_norm[ko_sp_idx]
                     sq_err = (pred - true) ** 2
                     inv_var = torch.exp(-2.0 * log_sigma)
                     loss_k = 0.5 * (inv_var * sq_err + 2.0 * log_sigma).mean()
                 else:
                     pred = out
                     true = train_X[i_d, t0_d + 1 + k]
+                    if ko_b_idx is not None:
+                        true = true.clone()
+                        true[ko_b_idx, ko_sp_idx] = zero_norm[ko_sp_idx]
                     loss_k = F.mse_loss(pred, true)
                 if use_hyp:
                     hyp_loss_k, hyp_parts_k = hyp.soft_loss(prev_state, pred)
@@ -2535,6 +2583,11 @@ def train_model(model, train_X, ruleset, hyp=None):
             nxt = pred.float().clamp(CLAMP_LO, CLAMP_HI)
             if step >= STEPS // 4:
                 nxt = ruleset.project(prev_state, nxt)
+            # KO augmentation: re-apply the knockdown so it persists across the
+            # K-step rollout (matches the eval-time permanent-knockdown semantics).
+            if ko_b_idx is not None:
+                nxt = nxt.clone()
+                nxt[ko_b_idx, ko_sp_idx] = zero_norm[ko_sp_idx]
             prev_state = nxt
             state = nxt
 
@@ -2961,10 +3014,12 @@ def main():
     cd_tensors = None
     if USE_CENTRAL_DOGMA:
         cd_tensors = build_central_dogma_tensors(species_active)
-    # v13.9: build AssemblyCore tensors (complex_formation.xlsx mass-action)
+    # v13.9: build AssemblyCore tensors (complex_formation.xlsx mass-action +
+    # 50S ribosome assembly chain from LargeSubunit.xlsx)
     asm_tensors = None
     if USE_ASSEMBLY_CORE:
-        asm_tensors = build_assembly_tensors(complexes, species_active)
+        asm_tensors = build_assembly_tensors(complexes, species_active,
+                                              lsu_chain=largesubunit)
     model = DynamicsModel(
         S=S, hidden=LGNN_HIDDEN, n_layers=LGNN_N_LAYERS,
         species_type_ids=species_type_ids,

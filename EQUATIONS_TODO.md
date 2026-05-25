@@ -19,10 +19,10 @@ Each module is gated on a verifiable improvement before we proceed to the next. 
 | 2 | **VolumeCore** — dynamic volume per timestep | membrane-lipid count proxy (`LIPID_PREFIXES`) | constant-volume assumption | +0.05–0.15 | – | **wired** |
 | 3 | **CentralDogmaCore** — per-gene tx / tl / mRNA-deg / prot-deg | per-gene G/R/P species; literature k_tx, k_tl, half-lives | LGNN's prediction for mRNA + protein species | +0.10–0.20 | – | **wired** |
 | 4 | **AssemblyCore** — complex assembly + 50S biogenesis (mass-action) | `complex_formation.xlsx`, `LargeSubunit.xlsx` | LGNN's prediction for complex species | +0.05–0.10 | – | **wired (complex_formation only; LargeSubunit deferred)** |
-| 5 | **TransportCore** — 58 transport reactions (bi-bi) | `kinetic_params.xlsx` Transport sheet | LGNN's prediction for transport species | +0.02–0.05 | – | not started |
-| 6 | **tRNAChargingCore** — 20 aa charging (bi-bi) | `kinetic_params.xlsx` Cofactor sheet | LGNN's prediction for tRNA species | +0.02 | – | not started |
-| 7 | **KnockoutAugmentation** — random species-zero per training batch | – | model trained only on unperturbed data | unchanged | **+0.20–0.40** | not started |
-| 8 | **ReplicationCore** — DnaA filament + replisome | upstream `replication.py`, would need new data parse | LGNN's prediction for `chromosome` + `ori_rep*` species | +0.05–0.10 | – | not started |
+| 5 | **TransportCore** — 58 transport reactions (bi-bi) | `kinetic_params.xlsx` Transport sheet | – | – | – | **subsumed by Module 1** (MetabolismCore reads all 5 sheets) |
+| 6 | **tRNAChargingCore** — 20 aa charging (bi-bi) | `kinetic_params.xlsx` Cofactor sheet | – | – | – | **subsumed by Module 1** (same — all kinetics share the bi-bi rate law) |
+| 7 | **KnockoutAugmentation** — random species-zero per training batch | – | model trained only on unperturbed data | unchanged | **+0.20–0.40** | **wired** |
+| 8 | **ReplicationCore** — DnaA filament + replisome | upstream `replication.py`, would need new data parse | LGNN's prediction for `chromosome` + `ori_rep*` species | +0.05–0.10 | – | deferred (state-machine complexity) |
 | 9 | **Residual LGNN + Stochastic head** — keep existing, shrink | – | – | – | – | retained |
 
 **Net expected final state:** rollout R² 0.80–0.95, KO MCC 0.40–0.70, element drift near 0%, structural OOD.
@@ -55,6 +55,52 @@ Before moving to the next module:
 ## Tracking
 
 Each module gets a section below as it lands.
+
+### Module 7 — KnockoutAugmentation
+
+- **Status**: wired (commit v13.9 module 7)
+- **Approach**: input perturbation during training, persistent through the K-step
+  rollout, target reflects the same knockdown.  No new module class — modifies
+  `train_model` directly.
+- **Mechanism**:
+  - Per training step, ~30% of batch elements (`KO_AUG_PROB=0.3`) have one
+    random species replaced by its `zero_norm` value (the normalised count=0
+    point per species) in both the input state and the per-step target.
+  - The knockdown is re-applied to `nxt` after each K-step so it persists
+    (matches the eval-time `knockout_sweep` permanent-knockdown semantics).
+  - The equation cores then naturally propagate the perturbation downstream
+    (zero enzyme → zero flux → cascading deltas through the stoichiometry).
+- **What it teaches the model**:
+  1. A zeroed species stays zeroed (target-side knockdown).
+  2. Other species follow trajectory dynamics — the model has to find the
+     RIGHT response without supervision (the equation cores carry the
+     downstream-propagation load).
+- **Cost**: ~10% slower per training step (extra clone + masked write); no
+  separate forward pass.
+- **Expected**: KO MCC −0.04 → 0.2–0.4 when combined with the equation cores
+  doing the heavy lifting on enzyme-driven flux.
+- **Headline result**: pending Colab run.
+
+### Modules 5, 6 — subsumed by Module 1
+
+`parse_kinetics` already reads all five sheets (Central, Nucleotide, Lipid,
+Cofactor, Transport).  `build_metabolism_tensors` then wires every SBML
+reaction with full kinetic data — that covers transport reactions and aa
+charging reactions automatically, since they share the same bi-bi rate
+law and stoichiometric matrix.  No separate `TransportCore` or
+`tRNAChargingCore` needed.
+
+### Module 8 — ReplicationCore: deferred
+
+Upstream's `replication.py` is a state machine: DnaA filament forms by
+sequential binding to high- and low-affinity oriC sites; once filament
+length ≥ 20 the replisome (P_0044) loads; replication proceeds gene by
+gene at position- and size-dependent rates; termination at JCVISYN3A_0421
+doubles the chromosome.  To wire this correctly would need parsing the
+upstream state machine + finding the DnaA / replisome / oriC species in
+our trajectory.  Expected gain is small (+0.05–0.10 rollout R²), the
+implementation is large.  Deferred until other modules' Colab gain
+plateaus and replication-related species become the bottleneck.
 
 ### Module 4 — AssemblyCore
 
