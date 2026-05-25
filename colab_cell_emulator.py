@@ -1068,7 +1068,14 @@ class Hypotheses:
         instantaneously.  Add in a follow-up if mono+pair shows traction.
         """
         N, T, S = train_X_norm.shape
-        deltas = (train_X_norm[:, 1:, :] - train_X_norm[:, :-1, :]).reshape(-1, S)
+        n_pairs = N * (T - 1)
+        if n_pairs > 50_000:
+            g = torch.Generator().manual_seed(SEED + 3)
+            idx_n = torch.randint(0, N, (50_000,), generator=g)
+            idx_t = torch.randint(0, T - 1, (50_000,), generator=g)
+            deltas = train_X_norm[idx_n, idx_t + 1] - train_X_norm[idx_n, idx_t]
+        else:
+            deltas = (train_X_norm[:, 1:, :] - train_X_norm[:, :-1, :]).reshape(-1, S)
         self._delta_mean = deltas.mean(dim=0).to(device)
         self._delta_std = (deltas.std(dim=0) + 1e-6).to(device)
 
@@ -1085,7 +1092,9 @@ class Hypotheses:
             elif kind.startswith("pairwise"):
                 pair_i.append(int(d["i"]))
                 pair_j.append(int(d["j"]))
-                pair_r.append(float(d["r_va"]))
+                # Use the TRAIN correlation, not the held-out one — using r_va
+                # would leak test-set statistics into the training loss.
+                pair_r.append(float(d["r_tr"]))
 
         if mono_up:
             self._mono_up_idx = torch.tensor(mono_up, dtype=torch.long, device=device)
@@ -1107,24 +1116,29 @@ class Hypotheses:
                 or self._pair_i is not None)
 
     def soft_loss(self, prev, nxt):
-        """Returns (scalar aux loss, per-kind detached dict).
-        prev, nxt: (B, S) normalised state tensors (any dtype, BF16-safe)."""
-        per_kind = {}
-        total = torch.zeros((), device=prev.device, dtype=prev.dtype)
+        """Returns (scalar aux loss, per-kind dict of DETACHED TENSORS).
 
+        prev, nxt: (B, S) normalised state tensors (any dtype, BF16-safe).
+        The per-kind values are GPU tensors — the caller is responsible for
+        any .item()/float() conversion (deferred to avoid GPU sync in the
+        hot training loop).
+        """
+        prev = prev.to(nxt.dtype)        # BF16 safety
+        per_kind = {}
+        total = torch.zeros((), device=nxt.device, dtype=nxt.dtype)
         w_mono = self._kind_weights["mono"]
         w_pair = self._kind_weights["pair"]
 
         if self._mono_up_idx is not None:
             v = F.relu(prev[:, self._mono_up_idx] - nxt[:, self._mono_up_idx])
             l = (v * v).mean()
-            per_kind["mono_up"] = float(l.detach())
+            per_kind["mono_up"] = l.detach()
             total = total + w_mono * l
 
         if self._mono_down_idx is not None:
             v = F.relu(nxt[:, self._mono_down_idx] - prev[:, self._mono_down_idx])
             l = (v * v).mean()
-            per_kind["mono_down"] = float(l.detach())
+            per_kind["mono_down"] = l.detach()
             total = total + w_mono * l
 
         if self._pair_i is not None:
@@ -1135,7 +1149,7 @@ class Hypotheses:
             r = self._pair_r.to(dx.dtype)
             res = dzi - r.unsqueeze(0) * dzj
             l = (res * res).mean()
-            per_kind["pair"] = float(l.detach())
+            per_kind["pair"] = l.detach()
             total = total + w_pair * l
 
         return total, per_kind
@@ -1869,10 +1883,11 @@ def train_model(model, train_X, ruleset, hyp=None):
                     true = train_X[i_d, t0_d + 1 + k]
                     loss_k = F.mse_loss(pred, true)
                 if use_hyp:
-                    hyp_loss_k, hyp_kinds_k = hyp.soft_loss(prev_state, pred)
+                    hyp_loss_k, hyp_parts_k = hyp.soft_loss(prev_state, pred)
                     loss_k = loss_k + LAMBDA_HYP * hyp_loss_k
-                    for kn, vv in hyp_kinds_k.items():
-                        hyp_ema[kn] = 0.99 * hyp_ema.get(kn, vv) + 0.01 * vv
+                    for kn, vv in hyp_parts_k.items():
+                        prev_t = hyp_ema.get(kn)
+                        hyp_ema[kn] = vv if prev_t is None else 0.99 * prev_t + 0.01 * vv
             if first_loss is None:
                 first_loss = loss_k
             chunk_losses.append(loss_k)
@@ -1905,7 +1920,7 @@ def train_model(model, train_X, ruleset, hyp=None):
         if step == 0 or (step + 1) % 250 == 0:
             hyp_str = ""
             if use_hyp and hyp_ema:
-                hyp_str = "  hyp[" + " ".join(f"{k}={v:.4f}"
+                hyp_str = "  hyp[" + " ".join(f"{k}={float(v):.4f}"
                                               for k, v in hyp_ema.items()) + "]"
             print(f"  step {step+1:5d}  K={K:4d}  "
                   f"1-step {float(first_loss.detach()):.5f}  "
@@ -1931,7 +1946,7 @@ def train_model(model, train_X, ruleset, hyp=None):
                 print(f"  [ckpt] save failed: {e}")
 
     print(f"[train] {STEPS} steps in {time.time()-t_start:.0f}s")
-    return hyp_ema
+    return {k: float(v) for k, v in hyp_ema.items()}
 
 
 def _eval_autocast():
