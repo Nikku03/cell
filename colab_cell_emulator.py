@@ -148,7 +148,7 @@ except ImportError:
 
 # ── config ───────────────────────────────────────────────────────────────────
 PARQUET_DIR         = ""
-TIME_STRIDE         = 1            # v10 Tier C: full-resolution training (was 60)
+TIME_STRIDE         = 30           # v13.8.2: stride=30 sanity run — 30-sec steps, ~240 timesteps/traj
 LENS_TIME_STRIDE    = 60           # v10: subsample for the lens phase (memory)
 # Drop t=0 and t=1 of the simulator (the unnatural startup transient).  At
 # TIME_STRIDE=1 that's the first 2 decimated steps; at TIME_STRIDE=60 it's the
@@ -162,7 +162,7 @@ N_HEADS             = 8
 DROPOUT             = 0.1
 N_TRAIN_TRAJ        = 40
 STEPS               = 1500         # v13: was 2000 — fewer steps, BATCH doubled to compensate
-K_MAX               = 256          # v12: was 64.  256 steps = ~4 min biological at 1s stride.
+K_MAX               = 120          # v13.8.2: 120 steps = 60 min biological at 30s stride (half cell cycle)
 TBPTT_CHUNK         = 64           # v12: gradient flows back this many rollout steps at a time
 USE_BF16            = True         # v12: BF16 autocast on Blackwell/Hopper/A100 — ~2x speedup
 BATCH               = 32           # v13: was 16 — doubled on Blackwell 96GB; more throughput per step
@@ -192,7 +192,7 @@ SKIP_TRAINING_IF_LOADED = False    # v13.6: if RESUME loaded weights, skip train
 CHECKPOINT_EVERY    = 250          # v13.7: write a rolling mid-training checkpoint every N steps (0 to disable)
 PINN_RATE_CLIP      = 6.0          # NEW v9: log-space rate clip (prevents expm1 blow-up)
 VAR_R2_TOP_K        = 200          # NEW v9: top-K species (by variance) for the honest R²
-KO_N_STEPS          = 300          # v10 Tier C: 5 min biological at 1s stride (was 30)
+KO_N_STEPS          = 60           # v13.8.2: 60 steps = 30 min biological at 30s stride
 KO_BATCH_SIZE       = 32           # NEW v9: parallel knockouts per batch
 BREUER_PATH         = "memory_bank/data/syn3a_essentiality_breuer2019.csv"
 SEED                = 0
