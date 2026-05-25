@@ -185,6 +185,7 @@ LGNN_N_LAYERS       = 3            # NEW v8: number of CfC graph layers
 LGNN_CFC_TAU_MIN    = 0.1          # NEW v8: CfC time-constant minimum
 LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
 USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML species
+USE_METABOLISM_CORE = True         # NEW v13.9: replace PINN's neural flux with the bi-bi rate law for ~160 SBML reactions
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -1924,6 +1925,8 @@ class DynamicsModel(nn.Module):
                  use_pinn=False, sbml_mask=None, sbml_indices=None,
                  stoich_matrix=None, lo_norm=None, span_norm=None,
                  pinn_rate_clip=PINN_RATE_CLIP, use_stochastic=False,
+                 # v13.9: equation-wired metabolism
+                 metab_tensors=None, metab_dt=1.0,
                  # backward-compat v7 kwargs (ignored)
                  d_model=None, n_heads=None, context=None, dropout=None,
                  d_type=None):
@@ -1943,8 +1946,13 @@ class DynamicsModel(nn.Module):
         ])
         self.out_norm = nn.LayerNorm(hidden)
         self.out_head = nn.Linear(hidden, 1)
-        # v9: PINN head (optional)
-        self.use_pinn = bool(use_pinn and sbml_mask is not None)
+        # v13.9: MetabolismCore takes priority over PINN for the species
+        # it covers — disable PINN entirely when MetabolismCore is wired in.
+        self.metab_core = MetabolismCore(metab_tensors) if metab_tensors is not None else None
+        self.metab_dt = float(metab_dt)
+        # v9: PINN head (optional) — disabled when MetabolismCore is on
+        self.use_pinn = bool(use_pinn and sbml_mask is not None
+                             and self.metab_core is None)
         if self.use_pinn:
             self.pinn_head = PINNHead(hidden, sbml_mask, sbml_indices,
                                       stoich_matrix, lo_norm, span_norm,
@@ -1953,8 +1961,14 @@ class DynamicsModel(nn.Module):
         self.use_stochastic = bool(use_stochastic)
         if self.use_stochastic:
             self.stochastic_head = StochasticHead(hidden)
+        # MetabolismCore needs per-species lo/span for normalised <-> count conversion
+        if self.metab_core is not None and lo_norm is not None and span_norm is not None:
+            lo_t   = torch.as_tensor(lo_norm,   dtype=torch.float32)
+            span_t = torch.as_tensor(span_norm, dtype=torch.float32).clamp(min=1e-6)
+            self.register_buffer("metab_lo",   lo_t)
+            self.register_buffer("metab_span", span_t)
 
-    def forward(self, x):                     # x: (B, S)
+    def forward(self, x):                     # x: (B, S) normalised
         B, S = x.shape
         te  = self.type_embed(self.stype).unsqueeze(0).expand(B, -1, -1)
         inp = torch.cat([x.unsqueeze(-1), te], dim=-1)
@@ -1964,7 +1978,22 @@ class DynamicsModel(nn.Module):
         h = self.out_norm(h)
         delta  = self.out_head(h).squeeze(-1)
         x_next = x + delta
-        # PINN head overrides SBML species with mass-balanced prediction
+        # v13.9: MetabolismCore overrides covered species via bi-bi rate law.
+        # Round-trip normalised -> count -> bi-bi step -> count -> normalised.
+        if self.metab_core is not None:
+            x_sl_lin     = x.float() * self.metab_span + self.metab_lo
+            x_count      = t_signed_expm1(x_sl_lin)
+            d_count, _   = self.metab_core(x_count, dt=self.metab_dt)
+            x_count_next = (x_count + d_count).clamp(min=0.0)
+            x_sl_next    = t_signed_log1p(x_count_next)
+            x_norm_metab = (x_sl_next - self.metab_lo) / self.metab_span
+            # Keep predictions within the trained normalisation window —
+            # otherwise a large bi-bi step can carry state outside the model's
+            # input distribution and corrupt the rest of the rollout.
+            x_norm_metab = x_norm_metab.clamp(CLAMP_LO, CLAMP_HI).to(x_next.dtype)
+            mask = self.metab_core.coverage_mask.unsqueeze(0).expand(B, -1)
+            x_next = torch.where(mask, x_norm_metab, x_next)
+        # PINN head overrides SBML species with mass-balanced prediction (disabled when MetabolismCore is on)
         if self.use_pinn:
             x_next_sbml = self.pinn_head(h, x)                              # (B, n_sbml)
             x_pinn_full = torch.zeros_like(x_next)
@@ -2548,6 +2577,12 @@ def main():
         sbml_mask     = sbml_mask.to(device)
         sbml_indices  = sbml_indices.to(device)
         stoich_matrix = stoich_matrix.to(device)
+    # v13.9: build MetabolismCore tensors (bi-bi rate law for ~160 SBML reactions).
+    # When this is non-None, DynamicsModel disables the PINN head and uses the
+    # bi-bi formula for covered species.  Disabled gracefully if kinetics sparse.
+    metab_tensors = None
+    if USE_METABOLISM_CORE:
+        metab_tensors = build_metabolism_tensors(sbml, kinetics, species_active)
     model = DynamicsModel(
         S=S, hidden=LGNN_HIDDEN, n_layers=LGNN_N_LAYERS,
         species_type_ids=species_type_ids,
@@ -2556,11 +2591,14 @@ def main():
         use_pinn=pinn_active, sbml_mask=sbml_mask, sbml_indices=sbml_indices,
         stoich_matrix=stoich_matrix, lo_norm=lo, span_norm=span,
         pinn_rate_clip=PINN_RATE_CLIP, use_stochastic=USE_STOCHASTIC_HEAD,
+        metab_tensors=metab_tensors, metab_dt=float(TIME_STRIDE),
     ).to(device)
     n_params = sum(p.numel() for p in model.parameters()) / 1e6
     head_tags = []
-    if pinn_active:          head_tags.append("PINN")
-    if USE_STOCHASTIC_HEAD:  head_tags.append("stochastic")
+    if model.metab_core is not None:
+        head_tags.append(f"MetabolismCore({model.metab_core.R})")
+    if model.use_pinn:        head_tags.append("PINN")
+    if USE_STOCHASTIC_HEAD:   head_tags.append("stochastic")
     print(f"[model] LGNN+{('+'.join(head_tags)) if head_tags else 'plain'}: {n_params:.2f}M parameters, "
           f"{edge_index.shape[1]:,} graph edges")
 
@@ -2701,7 +2739,9 @@ def main():
                        cfc_tau_min=LGNN_CFC_TAU_MIN, n_type_embed=LGNN_N_TYPE_EMBED,
                        time_stride=TIME_STRIDE, n_genes=len(locus_list),
                        skip_startup=SKIP_STARTUP_STEPS,
-                       use_pinn=pinn_active, use_stochastic=USE_STOCHASTIC_HEAD,
+                       use_pinn=model.use_pinn, use_stochastic=USE_STOCHASTIC_HEAD,
+                       use_metab_core=model.metab_core is not None,
+                       metab_n_reactions=(model.metab_core.R if model.metab_core is not None else 0),
                        architecture="LGNN_v13"),
     }, f"{SAVE_DIR}/cell_emulator_v13.pt")
     print(f"[save] traj  -> {SAVE_DIR}/cell_traj_51_v13.npy")
