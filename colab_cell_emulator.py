@@ -169,6 +169,7 @@ BATCH               = 32           # v13: was 16 — doubled on Blackwell 96GB; 
 LR                  = 3e-4
 WEIGHT_DECAY        = 1e-5
 LAMBDA_1STEP        = 1.0
+LAMBDA_HYP          = 0.01         # v13.8: weight for Tier-2 hypothesis aux loss
 CLAMP_LO, CLAMP_HI  = -0.2, 1.2
 MONO_EPS            = 1e-4
 RULE_COMPLIANCE     = 0.999
@@ -1015,16 +1016,30 @@ class RuleSet:
 class Hypotheses:
     """Tier 2: candidates that did NOT pass validation, or are not enforceable.
 
-    Tracked, confidence-scored and REPORTED, never enforced - so a wrong
-    hypothesis cannot corrupt a rollout.  Promote to a seed rule only once trusted.
+    Tracked, confidence-scored and REPORTED.  v13.8: also optionally fed back
+    to training as a SOFT loss (weight LAMBDA_HYP, small) — preserves the
+    "can be wrong" semantics because training data dominates ties, but stops
+    the model from being completely blind to what the discovery lenses found.
     """
 
     def __init__(self):
         self.items = []
+        # v13.8: soft-loss tensors, populated by build_tensors().  None until then.
+        self._mono_up_idx = None
+        self._mono_down_idx = None
+        self._pair_i = None
+        self._pair_j = None
+        self._pair_r = None
+        self._delta_mean = None
+        self._delta_std = None
+        # Mono loss lives in normalised [0,1] space (≈ same scale as main loss).
+        # Pair loss lives in z-score delta space, naturally ~100× larger; the 0.01
+        # weight rescales it to the same effective magnitude per element.
+        self._kind_weights = {"mono": 1.0, "pair": 0.01}
 
-    def add(self, kind, detail, score, source):
+    def add(self, kind, detail, score, source, data=None):
         self.items.append({"kind": kind, "detail": detail,
-                           "score": score, "source": source})
+                           "score": score, "source": source, "data": data})
 
     def summary(self, max_show=20):
         if not self.items:
@@ -1036,6 +1051,94 @@ class Hypotheses:
         if len(self.items) > max_show:
             lines.append(f"    ... and {len(self.items)-max_show} more")
         return "\n".join(lines)
+
+    def build_tensors(self, train_X_norm, device):
+        """v13.8: compile items into tensors for the auxiliary soft loss.
+
+        train_X_norm: (N, T, S) normalised training tensor on CPU.
+
+        Soft losses (each ~0 when prediction is consistent with the hypothesis):
+          monotone-up  : F.relu(prev - nxt) on stored indices
+          monotone-down: F.relu(nxt - prev) on stored indices
+          pairwise     : standardised-delta residual after the implied
+                         linear relation, (dzi - r * dzj)^2
+
+        Conservation, periodicity, gene-chain-lag are skipped for now —
+        they're nonlinear in normalised space or hard to evaluate
+        instantaneously.  Add in a follow-up if mono+pair shows traction.
+        """
+        N, T, S = train_X_norm.shape
+        deltas = (train_X_norm[:, 1:, :] - train_X_norm[:, :-1, :]).reshape(-1, S)
+        self._delta_mean = deltas.mean(dim=0).to(device)
+        self._delta_std = (deltas.std(dim=0) + 1e-6).to(device)
+
+        mono_up, mono_down, pair_i, pair_j, pair_r = [], [], [], [], []
+        for h in self.items:
+            d = h.get("data")
+            if d is None:
+                continue
+            kind = h["kind"]
+            if kind == "monotone-up":
+                mono_up.append(int(d["i"]))
+            elif kind == "monotone-down":
+                mono_down.append(int(d["i"]))
+            elif kind.startswith("pairwise"):
+                pair_i.append(int(d["i"]))
+                pair_j.append(int(d["j"]))
+                pair_r.append(float(d["r_va"]))
+
+        if mono_up:
+            self._mono_up_idx = torch.tensor(mono_up, dtype=torch.long, device=device)
+        if mono_down:
+            self._mono_down_idx = torch.tensor(mono_down, dtype=torch.long, device=device)
+        if pair_i:
+            self._pair_i = torch.tensor(pair_i, dtype=torch.long, device=device)
+            self._pair_j = torch.tensor(pair_j, dtype=torch.long, device=device)
+            self._pair_r = torch.tensor(pair_r, dtype=torch.float32, device=device)
+        n_total = len(mono_up) + len(mono_down) + len(pair_i)
+        print(f"[hyp] aux-loss tensors: {len(mono_up)} mono-up + "
+              f"{len(mono_down)} mono-down + {len(pair_i)} pair "
+              f"(total {n_total} soft constraints, lambda={LAMBDA_HYP})")
+        return n_total
+
+    def has_aux_loss(self):
+        return (self._mono_up_idx is not None
+                or self._mono_down_idx is not None
+                or self._pair_i is not None)
+
+    def soft_loss(self, prev, nxt):
+        """Returns (scalar aux loss, per-kind detached dict).
+        prev, nxt: (B, S) normalised state tensors (any dtype, BF16-safe)."""
+        per_kind = {}
+        total = torch.zeros((), device=prev.device, dtype=prev.dtype)
+
+        w_mono = self._kind_weights["mono"]
+        w_pair = self._kind_weights["pair"]
+
+        if self._mono_up_idx is not None:
+            v = F.relu(prev[:, self._mono_up_idx] - nxt[:, self._mono_up_idx])
+            l = (v * v).mean()
+            per_kind["mono_up"] = float(l.detach())
+            total = total + w_mono * l
+
+        if self._mono_down_idx is not None:
+            v = F.relu(nxt[:, self._mono_down_idx] - prev[:, self._mono_down_idx])
+            l = (v * v).mean()
+            per_kind["mono_down"] = float(l.detach())
+            total = total + w_mono * l
+
+        if self._pair_i is not None:
+            dx = nxt - prev
+            dz = (dx - self._delta_mean.to(dx.dtype)) / self._delta_std.to(dx.dtype)
+            dzi = dz[:, self._pair_i]
+            dzj = dz[:, self._pair_j]
+            r = self._pair_r.to(dx.dtype)
+            res = dzi - r.unsqueeze(0) * dzj
+            l = (res * res).mean()
+            per_kind["pair"] = float(l.detach())
+            total = total + w_pair * l
+
+        return total, per_kind
 
 
 def build_enforcement(known, patterns, species_names):
@@ -1063,7 +1166,7 @@ def build_enforcement(known, patterns, species_names):
                    "sbml" if i in sbml_up else "trajectory")
             hyp.add("monotone-up", f"'{species_names[i]}' fails held-out "
                     f"({patterns.up_frac_va[i]*100:.2f}% compliant)",
-                    patterns.up_frac_va[i], src)
+                    patterns.up_frac_va[i], src, data={"i": int(i)})
 
     # ── monotone-down ──
     cand_down = sbml_down | emp_down
@@ -1075,7 +1178,7 @@ def build_enforcement(known, patterns, species_names):
             src = "sbml" if i in sbml_down else "trajectory"
             hyp.add("monotone-down", f"'{species_names[i]}' fails held-out "
                     f"({patterns.down_frac_va[i]*100:.2f}% compliant)",
-                    patterns.down_frac_va[i], src)
+                    patterns.down_frac_va[i], src, data={"i": int(i)})
 
     # ── bounds ──
     lo, hi, ok = patterns.lo_cand, patterns.hi_cand, patterns.bound_ok
@@ -1106,7 +1209,9 @@ def build_enforcement(known, patterns, species_names):
         hyp.add(f"pairwise-{kind}",
                 f"'{species_names[i]}' <-> '{species_names[j]}' "
                 f"(r_tr={c_tr:+.2f} r_va={c_va:+.2f})",
-                abs(c_va), "trajectory")
+                abs(c_va), "trajectory",
+                data={"i": int(i), "j": int(j),
+                      "r_tr": float(c_tr), "r_va": float(c_va)})
     for i, freq_idx, rel in patterns.periodicity[:8]:
         hyp.add("periodicity",
                 f"'{species_names[i]}' peak bin {freq_idx} (rel power {rel:.2f})",
@@ -1700,7 +1805,7 @@ def variance_weighted_r2(pred, true, top_k=VAR_R2_TOP_K):
 
 # ── training / eval ───────────────────────────────────────────────────────────
 
-def train_model(model, train_X, ruleset):
+def train_model(model, train_X, ruleset, hyp=None):
     """v12 LGNN trainer with truncated BPTT + optional BF16 autocast.
 
     Truncated BPTT (TBPTT): rolls forward K steps but backward only flows
@@ -1710,12 +1815,16 @@ def train_model(model, train_X, ruleset):
 
     BF16 autocast: ~2x speedup on Blackwell/Hopper/A100.  Loss + ruleset.project
     cast back to fp32 between rollout iterations to keep state numerically clean.
+
+    v13.8: optional Tier-2 hypothesis aux loss (pass hyp with build_tensors()
+    already called).  Weight LAMBDA_HYP is small so training data dominates.
     """
     opt   = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=STEPS)
     gen   = torch.Generator().manual_seed(SEED + 1)
     N, T, S = train_X.shape
     use_nll = getattr(model, "use_stochastic", False)
+    use_hyp = hyp is not None and hyp.has_aux_loss()
 
     def _autocast():
         if USE_BF16 and device == "cuda":
@@ -1727,7 +1836,9 @@ def train_model(model, train_X, ruleset):
     print(f"[train] BF16 autocast: {'ON' if USE_BF16 and device == 'cuda' else 'off'}, "
           f"TBPTT chunk: {TBPTT_CHUNK}, K_MAX: {K_MAX}, STEPS: {STEPS}, "
           f"BATCH: {BATCH}, hidden: {LGNN_HIDDEN}, "
-          f"compile: {'ON' if USE_TORCH_COMPILE and device == 'cuda' else 'off'}")
+          f"compile: {'ON' if USE_TORCH_COMPILE and device == 'cuda' else 'off'}, "
+          f"hyp_aux: {'ON' if use_hyp else 'off'}")
+    hyp_ema = {}    # v13.8: per-kind running average across training (promotion signal)
 
     for step in range(STEPS):
         K    = 1 + int((K_MAX - 1) * step / STEPS)
@@ -1757,6 +1868,11 @@ def train_model(model, train_X, ruleset):
                     pred = out
                     true = train_X[i_d, t0_d + 1 + k]
                     loss_k = F.mse_loss(pred, true)
+                if use_hyp:
+                    hyp_loss_k, hyp_kinds_k = hyp.soft_loss(prev_state, pred)
+                    loss_k = loss_k + LAMBDA_HYP * hyp_loss_k
+                    for kn, vv in hyp_kinds_k.items():
+                        hyp_ema[kn] = 0.99 * hyp_ema.get(kn, vv) + 0.01 * vv
             if first_loss is None:
                 first_loss = loss_k
             chunk_losses.append(loss_k)
@@ -1787,9 +1903,14 @@ def train_model(model, train_X, ruleset):
         sched.step()
 
         if step == 0 or (step + 1) % 250 == 0:
+            hyp_str = ""
+            if use_hyp and hyp_ema:
+                hyp_str = "  hyp[" + " ".join(f"{k}={v:.4f}"
+                                              for k, v in hyp_ema.items()) + "]"
             print(f"  step {step+1:5d}  K={K:4d}  "
                   f"1-step {float(first_loss.detach()):.5f}  "
-                  f"rollout {sum(all_loss_means)/len(all_loss_means):.5f}", flush=True)
+                  f"rollout {sum(all_loss_means)/len(all_loss_means):.5f}"
+                  f"{hyp_str}", flush=True)
 
         # v13.7: rolling mid-training checkpoint so an interrupt mid-run doesn't lose progress
         if (CHECKPOINT_EVERY > 0
@@ -1810,6 +1931,7 @@ def train_model(model, train_X, ruleset):
                 print(f"  [ckpt] save failed: {e}")
 
     print(f"[train] {STEPS} steps in {time.time()-t_start:.0f}s")
+    return hyp_ema
 
 
 def _eval_autocast():
@@ -2145,6 +2267,8 @@ def main():
     # ── sort into Tier 1 (enforced) + Tier 2 (reported) ──────────────────
     ruleset, hyp = build_enforcement(known, patterns, species_active)
     ruleset = ruleset.to(device)
+    # v13.8: compile Tier-2 items into soft-loss tensors for training
+    hyp.build_tensors(X[train_idx], device=device)
 
     # ── cross-validate KnownRules vs trajectory ──────────────────────────
     cross_report = cross_validate_known(known, raw_counts_active, species_active)
@@ -2244,12 +2368,13 @@ def main():
         except Exception as e:
             print(f"[model] torch.compile failed ({e}) - running in eager mode")
 
+    hyp_violation_ema = {}
     if loaded_from_ckpt and SKIP_TRAINING_IF_LOADED:
         print("[train] SKIPPED — using loaded checkpoint as-is for evaluation")
     else:
         if loaded_from_ckpt:
             print("[train] continuing training from loaded checkpoint")
-        train_model(model, train_X, ruleset)
+        hyp_violation_ema = train_model(model, train_X, ruleset, hyp=hyp) or {}
 
     # ── evaluate ──────────────────────────────────────────────────────────
     print()
@@ -2312,6 +2437,7 @@ def main():
         "ruleset_lo": ruleset.lo_bound.cpu() if ruleset.lo_bound is not None else None,
         "ruleset_hi": ruleset.hi_bound.cpu() if ruleset.hi_bound is not None else None,
         "hypotheses": hyp.items,
+        "hyp_violation_ema": hyp_violation_ema,
         "known_rules_summary": known.summary(),
         "knockout_sweep": ko,
         "var_r2_median": var_r2,
