@@ -192,6 +192,10 @@ USE_ASSEMBLY_CORE   = True         # NEW v13.9: mass-action complex assembly fro
 USE_KO_AUGMENTATION = True         # NEW v13.9 module 7: random species-zero during training, teaches KO response
 KO_AUG_PROB         = 0.3          # probability per batch element of being knockout-perturbed
 GIBBS_DG_THRESHOLD_KJ = 10.0       # NEW v14 day 1: ΔG° (kJ/mol) below which a reaction is forced irreversible-forward
+USE_ATP_LEDGER      = True         # NEW v14 day 3: soft penalty when net ATP production rate falls below maintenance floor
+ATP_SPECIES_NAME    = "M_atp_c"    # which species to track for the energy ledger
+ATP_MAINTENANCE_RATE = 4.0e5       # ATP molecules per second per cell — NGAM floor (~5 mmol/g/hr × Syn3A mass)
+LAMBDA_ATP          = 0.01         # auxiliary loss weight for ATP-deficit penalty
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -1708,6 +1712,20 @@ def build_metabolism_tensors(sbml, kinetics, species_names,
           f"({n_gibbs_unknown} have no ΔG° data, left reversible)")
     print(f"[metabcore] species coverage: {int(coverage_mask.sum())}/{S}")
 
+    # v14 day 3: locate the ATP species for the energy ledger
+    atp_idx = name_to_idx.get(ATP_SPECIES_NAME)
+    if atp_idx is not None and coverage_mask[atp_idx]:
+        net_atp_per_rxn = stoich[atp_idx]   # (R,) net ATP per reaction
+        n_atp_producers = int((net_atp_per_rxn > 0).sum())
+        n_atp_consumers = int((net_atp_per_rxn < 0).sum())
+        print(f"[metabcore] ATP ledger: {n_atp_producers} producing + "
+              f"{n_atp_consumers} consuming reactions of {R} wired "
+              f"(net stoich coefficients available)")
+    else:
+        atp_idx = None
+        print(f"[metabcore] ATP ledger: '{ATP_SPECIES_NAME}' not in covered species "
+              f"— ledger disabled, ATP loss won't fire")
+
     return {
         "enzyme_idx": enzyme_idx,
         "kcat_fwd": kcat_fwd, "kcat_rev": kcat_rev,
@@ -1717,6 +1735,7 @@ def build_metabolism_tensors(sbml, kinetics, species_names,
         "wired_reactions": [r["id"] for r, _, _, _ in wired],
         "skipped_reactions": skipped,
         "median_km": median_km, "volume_l": volume_l,
+        "atp_idx": atp_idx,
     }
 
 
@@ -1734,7 +1753,7 @@ class MetabolismCore(nn.Module):
       fluxes:      (B, R) net flux per wired reaction (mM/s)
     """
 
-    def __init__(self, tensors, learnable_rates=False):
+    def __init__(self, tensors, learnable_rates=False, atp_idx=None):
         super().__init__()
         self.register_buffer("enzyme_idx",    tensors["enzyme_idx"])
         self.register_buffer("sub_idx",       tensors["sub_idx"])
@@ -1745,6 +1764,12 @@ class MetabolismCore(nn.Module):
         self.register_buffer("coverage_mask", tensors["coverage_mask"])
         self.register_buffer("volume_l",
                              torch.tensor(tensors["volume_l"], dtype=torch.float32))
+        # v14 day 3: ATP stoichiometry vector — net ATP yield per wired reaction
+        if atp_idx is not None:
+            self.register_buffer("atp_stoich", self.stoich_matrix[atp_idx].clone())
+            self.has_atp = True
+        else:
+            self.has_atp = False
 
         if learnable_rates:
             self.log_kcat_fwd = nn.Parameter(torch.log(tensors["kcat_fwd"].clamp(min=1e-9)))
@@ -1807,6 +1832,25 @@ class MetabolismCore(nn.Module):
         delta_state = delta_conc * dt * (NA_AVOGADRO * v_l) / 1e3
 
         return delta_state, v
+
+    def compute_atp_rate(self, fluxes, volume_l=None):
+        """v14 day 3: net ATP production rate over wired reactions.
+
+        fluxes:    (B, R) bi-bi fluxes from forward() (mM/s)
+        volume_l:  scalar or (B,) volume; None → use self.volume_l buffer
+        Returns:   (B,) net ATP rate in molecules/s.  None if ATP not tracked.
+        """
+        if not self.has_atp:
+            return None
+        atp_rate_mm = torch.einsum("br,r->b", fluxes, self.atp_stoich.to(fluxes.dtype))
+        B = fluxes.shape[0]
+        if volume_l is None:
+            v_l = self.volume_l.expand(B)
+        elif volume_l.ndim == 0:
+            v_l = volume_l.expand(B)
+        else:
+            v_l = volume_l
+        return atp_rate_mm * (NA_AVOGADRO * v_l) / 1e3
 
 
 # ── v13.9 VolumeCore: dynamic cell volume from membrane-lipid count ──────────
@@ -2380,7 +2424,9 @@ class DynamicsModel(nn.Module):
         self.out_head = nn.Linear(hidden, 1)
         # v13.9: MetabolismCore takes priority over PINN for the species
         # it covers — disable PINN entirely when MetabolismCore is wired in.
-        self.metab_core = MetabolismCore(metab_tensors) if metab_tensors is not None else None
+        self.metab_core = (MetabolismCore(metab_tensors,
+                                          atp_idx=metab_tensors.get("atp_idx"))
+                           if metab_tensors is not None else None)
         self.metab_dt = float(metab_dt)
         # v13.9: VolumeCore tracks dynamic cell volume; passed to MetabolismCore each step.
         self.volume_core = volume_core
@@ -2426,7 +2472,10 @@ class DynamicsModel(nn.Module):
             x_sl_lin     = x.float() * self.metab_span + self.metab_lo
             x_count      = t_signed_expm1(x_sl_lin)
             v_l = self.volume_core(x_count) if self.volume_core is not None else None
-            d_count, _   = self.metab_core(x_count, dt=self.metab_dt, volume_l=v_l)
+            d_count, fluxes = self.metab_core(x_count, dt=self.metab_dt, volume_l=v_l)
+            # v14 day 3: stash ATP rate so the training loop can apply the energy-ledger loss
+            if self.metab_core.has_atp:
+                self.last_atp_rate = self.metab_core.compute_atp_rate(fluxes, volume_l=v_l)
             x_count_next = (x_count + d_count).clamp(min=0.0)
             x_sl_next    = t_signed_log1p(x_count_next)
             x_norm_metab = (x_sl_next - self.metab_lo) / self.metab_span
@@ -2579,6 +2628,11 @@ def train_model(model, train_X, ruleset, hyp=None):
     _inner = getattr(model, "_orig_mod", model)
     zero_norm = getattr(_inner, "zero_norm", None)
     use_ko_aug = USE_KO_AUGMENTATION and zero_norm is not None
+    # v14 day 3: ATP ledger active when MetabolismCore has the ATP species in coverage
+    use_atp_ledger = (USE_ATP_LEDGER
+                      and _inner.metab_core is not None
+                      and _inner.metab_core.has_atp)
+    atp_ema = 0.0    # running average of net ATP rate, for the train log
 
     def _autocast():
         if USE_BF16 and device == "cuda":
@@ -2592,7 +2646,8 @@ def train_model(model, train_X, ruleset, hyp=None):
           f"BATCH: {BATCH}, hidden: {LGNN_HIDDEN}, "
           f"compile: {'ON' if USE_TORCH_COMPILE and device == 'cuda' else 'off'}, "
           f"hyp_aux: {'ON' if use_hyp else 'off'}, "
-          f"ko_aug: {'ON p=' + str(KO_AUG_PROB) if use_ko_aug else 'off'}")
+          f"ko_aug: {'ON p=' + str(KO_AUG_PROB) if use_ko_aug else 'off'}, "
+          f"atp_ledger: {'ON floor=' + str(int(ATP_MAINTENANCE_RATE)) if use_atp_ledger else 'off'}")
     hyp_ema = {}    # v13.8: per-kind running average across training (promotion signal)
 
     for step in range(STEPS):
@@ -2650,6 +2705,14 @@ def train_model(model, train_X, ruleset, hyp=None):
                     for kn, vv in hyp_parts_k.items():
                         prev_t = hyp_ema.get(kn)
                         hyp_ema[kn] = vv if prev_t is None else 0.99 * prev_t + 0.01 * vv
+                if use_atp_ledger:
+                    atp_rate = getattr(_inner, "last_atp_rate", None)
+                    if atp_rate is not None:
+                        # Penalise when ATP production falls below maintenance floor.
+                        deficit = F.relu(ATP_MAINTENANCE_RATE - atp_rate)   # (B,)
+                        atp_loss_k = (deficit / ATP_MAINTENANCE_RATE).pow(2).mean()
+                        loss_k = loss_k + LAMBDA_ATP * atp_loss_k
+                        atp_ema = 0.99 * atp_ema + 0.01 * float(atp_rate.mean().detach())
             if first_loss is None:
                 first_loss = loss_k
             chunk_losses.append(loss_k)
@@ -2689,10 +2752,11 @@ def train_model(model, train_X, ruleset, hyp=None):
             if use_hyp and hyp_ema:
                 hyp_str = "  hyp[" + " ".join(f"{k}={float(v):.4f}"
                                               for k, v in hyp_ema.items()) + "]"
+            atp_str = f"  atp={atp_ema:.2e}/s" if use_atp_ledger else ""
             print(f"  step {step+1:5d}  K={K:4d}  "
                   f"1-step {float(first_loss.detach()):.5f}  "
                   f"rollout {sum(all_loss_means)/len(all_loss_means):.5f}"
-                  f"{hyp_str}", flush=True)
+                  f"{hyp_str}{atp_str}", flush=True)
 
         # v13.7: rolling mid-training checkpoint so an interrupt mid-run doesn't lose progress
         if (CHECKPOINT_EVERY > 0
