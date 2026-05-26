@@ -42,10 +42,11 @@ import torch                                             # noqa: E402
 import colab_cell_emulator as cce                        # noqa: E402
 
 ADENYLATE_SPECIES        = ("M_atp_c", "M_adp_c", "M_amp_c")
-VIOLATION_THRESHOLD_REL  = 0.20      # 20% pool change in WINDOW_STEPS = violation
-WINDOW_STEPS             = 30        # at TIME_STRIDE=30 this is 15 min biological;
-                                     # at TIME_STRIDE=1 it's 30 s.  Independent of
-                                     # stride because we work in trajectory rows.
+VIOLATION_THRESHOLD_REL  = 0.20      # 20% pool change in WINDOW_SECONDS = violation
+WINDOW_SECONDS           = 30        # detect violations over 30 s biological
+TIME_STRIDE              = 30        # model's step in seconds — must match
+                                     # colab_cell_emulator.TIME_STRIDE used at training
+WINDOW_MODEL_STEPS       = max(1, WINDOW_SECONDS // TIME_STRIDE)
 MIN_POOL                 = 1.0       # avoid divide-by-zero on empty pools
 
 
@@ -74,19 +75,23 @@ def load_parquets(parquet_dir):
 def find_violations(traj_df, traj_path):
     """Scan one trajectory's adenylate pool for windows exceeding the threshold.
 
-    Returns list of dicts: {path, t0, t1, pool_t0, pool_t1, rel_change, signed_change}.
+    Parquet layout: rows = species (df.index), columns = time in seconds
+    (as float-string labels '0.0', '1.0', ...).  Access via .loc[species].iloc[t].
+
+    We scan only at TIME_STRIDE positions so the snapshot states match the
+    distribution the model was trained on (stride=30 → t=0, 30, 60, ...).
     """
-    missing = [s for s in ADENYLATE_SPECIES if s not in traj_df.columns]
+    missing = [s for s in ADENYLATE_SPECIES if s not in traj_df.index]
     if missing:
         print(f"[warn] {os.path.basename(traj_path)}: missing {missing}; skipping")
         return []
-    arr = np.stack([traj_df[s].values.astype(np.float64)
-                    for s in ADENYLATE_SPECIES], axis=1)   # (T, 3)
-    pool = arr.sum(axis=1)                                 # (T,)
+    arr = np.stack([traj_df.loc[s].values.astype(np.float64)
+                    for s in ADENYLATE_SPECIES], axis=0)   # (3, T)
+    pool = arr.sum(axis=0)                                 # (T,)
     T = pool.size
     out = []
-    for t0 in range(0, T - WINDOW_STEPS):
-        t1 = t0 + WINDOW_STEPS
+    for t0 in range(0, T - WINDOW_SECONDS, TIME_STRIDE):
+        t1 = t0 + WINDOW_SECONDS
         before = pool[t0]
         after  = pool[t1]
         denom = max(before, MIN_POOL)
@@ -170,18 +175,20 @@ def evaluate_violation(violation, traj_df, model, name_to_idx, lo, span):
     sp_idx = [name_to_idx.get(s) for s in ADENYLATE_SPECIES]
     if any(i is None for i in sp_idx):
         return None
-    # Snapshot state at t0
+    # Snapshot state at t0 — parquet rows are species, columns are time
     species_active = list(name_to_idx.keys())
     counts_t0 = np.zeros(len(species_active), dtype=np.float32)
+    t0 = violation["t0"]
+    in_index = set(traj_df.index)
     for nm, i in name_to_idx.items():
-        if nm in traj_df.columns:
-            counts_t0[i] = float(traj_df[nm].iloc[violation["t0"]])
+        if nm in in_index:
+            counts_t0[i] = float(traj_df.loc[nm].iloc[t0])
     # signed_log + normalise
     sl  = np.sign(counts_t0) * np.log1p(np.abs(counts_t0))
     nrm = np.clip((sl - lo) / span, cce.CLAMP_LO, cce.CLAMP_HI).astype(np.float32)
     state_norm = torch.from_numpy(nrm).unsqueeze(0)  # (1, S)
-    # Roll WINDOW_STEPS
-    rolled = roll_model(model, state_norm, WINDOW_STEPS)  # (W+1, 1, S)
+    # Roll WINDOW_MODEL_STEPS — one model step at stride=30 = 30 s biological
+    rolled = roll_model(model, state_norm, WINDOW_MODEL_STEPS)
     final_norm = rolled[-1, 0].numpy()
     # Denormalise → counts
     final_sl    = final_norm * span + lo
@@ -227,7 +234,8 @@ def main():
 
     if not all_violations:
         print("\n[result] no adenylate-pool violations found at threshold "
-              f"{VIOLATION_THRESHOLD_REL*100:.0f}% over {WINDOW_STEPS}-step windows")
+              f"{VIOLATION_THRESHOLD_REL*100:.0f}% over {WINDOW_SECONDS}s windows "
+              f"(scanned at TIME_STRIDE={TIME_STRIDE}s steps)")
         print("  → upstream is well-behaved on this metric; try a tighter threshold")
         print("    or a different conservation law (charge balance, element drift)")
         return
@@ -293,7 +301,9 @@ def main():
         json.dump({
             "config": {
                 "violation_threshold_rel": VIOLATION_THRESHOLD_REL,
-                "window_steps":            WINDOW_STEPS,
+                "window_seconds":          WINDOW_SECONDS,
+                "time_stride":             TIME_STRIDE,
+                "window_model_steps":      WINDOW_MODEL_STEPS,
                 "adenylate_species":       list(ADENYLATE_SPECIES),
                 "max_violations_evaluated": cap,
             },
