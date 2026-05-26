@@ -38,7 +38,11 @@ test_conservation_violations.py  ← post-hoc test: do we refuse simulator's phy
 ## Architecture
 
 ```
-state(t) ─┬─► LGNN (3-layer CfC graph, hidden=32, ~1.17M params)
+state(t-7..t) ─► TemporalContext (2-layer transformer, ~178k params)
+                  └─► context vector c added to LGNN hidden as broadcast bias
+                      (v15.0 hybrid — "two-cortex" model)
+
+state(t) ─┬─► LGNN (3-layer CfC graph, hidden=64, ~1.17M params)
           │      └─► 36,712 graph edges from 7 sources (SBML co-occurrence,
           │            central-dogma per gene, enzyme→flux, subunit→complex,
           │            protein↔metabolite, 50S assembly, self-loops)
@@ -70,7 +74,7 @@ paper" calibration uses tunable knobs (`CD_TRANSLATION_SCALE`, `SAMPLE_NOISE_SCA
 `LAMBDA_*`, `ATP_MAINTENANCE_RATE` — calibrated from data, not literature) all
 visible in the train log.
 
-## Current results (v14.7)
+## Current results (v15.0)
 
 > Update this section with numbers from the latest Colab run.
 

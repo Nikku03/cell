@@ -19,6 +19,7 @@ project, this is what to tweak when a specific metric is off.
 | `USE_PINN_HEAD` | True | mass-balance for SBML species (auto-disabled when MetabolismCore is on) | informational |
 | `USE_STOCHASTIC_HEAD` | True | per-species log σ + NLL loss | leave on |
 | `USE_TORCH_COMPILE` | True | torch.compile for ~1.5× speedup | turn off if it triggers a recompile loop |
+| `USE_TEMPORAL_CONTEXT` | True | v15.0: small transformer attends over past 8 states, adds context vector to LGNN hidden | turn off to revert to v14.9 pure-LGNN behaviour |
 
 ## Loss-term weights — λ knobs
 
@@ -55,9 +56,12 @@ project, this is what to tweak when a specific metric is off.
 |------|---|---|---|
 | `TIME_STRIDE` | 30 | seconds per model step | drop to 10 for finer dynamics (but 3× slower training); raise to 60 to match earlier v9 results |
 | `K_MAX` | 120 | training rollout max steps | matches half cell-cycle at stride=30; increase for terminal-state losses (future work) |
-| `STEPS` | 1500 | training optimization steps | fewer for quick experiments, more for convergence |
+| `STEPS` | 3000 | training optimization steps (v15.0 bumped 1500→3000 for hybrid arch) | fewer for quick experiments, more for convergence |
 | `BATCH` | 32 | training batch size | bump on bigger GPUs |
-| `LGNN_HIDDEN` | 32 | hidden dim | 64 is the next standard step up; doubles param count |
+| `LGNN_HIDDEN` | 64 | hidden dim (v14.9 bumped 32→64; v15.0 keeps 64) | 128 doubles param count again |
+| `T_CTX_WINDOW` | 8 | v15.0: past states attended over by transformer | larger → more global trajectory context, but more compute/memory |
+| `T_CTX_HIDDEN` | 32 | v15.0: transformer per-token embed dim | larger → more transformer capacity, ~5k extra params per +8 dim |
+| `T_CTX_LAYERS` | 2 | v15.0: transformer encoder depth | 1 → cheaper but less expressive; 3+ → diminishing returns vs cost |
 | `KO_AUG_PROB` | 0.3 | fraction of batch elements with knockout perturbation | raise to 0.5 for more KO emphasis |
 | `K_M_TOTAL_MRNA` | 100 | (legacy — superseded by v14.3 linear ribo scaling) | don't change |
 | `K_PER_RIBO` | 1.5e-3 | (legacy — superseded by v14.3 per-gene calibration) | don't change |

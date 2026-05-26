@@ -2,6 +2,47 @@
 
 ---
 
+## v15.0 — LGNN + Transformer hybrid (two-cortex architecture)
+
+The LGNN handles local species-graph dynamics; a small transformer (`TemporalContext`)
+handles global trajectory shape via attention over the last 8 states.  Brain-cortex
+analogy: graph layer = local circuits, transformer = "where in the cell cycle are we?"
+
+| Component | Params | What it adds |
+|---|---|---|
+| `TemporalContext` module | ~178k | Linear(S→32) embed + learned positional encoding + 2-layer encoder (4 heads, FFN dim 64) + Linear projection → context vector |
+| `ctx_to_hidden` projection | 2k | Adds the context vector as a per-batch bias to the LGNN's hidden state at every species (broadcast) |
+
+Wired into `DynamicsModel.forward(x, state_history=...)`; rolling history buffer
+maintained in `train_model`, `full_rollout`, `full_rollout_batched`, `_ko_rollout`.
+History buffer shape `(B, T_CTX_WINDOW, S)` is constant throughout a rollout
+(torch.compile-friendly).  Output projection zero-init → starts as v14.9
+behaviour, transformer wakes up gradually during training.
+
+Configuration knobs at the top of the file:
+- `USE_TEMPORAL_CONTEXT=True` — gate flag
+- `T_CTX_WINDOW=8` — past states attended over (W=8 is half the cell cycle at K=120, stride=30)
+- `T_CTX_HIDDEN=32` — per-token embed dim
+- `T_CTX_LAYERS=2`, `T_CTX_HEADS=4`, `T_CTX_FF=64` — transformer shape
+
+Also: `STEPS` bumped 1500 → 3000 to give the larger architecture room to converge.
+
+What this attacks (theory):
+1. **Mode collapse on long rollouts** — attention back to t=0 keeps the model
+   anchored to the seed; pure LGNN drifts toward mean predictions as horizon grows.
+2. **Phase awareness** — positional encoding within the window tells the model
+   "this is step N of the cell cycle"; LGNN's CfC cells encode tau but not
+   absolute phase.
+3. **Global drift detection** — the transformer sees pooled state summaries
+   and can correct LGNN predictions when they diverge from a plausible trajectory.
+
+Standalone tests pass (`/tmp/test_temporal_ctx.py` style): forward path correct
+for short/exact/long histories, gradients flow, output near zero at init.
+
+Headline result: pending Colab run.
+
+---
+
 ## v14 — 5-day physics list (consolidated)
 
 Independent of the v13.9 module plan below.  This is the user's

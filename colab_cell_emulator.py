@@ -161,7 +161,7 @@ N_LAYERS            = 3
 N_HEADS             = 8
 DROPOUT             = 0.1
 N_TRAIN_TRAJ        = 40
-STEPS               = 1500         # v13: was 2000 — fewer steps, BATCH doubled to compensate
+STEPS               = 3000         # v15.0: was 1500 — doubled for the LGNN+Transformer hybrid (more capacity → more steps to converge)
 K_MAX               = 120          # v13.8.2: 120 steps = 60 min biological at 30s stride (half cell cycle)
 TBPTT_CHUNK         = 64           # v12: gradient flows back this many rollout steps at a time
 USE_BF16            = True         # v12: BF16 autocast on Blackwell/Hopper/A100 — ~2x speedup
@@ -184,6 +184,17 @@ LGNN_HIDDEN         = 64           # v14.9: bumped 32 → 64 to attack mode coll
 LGNN_N_LAYERS       = 3            # NEW v8: number of CfC graph layers
 LGNN_CFC_TAU_MIN    = 0.1          # NEW v8: CfC time-constant minimum
 LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
+# v15.0: TemporalContext — small transformer over the past T_CTX_WINDOW states.
+# Provides a global "trajectory context" vector that gets broadcast-added to
+# the LGNN's hidden state. Attacks late-rollout mode collapse (attention back
+# to t=0), gives phase awareness (positional encoding within window), and
+# damps compounding rollout error by injecting global state info each step.
+USE_TEMPORAL_CONTEXT = True
+T_CTX_WINDOW        = 8            # past states attended over (includes current)
+T_CTX_HIDDEN        = 32           # per-token embed dim — keeps S→ctx projection cheap
+T_CTX_LAYERS        = 2            # transformer encoder depth
+T_CTX_HEADS         = 4            # multi-head attention heads
+T_CTX_FF            = 64           # feed-forward dim within each encoder layer
 USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML species
 USE_METABOLISM_CORE = True         # NEW v13.9: replace PINN's neural flux with the bi-bi rate law for ~160 SBML reactions
 USE_VOLUME_CORE     = True         # NEW v13.9: dynamic cell volume from membrane-lipid count (vs constant)
@@ -2469,6 +2480,68 @@ class StochasticHead(nn.Module):
         return self.head(h).squeeze(-1).clamp(-6.0, 2.0)                  # sigma in [exp(-6), exp(2)]
 
 
+class TemporalContext(nn.Module):
+    """v15.0: small transformer that summarises the recent state history.
+
+    Given a window of the past W states (B, W, S), produces a context vector
+    (B, ctx_dim) used to bias the LGNN at the next forward.  The "two-cortex"
+    half of the v15.0 hybrid — LGNN handles local species-graph dynamics, the
+    transformer handles global trajectory shape (phase awareness, drift
+    detection, anti-mode-collapse through attention back to t=0).
+
+    Architecture:
+        state(t-W+1..t) ─► Linear(S, D) per-step embed
+                       + learned positional encoding (W, D)
+                       ─► TransformerEncoder (L layers, H heads, FF dim)
+                       ─► last-position output (B, D)
+
+    Caller maintains the rolling history buffer; module is stateless so it
+    plays nicely with torch.compile.  When fewer than W states are available
+    (early in a rollout), the caller pads on the left with copies of the
+    oldest state — produces a smooth transient that converges to the steady
+    behaviour by step W.
+    """
+
+    def __init__(self, S, ctx_dim=T_CTX_HIDDEN, n_heads=T_CTX_HEADS,
+                 n_layers=T_CTX_LAYERS, ff_dim=T_CTX_FF, window=T_CTX_WINDOW):
+        super().__init__()
+        self.S = S
+        self.ctx_dim = ctx_dim
+        self.window = window
+        self.state_proj = nn.Linear(S, ctx_dim)
+        # Learnable positional encoding (last position = "now")
+        self.pos_embed = nn.Parameter(torch.randn(window, ctx_dim) * 0.02)
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=ctx_dim, nhead=n_heads, dim_feedforward=ff_dim,
+            batch_first=True, dropout=0.0, activation="gelu",
+            norm_first=True,
+        )
+        # enable_nested_tensor=False suppresses an info-only PyTorch warning that
+        # fires whenever norm_first=True (which we want for pre-LN stability).
+        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=n_layers,
+                                              enable_nested_tensor=False)
+        # Init output near zero so the residual injection starts as a no-op
+        # — model recovers v14.9 behaviour at step 0, transformer wakes up
+        # as training adjusts these weights.
+        self.out_proj = nn.Linear(ctx_dim, ctx_dim)
+        nn.init.zeros_(self.out_proj.bias)
+        nn.init.normal_(self.out_proj.weight, std=0.01)
+
+    def forward(self, history):
+        # history: (B, T_w, S) — last T_w states in normalised space.
+        # If T_w < window: pad left with copies of the oldest entry.
+        # If T_w >= window: take the rightmost window slots.
+        B, T_w, _ = history.shape
+        if T_w >= self.window:
+            hist = history[:, -self.window:]
+        else:
+            pad_left = history[:, :1].expand(B, self.window - T_w, -1)
+            hist = torch.cat([pad_left, history], dim=1)
+        emb = self.state_proj(hist) + self.pos_embed.unsqueeze(0)            # (B, W, D)
+        out = self.encoder(emb)                                              # (B, W, D)
+        return self.out_proj(out[:, -1])                                     # (B, D)
+
+
 class DynamicsModel(nn.Module):
     """v8 Liquid Graph Neural Network + v9 PINN head + v9 stochastic head.
 
@@ -2487,6 +2560,11 @@ class DynamicsModel(nn.Module):
                  cd_tensors=None, asm_tensors=None,
                  # v14 day 5: per-species empirical log σ (sigma calibration anchor)
                  target_log_sigma=None,
+                 # v15.0: temporal-context transformer (two-cortex hybrid)
+                 use_temporal_context=False,
+                 t_ctx_window=T_CTX_WINDOW, t_ctx_hidden=T_CTX_HIDDEN,
+                 t_ctx_heads=T_CTX_HEADS, t_ctx_layers=T_CTX_LAYERS,
+                 t_ctx_ff=T_CTX_FF,
                  # backward-compat v7 kwargs (ignored)
                  d_model=None, n_heads=None, context=None, dropout=None,
                  d_type=None):
@@ -2547,12 +2625,36 @@ class DynamicsModel(nn.Module):
             self.register_buffer("target_log_sigma",
                                   torch.as_tensor(target_log_sigma,
                                                   dtype=torch.float32))
+        # v15.0: TemporalContext (two-cortex hybrid).  Out-projection initialised
+        # near zero so the model starts from v14.9 behaviour and the transformer
+        # wakes up gradually during training.
+        self.use_temporal_context = bool(use_temporal_context)
+        if self.use_temporal_context:
+            self.temporal_ctx = TemporalContext(
+                S=S, ctx_dim=t_ctx_hidden, n_heads=t_ctx_heads,
+                n_layers=t_ctx_layers, ff_dim=t_ctx_ff, window=t_ctx_window,
+            )
+            self.ctx_to_hidden = nn.Linear(t_ctx_hidden, hidden)
+            nn.init.zeros_(self.ctx_to_hidden.bias)
+            nn.init.normal_(self.ctx_to_hidden.weight, std=0.01)
+            self.t_ctx_window = t_ctx_window
 
-    def forward(self, x):                     # x: (B, S) normalised
+    def forward(self, x, state_history=None):  # x: (B, S) normalised
+        # state_history: optional (B, T_w, S) — past states including the
+        # current one as the last row.  When None, falls back to using just
+        # `x` as a single-step history (TemporalContext pads).
         B, S = x.shape
         te  = self.type_embed(self.stype).unsqueeze(0).expand(B, -1, -1)
         inp = torch.cat([x.unsqueeze(-1), te], dim=-1)
         h   = self.in_proj(inp)
+        # v15.0: inject the temporal-context vector as a per-batch bias to h
+        # BEFORE the CfC layers run.  Each species gets the same context added
+        # → it propagates through the graph layers and out to the prediction.
+        if self.use_temporal_context:
+            hist = state_history if state_history is not None else x.unsqueeze(1)
+            c    = self.temporal_ctx(hist)                 # (B, ctx_dim)
+            c_h  = self.ctx_to_hidden(c).to(h.dtype)       # (B, hidden)
+            h    = h + c_h.unsqueeze(1)                    # broadcast over S
         for layer in self.layers:
             h = layer(h, self.edge_index, self.edge_weight)
         h = self.out_norm(h)
@@ -2743,6 +2845,10 @@ def train_model(model, train_X, ruleset, hyp=None):
     target_log_sigma = getattr(_inner, "target_log_sigma", None)
     use_sigma_anchor = USE_SIGMA_ANCHOR and use_nll and target_log_sigma is not None
     sigma_ema = 0.0  # mean predicted log σ, for the train log
+    # v15.0: temporal-context transformer — maintain a rolling history buffer per
+    # rollout so the transformer can attend over recent dynamics.
+    use_temporal_ctx = USE_TEMPORAL_CONTEXT and getattr(_inner, "use_temporal_context", False)
+    t_ctx_window = getattr(_inner, "t_ctx_window", T_CTX_WINDOW)
 
     def _autocast():
         if USE_BF16 and device == "cuda":
@@ -2758,7 +2864,8 @@ def train_model(model, train_X, ruleset, hyp=None):
           f"hyp_aux: {'ON' if use_hyp else 'off'}, "
           f"ko_aug: {'ON p=' + str(KO_AUG_PROB) if use_ko_aug else 'off'}, "
           f"atp_ledger: {'ON floor=' + str(int(ATP_MAINTENANCE_RATE)) if use_atp_ledger else 'off'}, "
-          f"sigma_anchor: {'ON λ=' + str(LAMBDA_SIGMA_ANCHOR) if use_sigma_anchor else 'off'}")
+          f"sigma_anchor: {'ON λ=' + str(LAMBDA_SIGMA_ANCHOR) if use_sigma_anchor else 'off'}, "
+          f"temporal_ctx: {'ON W=' + str(t_ctx_window) if use_temporal_ctx else 'off'}")
     hyp_ema = {}    # v13.8: per-kind running average across training (promotion signal)
 
     for step in range(STEPS):
@@ -2790,10 +2897,15 @@ def train_model(model, train_X, ruleset, hyp=None):
         prev_state = state
         first_chunk = True
         all_loss_means = []                        # for printing
+        # v15.0: initialise history buffer = window copies of seed state.
+        # Fixed shape (B, W, S) throughout the rollout — friendly to torch.compile.
+        state_history = (state.unsqueeze(1).repeat(1, t_ctx_window, 1)
+                         if use_temporal_ctx else None)
 
         for k in range(K):
             with _autocast():
-                out = model(state)
+                out = model(state, state_history=state_history) \
+                    if use_temporal_ctx else model(state)
                 if use_nll:
                     pred, log_sigma = out
                     true   = train_X[i_d, t0_d + 1 + k]
@@ -2863,6 +2975,11 @@ def train_model(model, train_X, ruleset, hyp=None):
                 nxt[ko_b_idx, ko_sp_idx] = zero_norm[ko_sp_idx]
             prev_state = nxt
             state = nxt
+            # v15.0: slide the history window forward by one step.  Shape stays
+            # (B, W, S) — drop the oldest, append the new state at the right.
+            if use_temporal_ctx:
+                state_history = torch.cat(
+                    [state_history[:, 1:], nxt.unsqueeze(1)], dim=1)
 
             # TBPTT: backward at end of chunk
             if (k + 1) % TBPTT_CHUNK == 0 or k == K - 1:
@@ -2877,6 +2994,8 @@ def train_model(model, train_X, ruleset, hyp=None):
                 chunk_losses = []
                 state = state.detach()
                 prev_state = prev_state.detach()
+                if use_temporal_ctx:
+                    state_history = state_history.detach()
 
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         opt.step()
@@ -2942,14 +3061,24 @@ def one_step(model, Xset, n=400):
 def full_rollout(model, traj, ruleset):
     """v8/v9: single-step rollout — seed from one frame, generate the rest."""
     model.eval()
+    _inner = getattr(model, "_orig_mod", model)
+    use_temporal_ctx = getattr(_inner, "use_temporal_context", False)
+    t_ctx_window = getattr(_inner, "t_ctx_window", T_CTX_WINDOW)
     state = traj[0].unsqueeze(0)        # (1, S)
+    state_history = (state.unsqueeze(1).repeat(1, t_ctx_window, 1)
+                     if use_temporal_ctx else None)
     preds = []
     for _ in range(traj.shape[0] - 1):
         with _eval_autocast():
-            p = _model_pred(model(state)).float().clamp(CLAMP_LO, CLAMP_HI)
+            out = (model(state, state_history=state_history)
+                   if use_temporal_ctx else model(state))
+            p = _model_pred(out).float().clamp(CLAMP_LO, CLAMP_HI)
         p = ruleset.project(state, p)
         preds.append(p)
         state = p
+        if use_temporal_ctx:
+            state_history = torch.cat(
+                [state_history[:, 1:], state.unsqueeze(1)], dim=1)
     return torch.cat(preds, 0), traj[1:]
 
 
@@ -3094,14 +3223,24 @@ def full_rollout_batched(model, trajs, ruleset):
     Returns (preds, truth) both shaped (n, T-1, S).
     """
     model.eval()
+    _inner = getattr(model, "_orig_mod", model)
+    use_temporal_ctx = getattr(_inner, "use_temporal_context", False)
+    t_ctx_window = getattr(_inner, "t_ctx_window", T_CTX_WINDOW)
     state = trajs[:, 0]              # (n, S)
+    state_history = (state.unsqueeze(1).repeat(1, t_ctx_window, 1)
+                     if use_temporal_ctx else None)
     preds = []
     for _ in range(trajs.shape[1] - 1):
         with _eval_autocast():
-            p = _model_pred(model(state)).float().clamp(CLAMP_LO, CLAMP_HI)
+            out = (model(state, state_history=state_history)
+                   if use_temporal_ctx else model(state))
+            p = _model_pred(out).float().clamp(CLAMP_LO, CLAMP_HI)
         p = ruleset.project(state, p)
         preds.append(p)
         state = p
+        if use_temporal_ctx:
+            state_history = torch.cat(
+                [state_history[:, 1:], state.unsqueeze(1)], dim=1)
     return torch.stack(preds, dim=1), trajs[:, 1:]   # (n, T-1, S) each
 
 
@@ -3182,14 +3321,24 @@ def _ko_rollout(model, state, ko_mask, n_steps):
 
     state: (B, S);  ko_mask: (B, S) bool;  returns (B, n_steps, S).
     """
+    _inner = getattr(model, "_orig_mod", model)
+    use_temporal_ctx = getattr(_inner, "use_temporal_context", False)
+    t_ctx_window = getattr(_inner, "t_ctx_window", T_CTX_WINDOW)
+    state_history = (state.unsqueeze(1).repeat(1, t_ctx_window, 1)
+                     if use_temporal_ctx else None)
     preds = []
     for _ in range(n_steps):
         with _eval_autocast():
-            p = _model_pred(model(state)).float().clamp(CLAMP_LO, CLAMP_HI)
+            out = (model(state, state_history=state_history)
+                   if use_temporal_ctx else model(state))
+            p = _model_pred(out).float().clamp(CLAMP_LO, CLAMP_HI)
         # Permanent knockdown: force every masked species back to floor
         p = torch.where(ko_mask, torch.full_like(p, CLAMP_LO), p)
         preds.append(p)
         state = p
+        if use_temporal_ctx:
+            state_history = torch.cat(
+                [state_history[:, 1:], state.unsqueeze(1)], dim=1)
     return torch.stack(preds, dim=1)
 
 
@@ -3478,6 +3627,10 @@ def main():
         volume_core=volume_core, cd_tensors=cd_tensors,
         asm_tensors=asm_tensors,
         target_log_sigma=target_log_sigma,
+        use_temporal_context=USE_TEMPORAL_CONTEXT,
+        t_ctx_window=T_CTX_WINDOW, t_ctx_hidden=T_CTX_HIDDEN,
+        t_ctx_heads=T_CTX_HEADS, t_ctx_layers=T_CTX_LAYERS,
+        t_ctx_ff=T_CTX_FF,
     ).to(device)
     n_params = sum(p.numel() for p in model.parameters()) / 1e6
     head_tags = []
@@ -3491,6 +3644,8 @@ def main():
         head_tags.append(f"VolumeCore({int(model.volume_core.lipid_indices.numel())})")
     if model.use_pinn:        head_tags.append("PINN")
     if USE_STOCHASTIC_HEAD:   head_tags.append("stochastic")
+    if model.use_temporal_context:
+        head_tags.append(f"TemporalCtx(W={T_CTX_WINDOW},L={T_CTX_LAYERS})")
     print(f"[model] LGNN+{('+'.join(head_tags)) if head_tags else 'plain'}: {n_params:.2f}M parameters, "
           f"{edge_index.shape[1]:,} graph edges")
 
