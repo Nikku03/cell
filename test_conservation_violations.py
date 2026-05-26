@@ -55,9 +55,14 @@ def load_parquets(parquet_dir):
         import pandas as pd
     except ImportError:
         sys.exit("[err] pandas not available — install pyarrow + pandas")
-    paths = sorted(glob.glob(os.path.join(parquet_dir, "counts_and_fluxes*.parquet")))
+    # Recursive search — Drive layouts often nest the parquets under
+    # MyDrive/<project>/<run>/counts_and_fluxes_*.parquet
+    paths = sorted(glob.glob(os.path.join(parquet_dir, "**",
+                                          "counts_and_fluxes*.parquet"),
+                              recursive=True))
     if not paths:
-        sys.exit(f"[err] no counts_and_fluxes*.parquet under {parquet_dir!r}")
+        sys.exit(f"[err] no counts_and_fluxes*.parquet under {parquet_dir!r} "
+                 f"(searched recursively).  Try a more specific --parquet-dir.")
     print(f"[load] {len(paths)} parquet trajectories under {parquet_dir}")
     for p in paths:
         try:
