@@ -3186,6 +3186,31 @@ def main():
               f"median {float(target_log_sigma.median()):+.2f}, "
               f"range [{float(target_log_sigma.min()):+.2f}, "
               f"{float(target_log_sigma.max()):+.2f}]")
+    # v14.2: calibrate ATP_MAINTENANCE_RATE from training data instead of
+    # using the literature NGAM value.  The literature 4e5/s assumes a
+    # specific biomass + growth rate; upstream may operate at a different
+    # net rate.  Use median |ΔATP+ΔADP+ΔAMP|/Δt across training as the
+    # actual scale the simulator runs at.  Per-second from raw_counts_active
+    # (1-second resolution), then scaled to per-step (TIME_STRIDE seconds).
+    global ATP_MAINTENANCE_RATE
+    aden_names = (ATP_SPECIES_NAME, "M_adp_c", "M_amp_c")
+    aden_idx_act = [species_active.index(n) for n in aden_names
+                    if n in species_active]
+    if len(aden_idx_act) == 3:
+        train_aden = raw_counts_active[train_idx][:, :, aden_idx_act].sum(axis=-1)  # (n_train, T)
+        pool_deltas = np.abs(np.diff(train_aden, axis=1))                            # (n_train, T-1)
+        median_abs_drate = float(np.median(pool_deltas))                             # per stride-step
+        # Convert from per-step (TIME_STRIDE seconds) to per-second
+        median_per_sec = median_abs_drate / max(1.0, float(TIME_STRIDE))
+        # Use the median as the floor, but never lower than 1e4/s (sanity floor)
+        calibrated_rate = max(median_per_sec, 1e4)
+        print(f"[atp_calibrate] data-derived adenylate-pool |dpool|/dt: "
+              f"median = {median_per_sec:.3e}/s (was literature {ATP_MAINTENANCE_RATE:.3e}/s); "
+              f"replacing ATP_MAINTENANCE_RATE → {calibrated_rate:.3e}/s")
+        ATP_MAINTENANCE_RATE = calibrated_rate
+    else:
+        print(f"[atp_calibrate] adenylate species not all in trajectory — "
+              f"keeping literature default {ATP_MAINTENANCE_RATE:.3e}/s")
     # v13.9: build AssemblyCore tensors (complex_formation.xlsx mass-action +
     # 50S ribosome assembly chain from LargeSubunit.xlsx)
     asm_tensors = None
