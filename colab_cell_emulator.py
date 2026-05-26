@@ -197,13 +197,10 @@ ATP_SPECIES_NAME    = "M_atp_c"    # which species to track for the energy ledge
 ATP_MAINTENANCE_RATE = 4.0e5       # ATP molecules per second per cell — NGAM floor (~5 mmol/g/hr × Syn3A mass)
 LAMBDA_ATP          = 0.01         # auxiliary loss weight for ATP-deficit penalty
 USE_SIGMA_ANCHOR    = True         # NEW v14 day 5: anchor predicted log σ to empirical std, prevents NLL-shrinkage
-LAMBDA_SIGMA_ANCHOR = 0.2          # v14.7: bumped 0.05 → 0.2 to attack mode collapse (model was producing
-                                   #        identical trajectories across all test starting states)
-LAMBDA_TRAJ_VAR     = 0.05         # v14.7: penalty on pred.std(across batch) vs target σ — explicit
-                                   #        anti-mode-collapse signal independent of NLL
-SAMPLE_NOISE_SCALE  = 0.5          # v14.7: training-time noise injection in rollout (reparameterized)
-                                   #        so model must handle perturbed inputs — kills the deterministic
-                                   #        mean trajectory.  0.0 = no noise, 1.0 = full σ sampling.
+LAMBDA_SIGMA_ANCHOR = 0.05         # v14.8: reverted v14.7's 0.2 — bump had no effect on calibration, just added noise
+LAMBDA_TRAJ_VAR     = 0.0          # v14.8: disabled — didn't budge mode collapse in v14.7, dropped to avoid masking
+SAMPLE_NOISE_SCALE  = 0.0          # v14.8: DISABLED — was the main cause of v14.7's rollout R² crash from 0.43 → -0.05
+                                   #         (model converged to "predict no change" under noisy training inputs)
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -1946,8 +1943,8 @@ AVG_PROTEIN_FALLBACK  = 180.0          # paper-stated average across 455 mRNA-co
 # (G doubling), which CD then amplifies through mRNA and protein.  These knobs
 # scale the per-gene rates so we match upstream's observed fold-change.
 CD_TRANSCRIPTION_SCALE = 1.0           # multiplier on every k_tx_per_gene
-CD_TRANSLATION_SCALE   = 0.7           # multiplier on every k_tl_per_gene
-                                       # → 0.7 estimated to bring 2.78× → ~2.0× (match upstream)
+CD_TRANSLATION_SCALE   = 0.85          # v14.8: was 0.7 (overshot — protein fold dropped to 1.00× when target was ~2.07×).
+                                       # 0.85 should land protein fold closer to upstream without freezing it.
 
 
 def build_central_dogma_tensors(species_names, initial=None, raw_counts_t0=None,
