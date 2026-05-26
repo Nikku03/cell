@@ -1,258 +1,152 @@
 # Luthey-Schulten Minimal Cell — what it does, how it gets accuracy
 
-A tour of the two upstream repositories that produced the parquet trajectories
-the LGNN emulator (`/home/user/cell/colab_cell_emulator.py`) is learning from.
-This is a reading task — every claim below is sourced from the README or one
-of 6-10 inspected source files; where the README was sparse or a file's behavior
-was opaque I say so rather than guess.
+A tour of the upstream simulator that produced the 50 parquet trajectories the
+LGNN emulator (`colab_cell_emulator.py`) is learning from.
 
-Repositories inspected:
-- `Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation` (CME-ODE, well-mixed)
-- `Luthey-Schulten-Lab/Minimal_Cell_4DWCM` (RDME-CME-ODE-BD, spatial)
+**Primary source**: Thornburg et al., 2026, *Cell* 189, 2582–2597,
+["Bringing the genetically minimal cell to life on a computer in 4D"](https://doi.org/10.1016/j.cell.2026.02.009)
+([PDF on Drive](https://drive.google.com/file/d/1eYItG18BFsJWgH8kX4guC8tiNb3r-P3R/view)).
 
-## Repo 1 / Repo 2 layout
+**Code**:
+- [`Luthey-Schulten-Lab/Minimal_Cell_4DWCM`](https://github.com/Luthey-Schulten-Lab/Minimal_Cell_4DWCM) — the 4D spatial model (this paper)
+- [`Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation`](https://github.com/Luthey-Schulten-Lab/Minimal_Cell_ComplexFormation) — the predecessor well-mixed model (Zhou et al., *JPCB* 2025; Thornburg et al., *Cell* 2022)
 
-**ComplexFormation** is the well-mixed, time-only model — the one that
-generates the 50 parquet stochastic trajectories. The whole repo is three
-directories: `programs/` (the simulator, 16 files), `input_data/` (SBML, the
-xlsx files, the GenBank, `SSU_assembly_raw.json`) and `figures/`. The
-simulation entry point is `hookSolver_CMEODE.py`, which subclasses
-`lm.GillespieDSolver` (Lattice Microbes' Gillespie solver) and overrides
-the `hookSimulation` callback. The README says: simulations run for 2
-biological hours with a 1-second communication step ("hook interval, t_H"),
-producing four CSV files per replicate (`counts_i.csv`, `SA_i.csv`,
-`Flux_i.csv`, `log_i.txt`) — total 100-200 MB per replicate. The
-accompanying paper is Zhou et al., *J. Phys. Chem. B* 2025
-(doi 10.1021/acs.jpcb.5c04532), with the trajectories archived on Zenodo
-(record 19598313).
+This tour was rewritten after reading the Thornburg 2026 paper directly; the
+earlier version cited the well-mixed 2022 model, but the parquets we use are
+actually from the 2026 4D model. Numbers below come from the paper.
 
-**4DWCM** is the spatial cousin: same biology, but instead of a single
-well-stirred volume it lives on a 3D lattice with surface-area-driven
-growth, division, and an explicit chromosome modeled by Brownian dynamics.
-The main script is `Whole_Cell_Minimal_Cell.py`, the in-loop callback
-again lives in `Hook.py`, and the simulator now stacks four engines:
-RDME (`Rxns_RDME.py`) + global CME (`Rxns_CME.py`) + ODE
-(`Rxns_ODE.py`) + chromosome BD (via the external `btree_chromo` /
-LAMMPS). Geometry updates happen in `Growth.py` / `Division.py`; cell
-shape is optionally refined by `FreeDTS_functions.py` (membrane shape
-software). The 4DWCM README does **not** cite a paper, list a doubling
-time, or report validation numbers — that material is in the Thornburg
-*Cell* 2022 paper that introduced the underlying WCM. (I noted the README
-was sparse on quantitative detail; the per-module headers in the source
-files are more informative than the top-level docs.)
+## What the 4DWCM is
+
+A whole-cell simulator of JCVI-Syn3A over its complete cell cycle (~105 min),
+in 4D (3 spatial + time). It hybridizes **five** computational methods:
+
+| Subsystem | Method | Time-step |
+|---|---|---|
+| Spatially-localized gene expression (RNAP↔gene binding, mRNA degradation, translation, ribosome diffusion) | RDME (reaction-diffusion master equation) on 10 nm lattice | 50 μs |
+| Whole-cell stochastic reactions (transcription elongation, tRNA charging) | CME (chemical master equation) — global Gillespie | hooked every 1 s |
+| Metabolism (glycolysis, nucleotide/lipid/cofactor synthesis, transporters) | ODE — SciPy LSODA | hooked every 1 s |
+| Chromosome dynamics (SMC loop extrusion, topoisomerases, replication) | Brownian dynamics — LAMMPS on a 2nd GPU | hooked every 4 s |
+| Cell morphology (growth, division) | Geometric overlapping-spheres model from membrane SA/V | hooked every 4 s |
+
+The RDME parent solver (Lattice Microbes) drives the time loop; everything
+else is invoked via the `hookSimulation` callback at 12.5 ms intervals.
+
+**Compute cost**: 4–6 days per cell cycle per replicate; ~250 GPU hours per
+replicate. The 50 parquets in your Drive represent **~15,000 GPU hours** of
+compute.
 
 ## What each component does
 
-- **Genome/proteome ingest.** `syn3A.gb` (NCBI GenBank CP016816.2,
-  493 genes, 455 proteins) plus `initial_concentration.xlsx`
-  ("Comparative Proteomics" sheet → protein counts;
-  "Intracellular Metabolites" → mM; "Simulation Medium" → external mM;
-  "mRNA Count" → initial transcripts) plus `Syn3A_updated.xml` (SBML L3
-  + FBC: ~308 species, ~356 reactions with stoichiometry and gene
-  associations) plus `complex_formation.xlsx` (multi-subunit complex
-  assembly stoichiometries and predefined complexes).
+### Genome / proteome ingest
+- `syn3A.gb` (NCBI GenBank CP016816.2) — 493 genes, 455 proteins
+- `initial_concentration.xlsx`:
+  - "Comparative Proteomics" → 455 protein counts (mass-spec from real Syn3A)
+  - "Intracellular Metabolites" → 140 metabolite mM concentrations (scaled from E. coli)
+  - "Simulation Medium" → 52 medium-component mM (defined-medium formulation)
+  - "mRNA Count" → 455 mRNA initial counts (Poisson-sampled per replicate, mean = 2× the 2022 model's averages)
+- `Syn3A_updated.xml` — SBML L3 + FBC: 308 species, 356 reactions, gene-protein-reaction associations
+- `complex_formation.xlsx` — 24 multi-subunit complex assembly stoichiometries
 
-- **Reaction network.** SBML supplies stoichiometry; `kinetic_params.xlsx`
-  supplies k_cat and K_m per substrate, per product, per reaction across
-  five subsystems (Central, Nucleotide, Lipid, Cofactor, Transport). The
-  ODE rate-law function (`rxns_ODE.py: Enzymatic(...)`) generates a
-  **random-order bi-bi** rate law — a generalised Michaelis-Menten form
-  with separate K_m for every reactant and every product — multiplied by
-  an `onoff` switch parameter (∈[0,1], default 1) that can knock a
-  reaction down without altering the topology. No explicit allosteric or
-  feedback-inhibition rate laws were found in the ODE file; regulation
-  enters through enzyme abundance changes (CME → enzyme count → ODE
-  rate prefactor).
+### Metabolism (356 reactions)
+Random-order bi-bi rate law per reaction (`rxns_ODE.py`):
 
-- **Stochastic CME engine.** Built on **Lattice Microbes' `GillespieDSolver`**
-  — i.e. exact Gillespie SSA, not tau-leaping (this is contrary to my
-  initial guess; I verified by reading `hookSolver_CMEODE.py`). Reactions
-  defined in `rxns_CME.py` cover the central dogma: per-gene transcription
-  initiation, per-mRNA translation initiation, mRNA degradation by
-  degradosome, ribosome biogenesis (30S + 50S assembly chains), tRNA
-  charging for all 20 amino acids, SRP / YidC / SecA translocation, and
-  multi-subunit protein complex formation. Transcription and translation
-  are **lumped, not stepwise** — a single Gillespie event consumes the
-  full NTP/aa cost and produces a finished mRNA or protein; timing comes
-  from sequence-length-dependent rate functions in `GIP_rates.py`.
+$$v = E \cdot \frac{k_{cat}^{fwd}\prod_i S_i/K_{m,Si} - k_{cat}^{rev}\prod_j P_j/K_{m,Pj}}{\prod_i(1 + S_i/K_{m,Si}) + \prod_j(1 + P_j/K_{m,Pj}) - 1}$$
 
-- **ODE metabolism coupling.** The hook callback (`hook_CMEODE.py`):
-  (i) reads CME counts → converts to mM via `IC.mMtoPart` (uses NA and
-  the current `volume_L`); (ii) runs the metabolic ODE for `hookInterval`
-  seconds — the README's example value is **1 second**; (iii) `payAfterODE`
-  reconciles costs (NTPs consumed during transcription, amino acids
-  consumed during translation are *deferred shortages* during CME steps
-  and "paid back" out of the ODE-replenished pools after each hook);
-  (iv) writes new metabolite counts back to CME via `updateODEtoCME`;
-  (v) computes new effective rate constants (depend on enzyme count and
-  volume) and updates the CME's propensities before resuming SSA.
-  The ODE integrator name was **not visible** in the files I read —
-  `integrate.noCythonSetSolver(model)` is a thin `odecell` wrapper; the
-  README confirms it's "SciPy's lsoda algorithm."
+All k_cat / K_m from `kinetic_params.xlsx` (1,138 rows across Central / Nucleotide / Lipid / Cofactor / Transport sheets) — measured values from Breuer 2019 + Thornburg 2022. **160 reactions have complete bi-bi data**; the remaining 196 are stoichiometric-only.
 
-- **Complex assembly.** `cme_complexation.py` runs a Gillespie reaction
-  per row of `complex_formation.xlsx`. Sub-units bind in the
-  stoichiometry specified; predefined complexes (e.g. RNA polymerase
-  holoenzyme) are seeded at t=0 with their `Init. Count`. The newer
-  `complex_formation` extension over Thornburg 2022 is what gives this
-  fork its name — it's the explicit machinery to assemble the
-  ribosome, polymerases, and other multi-protein complexes from monomers
-  rather than treating them as fixed pools.
+### Gene expression
+- **Transcription**: per-gene initiation rate scaled by **promoter strength** `S_g = Init_Ptn_Cnt_g / 180` (180 = average across 455 mRNA-coding genes). Elongation 20 nt/s (avg) scaled by `S_g`, capped at 85 nt/s. **No polycistronic operons** — each gene independent.
+- **Translation**: 12 aa/s, Hofmeyr rate law depending on charged-tRNA pool. **No polysomes** — one ribosome per mRNA at a time. Authors note this is the main cause of slight protein under-production.
+- **mRNA degradation**: degradosome (RNase Y + J1) binds mRNA at periphery, degrades at 88 nt/s. mRNA half-life median ~1.97 min, range <1 to 20 min.
+- **Ribosome biogenesis**: 30S has 19-intermediate linear assembly chain (reduced from 145-step hierarchical map). 50S similar, with "strong" (10⁶ M⁻¹s⁻¹) and "weak" (10⁴ M⁻¹s⁻¹) binders.
 
-- **DNA replication / division.** `replication.py` (ComplexFormation):
-  DnaA filament forms by sequential binding at high- and low-affinity
-  sites on oriC; once filament length ≥ 20 the replisome (P_0044) loads
-  and replication proceeds gene-by-gene at position- and size-dependent
-  rates. Termination at gene JCVISYN3A_0421 releases the replisome and
-  doubles the chromosome template count. **No division logic in
-  ComplexFormation** — the well-mixed model just records when replication
-  finishes. In 4DWCM, `Division.py` builds two ellipsoidal daughter
-  regions, remaps lattice sites, and uses a KDTree to relocate particles
-  to the nearest free daughter site; chromosome partitioning is handled
-  separately by the BD module.
+### DNA replication
+- DnaA forms a filament at oriC by sequential binding to one high-affinity (9/9 consensus) and two low-affinity (7/9) dsDNA sites, then polymerizes on ssDNA (140 mM⁻¹s⁻¹ on, 0.42 s⁻¹ off).
+- Replisome (DnaB helicase) loads once filament ≥ 20 DnaA.
+- Replication elongation: 100 bp/s (Syn3A; from M. capricolum measurement, slower than E. coli's 600 bp/s).
+- Train-track model: leading + lagging strands replicate simultaneously.
 
-- **Spatial 4D module (4DWCM only).** Uses **Lattice Microbes' RDME
-  solver** (GPU-accelerated reaction-diffusion master equation) on a
-  cubic lattice. Diffusion rules per species in `Diffusion.py`,
-  region geometry (membrane/cytoplasm/DNA) in `RegionsAndComplexes.py`,
-  ribosome excluded volume in `RibosomesRDME.py`. The chromosome is a
-  bead-spring polymer simulated by **`btree_chromo` on top of Kokkos
-  LAMMPS** (Brownian dynamics) and re-mapped onto the RDME lattice at
-  each hook. The hook sub-cadence in 4DWCM (per the file header in
-  `Hook.py`): DNA every 4 time units, CME every 1, ODE every 1,
-  ribosome positions every 8 steps. Growth is purely geometric in
-  `Growth.py` — it expands `cyto_radius` and re-bins particles; the
-  *coupling* to lipid synthesis happens at the hook level (the ODE
-  computes new lipid counts, those drive a surface-area update in
-  `Communicate.py: updateSA`, and `Growth.py` is then called with the
-  new target radius). It's not a single equation that says "membrane
-  flux drives dR/dt"; it's the hook orchestrating it.
+### Chromosome dynamics
+- Polymer model in LAMMPS (10 bp per bead, σ=3.4 nm, persistence length 45 nm).
+- SMC loops: one-sided extrusion, ~200 bp per step every 0.4 s, 4 s dwell time.
+- Topoisomerase: soft-then-hard potential switching to allow strand crossing.
+- **Daughter chromosome partitioning**: a non-physical 12 pN repulsive force is added to drive segregation (explicitly noted as a kludge — Syn3A lacks ParABS, MinDE, MukBEF, polysome-based mechanisms).
+
+### Cell growth + division
+- Surface area grows from `Σ membrane_components × per_component_SA_contribution`.
+- Volume held constant during division; cells grow as overlapping spheres.
+- 200 nm radius initial → 250 nm radius at end of growth (≈98% volume increase).
+- **Initial cytoplasmic volume = 3.35 × 10⁻¹⁷ L** (sphere of 200 nm radius).
+
+### Stochasticity
+- Exact Gillespie SSA in the RDME — not tau-leaping.
+- Each of the 50 replicate cells starts from Poisson-sampled initial mRNA counts; everything diverges from there.
 
 ## Where the accuracy comes from
 
-This is the load-bearing section. Three sources, in order of impact:
+Three sources, ranked by impact:
 
-**1. Exact Gillespie on top of measured parameters, not approximations.**
-The stochastic core is exact SSA via Lattice Microbes, not tau-leaping.
-The CME-ODE split is operator-splitting at a 1-second hook — fast
-metabolism (sub-second equilibration, large numbers) handled
-deterministically by lsoda; slow gene expression (rare events,
-integer-counted) handled stochastically. **Mass conservation across the
-split** is enforced by the `payAfterODE` shortage-tracking mechanism in
-`communicate.py`: when transcription/translation needs NTPs or AAs that
-the ODE hasn't yet produced, the CME logs a deficit and reconciles it
-out of the next ODE pool update — so counts never go genuinely negative
-and the integrated picture is closed-mass. The "negative count check"
-in `checkbeforeODE` is the belt-and-braces backup.
+**1. Measured parameters.** k_cat, K_m, initial counts, medium composition — every number comes from Breuer 2019, Thornburg 2022, BRENDA, or mass-spec on actual Syn3A. The model is *parameterised*, not *fit*.
 
-**2. Parameter sources are real measurements.** k_cat and K_m for every
-metabolic reaction come from the curated `kinetic_params.xlsx` — derived
-from **Breuer et al., *eLife* 2019** (the original Syn3A essential-metabolism
-parameterisation) and **Thornburg et al., *Cell* 2022** (whole-cell update
-adding gene-expression rates, ribosome stoichiometry, tRNA charging
-parameters). Initial protein counts are from quantitative mass-spec
-proteomics on real JCVI-Syn3A cultures (the "Comparative Proteomics"
-sheet of `initial_concentration.xlsx`). External medium composition
-matches the experimental growth medium. The model is not fit — it is
-*parameterised in advance* from independent experiments.
+**2. Mechanism-aware coupling.** NTP pools appear directly in the transcription rate law; charged-tRNA pools in translation; dNTPs in replication. When ATP crashes, gene expression slows down *by chemistry*, not by a learned correlation.
 
-**3. The rate laws are mechanism-aware, not lumped.** The ODE rate-law
-generator builds a random-order bi-bi expression per reaction (separate
-K_m per substrate AND per product, forward and reverse k_cat). The
-gene-expression rates in `GIP_rates.py` are **explicitly coupled to the
-metabolite pools**: transcription rate depends on the four NTP
-concentrations via Michaelis-Menten; translation rate depends on
-charged-tRNA concentration; DNA replication on the four dNTP pools.
-This is what makes the simulator capable of showing things like ATP
-crashes propagating into stalled translation — the kind of cross-talk
-that gives the trajectories their characteristic shape.
+**3. Exact SSA on real parameters.** Stochastic timing of individual reaction events is correct (per Gillespie); fluctuations match the true CTMC.
 
-**Validation.** The Thornburg 2022 *Cell* paper (which this codebase
-implements) validates against: cell-cycle doubling time (~2 hours,
-matched), ribosome counts at division (~6800, matched), proteomics
-distributions (matched within experimental error per replicate), and
-cryo-electron-tomography-derived geometry for 4DWCM. The READMEs do
-**not** restate these validations; you have to go to the paper.
+**Mass conservation across CME/ODE boundary** is enforced by `payAfterODE`: when CME events consume metabolites the ODE hasn't yet produced, the CME logs a deficit, and the next ODE step reconciles it from updated pools. So counts never go genuinely negative.
 
-**What they didn't model.** No allosteric regulation in the ODE; no
-substrate inhibition; no per-codon translation; no individual atom-level
-chemistry. The `onoff` parameter is the only knock-out knob. Membrane
-shape in 4DWCM is handed off to FreeDTS rather than solved in-loop.
+## Validation — paper vs experiment
 
-## What our emulator currently captures vs misses
+The paper validates the simulator against real Syn3A measurements:
 
-The emulator (LGNN + PINN head + stochastic head, v13) reads **almost all
-the same static inputs** the upstream simulator does — SBML, kinetic_params,
-initial_concentrations, complex_formation, protein_metabolites,
-LargeSubunit, gibbs.csv — and stores their facts in `KnownRules` (line 661).
-That data feeds two paths:
+| Quantity | Simulated | Experimental |
+|---|---|---|
+| Doubling time | 105 min | 105 min ✓ |
+| ori:ter ratio | 1.28 | 1.21 (DNA sequencing) ✓ |
+| Ribosome count at division | 881 | matches literature (~800) ✓ |
+| mRNA half-life median | ~2 min | matches B. subtilis distribution ✓ |
+| Cell morphology fractions | ~80% spherical, 12% prolate, 5% dividing | matches fluorescence imaging ✓ |
+| Cell radius range | 200–250 nm | matches cryo-ET |
 
-**Captures (verified in code):**
-- SBML stoichiometric matrix → **PINN head** (line 1596): GNN predicts
-  per-reaction log-fluxes, Δx = S·signed_expm1(v) is mass-conserving
-  by construction for the ~250 SBML species.
-- Co-occurrence in SBML reactions, central-dogma channels per gene,
-  enzyme→flux from `kinetics["enzymes"]`, subunit→complex, P↔M
-  regulatory bindings, 50S assembly — all wired as GNN edges in
-  `build_full_graph` (line 1382). 7 edge types, all bidirectional.
-- Per-species monotonicity, bounds (1D lenses).
-- ΔG° from `gibbs.csv` reported in KnownRules but **not yet used**
-  to constrain fluxes.
+The validation is **population-level** — they don't compare individual simulated trajectories to anything because each cell is unique. This matters for our emulator: trajectory-level R² isn't what the paper claims.
 
-**Misses (mechanisms in upstream that aren't yet wired in):**
-- **Volume / surface area as a dynamic state.** The upstream uses
-  `volume_L` to convert counts↔concentrations every hook; the
-  emulator treats counts as if the volume is constant. This is the
-  biggest single source of latent drift on long rollouts.
-- **The payAfterODE shortage mechanism.** Upstream forbids genuine
-  negative counts; emulator can predict any real number and only
-  clips via normalisation bounds. A non-negative count constraint
-  on count-space species would tighten this.
-- **Explicit cost coupling.** Upstream deducts AAs and NTPs from the
-  pool on every translation/transcription event. Emulator has the
-  central-dogma edges and (with PINN) mass-balance on metabolites,
-  but there is no hardcoded rule that translation events must remove
-  N AAs from the pool; the model has to discover this from data.
-- **ΔG° sign convention** for reaction direction. Already in
-  KnownRules; no loss term penalises predictions that violate it.
+## Acknowledged limitations (the authors' own caveats)
 
-## Two suggestions for what to add next
+Direct quotes / summaries from the paper:
 
-These are concrete and low-effort given what's already loaded:
+1. *"We are likely missing some balancing effects between NTP and dNTP pools in the metabolic rates"* — uptake rates had to be hand-tuned to compensate.
+2. Most proteins reach only **1.25–1.5× initial counts** at division instead of doubling — attributed to no polysomes.
+3. No polycistronic transcription. No coupled transcription-translation. No FtsZ kinetic model.
+4. Chromosome partitioning uses an artificial 12 pN force (no biological mechanism known in Syn3A).
+5. Some assembly rate constants (LSU) are estimated from order-of-magnitude analogy to SSU.
 
-1. **Wire ΔG° into the PINN head's flux sign.** You already parse
-   `gibbs.csv` and store it in `KnownRules.gibbs`. The PINN head outputs
-   `v_log` per reaction; multiply or clamp the sign so reactions with
-   strongly exergonic ΔG° (≪0) cannot go backwards in the predicted
-   flux, and reactions with strongly endergonic ΔG° (≫0) can only
-   proceed when coupled (this requires per-reaction sign-flexibility,
-   not a hard sign mask, but ΔG° gives you the prior). This is the
-   one piece of thermodynamics the upstream model implicitly respects
-   (through the bi-bi rate law's product-side K_m terms) and yours
-   currently doesn't.
+These matter for our emulator: the simulator itself isn't trustworthy on every transient. "Sense-1 better than the simulator" is only credible where we have an INDEPENDENT physical law (mass conservation, ΔG° sign, count ≥ 0) — not where we just don't trust the literature parameters.
 
-2. **Add a volume-aware count↔concentration normalisation.**
-   `SA_i.csv` is one of the upstream's output files; if those are in
-   the parquets or recoverable, expose the current cell volume as a
-   per-step global feature and have the PINN head use it as the
-   conversion factor (just like `IC.mMtoPart`). Without this the
-   model is implicitly assuming constant volume across the 7200-second
-   cell cycle, which is wrong by ~2x at division.
+## What our emulator captures vs misses
 
-A neither/nor suggestion: do **not** try to reimplement the SSA itself
-inside the emulator. The whole point of the LGNN is to *amortise* the
-SSA's expected dynamics, not to redo it stochastically per step. The
-stochastic head (per-species log_sigma + NLL loss) at line 187 is
-already the right shape for matching the SSA's variance — if the
-predictions' variance is currently too tight or too loose vs. the 50
-parquet replicates, that's the lever to tune, not a new SSA layer.
+| Reference subsystem | Our emulator (v14.7) |
+|---|---|
+| SBML stoichiometry | ✓ MetabolismCore (115 reactions wired) + PINN head |
+| Bi-bi metabolism kinetics | ✓ MetabolismCore (115 reactions with measured k_cat/K_m) |
+| ΔG° sign constraint | ✓ MetabolismCore clamps reverse k_cat to 0 for ΔG° < −10 kJ/mol |
+| Dynamic cell volume | ✓ VolumeCore (lipid-sum proxy) |
+| Central dogma (per-gene tx/tl/decay) | ✓ CentralDogmaCore (455 genes wired, per-gene rate calibration from initial counts) |
+| Shared ribosome pool | ✓ CD scales translation by ribo_total / ribo_total(t=0) |
+| ATP balance | ✓ Soft penalty when net ATP rate < calibrated maintenance floor |
+| Complex assembly | partial — AssemblyCore exists but only 2/24 wired on this data; currently disabled |
+| 50S biogenesis chain | partial — code in AssemblyCore, currently disabled |
+| Transport reactions | ✓ (subsumed in MetabolismCore) |
+| tRNA charging | ✓ (subsumed in MetabolismCore where data exists) |
+| DNA replication kinetics | ✗ — no ReplicationCore; LGNN handles gene replication implicitly |
+| Chromosome dynamics (SMC, topoisomerases) | ✗ |
+| 3D spatial diffusion | ✗ — single forward pass, no spatial component |
+| Per-cell stochasticity | partial — stochastic head outputs σ; rollout currently deterministic |
 
----
+## Where the emulator could meaningfully exceed the simulator
 
-**Brief contrast with `/home/user/cell/cell_sim/`:** the user's own
-reimplementation is an event-driven Gillespie that tracks per-molecule
-identity and uses the same kinetic data, but skips DNA replication,
-ribosome biogenesis, and the explicit CME-ODE split — it's a
-single-engine SSA over 308 SBML species with reversible MM, useful for
-rendering and intuition but not for the multi-scale dynamics the LGNN
-is learning.
+Three legitimate paths:
+
+1. **Refuse violations of universal laws.** Mass conservation and ΔG° sign hold regardless of whether the simulator's k_cat values are right. We can claim "where the simulator violates these by numerical accident, our constrained model produces the physically admissible trajectory instead." Limited but defensible (see `test_conservation_violations.py`).
+
+2. **Massive stochastic sampling for tail statistics.** The simulator can't afford to run 10,000 replicates; we can in seconds. Useful for rare-event probabilities — bounded by our Gaussian σ approximation of the true Poisson noise.
+
+3. **Data fusion.** Fine-tune our model against experimental observations (Breuer 2019 essentiality, doubling-time distributions, fluorescence imaging morphologies) on top of the simulator-derived base. The moment we train on real data the simulator doesn't capture, we exceed it on those quantities. This is the most defensible "better than simulator" claim and is the natural sequel to the calibration work in v14.3–v14.7.
