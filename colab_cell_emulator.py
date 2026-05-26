@@ -187,8 +187,8 @@ LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
 USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML species
 USE_METABOLISM_CORE = True         # NEW v13.9: replace PINN's neural flux with the bi-bi rate law for ~160 SBML reactions
 USE_VOLUME_CORE     = True         # NEW v13.9: dynamic cell volume from membrane-lipid count (vs constant)
-USE_CENTRAL_DOGMA   = False        # v14.1: DISABLED — literature-default k_tx/k_tl overrode 910 species toward wrong steady states, causing R² regression from 0.625 → -0.04
-USE_ASSEMBLY_CORE   = False        # v14.1: DISABLED with CD; only 2/24 wired anyway on real data
+USE_CENTRAL_DOGMA   = True         # v14.3: re-enabled with per-gene rate calibration from initial counts
+USE_ASSEMBLY_CORE   = False        # v14.1: still disabled — only 2/24 wired on real data, separate issue
 USE_KO_AUGMENTATION = True         # NEW v13.9 module 7: random species-zero during training, teaches KO response
 KO_AUG_PROB         = 0.3          # probability per batch element of being knockout-perturbed
 GIBBS_DG_THRESHOLD_KJ = 10.0       # NEW v14 day 1: ΔG° (kJ/mol) below which a reaction is forced irreversible-forward
@@ -1927,24 +1927,36 @@ T_HALF_PROTEIN_S  = 36_000.0           # protein half-life (~10 h)
 
 # v14 day 2: shared-ribosome-pool model
 RIBOSOME_PREFIXES = ("RB_", "RPM_", "C_ribosome", "ribosome")
-K_M_TOTAL_MRNA    = 100.0              # half-saturation of the total-mRNA bottleneck
-K_PER_RIBO        = 1.5e-3             # translation initiation rate per ribosome (/s)
-                                       # calibrated so r_tl_g at typical operating point ≈ K_TL_DEFAULT * mRNA_g
+K_M_TOTAL_MRNA    = 100.0              # half-saturation of the total-mRNA bottleneck (legacy; superseded by ribosome scaling)
+K_PER_RIBO        = 1.5e-3             # translation initiation rate per ribosome (/s) (legacy)
+
+# v14.3: per-gene calibration (Thornburg 2026 § "Transcription of mRNA and tRNA")
+MIN_PROMOTER_STRENGTH = 0.05           # floor for genes with no observed expression — still get some transcription
+AVG_PROTEIN_FALLBACK  = 180.0          # paper-stated average across 455 mRNA-coding genes
 
 
-def build_central_dogma_tensors(species_names):
-    """Pair (G, R, P) species by gene locus.
+def build_central_dogma_tensors(species_names, initial=None, raw_counts_t0=None,
+                                t_half_mrna=T_HALF_MRNA_S,
+                                t_half_prot=T_HALF_PROTEIN_S):
+    """Pair (G, R, P) species by gene locus, with v14.3 per-gene calibration.
 
     For each locus that has *all three* of G_<locus>, R_<locus>, P_<locus>
     species in the trajectory (preferring the _C1 chromosome-copy variant
     where multiple exist), pack the indices.
 
-    v14 day 2: also identifies ribosome species in the trajectory for the
-    shared-pool translation cap.  Any species matching RIBOSOME_PREFIXES
-    counts toward the pool.  If no ribosomes found, CentralDogmaCore falls
-    back to the independent per-gene K_TL_DEFAULT rate.
+    v14.3: per-gene k_tx_g and k_tl_g are derived from observed initial
+    counts (Thornburg 2026 promoter-strength formulation, S = P_init / 180):
+      - k_tx_g = R_init_g * k_deg_mrna     (steady-state R_ss = R_init_g when G=1)
+        if observed mRNA xlsx is available; else
+      - k_tx_g = (P_init_g / 180) * k_deg_mrna  (promoter-strength proxy)
+      - k_tl_g = P_init_g * k_deg_prot / max(R_init_g, 1) so steady-state P_ss = P_init_g
+    Floors apply (MIN_PROMOTER_STRENGTH * k_deg_mrna) when no observed counts.
 
-    Returns dict with index tensors + coverage_mask, or None.
+    Ribosome species are auto-identified by prefix.  CentralDogmaCore scales
+    all translation by (ribo_total / initial_ribo_total) so ribosome KO
+    halts all translation.
+
+    Returns dict with index tensors + per-gene rate tensors + coverage_mask.
     """
     S = len(species_names)
     by_locus = {}
@@ -1981,21 +1993,75 @@ def build_central_dogma_tensors(species_names):
     # v14 day 2: find ribosome species for the shared translation pool
     ribo_idx = [i for i, n in enumerate(species_names)
                 if any(n.startswith(p) for p in RIBOSOME_PREFIXES)]
+    initial_ribo_total = 1.0
+    if ribo_idx and raw_counts_t0 is not None:
+        arr = np.asarray(raw_counts_t0)
+        initial_ribo_total = max(1.0, float(arr[:, ribo_idx].sum(axis=1).mean()))
+
     print(f"[cdcore] {len(triples)} genes wired (G+R+P all present); "
           f"coverage = {int(cov_mask.sum())} species (mRNA + protein, "
           f"genes left to LGNN)")
     if ribo_idx:
         print(f"[cdcore] ribosome pool: {len(ribo_idx)} species "
-              f"(prefixes {RIBOSOME_PREFIXES}) — shared-pool translation enabled")
+              f"(prefixes {RIBOSOME_PREFIXES}); t=0 mean total = "
+              f"{initial_ribo_total:.3g} — translation scales with ribo/ribo_0")
     else:
-        print(f"[cdcore] no ribosome species found — falling back to "
-              f"per-gene independent translation (K_TL_DEFAULT={K_TL_DEFAULT})")
+        print(f"[cdcore] no ribosome species found — translation uncoupled from ribosomes")
+
+    # v14.3: per-gene calibration from initial conditions
+    k_deg_mrna_s = np.log(2) / float(t_half_mrna)
+    k_deg_prot_s = np.log(2) / float(t_half_prot)
+    proteins = (initial or {}).get("proteins", {})
+    mRNAs    = (initial or {}).get("mRNAs", {})
+    avg_protein = (float(np.mean([v for v in proteins.values() if v > 0]))
+                   if proteins else AVG_PROTEIN_FALLBACK)
+    if avg_protein <= 0:
+        avg_protein = AVG_PROTEIN_FALLBACK
+
+    k_tx_per_gene = np.zeros(len(triples), dtype=np.float32)
+    k_tl_per_gene = np.zeros(len(triples), dtype=np.float32)
+    n_direct, n_proxy, n_default = 0, 0, 0
+    for j, (_, _, _, locus) in enumerate(triples):
+        tag = f"JCVISYN3A_{locus}"
+        r_init = mRNAs.get(tag)
+        p_init = proteins.get(tag)
+        # transcription rate: prefer direct mRNA xlsx, else promoter-strength proxy
+        if r_init is not None and r_init > 0:
+            k_tx_per_gene[j] = float(r_init) * k_deg_mrna_s
+            n_direct += 1
+            r_target = float(r_init)
+        elif p_init is not None and p_init > 0:
+            strength = max(p_init / avg_protein, MIN_PROMOTER_STRENGTH)
+            k_tx_per_gene[j] = strength * k_deg_mrna_s
+            n_proxy += 1
+            r_target = strength
+        else:
+            k_tx_per_gene[j] = MIN_PROMOTER_STRENGTH * k_deg_mrna_s
+            n_default += 1
+            r_target = MIN_PROMOTER_STRENGTH
+        # translation rate: calibrate so steady-state P_ss = P_init given R_ss = r_target
+        if p_init is not None and p_init > 0:
+            k_tl_per_gene[j] = float(p_init) * k_deg_prot_s / max(r_target, 1e-6)
+        else:
+            k_tl_per_gene[j] = K_TL_DEFAULT
+
+    print(f"[cdcore] per-gene calibration: {n_direct} from mRNA xlsx, "
+          f"{n_proxy} from promoter-strength proxy (P/{avg_protein:.0f}), "
+          f"{n_default} default-floor")
+    print(f"[cdcore]   k_tx /s: median {np.median(k_tx_per_gene):.3e}, "
+          f"range [{k_tx_per_gene.min():.3e}, {k_tx_per_gene.max():.3e}]")
+    print(f"[cdcore]   k_tl /s: median {np.median(k_tl_per_gene):.3e}, "
+          f"range [{k_tl_per_gene.min():.3e}, {k_tl_per_gene.max():.3e}]")
+
     return {
         "gene_idx": gene_idx, "mrna_idx": mrna_idx, "prot_idx": prot_idx,
         "coverage_mask": cov_mask, "loci": [t[3] for t in triples],
         "n_genes": len(triples),
         "ribosome_idx": torch.tensor(ribo_idx, dtype=torch.long) if ribo_idx
                         else torch.zeros(0, dtype=torch.long),
+        "initial_ribo_total": initial_ribo_total,
+        "k_tx_per_gene": torch.as_tensor(k_tx_per_gene, dtype=torch.float32),
+        "k_tl_per_gene": torch.as_tensor(k_tl_per_gene, dtype=torch.float32),
     }
 
 
@@ -2017,31 +2083,28 @@ class CentralDogmaCore(nn.Module):
     """
 
     def __init__(self, tensors,
-                 k_tx=K_TX_DEFAULT, k_tl=K_TL_DEFAULT,
-                 t_half_mrna=T_HALF_MRNA_S, t_half_prot=T_HALF_PROTEIN_S,
-                 k_per_ribo=K_PER_RIBO, k_m_total_mrna=K_M_TOTAL_MRNA):
+                 t_half_mrna=T_HALF_MRNA_S, t_half_prot=T_HALF_PROTEIN_S):
         super().__init__()
         self.register_buffer("gene_idx",      tensors["gene_idx"])
         self.register_buffer("mrna_idx",      tensors["mrna_idx"])
         self.register_buffer("prot_idx",      tensors["prot_idx"])
         self.register_buffer("coverage_mask", tensors["coverage_mask"])
-        self.register_buffer("k_tx",
-                             torch.tensor(float(k_tx), dtype=torch.float32))
-        self.register_buffer("k_tl",
-                             torch.tensor(float(k_tl), dtype=torch.float32))
         self.register_buffer("k_deg_mrna",
                              torch.tensor(np.log(2) / float(t_half_mrna),
                                           dtype=torch.float32))
         self.register_buffer("k_deg_prot",
                              torch.tensor(np.log(2) / float(t_half_prot),
                                           dtype=torch.float32))
-        # v14 day 2: shared ribosome pool for translation
+        # v14.3: per-gene calibrated rates from initial-condition observation
+        self.register_buffer("k_tx_per_gene", tensors["k_tx_per_gene"])
+        self.register_buffer("k_tl_per_gene", tensors["k_tl_per_gene"])
+        # Ribosome pool: translation scales linearly with (ribo_total / ribo_total_initial),
+        # so KO of all ribosomes -> exactly zero translation.
         ribo_idx = tensors.get("ribosome_idx", torch.zeros(0, dtype=torch.long))
         self.register_buffer("ribosome_idx", ribo_idx)
-        self.register_buffer("k_per_ribo",
-                             torch.tensor(float(k_per_ribo), dtype=torch.float32))
-        self.register_buffer("k_m_total_mrna",
-                             torch.tensor(float(k_m_total_mrna), dtype=torch.float32))
+        self.register_buffer("initial_ribo_total",
+                             torch.tensor(float(tensors.get("initial_ribo_total", 1.0)),
+                                          dtype=torch.float32))
         self.has_ribosome_cap = ribo_idx.numel() > 0
         self.n_genes = tensors["n_genes"]
 
@@ -2052,22 +2115,16 @@ class CentralDogmaCore(nn.Module):
         R = state[:, self.mrna_idx].clamp(min=0.0)
         P = state[:, self.prot_idx].clamp(min=0.0)
 
-        # mRNA: production by gene transcription, decay first-order
-        dR = (self.k_tx * G - self.k_deg_mrna * R) * dt
+        # v14.3: per-gene calibrated transcription rate
+        dR = (self.k_tx_per_gene * G - self.k_deg_mrna * R) * dt
 
-        # Translation: shared ribosome pool (saturation in total mRNA).
-        # r_tl_g = (k_per_ribo · R_total · mRNA_g) / (K_m + Σ mRNA_h)
-        # At low total mRNA: linear in mRNA, scales with ribosomes.
-        # At high total mRNA: throughput-bounded by R_total.
+        # v14.3: per-gene calibrated translation, scaled by ribosome availability
         if self.has_ribosome_cap:
-            # No clamp on ribo_total — if all ribosomes are KO'd, sat=0 → r_tl=0 exactly.
-            # k_m_total_mrna already prevents division by zero on the denominator.
             ribo_total = state[:, self.ribosome_idx].sum(dim=1).clamp(min=0.0)   # (B,)
-            total_mrna = R.sum(dim=1).clamp(min=0.0)                              # (B,)
-            sat = ribo_total / (self.k_m_total_mrna + total_mrna)                 # (B,)
-            r_tl = self.k_per_ribo * sat.unsqueeze(-1) * R                        # (B, n_genes)
+            ribo_factor = (ribo_total / self.initial_ribo_total).unsqueeze(-1)    # (B, 1)
+            r_tl = self.k_tl_per_gene * R * ribo_factor                           # (B, n_genes)
         else:
-            r_tl = self.k_tl * R
+            r_tl = self.k_tl_per_gene * R
         dP = (r_tl - self.k_deg_prot * P) * dt
 
         delta = torch.zeros_like(state)
@@ -3173,10 +3230,15 @@ def main():
     if USE_VOLUME_CORE and metab_tensors is not None:
         volume_core = build_volume_core(species_active,
                                          raw_counts_active[train_idx, 0])
-    # v13.9: build CentralDogmaCore tensors (per-gene G/R/P triples)
+    # v14.3: build CentralDogmaCore tensors with per-gene rate calibration
+    # from initial_concentrations.xlsx + ribosome counts at t=0
     cd_tensors = None
     if USE_CENTRAL_DOGMA:
-        cd_tensors = build_central_dogma_tensors(species_active)
+        cd_tensors = build_central_dogma_tensors(
+            species_active,
+            initial=initial,
+            raw_counts_t0=raw_counts_active[train_idx, 0],
+        )
     # v14 day 5: empirical per-species log σ for the calibration anchor
     target_log_sigma = None
     if USE_SIGMA_ANCHOR:
