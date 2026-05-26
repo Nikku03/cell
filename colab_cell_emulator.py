@@ -2939,30 +2939,46 @@ def paper_validation_metrics(preds_norm, truth_norm, species_active, lo, span,
                 float(doubled_min.mean()), float(doubled_min.std()))
         out["doubling_time_min"]["paper"] = 105.0
 
-    # 2. ori:ter ratio — proxy from gene 0001 (origin) vs 0421 (terminus)
-    # Try several name variants since trajectory naming differs
-    def find_gene(prefix, locus):
-        for cand in (f"{prefix}_{locus}_C1", f"{prefix}_{locus}",
-                     f"{prefix}_{locus}_C2"):
-            if cand in name_to_idx:
-                return name_to_idx[cand]
-        return None
+    # 2. ori:ter ratio — proxy from gene 0001 (origin / DnaA region) vs gene 0421 (terminus).
+    # Sum ALL gene-copy variants (G_0001_C1, G_0001_C2, etc.) so we capture the
+    # full count regardless of which copy the trajectory tracks.  When DNA
+    # replicates, both gene copies appear; ori-side replicates first → ratio > 1.
+    def find_gene_total(prefix, locus):
+        return [i for i, n in enumerate(species_active)
+                if n == f"{prefix}_{locus}"
+                or n.startswith(f"{prefix}_{locus}_")]
 
-    ori_idx = find_gene("G", "0001")
-    ter_idx = find_gene("G", "0421")
-    if ori_idx is not None and ter_idx is not None:
+    ori_idxs = find_gene_total("G", "0001")
+    ter_idxs = find_gene_total("G", "0421")
+    if ori_idxs and ter_idxs:
+        print(f"  [validation] ori species ({len(ori_idxs)}): "
+              f"{[species_active[i] for i in ori_idxs][:3]}{'...' if len(ori_idxs) > 3 else ''}")
+        print(f"  [validation] ter species ({len(ter_idxs)}): "
+              f"{[species_active[i] for i in ter_idxs][:3]}{'...' if len(ter_idxs) > 3 else ''}")
         for label, arr in (("model", preds_count), ("upstream", truth_count)):
-            ori_final = arr[:, -1, ori_idx]
-            ter_final = arr[:, -1, ter_idx].clip(min=1.0)
+            ori_final = arr[:, -1, ori_idxs].sum(axis=-1)
+            ter_final = arr[:, -1, ter_idxs].sum(axis=-1).clip(min=1.0)
             ratio = ori_final / ter_final
             out.setdefault("ori_ter", {})[label] = (
                 float(ratio.mean()), float(ratio.std()))
         out["ori_ter"]["paper"] = 1.28
 
-    # 3. Ribosome fold-change (paper: ~881 at division from ~500 initial = 1.76×)
-    ribo_idx = [i for i, n in enumerate(species_active)
-                if any(n.startswith(p) for p in RIBOSOME_PREFIXES)]
+    # 3. Ribosome fold-change.  STRICT filter: only assembled ribosomes
+    # (C_ribosome, exact 'ribosome', 30S/50S full complexes), NOT biogenesis
+    # intermediates like RB_pe_*, RB_cp_*, or RPM_* (which are ribosomal-
+    # protein mRNAs, not ribosomes).  Paper: 500 initial -> 881 at division = 1.76×.
+    ASSEMBLED_RIBO_KEYS = ("C_ribosome", "ribosome",
+                            "C_30S_ribosome", "C_50S_ribosome",
+                            "30S_ribosome", "50S_ribosome",
+                            "C_complete_ribosome", "complete_ribosome")
+    def is_assembled_ribosome(name):
+        return name in ASSEMBLED_RIBO_KEYS or any(
+            name.startswith(k + "_") for k in ASSEMBLED_RIBO_KEYS)
+    ribo_idx = [i for i, n in enumerate(species_active) if is_assembled_ribosome(n)]
     if ribo_idx:
+        print(f"  [validation] assembled ribosome species ({len(ribo_idx)}): "
+              f"{[species_active[i] for i in ribo_idx][:5]}"
+              f"{'...' if len(ribo_idx) > 5 else ''}")
         for label, arr in (("model", preds_count), ("upstream", truth_count)):
             initial = arr[:, 0, ribo_idx].sum(axis=-1).clip(min=1.0)
             final   = arr[:, -1, ribo_idx].sum(axis=-1)
@@ -2970,6 +2986,9 @@ def paper_validation_metrics(preds_norm, truth_norm, species_active, lo, span,
             out.setdefault("ribosome_fold", {})[label] = (
                 float(fold.mean()), float(fold.std()))
         out["ribosome_fold"]["paper"] = 1.76
+    else:
+        print(f"  [validation] no assembled ribosome species found "
+              f"(searched: {ASSEMBLED_RIBO_KEYS}); ribosome metric skipped")
 
     # 4. Protein fold-change (paper: most proteins reach 1.25-1.5× initial)
     protein_idx = [i for i, n in enumerate(species_active)
