@@ -197,7 +197,13 @@ ATP_SPECIES_NAME    = "M_atp_c"    # which species to track for the energy ledge
 ATP_MAINTENANCE_RATE = 4.0e5       # ATP molecules per second per cell — NGAM floor (~5 mmol/g/hr × Syn3A mass)
 LAMBDA_ATP          = 0.01         # auxiliary loss weight for ATP-deficit penalty
 USE_SIGMA_ANCHOR    = True         # NEW v14 day 5: anchor predicted log σ to empirical std, prevents NLL-shrinkage
-LAMBDA_SIGMA_ANCHOR = 0.05         # anchor strength (small — data wins ties)
+LAMBDA_SIGMA_ANCHOR = 0.2          # v14.7: bumped 0.05 → 0.2 to attack mode collapse (model was producing
+                                   #        identical trajectories across all test starting states)
+LAMBDA_TRAJ_VAR     = 0.05         # v14.7: penalty on pred.std(across batch) vs target σ — explicit
+                                   #        anti-mode-collapse signal independent of NLL
+SAMPLE_NOISE_SCALE  = 0.5          # v14.7: training-time noise injection in rollout (reparameterized)
+                                   #        so model must handle perturbed inputs — kills the deterministic
+                                   #        mean trajectory.  0.0 = no noise, 1.0 = full σ sampling.
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -2788,6 +2794,13 @@ def train_model(model, train_X, ruleset, hyp=None):
                         sigma_anchor = ((log_sigma - target_log_sigma) ** 2).mean()
                         loss_k = loss_k + LAMBDA_SIGMA_ANCHOR * sigma_anchor
                         sigma_ema = 0.99 * sigma_ema + 0.01 * float(log_sigma.mean().detach())
+                        # v14.7: explicit anti-mode-collapse — predictions across
+                        # the batch should spread as widely as data does for the
+                        # same species.  Penalty on log(pred.std_across_batch) vs target_log_σ.
+                        if BATCH > 1:
+                            pred_batch_log_std = pred.std(dim=0).clamp(min=1e-4).log()
+                            traj_var_loss = ((pred_batch_log_std - target_log_sigma) ** 2).mean()
+                            loss_k = loss_k + LAMBDA_TRAJ_VAR * traj_var_loss
                 else:
                     pred = out
                     true = train_X[i_d, t0_d + 1 + k]
@@ -2813,8 +2826,18 @@ def train_model(model, train_X, ruleset, hyp=None):
                 first_loss = loss_k
             chunk_losses.append(loss_k)
 
-            # next state: clamp + project in fp32 between rollout iterations
-            nxt = pred.float().clamp(CLAMP_LO, CLAMP_HI)
+            # next state: clamp + project in fp32 between rollout iterations.
+            # v14.7: inject reparameterized noise scaled by predicted σ so the
+            # next-step input is a SAMPLE from the predicted distribution, not
+            # the mean.  Loss still uses pred (the mean), so NLL is unchanged;
+            # but the model now has to produce predictions that are robust to
+            # perturbed inputs — kills deterministic mean trajectories.
+            if use_nll and use_sigma_anchor and SAMPLE_NOISE_SCALE > 0:
+                noise = torch.randn_like(pred)
+                sampled = pred + noise * torch.exp(log_sigma.clamp(max=2.0)) * SAMPLE_NOISE_SCALE
+                nxt = sampled.float().clamp(CLAMP_LO, CLAMP_HI)
+            else:
+                nxt = pred.float().clamp(CLAMP_LO, CLAMP_HI)
             if step >= STEPS // 4:
                 nxt = ruleset.project(prev_state, nxt)
             # KO augmentation: re-apply the knockdown so it persists across the
