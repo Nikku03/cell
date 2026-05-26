@@ -1935,6 +1935,14 @@ K_PER_RIBO        = 1.5e-3             # translation initiation rate per ribosom
 MIN_PROMOTER_STRENGTH = 0.05           # floor for genes with no observed expression — still get some transcription
 AVG_PROTEIN_FALLBACK  = 180.0          # paper-stated average across 455 mRNA-coding genes
 
+# v14.6: global tuning knobs for CD rates.  Per-gene calibration sets steady-state
+# to match initial counts, but the LGNN often over-predicts gene replication
+# (G doubling), which CD then amplifies through mRNA and protein.  These knobs
+# scale the per-gene rates so we match upstream's observed fold-change.
+CD_TRANSCRIPTION_SCALE = 1.0           # multiplier on every k_tx_per_gene
+CD_TRANSLATION_SCALE   = 0.7           # multiplier on every k_tl_per_gene
+                                       # → 0.7 estimated to bring 2.78× → ~2.0× (match upstream)
+
 
 def build_central_dogma_tensors(species_names, initial=None, raw_counts_t0=None,
                                 t_half_mrna=T_HALF_MRNA_S,
@@ -2046,9 +2054,17 @@ def build_central_dogma_tensors(species_names, initial=None, raw_counts_t0=None,
         else:
             k_tl_per_gene[j] = K_TL_DEFAULT
 
+    # v14.6: apply global scaling knobs to compensate for LGNN over-prediction
+    # of gene replication that CD amplifies through mRNA → protein.
+    k_tx_per_gene = k_tx_per_gene * CD_TRANSCRIPTION_SCALE
+    k_tl_per_gene = k_tl_per_gene * CD_TRANSLATION_SCALE
+
     print(f"[cdcore] per-gene calibration: {n_direct} from mRNA xlsx, "
           f"{n_proxy} from promoter-strength proxy (P/{avg_protein:.0f}), "
           f"{n_default} default-floor")
+    print(f"[cdcore]   scales: k_tx × {CD_TRANSCRIPTION_SCALE}, "
+          f"k_tl × {CD_TRANSLATION_SCALE}  "
+          f"(tune CD_TRANSLATION_SCALE to match protein fold-change)")
     print(f"[cdcore]   k_tx /s: median {np.median(k_tx_per_gene):.3e}, "
           f"range [{k_tx_per_gene.min():.3e}, {k_tx_per_gene.max():.3e}]")
     print(f"[cdcore]   k_tl /s: median {np.median(k_tl_per_gene):.3e}, "
