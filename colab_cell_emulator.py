@@ -180,7 +180,7 @@ CONSERVATION_K      = 8            # NEW v7
 PERIODICITY_TOP_K   = 20           # NEW v7
 GENE_LAG_MAX        = 5            # NEW v7
 COUNT_BOUND_SLACK   = 0.1          # NEW v7.1: count-space high-side cap headroom
-LGNN_HIDDEN         = 32           # v13: was 64 — half params, ~2x faster forward (set 64 to restore)
+LGNN_HIDDEN         = 64           # v14.9: bumped 32 → 64 to attack mode collapse (capacity-limited)
 LGNN_N_LAYERS       = 3            # NEW v8: number of CfC graph layers
 LGNN_CFC_TAU_MIN    = 0.1          # NEW v8: CfC time-constant minimum
 LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
@@ -190,7 +190,7 @@ USE_VOLUME_CORE     = True         # NEW v13.9: dynamic cell volume from membran
 USE_CENTRAL_DOGMA   = True         # v14.3: re-enabled with per-gene rate calibration from initial counts
 USE_ASSEMBLY_CORE   = False        # v14.1: still disabled — only 2/24 wired on real data, separate issue
 USE_KO_AUGMENTATION = True         # NEW v13.9 module 7: random species-zero during training, teaches KO response
-KO_AUG_PROB         = 0.3          # probability per batch element of being knockout-perturbed
+KO_AUG_PROB         = 0.5          # v14.9: bumped 0.3 → 0.5 — more KO exposure, sharpens mid-rank essentiality scores
 GIBBS_DG_THRESHOLD_KJ = 10.0       # NEW v14 day 1: ΔG° (kJ/mol) below which a reaction is forced irreversible-forward
 USE_ATP_LEDGER      = True         # NEW v14 day 3: soft penalty when net ATP production rate falls below maintenance floor
 ATP_SPECIES_NAME    = "M_atp_c"    # which species to track for the energy ledger
@@ -1945,6 +1945,9 @@ AVG_PROTEIN_FALLBACK  = 180.0          # paper-stated average across 455 mRNA-co
 CD_TRANSCRIPTION_SCALE = 1.0           # multiplier on every k_tx_per_gene
 CD_TRANSLATION_SCALE   = 0.85          # v14.8: was 0.7 (overshot — protein fold dropped to 1.00× when target was ~2.07×).
                                        # 0.85 should land protein fold closer to upstream without freezing it.
+CD_BLEND_WEIGHT        = 0.1           # v14.9: was implicit-1.0 (full override).  Now CD adds residual:
+                                       #   x_next += BLEND × (x_cd - x_input)
+                                       # 0.1 = LGNN trusted to predict trajectory, CD nudges 10%.
 
 
 def build_central_dogma_tensors(species_names, initial=None, raw_counts_t0=None,
@@ -2503,21 +2506,23 @@ class DynamicsModel(nn.Module):
         ])
         self.out_norm = nn.LayerNorm(hidden)
         self.out_head = nn.Linear(hidden, 1)
-        # v13.9: MetabolismCore takes priority over PINN for the species
-        # it covers — disable PINN entirely when MetabolismCore is wired in.
+        # v14.9: PINN and MetabolismCore coexist.  PINN runs first and covers
+        # all 137 SBML species via neural flux + stoich; MetabolismCore then
+        # overrides on its ~125 species with the bi-bi (measured-kinetics) rate.
+        # Net result: all 356 SBML reactions get mass-balance enforcement,
+        # MetabolismCore wins on overlap where bi-bi math is more trustworthy.
         self.metab_core = (MetabolismCore(metab_tensors,
                                           atp_idx=metab_tensors.get("atp_idx"))
                            if metab_tensors is not None else None)
         self.metab_dt = float(metab_dt)
         # v13.9: VolumeCore tracks dynamic cell volume; passed to MetabolismCore each step.
         self.volume_core = volume_core
-        # v13.9: CentralDogmaCore — first-order tx/tl/decay per gene
+        # v13.9: CentralDogmaCore — v14.9 additive (residual) instead of override
         self.cd_core = CentralDogmaCore(cd_tensors) if cd_tensors is not None else None
         # v13.9: AssemblyCore — mass-action complex assembly
         self.asm_core = AssemblyCore(asm_tensors) if asm_tensors is not None else None
-        # v9: PINN head (optional) — disabled when MetabolismCore is on
-        self.use_pinn = bool(use_pinn and sbml_mask is not None
-                             and self.metab_core is None)
+        # v9: PINN head (optional).  v14.9: no longer mutually exclusive with MetabolismCore.
+        self.use_pinn = bool(use_pinn and sbml_mask is not None)
         if self.use_pinn:
             self.pinn_head = PINNHead(hidden, sbml_mask, sbml_indices,
                                       stoich_matrix, lo_norm, span_norm,
@@ -2553,8 +2558,25 @@ class DynamicsModel(nn.Module):
         h = self.out_norm(h)
         delta  = self.out_head(h).squeeze(-1)
         x_next = x + delta
-        # v13.9: MetabolismCore overrides covered species via bi-bi rate law.
-        # Round-trip normalised -> count -> bi-bi step -> count -> normalised.
+        # v14.9 head ordering (priority increases down the list):
+        #   1. PINN — neural flux × stoichiometry for all 137 SBML species
+        #   2. MetabolismCore — bi-bi rate law for ~125 species, overrides PINN where they overlap
+        #   3. CentralDogmaCore — ADDITIVE residual (blend × CD_delta) on ~910 species
+        #   4. AssemblyCore — override for complex species (currently off)
+        # The reordering means PINN's mass-balance covers the 241 reactions
+        # MetabolismCore doesn't have kinetics for, while MetabolismCore's
+        # measured-kinetics wins on its 115 reactions.
+
+        # 1. PINN head: mass-balance for all 137 SBML species
+        if self.use_pinn:
+            x_next_sbml = self.pinn_head(h, x)                              # (B, n_sbml)
+            x_pinn_full = torch.zeros_like(x_next)
+            x_pinn_full = x_pinn_full.index_copy(1, self.pinn_head.sbml_indices,
+                                                  x_next_sbml)
+            mask = self.pinn_head.sbml_mask.unsqueeze(0).expand(B, -1)
+            x_next = torch.where(mask, x_pinn_full, x_next)
+
+        # 2. MetabolismCore: bi-bi override (takes priority over PINN on its 125 species)
         if self.metab_core is not None:
             x_sl_lin     = x.float() * self.metab_span + self.metab_lo
             x_count      = t_signed_expm1(x_sl_lin)
@@ -2566,13 +2588,13 @@ class DynamicsModel(nn.Module):
             x_count_next = (x_count + d_count).clamp(min=0.0)
             x_sl_next    = t_signed_log1p(x_count_next)
             x_norm_metab = (x_sl_next - self.metab_lo) / self.metab_span
-            # Keep predictions within the trained normalisation window —
-            # otherwise a large bi-bi step can carry state outside the model's
-            # input distribution and corrupt the rest of the rollout.
             x_norm_metab = x_norm_metab.clamp(CLAMP_LO, CLAMP_HI).to(x_next.dtype)
             mask = self.metab_core.coverage_mask.unsqueeze(0).expand(B, -1)
             x_next = torch.where(mask, x_norm_metab, x_next)
-        # v13.9: CentralDogmaCore overrides mRNA + protein with first-order tx/tl/decay
+
+        # 3. CentralDogmaCore: ADDITIVE residual (v14.9, was override).
+        #    x_next_combined = x_next + BLEND × (x_cd - x_input)
+        #    Lets LGNN keep its learned signal; CD nudges in physics direction.
         if self.cd_core is not None:
             x_sl_lin     = x.float() * self.metab_span + self.metab_lo
             x_count      = t_signed_expm1(x_sl_lin)
@@ -2581,9 +2603,14 @@ class DynamicsModel(nn.Module):
             x_sl_next    = t_signed_log1p(x_count_next)
             x_norm_cd    = (x_sl_next - self.metab_lo) / self.metab_span
             x_norm_cd    = x_norm_cd.clamp(CLAMP_LO, CLAMP_HI).to(x_next.dtype)
+            # Additive blend: cd_delta_norm = x_norm_cd - x (input)
+            cd_residual  = x_norm_cd - x.to(x_norm_cd.dtype)
             mask_cd      = self.cd_core.coverage_mask.unsqueeze(0).expand(B, -1)
-            x_next       = torch.where(mask_cd, x_norm_cd, x_next)
-        # v13.9: AssemblyCore overrides complex + subunit counts via mass-action
+            x_next       = torch.where(mask_cd,
+                                       x_next + CD_BLEND_WEIGHT * cd_residual,
+                                       x_next)
+
+        # 4. AssemblyCore: override for complex species (currently disabled by default)
         if self.asm_core is not None:
             x_sl_lin     = x.float() * self.metab_span + self.metab_lo
             x_count      = t_signed_expm1(x_sl_lin)
@@ -2594,14 +2621,6 @@ class DynamicsModel(nn.Module):
             x_norm_asm   = x_norm_asm.clamp(CLAMP_LO, CLAMP_HI).to(x_next.dtype)
             mask_asm     = self.asm_core.coverage_mask.unsqueeze(0).expand(B, -1)
             x_next       = torch.where(mask_asm, x_norm_asm, x_next)
-        # PINN head overrides SBML species with mass-balanced prediction (disabled when MetabolismCore is on)
-        if self.use_pinn:
-            x_next_sbml = self.pinn_head(h, x)                              # (B, n_sbml)
-            x_pinn_full = torch.zeros_like(x_next)
-            x_pinn_full = x_pinn_full.index_copy(1, self.pinn_head.sbml_indices,
-                                                  x_next_sbml)
-            mask = self.pinn_head.sbml_mask.unsqueeze(0).expand(B, -1)
-            x_next = torch.where(mask, x_pinn_full, x_next)
         if self.use_stochastic:
             log_sigma = self.stochastic_head(h)
             return x_next, log_sigma
