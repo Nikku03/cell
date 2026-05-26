@@ -1582,7 +1582,8 @@ def build_stoich_matrix(sbml, species_names):
 # ── v13.9 MetabolismCore: bi-bi rate law on SBML reactions ───────────────────
 
 NA_AVOGADRO       = 6.02214076e23
-SYN3A_VOLUME_L    = 2.0e-16    # ~0.2 fL, typical JCVI-Syn3A cytoplasmic volume
+SYN3A_VOLUME_L    = 3.35e-17   # v14.4: corrected per Thornburg 2026 — sphere of 200 nm radius
+                               #        (was 2.0e-16, ~6× too large).  Doubles to ~6.55e-17 at division.
 
 
 def build_metabolism_tensors(sbml, kinetics, species_names,
@@ -2897,6 +2898,117 @@ def full_rollout(model, traj, ruleset):
     return torch.cat(preds, 0), traj[1:]
 
 
+# ── v14.4: paper validation metrics (Thornburg 2026) ─────────────────────────
+
+def paper_validation_metrics(preds_norm, truth_norm, species_active, lo, span,
+                              time_stride_s):
+    """Compute the headline validation metrics the Thornburg 2026 paper reports
+    on its 50 simulated cells.  Run on both our model's predicted rollout AND
+    the upstream's actual rollout, so we can see how close we are.
+
+    preds_norm, truth_norm: (n_test, T, S) torch tensors in normalised space.
+    lo, span: per-species normalisation params (numpy arrays).
+
+    Returns dict of metric -> dict(model=(mean, std), upstream=(mean, std), paper=value).
+    """
+    def to_count(arr):
+        # signed_expm1 inverse of normalisation
+        sl  = arr * span + lo
+        cnt = np.sign(sl) * np.expm1(np.abs(sl))
+        return np.maximum(cnt, 0)
+
+    preds_count = to_count(preds_norm.detach().cpu().numpy())
+    truth_count = to_count(truth_norm.detach().cpu().numpy())
+    T = preds_count.shape[1]
+
+    name_to_idx = {n: i for i, n in enumerate(species_active)}
+    out = {}
+
+    # 1. Doubling time from lipid total (paper: 105 min)
+    lipid_idx = [i for i, n in enumerate(species_active)
+                 if any(n.startswith(p) for p in LIPID_PREFIXES)]
+    if lipid_idx:
+        for label, arr in (("model", preds_count), ("upstream", truth_count)):
+            lipid_t = arr[:, :, lipid_idx].sum(axis=-1)                # (n_test, T)
+            initial = lipid_t[:, :1].clip(min=1.0)
+            ratio = lipid_t / initial
+            doubled_step = np.argmax(ratio >= 2.0, axis=1)             # (n_test,)
+            never = (ratio[:, -1] < 2.0)
+            doubled_min = np.where(never, T, doubled_step) * time_stride_s / 60.0
+            out.setdefault("doubling_time_min", {})[label] = (
+                float(doubled_min.mean()), float(doubled_min.std()))
+        out["doubling_time_min"]["paper"] = 105.0
+
+    # 2. ori:ter ratio — proxy from gene 0001 (origin) vs 0421 (terminus)
+    # Try several name variants since trajectory naming differs
+    def find_gene(prefix, locus):
+        for cand in (f"{prefix}_{locus}_C1", f"{prefix}_{locus}",
+                     f"{prefix}_{locus}_C2"):
+            if cand in name_to_idx:
+                return name_to_idx[cand]
+        return None
+
+    ori_idx = find_gene("G", "0001")
+    ter_idx = find_gene("G", "0421")
+    if ori_idx is not None and ter_idx is not None:
+        for label, arr in (("model", preds_count), ("upstream", truth_count)):
+            ori_final = arr[:, -1, ori_idx]
+            ter_final = arr[:, -1, ter_idx].clip(min=1.0)
+            ratio = ori_final / ter_final
+            out.setdefault("ori_ter", {})[label] = (
+                float(ratio.mean()), float(ratio.std()))
+        out["ori_ter"]["paper"] = 1.28
+
+    # 3. Ribosome fold-change (paper: ~881 at division from ~500 initial = 1.76×)
+    ribo_idx = [i for i, n in enumerate(species_active)
+                if any(n.startswith(p) for p in RIBOSOME_PREFIXES)]
+    if ribo_idx:
+        for label, arr in (("model", preds_count), ("upstream", truth_count)):
+            initial = arr[:, 0, ribo_idx].sum(axis=-1).clip(min=1.0)
+            final   = arr[:, -1, ribo_idx].sum(axis=-1)
+            fold    = final / initial
+            out.setdefault("ribosome_fold", {})[label] = (
+                float(fold.mean()), float(fold.std()))
+        out["ribosome_fold"]["paper"] = 1.76
+
+    # 4. Protein fold-change (paper: most proteins reach 1.25-1.5× initial)
+    protein_idx = [i for i, n in enumerate(species_active)
+                   if n.startswith("P_") and not n.startswith("PM_")]
+    if protein_idx:
+        for label, arr in (("model", preds_count), ("upstream", truth_count)):
+            initial = arr[:, 0, protein_idx].clip(min=1.0)
+            final   = arr[:, -1, protein_idx]
+            # Per-protein fold-change, then median across proteins, then mean across traj
+            fold = final / initial                                          # (n_test, n_prot)
+            per_traj_median = np.median(fold, axis=-1)                     # (n_test,)
+            out.setdefault("protein_fold_median", {})[label] = (
+                float(per_traj_median.mean()), float(per_traj_median.std()))
+        out["protein_fold_median"]["paper"] = 1.40   # midpoint of 1.25-1.5
+
+    return out
+
+
+def print_paper_metrics(metrics):
+    """Pretty-print the paper-validation metrics."""
+    if not metrics:
+        return
+    print(f"  paper validation (model rollout vs upstream rollout vs paper target):")
+    rows = [
+        ("doubling time (min)",     "doubling_time_min",   105.0,   "min"),
+        ("ori:ter ratio",            "ori_ter",             1.28,    ""),
+        ("ribosome fold-change",     "ribosome_fold",       1.76,    "×"),
+        ("protein fold-change",      "protein_fold_median", 1.40,    "× (median)"),
+    ]
+    for label, key, paper, unit in rows:
+        m = metrics.get(key)
+        if m is None:
+            continue
+        mm, ms = m.get("model",    (float("nan"), float("nan")))
+        um, us = m.get("upstream", (float("nan"), float("nan")))
+        print(f"    {label:25s}: model {mm:6.2f}±{ms:5.2f} | "
+              f"upstream {um:6.2f}±{us:5.2f} | paper {paper:.2f} {unit}")
+
+
 @torch.no_grad()
 def full_rollout_batched(model, trajs, ruleset):
     """v10: roll all test trajectories in parallel (one shared time loop).
@@ -3413,6 +3525,16 @@ def main():
                    "over-confident")
         print(f"  σ calibration            : log10(pred/true) median {cal_med:+.2f}  "
               f"IQR {cal_iqr:.2f}  ({verdict})")
+    print("=" * 72)
+    # v14.4: paper validation metrics (Thornburg 2026 §Results)
+    try:
+        metrics = paper_validation_metrics(
+            preds_batch, truth_batch, species_active, lo, span,
+            time_stride_s=float(TIME_STRIDE),
+        )
+        print_paper_metrics(metrics)
+    except Exception as e:
+        print(f"  paper validation: skipped ({e})")
     print("=" * 72)
 
     analyze_gaps(model, test_X, species_active, species_type_ids,
