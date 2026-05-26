@@ -3022,7 +3022,8 @@ def paper_validation_metrics(preds_norm, truth_norm, species_active, lo, span,
     # (C_ribosome, exact 'ribosome', 30S/50S full complexes), NOT biogenesis
     # intermediates like RB_pe_*, RB_cp_*, or RPM_* (which are ribosomal-
     # protein mRNAs, not ribosomes).  Paper: 500 initial -> 881 at division = 1.76×.
-    ASSEMBLED_RIBO_KEYS = ("C_ribosome", "ribosome",
+    ASSEMBLED_RIBO_KEYS = ("ribosomeP",     # confirmed name in our trajectory parquets
+                            "C_ribosome", "ribosome",
                             "C_30S_ribosome", "C_50S_ribosome",
                             "30S_ribosome", "50S_ribosome",
                             "C_complete_ribosome", "complete_ribosome")
