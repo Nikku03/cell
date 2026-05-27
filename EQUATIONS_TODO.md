@@ -2,7 +2,45 @@
 
 ---
 
-## v15.0 — LGNN + Transformer hybrid (two-cortex architecture)
+## v15.1 — refinement-pass training + reverted transformer
+
+v15.0 Colab result: 1-step R² **0.814** (beats persistence 0.781), rollout R² **0.586**
+(within noise of v14.9's 0.578), KO MCC +0.100 (flat), σ over-confident by 10×.
+The transformer added 1.1M params and 2× wall-clock for ~0 metric movement.
+Diagnosis: history buffer fills with model predictions, transformer attends over
+its own errors and compounds them at long rollouts (the K=40 training-loss flip
+from -1.32 to +1.89 was the smoking gun).
+
+**The bottleneck is no longer architecture — it's rollout self-consistency.**
+The 0.22 R² gap between 1-step (0.814) and rollout (0.586) is pure compounding
+error.  Adding more parameters cannot close it; we need a training signal that
+punishes the model for being unstable under its own outputs.
+
+### Three changes:
+
+1. **Disable transformer** — `USE_TEMPORAL_CONTEXT=False`.  Code retained for future
+   re-enable if combined with teacher-forced history during training.
+2. **Bump σ-anchor** — `LAMBDA_SIGMA_ANCHOR` 0.05 → 0.15.  v15.0's σ was 10× over-confident.
+3. **Refinement-pass loss** in the last 10% of training (`USE_REFINEMENT=True`,
+   `LAMBDA_REFINE=0.15`, `REFINE_START_FRAC=0.9`):
+
+       pred_1 = model(state(t))           # normal forward, predicts state(t+1)
+       pred_2 = model(pred_1.detach())    # feed prediction back → predicts state(t+2)
+       loss += λ · MSE(pred_2, true(t+2))
+
+   Gradient only flows through the SECOND forward (pred_1 is detached).  Teaches:
+   "if your input is your own imperfect prediction, still produce a good next-step
+   prediction" — directly attacks the rollout-vs-1step gap.
+
+   Cost: 1 extra forward per rollout step in the last 10% of training = ~3% extra
+   wall-clock.  Activates at step 2700 of 3000.
+
+Expected effect: rollout R² closer to 1-step R² (0.81 ceiling) by some fraction.
+Headline result: pending Colab run.
+
+---
+
+## v15.0 — LGNN + Transformer hybrid (two-cortex architecture, disabled in v15.1)
 
 The LGNN handles local species-graph dynamics; a small transformer (`TemporalContext`)
 handles global trajectory shape via attention over the last 8 states.  Brain-cortex

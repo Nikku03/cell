@@ -19,7 +19,8 @@ project, this is what to tweak when a specific metric is off.
 | `USE_PINN_HEAD` | True | mass-balance for SBML species (auto-disabled when MetabolismCore is on) | informational |
 | `USE_STOCHASTIC_HEAD` | True | per-species log σ + NLL loss | leave on |
 | `USE_TORCH_COMPILE` | True | torch.compile for ~1.5× speedup | turn off if it triggers a recompile loop |
-| `USE_TEMPORAL_CONTEXT` | True | v15.0: small transformer attends over past 8 states, adds context vector to LGNN hidden | turn off to revert to v14.9 pure-LGNN behaviour |
+| `USE_TEMPORAL_CONTEXT` | False (v15.1) | v15.0 added transformer over past 8 states; **v15.1 disabled** — moved rollout R² by only +0.008 at 2× wall-clock | turn on to re-enable (code retained) |
+| `USE_REFINEMENT` | True (v15.1) | self-consistency loss in the last 10% of training: model's prediction is fed back as input and checked against the next true target | turn off if it causes instability |
 
 ## Loss-term weights — λ knobs
 
@@ -28,7 +29,8 @@ project, this is what to tweak when a specific metric is off.
 | `LAMBDA_1STEP` | 1.0 | NLL weight on the first rollout step | over-emphasises 1-step accuracy, hurts long rollouts | over-emphasises long rollouts at expense of next-step |
 | `LAMBDA_HYP` | 0.01 | Tier-2 hypothesis aux loss (mono + pair) | model gets pulled toward maybe-wrong hypotheses | hypotheses ignored, missing signal |
 | `LAMBDA_ATP` | 0.01 | ATP-deficit penalty | model over-produces ATP to avoid penalty | ATP balance unconstrained, drifts |
-| `LAMBDA_SIGMA_ANCHOR` | 0.2 (v14.7, was 0.05) | log σ → empirical std | NLL gets fought, σ matches data even when wrong | mode collapse (model produces zero variance) |
+| `LAMBDA_SIGMA_ANCHOR` | 0.15 (v15.1; was 0.05 in v14.8) | log σ → empirical std | NLL gets fought, σ matches data even when wrong | mode collapse (model produces zero variance) |
+| `LAMBDA_REFINE` | 0.15 (v15.1) | refinement-pass MSE: model(model(state).detach()) should land at true(t+2) | training instability if too high | refinement signal too weak to close the rollout-vs-1step gap |
 | `LAMBDA_TRAJ_VAR` | 0.05 (v14.7) | pred.std(batch) → target σ | training unstable, predictions diverge | mode collapse persists |
 
 ## Rate scaling — calibration knobs

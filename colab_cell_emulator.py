@@ -189,7 +189,7 @@ LGNN_N_TYPE_EMBED   = 4            # NEW v8: gene-type embed dim
 # the LGNN's hidden state. Attacks late-rollout mode collapse (attention back
 # to t=0), gives phase awareness (positional encoding within window), and
 # damps compounding rollout error by injecting global state info each step.
-USE_TEMPORAL_CONTEXT = True
+USE_TEMPORAL_CONTEXT = False       # v15.1: reverted — v15.0 added 1.1M params and 2× wall-clock but only moved rollout R² by +0.008 (within noise).  Diagnosis: history buffer fills with model predictions, transformer attends over its own errors.  Code retained, gated off.
 T_CTX_WINDOW        = 8            # past states attended over (includes current)
 T_CTX_HIDDEN        = 32           # per-token embed dim — keeps S→ctx projection cheap
 T_CTX_LAYERS        = 2            # transformer encoder depth
@@ -208,10 +208,18 @@ ATP_SPECIES_NAME    = "M_atp_c"    # which species to track for the energy ledge
 ATP_MAINTENANCE_RATE = 4.0e5       # ATP molecules per second per cell — NGAM floor (~5 mmol/g/hr × Syn3A mass)
 LAMBDA_ATP          = 0.01         # auxiliary loss weight for ATP-deficit penalty
 USE_SIGMA_ANCHOR    = True         # NEW v14 day 5: anchor predicted log σ to empirical std, prevents NLL-shrinkage
-LAMBDA_SIGMA_ANCHOR = 0.05         # v14.8: reverted v14.7's 0.2 — bump had no effect on calibration, just added noise
+LAMBDA_SIGMA_ANCHOR = 0.15         # v15.1: bumped 0.05 → 0.15 — v15.0 σ was over-confident by 10× (log10 pred/true = -0.93), σ-anchor needs more weight
 LAMBDA_TRAJ_VAR     = 0.0          # v14.8: disabled — didn't budge mode collapse in v14.7, dropped to avoid masking
 SAMPLE_NOISE_SCALE  = 0.0          # v14.8: DISABLED — was the main cause of v14.7's rollout R² crash from 0.43 → -0.05
                                    #         (model converged to "predict no change" under noisy training inputs)
+# v15.1: refinement-pass training in the last 10% of steps.  Attacks the
+# rollout-vs-1step gap (v15.0: 1-step R²=0.814, rollout R²=0.586, 0.22 lost to
+# compounding error).  Mechanism: after computing pred at step k, do an EXTRA
+# forward pass on pred.detach() and check that the result lands at true(t+k+2).
+# Trains the model to be robust to its own (imperfect) outputs as input.
+USE_REFINEMENT      = True
+LAMBDA_REFINE       = 0.15         # weight on refinement MSE term
+REFINE_START_FRAC   = 0.9          # activate refinement at this fraction of STEPS (0.9 = last 10%)
 USE_STOCHASTIC_HEAD = True         # NEW v9: per-species log_sigma + NLL loss
 USE_TORCH_COMPILE   = True         # v13.4: was False — enable torch.compile by default (falls back to eager on failure)
 RESUME_FROM_CHECKPOINT  = False    # v13.6: load existing cell_emulator_v13.pt if compatible
@@ -2849,6 +2857,10 @@ def train_model(model, train_X, ruleset, hyp=None):
     # rollout so the transformer can attend over recent dynamics.
     use_temporal_ctx = USE_TEMPORAL_CONTEXT and getattr(_inner, "use_temporal_context", False)
     t_ctx_window = getattr(_inner, "t_ctx_window", T_CTX_WINDOW)
+    # v15.1: refinement-pass training — active in the last (1 - REFINE_START_FRAC) of STEPS.
+    # Computed per-step inside the rollout loop based on `step`.
+    refine_start_step = int(STEPS * REFINE_START_FRAC) if USE_REFINEMENT else STEPS + 1
+    refine_ema = 0.0
 
     def _autocast():
         if USE_BF16 and device == "cuda":
@@ -2865,7 +2877,8 @@ def train_model(model, train_X, ruleset, hyp=None):
           f"ko_aug: {'ON p=' + str(KO_AUG_PROB) if use_ko_aug else 'off'}, "
           f"atp_ledger: {'ON floor=' + str(int(ATP_MAINTENANCE_RATE)) if use_atp_ledger else 'off'}, "
           f"sigma_anchor: {'ON λ=' + str(LAMBDA_SIGMA_ANCHOR) if use_sigma_anchor else 'off'}, "
-          f"temporal_ctx: {'ON W=' + str(t_ctx_window) if use_temporal_ctx else 'off'}")
+          f"temporal_ctx: {'ON W=' + str(t_ctx_window) if use_temporal_ctx else 'off'}, "
+          f"refine: {'ON @step ' + str(refine_start_step) + ' λ=' + str(LAMBDA_REFINE) if USE_REFINEMENT else 'off'}")
     hyp_ema = {}    # v13.8: per-kind running average across training (promotion signal)
 
     for step in range(STEPS):
@@ -2950,6 +2963,27 @@ def train_model(model, train_X, ruleset, hyp=None):
                         atp_loss_k = (deficit / ATP_MAINTENANCE_RATE).pow(2).mean()
                         loss_k = loss_k + LAMBDA_ATP * atp_loss_k
                         atp_ema = 0.99 * atp_ema + 0.01 * float(atp_rate.mean().detach())
+                # v15.1: refinement-pass loss.  After the model produces pred (its
+                # claim about state(t+1+k)), feed it back through the model as
+                # input — the second forward should land at the TRUE state(t+2+k).
+                # Gradient flows only through the second forward (pred.detach()),
+                # so this teaches "if the input is your own imperfect prediction,
+                # still produce a good next-step prediction" — direct attack on
+                # the rollout-vs-1step gap.  Cost: 1 extra forward per rollout
+                # step in the last 10% of training.
+                if step >= refine_start_step and (k + 1) < K:
+                    out_refine = (model(pred.detach(),
+                                         state_history=state_history)
+                                  if use_temporal_ctx
+                                  else model(pred.detach()))
+                    pred_refine = out_refine[0] if use_nll else out_refine
+                    true_refine = train_X[i_d, t0_d + 2 + k]
+                    if ko_b_idx is not None:
+                        true_refine = true_refine.clone()
+                        true_refine[ko_b_idx, ko_sp_idx] = zero_norm[ko_sp_idx]
+                    refine_loss = F.mse_loss(pred_refine, true_refine)
+                    loss_k = loss_k + LAMBDA_REFINE * refine_loss
+                    refine_ema = 0.99 * refine_ema + 0.01 * float(refine_loss.detach())
             if first_loss is None:
                 first_loss = loss_k
             chunk_losses.append(loss_k)
@@ -3008,10 +3042,12 @@ def train_model(model, train_X, ruleset, hyp=None):
                                               for k, v in hyp_ema.items()) + "]"
             atp_str = f"  atp={atp_ema:.2e}/s" if use_atp_ledger else ""
             sigma_str = f"  log σ={sigma_ema:+.2f}" if use_sigma_anchor else ""
+            refine_str = (f"  refine={refine_ema:.5f}"
+                          if USE_REFINEMENT and step >= refine_start_step else "")
             print(f"  step {step+1:5d}  K={K:4d}  "
                   f"1-step {float(first_loss.detach()):.5f}  "
                   f"rollout {sum(all_loss_means)/len(all_loss_means):.5f}"
-                  f"{hyp_str}{atp_str}{sigma_str}", flush=True)
+                  f"{hyp_str}{atp_str}{sigma_str}{refine_str}", flush=True)
 
         # v13.7: rolling mid-training checkpoint so an interrupt mid-run doesn't lose progress
         if (CHECKPOINT_EVERY > 0
