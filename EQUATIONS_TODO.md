@@ -2,6 +2,69 @@
 
 ---
 
+## v15.2 — diagnostic suite + framing audit
+
+Nine post-hoc diagnostics from the "How Nature Reaches Outcomes Without
+Computing Them" technical survey (Freidlin–Wentzell, JKO, Barato–Seifert,
+Wang landscape–flux, Maximum Caliber, Putnam–Chalmers–Piccinini computation
+criterion).  Each is grounded in a specific peer-reviewed theorem; none
+requires retraining or architecture changes.
+
+| # | Diagnostic | Theorem | What it catches | Falsifier? |
+|---|---|---|---|---|
+| 1 | TUR per reaction | Barato–Seifert *PRL* 2015 | reactions where σ·Var(J)/⟨J⟩² < 2k_B | **yes** — hard physics |
+| 2 | Counterfactual-robustness | Putnam–Chalmers–Piccinini (computation criterion) | computing vs memorising per species | soft (relative) |
+| 3 | Friedlin–Wentzell action | Freidlin–Wentzell 1984; report §10 | predicted trajectories that are improbable under the inferred SDE | soft (relative) |
+| 4 | Stop "optimisation/finds" framing | — | language hygiene (Maximum Caliber, not MEPP) | pedagogical |
+| 5 | Drop FEP / grand-framework appeals | Biehl 2021, Aguilera 2022 (FEP refutations) | unfalsifiable scaffolding in our justifications | pedagogical |
+| 6 | Constraint provenance audit | (debugging tool, no theorem) | which data source loaded the wrong constraint | diagnostic |
+| 7 | Kramers residence times in lipid bins | Kramers 1940; Hänggi review | wells where model spends wrong amount of time → doubling-time mechanism | **yes** if mismatch |
+| 8 | Sliced W₂ per species | Jordan–Kinderlehrer–Otto 1998 | distribution mismatch (the metric per-trajectory R² should have been) | replaces wrong metric |
+| 9 | Helmholtz curl detection (2D proj) | Wang 2015; Friston–Da Costa 2023 | model collapsed to pure-gradient (equilibrium-like) when cell is NESS | **yes** if Q ≈ 0 |
+
+All wired into the eval block in `main()` after `paper_validation_metrics`.
+
+### #4 (framing audit): use Maximum Caliber, not MEPP / "finds the optimum"
+
+**Why**: MEPP (Maximum Entropy Production Principle) has been formally refuted
+(Bruers 2007, Paquette 2010, Grinstein–Linsker 2007 explicit counterexamples).
+Maximum Caliber (Jaynes 1980; Pressé–Ghosh–Lee–Dill *Rev. Mod. Phys.* 85:1115,
+2013) is the rigorous path-space MaxEnt and IS a theorem.
+
+**Default vocabulary** for describing what our model does:
+
+| Bad framing | Good framing |
+|---|---|
+| "the model finds the trajectory" | "the model produces a distribution over trajectories whose mode is X" |
+| "the model optimises the objective" | "the model minimises a training loss with respect to its parameters" |
+| "the cell selects the optimal path" | "the cell's stochastic dynamics concentrate on trajectories with low Freidlin–Wentzell action" |
+| "evolution optimises fitness" | "selection acts on heritable variation; differential reproduction shifts allele frequencies" |
+| "the simulator computes the cell" | "the simulator integrates an SDE that samples from a stochastic path measure" |
+| "constraint-shaped local dynamics" (used as a *law*) | "constraint-shaped local dynamics + filtering" used as a *question-generator* — where did the constraint get loaded? |
+
+Loss functions are objectives we wrote down.  Cells don't have objectives.
+Trajectories aren't "found"; they're sampled.
+
+### #5 (grand-framework audit): no FEP / constructor-theoretic justifications
+
+**Why**: as of 2026, the original Friston "free-energy lemma" is refuted by
+counterexample (Biehl–Pollock–Kanai *Entropy* 23:293, 2021), Markov-blanket
+existence is restrictive (Aguilera–Millidge–Tschantz–Buckley *Entropy* 24:18,
+2022), and constructor-theoretic predictions of life/thermodynamics
+remain arXiv-only since 2016 with no novel falsifier (Plesnik–Violaris
+arXiv:2404.07786, 2024).  Treating these as "established theory" smuggles
+unfalsifiable scaffolding into our reasoning.
+
+**Allowed**: cite FEP / constructor-theory as a *lens* or *charitable
+reformulation* where the math directly applies (e.g., when our model has
+an explicit Gaussian NESS and Heins–Da Costa conditions are checkable).
+
+**Not allowed**: justify a model choice by "this is what FEP / constructor
+theory says we should do" without showing the specific math derivation
+that supports the choice in our setting.
+
+---
+
 ## v15.1 — refinement-pass training + reverted transformer
 
 v15.0 Colab result: 1-step R² **0.814** (beats persistence 0.781), rollout R² **0.586**

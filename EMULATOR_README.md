@@ -127,6 +127,35 @@ Plus the v14 physics-list:
 - **Fast**: full cell-cycle prediction in seconds, vs days for the simulator
 - **Smooth interpolation**: query state at any time, run backward, do bifurcation analysis on the learned dynamics
 
+## Diagnostic suite (v15.2)
+
+Nine post-hoc diagnostics live in the eval block, each grounded in a
+peer-reviewed theorem from stochastic-dynamics / large-deviations theory:
+
+1. **TUR per reaction** (Barato–Seifert 2015) — thermodynamic falsifier:
+   any reaction with `σ · Var(J) / ⟨J⟩² < 2k_B` is broken.
+2. **Counterfactual-robustness** (Putnam–Chalmers–Piccinini criterion) —
+   per-species slope of ‖neighbour-response‖ vs perturbation magnitude.
+   Distinguishes computing from memorising.
+3. **Friedlin–Wentzell action** (Freidlin–Wentzell 1984) — plausibility
+   of predicted vs upstream trajectories under the inferred SDE
+   (diagonal A approximation).
+4. + 5. Framing audit — "use Maximum Caliber not MEPP, no FEP/grand-framework
+   appeals" — language hygiene; see `EQUATIONS_TODO.md` §v15.2.
+6. **Constraint provenance audit** — for each worst-predicted species, trace
+   back to the data source that loaded the wrong constraint (MetabolismCore /
+   CentralDogmaCore / PINN / pure-LGNN).
+7. **Kramers residence times** in lipid-total bins (cell-cycle phases).
+   Mismatch in residence time explains doubling-time error mechanistically.
+8. **Sliced Wasserstein-2** per species (JKO 1998 — the correct metric
+   for Fokker-Planck flows; replaces misleading per-trajectory R²).
+9. **Helmholtz curl detection** in 2D (lipid, ATP) projection (Wang 2015,
+   Friston–Da Costa 2023) — flags whether the model has collapsed to a
+   pure-gradient (equilibrium-like) drift when the cell is non-equilibrium.
+
+All run automatically.  If a required input is missing (e.g. no ΔG° data),
+that diagnostic silently skips.
+
 ## What this emulator gives up
 
 - **Stochastic discreteness**: Gaussian σ approximates Poisson noise. For
