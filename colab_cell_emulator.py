@@ -3679,6 +3679,273 @@ def print_friedlin_wentzell_report(fw):
     print(f"  Verdict: {verdict}")
 
 
+# ── v15.2 Kramers residence times in cell-cycle phase bins ───────────────────
+
+@torch.no_grad()
+def kramers_residence_times(predicted_trajs, upstream_trajs, species_active,
+                              n_bins=5):
+    """v15.2: Residence-time analysis in lipid-total bins (cell-cycle phases).
+
+    Theory: cell cycle has discrete phases that act like wells in a Kramers-
+    style landscape — characteristic states the cell lingers in before
+    transitioning.  Lipid total is the canonical cell-cycle proxy in the
+    paper validation block (used for doubling-time computation), so binning
+    by it gives interpretable 'phases.'
+
+    Mean residence time of upstream vs predicted trajectories in each phase
+    tells us *why* the doubling time is off — model spending more time at
+    low-lipid bins → escape from G1-like state is too slow; less time → too
+    fast.  Cell-cycle timing error gets a mechanistic explanation.
+
+    Args:
+      predicted_trajs: (n_pred, T, S) normalised
+      upstream_trajs:  (n_up, T, S) normalised
+      species_active:  list of S species names
+      n_bins:          number of lipid-total bins (cell-cycle phases)
+
+    Returns dict with mean residence per bin (model vs upstream).
+    """
+    lipid_idx = [i for i, n in enumerate(species_active)
+                 if any(n.startswith(p) for p in LIPID_PREFIXES)]
+    if not lipid_idx:
+        return None
+    lipid_pred = predicted_trajs[:, :, lipid_idx].sum(dim=-1)        # (n_pred, T)
+    lipid_up   = upstream_trajs[:, :, lipid_idx].sum(dim=-1)         # (n_up, T)
+    lo_v       = float(lipid_up.min().item())
+    hi_v       = float(lipid_up.max().item())
+    if hi_v <= lo_v:
+        return None
+    bin_edges  = np.linspace(lo_v, hi_v, n_bins + 1)
+    bin_inner  = bin_edges[1:-1]
+
+    def _residence(lipid):
+        # Per-trajectory fraction of timesteps in each bin
+        arr    = lipid.detach().cpu().numpy()
+        labels = np.searchsorted(bin_inner, arr).clip(0, n_bins - 1)
+        n, _T  = arr.shape
+        out    = np.zeros((n, n_bins))
+        for b in range(n_bins):
+            out[:, b] = (labels == b).mean(axis=1)
+        return out
+
+    res_pred = _residence(lipid_pred)
+    res_up   = _residence(lipid_up)
+    return {
+        "bin_edges":            bin_edges,
+        "mean_residence_pred":  res_pred.mean(axis=0),
+        "mean_residence_up":    res_up.mean(axis=0),
+        "std_residence_pred":   res_pred.std(axis=0),
+        "std_residence_up":     res_up.std(axis=0),
+        "lipid_mean_pred":      float(lipid_pred.mean().item()),
+        "lipid_mean_up":        float(lipid_up.mean().item()),
+    }
+
+
+def print_kramers_report(kr):
+    """Print Kramers residence-time diagnostic."""
+    print()
+    print("=" * 72)
+    print("  KRAMERS RESIDENCE TIMES IN CELL-CYCLE PHASE BINS")
+    print("  Theory: cell-cycle phases = wells; residence-time mismatch = wrong dynamics")
+    print("=" * 72)
+    if kr is None:
+        print("  No lipid species found — Kramers diagnostic skipped.")
+        return
+    edges = kr["bin_edges"]
+    n_b   = len(kr["mean_residence_pred"])
+    print(f"\n  Lipid-total mean (normalised):  model={kr['lipid_mean_pred']:.3f}  "
+          f"upstream={kr['lipid_mean_up']:.3f}")
+    print(f"\n  Mean residence fraction per bin (fraction of timesteps):")
+    print(f"  {'bin':>4s}  {'lipid range':<22s} {'upstream':>10s} {'model':>10s} {'Δ':>10s}")
+    for b in range(n_b):
+        diff = kr["mean_residence_pred"][b] - kr["mean_residence_up"][b]
+        flag = ""
+        if abs(diff) > 0.10:
+            flag = "  ⚠ large mismatch"
+        elif abs(diff) > 0.05:
+            flag = "  *"
+        print(f"  {b:>4d}  [{edges[b]:>9.3f}, {edges[b+1]:>9.3f}]  "
+              f"{kr['mean_residence_up'][b]:>10.3f} "
+              f"{kr['mean_residence_pred'][b]:>10.3f} "
+              f"{diff:>+10.3f}{flag}")
+    # Verdict: largest mismatch tells us the failure mode
+    diffs = kr["mean_residence_pred"] - kr["mean_residence_up"]
+    j_max = int(np.argmax(np.abs(diffs)))
+    if abs(diffs[j_max]) > 0.05:
+        sign = "MORE" if diffs[j_max] > 0 else "LESS"
+        print(f"\n  Verdict: model spends {sign} time at bin {j_max} "
+              f"(lipid {edges[j_max]:.2f}-{edges[j_max+1]:.2f}) than upstream.")
+        print(f"           {sign} time in this phase → escape rate is "
+              f"{'too slow' if diffs[j_max] > 0 else 'too fast'}.")
+
+
+# ── v15.2 sliced Wasserstein-2 distance per species ──────────────────────────
+
+@torch.no_grad()
+def sliced_wasserstein_W2(predicted_trajs, upstream_trajs, top_k_var=200,
+                            n_subsample=2000, seed=None):
+    """v15.2: 1D sliced W₂ distance per species → variance-weighted aggregate.
+
+    For each species s, compute the 1D W₂² distance between the empirical
+    distribution of predicted values and upstream values.  1D W₂² between
+    two empirical distributions = mean squared difference of sorted samples.
+
+    Aggregate across species via variance-weighted mean — this is the metric
+    JKO (1998) shows is the correct distance for Fokker-Planck flows, so it's
+    the right replacement for the misleading per-trajectory R².
+
+    Args:
+      predicted_trajs: (n_pred, T, S)
+      upstream_trajs:  (n_up, T, S)
+      top_k_var:       restrict to top-K most-variable species
+      n_subsample:     number of samples per side (cap memory)
+
+    Returns dict with per-species W₂ + variance-weighted aggregate.
+    """
+    _, _, S = predicted_trajs.shape
+    var     = upstream_trajs.reshape(-1, S).var(dim=0)
+    top_idx = torch.argsort(var, descending=True)[:int(top_k_var)]
+    g       = torch.Generator(device="cpu").manual_seed(
+                 int(seed) if seed is not None else SEED + 11)
+
+    w2 = torch.zeros(len(top_idx))
+    for j, s in enumerate(top_idx):
+        pred = predicted_trajs[:, :, s].reshape(-1).cpu()
+        upr  = upstream_trajs[:,  :, s].reshape(-1).cpu()
+        n    = min(pred.numel(), upr.numel(), n_subsample)
+        if n < 4:
+            continue
+        ip   = torch.randperm(pred.numel(), generator=g)[:n]
+        iu   = torch.randperm(upr.numel(),  generator=g)[:n]
+        psort, _ = pred[ip].sort()
+        usort, _ = upr[iu].sort()
+        w2[j] = ((psort - usort) ** 2).mean()
+    var_top = var[top_idx].cpu()
+    weighted = (w2 * var_top).sum() / var_top.sum().clamp(min=1e-12)
+    return {
+        "w2_per_species":   w2.numpy(),
+        "top_k_used":       int(len(top_idx)),
+        "w2_mean":          float(w2.mean()),
+        "w2_var_weighted":  float(weighted),
+        "w2_median":        float(w2.median()),
+    }
+
+
+def print_wasserstein_report(ws):
+    """Print sliced W₂ diagnostic."""
+    print()
+    print("=" * 72)
+    print("  SLICED W₂ DISTANCE PER SPECIES  (JKO 1998 — the right metric for FPE flows)")
+    print("=" * 72)
+    if ws is None:
+        print("  Not computed.")
+        return
+    print(f"\n  Computed on top {ws['top_k_used']} most-variable species")
+    print(f"\n  Per-species 1D W₂² (lower = predicted distribution matches upstream):")
+    print(f"    median           = {ws['w2_median']:.5f}")
+    print(f"    mean             = {ws['w2_mean']:.5f}")
+    print(f"    variance-weighted = {ws['w2_var_weighted']:.5f}")
+    print(f"\n  Note: scale depends on normalisation.  Compare across runs; "
+          f"smaller is better.")
+
+
+# ── v15.2 Helmholtz curl detection (NESS signature) ──────────────────────────
+
+@torch.no_grad()
+def helmholtz_curl_diagnostic(predicted_trajs, upstream_trajs, species_active):
+    """v15.2: Detect curl flux (NESS signature) via signed enclosed area
+    of trajectories in a 2D (lipid total, ATP) projection.
+
+    Theory: NESS dynamics have nonzero curl Q ≠ 0 in the Helmholtz decomposition
+    b(x) = (Q(x) + Γ) ∇ ln ρ_ss(x) + ∇·(Q(x) + Γ).  In a 2D projection,
+    persistent curl flux shows as a net signed area enclosed by trajectories
+    (positive = counter-clockwise circulation in the chosen coordinates).
+    Pure gradient-only drift → enclosed area ≈ 0 averaged over trajectories.
+
+    Discrete computation: signed area  A = ½ Σ_t (x̄_t · Δy_t − ȳ_t · Δx_t)
+    where (x̄, ȳ) are mid-point averages and (Δx, Δy) are step differences.
+
+    Cells are real NESS systems; we EXPECT nonzero curl.  If model trajectories
+    have area ≈ 0 while upstream has area ≠ 0, the model has collapsed to an
+    equilibrium-like (pure-gradient) approximation — which would explain
+    persistent doubling-time / cell-cycle errors.
+
+    Args:
+      predicted_trajs, upstream_trajs: (n, T, S) in normalised space
+      species_active: list of S names
+
+    Returns dict with area mean/std for model vs upstream.
+    """
+    lipid_idx = [i for i, n in enumerate(species_active)
+                 if any(n.startswith(p) for p in LIPID_PREFIXES)]
+    atp_name = ATP_SPECIES_NAME
+    if (not lipid_idx) or (atp_name not in species_active):
+        return None
+    atp_i = species_active.index(atp_name)
+
+    def _proj(trajs):
+        x = trajs[:, :, lipid_idx].sum(dim=-1)              # (n, T)
+        y = trajs[:, :, atp_i]                              # (n, T)
+        return x, y
+
+    def _signed_area(x, y):
+        # Discrete approximation of (1/2) ∮ (x dy - y dx) over each trajectory
+        dx    = x[:, 1:] - x[:, :-1]
+        dy    = y[:, 1:] - y[:, :-1]
+        x_avg = 0.5 * (x[:, :-1] + x[:, 1:])
+        y_avg = 0.5 * (y[:, :-1] + y[:, 1:])
+        return 0.5 * (x_avg * dy - y_avg * dx).sum(dim=1)   # (n,)
+
+    x_p, y_p = _proj(predicted_trajs)
+    x_u, y_u = _proj(upstream_trajs)
+    area_p   = _signed_area(x_p, y_p)
+    area_u   = _signed_area(x_u, y_u)
+    return {
+        "area_pred_mean":  float(area_p.mean().item()),
+        "area_pred_std":   float(area_p.std().item()),
+        "area_up_mean":    float(area_u.mean().item()),
+        "area_up_std":     float(area_u.std().item()),
+        "n_lipid_species": int(len(lipid_idx)),
+    }
+
+
+def print_helmholtz_report(hl):
+    """Print Helmholtz curl-detection diagnostic."""
+    print()
+    print("=" * 72)
+    print("  HELMHOLTZ CURL DETECTION  (NESS signature in 2D projection)")
+    print("  Signed area in (lipid_total, ATP) plane:")
+    print("    nonzero ↔ curl flux Q ≠ 0 (true NESS);  ~0 ↔ pure gradient (equilibrium)")
+    print("=" * 72)
+    if hl is None:
+        print("  Lipid prefix or ATP species not both present — skipped.")
+        return
+    a_u_mean = hl["area_up_mean"]
+    a_p_mean = hl["area_pred_mean"]
+    print(f"\n  Signed enclosed area per trajectory (normalised-space units):")
+    print(f"    upstream  mean = {a_u_mean:+.3e}  std = {hl['area_up_std']:.3e}")
+    print(f"    predicted mean = {a_p_mean:+.3e}  std = {hl['area_pred_std']:.3e}")
+    if abs(a_u_mean) < max(hl["area_up_std"] / 3.0, 1e-9):
+        print(f"\n  Upstream curl signal weak in this projection "
+              f"(|mean| < std/3) — diagnostic uninformative at this scale.")
+        return
+    ratio = a_p_mean / a_u_mean
+    print(f"\n  Curl ratio  predicted / upstream = {ratio:+.3f}")
+    if abs(ratio) < 0.3:
+        verdict = ("model has near-zero curl flux — likely treating cell as "
+                   "equilibrium (pure gradient).  This is consistent with persistent "
+                   "doubling-time errors.")
+    elif abs(ratio - 1.0) < 0.3:
+        verdict = "model captures the curl flux at upstream level."
+    elif ratio < 0:
+        verdict = (f"model curl has WRONG SIGN (ratio {ratio:+.2f}) — predicted "
+                   f"trajectories rotate opposite to upstream in this projection.")
+    else:
+        verdict = (f"model curl is {ratio:.1f}× upstream — magnitude mismatch but "
+                   f"correct sign.")
+    print(f"  Verdict: {verdict}")
+
+
 # ── v15.2 constraint provenance audit ─────────────────────────────────────────
 
 @torch.no_grad()
@@ -4371,6 +4638,31 @@ def main():
         print_provenance_report(traces)
     except Exception as e:
         print(f"  provenance audit: skipped ({e})")
+
+    # v15.2: Kramers residence times in cell-cycle phase bins
+    try:
+        kr = kramers_residence_times(
+            preds_batch, truth_batch, species_active, n_bins=5,
+        )
+        print_kramers_report(kr)
+    except Exception as e:
+        print(f"  Kramers residence: skipped ({e})")
+
+    # v15.2: sliced Wasserstein-2 distance per species
+    try:
+        ws = sliced_wasserstein_W2(
+            preds_batch, truth_batch, top_k_var=VAR_R2_TOP_K,
+        )
+        print_wasserstein_report(ws)
+    except Exception as e:
+        print(f"  Wasserstein: skipped ({e})")
+
+    # v15.2: Helmholtz curl detection in 2D projection
+    try:
+        hl = helmholtz_curl_diagnostic(preds_batch, truth_batch, species_active)
+        print_helmholtz_report(hl)
+    except Exception as e:
+        print(f"  Helmholtz curl: skipped ({e})")
 
     analyze_gaps(model, test_X, species_active, species_type_ids,
                  ruleset, hyp, sbml,
