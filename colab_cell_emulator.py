@@ -3429,6 +3429,375 @@ def print_tur_report(tur, top_k=15):
                 break
 
 
+# ── v15.2 counterfactual-robustness diagnostic ───────────────────────────────
+
+@torch.no_grad()
+def counterfactual_robustness(model, seed_state, species_active, edge_index,
+                                n_test_species=100, perturbation_mags=(0.0, 0.1, 0.2, 0.3),
+                                n_steps=60, seed=None):
+    """v15.2: Counterfactual-robustness metric per species.
+
+    Putnam–Chalmers–Piccinini criterion: a "computing" system preserves
+    counterfactual transition structure — perturbing an input produces a
+    proportional, sensible output change.  A "memorizing" system does not —
+    output is determined by trained input patterns, not by current input
+    value.
+
+    For each tested species s, perturb seed_state[s] by Δ ∈ perturbation_mags
+    and roll forward n_steps.  Measure response = ||Δ_neighbors||_1 at the
+    final step.  Linear-fit slope of response vs Δ:
+        - slope > 0           → counterfactually responsive (substrate-driven)
+        - slope ≈ 0           → memorized (input value doesn't matter)
+        - slope < 0 or noisy  → unstable
+
+    Skips ruleset.project to expose raw model output (rules would mask the
+    diagnostic by forcing the species back into its trained range).
+
+    Args:
+      model:           trained DynamicsModel
+      seed_state:      (1, S) initial normalized state
+      species_active:  list of S species names
+      edge_index:      (2, E) graph edges for neighbor lookup
+      n_test_species:  random subset size
+      perturbation_mags: tuple of Δ values to scan
+      n_steps:         rollout horizon
+      seed:            RNG seed for species subsampling
+
+    Returns dict with per-species slope + aggregate stats.
+    """
+    _inner = getattr(model, "_orig_mod", model)
+    use_tc = getattr(_inner, "use_temporal_context", False)
+    t_w    = getattr(_inner, "t_ctx_window", T_CTX_WINDOW)
+    S      = seed_state.shape[1]
+    mags   = list(perturbation_mags)
+    n_mags = len(mags)
+
+    def _rollout(initial):
+        st = initial.clone()
+        hist = st.unsqueeze(1).repeat(1, t_w, 1) if use_tc else None
+        traj = [st.clone()]
+        for _ in range(n_steps):
+            with _eval_autocast():
+                out = model(st, state_history=hist) if use_tc else model(st)
+                p = _model_pred(out).float().clamp(CLAMP_LO, CLAMP_HI)
+            traj.append(p.clone())
+            st = p
+            if use_tc:
+                hist = torch.cat([hist[:, 1:], st.unsqueeze(1)], dim=1)
+        return torch.stack(traj, dim=1)              # (1, n_steps+1, S)
+
+    baseline = _rollout(seed_state)
+
+    edge_arr  = edge_index.cpu().numpy()
+    seed_val  = seed if seed is not None else SEED + 7
+    rng       = np.random.RandomState(seed_val)
+    test_idx  = rng.choice(S, size=min(n_test_species, S), replace=False)
+
+    slopes        = np.zeros(len(test_idx))
+    propagation   = np.zeros(len(test_idx))
+    n_nbrs_per    = np.zeros(len(test_idx), dtype=int)
+    nbrs_cache    = {}
+
+    def _neighbors(sp):
+        if sp not in nbrs_cache:
+            out_n = edge_arr[1][edge_arr[0] == sp][:5].tolist()
+            in_n  = edge_arr[0][edge_arr[1] == sp][:5].tolist()
+            nbrs_cache[sp] = [int(n) for n in set(out_n) | set(in_n) if n != sp][:5]
+        return nbrs_cache[sp]
+
+    for j, sp in enumerate(test_idx):
+        sp_i = int(sp)
+        nbrs = _neighbors(sp_i)
+        n_nbrs_per[j] = len(nbrs)
+
+        responses = np.zeros(n_mags)
+        for k, mag in enumerate(mags):
+            pseed     = seed_state.clone()
+            orig_val  = float(pseed[0, sp_i].item())
+            pseed[0, sp_i] = float(max(CLAMP_LO, min(CLAMP_HI, orig_val + mag)))
+            pert      = _rollout(pseed)
+            if nbrs:
+                resp = float((pert[0, -1, nbrs] - baseline[0, -1, nbrs]).abs().mean().item())
+            else:
+                resp = float((pert[0, -1, sp_i] - baseline[0, -1, sp_i]).abs().item())
+            responses[k] = resp
+
+        mags_arr = np.asarray(mags, dtype=np.float64)
+        if mags_arr.std() > 0:
+            slopes[j] = float(np.polyfit(mags_arr, responses, 1)[0])
+        propagation[j] = responses[-1]
+
+    return {
+        "test_species_idx":  test_idx,
+        "slopes":            slopes,
+        "propagation_R":     propagation,
+        "n_neighbors":       n_nbrs_per,
+        "perturbation_mags": mags,
+    }
+
+
+def print_counterfactual_report(cf, species_active, top_k=10, slope_thresh=0.01):
+    """Print counterfactual-robustness diagnostic."""
+    print()
+    print("=" * 72)
+    print("  COUNTERFACTUAL-ROBUSTNESS DIAGNOSTIC")
+    print("  Putnam–Chalmers–Piccinini: computing systems preserve counterfactual structure")
+    print("=" * 72)
+    if cf is None:
+        print("  Not computed.")
+        return
+    slopes      = cf["slopes"]
+    propagation = cf["propagation_R"]
+    n_tested    = len(slopes)
+    f_responsive = float((slopes > slope_thresh).mean())
+    f_memorized  = float((np.abs(slopes) < slope_thresh).mean())
+
+    print(f"\n  Tested {n_tested} species, perturbation magnitudes {cf['perturbation_mags']}")
+    print(f"\n  Slope distribution  (∂||Δ_nbrs||/∂Δ):")
+    print(f"    median = {float(np.median(slopes)):+.4f}")
+    print(f"    mean   = {float(slopes.mean()):+.4f}")
+    print(f"    std    = {float(slopes.std()):.4f}")
+    print(f"    fraction responsive   (slope > {slope_thresh}): {f_responsive:.1%}")
+    print(f"    fraction memorized    (|slope| < {slope_thresh}): {f_memorized:.1%}")
+    print(f"\n  Final-step response at largest Δ ({cf['perturbation_mags'][-1]:.2f}):")
+    print(f"    median = {float(np.median(propagation)):.4f}")
+    print(f"    mean   = {float(propagation.mean()):.4f}")
+
+    order = np.argsort(slopes)[::-1][:top_k]
+    print(f"\n  Top-{top_k} most counterfactually-responsive species:")
+    for i in order:
+        sp_i = int(cf["test_species_idx"][i])
+        name = species_active[sp_i]
+        print(f"    {name[:28]:>28s}  slope={slopes[i]:+.4f}  "
+              f"R_max={propagation[i]:.4f}  n_nbrs={cf['n_neighbors'][i]}")
+
+    if f_responsive > 0.5:
+        verdict = "SUBSTRATE-DRIVEN — counterfactual structure preserved"
+    elif f_responsive > 0.2:
+        verdict = "MIXED — some species substrate-driven, some memorized"
+    else:
+        verdict = "MEMORIZED — counterfactual structure largely absent"
+    print(f"\n  Verdict: {verdict}")
+
+
+# ── v15.2 Friedlin-Wentzell action (trajectory plausibility) ─────────────────
+
+@torch.no_grad()
+def friedlin_wentzell_action(predicted_trajs, upstream_trajs, dt,
+                                top_k_var=200, fit_trajs=None):
+    """v15.2: Time-marginal Friedlin-Wentzell action.
+
+    Theory (Freidlin-Wentzell 1984, the report §10):
+        S[φ] = ∫₀ᵀ (φ̇ − b(φ))ᵀ A(φ)⁻¹ (φ̇ − b(φ)) dt,    A = σσᵀ
+    Trajectories minimising S are the most-probable under the inferred SDE.
+
+    Implementation choices:
+    - Time-marginal drift b(t) and diagonal diffusion A(t) (diag because
+      A is otherwise 5940×5940 estimated from 50 samples, rank-deficient —
+      the report's suggested reduction)
+    - Restrict to top-K most-variable species (the same set used by the
+      honest-R² metric, so we compare like-with-like)
+    - Compare action of model-predicted vs upstream trajectories under
+      the SAME inferred dynamics — what matters is the ratio, not the
+      absolute number
+
+    Args:
+      predicted_trajs: (n_pred, T, S) model rollouts in normalised space
+      upstream_trajs:  (n_up,   T, S) held-out simulator trajectories
+      dt: seconds per timestep
+      top_k_var: number of top-variance species to include
+      fit_trajs: optional separate set to fit b, A — defaults to upstream_trajs
+
+    Returns dict with per-trajectory actions + ratio.
+    """
+    if fit_trajs is None:
+        fit_trajs = upstream_trajs
+    n_pred, T, S = predicted_trajs.shape
+
+    # Fit drift and diffusion from the training-like set.  delta has shape
+    # (n_fit, T-1, S); time-marginal mean and variance give b_t and A_t.
+    delta_fit = fit_trajs[:, 1:] - fit_trajs[:, :-1]
+    b_t = delta_fit.mean(dim=0) / float(dt)                       # (T-1, S)
+    a_t = delta_fit.var(dim=0, unbiased=True) / float(dt)         # (T-1, S)
+    a_t = a_t.clamp(min=1e-8)
+
+    # Top-K variable species (use the fit set's variance)
+    species_var = fit_trajs.reshape(-1, S).var(dim=0)
+    top_idx     = torch.argsort(species_var, descending=True)[:int(top_k_var)]
+    b_k = b_t[:, top_idx]
+    a_k = a_t[:, top_idx]
+
+    def _action(trajs):
+        delta = (trajs[:, 1:] - trajs[:, :-1])[:, :, top_idx]     # (n, T-1, K)
+        resid = delta - b_k.unsqueeze(0) * float(dt)              # (n, T-1, K)
+        # Per-step action contribution: resid² / (A · dt)
+        return (resid.pow(2) / (a_k.unsqueeze(0) * float(dt))).sum(dim=(1, 2))
+
+    action_pred = _action(predicted_trajs)
+    action_up   = _action(upstream_trajs)
+
+    return {
+        "action_pred":       action_pred.detach().cpu().numpy(),
+        "action_upstream":   action_up.detach().cpu().numpy(),
+        "top_k_used":        int(len(top_idx)),
+        "mean_pred":         float(action_pred.mean()),
+        "mean_upstream":     float(action_up.mean()),
+        "ratio":             float(action_pred.mean()
+                                   / max(float(action_up.mean()), 1e-9)),
+    }
+
+
+def print_friedlin_wentzell_report(fw):
+    """Print F-W action diagnostic."""
+    print()
+    print("=" * 72)
+    print("  FRIEDLIN-WENTZELL ACTION  (trajectory plausibility under inferred SDE)")
+    print("  S[φ] = ∫(φ̇ − b)ᵀA⁻¹(φ̇ − b) dt   (time-marginal b, diagonal A)")
+    print("=" * 72)
+    if fw is None:
+        print("  Not computed.")
+        return
+    print(f"\n  Restricted to top {fw['top_k_used']} most-variable species")
+    print(f"\n  Action of upstream trajectories  (empirical baseline):")
+    print(f"    mean = {fw['mean_upstream']:.3e}")
+    print(f"    range = [{float(fw['action_upstream'].min()):.3e}, "
+          f"{float(fw['action_upstream'].max()):.3e}]")
+    print(f"\n  Action of model-predicted trajectories:")
+    print(f"    mean = {fw['mean_pred']:.3e}")
+    print(f"    range = [{float(fw['action_pred'].min()):.3e}, "
+          f"{float(fw['action_pred'].max()):.3e}]")
+    print(f"\n  Action ratio  predicted / upstream  = {fw['ratio']:.3f}")
+    r = fw["ratio"]
+    if r < 1.5:
+        verdict = "PLAUSIBLE — predicted trajectories are as probable as upstream samples"
+    elif r < 5.0:
+        verdict = "MODERATELY IMPROBABLE — predicted trajectories under-sample noise"
+    elif r < 50.0:
+        verdict = f"IMPROBABLE — model trajectories carry {r:.1f}× the action of upstream"
+    else:
+        verdict = f"VERY IMPROBABLE — model action is {r:.0f}× upstream baseline"
+    print(f"  Verdict: {verdict}")
+
+
+# ── v15.2 constraint provenance audit ─────────────────────────────────────────
+
+@torch.no_grad()
+def constraint_provenance(model, worst_species_idx, species_active,
+                            species_type_ids, edge_index, raw_counts_active,
+                            train_idx):
+    """v15.2: Trace each worst-predicted species back to its constraint sources.
+
+    The recurring debugging question: when species X is predicted badly, where
+    did the bias enter the model?  Walk the chain from the prediction back to
+    the data source — MetabolismCore, CentralDogmaCore, PINN, graph edges,
+    or pure LGNN residual.  Indicates which knob to actually turn.
+
+    Args:
+      model: trained DynamicsModel
+      worst_species_idx: list of species indices (from analyze_gaps)
+      species_active: list of species names
+      species_type_ids: per-species type label (0=protein, 1=tRNA, ...)
+      edge_index: (2, E) graph edges
+      raw_counts_active: (n_traj, T, S) raw counts
+      train_idx: indices into raw_counts_active that were used for training
+
+    Returns: list of per-species trace dicts.
+    """
+    _inner = getattr(model, "_orig_mod", model)
+
+    def _mask(core_or_head, attr):
+        if core_or_head is None:
+            return None
+        m = getattr(core_or_head, attr, None)
+        return m.detach().cpu().numpy() if m is not None else None
+
+    metab_mask = _mask(_inner.metab_core, "coverage_mask")
+    cd_mask    = _mask(getattr(_inner, "cd_core", None), "coverage_mask")
+    asm_mask   = _mask(getattr(_inner, "asm_core", None), "coverage_mask")
+    pinn_mask  = _mask(getattr(_inner, "pinn_head", None), "sbml_mask") \
+                  if getattr(_inner, "use_pinn", False) else None
+
+    # Per-species cfc_A/cfc_B norm summed across layers — proxy for how much
+    # per-species memorization is loaded for this species
+    layers = list(getattr(_inner, "layers", []))
+    cfc_norm = np.zeros(len(species_active))
+    for layer in layers:
+        A = getattr(layer, "cfc_A", None)
+        B = getattr(layer, "cfc_B", None)
+        if A is not None and B is not None:
+            cfc_norm = cfc_norm + (A.norm(dim=1).detach().cpu().numpy()
+                                    + B.norm(dim=1).detach().cpu().numpy())
+    if layers:
+        cfc_norm /= len(layers)
+
+    # Edge degrees per species
+    edge_arr   = edge_index.detach().cpu().numpy()
+    n_out      = np.zeros(len(species_active), dtype=int)
+    n_in       = np.zeros(len(species_active), dtype=int)
+    np.add.at(n_out, edge_arr[0], 1)
+    np.add.at(n_in,  edge_arr[1], 1)
+
+    init_mean = raw_counts_active[train_idx, 0].mean(axis=0)
+
+    GTYPE_NAMES = {GTYPE_PROTEIN: "protein", GTYPE_TRNA: "tRNA",
+                   GTYPE_RRNA: "rRNA", GTYPE_OTHER: "other",
+                   GTYPE_GLOBAL: "global"}
+
+    traces = []
+    for sp_i in worst_species_idx:
+        sp_i = int(sp_i)
+        gt   = int(species_type_ids[sp_i])
+        traces.append({
+            "idx":            sp_i,
+            "name":           species_active[sp_i],
+            "gtype":          GTYPE_NAMES.get(gt, f"t{gt}"),
+            "metab_covered":  bool(metab_mask[sp_i]) if metab_mask is not None else False,
+            "cd_covered":     bool(cd_mask[sp_i])    if cd_mask    is not None else False,
+            "asm_covered":    bool(asm_mask[sp_i])   if asm_mask   is not None else False,
+            "pinn_covered":   bool(pinn_mask[sp_i])  if pinn_mask  is not None else False,
+            "n_edges_out":    int(n_out[sp_i]),
+            "n_edges_in":     int(n_in[sp_i]),
+            "init_mean":      float(init_mean[sp_i]),
+            "cfc_norm":       float(cfc_norm[sp_i]),
+        })
+    return traces
+
+
+def print_provenance_report(traces):
+    """Print constraint-provenance audit."""
+    print()
+    print("=" * 72)
+    print("  CONSTRAINT PROVENANCE AUDIT")
+    print("  For each worst-predicted species: where did its dynamics come from?")
+    print("=" * 72)
+    if not traces:
+        print("  Nothing to trace.")
+        return
+    print(f"\n  Worst {len(traces)} predicted species and their constraint origins:")
+    print(f"  {'name':<24s} {'type':<8s} {'metab':>6s} {'cd':>4s} {'pinn':>5s} "
+          f"{'asm':>4s} {'n_out':>6s} {'n_in':>5s} {'init':>10s} {'|cfc|':>7s}")
+    print("  " + "-" * 78)
+    for t in traces:
+        print(f"  {t['name'][:24]:<24s} {t['gtype'][:8]:<8s} "
+              f"{'Y' if t['metab_covered']  else '-':>6s} "
+              f"{'Y' if t['cd_covered']     else '-':>4s} "
+              f"{'Y' if t['pinn_covered']   else '-':>5s} "
+              f"{'Y' if t['asm_covered']    else '-':>4s} "
+              f"{t['n_edges_out']:>6d} {t['n_edges_in']:>5d} "
+              f"{t['init_mean']:>10.2e} {t['cfc_norm']:>7.3f}")
+    n_metab     = sum(1 for t in traces if t["metab_covered"])
+    n_cd        = sum(1 for t in traces if t["cd_covered"])
+    n_pinn      = sum(1 for t in traces if t["pinn_covered"])
+    n_no_core   = sum(1 for t in traces
+                      if not (t["metab_covered"] or t["cd_covered"]
+                               or t["pinn_covered"] or t["asm_covered"]))
+    print(f"\n  Where the failure lives (multi-coverage possible):")
+    print(f"    {n_metab}/{len(traces)} in MetabolismCore   → debug kinetic params (k_cat, K_m, ΔG°)")
+    print(f"    {n_cd}/{len(traces)} in CentralDogmaCore  → debug per-gene k_tx/k_tl calibration")
+    print(f"    {n_pinn}/{len(traces)} in PINN             → debug SBML stoichiometric matrix")
+    print(f"    {n_no_core}/{len(traces)} pure-LGNN          → debug graph edges + cfc_A/cfc_B")
+
+
 # ── missing-info report ───────────────────────────────────────────────────────
 
 @torch.no_grad()
@@ -3969,6 +4338,39 @@ def main():
         print_tur_report(tur)
     except Exception as e:
         print(f"  TUR diagnostic: skipped ({e})")
+
+    # v15.2: counterfactual-robustness — computing vs memorization per species
+    try:
+        cf = counterfactual_robustness(
+            model, test_X[0, 0].unsqueeze(0).to(device),
+            species_active, edge_index,
+            n_test_species=100, n_steps=60,
+        )
+        print_counterfactual_report(cf, species_active)
+    except Exception as e:
+        print(f"  counterfactual-robustness: skipped ({e})")
+
+    # v15.2: Friedlin-Wentzell action under inferred SDE (plausibility score)
+    try:
+        fw = friedlin_wentzell_action(
+            preds_batch, truth_batch, dt=float(TIME_STRIDE),
+            top_k_var=VAR_R2_TOP_K, fit_trajs=train_X,
+        )
+        print_friedlin_wentzell_report(fw)
+    except Exception as e:
+        print(f"  F-W action: skipped ({e})")
+
+    # v15.2: constraint provenance audit on worst-predicted species
+    try:
+        _se = ((preds_batch - truth_batch) ** 2).mean(dim=(0, 1))
+        worst_sp = torch.argsort(_se, descending=True)[:15].tolist()
+        traces = constraint_provenance(
+            model, worst_sp, species_active, species_type_ids,
+            edge_index, raw_counts_active, train_idx,
+        )
+        print_provenance_report(traces)
+    except Exception as e:
+        print(f"  provenance audit: skipped ({e})")
 
     analyze_gaps(model, test_X, species_active, species_type_ids,
                  ruleset, hyp, sbml,
