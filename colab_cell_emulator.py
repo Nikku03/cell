@@ -1808,6 +1808,9 @@ class MetabolismCore(nn.Module):
             self.register_buffer("prod_km",  tensors["prod_km"])
         self.learnable_rates = learnable_rates
         self.R = tensors["kcat_fwd"].shape[0]
+        # v15.2: stash wired reaction names so post-hoc diagnostics (TUR, F-W
+        # action, provenance audit) can align ΔG° / per-reaction stats.
+        self.wired_reactions = list(tensors.get("wired_reactions", []))
 
     def _params(self):
         if self.learnable_rates:
@@ -2695,6 +2698,9 @@ class DynamicsModel(nn.Module):
             # v14 day 3: stash ATP rate so the training loop can apply the energy-ledger loss
             if self.metab_core.has_atp:
                 self.last_atp_rate = self.metab_core.compute_atp_rate(fluxes, volume_l=v_l)
+            # v15.2: stash fluxes so rollout-based diagnostics (TUR, F-W action)
+            # can collect them without re-running the metab_core themselves.
+            self.last_fluxes = fluxes
             x_count_next = (x_count + d_count).clamp(min=0.0)
             x_sl_next    = t_signed_log1p(x_count_next)
             x_norm_metab = (x_sl_next - self.metab_lo) / self.metab_span
@@ -3250,13 +3256,17 @@ def print_paper_metrics(metrics):
 
 
 @torch.no_grad()
-def full_rollout_batched(model, trajs, ruleset):
+def full_rollout_batched(model, trajs, ruleset, collect_fluxes=False):
     """v10: roll all test trajectories in parallel (one shared time loop).
     7,199 steps × 10 trajs would take ~60 min serially at full resolution;
     batched, it's a single 7,199-step loop = ~6 min.  With v12 BF16 ~3 min.
 
     trajs: (n, T, S) tensor of seed trajectories.
     Returns (preds, truth) both shaped (n, T-1, S).
+
+    v15.2: when collect_fluxes=True, also returns per-step per-reaction fluxes
+    as (n, T-1, R) — read from model.last_fluxes after each forward pass.
+    Used by TUR + Friedlin-Wentzell diagnostics.
     """
     model.eval()
     _inner = getattr(model, "_orig_mod", model)
@@ -3266,6 +3276,8 @@ def full_rollout_batched(model, trajs, ruleset):
     state_history = (state.unsqueeze(1).repeat(1, t_ctx_window, 1)
                      if use_temporal_ctx else None)
     preds = []
+    fluxes_all = []
+    metab_core = _inner.metab_core
     for _ in range(trajs.shape[1] - 1):
         with _eval_autocast():
             out = (model(state, state_history=state_history)
@@ -3273,11 +3285,148 @@ def full_rollout_batched(model, trajs, ruleset):
             p = _model_pred(out).float().clamp(CLAMP_LO, CLAMP_HI)
         p = ruleset.project(state, p)
         preds.append(p)
+        if collect_fluxes and metab_core is not None:
+            fl = getattr(_inner, "last_fluxes", None)
+            if fl is not None:
+                fluxes_all.append(fl.float().detach())
         state = p
         if use_temporal_ctx:
             state_history = torch.cat(
                 [state_history[:, 1:], state.unsqueeze(1)], dim=1)
-    return torch.stack(preds, dim=1), trajs[:, 1:]   # (n, T-1, S) each
+    preds_out = torch.stack(preds, dim=1)
+    truth_out = trajs[:, 1:]
+    if collect_fluxes and fluxes_all:
+        flux_out = torch.stack(fluxes_all, dim=1)   # (n, T-1, R)
+        return preds_out, truth_out, flux_out
+    return preds_out, truth_out
+
+
+# ── v15.2 TUR (Barato-Seifert 2015) per-reaction diagnostic ──────────────────
+
+@torch.no_grad()
+def tur_per_reaction_diagnostic(model, fluxes, gibbs_data, time_stride_s,
+                                  volume_l=SYN3A_VOLUME_L, t_kelvin=310.0):
+    """v15.2: Thermodynamic Uncertainty Relation per metabolic reaction.
+
+    Barato & Seifert, *PRL* 114:158101 (2015):
+        S_tot · Var(J_r) / ⟨J_r⟩²  ≥  2 k_B
+    where S_tot is total entropy production over the trajectory (in k_B units)
+    and J_r is the integrated flux of reaction r over the trajectory.
+
+    Violations (ratio < 2) flag reactions whose flux statistics are
+    thermodynamically inconsistent.  This is a hard physical falsifier —
+    it cannot be tuned away by changing the loss; the model is wrong about
+    the dissipation-precision trade-off for that reaction.
+
+    Args:
+      model: trained DynamicsModel (loaded checkpoint)
+      fluxes: (n, T-1, R) per-step per-reaction fluxes from
+              full_rollout_batched(collect_fluxes=True), in mM/s
+      gibbs_data: dict from parse_gibbs — reaction id → ΔG° (kJ/mol)
+      time_stride_s: seconds per timestep
+      volume_l: cell volume in litres (used for unit conversion)
+      t_kelvin: temperature, default 310 K (~body temperature)
+
+    Returns dict with per-reaction tur_ratio + summary stats.
+    """
+    if fluxes is None:
+        return None
+    _inner = getattr(model, "_orig_mod", model)
+    if _inner.metab_core is None:
+        return None
+    R = fluxes.shape[-1]
+    rxn_names = _inner.metab_core.wired_reactions
+    device = fluxes.device
+
+    # Build ΔG° vector aligned with wired reactions (zero for unknowns)
+    gibbs_vec = torch.zeros(R, dtype=torch.float32, device=device)
+    covered   = torch.zeros(R, dtype=torch.bool,    device=device)
+    for i, name in enumerate(rxn_names):
+        if name in gibbs_data:
+            gibbs_vec[i] = float(gibbs_data[name])
+            covered[i]   = True
+
+    # Integrate flux over trajectory.  fluxes is in mM/s = mmol/(L·s);
+    # ∫ flux dt = sum(flux) · Δt has units mM = mmol/L.
+    integrated_flux = fluxes.sum(dim=1) * float(time_stride_s)   # (n, R) in mM
+
+    # Total entropy production per trajectory in k_B units.
+    # Per reaction r: energy dissipated = -ΔG°_r [kJ/mol] · ∫J_r [mM = mmol/L] · V [L]
+    # Unit check: kJ/mol · mmol/L · L = kJ · mmol/mol = J  (since mmol/mol = 1e-3
+    # and kJ/J = 1e3 cancel)
+    # σ in k_B = energy [J] / (k_B · T) [J]
+    K_B    = 1.380649e-23                     # J/K (CODATA 2019)
+    k_BT_J = K_B * float(t_kelvin)            # J (≈ 4.28e-21 at 310 K)
+    sigma_per_traj = -(gibbs_vec.unsqueeze(0) * integrated_flux).sum(dim=1) \
+                     * float(volume_l) / k_BT_J                     # (n,) in k_B
+    sigma_total     = float(sigma_per_traj.mean())
+    sigma_neg_frac  = float((sigma_per_traj < 0).float().mean())
+
+    # Per-reaction flux statistics
+    J_mean = integrated_flux.mean(dim=0)                            # (R,)
+    J_var  = integrated_flux.var(dim=0, unbiased=True)              # (R,)
+
+    # TUR ratio: |σ_total| · Var(J) / ⟨J⟩²  — should be ≥ 2 (k_B)
+    eps       = 1e-12
+    tur_ratio = abs(sigma_total) * J_var / (J_mean ** 2 + eps)
+    return {
+        "tur_ratio":      tur_ratio.detach().cpu().numpy(),
+        "sigma_total":    sigma_total,
+        "sigma_per_traj": sigma_per_traj.detach().cpu().numpy(),
+        "sigma_neg_frac": sigma_neg_frac,
+        "flux_mean":      J_mean.detach().cpu().numpy(),
+        "flux_var":       J_var.detach().cpu().numpy(),
+        "rxn_names":      list(rxn_names),
+        "gibbs":          gibbs_vec.detach().cpu().numpy(),
+        "gibbs_covered":  covered.detach().cpu().numpy(),
+    }
+
+
+def print_tur_report(tur, top_k=15):
+    """Print TUR per-reaction diagnostic."""
+    print()
+    print("=" * 72)
+    print("  TUR PER-REACTION DIAGNOSTIC  (Barato-Seifert 2015)")
+    print("  Constraint: σ · Var(J) / ⟨J⟩²  ≥  2 k_B   per reaction")
+    print("=" * 72)
+    if tur is None:
+        print("  MetabolismCore disabled or no fluxes collected — TUR not computable.")
+        return
+    covered    = tur["gibbs_covered"]
+    rxn_names  = tur["rxn_names"]
+    n_covered  = int(covered.sum())
+    tur_ratio  = tur["tur_ratio"]
+    sigma_tot  = tur["sigma_total"]
+    sigma_neg  = tur["sigma_neg_frac"]
+
+    print(f"\n  Total entropy production σ over the rollout:")
+    print(f"    mean σ (k_B units)         = {sigma_tot:+.3e}")
+    print(f"    fraction with σ < 0       = {sigma_neg:.1%}    "
+          f"(>0% means second-law violation in some predicted trajectories)")
+    if sigma_tot < 0:
+        print("    ⚠ NET NEGATIVE entropy production — model violates 2nd law on average")
+
+    print(f"\n  ΔG° coverage: {n_covered}/{len(rxn_names)} wired reactions have known ΔG°")
+    n_viol = int(((tur_ratio < 2.0) & covered).sum())
+    print(f"  TUR violations (ratio < 2):   {n_viol}/{n_covered}")
+
+    # Sort by TUR ratio ascending, show worst-offending reactions with known ΔG°
+    if n_covered > 0:
+        order = np.argsort(tur_ratio)
+        shown = 0
+        print(f"\n  Worst-{min(top_k, n_covered)} reactions by TUR ratio (covered only):")
+        print(f"    {'reaction':<28s} {'TUR ratio':>10s} {'⟨J⟩ (mM·s)':>14s} "
+              f"{'Var(J)':>14s} {'ΔG° (kJ/mol)':>13s}")
+        for i in order:
+            if not covered[i]:
+                continue
+            mark = " ✗" if tur_ratio[i] < 2.0 else "  "
+            print(f"  {mark}{rxn_names[i]:<28s} {tur_ratio[i]:>10.3f} "
+                  f"{tur['flux_mean'][i]:>+14.3e} {tur['flux_var'][i]:>14.3e} "
+                  f"{tur['gibbs'][i]:>+13.1f}")
+            shown += 1
+            if shown >= top_k:
+                break
 
 
 # ── missing-info report ───────────────────────────────────────────────────────
@@ -3760,7 +3909,13 @@ def main():
     print("=" * 72)
     s_mse, s_r2 = one_step(model, test_X)
     # v10: batched rollout — all 10 test trajs in one shared time loop, ~10x faster
-    preds_batch, truth_batch = full_rollout_batched(model, test_X, ruleset)
+    # v15.2: also collect per-step fluxes for the TUR + F-W action diagnostics
+    _rollout_out = full_rollout_batched(model, test_X, ruleset, collect_fluxes=True)
+    if len(_rollout_out) == 3:
+        preds_batch, truth_batch, fluxes_batch = _rollout_out
+    else:
+        preds_batch, truth_batch = _rollout_out
+        fluxes_batch = None
     roll_r2 = [r2(preds_batch[k], truth_batch[k]) for k in range(test_X.shape[0])]
     mean_roll = sum(roll_r2) / len(roll_r2)
     # v9: variance-weighted R² (median over top-K high-variance species)
@@ -3802,6 +3957,18 @@ def main():
     except Exception as e:
         print(f"  paper validation: skipped ({e})")
     print("=" * 72)
+
+    # v15.2: TUR per-reaction thermodynamic check (Barato-Seifert 2015)
+    try:
+        tur = tur_per_reaction_diagnostic(
+            model, fluxes_batch,
+            gibbs_data=(gibbs or {}),
+            time_stride_s=float(TIME_STRIDE),
+            volume_l=SYN3A_VOLUME_L,
+        )
+        print_tur_report(tur)
+    except Exception as e:
+        print(f"  TUR diagnostic: skipped ({e})")
 
     analyze_gaps(model, test_X, species_active, species_type_ids,
                  ruleset, hyp, sbml,
