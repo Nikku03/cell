@@ -241,6 +241,48 @@ def banner(msg):
 CACHE_DIR = os.environ.get("FINANCE_CACHE", "finance_data")
 CNUGE_ZIP = ("https://raw.githubusercontent.com/CNuge/kaggle-code/master/"
              "stock_data/individual_stocks_5yr.zip")
+# Drop-in path for a user-supplied price file (e.g. Kaggle's sp500_stocks.csv,
+# 2010-present, columns Date,Symbol,Adj Close,Close,High,Low,Open,Volume).
+# Set FINANCE_PRICES_CSV, or just place the file at one of the auto-detected
+# names below.  This is THE way to run the real 2019-2024 test offline: download
+# sp500_stocks.csv from kaggle.com/datasets/andrewmvd/sp-500-stocks, commit it,
+# and this loader consumes it directly (filtered to UNIVERSE + date window).
+LOCAL_CSV_CANDIDATES = [
+    os.environ.get("FINANCE_PRICES_CSV", ""),
+    "finance_data/sp500_stocks.csv", "finance_data/prices.csv",
+    "sp500_stocks.csv", "prices.csv",
+]
+
+
+def _try_local_csv(tickers, start, end):
+    """Load a user-supplied LONG-format price CSV (Date,Symbol,<price>).
+
+    Accepts the Kaggle `sp500_stocks.csv` schema directly (prefers 'Adj Close',
+    falls back to 'Close').  Pivots to a (dates x tickers) panel filtered to the
+    requested universe and [start,end] window.  Returns None if no file found."""
+    if pd is None:
+        return None
+    path = next((p for p in LOCAL_CSV_CANDIDATES if p and os.path.exists(p)), None)
+    if path is None:
+        return None
+    print(f"[data] local price file: {path}")
+    df = pd.read_csv(path)
+    cols = {c.lower(): c for c in df.columns}
+    dcol = cols.get("date"); scol = cols.get("symbol", cols.get("ticker"))
+    pcol = cols.get("adj close", cols.get("adjclose", cols.get("close")))
+    if not (dcol and scol and pcol):
+        print(f"[data] local CSV missing Date/Symbol/(Adj)Close cols: {list(df.columns)}")
+        return None
+    df = df[[dcol, scol, pcol]].copy()
+    df[dcol] = pd.to_datetime(df[dcol])
+    df = df[(df[dcol] >= pd.Timestamp(start)) & (df[dcol] <= pd.Timestamp(end))]
+    df = df[df[scol].isin(set(tickers))]
+    close = df.pivot_table(index=dcol, columns=scol, values=pcol).sort_index()
+    close = close.dropna(axis=1, thresh=int(0.99 * len(close))).ffill().dropna(how="any")
+    if close.shape[1] < 10 or close.shape[0] < WARMUP + 60:
+        print(f"[data] local CSV too sparse after filter ({close.shape}); falling back")
+        return None
+    return close
 
 
 def _try_yfinance(tickers, start, end):
@@ -337,7 +379,13 @@ def _synthetic(tickers, n_days=1500):
 
 
 def load_prices(tickers, start=YF_START, end=YF_END):
-    """Return (close_df, source_tag).  close_df: DataFrame[dates x tickers]."""
+    """Return (close_df, source_tag).  close_df: DataFrame[dates x tickers].
+
+    Order: user-supplied CSV (real, any window) -> yfinance (Colab, 2019-2024)
+    -> committed GitHub real data (2013-2018 proxy) -> synthetic (flagged)."""
+    close = _try_local_csv(tickers, start, end)
+    if close is not None:
+        return close, "local-csv(user-supplied, real)"
     close = _try_yfinance(tickers, start, end)
     if close is not None:
         return close, "yfinance(adjusted)"
