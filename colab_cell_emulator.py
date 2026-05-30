@@ -4909,6 +4909,38 @@ def main():
                         delta = cal_sto - cal_med
                         print(f"    deterministic reference  = {cal_med:+.2f}")
                         print(f"    Δ (more positive = closer to truth spread) = {delta:+.2f}")
+                    # v15.4 B3: re-run the distributional diagnostics on the
+                    # STOCHASTIC rollout — deterministic preds are mode-collapsed,
+                    # so W2 / Helmholtz / paper-stats / TUR are only informative here.
+                    print("\n  --- distributional diagnostics on STOCHASTIC rollout (v15.4 B3) ---")
+                    try:
+                        print_paper_metrics(paper_validation_metrics(
+                            preds_sto, truth_sto, species_active, lo, span,
+                            time_stride_s=float(TIME_STRIDE)))
+                    except Exception as _e:
+                        print(f"  paper validation (stochastic): skipped ({_e})")
+                    try:
+                        print_wasserstein_report(sliced_wasserstein_W2(
+                            preds_sto, truth_sto, top_k_var=VAR_R2_TOP_K))
+                    except Exception as _e:
+                        print(f"  W2 (stochastic): skipped ({_e})")
+                    try:
+                        print_helmholtz_report(helmholtz_curl_diagnostic(
+                            preds_sto, truth_sto, species_active))
+                    except Exception as _e:
+                        print(f"  Helmholtz (stochastic): skipped ({_e})")
+                    try:
+                        print_kramers_report(kramers_residence_times(
+                            preds_sto, truth_sto, species_active, n_bins=5))
+                    except Exception as _e:
+                        print(f"  Kramers (stochastic): skipped ({_e})")
+                    if fluxes_sto is not None:
+                        try:
+                            print_tur_report(tur_per_reaction_diagnostic(
+                                model, fluxes_sto, gibbs_data=(gibbs or {}),
+                                time_stride_s=float(TIME_STRIDE), volume_l=SYN3A_VOLUME_L))
+                        except Exception as _e:
+                            print(f"  TUR (stochastic): skipped ({_e})")
         except Exception as e:
             print(f"  stochastic rollout eval: skipped ({e})")
 
