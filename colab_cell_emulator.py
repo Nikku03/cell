@@ -212,6 +212,14 @@ LAMBDA_SIGMA_ANCHOR = 0.15         # v15.1: bumped 0.05 → 0.15 — v15.0 σ wa
 LAMBDA_TRAJ_VAR     = 0.0          # v14.8: disabled — didn't budge mode collapse in v14.7, dropped to avoid masking
 SAMPLE_NOISE_SCALE  = 0.0          # v14.8: DISABLED — was the main cause of v14.7's rollout R² crash from 0.43 → -0.05
                                    #         (model converged to "predict no change" under noisy training inputs)
+# v15.3 step 5: stochastic rollout for distributional eval.  Post-hoc
+# σ recalibration fits α[s] s.t. α·predicted_σ matches empirical residual
+# std; rollout then samples from N(pred, α·σ) instead of using pred.
+# Makes the σ-calibration / W₂ / paper-validation distributional metrics
+# read against a fair (noise-aware) comparison.  Per-trajectory R² is
+# typically slightly lower for stochastic rollout — that's expected.
+USE_STOCHASTIC_ROLLOUT_EVAL = True
+
 # v15.1: refinement-pass training in the last 10% of steps.  Attacks the
 # rollout-vs-1step gap (v15.0: 1-step R²=0.814, rollout R²=0.586, 0.22 lost to
 # compounding error).  Mechanism: after computing pred at step k, do an EXTRA
@@ -3301,6 +3309,254 @@ def full_rollout_batched(model, trajs, ruleset, collect_fluxes=False):
     return preds_out, truth_out
 
 
+# ── v15.3 step 0: stochastic ceiling — irreducible R² limit ──────────────────
+
+def stochastic_ceiling_diagnostic(raw_counts_active, train_idx, top_k_var=200):
+    """v15.3 step 0: data-only diagnostic — irreducible R² ceiling for any
+    deterministic predictor on this stochastic data.
+
+    Theory: trajectories are samples from a stochastic process.  At each
+    timepoint t, the cross-trajectory variance Var_traj(x_t) is irreducible —
+    no deterministic model can predict which Gillespie seed produced which
+    trajectory.  For a deterministic predictor matching E[x_t | x_0]:
+        R²_ceil(s) = 1 − E_t[ Var_traj(x_t,s) ] / Var_(traj,t)(x_·,s)
+
+    Tells us how much headroom we have before we hit the wall of stochastic
+    uncertainty.  Computed on training trajectories (Poisson-sampled mRNA +
+    divergent SSA realisations, same distribution as test set).
+
+    Args:
+      raw_counts_active: (n_traj, T, S) raw counts in normalised space domain
+      train_idx: indices to use (training set)
+      top_k_var: top-K most-variable species to aggregate over
+
+    Returns dict with per-species ceiling + aggregates.
+    """
+    rc_tr      = raw_counts_active[train_idx]                    # (n_tr, T, S)
+    # Per-species variance across trajectories at each timepoint, then mean over t
+    var_per_t  = rc_tr.var(axis=0)                               # (T, S)
+    sig_stoch  = var_per_t.mean(axis=0)                          # (S,)
+    sig_total  = rc_tr.var(axis=(0, 1))                          # (S,)
+    valid_mask = sig_total > 1e-9
+    ratio      = np.where(valid_mask, sig_stoch / np.maximum(sig_total, 1e-12), np.nan)
+    r2_ceil    = np.clip(1.0 - ratio, 0.0, 1.0)
+
+    # Top-K species by total variance — matches honest-R² convention
+    var_rank   = np.argsort(sig_total)[::-1][:int(top_k_var)]
+    r2_top     = r2_ceil[var_rank]
+    r2_top_v   = r2_top[~np.isnan(r2_top)]
+    r2_all_v   = r2_ceil[valid_mask & ~np.isnan(r2_ceil)]
+    return {
+        "r2_ceil_per_species":      r2_ceil,
+        "valid_mask":               valid_mask,
+        "r2_ceil_median_top_k":     float(np.median(r2_top_v))   if r2_top_v.size else float("nan"),
+        "r2_ceil_mean_top_k":       float(np.mean(r2_top_v))     if r2_top_v.size else float("nan"),
+        "r2_ceil_q25_top_k":        float(np.percentile(r2_top_v, 25)) if r2_top_v.size else float("nan"),
+        "r2_ceil_q75_top_k":        float(np.percentile(r2_top_v, 75)) if r2_top_v.size else float("nan"),
+        "r2_ceil_median_all":       float(np.median(r2_all_v))   if r2_all_v.size else float("nan"),
+        "top_k":                    int(top_k_var),
+        "n_top_valid":              int(r2_top_v.size),
+        "stoch_var_total_ratio":    float(np.mean(ratio[var_rank][~np.isnan(ratio[var_rank])]))
+                                     if np.any(~np.isnan(ratio[var_rank])) else float("nan"),
+    }
+
+
+def print_ceiling_report(c, current_rollout_r2=None, current_honest_r2=None):
+    """Print stochastic ceiling diagnostic."""
+    print()
+    print("=" * 72)
+    print("  STOCHASTIC CEILING — irreducible R² limit for any deterministic model")
+    print("  R²_ceil(s) = 1 − E_t[ Var_traj(x_t) ] / Var_(traj,t)(x_·,s)")
+    print("=" * 72)
+    if c is None:
+        print("  Not computed.")
+        return
+    print(f"\n  R² ceiling on top-{c['top_k']} most-variable species "
+          f"({c['n_top_valid']} valid):")
+    print(f"    median   = {c['r2_ceil_median_top_k']:.3f}")
+    print(f"    mean     = {c['r2_ceil_mean_top_k']:.3f}")
+    print(f"    IQR      = [{c['r2_ceil_q25_top_k']:.3f}, "
+          f"{c['r2_ceil_q75_top_k']:.3f}]")
+    print(f"    fraction of variance that is irreducible stochastic noise = "
+          f"{c['stoch_var_total_ratio']:.3f}")
+    print(f"\n  Median ceiling across ALL variable species = {c['r2_ceil_median_all']:.3f}")
+    # Compare to current observed if provided
+    if current_honest_r2 is not None:
+        gap = c['r2_ceil_median_top_k'] - current_honest_r2
+        print(f"\n  Current honest R² (top-{c['top_k']}, median) = {current_honest_r2:+.3f}")
+        print(f"  Gap to ceiling:                          {gap:+.3f}")
+        if gap < 0.05:
+            verdict = ("AT THE WALL — deterministic R² has almost no room to grow.\n"
+                       "    The only meaningful improvement is distributional "
+                       "(W₂, paper-stats, stochastic rollout).")
+        elif gap < 0.15:
+            verdict = ("CLOSE TO THE WALL — modest room for deterministic R² gain.\n"
+                       "    Distributional metrics will benefit more than R² will.")
+        else:
+            verdict = ("REAL HEADROOM — deterministic R² can improve substantially.\n"
+                       "    Calibration + horizon fixes are worth pursuing.")
+        print(f"  Verdict: {verdict}")
+    if current_rollout_r2 is not None:
+        ratio = current_rollout_r2 / max(c['r2_ceil_median_top_k'], 1e-6)
+        print(f"\n  Current mean rollout R² = {current_rollout_r2:.3f}")
+        print(f"  Fraction of ceiling captured = {ratio:.1%}")
+
+
+# ── v15.3 step 5: post-hoc σ-head recalibration + stochastic rollout ─────────
+
+@torch.no_grad()
+def recalibrate_sigma_posthoc(model, train_X, n_pairs=2000, batch=128):
+    """v15.3 step 5: post-hoc per-species σ recalibration (Kuleshov 2018 style).
+
+    Fit α[s] such that α[s] · exp(predicted_log_σ[s]) matches the empirical
+    one-step residual std on training data.  Doesn't retrain anything;
+    α is computed from forward passes on random (i, t) pairs.
+
+    Applied at eval time in stochastic rollout so injected noise has the
+    correct magnitude.
+
+    Args:
+      model: trained DynamicsModel with stochastic head
+      train_X: (n_tr, T, S) normalised training trajectories
+      n_pairs: number of random (trajectory, timestep) pairs to sample
+
+    Returns dict with α (S,) and calibration summary.
+    """
+    _inner = getattr(model, "_orig_mod", model)
+    if not getattr(_inner, "use_stochastic", False):
+        return None
+    use_tc   = getattr(_inner, "use_temporal_context", False)
+    t_w      = getattr(_inner, "t_ctx_window", T_CTX_WINDOW)
+    device   = train_X.device
+    n_tr, T, S = train_X.shape
+    n_pairs  = int(min(n_pairs, n_tr * (T - 1)))
+    rng      = np.random.RandomState(SEED + 42)
+    i_samp   = rng.randint(0, n_tr, size=n_pairs)
+    t_samp   = rng.randint(0, T - 1, size=n_pairs)
+
+    model.eval()
+    pred_chunks, ls_chunks, true_chunks = [], [], []
+    for i in range(0, n_pairs, batch):
+        i_b = i_samp[i:i+batch]; t_b = t_samp[i:i+batch]
+        s_b = train_X[i_b, t_b]                  # (b, S)
+        true_b = train_X[i_b, t_b + 1]           # (b, S)
+        with _eval_autocast():
+            if use_tc:
+                hist = s_b.unsqueeze(1).repeat(1, t_w, 1)
+                out  = model(s_b, state_history=hist)
+            else:
+                out  = model(s_b)
+            pred_b, ls_b = out
+        pred_chunks.append(pred_b.float())
+        ls_chunks.append(ls_b.float())
+        true_chunks.append(true_b.float())
+
+    preds      = torch.cat(pred_chunks, dim=0)         # (n, S)
+    log_sigmas = torch.cat(ls_chunks,   dim=0)         # (n, S)
+    true_next  = torch.cat(true_chunks, dim=0)         # (n, S)
+
+    residuals     = (true_next - preds)
+    resid_std     = residuals.std(dim=0, unbiased=True).clamp(min=1e-6)         # (S,)
+    pred_sigma    = torch.exp(log_sigmas)
+    pred_sig_mean = pred_sigma.mean(dim=0).clamp(min=1e-6)                       # (S,)
+    alpha         = (resid_std / pred_sig_mean).clamp(min=1e-3, max=1e3)        # (S,)
+
+    return {
+        "alpha":              alpha,
+        "n_pairs":            int(n_pairs),
+        "resid_std_median":   float(resid_std.median().item()),
+        "pred_sigma_median":  float(pred_sig_mean.median().item()),
+        "alpha_median":       float(alpha.median().item()),
+        "alpha_q25":          float(alpha.quantile(0.25).item()),
+        "alpha_q75":          float(alpha.quantile(0.75).item()),
+    }
+
+
+def print_recalibration_report(rc):
+    """Print σ-recalibration diagnostic."""
+    print()
+    print("=" * 72)
+    print("  σ-HEAD POST-HOC RECALIBRATION  (Kuleshov 2018 / Levi 2022 style)")
+    print("  α[s] = empirical_residual_std[s] / mean_predicted_σ[s]")
+    print("=" * 72)
+    if rc is None:
+        print("  Stochastic head not enabled — recalibration skipped.")
+        return
+    print(f"\n  Fitted on {rc['n_pairs']} random (trajectory, timestep) pairs from train_X")
+    print(f"\n  Empirical residual std (median across species) = {rc['resid_std_median']:.5f}")
+    print(f"  Predicted σ pre-recal  (median across species)  = {rc['pred_sigma_median']:.5f}")
+    print(f"\n  Recalibration multiplier α:")
+    print(f"    median = {rc['alpha_median']:.3f}  (1.0 = already calibrated)")
+    print(f"    IQR    = [{rc['alpha_q25']:.3f}, {rc['alpha_q75']:.3f}]")
+    am = rc["alpha_median"]
+    if am > 5.0:
+        verdict = f"σ severely under-predicted (over-confident by ~{am:.1f}×)"
+    elif am > 2.0:
+        verdict = f"σ over-confident by ~{am:.1f}×"
+    elif am < 0.5:
+        verdict = f"σ under-confident (predicted σ too large by ~{1/am:.1f}×)"
+    else:
+        verdict = "σ reasonably well-calibrated"
+    print(f"  Verdict: {verdict}")
+
+
+@torch.no_grad()
+def full_rollout_batched_stochastic(model, trajs, ruleset, sigma_alpha,
+                                      collect_fluxes=False, seed=None):
+    """v15.3 step 5: stochastic rollout — sample from N(pred, α·exp(log_σ))
+    at each step instead of using pred directly.
+
+    Makes preds_batch.std(dim=0) measure the model's predicted trajectory
+    spread (initial-state variation + injected stochasticity), allowing the
+    distributional diagnostics (W₂, Helmholtz, paper-stats) to be read
+    against a fair comparison.
+
+    Per-trajectory R² will typically drop a little vs deterministic rollout —
+    that's expected and correct.  The point is the diagnostics, not R².
+    """
+    _inner = getattr(model, "_orig_mod", model)
+    if not getattr(_inner, "use_stochastic", False):
+        return None
+    model.eval()
+    use_tc = getattr(_inner, "use_temporal_context", False)
+    t_w    = getattr(_inner, "t_ctx_window", T_CTX_WINDOW)
+
+    state          = trajs[:, 0]
+    state_history  = (state.unsqueeze(1).repeat(1, t_w, 1) if use_tc else None)
+    sigma_alpha    = sigma_alpha.to(state.device, state.dtype)
+
+    g  = torch.Generator(device="cpu").manual_seed(
+            int(seed) if seed is not None else SEED + 99)
+    preds, fluxes_all = [], []
+    metab_core = _inner.metab_core
+
+    for _ in range(trajs.shape[1] - 1):
+        with _eval_autocast():
+            out = (model(state, state_history=state_history)
+                   if use_tc else model(state))
+            pred, log_sigma = out
+            sigma_recal = torch.exp(log_sigma) * sigma_alpha
+            noise_cpu   = torch.randn(pred.shape, generator=g).to(pred.device)
+            sampled     = pred + noise_cpu.to(pred.dtype) * sigma_recal
+            p = sampled.float().clamp(CLAMP_LO, CLAMP_HI)
+        p = ruleset.project(state, p)
+        preds.append(p)
+        if collect_fluxes and metab_core is not None:
+            fl = getattr(_inner, "last_fluxes", None)
+            if fl is not None:
+                fluxes_all.append(fl.float().detach())
+        state = p
+        if use_tc:
+            state_history = torch.cat(
+                [state_history[:, 1:], state.unsqueeze(1)], dim=1)
+
+    preds_out = torch.stack(preds, dim=1)
+    truth_out = trajs[:, 1:]
+    if collect_fluxes and fluxes_all:
+        return preds_out, truth_out, torch.stack(fluxes_all, dim=1)
+    return preds_out, truth_out
+
+
 # ── v15.2 TUR (Barato-Seifert 2015) per-reaction diagnostic ──────────────────
 
 @torch.no_grad()
@@ -4568,21 +4824,35 @@ def main():
     print(f"  median R² on top-{n_var} variable species : {var_r2:+.3f}  <- HONEST METRIC")
     print(f"  (v6 transformer (60s)    : rollout R^2 ~0.56,  honest unknown)")
     print(f"  (v9 LGNN (60s stride)    : rollout R^2 ~0.64,  honest +0.37)")
-    # v14 day 5: σ calibration — compare predicted std vs empirical std on test set
+    # v14 day 5: trajectory-spread metric.  NOTE (v15.3): this measures
+    # cross-trajectory spread of DETERMINISTIC predictions vs truth — it is
+    # really a mode-collapse metric, not σ-head calibration.  The σ-head's
+    # own calibration is measured separately in step-5 recalibration below.
     if USE_STOCHASTIC_HEAD and USE_SIGMA_ANCHOR:
         sigma_pred  = preds_batch.std(dim=0)          # (T, S) — across trajectories
         sigma_true  = truth_batch.std(dim=0)
-        # Median over species and time of log10(pred/true) — ideal calibration = 0
         log_ratio = (sigma_pred.clamp(min=1e-6).log10()
                      - sigma_true.clamp(min=1e-6).log10())
         cal_med = float(log_ratio.median())
         cal_iqr = float((log_ratio.quantile(0.75) - log_ratio.quantile(0.25)))
-        verdict = ("well-calibrated"   if abs(cal_med) < 0.3 else
-                   "under-confident"   if cal_med > 0 else
-                   "over-confident")
-        print(f"  σ calibration            : log10(pred/true) median {cal_med:+.2f}  "
+        verdict = ("well-spread"  if abs(cal_med) < 0.3 else
+                   "over-diverse" if cal_med > 0 else
+                   "mode-collapsed (under-spread)")
+        print(f"  trajectory spread (det.) : log10(pred_std/true_std) median {cal_med:+.2f}  "
               f"IQR {cal_iqr:.2f}  ({verdict})")
+        print(f"                             ^ this is mode-collapse, NOT σ-head calibration;")
+        print(f"                               see step-5 stochastic rollout for the real σ metric")
     print("=" * 72)
+
+    # v15.3 step 0: stochastic ceiling — irreducible R² limit for any deterministic model
+    try:
+        ceiling = stochastic_ceiling_diagnostic(
+            raw_counts_active, train_idx, top_k_var=VAR_R2_TOP_K,
+        )
+        print_ceiling_report(ceiling, current_rollout_r2=mean_roll,
+                             current_honest_r2=var_r2)
+    except Exception as e:
+        print(f"  stochastic ceiling: skipped ({e})")
     # v14.4: paper validation metrics (Thornburg 2026 §Results)
     try:
         metrics = paper_validation_metrics(
@@ -4593,6 +4863,52 @@ def main():
     except Exception as e:
         print(f"  paper validation: skipped ({e})")
     print("=" * 72)
+
+    # v15.3 step 5: post-hoc σ recalibration + stochastic rollout for
+    # distributional eval.  Per-trajectory R² will typically dip; the
+    # σ-spread, W₂, and paper-stats metrics become meaningful.
+    preds_sto, truth_sto, fluxes_sto = preds_batch, truth_batch, fluxes_batch
+    sigma_alpha = None
+    if USE_STOCHASTIC_ROLLOUT_EVAL and USE_STOCHASTIC_HEAD:
+        try:
+            rc = recalibrate_sigma_posthoc(model, train_X)
+            print_recalibration_report(rc)
+            if rc is not None:
+                sigma_alpha = rc["alpha"]
+                sto_out = full_rollout_batched_stochastic(
+                    model, test_X, ruleset, sigma_alpha,
+                    collect_fluxes=(fluxes_batch is not None),
+                )
+                if sto_out is not None:
+                    if len(sto_out) == 3:
+                        preds_sto, truth_sto, fluxes_sto = sto_out
+                    else:
+                        preds_sto, truth_sto = sto_out
+                    # Stochastic R² (typically lower; this is correct)
+                    r2_sto = [r2(preds_sto[k], truth_sto[k])
+                              for k in range(test_X.shape[0])]
+                    mean_sto = sum(r2_sto) / len(r2_sto)
+                    # Trajectory-spread metric (the mode-collapse one) on stochastic preds
+                    sp_pred_s = preds_sto.std(dim=0)
+                    sp_true_s = truth_sto.std(dim=0)
+                    cal_sto = float((sp_pred_s.clamp(min=1e-6).log10()
+                                     - sp_true_s.clamp(min=1e-6).log10()).median())
+                    print()
+                    print("=" * 72)
+                    print("  STOCHASTIC ROLLOUT EVAL  (v15.3 step 5)")
+                    print("=" * 72)
+                    print(f"\n  Per-trajectory R² (stochastic) = {mean_sto:.3f}  "
+                          f"(deterministic was {mean_roll:.3f})")
+                    print(f"    note: lower per-traj R² for stochastic is EXPECTED — "
+                          f"injected noise reduces mean-fit but enables population stats")
+                    print(f"\n  Trajectory-spread (stochastic) = log10(pred/true) median "
+                          f"{cal_sto:+.2f}")
+                    if 'cal_med' in dir() and cal_med is not None:
+                        delta = cal_sto - cal_med
+                        print(f"    deterministic reference  = {cal_med:+.2f}")
+                        print(f"    Δ (more positive = closer to truth spread) = {delta:+.2f}")
+        except Exception as e:
+            print(f"  stochastic rollout eval: skipped ({e})")
 
     # v15.2: TUR per-reaction thermodynamic check (Barato-Seifert 2015)
     try:
