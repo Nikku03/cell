@@ -148,7 +148,7 @@ except ImportError:
 
 # ── config ───────────────────────────────────────────────────────────────────
 PARQUET_DIR         = ""
-TIME_STRIDE         = 30           # v13.8.2: stride=30 sanity run — 30-sec steps, ~240 timesteps/traj
+TIME_STRIDE         = 60           # v15.4 [4/6]: was 30. Halves the rollout horizon (240->120 steps) so less compounding error, and K_MAX=90 now covers ~86% of the cycle (vs half at stride 30). Compare to v9 (60s -> rollout R^2 ~0.64). NEEDS a fresh training run (RESUME=False) — v15.0 ckpt is stride-30.
 LENS_TIME_STRIDE    = 60           # v10: subsample for the lens phase (memory)
 # Drop t=0 and t=1 of the simulator (the unnatural startup transient).  At
 # TIME_STRIDE=1 that's the first 2 decimated steps; at TIME_STRIDE=60 it's the
@@ -162,7 +162,7 @@ N_HEADS             = 8
 DROPOUT             = 0.1
 N_TRAIN_TRAJ        = 40
 STEPS               = 3000         # v15.0: was 1500 — doubled for the LGNN+Transformer hybrid (more capacity → more steps to converge)
-K_MAX               = 120          # v13.8.2: 120 steps = 60 min biological at 30s stride (half cell cycle)
+K_MAX               = 90           # v15.4 [4/6]: was 120. At stride 60 the trajectory is ~120 steps, so K_MAX must be < T-1 or training indexes out of bounds. 90 steps = 90 min biological (~86% of the 105-min cycle).
 TBPTT_CHUNK         = 64           # v12: gradient flows back this many rollout steps at a time
 USE_BF16            = True         # v12: BF16 autocast on Blackwell/Hopper/A100 — ~2x speedup
 BATCH               = 32           # v13: was 16 — doubled on Blackwell 96GB; more throughput per step
