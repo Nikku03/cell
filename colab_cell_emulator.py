@@ -199,7 +199,7 @@ USE_PINN_HEAD       = True         # NEW v9: hardwire mass-balance for SBML spec
 USE_METABOLISM_CORE = True         # NEW v13.9: replace PINN's neural flux with the bi-bi rate law for ~160 SBML reactions
 USE_VOLUME_CORE     = True         # NEW v13.9: dynamic cell volume from membrane-lipid count (vs constant)
 USE_CENTRAL_DOGMA   = True         # v14.3: re-enabled with per-gene rate calibration from initial counts
-USE_ASSEMBLY_CORE   = False        # v14.1: still disabled — only 2/24 wired on real data, separate issue
+USE_ASSEMBLY_CORE   = True         # v15.4 [6/6]: re-enabled via SAFE additive blend (ASM_BLEND_WEIGHT=0.1) + safety cap. Was disabled v14.1 (override regressions). Only ~2/24 complexes wire — low impact; revert by setting False.
 USE_KO_AUGMENTATION = True         # NEW v13.9 module 7: random species-zero during training, teaches KO response
 KO_AUG_PROB         = 0.5          # v14.9: bumped 0.3 → 0.5 — more KO exposure, sharpens mid-rank essentiality scores
 GIBBS_DG_THRESHOLD_KJ = 10.0       # NEW v14 day 1: ΔG° (kJ/mol) below which a reaction is forced irreversible-forward
@@ -2192,6 +2192,7 @@ class CentralDogmaCore(nn.Module):
 
 ASSEMBLY_K_ON_DEFAULT = 1.0e-5     # /s per molecule^stoich, ballpark for protein-protein
 ASSEMBLY_SAFETY_FRAC  = 0.5        # cap rate so it can't drain >50% of smallest pool/dt
+ASM_BLEND_WEIGHT      = 0.1           # v15.4 [6/6]: additive-residual weight for AssemblyCore (mirrors CD_BLEND_WEIGHT). NOTE: only ~2/24 complexes wire (complex product must be a tracked species) so impact is limited; validate with a training run.
 
 
 def _subunit_locus(gene_id):
@@ -2744,7 +2745,13 @@ class DynamicsModel(nn.Module):
             x_norm_asm   = (x_sl_next - self.metab_lo) / self.metab_span
             x_norm_asm   = x_norm_asm.clamp(CLAMP_LO, CLAMP_HI).to(x_next.dtype)
             mask_asm     = self.asm_core.coverage_mask.unsqueeze(0).expand(B, -1)
-            x_next       = torch.where(mask_asm, x_norm_asm, x_next)
+            # v15.4 [6/6]: additive blend (was full override) — same proven-safe
+            # pattern as CentralDogma v14.9, bounds the risk of re-enabling a
+            # module disabled in v14.1 for override-driven regressions.
+            asm_residual = x_norm_asm - x.to(x_norm_asm.dtype)
+            x_next       = torch.where(mask_asm,
+                                       x_next + ASM_BLEND_WEIGHT * asm_residual,
+                                       x_next)
         if self.use_stochastic:
             log_sigma = self.stochastic_head(h)
             return x_next, log_sigma
