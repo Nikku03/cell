@@ -1980,7 +1980,58 @@ CD_BLEND_WEIGHT        = 0.1           # v14.9: was implicit-1.0 (full override)
                                        # 0.1 = LGNN trusted to predict trajectory, CD nudges 10%.
 
 
+# v15.4 [5/6]: per-class translation scales.  One global CD_TRANSLATION_SCALE
+# cannot fit ribosomal vs membrane vs metabolic proteins (provenance audit:
+# 8/15 worst-predicted species are CD-covered; ribosome fold 1.27 vs upstream
+# 1.85 roots in ribosomal-protein under-production).  Each gene's k_tl is
+# multiplied by its class scale, classified from the gene-table `product` text.
+USE_CD_CLASS_SCALES = True
+CD_CLASS_TL_SCALES  = {
+    "ribosomal":  1.30,   # ribosomal proteins — under-produced, scale up
+    "membrane":   0.85,   # membrane / transport proteins
+    "metabolic":  0.85,   # enzymes
+    "other":      0.85,   # default / unclassified (== old global scale)
+}
+
+
+def load_gene_products(csv_path):
+    """v15.4 [5/6]: {locus_num_str: product_str} from syn3a_gene_table.csv."""
+    if not HAS_PANDAS:
+        return {}
+    try:
+        df = pd.read_csv(csv_path)
+        out = {}
+        for _, row in df.iterrows():
+            tag = str(row.get("locus_tag", ""))
+            if "_" in tag:
+                out[tag.split("_")[1]] = str(row.get("product", ""))
+        return out
+    except Exception as e:
+        print(f"[gene_products] load failed ({e})")
+        return {}
+
+
+def _classify_gene_for_cd(product):
+    """v15.4 [5/6]: map a gene product string to a CD translation class."""
+    p = (product or "").lower()
+    if not p:
+        return "other"
+    if ("ribosomal protein" in p or "ribosomal subunit" in p
+            or "30s " in p or "50s " in p):
+        return "ribosomal"
+    if ("membrane" in p or "transporter" in p or "permease" in p
+            or "translocase" in p or "abc transport" in p):
+        return "membrane"
+    if any(k in p for k in ("synthase", "synthetase", "kinase", "transferase",
+            "dehydrogenase", "reductase", "hydrolase", "ligase", "polymerase",
+            "phosphatase", "isomerase", "lyase", "oxidase", "carboxylase",
+            "aminotransferase", "nuclease", "phosphorylase")):
+        return "metabolic"
+    return "other"
+
+
 def build_central_dogma_tensors(species_names, initial=None, raw_counts_t0=None,
+                                product_map=None,
                                 t_half_mrna=T_HALF_MRNA_S,
                                 t_half_prot=T_HALF_PROTEIN_S):
     """Pair (G, R, P) species by gene locus, with v14.3 per-gene calibration.
@@ -2093,7 +2144,20 @@ def build_central_dogma_tensors(species_names, initial=None, raw_counts_t0=None,
     # v14.6: apply global scaling knobs to compensate for LGNN over-prediction
     # of gene replication that CD amplifies through mRNA → protein.
     k_tx_per_gene = k_tx_per_gene * CD_TRANSCRIPTION_SCALE
-    k_tl_per_gene = k_tl_per_gene * CD_TRANSLATION_SCALE
+    # v15.4 [5/6]: per-class translation scaling (falls back to the global scale)
+    if USE_CD_CLASS_SCALES and product_map:
+        tl_scales = np.empty(len(triples), dtype=np.float32)
+        cls_counts = {}
+        for j, (_, _, _, locus) in enumerate(triples):
+            cls = _classify_gene_for_cd(product_map.get(locus, ""))
+            tl_scales[j] = CD_CLASS_TL_SCALES.get(cls, CD_TRANSLATION_SCALE)
+            cls_counts[cls] = cls_counts.get(cls, 0) + 1
+        k_tl_per_gene = k_tl_per_gene * tl_scales
+        print("[cdcore] per-class k_tl scales: " + ", ".join(
+            f"{k}x{CD_CLASS_TL_SCALES.get(k, CD_TRANSLATION_SCALE)}({v})"
+            for k, v in sorted(cls_counts.items())))
+    else:
+        k_tl_per_gene = k_tl_per_gene * CD_TRANSLATION_SCALE
 
     print(f"[cdcore] per-gene calibration: {n_direct} from mRNA xlsx, "
           f"{n_proxy} from promoter-strength proxy (P/{avg_protein:.0f}), "
@@ -4656,10 +4720,12 @@ def main():
     # from initial_concentrations.xlsx + ribosome counts at t=0
     cd_tensors = None
     if USE_CENTRAL_DOGMA:
+        gene_product_map = load_gene_products(GENE_TABLE_PATH)
         cd_tensors = build_central_dogma_tensors(
             species_active,
             initial=initial,
             raw_counts_t0=raw_counts_active[train_idx, 0],
+            product_map=gene_product_map,
         )
     # v14 day 5: empirical per-species log σ for the calibration anchor
     target_log_sigma = None
