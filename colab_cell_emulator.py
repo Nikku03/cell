@@ -207,7 +207,7 @@ USE_ATP_LEDGER      = True         # NEW v14 day 3: soft penalty when net ATP pr
 ATP_SPECIES_NAME    = "M_atp_c"    # which species to track for the energy ledger
 ATP_MAINTENANCE_RATE = 4.0e5       # ATP molecules per second per cell — NGAM floor (~5 mmol/g/hr × Syn3A mass)
 LAMBDA_ATP          = 0.01         # auxiliary loss weight for ATP-deficit penalty
-USE_SIGMA_ANCHOR    = True         # NEW v14 day 5: anchor predicted log σ to empirical std, prevents NLL-shrinkage
+USE_SIGMA_ANCHOR    = False        # v15.4: DROPPED — post-hoc recalibration showed alpha=0.925 (sigma-head already calibrated by NLL). The anchor was solving a non-problem; the metric it "targeted" measured mode-collapse, not sigma.
 LAMBDA_SIGMA_ANCHOR = 0.15         # v15.1: bumped 0.05 → 0.15 — v15.0 σ was over-confident by 10× (log10 pred/true = -0.93), σ-anchor needs more weight
 LAMBDA_TRAJ_VAR     = 0.0          # v14.8: disabled — didn't budge mode collapse in v14.7, dropped to avoid masking
 SAMPLE_NOISE_SCALE  = 0.0          # v14.8: DISABLED — was the main cause of v14.7's rollout R² crash from 0.43 → -0.05
@@ -4830,7 +4830,7 @@ def main():
     # cross-trajectory spread of DETERMINISTIC predictions vs truth — it is
     # really a mode-collapse metric, not σ-head calibration.  The σ-head's
     # own calibration is measured separately in step-5 recalibration below.
-    if USE_STOCHASTIC_HEAD and USE_SIGMA_ANCHOR:
+    if USE_STOCHASTIC_HEAD:   # v15.4: was also gated on USE_SIGMA_ANCHOR (now off)
         sigma_pred  = preds_batch.std(dim=0)          # (T, S) — across trajectories
         sigma_true  = truth_batch.std(dim=0)
         log_ratio = (sigma_pred.clamp(min=1e-6).log10()
