@@ -180,6 +180,12 @@ CONSERVATION_K      = 8            # NEW v7
 PERIODICITY_TOP_K   = 20           # NEW v7
 GENE_LAG_MAX        = 5            # NEW v7
 COUNT_BOUND_SLACK   = 0.1          # NEW v7.1: count-space high-side cap headroom
+# v15.5 PhD-knowledge upgrades:
+CONSPAIR_CV_MAX     = 0.02         # conservation-pair lens: max coeff-of-variation of (A+B) over the cycle to call it conserved (2% drift)
+CONSPAIR_ANTICORR   = -0.90        # only test anti-correlated pairs (r < this) as conservation candidates
+MI_LENS_TOP_K       = 30           # nonlinear lens: top-K mutual-information pairs to report
+MI_LENS_BINS        = 8            # histogram bins for the MI estimate
+COMPOSE_MIN_LENSES  = 2            # lens-composition: a species flagged by ≥ this many lenses is "mechanistically central"
 LGNN_HIDDEN         = 64           # v14.9: bumped 32 → 64 to attack mode collapse (capacity-limited)
 LGNN_N_LAYERS       = 3            # NEW v8: number of CfC graph layers
 LGNN_CFC_TAU_MIN    = 0.1          # NEW v8: CfC time-constant minimum
@@ -998,6 +1004,111 @@ def lens_gene_chain(tr_active, species_names, max_lag=GENE_LAG_MAX):
     return result
 
 
+def lens_conservation_pairs(tr_counts, va_counts, species_names,
+                            anticorr=CONSPAIR_ANTICORR, cv_max=CONSPAIR_CV_MAX):
+    """v15.5 PhD upgrade 1: find anti-correlated species pairs whose COUNT SUM
+    is conserved over the cell cycle — A + B ≈ const.
+
+    Mechanism-over-correlation: an anti-correlation r≈-1 between A and B is
+    *explained* (not just fit) when A and B are two states of one conserved
+    pool (free gene G vs ribosome-bound RP; charged vs uncharged tRNA).  Those
+    are HARD constraints (A+B=const), not soft patterns to learn.
+
+    For each pair with train-Δ correlation < anticorr, test whether
+    (A_t + B_t) has coefficient-of-variation < cv_max on BOTH train and
+    held-out val (so the conservation generalises).  Returns the validated
+    conserved pairs with their conserved sum level.
+
+    Counts are in raw (linear) space — conservation is a count identity, not a
+    normalised-space one.
+    """
+    n_tr, T, S = tr_counts.shape
+    Xtr = tr_counts.reshape(-1, S).astype(np.float64)
+    Xva = va_counts.reshape(-1, S).astype(np.float64)
+    # Δ-correlation to find anti-correlated candidates (reuse pairwise math)
+    d_tr = np.diff(tr_counts, axis=1).reshape(-1, S).astype(np.float64)
+    sd = d_tr.std(axis=0)
+    valid = sd > 1e-9
+    if valid.sum() < 2:
+        return []
+    Z = np.where(valid, (d_tr - d_tr.mean(axis=0)) / (sd + 1e-12), 0.0)
+    C = (Z.T @ Z) / d_tr.shape[0]
+    np.fill_diagonal(C, 0.0)
+    C[~valid, :] = 0.0; C[:, ~valid] = 0.0
+    # candidate anti-correlated pairs
+    cand = np.argwhere(C < anticorr)
+    out = []
+    seen = set()
+    for i, j in cand:
+        if i >= j or (i, j) in seen:
+            continue
+        seen.add((i, j))
+        s_tr = Xtr[:, i] + Xtr[:, j]
+        s_va = Xva[:, i] + Xva[:, j]
+        m_tr = s_tr.mean()
+        if m_tr < 1.0:                       # ignore near-zero pools
+            continue
+        cv_tr = s_tr.std() / (abs(m_tr) + 1e-9)
+        cv_va = s_va.std() / (abs(s_va.mean()) + 1e-9)
+        if cv_tr < cv_max and cv_va < cv_max:
+            out.append({
+                "i": int(i), "j": int(j),
+                "sum_level": float(m_tr),
+                "cv_train": float(cv_tr), "cv_val": float(cv_va),
+                "corr": float(C[i, j]),
+            })
+    # strongest (lowest drift) first
+    out.sort(key=lambda d: d["cv_val"])
+    return out
+
+
+def lens_mutual_information(tr, top_k=MI_LENS_TOP_K, bins=MI_LENS_BINS):
+    """v15.5 PhD upgrade 3a: nonlinear coupling via mutual information on Δ.
+
+    Correlation only sees linear coupling.  MI sees ANY statistical dependence
+    — conditional activation, threshold switches, saturation.  We restrict to
+    the most-variable species (MI on 5,900² pairs is infeasible) and report the
+    top-K pairs whose MI is high but linear |corr| is LOW — i.e. couplings the
+    pairwise lens is BLIND to.
+
+    Returns list of (i, j, mi_nats, abs_corr).
+    """
+    n_tr, T, S = tr.shape
+    d = np.diff(tr, axis=1).reshape(-1, S).astype(np.float64)
+    var = d.var(axis=0)
+    # restrict to a tractable set of the most-variable species
+    k_keep = min(120, S)
+    keep = np.argsort(-var)[:k_keep]
+    dk = d[:, keep]
+    n = dk.shape[0]
+    if n < 50:
+        return []
+    # discretise each kept species into `bins` quantile bins
+    disc = np.zeros_like(dk, dtype=np.int32)
+    for c in range(dk.shape[1]):
+        col = dk[:, c]
+        qs = np.quantile(col, np.linspace(0, 1, bins + 1)[1:-1]) if col.std() > 1e-12 else None
+        disc[:, c] = np.digitize(col, qs) if qs is not None else 0
+    # linear corr among kept (to find MI-high / corr-low pairs)
+    sd = dk.std(axis=0) + 1e-12
+    Z = (dk - dk.mean(axis=0)) / sd
+    Ck = np.abs((Z.T @ Z) / n)
+    results = []
+    for a in range(len(keep)):
+        for b in range(a + 1, len(keep)):
+            xa, xb = disc[:, a], disc[:, b]
+            # joint + marginal histograms → MI in nats
+            pj = np.histogram2d(xa, xb, bins=bins)[0] / n
+            pa = pj.sum(axis=1, keepdims=True)
+            pb = pj.sum(axis=0, keepdims=True)
+            nz = pj > 0
+            mi = float((pj[nz] * np.log(pj[nz] / (pa @ pb)[nz] + 1e-12)).sum())
+            results.append((int(keep[a]), int(keep[b]), mi, float(Ck[a, b])))
+    # rank by MI-but-not-linear: high MI, low |corr|
+    results.sort(key=lambda r: -(r[2] - r[3]))
+    return results[:top_k]
+
+
 class DiscoveredPatterns:
     """Statistical regularities mined from trajectories via multiple lenses.
 
@@ -1014,6 +1125,10 @@ class DiscoveredPatterns:
         self.conservation = []
         self.periodicity  = []
         self.gene_chain   = {}
+        # v15.5 PhD upgrades:
+        self.conservation_pairs = []   # upgrade 1: validated A+B=const pairs
+        self.mutual_info        = []   # upgrade 3a: nonlinear couplings
+        self.central_species    = {}   # upgrade 2: species → which lenses flagged it
 
     @classmethod
     def from_trajectories(cls, train_X, val_X, train_counts, val_counts, species_names,
@@ -1035,7 +1150,41 @@ class DiscoveredPatterns:
         p.periodicity = lens_periodicity(tr)
         print("[patterns] gene-chain lag lens ...")
         p.gene_chain = lens_gene_chain(tr, species_names)
+        # v15.5 upgrade 1: conservation-pair lens (mechanism over correlation)
+        print("[patterns] conservation-pair lens (A+B=const) ...")
+        p.conservation_pairs = lens_conservation_pairs(
+            train_counts, val_counts, species_names)
+        # v15.5 upgrade 3a: nonlinear mutual-information lens
+        print("[patterns] nonlinear mutual-information lens ...")
+        p.mutual_info = lens_mutual_information(tr)
+        # v15.5 upgrade 2: lens composition — connect the dots across lenses
+        print("[patterns] lens-composition (connecting the dots) ...")
+        p.central_species = p._compose_lenses(species_names)
         return p
+
+    def _compose_lenses(self, species_names):
+        """v15.5 upgrade 2: cross-reference lens outputs.  A species flagged by
+        multiple INDEPENDENT lenses is mechanistically central — e.g. a species
+        that is both in an SVD conservation direction AND periodic is likely a
+        conserved oscillator (cell-cycle clock candidate)."""
+        from collections import defaultdict
+        flags = defaultdict(set)
+        for c in self.conservation:
+            for idx in c["top_species_idx"]:
+                flags[idx].add("svd-conservation")
+        for cp in self.conservation_pairs:
+            flags[cp["i"]].add("pair-conservation")
+            flags[cp["j"]].add("pair-conservation")
+        for (i, j, *_ ) in self.pairwise:
+            flags[i].add("pairwise"); flags[j].add("pairwise")
+        for (i, _f, _r) in self.periodicity:
+            flags[i].add("periodic")
+        for (i, j, _mi, _c) in self.mutual_info:
+            flags[i].add("nonlinear-MI"); flags[j].add("nonlinear-MI")
+        # keep only multiply-flagged species
+        central = {idx: sorted(s) for idx, s in flags.items()
+                   if len(s) >= COMPOSE_MIN_LENSES}
+        return central
 
     def summary(self, species_names):
         S = len(species_names)
@@ -1049,6 +1198,12 @@ class DiscoveredPatterns:
             f"    Conservation candidates     : {len(self.conservation)}  (low-d / SVD lens)",
             f"    Periodic species (top)      : {len(self.periodicity)}  (FFT lens)",
             f"    Gene-chain lag pairs        : {len(self.gene_chain)}  (chain lens)",
+            f"    Conserved A+B=const pairs   : {len(self.conservation_pairs)}  "
+            f"(v15.5 conservation-pair lens — HARD constraints)",
+            f"    Nonlinear MI couplings      : {len(self.mutual_info)}  "
+            f"(v15.5 mutual-information lens)",
+            f"    Mechanistically-central spp : {len(self.central_species)}  "
+            f"(v15.5 lens-composition — flagged by ≥{COMPOSE_MIN_LENSES} lenses)",
         ])
 
 
@@ -1062,10 +1217,16 @@ class RuleSet:
         self.mono_up = self.mono_down = None
         self.lo_bound = self.hi_bound = None
         self.n_seed = self.n_sbml = self.n_empirical = 0
+        # v15.5 upgrade 1: conservation-pair hard constraints.  Buffers in
+        # NORMALISED space so projection happens in the same domain as `project`.
+        self.cpair_i = self.cpair_j = None      # (P,) long species indices
+        self.cpair_lo = self.cpair_span = None  # (P,2) per-pair normalisation params
+        self.n_cpair = 0
 
     def to(self, dev):
         for a in ("mono_up_mask", "mono_down_mask", "mono_up", "mono_down",
-                  "lo_bound", "hi_bound"):
+                  "lo_bound", "hi_bound", "cpair_i", "cpair_j",
+                  "cpair_lo", "cpair_span"):
             t = getattr(self, a, None)
             if t is not None:
                 setattr(self, a, t.to(dev))
@@ -1081,6 +1242,39 @@ class RuleSet:
         if self.lo_bound is not None:
             nxt = torch.clamp(nxt, self.lo_bound.unsqueeze(0),
                               self.hi_bound.unsqueeze(0))
+        # v15.5 upgrade 1: enforce A+B = const for validated conservation pairs.
+        # Conservation is a COUNT identity, so convert the two species to counts,
+        # rescale so their sum matches the conserved level from prev, convert back.
+        if self.cpair_i is not None:
+            nxt = self._project_conservation_pairs(prev, nxt)
+        return nxt
+
+    def _project_conservation_pairs(self, prev, nxt):
+        # de-normalise the pair species to counts via stored lo/span (signed-log)
+        i, j = self.cpair_i, self.cpair_j
+        lo_i, lo_j     = self.cpair_lo[:, 0],   self.cpair_lo[:, 1]
+        span_i, span_j = self.cpair_span[:, 0], self.cpair_span[:, 1]
+
+        def to_count(x_norm, lo, span):
+            sl = x_norm * span + lo
+            return torch.sign(sl) * torch.expm1(torch.abs(sl))
+
+        def to_norm(cnt, lo, span):
+            sl = torch.sign(cnt) * torch.log1p(torch.abs(cnt))
+            return ((sl - lo) / span).clamp(CLAMP_LO, CLAMP_HI)
+
+        a_prev = to_count(prev[:, i], lo_i, span_i).clamp(min=0)
+        b_prev = to_count(prev[:, j], lo_j, span_j).clamp(min=0)
+        a_next = to_count(nxt[:, i],  lo_i, span_i).clamp(min=0)
+        b_next = to_count(nxt[:, j],  lo_j, span_j).clamp(min=0)
+        target_sum = a_prev + b_prev                          # conserved level
+        pred_sum   = (a_next + b_next).clamp(min=1e-6)
+        scale      = (target_sum / pred_sum).unsqueeze(0) if target_sum.dim() == 1 else target_sum / pred_sum
+        a_fix = a_next * (target_sum / pred_sum)
+        b_fix = b_next * (target_sum / pred_sum)
+        nxt = nxt.clone()
+        nxt[:, i] = to_norm(a_fix, lo_i, span_i).to(nxt.dtype)
+        nxt[:, j] = to_norm(b_fix, lo_j, span_j).to(nxt.dtype)
         return nxt
 
     def summary(self):
@@ -1088,7 +1282,7 @@ class RuleSet:
         nd = int(self.mono_down_mask.sum()) if self.mono_down_mask is not None else 0
         nb = "yes" if self.lo_bound is not None else "no"
         return (f"Tier 1 RuleSet: {nu} monotone-up + {nd} monotone-down + "
-                f"per-species bounds ({nb})  "
+                f"per-species bounds ({nb}) + {self.n_cpair} conservation-pairs  "
                 f"[provenance: {self.n_seed} seed, {self.n_sbml} SBML-backed, "
                 f"{self.n_empirical} trajectory-only]")
 
@@ -1235,9 +1429,13 @@ class Hypotheses:
         return total, per_kind
 
 
-def build_enforcement(known, patterns, species_names):
+def build_enforcement(known, patterns, species_names, lo=None, span=None):
     """Sort the validated subset of KnownRules+DiscoveredPatterns into Tier 1.
     Everything else (failed monotone, all conservation/pairwise/etc.) -> Tier 2.
+
+    v15.5: validated conservation pairs (A+B=const) become HARD Tier-1
+    constraints when lo/span are provided (needed to convert between normalised
+    and count space).
 
     Returns (RuleSet, Hypotheses).
     """
@@ -1317,12 +1515,45 @@ def build_enforcement(known, patterns, species_names):
                 1.0 / (1.0 + info["std_lag"]),
                 "trajectory")
 
+    # ── v15.5 upgrade 1: conservation pairs → HARD Tier-1 constraints ──
+    cpairs = getattr(patterns, "conservation_pairs", [])
+    if cpairs and lo is not None and span is not None:
+        ci, cj, c_lo, c_span = [], [], [], []
+        for cp in cpairs:
+            i, j = cp["i"], cp["j"]
+            ci.append(i); cj.append(j)
+            c_lo.append([float(lo[i]), float(lo[j])])
+            c_span.append([float(span[i]), float(span[j])])
+        rs.cpair_i    = torch.tensor(ci, dtype=torch.long)
+        rs.cpair_j    = torch.tensor(cj, dtype=torch.long)
+        rs.cpair_lo   = torch.tensor(c_lo,   dtype=torch.float32)
+        rs.cpair_span = torch.tensor(c_span, dtype=torch.float32).clamp(min=1e-6)
+        rs.n_cpair    = len(cpairs)
+        for cp in cpairs[:12]:
+            print(f"[rules]   conserved pair: '{species_names[cp['i']]}' + "
+                  f"'{species_names[cp['j']]}' = {cp['sum_level']:.1f} "
+                  f"(cv_val {cp['cv_val']*100:.2f}%)")
+    elif cpairs:
+        # No lo/span → can't build the count-space projection; report as Tier 2.
+        for cp in cpairs:
+            hyp.add("conservation-pair",
+                    f"'{species_names[cp['i']]}' + '{species_names[cp['j']]}' "
+                    f"= {cp['sum_level']:.1f} (cv {cp['cv_val']*100:.2f}%)",
+                    1.0 / (1.0 + cp["cv_val"]), "conspair")
+
+    # ── v15.5 upgrade 3a: nonlinear MI couplings → Tier 2 (reported) ──
+    for (i, j, mi, ac) in getattr(patterns, "mutual_info", [])[:12]:
+        hyp.add("nonlinear-MI",
+                f"'{species_names[i]}' ~ '{species_names[j]}' "
+                f"(MI={mi:.3f} nats, |corr|={ac:.2f})",
+                mi, "mutual-info")
+
     for i in seed_up - val_up:
         print(f"[rules] WARNING: seed monotone '{species_names[i]}' failed validation "
               f"({patterns.up_frac_va[i]*100:.2f}%) - moved to Tier 2")
 
     print(f"[rules] Tier 1: {len(val_up)} mono-up, {len(val_down)} mono-down, "
-          f"{int(ok.sum())}/{S} bounded")
+          f"{int(ok.sum())}/{S} bounded, {rs.n_cpair} conserved-pairs")
     print(f"[rules] Tier 2: {len(hyp.items)} hypotheses (reported, not enforced)")
     return rs, hyp
 
@@ -1407,6 +1638,16 @@ def phd_summary(known, patterns, ruleset, hyp, cross, species_names):
             c = cross["complex_tracking"]
             print(f"    Complex subunit tracking: {c['n_tracked']}/{c['n_total']} "
                   "complexes have all subunits in the trajectory")
+    # v15.5 upgrade 2: lens-composition — connecting the dots across lenses
+    central = getattr(patterns, "central_species", {})
+    if central:
+        print()
+        print("Lens composition (species flagged by multiple lenses — "
+              "mechanistically central):")
+        ranked = sorted(central.items(), key=lambda kv: -len(kv[1]))[:12]
+        for idx, lenses in ranked:
+            print(f"    {species_names[idx]:24s}  {len(lenses)} lenses: "
+                  f"{', '.join(lenses)}")
     print()
     print(ruleset.summary())
     print()
@@ -4677,7 +4918,8 @@ def main():
         lo=lo, span=span)
 
     # ── sort into Tier 1 (enforced) + Tier 2 (reported) ──────────────────
-    ruleset, hyp = build_enforcement(known, patterns, species_active)
+    ruleset, hyp = build_enforcement(known, patterns, species_active,
+                                     lo=lo, span=span)
     ruleset = ruleset.to(device)
     # v13.8: compile Tier-2 items into soft-loss tensors for training
     hyp.build_tensors(X[train_idx], device=device)
