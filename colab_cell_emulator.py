@@ -3396,10 +3396,12 @@ def print_ceiling_report(c, current_rollout_r2=None, current_honest_r2=None):
             verdict = ("REAL HEADROOM — deterministic R² can improve substantially.\n"
                        "    Calibration + horizon fixes are worth pursuing.")
         print(f"  Verdict: {verdict}")
-    if current_rollout_r2 is not None:
-        ratio = current_rollout_r2 / max(c['r2_ceil_median_top_k'], 1e-6)
-        print(f"\n  Current mean rollout R² = {current_rollout_r2:.3f}")
-        print(f"  Fraction of ceiling captured = {ratio:.1%}")
+        # v15.4 B1 fix: compare like-with-like — honest top-K R² vs top-K ceiling
+        # (the old "fraction captured" line compared all-species mean-R² to the
+        #  top-K ceiling — incoherent denominators, gave nonsense like 113%).
+        frac = current_honest_r2 / max(c['r2_ceil_median_top_k'], 1e-6)
+        print(f"  Fraction of ceiling captured (top-{c['top_k']}, like-for-like) = "
+              f"{frac:.1%}")
 
 
 # ── v15.3 step 5: post-hoc σ-head recalibration + stochastic rollout ─────────
