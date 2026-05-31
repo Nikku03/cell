@@ -186,6 +186,14 @@ CONSPAIR_ANTICORR   = -0.90        # only test anti-correlated pairs (r < this) 
 MI_LENS_TOP_K       = 30           # nonlinear lens: top-K mutual-information pairs to report
 MI_LENS_BINS        = 8            # histogram bins for the MI estimate
 COMPOSE_MIN_LENSES  = 2            # lens-composition: a species flagged by ≥ this many lenses is "mechanistically central"
+# v15.7 Move B: deeper pattern lenses
+GRANGER_TOP_K       = 20           # Granger-causality lens: top directed pairs to report
+GRANGER_MAX_LAG     = 3            # AR lag order for the Granger test
+NTUPLE_MAX_TERMS    = 3            # stoichiometric N-tuple conservation: search up to this many species
+NTUPLE_TOP_K        = 20           # max N-tuples to report
+REGIME_N_PHASES     = 3            # regime-conditional lens: split cycle into this many phases
+MI_CORR_CEIL        = 0.7          # v15.7 fix: MI lens only keeps pairs with |corr| < this (genuinely nonlinear)
+CONSPAIR_MEAN_FLOOR = 0.5          # v15.7 fix: was 1.0 — catch single-copy gene pairs that flicker during replication
 LGNN_HIDDEN         = 64           # v14.9: bumped 32 → 64 to attack mode collapse (capacity-limited)
 LGNN_N_LAYERS       = 3            # NEW v8: number of CfC graph layers
 LGNN_CFC_TAU_MIN    = 0.1          # NEW v8: CfC time-constant minimum
@@ -1068,7 +1076,7 @@ def lens_conservation_pairs(tr_counts, va_counts, species_names,
         s_tr = Xtr[:, i] + Xtr[:, j]
         s_va = Xva[:, i] + Xva[:, j]
         m_tr = s_tr.mean()
-        if m_tr < 1.0:                       # ignore near-zero pools
+        if m_tr < CONSPAIR_MEAN_FLOOR:       # v15.7: was 1.0 — catch flickering single-copy genes
             continue
         cv_tr = s_tr.std() / (abs(m_tr) + 1e-9)
         cv_va = s_va.std() / (abs(s_va.mean()) + 1e-9)
@@ -1123,12 +1131,159 @@ def lens_mutual_information(tr, top_k=MI_LENS_TOP_K, bins=MI_LENS_BINS):
             pj = np.histogram2d(xa, xb, bins=bins)[0] / n
             pa = pj.sum(axis=1, keepdims=True)
             pb = pj.sum(axis=0, keepdims=True)
+            ac = float(Ck[a, b])
+            if ac >= MI_CORR_CEIL:        # v15.7: skip linearly-coupled pairs — keep only genuinely nonlinear
+                continue
             nz = pj > 0
             mi = float((pj[nz] * np.log(pj[nz] / (pa @ pb)[nz] + 1e-12)).sum())
-            results.append((int(keep[a]), int(keep[b]), mi, float(Ck[a, b])))
-    # rank by MI-but-not-linear: high MI, low |corr|
-    results.sort(key=lambda r: -(r[2] - r[3]))
+            results.append((int(keep[a]), int(keep[b]), mi, ac))
+    # rank by MI (already filtered to |corr| < ceil, so these are nonlinear-only)
+    results.sort(key=lambda r: -r[2])
     return results[:top_k]
+
+
+def lens_granger(tr, species_names, top_k=GRANGER_TOP_K, max_lag=GRANGER_MAX_LAG):
+    """v15.7 Move B: directed causality via pairwise Granger test on the most-
+    variable species.  A 'Granger-causes' B if past(A) improves the AR
+    prediction of B beyond past(B) alone.  Reports directed pairs ranked by the
+    variance-reduction ratio (how much A's history cuts B's residual variance).
+
+    Distinct from lens_gene_chain (fixed G->R->P chain, cross-correlation only):
+    this is data-driven *direction* discovery across arbitrary species pairs.
+    """
+    n_tr, T, S = tr.shape
+    # mean trajectory per species (Granger on the ensemble-mean dynamics)
+    x = tr.mean(axis=0).astype(np.float64)                 # (T, S)
+    var = x.var(axis=0)
+    keep = np.argsort(-var)[:min(60, S)]                   # tractable subset
+    xs = x[:, keep]
+    L = max_lag
+    if T - L < 8:
+        return []
+
+    def _resid_var(target_col, predictor_cols):
+        # AR(L) regression of target on lagged predictors; return residual variance
+        y = xs[L:, target_col]
+        feats = []
+        for c in predictor_cols:
+            for lag in range(1, L + 1):
+                feats.append(xs[L - lag:T - lag, c])
+        A = np.column_stack(feats + [np.ones(len(y))])
+        try:
+            coef, *_ = np.linalg.lstsq(A, y, rcond=None)
+            return float(((y - A @ coef) ** 2).mean())
+        except Exception:
+            return float(y.var())
+
+    out = []
+    for bi, b in enumerate(keep):
+        rv_self = _resid_var(bi, [bi])
+        if rv_self < 1e-12:
+            continue
+        for ai, a in enumerate(keep):
+            if ai == bi:
+                continue
+            rv_both = _resid_var(bi, [bi, ai])
+            ratio = 1.0 - rv_both / rv_self          # fraction of B's residual var A explains
+            if ratio > 0.05:
+                out.append((int(a), int(b), float(ratio)))
+    out.sort(key=lambda r: -r[2])
+    return out[:top_k]
+
+
+def lens_ntuple_conservation(tr_counts, va_counts, species_names,
+                              max_terms=NTUPLE_MAX_TERMS, top_k=NTUPLE_TOP_K,
+                              cv_max=CONSPAIR_CV_MAX):
+    """v15.7 Move B: search for N-way conserved sums (A+B+C = const), the
+    generalisation of the pairwise conservation lens.  Restricted to the
+    most-variable species and built greedily: start from a high-variance seed,
+    add the species that most reduces the running-sum's coefficient of
+    variation, stop at max_terms or when CV < cv_max.
+
+    Returns validated N-tuples (CV < cv_max on BOTH train and val)."""
+    n_tr, T, S = tr_counts.shape
+    Xtr = tr_counts.reshape(-1, S).astype(np.float64)
+    Xva = va_counts.reshape(-1, S).astype(np.float64)
+    var = Xtr.var(axis=0)
+    seeds = np.argsort(-var)[:min(40, S)]                  # only seed from high-variance species
+    out, used = [], set()
+    for seed in seeds:
+        if seed in used or var[seed] < 1e-9:
+            continue
+        members = [int(seed)]
+        s_tr = Xtr[:, seed].copy()
+        for _ in range(max_terms - 1):
+            best_j, best_cv = None, np.inf
+            cand = np.argsort(-var)[:min(60, S)]
+            for j in cand:
+                if j in members:
+                    continue
+                trial = s_tr + Xtr[:, j]
+                mt = trial.mean()
+                if mt < CONSPAIR_MEAN_FLOOR:
+                    continue
+                cv = trial.std() / (abs(mt) + 1e-9)
+                if cv < best_cv:
+                    best_cv, best_j = cv, int(j)
+            if best_j is None:
+                break
+            members.append(best_j)
+            s_tr = s_tr + Xtr[:, best_j]
+            if best_cv < cv_max:
+                break
+        if len(members) >= 2:
+            sv = Xva[:, members].sum(axis=1)
+            cv_tr = s_tr.std() / (abs(s_tr.mean()) + 1e-9)
+            cv_va = sv.std() / (abs(sv.mean()) + 1e-9)
+            if cv_tr < cv_max and cv_va < cv_max and len(members) >= 3:
+                out.append({"members": members, "sum_level": float(s_tr.mean()),
+                            "cv_train": float(cv_tr), "cv_val": float(cv_va)})
+                used.update(members)
+    out.sort(key=lambda d: d["cv_val"])
+    return out[:top_k]
+
+
+def lens_regime_conditional(tr, species_names, n_phases=REGIME_N_PHASES,
+                              top_k=PAIRWISE_TOP_K, threshold=PAIRWISE_THRESHOLD):
+    """v15.7 Move B: pairwise couplings that exist in ONE cell-cycle phase but
+    not others.  Splits each trajectory into n_phases time-segments, computes
+    Δ-correlation per phase, and reports pairs whose correlation swings by more
+    than `threshold` between phases — regime-dependent structure the global
+    pairwise lens averages away.
+
+    Returns list of (i, j, phase_of_max, corr_range)."""
+    n_tr, T, S = tr.shape
+    seg = T // n_phases
+    if seg < 3:
+        return []
+    var = np.diff(tr, axis=1).reshape(-1, S).var(axis=0)
+    keep = np.argsort(-var)[:min(80, S)]
+    phase_corr = []                                          # (n_phases, k, k)
+    for p in range(n_phases):
+        sl = tr[:, p * seg:(p + 1) * seg, :]
+        d = np.diff(sl, axis=1).reshape(-1, S)[:, keep].astype(np.float64)
+        sd = d.std(axis=0) + 1e-12
+        Z = (d - d.mean(axis=0)) / sd
+        phase_corr.append((Z.T @ Z) / d.shape[0])
+    phase_corr = np.stack(phase_corr)                        # (P, k, k)
+    rng = phase_corr.max(axis=0) - phase_corr.min(axis=0)    # (k, k) swing
+    np.fill_diagonal(rng, 0.0)
+    out, seen = [], set()
+    flat = np.argsort(-rng.ravel())
+    K = len(keep)
+    for fi in flat[:top_k * 6]:
+        a, b = fi // K, fi % K
+        if a >= b or (a, b) in seen:
+            continue
+        seen.add((a, b))
+        swing = float(rng[a, b])
+        if swing < threshold:
+            break
+        pmax = int(np.argmax(np.abs(phase_corr[:, a, b])))
+        out.append((int(keep[a]), int(keep[b]), pmax, swing))
+        if len(out) >= top_k:
+            break
+    return out
 
 
 class DiscoveredPatterns:
@@ -1151,6 +1306,10 @@ class DiscoveredPatterns:
         self.conservation_pairs = []   # upgrade 1: validated A+B=const pairs
         self.mutual_info        = []   # upgrade 3a: nonlinear couplings
         self.central_species    = {}   # upgrade 2: species → which lenses flagged it
+        # v15.7 Move B: deeper lenses
+        self.granger            = []   # directed causality (a, b, ratio)
+        self.ntuples            = []   # N-way conservation A+B+C=const
+        self.regime_pairs       = []   # phase-dependent couplings
 
     @classmethod
     def from_trajectories(cls, train_X, val_X, train_counts, val_counts, species_names,
@@ -1179,6 +1338,13 @@ class DiscoveredPatterns:
         # v15.5 upgrade 3a: nonlinear mutual-information lens
         print("[patterns] nonlinear mutual-information lens ...")
         p.mutual_info = lens_mutual_information(tr)
+        # v15.7 Move B: deeper lenses
+        print("[patterns] Granger-causality lens ...")
+        p.granger = lens_granger(tr, species_names)
+        print("[patterns] N-tuple conservation lens (A+B+C=const) ...")
+        p.ntuples = lens_ntuple_conservation(train_counts, val_counts, species_names)
+        print("[patterns] regime-conditional lens (phase-dependent couplings) ...")
+        p.regime_pairs = lens_regime_conditional(tr, species_names)
         # v15.5 upgrade 2: lens composition — connect the dots across lenses
         print("[patterns] lens-composition (connecting the dots) ...")
         p.central_species = p._compose_lenses(species_names)
@@ -1203,6 +1369,13 @@ class DiscoveredPatterns:
             flags[i].add("periodic")
         for (i, j, _mi, _c) in self.mutual_info:
             flags[i].add("nonlinear-MI"); flags[j].add("nonlinear-MI")
+        for (a, b, _r) in self.granger:
+            flags[a].add("granger-cause"); flags[b].add("granger-effect")
+        for nt in self.ntuples:
+            for idx in nt["members"]:
+                flags[idx].add("ntuple-conservation")
+        for (a, b, _p, _s) in self.regime_pairs:
+            flags[a].add("regime-dependent"); flags[b].add("regime-dependent")
         # keep only multiply-flagged species
         central = {idx: sorted(s) for idx, s in flags.items()
                    if len(s) >= COMPOSE_MIN_LENSES}
@@ -1226,6 +1399,12 @@ class DiscoveredPatterns:
             f"(v15.5 mutual-information lens)",
             f"    Mechanistically-central spp : {len(self.central_species)}  "
             f"(v15.5 lens-composition — flagged by ≥{COMPOSE_MIN_LENSES} lenses)",
+            f"    Granger directed pairs      : {len(self.granger)}  "
+            f"(v15.7 causality lens)",
+            f"    N-tuple conservation        : {len(self.ntuples)}  "
+            f"(v15.7 — A+B+C=const)",
+            f"    Regime-dependent couplings  : {len(self.regime_pairs)}  "
+            f"(v15.7 phase-conditional lens)",
         ])
 
 
@@ -1569,6 +1748,20 @@ def build_enforcement(known, patterns, species_names, lo=None, span=None):
                 f"'{species_names[i]}' ~ '{species_names[j]}' "
                 f"(MI={mi:.3f} nats, |corr|={ac:.2f})",
                 mi, "mutual-info")
+    # v15.7 Move B: report deeper-lens findings as Tier 2
+    for (a, b, ratio) in getattr(patterns, "granger", [])[:12]:
+        hyp.add("granger-cause",
+                f"'{species_names[a]}' → '{species_names[b]}' "
+                f"(resid-var cut {ratio*100:.0f}%)", ratio, "granger")
+    for nt in getattr(patterns, "ntuples", [])[:8]:
+        names = " + ".join(species_names[m] for m in nt["members"])
+        hyp.add("ntuple-conservation",
+                f"{names} = {nt['sum_level']:.1f} (cv {nt['cv_val']*100:.2f}%)",
+                1.0 / (1.0 + nt["cv_val"]), "ntuple")
+    for (a, b, pmax, swing) in getattr(patterns, "regime_pairs", [])[:8]:
+        hyp.add("regime-coupling",
+                f"'{species_names[a]}' ~ '{species_names[b]}' "
+                f"(phase {pmax}, corr swing {swing:.2f})", swing, "regime")
 
     for i in seed_up - val_up:
         print(f"[rules] WARNING: seed monotone '{species_names[i]}' failed validation "
