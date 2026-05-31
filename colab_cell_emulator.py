@@ -240,12 +240,15 @@ USE_STOCHASTIC_ROLLOUT_EVAL = True
 # real-experiment data the simulator was never validated against per-gene. We've
 # been scoring against it (KO MCC at eval); now we LEARN from it.
 USE_BREUER_LOSS         = True
-LAMBDA_BREUER           = 0.05    # weight on KO-consistency hinge loss
+# v15.7.1: bumped from v15.6 defaults (which gave breuer EMA pinned at margin
+# floor — zero gradient flow). Diagnostic showed impact range 2e-4 to 3e-3,
+# so the old margin 1e-4 was satisfied trivially at random init.
+LAMBDA_BREUER           = 0.20    # was 0.05 — bigger so it competes with main NLL (~-1.5)
 BREUER_LOSS_START_FRAC  = 0.5     # activate after this fraction of STEPS (latter half)
 BREUER_LOSS_EVERY       = 5       # run every N training steps (amortise the extra rollouts)
-BREUER_HORIZON          = 10      # KO sub-rollout length (steps)
-BREUER_KO_PER_LABEL     = 2       # essential + nonessential genes per consistency batch
-BREUER_MARGIN           = 1e-4    # margin: E impact must exceed NE impact by at least this
+BREUER_HORIZON          = 15      # was 10 — give KO effect more time to develop
+BREUER_KO_PER_LABEL     = 3       # was 2 — more samples per call for less noise
+BREUER_MARGIN           = 5e-3    # was 1e-4 — above typical-impact floor so hinge bites
 
 # v15.7 Move A: training-signal upgrades (close the measurement→training loop)
 USE_MULTITASK_LOSS  = True        # A1: aux MSE on derived totals (lipid/ATP/ribosome/ori/ter/protein)
@@ -713,6 +716,25 @@ def parse_gibbs(path):
     """
     if not HAS_PANDAS:
         return {}
+    # v15.7.1: gibbs.csv is user-produced (eQuilibrator) and easy to lose between
+    # Colab sessions.  If not at the primary path, fall back to a Drive-wide glob
+    # — finding it anywhere on Drive is way better than silently losing 194
+    # ΔG° values (which collapses MetabolismCore from 115 → 92 wired reactions
+    # and disables the entire TUR diagnostic).
+    import glob as _glob, os as _os
+    if not _os.path.exists(path):
+        for cand_glob in ("/content/drive/MyDrive/**/gibbs.csv",
+                          "/content/**/gibbs.csv",
+                          "/content/cell/**/gibbs.csv"):
+            hits = _glob.glob(cand_glob, recursive=True)
+            if hits:
+                path = hits[0]
+                print(f"[gibbs] primary path missing — recovered from {path}")
+                break
+        else:
+            print(f"[gibbs] ⚠ NOT FOUND at {path} or anywhere on Drive — "
+                  f"ΔG° clamps + TUR diagnostic disabled (MetabolismCore will be "
+                  f"weaker; expect 20-30% fewer wired reactions)")
     try:
         df = pd.read_csv(path)
         rxn_col = next((c for c in df.columns
@@ -4734,10 +4756,19 @@ def friedlin_wentzell_action(predicted_trajs, upstream_trajs, dt,
     a_k = a_t[:, top_idx]
 
     def _action(trajs):
-        delta = (trajs[:, 1:] - trajs[:, :-1])[:, :, top_idx]     # (n, T-1, K)
-        resid = delta - b_k.unsqueeze(0) * float(dt)              # (n, T-1, K)
+        delta = (trajs[:, 1:] - trajs[:, :-1])[:, :, top_idx]     # (n, L-1, K)
+        # v15.7.1 fix (my v15.4 [1/6] commit lied — Edit failed silently):
+        # fit set (train_X length T_fit) and eval set (rollout length T_fit-1)
+        # differ by one step, so b_k/a_k (length T_fit-1) and delta (length L-1)
+        # mismatch on the time axis. Align both to the shorter dimension.
+        n_t = delta.shape[1]
+        m = min(n_t, b_k.shape[0])
+        d_m = delta[:, :m]                                        # (n, m, K)
+        b_m = b_k[:m].unsqueeze(0)                                # (1, m, K)
+        a_m = a_k[:m].unsqueeze(0)                                # (1, m, K)
+        resid = d_m - b_m * float(dt)
         # Per-step action contribution: resid² / (A · dt)
-        return (resid.pow(2) / (a_k.unsqueeze(0) * float(dt))).sum(dim=(1, 2))
+        return (resid.pow(2) / (a_m * float(dt))).sum(dim=(1, 2))
 
     action_pred = _action(predicted_trajs)
     action_up   = _action(upstream_trajs)
