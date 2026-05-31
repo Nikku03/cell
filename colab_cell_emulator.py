@@ -226,6 +226,19 @@ SAMPLE_NOISE_SCALE  = 0.0          # v14.8: DISABLED — was the main cause of v
 # typically slightly lower for stochastic rollout — that's expected.
 USE_STOCHASTIC_ROLLOUT_EVAL = True
 
+# v15.6: Breuer-as-training-signal — pairwise hinge loss on KO impact magnitudes.
+# Trains the model so essential-gene KOs produce LARGER trajectory deviation than
+# nonessential-gene KOs. This is the "past the simulator" move — Breuer 2019 is
+# real-experiment data the simulator was never validated against per-gene. We've
+# been scoring against it (KO MCC at eval); now we LEARN from it.
+USE_BREUER_LOSS         = True
+LAMBDA_BREUER           = 0.05    # weight on KO-consistency hinge loss
+BREUER_LOSS_START_FRAC  = 0.5     # activate after this fraction of STEPS (latter half)
+BREUER_LOSS_EVERY       = 5       # run every N training steps (amortise the extra rollouts)
+BREUER_HORIZON          = 10      # KO sub-rollout length (steps)
+BREUER_KO_PER_LABEL     = 2       # essential + nonessential genes per consistency batch
+BREUER_MARGIN           = 1e-4    # margin: E impact must exceed NE impact by at least this
+
 # v15.1: refinement-pass training in the last 10% of steps.  Attacks the
 # rollout-vs-1step gap (v15.0: 1-step R²=0.814, rollout R²=0.586, 0.22 lost to
 # compounding error).  Mechanism: after computing pred at step k, do an EXTRA
@@ -3143,9 +3156,100 @@ def variance_weighted_r2(pred, true, top_k=VAR_R2_TOP_K):
     return float(np.median(r2_list)), len(r2_list)
 
 
+# ── v15.6: Breuer-as-training-signal helpers ────────────────────────────────
+
+def build_breuer_helpers(species_names, breuer_labels):
+    """Build the per-gene species map and the E/NE locus lists used by the
+    Breuer-consistency loss.
+
+    Returns:
+      gene_species: {locus_key: [species_indices]} — G/R/P/RP species per gene
+      e_loci:  list of locus keys labelled Essential  (strict — Quasi excluded)
+      ne_loci: list of locus keys labelled Nonessential
+    """
+    from collections import defaultdict
+    gene_species = defaultdict(list)
+    for i, name in enumerate(species_names):
+        pre, loc = parse_species(name)
+        if pre in {"P", "R", "RP", "G"}:
+            key = _locus_key(loc)
+            if key:
+                gene_species[key].append(i)
+    e_loci, ne_loci = [], []
+    for locus, label in breuer_labels.items():
+        if locus not in gene_species:
+            continue
+        s = str(label).strip().lower()
+        if s.startswith("nonessential") or s == "ne" or s == "non-essential":
+            ne_loci.append(locus)
+        elif s == "essential" or s == "e":          # strict — skip Quasi as ambiguous
+            e_loci.append(locus)
+    return dict(gene_species), e_loci, ne_loci
+
+
+def breuer_consistency_loss(model, seed_state, gene_species, e_loci, ne_loci,
+                              horizon, n_per_label, margin, rng):
+    """v15.6: pairwise hinge loss on KO impact magnitudes vs Breuer 2019 labels.
+
+    Samples n_per_label essential and n_per_label nonessential genes.  For each,
+    runs a baseline rollout and a KO rollout of `horizon` steps from the same
+    seed state, measures the squared deviation at the final step, and computes a
+    pairwise hinge: every essential impact should exceed every nonessential
+    impact by `margin`.
+
+    Differentiable end-to-end through model forwards.  KOs use CLAMP_LO as the
+    knocked-out floor (same convention as the eval KO sweep — same _ko_rollout
+    semantics) and are re-applied at every step so the perturbation persists.
+
+    Returns scalar loss tensor (autograd-tracked), or None if labels missing
+    or sampled genes had no associated species.
+    """
+    if len(e_loci) < n_per_label or len(ne_loci) < n_per_label:
+        return None
+    e_sample  = list(rng.choice(e_loci,  size=n_per_label, replace=False))
+    ne_sample = list(rng.choice(ne_loci, size=n_per_label, replace=False))
+
+    B, S = seed_state.shape
+    device = seed_state.device
+
+    def _rollout(start, ko_idx_t):
+        cur = start
+        if ko_idx_t is not None:
+            mask = torch.zeros(B, S, dtype=torch.bool, device=device)
+            mask[:, ko_idx_t] = True
+            cur = torch.where(mask, torch.full_like(cur, CLAMP_LO), cur)
+        for _ in range(horizon):
+            out  = model(cur)
+            pred = out[0] if isinstance(out, tuple) else out
+            cur  = pred.clamp(CLAMP_LO, CLAMP_HI)
+            if ko_idx_t is not None:
+                cur = torch.where(mask, torch.full_like(cur, CLAMP_LO), cur)
+        return cur
+
+    baseline_final = _rollout(seed_state, None)
+
+    def _impact(locus):
+        sp = gene_species.get(locus, [])
+        if not sp:
+            return None
+        ko_idx_t = torch.tensor(sp, dtype=torch.long, device=device)
+        ko_final = _rollout(seed_state, ko_idx_t)
+        return ((ko_final - baseline_final) ** 2).mean()
+
+    imp_e  = [v for v in (_impact(loc) for loc in e_sample)  if v is not None]
+    imp_ne = [v for v in (_impact(loc) for loc in ne_sample) if v is not None]
+    if not imp_e or not imp_ne:
+        return None
+    imp_e_t  = torch.stack(imp_e)               # (n_E,)
+    imp_ne_t = torch.stack(imp_ne)              # (n_NE,)
+    # Pairwise hinge: every NE - E + margin should be <= 0
+    pairs = imp_ne_t.unsqueeze(0) - imp_e_t.unsqueeze(1) + margin
+    return F.relu(pairs).mean()
+
+
 # ── training / eval ───────────────────────────────────────────────────────────
 
-def train_model(model, train_X, ruleset, hyp=None):
+def train_model(model, train_X, ruleset, hyp=None, breuer=None):
     """v12 LGNN trainer with truncated BPTT + optional BF16 autocast.
 
     Truncated BPTT (TBPTT): rolls forward K steps but backward only flows
@@ -3187,6 +3291,11 @@ def train_model(model, train_X, ruleset, hyp=None):
     # Computed per-step inside the rollout loop based on `step`.
     refine_start_step = int(STEPS * REFINE_START_FRAC) if USE_REFINEMENT else STEPS + 1
     refine_ema = 0.0
+    # v15.6: Breuer-as-training-signal — pairwise hinge on KO impact magnitudes.
+    use_breuer       = USE_BREUER_LOSS and breuer is not None and breuer.get("e_loci") and breuer.get("ne_loci")
+    breuer_start_step = int(STEPS * BREUER_LOSS_START_FRAC) if use_breuer else STEPS + 1
+    breuer_rng       = np.random.RandomState(SEED + 8) if use_breuer else None
+    breuer_ema       = 0.0
 
     def _autocast():
         if USE_BF16 and device == "cuda":
@@ -3204,7 +3313,8 @@ def train_model(model, train_X, ruleset, hyp=None):
           f"atp_ledger: {'ON floor=' + str(int(ATP_MAINTENANCE_RATE)) if use_atp_ledger else 'off'}, "
           f"sigma_anchor: {'ON λ=' + str(LAMBDA_SIGMA_ANCHOR) if use_sigma_anchor else 'off'}, "
           f"temporal_ctx: {'ON W=' + str(t_ctx_window) if use_temporal_ctx else 'off'}, "
-          f"refine: {'ON @step ' + str(refine_start_step) + ' λ=' + str(LAMBDA_REFINE) if USE_REFINEMENT else 'off'}")
+          f"refine: {'ON @step ' + str(refine_start_step) + ' λ=' + str(LAMBDA_REFINE) if USE_REFINEMENT else 'off'}, "
+          f"breuer: {'ON @step ' + str(breuer_start_step) + ' λ=' + str(LAMBDA_BREUER) + ' E=' + str(len(breuer['e_loci'])) + ' NE=' + str(len(breuer['ne_loci'])) if use_breuer else 'off'}")
     hyp_ema = {}    # v13.8: per-kind running average across training (promotion signal)
 
     for step in range(STEPS):
@@ -3357,6 +3467,24 @@ def train_model(model, train_X, ruleset, hyp=None):
                 if use_temporal_ctx:
                     state_history = state_history.detach()
 
+        # v15.6: Breuer-as-training-signal — pairwise hinge on KO impacts.
+        # Independent forward graph; backward accumulates grads onto the
+        # already-summed main-rollout grads, then opt.step() applies both.
+        if use_breuer and step >= breuer_start_step and (step % BREUER_LOSS_EVERY == 0):
+            # Reuse the same batch's first trajectory as the breuer seed (cheap; correct device).
+            breuer_seed = train_X[i_d[:1], t0_d[:1]]                     # (1, S)
+            with _autocast():
+                bl = breuer_consistency_loss(
+                    model, breuer_seed,
+                    gene_species=breuer["gene_species"],
+                    e_loci=breuer["e_loci"], ne_loci=breuer["ne_loci"],
+                    horizon=BREUER_HORIZON, n_per_label=BREUER_KO_PER_LABEL,
+                    margin=BREUER_MARGIN, rng=breuer_rng,
+                )
+            if bl is not None:
+                (LAMBDA_BREUER * bl).backward()
+                breuer_ema = 0.99 * breuer_ema + 0.01 * float(bl.detach())
+
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         opt.step()
         sched.step()
@@ -3370,10 +3498,12 @@ def train_model(model, train_X, ruleset, hyp=None):
             sigma_str = f"  log σ={sigma_ema:+.2f}" if use_sigma_anchor else ""
             refine_str = (f"  refine={refine_ema:.5f}"
                           if USE_REFINEMENT and step >= refine_start_step else "")
+            breuer_str = (f"  breuer={breuer_ema:.5f}"
+                          if use_breuer and step >= breuer_start_step else "")
             print(f"  step {step+1:5d}  K={K:4d}  "
                   f"1-step {float(first_loss.detach()):.5f}  "
                   f"rollout {sum(all_loss_means)/len(all_loss_means):.5f}"
-                  f"{hyp_str}{atp_str}{sigma_str}{refine_str}", flush=True)
+                  f"{hyp_str}{atp_str}{sigma_str}{refine_str}{breuer_str}", flush=True)
 
         # v13.7: rolling mid-training checkpoint so an interrupt mid-run doesn't lose progress
         if (CHECKPOINT_EVERY > 0
@@ -5103,13 +5233,26 @@ def main():
         except Exception as e:
             print(f"[model] torch.compile failed ({e}) - running in eager mode")
 
+    # v15.6: pre-load Breuer + build helpers so train_model can use the
+    # KO-consistency loss (we already use breuer_labels in eval for KO MCC).
+    breuer_labels = load_breuer_essentiality(BREUER_PATH)
+    if USE_BREUER_LOSS and breuer_labels:
+        _gene_species, _e_loci, _ne_loci = build_breuer_helpers(species_active, breuer_labels)
+        breuer_data = {"gene_species": _gene_species,
+                       "e_loci": _e_loci, "ne_loci": _ne_loci}
+        print(f"[breuer] training signal: {len(_e_loci)} essential + "
+              f"{len(_ne_loci)} nonessential genes mapped to species")
+    else:
+        breuer_data = None
+
     hyp_violation_ema = {}
     if loaded_from_ckpt and SKIP_TRAINING_IF_LOADED:
         print("[train] SKIPPED — using loaded checkpoint as-is for evaluation")
     else:
         if loaded_from_ckpt:
             print("[train] continuing training from loaded checkpoint")
-        hyp_violation_ema = train_model(model, train_X, ruleset, hyp=hyp) or {}
+        hyp_violation_ema = train_model(model, train_X, ruleset,
+                                         hyp=hyp, breuer=breuer_data) or {}
 
     # ── evaluate ──────────────────────────────────────────────────────────
     print()
@@ -5335,7 +5478,7 @@ def main():
                  preds_batch=preds_batch, truth_batch=truth_batch)
 
     # ── v9: knockout sweep vs Breuer 2019 essentiality ───────────────────
-    breuer_labels = load_breuer_essentiality(BREUER_PATH)
+    # v15.6: breuer_labels was loaded earlier for the KO-consistency training loss
     ko = knockout_sweep(model, ruleset, test_X, species_active, breuer_labels)
     print_knockout_report(ko, breuer_labels)
 
