@@ -256,6 +256,12 @@ PER_CLASS_W_CEIL    = 5.0         # max weight for high-variance species
 USE_FW_TRAIN_LOSS   = False       # A5: Friedlin-Wentzell action as a (small) training loss — OFF by default (needs drift/diff buffers)
 LAMBDA_FW           = 0.01
 
+# v15.7 Move C: self-supervised pretraining (forces the graph layer to be used)
+USE_MASKED_PRETRAIN  = True       # C1: BERT-style masked-species prediction before main training
+MASK_PRETRAIN_STEPS  = 300        # pretraining steps (short — just to warm the graph)
+MASK_FRAC            = 0.20        # fraction of species masked per example
+MASK_PRETRAIN_LR     = 5e-4       # pretraining LR (higher than main; quick warmup)
+
 # v15.1: refinement-pass training in the last 10% of steps.  Attacks the
 # rollout-vs-1step gap (v15.0: 1-step R²=0.814, rollout R²=0.586, 0.22 lost to
 # compounding error).  Mechanism: after computing pred at step k, do an EXTRA
@@ -3492,6 +3498,63 @@ def build_per_class_weights(train_X, floor=PER_CLASS_W_FLOOR, ceil=PER_CLASS_W_C
     return w
 
 
+def masked_pretrain(model, train_X):
+    """v15.7 Move C1: BERT-style masked-species pretraining.
+
+    Randomly zero MASK_FRAC of species in the input and ask the model to
+    reconstruct the FULL current state (not the next step).  This forces the
+    graph layers to actually propagate information between species — a species
+    can only be reconstructed from its graph neighbours.  Pure self-supervision
+    on the same trajectories; runs before the main dynamics training to warm
+    the graph weights.
+
+    Reconstruction target is the input itself (x), so we read the model's
+    one-step prediction as a denoiser: with masked input, predict the clean
+    current state.  Uses the mean head only (ignores σ).
+    """
+    if not USE_MASKED_PRETRAIN or MASK_PRETRAIN_STEPS <= 0:
+        return
+    _inner = getattr(model, "_orig_mod", model)
+    opt = torch.optim.AdamW(model.parameters(), lr=MASK_PRETRAIN_LR,
+                            weight_decay=WEIGHT_DECAY)
+    gen = torch.Generator().manual_seed(SEED + 5)
+    N, T, S = train_X.shape
+    use_nll = getattr(model, "use_stochastic", False)
+    zero_norm = getattr(_inner, "zero_norm", None)
+    mask_fill = zero_norm if zero_norm is not None else torch.zeros(S, device=train_X.device)
+
+    def _autocast():
+        if USE_BF16 and device == "cuda":
+            return torch.autocast(device_type="cuda", dtype=torch.bfloat16)
+        return nullcontext()
+
+    model.train()
+    print(f"[pretrain] masked-species pretraining: {MASK_PRETRAIN_STEPS} steps, "
+          f"mask {MASK_FRAC:.0%}, lr {MASK_PRETRAIN_LR}")
+    t0 = time.time()
+    for step in range(MASK_PRETRAIN_STEPS):
+        i_t = torch.randint(0, N, (BATCH,), generator=gen)
+        t_t = torch.randint(0, T, (BATCH,), generator=gen)
+        clean = torch.stack([train_X[i_t[b], t_t[b]] for b in range(BATCH)]).to(device)
+        # mask: randomly select MASK_FRAC species per example, set to floor
+        mask = torch.rand(BATCH, S, device=device) < MASK_FRAC
+        masked_in = torch.where(mask, mask_fill.unsqueeze(0).to(clean.dtype), clean)
+        opt.zero_grad()
+        with _autocast():
+            out = model(masked_in)
+            pred = out[0] if use_nll else out
+            # reconstruct only the masked positions (where info had to flow via graph)
+            err = ((pred - clean) ** 2) * mask.to(pred.dtype)
+            loss = err.sum() / mask.to(pred.dtype).sum().clamp(min=1.0)
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        opt.step()
+        if step == 0 or (step + 1) % 100 == 0:
+            print(f"  [pretrain] step {step+1:4d}  masked-recon MSE {float(loss.detach()):.5f}",
+                  flush=True)
+    print(f"[pretrain] done in {time.time()-t0:.0f}s — graph warmed, starting dynamics training")
+
+
 # ── training / eval ───────────────────────────────────────────────────────────
 
 def train_model(model, train_X, ruleset, hyp=None, breuer=None,
@@ -5539,6 +5602,10 @@ def main():
     else:
         if loaded_from_ckpt:
             print("[train] continuing training from loaded checkpoint")
+        elif USE_MASKED_PRETRAIN:
+            # v15.7 Move C1: warm the graph with masked-species pretraining
+            # (only on a fresh model — skip when continuing from a checkpoint)
+            masked_pretrain(model, train_X)
         hyp_violation_ema = train_model(model, train_X, ruleset,
                                          hyp=hyp, breuer=breuer_data,
                                          multitask_groups=mt_groups,
