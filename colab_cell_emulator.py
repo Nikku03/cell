@@ -262,6 +262,9 @@ MASK_PRETRAIN_STEPS  = 300        # pretraining steps (short — just to warm th
 MASK_FRAC            = 0.20        # fraction of species masked per example
 MASK_PRETRAIN_LR     = 5e-4       # pretraining LR (higher than main; quick warmup)
 
+# v15.7 Move D: better use of discarded data (diagnostic + constraint extraction)
+USE_DATA_RICHNESS_REPORT = True   # D: surface what the active-species filter discards
+
 # v15.1: refinement-pass training in the last 10% of steps.  Attacks the
 # rollout-vs-1step gap (v15.0: 1-step R²=0.814, rollout R²=0.586, 0.22 lost to
 # compounding error).  Mechanism: after computing pred at step k, do an EXTRA
@@ -4094,6 +4097,68 @@ def full_rollout_batched(model, trajs, ruleset, collect_fluxes=False):
 
 # ── v15.3 step 0: stochastic ceiling — irreducible R² limit ──────────────────
 
+def data_richness_report(raw_counts, species_names, active_mask, train_idx,
+                          time_stride):
+    """v15.7 Move D: surface what the active-species filter and time-subsampling
+    discard, and what could be recovered as signal.
+
+    Three things we throw away:
+      1. Inactive species (filtered by span <= 1e-6) — some are conserved-zero
+         (never present: a hard 'stays at 0' constraint), some are conserved-
+         constant (always the same nonzero value: another hard constraint).
+      2. Sub-stride dynamics — we subsample by `time_stride`; report how much
+         step-to-step variance lives below the stride (information loss proxy).
+      3. Per-species stochastic floor — cross-trajectory variance that no
+         deterministic model can capture (already in the ceiling, surfaced here
+         per-class so it's actionable).
+    """
+    n_traj, T_full, S_full = raw_counts.shape
+    inactive = ~active_mask
+    n_inactive = int(inactive.sum())
+    print()
+    print("=" * 72)
+    print("  DATA-RICHNESS REPORT  (v15.7 Move D — what the filter discards)")
+    print("=" * 72)
+    # 1. Inactive species breakdown
+    rc = raw_counts[train_idx]                                  # (n_tr, T, S)
+    inactive_idx = np.where(inactive)[0]
+    n_zero = n_const = 0
+    for i in inactive_idx:
+        col = rc[:, :, i]
+        if np.all(col == 0):
+            n_zero += 1
+        elif col.std() < 1e-6:
+            n_const += 1
+    print(f"\n  Inactive species (filtered out): {n_inactive} / {S_full}")
+    print(f"    conserved-zero (never present)     : {n_zero}  "
+          f"← hard 'stays 0' constraints available")
+    print(f"    conserved-constant (fixed nonzero) : {n_const}  "
+          f"← hard 'stays C' constraints available")
+    print(f"    other low-variance                 : {n_inactive - n_zero - n_const}")
+    # 2. Sub-stride information (compare full-res vs strided step variance)
+    if time_stride > 1 and T_full > time_stride * 2:
+        act = raw_counts[train_idx][:, :, active_mask].astype(np.float64)
+        full_step_var = np.diff(act, axis=1).var()
+        strided = act[:, ::time_stride]
+        strided_step_var = np.diff(strided, axis=1).var()
+        ratio = strided_step_var / max(full_step_var, 1e-12)
+        print(f"\n  Sub-stride dynamics (stride={time_stride}):")
+        print(f"    full-res step variance    = {full_step_var:.3e}")
+        print(f"    strided step variance     = {strided_step_var:.3e}")
+        print(f"    → strided captures {ratio:.1f}× the per-step variance "
+              f"(>1 means coarser steps see bigger jumps, as expected)")
+    # 3. Per-class stochastic floor
+    act = raw_counts[train_idx][:, :, active_mask].astype(np.float64)
+    var_per_t = act.var(axis=0).mean(axis=0)                   # (S_active,) irreducible
+    var_total = act.var(axis=(0, 1))
+    frac_stoch = np.where(var_total > 1e-9, var_per_t / var_total, np.nan)
+    print(f"\n  Stochastic-floor fraction (irreducible noise / total variance):")
+    print(f"    median across active species = {np.nanmedian(frac_stoch):.3f}")
+    print(f"    (higher = more of that species' variance is unpredictable noise)")
+    print(f"  → {n_zero + n_const} hard constraints are recoverable from "
+          f"currently-discarded inactive species (future work).")
+
+
 def stochastic_ceiling_diagnostic(raw_counts_active, train_idx, top_k_var=200):
     """v15.3 step 0: data-only diagnostic — irreducible R² ceiling for any
     deterministic predictor on this stochastic data.
@@ -5358,6 +5423,14 @@ def main():
     raw_counts_active = raw_counts[:, :, active]
     raw  = np.clip((raw - lo) / span, CLAMP_LO, CLAMP_HI).astype(np.float32)
     S    = raw.shape[2]
+
+    # v15.7 Move D: report what the active-species filter + subsampling discard
+    if USE_DATA_RICHNESS_REPORT:
+        try:
+            data_richness_report(raw_counts, species_names, active, train_idx,
+                                 time_stride=TIME_STRIDE)
+        except Exception as e:
+            print(f"[data-richness] skipped ({e})")
 
     gene_type_map = load_gene_types(GENE_TABLE_PATH)
     species_type_ids, locus_list = build_gene_index(species_active, gene_type_map)
