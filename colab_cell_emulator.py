@@ -239,6 +239,15 @@ BREUER_HORIZON          = 10      # KO sub-rollout length (steps)
 BREUER_KO_PER_LABEL     = 2       # essential + nonessential genes per consistency batch
 BREUER_MARGIN           = 1e-4    # margin: E impact must exceed NE impact by at least this
 
+# v15.7 Move A: training-signal upgrades (close the measurement→training loop)
+USE_MULTITASK_LOSS  = True        # A1: aux MSE on derived totals (lipid/ATP/ribosome/ori/ter/protein)
+LAMBDA_MULTITASK    = 0.10        # weight on the derived-quantity aux loss
+USE_PER_CLASS_LOSS_W = True       # A2: weight main loss by species variance (align with honest top-K metric)
+PER_CLASS_W_FLOOR   = 0.2         # min weight for low-variance species (so they aren't ignored)
+PER_CLASS_W_CEIL    = 5.0         # max weight for high-variance species
+USE_FW_TRAIN_LOSS   = False       # A5: Friedlin-Wentzell action as a (small) training loss — OFF by default (needs drift/diff buffers)
+LAMBDA_FW           = 0.01
+
 # v15.1: refinement-pass training in the last 10% of steps.  Attacks the
 # rollout-vs-1step gap (v15.0: 1-step R²=0.814, rollout R²=0.586, 0.22 lost to
 # compounding error).  Mechanism: after computing pred at step k, do an EXTRA
@@ -3247,9 +3256,53 @@ def breuer_consistency_loss(model, seed_state, gene_species, e_loci, ne_loci,
     return F.relu(pairs).mean()
 
 
+# ── v15.7 Move A: training-signal builders ──────────────────────────────────
+
+def build_multitask_groups(species_active):
+    """A1: index groups for derived-quantity aux loss.  Returns {name: LongTensor}
+    of species indices whose normalised values we sum into a tracked total.
+    These are exactly the quantities the paper validates against."""
+    groups = {}
+    lip = [i for i, n in enumerate(species_active)
+           if any(n.startswith(p) for p in LIPID_PREFIXES)]
+    if lip:
+        groups["lipid_total"] = torch.tensor(lip, dtype=torch.long)
+    ribo = [i for i, n in enumerate(species_active)
+            if any(n.startswith(p) for p in RIBOSOME_PREFIXES)]
+    if ribo:
+        groups["ribo_total"] = torch.tensor(ribo, dtype=torch.long)
+    aden = [species_active.index(n) for n in (ATP_SPECIES_NAME, "M_adp_c", "M_amp_c")
+            if n in species_active]
+    if aden:
+        groups["adenylate_total"] = torch.tensor(aden, dtype=torch.long)
+    prot = [i for i, n in enumerate(species_active) if parse_species(n)[0] == "P"]
+    if prot:
+        groups["protein_total"] = torch.tensor(prot, dtype=torch.long)
+    # ori / ter gene-copy proxies (sum all copy variants)
+    for label, locus in (("ori_total", "0001"), ("ter_total", "0421")):
+        idx = [i for i, n in enumerate(species_active)
+               if n == f"G_{locus}" or n.startswith(f"G_{locus}_")]
+        if idx:
+            groups[label] = torch.tensor(idx, dtype=torch.long)
+    return groups
+
+
+def build_per_class_weights(train_X, floor=PER_CLASS_W_FLOOR, ceil=PER_CLASS_W_CEIL):
+    """A2: per-species loss weight ∝ variance (normalised to mean 1.0, clamped).
+    Aligns the training objective with the honest top-K-variance eval metric —
+    currently the loss treats all 5933 species equally while the metric only
+    scores the high-variance ones."""
+    var = train_X.float().var(dim=(0, 1))                      # (S,)
+    # normalise so mean weight ≈ 1 (keeps overall loss scale ~unchanged)
+    w = var / var.mean().clamp(min=1e-9)
+    w = w.clamp(floor, ceil)
+    return w
+
+
 # ── training / eval ───────────────────────────────────────────────────────────
 
-def train_model(model, train_X, ruleset, hyp=None, breuer=None):
+def train_model(model, train_X, ruleset, hyp=None, breuer=None,
+                multitask_groups=None, per_class_w=None):
     """v12 LGNN trainer with truncated BPTT + optional BF16 autocast.
 
     Truncated BPTT (TBPTT): rolls forward K steps but backward only flows
@@ -3296,6 +3349,14 @@ def train_model(model, train_X, ruleset, hyp=None, breuer=None):
     breuer_start_step = int(STEPS * BREUER_LOSS_START_FRAC) if use_breuer else STEPS + 1
     breuer_rng       = np.random.RandomState(SEED + 8) if use_breuer else None
     breuer_ema       = 0.0
+    # v15.7 Move A1: multi-task derived-quantity aux loss
+    use_multitask = USE_MULTITASK_LOSS and multitask_groups
+    if use_multitask:
+        mt_groups = {k: v.to(device) for k, v in multitask_groups.items()}
+    mt_ema = 0.0
+    # v15.7 Move A2: per-class (variance) loss weighting
+    use_pcw = USE_PER_CLASS_LOSS_W and per_class_w is not None
+    pcw = per_class_w.to(device) if use_pcw else None
 
     def _autocast():
         if USE_BF16 and device == "cuda":
@@ -3314,7 +3375,9 @@ def train_model(model, train_X, ruleset, hyp=None, breuer=None):
           f"sigma_anchor: {'ON λ=' + str(LAMBDA_SIGMA_ANCHOR) if use_sigma_anchor else 'off'}, "
           f"temporal_ctx: {'ON W=' + str(t_ctx_window) if use_temporal_ctx else 'off'}, "
           f"refine: {'ON @step ' + str(refine_start_step) + ' λ=' + str(LAMBDA_REFINE) if USE_REFINEMENT else 'off'}, "
-          f"breuer: {'ON @step ' + str(breuer_start_step) + ' λ=' + str(LAMBDA_BREUER) + ' E=' + str(len(breuer['e_loci'])) + ' NE=' + str(len(breuer['ne_loci'])) if use_breuer else 'off'}")
+          f"breuer: {'ON @step ' + str(breuer_start_step) + ' λ=' + str(LAMBDA_BREUER) + ' E=' + str(len(breuer['e_loci'])) + ' NE=' + str(len(breuer['ne_loci'])) if use_breuer else 'off'}, "
+          f"multitask: {'ON λ=' + str(LAMBDA_MULTITASK) + ' (' + str(len(mt_groups)) + ' groups)' if use_multitask else 'off'}, "
+          f"per_class_w: {'ON' if use_pcw else 'off'}")
     hyp_ema = {}    # v13.8: per-kind running average across training (promotion signal)
 
     for step in range(STEPS):
@@ -3363,7 +3426,10 @@ def train_model(model, train_X, ruleset, hyp=None, breuer=None):
                         true[ko_b_idx, ko_sp_idx] = zero_norm[ko_sp_idx]
                     sq_err = (pred - true) ** 2
                     inv_var = torch.exp(-2.0 * log_sigma)
-                    loss_k = 0.5 * (inv_var * sq_err + 2.0 * log_sigma).mean()
+                    nll_elem = 0.5 * (inv_var * sq_err + 2.0 * log_sigma)   # (B, S)
+                    if use_pcw:   # v15.7 A2: weight per species by variance
+                        nll_elem = nll_elem * pcw.to(nll_elem.dtype).unsqueeze(0)
+                    loss_k = nll_elem.mean()
                     if use_sigma_anchor:
                         # Pull log σ toward empirical std per species — prevents
                         # the σ → 0 collapse mode that gives wildly negative NLL
@@ -3384,7 +3450,11 @@ def train_model(model, train_X, ruleset, hyp=None, breuer=None):
                     if ko_b_idx is not None:
                         true = true.clone()
                         true[ko_b_idx, ko_sp_idx] = zero_norm[ko_sp_idx]
-                    loss_k = F.mse_loss(pred, true)
+                    if use_pcw:   # v15.7 A2: variance-weighted MSE
+                        loss_k = (((pred - true) ** 2)
+                                  * pcw.to(pred.dtype).unsqueeze(0)).mean()
+                    else:
+                        loss_k = F.mse_loss(pred, true)
                 if use_hyp:
                     hyp_loss_k, hyp_parts_k = hyp.soft_loss(prev_state, pred)
                     loss_k = loss_k + LAMBDA_HYP * hyp_loss_k
@@ -3420,6 +3490,20 @@ def train_model(model, train_X, ruleset, hyp=None, breuer=None):
                     refine_loss = F.mse_loss(pred_refine, true_refine)
                     loss_k = loss_k + LAMBDA_REFINE * refine_loss
                     refine_ema = 0.99 * refine_ema + 0.01 * float(refine_loss.detach())
+                # v15.7 A1: multi-task derived-quantity aux loss.  The model's
+                # summed group totals (lipid/ribo/adenylate/protein/ori/ter)
+                # should match the truth's — these are the paper-validation
+                # quantities, so training on them directly drives the biology
+                # metrics, not just per-species MSE.
+                if use_multitask:
+                    mt_loss = pred.new_zeros(())
+                    for _gname, _gidx in mt_groups.items():
+                        pred_tot = pred[:, _gidx].sum(dim=1)
+                        true_tot = true[:, _gidx].sum(dim=1)
+                        mt_loss = mt_loss + F.mse_loss(pred_tot, true_tot)
+                    mt_loss = mt_loss / max(len(mt_groups), 1)
+                    loss_k = loss_k + LAMBDA_MULTITASK * mt_loss
+                    mt_ema = 0.99 * mt_ema + 0.01 * float(mt_loss.detach())
             if first_loss is None:
                 first_loss = loss_k
             chunk_losses.append(loss_k)
@@ -3500,10 +3584,11 @@ def train_model(model, train_X, ruleset, hyp=None, breuer=None):
                           if USE_REFINEMENT and step >= refine_start_step else "")
             breuer_str = (f"  breuer={breuer_ema:.5f}"
                           if use_breuer and step >= breuer_start_step else "")
+            mt_str = f"  mt={mt_ema:.5f}" if use_multitask else ""
             print(f"  step {step+1:5d}  K={K:4d}  "
                   f"1-step {float(first_loss.detach()):.5f}  "
                   f"rollout {sum(all_loss_means)/len(all_loss_means):.5f}"
-                  f"{hyp_str}{atp_str}{sigma_str}{refine_str}{breuer_str}", flush=True)
+                  f"{hyp_str}{atp_str}{sigma_str}{refine_str}{breuer_str}{mt_str}", flush=True)
 
         # v13.7: rolling mid-training checkpoint so an interrupt mid-run doesn't lose progress
         if (CHECKPOINT_EVERY > 0
@@ -5245,6 +5330,16 @@ def main():
     else:
         breuer_data = None
 
+    # v15.7 Move A: build multi-task groups + per-class weights once
+    mt_groups = build_multitask_groups(species_active) if USE_MULTITASK_LOSS else None
+    pc_weights = build_per_class_weights(train_X) if USE_PER_CLASS_LOSS_W else None
+    if mt_groups:
+        print(f"[multitask] {len(mt_groups)} derived-quantity groups: "
+              f"{', '.join(mt_groups.keys())}")
+    if pc_weights is not None:
+        print(f"[per_class_w] variance weights: median {float(pc_weights.median()):.2f}, "
+              f"range [{float(pc_weights.min()):.2f}, {float(pc_weights.max()):.2f}]")
+
     hyp_violation_ema = {}
     if loaded_from_ckpt and SKIP_TRAINING_IF_LOADED:
         print("[train] SKIPPED — using loaded checkpoint as-is for evaluation")
@@ -5252,7 +5347,9 @@ def main():
         if loaded_from_ckpt:
             print("[train] continuing training from loaded checkpoint")
         hyp_violation_ema = train_model(model, train_X, ruleset,
-                                         hyp=hyp, breuer=breuer_data) or {}
+                                         hyp=hyp, breuer=breuer_data,
+                                         multitask_groups=mt_groups,
+                                         per_class_w=pc_weights) or {}
 
     # ── evaluate ──────────────────────────────────────────────────────────
     print()
