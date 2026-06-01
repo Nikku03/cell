@@ -148,6 +148,12 @@ except ImportError:
 
 # ── config ───────────────────────────────────────────────────────────────────
 PARQUET_DIR         = ""
+# v15.8.2: when True, main() runs only data-load + knowledge phase + the three
+# reframe diagnostics, then exits.  ~10–15 min instead of 80–110 min.  Use this
+# to verify the reframes (R1 algorithm / R2 constraints / R3 low-dim) without
+# spending an hour on a full training run.  Can also be flipped via
+# REFRAMES_ONLY=1 env var (so you don't have to edit cell 3).
+REFRAMES_ONLY       = (os.environ.get("REFRAMES_ONLY", "0") == "1")
 TIME_STRIDE         = 60           # v15.4 [4/6]: was 30. Halves the rollout horizon (240->120 steps) so less compounding error, and K_MAX=90 now covers ~86% of the cycle (vs half at stride 30). Compare to v9 (60s -> rollout R^2 ~0.64). NEEDS a fresh training run (RESUME=False) — v15.0 ckpt is stride-30.
 LENS_TIME_STRIDE    = 60           # v10: subsample for the lens phase (memory)
 # Drop t=0 and t=1 of the simulator (the unnatural startup transient).  At
@@ -5756,6 +5762,106 @@ def print_knockout_report(ko, breuer_labels):
 
 # ── main ──────────────────────────────────────────────────────────────────────
 
+def run_reframes_only():
+    """v15.8.2: lean path — load data + knowledge phase + three reframe tests.
+
+    Skips model construction, training, eval rollout, and all v15.2 diagnostics.
+    Use to verify R1/R2/R3 in ~10–15 min instead of 80–110 min for the full
+    pipeline.  Set REFRAMES_ONLY=True (config flag) or REFRAMES_ONLY=1 (env var).
+    """
+    print(f"[device] {device}")
+    print()
+    print("=" * 72)
+    print("  v15.8.2 — REFRAMES-ONLY fast path (no training, no model build)")
+    print("=" * 72)
+
+    raw_counts, species_names = load_data(skip_startup=True)
+    n_traj, T, S_full = raw_counts.shape
+    print(f"[data] {raw_counts.shape}  (traj, time, species)  {T} steps")
+
+    rng = np.random.RandomState(SEED)
+    perm = rng.permutation(n_traj)
+    train_idx, test_idx = perm[:N_TRAIN_TRAJ], perm[N_TRAIN_TRAJ:]
+
+    print()
+    print("[knowledge] parsing input files for ruleset construction ...")
+    sbml         = parse_sbml(SBML_PATH)
+    kinetics     = parse_kinetics(KINETICS_PATH)
+    initial      = parse_initial_concentrations(INITIAL_CONC_PATH)
+    complexes    = parse_complex_formation(COMPLEXES_PATH)
+    prot_metab   = parse_protein_metabolites(PROTEIN_METABOLITES_PATH)
+    gibbs        = parse_gibbs(GIBBS_PATH)
+    largesubunit = parse_largesubunit(LARGESUBUNIT_PATH)
+    known = KnownRules(sbml=sbml, kinetics=kinetics,
+                       initial=initial, complexes=complexes,
+                       protein_metabolites=prot_metab,
+                       gibbs=gibbs, largesubunit=largesubunit)
+
+    raw = signed_log(raw_counts)
+    dtr = raw[train_idx]
+    lo   = np.percentile(dtr, 0.5,  axis=(0, 1))
+    hi   = np.percentile(dtr, 99.5, axis=(0, 1))
+    span = hi - lo
+    active = span > 1e-6
+    print(f"[data] active species: {int(active.sum())} / {S_full}")
+    raw  = raw[:, :, active]
+    lo, span = lo[active], span[active]
+    species_active = [species_names[i] for i in range(S_full) if active[i]]
+    raw_counts_active = raw_counts[:, :, active]
+    raw  = np.clip((raw - lo) / span, CLAMP_LO, CLAMP_HI).astype(np.float32)
+    X       = torch.from_numpy(raw)
+    test_X  = X[test_idx].to(device)
+    print(f"[data] test {tuple(test_X.shape)}")
+
+    print()
+    lts = LENS_TIME_STRIDE if TIME_STRIDE == 1 else 1
+    print(f"[knowledge] running multi-lens pattern discovery "
+          f"(subsampling by {lts}; needed for conservation-pair ruleset) ...")
+    train_X = X[train_idx].to(device)
+    patterns = DiscoveredPatterns.from_trajectories(
+        train_X[:, ::lts].cpu(), test_X[:, ::lts].cpu(),
+        raw_counts_active[train_idx][:, ::lts],
+        raw_counts_active[test_idx][:, ::lts],
+        species_active,
+        lo=lo, span=span)
+    ruleset, _ = build_enforcement(known, patterns, species_active,
+                                    lo=lo, span=span)
+    ruleset = ruleset.to(device)
+    print(f"[ruleset] {ruleset.summary()}")
+
+    # Stochastic ceiling for the verdict-block reference
+    print()
+    try:
+        ceiling = stochastic_ceiling_diagnostic(
+            raw_counts_active, train_idx, top_k_var=VAR_R2_TOP_K)
+        print_ceiling_report(ceiling)
+        _ceil = ceiling["r2_ceil_median_top_k"] if ceiling is not None else None
+    except Exception as e:
+        print(f"  stochastic ceiling: skipped ({e})")
+        _ceil = None
+
+    # The three reframes
+    r3_out = r2_out = r1_out = None
+    try:
+        r3_out = reframe_lowdim_manifold(raw_counts_active, train_idx)
+    except Exception as e:
+        print(f"  reframe 3 (low-dim): skipped ({e})")
+    try:
+        r2_out = reframe_constraints_only(test_X, ruleset)
+    except Exception as e:
+        print(f"  reframe 2 (constraints): skipped ({e})")
+    try:
+        r1_out = reframe_binary_algorithm(raw_counts_active, train_idx, species_active)
+    except Exception as e:
+        print(f"  reframe 1 (algorithm): skipped ({e})")
+    print_reframe_report(r3_out, r2_out, r1_out,
+                          current_honest_r2=None, ceiling=_ceil)
+    print()
+    print("=" * 72)
+    print("  REFRAMES-ONLY RUN COMPLETE — no model trained, no checkpoint saved")
+    print("=" * 72)
+
+
 def main():
     print(f"[device] {device}")
     print()
@@ -6360,4 +6466,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if REFRAMES_ONLY:
+        run_reframes_only()
+    else:
+        main()
