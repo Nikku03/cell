@@ -5857,16 +5857,27 @@ def knockout_sweep(model, ruleset, test_X, species_names, breuer_labels,
     denom = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
     mcc = (tp * tn - fp * fn) / (denom ** 0.5) if denom > 0 else 0.0
 
+    # v15.9.1: surface the WRONG genes (FP and FN) for downstream interpretation.
+    # Sort FP by descending impact (most-confident wrong calls first);
+    # sort FN by ascending impact (most-underestimated essentials first).
+    impact_map = dict(ranking)
+    fp_loci = sorted(pred_top & true_n, key=lambda l: -impact_map.get(l, 0.0))
+    fn_loci = sorted(true_e - pred_top, key=lambda l: impact_map.get(l, 0.0))
+    tp_loci = sorted(pred_top & true_e, key=lambda l: -impact_map.get(l, 0.0))
+
     return {
         "ranking": ranking, "mcc": mcc,
         "tp": tp, "fp": fp, "fn": fn, "tn": tn,
+        "tp_loci": tp_loci, "fp_loci": fp_loci, "fn_loci": fn_loci,
+        "impact_map": impact_map,
         "n_genes": len(candidates),
         "n_essential": len(true_e),
         "n_nonessential": len(true_n),
     }
 
 
-def print_knockout_report(ko, breuer_labels):
+def print_knockout_report(ko, breuer_labels, gene_products=None,
+                           max_fp=20, max_fn=20):
     """Pretty-print the knockout-sweep result."""
     print()
     print("#" * 72)
@@ -5901,6 +5912,60 @@ def print_knockout_report(ko, breuer_labels):
         lab = breuer_labels.get(loc, "unknown")
         flag = "✓" if lab in {"Essential", "Quasiessential"} else "✗" if lab == "Nonessential" else "?"
         print(f"      {flag} JCVISYN3A_{loc}  impact={impact:.3e}  ({lab})")
+
+    # v15.9.1: WHERE THE MODEL IS WRONG — false positives and false negatives,
+    # annotated with each gene's function from syn3a_gene_table.csv.
+    fp_loci = ko.get("fp_loci", [])
+    fn_loci = ko.get("fn_loci", [])
+    impact_map = ko.get("impact_map", {})
+    if (fp_loci or fn_loci):
+        # Best-effort load of gene products if not passed in (so the call site
+        # can stay one-arg backwards-compatible).
+        if gene_products is None:
+            try:
+                gene_products = load_gene_products(GENE_TABLE_PATH)
+            except Exception:
+                gene_products = {}
+        def _fn(loc):
+            p = gene_products.get(loc) if gene_products else None
+            return (p or "(no product annotation)")[:54]
+        print()
+        print(f"  FALSE POSITIVES — model called essential, Breuer says nonessential "
+              f"({len(fp_loci)} total{'; showing top ' + str(min(max_fp,len(fp_loci))) + ' by impact' if len(fp_loci) > max_fp else ''})")
+        if fp_loci:
+            print(f"    {'gene':<18s}  {'impact':>11s}   function")
+            print(f"    {'-'*18}  {'-'*11}   {'-'*54}")
+            for loc in fp_loci[:max_fp]:
+                imp = impact_map.get(loc, 0.0)
+                print(f"    JCVISYN3A_{loc:<8s}  {imp:>11.3e}   {_fn(loc)}")
+        else:
+            print("    (none)")
+        print()
+        print(f"  FALSE NEGATIVES — Breuer says essential, model missed "
+              f"({len(fn_loci)} total{'; showing bottom ' + str(min(max_fn,len(fn_loci))) + ' by impact (most underestimated)' if len(fn_loci) > max_fn else ''})")
+        if fn_loci:
+            print(f"    {'gene':<18s}  {'impact':>11s}   function")
+            print(f"    {'-'*18}  {'-'*11}   {'-'*54}")
+            for loc in fn_loci[:max_fn]:
+                imp = impact_map.get(loc, 0.0)
+                print(f"    JCVISYN3A_{loc:<8s}  {imp:>11.3e}   {_fn(loc)}")
+        else:
+            print("    (none)")
+
+        # Functional-class breakdown of the misses (which families is the
+        # model systematically missing?)
+        from collections import Counter
+        def _cls(loc):
+            return _classify_gene_for_cd(gene_products.get(loc, "")) if gene_products else "unknown"
+        fn_classes = Counter(_cls(l) for l in fn_loci)
+        fp_classes = Counter(_cls(l) for l in fp_loci)
+        if fn_classes or fp_classes:
+            print()
+            print(f"  Error breakdown by functional class:")
+            all_cls = sorted(set(fn_classes) | set(fp_classes))
+            print(f"    {'class':<14s} {'false-neg':>10s} {'false-pos':>10s}")
+            for cl in all_cls:
+                print(f"    {cl:<14s} {fn_classes.get(cl, 0):>10d} {fp_classes.get(cl, 0):>10d}")
     print("#" * 72)
 
 
@@ -6164,15 +6229,47 @@ def run_essentiality_mcc(species_active, gene_products, gene_meta, breuer_labels
         kw_fn  = (rk["pred"] == 0) & (y == 1)        # essential, keyword missed
         recovered = kw_fn & (rc["pred"] == 1)        # combined now catches
         lost      = (rk["pred"] == 1) & (y == 1) & (rc["pred"] == 0)  # combined newly misses
+        # combined classifier's own errors
+        comb_fp_idx = list(np.where((rc["pred"] == 1) & (y == 0))[0])
+        comb_fn_idx = list(np.where((rc["pred"] == 0) & (y == 1))[0])
+
+        def _fn(tag):
+            # tag is 'JCVISYN3A_XXXX' here
+            loc = tag.split("_")[1] if "_" in tag else tag
+            p = gene_products.get(loc) if gene_products else None
+            return (p or "(no product annotation)")[:54]
+
         print(f"\n  Keyword false-negatives (essential genes keyword missed): {int(kw_fn.sum())}")
         print(f"    recovered by adding pipeline features: {int(recovered.sum())}")
         print(f"    newly lost (regression):               {int(lost.sum())}")
-        rec_loci = [loci[i] for i in np.where(recovered)[0]][:12]
-        if rec_loci:
-            print(f"    recovered genes: {rec_loci}")
+        rec_idx = list(np.where(recovered)[0])
+        if rec_idx:
+            print(f"\n    Recovered genes (keyword missed → combined caught):")
+            for i in rec_idx[:12]:
+                # use the keyword model's probability for context
+                print(f"      JCVISYN3A_{loci[i].split('_')[1]:<8s}  {_fn(loci[i])}")
         d_mcc = rc["mcc"] - rk["mcc"]
         print(f"\n  Δ MCC (combined − keyword) = {d_mcc:+.4f}  "
               f"→ {'pipeline features ADD signal' if d_mcc > 0.02 else 'no lift — essentiality gap is biological, not feature-extractable' if d_mcc < 0.0 else 'marginal'}")
+
+        # The honest errors of the BEST classifier we built (combined)
+        if comb_fn_idx:
+            print(f"\n  Combined-classifier FALSE NEGATIVES (still-missed essentials, "
+                  f"{len(comb_fn_idx)} total{'; showing 20' if len(comb_fn_idx) > 20 else ''}):")
+            print(f"    {'gene':<18s}  {'p(ess)':>7s}   function")
+            print(f"    {'-'*18}  {'-'*7}   {'-'*54}")
+            # sort ascending by predicted probability — most-confident misses first
+            comb_fn_idx.sort(key=lambda i: rc["oof"][i])
+            for i in comb_fn_idx[:20]:
+                print(f"    {loci[i]:<18s}  {rc['oof'][i]:>7.3f}   {_fn(loci[i])}")
+        if comb_fp_idx:
+            print(f"\n  Combined-classifier FALSE POSITIVES (called essential, are "
+                  f"nonessential, {len(comb_fp_idx)} total):")
+            print(f"    {'gene':<18s}  {'p(ess)':>7s}   function")
+            print(f"    {'-'*18}  {'-'*7}   {'-'*54}")
+            comb_fp_idx.sort(key=lambda i: -rc["oof"][i])
+            for i in comb_fp_idx[:20]:
+                print(f"    {loci[i]:<18s}  {rc['oof'][i]:>7.3f}   {_fn(loci[i])}")
     print("#" * 72)
     return {"feature_matrix": fm, "results": results}
 
@@ -6976,13 +7073,19 @@ def main():
 
     # ── v9: knockout sweep vs Breuer 2019 essentiality ───────────────────
     # v15.6: breuer_labels was loaded earlier for the KO-consistency training loss
+    # v15.9.1: load gene_products once here so both the KO report and the
+    # essentiality classifier can annotate which genes the model gets wrong.
+    try:
+        gene_products = load_gene_products(GENE_TABLE_PATH)
+    except Exception as _e:
+        print(f"  gene products: load failed ({_e}); error reports will be unlabelled")
+        gene_products = {}
     ko = knockout_sweep(model, ruleset, test_X, species_active, breuer_labels)
-    print_knockout_report(ko, breuer_labels)
+    print_knockout_report(ko, breuer_labels, gene_products=gene_products)
 
     # ── v15.9: static essentiality classifier (keyword + pipeline features) ──
     if USE_ESSENTIALITY_XGB and breuer_labels:
         try:
-            gene_products = load_gene_products(GENE_TABLE_PATH)
             gene_meta = {}
             if HAS_PANDAS:
                 _gt = pd.read_csv(GENE_TABLE_PATH)
