@@ -5083,6 +5083,325 @@ def print_helmholtz_report(hl):
     print(f"  Verdict: {verdict}")
 
 
+# ── v15.8 three-reframes tests ────────────────────────────────────────────────
+#
+# Empirical tests for three philosophical reframes of "what a cell is":
+#   R1: cell as computation/algorithm (binary control logic captures dynamics)
+#   R2: cell as constraint-satisfaction (invariants determine behaviour, not
+#       forward dynamics — like least-action vs Newton)
+#   R3: cell as low-dimensional manifold (~10⁴ species collapse to ~10² dims)
+#
+# Each test produces a numerical verdict the user can compare against the
+# trained model.  They are NOT prescriptive — they tell us which reframe is
+# most empirically supported by THIS dataset.
+
+def reframe_lowdim_manifold(raw_counts_active, train_idx, n_sample=2000,
+                             thresholds=(0.50, 0.80, 0.90, 0.95, 0.99)):
+    """v15.8 Reframe 3: intrinsic dimensionality of the trajectory tensor.
+
+    Tests "the cell lives in a low-dimensional manifold" by PCA on the
+    log-space normalised concatenated training trajectories.  Reports
+    cumulative explained variance at thresholds, plus participation ratio
+    (PR = (Σλ_i)² / Σλ_i² — effective number of equally-contributing dims).
+
+    Returns dict with PCs_at_thresholds, participation ratio, total dims.
+    """
+    rc = raw_counts_active[train_idx].astype(np.float64)
+    n_t, T, S = rc.shape
+    X = rc.reshape(-1, S)
+    # signed-log to match what the model sees
+    X = np.sign(X) * np.log1p(np.abs(X))
+    X = X - X.mean(axis=0, keepdims=True)
+    # subsample timepoints to keep SVD memory-bounded
+    n_rows = X.shape[0]
+    if n_rows > n_sample:
+        idx = np.random.default_rng(0).choice(n_rows, n_sample, replace=False)
+        X = X[idx]
+    # SVD on the centered data; eigenvalues of the covariance = singular_values²/(N-1)
+    try:
+        _, sv, _ = np.linalg.svd(X, full_matrices=False)
+    except np.linalg.LinAlgError:
+        return None
+    eig = (sv ** 2) / max(X.shape[0] - 1, 1)
+    total = float(eig.sum())
+    if total <= 0:
+        return None
+    var_frac = eig / total
+    cv = np.cumsum(var_frac)
+    pc_at = {}
+    for t in thresholds:
+        k = int(np.searchsorted(cv, t)) + 1
+        pc_at[t] = min(k, S)
+    pr = float(total * total / max(float((eig ** 2).sum()), 1e-30))
+    return {
+        "n_trajectories":     int(n_t),
+        "n_timepoints":       int(T),
+        "n_species":          int(S),
+        "n_samples_used":     int(X.shape[0]),
+        "pc_at_thresholds":   pc_at,
+        "participation_ratio": pr,
+        "top_eig_frac":       float(var_frac[0]) if eig.size else float("nan"),
+        "top10_eig_frac":     float(var_frac[:10].sum()) if eig.size else float("nan"),
+    }
+
+
+@torch.no_grad()
+def reframe_constraints_only(test_X, ruleset, top_k_var=VAR_R2_TOP_K):
+    """v15.8 Reframe 2: how much rollout R² do constraints alone capture?
+
+    Runs two baselines using the SAME ruleset.project that the trained model
+    uses:
+      (a) pure persistence:  x_{t+1} = x_t                (no constraints)
+      (b) persistence + project: x_{t+1} = ruleset.project(x_t, x_t)
+      (c) mean-trend + project:  x_{t+1} = clamp(x_t + Δ̄) then project
+          (Δ̄ = mean step delta across all training trajectories — but here
+          we compute it from test_X itself as a fair self-reference)
+
+    The gap (c)−(a) quantifies how much predictable trajectory follows from
+    constraints + linear trend WITHOUT any learned dynamics.  Compared to
+    the trained model's honest R², this tells us whether dynamics learning
+    adds real value or constraints carry most of it.
+    """
+    if test_X.dim() != 3:
+        return None
+    n, T, S = test_X.shape
+    if T < 2:
+        return None
+    # Mean step delta from test_X itself (self-reference; honest signal)
+    dx = test_X[:, 1:] - test_X[:, :-1]                                  # (n, T-1, S)
+    mean_delta = dx.mean(dim=(0, 1))                                     # (S,)
+
+    def _rollout(use_project, use_trend):
+        state = test_X[:, 0]                                             # (n, S)
+        preds = []
+        for _ in range(T - 1):
+            nxt = (state + mean_delta) if use_trend else state.clone()
+            nxt = nxt.clamp(CLAMP_LO, CLAMP_HI)
+            if use_project and ruleset is not None:
+                nxt = ruleset.project(state, nxt)
+            preds.append(nxt)
+            state = nxt
+        return torch.stack(preds, dim=1)                                 # (n, T-1, S)
+
+    truth = test_X[:, 1:]
+    out = {}
+    for label, p, t in [
+        ("persistence_only",          _rollout(False, False), truth),
+        ("persistence_plus_rules",    _rollout(True,  False), truth),
+        ("trend_plus_rules",          _rollout(True,  True),  truth),
+    ]:
+        r2_top, n_top = variance_weighted_r2(p, t, top_k=top_k_var)
+        # also mean per-traj R² for cross-reference with rollout R²
+        r2_per_traj = []
+        for k in range(p.shape[0]):
+            num = ((p[k] - t[k]) ** 2).sum()
+            den = ((t[k] - t[k].mean(dim=0, keepdim=True)) ** 2).sum().clamp(min=1e-9)
+            r2_per_traj.append(float(1.0 - num / den))
+        out[label] = {
+            "honest_r2_top_k":   float(r2_top),
+            "mean_traj_r2":      float(np.mean(r2_per_traj)),
+            "n_top_valid":       int(n_top),
+        }
+    out["top_k"] = int(top_k_var)
+    return out
+
+
+def reframe_binary_algorithm(raw_counts_active, train_idx, species_active,
+                              lag=10, n_sample=200, n_bins=2):
+    """v15.8 Reframe 1: does binary discretisation preserve predictive power?
+
+    Test: threshold each species at its training-set median.  Compute
+    mutual information between binary state at time t and binary state at
+    time t+lag (same species, MI is in nats).  If the cell behaves like
+    an algorithm operating on ON/OFF state, binary MI should stay close
+    to its theoretical maximum (ln 2 ≈ 0.69 nats).  If continuous detail
+    matters, binary MI collapses.
+
+    Per-class breakdown via species-name prefix:
+      regulatory: G_*, R_* (gene activity, mRNA — natural switch-like)
+      protein:    P_*, RP_*
+      metabolic:  M_* (metabolites — natural graded)
+      other:      ribosomeP, RB_*, RPM_*, lipids, etc.
+    """
+    rc = raw_counts_active[train_idx]                                # (n, T, S)
+    n_t, T, S = rc.shape
+    if T < lag + 1 or S < 1:
+        return None
+    rng = np.random.default_rng(0)
+    # Drop near-constant species — MI is uninformative on them
+    var = rc.reshape(-1, S).var(axis=0)
+    candidates = np.where(var > 1e-9)[0]
+    if candidates.size < n_sample:
+        chosen = candidates
+    else:
+        chosen = rng.choice(candidates, n_sample, replace=False)
+    medians = np.median(rc.reshape(-1, S)[:, chosen], axis=0)
+    binary  = (rc[:, :, chosen] > medians[None, None, :]).astype(np.int8)
+
+    def _bin_mi(x_now, x_fut):
+        # MI in nats from a 2x2 contingency table
+        flat = (x_now.astype(np.int32) << 1) | x_fut.astype(np.int32)
+        counts = np.bincount(flat, minlength=4).astype(np.float64)
+        total = counts.sum()
+        if total <= 0:
+            return 0.0
+        p = counts / total
+        # marginals
+        p_now = np.array([p[0] + p[1], p[2] + p[3]])
+        p_fut = np.array([p[0] + p[2], p[1] + p[3]])
+        mi = 0.0
+        for a in (0, 1):
+            for b in (0, 1):
+                pij = p[(a << 1) | b]
+                if pij > 0 and p_now[a] > 0 and p_fut[b] > 0:
+                    mi += pij * np.log(pij / (p_now[a] * p_fut[b]))
+        return float(mi)
+
+    mis = np.zeros(len(chosen), dtype=np.float64)
+    for s_i, s in enumerate(chosen):
+        x_now = binary[:, :T - lag, s_i].ravel()
+        x_fut = binary[:, lag:, s_i].ravel()
+        mis[s_i] = _bin_mi(x_now, x_fut)
+
+    def _class_of(name):
+        if name.startswith(("G_",)):       return "regulatory_gene"
+        if name.startswith(("R_",)) and not name.startswith("R_dummy"): return "mrna"
+        if name.startswith(("P_", "RP_")): return "protein"
+        if name.startswith("M_"):          return "metabolite"
+        return "other"
+
+    classes = {}
+    for s_i, s in enumerate(chosen):
+        c = _class_of(species_active[s])
+        classes.setdefault(c, []).append(mis[s_i])
+    class_summary = {c: {"mean_mi": float(np.mean(v)),
+                          "n":      int(len(v))} for c, v in classes.items()}
+    return {
+        "lag":         int(lag),
+        "n_species_sampled": int(len(chosen)),
+        "mean_mi":     float(np.mean(mis)),
+        "median_mi":   float(np.median(mis)),
+        "max_mi_theoretical": float(np.log(n_bins)),
+        "preservation_fraction": float(np.mean(mis) / np.log(n_bins)),
+        "per_class":   class_summary,
+        "high_mi_count": int(np.sum(mis > 0.5 * np.log(n_bins))),
+        "low_mi_count":  int(np.sum(mis < 0.1 * np.log(n_bins))),
+    }
+
+
+def print_reframe_report(r3, r2, r1, current_honest_r2=None, ceiling=None):
+    """Print the three-reframes verdict block (v15.8)."""
+    print()
+    print("=" * 72)
+    print("  THREE REFRAMES — empirical verdicts (v15.8)")
+    print("  R1: cell as algorithm   R2: cell as constraints   R3: cell as low-dim")
+    print("=" * 72)
+
+    # ----- Reframe 3 -----
+    print("\n  Reframe 3 (low-dimensional manifold):")
+    if r3 is None:
+        print("    skipped")
+    else:
+        pc = r3["pc_at_thresholds"]
+        S = r3["n_species"]
+        print(f"    PCs needed for X% variance  (out of {S} species, "
+              f"{r3['n_samples_used']} timepoints sampled):")
+        for thr in sorted(pc):
+            k = pc[thr]
+            print(f"      {int(thr*100):>2d}% var: {k:>4d} PCs  ({100.0*k/S:>4.1f}% of species)")
+        pr = r3["participation_ratio"]
+        print(f"    participation ratio (effective dim): {pr:.1f}")
+        print(f"    top 1 PC explains {100*r3['top_eig_frac']:.1f}% of variance; "
+              f"top 10 explain {100*r3['top10_eig_frac']:.1f}%")
+        k95 = pc.get(0.95, S)
+        if k95 <= 0.05 * S:
+            v3 = (f"STRONGLY SUPPORTED — {k95}/{S} ({100*k95/S:.1f}%) PCs cover 95%. "
+                  f"Cell lives in a low-dimensional manifold; molecular detail is mostly noise.")
+        elif k95 <= 0.20 * S:
+            v3 = (f"PARTIALLY SUPPORTED — {k95}/{S} ({100*k95/S:.1f}%) PCs cover 95%. "
+                  f"Modest dimensional collapse; substantial residual detail.")
+        else:
+            v3 = (f"NOT SUPPORTED — {k95}/{S} ({100*k95/S:.1f}%) PCs needed. "
+                  f"Variance is spread across many dimensions.")
+        print(f"    verdict: {v3}")
+
+    # ----- Reframe 2 -----
+    print("\n  Reframe 2 (cell defined by constraints, not dynamics):")
+    if r2 is None:
+        print("    skipped")
+    else:
+        po = r2["persistence_only"]["honest_r2_top_k"]
+        pr = r2["persistence_plus_rules"]["honest_r2_top_k"]
+        tr = r2["trend_plus_rules"]["honest_r2_top_k"]
+        po_t = r2["persistence_only"]["mean_traj_r2"]
+        pr_t = r2["persistence_plus_rules"]["mean_traj_r2"]
+        tr_t = r2["trend_plus_rules"]["mean_traj_r2"]
+        print(f"    honest R² (top-{r2['top_k']} species, median):")
+        print(f"      persistence only       = {po:+.3f}   (per-traj {po_t:+.3f})")
+        print(f"      persistence + ruleset  = {pr:+.3f}   (per-traj {pr_t:+.3f})")
+        print(f"      trend + ruleset        = {tr:+.3f}   (per-traj {tr_t:+.3f})")
+        if current_honest_r2 is not None:
+            print(f"      trained model          = {current_honest_r2:+.3f}")
+        if ceiling is not None:
+            print(f"      stochastic ceiling     = {ceiling:+.3f}")
+        gain_from_constraints = pr - po
+        gain_from_trend       = tr - pr
+        if current_honest_r2 is not None:
+            gain_from_model = current_honest_r2 - tr
+            print(f"    decomposition of honest R²:")
+            print(f"      constraints add over persistence:  {gain_from_constraints:+.3f}")
+            print(f"      linear trend adds over constraints:{gain_from_trend:+.3f}")
+            print(f"      trained dynamics add over trend:   {gain_from_model:+.3f}")
+            if abs(gain_from_constraints) > 0.05 and gain_from_model < gain_from_constraints:
+                v2 = ("STRONGLY SUPPORTED — constraints carry more R² than learned "
+                      "dynamics.  A constraint-discovery loop would likely outperform "
+                      "further dynamics tuning.")
+            elif gain_from_constraints > 0.02 and gain_from_model > 0.02:
+                v2 = ("PARTIALLY SUPPORTED — constraints carry real predictive power, "
+                      "but learned dynamics still add similar magnitude.  Both layers matter.")
+            elif gain_from_model > 2 * abs(gain_from_constraints):
+                v2 = ("NOT SUPPORTED — learned dynamics add much more than constraints. "
+                      "The cell is not well-described as constraint-satisfaction here.")
+            else:
+                v2 = "verdict mixed — gains are comparable and small."
+            print(f"    verdict: {v2}")
+
+    # ----- Reframe 1 -----
+    print("\n  Reframe 1 (cell as computation/algorithm):")
+    if r1 is None:
+        print("    skipped")
+    else:
+        mi   = r1["mean_mi"]
+        med  = r1["median_mi"]
+        mx   = r1["max_mi_theoretical"]
+        pres = r1["preservation_fraction"]
+        print(f"    binary MI(state_t, state_t+{r1['lag']}) over "
+              f"{r1['n_species_sampled']} species:")
+        print(f"      mean   = {mi:.3f} nats  ({100*pres:.1f}% of ln2={mx:.3f})")
+        print(f"      median = {med:.3f} nats")
+        print(f"      switch-like (MI > 0.5·ln2):     {r1['high_mi_count']}")
+        print(f"      noise-like  (MI < 0.1·ln2):     {r1['low_mi_count']}")
+        if r1.get("per_class"):
+            print(f"    per-class mean binary MI (nats):")
+            for c, d in sorted(r1["per_class"].items(), key=lambda kv: -kv[1]["mean_mi"]):
+                print(f"      {c:<20s} {d['mean_mi']:.3f}  (n={d['n']})")
+        if pres >= 0.70:
+            v1 = ("STRONGLY SUPPORTED — binary state preserves >70% of predictive "
+                  "structure.  The cell really does look algorithmic.")
+        elif pres >= 0.40:
+            v1 = ("PARTIALLY SUPPORTED — binary state preserves substantial structure. "
+                  "Mixed regime: some species are switch-like, others graded.")
+        else:
+            v1 = ("NOT SUPPORTED — binary state loses most predictive structure. "
+                  "Continuous detail matters.")
+        print(f"    verdict: {v1}")
+
+    print("\n  Strategic implication:")
+    print("    Which reframe is MOST supported here determines the next architectural")
+    print("    move (Koopman/DMD core for R3, constraint-discovery loop for R2,")
+    print("    discrete switching layer for R1, or hybrid if multiple are supported).")
+
+
 # ── v15.2 constraint provenance audit ─────────────────────────────────────────
 
 @torch.no_grad()
@@ -5932,6 +6251,27 @@ def main():
         print_helmholtz_report(hl)
     except Exception as e:
         print(f"  Helmholtz curl: skipped ({e})")
+
+    # v15.8: three-reframes empirical tests (cell as algorithm / constraints / low-dim)
+    r3_out = r2_out = r1_out = None
+    try:
+        r3_out = reframe_lowdim_manifold(raw_counts_active, train_idx)
+    except Exception as e:
+        print(f"  reframe 3 (low-dim): skipped ({e})")
+    try:
+        r2_out = reframe_constraints_only(test_X, ruleset)
+    except Exception as e:
+        print(f"  reframe 2 (constraints): skipped ({e})")
+    try:
+        r1_out = reframe_binary_algorithm(raw_counts_active, train_idx, species_active)
+    except Exception as e:
+        print(f"  reframe 1 (algorithm): skipped ({e})")
+    try:
+        _ceil = ceiling["r2_ceil_median_top_k"] if 'ceiling' in dir() and ceiling is not None else None
+        print_reframe_report(r3_out, r2_out, r1_out,
+                             current_honest_r2=var_r2, ceiling=_ceil)
+    except Exception as e:
+        print(f"  reframe report: skipped ({e})")
 
     analyze_gaps(model, test_X, species_active, species_type_ids,
                  ruleset, hyp, sbml,
