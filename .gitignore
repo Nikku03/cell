@@ -18,6 +18,11 @@ outputs/*.csv
 outputs/*.png
 outputs/*.tmp
 outputs/.wt_*.pkl
+
+# Generated figures from field_system.py (regenerable via `python field_system.py`)
+field_steady_heatmap.png
+field_locality_curve.png
+field_spread_snapshots.png
 *.log
 *.tmp
 
