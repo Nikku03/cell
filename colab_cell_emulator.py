@@ -298,8 +298,17 @@ SKIP_TRAINING_IF_LOADED = False    # v13.6: if RESUME loaded weights, skip train
 CHECKPOINT_EVERY    = 250          # v13.7: write a rolling mid-training checkpoint every N steps (0 to disable)
 PINN_RATE_CLIP      = 6.0          # NEW v9: log-space rate clip (prevents expm1 blow-up)
 VAR_R2_TOP_K        = 200          # NEW v9: top-K species (by variance) for the honest R²
-KO_N_STEPS          = 60           # v13.8.2: 60 steps = 30 min biological at 30s stride
+KO_N_STEPS          = 60           # v15.4: 60 steps × 60 s stride = 60 min biological
 KO_BATCH_SIZE       = 32           # NEW v9: parallel knockouts per batch
+# v15.9: static essentiality classifier (keyword + pipeline features) + synthetic
+# lethality screen.  The LGNN's dynamic KO sweep tops out at MCC ~0.06 because
+# essentiality is a STATIC property (gene annotation + network position), not a
+# dynamic one.  These two diagnostics test that directly.
+USE_ESSENTIALITY_XGB = True        # static-feature essentiality classifier + 5-fold MCC
+USE_SYNTHETIC_LETHALITY = True     # double-KO super-additivity screen
+SL_MAX_PAIRS        = 600          # cap on candidate gene pairs (compute bound)
+SL_HORIZON          = 30           # rollout steps per double-KO (30 = 30 min biological)
+ESS_N_FOLDS         = 5            # stratified CV folds for the MCC test
 BREUER_PATH         = "memory_bank/data/syn3a_essentiality_breuer2019.csv"
 SEED                = 0
 SAVE_DIR            = "/content/drive/MyDrive"
@@ -3349,6 +3358,12 @@ class DynamicsModel(nn.Module):
         # state_history: optional (B, T_w, S) — past states including the
         # current one as the last row.  When None, falls back to using just
         # `x` as a single-step history (TemporalContext pads).
+        # v15.9 speed: force contiguous input.  Rollout/eval slices like
+        # trajs[:, t] hand us a non-contiguous (B, S) view (stride S*T at dim 1),
+        # which made torch.compile re-specialise on stride and blow past the
+        # recompile_limit (the "x_norm stride mismatch ... actual 120" warning).
+        # One .contiguous() at the entry stabilises the compiled graph.
+        x = x.contiguous()
         B, S = x.shape
         te  = self.type_embed(self.stype).unsqueeze(0).expand(B, -1, -1)
         inp = torch.cat([x.unsqueeze(-1), te], dim=-1)
@@ -5889,6 +5904,423 @@ def print_knockout_report(ko, breuer_labels):
     print("#" * 72)
 
 
+# ── v15.9: static essentiality classifier + synthetic lethality ──────────────
+
+# Keyword categories ported from the vectorize-gex branch's static_node_features
+# (v15 keyword-prior detector, MCC 0.5372 vs Breuer 2019).  These catch the
+# obvious essentials (ribosomes / polymerases / synthetases) from annotation text.
+_ESS_KEYWORDS = {
+    "is_ribosomal":   ("ribosomal protein", "ribosomal subunit", "30s ", "50s ", "ribosom"),
+    "is_synthetase":  ("synthetase", "--trna ligase", "trna ligase", "aminoacyl"),
+    "is_trna":        ("trna",),
+    "is_polymerase":  ("polymerase", "primase", "helicase", "gyrase", "topoisomerase"),
+    "is_dna_machinery": ("dna ", "replication", "chromosom", "ftsz", "cell division", "smc"),
+    "is_translation": ("translation", "elongation factor", "initiation factor",
+                       "release factor", "ef-tu", "ef-g", "trna-modifying"),
+    "is_transcription": ("transcription", "sigma factor", "rna polymerase", "nusa", "nusg"),
+    "is_membrane":    ("membrane", "transporter", "permease", "translocase",
+                       "abc transport", "secy", "atp synthase"),
+    "is_atp_binding": ("atp-binding", "atpase", "atp synthase", "gtpase", "gtp-binding"),
+    "is_kinase":      ("kinase",),
+    "is_phosphatase": ("phosphatase",),
+    "is_synthase":    ("synthase",),
+    "is_metabolism":  ("dehydrogenase", "reductase", "hydrolase", "transferase",
+                       "isomerase", "lyase", "oxidase", "carboxylase", "phosphorylase",
+                       "nuclease", "deaminase", "phosphoribosyltransferase"),
+    "is_uncharacterized": ("uncharacterized", "hypothetical", "putative", "unknown"),
+}
+_ESS_KEYWORD_COLS = list(_ESS_KEYWORDS.keys()) + ["protein_length_aa_log",
+                                                  "has_gene_name", "length_bp_log"]
+# Currency metabolites (top-degree hubs from the SBML analysis: appear in 27-41%
+# of all reactions).  An enzyme that touches one of these sits on a central flux.
+_CURRENCY_SPECIES = ("M_h_c", "M_atp_c", "M_h2o_c", "M_adp_c", "M_pi_c",
+                     "M_ppi_c", "M_amp_c", "M_nad_c", "M_nadh_c", "M_nadp_c")
+
+
+def _essentiality_keyword_features(product, gene_name, length_bp):
+    """v15.9: 17 annotation-keyword features for one gene (ports v15 detector)."""
+    p = (product or "").lower()
+    feats = {}
+    for col, kws in _ESS_KEYWORDS.items():
+        feats[col] = 1.0 if any(k in p for k in kws) else 0.0
+    # protein length in amino acids (bp/3); log1p
+    aa = (float(length_bp) / 3.0) if length_bp and length_bp > 0 else 0.0
+    feats["protein_length_aa_log"] = float(np.log1p(aa))
+    feats["has_gene_name"] = 1.0 if (gene_name and str(gene_name).strip()
+                                      and str(gene_name).lower() != "nan") else 0.0
+    feats["length_bp_log"] = float(np.log1p(float(length_bp))) if length_bp and length_bp > 0 else 0.0
+    return feats
+
+
+def build_essentiality_feature_matrix(
+        species_active, gene_products, gene_meta, breuer_labels,
+        edge_index=None, ruleset=None, patterns=None, sbml=None,
+        kinetics=None, raw_counts_active=None, train_idx=None):
+    """v15.9: build keyword + pipeline feature matrices per labelled locus.
+
+    Returns dict with X_kw, X_pipe, X_all, y, loci, names_kw, names_pipe.
+    Labels: Essential ∪ Quasiessential = 1, Nonessential = 0 (other dropped).
+    """
+    # locus -> list of species indices, by prefix category
+    locus_species = {}
+    for i, name in enumerate(species_active):
+        pre, loc = parse_species(name)
+        key = _locus_key(loc) if pre else None
+        if pre in {"P", "R", "RP", "G", "PM", "RPM"} and key:
+            locus_species.setdefault(key, []).append((pre, i))
+
+    # ── precompute pipeline lookups ──
+    # graph degree per species
+    deg = None
+    if edge_index is not None:
+        ea = edge_index.detach().cpu().numpy()
+        deg = np.zeros(len(species_active), dtype=np.float64)
+        np.add.at(deg, ea[0], 1.0); np.add.at(deg, ea[1], 1.0)
+    # cpair membership per species (HARD Tier-1 pairs)
+    cpair_member = np.zeros(len(species_active), dtype=np.float64)
+    if ruleset is not None and getattr(ruleset, "cpair_i", None) is not None:
+        for idx in ruleset.cpair_i.tolist() + ruleset.cpair_j.tolist():
+            if 0 <= idx < len(cpair_member):
+                cpair_member[idx] += 1.0
+    # lens-composition count per species (how many lenses flagged it)
+    central = getattr(patterns, "central_species", {}) if patterns is not None else {}
+    comp_count = np.zeros(len(species_active), dtype=np.float64)
+    for idx, lenses in central.items():
+        if 0 <= idx < len(comp_count):
+            comp_count[idx] = float(len(lenses))
+    # granger out-degree per species (how many directed edges it drives)
+    granger_out = np.zeros(len(species_active), dtype=np.float64)
+    for (a, b, *_ ) in (getattr(patterns, "granger", []) if patterns is not None else []):
+        if 0 <= a < len(granger_out):
+            granger_out[a] += 1.0
+    # n_reactions catalysed + currency coupling per locus, via kinetics enzyme map
+    enzyme_rxn = {}
+    currency_rxn = set()
+    if sbml is not None:
+        cur = set(_CURRENCY_SPECIES)
+        for r in sbml["reactions"]:
+            touches = any(sid in cur for sid, _ in r["reactants"] + r["products"])
+            if touches:
+                currency_rxn.add(r["id"])
+    if kinetics is not None:
+        for rid, enz in kinetics.get("enzymes", {}).items():
+            # enzyme string may be a locus tag or 'JCVISYN3A_xxxx'
+            m = re.search(r"(\d{4})", str(enz))
+            if m:
+                enzyme_rxn.setdefault(m.group(1), []).append(rid)
+
+    # cross-replicate trajectory stats per species (linear space)
+    def _traj_stats(idxs):
+        if raw_counts_active is None or train_idx is None or not idxs:
+            return 0.0, 0.0, 0.0
+        arr = raw_counts_active[train_idx][:, :, idxs].astype(np.float64)  # (R,T,k)
+        arr = arr.mean(axis=2)                                            # (R,T)
+        xrep_std_end = float(arr[:, -1].std())
+        drift = float(arr[:, -1].mean() - arr[:, 0].mean())
+        log_init = float(np.log1p(abs(arr[:, 0].mean())))
+        return xrep_std_end, drift, log_init
+
+    names_kw = list(_ESS_KEYWORD_COLS)
+    names_pipe = ["graph_degree_log", "cpair_member", "lens_composition_count",
+                  "granger_outdegree", "n_reactions_catalyzed", "currency_coupling",
+                  "traj_xrep_std_end_log", "traj_drift", "traj_log_init_abundance"]
+
+    Xkw, Xpipe, y, loci = [], [], [], []
+    for key in sorted(locus_species):
+        tag = f"JCVISYN3A_{key}"
+        lab = breuer_labels.get(key)
+        if lab not in {"Essential", "Quasiessential", "Nonessential"}:
+            continue
+        # keyword features from gene table
+        prod, gname, lbp = gene_meta.get(key, ("", "", 0))
+        kw = _essentiality_keyword_features(prod, gname, lbp)
+        Xkw.append([kw[c] for c in names_kw])
+
+        sp_idxs = [i for _, i in locus_species[key]]
+        prot_idxs = [i for pre, i in locus_species[key] if pre in {"P", "PM"}]
+        gdeg = float(np.log1p(deg[sp_idxs].sum())) if deg is not None else 0.0
+        cpc  = float(cpair_member[sp_idxs].sum())
+        cmp_ = float(comp_count[sp_idxs].sum())
+        gro  = float(granger_out[sp_idxs].sum())
+        nrxn = float(len(enzyme_rxn.get(key, [])))
+        ccpl = float(sum(1 for rid in enzyme_rxn.get(key, []) if rid in currency_rxn))
+        xstd, drift, linit = _traj_stats(prot_idxs or sp_idxs)
+        Xpipe.append([gdeg, cpc, cmp_, gro, nrxn, ccpl,
+                      float(np.log1p(abs(xstd))), drift, linit])
+
+        y.append(1 if lab in {"Essential", "Quasiessential"} else 0)
+        loci.append(tag)
+
+    Xkw = np.array(Xkw, dtype=np.float32)
+    Xpipe = np.array(Xpipe, dtype=np.float32)
+    Xall = np.concatenate([Xkw, Xpipe], axis=1) if len(Xkw) else Xkw
+    return {
+        "X_kw": Xkw, "X_pipe": Xpipe, "X_all": Xall,
+        "y": np.array(y, dtype=np.int8), "loci": loci,
+        "names_kw": names_kw, "names_pipe": names_pipe,
+        "names_all": names_kw + names_pipe,
+    }
+
+
+def essentiality_classifier_cv(X, y, n_folds=ESS_N_FOLDS, seed=SEED, feature_names=None):
+    """v15.9: stratified k-fold gradient-boosted classifier → MCC + confusion +
+    out-of-fold predictions + feature importances.  Prefers xgboost, falls back
+    to sklearn HistGradientBoostingClassifier (always available on Colab)."""
+    from sklearn.model_selection import StratifiedKFold
+    from sklearn.metrics import matthews_corrcoef
+    if len(X) < n_folds * 2 or len(np.unique(y)) < 2:
+        return None
+
+    def _make_clf(pos_weight):
+        try:
+            import xgboost as xgb
+            return ("xgboost", xgb.XGBClassifier(
+                n_estimators=400, max_depth=4, learning_rate=0.05,
+                subsample=0.8, colsample_bytree=0.8, min_child_weight=2,
+                scale_pos_weight=pos_weight, objective="binary:logistic",
+                tree_method="hist", eval_metric="logloss", verbosity=0,
+                random_state=seed))
+        except Exception:
+            from sklearn.ensemble import HistGradientBoostingClassifier
+            return ("sklearn-hgb", HistGradientBoostingClassifier(
+                max_depth=4, learning_rate=0.05, max_iter=400,
+                l2_regularization=1.0, random_state=seed))
+
+    pos_weight = float((y == 0).sum()) / max(int((y == 1).sum()), 1)
+    skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=seed)
+    oof = np.zeros(len(y), dtype=np.float64)
+    importances = np.zeros(X.shape[1], dtype=np.float64)
+    backend = None
+    for tr, va in skf.split(X, y):
+        backend, clf = _make_clf(pos_weight)
+        if backend == "sklearn-hgb":
+            # emulate class weighting via sample_weight
+            sw = np.where(y[tr] == 1, pos_weight, 1.0)
+            clf.fit(X[tr], y[tr], sample_weight=sw)
+        else:
+            clf.fit(X[tr], y[tr])
+        oof[va] = clf.predict_proba(X[va])[:, 1]
+        fi = getattr(clf, "feature_importances_", None)
+        if fi is not None and len(fi) == X.shape[1]:
+            importances += np.asarray(fi, dtype=np.float64) / n_folds
+    pred = (oof > 0.5).astype(np.int8)
+    tp = int(((pred == 1) & (y == 1)).sum()); fp = int(((pred == 1) & (y == 0)).sum())
+    fn = int(((pred == 0) & (y == 1)).sum()); tn = int(((pred == 0) & (y == 0)).sum())
+    mcc = float(matthews_corrcoef(y, pred)) if len(np.unique(pred)) > 1 else 0.0
+    top_feats = []
+    if feature_names is not None and importances.sum() > 0:
+        order = np.argsort(-importances)[:10]
+        top_feats = [(feature_names[i], float(importances[i])) for i in order]
+    return {"mcc": mcc, "tp": tp, "fp": fp, "fn": fn, "tn": tn,
+            "oof": oof, "pred": pred, "backend": backend, "top_feats": top_feats,
+            "n": len(y), "n_pos": int(y.sum()), "n_neg": int((y == 0).sum())}
+
+
+def run_essentiality_mcc(species_active, gene_products, gene_meta, breuer_labels,
+                          edge_index=None, ruleset=None, patterns=None, sbml=None,
+                          kinetics=None, raw_counts_active=None, train_idx=None):
+    """v15.9: 3-way essentiality MCC comparison (keyword / pipeline / combined)
+    + false-negative recovery inspection.  Prints the report, returns the dict."""
+    print()
+    print("#" * 72)
+    print("#  STATIC ESSENTIALITY CLASSIFIER  -  keyword vs pipeline features")
+    print("#  (the LGNN dynamic KO sweep tops out at MCC ~0.06; essentiality is")
+    print("#   a STATIC gene property, so we test static features directly)")
+    print("#" * 72)
+    fm = build_essentiality_feature_matrix(
+        species_active, gene_products, gene_meta, breuer_labels,
+        edge_index=edge_index, ruleset=ruleset, patterns=patterns, sbml=sbml,
+        kinetics=kinetics, raw_counts_active=raw_counts_active, train_idx=train_idx)
+    if fm is None or len(fm["y"]) < 20:
+        print("  insufficient labelled genes — skipped")
+        print("#" * 72)
+        return None
+    print(f"  labelled genes: {fm['n_pos'] if False else int(fm['y'].sum())} essential "
+          f"+ {int((fm['y']==0).sum())} nonessential  (Quasi counted as essential)")
+    print(f"  features: {fm['X_kw'].shape[1]} keyword + {fm['X_pipe'].shape[1]} pipeline "
+          f"= {fm['X_all'].shape[1]} combined")
+
+    results = {}
+    for label, X, names in [
+        ("keyword-only",  fm["X_kw"],   fm["names_kw"]),
+        ("pipeline-only", fm["X_pipe"], fm["names_pipe"]),
+        ("combined",      fm["X_all"],  fm["names_all"]),
+    ]:
+        r = essentiality_classifier_cv(X, fm["y"], feature_names=names)
+        results[label] = r
+        if r is None:
+            print(f"\n  {label}: skipped (degenerate)")
+            continue
+        print(f"\n  {label}  [{r['backend']}]:")
+        print(f"    MCC = {r['mcc']:+.4f}   (TP={r['tp']} FP={r['fp']} FN={r['fn']} TN={r['tn']})")
+        if r["top_feats"]:
+            tops = ", ".join(f"{n}={v:.2f}" for n, v in r["top_feats"][:5])
+            print(f"    top features: {tops}")
+
+    # ── false-negative recovery: which genes does keyword MISS that pipeline catches? ──
+    rk, rc = results.get("keyword-only"), results.get("combined")
+    if rk is not None and rc is not None:
+        y = fm["y"]; loci = fm["loci"]
+        kw_fn  = (rk["pred"] == 0) & (y == 1)        # essential, keyword missed
+        recovered = kw_fn & (rc["pred"] == 1)        # combined now catches
+        lost      = (rk["pred"] == 1) & (y == 1) & (rc["pred"] == 0)  # combined newly misses
+        print(f"\n  Keyword false-negatives (essential genes keyword missed): {int(kw_fn.sum())}")
+        print(f"    recovered by adding pipeline features: {int(recovered.sum())}")
+        print(f"    newly lost (regression):               {int(lost.sum())}")
+        rec_loci = [loci[i] for i in np.where(recovered)[0]][:12]
+        if rec_loci:
+            print(f"    recovered genes: {rec_loci}")
+        d_mcc = rc["mcc"] - rk["mcc"]
+        print(f"\n  Δ MCC (combined − keyword) = {d_mcc:+.4f}  "
+              f"→ {'pipeline features ADD signal' if d_mcc > 0.02 else 'no lift — essentiality gap is biological, not feature-extractable' if d_mcc < 0.0 else 'marginal'}")
+    print("#" * 72)
+    return {"feature_matrix": fm, "results": results}
+
+
+@torch.no_grad()
+def synthetic_lethality_screen(model, test_X, species_active, breuer_labels,
+                                edge_index=None, max_pairs=SL_MAX_PAIRS,
+                                horizon=SL_HORIZON, batch_size=KO_BATCH_SIZE):
+    """v15.9: double-knockout super-additivity screen.
+
+    A gene pair (A, B) is synthetic-lethal if KO(A) and KO(B) are each
+    individually tolerable but KO(A,B) is not.  Score = impact(A,B) −
+    impact(A) − impact(B); large positive excess = candidate SL interaction.
+
+    Candidate selection (compute-bounded):
+      1. rank single-KO impacts; keep the genes BELOW the median (individually
+         viable — the only ones that can be synthetic-lethal),
+      2. enumerate pairs among them that share a graph edge (interaction is
+         only expected between connected genes), cap at max_pairs,
+      3. fall back to random viable pairs if too few connected ones.
+    """
+    model.eval()
+    S = test_X.shape[2]
+    seed = test_X[0, 0]
+    device_ = seed.device
+    # locus -> species indices
+    gene_cols = {}
+    for i, name in enumerate(species_active):
+        pre, loc = parse_species(name)
+        if pre in {"P", "R", "RP", "G"}:
+            gene_cols.setdefault(_locus_key(loc), []).append(i)
+    loci = sorted(gene_cols)
+    if len(loci) < 4:
+        return None
+
+    no_ko = torch.zeros(1, S, dtype=torch.bool, device=device_)
+    baseline = _ko_rollout(model, seed.unsqueeze(0), no_ko, horizon).squeeze(0)
+
+    # single-KO impacts (batched)
+    single = {}
+    for i in range(0, len(loci), batch_size):
+        batch = loci[i:i + batch_size]
+        km = torch.zeros(len(batch), S, dtype=torch.bool, device=device_)
+        for b, loc in enumerate(batch):
+            km[b, gene_cols[loc]] = True
+        st = seed.unsqueeze(0).expand(len(batch), -1).clone()
+        st[km] = CLAMP_LO
+        tr = _ko_rollout(model, st, km, horizon)
+        for b, loc in enumerate(batch):
+            single[loc] = float(((baseline - tr[b]) ** 2).mean())
+
+    # viable genes = single-KO impact below median
+    med = float(np.median(list(single.values())))
+    viable = [loc for loc in loci if single[loc] <= med]
+
+    # candidate pairs: connected in the graph, among viable genes
+    pairs = []
+    if edge_index is not None and len(viable) > 1:
+        ea = edge_index.detach().cpu().numpy()
+        sp_to_locus = {}
+        for loc in viable:
+            for sp in gene_cols[loc]:
+                sp_to_locus[sp] = loc
+        seen = set()
+        for u, v in zip(ea[0].tolist(), ea[1].tolist()):
+            lu, lv = sp_to_locus.get(u), sp_to_locus.get(v)
+            if lu and lv and lu != lv:
+                key = (lu, lv) if lu < lv else (lv, lu)
+                if key not in seen:
+                    seen.add(key); pairs.append(key)
+            if len(pairs) >= max_pairs:
+                break
+    # fallback: random viable pairs
+    if len(pairs) < min(50, max_pairs) and len(viable) > 1:
+        rng = np.random.RandomState(SEED)
+        while len(pairs) < min(max_pairs, 200):
+            a, b = rng.choice(len(viable), 2, replace=False)
+            key = tuple(sorted((viable[a], viable[b])))
+            if key not in pairs:
+                pairs.append(key)
+    pairs = pairs[:max_pairs]
+    if not pairs:
+        return None
+
+    # double-KO impacts (batched)
+    sl = []
+    for i in range(0, len(pairs), batch_size):
+        batch = pairs[i:i + batch_size]
+        km = torch.zeros(len(batch), S, dtype=torch.bool, device=device_)
+        for b, (la, lb) in enumerate(batch):
+            km[b, gene_cols[la]] = True
+            km[b, gene_cols[lb]] = True
+        st = seed.unsqueeze(0).expand(len(batch), -1).clone()
+        st[km] = CLAMP_LO
+        tr = _ko_rollout(model, st, km, horizon)
+        for b, (la, lb) in enumerate(batch):
+            dbl = float(((baseline - tr[b]) ** 2).mean())
+            excess = dbl - single[la] - single[lb]
+            sl.append({"a": la, "b": lb, "double": dbl,
+                       "single_a": single[la], "single_b": single[lb],
+                       "excess": excess})
+    sl.sort(key=lambda d: -d["excess"])
+    return {"pairs_tested": len(pairs), "n_viable": len(viable),
+            "median_single": med, "ranking": sl,
+            "breuer_labels": breuer_labels}
+
+
+def print_synthetic_lethality_report(sl, top=15):
+    """v15.9: print the synthetic-lethality screen."""
+    print()
+    print("#" * 72)
+    print("#  SYNTHETIC LETHALITY SCREEN  -  double-KO super-additivity")
+    print("#  excess = impact(A,B) − impact(A) − impact(B);  > 0 ⇒ epistatic/SL")
+    print("#" * 72)
+    if sl is None:
+        print("  (no candidate pairs — skipped)")
+        print("#" * 72)
+        return
+    print(f"  viable genes (single-KO impact ≤ median {sl['median_single']:.2e}): {sl['n_viable']}")
+    print(f"  candidate pairs tested: {sl['pairs_tested']}")
+    exc = [d["excess"] for d in sl["ranking"]]
+    if exc:
+        pos = sum(1 for e in exc if e > 0)
+        print(f"  pairs with positive excess (super-additive): {pos}/{len(exc)} "
+              f"({100*pos/len(exc):.1f}%)")
+        print(f"  excess range: [{min(exc):.2e}, {max(exc):.2e}]")
+    bl = sl.get("breuer_labels", {})
+    _abbr = {"Essential": "E", "Quasiessential": "Q", "Nonessential": "N"}
+    print(f"\n  Top {top} synthetic-lethal candidates (highest excess):")
+    print(f"  (label key: E=Essential Q=Quasiessential N=Nonessential ?=unlabelled)")
+    print(f"    {'gene A':<16s} {'gene B':<16s} {'excess':>11s}  {'A':>2s} {'B':>2s}")
+    for d in sl["ranking"][:top]:
+        la_lab = _abbr.get(bl.get(d["a"]), "?")
+        lb_lab = _abbr.get(bl.get(d["b"]), "?")
+        print(f"    JCVISYN3A_{d['a']:<6s} JCVISYN3A_{d['b']:<6s} "
+              f"{d['excess']:>11.3e}  {la_lab:>2s} {lb_lab:>2s}")
+    # Highlight the biologically interesting case: both individually nonessential
+    nn_pairs = [d for d in sl["ranking"]
+                if bl.get(d["a"]) == "Nonessential" and bl.get(d["b"]) == "Nonessential"
+                and d["excess"] > 0]
+    if nn_pairs:
+        print(f"\n  Both-nonessential SL candidates (the classic SL signature): "
+              f"{len(nn_pairs)}")
+        for d in nn_pairs[:5]:
+            print(f"    JCVISYN3A_{d['a']} + JCVISYN3A_{d['b']}  excess={d['excess']:.3e}")
+    print("#" * 72)
+
+
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def run_reframes_only():
@@ -6546,6 +6978,36 @@ def main():
     # v15.6: breuer_labels was loaded earlier for the KO-consistency training loss
     ko = knockout_sweep(model, ruleset, test_X, species_active, breuer_labels)
     print_knockout_report(ko, breuer_labels)
+
+    # ── v15.9: static essentiality classifier (keyword + pipeline features) ──
+    if USE_ESSENTIALITY_XGB and breuer_labels:
+        try:
+            gene_products = load_gene_products(GENE_TABLE_PATH)
+            gene_meta = {}
+            if HAS_PANDAS:
+                _gt = pd.read_csv(GENE_TABLE_PATH)
+                for _, _r in _gt.iterrows():
+                    _tag = str(_r.get("locus_tag", ""))
+                    if "_" in _tag:
+                        gene_meta[_tag.split("_")[1]] = (
+                            str(_r.get("product", "")), str(_r.get("gene_name", "")),
+                            _r.get("length_bp", 0))
+            run_essentiality_mcc(
+                species_active, gene_products, gene_meta, breuer_labels,
+                edge_index=edge_index, ruleset=ruleset, patterns=patterns,
+                sbml=sbml, kinetics=kinetics,
+                raw_counts_active=raw_counts_active, train_idx=train_idx)
+        except Exception as e:
+            print(f"  essentiality classifier: skipped ({e})")
+
+    # ── v15.9: synthetic lethality screen (double-KO super-additivity) ──
+    if USE_SYNTHETIC_LETHALITY:
+        try:
+            sl = synthetic_lethality_screen(
+                model, test_X, species_active, breuer_labels, edge_index=edge_index)
+            print_synthetic_lethality_report(sl)
+        except Exception as e:
+            print(f"  synthetic lethality: skipped ({e})")
 
     # ── generate + save ──────────────────────────────────────────────────
     print()
