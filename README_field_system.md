@@ -83,3 +83,71 @@ points to handle:
   it on host or switch to `xp.argsort`; it is never on the per-step path.
 - **Host transfer:** `to_numpy()` is `np.asarray` here; for CuPy use `xp.asnumpy` (matplotlib
   and the asserts/fits need host arrays).
+
+---
+
+# Stage 2b — CuPy GPU port + real-time measurement (`field_system_v2_gpu.py`)
+
+The GPU backend port of the proven Stage-2a code (Stage-2a file **left untouched**),
+plus the measurement it exists for: **the largest N that runs under a 16 ms/step
+real-time budget.** The physics, four operations, tests, and architecture are
+unchanged — this is a backend swap + an honest hardware measurement.
+
+### The port surface
+`import cupy as xp` (the alias that made this a one-liner). Deposit uses
+**`cupyx.scatter_add`** (NumPy's `np.add.at` has no fast CuPy equivalent); read uses
+`xp.take`; the Morton sort uses `xp.argsort`; the **preallocated shared (N,K) buffer**
+and a preallocated source grid are kept (per-step allocation is fatal on GPU). FFT
+dtype is asserted float32/complex64 every step (CuPy can silently promote). The file
+auto-detects the backend: **with a GPU it runs the real measurement; with no GPU it
+falls back to NumPy in PARITY+PROJECTION mode and never prints a CPU time as a GPU
+result.** Run: `python field_system_v2_gpu.py` (on Colab for real numbers).
+
+### Correct GPU timing (where fake-fast numbers come from)
+Timing is done properly: **≥25 warmup steps** (CUDA JIT/autotune, cuFFT plan cache),
+**device `synchronize()`** before and after timing (CuPy is async — without sync you
+time kernel *launches*, not *execution*), **CUDA-event** device-side timing,
+**median over ≥40 steps** with the inter-quartile spread, and a **per-stage
+breakdown** (deposit / FFT-solve / read / update) so the bottleneck at the ceiling is
+visible. No host↔device array transfer ever happens inside the timed loop.
+
+### Port correctness — validated on CPU (parity is checkable without a GPU)
+The proven v2 is the reference. The new code paths reproduce it to float32:
+`scatter_add` deposit vs v2's bincount **max|Δ| = 2.1e-7**; spectral falloff
+**L_fit = 1.999**; Morton sorted-vs-unsorted **7.2e-7**; conservation slope **4.0000**,
+drift **8e-8**. (GPU atomics reorder the scatter sums, so float32 — not bitwise —
+agreement is the correct expectation; tolerance 1e-4.)
+
+### The deliverable — measure it on Colab
+**This build sandbox has no GPU**, so the four headline numbers (largest real-time N,
+the OOM N, which constraint binds, the bottleneck stage) must come from running the
+harness on a Colab GPU. What *is* defensible from first principles is below; the
+harness fills in the measured values when run on hardware.
+
+- **Memory ceiling (exact):** bytes/unit is fixed at **2060** (= 515 floats×4). At 80%
+  VRAM that is **~6.2M (T4 16 GB) · ~31M (A100 80 GB) · ~37M (RTX 6000 Pro Blackwell
+  96 GB).** Reliable — pure capacity arithmetic.
+- **Compute ceiling (labeled bandwidth model):** the step streams the (N,K) arrays
+  through HBM ~10× (`bytes/step ≈ 10·N·K·4`; the 256² grid is L2-resident, the FFT is
+  a tiny constant), so `t_step ≈ 10·N·K·4 / (util·BW)`. With util≈60% the 16 ms
+  crossing is **~0.45M (T4) · ~2.5M (A100/Blackwell) · ~4.8M (H100)** — an
+  order-of-magnitude *estimate*, not a measurement. See
+  `field_v2b_realtime_ceiling.png` (a clearly-labeled MODEL plot in this sandbox; the
+  same script emits the MEASURED plot on a GPU).
+- **Which binds first:** on every card above the model puts the compute (bandwidth)
+  ceiling (~10⁶) **an order of magnitude below** the memory ceiling (~10⁷) — so the
+  real-time-N is **bandwidth-bound**, and the bottleneck stage is **deposit/read**
+  (scatter/gather), **not** the FFT. (This conclusion is robust to the model's
+  assumptions: even at util 80% / 5 passes, compute still binds first.)
+- **Blackwell (96 GB) extrapolation:** since the bound is *compute*, scale the
+  *measured* Colab real-time-N by the **bandwidth ratio** `1792 / BW_colab` (labeled an
+  estimate, resting on the workload being bandwidth-bound) — not by VRAM. Memory would
+  allow ~37M, but compute binds first, est ~2.5M. If a run is ever memory-bound
+  instead, scale by the VRAM ratio (96/VRAM_colab), which is reliable.
+
+### Operating point (carry-forward, not fixed here)
+Stage-1 showed units saturate `tanh` (mean|a|→1) under a strong field — bounded but
+information-free. That is a **Stage-3 (learning)** concern; the model is unchanged
+here. Timing is unaffected by operating point: `tanh` costs the same whether its input
+is in the linear or saturated regime, so saturated vs linear units have identical
+per-step cost.

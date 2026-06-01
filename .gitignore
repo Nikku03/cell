@@ -27,6 +27,9 @@ field_spread_snapshots.png
 # Generated figures from field_system_v2.py (regenerable via `python field_system_v2.py`)
 field_v2_scaling_N.png
 field_v2_scaling_M.png
+
+# Generated figure from field_system_v2_gpu.py (regenerable; MEASURED on GPU / MODEL on CPU)
+field_v2b_realtime_ceiling.png
 *.log
 *.tmp
 
