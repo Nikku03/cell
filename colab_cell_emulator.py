@@ -3332,13 +3332,42 @@ def t_signed_expm1(x):
 
 def load_data(skip_startup=True):
     """Load all parquet trajectories.  v10: pre-allocate the stacked array so we
-    don't briefly hold two copies (12 + 12 GB at full resolution)."""
+    don't briefly hold two copies (12 + 12 GB at full resolution).
+
+    v15.8: file-search is forgiving — tries the strict ``counts_and_fluxes*``
+    pattern first, then falls back to ANY ``.parquet`` under PARQUET_DIR (or
+    /MyDrive recursively if PARQUET_DIR is empty).  Sort key handles names
+    like ``foo.001.parquet`` (the original convention) AND plain
+    ``something_001.parquet`` (just sorts by filename).
+    """
     assert HAS_PANDAS, "pandas required - install or run on Colab"
-    pat = (f"{PARQUET_DIR}/counts_and_fluxes*.parquet" if PARQUET_DIR
-           else "/content/drive/MyDrive/**/counts_and_fluxes*.parquet")
-    files = sorted(glob.glob(pat, recursive=True),
-                   key=lambda p: int(p.rsplit(".", 2)[-2]))
-    assert files, "no parquet files - set PARQUET_DIR"
+    if PARQUET_DIR:
+        candidates = [
+            f"{PARQUET_DIR}/counts_and_fluxes*.parquet",
+            f"{PARQUET_DIR}/**/counts_and_fluxes*.parquet",
+            f"{PARQUET_DIR}/*.parquet",
+            f"{PARQUET_DIR}/**/*.parquet",
+        ]
+    else:
+        candidates = [
+            "/content/drive/MyDrive/**/counts_and_fluxes*.parquet",
+            "/content/drive/MyDrive/**/*.parquet",
+        ]
+    files = []
+    for pat in candidates:
+        files = sorted(set(glob.glob(pat, recursive=True)))
+        if files:
+            print(f"[data] matched {len(files)} file(s) with pattern: {pat}")
+            break
+
+    def _sort_key(p):
+        # Strip extension, take trailing integer if present, else fall back to name
+        base = os.path.splitext(os.path.basename(p))[0]
+        m = re.search(r"(\d+)\s*$", base)
+        return (0, int(m.group(1))) if m else (1, base)
+    files = sorted(files, key=_sort_key)
+    assert files, ("no parquet files - set PARQUET_DIR.  Tried patterns: "
+                   + " | ".join(candidates))
     print(f"[data] {len(files)} trajectory files")
     species_names = None
     out = None
