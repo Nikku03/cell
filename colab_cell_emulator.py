@@ -1731,6 +1731,15 @@ def _build_cpair_classifier(known, species_names):
             return ("ribosome_open_state", f"pattern:{name_j}")
         if name_j.endswith("_open") and name_j[:-5] == name_i:
             return ("ribosome_open_state", f"pattern:{name_i}")
+        # 1b. v15.8.4: central-dogma gene occupancy — G_<locus>_C<n> + RP_<locus>_C<n>.
+        # Each chromosome copy has a fixed gene count, and the gene is either free
+        # (G_) or RNA-polymerase-occupied (RP_).  Their sum is a hard biological
+        # constraint (chromosome stoichiometry).  Pattern: same locus and chromosome
+        # suffix, prefix swapped G_<X> <-> RP_<X>.
+        if name_i.startswith("G_") and name_j.startswith("RP_") and name_i[2:] == name_j[3:]:
+            return ("central_dogma_gene_occupancy", f"pattern:G/RP_{name_i[2:]}")
+        if name_j.startswith("G_") and name_i.startswith("RP_") and name_j[2:] == name_i[3:]:
+            return ("central_dogma_gene_occupancy", f"pattern:G/RP_{name_j[2:]}")
         # 2. SBML interconversion (same reaction, opposite stoich)
         for (rid_i, st_i) in rxn_membership.get(name_i, []):
             for (rid_j, st_j) in rxn_membership.get(name_j, []):
