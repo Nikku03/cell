@@ -6421,16 +6421,19 @@ def print_synthetic_lethality_report(sl, top=15):
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def run_reframes_only():
-    """v15.8.2: lean path — load data + knowledge phase + three reframe tests.
+    """v15.8.2 + v15.9.2: lean static-analysis path — load data + knowledge phase
+    + three reframes + STATIC essentiality classifier (v15 keywords + our 9
+    pipeline features).  Skips all training, model construction, LGNN-based
+    knockout sweep, and synthetic lethality (which needs the model).
 
-    Skips model construction, training, eval rollout, and all v15.2 diagnostics.
-    Use to verify R1/R2/R3 in ~10–15 min instead of 80–110 min for the full
-    pipeline.  Set REFRAMES_ONLY=True (config flag) or REFRAMES_ONLY=1 (env var).
+    Use to verify the static-analysis findings in ~15-20 min instead of 80-110.
+    Set REFRAMES_ONLY=True (config flag) or REFRAMES_ONLY=1 (env var).
     """
     print(f"[device] {device}")
     print()
     print("=" * 72)
-    print("  v15.8.2 — REFRAMES-ONLY fast path (no training, no model build)")
+    print("  v15.9.2 — STATIC-ANALYSIS fast path  (no training, no model)")
+    print("  runs: data + knowledge phase + reframes + essentiality classifier")
     print("=" * 72)
 
     raw_counts, species_names = load_data(skip_startup=True)
@@ -6487,6 +6490,19 @@ def run_reframes_only():
     ruleset = ruleset.to(device)
     print(f"[ruleset] {ruleset.summary()}")
 
+    # v15.9.2: build the full graph so essentiality features (graph_degree,
+    # currency_coupling) have real values.  ~1 min.
+    edge_index = None
+    try:
+        print()
+        print("[graph] building full SBML+CD+enzyme-flux graph (needed for "
+              "essentiality features) ...")
+        edge_index, _edge_weight = build_full_graph(
+            sbml, kinetics, complexes, species_active,
+            protein_metabolites=prot_metab, largesubunit=largesubunit)
+    except Exception as e:
+        print(f"  graph build skipped ({e}); graph_degree feature will be zero")
+
     # Stochastic ceiling for the verdict-block reference
     print()
     try:
@@ -6514,9 +6530,41 @@ def run_reframes_only():
         print(f"  reframe 1 (algorithm): skipped ({e})")
     print_reframe_report(r3_out, r2_out, r1_out,
                           current_honest_r2=None, ceiling=_ceil)
+
+    # v15.9.2: static essentiality classifier — the v15 keyword detector
+    # baseline + our 9 pipeline features (graph degree, cpair membership,
+    # lens-composition centrality, granger out-degree, n-reactions-catalysed,
+    # currency-hub coupling, trajectory stats).  Three feature sets compared
+    # by 5-fold MCC, plus per-gene errors annotated with function.
+    breuer_labels = load_breuer_essentiality(BREUER_PATH)
+    if USE_ESSENTIALITY_XGB and breuer_labels:
+        try:
+            gene_products = load_gene_products(GENE_TABLE_PATH)
+            gene_meta = {}
+            if HAS_PANDAS:
+                _gt = pd.read_csv(GENE_TABLE_PATH)
+                for _, _r in _gt.iterrows():
+                    _tag = str(_r.get("locus_tag", ""))
+                    if "_" in _tag:
+                        gene_meta[_tag.split("_")[1]] = (
+                            str(_r.get("product", "")), str(_r.get("gene_name", "")),
+                            _r.get("length_bp", 0))
+            run_essentiality_mcc(
+                species_active, gene_products, gene_meta, breuer_labels,
+                edge_index=edge_index, ruleset=ruleset, patterns=patterns,
+                sbml=sbml, kinetics=kinetics,
+                raw_counts_active=raw_counts_active, train_idx=train_idx)
+        except Exception as e:
+            print(f"  essentiality classifier: skipped ({e})")
+    else:
+        print("  essentiality classifier: skipped (USE_ESSENTIALITY_XGB off or "
+              "no Breuer labels)")
+
     print()
     print("=" * 72)
-    print("  REFRAMES-ONLY RUN COMPLETE — no model trained, no checkpoint saved")
+    print("  STATIC-ANALYSIS RUN COMPLETE — no model trained, no checkpoint saved")
+    print("  ran: reframes + essentiality classifier (LGNN KO + synthetic lethality")
+    print("        require a trained model, so were not run in this path)")
     print("=" * 72)
 
 
