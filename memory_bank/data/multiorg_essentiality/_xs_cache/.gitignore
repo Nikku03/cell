@@ -1,0 +1,9 @@
+# Raw upstream files cached by scripts/build_cross_species_from_github.py
+# Don't commit these — they're 1MB+ and reproducible via the script.
+*.xlsx
+*.gff
+*.gff3
+*.fasta
+*.faa
+*.csv
+*.tsv
