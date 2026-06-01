@@ -30,6 +30,12 @@ field_v2_scaling_M.png
 
 # Generated figure from field_system_v2_gpu.py (regenerable; MEASURED on GPU / MODEL on CPU)
 field_v2b_realtime_ceiling.png
+
+# Generated figures from field_system_v3.py (regenerable via `python field_system_v3.py`)
+field_v3_training.png
+field_v3_gradflow.png
+field_v3_loss_vs_T.png
+field_v3_task3_resolution.png
 *.log
 *.tmp
 

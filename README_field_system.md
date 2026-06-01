@@ -151,3 +151,68 @@ information-free. That is a **Stage-3 (learning)** concern; the model is unchang
 here. Timing is unaffected by operating point: `tanh` costs the same whether its input
 is in the linear or saturated regime, so saturated vs linear units have identical
 per-step cost.
+
+---
+
+# Stage 3 — differentiable: does learning flow through the field? (`field_system_v3.py`)
+
+The make-or-break stage. Same physics (periodic FFT solve, Gaussian deposit/read,
+leaky-integrate + `tanh`, `L=sqrt(D/λ)`), rebuilt in **PyTorch** so autograd backprops
+through the whole T-step unroll. Run: `python field_system_v3.py` (CPU; needs `torch`).
+The deliverable is an **honest, diagnosed answer** — not a forced pass.
+
+**Pipeline (all differentiable):** drive INPUT units from the task input each step →
+deposit (`index_add` scatter) → field solve (`torch.fft`) → read (gather) → unit
+update `s←s+Δt(−γs+φ); a=tanh(gain·s)` → linear readout of OUTPUT-unit states.
+**Carry-forwards handled:** input units are *driven* every step (zero is a fixed
+point); the **gain** is a tuned knob with the saturated fraction (`|a|>0.9`) reported
+every epoch. **Learnable set:** input map `W_in`, linear **reservoir readout** `W_out`
+(reads many units — a single read-out unit can't combine enough features and the
+optimizer just collapses gain→0), bias; gain is a **tuned hyperparameter co-tuned
+with T** (`gain∝1/charge(T)`); physics `D,λ` optionally learnable.
+
+### Results (per task: PASS/FAIL · loss · diagnosis)
+- **TASK 0 overfit-one — PASS** (loss 6e-5). Gradients flow end-to-end; the plumbing
+  is sound.
+- **TASK 1 spatial XOR — PASS** (best 1e-4; **2/3 seeds**). The field+`tanh` *does*
+  compute a genuine nonlinearity, but only with a reservoir readout and the gain kept
+  off the rails; optimization is **init-sensitive**, and the failure mode of bad runs
+  is gain-collapse / saturation, not missing capacity.
+- **TASK 2 spatial routing — PASS** (loss 5e-5, 0% saturated). Transporting a pattern
+  from region A to region B works cleanly **when the units are ≥L apart** (resolvable
+  at the source). The field's home-turf win.
+- **TASK 3 sub-L resolution — FAIL (by design — the valuable result).** With an
+  *identity* input (so the two classes differ only by deposit **location**), the field
+  representations of inputs `0.5L` apart have **contrast ≈0.05 (cosine 0.999 — 99.9%
+  identical)**, and a noisy classifier gets **62%** (≈ chance). Contrast rises ~linearly
+  with separation; noisy accuracy reaches 100% by **~1.5L**. The low-pass field
+  **cannot preserve distinctions finer than ~L**, and no amount of learning fixes a
+  difference the blur has already erased. See `field_v3_task3_resolution.png`.
+
+### Key diagnostics
+- **Gradient flow vs unroll depth** (`field_v3_gradflow.png`, the central plot,
+  measured at init): the decay back from the readout **tracks the `0.9^depth` leaky-
+  integrator rate, NOT the diffusion** — the FFT/diffusion is gradient-benign. At T=16
+  the profile is essentially flat (earliest/last ≈ 1.5, no vanishing); only at **T=64**
+  do early-step gradients fall to ~2% (the leak's ~10-step memory). Learning survives
+  anyway because the input is persistent and the readout reads the (recent) steady state.
+- **Saturation & T** (`field_v3_loss_vs_T.png`): with gain co-tuned, XOR learns for all
+  T≥4 (T=1 is too shallow); saturation still creeps 0→3→22→60% as T grows — confirming
+  saturation, controllable by gain, is the operative knob.
+- **L-sweep:** XOR fails at L=1 (units barely couple), works for L≥2 — coupling range
+  must exceed unit spacing for the field to mix inputs.
+
+### Verdict
+**Learning flows through the field.** Gradients are intact end-to-end; the architecture
+learns nonlinear (XOR) and spatial-transport (routing) tasks. The binding constraint is
+**not** gradient-vanishing through the diffusion — with gain co-tuned, XOR learns at
+T=64. The real limits are (a) **tanh saturation**, which grows with T as the field
+charges the integrator and must be countered by scaling gain ∝ 1/charge(T); (b)
+**learnable gain collapses** toward the linear regime (so we fix/tune it); and (c) the
+hard ceiling — **spatial resolution**: the field is a low-pass filter and cannot
+represent sub-L detail. So this architecture learns nonlinear, spatially-coarse (≳L)
+computation and transport, but not fine spatial detail. **The Stage-4 "laws not weights"
+test is worth running** — gradients flow, the minimal learnable set suffices, and the
+learnable-physics path (does it learn its own coupling range `D,λ`?) is well-posed —
+*provided the tasks stay above the L blur floor, which is physics, not a training
+problem.*
