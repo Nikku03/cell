@@ -154,6 +154,15 @@ PARQUET_DIR         = ""
 # spending an hour on a full training run.  Can also be flipped via
 # REFRAMES_ONLY=1 env var (so you don't have to edit cell 3).
 REFRAMES_ONLY       = (os.environ.get("REFRAMES_ONLY", "0") == "1")
+# v15.8.3: gate hard-projection conservation pairs to MECHANISM-BACKED only.
+# When True (safe default): cpairs that don't trace to SBML interconversion,
+# complex subunit-sharing, LargeSubunit assembly, ribosomal _open-state pairs,
+# or known tRNA charging are demoted to Tier 2 SOFT (penalty in loss, not a
+# hard projection).  This avoids enforcing trajectory-only "conservation"
+# laws that might be artifacts of the specific 50 training trajectories.
+# Set to False to restore the v15.5–v15.8.2 behavior of enforcing ALL 520
+# discovered pairs (useful for ablation: "did strict mechanism gating help?").
+CPAIR_STRICT_MECHANISM = True
 TIME_STRIDE         = 60           # v15.4 [4/6]: was 30. Halves the rollout horizon (240->120 steps) so less compounding error, and K_MAX=90 now covers ~86% of the cycle (vs half at stride 30). Compare to v9 (60s -> rollout R^2 ~0.64). NEEDS a fresh training run (RESUME=False) — v15.0 ckpt is stride-30.
 LENS_TIME_STRIDE    = 60           # v10: subsample for the lens phase (memory)
 # Drop t=0 and t=1 of the simulator (the unnatural startup transient).  At
@@ -1667,6 +1676,86 @@ class Hypotheses:
         return total, per_kind
 
 
+def _build_cpair_classifier(known, species_names):
+    """v15.8.3: classify a conservation-pair (i, j) by mechanistic backing.
+
+    Returns a closure `classify(i, j) -> (kind, source)` where `kind` is one of:
+      - 'ribosome_open_state'     — name patterns differ only by '_open'
+      - 'sbml_interconversion'    — same SBML reaction, opposite-sign stoich
+      - 'complex_subunits'        — both species are subunits of same complex
+      - 'largesubunit_assembly'   — both in LargeSubunit assembly path
+      - 'trna_charging'           — pattern: M_<aa>trna_c + M_f<aa>trna_c
+      - 'trajectory_only'         — no mechanism backing found
+
+    Anything that is NOT 'trajectory_only' is considered safe to project as a
+    hard Tier 1 constraint.  Trajectory-only pairs are mathematically valid
+    on the 50 training trajectories but could be artifacts of those specific
+    simulator runs — they should be Tier 2 SOFT until validated on perturbed
+    conditions (knockouts, parameter sweeps).
+    """
+    rxn_membership = {}                # species_id -> [(rxn_id, signed_stoich)]
+    if known is not None and known.sbml is not None:
+        for rxn in known.sbml.get("reactions", []):
+            rid = rxn["id"]
+            for sid, st in rxn.get("reactants", []):
+                rxn_membership.setdefault(sid, []).append((rid, -float(st)))
+            for sid, st in rxn.get("products", []):
+                rxn_membership.setdefault(sid, []).append((rid, +float(st)))
+
+    complex_membership = {}            # species_id -> set of complex names
+    if known is not None and known.complexes is not None:
+        for cx in known.complexes.get("complexes", []):
+            for sub_id, _ in cx.get("subunits", []):
+                complex_membership.setdefault(sub_id, set()).add(cx["name"])
+        # also include predefined complex names (species that ARE the complex)
+        for cx_name in (known.complexes.get("predefined", {}) or {}):
+            complex_membership.setdefault(cx_name, set()).add(cx_name)
+
+    largesubunit_species = set()
+    if known is not None:
+        for (sub, inter, prod) in (known.largesubunit or []):
+            for s in (sub, inter, prod):
+                if s and s != "nan":
+                    largesubunit_species.add(s)
+
+    def classify(i, j):
+        name_i = species_names[i] if i < len(species_names) else ""
+        name_j = species_names[j] if j < len(species_names) else ""
+        # 1. ribosome _open-state pattern (e.g. 'RP_0068_c1_2' + 'RP_0068_c1_open_2')
+        if "_open_" in name_i and name_i.replace("_open_", "_") == name_j:
+            return ("ribosome_open_state", f"pattern:{name_j}")
+        if "_open_" in name_j and name_j.replace("_open_", "_") == name_i:
+            return ("ribosome_open_state", f"pattern:{name_i}")
+        # Also handle 'open' as suffix without trailing index (rare)
+        if name_i.endswith("_open") and name_i[:-5] == name_j:
+            return ("ribosome_open_state", f"pattern:{name_j}")
+        if name_j.endswith("_open") and name_j[:-5] == name_i:
+            return ("ribosome_open_state", f"pattern:{name_i}")
+        # 2. SBML interconversion (same reaction, opposite stoich)
+        for (rid_i, st_i) in rxn_membership.get(name_i, []):
+            for (rid_j, st_j) in rxn_membership.get(name_j, []):
+                if rid_i == rid_j and abs(st_i + st_j) < 1e-9 and abs(st_i) > 1e-9:
+                    return ("sbml_interconversion", f"reaction:{rid_i}")
+        # 3. Complex co-subunits
+        shared = complex_membership.get(name_i, set()) & complex_membership.get(name_j, set())
+        if shared:
+            return ("complex_subunits", f"complex:{next(iter(shared))}")
+        # 4. LargeSubunit assembly co-membership
+        if name_i in largesubunit_species and name_j in largesubunit_species:
+            return ("largesubunit_assembly", "LargeSubunit.xlsx")
+        # 5. tRNA charging pattern: M_<aa>trna_c + M_f<aa>trna_c (formyl-methionine
+        #    style — generalises to any aminoacyl/formyl pair)
+        if (name_i.startswith("M_") and name_j.startswith("M_")
+                and "trna" in name_i.lower() and "trna" in name_j.lower()):
+            # canonical form: stripping leading 'f' from one matches the other
+            ni, nj = name_i[2:], name_j[2:]
+            if ni == "f" + nj or nj == "f" + ni:
+                return ("trna_charging", "biology_pattern:f_aminoacyl")
+        return ("trajectory_only", None)
+
+    return classify
+
+
 def build_enforcement(known, patterns, species_names, lo=None, span=None):
     """Sort the validated subset of KnownRules+DiscoveredPatterns into Tier 1.
     Everything else (failed monotone, all conservation/pairwise/etc.) -> Tier 2.
@@ -1753,31 +1842,62 @@ def build_enforcement(known, patterns, species_names, lo=None, span=None):
                 1.0 / (1.0 + info["std_lag"]),
                 "trajectory")
 
-    # ── v15.5 upgrade 1: conservation pairs → HARD Tier-1 constraints ──
+    # ── v15.5 upgrade 1, v15.8.3 strict-mechanism gating: conservation pairs ──
     cpairs = getattr(patterns, "conservation_pairs", [])
-    if cpairs and lo is not None and span is not None:
-        ci, cj, c_lo, c_span = [], [], [], []
+    if cpairs:
+        # v15.8.3: classify each pair by mechanistic backing.  Only mechanism-
+        # backed pairs become HARD Tier 1 projections.  Trajectory-only pairs
+        # demote to SOFT Tier 2 (loss penalty, no projection).
+        classifier = _build_cpair_classifier(known, species_names)
+        prov_counts = {}
+        mech_backed, traj_only = [], []
         for cp in cpairs:
-            i, j = cp["i"], cp["j"]
-            ci.append(i); cj.append(j)
-            c_lo.append([float(lo[i]), float(lo[j])])
-            c_span.append([float(span[i]), float(span[j])])
-        rs.cpair_i    = torch.tensor(ci, dtype=torch.long)
-        rs.cpair_j    = torch.tensor(cj, dtype=torch.long)
-        rs.cpair_lo   = torch.tensor(c_lo,   dtype=torch.float32)
-        rs.cpair_span = torch.tensor(c_span, dtype=torch.float32).clamp(min=1e-6)
-        rs.n_cpair    = len(cpairs)
-        for cp in cpairs[:12]:
-            print(f"[rules]   conserved pair: '{species_names[cp['i']]}' + "
-                  f"'{species_names[cp['j']]}' = {cp['sum_level']:.1f} "
-                  f"(cv_val {cp['cv_val']*100:.2f}%)")
-    elif cpairs:
-        # No lo/span → can't build the count-space projection; report as Tier 2.
-        for cp in cpairs:
-            hyp.add("conservation-pair",
+            kind, src = classifier(cp["i"], cp["j"])
+            cp["_provenance"]     = kind
+            cp["_provenance_src"] = src
+            prov_counts[kind] = prov_counts.get(kind, 0) + 1
+            (mech_backed if kind != "trajectory_only" else traj_only).append(cp)
+
+        if CPAIR_STRICT_MECHANISM:
+            enforce_list, soft_list = mech_backed, traj_only
+        else:
+            enforce_list, soft_list = cpairs, []
+
+        if enforce_list and lo is not None and span is not None:
+            ci, cj, c_lo, c_span = [], [], [], []
+            for cp in enforce_list:
+                i, j = cp["i"], cp["j"]
+                ci.append(i); cj.append(j)
+                c_lo.append([float(lo[i]), float(lo[j])])
+                c_span.append([float(span[i]), float(span[j])])
+            rs.cpair_i    = torch.tensor(ci, dtype=torch.long)
+            rs.cpair_j    = torch.tensor(cj, dtype=torch.long)
+            rs.cpair_lo   = torch.tensor(c_lo,   dtype=torch.float32)
+            rs.cpair_span = torch.tensor(c_span, dtype=torch.float32).clamp(min=1e-6)
+            rs.n_cpair    = len(enforce_list)
+            print(f"[cpair-provenance] breakdown of {len(cpairs)} discovered pairs:")
+            for kind, n in sorted(prov_counts.items(), key=lambda kv: -kv[1]):
+                print(f"    {kind:<28s} {n:>4d}")
+            mode = "STRICT" if CPAIR_STRICT_MECHANISM else "ALL"
+            print(f"[cpair-provenance] {mode} mode: {len(enforce_list)} pairs "
+                  f"enforced as HARD Tier 1; {len(soft_list)} demoted to SOFT Tier 2")
+            for cp in enforce_list[:12]:
+                print(f"[rules]   conserved pair: '{species_names[cp['i']]}' + "
+                      f"'{species_names[cp['j']]}' = {cp['sum_level']:.1f} "
+                      f"(cv_val {cp['cv_val']*100:.2f}%)  "
+                      f"[{cp.get('_provenance', '?')}]")
+        elif cpairs and (lo is None or span is None):
+            # Can't build projection without lo/span — report everything as Tier 2.
+            soft_list = cpairs
+
+        # SOFT: trajectory-only pairs become Tier 2 hypotheses (reported, used
+        # as soft loss when hyp.soft_loss is wired in training).
+        for cp in soft_list:
+            hyp.add("conservation-pair-soft",
                     f"'{species_names[cp['i']]}' + '{species_names[cp['j']]}' "
-                    f"= {cp['sum_level']:.1f} (cv {cp['cv_val']*100:.2f}%)",
-                    1.0 / (1.0 + cp["cv_val"]), "conspair")
+                    f"= {cp['sum_level']:.1f} (cv {cp['cv_val']*100:.2f}%) "
+                    f"[trajectory-only, no mechanism backing]",
+                    1.0 / (1.0 + cp["cv_val"]), "conspair-traj")
 
     # ── v15.5 upgrade 3a: nonlinear MI couplings → Tier 2 (reported) ──
     for (i, j, mi, ac) in getattr(patterns, "mutual_info", [])[:12]:
