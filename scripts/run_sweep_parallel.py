@@ -165,9 +165,23 @@ def _worker_init(cfg_dict: dict, wt_pickle_path: str,
             gene_to_rules=gene_to_rules,
             min_wt_events=cfg_dict.get("min_wt_events", 20),
         )
+        conserved = None
+        if cfg_dict.get("enable_cross_species", False):
+            from cell_sim.layer6_essentiality.conserved_essentiality_detector import (
+                ConservedEssentialityDetector, ConservedEssentialityKB,
+            )
+            xs_path = cfg_dict.get("cross_species_csv")
+            kb = (ConservedEssentialityKB.load(xs_path)
+                  if xs_path else ConservedEssentialityKB.load())
+            conserved = ConservedEssentialityDetector(
+                kb=kb,
+                min_pident=cfg_dict.get("cross_species_min_pident", 30.0),
+                require_both=cfg_dict.get("cross_species_require_both", False),
+            )
         _worker_detector = ComposedDetector(
             structural=ComplexAssemblyDetector(),
             annotation=AnnotationClassDetector(),
+            conserved=conserved,
             trajectory=pr,
         )
     else:
@@ -362,6 +376,24 @@ def main() -> int:
                         "three v10b metabolic false positives. See "
                         "memory_bank/facts/parameters/"
                         "imb155_pathway_patches.json.")
+    p.add_argument("--enable-cross-species", action="store_true",
+                   help="v16: add the ConservedEssentialityDetector to "
+                        "the composed stack. Reads cross-species "
+                        "essentiality calls from "
+                        "cell_sim/data/cross_species_essentiality.csv "
+                        "(populate first with "
+                        "scripts/build_cross_species_essentiality.py).")
+    p.add_argument("--cross-species-csv", default=None,
+                   help="Path override for the cross-species CSV. "
+                        "Defaults to cell_sim/data/cross_species_essentiality.csv.")
+    p.add_argument("--cross-species-min-pident", type=float, default=30.0,
+                   help="When the syn3A->reference homolog mapping is "
+                        "BLAST-derived, only count it as essential if "
+                        "percent identity is at least this value.")
+    p.add_argument("--cross-species-require-both", action="store_true",
+                   help="Fire only when BOTH M.gen AND M.pne homologs "
+                        "are essential. More conservative (lower recall, "
+                        "fewer FPs).")
     p.add_argument("--out-dir", default="outputs")
     args = p.parse_args()
 
@@ -373,6 +405,10 @@ def main() -> int:
         det_tag += f"-{args.ensemble_policy}"
     if args.rule_necessity_only:
         det_tag += "_uniqueonly"
+    if args.enable_cross_species:
+        det_tag += "_xs"
+        if args.cross_species_require_both:
+            det_tag += "and"
     tag = (f"parallel_s{args.scale}_t{args.t_end_s}_seed{args.seed}"
            f"_thr{args.threshold}_w{args.workers}{cal_tag}{det_tag}")
     pred_csv = out_dir / f"predictions_{tag}.csv"
@@ -403,6 +439,10 @@ def main() -> int:
         "sink_k_per_s": args.sink_k_per_s,
         "sink_tolerance": args.sink_tolerance,
         "enable_imb155_patches": args.enable_imb155_patches,
+        "enable_cross_species": args.enable_cross_species,
+        "cross_species_csv": args.cross_species_csv,
+        "cross_species_min_pident": args.cross_species_min_pident,
+        "cross_species_require_both": args.cross_species_require_both,
     }
 
     t_setup = time.time()

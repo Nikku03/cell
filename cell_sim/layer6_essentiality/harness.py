@@ -33,6 +33,10 @@ class FailureMode(str, Enum):
     # catalysed by a knocked-out gene stop firing, regardless of whether
     # metabolite pools move.
     CATALYSIS_SILENCED = "catalysis_silenced"
+    # v16: cross-species essentiality transfer. Trips when the gene's
+    # homolog in M. genitalium and/or M. pneumoniae is essential per
+    # the published Tn-seq calls (Glass 2006, Lluch-Senar 2015).
+    HOMOLOG_ESSENTIAL = "homolog_essential"
 
 
 # Metabolites worth watching under knockouts. Names match the

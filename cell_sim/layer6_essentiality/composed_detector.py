@@ -47,6 +47,9 @@ from cell_sim.layer6_essentiality.complex_assembly_detector import (
 from cell_sim.layer6_essentiality.annotation_class_detector import (
     AnnotationClassDetector,
 )
+from cell_sim.layer6_essentiality.conserved_essentiality_detector import (
+    ConservedEssentialityDetector,
+)
 
 
 class TrajectoryDetector(Protocol):
@@ -59,14 +62,16 @@ class TrajectoryDetector(Protocol):
 
 @dataclass
 class ComposedDetector:
-    """OR-composition of complex + annotation + trajectory detectors.
+    """OR-composition of complex + annotation + conserved + trajectory.
 
-    ``annotation`` is optional for backwards compatibility; when None,
-    behaves as a two-way compose (complex OR trajectory).
+    ``annotation`` and ``conserved`` are optional for backwards
+    compatibility; when both None, behaves as a two-way compose
+    (complex OR trajectory).
     """
     structural: ComplexAssemblyDetector
     trajectory: TrajectoryDetector
     annotation: Optional[AnnotationClassDetector] = None
+    conserved:  Optional[ConservedEssentialityDetector] = None
 
     def detect_for_gene(
         self,
@@ -80,17 +85,24 @@ class ComposedDetector:
             )
         else:
             a_mode, a_t, a_conf, a_ev = FailureMode.NONE, None, 0.0, "ann_off"
+        if self.conserved is not None:
+            h_mode, h_t, h_conf, h_ev = self.conserved.detect_for_gene(
+                locus_tag, ko
+            )
+        else:
+            h_mode, h_t, h_conf, h_ev = FailureMode.NONE, None, 0.0, "hom_off"
         t_mode, t_t, t_conf, t_ev = self.trajectory.detect_for_gene(locus_tag, ko)
 
         fires = [
-            ("cx", s_mode, s_t, s_conf, s_ev),
-            ("ann", a_mode, a_t, a_conf, a_ev),
+            ("cx",   s_mode, s_t, s_conf, s_ev),
+            ("ann",  a_mode, a_t, a_conf, a_ev),
+            ("hom",  h_mode, h_t, h_conf, h_ev),
             ("traj", t_mode, t_t, t_conf, t_ev),
         ]
         firing = [f for f in fires if f[1] != FailureMode.NONE]
         if not firing:
             return (FailureMode.NONE, None, 0.0,
-                    f"no_signal[cx:{s_ev}|ann:{a_ev}|traj:{t_ev}]")
+                    f"no_signal[cx:{s_ev}|ann:{a_ev}|hom:{h_ev}|traj:{t_ev}]")
         firing.sort(key=lambda f: f[3], reverse=True)
         best = firing[0]
         tag = best[0]
