@@ -23,6 +23,10 @@ outputs/.wt_*.pkl
 field_steady_heatmap.png
 field_locality_curve.png
 field_spread_snapshots.png
+
+# Generated figures from field_system_v2.py (regenerable via `python field_system_v2.py`)
+field_v2_scaling_N.png
+field_v2_scaling_M.png
 *.log
 *.tmp
 
