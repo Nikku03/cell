@@ -1,0 +1,4 @@
+# Raw upstream files cached by scripts/bacterial_essentiality_inventory.py
+# Don't commit - reproducible via the script.
+*
+!.gitignore

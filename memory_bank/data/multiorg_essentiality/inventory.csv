@@ -1,0 +1,8 @@
+organism,strain,n_genes,n_essential,n_nonessential,ess_rate,format,source,url,bytes,fetched_at,error
+syn3a,JCVI-syn3A,455,383,72,0.842,syn3a_breuer,Breuer 2019 eLife,memory_bank/data/syn3a_essentiality_breuer2019.csv,37984,2026-06-02T23:59:18+00:00,
+mgen,M. genitalium G37,486,382,104,0.786,karr_mg_xlsx,Glass 2006 PNAS (via Karr 2012 Cell),https://raw.githubusercontent.com/pauloburke/whole-cell-network/master/mg_build/mg_essentiality_basis.xlsx,36598,2026-06-02T23:59:18+00:00,
+mpne,M. pneumoniae M129,57,28,29,0.491,killswitch_goldsets,Lluch-Senar 2015 Mol Syst Biol,https://raw.githubusercontent.com/CRG-CNAG/killswitch/master/data/goldsets.csv,553,2026-06-02T23:59:18+00:00,
+spneT4,S. pneumoniae TIGR4,2032,197,1835,0.097,shinyomics_metadata,Zhu 2019 (via ShinyOmics),https://raw.githubusercontent.com/dsurujon/ShinyOmics/master/data/metadata/T4_metadata.csv,275501,2026-06-02T23:59:18+00:00,
+spne19F,S. pneumoniae 19F,1674,196,1478,0.117,shinyomics_metadata,Zhu 2019 (via ShinyOmics),https://raw.githubusercontent.com/dsurujon/ShinyOmics/master/data/metadata/19F_metadata.csv,238097,2026-06-02T23:59:18+00:00,
+mtub,M. tuberculosis H37Rv,3638,760,2878,0.209,mtbseq_categories,DeJesus 2017 mBio (via MTBseq),https://raw.githubusercontent.com/ngs-fzb/MTBseq_source/master/var/cat/MTB_Gene_Categories.txt,78887,2026-06-02T23:59:18+00:00,
+reut,R. eutropha H16,6036,260,5776,0.043,jahn_ralstonia,Jahn lab Ralstonia TraDIS,https://raw.githubusercontent.com/m-jahn/R-notebook-ralstonia-proteome/master/data/output/essentiality_escher.csv,77515,2026-06-02T23:59:18+00:00,
