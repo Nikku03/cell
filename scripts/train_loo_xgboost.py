@@ -49,10 +49,13 @@ OUT_JSON   = REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "loo
 
 def main() -> int:
     p = argparse.ArgumentParser()
-    p.add_argument("--orth-csv",   type=Path, default=ORTH_CSV)
-    p.add_argument("--labels-csv", type=Path, default=LABELS_CSV)
-    p.add_argument("--splits-csv", type=Path, default=SPLITS_CSV)
-    p.add_argument("--out",        type=Path, default=OUT_JSON)
+    p.add_argument("--orth-csv",     type=Path, default=ORTH_CSV)
+    p.add_argument("--cooccur-csv",  type=Path,
+                   default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "cooccurrence_features.csv",
+                   help="Optional co-occurrence features CSV (skip if missing)")
+    p.add_argument("--labels-csv",   type=Path, default=LABELS_CSV)
+    p.add_argument("--splits-csv",   type=Path, default=SPLITS_CSV)
+    p.add_argument("--out",          type=Path, default=OUT_JSON)
     p.add_argument("--n-estimators",   type=int,   default=500)
     p.add_argument("--max-depth",      type=int,   default=4)
     p.add_argument("--learning-rate",  type=float, default=0.05)
@@ -105,6 +108,17 @@ def main() -> int:
     orth = orth[keep_cols]
     j = j.merge(orth, on=["organism","locus_tag"], how="left")
 
+    # ---- Optional: join co-occurrence features ----
+    cooccur_cols: list[str] = []
+    if args.cooccur_csv.exists():
+        cooccur = pd.read_csv(args.cooccur_csv)
+        cooccur_cols = [c for c in cooccur.columns if c.startswith("cooccur_")]
+        print(f"  co-occurrence features ({len(cooccur)} rows): {cooccur_cols}")
+        j = j.merge(cooccur[["organism","locus_tag"] + cooccur_cols],
+                     on=["organism","locus_tag"], how="left")
+    else:
+        print(f"  (no co-occurrence features at {args.cooccur_csv})")
+
     has_feat = j.n_paralogs_in_genome.notna()
     n_feat = int(has_feat.sum())
     n_no   = len(j) - n_feat
@@ -127,11 +141,11 @@ def main() -> int:
             print(f"  fold {k}: empty test set, skip")
             continue
 
-        # Feature columns: fixed base + the fold-k specific frac column.
+        # Feature columns: fixed base + the fold-k specific frac column + cooccur.
         # Rename the fold-specific column to a stable name so the model
         # treats it as one feature regardless of which fold is held out.
         ff_col = f"family_frac_essential_fold{k}"
-        feat_cols = feat_cols_base + [ff_col]
+        feat_cols = feat_cols_base + [ff_col] + cooccur_cols
         X_train = train[feat_cols].rename(columns={ff_col: "family_frac_essential"})
         y_train = train["essential"].astype(int).values
         X_test  = test[feat_cols].rename(columns={ff_col: "family_frac_essential"})
