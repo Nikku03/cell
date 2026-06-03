@@ -198,7 +198,42 @@ BERIL_ORG_TO_CLADE: dict[str, str] = {
     # ---- BERIL ADP1 strains (adp1 triple essentiality dataset) ----
     # adp1_triple feeds rows where strain is the BERIL orgId; route by genus.
     # All ADP1 strains are environmental gram-neg bacteria already covered above.
+
+    # ---- Newly mapped from the 210k Drive run ----
+    "Btheta":  "bacteroides",       # Bacteroides thetaiotaomicron VPI-5482
+    "Caulo":   "caulobacter",       # Caulobacter crescentus NA1000
+    "DvH":     "desulfovibrio",     # Desulfovibrio vulgaris Hildenborough
+    "Kang":    "kangiella",         # Kangiella aquimarina
+    "Magneto": "magnetospirillum",  # Magnetospirillum magneticum AMB-1
+    "SynE":    "synechococcus",     # Synechococcus elongatus PCC 7942 (cyanobacterium = bacteria)
+
+    # Uncertain identity -- treat as singleton clades to be safe.
+    # If you identify them later (FB website has the species name) move
+    # them into a proper genus row above.
+    "Cola":  "beril_cola_unknown",
+    "Korea": "beril_korea_unknown",
+    "Miya":  "beril_miya_unknown",
+    "PS":    "beril_PS_unknown",
+    "Ponti": "beril_ponti_unknown",
+
+    # ---- ARCHAEA -- explicitly flagged for exclusion from bacterial training ----
+    # User directive: "search only bacterial for now". Methanococcus is in DEG/FB
+    # but it's archaeal. Keep the clade label visible so anyone can filter on
+    # 'archaea_' prefix to drop these ~3239 rows before training.
+    "Methanococcus_JJ": "archaea_methanococcus",
+    "Methanococcus_S2": "archaea_methanococcus",
 }
+
+
+def is_bacterial_clade(clade: str) -> bool:
+    """Filter helper for downstream consumers.
+
+    User directive: "search only bacterial for now". Anything with an
+    'archaea_' prefix is held out from training. Unmapped clades are
+    treated as bacterial by default (no false negatives -- they show
+    up as warnings in the run output and the user adds them explicitly).
+    """
+    return not clade.startswith('archaea_')
 
 
 def organism_to_clade(org: str) -> str:
@@ -320,6 +355,22 @@ def main() -> int:
     for i, load in enumerate(fold_load):
         clades_in = [c for c, f in fold_of_clade.items() if f == i]
         print(f"  fold {i}: {load:>7d} genes  ({len(clades_in)} clades): {', '.join(sorted(clades_in))}")
+
+    # ---- Bacteria vs Archaea breakdown ----
+    bact_genes = sum(info['n_genes'] for c, info in clade_rows.items()
+                       if is_bacterial_clade(c))
+    arch_genes = sum(info['n_genes'] for c, info in clade_rows.items()
+                       if not is_bacterial_clade(c))
+    bact_ess = sum(info['n_essential'] for c, info in clade_rows.items()
+                     if is_bacterial_clade(c))
+    arch_ess = sum(info['n_essential'] for c, info in clade_rows.items()
+                     if not is_bacterial_clade(c))
+    print(f"\n=== Bacteria vs Archaea (user directive: bacteria only) ===")
+    print(f"  bacterial clades:  {sum(1 for c in clade_rows if is_bacterial_clade(c)):>3d}  "
+          f"({bact_genes:>7d} genes, {bact_ess:>6d} essentials)")
+    print(f"  archaeal clades:   {sum(1 for c in clade_rows if not is_bacterial_clade(c)):>3d}  "
+          f"({arch_genes:>7d} genes, {arch_ess:>6d} essentials)")
+    print(f"  --> downstream training should filter on is_bacterial_clade()")
 
     return 0
 
