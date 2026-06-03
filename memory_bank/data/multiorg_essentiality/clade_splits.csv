@@ -1,0 +1,8 @@
+organism,clade,fold,n_genes,n_essential,ess_rate
+mgen,mycoplasmoid_minimal,3,486,382,0.786
+mpne,mycoplasmoid_minimal,3,57,28,0.491
+mtub,mycobacterium,2,3638,760,0.209
+reut,ralstonia,0,6036,260,0.043
+spne19F,streptococcus,1,1674,196,0.117
+spneT4,streptococcus,1,2032,197,0.097
+syn3a,mycoplasmoid_minimal,3,455,383,0.842
