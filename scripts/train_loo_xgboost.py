@@ -154,17 +154,22 @@ def main() -> int:
     else:
         print(f"  (no FBA features at {args.fba_csv})")
 
-    # ---- Optional: join synteny features (prev/next OG ids) ----
-    # prev_family_frac and next_family_frac are FILLED PER FOLD in the
-    # loop below (look up neighbor's og_id -> fold-k family_frac).
+    # ---- Optional: join synteny features ----
+    # Static cols (synteny_count_*, *_same_og) merge once; the per-fold
+    # neighbor family_frac columns are filled inside the loop below.
     syn_cols: list[str] = []
+    syn_static_cols = ["synteny_count_prev", "synteny_count_next",
+                        "max_synteny_count", "prev_same_og", "next_same_og"]
     if args.syn_csv.exists():
-        syn = pd.read_csv(args.syn_csv)[["organism","locus_tag",
-                                          "prev_og_id","next_og_id"]]
-        print(f"  synteny features ({len(syn)} rows): prev/next OGs")
-        j = j.merge(syn, on=["organism","locus_tag"], how="left")
+        syn = pd.read_csv(args.syn_csv)
+        syn_keep = ["organism","locus_tag","prev_og_id","next_og_id"] + \
+                   [c for c in syn_static_cols if c in syn.columns]
+        present_static = [c for c in syn_static_cols if c in syn.columns]
+        print(f"  synteny features ({len(syn)} rows): "
+              f"prev/next OGs + {present_static}")
+        j = j.merge(syn[syn_keep], on=["organism","locus_tag"], how="left")
         syn_cols = ["prev_family_frac", "next_family_frac",
-                    "max_neighbor_family_frac"]
+                    "max_neighbor_family_frac"] + present_static
     else:
         print(f"  (no synteny features at {args.syn_csv})")
 

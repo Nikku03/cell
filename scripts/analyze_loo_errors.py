@@ -105,9 +105,13 @@ def main() -> int:
                       on=["organism","locus_tag"], how="left")
     syn_cols = []
     if syn is not None:
-        j = j.merge(syn[["organism","locus_tag","prev_og_id","next_og_id"]],
-                      on=["organism","locus_tag"], how="left")
-        syn_cols = ["prev_family_frac","next_family_frac","max_neighbor_family_frac"]
+        syn_static = ["synteny_count_prev","synteny_count_next",
+                       "max_synteny_count","prev_same_og","next_same_og"]
+        present_static = [c for c in syn_static if c in syn.columns]
+        keep = ["organism","locus_tag","prev_og_id","next_og_id"] + present_static
+        j = j.merge(syn[keep], on=["organism","locus_tag"], how="left")
+        syn_cols = ["prev_family_frac","next_family_frac",
+                    "max_neighbor_family_frac"] + present_static
     j = j[j.n_paralogs_in_genome.notna()].reset_index(drop=True)
     print(f"  training set: {len(j)} rows, {j.essential.sum()} essentials, "
           f"{j.clade.nunique()} clades, {n_folds} folds")
