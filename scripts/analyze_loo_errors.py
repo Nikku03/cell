@@ -45,6 +45,8 @@ def main() -> int:
                    default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "fba_features.csv")
     p.add_argument("--syn-csv",    type=Path,
                    default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "synteny_features.csv")
+    p.add_argument("--blo-csv",    type=Path,
+                   default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "blo_features.csv")
     p.add_argument("--labels-csv", type=Path, default=LABELS_CSV)
     p.add_argument("--splits-csv", type=Path, default=SPLITS_CSV)
     p.add_argument("--pred-out",   type=Path, default=PRED_OUT)
@@ -74,6 +76,7 @@ def main() -> int:
     reg    = pd.read_csv(args.reg_csv)  if args.reg_csv.exists()  else None
     fba    = pd.read_csv(args.fba_csv)  if args.fba_csv.exists()  else None
     syn    = pd.read_csv(args.syn_csv)  if args.syn_csv.exists()  else None
+    blo    = pd.read_csv(args.blo_csv)  if args.blo_csv.exists()  else None
 
     j = labels.merge(splits[["organism","clade","fold"]], on="organism", how="left")
     j = j[j.clade.notna()]
@@ -112,6 +115,17 @@ def main() -> int:
         j = j.merge(syn[keep], on=["organism","locus_tag"], how="left")
         syn_cols = ["prev_family_frac","next_family_frac",
                     "max_neighbor_family_frac"] + present_static
+    blo_cols = []
+    if blo is not None:
+        blo_static = ["function_essentiality_universal","log_solution_diversity"]
+        blo_keep = [c for c in blo_static if c in blo.columns]
+        j = j.merge(blo[["organism","locus_tag"] + blo_keep],
+                      on=["organism","locus_tag"], how="left")
+        blo_cols = blo_keep
+        # also keep sub_branch label for later ~0-bin analysis
+        if "sub_branch" in blo.columns:
+            j = j.merge(blo[["organism","locus_tag","sub_branch","branch"]],
+                          on=["organism","locus_tag"], how="left")
     j = j[j.n_paralogs_in_genome.notna()].reset_index(drop=True)
     print(f"  training set: {len(j)} rows, {j.essential.sum()} essentials, "
           f"{j.clade.nunique()} clades, {n_folds} folds")
@@ -131,7 +145,7 @@ def main() -> int:
                 df["next_family_frac"] = df["next_og_id"].map(og2f)
                 df["max_neighbor_family_frac"] = df[
                     ["prev_family_frac","next_family_frac"]].max(axis=1)
-        feat_cols = feat_cols_base + [ff_col] + cooc_cols + reg_cols + fba_cols + syn_cols
+        feat_cols = feat_cols_base + [ff_col] + cooc_cols + reg_cols + fba_cols + syn_cols + blo_cols
         X_tr = train[feat_cols].rename(columns={ff_col:"family_frac_essential"})
         y_tr = train["essential"].astype(int).values
         X_te = test[feat_cols].rename(columns={ff_col:"family_frac_essential"})
@@ -149,7 +163,7 @@ def main() -> int:
         mcc  = float(matthews_corrcoef(y_te, pred))
         print(f"  fold {k}: MCC={mcc:+.3f}  n_test={len(test)}  wall={time.time()-t0:.1f}s")
         for i, (_, row) in enumerate(test.iterrows()):
-            all_preds.append({
+            rec = {
                 "organism": row["organism"], "locus_tag": row["locus_tag"],
                 "clade": row["clade"], "fold": int(k),
                 "y_true": int(y_te[i]), "y_pred": int(pred[i]),
@@ -157,7 +171,15 @@ def main() -> int:
                 "family_frac_essential_leakfree": float(row[ff_col]) if pd.notna(row[ff_col]) else None,
                 "family_n_organisms": int(row["family_n_organisms"]),
                 "n_paralogs_in_genome": int(row["n_paralogs_in_genome"]),
-            })
+            }
+            if "sub_branch" in row:
+                rec["sub_branch"] = row.get("sub_branch")
+                rec["branch"]     = row.get("branch")
+            for c in ("function_essentiality_universal","log_solution_diversity"):
+                if c in row.index:
+                    v = row[c]
+                    rec[c] = float(v) if pd.notna(v) else None
+            all_preds.append(rec)
 
     pred_df = pd.DataFrame(all_preds)
     pred_df.to_csv(args.pred_out, index=False)
@@ -208,6 +230,42 @@ def main() -> int:
         print(f"  {b:<14s}  {len(sub):>7d}  {s_tp:>5d}  {s_fp:>6d}  {s_tn:>5d}  {s_fn:>5d}  "
               f"{100*s_fp/max(s_fp+s_tn,1):>4.1f}%  {100*s_fn/max(s_fn+s_tp,1):>4.1f}%")
         fp_fn_by_size[b] = {"TP":s_tp,"FP":s_fp,"TN":s_tn,"FN":s_fn,"n":len(sub)}
+
+    # ---- TARGETED: ~0-bin FN by BLO branch (the rogue-essentials) ----
+    # This is the analysis the BLO feature framework is designed for.
+    # Question: of the FNs at family_frac ~ 0 (the rogue essentials -
+    # model says "your family is rarely essential" but they ARE
+    # essential), do they concentrate in branches with high
+    # function_essentiality_universal? If yes, the new features should
+    # be catching them after retraining.
+    if "branch" in pred_df.columns:
+        print(f"\n=== ~0-bin FNs (rogue-essentials) by BLO branch ===")
+        zero_bin = pred_df[pred_df.family_frac_essential_leakfree.fillna(0) < 0.05]
+        zero_fn  = zero_bin[zero_bin.error_class == "FN"]
+        zero_tp  = zero_bin[zero_bin.error_class == "TP"]
+        zero_all_ess = zero_bin[zero_bin.y_true == 1]
+        print(f"  total ~0-bin rows: {len(zero_bin):>6d}")
+        print(f"  ~0-bin essentials (TP+FN): {len(zero_all_ess):>4d}  "
+              f"(recovered {len(zero_tp)} = {100*len(zero_tp)/max(len(zero_all_ess),1):.1f}%, "
+              f"missed {len(zero_fn)} = {100*len(zero_fn)/max(len(zero_all_ess),1):.1f}%)")
+        print(f"\n  ~0-bin FN distribution by branch:")
+        print(f"  {'branch':<32s} {'n_FN':>5s}  {'func_ess':>8s}  {'mean_logSD':>10s}")
+        by_br = zero_fn.groupby("branch", dropna=False).agg(
+            n_FN=("locus_tag","count"),
+            func_ess=("function_essentiality_universal","mean"),
+            logSD=("log_solution_diversity","mean"),
+        ).sort_values("n_FN", ascending=False)
+        for br, r in by_br.iterrows():
+            print(f"    {str(br):<30s} {int(r.n_FN):>5d}  "
+                  f"{r.func_ess if pd.notna(r.func_ess) else 0:>7.2f}   "
+                  f"{r.logSD if pd.notna(r.logSD) else 0:>9.2f}")
+        # how many of the ~0-bin FNs are in high-function-essentiality
+        # branches (>= 0.5)? These should be the recoverable ones once
+        # BLO features are in.
+        recoverable = int((zero_fn.function_essentiality_universal >= 0.5).sum())
+        print(f"\n  ~0-bin FNs in high-func-ess branches (>=0.5): {recoverable}")
+        print(f"  ~0-bin FNs in unclassified rows:               "
+              f"{int(zero_fn.branch.isna().sum())}")
 
     # ---- High-confidence error genes ----
     print(f"\n=== confidently WRONG predictions ===")

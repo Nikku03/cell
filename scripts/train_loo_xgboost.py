@@ -62,6 +62,9 @@ def main() -> int:
     p.add_argument("--syn-csv",      type=Path,
                    default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "synteny_features.csv",
                    help="Optional synteny features CSV (prev/next OGs; skip if missing)")
+    p.add_argument("--blo-csv",      type=Path,
+                   default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "blo_features.csv",
+                   help="Optional bacterial-lifecycle branch features CSV (skip if missing)")
     p.add_argument("--labels-csv",   type=Path, default=LABELS_CSV)
     p.add_argument("--splits-csv",   type=Path, default=SPLITS_CSV)
     p.add_argument("--out",          type=Path, default=OUT_JSON)
@@ -173,6 +176,18 @@ def main() -> int:
     else:
         print(f"  (no synteny features at {args.syn_csv})")
 
+    # ---- Optional: join BLO (bacterial lifecycle ontology) features ----
+    blo_cols: list[str] = []
+    if args.blo_csv.exists():
+        blo = pd.read_csv(args.blo_csv)
+        blo_static = ["function_essentiality_universal", "log_solution_diversity"]
+        blo_keep = ["organism","locus_tag"] + [c for c in blo_static if c in blo.columns]
+        print(f"  BLO features ({len(blo)} rows): {blo_static}")
+        j = j.merge(blo[blo_keep], on=["organism","locus_tag"], how="left")
+        blo_cols = [c for c in blo_static if c in blo.columns]
+    else:
+        print(f"  (no BLO features at {args.blo_csv})")
+
     has_feat = j.n_paralogs_in_genome.notna()
     n_feat = int(has_feat.sum())
     n_no   = len(j) - n_feat
@@ -210,7 +225,7 @@ def main() -> int:
                 df["max_neighbor_family_frac"] = df[
                     ["prev_family_frac", "next_family_frac"]].max(axis=1)
 
-        feat_cols = feat_cols_base + [ff_col] + cooccur_cols + reg_cols + fba_cols + syn_cols
+        feat_cols = feat_cols_base + [ff_col] + cooccur_cols + reg_cols + fba_cols + syn_cols + blo_cols
         X_train = train[feat_cols].rename(columns={ff_col: "family_frac_essential"})
         y_train = train["essential"].astype(int).values
         X_test  = test[feat_cols].rename(columns={ff_col: "family_frac_essential"})
