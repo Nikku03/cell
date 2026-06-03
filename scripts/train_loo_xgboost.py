@@ -59,6 +59,9 @@ def main() -> int:
     p.add_argument("--fba-csv",      type=Path,
                    default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "fba_features.csv",
                    help="Optional FBA single-gene-KO features CSV (skip if missing)")
+    p.add_argument("--syn-csv",      type=Path,
+                   default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "synteny_features.csv",
+                   help="Optional synteny features CSV (prev/next OGs; skip if missing)")
     p.add_argument("--labels-csv",   type=Path, default=LABELS_CSV)
     p.add_argument("--splits-csv",   type=Path, default=SPLITS_CSV)
     p.add_argument("--out",          type=Path, default=OUT_JSON)
@@ -110,6 +113,8 @@ def main() -> int:
     n_folds = len(fold_cols)
     print(f"  features:      {feat_cols_base}  + {n_folds} fold-aware columns")
 
+    # keep full orth (with og_id) for the synteny neighbor->family_frac lookup
+    orth_full = orth[["og_id"] + fold_cols].drop_duplicates("og_id").set_index("og_id")
     keep_cols = ["organism","locus_tag"] + feat_cols_base + fold_cols
     orth = orth[keep_cols]
     j = j.merge(orth, on=["organism","locus_tag"], how="left")
@@ -149,6 +154,20 @@ def main() -> int:
     else:
         print(f"  (no FBA features at {args.fba_csv})")
 
+    # ---- Optional: join synteny features (prev/next OG ids) ----
+    # prev_family_frac and next_family_frac are FILLED PER FOLD in the
+    # loop below (look up neighbor's og_id -> fold-k family_frac).
+    syn_cols: list[str] = []
+    if args.syn_csv.exists():
+        syn = pd.read_csv(args.syn_csv)[["organism","locus_tag",
+                                          "prev_og_id","next_og_id"]]
+        print(f"  synteny features ({len(syn)} rows): prev/next OGs")
+        j = j.merge(syn, on=["organism","locus_tag"], how="left")
+        syn_cols = ["prev_family_frac", "next_family_frac",
+                    "max_neighbor_family_frac"]
+    else:
+        print(f"  (no synteny features at {args.syn_csv})")
+
     has_feat = j.n_paralogs_in_genome.notna()
     n_feat = int(has_feat.sum())
     n_no   = len(j) - n_feat
@@ -175,7 +194,18 @@ def main() -> int:
         # Rename the fold-specific column to a stable name so the model
         # treats it as one feature regardless of which fold is held out.
         ff_col = f"family_frac_essential_fold{k}"
-        feat_cols = feat_cols_base + [ff_col] + cooccur_cols + reg_cols + fba_cols
+
+        # Synteny: fill prev/next family_frac per fold via OG->frac lookup
+        # built from orth_full (indexed by og_id, fold column = ff_col).
+        if syn_cols:
+            og2f = orth_full[ff_col]
+            for df in (train, test):
+                df["prev_family_frac"] = df["prev_og_id"].map(og2f)
+                df["next_family_frac"] = df["next_og_id"].map(og2f)
+                df["max_neighbor_family_frac"] = df[
+                    ["prev_family_frac", "next_family_frac"]].max(axis=1)
+
+        feat_cols = feat_cols_base + [ff_col] + cooccur_cols + reg_cols + fba_cols + syn_cols
         X_train = train[feat_cols].rename(columns={ff_col: "family_frac_essential"})
         y_train = train["essential"].astype(int).values
         X_test  = test[feat_cols].rename(columns={ff_col: "family_frac_essential"})

@@ -43,6 +43,8 @@ def main() -> int:
                    default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "regulator_features.csv")
     p.add_argument("--fba-csv",    type=Path,
                    default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "fba_features.csv")
+    p.add_argument("--syn-csv",    type=Path,
+                   default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "synteny_features.csv")
     p.add_argument("--labels-csv", type=Path, default=LABELS_CSV)
     p.add_argument("--splits-csv", type=Path, default=SPLITS_CSV)
     p.add_argument("--pred-out",   type=Path, default=PRED_OUT)
@@ -71,6 +73,7 @@ def main() -> int:
     cooc   = pd.read_csv(args.cooc_csv) if args.cooc_csv.exists() else None
     reg    = pd.read_csv(args.reg_csv)  if args.reg_csv.exists()  else None
     fba    = pd.read_csv(args.fba_csv)  if args.fba_csv.exists()  else None
+    syn    = pd.read_csv(args.syn_csv)  if args.syn_csv.exists()  else None
 
     j = labels.merge(splits[["organism","clade","fold"]], on="organism", how="left")
     j = j[j.clade.notna()]
@@ -80,6 +83,8 @@ def main() -> int:
                        "family_n_organisms","is_orphan"]
     fold_cols = [c for c in orth.columns if c.startswith("family_frac_essential_fold")]
     n_folds = len(fold_cols)
+    # OG -> per-fold family_frac lookup for synteny neighbor scoring
+    orth_full = orth[["og_id"] + fold_cols].drop_duplicates("og_id").set_index("og_id")
     j = j.merge(orth[["organism","locus_tag"] + feat_cols_base + fold_cols],
                   on=["organism","locus_tag"], how="left")
     cooc_cols = []
@@ -98,6 +103,11 @@ def main() -> int:
         fba_cols = [c for c in fba.columns if c.startswith("fba_")]
         j = j.merge(fba[["organism","locus_tag"] + fba_cols],
                       on=["organism","locus_tag"], how="left")
+    syn_cols = []
+    if syn is not None:
+        j = j.merge(syn[["organism","locus_tag","prev_og_id","next_og_id"]],
+                      on=["organism","locus_tag"], how="left")
+        syn_cols = ["prev_family_frac","next_family_frac","max_neighbor_family_frac"]
     j = j[j.n_paralogs_in_genome.notna()].reset_index(drop=True)
     print(f"  training set: {len(j)} rows, {j.essential.sum()} essentials, "
           f"{j.clade.nunique()} clades, {n_folds} folds")
@@ -110,7 +120,14 @@ def main() -> int:
         test  = j[j.fold == k].copy()
         if len(test) == 0: continue
         ff_col = f"family_frac_essential_fold{k}"
-        feat_cols = feat_cols_base + [ff_col] + cooc_cols + reg_cols + fba_cols
+        if syn_cols:
+            og2f = orth_full[ff_col]
+            for df in (train, test):
+                df["prev_family_frac"] = df["prev_og_id"].map(og2f)
+                df["next_family_frac"] = df["next_og_id"].map(og2f)
+                df["max_neighbor_family_frac"] = df[
+                    ["prev_family_frac","next_family_frac"]].max(axis=1)
+        feat_cols = feat_cols_base + [ff_col] + cooc_cols + reg_cols + fba_cols + syn_cols
         X_tr = train[feat_cols].rename(columns={ff_col:"family_frac_essential"})
         y_tr = train["essential"].astype(int).values
         X_te = test[feat_cols].rename(columns={ff_col:"family_frac_essential"})
