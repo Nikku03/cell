@@ -238,6 +238,26 @@ def main() -> int:
         prob = clf.predict_proba(X_test)[:, 1]
         pred = (prob > 0.5).astype(int)
 
+        # ---- feature importances (gain) ----
+        # booster.get_score(importance_type='gain') gives average gain per
+        # feature across all splits that used it. We also keep the sklearn
+        # default (which is 'weight' = split count) for comparison.
+        booster = clf.get_booster()
+        gain_map  = booster.get_score(importance_type='gain')
+        cover_map = booster.get_score(importance_type='cover')
+        weight_map = booster.get_score(importance_type='weight')
+        # XGBoost names features f0, f1, ... in order of X_train columns;
+        # since we pass a pandas DataFrame, get_score uses the column names
+        # directly. Normalise: missing features = 0.
+        feat_names_used = X_train.columns.tolist()
+        fold_importance = {
+            "fold": k,
+            "feature_names": feat_names_used,
+            "gain":   [float(gain_map.get(f, 0.0))   for f in feat_names_used],
+            "cover":  [float(cover_map.get(f, 0.0))  for f in feat_names_used],
+            "weight": [float(weight_map.get(f, 0.0)) for f in feat_names_used],
+        }
+
         mcc       = float(matthews_corrcoef(y_test, pred))
         tp        = int(((pred==1)&(y_test==1)).sum())
         fp        = int(((pred==1)&(y_test==0)).sum())
@@ -257,6 +277,7 @@ def main() -> int:
             "F1": f1, "tp": tp, "fp": fp, "tn": tn, "fn": fn,
             "n_train": len(train), "n_test": len(test),
             "held_out_clades": held_out_clades,
+            "feature_importance": fold_importance,
         })
 
         # ---- per-held-out-clade ----
@@ -298,6 +319,34 @@ def main() -> int:
     print(f"\n=== HEADLINE (LOO-by-clade across {len(fold_results)} folds) ===")
     print(f"  mean MCC: {headline['mean_MCC']:+.4f} +/- {headline['std_MCC']:.4f}")
     print(f"  total test rows across folds: {headline['n_total_test']}")
+
+    # ---- Aggregated feature importance (gain, averaged across folds) ----
+    # Each fold may have a slightly different feature list (if some optional
+    # features are missing); we union across folds and average where present.
+    print(f"\n=== FEATURE IMPORTANCE (gain, mean across folds, normalised) ===")
+    agg: dict[str, list[float]] = {}
+    for fr in fold_results:
+        fi = fr["feature_importance"]
+        for name, gain in zip(fi["feature_names"], fi["gain"]):
+            agg.setdefault(name, []).append(gain)
+    mean_gain = {n: sum(vs)/len(vs) for n, vs in agg.items()}
+    tot = sum(mean_gain.values()) or 1.0
+    ranking = sorted(mean_gain.items(), key=lambda kv: -kv[1])
+    print(f"  {'rank':>4s}  {'feature':<32s}  {'mean_gain':>10s}  {'%total':>7s}  "
+          f"{'n_folds':>7s}")
+    cumpct = 0.0
+    for i, (name, g) in enumerate(ranking, 1):
+        pct = 100 * g / tot
+        cumpct += pct
+        print(f"  {i:>4d}  {name:<32s}  {g:>10.4f}  {pct:>6.2f}%  "
+              f"{len(agg[name]):>7d}   (cum {cumpct:.1f}%)")
+    headline["feature_importance_summary"] = {
+        "ranking_by_mean_gain": [
+            {"feature": n, "mean_gain": g, "pct_of_total": 100*g/tot,
+             "n_folds": len(agg[n])}
+            for n, g in ranking
+        ],
+    }
 
     print(f"\n=== Per-clade MCC (sorted) ===")
     pc = [r for r in all_per_clade if r["MCC"] is not None]
