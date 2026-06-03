@@ -53,6 +53,9 @@ def main() -> int:
     p.add_argument("--cooccur-csv",  type=Path,
                    default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "cooccurrence_features.csv",
                    help="Optional co-occurrence features CSV (skip if missing)")
+    p.add_argument("--reg-csv",      type=Path,
+                   default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "regulator_features.csv",
+                   help="Optional regulator/signaling/transporter features CSV (skip if missing)")
     p.add_argument("--labels-csv",   type=Path, default=LABELS_CSV)
     p.add_argument("--splits-csv",   type=Path, default=SPLITS_CSV)
     p.add_argument("--out",          type=Path, default=OUT_JSON)
@@ -119,6 +122,18 @@ def main() -> int:
     else:
         print(f"  (no co-occurrence features at {args.cooccur_csv})")
 
+    # ---- Optional: join regulator / signaling / transporter flags ----
+    reg_cols: list[str] = []
+    if args.reg_csv.exists():
+        reg = pd.read_csv(args.reg_csv)
+        reg_cols = [c for c in reg.columns
+                    if c.startswith("is_") and c != "is_orphan"]
+        print(f"  regulator features ({len(reg)} rows): {reg_cols}")
+        j = j.merge(reg[["organism","locus_tag"] + reg_cols],
+                     on=["organism","locus_tag"], how="left")
+    else:
+        print(f"  (no regulator features at {args.reg_csv})")
+
     has_feat = j.n_paralogs_in_genome.notna()
     n_feat = int(has_feat.sum())
     n_no   = len(j) - n_feat
@@ -145,7 +160,7 @@ def main() -> int:
         # Rename the fold-specific column to a stable name so the model
         # treats it as one feature regardless of which fold is held out.
         ff_col = f"family_frac_essential_fold{k}"
-        feat_cols = feat_cols_base + [ff_col] + cooccur_cols
+        feat_cols = feat_cols_base + [ff_col] + cooccur_cols + reg_cols
         X_train = train[feat_cols].rename(columns={ff_col: "family_frac_essential"})
         y_train = train["essential"].astype(int).values
         X_test  = test[feat_cols].rename(columns={ff_col: "family_frac_essential"})

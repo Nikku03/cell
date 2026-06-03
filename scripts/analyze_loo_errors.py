@@ -39,6 +39,8 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--orth-csv",   type=Path, default=ORTH_CSV)
     p.add_argument("--cooc-csv",   type=Path, default=COOC_CSV)
+    p.add_argument("--reg-csv",    type=Path,
+                   default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "regulator_features.csv")
     p.add_argument("--labels-csv", type=Path, default=LABELS_CSV)
     p.add_argument("--splits-csv", type=Path, default=SPLITS_CSV)
     p.add_argument("--pred-out",   type=Path, default=PRED_OUT)
@@ -65,6 +67,7 @@ def main() -> int:
     splits = pd.read_csv(args.splits_csv)
     orth   = pd.read_csv(args.orth_csv)
     cooc   = pd.read_csv(args.cooc_csv) if args.cooc_csv.exists() else None
+    reg    = pd.read_csv(args.reg_csv)  if args.reg_csv.exists()  else None
 
     j = labels.merge(splits[["organism","clade","fold"]], on="organism", how="left")
     j = j[j.clade.notna()]
@@ -81,6 +84,12 @@ def main() -> int:
         cooc_cols = [c for c in cooc.columns if c.startswith("cooccur_")]
         j = j.merge(cooc[["organism","locus_tag"] + cooc_cols],
                       on=["organism","locus_tag"], how="left")
+    reg_cols = []
+    if reg is not None:
+        reg_cols = [c for c in reg.columns
+                    if c.startswith("is_") and c != "is_orphan"]
+        j = j.merge(reg[["organism","locus_tag"] + reg_cols],
+                      on=["organism","locus_tag"], how="left")
     j = j[j.n_paralogs_in_genome.notna()].reset_index(drop=True)
     print(f"  training set: {len(j)} rows, {j.essential.sum()} essentials, "
           f"{j.clade.nunique()} clades, {n_folds} folds")
@@ -93,7 +102,7 @@ def main() -> int:
         test  = j[j.fold == k].copy()
         if len(test) == 0: continue
         ff_col = f"family_frac_essential_fold{k}"
-        feat_cols = feat_cols_base + [ff_col] + cooc_cols
+        feat_cols = feat_cols_base + [ff_col] + cooc_cols + reg_cols
         X_tr = train[feat_cols].rename(columns={ff_col:"family_frac_essential"})
         y_tr = train["essential"].astype(int).values
         X_te = test[feat_cols].rename(columns={ff_col:"family_frac_essential"})
