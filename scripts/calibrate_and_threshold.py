@@ -55,9 +55,22 @@ def main() -> int:
     p.add_argument("--pred-csv", type=Path, default=PRED_CSV)
     p.add_argument("--out-csv",  type=Path, default=OUT_CSV)
     p.add_argument("--out-json", type=Path, default=OUT_JSON)
-    p.add_argument("--method",   choices=["isotonic", "platt", "both"],
+    p.add_argument("--fold-col", default=None,
+                   help="column to use as the cross-validation grouping for "
+                        "leakage-free calibration. Default: auto-detect "
+                        "(fold -> clade -> organism -> synthetic).")
+    p.add_argument("--method", choices=["isotonic", "platt", "both"],
                    default="both")
     args = p.parse_args()
+
+    # Resolve the CV grouping column with graceful fallback.
+    import pandas as _pd
+    _df_head = _pd.read_csv(args.pred_csv, nrows=1)
+    if args.fold_col is None:
+        for cand in ("fold", "clade", "organism"):
+            if cand in _df_head.columns:
+                args.fold_col = cand; break
+    print(f"  calibration CV grouping column: {args.fold_col}")
 
     try:
         import pandas as pd
@@ -70,7 +83,14 @@ def main() -> int:
 
     print(f"Loading {args.pred_csv} ...")
     df = pd.read_csv(args.pred_csv)
-    print(f"  {len(df)} rows  {df.fold.nunique()} folds")
+    # Synthesize a grouping column if none of the candidates are present.
+    if args.fold_col is None or args.fold_col not in df.columns:
+        print(f"  no grouping column found; synthesizing 5 random folds")
+        rng = np.random.RandomState(0)
+        df["_synthetic_fold"] = rng.randint(0, 5, size=len(df))
+        args.fold_col = "_synthetic_fold"
+    print(f"  {len(df)} rows  {df[args.fold_col].nunique()} "
+          f"groups (by {args.fold_col})")
 
     y = df.y_true.values
     base_pred = (df.prob > 0.5).astype(int).values
@@ -80,12 +100,12 @@ def main() -> int:
     print(f"  TP={base_cm['TP']} FP={base_cm['FP']} TN={base_cm['TN']} FN={base_cm['FN']}")
     print(f"  prec={base_cm['precision']:.3f}  rec={base_cm['recall']:.3f}  MCC={base_mcc:+.4f}")
 
-    folds = sorted(df.fold.unique())
+    folds = sorted(df[args.fold_col].unique())
 
     def calibrate_isotonic():
         out = np.zeros(len(df))
         for k in folds:
-            tr = df.fold != k; te = df.fold == k
+            tr = df[args.fold_col] != k; te = df[args.fold_col] == k
             iso = IsotonicRegression(out_of_bounds="clip", y_min=0, y_max=1)
             iso.fit(df.loc[tr, "prob"].values, df.loc[tr, "y_true"].values)
             out[te.values] = iso.transform(df.loc[te, "prob"].values)
@@ -94,7 +114,7 @@ def main() -> int:
     def calibrate_platt():
         out = np.zeros(len(df))
         for k in folds:
-            tr = df.fold != k; te = df.fold == k
+            tr = df[args.fold_col] != k; te = df[args.fold_col] == k
             lr = LogisticRegression(max_iter=500)
             lr.fit(df.loc[tr, "prob"].values.reshape(-1, 1),
                    df.loc[tr, "y_true"].values)
