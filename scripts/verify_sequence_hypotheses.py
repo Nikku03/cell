@@ -49,8 +49,8 @@ LABELS_CSV = DATA_DIR / "labels.csv"
 # Defaults target E. coli K12 MG1655 (Keio b-numbers).
 # We use MG1655 (GCF_000005845.2) because Keio BW25113 inherits its
 # b-number locus tags and shares all annotated CDSes.
-DEFAULT_ACCESSION = "GCF_000005845.2"
-DEFAULT_ASSEMBLY  = "ASM584v2"
+DEFAULT_ACCESSION = "GCF_000750555.1"
+DEFAULT_ASSEMBLY  = "ASM75055v1"
 DEFAULT_ORGANISM_KEY = "ecoli_BW25113_tradis"
 
 NCBI_FTP_BASE = "https://ftp.ncbi.nlm.nih.gov/genomes/all"
@@ -424,22 +424,46 @@ def main() -> int:
         print(f"  available organisms (first 10): "
               f"{labels.organism.unique()[:10].tolist()}", file=sys.stderr)
         return 1
-    # Build locus_tag -> essential lookup. Try both new and old locus tags.
-    lt_ess = dict(zip(org_labels.locus_tag.astype(str), org_labels.essential.astype(int)))
-    matched = 0
+    # Build lookups: locus_tag -> essential AND gene_name -> essential
+    # (the gene_name fallback covers cross-strain matching like
+    # MG1655 b-numbers vs BW25113_NNNN, where both strains share
+    # the same canonical gene names: thrL, dnaA, rpsA, etc.)
+    lt_ess: dict[str, int] = dict(zip(
+        org_labels.locus_tag.astype(str),
+        org_labels.essential.astype(int)))
+    gene_ess: dict[str, int] = {}
+    if "gene_name" in org_labels.columns:
+        for g, e in zip(org_labels.gene_name, org_labels.essential):
+            if pd.notna(g) and str(g).strip():
+                gene_ess[str(g).strip().lower()] = int(e)
+    print(f"  lookup tables: {len(lt_ess)} by locus_tag, "
+          f"{len(gene_ess)} by gene_name")
+
+    matched_lt = matched_old = matched_gene = 0
     for r in rows:
         e = None
-        for key in (r["locus_tag"], r["old_locus_tag"], r["gene"]):
-            if key and key in lt_ess:
-                e = lt_ess[key]; break
+        # 1. exact locus_tag
+        if r["locus_tag"] and r["locus_tag"] in lt_ess:
+            e = lt_ess[r["locus_tag"]]; matched_lt += 1
+        # 2. old_locus_tag
+        elif r["old_locus_tag"] and r["old_locus_tag"] in lt_ess:
+            e = lt_ess[r["old_locus_tag"]]; matched_old += 1
+        # 3. fallback: gene name (cross-strain canonical symbol)
+        elif r["gene"] and r["gene"].strip().lower() in gene_ess:
+            e = gene_ess[r["gene"].strip().lower()]; matched_gene += 1
         r["essential"] = e
-        if e is not None: matched += 1
+    matched = matched_lt + matched_old + matched_gene
     print(f"  matched to label: {matched}/{len(rows)} CDSes "
           f"({100*matched/max(len(rows),1):.1f}%)")
+    print(f"    via locus_tag:      {matched_lt}")
+    print(f"    via old_locus_tag:  {matched_old}")
+    print(f"    via gene_name:      {matched_gene}")
     if matched < 100:
         print(f"WARN: too few matches. RefSeq locus_tag samples: "
               f"{[r['locus_tag'] for r in rows[:3]]} "
               f"  BERIL samples: {list(lt_ess.keys())[:3]}")
+        print(f"  RefSeq gene samples: {[r['gene'] for r in rows[:5] if r['gene']]}")
+        print(f"  BERIL gene samples:  {list(gene_ess.keys())[:5]}")
 
     # ---- 5. build CAI reference set (ribosomal protein CDSes) ----
     print(f"\nStage 5: build CAI weights from ribosomal protein reference")
