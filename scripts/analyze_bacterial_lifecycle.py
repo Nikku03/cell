@@ -413,9 +413,236 @@ BLO = [
   }),
 ]
 
-# Flatten into a lookup: (lc_name -> sub_branch_id), prefix list
+# Verbose-name keyword matches (BERIL & many RefSeq annotations use
+# descriptive strings rather than 3-4 letter symbols). Order within
+# each tuple: more-specific first (longer phrases match before shorter).
+# Each phrase is matched as a *substring* of the lower-cased gene_name.
+BLO_KEYWORDS = {
+  "1.1_dna_replication": (
+      "dna polymerase iii","dna polymerase","dna primase","primosome",
+      "dna gyrase","gyrase subunit","topoisomerase",
+      "replicative helicase","replication initiator",
+      "single-strand dna","single-stranded dna-binding",
+      "clamp loader","ribonucleotide reductase",
+  ),
+  "1.2_dna_repair": (
+      "mismatch repair","nucleotide excision repair","base excision repair",
+      "dna repair","dna recombinase","reca",
+      "uvrabc","endonuclease iv","exonuclease iii",
+      "dna glycosylase","photolyase","ada regulatory",
+      "sos response","lexa","umuc","umud",
+  ),
+  "1.3_chromosome_partition": (
+      "chromosome partition","chromosome segregation","condensin","smc",
+      "parab partition","muk subunit",
+  ),
+  "1.4_cell_division": (
+      "cell division protein","septation","septum formation",
+      "ftsz","penicillin-binding protein","penicillin binding",
+      "min system","murein hydrolase regulator",
+  ),
+  "2.1_transcription": (
+      "rna polymerase","dna-directed rna polymerase","sigma factor",
+      "sigma-70","sigma-32","sigma-54","sigma-e","sigma-b",
+      "transcription antitermination","transcription elongation",
+      "transcription termination","nusa","nusb",
+  ),
+  "2.2_translation_ribosome": (
+      "ribosomal protein","30s ribosomal","50s ribosomal",
+      "elongation factor","initiation factor","release factor",
+      "ribosome","16s rrna","23s rrna","5s rrna",
+      "ribosomal rna","rrna methyltransferase","peptide chain release",
+      "ribosome-recycling factor","trigger factor",
+  ),
+  "2.3_aatrna_synthetases": (
+      "aminoacyl-trna","trna synthetase","trna ligase",
+      "aminoacyl trna","tyrosyl-trna","leucyl-trna","valyl-trna",
+      "isoleucyl-trna","seryl-trna","methionyl-trna","arginyl-trna",
+      "alanyl-trna","glycyl-trna","threonyl-trna","prolyl-trna",
+      "histidyl-trna","aspartyl-trna","asparaginyl-trna",
+      "glutamyl-trna","glutaminyl-trna","cysteinyl-trna","lysyl-trna",
+      "phenylalanyl-trna","tryptophanyl-trna",
+  ),
+  "2.4_rna_processing": (
+      "ribonuclease","rnase","rna helicase","rna methyltransferase",
+      "pseudouridine synthase","trna pseudouridine","trna modification",
+      "rrna pseudouridine","polynucleotide phosphorylase",
+  ),
+  "3.1_atp_synthesis": (
+      "atp synthase","f0f1","f1f0","f-type atpase",
+      "atp synthase subunit","proton-translocating atpase",
+  ),
+  "3.2_electron_transport": (
+      "nadh dehydrogenase","nadh:quinone","nadh-quinone",
+      "cytochrome c","cytochrome bd","cytochrome bo",
+      "cytochrome b6","cytochrome o","cytochrome oxidase","ubiquinol oxidase",
+      "succinate dehydrogenase","fumarate reductase","quinol oxidase",
+      "ubiquinone","menaquinone biosynth","plastoquinone",
+  ),
+  "3.3_central_carbon_metab": (
+      "glyceraldehyde-3-phosphate","phosphoglycerate kinase","enolase",
+      "pyruvate kinase","phosphofructokinase","fructose-bisphosphate",
+      "triosephosphate isomerase","pyruvate dehydrogenase",
+      "citrate synthase","aconitase","aconitate hydratase",
+      "isocitrate dehydrogenase","2-oxoglutarate","alpha-ketoglutarate",
+      "succinyl-coa","fumarase","fumarate hydratase","malate dehydrogenase",
+      "transketolase","transaldolase","ribulose-phosphate",
+  ),
+  "4.1_amino_acid_biosynth": (
+      "amino acid biosynthesis","aminotransferase","amino-acid biosynthesis",
+      "shikimate","chorismate","prephenate","anthranilate",
+      "histidinol","imidazoleglycerol","threonine synthase",
+      "homoserine","cystathionine","methionine biosynthesis",
+      "serine biosynthesis","glutamate synthase","glutamine synthetase",
+      "asparagine synthetase","ornithine","argininosuccinate",
+      "diaminopimelate","aspartate kinase",
+      "indole-3-glycerol","tryptophan synthase","prephenate dehydrogenase",
+      "branched-chain amino","leucine biosynthesis","valine biosynthesis",
+  ),
+  "4.2_nucleotide_biosynth": (
+      "purine biosynthesis","pyrimidine biosynthesis","nucleotide biosynthesis",
+      "ribonucleotide reductase","thymidylate synthase","dihydroorotate",
+      "carbamoyl-phosphate","orotidine","adenylosuccinate",
+      "amidophosphoribosyltransferase","phosphoribosyl",
+      "thymidine kinase","thymidylate kinase","dutpase",
+      "nucleoside diphosphate kinase",
+  ),
+  "4.3_cofactor_vitamin": (
+      "biotin biosynth","biotin synthase","thiamine biosynth","thiamin biosynth",
+      "thiamine pyrophosphate","riboflavin biosynth","fmn ","fad ",
+      "folate biosynth","dihydrofolate","dihydropteroate","tetrahydrofolate",
+      "pantothenate","coenzyme a biosynth","pyridoxal","pyridoxine",
+      "cobalamin","vitamin b12","heme biosynth","porphyrin",
+      "molybdopterin","molybdenum cofactor",
+      "lipoyl","lipoate","menaquinone biosynth","ubiquinone biosynth",
+      "isoprenoid biosynth","octaprenyl",
+  ),
+  "4.4_lipid_biosynth": (
+      "fatty acid biosynth","fatty acid synthesis","acyl carrier",
+      "fatty-acid synthase","beta-ketoacyl","enoyl-acyl-carrier",
+      "acetyl-coa carboxylase","glycerol-3-phosphate dehydrogenase",
+      "phosphatidylserine","phosphatidylethanolamine","cardiolipin",
+      "lipid a biosynth","cdp-diacylglycerol",
+  ),
+  "5.1_peptidoglycan_wall": (
+      "peptidoglycan","murein","cell wall biosynth","cell wall synthesis",
+      "udp-n-acetyl","d-alanyl-d-alanine","d-alanine--d-alanine",
+      "muramidase","muramoyl","cell wall hydrolase","peptidoglycan glycosyltransf",
+  ),
+  "5.2_membrane_biosynth_repair": (
+      "lipid metabolism","membrane lipid","lipoprotein biosynth",
+      "phosphatidate","cardiolipin synthase","membrane-bound lytic",
+  ),
+  "5.3_lps_outer_membrane": (
+      "lipopolysaccharide","lipid a","kdo","outer membrane",
+      "outer membrane protein","porin","bam complex","beta-barrel",
+      "lol system","murein lipoprotein","mla pathway","periplasmic",
+      "o-antigen","lps biosynth","heptosyltransferase","kds",
+  ),
+  "5.4_secretion_machinery": (
+      "preprotein translocase","sec-dependent","sec translocase",
+      "twin-arginine translocation","tat system",
+      "type i secretion","type ii secretion","type iii secretion",
+      "type iv secretion","type v secretion","type vi secretion",
+      "secretin","general secretion","signal peptidase",
+  ),
+  "6.1_abc_transporters": (
+      "abc transporter","abc-type","atp-binding cassette","atp-binding protein",
+      "substrate-binding protein","periplasmic-binding protein",
+      "permease protein","membrane component",
+      "binding-protein-dependent transport","oligopeptide-binding",
+      "dipeptide-binding","polar amino acid",
+  ),
+  "6.2_pts_sugar_uptake": (
+      "phosphotransferase system","pts system","sugar-specific iia",
+      "iib component","iic component","enzyme i ",
+      "enzyme ii ","sugar phosphate","sugar:proton symporter",
+  ),
+  "6.3_efflux_resistance_pumps": (
+      "efflux pump","multidrug","multi-drug","drug efflux",
+      "mfs transporter","major facilitator","rnd efflux","rnd family",
+      "drug:proton antiporter","mate family",
+      "outer membrane efflux","outer-membrane efflux",
+  ),
+  "6.4_ion_homeostasis": (
+      "potassium uptake","potassium transport","potassium channel",
+      "magnesium transport","sodium/proton antiporter","na+/h+ antiporter",
+      "calcium transport","zinc uptake","zinc transport","copper-translocating",
+      "manganese transport","cation transport","cation efflux",
+      "heavy metal","arsenate","arsenite",
+  ),
+  "6.5_iron_uptake": (
+      "ferric iron","ferrous iron","iron transport","iron uptake",
+      "siderophore","heme transport","heme uptake","ton system",
+      "tonb-dependent","enterobactin","enterochelin",
+      "iron-regulated","high-affinity iron",
+  ),
+  "7.1_two_component_systems": (
+      "histidine kinase","sensor histidine","sensor kinase",
+      "response regulator","two-component system","two component",
+      "winged helix-turn-helix",
+  ),
+  "7.2_stress_response": (
+      "heat shock protein","chaperone","chaperonin","co-chaperonin",
+      "molecular chaperone","cold-shock","cold shock",
+      "stringent response","ppgpp","alarmone","spot",
+      "universal stress","peroxidase","superoxide dismutase","catalase",
+      "glutathione","thioredoxin","glutaredoxin","alkyl hydroperoxide",
+      "atp-dependent clp","atp-dependent protease",
+      "lon protease","hsl protease",
+  ),
+  "7.3_quorum_signaling": (
+      "quorum sensing","autoinducer","cyclic di-gmp","c-di-gmp",
+      "diguanylate cyclase","phosphodiesterase",
+      "competence","comp ",
+  ),
+  "8.1_phage_defense": (
+      "restriction enzyme","restriction-modification","type i restriction",
+      "type ii restriction","modification methylase","dna methyltransferase",
+      "crispr-associated","crispr","cas protein",
+      "anti-phage","phage shock protein",
+  ),
+  "8.2_toxin_antitoxin": (
+      "toxin-antitoxin","antitoxin","mazf","relbe","plasmid stability",
+      "addiction module","mrna interferase",
+  ),
+  "8.3_antibiotic_resistance": (
+      "beta-lactamase","penicillin amidase","aminoglycoside",
+      "tetracycline resistance","chloramphenicol acetyltransferase",
+      "erythromycin","macrolide","fluoroquinolone resistance",
+      "vancomycin resistance","methicillin",
+  ),
+  "9.1_flagella_motility": (
+      "flagellar","flagellum","flagellin","flagell-",
+      "flagellar motor","motility protein","hook ","hook-associated",
+  ),
+  "9.2_chemotaxis": (
+      "chemotaxis","methyl-accepting chemotaxis","chemoreceptor",
+      "chea ","chey ","cheb ","cher ","chez ",
+  ),
+  "9.3_pili_adhesion": (
+      "pilus assembly","pilin","fimbrial","fimbriae","type iv pilus",
+      "adhesin","autotransporter","trimeric autotransporter",
+      "curli","csg",
+  ),
+  "9.4_biofilm": (
+      "biofilm","exopolysaccharide","capsular polysaccharide",
+      "extracellular polysaccharide","alginate biosynth",
+      "cellulose biosynth","vps","pga",
+  ),
+  "10.1_autolysins_pcd": (
+      "autolysin","n-acetylmuramoyl-l-alanine amidase","lytic transglycosylase",
+      "cell wall amidase","peptidoglycan hydrolase",
+      "n-acetylglucosaminidase","murein hydrolase","muramidase",
+      "endolysin","holin",
+  ),
+}
+
+# Flatten into a lookup: (lc_name -> sub_branch_id), prefix list,
+# keyword list (substring matches).
 _NAME_LOOKUP: dict[str, str] = {}
-_PREFIX_RULES: list[tuple[str, str]] = []  # (prefix, sub_id), sorted longest first
+_PREFIX_RULES: list[tuple[str, str]] = []  # (prefix, sub_id), longest first
+_KEYWORD_RULES: list[tuple[str, str]] = []  # (keyword, sub_id), longest first
 _BRANCH_OF_SUB: dict[str, str] = {}  # sub_id -> top branch id
 
 for branch_id, subs in BLO:
@@ -426,19 +653,39 @@ for branch_id, subs in BLO:
         for p in rules["prefixes"]:
             _PREFIX_RULES.append((p.lower(), sub_id))
 
-_PREFIX_RULES.sort(key=lambda kv: -len(kv[0]))  # match longest first
+for sub_id, keywords in BLO_KEYWORDS.items():
+    if sub_id not in _BRANCH_OF_SUB:
+        # keyword bucket for an unknown sub-branch -- skip
+        continue
+    for kw in keywords:
+        _KEYWORD_RULES.append((kw.lower(), sub_id))
+
+_PREFIX_RULES.sort(key=lambda kv: -len(kv[0]))   # match longest first
+_KEYWORD_RULES.sort(key=lambda kv: -len(kv[0]))
 
 
 def classify_by_name(gene_name) -> str | None:
-    """Classify a gene to a sub-branch by name. Returns sub_id or None."""
+    """Classify a gene to a sub-branch by name. Returns sub_id or None.
+
+    Three-stage matching:
+      1. Exact lowercase name match (canonical symbols: 'dnaA', 'rpsA')
+      2. Prefix match for big families ('rps' -> ribosomal proteins)
+      3. Substring keyword match for verbose descriptors
+         ('ribosomal protein S12' -> translation; 'ABC transporter
+         ATP-binding protein' -> ABC transport)
+    """
     if gene_name is None: return None
     s = str(gene_name).strip().lower()
     if not s or s in {"nan", "none", "-", ""}: return None
-    # Exact match first
+    # 1. Exact match
     if s in _NAME_LOOKUP: return _NAME_LOOKUP[s]
-    # Prefix match (longest first)
+    # 2. Prefix match (longest first)
     for pfx, sub in _PREFIX_RULES:
-        if s.startswith(pfx) and len(s) > len(pfx) and (s[len(pfx)].isalnum()):
+        if s.startswith(pfx) and len(s) > len(pfx) and s[len(pfx)].isalnum():
+            return sub
+    # 3. Keyword/substring match (longest phrase wins)
+    for kw, sub in _KEYWORD_RULES:
+        if kw in s:
             return sub
     return None
 
@@ -472,11 +719,50 @@ def main() -> int:
     fba    = pd.read_csv(args.fba_csv)  if args.fba_csv.exists()  else None
     print(f"  labels: {len(labels):>7d} rows, {labels.organism.nunique()} organisms")
 
+    # ---- diagnostic: what does gene_name look like across orgs? ----
+    print(f"\n=== diagnostic: gene_name distribution ===")
+    n_null = int(labels.gene_name.isna().sum())
+    print(f"  null gene_name:    {n_null:>7d} ({100*n_null/len(labels):.1f}%)")
+    is_beril = labels.organism.str.startswith("beril_").fillna(False)
+    beril_lbl    = labels[is_beril]
+    nonberil_lbl = labels[~is_beril]
+    print(f"  BERIL rows:        {len(beril_lbl):>7d}  "
+          f"({beril_lbl.gene_name.isna().sum()} null gene_name)")
+    print(f"  non-BERIL rows:    {len(nonberil_lbl):>7d}  "
+          f"({nonberil_lbl.gene_name.isna().sum()} null gene_name)")
+    print(f"\n  top 15 BERIL gene_name values (non-null):")
+    for n, c in beril_lbl.gene_name.dropna().value_counts().head(15).items():
+        print(f"    {str(n)[:60]:<60s}  x{c}")
+    print(f"\n  top 15 non-BERIL gene_name values (non-null):")
+    for n, c in nonberil_lbl.gene_name.dropna().value_counts().head(15).items():
+        print(f"    {str(n)[:60]:<60s}  x{c}")
+
     # ---- Pass 1: classify by gene_name ----
-    print("\nPass 1: classify by gene_name ...")
+    print("\nPass 1: classify by gene_name (3 stages: exact / prefix / keyword) ...")
     labels["sub_branch"] = labels["gene_name"].apply(classify_by_name)
     n_named = int(labels.sub_branch.notna().sum())
     print(f"  classified by name:   {n_named:>7d} ({100*n_named/len(labels):.1f}%)")
+    # Per-stage breakdown: how many classified each way?
+    # Re-classify with each stage isolated, just for the diagnostic.
+    def _exact_only(g):
+        if g is None or pd.isna(g): return None
+        s = str(g).strip().lower()
+        return _NAME_LOOKUP.get(s)
+    def _prefix_only(g):
+        if g is None or pd.isna(g): return None
+        s = str(g).strip().lower()
+        for pfx, sub in _PREFIX_RULES:
+            if s.startswith(pfx) and len(s) > len(pfx) and s[len(pfx)].isalnum():
+                return sub
+        return None
+    sample = labels.gene_name.dropna()
+    n_exact   = int(sum(1 for g in sample if _exact_only(g) is not None))
+    n_prefix  = int(sum(1 for g in sample if _exact_only(g) is None
+                                            and _prefix_only(g) is not None))
+    n_keyword = n_named - n_exact - n_prefix
+    print(f"    exact-name matches:  {n_exact:>7d}")
+    print(f"    prefix matches:      {n_prefix:>7d}")
+    print(f"    keyword/substring:   {n_keyword:>7d}")
 
     # ---- Pass 2: OG-vote propagation ----
     propagated = 0
@@ -512,7 +798,7 @@ def main() -> int:
     cov = cov.sort_values("pct_class")
     print(f"{'organism':<32s} {'n_genes':>8s} {'classified':>10s} {'pct':>6s}")
     for org, r in cov.iterrows():
-        print(f"  {org:<30s} {r.n:>8d} {r.n_class:>10d} {r.pct_class:>5.1f}%")
+        print(f"  {org:<30s} {int(r.n):>8d} {int(r.n_class):>10d} {r.pct_class:>5.1f}%")
 
     # ---- Long-format per (organism, sub_branch) ----
     classified = labels[labels.sub_branch.notna()].copy()
