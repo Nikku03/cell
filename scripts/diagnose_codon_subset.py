@@ -106,16 +106,48 @@ def main() -> int:
     print(f"  clades in subset: {sorted(sub.clade.unique().tolist())}")
     print(f"  folds in subset:  {sorted(sub.fold.unique().tolist())}")
 
+    # If the CAI-covered rows span <2 clade-folds, LOO-by-clade can't
+    # evaluate the feature (hold out the only fold -> no CAI in train).
+    # Fall back to a stratified RANDOM k-fold WITHIN the subset, which
+    # keeps CAI present on both sides of every split. We assign a random
+    # fold per row; the per-fold family_frac column used is the original
+    # leakage-free one for whichever real fold each row belongs to.
+    use_random_kfold = sub.fold.nunique() < 2
+    RANDOM_K = 5
+    if use_random_kfold:
+        print(f"\n  NOTE: CAI subset spans only {sub.fold.nunique()} real "
+              f"clade-fold(s) -> LOO-by-clade is undefined here.")
+        print(f"  Falling back to stratified random {RANDOM_K}-fold WITHIN "
+              f"the subset (CAI present on both sides of every split).")
+        rng = np.random.RandomState(0)
+        # stratify by essential so each fold has positives
+        sub["_rfold"] = -1
+        for cls in (0, 1):
+            idx = sub.index[sub.essential.astype(int) == cls].to_numpy()
+            rng.shuffle(idx)
+            sub.loc[idx, "_rfold"] = np.arange(len(idx)) % RANDOM_K
+        # the family_frac column to use is the row's real held-out fold col
+        real_fold = int(sub.fold.iloc[0])
+        eval_fold_col = f"family_frac_essential_fold{real_fold}"
+        print(f"  using leakage-free family_frac column: {eval_fold_col}")
+
     def train_eval(feat_cols_extra: list[str], label: str):
         per_fold = []
-        for k in sorted(sub.fold.unique()):
-            train = sub[sub.fold != k].copy()
-            test  = sub[sub.fold == k].copy()
+        fold_iter = (range(RANDOM_K) if use_random_kfold
+                     else sorted(sub.fold.unique()))
+        for k in fold_iter:
+            if use_random_kfold:
+                train = sub[sub._rfold != k].copy()
+                test  = sub[sub._rfold == k].copy()
+                ff_col = eval_fold_col
+            else:
+                train = sub[sub.fold != k].copy()
+                test  = sub[sub.fold == k].copy()
+                ff_col = f"family_frac_essential_fold{k}"
             if len(test) == 0 or len(train) == 0: continue
             if test.essential.nunique() < 2:
                 print(f"    [{label}] fold {k}: degenerate test, skip"); continue
 
-            ff_col = f"family_frac_essential_fold{k}"
             # fill synteny neighbor family_frac for this fold
             og2f = orth_full[ff_col]
             for df in (train, test):
