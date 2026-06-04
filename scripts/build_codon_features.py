@@ -313,10 +313,11 @@ def main() -> int:
 
     if args.write_seed_config:
         args.config.parent.mkdir(parents=True, exist_ok=True)
-        with open(args.config, "w") as f:
-            f.write("organism,refseq_accession,assembly_name,note\n")
-            for o, a, asm, note in SEED_CONFIG:
-                f.write(f"{o},{a},{asm},{note}\n")
+        with open(args.config, "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["organism","refseq_accession","assembly_name","note"])
+            for row in SEED_CONFIG:
+                w.writerow(row)
         print(f"wrote seed config to {args.config}")
         return 0
 
@@ -329,10 +330,11 @@ def main() -> int:
     if not args.config.exists():
         print(f"  config not found at {args.config}, writing seed config")
         args.config.parent.mkdir(parents=True, exist_ok=True)
-        with open(args.config, "w") as f:
-            f.write("organism,refseq_accession,assembly_name,note\n")
-            for o, a, asm, note in SEED_CONFIG:
-                f.write(f"{o},{a},{asm},{note}\n")
+        with open(args.config, "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["organism","refseq_accession","assembly_name","note"])
+            for row in SEED_CONFIG:
+                w.writerow(row)
 
     cfg = pd.read_csv(args.config)
     print(f"Config: {len(cfg)} orgs in {args.config}")
