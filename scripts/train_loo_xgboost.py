@@ -65,6 +65,9 @@ def main() -> int:
     p.add_argument("--blo-csv",      type=Path,
                    default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "blo_features.csv",
                    help="Optional bacterial-lifecycle branch features CSV (skip if missing)")
+    p.add_argument("--codon-csv",    type=Path,
+                   default=REPO_ROOT / "memory_bank" / "data" / "multiorg_essentiality" / "codon_features.csv",
+                   help="Optional codon + leak-free operon features CSV (skip if missing)")
     p.add_argument("--labels-csv",   type=Path, default=LABELS_CSV)
     p.add_argument("--splits-csv",   type=Path, default=SPLITS_CSV)
     p.add_argument("--out",          type=Path, default=OUT_JSON)
@@ -176,6 +179,22 @@ def main() -> int:
     else:
         print(f"  (no synteny features at {args.syn_csv})")
 
+    # ---- Optional: join codon + operon features (the H2/H3 verifier scaled up) ----
+    codon_cols: list[str] = []
+    if args.codon_csv.exists():
+        cd = pd.read_csv(args.codon_csv)
+        codon_static = ["cai", "gc", "gc3", "cds_length",
+                         "intergenic_prev", "intergenic_next",
+                         "same_strand_prev", "same_strand_next"]
+        present = [c for c in codon_static if c in cd.columns]
+        print(f"  codon features ({len(cd)} rows, "
+              f"{cd.organism.nunique()} organisms): {present}")
+        j = j.merge(cd[["organism","locus_tag"] + present],
+                     on=["organism","locus_tag"], how="left")
+        codon_cols = present
+    else:
+        print(f"  (no codon features at {args.codon_csv})")
+
     # ---- Optional: join BLO (bacterial lifecycle ontology) features ----
     blo_cols: list[str] = []
     if args.blo_csv.exists():
@@ -225,7 +244,7 @@ def main() -> int:
                 df["max_neighbor_family_frac"] = df[
                     ["prev_family_frac", "next_family_frac"]].max(axis=1)
 
-        feat_cols = feat_cols_base + [ff_col] + cooccur_cols + reg_cols + fba_cols + syn_cols + blo_cols
+        feat_cols = feat_cols_base + [ff_col] + cooccur_cols + reg_cols + fba_cols + syn_cols + blo_cols + codon_cols
         X_train = train[feat_cols].rename(columns={ff_col: "family_frac_essential"})
         y_train = train["essential"].astype(int).values
         X_test  = test[feat_cols].rename(columns={ff_col: "family_frac_essential"})
