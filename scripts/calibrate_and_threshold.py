@@ -199,29 +199,37 @@ def main() -> int:
         "reduction": conf_fp_before - conf_fp_after,
     }
 
-    # ---- FP/FN by family_frac bin, before vs after ----
-    import pandas as _pd
-    df["ff_bin"] = _pd.cut(df.family_frac_essential_leakfree,
-        bins=[-0.01, 0.05, 0.2, 0.4, 0.6, 0.8, 1.01],
-        labels=["~0","0-0.2","0.2-0.4","0.4-0.6","0.6-0.8","0.8-1"])
-    print(f"\n=== FP / FN by family_frac bin: before vs after ({pick}, t={best_t:.2f}) ===")
-    print(f"{'bin':<10s} {'n':>7s} {'FP_b':>6s} {'FP_a':>6s} {'dFP':>6s}"
-          f" {'FN_b':>6s} {'FN_a':>6s} {'dFN':>6s}")
-    by_bin = {}
-    for b in ["~0","0-0.2","0.2-0.4","0.4-0.6","0.6-0.8","0.8-1"]:
-        sub = df[df.ff_bin == b]
-        if len(sub) == 0: continue
-        fp_b = int(((sub.prob > 0.5) & (sub.y_true == 0)).sum())
-        fp_a = int(((sub.pred_optimal == 1) & (sub.y_true == 0)).sum())
-        fn_b = int(((sub.prob <= 0.5) & (sub.y_true == 1)).sum())
-        fn_a = int(((sub.pred_optimal == 0) & (sub.y_true == 1)).sum())
-        print(f"  {b:<8s} {len(sub):>7d} {fp_b:>6d} {fp_a:>6d} {fp_a-fp_b:>+6d}"
-              f" {fn_b:>6d} {fn_a:>6d} {fn_a-fn_b:>+6d}")
-        by_bin[b] = {"n": len(sub), "FP_before": fp_b, "FP_after": fp_a,
-                     "FN_before": fn_b, "FN_after": fn_a}
-    out["bin_deltas"] = by_bin
+    # ---- FP/FN by family_frac bin, before vs after (optional) ----
+    # Only runs if the predictions file carries the leak-free family_frac
+    # column (the cross-clade analyze_loo_errors output does; the
+    # LOO-organism predictions file does not).
+    if "family_frac_essential_leakfree" in df.columns:
+        import pandas as _pd
+        df["ff_bin"] = _pd.cut(df.family_frac_essential_leakfree,
+            bins=[-0.01, 0.05, 0.2, 0.4, 0.6, 0.8, 1.01],
+            labels=["~0","0-0.2","0.2-0.4","0.4-0.6","0.6-0.8","0.8-1"])
+        print(f"\n=== FP / FN by family_frac bin: before vs after ({pick}, t={best_t:.2f}) ===")
+        print(f"{'bin':<10s} {'n':>7s} {'FP_b':>6s} {'FP_a':>6s} {'dFP':>6s}"
+              f" {'FN_b':>6s} {'FN_a':>6s} {'dFN':>6s}")
+        by_bin = {}
+        for b in ["~0","0-0.2","0.2-0.4","0.4-0.6","0.6-0.8","0.8-1"]:
+            sub = df[df.ff_bin == b]
+            if len(sub) == 0: continue
+            fp_b = int(((sub.prob > 0.5) & (sub.y_true == 0)).sum())
+            fp_a = int(((sub.pred_optimal == 1) & (sub.y_true == 0)).sum())
+            fn_b = int(((sub.prob <= 0.5) & (sub.y_true == 1)).sum())
+            fn_a = int(((sub.pred_optimal == 0) & (sub.y_true == 1)).sum())
+            print(f"  {b:<8s} {len(sub):>7d} {fp_b:>6d} {fp_a:>6d} {fp_a-fp_b:>+6d}"
+                  f" {fn_b:>6d} {fn_a:>6d} {fn_a-fn_b:>+6d}")
+            by_bin[b] = {"n": len(sub), "FP_before": fp_b, "FP_after": fp_a,
+                         "FN_before": fn_b, "FN_after": fn_a}
+        out["bin_deltas"] = by_bin
+        df = df.drop(columns=["ff_bin"])
+    else:
+        print(f"\n(skipping family_frac-bin breakdown: column not in this "
+              f"predictions file)")
 
-    df.drop(columns=["ff_bin"]).to_csv(args.out_csv, index=False)
+    df.to_csv(args.out_csv, index=False)
     print(f"\nwrote {args.out_csv}")
     args.out_json.parent.mkdir(parents=True, exist_ok=True)
     with open(args.out_json, "w") as f:
