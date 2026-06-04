@@ -60,6 +60,8 @@ def main() -> int:
     p.add_argument("--out-org",      type=Path, default=DATA_DIR / "per_organism_loo.csv")
     p.add_argument("--out-clade",    type=Path, default=DATA_DIR / "per_clade_summary.csv")
     p.add_argument("--out-json",     type=Path, default=DATA_DIR / "per_clade_evaluation.json")
+    p.add_argument("--out-pred",     type=Path, default=DATA_DIR / "loo_organism_predictions.csv",
+                   help="per-row predictions across LOO-org loop (for calibration)")
     args = p.parse_args()
 
     try:
@@ -174,6 +176,7 @@ def main() -> int:
 
     # ---- LOO-organism loop ----
     per_org = []
+    per_row: list[dict] = []
     for oi, O in enumerate(sorted(eval_orgs), 1):
         t0 = time.time()
         frac = family_frac_excl_org(O)
@@ -214,6 +217,13 @@ def main() -> int:
             "MCC": mcc, "precision": P, "recall": R,
             "tp": tp, "fp": fp, "tn": tn, "fn": fn,
         })
+        # per-row predictions for downstream calibration
+        test_locus = test["locus_tag"].astype(str).values
+        for lt, yt, pr in zip(test_locus, y_te, prob):
+            per_row.append({
+                "organism": O, "clade": clade, "locus_tag": lt,
+                "y_true":   int(yt), "prob": float(pr),
+            })
         print(f"  [{oi}/{len(eval_orgs)}] {O:<30s} clade={clade:<16s} "
               f"(n_orgs={csize})  MCC={mcc:+.3f}  P={P:.2f} R={R:.2f}  "
               f"ess={int(y_te.sum())}/{len(test)}  {time.time()-t0:.0f}s")
@@ -224,6 +234,9 @@ def main() -> int:
     po = pd.DataFrame(per_org)
     po.to_csv(args.out_org, index=False)
     print(f"\nwrote {args.out_org}")
+    pr_df = pd.DataFrame(per_row)
+    pr_df.to_csv(args.out_pred, index=False)
+    print(f"wrote {args.out_pred}  ({len(pr_df):,} per-row predictions)")
 
     # ---- per-clade aggregation ----
     clade_rows = []
