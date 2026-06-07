@@ -33,6 +33,7 @@ import urllib.request, urllib.error, urllib.parse
 from pathlib import Path
 
 DATASETS_API = "https://api.ncbi.nlm.nih.gov/datasets/v2"
+EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 
 # ---- confident, hand-verified accessions (organism -> GCF/GCA) ----
 SEED_ACC = {
@@ -110,6 +111,54 @@ def http_get(url: str, timeout=120) -> bytes | None:
                 return None
             time.sleep(2 * (attempt + 1))
     return None
+
+
+def _eutils_json(url: str):
+    time.sleep(0.4)  # NCBI rate limit (3/s without key)
+    data = http_get(url, timeout=40)
+    if not data: return None
+    try:
+        return json.loads(data)
+    except Exception:
+        return None
+
+
+def eutils_to_assembly(term: str, db: str = "nuccore") -> str | None:
+    """Resolve an exact identifier (locus_tag or NC accession) to the
+    GCF/GCA assembly that owns it, via esearch -> elink -> esummary.
+    Prefers the RefSeq (GCF) accession; falls back to GCA."""
+    # 1. esearch for the term
+    s = _eutils_json(f"{EUTILS}/esearch.fcgi?db={db}"
+                     f"&term={urllib.parse.quote(term)}&retmax=1&retmode=json")
+    if not s: return None
+    ids = s.get("esearchresult", {}).get("idlist", [])
+    if not ids: return None
+    uid = ids[0]
+    # 2. elink nuccore -> assembly
+    e = _eutils_json(f"{EUTILS}/elink.fcgi?dbfrom={db}&db=assembly"
+                     f"&id={uid}&retmode=json")
+    if not e: return None
+    asm_uid = None
+    for ls in e.get("linksets", []):
+        for db_block in ls.get("linksetdbs", []):
+            if db_block.get("dbto") == "assembly" and db_block.get("links"):
+                asm_uid = db_block["links"][0]; break
+        if asm_uid: break
+    if not asm_uid: return None
+    # 3. esummary assembly -> accession (prefer refseq)
+    su = _eutils_json(f"{EUTILS}/esummary.fcgi?db=assembly"
+                      f"&id={asm_uid}&retmode=json")
+    if not su: return None
+    rec = su.get("result", {}).get(asm_uid, {})
+    syn = rec.get("synonym", {})
+    return syn.get("refseq") or rec.get("assemblyaccession") or syn.get("genbank")
+
+
+def clean_species(s: str) -> str:
+    """Reduce a strain-suffixed organism string to genus+species for taxon
+    search fallback ('Staphylococcus aureus N315' -> 'Staphylococcus aureus')."""
+    toks = s.replace("/", " ").split()
+    return " ".join(toks[:2]) if len(toks) >= 2 else s
 
 
 def resolve_by_species(species: str) -> str | None:
@@ -215,19 +264,30 @@ def main() -> int:
         for row in csv.DictReader(open(args.override_csv)):
             overrides[row["organism"]] = row["accession"]
 
-    # build the work list: (organism, accession_or_None, kind)
+    # build the work list: [name, accession_or_None, kind, exact_key, species]
+    #   exact_key = a sample locus_tag (ours) or NC accession (DEG) for
+    #               eutils resolution; species = fallback taxon string.
     work = []
     for org in our_orgs:
-        acc = overrides.get(org) or SEED_ACC.get(org)
-        work.append([org, acc, "ours"])
+        acc = overrides.get(org)   # SEED is a fallback after eutils, set in loop
+        sample_lt = None
+        if org not in NUMERIC_BLOCKED:
+            lts = labels[labels.organism == org].locus_tag.astype(str)
+            sample_lt = lts.iloc[0] if len(lts) else None
+        work.append([org, acc, "ours", sample_lt, SPECIES.get(org)])
 
-    # DEG datasets: organism string + NC accession (resolve NC->GCF by species)
+    # DEG datasets: resolve via the NC accession in the data (exact),
+    # falling back to genus+species of the organism string.
     if args.deg_csv and args.deg_csv.exists():
         deg = pd.read_csv(args.deg_csv)
         for ds, g in deg.groupby("deg_dataset"):
             org_str = str(g.organism.dropna().iloc[0]) if g.organism.notna().any() else ds
+            nc = None
+            if "refseq" in g.columns and g.refseq.notna().any():
+                nc = str(g.refseq.dropna().iloc[0]).split()[0]  # first NC_ if multi
             name = f"DEG:{ds}:{org_str[:40]}"
-            work.append([name, overrides.get(name), "deg"])
+            work.append([name, overrides.get(name), "deg", nc,
+                          clean_species(org_str)])
 
     if args.only:
         work = [w for w in work if w[0] in set(args.only)]
@@ -237,17 +297,23 @@ def main() -> int:
           f"{sum(1 for w in work if w[2]=='deg')} DEG)")
 
     manifest = []
-    for i, (org, acc, kind) in enumerate(work, 1):
+    for i, (org, acc, kind, exact_key, species) in enumerate(work, 1):
         t0 = time.time()
         blocked = org in NUMERIC_BLOCKED
-        # resolve accession if missing
-        if not acc and not args.skip_species_search:
-            sp = SPECIES.get(org)
-            if not sp and kind == "deg":
-                sp = org.split(":", 2)[-1]  # DEG organism string
-            if sp:
-                acc = resolve_by_species(sp)
-                print(f"  [{i}/{len(work)}] {org}: resolved species '{sp}' -> {acc}")
+        # resolution priority: override/seed (acc) -> exact eutils key ->
+        # species taxon search.
+        if not acc and exact_key:
+            acc = eutils_to_assembly(exact_key, db="nuccore")
+            if acc:
+                print(f"  [{i}/{len(work)}] {org}: resolved {exact_key} -> {acc}")
+        if not acc:  # SEED fallback when eutils fails
+            acc = SEED_ACC.get(org)
+            if acc:
+                print(f"  [{i}/{len(work)}] {org}: seed accession -> {acc}")
+        if not acc and species and not args.skip_species_search:
+            acc = resolve_by_species(species)
+            if acc:
+                print(f"  [{i}/{len(work)}] {org}: resolved species '{species}' -> {acc}")
         if not acc:
             print(f"  [{i}/{len(work)}] {org}: NO ACCESSION (unresolved)")
             manifest.append({"organism":org,"kind":kind,"accession":None,
