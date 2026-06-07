@@ -46,13 +46,13 @@ SEED_ACC = {
     "ecoli_BW25113_tradis":    "GCF_000750555.1",
     # from codon_features_config (verified join earlier)
     "beril_Putida":            "GCF_000007565.2",   # P. putida KT2440 (PP_)
-    "beril_BFirm":             "GCF_000019365.1",   # Burkholderia phytofirmans PsJN (BPHYT_)
     "mgen":                    "GCF_000027325.1",
     "mpne":                    "GCF_000027345.1",
     "spneT4":                  "GCF_000006885.1",   # S. pneumoniae TIGR4 (SP_)
     "syn3a":                   "GCA_000968075.1",
     # identifiable from locus-tag prefix / species
-    "beril_Smeli":             "GCF_000006965.1",   # Sinorhizobium meliloti 1021 (SMc)
+    # (BFirm GCF_000019365.1 and Smeli GCF_000006965.1 REMOVED -- both
+    #  gave 0% join; locus_tag eutils lookup resolves them correctly)
     "beril_SyringaeB728a":     "GCF_000012245.1",   # P. syringae pv. syringae B728a (Psyr_)
     "beril_SyringaeB728a_mexBdelta": "GCF_000012245.1",
     "reut":                    "GCF_000009285.1",   # Cupriavidus necator H16 (H16_)
@@ -101,13 +101,13 @@ NUMERIC_BLOCKED = {"beril_Keio","beril_DvH","beril_MR1","beril_Btheta",
 def http_get(url: str, timeout=120) -> bytes | None:
     req = urllib.request.Request(url, headers={"User-Agent":"genome-cache/1.0",
                                                  "Accept":"application/zip, application/json"})
-    for attempt in range(3):
+    for attempt in range(4):
         try:
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return r.read()
-        except (urllib.error.HTTPError, urllib.error.URLError) as e:
-            if attempt == 2:
-                print(f"      GET failed ({e}) for {url[:90]}")
+        except Exception as e:  # HTTPError, URLError, IncompleteRead, socket, ...
+            if attempt == 3:
+                print(f"      GET failed ({type(e).__name__}: {e}) for {url[:90]}")
                 return None
             time.sleep(2 * (attempt + 1))
     return None
@@ -303,9 +303,12 @@ def main() -> int:
         # resolution priority: override/seed (acc) -> exact eutils key ->
         # species taxon search.
         if not acc and exact_key:
-            acc = eutils_to_assembly(exact_key, db="nuccore")
+            # ours -> locus_tag (db=gene indexes locus_tag);
+            # DEG -> NC accession (db=nuccore)
+            db = "nuccore" if exact_key.startswith(("NC_","NZ_","CP","AE","AL","BX")) else "gene"
+            acc = eutils_to_assembly(exact_key, db=db)
             if acc:
-                print(f"  [{i}/{len(work)}] {org}: resolved {exact_key} -> {acc}")
+                print(f"  [{i}/{len(work)}] {org}: resolved {exact_key} ({db}) -> {acc}")
         if not acc:  # SEED fallback when eutils fails
             acc = SEED_ACC.get(org)
             if acc:
