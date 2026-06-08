@@ -1,0 +1,7 @@
+beril_org,deg_dataset,note,n_evaluable_genes,n_beril_essential,n_deg_essential,both_essential,both_non_essential,beril_only_essential,deg_only_essential,agreement,cohens_kappa,jaccard_essential,sensitivity_deg_as_ref,specificity_deg_as_ref,unmatched_cds_no_beril
+mtub,DEG1010,M.tb H37Rv,3557,758,351,351,2799,407,0,0.8856,0.5758,0.4631,1.0,0.8731,349
+mtub,DEG1025,M.tb H37Rv II,3557,758,556,377,2620,381,179,0.8426,0.4801,0.4023,0.6781,0.873,349
+mtub,DEG1027,M.tb H37Rv III,3557,758,471,313,2641,445,158,0.8305,0.4136,0.3417,0.6645,0.8558,349
+saur_NCTC8325_biotradis,DEG1017,S.aureus NCTC8325,2100,349,94,91,1748,258,3,0.8757,0.3661,0.2585,0.9681,0.8714,667
+saur_NCTC8325_biotradis,DEG1061,S.aureus NCTC8325 v2,2100,349,85,83,1749,266,2,0.8724,0.3395,0.2365,0.9765,0.868,667
+beril_RalstoniaGMI1000,DEG1057,R.solanacearum GMI1000,4403,1346,218,197,3036,1149,21,0.7343,0.1822,0.1441,0.9037,0.7254,749

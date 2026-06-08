@@ -1,0 +1,258 @@
+{
+  "n_datasets": 66,
+  "n_essential_genes": 26619,
+  "overlap": [
+    {
+      "ours": "syn3a",
+      "species": "mycoplasma mycoides",
+      "deg_matches": [
+        "-"
+      ]
+    },
+    {
+      "ours": "mgen",
+      "species": "mycoplasma genitalium",
+      "deg_matches": [
+        "-",
+        "Mycoplasma genitalium G37"
+      ]
+    },
+    {
+      "ours": "mpne",
+      "species": "mycoplasma pneumoniae",
+      "deg_matches": [
+        "-",
+        "Mycoplasma pneumoniae M129"
+      ]
+    },
+    {
+      "ours": "mtub",
+      "species": "mycobacterium tuberculosis",
+      "deg_matches": [
+        "-",
+        "Mycobacterium tuberculosis H37Rv",
+        "Mycobacterium tuberculosis H37Rv II",
+        "Mycobacterium tuberculosis H37Rv III"
+      ]
+    },
+    {
+      "ours": "saur_NCTC8325_biotradis",
+      "species": "staphylococcus aureus",
+      "deg_matches": [
+        "-",
+        "Staphylococcus aureus N315",
+        "Staphylococcus aureus NCTC 8325",
+        "Staphylococcus aureus subsp. aureus MRSA252",
+        "Staphylococcus aureus subsp. aureus MSSA476",
+        "Staphylococcus aureus subsp. aureus MW2",
+        "Staphylococcus aureus subsp. aureus NCTC 8325",
+        "Staphylococcus aureus subsp. aureus USA300_TCH1516"
+      ]
+    },
+    {
+      "ours": "spneT4",
+      "species": "streptococcus pneumoniae",
+      "deg_matches": [
+        "-",
+        "Streptococcus pneumoniae"
+      ]
+    },
+    {
+      "ours": "spne19F",
+      "species": "streptococcus pneumoniae",
+      "deg_matches": [
+        "-",
+        "Streptococcus pneumoniae"
+      ]
+    },
+    {
+      "ours": "ecoli_BW25113_tradis",
+      "species": "escherichia coli",
+      "deg_matches": [
+        "-",
+        "Escherichia coli MG1655 I",
+        "Escherichia coli MG1655 II",
+        "Escherichia coli O157:H7 str. EDL933",
+        "Escherichia coli O157:H7 str. EDL933 plasmid unnamed",
+        "Escherichia coli ST131 strain EC958"
+      ]
+    },
+    {
+      "ours": "beril_Keio",
+      "species": "escherichia coli",
+      "deg_matches": [
+        "-",
+        "Escherichia coli MG1655 I",
+        "Escherichia coli MG1655 II",
+        "Escherichia coli O157:H7 str. EDL933",
+        "Escherichia coli O157:H7 str. EDL933 plasmid unnamed",
+        "Escherichia coli ST131 strain EC958"
+      ]
+    },
+    {
+      "ours": "beril_Putida",
+      "species": "pseudomonas putida",
+      "deg_matches": [
+        "-"
+      ]
+    },
+    {
+      "ours": "beril_BFirm",
+      "species": "burkholderia",
+      "deg_matches": [
+        "-",
+        "Burkholderia cenocepacia J2315 chromosome 1",
+        "Burkholderia cenocepacia J2315 chromosome 2",
+        "Burkholderia cenocepacia J2315 chromosome 3",
+        "Burkholderia cenocepacia J2315 pBCJ2315 plasmid",
+        "Burkholderia cenocepacia strain K56-2 scf7180000000048",
+        "Burkholderia cenocepacia strain K56-2 scf7180000000049",
+        "Burkholderia cenocepacia strain K56-2 scf7180000000050",
+        "Burkholderia cenocepacia strain K56-2 scf7180000000051",
+        "Burkholderia cenocepacia strain K56-2 scf7180000000054",
+        "Burkholderia cenocepacia strain K56-2 scf7180000000056",
+        "Burkholderia cenocepacia strain K56-2 scf7180000000061",
+        "Burkholderia cenocepacia strain K56-2 scf7180000000062",
+        "Burkholderia cenocepacia strain K56-2 scf7180000000064",
+        "Burkholderia pseudomallei K96243",
+        "Burkholderia thailandensis E264"
+      ]
+    },
+    {
+      "ours": "beril_SynE",
+      "species": "synechococcus elongatus",
+      "deg_matches": [
+        "-",
+        "Synechococcus elongatus PCC 7942",
+        "Synechococcus elongatus PCC 7942 plasmid 1"
+      ]
+    },
+    {
+      "ours": "beril_Btheta",
+      "species": "bacteroides thetaiotaomicron",
+      "deg_matches": [
+        "-",
+        "Bacteroides thetaiotaomicron VPI-5482"
+      ]
+    },
+    {
+      "ours": "beril_DvH",
+      "species": "desulfovibrio vulgaris",
+      "deg_matches": [
+        "-"
+      ]
+    },
+    {
+      "ours": "beril_MR1",
+      "species": "shewanella oneidensis",
+      "deg_matches": [
+        "-",
+        "Shewanella oneidensis MR-1"
+      ]
+    },
+    {
+      "ours": "beril_Caulo",
+      "species": "caulobacter",
+      "deg_matches": [
+        "-",
+        "Caulobacter crescentus"
+      ]
+    },
+    {
+      "ours": "beril_RalstoniaGMI1000",
+      "species": "ralstonia solanacearum",
+      "deg_matches": [
+        "-",
+        "Ralstonia solanacearum GMI1000"
+      ]
+    },
+    {
+      "ours": "beril_Koxy",
+      "species": "klebsiella",
+      "deg_matches": [
+        "-"
+      ]
+    },
+    {
+      "ours": "reut",
+      "species": "cupriavidus",
+      "deg_matches": [
+        "-"
+      ]
+    },
+    {
+      "ours": "reut_full",
+      "species": "cupriavidus",
+      "deg_matches": [
+        "-"
+      ]
+    },
+    {
+      "ours": "beril_Smeli",
+      "species": "sinorhizobium meliloti",
+      "deg_matches": [
+        "-"
+      ]
+    },
+    {
+      "ours": "beril_azobra",
+      "species": "azospirillum",
+      "deg_matches": [
+        "-"
+      ]
+    },
+    {
+      "ours": "aeromonas",
+      "species": "aeromonas",
+      "deg_matches": [
+        "-"
+      ]
+    }
+  ],
+  "n_overlap": 23,
+  "novel": [
+    "Acinetobacter baumannii ATCC 17978",
+    "Acinetobacter baylyi ADP1",
+    "Bacillus subtilis 168",
+    "Bacillus thuringiensis BMB171",
+    "Bacillus thuringiensis BMB171 plasmid pBMB171",
+    "Bacteroides fragilis 638R",
+    "Brevundimonas subvibrioides ATCC 15264",
+    "Campylobacter jejuni subsp. jejuni 81-176",
+    "Campylobacter jejuni subsp. jejuni NCTC 11168 = ATCC 700819",
+    "Francisella novicida U112",
+    "Francisella tularensis subsp. tularensis SCHU S4 complete gen",
+    "Haemophilus influenzae Rd KW20",
+    "Helicobacter pylori 26695",
+    "Mycobacterium avium subsp. hominissuis strain MAC109",
+    "Mycoplasma pulmonis UAB CTIP",
+    "NC_003062",
+    "NC_003063",
+    "NC_003064",
+    "NC_003065",
+    "Neisseria gonorrhoeae MS11",
+    "Porphyromonas gingivalis ATCC 33277",
+    "Providencia stuartii strain BE2467",
+    "Providencia stuartii strain BE2467 plasmid pPS1",
+    "Providencia stuartii strain BE2467 plasmid pPS2",
+    "Pseudomonas aeruginosa PAO1",
+    "Pseudomonas aeruginosa UCBPP-PA14",
+    "Rhodopseudomonas palustris CGA009",
+    "Salmonella enterica serovar Typhi",
+    "Salmonella enterica serovar Typhi Ty2",
+    "Salmonella enterica serovar Typhimurium SL1344",
+    "Salmonella enterica subsp. enterica serovar Typhimurium str. 14028S",
+    "Salmonella typhimurium LT2",
+    "Sphingomonas wittichii RW1",
+    "Streptococcus agalactiae A909",
+    "Streptococcus mutans UA159",
+    "Streptococcus pyogenes MGAS5448",
+    "Streptococcus pyogenes NZ131",
+    "Streptococcus sanguinis",
+    "Streptococcus suis P1/7 complete gen",
+    "Vibrio cholerae N16961",
+    "Vibrio cholerae O1 biovar El Tor str. N16961 chromosome I",
+    "Vibrio cholerae O1 biovar El Tor str. N16961 chromosome II, complete sequ"
+  ],
+  "n_novel": 42
+}

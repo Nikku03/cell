@@ -1,0 +1,126 @@
+organism,kind,accession,n_cds,join_rate,has_protein_faa,status
+aeromonas,ours,GCF_000014805.1,4195,0.0,True,low_join_wrong_assembly
+beril_ANA3,ours,,0,,,no_accession
+beril_BFirm,ours,,0,,,no_accession
+beril_Btheta,ours,,0,,,no_accession
+beril_Burk376,ours,,0,,,no_accession
+beril_Caulo,ours,GCF_000006905.1,3943,0.0,True,low_join_wrong_assembly
+beril_Cola,ours,GCF_000325705.1,4455,0.0,True,low_join_wrong_assembly
+beril_Cup4G11,ours,,0,,,no_accession
+beril_Dda3937,ours,GCF_000147055.1,4332,0.9954,True,ok
+beril_Ddia6719,ours,GCF_003403135.1,4377,0.0,True,low_join_wrong_assembly
+beril_DdiaME23,ours,,0,,,no_accession
+beril_Dino,ours,,0,,,no_accession
+beril_DvH,ours,,0,,,no_accession
+beril_Dyella79,ours,GCF_000620485.1,4398,0.0,True,low_join_wrong_assembly
+beril_HerbieS,ours,GCF_000143225.1,4824,0.9974,True,ok
+beril_Kang,ours,GCF_000374105.1,2457,0.0,True,low_join_wrong_assembly
+beril_Keio,ours,,0,,,no_accession
+beril_Korea,ours,GCF_900215245.1,5916,0.0,True,low_join_wrong_assembly
+beril_Koxy,ours,GCF_015139575.1,5574,0.0,True,low_join_wrong_assembly
+beril_MR1,ours,,0,,,no_accession
+beril_Magneto,ours,GCF_000009985.1,4703,0.9921,True,ok
+beril_Marino,ours,,0,,,no_accession
+beril_Methanococcus_JJ,ours,GCF_002945325.1,1824,1.0,True,ok
+beril_Methanococcus_S2,ours,GCF_000011585.1,1749,1.0,True,ok
+beril_Miya,ours,,0,,,no_accession
+beril_PS,ours,GCF_000236665.1,3522,0.0,True,low_join_wrong_assembly
+beril_PV4,ours,,0,,,no_accession
+beril_Pedo557,ours,,0,,,no_accession
+beril_Phaeo,ours,,0,,,no_accession
+beril_Ponti,ours,GCF_003585765.1,4290,0.0,True,low_join_wrong_assembly
+beril_Putida,ours,GCF_000007565.2,5619,0.0,True,low_join_wrong_assembly
+beril_RalstoniaBSBF1503,ours,GCF_001587155.1,4830,0.9721,True,ok
+beril_RalstoniaGMI1000,ours,GCF_000009125.1,5124,0.9906,True,ok
+beril_RalstoniaPSI07,ours,GCF_000283475.1,4884,0.9896,True,ok
+beril_RalstoniaUW163,ours,,0,,,no_accession
+beril_SB2B,ours,,0,,,no_accession
+beril_Smeli,ours,,0,,,no_accession
+beril_SynE,ours,GCF_000012525.1,2720,0.0,True,low_join_wrong_assembly
+beril_SyringaeB728a,ours,GCF_000012245.1,5219,0.0,True,low_join_wrong_assembly
+beril_SyringaeB728a_mexBdelta,ours,GCF_000012245.1,5219,0.0,True,low_join_wrong_assembly
+beril_WCS417,ours,,0,,,no_accession
+beril_acidovorax_3H11,ours,GCF_001633105.1,4960,0.0,True,low_join_wrong_assembly
+beril_azobra,ours,GCF_007827425.1,6338,0.0,True,low_join_wrong_assembly
+beril_psRCH2,ours,GCF_000327065.1,4290,0.0,True,low_join_wrong_assembly
+beril_pseudo13_GW456_L13,ours,,0,,,no_accession
+beril_pseudo1_N1B4,ours,,0,,,no_accession
+beril_pseudo3_N2E3,ours,,0,,,no_accession
+beril_pseudo5_N2C3_1,ours,,0,,,no_accession
+beril_pseudo6_N2E2,ours,,0,,,no_accession
+ecoli_BW25113_tradis,ours,GCF_000750555.1,4398,0.0,True,low_join_wrong_assembly
+mgen,ours,GCF_000027325.1,524,0.0,True,low_join_wrong_assembly
+mpne,ours,GCF_000027345.1,724,0.0,True,low_join_wrong_assembly
+mtub,ours,GCF_000195955.2,3906,0.9777,True,ok
+reut,ours,GCF_000009285.1,6814,0.0,True,low_join_wrong_assembly
+reut_full,ours,GCF_000009285.1,6814,0.0,True,low_join_wrong_assembly
+saur_NCTC8325_biotradis,ours,GCF_000013425.1,2767,0.917,True,ok
+spne19F,ours,GCF_000019025.1,2104,0.0,True,low_join_wrong_assembly
+spneT4,ours,GCF_000006885.1,2139,0.0,True,low_join_wrong_assembly
+syn3a,ours,GCA_000968075.1,845,0.0,True,low_join_wrong_assembly
+DEG:DEG1001:Bacillus subtilis 168,deg,GCF_000009045.1,4237,,True,ok
+DEG:DEG1002:Staphylococcus aureus N315,deg,GCF_000009645.1,2735,,True,ok
+DEG:DEG1003:Vibrio cholerae N16961,deg,GCF_000006745.1,3584,,True,ok
+DEG:DEG1005:Haemophilus influenzae Rd KW20,deg,GCF_020736045.1,1806,,True,ok
+DEG:DEG1006:Mycoplasma genitalium G37,deg,GCF_000027325.1,524,,True,ok
+DEG:DEG1007:Streptococcus pneumoniae,deg,GCF_000006885.1,2139,,True,ok
+DEG:DEG1008:Helicobacter pylori 26695,deg,GCF_025998455.1,1584,,True,ok
+DEG:DEG1010:Mycobacterium tuberculosis H37Rv,deg,GCF_000195955.2,3906,,True,ok
+DEG:DEG1011:Salmonella typhimurium LT2,deg,GCF_000006945.2,4554,,True,ok
+DEG:DEG1012:Francisella novicida U112,deg,GCF_000014645.1,1791,,True,ok
+DEG:DEG1013:Acinetobacter baylyi ADP1,deg,GCF_000046845.1,3256,,True,ok
+DEG:DEG1014:Mycoplasma pulmonis UAB CTIP,deg,GCF_000195875.1,759,,True,ok
+DEG:DEG1015:Pseudomonas aeruginosa UCBPP-PA14,deg,GCF_000014625.1,5961,,True,ok
+DEG:DEG1016:Salmonella enterica serovar Typhi,deg,GCF_000007545.1,4596,,True,ok
+DEG:DEG1017:Staphylococcus aureus NCTC 8325,deg,GCF_000013425.1,2767,,True,ok
+DEG:DEG1018:Escherichia coli MG1655 I,deg,GCF_000005845.2,4308,,True,ok
+DEG:DEG1019:Escherichia coli MG1655 II,deg,GCF_000005845.2,4308,,True,ok
+DEG:DEG1020:Caulobacter crescentus,deg,GCF_000022005.1,3886,,True,ok
+DEG:DEG1021:Streptococcus sanguinis,deg,GCF_000014205.1,2273,,True,ok
+DEG:DEG1022:Porphyromonas gingivalis ATCC 33277,deg,GCF_000010505.1,2030,,True,ok
+DEG:DEG1023:Bacteroides thetaiotaomicron VPI-5482,deg,GCF_000011065.1,4801,,True,ok
+DEG:DEG1024:Burkholderia thailandensis E264,deg,GCF_000012365.1,5840,,True,ok
+DEG:DEG1025:Mycobacterium tuberculosis H37Rv II,deg,GCF_000195955.2,3906,,True,ok
+DEG:DEG1026:Salmonella enterica subsp. enterica sero,deg,GCF_000022165.1,4745,,True,ok
+DEG:DEG1027:Mycobacterium tuberculosis H37Rv III,deg,GCF_000195955.2,3906,,True,ok
+DEG:DEG1028:Sphingomonas wittichii RW1,deg,GCF_017607425.1,5808,,True,ok
+DEG:DEG1029:Shewanella oneidensis MR-1,deg,GCF_000146165.2,4491,,True,ok
+DEG:DEG1030:Pseudomonas aeruginosa PAO1,deg,GCF_000006765.1,5572,,True,ok
+DEG:DEG1031:Campylobacter jejuni subsp. jejuni NCTC ,deg,GCF_000009085.1,1572,,True,ok
+DEG:DEG1032:Salmonella enterica serovar Typhimurium ,deg,GCF_000210855.2,4868,,True,ok
+DEG:DEG1033:Salmonella enterica serovar Typhi Ty2,deg,GCF_000007545.1,4596,,True,ok
+DEG:DEG1034:Bacteroides fragilis 638R,deg,GCF_000210835.1,4321,,True,ok
+DEG:DEG1035:Burkholderia pseudomallei K96243,deg,GCF_000011545.1,6425,,True,ok
+DEG:DEG1036:Pseudomonas aeruginosa PAO1,deg,GCF_000006765.1,5572,,True,ok
+DEG:DEG1037:Streptococcus pyogenes MGAS5448,deg,GCF_000011765.3,1763,,True,ok
+DEG:DEG1038:Streptococcus pyogenes NZ131,deg,GCF_900475035.1,1647,,True,ok
+DEG:DEG1039:Porphyromonas gingivalis ATCC 33277,deg,GCF_000010505.1,2030,,True,ok
+DEG:DEG1040:Synechococcus elongatus PCC 7942,deg,GCF_000012525.1,2720,,True,ok
+DEG:DEG1041:Rhodopseudomonas palustris CGA009,deg,GCF_000195775.1,4964,,True,ok
+DEG:DEG1042:Streptococcus agalactiae A909,deg,GCF_000012705.1,2073,,True,ok
+DEG:DEG1043:Acinetobacter baumannii ATCC 17978,deg,GCF_009035845.1,3736,,True,ok
+DEG:DEG1044:Acinetobacter baumannii ATCC 17978,deg,GCF_009035845.1,3736,,True,ok
+DEG:DEG1045:NC_003062,deg,,0,,,no_accession
+DEG:DEG1046:Brevundimonas subvibrioides ATCC 15264,deg,GCF_000144605.1,3336,,True,ok
+DEG:DEG1047:Bacillus thuringiensis BMB171,deg,GCF_000092165.1,5621,,True,ok
+DEG:DEG1048:Escherichia coli ST131 strain EC958,deg,GCF_000005845.2,4308,,True,ok
+DEG:DEG1049:Campylobacter jejuni subsp. jejuni NCTC ,deg,GCF_000009085.1,1572,,True,ok
+DEG:DEG1050:Campylobacter jejuni subsp. jejuni 81-17,deg,GCF_000015525.1,1705,,True,ok
+DEG:DEG1051:Pseudomonas aeruginosa PAO1,deg,GCF_000006765.1,5572,,True,ok
+DEG:DEG1052:Francisella tularensis subsp. tularensis,deg,GCF_000833355.1,1762,,True,ok
+DEG:DEG1053:Burkholderia cenocepacia strain K56-2 sc,deg,GCF_000981305.1,7092,,True,ok
+DEG:DEG1054:Streptococcus mutans UA159,deg,GCF_000007465.2,1924,,True,ok
+DEG:DEG1055:Neisseria gonorrhoeae MS11,deg,GCF_000156855.2,2296,,True,ok
+DEG:DEG1056:Escherichia coli O157:H7 str. EDL933,deg,GCF_000732965.1,5529,,True,ok
+DEG:DEG1057:Ralstonia solanacearum GMI1000,deg,GCF_000009125.1,5124,,True,ok
+DEG:DEG1058:Streptococcus suis P1/7 complete gen,deg,GCF_000026745.1,2061,,True,ok
+DEG:DEG1059:Mycobacterium avium subsp. hominissuis s,deg,GCF_003408535.1,5009,,True,ok
+DEG:DEG1060:Providencia stuartii strain BE2467,deg,GCF_001888205.1,4288,,True,ok
+DEG:DEG1061:Staphylococcus aureus subsp. aureus NCTC,deg,GCF_000013425.1,2767,,True,ok
+DEG:DEG1062:Staphylococcus aureus subsp. aureus USA3,deg,GCF_000017085.1,2845,,True,ok
+DEG:DEG1063:Staphylococcus aureus subsp. aureus MW2,deg,GCF_000011265.1,2709,,True,ok
+DEG:DEG1064:Staphylococcus aureus subsp. aureus MSSA,deg,GCF_000011525.1,2710,,True,ok
+DEG:DEG1065:Staphylococcus aureus subsp. aureus MRSA,deg,GCF_000011505.1,2805,,True,ok
+DEG:DEG1066:Burkholderia cenocepacia J2315 chromosom,deg,GCF_001718895.1,7024,,True,ok
+DEG:DEG1067:Vibrio cholerae O1 biovar El Tor str. N1,deg,GCF_000006745.1,3584,,True,ok
+DEG:DEG1068:Mycoplasma pneumoniae M129,deg,GCF_000027345.1,724,,True,ok
