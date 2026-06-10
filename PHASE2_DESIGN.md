@@ -1,7 +1,52 @@
 # PHASE 2 DESIGN — make sure it's the best we can do, *before* building
 
-Status: design review. No model code until the four gating numbers below are
-measured. This doc is the "is two-tower actually the right call?" answer.
+Status: design review + feasibility MEASURED. The four gating numbers were run
+against feba.db (`scripts/phase2_feasibility.py`,
+`outputs/phase2_feasibility.json`). Results below changed the plan.
+
+## FEASIBILITY RESULTS (measured 2026-06; 8-organism sample incl. 3 Shewanella)
+
+| # | number | value | consequence |
+|---|--------|-------|-------------|
+| Q1a | replicate corr, full | median 0.60 | dominated by neutral mass — not the target |
+| **Q1b** | **replicate corr, TAIL** | **median 0.34, p25 −0.18** | **continuous fit value does NOT reproduce — regression target was wrong** |
+| **Q1c** | **strong-hit reproducibility** | **median 0.78, mean 0.62** | **binary "is it a hit" DOES reproduce — this is the real target + the ceiling** |
+| Q2a | interaction (residual) variance | 0.64 | the headroom; additive captures only main-effects |
+| Q2b | additive tail-recall | mean 0.155, ~0.01 in MR1/SB2B | the floor to beat; ~0 in our litmus orgs |
+| Q2c | bacitracin litmus vs additive | missed by 3.24 fit-units avg (envZ/SB2B: actual −5.2, pred +0.20) | proof the signal is pure interaction |
+| Q3 | compounds with CAS / in ≥3 orgs | 97% have CAS; 153 in ≥3 orgs | **LOCO in scope** via CAS→structure→MoA features |
+| Q4 | org×compound cells / w/ replicates | 2,425 / 1,815 | **split by compound, not experiment** |
+
+### THE decision the data forced: target = strong-hit, not continuous fit
+The original brief said two-tower → *predicted fit* (a regression). Q1 kills
+that: the continuous tail value reproduces at only ~0.34 (p25 negative), so a
+perfect model is bounded by measurement noise on that target. But strong-hit
+*identity* reproduces at 0.62–0.78. So Phase 2 predicts **P(strong conditional
+vulnerability | gene, condition)** — binary/ranking — which is (a) the
+reproducible signal and (b) exactly the adjuvant-ranking output we want. The
+continuous fit becomes an auxiliary/secondary head, not the headline target.
+
+### Ceiling, floor, and the win condition (now quantitative)
+- **Ceiling** = strong-hit reproducibility ≈ 0.62–0.78. A held-out model whose
+  precision/recall approaches this is "as good as the measurement allows."
+  Report everything relative to this, never to 1.0.
+- **Floor** = additive tail-recall ≈ 0.155 (and ≈0.01 in MR1/SB2B). Beat this.
+- **Litmus** = recover envZ/ompR/pspB × bacitracin (additive misses by 3.24).
+
+### Two more locked decisions from the results
+- **Feed leak-free additive main-effects as FEATURES.** gene-mean-fit and
+  compound-mean-fit (computed per-fold, excluding held-out org/compound) go in
+  as inputs, so the model spends its capacity on the 0.64 interaction residual
+  instead of re-learning main-effects. The model predicts the part additive
+  can't.
+- **Lean on cross-organism agreement + calibrated abstention for precision.**
+  Single-measurement reproducibility is 0.62–0.78; requiring agreement across
+  ≥2 organisms (as phase 1 did) lifts precision toward the high-confidence
+  subset — the AlphaFold-paradigm move, carried forward.
+
+---
+
+Original review (still valid) below.
 
 ## TL;DR
 
