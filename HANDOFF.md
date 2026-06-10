@@ -98,3 +98,38 @@ reconstructs at most ~21% of the conditional signal.
 - `scripts/syn3a_full_pipeline.py` — sequence->structure->function->network on unclear essentials
 - `scripts/build_per_clade_evaluation.py` — the LOO-organism + leak-free family_frac harness
 - `scripts/train_neural_essentiality.py` — ESM+GNN+XGBoost hybrid (Colab; scope-bug noted: train on ALL 175K rows with ESM as NaN-optional cols, NOT just the 10 genome orgs)
+
+═══════════════════════════════════════════════════════════════════════
+## STRATEGY CORRECTION (post Fitness Browser download) — READ THIS
+═══════════════════════════════════════════════════════════════════════
+The Fitness Browser (feba.db, 7.4 GB, on Drive at multiorg/fitness_browser/)
+does NOT contain strict essentiality and MUST NOT be used to re-derive the
+binary label. PROVEN on Keio: essential genes have 25% fitness-data coverage,
+non-essential 100% — because RB-TnSeq cannot insert transposons into strictly
+essential genes (they die before assay). FB and labels.csv are COMPLEMENTARY.
+
+LOCKED STRATEGY (two layers):
+  - STRICT essentiality  -> use labels.csv + family_frac (the existing model,
+    MCC 0.63, the easy 85%). FB cannot see these.
+  - CONDITIONAL essentiality -> use Fitness Browser. This IS the 79% residual.
+    A gene conditionally essential = neutral fitness in most conditions, strongly
+    negative (fit < -3) in specific ones. VALIDATED with zero tuning: flagellar
+    regulon lethal on Agar, puuB lethal on putrescine, etc. -- mechanism attached.
+
+NEW TARGET: fit(gene, condition), not essential(gene).
+  Atlas (measured, immediate): (org, gene, condition, fit, killing-condition)
+    across 48 orgs. A resource, no ceiling.
+  Predictive model (the hard ML): TWO-TOWER -- gene tower (ESM+family+structure)
+    x condition tower (Experiment metadata: media/carbon/nitrogen/stress/conc)
+    -> predict fit. Validation = predict conditional essentiality for UNSEEN
+    gene/org/condition. THIS is the open science.
+
+KEY FB TABLES (feba.db, sqlite):
+  GeneFitness (27.4M rows: orgId,locusId,expName,fit,t) -- THE matrix
+  Experiment (7552 rows, rich condition metadata: expGroup, condition_1..4,
+    concentration, media, temperature, pH, aerobic) -- the condition vector
+  Gene (228K: orgId,locusId,sysName,gene,desc) -- 100% joins our labels.locus_tag
+  Cofit (13.6M) -- precomputed gene-gene cofitness (the phylo-profile signal, free)
+  MetacycPathway* / SEEDRoles / KEGG* -- pathway membership for the mechanism head
+  Reannotation / SpecificPhenotype / SpecOG -- curated conditional phenotypes
+  JOIN: FB locusId == our labels.locus_tag (100% on all orgs tested)
