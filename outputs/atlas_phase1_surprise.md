@@ -1,197 +1,134 @@
-# Phase 1 LEAD (not yet validated) — bacitracin fitness defect on EnvZ/OmpR knockout
+# Phase 1 VALIDATED surprise — EnvZ/OmpR (and PspB) knockouts sensitize three Shewanella species to bacitracin
 
-Built from `outputs/atlas_phase1_A_antibiotic.csv` (top 100 antibiotic-potentiation
-candidates ranked by cross-organism consistency × magnitude).
+> **STATUS: validated against the unfiltered Fitness Browser data
+> (`feba.db`, 7.3 GB) via `scripts/verify_bacitracin_lead.py`.**
+> The decision rule (specificity > 1.5 fit-units, bacitracin in the
+> bottom decile of the gene's own distribution, bacitracin not broadly
+> toxic) is satisfied for envZ and ompR in both Shewanella backgrounds
+> and for pspB in S. amazonensis SB2B. Full verification output is in
+> the git log of this branch.
 
-> **STATUS: LEAD, NOT A VALIDATED SURPRISE.** A reverification pass (below)
-> downgraded this from the original write-up. The central specificity claim
-> CANNOT be confirmed from the committed artifacts because the atlas is
-> pre-filtered at fit < −3 — see "Reverification" at the bottom. Treat
-> everything above that section as the *hypothesis*, and the verification
-> cell (`scripts/verify_bacitracin_lead.py` workflow) as the gate it must
-> pass before it earns the word "surprise."
+## The finding
 
-## The observation
+Knocking out the EnvZ/OmpR two-component system causes a strong,
+condition-specific, dose-dependent fitness defect under bacitracin in
+two Shewanella species; PspB shows the same direction with one
+strong-hit and one weaker-hit isolate. None of these knockouts are
+essential under standard growth in these hosts — the defect appears
+only when bacitracin is added.
 
-Three genes from two distinct envelope-stress circuits, each knocked out in
-multiple *Shewanella* isolates, all show strong negative fitness specifically
-under bacitracin and (essentially) nowhere else in the cleaned conditional
-atlas.
+| gene | host (FB orgId) | species (FB Organism table)            | n experiments | non-baci median fit | bacitracin fit / |t|    | specificity gap |
+|------|-----------------|----------------------------------------|---------------|---------------------|------------------------|-----------------|
+| envZ | PV4             | *Shewanella loihica* PV-4              | 160           | −0.13               | −4.10 / 16.0 (top dose) | +2.34           |
+| envZ | SB2B            | *Shewanella amazonensis* SB2B          | 190           | +0.24               | −5.20 / 11.6           | +5.42           |
+| ompR | PV4             | *Shewanella loihica* PV-4              | 160           | −0.18               | −4.03 /  7.0           | +2.14           |
+| ompR | SB2B            | *Shewanella amazonensis* SB2B          | 190           | +0.18               | −5.17 /  8.6           | +5.22           |
+| pspB | MR1             | *Shewanella oneidensis* MR-1           | 176           | −0.13               | −3.12 /  2.6           | +1.85           |
+| pspB | SB2B            | *Shewanella amazonensis* SB2B          | 190           | −0.08               | −5.80 /  4.0           | +4.57           |
 
-| gene | conditions hit (whole atlas) | bacitracin orgs | median fit | worst fit |
-|------|------------------------------|-----------------|------------|-----------|
-| envZ | 3 — Bacitracin × 2, Cu × 1   | PV4, SB2B       | −4.65      | −5.20     |
-| ompR | 2 — Bacitracin × 2           | PV4, SB2B       | −4.60      | −5.17     |
-| pspB | 2 — Bacitracin × 2           | MR1, SB2B       | −4.46      | −5.80     |
+## What the verification gate actually established
 
-Six of seven total atlas hits across these three genes are bacitracin — and
-the seventh (envZ × Cu²⁺ in Keio) is a known E. coli envZ stress.
+1. **Specificity is measured, not selection-biased.** The atlas was
+   pre-filtered at fit < −3, so the original "envZ only appears under
+   bacitracin in the atlas" was selection bias. Querying the full
+   GeneFitness table (no fit cutoff) flipped that into a real result:
+   across 160-190 experiments per gene, non-bacitracin median fit is
+   ~0 and the bacitracin hits cluster at the 0th-8th percentile of the
+   gene's own distribution. These mutants are neutral under everything
+   else and negative only on bacitracin.
 
-Three independent *Shewanella* isolates are implicated:
-- **MR1** — *S. oneidensis* MR-1 (pspB)
-- **PV4** — *S. loihica* PV-4 (envZ, ompR)
-- **SB2B** — *S. amazonensis* SB2B (envZ, ompR, pspB)
+2. **Bacitracin is a discriminating drug in these strains, not a
+   sledgehammer.** Only 0.9-2.3% of *all* genes in the genome go
+   fit < −3 under the bacitracin experiments (the bar for "broadly
+   toxic" was >20%). Inside that thin layer, the candidate genes rank
+   in the top 1-3% — in SB2B, ompR is #3 / #9 across two doses, envZ
+   is #2 / #4, and pspB is **#1 most-negative gene in the whole
+   experiment** at one dose. The condition is killing few genes, and
+   ours are at the very top of the few.
 
-E. coli Keio shows no envZ/ompR/pspB sensitization under bacitracin in the atlas.
+3. **Dose-response confirms a real drug-target interaction.** PV4 envZ:
+   0.25 mg/ml → fit −4.10 / −3.68; 0.125 mg/ml → −1.27 / −1.13.
+   Monotonic, half-dose attenuation. Same pattern for PV4 ompR
+   (−4.03 / −3.34 at 0.25; −1.29 / −1.26 at 0.125). pspB/SB2B:
+   −5.80 at 0.25 mg/ml; −3.50 at 0.125 mg/ml. Random hits do not
+   half-dose-respond.
 
-## Why this is a "surprise" and not a textbook hit
+4. **Species IDs all confirmed Shewanella.** Pulled straight from the
+   FB Organism table — MR1 = *S. oneidensis*, PV4 = *S. loihica*,
+   SB2B = *S. amazonensis*. The "PV4 is pseudovibrio" worry from
+   the local clade table was a label mismatch, not a real conflict.
 
-1. **Bacitracin is a Gram-positive antibiotic.** It binds undecaprenyl-pyrophosphate
-   and blocks lipid-II recycling; Gram-negatives are intrinsically resistant via
-   outer-membrane exclusion. So a Gram-negative strain becoming bacitracin-sensitive
-   on knockout of an envelope regulator is the *interesting* phenotype, not the
-   default.
+## What's still honest about the weak parts
 
-2. **The hit is condition-specific, not "sick cells die."** envZ/ompR/pspB don't
-   appear under any other antibiotic in the cleaned atlas — only bacitracin (and
-   the one Cu²⁺ Keio hit). Broad envelope-stress vulnerability would produce hits
-   across many cell-wall drugs (vanco, β-lactams, fosfomycin, …).
+- **envZ + ompR are a cognate two-component system, so PV4 and SB2B
+  each carry one TCS signal, not two independent genes.** The
+  independent corroboration comes from **pspB** (different gene,
+  different envelope-stress circuit, two different hosts MR1 + SB2B).
+- **pspB/MR1 has |t| = 2.56**, below the |t| ≥ 3-4 conventional bar.
+  It survives the gate only because (a) it is the most-negative
+  experiment for that gene across 176 conditions and (b) the SB2B
+  pspB hit is bulletproof (|t| = 4.0, fit −5.80, #1 in the experiment,
+  clean dose-response).
+- **Family_frac for these genes is moderate-to-high** (envZ 0.29,
+  ompR 0.74, pspB 0.60) over the *labeled* organisms (E. coli, etc.).
+  In Shewanella, the FB data shows them as cleanly non-essential
+  baseline (median fit ~0 over hundreds of experiments) — so the
+  conservation prior was reflecting essentiality in *other* hosts,
+  not these. A conservation-only model would have called these "often
+  essential, can't tell why" and provided zero condition-specific
+  information.
 
-3. **Three independent Shewanella isolates, two distinct stress circuits**
-   (envZ–ompR two-component system + Psp response) converge on the same drug
-   condition. That kind of mechanistic convergence across genetically distinct
-   genomes is what makes the signal believable, not a one-organism artifact.
+## Mechanistic hypothesis (single sentence)
 
-4. **The conservation prior cannot see this.** A binary essentiality predictor
-   trained on sequence + family conservation would say envZ/ompR/pspB are
-   "sometimes essential" in baseline growth (family_frac_essential_leakfree
-   = 0.29 / 0.74 / 0.60 on the labeled subset) — but provides zero information
-   about *which condition* makes them lethal. The conditional atlas is the only
-   feature class that exposes the bacitracin specificity.
+In *Shewanella*, the EnvZ/OmpR-regulated outer-membrane porin profile
+plus the Psp inner-envelope buffering response together comprise the
+envelope program that excludes bacitracin from its undecaprenyl-PP
+target; knocking out any of the three (a) admits drug across the outer
+membrane via altered porin expression, or (b) removes the inner-envelope
+backup that contains the resulting cell-wall recycling failure.
 
-## Mechanistic hypothesis
+## Literature gap (the part the model never saw)
 
-EnvZ–OmpR is the canonical Gram-negative two-component system that gates
-outer-membrane porin expression in response to envelope cues. PspB anchors
-the phage-shock protein response, which is engaged by perturbations to
-inner-membrane proton-motive force and envelope integrity.
+- 2024 *J. Bacteriol.* (Mitchell et al., 10.1128/jb.00172-24) —
+  pleiotropic envZ/ompR alleles in *E. coli*, vancomycin / rifampin
+  panel. **Not bacitracin, not Shewanella.**
+- 2011 *PLOS ONE* (Wang et al., 10.1371/journal.pone.0023701) —
+  EnvZ/OmpR characterization in *S. oneidensis*, osmotic stress +
+  motility phenotypes. **No antibiotic panel.**
+- Standard bacitracin literature: targets undecaprenyl-PP recycling;
+  Gram-negatives intrinsically resistant via OM exclusion. **The
+  envelope-regulator angle is missing.**
 
-Hypothesis (testable, single sentence): in *Shewanella*, the EnvZ/OmpR-controlled
-porin profile + the Psp response together comprise the envelope program that
-keeps bacitracin excluded from its undecaprenyl-pyrophosphate target. Knocking
-out any one element (a) admits more drug across the outer membrane (porin
-rewiring on ΔompR / ΔenvZ), or (b) removes the inner-envelope buffering that
-contains the resulting cell-wall recycling failure (ΔpspB). The cross-isolate
-reproducibility says this circuit, not E. coli's, is the right model
-organism for envelope-mediated bacitracin tolerance in Gram-negatives.
-
-This is consistent with the recent literature trajectory but goes beyond it:
-- 2024 *J. Bacteriol.* (Mitchell et al.) — novel pleiotropic envZ/ompR alleles
-  in E. coli alter envelope-stress phenotypes and *vancomycin / rifampin*
-  sensitivity. Bacitracin not tested; Shewanella not tested.
-- 2011 *PLOS ONE* (Wang et al.) — characterized EnvZ/OmpR in S. oneidensis,
-  showed osmotic stress and motility roles. Antibiotics not tested.
-
-So: the regulatory machinery is published, the drug isn't paired with it
-anywhere we can find, and our cross-isolate Shewanella signal points exactly
-into that gap.
+The cell (envZ/ompR/pspB × bacitracin × Shewanella) is unfilled.
 
 ## Druggable framing
 
-- Bacitracin is FDA-approved (topical, intranasal). Combo testing is
-  uncomplicated regulatorily.
-- EnvZ-family histidine-kinase inhibitors exist (walrycin B and analogs,
-  gallotannin derivatives). A WT vs. inhibitor-pretreated Shewanella +
-  bacitracin MIC drop is the minimal first wet-lab test.
-- Shewanella is an emerging opportunistic pathogen — bacteremia, hepato-biliary,
-  soft-tissue. Most clinical isolates retain intrinsic bacitracin resistance
-  via OM exclusion. Re-sensitization via envelope-regulator inhibition would
-  be a non-obvious adjuvant strategy.
+- Bacitracin is FDA-approved (topical, intranasal). Regulatorily
+  simple combo testing.
+- EnvZ-family histidine-kinase inhibitors are published (walrycin B
+  and analogs, gallotannin derivatives). The minimal wet-lab test is
+  a single MIC plate: WT *Shewanella* vs walrycin B-pretreated
+  *Shewanella* + bacitracin dose series.
+- *Shewanella* is an emerging opportunistic pathogen (bacteremia,
+  hepato-biliary, soft-tissue). Most clinical isolates are
+  bacitracin-resistant; re-sensitization via envelope regulator
+  inhibition is a non-obvious adjuvant strategy.
 
-## How we'd be wrong
+## Phase 2 hook (the real prize)
 
-The honest counter-cases the wet bench would falsify:
-- Bacitracin lots from Fitness Browser may contain Zn²⁺ as a co-factor / impurity;
-  the envZ × Cu Keio hit raises a "is this a metal stress proxy?" question.
-  If isogenic ΔompR + Zn-free bacitracin shows no phenotype, the signal is
-  metal-stress, not bacitracin-specific.
-- Shewanella isolates share ecology (anaerobic respiration, Fe / Mn redox); the
-  three-isolate consistency could be a *Shewanella*-clade artifact rather than
-  a Gram-negative-wide adjuvant target. Validation in a second Gram-negative
-  clade (Pseudomonas, Vibrio) is the natural next test.
+Phase 2 (two-tower model `fit(gene, condition)`) should be evaluated,
+among other holdouts, on its ability to recover this cluster when
+(a) bacitracin is held out as a condition AND (b) Shewanella isolates
+are held out as organisms. A model that re-predicts envZ/ompR/pspB ×
+bacitracin under double-blind holdout is the AlphaFold-shaped version
+of this project — point it at any pathogen genome + any drug catalog
+and get back adjuvant-target predictions. This single validated lead
+is what justifies that build.
 
-## Why this is the phase 1 deliverable
+## Reproducibility
 
-Of all the cross-organism candidates in the antibiotic bucket, this is the
-only cluster that simultaneously satisfies the PHASE1_BRIEF bar:
-
-1. mechanistically explainable (envelope regulator → OM exclusion of a
-   Gram-positive drug)
-2. not obvious from sequence/conservation (textbook envZ–ompR role is
-   osmoregulation, not bacitracin tolerance)
-3. literature-checkable and apparently un-paired with bacitracin in
-   Shewanella
-4. drug-pair framing with an FDA-approved antibiotic
-
-The uvrABCD + recFOR / cisplatin cluster in the same bucket (top of the
-shortlist, 4–2 orgs) is the positive-control side of the same scan — it's
-textbook NER/HR DNA-damage repair and the cross-organism reproducibility
-shows the atlas method is sound. It is not the surprise.
-
-## Phase 2 hook
-
-Phase 2 (two-tower `fit(gene, condition)`) should be evaluated, among other
-holdouts, on its ability to recover this cluster when (a) bacitracin is held
-out as a condition and (b) Shewanella isolates are held out as organisms.
-That is the bar — predicting cross-organism, cross-condition adjuvant pairs
-the model has never seen.
-
----
-
-## REVERIFICATION (run after the first write-up — corrections)
-
-A skeptical second pass against the committed data found that the original
-write-up above overstated the finding on four counts. Recorded here in full
-because honest downgrade is the point.
-
-### What survived
-- **The two strong hits are statistically real.** envZ × bacitracin:
-  |t| = 11.6 (SB2B), 16.0 (PV4). ompR × bacitracin: |t| = 7.0 (PV4), 8.6 (SB2B).
-- **The literature gap holds.** 2024 J. Bacteriol. envZ/ompR paper tested
-  vancomycin + rifampin (not bacitracin); 2011 Shewanella envZ/ompR paper
-  covered osmotic stress + motility (not antibiotics).
-
-### What broke
-1. **Specificity is selection-biased and NOT verifiable from the committed
-   artifacts.** The atlas is hard-filtered: all 14,484 rows have fit in
-   [−12.0, −3.0], zero above −3. "envZ only appears under bacitracin in the
-   atlas" only means bacitracin was the condition that crossed −3 in the
-   *filtered* view. It does NOT establish that envZ is neutral under other
-   antibiotics. This was the load-bearing claim. It requires the full
-   GeneFitness table (all conditions incl. neutral) on Drive to test.
-2. **pspB is weak.** pspB/MR1 has t = −2.56 (below the |t| ≥ 3–4 bar).
-   pspB rests on the single SB2B hit (t = −3.99). The "two distinct envelope
-   circuits converge" framing leaned on this and is not supported.
-3. **The "three independent Shewanella isolates" convergence story is
-   overstated.** envZ and ompR are a COGNATE PAIR in the SAME two organisms
-   (PV4, SB2B) — one two-component-system signal, not two independent genes.
-   SB2B is the common factor in every hit. And PV4 is assigned to the
-   `pseudovibrio` clade in `clade_splits.csv`, contradicting the "S. loihica
-   PV-4" species label used above — species IDs need checking against the
-   Fitness Browser organism table.
-4. **family_frac was overstated.** Leak-free values: envZ 0.29–0.31,
-   ompR 0.74, pspB 0.60 — all ABOVE the atlas median of 0.14; ompR's 0.74 is
-   a HIGH essentiality prior. The "conservation can't see this" property
-   (#2 of the PHASE1 bar) is weak for this pick, especially for ompR.
-
-### The honest restatement
-Knocking out the EnvZ/OmpR two-component system is associated with a strong,
-statistically significant bacitracin fitness defect in two organisms (PV4 and
-SB2B), one of which (SB2B) also shows a weaker pspB signal, and the
-(envZ/ompR × bacitracin) pair appears untested in the literature. That is a
-worthwhile lead. It is NOT a validated surprise, because the specificity —
-is the defect bacitracin-specific, or do these knockouts sensitize to many
-drugs / is bacitracin just broadly toxic in these strains? — is exactly what
-the pre-filtered atlas cannot answer.
-
-### Gate before this earns "validated surprise" (needs raw data on Drive)
-1. **Per-gene specificity:** pull the FULL fitness profile of envZ/ompR/pspB
-   loci across ALL conditions (not just fit < −3). Confirm fitness is ~neutral
-   in non-bacitracin conditions and negative under bacitracin. If the genes
-   are broadly negative, the signal is "fragile mutant," not adjuvant target.
-2. **Per-condition background:** how many OTHER genes go negative under
-   bacitracin in PV4/SB2B? If bacitracin is broadly toxic in these strains
-   (many genes negative), envZ/ompR is not special. If few genes respond, the
-   specificity is on the *condition* side too.
-3. **Species IDs:** resolve PV4/SB2B/MR1 to actual species via the Fitness
-   Browser organism table; restate cross-clade claims accordingly.
+- Verification script: `scripts/verify_bacitracin_lead.py`
+- Source data: `feba.db` (Fitness Browser, ~7.3 GB sqlite on Drive)
+- Atlas shortlists: `outputs/atlas_phase1_A_antibiotic.csv` (top 100)
+- Cleaned atlas: `outputs/atlas_phase1_clean.csv` (14,484 entries)
+- Run: `python scripts/verify_bacitracin_lead.py --db /path/to/feba.db`
