@@ -91,6 +91,8 @@ def main() -> int:
                                 "is_orphan", "og_id"]
     gene_feat_cols = [c for c in gene_feat_cols if c in feats.columns]
     feats_small = feats[["fb_org", "locusId"] + gene_feat_cols].copy()
+    if "og_id" in feats_small.columns:   # str for matched, <NA> for unmatched
+        feats_small["og_id"] = feats_small["og_id"].astype("string")
     orgs_with_feats = set(feats_small.fb_org.unique())
     print(f"  features for {len(orgs_with_feats)} organisms; cols={gene_feat_cols}")
 
@@ -100,12 +102,16 @@ def main() -> int:
         "SELECT orgId, expName, expGroup, condition_1, units_1, "
         "concentration_1, media, pH, temperature, aerobic FROM Experiment", con)
     exps["compound"] = exps.condition_1.apply(norm_compound)
+    # FB stores blanks as '' not NaN -> coerce numeric cols or pyarrow chokes
+    for c in ["concentration_1", "pH", "temperature"]:
+        exps[c] = pd.to_numeric(exps[c], errors="coerce")
     comp = pd.read_sql("SELECT compound, MW, CAS FROM Compounds", con)
     comp["_n"] = comp.compound.apply(norm_compound)
+    comp["MW"] = pd.to_numeric(comp["MW"], errors="coerce")
     mw_map = comp.dropna(subset=["MW"]).groupby("_n").MW.first()
-    cas_map = comp.dropna(subset=["CAS"]).groupby("_n").CAS.first()
+    cas_map = comp[comp.CAS.astype(str).str.strip() != ""].groupby("_n").CAS.first()
     exps["MW"] = exps.compound.map(mw_map)
-    exps["CAS"] = exps.compound.map(cas_map)
+    exps["CAS"] = exps.compound.map(cas_map).astype("string")
 
     fb_orgs = sorted(orgs_with_feats & set(exps.orgId.unique()))
     print(f"  organisms in BOTH fitness + features: {len(fb_orgs)}\n  {fb_orgs}")
