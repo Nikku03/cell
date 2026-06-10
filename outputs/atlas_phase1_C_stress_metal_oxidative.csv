@@ -1,0 +1,34 @@
+gene_n,cond_n,n_orgs,organisms,n_entries,median_fit,worst_fit,example_locus,example_org,example_condition,description,score
+zntr,zinc heptahydrate,2,"beril_PV4,beril_SB2B",2,-5.3463122957951,-7.55833680224076,5210985,beril_PV4,Zinc sulfate heptahydrate,zinc-responsive transcriptional regulator (RefSeq),10.6926245915902
+hflk,paraquat dichloride,1,beril_MR1,1,-6.81780967534506,-6.81780967534506,199793,beril_MR1,Paraquat dichloride,hflK protein (NCBI ptt file),6.81780967534506
+galu,paraquat dichloride,1,beril_MR1,1,-6.49761934380029,-6.49761934380029,200830,beril_MR1,Paraquat dichloride,UTP-glucose-1-phosphate uridylyltransferase (NCBI ptt file),6.49761934380029
+fabf-1,paraquat dichloride,1,beril_MR1,1,-6.38613719435186,-6.38613719435186,201909,beril_MR1,Paraquat dichloride,3-oxoacyl-(acyl-carrier-protein) synthase II (NCBI ptt file),6.38613719435186
+clpp,zinc heptahydrate,1,beril_PV4,1,-6.11890914393859,-6.11890914393859,5210061,beril_PV4,Zinc sulfate heptahydrate,ATP-dependent Clp protease proteolytic subunit (RefSeq),6.11890914393859
+pyka,paraquat dichloride,1,beril_MR1,1,-5.78435588788444,-5.78435588788444,201632,beril_MR1,Paraquat dichloride,pyruvate kinase II (NCBI ptt file),5.78435588788444
+grea,nickel (ii),1,beril_MR1,1,-5.57207377151663,-5.57207377151663,200371,beril_MR1,Nickel (II) chloride hexahydrate,transcription elongation factor GreA (NCBI ptt file),5.57207377151663
+lepb,paraquat dichloride,1,beril_MR1,1,-5.37806781895868,-5.37806781895868,200522,beril_MR1,Paraquat dichloride,signal peptidase I (NCBI ptt file),5.37806781895868
+yajc,paraquat dichloride,1,beril_MR1,1,-5.02177439702804,-5.02177439702804,202228,beril_MR1,Paraquat dichloride,"preprotein translocase, YajC subunit (NCBI ptt file)",5.02177439702804
+sapc,paraquat dichloride,1,beril_MR1,1,-4.82713870594626,-4.82713870594626,200965,beril_MR1,Paraquat dichloride,"peptide ABC transporter, permease protein (NCBI ptt file)",4.82713870594626
+sapb,paraquat dichloride,1,beril_MR1,1,-4.72064664494784,-4.72064664494784,200966,beril_MR1,Paraquat dichloride,"peptide ABC transporter, permease protein (NCBI ptt file)",4.72064664494784
+mdoh,paraquat dichloride,1,beril_MR1,1,-4.64983537431366,-4.64983537431366,201265,beril_MR1,Paraquat dichloride,periplasmic glucans biosynthesis protein MdoH (NCBI ptt file),4.64983537431366
+ksga,cobalt,1,beril_MR1,1,-4.59076798094945,-4.59076798094945,202735,beril_MR1,Cobalt chloride hexahydrate,dimethyladenosine transferase (NCBI ptt file),4.59076798094945
+hypa,zinc heptahydrate,1,beril_DvH,1,-4.58669402576818,-4.58669402576818,207815,beril_DvH,Zinc sulfate heptahydrate,"hydrogenase nickel insertion protein HypA, putative (TIGR)",4.58669402576818
+ppib-1,cobalt,1,beril_MR1,1,-4.50758389135472,-4.50758389135472,200953,beril_MR1,Cobalt chloride hexahydrate,peptidyl-prolyl cis-trans isomerase B (NCBI ptt file),4.50758389135472
+sfca,paraquat dichloride,1,beril_MR1,1,-4.48167125507493,-4.48167125507493,202941,beril_MR1,Paraquat dichloride,malate oxidoreductase (NCBI ptt file),4.48167125507493
+cafa,cobalt,1,beril_MR1,1,-4.30365935300231,-4.30365935300231,203178,beril_MR1,Cobalt chloride hexahydrate,ribonuclease G (NCBI ptt file),4.30365935300231
+smta,zinc heptahydrate,1,beril_SynE,1,-4.28508555254878,-4.28508555254878,Synpcc7942_1290,beril_SynE,Zinc sulfate heptahydrate,SmtA metallothionein,4.28508555254878
+pilc,zinc heptahydrate,1,beril_SynE,1,-4.22957755925015,-4.22957755925015,Synpcc7942_2069,beril_SynE,Zinc sulfate heptahydrate,fimbrial assembly protein PilC-like,4.22957755925015
+yicc,cobalt,1,beril_Keio,1,-4.08164705704855,-4.08164705704855,17705,beril_Keio,Cobalt chloride hexahydrate,hypothetical protein (NCBI),4.08164705704855
+rpod2,zinc heptahydrate,1,beril_SynE,1,-3.80297662086635,-3.80297662086635,Synpcc7942_1746,beril_SynE,Zinc sulfate heptahydrate,group2 RNA polymerase sigma factor SigB,3.80297662086635
+pilb1,zinc heptahydrate,1,beril_SynE,1,-3.78899146961163,-3.78899146961163,Synpcc7942_2071,beril_SynE,Zinc sulfate heptahydrate,ATPase,3.78899146961163
+pilm,zinc heptahydrate,1,beril_SynE,1,-3.74828138157612,-3.74828138157612,Synpcc7942_2453,beril_SynE,Zinc sulfate heptahydrate,type IV pilus assembly protein PilM,3.74828138157612
+prlc,paraquat dichloride,1,beril_MR1,1,-3.61809721851718,-3.61809721851718,203768,beril_MR1,Paraquat dichloride,oligopeptidase A (NCBI ptt file),3.61809721851718
+mdog,paraquat dichloride,1,beril_SB2B,1,-3.61693516987562,-3.61693516987562,6937535,beril_SB2B,Paraquat dichloride,glucan biosynthesis protein G (RefSeq),3.61693516987562
+emrd,cobalt,1,beril_MR1,1,-3.46768388205668,-3.46768388205668,201533,beril_MR1,Cobalt chloride hexahydrate,multidrug resistance protein D (NCBI ptt file),3.46768388205668
+pilt,zinc heptahydrate,1,beril_SynE,1,-3.45363831960263,-3.45363831960263,Synpcc7942_2070,beril_SynE,Zinc sulfate heptahydrate,twitching motility protein,3.45363831960263
+yeex,nickel (ii),1,beril_Keio,1,-3.35718394336897,-3.35718394336897,16115,beril_Keio,Nickel (II) chloride hexahydrate,conserved protein (RefSeq),3.35718394336897
+cls,thallium(i),1,beril_PV4,1,-3.34568731537363,-3.34568731537363,5209462,beril_PV4,Thallium(I) acetate,cardiolipin synthetase (RefSeq),3.34568731537363
+rhlb,cobalt,1,beril_Keio,1,-3.24226262506848,-3.24226262506848,17831,beril_Keio,Cobalt chloride hexahydrate,ATP-dependent RNA helicase (NCBI),3.24226262506848
+yfgg,cobalt,1,beril_Keio,1,-3.13072237547649,-3.13072237547649,16603,beril_Keio,Cobalt chloride hexahydrate,hypothetical protein (NCBI),3.13072237547649
+envz,copper (ii),1,beril_Keio,1,-3.12596044828587,-3.12596044828587,17467,beril_Keio,copper (II) chloride dihydrate,osmolarity sensor protein (NCBI),3.12596044828587
+alca,thallium(i),1,beril_MR1,1,-3.01977352116006,-3.01977352116006,202152,beril_MR1,Thallium(I) acetate,siderophore biosynthesis protein (NCBI ptt file),3.01977352116006

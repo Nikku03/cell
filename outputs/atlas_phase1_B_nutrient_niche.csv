@@ -1,0 +1,101 @@
+gene_n,cond_n,n_orgs,organisms,n_entries,median_fit,worst_fit,example_locus,example_org,example_condition,description,score
+astd,l-arginine,4,"beril_ANA3,beril_Keio,beril_MR1,beril_SB2B",4,-6.2630514903517795,-8.01694262199757,7023382,beril_ANA3,L-Arginine,succinylglutamic semialdehyde dehydrogenase (RefSeq),25.052205961407118
+fadb,tween 20,3,"beril_ANA3,beril_MR1,beril_SB2B",3,-8.33842262529805,-8.53256357035827,7022769,beril_ANA3,Tween 20,multifunctional fatty acid oxidation complex subunit alpha (RefSeq),25.015267875894146
+tdh,l-threonine,3,"beril_ANA3,beril_MR1,beril_SB2B",3,-6.83963803112068,-7.52770032186868,7026976,beril_ANA3,L-Threonine,L-threonine 3-dehydrogenase (RefSeq),20.518914093362042
+ansa,l-asparagine,3,"beril_ANA3,beril_Keio,beril_MR1",3,-6.54137495520335,-7.36618738611898,7024785,beril_ANA3,L-Asparagine,cytoplasmic asparaginase I (RefSeq),19.62412486561005
+fada,tween 20,3,"beril_ANA3,beril_MR1,beril_SB2B",3,-6.19171611145613,-6.86543076711259,7022768,beril_ANA3,Tween 20,3-ketoacyl-CoA thiolase (RefSeq),18.57514833436839
+gcvt,glycine,3,"beril_ANA3,beril_DvH,beril_Keio",3,-4.72230280689199,-6.4775578490303,7026359,beril_ANA3,Glycine,glycine cleavage system aminomethyltransferase T (RefSeq),14.16690842067597
+metl,l-threonine,3,"beril_ANA3,beril_MR1,beril_SB2B",3,-3.8929204525601,-4.2623474964634,7026471,beril_ANA3,L-Threonine,bifunctional aspartate kinase II/homoserine dehydrogenase II (RefSeq),11.678761357680301
+prpb,sodium propionate,2,"beril_ANA3,beril_MR1",2,-6.7006141500953,-6.76692781981712,7026692,beril_ANA3,Sodium propionate,2-methylisocitrate lyase (RefSeq),13.4012283001906
+gcvt,l-threonine,2,"beril_MR1,beril_SB2B",2,-6.485687772913015,-7.42871050056178,199965,beril_MR1,L-Threonine,glycine cleavage system T protein (NCBI ptt file),12.97137554582603
+cobo,l-threonine,2,"beril_DvH,beril_MR1",2,-6.222972333884435,-7.63629938389812,206846,beril_DvH,L-Threonine,cob(I)alamin adenosyltransferase (TIGR),12.44594466776887
+argd,l-arginine,2,"beril_MR1,beril_SB2B",2,-5.942928794396694,-6.62661503622562,199805,beril_MR1,L-Arginine,acetylornithine aminotransferase (NCBI ptt file),11.885857588793389
+naga,n-acetyl-d-glucosamine,2,"beril_Keio,beril_MR1",2,-5.797210404639705,-6.76059908664009,14807,beril_Keio,N-Acetyl-D-Glucosamine,N-acetylglucosamine-6-phosphate deacetylase (NCBI),11.59442080927941
+astb,l-arginine,2,"beril_Keio,beril_MR1",2,-5.51892170557368,-7.60177424152033,15863,beril_Keio,L-Arginine,succinylarginine dihydrolase (NCBI),11.03784341114736
+asta,l-arginine,2,"beril_Keio,beril_MR1",2,-5.0525685981742345,-6.22975321333713,15865,beril_Keio,L-Arginine,arginine succinyltransferase (NCBI),10.105137196348469
+sdaa,l-serine,2,"beril_Keio,beril_MR1",2,-4.810279018450775,-5.06099454996455,15932,beril_Keio,L-Serine,L-serine deaminase I (NCBI),9.62055803690155
+pepd,gly-dl-asp,2,"beril_Keio,beril_MR1",2,-4.80421315001524,-5.48946371300323,14376,beril_Keio,Gly-DL-Asp,aminoacyl-histidine dipeptidase (peptidase D) (NCBI),9.60842630003048
+gcvh,glycine,2,"beril_DvH,beril_Keio",2,-4.7988705397866,-6.26034297269596,206870,beril_DvH,Glycine,glycine cleavage system H protein (TIGR),9.5977410795732
+tgt,l-alanine,2,"beril_ANA3,beril_MR1",2,-4.78730946927106,-5.34989431727857,7024243,beril_ANA3,L-Alanine,queuine tRNA-ribosyltransferase (RefSeq),9.57461893854212
+nhab,gelatin,2,"beril_MR1,beril_SB2B",2,-3.88071543014254,-4.73754735534838,202012,beril_MR1,Gelatin,Na+/H+ antiporter (NCBI ptt file),7.76143086028508
+glga,putrescine,2,"beril_Keio,beril_MR1",2,-3.4764756878814946,-3.86684445634518,17491,beril_Keio,Putrescine Dihydrochloride,glycogen synthase (NCBI),6.952951375762989
+hish,nan,1,beril_Miya,1,-10.7960431548611,-10.7960431548611,8501586,beril_Miya,,imidazole glycerol phosphate synthase subunit HisH (RefSeq),10.7960431548611
+hisd,l-serine,1,beril_Miya,1,-10.5217224286725,-10.5217224286725,8502101,beril_Miya,L-Serine,histidinol dehydrogenase (RefSeq),10.5217224286725
+carb,d-maltose,1,beril_PV4,1,-9.86269373445584,-9.86269373445584,5210397,beril_PV4,D-Maltose monohydrate,carbamoyl phosphate synthase large subunit (RefSeq),9.86269373445584
+argc,l-serine,1,beril_Miya,1,-9.59233114602235,-9.59233114602235,8500980,beril_Miya,L-Serine,N-acetyl-gamma-glutamyl-phosphate reductase (RefSeq),9.59233114602235
+argc,potassium,1,beril_PV4,1,-9.58489038779628,-9.58489038779628,5207680,beril_PV4,Potassium acetate,N-acetyl-gamma-glutamyl-phosphate reductase (RefSeq),9.58489038779628
+trpa,d-maltose,1,beril_PV4,1,-9.36339325938596,-9.36339325938596,5209803,beril_PV4,D-Maltose monohydrate,tryptophan synthase subunit alpha (RefSeq),9.36339325938596
+thra,d-maltose,1,beril_PV4,1,-9.36122365018279,-9.36122365018279,5208568,beril_PV4,D-Maltose monohydrate,bifunctional aspartokinase I/homeserine dehydrogenase I (RefSeq),9.36122365018279
+acea,tween 20,1,beril_MR1,1,-8.97663490479782,-8.97663490479782,200655,beril_MR1,Tween 20,isocitrate lyase (NCBI ptt file),8.97663490479782
+cysq-2,sodium pyruvate,1,beril_MR1,1,-8.89895626956054,-8.89895626956054,200820,beril_MR1,Sodium pyruvate,cysQ protein (NCBI ptt file),8.89895626956054
+meta,l-threonine,1,beril_MR1,1,-8.68186664255349,-8.68186664255349,200841,beril_MR1,L-Threonine,homoserine O-succinyltransferase (NCBI ptt file),8.68186664255349
+cysi,sodium pyruvate,1,beril_MR1,1,-8.63829368752128,-8.63829368752128,202830,beril_MR1,Sodium pyruvate,sulfite reductase (NADPH) hemoprotein beta-component (cysI) (NCBI ptt file),8.63829368752128
+hisg,nan,1,beril_Miya,1,-8.53445179879322,-8.53445179879322,8501229,beril_Miya,,ATP phosphoribosyltransferase (RefSeq),8.53445179879322
+panb,tween 20,1,beril_MR1,1,-8.52747140180107,-8.52747140180107,200056,beril_MR1,Tween 20,3-methyl-2-oxobutanoate hydroxymethyltransferase (NCBI ptt file),8.52747140180107
+metf,l-arginine,1,beril_MR1,1,-8.50340102287699,-8.50340102287699,203138,beril_MR1,L-Arginine,"5,10-methylenetetrahydrofolate reductase (NCBI ptt file)",8.50340102287699
+pure,ammonium,1,beril_MR1,1,-8.48533204215856,-8.48533204215856,202655,beril_MR1,Ammonium chloride,"phosphoribosylaminoimidazole carboxylase, catalytic subunit (NCBI ptt file)",8.48533204215856
+hisf,sodium pyruvate,1,beril_MR1,1,-8.42827145362109,-8.42827145362109,201225,beril_MR1,Sodium pyruvate,hisF protein (cyclase) (NCBI ptt file),8.42827145362109
+aste,l-arginine,1,beril_MR1,1,-8.40052228644667,-8.40052228644667,201482,beril_MR1,L-Arginine,succinylglutamate desuccinylase (NCBI ptt file),8.40052228644667
+metf,d-maltose,1,beril_PV4,1,-8.36060417151804,-8.36060417151804,5208006,beril_PV4,D-Maltose monohydrate,"5,10-methylenetetrahydrofolate reductase (RefSeq)",8.36060417151804
+leud,sodium pyruvate,1,beril_MR1,1,-8.34912599495127,-8.34912599495127,203314,beril_MR1,Sodium pyruvate,"3-isopropylmalate dehydratase, small subunit (NCBI ptt file)",8.34912599495127
+sera,sodium pyruvate,1,beril_MR1,1,-8.27902090350543,-8.27902090350543,200048,beril_MR1,Sodium pyruvate,D-3-phosphoglycerate dehydrogenase (NCBI ptt file),8.27902090350543
+purh,sodium pyruvate,1,beril_MR1,1,-8.25963330054897,-8.25963330054897,199634,beril_MR1,Sodium pyruvate,phosphoribosylaminoimidazolecarboxamide formyltransferase/IMP cyclohydrolase (NCBI ptt fil,8.25963330054897
+hish,l-threonine,1,beril_MR1,1,-8.25219884275017,-8.25219884275017,201227,beril_MR1,L-Threonine,amidotransferase HisH (NCBI ptt file),8.25219884275017
+hisb,sodium pyruvate,1,beril_MR1,1,-8.2360747272453,-8.2360747272453,201228,beril_MR1,Sodium pyruvate,imidazoleglycerol-phosphate dehydratase/histidinol-phosphatase (NCBI ptt file),8.2360747272453
+hisg,d-maltose,1,beril_PV4,1,-8.22818147845313,-8.22818147845313,5209744,beril_PV4,D-Maltose monohydrate,ATP phosphoribosyltransferase (RefSeq),8.22818147845313
+argb,adenosine,1,beril_MR1,1,-8.21386548154557,-8.21386548154557,199471,beril_MR1,Adenosine,acetylglutamate kinase (NCBI ptt file),8.21386548154557
+thrb,l-arginine,1,beril_MR1,1,-8.19530911175075,-8.19530911175075,202521,beril_MR1,L-Arginine,homoserine kinase (NCBI ptt file),8.19530911175075
+ilvd,sodium pyruvate,1,beril_MR1,1,-8.10605323608135,-8.10605323608135,203423,beril_MR1,Sodium pyruvate,dihydroxy-acid dehydratase (NCBI ptt file),8.10605323608135
+hisg,l-threonine,1,beril_MR1,1,-8.07727627135505,-8.07727627135505,201231,beril_MR1,L-Threonine,ATP phosphoribosyltransferase (NCBI ptt file),8.07727627135505
+hisd,l-threonine,1,beril_MR1,1,-8.05917411460491,-8.05917411460491,201230,beril_MR1,L-Threonine,histidinol dehydrogenase (NCBI ptt file),8.05917411460491
+carb,l-threonine,1,beril_MR1,1,-8.04053868729199,-8.04053868729199,200322,beril_MR1,L-Threonine,"carbamoyl-phosphate synthase, large subunit (NCBI ptt file)",8.04053868729199
+metb,l-arginine,1,beril_MR1,1,-8.00346417425829,-8.00346417425829,203140,beril_MR1,L-Arginine,cystathionine gamma-synthase (NCBI ptt file),8.00346417425829
+serb,sodium pyruvate,1,beril_MR1,1,-8.00094599362088,-8.00094599362088,200401,beril_MR1,Sodium pyruvate,phosphoserine phosphatase (RefSeq),8.00094599362088
+purk,l-threonine,1,beril_MR1,1,-7.98551217442825,-7.98551217442825,202656,beril_MR1,L-Threonine,"phosphoribosylaminoimidazole carboxylase, ATPase subunit (NCBI ptt file)",7.98551217442825
+argc,l-threonine,1,beril_MR1,1,-7.93075803470537,-7.93075803470537,199470,beril_MR1,L-Threonine,N-acetyl-gamma-glutamyl-phosphate reductase (NCBI ptt file),7.93075803470537
+hish,d-maltose,1,beril_PV4,1,-7.9202134445506,-7.9202134445506,5209748,beril_PV4,D-Maltose monohydrate,imidazole glycerol phosphate synthase subunit HisH (RefSeq),7.9202134445506
+argf,adenosine,1,beril_MR1,1,-7.91581540667074,-7.91581540667074,199472,beril_MR1,Adenosine,ornithine carbamoyltransferase (NCBI ptt file),7.91581540667074
+cara,l-threonine,1,beril_MR1,1,-7.90915246792219,-7.90915246792219,200321,beril_MR1,L-Threonine,"carbamoyl-phosphate synthase, small subunit (NCBI ptt file)",7.90915246792219
+gltd,sodium pyruvate,1,beril_MR1,1,-7.84264937621848,-7.84264937621848,200499,beril_MR1,Sodium pyruvate,"glutamate synthase, small subunit (NCBI ptt file)",7.84264937621848
+leub,l-arginine,1,beril_MR1,1,-7.81077940113636,-7.81077940113636,203316,beril_MR1,L-Arginine,3-isopropylmalate dehydrogenase (NCBI ptt file),7.81077940113636
+prob,l-threonine,1,beril_MR1,1,-7.79703509468829,-7.79703509468829,200301,beril_MR1,L-Threonine,glutamate 5-kinase (NCBI ptt file),7.79703509468829
+tyra,sodium pyruvate,1,beril_MR1,1,-7.78944903299483,-7.78944903299483,200537,beril_MR1,Sodium pyruvate,chorismate mutase/prephenate dehydrogenase (NCBI ptt file),7.78944903299483
+mete,sodium pyruvate,1,beril_MR1,1,-7.77754540015794,-7.77754540015794,200004,beril_MR1,Sodium pyruvate,5-methyltetrahydropteroyltriglutamate--homocysteine methyltransferase (NCBI ptt file),7.77754540015794
+pyrc,l-threonine,1,beril_MR1,1,-7.76398226955981,-7.76398226955981,202789,beril_MR1,L-Threonine,"dihydroorotase, homodimeric type (NCBI ptt file)",7.76398226955981
+argh,l-threonine,1,beril_MR1,1,-7.73769856397347,-7.73769856397347,199474,beril_MR1,L-Threonine,argininosuccinate lyase (NCBI ptt file),7.73769856397347
+asnb-1,l-arginine,1,beril_MR1,1,-7.72614433742227,-7.72614433742227,201902,beril_MR1,L-Arginine,"asparagine synthetase B, glutamine-hydrolyzing (NCBI ptt file)",7.72614433742227
+pyrf,sodium l-lactate,1,beril_MR1,1,-7.72372588367974,-7.72372588367974,201542,beril_MR1,Sodium L-Lactate,orotidine 5`-phosphate decarboxylase (NCBI ptt file),7.72372588367974
+proc,l-threonine,1,beril_MR1,1,-7.70801060984603,-7.70801060984603,202462,beril_MR1,L-Threonine,pyrroline-5-carboxylate reductase (NCBI ptt file),7.70801060984603
+trpe,l-threonine,1,beril_MR1,1,-7.70371341023523,-7.70371341023523,202141,beril_MR1,L-Threonine,anthranilate synthase component I (NCBI ptt file),7.70371341023523
+argg,l-threonine,1,beril_MR1,1,-7.68540563884639,-7.68540563884639,199473,beril_MR1,L-Threonine,argininosuccinate synthase (NCBI ptt file),7.68540563884639
+ppc,l-threonine,1,beril_MR1,1,-7.67608658424061,-7.67608658424061,199469,beril_MR1,L-Threonine,phosphoenolpyruvate carboxylase (NCBI ptt file),7.67608658424061
+proa,l-threonine,1,beril_MR1,1,-7.66852760409722,-7.66852760409722,200302,beril_MR1,L-Threonine,gamma-glutamyl phosphate reductase (NCBI ptt file),7.66852760409722
+purm,ammonium,1,beril_MR1,1,-7.65006856956902,-7.65006856956902,201896,beril_MR1,Ammonium chloride,phosphoribosylformylglycinamidine cyclo-ligase (NCBI ptt file),7.65006856956902
+ptsh,l-arginine,1,beril_DvH,1,-7.62910641350336,-7.62910641350336,206258,beril_DvH,L-Arginine,phosphocarrier protein HPr (TIGR),7.62910641350336
+pane,tween 20,1,beril_MR1,1,-7.60254308841,-7.60254308841,202907,beril_MR1,Tween 20,2-dehydropantoate 2-reductase (NCBI ptt file),7.60254308841
+ilvy,sodium pyruvate,1,beril_MR1,1,-7.598805240241,-7.598805240241,203428,beril_MR1,Sodium pyruvate,transcriptional regulator ilvY (NCBI ptt file),7.598805240241
+coba,sodium pyruvate,1,beril_MR1,1,-7.57721859320211,-7.57721859320211,202822,beril_MR1,Sodium pyruvate,uroporphyrin-III C-methyltransferase (NCBI ptt file),7.57721859320211
+rela,l-arginine,1,beril_MR1,1,-7.56328624377892,-7.56328624377892,202558,beril_MR1,L-Arginine,GTP pyrophosphokinase (NCBI ptt file),7.56328624377892
+pyre,l-threonine,1,beril_MR1,1,-7.55521711828435,-7.55521711828435,203336,beril_MR1,L-Threonine,orotate phosphoribosyltransferase (NCBI ptt file),7.55521711828435
+gltb,l-threonine,1,beril_MR1,1,-7.55013251149889,-7.55013251149889,200500,beril_MR1,L-Threonine,"glutamate synthase, large subunit (NCBI ptt file)",7.55013251149889
+cysd,l-arginine,1,beril_MR1,1,-7.52092824257622,-7.52092824257622,202821,beril_MR1,L-Arginine,"sulfate adenylyltransferase, subunit 2 (NCBI ptt file)",7.52092824257622
+ilvc,sodium pyruvate,1,beril_MR1,1,-7.50858190053676,-7.50858190053676,203427,beril_MR1,Sodium pyruvate,ketol-acid reductoisomerase (NCBI ptt file),7.50858190053676
+leua,l-glutamine,1,beril_MR1,1,-7.5047660077503,-7.5047660077503,203317,beril_MR1,L-Glutamine,2-isopropylmalate synthase (NCBI ptt file),7.5047660077503
+purd,l-threonine,1,beril_MR1,1,-7.49515898137851,-7.49515898137851,199633,beril_MR1,L-Threonine,phosphoribosylamine--glycine ligase (NCBI ptt file),7.49515898137851
+aspc-2,l-threonine,1,beril_MR1,1,-7.49231166821026,-7.49231166821026,201550,beril_MR1,L-Threonine,aspartate aminotransferase (NCBI ptt file),7.49231166821026
+folk-2,sodium pyruvate,1,beril_MR1,1,-7.46685430248724,-7.46685430248724,200469,beril_MR1,Sodium pyruvate,2-amino-4-hydroxy-6-hydroxymethyldihydropteridine pyrophosphokinase (NCBI ptt file),7.46685430248724
+aceb,tween 20,1,beril_MR1,1,-7.44314518873736,-7.44314518873736,200654,beril_MR1,Tween 20,malate synthase A (NCBI ptt file),7.44314518873736
+gcvp,l-threonine,1,beril_MR1,1,-7.43711278775178,-7.43711278775178,199967,beril_MR1,L-Threonine,glycine cleavage system P protein (NCBI ptt file),7.43711278775178
+purl,l-threonine,1,beril_MR1,1,-7.42239220568649,-7.42239220568649,202395,beril_MR1,L-Threonine,phosphoribosylformylglycinamidine synthase (NCBI ptt file),7.42239220568649
+thrc,l-arginine,1,beril_MR1,1,-7.4118606973081,-7.4118606973081,202520,beril_MR1,L-Arginine,threonine synthase (NCBI ptt file),7.4118606973081
+cysn,sodium pyruvate,1,beril_MR1,1,-7.40313480805696,-7.40313480805696,202820,beril_MR1,Sodium pyruvate,"sulfate adenylyltransferase, subunit 1 (NCBI ptt file)",7.40313480805696
+meth,l-malic acid disodium,1,beril_PV4,1,-7.39447799673419,-7.39447799673419,5208198,beril_PV4,L-Malic acid disodium salt monohydrate,B12-dependent methionine synthase (RefSeq),7.39447799673419
+lysa,sodium pyruvate,1,beril_MR1,1,-7.38839718427957,-7.38839718427957,203388,beril_MR1,Sodium pyruvate,diaminopimelate decarboxylase (NCBI ptt file),7.38839718427957
+ilvi,l-threonine,1,beril_MR1,1,-7.36325183743029,-7.36325183743029,201429,beril_MR1,L-Threonine,"acetolactate synthase III, large subunit (NCBI ptt file)",7.36325183743029
+hisi,uridine,1,beril_MR1,1,-7.36206843934805,-7.36206843934805,201224,beril_MR1,Uridine,phosphoribosyl-ATP pyrophosphatase/phosphoribosyl-AMP cyclohydrolase (NCBI ptt file),7.36206843934805
+prpc,sodium propionate,1,beril_MR1,1,-7.3369409892114,-7.3369409892114,199539,beril_MR1,Sodium propionate,methylcitrate synthase (NCBI ptt file),7.3369409892114
+trpa,l-threonine,1,beril_MR1,1,-7.2305815241446,-7.2305815241446,202146,beril_MR1,L-Threonine,"tryptophan synthase, alpha subunit (NCBI ptt file)",7.2305815241446
+kbl,l-threonine,1,beril_MR1,1,-7.22252378040432,-7.22252378040432,203743,beril_MR1,L-Threonine,2-amino-3-ketobutyrate coenzyme A ligase (NCBI ptt file),7.22252378040432
+pyrd,l-threonine,1,beril_MR1,1,-7.21148110344877,-7.21148110344877,201732,beril_MR1,L-Threonine,dihydroorotate dehydrogenase (NCBI ptt file),7.21148110344877
+cysk,ammonium,1,beril_MR1,1,-7.20797868137015,-7.20797868137015,202029,beril_MR1,Ammonium chloride,cysteine synthase A (NCBI ptt file),7.20797868137015
+glya,sodium pyruvate,1,beril_MR1,1,-7.2078630556019,-7.2078630556019,202574,beril_MR1,Sodium pyruvate,serine hydroxymethyltransferase (NCBI ptt file),7.2078630556019

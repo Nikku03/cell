@@ -1,0 +1,416 @@
+locusId,expName,fit,t,expGroup,condition_1,media,gene,desc,organism
+Echvi_4104,set1IT048,-4.38755801248968,-2.92906998445019,marine broth,,marine_broth_2216,,hypothetical protein,beril_Cola
+Echvi_0641,set1IT079,-4.12000220531352,-1.50308242420627,marine broth,,marine_broth_2216,,Transposase and inactivated derivatives,beril_Cola
+Echvi_3764,set1IT079,-3.88361247108675,-2.48263427775004,marine broth,,marine_broth_2216,,Predicted transcriptional regulators,beril_Cola
+Echvi_2401,set1IT048,-3.8718001828178,-2.6576379672442,marine broth,,marine_broth_2216,,hypothetical protein,beril_Cola
+Echvi_2186,set1IT048,-3.19637332446931,-4.3545417300886,marine broth,,marine_broth_2216,,"rRNA methylase, putative, group 3",beril_Cola
+Echvi_4549,set1IT035,-3.05152168609286,-2.92546878437396,marine broth,,marine_broth_2216,,"Histidine kinase./Histidine kinase-, DNA gyrase B-, and HSP90-like ATPase.",beril_Cola
+Echvi_1227,set1IT035,-3.00332968665142,-1.88946420303229,marine broth,,marine_broth_2216,,hypothetical protein,beril_Cola
+DDA3937_RS13495,set11TCH514,-5.75691644709707,-3.96812003490948,plant,,,,flagellar export chaperone FlgN,beril_Dda3937
+DDA3937_RS13480,set11TCH530,-5.60529746343988,-11.2056816526126,plant,,,,flagellar basal body rod protein FlgB,beril_Dda3937
+DDA3937_RS13360,set11TCH534,-5.55383699002745,-2.12272153571836,plant,,,,flagellar hook-basal body complex protein FliE,beril_Dda3937
+DDA3937_RS13420,set11TCH530,-5.2538667953508,-8.75034517589875,plant,,,,flagellar biosynthesis protein FliQ,beril_Dda3937
+DDA3937_RS13565,set11TCH530,-4.93870228866521,-15.2429976388611,plant,,,,flagellar transcriptional regulator FlhD,beril_Dda3937
+DDA3937_RS10980,set11TCH529,-4.80400380384947,-9.16954303862001,plant,,,,tetratricopeptide repeat-containing protein,beril_Dda3937
+DDA3937_RS15705,set11TCH530,-4.75613984474959,-11.4430386872748,plant,,,,cyclic-guanylate-specific phosphodiesterase,beril_Dda3937
+DDA3937_RS13455,set11TCH530,-4.71335113994412,-10.0284671873266,plant,,,,flagellar basal-body rod protein FlgG,beril_Dda3937
+DDA3937_RS13505,set11TCH530,-4.68979465727533,-18.303961200513,plant,,,,flagellar biosynthesis protein FlhA,beril_Dda3937
+DDA3937_RS13385,set11TCH518,-4.62140929864816,-6.31317023863416,plant,,,,flagella biosynthesis chaperone FliJ,beril_Dda3937
+DDA3937_RS09770,set11TCH529,-4.55669942678882,-1.57629393434566,plant,,,,fumarylacetoacetate hydrolase family protein,beril_Dda3937
+DDA3937_RS18670,set11TCH513,-4.51188901298789,-5.26482586168464,plant,,,,ABC transporter permease,beril_Dda3937
+DDA3937_RS13515,set11TCH530,-4.45478939346928,-12.1032627896511,plant,,,,protein phosphatase CheZ,beril_Dda3937
+DDA3937_RS18685,set11TCH530,-4.44525216838011,-16.1518874961582,plant,,,,WbeA,beril_Dda3937
+DDA3937_RS01495,set11TCH530,-4.39651222260158,-9.75699262783671,plant,,,,ribosome-associated protein,beril_Dda3937
+DDA3937_RS13470,set11TCH530,-4.39596366785436,-15.4928842178557,plant,,,,flagellar hook assembly protein FlgD,beril_Dda3937
+DDA3937_RS13340,set11TCH530,-4.37530600579056,-9.23956000841082,plant,,,,flagellin FliC,beril_Dda3937
+DDA3937_RS10840,set11TCH518,-4.33775328500653,-16.7366826420121,plant,,,,hypothetical protein,beril_Dda3937
+DDA3937_RS13510,set11TCH534,-4.33135038516145,-14.3714974736437,plant,,,,flagellar type III secretion system protein FlhB,beril_Dda3937
+DDA3937_RS00640,setATCH154,-4.2720562572442,-3.07143136898497,plant,cv.Norland,Potato tuber,,cell division ATP-binding protein FtsE,beril_Dda3937
+DDA3937_RS13365,set11TCH530,-4.23827012401398,-18.9752531434394,plant,,,,flagellar M-ring protein FliF,beril_Dda3937
+DDA3937_RS13490,set11TCH529,-4.23032172534631,-1.19666237828519,plant,,,,anti-sigma-28 factor FlgM,beril_Dda3937
+DDA3937_RS18680,set11TCH518,-4.09086314493453,-3.97201242143521,plant,,,,GDP-L-fucose synthase,beril_Dda3937
+DDA3937_RS13375,set11TCH518,-4.08260382633816,-2.80991158501907,plant,,,,flagellar assembly protein FliH,beril_Dda3937
+DDA3937_RS10845,set11TCH530,-4.07734958577649,-19.3812336628437,plant,,,,virulence factor SrfB,beril_Dda3937
+DDA3937_RS13425,set11TCH530,-4.05888616399444,-13.2353799568046,plant,,,,flagellar type III secretion system protein FliR,beril_Dda3937
+DDA3937_RS13485,set11TCH530,-4.01605875777939,-9.60529534740217,plant,,,,flagellar basal body P-ring formation protein FlgA,beril_Dda3937
+DDA3937_RS20475,setATCH161,-4.00741382255811,-3.55987838774065,plant,cv.Upstate,Potato tuber,,glycosyltransferase family 4 protein,beril_Dda3937
+DDA3937_RS09370,set11TCH513,-4.00738210003335,-1.92172070524023,plant,,,,GTP cyclohydrolase I FolE,beril_Dda3937
+DDA3937_RS02855,set11TCH529,-3.99278897734645,-1.15405804260154,plant,,,,hypothetical protein,beril_Dda3937
+DDA3937_RS07750,set11TCH518,-3.97216608189003,-2.73390119783768,plant,,,,iron-siderophore ABC transporter substrate-binding protein,beril_Dda3937
+DDA3937_RS13405,set11TCH530,-3.95577526932463,-10.077817339876,plant,,,,flagellar motor switch protein FliN,beril_Dda3937
+DDA3937_RS13555,set11TCH530,-3.94583794761721,-14.8148713856371,plant,,,,flagellar motor stator protein MotA,beril_Dda3937
+DDA3937_RS11365,set11TCH516,-3.93095571751009,-2.27290250656895,plant,,,,oligogalacturonate-specific porin KdgM,beril_Dda3937
+DDA3937_RS18665,set11TCH530,-3.92618052344171,-18.2228938181202,plant,,,,"GDP-mannose 4,6-dehydratase",beril_Dda3937
+DDA3937_RS13415,set11TCH530,-3.91276737040568,-12.0728143983912,plant,,,,flagellar type III secretion system pore protein FliP,beril_Dda3937
+DDA3937_RS13395,set11TCH530,-3.91148236624711,-10.5402552777365,plant,,,,flagellar basal body-associated protein FliL,beril_Dda3937
+DDA3937_RS15545,set11TCH534,-3.89922914689303,-1.63302589565396,plant,,,,cysteine desulfurase,beril_Dda3937
+DDA3937_RS20455,set11TCH513,-3.88913737436986,-2.67811648651832,plant,,,,putative lipopolysaccharide heptosyltransferase III,beril_Dda3937
+DDA3937_RS13380,set11TCH534,-3.84335197191005,-17.7809349873968,plant,,,,flagellum-specific ATP synthase FliI,beril_Dda3937
+DDA3937_RS13465,set11TCH530,-3.82654515337669,-20.1345280333767,plant,,,,flagellar hook protein FlgE,beril_Dda3937
+DDA3937_RS06755,setATCH152,-3.82043117212175,-8.07020104870848,plant,cv.Atlantic,Potato tuber,,glycosyltransferase family 2 protein,beril_Dda3937
+DDA3937_RS13400,set11TCH530,-3.80946869010809,-12.2848651973,plant,,,,flagellar motor switch protein FliM,beril_Dda3937
+DDA3937_RS00580,set11TCH530,-3.79528889507936,-13.4935546874374,plant,,,,2-dehydro-3-deoxygluconokinase,beril_Dda3937
+DDA3937_RS13410,set11TCH515,-3.79308551408572,-10.0296580683729,plant,,,,flagellar biosynthetic protein FliO,beril_Dda3937
+DDA3937_RS06770,setATCH149,-3.79291040632939,-2.59358454154444,plant,cv.Atlantic,Potato tuber,,oligosaccharide flippase family protein,beril_Dda3937
+DDA3937_RS06270,set11TCH516,-3.79058061262112,-1.97730443376442,plant,,,,tRNA-Met,beril_Dda3937
+DDA3937_RS15910,set11TCH513,-3.76426099200171,-1.78736228844747,plant,,,,Fe3+-hydroxamate ABC transporter ATP-binding protein FhuC,beril_Dda3937
+DDA3937_RS13530,set11TCH518,-3.7447115034058,-9.32188808023686,plant,,,,protein-glutamate O-methyltransferase CheR,beril_Dda3937
+DDA3937_RS21965,set11TCH518,-3.74278568768234,-1.25688053488534,plant,,,,helix-turn-helix domain-containing protein,beril_Dda3937
+DDA3937_RS11325,set11TCH518,-3.73425046134154,-9.25432422493345,plant,,,,cupin domain-containing protein,beril_Dda3937
+DDA3937_RS18660,set11TCH518,-3.70920122947869,-21.7554143871904,plant,,,,phosphomannomutase/phosphoglucomutase,beril_Dda3937
+DDA3937_RS00975,set11TCH518,-3.70314674004454,-1.92080232371634,plant,,,,Si-specific NAD(P)(+) transhydrogenase,beril_Dda3937
+DDA3937_RS21375,set11TCH515,-3.69119021116545,-6.12448129510353,plant,,,,4-deoxy-4-formamido-L-arabinose- phosphoundecaprenol deformylase,beril_Dda3937
+DDA3937_RS13390,set11TCH534,-3.67947019523467,-8.67365139986071,plant,,,,flagellar hook-length control protein FliK,beril_Dda3937
+DDA3937_RS02160,set11TCH529,-3.66031710629267,-2.06019031971859,plant,,,,transketolase,beril_Dda3937
+DDA3937_RS13545,set11TCH530,-3.64658953212028,-15.9770608820329,plant,,,,chemotaxis protein CheA,beril_Dda3937
+DDA3937_RS13430,set11TCH518,-3.61096059405557,-11.4976022952994,plant,,,,flagellar hook-associated protein FlgL,beril_Dda3937
+DDA3937_RS13450,set11TCH518,-3.5719336694751,-14.5032827899269,plant,,,,flagellar basal body L-ring protein FlgH,beril_Dda3937
+DDA3937_RS13445,set11TCH527,-3.56981172715802,-9.96974240910475,plant,,,,flagellar basal body P-ring protein FlgI,beril_Dda3937
+DDA3937_RS07760,set11TCH518,-3.5466930843503,-3.41468703243415,plant,,,,iron ABC transporter permease,beril_Dda3937
+DDA3937_RS11185,set11TCH515,-3.49507844334299,-7.74715098157771,plant,,,,disulfide bond formation protein DsbB,beril_Dda3937
+DDA3937_RS06100,set11TCH527,-3.48824021160646,-1.47739068320209,plant,,,,M15 family metallopeptidase,beril_Dda3937
+DDA3937_RS11180,set11TCH518,-3.44164209739938,-4.81570158137965,plant,,,,fatty acid metabolism transcriptional regulator FadR,beril_Dda3937
+DDA3937_RS10850,set11TCH515,-3.42713650625335,-17.4463179971145,plant,,,,virulence factor,beril_Dda3937
+DDA3937_RS13435,set11TCH518,-3.39371286619269,-17.5680483892643,plant,,,,flagellar hook-associated protein FlgK,beril_Dda3937
+DDA3937_RS20305,set11TCH531,-3.38560290414928,-9.85258214199601,plant,,,,Sec-independent protein translocase subunit TatC,beril_Dda3937
+DDA3937_RS10950,setATCH160,-3.36411114685075,-8.3314197579696,plant,cv.Upstate,Potato tuber,,fumarate/nitrate reduction transcriptional regulator Fnr,beril_Dda3937
+DDA3937_RS05615,set11TCH534,-3.3251932805792,-1.9522062534649,plant,,,,cytochrome o ubiquinol oxidase subunit II,beril_Dda3937
+DDA3937_RS13550,set11TCH518,-3.32235672504991,-12.4445910576628,plant,,,,flagellar motor protein MotB,beril_Dda3937
+DDA3937_RS13345,set11TCH531,-3.28740377634333,-8.82814473236588,plant,,,,flagellar filament capping protein FliD,beril_Dda3937
+DDA3937_RS13300,set11TCH515,-3.25322120591359,-10.25290339919,plant,,,,RNA polymerase sigma factor FliA,beril_Dda3937
+DDA3937_RS11330,set11TCH518,-3.25236649515133,-12.7013905766009,plant,,,,5-dehydro-4-deoxy-D-glucuronate isomerase,beril_Dda3937
+DDA3937_RS14470,set11TCH531,-3.24183370768482,-4.6444653123451,plant,,,,aspartate-semialdehyde dehydrogenase,beril_Dda3937
+DDA3937_RS13560,set11TCH534,-3.23821298773901,-9.35294621663891,plant,,,,flagellar transcriptional regulator FlhC,beril_Dda3937
+DDA3937_RS14380,setATCH162,-3.22932379339133,-2.22272577929702,plant,cv.Upstate,Potato tuber,,acetate kinase,beril_Dda3937
+DDA3937_RS19660,set11TCH530,-3.22677699914088,-15.7485712984601,plant,,,,4-alpha-glucanotransferase,beril_Dda3937
+DDA3937_RS13540,set11TCH534,-3.20950895871574,-8.18040446361342,plant,,,,chemotaxis protein CheW,beril_Dda3937
+DDA3937_RS13440,set11TCH516,-3.20892132870277,-10.8435286895357,plant,,,,flagellar assembly peptidoglycan hydrolase FlgJ,beril_Dda3937
+DDA3937_RS01065,set11TCH516,-3.20695945691141,-0.861330622212808,plant,,,,elongation factor Tu,beril_Dda3937
+DDA3937_RS13460,set11TCH530,-3.19385953577734,-8.55872848251809,plant,,,,flagellar basal body rod protein FlgF,beril_Dda3937
+DDA3937_RS16470,set11TCH534,-3.17359798990623,-2.21337727860517,plant,,,,hypothetical protein,beril_Dda3937
+DDA3937_RS08585,setATCH158,-3.1704016535663,-2.77821242163938,plant,cv.Norland,Potato tuber,,molybdopterin synthase catalytic subunit MoaE,beril_Dda3937
+DDA3937_RS06490,set11TCH534,-3.16527721800955,-1.61748864117016,plant,,,,cyd operon protein YbgE,beril_Dda3937
+DDA3937_RS13370,set11TCH534,-3.16036485397278,-9.30977127349172,plant,,,,flagellar motor switch protein FliG,beril_Dda3937
+DDA3937_RS21095,setATCH153,-3.15602566521759,-1.08008917850054,plant,cv.Atlantic,Potato tuber,,DUF1471 domain-containing protein,beril_Dda3937
+DDA3937_RS14630,set11TCH534,-3.14632671760727,-3.75223266469303,plant,,,,tRNA-Arg,beril_Dda3937
+DDA3937_RS20415,setATCH162,-3.14465930348824,-3.51423727819297,plant,cv.Upstate,Potato tuber,,rhodanese-like domain-containing protein,beril_Dda3937
+DDA3937_RS18690,set11TCH518,-3.13796064128542,-6.64533951947265,plant,,,,glycosyltransferase,beril_Dda3937
+DDA3937_RS13160,set11TCH534,-3.12984776133431,-1.96079343757461,plant,,,,ribonuclease E,beril_Dda3937
+DDA3937_RS04555,set11TCH516,-3.11386359366756,-1.88699480605923,plant,,,,DNA-3-methyladenine glycosylase 2 family protein,beril_Dda3937
+DDA3937_RS09345,set11TCH516,-3.0847626789642,-0.79442984400991,plant,,,,IS200/IS605 family transposase,beril_Dda3937
+DDA3937_RS15060,set11TCH527,-3.07860297804941,-1.58919974281782,plant,,,,imidazolonepropionase,beril_Dda3937
+DDA3937_RS09585,setATCH156,-3.07619977397762,-1.95883093904183,plant,cv.Norland,Potato tuber,,thioredoxin-disulfide reductase,beril_Dda3937
+DDA3937_RS13525,set11TCH527,-3.07400429216897,-11.3423554930334,plant,,,,chemotaxis response regulator protein-glutamate methylesterase,beril_Dda3937
+DDA3937_RS14465,set11TCH529,-3.06441467389018,-1.74341187299583,plant,,,,tRNA pseudouridine(38-40) synthase TruA,beril_Dda3937
+DDA3937_RS13305,set11TCH515,-3.05438547013645,-9.33151543668896,plant,,,,hypothetical protein,beril_Dda3937
+DDA3937_RS10540,set11TCH529,-3.03240788560569,-2.29560398004109,plant,,,,HTH-type transcriptional regulator CysB,beril_Dda3937
+DDA3937_RS14385,setATCH165,-3.02763758386635,-10.0742435420978,plant,cv.Upstate,Potato tuber,,phosphate acetyltransferase,beril_Dda3937
+DDA3937_RS13355,set11TCH531,-3.0273388732232,-5.54525568175231,plant,,,,flagellar protein FliT,beril_Dda3937
+DDA3937_RS06475,set11TCH513,-3.02366249837786,-2.17091670723361,plant,,,,succinate--CoA ligase subunit alpha,beril_Dda3937
+DDA3937_RS06145,set11TCH529,-3.01762292395493,-2.09566528162471,plant,,,,lipoyl(octanoyl) transferase LipB,beril_Dda3937
+HGI48_RS06775,setATCH234,-4.7942579017443,-3.18371908358243,plant,cv.Upstate,Potato tuber,,glycosyltransferase family 2 protein,beril_Ddia6719
+HGI48_RS03215,setATCH223,-4.58202671170294,-0.939585153355994,plant,cv.Atlantic,Potato tuber,,preprotein translocase subunit SecG,beril_Ddia6719
+HGI48_RS19435,setATCH223,-4.37297944204746,-1.54003522065624,plant,cv.Atlantic,Potato tuber,,sulfurtransferase complex subunit TusD,beril_Ddia6719
+HGI48_RS05700,setATCH223,-4.26678367818641,-1.73575662018581,plant,cv.Atlantic,Potato tuber,,DNA-binding protein HU-beta,beril_Ddia6719
+HGI48_RS05390,setATCH222,-3.95555340420981,-1.65342801743171,plant,cv.Atlantic,Potato tuber,,alkylphosphonate utilization protein,beril_Ddia6719
+HGI48_RS01290,setATCH222,-3.94433819361626,-1.99927331469272,plant,cv.Atlantic,Potato tuber,,DNA-binding transcriptional regulator Fis,beril_Ddia6719
+HGI48_RS14280,setATCH223,-3.84891098789619,-1.75544985109904,plant,cv.Atlantic,Potato tuber,,NADH-quinone oxidoreductase subunit NuoH,beril_Ddia6719
+HGI48_RS21475,setATCH224,-3.70384279028885,-1.78931879490361,plant,cv.Atlantic,Potato tuber,,acyl carrier protein,beril_Ddia6719
+HGI48_RS19720,setATCH221,-3.67354216210908,-2.41827771838213,plant,cv.Atlantic,Potato tuber,,intracellular growth attenuator family protein,beril_Ddia6719
+HGI48_RS14305,setATCH229,-3.60479454698229,-2.70257928927509,plant,cv.Norland,Potato tuber,,NADH-quinone oxidoreductase subunit B,beril_Ddia6719
+HGI48_RS11375,setATCH224,-3.53797585758282,-2.33609089936106,plant,cv.Atlantic,Potato tuber,,2-dehydro-3-deoxy-D-gluconate 5-dehydrogenase KduD,beril_Ddia6719
+HGI48_RS00735,setATCH223,-3.51999136679102,-1.42984113494269,plant,cv.Atlantic,Potato tuber,,glycosyltransferase family 4 protein,beril_Ddia6719
+HGI48_RS15930,setATCH224,-3.50075054981773,-1.27045416533152,plant,cv.Atlantic,Potato tuber,,TSUP family transporter,beril_Ddia6719
+HGI48_RS00095,setATCH224,-3.41793175176303,-1.08181106727458,plant,cv.Atlantic,Potato tuber,,PAS domain-containing protein,beril_Ddia6719
+HGI48_RS06515,setATCH222,-3.37342409242845,-1.85139185461568,plant,cv.Atlantic,Potato tuber,,succinate--CoA ligase subunit alpha,beril_Ddia6719
+HGI48_RS14285,setATCH224,-3.32406781598386,-1.21021462474347,plant,cv.Atlantic,Potato tuber,,NADH-quinone oxidoreductase subunit NuoG,beril_Ddia6719
+HGI48_RS12920,setATCH224,-3.30142981120943,-1.48276214239326,plant,cv.Atlantic,Potato tuber,,cell division protein ZapC,beril_Ddia6719
+HGI48_RS12630,setATCH221,-3.289031374164,-2.0795614466156,plant,cv.Atlantic,Potato tuber,,pyridoxamine 5'-phosphate oxidase,beril_Ddia6719
+HGI48_RS01590,setATCH224,-3.26745274044825,-1.19778725901926,plant,cv.Atlantic,Potato tuber,,divisome-associated lipoprotein YraP,beril_Ddia6719
+HGI48_RS04385,setATCH223,-3.18040494213603,-2.77526305145034,plant,cv.Atlantic,Potato tuber,,LuxR family transcriptional regulator,beril_Ddia6719
+HGI48_RS02290,setATCH236,-3.12242564648947,-5.11567787556703,plant,cv.Upstate,Potato tuber,,hypothetical protein,beril_Ddia6719
+HGI48_RS19055,setATCH224,-3.05853944726682,-1.11842129565613,plant,cv.Atlantic,Potato tuber,,elongation factor P--(R)-beta-lysine ligase,beril_Ddia6719
+DZA65_RS13890,set2TCH580,-4.7751197232024,-6.51294137554392,plant,cv.Atlantic,Potato stem,,flagellar hook-basal body complex protein FliE,beril_DdiaME23
+DZA65_RS05860,set2TCH566,-4.59693852329999,-2.32305152019444,plant,cv.Norland,Potato stem,,preprotein translocase subunit YajC,beril_DdiaME23
+DZA65_RS09015,set2TCH580,-4.3497387586745,-1.7662306648691,plant,cv.Atlantic,Potato stem,,molybdopterin synthase sulfur carrier subunit,beril_DdiaME23
+DZA65_RS05165,set2TCH551,-4.27569183544059,-2.22581642015696,plant,cv.Upstate,Potato stem,,hypothetical protein,beril_DdiaME23
+DZA65_RS01020,set2TCH570,-4.10103785849102,-1.62348734372806,plant,cv.Upstate,Potato stem,,YeeE/YedE family protein,beril_DdiaME23
+DZA65_RS00350,set2TCH571,-4.09953225127437,-1.81850535000677,plant,cv.Upstate,Potato stem,,hypothetical protein,beril_DdiaME23
+DZA65_RS13900,set2TCH580,-3.92316548217134,-13.5771348293771,plant,cv.Atlantic,Potato stem,,flagellar motor switch protein FliG,beril_DdiaME23
+DZA65_RS02945,set2TCH546,-3.90109979905976,-4.14294788478456,plant,cv.Norland,Potato stem,,transcriptional regulator ExuR,beril_DdiaME23
+DZA65_RS08855,set2TCH551,-3.89245068125769,-1.98851800396771,plant,cv.Upstate,Potato stem,,hypothetical protein,beril_DdiaME23
+DZA65_RS14095,set2TCH580,-3.86546736153883,-11.0356466240206,plant,cv.Atlantic,Potato stem,,flagellar transcriptional regulator FlhD,beril_DdiaME23
+DZA65_RS13985,set2TCH580,-3.86309841731972,-8.57635145651729,plant,cv.Atlantic,Potato stem,,flagellar basal-body rod protein FlgG,beril_DdiaME23
+DZA65_RS06510,set2TCH571,-3.84228097844391,-1.45339852812468,plant,cv.Upstate,Potato stem,,transcription antiterminator/RNA stability regulator CspE,beril_DdiaME23
+DZA65_RS14000,set2TCH580,-3.83577113539193,-11.2364938343022,plant,cv.Atlantic,Potato stem,,flagellar hook assembly protein FlgD,beril_DdiaME23
+DZA65_RS13925,set2TCH580,-3.81858322186838,-13.4178642954814,plant,cv.Atlantic,Potato stem,,flagellar basal body-associated protein FliL,beril_DdiaME23
+DZA65_RS13940,set2TCH580,-3.80301365755681,-12.5155784194291,plant,cv.Atlantic,Potato stem,,flagellar biosynthetic protein FliO,beril_DdiaME23
+DZA65_RS13880,set2TCH578,-3.78565551890901,-7.95792149659098,plant,cv.Atlantic,Potato stem,,flagellar export chaperone FliS,beril_DdiaME23
+DZA65_RS14015,set2TCH575,-3.76884826684739,-11.9444898264044,plant,cv.Atlantic,Potato stem,,flagellar basal body P-ring formation protein FlgA,beril_DdiaME23
+DZA65_RS13995,set2TCH580,-3.74689034786713,-16.7275722243516,plant,cv.Atlantic,Potato stem,,flagellar hook protein FlgE,beril_DdiaME23
+DZA65_RS13950,set2TCH580,-3.73105359349104,-11.8420388895404,plant,cv.Atlantic,Potato stem,,flagellar biosynthesis protein FliQ,beril_DdiaME23
+DZA65_RS13975,set2TCH580,-3.72579553402572,-10.8924649487078,plant,cv.Atlantic,Potato stem,,flagellar basal body P-ring protein FlgI,beril_DdiaME23
+DZA65_RS16370,set2TCH546,-3.7085453623143,-2.67917760029936,plant,cv.Norland,Potato stem,,hypothetical protein,beril_DdiaME23
+DZA65_RS00675,set2TCH572,-3.70852206533575,-2.0093887491128,plant,cv.Upstate,Potato stem,,isoaspartyl peptidase/L-asparaginase,beril_DdiaME23
+DZA65_RS11565,set2TCH580,-3.70396921006404,-5.00562138972057,plant,cv.Atlantic,Potato stem,,disulfide bond formation protein DsbB,beril_DdiaME23
+DZA65_RS14090,set2TCH580,-3.69602989606388,-18.6836102704975,plant,cv.Atlantic,Potato stem,,flagellar transcriptional regulator FlhC,beril_DdiaME23
+DZA65_RS22840,set2TCH571,-3.64062603981042,-1.14249256691382,plant,cv.Upstate,Potato stem,,hypothetical protein,beril_DdiaME23
+DZA65_RS14025,set2TCH578,-3.63664316550635,-6.00896671052009,plant,cv.Atlantic,Potato stem,,flagella synthesis chaperone protein FlgN,beril_DdiaME23
+DZA65_RS13895,set2TCH580,-3.6156068576589,-22.4030621679739,plant,cv.Atlantic,Potato stem,,flagellar basal body M-ring protein FliF,beril_DdiaME23
+DZA65_RS13945,set2TCH580,-3.60903748707264,-17.2690030866032,plant,cv.Atlantic,Potato stem,,flagellar type III secretion system pore protein FliP,beril_DdiaME23
+DZA65_RS18785,set2TCH571,-3.60584640584737,-1.37454901513111,plant,cv.Upstate,Potato stem,,hypothetical protein,beril_DdiaME23
+DZA65_RS13915,set2TCH580,-3.59697643196765,-12.3828018369865,plant,cv.Atlantic,Potato stem,,flagella biosynthesis chaperone FliJ,beril_DdiaME23
+DZA65_RS13930,set2TCH580,-3.58004861381546,-16.1609450219686,plant,cv.Atlantic,Potato stem,,flagellar motor switch protein FliM,beril_DdiaME23
+DZA65_RS13870,set2TCH577,-3.57771656329634,-8.8813339038145,plant,cv.Atlantic,Potato stem,,flagellin,beril_DdiaME23
+DZA65_RS14035,set2TCH580,-3.57758466972667,-18.0994433191957,plant,cv.Atlantic,Potato stem,,flagellar biosynthesis protein FlhA,beril_DdiaME23
+DZA65_RS13980,set2TCH580,-3.56715651624349,-15.1348539412,plant,cv.Atlantic,Potato stem,,flagellar basal body L-ring protein FlgH,beril_DdiaME23
+DZA65_RS13955,set2TCH580,-3.53654431436786,-18.6658263490409,plant,cv.Atlantic,Potato stem,,flagellar type III secretion system protein FliR,beril_DdiaME23
+DZA65_RS03210,set2TCH550,-3.5350097212381,-2.40726979432202,plant,cv.Upstate,Potato stem,,preprotein translocase subunit SecG,beril_DdiaME23
+DZA65_RS13905,set2TCH580,-3.53176078451299,-11.5853704986953,plant,cv.Atlantic,Potato stem,,flagellar assembly protein FliH,beril_DdiaME23
+DZA65_RS03410,set2TCH551,-3.51621465849394,-2.06588026834171,plant,cv.Upstate,Potato stem,,tRNA-Leu,beril_DdiaME23
+DZA65_RS13835,set2TCH547,-3.50967176057019,-8.69457889033438,plant,cv.Norland,Potato stem,,RNA polymerase sigma factor FliA,beril_DdiaME23
+DZA65_RS13935,set2TCH575,-3.50932398670946,-8.04279029500633,plant,cv.Atlantic,Potato stem,,flagellar motor switch protein FliN,beril_DdiaME23
+DZA65_RS14005,set2TCH580,-3.4734349757052,-6.57861903286451,plant,cv.Atlantic,Potato stem,,flagellar basal body rod protein FlgC,beril_DdiaME23
+DZA65_RS00790,set2TCH574,-3.46667095765509,-3.30497919972974,plant,cv.Atlantic,Potato stem,,glycosyltransferase family 4 protein,beril_DdiaME23
+DZA65_RS01525,set2TCH565,-3.45999858111559,-3.34440674626307,plant,cv.Norland,Potato stem,,LPS export ABC transporter periplasmic protein LptC,beril_DdiaME23
+DZA65_RS13910,set2TCH580,-3.41903503057158,-18.7621621613431,plant,cv.Atlantic,Potato stem,,flagellum-specific ATP synthase FliI,beril_DdiaME23
+DZA65_RS03265,set2TCH566,-3.41022134127867,-1.51119058854111,plant,cv.Norland,Potato stem,,protein YrbN,beril_DdiaME23
+DZA65_RS00530,set2TCH572,-3.40151520873396,-0.818606607886906,plant,cv.Upstate,Potato stem,,DUF1471 domain-containing protein,beril_DdiaME23
+DZA65_RS02300,set2TCH578,-3.39655654433083,-3.9318039339827,plant,cv.Atlantic,Potato stem,,type-1Ba cytolytic delta-endotoxin,beril_DdiaME23
+DZA65_RS22240,set2TCH545,-3.37773869022589,-10.3492537319588,plant,cv.Norland,Potato stem,,thiol:disulfide interchange protein DsbA,beril_DdiaME23
+DZA65_RS13990,set2TCH580,-3.3689264434499,-10.2833389576778,plant,cv.Atlantic,Potato stem,,flagellar basal body rod protein FlgF,beril_DdiaME23
+DZA65_RS20875,set2TCH545,-3.34527127642773,-3.221867491977,plant,cv.Norland,Potato stem,,Fe-S biogenesis protein NfuA,beril_DdiaME23
+DZA65_RS13885,set2TCH575,-3.32768688778099,-8.97090272196083,plant,cv.Atlantic,Potato stem,,flagellar protein FliT,beril_DdiaME23
+DZA65_RS06120,setATCH175,-3.30675745399007,-15.6124799995366,plant,cv.Atlantic,Potato tuber,,efflux RND transporter periplasmic adaptor subunit,beril_DdiaME23
+DZA65_RS03185,set2TCH566,-3.29753427162728,-2.36229993492674,plant,cv.Norland,Potato stem,,ribosome assembly RNA-binding protein YhbY,beril_DdiaME23
+DZA65_RS14010,set2TCH568,-3.2819684977326,-3.18463946055755,plant,cv.Norland,Potato stem,,flagellar basal body rod protein FlgB,beril_DdiaME23
+DZA65_RS11915,set2TCH566,-3.27177673636885,-2.04494018883691,plant,cv.Norland,Potato stem,,ferrous iron transport protein A,beril_DdiaME23
+DZA65_RS14045,set2TCH580,-3.25450896855011,-9.66163049751855,plant,cv.Atlantic,Potato stem,,protein phosphatase CheZ,beril_DdiaME23
+DZA65_RS14085,set2TCH550,-3.24335929556897,-11.7282124832871,plant,cv.Upstate,Potato stem,,flagellar motor stator protein MotA,beril_DdiaME23
+DZA65_RS13970,set2TCH547,-3.22285931415641,-13.09102382682,plant,cv.Norland,Potato stem,,flagellar assembly peptidoglycan hydrolase FlgJ,beril_DdiaME23
+DZA65_RS06115,setATCH175,-3.21588671756055,-23.336344008673,plant,cv.Atlantic,Potato tuber,,multidrug efflux RND transporter permease subunit,beril_DdiaME23
+DZA65_RS13960,set2TCH577,-3.20609864828458,-12.623110813875,plant,cv.Atlantic,Potato stem,,flagellar hook-filament junction protein FlgL,beril_DdiaME23
+DZA65_RS19670,set2TCH579,-3.20287544755267,-3.09291973919848,plant,cv.Atlantic,Potato stem,,FtsH protease activity modulator HflK,beril_DdiaME23
+DZA65_RS14040,set2TCH575,-3.19679183766349,-19.7742915548844,plant,cv.Atlantic,Potato stem,,flagellar type III secretion system protein FlhB,beril_DdiaME23
+DZA65_RS04040,set2TCH576,-3.19288988348654,-3.16108923221065,plant,cv.Atlantic,Potato stem,,hypothetical protein,beril_DdiaME23
+DZA65_RS14055,set2TCH575,-3.17741466839901,-12.6640077722169,plant,cv.Atlantic,Potato stem,,chemotaxis response regulator protein-glutamate methylesterase,beril_DdiaME23
+DZA65_RS14050,set2TCH546,-3.16558405067206,-10.9043832381705,plant,cv.Norland,Potato stem,,chemotaxis protein CheY,beril_DdiaME23
+DZA65_RS08125,set2TCH566,-3.16084394513625,-5.22155910877474,plant,cv.Norland,Potato stem,,iron ABC transporter permease,beril_DdiaME23
+DZA65_RS09460,set2TCH552,-3.15439471949688,-2.15895940043214,plant,cv.Upstate,Potato stem,,YejL family protein,beril_DdiaME23
+DZA65_RS11260,set2TCH546,-3.14387407764379,-11.9399687534358,plant,cv.Norland,Potato stem,,hypothetical protein,beril_DdiaME23
+DZA65_RS14075,set2TCH578,-3.10727351239283,-20.6240433738618,plant,cv.Atlantic,Potato stem,,chemotaxis protein CheA,beril_DdiaME23
+DZA65_RS13920,set2TCH547,-3.09023346105778,-15.1507195847535,plant,cv.Norland,Potato stem,,flagellar hook-length control protein FliK,beril_DdiaME23
+DZA65_RS06840,set2TCH552,-3.07537569369422,-5.13175867870771,plant,cv.Upstate,Potato stem,,succinate dehydrogenase iron-sulfur subunit,beril_DdiaME23
+DZA65_RS14070,set2TCH580,-3.07304804161082,-7.54655409566151,plant,cv.Atlantic,Potato stem,,chemotaxis protein CheW,beril_DdiaME23
+DZA65_RS13875,set2TCH578,-3.06863322311726,-14.9468611611378,plant,cv.Atlantic,Potato stem,,flagellar filament capping protein FliD,beril_DdiaME23
+DZA65_RS12810,set2TCH570,-3.06832184340934,-1.34319429021187,plant,cv.Upstate,Potato stem,,YnbE family lipoprotein,beril_DdiaME23
+DZA65_RS01180,set2TCH572,-3.06681786917286,-1.6902411350668,plant,cv.Upstate,Potato stem,,DUF1127 domain-containing protein,beril_DdiaME23
+DZA65_RS11265,set2TCH546,-3.06022762769903,-21.2757373856668,plant,cv.Norland,Potato stem,,virulence factor SrfB,beril_DdiaME23
+DZA65_RS13025,set2TCH548,-3.05303395457494,-2.9037594549589,plant,cv.Norland,Potato stem,,stress response translation initiation inhibitor YciH,beril_DdiaME23
+B158DRAFT_2431,set3IT074,-4.82495009549784,-1.92470583725407,marine broth,,marine_broth_2216,,hypothetical protein,beril_Kang
+GFF1247,set2H22,-3.55673074117797,-1.19511697125504,marine broth,,marine_broth_2216,,"conserved hypothetical protein, membrane",beril_Marino
+GFF1667,set3H31,-3.04418475231556,-1.42439302268076,marine broth,,marine_broth_2216,,conserved hypothetical protein,beril_Marino
+MMP_RS00120,set1IT058,-11.2322029095611,-7.02975692529694,mixed community,Ethanol,McCas,,LysR family transcriptional regulator,beril_Methanococcus_S2
+MMP_RS00335,set1IT067,-11.2183288548418,-5.17016489207746,mixed community,"1,3-Propanediol",McCas,,5-amino-6-(D-ribitylamino)uracil--L-tyrosine 4-hydroxyphenyl transferase CofH,beril_Methanococcus_S2
+MMP_RS08840,set1IT067,-10.9530615409837,-7.57317036149959,mixed community,"1,3-Propanediol",McCas,,class I SAM-dependent methyltransferase,beril_Methanococcus_S2
+MMP_RS08070,set1IT058,-10.937350115189,-7.27193002023061,mixed community,Ethanol,McCas,,DUF2096 domain-containing protein,beril_Methanococcus_S2
+MMP_RS02100,set1IT077,-10.884284933602,-2.1759381675459,mixed community,Ethanolamine,McCas,,metallophosphoesterase,beril_Methanococcus_S2
+MMP_RS05450,set1IT077,-10.7845030898653,-2.48796530836334,mixed community,Ethanolamine,McCas,,CoB--CoM heterodisulfide reductase subunit C,beril_Methanococcus_S2
+MMP_RS05290,set1IT077,-10.6272648590912,-4.89574076431751,mixed community,Ethanolamine,McCas,,TetR/AcrR family transcriptional regulator,beril_Methanococcus_S2
+MMP_RS01445,set1IT067,-10.4797136270384,-8.83243070226201,mixed community,"1,3-Propanediol",McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS05635,set1IT077,-10.400614305154,-4.4864658362245,mixed community,Ethanolamine,McCas,,NAD-dependent epimerase/dehydratase family protein,beril_Methanococcus_S2
+MMP_RS08860,set1IT067,-10.3783239687994,-5.68376108623845,mixed community,"1,3-Propanediol",McCas,,MinD/ParA family protein,beril_Methanococcus_S2
+MMP_RS03305,set1IT058,-10.3303080547342,-10.0745694414229,mixed community,Ethanol,McCas,,winged helix-turn-helix domain-containing protein,beril_Methanococcus_S2
+MMP_RS01975,set1IT077,-10.2401352854182,-7.08071598750825,mixed community,Ethanolamine,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS05280,set1IT075,-10.1755057781651,-7.03555445509182,mixed community,Ethanolamine,McCas,,COG1361 S-layer family protein,beril_Methanococcus_S2
+MMP_RS08590,set1IT067,-10.147329989983,-5.51751292015609,mixed community,"1,3-Propanediol",McCas,,flagellin,beril_Methanococcus_S2
+MMP_RS06175,set1IT077,-9.9556219265447,-3.44919446859289,mixed community,Ethanolamine,McCas,,winged helix-turn-helix transcriptional regulator,beril_Methanococcus_S2
+MMP_RS07090,set1IT067,-9.57483873144866,-6.6200077820979,mixed community,"1,3-Propanediol",McCas,,tRNA (adenine-N1)-methyltransferase,beril_Methanococcus_S2
+MMP_RS08605,set1IT077,-9.56406797449894,-3.12429425555605,mixed community,Ethanolamine,McCas,,flagellar protein E,beril_Methanococcus_S2
+MMP_RS03155,set1IT076,-9.26634307618868,-4.22310164699382,mixed community,Ethanolamine,McCas,,precorrin-6A reductase,beril_Methanococcus_S2
+MMP_RS08155,set1IT076,-9.26310876896646,-5.50717480479612,mixed community,Ethanolamine,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS08195,set1IT077,-9.14856160458982,-5.05414268719123,mixed community,Ethanolamine,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS03390,set1IT068,-9.14429219510868,-6.32149117954836,mixed community,"1,3-Propanediol",McCas,,malate dehydrogenase,beril_Methanococcus_S2
+MMP_RS07620,set1IT078,-9.0085648597895,-2.49893061223924,mixed community,Ethanolamine,McCas,,energy-coupling factor ABC transporter substrate-binding protein,beril_Methanococcus_S2
+MMP_RS07820,set1IT077,-8.98785917264808,-2.73589696959265,mixed community,Ethanolamine,McCas,,UPF0104 family protein,beril_Methanococcus_S2
+MMP_RS07875,set1IT077,-8.98444392501668,-3.27346143342941,mixed community,Ethanolamine,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS05445,set1IT076,-8.98311671799779,-5.82298199591158,mixed community,Ethanolamine,McCas,,CoB--CoM heterodisulfide reductase subunit B,beril_Methanococcus_S2
+MMP_RS00915,set1IT077,-8.94689404835058,-3.84956482348755,mixed community,Ethanolamine,McCas,,DUF116 domain-containing protein,beril_Methanococcus_S2
+MMP_RS08445,set1IT067,-8.87405240485753,-4.44519577474068,mixed community,"1,3-Propanediol",McCas,,DUF2099 family protein,beril_Methanococcus_S2
+MMP_RS04090,set1IT067,-8.86313548964045,-4.106502655266,mixed community,"1,3-Propanediol",McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS08600,set1IT067,-8.8089541851339,-3.65966430042235,mixed community,"1,3-Propanediol",McCas,,flagellar protein D,beril_Methanococcus_S2
+MMP_RS05525,set1IT077,-8.73808699006616,-3.49456983071505,mixed community,Ethanolamine,McCas,,calcium/sodium antiporter,beril_Methanococcus_S2
+MMP_RS07330,set1IT078,-8.6393028119388,-11.8618362965366,mixed community,Ethanolamine,McCas,,membrane protein,beril_Methanococcus_S2
+MMP_RS03110,set1IT068,-8.57125528505995,-5.92520450718699,mixed community,"1,3-Propanediol",McCas,,glycosyltransferase family 2 protein,beril_Methanococcus_S2
+MMP_RS07350,set1IT077,-8.330001351916,-1.66890052777081,mixed community,Ethanolamine,McCas,,preprotein translocase subunit Sec61beta,beril_Methanococcus_S2
+MMP_RS06035,set1IT076,-8.32882713385716,-9.34410962666754,mixed community,Ethanolamine,McCas,,glycosyltransferase family 2 protein,beril_Methanococcus_S2
+MMP_RS01970,set1IT077,-8.2422567498318,-15.8872388283249,mixed community,Ethanolamine,McCas,,TIGR04279 domain-containing protein,beril_Methanococcus_S2
+MMP_RS01910,set1IT078,-8.13842459119365,-5.62708958574161,mixed community,Ethanolamine,McCas,,UDP-N-acetylglucosamine 2-epimerase (non-hydrolyzing),beril_Methanococcus_S2
+MMP_RS07425,set1IT078,-7.97777543173105,-2.99339533764553,mixed community,Ethanolamine,McCas,,GTP-binding protein,beril_Methanococcus_S2
+MMP_RS08075,set1IT058,-7.95325616139457,-6.95559384398703,mixed community,Ethanol,McCas,,DUF749 domain-containing protein,beril_Methanococcus_S2
+MMP_RS01895,set1IT077,-7.68904672350186,-17.519907529294,mixed community,Ethanolamine,McCas,,flippase,beril_Methanococcus_S2
+MMP_RS05545,set1IT059,-7.65345915038528,-7.66543653268751,mixed community,Ethanol,McCas,,pyridoxal phosphate-dependent aminotransferase,beril_Methanococcus_S2
+MMP_RS07435,set1IT067,-7.46538106262244,-3.08913964832602,mixed community,"1,3-Propanediol",McCas,,GMP synthase subunit A,beril_Methanococcus_S2
+MMP_RS07540,set1IT058,-7.44427809589715,-6.14405252858075,mixed community,Ethanol,McCas,,CBS domain-containing protein,beril_Methanococcus_S2
+MMP_RS01335,set1IT058,-7.34164980254529,-2.6360099327291,mixed community,Ethanol,McCas,,prefoldin subunit beta,beril_Methanococcus_S2
+MMP_RS07615,set1IT067,-7.10130000033811,-7.09052319274346,mixed community,"1,3-Propanediol",McCas,,energy-coupling factor ABC transporter permease,beril_Methanococcus_S2
+MMP_RS00130,set1IT073,-6.96588931078168,-1.20901142722158,mixed community,Ethanolamine,McCas,,nickel-responsive transcriptional regulator NikR,beril_Methanococcus_S2
+MMP_RS01915,set1IT078,-6.96251952711074,-16.6346935087009,mixed community,Ethanolamine,McCas,,DUF354 domain-containing protein,beril_Methanococcus_S2
+MMP_RS07625,set1IT058,-6.85844905200146,-5.46329319003217,mixed community,Ethanol,McCas,,cobalt ECF transporter T component CbiQ,beril_Methanococcus_S2
+MMP_RS01920,set1IT077,-6.8479043325231,-17.6496383270402,mixed community,Ethanolamine,McCas,,glycosyltransferase family 2 protein,beril_Methanococcus_S2
+MMP_RS05580,set1IT078,-6.80677534267801,-12.1781636703087,mixed community,Ethanolamine,McCas,,glycosyltransferase,beril_Methanococcus_S2
+MMP_RS00320,set1IT067,-6.78089468157573,-1.98690598154486,mixed community,"1,3-Propanediol",McCas,,class I SAM-dependent methyltransferase,beril_Methanococcus_S2
+MMP_RS03385,set1IT077,-6.72780121405767,-0.777794073603634,mixed community,Ethanolamine,McCas,,cation diffusion facilitator family transporter,beril_Methanococcus_S2
+MMP_RS02110,set1IT077,-6.49590330048334,-1.06096696065459,mixed community,Ethanolamine,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS06110,set1IT075,-6.47208991551458,-3.00229594685591,mixed community,Ethanolamine,McCas,,ATP-dependent protease LonB,beril_Methanococcus_S2
+MMP_RS07355,set1IT067,-6.3190054937051,-1.31552742776229,mixed community,"1,3-Propanediol",McCas,,transcription factor S,beril_Methanococcus_S2
+MMP_RS06840,set1IT067,-5.99966797934142,-1.24744987545431,mixed community,"1,3-Propanediol",McCas,,DNA-directed RNA polymerase subunit N,beril_Methanococcus_S2
+MMP_RS07685,set1IT059,-5.85464061835905,-10.9766787827072,mixed community,Ethanol,McCas,,TIGR01212 family radical SAM protein,beril_Methanococcus_S2
+MMP_RS06200,set1IT059,-5.80897056312417,-7.50289160909559,mixed community,Ethanol,McCas,,M24 family metallopeptidase,beril_Methanococcus_S2
+MMP_RS02175,set1IT077,-5.74619028812404,-0.662924992048374,mixed community,Ethanolamine,McCas,,DUF1611 domain-containing protein,beril_Methanococcus_S2
+MMP_RS01150,set1IT078,-5.72576436610348,-3.47596164201153,mixed community,Ethanolamine,McCas,,aldo/keto reductase,beril_Methanococcus_S2
+MMP_RS05835,set1IT078,-5.69573199545798,-0.644920053259993,mixed community,Ethanolamine,McCas,,secondary thiamine-phosphate synthase enzyme YjbQ,beril_Methanococcus_S2
+MMP_RS03020,set1IT078,-5.53004672875151,-4.016312058093,mixed community,Ethanolamine,McCas,,peptidylprolyl isomerase,beril_Methanococcus_S2
+MMP_RS03300,set1IT077,-5.44102760734034,-0.62691436184049,mixed community,Ethanolamine,McCas,,TOBE domain-containing protein,beril_Methanococcus_S2
+MMP_RS08370,set1IT055,-5.40263445175022,-0.970102058556547,mixed community,Ethanol,McCas,,cation:proton antiporter subunit C,beril_Methanococcus_S2
+MMP_RS02885,set1IT078,-5.33561196276901,-7.2869963196162,mixed community,Ethanolamine,McCas,,molybdopterin biosynthesis protein,beril_Methanococcus_S2
+MMP_RS06855,set1IT058,-5.32426783637366,-12.3492256281241,mixed community,Ethanol,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS01950,set1IT077,-5.29177872860279,-8.7010986997582,mixed community,Ethanolamine,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS01750,set1IT078,-5.0459445431462,-6.64071573945152,mixed community,Ethanolamine,McCas,,DUF63 family protein,beril_Methanococcus_S2
+MMP_RS00850,set1IT077,-4.99764968547734,-3.25579635246522,mixed community,Ethanolamine,McCas,,TIGR01177 family methyltransferase,beril_Methanococcus_S2
+MMP_RS06600,set1IT058,-4.92270934621005,-1.77815082937848,mixed community,Ethanol,McCas,,class III signal peptide-containing protein,beril_Methanococcus_S2
+MMP_RS01250,set1IT069,-4.85031579351116,-7.39338820035357,mixed community,"1,3-Propanediol",McCas,,tRNA (guanine(26)-N(2))-dimethyltransferase,beril_Methanococcus_S2
+MMP_RS08595,set1IT056,-4.76204787125698,-1.76102022984536,mixed community,Ethanol,McCas,,flagellar protein C,beril_Methanococcus_S2
+MMP_RS06575,set1IT058,-4.70155926508646,-4.63262004621071,mixed community,Ethanol,McCas,,fluoride efflux transporter CrcB,beril_Methanococcus_S2
+MMP_RS06570,set1IT058,-4.69220272432404,-5.83508804746074,mixed community,Ethanol,McCas,,DUF190 domain-containing protein,beril_Methanococcus_S2
+MMP_RS06770,set1IT067,-4.67160491282042,-11.1101429625349,mixed community,"1,3-Propanediol",McCas,,DHH family phosphoesterase,beril_Methanococcus_S2
+MMP_RS03685,set1IT058,-4.65539121045606,-14.0345111150614,mixed community,Ethanol,McCas,,Mrp/NBP35 family ATP-binding protein,beril_Methanococcus_S2
+MMP_RS06760,set1IT078,-4.6241253834921,-1.89061775182402,mixed community,Ethanolamine,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS06310,set1IT078,-4.57732799944003,-3.82364617974893,mixed community,Ethanolamine,McCas,,NAD(P)/FAD-dependent oxidoreductase,beril_Methanococcus_S2
+MMP_RS07795,set1IT076,-4.53065869430369,-7.41351651748219,mixed community,Ethanolamine,McCas,,site-2 protease family protein,beril_Methanococcus_S2
+MMP_RS07960,set1IT067,-4.50694241056288,-12.8979250368277,mixed community,"1,3-Propanediol",McCas,,sugar phosphate isomerase/epimerase,beril_Methanococcus_S2
+MMP_RS08945,set1IT058,-4.31891073525117,-15.9175959962391,mixed community,Ethanol,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS03590,set1IT077,-4.25156282354926,-3.15682412269783,mixed community,Ethanolamine,McCas,,METTL5 family protein,beril_Methanococcus_S2
+MMP_RS01945,set1IT077,-4.19777175073805,-5.9372694074366,mixed community,Ethanolamine,McCas,,DUF4350 domain-containing protein,beril_Methanococcus_S2
+MMP_RS01330,set1IT078,-4.18627110849313,-7.30239774522698,mixed community,Ethanolamine,McCas,,DHH family phosphoesterase,beril_Methanococcus_S2
+MMP_RS04695,set1IT078,-4.14650707071133,-4.20952939043389,mixed community,Ethanolamine,McCas,,selenide  water dikinase SelD,beril_Methanococcus_S2
+MMP_RS02870,set1IT078,-4.07598664941166,-4.58823413004448,mixed community,Ethanolamine,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS02130,set1IT078,-4.02700508882238,-5.77938138007697,mixed community,Ethanolamine,McCas,,zinc metalloprotease HtpX,beril_Methanococcus_S2
+MMP_RS08000,set1IT058,-3.97521858490829,-19.8541148993721,mixed community,Ethanol,McCas,,methyl coenzyme M reductase-arginine methyltransferase Mmp10,beril_Methanococcus_S2
+MMP_RS08660,set1IT069,-3.97264887797338,-11.2001466059385,mixed community,"1,3-Propanediol",McCas,,DHH family phosphoesterase,beril_Methanococcus_S2
+MMP_RS01935,set1IT076,-3.92030948578253,-9.6462245235841,mixed community,Ethanolamine,McCas,,DUF58 domain-containing protein,beril_Methanococcus_S2
+MMP_RS00830,set1IT078,-3.88920462170742,-1.62240018638935,mixed community,Ethanolamine,McCas,,purine phosphoribosyltransferase family protein,beril_Methanococcus_S2
+MMP_RS08890,set1IT078,-3.80294568810638,-8.24235479560906,mixed community,Ethanolamine,McCas,,glycosyltransferase family 4 protein,beril_Methanococcus_S2
+MMP_RS01930,set1IT078,-3.74281560706477,-7.55665763063761,mixed community,Ethanolamine,McCas,,hypothetical protein,beril_Methanococcus_S2
+MMP_RS03250,set1IT067,-3.65906921044005,-5.36449087345155,mixed community,"1,3-Propanediol",McCas,,MJ1244 family protein,beril_Methanococcus_S2
+MMP_RS08570,set1IT077,-3.61579844591024,-5.15025506947104,mixed community,Ethanolamine,McCas,,coenzyme F420-0:L-glutamate ligase,beril_Methanococcus_S2
+MMP_RS01665,set1IT058,-3.41394452732323,-2.85412220100458,mixed community,Ethanol,McCas,,DUF2111 domain-containing protein,beril_Methanococcus_S2
+MMP_RS08915,set1IT077,-3.37937323531806,-3.32224843859473,mixed community,Ethanolamine,McCas,,2 5-diamino-6-(ribosylamino)-4(3H)-pyrimidinone 5'-phosphate reductase,beril_Methanococcus_S2
+MMP_RS08585,set1IT076,-3.37757330312444,-3.8509732348169,mixed community,Ethanolamine,McCas,,flagellin,beril_Methanococcus_S2
+MMP_RS02645,set1IT058,-3.22363041869047,-13.3373940843501,mixed community,Ethanol,McCas,,ArsR family transcriptional regulator,beril_Methanococcus_S2
+MMP_RS05460,set1IT078,-3.1396960649477,-5.06207094616899,mixed community,Ethanolamine,McCas,,YcaO-related McrA-glycine thioamidation protein,beril_Methanococcus_S2
+MMP_RS07190,set1IT067,-3.11313067748375,-12.0081207135714,mixed community,"1,3-Propanediol",McCas,,chromosome segregation protein SMC,beril_Methanococcus_S2
+MMP_RS00060,set1IT077,-3.04538435057792,-1.78391092857234,mixed community,Ethanolamine,McCas,,3-dehydroquinate synthase II,beril_Methanococcus_S2
+GFF1470,set4H18,-4.67496498621222,-3.21086933957663,marine broth,,marine_broth_2216,,Uncharacterized conserved protein,beril_Phaeo
+GFF3921,set7IT073,-4.58996999239966,-3.16471338289564,marine broth,,marine_broth_2216,,"dTDP-glucose 4,6-dehydratase RffG",beril_Phaeo
+GFF2445,set4H18,-4.35622057817215,-2.85195080767189,marine broth,,marine_broth_2216,,putative leucine-responsive regulatory protein,beril_Phaeo
+GFF3241,set4H18,-3.92997182201684,-10.3692301081447,marine broth,,marine_broth_2216,,Predicted periplasmic protein,beril_Phaeo
+GFF1579,set4H18,-3.1581837362318,-9.01219911872639,marine broth,,marine_broth_2216,,"putative L,D-transpeptidase",beril_Phaeo
+GFF2024,set4H18,-3.07520912219911,-5.36595087203012,marine broth,,marine_broth_2216,,queuine tRNA-ribosyltransferase Tgt,beril_Phaeo
+CA264_20935,set3IT028,-3.00217210291207,-1.75618759476018,marine broth,,marine_broth_2216,,transcriptional regulator,beril_Ponti
+Psyr_1196,set2IT076,-5.99457500087624,-2.59648621777549,in planta,,,,type III secretion protein HrpD,beril_SyringaeB728a
+Psyr_4940,set2IT077,-5.5499624325706,-2.83668784891584,in planta,,,,"3'(2'),5'-bisphosphate nucleotidase",beril_SyringaeB728a
+Psyr_1983,set7IT019,-5.47446585037203,-3.77658931851802,in planta,,,,"3-isopropylmalate dehydratase, large subunit",beril_SyringaeB728a
+Psyr_1998,set2IT076,-5.32974959123844,-2.69419959936525,in planta,,,,"lipoprotein, putative",beril_SyringaeB728a
+Psyr_1985,set3IT040,-5.28864201635226,-8.81775199031297,in planta,,,,3-isopropylmalate dehydrogenase,beril_SyringaeB728a
+Psyr_4580,set2IT076,-5.18159708572494,-3.56958115918198,in planta,,,,anthranilate phosphoribosyltransferase,beril_SyringaeB728a
+Psyr_1198,set2IT077,-4.99813486034476,-2.8451390997817,in planta,,,,type III secretion protein HrpF,beril_SyringaeB728a
+Psyr_4897,set7IT019,-4.94381115701091,-4.52716744064718,in planta,,,,imidazoleglycerol-phosphate dehydratase,beril_SyringaeB728a
+Psyr_4774,set2IT095,-4.85251584844461,-2.21314178269015,in planta,,,,Hypothetical protein,beril_SyringaeB728a
+Psyr_1669,set2IT077,-4.81775658607178,-5.72927901481317,in planta,,,,O-succinylhomoserine sulfhydrylase,beril_SyringaeB728a
+Psyr_1217,set2IT077,-4.76647907067692,-3.28341905076614,in planta,,,,Sigma-70 region 2:Sigma-70 region 4,beril_SyringaeB728a
+Psyr_0847,set7IT018,-4.75539918196761,-7.24535643170843,in planta,,,,"acetolactate synthase, small subunit",beril_SyringaeB728a
+Psyr_1350,set7IT027,-4.74596626175393,-3.26814130398834,in planta,,,,"site-2 protease, Metallo peptidase, MEROPS family M50B",beril_SyringaeB728a
+Psyr_3597,set2IT081,-4.71926310107271,-1.51246764275961,in planta,,,,ABC transporter,beril_SyringaeB728a
+Psyr_1733,set2IT076,-4.7044809469029,-2.05196844478552,in planta,,,,"Peptidyl-prolyl cis-trans isomerase, cyclophilin type",beril_SyringaeB728a
+Psyr_0473,set2IT076,-4.68796119986188,-6.39881295150754,in planta,,,,Methionine biosynthesis MetW,beril_SyringaeB728a
+Psyr_0167,set7IT014,-4.63987973926115,-5.47703736514405,in planta,,,,hypothetical protein,beril_SyringaeB728a
+Psyr_0557,set2IT081,-4.61145338065364,-4.48426478486536,in planta,,,,phosphoserine phosphatase,beril_SyringaeB728a
+Psyr_5072,set2IT076,-4.57257691102284,-1.15304587673805,in planta,,,,Cobalamin synthesis protein/P47K:Cobalamin synthesis protein/P47K,beril_SyringaeB728a
+Psyr_1056,set6IT084,-4.57223388278011,-5.40541267392049,in planta,,,,Poly(beta-D-mannuronate) lyase,beril_SyringaeB728a
+Psyr_2612,set2IT076,-4.56158430853974,-2.24590138737574,in planta,,,,"syrP protein, putative",beril_SyringaeB728a
+Psyr_1946,set2IT076,-4.56104230635127,-2.2913583738243,in planta,,,,diaminobutyrate aminotransferase apoenzyme,beril_SyringaeB728a
+Psyr_4582,set2IT077,-4.54945826756913,-1.17143839879765,in planta,,,,hypothetical protein,beril_SyringaeB728a
+Psyr_4116,set2IT095,-4.50844155137674,-1.68795959840001,in planta,,,,Transport-associated protein,beril_SyringaeB728a
+Psyr_0831,set3IT032,-4.47766735013156,-3.07351056162688,in planta,,,,Two-component response regulator CbrB,beril_SyringaeB728a
+Psyr_4134,set7IT018,-4.45775030022512,-9.91701711413696,in planta,,,,ATP phosphoribosyltransferase (homohexameric),beril_SyringaeB728a
+Psyr_1212,set7IT030,-4.41230422819859,-4.1257972718088,in planta,,,,type III secretion protein HrpO,beril_SyringaeB728a
+Psyr_0576,set6IT084,-4.41159762493809,-4.27297030978613,in planta,,,,"ATP phosphoribosyltransferase regulatory subunit, putative",beril_SyringaeB728a
+Psyr_0907,set2IT077,-4.40376350759789,-2.94795544182908,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_2264,set2IT076,-4.29104034712626,-2.09445426396496,in planta,,,,"Oligopeptide/dipeptide ABC transporter, ATP-binding protein, C-terminal",beril_SyringaeB728a
+Psyr_0827,set2IT080,-4.2752520918995,-5.0472632591845,in planta,,,,pantothenate synthetase,beril_SyringaeB728a
+Psyr_0474,set6IT083,-4.27038639476504,-11.9235427600757,in planta,,,,homoserine O-acetyltransferase,beril_SyringaeB728a
+Psyr_4754,set3IT032,-4.24136080486762,-2.89427871798288,in planta,,,,16S rRNA m(2)G-966 methyltransferase,beril_SyringaeB728a
+Psyr_3667,set2IT095,-4.23062762326276,-3.21957746742507,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_3808,set2IT076,-4.17209854525378,-1.48991120603275,in planta,,,,hypothetical protein,beril_SyringaeB728a
+Psyr_0219,set5IT059,-4.1689947622075,-11.9276312467859,in planta,,,,phosphomannomutase,beril_SyringaeB728a
+Psyr_0954,set2IT076,-4.16672652336193,-3.06102899049545,in planta,,,,Protein of unknown function UPF0153,beril_SyringaeB728a
+Psyr_0025,set7IT014,-4.10641667994984,-6.19628066710054,in planta,,,,shikimate dehydrogenase,beril_SyringaeB728a
+Psyr_0846,set7IT019,-4.03019345207569,-11.5608855566739,in planta,,,,"acetolactate synthase, large subunit",beril_SyringaeB728a
+Psyr_0469,set2IT095,-4.00469538554487,-11.2008260965693,in planta,,,,dihydroxyacid dehydratase,beril_SyringaeB728a
+Psyr_4894,set7IT018,-3.9943218148656,-7.2965291565358,in planta,,,,1-(5-phosphoribosyl)-5-[(5- phosphoribosylamino)methylideneamino] imidazole-4-carboxamide isomerase,beril_SyringaeB728a
+Psyr_4133,set7IT030,-3.9654507667803,-15.8800619421148,in planta,,,,histidinol dehydrogenase,beril_SyringaeB728a
+Psyr_3958,set3IT039,-3.96441415295469,-12.1259505717001,in planta,,,,"RNA polymerase, sigma-24 subunit, RpoE",beril_SyringaeB728a
+Psyr_3601,set2IT076,-3.95010145273172,-1.40914324455914,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_0385,set2IT077,-3.94169003590335,-4.65164382102103,in planta,,,,phosphoribosyl-ATP pyrophosphatase,beril_SyringaeB728a
+Psyr_0915,set7IT014,-3.93778287354623,-12.9292075849858,in planta,,,,NAD-dependent epimerase/dehydratase,beril_SyringaeB728a
+Psyr_0704,set2IT076,-3.93125852314172,-9.88975673966337,in planta,,,,glutamate 5-kinase,beril_SyringaeB728a
+Psyr_3934,set2IT076,-3.89962895487641,-1.31843921065437,in planta,,,,Short-chain dehydrogenase/reductase SDR,beril_SyringaeB728a
+Psyr_4262,set2IT077,-3.86674355549871,-1.40895947601266,in planta,,,,"lipoprotein, putative",beril_SyringaeB728a
+Psyr_0848,set2IT095,-3.85956345834502,-10.1941321608371,in planta,,,,ketol-acid reductoisomerase,beril_SyringaeB728a
+Psyr_3854,set2IT076,-3.78119662441361,-0.940521980665542,in planta,,,,OmpA/MotB,beril_SyringaeB728a
+Psyr_3701,set2IT077,-3.77550003014492,-2.56349224798782,in planta,,,,"thioredoxin, putative",beril_SyringaeB728a
+Psyr_2733,set2IT076,-3.76054666484619,-3.4615347331102,in planta,,,,Short-chain dehydrogenase/reductase SDR,beril_SyringaeB728a
+Psyr_3755,set2IT076,-3.74606996506876,-1.52144238571986,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_1210,set3IT040,-3.7094678023367,-6.89058265525786,in planta,,,,type III secretion protein HrcQa,beril_SyringaeB728a
+Psyr_0386,set7IT018,-3.69400067435331,-5.89585223425006,in planta,,,,phosphoribosyl-AMP cyclohydrolase,beril_SyringaeB728a
+Psyr_3886,set6IT084,-3.68380152694975,-2.91205876497175,in planta,,,,methionyl-tRNA synthetase,beril_SyringaeB728a
+Psyr_1190,set7IT027,-3.64410527334554,-5.39557559502843,in planta,,,,type III transcriptional regulator HrpR,beril_SyringaeB728a
+Psyr_2462,set2IT081,-3.61213171984642,-5.95421938498588,in planta,,,,"Nitrite/sulfite reductase, hemoprotein beta-component, ferrodoxin-like:Nitrite and sulphite reductase 4Fe-4S region",beril_SyringaeB728a
+Psyr_3174,set3IT031,-3.60375124408508,-6.30946208976734,in planta,,,,uroporphyrinogen-III C-methyltransferase / precorrin-2 dehydrogenase,beril_SyringaeB728a
+Psyr_4224,set2IT095,-3.6033758725211,-2.13317044741912,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_4132,set2IT095,-3.58719228038747,-10.9413192083999,in planta,,,,histidinol phosphate aminotransferase apoenzyme,beril_SyringaeB728a
+Psyr_1419,set2IT077,-3.58263450633463,-2.4620817917077,in planta,,,,preQ(0) biosynthesis protein QueC,beril_SyringaeB728a
+Psyr_3287,set2IT076,-3.57012458099466,-2.36426303029254,in planta,,,,DNA topoisomerase I,beril_SyringaeB728a
+Psyr_2562,set2IT076,-3.54547859681712,-2.13250826365121,in planta,,,,hypothetical protein,beril_SyringaeB728a
+Psyr_3555,set2IT081,-3.50303047733385,-2.15508354498542,in planta,,,,aspartate kinase,beril_SyringaeB728a
+Psyr_2501,set2IT076,-3.46638835780171,-2.7432135440822,in planta,,,,Hemerythrin,beril_SyringaeB728a
+Psyr_0383,set5IT059,-3.46445182161448,-2.2034258097186,in planta,,,,Twin-arginine translocation protein TatB,beril_SyringaeB728a
+Psyr_4015,set2IT076,-3.45316274975618,-2.26792379010095,in planta,,,,conserved domain protein,beril_SyringaeB728a
+Psyr_4144,set7IT018,-3.40074533208704,-1.21019287520184,in planta,,,,Protein of unknown function DUF1239,beril_SyringaeB728a
+Psyr_3673,set7IT030,-3.38728587799381,-3.44448105105084,in planta,,,,Phosphoglycerate/bisphosphoglycerate mutase,beril_SyringaeB728a
+Psyr_3290,set2IT077,-3.38294944093976,-3.87231679373955,in planta,,,,3-hydroxyacyl-CoA dehydrogenase / short chain enoyl-CoA hydratase,beril_SyringaeB728a
+Psyr_1588,set2IT076,-3.3750879943671,-2.31996553539243,in planta,,,,"Putative exonuclease, RdgC",beril_SyringaeB728a
+Psyr_3281,set1IT049,-3.35545641207496,-3.86110939913015,in planta,epiphytic,,,"Glycoside hydrolase, family 3, N-terminal",beril_SyringaeB728a
+Psyr_1247,set2IT095,-3.35427271875697,-3.06582362592335,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_4896,set7IT030,-3.34851307333997,-8.42673222772429,in planta,,,,imidazole glycerol phosphate synthase subunit hisH,beril_SyringaeB728a
+Psyr_3835,set7IT018,-3.33773315135916,-2.55597339115905,in planta,,,,hypothetical protein,beril_SyringaeB728a
+Psyr_3837,set2IT076,-3.33754480851316,-2.77122460790364,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_3135,set2IT077,-3.32745143079356,-2.24525315158251,in planta,,,,"transcriptional regulator, GntR family",beril_SyringaeB728a
+Psyr_3554,set7IT019,-3.28602019082771,-1.16611316504745,in planta,,,,Carbon storage regulator,beril_SyringaeB728a
+Psyr_1213,set3IT040,-3.24846379065612,-5.68469276379844,in planta,,,,type III secretion cytoplasmic ATPase HrcN,beril_SyringaeB728a
+Psyr_3676,set2IT076,-3.2386386333136,-4.60626809039459,in planta,,,,adenosylcobyric acid synthase (glutamine-hydrolysing),beril_SyringaeB728a
+Psyr_2543,set7IT018,-3.22053091805509,-2.27003601516722,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_3458,set2IT076,-3.19968690990139,-1.50711217462052,in planta,,,,Flagellar hook-basal body complex protein FliE,beril_SyringaeB728a
+Psyr_3805,set3IT031,-3.18638797625291,-3.60913849040748,in planta,,,,hypothetical protein,beril_SyringaeB728a
+Psyr_2613,set2IT076,-3.18266167979811,-7.02063819562011,in planta,,,,Cyclic peptide transporter,beril_SyringaeB728a
+Psyr_3684,set5IT059,-3.17046360551241,-2.6966374186812,in planta,,,,NLP/P60,beril_SyringaeB728a
+Psyr_1195,set3IT040,-3.17034008808543,-9.2516616006855,in planta,,,,"type III secretion apparatus lipoprotein, YscJ/HrcJ family",beril_SyringaeB728a
+Psyr_0923,set5IT060,-3.1537041678712,-6.29989435526019,in planta,,,,hypothetical protein,beril_SyringaeB728a
+Psyr_1953,set3IT039,-3.14536296859047,-2.24010754263655,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_1447,set2IT095,-3.0954302705169,-2.70868961015099,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_3293,set2IT081,-3.09246515422905,-2.72520207596327,in planta,,,,UspA,beril_SyringaeB728a
+Psyr_2619,set2IT076,-3.0853361855182,-3.38187160400075,in planta,,,,diaminobutyrate aminotransferase apoenzyme,beril_SyringaeB728a
+Psyr_1411,set2IT076,-3.07973084937823,-3.21009039751762,in planta,,,,4-hydroxybenzoyl-CoA thioesterase,beril_SyringaeB728a
+Psyr_3640,set2IT077,-3.0550563033452,-3.2069730983664,in planta,,,,conserved hypothetical protein,beril_SyringaeB728a
+Psyr_3028,set2IT076,-3.00938679043955,-2.24183677413228,in planta,,,,Protein of unknown function DUF28,beril_SyringaeB728a

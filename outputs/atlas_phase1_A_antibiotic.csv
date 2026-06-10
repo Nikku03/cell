@@ -1,0 +1,101 @@
+gene_n,cond_n,n_orgs,organisms,n_entries,median_fit,worst_fit,example_locus,example_org,example_condition,description,score
+uvrc,cisplatin,4,"beril_Keio,beril_MR1,beril_PV4,beril_SB2B",4,-4.57707335758572,-8.14758902724152,16027,beril_Keio,Cisplatin,"excinuclease ABC, subunit C; repair of UV damage to DNA (VIMSS)",18.30829343034288
+recr,cisplatin,3,"beril_Keio,beril_MR1,beril_SB2B",3,-5.45582688071761,-6.66348784690888,14609,beril_Keio,Cisplatin,recombination protein RecR (NCBI),16.36748064215283
+envz,bacitracin,2,"beril_PV4,beril_SB2B",2,-4.649888406506864,-5.19913688130821,5211222,beril_PV4,Bacitracin,osmolarity sensor protein (RefSeq),9.299776813013729
+ompr,bacitracin,2,"beril_PV4,beril_SB2B",2,-4.599423761143595,-5.17000941078615,5211221,beril_PV4,Bacitracin,osmolarity response regulator (RefSeq),9.19884752228719
+reco,cisplatin,2,"beril_Keio,beril_MR1",2,-4.580091471739729,-5.03693418535945,16664,beril_Keio,Cisplatin,DNA repair protein RecO (NCBI),9.160182943479459
+pspb,bacitracin,2,"beril_MR1,beril_SB2B",2,-4.45929661992665,-5.79999591478881,200970,beril_MR1,Bacitracin,phage shock protein B (NCBI ptt file),8.9185932398533
+uvrb,cisplatin,2,"beril_Keio,beril_MR1",2,-4.4029371813315645,-4.62529324415884,14904,beril_Keio,Cisplatin,excinuclease ABC subunit B (NCBI),8.805874362663129
+uvra,cisplatin,2,"beril_Keio,beril_MR1",2,-4.259356197273865,-4.28022863290243,18086,beril_Keio,Cisplatin,excinuclease ABC subunit A (NCBI),8.51871239454773
+recf,cisplatin,2,"beril_Keio,beril_SB2B",2,-4.23720090203282,-4.28773159051489,17759,beril_Keio,Cisplatin,recombination protein F (NCBI),8.47440180406564
+uvrd,cisplatin,2,"beril_Keio,beril_MR1",2,-4.14554556242355,-4.40082139152288,17862,beril_Keio,Cisplatin,DNA-dependent ATPase I and helicase II (NCBI),8.2910911248471
+gmha,fusidic acid,1,beril_MR1,1,-7.67251891327838,-7.67251891327838,199493,beril_MR1,Fusidic acid sodium salt,phosphoheptose isomerase (NCBI ptt file),7.67251891327838
+rfae,fusidic acid,1,beril_MR1,1,-7.48699355077958,-7.48699355077958,202838,beril_MR1,Fusidic acid sodium salt,ADP-heptose synthase (NCBI ptt file),7.48699355077958
+tolc,fusidic acid,1,beril_ANA3,1,-7.22526742919499,-7.22526742919499,7023495,beril_ANA3,Fusidic acid sodium salt,outer membrane channel protein (RefSeq),7.22526742919499
+hflx,gentamicin,1,beril_MR1,1,-6.20440651185205,-6.20440651185205,199792,beril_MR1,Gentamicin sulfate salt,GTP-binding protein HflX (NCBI ptt file),6.20440651185205
+ispz,carbenicillin disodium,1,beril_MR1,1,-5.96895600157541,-5.96895600157541,202157,beril_MR1,Carbenicillin disodium salt,intracellular septation protein A (NCBI ptt file),5.96895600157541
+tig,polymyxin b,1,beril_PV4,1,-5.92566218326455,-5.92566218326455,5210062,beril_PV4,Polymyxin B sulfate,trigger factor (RefSeq),5.92566218326455
+amib,bacitracin,1,beril_MR1,1,-5.82802018659281,-5.82802018659281,199788,beril_MR1,Bacitracin,N-acetylmuramoyl-L-alanine amidase (NCBI ptt file),5.82802018659281
+dps,d-cycloserine,1,beril_Keio,1,-5.70535955975893,-5.70535955975893,14937,beril_Keio,D-Cycloserine,DNA protection during starvation conditions (NCBI),5.70535955975893
+bioh,benzalkonium,1,beril_MR1,1,-5.57125508959094,-5.57125508959094,203696,beril_MR1,Benzalkonium Chloride,bioH protein (NCBI ptt file),5.57125508959094
+hflc,gentamicin,1,beril_MR1,1,-5.48172071490414,-5.48172071490414,199794,beril_MR1,Gentamicin sulfate salt,hflC protein (NCBI ptt file),5.48172071490414
+smpa,nalidixic acid,1,beril_Keio,1,-5.36561119321612,-5.36561119321612,16711,beril_Keio,Nalidixic acid sodium salt,small membrane protein A (VIMSS),5.36561119321612
+trna-arg-9,benzalkonium,1,beril_MR1,1,-5.26570306022327,-5.26570306022327,401142,beril_MR1,Benzalkonium Chloride,tRNA-Arg (RefSeq),5.26570306022327
+sixa,benzalkonium,1,beril_MR1,1,-5.26075346448572,-5.26075346448572,202199,beril_MR1,Benzalkonium Chloride,phosphohistidine phosphatase SixA (NCBI ptt file),5.26075346448572
+mrcb,d-cycloserine,1,beril_Keio,1,-5.18317758002952,-5.18317758002952,14295,beril_Keio,D-Cycloserine,penicillin-binding protein 1b (NCBI),5.18317758002952
+pola,d-cycloserine,1,beril_Keio,1,-5.09447837720569,-5.09447837720569,17904,beril_Keio,D-Cycloserine,DNA polymerase I (NCBI),5.09447837720569
+prc,nalidixic acid,1,beril_Keio,1,-5.08175084751123,-5.08175084751123,15948,beril_Keio,Nalidixic acid sodium salt,carboxy-terminal protease for penicillin-binding protein 3 (NCBI),5.08175084751123
+dgka,carbenicillin disodium,1,beril_MR1,1,-4.98411717422836,-4.98411717422836,201355,beril_MR1,Carbenicillin disodium salt,diacylglycerol kinase (NCBI ptt file),4.98411717422836
+yfgl,nalidixic acid,1,beril_Keio,1,-4.94024662029695,-4.94024662029695,16611,beril_Keio,Nalidixic acid sodium salt,"protein assembly complex, lipoprotein component (NCBI)",4.94024662029695
+lpxm,bacitracin,1,beril_Keio,1,-4.93126126691831,-4.93126126691831,15973,beril_Keio,Bacitracin,lipid A biosynthesis (KDO)2-(lauroyl)-lipid IVA acyltransferase (NCBI),4.93126126691831
+acra,fusidic acid,1,beril_Keio,1,-4.92670895457845,-4.92670895457845,14600,beril_Keio,Fusidic acid sodium salt,multidrug efflux system (NCBI),4.92670895457845
+mara,benzalkonium,1,beril_Keio,1,-4.89561451019935,-4.89561451019935,15652,beril_Keio,Benzalkonium Chloride,multiple antibiotic resistance; transcriptional activator of defense systems (VIMSS),4.89561451019935
+lpp,nalidixic acid,1,beril_Keio,1,-4.89065276223899,-4.89065276223899,15796,beril_Keio,Nalidixic acid sodium salt,murein lipoprotein (NCBI),4.89065276223899
+sapf,gentamicin,1,beril_MR1,1,-4.79608623923855,-4.79608623923855,200963,beril_MR1,Gentamicin sulfate salt,"peptide ABC transporter, ATP-binding protein (NCBI ptt file)",4.79608623923855
+dsbc,bacitracin,1,beril_Keio,1,-4.79427640967193,-4.79427640967193,16973,beril_Keio,Bacitracin,protein disulfide isomerase II (NCBI),4.79427640967193
+ksga,d-cycloserine,1,beril_Miya,1,-4.77331435705901,-4.77331435705901,8499736,beril_Miya,D-Cycloserine,dimethyladenosine transferase (RefSeq),4.77331435705901
+acrb,nalidixic acid,1,beril_Keio,1,-4.74588371255839,-4.74588371255839,14599,beril_Keio,Nalidixic acid sodium salt,multidrug efflux system protein (NCBI),4.74588371255839
+trna-pro-4,bacitracin,1,beril_MR1,1,-4.73355678471425,-4.73355678471425,401124,beril_MR1,Bacitracin,tRNA-Pro (RefSeq),4.73355678471425
+sigg,bacitracin,1,beril_SynE,1,-4.66080517410104,-4.66080517410104,Synpcc7942_1923,beril_SynE,Bacitracin,RNA polymerase sigma factor RpoE,4.66080517410104
+zapa,bacitracin,1,beril_Keio,1,-4.64063862564155,-4.64063862564155,16990,beril_Keio,Bacitracin,protein that localizes to the cytokinetic ring (NCBI),4.64063862564155
+tig,benzalkonium,1,beril_Keio,1,-4.6006115943726,-4.6006115943726,14574,beril_Keio,Benzalkonium Chloride,trigger factor (NCBI),4.6006115943726
+yrbd,benzalkonium,1,beril_Keio,1,-4.56068506246877,-4.56068506246877,17264,beril_Keio,Benzalkonium Chloride,predicted ABC-type organic solvent transporter (NCBI),4.56068506246877
+ygit,spectinomycin pentahydrate,1,beril_Keio,1,-4.53066590999266,-4.53066590999266,17097,beril_Keio,Spectinomycin dihydrochloride pentahydrate,predicted DNA-binding transcriptional regulator (NCBI),4.53066590999266
+cvpa,bacitracin,1,beril_Keio,1,-4.51103059053759,-4.51103059053759,16420,beril_Keio,Bacitracin,membrane protein required for colicin V production (NCBI),4.51103059053759
+ydgh,benzalkonium,1,beril_Keio,1,-4.49593395236153,-4.49593395236153,15725,beril_Keio,Benzalkonium Chloride,hypothetical protein (NCBI),4.49593395236153
+sapa,benzalkonium,1,beril_MR1,1,-4.48787998203359,-4.48787998203359,200967,beril_MR1,Benzalkonium Chloride,"peptide ABC transporter, periplasmic peptide-binding protein (NCBI ptt file)",4.48787998203359
+tff,spectinomycin pentahydrate,1,beril_Keio,1,-4.46164848534717,-4.46164848534717,1936221,beril_Keio,Spectinomycin dihydrochloride pentahydrate,unknown RNA (NCBI),4.46164848534717
+rnpa,spectinomycin pentahydrate,1,beril_DvH,1,-4.38801862214673,-4.38801862214673,206510,beril_DvH,Spectinomycin dihydrochloride pentahydrate,ribonuclease P protein component (TIGR),4.38801862214673
+prib,nalidixic acid,1,beril_Keio,1,-4.38604516721435,-4.38604516721435,18226,beril_Keio,Nalidixic acid sodium salt,primosomal replication protein N (NCBI),4.38604516721435
+plsb,spectinomycin pentahydrate,1,beril_Keio,1,-4.37341434904653,-4.37341434904653,18069,beril_Keio,Spectinomycin dihydrochloride pentahydrate,glycerol-3-phosphate acyltransferase (VIMSS),4.37341434904653
+yfgc,bacitracin,1,beril_Keio,1,-4.30499420583939,-4.30499420583939,16593,beril_Keio,Bacitracin,predicted peptidase (NCBI),4.30499420583939
+cmr,benzalkonium,1,beril_Keio,1,-4.2507777636356,-4.2507777636356,14967,beril_Keio,Benzalkonium Chloride,multidrug efflux system protein (NCBI),4.2507777636356
+vacj,nalidixic acid,1,beril_Keio,1,-4.22194365570075,-4.22194365570075,16452,beril_Keio,Nalidixic acid sodium salt,predicted lipoprotein (NCBI),4.22194365570075
+pspc,bacitracin,1,beril_MR1,1,-4.19860581716119,-4.19860581716119,200971,beril_MR1,Bacitracin,phage shock protein C (NCBI ptt file),4.19860581716119
+yhdp,bacitracin,1,beril_Keio,1,-4.16916291124451,-4.16916291124451,1936971,beril_Keio,Bacitracin,"conserved membrane protein, predicted transporter (NCBI)",4.16916291124451
+bcp,rifampicin,1,beril_SynE,1,-4.14230630398759,-4.14230630398759,Synpcc7942_2124,beril_SynE,Rifampicin,acetylpolyamine aminohydolase,4.14230630398759
+rpso,d-cycloserine,1,beril_SynE,1,-4.13507122044375,-4.13507122044375,Synpcc7942_2299,beril_SynE,D-Cycloserine,30S ribosomal protein S15,4.13507122044375
+slt,carbenicillin disodium,1,beril_Keio,1,-4.12567254466984,-4.12567254466984,18413,beril_Keio,Carbenicillin disodium salt,soluble lytic murein transglycosylase (VIMSS),4.12567254466984
+secf,benzethonium,1,beril_SB2B,1,-4.10372079690288,-4.10372079690288,6938057,beril_SB2B,Benzethonium chloride,preprotein translocase subunit SecF (RefSeq),4.10372079690288
+somb2,rifampicin,1,beril_SynE,1,-4.10083736613648,-4.10083736613648,Synpcc7942_1635,beril_SynE,Rifampicin,probable porin; major outer membrane protein,4.10083736613648
+ycfl,benzalkonium,1,beril_Keio,1,-4.0938388000746,-4.0938388000746,15226,beril_Keio,Benzalkonium Chloride,hypothetical protein (NCBI),4.0938388000746
+ddlb,d-cycloserine,1,beril_Keio,1,-4.09091532172682,-4.09091532172682,14238,beril_Keio,D-Cycloserine,D-alanylalanine synthetase (NCBI),4.09091532172682
+metz,tetracycline,1,beril_Keio,1,-4.0460306034946,-4.0460306034946,1936856,beril_Keio,Tetracycline hydrochloride,tRNA-Met (NCBI),4.0460306034946
+lap,gentamicin,1,beril_SynE,1,-4.03569608338075,-4.03569608338075,Synpcc7942_1190,beril_SynE,Gentamicin sulfate salt,leucyl aminopeptidase,4.03569608338075
+nlpi,nalidixic acid,1,beril_Keio,1,-4.03263107518946,-4.03263107518946,17236,beril_Keio,Nalidixic acid sodium salt,hypothetical protein (NCBI),4.03263107518946
+ompa,benzalkonium,1,beril_Keio,1,-4.02365239462734,-4.02365239462734,15081,beril_Keio,Benzalkonium Chloride,outer membrane protein A (3a;II*;G;d) (NCBI),4.02365239462734
+kdsc,benzalkonium,1,beril_Keio,1,-3.99684388289987,-3.99684388289987,17269,beril_Keio,Benzalkonium Chloride,3-deoxy-D-manno-octulosonate 8-phosphate phosphatase (NCBI),3.99684388289987
+moda,nalidixic acid,1,beril_SynE,1,-3.98726765335338,-3.98726765335338,Synpcc7942_1531,beril_SynE,Nalidixic acid sodium salt,"molybdenum ABC transporter, periplasmic molybdate-binding protein",3.98726765335338
+yrbe,nalidixic acid,1,beril_Keio,1,-3.98385154533606,-3.98385154533606,17265,beril_Keio,Nalidixic acid sodium salt,predicted toluene transporter subunit: membrane component of ABC superfamily (NCBI),3.98385154533606
+nlpb,benzalkonium,1,beril_Keio,1,-3.94660908454658,-3.94660908454658,16576,beril_Keio,Benzalkonium Chloride,lipoprotein-34 (VIMSS),3.94660908454658
+mind,cisplatin,1,beril_Keio,1,-3.94589010957752,-3.94589010957752,15297,beril_Keio,Cisplatin,membrane ATPase of the MinC-MinD-MinE system (NCBI),3.94589010957752
+purr,benzalkonium,1,beril_Keio,1,-3.93464814767574,-3.93464814767574,15779,beril_Keio,Benzalkonium Chloride,"DNA-binding transcriptional repressor, hypoxanthine-binding (NCBI)",3.93464814767574
+recn,rifampicin,1,beril_SynE,1,-3.90019468886643,-3.90019468886643,Synpcc7942_1779,beril_SynE,Rifampicin,DNA repair protein RecN,3.90019468886643
+b2174,benzalkonium,1,beril_Keio,1,-3.89235026934643,-3.89235026934643,16283,beril_Keio,Benzalkonium Chloride,"orf, hypothetical protein (VIMSS)",3.89235026934643
+deoa,cisplatin,1,beril_PV4,1,-3.88994229985094,-3.88994229985094,5210371,beril_PV4,Cisplatin,thymidine phosphorylase (RefSeq),3.88994229985094
+amia,bacitracin,1,beril_Keio,1,-3.87420687153714,-3.87420687153714,16534,beril_Keio,Bacitracin,N-acetylmuramoyl-l-alanine amidase I (NCBI),3.87420687153714
+rfai,benzalkonium,1,beril_Keio,1,-3.87384009723299,-3.87384009723299,17688,beril_Keio,Benzalkonium Chloride,"UDP-D-galactose:(glucosyl)lipopolysaccharide- alpha-1,3-D-galactosyltransferase (NCBI)",3.87384009723299
+yrbb,benzalkonium,1,beril_Keio,1,-3.87008348393432,-3.87008348393432,17262,beril_Keio,Benzalkonium Chloride,"orf, hypothetical protein (VIMSS)",3.87008348393432
+reca,cisplatin,1,beril_SB2B,1,-3.86523603205608,-3.86523603205608,6936864,beril_SB2B,Cisplatin,recombinase A (RefSeq),3.86523603205608
+hrpa,spectinomycin pentahydrate,1,beril_Keio,1,-3.86421201037532,-3.86421201037532,15535,beril_Keio,Spectinomycin dihydrochloride pentahydrate,ATP-dependent helicase (RefSeq),3.86421201037532
+ompx,benzalkonium,1,beril_Keio,1,-3.85925157406289,-3.85925157406289,14939,beril_Keio,Benzalkonium Chloride,outer membrane protein X (NCBI),3.85925157406289
+mipa,benzalkonium,1,beril_Keio,1,-3.83669952472687,-3.83669952472687,15900,beril_Keio,Benzalkonium Chloride,scaffolding protein for murein synthesizing machinery (NCBI),3.83669952472687
+txla,rifampicin,1,beril_SynE,1,-3.82911807915944,-3.82911807915944,Synpcc7942_2128,beril_SynE,Rifampicin,thioredoxin,3.82911807915944
+spea,spectinomycin pentahydrate,1,beril_Keio,1,-3.78463692544849,-3.78463692544849,17017,beril_Keio,Spectinomycin dihydrochloride pentahydrate,arginine decarboxylase (NCBI),3.78463692544849
+rdgc,cisplatin,1,beril_PV4,1,-3.76441937070329,-3.76441937070329,5210308,beril_PV4,Cisplatin,recombination associated protein (RefSeq),3.76441937070329
+proq,nalidixic acid,1,beril_Keio,1,-3.74696893498962,-3.74696893498962,1936604,beril_Keio,Nalidixic acid sodium salt,putative solute/DNA competence effector (NCBI),3.74696893498962
+yrbf,benzalkonium,1,beril_Keio,1,-3.72945451346784,-3.72945451346784,17266,beril_Keio,Benzalkonium Chloride,predicted toluene transporter subunit: ATP-binding component of ABC superfamily (NCBI),3.72945451346784
+rbp3,rifampicin,1,beril_SynE,1,-3.72391903647545,-3.72391903647545,Synpcc7942_0790,beril_SynE,Rifampicin,RNA-binding region RNP-1,3.72391903647545
+pgpa,spectinomycin pentahydrate,1,beril_Keio,1,-3.7218026600653,-3.7218026600653,14556,beril_Keio,Spectinomycin dihydrochloride pentahydrate,phosphatidylglycerophosphatase A (NCBI),3.7218026600653
+ycfq,bacitracin,1,beril_Keio,1,-3.70992849319815,-3.70992849319815,15233,beril_Keio,Bacitracin,"orf, hypothetical protein (VIMSS)",3.70992849319815
+mapa,cisplatin,1,beril_SynE,1,-3.6881927836471,-3.6881927836471,Synpcc7942_1408,beril_SynE,Cisplatin,membrane-associated protein,3.6881927836471
+slt,bacitracin,1,beril_SynE,1,-3.68729031017602,-3.68729031017602,Synpcc7942_2131,beril_SynE,Bacitracin,probable soluble lytic transglycosylase,3.68729031017602
+exbb,benzalkonium,1,beril_Keio,1,-3.6846729555083,-3.6846729555083,17083,beril_Keio,Benzalkonium Chloride,membrane spanning protein in TonB-ExbB-ExbD complex (NCBI),3.6846729555083
+yjep,benzalkonium,1,beril_Keio,1,-3.67590371206372,-3.67590371206372,18187,beril_Keio,Benzalkonium Chloride,predicted mechanosensitive channel (NCBI),3.67590371206372
+yjga,bacitracin,1,beril_Keio,1,-3.67544051072811,-3.67544051072811,18259,beril_Keio,Bacitracin,hypothetical protein (NCBI),3.67544051072811
+rfe,benzalkonium,1,beril_Keio,1,-3.64917507611891,-3.64917507611891,17835,beril_Keio,Benzalkonium Chloride,UDP-GlcNAc:undecaprenylphosphate GlcNAc-1-phosphate transferase (NCBI),3.64917507611891
+fis,nalidixic acid,1,beril_Keio,1,-3.62856641213144,-3.62856641213144,17331,beril_Keio,Nalidixic acid sodium salt,DNA-binding protein Fis (NCBI),3.62856641213144
+yrbc,benzalkonium,1,beril_Keio,1,-3.62416492254292,-3.62416492254292,17263,beril_Keio,Benzalkonium Chloride,predicted ABC-type organic solvent transporter (NCBI),3.62416492254292
+yebg,cisplatin,1,beril_Keio,1,-3.62302753193326,-3.62302753193326,15966,beril_Keio,Cisplatin,conserved protein regulated by LexA (NCBI),3.62302753193326
+tig,bacitracin,1,beril_SB2B,1,-3.59700624098783,-3.59700624098783,6937052,beril_SB2B,Bacitracin,trigger factor (RefSeq),3.59700624098783
+ppid,benzalkonium,1,beril_Keio,1,-3.58314176139068,-3.58314176139068,14579,beril_Keio,Benzalkonium Chloride,peptidyl-prolyl cis-trans isomerase (rotamase D) (NCBI),3.58314176139068
