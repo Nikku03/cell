@@ -195,14 +195,21 @@ def featurize(df, ff_col):
     import numpy as np
     cols = [ff_col] + NUMERIC_GENE_COLS + NUMERIC_COND_COLS
     X = df[cols].copy()
+    # aerobic is stored as a string in feba.db -> map to {1.0, 0.0, NaN}
+    if "aerobic" in X.columns:
+        X["aerobic"] = (X["aerobic"].astype("string").str.lower()
+                        .map({"aerobic": 1.0, "anaerobic": 0.0}))
     # expGroup ordinal (stable hash, fits XGBoost which handles unseen levels)
     if "expGroup" in df.columns:
-        X["expGroup_h"] = df.expGroup.fillna("").astype(str)\
-            .apply(lambda s: hash(s) % 10000)
+        X["expGroup_h"] = (df.expGroup.fillna("").astype(str)
+                           .apply(lambda s: hash(s) % 10000))
     # add main-effects as columns
     if "additive_pred" in df.columns:
         X["additive_pred"] = df["additive_pred"]
-    return X.astype("float32", errors="ignore")
+    # force everything numeric; any residual object column becomes NaN
+    for c in X.columns:
+        X[c] = pd.to_numeric(X[c], errors="coerce")
+    return X.astype("float32")
 
 
 def run_loo_org_fold(out_dir, all_orgs, test_org, archs, gpu, force):
