@@ -1,0 +1,389 @@
+"""Phase 2 bake-off harness — additive vs XGBoost-concat, with leak-free
+splits, tail-focused metrics, and the bacitracin litmus.
+
+PER PHASE2_DESIGN.md / feasibility:
+- target = binary strong_hit (continuous fit doesn't reproduce)
+- ceiling = 0.62-0.78 strong-hit reproducibility; report relative to it
+- floor   = additive tail-recall ~0.155
+- split-by-COMPOUND, never by experiment (replicate leakage)
+- per-fold leak-free family_frac column (fold k for held-out org's clade)
+- additive main-effects (gene-mean-fit, cpd-mean-fit) computed from full-data
+  per-org aggregates by SUBTRACTING the held-out group, never from raw rows
+
+MODES (--mode):
+  loo-org-fast   (default) one fit per arch; held-out test orgs chosen to
+                  cover clades + the Shewanella litmus. Fast model selection.
+  loo-org-full   every eligible org as a held-out fold (40+ retrains).
+                  Publishable headline LOO-organism number.
+  loco           leave-one-compound-out. MUST include bacitracin so the
+                  litmus runs on a never-seen compound.
+  double-blind   held-out = Shewanella ∪ bacitracin. THE adjuvant-discovery
+                  setting.
+
+ARCHS (--arch):
+  additive   mu + alpha_gene_OG + beta_cond (per held-out org/cpd)
+  xgb        gradient-boosted trees on concat features  (GPU if available)
+  both       run both, save predictions for each (default)
+
+RESUMABLE: per (mode, arch, fold) outputs to Drive. Skip if predictions
+parquet already exists. --force overrides.
+
+OUTPUTS (default DRIVE/phase2/):
+  eval/<mode>/preds_<arch>__<fold_label>.parquet
+  eval/<mode>/summary.json                (one combined summary per mode)
+  models/<mode>/<arch>__<fold_label>.json (xgb model dumps)
+"""
+from __future__ import annotations
+import argparse, json, sys, time
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+DEFAULT_OUT = Path("/content/drive/MyDrive/cell_count_dynamics/multiorg/phase2")
+DEFAULT_CLADES = (REPO / "data" / "drive_import" / "labels" / "clade_splits.csv")
+
+# Fast bake-off held-out test set: covers clades + carries the litmus.
+DEFAULT_FAST_TEST_ORGS = ["SB2B", "Keio", "Phaeo", "pseudo5_N2C3_1"]
+
+# LOCO default: include bacitracin (the litmus) + a few representative drugs.
+DEFAULT_LOCO_CPDS = ["bacitracin", "cisplatin", "gentamicin",
+                     "nalidixic acid", "d-cycloserine"]
+
+# pos-count floor for a fold to be eligible as a held-out test (avoids
+# degenerate test sets with <100 positives)
+MIN_POSITIVES_FOR_TEST = 100
+
+NUMERIC_GENE_COLS = ["family_n_organisms", "n_paralogs_in_genome", "is_orphan"]
+NUMERIC_COND_COLS = ["MW", "concentration_1", "pH", "temperature", "aerobic"]
+
+
+def load_clade_map(path: Path) -> dict[str, int]:
+    """org (without 'beril_') -> fold (0..4) for leak-free family_frac pick."""
+    import pandas as pd
+    cs = pd.read_csv(path)
+    out = {}
+    for _, r in cs.iterrows():
+        o = str(r.organism)
+        bare = o.replace("beril_", "", 1) if o.startswith("beril_") else o
+        out[bare] = int(r.fold)
+    return out
+
+
+def ff_col_for_org(org: str, clade_map: dict[str, int]) -> str:
+    """Pick the family_frac fold column whose held-out clade excludes org.
+
+    When held-out org X belongs to fold k, fold-k family_frac was computed
+    excluding X's clade -> leak-free for X. We use that same column for
+    BOTH train and test rows in this fold, which keeps the model honest.
+    """
+    f = clade_map.get(org, 0)
+    return f"family_frac_essential_fold{f}"
+
+
+def load_shards(out_dir: Path, orgs: list[str], cols: list[str]):
+    """Load and concat shards for the given orgs; pandas can handle ~10M
+    rows downsampled in memory comfortably on Colab."""
+    import pandas as pd
+    parts = []
+    for o in orgs:
+        p = out_dir / "frame" / f"{o}.parquet"
+        if p.exists():
+            parts.append(pd.read_parquet(p, columns=cols))
+    if not parts:
+        raise RuntimeError("no shards loaded")
+    return pd.concat(parts, ignore_index=True)
+
+
+def load_agg(out_dir: Path, orgs: list[str], kind: str):
+    """Load per-org sufficient statistics (kind in {'gene','cpd'})."""
+    import pandas as pd
+    parts = []
+    for o in orgs:
+        p = out_dir / "agg" / f"{o}_{kind}.parquet"
+        if p.exists():
+            parts.append(pd.read_parquet(p))
+    return pd.concat(parts, ignore_index=True) if parts else None
+
+
+def compute_additive_effects(out_dir, train_orgs, held_out_cpds=None):
+    """Leak-free main-effects from per-org sufficient statistics.
+
+    gene effect: mean fit per (orgId, og_id) over train_orgs only (we're
+      conditioning on the gene's own OG signature). For test rows we use
+      og_id; if the test org is held out and we want a gene effect for it,
+      we look up the same og_id's effect across train_orgs.
+
+    cpd effect: mean fit per compound across train_orgs, EXCLUDING any
+      held-out compounds (so LOCO is honest).
+    """
+    import pandas as pd
+    ga = load_agg(out_dir, train_orgs, "gene")
+    ca = load_agg(out_dir, train_orgs, "cpd")
+    mu = float(ga.sum_fit.sum() / ga.n.sum()) if ga is not None and ga.n.sum() else 0.0
+
+    # gene effect by og_id across all train_orgs
+    g_by_og = (ga.dropna(subset=["og_id"])
+                  .groupby("og_id").agg(sum=("sum_fit","sum"), n=("n","sum")))
+    g_by_og["alpha_gene"] = g_by_og["sum"] / g_by_og["n"] - mu
+    alpha_gene_map = g_by_og["alpha_gene"].to_dict()  # og_id -> alpha
+
+    # cpd effect across train_orgs; drop held-out compounds
+    if held_out_cpds:
+        ca = ca[~ca.compound.isin(set(held_out_cpds))]
+    c_by_cpd = ca.groupby("compound").agg(sum=("sum_fit","sum"), n=("n","sum"))
+    c_by_cpd["beta_cond"] = c_by_cpd["sum"] / c_by_cpd["n"] - mu
+    beta_cond_map = c_by_cpd["beta_cond"].to_dict()
+
+    return mu, alpha_gene_map, beta_cond_map
+
+
+def tail_metrics(y, p, threshold_precisions=(0.30, 0.50)):
+    """Tail-focused metrics. Returns dict with AUPRC, calibration, and
+    recall at each requested precision."""
+    import numpy as np
+    from sklearn.metrics import average_precision_score, precision_recall_curve
+    if y.sum() == 0:
+        return {"auprc": None, "base_rate": float(y.mean())}
+    auprc = float(average_precision_score(y, p))
+    pr, rc, th = precision_recall_curve(y, p)
+    out = {"auprc": auprc, "base_rate": float(y.mean()),
+           "n": int(len(y)), "n_pos": int(y.sum())}
+    # recall at fixed precision (highest threshold meeting it)
+    for tp in threshold_precisions:
+        mask = pr[:-1] >= tp
+        if mask.any():
+            # pick threshold with max recall meeting the precision floor
+            idx = int(np.argmax(rc[:-1] * mask))
+            out[f"recall_at_p{int(tp*100)}"] = float(rc[idx])
+            out[f"thresh_at_p{int(tp*100)}"] = float(th[idx])
+        else:
+            out[f"recall_at_p{int(tp*100)}"] = 0.0
+    return out
+
+
+def fit_additive(train, mu, alpha_gene_map, beta_cond_map):
+    """Additive prediction for a frame: mu + alpha[og_id] + beta[compound]."""
+    a = train.og_id.map(alpha_gene_map).fillna(0.0)
+    b = train.compound.map(beta_cond_map).fillna(0.0)
+    return mu + a + b
+
+
+def fit_xgb(train_X, train_y, val_X=None, val_y=None, gpu=True):
+    """Train one XGBoost classifier with class-balanced weight."""
+    import xgboost as xgb
+    spw = (train_y == 0).sum() / max((train_y == 1).sum(), 1)
+    clf = xgb.XGBClassifier(
+        n_estimators=600, max_depth=6, learning_rate=0.05,
+        subsample=0.8, colsample_bytree=0.8, min_child_weight=2,
+        scale_pos_weight=spw, objective="binary:logistic",
+        tree_method="hist", device=("cuda" if gpu else "cpu"),
+        eval_metric="aucpr", verbosity=0, random_state=0,
+        early_stopping_rounds=30 if val_X is not None else None,
+    )
+    if val_X is not None:
+        clf.fit(train_X, train_y, eval_set=[(val_X, val_y)], verbose=False)
+    else:
+        clf.fit(train_X, train_y, verbose=False)
+    return clf
+
+
+def featurize(df, ff_col):
+    """Build the feature matrix the model will see. expGroup is encoded by
+    ordinal hash; high-cardinality str cols (compound, media, og_id, CAS)
+    are excluded from the model — we already extracted their signal into
+    leak-free additive main-effects and family_frac columns."""
+    import pandas as pd
+    import numpy as np
+    cols = [ff_col] + NUMERIC_GENE_COLS + NUMERIC_COND_COLS
+    X = df[cols].copy()
+    # expGroup ordinal (stable hash, fits XGBoost which handles unseen levels)
+    if "expGroup" in df.columns:
+        X["expGroup_h"] = df.expGroup.fillna("").astype(str)\
+            .apply(lambda s: hash(s) % 10000)
+    # add main-effects as columns
+    if "additive_pred" in df.columns:
+        X["additive_pred"] = df["additive_pred"]
+    return X.astype("float32", errors="ignore")
+
+
+def run_loo_org_fold(out_dir, all_orgs, test_org, archs, gpu, force):
+    """Train architectures on (all_orgs \\ test_org), predict on test_org."""
+    import pandas as pd
+    eval_dir = out_dir / "eval" / "loo-org"
+    eval_dir.mkdir(parents=True, exist_ok=True)
+    fold_results = {}
+    train_orgs = [o for o in all_orgs if o != test_org]
+
+    mu, ag, bc = compute_additive_effects(out_dir, train_orgs)
+    ff_col = ff_col_for_org(test_org, CLADE_MAP)
+
+    # need ff_col in the loaded columns
+    base_cols = ["orgId", "locusId", "expName", "fit", "t", "strong_hit",
+                 "compound", "expGroup", "og_id"] + NUMERIC_GENE_COLS \
+                + NUMERIC_COND_COLS + [ff_col]
+    train_df = load_shards(out_dir, train_orgs, base_cols)
+    test_df  = load_shards(out_dir, [test_org], base_cols)
+    train_df["additive_pred"] = fit_additive(train_df, mu, ag, bc)
+    test_df["additive_pred"]  = fit_additive(test_df,  mu, ag, bc)
+
+    print(f"  [{test_org}] train={len(train_df):,}  test={len(test_df):,}  "
+          f"test_pos={int(test_df.strong_hit.sum()):,}  ff_col={ff_col}")
+
+    for arch in archs:
+        out_path = eval_dir / f"preds_{arch}__{test_org}.parquet"
+        if out_path.exists() and not force:
+            print(f"    {arch:8s} SKIP (exists)"); continue
+        t0 = time.time()
+        if arch == "additive":
+            prob = (test_df.additive_pred < -1.0).astype(int).values.astype(float)
+            # for AUPRC we need a score not a label: lower additive_pred -> more likely hit
+            score = -test_df.additive_pred.values
+        elif arch == "xgb":
+            X_tr = featurize(train_df, ff_col)
+            X_te = featurize(test_df,  ff_col)
+            y_tr = train_df.strong_hit.values.astype(int)
+            clf = fit_xgb(X_tr, y_tr, gpu=gpu)
+            score = clf.predict_proba(X_te)[:, 1]
+            (out_dir / "models" / "loo-org").mkdir(parents=True, exist_ok=True)
+            clf.save_model(str(out_dir / "models" / "loo-org"
+                               / f"xgb__{test_org}.json"))
+        else:
+            continue
+        m = tail_metrics(test_df.strong_hit.values.astype(int), score)
+        m["arch"] = arch; m["test_org"] = test_org
+        m["seconds"] = round(time.time() - t0, 1)
+        fold_results[arch] = m
+        # write predictions for downstream analysis (bacitracin litmus etc.)
+        pred_df = test_df[["orgId","locusId","expName","compound","expGroup",
+                           "fit","t","strong_hit"]].copy()
+        pred_df["pred"] = score
+        pred_df.to_parquet(out_path, index=False)
+        print(f"    {arch:8s} AUPRC={m['auprc']:.3f}  "
+              f"recall@P30={m.get('recall_at_p30',0):.3f}  "
+              f"recall@P50={m.get('recall_at_p50',0):.3f}  "
+              f"({m['seconds']}s)")
+    return fold_results
+
+
+def bacitracin_litmus(out_dir, mode_label):
+    """Read the test_org predictions and check whether envZ/ompR/pspB ×
+    bacitracin rows ranked high in their test_org. Returns dict per gene."""
+    import pandas as pd
+    cluster = [("envZ","SB2B","6939419"), ("ompR","SB2B","6939418"),
+               ("pspB","SB2B","6937067"), ("envZ","PV4","5211222"),
+               ("ompR","PV4","5211221"), ("pspB","MR1","200970")]
+    eval_dir = out_dir / "eval" / mode_label
+    out = []
+    for gene, org, locus in cluster:
+        for arch in ("additive", "xgb"):
+            p = eval_dir / f"preds_{arch}__{org}.parquet"
+            if not p.exists(): continue
+            df = pd.read_parquet(p)
+            df = df.sort_values("pred", ascending=False).reset_index(drop=True)
+            df["_rank"] = range(1, len(df) + 1)
+            rows = df[(df.locusId.astype(str) == locus) &
+                      (df.compound.str.contains("bacitracin", na=False))]
+            for _, r in rows.iterrows():
+                out.append({"arch": arch, "gene": gene, "org": org,
+                            "compound": r.compound, "fit": float(r.fit),
+                            "pred": float(r.pred), "rank": int(r._rank),
+                            "pctile": float(r._rank / len(df))})
+    return out
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    ap.add_argument("--clades", type=Path, default=DEFAULT_CLADES)
+    ap.add_argument("--mode", choices=["loo-org-fast","loo-org-full"],
+                    default="loo-org-fast")
+    ap.add_argument("--arch", choices=["additive","xgb","both"], default="both")
+    ap.add_argument("--test-orgs", nargs="*", default=None,
+                    help="explicit held-out test orgs (loo-org-fast)")
+    ap.add_argument("--no-gpu", action="store_true")
+    ap.add_argument("--force", action="store_true")
+    args = ap.parse_args()
+
+    import pandas as pd
+    global CLADE_MAP
+    CLADE_MAP = load_clade_map(args.clades)
+    manifest = json.loads((args.out / "_build_manifest.json").read_text())
+    all_orgs = [r["org"] for r in manifest["per_org"]]
+    pos_by_org = {r["org"]: r["n_pos"] for r in manifest["per_org"]}
+
+    eligible = [o for o in all_orgs
+                if pos_by_org[o] >= MIN_POSITIVES_FOR_TEST and o in CLADE_MAP]
+    skipped_small = [o for o in all_orgs if pos_by_org[o] < MIN_POSITIVES_FOR_TEST]
+    no_clade      = [o for o in all_orgs if o not in CLADE_MAP]
+    print(f"=== orgs ===")
+    print(f"  total: {len(all_orgs)}   eligible test folds: {len(eligible)}")
+    print(f"  skipped (too few positives <{MIN_POSITIVES_FOR_TEST}): "
+          f"{skipped_small}")
+    if no_clade:
+        print(f"  skipped (no clade fold assignment): {no_clade}")
+
+    archs = ["additive","xgb"] if args.arch == "both" else [args.arch]
+
+    if args.mode == "loo-org-fast":
+        if args.test_orgs:
+            test_orgs = args.test_orgs
+        else:
+            # default test set: SB2B (litmus, big), Keio (canonical), Phaeo,
+            # pseudo5_N2C3_1 -- if any aren't eligible, drop them.
+            test_orgs = [o for o in DEFAULT_FAST_TEST_ORGS if o in eligible]
+        print(f"\n=== loo-org-fast | held-out test orgs: {test_orgs} ===")
+        results = {}
+        for to in test_orgs:
+            print(f"\n-- fold: hold out {to} --")
+            results[to] = run_loo_org_fold(
+                args.out, all_orgs, to, archs, gpu=not args.no_gpu,
+                force=args.force)
+
+    elif args.mode == "loo-org-full":
+        print(f"\n=== loo-org-full | {len(eligible)} folds ===")
+        results = {}
+        for i, to in enumerate(eligible, 1):
+            print(f"\n-- fold {i}/{len(eligible)}: hold out {to} --")
+            results[to] = run_loo_org_fold(
+                args.out, all_orgs, to, archs, gpu=not args.no_gpu,
+                force=args.force)
+
+    # ---- bacitracin litmus ----
+    print(f"\n=== bacitracin litmus on '{args.mode}' predictions ===")
+    lit = bacitracin_litmus(args.out, args.mode if args.mode != "loo-org-full"
+                            else "loo-org")
+    for r in lit:
+        print(f"  {r['arch']:8s} {r['gene']:5s} {r['org']:5s} "
+              f"{r['compound'][:18]:<18s} fit={r['fit']:+.2f} "
+              f"pred={r['pred']:+.3f} rank={r['rank']:<6d} "
+              f"pctile={r['pctile']:.4f}")
+    if not lit:
+        print("  (no litmus rows -- ensure bacitracin compound rows survived)")
+
+    # ---- summary ----
+    summary = {"mode": args.mode, "archs": archs,
+               "test_orgs": list(results.keys()),
+               "per_fold": results, "bacitracin_litmus": lit}
+    mode_label = "loo-org" if args.mode == "loo-org-full" else args.mode
+    (args.out / "eval" / mode_label).mkdir(parents=True, exist_ok=True)
+    sp = args.out / "eval" / mode_label / "summary.json"
+    with open(sp, "w") as f:
+        json.dump(summary, f, indent=2, default=str)
+    print(f"\nwrote {sp}")
+
+    # ---- macro AUPRC + recall@P=0.30 table ----
+    print(f"\n=== macro across folds ===")
+    import numpy as np
+    for arch in archs:
+        aps = [r[arch]["auprc"] for r in results.values()
+               if arch in r and r[arch]["auprc"] is not None]
+        r30 = [r[arch].get("recall_at_p30", 0.0) for r in results.values()
+               if arch in r]
+        if aps:
+            print(f"  {arch:8s}  AUPRC mean={np.mean(aps):.3f} "
+                  f"median={np.median(aps):.3f}   "
+                  f"recall@P30 mean={np.mean(r30):.3f}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
