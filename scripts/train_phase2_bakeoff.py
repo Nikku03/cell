@@ -213,36 +213,54 @@ def featurize(df, ff_col):
 
 
 def run_loo_org_fold(out_dir, all_orgs, test_org, archs, gpu, force):
-    """Train architectures on (all_orgs \\ test_org), predict on test_org."""
+    """Train architectures on (all_orgs \\ test_org), predict on test_org.
+
+    All predictions go to eval/loo-org/ regardless of mode; loo-org-fast and
+    loo-org-full just exercise different subsets of folds, so the unified
+    dir lets the fast pass be reused by the full pass.
+    """
     import pandas as pd
+    import numpy as np
     eval_dir = out_dir / "eval" / "loo-org"
     eval_dir.mkdir(parents=True, exist_ok=True)
     fold_results = {}
     train_orgs = [o for o in all_orgs if o != test_org]
 
-    mu, ag, bc = compute_additive_effects(out_dir, train_orgs)
     ff_col = ff_col_for_org(test_org, CLADE_MAP)
-
     # need ff_col in the loaded columns
     base_cols = ["orgId", "locusId", "expName", "fit", "t", "strong_hit",
                  "compound", "expGroup", "og_id"] + NUMERIC_GENE_COLS \
                 + NUMERIC_COND_COLS + [ff_col]
-    train_df = load_shards(out_dir, train_orgs, base_cols)
-    test_df  = load_shards(out_dir, [test_org], base_cols)
-    train_df["additive_pred"] = fit_additive(train_df, mu, ag, bc)
-    test_df["additive_pred"]  = fit_additive(test_df,  mu, ag, bc)
 
-    print(f"  [{test_org}] train={len(train_df):,}  test={len(test_df):,}  "
-          f"test_pos={int(test_df.strong_hit.sum()):,}  ff_col={ff_col}")
+    # only do the expensive shard loads if any arch needs to run
+    needs_run = any(not (eval_dir / f"preds_{a}__{test_org}.parquet").exists()
+                    or force for a in archs)
+    train_df = test_df = None
+    if needs_run:
+        mu, ag, bc = compute_additive_effects(out_dir, train_orgs)
+        train_df = load_shards(out_dir, train_orgs, base_cols)
+        test_df  = load_shards(out_dir, [test_org], base_cols)
+        train_df["additive_pred"] = fit_additive(train_df, mu, ag, bc)
+        test_df["additive_pred"]  = fit_additive(test_df,  mu, ag, bc)
+        print(f"  [{test_org}] train={len(train_df):,}  test={len(test_df):,}  "
+              f"test_pos={int(test_df.strong_hit.sum()):,}  ff_col={ff_col}")
 
     for arch in archs:
         out_path = eval_dir / f"preds_{arch}__{test_org}.parquet"
         if out_path.exists() and not force:
-            print(f"    {arch:8s} SKIP (exists)"); continue
+            # recompute metrics from the saved predictions so the summary is
+            # complete even on resumed runs
+            pred_df = pd.read_parquet(out_path)
+            m = tail_metrics(pred_df.strong_hit.values.astype(int),
+                             pred_df.pred.values)
+            m["arch"] = arch; m["test_org"] = test_org; m["status"] = "cached"
+            fold_results[arch] = m
+            print(f"    {arch:8s} CACHED  AUPRC={m['auprc']:.3f}  "
+                  f"R@P30={m.get('recall_at_p30',0):.3f}  "
+                  f"R@P50={m.get('recall_at_p50',0):.3f}")
+            continue
         t0 = time.time()
         if arch == "additive":
-            prob = (test_df.additive_pred < -1.0).astype(int).values.astype(float)
-            # for AUPRC we need a score not a label: lower additive_pred -> more likely hit
             score = -test_df.additive_pred.values
         elif arch == "xgb":
             X_tr = featurize(train_df, ff_col)
@@ -257,44 +275,69 @@ def run_loo_org_fold(out_dir, all_orgs, test_org, archs, gpu, force):
             continue
         m = tail_metrics(test_df.strong_hit.values.astype(int), score)
         m["arch"] = arch; m["test_org"] = test_org
-        m["seconds"] = round(time.time() - t0, 1)
+        m["seconds"] = round(time.time() - t0, 1); m["status"] = "fresh"
         fold_results[arch] = m
-        # write predictions for downstream analysis (bacitracin litmus etc.)
         pred_df = test_df[["orgId","locusId","expName","compound","expGroup",
                            "fit","t","strong_hit"]].copy()
         pred_df["pred"] = score
         pred_df.to_parquet(out_path, index=False)
         print(f"    {arch:8s} AUPRC={m['auprc']:.3f}  "
-              f"recall@P30={m.get('recall_at_p30',0):.3f}  "
-              f"recall@P50={m.get('recall_at_p50',0):.3f}  "
-              f"({m['seconds']}s)")
+              f"R@P30={m.get('recall_at_p30',0):.3f}  "
+              f"R@P50={m.get('recall_at_p50',0):.3f}  ({m['seconds']}s)")
     return fold_results
 
 
-def bacitracin_litmus(out_dir, mode_label):
+def bacitracin_litmus(out_dir):
     """Read the test_org predictions and check whether envZ/ompR/pspB ×
-    bacitracin rows ranked high in their test_org. Returns dict per gene."""
+    bacitracin rows ranked high in their test_org. Always reads from
+    eval/loo-org/ (the unified predictions dir). Also reports the top
+    bacitracin-experiment predictions per (org, arch) so we can see what
+    the model thinks the strongest hits ARE, not just our cluster."""
     import pandas as pd
     cluster = [("envZ","SB2B","6939419"), ("ompR","SB2B","6939418"),
                ("pspB","SB2B","6937067"), ("envZ","PV4","5211222"),
                ("ompR","PV4","5211221"), ("pspB","MR1","200970")]
-    eval_dir = out_dir / "eval" / mode_label
-    out = []
+    eval_dir = out_dir / "eval" / "loo-org"
+    rows_out, top_out = [], []
     for gene, org, locus in cluster:
         for arch in ("additive", "xgb"):
             p = eval_dir / f"preds_{arch}__{org}.parquet"
             if not p.exists(): continue
             df = pd.read_parquet(p)
+            df["locusId"] = df.locusId.astype(str)
             df = df.sort_values("pred", ascending=False).reset_index(drop=True)
             df["_rank"] = range(1, len(df) + 1)
-            rows = df[(df.locusId.astype(str) == locus) &
-                      (df.compound.str.contains("bacitracin", na=False))]
+            # cluster rank lookup
+            rows = df[(df.locusId == str(locus)) &
+                      (df.compound.fillna("").str.contains("bacitracin",
+                                                           case=False, na=False))]
             for _, r in rows.iterrows():
-                out.append({"arch": arch, "gene": gene, "org": org,
-                            "compound": r.compound, "fit": float(r.fit),
-                            "pred": float(r.pred), "rank": int(r._rank),
-                            "pctile": float(r._rank / len(df))})
-    return out
+                rows_out.append({
+                    "arch": arch, "gene": gene, "org": org,
+                    "compound": str(r.compound), "fit": float(r.fit),
+                    "pred": float(r.pred), "rank": int(r._rank),
+                    "pctile": float(r._rank / len(df))})
+    # top-K bacitracin predictions per (org, arch) -- one summary per pair
+    seen = set()
+    for gene, org, _ in cluster:
+        for arch in ("additive", "xgb"):
+            key = (org, arch)
+            if key in seen: continue
+            seen.add(key)
+            p = eval_dir / f"preds_{arch}__{org}.parquet"
+            if not p.exists(): continue
+            df = pd.read_parquet(p)
+            df["locusId"] = df.locusId.astype(str)
+            baci = df[df.compound.fillna("").str.contains("bacitracin",
+                                                          case=False, na=False)]
+            if baci.empty: continue
+            baci = baci.sort_values("pred", ascending=False).head(10)
+            top_out.append({"org": org, "arch": arch, "n_baci_rows": int(len(df[
+                df.compound.fillna("").str.contains("bacitracin", case=False,
+                                                    na=False)])),
+                "top10": baci[["locusId","compound","fit","pred",
+                               "strong_hit"]].to_dict("records")})
+    return {"cluster_ranks": rows_out, "top_baci": top_out}
 
 
 def main() -> int:
@@ -355,24 +398,34 @@ def main() -> int:
                 force=args.force)
 
     # ---- bacitracin litmus ----
-    print(f"\n=== bacitracin litmus on '{args.mode}' predictions ===")
-    lit = bacitracin_litmus(args.out, args.mode if args.mode != "loo-org-full"
-                            else "loo-org")
-    for r in lit:
-        print(f"  {r['arch']:8s} {r['gene']:5s} {r['org']:5s} "
-              f"{r['compound'][:18]:<18s} fit={r['fit']:+.2f} "
-              f"pred={r['pred']:+.3f} rank={r['rank']:<6d} "
-              f"pctile={r['pctile']:.4f}")
-    if not lit:
-        print("  (no litmus rows -- ensure bacitracin compound rows survived)")
+    print(f"\n=== bacitracin litmus (from eval/loo-org/) ===")
+    lit = bacitracin_litmus(args.out)
+    if lit["cluster_ranks"]:
+        print(f"  cluster ranks (envZ/ompR/pspB x bacitracin):")
+        for r in lit["cluster_ranks"]:
+            print(f"    {r['arch']:8s} {r['gene']:5s} {r['org']:5s} "
+                  f"fit={r['fit']:+5.2f}  pred={r['pred']:+.3f}  "
+                  f"rank={r['rank']:>6d}  top {r['pctile']*100:6.3f}%")
+    else:
+        print(f"  (no cluster rows matched -- shard/compound mismatch?)")
+    if lit["top_baci"]:
+        print(f"\n  top-10 bacitracin predictions per held-out org x arch:")
+        for entry in lit["top_baci"]:
+            print(f"    --- {entry['org']:5s} {entry['arch']:8s}  "
+                  f"({entry['n_baci_rows']} bacitracin rows in test) ---")
+            for r in entry["top10"]:
+                print(f"      locus={str(r['locusId']):<10s} "
+                      f"fit={r['fit']:+5.2f} pred={r['pred']:+.3f} "
+                      f"hit={int(r['strong_hit'])}  cpd={r['compound']}")
 
     # ---- summary ----
     summary = {"mode": args.mode, "archs": archs,
                "test_orgs": list(results.keys()),
-               "per_fold": results, "bacitracin_litmus": lit}
-    mode_label = "loo-org" if args.mode == "loo-org-full" else args.mode
-    (args.out / "eval" / mode_label).mkdir(parents=True, exist_ok=True)
-    sp = args.out / "eval" / mode_label / "summary.json"
+               "per_fold": results, "bacitracin_litmus": lit,
+               "note": ("AUPRC computed on 10:1 downsampled test set; "
+                        "recall@P is base-rate-invariant and unaffected.")}
+    sp = args.out / "eval" / "loo-org" / f"summary_{args.mode}.json"
+    sp.parent.mkdir(parents=True, exist_ok=True)
     with open(sp, "w") as f:
         json.dump(summary, f, indent=2, default=str)
     print(f"\nwrote {sp}")
