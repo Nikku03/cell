@@ -70,6 +70,9 @@ def main() -> int:
     import pandas as pd
     import numpy as np
     con = sqlite3.connect(str(args.db))
+    # feba.db has some rows with non-UTF-8 bytes (Unicode primes, etc.);
+    # don't let one bad SEED row abort the whole functional-feature build.
+    con.text_factory = lambda b: b.decode("utf-8", errors="replace")
     cur = con.cursor()
     tabs = {r[0] for r in cur.execute(
         "SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
@@ -117,23 +120,25 @@ def main() -> int:
 
     # ---- SEED class (optional) ----
     if "SEEDAnnotation" in tabs:
-        sa_cols = [r[1] for r in cur.execute(
-            "PRAGMA table_info(SEEDAnnotation)").fetchall()]
-        sloc = pick_col(sa_cols, "locusId", "locus")
-        sorg = pick_col(sa_cols, "orgId")
-        sdesc = pick_col(sa_cols, "seed_desc", "seedClass", "class", "desc")
-        if sloc and sorg and sdesc:
-            sa = pd.read_sql(f"SELECT {sorg} AS orgId, {sloc} AS locusId, "
-                             f"{sdesc} AS seed FROM SEEDAnnotation", con)
-            sa["locusId"] = sa.locusId.astype(str)
-            sa = sa.dropna(subset=["seed"]).drop_duplicates(["orgId", "locusId"])
-            # ordinal encode by frequency rank (stable, low-card-friendly)
-            codes = {v: i for i, v in enumerate(
-                sa.seed.value_counts().index)}
-            sa["seed_class"] = sa.seed.map(codes).astype("float32")
-            feat = feat.merge(sa[["orgId", "locusId", "seed_class"]],
-                              on=["orgId", "locusId"], how="left")
-            print(f"  SEED: {len(codes)} classes over {len(sa):,} genes")
+        try:
+            sa_cols = [r[1] for r in cur.execute(
+                "PRAGMA table_info(SEEDAnnotation)").fetchall()]
+            sloc = pick_col(sa_cols, "locusId", "locus")
+            sorg = pick_col(sa_cols, "orgId")
+            sdesc = pick_col(sa_cols, "seed_desc", "seedClass", "class", "desc")
+            if sloc and sorg and sdesc:
+                sa = pd.read_sql(f"SELECT {sorg} AS orgId, {sloc} AS locusId, "
+                                 f"{sdesc} AS seed FROM SEEDAnnotation", con)
+                sa["locusId"] = sa.locusId.astype(str)
+                sa = sa.dropna(subset=["seed"]).drop_duplicates(["orgId", "locusId"])
+                codes = {v: i for i, v in enumerate(
+                    sa.seed.value_counts().index)}
+                sa["seed_class"] = sa.seed.map(codes).astype("float32")
+                feat = feat.merge(sa[["orgId", "locusId", "seed_class"]],
+                                  on=["orgId", "locusId"], how="left")
+                print(f"  SEED: {len(codes)} classes over {len(sa):,} genes")
+        except Exception as e:
+            print(f"  SEED extraction failed ({e}); shipping domains only")
 
     feat["locusId"] = feat.locusId.astype(str)
     # downcast domain cols to uint8 to keep the join cheap
