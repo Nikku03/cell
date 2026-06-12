@@ -115,6 +115,92 @@ def merge_func(df):
 # Loaded once; the per-fold rate EXCLUDES the held-out org -> leak-free.
 OGCPD = None          # DataFrame: orgId, og_id, compound, n, n_hit
 
+# Kernel-smoothed (phylo x MoA) feature -- combined stepping-stone + chemistry.
+# Loaded once; already indexed by test_org and chem_key (MoA class or
+# EXACT::compound), so the per-fold lookup is a simple join.
+KERNEL = None         # DataFrame: test_org, og_id, chem_key, kernel_*
+MOA_LOOKUP = {}       # compound (normalized) -> MoA class (mirrors the builder)
+
+
+def load_kernel(out_dir):
+    """Populate KERNEL + MOA_LOOKUP from kernel_ogcpd_features.parquet if
+    present. The features attempt to predict (gene-family x compound) hit
+    rate by smoothing across phylogenetically close orgs AND MoA-similar
+    compounds -- Naresh's stepping-stone idea + chemistry MoA, combined."""
+    global KERNEL, MOA_LOOKUP
+    import pandas as pd
+    p = out_dir / "kernel_ogcpd_features.parquet"
+    if not p.exists():
+        print("  (no kernel_ogcpd_features.parquet -> running WITHOUT kernel)")
+        return False
+    KERNEL = pd.read_parquet(p)
+    KERNEL["og_id"] = KERNEL.og_id.astype(str)
+    KERNEL["chem_key"] = KERNEL.chem_key.astype(str)
+    print(f"  loaded kernel features: {len(KERNEL):,} (test_org, og_id, chem) "
+          f"cells across {KERNEL.test_org.nunique()} orgs")
+    # mirror the MoA table from the builder
+    moa_table = {
+        "bacitracin":"cell_wall","vancomycin":"cell_wall","d-cycloserine":"cell_wall",
+        "cycloserine":"cell_wall","fosfomycin":"cell_wall","ampicillin":"cell_wall",
+        "carbenicillin":"cell_wall","penicillin":"cell_wall","cefoxitin":"cell_wall",
+        "cefotaxime":"cell_wall","ceftriaxone":"cell_wall",
+        "cisplatin":"dna_damage","nalidixic acid":"dna_damage",
+        "ciprofloxacin":"dna_damage","norfloxacin":"dna_damage",
+        "levofloxacin":"dna_damage","mitomycin":"dna_damage","bleomycin":"dna_damage",
+        "novobiocin":"dna_damage",
+        "tetracycline":"ribosome","doxycycline":"ribosome","minocycline":"ribosome",
+        "tigecycline":"ribosome","gentamicin":"ribosome","kanamycin":"ribosome",
+        "neomycin":"ribosome","tobramycin":"ribosome","amikacin":"ribosome",
+        "sisomicin":"ribosome","spectinomycin":"ribosome","streptomycin":"ribosome",
+        "chloramphenicol":"ribosome","erythromycin":"ribosome","azithromycin":"ribosome",
+        "clindamycin":"ribosome",
+        "trimethoprim":"folate","sulfamethoxazole":"folate",
+        "polymyxin":"membrane","colistin":"membrane","daptomycin":"membrane",
+        "benzalkonium":"membrane_detergent","benzethonium":"membrane_detergent",
+        "triclosan":"membrane_detergent",
+        "rifampicin":"transcription","rifampin":"transcription",
+        "fusidic acid":"protein_synthesis","linezolid":"protein_synthesis",
+        "mupirocin":"protein_synthesis","cerulenin":"fatty_acid_synthesis",
+    }
+    MOA_LOOKUP = moa_table
+    return True
+
+
+def _moa_of(c):
+    if not isinstance(c, str) or not c: return None
+    cl = c.lower()
+    for k, v in MOA_LOOKUP.items():
+        if k in cl:
+            return v
+    return None
+
+
+def add_kernel_rate(df, held_out_org=None):
+    """Join kernel_rate / kernel_total_n / kernel_phylo_w. To keep train and
+    test consistent (no train-leak): TRAIN rows route to the kernel computed
+    from their OWN org's perspective (so each row never sees its own org in
+    the kernel sum); TEST rows use the held-out-org perspective. Both sides
+    exclude the row's own org -- same leave-own-org-out discipline that
+    fixed the og_cpd train-leak earlier."""
+    if KERNEL is None:
+        return df
+    import pandas as pd
+    df = df.copy()
+    df["og_id"] = df.og_id.astype(str)
+    moas = df.compound.apply(_moa_of)
+    df["chem_key"] = moas.where(moas.notna(),
+                                "EXACT::" + df.compound.astype(str))
+    if held_out_org is None:
+        # train: route each row to the kernel keyed by its own orgId
+        sub = KERNEL[["test_org", "og_id", "chem_key",
+                      "kernel_rate", "kernel_total_n", "kernel_phylo_w"]]
+        return df.merge(sub, left_on=["orgId", "og_id", "chem_key"],
+                        right_on=["test_org", "og_id", "chem_key"],
+                        how="left").drop(columns=["test_org"])
+    sub = KERNEL[KERNEL.test_org == held_out_org][
+        ["og_id", "chem_key", "kernel_rate", "kernel_total_n", "kernel_phylo_w"]]
+    return df.merge(sub, on=["og_id", "chem_key"], how="left")
+
 
 def load_ogcpd(out_dir):
     """Populate OGCPD from agg_ogcpd/*.parquet if present."""
@@ -311,6 +397,8 @@ def featurize(df, ff_col):
     cols += [c for c in FUNC_COLS if c in df.columns]   # functional features
     cols += [c for c in ("og_cpd_hit_rate", "og_cpd_n")  # conditional prior
              if c in df.columns]
+    cols += [c for c in ("kernel_rate", "kernel_total_n", "kernel_phylo_w")
+             if c in df.columns]   # phylo x MoA kernel
     X = df[cols].copy()
     # aerobic is stored as a string in feba.db -> map to {1.0, 0.0, NaN}
     if "aerobic" in X.columns:
@@ -363,6 +451,11 @@ def run_loo_org_fold(out_dir, all_orgs, test_org, archs, gpu, force):
         # conditional-conservation prior, leak-free (excludes held-out org)
         train_df = add_ogcpd_rate(train_df, test_org)
         test_df  = add_ogcpd_rate(test_df,  test_org)
+        # kernel-smoothed (phylo x MoA) feature, leave-own-org-out on both
+        # sides: train rows route to their own org's kernel; test rows to the
+        # held-out org's kernel. Same leak-free discipline as og_cpd.
+        train_df = add_kernel_rate(train_df, held_out_org=None)
+        test_df  = add_kernel_rate(test_df,  held_out_org=test_org)
         train_df["additive_pred"] = fit_additive(train_df, mu, ag, bc)
         test_df["additive_pred"]  = fit_additive(test_df,  mu, ag, bc)
         print(f"  [{test_org}] train={len(train_df):,}  test={len(test_df):,}  "
@@ -507,6 +600,8 @@ def main() -> int:
                     help="ignore func_features.parquet (ablation)")
     ap.add_argument("--no-ogcpd", action="store_true",
                     help="ignore og_cpd conditional-conservation prior (ablation)")
+    ap.add_argument("--no-kernel", action="store_true",
+                    help="ignore phylo x MoA kernel feature (ablation)")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
 
@@ -517,6 +612,8 @@ def main() -> int:
         load_func_features(args.out)
     if not args.no_ogcpd:
         load_ogcpd(args.out)
+    if not args.no_kernel:
+        load_kernel(args.out)
     manifest = json.loads((args.out / "_build_manifest.json").read_text())
     all_orgs = [r["org"] for r in manifest["per_org"]]
     pos_by_org = {r["org"]: r["n_pos"] for r in manifest["per_org"]}
