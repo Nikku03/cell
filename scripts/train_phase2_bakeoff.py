@@ -164,17 +164,23 @@ def ff_col_for_org(org: str, clade_map: dict[str, int]) -> str:
     return f"family_frac_essential_fold{f}"
 
 
-def load_shards(out_dir: Path, orgs: list[str], cols: list[str]):
-    """Load and concat shards for the given orgs; pandas can handle ~10M
-    rows downsampled in memory comfortably on Colab."""
+def load_shards(out_dir: Path, orgs: list[str], cols: list[str],
+                subdir: str = "frame"):
+    """Load and concat shards for the given orgs.
+
+    subdir='frame'      -> downsampled shards (for TRAINING)
+    subdir='frame_full' -> full un-downsampled shards (for TESTING at true
+                           prevalence; recall-at-fixed-precision is only
+                           honest on the real negative base rate)
+    """
     import pandas as pd
     parts = []
     for o in orgs:
-        p = out_dir / "frame" / f"{o}.parquet"
+        p = out_dir / subdir / f"{o}.parquet"
         if p.exists():
             parts.append(pd.read_parquet(p, columns=cols))
     if not parts:
-        raise RuntimeError("no shards loaded")
+        raise RuntimeError(f"no shards loaded from {subdir}/ for {orgs}")
     return pd.concat(parts, ignore_index=True)
 
 
@@ -326,8 +332,11 @@ def run_loo_org_fold(out_dir, all_orgs, test_org, archs, gpu, force):
     train_df = test_df = None
     if needs_run:
         mu, ag, bc = compute_additive_effects(out_dir, train_orgs)
-        train_df = merge_func(load_shards(out_dir, train_orgs, base_cols))
-        test_df  = merge_func(load_shards(out_dir, [test_org], base_cols))
+        # TRAIN on downsampled shards; TEST on FULL (true-prevalence) shards
+        train_df = merge_func(load_shards(out_dir, train_orgs, base_cols,
+                                          subdir="frame"))
+        test_df  = merge_func(load_shards(out_dir, [test_org], base_cols,
+                                          subdir="frame_full"))
         # conditional-conservation prior, leak-free (excludes held-out org)
         train_df = add_ogcpd_rate(train_df, test_org)
         test_df  = add_ogcpd_rate(test_df,  test_org)
@@ -367,14 +376,32 @@ def run_loo_org_fold(out_dir, all_orgs, test_org, archs, gpu, force):
         m = tail_metrics(test_df.strong_hit.values.astype(int), score)
         m["arch"] = arch; m["test_org"] = test_org
         m["seconds"] = round(time.time() - t0, 1); m["status"] = "fresh"
+        # novel-interaction slice: rows whose (OG x compound) was NEVER seen in
+        # any training org (og_cpd_n==0) -> true de-novo generalization, no
+        # nearest-neighbour lookup possible. This is the honest hard number.
+        if "og_cpd_n" in test_df.columns:
+            novel = (test_df.og_cpd_n.fillna(0).values == 0)
+            if novel.sum() > 0 and test_df.strong_hit.values[novel].sum() > 0:
+                mn = tail_metrics(test_df.strong_hit.values[novel].astype(int),
+                                  score[novel])
+                m["novel_n"] = int(novel.sum())
+                m["novel_pos"] = int(test_df.strong_hit.values[novel].sum())
+                m["novel_auprc"] = mn["auprc"]
+                m["novel_recall_at_p30"] = mn.get("recall_at_p30", 0.0)
         fold_results[arch] = m
-        pred_df = test_df[["orgId","locusId","expName","compound","expGroup",
-                           "fit","t","strong_hit"]].copy()
+        keep = ["orgId","locusId","expName","compound","expGroup",
+                "fit","t","strong_hit"]
+        if "og_cpd_n" in test_df.columns: keep.append("og_cpd_n")
+        if "og_cpd_hit_rate" in test_df.columns: keep.append("og_cpd_hit_rate")
+        pred_df = test_df[keep].copy()
         pred_df["pred"] = score
         pred_df.to_parquet(out_path, index=False)
         print(f"    {arch:8s} AUPRC={m['auprc']:.3f}  "
               f"R@P30={m.get('recall_at_p30',0):.3f}  "
-              f"R@P50={m.get('recall_at_p50',0):.3f}  ({m['seconds']}s)")
+              f"R@P50={m.get('recall_at_p50',0):.3f}  "
+              f"base={m['base_rate']:.4f}  "
+              f"novelR@P30={m.get('novel_recall_at_p30','-')}  "
+              f"({m['seconds']}s)")
     return fold_results
 
 
@@ -521,26 +548,35 @@ def main() -> int:
     summary = {"mode": args.mode, "archs": archs,
                "test_orgs": list(results.keys()),
                "per_fold": results, "bacitracin_litmus": lit,
-               "note": ("AUPRC computed on 10:1 downsampled test set; "
-                        "recall@P is base-rate-invariant and unaffected.")}
+               "note": ("TRAIN on 10:1 downsampled shards; TEST on FULL "
+                        "un-downsampled shards (frame_full/) so recall@P is "
+                        "at TRUE prevalence. novel_* = slice where (OG x "
+                        "compound) was never seen in any training org "
+                        "(og_cpd_n==0): the de-novo generalization number.")}
     sp = args.out / "eval" / "loo-org" / f"summary_{args.mode}.json"
     sp.parent.mkdir(parents=True, exist_ok=True)
     with open(sp, "w") as f:
         json.dump(summary, f, indent=2, default=str)
     print(f"\nwrote {sp}")
 
-    # ---- macro AUPRC + recall@P=0.30 table ----
-    print(f"\n=== macro across folds ===")
+    # ---- macro table: true-prevalence recall@P + de-novo novel slice ----
+    print(f"\n=== macro across folds (TEST at true prevalence) ===")
     import numpy as np
     for arch in archs:
-        aps = [r[arch]["auprc"] for r in results.values()
-               if arch in r and r[arch]["auprc"] is not None]
-        r30 = [r[arch].get("recall_at_p30", 0.0) for r in results.values()
-               if arch in r]
-        if aps:
-            print(f"  {arch:8s}  AUPRC mean={np.mean(aps):.3f} "
-                  f"median={np.median(aps):.3f}   "
-                  f"recall@P30 mean={np.mean(r30):.3f}")
+        rs = [r[arch] for r in results.values()
+              if arch in r and r[arch].get("auprc") is not None]
+        if not rs: continue
+        aps = [x["auprc"] for x in rs]
+        r30 = [x.get("recall_at_p30", 0.0) for x in rs]
+        base = [x.get("base_rate", float("nan")) for x in rs]
+        nov = [x["novel_recall_at_p30"] for x in rs
+               if x.get("novel_recall_at_p30") is not None]
+        print(f"  {arch:8s}  AUPRC mean={np.mean(aps):.3f}   "
+              f"recall@P30 mean={np.mean(r30):.3f}   "
+              f"test_base_rate~{np.nanmean(base):.4f}")
+        if nov:
+            print(f"           de-novo (og_cpd_n==0) recall@P30 "
+                  f"mean={np.mean(nov):.3f}  over {len(nov)} folds")
     return 0
 
 

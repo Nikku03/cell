@@ -53,6 +53,7 @@ def norm_compound(c: str) -> str:
 
 def all_outputs_present(out: Path, org: str) -> bool:
     return ((out / "frame" / f"{org}.parquet").exists() and
+            (out / "frame_full" / f"{org}.parquet").exists() and
             (out / "agg" / f"{org}_gene.parquet").exists() and
             (out / "agg" / f"{org}_cpd.parquet").exists())
 
@@ -92,6 +93,7 @@ def main() -> int:
     rng = np.random.RandomState(args.seed)
 
     (args.out / "frame").mkdir(parents=True, exist_ok=True)
+    (args.out / "frame_full").mkdir(parents=True, exist_ok=True)
     (args.out / "agg").mkdir(parents=True, exist_ok=True)
 
     # ---- gene features ----
@@ -188,7 +190,13 @@ def main() -> int:
         ca.insert(0, "orgId", org)
         ca.to_parquet(args.out / "agg" / f"{org}_cpd.parquet", index=False)
 
-        # downsampled shard
+        # FULL un-downsampled shard -> honest test set at true prevalence.
+        # (Training uses the downsampled frame/; testing must use this, or
+        # recall-at-fixed-precision is inflated by the missing negatives.)
+        gf[keep_cols].to_parquet(args.out / "frame_full" / f"{org}.parquet",
+                                 index=False)
+
+        # downsampled shard (for training only)
         pos = gf[gf.strong_hit == 1]
         neg = gf[gf.strong_hit == 0]
         keep_neg = min(len(neg), int(args.neg_ratio * max(npos, 1)))
