@@ -79,7 +79,10 @@ def main() -> int:
     tabs = {r[0] for r in cur.execute(
         "SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
 
-    # ---- BestHitKEGG: locus -> KEGG ortholog group ----
+    # ---- BestHitKEGG: locus -> KEGG gene id  THEN KEGGMember: keggId -> kgroup ----
+    # BestHitKEGG stores the best matching KEGG gene id (e.g. eco:b0001), NOT the
+    # KO group directly. To get the KO (kgroup) we join through KEGGMember,
+    # which is the (kgroup, keggOrg, keggId) membership table.
     if "BestHitKEGG" not in tabs:
         print("ERROR: BestHitKEGG table absent", file=sys.stderr); return 1
     bhk_cols = [r[1] for r in cur.execute(
@@ -87,13 +90,39 @@ def main() -> int:
     print(f"BestHitKEGG cols: {bhk_cols}")
     loc = pick_col(bhk_cols, "locusId", "locus")
     org = pick_col(bhk_cols, "orgId", "orgid")
-    kg = pick_col(bhk_cols, "kgroup", "ko", "keggGroup")
-    print(f"  using org={org} locus={loc} kgroup={kg}")
-    bhk = pd.read_sql(f"SELECT {org} AS orgId, {loc} AS locusId, "
-                      f"{kg} AS ko FROM BestHitKEGG "
-                      f"WHERE {kg} IS NOT NULL AND {kg} != ''", con)
+    kid = pick_col(bhk_cols, "keggId", "keggid")
+    korg = pick_col(bhk_cols, "keggOrg", "keggorg")
+    print(f"  using org={org} locus={loc} keggOrg={korg} keggId={kid}")
+    bhk = pd.read_sql(
+        f"SELECT {org} AS orgId, {loc} AS locusId, "
+        f"{korg} AS keggOrg, {kid} AS keggId FROM BestHitKEGG "
+        f"WHERE {kid} IS NOT NULL AND {kid} != ''", con)
     bhk["locusId"] = bhk.locusId.astype(str)
-    print(f"  {len(bhk):,} KEGG annotations over "
+    print(f"  BestHitKEGG: {len(bhk):,} hits")
+
+    if "KEGGMember" not in tabs:
+        print("ERROR: KEGGMember table absent (needed to map keggId -> kgroup)",
+              file=sys.stderr); return 1
+    km_cols = [r[1] for r in cur.execute(
+        "PRAGMA table_info(KEGGMember)").fetchall()]
+    print(f"KEGGMember cols: {km_cols}")
+    kg = pick_col(km_cols, "kgroup", "ko", "keggGroup")
+    mkid = pick_col(km_cols, "keggId", "keggid")
+    mkorg = pick_col(km_cols, "keggOrg", "keggorg")
+    join_keys = ["keggId"] + (["keggOrg"] if mkorg and korg else [])
+    print(f"  using kgroup={kg} keggOrg={mkorg} keggId={mkid}  join={join_keys}")
+    cols_select = f"{kg} AS ko, {mkid} AS keggId"
+    if mkorg and korg:
+        cols_select += f", {mkorg} AS keggOrg"
+    km = pd.read_sql(
+        f"SELECT {cols_select} FROM KEGGMember "
+        f"WHERE {kg} IS NOT NULL AND {kg} != ''", con)
+    print(f"  KEGGMember: {len(km):,} (kgroup, keggId) rows; "
+          f"{km.ko.nunique():,} distinct KOs")
+
+    # join BestHitKEGG -> KEGGMember -> ko
+    bhk = bhk.merge(km, on=join_keys, how="inner")
+    print(f"  after join -> {len(bhk):,} (orgId, locusId, ko) rows over "
           f"{bhk.groupby(['orgId','locusId']).ngroups:,} genes")
 
     # ---- KgroupEC: kgroup -> EC number ----
