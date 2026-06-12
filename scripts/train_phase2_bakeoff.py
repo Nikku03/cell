@@ -55,6 +55,38 @@ MIN_POSITIVES_FOR_TEST = 100
 NUMERIC_GENE_COLS = ["family_n_organisms", "n_paralogs_in_genome", "is_orphan"]
 NUMERIC_COND_COLS = ["MW", "concentration_1", "pH", "temperature", "aerobic"]
 
+# Optional functional features (domain content + SEED), loaded once into these
+# module globals from <out>/func_features.parquet if it exists. Leak-free:
+# annotation-derived, keyed by (orgId, locusId), so the held-out organism's
+# domains are known without ever seeing its fitness.
+FUNC_FEATS = None     # DataFrame: orgId, locusId, dom_*, n_domains, seed_class
+FUNC_COLS = []        # list of functional feature column names
+
+
+def load_func_features(out_dir):
+    """Populate FUNC_FEATS / FUNC_COLS from func_features.parquet if present."""
+    global FUNC_FEATS, FUNC_COLS
+    import pandas as pd
+    p = out_dir / "func_features.parquet"
+    if not p.exists():
+        print("  (no func_features.parquet -> running WITHOUT functional features)")
+        return False
+    FUNC_FEATS = pd.read_parquet(p)
+    FUNC_FEATS["locusId"] = FUNC_FEATS.locusId.astype(str)
+    FUNC_COLS = [c for c in FUNC_FEATS.columns
+                 if c.startswith("dom_") or c in ("n_domains", "seed_class")]
+    print(f"  loaded functional features: {len(FUNC_FEATS):,} genes, "
+          f"{len(FUNC_COLS)} cols")
+    return True
+
+
+def merge_func(df):
+    """Left-join functional features onto a frame keyed by (orgId, locusId)."""
+    if FUNC_FEATS is None:
+        return df
+    import pandas as pd
+    return df.merge(FUNC_FEATS, on=["orgId", "locusId"], how="left")
+
 
 def load_clade_map(path: Path) -> dict[str, int]:
     """org (without 'beril_') -> fold (0..4) for leak-free family_frac pick."""
@@ -194,6 +226,7 @@ def featurize(df, ff_col):
     import pandas as pd
     import numpy as np
     cols = [ff_col] + NUMERIC_GENE_COLS + NUMERIC_COND_COLS
+    cols += [c for c in FUNC_COLS if c in df.columns]   # functional features
     X = df[cols].copy()
     # aerobic is stored as a string in feba.db -> map to {1.0, 0.0, NaN}
     if "aerobic" in X.columns:
@@ -238,8 +271,8 @@ def run_loo_org_fold(out_dir, all_orgs, test_org, archs, gpu, force):
     train_df = test_df = None
     if needs_run:
         mu, ag, bc = compute_additive_effects(out_dir, train_orgs)
-        train_df = load_shards(out_dir, train_orgs, base_cols)
-        test_df  = load_shards(out_dir, [test_org], base_cols)
+        train_df = merge_func(load_shards(out_dir, train_orgs, base_cols))
+        test_df  = merge_func(load_shards(out_dir, [test_org], base_cols))
         train_df["additive_pred"] = fit_additive(train_df, mu, ag, bc)
         test_df["additive_pred"]  = fit_additive(test_df,  mu, ag, bc)
         print(f"  [{test_org}] train={len(train_df):,}  test={len(test_df):,}  "
@@ -350,12 +383,16 @@ def main() -> int:
     ap.add_argument("--test-orgs", nargs="*", default=None,
                     help="explicit held-out test orgs (loo-org-fast)")
     ap.add_argument("--no-gpu", action="store_true")
+    ap.add_argument("--no-func", action="store_true",
+                    help="ignore func_features.parquet (ablation)")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
 
     import pandas as pd
     global CLADE_MAP
     CLADE_MAP = load_clade_map(args.clades)
+    if not args.no_func:
+        load_func_features(args.out)
     manifest = json.loads((args.out / "_build_manifest.json").read_text())
     all_orgs = [r["org"] for r in manifest["per_org"]]
     pos_by_org = {r["org"]: r["n_pos"] for r in manifest["per_org"]}
