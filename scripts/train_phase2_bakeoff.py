@@ -88,6 +88,45 @@ def merge_func(df):
     return df.merge(FUNC_FEATS, on=["orgId", "locusId"], how="left")
 
 
+# Conditional-conservation prior: per-(orgId, og_id, compound) hit aggregates.
+# Loaded once; the per-fold rate EXCLUDES the held-out org -> leak-free.
+OGCPD = None          # DataFrame: orgId, og_id, compound, n, n_hit
+
+
+def load_ogcpd(out_dir):
+    """Populate OGCPD from agg_ogcpd/*.parquet if present."""
+    global OGCPD
+    import pandas as pd
+    d = out_dir / "agg_ogcpd"
+    files = sorted(d.glob("*.parquet")) if d.exists() else []
+    if not files:
+        print("  (no agg_ogcpd/ -> running WITHOUT og_cpd_hit_rate)")
+        return False
+    OGCPD = pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)
+    OGCPD["og_id"] = OGCPD.og_id.astype(str)
+    print(f"  loaded og_cpd aggregates: {len(OGCPD):,} (org,og,cpd) cells "
+          f"from {len(files)} orgs")
+    return True
+
+
+def add_ogcpd_rate(df, held_out_org):
+    """Add og_cpd_hit_rate + og_cpd_n, computed over all orgs EXCEPT the
+    held-out org (so the test fold never sees its own data). Maps onto rows
+    by (og_id, compound). The conditional analog of family_frac."""
+    if OGCPD is None:
+        return df
+    import pandas as pd
+    sub = OGCPD[OGCPD.orgId != held_out_org]
+    g = sub.groupby(["og_id", "compound"]).agg(
+        n=("n", "sum"), n_hit=("n_hit", "sum")).reset_index()
+    g["og_cpd_hit_rate"] = g.n_hit / g.n.clip(lower=1)
+    g = g.rename(columns={"n": "og_cpd_n"})[
+        ["og_id", "compound", "og_cpd_hit_rate", "og_cpd_n"]]
+    df = df.copy()
+    df["og_id"] = df.og_id.astype(str)
+    return df.merge(g, on=["og_id", "compound"], how="left")
+
+
 def load_clade_map(path: Path) -> dict[str, int]:
     """org (without 'beril_') -> fold (0..4) for leak-free family_frac pick."""
     import pandas as pd
@@ -227,6 +266,8 @@ def featurize(df, ff_col):
     import numpy as np
     cols = [ff_col] + NUMERIC_GENE_COLS + NUMERIC_COND_COLS
     cols += [c for c in FUNC_COLS if c in df.columns]   # functional features
+    cols += [c for c in ("og_cpd_hit_rate", "og_cpd_n")  # conditional prior
+             if c in df.columns]
     X = df[cols].copy()
     # aerobic is stored as a string in feba.db -> map to {1.0, 0.0, NaN}
     if "aerobic" in X.columns:
@@ -273,6 +314,9 @@ def run_loo_org_fold(out_dir, all_orgs, test_org, archs, gpu, force):
         mu, ag, bc = compute_additive_effects(out_dir, train_orgs)
         train_df = merge_func(load_shards(out_dir, train_orgs, base_cols))
         test_df  = merge_func(load_shards(out_dir, [test_org], base_cols))
+        # conditional-conservation prior, leak-free (excludes held-out org)
+        train_df = add_ogcpd_rate(train_df, test_org)
+        test_df  = add_ogcpd_rate(test_df,  test_org)
         train_df["additive_pred"] = fit_additive(train_df, mu, ag, bc)
         test_df["additive_pred"]  = fit_additive(test_df,  mu, ag, bc)
         print(f"  [{test_org}] train={len(train_df):,}  test={len(test_df):,}  "
@@ -385,6 +429,8 @@ def main() -> int:
     ap.add_argument("--no-gpu", action="store_true")
     ap.add_argument("--no-func", action="store_true",
                     help="ignore func_features.parquet (ablation)")
+    ap.add_argument("--no-ogcpd", action="store_true",
+                    help="ignore og_cpd conditional-conservation prior (ablation)")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
 
@@ -393,6 +439,8 @@ def main() -> int:
     CLADE_MAP = load_clade_map(args.clades)
     if not args.no_func:
         load_func_features(args.out)
+    if not args.no_ogcpd:
+        load_ogcpd(args.out)
     manifest = json.loads((args.out / "_build_manifest.json").read_text())
     all_orgs = [r["org"] for r in manifest["per_org"]]
     pos_by_org = {r["org"]: r["n_pos"] for r in manifest["per_org"]}
