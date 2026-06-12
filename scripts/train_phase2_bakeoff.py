@@ -64,19 +64,42 @@ FUNC_COLS = []        # list of functional feature column names
 
 
 def load_func_features(out_dir):
-    """Populate FUNC_FEATS / FUNC_COLS from func_features.parquet if present."""
+    """Populate FUNC_FEATS / FUNC_COLS from func_features.parquet if present.
+
+    Also merges in redundancy_features.parquet (per-genome functional-redundancy
+    counts: same-KO/EC genes in this genome, with the NOGD 'same function via
+    different OG' variant) if it exists. The two are merged on (orgId, locusId)
+    so they look like one feature table to the rest of the harness."""
     global FUNC_FEATS, FUNC_COLS
     import pandas as pd
     p = out_dir / "func_features.parquet"
-    if not p.exists():
-        print("  (no func_features.parquet -> running WITHOUT functional features)")
+    pr = out_dir / "redundancy_features.parquet"
+    have_func = p.exists()
+    have_red = pr.exists()
+    if not have_func and not have_red:
+        print("  (no func or redundancy features -> running WITHOUT them)")
         return False
-    FUNC_FEATS = pd.read_parquet(p)
-    FUNC_FEATS["locusId"] = FUNC_FEATS.locusId.astype(str)
+    parts = []
+    if have_func:
+        df = pd.read_parquet(p)
+        df["locusId"] = df.locusId.astype(str)
+        parts.append(df)
+        print(f"  loaded functional features: {len(df):,} genes, "
+              f"{len([c for c in df.columns if c.startswith('dom_')])} domain cols")
+    if have_red:
+        rdf = pd.read_parquet(pr)
+        rdf["locusId"] = rdf.locusId.astype(str)
+        parts.append(rdf)
+        red_cols = [c for c in rdf.columns if c not in ("orgId", "locusId")]
+        print(f"  loaded redundancy features: {len(rdf):,} genes, "
+              f"cols={red_cols}")
+    if len(parts) == 1:
+        FUNC_FEATS = parts[0]
+    else:
+        FUNC_FEATS = parts[0].merge(parts[1], on=["orgId", "locusId"],
+                                     how="outer")
     FUNC_COLS = [c for c in FUNC_FEATS.columns
-                 if c.startswith("dom_") or c in ("n_domains", "seed_class")]
-    print(f"  loaded functional features: {len(FUNC_FEATS):,} genes, "
-          f"{len(FUNC_COLS)} cols")
+                 if c not in ("orgId", "locusId")]
     return True
 
 
