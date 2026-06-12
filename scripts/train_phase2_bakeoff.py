@@ -351,13 +351,25 @@ def run_loo_org_fold(out_dir, all_orgs, test_org, archs, gpu, force):
             # recompute metrics from the saved predictions so the summary is
             # complete even on resumed runs
             pred_df = pd.read_parquet(out_path)
-            m = tail_metrics(pred_df.strong_hit.values.astype(int),
-                             pred_df.pred.values)
+            y = pred_df.strong_hit.values.astype(int)
+            p = pred_df.pred.values
+            m = tail_metrics(y, p)
             m["arch"] = arch; m["test_org"] = test_org; m["status"] = "cached"
+            # de-novo slice from cached og_cpd_n column (added in 86156c0)
+            if "og_cpd_n" in pred_df.columns:
+                novel = (pred_df.og_cpd_n.fillna(0).values == 0)
+                if novel.sum() > 0 and y[novel].sum() > 0:
+                    mn = tail_metrics(y[novel], p[novel])
+                    m["novel_n"] = int(novel.sum())
+                    m["novel_pos"] = int(y[novel].sum())
+                    m["novel_auprc"] = mn["auprc"]
+                    m["novel_recall_at_p30"] = mn.get("recall_at_p30", 0.0)
             fold_results[arch] = m
             print(f"    {arch:8s} CACHED  AUPRC={m['auprc']:.3f}  "
                   f"R@P30={m.get('recall_at_p30',0):.3f}  "
-                  f"R@P50={m.get('recall_at_p50',0):.3f}")
+                  f"R@P50={m.get('recall_at_p50',0):.3f}  "
+                  f"base={m['base_rate']:.4f}  "
+                  f"novelR@P30={m.get('novel_recall_at_p30','-')}")
             continue
         t0 = time.time()
         if arch == "additive":
