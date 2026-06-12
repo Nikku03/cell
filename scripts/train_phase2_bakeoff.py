@@ -110,21 +110,35 @@ def load_ogcpd(out_dir):
 
 
 def add_ogcpd_rate(df, held_out_org):
-    """Add og_cpd_hit_rate + og_cpd_n, computed over all orgs EXCEPT the
-    held-out org (so the test fold never sees its own data). Maps onto rows
-    by (og_id, compound). The conditional analog of family_frac."""
+    """Add og_cpd_hit_rate + og_cpd_n -- the conditional analog of family_frac.
+
+    LEAVE-OWN-ORG-OUT + exclude held-out org: for every row from org o, the
+    rate is computed over the aggregates of all orgs EXCEPT both the held-out
+    test org T AND o itself. This makes the feature leak-free in BOTH train
+    (never sees its own org) and test (never sees T), with a consistent
+    distribution across the two -- fixing the train-leak that an
+    'exclude-T-only' rate causes (train rows would include their own org,
+    test rows would not, and the model over-trusts the feature)."""
     if OGCPD is None:
         return df
     import pandas as pd
-    sub = OGCPD[OGCPD.orgId != held_out_org]
-    g = sub.groupby(["og_id", "compound"]).agg(
-        n=("n", "sum"), n_hit=("n_hit", "sum")).reset_index()
-    g["og_cpd_hit_rate"] = g.n_hit / g.n.clip(lower=1)
-    g = g.rename(columns={"n": "og_cpd_n"})[
-        ["og_id", "compound", "og_cpd_hit_rate", "og_cpd_n"]]
     df = df.copy()
     df["og_id"] = df.og_id.astype(str)
-    return df.merge(g, on=["og_id", "compound"], how="left")
+    sub = OGCPD[OGCPD.orgId != held_out_org]
+    tot = sub.groupby(["og_id", "compound"]).agg(
+        tot_n=("n", "sum"), tot_hit=("n_hit", "sum")).reset_index()
+    own = sub.rename(columns={"orgId": "_o", "n": "own_n", "n_hit": "own_hit"})
+    df = df.merge(tot, on=["og_id", "compound"], how="left")
+    df = df.merge(own[["_o", "og_id", "compound", "own_n", "own_hit"]],
+                  left_on=["orgId", "og_id", "compound"],
+                  right_on=["_o", "og_id", "compound"], how="left")
+    own_n = df.own_n.fillna(0.0); own_hit = df.own_hit.fillna(0.0)
+    den = df.tot_n.fillna(0.0) - own_n          # measurements, others' orgs
+    num = df.tot_hit.fillna(0.0) - own_hit      # hits, others' orgs
+    df["og_cpd_hit_rate"] = (num / den.where(den > 0)).astype("float32")
+    df["og_cpd_n"] = den.clip(lower=0).astype("float32")
+    return df.drop(columns=["_o", "own_n", "own_hit", "tot_n", "tot_hit"],
+                   errors="ignore")
 
 
 def load_clade_map(path: Path) -> dict[str, int]:
