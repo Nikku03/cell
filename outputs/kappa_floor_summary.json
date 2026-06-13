@@ -1,0 +1,397 @@
+{
+  "deg_floor": {
+    "median_kappa": 0.38985000000000003,
+    "p10": 0.26085,
+    "p90": 0.52795,
+    "n_pairs": 6
+  },
+  "feba_continuous_floor": null,
+  "feba_binary_floor": null,
+  "family_frac_regrade": [
+    {
+      "organism": "beril_ANA3",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3611,
+      "n_essential": 794,
+      "auprc": 0.7287547046000997,
+      "kappa_vs_labels": 0.5880712602627103
+    },
+    {
+      "organism": "beril_BFirm",
+      "predictor": "family_frac (>=0.5)",
+      "n": 5323,
+      "n_essential": 2367,
+      "auprc": 0.7782411771556984,
+      "kappa_vs_labels": 0.3531961692988929
+    },
+    {
+      "organism": "beril_Btheta",
+      "predictor": "family_frac (>=0.5)",
+      "n": 2273,
+      "n_essential": 596,
+      "auprc": 0.7836571732645817,
+      "kappa_vs_labels": 0.581111292378898
+    },
+    {
+      "organism": "beril_Burk376",
+      "predictor": "family_frac (>=0.5)",
+      "n": 4908,
+      "n_essential": 1999,
+      "auprc": 0.7940172085951148,
+      "kappa_vs_labels": 0.4320047943578104
+    },
+    {
+      "organism": "beril_Caulo",
+      "predictor": "family_frac (>=0.5)",
+      "n": 2620,
+      "n_essential": 620,
+      "auprc": 0.8048213268273003,
+      "kappa_vs_labels": 0.6655064974542138
+    },
+    {
+      "organism": "beril_Cola",
+      "predictor": "family_frac (>=0.5)",
+      "n": 2918,
+      "n_essential": 621,
+      "auprc": 0.8255371132849505,
+      "kappa_vs_labels": 0.6843823830129394
+    },
+    {
+      "organism": "beril_Cup4G11",
+      "predictor": "family_frac (>=0.5)",
+      "n": 5362,
+      "n_essential": 1570,
+      "auprc": 0.7778768900964484,
+      "kappa_vs_labels": 0.569259305255944
+    },
+    {
+      "organism": "beril_Dda3937",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3553,
+      "n_essential": 724,
+      "auprc": 0.8193664045551197,
+      "kappa_vs_labels": 0.6726023990039831
+    },
+    {
+      "organism": "beril_Ddia6719",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3457,
+      "n_essential": 776,
+      "auprc": 0.7712170563448616,
+      "kappa_vs_labels": 0.5717609443905246
+    },
+    {
+      "organism": "beril_DdiaME23",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3461,
+      "n_essential": 657,
+      "auprc": 0.7704038689860812,
+      "kappa_vs_labels": 0.5769734802616241
+    },
+    {
+      "organism": "beril_Dino",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3073,
+      "n_essential": 1027,
+      "auprc": 0.7920813994748989,
+      "kappa_vs_labels": 0.5533882255007369
+    },
+    {
+      "organism": "beril_DvH",
+      "predictor": "family_frac (>=0.5)",
+      "n": 2513,
+      "n_essential": 616,
+      "auprc": 0.7554918260572151,
+      "kappa_vs_labels": 0.6374272805126538
+    },
+    {
+      "organism": "beril_Dyella79",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3011,
+      "n_essential": 707,
+      "auprc": 0.7969311577621495,
+      "kappa_vs_labels": 0.6254423941184176
+    },
+    {
+      "organism": "beril_HerbieS",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3819,
+      "n_essential": 1198,
+      "auprc": 0.8342564415590812,
+      "kappa_vs_labels": 0.656418360556309
+    },
+    {
+      "organism": "beril_Kang",
+      "predictor": "family_frac (>=0.5)",
+      "n": 1915,
+      "n_essential": 497,
+      "auprc": 0.8473212378636449,
+      "kappa_vs_labels": 0.642473745624271
+    },
+    {
+      "organism": "beril_Keio",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3556,
+      "n_essential": 588,
+      "auprc": 0.7585530918513482,
+      "kappa_vs_labels": 0.626815398383494
+    },
+    {
+      "organism": "beril_Korea",
+      "predictor": "family_frac (>=0.5)",
+      "n": 2817,
+      "n_essential": 756,
+      "auprc": 0.8419696780401557,
+      "kappa_vs_labels": 0.6716845004798935
+    },
+    {
+      "organism": "beril_Koxy",
+      "predictor": "family_frac (>=0.5)",
+      "n": 4463,
+      "n_essential": 1223,
+      "auprc": 0.7360490453861089,
+      "kappa_vs_labels": 0.5407893831236679
+    },
+    {
+      "organism": "beril_MR1",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3342,
+      "n_essential": 639,
+      "auprc": 0.7391360217914894,
+      "kappa_vs_labels": 0.613741255057482
+    },
+    {
+      "organism": "beril_Magneto",
+      "predictor": "family_frac (>=0.5)",
+      "n": 2535,
+      "n_essential": 1144,
+      "auprc": 0.8320626018321744,
+      "kappa_vs_labels": 0.5071595212334323
+    },
+    {
+      "organism": "beril_Marino",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3073,
+      "n_essential": 811,
+      "auprc": 0.8473120383059519,
+      "kappa_vs_labels": 0.6955604454484695
+    },
+    {
+      "organism": "beril_Methanococcus_JJ",
+      "predictor": "family_frac (>=0.5)",
+      "n": 666,
+      "n_essential": 167,
+      "auprc": 0.42169092417721527,
+      "kappa_vs_labels": 0.2542305895878993
+    },
+    {
+      "organism": "beril_Methanococcus_S2",
+      "predictor": "family_frac (>=0.5)",
+      "n": 693,
+      "n_essential": 236,
+      "auprc": 0.5841157744286788,
+      "kappa_vs_labels": 0.35483903259389765
+    },
+    {
+      "organism": "beril_Miya",
+      "predictor": "family_frac (>=0.5)",
+      "n": 2532,
+      "n_essential": 676,
+      "auprc": 0.760348026033914,
+      "kappa_vs_labels": 0.5997286206419572
+    },
+    {
+      "organism": "beril_PS",
+      "predictor": "family_frac (>=0.5)",
+      "n": 2618,
+      "n_essential": 987,
+      "auprc": 0.8103950433154296,
+      "kappa_vs_labels": 0.5556550706226953
+    },
+    {
+      "organism": "beril_PV4",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3448,
+      "n_essential": 1022,
+      "auprc": 0.7817489584670155,
+      "kappa_vs_labels": 0.559961918690645
+    },
+    {
+      "organism": "beril_Pedo557",
+      "predictor": "family_frac (>=0.5)",
+      "n": 2869,
+      "n_essential": 608,
+      "auprc": 0.8451608582409015,
+      "kappa_vs_labels": 0.7104340629394628
+    },
+    {
+      "organism": "beril_Phaeo",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3017,
+      "n_essential": 960,
+      "auprc": 0.8039441875414775,
+      "kappa_vs_labels": 0.5824951031255575
+    },
+    {
+      "organism": "beril_Ponti",
+      "predictor": "family_frac (>=0.5)",
+      "n": 2657,
+      "n_essential": 631,
+      "auprc": 0.8301277508961177,
+      "kappa_vs_labels": 0.6917463519622646
+    },
+    {
+      "organism": "beril_Putida",
+      "predictor": "family_frac (>=0.5)",
+      "n": 4184,
+      "n_essential": 861,
+      "auprc": 0.7840368791592308,
+      "kappa_vs_labels": 0.6177691980539599
+    },
+    {
+      "organism": "beril_RalstoniaBSBF1503",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3588,
+      "n_essential": 1129,
+      "auprc": 0.8040530518170828,
+      "kappa_vs_labels": 0.5639309290547689
+    },
+    {
+      "organism": "beril_RalstoniaGMI1000",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3714,
+      "n_essential": 1240,
+      "auprc": 0.7994784135258656,
+      "kappa_vs_labels": 0.5471339290739075
+    },
+    {
+      "organism": "beril_RalstoniaPSI07",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3648,
+      "n_essential": 934,
+      "auprc": 0.7854699695154348,
+      "kappa_vs_labels": 0.5776236182616132
+    },
+    {
+      "organism": "beril_RalstoniaUW163",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3574,
+      "n_essential": 1209,
+      "auprc": 0.8114809731663786,
+      "kappa_vs_labels": 0.5680835869974938
+    },
+    {
+      "organism": "beril_SB2B",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3249,
+      "n_essential": 674,
+      "auprc": 0.7612892484332126,
+      "kappa_vs_labels": 0.653919614896866
+    },
+    {
+      "organism": "beril_Smeli",
+      "predictor": "family_frac (>=0.5)",
+      "n": 4101,
+      "n_essential": 1171,
+      "auprc": 0.7521968324749253,
+      "kappa_vs_labels": 0.5175835166117784
+    },
+    {
+      "organism": "beril_SynE",
+      "predictor": "family_frac (>=0.5)",
+      "n": 1327,
+      "n_essential": 585,
+      "auprc": 0.7986847457334721,
+      "kappa_vs_labels": 0.4983565783383953
+    },
+    {
+      "organism": "beril_SyringaeB728a",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3924,
+      "n_essential": 971,
+      "auprc": 0.7937446050227029,
+      "kappa_vs_labels": 0.6048072570602725
+    },
+    {
+      "organism": "beril_SyringaeB728a_mexBdelta",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3924,
+      "n_essential": 1031,
+      "auprc": 0.7807136610165112,
+      "kappa_vs_labels": 0.5681735484821427
+    },
+    {
+      "organism": "beril_WCS417",
+      "predictor": "family_frac (>=0.5)",
+      "n": 4445,
+      "n_essential": 1603,
+      "auprc": 0.8129452209421408,
+      "kappa_vs_labels": 0.5080425394430359
+    },
+    {
+      "organism": "beril_acidovorax_3H11",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3563,
+      "n_essential": 1127,
+      "auprc": 0.8227661441824551,
+      "kappa_vs_labels": 0.6267617506006707
+    },
+    {
+      "organism": "beril_azobra",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3616,
+      "n_essential": 1262,
+      "auprc": 0.8034564035554389,
+      "kappa_vs_labels": 0.5137890303273669
+    },
+    {
+      "organism": "beril_psRCH2",
+      "predictor": "family_frac (>=0.5)",
+      "n": 3422,
+      "n_essential": 982,
+      "auprc": 0.8194505681491631,
+      "kappa_vs_labels": 0.6333219276761273
+    },
+    {
+      "organism": "beril_pseudo13_GW456_L13",
+      "predictor": "family_frac (>=0.5)",
+      "n": 4053,
+      "n_essential": 940,
+      "auprc": 0.8057867981336787,
+      "kappa_vs_labels": 0.6689210745711064
+    },
+    {
+      "organism": "beril_pseudo1_N1B4",
+      "predictor": "family_frac (>=0.5)",
+      "n": 4290,
+      "n_essential": 1789,
+      "auprc": 0.7942779800624147,
+      "kappa_vs_labels": 0.40723410549556804
+    },
+    {
+      "organism": "beril_pseudo3_N2E3",
+      "predictor": "family_frac (>=0.5)",
+      "n": 4477,
+      "n_essential": 840,
+      "auprc": 0.8083864272092386,
+      "kappa_vs_labels": 0.6810765080751973
+    },
+    {
+      "organism": "beril_pseudo5_N2C3_1",
+      "predictor": "family_frac (>=0.5)",
+      "n": 4802,
+      "n_essential": 1233,
+      "auprc": 0.7657919773944449,
+      "kappa_vs_labels": 0.5871806855982593
+    },
+    {
+      "organism": "beril_pseudo6_N2E2",
+      "predictor": "family_frac (>=0.5)",
+      "n": 4593,
+      "n_essential": 1069,
+      "auprc": 0.7752931583817506,
+      "kappa_vs_labels": 0.5768660610231033
+    }
+  ],
+  "reading": "Any predictor's binary kappa vs a single Tn-seq screen above the DEG floor's 90th percentile is implausible. Any continuous Spearman vs a held-out Tn-seq experiment above the feba continuous floor's 90th percentile is implausible. PALMYRA's 0.65 Spearman claim is BELOW the feba continuous self-Spearman ceiling (typically 0.85-0.95) -- the reproducibility framing of 'better than Tn-seq' is therefore the wrong axis. The right axis is COVERAGE: predicting (organism x condition) cells Tn-seq has not run."
+}
