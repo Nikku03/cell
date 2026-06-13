@@ -209,7 +209,7 @@ def run_real(args):
             load_clade_map, ff_col_for_org, load_shards, compute_additive_effects,
             featurize, fit_xgb, merge_func, add_ogcpd_rate, add_kernel_rate,
             load_func_features, load_kernel, fit_additive,
-            NUMERIC_GENE_COLS, NUMERIC_COND_COLS, CLADE_MAP,
+            NUMERIC_GENE_COLS, NUMERIC_COND_COLS,
         )
     except ImportError as e:
         print(f"ERROR importing bake-off helpers: {e}", file=sys.stderr); return 1
