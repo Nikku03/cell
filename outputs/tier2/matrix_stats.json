@@ -1,0 +1,13 @@
+{
+  "n_organisms_labeled": 48,
+  "n_ogs_distinct": 17222,
+  "n_total_ess_calls": 132957,
+  "n_ess_1": 31976,
+  "n_ess_0": 100981,
+  "matrix_density_pct": 16.084,
+  "n_clades": 34,
+  "n_sl_pairs_named_gene": 0,
+  "n_sl_pairs_operon_adjacent": 13693,
+  "ogs_in_ge5_orgs": 6218,
+  "ogs_in_ge10_orgs": 3496
+}

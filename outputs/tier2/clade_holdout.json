@@ -1,0 +1,129 @@
+{
+  "acidovorax": [
+    "beril_acidovorax_3H11"
+  ],
+  "aeromonas": [
+    "aeromonas"
+  ],
+  "archaea_methanococcus": [
+    "beril_Methanococcus_JJ",
+    "beril_Methanococcus_S2"
+  ],
+  "azotobacter": [
+    "beril_azobra"
+  ],
+  "bacteroides": [
+    "beril_Btheta"
+  ],
+  "beril_PS_unknown": [
+    "beril_PS"
+  ],
+  "beril_cola_unknown": [
+    "beril_Cola"
+  ],
+  "beril_korea_unknown": [
+    "beril_Korea"
+  ],
+  "beril_miya_unknown": [
+    "beril_Miya"
+  ],
+  "beril_ponti_unknown": [
+    "beril_Ponti"
+  ],
+  "burkholderia": [
+    "beril_BFirm",
+    "beril_Burk376"
+  ],
+  "caulobacter": [
+    "beril_Caulo"
+  ],
+  "desulfovibrio": [
+    "beril_DvH"
+  ],
+  "dickeya": [
+    "beril_Dda3937",
+    "beril_Ddia6719",
+    "beril_DdiaME23"
+  ],
+  "dinoroseobacter": [
+    "beril_Dino"
+  ],
+  "dyella": [
+    "beril_Dyella79"
+  ],
+  "escherichia": [
+    "beril_Keio",
+    "ecoli_BW25113_tradis"
+  ],
+  "herbaspirillum": [
+    "beril_HerbieS"
+  ],
+  "kangiella": [
+    "beril_Kang"
+  ],
+  "klebsiella": [
+    "beril_Koxy"
+  ],
+  "magnetospirillum": [
+    "beril_Magneto"
+  ],
+  "marinobacter": [
+    "beril_Marino"
+  ],
+  "mycobacterium": [
+    "mtub"
+  ],
+  "mycoplasmoid_minimal": [
+    "mgen",
+    "mpne",
+    "syn3a"
+  ],
+  "pedobacter": [
+    "beril_Pedo557"
+  ],
+  "phaeobacter": [
+    "beril_Phaeo"
+  ],
+  "pseudomonas": [
+    "beril_Putida",
+    "beril_SyringaeB728a",
+    "beril_SyringaeB728a_mexBdelta",
+    "beril_WCS417",
+    "beril_psRCH2",
+    "beril_pseudo13_GW456_L13",
+    "beril_pseudo1_N1B4",
+    "beril_pseudo3_N2E3",
+    "beril_pseudo5_N2C3_1",
+    "beril_pseudo6_N2E2"
+  ],
+  "pseudovibrio": [
+    "beril_PV4"
+  ],
+  "ralstonia": [
+    "beril_Cup4G11",
+    "beril_RalstoniaBSBF1503",
+    "beril_RalstoniaGMI1000",
+    "beril_RalstoniaPSI07",
+    "beril_RalstoniaUW163",
+    "reut",
+    "reut_full"
+  ],
+  "shewanella": [
+    "beril_ANA3",
+    "beril_MR1",
+    "beril_SB2B"
+  ],
+  "sinorhizobium": [
+    "beril_Smeli"
+  ],
+  "staphylococcus": [
+    "saur_NCTC8325_biotradis"
+  ],
+  "streptococcus": [
+    "spne19F",
+    "spneT4"
+  ],
+  "synechococcus": [
+    "beril_SynE"
+  ]
+}
