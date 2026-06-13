@@ -215,8 +215,9 @@ def run_real(args):
     print(f"held-out clades (most positives): {held_clades}")
 
     class Coupling(nn.Module):
-        def __init__(self, n_og, d):
+        def __init__(self, n_og, d, use_coupling=True):
             super().__init__()
+            self.use_coupling = use_coupling
             self.E = nn.Embedding(n_og, d)
             nn.init.normal_(self.E.weight, std=0.1)
             self.C = nn.Parameter(torch.empty(d, d))
@@ -227,6 +228,8 @@ def run_real(args):
             return torch.sparse.mm(pres, self.E.weight)      # (n_org x d)
 
         def logits(self, org_idx, og_idx, S):
+            if not self.use_coupling:
+                return self.bias[og_idx]                      # bias-only ablation
             e_t = self.E(og_idx)                              # (B,d)
             s = S[org_idx]                                    # (B,d)
             n = n_o[org_idx].clamp(min=2.0)                   # (B,)
@@ -234,7 +237,7 @@ def run_real(args):
             coupling = (e_t @ self.C * context).sum(-1)       # (B,)
             return self.bias[og_idx] + coupling
 
-    def train_eval(held_clade, permute):
+    def train_eval(held_clade, permute, use_coupling=True):
         train_ess, test_ess = apply_clade_holdout(ess, clade_map, held_clade)
         if permute:
             train_ess = permute_within_organism(train_ess, seed=SEED)
@@ -247,7 +250,7 @@ def run_real(args):
         tr_og_t = torch.tensor(tr_og, device=dev)
         tr_y_t = torch.tensor(tr_y, device=dev)
 
-        model = Coupling(idx["n_og"], args.d).to(dev)
+        model = Coupling(idx["n_og"], args.d, use_coupling=use_coupling).to(dev)
         opt = torch.optim.Adam(model.parameters(), lr=args.lr,
                                weight_decay=args.wd)
         bce = nn.BCEWithLogitsLoss()
@@ -258,12 +261,12 @@ def run_real(args):
             tot = 0.0
             for b0 in range(0, N, args.batch):
                 bi = perm[b0:b0 + args.batch]
-                S = model.org_sums()                 # grad flows to context
+                S = model.org_sums() if use_coupling else None  # grad to context
                 logit = model.logits(tr_org_t[bi], tr_og_t[bi], S)
                 loss = bce(logit, tr_y_t[bi])
                 opt.zero_grad(); loss.backward(); opt.step()
-                tot += float(loss) * len(bi)
-            if not permute and (ep + 1) % 10 == 0:
+                tot += loss.item() * len(bi)
+            if not permute and use_coupling and (ep + 1) % 10 == 0:
                 print(f"    epoch {ep+1:>2}/{args.epochs}  loss={tot/N:.4f}")
 
         model.eval()
@@ -303,10 +306,24 @@ def run_real(args):
             print(f"  [gate2] coupling lift operon vs random: "
                   f"{g2['lift_ratio']:.2f}x  "
                   f"(frac>p95={g2['frac_operon_above_rand_p95']:.2f})")
+        ablation = None
+        if args.ablation:
+            print(f"  [ablation] training bias-only (no coupling head) ...")
+            bo = train_eval(clade, permute=False, use_coupling=False)
+            ablation = {"model_full": bo["model_full"],
+                        "model_hard": bo["model_hard"]}
+            adds_full = (real["model_full"]["auprc"] or 0) - \
+                        (bo["model_full"]["auprc"] or 0)
+            adds_hard = (real["model_hard"]["auprc"] or 0) - \
+                        (bo["model_hard"]["auprc"] or 0)
+            print(f"  [ablation] bias-only full AUPRC="
+                  f"{fmt(bo['model_full']['auprc'])} "
+                  f"hard={fmt(bo['model_hard']['auprc'])}  | coupling head adds: "
+                  f"full={adds_full:+.3f} hard={adds_hard:+.3f}")
         results[clade] = {
             "model_full": real["model_full"], "model_hard": real["model_hard"],
             "ff_full": real["ff_full"], "ff_hard": real["ff_hard"],
-            "perm_model_full": perm["model_full"],
+            "perm_model_full": perm["model_full"], "ablation_bias_only": ablation,
             "gate2": g2, "secs": round(time.time() - t0, 1)}
 
     verdict = decide(results)
@@ -480,6 +497,9 @@ def main() -> int:
     ap.add_argument("--wd", type=float, default=DEFAULT_WD)
     ap.add_argument("--batch", type=int, default=DEFAULT_BATCH)
     ap.add_argument("--n_clades", type=int, default=DEFAULT_NCLADES)
+    ap.add_argument("--ablation", action="store_true",
+                    help="also train bias-only model to isolate coupling-head "
+                         "contribution (the decisive null-result confirmation)")
     args = ap.parse_args()
     if args.real:
         return run_real(args)

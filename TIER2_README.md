@@ -31,8 +31,9 @@ residual specifically, ~20-30% probability of working (the review's number).
 |---|---|---|---|
 | **A** | Build the matrices + leak-free schema + permutation control + coupling-recovery target | sandbox | **DONE, 7/7 tests PASS** |
 | **B** | Infrastructure for the model + the two kill-gates (label permutation, coupling recovery) | sandbox | **DONE, 5/5 tests PASS** |
-| **C** | Train minimal coupling model; run both kill-gates; gate decision | Colab+GPU | next |
-| **D** | If gates pass: scale. If not: clean kill, document as null result | Colab+GPU | gated by C |
+| **C** | Train minimal coupling model; run all three kill-gates; gate decision | Colab+GPU (L4) | **DONE — clean kill** |
+| **C0** | ESM-2 frozen-encoder probe vs conservation (bottleneck: features or data scale?) | Colab+GPU | built; data-limited (8/48 orgs) |
+| **D** | If gates pass: scale. If not: clean kill, document as null result | Colab+GPU | **null result documented** |
 
 ---
 
@@ -91,7 +92,56 @@ absent from training; test set fully contained in held-out clade. **PASS**.
 
 ---
 
-## Stage C plan (next; Colab + GPU)
+## Stage C RESULT — clean kill (run on L4, 22 s)
+
+`scripts/tier2_stage_c_train.py --real` trained the bilinear coupling model
+(`logit(o,t) = b[t] + E[t]ᵀ C · mean-of-other-present-OG-embeddings`) over the
+three biggest held-out clades (pseudomonas, ralstonia, burkholderia), each with
+all three gates. Verdict:
+
+| gate | result | threshold | pass |
+|---|---|---|:--:|
+| **GATE 1** label-permutation collapse | permuted/real AUPRC ratio **0.28** | < 0.70 | ✅ |
+| **PERFORMANCE** (hard slice) | model AUPRC **−10.4%** vs family_frac | ≥ +10% | ❌ |
+| **GATE 2** operon coupling recovery | learned C lift **0.00×** | ≥ 2.0× | ❌ |
+
+**Reading:** the architecture is *honest* — it cleared Gate 1, the hardest
+hurdle and the 25-year trap: it is **not** fitting phylogeny (permuting labels
+destroys the signal). But the coupling head adds nothing over the marginal:
+held-out AUPRC tracks family_frac slightly *below* it (≈0.72 vs 0.78 full;
+0.17–0.35 vs 0.20–0.37 on the hard slice), and the learned `C` shows no
+preference for operon-adjacent pairs. Classic signature of **the per-OG bias
+term doing all the work while the coupling head learns noise** — exactly what's
+expected when 48 organisms don't supply enough cross-organism variation to
+train a pairwise coupling matrix. The signal the architecture is built to find
+("if you have X you don't need Y") lives in the **pangenome**, not in 48 orgs.
+
+A `--ablation` flag trains a bias-only model to confirm the coupling head's
+contribution is ≤ 0 (the decisive null confirmation).
+
+**Decision:** do NOT scale *this exact architecture* (scratch-learned
+embeddings + bilinear C) to the pangenome — it would just give bigger
+marginals. Two levers remain, in order: **(C0)** richer per-gene features
+(frozen ESM-2) to see if the bottleneck is features vs. data scale, then
+**(Tier 3)** pangenome-scale pretraining.
+
+## Stage C0 — ESM-2 vs conservation (`scripts/tier2_c0_esm_features.py`)
+
+Isolates *features vs. data scale*: replace the scratch-learned per-OG
+embedding with frozen **ESM-2** protein-LM embeddings and ask whether a linear
+probe beats family_frac on the hard slice. **Smoke-tested; partially blocked**
+by the disjoint-data wall — only **8 of 48 labeled orgs** have a usable
+`locus_tag`→RefSeq-sequence join (the rest use a different locus_tag namespace
+than the cached genomes). Runnable as a *suggestive* small-scale test
+(held-out Ralstonia / Herbaspirillum / Magnetospirillum, ~27k genes); a
+definitive run needs the **locus_tag bridge** — the same unlock the κ-equivalence
+product test and DEG validation need. Asymmetric evidence: an ESM *win* at this
+small scale is meaningful (small data usually hurts the probe); a *loss* is
+inconclusive.
+
+---
+
+## Stage C plan (the architecture that was tested)
 
 **Minimal architecture (target <200K params):**
 1. Per-OG learned embedding (d=64).
