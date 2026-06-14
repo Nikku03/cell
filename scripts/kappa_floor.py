@@ -183,10 +183,10 @@ def fetch_feba(target: Path):
         ext_rank = 0 if n.endswith((".db", ".sqlite")) else 1  # prefer raw db
         return (ext_rank, -f.get("size", 0))
 
-    # Try the two Fitness Browser releases. 13172087 (Nov 2020) historically
-    # carries the monolithic feba.db; 25236931 (Feb 2024) is mostly per-org
-    # flat files (db.StrainFitness.*.gz) + code + aaseqs.
-    candidate_articles = ["13172087", "25236931"]
+    # 25236931 (Feb 2024) carries the monolithic feba.db.gz (~2.3 GB, verified
+    # in the manifest); 13172087 (Nov 2020) only has db.tar.gz/strainfitness.tar.gz
+    # (NOT a single sqlite). Try the one that actually has feba.db.gz first.
+    candidate_articles = ["25236931", "13172087"]
     chosen = None
     for aid in candidate_articles:
         try:
@@ -207,19 +207,17 @@ def fetch_feba(target: Path):
     if chosen is None:
         raise RuntimeError(
             f"No feba.db / .sqlite found in figshare articles "
-            f"{candidate_articles}. The release likely distributes per-organism "
-            f"flat files only (db.StrainFitness.<org>.gz). Manually download the "
-            f"SQLite from https://fit.genomics.lbl.gov (Downloads page) to "
-            f"{target} and re-run with --no_download. (We can also switch to "
-            f"per-org parsing now that the manifest is known.)")
+            f"{candidate_articles}. Manually download feba.db.gz from "
+            f"https://figshare.com/articles/dataset/25236931 to {target}.gz, "
+            f"gunzip it, and re-run with --no_download.")
 
     fname = chosen["name"]
     download_url = (chosen.get("download_url") or
                     f"https://ndownloader.figshare.com/files/{chosen['id']}")
-    print(f"  downloading: {fname} ({chosen.get('size', 0)/1e6:.1f} MB) "
-          f"from {download_url}")
+    expected = int(chosen.get("size", 0))
+    print(f"  downloading: {fname} ({expected/1e6:.1f} MB) from {download_url}")
     tmp = target.with_suffix(".dl")
-    urllib.request.urlretrieve(download_url, tmp)
+    _stream_download(download_url, tmp, expected)
     sz = tmp.stat().st_size
     print(f"  downloaded {sz/1e9:.2f} GB to {tmp.name}")
     if sz < 1_000_000:
@@ -230,6 +228,60 @@ def fetch_feba(target: Path):
     _extract_if_needed(tmp, target, fname)
     _verify_sqlite(target)
     print(f"  ok: {target} ({target.stat().st_size/1e9:.2f} GB, verified SQLite)")
+
+
+def _stream_download(url, dest: Path, expected_bytes=0, retries=5, chunk=1 << 20):
+    """Robust download: streams in 1 MB chunks with progress, a per-read
+    socket timeout (so it FAILS instead of hanging forever), and HTTP-Range
+    resume across retries. urlretrieve has none of these -- it was the cause
+    of the 35-minute silent hang."""
+    import urllib.request, time
+    dest = Path(dest)
+    for attempt in range(1, retries + 1):
+        have = dest.stat().st_size if dest.exists() else 0
+        if expected_bytes and have >= expected_bytes:
+            return
+        req = urllib.request.Request(url)
+        mode = "wb"
+        if have > 0:
+            req.add_header("Range", f"bytes={have}-")
+            mode = "ab"
+            print(f"  [resume] already have {have/1e6:.1f} MB, "
+                  f"requesting rest (attempt {attempt})")
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r, \
+                    open(dest, mode) as f:
+                # if server ignored Range (200 not 206), restart clean
+                if have > 0 and r.status == 200:
+                    f.close(); dest.unlink(); have = 0
+                    f = open(dest, "wb")
+                done = have; t0 = time.time(); last = t0
+                while True:
+                    buf = r.read(chunk)
+                    if not buf:
+                        break
+                    f.write(buf); done += len(buf)
+                    now = time.time()
+                    if now - last > 10:  # progress every ~10s
+                        rate = (done - have) / max(now - t0, 1e-6) / 1e6
+                        pct = (100 * done / expected_bytes) if expected_bytes else 0
+                        print(f"    {done/1e6:8.1f} MB"
+                              f"{f' / {expected_bytes/1e6:.0f} MB ({pct:.0f}%)' if expected_bytes else ''}"
+                              f"  {rate:.1f} MB/s")
+                        last = now
+            # success
+            if not expected_bytes or dest.stat().st_size >= expected_bytes:
+                return
+            print(f"  incomplete ({dest.stat().st_size/1e6:.1f}/"
+                  f"{expected_bytes/1e6:.1f} MB); retrying")
+        except Exception as e:
+            wait = min(2 ** attempt, 30)
+            print(f"  download error (attempt {attempt}/{retries}): {e}; "
+                  f"retry in {wait}s (resuming from {dest.stat().st_size/1e6:.1f} MB)"
+                  if dest.exists() else
+                  f"  download error (attempt {attempt}/{retries}): {e}; retry in {wait}s")
+            time.sleep(wait)
+    raise RuntimeError(f"download failed after {retries} attempts: {url}")
 
 
 def _list_tables(db_path: Path):
@@ -272,85 +324,85 @@ def _read_exp(con, exp_table):
     return df
 
 
-def feba_continuous_floor(db_path: Path, min_genes=200, min_pairs_per=2):
-    """For each (org, condition-cluster) with >=2 experiments: pairwise
-    Spearman of fitness across genes. The condition cluster is keyed by
-    (media, aerobic, condition_1) -- enough to call two experiments "the
-    same condition" while keeping replicates from different libraries.
+def _feba_floor(db_path: Path, mode, min_genes=200, min_pairs_per=2):
+    """Cross-experiment reproducibility floor within (org, condition-cluster).
+    mode='continuous' -> Spearman of fit; mode='binary' -> Cohen's kappa of
+    (fit<-2 AND |t|>=4) calls. Cluster key = (media, aerobic, condition_1).
+
+    Processes ONE ORGANISM AT A TIME (queries only that org's GeneFitness)
+    so the ~7 GB uncompressed feba.db never has to live in RAM at once.
     """
     import pandas as pd
     exp_table = _pick_table(db_path, ["Experiment", "Experiments", "Exp"],
-                            "continuous floor (Experiment)")
+                            f"{mode} floor (Experiment)")
     fit_table = _pick_table(db_path, ["GeneFitness", "Fitness", "GeneFit"],
-                            "continuous floor (GeneFitness)")
+                            f"{mode} floor (GeneFitness)")
     con = sqlite3.connect(str(db_path))
-    print(f"  loading {exp_table} + {fit_table} ...")
     exp = _read_exp(con, exp_table)
-    fit = pd.read_sql(f"SELECT orgId, locusId, expName, fit, t "
-                      f"FROM {fit_table}", con)
-    con.close()
-    print(f"  experiments: {len(exp):,}  fitness rows: {len(fit):,}  "
-          f"orgs: {exp.orgId.nunique()}")
-
-    # cluster key: (org, media, aerobic, condition_1). Treat NaN as "—".
     exp["cluster"] = exp.apply(
         lambda r: f"{r.media or '-'}|{r.aerobic or '-'}|{r.condition_1 or '-'}",
         axis=1)
+    orgs = sorted(exp.orgId.unique())
+    print(f"  {mode} floor: {len(exp):,} experiments over {len(orgs)} orgs "
+          f"(processing per-organism to bound memory)")
     rows = []
-    for (org, cluster), g in exp.groupby(["orgId", "cluster"]):
-        if len(g) < min_pairs_per: continue
-        exps = list(g.expName.unique())
-        # wide pivot of fit per gene per exp
-        sub = fit[(fit.orgId == org) & (fit.expName.isin(exps))]
-        if sub.empty: continue
-        w = sub.pivot_table(index="locusId", columns="expName",
-                              values="fit", aggfunc="first")
-        if w.shape[0] < min_genes or w.shape[1] < 2: continue
-        # pairwise Spearman over experiments in this cluster
-        for e1, e2 in combinations(w.columns, 2):
-            rho, n = spearman(w[e1].values, w[e2].values)
-            if rho is None: continue
-            rows.append({"orgId": org, "cluster": cluster,
-                         "exp_a": e1, "exp_b": e2,
-                         "spearman": rho, "n_genes": n})
+    for oi, org in enumerate(orgs, 1):
+        eg = exp[exp.orgId == org]
+        # only clusters with >=2 experiments are usable
+        usable = [c for c, g in eg.groupby("cluster")
+                  if g.expName.nunique() >= min_pairs_per]
+        if not usable:
+            continue
+        sub = pd.read_sql(
+            f"SELECT locusId, expName, fit, t FROM {fit_table} "
+            f"WHERE orgId = ?", con, params=(org,))
+        if sub.empty:
+            continue
+        if mode == "binary":
+            sub["val"] = ((sub.fit < ESS_FIT_T) &
+                          (sub.t.abs() >= ESS_T_T)).astype(int)
+        else:
+            sub["val"] = sub.fit
+        for cluster, g in eg.groupby("cluster"):
+            if cluster not in usable:
+                continue
+            exps = list(g.expName.unique())
+            ss = sub[sub.expName.isin(exps)]
+            if ss.empty:
+                continue
+            w = ss.pivot_table(index="locusId", columns="expName",
+                               values="val", aggfunc="first")
+            if mode == "binary":
+                w = w.dropna(how="any")
+            if w.shape[0] < min_genes or w.shape[1] < 2:
+                continue
+            for e1, e2 in combinations(w.columns, 2):
+                if mode == "binary":
+                    stat, n = cohens_kappa(w[e1].values, w[e2].values)
+                    key = "kappa"
+                else:
+                    stat, n = spearman(w[e1].values, w[e2].values)
+                    key = "spearman"
+                if stat is None:
+                    continue
+                rows.append({"orgId": org, "cluster": cluster,
+                             "exp_a": e1, "exp_b": e2, key: stat,
+                             "n_genes": n})
+        if oi % 10 == 0:
+            print(f"    ...{oi}/{len(orgs)} orgs, {len(rows):,} pairs so far")
+    con.close()
     df = pd.DataFrame(rows)
-    print(f"  computed {len(df):,} cross-experiment pairs over "
+    print(f"  {mode} floor: {len(df):,} cross-experiment pairs over "
           f"{df.orgId.nunique() if len(df) else 0} orgs")
     return df
 
 
+def feba_continuous_floor(db_path: Path, min_genes=200, min_pairs_per=2):
+    return _feba_floor(db_path, "continuous", min_genes, min_pairs_per)
+
+
 def feba_binary_floor(db_path: Path, min_genes=200, min_pairs_per=2):
-    """Same grouping; binary kappa on |t|>=4 AND fit<-2 calls."""
-    import pandas as pd
-    exp_table = _pick_table(db_path, ["Experiment", "Experiments", "Exp"],
-                            "binary floor (Experiment)")
-    fit_table = _pick_table(db_path, ["GeneFitness", "Fitness", "GeneFit"],
-                            "binary floor (GeneFitness)")
-    con = sqlite3.connect(str(db_path))
-    exp = _read_exp(con, exp_table)
-    fit = pd.read_sql(f"SELECT orgId, locusId, expName, fit, t "
-                      f"FROM {fit_table}", con)
-    con.close()
-    fit["ess"] = ((fit.fit < ESS_FIT_T) & (fit.t.abs() >= ESS_T_T)).astype(int)
-    exp["cluster"] = exp.apply(
-        lambda r: f"{r.media or '-'}|{r.aerobic or '-'}|{r.condition_1 or '-'}",
-        axis=1)
-    rows = []
-    for (org, cluster), g in exp.groupby(["orgId", "cluster"]):
-        if len(g) < min_pairs_per: continue
-        exps = list(g.expName.unique())
-        sub = fit[(fit.orgId == org) & (fit.expName.isin(exps))]
-        if sub.empty: continue
-        w = sub.pivot_table(index="locusId", columns="expName",
-                              values="ess", aggfunc="first").dropna(how="any")
-        if w.shape[0] < min_genes or w.shape[1] < 2: continue
-        for e1, e2 in combinations(w.columns, 2):
-            k, n = cohens_kappa(w[e1].values, w[e2].values)
-            if k is None: continue
-            rows.append({"orgId": org, "cluster": cluster,
-                         "exp_a": e1, "exp_b": e2, "kappa": k,
-                         "n_genes": n})
-    return pd.DataFrame(rows)
+    return _feba_floor(db_path, "binary", min_genes, min_pairs_per)
 
 
 # ----------------------------------------------------------------------------
