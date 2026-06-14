@@ -92,12 +92,37 @@ def _encode_condition(train, test):
     return train, test
 
 
+_XGB_DEVICE = None  # cached: "cuda" if a usable GPU is present, else "cpu"
+
+
+def _xgb_device():
+    """Detect once whether xgboost can use a GPU. GPU hist is numerically
+    near-identical to CPU hist (same algorithm, different float reduction
+    order) -- fine for a pass/fail kill-gate, and ~10x faster on the
+    654-feature ESM model."""
+    global _XGB_DEVICE
+    if _XGB_DEVICE is not None:
+        return _XGB_DEVICE
+    _XGB_DEVICE = "cpu"
+    try:
+        import xgboost as xgb, numpy as np
+        Xt = np.random.rand(64, 4).astype("float32")
+        yt = np.random.rand(64).astype("float32")
+        xgb.XGBRegressor(tree_method="hist", device="cuda",
+                         n_estimators=2).fit(Xt, yt)
+        _XGB_DEVICE = "cuda"
+    except Exception as e:
+        print(f"  [xgb] GPU not usable ({type(e).__name__}); using CPU")
+    return _XGB_DEVICE
+
+
 def _fit_predict(Xtr, ytr, Xte, fast=True):
     import numpy as np
     try:
         import xgboost as xgb
         m = xgb.XGBRegressor(
-            tree_method="hist", n_estimators=300 if not fast else 150,
+            tree_method="hist", device=_xgb_device(),
+            n_estimators=300 if not fast else 150,
             max_depth=7, learning_rate=0.1, subsample=0.8,
             colsample_bytree=0.8, n_jobs=-1, max_bin=128)
         m.fit(Xtr, ytr)
@@ -231,6 +256,7 @@ def run_real(args):
                           indicator=True)._merge.eq("both").mean()
         print(f"  ESM loaded: {len(esm_df):,} genes x {len(esm_cols)} dims, "
               f"{cov:.1%} of frame genes covered  ({epath})")
+    print(f"  xgboost device: {_xgb_device()}")
     out = evaluate(df, fast=args.fast, subsample=args.subsample,
                    esm_cols=esm_cols, esm_df=esm_df)
     _report(out)
