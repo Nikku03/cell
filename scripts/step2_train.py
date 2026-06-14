@@ -149,10 +149,16 @@ def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None):
     res = {k: {"all": [], "hiconf": []} for k in models}
     res_ap = {k: [] for k in models}
     rng = np.random.RandomState(0)
+    import time as _t
+    fold_i, n_folds = 0, len(clades)
     for held in clades:
+        fold_i += 1
+        t0 = _t.time()
         tr = df[df.clade != held]
         te = df[df.clade == held]
         if len(te) < 100 or (te.consensus_essential >= 0.5).sum() < 10:
+            print(f"  [{fold_i}/{n_folds}] {held}: skip (too few test/essential)",
+                  flush=True)
             continue
         if subsample and len(tr) > subsample:
             tr = tr.sample(subsample, random_state=0)
@@ -170,14 +176,18 @@ def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None):
         thr = te.total_weight.quantile(0.15)
         hi = te.total_weight.values >= thr
         for name, cols in models.items():
-            pred = _fit_predict(tr[cols].values, tr.consensus_fitness.values,
-                                te[cols].values, fast=fast)
+            # float32: halves the 800k x 654 ESM matrix + its GPU transfer
+            Xtr = tr[cols].to_numpy(dtype="float32")
+            Xte = te[cols].to_numpy(dtype="float32")
+            pred = _fit_predict(Xtr, tr.consensus_fitness.values, Xte, fast=fast)
             # predicted fitness is low for essential -> Spearman naturally signed
             res[name]["all"].append(spearman(pred, yte))
             if hi.sum() > 30:
                 res[name]["hiconf"].append(spearman(pred[hi], yte[hi]))
             # essential AUPRC: more-negative predicted fitness = more essential
             res_ap[name].append(auprc(yte_ess, -pred))
+        print(f"  [{fold_i}/{n_folds}] {held}: {len(te):,} test, "
+              f"{int(yte_ess.sum())} ess  ({_t.time()-t0:.0f}s)", flush=True)
     out = {}
     for name in models:
         a = [x for x in res[name]["all"] if not np.isnan(x)]
