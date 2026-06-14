@@ -297,23 +297,66 @@ def stage_annotate():
                "--cpu", str(os.cpu_count() or 2),
                "--profile", str(profiles_dir), "--ko-list", str(ko_list),
                str(fasta)]
-    elif subprocess.run(["which", "hmmsearch"], capture_output=True).returncode == 0:
-        # fallback: search prokaryote profile set with hmmsearch directly
-        hal = profiles_dir / "prokaryote.hal"
-        if not hal.exists():
-            raise RuntimeError("prokaryote.hal not found; install kofam_scan")
-        cmd = ["bash", "-c",
-               f"cat {hal} | xargs -I{{}} -P {os.cpu_count() or 2} "
-               f"hmmsearch --tblout - {profiles_dir}/{{}}.hmm {fasta} "
-               f"| awk '/^[^#]/ {{print $1\"\\t\"$3}}' > {out}"]
-    else:
+        print("  running exec_annotation (~hours) ...")
+        subprocess.run(cmd, check=True)
+        print(f"  wrote {out}")
+        return
+    if subprocess.run(["which", "hmmsearch"], capture_output=True).returncode != 0:
         raise RuntimeError(
-            "Neither exec_annotation (kofam_scan) nor hmmsearch found. "
-            "Install with: pip install kofamscan OR conda install -c bioconda "
-            "kofam_scan hmmer")
-    print("  running KO annotation (this is the longest step, ~hours) ...")
-    subprocess.run(cmd, check=True)
-    print(f"  wrote {out}")
+            "Neither exec_annotation nor hmmsearch found. Install with: "
+            "apt install hmmer  OR  conda install -c bioconda kofam_scan hmmer")
+    # hmmsearch fallback: concatenate the prokaryote KO HMMs into one library
+    # and run a single multi-threaded hmmsearch over it. Far faster and far
+    # more robust than thousands of xargs invocations.
+    hal = profiles_dir / "prokaryote.hal"
+    if not hal.exists():
+        raise RuntimeError("prokaryote.hal not found; check KofamScan extract")
+    big = KOFAM / "prokaryote.hmm"
+    if not big.exists() or big.stat().st_size < 50_000_000:
+        print("  concatenating prokaryote KO HMMs into one library ...")
+        n_in, n_miss = 0, 0
+        with open(hal) as fi, open(big, "w") as fo:
+            for line in fi:
+                ko = line.strip().rstrip(".hmm")
+                if not ko: continue
+                p = profiles_dir / f"{ko}.hmm"
+                if p.exists():
+                    fo.write(p.read_text()); n_in += 1
+                else:
+                    n_miss += 1
+        print(f"  {big.name}: {big.stat().st_size/1e6:.0f} MB  "
+              f"({n_in:,} KOs in, {n_miss} missing)")
+    tbl = KOFAM / "hmmsearch.tbl"
+    if not tbl.exists() or tbl.stat().st_size < 1000:
+        print(f"  hmmsearch (KO HMMs vs {fasta.name}, "
+              f"{os.cpu_count() or 2} threads, ~1-2 h) ...")
+        cmd = ["hmmsearch", "--cpu", str(os.cpu_count() or 2),
+               "--tblout", str(tbl), "-o", "/dev/null",
+               str(big), str(fasta)]
+        subprocess.run(cmd, check=True)
+        print(f"  tblout: {tbl.stat().st_size/1e6:.1f} MB")
+    # Parse tblout, keep best KO per OG by E-value.
+    # tblout columns: target_name accession query_name accession E-value score ...
+    print("  parsing tblout -> best KO per OG ...")
+    best = {}
+    with open(tbl) as f:
+        for line in f:
+            if line.startswith("#"): continue
+            p = line.split()
+            if len(p) < 5: continue
+            og_hdr, ko = p[0], p[2]
+            try:
+                evalue = float(p[4])
+            except ValueError:
+                continue
+            cur = best.get(og_hdr)
+            if cur is None or evalue < cur[0]:
+                best[og_hdr] = (evalue, ko)
+    with open(out, "w") as fo:
+        for og_hdr, (_, ko) in best.items():
+            fo.write(f"{og_hdr}\t{ko}\n")
+    print(f"  wrote {out}: {len(best):,} OG->KO assignments "
+          f"(of {sum(1 for _ in open(fasta) if _.startswith('>')):,} OG reps)")
 
 
 # -------------------- final join -> gene_family_map -------------------------
