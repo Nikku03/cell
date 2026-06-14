@@ -55,7 +55,7 @@ PFAM_HMM_DAT_URL = ("https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/"
 FAMILY = os.environ.get("FLUX_FAMILY", "pfam").lower()
 assert FAMILY in ("pfam", "ko"), f"FLUX_FAMILY must be pfam or ko, got {FAMILY}"
 # Bump when conversion logic changes (forces parquet regen):
-CONVERT_LOGIC_VERSION = 3
+CONVERT_LOGIC_VERSION = 4
 
 
 # -------------------- streaming download (reused pattern) --------------------
@@ -182,43 +182,64 @@ def stage_convert():
     if tmp_tsv.exists():
         # don't trust a TSV from a buggy prior run
         tmp_tsv.unlink()
-    print("  R: KOTable.fst -> TSV (long form, presence only) ...")
-    # PhyloCorrelate's KOTable stores species as R ROW NAMES with all 12717
-    # columns being KOs (0/1). We must read with as.data.frame() to preserve
-    # row names, then promote them to a real species_id column before melt.
-    # Heuristic auto-detects either layout (col1 = species, or row names).
+    print("  R: FST -> TSV (long form, presence only) ...")
+    # PhyloCorrelate's matrices store rows=species, cols=families, values
+    # 0/1 (KOTable, integer) OR TRUE/FALSE (PFAMTable, logical).
+    # Species IDs live in R row names. The `fst` package's read_fst() does
+    # NOT restore row names; we use `read.fst()` from the package which
+    # returns a data.frame with row names preserved, then promote them.
     r_script = f"""
     if (!require(fst, quietly=TRUE))
         install.packages('fst', repos='https://cloud.r-project.org')
     if (!require(data.table, quietly=TRUE))
         install.packages('data.table', repos='https://cloud.r-project.org')
     library(fst); library(data.table)
-    x <- as.data.frame(read_fst('{fst}'))
+    # read.fst() restores row names; read_fst() (underscore) does not.
+    x <- read.fst('{fst}')
     cat('dim:', nrow(x), ncol(x), '\\n')
     cat('col1 name:', names(x)[1], '\\n')
     col1_head <- as.character(x[[1]][1:min(5, nrow(x))])
     cat('col1 head:', paste(col1_head, collapse=','), '\\n')
-    looks_like_acc <- any(grepl('^(GB_|RS_|GCA_|GCF_)', col1_head))
-    has_rn <- !is.null(rownames(x)) &&
-        any(grepl('^(GB_|RS_|GCA_|GCF_)', head(rownames(x), 5)))
-    if (looks_like_acc) {{
+    rn <- rownames(x)
+    cat('rowname head:', paste(head(rn, 3), collapse=','), '\\n')
+
+    has_species_col1 <- any(grepl('^(GB_|RS_|GCA_|GCF_)', col1_head))
+    has_species_rn   <- !is.null(rn) && length(rn) == nrow(x) &&
+        any(grepl('^(GB_|RS_|GCA_|GCF_)', head(rn, 5)))
+
+    if (has_species_col1) {{
         idcol <- names(x)[1]
-        cat('species_id source: col1\\n')
-    }} else if (has_rn) {{
-        x$species_id <- rownames(x)
+        cat('species_id source: col1 (', idcol, ')\\n')
+    }} else if (has_species_rn) {{
+        x$species_id <- rn
         idcol <- 'species_id'
         cat('species_id source: row names\\n')
     }} else {{
-        stop(paste('cannot locate species_id; col1 sample:',
-                   paste(col1_head, collapse=',')))
+        # last resort: assume row index is the species, take from genomes.txt
+        gen <- readLines('{ZEN / "genomes.txt"}')
+        if (length(gen) == nrow(x)) {{
+            x$species_id <- gen
+            idcol <- 'species_id'
+            cat('species_id source: genomes.txt (positional)\\n')
+        }} else {{
+            stop(paste('cannot locate species_id; col1 head:',
+                       paste(col1_head, collapse=','),
+                       'rn head:', paste(head(rn, 3), collapse=','),
+                       'genomes.txt lines:', length(gen),
+                       'matrix rows:', nrow(x)))
+        }}
     }}
+
     xdt <- as.data.table(x)
     m <- melt(xdt, id.vars=idcol, variable.name='family_id',
               value.name='copies', variable.factor=FALSE)
-    m <- m[copies > 0, .(species_id=get(idcol), family_id)]
+    # values may be integer (0/1), numeric, or logical (TRUE/FALSE).
+    m <- m[as.logical(copies) | copies > 0,
+           .(species_id=get(idcol), family_id)]
     fwrite(m, '{tmp_tsv}', sep='\\t')
     cat('wrote', nrow(m), 'occurrence rows; distinct species:',
-        length(unique(m$species_id)), '\\n')
+        length(unique(m$species_id)),
+        'distinct families:', length(unique(m$family_id)), '\\n')
     """
     r = subprocess.run(["Rscript", "-e", r_script], capture_output=True,
                        text=True, timeout=900)
