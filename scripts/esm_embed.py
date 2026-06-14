@@ -176,13 +176,24 @@ def stage_embed(args):
     nlayer = model.num_layers
     rows = []
     B = args.batch
+    # SPEED: sort by length so each batch pads to ~uniform length (a single
+    # long seq in a mixed batch otherwise forces every member through a long
+    # forward pass). Output carries its own (o,l) key, so order is irrelevant.
+    seqs = sorted(seqs, key=lambda x: len(x[2]))
+    # SPEED: bf16 autocast on GPU (L4/A100 native). ~1.5-2x, no accuracy cost
+    # for mean-pooled features. CPU stays fp32.
+    use_amp = dev == "cuda"
+    amp_dt = torch.bfloat16 if (use_amp and torch.cuda.is_bf16_supported()) \
+        else torch.float16
     t0 = time.time()
     for i in range(0, len(seqs), B):
         chunk = [(f"{o}|{l}", s) for o, l, s in seqs[i:i + B]]
         _, _, toks = bc(chunk)
         toks = toks.to(dev)
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast("cuda", dtype=amp_dt,
+                                              enabled=use_amp):
             rep = model(toks, repr_layers=[nlayer])["representations"][nlayer]
+        rep = rep.float()
         for j, (o, l, s) in enumerate(seqs[i:i + B]):
             L = min(len(s), MAX_AA)
             v = rep[j, 1:L + 1].mean(0).cpu().numpy()
