@@ -37,15 +37,25 @@ ZEN = GTDB / "phylocorrelate"
 KOFAM = GTDB / "kofam"
 
 ZENODO_BASE = "https://zenodo.org/api/records/3993422/files"
-ZENODO_FILES = ["KOTable.fst", "GTDB_bacterial.tree", "genomes.txt",
-                "ko_pathway.tsv"]
+# Add PFAMTable.fst (the Pfam family route — faster than KEGG/genome.jp):
+ZENODO_FILES = ["KOTable.fst", "PFAMTable.fst", "GTDB_bacterial.tree",
+                "genomes.txt", "ko_pathway.tsv"]
 GTDB_TAX_URL = ("https://data.gtdb.ecogenomic.org/releases/release226/226.0/"
                 "bac120_taxonomy_r226.tsv.gz")
 KOFAM_KO_LIST = "https://www.genome.jp/ftp/db/kofam/ko_list.gz"
 KOFAM_PROFILES = "https://www.genome.jp/ftp/db/kofam/profiles.tar.gz"
 EXPECTED_PROFILES_SIZE = 1_554_236_962  # verified bytes from genome.jp HEAD
-# Bump when KOTable->TSV conversion logic changes (forces parquet regen):
-CONVERT_LOGIC_VERSION = 2
+# Pfam route (default — genome.jp KEGG mirror is heavily throttled at ~0.4 MB/s,
+# EBI Pfam ships at >10 MB/s and Pfam covers more than KO for our purpose).
+PFAM_HMM_URL = ("https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/"
+                "Pfam-A.hmm.gz")
+PFAM_HMM_DAT_URL = ("https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/"
+                    "Pfam-A.hmm.dat.gz")
+# choose route at module level; cell sets FLUX_FAMILY=pfam (default) or ko
+FAMILY = os.environ.get("FLUX_FAMILY", "pfam").lower()
+assert FAMILY in ("pfam", "ko"), f"FLUX_FAMILY must be pfam or ko, got {FAMILY}"
+# Bump when conversion logic changes (forces parquet regen):
+CONVERT_LOGIC_VERSION = 3
 
 
 # -------------------- streaming download (reused pattern) --------------------
@@ -109,21 +119,35 @@ def stage_download():
         print(f"  have ko_list  ({ko_list.stat().st_size/1e6:.1f} MB)")
     else:
         print("  fetching ko_list ..."); _stream(KOFAM_KO_LIST, ko_list)
-    if profiles.exists() and profiles.stat().st_size == EXPECTED_PROFILES_SIZE:
-        print(f"  have KofamScan profiles  "
-              f"({profiles.stat().st_size/1e9:.2f} GB, full size)")
+    if FAMILY == "ko":
+        if profiles.exists() and profiles.stat().st_size == EXPECTED_PROFILES_SIZE:
+            print(f"  have KofamScan profiles  "
+                  f"({profiles.stat().st_size/1e9:.2f} GB, full size)")
+        else:
+            if profiles.exists():
+                actual = profiles.stat().st_size
+                print(f"  profiles.tar.gz INCOMPLETE: {actual/1e6:.0f} MB / "
+                      f"{EXPECTED_PROFILES_SIZE/1e6:.0f} MB; re-downloading")
+                profiles.unlink()
+            print("  fetching KofamScan profiles (1.5 GB, slow ~genome.jp) ...")
+            _stream(KOFAM_PROFILES, profiles, expected=EXPECTED_PROFILES_SIZE)
+            prof_dir = KOFAM / "profiles"
+            if prof_dir.exists():
+                import shutil; shutil.rmtree(prof_dir)
     else:
-        if profiles.exists():
-            actual = profiles.stat().st_size
-            print(f"  profiles.tar.gz INCOMPLETE: {actual/1e6:.0f} MB / "
-                  f"{EXPECTED_PROFILES_SIZE/1e6:.0f} MB; re-downloading")
-            profiles.unlink()
-        print("  fetching KofamScan profiles (1.5 GB) ...")
-        _stream(KOFAM_PROFILES, profiles, expected=EXPECTED_PROFILES_SIZE)
-        # also clear any prior extracted dir so it gets re-extracted
-        prof_dir = KOFAM / "profiles"
-        if prof_dir.exists():
-            import shutil; shutil.rmtree(prof_dir)
+        # Pfam route: download Pfam-A.hmm from EBI (fast, ~1.5 GB)
+        pfam = KOFAM / "Pfam-A.hmm.gz"
+        pfam_dat = KOFAM / "Pfam-A.hmm.dat.gz"
+        if not pfam.exists() or pfam.stat().st_size < 100_000_000:
+            print("  fetching Pfam-A.hmm.gz from EBI (~1.5 GB, fast) ...")
+            _stream(PFAM_HMM_URL, pfam)
+        else:
+            print(f"  have Pfam-A.hmm.gz  ({pfam.stat().st_size/1e9:.2f} GB)")
+        if not pfam_dat.exists() or pfam_dat.stat().st_size < 100_000:
+            print("  fetching Pfam-A.hmm.dat.gz from EBI ...")
+            _stream(PFAM_HMM_DAT_URL, pfam_dat)
+        else:
+            print(f"  have Pfam-A.hmm.dat.gz")
     print("  stage 1 done")
 
 
@@ -151,8 +175,10 @@ def stage_convert():
         print(f"  {occ_pq} predates convert v{CONVERT_LOGIC_VERSION}; "
               f"regenerating")
         occ_pq.unlink()
-    fst = ZEN / "KOTable.fst"
-    tmp_tsv = ZEN / "KOTable.tsv"
+    fst_name = "PFAMTable.fst" if FAMILY == "pfam" else "KOTable.fst"
+    fst = ZEN / fst_name
+    tmp_tsv = ZEN / fst_name.replace(".fst", ".tsv")
+    print(f"  family route: {FAMILY.upper()}  source: {fst_name}")
     if tmp_tsv.exists():
         # don't trust a TSV from a buggy prior run
         tmp_tsv.unlink()
@@ -352,7 +378,55 @@ def stage_annotate():
     fasta = GTDB / "og_reps.faa"
     if not fasta.exists():
         raise RuntimeError("run stage og_reps first")
-    # extract profiles
+    # ----- Pfam route: hmmsearch our OG reps against Pfam-A.hmm ----------
+    if FAMILY == "pfam":
+        pfam_gz = KOFAM / "Pfam-A.hmm.gz"
+        pfam_hmm = KOFAM / "Pfam-A.hmm"
+        if not pfam_hmm.exists() or pfam_hmm.stat().st_size < 1_000_000_000:
+            print("  gunzip Pfam-A.hmm.gz ...")
+            with gzip.open(pfam_gz, "rb") as fi, open(pfam_hmm, "wb") as fo:
+                while True:
+                    b = fi.read(1 << 20)
+                    if not b: break
+                    fo.write(b)
+            print(f"  Pfam-A.hmm: {pfam_hmm.stat().st_size/1e9:.2f} GB")
+        tbl = KOFAM / "pfam_hmmsearch.tbl"
+        if not tbl.exists() or tbl.stat().st_size < 1000:
+            ncpu = os.cpu_count() or 2
+            print(f"  hmmsearch Pfam-A vs {fasta.name}  ({ncpu} cpu, ~30-60 min) ...")
+            subprocess.run(["hmmsearch", "--cpu", str(ncpu),
+                            "--tblout", str(tbl), "-o", "/dev/null",
+                            str(pfam_hmm), str(fasta)], check=True)
+            print(f"  tblout: {tbl.stat().st_size/1e6:.1f} MB")
+        # Parse tblout: target = our OG header, query = Pfam name
+        # Pfam-A.hmm queries are named like "ABC_transporter" but the
+        # accession (PF00005.27) is in column 4. Use the accession.
+        print("  parsing tblout -> best Pfam per OG ...")
+        best = {}  # og_header -> (evalue, pfam_acc)
+        with open(tbl) as f:
+            for line in f:
+                if line.startswith("#"): continue
+                p = line.split()
+                if len(p) < 5: continue
+                og_hdr = p[0]
+                pfam_acc = p[3]  # accession column for queries
+                if not pfam_acc.startswith("PF"):
+                    # fall back to query name if accession is "-"
+                    pfam_acc = p[2]
+                try: evalue = float(p[4])
+                except ValueError: continue
+                cur = best.get(og_hdr)
+                if cur is None or evalue < cur[0]:
+                    best[og_hdr] = (evalue, pfam_acc)
+        # Pfam accessions in PhyloCorrelate's PFAMTable are versionless
+        # ("PF00005" not "PF00005.27") -- strip the trailing ".N".
+        with open(out, "w") as fo:
+            for og_hdr, (_, acc) in best.items():
+                fo.write(f"{og_hdr}\t{acc.split('.')[0]}\n")
+        nseq = sum(1 for L in open(fasta) if L.startswith(">"))
+        print(f"  wrote {out}: {len(best):,} of {nseq:,} OG reps got a Pfam")
+        return
+    # ----- KO route (original) -----------------------------------------
     profiles_dir = KOFAM / "profiles"
     if not profiles_dir.exists():
         print("  extracting profiles.tar.gz ...")
