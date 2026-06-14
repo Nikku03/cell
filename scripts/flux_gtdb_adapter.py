@@ -43,6 +43,9 @@ GTDB_TAX_URL = ("https://data.gtdb.ecogenomic.org/releases/release226/226.0/"
                 "bac120_taxonomy_r226.tsv.gz")
 KOFAM_KO_LIST = "https://www.genome.jp/ftp/db/kofam/ko_list.gz"
 KOFAM_PROFILES = "https://www.genome.jp/ftp/db/kofam/profiles.tar.gz"
+EXPECTED_PROFILES_SIZE = 1_554_236_962  # verified bytes from genome.jp HEAD
+# Bump when KOTable->TSV conversion logic changes (forces parquet regen):
+CONVERT_LOGIC_VERSION = 2
 
 
 # -------------------- streaming download (reused pattern) --------------------
@@ -106,12 +109,21 @@ def stage_download():
         print(f"  have ko_list  ({ko_list.stat().st_size/1e6:.1f} MB)")
     else:
         print("  fetching ko_list ..."); _stream(KOFAM_KO_LIST, ko_list)
-    if profiles.exists() and profiles.stat().st_size > 100_000_000:
+    if profiles.exists() and profiles.stat().st_size == EXPECTED_PROFILES_SIZE:
         print(f"  have KofamScan profiles  "
-              f"({profiles.stat().st_size/1e6:.0f} MB)")
+              f"({profiles.stat().st_size/1e9:.2f} GB, full size)")
     else:
-        print("  fetching KofamScan profiles (~1.5 GB) ...")
-        _stream(KOFAM_PROFILES, profiles, expected=1_554_236_962)
+        if profiles.exists():
+            actual = profiles.stat().st_size
+            print(f"  profiles.tar.gz INCOMPLETE: {actual/1e6:.0f} MB / "
+                  f"{EXPECTED_PROFILES_SIZE/1e6:.0f} MB; re-downloading")
+            profiles.unlink()
+        print("  fetching KofamScan profiles (1.5 GB) ...")
+        _stream(KOFAM_PROFILES, profiles, expected=EXPECTED_PROFILES_SIZE)
+        # also clear any prior extracted dir so it gets re-extracted
+        prof_dir = KOFAM / "profiles"
+        if prof_dir.exists():
+            import shutil; shutil.rmtree(prof_dir)
     print("  stage 1 done")
 
 
@@ -120,44 +132,86 @@ def stage_convert():
     """KOTable.fst -> family_occurrence.parquet + species id list."""
     import pandas as pd
     occ_pq = GTDB / "family_occurrence.parquet"
-    if occ_pq.exists():
-        print(f"  have {occ_pq} ({occ_pq.stat().st_size/1e6:.1f} MB)")
-        return
+    ver_stamp = GTDB / ".convert_version"
+    have_ver = (int(ver_stamp.read_text())
+                if ver_stamp.exists() and ver_stamp.read_text().strip().isdigit()
+                else 0)
+    if occ_pq.exists() and have_ver >= CONVERT_LOGIC_VERSION:
+        # quick integrity check: species_id should have many unique values
+        sample = pd.read_parquet(occ_pq, columns=["species_id"]).head(50_000)
+        nu = sample.species_id.nunique()
+        if nu > 100:
+            print(f"  have {occ_pq} ({occ_pq.stat().st_size/1e6:.1f} MB, "
+                  f"{nu:,} distinct species in 50k-row sample)")
+            return
+        print(f"  {occ_pq}: species_id has only {nu} unique values in sample "
+              f"-> corrupt; regenerating")
+        occ_pq.unlink()
+    elif occ_pq.exists():
+        print(f"  {occ_pq} predates convert v{CONVERT_LOGIC_VERSION}; "
+              f"regenerating")
+        occ_pq.unlink()
     fst = ZEN / "KOTable.fst"
     tmp_tsv = ZEN / "KOTable.tsv"
-    if not tmp_tsv.exists():
-        print("  R: KOTable.fst -> TSV (long form, presence only) ...")
-        # PhyloCorrelate stores rows=species, cols=KOs, values=copy number.
-        # We melt to long and keep only present (>0).
-        r_script = f"""
-        if (!require(fst, quietly=TRUE))
-            install.packages('fst', repos='https://cloud.r-project.org')
-        if (!require(data.table, quietly=TRUE))
-            install.packages('data.table', repos='https://cloud.r-project.org')
-        library(fst); library(data.table)
-        x <- as.data.table(read_fst('{fst}'))
-        cat('rows', nrow(x), 'cols', ncol(x), '\\n')
-        # detect species id column
+    if tmp_tsv.exists():
+        # don't trust a TSV from a buggy prior run
+        tmp_tsv.unlink()
+    print("  R: KOTable.fst -> TSV (long form, presence only) ...")
+    # PhyloCorrelate's KOTable stores species as R ROW NAMES with all 12717
+    # columns being KOs (0/1). We must read with as.data.frame() to preserve
+    # row names, then promote them to a real species_id column before melt.
+    # Heuristic auto-detects either layout (col1 = species, or row names).
+    r_script = f"""
+    if (!require(fst, quietly=TRUE))
+        install.packages('fst', repos='https://cloud.r-project.org')
+    if (!require(data.table, quietly=TRUE))
+        install.packages('data.table', repos='https://cloud.r-project.org')
+    library(fst); library(data.table)
+    x <- as.data.frame(read_fst('{fst}'))
+    cat('dim:', nrow(x), ncol(x), '\\n')
+    cat('col1 name:', names(x)[1], '\\n')
+    col1_head <- as.character(x[[1]][1:min(5, nrow(x))])
+    cat('col1 head:', paste(col1_head, collapse=','), '\\n')
+    looks_like_acc <- any(grepl('^(GB_|RS_|GCA_|GCF_)', col1_head))
+    has_rn <- !is.null(rownames(x)) &&
+        any(grepl('^(GB_|RS_|GCA_|GCF_)', head(rownames(x), 5)))
+    if (looks_like_acc) {{
         idcol <- names(x)[1]
-        m <- melt(x, id.vars=idcol, variable.name='family_id',
-                  value.name='copies', variable.factor=FALSE)
-        m <- m[copies > 0, .(species_id=get(idcol), family_id)]
-        fwrite(m, '{tmp_tsv}', sep='\\t')
-        cat('wrote', nrow(m), 'occurrence rows\\n')
-        """
-        r = subprocess.run(["Rscript", "-e", r_script], capture_output=True,
-                           text=True, timeout=900)
-        print(r.stdout[-1000:])
-        if r.returncode != 0:
-            print(r.stderr[-1000:])
-            raise RuntimeError("R conversion failed")
+        cat('species_id source: col1\\n')
+    }} else if (has_rn) {{
+        x$species_id <- rownames(x)
+        idcol <- 'species_id'
+        cat('species_id source: row names\\n')
+    }} else {{
+        stop(paste('cannot locate species_id; col1 sample:',
+                   paste(col1_head, collapse=',')))
+    }}
+    xdt <- as.data.table(x)
+    m <- melt(xdt, id.vars=idcol, variable.name='family_id',
+              value.name='copies', variable.factor=FALSE)
+    m <- m[copies > 0, .(species_id=get(idcol), family_id)]
+    fwrite(m, '{tmp_tsv}', sep='\\t')
+    cat('wrote', nrow(m), 'occurrence rows; distinct species:',
+        length(unique(m$species_id)), '\\n')
+    """
+    r = subprocess.run(["Rscript", "-e", r_script], capture_output=True,
+                       text=True, timeout=900)
+    print(r.stdout[-1500:])
+    if r.returncode != 0:
+        print("R STDERR:", r.stderr[-1500:])
+        raise RuntimeError("R conversion failed")
     print(f"  TSV -> parquet ...")
     df = pd.read_csv(tmp_tsv, sep="\t", dtype=str)
     df.to_parquet(occ_pq, index=False)
-    print(f"  {occ_pq}: {len(df):,} rows  "
-          f"{df.species_id.nunique():,} species  "
+    n_sp = df.species_id.nunique()
+    print(f"  {occ_pq}: {len(df):,} rows  {n_sp:,} species  "
           f"{df.family_id.nunique():,} KOs")
+    if n_sp < 1000:
+        raise RuntimeError(
+            f"converted parquet has only {n_sp} species (expected ~27k). "
+            f"R FST conversion is reading the wrong column.")
     tmp_tsv.unlink()
+    ver_stamp.write_text(str(CONVERT_LOGIC_VERSION))
 
 
 # -------------------- build taxonomy ----------------------------------------
