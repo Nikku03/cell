@@ -112,7 +112,7 @@ def _fit_predict(Xtr, ytr, Xte, fast=True):
         return Xte1 @ w
 
 
-def evaluate(df, fast=True, subsample=None, esm_cols=None):
+def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None):
     import numpy as np, pandas as pd
     df = add_condition_cols(df)
     clades = sorted(df.clade.dropna().unique())
@@ -131,6 +131,13 @@ def evaluate(df, fast=True, subsample=None, esm_cols=None):
             continue
         if subsample and len(tr) > subsample:
             tr = tr.sample(subsample, random_state=0)
+        # ESM merge is per-fold (after subsample) to keep peak RAM bounded by
+        # subsample x 640, not full-frame x 640. Drop rows with no embedding.
+        if esm_df is not None:
+            tr = tr.merge(esm_df, on=["organism", "locus_tag"], how="left")
+            te = te.merge(esm_df, on=["organism", "locus_tag"], how="left")
+            tr = tr.dropna(subset=[esm_cols[0]])
+            te = te.dropna(subset=[esm_cols[0]])
         tr, te = _encode_condition(tr.copy(), te.copy())
         yte = te.consensus_fitness.values
         yte_ess = (te.consensus_essential >= 0.5).astype(int).values
@@ -202,8 +209,11 @@ def run_real(args):
     print(f"  rows: {len(df):,}  orgs: {df.organism.nunique()}  "
           f"conditions: {df.condition_cluster.nunique()}  "
           f"clades: {df.clade.nunique()}")
-    # optional ESM-2 features (Stage 2)
+    # optional ESM-2 features (Stage 2). Keep ESM as a side table; merge
+    # per-fold inside evaluate() so the global frame doesn't get inflated
+    # by 640 columns x 8.3M rows (~21 GB, kills Colab RAM).
     esm_cols = None
+    esm_df = None
     if args.esm:
         epath = next((p for p in [Path(args.esm),
                                   OUT / "esm_embeddings.parquet",
@@ -211,16 +221,18 @@ def run_real(args):
                       if p.exists()), None)
         if epath is None:
             raise FileNotFoundError(f"--esm given but no embeddings at {args.esm}")
-        esm = pd.read_parquet(epath)
-        esm_cols = [c for c in esm.columns if c.startswith("e")
+        esm_df = pd.read_parquet(epath)
+        esm_cols = [c for c in esm_df.columns if c.startswith("e")
                     and c not in ("essential",)]
-        before = len(df)
-        df = df.merge(esm, on=["organism", "locus_tag"], how="left")
-        cov = df[esm_cols[0]].notna().mean()
-        print(f"  ESM merged: {len(esm_cols)} dims, "
-              f"{cov:.1%} of frame rows have an embedding  ({epath})")
+        # gene-level coverage (one embedding per (organism, locus_tag))
+        gkeys = df[["organism", "locus_tag"]].drop_duplicates()
+        cov = gkeys.merge(esm_df[["organism", "locus_tag"]],
+                          on=["organism", "locus_tag"], how="left",
+                          indicator=True)._merge.eq("both").mean()
+        print(f"  ESM loaded: {len(esm_df):,} genes x {len(esm_cols)} dims, "
+              f"{cov:.1%} of frame genes covered  ({epath})")
     out = evaluate(df, fast=args.fast, subsample=args.subsample,
-                   esm_cols=esm_cols)
+                   esm_cols=esm_cols, esm_df=esm_df)
     _report(out)
     OUT.mkdir(exist_ok=True)
     (OUT / "step2_model_results.json").write_text(json.dumps({
