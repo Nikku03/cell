@@ -137,7 +137,8 @@ def _fit_predict(Xtr, ytr, Xte, fast=True):
         return Xte1 @ w
 
 
-def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None):
+def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None,
+             cond3_cols=None, cond3_df=None):
     import numpy as np, pandas as pd
     df = add_condition_cols(df)
     clades = sorted(df.clade.dropna().unique())
@@ -146,6 +147,11 @@ def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None):
               "M_full": GENE_FEATS + COND_FEATS}
     if esm_cols:
         models["M_full_esm"] = GENE_FEATS + COND_FEATS + esm_cols
+    if cond3_cols:
+        models["M_full_cond3"] = GENE_FEATS + COND_FEATS + cond3_cols
+    if esm_cols and cond3_cols:
+        models["M_full_esm_cond3"] = (GENE_FEATS + COND_FEATS + esm_cols
+                                      + cond3_cols)
     res = {k: {"all": [], "hiconf": []} for k in models}
     res_ap = {k: [] for k in models}
     rng = np.random.RandomState(0)
@@ -169,6 +175,14 @@ def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None):
             te = te.merge(esm_df, on=["organism", "locus_tag"], how="left")
             tr = tr.dropna(subset=[esm_cols[0]])
             te = te.dropna(subset=[esm_cols[0]])
+        # condition-content merge on condition_cluster (small side table, leak-
+        # free: pure metadata, identical in train and held-out clades). Unseen
+        # clusters get 0.
+        if cond3_df is not None:
+            tr = tr.merge(cond3_df, on="condition_cluster", how="left")
+            te = te.merge(cond3_df, on="condition_cluster", how="left")
+            tr[cond3_cols] = tr[cond3_cols].fillna(0.0)
+            te[cond3_cols] = te[cond3_cols].fillna(0.0)
         tr, te = _encode_condition(tr.copy(), te.copy())
         yte = te.consensus_fitness.values
         yte_ess = (te.consensus_essential >= 0.5).astype(int).values
@@ -228,6 +242,19 @@ def _report(out):
         print(f"\n  STAGE-2 KILL-GATE: ESM must add >= +0.02 AUPRC over M_full")
         print(f"    -> ESM lift = {ap(esm)-ap(full):+.4f}  "
               f"{'PASS' if ap(esm)-ap(full) >= 0.02 else 'FAIL/marginal'}")
+    # Stage 3: rich condition-content features
+    c3 = out.get("M_full_cond3", {})
+    ec3 = out.get("M_full_esm_cond3", {})
+    if ap(c3) is not None and ap(full) is not None:
+        print(f"\n    + condition-content (no ESM): {ap(c3):.4f}  "
+              f"({ap(c3)-ap(full):+.4f} vs M_full)")
+    if ap(ec3) is not None and ap(esm) is not None:
+        print(f"    + ESM + condition-content:    {ap(ec3):.4f}  "
+              f"({ap(ec3)-ap(esm):+.4f} vs ESM-only)  <<< Stage 3 lift")
+        print(f"\n  STAGE-3 KILL-GATE: condition-content must add "
+              f">= +0.02 AUPRC over M_full_esm")
+        print(f"    -> Stage 3 lift = {ap(ec3)-ap(esm):+.4f}  "
+              f"{'PASS' if ap(ec3)-ap(esm) >= 0.02 else 'FAIL/marginal'}")
 
 
 def run_real(args):
@@ -266,9 +293,28 @@ def run_real(args):
                           indicator=True)._merge.eq("both").mean()
         print(f"  ESM loaded: {len(esm_df):,} genes x {len(esm_cols)} dims, "
               f"{cov:.1%} of frame genes covered  ({epath})")
+    # optional Stage-3 condition-content features (small side table keyed by
+    # condition_cluster; merged per-fold inside evaluate()).
+    cond3_cols = None
+    cond3_df = None
+    if args.cond3:
+        cpath = next((p for p in [Path(args.cond3),
+                                  OUT / "condition_features.parquet",
+                                  Path("/content/drive/MyDrive/condition_features.parquet")]
+                      if p.exists()), None)
+        if cpath is None:
+            raise FileNotFoundError(f"--cond3 given but no features at {args.cond3}")
+        cond3_df = pd.read_parquet(cpath)
+        cond3_cols = [c for c in cond3_df.columns if c.startswith("cond3_")]
+        ccov = df[["condition_cluster"]].drop_duplicates().merge(
+            cond3_df[["condition_cluster"]], on="condition_cluster",
+            how="left", indicator=True)._merge.eq("both").mean()
+        print(f"  cond3 loaded: {len(cond3_df):,} clusters x {len(cond3_cols)} "
+              f"feats, {ccov:.1%} of frame clusters covered  ({cpath})")
     print(f"  xgboost device: {_xgb_device()}")
     out = evaluate(df, fast=args.fast, subsample=args.subsample,
-                   esm_cols=esm_cols, esm_df=esm_df)
+                   esm_cols=esm_cols, esm_df=esm_df,
+                   cond3_cols=cond3_cols, cond3_df=cond3_df)
     _report(out)
     OUT.mkdir(exist_ok=True)
     (OUT / "step2_model_results.json").write_text(json.dumps({
@@ -323,6 +369,9 @@ def main() -> int:
     ap.add_argument("--frame", default=None)
     ap.add_argument("--esm", default=None,
                     help="path to esm_embeddings.parquet (adds M_full_esm model)")
+    ap.add_argument("--cond3", default=None,
+                    help="path to condition_features.parquet (Stage 3; adds "
+                         "M_full_cond3 and M_full_esm_cond3 models)")
     ap.add_argument("--subsample", type=int, default=1_500_000,
                     help="max train rows per fold (speed); 0 = full")
     ap.add_argument("--fast", action="store_true", default=True)
