@@ -164,31 +164,61 @@ def fetch_feba(target: Path):
             target.unlink()
     target.parent.mkdir(parents=True, exist_ok=True)
 
-    # The Feb 2024 release. Article 25236931.
-    api = "https://api.figshare.com/v2/articles/25236931/files"
-    print(f"  querying figshare API: {api}")
-    req = urllib.request.Request(api, headers={"Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        files = _json.loads(r.read())
-    print(f"  found {len(files)} files in the article:")
-    for f in files:
-        print(f"    {f.get('name',''):60s} "
-              f"{f.get('size', 0)/1e6:7.1f} MB  id={f.get('id')}")
+    def _manifest(aid):
+        # IMPORTANT: figshare paginates files at 10 by default -> page_size.
+        api = (f"https://api.figshare.com/v2/articles/{aid}/files"
+               f"?page_size=1000")
+        req = urllib.request.Request(api, headers={"Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return _json.loads(r.read())
 
-    # Prefer a .db; then .gz; then .zip; then .tar.gz.
-    def _rank(f):
+    def _is_db(name):
+        n = name.lower()
+        if "code" in n:                      # exclude the source-code archive
+            return False
+        return n.endswith((".db", ".sqlite", ".db.gz", ".sqlite.gz"))
+
+    def _dl_rank(f):
         n = f.get("name", "").lower()
-        for i, ext in enumerate([".db", ".sqlite", ".tar.gz", ".gz",
-                                 ".zip", ".tgz"]):
-            if n.endswith(ext): return (i, -f.get("size", 0))
-        return (99, -f.get("size", 0))
-    files.sort(key=_rank)
-    chosen = files[0]
-    fname = chosen.get("name", "")
+        ext_rank = 0 if n.endswith((".db", ".sqlite")) else 1  # prefer raw db
+        return (ext_rank, -f.get("size", 0))
+
+    # Try the two Fitness Browser releases. 13172087 (Nov 2020) historically
+    # carries the monolithic feba.db; 25236931 (Feb 2024) is mostly per-org
+    # flat files (db.StrainFitness.*.gz) + code + aaseqs.
+    candidate_articles = ["13172087", "25236931"]
+    chosen = None
+    for aid in candidate_articles:
+        try:
+            files = _manifest(aid)
+        except Exception as e:
+            print(f"  figshare article {aid} query failed: {e}"); continue
+        print(f"  article {aid}: {len(files)} files")
+        dbs = [f for f in files if _is_db(f.get("name", ""))]
+        if dbs:
+            for f in sorted(dbs, key=_dl_rank):
+                print(f"    DB candidate: {f.get('name')} "
+                      f"{f.get('size', 0)/1e6:.1f} MB")
+            chosen = sorted(dbs, key=_dl_rank)[0]
+            break
+        else:
+            print(f"    no .db/.sqlite here; sample: "
+                  f"{[f.get('name') for f in files[:8]]}")
+    if chosen is None:
+        raise RuntimeError(
+            f"No feba.db / .sqlite found in figshare articles "
+            f"{candidate_articles}. The release likely distributes per-organism "
+            f"flat files only (db.StrainFitness.<org>.gz). Manually download the "
+            f"SQLite from https://fit.genomics.lbl.gov (Downloads page) to "
+            f"{target} and re-run with --no_download. (We can also switch to "
+            f"per-org parsing now that the manifest is known.)")
+
+    fname = chosen["name"]
     download_url = (chosen.get("download_url") or
-                    f"https://ndownloader.figshare.com/files/{chosen.get('id')}")
-    print(f"  downloading: {fname} from {download_url}")
-    tmp = target.with_suffix(target.suffix + ".dl")
+                    f"https://ndownloader.figshare.com/files/{chosen['id']}")
+    print(f"  downloading: {fname} ({chosen.get('size', 0)/1e6:.1f} MB) "
+          f"from {download_url}")
+    tmp = target.with_suffix(".dl")
     urllib.request.urlretrieve(download_url, tmp)
     sz = tmp.stat().st_size
     print(f"  downloaded {sz/1e9:.2f} GB to {tmp.name}")
