@@ -91,33 +91,155 @@ def auprc(y, scores):
 # ----------------------------------------------------------------------------
 # feba.db continuous floor
 # ----------------------------------------------------------------------------
-def fetch_feba(target: Path):
-    """Download feba.db sqlite from the Fitness Browser figshare release."""
-    if target.exists():
-        print(f"  feba.db already at {target} ({target.stat().st_size/1e9:.2f} GB)")
+def _verify_sqlite(path: Path):
+    """Raise if the file isn't a real SQLite db (catches HTML-error downloads)."""
+    if not path.exists():
+        raise RuntimeError(f"{path} does not exist")
+    size = path.stat().st_size
+    if size < 1_000_000:
+        raise RuntimeError(
+            f"{path} is only {size} bytes -- the download probably returned "
+            f"an HTML error page, not the sqlite file.")
+    with open(path, "rb") as f:
+        if not f.read(16).startswith(b"SQLite format 3"):
+            raise RuntimeError(f"{path} is not a SQLite database")
+
+
+def _extract_if_needed(downloaded: Path, target: Path, fname: str):
+    """If we downloaded a .gz/.zip/.tar.gz, extract the sqlite out of it."""
+    import gzip, shutil, zipfile, tarfile
+    fname = fname.lower()
+    if fname.endswith(".db") or fname.endswith(".sqlite"):
+        if downloaded != target:
+            downloaded.rename(target)
         return
-    # The Feb 2024 release on figshare; full bundle is a zip. We try a small set
-    # of mirrors in order. If all fail, the user must download manually.
-    urls = [
-        # Primary: figshare item 25236931 (Feb 2024 release)
-        "https://figshare.com/ndownloader/files/45036907",
-        # Mirror published in feba bitbucket (older but works)
-        "https://genomics.lbl.gov/supplemental/bigfit/feba.db",
-    ]
-    target.parent.mkdir(parents=True, exist_ok=True)
-    for u in urls:
+    if fname.endswith(".gz") and not fname.endswith(".tar.gz"):
+        print(f"  decompressing {downloaded.name} ...")
+        with gzip.open(downloaded, "rb") as fi, open(target, "wb") as fo:
+            shutil.copyfileobj(fi, fo)
+        downloaded.unlink()
+        return
+    if fname.endswith(".zip"):
+        print(f"  unzipping {downloaded.name} ...")
+        with zipfile.ZipFile(downloaded) as z:
+            dbs = [n for n in z.namelist()
+                   if n.lower().endswith((".db", ".sqlite"))]
+            if not dbs:
+                raise RuntimeError(f"No .db inside {downloaded.name}: "
+                                   f"{z.namelist()[:10]}")
+            # pick the largest .db
+            biggest = max(dbs, key=lambda n: z.getinfo(n).file_size)
+            with z.open(biggest) as fi, open(target, "wb") as fo:
+                shutil.copyfileobj(fi, fo)
+        downloaded.unlink()
+        return
+    if fname.endswith((".tar.gz", ".tgz", ".tar")):
+        print(f"  untaring {downloaded.name} ...")
+        with tarfile.open(downloaded) as t:
+            dbs = [m for m in t.getmembers()
+                   if m.name.lower().endswith((".db", ".sqlite"))]
+            if not dbs:
+                raise RuntimeError(f"No .db inside tar: {[m.name for m in t.getmembers()][:10]}")
+            biggest = max(dbs, key=lambda m: m.size)
+            with t.extractfile(biggest) as fi, open(target, "wb") as fo:
+                shutil.copyfileobj(fi, fo)
+        downloaded.unlink()
+        return
+    raise RuntimeError(f"Unknown archive format: {fname}")
+
+
+def fetch_feba(target: Path):
+    """Download feba.db sqlite from the Fitness Browser figshare release.
+    Queries the figshare API for the actual file manifest, picks the right
+    one, verifies it's a sqlite. Fails loudly on download problems."""
+    import urllib.request, json as _json
+    if target.exists() and target.stat().st_size > 100_000_000:
         try:
-            print(f"  fetching {u} ...")
-            urllib.request.urlretrieve(u, target)
-            print(f"  ok ({target.stat().st_size/1e9:.2f} GB)")
+            _verify_sqlite(target)
+            print(f"  feba.db already at {target} "
+                  f"({target.stat().st_size/1e9:.2f} GB) -- skip download")
             return
-        except Exception as e:
-            print(f"  failed: {e}")
-    raise RuntimeError(
-        "Could not auto-download feba.db. Manually grab it from "
-        "https://figshare.com/articles/dataset/25236931 and place at "
-        f"{target}"
-    )
+        except RuntimeError:
+            print(f"  existing {target} is not a valid sqlite; re-downloading")
+            target.unlink()
+    target.parent.mkdir(parents=True, exist_ok=True)
+
+    # The Feb 2024 release. Article 25236931.
+    api = "https://api.figshare.com/v2/articles/25236931/files"
+    print(f"  querying figshare API: {api}")
+    req = urllib.request.Request(api, headers={"Accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        files = _json.loads(r.read())
+    print(f"  found {len(files)} files in the article:")
+    for f in files:
+        print(f"    {f.get('name',''):60s} "
+              f"{f.get('size', 0)/1e6:7.1f} MB  id={f.get('id')}")
+
+    # Prefer a .db; then .gz; then .zip; then .tar.gz.
+    def _rank(f):
+        n = f.get("name", "").lower()
+        for i, ext in enumerate([".db", ".sqlite", ".tar.gz", ".gz",
+                                 ".zip", ".tgz"]):
+            if n.endswith(ext): return (i, -f.get("size", 0))
+        return (99, -f.get("size", 0))
+    files.sort(key=_rank)
+    chosen = files[0]
+    fname = chosen.get("name", "")
+    download_url = (chosen.get("download_url") or
+                    f"https://ndownloader.figshare.com/files/{chosen.get('id')}")
+    print(f"  downloading: {fname} from {download_url}")
+    tmp = target.with_suffix(target.suffix + ".dl")
+    urllib.request.urlretrieve(download_url, tmp)
+    sz = tmp.stat().st_size
+    print(f"  downloaded {sz/1e9:.2f} GB to {tmp.name}")
+    if sz < 1_000_000:
+        head = tmp.read_bytes()[:200]
+        tmp.unlink()
+        raise RuntimeError(f"Downloaded file is only {sz} bytes -- looks "
+                           f"like an error page. First bytes: {head!r}")
+    _extract_if_needed(tmp, target, fname)
+    _verify_sqlite(target)
+    print(f"  ok: {target} ({target.stat().st_size/1e9:.2f} GB, verified SQLite)")
+
+
+def _list_tables(db_path: Path):
+    con = sqlite3.connect(str(db_path))
+    cur = con.cursor()
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table' "
+                "ORDER BY name")
+    tables = [r[0] for r in cur.fetchall()]
+    con.close()
+    return tables
+
+
+def _pick_table(db_path: Path, candidates: list, purpose: str):
+    """Return the first matching table from `candidates` (case-insensitive)."""
+    tables = _list_tables(db_path)
+    low = {t.lower(): t for t in tables}
+    for c in candidates:
+        if c.lower() in low:
+            return low[c.lower()]
+    raise RuntimeError(f"None of {candidates} found in {db_path} for "
+                       f"{purpose}. Tables present: {tables}")
+
+
+def _read_exp(con, exp_table):
+    """Read the Experiment table, tolerating column-name variation."""
+    import pandas as pd
+    cols = pd.read_sql(f"PRAGMA table_info({exp_table})", con).name.tolist()
+    needed = ["orgId", "expName"]
+    for c in needed:
+        if c not in cols:
+            raise RuntimeError(f"{exp_table} missing required column {c}. "
+                               f"Have: {cols}")
+    optional = [c for c in ("expGroup", "condition_1", "media", "aerobic",
+                            "temperature", "pH") if c in cols]
+    sel = ", ".join(needed + optional)
+    df = pd.read_sql(f"SELECT {sel} FROM {exp_table}", con)
+    for c in ("media", "aerobic", "condition_1"):
+        if c not in df.columns:
+            df[c] = "-"
+    return df
 
 
 def feba_continuous_floor(db_path: Path, min_genes=200, min_pairs_per=2):
@@ -127,12 +249,15 @@ def feba_continuous_floor(db_path: Path, min_genes=200, min_pairs_per=2):
     same condition" while keeping replicates from different libraries.
     """
     import pandas as pd
+    exp_table = _pick_table(db_path, ["Experiment", "Experiments", "Exp"],
+                            "continuous floor (Experiment)")
+    fit_table = _pick_table(db_path, ["GeneFitness", "Fitness", "GeneFit"],
+                            "continuous floor (GeneFitness)")
     con = sqlite3.connect(str(db_path))
-    print("  loading Experiment + GeneFitness ...")
-    exp = pd.read_sql("SELECT orgId, expName, expGroup, condition_1, "
-                      "media, aerobic, temperature, pH FROM Experiment", con)
-    fit = pd.read_sql("SELECT orgId, locusId, expName, fit, t "
-                      "FROM GeneFitness", con)
+    print(f"  loading {exp_table} + {fit_table} ...")
+    exp = _read_exp(con, exp_table)
+    fit = pd.read_sql(f"SELECT orgId, locusId, expName, fit, t "
+                      f"FROM {fit_table}", con)
     con.close()
     print(f"  experiments: {len(exp):,}  fitness rows: {len(fit):,}  "
           f"orgs: {exp.orgId.nunique()}")
@@ -167,11 +292,14 @@ def feba_continuous_floor(db_path: Path, min_genes=200, min_pairs_per=2):
 def feba_binary_floor(db_path: Path, min_genes=200, min_pairs_per=2):
     """Same grouping; binary kappa on |t|>=4 AND fit<-2 calls."""
     import pandas as pd
+    exp_table = _pick_table(db_path, ["Experiment", "Experiments", "Exp"],
+                            "binary floor (Experiment)")
+    fit_table = _pick_table(db_path, ["GeneFitness", "Fitness", "GeneFit"],
+                            "binary floor (GeneFitness)")
     con = sqlite3.connect(str(db_path))
-    exp = pd.read_sql("SELECT orgId, expName, condition_1, media, aerobic "
-                      "FROM Experiment", con)
-    fit = pd.read_sql("SELECT orgId, locusId, expName, fit, t "
-                      "FROM GeneFitness", con)
+    exp = _read_exp(con, exp_table)
+    fit = pd.read_sql(f"SELECT orgId, locusId, expName, fit, t "
+                      f"FROM {fit_table}", con)
     con.close()
     fit["ess"] = ((fit.fit < ESS_FIT_T) & (fit.t.abs() >= ESS_T_T)).astype(int)
     exp["cluster"] = exp.apply(
@@ -336,6 +464,8 @@ def main() -> int:
         if not args.no_download:
             fetch_feba(feba_db)
         if feba_db.exists():
+            tables = _list_tables(feba_db)
+            print(f"  feba.db tables: {tables}")
             feba_cont = feba_continuous_floor(feba_db)
             feba_cont.to_csv(OUT / "kappa_floor_continuous.csv", index=False)
             if len(feba_cont):
