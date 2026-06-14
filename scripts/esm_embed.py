@@ -94,6 +94,17 @@ def _find_aaseqs():
     return gz
 
 
+_AA_OK = set("ACDEFGHIKLMNPQRSTVWYXBUZO")
+
+
+def _clean_seq(s, max_aa=MAX_AA):
+    """ESM alphabet has no '*' (stop), digits, or whitespace. Drop stops,
+    map any other non-standard residue to 'X', truncate to max_aa."""
+    s = s.upper().replace("*", "")
+    s = "".join(c if c in _AA_OK else "X" for c in s)
+    return s[:max_aa]
+
+
 def parse_aaseqs(path, max_aa=MAX_AA):
     """feba aaseqs FASTA. Header is 'orgId:locusId' (':' separated). Yields
     (organism, locus_tag, seq) with organism = 'beril_'+orgId."""
@@ -104,7 +115,7 @@ def parse_aaseqs(path, max_aa=MAX_AA):
         for line in f:
             if line.startswith(">"):
                 if org is not None:
-                    out.append((org, lt, "".join(buf)[:max_aa]))
+                    out.append((org, lt, _clean_seq("".join(buf), max_aa)))
                 head = line[1:].split()[0]
                 if ":" in head:
                     o, l = head.split(":", 1)
