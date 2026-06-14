@@ -112,13 +112,15 @@ def _fit_predict(Xtr, ytr, Xte, fast=True):
         return Xte1 @ w
 
 
-def evaluate(df, fast=True, subsample=None):
+def evaluate(df, fast=True, subsample=None, esm_cols=None):
     import numpy as np, pandas as pd
     df = add_condition_cols(df)
     clades = sorted(df.clade.dropna().unique())
     models = {"M_cons": ["family_frac"],
               "M_gene": GENE_FEATS,
               "M_full": GENE_FEATS + COND_FEATS}
+    if esm_cols:
+        models["M_full_esm"] = GENE_FEATS + COND_FEATS + esm_cols
     res = {k: {"all": [], "hiconf": []} for k in models}
     res_ap = {k: [] for k in models}
     rng = np.random.RandomState(0)
@@ -166,15 +168,24 @@ def _report(out):
         print(f"  {name:<8} {str(d['spearman_all']):>14} "
               f"{str(d['spearman_hiconf']):>18} "
               f"{str(d['auprc_essential']):>10}  {d['n_clades']}")
-    full = out.get("M_full", {})
+    # AUPRC is the product metric for conditional essentiality
     cons = out.get("M_cons", {})
-    if full.get("spearman_hiconf") and cons.get("spearman_hiconf"):
-        lift = full["spearman_hiconf"] - cons["spearman_hiconf"]
-        gap = CEILING_RHO - full["spearman_hiconf"]
-        print(f"\n  condition lift over conservation (hi-conf): {lift:+.4f}")
-        print(f"  full model hi-conf Spearman: {full['spearman_hiconf']:.3f}  "
-              f"-> {full['spearman_hiconf']/CEILING_RHO*100:.0f}% of the "
-              f"{CEILING_RHO} ceiling  (gap {gap:+.3f})")
+    full = out.get("M_full", {})
+    esm = out.get("M_full_esm", {})
+    def ap(m): return m.get("auprc_essential")
+    print(f"\n  AUPRC-essential (the product metric, base rate ~0.015):")
+    if ap(cons) is not None:
+        print(f"    conservation:        {ap(cons):.4f}")
+    if ap(full) is not None:
+        print(f"    + condition:         {ap(full):.4f}  "
+              f"({ap(full)-ap(cons):+.4f} vs conservation)")
+    if ap(esm) is not None:
+        print(f"    + condition + ESM:   {ap(esm):.4f}  "
+              f"({ap(esm)-ap(full):+.4f} vs no-ESM)  "
+              f"<<< Stage 2 lift")
+        print(f"\n  STAGE-2 KILL-GATE: ESM must add >= +0.02 AUPRC over M_full")
+        print(f"    -> ESM lift = {ap(esm)-ap(full):+.4f}  "
+              f"{'PASS' if ap(esm)-ap(full) >= 0.02 else 'FAIL/marginal'}")
 
 
 def run_real(args):
@@ -188,11 +199,28 @@ def run_real(args):
     print("=" * 70)
     print(f"  frame: {frame}")
     df = pd.read_parquet(frame)
-    # drop the namespace-blocked codon/fba cols if present
     print(f"  rows: {len(df):,}  orgs: {df.organism.nunique()}  "
           f"conditions: {df.condition_cluster.nunique()}  "
           f"clades: {df.clade.nunique()}")
-    out = evaluate(df, fast=args.fast, subsample=args.subsample)
+    # optional ESM-2 features (Stage 2)
+    esm_cols = None
+    if args.esm:
+        epath = next((p for p in [Path(args.esm),
+                                  OUT / "esm_embeddings.parquet",
+                                  Path("/content/drive/MyDrive/esm_embeddings.parquet")]
+                      if p.exists()), None)
+        if epath is None:
+            raise FileNotFoundError(f"--esm given but no embeddings at {args.esm}")
+        esm = pd.read_parquet(epath)
+        esm_cols = [c for c in esm.columns if c.startswith("e")
+                    and c not in ("essential",)]
+        before = len(df)
+        df = df.merge(esm, on=["organism", "locus_tag"], how="left")
+        cov = df[esm_cols[0]].notna().mean()
+        print(f"  ESM merged: {len(esm_cols)} dims, "
+              f"{cov:.1%} of frame rows have an embedding  ({epath})")
+    out = evaluate(df, fast=args.fast, subsample=args.subsample,
+                   esm_cols=esm_cols)
     _report(out)
     OUT.mkdir(exist_ok=True)
     (OUT / "step2_model_results.json").write_text(json.dumps({
@@ -245,6 +273,8 @@ def main() -> int:
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--real", action="store_true")
     ap.add_argument("--frame", default=None)
+    ap.add_argument("--esm", default=None,
+                    help="path to esm_embeddings.parquet (adds M_full_esm model)")
     ap.add_argument("--subsample", type=int, default=1_500_000,
                     help="max train rows per fold (speed); 0 = full")
     ap.add_argument("--fast", action="store_true", default=True)
