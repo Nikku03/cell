@@ -94,15 +94,22 @@ def stage_download():
         print(f"  fetching {f} ...")
         _stream(url, out)
     tax_gz = GTDB / "bac120_taxonomy_r226.tsv.gz"
-    if not tax_gz.exists():
+    if tax_gz.exists() and tax_gz.stat().st_size > 1000:
+        print(f"  have GTDB taxonomy  ({tax_gz.stat().st_size/1e6:.1f} MB)")
+    else:
         print("  fetching GTDB taxonomy ...")
         _stream(GTDB_TAX_URL, tax_gz)
     # KofamScan DB
     ko_list = KOFAM / "ko_list.gz"
     profiles = KOFAM / "profiles.tar.gz"
-    if not ko_list.exists():
+    if ko_list.exists() and ko_list.stat().st_size > 1000:
+        print(f"  have ko_list  ({ko_list.stat().st_size/1e6:.1f} MB)")
+    else:
         print("  fetching ko_list ..."); _stream(KOFAM_KO_LIST, ko_list)
-    if not profiles.exists():
+    if profiles.exists() and profiles.stat().st_size > 100_000_000:
+        print(f"  have KofamScan profiles  "
+              f"({profiles.stat().st_size/1e6:.0f} MB)")
+    else:
         print("  fetching KofamScan profiles (~1.5 GB) ...")
         _stream(KOFAM_PROFILES, profiles, expected=1_554_236_962)
     print("  stage 1 done")
@@ -274,8 +281,20 @@ def stage_og_reps():
 # -------------------- KofamScan -> KO per OG --------------------------------
 def stage_annotate():
     out = GTDB / "og_to_ko.tsv"
-    if out.exists():
-        print(f"  have {out}"); return
+    if out.exists() and out.stat().st_size > 1000:
+        # quick sanity: should be tab-separated OG_header <TAB> K-id lines
+        ok = False
+        with open(out) as f:
+            for line in f:
+                p = line.rstrip("\n").split("\t")
+                if len(p) == 2 and p[1].startswith("K") and p[0].startswith("OG"):
+                    ok = True; break
+        if ok:
+            print(f"  have {out}  "
+                  f"({sum(1 for _ in open(out)):,} OG->KO lines)")
+            return
+        print(f"  {out} exists but looks malformed; regenerating")
+        out.unlink()
     fasta = GTDB / "og_reps.faa"
     if not fasta.exists():
         raise RuntimeError("run stage og_reps first")
