@@ -1,0 +1,32 @@
+{
+  "orthogonality": {
+    "corr_family_frac": 0.04401178615234365,
+    "corr_prevalence": -0.12127428202605676
+  },
+  "loco_auprc": {
+    "conservation (family_frac)": {
+      "auprc": 0.787973884174444,
+      "n_clades": 29
+    },
+    "conservation+prevalence": {
+      "auprc": 0.8027882007838497,
+      "n_clades": 29
+    },
+    "flux_resid alone": {
+      "auprc": 0.2679288186959178,
+      "n_clades": 29
+    },
+    "conservation + flux_resid": {
+      "auprc": 0.7715134157711901,
+      "n_clades": 29
+    },
+    "conservation+prev+flux": {
+      "auprc": 0.8032498949405721,
+      "n_clades": 29
+    }
+  },
+  "flux_lift_over_conservation": -0.01646046840325388,
+  "phylogeny_shuffle_null_lift": -0.01151368624702367,
+  "verdict_alive": false,
+  "note": "n=48 low-power proxy; positive=strong, null=inconclusive (needs AllTheBacteria/Panstripe for full power)."
+}
