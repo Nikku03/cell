@@ -51,6 +51,45 @@ def _read_faa(path):
     return ids, seqs
 
 
+def gather_all_proteins():
+    """(organism, locus_tag, seq) for every labeled gene across all orgs whose
+    cached genome joins -> the training pool for the leave-one-organism-out test.
+    Reuses the GFF locus_tag->protein_id + faa->seq join (the step-0 bridge)."""
+    import csv, re
+    DATA = REPO / "data" / "drive_import"
+    acc = {}
+    with open(DATA / "labels" / "genome_cache_manifest.csv") as f:
+        for r in csv.DictReader(f):
+            if r["accession"] and r.get("has_protein_faa") == "True":
+                acc[r["organism"]] = r["accession"]
+    labeled = {}
+    with open(DATA / "labels" / "labels.csv") as f:
+        for r in csv.DictReader(f):
+            labeled.setdefault(r["organism"], set()).add(r["locus_tag"])
+    out = []
+    for org, a in acc.items():
+        gff = DATA / "genome_cache" / a / "genomic.gff"
+        faa = DATA / "genome_cache" / a / "protein.faa"
+        if not (gff.exists() and faa.exists()) or org not in labeled:
+            continue
+        lt2pid = {}
+        with open(gff) as f:
+            for line in f:
+                if "\tCDS\t" not in line:
+                    continue
+                lt = re.search(r'locus_tag=([^;\n]+)', line)
+                pid = re.search(r'protein_id=([^;\n]+)', line)
+                if lt and pid:
+                    lt2pid.setdefault(lt.group(1), pid.group(1))
+        ids, seqs = _read_faa(faa)
+        seqmap = dict(zip(ids, seqs))
+        for lt in labeled[org]:
+            pid = lt2pid.get(lt)
+            if pid and pid in seqmap:
+                out.append((org, lt, seqmap[pid]))
+    return out
+
+
 def embed_esm(seqs, model_name="facebook/esm2_t33_650M_UR50D", batch=8):
     """Mean-pooled ESM-2 embeddings (GPU). Imported lazily so --smoke needs no
     torch/transformers."""
@@ -74,8 +113,34 @@ def embed_esm(seqs, model_name="facebook/esm2_t33_650M_UR50D", batch=8):
     return np.concatenate(out, 0)
 
 
+def run_multi(args):
+    """Embed ALL orgs together with a GLOBAL PCA -> esm_all.parquet (organism,
+    locus_tag, esm_*). This is the input to the leave-one-organism-out test:
+    PCs must be comparable across orgs, so PCA is fit on the pooled embedding."""
+    import pandas as pd, numpy as np
+    out_path = OUT / "esm_all.parquet"
+    if out_path.exists() and not args.force:
+        print(f"PHASE B ESM(multi) -- CACHED ({out_path})"); return 0
+    trip = gather_all_proteins()
+    orgs = sorted({o for o, _, _ in trip})
+    print(f"  embedding {len(trip):,} proteins across {len(orgs)} orgs with "
+          f"ESM-2 ({args.model})")
+    seqs = [s for _, _, s in trip]
+    emb = embed_esm(seqs, args.model, args.batch)
+    pcs = pca_reduce(emb, args.k)
+    df = pd.DataFrame(pcs, columns=[f"esm_{i}" for i in range(pcs.shape[1])])
+    df.insert(0, "locus_tag", [lt for _, lt, _ in trip])
+    df.insert(0, "organism", [o for o, _, _ in trip])
+    OUT.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(out_path, index=False)
+    print(f"  wrote {out_path}  ({pcs.shape[0]}x{pcs.shape[1]}, {len(orgs)} orgs)")
+    return 0
+
+
 def run_real(args):
     import pandas as pd, numpy as np
+    if args.multi:
+        return run_multi(args)
     faa = OUT / f"proteins_{args.org}.faa"
     if not faa.exists():
         print("ERROR: run orphan_bridge.py --real first"); return 2
@@ -134,6 +199,8 @@ def main() -> int:
     ap.add_argument("--model", default="facebook/esm2_t33_650M_UR50D")
     ap.add_argument("--k", type=int, default=K_PCS)
     ap.add_argument("--batch", type=int, default=8)
+    ap.add_argument("--multi", action="store_true",
+                    help="embed ALL orgs -> esm_all.parquet (for LOO-org test)")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
     if not (args.smoke or args.real):
