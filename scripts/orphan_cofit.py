@@ -55,29 +55,114 @@ def _cons_map(org):
     return cm
 
 
+def _manifest_acc(org):
+    with open(DATA / "labels" / "genome_cache_manifest.csv") as f:
+        for r in csv.DictReader(f):
+            if r["organism"] == org and r["accession"]:
+                return r["accession"]
+    return None
+
+
+def _locus_bridge(acc):
+    """Map every old_locus_tag (e.g. RSc0001) AND the RefSeq locus_tag itself
+    -> our RefSeq locus_tag (RS_RS#####), from the GFF. Handles %2C-separated
+    multi old tags. Lets us join FB (which uses old tags) to our labels."""
+    import re, urllib.parse
+    gff = DATA / "genome_cache" / acc / "genomic.gff"
+    bridge = {}
+    if not gff.exists():
+        return bridge
+    with open(gff) as f:
+        for line in f:
+            c = line.split("\t")
+            if len(c) < 9 or c[2] not in ("gene", "CDS"):
+                continue          # old_locus_tag lives on the 'gene' feature
+            lt = re.search(r'locus_tag=([^;\n]+)', c[8])
+            if not lt:
+                continue
+            lt = lt.group(1)
+            bridge[lt] = lt
+            old = re.search(r'old_locus_tag=([^;\n]+)', c[8])
+            if old:
+                for t in urllib.parse.unquote(old.group(1)).split(","):
+                    if t:
+                        bridge[t.strip()] = lt
+    return bridge
+
+
+def _resolve_org(con, want_regex):
+    """Find the FB orgId with the most Cofit rows whose Organism name matches."""
+    import pandas as pd, re
+    try:
+        org = pd.read_sql("SELECT * FROM Organism", con)
+    except Exception:
+        org = None
+    cof_counts = pd.read_sql(
+        "SELECT orgId, COUNT(*) n FROM Cofit GROUP BY orgId", con)
+    cand = cof_counts.copy()
+    if org is not None:
+        namecol = next((c for c in ("genus", "species", "Organism", "name")
+                        if c in org.columns), None)
+        if "orgId" in org.columns and namecol:
+            org["_nm"] = org[namecol].astype(str)
+            ids = org[org["_nm"].str.contains(want_regex, case=False, regex=True,
+                                              na=False)]["orgId"].tolist()
+            if ids:
+                cand = cof_counts[cof_counts.orgId.isin(ids)]
+    cand = cand[cand.n > 0].sort_values("n", ascending=False)
+    return cand
+
+
 def run_real(args):
     import pandas as pd, numpy as np
-    bridge = OUT / f"bridge_{args.org}.parquet"
-    if not bridge.exists():
+    bridge_pq = OUT / f"bridge_{args.org}.parquet"
+    if not bridge_pq.exists():
         print("ERROR: run orphan_bridge.py --real first"); return 2
     if not Path(args.feba).exists():
         print(f"ERROR: feba.db not found at {args.feba} (Colab step)"); return 2
-    fb_org = args.fb_org
     con = sqlite3.connect(args.feba)
+
+    # 1) resolve FB orgId (auto: most Cofit rows matching the name regex)
+    cand = _resolve_org(con, args.fb_org_regex)
+    if args.fb_org:
+        forced = cand[cand.orgId == args.fb_org]
+        cand = forced if len(forced) else cand
+    if len(cand) == 0:
+        print(f"  no Cofit orgId matches /{args.fb_org_regex}/; available top:")
+        print(pd.read_sql("SELECT orgId,COUNT(*) n FROM Cofit GROUP BY orgId "
+                          "ORDER BY n DESC LIMIT 10", con).to_string(index=False))
+        con.close(); return 1
+    fb_org = cand.iloc[0]["orgId"]
+    print(f"  FB orgId resolved: {fb_org!r}  (Cofit rows {int(cand.iloc[0]['n']):,})")
+
+    # 2) old-tag bridge: FB tag -> our RS_RS#####
+    acc = _manifest_acc(args.org)
+    lb = _locus_bridge(acc) if acc else {}
+    # FB Gene table: locusId/sysName for this org -> our locus_tag via bridge
+    gene = pd.read_sql("SELECT locusId, sysName FROM Gene WHERE orgId=?",
+                       con, params=(fb_org,))
+    fb2rs = {}
+    for r in gene.itertuples():
+        for key in (r.sysName, r.locusId):
+            if key in lb:
+                fb2rs[r.locusId] = lb[key]
+                break
+    print(f"  FB gene -> our locus_tag mapped: {len(fb2rs):,}/{len(gene):,} "
+          f"({100*len(fb2rs)/max(1,len(gene)):.0f}%)")
+
+    # 3) Cofit, remapped to our locus_tag on both ends
     cof = pd.read_sql(
         "SELECT locusId, hitId, cofit, rank FROM Cofit WHERE orgId=?",
         con, params=(fb_org,))
     con.close()
-    print(f"  Cofit edges for {fb_org}: {len(cof):,}")
     cons = _cons_map(args.org)
-    # join: FB locusId == our locus_tag (validate)
-    df = pd.read_parquet(bridge)
-    overlap = len(set(cof.locusId) & set(df.locus_tag))
-    print(f"  locusId<->locus_tag overlap: {overlap}/{df.locus_tag.nunique()} "
-          f"({100*overlap/df.locus_tag.nunique():.0f}%)")
+    df = pd.read_parquet(bridge_pq)
     by_gene = {}
     for r in cof.itertuples():
-        by_gene.setdefault(r.locusId, []).append((r.hitId, r.cofit, r.rank))
+        g = fb2rs.get(r.locusId); h = fb2rs.get(r.hitId)
+        if g is None or h is None:
+            continue
+        by_gene.setdefault(g, []).append((h, r.cofit, r.rank))
     rows = []
     for lt in df.locus_tag:
         agg = aggregate(by_gene.get(lt, []), cons, args.top_n)
@@ -85,7 +170,11 @@ def run_real(args):
     out = pd.DataFrame(rows)
     OUT.mkdir(parents=True, exist_ok=True)
     out.to_parquet(OUT / f"cofit_{args.org}.parquet", index=False)
-    print(f"  genes with >=1 cofit partner: {(out.cofit_n>0).sum():,}")
+    print(f"  genes with >=1 usable cofit partner: {int((out.cofit_n>0).sum()):,}"
+          f" / {len(out):,}")
+    if (out.cofit_n > 0).sum() == 0:
+        print("  *** still 0 -- inspect Gene.sysName/locusId format vs GFF "
+              "old_locus_tag; the namespace bridge needs adjustment. ***")
     print(f"  wrote cofit_{args.org}.parquet")
     return 0
 
@@ -115,6 +204,22 @@ def run_smoke():
     agg3 = aggregate([("D", 0.9, 1), ("Z", 0.9, 2)], cons, top_n=3)
     assert agg3["cofit_n"] == 0 and np.isnan(agg3["cofit_cons"])
     print(f"  no usable partner -> n=0, cons=NaN  OK")
+    # old-tag bridge: %2C-separated old_locus_tag -> RefSeq locus_tag
+    import tempfile
+    global DATA
+    d = Path(tempfile.mkdtemp()); (d / "genome_cache" / "G").mkdir(parents=True)
+    (d / "genome_cache" / "G" / "genomic.gff").write_text(
+        "c\tx\tCDS\t1\t9\t.\t+\t0\tlocus_tag=RS_RS25220;old_locus_tag=RS06178%2CRSc0001\n"
+        "c\tx\tCDS\t20\t29\t.\t+\t0\tlocus_tag=RS_RS00005;old_locus_tag=RSc0002\n")
+    saved = DATA; DATA = d
+    try:
+        lb = _locus_bridge("G")
+    finally:
+        DATA = saved
+    print(f"  locus bridge: RSc0001->{lb.get('RSc0001')}  RSc0002->{lb.get('RSc0002')}")
+    assert lb["RSc0001"] == "RS_RS25220" and lb["RS06178"] == "RS_RS25220"
+    assert lb["RSc0002"] == "RS_RS00005" and lb["RS_RS25220"] == "RS_RS25220"
+    print("  FB old-tag (RSc####) -> RefSeq (RS_RS#####) bridge: OK")
     print("\n=== STEP 5 SMOKE PASS ===")
     print("  top-N cofit selection + LEAK-FREE partner-conservation median")
     print("  (no in-org labels used) validated. Real reads feba.db on Colab.")
@@ -126,7 +231,9 @@ def main() -> int:
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--real", action="store_true")
     ap.add_argument("--org", default="beril_RalstoniaGMI1000")
-    ap.add_argument("--fb_org", default="Ralstonia", help="FB orgId")
+    ap.add_argument("--fb_org", default="", help="force FB orgId (else auto)")
+    ap.add_argument("--fb_org_regex", default="alstonia|olanacearum",
+                    help="Organism-name regex to auto-resolve the FB orgId")
     ap.add_argument("--feba", default="/content/feba.db")
     ap.add_argument("--top_n", type=int, default=TOP_N)
     args = ap.parse_args()
