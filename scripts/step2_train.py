@@ -138,7 +138,8 @@ def _fit_predict(Xtr, ytr, Xte, fast=True):
 
 
 def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None,
-             cond3_cols=None, cond3_df=None, test_cap=600_000):
+             cond3_cols=None, cond3_df=None, test_cap=600_000,
+             oof_sink=None, models_filter=None):
     import numpy as np, pandas as pd, gc
     df = add_condition_cols(df)
     clades = sorted(df.clade.dropna().unique())
@@ -152,6 +153,10 @@ def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None,
     if esm_cols and cond3_cols:
         models["M_full_esm_cond3"] = (GENE_FEATS + COND_FEATS + esm_cols
                                       + cond3_cols)
+    if models_filter:
+        models = {k: v for k, v in models.items() if k in models_filter}
+        if not models:
+            raise ValueError(f"models_filter {models_filter} matched nothing")
     res = {k: {"all": [], "hiconf": []} for k in models}
     res_ap = {k: [] for k in models}
     rng = np.random.RandomState(0)
@@ -194,17 +199,29 @@ def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None,
         # high-confidence subset of the held-out clade (top 85% total_weight)
         thr = te.total_weight.quantile(0.15)
         hi = te.total_weight.values >= thr
+        fold_preds = {}
         for name, cols in models.items():
             # float32: halves the 800k x 654 ESM matrix + its GPU transfer
             Xtr = tr[cols].to_numpy(dtype="float32")
             Xte = te[cols].to_numpy(dtype="float32")
             pred = _fit_predict(Xtr, tr.consensus_fitness.values, Xte, fast=fast)
+            fold_preds[name] = pred
             # predicted fitness is low for essential -> Spearman naturally signed
             res[name]["all"].append(spearman(pred, yte))
             if hi.sum() > 30:
                 res[name]["hiconf"].append(spearman(pred[hi], yte[hi]))
             # essential AUPRC: more-negative predicted fitness = more essential
             res_ap[name].append(auprc(yte_ess, -pred))
+        # collect out-of-fold per-cell predictions for Stage 4 (abstention curve)
+        if oof_sink is not None:
+            of = pd.DataFrame({
+                "clade": held,
+                "y_ess": yte_ess.astype("int8"),
+                "total_weight": te.total_weight.values.astype("float32"),
+                "consensus_fitness": yte.astype("float32")})
+            for name, pr in fold_preds.items():
+                of[f"pred_{name}"] = pr.astype("float32")
+            oof_sink.append(of)
         print(f"  [{fold_i}/{n_folds}] {held}: {len(te):,} test, "
               f"{int(yte_ess.sum())} ess  ({_t.time()-t0:.0f}s)", flush=True)
         del tr, te; gc.collect()   # release the big merged frames between folds
@@ -318,16 +335,27 @@ def run_real(args):
         print(f"  cond3 loaded: {len(cond3_df):,} clusters x {len(cond3_cols)} "
               f"feats, {ccov:.1%} of frame clusters covered  ({cpath})")
     print(f"  xgboost device: {_xgb_device()}")
+    models_filter = (set(s.strip() for s in args.models.split(","))
+                     if args.models else None)
+    oof_sink = [] if args.dump_oof else None
     out = evaluate(df, fast=args.fast, subsample=args.subsample,
                    esm_cols=esm_cols, esm_df=esm_df,
                    cond3_cols=cond3_cols, cond3_df=cond3_df,
-                   test_cap=args.test_cap)
+                   test_cap=args.test_cap, oof_sink=oof_sink,
+                   models_filter=models_filter)
     _report(out)
     OUT.mkdir(exist_ok=True)
     (OUT / "step2_model_results.json").write_text(json.dumps({
         "models": out, "floor_rho": FLOOR_RHO, "ceiling_rho": CEILING_RHO,
         "subsample": args.subsample, "fast": args.fast}, indent=2))
     print(f"\nwrote {OUT/'step2_model_results.json'}")
+    if oof_sink:
+        oof = pd.concat(oof_sink, ignore_index=True)
+        op = Path(args.dump_oof)
+        op.parent.mkdir(parents=True, exist_ok=True)
+        oof.to_parquet(op, index=False)
+        print(f"wrote OOF predictions: {op}  ({len(oof):,} held-out cells, "
+              f"cols {[c for c in oof.columns if c.startswith('pred_')]})")
     return 0
 
 
@@ -383,6 +411,12 @@ def main() -> int:
                     help="max train rows per fold (speed); 0 = full")
     ap.add_argument("--test_cap", type=int, default=600_000,
                     help="max held-out test rows per fold (RAM); 0 = uncapped")
+    ap.add_argument("--dump_oof", default=None,
+                    help="write out-of-fold per-cell predictions to this parquet "
+                         "(for Stage 4 abstention analysis)")
+    ap.add_argument("--models", default=None,
+                    help="comma list of models to train (e.g. "
+                         "M_cons,M_full_esm_cond3); default = all available")
     ap.add_argument("--fast", action="store_true", default=True)
     ap.add_argument("--full", dest="fast", action="store_false")
     args = ap.parse_args()
