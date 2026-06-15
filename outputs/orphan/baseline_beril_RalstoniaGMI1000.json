@@ -1,0 +1,36 @@
+{
+  "org": "beril_RalstoniaGMI1000",
+  "rogue_cons": 0.1,
+  "bar_rogue_R@P30": 0.0,
+  "gate_type": "absolute",
+  "gate_rogue_R@P30": 0.0,
+  "gate_note": "conservation==0 in rogue zone; combined model must reach R@P30>0 AND beat permutation null",
+  "rows": [
+    {
+      "slice": "whole_genome",
+      "n": 4445,
+      "positives": 1361,
+      "base_rate": 0.3062,
+      "auprc": NaN,
+      "R@P30": 1.0,
+      "k@P30": 3714,
+      "R@P50": 0.9097,
+      "k@P50": 2256,
+      "R@P70": 0.7532,
+      "k@P70": 1334
+    },
+    {
+      "slice": "rogue_zone(cons<0.1)",
+      "n": 1694,
+      "positives": 140,
+      "base_rate": 0.0826,
+      "auprc": NaN,
+      "R@P30": 0.0,
+      "k@P30": 0,
+      "R@P50": 0.0,
+      "k@P50": 0,
+      "R@P70": 0.0,
+      "k@P70": 0
+    }
+  ]
+}
