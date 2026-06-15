@@ -1,0 +1,23 @@
+{
+  "org": "beril_RalstoniaGMI1000",
+  "features": [
+    "dnds"
+  ],
+  "rogue_n": 1694,
+  "rogue_essential": 140,
+  "univariate_rogue_RatP30": {
+    "neg_dnds": 0.0,
+    "dn": 0.0,
+    "ds": 0.0,
+    "ortholog_org": 0.0,
+    "ortholog_locus": 0.0,
+    "pct_identity": 0.0,
+    "prot_len": 0.0,
+    "n_same_len_orthologs": 0.0143
+  },
+  "combined_rogue_RatP30": 0.0,
+  "null_median": 0.0,
+  "null_p": 1.0,
+  "bar": 0.0,
+  "gate_pass": false
+}
