@@ -139,7 +139,7 @@ def run_multi(args):
     df.insert(0, "organism", [o for o, _, _ in trip])
     OUT.mkdir(parents=True, exist_ok=True)
     df.to_parquet(out_path, index=False)
-    print(f"  wrote {out_path}  ({pcs.shape[0]}x{pcs.shape[1]}, {len(orgs)} orgs)")
+    print(f"  wrote {out_path}  ({feat.shape[0]}x{feat.shape[1]}, {len(orgs)} orgs)")
     return 0
 
 
