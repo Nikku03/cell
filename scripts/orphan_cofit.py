@@ -113,6 +113,41 @@ def _resolve_org(con, want_regex):
     return cand
 
 
+def cofit_edges_from_matrix(locus_ids, M, top_n):
+    """M: (genes x experiments) fitness matrix (NaN ok). Return long-form
+    (locusId, hitId, cofit, rank) of each gene's top-N Pearson cofitness
+    partners. Pure NumPy."""
+    import numpy as np
+    X = np.asarray(M, float)
+    X = X - np.nanmean(X, axis=1, keepdims=True)
+    X = np.nan_to_num(X)
+    norm = np.linalg.norm(X, axis=1, keepdims=True)
+    norm[norm == 0] = 1.0
+    Xn = X / norm
+    C = Xn @ Xn.T                       # gene-gene correlation
+    np.fill_diagonal(C, -np.inf)        # exclude self
+    rows = []
+    k = min(top_n, C.shape[0] - 1)
+    for i in range(C.shape[0]):
+        idx = np.argpartition(-C[i], k - 1)[:k]
+        idx = idx[np.argsort(-C[i][idx])]
+        for r, j in enumerate(idx, 1):
+            rows.append((locus_ids[i], locus_ids[j], float(C[i, j]), r))
+    import pandas as pd
+    return pd.DataFrame(rows, columns=["locusId", "hitId", "cofit", "rank"])
+
+
+def _cofit_from_genefitness(con, fb_org, top_n):
+    import pandas as pd, numpy as np
+    gf = pd.read_sql("SELECT locusId, expName, fit FROM GeneFitness WHERE orgId=?",
+                     con, params=(fb_org,))
+    gf["fit"] = pd.to_numeric(gf["fit"], errors="coerce")
+    mat = gf.pivot_table(index="locusId", columns="expName", values="fit",
+                         aggfunc="mean")
+    print(f"    GeneFitness matrix: {mat.shape[0]} genes x {mat.shape[1]} exps")
+    return cofit_edges_from_matrix(list(mat.index), mat.values, top_n)
+
+
 def run_real(args):
     import pandas as pd, numpy as np
     bridge_pq = OUT / f"bridge_{args.org}.parquet"
@@ -122,18 +157,28 @@ def run_real(args):
         print(f"ERROR: feba.db not found at {args.feba} (Colab step)"); return 2
     con = sqlite3.connect(args.feba)
 
-    # 1) resolve FB orgId (auto: most Cofit rows matching the name regex)
-    cand = _resolve_org(con, args.fb_org_regex)
-    if args.fb_org:
-        forced = cand[cand.orgId == args.fb_org]
-        cand = forced if len(forced) else cand
-    if len(cand) == 0:
-        print(f"  no Cofit orgId matches /{args.fb_org_regex}/; available top:")
+    # 1) resolve FB orgId. FB orgId == our org name minus the 'beril_' prefix
+    #    (e.g. beril_RalstoniaGMI1000 -> RalstoniaGMI1000). Verify it has data.
+    fb_org = args.fb_org or args.org.replace("beril_", "")
+    def _count(tbl, oid):
+        try:
+            return int(pd.read_sql(f"SELECT COUNT(*) n FROM {tbl} WHERE orgId=?",
+                                   con, params=(oid,)).iloc[0]["n"])
+        except Exception:
+            return 0
+    n_cofit = _count("Cofit", fb_org)
+    n_gf = _count("GeneFitness", fb_org)
+    print(f"  FB orgId: {fb_org!r}  | Cofit rows {n_cofit:,} | "
+          f"GeneFitness rows {n_gf:,}")
+    if n_cofit == 0 and n_gf == 0:
+        print("  orgId not found in feba.db; Cofit orgIds available:")
         print(pd.read_sql("SELECT orgId,COUNT(*) n FROM Cofit GROUP BY orgId "
-                          "ORDER BY n DESC LIMIT 10", con).to_string(index=False))
+                          "ORDER BY n DESC LIMIT 15", con).to_string(index=False))
         con.close(); return 1
-    fb_org = cand.iloc[0]["orgId"]
-    print(f"  FB orgId resolved: {fb_org!r}  (Cofit rows {int(cand.iloc[0]['n']):,})")
+    use_genefitness = (n_cofit == 0)
+    if use_genefitness:
+        print("  no precomputed Cofit for this org -> deriving cofitness from "
+              "GeneFitness (top-N fitness correlations)")
 
     # 2) old-tag bridge: FB tag -> our RS_RS#####
     acc = _manifest_acc(args.org)
@@ -150,10 +195,13 @@ def run_real(args):
     print(f"  FB gene -> our locus_tag mapped: {len(fb2rs):,}/{len(gene):,} "
           f"({100*len(fb2rs)/max(1,len(gene)):.0f}%)")
 
-    # 3) Cofit, remapped to our locus_tag on both ends
-    cof = pd.read_sql(
-        "SELECT locusId, hitId, cofit, rank FROM Cofit WHERE orgId=?",
-        con, params=(fb_org,))
+    # 3) Cofit edges (precomputed, or derived from GeneFitness), remapped
+    if use_genefitness:
+        cof = _cofit_from_genefitness(con, fb_org, args.top_n)
+    else:
+        cof = pd.read_sql(
+            "SELECT locusId, hitId, cofit, rank FROM Cofit WHERE orgId=?",
+            con, params=(fb_org,))
     con.close()
     cons = _cons_map(args.org)
     df = pd.read_parquet(bridge_pq)
@@ -220,6 +268,17 @@ def run_smoke():
     assert lb["RSc0001"] == "RS_RS25220" and lb["RS06178"] == "RS_RS25220"
     assert lb["RSc0002"] == "RS_RS00005" and lb["RS_RS25220"] == "RS_RS25220"
     print("  FB old-tag (RSc####) -> RefSeq (RS_RS#####) bridge: OK")
+    # GeneFitness-derived cofit: g1 & g2 have anti/correlated profiles
+    M = np.array([[ 1.0,  2.0,  3.0],     # g1
+                  [ 1.1,  2.1,  2.9],     # g2  ~ g1 (high cofit)
+                  [-1.0, -2.0, -3.0]])    # g3  anti-correlated with g1
+    edges = cofit_edges_from_matrix(["g1", "g2", "g3"], M, top_n=1)
+    top_of_g1 = edges[edges.locusId == "g1"].iloc[0]
+    print(f"  GeneFitness cofit: g1 top partner = {top_of_g1.hitId} "
+          f"(cofit {top_of_g1.cofit:.2f})")
+    assert top_of_g1.hitId == "g2", "g1's top cofit partner must be g2"
+    assert top_of_g1.cofit > 0.9, "correlated profiles -> high cofit"
+    print("  GeneFitness-derived cofitness (top-N correlation): OK")
     print("\n=== STEP 5 SMOKE PASS ===")
     print("  top-N cofit selection + LEAK-FREE partner-conservation median")
     print("  (no in-org labels used) validated. Real reads feba.db on Colab.")
