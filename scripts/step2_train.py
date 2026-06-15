@@ -138,8 +138,8 @@ def _fit_predict(Xtr, ytr, Xte, fast=True):
 
 
 def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None,
-             cond3_cols=None, cond3_df=None):
-    import numpy as np, pandas as pd
+             cond3_cols=None, cond3_df=None, test_cap=600_000):
+    import numpy as np, pandas as pd, gc
     df = add_condition_cols(df)
     clades = sorted(df.clade.dropna().unique())
     models = {"M_cons": ["family_frac"],
@@ -168,6 +168,11 @@ def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None,
             continue
         if subsample and len(tr) > subsample:
             tr = tr.sample(subsample, random_state=0)
+        # cap the held-out test too: a random subsample preserves base rate, and
+        # AUPRC/Spearman on ~600k rows is as accurate as on millions. Without
+        # this, a 3.1M-row clade (pseudomonas) x ~696 cols OOMs Colab.
+        if test_cap and len(te) > test_cap:
+            te = te.sample(test_cap, random_state=0)
         # ESM merge is per-fold (after subsample) to keep peak RAM bounded by
         # subsample x 640, not full-frame x 640. Drop rows with no embedding.
         if esm_df is not None:
@@ -202,6 +207,7 @@ def evaluate(df, fast=True, subsample=None, esm_cols=None, esm_df=None,
             res_ap[name].append(auprc(yte_ess, -pred))
         print(f"  [{fold_i}/{n_folds}] {held}: {len(te):,} test, "
               f"{int(yte_ess.sum())} ess  ({_t.time()-t0:.0f}s)", flush=True)
+        del tr, te; gc.collect()   # release the big merged frames between folds
     out = {}
     for name in models:
         a = [x for x in res[name]["all"] if not np.isnan(x)]
@@ -314,7 +320,8 @@ def run_real(args):
     print(f"  xgboost device: {_xgb_device()}")
     out = evaluate(df, fast=args.fast, subsample=args.subsample,
                    esm_cols=esm_cols, esm_df=esm_df,
-                   cond3_cols=cond3_cols, cond3_df=cond3_df)
+                   cond3_cols=cond3_cols, cond3_df=cond3_df,
+                   test_cap=args.test_cap)
     _report(out)
     OUT.mkdir(exist_ok=True)
     (OUT / "step2_model_results.json").write_text(json.dumps({
@@ -374,11 +381,15 @@ def main() -> int:
                          "M_full_cond3 and M_full_esm_cond3 models)")
     ap.add_argument("--subsample", type=int, default=1_500_000,
                     help="max train rows per fold (speed); 0 = full")
+    ap.add_argument("--test_cap", type=int, default=600_000,
+                    help="max held-out test rows per fold (RAM); 0 = uncapped")
     ap.add_argument("--fast", action="store_true", default=True)
     ap.add_argument("--full", dest="fast", action="store_false")
     args = ap.parse_args()
     if args.subsample == 0:
         args.subsample = None
+    if args.test_cap == 0:
+        args.test_cap = None
     if not (args.smoke or args.real):
         args.smoke = True
     return run_real(args) if args.real else run_smoke()
