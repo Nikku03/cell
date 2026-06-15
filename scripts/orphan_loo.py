@@ -54,7 +54,7 @@ def _fit_predict(Xtr, ytr, Xte, iters=400, lr=0.5, l2=1.0):
     return 1.0 / (1.0 + np.exp(-Xte @ w))
 
 
-def loo_eval(df, feat_cols, held_org, clade_regex=None):
+def loo_eval(df, feat_cols, held_org, clade_regex=None, l2=1.0):
     """df: rows with columns organism, essential, conservation, feat_cols.
     Train on all orgs not in the held-out set, predict held_org.
     If clade_regex is given, EXCLUDE every org matching it from training
@@ -67,7 +67,7 @@ def loo_eval(df, feat_cols, held_org, clade_regex=None):
         tr = df[df.organism != held_org]
     Xtr = tr[feat_cols].to_numpy(float); ytr = tr.essential.to_numpy(int)
     Xte = te[feat_cols].to_numpy(float); yte = te.essential.to_numpy(int)
-    pred = _fit_predict(Xtr, ytr, Xte)
+    pred = _fit_predict(Xtr, ytr, Xte, l2=l2)
     rogue = te.conservation.to_numpy() < ROGUE_CONS
     out = {
         "held_org": held_org, "clade_regex": clade_regex,
@@ -104,8 +104,8 @@ def run_real(args):
           f"esm PCs: {len(esm_cols)}")
     print("=" * 70)
     cr = args.clade_regex or None
-    res, pred, rogue, yte = loo_eval(df, feat_cols, args.org, cr)
-    res_esm, *_ = loo_eval(df, esm_cols, args.org, cr)
+    res, pred, rogue, yte = loo_eval(df, feat_cols, args.org, cr, args.l2)
+    res_esm, *_ = loo_eval(df, esm_cols, args.org, cr, args.l2)
     mode = (f"leave-one-CLADE-out (exclude /{cr}/ from training)"
             if cr else "leave-one-ORGANISM-out (sisters stay in training)")
     print(f"  mode: {mode}")
@@ -172,6 +172,8 @@ def main() -> int:
     ap.add_argument("--clade_regex", default="",
                     help="exclude all orgs matching this from training "
                          "(leave-one-clade-out; e.g. 'Ralstonia')")
+    ap.add_argument("--l2", type=float, default=1.0,
+                    help="L2 strength (raise for full-dim ESM)")
     args = ap.parse_args()
     if not (args.smoke or args.real):
         args.smoke = True

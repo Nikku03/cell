@@ -127,8 +127,14 @@ def run_multi(args):
           f"ESM-2 ({args.model})")
     seqs = [s for _, _, s in trip]
     emb = embed_esm(seqs, args.model, args.batch)
-    pcs = pca_reduce(emb, args.k)
-    df = pd.DataFrame(pcs, columns=[f"esm_{i}" for i in range(pcs.shape[1])])
+    # Keep the FULL embedding (not 16 PCs). Top-variance PCs capture protein-
+    # family structure, NOT the essentiality-discriminative directions, so
+    # aggressive PCA throws the signal away (audit: 16-PC ESM scored 0 cross-org
+    # while raw AA-composition scored 0.13). Cross-org LOO trains on 11-18k
+    # genes -> can fit full dims with L2.
+    feat = emb.astype("float32")
+    print(f"  keeping FULL {feat.shape[1]}-d embedding for LOO")
+    df = pd.DataFrame(feat, columns=[f"esm_{i}" for i in range(feat.shape[1])])
     df.insert(0, "locus_tag", [lt for _, lt, _ in trip])
     df.insert(0, "organism", [o for o, _, _ in trip])
     OUT.mkdir(parents=True, exist_ok=True)
