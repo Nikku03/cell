@@ -1,0 +1,9 @@
+{
+  "org": "beril_RalstoniaGMI1000",
+  "panel_orgs": 48,
+  "adjacent_mean": 0.35962255614136346,
+  "random_mean": 0.2214192781190433,
+  "fold": 1.6241700325118795,
+  "useful": true,
+  "ghosts_with_named_partner": 35
+}

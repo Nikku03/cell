@@ -1,0 +1,36 @@
+ghost,ghost_product,ghost_orgs,top_partner,partner_product,phi
+RS_RS21195,DUF4880 domain-containing protein,29,RS_RS14620,FecR family protein,1.0
+RS_RS07445,hypothetical protein,10,RS_RS04475,outer membrane protein OmpA,1.0
+RS_RS04955,DUF1841 family protein,10,RS_RS04475,outer membrane protein OmpA,1.0
+RS_RS13920,hypothetical protein,10,RS_RS04475,outer membrane protein OmpA,1.0
+RS_RS10430,DUF3619 family protein,10,RS_RS04475,outer membrane protein OmpA,1.0
+RS_RS15190,DUF2138 domain-containing protein,13,RS_RS15165,YfaP family protein,1.0
+RS_RS10265,DUF1178 family protein,16,RS_RS06295,competence/damage-inducible protein A,0.955
+RS_RS06595,hypothetical protein,13,RS_RS15180,alpha-2-macroglobulin family protein,0.947
+RS_RS12810,DUF3579 domain-containing protein,11,RS_RS02835,zinc-finger domain-containing protein,0.944
+RS_RS24405,DUF1059 domain-containing protein,10,RS_RS22470,Mut7-C RNAse domain-containing protein,0.941
+RS_RS01415,DUF1840 domain-containing protein,11,RS_RS04475,outer membrane protein OmpA,0.941
+RS_RS12165,DUF934 domain-containing protein,26,RS_RS14165,ATP-binding protein,0.919
+RS_RS15325,DUF2160 domain-containing protein,20,RS_RS15305,ABC transporter ATP-binding protein,0.919
+RS_RS03795,DUF883 family protein,24,RS_RS05360,glucarate dehydratase,0.917
+RS_RS00265,DUF484 family protein,37,RS_RS08055,pyruvate dehydrogenase (acetyl-transferring)%2C homodimeric type,0.895
+RS_RS12505,DUF192 domain-containing protein,21,RS_RS04990,polyhydroxyalkanoate depolymerase,0.878
+RS_RS05530,DUF899 domain-containing protein,17,RS_RS20170,YciI family protein,0.876
+RS_RS03995,DUF2214 family protein,15,RS_RS15180,alpha-2-macroglobulin family protein,0.856
+RS_RS07455,DUF1653 domain-containing protein,20,RS_RS02680,3-oxoacyl-ACP reductase,0.837
+RS_RS23595,DUF1304 domain-containing protein,11,RS_RS03330,TPM domain-containing protein,0.83
+RS_RS19135,DUF1345 domain-containing protein,20,RS_RS24460,bifunctional lysylphosphatidylglycerol flippase/synthetase MprF,0.829
+RS_RS08320,DUF1501 domain-containing protein,16,RS_RS12790,patatin-like phospholipase family protein,0.812
+RS_RS20045,DUF2784 domain-containing protein,15,RS_RS03370,chemotaxis protein CheW,0.798
+RS_RS06580,DUF47 domain-containing protein,18,RS_RS00080,phosphoenolpyruvate carboxykinase (GTP),0.787
+RS_RS16700,DUF3820 family protein,30,RS_RS02015,ribosome hibernation-promoting factor%2C HPF/YfiA family,0.787
+RS_RS08005,DUF1223 domain-containing protein,12,RS_RS07375,vWA domain-containing protein,0.778
+RS_RS03550,DUF4337 domain-containing protein,11,RS_RS08080,phasin family protein,0.764
+RS_RS24560,DUF1993 domain-containing protein,20,RS_RS07020,peptide deformylase,0.761
+RS_RS05615,DUF1330 domain-containing protein,20,RS_RS03720,YeeE/YedE family protein,0.743
+RS_RS03855,DUF72 domain-containing protein,35,RS_RS12360,LLM class flavin-dependent oxidoreductase,0.731
+RS_RS23410,DUF350 domain-containing protein,15,RS_RS04010,purine-nucleoside phosphorylase,0.709
+RS_RS12840,DUF3313 domain-containing protein,21,RS_RS00115,YbdD/YjiX family protein,0.706
+RS_RS22715,DUF1272 domain-containing protein,16,RS_RS20125,HoxN/HupN/NixA family nickel/cobalt transporter,0.666
+RS_RS05595,hypothetical protein,20,RS_RS04505,prephenate dehydrogenase,0.655
+RS_RS13650,DUF1624 domain-containing protein,19,RS_RS23995,lysine N(6)-hydroxylase/L-ornithine N(5)-oxygenase family protein,0.612
