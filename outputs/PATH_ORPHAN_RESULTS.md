@@ -77,6 +77,41 @@ Findings:
 PCA); `orphan_loo.py` gained `--l2`. Re-embed (one GPU pass) and re-run LOO with
 full dims + L2 to get ESM's TRUE cross-org number.
 
+## NOVELTY BUILDS (today) — both validated on real GMI1000 data
+
+### #1 Acute × evolutionary 2×2 lens (`orphan_2x2.py`)
+Crossing FB-measured essentiality (acute) × ortholog breadth (evolutionary
+retention) partitions the genome, and all three **non-circular** predictions hold:
+
+| quadrant | n | %ess | has_paralog | dark | median ω |
+|---|---|---|---|---|---|
+| core (ess+retained) | 1050 | 100 | 0.53 | 0.00 | **0.113** |
+| **conditional (ess+labile)** | 311 | 100 | **0.14** | **0.36** | 0.184 |
+| buffered (non-ess+retained) | 1390 | 0 | **0.56** | 0.00 | 0.142 |
+| accessory (non-ess+labile) | 1694 | 0 | 0.08 | 0.26 | 0.185 |
+
+- BUFFERED paralog-rich (0.56) ≫ CONDITIONAL (0.14) → redundancy explains why
+  retained-but-dispensable. **PASS**
+- CONDITIONAL darker (0.36) ≫ CORE (0.00) → novel niche genes. **PASS**
+- CORE strongest purifying selection (ω 0.113 < accessory 0.185). **PASS**
+
+The off-diagonal works: conditional essentials are dark, paralog-poor niche genes;
+buffered genes are redundancy-protected. Novel framing, validated, $0.
+
+### #2 Fused atlas + live-ghost hit-list (`orphan_atlas.py`)
+Per-gene integration (function tier + 2×2 conditional + confidence), degrades
+gracefully to channels present. On GMI1000: 88% annotated, **8% live_ghost (355)**,
+4% unknown. **KILL-GATE PASS**: live-ghost flag enriches for ortholog breadth
+(7.1 vs 3.8) and stronger purifying selection (ω 0.187 vs 0.445) — it captures
+real genes, not noise. Output: prioritized 355-gene experimental hit-list (top:
+DUF934/DUF3579, conserved 10–26 orgs).
+
+### Colab-ready scaffolds (smoke-validated logic)
+- `orphan_afdb.py` — AFDB pull + Foldseek run-half (URL/pLDDT/idmapping plumbing
+  tested); feeds `orphan_foldseek.py` grading.
+- `orphan_gem.py` — gapseq GEM + FB-media mapping + in-silico single-gene-deletion
+  (media-map + redundancy-aware KO readout tested); the conditional extrapolator.
+
 ## Verdict logic (after the full-dim re-run)
 - ESM-full LOO rogue R@P30 clearly > composition's 0.13 → ESM is a real $0
   cross-org detector of rogue/orphan essentials. Result.

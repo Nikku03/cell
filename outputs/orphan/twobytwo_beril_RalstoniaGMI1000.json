@@ -1,0 +1,38 @@
+{
+  "org": "beril_RalstoniaGMI1000",
+  "retained_min": 24,
+  "quadrants": {
+    "core": {
+      "n": 1050,
+      "pct_ess": 1.0,
+      "has_paralog": 0.5285714285714286,
+      "metabolic": 0.4380952380952381,
+      "dark": 0.002857142857142857,
+      "median_omega": 0.11272218167068102
+    },
+    "conditional": {
+      "n": 311,
+      "pct_ess": 1.0,
+      "has_paralog": 0.13504823151125403,
+      "metabolic": 0.10610932475884244,
+      "dark": 0.35691318327974275,
+      "median_omega": 0.18436986059852034
+    },
+    "buffered": {
+      "n": 1390,
+      "pct_ess": 0.0,
+      "has_paralog": 0.5611510791366906,
+      "metabolic": 0.5294964028776978,
+      "dark": 0.004316546762589928,
+      "median_omega": 0.14218624223992482
+    },
+    "accessory": {
+      "n": 1694,
+      "pct_ess": 0.0,
+      "has_paralog": 0.07969303423848878,
+      "metabolic": 0.22077922077922077,
+      "dark": 0.2550177095631641,
+      "median_omega": 0.1850625115596361
+    }
+  }
+}

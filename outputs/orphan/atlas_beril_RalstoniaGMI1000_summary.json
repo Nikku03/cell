@@ -1,0 +1,19 @@
+{
+  "org": "beril_RalstoniaGMI1000",
+  "n_genes": 4445,
+  "channels_present": [
+    "dnds"
+  ],
+  "function_tiers": {
+    "annotated": 3893,
+    "live_ghost": 355,
+    "unknown": 197
+  },
+  "conditional_quadrants": {
+    "accessory": 1694,
+    "buffered": 1390,
+    "core": 1050,
+    "conditional": 311
+  },
+  "n_live_ghosts": 355
+}
