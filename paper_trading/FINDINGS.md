@@ -78,16 +78,72 @@ history, then judge that choice on the **held-out second** half.
 - The window that was *actually* best out-of-sample (BTC: 120, ETH: 200) was
   unknowable in advance — which is the whole point.
 
+## Experiment 3 — Does regime-awareness help?
+
+Experiment 1 hinted that trend tools work *where the asset is volatile and
+trending* and hurt elsewhere. So I built two regime filters and tested them the
+same ruthless way (OOS, costs, vs the same assets). Cells are **OOS Sharpe**.
+
+- **`regime`** — trend, but only "armed" when the Kaufman Efficiency Ratio says
+  the market is moving cleanly (not chopping). Go long only if uptrend *and*
+  efficiency clears a threshold.
+- **`regimeswitch`** — switch tools by volatility: use trend in turbulent
+  regimes (recent vol > long-run vol) for its downside protection; just hold in
+  calm regimes, where trend only pays whipsaw.
+
+| asset | buyhold | trend | regime | regimeswitch |
+|---|--:|--:|--:|--:|
+| BTC | 0.81 | **1.18** | 0.91 | 0.79 |
+| ETH | 0.63 | **0.92** | 0.50 | 0.75 |
+| LTC | **0.41** | 0.12 | −0.55 | 0.16 |
+| DOGE | 0.92 | **0.94** | 0.84 | 0.90 |
+| AAPL | 0.61 | 0.46 | 0.42 | **0.69** |
+| MSFT | **1.29** | 0.89 | 0.60 | 1.18 |
+| AMZN | 1.61 | 1.69 | 0.55 | **1.83** |
+| JPM | 1.01 | **1.05** | 0.16 | 0.88 |
+| XOM | 0.04 | −0.13 | −0.27 | **0.16** |
+| KO | **0.27** | −0.90 | −0.47 | −0.54 |
+| GE | −0.94 | 0.33 | **0.57** | −0.55 |
+| WMT | **0.82** | 0.63 | 0.67 | 0.68 |
+| **mean** | **0.62** | 0.60 | 0.33 | 0.58 |
+| **median** | 0.72 | **0.76** | 0.52 | 0.72 |
+| **worst** | −0.94 | −0.90 | −0.55 | **−0.55** |
+
+### What this honestly says
+
+1. **The clever filter (`regime`) was a bust — a clean negative result.** Mean
+   Sharpe 0.33, dead last, *below buy & hold*. Gating on the efficiency ratio
+   sat out so much of the move that it sacrificed more upside than the whipsaws
+   it avoided. This is the over-engineering trap: a smarter-sounding rule that
+   tests worse. Recorded, not buried.
+2. **`regimeswitch` did not raise the ceiling — it raised the floor.** Its mean
+   Sharpe (0.58) is a hair *below* both buy & hold (0.62) and plain trend (0.60),
+   so it is **not** a free lunch. Its one real, narrow win is the **worst case**:
+   −0.55, the least-bad of any approach (buy & hold and trend both crater to
+   ≈ −0.9 on their worst asset). It also fixed plain trend's specific failures on
+   the calm names — AAPL (0.69 vs trend 0.46), AMZN (1.83 vs 1.69), XOM
+   (0.16 vs −0.13) — by holding instead of whipsawing there, while keeping most
+   of trend's crypto edge.
+3. **So regime-awareness bought robustness, not return.** That is the same lesson
+   as the leverage and the 150-year tests, one more time: the durable gain is a
+   higher floor (survive your worst asset / worst decade), not a higher peak.
+   `regimeswitch` is the better *default* precisely because it is rarely the
+   worst choice — never the best by much either.
+4. **Honest limitation:** none of this beats just buying and holding a good asset
+   on average. The edge across a blind cross-section remains a *tilt* toward
+   better worst-case behavior, not a money pump.
+
 ## Takeaways for how we evolve
 
 - Keep parameters fixed a priori; treat any in-sample optimization with deep
   suspicion and always confirm on held-out data (`--oos`).
 - Judge strategies by their **beat rate across many assets**, not one flattering
   chart. Robustness > peak performance.
-- The honest opportunity is **regime-aware**: trend tools earn their keep on
-  volatile trenders (crypto, some stocks) and destroy value on stable
-  mean-reverters. A sensible next step is a filter that only deploys trend where
-  the asset is actually trending/volatile — to be built and then tested the same
-  ruthless way.
+- **Regime-awareness was built and tested (Experiment 3).** The aggressive
+  efficiency-ratio gate failed; the volatility-regime switch bought *robustness*
+  (best worst-case, fixed trend's calm-asset failures) but not higher average
+  return. Use `regimeswitch` as the better-behaved default, not as a money pump.
+  If we push regime work further, the bar is: beat buy & hold's **mean** Sharpe
+  across the cross-section, not just its worst case.
 - Mean-reversion as implemented is dead on arrival; if we revisit it, it needs a
   trend filter so it stops catching knives.

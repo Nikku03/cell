@@ -104,7 +104,32 @@ def optimization_trap(symbol="BTC", windows=range(10, 210, 10)):
         print(f"-> {verdict}")
 
 
+def regime_study(strats=("buyhold", "trend", "regime", "regimeswitch"), oos_split=0.5):
+    """Does regime-awareness help? Report per-asset Sharpe plus aggregate
+    robustness (mean / median / worst-case), OOS. Robustness = a high floor,
+    not just a high ceiling."""
+    print("\n" + "=" * 78)
+    print("EXPERIMENT 3 - REGIME AWARENESS (OOS Sharpe per asset + aggregates)")
+    print("=" * 78)
+    crypto = set(CRYPTO)
+    S = {s: [] for s in strats}
+    print(f"{'asset':6s}" + "".join(f"{s:>14s}" for s in strats))
+    for a in ASSETS:
+        row = f"{a:6s}"
+        for s in strats:
+            sh = engine.backtest(s, a, oos_split=oos_split)["strategy_metrics"]["sharpe"]
+            if np.isfinite(sh):
+                S[s].append(sh)
+            row += f"{sh:>14.2f}"
+        print(row)
+    print("-" * 78)
+    print(f"{'aggregate':6s}" + "".join(f"{'':>14s}" for _ in strats))
+    for label, fn in [("mean", np.mean), ("median", np.median), ("worst", np.min)]:
+        print(f"{label:6s}" + "".join(f"{fn(S[s]):>14.2f}" for s in strats))
+
+
 if __name__ == "__main__":
     robustness_matrix(["trend", "absmom", "breakout", "voltrend", "meanrevert"])
+    regime_study()
     for s in ["BTC", "ETH", "AAPL"]:
         optimization_trap(s)

@@ -132,8 +132,66 @@ class VolTargetTrend(Strategy):
         return 1.0 if vol <= 0 else float(np.clip(self.target_vol / vol, 0.0, 1.0))
 
 
+class RegimeTrend(Strategy):
+    """Trend-following, but only 'armed' when the market is cleanly trending.
+
+    Regime gauge = Kaufman Efficiency Ratio over `er_window`: |net move| divided
+    by total path length, in [0,1]. ~1 means a clean directional move; ~0 means
+    choppy noise where trend rules get whipsawed. We go long only when price is
+    above its MA AND efficiency clears `er_thresh`. All causal (trailing only).
+    """
+    name = "regime"
+
+    def __init__(self, window=50, er_window=30, er_thresh=0.30):
+        self.window = window
+        self.er_window = er_window
+        self.er_thresh = er_thresh
+
+    def target_weight(self, prices):
+        if len(prices) < max(self.window, self.er_window) + 1:
+            return 0.0
+        if prices[-1] <= prices[-self.window:].mean():
+            return 0.0  # not in an uptrend -> flat regardless of regime
+        seg = prices[-self.er_window - 1:]
+        net = abs(seg[-1] - seg[0])
+        path = np.abs(np.diff(seg)).sum()
+        er = net / path if path > 0 else 0.0
+        return 1.0 if er >= self.er_thresh else 0.0
+
+
+class RegimeSwitch(Strategy):
+    """Switch tools by volatility regime.
+
+    When recent volatility is ABOVE the asset's longer-run volatility (a
+    turbulent regime), use trend-following for its downside protection. When
+    things are calm (recent vol below long-run), just hold -- calm markets tend
+    to drift up and trend rules only cost whipsaw there. Causal throughout.
+    """
+    name = "regimeswitch"
+
+    def __init__(self, window=50, vol_window=20, regime_window=200):
+        self.window = window
+        self.vol_window = vol_window
+        self.regime_window = regime_window
+
+    def target_weight(self, prices):
+        if len(prices) < self.window + 1:
+            return 0.0
+        if len(prices) < self.regime_window + 1:
+            return 1.0  # not enough history to judge regime -> hold
+        w = prices[-self.regime_window - 1:]
+        rets = w[1:] / w[:-1] - 1.0
+        recent_vol = rets[-self.vol_window:].std()
+        long_vol = rets.std()
+        turbulent = recent_vol > long_vol
+        if turbulent:
+            return 1.0 if prices[-1] > prices[-self.window:].mean() else 0.0
+        return 1.0  # calm regime -> hold
+
+
 REGISTRY = {s.name: s for s in
-            [BuyAndHold, TrendFollow, MeanRevert, AbsMomentum, Breakout, VolTargetTrend]}
+            [BuyAndHold, TrendFollow, MeanRevert, AbsMomentum, Breakout,
+             VolTargetTrend, RegimeTrend, RegimeSwitch]}
 
 
 def make(name, **kw) -> Strategy:
