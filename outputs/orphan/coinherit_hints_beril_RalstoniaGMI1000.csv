@@ -1,36 +1,1773 @@
 ghost,ghost_product,ghost_orgs,top_partner,partner_product,phi
-RS_RS21195,DUF4880 domain-containing protein,29,RS_RS14620,FecR family protein,1.0
-RS_RS07445,hypothetical protein,10,RS_RS04475,outer membrane protein OmpA,1.0
-RS_RS04955,DUF1841 family protein,10,RS_RS04475,outer membrane protein OmpA,1.0
-RS_RS13920,hypothetical protein,10,RS_RS04475,outer membrane protein OmpA,1.0
-RS_RS10430,DUF3619 family protein,10,RS_RS04475,outer membrane protein OmpA,1.0
+RS_RS20225,3-hydroxyisobutyrate dehydrogenase,42,RS_RS16450,2-hydroxy-3-oxopropionate reductase,1.0
+RS_RS15170,YfaP family protein,12,RS_RS15180,alpha-2-macroglobulin family protein,1.0
+RS_RS15180,alpha-2-macroglobulin family protein,12,RS_RS15170,YfaP family protein,1.0
+RS_RS12300,DesA family fatty acid desaturase,27,RS_RS01405,SPOR domain-containing protein,1.0
+RS_RS06285,sterol desaturase family protein,10,RS_RS01810,twin transmembrane helix small protein,1.0
+RS_RS00170,sigma-70 family RNA polymerase sigma factor,44,RS_RS05225,RNA polymerase sigma factor RpoE,1.0
+RS_RS00780,arginase,31,RS_RS24710,agmatinase,1.0
+RS_RS09755,phage major capsid protein%2C P2 family,10,RS_RS09770,phage portal protein,1.0
+RS_RS02270,bifunctional demethylmenaquinone methyltransferase/2-methoxy-6-polyprenyl-1%2C4-benzoquinol methylase UbiE,45,RS_RS01925,pantetheine-phosphate adenylyltransferase,1.0
+RS_RS12270,RadC family protein,45,RS_RS14995,50S ribosomal protein L17,1.0
+RS_RS08170,potassium transporter Kup,33,RS_RS22210,potassium transporter Kup,1.0
+RS_RS22210,potassium transporter Kup,33,RS_RS08170,potassium transporter Kup,1.0
+RS_RS14870,OmpW/AlkL family protein,34,RS_RS16785,OmpW/AlkL family protein,1.0
+RS_RS16785,OmpW/AlkL family protein,34,RS_RS14870,OmpW/AlkL family protein,1.0
+RS_RS02575,4-hydroxythreonine-4-phosphate dehydrogenase PdxA,45,RS_RS10840,radical SAM family heme chaperone HemW,1.0
+RS_RS10425,RNA polymerase sigma factor,11,RS_RS10100,putative toxin-antitoxin system toxin component%2C PIN family,1.0
+RS_RS24710,agmatinase,31,RS_RS00780,arginase,1.0
+RS_RS06300,rhodanese-like domain-containing protein,14,RS_RS01455,rhodanese-like domain-containing protein,1.0
+RS_RS02030,lipopolysaccharide transport periplasmic protein LptA,30,RS_RS06265,amino-acid N-acetyltransferase,1.0
+RS_RS09100,voltage-gated chloride channel family protein,20,RS_RS17295,ClcB-like voltage-gated chloride channel protein,1.0
+RS_RS17295,ClcB-like voltage-gated chloride channel protein,20,RS_RS09100,voltage-gated chloride channel family protein,1.0
+RS_RS08285,2-C-methyl-D-erythritol 2%2C4-cyclodiphosphate synthase,37,RS_RS08280,2-C-methyl-D-erythritol 4-phosphate cytidylyltransferase,1.0
+RS_RS20245,AraC family transcriptional regulator,34,RS_RS19940,AraC family transcriptional regulator,1.0
+RS_RS19940,AraC family transcriptional regulator,34,RS_RS20245,AraC family transcriptional regulator,1.0
+RS_RS08085,histone deacetylase family protein,37,RS_RS04570,histone deacetylase family protein,1.0
+RS_RS09975,tRNA pseudouridine(38-40) synthase TruA,47,RS_RS08205,RluA family pseudouridine synthase,1.0
+RS_RS21315,type III secretion system outer membrane ring subunit SctC,18,RS_RS21260,type III secretion system export apparatus subunit SctV,1.0
+RS_RS20675,type VI secretion system contractile sheath large subunit,22,RS_RS20700,type VI secretion system ATPase TssH,1.0
+RS_RS10530,guanine deaminase,39,RS_RS10630,8-oxoguanine deaminase,1.0
+RS_RS10630,8-oxoguanine deaminase,39,RS_RS10530,guanine deaminase,1.0
+RS_RS19780,amidohydrolase family protein,39,RS_RS10530,guanine deaminase,1.0
+RS_RS01455,rhodanese-like domain-containing protein,14,RS_RS06300,rhodanese-like domain-containing protein,1.0
+RS_RS19270,HlyD family secretion protein,44,RS_RS06480,HlyD family secretion protein,1.0
+RS_RS00805,HlyD family secretion protein,44,RS_RS06480,HlyD family secretion protein,1.0
+RS_RS13640,HlyD family secretion protein,44,RS_RS06480,HlyD family secretion protein,1.0
+RS_RS09360,HlyD family secretion protein,44,RS_RS06480,HlyD family secretion protein,1.0
+RS_RS19190,IucA/IucC family protein,19,RS_RS19195,IucA/IucC family protein,1.0
+RS_RS01635,sigma-54-dependent transcriptional regulator,45,RS_RS17240,sigma-54-dependent transcriptional regulator,1.0
+RS_RS21990,glycosyltransferase family 4 protein,46,RS_RS10455,glycosyltransferase family 4 protein,1.0
+RS_RS10455,glycosyltransferase family 4 protein,46,RS_RS21990,glycosyltransferase family 4 protein,1.0
+RS_RS20020,1%2C2-phenylacetyl-CoA epoxidase subunit PaaD,17,RS_RS20015,1%2C2-phenylacetyl-CoA epoxidase subunit PaaC,1.0
+RS_RS16755,ABC transporter ATP-binding protein,34,RS_RS17275,ABC transporter ATP-binding protein,1.0
+RS_RS17260,ABC transporter substrate-binding protein,36,RS_RS15380,ABC transporter substrate-binding protein,1.0
+RS_RS00165,acetylglutamate kinase,46,RS_RS10415,acetolactate synthase small subunit,1.0
+RS_RS06480,HlyD family secretion protein,44,RS_RS19270,HlyD family secretion protein,1.0
+RS_RS17270,branched-chain amino acid ABC transporter permease,35,RS_RS10230,urea ABC transporter permease subunit UrtC,1.0
+RS_RS21460,GMC oxidoreductase,34,RS_RS03880,GMC family oxidoreductase,1.0
+RS_RS17275,ABC transporter ATP-binding protein,34,RS_RS16755,ABC transporter ATP-binding protein,1.0
+RS_RS11275,,34,RS_RS16755,ABC transporter ATP-binding protein,1.0
+RS_RS12240,ABC transporter ATP-binding protein,34,RS_RS16755,ABC transporter ATP-binding protein,1.0
+RS_RS08855,ABC transporter ATP-binding protein,34,RS_RS16755,ABC transporter ATP-binding protein,1.0
+RS_RS23940,flagellar transcriptional regulator FlhC,13,RS_RS23945,flagellar transcriptional regulator FlhD,1.0
+RS_RS04030,slipin family protein,46,RS_RS06125,protease modulator HflC,1.0
+RS_RS04595,electron transfer flavoprotein subunit alpha/FixB family protein,39,RS_RS04590,electron transfer flavoprotein subunit beta/FixA family protein,1.0
+RS_RS14660,glutathione S-transferase N-terminal domain-containing protein,40,RS_RS04870,glutathione S-transferase,1.0
+RS_RS05390,maleylacetoacetate isomerase,28,RS_RS01895,maleylacetoacetate isomerase,1.0
+RS_RS01895,maleylacetoacetate isomerase,28,RS_RS05390,maleylacetoacetate isomerase,1.0
+RS_RS07845,NAD(P)H:quinone oxidoreductase,35,RS_RS03180,flavodoxin family protein,1.0
+RS_RS03180,flavodoxin family protein,35,RS_RS07845,NAD(P)H:quinone oxidoreductase,1.0
+RS_RS11075,flavodoxin family protein,35,RS_RS07845,NAD(P)H:quinone oxidoreductase,1.0
+RS_RS01910,M16 family metallopeptidase,34,RS_RS01915,M16 family metallopeptidase,1.0
+RS_RS00195,ATP-binding protein,33,RS_RS00200,response regulator transcription factor,1.0
+RS_RS03880,GMC family oxidoreductase,34,RS_RS21460,GMC oxidoreductase,1.0
+RS_RS15650,type II secretion system inner membrane protein GspF,37,RS_RS14135,type II secretion system F family protein,1.0
+RS_RS14135,type II secretion system F family protein,37,RS_RS15650,type II secretion system inner membrane protein GspF,1.0
+RS_RS20380,indole-3-glycerol phosphate synthase TrpC,38,RS_RS14450,indole-3-glycerol phosphate synthase TrpC,1.0
+RS_RS14450,indole-3-glycerol phosphate synthase TrpC,38,RS_RS20380,indole-3-glycerol phosphate synthase TrpC,1.0
+RS_RS10505,LysR substrate-binding domain-containing protein,35,RS_RS18215,LysR family transcriptional regulator,1.0
+RS_RS25155,NCS2 family permease,36,RS_RS03805,NCS2 family permease,1.0
+RS_RS24430,threo-3-hydroxy-L-aspartate ammonia-lyase,44,RS_RS20210,1-aminocyclopropane-1-carboxylate deaminase,1.0
+RS_RS20210,1-aminocyclopropane-1-carboxylate deaminase,44,RS_RS24430,threo-3-hydroxy-L-aspartate ammonia-lyase,1.0
+RS_RS05580,circularly permuted type 2 ATP-grasp protein,32,RS_RS05585,alpha-E domain-containing protein,1.0
+RS_RS20205,Lrp/AsnC family transcriptional regulator,45,RS_RS15580,Lrp/AsnC family transcriptional regulator,1.0
+RS_RS01915,M16 family metallopeptidase,34,RS_RS01910,M16 family metallopeptidase,1.0
+RS_RS11900,formate dehydrogenase subunit gamma,15,RS_RS11925,TorD/DmsD family molecular chaperone,1.0
+RS_RS03910,DsbA family protein,26,RS_RS07270,DsbA family protein,1.0
+RS_RS11825,heme biosynthesis protein HemY,32,RS_RS12060,cell division protein ZapA,1.0
+RS_RS08105,IclR family transcriptional regulator,36,RS_RS03815,IclR family transcriptional regulator,1.0
+RS_RS06905,MurR/RpiR family transcriptional regulator,35,RS_RS24600,MurR/RpiR family transcriptional regulator,1.0
+RS_RS22535,MBL fold metallo-hydrolase,31,RS_RS23825,MBL fold metallo-hydrolase,1.0
+RS_RS03805,NCS2 family permease,36,RS_RS25155,NCS2 family permease,1.0
+RS_RS19195,IucA/IucC family protein,19,RS_RS19190,IucA/IucC family protein,1.0
+RS_RS11925,TorD/DmsD family molecular chaperone,15,RS_RS11900,formate dehydrogenase subunit gamma,1.0
+RS_RS07270,DsbA family protein,26,RS_RS03910,DsbA family protein,1.0
+RS_RS13185,ABC transporter permease,17,RS_RS10500,substrate-binding domain-containing protein,1.0
+RS_RS10500,substrate-binding domain-containing protein,17,RS_RS13185,ABC transporter permease,1.0
+RS_RS04835,lytic transglycosylase domain-containing protein,17,RS_RS11495,lytic transglycosylase domain-containing protein,1.0
+RS_RS11495,lytic transglycosylase domain-containing protein,17,RS_RS04835,lytic transglycosylase domain-containing protein,1.0
+RS_RS06200,5-deoxy-glucuronate isomerase,22,RS_RS06205,myo-inosose-2 dehydratase,1.0
+RS_RS10185,urease accessory protein UreF,24,RS_RS10225,urea ABC transporter ATP-binding protein UrtD,1.0
+RS_RS03455,glycosyltransferase family 2 protein,27,RS_RS03460,glycosyltransferase family 2 protein,1.0
+RS_RS03460,glycosyltransferase family 2 protein,27,RS_RS03455,glycosyltransferase family 2 protein,1.0
+RS_RS10865,pyroglutamyl-peptidase I,10,RS_RS18405,pyroglutamyl-peptidase I,1.0
+RS_RS17575,winged helix-turn-helix transcriptional regulator,25,RS_RS22520,winged helix-turn-helix transcriptional regulator,1.0
+RS_RS04000,CaiB/BaiF CoA transferase family protein,38,RS_RS05995,CaiB/BaiF CoA transferase family protein,1.0
+RS_RS05995,CaiB/BaiF CoA transferase family protein,38,RS_RS04000,CaiB/BaiF CoA transferase family protein,1.0
+RS_RS06895,CaiB/BaiF CoA transferase family protein,38,RS_RS04000,CaiB/BaiF CoA transferase family protein,1.0
+RS_RS01150,helix-turn-helix domain-containing protein,42,RS_RS22710,helix-turn-helix domain-containing protein,1.0
+RS_RS17070,alpha/beta fold hydrolase,44,RS_RS07920,alpha/beta fold hydrolase,1.0
+RS_RS14935,protein-methionine-sulfoxide reductase heme-binding subunit MsrQ,36,RS_RS14940,protein-methionine-sulfoxide reductase catalytic subunit MsrP,1.0
+RS_RS10235,urea ABC transporter permease subunit UrtB,24,RS_RS10225,urea ABC transporter ATP-binding protein UrtD,1.0
+RS_RS18405,pyroglutamyl-peptidase I,10,RS_RS10865,pyroglutamyl-peptidase I,1.0
+RS_RS24650,cytochrome c oxidase subunit 3,40,RS_RS24655,heme-copper oxidase subunit III family protein,1.0
+RS_RS14600,cytochrome o ubiquinol oxidase subunit III,40,RS_RS24655,heme-copper oxidase subunit III family protein,1.0
+RS_RS05380,aldose 1-epimerase,39,RS_RS13780,aldose 1-epimerase,1.0
+RS_RS05725,FKBP-type peptidyl-prolyl cis-trans isomerase,42,RS_RS12265,FKBP-type peptidyl-prolyl cis-trans isomerase,1.0
+RS_RS12265,FKBP-type peptidyl-prolyl cis-trans isomerase,42,RS_RS05725,FKBP-type peptidyl-prolyl cis-trans isomerase,1.0
+RS_RS17930,MbtH family protein,22,RS_RS26200,MbtH family protein,1.0
+RS_RS26200,MbtH family protein,22,RS_RS17930,MbtH family protein,1.0
+RS_RS23825,MBL fold metallo-hydrolase,31,RS_RS22535,MBL fold metallo-hydrolase,1.0
+RS_RS13780,aldose 1-epimerase,39,RS_RS05380,aldose 1-epimerase,1.0
+RS_RS07985,aldose 1-epimerase,39,RS_RS05380,aldose 1-epimerase,1.0
+RS_RS13250,histidine ammonia-lyase,37,RS_RS18910,HAL/PAL/TAL family ammonia-lyase,1.0
+RS_RS18910,HAL/PAL/TAL family ammonia-lyase,37,RS_RS13250,histidine ammonia-lyase,1.0
+RS_RS04875,PLP-dependent aminotransferase family protein,43,RS_RS02995,PLP-dependent aminotransferase family protein,1.0
+RS_RS24655,heme-copper oxidase subunit III family protein,40,RS_RS09390,cytochrome o ubiquinol oxidase subunit III,1.0
+RS_RS09390,cytochrome o ubiquinol oxidase subunit III,40,RS_RS24655,heme-copper oxidase subunit III family protein,1.0
+RS_RS09160,GNAT family N-acetyltransferase,42,RS_RS12860,GNAT family N-acetyltransferase,1.0
+RS_RS04020,TonB-dependent siderophore receptor,44,RS_RS14625,TonB-dependent siderophore receptor,1.0
+RS_RS23680,MFS transporter,45,RS_RS06475,DHA2 family efflux MFS transporter permease subunit,1.0
+RS_RS02725,FAD-dependent oxidoreductase,43,RS_RS14495,UbiH/UbiF family hydroxylase,1.0
+RS_RS03110,molybdopterin-dependent oxidoreductase,14,RS_RS03105,cytochrome b/b6 domain-containing protein,1.0
+RS_RS22365,type II and III secretion system protein family protein,27,RS_RS03295,type II and III secretion system protein family protein,1.0
+RS_RS03295,type II and III secretion system protein family protein,27,RS_RS22365,type II and III secretion system protein family protein,1.0
+RS_RS17235,sensor histidine kinase,30,RS_RS01630,sensor histidine kinase,1.0
+RS_RS00430,multifunctional CCA addition/repair protein,45,RS_RS05880,glutamate--tRNA ligase,1.0
+RS_RS13315,metalloprotease TldD,44,RS_RS04700,metalloprotease PmbA,1.0
+RS_RS02965,HD-GYP domain-containing protein,21,RS_RS12610,HD-GYP domain-containing protein,1.0
+RS_RS12610,HD-GYP domain-containing protein,21,RS_RS02965,HD-GYP domain-containing protein,1.0
+RS_RS12860,GNAT family N-acetyltransferase,42,RS_RS24050,GNAT family N-acetyltransferase,1.0
+RS_RS24050,GNAT family N-acetyltransferase,42,RS_RS12860,GNAT family N-acetyltransferase,1.0
+RS_RS16760,GMC family oxidoreductase,29,RS_RS00605,GMC family oxidoreductase,1.0
+RS_RS17500,hybrid-cluster NAD(P)-dependent oxidoreductase,36,RS_RS20025,1%2C2-phenylacetyl-CoA epoxidase subunit PaaE,1.0
+RS_RS20025,1%2C2-phenylacetyl-CoA epoxidase subunit PaaE,36,RS_RS17500,hybrid-cluster NAD(P)-dependent oxidoreductase,1.0
+RS_RS18225,PDR/VanB family oxidoreductase,36,RS_RS17500,hybrid-cluster NAD(P)-dependent oxidoreductase,1.0
+RS_RS17230,MFS transporter,37,RS_RS19740,MFS transporter,1.0
+RS_RS20700,type VI secretion system ATPase TssH,22,RS_RS20670,type VI secretion system contractile sheath small subunit,1.0
+RS_RS21065,spermidine synthase,25,RS_RS04925,spermidine synthase,1.0
+RS_RS04925,spermidine synthase,25,RS_RS21065,spermidine synthase,1.0
+RS_RS22520,winged helix-turn-helix transcriptional regulator,25,RS_RS17575,winged helix-turn-helix transcriptional regulator,1.0
+RS_RS18620,NAD(P)H-dependent flavin oxidoreductase,38,RS_RS00560,NAD(P)H-dependent flavin oxidoreductase,1.0
+RS_RS00560,NAD(P)H-dependent flavin oxidoreductase,38,RS_RS18620,NAD(P)H-dependent flavin oxidoreductase,1.0
+RS_RS01250,NAD(P)H-dependent flavin oxidoreductase,38,RS_RS18620,NAD(P)H-dependent flavin oxidoreductase,1.0
+RS_RS18665,NAD(P)H-dependent flavin oxidoreductase,38,RS_RS18620,NAD(P)H-dependent flavin oxidoreductase,1.0
+RS_RS10360,triose-phosphate isomerase,47,RS_RS04490,3-phosphoserine/phosphohydroxythreonine transaminase,1.0
+RS_RS00605,GMC family oxidoreductase,29,RS_RS16760,GMC family oxidoreductase,1.0
+RS_RS03705,peptidoglycan-associated lipoprotein Pal,42,RS_RS14490,DsbC family protein,1.0
+RS_RS23080,4-carboxy-4-hydroxy-2-oxoadipate aldolase/oxaloacetate decarboxylase,27,RS_RS23090,RraA family protein,1.0
+RS_RS10100,putative toxin-antitoxin system toxin component%2C PIN family,11,RS_RS02005,HPr(Ser) kinase/phosphatase,1.0
+RS_RS19035,flagellar basal-body MS-ring/collar protein FliF,39,RS_RS18820,flagellar basal-body rod protein FlgG,1.0
+RS_RS19610,non-hydrolyzing UDP-N-acetylglucosamine 2-epimerase,34,RS_RS22030,non-hydrolyzing UDP-N-acetylglucosamine 2-epimerase,1.0
+RS_RS22030,non-hydrolyzing UDP-N-acetylglucosamine 2-epimerase,34,RS_RS19610,non-hydrolyzing UDP-N-acetylglucosamine 2-epimerase,1.0
+RS_RS23930,flagellar motor protein MotB,38,RS_RS18805,flagellar hook assembly protein FlgD,1.0
+RS_RS23090,RraA family protein,27,RS_RS23080,4-carboxy-4-hydroxy-2-oxoadipate aldolase/oxaloacetate decarboxylase,1.0
+RS_RS21640,RraA family protein,27,RS_RS23080,4-carboxy-4-hydroxy-2-oxoadipate aldolase/oxaloacetate decarboxylase,1.0
+RS_RS06465,30S ribosome-binding factor RbfA,43,RS_RS12740,tRNA epoxyqueuosine(34) reductase QueG,1.0
+RS_RS08205,RluA family pseudouridine synthase,47,RS_RS05155,RluA family pseudouridine synthase,1.0
+RS_RS05155,RluA family pseudouridine synthase,47,RS_RS08205,RluA family pseudouridine synthase,1.0
+RS_RS07955,50S ribosomal protein L20,45,RS_RS15090,50S ribosomal protein L16,1.0
+RS_RS16465,acyl-homoserine-lactone synthase SolI,16,RS_RS20835,acyl-homoserine-lactone synthase RasI,1.0
+RS_RS20835,acyl-homoserine-lactone synthase RasI,16,RS_RS16465,acyl-homoserine-lactone synthase SolI,1.0
+RS_RS12040,ABC transporter ATP-binding protein,46,RS_RS12235,ABC transporter ATP-binding protein,1.0
+RS_RS04585,MetQ/NlpA family ABC transporter substrate-binding protein,30,RS_RS16970,MetQ/NlpA family ABC transporter substrate-binding protein,1.0
+RS_RS19650,type VI secretion system Vgr family protein,13,RS_RS20705,type VI secretion system Vgr family protein,1.0
+RS_RS20705,type VI secretion system Vgr family protein,13,RS_RS19650,type VI secretion system Vgr family protein,1.0
+RS_RS20130,type VI secretion system Vgr family protein,13,RS_RS19650,type VI secretion system Vgr family protein,1.0
+RS_RS01630,sensor histidine kinase,30,RS_RS17235,sensor histidine kinase,1.0
+RS_RS20215,enoyl-CoA hydratase/isomerase family protein,31,RS_RS06505,enoyl-CoA hydratase/isomerase family protein,1.0
+RS_RS06505,enoyl-CoA hydratase/isomerase family protein,31,RS_RS20215,enoyl-CoA hydratase/isomerase family protein,1.0
+RS_RS03275,type II secretion system F family protein,25,RS_RS22350,type II secretion system F family protein,1.0
+RS_RS22350,type II secretion system F family protein,25,RS_RS03275,type II secretion system F family protein,1.0
+RS_RS16930,TorF family putative porin,24,RS_RS01680,TorF family putative porin,1.0
+RS_RS01680,TorF family putative porin,24,RS_RS16930,TorF family putative porin,1.0
+RS_RS06655,homoserine dehydrogenase,34,RS_RS00290,Asp-tRNA(Asn)/Glu-tRNA(Gln) amidotransferase subunit GatC,1.0
+RS_RS10720,winged helix-turn-helix transcriptional regulator,32,RS_RS01040,winged helix-turn-helix transcriptional regulator,1.0
+RS_RS21615,5-oxoprolinase subunit PxpB,30,RS_RS10895,5-oxoprolinase subunit PxpB,1.0
+RS_RS10895,5-oxoprolinase subunit PxpB,30,RS_RS21615,5-oxoprolinase subunit PxpB,1.0
+RS_RS13995,methyl-accepting chemotaxis protein,34,RS_RS22425,methyl-accepting chemotaxis protein,1.0
+RS_RS22425,methyl-accepting chemotaxis protein,34,RS_RS13995,methyl-accepting chemotaxis protein,1.0
+RS_RS24975,AraC family transcriptional regulator,34,RS_RS15385,AraC family transcriptional regulator,1.0
+RS_RS15385,AraC family transcriptional regulator,34,RS_RS24975,AraC family transcriptional regulator,1.0
+RS_RS03700,Tol-Pal system beta propeller repeat protein TolB,41,RS_RS11745,outer membrane lipoprotein chaperone LolA,1.0
+RS_RS05755,methyl-accepting chemotaxis protein,34,RS_RS13995,methyl-accepting chemotaxis protein,1.0
+RS_RS18560,HlyD family type I secretion periplasmic adaptor subunit,43,RS_RS22840,HlyD family efflux transporter periplasmic adaptor subunit,1.0
+RS_RS22840,HlyD family efflux transporter periplasmic adaptor subunit,43,RS_RS18560,HlyD family type I secretion periplasmic adaptor subunit,1.0
+RS_RS15740,GNAT family N-acetyltransferase,38,RS_RS19070,GNAT family N-acetyltransferase,1.0
+RS_RS19070,GNAT family N-acetyltransferase,38,RS_RS15740,GNAT family N-acetyltransferase,1.0
+RS_RS18430,GNAT family N-acetyltransferase,38,RS_RS15740,GNAT family N-acetyltransferase,1.0
+RS_RS08950,alpha/beta hydrolase,39,RS_RS16595,alpha/beta hydrolase,1.0
+RS_RS21160,winged helix-turn-helix transcriptional regulator,32,RS_RS01040,winged helix-turn-helix transcriptional regulator,1.0
+RS_RS03280,CpaF family protein,26,RS_RS22355,CpaF family protein,1.0
+RS_RS18565,type I secretion system permease/ATPase,35,RS_RS22835,type I secretion system permease/ATPase,1.0
+RS_RS22835,type I secretion system permease/ATPase,35,RS_RS18565,type I secretion system permease/ATPase,1.0
+RS_RS12955,P-type conjugative transfer ATPase TrbB,16,RS_RS12940,conjugal transfer protein TrbE,1.0
+RS_RS21670,NAD(P) transhydrogenase subunit alpha,24,RS_RS13670,NAD(P) transhydrogenase subunit alpha,1.0
+RS_RS13670,NAD(P) transhydrogenase subunit alpha,24,RS_RS21670,NAD(P) transhydrogenase subunit alpha,1.0
+RS_RS03285,AAA family ATPase,24,RS_RS22360,AAA family ATPase,1.0
+RS_RS22360,AAA family ATPase,24,RS_RS03285,AAA family ATPase,1.0
+RS_RS22525,MaoC family dehydratase,32,RS_RS10250,MaoC family dehydratase,1.0
+RS_RS10250,MaoC family dehydratase,32,RS_RS22525,MaoC family dehydratase,1.0
+RS_RS09760,GPO family capsid scaffolding protein,10,RS_RS09770,phage portal protein,1.0
+RS_RS09745,head completion/stabilization protein,10,RS_RS09770,phage portal protein,1.0
+RS_RS06885,disulfide bond formation protein B,31,RS_RS00445,lytic transglycosylase domain-containing protein,1.0
+RS_RS08895,acetyl-CoA C-acyltransferase,44,RS_RS11305,3-oxoadipyl-CoA thiolase,1.0
+RS_RS11305,3-oxoadipyl-CoA thiolase,44,RS_RS08895,acetyl-CoA C-acyltransferase,1.0
+RS_RS08250,beta-ketothiolase BktB,44,RS_RS08895,acetyl-CoA C-acyltransferase,1.0
+RS_RS01355,acetyl-CoA C-acetyltransferase,44,RS_RS08895,acetyl-CoA C-acyltransferase,1.0
+RS_RS08225,acetyl-CoA C-acetyltransferase,44,RS_RS08895,acetyl-CoA C-acyltransferase,1.0
+RS_RS02355,acetyl-CoA C-acyltransferase,44,RS_RS08895,acetyl-CoA C-acyltransferase,1.0
+RS_RS16595,alpha/beta hydrolase,39,RS_RS08950,alpha/beta hydrolase,1.0
+RS_RS23890,chemotaxis response regulator CheY,46,RS_RS03360,response regulator,1.0
+RS_RS03360,response regulator,46,RS_RS23890,chemotaxis response regulator CheY,1.0
+RS_RS03365,response regulator,46,RS_RS23890,chemotaxis response regulator CheY,1.0
+RS_RS03735,chemotaxis response regulator CheY,46,RS_RS23890,chemotaxis response regulator CheY,1.0
+RS_RS23925,response regulator,46,RS_RS23890,chemotaxis response regulator CheY,1.0
+RS_RS15705,ethanolamine ammonia-lyase subunit EutC,23,RS_RS15710,ethanolamine ammonia-lyase subunit EutB,1.0
+RS_RS00575,phage tail protein,23,RS_RS00570,phage tail protein,1.0
+RS_RS10610,urate hydroxylase PuuD,24,RS_RS10510,xanthine dehydrogenase small subunit,1.0
+RS_RS14165,ATP-binding protein,28,RS_RS04940,AAA family ATPase,1.0
+RS_RS00570,phage tail protein,23,RS_RS00575,phage tail protein,1.0
+RS_RS00580,phage tail protein,23,RS_RS00575,phage tail protein,1.0
+RS_RS18715,organic hydroperoxide resistance protein,37,RS_RS22460,organic hydroperoxide resistance protein,1.0
+RS_RS22460,organic hydroperoxide resistance protein,37,RS_RS18715,organic hydroperoxide resistance protein,1.0
+RS_RS14330,ABC transporter ATP-binding protein,36,RS_RS09520,ABC transporter ATP-binding protein,1.0
+RS_RS09520,ABC transporter ATP-binding protein,36,RS_RS14330,ABC transporter ATP-binding protein,1.0
+RS_RS01180,DoxX family protein,38,RS_RS12535,DoxX family protein,1.0
+RS_RS06340,sn-glycerol-3-phosphate ABC transporter permease UgpA,33,RS_RS15315,carbohydrate ABC transporter permease,1.0
+RS_RS01040,winged helix-turn-helix transcriptional regulator,32,RS_RS21160,winged helix-turn-helix transcriptional regulator,1.0
+RS_RS00290,Asp-tRNA(Asn)/Glu-tRNA(Gln) amidotransferase subunit GatC,34,RS_RS06655,homoserine dehydrogenase,1.0
+RS_RS06205,myo-inosose-2 dehydratase,22,RS_RS06250,TIM barrel protein,1.0
+RS_RS06250,TIM barrel protein,22,RS_RS06205,myo-inosose-2 dehydratase,1.0
+RS_RS09535,peroxidase-related enzyme,24,RS_RS11035,peroxidase-related enzyme,1.0
+RS_RS11035,peroxidase-related enzyme,24,RS_RS09535,peroxidase-related enzyme,1.0
+RS_RS15090,50S ribosomal protein L16,45,RS_RS07955,50S ribosomal protein L20,1.0
+RS_RS04885,DMT family transporter,29,RS_RS10580,aromatic amino acid DMT transporter YddG,1.0
+RS_RS10580,aromatic amino acid DMT transporter YddG,29,RS_RS04885,DMT family transporter,1.0
+RS_RS00440,complex I NDUFA9 subunit family protein,43,RS_RS07540,aldo/keto reductase,1.0
+RS_RS12535,DoxX family protein,38,RS_RS01180,DoxX family protein,1.0
+RS_RS01640,TlpA disulfide reductase family protein,40,RS_RS13925,TlpA family protein disulfide reductase,1.0
+RS_RS13925,TlpA family protein disulfide reductase,40,RS_RS01640,TlpA disulfide reductase family protein,1.0
+RS_RS10225,urea ABC transporter ATP-binding protein UrtD,24,RS_RS10215,urease accessory protein UreD,1.0
+RS_RS05025,ABC transporter permease,31,RS_RS13790,L-arabinose ABC transporter permease AraH,1.0
+RS_RS24955,sugar ABC transporter permease,31,RS_RS13790,L-arabinose ABC transporter permease AraH,1.0
+RS_RS19175,2%2C3-diaminopropionate biosynthesis protein SbnB,26,RS_RS16795,delta(1)-pyrroline-2-carboxylate reductase family protein,1.0
+RS_RS16795,delta(1)-pyrroline-2-carboxylate reductase family protein,26,RS_RS19175,2%2C3-diaminopropionate biosynthesis protein SbnB,1.0
+RS_RS00905,CBS domain-containing protein,40,RS_RS07870,CBS domain-containing protein,1.0
+RS_RS07870,CBS domain-containing protein,40,RS_RS00905,CBS domain-containing protein,1.0
+RS_RS02950,amidase,44,RS_RS00285,Asp-tRNA(Asn)/Glu-tRNA(Gln) amidotransferase subunit GatA,1.0
+RS_RS00285,Asp-tRNA(Asn)/Glu-tRNA(Gln) amidotransferase subunit GatA,44,RS_RS02950,amidase,1.0
+RS_RS03865,pyridoxamine 5'-phosphate oxidase,42,RS_RS20370,pyridoxamine 5'-phosphate oxidase,1.0
+RS_RS10290,NADH-quinone oxidoreductase subunit L,38,RS_RS10295,NADH-quinone oxidoreductase subunit NuoK,1.0
+RS_RS02050,monovalent cation:proton antiporter family protein,45,RS_RS15550,glutathione-regulated potassium-efflux system protein KefC,1.0
+RS_RS15550,glutathione-regulated potassium-efflux system protein KefC,45,RS_RS02050,monovalent cation:proton antiporter family protein,1.0
+RS_RS14345,ABC transporter permease,40,RS_RS09505,ABC transporter permease,1.0
+RS_RS09505,ABC transporter permease,40,RS_RS14345,ABC transporter permease,1.0
+RS_RS13790,L-arabinose ABC transporter permease AraH,31,RS_RS06230,ABC transporter permease,1.0
+RS_RS06230,ABC transporter permease,31,RS_RS13790,L-arabinose ABC transporter permease AraH,1.0
+RS_RS18270,alpha/beta hydrolase,39,RS_RS08950,alpha/beta hydrolase,1.0
+RS_RS22465,alpha/beta hydrolase,39,RS_RS08950,alpha/beta hydrolase,1.0
+RS_RS02175,alpha/beta hydrolase,39,RS_RS08950,alpha/beta hydrolase,1.0
+RS_RS24680,MFS transporter,40,RS_RS23040,MFS transporter,1.0
+RS_RS06615,bifunctional UDP-4-keto-pentose/UDP-xylose synthase,47,RS_RS04550,ADP-glyceromanno-heptose 6-epimerase,1.0
+RS_RS19480,ornithine cyclodeaminase,26,RS_RS19175,2%2C3-diaminopropionate biosynthesis protein SbnB,1.0
+RS_RS20370,pyridoxamine 5'-phosphate oxidase,42,RS_RS03865,pyridoxamine 5'-phosphate oxidase,1.0
+RS_RS23335,phosphoenolpyruvate--protein phosphotransferase,22,RS_RS14310,phosphoenolpyruvate--protein phosphotransferase,1.0
+RS_RS14310,phosphoenolpyruvate--protein phosphotransferase,22,RS_RS23335,phosphoenolpyruvate--protein phosphotransferase,1.0
+RS_RS22355,CpaF family protein,26,RS_RS03280,CpaF family protein,1.0
+RS_RS09690,baseplate assembly protein,17,RS_RS09740,tail protein X,1.0
+RS_RS12940,conjugal transfer protein TrbE,16,RS_RS12955,P-type conjugative transfer ATPase TrbB,1.0
+RS_RS16945,potassium-transporting ATPase subunit KdpA,36,RS_RS16955,potassium-transporting ATPase subunit KdpC,1.0
+RS_RS15185,DUF1175 domain-containing protein,13,RS_RS15165,YfaP family protein,1.0
+RS_RS06925,glutathione ABC transporter permease GsiC,40,RS_RS14345,ABC transporter permease,1.0
+RS_RS01405,SPOR domain-containing protein,27,RS_RS12300,DesA family fatty acid desaturase,1.0
+RS_RS11135,NAD(P)/FAD-dependent oxidoreductase,45,RS_RS15870,NAD(P)/FAD-dependent oxidoreductase,1.0
+RS_RS22565,ArsR/SmtB family transcription factor,46,RS_RS23640,ArsR/SmtB family transcription factor,1.0
+RS_RS23640,ArsR/SmtB family transcription factor,46,RS_RS22565,ArsR/SmtB family transcription factor,1.0
+RS_RS09750,terminase endonuclease subunit,10,RS_RS09770,phage portal protein,1.0
+RS_RS07910,CoA transferase subunit B,35,RS_RS11310,CoA transferase subunit B,1.0
+RS_RS04915,ArsR/SmtB family transcription factor,46,RS_RS22565,ArsR/SmtB family transcription factor,1.0
+RS_RS07745,ArsR/SmtB family transcription factor,46,RS_RS22565,ArsR/SmtB family transcription factor,1.0
+RS_RS13845,NADP-dependent malic enzyme,27,RS_RS10650,NADP-dependent malic enzyme,1.0
+RS_RS10650,NADP-dependent malic enzyme,27,RS_RS13845,NADP-dependent malic enzyme,1.0
+RS_RS01390,helical backbone metal receptor,41,RS_RS12020,cobalamin-binding protein,1.0
+RS_RS12020,cobalamin-binding protein,41,RS_RS01390,helical backbone metal receptor,1.0
+RS_RS05855,microcin C ABC transporter permease YejB,40,RS_RS14345,ABC transporter permease,1.0
+RS_RS11310,CoA transferase subunit B,35,RS_RS07910,CoA transferase subunit B,1.0
+RS_RS05220,beta-ketoacyl-ACP synthase II,45,RS_RS15150,30S ribosomal protein S12,1.0
+RS_RS12730,N-acetylmuramoyl-L-alanine amidase,39,RS_RS12170,nitrite/sulfite reductase,1.0
+RS_RS01055,glutamine amidotransferase,32,RS_RS05770,glutamine amidotransferase,1.0
+RS_RS05770,glutamine amidotransferase,32,RS_RS01055,glutamine amidotransferase,1.0
+RS_RS12740,tRNA epoxyqueuosine(34) reductase QueG,43,RS_RS06465,30S ribosome-binding factor RbfA,1.0
+RS_RS13155,DnaA regulatory inactivator Hda,38,RS_RS04840,DNA topoisomerase IV subunit A,1.0
+RS_RS07660,dihydropteroate synthase,45,RS_RS07960,phenylalanine--tRNA ligase subunit alpha,1.0
+RS_RS09545,(2Fe-2S)-binding protein,37,RS_RS07395,(2Fe-2S)-binding protein,1.0
+RS_RS07395,(2Fe-2S)-binding protein,37,RS_RS09545,(2Fe-2S)-binding protein,1.0
+RS_RS04570,histone deacetylase family protein,37,RS_RS08085,histone deacetylase family protein,1.0
+RS_RS21295,type III secretion system ATPase SctN,42,RS_RS19050,flagellar protein export ATPase FliI,1.0
+RS_RS19050,flagellar protein export ATPase FliI,42,RS_RS21295,type III secretion system ATPase SctN,1.0
+RS_RS14760,imidazole glycerol phosphate synthase subunit HisF,47,RS_RS11770,P-II family nitrogen regulator,1.0
+RS_RS03145,(2Fe-2S)-binding protein,37,RS_RS09545,(2Fe-2S)-binding protein,1.0
+RS_RS18705,(2Fe-2S)-binding protein,37,RS_RS09545,(2Fe-2S)-binding protein,1.0
+RS_RS14065,MarC family protein,44,RS_RS14775,MarC family protein,1.0
+RS_RS14775,MarC family protein,44,RS_RS14065,MarC family protein,1.0
+RS_RS05880,glutamate--tRNA ligase,45,RS_RS00430,multifunctional CCA addition/repair protein,1.0
+RS_RS14810,ABC transporter permease,42,RS_RS09925,ABC transporter permease,1.0
+RS_RS12170,nitrite/sulfite reductase,39,RS_RS12730,N-acetylmuramoyl-L-alanine amidase,1.0
+RS_RS09400,nitrite/sulfite reductase,39,RS_RS12730,N-acetylmuramoyl-L-alanine amidase,1.0
+RS_RS03235,YjgN family protein,10,RS_RS03240,M48 family metallopeptidase,1.0
+RS_RS05005,excinuclease ABC subunit UvrB,47,RS_RS14435,anthranilate synthase component II,1.0
+RS_RS07905,CoA transferase subunit A,32,RS_RS11315,3-oxoacid CoA-transferase subunit A,1.0
+RS_RS11315,3-oxoacid CoA-transferase subunit A,32,RS_RS07905,CoA transferase subunit A,1.0
+RS_RS01610,D-alanyl-D-alanine carboxypeptidase family protein,38,RS_RS13605,cytochrome b,1.0
+RS_RS10510,xanthine dehydrogenase small subunit,24,RS_RS10610,urate hydroxylase PuuD,1.0
+RS_RS03740,protein phosphatase CheZ,29,RS_RS23885,protein phosphatase CheZ,1.0
+RS_RS23885,protein phosphatase CheZ,29,RS_RS03740,protein phosphatase CheZ,1.0
+RS_RS05135,molybdopterin molybdotransferase MoeA,46,RS_RS06670,molybdopterin molybdotransferase MoeA,1.0
+RS_RS06670,molybdopterin molybdotransferase MoeA,46,RS_RS05135,molybdopterin molybdotransferase MoeA,1.0
+RS_RS16950,potassium-transporting ATPase subunit KdpB,36,RS_RS16955,potassium-transporting ATPase subunit KdpC,1.0
+RS_RS09925,ABC transporter permease,42,RS_RS14810,ABC transporter permease,1.0
+RS_RS20830,transcriptional activator protein RasR,24,RS_RS16470,transcriptional activator protein SolR,1.0
+RS_RS16470,transcriptional activator protein SolR,24,RS_RS20830,transcriptional activator protein RasR,1.0
+RS_RS16005,lysozyme,13,RS_RS04400,lysozyme,1.0
+RS_RS04400,lysozyme,13,RS_RS16005,lysozyme,1.0
+RS_RS18030,lactonase family protein,27,RS_RS00245,lactonase family protein,1.0
+RS_RS00245,lactonase family protein,27,RS_RS18030,lactonase family protein,1.0
+RS_RS18635,MFS transporter,35,RS_RS22810,MFS transporter,1.0
+RS_RS00650,AraC family transcriptional regulator,29,RS_RS23160,AraC family transcriptional regulator,1.0
+RS_RS06410,cytochrome-c oxidase%2C cbb3-type subunit III,31,RS_RS06400,cytochrome-c oxidase%2C cbb3-type subunit II,1.0
+RS_RS17495,aromatic ring-hydroxylating oxygenase subunit alpha,31,RS_RS05415,aromatic ring-hydroxylating dioxygenase subunit alpha,1.0
+RS_RS18890,beta-ketoacyl-[acyl-carrier-protein] synthase family protein,26,RS_RS02115,beta-ketoacyl-[acyl-carrier-protein] synthase family protein,1.0
+RS_RS20085,precorrin-4 C(11)-methyltransferase,27,RS_RS20090,precorrin-2 C(20)-methyltransferase,1.0
+RS_RS20650,type IVB secretion system protein IcmH/DotU,21,RS_RS20770,type VI secretion system membrane subunit TssM,1.0
+RS_RS05110,LutC/YkgG family protein,31,RS_RS08110,(Fe-S)-binding protein,1.0
+RS_RS22305,ShlB/FhaC/HecB family hemolysin secretion/activation protein,24,RS_RS22405,ShlB/FhaC/HecB family hemolysin secretion/activation protein,1.0
+RS_RS06630,DegT/DnrJ/EryC1/StrS family aminotransferase,45,RS_RS21975,DegT/DnrJ/EryC1/StrS family aminotransferase,1.0
+RS_RS21975,DegT/DnrJ/EryC1/StrS family aminotransferase,45,RS_RS06630,DegT/DnrJ/EryC1/StrS family aminotransferase,1.0
+RS_RS08890,bifunctional nicotinamidase/pyrazinamidase,41,RS_RS19265,isochorismatase family cysteine hydrolase,1.0
+RS_RS19265,isochorismatase family cysteine hydrolase,41,RS_RS08890,bifunctional nicotinamidase/pyrazinamidase,1.0
+RS_RS13015,isochorismatase family cysteine hydrolase,41,RS_RS08890,bifunctional nicotinamidase/pyrazinamidase,1.0
+RS_RS09835,glutamate racemase,45,RS_RS01960,4-(cytidine 5'-diphospho)-2-C-methyl-D-erythritol kinase,1.0
+RS_RS12500,cytochrome-c peroxidase,26,RS_RS22790,cytochrome-c peroxidase,1.0
+RS_RS22790,cytochrome-c peroxidase,26,RS_RS12500,cytochrome-c peroxidase,1.0
+RS_RS20565,cytochrome-c peroxidase,26,RS_RS12500,cytochrome-c peroxidase,1.0
+RS_RS04765,PAAR domain-containing protein,16,RS_RS19635,PAAR domain-containing protein,1.0
+RS_RS19635,PAAR domain-containing protein,16,RS_RS04765,PAAR domain-containing protein,1.0
+RS_RS20780,PAAR domain-containing protein,16,RS_RS04765,PAAR domain-containing protein,1.0
+RS_RS05415,aromatic ring-hydroxylating dioxygenase subunit alpha,31,RS_RS17495,aromatic ring-hydroxylating oxygenase subunit alpha,1.0
+RS_RS11165,aromatic ring-hydroxylating oxygenase subunit alpha,31,RS_RS17495,aromatic ring-hydroxylating oxygenase subunit alpha,1.0
+RS_RS20005,1%2C2-phenylacetyl-CoA epoxidase subunit PaaA,17,RS_RS20020,1%2C2-phenylacetyl-CoA epoxidase subunit PaaD,1.0
+RS_RS22810,MFS transporter,35,RS_RS18635,MFS transporter,1.0
+RS_RS18725,GntR family transcriptional regulator,19,RS_RS18740,GntR family transcriptional regulator,1.0
+RS_RS18740,GntR family transcriptional regulator,19,RS_RS18725,GntR family transcriptional regulator,1.0
+RS_RS10415,acetolactate synthase small subunit,46,RS_RS00165,acetylglutamate kinase,1.0
+RS_RS08110,(Fe-S)-binding protein,31,RS_RS05110,LutC/YkgG family protein,1.0
+RS_RS08945,iron-containing alcohol dehydrogenase,42,RS_RS21875,iron-containing alcohol dehydrogenase,1.0
+RS_RS07390,xanthine dehydrogenase family protein molybdopterin-binding subunit,30,RS_RS10515,xanthine dehydrogenase molybdopterin binding subunit,1.0
+RS_RS10515,xanthine dehydrogenase molybdopterin binding subunit,30,RS_RS07390,xanthine dehydrogenase family protein molybdopterin-binding subunit,1.0
+RS_RS16115,PAAR domain-containing protein,16,RS_RS04765,PAAR domain-containing protein,1.0
+RS_RS18130,PAAR domain-containing protein,16,RS_RS04765,PAAR domain-containing protein,1.0
+RS_RS12540,gamma-glutamyltransferase family protein,44,RS_RS18475,gamma-glutamyltransferase,1.0
+RS_RS18475,gamma-glutamyltransferase,44,RS_RS12540,gamma-glutamyltransferase family protein,1.0
+RS_RS14630,gamma-glutamyltransferase family protein,44,RS_RS12540,gamma-glutamyltransferase family protein,1.0
+RS_RS06860,ribosomal protein S18-alanine N-acetyltransferase,44,RS_RS06685,fluoride efflux transporter CrcB,1.0
+RS_RS16660,ParB/RepB/Spo0J family partition protein,40,RS_RS11750,DNA translocase FtsK,1.0
+RS_RS02850,AzlD domain-containing protein,26,RS_RS02550,AzlD domain-containing protein,1.0
+RS_RS02550,AzlD domain-containing protein,26,RS_RS02850,AzlD domain-containing protein,1.0
+RS_RS22980,cardiolipin synthase,38,RS_RS02330,cardiolipin synthase ClsB,1.0
+RS_RS02330,cardiolipin synthase ClsB,38,RS_RS22980,cardiolipin synthase,1.0
+RS_RS23160,AraC family transcriptional regulator,29,RS_RS00650,AraC family transcriptional regulator,1.0
+RS_RS06220,sugar ABC transporter substrate-binding protein,36,RS_RS05035,sugar ABC transporter substrate-binding protein,1.0
+RS_RS05035,sugar ABC transporter substrate-binding protein,36,RS_RS06220,sugar ABC transporter substrate-binding protein,1.0
+RS_RS24945,D-xylose ABC transporter substrate-binding protein,36,RS_RS06220,sugar ABC transporter substrate-binding protein,1.0
+RS_RS06000,ABC transporter substrate-binding protein,31,RS_RS06710,aliphatic sulfonate ABC transporter substrate-binding protein,1.0
+RS_RS06710,aliphatic sulfonate ABC transporter substrate-binding protein,31,RS_RS06000,ABC transporter substrate-binding protein,1.0
+RS_RS23795,sulfonate ABC transporter substrate-binding protein,31,RS_RS06000,ABC transporter substrate-binding protein,1.0
+RS_RS02920,molybdopterin-guanine dinucleotide biosynthesis protein B,17,RS_RS21835,molybdopterin-guanine dinucleotide biosynthesis protein B,1.0
+RS_RS21835,molybdopterin-guanine dinucleotide biosynthesis protein B,17,RS_RS02920,molybdopterin-guanine dinucleotide biosynthesis protein B,1.0
+RS_RS14095,glutamate 5-kinase,45,RS_RS12025,alpha-ribazole phosphatase,1.0
+RS_RS06675,molybdopterin converting factor subunit 1,37,RS_RS06540,transcriptional repressor LexA,1.0
+RS_RS21825,nitrate reductase molybdenum cofactor assembly chaperone,18,RS_RS21830,respiratory nitrate reductase subunit gamma,1.0
+RS_RS00095,2-oxo-tetronate isomerase,32,RS_RS16445,hydroxypyruvate isomerase,1.0
+RS_RS15175,YfaQ family protein,13,RS_RS15165,YfaP family protein,1.0
+RS_RS09095,DJ-1/PfpI family protein,46,RS_RS02060,DJ-1/PfpI family protein,1.0
+RS_RS02060,DJ-1/PfpI family protein,46,RS_RS09095,DJ-1/PfpI family protein,1.0
+RS_RS09200,fumarylacetoacetate hydrolase family protein,47,RS_RS05395,fumarylacetoacetate hydrolase family protein,1.0
+RS_RS22200,formate dehydrogenase accessory sulfurtransferase FdhD,42,RS_RS11885,formate dehydrogenase accessory sulfurtransferase FdhD,1.0
+RS_RS11885,formate dehydrogenase accessory sulfurtransferase FdhD,42,RS_RS22200,formate dehydrogenase accessory sulfurtransferase FdhD,1.0
+RS_RS23030,nitrite reductase small subunit NirD,30,RS_RS05405,non-heme iron oxygenase ferredoxin subunit,1.0
+RS_RS20770,type VI secretion system membrane subunit TssM,21,RS_RS20650,type IVB secretion system protein IcmH/DotU,1.0
+RS_RS06540,transcriptional repressor LexA,37,RS_RS06675,molybdopterin converting factor subunit 1,1.0
+RS_RS14225,undecaprenyldiphospho-muramoylpentapeptide beta-N-acetylglucosaminyltransferase,45,RS_RS05550,single-stranded-DNA-specific exonuclease RecJ,1.0
+RS_RS12025,alpha-ribazole phosphatase,45,RS_RS01740,2%2C3-diphosphoglycerate-dependent phosphoglycerate mutase,1.0
+RS_RS01740,2%2C3-diphosphoglycerate-dependent phosphoglycerate mutase,45,RS_RS12025,alpha-ribazole phosphatase,1.0
+RS_RS02480,histidine phosphatase family protein,45,RS_RS12025,alpha-ribazole phosphatase,1.0
+RS_RS04085,LysE family translocator,44,RS_RS22075,LysE family translocator,1.0
 RS_RS15190,DUF2138 domain-containing protein,13,RS_RS15165,YfaP family protein,1.0
-RS_RS10265,DUF1178 family protein,16,RS_RS06295,competence/damage-inducible protein A,0.955
+RS_RS05405,non-heme iron oxygenase ferredoxin subunit,30,RS_RS23030,nitrite reductase small subunit NirD,1.0
+RS_RS02185,gluconokinase,26,RS_RS21650,gluconokinase,1.0
+RS_RS21650,gluconokinase,26,RS_RS02185,gluconokinase,1.0
+RS_RS21875,iron-containing alcohol dehydrogenase,42,RS_RS08945,iron-containing alcohol dehydrogenase,1.0
+RS_RS23145,2-dehydropantoate 2-reductase,39,RS_RS16840,2-dehydropantoate 2-reductase,1.0
+RS_RS00860,2-dehydropantoate 2-reductase,39,RS_RS16840,2-dehydropantoate 2-reductase,1.0
+RS_RS01410,arginine--tRNA ligase,47,RS_RS04490,3-phosphoserine/phosphohydroxythreonine transaminase,1.0
+RS_RS20670,type VI secretion system contractile sheath small subunit,22,RS_RS20700,type VI secretion system ATPase TssH,1.0
+RS_RS09560,sensor domain-containing diguanylate cyclase,28,RS_RS24470,sensor domain-containing diguanylate cyclase,1.0
+RS_RS24470,sensor domain-containing diguanylate cyclase,28,RS_RS09560,sensor domain-containing diguanylate cyclase,1.0
+RS_RS16770,Cu(I)-responsive transcriptional regulator,41,RS_RS17805,MerR family transcriptional regulator,1.0
+RS_RS09540,xanthine dehydrogenase family protein molybdopterin-binding subunit,31,RS_RS18710,xanthine dehydrogenase family protein molybdopterin-binding subunit,1.0
+RS_RS18710,xanthine dehydrogenase family protein molybdopterin-binding subunit,31,RS_RS09540,xanthine dehydrogenase family protein molybdopterin-binding subunit,1.0
+RS_RS03150,xanthine dehydrogenase family protein molybdopterin-binding subunit,31,RS_RS09540,xanthine dehydrogenase family protein molybdopterin-binding subunit,1.0
+RS_RS03485,lipid IV(A) 3-deoxy-D-manno-octulosonic acid transferase,44,RS_RS10815,YicC/YloC family endoribonuclease,1.0
+RS_RS17805,MerR family transcriptional regulator,41,RS_RS16770,Cu(I)-responsive transcriptional regulator,1.0
+RS_RS18685,Cd(II)/Pb(II)-responsive transcriptional regulator,41,RS_RS16770,Cu(I)-responsive transcriptional regulator,1.0
+RS_RS11645,heavy metal-responsive transcriptional regulator,41,RS_RS16770,Cu(I)-responsive transcriptional regulator,1.0
+RS_RS16840,2-dehydropantoate 2-reductase,39,RS_RS23145,2-dehydropantoate 2-reductase,1.0
+RS_RS10170,LysE/ArgO family amino acid transporter,34,RS_RS01900,LysE/ArgO family amino acid transporter,1.0
+RS_RS04970,malonic semialdehyde reductase,38,RS_RS04120,nitroreductase family protein,1.0
+RS_RS08685,arylesterase,44,RS_RS07595,ribonuclease HI,1.0
+RS_RS10215,urease accessory protein UreD,24,RS_RS10225,urea ABC transporter ATP-binding protein UrtD,1.0
+RS_RS14665,cytochrome c1,31,RS_RS14670,cytochrome b,1.0
+RS_RS23650,helix-turn-helix domain-containing protein,41,RS_RS21755,helix-turn-helix domain-containing protein,1.0
+RS_RS21755,helix-turn-helix domain-containing protein,41,RS_RS23650,helix-turn-helix domain-containing protein,1.0
+RS_RS05775,helix-turn-helix domain-containing protein,41,RS_RS23650,helix-turn-helix domain-containing protein,1.0
+RS_RS15735,helix-turn-helix domain-containing protein,41,RS_RS23650,helix-turn-helix domain-containing protein,1.0
+RS_RS01900,LysE/ArgO family amino acid transporter,34,RS_RS10170,LysE/ArgO family amino acid transporter,1.0
+RS_RS16445,hydroxypyruvate isomerase,32,RS_RS00095,2-oxo-tetronate isomerase,1.0
+RS_RS15165,YfaP family protein,13,RS_RS15175,YfaQ family protein,1.0
+RS_RS13585,protein translocase subunit SecD,40,RS_RS02810,beta-barrel assembly-enhancing protease,1.0
+RS_RS21790,U32 family peptidase,26,RS_RS21795,ubiquinone anaerobic biosynthesis protein UbiU,1.0
+RS_RS14670,cytochrome b,31,RS_RS14665,cytochrome c1,1.0
+RS_RS02795,pilin,30,RS_RS02790,pilin,1.0
+RS_RS02790,pilin,30,RS_RS02795,pilin,1.0
+RS_RS23325,carbohydrate kinase family protein,46,RS_RS05015,ribokinase,1.0
+RS_RS05015,ribokinase,46,RS_RS23325,carbohydrate kinase family protein,1.0
+RS_RS04120,nitroreductase family protein,38,RS_RS04970,malonic semialdehyde reductase,1.0
+RS_RS08095,nitroreductase,38,RS_RS04970,malonic semialdehyde reductase,1.0
+RS_RS08135,arginyltransferase,34,RS_RS01300,acetyl/propionyl/methylcrotonyl-CoA carboxylase subunit alpha,1.0
+RS_RS02010,PTS IIA-like nitrogen regulatory protein PtsN,40,RS_RS05950,transcription termination factor Rho,1.0
+RS_RS22845,sugar kinase,46,RS_RS23325,carbohydrate kinase family protein,1.0
+RS_RS04050,class II aldolase/adducin family protein,40,RS_RS08925,class II aldolase/adducin family protein,1.0
+RS_RS08925,class II aldolase/adducin family protein,40,RS_RS04050,class II aldolase/adducin family protein,1.0
+RS_RS07595,ribonuclease HI,44,RS_RS08685,arylesterase,1.0
+RS_RS15860,cold-shock protein,41,RS_RS12380,cold-shock protein,1.0
+RS_RS12380,cold-shock protein,41,RS_RS15860,cold-shock protein,1.0
+RS_RS22215,cold-shock protein,41,RS_RS15860,cold-shock protein,1.0
+RS_RS17205,cold-shock protein,41,RS_RS15860,cold-shock protein,1.0
+RS_RS18945,beta-ketoacyl synthase chain length factor,22,RS_RS18885,hotdog family protein,1.0
+RS_RS12315,RsmB/NOP family class I SAM-dependent RNA methyltransferase,44,RS_RS00375,16S rRNA (cytosine(967)-C(5))-methyltransferase RsmB,1.0
+RS_RS00375,16S rRNA (cytosine(967)-C(5))-methyltransferase RsmB,44,RS_RS12315,RsmB/NOP family class I SAM-dependent RNA methyltransferase,1.0
+RS_RS04830,DNA topoisomerase IV subunit B,39,RS_RS01755,protein-export chaperone SecB,1.0
+RS_RS12135,sirohydrochlorin chelatase,11,RS_RS16530,cation:proton antiporter,1.0
+RS_RS10760,sugar kinase,46,RS_RS23325,carbohydrate kinase family protein,1.0
+RS_RS04545,D-glycero-beta-D-manno-heptose-7-phosphate kinase,46,RS_RS23325,carbohydrate kinase family protein,1.0
+RS_RS13960,carbohydrate kinase family protein,46,RS_RS23325,carbohydrate kinase family protein,1.0
+RS_RS10295,NADH-quinone oxidoreductase subunit NuoK,38,RS_RS10290,NADH-quinone oxidoreductase subunit L,1.0
+RS_RS20015,1%2C2-phenylacetyl-CoA epoxidase subunit PaaC,17,RS_RS20020,1%2C2-phenylacetyl-CoA epoxidase subunit PaaD,1.0
+RS_RS07890,electron transfer flavoprotein-ubiquinone oxidoreductase,34,RS_RS08135,arginyltransferase,1.0
+RS_RS10395,2-isopropylmalate synthase,44,RS_RS18695,2-isopropylmalate synthase,1.0
+RS_RS18695,2-isopropylmalate synthase,44,RS_RS10395,2-isopropylmalate synthase,1.0
+RS_RS10200,urease subunit beta,23,RS_RS10195,urease subunit alpha,1.0
+RS_RS20655,type VI secretion system baseplate subunit TssK,23,RS_RS20690,type VI secretion system baseplate subunit TssF,1.0
+RS_RS09260,flavin reductase family protein,26,RS_RS03845,flavin reductase family protein,1.0
+RS_RS03845,flavin reductase family protein,26,RS_RS09260,flavin reductase family protein,1.0
+RS_RS20070,CobW family GTP-binding protein,40,RS_RS00225,zinc metallochaperone GTPase ZigA,1.0
+RS_RS00225,zinc metallochaperone GTPase ZigA,40,RS_RS20070,CobW family GTP-binding protein,1.0
+RS_RS00235,CobW family GTP-binding protein,40,RS_RS20070,CobW family GTP-binding protein,1.0
+RS_RS10315,NADH-quinone oxidoreductase subunit NuoG,19,RS_RS06645,Mth938-like domain-containing protein,1.0
+RS_RS11005,nicotinate-nucleotide adenylyltransferase,45,RS_RS07955,50S ribosomal protein L20,1.0
+RS_RS22250,DUF3734 domain-containing protein,28,RS_RS01505,patatin-like phospholipase family protein,1.0
+RS_RS03445,dTDP-4-dehydrorhamnose 3%2C5-epimerase,44,RS_RS03435,dTDP-4-dehydrorhamnose reductase,1.0
+RS_RS04730,ergothioneine biosynthesis protein EgtB,17,RS_RS09030,ergothioneine biosynthesis protein EgtB,1.0
+RS_RS09030,ergothioneine biosynthesis protein EgtB,17,RS_RS04730,ergothioneine biosynthesis protein EgtB,1.0
+RS_RS17510,formyltetrahydrofolate deformylase,42,RS_RS05490,formyltetrahydrofolate deformylase,1.0
+RS_RS09460,formyltetrahydrofolate deformylase,42,RS_RS05490,formyltetrahydrofolate deformylase,1.0
+RS_RS07960,phenylalanine--tRNA ligase subunit alpha,45,RS_RS07660,dihydropteroate synthase,1.0
+RS_RS08210,peptidoglycan editing factor PgeF,43,RS_RS13760,transketolase,1.0
+RS_RS12340,isoleucine--tRNA ligase,47,RS_RS05915,MATE family efflux transporter,1.0
+RS_RS09660,phage major tail tube protein,17,RS_RS09740,tail protein X,1.0
+RS_RS17665,MFS transporter,35,RS_RS22185,OFA family MFS transporter,1.0
+RS_RS15745,MFS transporter,35,RS_RS22185,OFA family MFS transporter,1.0
+RS_RS22850,amino acid deaminase,26,RS_RS13550,DSD1 family PLP-dependent enzyme,1.0
+RS_RS13550,DSD1 family PLP-dependent enzyme,26,RS_RS22850,amino acid deaminase,1.0
+RS_RS21665,NAD(P) transhydrogenase subunit alpha,41,RS_RS13660,Re/Si-specific NAD(P)(+) transhydrogenase subunit alpha,1.0
+RS_RS18535,poly-beta-1%2C6 N-acetyl-D-glucosamine export porin PgaA,11,RS_RS18540,poly-beta-1%2C6-N-acetyl-D-glucosamine N-deacetylase PgaB,1.0
+RS_RS03595,riboflavin synthase,45,RS_RS07660,dihydropteroate synthase,1.0
+RS_RS11835,hydroxymethylbilane synthase,46,RS_RS06875,alanine racemase,1.0
+RS_RS13660,Re/Si-specific NAD(P)(+) transhydrogenase subunit alpha,41,RS_RS21665,NAD(P) transhydrogenase subunit alpha,1.0
+RS_RS24965,LacI family DNA-binding transcriptional regulator,39,RS_RS09035,LacI family DNA-binding transcriptional regulator,1.0
+RS_RS09035,LacI family DNA-binding transcriptional regulator,39,RS_RS24965,LacI family DNA-binding transcriptional regulator,1.0
+RS_RS23355,LacI family DNA-binding transcriptional regulator,39,RS_RS24965,LacI family DNA-binding transcriptional regulator,1.0
+RS_RS24865,LacI family DNA-binding transcriptional regulator,39,RS_RS24965,LacI family DNA-binding transcriptional regulator,1.0
+RS_RS14305,LacI family DNA-binding transcriptional regulator,39,RS_RS24965,LacI family DNA-binding transcriptional regulator,1.0
+RS_RS05020,LacI family DNA-binding transcriptional regulator,39,RS_RS24965,LacI family DNA-binding transcriptional regulator,1.0
+RS_RS22185,OFA family MFS transporter,35,RS_RS17665,MFS transporter,1.0
+RS_RS10080,ABC transporter substrate-binding protein,41,RS_RS06920,glutathione ABC transporter substrate-binding protein GsiB,1.0
+RS_RS00220,ABC transporter substrate-binding protein,41,RS_RS06920,glutathione ABC transporter substrate-binding protein GsiB,1.0
+RS_RS10840,radical SAM family heme chaperone HemW,45,RS_RS13310,carbon-nitrogen hydrolase family protein,1.0
+RS_RS02810,beta-barrel assembly-enhancing protease,40,RS_RS13585,protein translocase subunit SecD,1.0
+RS_RS06920,glutathione ABC transporter substrate-binding protein GsiB,41,RS_RS05850,extracellular solute-binding protein,1.0
+RS_RS05850,extracellular solute-binding protein,41,RS_RS06920,glutathione ABC transporter substrate-binding protein GsiB,1.0
+RS_RS09525,ABC transporter substrate-binding protein,41,RS_RS06920,glutathione ABC transporter substrate-binding protein GsiB,1.0
+RS_RS14350,ABC transporter substrate-binding protein,41,RS_RS06920,glutathione ABC transporter substrate-binding protein GsiB,1.0
+RS_RS03375,methyl-accepting chemotaxis protein,21,RS_RS13895,energy transducer TonB family protein,1.0
+RS_RS00295,rod shape-determining protein,45,RS_RS00310,penicillin-binding protein 2,1.0
+RS_RS00310,penicillin-binding protein 2,45,RS_RS00295,rod shape-determining protein,1.0
+RS_RS04590,electron transfer flavoprotein subunit beta/FixA family protein,39,RS_RS04595,electron transfer flavoprotein subunit alpha/FixB family protein,1.0
+RS_RS16515,L-serine ammonia-lyase,38,RS_RS17410,L-serine ammonia-lyase,1.0
+RS_RS17410,L-serine ammonia-lyase,38,RS_RS16515,L-serine ammonia-lyase,1.0
+RS_RS22125,MNIO family bufferin maturase,26,RS_RS22130,HvfC/BufC N-terminal domain-containing protein,1.0
+RS_RS20390,FAD-dependent oxidoreductase,31,RS_RS17475,FAD-dependent oxidoreductase,1.0
+RS_RS17475,FAD-dependent oxidoreductase,31,RS_RS20390,FAD-dependent oxidoreductase,1.0
+RS_RS14435,anthranilate synthase component II,47,RS_RS05005,excinuclease ABC subunit UvrB,1.0
+RS_RS20450,tryptophan 2%2C3-dioxygenase family protein,19,RS_RS03820,tryptophan 2%2C3-dioxygenase,1.0
+RS_RS03820,tryptophan 2%2C3-dioxygenase,19,RS_RS20450,tryptophan 2%2C3-dioxygenase family protein,1.0
+RS_RS16615,F0F1 ATP synthase subunit epsilon,40,RS_RS20990,F0F1 ATP synthase subunit epsilon,1.0
+RS_RS20990,F0F1 ATP synthase subunit epsilon,40,RS_RS16615,F0F1 ATP synthase subunit epsilon,1.0
+RS_RS06400,cytochrome-c oxidase%2C cbb3-type subunit II,31,RS_RS06410,cytochrome-c oxidase%2C cbb3-type subunit III,1.0
+RS_RS02845,AzlC family ABC transporter permease,35,RS_RS23760,AzlC family ABC transporter permease,1.0
+RS_RS00935,BON domain-containing protein,11,RS_RS00920,BON domain-containing protein,1.0
+RS_RS00920,BON domain-containing protein,11,RS_RS00935,BON domain-containing protein,1.0
+RS_RS23760,AzlC family ABC transporter permease,35,RS_RS02555,AzlC family ABC transporter permease,1.0
+RS_RS23995,lysine N(6)-hydroxylase/L-ornithine N(5)-oxygenase family protein,20,RS_RS09165,lysine N(6)-hydroxylase/L-ornithine N(5)-oxygenase family protein,1.0
+RS_RS09165,lysine N(6)-hydroxylase/L-ornithine N(5)-oxygenase family protein,20,RS_RS23995,lysine N(6)-hydroxylase/L-ornithine N(5)-oxygenase family protein,1.0
+RS_RS07885,chorismate synthase,47,RS_RS08205,RluA family pseudouridine synthase,1.0
+RS_RS23140,cytochrome d ubiquinol oxidase subunit II,42,RS_RS22955,cytochrome d ubiquinol oxidase subunit II,1.0
+RS_RS22955,cytochrome d ubiquinol oxidase subunit II,42,RS_RS23140,cytochrome d ubiquinol oxidase subunit II,1.0
+RS_RS01775,methyltransferase domain-containing protein,41,RS_RS02590,lactoylglutathione lyase,1.0
+RS_RS20160,acyltransferase family protein,32,RS_RS07730,acyltransferase family protein,1.0
+RS_RS07730,acyltransferase family protein,32,RS_RS20160,acyltransferase family protein,1.0
+RS_RS23135,cytochrome ubiquinol oxidase subunit I,43,RS_RS22960,cytochrome ubiquinol oxidase subunit I,1.0
+RS_RS22960,cytochrome ubiquinol oxidase subunit I,43,RS_RS23135,cytochrome ubiquinol oxidase subunit I,1.0
+RS_RS02555,AzlC family ABC transporter permease,35,RS_RS23760,AzlC family ABC transporter permease,1.0
+RS_RS00345,LysM peptidoglycan-binding domain-containing protein,21,RS_RS13425,PilT/PilU family type 4a pilus ATPase,1.0
+RS_RS09015,PilZ domain-containing protein,21,RS_RS13425,PilT/PilU family type 4a pilus ATPase,1.0
+RS_RS07655,ATP-dependent zinc metalloprotease FtsH,45,RS_RS07660,dihydropteroate synthase,1.0
+RS_RS08140,leucyl/phenylalanyl-tRNA--protein transferase,43,RS_RS13450,4-hydroxybenzoate octaprenyltransferase,1.0
+RS_RS10885,5-oxoprolinase subunit PxpA,34,RS_RS21600,LamB/YcsF family protein,1.0
+RS_RS21600,LamB/YcsF family protein,34,RS_RS10885,5-oxoprolinase subunit PxpA,1.0
+RS_RS01745,rhodanese-like domain-containing protein,41,RS_RS01335,rhodanese-like domain-containing protein,1.0
+RS_RS01335,rhodanese-like domain-containing protein,41,RS_RS01745,rhodanese-like domain-containing protein,1.0
+RS_RS03500,rhodanese-like domain-containing protein,41,RS_RS01745,rhodanese-like domain-containing protein,1.0
+RS_RS18940,lysophospholipid acyltransferase family protein,42,RS_RS02600,lysophospholipid acyltransferase family protein,1.0
+RS_RS02600,lysophospholipid acyltransferase family protein,42,RS_RS18940,lysophospholipid acyltransferase family protein,1.0
+RS_RS12480,tyrosine-type recombinase/integrase,36,RS_RS13140,tyrosine-type recombinase/integrase,1.0
+RS_RS20090,precorrin-2 C(20)-methyltransferase,27,RS_RS20085,precorrin-4 C(11)-methyltransferase,1.0
+RS_RS08880,amino acid permease,41,RS_RS18515,APC family permease,1.0
+RS_RS18515,APC family permease,41,RS_RS08880,amino acid permease,1.0
+RS_RS08785,ABC transporter permease,10,RS_RS08780,ABC transporter ATP-binding protein,1.0
+RS_RS15525,porin,15,RS_RS08775,porin,1.0
+RS_RS03005,intermembrane transport protein PqiB,27,RS_RS12845,intermembrane transport protein PqiB,1.0
+RS_RS24150,amidohydrolase,32,RS_RS01175,amidohydrolase,1.0
+RS_RS01175,amidohydrolase,32,RS_RS24150,amidohydrolase,1.0
+RS_RS08000,amino acid permease,41,RS_RS08880,amino acid permease,1.0
+RS_RS09045,ABC transporter permease,38,RS_RS09050,ABC transporter permease,1.0
+RS_RS09050,ABC transporter permease,38,RS_RS09045,ABC transporter permease,1.0
+RS_RS08745,ABC transporter permease,38,RS_RS09045,ABC transporter permease,1.0
+RS_RS20685,type VI secretion system baseplate subunit TssE,22,RS_RS20700,type VI secretion system ATPase TssH,1.0
+RS_RS12845,intermembrane transport protein PqiB,27,RS_RS03005,intermembrane transport protein PqiB,1.0
+RS_RS02005,HPr(Ser) kinase/phosphatase,11,RS_RS10100,putative toxin-antitoxin system toxin component%2C PIN family,1.0
+RS_RS16955,potassium-transporting ATPase subunit KdpC,36,RS_RS16950,potassium-transporting ATPase subunit KdpB,1.0
+RS_RS16550,uroporphyrinogen decarboxylase,46,RS_RS05640,gamma carbonic anhydrase family protein,1.0
+RS_RS17680,DUF58 domain-containing protein,18,RS_RS17685,transglutaminase TgpA family protein,1.0
+RS_RS05705,outer membrane protein assembly factor BamC,31,RS_RS01605,YbeD family protein,1.0
+RS_RS02020,RNA polymerase factor sigma-54,44,RS_RS25120,RNA polymerase factor sigma-54,1.0
+RS_RS25120,RNA polymerase factor sigma-54,44,RS_RS02020,RNA polymerase factor sigma-54,1.0
+RS_RS07820,integrase,36,RS_RS12480,tyrosine-type recombinase/integrase,1.0
+RS_RS09580,tyrosine-type recombinase/integrase,36,RS_RS12480,tyrosine-type recombinase/integrase,1.0
+RS_RS13785,SMP-30/gluconolactonase/LRE family protein,30,RS_RS21100,SMP-30/gluconolactonase/LRE family protein,1.0
+RS_RS20690,type VI secretion system baseplate subunit TssF,23,RS_RS20655,type VI secretion system baseplate subunit TssK,1.0
+RS_RS05950,transcription termination factor Rho,40,RS_RS02010,PTS IIA-like nitrogen regulatory protein PtsN,1.0
+RS_RS03240,M48 family metallopeptidase,10,RS_RS03235,YjgN family protein,1.0
+RS_RS03945,YaeQ family protein,31,RS_RS13725,LPS assembly lipoprotein LptE,1.0
+RS_RS13895,energy transducer TonB family protein,21,RS_RS03375,methyl-accepting chemotaxis protein,1.0
+RS_RS02295,sodium:solute symporter family protein,44,RS_RS09810,sodium:solute symporter family protein,1.0
+RS_RS09810,sodium:solute symporter family protein,44,RS_RS02295,sodium:solute symporter family protein,1.0
+RS_RS03435,dTDP-4-dehydrorhamnose reductase,44,RS_RS03445,dTDP-4-dehydrorhamnose 3%2C5-epimerase,1.0
+RS_RS13720,DNA polymerase III subunit delta,36,RS_RS16640,F0F1 ATP synthase subunit B,1.0
+RS_RS01810,twin transmembrane helix small protein,10,RS_RS06285,sterol desaturase family protein,1.0
+RS_RS21100,SMP-30/gluconolactonase/LRE family protein,30,RS_RS21060,SMP-30/gluconolactonase/LRE family protein,1.0
+RS_RS21060,SMP-30/gluconolactonase/LRE family protein,30,RS_RS21100,SMP-30/gluconolactonase/LRE family protein,1.0
+RS_RS20155,lipopolysaccharide heptosyltransferase I,41,RS_RS02830,lipopolysaccharide heptosyltransferase II,1.0
+RS_RS02830,lipopolysaccharide heptosyltransferase II,41,RS_RS20155,lipopolysaccharide heptosyltransferase I,1.0
+RS_RS03480,lipopolysaccharide heptosyltransferase I,41,RS_RS20155,lipopolysaccharide heptosyltransferase I,1.0
+RS_RS13450,4-hydroxybenzoate octaprenyltransferase,43,RS_RS08140,leucyl/phenylalanyl-tRNA--protein transferase,1.0
+RS_RS13875,magnesium/cobalt transporter CorA,45,RS_RS20305,magnesium and cobalt transport protein CorA,1.0
+RS_RS20305,magnesium and cobalt transport protein CorA,45,RS_RS13875,magnesium/cobalt transporter CorA,1.0
+RS_RS05585,alpha-E domain-containing protein,32,RS_RS05580,circularly permuted type 2 ATP-grasp protein,1.0
+RS_RS14335,ABC transporter ATP-binding protein,36,RS_RS14330,ABC transporter ATP-binding protein,1.0
+RS_RS13140,tyrosine-type recombinase/integrase,36,RS_RS12480,tyrosine-type recombinase/integrase,1.0
+RS_RS09445,tyrosine-type recombinase/integrase,36,RS_RS12480,tyrosine-type recombinase/integrase,1.0
+RS_RS04790,tyrosine-type recombinase/integrase,36,RS_RS12480,tyrosine-type recombinase/integrase,1.0
+RS_RS18930,acyl carrier protein,22,RS_RS18945,beta-ketoacyl synthase chain length factor,1.0
+RS_RS14245,UDP-N-acetylmuramoyl-tripeptide--D-alanyl-D-alanine ligase,45,RS_RS02270,bifunctional demethylmenaquinone methyltransferase/2-methoxy-6-polyprenyl-1%2C4-benzoquinol methylase UbiE,1.0
+RS_RS08280,2-C-methyl-D-erythritol 4-phosphate cytidylyltransferase,37,RS_RS08285,2-C-methyl-D-erythritol 2%2C4-cyclodiphosphate synthase,1.0
+RS_RS10750,ABC transporter substrate-binding protein,35,RS_RS06335,sn-glycerol-3-phosphate ABC transporter substrate-binding protein UgpB,1.0
+RS_RS13760,transketolase,43,RS_RS08210,peptidoglycan editing factor PgeF,1.0
+RS_RS08015,4-hydroxy-2-oxoheptanedioate aldolase,28,RS_RS24850,4-hydroxy-2-oxoheptanedioate aldolase,1.0
+RS_RS14610,ubiquinol oxidase subunit II,30,RS_RS09380,ubiquinol oxidase subunit II,1.0
+RS_RS09380,ubiquinol oxidase subunit II,30,RS_RS14610,ubiquinol oxidase subunit II,1.0
+RS_RS00215,ATP-dependent protease subunit HslV,43,RS_RS00210,ATP-dependent protease ATPase subunit HslU,1.0
+RS_RS09515,ABC transporter ATP-binding protein,36,RS_RS14330,ABC transporter ATP-binding protein,1.0
+RS_RS13770,2-dehydro-3-deoxy-6-phosphogalactonate aldolase,41,RS_RS22875,bifunctional 4-hydroxy-2-oxoglutarate aldolase/2-dehydro-3-deoxy-phosphogluconate aldolase,1.0
+RS_RS04720,TerC family protein,33,RS_RS02785,TerC family protein,1.0
+RS_RS24850,4-hydroxy-2-oxoheptanedioate aldolase,28,RS_RS08015,4-hydroxy-2-oxoheptanedioate aldolase,1.0
+RS_RS19200,HpcH/HpaI aldolase family protein,28,RS_RS08015,4-hydroxy-2-oxoheptanedioate aldolase,1.0
+RS_RS17525,GlxA family transcriptional regulator,41,RS_RS05455,GlxA family transcriptional regulator,1.0
+RS_RS05455,GlxA family transcriptional regulator,41,RS_RS17525,GlxA family transcriptional regulator,1.0
+RS_RS17455,GlxA family transcriptional regulator,41,RS_RS17525,GlxA family transcriptional regulator,1.0
+RS_RS13310,carbon-nitrogen hydrolase family protein,45,RS_RS10840,radical SAM family heme chaperone HemW,1.0
+RS_RS06335,sn-glycerol-3-phosphate ABC transporter substrate-binding protein UgpB,35,RS_RS10750,ABC transporter substrate-binding protein,1.0
+RS_RS13425,PilT/PilU family type 4a pilus ATPase,21,RS_RS09015,PilZ domain-containing protein,1.0
+RS_RS11090,tRNA glutamyl-Q(34) synthetase GluQRS,44,RS_RS12120,leucyl aminopeptidase,1.0
+RS_RS02785,TerC family protein,33,RS_RS04720,TerC family protein,1.0
+RS_RS13390,glutathione peroxidase,42,RS_RS01510,glutathione peroxidase,1.0
+RS_RS01510,glutathione peroxidase,42,RS_RS13390,glutathione peroxidase,1.0
+RS_RS03745,3-deoxy-7-phosphoheptulonate synthase,34,RS_RS13320,3-deoxy-7-phosphoheptulonate synthase AroG,1.0
+RS_RS17945,adenylyl-sulfate kinase,30,RS_RS15910,adenylyl-sulfate kinase,1.0
+RS_RS15910,adenylyl-sulfate kinase,30,RS_RS17945,adenylyl-sulfate kinase,1.0
+RS_RS13320,3-deoxy-7-phosphoheptulonate synthase AroG,34,RS_RS03745,3-deoxy-7-phosphoheptulonate synthase,1.0
+RS_RS20385,anthranilate phosphoribosyltransferase,46,RS_RS14445,anthranilate phosphoribosyltransferase,1.0
+RS_RS14445,anthranilate phosphoribosyltransferase,46,RS_RS20385,anthranilate phosphoribosyltransferase,1.0
+RS_RS06305,3-hydroxylaminophenol mutase,46,RS_RS21375,type I glutamate--ammonia ligase,1.0
+RS_RS21375,type I glutamate--ammonia ligase,46,RS_RS06305,3-hydroxylaminophenol mutase,1.0
+RS_RS14995,50S ribosomal protein L17,45,RS_RS12270,RadC family protein,1.0
+RS_RS14130,type IV-A pilus assembly ATPase PilB,36,RS_RS15645,type II secretion system ATPase GspE,1.0
+RS_RS15645,type II secretion system ATPase GspE,36,RS_RS14130,type IV-A pilus assembly ATPase PilB,1.0
+RS_RS07265,RNA 2'%2C3'-cyclic phosphodiesterase,32,RS_RS11870,RNA 2'%2C3'-cyclic phosphodiesterase,1.0
+RS_RS11870,RNA 2'%2C3'-cyclic phosphodiesterase,32,RS_RS07265,RNA 2'%2C3'-cyclic phosphodiesterase,1.0
+RS_RS13595,YceI family protein,40,RS_RS03970,YceI family protein,1.0
+RS_RS03970,YceI family protein,40,RS_RS13595,YceI family protein,1.0
+RS_RS23115,YceI family protein,40,RS_RS13595,YceI family protein,1.0
+RS_RS13600,YceI family protein,40,RS_RS13595,YceI family protein,1.0
+RS_RS03545,carbon-nitrogen hydrolase family protein,45,RS_RS10840,radical SAM family heme chaperone HemW,1.0
+RS_RS23045,methyl-accepting chemotaxis protein,33,RS_RS18385,methyl-accepting chemotaxis protein,1.0
+RS_RS07690,phosphate signaling complex protein PhoU,46,RS_RS07685,phosphate ABC transporter ATP-binding protein PstB,1.0
+RS_RS19290,pirin family protein,42,RS_RS02705,pirin family protein,1.0
+RS_RS06745,sulfate ABC transporter permease subunit CysT,44,RS_RS06750,sulfate ABC transporter permease subunit CysW,1.0
+RS_RS06750,sulfate ABC transporter permease subunit CysW,44,RS_RS06745,sulfate ABC transporter permease subunit CysT,1.0
+RS_RS22640,molybdate ABC transporter permease subunit,44,RS_RS06745,sulfate ABC transporter permease subunit CysT,1.0
+RS_RS13820,VOC family protein,19,RS_RS00525,VOC family protein,1.0
+RS_RS18385,methyl-accepting chemotaxis protein,33,RS_RS23045,methyl-accepting chemotaxis protein,1.0
+RS_RS22875,bifunctional 4-hydroxy-2-oxoglutarate aldolase/2-dehydro-3-deoxy-phosphogluconate aldolase,41,RS_RS13770,2-dehydro-3-deoxy-6-phosphogalactonate aldolase,1.0
+RS_RS00525,VOC family protein,19,RS_RS13820,VOC family protein,1.0
+RS_RS14815,ABC transporter ATP-binding protein,45,RS_RS09920,nodulation factor ABC transporter ATP-binding protein NodI,1.0
+RS_RS09920,nodulation factor ABC transporter ATP-binding protein NodI,45,RS_RS14815,ABC transporter ATP-binding protein,1.0
+RS_RS23735,ABC transporter ATP-binding protein,45,RS_RS14815,ABC transporter ATP-binding protein,1.0
+RS_RS00810,ABC transporter ATP-binding protein,45,RS_RS14815,ABC transporter ATP-binding protein,1.0
+RS_RS23260,sulfite exporter TauE/SafE family protein,35,RS_RS16720,sulfite exporter TauE/SafE family protein,1.0
+RS_RS16720,sulfite exporter TauE/SafE family protein,35,RS_RS23260,sulfite exporter TauE/SafE family protein,1.0
+RS_RS04540,UDP-glucose dehydrogenase family protein,45,RS_RS22025,UDP-N-acetyl-D-mannosamine dehydrogenase,1.0
+RS_RS22025,UDP-N-acetyl-D-mannosamine dehydrogenase,45,RS_RS04540,UDP-glucose dehydrogenase family protein,1.0
+RS_RS01965,lipoprotein insertase outer membrane protein LolB,31,RS_RS01675,accessory factor UbiK family protein,1.0
+RS_RS05975,YbaB/EbfC family nucleoid-associated protein,43,RS_RS00215,ATP-dependent protease subunit HslV,1.0
+RS_RS21830,respiratory nitrate reductase subunit gamma,18,RS_RS21815,nitrate reductase subunit alpha,1.0
+RS_RS00445,lytic transglycosylase domain-containing protein,31,RS_RS06885,disulfide bond formation protein B,1.0
+RS_RS21195,DUF4880 domain-containing protein,29,RS_RS14620,FecR family protein,1.0
+RS_RS05275,DNA repair protein RecO,38,RS_RS10660,aminopeptidase N,1.0
+RS_RS12750,methylated-DNA--[protein]-cysteine S-methyltransferase,37,RS_RS12565,methylated-DNA--[protein]-cysteine S-methyltransferase,1.0
+RS_RS12565,methylated-DNA--[protein]-cysteine S-methyltransferase,37,RS_RS12750,methylated-DNA--[protein]-cysteine S-methyltransferase,1.0
+RS_RS02705,pirin family protein,42,RS_RS19290,pirin family protein,1.0
+RS_RS01855,pirin family protein,42,RS_RS19290,pirin family protein,1.0
+RS_RS05795,UDP-2%2C3-diacylglucosamine diphosphatase,41,RS_RS10450,UDP-2%2C3-diacylglucosamine diphosphatase,1.0
+RS_RS10450,UDP-2%2C3-diacylglucosamine diphosphatase,41,RS_RS05795,UDP-2%2C3-diacylglucosamine diphosphatase,1.0
+RS_RS06255,Gfo/Idh/MocA family protein,38,RS_RS22310,Gfo/Idh/MocA family protein,1.0
+RS_RS22310,Gfo/Idh/MocA family protein,38,RS_RS06255,Gfo/Idh/MocA family protein,1.0
+RS_RS12865,methylated-DNA--[protein]-cysteine S-methyltransferase,37,RS_RS12750,methylated-DNA--[protein]-cysteine S-methyltransferase,1.0
+RS_RS07365,XdhC family protein,37,RS_RS03155,XdhC family protein,1.0
+RS_RS03155,XdhC family protein,37,RS_RS07365,XdhC family protein,1.0
+RS_RS10520,xanthine dehydrogenase accessory protein XdhC,37,RS_RS07365,XdhC family protein,1.0
+RS_RS10285,NADH-quinone oxidoreductase subunit M,43,RS_RS10280,NADH-quinone oxidoreductase subunit NuoN,1.0
+RS_RS10280,NADH-quinone oxidoreductase subunit NuoN,43,RS_RS10285,NADH-quinone oxidoreductase subunit M,1.0
+RS_RS06495,translational GTPase TypA,45,RS_RS07660,dihydropteroate synthase,1.0
+RS_RS20495,MBL fold metallo-hydrolase,27,RS_RS23620,MBL fold metallo-hydrolase,1.0
+RS_RS23620,MBL fold metallo-hydrolase,27,RS_RS20495,MBL fold metallo-hydrolase,1.0
+RS_RS21795,ubiquinone anaerobic biosynthesis protein UbiU,26,RS_RS21790,U32 family peptidase,1.0
+RS_RS18805,flagellar hook assembly protein FlgD,38,RS_RS23930,flagellar motor protein MotB,1.0
+RS_RS14205,cell division protein FtsA,44,RS_RS08685,arylesterase,1.0
+RS_RS12120,leucyl aminopeptidase,44,RS_RS11090,tRNA glutamyl-Q(34) synthetase GluQRS,1.0
+RS_RS18885,hotdog family protein,22,RS_RS18945,beta-ketoacyl synthase chain length factor,1.0
+RS_RS05490,formyltetrahydrofolate deformylase,42,RS_RS17510,formyltetrahydrofolate deformylase,1.0
+RS_RS07560,universal stress protein,42,RS_RS00910,universal stress protein,1.0
+RS_RS24625,universal stress protein,42,RS_RS00910,universal stress protein,1.0
+RS_RS06815,universal stress protein,42,RS_RS00910,universal stress protein,1.0
+RS_RS11620,MFS transporter,19,RS_RS19225,MFS transporter,1.0
+RS_RS09510,ABC transporter permease,37,RS_RS14340,ABC transporter permease,1.0
+RS_RS14340,ABC transporter permease,37,RS_RS09510,ABC transporter permease,1.0
+RS_RS06930,glutathione ABC transporter permease GsiD,37,RS_RS09510,ABC transporter permease,1.0
+RS_RS01275,YbaK/EbsC family protein,39,RS_RS12760,Cys-tRNA(Pro) deacylase,1.0
+RS_RS07255,protocatechuate 3%2C4-dioxygenase subunit beta,22,RS_RS07260,protocatechuate 3%2C4-dioxygenase subunit alpha,1.0
+RS_RS04700,metalloprotease PmbA,44,RS_RS13315,metalloprotease TldD,1.0
+RS_RS08655,endopeptidase La,44,RS_RS08685,arylesterase,1.0
+RS_RS00910,universal stress protein,42,RS_RS00885,universal stress protein,1.0
+RS_RS00885,universal stress protein,42,RS_RS00910,universal stress protein,1.0
+RS_RS22720,universal stress protein,42,RS_RS00910,universal stress protein,1.0
+RS_RS09930,amidophosphoribosyltransferase,47,RS_RS01950,ribose-phosphate pyrophosphokinase,1.0
+RS_RS14940,protein-methionine-sulfoxide reductase catalytic subunit MsrP,36,RS_RS14935,protein-methionine-sulfoxide reductase heme-binding subunit MsrQ,1.0
+RS_RS06210,3D-(3%2C5/4)-trihydroxycyclohexane-1%2C2-dione acylhydrolase (decyclizing),22,RS_RS06205,myo-inosose-2 dehydratase,1.0
+RS_RS03655,PilW family protein,25,RS_RS23375,PilW family protein,1.0
+RS_RS12760,Cys-tRNA(Pro) deacylase,39,RS_RS01275,YbaK/EbsC family protein,1.0
+RS_RS06245,Gfo/Idh/MocA family protein,38,RS_RS06255,Gfo/Idh/MocA family protein,1.0
+RS_RS21505,Gfo/Idh/MocA family protein,38,RS_RS06255,Gfo/Idh/MocA family protein,1.0
+RS_RS11750,DNA translocase FtsK,40,RS_RS16660,ParB/RepB/Spo0J family partition protein,1.0
+RS_RS04840,DNA topoisomerase IV subunit A,38,RS_RS07700,phosphate regulon sensor histidine kinase PhoR,1.0
+RS_RS12175,sulfite exporter TauE/SafE family protein,44,RS_RS18060,sulfite exporter TauE/SafE family protein,1.0
+RS_RS18060,sulfite exporter TauE/SafE family protein,44,RS_RS12175,sulfite exporter TauE/SafE family protein,1.0
+RS_RS07735,sulfite exporter TauE/SafE family protein,44,RS_RS12175,sulfite exporter TauE/SafE family protein,1.0
+RS_RS02150,phosphopantetheine-binding protein,24,RS_RS18935,phosphopantetheine-binding protein,1.0
+RS_RS18935,phosphopantetheine-binding protein,24,RS_RS02150,phosphopantetheine-binding protein,1.0
+RS_RS10050,methylisocitrate lyase,31,RS_RS17740,methylisocitrate lyase,1.0
+RS_RS17740,methylisocitrate lyase,31,RS_RS10050,methylisocitrate lyase,1.0
+RS_RS13840,ribonuclease,11,RS_RS10100,putative toxin-antitoxin system toxin component%2C PIN family,1.0
+RS_RS12010,adenosylcobinamide-phosphate synthase CbiB,42,RS_RS04665,CobD/CbiB family protein,1.0
+RS_RS22255,oxidoreductase,38,RS_RS06255,Gfo/Idh/MocA family protein,1.0
+RS_RS13930,type II 3-dehydroquinate dehydratase,44,RS_RS23865,type II 3-dehydroquinate dehydratase,1.0
+RS_RS05915,MATE family efflux transporter,47,RS_RS12340,isoleucine--tRNA ligase,1.0
+RS_RS22990,MATE family efflux transporter,47,RS_RS12340,isoleucine--tRNA ligase,1.0
+RS_RS18520,MATE family efflux transporter,47,RS_RS12340,isoleucine--tRNA ligase,1.0
+RS_RS21260,type III secretion system export apparatus subunit SctV,18,RS_RS21315,type III secretion system outer membrane ring subunit SctC,1.0
+RS_RS17570,GntR family transcriptional regulator,41,RS_RS18765,GntR family transcriptional regulator,1.0
+RS_RS04665,CobD/CbiB family protein,42,RS_RS12010,adenosylcobinamide-phosphate synthase CbiB,1.0
+RS_RS03525,undecaprenyl-diphosphate phosphatase,47,RS_RS04490,3-phosphoserine/phosphohydroxythreonine transaminase,1.0
+RS_RS23865,type II 3-dehydroquinate dehydratase,44,RS_RS13930,type II 3-dehydroquinate dehydratase,1.0
+RS_RS15150,30S ribosomal protein S12,45,RS_RS05220,beta-ketoacyl-ACP synthase II,1.0
+RS_RS17925,MATE family efflux transporter,47,RS_RS12340,isoleucine--tRNA ligase,1.0
+RS_RS00555,phosphomethylpyrimidine synthase ThiC,43,RS_RS06115,GTPase HflX,1.0
+RS_RS18540,poly-beta-1%2C6-N-acetyl-D-glucosamine N-deacetylase PgaB,11,RS_RS18535,poly-beta-1%2C6 N-acetyl-D-glucosamine export porin PgaA,1.0
+RS_RS13350,FAD-linked oxidase C-terminal domain-containing protein,36,RS_RS07835,FAD-binding oxidoreductase,1.0
+RS_RS07835,FAD-binding oxidoreductase,36,RS_RS13350,FAD-linked oxidase C-terminal domain-containing protein,1.0
+RS_RS08780,ABC transporter ATP-binding protein,10,RS_RS08785,ABC transporter permease,1.0
+RS_RS10925,BMP family ABC transporter substrate-binding protein,22,RS_RS10915,ABC transporter permease,1.0
+RS_RS11195,DNA polymerase I,45,RS_RS10840,radical SAM family heme chaperone HemW,1.0
+RS_RS03860,SAM-dependent methyltransferase,39,RS_RS24095,cyclopropane fatty acyl phospholipid synthase,1.0
+RS_RS24095,cyclopropane fatty acyl phospholipid synthase,39,RS_RS03860,SAM-dependent methyltransferase,1.0
+RS_RS14030,1%2C6-anhydro-N-acetylmuramyl-L-alanine amidase AmpD,31,RS_RS01605,YbeD family protein,1.0
+RS_RS07685,phosphate ABC transporter ATP-binding protein PstB,46,RS_RS07690,phosphate signaling complex protein PhoU,1.0
+RS_RS11590,type II secretion system major pseudopilin GspG,32,RS_RS17870,type II secretion system major pseudopilin GspG,1.0
+RS_RS17870,type II secretion system major pseudopilin GspG,32,RS_RS11590,type II secretion system major pseudopilin GspG,1.0
+RS_RS09740,tail protein X,17,RS_RS09660,phage major tail tube protein,1.0
+RS_RS23590,dienelactone hydrolase family protein,41,RS_RS11185,dienelactone hydrolase family protein,1.0
+RS_RS11185,dienelactone hydrolase family protein,41,RS_RS23590,dienelactone hydrolase family protein,1.0
+RS_RS04060,threonine aldolase family protein,38,RS_RS22505,low specificity L-threonine aldolase,1.0
+RS_RS22505,low specificity L-threonine aldolase,38,RS_RS04060,threonine aldolase family protein,1.0
+RS_RS19405,type II secretion system major pseudopilin GspG,32,RS_RS11590,type II secretion system major pseudopilin GspG,1.0
+RS_RS15600,type II secretion system major pseudopilin GspG,32,RS_RS11590,type II secretion system major pseudopilin GspG,1.0
+RS_RS15055,30S ribosomal protein S8,47,RS_RS04490,3-phosphoserine/phosphohydroxythreonine transaminase,1.0
+RS_RS22130,HvfC/BufC N-terminal domain-containing protein,26,RS_RS22125,MNIO family bufferin maturase,1.0
+RS_RS23710,FAD:protein FMN transferase,37,RS_RS03065,FAD:protein FMN transferase,1.0
+RS_RS03065,FAD:protein FMN transferase,37,RS_RS23710,FAD:protein FMN transferase,1.0
+RS_RS23240,sulfite exporter TauE/SafE family protein,44,RS_RS12175,sulfite exporter TauE/SafE family protein,1.0
+RS_RS00210,ATP-dependent protease ATPase subunit HslU,43,RS_RS00215,ATP-dependent protease subunit HslV,1.0
+RS_RS06975,ArsC family reductase,43,RS_RS06115,GTPase HflX,1.0
+RS_RS16385,arsenate reductase (glutaredoxin),43,RS_RS06115,GTPase HflX,1.0
+RS_RS01950,ribose-phosphate pyrophosphokinase,47,RS_RS09930,amidophosphoribosyltransferase,1.0
+RS_RS01000,ribose-phosphate pyrophosphokinase,47,RS_RS09930,amidophosphoribosyltransferase,1.0
+RS_RS09770,phage portal protein,10,RS_RS09755,phage major capsid protein%2C P2 family,1.0
+RS_RS24195,SphA family protein,16,RS_RS09245,SphA family protein,1.0
+RS_RS09245,SphA family protein,16,RS_RS24195,SphA family protein,1.0
+RS_RS18265,SphA family protein,16,RS_RS24195,SphA family protein,1.0
+RS_RS13340,FAD-binding oxidoreductase,36,RS_RS13350,FAD-linked oxidase C-terminal domain-containing protein,1.0
+RS_RS03105,cytochrome b/b6 domain-containing protein,14,RS_RS03110,molybdopterin-dependent oxidoreductase,1.0
+RS_RS13605,cytochrome b,38,RS_RS00985,cytochrome b,1.0
+RS_RS00985,cytochrome b,38,RS_RS13605,cytochrome b,1.0
+RS_RS05420,2Fe-2S iron-sulfur cluster-binding protein,35,RS_RS12220,CDP-6-deoxy-delta-3%2C4-glucoseen reductase,1.0
+RS_RS12220,CDP-6-deoxy-delta-3%2C4-glucoseen reductase,35,RS_RS05420,2Fe-2S iron-sulfur cluster-binding protein,1.0
+RS_RS01675,accessory factor UbiK family protein,31,RS_RS01965,lipoprotein insertase outer membrane protein LolB,1.0
+RS_RS10195,urease subunit alpha,23,RS_RS10200,urease subunit beta,1.0
+RS_RS21440,2-keto-4-pentenoate hydratase,23,RS_RS21400,2-keto-4-pentenoate hydratase,1.0
+RS_RS21400,2-keto-4-pentenoate hydratase,23,RS_RS21440,2-keto-4-pentenoate hydratase,1.0
+RS_RS21405,2-keto-4-pentenoate hydratase,23,RS_RS21440,2-keto-4-pentenoate hydratase,1.0
+RS_RS14490,DsbC family protein,42,RS_RS03705,peptidoglycan-associated lipoprotein Pal,1.0
+RS_RS18765,GntR family transcriptional regulator,41,RS_RS17570,GntR family transcriptional regulator,1.0
+RS_RS10035,GntR family transcriptional regulator,41,RS_RS17570,GntR family transcriptional regulator,1.0
+RS_RS13260,histidine utilization repressor,41,RS_RS17570,GntR family transcriptional regulator,1.0
+RS_RS24375,GntR family transcriptional regulator,41,RS_RS17570,GntR family transcriptional regulator,1.0
+RS_RS05640,gamma carbonic anhydrase family protein,46,RS_RS16550,uroporphyrinogen decarboxylase,1.0
+RS_RS03590,bifunctional 3%2C4-dihydroxy-2-butanone-4-phosphate synthase/GTP cyclohydrolase II,40,RS_RS16660,ParB/RepB/Spo0J family partition protein,1.0
+RS_RS06265,amino-acid N-acetyltransferase,30,RS_RS02030,lipopolysaccharide transport periplasmic protein LptA,1.0
+RS_RS01790,cytochrome c oxidase subunit I,44,RS_RS14605,cytochrome o ubiquinol oxidase subunit I,1.0
+RS_RS14605,cytochrome o ubiquinol oxidase subunit I,44,RS_RS01790,cytochrome c oxidase subunit I,1.0
+RS_RS24645,cytochrome c oxidase subunit I,44,RS_RS01790,cytochrome c oxidase subunit I,1.0
+RS_RS06645,Mth938-like domain-containing protein,19,RS_RS10315,NADH-quinone oxidoreductase subunit NuoG,1.0
+RS_RS17535,FdhF/YdeP family oxidoreductase,44,RS_RS22190,FdhF/YdeP family oxidoreductase,1.0
+RS_RS22190,FdhF/YdeP family oxidoreductase,44,RS_RS17535,FdhF/YdeP family oxidoreductase,1.0
+RS_RS14300,molybdopterin-containing oxidoreductase family protein,44,RS_RS17535,FdhF/YdeP family oxidoreductase,1.0
+RS_RS15305,ABC transporter ATP-binding protein,22,RS_RS15330,ABC transporter substrate-binding protein,1.0
+RS_RS09895,YdcF family protein,34,RS_RS00720,YdcF family protein,1.0
+RS_RS03395,YqgE/AlgH family protein,43,RS_RS06115,GTPase HflX,1.0
+RS_RS05590,transglutaminase family protein,32,RS_RS05580,circularly permuted type 2 ATP-grasp protein,1.0
+RS_RS07165,DMT family transporter,16,RS_RS01145,DMT family transporter,1.0
+RS_RS14140,prepilin peptidase,37,RS_RS15650,type II secretion system inner membrane protein GspF,1.0
+RS_RS13725,LPS assembly lipoprotein LptE,31,RS_RS03945,YaeQ family protein,1.0
+RS_RS11460,MipA/OmpV family protein,30,RS_RS15400,MipA/OmpV family protein,1.0
+RS_RS15400,MipA/OmpV family protein,30,RS_RS11460,MipA/OmpV family protein,1.0
+RS_RS17695,SulP family inorganic anion transporter,46,RS_RS24445,SulP family inorganic anion transporter,1.0
+RS_RS24445,SulP family inorganic anion transporter,46,RS_RS17695,SulP family inorganic anion transporter,1.0
+RS_RS00720,YdcF family protein,34,RS_RS09895,YdcF family protein,1.0
+RS_RS04600,acyl-CoA dehydrogenase,35,RS_RS02345,acyl-CoA dehydrogenase C-terminal domain-containing protein,1.0
+RS_RS02345,acyl-CoA dehydrogenase C-terminal domain-containing protein,35,RS_RS04600,acyl-CoA dehydrogenase,1.0
+RS_RS07700,phosphate regulon sensor histidine kinase PhoR,38,RS_RS04840,DNA topoisomerase IV subunit A,1.0
+RS_RS06875,alanine racemase,46,RS_RS11835,hydroxymethylbilane synthase,1.0
+RS_RS18870,beta-ketoacyl synthase N-terminal-like domain-containing protein,32,RS_RS18875,beta-ketoacyl-ACP synthase,1.0
+RS_RS18875,beta-ketoacyl-ACP synthase,32,RS_RS18870,beta-ketoacyl synthase N-terminal-like domain-containing protein,1.0
+RS_RS14715,ABC transporter substrate-binding protein,11,RS_RS14700,ABC transporter substrate-binding protein,1.0
+RS_RS14700,ABC transporter substrate-binding protein,11,RS_RS14715,ABC transporter substrate-binding protein,1.0
+RS_RS01300,acetyl/propionyl/methylcrotonyl-CoA carboxylase subunit alpha,34,RS_RS08135,arginyltransferase,1.0
+RS_RS18920,AMP-binding protein,16,RS_RS02140,AMP-binding protein,1.0
+RS_RS02140,AMP-binding protein,16,RS_RS18920,AMP-binding protein,1.0
+RS_RS21090,galactarate dehydratase,31,RS_RS24860,UxaA family hydrolase,1.0
+RS_RS24860,UxaA family hydrolase,31,RS_RS21090,galactarate dehydratase,1.0
+RS_RS07260,protocatechuate 3%2C4-dioxygenase subunit alpha,22,RS_RS07255,protocatechuate 3%2C4-dioxygenase subunit beta,1.0
+RS_RS12365,dUTP diphosphatase,44,RS_RS14395,hydroxyphenylacetyl-CoA thioesterase PaaI,1.0
+RS_RS10190,urease accessory protein UreE,24,RS_RS10225,urea ABC transporter ATP-binding protein UrtD,1.0
+RS_RS02590,lactoylglutathione lyase,41,RS_RS01775,methyltransferase domain-containing protein,1.0
+RS_RS01605,YbeD family protein,31,RS_RS14030,1%2C6-anhydro-N-acetylmuramyl-L-alanine amidase AmpD,1.0
+RS_RS21815,nitrate reductase subunit alpha,18,RS_RS21830,respiratory nitrate reductase subunit gamma,1.0
+RS_RS11770,P-II family nitrogen regulator,47,RS_RS01685,P-II family nitrogen regulator,1.0
+RS_RS01685,P-II family nitrogen regulator,47,RS_RS11770,P-II family nitrogen regulator,1.0
+RS_RS09840,dicarboxylate/amino acid:cation symporter,40,RS_RS21925,dicarboxylate/amino acid:cation symporter,1.0
+RS_RS21925,dicarboxylate/amino acid:cation symporter,40,RS_RS09840,dicarboxylate/amino acid:cation symporter,1.0
+RS_RS01625,dicarboxylate/amino acid:cation symporter,40,RS_RS09840,dicarboxylate/amino acid:cation symporter,1.0
+RS_RS16410,C4-dicarboxylate transporter DctA,40,RS_RS09840,dicarboxylate/amino acid:cation symporter,1.0
+RS_RS01925,pantetheine-phosphate adenylyltransferase,45,RS_RS02270,bifunctional demethylmenaquinone methyltransferase/2-methoxy-6-polyprenyl-1%2C4-benzoquinol methylase UbiE,1.0
+RS_RS19225,MFS transporter,19,RS_RS11620,MFS transporter,1.0
+RS_RS06740,RBBP9/YdeN family alpha/beta hydrolase,29,RS_RS25530,alpha/beta hydrolase,1.0
+RS_RS09010,DNA polymerase III subunit delta',43,RS_RS06115,GTPase HflX,1.0
+RS_RS10660,aminopeptidase N,38,RS_RS05275,DNA repair protein RecO,1.0
+RS_RS15330,ABC transporter substrate-binding protein,22,RS_RS15305,ABC transporter ATP-binding protein,1.0
+RS_RS25530,alpha/beta hydrolase,29,RS_RS06740,RBBP9/YdeN family alpha/beta hydrolase,1.0
+RS_RS06115,GTPase HflX,43,RS_RS09010,DNA polymerase III subunit delta',1.0
+RS_RS01145,DMT family transporter,16,RS_RS07165,DMT family transporter,1.0
+RS_RS21915,cbb3-type cytochrome c oxidase subunit I,32,RS_RS06395,cytochrome-c oxidase%2C cbb3-type subunit I,1.0
+RS_RS06395,cytochrome-c oxidase%2C cbb3-type subunit I,32,RS_RS21915,cbb3-type cytochrome c oxidase subunit I,1.0
+RS_RS14790,histidinol dehydrogenase,47,RS_RS04490,3-phosphoserine/phosphohydroxythreonine transaminase,1.0
+RS_RS14565,glucan biosynthesis protein G,28,RS_RS18420,glucan biosynthesis protein,1.0
+RS_RS18420,glucan biosynthesis protein,28,RS_RS14565,glucan biosynthesis protein G,1.0
+RS_RS15360,glucan biosynthesis protein,28,RS_RS14565,glucan biosynthesis protein G,1.0
+RS_RS13300,bifunctional [glutamate--ammonia ligase]-adenylyl-L-tyrosine phosphorylase/[glutamate--ammonia-ligase] adenylyltransferase,38,RS_RS04840,DNA topoisomerase IV subunit A,1.0
+RS_RS14980,porphobilinogen synthase,47,RS_RS20230,CoA-acylating methylmalonate-semialdehyde dehydrogenase,1.0
+RS_RS06720,aliphatic sulfonate ABC transporter permease SsuC,37,RS_RS01870,nitrate ABC transporter permease,1.0
+RS_RS14730,twin-arginine translocase subunit TatC,46,RS_RS22165,sensor histidine kinase,1.0
+RS_RS23945,flagellar transcriptional regulator FlhD,13,RS_RS23940,flagellar transcriptional regulator FlhC,1.0
+RS_RS24700,amino acid ABC transporter permease,38,RS_RS19465,amino acid ABC transporter permease,1.0
+RS_RS10680,xylulokinase,44,RS_RS15335,glycerol kinase GlpK,1.0
+RS_RS15335,glycerol kinase GlpK,44,RS_RS10680,xylulokinase,1.0
+RS_RS16450,2-hydroxy-3-oxopropionate reductase,42,RS_RS20225,3-hydroxyisobutyrate dehydrogenase,1.0
+RS_RS07540,aldo/keto reductase,43,RS_RS05750,2%2C5-didehydrogluconate reductase DkgB,1.0
+RS_RS05750,2%2C5-didehydrogluconate reductase DkgB,43,RS_RS07540,aldo/keto reductase,1.0
+RS_RS24225,aldo/keto reductase,43,RS_RS07540,aldo/keto reductase,1.0
+RS_RS01075,aldo/keto reductase,43,RS_RS07540,aldo/keto reductase,1.0
+RS_RS06685,fluoride efflux transporter CrcB,44,RS_RS06860,ribosomal protein S18-alanine N-acetyltransferase,1.0
+RS_RS10605,GntR family transcriptional regulator,43,RS_RS19255,GntR family transcriptional regulator,1.0
+RS_RS19295,alkene reductase,42,RS_RS03530,NADH:flavin oxidoreductase/NADH oxidase,1.0
+RS_RS12190,NAD(P)-dependent oxidoreductase,42,RS_RS16450,2-hydroxy-3-oxopropionate reductase,1.0
+RS_RS03530,NADH:flavin oxidoreductase/NADH oxidase,42,RS_RS19295,alkene reductase,1.0
+RS_RS17800,NADH:flavin oxidoreductase/NADH oxidase family protein,42,RS_RS19295,alkene reductase,1.0
+RS_RS06020,alkene reductase,42,RS_RS19295,alkene reductase,1.0
+RS_RS01960,4-(cytidine 5'-diphospho)-2-C-methyl-D-erythritol kinase,45,RS_RS09835,glutamate racemase,1.0
+RS_RS16570,methyl-accepting chemotaxis protein,34,RS_RS03035,methyl-accepting chemotaxis protein,1.0
+RS_RS03035,methyl-accepting chemotaxis protein,34,RS_RS16570,methyl-accepting chemotaxis protein,1.0
+RS_RS04475,outer membrane protein OmpA,10,RS_RS03695,cell envelope integrity protein TolA,1.0
+RS_RS05475,sarcosine oxidase subunit alpha family protein,15,RS_RS05480,sarcosine oxidase subunit gamma,1.0
+RS_RS17425,2Fe-2S iron-sulfur cluster-binding protein,15,RS_RS05480,sarcosine oxidase subunit gamma,1.0
+RS_RS17470,DUF5943 domain-containing protein,12,RS_RS17485,electron transfer flavoprotein subunit alpha/FixB family protein,1.0
+RS_RS05480,sarcosine oxidase subunit gamma,15,RS_RS05475,sarcosine oxidase subunit alpha family protein,1.0
+RS_RS21485,DsbA family oxidoreductase,31,RS_RS01340,2-hydroxychromene-2-carboxylate isomerase,1.0
+RS_RS14395,hydroxyphenylacetyl-CoA thioesterase PaaI,44,RS_RS08910,PaaI family thioesterase,1.0
+RS_RS08910,PaaI family thioesterase,44,RS_RS14395,hydroxyphenylacetyl-CoA thioesterase PaaI,1.0
+RS_RS04490,3-phosphoserine/phosphohydroxythreonine transaminase,47,RS_RS10360,triose-phosphate isomerase,1.0
+RS_RS15710,ethanolamine ammonia-lyase subunit EutB,23,RS_RS15705,ethanolamine ammonia-lyase subunit EutC,1.0
+RS_RS07350,methyl-accepting chemotaxis protein,35,RS_RS06185,methyl-accepting chemotaxis protein,1.0
+RS_RS07110,lipid-A-disaccharide synthase,45,RS_RS07105,acyl-ACP--UDP-N-acetylglucosamine O-acyltransferase,1.0
+RS_RS02610,glycine--tRNA ligase subunit beta,42,RS_RS15085,50S ribosomal protein L29,1.0
+RS_RS19730,metallophosphoesterase,37,RS_RS09060,phosphodiesterase,1.0
+RS_RS00200,response regulator transcription factor,33,RS_RS00195,ATP-binding protein,1.0
+RS_RS06125,protease modulator HflC,46,RS_RS04030,slipin family protein,1.0
+RS_RS07140,SPFH domain-containing protein,46,RS_RS04030,slipin family protein,1.0
+RS_RS10730,ABC transporter ATP-binding protein,46,RS_RS09055,ABC transporter ATP-binding protein,1.0
+RS_RS04815,amino acid ABC transporter substrate-binding protein,43,RS_RS11350,glutamate/aspartate ABC transporter substrate-binding protein,1.0
+RS_RS01340,2-hydroxychromene-2-carboxylate isomerase,31,RS_RS21485,DsbA family oxidoreductase,1.0
+RS_RS07740,NAD(P)/FAD-dependent oxidoreductase,19,RS_RS16340,NAD(P)/FAD-dependent oxidoreductase,1.0
+RS_RS02415,glycerate kinase type-2 family protein,22,RS_RS24110,glycerate kinase type-2 family protein,1.0
+RS_RS24110,glycerate kinase type-2 family protein,22,RS_RS02415,glycerate kinase type-2 family protein,1.0
+RS_RS04275,phage portal protein,14,RS_RS04255,phage terminase large subunit family protein,1.0
+RS_RS04950,c-type cytochrome,11,RS_RS04945,c-type cytochrome,1.0
+RS_RS04945,c-type cytochrome,11,RS_RS04950,c-type cytochrome,1.0
+RS_RS09060,phosphodiesterase,37,RS_RS19730,metallophosphoesterase,1.0
+RS_RS16330,c-type cytochrome,15,RS_RS03160,c-type cytochrome,1.0
+RS_RS03160,c-type cytochrome,15,RS_RS16330,c-type cytochrome,1.0
+RS_RS10915,ABC transporter permease,22,RS_RS10925,BMP family ABC transporter substrate-binding protein,1.0
+RS_RS10910,ABC transporter permease,22,RS_RS10925,BMP family ABC transporter substrate-binding protein,1.0
+RS_RS04255,phage terminase large subunit family protein,14,RS_RS04275,phage portal protein,1.0
+RS_RS16530,cation:proton antiporter,11,RS_RS12135,sirohydrochlorin chelatase,1.0
+RS_RS16340,NAD(P)/FAD-dependent oxidoreductase,19,RS_RS07740,NAD(P)/FAD-dependent oxidoreductase,1.0
+RS_RS10210,urease subunit gamma,23,RS_RS10225,urea ABC transporter ATP-binding protein UrtD,0.959
+RS_RS10150,acyl-CoA dehydrogenase family protein,25,RS_RS10130,phosphotransferase,0.959
+RS_RS10440,RDD family protein,25,RS_RS01820,SCO family protein,0.959
+RS_RS14895,pilus assembly protein PilP,21,RS_RS14900,type 4a pilus biogenesis protein PilO,0.959
+RS_RS14900,type 4a pilus biogenesis protein PilO,22,RS_RS14890,temperature dependent type IV pilus secretin PilQ,0.959
+RS_RS03940,FKBP-type peptidyl-prolyl cis-trans isomerase,23,RS_RS05300,elongation factor P maturation arginine rhamnosyltransferase EarP,0.959
+RS_RS06135,ATP phosphoribosyltransferase regulatory subunit,24,RS_RS00130,methionine biosynthesis protein MetW,0.959
+RS_RS14890,temperature dependent type IV pilus secretin PilQ,23,RS_RS14900,type 4a pilus biogenesis protein PilO,0.959
+RS_RS01820,SCO family protein,24,RS_RS10440,RDD family protein,0.959
+RS_RS05300,elongation factor P maturation arginine rhamnosyltransferase EarP,24,RS_RS03940,FKBP-type peptidyl-prolyl cis-trans isomerase,0.959
+RS_RS20695,type VI secretion system baseplate subunit TssG,22,RS_RS20690,type VI secretion system baseplate subunit TssF,0.959
+RS_RS00130,methionine biosynthesis protein MetW,25,RS_RS06135,ATP phosphoribosyltransferase regulatory subunit,0.959
+RS_RS10130,phosphotransferase,24,RS_RS10150,acyl-CoA dehydrogenase family protein,0.959
+RS_RS03270,type II secretion system F family protein,24,RS_RS03275,type II secretion system F family protein,0.959
+RS_RS14970,c-type cytochrome,26,RS_RS10440,RDD family protein,0.959
+RS_RS03370,chemotaxis protein CheW,20,RS_RS13895,energy transducer TonB family protein,0.958
+RS_RS15510,Bug family tripartite tricarboxylate transporter substrate binding protein,28,RS_RS03985,tripartite tricarboxylate transporter permease,0.958
+RS_RS18295,malto-oligosyltrehalose trehalohydrolase,20,RS_RS18285,malto-oligosyltrehalose synthase,0.958
+RS_RS21095,NAD-dependent epimerase/dehydratase family protein,19,RS_RS21070,5-dehydro-4-deoxyglucarate dehydratase,0.958
+RS_RS18285,malto-oligosyltrehalose synthase,21,RS_RS18295,malto-oligosyltrehalose trehalohydrolase,0.958
+RS_RS00765,class I SAM-dependent methyltransferase,20,RS_RS06645,Mth938-like domain-containing protein,0.958
+RS_RS21070,5-dehydro-4-deoxyglucarate dehydratase,20,RS_RS21095,NAD-dependent epimerase/dehydratase family protein,0.958
+RS_RS03985,tripartite tricarboxylate transporter permease,27,RS_RS15510,Bug family tripartite tricarboxylate transporter substrate binding protein,0.958
+RS_RS03790,phage holin family protein,18,RS_RS22930,acyloxyacyl hydrolase,0.957
+RS_RS14685,Nif3-like dinuclear metal center hexameric protein,29,RS_RS06265,amino-acid N-acetyltransferase,0.957
+RS_RS21820,nitrate reductase subunit beta,19,RS_RS21830,respiratory nitrate reductase subunit gamma,0.957
+RS_RS19055,flagellar export protein FliJ,29,RS_RS18835,flagellar assembly peptidoglycan hydrolase FlgJ,0.957
+RS_RS05235,MucB/RseB C-terminal domain-containing protein,29,RS_RS06265,amino-acid N-acetyltransferase,0.957
+RS_RS12795,pyrimidine/purine nucleoside phosphorylase,30,RS_RS08100,D-alanyl-D-alanine endopeptidase,0.957
+RS_RS10335,NADH-quinone oxidoreductase subunit C,18,RS_RS06645,Mth938-like domain-containing protein,0.957
+RS_RS01615,alpha/beta hydrolase,29,RS_RS05545,ferredoxin FdxA,0.957
+RS_RS22930,acyloxyacyl hydrolase,19,RS_RS03790,phage holin family protein,0.957
+RS_RS08100,D-alanyl-D-alanine endopeptidase,29,RS_RS06265,amino-acid N-acetyltransferase,0.957
+RS_RS05545,ferredoxin FdxA,30,RS_RS01615,alpha/beta hydrolase,0.957
+RS_RS18835,flagellar assembly peptidoglycan hydrolase FlgJ,30,RS_RS19055,flagellar export protein FliJ,0.957
+RS_RS14595,cytochrome o ubiquinol oxidase subunit IV,29,RS_RS14610,ubiquinol oxidase subunit II,0.957
+RS_RS11965,translocation/assembly module TamB domain-containing protein,30,RS_RS05235,MucB/RseB C-terminal domain-containing protein,0.957
+RS_RS08115,LutB/LldF family L-lactate oxidation iron-sulfur protein,30,RS_RS08110,(Fe-S)-binding protein,0.956
+RS_RS01805,cytochrome c oxidase subunit 3,31,RS_RS01815,SURF1 family protein,0.956
+RS_RS02280,ubiquinone biosynthesis accessory factor UbiJ,30,RS_RS01675,accessory factor UbiK family protein,0.956
+RS_RS10025,succinate dehydrogenase%2C hydrophobic membrane anchor protein,30,RS_RS01605,YbeD family protein,0.956
+RS_RS13910,YqiA/YcfP family alpha/beta fold hydrolase,30,RS_RS06885,disulfide bond formation protein B,0.956
+RS_RS14920,iron donor protein CyaY,31,RS_RS13910,YqiA/YcfP family alpha/beta fold hydrolase,0.956
+RS_RS23035,nitrite reductase large subunit NirB,31,RS_RS23030,nitrite reductase small subunit NirD,0.956
+RS_RS21280,type III secretion system inner membrane ring lipoprotein SctJ,17,RS_RS21260,type III secretion system export apparatus subunit SctV,0.956
+RS_RS01815,SURF1 family protein,30,RS_RS14665,cytochrome c1,0.956
+RS_RS02685,acyl-CoA dehydrogenase,30,RS_RS01675,accessory factor UbiK family protein,0.956
+RS_RS09635,phage late control D family protein,16,RS_RS09740,tail protein X,0.955
+RS_RS06295,competence/damage-inducible protein A,17,RS_RS01380,MBL fold metallo-hydrolase,0.955
+RS_RS01795,cytochrome c oxidase assembly protein,32,RS_RS20215,enoyl-CoA hydratase/isomerase family protein,0.955
+RS_RS04725,L-histidine N(alpha)-methyltransferase,16,RS_RS04730,ergothioneine biosynthesis protein EgtB,0.955
+RS_RS20010,1%2C2-phenylacetyl-CoA epoxidase subunit PaaB,16,RS_RS20020,1%2C2-phenylacetyl-CoA epoxidase subunit PaaD,0.955
+RS_RS15640,type II secretion system secretin GspD,31,RS_RS11590,type II secretion system major pseudopilin GspG,0.955
+RS_RS17420,sarcosine oxidase subunit delta,16,RS_RS05480,sarcosine oxidase subunit gamma,0.953
+RS_RS16890,ABC transporter permease,16,RS_RS16895,ABC transporter ATP-binding protein,0.953
+RS_RS14170,bifunctional glutamate N-acetyltransferase/amino-acid acetyltransferase ArgJ,33,RS_RS14755,phosphoribosyl-AMP cyclohydrolase,0.953
+RS_RS09665,phage tail sheath protein,15,RS_RS09635,phage late control D family protein,0.953
+RS_RS05065,Fe-S protein assembly co-chaperone HscB,32,RS_RS05070,Fe-S protein assembly chaperone HscA,0.953
+RS_RS08190,DUF465 domain-containing protein,15,RS_RS12790,patatin-like phospholipase family protein,0.953
+RS_RS09685,phage tail protein I,15,RS_RS09635,phage late control D family protein,0.953
+RS_RS14755,phosphoribosyl-AMP cyclohydrolase,32,RS_RS14170,bifunctional glutamate N-acetyltransferase/amino-acid acetyltransferase ArgJ,0.953
+RS_RS05070,Fe-S protein assembly chaperone HscA,33,RS_RS05065,Fe-S protein assembly co-chaperone HscB,0.953
+RS_RS17750,DUF2242 domain-containing protein,15,RS_RS02680,3-oxoacyl-ACP reductase,0.953
+RS_RS16895,ABC transporter ATP-binding protein,15,RS_RS16890,ABC transporter permease,0.953
+RS_RS11930,4Fe-4S binding protein,14,RS_RS11900,formate dehydrogenase subunit gamma,0.952
+RS_RS02215,transporter,15,RS_RS02205,C39 family peptidase,0.952
+RS_RS05175,SAM-dependent methyltransferase,14,RS_RS13870,orotidine-5'-phosphate decarboxylase,0.952
+RS_RS13870,orotidine-5'-phosphate decarboxylase,15,RS_RS05175,SAM-dependent methyltransferase,0.952
+RS_RS02205,C39 family peptidase,14,RS_RS02215,transporter,0.952
+RS_RS10260,acyl-CoA dehydrogenase family protein,15,RS_RS10255,acyl-CoA dehydrogenase family protein,0.952
+RS_RS10255,acyl-CoA dehydrogenase family protein,14,RS_RS10260,acyl-CoA dehydrogenase family protein,0.952
+RS_RS02560,aminoglycoside phosphotransferase family protein,33,RS_RS08135,arginyltransferase,0.952
+RS_RS18980,flagellar basal body-associated protein FliL,33,RS_RS23830,RNA polymerase sigma factor FliA,0.952
+RS_RS00305,rod shape-determining protein MreD,34,RS_RS06960,50S ribosomal protein L3 N(5)-glutamine methyltransferase,0.952
+RS_RS14780,imidazoleglycerol-phosphate dehydratase HisB,34,RS_RS14170,bifunctional glutamate N-acetyltransferase/amino-acid acetyltransferase ArgJ,0.952
+RS_RS23830,RNA polymerase sigma factor FliA,34,RS_RS18980,flagellar basal body-associated protein FliL,0.952
+RS_RS10890,biotin-dependent carboxyltransferase family protein,33,RS_RS10885,5-oxoprolinase subunit PxpA,0.952
+RS_RS13255,urocanate hydratase,35,RS_RS13240,imidazolonepropionase,0.95
+RS_RS08710,phosphoribosylformylglycinamidine synthase,35,RS_RS03895,tRNA cyclic N6-threonylcarbamoyladenosine(37) synthase TcdA,0.95
+RS_RS03895,tRNA cyclic N6-threonylcarbamoyladenosine(37) synthase TcdA,34,RS_RS08710,phosphoribosylformylglycinamidine synthase,0.95
+RS_RS16350,BON domain-containing protein,34,RS_RS01325,YchJ family protein,0.95
+RS_RS18655,response regulator,13,RS_RS18660,ATP-binding protein,0.95
+RS_RS06080,helix-turn-helix domain-containing protein,35,RS_RS04695,ribosome biogenesis factor YjgA,0.95
+RS_RS14080,proline--tRNA ligase,35,RS_RS05675,3'%2C5'-nucleoside bisphosphate phosphatase,0.95
+RS_RS13240,imidazolonepropionase,34,RS_RS13255,urocanate hydratase,0.95
+RS_RS18660,ATP-binding protein,14,RS_RS18655,response regulator,0.95
+RS_RS01325,YchJ family protein,35,RS_RS16350,BON domain-containing protein,0.95
+RS_RS07375,vWA domain-containing protein,12,RS_RS07370,SRPBCC family protein,0.947
+RS_RS07370,SRPBCC family protein,13,RS_RS07375,vWA domain-containing protein,0.947
 RS_RS06595,hypothetical protein,13,RS_RS15180,alpha-2-macroglobulin family protein,0.947
+RS_RS24345,Csu type fimbrial protein,12,RS_RS13490,fimbrial biogenesis chaperone,0.947
+RS_RS18970,flagellar motor switch protein FliN,35,RS_RS18975,flagellar motor switch protein FliM,0.947
+RS_RS02250,DUF3683 domain-containing protein,12,RS_RS13900,ribonuclease catalytic domain-containing protein,0.947
+RS_RS13490,fimbrial biogenesis chaperone,13,RS_RS24345,Csu type fimbrial protein,0.947
 RS_RS12810,DUF3579 domain-containing protein,11,RS_RS02835,zinc-finger domain-containing protein,0.944
+RS_RS18545,poly-beta-1%2C6-N-acetyl-D-glucosamine synthase,12,RS_RS18540,poly-beta-1%2C6-N-acetyl-D-glucosamine N-deacetylase PgaB,0.944
+RS_RS09830,fumarate hydratase,37,RS_RS14735,Sec-independent protein translocase protein TatB,0.944
+RS_RS14735,Sec-independent protein translocase protein TatB,36,RS_RS09830,fumarate hydratase,0.944
+RS_RS01280,hydroxymethylglutaryl-CoA lyase,36,RS_RS01835,SCO family protein,0.944
+RS_RS01835,SCO family protein,37,RS_RS11980,segregation and condensation protein A,0.944
+RS_RS11980,segregation and condensation protein A,36,RS_RS01835,SCO family protein,0.944
+RS_RS07600,class I SAM-dependent methyltransferase,37,RS_RS14935,protein-methionine-sulfoxide reductase heme-binding subunit MsrQ,0.944
+RS_RS02825,nuclear transport factor 2 family protein,11,RS_RS20510,branched-chain amino acid ABC transporter ATP-binding protein/permease,0.941
+RS_RS14740,Sec-independent protein translocase subunit TatA,37,RS_RS05275,DNA repair protein RecO,0.941
+RS_RS14720,ABC transporter permease,37,RS_RS09040,ABC transporter substrate-binding protein,0.941
+RS_RS19065,DedA family protein/thiosulfate sulfurtransferase GlpE,10,RS_RS10100,putative toxin-antitoxin system toxin component%2C PIN family,0.941
 RS_RS24405,DUF1059 domain-containing protein,10,RS_RS22470,Mut7-C RNAse domain-containing protein,0.941
-RS_RS01415,DUF1840 domain-containing protein,11,RS_RS04475,outer membrane protein OmpA,0.941
-RS_RS12165,DUF934 domain-containing protein,26,RS_RS14165,ATP-binding protein,0.919
+RS_RS05290,beta-N-acetylhexosaminidase,37,RS_RS14085,RNA pyrophosphohydrolase,0.941
+RS_RS08995,YgfZ/GcvT domain-containing protein,38,RS_RS06510,tRNA dihydrouridine(20/20a) synthase DusA,0.941
+RS_RS01320,carboxyl transferase domain-containing protein,38,RS_RS01835,SCO family protein,0.941
+RS_RS09970,phosphoribosylanthranilate isomerase,37,RS_RS20380,indole-3-glycerol phosphate synthase TrpC,0.941
+RS_RS14085,RNA pyrophosphohydrolase,38,RS_RS05290,beta-N-acetylhexosaminidase,0.941
+RS_RS06460,translation initiation factor IF-2,37,RS_RS13605,cytochrome b,0.941
+RS_RS06510,tRNA dihydrouridine(20/20a) synthase DusA,37,RS_RS08995,YgfZ/GcvT domain-containing protein,0.941
+RS_RS10410,ketol-acid reductoisomerase,37,RS_RS20380,indole-3-glycerol phosphate synthase TrpC,0.941
+RS_RS20510,branched-chain amino acid ABC transporter ATP-binding protein/permease,10,RS_RS02825,nuclear transport factor 2 family protein,0.941
+RS_RS06840,SRPBCC family protein,10,RS_RS12135,sirohydrochlorin chelatase,0.941
+RS_RS09040,ABC transporter substrate-binding protein,38,RS_RS14720,ABC transporter permease,0.941
+RS_RS08885,3-hydroxyacyl-CoA dehydrogenase NAD-binding domain-containing protein,37,RS_RS04840,DNA topoisomerase IV subunit A,0.941
+RS_RS06100,outer membrane protein assembly factor BamB,37,RS_RS04840,DNA topoisomerase IV subunit A,0.941
+RS_RS10495,substrate-binding domain-containing protein,10,RS_RS12135,sirohydrochlorin chelatase,0.941
+RS_RS10345,NADH-quinone oxidoreductase subunit A,38,RS_RS10300,NADH-quinone oxidoreductase subunit J,0.936
+RS_RS10305,NADH-quinone oxidoreductase subunit NuoI,38,RS_RS10300,NADH-quinone oxidoreductase subunit J,0.936
+RS_RS09950,acetyl-CoA carboxylase%2C carboxyltransferase subunit beta,38,RS_RS05825,acetyl-CoA carboxylase carboxyltransferase subunit alpha,0.936
+RS_RS10320,NADH-quinone oxidoreductase subunit NuoF,39,RS_RS10290,NADH-quinone oxidoreductase subunit L,0.936
+RS_RS10300,NADH-quinone oxidoreductase subunit J,39,RS_RS10290,NADH-quinone oxidoreductase subunit L,0.936
+RS_RS05825,acetyl-CoA carboxylase carboxyltransferase subunit alpha,39,RS_RS09950,acetyl-CoA carboxylase%2C carboxyltransferase subunit beta,0.936
+RS_RS10310,NADH-quinone oxidoreductase subunit NuoH,40,RS_RS10300,NADH-quinone oxidoreductase subunit J,0.931
+RS_RS14825,MlaC/ttg2D family ABC transporter substrate-binding protein,39,RS_RS02810,beta-barrel assembly-enhancing protease,0.931
+RS_RS01995,RNase adapter RapZ,39,RS_RS02810,beta-barrel assembly-enhancing protease,0.931
+RS_RS11025,ribonuclease G,41,RS_RS02470,D-aminoacyl-tRNA deacylase,0.924
+RS_RS04660,CoA pyrophosphatase,41,RS_RS04465,bifunctional 2-polyprenyl-6-hydroxyphenol methylase/3-demethylubiquinol 3-O-methyltransferase UbiG,0.924
+RS_RS02470,D-aminoacyl-tRNA deacylase,40,RS_RS11025,ribonuclease G,0.924
+RS_RS18925,membrane protein,22,RS_RS02150,phosphopantetheine-binding protein,0.92
+RS_RS14910,type IV pilus biogenesis protein PilM,24,RS_RS14900,type 4a pilus biogenesis protein PilO,0.92
+RS_RS06705,NADPH-dependent FMN reductase,26,RS_RS05360,glucarate dehydratase,0.92
+RS_RS05360,glucarate dehydratase,24,RS_RS06705,NADPH-dependent FMN reductase,0.92
+RS_RS00420,3-keto-5-aminohexanoate cleavage protein,22,RS_RS10610,urate hydroxylase PuuD,0.92
+RS_RS05165,Rieske (2Fe-2S) protein,25,RS_RS14275,2-polyprenyl-3-methyl-6-methoxy-1%2C4-benzoquinone monooxygenase,0.919
+RS_RS06215,bifunctional 5-dehydro-2-deoxygluconokinase/5-dehydro-2-deoxyphosphogluconate aldolase,20,RS_RS06205,myo-inosose-2 dehydratase,0.919
+RS_RS15610,type II secretion system minor pseudopilin GspI,26,RS_RS15620,type II secretion system minor pseudopilin GspK,0.919
+RS_RS03420,lysophospholipid acyltransferase family protein,28,RS_RS07715,GNAT family N-acetyltransferase,0.919
+RS_RS13265,heat-inducible transcriptional repressor HrcA,22,RS_RS00765,class I SAM-dependent methyltransferase,0.919
+RS_RS05245,glutaredoxin family protein,25,RS_RS12300,DesA family fatty acid desaturase,0.919
+RS_RS15620,type II secretion system minor pseudopilin GspK,28,RS_RS15610,type II secretion system minor pseudopilin GspI,0.919
 RS_RS15325,DUF2160 domain-containing protein,20,RS_RS15305,ABC transporter ATP-binding protein,0.919
+RS_RS14275,2-polyprenyl-3-methyl-6-methoxy-1%2C4-benzoquinone monooxygenase,27,RS_RS05165,Rieske (2Fe-2S) protein,0.919
+RS_RS18310,maltose alpha-D-glucosyltransferase,19,RS_RS18285,malto-oligosyltrehalose synthase,0.918
+RS_RS03000,PqiC family protein,29,RS_RS13965,membrane protein,0.918
+RS_RS13965,membrane protein,27,RS_RS03000,PqiC family protein,0.918
+RS_RS02165,YeeE/YedE family protein,27,RS_RS02170,YeeE/YedE family protein,0.918
+RS_RS02170,YeeE/YedE family protein,29,RS_RS02165,YeeE/YedE family protein,0.918
+RS_RS06790,ribonuclease E activity regulator RraA,30,RS_RS08240,tRNA dihydrouridine synthase,0.917
+RS_RS03015,paraquat-inducible protein A,25,RS_RS03010,paraquat-inducible protein A,0.917
+RS_RS06635,SMR family transporter,20,RS_RS06610,4-deoxy-4-formamido-L-arabinose-phosphoundecaprenol deformylase,0.917
+RS_RS08240,tRNA dihydrouridine synthase,28,RS_RS06790,ribonuclease E activity regulator RraA,0.917
+RS_RS03010,paraquat-inducible protein A,25,RS_RS03015,paraquat-inducible protein A,0.917
 RS_RS03795,DUF883 family protein,24,RS_RS05360,glucarate dehydratase,0.917
+RS_RS19045,flagellar assembly protein FliH,28,RS_RS18835,flagellar assembly peptidoglycan hydrolase FlgJ,0.917
+RS_RS08145,NUDIX hydrolase,24,RS_RS06135,ATP phosphoribosyltransferase regulatory subunit,0.917
+RS_RS06610,4-deoxy-4-formamido-L-arabinose-phosphoundecaprenol deformylase,18,RS_RS06635,SMR family transporter,0.917
+RS_RS17340,DUF2076 domain-containing protein,22,RS_RS00115,YbdD/YjiX family protein,0.916
+RS_RS10490,ABC transporter permease,42,RS_RS17525,GlxA family transcriptional regulator,0.915
+RS_RS16455,oxygen-independent coproporphyrinogen III oxidase,41,RS_RS06360,2-oxoglutarate dehydrogenase E1 component,0.915
+RS_RS05125,DNA recombination protein RmuC,41,RS_RS02570,peptidylprolyl isomerase,0.915
+RS_RS15155,DNA helicase RecQ,42,RS_RS06660,threonine synthase,0.915
+RS_RS13905,chorismate--pyruvate lyase family protein,29,RS_RS01675,accessory factor UbiK family protein,0.915
+RS_RS23915,chemotaxis protein CheW,42,RS_RS23895,protein-glutamate methylesterase/protein-glutamine glutaminase,0.915
+RS_RS09455,DNA polymerase III subunit epsilon,42,RS_RS01700,glutathione synthase,0.915
+RS_RS23895,protein-glutamate methylesterase/protein-glutamine glutaminase,41,RS_RS23915,chemotaxis protein CheW,0.915
+RS_RS06360,2-oxoglutarate dehydrogenase E1 component,42,RS_RS15860,cold-shock protein,0.915
+RS_RS10270,NUDIX domain-containing protein,41,RS_RS00775,dihydroneopterin aldolase,0.915
+RS_RS02570,peptidylprolyl isomerase,42,RS_RS05125,DNA recombination protein RmuC,0.915
+RS_RS03025,S-formylglutathione hydrolase,42,RS_RS13770,2-dehydro-3-deoxy-6-phosphogalactonate aldolase,0.915
+RS_RS03515,YkgJ family cysteine cluster protein,29,RS_RS06885,disulfide bond formation protein B,0.915
+RS_RS06660,threonine synthase,41,RS_RS15155,DNA helicase RecQ,0.915
+RS_RS05075,ISC system 2Fe-2S type ferredoxin,41,RS_RS06360,2-oxoglutarate dehydrogenase E1 component,0.915
+RS_RS04705,dihydrofolate reductase,42,RS_RS05795,UDP-2%2C3-diacylglucosamine diphosphatase,0.915
+RS_RS05090,lysine--tRNA ligase,42,RS_RS05680,L-threonylcarbamoyladenylate synthase,0.915
+RS_RS00775,dihydroneopterin aldolase,42,RS_RS05795,UDP-2%2C3-diacylglucosamine diphosphatase,0.915
+RS_RS05680,L-threonylcarbamoyladenylate synthase,41,RS_RS05090,lysine--tRNA ligase,0.915
+RS_RS14150,cell division protein ZapD,20,RS_RS00155,nucleoid occlusion factor SlmA,0.914
+RS_RS00155,nucleoid occlusion factor SlmA,20,RS_RS14150,cell division protein ZapD,0.914
+RS_RS05720,cupin domain-containing protein,32,RS_RS11965,translocation/assembly module TamB domain-containing protein,0.913
+RS_RS18175,AMP nucleosidase,30,RS_RS02375,LysR family transcriptional regulator,0.911
+RS_RS10615,hydroxyisourate hydrolase,30,RS_RS18175,AMP nucleosidase,0.911
+RS_RS19005,flagellar export chaperone FliS,30,RS_RS18835,flagellar assembly peptidoglycan hydrolase FlgJ,0.911
+RS_RS02375,LysR family transcriptional regulator,30,RS_RS18175,AMP nucleosidase,0.911
+RS_RS10480,DUF924 family protein,30,RS_RS01815,SURF1 family protein,0.911
+RS_RS16865,cell division topological specificity factor MinE,33,RS_RS03945,YaeQ family protein,0.91
+RS_RS01375,MerR family transcriptional regulator,31,RS_RS00200,response regulator transcription factor,0.91
+RS_RS09075,alpha-ketoacid dehydrogenase subunit beta,31,RS_RS09070,pyruvate dehydrogenase (acetyl-transferring) E1 component subunit alpha,0.91
+RS_RS16855,septum site-determining protein MinC,33,RS_RS03945,YaeQ family protein,0.91
+RS_RS09070,pyruvate dehydrogenase (acetyl-transferring) E1 component subunit alpha,33,RS_RS09075,alpha-ketoacid dehydrogenase subunit beta,0.91
+RS_RS09700,phage baseplate assembly protein V,15,RS_RS09740,tail protein X,0.91
+RS_RS05080,Fe-S cluster assembly protein IscX,31,RS_RS05070,Fe-S protein assembly chaperone HscA,0.91
+RS_RS03955,DUF3999 domain-containing protein,17,RS_RS04980,electron transport complex subunit RsxB,0.909
+RS_RS07025,hypothetical protein,17,RS_RS04980,electron transport complex subunit RsxB,0.909
+RS_RS08635,bifunctional tRNA (5-methylaminomethyl-2-thiouridine)(34)-methyltransferase MnmD/FAD-dependent 5-carboxymethylaminomethyl-2-thiouridine(34) oxidoreductase MnmC,31,RS_RS13305,YhdP family protein,0.909
+RS_RS16645,F0F1 ATP synthase subunit C,32,RS_RS03895,tRNA cyclic N6-threonylcarbamoyladenosine(37) synthase TcdA,0.907
+RS_RS12305,mechanosensitive ion channel family protein,14,RS_RS01380,MBL fold metallo-hydrolase,0.907
+RS_RS07155,RnfH family protein,32,RS_RS00305,rod shape-determining protein MreD,0.907
+RS_RS18095,chorismate mutase,14,RS_RS18920,AMP-binding protein,0.907
+RS_RS05645,ferritin-like domain-containing protein,16,RS_RS12790,patatin-like phospholipase family protein,0.906
+RS_RS22445,trehalose-phosphatase,13,RS_RS22450,alpha%2Calpha-trehalose-phosphate synthase (UDP-forming),0.904
+RS_RS01620,(2Fe-2S) ferredoxin domain-containing protein,15,RS_RS13900,ribonuclease catalytic domain-containing protein,0.904
+RS_RS08055,pyruvate dehydrogenase (acetyl-transferring)%2C homodimeric type,35,RS_RS02700,serine/threonine protein kinase,0.904
+RS_RS22450,alpha%2Calpha-trehalose-phosphate synthase (UDP-forming),15,RS_RS22445,trehalose-phosphatase,0.904
+RS_RS02320,dihydroneopterin triphosphate diphosphatase,15,RS_RS23945,flagellar transcriptional regulator FlhD,0.904
+RS_RS09640,phage tail protein,13,RS_RS09685,phage tail protein I,0.904
+RS_RS05935,M90 family metallopeptidase,33,RS_RS02015,ribosome hibernation-promoting factor%2C HPF/YfiA family,0.904
+RS_RS05685,site-2 protease family protein,15,RS_RS01620,(2Fe-2S) ferredoxin domain-containing protein,0.903
+RS_RS02350,3-hydroxyacyl-CoA dehydrogenase/enoyl-CoA hydratase family protein,15,RS_RS13870,orotidine-5'-phosphate decarboxylase,0.903
+RS_RS12215,NAD-dependent epimerase/dehydratase family protein,42,RS_RS07540,aldo/keto reductase,0.902
+RS_RS05195,phosphate acyltransferase PlsX,43,RS_RS02625,apolipoprotein N-acyltransferase,0.902
+RS_RS13235,ferrochelatase,42,RS_RS06465,30S ribosome-binding factor RbfA,0.902
+RS_RS02625,apolipoprotein N-acyltransferase,42,RS_RS05195,phosphate acyltransferase PlsX,0.902
+RS_RS01990,LON peptidase substrate-binding domain-containing protein,36,RS_RS08135,arginyltransferase,0.9
+RS_RS13335,cob(I)yrinic acid a%2Cc-diamide adenosyltransferase,34,RS_RS01945,50S ribosomal protein L25/general stress protein Ctc,0.9
+RS_RS00270,Asp-tRNA(Asn)/Glu-tRNA(Gln) amidotransferase subunit GatB,36,RS_RS00290,Asp-tRNA(Asn)/Glu-tRNA(Gln) amidotransferase subunit GatC,0.9
+RS_RS01945,50S ribosomal protein L25/general stress protein Ctc,36,RS_RS01970,tetratricopeptide repeat protein,0.9
+RS_RS01970,tetratricopeptide repeat protein,34,RS_RS01945,50S ribosomal protein L25/general stress protein Ctc,0.9
+RS_RS01735,S41 family peptidase,36,RS_RS08135,arginyltransferase,0.9
+RS_RS17580,GNAT family N-acetyltransferase,12,RS_RS02205,C39 family peptidase,0.9
+RS_RS25090,YihY/virulence factor BrkB family protein,35,RS_RS07910,CoA transferase subunit B,0.895
+RS_RS00080,phosphoenolpyruvate carboxykinase (GTP),13,RS_RS10100,putative toxin-antitoxin system toxin component%2C PIN family,0.895
+RS_RS13860,CinA family protein,37,RS_RS22185,OFA family MFS transporter,0.895
+RS_RS15750,ferritin-like domain-containing protein,11,RS_RS00080,phosphoenolpyruvate carboxykinase (GTP),0.895
+RS_RS06940,M55 family metallopeptidase,11,RS_RS23945,flagellar transcriptional regulator FlhD,0.895
+RS_RS02420,dihydroorotase,35,RS_RS06460,translation initiation factor IF-2,0.895
+RS_RS08830,protein adenylyltransferase SelO,37,RS_RS05000,amino acid aminotransferase,0.895
+RS_RS05000,amino acid aminotransferase,35,RS_RS08830,protein adenylyltransferase SelO,0.895
 RS_RS00265,DUF484 family protein,37,RS_RS08055,pyruvate dehydrogenase (acetyl-transferring)%2C homodimeric type,0.895
+RS_RS15585,4-hydroxyphenylpyruvate dioxygenase,35,RS_RS13250,histidine ammonia-lyase,0.895
+RS_RS14020,ribonucleotide-diphosphate reductase subunit beta,38,RS_RS14025,ribonucleoside-diphosphate reductase subunit alpha,0.889
+RS_RS13675,NAD(P)(+) transhydrogenase (Re/Si-specific) subunit beta,38,RS_RS00435,glutathione S-transferase family protein,0.889
+RS_RS24330,Csu type fimbrial protein,10,RS_RS24345,Csu type fimbrial protein,0.889
+RS_RS06850,acyl-CoA-binding protein,12,RS_RS01810,twin transmembrane helix small protein,0.889
+RS_RS14025,ribonucleoside-diphosphate reductase subunit alpha,36,RS_RS14020,ribonucleotide-diphosphate reductase subunit beta,0.889
+RS_RS14745,DUF4870 family protein,12,RS_RS10495,substrate-binding domain-containing protein,0.889
+RS_RS15295,DeoR/GlpR family DNA-binding transcription regulator,38,RS_RS01285,2-hydroxyacid dehydrogenase,0.889
+RS_RS08820,septation protein A,36,RS_RS14085,RNA pyrophosphohydrolase,0.889
+RS_RS01285,2-hydroxyacid dehydrogenase,36,RS_RS15295,DeoR/GlpR family DNA-binding transcription regulator,0.889
+RS_RS06110,RNA chaperone Hfq,36,RS_RS14935,protein-methionine-sulfoxide reductase heme-binding subunit MsrQ,0.889
+RS_RS00435,glutathione S-transferase family protein,36,RS_RS06110,RNA chaperone Hfq,0.889
+RS_RS16815,4a-hydroxytetrahydrobiopterin dehydratase,36,RS_RS01990,LON peptidase substrate-binding domain-containing protein,0.889
+RS_RS04455,DUF748 domain-containing protein,12,RS_RS24270,OmpA family protein,0.889
+RS_RS01920,16S rRNA (guanine(966)-N(2))-methyltransferase RsmD,44,RS_RS06585,inorganic phosphate transporter,0.884
+RS_RS06585,inorganic phosphate transporter,43,RS_RS01920,16S rRNA (guanine(966)-N(2))-methyltransferase RsmD,0.884
+RS_RS17660,molybdate ABC transporter substrate-binding protein,43,RS_RS06745,sulfate ABC transporter permease subunit CysT,0.884
+RS_RS14840,lipid asymmetry maintenance ABC transporter permease subunit MlaE,43,RS_RS03435,dTDP-4-dehydrorhamnose reductase,0.884
+RS_RS01975,bifunctional DNA-formamidopyrimidine glycosylase/DNA-(apurinic or apyrimidinic site) lyase,43,RS_RS01920,16S rRNA (guanine(966)-N(2))-methyltransferase RsmD,0.884
+RS_RS16670,16S rRNA (guanine(527)-N(7))-methyltransferase RsmG,44,RS_RS14880,3-dehydroquinate synthase,0.884
+RS_RS13270,NAD kinase,37,RS_RS07090,OmpH family outer membrane protein,0.882
+RS_RS19140,AI-2E family transporter,21,RS_RS18395,siderophore-interacting protein,0.882
+RS_RS07090,OmpH family outer membrane protein,37,RS_RS13270,NAD kinase,0.882
+RS_RS08705,winged helix DNA-binding protein,11,RS_RS06995,DMT family transporter,0.882
+RS_RS07875,MFS transporter,24,RS_RS12300,DesA family fatty acid desaturase,0.882
+RS_RS23725,regulatory protein NosR,11,RS_RS23745,nitrous oxide reductase accessory protein NosL,0.882
+RS_RS18395,siderophore-interacting protein,24,RS_RS19140,AI-2E family transporter,0.882
+RS_RS07900,LuxR C-terminal-related transcriptional regulator,11,RS_RS08705,winged helix DNA-binding protein,0.882
+RS_RS14905,PilN domain-containing protein,22,RS_RS05245,glutaredoxin family protein,0.882
+RS_RS00760,muropeptide transporter,37,RS_RS07125,posphoenolpyruvate synthetase regulatory kinase/phosphorylase PpsR,0.882
+RS_RS23745,nitrous oxide reductase accessory protein NosL,11,RS_RS23725,regulatory protein NosR,0.882
+RS_RS20125,HoxN/HupN/NixA family nickel/cobalt transporter,11,RS_RS06940,M55 family metallopeptidase,0.882
+RS_RS07125,posphoenolpyruvate synthetase regulatory kinase/phosphorylase PpsR,37,RS_RS00760,muropeptide transporter,0.882
+RS_RS11255,4-hydroxybenzoate 3-monooxygenase,25,RS_RS07260,protocatechuate 3%2C4-dioxygenase subunit alpha,0.882
+RS_RS21785,ubiquinone anaerobic biosynthesis accessory factor UbiT,23,RS_RS21795,ubiquinone anaerobic biosynthesis protein UbiU,0.882
+RS_RS04905,DNA-deoxyinosine glycosylase,11,RS_RS13195,chorismate-binding protein,0.882
+RS_RS02265,gamma-butyrobetaine hydroxylase-like domain-containing protein,27,RS_RS05300,elongation factor P maturation arginine rhamnosyltransferase EarP,0.882
+RS_RS01885,ANTAR domain-containing response regulator,23,RS_RS07715,GNAT family N-acetyltransferase,0.882
+RS_RS14830,MlaA family lipoprotein,37,RS_RS14825,MlaC/ttg2D family ABC transporter substrate-binding protein,0.881
+RS_RS04690,molybdopterin adenylyltransferase,39,RS_RS06540,transcriptional repressor LexA,0.881
+RS_RS10325,NADH-quinone oxidoreductase subunit NuoE,37,RS_RS10320,NADH-quinone oxidoreductase subunit NuoF,0.881
+RS_RS01930,YfhL family 4Fe-4S dicluster ferredoxin,37,RS_RS14415,Co2+/Mg2+ efflux protein ApaG,0.881
+RS_RS02290,TPMT family class I SAM-dependent methyltransferase,28,RS_RS05245,glutaredoxin family protein,0.881
+RS_RS04070,sulfurtransferase TusA family protein,39,RS_RS07600,class I SAM-dependent methyltransferase,0.881
+RS_RS20275,copper homeostasis membrane protein CopD,20,RS_RS20270,copper homeostasis periplasmic binding protein CopC,0.881
+RS_RS14415,Co2+/Mg2+ efflux protein ApaG,39,RS_RS01930,YfhL family 4Fe-4S dicluster ferredoxin,0.881
+RS_RS20270,copper homeostasis periplasmic binding protein CopC,23,RS_RS20275,copper homeostasis membrane protein CopD,0.881
+RS_RS14835,outer membrane lipid asymmetry maintenance protein MlaD,37,RS_RS14825,MlaC/ttg2D family ABC transporter substrate-binding protein,0.881
+RS_RS16400,ureidoglycolate lyase,22,RS_RS23880,bifunctional sugar phosphate isomerase/epimerase/4-hydroxyphenylpyruvate dioxygenase family protein,0.88
+RS_RS14955,COG4315 family predicted lipoprotein,22,RS_RS25015,CheR family methyltransferase,0.88
+RS_RS17520,choline ABC transporter permease subunit,26,RS_RS17515,glycine betaine/L-proline ABC transporter ATP-binding protein,0.88
+RS_RS25015,CheR family methyltransferase,19,RS_RS14955,COG4315 family predicted lipoprotein,0.88
+RS_RS17505,glycine betaine ABC transporter substrate-binding protein,29,RS_RS17520,choline ABC transporter permease subunit,0.88
+RS_RS17515,glycine betaine/L-proline ABC transporter ATP-binding protein,29,RS_RS17520,choline ABC transporter permease subunit,0.88
+RS_RS23880,bifunctional sugar phosphate isomerase/epimerase/4-hydroxyphenylpyruvate dioxygenase family protein,19,RS_RS16400,ureidoglycolate lyase,0.88
+RS_RS05790,serine O-acetyltransferase,30,RS_RS02265,gamma-butyrobetaine hydroxylase-like domain-containing protein,0.878
+RS_RS00385,sensor histidine kinase,18,RS_RS01705,PTS sugar transporter subunit IIA,0.878
 RS_RS12505,DUF192 domain-containing protein,21,RS_RS04990,polyhydroxyalkanoate depolymerase,0.878
+RS_RS18840,flagellar hook-associated protein FlgK,27,RS_RS18835,flagellar assembly peptidoglycan hydrolase FlgJ,0.878
+RS_RS01705,PTS sugar transporter subunit IIA,21,RS_RS00385,sensor histidine kinase,0.878
+RS_RS14295,aminopeptidase,18,RS_RS13895,energy transducer TonB family protein,0.878
+RS_RS04495,prephenate dehydratase,30,RS_RS13965,membrane protein,0.878
+RS_RS02275,Tim44 domain-containing protein,24,RS_RS03940,FKBP-type peptidyl-prolyl cis-trans isomerase,0.876
 RS_RS05530,DUF899 domain-containing protein,17,RS_RS20170,YciI family protein,0.876
+RS_RS07020,peptide deformylase,24,RS_RS03940,FKBP-type peptidyl-prolyl cis-trans isomerase,0.876
+RS_RS11210,homoserine kinase,26,RS_RS00130,methionine biosynthesis protein MetW,0.875
+RS_RS21840,type IV pili methyl-accepting chemotaxis transducer N-terminal domain-containing protein,22,RS_RS21785,ubiquinone anaerobic biosynthesis accessory factor UbiT,0.875
+RS_RS15410,mechanosensitive ion channel family protein,21,RS_RS16400,ureidoglycolate lyase,0.874
+RS_RS20935,Y-family DNA polymerase,29,RS_RS22525,MaoC family dehydratase,0.874
+RS_RS00870,DUF6279 family lipoprotein,21,RS_RS14905,PilN domain-containing protein,0.874
+RS_RS05170,S49 family peptidase,29,RS_RS14755,phosphoribosyl-AMP cyclohydrolase,0.874
+RS_RS08755,ABC transporter substrate-binding protein,38,RS_RS09045,ABC transporter permease,0.874
+RS_RS03760,TauD/TfdA dioxygenase family protein,22,RS_RS02540,putative bifunctional diguanylate cyclase/phosphodiesterase,0.874
+RS_RS12645,HutD/Ves family protein,27,RS_RS02185,gluconokinase,0.874
+RS_RS16405,allantoicase,16,RS_RS23880,bifunctional sugar phosphate isomerase/epimerase/4-hydroxyphenylpyruvate dioxygenase family protein,0.874
+RS_RS02540,putative bifunctional diguanylate cyclase/phosphodiesterase,21,RS_RS03760,TauD/TfdA dioxygenase family protein,0.874
+RS_RS14320,PTS fructose transporter subunit IIC,21,RS_RS22615,type VI secretion system Vgr family protein,0.873
+RS_RS02740,MFS transporter,21,RS_RS20170,YciI family protein,0.873
+RS_RS22615,type VI secretion system Vgr family protein,20,RS_RS14320,PTS fructose transporter subunit IIC,0.873
+RS_RS00470,adenosylhomocysteinase,40,RS_RS20380,indole-3-glycerol phosphate synthase TrpC,0.872
+RS_RS10400,CDP-diacylglycerol--serine O-phosphatidyltransferase,38,RS_RS16660,ParB/RepB/Spo0J family partition protein,0.872
+RS_RS02040,KdsC family phosphatase,38,RS_RS04675,ribosome small subunit-dependent GTPase A,0.872
+RS_RS03415,dihydroorotase,40,RS_RS20380,indole-3-glycerol phosphate synthase TrpC,0.872
+RS_RS04675,ribosome small subunit-dependent GTPase A,40,RS_RS02040,KdsC family phosphatase,0.872
+RS_RS00070,DODA-type extradiol aromatic ring-opening family dioxygenase,40,RS_RS14020,ribonucleotide-diphosphate reductase subunit beta,0.872
+RS_RS07680,phosphate ABC transporter permease PstA,29,RS_RS07675,phosphate ABC transporter permease PstC,0.871
+RS_RS05285,holo-ACP synthase,29,RS_RS14160,NUDIX domain-containing protein,0.871
+RS_RS22135,DoxX family protein,19,RS_RS22120,BufA1 family periplasmic bufferin-type metallophore,0.871
+RS_RS14160,NUDIX domain-containing protein,28,RS_RS05285,holo-ACP synthase,0.871
+RS_RS22120,BufA1 family periplasmic bufferin-type metallophore,20,RS_RS22135,DoxX family protein,0.871
+RS_RS14820,STAS domain-containing protein,19,RS_RS21070,5-dehydro-4-deoxyglucarate dehydratase,0.871
+RS_RS07675,phosphate ABC transporter permease PstC,28,RS_RS07680,phosphate ABC transporter permease PstA,0.871
+RS_RS23025,NAD(P)/FAD-dependent oxidoreductase,33,RS_RS02375,LysR family transcriptional regulator,0.87
+RS_RS01780,DUF2244 domain-containing protein,15,RS_RS04990,polyhydroxyalkanoate depolymerase,0.87
+RS_RS08930,glutathione S-transferase family protein,15,RS_RS14295,aminopeptidase,0.87
+RS_RS06870,lysophospholipid transporter LplT,18,RS_RS02320,dihydroneopterin triphosphate diphosphatase,0.87
+RS_RS00190,copper chaperone PCu(A)C,30,RS_RS00200,response regulator transcription factor,0.87
+RS_RS16960,sensor histidine kinase,30,RS_RS08170,potassium transporter Kup,0.87
+RS_RS08900,acyl-CoA dehydrogenase,19,RS_RS14295,aminopeptidase,0.869
+RS_RS22685,TOBE domain-containing protein,29,RS_RS12825,SirB1 family protein,0.869
+RS_RS12825,SirB1 family protein,30,RS_RS22685,TOBE domain-containing protein,0.869
+RS_RS18790,flagellar basal body P-ring formation chaperone FlgA,29,RS_RS06790,ribonuclease E activity regulator RraA,0.869
+RS_RS12625,GntP family permease,17,RS_RS02205,C39 family peptidase,0.867
+RS_RS05965,UvrD-helicase domain-containing protein,17,RS_RS00385,sensor histidine kinase,0.866
+RS_RS02405,class II glutamine amidotransferase,31,RS_RS06790,ribonuclease E activity regulator RraA,0.866
+RS_RS20750,type VI secretion system protein TssA,17,RS_RS03790,phage holin family protein,0.866
+RS_RS02655,NAD(P)/FAD-dependent oxidoreductase,17,RS_RS14295,aminopeptidase,0.866
+RS_RS10805,DNA-directed RNA polymerase subunit omega,39,RS_RS02565,LPS-assembly protein LptD,0.863
+RS_RS02565,LPS-assembly protein LptD,39,RS_RS10805,DNA-directed RNA polymerase subunit omega,0.863
+RS_RS07710,exopolyphosphatase,39,RS_RS12730,N-acetylmuramoyl-L-alanine amidase,0.863
+RS_RS11070,sulfurtransferase,39,RS_RS03860,SAM-dependent methyltransferase,0.863
+RS_RS03390,pseudouridine synthase,32,RS_RS03945,YaeQ family protein,0.862
+RS_RS02135,acyl-CoA synthetase,16,RS_RS09480,lipid A hydroxylase LpxO,0.862
+RS_RS15845,c-type cytochrome,16,RS_RS20750,type VI secretion system protein TssA,0.862
+RS_RS05860,ABC transporter permease,32,RS_RS03930,gamma-glutamylcyclotransferase,0.862
+RS_RS03930,gamma-glutamylcyclotransferase,31,RS_RS05860,ABC transporter permease,0.862
+RS_RS09480,lipid A hydroxylase LpxO,17,RS_RS02135,acyl-CoA synthetase,0.862
+RS_RS16540,trifunctional transcriptional regulator/proline dehydrogenase/L-glutamate gamma-semialdehyde dehydrogenase,41,RS_RS02565,LPS-assembly protein LptD,0.86
+RS_RS14860,glutamate synthase-related protein,41,RS_RS24615,glucose-6-phosphate dehydrogenase,0.86
+RS_RS06545,ferredoxin--NADP reductase,41,RS_RS02565,LPS-assembly protein LptD,0.86
+RS_RS24615,glucose-6-phosphate dehydrogenase,39,RS_RS13770,2-dehydro-3-deoxy-6-phosphogalactonate aldolase,0.86
+RS_RS11785,GNAT family N-acetyltransferase,33,RS_RS01795,cytochrome c oxidase assembly protein,0.858
+RS_RS00450,5-formyltetrahydrofolate cyclo-ligase,44,RS_RS07955,50S ribosomal protein L20,0.856
+RS_RS05215,acyl carrier protein,45,RS_RS23320,class II fumarate hydratase,0.856
+RS_RS07440,dethiobiotin synthase,45,RS_RS01305,biotin synthase BioB,0.856
+RS_RS25080,peptide chain release factor 3,44,RS_RS00430,multifunctional CCA addition/repair protein,0.856
+RS_RS14235,UDP-N-acetylmuramoyl-L-alanine--D-glutamate ligase,44,RS_RS07955,50S ribosomal protein L20,0.856
+RS_RS06680,molybdenum cofactor biosynthesis protein MoaE,44,RS_RS14815,ABC transporter ATP-binding protein,0.856
+RS_RS14215,D-alanine--D-alanine ligase,45,RS_RS01920,16S rRNA (guanine(966)-N(2))-methyltransferase RsmD,0.856
+RS_RS03330,TPM domain-containing protein,12,RS_RS02350,3-hydroxyacyl-CoA dehydrogenase/enoyl-CoA hydratase family protein,0.856
+RS_RS23320,class II fumarate hydratase,44,RS_RS00430,multifunctional CCA addition/repair protein,0.856
+RS_RS24640,c-type cytochrome,12,RS_RS22450,alpha%2Calpha-trehalose-phosphate synthase (UDP-forming),0.856
+RS_RS06810,isocitrate lyase,36,RS_RS16855,septum site-determining protein MinC,0.856
+RS_RS01305,biotin synthase BioB,44,RS_RS07440,dethiobiotin synthase,0.856
+RS_RS01760,NAD(P)H-dependent glycerol-3-phosphate dehydrogenase,44,RS_RS07660,dihydropteroate synthase,0.856
+RS_RS14105,50S ribosomal protein L27,44,RS_RS05220,beta-ketoacyl-ACP synthase II,0.856
+RS_RS16500,glycine cleavage system aminomethyltransferase GcvT,44,RS_RS05220,beta-ketoacyl-ACP synthase II,0.856
+RS_RS11015,23S rRNA (pseudouridine(1915)-N(3))-methyltransferase RlmH,45,RS_RS06685,fluoride efflux transporter CrcB,0.856
+RS_RS01450,homocysteine S-methyltransferase family protein,15,RS_RS01445,methionine synthase,0.856
+RS_RS13915,UDP-N-acetylmuramate:L-alanyl-gamma-D-glutamyl-meso-diaminopimelate ligase,36,RS_RS05070,Fe-S protein assembly chaperone HscA,0.856
+RS_RS12735,tRNA (adenosine(37)-N6)-threonylcarbamoyltransferase complex ATPase subunit type 1 TsaE,44,RS_RS02270,bifunctional demethylmenaquinone methyltransferase/2-methoxy-6-polyprenyl-1%2C4-benzoquinol methylase UbiE,0.856
 RS_RS03995,DUF2214 family protein,15,RS_RS15180,alpha-2-macroglobulin family protein,0.856
+RS_RS06415,cytochrome c oxidase accessory protein CcoG,33,RS_RS01280,hydroxymethylglutaryl-CoA lyase,0.856
+RS_RS02870,class II fructose-bisphosphate aldolase,44,RS_RS01960,4-(cytidine 5'-diphospho)-2-C-methyl-D-erythritol kinase,0.856
+RS_RS06045,RNA polymerase sigma factor RpoS,34,RS_RS14985,protein-disulfide reductase DsbD,0.853
+RS_RS05670,NAD(P)/FAD-dependent oxidoreductase,14,RS_RS02350,3-hydroxyacyl-CoA dehydrogenase/enoyl-CoA hydratase family protein,0.853
+RS_RS18125,acyl-CoA thioesterase,33,RS_RS06600,PhoH family protein,0.853
+RS_RS06795,gamma-glutamylcyclotransferase family protein,14,RS_RS02320,dihydroneopterin triphosphate diphosphatase,0.853
+RS_RS06600,PhoH family protein,34,RS_RS18125,acyl-CoA thioesterase,0.853
+RS_RS13710,CopD family protein,33,RS_RS13335,cob(I)yrinic acid a%2Cc-diamide adenosyltransferase,0.853
+RS_RS09935,CvpA family protein,40,RS_RS05950,transcription termination factor Rho,0.85
+RS_RS14155,DNA gyrase inhibitor YacG,34,RS_RS07600,class I SAM-dependent methyltransferase,0.85
+RS_RS06060,Bax inhibitor-1/YccA family protein,40,RS_RS05950,transcription termination factor Rho,0.85
+RS_RS14190,UDP-3-O-acyl-N-acetylglucosamine deacetylase,40,RS_RS16615,F0F1 ATP synthase subunit epsilon,0.85
+RS_RS00105,cache domain-containing protein,14,RS_RS09485,BPSL1445 family SYLF domain-containing lipoprotein,0.85
+RS_RS23730,nitrous oxide reductase family maturation protein NosD,14,RS_RS23745,nitrous oxide reductase accessory protein NosL,0.85
+RS_RS06470,tRNA pseudouridine(55) synthase TruB,40,RS_RS11160,exodeoxyribonuclease VII small subunit,0.85
+RS_RS13230,RNA-binding S4 domain-containing protein,37,RS_RS03895,tRNA cyclic N6-threonylcarbamoyladenosine(37) synthase TcdA,0.85
+RS_RS18720,nucleotidyltransferase family protein,34,RS_RS09545,(2Fe-2S)-binding protein,0.85
+RS_RS09485,BPSL1445 family SYLF domain-containing lipoprotein,11,RS_RS00105,cache domain-containing protein,0.85
+RS_RS13175,deoxynucleoside kinase,13,RS_RS05175,SAM-dependent methyltransferase,0.847
+RS_RS23720,TAT-dependent nitrous-oxide reductase,13,RS_RS23730,nitrous oxide reductase family maturation protein NosD,0.847
+RS_RS01520,D-glycero-beta-D-manno-heptose 1-phosphate adenylyltransferase,14,RS_RS13900,ribonuclease catalytic domain-containing protein,0.847
+RS_RS20680,Hcp family type VI secretion system effector,25,RS_RS20650,type IVB secretion system protein IcmH/DotU,0.846
+RS_RS03300,Flp pilus assembly protein CpaB,23,RS_RS22365,type II and III secretion system protein family protein,0.846
+RS_RS16780,heavy-metal-associated domain-containing protein,27,RS_RS01885,ANTAR domain-containing response regulator,0.846
+RS_RS10330,NADH-quinone oxidoreductase subunit D,26,RS_RS13265,heat-inducible transcriptional repressor HrcA,0.846
+RS_RS04535,lipopolysaccharide assembly protein LapB,24,RS_RS00155,nucleoid occlusion factor SlmA,0.845
+RS_RS04710,thymidylate synthase,40,RS_RS04705,dihydrofolate reductase,0.845
+RS_RS05575,DNA internalization-related competence protein ComEC/Rec2,40,RS_RS20370,pyridoxamine 5'-phosphate oxidase,0.845
+RS_RS10640,2-oxo-4-hydroxy-4-carboxy-5-ureidoimidazoline decarboxylase,24,RS_RS10635,allantoinase PuuE,0.845
+RS_RS14875,deoxyguanosinetriphosphate triphosphohydrolase,40,RS_RS15155,DNA helicase RecQ,0.845
+RS_RS02365,acyl-CoA thioesterase,40,RS_RS15155,DNA helicase RecQ,0.845
+RS_RS11175,sulfurtransferase,40,RS_RS16450,2-hydroxy-3-oxopropionate reductase,0.845
+RS_RS10635,allantoinase PuuE,28,RS_RS10640,2-oxo-4-hydroxy-4-carboxy-5-ureidoimidazoline decarboxylase,0.845
+RS_RS20970,DUF962 domain-containing protein,28,RS_RS07875,MFS transporter,0.845
+RS_RS05105,nicotinate phosphoribosyltransferase,29,RS_RS06715,FMNH2-dependent alkanesulfonate monooxygenase,0.844
+RS_RS05115,sodium:proton antiporter,13,RS_RS05095,SDR family oxidoreductase,0.842
+RS_RS15700,exodeoxyribonuclease I,26,RS_RS11965,translocation/assembly module TamB domain-containing protein,0.842
+RS_RS08325,presqualene diphosphate synthase HpnD,22,RS_RS04505,prephenate dehydrogenase,0.842
+RS_RS19145,MFS transporter,30,RS_RS02185,gluconokinase,0.842
+RS_RS01785,cytochrome c oxidase subunit II,17,RS_RS13895,energy transducer TonB family protein,0.84
+RS_RS02000,PsiF family protein,21,RS_RS20750,type VI secretion system protein TssA,0.84
+RS_RS00005,ribonuclease P protein component,27,RS_RS01675,accessory factor UbiK family protein,0.84
+RS_RS07340,glycoside hydrolase family 15 protein,21,RS_RS20750,type VI secretion system protein TssA,0.84
+RS_RS00640,HPP family protein,13,RS_RS24640,c-type cytochrome,0.839
 RS_RS07455,DUF1653 domain-containing protein,20,RS_RS02680,3-oxoacyl-ACP reductase,0.837
+RS_RS20165,RNA polymerase sigma factor,16,RS_RS19970,VOC family protein,0.837
+RS_RS19970,VOC family protein,20,RS_RS20165,RNA polymerase sigma factor,0.837
+RS_RS18290,4-alpha-glucanotransferase,28,RS_RS18300,glycogen debranching protein GlgX,0.837
+RS_RS18300,glycogen debranching protein GlgX,32,RS_RS18290,4-alpha-glucanotransferase,0.837
+RS_RS05600,alpha/beta fold hydrolase,20,RS_RS22110,zinc-binding metallopeptidase family protein,0.837
+RS_RS20525,cytochrome P450,23,RS_RS08220,class I poly(R)-hydroxyalkanoic acid synthase,0.837
+RS_RS02260,ABC transporter ATP-binding protein/permease,24,RS_RS14955,COG4315 family predicted lipoprotein,0.836
+RS_RS10090,M14 family metallopeptidase,22,RS_RS07875,MFS transporter,0.836
+RS_RS14475,FUSC family protein,23,RS_RS14570,glucans biosynthesis glucosyltransferase MdoH,0.835
+RS_RS20930,translesion DNA synthesis-associated protein ImuA,25,RS_RS12300,DesA family fatty acid desaturase,0.835
+RS_RS21010,malate dehydrogenase (quinone),23,RS_RS14320,PTS fructose transporter subunit IIC,0.835
+RS_RS02255,HIT family protein,25,RS_RS14275,2-polyprenyl-3-methyl-6-methoxy-1%2C4-benzoquinone monooxygenase,0.835
+RS_RS24390,ABC transporter substrate-binding protein,20,RS_RS20700,type VI secretion system ATPase TssH,0.834
+RS_RS18845,flagellar hook-associated protein FlgL,24,RS_RS04535,lipopolysaccharide assembly protein LapB,0.833
+RS_RS08035,M3 family metallopeptidase,41,RS_RS04660,CoA pyrophosphatase,0.833
+RS_RS02460,anhydro-N-acetylmuramic acid kinase,41,RS_RS16455,oxygen-independent coproporphyrinogen III oxidase,0.833
+RS_RS01715,phosphoenolpyruvate--protein phosphotransferase,24,RS_RS04535,lipopolysaccharide assembly protein LapB,0.833
+RS_RS19975,chemotaxis protein,29,RS_RS18980,flagellar basal body-associated protein FliL,0.833
+RS_RS12005,bifunctional adenosylcobinamide kinase/adenosylcobinamide-phosphate guanylyltransferase,36,RS_RS12030,adenosylcobinamide-GDP ribazoletransferase,0.832
+RS_RS06145,phosphoribosyltransferase,27,RS_RS05285,holo-ACP synthase,0.832
+RS_RS08985,NRDE family protein,26,RS_RS14970,c-type cytochrome,0.832
+RS_RS06075,type IV pilus biogenesis/stability protein PilW,27,RS_RS18790,flagellar basal body P-ring formation chaperone FlgA,0.832
+RS_RS23340,maltoporin,19,RS_RS14320,PTS fructose transporter subunit IIC,0.832
+RS_RS12030,adenosylcobinamide-GDP ribazoletransferase,39,RS_RS12005,bifunctional adenosylcobinamide kinase/adenosylcobinamide-phosphate guanylyltransferase,0.832
+RS_RS02450,bactofilin family protein,22,RS_RS14180,M23 family metallopeptidase,0.832
+RS_RS02325,endonuclease/exonuclease/phosphatase family protein,36,RS_RS05825,acetyl-CoA carboxylase carboxyltransferase subunit alpha,0.832
+RS_RS14180,M23 family metallopeptidase,22,RS_RS02450,bactofilin family protein,0.832
+RS_RS01165,fused isobutyryl-CoA mutase/GTPase IcmF,11,RS_RS03330,TPM domain-containing protein,0.83
+RS_RS12035,nicotinate-nucleotide--dimethylbenzimidazole phosphoribosyltransferase,37,RS_RS12005,bifunctional adenosylcobinamide kinase/adenosylcobinamide-phosphate guanylyltransferase,0.83
+RS_RS11840,phosphoenolpyruvate carboxylase,37,RS_RS14025,ribonucleoside-diphosphate reductase subunit alpha,0.83
 RS_RS23595,DUF1304 domain-containing protein,11,RS_RS03330,TPM domain-containing protein,0.83
+RS_RS03215,Hsp70 family protein,36,RS_RS06540,transcriptional repressor LexA,0.83
+RS_RS03830,arylformamidase,11,RS_RS05340,CHASE2 domain-containing protein,0.83
+RS_RS05340,CHASE2 domain-containing protein,12,RS_RS03830,arylformamidase,0.83
+RS_RS12830,VTT domain-containing protein,37,RS_RS16955,potassium-transporting ATPase subunit KdpC,0.83
+RS_RS03965,RNA-binding S4 domain-containing protein,20,RS_RS14150,cell division protein ZapD,0.829
+RS_RS07855,Mpo1-like protein,30,RS_RS16810,phenylalanine 4-monooxygenase,0.829
+RS_RS16810,phenylalanine 4-monooxygenase,28,RS_RS07855,Mpo1-like protein,0.829
 RS_RS19135,DUF1345 domain-containing protein,20,RS_RS24460,bifunctional lysylphosphatidylglycerol flippase/synthetase MprF,0.829
+RS_RS09825,TIGR00645 family protein,31,RS_RS22685,TOBE domain-containing protein,0.826
+RS_RS20940,error-prone DNA polymerase,31,RS_RS20935,Y-family DNA polymerase,0.826
+RS_RS07425,transglycosylase domain-containing protein,19,RS_RS18310,maltose alpha-D-glucosyltransferase,0.826
+RS_RS05140,molybdenum cofactor guanylyltransferase MobA,43,RS_RS01390,helical backbone metal receptor,0.825
+RS_RS12765,glycerol-3-phosphate 1-O-acyltransferase PlsY,41,RS_RS05195,phosphate acyltransferase PlsX,0.825
+RS_RS05350,GlsB/YeaQ/YmgE family stress response membrane protein,32,RS_RS04575,methionine ABC transporter ATP-binding protein,0.822
+RS_RS04635,PQQ-dependent sugar dehydrogenase,30,RS_RS20435,homogentisate 1%2C2-dioxygenase,0.822
+RS_RS00160,pyrimidine 5'-nucleotidase,32,RS_RS17235,sensor histidine kinase,0.822
+RS_RS20435,homogentisate 1%2C2-dioxygenase,32,RS_RS04635,PQQ-dependent sugar dehydrogenase,0.822
+RS_RS00035,30S ribosomal protein S21,37,RS_RS04675,ribosome small subunit-dependent GTPase A,0.82
+RS_RS18340,alkyl hydroperoxide reductase subunit F,37,RS_RS01725,bacterioferritin,0.82
+RS_RS01725,bacterioferritin,40,RS_RS07125,posphoenolpyruvate synthetase regulatory kinase/phosphorylase PpsR,0.82
+RS_RS14675,ubiquinol-cytochrome c reductase iron-sulfur subunit,31,RS_RS14665,cytochrome c1,0.818
+RS_RS18090,prolyl aminopeptidase,31,RS_RS20215,enoyl-CoA hydratase/isomerase family protein,0.818
+RS_RS01825,COX15/CtaA family protein,33,RS_RS09540,xanthine dehydrogenase family protein molybdopterin-binding subunit,0.816
+RS_RS24620,phosphogluconate dehydratase,32,RS_RS11970,autotransporter assembly complex protein TamA,0.816
+RS_RS13370,LrgB family protein,33,RS_RS02405,class II glutamine amidotransferase,0.816
+RS_RS07850,YihY family inner membrane protein,15,RS_RS04730,ergothioneine biosynthesis protein EgtB,0.816
+RS_RS03810,acyl-CoA dehydrogenase,33,RS_RS20940,error-prone DNA polymerase,0.816
+RS_RS16870,CoA transferase,16,RS_RS15180,alpha-2-macroglobulin family protein,0.816
+RS_RS01875,CmpA/NrtA family ABC transporter substrate-binding protein,32,RS_RS05580,circularly permuted type 2 ATP-grasp protein,0.812
 RS_RS08320,DUF1501 domain-containing protein,16,RS_RS12790,patatin-like phospholipase family protein,0.812
+RS_RS11780,NAD+ synthase,27,RS_RS13265,heat-inducible transcriptional repressor HrcA,0.811
+RS_RS14315,1-phosphofructokinase,26,RS_RS14320,PTS fructose transporter subunit IIC,0.811
+RS_RS23705,acyltransferase,21,RS_RS15700,exodeoxyribonuclease I,0.811
+RS_RS00485,alkaline phosphatase,16,RS_RS22725,Spy/CpxP family protein refolding chaperone,0.81
+RS_RS23740,ABC transporter permease,16,RS_RS23730,nitrous oxide reductase family maturation protein NosD,0.81
+RS_RS03350,glutamate-1-semialdehyde 2%2C1-aminomutase,42,RS_RS05090,lysine--tRNA ligase,0.81
+RS_RS07705,polyphosphate kinase 1,42,RS_RS00775,dihydroneopterin aldolase,0.81
+RS_RS07130,phosphoenolpyruvate synthase,42,RS_RS09925,ABC transporter permease,0.81
+RS_RS13705,THUMP domain-containing class I SAM-dependent RNA methyltransferase,16,RS_RS00465,phage holin family protein,0.81
+RS_RS22725,Spy/CpxP family protein refolding chaperone,14,RS_RS00485,alkaline phosphatase,0.81
+RS_RS08960,GNAT family N-acetyltransferase,34,RS_RS05065,Fe-S protein assembly co-chaperone HscB,0.81
+RS_RS00465,phage holin family protein,14,RS_RS13705,THUMP domain-containing class I SAM-dependent RNA methyltransferase,0.81
+RS_RS21770,anaerobic ribonucleoside-triphosphate reductase activating protein,15,RS_RS21780,putative zinc-binding protein,0.809
+RS_RS06730,TOBE domain-containing protein,24,RS_RS22930,acyloxyacyl hydrolase,0.809
+RS_RS23210,FMN-dependent NADH-azoreductase,37,RS_RS16855,septum site-determining protein MinC,0.809
+RS_RS03890,AsmA family protein,33,RS_RS14830,MlaA family lipoprotein,0.809
+RS_RS21780,putative zinc-binding protein,11,RS_RS21770,anaerobic ribonucleoside-triphosphate reductase activating protein,0.809
+RS_RS13740,outer membrane protein assembly factor BamE,19,RS_RS05300,elongation factor P maturation arginine rhamnosyltransferase EarP,0.809
+RS_RS17725,2-methylaconitate cis-trans isomerase PrpF,33,RS_RS07125,posphoenolpyruvate synthetase regulatory kinase/phosphorylase PpsR,0.809
+RS_RS05835,aspartate kinase,45,RS_RS00165,acetylglutamate kinase,0.808
+RS_RS05145,GTP 3'%2C8-cyclase MoaA,45,RS_RS23890,chemotaxis response regulator CheY,0.808
+RS_RS12000,cobyric acid synthase,38,RS_RS12030,adenosylcobinamide-GDP ribazoletransferase,0.805
+RS_RS01240,PhzF family phenazine biosynthesis protein,38,RS_RS05825,acetyl-CoA carboxylase carboxyltransferase subunit alpha,0.805
+RS_RS23920,chemotaxis protein CheA,38,RS_RS23895,protein-glutamate methylesterase/protein-glutamine glutaminase,0.805
+RS_RS20175,cyclic peptide export ABC transporter,17,RS_RS17930,MbtH family protein,0.805
+RS_RS10340,NuoB/complex I 20 kDa subunit family protein,41,RS_RS10305,NADH-quinone oxidoreductase subunit NuoI,0.805
+RS_RS14200,cell division protein FtsZ,39,RS_RS03975,glutamine--tRNA ligase/YqeY domain fusion protein,0.805
+RS_RS11795,inorganic diphosphatase,38,RS_RS10270,NUDIX domain-containing protein,0.805
+RS_RS03975,glutamine--tRNA ligase/YqeY domain fusion protein,38,RS_RS05680,L-threonylcarbamoyladenylate synthase,0.805
+RS_RS15830,FAD-dependent oxidoreductase,22,RS_RS09480,lipid A hydroxylase LpxO,0.805
+RS_RS03565,4-hydroxy-3-polyprenylbenzoate decarboxylase,38,RS_RS04070,sulfurtransferase TusA family protein,0.805
+RS_RS20065,cob(I)yrinic acid a%2Cc-diamide adenosyltransferase,39,RS_RS18810,flagellar hook protein FlgE,0.805
+RS_RS12140,5-carboxymethyl-2-hydroxymuconate Delta-isomerase,21,RS_RS16870,CoA transferase,0.802
+RS_RS24310,carbamoyltransferase family protein,21,RS_RS16405,allantoicase,0.802
+RS_RS00250,FAD-dependent oxidoreductase,14,RS_RS01810,twin transmembrane helix small protein,0.799
+RS_RS07400,CreA family protein,34,RS_RS09045,ABC transporter permease,0.799
+RS_RS00135,homoserine O-succinyltransferase MetX,34,RS_RS11795,inorganic diphosphatase,0.799
+RS_RS18995,flagellin,34,RS_RS18810,flagellar hook protein FlgE,0.799
+RS_RS24995,PepSY-associated TM helix domain-containing protein,20,RS_RS20545,GNAT family N-acetyltransferase,0.798
+RS_RS06570,50S ribosomal protein L9,44,RS_RS04900,molecular chaperone HtpG,0.798
+RS_RS12870,2OG-Fe(II) oxygenase,15,RS_RS20170,YciI family protein,0.798
+RS_RS04900,molecular chaperone HtpG,42,RS_RS06570,50S ribosomal protein L9,0.798
+RS_RS20095,cobalt-precorrin-5B (C(1))-methyltransferase CbiD,24,RS_RS20085,precorrin-4 C(11)-methyltransferase,0.798
 RS_RS20045,DUF2784 domain-containing protein,15,RS_RS03370,chemotaxis protein CheW,0.798
+RS_RS14855,glutamate synthase subunit beta,42,RS_RS14395,hydroxyphenylacetyl-CoA thioesterase PaaI,0.798
+RS_RS20545,GNAT family N-acetyltransferase,15,RS_RS24995,PepSY-associated TM helix domain-containing protein,0.798
+RS_RS08180,Tex family protein,44,RS_RS05725,FKBP-type peptidyl-prolyl cis-trans isomerase,0.798
+RS_RS15720,sigma-54-dependent Fis family transcriptional regulator,28,RS_RS21065,spermidine synthase,0.797
+RS_RS03305,A24 family peptidase,14,RS_RS15180,alpha-2-macroglobulin family protein,0.794
+RS_RS10245,MaoC family dehydratase,26,RS_RS04615,PA0069 family radical SAM protein,0.794
+RS_RS15755,methyl-accepting chemotaxis protein,26,RS_RS19975,chemotaxis protein,0.794
+RS_RS04615,PA0069 family radical SAM protein,29,RS_RS10245,MaoC family dehydratase,0.794
+RS_RS00595,acyl-CoA dehydrogenase family protein,26,RS_RS00605,GMC family oxidoreductase,0.794
+RS_RS25650,50S ribosomal protein L36,29,RS_RS05675,3'%2C5'-nucleoside bisphosphate phosphatase,0.793
+RS_RS22420,H-NS family nucleoid-associated regulatory protein,19,RS_RS22725,Spy/CpxP family protein refolding chaperone,0.793
+RS_RS07750,MBL fold metallo-hydrolase,27,RS_RS05545,ferredoxin FdxA,0.792
+RS_RS21565,copper-binding protein,21,RS_RS06870,lysophospholipid transporter LplT,0.792
+RS_RS24335,fimbria/pilus outer membrane usher protein,18,RS_RS02000,PsiF family protein,0.792
+RS_RS13695,two-component system hybrid sensor histidine kinase/response regulator PhcR,25,RS_RS08145,NUDIX hydrolase,0.792
+RS_RS14945,anti-sigma factor family protein,23,RS_RS14955,COG4315 family predicted lipoprotein,0.792
+RS_RS14040,sensor histidine kinase,18,RS_RS13895,energy transducer TonB family protein,0.792
+RS_RS23295,YnfA family protein,24,RS_RS00130,methionine biosynthesis protein MetW,0.792
+RS_RS20430,fumarylacetoacetase,22,RS_RS02540,putative bifunctional diguanylate cyclase/phosphodiesterase,0.79
+RS_RS11950,OmpA family protein,35,RS_RS07910,CoA transferase subunit B,0.789
+RS_RS06120,FtsH protease activity modulator HflK,40,RS_RS01995,RNase adapter RapZ,0.788
+RS_RS00865,tRNA 2-thiocytidine(32) synthetase TtcA,40,RS_RS10625,nucleobase:cation symporter-2 family protein,0.788
+RS_RS16440,glyoxylate carboligase,20,RS_RS12625,GntP family permease,0.788
+RS_RS01765,tRNA (uridine(34)/cytosine(34)/5-carboxymethylaminomethyluridine(34)-2'-O)-methyltransferase TrmL,39,RS_RS01725,bacterioferritin,0.788
+RS_RS10855,PA2169 family four-helix-bundle protein,20,RS_RS07340,glycoside hydrolase family 15 protein,0.788
+RS_RS02065,adenine phosphoribosyltransferase,39,RS_RS07130,phosphoenolpyruvate synthase,0.787
+RS_RS14555,UbiX family flavin prenyltransferase,42,RS_RS10180,urease accessory protein UreG,0.787
+RS_RS02805,cyclic pyranopterin monophosphate synthase MoaC,42,RS_RS04690,molybdopterin adenylyltransferase,0.787
 RS_RS06580,DUF47 domain-containing protein,18,RS_RS00080,phosphoenolpyruvate carboxykinase (GTP),0.787
 RS_RS16700,DUF3820 family protein,30,RS_RS02015,ribosome hibernation-promoting factor%2C HPF/YfiA family,0.787
+RS_RS10180,urease accessory protein UreG,39,RS_RS14555,UbiX family flavin prenyltransferase,0.787
+RS_RS14530,glutamyl-tRNA reductase,42,RS_RS12780,YajQ family cyclic di-GMP-binding protein,0.787
+RS_RS06165,SIR2 family NAD-dependent protein deacylase,39,RS_RS02570,peptidylprolyl isomerase,0.787
+RS_RS10770,peptidoglycan-binding protein LysM,19,RS_RS16440,glyoxylate carboligase,0.785
+RS_RS06275,cytochrome D1 domain-containing protein,28,RS_RS04615,PA0069 family radical SAM protein,0.785
+RS_RS02225,threonine ammonia-lyase%2C biosynthetic,37,RS_RS05000,amino acid aminotransferase,0.783
+RS_RS08030,amidohydrolase family protein,29,RS_RS02375,LysR family transcriptional regulator,0.781
+RS_RS10535,TMEM165/GDT1 family protein,29,RS_RS05790,serine O-acetyltransferase,0.781
+RS_RS10475,LysE family translocator,31,RS_RS11970,autotransporter assembly complex protein TamA,0.78
+RS_RS06040,peptidoglycan DD-metalloendopeptidase family protein,31,RS_RS13915,UDP-N-acetylmuramate:L-alanyl-gamma-D-glutamyl-meso-diaminopimelate ligase,0.78
+RS_RS13620,FMN-binding glutamate synthase family protein,31,RS_RS01280,hydroxymethylglutaryl-CoA lyase,0.78
+RS_RS07975,MerR family transcriptional regulator,31,RS_RS01945,50S ribosomal protein L25/general stress protein Ctc,0.78
+RS_RS23785,zinc ribbon domain-containing protein YjdM,33,RS_RS13160,HAD family hydrolase,0.778
+RS_RS16425,helix-turn-helix domain-containing protein,21,RS_RS03985,tripartite tricarboxylate transporter permease,0.778
+RS_RS12360,LLM class flavin-dependent oxidoreductase,36,RS_RS02325,endonuclease/exonuclease/phosphatase family protein,0.778
 RS_RS08005,DUF1223 domain-containing protein,12,RS_RS07375,vWA domain-containing protein,0.778
+RS_RS06435,sulfite exporter TauE/SafE family protein,30,RS_RS06415,cytochrome c oxidase accessory protein CcoG,0.778
+RS_RS01540,MlaE family ABC transporter permease,26,RS_RS20170,YciI family protein,0.777
+RS_RS03720,YeeE/YedE family protein,20,RS_RS09260,flavin reductase family protein,0.777
+RS_RS00230,RNA polymerase-binding protein DksA,43,RS_RS04515,(d)CMP kinase,0.777
+RS_RS04515,(d)CMP kinase,43,RS_RS00230,RNA polymerase-binding protein DksA,0.777
+RS_RS08750,ABC transporter permease,24,RS_RS04575,methionine ABC transporter ATP-binding protein,0.775
+RS_RS22870,gluconate:H+ symporter,30,RS_RS18395,siderophore-interacting protein,0.775
+RS_RS11880,dCTP deaminase,40,RS_RS13915,UDP-N-acetylmuramate:L-alanyl-gamma-D-glutamyl-meso-diaminopimelate ligase,0.775
+RS_RS14990,divalent-cation tolerance protein CutA,30,RS_RS01715,phosphoenolpyruvate--protein phosphotransferase,0.775
+RS_RS12690,Trm112 family protein,36,RS_RS14190,UDP-3-O-acyl-N-acetylglucosamine deacetylase,0.775
+RS_RS12375,ATP-dependent Clp protease adapter ClpS,36,RS_RS14210,cell division protein FtsQ/DivIB,0.775
+RS_RS05050,Fe-S cluster assembly scaffold IscU,40,RS_RS08820,septation protein A,0.775
+RS_RS05710,MBL fold metallo-hydrolase,23,RS_RS04980,electron transport complex subunit RsxB,0.772
+RS_RS11145,GTP cyclohydrolase FolE2,23,RS_RS20750,type VI secretion system protein TssA,0.772
+RS_RS17035,NnrS family protein,25,RS_RS06410,cytochrome-c oxidase%2C cbb3-type subunit III,0.772
+RS_RS24080,SgcJ/EcaC family oxidoreductase,16,RS_RS17100,methyl-accepting chemotaxis protein,0.771
+RS_RS13330,mechanosensitive ion channel family protein,38,RS_RS06550,asparaginase,0.77
+RS_RS13360,glycolate oxidase subunit GlcF,32,RS_RS13355,glycolate oxidase subunit GlcE,0.769
+RS_RS02160,glycosyltransferase family 2 protein,22,RS_RS02135,acyl-CoA synthetase,0.769
+RS_RS10205,HupE/UreJ family protein,26,RS_RS21915,cbb3-type cytochrome c oxidase subunit I,0.769
+RS_RS13355,glycolate oxidase subunit GlcE,26,RS_RS13360,glycolate oxidase subunit GlcF,0.769
+RS_RS14480,M61 family metallopeptidase,22,RS_RS07880,FKBP-type peptidyl-prolyl cis-trans isomerase,0.769
+RS_RS02925,D-alanyl-D-alanine carboxypeptidase/D-alanyl-D-alanine endopeptidase,40,RS_RS13770,2-dehydro-3-deoxy-6-phosphogalactonate aldolase,0.766
+RS_RS00370,zinc metalloprotease HtpX,41,RS_RS01725,bacterioferritin,0.766
+RS_RS05830,tRNA lysidine(34) synthetase TilS,40,RS_RS15860,cold-shock protein,0.766
+RS_RS02605,D-glycero-beta-D-manno-heptose 1%2C7-bisphosphate 7-phosphatase,40,RS_RS20155,lipopolysaccharide heptosyltransferase I,0.766
+RS_RS13885,monofunctional biosynthetic peptidoglycan transglycosylase,40,RS_RS08890,bifunctional nicotinamidase/pyrazinamidase,0.766
+RS_RS14110,50S ribosomal protein L21,41,RS_RS11190,NAD(P)/FAD-dependent oxidoreductase,0.766
+RS_RS11190,NAD(P)/FAD-dependent oxidoreductase,40,RS_RS14110,50S ribosomal protein L21,0.766
+RS_RS24120,c-type cytochrome,11,RS_RS13410,type IV pilus modification protein PilV,0.764
+RS_RS03885,cytochrome c,15,RS_RS02740,MFS transporter,0.764
+RS_RS04715,threonine dehydratase,11,RS_RS17950,sulfotransferase family protein,0.764
 RS_RS03550,DUF4337 domain-containing protein,11,RS_RS08080,phasin family protein,0.764
+RS_RS10060,bifunctional 2-methylcitrate dehydratase/aconitate hydratase,16,RS_RS02215,transporter,0.763
+RS_RS22785,TerC family protein,15,RS_RS22735,ATP-binding protein,0.763
+RS_RS22735,ATP-binding protein,16,RS_RS22785,TerC family protein,0.763
+RS_RS06625,glycosyltransferase,35,RS_RS20160,acyltransferase family protein,0.762
+RS_RS06240,TIM barrel protein,13,RS_RS16405,allantoicase,0.762
+RS_RS21760,ribonucleoside triphosphate reductase,27,RS_RS21785,ubiquinone anaerobic biosynthesis accessory factor UbiT,0.762
+RS_RS02855,EamA family transporter RarD,40,RS_RS05195,phosphate acyltransferase PlsX,0.762
+RS_RS02535,aminopeptidase P N-terminal domain-containing protein,43,RS_RS02470,D-aminoacyl-tRNA deacylase,0.762
+RS_RS12635,oxidoreductase,22,RS_RS14315,1-phosphofructokinase,0.762
 RS_RS24560,DUF1993 domain-containing protein,20,RS_RS07020,peptide deformylase,0.761
+RS_RS06180,NCS1 family nucleobase:cation symporter-1,28,RS_RS05360,glucarate dehydratase,0.761
+RS_RS10525,adenosine deaminase,33,RS_RS13675,NAD(P)(+) transhydrogenase (Re/Si-specific) subunit beta,0.761
+RS_RS04890,alanyl-tRNA editing protein,24,RS_RS15510,Bug family tripartite tricarboxylate transporter substrate binding protein,0.761
+RS_RS01155,DUF427 domain-containing protein,15,RS_RS05095,SDR family oxidoreductase,0.761
+RS_RS22390,Flp family type IVb pilin,15,RS_RS16925,phospholipase D-like domain-containing protein,0.761
+RS_RS12775,nucleoside hydrolase,28,RS_RS20830,transcriptional activator protein RasR,0.761
+RS_RS10095,peroxide stress protein YaaA,34,RS_RS08240,tRNA dihydrouridine synthase,0.759
+RS_RS03750,DNA/RNA non-specific endonuclease,14,RS_RS06635,SMR family transporter,0.759
+RS_RS21000,YfiR family protein,19,RS_RS01365,bifunctional isocitrate dehydrogenase kinase/phosphatase,0.759
+RS_RS20490,FAD-dependent oxidoreductase,25,RS_RS00605,GMC family oxidoreductase,0.759
+RS_RS13765,galactonate dehydratase,37,RS_RS00495,bifunctional hydroxymethylpyrimidine kinase/phosphomethylpyrimidine kinase,0.758
+RS_RS07300,6-carboxytetrahydropterin synthase QueD,37,RS_RS00495,bifunctional hydroxymethylpyrimidine kinase/phosphomethylpyrimidine kinase,0.758
+RS_RS01350,SDR family oxidoreductase,37,RS_RS01700,glutathione synthase,0.758
+RS_RS00495,bifunctional hydroxymethylpyrimidine kinase/phosphomethylpyrimidine kinase,41,RS_RS13765,galactonate dehydratase,0.758
+RS_RS15555,NAD(P)H-dependent oxidoreductase,37,RS_RS17570,GntR family transcriptional regulator,0.758
+RS_RS05845,enoyl-ACP reductase FabI,37,RS_RS00495,bifunctional hydroxymethylpyrimidine kinase/phosphomethylpyrimidine kinase,0.758
+RS_RS00990,Hsp20/alpha crystallin family protein,43,RS_RS07955,50S ribosomal protein L20,0.757
+RS_RS02245,YqaA family protein,30,RS_RS21795,ubiquinone anaerobic biosynthesis protein UbiU,0.756
+RS_RS02380,Glu/Leu/Phe/Val family dehydrogenase,37,RS_RS04595,electron transfer flavoprotein subunit alpha/FixB family protein,0.754
+RS_RS01530,type III pantothenate kinase,33,RS_RS01970,tetratricopeptide repeat protein,0.754
+RS_RS24320,NADPH-dependent FMN reductase,37,RS_RS05825,acetyl-CoA carboxylase carboxyltransferase subunit alpha,0.754
+RS_RS01730,HesA/MoeB/ThiF family protein,39,RS_RS00760,muropeptide transporter,0.754
+RS_RS10460,diacylglycerol kinase,34,RS_RS05935,M90 family metallopeptidase,0.754
+RS_RS07670,phosphate ABC transporter substrate-binding protein PstS,22,RS_RS19660,Nramp family divalent metal transporter,0.753
+RS_RS17355,MarR family winged helix-turn-helix transcriptional regulator,15,RS_RS07375,vWA domain-containing protein,0.753
+RS_RS13210,nucleoside diphosphate kinase regulator,33,RS_RS01285,2-hydroxyacid dehydrogenase,0.753
+RS_RS06835,malate synthase A,22,RS_RS01715,phosphoenolpyruvate--protein phosphotransferase,0.753
+RS_RS19660,Nramp family divalent metal transporter,24,RS_RS07670,phosphate ABC transporter substrate-binding protein PstS,0.753
+RS_RS20060,cobyrinate a%2Cc-diamide synthase,31,RS_RS20085,precorrin-4 C(11)-methyltransferase,0.752
+RS_RS12875,DNA oxidative demethylase AlkB,27,RS_RS03930,gamma-glutamylcyclotransferase,0.752
+RS_RS06985,2%2C3%2C4%2C5-tetrahydropyridine-2%2C6-dicarboxylate N-succinyltransferase,31,RS_RS13845,NADP-dependent malic enzyme,0.752
+RS_RS03355,rubredoxin,27,RS_RS02255,HIT family protein,0.751
+RS_RS01200,3-hydroxybutyryl-CoA dehydrogenase,25,RS_RS08220,class I poly(R)-hydroxyalkanoic acid synthase,0.75
+RS_RS07385,FAD binding domain-containing protein,22,RS_RS03720,YeeE/YedE family protein,0.749
+RS_RS16905,5'-methylthioadenosine/adenosylhomocysteine nucleosidase,22,RS_RS14150,cell division protein ZapD,0.749
+RS_RS02595,M48 family metallopeptidase,28,RS_RS10330,NADH-quinone oxidoreductase subunit D,0.749
+RS_RS23715,c-type cytochrome,20,RS_RS14905,PilN domain-containing protein,0.749
+RS_RS23165,alpha/beta hydrolase family protein,20,RS_RS23335,phosphoenolpyruvate--protein phosphotransferase,0.749
+RS_RS17675,AAA family ATPase,38,RS_RS01320,carboxyl transferase domain-containing protein,0.747
+RS_RS11130,GatB/YqeY domain-containing protein,29,RS_RS11780,NAD+ synthase,0.746
+RS_RS08915,serine hydrolase domain-containing protein,27,RS_RS04615,PA0069 family radical SAM protein,0.746
+RS_RS09195,carbon-nitrogen hydrolase family protein,19,RS_RS19140,AI-2E family transporter,0.746
+RS_RS09890,GlcG/HbpS family heme-binding protein,27,RS_RS00605,GMC family oxidoreductase,0.746
+RS_RS11820,cytochrome b/b6 domain-containing protein,19,RS_RS13425,PilT/PilU family type 4a pilus ATPase,0.746
+RS_RS23195,oxygenase MpaB family protein,18,RS_RS24345,Csu type fimbrial protein,0.745
+RS_RS23350,sucrose-specific PTS transporter subunit IIBC,12,RS_RS21830,respiratory nitrate reductase subunit gamma,0.745
+RS_RS10405,phosphatidylserine decarboxylase,20,RS_RS11780,NAD+ synthase,0.745
+RS_RS11290,4-carboxymuconolactone decarboxylase,30,RS_RS01885,ANTAR domain-containing response regulator,0.743
 RS_RS05615,DUF1330 domain-containing protein,20,RS_RS03720,YeeE/YedE family protein,0.743
+RS_RS14195,peroxiredoxin,23,RS_RS01815,SURF1 family protein,0.743
+RS_RS01245,DUF1254 domain-containing protein,14,RS_RS03830,arylformamidase,0.741
+RS_RS00545,sulfur carrier protein ThiS,34,RS_RS07300,6-carboxytetrahydropterin synthase QueD,0.741
+RS_RS16600,CoA-binding protein,24,RS_RS02920,molybdopterin-guanine dinucleotide biosynthesis protein B,0.741
+RS_RS13955,thiol peroxidase,33,RS_RS03000,PqiC family protein,0.741
+RS_RS13800,arabinose ABC transporter substrate-binding protein,17,RS_RS20830,transcriptional activator protein RasR,0.741
+RS_RS06955,GTP cyclohydrolase I FolE,38,RS_RS00775,dihydroneopterin aldolase,0.737
+RS_RS02305,DUF502 domain-containing protein,23,RS_RS13705,THUMP domain-containing class I SAM-dependent RNA methyltransferase,0.737
+RS_RS02300,FmdB family zinc ribbon protein,16,RS_RS11145,GTP cyclohydrolase FolE2,0.737
+RS_RS09845,DHCW motif cupin fold protein,11,RS_RS01785,cytochrome c oxidase subunit II,0.736
+RS_RS23905,CheR family methyltransferase,42,RS_RS23895,protein-glutamate methylesterase/protein-glutamine glutaminase,0.736
+RS_RS06440,SMC-Scp complex subunit ScpB,31,RS_RS04570,histone deacetylase family protein,0.736
+RS_RS10040,malate dehydrogenase,37,RS_RS06985,2%2C3%2C4%2C5-tetrahydropyridine-2%2C6-dicarboxylate N-succinyltransferase,0.736
+RS_RS10045,HpcH/HpaI aldolase/citrate lyase family protein,31,RS_RS13860,CinA family protein,0.736
+RS_RS16710,SDR family oxidoreductase,18,RS_RS00250,FAD-dependent oxidoreductase,0.734
 RS_RS03855,DUF72 domain-containing protein,35,RS_RS12360,LLM class flavin-dependent oxidoreductase,0.731
+RS_RS03715,7-cyano-7-deazaguanine synthase QueC,44,RS_RS00370,zinc metalloprotease HtpX,0.73
+RS_RS12145,uroporphyrinogen-III C-methyltransferase,41,RS_RS06680,molybdenum cofactor biosynthesis protein MoaE,0.73
+RS_RS13850,thiamine-phosphate kinase,44,RS_RS05680,L-threonylcarbamoyladenylate synthase,0.73
+RS_RS03405,bifunctional pyr operon transcriptional regulator/uracil phosphoribosyltransferase PyrR,27,RS_RS00290,Asp-tRNA(Asn)/Glu-tRNA(Gln) amidotransferase subunit GatC,0.728
+RS_RS00680,polyphosphate kinase 2 family protein,27,RS_RS13335,cob(I)yrinic acid a%2Cc-diamide adenosyltransferase,0.728
+RS_RS15100,50S ribosomal protein L22,44,RS_RS05190,50S ribosomal protein L32,0.727
+RS_RS01550,MlaD family protein,31,RS_RS07975,MerR family transcriptional regulator,0.727
+RS_RS19790,metal/formaldehyde-sensitive transcriptional repressor,21,RS_RS06705,NADPH-dependent FMN reductase,0.727
+RS_RS12295,quinolinate synthase NadA,44,RS_RS03715,7-cyano-7-deazaguanine synthase QueC,0.727
+RS_RS12095,prolipoprotein diacylglyceryl transferase,44,RS_RS13930,type II 3-dehydroquinate dehydratase,0.727
+RS_RS06910,isoaspartyl peptidase/L-asparaginase family protein,25,RS_RS03965,RNA-binding S4 domain-containing protein,0.726
+RS_RS16510,aminomethyl-transferring glycine dehydrogenase,38,RS_RS02015,ribosome hibernation-promoting factor%2C HPF/YfiA family,0.726
+RS_RS01385,antibiotic biosynthesis monooxygenase family protein,23,RS_RS05390,maleylacetoacetate isomerase,0.726
+RS_RS24610,6-phosphogluconolactonase,35,RS_RS04060,threonine aldolase family protein,0.726
+RS_RS08825,peptide-methionine (R)-S-oxide reductase MsrB,39,RS_RS05825,acetyl-CoA carboxylase carboxyltransferase subunit alpha,0.726
+RS_RS14405,murein transglycosylase A,35,RS_RS03930,gamma-glutamylcyclotransferase,0.725
+RS_RS08790,ABC transporter substrate-binding protein,16,RS_RS08785,ABC transporter permease,0.725
+RS_RS20265,copper resistance protein B,19,RS_RS21670,NAD(P) transhydrogenase subunit alpha,0.724
+RS_RS18275,amidohydrolase family protein,19,RS_RS06135,ATP phosphoribosyltransferase regulatory subunit,0.724
+RS_RS00110,carbon starvation CstA family protein,31,RS_RS03890,AsmA family protein,0.722
+RS_RS05765,MOSC domain-containing protein,17,RS_RS20545,GNAT family N-acetyltransferase,0.722
+RS_RS12725,bile acid:sodium symporter family protein,31,RS_RS08170,potassium transporter Kup,0.722
+RS_RS11860,anti-sigma factor,17,RS_RS17355,MarR family winged helix-turn-helix transcriptional regulator,0.722
+RS_RS23020,nitrate reductase,26,RS_RS06000,ABC transporter substrate-binding protein,0.718
+RS_RS18220,aromatic ring-hydroxylating oxygenase subunit alpha,23,RS_RS06705,NADPH-dependent FMN reductase,0.715
+RS_RS14005,Lrp/AsnC family transcriptional regulator,11,RS_RS24345,Csu type fimbrial protein,0.715
+RS_RS22860,D-aminoacylase,23,RS_RS22850,amino acid deaminase,0.715
+RS_RS17030,globin domain-containing protein,26,RS_RS01365,bifunctional isocitrate dehydrogenase kinase/phosphatase,0.715
+RS_RS20950,anion transporter,24,RS_RS03005,intermembrane transport protein PqiB,0.714
+RS_RS21740,nitric oxide reductase transcriptional regulator NorR,21,RS_RS05235,MucB/RseB C-terminal domain-containing protein,0.714
+RS_RS12745,chalcone isomerase family protein,24,RS_RS12300,DesA family fatty acid desaturase,0.714
+RS_RS12550,KPN_02809 family neutral zinc metallopeptidase,27,RS_RS10770,peptidoglycan-binding protein LysM,0.714
+RS_RS18305,1%2C4-alpha-glucan branching protein GlgB,34,RS_RS18300,glycogen debranching protein GlgX,0.713
+RS_RS03770,ABC transporter permease,19,RS_RS03775,ABC transporter ATP-binding protein,0.713
+RS_RS09870,energy transducer TonB,18,RS_RS23020,nitrate reductase,0.713
+RS_RS21735,iron-sulfur cluster repair protein YtfE,20,RS_RS21785,ubiquinone anaerobic biosynthesis accessory factor UbiT,0.712
+RS_RS24435,helix-turn-helix transcriptional regulator,25,RS_RS10635,allantoinase PuuE,0.712
+RS_RS14460,uracil-DNA glycosylase,39,RS_RS02535,aminopeptidase P N-terminal domain-containing protein,0.71
+RS_RS03960,MAPEG family protein,25,RS_RS06530,dipeptidase,0.71
+RS_RS22040,low molecular weight protein-tyrosine-phosphatase,39,RS_RS14880,3-dehydroquinate synthase,0.71
+RS_RS10665,class 1 fructose-bisphosphatase,39,RS_RS23590,dienelactone hydrolase family protein,0.709
+RS_RS18320,glycogen synthase GlgA,36,RS_RS10180,urease accessory protein UreG,0.709
+RS_RS09180,flavin reductase family protein,39,RS_RS11025,ribonuclease G,0.709
+RS_RS16420,IMPACT family protein,39,RS_RS06550,asparaginase,0.709
+RS_RS13805,2-dehydro-3-deoxygalactonokinase,24,RS_RS20490,FAD-dependent oxidoreductase,0.709
 RS_RS23410,DUF350 domain-containing protein,15,RS_RS04010,purine-nucleoside phosphorylase,0.709
+RS_RS01480,fumarylacetoacetate hydrolase family protein,24,RS_RS14195,peroxiredoxin,0.709
+RS_RS07615,propionate--CoA ligase,22,RS_RS14195,peroxiredoxin,0.708
+RS_RS12770,acylase,15,RS_RS23715,c-type cytochrome,0.707
+RS_RS09695,GPW/gp25 family protein,20,RS_RS09700,phage baseplate assembly protein V,0.707
+RS_RS10825,PP2C family protein-serine/threonine phosphatase,20,RS_RS16330,c-type cytochrome,0.707
+RS_RS01190,hydrolase,28,RS_RS17725,2-methylaconitate cis-trans isomerase PrpF,0.707
 RS_RS12840,DUF3313 domain-containing protein,21,RS_RS00115,YbdD/YjiX family protein,0.706
+RS_RS10590,dihydrodipicolinate synthase family protein,27,RS_RS02185,gluconokinase,0.706
+RS_RS15365,AGE family epimerase/isomerase,27,RS_RS10245,MaoC family dehydratase,0.706
+RS_RS24415,multidrug/biocide efflux PACE transporter,26,RS_RS12875,DNA oxidative demethylase AlkB,0.706
+RS_RS08260,cystathionine beta-lyase,27,RS_RS11460,MipA/OmpV family protein,0.705
+RS_RS16525,YbdK family carboxylate-amine ligase,18,RS_RS02825,nuclear transport factor 2 family protein,0.704
+RS_RS07120,TrmH family RNA methyltransferase,28,RS_RS13845,NADP-dependent malic enzyme,0.703
+RS_RS02520,helix-turn-helix domain-containing protein,13,RS_RS03885,cytochrome c,0.702
+RS_RS18490,alpha%2Calpha-trehalase TreA,15,RS_RS22445,trehalose-phosphatase,0.702
+RS_RS17335,class D beta-lactamase,13,RS_RS20545,GNAT family N-acetyltransferase,0.702
+RS_RS15075,50S ribosomal protein L14,47,RS_RS07305,tRNA adenosine(34) deaminase TadA,0.7
+RS_RS12355,bifunctional phosphopantothenoylcysteine decarboxylase/phosphopantothenate--cysteine ligase CoaBC,47,RS_RS04030,slipin family protein,0.7
+RS_RS14060,hypoxanthine-guanine phosphoribosyltransferase,40,RS_RS02470,D-aminoacyl-tRNA deacylase,0.7
+RS_RS12290,carboxylating nicotinate-nucleotide diphosphorylase,46,RS_RS08205,RluA family pseudouridine synthase,0.7
+RS_RS07305,tRNA adenosine(34) deaminase TadA,46,RS_RS15075,50S ribosomal protein L14,0.7
+RS_RS04935,GNAT family N-acetyltransferase,46,RS_RS12340,isoleucine--tRNA ligase,0.7
+RS_RS07295,7-carboxy-7-deazaguanine synthase,47,RS_RS12290,carboxylating nicotinate-nucleotide diphosphorylase,0.7
+RS_RS04855,L-lactate permease,29,RS_RS07400,CreA family protein,0.699
+RS_RS10685,D-arabinitol 4-dehydrogenase,28,RS_RS21090,galactarate dehydratase,0.699
+RS_RS23345,glycoside hydrolase family 32 protein,17,RS_RS20275,copper homeostasis membrane protein CopD,0.699
+RS_RS13385,helix-turn-helix transcriptional regulator,28,RS_RS09540,xanthine dehydrogenase family protein molybdopterin-binding subunit,0.699
+RS_RS11875,arginine/lysine/ornithine decarboxylase,28,RS_RS14920,iron donor protein CyaY,0.699
+RS_RS19990,VOC family protein,19,RS_RS19970,VOC family protein,0.698
+RS_RS00755,M48 family metallopeptidase,40,RS_RS06600,PhoH family protein,0.697
+RS_RS11080,pirin family protein,37,RS_RS11795,inorganic diphosphatase,0.697
+RS_RS21685,IS21-like element ISRso6 family helper ATPase IstB,14,RS_RS12305,mechanosensitive ion channel family protein,0.697
+RS_RS05970,DNA polymerase III subunit gamma/tau,38,RS_RS13860,CinA family protein,0.697
+RS_RS10115,3-hydroxyacyl-CoA dehydrogenase,17,RS_RS10495,substrate-binding domain-containing protein,0.693
+RS_RS23060,LLM class flavin-dependent oxidoreductase,21,RS_RS23080,4-carboxy-4-hydroxy-2-oxoadipate aldolase/oxaloacetate decarboxylase,0.693
+RS_RS24725,temperature dependent virulence factor catalase KatE,32,RS_RS04855,L-lactate permease,0.693
+RS_RS13940,acetyl-CoA carboxylase biotin carboxylase subunit,44,RS_RS05640,gamma carbonic anhydrase family protein,0.692
+RS_RS15785,undecaprenyl-diphosphatase,21,RS_RS13245,formimidoylglutamase,0.691
+RS_RS18850,YoaK family protein,23,RS_RS04615,PA0069 family radical SAM protein,0.691
+RS_RS22035,polysaccharide biosynthesis tyrosine autokinase,30,RS_RS06625,glycosyltransferase,0.69
+RS_RS12885,bifunctional DNA-binding transcriptional regulator/O6-methylguanine-DNA methyltransferase Ada,34,RS_RS12360,LLM class flavin-dependent oxidoreductase,0.688
+RS_RS01665,YifB family Mg chelatase-like AAA ATPase,40,RS_RS06510,tRNA dihydrouridine(20/20a) synthase DusA,0.687
+RS_RS01570,phosphocholine-specific phospholipase C,10,RS_RS00465,phage holin family protein,0.687
+RS_RS13855,phosphatidylglycerophosphatase A family protein,37,RS_RS02470,D-aminoacyl-tRNA deacylase,0.687
+RS_RS14680,large conductance mechanosensitive channel protein MscL,40,RS_RS13765,galactonate dehydratase,0.687
+RS_RS13130,RadC family protein,10,RS_RS22725,Spy/CpxP family protein refolding chaperone,0.687
+RS_RS07310,muramoyltetrapeptide carboxypeptidase,29,RS_RS09100,voltage-gated chloride channel family protein,0.684
+RS_RS23075,VOC family protein,21,RS_RS22870,gluconate:H+ symporter,0.683
+RS_RS11765,trimeric intracellular cation channel family protein,45,RS_RS15155,DNA helicase RecQ,0.683
+RS_RS22940,diguanylate cyclase domain-containing protein,18,RS_RS06075,type IV pilus biogenesis/stability protein PilW,0.683
+RS_RS19985,YybH family protein,12,RS_RS20170,YciI family protein,0.683
+RS_RS22635,glutaminase,26,RS_RS24620,phosphogluconate dehydratase,0.68
+RS_RS04965,S10 family peptidase,16,RS_RS14480,M61 family metallopeptidase,0.68
+RS_RS24495,2OG-Fe(II) oxygenase family protein,31,RS_RS14025,ribonucleoside-diphosphate reductase subunit alpha,0.679
+RS_RS06780,LytR/AlgR family response regulator transcription factor,39,RS_RS02765,recombination regulator RecX,0.679
+RS_RS22655,NADPH-dependent F420 reductase,16,RS_RS13800,arabinose ABC transporter substrate-binding protein,0.678
+RS_RS06935,P1 family peptidase,23,RS_RS02165,YeeE/YedE family protein,0.678
+RS_RS15405,PepSY-associated TM helix domain-containing protein,17,RS_RS07880,FKBP-type peptidyl-prolyl cis-trans isomerase,0.678
+RS_RS06175,ribose-5-phosphate isomerase RpiA,41,RS_RS08195,ATP-dependent DNA helicase,0.678
+RS_RS16975,EAL domain-containing response regulator,14,RS_RS06530,dipeptidase,0.675
+RS_RS10985,helicase HerA-like C-terminal domain-containing protein,29,RS_RS02380,Glu/Leu/Phe/Val family dehydrogenase,0.674
+RS_RS13455,Dps family protein,38,RS_RS06165,SIR2 family NAD-dependent protein deacylase,0.674
+RS_RS12205,chloride channel protein,25,RS_RS11130,GatB/YqeY domain-containing protein,0.673
+RS_RS19800,chromate transporter,35,RS_RS04570,histone deacetylase family protein,0.672
+RS_RS14485,MDR family oxidoreductase,24,RS_RS22045,polysaccharide biosynthesis/export family protein,0.669
+RS_RS10470,TIGR00730 family Rossman fold protein,34,RS_RS01200,3-hydroxybutyryl-CoA dehydrogenase,0.669
+RS_RS22045,polysaccharide biosynthesis/export family protein,22,RS_RS14485,MDR family oxidoreductase,0.669
+RS_RS04340,type II toxin-antitoxin system VapC family toxin,18,RS_RS15830,FAD-dependent oxidoreductase,0.669
+RS_RS09065,N-acetylmuramoyl-L-alanine amidase,30,RS_RS14315,1-phosphofructokinase,0.669
+RS_RS12880,DNA-3-methyladenine glycosylase family protein,25,RS_RS08915,serine hydrolase domain-containing protein,0.667
+RS_RS12065,EVE domain-containing protein,36,RS_RS01735,S41 family peptidase,0.667
+RS_RS03340,LemA family protein,32,RS_RS02380,Glu/Leu/Phe/Val family dehydrogenase,0.666
+RS_RS18855,NAD(P)/FAD-dependent oxidoreductase,34,RS_RS02290,TPMT family class I SAM-dependent methyltransferase,0.666
 RS_RS22715,DUF1272 domain-containing protein,16,RS_RS20125,HoxN/HupN/NixA family nickel/cobalt transporter,0.666
+RS_RS22555,aquaporin,41,RS_RS23650,helix-turn-helix domain-containing protein,0.666
+RS_RS12230,GNAT family N-acetyltransferase,16,RS_RS06940,M55 family metallopeptidase,0.666
+RS_RS00915,universal stress protein,38,RS_RS00990,Hsp20/alpha crystallin family protein,0.665
+RS_RS16885,acylphosphatase,27,RS_RS06985,2%2C3%2C4%2C5-tetrahydropyridine-2%2C6-dicarboxylate N-succinyltransferase,0.664
+RS_RS11890,superoxide dismutase family protein,22,RS_RS23945,flagellar transcriptional regulator FlhD,0.663
+RS_RS07355,MgtC/SapB family protein,18,RS_RS20510,branched-chain amino acid ABC transporter ATP-binding protein/permease,0.662
+RS_RS11180,ZIP family metal transporter,27,RS_RS05170,S49 family peptidase,0.66
+RS_RS24355,formylglycine-generating enzyme family protein,27,RS_RS04615,PA0069 family radical SAM protein,0.66
+RS_RS16850,bifunctional 2'%2C3'-cyclic-nucleotide 2'-phosphodiesterase/3'-nucleotidase,26,RS_RS22420,H-NS family nucleoid-associated regulatory protein,0.659
+RS_RS17110,bestrophin family protein,20,RS_RS09100,voltage-gated chloride channel family protein,0.657
+RS_RS17290,YciI family protein,20,RS_RS12230,GNAT family N-acetyltransferase,0.657
+RS_RS06390,cbb3-type cytochrome oxidase assembly protein CcoS,23,RS_RS06435,sulfite exporter TauE/SafE family protein,0.657
+RS_RS11915,molybdopterin-dependent oxidoreductase,29,RS_RS22420,H-NS family nucleoid-associated regulatory protein,0.655
+RS_RS21965,polysaccharide biosynthesis protein,36,RS_RS15155,DNA helicase RecQ,0.655
 RS_RS05595,hypothetical protein,20,RS_RS04505,prephenate dehydrogenase,0.655
+RS_RS11910,formate dehydrogenase FDH3 subunit beta,27,RS_RS13185,ABC transporter permease,0.653
+RS_RS24010,rhodanese-like domain-containing protein,10,RS_RS12870,2OG-Fe(II) oxygenase,0.65
+RS_RS22560,arsenate reductase ArsC,33,RS_RS01615,alpha/beta hydrolase,0.649
+RS_RS21165,SDR family oxidoreductase,29,RS_RS08170,potassium transporter Kup,0.649
+RS_RS05690,tryptophan--tRNA ligase,37,RS_RS10040,malate dehydrogenase,0.646
+RS_RS06640,glycosyltransferase family 39 protein,30,RS_RS12825,SirB1 family protein,0.644
+RS_RS19685,NAD(P)-dependent oxidoreductase,34,RS_RS13770,2-dehydro-3-deoxy-6-phosphogalactonate aldolase,0.644
+RS_RS18155,phytanoyl-CoA dioxygenase family protein,22,RS_RS09890,GlcG/HbpS family heme-binding protein,0.643
+RS_RS17305,YbhB/YbcL family Raf kinase inhibitor-like protein,26,RS_RS16855,septum site-determining protein MinC,0.643
+RS_RS00590,GNAT family N-acetyltransferase,22,RS_RS03005,intermembrane transport protein PqiB,0.643
+RS_RS10870,TRAP transporter substrate-binding protein,34,RS_RS12745,chalcone isomerase family protein,0.642
+RS_RS17465,dipeptidase,30,RS_RS24150,amidohydrolase,0.639
+RS_RS20260,copper resistance system multicopper oxidase,32,RS_RS09065,N-acetylmuramoyl-L-alanine amidase,0.639
+RS_RS22880,3%2C4-dihydroxy-2-butanone-4-phosphate synthase,21,RS_RS22725,Spy/CpxP family protein refolding chaperone,0.635
+RS_RS10965,methylglyoxal synthase,21,RS_RS06795,gamma-glutamylcyclotransferase family protein,0.635
+RS_RS06785,thiamine pyrophosphate-binding protein,21,RS_RS06795,gamma-glutamylcyclotransferase family protein,0.635
+RS_RS11685,NAD(P)H-dependent oxidoreductase,18,RS_RS21010,malate dehydrogenase (quinone),0.635
+RS_RS11670,helix-turn-helix domain-containing protein,19,RS_RS16155,type II toxin-antitoxin system ParD family antitoxin,0.634
+RS_RS09240,AraC family transcriptional regulator,11,RS_RS01785,cytochrome c oxidase subunit II,0.633
+RS_RS09190,maleate cis-trans isomerase family protein,12,RS_RS15305,ABC transporter ATP-binding protein,0.628
+RS_RS21480,LLM class oxidoreductase,12,RS_RS20700,type VI secretion system ATPase TssH,0.628
+RS_RS01850,OsmC family protein,22,RS_RS05340,CHASE2 domain-containing protein,0.628
+RS_RS10355,preprotein translocase subunit SecG,35,RS_RS06040,peptidoglycan DD-metalloendopeptidase family protein,0.627
+RS_RS16560,GFA family protein,20,RS_RS20390,FAD-dependent oxidoreductase,0.626
+RS_RS06030,5'/3'-nucleotidase SurE,45,RS_RS21665,NAD(P) transhydrogenase subunit alpha,0.625
+RS_RS10980,uracil phosphoribosyltransferase,45,RS_RS01390,helical backbone metal receptor,0.625
+RS_RS18590,GNAT family N-acetyltransferase,21,RS_RS17790,FUSC family protein,0.624
+RS_RS14400,phenylacetate--CoA ligase PaaK,25,RS_RS10115,3-hydroxyacyl-CoA dehydrogenase,0.623
+RS_RS13665,aspartate 1-decarboxylase,26,RS_RS18030,lactonase family protein,0.622
+RS_RS21865,thiamine phosphate synthase,39,RS_RS09065,N-acetylmuramoyl-L-alanine amidase,0.62
+RS_RS17175,DNA cytosine methyltransferase,24,RS_RS25190,very short patch repair endonuclease,0.619
+RS_RS25190,very short patch repair endonuclease,16,RS_RS17175,DNA cytosine methyltransferase,0.619
+RS_RS18745,bifunctional aconitate hydratase 2/2-methylisocitrate dehydratase,32,RS_RS00305,rod shape-determining protein MreD,0.616
 RS_RS13650,DUF1624 domain-containing protein,19,RS_RS23995,lysine N(6)-hydroxylase/L-ornithine N(5)-oxygenase family protein,0.612
+RS_RS00815,ABC transporter permease,35,RS_RS01725,bacterioferritin,0.608
+RS_RS18365,ferrous iron transport protein B,30,RS_RS01715,phosphoenolpyruvate--protein phosphotransferase,0.602
+RS_RS00715,prohibitin family protein,12,RS_RS13410,type IV pilus modification protein PilV,0.601
+RS_RS21745,L-threonine 3-dehydrogenase,14,RS_RS05175,SAM-dependent methyltransferase,0.597
+RS_RS20360,5-methyltetrahydropteroyltriglutamate--homocysteine S-methyltransferase,30,RS_RS08110,(Fe-S)-binding protein,0.596
+RS_RS21940,rhomboid family intramembrane serine protease,18,RS_RS11780,NAD+ synthase,0.596
+RS_RS18865,hypothetical protein,11,RS_RS16330,c-type cytochrome,0.595
+RS_RS22005,acyltransferase,25,RS_RS15785,undecaprenyl-diphosphatase,0.594
+RS_RS18915,glycosyltransferase family 2 protein,11,RS_RS18945,beta-ketoacyl synthase chain length factor,0.593
+RS_RS15160,class I SAM-dependent methyltransferase,22,RS_RS02135,acyl-CoA synthetase,0.591
+RS_RS22540,oxidoreductase,36,RS_RS14880,3-dehydroquinate synthase,0.591
+RS_RS20915,alpha/beta hydrolase family protein,14,RS_RS14970,c-type cytochrome,0.59
+RS_RS01010,thymidine phosphorylase,22,RS_RS21735,iron-sulfur cluster repair protein YtfE,0.58
+RS_RS06890,DUF523 domain-containing protein,14,RS_RS00615,helix-turn-helix domain-containing protein,0.579
+RS_RS12670,exodeoxyribonuclease VII large subunit,45,RS_RS00865,tRNA 2-thiocytidine(32) synthetase TtcA,0.577
+RS_RS04510,3-phosphoshikimate 1-carboxyvinyltransferase,38,RS_RS05690,tryptophan--tRNA ligase,0.575
+RS_RS03465,MraY family glycosyltransferase,29,RS_RS18030,lactonase family protein,0.574
+RS_RS19500,M20 family peptidase,29,RS_RS13845,NADP-dependent malic enzyme,0.574
+RS_RS11110,MBL fold metallo-hydrolase,28,RS_RS10470,TIGR00730 family Rossman fold protein,0.573
+RS_RS07790,transposase,19,RS_RS18870,beta-ketoacyl synthase N-terminal-like domain-containing protein,0.572
+RS_RS05520,YeiH family protein,32,RS_RS06835,malate synthase A,0.562
+RS_RS12510,MBL fold metallo-hydrolase,21,RS_RS16495,acyltransferase,0.558
+RS_RS23900,chemoreceptor glutamine deamidase CheD,25,RS_RS20545,GNAT family N-acetyltransferase,0.557
+RS_RS14355,M20 aminoacylase family protein,37,RS_RS24655,heme-copper oxidase subunit III family protein,0.554
+RS_RS07280,type II toxin-antitoxin system HipA family toxin,24,RS_RS08705,winged helix DNA-binding protein,0.545
+RS_RS21420,4-hydroxy-2-oxovalerate aldolase,20,RS_RS10965,methylglyoxal synthase,0.532
+RS_RS21985,sugar transferase,26,RS_RS21965,polysaccharide biosynthesis protein,0.531
+RS_RS10675,sugar-binding transcriptional regulator,13,RS_RS08015,4-hydroxy-2-oxoheptanedioate aldolase,0.515
+RS_RS13135,PDDEXK nuclease domain-containing protein,12,RS_RS18030,lactonase family protein,0.509
+RS_RS17020,type I restriction-modification system subunit M,23,RS_RS22005,acyltransferase,0.503
+RS_RS00255,class I SAM-dependent rRNA methyltransferase,38,RS_RS06030,5'/3'-nucleotidase SurE,0.503

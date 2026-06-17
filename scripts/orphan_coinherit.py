@@ -129,9 +129,9 @@ def run_real(args):
     dn = OUT / f"dnds_{args.org}.parquet"
     dnds = (pd.read_parquet(dn).set_index("locus_tag")["dnds"].to_dict()
             if dn.exists() else {})
-    dark = df["product"].fillna("").str.contains(DARK)
-    ess = df.essential == 1
-    ghosts = df[dark & (ess | df.locus_tag.map(lambda l: dnds.get(l, 1) < 0.3))]
+    # Emit confound-guarded hints for ALL genes (atlas filters to ghosts for tier
+    # assignment; validator uses the broader file to measure recovery on knowns).
+    ghosts = df
     # product lookup for naming the partner's function
     prod = dict(zip(df.locus_tag, df["product"]))
     P = np.array([prof[l] for l in df.locus_tag])           # genes x orgs

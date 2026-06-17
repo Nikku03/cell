@@ -2,12 +2,14 @@
   "org": "beril_RalstoniaGMI1000",
   "n_genes": 4445,
   "channels_present": [
-    "dnds"
+    "dnds",
+    "context_partner_named"
   ],
   "function_tiers": {
     "annotated": 3893,
-    "live_ghost": 355,
-    "unknown": 197
+    "live_ghost": 306,
+    "unknown": 197,
+    "context_inferred": 49
   },
   "conditional_quadrants": {
     "accessory": 1694,
