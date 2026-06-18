@@ -1,0 +1,80 @@
+{
+  "organism": "beril_RalstoniaGMI1000",
+  "n_genes": 4403,
+  "n_essential": 1346,
+  "n_nonessential": 3057,
+  "essentiality_axis_weights": {
+    "conservation": 1.523,
+    "n_paralogs": 0.517,
+    "m35_hit": 0.078,
+    "mobile_dist_kb": 0.053,
+    "motif_density": 0.049,
+    "leading": 0.03,
+    "tga_stop": 0.026,
+    "deep_operon": 0.024,
+    "oriC_frac": 0.02,
+    "m10_hit": 0.005,
+    "gc": 0.002,
+    "atg_start": -0.016,
+    "rbs_strength": -0.106,
+    "length_aa": -0.642
+  },
+  "pca_explained_var": [
+    0.101,
+    0.096
+  ],
+  "opposite_set": {
+    "n": 459,
+    "mean_motif": 6.053,
+    "mean_rbs": 3.42,
+    "mean_mobile_kb": 37.6,
+    "mean_len_aa": 775.9,
+    "mean_paralogs": 0.59
+  },
+  "nonessential_clusters": [
+    {
+      "cluster": 0,
+      "n": 1604,
+      "motif": 6.14,
+      "rbs": 3.33,
+      "mobile_kb": 23.3,
+      "len_aa": 362.0,
+      "gc": 0.679,
+      "paralogs": 1.31,
+      "leading": 0.55
+    },
+    {
+      "cluster": 1,
+      "n": 727,
+      "motif": 6.16,
+      "rbs": 3.31,
+      "mobile_kb": 26.6,
+      "len_aa": 330.0,
+      "gc": 0.671,
+      "paralogs": 1.34,
+      "leading": 0.56
+    },
+    {
+      "cluster": 2,
+      "n": 257,
+      "motif": 6.49,
+      "rbs": 3.37,
+      "mobile_kb": 31.7,
+      "len_aa": 367.0,
+      "gc": 0.676,
+      "paralogs": 1.14,
+      "leading": 0.51
+    },
+    {
+      "cluster": 3,
+      "n": 469,
+      "motif": 6.15,
+      "rbs": 3.19,
+      "mobile_kb": 120.0,
+      "len_aa": 417.0,
+      "gc": 0.686,
+      "paralogs": 1.42,
+      "leading": 0.62
+    }
+  ]
+}
