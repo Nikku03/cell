@@ -133,6 +133,37 @@ same ruthless way (OOS, costs, vs the same assets). Cells are **OOS Sharpe**.
    on average. The edge across a blind cross-section remains a *tilt* toward
    better worst-case behavior, not a money pump.
 
+## Experiment 4 — Does a "brilliant" Markov model help? (Hidden Markov regime)
+
+The faithful version of the Markov-chain idea: a 2-state Gaussian **Hidden
+Markov Model** fit by EM to returns, inferring a hidden bull vs bear state, hold
+only in the bull state. Walk-forward, rolling refit, leak-free, costs charged.
+Reproduce: `python -m paper_trading.markov`.
+
+| asset | HMM CAGR | HMM Sharpe | HMM MaxDD | B&H CAGR | B&H Sharpe | verdict |
+|---|--:|--:|--:|--:|--:|---|
+| BTC | 38.9% | 0.85 | −84% | 137.3% | 1.41 | **loses** |
+| ETH | 28.4% | 0.71 | −81% | 99.8% | 1.18 | **loses** |
+| AAPL | 7.8% | 0.50 | −34% | 18.7% | 0.86 | **loses** |
+| MSFT | 17.0% | 1.00 | −20% | 26.7% | 1.16 | **loses** |
+| AMZN | 25.5% | 1.11 | −21% | 40.2% | 1.31 | **loses** |
+| **mean** | | **0.83** | | | **1.18** | |
+
+### What this honestly says
+
+- **The most mathematically sophisticated tool we've built LOST to buy & hold on
+  every asset.** A clean, unambiguous negative result. More machinery did not
+  mean more edge — it meant *less*.
+- **Why it fails is instructive:** the HMM detects the bear state only *after*
+  the drop and re-enters only *after* the recovery (regime inference lags), so it
+  is a slower, higher-parameter trend-follower that sits out ~half the time and
+  thereby misses the big up-moves that pay for everything. Lag + missed upside.
+- **The lesson of the whole study, in one line:** across Ramanujan transforms, a
+  150-year trend test, a vol-regime switch, and now an HMM, every added layer of
+  sophistication produced the *same* answer — a small-or-zero edge, with the only
+  durable gain being risk control. The absence of a free lunch is the single most
+  reproduced result here. That is informative, not pessimistic.
+
 ## Takeaways for how we evolve
 
 - Keep parameters fixed a priori; treat any in-sample optimization with deep
