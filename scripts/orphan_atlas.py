@@ -69,6 +69,11 @@ def build(df):
                               .fillna(0).astype(int))
     context_partner_product = df.get("context_partner_product",
                                       pd.Series("", index=df.index)).fillna("")
+    fold_target_product = df.get("fold_target_product",
+                                  pd.Series("", index=df.index)).fillna("")
+    fold_best_tm = pd.to_numeric(df.get("fold_best_tm"),
+                                 errors="coerce") \
+        if "fold_best_tm" in df else pd.Series(float("nan"), index=df.index)
     gem_ess_conds = df.get("gem_essential_in",
                            pd.Series("", index=df.index)).fillna("")
     dark = df["product"].fillna("").str.contains(DARK)
@@ -95,6 +100,9 @@ def build(df):
         "live_ghost": live_ghost.astype(int), "priority": pr.astype(int),
         "context_partner_named": context_partner_named.astype(int),
         "context_partner_product": context_partner_product,
+        "fold_hit_named": fold_named.astype(int),
+        "fold_target_product": fold_target_product,
+        "fold_best_tm": fold_best_tm.round(3),
         "gem_essential_in": gem_ess_conds,
     })
     return out

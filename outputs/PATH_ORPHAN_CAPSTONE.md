@@ -21,7 +21,8 @@ is the part interventional data must answer.
 | Composition baseline (length + AA), LOO-org | rogue R@P30 = 0.129 |
 | Live-ghost flag enrichment (kill-gate) | orth-breadth 7.1 vs 3.8; ω 0.187 vs 0.445 — **PASS** |
 | DEG1057 cross-grade (independent screen) | overall R 0.842, **rogue R 0.343** — independent confirmation of the conditional zone |
-| Function-recovery validator (held-out annotations) | context channel **20% vs 1.79% null, p < 0.001** — **PASS** |
+| **Structure channel (AFDB + Foldseek vs Swiss-Prot, 1,485 MB curated DB)** | **3,128 / 4,445 (70%) get any fold hit; 3,070 (69%) get NAMED fold hit**. Top hits biologically sane: sigma factors, tRNA modification, lipid desaturase. |
+| Function-recovery validator (held-out annotations, **context channel only**) | **20% vs 1.79% null, p < 0.001** — **PASS**. Structure channel pending integration. |
 
 ## The three novelties (each validated, all $0)
 
@@ -45,12 +46,20 @@ Per-gene integration across all built channels, with confidence tiers + an
 honest unknown bucket. On GMI1000 (channels currently merged: dnds, cofit,
 coinherit; foldhit and GEM land from the queued Colab steps):
 
+**Pre-structure (channels: dnds, cofit, coinherit):**
+
 | tier | n | % | meaning |
 |---|---|---|---|
 | annotated | 3,893 | 88 | known function (control) |
 | live_ghost | 306 | 7 | dark **but functional** — prioritized for experiment |
 | context_inferred | 49 | 1 | dark, but confound-guarded co-inheritance gives a characterized partner |
 | unknown | 197 | 4 | flagged unknowns |
+
+**Expected after structure fold-in** (3,070 named-fold hits across 4,445 genes
+= ~69% coverage; projecting that proportion onto each tier): live_ghost
+~75–105, fold_named ~200–250, context_inferred ~30–40, unknown ~50–80. The
+remaining dark-and-unrescued residual is the **wet-lab-only true orphan tail**
+— a much smaller, sharper target list than the 355 we started with.
 
 **Kill-gate PASS** — the live-ghost flag enriches for ortholog breadth (7.1 vs 3.8) and stronger purifying selection (ω 0.187 vs 0.445); the validator confirms the integration carries real functional signal at 11× over a shuffled-pair null.
 
