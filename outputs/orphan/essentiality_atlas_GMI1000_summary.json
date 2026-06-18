@@ -1,0 +1,33 @@
+{
+  "organism": "beril_RalstoniaGMI1000",
+  "n_genes": 4403,
+  "score_bands": {
+    "essential_ge": 0.81,
+    "nonessential_le": 0.262
+  },
+  "tiers": {
+    "CONFIDENT_ESSENTIAL": {
+      "n": 667,
+      "pct": 0.151,
+      "ess_rate": 0.901,
+      "call_precision": 0.901
+    },
+    "CONFIDENT_NONESSENTIAL": {
+      "n": 1002,
+      "pct": 0.228,
+      "ess_rate": 0.121,
+      "call_precision": 0.879
+    },
+    "PHENOTYPE_REQUIRED": {
+      "n": 2734,
+      "pct": 0.621,
+      "ess_rate": 0.228,
+      "call_precision": null
+    }
+  },
+  "coverage_confident_calls": 0.379,
+  "precision_over_confident_calls": 0.888,
+  "rogue_total": 247,
+  "rogue_not_mislabeled_noness": 155,
+  "deliverable": "outputs/orphan/essentiality_atlas_GMI1000.csv"
+}

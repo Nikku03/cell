@@ -1,0 +1,44 @@
+{
+  "organism": "beril_RalstoniaGMI1000",
+  "sisters": [
+    "beril_RalstoniaBSBF1503",
+    "beril_RalstoniaPSI07",
+    "beril_RalstoniaUW163"
+  ],
+  "n_genes": 4403,
+  "base_ess": 0.306,
+  "rogue_total": 247,
+  "ess_rate_by_n_sisters": {
+    "0": 0.135,
+    "1": 0.158,
+    "2": 0.138,
+    "3": 0.329
+  },
+  "rogue_frac_by_n_sisters": {
+    "0": 0.055,
+    "1": 0.146,
+    "2": 0.094,
+    "3": 0.05
+  },
+  "D1_absent_in_any_sister": {
+    "killed": 552,
+    "kill_frac": 0.125,
+    "kill_precision": 0.857,
+    "essentials_killed": 79,
+    "essentials_killed_frac": 0.059,
+    "rogue_killed": 53,
+    "rogue_spared": 194,
+    "rogue_spared_frac": 0.785
+  },
+  "D2_absent_in_all_sisters": {
+    "killed": 200,
+    "kill_frac": 0.045,
+    "kill_precision": 0.865,
+    "essentials_killed": 27,
+    "essentials_killed_frac": 0.02,
+    "rogue_killed": 11,
+    "rogue_spared": 236,
+    "rogue_spared_frac": 0.955
+  },
+  "absent_in_sister_ess_rate": 0.143
+}
