@@ -1,7 +1,7 @@
 {
   "org": "beril_RalstoniaGMI1000",
   "n_sample": 200,
-  "structure_recovery": null,
+  "structure_recovery": 0.0,
   "context_recovery": 0.2,
   "combined_n": 90,
   "combined_recovery": 0.2,
