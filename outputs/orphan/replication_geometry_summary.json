@@ -1,0 +1,88 @@
+{
+  "focal_organism": "beril_RalstoniaGMI1000",
+  "n_bacteria_pool": 6,
+  "P1_dose_curve_essential_rate_by_ori_bin": [
+    {
+      "ori_frac_bin": 0.05,
+      "n": 1979,
+      "ess_rate": 0.323
+    },
+    {
+      "ori_frac_bin": 0.15,
+      "n": 2005,
+      "ess_rate": 0.266
+    },
+    {
+      "ori_frac_bin": 0.25,
+      "n": 2113,
+      "ess_rate": 0.379
+    },
+    {
+      "ori_frac_bin": 0.35,
+      "n": 1967,
+      "ess_rate": 0.304
+    },
+    {
+      "ori_frac_bin": 0.45,
+      "n": 1826,
+      "ess_rate": 0.265
+    },
+    {
+      "ori_frac_bin": 0.55,
+      "n": 1955,
+      "ess_rate": 0.327
+    },
+    {
+      "ori_frac_bin": 0.65,
+      "n": 1895,
+      "ess_rate": 0.339
+    },
+    {
+      "ori_frac_bin": 0.75,
+      "n": 1915,
+      "ess_rate": 0.302
+    },
+    {
+      "ori_frac_bin": 0.85,
+      "n": 1941,
+      "ess_rate": 0.309
+    },
+    {
+      "ori_frac_bin": 0.95,
+      "n": 1791,
+      "ess_rate": 0.312
+    }
+  ],
+  "P2_replichore_symmetry_focal": [
+    {
+      "arm": "L",
+      "n": 1497,
+      "ess_rate": 0.341
+    },
+    {
+      "arm": "R",
+      "n": 1573,
+      "ess_rate": 0.355
+    }
+  ],
+  "P4_zone_essential_rate_focal": [
+    {
+      "zone": "middle",
+      "n": 1070,
+      "ess_rate": 0.36
+    },
+    {
+      "zone": "oriC-third",
+      "n": 1048,
+      "ess_rate": 0.333
+    },
+    {
+      "zone": "ter-third",
+      "n": 952,
+      "ess_rate": 0.352
+    }
+  ],
+  "P5_machinery_csv": "outputs/orphan/replication_geometry_machinery.csv",
+  "P5_machinery_categories_found": 17,
+  "P5_machinery_total_genes": 43
+}

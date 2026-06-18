@@ -1,0 +1,44 @@
+category,locus_tag,gene,product,essential,strand,leading,ori_frac,ter_frac,length_aa
+REPLICATION_initiation,RS_RS13155,hda,DnaA regulatory inactivator Hda,1,+,0,0.478,0.441,234
+REPLICATION_initiation,RS_RS17190,dnaA,chromosomal replication initiator protein DnaA,1,-,1,0.0,0.918,523
+REPLICATION_polymerase,RS_RS05970,,DNA polymerase III subunit gamma/tau,1,+,1,0.679,0.403,729
+REPLICATION_polymerase,RS_RS09010,,DNA polymerase III subunit delta',1,+,0,0.966,0.048,337
+REPLICATION_polymerase,RS_RS09455,dnaQ,DNA polymerase III subunit epsilon,1,-,1,0.893,0.025,243
+REPLICATION_polymerase,RS_RS11065,dnaE,DNA polymerase III subunit alpha,1,-,1,0.714,0.204,1174
+REPLICATION_polymerase,RS_RS12115,,DNA polymerase III subunit chi,0,-,1,0.59,0.328,143
+REPLICATION_polymerase,RS_RS13720,holA,DNA polymerase III subunit delta,1,-,1,0.411,0.507,359
+REPLICATION_polymerase,RS_RS17185,dnaN,DNA polymerase III subunit beta,1,-,1,0.001,0.917,372
+REPLICATION_helicase,RS_RS06575,,replicative DNA helicase,1,+,1,0.752,0.33,464
+REPLICATION_primase,RS_RS11125,dnaG,DNA primase,1,-,1,0.707,0.212,604
+REPLICATION_ssb,RS_RS02090,,single-stranded DNA-binding protein,1,+,1,0.243,0.839,179
+REPLICATION_ligase,RS_RS07015,ligA,NAD-dependent DNA ligase LigA,1,+,1,0.804,0.277,814
+REPLICATION_gyrase,RS_RS00330,,DNA topoisomerase III,1,-,0,0.041,0.959,878
+REPLICATION_gyrase,RS_RS04480,gyrA,DNA gyrase subunit A,1,+,1,0.512,0.569,886
+REPLICATION_gyrase,RS_RS14155,yacG,DNA gyrase inhibitor YacG,0,+,0,0.362,0.556,72
+REPLICATION_gyrase,RS_RS17180,gyrB,DNA topoisomerase (ATP-hydrolyzing) subunit B,1,-,1,0.002,0.916,843
+REPLICATION_topoIV,RS_RS00610,,type II toxin-antitoxin system RelE/ParE family toxin,1,+,1,0.079,0.998,122
+REPLICATION_topoIV,RS_RS01290,,type II toxin-antitoxin system RelE/ParE family toxin,0,-,0,0.159,0.922,132
+REPLICATION_topoIV,RS_RS04830,,DNA topoisomerase IV subunit B,1,+,1,0.552,0.53,662
+REPLICATION_topoIV,RS_RS04840,parC,DNA topoisomerase IV subunit A,1,+,1,0.554,0.528,782
+REPLICATION_topoIV,RS_RS16150,,type II toxin-antitoxin system RelE/ParE family toxin,0,-,1,0.124,0.795,100
+TERMINUS_dif_xer,RS_RS00260,xerC,tyrosine recombinase XerC,1,-,0,0.031,0.949,330
+TERMINUS_dif_xer,RS_RS12755,xerD,site-specific tyrosine recombinase XerD,1,+,0,0.519,0.4,309
+TERMINUS_FtsK,RS_RS11750,,DNA translocase FtsK,0,-,1,0.633,0.285,782
+DIVISION_FtsZ,RS_RS07010,,cell division protein ZipA C-terminal FtsZ-binding domain-containing protein,0,+,1,0.803,0.278,409
+DIVISION_FtsZ,RS_RS14200,ftsZ,cell division protein FtsZ,1,-,1,0.356,0.562,401
+DIVISION_FtsA,RS_RS14205,ftsA,cell division protein FtsA,1,-,1,0.356,0.563,411
+DIVISION_FtsI_W,RS_RS14230,ftsW,putative lipid II flippase FtsW,1,-,1,0.353,0.566,414
+DIVISION_FtsI_W,RS_RS14255,,peptidoglycan D%2CD-transpeptidase FtsI family protein,1,-,1,0.349,0.57,596
+DIVISION_MinCDE,RS_RS16855,minC,septum site-determining protein MinC,0,+,0,0.049,0.869,256
+DIVISION_MinCDE,RS_RS16860,minD,septum site-determining protein MinD,1,+,0,0.049,0.869,272
+DIVISION_MinCDE,RS_RS16865,minE,cell division topological specificity factor MinE,1,+,0,0.049,0.87,85
+DIVISION_MreB,RS_RS00295,,rod shape-determining protein,1,+,1,0.035,0.953,348
+DIVISION_MreB,RS_RS00300,mreC,rod shape-determining protein MreC,1,+,1,0.036,0.954,347
+DIVISION_MreB,RS_RS00305,mreD,rod shape-determining protein MreD,1,+,1,0.036,0.954,171
+DIVISION_MreB,RS_RS00315,rodA,rod shape-determining protein RodA,1,+,1,0.038,0.956,381
+PARTITION_ParAB,RS_RS03555,,ParB-like protein,0,-,0,0.405,0.676,199
+PARTITION_ParAB,RS_RS11995,,ParA family protein,1,-,1,0.602,0.316,218
+PARTITION_ParAB,RS_RS13060,parA,ParA family partition ATPase,1,-,1,0.489,0.43,213
+PARTITION_ParAB,RS_RS16660,,ParB/RepB/Spo0J family partition protein,1,-,1,0.069,0.849,304
+PARTITION_ParAB,RS_RS16665,,ParA family protein,1,-,1,0.069,0.85,262
+PARTITION_SMC_MukB,RS_RS06440,scpB,SMC-Scp complex subunit ScpB,1,+,1,0.736,0.346,305
