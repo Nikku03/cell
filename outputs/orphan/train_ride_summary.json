@@ -1,0 +1,113 @@
+{
+  "n_organisms": 10,
+  "n_stations": 39024,
+  "n_labeled": 32432,
+  "base_essential_rate": 0.27,
+  "notes_ranked_by_enrichment": [
+    {
+      "note": "SAME_STRAND_RUN",
+      "n_flagged": 3438,
+      "essential_rate": 0.386,
+      "enrichment_over_base": 1.431,
+      "orgs_consistent": 10
+    },
+    {
+      "note": "DEJA_VU",
+      "n_flagged": 5536,
+      "essential_rate": 0.364,
+      "enrichment_over_base": 1.348,
+      "orgs_consistent": 6
+    },
+    {
+      "note": "TINY",
+      "n_flagged": 2299,
+      "essential_rate": 0.355,
+      "enrichment_over_base": 1.315,
+      "orgs_consistent": 8
+    },
+    {
+      "note": "DEEP_OPERON",
+      "n_flagged": 5794,
+      "essential_rate": 0.316,
+      "enrichment_over_base": 1.17,
+      "orgs_consistent": 7
+    },
+    {
+      "note": "LONE_STAR",
+      "n_flagged": 15745,
+      "essential_rate": 0.287,
+      "enrichment_over_base": 1.062,
+      "orgs_consistent": 8
+    },
+    {
+      "note": "EXPRESS",
+      "n_flagged": 6166,
+      "essential_rate": 0.283,
+      "enrichment_over_base": 1.047,
+      "orgs_consistent": 4
+    },
+    {
+      "note": "HOMETOWN",
+      "n_flagged": 3263,
+      "essential_rate": 0.28,
+      "enrichment_over_base": 1.039,
+      "orgs_consistent": 5
+    },
+    {
+      "note": "GC_NORMAL",
+      "n_flagged": 6964,
+      "essential_rate": 0.271,
+      "enrichment_over_base": 1.006,
+      "orgs_consistent": 6
+    },
+    {
+      "note": "FOREIGN_SIGN",
+      "n_flagged": 5612,
+      "essential_rate": 0.261,
+      "enrichment_over_base": 0.967,
+      "orgs_consistent": 6
+    },
+    {
+      "note": "REMOTE",
+      "n_flagged": 3051,
+      "essential_rate": 0.251,
+      "enrichment_over_base": 0.93,
+      "orgs_consistent": 5
+    },
+    {
+      "note": "HEADWIND",
+      "n_flagged": 13965,
+      "essential_rate": 0.251,
+      "enrichment_over_base": 0.93,
+      "orgs_consistent": 2
+    },
+    {
+      "note": "WRONG_SIDE",
+      "n_flagged": 11667,
+      "essential_rate": 0.241,
+      "enrichment_over_base": 0.892,
+      "orgs_consistent": 0
+    },
+    {
+      "note": "SCRAPYARD",
+      "n_flagged": 2899,
+      "essential_rate": 0.225,
+      "enrichment_over_base": 0.835,
+      "orgs_consistent": 2
+    },
+    {
+      "note": "EMPTY_PLATFORM",
+      "n_flagged": 3551,
+      "essential_rate": 0.222,
+      "enrichment_over_base": 0.822,
+      "orgs_consistent": 1
+    },
+    {
+      "note": "GRAND_CENTRAL",
+      "n_flagged": 1698,
+      "essential_rate": 0.201,
+      "enrichment_over_base": 0.744,
+      "orgs_consistent": 2
+    }
+  ]
+}

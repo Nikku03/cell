@@ -1,0 +1,43 @@
+GENOME TRAIN RIDE -- conductor's notebook
+first 40 stations of beril_RalstoniaGMI1000:
+
+  station #  1 RS_RS25220     (  45 aa, +) 50S ribosomal protein L34                 notes: TINY, NEW_LINE, HOMETOWN
+  station #  2 RS_RS00005     ( 144 aa, +) ribonuclease P protein component          notes: HOMETOWN
+  station #  3 RS_RS00010     ( 105 aa, +) membrane protein insertion efficiency fa  notes: EXPRESS, HOMETOWN, DEEP_OPERON, GC_NORMAL
+  station #  4 RS_RS00015     ( 554 aa, +) membrane protein insertase YidC           notes: EXPRESS, HOMETOWN
+  station #  5 RS_RS00020     ( 475 aa, +) tRNA uridine-5-carboxymethylaminomethyl(  notes: HOMETOWN
+  station #  6 RS_RS00025     ( 108 aa, +) low molecular weight protein tyrosine ph  notes: HOMETOWN
+  station #  7 RS_RS00030     ( 182 aa, +) hypothetical protein                      notes: HOMETOWN
+  station #  8 RS_RS00035     (  71 aa, -) 30S ribosomal protein S21                 notes: WRONG_SIDE, EMPTY_PLATFORM, TINY, HEADWIND, HOMETOWN
+  station #  9 RS_RS00040     ( 515 aa, -) efflux transporter outer membrane subuni  notes: WRONG_SIDE, EMPTY_PLATFORM, HEADWIND, HOMETOWN
+  station # 10 RS_RS00045     (1050 aa, -) efflux RND transporter permease subunit   notes: WRONG_SIDE, EXPRESS, GRAND_CENTRAL, HEADWIND, HOMETOWN, DEEP_OPERON
+  station # 11 RS_RS00050     ( 399 aa, -) efflux RND transporter periplasmic adapt  notes: WRONG_SIDE, HEADWIND, HOMETOWN
+  station # 12 RS_RS00055     ( 220 aa, +) TetR family transcriptional regulator     notes: EMPTY_PLATFORM, HOMETOWN
+  station # 13 RS_RS00060     ( 298 aa, +) patatin-like phospholipase family protei  notes: EXPRESS, HOMETOWN
+  station # 14 RS_RS00065     ( 471 aa, +) dihydrolipoyl dehydrogenase family prote  notes: FOREIGN_SIGN, HOMETOWN
+  station # 15 RS_RS00070     ( 297 aa, +) DODA-type extradiol aromatic ring-openin  notes: HOMETOWN
+  station # 16 RS_RS00075     ( 343 aa, -) D-2-hydroxyacid dehydrogenase family pro  notes: WRONG_SIDE, HEADWIND, HOMETOWN
+  station # 17 RS_RS00080     ( 623 aa, +) phosphoenolpyruvate carboxykinase (GTP)   notes: EMPTY_PLATFORM, HOMETOWN, GC_NORMAL
+  station # 18 RS_RS00085     ( 280 aa, +) winged helix-turn-helix domain-containin  notes: EMPTY_PLATFORM, HOMETOWN
+  station # 19 RS_RS00090     ( 155 aa, +) DUF3617 domain-containing protein         notes: HOMETOWN
+  station # 20 RS_RS00095     ( 263 aa, -) 2-oxo-tetronate isomerase                 notes: WRONG_SIDE, HEADWIND, HOMETOWN, GC_NORMAL
+  station # 21 RS_RS00100     ( 211 aa, -) response regulator                        notes: WRONG_SIDE, HEADWIND, HOMETOWN, GC_NORMAL
+  station # 22 RS_RS00105     ( 488 aa, -) cache domain-containing protein           notes: WRONG_SIDE, EXPRESS, HEADWIND, HOMETOWN
+  station # 23 RS_RS00110     ( 687 aa, +) carbon starvation CstA family protein     notes: EMPTY_PLATFORM, HOMETOWN
+  station # 24 RS_RS00115     (  65 aa, +) YbdD/YjiX family protein                  notes: FOREIGN_SIGN, TINY, HOMETOWN
+  station # 25 RS_RS00120     ( 253 aa, -) tetratricopeptide repeat protein          notes: WRONG_SIDE, HEADWIND, HOMETOWN
+  station # 26 RS_RS00125     ( 174 aa, -) phasin family protein                     notes: WRONG_SIDE, HEADWIND, HOMETOWN
+  station # 27 RS_RS00130     ( 216 aa, -) methionine biosynthesis protein MetW      notes: HEADWIND, HOMETOWN, GC_NORMAL
+  station # 28 RS_RS00135     ( 404 aa, -) homoserine O-succinyltransferase MetX     notes: EXPRESS, HEADWIND, HOMETOWN, GC_NORMAL
+  station # 29 RS_RS00140     ( 498 aa, -) NAD-dependent succinate-semialdehyde deh  notes: HEADWIND, HOMETOWN
+  station # 30 RS_RS00145     ( 427 aa, -) 4-aminobutyrate--2-oxoglutarate transami  notes: EXPRESS, HEADWIND, HOMETOWN, GC_NORMAL
+  station # 31 RS_RS00150     ( 510 aa, +) PLP-dependent aminotransferase family pr  notes: HOMETOWN
+  station # 32 RS_RS00155     ( 219 aa, -) nucleoid occlusion factor SlmA            notes: HEADWIND, HOMETOWN
+  station # 33 RS_RS00160     ( 288 aa, -) pyrimidine 5'-nucleotidase                notes: HEADWIND, HOMETOWN, DEEP_OPERON
+  station # 34 RS_RS00165     ( 311 aa, -) acetylglutamate kinase                    notes: EXPRESS, HEADWIND, HOMETOWN
+  station # 35 RS_RS00170     ( 198 aa, +) sigma-70 family RNA polymerase sigma fac  notes: WRONG_SIDE, HOMETOWN, GC_NORMAL
+  station # 36 RS_RS00175     (  72 aa, +) zf-HC2 domain-containing protein          notes: WRONG_SIDE, TINY, HOMETOWN, DEEP_OPERON
+  station # 37 RS_RS00180     (  81 aa, +) cysteine-rich CWC family protein          notes: WRONG_SIDE, EXPRESS, FOREIGN_SIGN, TINY, HOMETOWN
+  station # 38 RS_RS00185     (  72 aa, -) hypothetical protein                      notes: TINY, HEADWIND, HOMETOWN
+  station # 39 RS_RS00190     ( 168 aa, -) copper chaperone PCu(A)C                  notes: HEADWIND, HOMETOWN
+  station # 40 RS_RS00195     ( 449 aa, +) ATP-binding protein                       notes: WRONG_SIDE, HOMETOWN
