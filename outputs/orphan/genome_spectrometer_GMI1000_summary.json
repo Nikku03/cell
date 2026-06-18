@@ -1,0 +1,28 @@
+{
+  "organism": "beril_RalstoniaGMI1000",
+  "contig": "NC_003295.1",
+  "length_bp": 3716413,
+  "n_cds_on_contig": 3473,
+  "oriC_Mb": 3.685,
+  "terC_Mb": 2.015,
+  "channels": {
+    "GC_pct": {
+      "mean": 67.07,
+      "min": 62.18,
+      "max": 71.99
+    },
+    "essential_per_50kb": {
+      "mean": 14.41,
+      "max": 42
+    },
+    "conservation": {
+      "mean": 0.293
+    },
+    "mobile_per_50kb": {
+      "mean": 1.78,
+      "max": 17
+    }
+  },
+  "fft_3bp_period_peak_power": 1350759.7409095394,
+  "windows": 367
+}
