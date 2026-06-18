@@ -1,0 +1,271 @@
+{
+  "n_rounds": 3,
+  "precision_target_for_kill": 0.9,
+  "round_summary": [
+    {
+      "round": 1,
+      "alive": 1535,
+      "killed": 2387,
+      "base": 0.59,
+      "auc": 0.811,
+      "auprc": 0.849,
+      "p10": 0.891,
+      "p25": 0.901,
+      "cov_p70": 0.752
+    },
+    {
+      "round": 2,
+      "alive": 1531,
+      "killed": 3,
+      "base": 0.591,
+      "auc": 0.811,
+      "auprc": 0.848,
+      "p10": 0.885,
+      "p25": 0.901,
+      "cov_p70": 0.756
+    },
+    {
+      "round": 3,
+      "alive": 1528,
+      "killed": 3,
+      "base": 0.591,
+      "auc": 0.81,
+      "auprc": 0.848,
+      "p10": 0.885,
+      "p25": 0.901,
+      "cov_p70": 0.758
+    }
+  ],
+  "final_pool": {
+    "total": 23536,
+    "killed": 14367,
+    "alive": 9169,
+    "alive_base_ess": 0.575,
+    "essentials_alive": 5273,
+    "essentials_killed": 1500,
+    "essential_recall_alive": 0.779
+  },
+  "rogue_zone": {
+    "total_rogue": 994,
+    "rogue_alive": 12,
+    "rogue_killed": 982
+  },
+  "per_round_per_org": [
+    {
+      "round": 1,
+      "organism": "beril_RalstoniaGMI1000",
+      "n_alive_te": 1434,
+      "n_killed_te": 2969,
+      "base_ess": 0.675,
+      "ess_auc": 0.792,
+      "ess_auprc": 0.886,
+      "top10_prec": 0.972,
+      "top25_prec": 0.927,
+      "cov_at_p70": 0.937
+    },
+    {
+      "round": 1,
+      "organism": "beril_RalstoniaBSBF1503",
+      "n_alive_te": 1496,
+      "n_killed_te": 2935,
+      "base_ess": 0.628,
+      "ess_auc": 0.789,
+      "ess_auprc": 0.862,
+      "top10_prec": 0.94,
+      "top25_prec": 0.93,
+      "cov_at_p70": 0.822
+    },
+    {
+      "round": 1,
+      "organism": "beril_RalstoniaPSI07",
+      "n_alive_te": 1721,
+      "n_killed_te": 2577,
+      "base_ess": 0.486,
+      "ess_auc": 0.774,
+      "ess_auprc": 0.696,
+      "top10_prec": 0.558,
+      "top25_prec": 0.774,
+      "cov_at_p70": 0.539
+    },
+    {
+      "round": 1,
+      "organism": "beril_Dda3937",
+      "n_alive_te": 1643,
+      "n_killed_te": 2283,
+      "base_ess": 0.414,
+      "ess_auc": 0.878,
+      "ess_auprc": 0.859,
+      "top10_prec": 0.963,
+      "top25_prec": 0.888,
+      "cov_at_p70": 0.503
+    },
+    {
+      "round": 1,
+      "organism": "beril_HerbieS",
+      "n_alive_te": 1896,
+      "n_killed_te": 1951,
+      "base_ess": 0.564,
+      "ess_auc": 0.836,
+      "ess_auprc": 0.872,
+      "top10_prec": 0.952,
+      "top25_prec": 0.947,
+      "cov_at_p70": 0.712
+    },
+    {
+      "round": 1,
+      "organism": "beril_Magneto",
+      "n_alive_te": 1022,
+      "n_killed_te": 1609,
+      "base_ess": 0.772,
+      "ess_auc": 0.797,
+      "ess_auprc": 0.92,
+      "top10_prec": 0.961,
+      "top25_prec": 0.941,
+      "cov_at_p70": 1.0
+    },
+    {
+      "round": 2,
+      "organism": "beril_RalstoniaGMI1000",
+      "n_alive_te": 1429,
+      "n_killed_te": 5,
+      "base_ess": 0.677,
+      "ess_auc": 0.79,
+      "ess_auprc": 0.883,
+      "top10_prec": 0.951,
+      "top25_prec": 0.927,
+      "cov_at_p70": 0.939
+    },
+    {
+      "round": 2,
+      "organism": "beril_RalstoniaBSBF1503",
+      "n_alive_te": 1493,
+      "n_killed_te": 3,
+      "base_ess": 0.629,
+      "ess_auc": 0.789,
+      "ess_auprc": 0.86,
+      "top10_prec": 0.933,
+      "top25_prec": 0.928,
+      "cov_at_p70": 0.825
+    },
+    {
+      "round": 2,
+      "organism": "beril_RalstoniaPSI07",
+      "n_alive_te": 1710,
+      "n_killed_te": 11,
+      "base_ess": 0.487,
+      "ess_auc": 0.776,
+      "ess_auprc": 0.698,
+      "top10_prec": 0.55,
+      "top25_prec": 0.773,
+      "cov_at_p70": 0.544
+    },
+    {
+      "round": 2,
+      "organism": "beril_Dda3937",
+      "n_alive_te": 1643,
+      "n_killed_te": 0,
+      "base_ess": 0.414,
+      "ess_auc": 0.878,
+      "ess_auprc": 0.858,
+      "top10_prec": 0.963,
+      "top25_prec": 0.89,
+      "cov_at_p70": 0.508
+    },
+    {
+      "round": 2,
+      "organism": "beril_HerbieS",
+      "n_alive_te": 1893,
+      "n_killed_te": 3,
+      "base_ess": 0.564,
+      "ess_auc": 0.84,
+      "ess_auprc": 0.874,
+      "top10_prec": 0.952,
+      "top25_prec": 0.947,
+      "cov_at_p70": 0.719
+    },
+    {
+      "round": 2,
+      "organism": "beril_Magneto",
+      "n_alive_te": 1022,
+      "n_killed_te": 0,
+      "base_ess": 0.772,
+      "ess_auc": 0.795,
+      "ess_auprc": 0.916,
+      "top10_prec": 0.961,
+      "top25_prec": 0.941,
+      "cov_at_p70": 1.0
+    },
+    {
+      "round": 3,
+      "organism": "beril_RalstoniaGMI1000",
+      "n_alive_te": 1427,
+      "n_killed_te": 2,
+      "base_ess": 0.677,
+      "ess_auc": 0.79,
+      "ess_auprc": 0.883,
+      "top10_prec": 0.951,
+      "top25_prec": 0.927,
+      "cov_at_p70": 0.94
+    },
+    {
+      "round": 3,
+      "organism": "beril_RalstoniaBSBF1503",
+      "n_alive_te": 1486,
+      "n_killed_te": 7,
+      "base_ess": 0.631,
+      "ess_auc": 0.787,
+      "ess_auprc": 0.86,
+      "top10_prec": 0.932,
+      "top25_prec": 0.927,
+      "cov_at_p70": 0.829
+    },
+    {
+      "round": 3,
+      "organism": "beril_RalstoniaPSI07",
+      "n_alive_te": 1701,
+      "n_killed_te": 9,
+      "base_ess": 0.489,
+      "ess_auc": 0.774,
+      "ess_auprc": 0.699,
+      "top10_prec": 0.553,
+      "top25_prec": 0.772,
+      "cov_at_p70": 0.547
+    },
+    {
+      "round": 3,
+      "organism": "beril_Dda3937",
+      "n_alive_te": 1641,
+      "n_killed_te": 2,
+      "base_ess": 0.414,
+      "ess_auc": 0.878,
+      "ess_auprc": 0.858,
+      "top10_prec": 0.963,
+      "top25_prec": 0.89,
+      "cov_at_p70": 0.512
+    },
+    {
+      "round": 3,
+      "organism": "beril_HerbieS",
+      "n_alive_te": 1892,
+      "n_killed_te": 1,
+      "base_ess": 0.564,
+      "ess_auc": 0.839,
+      "ess_auprc": 0.874,
+      "top10_prec": 0.952,
+      "top25_prec": 0.947,
+      "cov_at_p70": 0.719
+    },
+    {
+      "round": 3,
+      "organism": "beril_Magneto",
+      "n_alive_te": 1022,
+      "n_killed_te": 0,
+      "base_ess": 0.772,
+      "ess_auc": 0.795,
+      "ess_auprc": 0.917,
+      "top10_prec": 0.961,
+      "top25_prec": 0.941,
+      "cov_at_p70": 1.0
+    }
+  ]
+}
