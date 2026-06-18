@@ -1,0 +1,85 @@
+{
+  "n_essentials": 1346,
+  "start_consensus_-30..+20": {
+    "ATG_match_at_+1": 0.924962852897474,
+    "T_match_at_+2": 1.0,
+    "G_match_at_+3": 0.9992570579494799
+  },
+  "top10_5mers": [
+    {
+      "kmer": "TGCTG",
+      "log2_fold": 2.446,
+      "count": 5817,
+      "obs_per1000": 5.13,
+      "exp_per1000": 0.94
+    },
+    {
+      "kmer": "TGATC",
+      "log2_fold": 2.337,
+      "count": 2673,
+      "obs_per1000": 2.36,
+      "exp_per1000": 0.47
+    },
+    {
+      "kmer": "ATCGA",
+      "log2_fold": 2.229,
+      "count": 2654,
+      "obs_per1000": 2.34,
+      "exp_per1000": 0.5
+    },
+    {
+      "kmer": "ATCAA",
+      "log2_fold": 2.202,
+      "count": 1291,
+      "obs_per1000": 1.14,
+      "exp_per1000": 0.25
+    },
+    {
+      "kmer": "TCAAG",
+      "log2_fold": 2.122,
+      "count": 2464,
+      "obs_per1000": 2.17,
+      "exp_per1000": 0.5
+    },
+    {
+      "kmer": "CTGAT",
+      "log2_fold": 2.072,
+      "count": 2225,
+      "obs_per1000": 1.96,
+      "exp_per1000": 0.47
+    },
+    {
+      "kmer": "ATCAT",
+      "log2_fold": 1.983,
+      "count": 1037,
+      "obs_per1000": 0.91,
+      "exp_per1000": 0.23
+    },
+    {
+      "kmer": "TGTTC",
+      "log2_fold": 1.971,
+      "count": 1940,
+      "obs_per1000": 1.71,
+      "exp_per1000": 0.44
+    },
+    {
+      "kmer": "AAGAA",
+      "log2_fold": 1.963,
+      "count": 1159,
+      "obs_per1000": 1.02,
+      "exp_per1000": 0.26
+    },
+    {
+      "kmer": "CATCG",
+      "log2_fold": 1.952,
+      "count": 4458,
+      "obs_per1000": 3.93,
+      "exp_per1000": 1.02
+    }
+  ],
+  "rho_independent_T_tract": {
+    "peak_position": 44,
+    "peak_T_fraction_6bp": 0.203,
+    "genome_T_baseline": 0.166
+  }
+}
