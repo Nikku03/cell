@@ -1,0 +1,94 @@
+{
+  "scope": "bacteria only (6 organisms), leave-one-organism-out",
+  "operating_point": "precision >= 0.7 per held-out organism",
+  "detection": {
+    "per_org": {
+      "beril_RalstoniaGMI1000": {
+        "n_essential": 1346,
+        "cons_recall": 0.698,
+        "prot_recall": 0.169,
+        "union_recall": 0.73,
+        "cons_only": 754,
+        "prot_only": 43,
+        "both": 185,
+        "union_n": 982,
+        "missed": 3421
+      },
+      "beril_RalstoniaBSBF1503": {
+        "n_essential": 1269,
+        "cons_recall": 0.678,
+        "prot_recall": 0.085,
+        "union_recall": 0.681,
+        "cons_only": 756,
+        "prot_only": 3,
+        "both": 105,
+        "union_n": 864,
+        "missed": 3567
+      },
+      "beril_RalstoniaPSI07": {
+        "n_essential": 1020,
+        "cons_recall": 0.662,
+        "prot_recall": 0.0,
+        "union_recall": 0.662,
+        "cons_only": 675,
+        "prot_only": 0,
+        "both": 0,
+        "union_n": 675,
+        "missed": 3623
+      },
+      "beril_Dda3937": {
+        "n_essential": 758,
+        "cons_recall": 0.765,
+        "prot_recall": 0.115,
+        "union_recall": 0.772,
+        "cons_only": 498,
+        "prot_only": 5,
+        "both": 82,
+        "union_n": 585,
+        "missed": 3341
+      },
+      "beril_HerbieS": {
+        "n_essential": 1211,
+        "cons_recall": 0.812,
+        "prot_recall": 0.172,
+        "union_recall": 0.825,
+        "cons_only": 791,
+        "prot_only": 16,
+        "both": 192,
+        "union_n": 999,
+        "missed": 2848
+      },
+      "beril_Magneto": {
+        "n_essential": 1169,
+        "cons_recall": 0.784,
+        "prot_recall": 0.082,
+        "union_recall": 0.785,
+        "cons_only": 822,
+        "prot_only": 2,
+        "both": 94,
+        "union_n": 918,
+        "missed": 1713
+      }
+    },
+    "pooled": {
+      "total_essentials": 6773,
+      "conservation_detects": 4954,
+      "protection_detects": 727,
+      "union_detects": 5023,
+      "both": 658,
+      "conservation_only": 4296,
+      "protection_only_unique": 69,
+      "missed_by_both": 1750,
+      "conservation_recall": 0.731,
+      "protection_recall": 0.107,
+      "union_recall": 0.742
+    }
+  },
+  "annotation_overlay_GMI1000": {
+    "total_essentials": 1361,
+    "annotated": 1247,
+    "dark": 114,
+    "dark_deorphaned_by_context_local": 4,
+    "note": "structure (Foldseek/AFDB) per-gene fold membership lives in the Project A Colab run, not local; capstone reports 552 dark -> 96 (17%) de-orphaned genome-wide (60 structure + 34 context + 2 pheno)."
+  }
+}
