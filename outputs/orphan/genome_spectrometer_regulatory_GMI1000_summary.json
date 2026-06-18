@@ -1,0 +1,20 @@
+{
+  "organism": "beril_RalstoniaGMI1000",
+  "contig": "NC_003295.1",
+  "length_bp": 3716413,
+  "n_cds": 3473,
+  "oriC_Mb": 0.025,
+  "terC_Mb": 2.015,
+  "genome_wide_fractions": {
+    "start_ATG": 0.9,
+    "alt_start_GTG_TTG": 0.085,
+    "stop_TGA": 0.667,
+    "minus35_hit": 0.037,
+    "minus10_hit": 0.016,
+    "spacer_canonical": 0.011,
+    "rbs_strong": 0.434
+  },
+  "motif": "TGCTG",
+  "motif_mean_per_kb": 5.63,
+  "windows": 367
+}
