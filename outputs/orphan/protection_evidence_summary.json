@@ -1,0 +1,28 @@
+{
+  "chromosome": "NC_003295.1",
+  "length_bp": 3716413,
+  "oriC_bp": 0,
+  "terC_bp": 2010000,
+  "n_essentials_chr1": 1069,
+  "n_others_chr1": 2404,
+  "dosage_protection": {
+    "median_dist_to_oriC_essentials_Mb": 0.957,
+    "median_dist_to_oriC_others_Mb": 0.902,
+    "permutation_p": 0.0795
+  },
+  "strand_protection": {
+    "essentials_leading_pct": 61.7,
+    "non_essentials_leading_pct": 57.9,
+    "absolute_difference_pct": 3.9
+  },
+  "insertion_protection": {
+    "n_mobile_elements_chr1": 131,
+    "median_dist_essentials_kb": 30.3,
+    "median_dist_others_kb": 17.3,
+    "permutation_p": 0.0
+  },
+  "backup_protection_paralogs": {
+    "essentials_pct_with_paralog": 43.9,
+    "others_pct_with_paralog": 29.7
+  }
+}
