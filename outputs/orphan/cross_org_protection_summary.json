@@ -1,0 +1,113 @@
+{
+  "n_orgs": 8,
+  "n_genes": 26775,
+  "mean_auprc": {
+    "protection_only": 0.419,
+    "conservation_only": 0.673,
+    "all_combined": 0.678
+  },
+  "mean_auc": {
+    "protection_only": 0.608,
+    "conservation_only": 0.787,
+    "all_combined": 0.811
+  },
+  "coefficients": {
+    "leading": -0.017,
+    "oriC_frac": -0.045,
+    "mobile_dist_kb": 0.236,
+    "n_paralogs": 0.117,
+    "gene_len_aa": -0.407,
+    "gc": -0.023,
+    "conservation": 1.439
+  },
+  "per_org": [
+    {
+      "organism": "beril_RalstoniaGMI1000",
+      "n": 4403,
+      "base_rate": 0.306,
+      "protection_only_auprc": 0.512,
+      "protection_only_auc": 0.659,
+      "conservation_only_auprc": 0.753,
+      "conservation_only_auc": 0.836,
+      "all_combined_auprc": 0.766,
+      "all_combined_auc": 0.86
+    },
+    {
+      "organism": "beril_RalstoniaBSBF1503",
+      "n": 4431,
+      "base_rate": 0.286,
+      "protection_only_auprc": 0.458,
+      "protection_only_auc": 0.645,
+      "conservation_only_auprc": 0.741,
+      "conservation_only_auc": 0.837,
+      "all_combined_auprc": 0.755,
+      "all_combined_auc": 0.869
+    },
+    {
+      "organism": "beril_RalstoniaPSI07",
+      "n": 4298,
+      "base_rate": 0.237,
+      "protection_only_auprc": 0.293,
+      "protection_only_auc": 0.595,
+      "conservation_only_auprc": 0.72,
+      "conservation_only_auc": 0.849,
+      "all_combined_auprc": 0.657,
+      "all_combined_auc": 0.868
+    },
+    {
+      "organism": "beril_Dda3937",
+      "n": 3926,
+      "base_rate": 0.193,
+      "protection_only_auprc": 0.392,
+      "protection_only_auc": 0.64,
+      "conservation_only_auprc": 0.776,
+      "conservation_only_auc": 0.896,
+      "all_combined_auprc": 0.784,
+      "all_combined_auc": 0.915
+    },
+    {
+      "organism": "beril_HerbieS",
+      "n": 3847,
+      "base_rate": 0.315,
+      "protection_only_auprc": 0.507,
+      "protection_only_auc": 0.618,
+      "conservation_only_auprc": 0.817,
+      "conservation_only_auc": 0.893,
+      "all_combined_auprc": 0.821,
+      "all_combined_auc": 0.89
+    },
+    {
+      "organism": "beril_Magneto",
+      "n": 2631,
+      "base_rate": 0.444,
+      "protection_only_auprc": 0.555,
+      "protection_only_auc": 0.593,
+      "conservation_only_auprc": 0.822,
+      "conservation_only_auc": 0.834,
+      "all_combined_auprc": 0.816,
+      "all_combined_auc": 0.825
+    },
+    {
+      "organism": "beril_Methanococcus_JJ",
+      "n": 1605,
+      "base_rate": 0.228,
+      "protection_only_auprc": 0.292,
+      "protection_only_auc": 0.569,
+      "conservation_only_auprc": 0.316,
+      "conservation_only_auc": 0.557,
+      "all_combined_auprc": 0.362,
+      "all_combined_auc": 0.628
+    },
+    {
+      "organism": "beril_Methanococcus_S2",
+      "n": 1634,
+      "base_rate": 0.31,
+      "protection_only_auprc": 0.34,
+      "protection_only_auc": 0.543,
+      "conservation_only_auprc": 0.437,
+      "conservation_only_auc": 0.595,
+      "all_combined_auprc": 0.466,
+      "all_combined_auc": 0.63
+    }
+  ]
+}

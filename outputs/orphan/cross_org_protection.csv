@@ -1,0 +1,9 @@
+organism,n,base_rate,protection_only_auprc,protection_only_auc,conservation_only_auprc,conservation_only_auc,all_combined_auprc,all_combined_auc
+beril_RalstoniaGMI1000,4403,0.306,0.512,0.659,0.753,0.836,0.766,0.86
+beril_RalstoniaBSBF1503,4431,0.286,0.458,0.645,0.741,0.837,0.755,0.869
+beril_RalstoniaPSI07,4298,0.237,0.293,0.595,0.72,0.849,0.657,0.868
+beril_Dda3937,3926,0.193,0.392,0.64,0.776,0.896,0.784,0.915
+beril_HerbieS,3847,0.315,0.507,0.618,0.817,0.893,0.821,0.89
+beril_Magneto,2631,0.444,0.555,0.593,0.822,0.834,0.816,0.825
+beril_Methanococcus_JJ,1605,0.228,0.292,0.569,0.316,0.557,0.362,0.628
+beril_Methanococcus_S2,1634,0.31,0.34,0.543,0.437,0.595,0.466,0.63
