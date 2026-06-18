@@ -1,0 +1,34 @@
+{
+  "essential_total": 1361,
+  "essential_operon_starts": 831,
+  "essential_operon_ends": 832,
+  "terminator_T_tract": {
+    "peak_position_operon_end_genes": 45,
+    "peak_T_fraction_operon_end_6bp": 0.209,
+    "peak_T_fraction_all_essentials_6bp": 0.203,
+    "genome_T_baseline": 0.166
+  },
+  "sigma_hits_at_operon_starts": {
+    "sigma70": {
+      "count": 120,
+      "pct": 14.44
+    },
+    "sigma32": {
+      "count": 216,
+      "pct": 25.99
+    },
+    "sigma54": {
+      "count": 214,
+      "pct": 25.75
+    },
+    "sigmaE": {
+      "count": 99,
+      "pct": 11.91
+    }
+  },
+  "no_sigma70_but_alt": {
+    "no_sigma70_hit": 711,
+    "alt_sigma_hit": 354,
+    "alt_rescue_pct": 49.79
+  }
+}
