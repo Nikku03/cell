@@ -1,0 +1,46 @@
+{
+  "n_bacteria": 6,
+  "n_genes": 23536,
+  "base_essential": 0.288,
+  "n_rogue": 994,
+  "T1_rogue_frac_among_essentials_by_config": {
+    "safe (leading+short)": {
+      "n": 3259,
+      "rogue_frac": 0.151
+    },
+    "leading+long": {
+      "n": 754,
+      "rogue_frac": 0.062
+    },
+    "lagging+short": {
+      "n": 2344,
+      "rogue_frac": 0.174
+    },
+    "forbidden (lagging+long)": {
+      "n": 416,
+      "rogue_frac": 0.113
+    }
+  },
+  "T2_lowcons_essential_rate_by_config": {
+    "lowcons_base": 0.082,
+    "n": 12081,
+    "safe (leading+short)": {
+      "n": 4443,
+      "ess_rate": 0.111,
+      "enrichment": 1.343
+    },
+    "forbidden (lagging+long)": {
+      "n": 1712,
+      "ess_rate": 0.027,
+      "enrichment": 0.334
+    }
+  },
+  "T3_geometry_lowcons_LOO": {
+    "n": 12081,
+    "base": 0.082,
+    "auc": 0.729,
+    "precision_top10": 0.273,
+    "precision_top30": 0.174
+  },
+  "T4_n_candidates_GMI1000": 13
+}

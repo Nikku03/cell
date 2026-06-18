@@ -1,0 +1,14 @@
+locus_tag,product,gene_len_aa,leading,oriC_frac,mobile_dist_kb,n_paralogs,conservation
+RS_RS05150,Rne/Rng family ribonuclease,1015,0,0.589,29.36,0.0,0.0
+RS_RS07035,[protein-PII] uridylyltransferase,862,0,0.8078,37.94,0.0,0.088235294117647
+RS_RS17835,type IV pilus secretin PilQ,755,0,0.1575,14.84,0.0,0.0
+RS_RS17860,GspE/PulE family protein,562,0,0.1617,10.48,1.0,0.0
+RS_RS23585,NAD(P)-binding protein,541,0,0.3864,2.7,0.0,0.0
+RS_RS23580,polyamine aminopropyltransferase,526,0,0.3879,1.09,0.0,0.0
+RS_RS06475,DHA2 family efflux MFS transporter permease subunit,519,0,0.7411,161.96,8.0,0.0256410256410256
+RS_RS13645,MDR family MFS transporter,512,0,0.4211,21.93,8.0,0.0256410256410256
+RS_RS02225,threonine ammonia-lyase%2C biosynthetic,508,0,0.2571,26.12,0.0,0.0625
+RS_RS23680,MFS transporter,480,0,0.3682,2.62,8.0,0.0256410256410256
+RS_RS17775,GGDEF domain-containing protein,479,0,0.1464,5.5,1.0,0.0
+RS_RS15790,sensor domain-containing diguanylate cyclase,460,0,0.1738,2.48,1.0,0.0
+RS_RS02535,aminopeptidase P N-terminal domain-containing protein,459,0,0.2934,51.59,0.0,0.0
