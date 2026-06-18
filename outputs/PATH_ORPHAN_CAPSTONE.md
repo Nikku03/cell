@@ -23,6 +23,7 @@ is the part interventional data must answer.
 | DEG1057 cross-grade (independent screen) | overall R 0.842, **rogue R 0.343** — independent confirmation of the conditional zone |
 | **Structure channel (AFDB + Foldseek vs Swiss-Prot, 1,485 MB curated DB)** | **3,128 / 4,445 (70%) get any fold hit; 3,070 (69%) get NAMED fold hit**. Top hits biologically sane: sigma factors, tRNA modification, lipid desaturase. |
 | **Function-recovery validator (held-out annotations, structure+context, n=400)** | **combined 33.7% vs 1.36% null (p<0.001, ~25× lift)** — **PASS**. structure 30.9%, context 21.7%. The trust bound: atlas de-orphaning is right ~1 in 3 where checkable. |
+| **GEM mechanistic rung (CarveMe auto-build, 1,289 genes, 3,264 reactions)** | **WEAK** — model grew (88.5) only with all exchanges open; on FB conditions / glucose-minimal / Ralstonia-enriched-minimal, growth = 0. Auto-GEM cannot test the metabolic-rogue kill-gate without manual biomass curation. **Negative result for the auto-mechanism path on this organism.** |
 
 ## The three novelties (each validated, all $0)
 
@@ -114,6 +115,10 @@ confirmation).
   honest evaluation the field has been skipping.
 - **Multi-organism extension**: the same pipeline, GMI1000-tested, runs on any
   organism with a clean locus-tag bridge to its labels. The atlas generalizes.
+- **Auto-GEM boundary documented**: the CarveMe auto-build on Ralstonia
+  collapses on any defined medium. The mechanistic alternative to sequence
+  prediction also fails without manual curation — closing the cheap-mechanism
+  escape hatch.
 - **CRISPRi argument earned, not asserted**: every $0 channel has been honestly
   exhausted on the conditional/orphan slice. The case for interventional data
   is now a measurement, not a hope.
