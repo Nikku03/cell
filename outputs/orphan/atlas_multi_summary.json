@@ -1,0 +1,167 @@
+{
+  "n_organisms": 6,
+  "n_genes_total": 23536,
+  "confident_calls_total": 8043,
+  "overall_coverage": 0.342,
+  "overall_precision": 0.86,
+  "cross_org_consistency": {
+    "shared_ogs": 1312,
+    "agree": 1300,
+    "agree_frac": 0.991,
+    "cross_validated_calls": 5378
+  },
+  "per_organism": {
+    "beril_RalstoniaGMI1000": {
+      "n": 4403,
+      "tiers": {
+        "CONFIDENT_ESSENTIAL": 57,
+        "CONFIDENT_NONESSENTIAL": 1495,
+        "ROGUE_SUSPECT": 1433,
+        "CONDITIONAL_SUSPECT": 168,
+        "UNRESOLVED": 1250
+      },
+      "coverage": 0.352,
+      "precision_called": 0.823,
+      "rogue_total": 247,
+      "rogue_protected": 141
+    },
+    "beril_RalstoniaBSBF1503": {
+      "n": 4431,
+      "tiers": {
+        "CONFIDENT_ESSENTIAL": 83,
+        "CONFIDENT_NONESSENTIAL": 1383,
+        "ROGUE_SUSPECT": 1438,
+        "CONDITIONAL_SUSPECT": 164,
+        "UNRESOLVED": 1363
+      },
+      "coverage": 0.331,
+      "precision_called": 0.872,
+      "rogue_total": 223,
+      "rogue_protected": 150
+    },
+    "beril_RalstoniaPSI07": {
+      "n": 4298,
+      "tiers": {
+        "CONFIDENT_ESSENTIAL": 522,
+        "CONFIDENT_NONESSENTIAL": 927,
+        "ROGUE_SUSPECT": 1462,
+        "CONDITIONAL_SUSPECT": 145,
+        "UNRESOLVED": 1242
+      },
+      "coverage": 0.337,
+      "precision_called": 0.883,
+      "rogue_total": 139,
+      "rogue_protected": 108
+    },
+    "beril_Dda3937": {
+      "n": 3926,
+      "tiers": {
+        "CONFIDENT_ESSENTIAL": 146,
+        "CONFIDENT_NONESSENTIAL": 642,
+        "ROGUE_SUSPECT": 1327,
+        "CONDITIONAL_SUSPECT": 150,
+        "UNRESOLVED": 1661
+      },
+      "coverage": 0.201,
+      "precision_called": 0.944,
+      "rogue_total": 68,
+      "rogue_protected": 45
+    },
+    "beril_HerbieS": {
+      "n": 3847,
+      "tiers": {
+        "CONFIDENT_ESSENTIAL": 223,
+        "CONFIDENT_NONESSENTIAL": 1047,
+        "ROGUE_SUSPECT": 499,
+        "CONDITIONAL_SUSPECT": 142,
+        "UNRESOLVED": 1936
+      },
+      "coverage": 0.33,
+      "precision_called": 0.928,
+      "rogue_total": 104,
+      "rogue_protected": 43
+    },
+    "beril_Magneto": {
+      "n": 2631,
+      "tiers": {
+        "CONFIDENT_ESSENTIAL": 91,
+        "CONFIDENT_NONESSENTIAL": 1427,
+        "ROGUE_SUSPECT": 177,
+        "CONDITIONAL_SUSPECT": 75,
+        "UNRESOLVED": 861
+      },
+      "coverage": 0.577,
+      "precision_called": 0.766,
+      "rogue_total": 213,
+      "rogue_protected": 38
+    }
+  },
+  "thresholds": {
+    "hi": {
+      "beril_RalstoniaGMI1000": 0.966,
+      "beril_RalstoniaBSBF1503": 0.966,
+      "beril_RalstoniaPSI07": 0.9,
+      "beril_Dda3937": 0.965,
+      "beril_HerbieS": 0.968,
+      "beril_Magneto": 0.966
+    },
+    "lo": {
+      "beril_RalstoniaGMI1000": 0.431,
+      "beril_RalstoniaBSBF1503": 0.404,
+      "beril_RalstoniaPSI07": 0.343,
+      "beril_Dda3937": 0.293,
+      "beril_HerbieS": 0.359,
+      "beril_Magneto": 0.492
+    }
+  },
+  "tier_order": [
+    "CONFIDENT_ESSENTIAL",
+    "CONFIDENT_NONESSENTIAL",
+    "ROGUE_SUSPECT",
+    "CONDITIONAL_SUSPECT",
+    "UNRESOLVED"
+  ],
+  "evidence_channels": [
+    "E_score",
+    "E_cons_core",
+    "E_geometry",
+    "N_score",
+    "N_pangenome",
+    "N_paralog",
+    "N_mobile",
+    "N_long_lagging",
+    "P_rogue",
+    "P_conditional"
+  ],
+  "sister_strain_map": {
+    "beril_RalstoniaGMI1000": [
+      "beril_RalstoniaBSBF1503",
+      "beril_RalstoniaPSI07",
+      "beril_RalstoniaUW163"
+    ],
+    "beril_RalstoniaBSBF1503": [
+      "beril_RalstoniaGMI1000",
+      "beril_RalstoniaPSI07",
+      "beril_RalstoniaUW163"
+    ],
+    "beril_RalstoniaPSI07": [
+      "beril_RalstoniaGMI1000",
+      "beril_RalstoniaBSBF1503",
+      "beril_RalstoniaUW163"
+    ],
+    "beril_Dda3937": [
+      "beril_Ddia6719",
+      "beril_DdiaME23"
+    ],
+    "beril_HerbieS": [
+      "beril_Cup4G11",
+      "beril_BFirm",
+      "beril_Burk376"
+    ],
+    "beril_Magneto": [
+      "beril_azobra",
+      "beril_Smeli",
+      "beril_PS"
+    ]
+  }
+}
