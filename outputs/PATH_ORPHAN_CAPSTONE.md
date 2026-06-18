@@ -22,7 +22,7 @@ is the part interventional data must answer.
 | Live-ghost flag enrichment (kill-gate) | orth-breadth 7.1 vs 3.8; ω 0.187 vs 0.445 — **PASS** |
 | DEG1057 cross-grade (independent screen) | overall R 0.842, **rogue R 0.343** — independent confirmation of the conditional zone |
 | **Structure channel (AFDB + Foldseek vs Swiss-Prot, 1,485 MB curated DB)** | **3,128 / 4,445 (70%) get any fold hit; 3,070 (69%) get NAMED fold hit**. Top hits biologically sane: sigma factors, tRNA modification, lipid desaturase. |
-| Function-recovery validator (held-out annotations, **context channel only**) | **20% vs 1.79% null, p < 0.001** — **PASS**. Structure channel pending integration. |
+| **Function-recovery validator (held-out annotations, structure+context, n=400)** | **combined 33.7% vs 1.36% null (p<0.001, ~25× lift)** — **PASS**. structure 30.9%, context 21.7%. The trust bound: atlas de-orphaning is right ~1 in 3 where checkable. |
 
 ## The three novelties (each validated, all $0)
 
@@ -55,11 +55,21 @@ coinherit; foldhit and GEM land from the queued Colab steps):
 | context_inferred | 49 | 1 | dark, but confound-guarded co-inheritance gives a characterized partner |
 | unknown | 197 | 4 | flagged unknowns |
 
-**Expected after structure fold-in** (3,070 named-fold hits across 4,445 genes
-= ~69% coverage; projecting that proportion onto each tier): live_ghost
-~75–105, fold_named ~200–250, context_inferred ~30–40, unknown ~50–80. The
-remaining dark-and-unrescued residual is the **wet-lab-only true orphan tail**
-— a much smaller, sharper target list than the 355 we started with.
+**After structure fold-in (MEASURED, all channels):**
+
+| tier | n | meaning |
+|---|---|---|
+| annotated | 3,893 | known function (control) |
+| **live_ghost** | **277** | dark, functional, UNRESCUED → the experiment-only hit-list |
+| unknown | 179 | dark, no functional evidence (lower priority) |
+| **fold_named** | **60** | dark genes rescued by structure (Foldseek/Swiss-Prot) |
+| **context_inferred** | **34** | dark genes rescued by co-inheritance |
+| phenotype_module | 2 | dark genes rescued by cofitness |
+
+Of **552 dark genes, 96 (17%) de-orphaned to a named function** (60 structure +
+34 context + 2 phenotype). The live-ghost hit-list shrank **355 → 277**: a
+sharper, validated experiment-only target set. The validator's 33.7% recovery
+(vs 1.36% null) is the trust bound on these calls.
 
 **Kill-gate PASS** — the live-ghost flag enriches for ortholog breadth (7.1 vs 3.8) and stronger purifying selection (ω 0.187 vs 0.445); the validator confirms the integration carries real functional signal at 11× over a shuffled-pair null.
 

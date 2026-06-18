@@ -167,13 +167,19 @@ def run_real(args):
             print(f"    median omega:     live-ghost {d_lg:.3f} vs unflagged {d_nlg:.3f}"
                   f"  -> {'PASS' if d_lg<d_nlg else 'FAIL'} (stronger purifying selection)")
 
-    # the deliverable hit-list: top-priority live ghosts to characterize
-    hit = atlas[atlas.live_ghost == 1].sort_values(
+    # the deliverable hit-list: live ghosts STILL unrescued by any channel
+    # (tier == 'live_ghost' excludes the ones promoted to fold_named /
+    # context_inferred / phenotype_module) -- the genuine experiment-only set.
+    hit = atlas[atlas.function_tier == "live_ghost"].sort_values(
         ["priority", "n_orgs"], ascending=False)
+    n_rescued = int(((atlas.live_ghost == 1) &
+                     (atlas.function_tier != "live_ghost")).sum())
     OUT.mkdir(parents=True, exist_ok=True)
     atlas.to_parquet(OUT / f"atlas_{args.org}.parquet", index=False)
     hit.to_csv(OUT / f"live_ghost_hitlist_{args.org}.csv", index=False)
-    print(f"\n  LIVE-GHOST HIT-LIST: {len(hit)} genes (-> live_ghost_hitlist_*.csv)")
+    print(f"\n  LIVE-GHOST HIT-LIST: {len(hit)} genes still dark+functional "
+          f"(-> live_ghost_hitlist_*.csv); {n_rescued} flagged ghosts rescued "
+          f"to a named tier")
     print("  top 10 to characterize first:")
     for r in hit.head(10).itertuples():
         print(f"    {r.locus_tag:<13} pri={r.priority} cons={r.conservation:.2f} "
@@ -183,7 +189,9 @@ def run_real(args):
         "channels_present": present,
         "function_tiers": atlas.function_tier.value_counts().to_dict(),
         "conditional_quadrants": atlas.conditional.value_counts().to_dict(),
-        "n_live_ghosts": int((atlas.live_ghost == 1).sum())}, indent=2))
+        "n_live_ghost_flag": int((atlas.live_ghost == 1).sum()),
+        "n_live_ghost_unrescued": int(len(hit)),
+        "n_ghost_rescued": n_rescued}, indent=2))
     print(f"\n  wrote atlas_{args.org}.parquet + hitlist + summary")
     return 0
 
