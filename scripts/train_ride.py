@@ -208,6 +208,7 @@ for i, (org, acc) in enumerate(ORGS.items()):
     all_rows += r
 df = pd.DataFrame(all_rows)
 print(f"\ntotal: {len(df):,} stations across {df.organism.nunique()} organisms")
+df.to_parquet(OUT / "train_ride_stations.parquet", index=False)
 
 # Write the prose log
 (OUT / "train_ride_log.txt").write_text(

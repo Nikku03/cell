@@ -1,0 +1,144 @@
+{
+  "n_labeled": 32432,
+  "n_orgs": 10,
+  "mean_auc": {
+    "architecture_only": 0.583,
+    "conservation_only": 0.732,
+    "arch_plus_cons": 0.751
+  },
+  "mean_auprc": {
+    "architecture_only": 0.338,
+    "conservation_only": 0.574,
+    "arch_plus_cons": 0.591
+  },
+  "note_coefficients": {
+    "DEJA_VU": 0.233,
+    "SAME_STRAND_RUN": 0.166,
+    "TINY": 0.139,
+    "DEEP_OPERON": 0.072,
+    "LONE_STAR": 0.065,
+    "NEW_LINE": 0.042,
+    "HOMETOWN": 0.017,
+    "GC_NORMAL": 0.003,
+    "EXPRESS": -0.022,
+    "FOREIGN_SIGN": -0.029,
+    "REMOTE": -0.038,
+    "WRONG_SIDE": -0.054,
+    "HEADWIND": -0.055,
+    "SCRAPYARD": -0.063,
+    "GRAND_CENTRAL": -0.063,
+    "EMPTY_PLATFORM": -0.069
+  },
+  "per_org": [
+    {
+      "organism": "beril_RalstoniaGMI1000",
+      "n": 4403,
+      "base": 0.306,
+      "architecture_only_auc": 0.617,
+      "architecture_only_auprc": 0.405,
+      "conservation_only_auc": 0.836,
+      "conservation_only_auprc": 0.753,
+      "arch_plus_cons_auc": 0.84,
+      "arch_plus_cons_auprc": 0.759
+    },
+    {
+      "organism": "beril_RalstoniaBSBF1503",
+      "n": 4431,
+      "base": 0.286,
+      "architecture_only_auc": 0.608,
+      "architecture_only_auprc": 0.377,
+      "conservation_only_auc": 0.837,
+      "conservation_only_auprc": 0.741,
+      "arch_plus_cons_auc": 0.852,
+      "arch_plus_cons_auprc": 0.752
+    },
+    {
+      "organism": "beril_RalstoniaPSI07",
+      "n": 4298,
+      "base": 0.237,
+      "architecture_only_auc": 0.602,
+      "architecture_only_auprc": 0.323,
+      "conservation_only_auc": 0.849,
+      "conservation_only_auprc": 0.72,
+      "arch_plus_cons_auc": 0.869,
+      "arch_plus_cons_auprc": 0.736
+    },
+    {
+      "organism": "beril_Dda3937",
+      "n": 3926,
+      "base": 0.193,
+      "architecture_only_auc": 0.6,
+      "architecture_only_auprc": 0.262,
+      "conservation_only_auc": 0.896,
+      "conservation_only_auprc": 0.776,
+      "arch_plus_cons_auc": 0.909,
+      "arch_plus_cons_auprc": 0.774
+    },
+    {
+      "organism": "beril_HerbieS",
+      "n": 3847,
+      "base": 0.315,
+      "architecture_only_auc": 0.595,
+      "architecture_only_auprc": 0.384,
+      "conservation_only_auc": 0.893,
+      "conservation_only_auprc": 0.817,
+      "arch_plus_cons_auc": 0.888,
+      "arch_plus_cons_auprc": 0.818
+    },
+    {
+      "organism": "beril_Magneto",
+      "n": 2631,
+      "base": 0.444,
+      "architecture_only_auc": 0.593,
+      "architecture_only_auprc": 0.548,
+      "conservation_only_auc": 0.834,
+      "conservation_only_auprc": 0.822,
+      "arch_plus_cons_auc": 0.833,
+      "arch_plus_cons_auprc": 0.826
+    },
+    {
+      "organism": "mtub",
+      "n": 3557,
+      "base": 0.213,
+      "architecture_only_auc": 0.534,
+      "architecture_only_auprc": 0.242,
+      "conservation_only_auc": 0.522,
+      "conservation_only_auprc": 0.2,
+      "arch_plus_cons_auc": 0.511,
+      "arch_plus_cons_auprc": 0.223
+    },
+    {
+      "organism": "saur_NCTC8325_biotradis",
+      "n": 2100,
+      "base": 0.166,
+      "architecture_only_auc": 0.582,
+      "architecture_only_auprc": 0.225,
+      "conservation_only_auc": 0.498,
+      "conservation_only_auprc": 0.162,
+      "arch_plus_cons_auc": 0.544,
+      "arch_plus_cons_auprc": 0.203
+    },
+    {
+      "organism": "beril_Methanococcus_S2",
+      "n": 1634,
+      "base": 0.31,
+      "architecture_only_auc": 0.532,
+      "architecture_only_auprc": 0.336,
+      "conservation_only_auc": 0.595,
+      "conservation_only_auprc": 0.437,
+      "arch_plus_cons_auc": 0.623,
+      "arch_plus_cons_auprc": 0.466
+    },
+    {
+      "organism": "beril_Methanococcus_JJ",
+      "n": 1605,
+      "base": 0.228,
+      "architecture_only_auc": 0.563,
+      "architecture_only_auprc": 0.279,
+      "conservation_only_auc": 0.557,
+      "conservation_only_auprc": 0.316,
+      "arch_plus_cons_auc": 0.636,
+      "arch_plus_cons_auprc": 0.353
+    }
+  ]
+}
