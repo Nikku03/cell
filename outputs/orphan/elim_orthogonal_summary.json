@@ -1,0 +1,46 @@
+{
+  "A_essentiality_axis": {
+    "killed": 14324,
+    "kill_frac": 0.609,
+    "kill_precision": 0.896,
+    "essentials_killed": 1490,
+    "essentials_killed_frac": 0.22,
+    "rogue_killed": 979,
+    "rogue_spared": 15,
+    "rogue_spared_frac": 0.015,
+    "buffered_killed": 2,
+    "buffered_caught_frac": 0.002
+  },
+  "B_dispensability": {
+    "killed": 91,
+    "kill_frac": 0.004,
+    "kill_precision": 0.747,
+    "essentials_killed": 23,
+    "essentials_killed_frac": 0.003,
+    "rogue_killed": 13,
+    "rogue_spared": 981,
+    "rogue_spared_frac": 0.987,
+    "buffered_killed": 4,
+    "buffered_caught_frac": 0.004
+  },
+  "C_conservation_only": {
+    "killed": 14561,
+    "kill_frac": 0.619,
+    "kill_precision": 0.897,
+    "essentials_killed": 1498,
+    "essentials_killed_frac": 0.221,
+    "rogue_killed": 994,
+    "rogue_spared": 0,
+    "rogue_spared_frac": 0.0,
+    "buffered_killed": 0,
+    "buffered_caught_frac": 0.0
+  },
+  "essential_on_B_residual": {
+    "residual_n": 23445,
+    "base_ess": 0.288,
+    "auc": 0.865,
+    "coverage_at_p70": 0.287,
+    "rogue_surviving": 981,
+    "rogue_surviving_frac": 0.987
+  }
+}
