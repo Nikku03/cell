@@ -1,0 +1,23 @@
+{
+  "n_essential_analyzed": 1346,
+  "start_codons": {
+    "ATG": 1244,
+    "GTG": 81,
+    "TTG": 20,
+    "ATT": 1
+  },
+  "stop_codons": {
+    "TGA": 888,
+    "TAA": 290,
+    "TAG": 167,
+    "AAG": 1
+  },
+  "m10_median_mismatch": 3.0,
+  "m10_strong_pct": 0.10326894502228826,
+  "m35_median_mismatch": 2.0,
+  "m35_strong_pct": 0.20802377414561665,
+  "spacing_canonical_pct": 0.10104011887072809,
+  "rbs_median_mismatch": 2.0,
+  "rbs_strong_pct": 0.5735512630014858,
+  "median_aa_len": 255
+}
