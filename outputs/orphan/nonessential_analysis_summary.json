@@ -1,0 +1,63 @@
+{
+  "bacteria_noness_base": 0.712,
+  "A_coverage_at_precision": {
+    "0.9": {
+      "coverage": 0.588,
+      "recall": 0.743
+    },
+    "0.95": {
+      "coverage": 0.271,
+      "recall": 0.362
+    },
+    "0.99": {
+      "coverage": 0.01,
+      "recall": 0.014
+    }
+  },
+  "A_precision_at_top": {
+    "top25": 0.955,
+    "top50": 0.91,
+    "top70": 0.879,
+    "top90": 0.779
+  },
+  "B_minimal_model_mean": {
+    "cons": {
+      "auc": 0.859,
+      "auprc": 0.903
+    },
+    "3": {
+      "auc": 0.875,
+      "auprc": 0.927
+    },
+    "all": {
+      "auc": 0.871,
+      "auprc": 0.923
+    }
+  },
+  "B_coefficients": {
+    "gene_len_aa": 0.509,
+    "oriC_frac": -0.01,
+    "leading": -0.033,
+    "mobile_dist_kb": -0.071,
+    "n_paralogs": -0.117,
+    "gc": -0.275,
+    "conservation": -1.643
+  },
+  "C_buffered": {
+    "n": 1018,
+    "pct_of_nonessentials": 0.061,
+    "mean_paralogs_buffered": 6.0,
+    "mean_paralogs_essential": 5.18,
+    "mean_paralogs_other_noness": 1.54
+  },
+  "D_coverage_P90_per_org": {
+    "beril_RalstoniaGMI1000": 0.519,
+    "beril_RalstoniaBSBF1503": 0.57,
+    "beril_RalstoniaPSI07": 0.763,
+    "beril_Dda3937": 0.879,
+    "beril_HerbieS": 0.622,
+    "beril_Magneto": 0.062,
+    "beril_Methanococcus_JJ": 0.0,
+    "beril_Methanococcus_S2": 0.015
+  }
+}

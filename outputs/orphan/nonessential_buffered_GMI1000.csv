@@ -1,0 +1,148 @@
+locus_tag,product,conservation,n_paralogs,gene_len_aa
+RS_RS00055,TetR family transcriptional regulator,0.5365853658536586,15.0,220
+RS_RS02340,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,197
+RS_RS00800,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,251
+RS_RS17670,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,217
+RS_RS16070,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,205
+RS_RS22530,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,198
+RS_RS23855,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,225
+RS_RS21015,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,208
+RS_RS20920,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,192
+RS_RS19285,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,210
+RS_RS20050,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,206
+RS_RS11105,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,234
+RS_RS06015,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,210
+RS_RS04985,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,240
+RS_RS10465,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,232
+RS_RS03510,TetR/AcrR family transcriptional regulator,0.5365853658536586,15.0,265
+RS_RS00940,helix-turn-helix domain-containing protein,0.5384615384615384,3.0,267
+RS_RS06430,fumarate/nitrate reduction transcriptional regulator Fnr,0.5384615384615384,3.0,243
+RS_RS03440,glucose-1-phosphate thymidylyltransferase RfbA,0.7804878048780488,3.0,293
+RS_RS11230,UTP--glucose-1-phosphate uridylyltransferase GalU,0.7804878048780488,3.0,290
+RS_RS17225,UTP--glucose-1-phosphate uridylyltransferase GalU,0.7804878048780488,3.0,322
+RS_RS20965,Crp/Fnr family transcriptional regulator,0.5384615384615384,3.0,240
+RS_RS21775,Crp/Fnr family transcriptional regulator,0.5384615384615384,3.0,226
+RS_RS02545,N-acetylmuramate alpha-1-phosphate uridylyltransferase MurU,0.7804878048780488,3.0,242
+RS_RS25600,hypothetical protein,0.5,2.0,95
+RS_RS13510,hypothetical protein,0.5,2.0,99
+RS_RS16480,UvrD-helicase domain-containing protein,0.7435897435897436,2.0,706
+RS_RS23300,ATP-dependent helicase,0.7435897435897436,2.0,711
+RS_RS04325,H-NS family nucleoid-associated regulatory protein,1.0,2.0,97
+RS_RS11245,hypothetical protein,0.5,2.0,97
+RS_RS11220,UvrD-helicase domain-containing protein,0.7435897435897436,2.0,795
+RS_RS11095,DEAD/DEAH box helicase,0.5,2.0,496
+RS_RS02695,DEAD/DEAH box helicase,0.5,2.0,541
+RS_RS03120,ATP-dependent RNA helicase DbpA,0.5,2.0,466
+RS_RS17330,H-NS family nucleoid-associated regulatory protein,1.0,2.0,96
+RS_RS18760,H-NS family nucleoid-associated regulatory protein,1.0,2.0,97
+RS_RS11770,P-II family nitrogen regulator,0.55,1.0,113
+RS_RS21695,porin,0.5,1.0,369
+RS_RS07590,DUF1488 domain-containing protein,0.5,1.0,93
+RS_RS14515,flagellar protein FliT,0.5,1.0,123
+RS_RS15925,DUF2924 domain-containing protein,0.5,1.0,150
+RS_RS16260,DUF2924 domain-containing protein,0.5,1.0,150
+RS_RS25120,RNA polymerase factor sigma-54,0.5135135135135135,1.0,501
+RS_RS13890,shikimate dehydrogenase,0.5609756097560976,1.0,307
+RS_RS20370,pyridoxamine 5'-phosphate oxidase,0.8888888888888888,1.0,214
+RS_RS23875,porin,0.5,1.0,348
+RS_RS23870,shikimate dehydrogenase,0.5609756097560976,1.0,316
+RS_RS01005,DUF1488 domain-containing protein,0.5,1.0,93
+RS_RS01685,P-II family nitrogen regulator,0.55,1.0,113
+RS_RS02020,RNA polymerase factor sigma-54,0.5135135135135135,1.0,500
+RS_RS16330,c-type cytochrome,0.5,1.0,116
+RS_RS03865,pyridoxamine 5'-phosphate oxidase,0.8888888888888888,1.0,213
+RS_RS18870,beta-ketoacyl synthase N-terminal-like domain-containing protein,0.7586206896551724,1.0,405
+RS_RS19010,flagellar protein FliT,0.5,1.0,119
+RS_RS03160,c-type cytochrome,0.5,1.0,105
+RS_RS18875,beta-ketoacyl-ACP synthase,0.7586206896551724,1.0,409
+RS_RS02250,DUF3683 domain-containing protein,0.6666666666666666,0.0,1346
+RS_RS01515,ferritin,0.5,0.0,290
+RS_RS01705,PTS sugar transporter subunit IIA,0.5333333333333333,0.0,152
+RS_RS00620,hypothetical protein,1.0,0.0,74
+RS_RS00835,NAD-dependent epimerase/dehydratase family protein,1.0,0.0,313
+RS_RS00230,RNA polymerase-binding protein DksA,0.5,0.0,140
+RS_RS00350,peptide deformylase,0.8974358974358975,0.0,170
+RS_RS01430,response regulator,1.0,0.0,147
+RS_RS00655,GYD domain-containing protein,0.6666666666666666,0.0,98
+RS_RS01185,XapX domain-containing protein,0.5,0.0,97
+RS_RS01405,SPOR domain-containing protein,0.7619047619047619,0.0,239
+RS_RS02510,Fis family transcriptional regulator,0.7692307692307693,0.0,78
+RS_RS05700,4-hydroxy-tetrahydrodipicolinate synthase,0.8292682926829268,0.0,295
+RS_RS06330,HAD family hydrolase,0.5,0.0,296
+RS_RS03700,Tol-Pal system beta propeller repeat protein TolB,0.8823529411764706,0.0,434
+RS_RS04510,3-phosphoshikimate 1-carboxyvinyltransferase,0.6774193548387096,0.0,437
+RS_RS04555,ComEA family DNA-binding protein,0.5,0.0,106
+RS_RS04490,3-phosphoserine/phosphohydroxythreonine transaminase,0.725,0.0,379
+RS_RS04485,DUF2059 domain-containing protein,1.0,0.0,187
+RS_RS04225,hypothetical protein,1.0,0.0,122
+RS_RS04065,NUDIX domain-containing protein,0.8,0.0,194
+RS_RS03840,DUF3079 domain-containing protein,0.5,0.0,69
+RS_RS02775,ADP-forming succinate--CoA ligase subunit beta,0.6923076923076923,0.0,389
+RS_RS02870,class II fructose-bisphosphate aldolase,0.8378378378378378,0.0,355
+RS_RS02860,phosphoglycerate kinase,0.8780487804878049,0.0,404
+RS_RS02780,succinate--CoA ligase subunit alpha,0.6666666666666666,0.0,294
+RS_RS02605,D-glycero-beta-D-manno-heptose 1%2C7-bisphosphate 7-phosphatase,0.5757575757575758,0.0,200
+RS_RS11780,NAD+ synthase,0.75,0.0,547
+RS_RS11750,DNA translocase FtsK,0.6666666666666666,0.0,782
+RS_RS11205,membrane protein,0.5,0.0,140
+RS_RS10055,hypothetical protein,1.0,0.0,186
+RS_RS11005,nicotinate-nucleotide adenylyltransferase,0.8421052631578947,0.0,232
+RS_RS11010,ribosome silencing factor,1.0,0.0,204
+RS_RS11050,glycosyltransferase family 2 protein,0.5625,0.0,257
+RS_RS11060,O-antigen ligase family protein,0.5,0.0,436
+RS_RS10375,polyribonucleotide nucleotidyltransferase,0.6923076923076923,0.0,718
+RS_RS09110,thiazolinyl imide reductase,0.5,0.0,388
+RS_RS09305,ISNCY family transposase,1.0,0.0,492
+RS_RS09350,MarR family winged helix-turn-helix transcriptional regulator,0.5,0.0,156
+RS_RS09620,helix-turn-helix domain-containing protein,1.0,0.0,174
+RS_RS09830,fumarate hydratase,0.6129032258064516,0.0,508
+RS_RS09835,glutamate racemase,0.7105263157894737,0.0,278
+RS_RS10040,malate dehydrogenase,0.5,0.0,330
+RS_RS08460,hypothetical protein,1.0,0.0,201
+RS_RS08265,phosphoserine phosphatase SerB,0.6428571428571429,0.0,286
+RS_RS08190,DUF465 domain-containing protein,0.6,0.0,68
+RS_RS08185,hypothetical protein,1.0,0.0,239
+RS_RS07885,chorismate synthase,0.75,0.0,367
+RS_RS07790,transposase,0.5555555555555556,0.0,84
+RS_RS06955,GTP cyclohydrolase I FolE,0.7714285714285715,0.0,210
+RS_RS08550,tail fiber assembly protein,1.0,0.0,199
+RS_RS04810,Kdo hydroxylase family protein,0.6666666666666666,0.0,323
+RS_RS25405,ogr/Delta-like zinc finger family protein,0.5,0.0,74
+RS_RS05080,Fe-S cluster assembly protein IscX,0.6,0.0,66
+RS_RS05185,YceD family protein,0.6923076923076923,0.0,180
+RS_RS05680,L-threonylcarbamoyladenylate synthase,0.7647058823529411,0.0,208
+RS_RS05670,NAD(P)/FAD-dependent oxidoreductase,0.7777777777777778,0.0,360
+RS_RS13200,molecular chaperone DnaJ,0.6666666666666666,0.0,381
+RS_RS13080,DUF2958 domain-containing protein,0.5,0.0,117
+RS_RS18745,bifunctional aconitate hydratase 2/2-methylisocitrate dehydratase,0.8275862068965517,0.0,864
+RS_RS18115,type IV toxin-antitoxin system AbiEi family antitoxin domain-containing protein,1.0,0.0,249
+RS_RS17175,DNA cytosine methyltransferase,0.5238095238095238,0.0,365
+RS_RS15630,type II secretion system protein GspM,0.5,0.0,193
+RS_RS25700,hypothetical protein,1.0,0.0,147
+RS_RS15985,DUF6881 domain-containing protein,0.5,0.0,116
+RS_RS16135,IS5 family transposase,1.0,0.0,275
+RS_RS16155,type II toxin-antitoxin system ParD family antitoxin,0.5714285714285714,0.0,89
+RS_RS13205,molecular chaperone DnaK,0.9487179487179488,0.0,653
+RS_RS14675,ubiquinol-cytochrome c reductase iron-sulfur subunit,0.56,0.0,203
+RS_RS14730,twin-arginine translocase subunit TatC,0.5897435897435898,0.0,268
+RS_RS14735,Sec-independent protein translocase protein TatB,0.6666666666666666,0.0,173
+RS_RS14820,STAS domain-containing protein,0.6428571428571429,0.0,105
+RS_RS14885,shikimate kinase,0.7837837837837838,0.0,191
+RS_RS15325,DUF2160 domain-containing protein,0.5333333333333333,0.0,94
+RS_RS15425,hypothetical protein,1.0,0.0,139
+RS_RS12115,DNA polymerase III subunit chi,0.6363636363636364,0.0,143
+RS_RS12140,5-carboxymethyl-2-hydroxymuconate Delta-isomerase,0.625,0.0,135
+RS_RS20875,fatty acyl-AMP ligase,0.5,0.0,560
+RS_RS20145,PAAR domain-containing protein,1.0,0.0,97
+RS_RS19150,ParB N-terminal domain-containing protein,1.0,0.0,147
+RS_RS20110,putative cobaltochelatase,0.5,0.0,638
+RS_RS20320,Rossmann-like and DUF2520 domain-containing protein,0.5,0.0,295
+RS_RS20485,DUF2783 domain-containing protein,0.6,0.0,69
+RS_RS22345,type II secretion system F family protein,1.0,0.0,327
+RS_RS22000,bi-domain-containing oxidoreductase,1.0,0.0,714
+RS_RS21780,putative zinc-binding protein,0.8,0.0,140
+RS_RS21725,hypothetical protein,1.0,0.0,120
+RS_RS21250,type III secretion system cytoplasmic ring protein SctQ,1.0,0.0,355
+RS_RS23150,SGNH/GDSL hydrolase family protein,1.0,0.0,214
+RS_RS23095,RraA family protein,0.5,0.0,222
+RS_RS24405,DUF1059 domain-containing protein,0.8,0.0,73
