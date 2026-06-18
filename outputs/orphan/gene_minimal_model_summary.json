@@ -1,0 +1,67 @@
+{
+  "within_GMI1000_5fold": {
+    "three_core": {
+      "auc": 0.866,
+      "auprc": 0.779
+    },
+    "non_negotiables": {
+      "auc": 0.559,
+      "auprc": 0.35
+    },
+    "full_14": {
+      "auc": 0.863,
+      "auprc": 0.779
+    }
+  },
+  "cross_org_LOO_mean_auc": {
+    "conservation_only": 0.857,
+    "three_core": 0.875,
+    "position_geom": 0.538,
+    "all_seven": 0.871
+  },
+  "cross_org_LOO_per_org": [
+    {
+      "organism": "beril_RalstoniaGMI1000",
+      "conservation_only": 0.836,
+      "three_core": 0.863,
+      "position_geom": 0.527,
+      "all_seven": 0.859
+    },
+    {
+      "organism": "beril_RalstoniaBSBF1503",
+      "conservation_only": 0.837,
+      "three_core": 0.873,
+      "position_geom": 0.536,
+      "all_seven": 0.868
+    },
+    {
+      "organism": "beril_RalstoniaPSI07",
+      "conservation_only": 0.849,
+      "three_core": 0.869,
+      "position_geom": 0.525,
+      "all_seven": 0.865
+    },
+    {
+      "organism": "beril_Dda3937",
+      "conservation_only": 0.896,
+      "three_core": 0.916,
+      "position_geom": 0.596,
+      "all_seven": 0.914
+    },
+    {
+      "organism": "beril_HerbieS",
+      "conservation_only": 0.893,
+      "three_core": 0.904,
+      "position_geom": 0.503,
+      "all_seven": 0.892
+    },
+    {
+      "organism": "beril_Magneto",
+      "conservation_only": 0.834,
+      "three_core": 0.824,
+      "position_geom": 0.538,
+      "all_seven": 0.827
+    }
+  ],
+  "takeaway": "three_core (conservation+paralogs+length) recovers nearly all of the full model; motif+RBS+mobile sequence grammar alone is weak."
+}
