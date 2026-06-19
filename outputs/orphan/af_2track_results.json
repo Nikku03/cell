@@ -1,0 +1,80 @@
+{
+  "1track": {
+    "pseudomonas": {
+      "auc": 0.838,
+      "auprc": 0.706,
+      "ne_cov_p90": 0.666,
+      "ess_cov_p70": 0.213
+    },
+    "ralstonia": {
+      "auc": 0.852,
+      "auprc": 0.747,
+      "ne_cov_p90": 0.594,
+      "ess_cov_p70": 0.271
+    },
+    "shewanella": {
+      "auc": 0.908,
+      "auprc": 0.779,
+      "ne_cov_p90": 0.866,
+      "ess_cov_p70": 0.206
+    },
+    "dickeya": {
+      "auc": 0.877,
+      "auprc": 0.721,
+      "ne_cov_p90": 0.861,
+      "ess_cov_p70": 0.185
+    },
+    "burkholderia": {
+      "auc": 0.811,
+      "auprc": 0.794,
+      "ne_cov_p90": 0.0,
+      "ess_cov_p70": 0.431
+    }
+  },
+  "2track": {
+    "pseudomonas": {
+      "auc": 0.847,
+      "auprc": 0.726,
+      "ne_cov_p90": 0.674,
+      "ess_cov_p70": 0.217
+    },
+    "ralstonia": {
+      "auc": 0.854,
+      "auprc": 0.762,
+      "ne_cov_p90": 0.594,
+      "ess_cov_p70": 0.272
+    },
+    "shewanella": {
+      "auc": 0.911,
+      "auprc": 0.788,
+      "ne_cov_p90": 0.864,
+      "ess_cov_p70": 0.198
+    },
+    "dickeya": {
+      "auc": 0.87,
+      "auprc": 0.726,
+      "ne_cov_p90": 0.856,
+      "ess_cov_p70": 0.179
+    },
+    "burkholderia": {
+      "auc": 0.809,
+      "auprc": 0.791,
+      "ne_cov_p90": 0.0,
+      "ess_cov_p70": 0.426
+    }
+  },
+  "pooled_1track": {
+    "auc": 0.832,
+    "auprc": 0.709,
+    "ne_cov_p90": 0.629,
+    "ess_cov_p70": 0.228,
+    "ess_cov_p90": 0.03
+  },
+  "pooled_2track": {
+    "auc": 0.842,
+    "auprc": 0.731,
+    "ne_cov_p90": 0.642,
+    "ess_cov_p70": 0.233,
+    "ess_cov_p90": 0.089
+  }
+}
