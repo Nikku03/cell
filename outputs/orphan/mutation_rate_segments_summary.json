@@ -1,0 +1,98 @@
+{
+  "n_genes": 3187,
+  "Q4_essential_vs_nonessential": {
+    "dS_ess": 0.162,
+    "dS_noness": 0.17,
+    "dN_ess": 0.019,
+    "dN_noness": 0.027,
+    "dnds_ess": 0.123,
+    "dnds_noness": 0.163
+  },
+  "Q2_dS_vs_oriC": {
+    "slope": 0.0237,
+    "pearson_r": 0.028,
+    "by_bin": [
+      {
+        "ori_frac": 0.05,
+        "n": 342,
+        "ds": 0.165
+      },
+      {
+        "ori_frac": 0.15,
+        "n": 277,
+        "ds": 0.164
+      },
+      {
+        "ori_frac": 0.25,
+        "n": 350,
+        "ds": 0.154
+      },
+      {
+        "ori_frac": 0.35,
+        "n": 336,
+        "ds": 0.167
+      },
+      {
+        "ori_frac": 0.45,
+        "n": 346,
+        "ds": 0.165
+      },
+      {
+        "ori_frac": 0.55,
+        "n": 359,
+        "ds": 0.168
+      },
+      {
+        "ori_frac": 0.65,
+        "n": 307,
+        "ds": 0.171
+      },
+      {
+        "ori_frac": 0.75,
+        "n": 309,
+        "ds": 0.162
+      },
+      {
+        "ori_frac": 0.85,
+        "n": 313,
+        "ds": 0.175
+      },
+      {
+        "ori_frac": 0.95,
+        "n": 248,
+        "ds": 0.176
+      }
+    ]
+  },
+  "Q3_strand": {
+    "leading_dS": 0.173,
+    "lagging_dS": 0.16
+  },
+  "Q5_by_tier": {
+    "CONFIDENT_ESSENTIAL": {
+      "n": 157,
+      "ds": 0.155,
+      "dnds": 0.094
+    },
+    "CONFIDENT_NONESSENTIAL": {
+      "n": 1627,
+      "ds": 0.171,
+      "dnds": 0.165
+    },
+    "ROGUE_SUSPECT": {
+      "n": 376,
+      "ds": 0.163,
+      "dnds": 0.162
+    },
+    "CONDITIONAL_SUSPECT": {
+      "n": 95,
+      "ds": 0.154,
+      "dnds": 0.159
+    },
+    "UNRESOLVED": {
+      "n": 932,
+      "ds": 0.164,
+      "dnds": 0.124
+    }
+  }
+}
