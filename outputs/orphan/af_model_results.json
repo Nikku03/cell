@@ -1,0 +1,79 @@
+{
+  "per_clade": {
+    "pseudomonas": {
+      "n": 49459,
+      "base_ess": 0.25,
+      "auc": 0.838,
+      "auprc": 0.706,
+      "ne_cov_p90": 0.666,
+      "ess_cov_p90": 0.077,
+      "ess_cov_p70": 0.213
+    },
+    "ralstonia": {
+      "n": 23347,
+      "base_ess": 0.286,
+      "auc": 0.859,
+      "auprc": 0.758,
+      "ne_cov_p90": 0.611,
+      "ess_cov_p90": 0.109,
+      "ess_cov_p70": 0.275
+    },
+    "shewanella": {
+      "n": 10817,
+      "base_ess": 0.198,
+      "auc": 0.909,
+      "auprc": 0.778,
+      "ne_cov_p90": 0.868,
+      "ess_cov_p90": 0.097,
+      "ess_cov_p70": 0.208
+    },
+    "dickeya": {
+      "n": 11683,
+      "base_ess": 0.194,
+      "auc": 0.875,
+      "auprc": 0.714,
+      "ne_cov_p90": 0.86,
+      "ess_cov_p90": 0.045,
+      "ess_cov_p70": 0.184
+    },
+    "burkholderia": {
+      "n": 11513,
+      "base_ess": 0.407,
+      "auc": 0.836,
+      "auprc": 0.805,
+      "ne_cov_p90": 0.22,
+      "ess_cov_p90": 0.179,
+      "ess_cov_p70": 0.433
+    }
+  },
+  "pooled": {
+    "n": 106819,
+    "auc": 0.849,
+    "auprc": 0.726,
+    "ne_cov_p90": 0.653,
+    "ess_cov_p70": 0.235,
+    "ess_cov_p90": 0.066
+  },
+  "calibration": [
+    {
+      "bin": "0-0.5",
+      "n": 8179,
+      "acc": 0.465
+    },
+    {
+      "bin": "0.5-0.7",
+      "n": 15809,
+      "acc": 0.641
+    },
+    {
+      "bin": "0.7-0.85",
+      "n": 21649,
+      "acc": 0.812
+    },
+    {
+      "bin": "0.85-1.01",
+      "n": 61182,
+      "acc": 0.918
+    }
+  ]
+}
