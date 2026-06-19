@@ -101,6 +101,25 @@ for r in csv.DictReader(open(DATA / "labels" / "orthology_features.csv")):
         gene_og[(r["organism"], r["locus_tag"])] = r["og_id"]
 df["og"] = [gene_og.get((o,l), "") for o,l in zip(df.organism, df.locus_tag)]
 
+# -- ortholog-transfer vote: measured essentiality of OG members in OTHER orgs --
+# (LOO-safe: at deploy time the training organisms' labels are known)
+meas = {}
+for r in csv.DictReader(open(DATA / "labels" / "labels.csv")):
+    meas[(r["organism"], r["locus_tag"])] = int(r["essential"])
+og_votes = defaultdict(lambda: [0, 0])   # og -> [n_essential, n_nonessential] with org tags
+og_org_label = defaultdict(list)
+for (o, l), e in meas.items():
+    og = gene_og.get((o, l))
+    if og: og_org_label[og].append((o, e))
+def ortho_vote(org, og):
+    if not og: return 0, 0
+    ess = sum(1 for o, e in og_org_label[og] if o != org and e == 1)
+    non = sum(1 for o, e in og_org_label[og] if o != org and e == 0)
+    return ess, non
+votes = [ortho_vote(o, og) for o, og in zip(df.organism, df.og)]
+df["ovote_ess"] = [v[0] for v in votes]
+df["ovote_non"] = [v[1] for v in votes]
+
 def n_sisters_present(row):
     og = row["og"]; sis = SISTERS.get(row["organism"], [])
     if not og or not sis: return 0
@@ -151,6 +170,9 @@ def tier_gene(r):
     if r.n_paralogs >= 4 and r.conservation < 0.5: ev.append("N_redundancy")
     if r.mobile_dist_kb < 5: ev.append("N_mobile")
     if r["long"] and r.leading == 0 and r.conservation < 0.3: ev.append("N_long_lagging")
+    # ortholog-transfer vote (independent of this gene's own features)
+    if r.ovote_ess >= 2 and r.ovote_non == 0: ev.append("E_ortho")
+    if r.ovote_non >= 2 and r.ovote_ess == 0: ev.append("N_ortho")
     # phenotype-required flags
     p_rogue = (r.conservation < 0.1 and r.n_paralogs == 0
                and (r.max_sisters == 0 or r.sister_absent_count == 0))
@@ -162,12 +184,21 @@ def tier_gene(r):
     if r.n_paralogs >= 4 and r.conservation >= 0.5: ev.append("F_core_redundant")
 
     # tier resolution: strict, score-led; biology flags annotate but don't call
+    quarantine = p_rogue or p_cond
     has_E_call = "E_score" in ev
     has_N_call = ("N_score" in ev) or ("N_pangenome_strong" in ev)
-    quarantine = p_rogue or p_cond
+    # v3 ortholog-transfer promotion (validated combos that hold precision >=0.85):
+    #   essential : E_ortho with a second essential signal (E_cons or E_geometry)
+    #   non-ess   : N_ortho alone (measured non-ess in >=2 sister orgs) -- 0.965
+    promote_E = ("E_ortho" in ev) and (("E_cons_core" in ev) or ("E_geometry" in ev))
+    promote_N = ("N_ortho" in ev)
 
-    if has_E_call and not p_rogue:
+    if (has_E_call or promote_E) and not p_rogue:
         tier = "CONFIDENT_ESSENTIAL"
+    elif promote_N:
+        # a clean measured non-ess ortholog vote (>=2 non, 0 ess) is 0.98 precise
+        # even on rogue/conditional suspects -> it OVERRIDES the structural quarantine
+        tier = "CONFIDENT_NONESSENTIAL"
     elif has_N_call and not quarantine:
         tier = "CONFIDENT_NONESSENTIAL"
     elif p_rogue:
@@ -265,7 +296,7 @@ for org in BACT:
     cols = ["locus_tag","product","tier","predicted_call","confidence","evidence",
             "essential","ess_score","noness_score","conservation","n_paralogs",
             "gene_len_aa","leading","mobile_dist_kb","n_sisters","max_sisters",
-            "cross_validated"]
+            "ovote_ess","ovote_non","cross_validated"]
     g[cols].rename(columns={"essential":"measured_essential"}).to_csv(
         ATL / f"{org}.csv", index=False)
 

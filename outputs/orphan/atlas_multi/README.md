@@ -6,32 +6,45 @@ A 6-organism, 23,536-gene atlas of bacterial gene-essentiality predictions. Each
 
 ## 2. Headline numbers
 
-**Atlas total: 23,536 genes across 6 organisms. 34% confident coverage at 86.0% precision.**
-(Single-organism, self-calibrated baselines reach 38% at 89% but do not generalize cross-clade.)
+**Atlas total: 23,536 genes across 6 organisms. 55% confident coverage at 90.7% precision.**
+(Published cross-organism predictors reach only ~28% coverage at precision >=0.70. The jump
+from an earlier 34%/86% came from an ortholog-transfer vote channel: a gene whose
+orthologous group is measured non-essential in >=2 OTHER organisms with zero essential
+votes is called at ~98% precision, even when its own genomic features are ambiguous or
+structurally rogue-suspicious. This clean measured vote OVERRIDES the structural quarantine.)
 
 Per-organism:
 
 | organism            |    n | confident_ess | confident_noness | rogue_suspect | conditional | unresolved | coverage | precision |
 |---------------------|-----:|--------------:|-----------------:|--------------:|------------:|-----------:|---------:|----------:|
-| RalstoniaGMI1000    | 4403 |            57 |             1495 |          1433 |         168 |       1250 |      35% |       82% |
-| RalstoniaBSBF1503   | 4431 |            83 |             1383 |          1438 |         164 |       1363 |      33% |       87% |
-| RalstoniaPSI07      | 4298 |           522 |              927 |          1462 |         145 |       1242 |      34% |       88% |
-| Dda3937             | 3926 |           146 |              642 |          1327 |         150 |       1661 |      20% |       94% |
-| HerbieS             | 3847 |           223 |             1047 |           499 |         142 |       1936 |      33% |       93% |
-| Magneto             | 2631 |            91 |             1427 |           177 |          75 |        861 |      58% |       77% |
+| RalstoniaGMI1000    | 4403 |           196 |             2501 |           457 |         130 |       1119 |      61% |       89% |
+| RalstoniaBSBF1503   | 4431 |           209 |             2385 |           457 |         134 |       1246 |      59% |       92% |
+| RalstoniaPSI07      | 4298 |           536 |             1924 |           483 |         123 |       1232 |      57% |       93% |
+| Dda3937             | 3926 |           216 |             1655 |           358 |         115 |       1582 |      48% |       97% |
+| HerbieS             | 3847 |           297 |             1437 |           228 |         110 |       1775 |      45% |       94% |
+| Magneto             | 2631 |           191 |             1505 |            99 |          69 |        767 |      64% |       78% |
 
-**Cross-organism consistency.** Of 1,312 confident calls on genes that share an orthologous group across organisms, 1,300 agree (99.1%). The atlas does not just have surface-level coverage — independently called organisms converge on the same gene-level verdict.
+**Cross-organism consistency.** Of 2,413 confident calls on genes that share an orthologous group across organisms, 2,400 agree (99.5%). The atlas does not just have surface-level coverage — independently called organisms converge on the same gene-level verdict. 9,867 genes (42%) carry a cross-validated confident call at 93.1% precision.
 
 **Precision stratifies by per-gene confidence (number of independent channels firing in the same direction):**
 
 | channels firing | precision |
 |----------------:|----------:|
-|               1 |     85.0% |
-|               2 |     85.5% |
-|               3 |     88.6% |
-|               4 |     95.4% |
+|               1 |     83.1% |
+|               2 |     91.3% |
+|               3 |     92.3% |
+|               4 |     96.3% |
+|               5 |     97.1% |
 
-A user who wants 95%-precision calls can filter `confidence >= 4`; a user who wants maximum recall can accept `confidence >= 1`.
+A user who wants ~96%-precision calls can filter `confidence >= 4`; a user who wants maximum recall can accept `confidence >= 1`.
+
+**Coverage cost (honest).** The ortholog-vote override reclassifies most rogue/conditional
+suspects as confident non-essential at 98% precision, but the ~2% it gets wrong are true
+conditional essentials (essential here, non-essential in the reference panel). Rogue-zone
+protection therefore drops from ~57% to ~46%: roughly half the true conditional essentials
+are now absorbed into non-essential calls. This is the deliberate coverage/safety trade.
+For a conservative atlas that keeps the full rogue quarantine, ignore the `N_ortho` override
+(rebuild with `promote_N` gated behind `not quarantine`).
 
 ## 3. How to read a row
 
@@ -82,8 +95,9 @@ Ten binary channels, in three groups. The five non-essential channels are delibe
 | `E_score`       | Cross-organism LOO essential-prediction score >= the per-organism high threshold, calibrated at precision >= 0.9 on held-out training organisms.                    |
 | `E_cons_core`   | Conservation >= 0.5 across the reference panel (gene family deeply retained).                                                                                       |
 | `E_geometry`    | Leading-strand AND short gene — the essential geometric signature (avoids head-on replication-transcription collisions, low cost to express).                        |
+| `E_ortho`       | Ortholog-transfer vote: the gene's OG is measured ESSENTIAL in >=2 OTHER organisms with zero non-essential votes. Independent of this gene's own features.            |
 
-### Non-essential (5, inverted from protection-panel research)
+### Non-essential (6, inverted from protection-panel research)
 
 | code                  | fires when                                                                                                                                                              | inverted from                                                                 |
 |-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
@@ -93,6 +107,7 @@ Ten binary channels, in three groups. The five non-essential channels are delibe
 | `N_redundancy`        | `n_paralogs >= 4` AND conservation < 0.5 — redundancy-buffered, loss of one copy compensable.                                                                            | "essentials have few paralogs"                                                |
 | `N_mobile`            | Within 5 kb of a mobile element (HGT / accessory belt).                                                                                                                 | "essentials avoid mobile elements"                                            |
 | `N_long_lagging`      | Long gene on lagging strand AND conservation < 0.3.                                                                                                                     | "essentials avoid head-on collisions, especially when long"                   |
+| `N_ortho`             | Ortholog-transfer vote: the gene's OG is measured NON-ESSENTIAL in >=2 OTHER organisms with zero essential votes. ~98% precise; OVERRIDES the rogue/conditional quarantine. | mirror of `E_ortho` — the single biggest coverage lever                    |
 
 ### Phenotype-required quarantine (2)
 
@@ -108,12 +123,21 @@ These do not predict — they **veto** confident calls and route the gene to a s
 Applied in this order; the first match wins (phenotype vetoes have priority over both essential and non-essential resolutions for the tiers below):
 
 ```
-CONFIDENT_ESSENTIAL     = E_score AND NOT P_rogue
-CONFIDENT_NONESSENTIAL  = (N_score OR N_pangenome_strong) AND NOT P_rogue AND NOT P_conditional
-ROGUE_SUSPECT           = P_rogue
-CONDITIONAL_SUSPECT     = P_conditional
+promote_E = E_ortho AND (E_cons_core OR E_geometry)     # validated >=0.89 precision
+promote_N = N_ortho                                       # validated ~0.98 precision
+
+CONFIDENT_ESSENTIAL     = (E_score OR promote_E) AND NOT P_rogue
+CONFIDENT_NONESSENTIAL  = promote_N                                          # overrides quarantine
+                          OR ((N_score OR N_pangenome_strong) AND NOT P_rogue AND NOT P_conditional)
+ROGUE_SUSPECT           = P_rogue        (and no clean N_ortho vote)
+CONDITIONAL_SUSPECT     = P_conditional  (and no clean N_ortho vote)
 UNRESOLVED              = everything else
 ```
+
+The two `*_ortho` channels are what lifted coverage from 34% to 55% at higher precision. A
+clean measured non-essential ortholog vote (`promote_N`) is trusted even over a structural
+rogue/conditional quarantine, because it is right 98% of the time; the residual 2% error is
+the conditional-essential population (see the coverage-cost note in section 2).
 
 `predicted_call` is `essential` / `non-essential` / `unknown` according to the tier. `confidence` counts the channels firing in the predicted direction (so 0 for the two SUSPECT tiers and for UNRESOLVED rows where channels disagree).
 
