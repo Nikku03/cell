@@ -1,0 +1,22 @@
+{
+  "organism": "beril_RalstoniaGMI1000",
+  "contig": "NC_003295.1",
+  "length_bp": 3716413,
+  "n_cds_on_contig": 3473,
+  "oriC_Mb": 0.0,
+  "terC_Mb": 2.01,
+  "noness_total": 2001,
+  "ess_total": 1069,
+  "correlations_with_noness_density": {
+    "GC%": 0.065,
+    "GC skew |abs|": -0.141,
+    "essential density": -0.428,
+    "mobile-element": 0.065,
+    "paralog load": 0.143,
+    "low-conservation": 0.652,
+    "sister-absent": 0.054,
+    "head-on long": 0.225,
+    "quarantine\n(rogue+cond)": 0.222
+  },
+  "windows": 367
+}
