@@ -116,7 +116,11 @@ Two deployable artifacts follow from the negatives in §4.1, evaluated under two
 | brightness (confidence) ≥ 0.85 | 57% | 91.8% accuracy |
 | non-essential calls at P ≥ 0.90 | 74.5% | 90% |
 
-This is the project's headline: **78% of genes receive a confident call at 90% precision cross-clade, and the high-brightness 57% are 92% accurate** — the AlphaFold abstention paradigm operating end-to-end on data where ESM-2 cross-clade hit R@P30 = 0.000 on the rogue zone. Reproduced on a free-T4 JAX/Haiku run (`outputs/orphan/af_model.png`, `af_model_results.json`).
+This is the project's headline: **78% of genes receive a confident call at 90% precision cross-clade, and the high-brightness 57% are 92% accurate** — the AlphaFold abstention paradigm operating end-to-end on data where ESM-2 cross-clade hit R@P30 = 0.000 on the rogue zone.
+
+![Figure 2A. Learned-model headline: per-clade AUC, brightness calibration (predicted confidence vs actual accuracy), and prediction-vs-brightness scatter. Filtering to brightness >= 0.85 gives 92% accuracy on 57% of genes, cross-clade.](outputs/orphan/af_model.png)
+
+*Figure 2A.* Reproduced on a free-T4 JAX/Haiku run (`outputs/orphan/af_model_results.json`).
 
 **(B) Rule-based evidence-channel atlas — the explainable alternative.** For audit-trail use we assemble 10 evidence channels (3 positive-essential, 5 positive-non-essential including the only positive-dispensability signal not reducible to inverted conservation — within-species pangenome absence in sister strains — plus 2 ortholog-vote and dN/dS label-transfer channels) and 2 phenotype-required quarantine flags into a 5-tier system with explicit per-gene reason codes. This trades coverage for explainability and is evaluated **per-organism LOO**.
 
