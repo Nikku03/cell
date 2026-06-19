@@ -1,0 +1,22 @@
+{
+  "recycles_1": {
+    "mean_auc": 0.777,
+    "mean_ne_cov_p90": 0.429,
+    "per_clade": {
+      "pseudomonas": 0.737,
+      "ralstonia": 0.722,
+      "shewanella": 0.845,
+      "dickeya": 0.804
+    }
+  },
+  "recycles_3": {
+    "mean_auc": 0.772,
+    "mean_ne_cov_p90": 0.428,
+    "per_clade": {
+      "pseudomonas": 0.702,
+      "ralstonia": 0.74,
+      "shewanella": 0.844,
+      "dickeya": 0.8
+    }
+  }
+}
