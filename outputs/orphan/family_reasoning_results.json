@@ -1,0 +1,65 @@
+{
+  "n_genes": 23536,
+  "thresholds": {
+    "HI": 0.65,
+    "LO": 0.2
+  },
+  "statistical_coverage": 0.579,
+  "family_added": 0.086,
+  "combined_coverage": 0.665,
+  "combined_precision": 0.882,
+  "family_recovered_n": 2025,
+  "family_recovered_precision": 0.743,
+  "experiment_only_n": 7875,
+  "experiment_only_frac": 0.335,
+  "per_org": [
+    {
+      "org": "beril_RalstoniaGMI1000",
+      "residual_n": 1480,
+      "family_called": 256,
+      "family_call_frac": 0.173,
+      "family_call_precision": 0.75,
+      "residual_base_ess": 0.454
+    },
+    {
+      "org": "beril_RalstoniaBSBF1503",
+      "residual_n": 1592,
+      "family_called": 277,
+      "family_call_frac": 0.174,
+      "family_call_precision": 0.747,
+      "residual_base_ess": 0.418
+    },
+    {
+      "org": "beril_RalstoniaPSI07",
+      "residual_n": 1731,
+      "family_called": 354,
+      "family_call_frac": 0.205,
+      "family_call_precision": 0.788,
+      "residual_base_ess": 0.263
+    },
+    {
+      "org": "beril_Dda3937",
+      "residual_n": 2053,
+      "family_called": 502,
+      "family_call_frac": 0.245,
+      "family_call_precision": 0.749,
+      "residual_base_ess": 0.254
+    },
+    {
+      "org": "beril_HerbieS",
+      "residual_n": 2109,
+      "family_called": 485,
+      "family_call_frac": 0.23,
+      "family_call_precision": 0.728,
+      "residual_base_ess": 0.396
+    },
+    {
+      "org": "beril_Magneto",
+      "residual_n": 935,
+      "family_called": 151,
+      "family_call_frac": 0.161,
+      "family_call_precision": 0.642,
+      "residual_base_ess": 0.672
+    }
+  ]
+}
