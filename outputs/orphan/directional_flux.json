@@ -1,0 +1,13 @@
+{
+  "n_genes": 23781,
+  "single_auc": {
+    "breadth": 0.73,
+    "retention": 0.52,
+    "distant": 0.728,
+    "diminishing": 0.677,
+    "conservation": 0.85
+  },
+  "breadth_only_auc": 0.73,
+  "breadth_plus_retention_auc": 0.729,
+  "breadth_plus_flux_auc": 0.728
+}
