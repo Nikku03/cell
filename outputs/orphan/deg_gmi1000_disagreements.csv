@@ -1,0 +1,15 @@
+locus_tag,gene,product
+RS_RS21620,accC,acetyl-CoA carboxylase biotin carboxylase subunit
+RS_RS06070,rlmN,23S rRNA (adenine(2503)-C(2))-methyltransferase RlmN
+RS_RS23335,ptsP,phosphoenolpyruvate--protein phosphotransferase
+RS_RS23885,cheZ,protein phosphatase CheZ
+RS_RS10375,pnp,polyribonucleotide nucleotidyltransferase
+RS_RS17520,choW,choline ABC transporter permease subunit
+RS_RS17510,purU,formyltetrahydrofolate deformylase
+RS_RS06870,lplT,lysophospholipid transporter LplT
+RS_RS04510,aroA,3-phosphoshikimate 1-carboxyvinyltransferase
+RS_RS07080,rseP,RIP metalloprotease RseP
+RS_RS02805,moaC,cyclic pyranopterin monophosphate synthase MoaC
+RS_RS17450,fdhA,formaldehyde dehydrogenase%2C glutathione-independent
+RS_RS13205,dnaK,molecular chaperone DnaK
+RS_RS12955,trbB,P-type conjugative transfer ATPase TrbB

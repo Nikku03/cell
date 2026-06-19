@@ -1,0 +1,11 @@
+{
+  "deg_total_essential": 26619,
+  "deg_true_conditional": 2506,
+  "conditional_organisms_not_in_our_orthology": true,
+  "gmi1000_deg_essentials": 448,
+  "gmi1000_mapped": 206,
+  "gmi1000_in_both": 206,
+  "gmi1000_agreement": 0.932,
+  "gmi1000_disagreements": 14,
+  "note": "Independent-screen agreement on GMI1000 NAMED core essentials is high (93%); this is the conserved core, where screens agree. DEG conditional data is in pathogen organisms disjoint from our orthology -- using it requires ingesting those genomes."
+}
