@@ -6,37 +6,41 @@ A 6-organism, 23,536-gene atlas of bacterial gene-essentiality predictions. Each
 
 ## 2. Headline numbers
 
-**Atlas total: 23,536 genes across 6 organisms. 55% confident coverage at 90.7% precision.**
+**Atlas total: 23,536 genes across 6 organisms. 58% confident coverage at 90.3% precision.** (v4)
 (Published cross-organism predictors reach only ~28% coverage at precision >=0.70. The jump
 from an earlier 34%/86% came from an ortholog-transfer vote channel: a gene whose
 orthologous group is measured non-essential in >=2 OTHER organisms with zero essential
 votes is called at ~98% precision, even when its own genomic features are ambiguous or
-structurally rogue-suspicious. This clean measured vote OVERRIDES the structural quarantine.)
+structurally rogue-suspicious. This clean measured vote OVERRIDES the structural quarantine.
+v4 then added a dN/dS selection channel: strong purifying selection (dN/dS <= 0.10 vs sister
+orthologs) paired with conservation or an ortholog vote promotes a gene to confident
+essential. This grew the essential tier by ~580 calls, concentrated in the Ralstonia strains
+that have close sisters with many same-length orthologs.)
 
 Per-organism:
 
 | organism            |    n | confident_ess | confident_noness | rogue_suspect | conditional | unresolved | coverage | precision |
 |---------------------|-----:|--------------:|-----------------:|--------------:|------------:|-----------:|---------:|----------:|
-| RalstoniaGMI1000    | 4403 |           196 |             2501 |           457 |         130 |       1119 |      61% |       89% |
-| RalstoniaBSBF1503   | 4431 |           209 |             2385 |           457 |         134 |       1246 |      59% |       92% |
-| RalstoniaPSI07      | 4298 |           536 |             1924 |           483 |         123 |       1232 |      57% |       93% |
-| Dda3937             | 3926 |           216 |             1655 |           358 |         115 |       1582 |      48% |       97% |
-| HerbieS             | 3847 |           297 |             1437 |           228 |         110 |       1775 |      45% |       94% |
+| RalstoniaGMI1000    | 4403 |           422 |             2501 |           457 |         130 |        893 |      66% |       88% |
+| RalstoniaBSBF1503   | 4431 |           454 |             2385 |           457 |         134 |       1001 |      64% |       91% |
+| RalstoniaPSI07      | 4298 |           644 |             1923 |           483 |         123 |       1125 |      60% |       92% |
+| Dda3937             | 3926 |           218 |             1655 |           358 |         115 |       1580 |      48% |       97% |
+| HerbieS             | 3847 |           302 |             1436 |           228 |         110 |       1771 |      45% |       94% |
 | Magneto             | 2631 |           191 |             1505 |            99 |          69 |        767 |      64% |       78% |
 
-**Cross-organism consistency.** Of 2,413 confident calls on genes that share an orthologous group across organisms, 2,400 agree (99.5%). The atlas does not just have surface-level coverage — independently called organisms converge on the same gene-level verdict. 9,867 genes (42%) carry a cross-validated confident call at 93.1% precision.
+**Cross-organism consistency.** Of 2,584 confident calls on genes that share an orthologous group across organisms, 2,569 agree (99.4%). The atlas does not just have surface-level coverage — independently called organisms converge on the same gene-level verdict. 10,517 genes (45%) carry a cross-validated confident call at 92.5% precision.
 
 **Precision stratifies by per-gene confidence (number of independent channels firing in the same direction):**
 
 | channels firing | precision |
 |----------------:|----------:|
 |               1 |     83.1% |
-|               2 |     91.3% |
-|               3 |     92.3% |
-|               4 |     96.3% |
-|               5 |     97.1% |
+|               2 |     91.0% |
+|               3 |     91.2% |
+|               4 |     95.4% |
+|               5 |     97.3% |
 
-A user who wants ~96%-precision calls can filter `confidence >= 4`; a user who wants maximum recall can accept `confidence >= 1`.
+A user who wants ~95%-precision calls can filter `confidence >= 4`; a user who wants maximum recall can accept `confidence >= 1`.
 
 **Coverage cost (honest).** The ortholog-vote override reclassifies most rogue/conditional
 suspects as confident non-essential at 98% precision, but the ~2% it gets wrong are true
@@ -96,6 +100,7 @@ Ten binary channels, in three groups. The five non-essential channels are delibe
 | `E_cons_core`   | Conservation >= 0.5 across the reference panel (gene family deeply retained).                                                                                       |
 | `E_geometry`    | Leading-strand AND short gene — the essential geometric signature (avoids head-on replication-transcription collisions, low cost to express).                        |
 | `E_ortho`       | Ortholog-transfer vote: the gene's OG is measured ESSENTIAL in >=2 OTHER organisms with zero non-essential votes. Independent of this gene's own features.            |
+| `E_dnds`        | Strong purifying selection: dN/dS <= 0.10 vs the closest sister ortholog (synonymous rate dS > 0.01). Promotes to essential only when paired with E_cons_core or E_ortho. Sparse for distant-sister organisms (Dda3937/HerbieS/Magneto). |
 
 ### Non-essential (6, inverted from protection-panel research)
 
@@ -123,7 +128,8 @@ These do not predict — they **veto** confident calls and route the gene to a s
 Applied in this order; the first match wins (phenotype vetoes have priority over both essential and non-essential resolutions for the tiers below):
 
 ```
-promote_E = E_ortho AND (E_cons_core OR E_geometry)     # validated >=0.89 precision
+promote_E = (E_ortho AND (E_cons_core OR E_geometry))     # validated >=0.89 precision
+            OR (E_dnds AND (E_cons_core OR E_ortho))       # v4: dN/dS, ~0.85 precision
 promote_N = N_ortho                                       # validated ~0.98 precision
 
 CONFIDENT_ESSENTIAL     = (E_score OR promote_E) AND NOT P_rogue

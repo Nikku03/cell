@@ -1,83 +1,83 @@
 {
   "n_organisms": 6,
   "n_genes_total": 23536,
-  "confident_calls_total": 13052,
-  "overall_coverage": 0.555,
-  "overall_precision": 0.907,
+  "confident_calls_total": 13636,
+  "overall_coverage": 0.579,
+  "overall_precision": 0.903,
   "cross_org_consistency": {
-    "shared_ogs": 2413,
-    "agree": 2400,
-    "agree_frac": 0.995,
-    "cross_validated_calls": 9867
+    "shared_ogs": 2584,
+    "agree": 2569,
+    "agree_frac": 0.994,
+    "cross_validated_calls": 10517
   },
   "per_organism": {
     "beril_RalstoniaGMI1000": {
       "n": 4403,
       "tiers": {
-        "CONFIDENT_ESSENTIAL": 196,
+        "CONFIDENT_ESSENTIAL": 422,
         "CONFIDENT_NONESSENTIAL": 2501,
         "ROGUE_SUSPECT": 457,
         "CONDITIONAL_SUSPECT": 130,
-        "UNRESOLVED": 1119
+        "UNRESOLVED": 893
       },
-      "coverage": 0.613,
-      "precision_called": 0.887,
+      "coverage": 0.664,
+      "precision_called": 0.884,
       "rogue_total": 247,
       "rogue_protected": 114
     },
     "beril_RalstoniaBSBF1503": {
       "n": 4431,
       "tiers": {
-        "CONFIDENT_ESSENTIAL": 209,
+        "CONFIDENT_ESSENTIAL": 454,
         "CONFIDENT_NONESSENTIAL": 2385,
         "ROGUE_SUSPECT": 457,
         "CONDITIONAL_SUSPECT": 134,
-        "UNRESOLVED": 1246
+        "UNRESOLVED": 1001
       },
-      "coverage": 0.585,
-      "precision_called": 0.919,
+      "coverage": 0.641,
+      "precision_called": 0.913,
       "rogue_total": 223,
       "rogue_protected": 131
     },
     "beril_RalstoniaPSI07": {
       "n": 4298,
       "tiers": {
-        "CONFIDENT_ESSENTIAL": 536,
-        "CONFIDENT_NONESSENTIAL": 1924,
+        "CONFIDENT_ESSENTIAL": 644,
+        "CONFIDENT_NONESSENTIAL": 1923,
         "ROGUE_SUSPECT": 483,
         "CONDITIONAL_SUSPECT": 123,
-        "UNRESOLVED": 1232
+        "UNRESOLVED": 1125
       },
-      "coverage": 0.572,
-      "precision_called": 0.928,
+      "coverage": 0.597,
+      "precision_called": 0.919,
       "rogue_total": 139,
       "rogue_protected": 101
     },
     "beril_Dda3937": {
       "n": 3926,
       "tiers": {
-        "CONFIDENT_ESSENTIAL": 216,
+        "CONFIDENT_ESSENTIAL": 218,
         "CONFIDENT_NONESSENTIAL": 1655,
         "ROGUE_SUSPECT": 358,
         "CONDITIONAL_SUSPECT": 115,
-        "UNRESOLVED": 1582
+        "UNRESOLVED": 1580
       },
       "coverage": 0.477,
-      "precision_called": 0.971,
+      "precision_called": 0.97,
       "rogue_total": 68,
       "rogue_protected": 34
     },
     "beril_HerbieS": {
       "n": 3847,
       "tiers": {
-        "CONFIDENT_ESSENTIAL": 297,
-        "CONFIDENT_NONESSENTIAL": 1437,
+        "CONFIDENT_ESSENTIAL": 302,
+        "CONFIDENT_NONESSENTIAL": 1436,
         "ROGUE_SUSPECT": 228,
         "CONDITIONAL_SUSPECT": 110,
-        "UNRESOLVED": 1775
+        "UNRESOLVED": 1771
       },
-      "coverage": 0.451,
-      "precision_called": 0.941,
+      "coverage": 0.452,
+      "precision_called": 0.94,
       "rogue_total": 104,
       "rogue_protected": 33
     },

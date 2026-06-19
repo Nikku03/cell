@@ -120,6 +120,17 @@ votes = [ortho_vote(o, og) for o, og in zip(df.organism, df.og)]
 df["ovote_ess"] = [v[0] for v in votes]
 df["ovote_non"] = [v[1] for v in votes]
 
+# -- dN/dS selection signal (computed per org vs sister orthologs) --
+dnds_map = {}
+for org in BACT:
+    p = OUT / f"dnds_{org}.parquet"
+    if p.exists():
+        dd = pd.read_parquet(p)[["locus_tag","dnds","ds"]]
+        for lt, dn, ds in zip(dd.locus_tag, dd.dnds, dd.ds):
+            dnds_map[(org, lt)] = (dn, ds)
+df["dnds"] = [dnds_map.get((o,l),(np.nan,np.nan))[0] for o,l in zip(df.organism, df.locus_tag)]
+df["ds"]   = [dnds_map.get((o,l),(np.nan,np.nan))[1] for o,l in zip(df.organism, df.locus_tag)]
+
 def n_sisters_present(row):
     og = row["og"]; sis = SISTERS.get(row["organism"], [])
     if not og or not sis: return 0
@@ -173,6 +184,9 @@ def tier_gene(r):
     # ortholog-transfer vote (independent of this gene's own features)
     if r.ovote_ess >= 2 and r.ovote_non == 0: ev.append("E_ortho")
     if r.ovote_non >= 2 and r.ovote_ess == 0: ev.append("N_ortho")
+    # dN/dS selection signal (strong purifying selection -> essential-leaning)
+    if (not pd.isna(r.dnds)) and (not pd.isna(r.ds)) and r.ds > 0.01 and r.dnds <= 0.10:
+        ev.append("E_dnds")
     # phenotype-required flags
     p_rogue = (r.conservation < 0.1 and r.n_paralogs == 0
                and (r.max_sisters == 0 or r.sister_absent_count == 0))
@@ -190,7 +204,10 @@ def tier_gene(r):
     # v3 ortholog-transfer promotion (validated combos that hold precision >=0.85):
     #   essential : E_ortho with a second essential signal (E_cons or E_geometry)
     #   non-ess   : N_ortho alone (measured non-ess in >=2 sister orgs) -- 0.965
-    promote_E = ("E_ortho" in ev) and (("E_cons_core" in ev) or ("E_geometry" in ev))
+    #   + dN/dS: strong purifying selection paired with conservation or an
+    #     ortholog vote -> essential (validated ~0.85 precision on UNRESOLVED)
+    promote_E = (("E_ortho" in ev) and (("E_cons_core" in ev) or ("E_geometry" in ev))) \
+                or (("E_dnds" in ev) and (("E_cons_core" in ev) or ("E_ortho" in ev)))
     promote_N = ("N_ortho" in ev)
 
     if (has_E_call or promote_E) and not p_rogue:
@@ -296,7 +313,7 @@ for org in BACT:
     cols = ["locus_tag","product","tier","predicted_call","confidence","evidence",
             "essential","ess_score","noness_score","conservation","n_paralogs",
             "gene_len_aa","leading","mobile_dist_kb","n_sisters","max_sisters",
-            "ovote_ess","ovote_non","cross_validated"]
+            "ovote_ess","ovote_non","dnds","cross_validated"]
     g[cols].rename(columns={"essential":"measured_essential"}).to_csv(
         ATL / f"{org}.csv", index=False)
 
