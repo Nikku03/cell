@@ -1,0 +1,62 @@
+{
+  "n_genes": 10878,
+  "H1_protected_from_mutation": {
+    "metric": "ds",
+    "ess_median": 0.1844,
+    "noness_median": 0.1846,
+    "ratio": 0.999,
+    "cliffs_delta": 0.01,
+    "p_value": 0.38703135746126716
+  },
+  "H2a_dN": {
+    "metric": "dn",
+    "ess_median": 0.0228,
+    "noness_median": 0.0292,
+    "ratio": 0.782,
+    "cliffs_delta": -0.12,
+    "p_value": 2.607968207537894e-24
+  },
+  "H2b_dnds": {
+    "metric": "dnds",
+    "ess_median": 0.1387,
+    "noness_median": 0.1654,
+    "ratio": 0.839,
+    "cliffs_delta": -0.11,
+    "p_value": 1.3152996116263403e-20
+  },
+  "H3_paralogs": {
+    "metric": "n_paralogs",
+    "ess_median": 0.0,
+    "noness_median": 0.0,
+    "ratio": NaN,
+    "cliffs_delta": 0.134,
+    "p_value": 3.5358235156661424e-37
+  },
+  "verdict": "NOT protected from mutation (dS equal) and NOT resistant (dN/dS low = mutation-sensitive); essentials are protected by PURIFYING SELECTION (mutants die), with additional SYSTEM-level redundancy via paralogs.",
+  "per_org": {
+    "beril_RalstoniaGMI1000": {
+      "dS_ratio": 0.951,
+      "dnds_ratio": 0.756
+    },
+    "beril_RalstoniaBSBF1503": {
+      "dS_ratio": 0.935,
+      "dnds_ratio": 0.733
+    },
+    "beril_RalstoniaPSI07": {
+      "dS_ratio": 0.92,
+      "dnds_ratio": 0.69
+    },
+    "beril_Dda3937": {
+      "dS_ratio": 1.044,
+      "dnds_ratio": 0.77
+    },
+    "beril_HerbieS": {
+      "dS_ratio": 1.005,
+      "dnds_ratio": 0.742
+    },
+    "beril_Magneto": {
+      "dS_ratio": 0.969,
+      "dnds_ratio": 0.937
+    }
+  }
+}
