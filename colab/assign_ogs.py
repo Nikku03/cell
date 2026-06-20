@@ -19,6 +19,15 @@ def have_mmseqs():
     return shutil.which("mmseqs") is not None
 
 
+def _count_seqs(faa):
+    n = 0
+    with open(faa) as f:
+        for line in f:
+            if line.startswith(">"):
+                n += 1
+    return n
+
+
 def search_one(faa, reps, min_pident, min_qcov, threads):
     """Return list of (query, og_id, pident, qcov) best-hits for one proteome."""
     with tempfile.TemporaryDirectory() as td:
@@ -58,7 +67,15 @@ def main(proteomes, reps, out, min_pident, min_qcov, threads):
         w.writeheader()
         for faa in faas:
             org = faa.stem
-            hits = search_one(faa, reps, min_pident, min_qcov, threads)
+            n_seqs = _count_seqs(faa)
+            if n_seqs < 50:
+                print(f"    {org:<34s}   skip ({n_seqs} seqs - empty or truncated fetch)")
+                continue
+            try:
+                hits = search_one(faa, reps, min_pident, min_qcov, threads)
+            except subprocess.CalledProcessError as e:
+                print(f"    {org:<34s}   mmseqs failed (exit {e.returncode}) - skipped")
+                continue
             for q, og, pid in hits:
                 w.writerow(dict(organism=org, locus_tag=q, og_id=og, pident=round(pid, 1)))
             n_total += len(hits)
