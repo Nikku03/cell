@@ -1,0 +1,19 @@
+{
+  "rogue_essentials_atlas6": {
+    "n": 1047,
+    "median_family_breadth": 5,
+    "pct_true_orphan": 0.0,
+    "pct_broad_family_gt20": 0.284
+  },
+  "true_orphans_atlas6": {
+    "n": 13,
+    "pct_of_atlas": 0.0005,
+    "n_essential": 13
+  },
+  "true_orphans_all59orgs": {
+    "n": 31126,
+    "pct": 0.148,
+    "n_essential": 4415
+  },
+  "verdict": "Atlas residual is CONDITIONAL essentiality within known families (median family breadth 5 organisms), NOT orphans. Structure de-orphaning cannot make it predictable. 13 true orphans in the 6 atlas bacteria. 4,415 true-orphan essentials exist across the broader 59-org set -- a separate problem on separate organisms, where ESMFold+Foldseek WOULD apply."
+}
