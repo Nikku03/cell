@@ -1,0 +1,9 @@
+{
+  "n": 23503,
+  "physicochem_nn_auc": 0.68,
+  "conservation_auc": 0.857,
+  "rogue_n": 12061,
+  "rogue_physicochem_auc": 0.632,
+  "rogue_conservation_auc": 0.535,
+  "combined_auc": 0.865
+}
