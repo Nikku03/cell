@@ -51,34 +51,48 @@ def pred_logreg(model, X):
     return 1 / (1 + np.exp(-np.clip(Xs @ w, -30, 30)))
 
 
-def load_orthology(presence_npz=None):
+def load_orthology(labels_dir=None, presence_npz=None):
     """Build Y[O,G] essentiality, P[O,G] presence, plus index maps.
-    If presence_npz is given (build_presence.py output), use its larger
-    presence matrix for the cooccur partner search (essentiality stays from
-    labelled orgs only)."""
+
+    labels_dir:   directory of the driver CSVs. Point at the DEG-augmented dir
+                  to let DEG's extra LABELLED orgs sharpen the cooccur
+                  correlations (this is the real lever).
+    presence_npz: if given, align org/OG indexing + presence to it (lets
+                  presence-only genomes widen P). NOTE: every channel is gated
+                  on labelled positions, so presence-only orgs add ~0 here."""
+    labels_dir = Path(labels_dir) if labels_dir else (DATA / "labels")
     gene_og = {}; og_present = defaultdict(set)
-    for r in csv.DictReader(open(DATA / "labels" / "orthology_features.csv")):
+    for r in csv.DictReader(open(labels_dir / "orthology_features.csv")):
         if r["og_id"]:
             gene_og[(r["organism"], r["locus_tag"])] = r["og_id"]
             og_present[r["og_id"]].add(r["organism"])
     labels = {(r["organism"], r["locus_tag"]): int(r["essential"])
-              for r in csv.DictReader(open(DATA / "labels" / "labels.csv"))}
-    all_orgs = sorted({o for s in og_present.values() for o in s})
+              for r in csv.DictReader(open(labels_dir / "labels.csv"))}
+    if presence_npz:
+        Z = np.load(presence_npz, allow_pickle=True)
+        all_orgs = list(map(str, Z["all_orgs"])); all_ogs = list(map(str, Z["all_ogs"]))
+        P = Z["P"].astype(np.float32)
+    else:
+        all_orgs = sorted({o for s in og_present.values() for o in s})
+        all_ogs = sorted(og_present)
+        P = None
     org_idx = {o: i for i, o in enumerate(all_orgs)}
-    all_ogs = sorted(og_present); og_idx = {g: j for j, g in enumerate(all_ogs)}
+    og_idx = {g: j for j, g in enumerate(all_ogs)}
     O, G = len(all_orgs), len(all_ogs)
     Y = np.full((O, G), np.nan, np.float32)
     for (o, l), e in labels.items():
         g = gene_og.get((o, l))
-        if g:
+        if g in og_idx and o in org_idx:
             Y[org_idx[o], og_idx[g]] = e
-    P = np.zeros((O, G), np.float32)
-    for g, orgs_p in og_present.items():
-        j = og_idx[g]
-        for o in orgs_p:
-            P[org_idx[o], j] = 1.0
+    if P is None:
+        P = np.zeros((O, G), np.float32)
+        for g, orgs_p in og_present.items():
+            j = og_idx[g]
+            for o in orgs_p:
+                if o in org_idx:
+                    P[org_idx[o], j] = 1.0
     cofeat = {}
-    for r in csv.DictReader(open(DATA / "labels" / "cooccurrence_features.csv")):
+    for r in csv.DictReader(open(labels_dir / "cooccurrence_features.csv")):
         try:
             cofeat[(r["organism"], r["locus_tag"])] = float(r["cooccur_essential_neighbor_frac"])
         except Exception:
@@ -246,13 +260,13 @@ def evaluate(preds, X, y, meta, label=""):
     return res
 
 
-def main(presence_npz=None):
-    preds = dict(np.load(OUT / "af_torch_preds.npz", allow_pickle=True))
-    # attach focal cache (for dN/dS channel) + org names
-    from af_common import Cache
-    c = Cache()
+def main(presence_npz=None, cache_path=None, preds_path=None, out_tag="", labels_dir=None):
+    from af_common import Cache, CACHE
+    preds = dict(np.load(preds_path or (OUT / "af_torch_preds.npz"), allow_pickle=True))
+    # attach focal cache (for dN/dS channel) + org names; must match the preds run
+    c = Cache(cache_path or CACHE)
     preds["foc"] = c.foc; preds["orgs"] = np.array(c.orgs, dtype=object)
-    orth = load_orthology(presence_npz)
+    orth = load_orthology(labels_dir=labels_dir, presence_npz=presence_npz)
 
     out = {}
     for use_dnds, tag in [(True, "with_dnds"), (False, "no_dnds")]:
@@ -269,13 +283,18 @@ def main(presence_npz=None):
     dn = out["with_dnds"]["smart_combined"]["coverage"] - out["no_dnds"]["smart_combined"]["coverage"]
     out["dnds_marginal_coverage_pp"] = round(dn * 100, 2)
     print(f"\ndN/dS marginal coverage: {dn*100:+.2f}pp")
-    json.dump(out, open(OUT / "smart_cooccur_results.json", "w"), indent=2)
-    print("wrote smart_cooccur_results.json")
+    json.dump(out, open(OUT / f"smart_cooccur_results{out_tag}.json", "w"), indent=2)
+    print(f"wrote smart_cooccur_results{out_tag}.json")
     return out
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--presence_npz", default=None, help="optional expanded presence matrix")
+    ap.add_argument("--cache", default=None, help="alternate af_msa_cache npz (e.g. _aug)")
+    ap.add_argument("--preds", default=None, help="alternate af_torch_preds npz")
+    ap.add_argument("--labels_dir", default=None, help="augmented labels dir (DEG)")
+    ap.add_argument("--tag", default="", help="suffix for output json")
     a = ap.parse_args()
-    main(a.presence_npz)
+    main(a.presence_npz, cache_path=a.cache, preds_path=a.preds,
+         out_tag=a.tag, labels_dir=a.labels_dir)

@@ -139,10 +139,14 @@ class Trainer:
         return out_p, out_c
 
 
-def run_loco(cfg: AFConfig, save=True):
+def run_loco(cfg: AFConfig, save=True, cache_path=None, tag=""):
     """Leave-one-clade-out over the 5 major clades. Returns per-gene p,
-    brightness (nan where unevaluated) and the metrics dict."""
-    c = Cache()
+    brightness (nan where unevaluated) and the metrics dict.
+
+    cache_path: alternate af_msa_cache npz (e.g. the DEG-augmented one).
+    tag:        suffix for the output files (af_torch_results{tag}.json etc.)."""
+    from af_common import CACHE
+    c = Cache(cache_path or CACHE)
     tr = Trainer(c, cfg)
     N = c.N
     all_p = np.full(N, np.nan, np.float32); all_c = np.full(N, np.nan, np.float32)
@@ -182,10 +186,10 @@ def run_loco(cfg: AFConfig, save=True):
     res = dict(config=cfg.__dict__, per_clade=per_clade, pooled=pooled, seconds=round(dt, 1))
     if save:
         OUT.mkdir(parents=True, exist_ok=True)
-        json.dump(res, open(OUT / "af_torch_results.json", "w"), indent=2)
-        np.savez(OUT / "af_torch_preds.npz", p=all_p, brightness=all_c,
+        json.dump(res, open(OUT / f"af_torch_results{tag}.json", "w"), indent=2)
+        np.savez(OUT / f"af_torch_preds{tag}.npz", p=all_p, brightness=all_c,
                  y=c.y, clade=c.clade, meta_org=c.meta_org, lt=c.lt)
-        print("wrote af_torch_results.json + af_torch_preds.npz")
+        print(f"wrote af_torch_results{tag}.json + af_torch_preds{tag}.npz")
     return all_p, all_c, res
 
 
@@ -193,6 +197,8 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--big", action="store_true", help="multi-head, deeper (uses the A100)")
     ap.add_argument("--epochs", type=int, default=None)
+    ap.add_argument("--cache", default=None, help="alternate af_msa_cache npz")
+    ap.add_argument("--tag", default="", help="suffix for output files (e.g. _aug)")
     a = ap.parse_args()
     cfg = AFConfig()
     if a.big:
@@ -200,4 +206,4 @@ if __name__ == "__main__":
     if a.epochs:
         cfg.epochs = a.epochs
     print(f"device={cfg.device} config={cfg}")
-    run_loco(cfg)
+    run_loco(cfg, cache_path=a.cache, tag=a.tag)

@@ -22,6 +22,22 @@ python colab/thesis_loop.py             # 4. splice results into CAPSTONE_PAPER.
 | `active_learning.py` | leave-one-clade-out AL simulation; reveal held-clade labels by random / uncertainty / low-brightness; AUC-vs-labels curves | `active_learning_results.json`, `.png` |
 | `build_presence.py` | materialise the OG presence matrix; optional `--extra_presence_csv` to union OG-assigned extra genomes | `presence_matrix.npz` |
 | `thesis_loop.py` | render results table + splice into `CAPSTONE_PAPER.md` between AUTOGEN markers | `RESULTS_AUTOGEN.md` |
+| `fetch_proteomes.py` | NCBI efetch (fasta_cds_aa) for DEG / GTDB genomes; stdlib only | `work/proteomes/*.faa`, `*.genes.csv`, `deg_manifest.csv` |
+| `assign_ogs.py` | mmseqs2 easy-search proteomes vs `og_reps.faa`; best-hit OG per gene | `work/og_assignments.csv` |
+| `integrate_deg.py` | match DEG-essential gene names to proteomes, append DEG orgs to the driver CSVs (with match-rate report + drop filter) | `data/drive_import/labels_aug/` |
+| `build_cache.py` | parameterised, bit-faithful rebuild of `af_msa_cache.npz` from any labels dir | `af_msa_cache_aug.npz` |
+
+## Scaling up ("cover all species") — path A vs B
+
+- **Path A (DEG labels) — the real lever.** Adds ~40 labelled organisms (new
+  clades + more orgs in existing clades). Run notebook section 7. The cache is
+  rebuilt by *appending rows to three CSVs* — `build_cache.py` reproduces the
+  original cache bit-for-bit, so the augmentation is the only change.
+- **Path B (GTDB presence-only) — structurally a no-op here.** Every cooccur
+  channel is gated on *labelled* organisms; presence-only genomes are excluded
+  from all correlations, and `phyl` is prebuilt. So more genomes ≠ more signal
+  under the current design. The fetch/assign/presence scripts exist for a future
+  redesign (phyletic-profile partner search), but today **C collapses to A.**
 
 ## Design notes
 
