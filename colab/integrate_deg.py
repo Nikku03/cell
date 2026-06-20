@@ -53,7 +53,8 @@ def norm_name(g):
     return (g or "").strip().lower()
 
 
-def main(work, deg_dir, src_dir, out_dir, min_match, min_pident, min_assigned):
+def main(work, deg_dir, src_dir, out_dir, min_match, min_pident, min_assigned,
+         min_ess_rate, max_ess_rate):
     work = Path(work); deg_dir = Path(deg_dir); src_dir = Path(src_dir); out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -115,12 +116,20 @@ def main(work, deg_dir, src_dir, out_dir, min_match, min_pident, min_assigned):
             rows_o.append(dict(organism=org, locus_tag=lt, og_id=og,
                                n_paralogs_in_genome=og_count[og] - 1))
         match_rate = len(matched_ess) / max(1, len(ess_names))
+        ess_rate = sum(r["essential"] for r in rows_l) / len(rows_l)
         if match_rate < min_match:
-            report.append((org, len(pairs), len(matched_ess), match_rate, "skip:low_match"))
+            report.append((org, len(pairs), len(matched_ess), match_rate,
+                           f"skip:low_match ess={ess_rate:.2f}"))
+            continue
+        # incomplete DEG datasets (a handful of curated essentials, not a
+        # genome-wide screen) produce absurd ess rates -> their implied
+        # 'everything else is non-essential' poisons training. Drop them.
+        if not (min_ess_rate <= ess_rate <= max_ess_rate):
+            report.append((org, len(pairs), len(matched_ess), match_rate,
+                           f"skip:ess_rate_out_of_band ess={ess_rate:.2f}"))
             continue
         add_labels += rows_l; add_orth += rows_o
         add_clade.append(dict(organism=org, clade=clade_for(org_species.get(org, org))))
-        ess_rate = sum(r["essential"] for r in rows_l) / len(rows_l)
         report.append((org, len(pairs), len(matched_ess), match_rate,
                        f"KEEP clade={add_clade[-1]['clade']} ess={ess_rate:.2f}"))
 
@@ -171,5 +180,10 @@ if __name__ == "__main__":
                     help="min mmseqs %identity to accept an OG assignment")
     ap.add_argument("--min_assigned", type=int, default=500,
                     help="min OG-assigned genes for an org to be usable")
+    ap.add_argument("--min_ess_rate", type=float, default=0.05,
+                    help="drop datasets below this essentiality rate (incomplete screens)")
+    ap.add_argument("--max_ess_rate", type=float, default=0.50,
+                    help="drop datasets above this essentiality rate (suspicious)")
     a = ap.parse_args()
-    main(a.work, a.deg_dir, a.src_dir, a.out_dir, a.min_match, a.min_pident, a.min_assigned)
+    main(a.work, a.deg_dir, a.src_dir, a.out_dir, a.min_match, a.min_pident,
+         a.min_assigned, a.min_ess_rate, a.max_ess_rate)
