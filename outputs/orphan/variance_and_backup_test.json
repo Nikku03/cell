@@ -1,0 +1,35 @@
+{
+  "variance_flag": {
+    "n": 21862,
+    "auc_predicting_family_disagreement": 0.781,
+    "top10pct_variance_lift": 2.66,
+    "majority_vote_auc": 0.905,
+    "majority_plus_variance_auc": 0.905,
+    "variance_coef_standardized": 0.233
+  },
+  "backup_mining": {
+    "target_ogs_searched": 500,
+    "candidate_backup_ogs": 5721,
+    "predictions_made": 1797,
+    "accuracy": 0.732,
+    "base_rate": 0.413,
+    "high_conf_thresholds": {
+      "0.5": {
+        "n": 1579,
+        "acc": 0.752
+      },
+      "0.6": {
+        "n": 1235,
+        "acc": 0.766
+      },
+      "0.7": {
+        "n": 738,
+        "acc": 0.782
+      },
+      "0.8": {
+        "n": 408,
+        "acc": 0.784
+      }
+    }
+  }
+}

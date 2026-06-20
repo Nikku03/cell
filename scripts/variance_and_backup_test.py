@@ -1,17 +1,15 @@
-"""Test two literature-driven moves cheaply, sandbox-only:
+"""Vectorized test of two literature-driven moves (sandbox, no GPU/network):
 
-  (A) ESSENTIALITY-VARIANCE FLAG: per OG, compute the variance of measured
-      essentiality across labeled organisms. High-variance families are
-      context-dependent; the feature predicts UNPREDICTABILITY (= which
-      genes to abstain on). Leak-free: variance computed from OTHER orgs.
+  (A) ESSENTIALITY-VARIANCE FLAG: per OG, std of essentiality across labeled
+      orgs (LOO-org, leak-free). Predicts which genes will disagree with their
+      family majority -- = which genes the atlas should abstain on.
 
-  (B) PAN-GENOME BACKUP MINING: for each gene, find candidate backups -- OGs
-      whose PRESENCE is anti-correlated with our gene's essentiality across
-      strains. If gene X is essential exactly in the strains lacking gene Y,
-      Y is X's backup, and we can predict X's essentiality FROM Y's presence.
+  (B) PAN-GENOME BACKUP MINING (Rosconi 2022 frame): for each test OG with
+      variable essentiality, find the backup OG whose presence is most
+      anti-correlated with its essentiality across organisms. Predict held-out
+      essentiality from backup presence.
 
-For each: leave-one-organism-out, measure AUC + abstention precision.
-Output: outputs/orphan/variance_and_backup_test.json
+Both vectorized via numpy presence/essentiality matrices.
 """
 import csv, json
 from pathlib import Path
@@ -23,180 +21,171 @@ OUT  = Path("/home/user/cell/outputs/orphan")
 ORGS = ["beril_RalstoniaGMI1000","beril_RalstoniaBSBF1503","beril_RalstoniaPSI07",
         "beril_Dda3937","beril_HerbieS","beril_Magneto"]
 
-# gene -> og ; og -> {org: essentiality} ; og -> set of orgs present
-gene_og={}; og_org_ess=defaultdict(dict); og_present=defaultdict(set)
+# --- load orthology + labels ---
+gene_og={}; og_present=defaultdict(set)
 for r in csv.DictReader(open(DATA/"labels"/"orthology_features.csv")):
     if r["og_id"]:
         gene_og[(r["organism"],r["locus_tag"])]=r["og_id"]
         og_present[r["og_id"]].add(r["organism"])
 labels={(r["organism"],r["locus_tag"]):int(r["essential"])
         for r in csv.DictReader(open(DATA/"labels"/"labels.csv"))}
-for (o,l),e in labels.items():
-    og=gene_og.get((o,l))
-    if og: og_org_ess[og][o]=e
+
 all_orgs=sorted({o for og in og_present.values() for o in og})
-print(f"labeled orgs in orthology: {len(all_orgs)}; OGs with >=1 labeled member: {len(og_org_ess)}")
+O=len(all_orgs); org_idx={o:i for i,o in enumerate(all_orgs)}
+all_ogs=sorted(og_present)
+G=len(all_ogs); og_idx={og:j for j,og in enumerate(all_ogs)}
+print(f"orgs={O}, OGs={G}")
 
-# Build per-gene set used by both tests
-rows=[]
+# essentiality matrix Y[O,G]: 0/1 if labeled, NaN if not
+Y=np.full((O,G), np.nan, np.float32)
 for (o,l),e in labels.items():
     og=gene_og.get((o,l))
-    if not og or o not in ORGS: continue
-    rows.append(dict(org=o, lt=l, ess=e, og=og))
-print(f"atlas-6 genes with OG: {len(rows)}")
+    if og: Y[org_idx[o], og_idx[og]] = e
+# presence matrix P[O,G]: 1 if org has the OG, 0 otherwise
+P=np.zeros((O,G), np.float32)
+for og,orgs_p in og_present.items():
+    j=og_idx[og]
+    for o in orgs_p: P[org_idx[o],j]=1.0
+print(f"essentiality entries: {int((~np.isnan(Y)).sum()):,}; presence-1 entries: {int(P.sum()):,}")
 
-# ---------------------- (A) ESSENTIALITY-VARIANCE FLAG ----------------------
 def auc(s,y):
     y=np.asarray(y); n1=y.sum(); n0=len(y)-n1
     if n1==0 or n0==0: return float("nan")
     r=np.argsort(np.argsort(s))+1; return float((r[y==1].sum()-n1*(n1+1)/2)/(n1*n0))
 
-def variance_feature(held):
-    """OG -> std of essentiality across labeled orgs EXCEPT the held org."""
-    out={}
-    for og,d in og_org_ess.items():
-        vals=[v for o,v in d.items() if o!=held]
-        if len(vals)>=3: out[og]=float(np.std(vals))
-    return out
-
-# predict UNPREDICTABILITY = |pred - actual| would be high.
-# Operational: identify genes that DISAGREE with the family majority -- those are
-# the context-flipping ones. variance flag should be enriched in disagreers.
+# ---------------------- (A) VARIANCE FLAG ----------------------
 print("\n=== (A) essentiality-variance flag ===")
-disagrees=[]; var_flag=[]; ess=[]
-for row in rows:
-    vmap = variance_feature(row["org"])
-    v = vmap.get(row["og"], np.nan)
-    if np.isnan(v): continue
-    family_ess=og_org_ess[row["og"]]
-    # family majority (excluding held org)
-    others=[v2 for o2,v2 in family_ess.items() if o2!=row["org"]]
-    if len(others)<3: continue
-    fam_majority = 1 if np.mean(others)>=0.5 else 0
-    disagree = int(row["ess"]!=fam_majority)
-    disagrees.append(disagree); var_flag.append(v); ess.append(row["ess"])
-disagrees=np.array(disagrees); var_flag=np.array(var_flag); ess=np.array(ess)
-n=len(disagrees); n_dis=disagrees.sum()
-print(f"  n={n}, family-majority disagreers: {n_dis} ({n_dis/n:.1%})")
-print(f"  AUC of variance-flag predicting disagreement: {auc(var_flag, disagrees):.3f}")
-print(f"     (i.e. can we predict which genes will buck their family?)")
-# precision in the top-decile by variance
-o=np.argsort(-var_flag); k=int(0.1*n)
-print(f"  top-10% by variance: disagreement rate {disagrees[o][:k].mean():.3f} vs base {n_dis/n:.3f} "
-      f"({disagrees[o][:k].mean()/(n_dis/n):.2f}x lift)")
-# does variance flag improve essentiality prediction when COMBINED w/ majority vote?
-maj_vote=[]; vf=[]; y=[]
-for row in rows:
-    family_ess=og_org_ess[row["og"]]
-    others=[v2 for o2,v2 in family_ess.items() if o2!=row["org"]]
-    if len(others)<3: continue
-    maj_vote.append(np.mean(others))   # = family_frac
-    v=variance_feature(row["org"]).get(row["og"], 0.0)
-    vf.append(v); y.append(row["ess"])
-maj_vote=np.array(maj_vote); vf=np.array(vf); y=np.array(y)
-# logistic of [majority, -variance]: penalize high variance (less confident)
-mu0,sd0=maj_vote.mean(),maj_vote.std()+1e-9
-mu1,sd1=vf.mean(),vf.std()+1e-9
-Z=np.c_[np.ones(len(y)),(maj_vote-mu0)/sd0,(vf-mu1)/sd1]
-w=np.zeros(Z.shape[1])
+# Per OG: vector of essentialities across orgs (NaN where unlabeled)
+# variance excluding org i = std of Y[~i, j] over non-NaN entries
+# Compute once per held-org via vectorized masking
+results=[]
+for held in ORGS:
+    hi=org_idx[held]
+    mask=np.ones(O, bool); mask[hi]=False
+    Y_tr=Y[mask]                # [O-1, G]
+    # per OG: count + sum
+    valid=~np.isnan(Y_tr)
+    n=valid.sum(0)              # [G]
+    s=np.where(valid, Y_tr, 0).sum(0)
+    s2=np.where(valid, Y_tr*Y_tr, 0).sum(0)
+    mean = np.where(n>0, s/np.maximum(n,1), 0)
+    var  = np.where(n>0, s2/np.maximum(n,1) - mean**2, 0)
+    std  = np.sqrt(np.maximum(var,0))
+    maj  = (mean>=0.5).astype(np.float32)
+    # for genes in held organism with labels, look up
+    for (o,l),e in labels.items():
+        if o!=held: continue
+        og=gene_og.get((o,l))
+        if og is None: continue
+        j=og_idx[og]
+        if n[j]<3: continue
+        results.append((std[j], float(maj[j]), float(mean[j]), e))
+results=np.array(results)
+stds=results[:,0]; majs=results[:,1]; means=results[:,2]; ys=results[:,3].astype(int)
+disagrees=(ys!=majs.astype(int)).astype(int)
+n_total=len(ys); n_dis=disagrees.sum()
+print(f"  atlas-6 genes with family-majority computable: {n_total}, disagreers: {n_dis} ({n_dis/n_total:.1%})")
+print(f"  AUC of variance-flag predicting disagreement: {auc(stds, disagrees):.3f}")
+o=np.argsort(-stds); k=int(0.1*n_total)
+top10_lift=disagrees[o][:k].mean()/(n_dis/n_total)
+print(f"  top-10% by variance: disagreement rate {disagrees[o][:k].mean():.3f} (lift {top10_lift:.2f}x)")
+# combined with majority
+Z=np.c_[np.ones(n_total), (means-means.mean())/(means.std()+1e-9), (stds-stds.mean())/(stds.std()+1e-9)]
+w=np.zeros(3); yf=ys.astype(float)
 for _ in range(400):
-    p=1/(1+np.exp(-Z@w)); g=Z.T@(p-y.astype(float))/len(y); w-=0.5*g
-print(f"  majority-vote AUC: {auc(maj_vote, y):.3f}")
-print(f"  majority + variance combined AUC: {auc(1/(1+np.exp(-Z@w)), y):.3f}")
-print(f"  variance coefficient (standardized): {w[2]:+.3f}  (negative = high variance lowers conf)")
+    p=1/(1+np.exp(-Z@w)); g=Z.T@(p-yf)/n_total; w-=0.5*g
+auc_maj=auc(means, ys); auc_combo=auc(1/(1+np.exp(-Z@w)), ys)
+print(f"  majority-vote (mean) AUC: {auc_maj:.3f}")
+print(f"  majority + variance combined AUC: {auc_combo:.3f}  (variance coef {w[2]:+.3f})")
 
 # ---------------------- (B) PAN-GENOME BACKUP MINING ----------------------
 print("\n=== (B) pan-genome backup mining ===")
-# For each test OG, find a CANDIDATE BACKUP: another OG whose PRESENCE pattern
-# (across labeled organisms) is anti-correlated with the test OG's ESSENTIALITY pattern.
-# Anti-corr: OG_X is essential IFF backup_Y is ABSENT.
-# Leak-clean: training uses only OTHER organisms; predict held org's essentiality
-# = (1 - present(held, backup)).
+# Find target OGs with variable essentiality (>=10 labeled orgs, mean in 0.1-0.9)
+n_lab=(~np.isnan(Y)).sum(0)            # [G]
+mean_ess=np.nanmean(Y, axis=0)
+target_mask = (n_lab>=10) & (mean_ess>0.1) & (mean_ess<0.9)
+target_idx=np.where(target_mask)[0]
+print(f"  target OGs (>=10 labeled, variable ess): {len(target_idx)}")
+# Restrict candidate backups to OGs present in 5-43 orgs (informative variation)
+p_sum=P.sum(0)
+cand_mask = (p_sum>=5) & (p_sum<=O-5)
+cand_idx=np.where(cand_mask)[0]
+print(f"  candidate backups (informative presence variation): {len(cand_idx)}")
+# Standardize P columns once
+Pc=P[:,cand_idx] - P[:,cand_idx].mean(0)
+Pc_std=Pc.std(0)+1e-9
+Pn=Pc/Pc_std                            # [O, n_cand]
 
-# Build presence matrix per organism (which OGs are present)
-present_by_org={o:set() for o in all_orgs}
-for og,orgs_p in og_present.items():
-    for o in orgs_p: present_by_org[o].add(og)
-# binary essentiality matrix per (og,org) only where labeled
-ess_dict={(og,o):v for og,d in og_org_ess.items() for o,v in d.items()}
+results_b=[]
+import random; random.seed(0)
+sample_targets=random.sample(list(target_idx), min(500, len(target_idx)))
+print(f"  vectorized search over {len(sample_targets)} targets x {len(cand_idx)} candidates ...")
 
-# Find candidate backups for OGs with sufficient essentiality variance
-candidates={}
-ess_vec_cache={}
-def vec(og, orgs_subset):
-    if (og,tuple(orgs_subset)) in ess_vec_cache: return ess_vec_cache[(og,tuple(orgs_subset))]
-    out=np.array([ess_dict.get((og,o),-1) for o in orgs_subset])
-    ess_vec_cache[(og,tuple(orgs_subset))]=out
-    return out
-
-# Restrict search: OGs with enough variance and enough labeled orgs (>=10)
-target_ogs=[og for og,d in og_org_ess.items() if len(d)>=10 and 0.1<np.mean(list(d.values()))<0.9]
-print(f"  candidate target OGs (variable essentiality, >=10 labeled orgs): {len(target_ogs)}")
-
-# Build a presence vector per OG over the labeled orgs (cheap)
-# anti-correlation: high score when essential(target,org)=1 AND absent(backup,org)=0
-# Cap search per target to top-100 backup candidates by negative pearson
-def best_backup(target_og, train_orgs):
-    e_target = np.array([ess_dict.get((target_og,o),-1) for o in train_orgs], float)
-    mask = e_target>=0
-    if mask.sum()<5: return None,0.0
-    et=e_target[mask]
-    if et.std()<0.1: return None,0.0
-    best=None; best_score=-1
-    # Iterate over candidate OGs that have at least some presence variation
-    for cand,orgs_with in og_present.items():
-        if cand==target_og: continue
-        present_vec=np.array([1.0 if o in orgs_with else 0.0 for o in train_orgs])[mask]
-        if present_vec.std()<0.1: continue
-        # anti-correlation: when target ess high, backup absent (low)
-        corr = -np.corrcoef(et, present_vec)[0,1]
-        if corr>best_score:
-            best_score=corr; best=cand
-    return best, best_score
-
-# Run on a small sample (full search is O(target_ogs * all_OGs) which is slow)
-import random
-random.seed(0)
-sample = random.sample(target_ogs, min(200, len(target_ogs)))
-predictions=[]; truths=[]; corrs=[]
 for held in ORGS:
-    train_orgs=[o for o in all_orgs if o!=held]
-    for og in sample:
-        if og not in og_org_ess: continue
-        truth=og_org_ess[og].get(held)
-        if truth is None: continue
-        backup,score=best_backup(og, train_orgs)
-        if backup is None or score<0.4: continue   # require non-trivial anti-corr
-        # predict: essential iff backup ABSENT in held
-        pred_ess = 1 if (held not in og_present[backup]) else 0
-        predictions.append(pred_ess); truths.append(truth); corrs.append(score)
-predictions=np.array(predictions); truths=np.array(truths); corrs=np.array(corrs)
-print(f"  predictions made (anti-corr>=0.4): {len(predictions)}")
-if len(predictions):
-    acc=(predictions==truths).mean()
-    print(f"  backup-mining accuracy: {acc:.3f} (base rate {truths.mean():.3f})")
-    # high-confidence subset (anti-corr >= 0.7)
-    hi=corrs>=0.7
-    if hi.sum()>=20:
-        print(f"  high-confidence (anti-corr>=0.7, n={hi.sum()}): acc {(predictions[hi]==truths[hi]).mean():.3f}")
-    print(f"  mean anti-corr score: {corrs.mean():.3f}")
+    hi=org_idx[held]; mask=np.ones(O, bool); mask[hi]=False
+    Pn_tr=Pn[mask]                       # [O-1, n_cand]
+    n_tr=mask.sum()
+    for j in sample_targets:
+        e_full=Y[:,j]
+        # exclude held org
+        e_tr=e_full[mask]
+        valid=~np.isnan(e_tr)
+        if valid.sum()<8: continue
+        et=e_tr[valid]
+        if et.std()<0.1: continue
+        et_z=(et-et.mean())/(et.std()+1e-9)
+        # anti-correlation = -pearson( et_z, presence_z ) = -dot/n_valid
+        # Pn_tr[valid] : [n_valid, n_cand]
+        Pv=Pn_tr[valid]
+        # to get true pearson with the SUBSAMPLE we need to re-standardize Pv
+        Pv_c = Pv - Pv.mean(0)
+        Pv_std = Pv_c.std(0)+1e-9
+        Pv_z = Pv_c/Pv_std
+        corr = (et_z @ Pv_z) / len(et_z)   # [n_cand]
+        anticorr = -corr
+        best_pos = int(np.argmax(anticorr))
+        score = float(anticorr[best_pos])
+        if score < 0.4: continue
+        backup_og = all_ogs[cand_idx[best_pos]]
+        # predict: essential iff backup absent in held
+        backup_present_held = int(P[hi, cand_idx[best_pos]]==1.0)
+        pred_ess = 1 - backup_present_held
+        truth = e_full[hi]
+        if np.isnan(truth): continue
+        results_b.append((pred_ess, int(truth), score))
+
+if results_b:
+    R=np.array(results_b)
+    pr=R[:,0].astype(int); tr=R[:,1].astype(int); sc=R[:,2]
+    acc=(pr==tr).mean(); base=tr.mean()
+    print(f"  predictions made (anti-corr>=0.4): {len(R)}")
+    print(f"  backup-mining accuracy: {acc:.3f}  (base rate {base:.3f})")
+    print(f"  mean anti-corr score: {sc.mean():.3f}")
+    for thr in (0.5, 0.6, 0.7, 0.8):
+        m=sc>=thr
+        if m.sum()>=20:
+            print(f"  anti-corr>={thr}: n={m.sum()} accuracy={(pr[m]==tr[m]).mean():.3f}  ess-rate-truth={tr[m].mean():.2f}")
 else:
-    print("  no qualifying backup predictions")
+    print("  no qualifying predictions"); acc=base=float("nan")
 
 json.dump(dict(
   variance_flag=dict(
-    auc_predicting_family_disagreement=round(auc(var_flag,disagrees),3),
-    top10pct_variance_lift=round(disagrees[o][:k].mean()/(n_dis/n),2),
-    majority_vote_auc=round(auc(maj_vote,y),3),
-    majority_plus_variance_auc=round(auc(1/(1+np.exp(-Z@w)),y),3),
+    n=int(n_total),
+    auc_predicting_family_disagreement=round(auc(stds,disagrees),3),
+    top10pct_variance_lift=round(top10_lift,2),
+    majority_vote_auc=round(auc_maj,3),
+    majority_plus_variance_auc=round(auc_combo,3),
     variance_coef_standardized=round(float(w[2]),3)),
   backup_mining=dict(
-    target_ogs_searched=len(sample),
-    predictions_made=int(len(predictions)),
-    accuracy=round(float((predictions==truths).mean()),3) if len(predictions) else None,
-    base_rate=round(float(truths.mean()),3) if len(predictions) else None,
-    high_conf_n=int((corrs>=0.7).sum()) if len(predictions) else 0,
-    high_conf_acc=round(float((predictions[corrs>=0.7]==truths[corrs>=0.7]).mean()),3) if (len(predictions) and (corrs>=0.7).sum()>=20) else None,
-    mean_anti_corr=round(float(corrs.mean()),3) if len(predictions) else None),
+    target_ogs_searched=len(sample_targets),
+    candidate_backup_ogs=int(cand_mask.sum()),
+    predictions_made=int(len(results_b)),
+    accuracy=round(float((np.array(results_b)[:,0]==np.array(results_b)[:,1]).mean()),3) if results_b else None,
+    base_rate=round(float(np.array(results_b)[:,1].mean()),3) if results_b else None,
+    high_conf_thresholds={
+      str(t): {"n": int((np.array(results_b)[:,2]>=t).sum()),
+               "acc": round(float((np.array(results_b)[(np.array(results_b)[:,2]>=t),0]==np.array(results_b)[(np.array(results_b)[:,2]>=t),1]).mean()),3)
+                     if (np.array(results_b)[:,2]>=t).sum()>=20 else None}
+      for t in (0.5,0.6,0.7,0.8)} if results_b else {})
 ), open(OUT/"variance_and_backup_test.json","w"), indent=2)
 print("\nwrote variance_and_backup_test.json")
