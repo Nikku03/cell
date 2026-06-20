@@ -198,8 +198,12 @@ def channel_features(preds, orth, use_dnds=True):
     return np.array(feats, np.float32), np.array(ys, np.float32), meta
 
 
-def evaluate(preds, X, y, meta, label=""):
-    """Cross-clade stacker fit + threshold selection to a precision floor."""
+def evaluate(preds, X, y, meta, label="", fit_fn=None, pred_fn=None):
+    """Cross-clade stacker fit + threshold selection to a precision floor.
+    fit_fn/pred_fn default to the logistic stacker; pass GBM for the nonlinear
+    rescue that wins on label-rich (DEG-augmented) data."""
+    fit_fn = fit_fn or fit_logreg
+    pred_fn = pred_fn or pred_logreg
     p_all = preds["p"]; br_all = preds["brightness"]; y_all = preds["y"]; clade = preds["clade"]
     clades = np.array([m[0] for m in meta])
 
@@ -210,14 +214,15 @@ def evaluate(preds, X, y, meta, label=""):
     T_correct = int(((p_all[hi] > 0.5).astype(int) == y_all[hi]).sum())
     N_pooled = int(ev.sum())
 
-    # cross-clade stacker predictions over the abstained pool
+    # cross-clade stacker predictions over the abstained pool (iterate the clades
+    # actually present, so --all_clades runs score new clades too)
     stack_p = np.zeros(len(y))
-    for cl in MAJOR_CLADES:
+    for cl in np.unique(clades):
         te = clades == cl; trn = ~te
         if te.sum() == 0 or trn.sum() < 50:
             continue
-        model = fit_logreg(X[trn], y[trn])
-        stack_p[te] = pred_logreg(model, X[te])
+        model = fit_fn(X[trn], y[trn])
+        stack_p[te] = pred_fn(model, X[te])
     conf = np.maximum(stack_p, 1 - stack_p)
     call = (stack_p >= 0.5).astype(int)
     correct = (call == y).astype(int)
@@ -260,19 +265,35 @@ def evaluate(preds, X, y, meta, label=""):
     return res
 
 
-def main(presence_npz=None, cache_path=None, preds_path=None, out_tag="", labels_dir=None):
+def get_model(name):
+    """Return (fit_fn, pred_fn) for the rescue stacker."""
+    if name == "logistic":
+        return fit_logreg, pred_logreg
+    if name == "gbm":
+        from rescue_models import fit_gbm, pred_gbm
+        return fit_gbm, pred_gbm
+    if name == "mlp":
+        from rescue_models import fit_skmlp, pred_skmlp
+        return fit_skmlp, pred_skmlp
+    raise ValueError(f"unknown model {name}")
+
+
+def main(presence_npz=None, cache_path=None, preds_path=None, out_tag="",
+         labels_dir=None, model="logistic"):
     from af_common import Cache, CACHE
     preds = dict(np.load(preds_path or (OUT / "af_torch_preds.npz"), allow_pickle=True))
     # attach focal cache (for dN/dS channel) + org names; must match the preds run
     c = Cache(cache_path or CACHE)
     preds["foc"] = c.foc; preds["orgs"] = np.array(c.orgs, dtype=object)
     orth = load_orthology(labels_dir=labels_dir, presence_npz=presence_npz)
+    fit_fn, pred_fn = get_model(model)
+    print(f"rescue model: {model}")
 
     out = {}
     for use_dnds, tag in [(True, "with_dnds"), (False, "no_dnds")]:
         X, y, meta = channel_features(preds, orth, use_dnds=use_dnds)
         print(f"\n[{tag}] abstained genes scored: {len(y)}")
-        res = evaluate(preds, X, y, meta, label=tag)
+        res = evaluate(preds, X, y, meta, label=tag, fit_fn=fit_fn, pred_fn=pred_fn)
         out[tag] = res
         t = res["transformer"]; s = res["smart_combined"]; d = res["delta"]
         print(f"  transformer: {t['coverage']:.3f} @ {t['precision']:.3f}")
@@ -295,6 +316,8 @@ if __name__ == "__main__":
     ap.add_argument("--preds", default=None, help="alternate af_torch_preds npz")
     ap.add_argument("--labels_dir", default=None, help="augmented labels dir (DEG)")
     ap.add_argument("--tag", default="", help="suffix for output json")
+    ap.add_argument("--model", default="logistic", choices=["logistic", "gbm", "mlp"],
+                    help="rescue stacker; gbm wins on DEG-augmented data")
     a = ap.parse_args()
     main(a.presence_npz, cache_path=a.cache, preds_path=a.preds,
-         out_tag=a.tag, labels_dir=a.labels_dir)
+         out_tag=a.tag, labels_dir=a.labels_dir, model=a.model)
