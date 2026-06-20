@@ -47,6 +47,7 @@ class Cfg2:
     patience: int = 3            # early-stop patience (epochs)
     val_frac: float = 0.08       # fraction of train genes held for val
     seeds: int = 1
+    simple: bool = False         # use v1's proven recipe (isolates the 2nd track)
     prof_rows: int = 0           # set at runtime = n organisms
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -162,17 +163,22 @@ class Trainer2:
         torch.manual_seed(seed); np.random.seed(seed)
         model = Model2(self.c.Df, self.c.Dm, 4, cfg).to(d)
         opt = torch.optim.AdamW(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
-        # val split (early stopping) from within the training set
+        # val split (early stopping) from within the training set.
+        # --simple = v1's recipe: no focal, no early stop, constant lr, train all.
+        do_val = (cfg.val_frac > 0) and not cfg.simple
         rng = np.random.default_rng(seed)
         perm = rng.permutation(train_idx)
-        n_val = int(len(perm) * cfg.val_frac)
+        n_val = int(len(perm) * cfg.val_frac) if do_val else 0
         val_idx, tr_idx = perm[:n_val], perm[n_val:]
         pos = float(self.y[tr_idx].mean().clamp_min(1e-6))
         wpos, wneg = 0.5 / pos, 0.5 / (1 - pos)
         steps = cfg.epochs * max(1, len(tr_idx) // cfg.bs)
         warm = max(1, int(steps * cfg.warmup_frac)); t = 0
+        gamma = 0.0 if cfg.simple else cfg.focal_gamma
 
         def lr_at(step):
+            if cfg.simple:
+                return cfg.lr
             if step < warm:
                 return cfg.lr * step / warm
             pr = (step - warm) / max(1, steps - warm)
@@ -196,12 +202,13 @@ class Trainer2:
                 lo, clo = model(self.foc[bt], msa_m[bt], self.msa_mask[bt], prof, pmask)
                 yb = self.y[bt]
                 w = torch.where(yb == 1, torch.tensor(wpos, device=d), torch.tensor(wneg, device=d))
-                loss = focal_bce(lo, yb, w, cfg.focal_gamma)
+                loss = focal_bce(lo, yb, w, gamma)
                 with torch.no_grad():
                     corr = ((torch.sigmoid(lo) > 0.5).float() == yb).float()
                 loss = loss + F.binary_cross_entropy_with_logits(clo, corr)
                 opt.zero_grad(); loss.backward(); opt.step()
-            # validate
+            if not do_val:
+                continue                       # simple recipe: train all epochs, keep final
             vp, _ = self._predict(model, val_idx, msa_m, held_clade)
             va = auc(vp, self.c.y[val_idx])
             if va > best_val + 1e-4:
@@ -287,8 +294,12 @@ if __name__ == "__main__":
     ap.add_argument("--min_clade_genes", type=int, default=2000)
     ap.add_argument("--seeds", type=int, default=1)
     ap.add_argument("--epochs", type=int, default=15)
+    ap.add_argument("--simple", action="store_true",
+                    help="v1's recipe (no focal/early-stop/cosine, dropout=0) to isolate the 2nd track")
     a = ap.parse_args()
-    cfg = Cfg2(seeds=a.seeds, epochs=a.epochs)
+    cfg = Cfg2(seeds=a.seeds, epochs=a.epochs, simple=a.simple)
+    if a.simple:
+        cfg.dropout = 0.0          # match v1
     print(f"device={cfg.device} cfg={cfg}")
     run(cfg, a.cache, a.labels_dir, tag=a.tag,
         eval_clades="all" if a.all_clades else None, min_clade_genes=a.min_clade_genes)
