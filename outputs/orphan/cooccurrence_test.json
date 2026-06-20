@@ -1,0 +1,55 @@
+{
+  "presence_cooccurrence": {
+    "n": 1855,
+    "base_rate": 0.405,
+    "accuracy": 0.727,
+    "thresholds": {
+      "0.5": {
+        "n": 1780,
+        "acc": 0.729
+      },
+      "0.6": {
+        "n": 1473,
+        "acc": 0.752
+      },
+      "0.7": {
+        "n": 1020,
+        "acc": 0.755
+      },
+      "0.8": {
+        "n": 606,
+        "acc": 0.767
+      }
+    }
+  },
+  "coessentiality": {
+    "n": 1455,
+    "base_rate": 0.401,
+    "accuracy": 0.747,
+    "thresholds": {
+      "0.6": {
+        "n": 1233,
+        "acc": 0.758
+      },
+      "0.7": {
+        "n": 849,
+        "acc": 0.779
+      },
+      "0.8": {
+        "n": 511,
+        "acc": 0.781
+      },
+      "0.9": {
+        "n": 260,
+        "acc": 0.715
+      }
+    }
+  },
+  "prebuilt_phyletic_cooccur": {
+    "n": 22773,
+    "auc": 0.662,
+    "top10_ess_rate": 0.263,
+    "bottom10_ess_rate": 0.076,
+    "base_rate": 0.292
+  }
+}
