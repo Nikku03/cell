@@ -1,0 +1,28 @@
+{
+  "v4_baseline": {
+    "coverage": 0.579,
+    "precision": 0.903,
+    "called": 13636,
+    "total": 23536
+  },
+  "cooccur_added": {
+    "n": 1544,
+    "accuracy": 0.8
+  },
+  "v5_combined": {
+    "coverage": 0.645,
+    "precision": 0.892,
+    "called": 15180
+  },
+  "delta": {
+    "coverage_pp": 6.56,
+    "precision_pp": -1.05
+  },
+  "thresholds": {
+    "backup": 0.7,
+    "presence": 0.7,
+    "coess": 0.7,
+    "phyl_low": 0.1,
+    "min_votes": 2
+  }
+}
