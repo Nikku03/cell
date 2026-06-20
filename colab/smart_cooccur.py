@@ -97,8 +97,39 @@ def load_orthology(labels_dir=None, presence_npz=None):
             cofeat[(r["organism"], r["locus_tag"])] = float(r["cooccur_essential_neighbor_frac"])
         except Exception:
             pass
+    # extra clean, leak-free features we previously left unused (full-coverage
+    # functional flags + partial codon/FBA). Fed to the GBM rescue stacker.
+    annot = _load_annotations(labels_dir)
     return dict(gene_og=gene_og, og_idx=og_idx, org_idx=org_idx,
-                Y=Y, P=P, cofeat=cofeat, O=O, G=G, all_orgs=all_orgs)
+                Y=Y, P=P, cofeat=cofeat, O=O, G=G, all_orgs=all_orgs, annot=annot)
+
+
+def _load_annotations(labels_dir):
+    """Per-gene extra features: is_regulator/is_transporter (full coverage),
+    cai/gc3 (codon, partial), fba_essential (partial). Missing -> NaN, with a
+    has_* flag so the tree model can route around absence."""
+    a = {}
+    reg = labels_dir / "regulator_features.csv"
+    if reg.exists():
+        for r in csv.DictReader(open(reg)):
+            d = a.setdefault((r["organism"], r["locus_tag"]), {})
+            for k in ("is_regulator", "is_transporter"):
+                try: d[k] = float(r.get(k, 0) or 0)
+                except Exception: d[k] = 0.0
+    cod = labels_dir / "codon_features.csv"
+    if cod.exists():
+        for r in csv.DictReader(open(cod)):
+            d = a.setdefault((r["organism"], r["locus_tag"]), {})
+            for k in ("cai", "gc3"):
+                try: d[k] = float(r[k])
+                except Exception: pass
+    fba = labels_dir / "fba_features.csv"
+    if fba.exists():
+        for r in csv.DictReader(open(fba)):
+            d = a.setdefault((r["organism"], r["locus_tag"]), {})
+            try: d["fba_essential"] = float(r["fba_essential"])
+            except Exception: pass
+    return a
 
 
 def channel_features(preds, orth, use_dnds=True):
@@ -110,7 +141,8 @@ def channel_features(preds, orth, use_dnds=True):
     orgs_cache = list(preds["orgs"]) if "orgs" in preds else None
 
     Y, P = orth["Y"], orth["P"]; O = orth["O"]
-    org_idx = orth["org_idx"]; og_idx = orth["og_idx"]; gene_og = orth["gene_og"]; cofeat = orth["cofeat"]
+    org_idx = orth["org_idx"]; og_idx = orth["og_idx"]; gene_og = orth["gene_og"]
+    cofeat = orth["cofeat"]; annot = orth.get("annot", {})
     p_sum = P.sum(0); cand_p = np.where((p_sum >= 5) & (p_sum <= O - 5))[0]
     n_lab = (~np.isnan(Y)).sum(0); mean_e = np.nanmean(Y, axis=0)
     cand_e = np.where((n_lab >= 10) & (mean_e > 0.05) & (mean_e < 0.95))[0]
@@ -123,7 +155,9 @@ def channel_features(preds, orth, use_dnds=True):
     feats = []; ys = []; meta = []
     base_phyl = np.nanmean([v for v in cofeat.values()]) if cofeat else 0.5
 
-    for cl in MAJOR_CLADES:
+    # iterate the clades actually evaluated (covers new DEG clades, not just the 5)
+    present_clades = [c for c in np.unique(clade[~np.isnan(p)]) if (clade == c).sum() > 0]
+    for cl in present_clades:
         sel = np.where((clade == cl) & (br < BRIGHT))[0]   # abstained genes only
         if len(sel) == 0:
             continue
@@ -194,8 +228,22 @@ def channel_features(preds, orth, use_dnds=True):
             row = [p[i], br[i], f["backup"], f["presence"], f["coess"], f["phyl"]]
             if use_dnds:
                 row += [f["dnds"], f["has_dnds"]]
+            # extra clean annotation features (#2): functional flags + codon + FBA
+            an = annot.get((nm, lts), {})
+            cai = an.get("cai", np.nan); gc3 = an.get("gc3", np.nan); fbe = an.get("fba_essential", np.nan)
+            row += [an.get("is_regulator", 0.0), an.get("is_transporter", 0.0),
+                    0.0 if np.isnan(cai) else cai, 0.0 if np.isnan(gc3) else gc3,
+                    1.0 if not np.isnan(cai) else 0.0,
+                    0.0 if np.isnan(fbe) else fbe, 1.0 if not np.isnan(fbe) else 0.0]
             feats.append(row); ys.append(float(y[i])); meta.append((cl, int(i)))
     return np.array(feats, np.float32), np.array(ys, np.float32), meta
+
+
+# canonical feature column order produced by channel_features(use_dnds=True)
+FEATURE_COLS = ["p", "brightness", "backup", "presence", "coess", "phyl",
+                "dnds", "has_dnds",
+                "is_regulator", "is_transporter", "cai", "gc3", "has_codon",
+                "fba_essential", "has_fba"]
 
 
 def evaluate(preds, X, y, meta, label="", fit_fn=None, pred_fn=None):

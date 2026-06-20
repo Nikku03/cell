@@ -48,6 +48,8 @@ class Cfg2:
     val_frac: float = 0.08       # fraction of train genes held for val
     seeds: int = 1
     simple: bool = False         # use v1's proven recipe (isolates the 2nd track)
+    loss: str = "bce"            # "bce" or "rank" (#4: pairwise ranking surrogate)
+    cal_frac: float = 0.05       # held-out split to calibrate the confidence head
     prof_rows: int = 0           # set at runtime = n organisms
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -101,6 +103,21 @@ def focal_bce(logit, y, w, gamma):
             F.binary_cross_entropy_with_logits(logit, y, reduction="none")).mean()
 
 
+def rank_loss(logit, y, max_pairs=200000):
+    """Sampled pairwise ranking surrogate (differentiable AUC): push essential
+    logits above non-essential ones. Optimises the ranking/coverage objective
+    directly instead of calibration. Combined with a little BCE so probabilities
+    stay usable. Item #4 -- enabled with --loss rank."""
+    pos = logit[y == 1]; neg = logit[y == 0]
+    if len(pos) == 0 or len(neg) == 0:
+        return F.binary_cross_entropy_with_logits(logit, y)
+    npair = min(max_pairs, len(pos) * len(neg))
+    pi = torch.randint(len(pos), (npair,), device=logit.device)
+    ni = torch.randint(len(neg), (npair,), device=logit.device)
+    margin = pos[pi] - neg[ni]
+    return F.softplus(-margin).mean()
+
+
 class Trainer2:
     def __init__(self, cache: Cache, labels_dir, cfg: Cfg2):
         self.c, self.cfg = cache, cfg
@@ -138,25 +155,48 @@ class Trainer2:
         self.Yfill = np.nan_to_num(Y, nan=0.0).astype(np.float32)
 
     def build_profile(self, idx, held_clade):
-        """[len(idx), O, 4] = present, ess_known, ess_label, same_clade,
-        with held-clade essentiality labels masked. Absent OGs -> all-zero
-        present but still a real (informative) row."""
+        """[len(idx), O, 4] = present, ess_known, ess_label, same_clade.
+        LEAK CONTROL: mask essentiality labels for (a) the held clade AND
+        (b) each focal gene's OWN clade -- so a training gene never sees its own
+        label or its same-clade neighbours' labels (mirrors the LOCO test
+        condition, where the whole focal clade is masked). Presence is genome
+        content, not a label, so it stays."""
         j = self.gene_j[idx]
         valid = j >= 0
         jj = np.where(valid, j, 0)
         present = self.P[:, jj].T                       # [B,O]
         known = self.Yknown[:, jj].T.copy()
         label = self.Yfill[:, jj].T.copy()
+        same = (self.orth_clade[None, :] == self.gene_focal_clade[idx][:, None])  # [B,O] bool
         held = (self.orth_clade == held_clade)          # [O]
-        if held.any():
-            known[:, held] = 0.0
-            label[:, held] = 0.0
-        same = (self.orth_clade[None, :] == self.gene_focal_clade[idx][:, None]).astype(np.float32)
-        prof = np.stack([present, known, label, same], axis=-1).astype(np.float32)
+        maskcol = same | held[None, :]                  # own clade + held clade
+        known[maskcol] = 0.0
+        label[maskcol] = 0.0
+        prof = np.stack([present, known, label, same.astype(np.float32)], axis=-1).astype(np.float32)
         prof[~valid] = 0.0
         mask = np.ones((len(idx), self.O), np.float32)
         mask[~valid] = 0.0
         return prof, mask
+
+    def selftest(self, n=200, seed=0):
+        """Leak assertion: for sampled TRAINING genes (held_clade = some OTHER
+        clade), the gene's own-clade essentiality labels must be fully masked in
+        its profile. Catches the v2 self-leak class of bug. Returns True/raises."""
+        rng = np.random.default_rng(seed)
+        clades = sorted(set(map(str, self.gene_focal_clade)))
+        ok = 0
+        for i in rng.choice(self.c.N, min(n, self.c.N), replace=False):
+            i = int(i)
+            focal = str(self.gene_focal_clade[i])
+            other = next(c for c in clades if c != focal)   # simulate a TRAIN fold
+            prof, _ = self.build_profile(np.array([i]), other)
+            own = (self.orth_clade == focal)               # this gene's own-clade columns
+            if prof[0, own, 1].max() > 0 or prof[0, own, 2].max() > 0:
+                raise AssertionError(f"LEAK: gene {i} ({focal}) sees own-clade labels "
+                                     f"when held={other}")
+            ok += 1
+        print(f"  leak selftest PASSED on {ok} training genes (own-clade labels masked)")
+        return True
 
     def _fit_one(self, train_idx, held_clade, seed):
         cfg = self.cfg; d = cfg.device
@@ -168,8 +208,12 @@ class Trainer2:
         do_val = (cfg.val_frac > 0) and not cfg.simple
         rng = np.random.default_rng(seed)
         perm = rng.permutation(train_idx)
-        n_val = int(len(perm) * cfg.val_frac) if do_val else 0
-        val_idx, tr_idx = perm[:n_val], perm[n_val:]
+        # cal split: held out from ess-head training, used to calibrate the conf
+        # head on HONEST (not memorised) correctness.
+        n_cal = int(len(perm) * cfg.cal_frac)
+        cal_idx = perm[:n_cal]; rest = perm[n_cal:]
+        n_val = int(len(rest) * cfg.val_frac) if do_val else 0
+        val_idx, tr_idx = rest[:n_val], rest[n_val:]
         pos = float(self.y[tr_idx].mean().clamp_min(1e-6))
         wpos, wneg = 0.5 / pos, 0.5 / (1 - pos)
         steps = cfg.epochs * max(1, len(tr_idx) // cfg.bs)
@@ -201,8 +245,11 @@ class Trainer2:
                 bt = torch.as_tensor(bi, device=d)
                 lo, clo = model(self.foc[bt], msa_m[bt], self.msa_mask[bt], prof, pmask)
                 yb = self.y[bt]
-                w = torch.where(yb == 1, torch.tensor(wpos, device=d), torch.tensor(wneg, device=d))
-                loss = focal_bce(lo, yb, w, gamma)
+                if cfg.loss == "rank":
+                    loss = rank_loss(lo, yb) + 0.2 * F.binary_cross_entropy_with_logits(lo, yb)
+                else:
+                    w = torch.where(yb == 1, torch.tensor(wpos, device=d), torch.tensor(wneg, device=d))
+                    loss = focal_bce(lo, yb, w, gamma)
                 with torch.no_grad():
                     corr = ((torch.sigmoid(lo) > 0.5).float() == yb).float()
                 loss = loss + F.binary_cross_entropy_with_logits(clo, corr)
@@ -219,6 +266,35 @@ class Trainer2:
                     break
         if best_state is not None:
             model.load_state_dict(best_state)
+
+        # ---- recalibrate the confidence head on HELD-OUT correctness ----
+        # Freeze everything but head_conf; train it to predict whether the (now
+        # frozen) essentiality head is right on cal_idx -- honest correctness the
+        # model did not train its ess head on. Fixes the brightness saturation.
+        if len(cal_idx) > 200:
+            with torch.no_grad():
+                cp, _ = self._predict(model, cal_idx, msa_m, held_clade)
+            corr_cal = torch.tensor(((cp > 0.5).astype(np.float32) ==
+                                     self.c.y[cal_idx]).astype(np.float32), device=d)
+            for p in model.parameters():
+                p.requires_grad_(False)
+            for p in model.head_conf.parameters():
+                p.requires_grad_(True)
+            optc = torch.optim.Adam(model.head_conf.parameters(), lr=1e-2)
+            for _ in range(60):
+                order = rng.permutation(len(cal_idx))
+                for i in range(0, len(order), cfg.bs):
+                    sub = cal_idx[order[i:i + cfg.bs]]
+                    prof, pmask = self.build_profile(sub, held_clade)
+                    prof = torch.tensor(prof, device=d); pmask = torch.tensor(pmask, device=d)
+                    bt = torch.as_tensor(sub, device=d)
+                    model.eval()
+                    _, clo = model(self.foc[bt], msa_m[bt], self.msa_mask[bt], prof, pmask)
+                    tgt = corr_cal[order[i:i + cfg.bs]]
+                    lc = F.binary_cross_entropy_with_logits(clo, tgt)
+                    optc.zero_grad(); lc.backward(); optc.step()
+            for p in model.parameters():
+                p.requires_grad_(True)
         return model, msa_m
 
     @torch.no_grad()
@@ -248,6 +324,7 @@ class Trainer2:
 def run(cfg: Cfg2, cache_path, labels_dir, tag="", eval_clades=None, min_clade_genes=2000):
     c = Cache(cache_path or CACHE)
     tr = Trainer2(c, labels_dir, cfg)
+    tr.selftest()                      # fail fast if the profile track leaks
     if eval_clades == "all":
         uniq, cnt = np.unique(c.clade, return_counts=True)
         eval_clades = sorted(str(u) for u, n in zip(uniq, cnt) if n >= min_clade_genes)
@@ -296,10 +373,15 @@ if __name__ == "__main__":
     ap.add_argument("--epochs", type=int, default=15)
     ap.add_argument("--simple", action="store_true",
                     help="v1's recipe (no focal/early-stop/cosine, dropout=0) to isolate the 2nd track")
+    ap.add_argument("--loss", default="bce", choices=["bce", "rank"],
+                    help="rank = pairwise ranking surrogate (#4)")
+    ap.add_argument("--selftest", action="store_true", help="run the leak assertion and exit")
     a = ap.parse_args()
-    cfg = Cfg2(seeds=a.seeds, epochs=a.epochs, simple=a.simple)
+    cfg = Cfg2(seeds=a.seeds, epochs=a.epochs, simple=a.simple, loss=a.loss)
     if a.simple:
         cfg.dropout = 0.0          # match v1
+    if a.selftest:
+        c = Cache(a.cache or CACHE); Trainer2(c, a.labels_dir, cfg).selftest(); raise SystemExit
     print(f"device={cfg.device} cfg={cfg}")
     run(cfg, a.cache, a.labels_dir, tag=a.tag,
         eval_clades="all" if a.all_clades else None, min_clade_genes=a.min_clade_genes)

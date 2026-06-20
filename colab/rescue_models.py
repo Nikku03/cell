@@ -19,9 +19,8 @@ import numpy as np
 
 from af_common import Cache, CACHE, OUT, MAJOR_CLADES
 from smart_cooccur import (load_orthology, channel_features,
-                            fit_logreg, pred_logreg, PRECISION_FLOOR, BRIGHT)
-
-COLS = ["p", "brightness", "backup", "presence", "coess", "phyl", "dnds", "has_dnds"]
+                            fit_logreg, pred_logreg, PRECISION_FLOOR, BRIGHT,
+                            FEATURE_COLS as COLS)
 
 
 # ---- a small numpy MLP (1 hidden ReLU layer), class-balanced BCE -----------

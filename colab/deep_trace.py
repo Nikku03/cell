@@ -22,10 +22,8 @@ import numpy as np
 
 from af_common import Cache, OUT, MAJOR_CLADES
 from smart_cooccur import (load_orthology, channel_features, evaluate,
-                            fit_logreg, pred_logreg, BRIGHT, PRECISION_FLOOR)
-
-# column layout produced by channel_features(..., use_dnds=True):
-COLS = ["p", "brightness", "backup", "presence", "coess", "phyl", "dnds", "has_dnds"]
+                            fit_logreg, pred_logreg, BRIGHT, PRECISION_FLOOR,
+                            FEATURE_COLS as COLS)
 
 
 def section(t):
