@@ -1,0 +1,81 @@
+{
+  "n_pooled": 106819,
+  "transformer": {
+    "called": 58998,
+    "correct": 53678,
+    "coverage": 0.552,
+    "accuracy": 0.91
+  },
+  "cooccur_added": {
+    "called": 6987,
+    "correct": 5075,
+    "accuracy": 0.726
+  },
+  "combined": {
+    "called": 65985,
+    "correct": 58753,
+    "coverage": 0.618,
+    "accuracy": 0.89
+  },
+  "delta_pp": {
+    "coverage": 6.54,
+    "accuracy": -1.94
+  },
+  "per_clade": [
+    {
+      "clade": "pseudomonas",
+      "n_test": 49459,
+      "transformer_hi": 25172,
+      "transformer_acc": 0.917,
+      "cooccur_rescued": 3909,
+      "cooccur_acc": 0.73,
+      "combined_n": 29081,
+      "combined_acc": 0.892,
+      "combined_coverage": 0.588
+    },
+    {
+      "clade": "ralstonia",
+      "n_test": 23347,
+      "transformer_hi": 14644,
+      "transformer_acc": 0.906,
+      "cooccur_rescued": 1360,
+      "cooccur_acc": 0.699,
+      "combined_n": 16004,
+      "combined_acc": 0.888,
+      "combined_coverage": 0.685
+    },
+    {
+      "clade": "shewanella",
+      "n_test": 10817,
+      "transformer_hi": 6789,
+      "transformer_acc": 0.967,
+      "cooccur_rescued": 537,
+      "cooccur_acc": 0.749,
+      "combined_n": 7326,
+      "combined_acc": 0.951,
+      "combined_coverage": 0.677
+    },
+    {
+      "clade": "dickeya",
+      "n_test": 11683,
+      "transformer_hi": 5253,
+      "transformer_acc": 0.964,
+      "cooccur_rescued": 544,
+      "cooccur_acc": 0.671,
+      "combined_n": 5797,
+      "combined_acc": 0.937,
+      "combined_coverage": 0.496
+    },
+    {
+      "clade": "burkholderia",
+      "n_test": 11513,
+      "transformer_hi": 7140,
+      "transformer_acc": 0.797,
+      "cooccur_rescued": 637,
+      "cooccur_acc": 0.793,
+      "combined_n": 7777,
+      "combined_acc": 0.796,
+      "combined_coverage": 0.675
+    }
+  ]
+}
