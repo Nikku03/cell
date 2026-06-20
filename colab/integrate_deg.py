@@ -21,32 +21,31 @@ import csv, argparse, shutil, re
 from pathlib import Path
 from collections import defaultdict
 
-# coarse clade assignment so leave-one-clade-out can use DEG orgs
-CLADE_KEYWORDS = [
-    ("pseudomonas", "pseudomonas"), ("ralstonia", "ralstonia"),
-    ("burkholderia", "burkholderia"), ("dickeya", "dickeya"),
-    ("shewanella", "shewanella"), ("escherichia", "escherichia"),
-    ("salmonella", "salmonella"), ("vibrio", "vibrio"),
-    ("bacillus", "bacillus"), ("staphylococcus", "staphylococcus"),
-    ("streptococcus", "streptococcus"), ("mycobacterium", "mycobacterium"),
-    ("mycoplasma", "mycoplasma"), ("campylobacter", "campylobacter"),
-    ("helicobacter", "helicobacter"), ("acinetobacter", "acinetobacter"),
-    ("francisella", "francisella"), ("neisseria", "neisseria"),
-    ("haemophilus", "haemophilus"), ("caulobacter", "caulobacter"),
-    ("bacteroides", "bacteroides"), ("porphyromonas", "bacteroides"),
-    ("sinorhizobium", "rhizobiales"), ("rhodopseudomonas", "rhizobiales"),
-    ("brevundimonas", "caulobacter"), ("sphingomonas", "sphingomonas"),
-    ("synechococcus", "cyanobacteria"), ("providencia", "enterobacter"),
-    ("klebsiella", "enterobacter"),
-]
+# coarse clade assignment so leave-one-clade-out can use DEG orgs.
+# Keyed on GENUS (first token) to avoid substring traps like
+# "Rhodopseudomonas"->pseudomonas or "Brevundimonas subvibrioides"->vibrio.
+GENUS_CLADE = {
+    "pseudomonas": "pseudomonas", "ralstonia": "ralstonia",
+    "burkholderia": "burkholderia", "dickeya": "dickeya",
+    "shewanella": "shewanella", "escherichia": "escherichia",
+    "salmonella": "salmonella", "vibrio": "vibrio",
+    "bacillus": "bacillus", "staphylococcus": "staphylococcus",
+    "streptococcus": "streptococcus", "mycobacterium": "mycobacterium",
+    "mycoplasma": "mycoplasma", "campylobacter": "campylobacter",
+    "helicobacter": "helicobacter", "acinetobacter": "acinetobacter",
+    "francisella": "francisella", "neisseria": "neisseria",
+    "haemophilus": "haemophilus", "caulobacter": "caulobacter",
+    "brevundimonas": "caulobacter", "bacteroides": "bacteroides",
+    "porphyromonas": "bacteroides", "sinorhizobium": "rhizobiales",
+    "rhodopseudomonas": "rhizobiales", "sphingomonas": "sphingomonas",
+    "synechococcus": "cyanobacteria", "providencia": "enterobacter",
+    "klebsiella": "enterobacter",
+}
 
 
 def clade_for(species):
-    s = species.lower()
-    for kw, cl in CLADE_KEYWORDS:
-        if kw in s:
-            return cl
-    return re.split(r"[ _]", s)[0] or "other"   # genus fallback
+    genus = re.split(r"[ _]", species.strip().lower())[0]
+    return GENUS_CLADE.get(genus, genus or "other")
 
 
 def norm_name(g):

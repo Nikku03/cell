@@ -139,20 +139,30 @@ class Trainer:
         return out_p, out_c
 
 
-def run_loco(cfg: AFConfig, save=True, cache_path=None, tag=""):
-    """Leave-one-clade-out over the 5 major clades. Returns per-gene p,
-    brightness (nan where unevaluated) and the metrics dict.
+def run_loco(cfg: AFConfig, save=True, cache_path=None, tag="",
+             eval_clades=None, min_clade_genes=2000):
+    """Leave-one-clade-out. Returns per-gene p, brightness (nan where
+    unevaluated) and the metrics dict.
 
-    cache_path: alternate af_msa_cache npz (e.g. the DEG-augmented one).
-    tag:        suffix for the output files (af_torch_results{tag}.json etc.)."""
+    cache_path:  alternate af_msa_cache npz (e.g. the DEG-augmented one).
+    tag:         suffix for the output files (af_torch_results{tag}.json etc.).
+    eval_clades: clades to hold out. None -> the original 5. Pass "all" to
+                 auto-select every clade with >= min_clade_genes genes (this is
+                 how we score the new DEG clades)."""
     from af_common import CACHE
     c = Cache(cache_path or CACHE)
     tr = Trainer(c, cfg)
     N = c.N
+    if eval_clades == "all":
+        uniq, cnt = np.unique(c.clade, return_counts=True)
+        eval_clades = sorted(str(u) for u, n in zip(uniq, cnt) if n >= min_clade_genes)
+        print(f"auto-selected {len(eval_clades)} clades with >= {min_clade_genes} genes")
+    elif eval_clades is None:
+        eval_clades = MAJOR_CLADES
     all_p = np.full(N, np.nan, np.float32); all_c = np.full(N, np.nan, np.float32)
     per_clade = {}
     t0 = time.time()
-    for cl in MAJOR_CLADES:
+    for cl in eval_clades:
         test_idx = np.where(c.clade == cl)[0]
         if len(test_idx) < 100:
             continue
@@ -199,6 +209,9 @@ if __name__ == "__main__":
     ap.add_argument("--epochs", type=int, default=None)
     ap.add_argument("--cache", default=None, help="alternate af_msa_cache npz")
     ap.add_argument("--tag", default="", help="suffix for output files (e.g. _aug)")
+    ap.add_argument("--all_clades", action="store_true",
+                    help="evaluate every clade with >= --min_clade_genes (scores new DEG clades)")
+    ap.add_argument("--min_clade_genes", type=int, default=2000)
     a = ap.parse_args()
     cfg = AFConfig()
     if a.big:
@@ -206,4 +219,6 @@ if __name__ == "__main__":
     if a.epochs:
         cfg.epochs = a.epochs
     print(f"device={cfg.device} config={cfg}")
-    run_loco(cfg, cache_path=a.cache, tag=a.tag)
+    run_loco(cfg, cache_path=a.cache, tag=a.tag,
+             eval_clades="all" if a.all_clades else None,
+             min_clade_genes=a.min_clade_genes)
