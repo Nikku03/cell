@@ -1,0 +1,100 @@
+{
+  "baseline": {
+    "per_clade": [
+      {
+        "clade": "pseudomonas",
+        "n": 49459,
+        "auc": 0.838,
+        "cov_p90": 0.701,
+        "hi_conf_frac": 0.509,
+        "hi_conf_acc": 0.917
+      },
+      {
+        "clade": "ralstonia",
+        "n": 23347,
+        "auc": 0.845,
+        "cov_p90": 0.528,
+        "hi_conf_frac": 0.627,
+        "hi_conf_acc": 0.906
+      },
+      {
+        "clade": "shewanella",
+        "n": 10817,
+        "auc": 0.908,
+        "cov_p90": 0.852,
+        "hi_conf_frac": 0.628,
+        "hi_conf_acc": 0.967
+      },
+      {
+        "clade": "dickeya",
+        "n": 11683,
+        "auc": 0.886,
+        "cov_p90": 0.076,
+        "hi_conf_frac": 0.45,
+        "hi_conf_acc": 0.964
+      },
+      {
+        "clade": "burkholderia",
+        "n": 11513,
+        "auc": 0.811,
+        "cov_p90": 0.081,
+        "hi_conf_frac": 0.62,
+        "hi_conf_acc": 0.797
+      }
+    ],
+    "pooled_auc": 0.831,
+    "pooled_cov_p90": 0.529,
+    "pooled_n": 106819
+  },
+  "augmented": {
+    "per_clade": [
+      {
+        "clade": "pseudomonas",
+        "n": 49459,
+        "auc": 0.839,
+        "cov_p90": 0.719,
+        "hi_conf_frac": 0.523,
+        "hi_conf_acc": 0.915
+      },
+      {
+        "clade": "ralstonia",
+        "n": 23347,
+        "auc": 0.811,
+        "cov_p90": 0.117,
+        "hi_conf_frac": 0.572,
+        "hi_conf_acc": 0.896
+      },
+      {
+        "clade": "shewanella",
+        "n": 10817,
+        "auc": 0.91,
+        "cov_p90": 0.829,
+        "hi_conf_frac": 0.649,
+        "hi_conf_acc": 0.964
+      },
+      {
+        "clade": "dickeya",
+        "n": 11683,
+        "auc": 0.882,
+        "cov_p90": 0.012,
+        "hi_conf_frac": 0.525,
+        "hi_conf_acc": 0.959
+      },
+      {
+        "clade": "burkholderia",
+        "n": 11513,
+        "auc": 0.831,
+        "cov_p90": 0.35,
+        "hi_conf_frac": 0.597,
+        "hi_conf_acc": 0.832
+      }
+    ],
+    "pooled_auc": 0.828,
+    "pooled_cov_p90": 0.521,
+    "pooled_n": 106819
+  },
+  "delta": {
+    "auc": -0.003,
+    "cov_p90": -0.008
+  }
+}
