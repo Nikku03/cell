@@ -1,0 +1,49 @@
+{
+  "FULL (all features)": {
+    "coverage": 0.8071,
+    "precision": 0.9
+  },
+  "base-8 only (no new)": {
+    "coverage": 0.8058,
+    "precision": 0.9
+  },
+  "FULL - is_regulator": {
+    "coverage": 0.8108,
+    "precision": 0.9
+  },
+  "FULL - is_transporter": {
+    "coverage": 0.8056,
+    "precision": 0.9
+  },
+  "FULL - codon": {
+    "coverage": 0.8071,
+    "precision": 0.9
+  },
+  "FULL - fba": {
+    "coverage": 0.8071,
+    "precision": 0.9
+  },
+  "base-8 + is_regulator only": {
+    "coverage": 0.81,
+    "precision": 0.9
+  },
+  "base-8 + is_transporter only": {
+    "coverage": 0.8094,
+    "precision": 0.9
+  },
+  "base-8 + codon only": {
+    "coverage": 0.8069,
+    "precision": 0.9
+  },
+  "base-8 + fba only": {
+    "coverage": 0.8084,
+    "precision": 0.9
+  },
+  "fba_validation": {
+    "base": 0.8116,
+    "has_only": 0.8098,
+    "fba": 0.8094,
+    "fba_perm": 0.8091,
+    "real_signal_pp": 0.03
+  }
+}
