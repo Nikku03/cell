@@ -47,6 +47,7 @@ class Cfg2:
     patience: int = 3            # early-stop patience (epochs)
     val_frac: float = 0.08       # fraction of train genes held for val
     seeds: int = 1
+    seed_start: int = 0          # first seed (so independent runs vary genuinely)
     simple: bool = False         # use v1's proven recipe (isolates the 2nd track)
     loss: str = "bce"            # "bce" or "rank" (#4: pairwise ranking surrogate)
     cal_frac: float = 0.05       # held-out split to calibrate the confidence head
@@ -337,7 +338,8 @@ class Trainer2:
         train_idx = np.where(self.c.clade != held_clade)[0]
         ps, cs = [], []
         for s in range(self.cfg.seeds):
-            model, msa_m = self._fit_one(train_idx, held_clade, seed=s)
+            model, msa_m = self._fit_one(train_idx, held_clade,
+                                         seed=self.cfg.seed_start + s)
             p, c = self._predict(model, test_idx, msa_m, held_clade)
             ps.append(p); cs.append(c)
         return np.mean(ps, 0), np.mean(cs, 0)
@@ -391,7 +393,8 @@ if __name__ == "__main__":
     ap.add_argument("--tag", default="_v2")
     ap.add_argument("--all_clades", action="store_true")
     ap.add_argument("--min_clade_genes", type=int, default=2000)
-    ap.add_argument("--seeds", type=int, default=1)
+    ap.add_argument("--seeds", type=int, default=1, help="number of seeds to ensemble")
+    ap.add_argument("--seed", type=int, default=0, help="starting seed (use to vary independent runs)")
     ap.add_argument("--epochs", type=int, default=15)
     ap.add_argument("--simple", action="store_true",
                     help="v1's recipe (no focal/early-stop/cosine, dropout=0) to isolate the 2nd track")
@@ -403,7 +406,7 @@ if __name__ == "__main__":
                     help="zero the same_clade profile column (identity-signal ablation)")
     ap.add_argument("--selftest", action="store_true", help="run the leak assertion and exit")
     a = ap.parse_args()
-    cfg = Cfg2(seeds=a.seeds, epochs=a.epochs, simple=a.simple, loss=a.loss,
+    cfg = Cfg2(seeds=a.seeds, seed_start=a.seed, epochs=a.epochs, simple=a.simple, loss=a.loss,
                profile_mask=a.profile_mask, no_same_clade=a.no_same_clade)
     if a.simple:
         cfg.dropout = 0.0          # match v1
