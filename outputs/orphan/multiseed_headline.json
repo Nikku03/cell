@@ -1,0 +1,32 @@
+{
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "per_seed": [
+    {
+      "seed": 0,
+      "auc": 0.836,
+      "coverage": 0.8092,
+      "precision": 0.9
+    },
+    {
+      "seed": 1,
+      "auc": 0.84,
+      "coverage": 0.7997,
+      "precision": 0.9
+    },
+    {
+      "seed": 2,
+      "auc": 0.832,
+      "coverage": 0.788,
+      "precision": 0.9
+    }
+  ],
+  "coverage_mean": 0.799,
+  "coverage_ci95": 0.012,
+  "auc_mean": 0.836,
+  "auc_ci95": 0.0045,
+  "feature_set": "base-8 + fba_essential"
+}

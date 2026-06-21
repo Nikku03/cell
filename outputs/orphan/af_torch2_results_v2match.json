@@ -1,0 +1,210 @@
+{
+  "config": {
+    "heads": 4,
+    "head_dim": 16,
+    "hid": 64,
+    "blocks": 2,
+    "dropout": 0.0,
+    "epochs": 15,
+    "bs": 8192,
+    "lr": 0.002,
+    "weight_decay": 0.0001,
+    "warmup_frac": 0.05,
+    "focal_gamma": 1.5,
+    "patience": 3,
+    "val_frac": 0.08,
+    "seeds": 1,
+    "simple": true,
+    "loss": "bce",
+    "cal_frac": 0.05,
+    "profile_mask": "own_clade",
+    "no_same_clade": false,
+    "prof_rows": 64,
+    "device": "cuda"
+  },
+  "per_clade": {
+    "acidovorax": {
+      "n": 3596,
+      "auc": 0.888,
+      "auprc": 0.841,
+      "ne_cov_p90": 0.612
+    },
+    "archaea_methanococcus": {
+      "n": 3239,
+      "auc": 0.598,
+      "auprc": 0.398,
+      "ne_cov_p90": 0.008
+    },
+    "azotobacter": {
+      "n": 3737,
+      "auc": 0.879,
+      "auprc": 0.827,
+      "ne_cov_p90": 0.528
+    },
+    "bacteroides": {
+      "n": 3912,
+      "auc": 0.844,
+      "auprc": 0.598,
+      "ne_cov_p90": 0.804
+    },
+    "beril_PS_unknown": {
+      "n": 2635,
+      "auc": 0.869,
+      "auprc": 0.834,
+      "ne_cov_p90": 0.466
+    },
+    "beril_cola_unknown": {
+      "n": 2941,
+      "auc": 0.929,
+      "auprc": 0.828,
+      "ne_cov_p90": 0.847
+    },
+    "beril_korea_unknown": {
+      "n": 2850,
+      "auc": 0.915,
+      "auprc": 0.836,
+      "ne_cov_p90": 0.749
+    },
+    "beril_miya_unknown": {
+      "n": 2539,
+      "auc": 0.867,
+      "auprc": 0.768,
+      "ne_cov_p90": 0.69
+    },
+    "beril_ponti_unknown": {
+      "n": 2768,
+      "auc": 0.917,
+      "auprc": 0.833,
+      "ne_cov_p90": 0.829
+    },
+    "burkholderia": {
+      "n": 11513,
+      "auc": 0.824,
+      "auprc": 0.795,
+      "ne_cov_p90": 0.128
+    },
+    "caulobacter": {
+      "n": 2654,
+      "auc": 0.92,
+      "auprc": 0.819,
+      "ne_cov_p90": 0.818
+    },
+    "desulfovibrio": {
+      "n": 2514,
+      "auc": 0.895,
+      "auprc": 0.795,
+      "ne_cov_p90": 0.767
+    },
+    "dickeya": {
+      "n": 11683,
+      "auc": 0.878,
+      "auprc": 0.719,
+      "ne_cov_p90": 0.862
+    },
+    "dinoroseobacter": {
+      "n": 3082,
+      "auc": 0.855,
+      "auprc": 0.791,
+      "ne_cov_p90": 0.517
+    },
+    "dyella": {
+      "n": 3052,
+      "auc": 0.889,
+      "auprc": 0.787,
+      "ne_cov_p90": 0.787
+    },
+    "escherichia": {
+      "n": 3568,
+      "auc": 0.908,
+      "auprc": 0.791,
+      "ne_cov_p90": 0.921
+    },
+    "herbaspirillum": {
+      "n": 3843,
+      "auc": 0.909,
+      "auprc": 0.864,
+      "ne_cov_p90": 0.667
+    },
+    "klebsiella": {
+      "n": 4472,
+      "auc": 0.859,
+      "auprc": 0.775,
+      "ne_cov_p90": 0.642
+    },
+    "magnetospirillum": {
+      "n": 2650,
+      "auc": 0.848,
+      "auprc": 0.846,
+      "ne_cov_p90": 0.227
+    },
+    "marinobacter": {
+      "n": 3110,
+      "auc": 0.928,
+      "auprc": 0.869,
+      "ne_cov_p90": 0.785
+    },
+    "pedobacter": {
+      "n": 2981,
+      "auc": 0.937,
+      "auprc": 0.844,
+      "ne_cov_p90": 0.864
+    },
+    "phaeobacter": {
+      "n": 3046,
+      "auc": 0.898,
+      "auprc": 0.841,
+      "ne_cov_p90": 0.626
+    },
+    "pseudomonas": {
+      "n": 52420,
+      "auc": 0.828,
+      "auprc": 0.592,
+      "ne_cov_p90": 0.694
+    },
+    "pseudovibrio": {
+      "n": 3456,
+      "auc": 0.852,
+      "auprc": 0.784,
+      "ne_cov_p90": 0.565
+    },
+    "ralstonia": {
+      "n": 23347,
+      "auc": 0.856,
+      "auprc": 0.75,
+      "ne_cov_p90": 0.583
+    },
+    "salmonella": {
+      "n": 10011,
+      "auc": 0.909,
+      "auprc": 0.556,
+      "ne_cov_p90": 1.0
+    },
+    "shewanella": {
+      "n": 10817,
+      "auc": 0.901,
+      "auprc": 0.764,
+      "ne_cov_p90": 0.863
+    },
+    "sinorhizobium": {
+      "n": 4132,
+      "auc": 0.875,
+      "auprc": 0.776,
+      "ne_cov_p90": 0.637
+    },
+    "streptococcus": {
+      "n": 2052,
+      "auc": 0.875,
+      "auprc": 0.48,
+      "ne_cov_p90": 0.887
+    }
+  },
+  "pooled": {
+    "n": 192620,
+    "auc": 0.828,
+    "auprc": 0.684,
+    "ne_cov_p90": 0.648,
+    "brightness85_coverage": 0.671,
+    "brightness85_accuracy": 0.905
+  },
+  "seconds": 785.6
+}

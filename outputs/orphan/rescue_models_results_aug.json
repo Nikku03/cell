@@ -1,0 +1,26 @@
+{
+  "logistic": {
+    "label": "logistic",
+    "coverage": 0.7594,
+    "precision": 0.9,
+    "rescued": 34565,
+    "rescued_acc": 0.8419,
+    "tau": 0.7861
+  },
+  "mlp": {
+    "label": "mlp",
+    "coverage": 0.7901,
+    "precision": 0.9,
+    "rescued": 40476,
+    "rescued_acc": 0.8504,
+    "tau": 0.7883
+  },
+  "gbm": {
+    "label": "gbm",
+    "coverage": 0.8069,
+    "precision": 0.9,
+    "rescued": 43720,
+    "rescued_acc": 0.854,
+    "tau": 0.7431
+  }
+}
