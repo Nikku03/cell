@@ -50,6 +50,8 @@ class Cfg2:
     simple: bool = False         # use v1's proven recipe (isolates the 2nd track)
     loss: str = "bce"            # "bce" or "rank" (#4: pairwise ranking surrogate)
     cal_frac: float = 0.05       # held-out split to calibrate the confidence head
+    profile_mask: str = "own_clade"   # "own_clade" (strict) or "own_org" (match v1's budget)
+    no_same_clade: bool = False  # zero the same_clade profile column (identity-signal ablation)
     prof_rows: int = 0           # set at runtime = n organisms
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -148,6 +150,7 @@ class Trainer2:
                 orth_clade[oi] = cache.org_clade.get(ci, "?")
         self.Y = Y; self.P = P; self.O = O
         self.gene_j = gene_j
+        self.gene_orthorg = c2o[cache.meta_org]      # focal org in orthology space (-1 if absent)
         self.gene_focal_clade = cache.clade
         self.orth_clade = orth_clade
         # precompute essentiality-known mask once
@@ -169,10 +172,20 @@ class Trainer2:
         label = self.Yfill[:, jj].T.copy()
         same = (self.orth_clade[None, :] == self.gene_focal_clade[idx][:, None])  # [B,O] bool
         held = (self.orth_clade == held_clade)          # [O]
-        maskcol = same | held[None, :]                  # own clade + held clade
+        if self.cfg.profile_mask == "own_org":
+            # match v1's budget: hide only the focal org's own label (+ held clade),
+            # leaving same-clade siblings visible during training as the MSA does.
+            own = np.zeros_like(same)
+            oo = self.gene_orthorg[idx]
+            valid_o = oo >= 0
+            own[np.where(valid_o)[0], oo[valid_o]] = True
+            maskcol = own | held[None, :]
+        else:                                           # "own_clade" (strict, default)
+            maskcol = same | held[None, :]
         known[maskcol] = 0.0
         label[maskcol] = 0.0
-        prof = np.stack([present, known, label, same.astype(np.float32)], axis=-1).astype(np.float32)
+        same_feat = np.zeros_like(same, np.float32) if self.cfg.no_same_clade else same.astype(np.float32)
+        prof = np.stack([present, known, label, same_feat], axis=-1).astype(np.float32)
         prof[~valid] = 0.0
         mask = np.ones((len(idx), self.O), np.float32)
         mask[~valid] = 0.0
@@ -184,18 +197,27 @@ class Trainer2:
         its profile. Catches the v2 self-leak class of bug. Returns True/raises."""
         rng = np.random.default_rng(seed)
         clades = sorted(set(map(str, self.gene_focal_clade)))
+        strict = self.cfg.profile_mask == "own_clade"
         ok = 0
         for i in rng.choice(self.c.N, min(n, self.c.N), replace=False):
             i = int(i)
             focal = str(self.gene_focal_clade[i])
             other = next(c for c in clades if c != focal)   # simulate a TRAIN fold
             prof, _ = self.build_profile(np.array([i]), other)
-            own = (self.orth_clade == focal)               # this gene's own-clade columns
-            if prof[0, own, 1].max() > 0 or prof[0, own, 2].max() > 0:
-                raise AssertionError(f"LEAK: gene {i} ({focal}) sees own-clade labels "
+            # universal guard: the focal gene's OWN organism label must be masked
+            oo = int(self.gene_orthorg[i])
+            if oo >= 0 and (prof[0, oo, 1] > 0 or prof[0, oo, 2] > 0):
+                raise AssertionError(f"SELF-LEAK: gene {i} ({focal}) sees its own org label "
                                      f"when held={other}")
+            # strict mode also masks the whole own clade
+            if strict:
+                own = (self.orth_clade == focal)
+                if prof[0, own, 1].max() > 0 or prof[0, own, 2].max() > 0:
+                    raise AssertionError(f"CLADE-LEAK: gene {i} ({focal}) sees own-clade "
+                                         f"labels when held={other}")
             ok += 1
-        print(f"  leak selftest PASSED on {ok} training genes (own-clade labels masked)")
+        mode = "own-clade" if strict else "own-org"
+        print(f"  leak selftest PASSED on {ok} training genes ({mode} masking)")
         return True
 
     def _fit_one(self, train_idx, held_clade, seed):
@@ -375,9 +397,14 @@ if __name__ == "__main__":
                     help="v1's recipe (no focal/early-stop/cosine, dropout=0) to isolate the 2nd track")
     ap.add_argument("--loss", default="bce", choices=["bce", "rank"],
                     help="rank = pairwise ranking surrogate (#4)")
+    ap.add_argument("--profile_mask", default="own_clade", choices=["own_clade", "own_org"],
+                    help="own_org matches v1's information budget for a fair v1-vs-v2 test")
+    ap.add_argument("--no_same_clade", action="store_true",
+                    help="zero the same_clade profile column (identity-signal ablation)")
     ap.add_argument("--selftest", action="store_true", help="run the leak assertion and exit")
     a = ap.parse_args()
-    cfg = Cfg2(seeds=a.seeds, epochs=a.epochs, simple=a.simple, loss=a.loss)
+    cfg = Cfg2(seeds=a.seeds, epochs=a.epochs, simple=a.simple, loss=a.loss,
+               profile_mask=a.profile_mask, no_same_clade=a.no_same_clade)
     if a.simple:
         cfg.dropout = 0.0          # match v1
     if a.selftest:

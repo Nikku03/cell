@@ -44,7 +44,43 @@ def run(X, y, meta, preds, ff, pf, zero_cols, label):
     return r["smart_combined"]["coverage"], r["smart_combined"]["precision"]
 
 
-def main(cache_path, preds_path, labels_dir, model):
+def validate_fba(X, y, meta, preds, ff, pf, seed=0):
+    """Is the FBA lift real signal or a sparse-indicator/artefact?
+    Compares: base-8 | +has_fba-only | +fba(value+flag) | +fba with the VALUE
+    permuted among covered genes. If +fba >> +has_fba and permuting kills the
+    lift, the value carries real signal; if +fba ~= +has_fba, it's the indicator."""
+    rng = np.random.default_rng(seed)
+    i_fba, i_has = I["fba_essential"], I["has_fba"]
+    others = [c for c in NEW if c not in (i_fba, i_has)]   # zero all new except fba group
+    covered = X[:, i_has] > 0.5
+    print(f"\n  FBA validation  (covered genes: {int(covered.sum())} / {len(y)} "
+          f"= {covered.mean()*100:.1f}%)")
+
+    def cov(zero, perm=False):
+        Xa = X.copy()
+        for c in zero:
+            Xa[:, c] = 0.0
+        if perm:                                  # shuffle the value among covered rows only
+            idx = np.where(covered)[0]
+            Xa[idx, i_fba] = Xa[rng.permutation(idx), i_fba]
+        return evaluate(preds, Xa, y, meta, fit_fn=ff, pred_fn=pf)["smart_combined"]["coverage"]
+
+    base = cov(NEW)                                   # base-8 only
+    has_only = cov(others + [i_fba])                  # base-8 + has_fba indicator only
+    fba = cov(others)                                 # base-8 + fba (value + flag)
+    fba_perm = cov(others, perm=True)                 # base-8 + fba, value permuted
+    print(f"    base-8 only            : {base:.4f}")
+    print(f"    + has_fba flag only    : {has_only:.4f}  ({(has_only-base)*100:+.2f}pp)")
+    print(f"    + fba (value+flag)     : {fba:.4f}  ({(fba-base)*100:+.2f}pp)")
+    print(f"    + fba, VALUE permuted  : {fba_perm:.4f}  ({(fba_perm-base)*100:+.2f}pp)")
+    real = (fba - has_only) - (fba_perm - has_only)
+    print(f"    -> FBA-value real signal (fba - permuted): {real*100:+.2f}pp")
+    print("       (if ~0, the lift is the indicator/sparsity, not the FBA value)")
+    return dict(base=base, has_only=has_only, fba=fba, fba_perm=fba_perm,
+                real_signal_pp=round(real*100, 3))
+
+
+def main(cache_path, preds_path, labels_dir, model, validate=False):
     preds = dict(np.load(preds_path or (OUT / "af_torch_preds.npz"), allow_pickle=True))
     c = Cache(cache_path or CACHE)
     preds["foc"] = c.foc; preds["orgs"] = np.array(c.orgs, dtype=object)
@@ -77,6 +113,8 @@ def main(cache_path, preds_path, labels_dir, model):
     if full_cov and base_cov:
         print(f"\n  total new-feature lift: {(full_cov-base_cov)*100:+.2f}pp "
               f"({base_cov:.4f} -> {full_cov:.4f})")
+    if validate:
+        res["fba_validation"] = validate_fba(X, y, meta, preds, ff, pf)
     json.dump(res, open(OUT / "feature_ablation_results.json", "w"), indent=2)
     print("  wrote feature_ablation_results.json")
 
@@ -87,5 +125,7 @@ if __name__ == "__main__":
     ap.add_argument("--preds", default=None)
     ap.add_argument("--labels_dir", default=None)
     ap.add_argument("--model", default="gbm", choices=["gbm", "logistic"])
+    ap.add_argument("--validate_fba", action="store_true",
+                    help="subset + permutation test that the FBA lift is real signal")
     a = ap.parse_args()
-    main(a.cache, a.preds, a.labels_dir, a.model)
+    main(a.cache, a.preds, a.labels_dir, a.model, validate=a.validate_fba)

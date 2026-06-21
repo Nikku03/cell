@@ -29,6 +29,7 @@ class AFConfig:
     bs: int = 4096          # larger batch -> better A100 utilisation
     lr: float = 3e-3
     seed: int = 0
+    mask_own_clade: bool = False   # also mask same-clade ortholog labels (match v2 budget)
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
 
@@ -81,11 +82,20 @@ class Trainer:
         self.mask = torch.tensor(cache.msa_mask, device=d)
         self.y    = torch.tensor(cache.y, device=d)
         self.msa_org = cache.msa_org  # keep on cpu for masking logic
+        # per-row clade (for the optional matched-budget own-clade mask)
+        oc = np.array([cache.org_clade.get(int(o), "?") for o in range(len(cache.orgs))] + ["?"])
+        self.row_clade = oc[np.where(self.msa_org < 0, len(cache.orgs), self.msa_org)]  # [N,24]
 
     def masked_msa(self, held_clade, reveal_idx=None):
         """MSA with held-clade label/known zeroed, EXCEPT rows belonging to
-        revealed genes (active learning), which stay visible."""
+        revealed genes (active learning), which stay visible. With
+        cfg.mask_own_clade, also zero each gene's same-clade ortholog labels
+        (matches v2's strict budget for a fair v1-vs-v2 comparison)."""
         m = self.c.masked_msa(held_clade)
+        if getattr(self.cfg, "mask_own_clade", False):
+            own = self.row_clade == self.c.clade[:, None]   # [N,24]
+            m[..., 0] = np.where(own, 0.0, m[..., 0])
+            m[..., 1] = np.where(own, 0.0, m[..., 1])
         if reveal_idx is not None and len(reveal_idx):
             # un-mask ortholog rows that correspond to the revealed focal genes
             reveal_orgs = set(int(self.c.meta_org[i]) for i in reveal_idx)
@@ -212,12 +222,17 @@ if __name__ == "__main__":
     ap.add_argument("--all_clades", action="store_true",
                     help="evaluate every clade with >= --min_clade_genes (scores new DEG clades)")
     ap.add_argument("--min_clade_genes", type=int, default=2000)
+    ap.add_argument("--seed", type=int, default=0, help="training seed (for multi-seed CIs)")
+    ap.add_argument("--mask_own_clade", action="store_true",
+                    help="also mask same-clade ortholog labels (match v2's strict budget)")
     a = ap.parse_args()
     cfg = AFConfig()
     if a.big:
         cfg = AFConfig(heads=4, head_dim=16, hid=64, blocks=2, epochs=12, bs=8192)
     if a.epochs:
         cfg.epochs = a.epochs
+    cfg.seed = a.seed
+    cfg.mask_own_clade = a.mask_own_clade
     print(f"device={cfg.device} config={cfg}")
     run_loco(cfg, cache_path=a.cache, tag=a.tag,
              eval_clades="all" if a.all_clades else None,

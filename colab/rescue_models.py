@@ -90,7 +90,7 @@ def evaluate(preds, X, y, meta, fit_fn, pred_fn, label):
     N = int(ev.sum())
 
     stack_p = np.zeros(len(y))
-    for cl in MAJOR_CLADES:
+    for cl in np.unique(clades):           # all clades present, not just the 5 majors
         te = clades == cl; trn = ~te
         if te.sum() == 0 or trn.sum() < 50:
             continue
