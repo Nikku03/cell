@@ -1,0 +1,55 @@
+{
+  "router": {
+    "loco_accuracy": 0.728,
+    "EASY": {
+      "precision": 0.752,
+      "recall": 0.957,
+      "predicted_n": 149036,
+      "true_n": 117087
+    },
+    "CONDITIONAL": {
+      "precision": 0.4,
+      "recall": 0.128,
+      "predicted_n": 7436,
+      "true_n": 23356
+    },
+    "SPARSE": {
+      "precision": 0.708,
+      "recall": 0.698,
+      "predicted_n": 18265,
+      "true_n": 18530
+    },
+    "DOMAIN": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "predicted_n": 324,
+      "true_n": 3239
+    },
+    "NOISY": {
+      "precision": 0.153,
+      "recall": 0.01,
+      "predicted_n": 918,
+      "true_n": 13767
+    }
+  },
+  "deployment": {
+    "coverage": 0.4933,
+    "precision": 0.9138,
+    "n_called": 88425,
+    "n_evaluable": 179237,
+    "policy": {
+      "EASY": "predict",
+      "CONDITIONAL": "predict_with_flag",
+      "SPARSE": "abstain_insufficient_data",
+      "DOMAIN": "abstain_domain_barrier",
+      "NOISY": "abstain_irreducible_residual"
+    }
+  },
+  "actions": {
+    "EASY": "predict",
+    "CONDITIONAL": "predict_with_flag",
+    "SPARSE": "abstain_insufficient_data",
+    "DOMAIN": "abstain_domain_barrier",
+    "NOISY": "abstain_irreducible_residual"
+  }
+}

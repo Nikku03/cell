@@ -1,0 +1,128 @@
+{
+  "mode_definitions": {
+    "EASY": "conserved + family-agreement + model correct",
+    "CONDITIONAL": "family informative but disagrees with focal label",
+    "SPARSE": "MSA depth < 3; insufficient comparative evidence",
+    "DOMAIN": "archaea / domain-distant clade",
+    "NOISY": "model confidently wrong with no other structural reason"
+  },
+  "per_mode_report": {
+    "EASY": {
+      "n": 118790,
+      "pct": 66.28,
+      "ess_rate": 0.227,
+      "model_auc": 0.981,
+      "bright_acc": 1.0,
+      "bright_cov": 0.639
+    },
+    "CONDITIONAL": {
+      "n": 23945,
+      "pct": 13.36,
+      "ess_rate": 0.61,
+      "model_auc": 0.147,
+      "bright_acc": 0.08,
+      "bright_cov": 0.273
+    },
+    "SPARSE": {
+      "n": 18725,
+      "pct": 10.45,
+      "ess_rate": 0.119,
+      "model_auc": 0.651,
+      "bright_acc": 0.887,
+      "bright_cov": 0.887
+    },
+    "DOMAIN": {
+      "n": 3239,
+      "pct": 1.81,
+      "ess_rate": 0.27,
+      "model_auc": 0.588,
+      "bright_acc": 0.766,
+      "bright_cov": 0.699
+    },
+    "NOISY": {
+      "n": 14538,
+      "pct": 8.11,
+      "ess_rate": 0.266,
+      "model_auc": 0.2,
+      "bright_acc": 0.0,
+      "bright_cov": 0.09
+    }
+  },
+  "feature_means_by_mode": {
+    "EASY": {
+      "msa_depth": 19.008,
+      "known_count": 19.008,
+      "family_ess_rate": 0.251,
+      "family_ess_var": 0.069,
+      "same_clade_count": 2.623,
+      "cross_clade_count": 16.385,
+      "foc_loglen": -7.987,
+      "foc_lead": 0.509,
+      "foc_oric": 0.499,
+      "foc_gc": 0.607,
+      "foc_npar": -1.126,
+      "foc_dnds": -0.579,
+      "foc_has_dnds": 0.064
+    },
+    "CONDITIONAL": {
+      "msa_depth": 20.926,
+      "known_count": 20.926,
+      "family_ess_rate": 0.397,
+      "family_ess_var": 0.173,
+      "same_clade_count": 2.376,
+      "cross_clade_count": 18.551,
+      "foc_loglen": -8.066,
+      "foc_lead": 0.506,
+      "foc_oric": 0.501,
+      "foc_gc": 0.607,
+      "foc_npar": -0.608,
+      "foc_dnds": -0.566,
+      "foc_has_dnds": 0.07
+    },
+    "SPARSE": {
+      "msa_depth": 1.342,
+      "known_count": 1.342,
+      "family_ess_rate": 0.119,
+      "family_ess_var": 0.339,
+      "same_clade_count": 0.544,
+      "cross_clade_count": 0.798,
+      "foc_loglen": -8.419,
+      "foc_lead": 0.503,
+      "foc_oric": 0.5,
+      "foc_gc": 0.601,
+      "foc_npar": -1.644,
+      "foc_dnds": -0.608,
+      "foc_has_dnds": 0.012
+    },
+    "DOMAIN": {
+      "msa_depth": 8.242,
+      "known_count": 8.242,
+      "family_ess_rate": 0.276,
+      "family_ess_var": 0.333,
+      "same_clade_count": 0.885,
+      "cross_clade_count": 7.356,
+      "foc_loglen": -0.268,
+      "foc_lead": 0.496,
+      "foc_oric": 0.492,
+      "foc_gc": 0.338,
+      "foc_npar": -1.564,
+      "foc_dnds": -0.615,
+      "foc_has_dnds": 0.0
+    },
+    "NOISY": {
+      "msa_depth": 21.458,
+      "known_count": 21.458,
+      "family_ess_rate": 0.411,
+      "family_ess_var": 0.184,
+      "same_clade_count": 3.015,
+      "cross_clade_count": 18.443,
+      "foc_loglen": -7.559,
+      "foc_lead": 0.507,
+      "foc_oric": 0.497,
+      "foc_gc": 0.611,
+      "foc_npar": -0.382,
+      "foc_dnds": -0.531,
+      "foc_has_dnds": 0.106
+    }
+  }
+}
