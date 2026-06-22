@@ -1,119 +1,144 @@
-"""Stage 3a -- extract protein sequences for the genes in cond_pairs.
+"""Stage 3a (REWRITE) -- extract protein sequences from feba.db itself.
 
-For each unique (organism, locus_tag) in cond_pairs.npz, locate its protein.faa
-in data/drive_import/genome_cache/ (via genome_cache_manifest.csv), parse the
-[locus_tag=...] tag in the FASTA header, and emit a deterministic per-gene
-sequence file used by Stage 3b (ESM-2 embedding).
+The previous version of this script tried to pull sequences from
+data/drive_import/genome_cache/<accession>/protein.faa.  That failed for two
+independent reasons:
 
-Output: data/drive_import/cond/proteins.fasta
-        data/drive_import/cond/protein_index.json     # gene_idx -> {org, locus_tag, len}
+  1. Most beril orgs in the manifest have no accession (`no_accession`) and
+     the few that have one are flagged `low_join_wrong_assembly` -- the RefSeq
+     locus_tags don't match the beril locus_tags anyway.
+  2. The genome_cache fastas use NCBI protein IDs in headers, not the
+     [locus_tag=...] tag the parser was hunting for.
 
-Genes whose protein cannot be resolved get an empty sequence and are flagged in
-the index (`resolved: False`) -- the model will fall back to a zero embedding
-for those rows.
+The right source is **feba.db itself**.  feba's locusId is exactly what is in
+cond_pairs (both come from feba), so the join is trivial; the only question is
+which column in which feba table holds the amino-acid sequence.  We probe at
+runtime since the schema varies slightly across releases.
+
+Output: data/drive_import/cond/proteins.fasta (one record per cond_pairs gene)
+        data/drive_import/cond/protein_index.json (gene_idx -> {org, locus_tag, len, resolved})
 """
-import argparse, csv, json, re, sys
+import argparse, json, sqlite3, sys
 from pathlib import Path
 from collections import defaultdict
 import numpy as np
 
 
-def parse_faa(faa_path, target_loci):
-    """Return {locus_tag: sequence} for locus_tags in target_loci."""
-    out = {}
-    cur_lt, cur_seq = None, []
-    re_lt = re.compile(r"\[locus_tag=([^\]]+)\]")
-    with open(faa_path) as f:
-        for line in f:
-            if line.startswith(">"):
-                if cur_lt is not None and cur_lt in target_loci and cur_seq:
-                    out[cur_lt] = "".join(cur_seq)
-                m = re_lt.search(line)
-                if m:
-                    cur_lt = m.group(1)
-                else:
-                    # fallback: take the first whitespace token after >
-                    tok = line[1:].split()[0]
-                    cur_lt = tok.split("|")[-1]
-                cur_seq = []
-            else:
-                cur_seq.append(line.strip())
-        if cur_lt is not None and cur_lt in target_loci and cur_seq:
-            out[cur_lt] = "".join(cur_seq)
-    return out
+def discover_sequence_column(con):
+    """Return (table, locus_col, seq_col, org_col_or_None) for whichever feba
+    table actually holds protein sequences."""
+    cur = con.cursor()
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    tables = [r[0] for r in cur.fetchall()]
+    # tables in priority order: Gene first (most releases), then GeneSeqs, etc.
+    candidates = [t for t in ("Gene", "GeneSeqs", "Sequence", "ProteinSequence",
+                              "Proteins", "AASeq") if t in tables]
+    seq_aliases = ("seq", "aaseq", "sequence", "protein_seq", "AAseq", "aa")
+    loc_aliases = ("locusId", "locus_id", "sysName", "name", "Gene")
+    org_aliases = ("orgId", "organism", "org_id")
+    for t in candidates:
+        cur.execute(f"PRAGMA table_info({t})")
+        cols = [r[1] for r in cur.fetchall()]
+        seq = next((c for c in cols if c in seq_aliases), None)
+        loc = next((c for c in cols if c in loc_aliases), None)
+        org = next((c for c in cols if c in org_aliases), None)
+        if seq and loc:
+            return t, loc, seq, org
+    # last resort: scan every table for a seq-like column
+    for t in tables:
+        cur.execute(f"PRAGMA table_info({t})")
+        cols = [r[1] for r in cur.fetchall()]
+        seq = next((c for c in cols if c in seq_aliases), None)
+        loc = next((c for c in cols if c in loc_aliases), None)
+        org = next((c for c in cols if c in org_aliases), None)
+        if seq and loc:
+            return t, loc, seq, org
+    return None
 
 
-def main(cond_npz, genome_cache, manifest_csv, out_dir):
+def main(cond_npz, cache_path, feba_db, out_dir):
     out_dir = Path(out_dir); out_dir.mkdir(parents=True, exist_ok=True)
     Z = np.load(cond_npz, allow_pickle=True)
     gene_idx = Z["gene_idx"]
-    org_arr = Z["org"]
-    # we need to recover the locus_tag per gene_idx; load it from the cache npz
-    cache_path = Path("outputs/orphan/af_msa_cache.npz")
     cache = np.load(cache_path, allow_pickle=True)
     cache_orgs = list(cache["orgs"]); meta_org = cache["meta_org"]; lt = cache["lt"]
     org_by_idx = {gi: (str(cache_orgs[int(meta_org[gi])]), str(lt[gi]))
                   for gi in set(gene_idx.tolist())}
     print(f"unique genes to extract: {len(org_by_idx):,}")
 
-    # group by organism
-    targets = defaultdict(set)
+    # build the inverse mapping our_org -> feba orgId via the extractor's map
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from extract_feba_conditions import MANUAL_MAP, map_feba_to_our_orgs
+
+    con = sqlite3.connect(str(feba_db))
+    probe = discover_sequence_column(con)
+    if probe is None:
+        print("!! could not find a (locusId, sequence) column pair in feba.db")
+        print("   tables:", [r[0] for r in con.execute(
+            "SELECT name FROM sqlite_master WHERE type='table'").fetchall()])
+        sys.exit("schema probe failed")
+    seq_table, loc_col, seq_col, org_col = probe
+    print(f"sequence source: {seq_table}({loc_col}, {seq_col}"
+          f"{', '+org_col if org_col else ''})")
+
+    # collect feba orgIds that map to our orgs
+    cur = con.cursor()
+    cur.execute(f"SELECT DISTINCT {org_col} FROM {seq_table}" if org_col
+                else "SELECT DISTINCT orgId FROM GeneFitness")
+    feba_orgs = [r[0] for r in cur.fetchall() if r[0]]
+    our_orgs_in_need = set(o for (o, _) in org_by_idx.values())
+    org_map = map_feba_to_our_orgs(feba_orgs, our_orgs_in_need)
+    inv_map = {ours: fb for fb, ours in org_map.items()}    # our -> feba
+    print(f"\nour-org -> feba orgId map ({len(inv_map)} orgs):")
+    for ours, fb in sorted(inv_map.items()):
+        print(f"  {ours:<26} <- {fb}")
+
+    # pull sequences in bulk per org
+    found = {}                                    # (our_org, locus_tag) -> seq
+    by_org = defaultdict(set)
     for gi, (org, lt_) in org_by_idx.items():
-        targets[org].add(lt_)
-    print(f"unique organisms: {len(targets)}")
-
-    # manifest: org -> accession -> genome_cache/<accession>/protein.faa
-    org_to_accession = {}
-    if Path(manifest_csv).exists():
-        for r in csv.DictReader(open(manifest_csv)):
-            if r.get("accession"):
-                org_to_accession[r["organism"]] = r["accession"]
-
-    # also look for protein.faa next to genomic.gff in any subdir
-    found_sequences = {}
-    for org, loci in targets.items():
-        acc = org_to_accession.get(org)
-        candidates = []
-        if acc:
-            candidates.append(Path(genome_cache) / acc / "protein.faa")
-        # fallback: also try any subdir matching the org name
-        for d in Path(genome_cache).iterdir():
-            if d.is_dir():
-                faa = d / "protein.faa"
-                if faa.exists() and (acc is None or d.name == acc):
-                    candidates.append(faa)
-        seqs = {}
-        for c in candidates:
-            if c.exists():
-                seqs.update(parse_faa(c, loci))
-                if seqs:
-                    break
-        found_sequences[org] = seqs
-        print(f"  {org:<28} target {len(loci):>5}  found {len(seqs):>5}  "
-              f"({100*len(seqs)/max(1,len(loci)):>5.1f}%)")
+        by_org[org].add(lt_)
+    for our, loci in by_org.items():
+        fb = inv_map.get(our)
+        if fb is None:
+            print(f"  {our:<26}: no feba mapping; skipped")
+            continue
+        if org_col:
+            rows = cur.execute(
+                f"SELECT {loc_col}, {seq_col} FROM {seq_table} "
+                f"WHERE {org_col} = ?", (fb,)).fetchall()
+        else:
+            rows = cur.execute(
+                f"SELECT {loc_col}, {seq_col} FROM {seq_table}").fetchall()
+        hit = 0
+        for lid, seq in rows:
+            if lid in loci and seq:
+                found[(our, str(lid))] = seq
+                hit += 1
+        print(f"  {our:<26} feba={fb:<14}  target {len(loci):>5}  "
+              f"got {hit:>5}  ({100*hit/max(1,len(loci)):>5.1f}%)")
 
     # emit fasta + index
     out_fa = out_dir / "proteins.fasta"
     index = {}
     with open(out_fa, "w") as f:
         for gi, (org, lt_) in sorted(org_by_idx.items()):
-            seq = found_sequences.get(org, {}).get(lt_, "")
-            seq = seq.replace("*", "")[:1022]   # ESM-2 max len 1024; leave headroom
+            seq = (found.get((org, lt_), "") or "").replace("*", "")[:1022]
             index[gi] = dict(organism=org, locus_tag=lt_,
                              len=len(seq), resolved=bool(seq))
             if seq:
                 f.write(f">{gi}|{org}|{lt_}\n{seq}\n")
     json.dump(index, open(out_dir / "protein_index.json", "w"))
-    n_resolved = sum(1 for v in index.values() if v["resolved"])
-    print(f"\nresolved {n_resolved:,} / {len(index):,} ({100*n_resolved/len(index):.1f}%)")
+    n_res = sum(1 for v in index.values() if v["resolved"])
+    print(f"\nresolved {n_res:,} / {len(index):,} ({100*n_res/len(index):.1f}%)")
     print(f"wrote {out_fa} + protein_index.json")
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--cond_npz", default="data/drive_import/cond/cond_pairs.npz")
-    ap.add_argument("--genome_cache", default="data/drive_import/genome_cache")
-    ap.add_argument("--manifest", default="data/drive_import/labels/genome_cache_manifest.csv")
+    ap.add_argument("--cache", default="outputs/orphan/af_msa_cache.npz")
+    ap.add_argument("--feba_db", default="/tmp/feba.db")
     ap.add_argument("--out_dir", default="data/drive_import/cond")
     a = ap.parse_args()
-    main(a.cond_npz, a.genome_cache, a.manifest, a.out_dir)
+    main(a.cond_npz, a.cache, a.feba_db, a.out_dir)
