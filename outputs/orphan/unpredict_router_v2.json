@@ -1,0 +1,77 @@
+{
+  "router": {
+    "loco_accuracy": 0.705,
+    "EASY": {
+      "precision": 0.877,
+      "recall": 0.788,
+      "predicted_n": 105237,
+      "true_n": 117087,
+      "delta_recall_vs_v1": -0.169
+    },
+    "CONDITIONAL": {
+      "precision": 0.349,
+      "recall": 0.417,
+      "predicted_n": 27866,
+      "true_n": 23356,
+      "delta_recall_vs_v1": 0.289
+    },
+    "SPARSE": {
+      "precision": 0.608,
+      "recall": 0.989,
+      "predicted_n": 30139,
+      "true_n": 18530,
+      "delta_recall_vs_v1": 0.291
+    },
+    "DOMAIN": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "predicted_n": 452,
+      "true_n": 3239,
+      "delta_recall_vs_v1": 0.0
+    },
+    "NOISY": {
+      "precision": 0.307,
+      "recall": 0.274,
+      "predicted_n": 12285,
+      "true_n": 13767,
+      "delta_recall_vs_v1": 0.264
+    }
+  },
+  "feature_importance": {
+    "msa_depth": 1.902,
+    "known_count": 1.902,
+    "foc_gc": 1.721,
+    "family_ess_var": 1.435,
+    "family_ess_rate": 0.929,
+    "cc_ess_rate": 0.69,
+    "foc_npar": 0.618,
+    "sc_ess_rate": 0.607,
+    "n_clades_in_family": 0.482,
+    "family_n_orgs": 0.449,
+    "dnds_max": 0.344,
+    "family_size": 0.325,
+    "foc_loglen": 0.279,
+    "dnds_mean": 0.259,
+    "foc_has_dnds": 0.219,
+    "n_paralogs": 0.215,
+    "dnds_spread": 0.198,
+    "cai": 0.184,
+    "foc_dnds": 0.176,
+    "is_transporter": 0.171,
+    "is_regulator": 0.166,
+    "has_cai": 0.16,
+    "same_minus_cross": 0.124,
+    "dnds_var": 0.089,
+    "is_signaling": 0.06,
+    "foc_lead": 0.044,
+    "gc3": 0.033,
+    "foc_oric": 0.028
+  },
+  "n_features": 28,
+  "deployment": {
+    "coverage": 0.4232,
+    "precision": 0.9135,
+    "n_called": 75861,
+    "n_evaluable": 179237
+  }
+}
