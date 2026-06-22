@@ -210,10 +210,11 @@ class Trainer2:
             if oo >= 0 and (prof[0, oo, 1] > 0 or prof[0, oo, 2] > 0):
                 raise AssertionError(f"SELF-LEAK: gene {i} ({focal}) sees its own org label "
                                      f"when held={other}")
-            # strict mode also masks the whole own clade
+            # strict mode also masks the whole own clade -- but only if that clade
+            # has any orthology presence (orphan-only clades are vacuously safe).
             if strict:
                 own = (self.orth_clade == focal)
-                if prof[0, own, 1].max() > 0 or prof[0, own, 2].max() > 0:
+                if own.sum() > 0 and (prof[0, own, 1].max() > 0 or prof[0, own, 2].max() > 0):
                     raise AssertionError(f"CLADE-LEAK: gene {i} ({focal}) sees own-clade "
                                          f"labels when held={other}")
             ok += 1
