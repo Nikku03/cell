@@ -1,0 +1,140 @@
+{
+  "q1_essentiality_distribution": {
+    "universal": 133,
+    "high": 211,
+    "conditional": 502,
+    "rare": 726,
+    "never": 379
+  },
+  "q1_total_broad_ogs": 1951,
+  "q2_universal_composition": {
+    "unclassified": 33,
+    "translation/ribosome": 62,
+    "cofactor": 3,
+    "amino-acid": 5,
+    "lipid/membrane": 3,
+    "energy": 8,
+    "chaperone/other": 2,
+    "replication/repair": 11,
+    "transcription": 4,
+    "nucleotide": 2
+  },
+  "q2_conditional_composition": {
+    "lipid/membrane": 9,
+    "amino-acid": 46,
+    "transcription": 30,
+    "unclassified": 332,
+    "energy": 36,
+    "nucleotide": 7,
+    "translation/ribosome": 13,
+    "chaperone/other": 15,
+    "replication/repair": 13,
+    "cofactor": 1
+  },
+  "q2_universal_examples": [
+    [
+      "OG00354",
+      48,
+      "50S ribosomal protein L6"
+    ],
+    [
+      "OG00546",
+      48,
+      "30S ribosomal protein S3"
+    ],
+    [
+      "OG00632",
+      48,
+      "50S ribosomal protein L11"
+    ],
+    [
+      "OG00833",
+      48,
+      "elongation factor G"
+    ],
+    [
+      "OG01203",
+      48,
+      "chaperonin GroEL"
+    ],
+    [
+      "OG01241",
+      48,
+      "30S ribosomal protein S11"
+    ],
+    [
+      "OG01350",
+      48,
+      "50S ribosomal protein L23"
+    ],
+    [
+      "OG01586",
+      48,
+      "CTP synthase"
+    ],
+    [
+      "OG01758",
+      48,
+      "valine--tRNA ligase"
+    ],
+    [
+      "OG01765",
+      48,
+      "polyprenyl synthetase family protein"
+    ],
+    [
+      "OG01816",
+      48,
+      "LSU ribosomal protein L2P"
+    ],
+    [
+      "OG01832",
+      48,
+      "50S ribosomal protein L1"
+    ],
+    [
+      "OG01944",
+      48,
+      "30S ribosomal protein S10"
+    ],
+    [
+      "OG02092",
+      48,
+      "30S ribosomal protein S13"
+    ],
+    [
+      "OG02779",
+      48,
+      "30S ribosomal protein S9"
+    ]
+  ],
+  "q3_robustness": {
+    "removed_pct": [
+      0.0,
+      2.0,
+      5.0,
+      10.0,
+      15.0,
+      20.0,
+      30.0
+    ],
+    "targeted_giant_frac": [
+      0.418,
+      0.307,
+      0.25,
+      0.114,
+      0.071,
+      0.03,
+      0.012
+    ],
+    "random_giant_frac": [
+      0.418,
+      0.398,
+      0.383,
+      0.32,
+      0.278,
+      0.266,
+      0.181
+    ]
+  }
+}
