@@ -1,0 +1,45 @@
+{
+  "buckets": {
+    "confident": 80995,
+    "confident_ess_rate": 0.134,
+    "abstention": 65166,
+    "abstention_ess_rate": 0.461
+  },
+  "abstention_coverage": {
+    "model_alone": {
+      "essCov": 0.083,
+      "neCov": 0.0,
+      "combined": 0.038
+    },
+    "systems_prior": {
+      "essCov": 0.305,
+      "neCov": 0.033,
+      "combined": 0.159
+    },
+    "patched": {
+      "essCov": 0.361,
+      "neCov": 0.0,
+      "combined": 0.166
+    }
+  },
+  "whole_genome_coverage": {
+    "model_alone": {
+      "essCov": 0.021,
+      "neCov": 0.789,
+      "combined": 0.574
+    },
+    "patched": {
+      "essCov": 0.343,
+      "neCov": 0.789,
+      "combined": 0.664
+    }
+  },
+  "hunt_list": {
+    "total": 22236,
+    "by_category": {
+      "conditional (bimodal middle)": 21741,
+      "noisy/unresolved": 320,
+      "paralog-buffered": 175
+    }
+  }
+}
