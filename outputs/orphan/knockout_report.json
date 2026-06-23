@@ -1,0 +1,229 @@
+{
+  "FtsZ": {
+    "locus_tag": "14241",
+    "gene_name": "?",
+    "product": "cell division protein FtsZ",
+    "slot": "cell_division",
+    "essential": true,
+    "universal_core": false,
+    "operon_neighbours": [
+      [
+        "14240",
+        "?",
+        "cell division protein FtsA",
+        "essential"
+      ],
+      [
+        "14242",
+        "?",
+        "UDP-3-O-acyl-N-acetylglucosamine deacety",
+        "essential"
+      ]
+    ],
+    "operon_essentials_hit": 2,
+    "phyletic_partners": [
+      [
+        "14810",
+        "?",
+        "glutamine--tRNA ligase/YqeY domain fusion protein"
+      ],
+      [
+        "15054",
+        "?",
+        "lysine--tRNA ligase"
+      ],
+      [
+        "15387",
+        "?",
+        "L-threonylcarbamoyladenylate synthase"
+      ],
+      [
+        "16970",
+        "?",
+        "lysine--tRNA ligase"
+      ],
+      [
+        "17345",
+        "?",
+        "L-threonylcarbamoyladenylate synthase"
+      ],
+      [
+        "18157",
+        "?",
+        "lysine--tRNA ligase"
+      ]
+    ],
+    "slot_before": 8,
+    "slot_after": 5,
+    "slot_required": 1,
+    "slot_status": "slot OK",
+    "cascade_reach": 47,
+    "verdict": "DEAD",
+    "mechanism": "essential gene knockout (AND gate: 1 essential lost -> 0 viability)"
+  },
+  "GyrA": {
+    "locus_tag": "16338",
+    "gene_name": "?",
+    "product": "DNA gyrase subunit A",
+    "slot": "replication",
+    "essential": true,
+    "universal_core": true,
+    "operon_neighbours": [
+      [
+        "16337",
+        "?",
+        "DUF2138 domain-containing protein",
+        "non-essential"
+      ],
+      [
+        "16339",
+        "?",
+        "bifunctional 2-polyprenyl-6-hydroxypheno",
+        "essential"
+      ]
+    ],
+    "operon_essentials_hit": 1,
+    "phyletic_partners": [],
+    "slot_before": 19,
+    "slot_after": 17,
+    "slot_required": 5,
+    "slot_status": "slot OK",
+    "cascade_reach": 58,
+    "verdict": "DEAD",
+    "mechanism": "essential gene knockout (AND gate: 1 essential lost -> 0 viability)"
+  },
+  "RpoB": {
+    "locus_tag": "18018",
+    "gene_name": "?",
+    "product": "DNA-directed RNA polymerase subunit beta",
+    "slot": "transcription",
+    "essential": true,
+    "universal_core": true,
+    "operon_neighbours": [
+      [
+        "18017",
+        "?",
+        "50S ribosomal protein L7/L12",
+        "essential"
+      ],
+      [
+        "18019",
+        "?",
+        "DNA-directed RNA polymerase subunit beta",
+        "essential"
+      ]
+    ],
+    "operon_essentials_hit": 2,
+    "phyletic_partners": [],
+    "slot_before": 61,
+    "slot_after": 58,
+    "slot_required": 6,
+    "slot_status": "slot OK",
+    "cascade_reach": 3,
+    "verdict": "DEAD",
+    "mechanism": "essential gene knockout (AND gate: 1 essential lost -> 0 viability)"
+  },
+  "FolA": {
+    "locus_tag": "14194",
+    "gene_name": "?",
+    "product": "dihydrofolate reductase",
+    "slot": "cofactor",
+    "essential": true,
+    "universal_core": false,
+    "operon_neighbours": [
+      [
+        "14193",
+        "?",
+        "glutathione-regulated potassium-efflux s",
+        "non-essential"
+      ],
+      [
+        "14195",
+        "?",
+        "symmetrical bis(5'-nucleosyl)-tetraphosp",
+        "non-essential"
+      ]
+    ],
+    "operon_essentials_hit": 1,
+    "phyletic_partners": [
+      [
+        "14302",
+        "?",
+        "iron-sulfur cluster insertion protein ErpA"
+      ],
+      [
+        "14316",
+        "?",
+        "translation elongation factor Ts"
+      ],
+      [
+        "14334",
+        "?",
+        "tRNA lysidine(34) synthetase TilS"
+      ],
+      [
+        "14355",
+        "?",
+        "DNA polymerase III subunit epsilon"
+      ],
+      [
+        "14612",
+        "?",
+        "ferrochelatase"
+      ],
+      [
+        "14661",
+        "?",
+        "UDP-2%2C3-diacylglucosamine diphosphatase"
+      ],
+      [
+        "14760",
+        "?",
+        "cold-shock protein"
+      ],
+      [
+        "14799",
+        "?",
+        "FAD-dependent oxidoreductase"
+      ]
+    ],
+    "slot_before": 5,
+    "slot_after": 3,
+    "slot_required": 0,
+    "slot_status": "slot OK",
+    "cascade_reach": 87,
+    "verdict": "DEAD",
+    "mechanism": "essential gene knockout (AND gate: 1 essential lost -> 0 viability)"
+  },
+  "non-essential": {
+    "locus_tag": "15565",
+    "gene_name": "?",
+    "product": "aldehyde dehydrogenase family protein",
+    "slot": "other",
+    "essential": false,
+    "universal_core": true,
+    "operon_neighbours": [
+      [
+        "15564",
+        "?",
+        "",
+        "non-essential"
+      ],
+      [
+        "15566",
+        "?",
+        "",
+        "essential"
+      ]
+    ],
+    "operon_essentials_hit": 1,
+    "phyletic_partners": [],
+    "slot_before": 327,
+    "slot_after": 326,
+    "slot_required": 0,
+    "slot_status": "slot OK",
+    "cascade_reach": 1,
+    "verdict": "IMPAIRED",
+    "mechanism": "universal-core gene removal; conserved everywhere despite being non-essential here"
+  }
+}
