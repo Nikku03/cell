@@ -1,0 +1,58 @@
+{
+  "n_orphans": 31126,
+  "orphan_ess_rate": 0.142,
+  "n_with_codon": 9082,
+  "organisms": [
+    "beril_MR1",
+    "beril_SynE",
+    "ecoli_BW25113_tradis",
+    "mtub",
+    "saur_NCTC8325_biotradis",
+    "spneT4",
+    "syn3a"
+  ],
+  "univariate_auc": {
+    "cai": 0.717,
+    "gc": 0.573,
+    "gc3": 0.57,
+    "log_len": 0.589,
+    "intergenic_prev": 0.563,
+    "intergenic_next": 0.557,
+    "same_strand_prev": 0.562,
+    "same_strand_next": 0.564
+  },
+  "per_org_loo": {
+    "ecoli_BW25113_tradis": {
+      "n": 2942,
+      "ess_rate": 0.045,
+      "auc": 0.807,
+      "neCov_p90": 1.0,
+      "essCov_p70": 0.0
+    },
+    "mtub": {
+      "n": 3557,
+      "ess_rate": 0.213,
+      "auc": 0.662,
+      "neCov_p90": 0.237,
+      "essCov_p70": 0.0
+    },
+    "saur_NCTC8325_biotradis": {
+      "n": 2100,
+      "ess_rate": 0.166,
+      "auc": 0.693,
+      "neCov_p90": 0.565,
+      "essCov_p70": 0.01
+    },
+    "spneT4": {
+      "n": 431,
+      "ess_rate": 0.223,
+      "auc": 0.538,
+      "neCov_p90": 0.074,
+      "essCov_p70": 0.0
+    }
+  },
+  "pooled_loo_auc": 0.71,
+  "pooled_loo_neCov_p90": 0.759,
+  "cai_only_auc": 0.694,
+  "note": "orthology-free orphan essentiality prediction; LOO-org over 4 orgs with codon features"
+}
