@@ -1,0 +1,25 @@
+{
+  "feature_results": [
+    {
+      "label": "baseline (6 feats)",
+      "n": 65166,
+      "essCov": 0.361,
+      "neCov": 0.0
+    },
+    {
+      "label": "+ SAFE (cooccur struct + regulator)",
+      "n": 65166,
+      "essCov": 0.357,
+      "neCov": 0.0
+    },
+    {
+      "label": "+ SAFE + RISKY (ess-neighbor-frac)",
+      "n": 65166,
+      "essCov": 0.356,
+      "neCov": 0.0
+    }
+  ],
+  "ensemble": "AUC 0.845 vs best single 0.847 (variants corr 0.96-0.98)",
+  "base_model_swap": "aug essCov 0.361 vs v2nosc 0.247",
+  "conclusion": "precision at data ceiling; abstention bucket ~98% conditional"
+}
