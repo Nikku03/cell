@@ -1,0 +1,90 @@
+{
+  "organism": "beril_Keio",
+  "held_clade": "escherichia",
+  "K": 606,
+  "n_true_essential": 588,
+  "naive": [
+    {
+      "loop": 0,
+      "precision": 0.708,
+      "recall": 0.73,
+      "f1": 0.719,
+      "tp": 429,
+      "incoherent": 108,
+      "slots_complete": "8/9"
+    },
+    {
+      "loop": 1,
+      "precision": 0.649,
+      "recall": 0.668,
+      "f1": 0.658,
+      "tp": 393,
+      "incoherent": 54,
+      "slots_complete": "8/9"
+    },
+    {
+      "loop": 2,
+      "precision": 0.632,
+      "recall": 0.651,
+      "f1": 0.642,
+      "tp": 383,
+      "incoherent": 28,
+      "slots_complete": "8/9"
+    },
+    {
+      "loop": 3,
+      "precision": 0.642,
+      "recall": 0.662,
+      "f1": 0.652,
+      "tp": 389,
+      "incoherent": 16,
+      "slots_complete": "8/9"
+    }
+  ],
+  "discriminative": [
+    {
+      "loop": 0,
+      "precision": 0.708,
+      "recall": 0.73,
+      "f1": 0.719,
+      "tp": 429,
+      "incoherent": 108,
+      "slots_complete": "8/9"
+    },
+    {
+      "loop": 1,
+      "precision": 0.708,
+      "recall": 0.73,
+      "f1": 0.719,
+      "tp": 429,
+      "incoherent": 108,
+      "slots_complete": "8/9"
+    },
+    {
+      "loop": 2,
+      "precision": 0.708,
+      "recall": 0.73,
+      "f1": 0.719,
+      "tp": 429,
+      "incoherent": 108,
+      "slots_complete": "8/9"
+    },
+    {
+      "loop": 3,
+      "precision": 0.708,
+      "recall": 0.73,
+      "f1": 0.719,
+      "tp": 429,
+      "incoherent": 108,
+      "slots_complete": "8/9"
+    }
+  ],
+  "diagnostic": {
+    "TP_isolated": 0.3146853146853147,
+    "FP_isolated": 0.3672316384180791,
+    "TP_universal": 0.696969696969697,
+    "FP_universal": 0.2711864406779661
+  },
+  "n_missed_species_specific": 102,
+  "n_missed_total": 159
+}
