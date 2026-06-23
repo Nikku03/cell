@@ -1,0 +1,35 @@
+{
+  "syn3a_validation": {
+    "n_total": 455,
+    "n_true_essential": 383,
+    "n_pruned": 0,
+    "n_minimal": 455,
+    "composition": {
+      "conserved_core": 0,
+      "species_specific": 0,
+      "unannotated_no_og": 455
+    },
+    "slot_counts": {
+      "is_ribosomal": 63,
+      "is_trna": 39,
+      "is_synthetase": 24,
+      "is_polymerase": 12,
+      "is_dna_machinery": 21,
+      "is_translation": 13,
+      "is_transcription": 8,
+      "is_membrane": 53,
+      "is_atp_binding": 29,
+      "is_kinase": 19,
+      "is_phosphatase": 5,
+      "is_synthase": 23,
+      "is_metabolism": 79,
+      "is_uncharacterized": 138
+    },
+    "missing_required_slots": [],
+    "validation": {
+      "essential_recall": 1.0,
+      "minimal_cell_essential_purity": 0.842,
+      "n_with_product": 455
+    }
+  }
+}
