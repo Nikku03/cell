@@ -11,41 +11,26 @@
         "unannotated_no_og": 4
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 81,
+        "is_trna": 69,
+        "is_synthetase": 33,
+        "is_polymerase": 26,
+        "is_dna_machinery": 44,
+        "is_translation": 44,
+        "is_transcription": 168,
+        "is_membrane": 299,
+        "is_atp_binding": 72,
+        "is_kinase": 67,
+        "is_phosphatase": 33,
+        "is_synthase": 128,
+        "is_metabolism": 619,
+        "is_uncharacterized": 58
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.98,
         "minimal_cell_essential_purity": 0.22,
-        "n_with_product": 4
+        "n_with_product": 2540
       }
     },
     "beril_BFirm": {
@@ -59,41 +44,26 @@
         "unannotated_no_og": 19
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 68,
+        "is_trna": 48,
+        "is_synthetase": 33,
+        "is_polymerase": 29,
+        "is_dna_machinery": 32,
+        "is_translation": 32,
+        "is_transcription": 382,
+        "is_membrane": 539,
+        "is_atp_binding": 142,
+        "is_kinase": 61,
+        "is_phosphatase": 33,
+        "is_synthase": 104,
+        "is_metabolism": 861,
+        "is_uncharacterized": 44
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.789,
         "minimal_cell_essential_purity": 0.643,
-        "n_with_product": 19
+        "n_with_product": 3031
       }
     },
     "beril_Btheta": {
@@ -107,41 +77,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 59,
+        "is_trna": 45,
+        "is_synthetase": 27,
+        "is_polymerase": 43,
+        "is_dna_machinery": 23,
+        "is_translation": 23,
+        "is_transcription": 84,
+        "is_membrane": 154,
+        "is_atp_binding": 42,
+        "is_kinase": 41,
+        "is_phosphatase": 14,
+        "is_synthase": 76,
+        "is_metabolism": 304,
+        "is_uncharacterized": 11
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.915,
         "minimal_cell_essential_purity": 0.416,
-        "n_with_product": 0
+        "n_with_product": 1196
       }
     },
     "beril_Burk376": {
@@ -155,41 +110,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 66,
+        "is_trna": 44,
+        "is_synthetase": 29,
+        "is_polymerase": 30,
+        "is_dna_machinery": 26,
+        "is_translation": 28,
+        "is_transcription": 361,
+        "is_membrane": 516,
+        "is_atp_binding": 120,
+        "is_kinase": 58,
+        "is_phosphatase": 28,
+        "is_synthase": 95,
+        "is_metabolism": 793,
+        "is_uncharacterized": 40
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.828,
         "minimal_cell_essential_purity": 0.61,
-        "n_with_product": 0
+        "n_with_product": 2817
       }
     },
     "beril_Caulo": {
@@ -203,41 +143,26 @@
         "unannotated_no_og": 26
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 75,
+        "is_trna": 46,
+        "is_synthetase": 44,
+        "is_polymerase": 32,
+        "is_dna_machinery": 23,
+        "is_translation": 23,
+        "is_transcription": 129,
+        "is_membrane": 153,
+        "is_atp_binding": 58,
+        "is_kinase": 50,
+        "is_phosphatase": 28,
+        "is_synthase": 84,
+        "is_metabolism": 574,
+        "is_uncharacterized": 62
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.98,
         "minimal_cell_essential_purity": 0.331,
-        "n_with_product": 26
+        "n_with_product": 1914
       }
     },
     "beril_Cola": {
@@ -251,41 +176,26 @@
         "unannotated_no_og": 23
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 58,
+        "is_trna": 52,
+        "is_synthetase": 28,
+        "is_polymerase": 37,
+        "is_dna_machinery": 23,
+        "is_translation": 19,
+        "is_transcription": 103,
+        "is_membrane": 152,
+        "is_atp_binding": 53,
+        "is_kinase": 46,
+        "is_phosphatase": 29,
+        "is_synthase": 96,
+        "is_metabolism": 424,
+        "is_uncharacterized": 10
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.975,
         "minimal_cell_essential_purity": 0.346,
-        "n_with_product": 23
+        "n_with_product": 1545
       }
     },
     "beril_Cup4G11": {
@@ -299,41 +209,26 @@
         "unannotated_no_og": 23
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 68,
+        "is_trna": 49,
+        "is_synthetase": 38,
+        "is_polymerase": 34,
+        "is_dna_machinery": 37,
+        "is_translation": 35,
+        "is_transcription": 428,
+        "is_membrane": 629,
+        "is_atp_binding": 145,
+        "is_kinase": 79,
+        "is_phosphatase": 34,
+        "is_synthase": 133,
+        "is_metabolism": 1124,
+        "is_uncharacterized": 90
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.974,
         "minimal_cell_essential_purity": 0.365,
-        "n_with_product": 23
+        "n_with_product": 4063
       }
     },
     "beril_Dda3937": {
@@ -347,41 +242,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 85,
+        "is_trna": 71,
+        "is_synthetase": 35,
+        "is_polymerase": 27,
+        "is_dna_machinery": 45,
+        "is_translation": 51,
+        "is_transcription": 243,
+        "is_membrane": 599,
+        "is_atp_binding": 143,
+        "is_kinase": 88,
+        "is_phosphatase": 53,
+        "is_synthase": 151,
+        "is_metabolism": 732,
+        "is_uncharacterized": 213
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.997,
         "minimal_cell_essential_purity": 0.215,
-        "n_with_product": 0
+        "n_with_product": 3509
       }
     },
     "beril_Ddia6719": {
@@ -395,41 +275,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 71,
+        "is_trna": 47,
+        "is_synthetase": 33,
+        "is_polymerase": 22,
+        "is_dna_machinery": 42,
+        "is_translation": 36,
+        "is_transcription": 191,
+        "is_membrane": 427,
+        "is_atp_binding": 123,
+        "is_kinase": 63,
+        "is_phosphatase": 28,
+        "is_synthase": 115,
+        "is_metabolism": 548,
+        "is_uncharacterized": 35
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.941,
         "minimal_cell_essential_purity": 0.31,
-        "n_with_product": 0
+        "n_with_product": 2417
       }
     },
     "beril_DdiaME23": {
@@ -443,41 +308,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 76,
+        "is_trna": 45,
+        "is_synthetase": 28,
+        "is_polymerase": 21,
+        "is_dna_machinery": 41,
+        "is_translation": 40,
+        "is_transcription": 191,
+        "is_membrane": 428,
+        "is_atp_binding": 115,
+        "is_kinase": 64,
+        "is_phosphatase": 36,
+        "is_synthase": 120,
+        "is_metabolism": 546,
+        "is_uncharacterized": 126
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.957,
         "minimal_cell_essential_purity": 0.259,
-        "n_with_product": 0
+        "n_with_product": 2503
       }
     },
     "beril_Dino": {
@@ -491,41 +341,26 @@
         "unannotated_no_og": 23
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 62,
+        "is_trna": 46,
+        "is_synthetase": 29,
+        "is_polymerase": 21,
+        "is_dna_machinery": 26,
+        "is_translation": 26,
+        "is_transcription": 133,
+        "is_membrane": 312,
+        "is_atp_binding": 106,
+        "is_kinase": 49,
+        "is_phosphatase": 16,
+        "is_synthase": 95,
+        "is_metabolism": 513,
+        "is_uncharacterized": 30
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.92,
         "minimal_cell_essential_purity": 0.47,
-        "n_with_product": 23
+        "n_with_product": 1905
       }
     },
     "beril_DvH": {
@@ -539,41 +374,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 64,
+        "is_trna": 46,
+        "is_synthetase": 28,
+        "is_polymerase": 13,
+        "is_dna_machinery": 17,
+        "is_translation": 22,
+        "is_transcription": 64,
+        "is_membrane": 195,
+        "is_atp_binding": 57,
+        "is_kinase": 34,
+        "is_phosphatase": 14,
+        "is_synthase": 82,
+        "is_metabolism": 301,
+        "is_uncharacterized": 16
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.932,
         "minimal_cell_essential_purity": 0.39,
-        "n_with_product": 0
+        "n_with_product": 1285
       }
     },
     "beril_Dyella79": {
@@ -587,41 +407,26 @@
         "unannotated_no_og": 24
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 70,
+        "is_trna": 46,
+        "is_synthetase": 28,
+        "is_polymerase": 27,
+        "is_dna_machinery": 27,
+        "is_translation": 34,
+        "is_transcription": 171,
+        "is_membrane": 217,
+        "is_atp_binding": 59,
+        "is_kinase": 59,
+        "is_phosphatase": 28,
+        "is_synthase": 98,
+        "is_metabolism": 524,
+        "is_uncharacterized": 34
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.96,
         "minimal_cell_essential_purity": 0.334,
-        "n_with_product": 24
+        "n_with_product": 2007
       }
     },
     "beril_HerbieS": {
@@ -635,41 +440,26 @@
         "unannotated_no_og": 13
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 74,
+        "is_trna": 59,
+        "is_synthetase": 39,
+        "is_polymerase": 37,
+        "is_dna_machinery": 34,
+        "is_translation": 41,
+        "is_transcription": 296,
+        "is_membrane": 616,
+        "is_atp_binding": 168,
+        "is_kinase": 92,
+        "is_phosphatase": 38,
+        "is_synthase": 125,
+        "is_metabolism": 885,
+        "is_uncharacterized": 159
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.999,
         "minimal_cell_essential_purity": 0.321,
-        "n_with_product": 13
+        "n_with_product": 3774
       }
     },
     "beril_Keio": {
@@ -683,40 +473,26 @@
         "unannotated_no_og": 17
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 13
+        "is_ribosomal": 69,
+        "is_trna": 50,
+        "is_synthetase": 33,
+        "is_polymerase": 22,
+        "is_dna_machinery": 39,
+        "is_translation": 42,
+        "is_transcription": 158,
+        "is_membrane": 336,
+        "is_atp_binding": 79,
+        "is_kinase": 68,
+        "is_phosphatase": 29,
+        "is_synthase": 100,
+        "is_metabolism": 525,
+        "is_uncharacterized": 42
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.954,
         "minimal_cell_essential_purity": 0.257,
-        "n_with_product": 17
+        "n_with_product": 2146
       }
     },
     "beril_Korea": {
@@ -730,41 +506,26 @@
         "unannotated_no_og": 45
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 65,
+        "is_trna": 45,
+        "is_synthetase": 32,
+        "is_polymerase": 34,
+        "is_dna_machinery": 29,
+        "is_translation": 29,
+        "is_transcription": 158,
+        "is_membrane": 168,
+        "is_atp_binding": 45,
+        "is_kinase": 42,
+        "is_phosphatase": 23,
+        "is_synthase": 95,
+        "is_metabolism": 525,
+        "is_uncharacterized": 35
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.971,
         "minimal_cell_essential_purity": 0.391,
-        "n_with_product": 45
+        "n_with_product": 1954
       }
     },
     "beril_Koxy": {
@@ -778,41 +539,26 @@
         "unannotated_no_og": 8
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 72,
+        "is_trna": 56,
+        "is_synthetase": 37,
+        "is_polymerase": 25,
+        "is_dna_machinery": 40,
+        "is_translation": 37,
+        "is_transcription": 292,
+        "is_membrane": 604,
+        "is_atp_binding": 135,
+        "is_kinase": 89,
+        "is_phosphatase": 39,
+        "is_synthase": 136,
+        "is_metabolism": 763,
+        "is_uncharacterized": 43
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.939,
         "minimal_cell_essential_purity": 0.361,
-        "n_with_product": 8
+        "n_with_product": 3089
       }
     },
     "beril_MR1": {
@@ -826,40 +572,26 @@
         "unannotated_no_og": 10
       },
       "slot_counts": {
-        "is_ribosomal": 1,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 82,
+        "is_trna": 63,
+        "is_synthetase": 31,
+        "is_polymerase": 27,
+        "is_dna_machinery": 51,
+        "is_translation": 39,
+        "is_transcription": 137,
+        "is_membrane": 276,
+        "is_atp_binding": 69,
+        "is_kinase": 64,
+        "is_phosphatase": 32,
+        "is_synthase": 117,
+        "is_metabolism": 591,
+        "is_uncharacterized": 53
       },
-      "missing_required_slots": [
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.989,
         "minimal_cell_essential_purity": 0.191,
-        "n_with_product": 10
+        "n_with_product": 2408
       }
     },
     "beril_Magneto": {
@@ -873,41 +605,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 64,
+        "is_trna": 46,
+        "is_synthetase": 29,
+        "is_polymerase": 18,
+        "is_dna_machinery": 36,
+        "is_translation": 30,
+        "is_transcription": 104,
+        "is_membrane": 170,
+        "is_atp_binding": 65,
+        "is_kinase": 44,
+        "is_phosphatase": 25,
+        "is_synthase": 96,
+        "is_metabolism": 465,
+        "is_uncharacterized": 94
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.906,
         "minimal_cell_essential_purity": 0.57,
-        "n_with_product": 0
+        "n_with_product": 1867
       }
     },
     "beril_Marino": {
@@ -921,41 +638,26 @@
         "unannotated_no_og": 32
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 66,
+        "is_trna": 46,
+        "is_synthetase": 28,
+        "is_polymerase": 24,
+        "is_dna_machinery": 29,
+        "is_translation": 28,
+        "is_transcription": 127,
+        "is_membrane": 265,
+        "is_atp_binding": 92,
+        "is_kinase": 45,
+        "is_phosphatase": 19,
+        "is_synthase": 97,
+        "is_metabolism": 501,
+        "is_uncharacterized": 19
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.97,
         "minimal_cell_essential_purity": 0.409,
-        "n_with_product": 32
+        "n_with_product": 1838
       }
     },
     "beril_Methanococcus_JJ": {
@@ -969,41 +671,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 58,
+        "is_trna": 27,
+        "is_synthetase": 15,
+        "is_polymerase": 8,
+        "is_dna_machinery": 8,
+        "is_translation": 12,
+        "is_transcription": 24,
+        "is_membrane": 75,
+        "is_atp_binding": 26,
+        "is_kinase": 18,
+        "is_phosphatase": 10,
+        "is_synthase": 61,
+        "is_metabolism": 183,
+        "is_uncharacterized": 183
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.716,
         "minimal_cell_essential_purity": 0.263,
-        "n_with_product": 0
+        "n_with_product": 996
       }
     },
     "beril_Methanococcus_S2": {
@@ -1017,41 +704,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 59,
+        "is_trna": 27,
+        "is_synthetase": 16,
+        "is_polymerase": 8,
+        "is_dna_machinery": 7,
+        "is_translation": 12,
+        "is_transcription": 24,
+        "is_membrane": 79,
+        "is_atp_binding": 27,
+        "is_kinase": 18,
+        "is_phosphatase": 10,
+        "is_synthase": 61,
+        "is_metabolism": 189,
+        "is_uncharacterized": 185
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.665,
         "minimal_cell_essential_purity": 0.329,
-        "n_with_product": 0
+        "n_with_product": 1024
       }
     },
     "beril_Miya": {
@@ -1065,41 +737,26 @@
         "unannotated_no_og": 14
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 61,
+        "is_trna": 47,
+        "is_synthetase": 28,
+        "is_polymerase": 10,
+        "is_dna_machinery": 18,
+        "is_translation": 22,
+        "is_transcription": 67,
+        "is_membrane": 215,
+        "is_atp_binding": 67,
+        "is_kinase": 33,
+        "is_phosphatase": 15,
+        "is_synthase": 86,
+        "is_metabolism": 302,
+        "is_uncharacterized": 12
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.89,
         "minimal_cell_essential_purity": 0.419,
-        "n_with_product": 14
+        "n_with_product": 1305
       }
     },
     "beril_PS": {
@@ -1113,41 +770,26 @@
         "unannotated_no_og": 15
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 70,
+        "is_trna": 49,
+        "is_synthetase": 29,
+        "is_polymerase": 27,
+        "is_dna_machinery": 35,
+        "is_translation": 33,
+        "is_transcription": 107,
+        "is_membrane": 250,
+        "is_atp_binding": 81,
+        "is_kinase": 49,
+        "is_phosphatase": 29,
+        "is_synthase": 114,
+        "is_metabolism": 458,
+        "is_uncharacterized": 45
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.946,
         "minimal_cell_essential_purity": 0.471,
-        "n_with_product": 15
+        "n_with_product": 1954
       }
     },
     "beril_PV4": {
@@ -1161,41 +803,26 @@
         "unannotated_no_og": 2
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 73,
+        "is_trna": 53,
+        "is_synthetase": 32,
+        "is_polymerase": 22,
+        "is_dna_machinery": 32,
+        "is_translation": 40,
+        "is_transcription": 134,
+        "is_membrane": 204,
+        "is_atp_binding": 58,
+        "is_kinase": 47,
+        "is_phosphatase": 28,
+        "is_synthase": 114,
+        "is_metabolism": 484,
+        "is_uncharacterized": 19
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.881,
         "minimal_cell_essential_purity": 0.44,
-        "n_with_product": 2
+        "n_with_product": 1886
       }
     },
     "beril_Pedo557": {
@@ -1209,41 +836,26 @@
         "unannotated_no_og": 22
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 63,
+        "is_trna": 52,
+        "is_synthetase": 29,
+        "is_polymerase": 46,
+        "is_dna_machinery": 18,
+        "is_translation": 24,
+        "is_transcription": 120,
+        "is_membrane": 140,
+        "is_atp_binding": 43,
+        "is_kinase": 51,
+        "is_phosphatase": 23,
+        "is_synthase": 92,
+        "is_metabolism": 458,
+        "is_uncharacterized": 21
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.968,
         "minimal_cell_essential_purity": 0.333,
-        "n_with_product": 22
+        "n_with_product": 1604
       }
     },
     "beril_Phaeo": {
@@ -1257,41 +869,26 @@
         "unannotated_no_og": 19
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 64,
+        "is_trna": 46,
+        "is_synthetase": 32,
+        "is_polymerase": 21,
+        "is_dna_machinery": 26,
+        "is_translation": 27,
+        "is_transcription": 172,
+        "is_membrane": 314,
+        "is_atp_binding": 108,
+        "is_kinase": 41,
+        "is_phosphatase": 23,
+        "is_synthase": 103,
+        "is_metabolism": 550,
+        "is_uncharacterized": 44
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.961,
         "minimal_cell_essential_purity": 0.439,
-        "n_with_product": 19
+        "n_with_product": 2028
       }
     },
     "beril_Ponti": {
@@ -1305,41 +902,26 @@
         "unannotated_no_og": 21
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 59,
+        "is_trna": 53,
+        "is_synthetase": 28,
+        "is_polymerase": 28,
+        "is_dna_machinery": 25,
+        "is_translation": 21,
+        "is_transcription": 76,
+        "is_membrane": 132,
+        "is_atp_binding": 53,
+        "is_kinase": 44,
+        "is_phosphatase": 24,
+        "is_synthase": 102,
+        "is_metabolism": 444,
+        "is_uncharacterized": 16
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.954,
         "minimal_cell_essential_purity": 0.375,
-        "n_with_product": 21
+        "n_with_product": 1487
       }
     },
     "beril_Putida": {
@@ -1353,41 +935,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 65,
+        "is_trna": 53,
+        "is_synthetase": 30,
+        "is_polymerase": 36,
+        "is_dna_machinery": 38,
+        "is_translation": 39,
+        "is_transcription": 291,
+        "is_membrane": 495,
+        "is_atp_binding": 111,
+        "is_kinase": 67,
+        "is_phosphatase": 24,
+        "is_synthase": 126,
+        "is_metabolism": 801,
+        "is_uncharacterized": 44
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.973,
         "minimal_cell_essential_purity": 0.236,
-        "n_with_product": 0
+        "n_with_product": 3075
       }
     },
     "beril_RalstoniaBSBF1503": {
@@ -1401,41 +968,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 78,
+        "is_trna": 56,
+        "is_synthetase": 34,
+        "is_polymerase": 32,
+        "is_dna_machinery": 32,
+        "is_translation": 45,
+        "is_transcription": 282,
+        "is_membrane": 476,
+        "is_atp_binding": 120,
+        "is_kinase": 78,
+        "is_phosphatase": 43,
+        "is_synthase": 116,
+        "is_metabolism": 872,
+        "is_uncharacterized": 592
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.997,
         "minimal_cell_essential_purity": 0.305,
-        "n_with_product": 0
+        "n_with_product": 4155
       }
     },
     "beril_RalstoniaGMI1000": {
@@ -1449,41 +1001,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 77,
+        "is_trna": 58,
+        "is_synthetase": 36,
+        "is_polymerase": 32,
+        "is_dna_machinery": 41,
+        "is_translation": 43,
+        "is_transcription": 273,
+        "is_membrane": 482,
+        "is_atp_binding": 118,
+        "is_kinase": 79,
+        "is_phosphatase": 42,
+        "is_synthase": 123,
+        "is_metabolism": 873,
+        "is_uncharacterized": 521
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.995,
         "minimal_cell_essential_purity": 0.326,
-        "n_with_product": 0
+        "n_with_product": 4119
       }
     },
     "beril_RalstoniaPSI07": {
@@ -1497,41 +1034,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 76,
+        "is_trna": 57,
+        "is_synthetase": 36,
+        "is_polymerase": 33,
+        "is_dna_machinery": 33,
+        "is_translation": 41,
+        "is_transcription": 280,
+        "is_membrane": 499,
+        "is_atp_binding": 120,
+        "is_kinase": 81,
+        "is_phosphatase": 46,
+        "is_synthase": 120,
+        "is_metabolism": 881,
+        "is_uncharacterized": 483
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.998,
         "minimal_cell_essential_purity": 0.254,
-        "n_with_product": 0
+        "n_with_product": 4033
       }
     },
     "beril_RalstoniaUW163": {
@@ -1545,41 +1067,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 69,
+        "is_trna": 49,
+        "is_synthetase": 31,
+        "is_polymerase": 28,
+        "is_dna_machinery": 37,
+        "is_translation": 40,
+        "is_transcription": 247,
+        "is_membrane": 432,
+        "is_atp_binding": 104,
+        "is_kinase": 65,
+        "is_phosphatase": 34,
+        "is_synthase": 110,
+        "is_metabolism": 746,
+        "is_uncharacterized": 117
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.953,
         "minimal_cell_essential_purity": 0.37,
-        "n_with_product": 0
+        "n_with_product": 3104
       }
     },
     "beril_SB2B": {
@@ -1593,41 +1100,26 @@
         "unannotated_no_og": 4
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 82,
+        "is_trna": 67,
+        "is_synthetase": 32,
+        "is_polymerase": 25,
+        "is_dna_machinery": 36,
+        "is_translation": 43,
+        "is_transcription": 137,
+        "is_membrane": 240,
+        "is_atp_binding": 62,
+        "is_kinase": 65,
+        "is_phosphatase": 35,
+        "is_synthase": 128,
+        "is_metabolism": 585,
+        "is_uncharacterized": 46
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.991,
         "minimal_cell_essential_purity": 0.217,
-        "n_with_product": 4
+        "n_with_product": 2320
       }
     },
     "beril_Smeli": {
@@ -1641,41 +1133,26 @@
         "unannotated_no_og": 89
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 64,
+        "is_trna": 44,
+        "is_synthetase": 30,
+        "is_polymerase": 26,
+        "is_dna_machinery": 25,
+        "is_translation": 33,
+        "is_transcription": 301,
+        "is_membrane": 572,
+        "is_atp_binding": 168,
+        "is_kinase": 78,
+        "is_phosphatase": 21,
+        "is_synthase": 105,
+        "is_metabolism": 773,
+        "is_uncharacterized": 38
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.968,
         "minimal_cell_essential_purity": 0.39,
-        "n_with_product": 89
+        "n_with_product": 2969
       }
     },
     "beril_SyringaeB728a": {
@@ -1689,41 +1166,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 71,
+        "is_trna": 60,
+        "is_synthetase": 33,
+        "is_polymerase": 34,
+        "is_dna_machinery": 39,
+        "is_translation": 40,
+        "is_transcription": 244,
+        "is_membrane": 536,
+        "is_atp_binding": 141,
+        "is_kinase": 72,
+        "is_phosphatase": 32,
+        "is_synthase": 126,
+        "is_metabolism": 807,
+        "is_uncharacterized": 55
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.977,
         "minimal_cell_essential_purity": 0.238,
-        "n_with_product": 0
+        "n_with_product": 3106
       }
     },
     "beril_SyringaeB728a_mexBdelta": {
@@ -1737,41 +1199,26 @@
         "unannotated_no_og": 0
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 73,
+        "is_trna": 62,
+        "is_synthetase": 32,
+        "is_polymerase": 37,
+        "is_dna_machinery": 37,
+        "is_translation": 40,
+        "is_transcription": 247,
+        "is_membrane": 535,
+        "is_atp_binding": 144,
+        "is_kinase": 77,
+        "is_phosphatase": 30,
+        "is_synthase": 125,
+        "is_metabolism": 819,
+        "is_uncharacterized": 48
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.979,
         "minimal_cell_essential_purity": 0.251,
-        "n_with_product": 0
+        "n_with_product": 3125
       }
     },
     "beril_WCS417": {
@@ -1785,41 +1232,26 @@
         "unannotated_no_og": 4
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 70,
+        "is_trna": 58,
+        "is_synthetase": 31,
+        "is_polymerase": 46,
+        "is_dna_machinery": 35,
+        "is_translation": 38,
+        "is_transcription": 333,
+        "is_membrane": 589,
+        "is_atp_binding": 141,
+        "is_kinase": 78,
+        "is_phosphatase": 31,
+        "is_synthase": 127,
+        "is_metabolism": 879,
+        "is_uncharacterized": 48
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.958,
         "minimal_cell_essential_purity": 0.386,
-        "n_with_product": 4
+        "n_with_product": 3409
       }
     },
     "beril_acidovorax_3H11": {
@@ -1833,41 +1265,26 @@
         "unannotated_no_og": 37
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 63,
+        "is_trna": 49,
+        "is_synthetase": 30,
+        "is_polymerase": 23,
+        "is_dna_machinery": 29,
+        "is_translation": 29,
+        "is_transcription": 224,
+        "is_membrane": 399,
+        "is_atp_binding": 113,
+        "is_kinase": 59,
+        "is_phosphatase": 30,
+        "is_synthase": 112,
+        "is_metabolism": 640,
+        "is_uncharacterized": 57
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.949,
         "minimal_cell_essential_purity": 0.423,
-        "n_with_product": 37
+        "n_with_product": 2518
       }
     },
     "beril_azobra": {
@@ -1881,41 +1298,26 @@
         "unannotated_no_og": 43
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 64,
+        "is_trna": 49,
+        "is_synthetase": 28,
+        "is_polymerase": 31,
+        "is_dna_machinery": 27,
+        "is_translation": 40,
+        "is_transcription": 203,
+        "is_membrane": 499,
+        "is_atp_binding": 153,
+        "is_kinase": 54,
+        "is_phosphatase": 24,
+        "is_synthase": 109,
+        "is_metabolism": 658,
+        "is_uncharacterized": 51
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.941,
         "minimal_cell_essential_purity": 0.453,
-        "n_with_product": 43
+        "n_with_product": 2661
       }
     },
     "beril_psRCH2": {
@@ -1929,41 +1331,26 @@
         "unannotated_no_og": 11
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 71,
+        "is_trna": 58,
+        "is_synthetase": 31,
+        "is_polymerase": 28,
+        "is_dna_machinery": 41,
+        "is_translation": 36,
+        "is_transcription": 169,
+        "is_membrane": 355,
+        "is_atp_binding": 90,
+        "is_kinase": 67,
+        "is_phosphatase": 34,
+        "is_synthase": 120,
+        "is_metabolism": 678,
+        "is_uncharacterized": 48
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.965,
         "minimal_cell_essential_purity": 0.332,
-        "n_with_product": 11
+        "n_with_product": 2570
       }
     },
     "beril_pseudo13_GW456_L13": {
@@ -1977,41 +1364,26 @@
         "unannotated_no_og": 2
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 67,
+        "is_trna": 53,
+        "is_synthetase": 30,
+        "is_polymerase": 33,
+        "is_dna_machinery": 32,
+        "is_translation": 37,
+        "is_transcription": 275,
+        "is_membrane": 460,
+        "is_atp_binding": 106,
+        "is_kinase": 70,
+        "is_phosphatase": 27,
+        "is_synthase": 125,
+        "is_metabolism": 840,
+        "is_uncharacterized": 47
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.967,
         "minimal_cell_essential_purity": 0.268,
-        "n_with_product": 2
+        "n_with_product": 2975
       }
     },
     "beril_pseudo1_N1B4": {
@@ -2025,41 +1397,26 @@
         "unannotated_no_og": 7
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 70,
+        "is_trna": 56,
+        "is_synthetase": 32,
+        "is_polymerase": 38,
+        "is_dna_machinery": 34,
+        "is_translation": 39,
+        "is_transcription": 290,
+        "is_membrane": 511,
+        "is_atp_binding": 115,
+        "is_kinase": 68,
+        "is_phosphatase": 30,
+        "is_synthase": 124,
+        "is_metabolism": 860,
+        "is_uncharacterized": 45
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.941,
         "minimal_cell_essential_purity": 0.468,
-        "n_with_product": 7
+        "n_with_product": 3130
       }
     },
     "beril_pseudo3_N2E3": {
@@ -2073,41 +1430,26 @@
         "unannotated_no_og": 6
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 68,
+        "is_trna": 50,
+        "is_synthetase": 31,
+        "is_polymerase": 31,
+        "is_dna_machinery": 33,
+        "is_translation": 38,
+        "is_transcription": 303,
+        "is_membrane": 524,
+        "is_atp_binding": 130,
+        "is_kinase": 77,
+        "is_phosphatase": 30,
+        "is_synthase": 128,
+        "is_metabolism": 874,
+        "is_uncharacterized": 44
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.974,
         "minimal_cell_essential_purity": 0.215,
-        "n_with_product": 6
+        "n_with_product": 3265
       }
     },
     "beril_pseudo5_N2C3_1": {
@@ -2121,41 +1463,26 @@
         "unannotated_no_og": 3
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 66,
+        "is_trna": 51,
+        "is_synthetase": 29,
+        "is_polymerase": 37,
+        "is_dna_machinery": 31,
+        "is_translation": 38,
+        "is_transcription": 360,
+        "is_membrane": 590,
+        "is_atp_binding": 142,
+        "is_kinase": 74,
+        "is_phosphatase": 29,
+        "is_synthase": 130,
+        "is_metabolism": 932,
+        "is_uncharacterized": 48
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.974,
         "minimal_cell_essential_purity": 0.285,
-        "n_with_product": 3
+        "n_with_product": 3539
       }
     },
     "beril_pseudo6_N2E2": {
@@ -2169,41 +1496,26 @@
         "unannotated_no_og": 4
       },
       "slot_counts": {
-        "is_ribosomal": 0,
-        "is_trna": 0,
-        "is_synthetase": 0,
-        "is_polymerase": 0,
-        "is_dna_machinery": 0,
-        "is_translation": 0,
-        "is_transcription": 0,
-        "is_membrane": 0,
-        "is_atp_binding": 0,
-        "is_kinase": 0,
-        "is_phosphatase": 0,
-        "is_synthase": 0,
-        "is_metabolism": 0,
-        "is_uncharacterized": 0
+        "is_ribosomal": 66,
+        "is_trna": 51,
+        "is_synthetase": 30,
+        "is_polymerase": 39,
+        "is_dna_machinery": 34,
+        "is_translation": 36,
+        "is_transcription": 324,
+        "is_membrane": 565,
+        "is_atp_binding": 137,
+        "is_kinase": 70,
+        "is_phosphatase": 29,
+        "is_synthase": 127,
+        "is_metabolism": 921,
+        "is_uncharacterized": 43
       },
-      "missing_required_slots": [
-        "is_ribosomal",
-        "is_trna",
-        "is_synthetase",
-        "is_polymerase",
-        "is_dna_machinery",
-        "is_translation",
-        "is_transcription",
-        "is_membrane",
-        "is_atp_binding",
-        "is_kinase",
-        "is_phosphatase",
-        "is_synthase",
-        "is_metabolism",
-        "is_uncharacterized"
-      ],
+      "missing_required_slots": [],
       "validation": {
         "essential_recall": 0.978,
         "minimal_cell_essential_purity": 0.264,
-        "n_with_product": 4
+        "n_with_product": 3358
       }
     },
     "syn3a": {

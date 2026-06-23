@@ -151,6 +151,16 @@ except Exception:
     pass
 print(f"  syn3a products loaded: {len(syn3a_products)}")
 
+# full per-gene annotation from annotate_genes.py (GFF + OG propagation)
+annot_products = {}
+try:
+    for r in csv.DictReader(open("data/drive_import/labels/gene_annotations.csv")):
+        if r.get("product"):
+            annot_products[(r["organism"], r["locus_tag"])] = r["product"]
+    print(f"  GFF/OG annotations loaded: {len(annot_products):,}")
+except FileNotFoundError:
+    print("  (gene_annotations.csv not found -- run annotate_genes.py first)")
+
 # load model predictions
 preds = np.load(OUT / "af_torch_preds_aug.npz", allow_pickle=True)
 p_arr = preds["p"]; br_arr = preds["brightness"]
@@ -226,7 +236,7 @@ syn3a_essentials = [(lt, y) for (lt, y) in [((k[1], v) if k[0] == "syn3a" else (
                                               for k, v in labels.items()] if lt is not None and y == 1]
 syn3a_slot_vec = np.zeros(len(SLOT_NAMES), int)
 for lt, _ in syn3a_essentials:
-    prod = syn3a_products.get(("syn3a", lt), "")
+    prod = syn3a_products.get(("syn3a", lt)) or annot_products.get(("syn3a", lt), "")
     gn = gene_names.get(("syn3a", lt), "")
     syn3a_slot_vec += classify(prod, gn)
 syn3a_required_slots = [SLOT_NAMES[i] for i, v in enumerate(syn3a_slot_vec) if v >= 3]
@@ -271,7 +281,8 @@ for org in sorted(prediction_orgs):
     conserved = 0; species_specific = 0; unannotated = 0
     survivor_records = []
     for lt, y, p, br in survivors:
-        prod = syn3a_products.get((org, lt)) or og_product.get(og_by_gene.get((org, lt)), "")
+        prod = (syn3a_products.get((org, lt)) or annot_products.get((org, lt))
+                or og_product.get(og_by_gene.get((org, lt)), ""))
         gn = gene_names.get((org, lt), "")
         if prod or gn:
             n_with_product += 1
