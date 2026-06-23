@@ -1,0 +1,51 @@
+{
+  "held_clade": "escherichia",
+  "organism": "beril_Keio",
+  "n_truth_essential": 588,
+  "n_predicted_essential": 606,
+  "overlap": 429,
+  "precision": 0.708,
+  "recall": 0.73,
+  "truth_network": {
+    "nodes": 588,
+    "edges": 1633
+  },
+  "predicted_network": {
+    "nodes": 606,
+    "edges": 2554
+  },
+  "module_composition": {
+    "truth": {
+      "ribosomal": 59,
+      "trna": 32,
+      "synthetase": 4,
+      "transcription": 70,
+      "replication": 10,
+      "translation": 17,
+      "cell_division": 8,
+      "membrane": 32,
+      "energy": 14,
+      "lipid": 8,
+      "nucleotide": 4,
+      "amino_acid": 7,
+      "cofactor": 5,
+      "other": 318
+    },
+    "predicted": {
+      "ribosomal": 61,
+      "trna": 32,
+      "synthetase": 3,
+      "transcription": 71,
+      "replication": 13,
+      "translation": 18,
+      "cell_division": 8,
+      "membrane": 36,
+      "energy": 23,
+      "lipid": 7,
+      "nucleotide": 5,
+      "amino_acid": 12,
+      "cofactor": 5,
+      "other": 312
+    }
+  }
+}
