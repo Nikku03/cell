@@ -1,0 +1,592 @@
+{
+  "beril_Keio": {
+    "organism": "beril_Keio",
+    "n_genes": 3568,
+    "n_essential": 588,
+    "ess_rate": 0.165,
+    "wheel1_size": 334,
+    "wheel1_cov": 0.568,
+    "gaps": {
+      "trna": 1,
+      "membrane": 2,
+      "lipid": 1
+    },
+    "n_gaps": 4,
+    "soup_size": 868,
+    "inserts": 4,
+    "insert_precision": 0.75,
+    "cell_conf": {
+      "n": 334,
+      "tp": 301,
+      "p": 0.901,
+      "r": 0.512,
+      "f1": 0.653
+    },
+    "cell_asm": {
+      "n": 338,
+      "tp": 304,
+      "p": 0.899,
+      "r": 0.517,
+      "f1": 0.657
+    },
+    "insert_details": [
+      {
+        "slot": "trna",
+        "lt": "16658",
+        "gene": "?",
+        "family": "tRNA adenosine(34) deaminase TadA",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "15331",
+        "gene": "?",
+        "family": "lipoprotein insertase outer membrane protein ",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "14854",
+        "gene": "?",
+        "family": "succinate dehydrogenase%2C hydrophobic membra",
+        "real": false
+      },
+      {
+        "slot": "lipid",
+        "lt": "15176",
+        "gene": "?",
+        "family": "lysophospholipid acyltransferase family prote",
+        "real": true
+      }
+    ]
+  },
+  "beril_BFirm": {
+    "organism": "beril_BFirm",
+    "n_genes": 5964,
+    "n_essential": 2541,
+    "ess_rate": 0.426,
+    "wheel1_size": 390,
+    "wheel1_cov": 0.153,
+    "gaps": {
+      "replication": 1,
+      "lipid": 1,
+      "nucleotide": 1
+    },
+    "n_gaps": 3,
+    "soup_size": 1132,
+    "inserts": 3,
+    "insert_precision": 1.0,
+    "cell_conf": {
+      "n": 390,
+      "tp": 376,
+      "p": 0.964,
+      "r": 0.148,
+      "f1": 0.257
+    },
+    "cell_asm": {
+      "n": 393,
+      "tp": 379,
+      "p": 0.964,
+      "r": 0.149,
+      "f1": 0.258
+    },
+    "insert_details": [
+      {
+        "slot": "replication",
+        "lt": "BPHYT_RS08860",
+        "gene": "?",
+        "family": "primosomal replication protein N",
+        "real": true
+      },
+      {
+        "slot": "lipid",
+        "lt": "BPHYT_RS01670",
+        "gene": "?",
+        "family": "lysophospholipid acyltransferase family prote",
+        "real": true
+      },
+      {
+        "slot": "nucleotide",
+        "lt": "BPHYT_RS06395",
+        "gene": "?",
+        "family": "nicotinate-nucleotide adenylyltransferase",
+        "real": true
+      }
+    ]
+  },
+  "beril_Methanococcus_S2": {
+    "organism": "beril_Methanococcus_S2",
+    "n_genes": 1634,
+    "n_essential": 507,
+    "ess_rate": 0.31,
+    "wheel1_size": 72,
+    "wheel1_cov": 0.142,
+    "gaps": {
+      "ribosomal": 18,
+      "synthetase": 1,
+      "trna": 4,
+      "transcription": 9,
+      "replication": 8,
+      "translation": 3,
+      "membrane": 19,
+      "energy": 7,
+      "lipid": 5,
+      "nucleotide": 4,
+      "cofactor": 2
+    },
+    "n_gaps": 80,
+    "soup_size": 173,
+    "inserts": 33,
+    "insert_precision": 0.424,
+    "cell_conf": {
+      "n": 72,
+      "tp": 49,
+      "p": 0.681,
+      "r": 0.097,
+      "f1": 0.169
+    },
+    "cell_asm": {
+      "n": 105,
+      "tp": 63,
+      "p": 0.6,
+      "r": 0.124,
+      "f1": 0.206
+    },
+    "insert_details": [
+      {
+        "slot": "synthetase",
+        "lt": "MMP_RS01425",
+        "gene": "?",
+        "family": "tryptophan--tRNA ligase",
+        "real": true
+      },
+      {
+        "slot": "transcription",
+        "lt": "MMP_RS08815",
+        "gene": "?",
+        "family": "LysR family transcriptional regulator",
+        "real": true
+      },
+      {
+        "slot": "transcription",
+        "lt": "MMP_RS04125",
+        "gene": "?",
+        "family": "TetR/AcrR family transcriptional regulator",
+        "real": false
+      },
+      {
+        "slot": "transcription",
+        "lt": "MMP_RS05290",
+        "gene": "?",
+        "family": "TetR/AcrR family transcriptional regulator",
+        "real": false
+      },
+      {
+        "slot": "transcription",
+        "lt": "MMP_RS04375",
+        "gene": "?",
+        "family": "TetR/AcrR family transcriptional regulator",
+        "real": false
+      },
+      {
+        "slot": "transcription",
+        "lt": "MMP_RS04165",
+        "gene": "?",
+        "family": "TetR/AcrR family transcriptional regulator",
+        "real": false
+      },
+      {
+        "slot": "transcription",
+        "lt": "MMP_RS01195",
+        "gene": "?",
+        "family": "ArsR/SmtB family transcription factor",
+        "real": false
+      },
+      {
+        "slot": "transcription",
+        "lt": "MMP_RS07420",
+        "gene": "?",
+        "family": "ArsR/SmtB family transcription factor",
+        "real": false
+      },
+      {
+        "slot": "transcription",
+        "lt": "MMP_RS05870",
+        "gene": "?",
+        "family": "Lrp/AsnC family transcriptional regulator",
+        "real": true
+      },
+      {
+        "slot": "replication",
+        "lt": "MMP_RS04955",
+        "gene": "?",
+        "family": "DNA topoisomerase III",
+        "real": false
+      },
+      {
+        "slot": "replication",
+        "lt": "MMP_RS02420",
+        "gene": "?",
+        "family": "DEAD/DEAH box helicase",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS00630",
+        "gene": "?",
+        "family": "CD3073 family putative ECF transporter S comp",
+        "real": false
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS06095",
+        "gene": "?",
+        "family": "ABC transporter ATP-binding protein",
+        "real": false
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS01100",
+        "gene": "?",
+        "family": "ABC transporter ATP-binding protein",
+        "real": false
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS06025",
+        "gene": "?",
+        "family": "ABC transporter ATP-binding protein",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS07625",
+        "gene": "?",
+        "family": "cobalt ECF transporter T component CbiQ",
+        "real": false
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS06170",
+        "gene": "?",
+        "family": "ABC transporter ATP-binding protein",
+        "real": false
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS06090",
+        "gene": "?",
+        "family": "FecCD family ABC transporter permease",
+        "real": false
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS01095",
+        "gene": "?",
+        "family": "FecCD family ABC transporter permease",
+        "real": false
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS02915",
+        "gene": "?",
+        "family": "amino acid ABC transporter permease",
+        "real": false
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS03725",
+        "gene": "?",
+        "family": "magnesium/cobalt transporter CorA",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS05725",
+        "gene": "?",
+        "family": "magnesium/cobalt transporter CorA",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "MMP_RS00650",
+        "gene": "?",
+        "family": "ABC transporter ATP-binding protein",
+        "real": false
+      },
+      {
+        "slot": "energy",
+        "lt": "MMP_RS08365",
+        "gene": "?",
+        "family": "NADH-quinone oxidoreductase subunit NuoN",
+        "real": false
+      },
+      {
+        "slot": "energy",
+        "lt": "MMP_RS07520",
+        "gene": "?",
+        "family": "NADH-quinone oxidoreductase subunit D",
+        "real": true
+      },
+      {
+        "slot": "energy",
+        "lt": "MMP_RS05950",
+        "gene": "?",
+        "family": "NADH-quinone oxidoreductase subunit D",
+        "real": true
+      },
+      {
+        "slot": "energy",
+        "lt": "MMP_RS04960",
+        "gene": "?",
+        "family": "cytochrome c biogenesis CcdA family protein",
+        "real": false
+      },
+      {
+        "slot": "nucleotide",
+        "lt": "MMP_RS01520",
+        "gene": "?",
+        "family": "5-(carboxyamino)imidazole ribonucleotide muta",
+        "real": true
+      },
+      {
+        "slot": "nucleotide",
+        "lt": "MMP_RS00715",
+        "gene": "?",
+        "family": "5-(carboxyamino)imidazole ribonucleotide synt",
+        "real": true
+      },
+      {
+        "slot": "nucleotide",
+        "lt": "MMP_RS04560",
+        "gene": "?",
+        "family": "carboxylating nicotinate-nucleotide diphospho",
+        "real": true
+      }
+    ]
+  },
+  "beril_DvH": {
+    "organism": "beril_DvH",
+    "n_genes": 2514,
+    "n_essential": 616,
+    "ess_rate": 0.245,
+    "wheel1_size": 267,
+    "wheel1_cov": 0.433,
+    "gaps": {
+      "replication": 3,
+      "membrane": 2,
+      "energy": 1,
+      "lipid": 1,
+      "nucleotide": 2
+    },
+    "n_gaps": 9,
+    "soup_size": 551,
+    "inserts": 9,
+    "insert_precision": 0.778,
+    "cell_conf": {
+      "n": 267,
+      "tp": 247,
+      "p": 0.925,
+      "r": 0.401,
+      "f1": 0.559
+    },
+    "cell_asm": {
+      "n": 276,
+      "tp": 254,
+      "p": 0.92,
+      "r": 0.412,
+      "f1": 0.57
+    },
+    "insert_details": [
+      {
+        "slot": "replication",
+        "lt": "207535",
+        "gene": "?",
+        "family": "UvrD-helicase domain-containing protein",
+        "real": false
+      },
+      {
+        "slot": "replication",
+        "lt": "207803",
+        "gene": "?",
+        "family": "DNA topoisomerase III",
+        "real": true
+      },
+      {
+        "slot": "replication",
+        "lt": "208917",
+        "gene": "?",
+        "family": "DNA topoisomerase III",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "207303",
+        "gene": "?",
+        "family": "outer membrane protein assembly factor BamD",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "208621",
+        "gene": "?",
+        "family": "peptidoglycan-associated lipoprotein Pal",
+        "real": true
+      },
+      {
+        "slot": "energy",
+        "lt": "207497",
+        "gene": "?",
+        "family": "AAA family ATPase",
+        "real": false
+      },
+      {
+        "slot": "lipid",
+        "lt": "207132",
+        "gene": "?",
+        "family": "lysophospholipid acyltransferase family prote",
+        "real": true
+      },
+      {
+        "slot": "nucleotide",
+        "lt": "207424",
+        "gene": "?",
+        "family": "nicotinate-nucleotide adenylyltransferase",
+        "real": true
+      },
+      {
+        "slot": "nucleotide",
+        "lt": "209423",
+        "gene": "?",
+        "family": "5-(carboxyamino)imidazole ribonucleotide muta",
+        "real": true
+      }
+    ]
+  },
+  "beril_Btheta": {
+    "organism": "beril_Btheta",
+    "n_genes": 2295,
+    "n_essential": 597,
+    "ess_rate": 0.26,
+    "wheel1_size": 252,
+    "wheel1_cov": 0.422,
+    "gaps": {
+      "trna": 1,
+      "replication": 5,
+      "membrane": 4,
+      "lipid": 1,
+      "nucleotide": 2
+    },
+    "n_gaps": 13,
+    "soup_size": 507,
+    "inserts": 13,
+    "insert_precision": 0.923,
+    "cell_conf": {
+      "n": 252,
+      "tp": 232,
+      "p": 0.921,
+      "r": 0.389,
+      "f1": 0.547
+    },
+    "cell_asm": {
+      "n": 265,
+      "tp": 244,
+      "p": 0.921,
+      "r": 0.409,
+      "f1": 0.566
+    },
+    "insert_details": [
+      {
+        "slot": "trna",
+        "lt": "351762",
+        "gene": "?",
+        "family": "tRNA adenosine(34) deaminase TadA",
+        "real": true
+      },
+      {
+        "slot": "replication",
+        "lt": "352354",
+        "gene": "?",
+        "family": "DNA topoisomerase III",
+        "real": true
+      },
+      {
+        "slot": "replication",
+        "lt": "349633",
+        "gene": "?",
+        "family": "DNA topoisomerase III",
+        "real": true
+      },
+      {
+        "slot": "replication",
+        "lt": "351617",
+        "gene": "?",
+        "family": "DNA topoisomerase III",
+        "real": true
+      },
+      {
+        "slot": "replication",
+        "lt": "350185",
+        "gene": "?",
+        "family": "UvrD-helicase domain-containing protein",
+        "real": true
+      },
+      {
+        "slot": "replication",
+        "lt": "352812",
+        "gene": "?",
+        "family": "Holliday junction branch migration DNA helica",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "350101",
+        "gene": "?",
+        "family": "outer membrane protein assembly factor BamD",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "353250",
+        "gene": "?",
+        "family": "OmpH family outer membrane protein",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "353249",
+        "gene": "?",
+        "family": "OmpH family outer membrane protein",
+        "real": true
+      },
+      {
+        "slot": "membrane",
+        "lt": "351478",
+        "gene": "?",
+        "family": "ABC transporter ATP-binding protein",
+        "real": false
+      },
+      {
+        "slot": "lipid",
+        "lt": "351680",
+        "gene": "?",
+        "family": "lysophospholipid acyltransferase family prote",
+        "real": true
+      },
+      {
+        "slot": "nucleotide",
+        "lt": "351539",
+        "gene": "?",
+        "family": "nicotinate-nucleotide adenylyltransferase",
+        "real": true
+      },
+      {
+        "slot": "nucleotide",
+        "lt": "352046",
+        "gene": "?",
+        "family": "5-(carboxyamino)imidazole ribonucleotide muta",
+        "real": true
+      }
+    ]
+  }
+}
