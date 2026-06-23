@@ -1,0 +1,75 @@
+{
+  "requirements_table": {
+    "ribosomal": 31,
+    "synthetase": 12,
+    "trna": 8,
+    "transcription": 9,
+    "replication": 8,
+    "translation": 5,
+    "cell_division": 1,
+    "membrane": 25,
+    "energy": 7,
+    "lipid": 5,
+    "nucleotide": 4,
+    "amino_acid": 1,
+    "cofactor": 3
+  },
+  "gaps_before": {
+    "trna": 1,
+    "membrane": 2,
+    "lipid": 1
+  },
+  "gaps_after": {},
+  "confident_fill": 333,
+  "search_space": 872,
+  "inserted": 4,
+  "insert_precision": 0.75,
+  "confident_only_cell": {
+    "n": 333,
+    "tp": 300,
+    "precision": 0.901,
+    "recall": 0.51,
+    "f1": 0.651
+  },
+  "assembled_cell": {
+    "n": 337,
+    "tp": 303,
+    "precision": 0.899,
+    "recall": 0.515,
+    "f1": 0.655
+  },
+  "synthetase_inserts": [
+    {
+      "slot": "trna",
+      "locus_tag": "16658",
+      "gene": "?",
+      "family_product": "tRNA adenosine(34) deaminase TadA",
+      "model_p": 0.844,
+      "truly_essential": true
+    },
+    {
+      "slot": "membrane",
+      "locus_tag": "15331",
+      "gene": "?",
+      "family_product": "lipoprotein insertase outer membrane pro",
+      "model_p": 0.882,
+      "truly_essential": true
+    },
+    {
+      "slot": "membrane",
+      "locus_tag": "14854",
+      "gene": "?",
+      "family_product": "succinate dehydrogenase%2C hydrophobic m",
+      "model_p": 0.876,
+      "truly_essential": false
+    },
+    {
+      "slot": "lipid",
+      "locus_tag": "15176",
+      "gene": "?",
+      "family_product": "lysophospholipid acyltransferase family ",
+      "model_p": 0.816,
+      "truly_essential": true
+    }
+  ]
+}
