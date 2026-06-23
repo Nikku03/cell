@@ -1,0 +1,527 @@
+{
+  "organism": "beril_Keio",
+  "held_clade": "escherichia",
+  "thresholds": {
+    "P90_essential": 0.8885630466175791,
+    "P90_non_essential": 0.3467179536819458
+  },
+  "verdict_counts": {
+    "CONFIDENT_ESSENTIAL": 333,
+    "CELL_SUPPORTED": 313,
+    "EXPERIMENTAL_TARGET": 559,
+    "CONFIDENT_NON_ESSENTIAL": 2361
+  },
+  "wheel1_alone": {
+    "n": 333,
+    "tp": 300,
+    "fp": 33,
+    "fn": 288,
+    "precision": 0.901,
+    "recall": 0.51,
+    "f1": 0.651
+  },
+  "combined": {
+    "n": 646,
+    "tp": 414,
+    "fp": 232,
+    "fn": 174,
+    "precision": 0.641,
+    "recall": 0.704,
+    "f1": 0.671
+  },
+  "cell_audit": {
+    "filled": {
+      "ribosomal": 66,
+      "synthetase": 4,
+      "transcription": 141,
+      "replication": 19,
+      "translation": 25,
+      "cell_division": 8
+    },
+    "minimums": {
+      "ribosomal": 30,
+      "synthetase": 12,
+      "transcription": 6,
+      "replication": 5,
+      "translation": 5,
+      "cell_division": 1
+    },
+    "gaps": {
+      "synthetase": 8
+    },
+    "gap_candidates": {
+      "synthetase": [
+        {
+          "locus_tag": "15822",
+          "gene": "?",
+          "product": "posphoenolpyruvate synthetase regulatory kinase/phosphorylas",
+          "model_p": 0.195,
+          "og_univ": 0.156,
+          "is_truth_essential": false
+        },
+        {
+          "locus_tag": "15458",
+          "gene": "?",
+          "product": "M20 aminoacylase family protein",
+          "model_p": 0.18,
+          "og_univ": 0.132,
+          "is_truth_essential": false
+        }
+      ]
+    }
+  },
+  "experimental_queue_top50": [
+    {
+      "locus_tag": "16582",
+      "gene": "?",
+      "product": "NADH-quinone oxidoreductase subunit NuoH",
+      "slot": "energy",
+      "model_p": 0.883,
+      "og_univ": 0.841,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16806",
+      "gene": "?",
+      "product": "NADH-quinone oxidoreductase subunit NuoH",
+      "slot": "energy",
+      "model_p": 0.876,
+      "og_univ": 0.841,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16389",
+      "gene": "?",
+      "product": "NADH-quinone oxidoreductase subunit NuoH",
+      "slot": "energy",
+      "model_p": 0.876,
+      "og_univ": 0.841,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "17948",
+      "gene": "?",
+      "product": "superoxide dismutase [Fe]",
+      "slot": "other",
+      "model_p": 0.87,
+      "og_univ": 0.843,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "17958",
+      "gene": "?",
+      "product": "triose-phosphate isomerase",
+      "slot": "other",
+      "model_p": 0.872,
+      "og_univ": 0.837,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "15777",
+      "gene": "?",
+      "product": "superoxide dismutase [Fe]",
+      "slot": "other",
+      "model_p": 0.864,
+      "og_univ": 0.843,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "15397",
+      "gene": "?",
+      "product": "GTP cyclohydrolase II",
+      "slot": "other",
+      "model_p": 0.861,
+      "og_univ": 0.846,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "14873",
+      "gene": "?",
+      "product": "peptidoglycan-associated lipoprotein Pal",
+      "slot": "membrane",
+      "model_p": 0.866,
+      "og_univ": 0.838,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "17449",
+      "gene": "?",
+      "product": "ribulose-phosphate 3-epimerase",
+      "slot": "other",
+      "model_p": 0.858,
+      "og_univ": 0.844,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "14855",
+      "gene": "?",
+      "product": "L-aspartate oxidase",
+      "slot": "amino_acid",
+      "model_p": 0.88,
+      "og_univ": 0.821,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "18029",
+      "gene": "?",
+      "product": "uroporphyrinogen decarboxylase",
+      "slot": "other",
+      "model_p": 0.863,
+      "og_univ": 0.837,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "16394",
+      "gene": "?",
+      "product": "NuoB/complex I 20 kDa subunit family protein",
+      "slot": "other",
+      "model_p": 0.863,
+      "og_univ": 0.837,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "18182",
+      "gene": "?",
+      "product": "L-aspartate oxidase",
+      "slot": "amino_acid",
+      "model_p": 0.877,
+      "og_univ": 0.821,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16690",
+      "gene": "?",
+      "product": "outer membrane protein assembly factor BamD",
+      "slot": "membrane",
+      "model_p": 0.869,
+      "og_univ": 0.829,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "17132",
+      "gene": "?",
+      "product": "multifunctional CCA addition/repair protein",
+      "slot": "other",
+      "model_p": 0.862,
+      "og_univ": 0.829,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "1936890",
+      "gene": "?",
+      "product": "transketolase",
+      "slot": "other",
+      "model_p": 0.868,
+      "og_univ": 0.822,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16993",
+      "gene": "?",
+      "product": "ribose-5-phosphate isomerase RpiA",
+      "slot": "other",
+      "model_p": 0.861,
+      "og_univ": 0.829,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "16203",
+      "gene": "?",
+      "product": "class II fructose-bisphosphate aldolase",
+      "slot": "other",
+      "model_p": 0.872,
+      "og_univ": 0.814,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "17004",
+      "gene": "?",
+      "product": "class II fructose-bisphosphate aldolase",
+      "slot": "other",
+      "model_p": 0.872,
+      "og_univ": 0.814,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "16673",
+      "gene": "?",
+      "product": "L-aspartate oxidase",
+      "slot": "amino_acid",
+      "model_p": 0.864,
+      "og_univ": 0.821,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "1937202",
+      "gene": "?",
+      "product": "sulfur carrier protein ThiS",
+      "slot": "other",
+      "model_p": 0.858,
+      "og_univ": 0.828,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16658",
+      "gene": "?",
+      "product": "tRNA adenosine(34) deaminase TadA",
+      "slot": "trna",
+      "model_p": 0.844,
+      "og_univ": 0.84,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "17210",
+      "gene": "?",
+      "product": "class II fructose-bisphosphate aldolase",
+      "slot": "other",
+      "model_p": 0.868,
+      "og_univ": 0.814,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "16663",
+      "gene": "?",
+      "product": "pyridoxine 5'-phosphate synthase",
+      "slot": "other",
+      "model_p": 0.861,
+      "og_univ": 0.821,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "15417",
+      "gene": "?",
+      "product": "type I glutamate--ammonia ligase",
+      "slot": "amino_acid",
+      "model_p": 0.867,
+      "og_univ": 0.81,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16564",
+      "gene": "?",
+      "product": "transketolase",
+      "slot": "other",
+      "model_p": 0.853,
+      "og_univ": 0.822,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "15817",
+      "gene": "?",
+      "product": "electron transfer flavoprotein subunit alpha/FixB family pro",
+      "slot": "other",
+      "model_p": 0.86,
+      "og_univ": 0.812,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "14188",
+      "gene": "?",
+      "product": "electron transfer flavoprotein subunit alpha/FixB family pro",
+      "slot": "other",
+      "model_p": 0.857,
+      "og_univ": 0.812,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "17910",
+      "gene": "?",
+      "product": "type I glutamate--ammonia ligase",
+      "slot": "amino_acid",
+      "model_p": 0.859,
+      "og_univ": 0.81,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16306",
+      "gene": "?",
+      "product": "",
+      "slot": "other",
+      "model_p": 0.834,
+      "og_univ": 0.833,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "17673",
+      "gene": "?",
+      "product": "2%2C3-bisphosphoglycerate-independent phosphoglycerate mutas",
+      "slot": "other",
+      "model_p": 0.838,
+      "og_univ": 0.826,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16617",
+      "gene": "?",
+      "product": "nucleoside-diphosphate kinase",
+      "slot": "other",
+      "model_p": 0.854,
+      "og_univ": 0.81,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16595",
+      "gene": "?",
+      "product": "DnaA regulatory inactivator Hda",
+      "slot": "other",
+      "model_p": 0.85,
+      "og_univ": 0.812,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "15012",
+      "gene": "?",
+      "product": "thioredoxin-disulfide reductase",
+      "slot": "other",
+      "model_p": 0.854,
+      "og_univ": 0.809,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "1937094",
+      "gene": "?",
+      "product": "bifunctional 4-hydroxy-2-oxoglutarate aldolase/2-dehydro-3-d",
+      "slot": "other",
+      "model_p": 0.854,
+      "og_univ": 0.803,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "15968",
+      "gene": "?",
+      "product": "bifunctional 4-hydroxy-2-oxoglutarate aldolase/2-dehydro-3-d",
+      "slot": "other",
+      "model_p": 0.853,
+      "og_univ": 0.803,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "18181",
+      "gene": "?",
+      "product": "succinate dehydrogenase iron-sulfur subunit",
+      "slot": "other",
+      "model_p": 0.848,
+      "og_univ": 0.8,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16714",
+      "gene": "?",
+      "product": "SsrA-binding protein SmpB",
+      "slot": "other",
+      "model_p": 0.843,
+      "og_univ": 0.805,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16384",
+      "gene": "?",
+      "product": "NADH-quinone oxidoreductase subunit NuoN",
+      "slot": "energy",
+      "model_p": 0.856,
+      "og_univ": 0.791,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16978",
+      "gene": "?",
+      "product": "YgfZ/GcvT domain-containing protein",
+      "slot": "other",
+      "model_p": 0.84,
+      "og_univ": 0.806,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "17407",
+      "gene": "?",
+      "product": "sulfurtransferase complex subunit TusC",
+      "slot": "other",
+      "model_p": 0.831,
+      "og_univ": 0.812,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "18202",
+      "gene": "?",
+      "product": "adenylosuccinate synthase",
+      "slot": "other",
+      "model_p": 0.834,
+      "og_univ": 0.81,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16383",
+      "gene": "?",
+      "product": "NADH-quinone oxidoreductase subunit NuoN",
+      "slot": "energy",
+      "model_p": 0.849,
+      "og_univ": 0.791,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "16535",
+      "gene": "?",
+      "product": "oxygen-dependent coproporphyrinogen oxidase",
+      "slot": "other",
+      "model_p": 0.843,
+      "og_univ": 0.794,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "17840",
+      "gene": "?",
+      "product": "UTP--glucose-1-phosphate uridylyltransferase GalU",
+      "slot": "other",
+      "model_p": 0.86,
+      "og_univ": 0.776,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "17408",
+      "gene": "?",
+      "product": "sulfurtransferase complex subunit TusD",
+      "slot": "other",
+      "model_p": 0.822,
+      "og_univ": 0.812,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "17268",
+      "gene": "?",
+      "product": "KpsF/GutQ family sugar-phosphate isomerase",
+      "slot": "other",
+      "model_p": 0.839,
+      "og_univ": 0.795,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "15356",
+      "gene": "?",
+      "product": "UTP--glucose-1-phosphate uridylyltransferase GalU",
+      "slot": "other",
+      "model_p": 0.853,
+      "og_univ": 0.776,
+      "is_truth_essential": false
+    },
+    {
+      "locus_tag": "17447",
+      "gene": "?",
+      "product": "tryptophan--tRNA ligase",
+      "slot": "trna",
+      "model_p": 0.833,
+      "og_univ": 0.795,
+      "is_truth_essential": true
+    },
+    {
+      "locus_tag": "14187",
+      "gene": "?",
+      "product": "electron transfer flavoprotein subunit beta/FixA family prot",
+      "slot": "other",
+      "model_p": 0.842,
+      "og_univ": 0.783,
+      "is_truth_essential": false
+    }
+  ],
+  "queue_top50_hit_rate": 0.3,
+  "soup_baseline_rate": 0.157
+}
