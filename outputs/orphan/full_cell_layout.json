@@ -1,0 +1,29 @@
+{
+  "organism": "beril_Keio",
+  "n_genes": 3585,
+  "n_essential": 605,
+  "n_universal_core": 873,
+  "n_operon_edges": 3567,
+  "module_sizes": {
+    "ribosomal": 75,
+    "trna": 44,
+    "synthetase": 34,
+    "transcription": 28,
+    "replication": 67,
+    "translation": 47,
+    "cell_division": 17,
+    "membrane": 74,
+    "transport": 456,
+    "energy": 58,
+    "lipid": 26,
+    "nucleotide": 27,
+    "amino_acid": 48,
+    "cofactor": 23,
+    "metabolism": 676,
+    "regulation": 296,
+    "signaling": 33,
+    "stress": 17,
+    "hypothetical": 52,
+    "other": 1487
+  }
+}
