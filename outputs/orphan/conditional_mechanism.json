@@ -1,0 +1,190 @@
+{
+  "univariate_ranking": [
+    {
+      "feature": "family_ess_var",
+      "auc": 0.812,
+      "sign": "+"
+    },
+    {
+      "feature": "family_ess_rate",
+      "auc": 0.695,
+      "sign": "+"
+    },
+    {
+      "feature": "cc_ess_rate",
+      "auc": 0.662,
+      "sign": "+"
+    },
+    {
+      "feature": "family_size",
+      "auc": 0.64,
+      "sign": "+"
+    },
+    {
+      "feature": "foc_npar",
+      "auc": 0.63,
+      "sign": "+"
+    },
+    {
+      "feature": "n_paralogs",
+      "auc": 0.63,
+      "sign": "+"
+    },
+    {
+      "feature": "family_n_orgs",
+      "auc": 0.613,
+      "sign": "+"
+    },
+    {
+      "feature": "msa_depth",
+      "auc": 0.604,
+      "sign": "+"
+    },
+    {
+      "feature": "known_count",
+      "auc": 0.604,
+      "sign": "+"
+    },
+    {
+      "feature": "sc_ess_rate",
+      "auc": 0.604,
+      "sign": "+"
+    },
+    {
+      "feature": "dnds_max",
+      "auc": 0.584,
+      "sign": "+"
+    },
+    {
+      "feature": "dnds_spread",
+      "auc": 0.584,
+      "sign": "+"
+    },
+    {
+      "feature": "is_regulator",
+      "auc": 0.58,
+      "sign": "+"
+    },
+    {
+      "feature": "dnds_var",
+      "auc": 0.579,
+      "sign": "+"
+    },
+    {
+      "feature": "dnds_mean",
+      "auc": 0.574,
+      "sign": "+"
+    },
+    {
+      "feature": "cai",
+      "auc": 0.564,
+      "sign": "+"
+    },
+    {
+      "feature": "gc3",
+      "auc": 0.564,
+      "sign": "+"
+    },
+    {
+      "feature": "has_cai",
+      "auc": 0.564,
+      "sign": "+"
+    },
+    {
+      "feature": "is_signaling",
+      "auc": 0.563,
+      "sign": "+"
+    },
+    {
+      "feature": "foc_has_dnds",
+      "auc": 0.56,
+      "sign": "+"
+    },
+    {
+      "feature": "foc_dnds",
+      "auc": 0.559,
+      "sign": "+"
+    },
+    {
+      "feature": "is_transporter",
+      "auc": 0.551,
+      "sign": "+"
+    },
+    {
+      "feature": "foc_oric",
+      "auc": 0.546,
+      "sign": "+"
+    },
+    {
+      "feature": "foc_gc",
+      "auc": 0.546,
+      "sign": "+"
+    },
+    {
+      "feature": "foc_loglen",
+      "auc": 0.546,
+      "sign": "+"
+    },
+    {
+      "feature": "foc_lead",
+      "auc": 0.544,
+      "sign": "-"
+    },
+    {
+      "feature": "n_clades_in_family",
+      "auc": 0.539,
+      "sign": "+"
+    },
+    {
+      "feature": "same_minus_cross",
+      "auc": 0.518,
+      "sign": "-"
+    }
+  ],
+  "forward_selection_top": [
+    "family_ess_var",
+    "foc_npar",
+    "family_size",
+    "same_minus_cross",
+    "foc_gc",
+    "foc_oric",
+    "is_signaling",
+    "foc_dnds",
+    "has_cai",
+    "gc3"
+  ],
+  "full_model": {
+    "precision": 0.493,
+    "recall": 0.559
+  },
+  "group_ablation_ranking": [
+    {
+      "group": "FAMILY SUMMARY",
+      "recall_drop_when_removed": 0.267
+    },
+    {
+      "group": "FOCAL (intrinsic)",
+      "recall_drop_when_removed": 0.02
+    },
+    {
+      "group": "SAME-vs-CROSS CLADE",
+      "recall_drop_when_removed": 0.011
+    },
+    {
+      "group": "FUNCTIONAL (product)",
+      "recall_drop_when_removed": 0.001
+    },
+    {
+      "group": "PER-ORTHOLOG dN/dS",
+      "recall_drop_when_removed": 0.0
+    },
+    {
+      "group": "CODON USAGE",
+      "recall_drop_when_removed": 0.0
+    },
+    {
+      "group": "ORTHOLOGY CONTEXT",
+      "recall_drop_when_removed": 0.0
+    }
+  ]
+}
