@@ -1,0 +1,43 @@
+{
+  "method": "codon_usage_bias (Vieira-Silva & Rocha 2010)",
+  "calibration": {
+    "slope": -8.13,
+    "intercept": 3.209,
+    "r2": 0.74,
+    "n_anchors": 4
+  },
+  "organisms": [
+    {
+      "org": "mtub",
+      "n_cai": 3557,
+      "n_hx": 86,
+      "delta_cai": 0.0608,
+      "known_dt": 1440,
+      "pred_dt": 518.0
+    },
+    {
+      "org": "saur_NCTC8325_biotradis",
+      "n_cai": 2100,
+      "n_hx": 53,
+      "delta_cai": 0.2231,
+      "known_dt": 30,
+      "pred_dt": 25.0
+    },
+    {
+      "org": "spneT4",
+      "n_cai": 418,
+      "n_hx": 75,
+      "delta_cai": 0.2141,
+      "known_dt": 30,
+      "pred_dt": 29.0
+    },
+    {
+      "org": "beril_RalstoniaGMI1000",
+      "n_cai": 4402,
+      "n_hx": 100,
+      "delta_cai": 0.0884,
+      "known_dt": 90,
+      "pred_dt": 309.0
+    }
+  ]
+}
