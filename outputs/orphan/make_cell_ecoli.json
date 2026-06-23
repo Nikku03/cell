@@ -1,0 +1,91 @@
+{
+  "organism": "beril_Keio",
+  "n_genes": 3585,
+  "n_true_essential": 605,
+  "validation": {
+    "MODEL": {
+      "n_pred": 985,
+      "tp": 488,
+      "fp": 497,
+      "fn": 117,
+      "precision": 0.495,
+      "recall": 0.807,
+      "f1": 0.614
+    },
+    "FBA": {
+      "n_pred": 196,
+      "tp": 0,
+      "fp": 196,
+      "fn": 605,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "MODEL+FBA (union)": {
+      "n_pred": 1181,
+      "tp": 488,
+      "fp": 693,
+      "fn": 117,
+      "precision": 0.413,
+      "recall": 0.807,
+      "f1": 0.546
+    },
+    "MODEL+FBA (conserved-model + metabolic-fba)": {
+      "n_pred": 1181,
+      "tp": 488,
+      "fp": 693,
+      "fn": 117,
+      "precision": 0.413,
+      "recall": 0.807,
+      "f1": 0.546
+    }
+  },
+  "complementarity": {
+    "model_only": 488,
+    "fba_only": 0,
+    "both": 0,
+    "model_only_character": [
+      [
+        "ribosom",
+        58
+      ],
+      [
+        "transferase",
+        45
+      ],
+      [
+        "synthase",
+        32
+      ],
+      [
+        "trna",
+        32
+      ],
+      [
+        "reductase",
+        28
+      ],
+      [
+        "transport",
+        19
+      ]
+    ],
+    "fba_only_character": []
+  },
+  "assembled_cell": {
+    "n": 1181,
+    "slots": {
+      "ribosomal": 64,
+      "trna": 35,
+      "synthetase": 44,
+      "polymerase": 17,
+      "dna": 12,
+      "translation": 13,
+      "transcription": 103,
+      "membrane": 88,
+      "energy": 61,
+      "metabolism": 199
+    },
+    "missing_slots": []
+  }
+}
