@@ -1,0 +1,27 @@
+{
+  "universe": 210363,
+  "core": {
+    "evaluable": 192620,
+    "accepted": 125173,
+    "precision": 0.9,
+    "note": "transformer + linear recalibration; GBM deployment ~0.83"
+  },
+  "orphan": {
+    "total": 31126,
+    "with_cai": 9082,
+    "accepted": 6066,
+    "precision": 0.9001,
+    "loo_auc": 0.7111
+  },
+  "whole_genome": {
+    "coverage": 0.6239,
+    "precision": 0.9,
+    "core_only_coverage": 0.595,
+    "orphan_route_adds_pp": 2.88
+  },
+  "abstention": {
+    "core_lowconf": 67447,
+    "orphan_no_cai": 22044,
+    "orphan_lowconf": 2964
+  }
+}
