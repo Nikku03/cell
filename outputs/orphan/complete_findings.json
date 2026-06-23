@@ -1,0 +1,36 @@
+{
+  "law_min_floor": [
+    383,
+    27,
+    382
+  ],
+  "n_organisms": 59,
+  "bimodal": {
+    "universal": 133,
+    "never": 379,
+    "conditional": 502,
+    "total": 1951
+  },
+  "universal_core_n": 130,
+  "universal_core_composition": {
+    "other/metab": 34,
+    "translation": 61,
+    "cofactor": 5,
+    "lipid/membr": 4,
+    "energy": 8,
+    "chaperone": 2,
+    "replication": 9,
+    "transcription": 4,
+    "amino-acid": 1,
+    "nucleotide": 2
+  },
+  "paralog_groups": 18072,
+  "paralog_fully_dispensable": 13257,
+  "paralog_pct_dispensable": 73.4,
+  "and_gate_half_dead_k": 4,
+  "ecoli": {
+    "genome": 3585,
+    "essential": 605,
+    "p_ess": 0.169
+  }
+}
