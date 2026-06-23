@@ -1,0 +1,832 @@
+{
+  "bridge_size": 1191,
+  "fba_essential_keio_dispensable": [
+    {
+      "lt": "14148",
+      "b": "b0003",
+      "gene": "thrB",
+      "product": "homoserine kinase"
+    },
+    {
+      "lt": "14149",
+      "b": "b0004",
+      "gene": "thrC",
+      "product": "threonine synthase"
+    },
+    {
+      "lt": "14198",
+      "b": "b0052",
+      "gene": "pdxA",
+      "product": "4-hydroxythreonine-4-phosphate dehydrogenase"
+    },
+    {
+      "lt": "14217",
+      "b": "b0071",
+      "gene": "leuD",
+      "product": "3-isopropylmalate dehydratase subunit LeuD"
+    },
+    {
+      "lt": "14218",
+      "b": "b0072",
+      "gene": "leuC",
+      "product": "3-isopropylmalate dehydratase subunit LeuC"
+    },
+    {
+      "lt": "14220",
+      "b": "b0074",
+      "gene": "leuA",
+      "product": "2-isopropylmalate synthase"
+    },
+    {
+      "lt": "14234",
+      "b": "b0088",
+      "gene": "murD",
+      "product": "UDP-N-acetylmuramoyl-L-alanine--D-glutamate ligase"
+    },
+    {
+      "lt": "14280",
+      "b": "b0134",
+      "gene": "panB",
+      "product": "3-methyl-2-oxobutanoate hydroxymethyltransferase"
+    },
+    {
+      "lt": "14288",
+      "b": "b0142",
+      "gene": "folK",
+      "product": "2-amino-4-hydroxy-6-hydroxymethyldihydropteridine diphosphokinase"
+    },
+    {
+      "lt": "14381",
+      "b": "b0242",
+      "gene": "proB",
+      "product": "glutamate 5-kinase"
+    },
+    {
+      "lt": "14382",
+      "b": "b0243",
+      "gene": "proA",
+      "product": "glutamate-5-semialdehyde dehydrogenase"
+    },
+    {
+      "lt": "14524",
+      "b": "b0386",
+      "gene": "proC",
+      "product": "pyrroline-5-carboxylate reductase"
+    },
+    {
+      "lt": "14659",
+      "b": "b0522",
+      "gene": "purK",
+      "product": "5-(carboxyamino)imidazole ribonucleotide synthase"
+    },
+    {
+      "lt": "14660",
+      "b": "b0523",
+      "gene": "purE",
+      "product": "N(5)-carboxyaminoimidazole ribonucleotide mutase"
+    },
+    {
+      "lt": "14739",
+      "b": "b2762",
+      "gene": "cysH",
+      "product": "phosphoadenosine phosphosulfate reductase"
+    },
+    {
+      "lt": "14778",
+      "b": "b0641",
+      "gene": "lptE",
+      "product": "lipopolysaccharide assembly protein LptE"
+    },
+    {
+      "lt": "15032",
+      "b": "b0908",
+      "gene": "aroA",
+      "product": "3-phosphoshikimate 1-carboxyvinyltransferase"
+    },
+    {
+      "lt": "15184",
+      "b": "b1062",
+      "gene": "pyrC",
+      "product": "dihydroorotase"
+    },
+    {
+      "lt": "15380",
+      "b": "b1260",
+      "gene": "trpA",
+      "product": "tryptophan synthase subunit alpha"
+    },
+    {
+      "lt": "15381",
+      "b": "b1261",
+      "gene": "trpB",
+      "product": "tryptophan synthase subunit beta"
+    },
+    {
+      "lt": "15382",
+      "b": "b1262",
+      "gene": "trpC",
+      "product": "fused indole-3-glycerol phosphate synthase/phosphoribosylanthranilate isomerase"
+    },
+    {
+      "lt": "15383",
+      "b": "b1263",
+      "gene": "trpD",
+      "product": "anthranilate synthase subunit TrpD"
+    },
+    {
+      "lt": "15384",
+      "b": "b1264",
+      "gene": "trpE",
+      "product": "anthranilate synthase subunit TrpE"
+    },
+    {
+      "lt": "15401",
+      "b": "b1281",
+      "gene": "pyrF",
+      "product": "orotidine-5'-phosphate decarboxylase"
+    },
+    {
+      "lt": "16127",
+      "b": "b2019",
+      "gene": "hisG",
+      "product": "ATP phosphoribosyltransferase"
+    },
+    {
+      "lt": "16128",
+      "b": "b2020",
+      "gene": "hisD",
+      "product": "histidinal/histidinol dehydrogenase"
+    },
+    {
+      "lt": "16129",
+      "b": "b2021",
+      "gene": "hisC",
+      "product": "histidinol-phosphate aminotransferase"
+    },
+    {
+      "lt": "16130",
+      "b": "b2022",
+      "gene": "hisB",
+      "product": "imidazoleglycerol-phosphate dehydratase/histidinol-phosphatase"
+    },
+    {
+      "lt": "16131",
+      "b": "b2023",
+      "gene": "hisH",
+      "product": "imidazole glycerol phosphate synthase subunit HisH"
+    },
+    {
+      "lt": "16132",
+      "b": "b2024",
+      "gene": "hisA",
+      "product": "1-(5-phosphoribosyl)-5-[(5-phosphoribosylamino)methylideneamino]imidazole-4-carboxamide isomerase"
+    },
+    {
+      "lt": "16133",
+      "b": "b2025",
+      "gene": "hisF",
+      "product": "imidazole glycerol phosphate synthase subunit HisF"
+    },
+    {
+      "lt": "16134",
+      "b": "b2026",
+      "gene": "hisI",
+      "product": "putative bifunctional phosphoribosyl-AMP cyclohydrolase/phosphoribosyl-ATP pyrophosphatase"
+    },
+    {
+      "lt": "16166",
+      "b": "b3607",
+      "gene": "cysE",
+      "product": "serine acetyltransferase"
+    },
+    {
+      "lt": "16210",
+      "b": "b2103",
+      "gene": "thiD",
+      "product": "bifunctional hydroxymethylpyrimidine kinase/phosphomethylpyrimidine kinase"
+    },
+    {
+      "lt": "16419",
+      "b": "b2312",
+      "gene": "purF",
+      "product": "amidophosphoribosyltransferase"
+    },
+    {
+      "lt": "16436",
+      "b": "b2329",
+      "gene": "aroC",
+      "product": "chorismate synthase"
+    },
+    {
+      "lt": "16575",
+      "b": "b2476",
+      "gene": "purC",
+      "product": "phosphoribosylaminoimidazole-succinocarboxamide synthase"
+    },
+    {
+      "lt": "16598",
+      "b": "b2499",
+      "gene": "purM",
+      "product": "phosphoribosylformylglycinamide cyclo-ligase"
+    },
+    {
+      "lt": "16663",
+      "b": "b2564",
+      "gene": "pdxJ",
+      "product": "pyridoxine 5'-phosphate synthase"
+    },
+    {
+      "lt": "16694",
+      "b": "b2599",
+      "gene": "pheA",
+      "product": "fused chorismate mutase/prephenate dehydratase"
+    },
+    {
+      "lt": "16695",
+      "b": "b2600",
+      "gene": "tyrA",
+      "product": "fused chorismate mutase/prephenate dehydrogenase"
+    },
+    {
+      "lt": "16776",
+      "b": "b2687",
+      "gene": "luxS",
+      "product": "S-ribosylhomocysteine lyase"
+    },
+    {
+      "lt": "16834",
+      "b": "b2750",
+      "gene": "cysC",
+      "product": "adenylyl-sulfate kinase"
+    },
+    {
+      "lt": "16919",
+      "b": "b2838",
+      "gene": "lysA",
+      "product": "diaminopimelate decarboxylase"
+    },
+    {
+      "lt": "17244",
+      "b": "b3172",
+      "gene": "argG",
+      "product": "argininosuccinate synthetase"
+    },
+    {
+      "lt": "17452",
+      "b": "b3389",
+      "gene": "aroB",
+      "product": "3-dehydroquinate synthase"
+    },
+    {
+      "lt": "17703",
+      "b": "b3642",
+      "gene": "pyrE",
+      "product": "orotate phosphoribosyltransferase"
+    },
+    {
+      "lt": "17997",
+      "b": "b3958",
+      "gene": "argC",
+      "product": "N-acetylglutamylphosphate reductase"
+    },
+    {
+      "lt": "17998",
+      "b": "b3959",
+      "gene": "argB",
+      "product": "acetylglutamate kinase"
+    },
+    {
+      "lt": "17999",
+      "b": "b3960",
+      "gene": "argH",
+      "product": "argininosuccinate lyase"
+    },
+    {
+      "lt": "18025",
+      "b": "b3993",
+      "gene": "thiE",
+      "product": "thiamine phosphate synthase"
+    },
+    {
+      "lt": "18026",
+      "b": "b3994",
+      "gene": "thiC",
+      "product": "phosphomethylpyrimidine synthase"
+    },
+    {
+      "lt": "18037",
+      "b": "b4005",
+      "gene": "purD",
+      "product": "phosphoribosylamine--glycine ligase"
+    },
+    {
+      "lt": "18038",
+      "b": "b4006",
+      "gene": "purH",
+      "product": "bifunctional AICAR transformylase/IMP cyclohydrolase"
+    },
+    {
+      "lt": "18041",
+      "b": "b4013",
+      "gene": "metA",
+      "product": "homoserine O-succinyltransferase"
+    },
+    {
+      "lt": "1937119",
+      "b": "b3770",
+      "gene": "ilvE",
+      "product": "branched-chain-amino-acid aminotransferase"
+    },
+    {
+      "lt": "1937120",
+      "b": "b3771",
+      "gene": "ilvD",
+      "product": "dihydroxy-acid dehydratase"
+    },
+    {
+      "lt": "1937187",
+      "b": "b3991",
+      "gene": "thiG",
+      "product": "1-deoxy-D-xylulose 5-phosphate:thiol sulfurtransferase"
+    },
+    {
+      "lt": "1937202",
+      "b": "b4407",
+      "gene": "thiS",
+      "product": "sulfur carrier protein ThiS"
+    }
+  ],
+  "keio_essential_fba_missed": [
+    {
+      "lt": "14194",
+      "b": "b0048",
+      "gene": "folA",
+      "product": "dihydrofolate reductase"
+    },
+    {
+      "lt": "14208",
+      "b": "b0062",
+      "gene": "araA",
+      "product": "L-arabinose isomerase"
+    },
+    {
+      "lt": "14219",
+      "b": "b0073",
+      "gene": "leuB",
+      "product": "3-isopropylmalate dehydrogenase"
+    },
+    {
+      "lt": "14317",
+      "b": "b0171",
+      "gene": "pyrH",
+      "product": "UMP kinase"
+    },
+    {
+      "lt": "14611",
+      "b": "b0474",
+      "gene": "adk",
+      "product": "adenylate kinase"
+    },
+    {
+      "lt": "14612",
+      "b": "b0475",
+      "gene": "hemH",
+      "product": "ferrochelatase"
+    },
+    {
+      "lt": "14666",
+      "b": "b0529",
+      "gene": "folD",
+      "product": "bifunctional methylenetetrahydrofolate dehydrogenase/methenyltetrahydrofolate cyclohydrolase"
+    },
+    {
+      "lt": "14751",
+      "b": "b0614",
+      "gene": "citX",
+      "product": "apo-citrate lyase phosphoribosyl-dephospho-CoA transferase"
+    },
+    {
+      "lt": "14765",
+      "b": "b0628",
+      "gene": "lipA",
+      "product": "lipoyl synthase"
+    },
+    {
+      "lt": "14794",
+      "b": "b0657",
+      "gene": "lnt",
+      "product": "apolipoprotein N-acyltransferase"
+    },
+    {
+      "lt": "15010",
+      "b": "b0886",
+      "gene": "cydC",
+      "product": "heme ABC transporter subunit CydC"
+    },
+    {
+      "lt": "15011",
+      "b": "b0887",
+      "gene": "cydD",
+      "product": "heme ABC transporter subunit CydD"
+    },
+    {
+      "lt": "15078",
+      "b": "b0954",
+      "gene": "fabA",
+      "product": "beta-hydroxyacyl-acyl carrier protein dehydratase/isomerase"
+    },
+    {
+      "lt": "15329",
+      "b": "b1207",
+      "gene": "prs",
+      "product": "ribose-phosphate diphosphokinase"
+    },
+    {
+      "lt": "15759",
+      "b": "b1638",
+      "gene": "pdxH",
+      "product": "pyridoxine/pyridoxamine 5'-phosphate oxidase"
+    },
+    {
+      "lt": "15775",
+      "b": "b1654",
+      "gene": "grxD",
+      "product": "glutaredoxin 4"
+    },
+    {
+      "lt": "15854",
+      "b": "b1736",
+      "gene": "chbA",
+      "product": "N%2CN'-diacetylchitobiose-specific PTS enzyme IIA component"
+    },
+    {
+      "lt": "15970",
+      "b": "b1852",
+      "gene": "zwf",
+      "product": "NADP(+)-dependent glucose-6-phosphate dehydrogenase"
+    },
+    {
+      "lt": "16026",
+      "b": "b1912",
+      "gene": "pgsA",
+      "product": "CDP-diacylglycerol--glycerol-3-phosphate 3-phosphatidyltransferase"
+    },
+    {
+      "lt": "16173",
+      "b": "b2065",
+      "gene": "dcd",
+      "product": "dCTP deaminase"
+    },
+    {
+      "lt": "16339",
+      "b": "b2232",
+      "gene": "ubiG",
+      "product": "bifunctional 3-demethylubiquinone-8 3-O-methyltransferase and 2-octaprenyl-6-hydroxyphenol methylase"
+    },
+    {
+      "lt": "16369",
+      "b": "b2262",
+      "gene": "menB",
+      "product": "1%2C4-dihydroxy-2-naphthoyl-CoA synthase"
+    },
+    {
+      "lt": "16403",
+      "b": "b2296",
+      "gene": "ackA",
+      "product": "acetate kinase"
+    },
+    {
+      "lt": "16413",
+      "b": "b2306",
+      "gene": "hisP",
+      "product": "lysine/arginine/ornithine ABC transporter/histidine ABC transporter%2C ATP binding subunit"
+    },
+    {
+      "lt": "16510",
+      "b": "b2411",
+      "gene": "ligA",
+      "product": "DNA ligase"
+    },
+    {
+      "lt": "16514",
+      "b": "b2415",
+      "gene": "ptsH",
+      "product": "phosphocarrier protein HPr"
+    },
+    {
+      "lt": "16650",
+      "b": "b2551",
+      "gene": "glyA",
+      "product": "serine hydroxymethyltransferase"
+    },
+    {
+      "lt": "16662",
+      "b": "b2563",
+      "gene": "acpS",
+      "product": "holo-[acyl-carrier-protein] synthase"
+    },
+    {
+      "lt": "16765",
+      "b": "b2675",
+      "gene": "nrdE",
+      "product": "ribonucleoside-diphosphate reductase 2 subunit alpha"
+    },
+    {
+      "lt": "16766",
+      "b": "b2676",
+      "gene": "nrdF",
+      "product": "ribonucleoside-diphosphate reductase 2 subunit beta"
+    },
+    {
+      "lt": "16993",
+      "b": "b2914",
+      "gene": "rpiA",
+      "product": "ribose-5-phosphate isomerase A"
+    },
+    {
+      "lt": "16998",
+      "b": "b2919",
+      "gene": "scpB",
+      "product": "methylmalonyl-CoA decarboxylase"
+    },
+    {
+      "lt": "17004",
+      "b": "b2925",
+      "gene": "fbaA",
+      "product": "fructose-bisphosphate aldolase class II"
+    },
+    {
+      "lt": "17005",
+      "b": "b2926",
+      "gene": "pgk",
+      "product": "phosphoglycerate kinase"
+    },
+    {
+      "lt": "17006",
+      "b": "b2927",
+      "gene": "epd",
+      "product": "D-erythrose-4-phosphate dehydrogenase"
+    },
+    {
+      "lt": "17701",
+      "b": "b3640",
+      "gene": "dut",
+      "product": "dUTP diphosphatase"
+    },
+    {
+      "lt": "17944",
+      "b": "b3904",
+      "gene": "rhaB",
+      "product": "rhamnulokinase"
+    },
+    {
+      "lt": "17958",
+      "b": "b3919",
+      "gene": "tpiA",
+      "product": "triose-phosphate isomerase"
+    },
+    {
+      "lt": "18189",
+      "b": "b4161",
+      "gene": "rsgA",
+      "product": "ribosome small subunit-dependent GTPase A"
+    },
+    {
+      "lt": "1937180",
+      "b": "b3903",
+      "gene": "rhaA",
+      "product": "L-rhamnose isomerase"
+    }
+  ],
+  "universal_core_dispensable_top30": [
+    {
+      "lt": "14177",
+      "b": "b0032",
+      "gene": "carA",
+      "product": "carbamoyl-phosphate synthetase small subunit",
+      "breadth": 48
+    },
+    {
+      "lt": "14178",
+      "b": "b0033",
+      "gene": "carB",
+      "product": "carbamoyl-phosphate synthetase large subunit",
+      "breadth": 48
+    },
+    {
+      "lt": "14197",
+      "b": "b0051",
+      "gene": "rsmA",
+      "product": "16S rRNA (A(1518)/A(1519))-N(6)-dimethyltransferase",
+      "breadth": 48
+    },
+    {
+      "lt": "14217",
+      "b": "b0071",
+      "gene": "leuD",
+      "product": "3-isopropylmalate dehydratase subunit LeuD",
+      "breadth": 48
+    },
+    {
+      "lt": "14218",
+      "b": "b0072",
+      "gene": "leuC",
+      "product": "3-isopropylmalate dehydratase subunit LeuC",
+      "breadth": 48
+    },
+    {
+      "lt": "14329",
+      "b": "b0183",
+      "gene": "rnhB",
+      "product": "RNase HII",
+      "breadth": 48
+    },
+    {
+      "lt": "14352",
+      "b": "b0212",
+      "gene": "gloB",
+      "product": "hydroxyacylglutathione hydrolase GloB",
+      "breadth": 48
+    },
+    {
+      "lt": "14581",
+      "b": "b0443",
+      "gene": "fadM",
+      "product": "long-chain acyl-CoA thioesterase FadM",
+      "breadth": 48
+    },
+    {
+      "lt": "14659",
+      "b": "b0522",
+      "gene": "purK",
+      "product": "5-(carboxyamino)imidazole ribonucleotide synthase",
+      "breadth": 48
+    },
+    {
+      "lt": "14798",
+      "b": "b0661",
+      "gene": "miaB",
+      "product": "isopentenyl-adenosine A37 tRNA methylthiolase",
+      "breadth": 48
+    },
+    {
+      "lt": "14960",
+      "b": "b0835",
+      "gene": "rimO",
+      "product": "ribosomal protein S12 methylthiotransferase RimO",
+      "breadth": 48
+    },
+    {
+      "lt": "15051",
+      "b": "b0927",
+      "gene": "gloC",
+      "product": "hydroxyacylglutathione hydrolase GloC",
+      "breadth": 48
+    },
+    {
+      "lt": "15069",
+      "b": "b0945",
+      "gene": "pyrD",
+      "product": "dihydroorotate dehydrogenase%2C type 2",
+      "breadth": 48
+    },
+    {
+      "lt": "15073",
+      "b": "b0949",
+      "gene": "uup",
+      "product": "ATP-binding protein Uup",
+      "breadth": 48
+    },
+    {
+      "lt": "15222",
+      "b": "b1100",
+      "gene": "ycfH",
+      "product": "putative metal-dependent hydrolase YcfH",
+      "breadth": 48
+    },
+    {
+      "lt": "15356",
+      "b": "b1236",
+      "gene": "galU",
+      "product": "UTP--glucose-1-phosphate uridylyltransferase",
+      "breadth": 48
+    },
+    {
+      "lt": "15380",
+      "b": "b1260",
+      "gene": "trpA",
+      "product": "tryptophan synthase subunit alpha",
+      "breadth": 48
+    },
+    {
+      "lt": "15381",
+      "b": "b1261",
+      "gene": "trpB",
+      "product": "tryptophan synthase subunit beta",
+      "breadth": 48
+    },
+    {
+      "lt": "15384",
+      "b": "b1264",
+      "gene": "trpE",
+      "product": "anthranilate synthase subunit TrpE",
+      "breadth": 48
+    },
+    {
+      "lt": "15867",
+      "b": "b1749",
+      "gene": "xthA",
+      "product": "exodeoxyribonuclease III",
+      "breadth": 48
+    },
+    {
+      "lt": "16072",
+      "b": "b1959",
+      "gene": "yedA",
+      "product": "putative transporter YedA",
+      "breadth": 48
+    },
+    {
+      "lt": "16129",
+      "b": "b2021",
+      "gene": "hisC",
+      "product": "histidinol-phosphate aminotransferase",
+      "breadth": 48
+    },
+    {
+      "lt": "16131",
+      "b": "b2023",
+      "gene": "hisH",
+      "product": "imidazole glycerol phosphate synthase subunit HisH",
+      "breadth": 48
+    },
+    {
+      "lt": "16147",
+      "b": "b2039",
+      "gene": "rfbA",
+      "product": "glucose-1-phosphate thymidylyltransferase 1",
+      "breadth": 48
+    },
+    {
+      "lt": "16221",
+      "b": "b2114",
+      "gene": "metG",
+      "product": "methionine--tRNA ligase",
+      "breadth": 48
+    },
+    {
+      "lt": "16256",
+      "b": "b2147",
+      "gene": "preA",
+      "product": "dihydropyrimidine dehydrogenase (NAD(+)) subunit PreA",
+      "breadth": 48
+    },
+    {
+      "lt": "16258",
+      "b": "b2149",
+      "gene": "mglA",
+      "product": "D-galactose/methyl-galactoside ABC transporter ATP binding subunit",
+      "breadth": 48
+    },
+    {
+      "lt": "16429",
+      "b": "b2322",
+      "gene": "yfcJ",
+      "product": "putative transporter YfcJ",
+      "breadth": 48
+    },
+    {
+      "lt": "16575",
+      "b": "b2476",
+      "gene": "purC",
+      "product": "phosphoribosylaminoimidazole-succinocarboxamide synthase",
+      "breadth": 48
+    },
+    {
+      "lt": "16592",
+      "b": "b2493",
+      "gene": "yfgO",
+      "product": "putative transporter YfgO",
+      "breadth": 48
+    }
+  ],
+  "lysr_essentials_true": [
+    {
+      "b": "b2839",
+      "gene": "lysR",
+      "product": "DNA-binding transcriptional dual regulator LysR"
+    }
+  ],
+  "paralog_groups_top15": [
+    {
+      "product": "regulator of biofilm formation",
+      "n": 2,
+      "essential": 0
+    },
+    {
+      "product": "stress-induced protein",
+      "n": 2,
+      "essential": 0
+    }
+  ]
+}
