@@ -1,0 +1,53 @@
+{
+  "organism": "saur_NCTC8325_biotradis",
+  "n_genes": 2290,
+  "n_essential": 415,
+  "n_annotated": 2103,
+  "transformer_auc": 0.503,
+  "stages": [
+    {
+      "stage": "S1  Wheel 1 (conservation, dead transformer)",
+      "threshold": 0.75,
+      "n": 137,
+      "tp": 115,
+      "precision": 0.839,
+      "recall": 0.277,
+      "f1": 0.417,
+      "gaps": {
+        "transcription": 5,
+        "replication": 3
+      }
+    },
+    {
+      "stage": "S2  Wheel 2 (assemble + family-match gaps)",
+      "inserts": 8,
+      "insert_precision": 0.625,
+      "gaps_after": {},
+      "n": 145,
+      "tp": 120,
+      "precision": 0.828,
+      "recall": 0.289,
+      "f1": 0.429
+    },
+    {
+      "stage": "S3  Wheel 1 (re-score: accept inserts + cell-supported)",
+      "promoted": 5,
+      "n": 148,
+      "tp": 122,
+      "precision": 0.824,
+      "recall": 0.294,
+      "f1": 0.433
+    },
+    {
+      "stage": "S4  Wheel 2 (final cell)",
+      "core_complete": "6/6",
+      "n": 148,
+      "tp": 122,
+      "precision": 0.824,
+      "recall": 0.294,
+      "f1": 0.433
+    }
+  ],
+  "final_accuracy": 0.879,
+  "final_core_complete": "6/6"
+}
