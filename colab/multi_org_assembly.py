@@ -32,19 +32,27 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+import os
 OUT = Path("outputs/orphan")
+# overridable artifact paths (DEG run sets these via env)
+PREDS = os.environ.get("AF_PREDS", "af_torch_preds_aug.npz")
+CACHE = os.environ.get("AF_CACHE", "af_msa_cache.npz")
+LABELS_DIR = os.environ.get("AF_LABELS_DIR", "data/drive_import/labels")
+ORTH_CSV = f"{LABELS_DIR}/orthology_features.csv"
+LABELS_CSV = f"{LABELS_DIR}/labels.csv"
+ANNOT_CSV = "data/drive_import/labels/gene_annotations.csv"
 
 # ===================== 1. predictions + features (whole corpus) ==============
-P = np.load(OUT / "af_torch_preds_aug.npz", allow_pickle=True)
+P = np.load(OUT / PREDS, allow_pickle=True)
 p = P["p"].astype(float); br = P["brightness"].astype(float)
 y = P["y"].astype(float); clade = P["clade"].astype(str); lt = P["lt"].astype(str)
 valid = ~(np.isnan(p) | np.isnan(br))
-C = np.load(OUT / "af_msa_cache.npz", allow_pickle=True)
+C = np.load(OUT / CACHE, allow_pickle=True)
 corgs = [str(x) for x in C["orgs"]]; cm = C["meta_org"]; cc = C["clade"].astype(str)
 org2clade = {corgs[int(cm[i])]: str(cc[i]) for i in range(len(cm))}
 
 feat = {}; obylt = defaultdict(list)
-for r in csv.DictReader(open("data/drive_import/labels/orthology_features.csv")):
+for r in csv.DictReader(open(ORTH_CSV)):
     k = (r["organism"], r["locus_tag"])
     feat[k] = (r.get("og_id") or "", float(r.get("n_paralogs_in_genome") or 0),
                float(r.get("family_n_organisms") or 0), float(r.get("is_orphan") or 0))
@@ -111,14 +119,14 @@ print(f"GLOBAL P90 thresholds: essential>={ESS_THR:.3f}  non_essential<={NE_THR:
 
 # ===================== 2. per-organism resources =============================
 annot_all = defaultdict(dict); gname_all = defaultdict(dict)
-for r in csv.DictReader(open("data/drive_import/labels/gene_annotations.csv")):
+for r in csv.DictReader(open(ANNOT_CSV)):
     if r.get("product"): annot_all[r["organism"]][r["locus_tag"]] = r["product"]
-for r in csv.DictReader(open("data/drive_import/labels/labels.csv")):
+for r in csv.DictReader(open(LABELS_CSV)):
     gnv = (r.get("gene_name") or "").strip()
     if gnv and gnv != "-": gname_all[r["organism"]][r["locus_tag"]] = gnv
 
 memb = defaultdict(list); og_present = defaultdict(set)
-for r in csv.DictReader(open("data/drive_import/labels/orthology_features.csv")):
+for r in csv.DictReader(open(ORTH_CSV)):
     if r.get("og_id"):
         memb[r["og_id"]].append((r["organism"], r["locus_tag"]))
         og_present[r["og_id"]].add(r["organism"])
@@ -164,7 +172,7 @@ syn_prod = {}
 for r in csv.DictReader(open("memory_bank/data/syn3a_gene_table.csv")):
     if r.get("product"): syn_prod[r["locus_tag"]] = r["product"]
 syn_counts = Counter()
-for r in csv.DictReader(open("data/drive_import/labels/labels.csv")):
+for r in csv.DictReader(open(LABELS_CSV)):
     if r["organism"] == "syn3a" and int(r["essential"]) == 1:
         syn_counts[classify(syn_prod.get(r["locus_tag"], ""),
                             r.get("gene_name", ""))] += 1
@@ -258,8 +266,9 @@ def assemble(org):
     )
 
 # ===================== 6. run on the 6 organisms =============================
-ORGS = ["beril_Keio", "beril_BFirm", "beril_Methanococcus_S2",
-        "beril_DvH", "beril_SynE", "beril_Btheta"]
+ORGS = (os.environ["ASSEMBLY_ORGS"].split(",") if os.environ.get("ASSEMBLY_ORGS")
+        else ["beril_Keio", "beril_BFirm", "beril_Methanococcus_S2",
+              "beril_DvH", "beril_SynE", "beril_Btheta"])
 SHORT = {"beril_Keio": "E. coli", "beril_BFirm": "B. firm",
          "beril_Methanococcus_S2": "Mcoccus (archaea)",
          "beril_DvH": "D. vulgaris", "beril_SynE": "Synechoc.",
