@@ -1,0 +1,148 @@
+{
+  "organism": "beril_Keio",
+  "n_genes": 3585,
+  "n_essential": 605,
+  "n_non_essential": 2980,
+  "slot_stats": {
+    "other": {
+      "essential": 173,
+      "non_essential": 1218,
+      "universal": 213,
+      "mean_cai": 0.0,
+      "total": 1391
+    },
+    "metabolism": {
+      "essential": 105,
+      "non_essential": 557,
+      "universal": 209,
+      "mean_cai": 0.0,
+      "total": 662
+    },
+    "transport": {
+      "essential": 27,
+      "non_essential": 487,
+      "universal": 133,
+      "mean_cai": 0.0,
+      "total": 514
+    },
+    "regulation": {
+      "essential": 82,
+      "non_essential": 218,
+      "universal": 88,
+      "mean_cai": 0.0,
+      "total": 300
+    },
+    "ribosomal": {
+      "essential": 59,
+      "non_essential": 16,
+      "universal": 54,
+      "mean_cai": 0.0,
+      "total": 75
+    },
+    "membrane": {
+      "essential": 13,
+      "non_essential": 61,
+      "universal": 5,
+      "mean_cai": 0.0,
+      "total": 74
+    },
+    "amino_acid": {
+      "essential": 8,
+      "non_essential": 65,
+      "universal": 28,
+      "mean_cai": 0.0,
+      "total": 73
+    },
+    "replication": {
+      "essential": 21,
+      "non_essential": 46,
+      "universal": 24,
+      "mean_cai": 0.0,
+      "total": 67
+    },
+    "energy": {
+      "essential": 15,
+      "non_essential": 51,
+      "universal": 8,
+      "mean_cai": 0.0,
+      "total": 66
+    },
+    "hypothetical": {
+      "essential": 0,
+      "non_essential": 52,
+      "universal": 0,
+      "mean_cai": 0.0,
+      "total": 52
+    },
+    "translation": {
+      "essential": 18,
+      "non_essential": 29,
+      "universal": 18,
+      "mean_cai": 0.0,
+      "total": 47
+    },
+    "trna": {
+      "essential": 8,
+      "non_essential": 36,
+      "universal": 16,
+      "mean_cai": 0.0,
+      "total": 44
+    },
+    "synthetase": {
+      "essential": 28,
+      "non_essential": 6,
+      "universal": 20,
+      "mean_cai": 0.0,
+      "total": 34
+    },
+    "lipid": {
+      "essential": 18,
+      "non_essential": 15,
+      "universal": 11,
+      "mean_cai": 0.0,
+      "total": 33
+    },
+    "signaling": {
+      "essential": 0,
+      "non_essential": 33,
+      "universal": 7,
+      "mean_cai": 0.0,
+      "total": 33
+    },
+    "cofactor": {
+      "essential": 8,
+      "non_essential": 23,
+      "universal": 18,
+      "mean_cai": 0.0,
+      "total": 31
+    },
+    "transcription": {
+      "essential": 9,
+      "non_essential": 19,
+      "universal": 11,
+      "mean_cai": 0.0,
+      "total": 28
+    },
+    "nucleotide": {
+      "essential": 4,
+      "non_essential": 23,
+      "universal": 9,
+      "mean_cai": 0.0,
+      "total": 27
+    },
+    "cell_division": {
+      "essential": 8,
+      "non_essential": 9,
+      "universal": 1,
+      "mean_cai": 0.0,
+      "total": 17
+    },
+    "stress": {
+      "essential": 1,
+      "non_essential": 16,
+      "universal": 0,
+      "mean_cai": 0.0,
+      "total": 17
+    }
+  }
+}
