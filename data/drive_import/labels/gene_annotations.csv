@@ -454,492 +454,492 @@ syn3a,JCVISYN3A_0907,,none
 syn3a,JCVISYN3A_0908,,none
 syn3a,JCVISYN3A_0909,,none
 syn3a,JCVISYN3A_0910,,none
-mgen,MG_001,,none
-mgen,MG_002,,none
-mgen,MG_003,,none
-mgen,MG_004,,none
-mgen,MG_005,,none
-mgen,MG_006,,none
-mgen,MG_007,,none
-mgen,MG_008,,none
+mgen,MG_001,DNA polymerase III,deg_local
+mgen,MG_002,DnaJ domain protein,deg_local
+mgen,MG_003,DNA gyrase,deg_local
+mgen,MG_004,DNA gyrase,deg_local
+mgen,MG_005,seryl-tRNA synthetase,deg_local
+mgen,MG_006,thymidylate kinase,deg_local
+mgen,MG_007,DNA polymerase III delta prime,deg_local
+mgen,MG_008,tRNA modification GTPase TrmE,deg_local
 mgen,MG_009,,none
-mgen,MG_010,,none
+mgen,MG_010,DNA primase-related protein,deg_local
 mgen,MG_011,,none
-mgen,MG_012,,none
-mgen,MG_013,,none
-mgen,MG_014,,none
-mgen,MG_015,,none
-mgen,MG_018,,none
-mgen,MG_019,,none
-mgen,MG_020,,none
-mgen,MG_021,,none
-mgen,MG_022,,none
-mgen,MG_023,,none
-mgen,MG_024,,none
-mgen,MG_025,,none
-mgen,MG_026,,none
-mgen,MG_027,,none
+mgen,MG_012,alpha-L-glutamate ligase,deg_local
+mgen,MG_013,methylenetetrahydrofolate dehy,deg_local
+mgen,MG_014,multidrug ABC transporter,deg_local
+mgen,MG_015,multidrug ABC transporter,deg_local
+mgen,MG_018,SNF2 family helicase putative,deg_local
+mgen,MG_019,chaperone protein DnaJ,deg_local
+mgen,MG_020,proline iminopeptidase,deg_local
+mgen,MG_021,methionyl-tRNA synthetase,deg_local
+mgen,MG_022,DNA-directed RNA polymerase,deg_local
+mgen,MG_023,fructose-1,deg_local
+mgen,MG_024,GTP-binding protein YchF,deg_local
+mgen,MG_025,Beta-glycosyl transferase,deg_local
+mgen,MG_026,translation elongation factor,deg_local
+mgen,MG_027,transcription termination/anti,deg_local
 mgen,MG_028,,none
-mgen,MG_029,,none
-mgen,MG_030,,none
-mgen,MG_031,,none
+mgen,MG_029,DJ-1/PfpI family protein,deg_local
+mgen,MG_030,uracil phosphoribosyltransfera,deg_local
+mgen,MG_031,DNA polymerase III,deg_local
 mgen,MG_032,,none
-mgen,MG_033,,none
-mgen,MG_034,,none
-mgen,MG_035,,none
-mgen,MG_036,,none
-mgen,MG_037,,none
-mgen,MG_038,,none
-mgen,MG_039,,none
-mgen,MG_040,,none
-mgen,MG_041,,none
-mgen,MG_042,,none
-mgen,MG_043,,none
-mgen,MG_044,,none
-mgen,MG_045,,none
+mgen,MG_033,glycerol uptake facilitator,deg_local
+mgen,MG_034,thymidine kinase,deg_local
+mgen,MG_035,histidyl-tRNA synthetase,deg_local
+mgen,MG_036,aspartyl-tRNA synthetase,deg_local
+mgen,MG_037,nicotinate phosphoribosyltrans,deg_local
+mgen,MG_038,glycerol kinase,deg_local
+mgen,MG_039,FAD-dependent glycerol-3-phosp,deg_local
+mgen,MG_040,Monosaccharide (riboside/galac,deg_local
+mgen,MG_041,PTS system,deg_local
+mgen,MG_042,spermidine/putrescine (polyami,deg_local
+mgen,MG_043,spermidine/putrescine (polyami,deg_local
+mgen,MG_044,spermidine/putrescine (polyami,deg_local
+mgen,MG_045,spermidine/putrescine (polyami,deg_local
 mgen,MG_046,,none
-mgen,MG_047,,none
-mgen,MG_048,,none
-mgen,MG_049,,none
-mgen,MG_050,,none
-mgen,MG_051,,none
-mgen,MG_052,,none
+mgen,MG_047,S-adenosylmethionine synthetas,deg_local
+mgen,MG_048,signal recognition particle pr,deg_local
+mgen,MG_049,purine nucleoside phosphorylas,deg_local
+mgen,MG_050,deoxyribose-phosphate aldolase,deg_local
+mgen,MG_051,pyrimidine-nucleoside phosphor,deg_local
+mgen,MG_052,cytidine deaminase,deg_local
 mgen,MG_053,,none
-mgen,MG_054,,none
-mgen,MG_055,,none
-mgen,MG_473,,none
+mgen,MG_054,transcription antitermination,deg_local
+mgen,MG_055,preprotein translocase,deg_local
+mgen,MG_473,ribosomal protein L33 type 2,deg_local
 mgen,MG_474,,none
-mgen,MG_056,,none
-mgen,MG_057,,none
-mgen,MG_058,,none
-mgen,MG_059,,none
-mgen,MG_060,,none
-mgen,MG_061,,none
-mgen,MG_062,,none
-mgen,MG_063,,none
-mgen,MG_064,,none
-mgen,MG_065,,none
+mgen,MG_056,tetrapyrrole (corrin/porphyrin,deg_local
+mgen,MG_057,small primase-like protein,deg_local
+mgen,MG_058,ribose-phosphate pyrophosphoki,deg_local
+mgen,MG_059,SsrA-binding protein,deg_local
+mgen,MG_060,glycosyl transferase,deg_local
+mgen,MG_061,Mycoplasma MFS transporter,deg_local
+mgen,MG_062,PTS system,deg_local
+mgen,MG_063,1-phosphofructokinase,deg_local
+mgen,MG_064,ABC transporter,deg_local
+mgen,MG_065,ABC transporter,deg_local
 mgen,MG_066,,none
 mgen,MG_067,,none
 mgen,MG_068,,none
-mgen,MG_069,,none
-mgen,MG_070,,none
+mgen,MG_069,PTS system,deg_local
+mgen,MG_070,ribosomal protein S2,deg_local
 mgen,MG_071,,none
-mgen,MG_072,,none
-mgen,MG_073,,none
+mgen,MG_072,preprotein translocase,deg_local
+mgen,MG_073,excinuclease ABC,deg_local
 mgen,MG_074,,none
-mgen,MG_075,,none
+mgen,MG_075,116 kDa surface antigen,deg_local
 mgen,MG_076,,none
-mgen,MG_077,,none
-mgen,MG_078,,none
-mgen,MG_079,,none
-mgen,MG_080,,none
-mgen,MG_081,,none
-mgen,MG_082,,none
-mgen,MG_083,,none
-mgen,MG_084,,none
-mgen,MG_085,,none
-mgen,MG_086,,none
-mgen,MG_087,,none
-mgen,MG_088,,none
-mgen,MG_089,,none
-mgen,MG_090,,none
-mgen,MG_091,,none
-mgen,MG_092,,none
-mgen,MG_093,,none
-mgen,MG_094,,none
+mgen,MG_077,oligopeptide ABC transporter,deg_local
+mgen,MG_078,oligopeptide ABC transporter,deg_local
+mgen,MG_079,oligopeptide ABC transporter,deg_local
+mgen,MG_080,oligopeptide ABC transporter,deg_local
+mgen,MG_081,ribosomal protein L11,deg_local
+mgen,MG_082,ribosomal protein L1,deg_local
+mgen,MG_083,peptidyl-tRNA hydrolase,deg_local
+mgen,MG_084,tRNA(Ile)-lysidine synthetase,deg_local
+mgen,MG_085,HPr(Ser) kinase/phosphatase,deg_local
+mgen,MG_086,prolipoprotein diacylglyceryl,deg_local
+mgen,MG_087,ribosomal protein S12,deg_local
+mgen,MG_088,ribosomal protein S7,deg_local
+mgen,MG_089,translation elongation factor,deg_local
+mgen,MG_090,ribosomal protein S6,deg_local
+mgen,MG_091,single-strand binding protein,deg_local
+mgen,MG_092,ribosomal protein S18,deg_local
+mgen,MG_093,ribosomal protein L9,deg_local
+mgen,MG_094,replicative DNA helicase,deg_local
 mgen,MG_095,,none
 mgen,MG_096,,none
-mgen,MG_097,,none
-mgen,MG_098,,none
-mgen,MG_099,,none
-mgen,MG_100,,none
-mgen,MG_101,,none
-mgen,MG_102,,none
+mgen,MG_097,uracil-DNA glycosylase,deg_local
+mgen,MG_098,glutamyl-tRNA(Gln) and/or aspa,deg_local
+mgen,MG_099,glutamyl-tRNA(Gln) and/or aspa,deg_local
+mgen,MG_100,glutamyl-tRNA(Gln) and/or aspa,deg_local
+mgen,MG_101,Uncharacterized HTH-type trans,deg_local
+mgen,MG_102,thioredoxin-disulfide reductas,deg_local
 mgen,MG_103,,none
-mgen,MG_476,,none
-mgen,MG_104,,none
-mgen,MG_105,,none
-mgen,MG_106,,none
-mgen,MG_107,,none
-mgen,MG_108,,none
-mgen,MG_109,,none
-mgen,MG_110,,none
-mgen,MG_111,,none
-mgen,MG_112,,none
-mgen,MG_113,,none
-mgen,MG_114,,none
-mgen,MG_115,,none
+mgen,MG_476,preprotein translocase,deg_local
+mgen,MG_104,ribonuclease R,deg_local
+mgen,MG_105,putative DNA integrity scannin,deg_local
+mgen,MG_106,peptide deformylase,deg_local
+mgen,MG_107,guanylate kinase,deg_local
+mgen,MG_108,Ser/Thr protein phosphatase 2C,deg_local
+mgen,MG_109,serine/threonine protein kinas,deg_local
+mgen,MG_110,ribosome small subunit-depende,deg_local
+mgen,MG_111,glucose-6-phosphate isomerase,deg_local
+mgen,MG_112,ribulose-phosphate 3-epimerase,deg_local
+mgen,MG_113,asparaginyl-tRNA synthetase,deg_local
+mgen,MG_114,CDP-diacylglycerol--glycerol-3,deg_local
+mgen,MG_115,competence/damage-inducible pr,deg_local
 mgen,MG_116,,none
 mgen,MG_117,,none
-mgen,MG_118,,none
-mgen,MG_119,,none
-mgen,MG_120,,none
-mgen,MG_121,,none
-mgen,MG_122,,none
-mgen,MG_123,,none
+mgen,MG_118,UDP-glucose 4-epimerase,deg_local
+mgen,MG_119,Monosaccharide (riboside/galac,deg_local
+mgen,MG_120,Monosaccharide (riboside/galac,deg_local
+mgen,MG_121,Monosaccharide (riboside/galac,deg_local
+mgen,MG_122,DNA topoisomerase I,deg_local
+mgen,MG_123,arginine deaminasse,deg_local
 mgen,MG_124,,none
-mgen,MG_125,,none
-mgen,MG_126,,none
-mgen,MG_127,,none
-mgen,MG_128,,none
-mgen,MG_129,,none
+mgen,MG_125,Cof-like hydrolase,deg_local
+mgen,MG_126,tryptophanyl-tRNA synthetase,deg_local
+mgen,MG_127,Spx subfamily protein,deg_local
+mgen,MG_128,inorganic polyphosphate/ATP-NA,deg_local
+mgen,MG_129,Putative phosphotransferase en,deg_local
 mgen,MG_130,,none
-mgen,MG_131,,none
-mgen,MG_132,,none
-mgen,MG_133,,none
+mgen,MG_131,hypothetical protein,deg_local
+mgen,MG_132,purine nucleoside phosphoramid,deg_local
+mgen,MG_133,membrane protein,deg_local
 mgen,MG_134,,none
-mgen,MG_135,,none
-mgen,MG_136,,none
-mgen,MG_137,,none
-mgen,MG_138,,none
-mgen,MG_139,,none
-mgen,MG_140,,none
-mgen,MG_141,,none
+mgen,MG_135,membrane protein,deg_local
+mgen,MG_136,lysyl-tRNA synthetase,deg_local
+mgen,MG_137,UDP-galactopyranose mutase,deg_local
+mgen,MG_138,Translation elongation factor,deg_local
+mgen,MG_139,ribonuclease J,deg_local
+mgen,MG_140,putative ATP-dependent helicas,deg_local
+mgen,MG_141,transcription termination fact,deg_local
 mgen,MG_477,,none
-mgen,MG_142,,none
-mgen,MG_143,,none
+mgen,MG_142,translation initiation factor,deg_local
+mgen,MG_143,ribosome-binding factor A,deg_local
 mgen,MG_144,,none
-mgen,MG_145,,none
-mgen,MG_146,,none
-mgen,MG_147,,none
+mgen,MG_145,riboflavin biosynthesis protei,deg_local
+mgen,MG_146,UPF0053 protein,deg_local
+mgen,MG_147,membrane protein,deg_local
 mgen,MG_148,,none
 mgen,MG_149,,none
 mgen,MG_478,,none
-mgen,MG_150,,none
-mgen,MG_151,,none
-mgen,MG_152,,none
-mgen,MG_153,,none
-mgen,MG_154,,none
-mgen,MG_155,,none
-mgen,MG_156,,none
-mgen,MG_157,,none
-mgen,MG_158,,none
-mgen,MG_159,,none
-mgen,MG_160,,none
-mgen,MG_161,,none
-mgen,MG_162,,none
-mgen,MG_163,,none
-mgen,MG_164,,none
-mgen,MG_165,,none
-mgen,MG_166,,none
-mgen,MG_167,,none
-mgen,MG_168,,none
-mgen,MG_169,,none
-mgen,MG_170,,none
-mgen,MG_171,,none
-mgen,MG_172,,none
-mgen,MG_173,,none
-mgen,MG_174,,none
-mgen,MG_175,,none
+mgen,MG_150,ribosomal protein S10,deg_local
+mgen,MG_151,ribosomal protein L3,deg_local
+mgen,MG_152,ribosomal protein L4/L1 family,deg_local
+mgen,MG_153,ribosomal protein L23,deg_local
+mgen,MG_154,ribosomal protein L2,deg_local
+mgen,MG_155,ribosomal protein S19,deg_local
+mgen,MG_156,ribosomal protein L22,deg_local
+mgen,MG_157,ribosomal protein S3,deg_local
+mgen,MG_158,ribosomal protein L16,deg_local
+mgen,MG_159,ribosomal protein L29,deg_local
+mgen,MG_160,ribosomal protein S17,deg_local
+mgen,MG_161,ribosomal protein L14,deg_local
+mgen,MG_162,ribosomal protein L24,deg_local
+mgen,MG_163,ribosomal protein L5,deg_local
+mgen,MG_164,ribosomal protein S14,deg_local
+mgen,MG_165,ribosomal protein S8,deg_local
+mgen,MG_166,ribosomal protein L6,deg_local
+mgen,MG_167,ribosomal protein L18,deg_local
+mgen,MG_168,ribosomal protein S5,deg_local
+mgen,MG_169,ribosomal protein L15,deg_local
+mgen,MG_170,preprotein translocase,deg_local
+mgen,MG_171,adenylate kinase,deg_local
+mgen,MG_172,methionine aminopeptidase,deg_local
+mgen,MG_173,translation initiation factor,deg_local
+mgen,MG_174,ribosomal protein L36,deg_local
+mgen,MG_175,ribosomal protein S13,deg_local
 mgen,MG_176,,none
-mgen,MG_177,,none
-mgen,MG_178,,none
-mgen,MG_179,,none
-mgen,MG_180,,none
-mgen,MG_181,,none
-mgen,MG_182,,none
-mgen,MG_183,,none
-mgen,MG_184,,none
+mgen,MG_177,DNA-directed RNA polymerase,deg_local
+mgen,MG_178,ribosomal protein L17,deg_local
+mgen,MG_179,metal ion (cobalt) ABC transpo,deg_local
+mgen,MG_180,metal ion (cobalt) ABC transpo,deg_local
+mgen,MG_181,metal ion (cobalt) ABC transpo,deg_local
+mgen,MG_182,tRNA pseudouridine synthase A,deg_local
+mgen,MG_183,oligoendopeptidase F,deg_local
+mgen,MG_184,adenine-specific DNA modificat,deg_local
 mgen,MG_185,,none
-mgen,MG_186,,none
-mgen,MG_187,,none
-mgen,MG_188,,none
-mgen,MG_189,,none
+mgen,MG_186,Oligosaccharide or polyol ABC,deg_local
+mgen,MG_187,Oligosaccharide or polyol ABC,deg_local
+mgen,MG_188,Oligosaccharide or polyol ABC,deg_local
+mgen,MG_189,Oligosaccharide or polyol ABC,deg_local
 mgen,MG_190,,none
-mgen,MG_191,,none
-mgen,MG_192,,none
-mgen,MG_194,,none
-mgen,MG_195,,none
-mgen,MG_196,,none
-mgen,MG_197,,none
-mgen,MG_198,,none
-mgen,MG_199,,none
-mgen,MG_200,,none
-mgen,MG_201,,none
+mgen,MG_191,MgPa adhesin,deg_local
+mgen,MG_192,P110 protein,deg_local
+mgen,MG_194,phenylalanyl-tRNA synthetase,deg_local
+mgen,MG_195,phenylalanyl-tRNA synthetase,deg_local
+mgen,MG_196,translation initiation factor,deg_local
+mgen,MG_197,ribosomal protein L35,deg_local
+mgen,MG_198,ribosomal protein L20,deg_local
+mgen,MG_199,ribonuclease HIII,deg_local
+mgen,MG_200,DnaJ domain protein,deg_local
+mgen,MG_201,co-chaperone GrpE,deg_local
 mgen,MG_202,,none
-mgen,MG_203,,none
-mgen,MG_204,,none
-mgen,MG_205,,none
-mgen,MG_206,,none
-mgen,MG_207,,none
+mgen,MG_203,DNA topoisomerase IV,deg_local
+mgen,MG_204,DNA topoisomerase IV,deg_local
+mgen,MG_205,heat-inducible transcription r,deg_local
+mgen,MG_206,excinuclease ABC,deg_local
+mgen,MG_207,Ser/Thr protein phosphatase 2A,deg_local
 mgen,MG_208,,none
-mgen,MG_209,,none
-mgen,MG_210,,none
+mgen,MG_209,23S rRNA pseudouridine synthas,deg_local
+mgen,MG_210,prolipoprotein signal peptidas,deg_local
 mgen,MG_480,,none
-mgen,MG_481,,none
+mgen,MG_481,30S ribosomal protein S21,deg_local
 mgen,MG_211,,none
-mgen,MG_482,,none
-mgen,MG_212,,none
-mgen,MG_213,,none
-mgen,MG_214,,none
-mgen,MG_215,,none
-mgen,MG_216,,none
-mgen,MG_217,,none
-mgen,MG_218,,none
+mgen,MG_482,holo-(acyl-carrier-protein) sy,deg_local
+mgen,MG_212,1-acyl-sn-glycerol-3-phosphate,deg_local
+mgen,MG_213,segregation and condensation p,deg_local
+mgen,MG_214,segregation and condensation p,deg_local
+mgen,MG_215,6-phosphofructokinase,deg_local
+mgen,MG_216,pyruvate kinase,deg_local
+mgen,MG_217,P65 adhesin,deg_local
+mgen,MG_218,high molecular weight cytadher,deg_local
 mgen,MG_491,,none
 mgen,MG_219,,none
 mgen,MG_220,,none
-mgen,MG_221,,none
-mgen,MG_222,,none
+mgen,MG_221,mraZ protein,deg_local
+mgen,MG_222,S-adenosyl-methyltransferase M,deg_local
 mgen,MG_223,,none
-mgen,MG_224,,none
-mgen,MG_225,,none
-mgen,MG_226,,none
-mgen,MG_227,,none
-mgen,MG_228,,none
-mgen,MG_229,,none
-mgen,MG_230,,none
-mgen,MG_231,,none
-mgen,MG_232,,none
+mgen,MG_224,cell division protein FtsZ,deg_local
+mgen,MG_225,amino acid-polyamine-organocat,deg_local
+mgen,MG_226,amino acid-polyamine-organocat,deg_local
+mgen,MG_227,thymidylate synthase,deg_local
+mgen,MG_228,dihydrofolate reductase,deg_local
+mgen,MG_229,ribonucleoside-diphosphate red,deg_local
+mgen,MG_230,ribonucleotide reductase stimu,deg_local
+mgen,MG_231,ribonucleoside-diphosphate red,deg_local
+mgen,MG_232,ribosomal protein L21,deg_local
 mgen,MG_233,,none
-mgen,MG_234,,none
-mgen,MG_235,,none
-mgen,MG_236,,none
+mgen,MG_234,ribosomal protein L27,deg_local
+mgen,MG_235,apurinic endonuclease,deg_local
+mgen,MG_236,ferric uptake repressor,deg_local
 mgen,MG_237,,none
-mgen,MG_238,,none
-mgen,MG_239,,none
-mgen,MG_240,,none
+mgen,MG_238,trigger factor,deg_local
+mgen,MG_239,ATP-dependent protease La,deg_local
+mgen,MG_240,nicotinamide-nucleotide adenyl,deg_local
 mgen,MG_241,,none
 mgen,MG_242,,none
-mgen,MG_243,,none
-mgen,MG_244,,none
-mgen,MG_245,,none
-mgen,MG_246,,none
-mgen,MG_247,,none
+mgen,MG_243,conserved hypothetical protein,deg_local
+mgen,MG_244,3-5' helicase,deg_local
+mgen,MG_245,5-formyltetrahydrofolate cyclo,deg_local
+mgen,MG_246,Ser/Thr protein phosphatase 2A,deg_local
+mgen,MG_247,membrane protein,deg_local
 mgen,MG_248,,none
-mgen,MG_249,,none
-mgen,MG_250,,none
-mgen,MG_251,,none
-mgen,MG_252,,none
-mgen,MG_253,,none
-mgen,MG_254,,none
+mgen,MG_249,RNA polymerase sigma factor Rp,deg_local
+mgen,MG_250,DNA primase,deg_local
+mgen,MG_251,glycyl-tRNA synthetase,deg_local
+mgen,MG_252,23S rRNA methyltransferase; G2,deg_local
+mgen,MG_253,cysteinyl-tRNA synthetase,deg_local
+mgen,MG_254,DNA ligase,deg_local
 mgen,MG_255,,none
 mgen,MG_494,,none
 mgen,MG_256,,none
-mgen,MG_257,,none
-mgen,MG_258,,none
-mgen,MG_259,,none
+mgen,MG_257,ribosomal protein L31,deg_local
+mgen,MG_258,peptide chain release factor 1,deg_local
+mgen,MG_259,modification methylase,deg_local
 mgen,MG_260,,none
-mgen,MG_261,,none
-mgen,MG_262,,none
-mgen,MG_498,,none
-mgen,MG_263,,none
-mgen,MG_264,,none
-mgen,MG_265,,none
-mgen,MG_266,,none
+mgen,MG_261,DNA polymerase III,deg_local
+mgen,MG_262,polI-like 5'-3' exonuclease,deg_local
+mgen,MG_498,formamidopyrimidine-DNA glycos,deg_local
+mgen,MG_263,Cof-like hydrolase,deg_local
+mgen,MG_264,dephospho-CoA kinase,deg_local
+mgen,MG_265,sugar phosphatase,deg_local
+mgen,MG_266,leucyl-tRNA synthetase,deg_local
 mgen,MG_267,,none
 mgen,MG_268,,none
 mgen,MG_0001,,none
 mgen,MG_269,,none
-mgen,MG_270,,none
-mgen,MG_271,,none
-mgen,MG_272,,none
-mgen,MG_0002,,none
-mgen,MG_273,,none
-mgen,MG_274,,none
-mgen,MG_275,,none
-mgen,MG_276,,none
-mgen,MG_277,,none
-mgen,MG_278,,none
+mgen,MG_270,lipoyltransferase/lipoate-prot,deg_local
+mgen,MG_271,dihydrolipoamide dehydrogenase,deg_local
+mgen,MG_272,dihydrolipoamide acetyltransfe,deg_local
+mgen,MG_0002,MG170 RNA,deg_local
+mgen,MG_273,pyruvate dehydrogenase compone,deg_local
+mgen,MG_274,pyruvate dehydrogenase compone,deg_local
+mgen,MG_275,NADH oxidase,deg_local
+mgen,MG_276,adenine phosphoribosyltransfer,deg_local
+mgen,MG_277,Protein-export membrane protei,deg_local
+mgen,MG_278,GTP diphosphokinase,deg_local
 mgen,MG_279,,none
-mgen,MG_280,,none
+mgen,MG_280,sensory rhodopsin II transduce,deg_local
 mgen,MG_281,,none
-mgen,MG_282,,none
-mgen,MG_283,,none
+mgen,MG_282,transcription elongation facto,deg_local
+mgen,MG_283,prolyl-tRNA synthetase,deg_local
 mgen,MG_284,,none
 mgen,MG_285,,none
 mgen,MG_286,,none
-mgen,MG_287,,none
-mgen,MG_288,,none
-mgen,MG_289,,none
-mgen,MG_290,,none
-mgen,MG_291,,none
-mgen,MG_505,,none
-mgen,MG_292,,none
-mgen,MG_293,,none
-mgen,MG_294,,none
-mgen,MG_295,,none
+mgen,MG_287,acyl carrier protein,deg_local
+mgen,MG_288,protein L,deg_local
+mgen,MG_289,phosphonate ABC transporter,deg_local
+mgen,MG_290,phosphonate ABC transporter,deg_local
+mgen,MG_291,phosphonate ABC transporter,deg_local
+mgen,MG_505,putative holliday junction res,deg_local
+mgen,MG_292,alanyl-tRNA synthetase,deg_local
+mgen,MG_293,glycerophosphoryl diester phos,deg_local
+mgen,MG_294,major facilitator superfamily,deg_local
+mgen,MG_295,tRNA U34 sulfurtransferase,deg_local
 mgen,MG_296,,none
-mgen,MG_297,,none
-mgen,MG_298,,none
-mgen,MG_299,,none
-mgen,MG_300,,none
-mgen,MG_301,,none
-mgen,MG_302,,none
-mgen,MG_303,,none
-mgen,MG_304,,none
+mgen,MG_297,signal recognition particle re,deg_local
+mgen,MG_298,chromosome segregation protein,deg_local
+mgen,MG_299,phosphate acetyltransferase,deg_local
+mgen,MG_300,phosphoglycerate kinase,deg_local
+mgen,MG_301,glyceraldehyde-3-phosphate deh,deg_local
+mgen,MG_302,metal ion (cobalt) ABC transpo,deg_local
+mgen,MG_303,metal ion (cobalt) ABC transpo,deg_local
+mgen,MG_304,metal ion (cobalt) ABC transpo,deg_local
 mgen,MG_305,,none
-mgen,MG_306,,none
+mgen,MG_306,membrane protein,deg_local
 mgen,MG_307,,none
-mgen,MG_308,,none
+mgen,MG_308,ATP-dependent RNA helicase,deg_local
 mgen,MG_309,,none
 mgen,MG_310,,none
-mgen,MG_311,,none
-mgen,MG_312,,none
-mgen,MG_313,,none
+mgen,MG_311,ribosomal protein S4,deg_local
+mgen,MG_312,high molecular weight cytadher,deg_local
+mgen,MG_313,membrane protein,deg_local
 mgen,MG_314,,none
-mgen,MG_315,,none
-mgen,MG_316,,none
-mgen,MG_317,,none
-mgen,MG_318,,none
+mgen,MG_315,DNA polymerase III,deg_local
+mgen,MG_316,DNA internalization-related co,deg_local
+mgen,MG_317,high molecular weight cytadher,deg_local
+mgen,MG_318,P32 adhesin,deg_local
 mgen,MG_319,,none
-mgen,MG_320,,none
-mgen,MG_321,,none
-mgen,MG_322,,none
-mgen,MG_323,,none
-mgen,MG_0003,,none
-mgen,MG_0004,,none
+mgen,MG_320,membrane protein,deg_local
+mgen,MG_321,oligopeptide ABC transporter,deg_local
+mgen,MG_322,potassium uptake protein,deg_local
+mgen,MG_323,potassium uptake protein,deg_local
+mgen,MG_0003,Rnase P RNA,deg_local
+mgen,MG_0004,transfer-messenger RNA,deg_local
 mgen,MG_515,,none
 mgen,MG_324,,none
-mgen,MG_325,,none
-mgen,MG_326,,none
+mgen,MG_325,ribosomal protein L33,deg_local
+mgen,MG_326,degV family protein,deg_local
 mgen,MG_327,,none
-mgen,MG_328,,none
-mgen,MG_329,,none
-mgen,MG_330,,none
+mgen,MG_328,coiled coil putative structura,deg_local
+mgen,MG_329,GTP-binding protein engA,deg_local
+mgen,MG_330,cytidylate kinase,deg_local
 mgen,MG_331,,none
 mgen,MG_332,,none
-mgen,MG_333,,none
-mgen,MG_334,,none
-mgen,MG_335,,none
+mgen,MG_333,FMN-dependent NADH-azoreductas,deg_local
+mgen,MG_334,valyl-tRNA synthetase,deg_local
+mgen,MG_335,GTP-binding protein engB,deg_local
 mgen,MG_516,,none
-mgen,MG_517,,none
-mgen,MG_336,,none
+mgen,MG_517,glycosyl transferase,deg_local
+mgen,MG_336,cysteine desulfurase,deg_local
 mgen,MG_337,,none
 mgen,MG_338,,none
-mgen,MG_339,,none
-mgen,MG_340,,none
-mgen,MG_341,,none
-mgen,MG_342,,none
+mgen,MG_339,recombination protein,deg_local
+mgen,MG_340,DNA-directed RNA polymerase,deg_local
+mgen,MG_341,DNA-directed RNA polymerase,deg_local
+mgen,MG_342,NADPH-dependent FMN reductase,deg_local
 mgen,MG_343,,none
 mgen,MG_344,,none
-mgen,MG_345,,none
-mgen,MG_346,,none
-mgen,MG_347,,none
+mgen,MG_345,isoleucyl-tRNA synthetase,deg_local
+mgen,MG_346,23S rRNA methyltransferase; U2,deg_local
+mgen,MG_347,tRNA (guanine-N(7)-)-methyltra,deg_local
 mgen,MG_348,,none
-mgen,MG_349,,none
+mgen,MG_349,Replication initiation/membran,deg_local
 mgen,MG_350,,none
-mgen,MG_521,,none
-mgen,MG_351,,none
-mgen,MG_352,,none
-mgen,MG_353,,none
+mgen,MG_521,membrane protein,deg_local
+mgen,MG_351,inorganic pyrophosphatase,deg_local
+mgen,MG_352,Holliday junction endonuclease,deg_local
+mgen,MG_353,DNA-binding protein HU,deg_local
 mgen,MG_354,,none
-mgen,MG_355,,none
-mgen,MG_356,,none
-mgen,MG_357,,none
-mgen,MG_358,,none
-mgen,MG_359,,none
-mgen,MG_360,,none
-mgen,MG_361,,none
-mgen,MG_362,,none
-mgen,MG_363,,none
-mgen,MG_522,,none
-mgen,MG_364,,none
-mgen,MG_365,,none
+mgen,MG_355,ATP-dependent Clp protease,deg_local
+mgen,MG_356,choline/ethanolamine kinase,deg_local
+mgen,MG_357,acetate kinase,deg_local
+mgen,MG_358,Holliday junction DNA helicase,deg_local
+mgen,MG_359,Holliday junction DNA helicase,deg_local
+mgen,MG_360,ImpB/MucB/SamB family protein,deg_local
+mgen,MG_361,ribosomal protein L10,deg_local
+mgen,MG_362,ribosomal protein L7/L12,deg_local
+mgen,MG_363,ribosomal protein L32,deg_local
+mgen,MG_522,ribosomal protein S20,deg_local
+mgen,MG_364,Replication initiation/membran,deg_local
+mgen,MG_365,methionyl-tRNA formyltransfera,deg_local
 mgen,MG_366,,none
-mgen,MG_367,,none
-mgen,MG_368,,none
-mgen,MG_369,,none
-mgen,MG_370,,none
-mgen,MG_371,,none
-mgen,MG_372,,none
+mgen,MG_367,ribonuclease III,deg_local
+mgen,MG_368,fatty acid/phospholipid synthe,deg_local
+mgen,MG_369,DAK2 phosphatase domain protei,deg_local
+mgen,MG_370,23S rRNA pseudouridine synthas,deg_local
+mgen,MG_371,DHH family protein,deg_local
+mgen,MG_372,thiamine biosynthesis/tRNA mod,deg_local
 mgen,MG_373,,none
 mgen,MG_374,,none
-mgen,MG_375,,none
+mgen,MG_375,threonyl-tRNA synthetase,deg_local
 mgen,MG_376,,none
 mgen,MG_377,,none
-mgen,MG_378,,none
-mgen,MG_379,,none
-mgen,MG_380,,none
+mgen,MG_378,arginyl-tRNA synthetase,deg_local
+mgen,MG_379,tRNA uridine 5-carboxymethylam,deg_local
+mgen,MG_380,methyltransferase GidB,deg_local
 mgen,MG_381,,none
-mgen,MG_382,,none
-mgen,MG_383,,none
-mgen,MG_384,,none
+mgen,MG_382,uridine kinase,deg_local
+mgen,MG_383,NH(3)-dependent NAD+ synthetas,deg_local
+mgen,MG_384,GTPase1 Obg,deg_local
 mgen,MG_524,,none
-mgen,MG_385,,none
-mgen,MG_386,,none
-mgen,MG_387,,none
-mgen,MG_388,,none
+mgen,MG_385,glycerophosphoryl diester phos,deg_local
+mgen,MG_386,P200 protein,deg_local
+mgen,MG_387,GTP-binding protein Era,deg_local
+mgen,MG_388,Putative metalloprotease,deg_local
 mgen,MG_389,,none
-mgen,MG_390,,none
-mgen,MG_391,,none
+mgen,MG_390,toxin ABC transporter,deg_local
+mgen,MG_391,cytosol aminopeptidase,deg_local
 mgen,MG_392,,none
 mgen,MG_393,,none
-mgen,MG_394,,none
+mgen,MG_394,serine hydroxymethyltransferas,deg_local
 mgen,MG_395,,none
-mgen,MG_396,,none
+mgen,MG_396,ribose 5-phosphate isomerase B,deg_local
 mgen,MG_397,,none
-mgen,MG_398,,none
-mgen,MG_399,,none
-mgen,MG_400,,none
-mgen,MG_401,,none
-mgen,MG_402,,none
-mgen,MG_403,,none
-mgen,MG_404,,none
-mgen,MG_405,,none
+mgen,MG_398,ATP synthase F1,deg_local
+mgen,MG_399,ATP synthase F1,deg_local
+mgen,MG_400,ATP synthase F1,deg_local
+mgen,MG_401,ATP synthase F1,deg_local
+mgen,MG_402,ATP synthase F1,deg_local
+mgen,MG_403,ATP synthase F0,deg_local
+mgen,MG_404,ATP synthase F0,deg_local
+mgen,MG_405,ATP synthase F0,deg_local
 mgen,MG_406,,none
 mgen,MG_407,,none
-mgen,MG_408,,none
-mgen,MG_409,,none
-mgen,MG_410,,none
-mgen,MG_411,,none
-mgen,MG_412,,none
+mgen,MG_408,methionine-S-sulfoxide reducta,deg_local
+mgen,MG_409,phosphate transport system reg,deg_local
+mgen,MG_410,phosphate ABC transporter,deg_local
+mgen,MG_411,phosphate ABC transporter,deg_local
+mgen,MG_412,phosphate ABC transporter,deg_local
 mgen,MG_414,,none
 mgen,MG_525,,none
-mgen,MG_417,,none
-mgen,MG_418,,none
-mgen,MG_419,,none
-mgen,MG_421,,none
+mgen,MG_417,ribosomal protein S9,deg_local
+mgen,MG_418,ribosomal protein L13,deg_local
+mgen,MG_419,DNA polymerase III,deg_local
+mgen,MG_421,excinuclease ABC,deg_local
 mgen,MG_422,,none
-mgen,MG_423,,none
-mgen,MG_424,,none
-mgen,MG_425,,none
-mgen,MG_426,,none
-mgen,MG_427,,none
-mgen,MG_428,,none
-mgen,MG_429,,none
+mgen,MG_423,metallo-beta-lactamase superfa,deg_local
+mgen,MG_424,ribosomal protein S15,deg_local
+mgen,MG_425,ATP-dependent RNA helicase,deg_local
+mgen,MG_426,ribosomal protein L28,deg_local
+mgen,MG_427,osmotically inducible peroxida,deg_local
+mgen,MG_428,LuxR bacterial regulatory prot,deg_local
+mgen,MG_429,PTS system,deg_local
 mgen,MG_430,,none
-mgen,MG_431,,none
-mgen,MG_432,,none
-mgen,MG_433,,none
-mgen,MG_434,,none
-mgen,MG_435,,none
-mgen,MG_437,,none
-mgen,MG_438,,none
+mgen,MG_431,triosephosphate isomerase,deg_local
+mgen,MG_432,membrane protein,deg_local
+mgen,MG_433,translation elongation factor,deg_local
+mgen,MG_434,uridylate kinase,deg_local
+mgen,MG_435,ribosome recycling factor,deg_local
+mgen,MG_437,phosphatidate cytidylyltransfe,deg_local
+mgen,MG_438,type I restriction modificatio,deg_local
 mgen,MG_439,,none
 mgen,MG_440,,none
 mgen,MG_441,,none
-mgen,MG_442,,none
-mgen,MG_443,,none
-mgen,MG_444,,none
-mgen,MG_445,,none
-mgen,MG_446,,none
-mgen,MG_447,,none
-mgen,MG_448,,none
-mgen,MG_449,,none
-mgen,MG_450,,none
-mgen,MG_451,,none
-mgen,MG_452,,none
-mgen,MG_453,,none
-mgen,MG_454,,none
-mgen,MG_455,,none
+mgen,MG_442,ribosomal biogenesis GTPase,deg_local
+mgen,MG_443,membrane protein,deg_local
+mgen,MG_444,ribosomal protein L19,deg_local
+mgen,MG_445,tRNA (guanine-N1)-methyltransf,deg_local
+mgen,MG_446,ribosomal protein S16,deg_local
+mgen,MG_447,multidrug efflux pump,deg_local
+mgen,MG_448,methionine-R-sulfoxide reducta,deg_local
+mgen,MG_449,conserved hypothetical protein,deg_local
+mgen,MG_450,degV family protein,deg_local
+mgen,MG_451,translation elongation factor,deg_local
+mgen,MG_452,membrane protein,deg_local
+mgen,MG_453,UTP-glucose-1-phosphate uridyl,deg_local
+mgen,MG_454,thiol-dependent peroxidase,deg_local
+mgen,MG_455,tyrosyl-tRNA synthetase,deg_local
 mgen,MG_456,,none
-mgen,MG_457,,none
-mgen,MG_458,,none
-mgen,MG_459,,none
-mgen,MG_460,,none
-mgen,MG_461,,none
-mgen,MG_462,,none
-mgen,MG_463,,none
-mgen,MG_464,,none
-mgen,MG_465,,none
-mgen,MG_466,,none
-mgen,MG_467,,none
-mgen,MG_468,,none
-mgen,MG_526,,none
-mgen,MG_469,,none
-mgen,MG_470,,none
+mgen,MG_457,ATP-dependent metalloprotease,deg_local
+mgen,MG_458,hypoxanthine phosphoribosyltra,deg_local
+mgen,MG_459,putative 2-C-methyl-D-erythrit,deg_local
+mgen,MG_460,L-lactate dehydrogenase/malate,deg_local
+mgen,MG_461,HD domain protein,deg_local
+mgen,MG_462,glutamyl-tRNA synthetase,deg_local
+mgen,MG_463,dimethyladenosine transferase,deg_local
+mgen,MG_464,inner-membrane protein inserti,deg_local
+mgen,MG_465,ribonuclease P protein compone,deg_local
+mgen,MG_466,ribosomal protein L34,deg_local
+mgen,MG_467,salivaricin A ABC transporter,deg_local
+mgen,MG_468,salivaricin A ABC transporter,deg_local
+mgen,MG_526,salivaricin A ABC transporter,deg_local
+mgen,MG_469,chromosomal replication initia,deg_local
+mgen,MG_470,CobQ/CobB/MinD/ParA nucleotide,deg_local
 mpne,MPN001,,none
 mpne,MPN005,,none
 mpne,MPN023,,none
@@ -996,54 +996,54 @@ mpne,MPN578,,none
 mpne,MPN651,,none
 mpne,MPN652,,none
 mpne,MPN653,,none
-spneT4,SP_0001,,none
-spneT4,SP_0002,,none
+spneT4,SP_0001,chromosomal replication initiator protein DnaA,deg_local
+spneT4,SP_0002,DNA polymerase III subunit beta,deg_local
 spneT4,SP_0003,,none
-spneT4,SP_0004,,none
-spneT4,SP_0005,,none
-spneT4,SP_0006,,none
+spneT4,SP_0004,redox-regulated ATPase YchF,deg_local
+spneT4,SP_0005,aminoacyl-tRNA hydrolase,deg_local
+spneT4,SP_0006,transcription-repair coupling factor,deg_local
 spneT4,SP_0007,,none
 spneT4,SP_0008,,none
 spneT4,SP_0009,,none
 spneT4,SP_0010,,none
-spneT4,SP_0011,,none
+spneT4,SP_0011,tRNA lysidine(34) synthetase TilS,deg_local
 spneT4,SP_0012,,none
-spneT4,SP_0013,,none
+spneT4,SP_0013,ATP-dependent zinc metalloprotease FtsH,deg_local
 spneT4,SP_2006,,none
 spneT4,SP_0014,,none
-spneT4,SP_0018,,none
+spneT4,SP_0018,sigma(X)-activator ComW,deg_local
 spneT4,SP_0019,,none
-spneT4,SP_0020,,none
+spneT4,SP_0020,tRNA adenosine(34) deaminase TadA,deg_local
 spneT4,SP_0021,,none
 spneT4,SP_0022,,none
 spneT4,SP_0024,,none
 spneT4,SP_0025,,none
 spneT4,SP_0026,,none
 spneT4,SP_1095,,none
-spneT4,SP_0027,,none
-spneT4,SP_0032,,none
+spneT4,SP_0027,peptidylprolyl isomerase PrsA,deg_local
+spneT4,SP_0032,DNA polymerase I,deg_local
 spneT4,SP_0033,,none
 spneT4,SP_0034,,none
 spneT4,SP_0035,,none
-spneT4,SP_0036,,none
-spneT4,SP_0037,,none
+spneT4,SP_0036,DNA repair protein RecO,deg_local
+spneT4,SP_0037,phosphate acyltransferase PlsX,deg_local
 spneT4,SP_0038,,none
 spneT4,SP_0040,,none
-spneT4,SP_0041,,none
+spneT4,SP_0041,bacteriocin-like peptide BlpU,deg_local
 spneT4,SP_0533,,none
-spneT4,SP_0042,,none
-spneT4,SP_0043,,none
-spneT4,SP_0044,,none
+spneT4,SP_0042,peptide cleavage/export ABC transporter ComA,deg_local
+spneT4,SP_0043,competence pheromone export protein ComB,deg_local
+spneT4,SP_0044,phosphoribosylaminoimidazolesuccinocarboxamide synthase,deg_local
 spneT4,SP_0045,,none
-spneT4,SP_0046,,none
-spneT4,SP_0047,,none
-spneT4,SP_0050,,none
-spneT4,SP_0051,,none
+spneT4,SP_0046,amidophosphoribosyltransferase,deg_local
+spneT4,SP_0047,phosphoribosylformylglycinamidine cyclo-ligase,deg_local
+spneT4,SP_0050,bifunctional phosphoribosylaminoimidazolecarboxamide formyltransferase/IMP cyclohydrolase,deg_local
+spneT4,SP_0051,phosphoribosylamine--glycine ligase,deg_local
 spneT4,SP_0052,,none
-spneT4,SP_0053,,none
-spneT4,SP_0054,,none
+spneT4,SP_0053,5-(carboxyamino)imidazole ribonucleotide mutase,deg_local
+spneT4,SP_0054,5-(carboxyamino)imidazole ribonucleotide synthase,deg_local
 spneT4,SP_0055,,none
-spneT4,SP_0056,,none
+spneT4,SP_0056,adenylosuccinate lyase,deg_local
 spneT4,SP_0057,,none
 spneT4,SP_0058,,none
 spneT4,SP_0061,,none
@@ -1059,10 +1059,10 @@ spneT4,SP_0075,,none
 spneT4,SP_0076,,none
 spneT4,SP_0077,,none
 spneT4,SP_0078,,none
-spneT4,SP_0079,,none
+spneT4,SP_0079,Trk system potassium transporter TrkA,deg_local
 spneT4,SP_0080,,none
 spneT4,SP_0084,,none
-spneT4,SP_0085,,none
+spneT4,SP_0085,30S ribosomal protein S4,deg_local
 spneT4,SP_1488,,none
 spneT4,SP_1302,,none
 spneT4,SP_0087,,none
@@ -1091,7 +1091,7 @@ spneT4,SP_1394,,none
 spneT4,SP_0115,,none
 spneT4,SP_0116,,none
 spneT4,SP_0117,,none
-spneT4,SP_0118,,none
+spneT4,SP_0118,tRNA 2-thiouridine(34) synthase MnmA,deg_local
 spneT4,SP_0120,,none
 spneT4,SP_0121,,none
 spneT4,SP_0122,,none
@@ -1120,7 +1120,7 @@ spneT4,SP_0154,,none
 spneT4,SP_0155,,none
 spneT4,SP_0156,,none
 spneT4,SP_0157,,none
-spneT4,SP_0158,,none
+spneT4,SP_0158,class Ib ribonucleoside-diphosphate reductase assembly flavoprotein NrdI,deg_local
 spneT4,SP_0159,,none
 spneT4,SP_0160,,none
 spneT4,SP_0161,,none
@@ -1135,17 +1135,17 @@ spneT4,SP_0170,,none
 spneT4,SP_0171,,none
 spneT4,SP_0172,,none
 spneT4,SP_0414,,none
-spneT4,SP_0173,,none
-spneT4,SP_0175,,none
-spneT4,SP_0177,,none
-spneT4,SP_0178,,none
-spneT4,SP_0179,,none
+spneT4,SP_0173,DNA mismatch repair endonuclease MutL,deg_local
+spneT4,SP_0175,6%2C7-dimethyl-8-ribityllumazine synthase,deg_local
+spneT4,SP_0177,riboflavin synthase,deg_local
+spneT4,SP_0178,bifunctional diaminohydroxyphosphoribosylaminopyrimidine deaminase/5-amino-6-(5-phosphoribosylamino)uracil reductase RibD,deg_local
+spneT4,SP_0179,Holliday junction branch migration protein RuvA,deg_local
 spneT4,SP_0180,,none
 spneT4,SP_0181,,none
 spneT4,SP_0182,,none
 spneT4,SP_0184,,none
 spneT4,SP_0185,,none
-spneT4,SP_0186,,none
+spneT4,SP_0186,excinuclease ABC subunit UvrA,deg_local
 spneT4,SP_0187,,none
 spneT4,SP_0188,,none
 spneT4,SP_1405,,none
@@ -1160,42 +1160,42 @@ spneT4,SP_0198,,none
 spneT4,SP_0199,,none
 spneT4,SP_0200,,none
 spneT4,SP_0201,,none
-spneT4,SP_0202,,none
+spneT4,SP_0202,anaerobic ribonucleoside-triphosphate reductase,deg_local
 spneT4,SP_0203,,none
 spneT4,SP_0204,,none
 spneT4,SP_0205,,none
 spneT4,SP_0206,,none
 spneT4,SP_0207,,none
-spneT4,SP_0208,,none
-spneT4,SP_0209,,none
-spneT4,SP_0210,,none
+spneT4,SP_0208,30S ribosomal protein S10,deg_local
+spneT4,SP_0209,50S ribosomal protein L3,deg_local
+spneT4,SP_0210,50S ribosomal protein L4,deg_local
 spneT4,SP_0211,,none
-spneT4,SP_0212,,none
-spneT4,SP_0213,,none
-spneT4,SP_0214,,none
-spneT4,SP_0215,,none
-spneT4,SP_0216,,none
-spneT4,SP_0217,,none
-spneT4,SP_0218,,none
-spneT4,SP_0219,,none
-spneT4,SP_0220,,none
-spneT4,SP_0221,,none
-spneT4,SP_0222,,none
+spneT4,SP_0212,50S ribosomal protein L2,deg_local
+spneT4,SP_0213,30S ribosomal protein S19,deg_local
+spneT4,SP_0214,50S ribosomal protein L22,deg_local
+spneT4,SP_0215,30S ribosomal protein S3,deg_local
+spneT4,SP_0216,50S ribosomal protein L16,deg_local
+spneT4,SP_0217,50S ribosomal protein L29,deg_local
+spneT4,SP_0218,30S ribosomal protein S17,deg_local
+spneT4,SP_0219,50S ribosomal protein L14,deg_local
+spneT4,SP_0220,50S ribosomal protein L24,deg_local
+spneT4,SP_0221,50S ribosomal protein L5,deg_local
+spneT4,SP_0222,30S ribosomal protein S14,deg_local
 spneT4,SP_0223,,none
-spneT4,SP_0224,,none
-spneT4,SP_0225,,none
-spneT4,SP_0226,,none
-spneT4,SP_0227,,none
-spneT4,SP_0228,,none
-spneT4,SP_0229,,none
-spneT4,SP_0230,,none
-spneT4,SP_0231,,none
-spneT4,SP_0232,,none
-spneT4,SP_0233,,none
-spneT4,SP_0234,,none
-spneT4,SP_0235,,none
+spneT4,SP_0224,30S ribosomal protein S8,deg_local
+spneT4,SP_0225,50S ribosomal protein L6,deg_local
+spneT4,SP_0226,50S ribosomal protein L18,deg_local
+spneT4,SP_0227,30S ribosomal protein S5,deg_local
+spneT4,SP_0228,50S ribosomal protein L30,deg_local
+spneT4,SP_0229,50S ribosomal protein L15,deg_local
+spneT4,SP_0230,preprotein translocase subunit SecY,deg_local
+spneT4,SP_0231,Adenylate kinase (ATP-AMP transphosphorylase),deg_local
+spneT4,SP_0232,translation initiation factor IF-1,deg_local
+spneT4,SP_0233,50S ribosomal protein L36,deg_local
+spneT4,SP_0234,30S ribosomal protein S13,deg_local
+spneT4,SP_0235,30S ribosomal protein S11,deg_local
 spneT4,SP_0236,,none
-spneT4,SP_0237,,none
+spneT4,SP_0237,50S ribosomal protein L17,deg_local
 spneT4,SP_0238,,none
 spneT4,SP_0239,,none
 spneT4,SP_0240,,none
@@ -1205,28 +1205,28 @@ spneT4,SP_0244,,none
 spneT4,SP_0245,,none
 spneT4,SP_0247,,none
 spneT4,SP_0248,,none
-spneT4,SP_0249,,none
-spneT4,SP_0250,,none
+spneT4,SP_0249,Competence protein,deg_local
+spneT4,SP_0250,PTS cellobiose transporter subunit IIC,deg_local
 spneT4,SP_0251,,none
 spneT4,SP_0252,,none
 spneT4,SP_0253,,none
-spneT4,SP_0254,,none
+spneT4,SP_0254,leucine--tRNA ligase,deg_local
 spneT4,SP_0255,,none
 spneT4,SP_0256,,none
 spneT4,SP_0258,,none
-spneT4,SP_0259,,none
+spneT4,SP_0259,Holliday junction branch migration DNA helicase RuvB,deg_local
 spneT4,SP_0260,,none
 spneT4,SP_0261,,none
 spneT4,SP_0262,,none
 spneT4,SP_0263,,none
-spneT4,SP_0264,,none
+spneT4,SP_0264,Prolyl-tRNA synthetase,deg_local
 spneT4,SP_0266,,none
 spneT4,SP_0267,,none
 spneT4,SP_0268,,none
 spneT4,SP_0269,,none
-spneT4,SP_0271,,none
-spneT4,SP_0272,,none
-spneT4,SP_0273,,none
+spneT4,SP_0271,30S ribosomal protein S12,deg_local
+spneT4,SP_0272,30S ribosomal protein S7,deg_local
+spneT4,SP_0273,elongation factor G,deg_local
 spneT4,SP_0274,,none
 spneT4,SP_0276,,none
 spneT4,SP_0277,,none
@@ -1245,16 +1245,16 @@ spneT4,SP_0290,,none
 spneT4,SP_0291,,none
 spneT4,SP_0292,,none
 spneT4,SP_0293,,none
-spneT4,SP_0294,,none
-spneT4,SP_0295,,none
+spneT4,SP_0294,50S ribosomal protein L13,deg_local
+spneT4,SP_0295,50S ribosomal protein L9,deg_local
 spneT4,SP_0296,,none
 spneT4,SP_0297,,none
 spneT4,SP_0298,,none
 spneT4,SP_0302,,none
 spneT4,SP_0578,,none
-spneT4,SP_0303,,none
+spneT4,SP_0303,Competence protein,deg_local
 spneT4,SP_0304,,none
-spneT4,SP_0305,,none
+spneT4,SP_0305,PTS cellobiose transporter subunit IIC,deg_local
 spneT4,SP_0306,,none
 spneT4,SP_0307,,none
 spneT4,SP_0308,,none
@@ -1273,43 +1273,43 @@ spneT4,SP_0321,,none
 spneT4,SP_0322,,none
 spneT4,SP_0323,,none
 spneT4,SP_0325,,none
-spneT4,SP_0326,,none
+spneT4,SP_0326,preprotein translocase subunit YajC,deg_local
 spneT4,SP_0327,,none
 spneT4,SP_0329,,none
 spneT4,SP_0330,,none
 spneT4,SP_0332,,none
 spneT4,SP_0333,,none
-spneT4,SP_0334,,none
-spneT4,SP_0335,,none
+spneT4,SP_0334,yllC protein,deg_local
+spneT4,SP_0335,cell division protein FtsL,deg_local
 spneT4,SP_0336,,none
-spneT4,SP_0337,,none
+spneT4,SP_0337,phospho-N-acetylmuramoyl-pentapeptide-transferase,deg_local
 spneT4,SP_0338,,none
 spneT4,SP_0340,,none
 spneT4,SP_0341,,none
 spneT4,SP_0342,,none
-spneT4,SP_0346,,none
-spneT4,SP_0347,,none
+spneT4,SP_0346,capsular polysaccharide biosynthesis protein Cps4A,deg_local
+spneT4,SP_0347,capsular polysaccharide biosynthesis protein Cps4B,deg_local
 spneT4,SP_0348,,none
-spneT4,SP_0349,,none
-spneT4,SP_0350,,none
-spneT4,SP_0351,,none
-spneT4,SP_0352,,none
-spneT4,SP_0353,,none
+spneT4,SP_0349,capsular polysaccharide biosynthesis protein Cps4D,deg_local
+spneT4,SP_0350,capsular polysaccharide biosynthesis protein Cps4E,deg_local
+spneT4,SP_0351,capsular polysaccharide biosynthesis protein Cps4F,deg_local
+spneT4,SP_0352,capsular polysaccharide biosynthesis protein Cps4G,deg_local
+spneT4,SP_0353,capsular polysaccharide biosynthesis protein Cps4H,deg_local
 spneT4,SP_0354,,none
 spneT4,SP_0355,,none
 spneT4,SP_0356,,none
-spneT4,SP_0357,,none
-spneT4,SP_0358,,none
-spneT4,SP_0359,,none
-spneT4,SP_0360,,none
+spneT4,SP_0357,capsular polysaccharide biosynthesis protein Cps4I,deg_local
+spneT4,SP_0358,capsular polysaccharide biosynthesis protein Cps4J,deg_local
+spneT4,SP_0359,capsular polysaccharide biosynthesis protein Cps4K,deg_local
+spneT4,SP_0360,capsular polysaccharide biosynthesis protein Cps4L,deg_local
 spneT4,SP_0366,,none
 spneT4,SP_1891,,none
 spneT4,SP_1527,,none
 spneT4,SP_0367,,none
 spneT4,SP_0368,,none
 spneT4,SP_0369,,none
-spneT4,SP_0370,,none
-spneT4,SP_0372,,none
+spneT4,SP_0370,Holliday junction resolvase RecU,deg_local
+spneT4,SP_0372,cell division regulator GpsB,deg_local
 spneT4,SP_0373,,none
 spneT4,SP_0374,,none
 spneT4,SP_0375,,none
@@ -1317,11 +1317,11 @@ spneT4,SP_0376,,none
 spneT4,SP_0378,,none
 spneT4,SP_0377,,none
 spneT4,SP_0391,,none
-spneT4,SP_2190,,none
+spneT4,SP_2190,choline-binding protein CbpA,deg_local
 spneT4,SP_0379,,none
 spneT4,SP_0380,,none
 spneT4,SP_0381,,none
-spneT4,SP_0382,,none
+spneT4,SP_0382,diphosphomevalonate decarboxylase,deg_local
 spneT4,SP_0383,,none
 spneT4,SP_0384,,none
 spneT4,SP_0385,,none
@@ -1333,11 +1333,11 @@ spneT4,SP_0394,,none
 spneT4,SP_0395,,none
 spneT4,SP_0396,,none
 spneT4,SP_0397,,none
-spneT4,SP_0400,,none
+spneT4,SP_0400,trigger factor,deg_local
 spneT4,SP_0401,,none
 spneT4,SP_0402,,none
 spneT4,SP_0403,,none
-spneT4,SP_0404,,none
+spneT4,SP_0404,cell division protein ZapA,deg_local
 spneT4,SP_0405,,none
 spneT4,SP_0406,,none
 spneT4,SP_0407,,none
@@ -1353,33 +1353,33 @@ spneT4,SP_0417,,none
 spneT4,SP_0418,,none
 spneT4,SP_0419,,none
 spneT4,SP_0420,,none
-spneT4,SP_0421,,none
-spneT4,SP_0422,,none
-spneT4,SP_0423,,none
-spneT4,SP_0424,,none
-spneT4,SP_0425,,none
-spneT4,SP_0426,,none
+spneT4,SP_0421,3-oxoacyl-[acyl-carrier-protein] reductase,deg_local
+spneT4,SP_0422,beta-ketoacyl-ACP synthase II,deg_local
+spneT4,SP_0423,acetyl-CoA carboxylase biotin carboxyl carrier protein,deg_local
+spneT4,SP_0424,3-hydroxyacyl-ACP dehydratase FabZ,deg_local
+spneT4,SP_0425,acetyl-CoA carboxylase biotin carboxylase subunit,deg_local
+spneT4,SP_0426,acetyl-CoA carboxylase%2C carboxyltransferase subunit beta,deg_local
 spneT4,SP_0427,,none
 spneT4,SP_0428,,none
 spneT4,SP_0431,,none
 spneT4,SP_0430,,none
-spneT4,SP_0433,,none
+spneT4,SP_0433,transcription antitermination factor NusB,deg_local
 spneT4,SP_0434,,none
-spneT4,SP_0435,,none
-spneT4,SP_0436,,none
-spneT4,SP_0437,,none
-spneT4,SP_0438,,none
+spneT4,SP_0435,elongation factor P,deg_local
+spneT4,SP_0436,Asp-tRNA(Asn)/Glu-tRNA(Gln) amidotransferase subunit GatB,deg_local
+spneT4,SP_0437,Asp-tRNA(Asn)/Glu-tRNA(Gln) amidotransferase subunit GatA,deg_local
+spneT4,SP_0438,Asp-tRNA(Asn)/Glu-tRNA(Gln) amidotransferase subunit GatC,deg_local
 spneT4,SP_0439,,none
-spneT4,SP_0441,,none
+spneT4,SP_0441,50S ribosomal protein L28,deg_local
 spneT4,SP_0442,,none
 spneT4,SP_0443,,none
 spneT4,SP_0444,,none
 spneT4,SP_0445,,none
 spneT4,SP_0446,,none
-spneT4,SP_0447,,none
+spneT4,SP_0447,ketol-acid reductoisomerase,deg_local
 spneT4,SP_0448,,none
 spneT4,SP_0449,,none
-spneT4,SP_0450,,none
+spneT4,SP_0450,threonine ammonia-lyase IlvA,deg_local
 spneT4,SP_0451,,none
 spneT4,SP_1460,,none
 spneT4,SP_0610,,none
@@ -1390,7 +1390,7 @@ spneT4,SP_0453,,none
 spneT4,SP_0454,,none
 spneT4,SP_0455,,none
 spneT4,SP_0917,,none
-spneT4,SP_0457,,none
+spneT4,SP_0457,bacitracin resistance protein,deg_local
 spneT4,SP_0458,,none
 spneT4,SP_0459,,none
 spneT4,SP_0461,,none
@@ -1411,7 +1411,7 @@ spneT4,SP_1186,,none
 spneT4,SP_0478,,none
 spneT4,SP_1185,,none
 spneT4,SP_0479,,none
-spneT4,SP_0480,,none
+spneT4,SP_0480,Trk system potassium transporter TrkA,deg_local
 spneT4,SP_0481,,none
 spneT4,SP_0482,,none
 spneT4,SP_0483,,none
@@ -1427,14 +1427,14 @@ spneT4,SP_0493,,none
 spneT4,SP_0494,,none
 spneT4,SP_0497,,none
 spneT4,SP_0498,,none
-spneT4,SP_0499,,none
+spneT4,SP_0499,phosphoglycerate kinase,deg_local
 spneT4,SP_0500,,none
 spneT4,SP_0501,,none
-spneT4,SP_0502,,none
+spneT4,SP_0502,type I glutamate--ammonia ligase,deg_local
 spneT4,SP_0503,,none
 spneT4,SP_0504,,none
 spneT4,SP_0507,,none
-spneT4,SP_0510,,none
+spneT4,SP_0510,EcoAI/FtnUII family type I restriction enzme subunit R,deg_local
 spneT4,SP_0508,,none
 spneT4,SP_0505,,none
 spneT4,SP_0509,,none
@@ -1442,11 +1442,11 @@ spneT4,SP_0511,,none
 spneT4,SP_0512,,none
 spneT4,SP_0513,,none
 spneT4,SP_0514,,none
-spneT4,SP_0515,,none
-spneT4,SP_0516,,none
-spneT4,SP_0517,,none
+spneT4,SP_0515,heat-inducible transcriptional repressor HrcA,deg_local
+spneT4,SP_0516,nucleotide exchange factor GrpE,deg_local
+spneT4,SP_0517,molecular chaperone DnaK,deg_local
 spneT4,SP_0518,,none
-spneT4,SP_0519,,none
+spneT4,SP_0519,molecular chaperone DnaJ,deg_local
 spneT4,SP_0520,,none
 spneT4,SP_0521,,none
 spneT4,SP_0522,,none
@@ -1454,29 +1454,29 @@ spneT4,SP_0523,,none
 spneT4,SP_0525,,none
 spneT4,SP_0526,,none
 spneT4,SP_0527,,none
-spneT4,SP_0528,,none
+spneT4,SP_0528,quorum-sensing system pheromone BlpC,deg_local
 spneT4,SP_0529,,none
-spneT4,SP_0531,,none
+spneT4,SP_0531,bacteriocin-like peptide BlpI,deg_local
 spneT4,SP_0534,,none
 spneT4,SP_0543,,none
 spneT4,SP_0536,,none
-spneT4,SP_0539,,none
-spneT4,SP_0540,,none
-spneT4,SP_0541,,none
+spneT4,SP_0539,two-peptide bacteriocin subunit BlpM,deg_local
+spneT4,SP_0540,two-peptide bacteriocin subunit BlpN,deg_local
+spneT4,SP_0541,bacteriocin-like peptide BlpO,deg_local
 spneT4,SP_0542,,none
 spneT4,SP_0544,,none
 spneT4,SP_0545,,none
-spneT4,SP_0546,,none
+spneT4,SP_0546,immunity protein BlpZ,deg_local
 spneT4,SP_0547,,none
 spneT4,SP_0548,,none
 spneT4,SP_0549,,none
-spneT4,SP_0550,,none
-spneT4,SP_0552,,none
-spneT4,SP_0553,,none
+spneT4,SP_0550,tRNA (guanosine(46)-N7)-methyltransferase TrmB,deg_local
+spneT4,SP_0552,ribosome maturation factor RimP,deg_local
+spneT4,SP_0553,transcription termination factor NusA,deg_local
 spneT4,SP_0554,,none
 spneT4,SP_0555,,none
-spneT4,SP_0556,,none
-spneT4,SP_0557,,none
+spneT4,SP_0556,translation initiation factor IF-2,deg_local
+spneT4,SP_0557,30S ribosome-binding factor RbfA,deg_local
 spneT4,SP_0558,,none
 spneT4,SP_0559,,none
 spneT4,SP_0561,,none
@@ -1492,32 +1492,32 @@ spneT4,SP_0574,,none
 spneT4,SP_0575,,none
 spneT4,SP_0576,,none
 spneT4,SP_0577,,none
-spneT4,SP_0579,,none
+spneT4,SP_0579,phenylalanine--tRNA ligase subunit alpha,deg_local
 spneT4,SP_0580,,none
-spneT4,SP_0581,,none
+spneT4,SP_0581,phenylalanine--tRNA ligase subunit beta,deg_local
 spneT4,SP_0584,,none
 spneT4,SP_1144,,none
-spneT4,SP_0585,,none
+spneT4,SP_0585,5-methyltetrahydropteroyltriglutamate--homocysteine S-methyltransferase,deg_local
 spneT4,SP_0587,,none
-spneT4,SP_0588,,none
-spneT4,SP_0589,,none
+spneT4,SP_0588,polyribonucleotide nucleotidyltransferase,deg_local
+spneT4,SP_0589,serine O-acetyltransferase,deg_local
 spneT4,SP_0590,,none
-spneT4,SP_0591,,none
+spneT4,SP_0591,cysteine--tRNA ligase,deg_local
 spneT4,SP_0592,,none
 spneT4,SP_0593,,none
 spneT4,SP_0598,,none
 spneT4,SP_0599,,none
-spneT4,SP_0600,,none
+spneT4,SP_0600,ABC transporter ATP-binding subunit Vex2,deg_local
 spneT4,SP_0602,,none
-spneT4,SP_0604,,none
-spneT4,SP_0605,,none
+spneT4,SP_0604,sensor histidine kinase VncS,deg_local
+spneT4,SP_0605,Fructose-bisphosphate aldolase,deg_local
 spneT4,SP_0606,,none
 spneT4,SP_0607,,none
 spneT4,SP_0608,,none
 spneT4,SP_0609,,none
-spneT4,SP_0611,,none
+spneT4,SP_0611,single-stranded-DNA-specific exonuclease RecJ,deg_local
 spneT4,SP_0612,,none
-spneT4,SP_0613,,none
+spneT4,SP_0613,ribonuclease J1,deg_local
 spneT4,SP_0614,,none
 spneT4,SP_0615,,none
 spneT4,SP_0616,,none
@@ -1526,15 +1526,15 @@ spneT4,SP_0618,,none
 spneT4,SP_0619,,none
 spneT4,SP_0621,,none
 spneT4,SP_0622,,none
-spneT4,SP_0623,,none
+spneT4,SP_0623,dipeptidase PepV,deg_local
 spneT4,SP_0624,,none
-spneT4,SP_0626,,none
+spneT4,SP_0626,branched-chain amino acid transport system II carrier protein,deg_local
 spneT4,SP_0627,,none
 spneT4,SP_0628,,none
 spneT4,SP_0667,,none
-spneT4,SP_0629,,none
-spneT4,SP_0630,,none
-spneT4,SP_0631,,none
+spneT4,SP_0629,LD-carboxypeptidase LdcB/DacB,deg_local
+spneT4,SP_0630,50S ribosomal protein L11,deg_local
+spneT4,SP_0631,50S ribosomal protein L1,deg_local
 spneT4,SP_0633,,none
 spneT4,SP_0634,,none
 spneT4,SP_0635,,none
@@ -1549,7 +1549,7 @@ spneT4,SP_1199,,none
 spneT4,SP_1197,,none
 spneT4,SP_0646,,none
 spneT4,SP_0647,,none
-spneT4,SP_0648,,none
+spneT4,SP_0648,LPXTG-anchored adhesin/beta-galactosidase BgaA,deg_local
 spneT4,SP_0650,,none
 spneT4,SP_0652,,none
 spneT4,SP_0653,,none
@@ -1563,21 +1563,21 @@ spneT4,SP_1359,,none
 spneT4,SP_0662,,none
 spneT4,SP_0663,,none
 spneT4,SP_0664,,none
-spneT4,SP_0665,,none
+spneT4,SP_0665,aminodeoxychorismate synthase component I,deg_local
 spneT4,SP_0666,,none
-spneT4,SP_0669,,none
+spneT4,SP_0669,Thymidylate synthase,deg_local
 spneT4,SP_0670,,none
-spneT4,SP_0671,,none
-spneT4,SP_0672,,none
+spneT4,SP_0671,tRNA (adenosine(37)-N6)-dimethylallyltransferase MiaA,deg_local
+spneT4,SP_0672,GTPase HflX,deg_local
 spneT4,SP_0673,,none
-spneT4,SP_0674,,none
+spneT4,SP_0674,ribonuclease Z,deg_local
 spneT4,SP_0675,,none
 spneT4,SP_0676,,none
 spneT4,SP_0677,,none
 spneT4,SP_0678,,none
 spneT4,SP_0679,,none
 spneT4,SP_0680,,none
-spneT4,SP_0681,,none
+spneT4,SP_0681,translational GTPase TypA,deg_local
 spneT4,SP_0682,,none
 spneT4,SP_0683,,none
 spneT4,SP_0684,,none
@@ -1586,8 +1586,8 @@ spneT4,SP_0686,,none
 spneT4,SP_0687,,none
 spneT4,SP_1957,,none
 spneT4,SP_1987,,none
-spneT4,SP_0688,,none
-spneT4,SP_0689,,none
+spneT4,SP_0688,UDP-N-acetylmuramoyl-L-alanine--D-glutamate ligase,deg_local
+spneT4,SP_0689,Undecaprenyl-PP-MurNAc-pentapeptide-UDPGlcNAc GlcNAc transferase,deg_local
 spneT4,SP_0690,,none
 spneT4,SP_0691,,none
 spneT4,SP_0692,,none
@@ -1596,34 +1596,34 @@ spneT4,SP_0694,,none
 spneT4,SP_0696,,none
 spneT4,SP_0695,,none
 spneT4,SP_0698,,none
-spneT4,SP_0701,,none
-spneT4,SP_0702,,none
+spneT4,SP_0701,orotidine-5'-phosphate decarboxylase,deg_local
+spneT4,SP_0702,orotate phosphoribosyltransferase,deg_local
 spneT4,SP_0703,,none
 spneT4,SP_0704,,none
 spneT4,SP_0705,,none
 spneT4,SP_0706,,none
 spneT4,SP_0710,,none
 spneT4,SP_0711,,none
-spneT4,SP_0713,,none
+spneT4,SP_0713,lysine--tRNA ligase,deg_local
 spneT4,SP_0715,,none
-spneT4,SP_0716,,none
-spneT4,SP_0717,,none
+spneT4,SP_0716,thiaminase II,deg_local
+spneT4,SP_0717,hydroxyethylthiazole kinase,deg_local
 spneT4,SP_0718,,none
 spneT4,SP_0719,,none
 spneT4,SP_0720,,none
 spneT4,SP_0721,,none
-spneT4,SP_0722,,none
-spneT4,SP_0723,,none
-spneT4,SP_0724,,none
+spneT4,SP_0722,thiaminase II,deg_local
+spneT4,SP_0723,energy coupling factor transporter S component ThiW,deg_local
+spneT4,SP_0724,hydroxyethylthiazole kinase,deg_local
 spneT4,SP_0725,,none
 spneT4,SP_0727,,none
 spneT4,SP_0728,,none
 spneT4,SP_0729,,none
-spneT4,SP_0730,,none
+spneT4,SP_0730,pyruvate oxidase,deg_local
 spneT4,SP_0733,,none
 spneT4,SP_1487,,none
 spneT4,SP_0810,,none
-spneT4,SP_0736,,none
+spneT4,SP_0736,mannose-6-phosphate isomerase%2C class I,deg_local
 spneT4,SP_0738,,none
 spneT4,SP_0737,,none
 spneT4,SP_0739,,none
@@ -1632,106 +1632,106 @@ spneT4,SP_0741,,none
 spneT4,SP_0742,,none
 spneT4,SP_0743,,none
 spneT4,SP_0744,,none
-spneT4,SP_0745,,none
-spneT4,SP_0746,,none
+spneT4,SP_0745,uracil phosphoribosyltransferase,deg_local
+spneT4,SP_0746,ATP-dependent Clp protease proteolytic subunit ClpP,deg_local
 spneT4,SP_0748,,none
 spneT4,SP_0749,,none
 spneT4,SP_0750,,none
 spneT4,SP_0754,,none
-spneT4,SP_0755,,none
-spneT4,SP_0756,,none
-spneT4,SP_0757,,none
+spneT4,SP_0755,peptide chain release factor 2,deg_local
+spneT4,SP_0756,cell division ATP-binding protein FtsE,deg_local
+spneT4,SP_0757,permease-like cell division protein FtsX,deg_local
 spneT4,SP_0758,,none
 spneT4,SP_0759,,none
 spneT4,SP_0760,,none
 spneT4,SP_0761,,none
-spneT4,SP_0762,,none
+spneT4,SP_0762,methionine adenosyltransferase,deg_local
 spneT4,SP_0763,,none
 spneT4,SP_0764,,none
-spneT4,SP_0765,,none
-spneT4,SP_0766,,none
+spneT4,SP_0765,DNA polymerase III subunit delta,deg_local
+spneT4,SP_0766,superoxide dismutase SodA,deg_local
 spneT4,SP_0767,,none
-spneT4,SP_0768,,none
+spneT4,SP_0768,23S rRNA (adenine(2503)-C(2))-methyltransferase RlmN,deg_local
 spneT4,SP_0769,,none
 spneT4,SP_0771,,none
 spneT4,SP_0773,,none
 spneT4,SP_0774,,none
-spneT4,SP_0775,,none
+spneT4,SP_0775,30S ribosomal protein S16,deg_local
 spneT4,SP_0776,,none
 spneT4,SP_0777,,none
-spneT4,SP_0778,,none
-spneT4,SP_0779,,none
+spneT4,SP_0778,ribosome maturation factor RimM,deg_local
+spneT4,SP_0779,tRNA (guanosine(37)-N1)-methyltransferase TrmD,deg_local
 spneT4,SP_0782,,none
 spneT4,SP_0783,,none
-spneT4,SP_0784,,none
+spneT4,SP_0784,glutathione-disulfide reductase,deg_local
 spneT4,SP_0785,,none
 spneT4,SP_0787,,none
-spneT4,SP_0788,,none
+spneT4,SP_0788,methionine--tRNA ligase,deg_local
 spneT4,SP_0789,,none
 spneT4,SP_0790,,none
 spneT4,SP_0791,,none
 spneT4,SP_0792,,none
-spneT4,SP_0793,,none
+spneT4,SP_0793,3-oxoacyl-[acyl-carrier-protein] reductase,deg_local
 spneT4,SP_0794,,none
 spneT4,SP_0795,,none
 spneT4,SP_0796,,none
 spneT4,SP_0797,,none
-spneT4,SP_0798,,none
-spneT4,SP_0799,,none
+spneT4,SP_0798,two-component system response regulator CiaR,deg_local
+spneT4,SP_0799,two-component system sensor histidine kinase CiaH,deg_local
 spneT4,SP_0800,,none
 spneT4,SP_0801,,none
 spneT4,SP_0802,,none
 spneT4,SP_0803,,none
 spneT4,SP_0804,,none
 spneT4,SP_0805,,none
-spneT4,SP_0806,,none
-spneT4,SP_0852,,none
-spneT4,SP_0807,,none
+spneT4,SP_0806,DNA topoisomerase (ATP-hydrolyzing) subunit B,deg_local
+spneT4,SP_0852,DNA topoisomerase IV subunit B,deg_local
+spneT4,SP_0807,septation ring formation regulator EzrA,deg_local
 spneT4,SP_0815,,none
 spneT4,SP_0816,,none
 spneT4,SP_0820,,none
 spneT4,SP_0821,,none
 spneT4,SP_0822,,none
 spneT4,SP_0824,,none
-spneT4,SP_0825,,none
+spneT4,SP_0825,"Fold bifunctional protein; includes: methylenetetrahydrofolate dehydrogenase, methenyltetrahydrofolate cyclohydrolase.",deg_local
 spneT4,SP_0826,,none
-spneT4,SP_0828,,none
+spneT4,SP_0828,ribose-5-phosphate isomerase RpiA,deg_local
 spneT4,SP_0829,,none
 spneT4,SP_0830,,none
 spneT4,SP_0832,,none
 spneT4,SP_0833,,none
 spneT4,SP_0834,,none
-spneT4,SP_0835,,none
+spneT4,SP_0835,purine-nucleoside phosphorylase,deg_local
 spneT4,SP_0837,,none
-spneT4,SP_0838,,none
-spneT4,SP_0839,,none
+spneT4,SP_0838,30S ribosomal protein S20,deg_local
+spneT4,SP_0839,type I pantothenate kinase,deg_local
 spneT4,SP_0840,,none
 spneT4,SP_0841,,none
 spneT4,SP_0842,,none
-spneT4,SP_0843,,none
+spneT4,SP_0843,deoxyribose-phosphate aldolase,deg_local
 spneT4,SP_0844,,none
 spneT4,SP_0845,,none
 spneT4,SP_0846,,none
 spneT4,SP_0847,,none
 spneT4,SP_0848,,none
-spneT4,SP_0851,,none
+spneT4,SP_0851,glycerol-3-phosphate 1-O-acyltransferase PlsY,deg_local
 spneT4,SP_0854,,none
-spneT4,SP_0855,,none
+spneT4,SP_0855,DNA topoisomerase IV subunit A,deg_local
 spneT4,SP_0856,,none
 spneT4,SP_0858,,none
 spneT4,SP_0859,,none
 spneT4,SP_0860,,none
 spneT4,SP_2060,,none
 spneT4,SP_0861,,none
-spneT4,SP_0862,,none
+spneT4,SP_0862,30S ribosomal protein S1,deg_local
 spneT4,SP_0864,,none
-spneT4,SP_0865,,none
+spneT4,SP_0865,DNA polymerase III subunit gamma/tau,deg_local
 spneT4,SP_0866,,none
-spneT4,SP_0867,,none
-spneT4,SP_0868,,none
+spneT4,SP_0867,Fe-S cluster assembly ATPase SufC,deg_local
+spneT4,SP_0868,Fe-S cluster assembly protein SufD,deg_local
 spneT4,SP_0869,,none
 spneT4,SP_0870,,none
-spneT4,SP_0871,,none
+spneT4,SP_0871,Fe-S cluster assembly protein SufB,deg_local
 spneT4,SP_0872,,none
 spneT4,SP_0873,,none
 spneT4,SP_0874,,none
@@ -1740,8 +1740,8 @@ spneT4,SP_0876,,none
 spneT4,SP_0877,,none
 spneT4,SP_0878,,none
 spneT4,SP_0879,,none
-spneT4,SP_0880,,none
-spneT4,SP_0881,,none
+spneT4,SP_0880,Pyridoxal-phosphate dependent aminotransferase,deg_local
+spneT4,SP_0881,tRNA uracil 4-sulfurtransferase ThiI,deg_local
 spneT4,SP_0882,,none
 spneT4,SP_0883,,none
 spneT4,SP_0884,,none
@@ -1751,12 +1751,12 @@ spneT4,SP_0887,,none
 spneT4,SP_0891,,none
 spneT4,SP_0888,,none
 spneT4,SP_0889,,none
-spneT4,SP_0892,,none
-spneT4,SP_0893,,none
+spneT4,SP_0892,EcoAI/FtnUII family type I restriction enzme subunit R,deg_local
+spneT4,SP_0893,arginine repressor,deg_local
 spneT4,SP_0894,,none
-spneT4,SP_0895,,none
+spneT4,SP_0895,"DNA polymerase III, alpha subunit",deg_local
 spneT4,SP_0896,,none
-spneT4,SP_0897,,none
+spneT4,SP_0897,pyruvate kinase,deg_local
 spneT4,SP_0899,,none
 spneT4,SP_0901,,none
 spneT4,SP_0902,,none
@@ -1769,29 +1769,29 @@ spneT4,SP_0910,,none
 spneT4,SP_0911,,none
 spneT4,SP_0913,,none
 spneT4,SP_0916,,none
-spneT4,SP_0918,,none
-spneT4,SP_0920,,none
-spneT4,SP_0921,,none
+spneT4,SP_0918,polyamine aminopropyltransferase,deg_local
+spneT4,SP_0920,carboxynorspermidine decarboxylase,deg_local
+spneT4,SP_0921,agmatine deiminase,deg_local
 spneT4,SP_0922,,none
 spneT4,SP_0923,,none
 spneT4,SP_0924,,none
 spneT4,SP_0925,,none
 spneT4,SP_0926,,none
 spneT4,SP_0927,,none
-spneT4,SP_0928,,none
-spneT4,SP_0930,,none
-spneT4,SP_0931,,none
+spneT4,SP_0928,signal peptidase II,deg_local
+spneT4,SP_0930,phosphorylcholine esterase CbpE,deg_local
+spneT4,SP_0931,glutamate 5-kinase,deg_local
 spneT4,SP_0932,,none
-spneT4,SP_0933,,none
+spneT4,SP_0933,pyrroline-5-carboxylate reductase,deg_local
 spneT4,SP_0934,,none
-spneT4,SP_0935,,none
+spneT4,SP_0935,dTMP kinase,deg_local
 spneT4,SP_0936,,none
-spneT4,SP_0937,,none
-spneT4,SP_0938,,none
-spneT4,SP_0939,,none
-spneT4,SP_0943,,none
-spneT4,SP_0944,,none
-spneT4,SP_0945,,none
+spneT4,SP_0937,DNA replication initiation control protein YabA,deg_local
+spneT4,SP_0938,16S rRNA (cytidine(1402)-2'-O)-methyltransferase,deg_local
+spneT4,SP_0939,DNA polymerase IV,deg_local
+spneT4,SP_0943,methylenetetrahydrofolate--tRNA-(uracil(54)-C(5))-methyltransferase (FADH(2)-oxidizing) TrmFO,deg_local
+spneT4,SP_0944,UMP kinase,deg_local
+spneT4,SP_0945,ribosome recycling factor,deg_local
 spneT4,SP_0946,,none
 spneT4,SP_0947,,none
 spneT4,SP_0948,,none
@@ -1803,32 +1803,32 @@ spneT4,SP_0955,,none
 spneT4,SP_0956,,none
 spneT4,SP_0957,,none
 spneT4,SP_0958,,none
-spneT4,SP_0959,,none
+spneT4,SP_0959,translation initiation factor IF-3,deg_local
 spneT4,SP_0960,,none
-spneT4,SP_0961,,none
+spneT4,SP_0961,50S ribosomal protein L20,deg_local
 spneT4,SP_0962,,none
 spneT4,SP_0963,,none
 spneT4,SP_0964,,none
 spneT4,SP_0965,,none
-spneT4,SP_0966,,none
-spneT4,SP_0967,,none
+spneT4,SP_0966,Rqc2 family fibronectin-binding protein PavA,deg_local
+spneT4,SP_0967,rRNA maturation RNase YbeY,deg_local
 spneT4,SP_0968,,none
-spneT4,SP_0969,,none
+spneT4,SP_0969,GTPase Era,deg_local
 spneT4,SP_0970,,none
-spneT4,SP_0971,,none
+spneT4,SP_0971,dephospho-CoA kinase,deg_local
 spneT4,SP_0972,,none
 spneT4,SP_0973,,none
-spneT4,SP_0974,,none
+spneT4,SP_0974,preprotein translocase subunit SecG,deg_local
 spneT4,SP_0975,,none
-spneT4,SP_0976,,none
-spneT4,SP_0977,,none
-spneT4,SP_0978,,none
+spneT4,SP_0976,SsrA-binding protein SmpB,deg_local
+spneT4,SP_0977,SAM-dependent methyltransferase TehB,deg_local
+spneT4,SP_0978,competence protein CoiA,deg_local
 spneT4,SP_0980,,none
 spneT4,SP_0984,,none
 spneT4,SP_0985,,none
 spneT4,SP_0986,,none
 spneT4,SP_0987,,none
-spneT4,SP_0988,,none
+spneT4,SP_0988,bifunctional UDP-N-acetylglucosamine diphosphorylase/glucosamine-1-phosphate N-acetyltransferase GlmU,deg_local
 spneT4,SP_0990,,none
 spneT4,SP_0991,,none
 spneT4,SP_0992,,none
@@ -1845,20 +1845,20 @@ spneT4,SP_1006,,none
 spneT4,SP_1007,,none
 spneT4,SP_1008,,none
 spneT4,SP_1009,,none
-spneT4,SP_1010,,none
+spneT4,SP_1010,large conductance mechanosensitive channel protein MscL,deg_local
 spneT4,SP_1011,,none
 spneT4,SP_1012,,none
 spneT4,SP_1013,,none
-spneT4,SP_1014,,none
+spneT4,SP_1014,4-hydroxy-tetrahydrodipicolinate synthase,deg_local
 spneT4,SP_1016,,none
 spneT4,SP_1017,,none
 spneT4,SP_1018,,none
 spneT4,SP_1019,,none
-spneT4,SP_1020,,none
+spneT4,SP_1020,peptide chain release factor 1,deg_local
 spneT4,SP_1021,,none
 spneT4,SP_1022,,none
 spneT4,SP_1023,,none
-spneT4,SP_1024,,none
+spneT4,SP_1024,serine hydroxymethyltransferase,deg_local
 spneT4,SP_1025,,none
 spneT4,SP_1026,,none
 spneT4,SP_1027,,none
@@ -1890,26 +1890,26 @@ spneT4,SP_1061,,none
 spneT4,SP_1062,,none
 spneT4,SP_1063,,none
 spneT4,SP_1065,,none
-spneT4,SP_1067,,none
-spneT4,SP_1068,,none
+spneT4,SP_1067,cell division peptidoglycan polymerase FtsW,deg_local
+spneT4,SP_1068,phosphoenolpyruvate carboxylase,deg_local
 spneT4,SP_1069,,none
 spneT4,SP_1070,,none
 spneT4,SP_1071,,none
-spneT4,SP_1072,,none
-spneT4,SP_1073,,none
+spneT4,SP_1072,DNA primase,deg_local
+spneT4,SP_1073,RNA polymerase sigma factor RpoD,deg_local
 spneT4,SP_1074,,none
-spneT4,SP_1075,,none
+spneT4,SP_1075,alpha-galactosylglucosyldiacylglycerol synthase,deg_local
 spneT4,SP_1076,,none
 spneT4,SP_1077,,none
 spneT4,SP_1078,,none
-spneT4,SP_1079,,none
+spneT4,SP_1079,GTPase ObgE,deg_local
 spneT4,SP_1080,,none
 spneT4,SP_1081,,none
 spneT4,SP_1082,,none
 spneT4,SP_1083,,none
 spneT4,SP_1084,,none
-spneT4,SP_1087,,none
-spneT4,SP_1088,,none
+spneT4,SP_1087,DNA helicase PcrA,deg_local
+spneT4,SP_1088,RadC family protein,deg_local
 spneT4,SP_1089,,none
 spneT4,SP_2072,,none
 spneT4,SP_1090,,none
@@ -1919,15 +1919,15 @@ spneT4,SP_1093,,none
 spneT4,SP_1094,,none
 spneT4,SP_1096,,none
 spneT4,SP_1097,,none
-spneT4,SP_1098,,none
+spneT4,SP_1098,conserved hypothetical protein,deg_local
 spneT4,SP_1099,,none
 spneT4,SP_1100,,none
 spneT4,SP_1102,,none
 spneT4,SP_1103,,none
 spneT4,SP_1104,,none
-spneT4,SP_1105,,none
+spneT4,SP_1105,50S ribosomal protein L21,deg_local
 spneT4,SP_1106,,none
-spneT4,SP_1107,,none
+spneT4,SP_1107,50S ribosomal protein L27,deg_local
 spneT4,SP_1108,,none
 spneT4,SP_1110,,none
 spneT4,SP_1111,,none
@@ -1936,16 +1936,16 @@ spneT4,SP_1113,,none
 spneT4,SP_1114,,none
 spneT4,SP_1115,,none
 spneT4,SP_1116,,none
-spneT4,SP_1117,,none
+spneT4,SP_1117,NAD-dependent DNA ligase LigA,deg_local
 spneT4,SP_1118,,none
 spneT4,SP_1119,,none
 spneT4,SP_1120,,none
-spneT4,SP_1121,,none
+spneT4,SP_1121,1%2C4-alpha-glucan branching protein GlgB,deg_local
 spneT4,SP_1122,,none
-spneT4,SP_1123,,none
+spneT4,SP_1123,glucose-1-phosphate adenylyltransferase subunit GlgD,deg_local
 spneT4,SP_1126,,none
 spneT4,SP_1127,,none
-spneT4,SP_1128,,none
+spneT4,SP_1128,surface-displayed alpha-enolase,deg_local
 spneT4,SP_1130,,none
 spneT4,SP_1131,,none
 spneT4,SP_1133,,none
@@ -1959,14 +1959,14 @@ spneT4,SP_1141,,none
 spneT4,SP_1142,,none
 spneT4,SP_1143,,none
 spneT4,SP_1145,,none
-spneT4,SP_1151,,none
+spneT4,SP_1151,ATP-dependent nuclease subunit B,deg_local
 spneT4,SP_1152,,none
 spneT4,SP_1153,,none
 spneT4,SP_1154,,none
-spneT4,SP_1155,,none
+spneT4,SP_1155,GTP-binding protein,deg_local
 spneT4,SP_1156,,none
 spneT4,SP_1157,,none
-spneT4,SP_1159,,none
+spneT4,SP_1159,tyrosine recombinase XerS,deg_local
 spneT4,SP_1160,,none
 spneT4,SP_1161,,none
 spneT4,SP_1162,,none
@@ -1982,46 +1982,46 @@ spneT4,SP_1173,,none
 spneT4,SP_1176,,none
 spneT4,SP_1177,,none
 spneT4,SP_1178,,none
-spneT4,SP_1179,,none
-spneT4,SP_1180,,none
+spneT4,SP_1179,class 1b ribonucleoside-diphosphate reductase subunit alpha,deg_local
+spneT4,SP_1180,class 1b ribonucleoside-diphosphate reductase subunit beta,deg_local
 spneT4,SP_1181,,none
 spneT4,SP_1182,,none
 spneT4,SP_1183,,none
 spneT4,SP_1187,,none
 spneT4,SP_1188,,none
 spneT4,SP_1189,,none
-spneT4,SP_1190,,none
+spneT4,SP_1190,tagatose-bisphosphate aldolase,deg_local
 spneT4,SP_1191,,none
-spneT4,SP_1192,,none
-spneT4,SP_1193,,none
+spneT4,SP_1192,galactose-6-phosphate isomerase subunit LacB,deg_local
+spneT4,SP_1193,galactose-6-phosphate isomerase subunit LacA,deg_local
 spneT4,SP_1200,,none
 spneT4,SP_1201,,none
-spneT4,SP_1202,,none
-spneT4,SP_1203,,none
+spneT4,SP_1202,DNA repair protein RecN,deg_local
+spneT4,SP_1203,arginine repressor,deg_local
 spneT4,SP_1204,,none
 spneT4,SP_1205,,none
 spneT4,SP_1206,,none
-spneT4,SP_1207,,none
-spneT4,SP_1208,,none
+spneT4,SP_1207,exodeoxyribonuclease VII large subunit,deg_local
+spneT4,SP_1208,uridine kinase,deg_local
 spneT4,SP_1209,,none
 spneT4,SP_1210,,none
 spneT4,SP_1211,,none
-spneT4,SP_1212,,none
+spneT4,SP_1212,tRNA pseudouridine(55) synthase TruB,deg_local
 spneT4,SP_1213,,none
 spneT4,SP_1215,,none
 spneT4,SP_1217,,none
 spneT4,SP_1218,,none
-spneT4,SP_1219,,none
+spneT4,SP_1219,DNA gyrase subunit A,deg_local
 spneT4,SP_1220,,none
 spneT4,SP_1221,,none
 spneT4,SP_1222,,none
 spneT4,SP_1223,,none
-spneT4,SP_1224,,none
+spneT4,SP_1224,type II toxin-antitoxin system RelB family antitoxin,deg_local
 spneT4,SP_1225,,none
-spneT4,SP_1226,,none
+spneT4,SP_1226,cell wall metabolism sensor histidine kinase VicK,deg_local
 spneT4,SP_1227,,none
 spneT4,SP_2082,,none
-spneT4,SP_1228,,none
+spneT4,SP_1228,A/G-specific adenine glycosylase,deg_local
 spneT4,SP_1229,,none
 spneT4,SP_1230,,none
 spneT4,SP_1231,,none
@@ -2033,49 +2033,49 @@ spneT4,SP_1236,,none
 spneT4,SP_1237,,none
 spneT4,SP_1240,,none
 spneT4,SP_1241,,none
-spneT4,SP_1243,,none
-spneT4,SP_1244,,none
+spneT4,SP_1243,glucose-6-phosphate dehydrogenase,deg_local
+spneT4,SP_1244,signal recognition particle-docking protein FtsY,deg_local
 spneT4,SP_1245,,none
 spneT4,SP_1246,,none
-spneT4,SP_1247,,none
-spneT4,SP_1248,,none
+spneT4,SP_1247,chromosome segregation protein SMC,deg_local
+spneT4,SP_1248,ribonuclease III,deg_local
 spneT4,SP_1250,,none
 spneT4,SP_1251,,none
 spneT4,SP_1254,,none
 spneT4,SP_1252,,none
-spneT4,SP_1255,,none
+spneT4,SP_1255,3-isopropylmalate dehydratase small subunit,deg_local
 spneT4,SP_1256,,none
 spneT4,SP_1259,,none
 spneT4,SP_1260,,none
 spneT4,SP_1261,,none
-spneT4,SP_1263,,none
+spneT4,SP_1263,type I DNA topoisomerase,deg_local
 spneT4,SP_1264,,none
 spneT4,SP_1265,,none
-spneT4,SP_1266,,none
+spneT4,SP_1266,DNA-processing protein DprA,deg_local
 spneT4,SP_1267,,none
 spneT4,SP_1268,,none
-spneT4,SP_1269,,none
+spneT4,SP_1269,choline kinase LicA,deg_local
 spneT4,SP_1270,,none
-spneT4,SP_1271,,none
+spneT4,SP_1271,"cytidine diphosphocholine pyrophosphorylase, putative",deg_local
 spneT4,SP_1272,,none
 spneT4,SP_1273,,none
 spneT4,SP_1274,,none
-spneT4,SP_1275,,none
-spneT4,SP_1278,,none
-spneT4,SP_1279,,none
+spneT4,SP_1275,carbamoyl-phosphate synthase large subunit,deg_local
+spneT4,SP_1278,bifunctional pyr operon transcriptional regulator/uracil phosphoribosyltransferase PyrR,deg_local
+spneT4,SP_1279,endonuclease III,deg_local
 spneT4,SP_1280,,none
 spneT4,SP_1282,,none
-spneT4,SP_1283,,none
+spneT4,SP_1283,zinc metalloprotease HtpX,deg_local
 spneT4,SP_1284,,none
 spneT4,SP_1285,,none
 spneT4,SP_1286,,none
-spneT4,SP_1287,,none
+spneT4,SP_1287,signal recognition particle protein,deg_local
 spneT4,SP_1288,,none
 spneT4,SP_1289,,none
 spneT4,SP_1290,,none
 spneT4,SP_1291,,none
 spneT4,SP_1292,,none
-spneT4,SP_1293,,none
+spneT4,SP_1293,50S ribosomal protein L19,deg_local
 spneT4,SP_1294,,none
 spneT4,SP_1296,,none
 spneT4,SP_1297,,none
@@ -2084,7 +2084,7 @@ spneT4,SP_1299,,none
 spneT4,SP_1300,,none
 spneT4,SP_1304,,none
 spneT4,SP_1305,,none
-spneT4,SP_1306,,none
+spneT4,SP_1306,NADP-specific glutamate dehydrogenase,deg_local
 spneT4,SP_1307,,none
 spneT4,SP_1315,,none
 spneT4,SP_1316,,none
@@ -2122,47 +2122,47 @@ spneT4,SP_1345,,none
 spneT4,SP_1350,,none
 spneT4,SP_1351,,none
 spneT4,SP_1353,,none
-spneT4,SP_1354,,none
-spneT4,SP_1355,,none
+spneT4,SP_1354,50S ribosomal protein L7/L12,deg_local
+spneT4,SP_1355,50S ribosomal protein L10,deg_local
 spneT4,SP_1356,,none
-spneT4,SP_1360,,none
+spneT4,SP_1360,homoserine kinase,deg_local
 spneT4,SP_1361,,none
-spneT4,SP_1362,,none
+spneT4,SP_1362,adaptor protein MecA,deg_local
 spneT4,SP_1363,,none
 spneT4,SP_1364,,none
 spneT4,SP_1365,,none
 spneT4,SP_1366,,none
 spneT4,SP_1367,,none
-spneT4,SP_1368,,none
-spneT4,SP_1369,,none
+spneT4,SP_1368,polyisoprenyl-teichoic acid--peptidoglycan teichoic acid transferase Psr,deg_local
+spneT4,SP_1369,prephenate dehydratase,deg_local
 spneT4,SP_1370,,none
-spneT4,SP_1371,,none
+spneT4,SP_1371,3-phosphoshikimate 1-carboxyvinyltransferase,deg_local
 spneT4,SP_1372,,none
 spneT4,SP_1373,,none
-spneT4,SP_1374,,none
-spneT4,SP_1375,,none
+spneT4,SP_1374,chorismate synthase,deg_local
+spneT4,SP_1375,3-dehydroquinate synthase,deg_local
 spneT4,SP_1376,,none
-spneT4,SP_1377,,none
+spneT4,SP_1377,type I 3-dehydroquinate dehydratase,deg_local
 spneT4,SP_1378,,none
 spneT4,SP_1379,,none
 spneT4,SP_1380,,none
 spneT4,SP_1381,,none
 spneT4,SP_1382,,none
-spneT4,SP_1383,,none
+spneT4,SP_1383,alanine--tRNA ligase,deg_local
 spneT4,SP_1385,,none
 spneT4,SP_1386,,none
 spneT4,SP_1387,,none
 spneT4,SP_1388,,none
 spneT4,SP_1389,,none
-spneT4,SP_1390,,none
+spneT4,SP_1390,UDP-N-acetylmuramate dehydrogenase,deg_local
 spneT4,SP_1392,,none
-spneT4,SP_1395,,none
+spneT4,SP_1395,phosphate signaling complex protein PhoU,deg_local
 spneT4,SP_1396,,none
 spneT4,SP_1397,,none
-spneT4,SP_2087,,none
-spneT4,SP_1398,,none
-spneT4,SP_1399,,none
-spneT4,SP_1400,,none
+spneT4,SP_2087,phosphate ABC transporter ATP-binding protein PstB,deg_local
+spneT4,SP_1398,phosphate ABC transporter permease PstA,deg_local
+spneT4,SP_1399,phosphate ABC transporter permease subunit PstC,deg_local
+spneT4,SP_1400,phosphate ABC transporter substrate-binding protein PstS,deg_local
 spneT4,SP_1401,,none
 spneT4,SP_1402,,none
 spneT4,SP_1403,,none
@@ -2172,12 +2172,12 @@ spneT4,SP_1408,,none
 spneT4,SP_1409,,none
 spneT4,SP_1410,,none
 spneT4,SP_1411,,none
-spneT4,SP_1412,,none
-spneT4,SP_1413,,none
-spneT4,SP_1414,,none
+spneT4,SP_1412,prolipoprotein diacylglyceryl transferase,deg_local
+spneT4,SP_1413,HPr(Ser) kinase/phosphatase,deg_local
+spneT4,SP_1414,30S ribosomal protein S21,deg_local
 spneT4,SP_1415,,none
 spneT4,SP_1419,,none
-spneT4,SP_1420,,none
+spneT4,SP_1420,ammonia-dependent NAD(+) synthetase,deg_local
 spneT4,SP_1421,,none
 spneT4,SP_1422,,none
 spneT4,SP_1423,,none
@@ -2195,7 +2195,7 @@ spneT4,SP_1435,,none
 spneT4,SP_1436,,none
 spneT4,SP_1438,,none
 spneT4,SP_1437,,none
-spneT4,SP_1445,,none
+spneT4,SP_1445,glutamine-hydrolyzing GMP synthase,deg_local
 spneT4,SP_1447,,none
 spneT4,SP_1448,,none
 spneT4,SP_1450,,none
@@ -2203,28 +2203,28 @@ spneT4,SP_1452,,none
 spneT4,SP_1453,,none
 spneT4,SP_1454,,none
 spneT4,SP_1455,,none
-spneT4,SP_1456,,none
+spneT4,SP_1456,peptide deformylase,deg_local
 spneT4,SP_1457,,none
-spneT4,SP_1458,,none
+spneT4,SP_1458,thioredoxin-disulfide reductase,deg_local
 spneT4,SP_1459,,none
 spneT4,SP_1461,,none
 spneT4,SP_1462,,none
 spneT4,SP_1463,,none
 spneT4,SP_1465,,none
 spneT4,SP_1466,,none
-spneT4,SP_1467,,none
-spneT4,SP_1468,,none
+spneT4,SP_1467,pyridoxal 5'-phosphate synthase glutaminase subunit PdxT,deg_local
+spneT4,SP_1468,pyridoxal 5'-phosphate synthase lyase subunit PdxS,deg_local
 spneT4,SP_1469,,none
 spneT4,SP_1470,,none
 spneT4,SP_1471,,none
 spneT4,SP_1472,,none
 spneT4,SP_1473,,none
-spneT4,SP_1474,,none
-spneT4,SP_1475,,none
+spneT4,SP_1474,glycine--tRNA ligase subunit beta,deg_local
+spneT4,SP_1475,glycine--tRNA ligase subunit alpha,deg_local
 spneT4,SP_1477,,none
 spneT4,SP_1476,,none
 spneT4,SP_1478,,none
-spneT4,SP_1479,,none
+spneT4,SP_1479,peptidoglycan-N-acetylglucosamine deacetylase PgdA,deg_local
 spneT4,SP_1482,,none
 spneT4,SP_1483,,none
 spneT4,SP_1489,,none
@@ -2242,36 +2242,36 @@ spneT4,SP_1502,,none
 spneT4,SP_1504,,none
 spneT4,SP_1505,,none
 spneT4,SP_1506,,none
-spneT4,SP_1507,,none
-spneT4,SP_1508,,none
-spneT4,SP_1509,,none
-spneT4,SP_1510,,none
+spneT4,SP_1507,"Proton-translocating ATPase, F1 sector, epsilon-subunit",deg_local
+spneT4,SP_1508,F0F1 ATP synthase subunit beta,deg_local
+spneT4,SP_1509,"Proton-translocating ATPase, F1 sector, gamma-subunit",deg_local
+spneT4,SP_1510,F0F1 ATP synthase subunit alpha,deg_local
 spneT4,SP_1511,,none
-spneT4,SP_1512,,none
-spneT4,SP_1513,,none
+spneT4,SP_1512,F0F1 ATP synthase subunit B,deg_local
+spneT4,SP_1513,F0F1 ATP synthase subunit A,deg_local
 spneT4,SP_1514,,none
 spneT4,SP_1516,,none
-spneT4,SP_1517,,none
+spneT4,SP_1517,transcription elongation factor GreA,deg_local
 spneT4,SP_1518,,none
 spneT4,SP_1519,,none
 spneT4,SP_1520,,none
-spneT4,SP_1521,,none
+spneT4,SP_1521,UDP-N-acetylmuramate--L-alanine ligase,deg_local
 spneT4,SP_1522,,none
 spneT4,SP_1524,,none
 spneT4,SP_1525,,none
 spneT4,SP_1528,,none
 spneT4,SP_1529,,none
-spneT4,SP_1530,,none
+spneT4,SP_1530,"UDP-N-acetylmuramoylalanyl-D-glutamate-2,6-diaminopimelate ligase",deg_local
 spneT4,SP_1533,,none
 spneT4,SP_1534,,none
 spneT4,SP_1535,,none
 spneT4,SP_1536,,none
 spneT4,SP_1537,,none
 spneT4,SP_1538,,none
-spneT4,SP_1539,,none
+spneT4,SP_1539,30S ribosomal protein S18,deg_local
 spneT4,SP_1540,,none
-spneT4,SP_1541,,none
-spneT4,SP_1542,,none
+spneT4,SP_1541,30S ribosomal protein S6,deg_local
+spneT4,SP_1542,asparaginyl-tRNA synthetase,deg_local
 spneT4,SP_1544,,none
 spneT4,SP_1545,,none
 spneT4,SP_1546,,none
@@ -2282,10 +2282,10 @@ spneT4,SP_1551,,none
 spneT4,SP_1552,,none
 spneT4,SP_1553,,none
 spneT4,SP_1554,,none
-spneT4,SP_1555,,none
+spneT4,SP_1555,4-hydroxy-tetrahydrodipicolinate reductase,deg_local
 spneT4,SP_1557,,none
 spneT4,SP_1558,,none
-spneT4,SP_1559,,none
+spneT4,SP_1559,phosphoglucosamine mutase,deg_local
 spneT4,SP_1560,,none
 spneT4,SP_1561,,none
 spneT4,SP_1562,,none
@@ -2294,19 +2294,19 @@ spneT4,SP_1564,,none
 spneT4,SP_1566,,none
 spneT4,SP_1567,,none
 spneT4,SP_1568,,none
-spneT4,SP_1569,,none
+spneT4,SP_1569,ATP-dependent Clp protease ATP-binding subunit ClpX,deg_local
 spneT4,SP_1570,,none
 spneT4,SP_1571,,none
 spneT4,SP_1572,,none
-spneT4,SP_1573,,none
-spneT4,SP_1574,,none
-spneT4,SP_1576,,none
+spneT4,SP_1573,choline binding-anchored murein hydrolase LytC,deg_local
+spneT4,SP_1574,triose-phosphate isomerase,deg_local
+spneT4,SP_1576,homoserine O-acetyltransferase MetA,deg_local
 spneT4,SP_1577,,none
 spneT4,SP_1578,,none
 spneT4,SP_1580,,none
 spneT4,SP_1581,,none
 spneT4,SP_1583,,none
-spneT4,SP_1584,,none
+spneT4,SP_1584,GTP-sensing pleiotropic transcriptional regulator CodY,deg_local
 spneT4,SP_1586,,none
 spneT4,SP_1589,,none
 spneT4,SP_1590,,none
@@ -2314,11 +2314,11 @@ spneT4,SP_1591,,none
 spneT4,SP_1592,,none
 spneT4,SP_1597,,none
 spneT4,SP_1598,,none
-spneT4,SP_1599,,none
+spneT4,SP_1599,tRNA pseudouridine(38-40) synthase TruA,deg_local
 spneT4,SP_1600,,none
 spneT4,SP_1601,,none
-spneT4,SP_1603,,none
-spneT4,SP_1605,,none
+spneT4,SP_1603,(d)CMP kinase,deg_local
+spneT4,SP_1605,Ferredoxin,deg_local
 spneT4,SP_1606,,none
 spneT4,SP_1607,,none
 spneT4,SP_1828,,none
@@ -2336,12 +2336,12 @@ spneT4,SP_1621,,none
 spneT4,SP_1623,,none
 spneT4,SP_1624,,none
 spneT4,SP_1625,,none
-spneT4,SP_1626,,none
+spneT4,SP_1626,30S ribosomal protein S15,deg_local
 spneT4,SP_1627,,none
 spneT4,SP_1629,,none
 spneT4,SP_1628,,none
 spneT4,SP_1630,,none
-spneT4,SP_1631,,none
+spneT4,SP_1631,threonine--tRNA ligase,deg_local
 spneT4,SP_1632,,none
 spneT4,SP_1633,,none
 spneT4,SP_1635,,none
@@ -2354,29 +2354,29 @@ spneT4,SP_1642,,none
 spneT4,SP_1643,,none
 spneT4,SP_1645,,none
 spneT4,SP_1646,,none
-spneT4,SP_1647,,none
+spneT4,SP_1647,endopeptidase PepO,deg_local
 spneT4,SP_1648,,none
 spneT4,SP_1649,,none
-spneT4,SP_1650,,none
-spneT4,SP_1651,,none
+spneT4,SP_1650,metal ABC transporter substrate-binding lipoprotein/adhesin PsaA,deg_local
+spneT4,SP_1651,thiol peroxidase,deg_local
 spneT4,SP_1652,,none
 spneT4,SP_1654,,none
 spneT4,SP_1655,,none
 spneT4,SP_1656,,none
-spneT4,SP_1659,,none
+spneT4,SP_1659,isoleucine--tRNA ligase,deg_local
 spneT4,SP_1660,,none
-spneT4,SP_1661,,none
+spneT4,SP_1661,cell division protein DivIVA,deg_local
 spneT4,SP_1662,,none
 spneT4,SP_1663,,none
 spneT4,SP_1664,,none
 spneT4,SP_1665,,none
-spneT4,SP_1666,,none
-spneT4,SP_1667,,none
+spneT4,SP_1666,cell division protein FtsZ,deg_local
+spneT4,SP_1667,cell division protein FtsA,deg_local
 spneT4,SP_1668,,none
 spneT4,SP_1669,,none
-spneT4,SP_1670,,none
+spneT4,SP_1670,UDP-N-acetylmuramoylalanine-D-glutamyl-lysine-D-alanyl-D-alanine ligase,deg_local
 spneT4,SP_1671,,none
-spneT4,SP_1672,,none
+spneT4,SP_1672,recombination mediator RecR,deg_local
 spneT4,SP_1673,,none
 spneT4,SP_1674,,none
 spneT4,SP_1675,,none
@@ -2387,19 +2387,19 @@ spneT4,SP_1680,,none
 spneT4,SP_1682,,none
 spneT4,SP_1683,,none
 spneT4,SP_1684,,none
-spneT4,SP_1687,,none
+spneT4,SP_1687,neuraminidase NanB,deg_local
 spneT4,SP_1688,,none
 spneT4,SP_1689,,none
 spneT4,SP_1690,,none
 spneT4,SP_1694,,none
 spneT4,SP_1695,,none
 spneT4,SP_1696,,none
-spneT4,SP_1697,,none
+spneT4,SP_1697,ATP-dependent DNA helicase RecG,deg_local
 spneT4,SP_1698,,none
-spneT4,SP_1699,,none
+spneT4,SP_1699,holo-ACP synthase,deg_local
 spneT4,SP_1701,,none
 spneT4,SP_1700,,none
-spneT4,SP_1702,,none
+spneT4,SP_1702,preprotein translocase subunit SecA,deg_local
 spneT4,SP_1703,,none
 spneT4,SP_1704,,none
 spneT4,SP_1705,,none
@@ -2408,52 +2408,52 @@ spneT4,SP_1708,,none
 spneT4,SP_1707,,none
 spneT4,SP_1709,,none
 spneT4,SP_1710,,none
-spneT4,SP_1711,,none
-spneT4,SP_1712,,none
-spneT4,SP_1713,,none
+spneT4,SP_1711,primosomal protein DnaI,deg_local
+spneT4,SP_1712,replicative DNA helicase,deg_local
+spneT4,SP_1713,transcriptional regulator NrdR,deg_local
 spneT4,SP_1714,,none
 spneT4,SP_1715,,none
 spneT4,SP_1716,,none
 spneT4,SP_1717,,none
 spneT4,SP_1720,,none
-spneT4,SP_1721,,none
+spneT4,SP_1721,fructokinase ScrK,deg_local
 spneT4,SP_1722,,none
 spneT4,SP_1723,,none
 spneT4,SP_1724,,none
 spneT4,SP_1725,,none
 spneT4,SP_1726,,none
-spneT4,SP_1727,,none
+spneT4,SP_1727,3-hydroxy-3-methylglutaryl coenzyme A (HMG-CoA) synthase,deg_local
 spneT4,SP_1730,,none
 spneT4,SP_1731,,none
-spneT4,SP_1732,,none
+spneT4,SP_1732,serine/threonine-protein kinase StkP,deg_local
 spneT4,SP_1733,,none
-spneT4,SP_1734,,none
-spneT4,SP_1735,,none
+spneT4,SP_1734,16S rRNA (cytosine(967)-C(5))-methyltransferase RsmB,deg_local
+spneT4,SP_1735,methionyl-tRNA formyltransferase,deg_local
 spneT4,SP_1736,,none
-spneT4,SP_1737,,none
-spneT4,SP_1738,,none
+spneT4,SP_1737,DNA-directed RNA polymerase subunit omega,deg_local
+spneT4,SP_1738,guanylate kinase,deg_local
 spneT4,SP_1739,,none
 spneT4,SP_1740,,none
 spneT4,SP_1741,,none
 spneT4,SP_1742,,none
 spneT4,SP_1743,,none
-spneT4,SP_1744,,none
+spneT4,SP_1744,ribosome silencing factor,deg_local
 spneT4,SP_1745,,none
 spneT4,SP_1746,,none
-spneT4,SP_1747,,none
+spneT4,SP_1747,conserved hypothetical protein,deg_local
 spneT4,SP_1748,,none
 spneT4,SP_1749,,none
 spneT4,SP_1750,,none
 spneT4,SP_1751,,none
 spneT4,SP_1752,,none
 spneT4,SP_1754,,none
-spneT4,SP_1755,,none
+spneT4,SP_1755,accessory Sec system protein Asp5,deg_local
 spneT4,SP_1757,,none
 spneT4,SP_1758,,none
-spneT4,SP_1760,,none
-spneT4,SP_1761,,none
-spneT4,SP_1762,,none
-spneT4,SP_1763,,none
+spneT4,SP_1760,accessory Sec system protein Asp3,deg_local
+spneT4,SP_1761,accessory Sec system protein Asp2,deg_local
+spneT4,SP_1762,accessory Sec system protein Asp1,deg_local
+spneT4,SP_1763,preprotein translocase subunit SecY,deg_local
 spneT4,SP_1764,,none
 spneT4,SP_1765,,none
 spneT4,SP_1766,,none
@@ -2465,12 +2465,12 @@ spneT4,SP_1772,,none
 spneT4,SP_1774,,none
 spneT4,SP_1775,,none
 spneT4,SP_1776,,none
-spneT4,SP_1777,,none
+spneT4,SP_1777,preQ(1) synthase,deg_local
 spneT4,SP_1778,,none
 spneT4,SP_1779,,none
 spneT4,SP_1780,,none
 spneT4,SP_1781,,none
-spneT4,SP_1782,,none
+spneT4,SP_1782,50S ribosomal protein L11 methyltransferase,deg_local
 spneT4,SP_1783,,none
 spneT4,SP_1784,,none
 spneT4,SP_1785,,none
@@ -2491,12 +2491,12 @@ spneT4,SP_1806,,none
 spneT4,SP_1807,,none
 spneT4,SP_1809,,none
 spneT4,SP_1810,,none
-spneT4,SP_1811,,none
-spneT4,SP_1812,,none
+spneT4,SP_1811,tryptophan synthase subunit alpha,deg_local
+spneT4,SP_1812,tryptophan synthase subunit beta,deg_local
 spneT4,SP_1813,,none
-spneT4,SP_1814,,none
-spneT4,SP_1815,,none
-spneT4,SP_1817,,none
+spneT4,SP_1814,indole-3-glycerol phosphate synthase TrpC,deg_local
+spneT4,SP_1815,anthranilate phosphoribosyltransferase,deg_local
+spneT4,SP_1817,anthranilate synthase component I,deg_local
 spneT4,SP_1818,,none
 spneT4,SP_1819,,none
 spneT4,SP_1820,,none
@@ -2524,7 +2524,7 @@ spneT4,SP_1849,,none
 spneT4,SP_1850,,none
 spneT4,SP_1851,,none
 spneT4,SP_1853,,none
-spneT4,SP_1854,,none
+spneT4,SP_1854,DNA-binding transcriptional regulator GalR,deg_local
 spneT4,SP_1855,,none
 spneT4,SP_1856,,none
 spneT4,SP_1857,,none
@@ -2536,7 +2536,7 @@ spneT4,SP_1863,,none
 spneT4,SP_1864,,none
 spneT4,SP_1865,,none
 spneT4,SP_1866,,none
-spneT4,SP_1867,,none
+spneT4,SP_1867,UDP-glucose 4-epimerase GalE,deg_local
 spneT4,SP_1868,,none
 spneT4,SP_1869,,none
 spneT4,SP_1870,,none
@@ -2544,12 +2544,12 @@ spneT4,SP_1871,,none
 spneT4,SP_1872,,none
 spneT4,SP_1873,,none
 spneT4,SP_1874,,none
-spneT4,SP_1875,,none
+spneT4,SP_1875,SMC-Scp complex subunit ScpB,deg_local
 spneT4,SP_1876,,none
 spneT4,SP_1878,,none
 spneT4,SP_1879,,none
 spneT4,SP_1880,,none
-spneT4,SP_1881,,none
+spneT4,SP_1881,Glutamate racemase,deg_local
 spneT4,SP_1882,,none
 spneT4,SP_1883,,none
 spneT4,SP_1884,,none
@@ -2563,13 +2563,13 @@ spneT4,SP_1895,,none
 spneT4,SP_1896,,none
 spneT4,SP_1897,,none
 spneT4,SP_1898,,none
-spneT4,SP_1900,,none
+spneT4,SP_1900,bifunctional biotin--[acetyl-CoA-carboxylase] ligase/biotin operon repressor BirA,deg_local
 spneT4,SP_1901,,none
-spneT4,SP_1902,,none
+spneT4,SP_1902,recombination regulator RecX,deg_local
 spneT4,SP_1903,,none
 spneT4,SP_1904,,none
-spneT4,SP_1906,,none
-spneT4,SP_1907,,none
+spneT4,SP_1906,"chaperonin, 60 kDa",deg_local
+spneT4,SP_1907,co-chaperone GroES,deg_local
 spneT4,SP_1908,,none
 spneT4,SP_1909,,none
 spneT4,SP_1910,,none
@@ -2582,7 +2582,7 @@ spneT4,SP_1919,,none
 spneT4,SP_1920,,none
 spneT4,SP_1921,,none
 spneT4,SP_1922,,none
-spneT4,SP_1923,,none
+spneT4,SP_1923,cholesterol-dependent cytolysin pneumolysin,deg_local
 spneT4,SP_1924,,none
 spneT4,SP_1925,,none
 spneT4,SP_1926,,none
@@ -2593,14 +2593,14 @@ spneT4,SP_1933,,none
 spneT4,SP_1932,,none
 spneT4,SP_1934,,none
 spneT4,SP_1935,,none
-spneT4,SP_1937,,none
+spneT4,SP_1937,N-acetylmuramoyl-L-alanine amidase LytA,deg_local
 spneT4,SP_1938,,none
 spneT4,SP_1939,,none
-spneT4,SP_1940,,none
+spneT4,SP_1940,recombinase RecA,deg_local
 spneT4,SP_1941,,none
 spneT4,SP_1942,,none
 spneT4,SP_1943,,none
-spneT4,SP_1944,,none
+spneT4,SP_1944,tRNA (adenosine(37)-N6)-threonylcarbamoyltransferase complex ATPase subunit type 1 TsaE,deg_local
 spneT4,SP_1945,,none
 spneT4,SP_1947,,none
 spneT4,SP_1949,,none
@@ -2612,63 +2612,63 @@ spneT4,SP_1954,,none
 spneT4,SP_1955,,none
 spneT4,SP_1956,,none
 spneT4,SP_1958,,none
-spneT4,SP_1959,,none
-spneT4,SP_1960,,none
-spneT4,SP_1961,,none
+spneT4,SP_1959,nucleoside-diphosphate kinase,deg_local
+spneT4,SP_1960,DNA-directed RNA polymerase subunit beta',deg_local
+spneT4,SP_1961,DNA-directed RNA polymerase subunit beta,deg_local
 spneT4,SP_1962,,none
 spneT4,SP_1963,,none
-spneT4,SP_1964,,none
+spneT4,SP_1964,DNA-entry nuclease EndA,deg_local
 spneT4,SP_1965,,none
 spneT4,SP_1966,,none
 spneT4,SP_1967,,none
-spneT4,SP_1968,,none
+spneT4,SP_1968,pantetheine-phosphate adenylyltransferase,deg_local
 spneT4,SP_1969,,none
-spneT4,SP_1970,,none
+spneT4,SP_1970,aspartate--ammonia ligase,deg_local
 spneT4,SP_1971,,none
 spneT4,SP_1972,,none
 spneT4,SP_1973,,none
 spneT4,SP_1974,,none
 spneT4,SP_1975,,none
-spneT4,SP_1976,,none
+spneT4,SP_1976,pyruvate formate-lyase-activating protein,deg_local
 spneT4,SP_1977,,none
 spneT4,SP_1978,,none
-spneT4,SP_1979,,none
+spneT4,SP_1979,pur operon repressor,deg_local
 spneT4,SP_1980,,none
 spneT4,SP_1982,,none
-spneT4,SP_1983,,none
-spneT4,SP_1984,,none
+spneT4,SP_1983,ribulose-phosphate 3-epimerase,deg_local
+spneT4,SP_1984,ribosome small subunit-dependent GTPase A,deg_local
 spneT4,SP_1985,,none
 spneT4,SP_1986,,none
 spneT4,SP_1988,,none
-spneT4,SP_1990,,none
+spneT4,SP_1990,ribonuclease M5,deg_local
 spneT4,SP_1991,,none
 spneT4,SP_1992,,none
-spneT4,SP_1993,,none
+spneT4,SP_1993,50S ribosomal protein L34,deg_local
 spneT4,SP_1994,,none
 spneT4,SP_1996,,none
 spneT4,SP_1998,,none
-spneT4,SP_1999,,none
+spneT4,SP_1999,catabolite control protein A,deg_local
 spneT4,SP_2000,,none
 spneT4,SP_2001,,none
 spneT4,SP_2002,,none
 spneT4,SP_2003,,none
 spneT4,SP_2005,,none
-spneT4,SP_2007,,none
-spneT4,SP_2008,,none
-spneT4,SP_2009,,none
-spneT4,SP_2010,,none
+spneT4,SP_2007,transcription termination/antitermination protein NusG,deg_local
+spneT4,SP_2008,preprotein translocase subunit SecE,deg_local
+spneT4,SP_2009,50S ribosomal protein L33,deg_local
+spneT4,SP_2010,penicillin-binding protein PBP2A,deg_local
 spneT4,SP_2011,,none
-spneT4,SP_2012,,none
+spneT4,SP_2012,type I glyceraldehyde-3-phosphate dehydrogenase,deg_local
 spneT4,SP_2013,,none
 spneT4,SP_2017,,none
 spneT4,SP_2020,,none
-spneT4,SP_2023,,none
+spneT4,SP_2023,Competence protein,deg_local
 spneT4,SP_2024,,none
 spneT4,SP_2025,,none
 spneT4,SP_2026,,none
 spneT4,SP_2027,,none
 spneT4,SP_2028,,none
-spneT4,SP_2029,,none
+spneT4,SP_2029,preprotein translocase subunit YajC,deg_local
 spneT4,SP_2031,,none
 spneT4,SP_2032,,none
 spneT4,SP_2033,,none
@@ -2679,12 +2679,12 @@ spneT4,SP_2037,,none
 spneT4,SP_2038,,none
 spneT4,SP_2039,,none
 spneT4,SP_2040,,none
-spneT4,SP_2042,,none
+spneT4,SP_2042,ribonuclease P protein component,deg_local
 spneT4,SP_2043,,none
 spneT4,SP_2044,,none
 spneT4,SP_2045,,none
 spneT4,SP_2047,,none
-spneT4,SP_2048,,none
+spneT4,SP_2048,competence type IV pilus minor pilin ComGF,deg_local
 spneT4,SP_2049,,none
 spneT4,SP_2050,,none
 spneT4,SP_2051,,none
@@ -2692,7 +2692,7 @@ spneT4,SP_2053,,none
 spneT4,SP_2052,,none
 spneT4,SP_2054,,none
 spneT4,SP_2055,,none
-spneT4,SP_2056,,none
+spneT4,SP_2056,N-acetylglucosamine-6-phosphate deacetylase,deg_local
 spneT4,SP_2057,,none
 spneT4,SP_2059,,none
 spneT4,SP_2061,,none
@@ -2700,31 +2700,31 @@ spneT4,SP_2062,,none
 spneT4,SP_2063,,none
 spneT4,SP_2064,,none
 spneT4,SP_2065,,none
-spneT4,SP_2066,,none
+spneT4,SP_2066,threonine synthase,deg_local
 spneT4,SP_2067,,none
 spneT4,SP_2068,,none
-spneT4,SP_2069,,none
+spneT4,SP_2069,glutamate--tRNA ligase,deg_local
 spneT4,SP_2070,,none
 spneT4,SP_2071,,none
 spneT4,SP_2075,,none
-spneT4,SP_2077,,none
-spneT4,SP_2078,,none
+spneT4,SP_2077,arginine repressor,deg_local
+spneT4,SP_2078,arginine--tRNA ligase,deg_local
 spneT4,SP_2081,,none
-spneT4,SP_2083,,none
-spneT4,SP_2084,,none
-spneT4,SP_2085,,none
-spneT4,SP_2086,,none
-spneT4,SP_2088,,none
+spneT4,SP_2083,two-component system histidine kinase PnpS,deg_local
+spneT4,SP_2084,phosphate ABC transporter substrate-binding protein PstS,deg_local
+spneT4,SP_2085,phosphate ABC transporter permease subunit PstC,deg_local
+spneT4,SP_2086,phosphate ABC transporter permease PstA,deg_local
+spneT4,SP_2088,phosphate signaling complex protein PhoU,deg_local
 spneT4,SP_2090,,none
 spneT4,SP_2091,,none
-spneT4,SP_2092,,none
+spneT4,SP_2092,UTP--glucose-1-phosphate uridylyltransferase GalU,deg_local
 spneT4,SP_2093,,none
 spneT4,SP_2094,,none
 spneT4,SP_2095,,none
 spneT4,SP_2096,,none
 spneT4,SP_2097,,none
 spneT4,SP_2098,,none
-spneT4,SP_2099,,none
+spneT4,SP_2099,penicillin-binding protein PBP1B,deg_local
 spneT4,SP_2100,,none
 spneT4,SP_2101,,none
 spneT4,SP_2102,,none
@@ -2739,24 +2739,24 @@ spneT4,SP_2110,,none
 spneT4,SP_2111,,none
 spneT4,SP_2112,,none
 spneT4,SP_2113,,none
-spneT4,SP_2114,,none
+spneT4,SP_2114,aspartate--tRNA ligase,deg_local
 spneT4,SP_2115,,none
 spneT4,SP_2117,,none
 spneT4,SP_2118,,none
 spneT4,SP_2119,,none
 spneT4,SP_2120,,none
-spneT4,SP_2121,,none
+spneT4,SP_2121,histidine--tRNA ligase,deg_local
 spneT4,SP_2122,,none
 spneT4,SP_2124,,none
 spneT4,SP_2125,,none
-spneT4,SP_2126,,none
+spneT4,SP_2126,dihydroxy-acid dehydratase,deg_local
 spneT4,SP_2128,,none
 spneT4,SP_2129,,none
 spneT4,SP_2131,,none
 spneT4,SP_2132,,none
 spneT4,SP_2133,,none
-spneT4,SP_2134,,none
-spneT4,SP_2135,,none
+spneT4,SP_2134,50S ribosomal protein L32,deg_local
+spneT4,SP_2135,50S ribosomal protein L33,deg_local
 spneT4,SP_2139,,none
 spneT4,SP_2140,,none
 spneT4,SP_2141,,none
@@ -2766,9 +2766,9 @@ spneT4,SP_2144,,none
 spneT4,SP_2145,,none
 spneT4,SP_2146,,none
 spneT4,SP_2147,,none
-spneT4,SP_2148,,none
+spneT4,SP_2148,arginine deiminase,deg_local
 spneT4,SP_2150,,none
-spneT4,SP_2151,,none
+spneT4,SP_2151,carbamate kinase,deg_local
 spneT4,SP_2152,,none
 spneT4,SP_2153,,none
 spneT4,SP_2156,,none
@@ -2780,25 +2780,25 @@ spneT4,SP_2161,,none
 spneT4,SP_2162,,none
 spneT4,SP_2163,,none
 spneT4,SP_2164,,none
-spneT4,SP_2165,,none
+spneT4,SP_2165,"Fucose pathway protein, function unknown",deg_local
 spneT4,SP_2166,,none
 spneT4,SP_2167,,none
 spneT4,SP_2168,,none
 spneT4,SP_2170,,none
 spneT4,SP_2171,,none
-spneT4,SP_2172,,none
-spneT4,SP_2173,,none
-spneT4,SP_2174,,none
-spneT4,SP_2175,,none
-spneT4,SP_2176,,none
+spneT4,SP_2172,zinc-dependent transcriptional regulator AdcR,deg_local
+spneT4,SP_2173,D-alanyl-lipoteichoic acid biosynthesis protein DltD,deg_local
+spneT4,SP_2174,D-alanine--poly(phosphoribitol) ligase subunit DltC,deg_local
+spneT4,SP_2175,D-alanyl-lipoteichoic acid biosynthesis protein DltB,deg_local
+spneT4,SP_2176,D-alanine--poly(phosphoribitol) ligase subunit DltA,deg_local
 spneT4,SP_2177,,none
 spneT4,SP_2182,,none
 spneT4,SP_2183,,none
 spneT4,SP_2184,,none
-spneT4,SP_2185,,none
-spneT4,SP_2186,,none
+spneT4,SP_2185,type 1 glycerol-3-phosphate oxidase,deg_local
+spneT4,SP_2186,glycerol kinase GlpK,deg_local
 spneT4,SP_2187,,none
-spneT4,SP_2188,,none
+spneT4,SP_2188,Hsp33 family molecular chaperone HslO,deg_local
 spneT4,SP_2189,,none
 spneT4,SP_2191,,none
 spneT4,SP_2192,,none
@@ -2809,61 +2809,61 @@ spneT4,SP_2197,,none
 spneT4,SP_2198,,none
 spneT4,SP_2199,,none
 spneT4,SP_2200,,none
-spneT4,SP_2201,,none
+spneT4,SP_2201,choline binding-anchored murein hydrolase CbpD,deg_local
 spneT4,SP_2202,,none
 spneT4,SP_2203,,none
-spneT4,SP_2204,,none
+spneT4,SP_2204,50S ribosomal protein L9,deg_local
 spneT4,SP_2205,,none
 spneT4,SP_2206,,none
-spneT4,SP_2207,,none
-spneT4,SP_2208,,none
+spneT4,SP_2207,Involved in transformation (competence for DNA uptake),deg_local
+spneT4,SP_2208,Involved in transformation; required for DNA uptake but not for binding; Related to ATP-dependent RNA/DNA helicase,deg_local
 spneT4,SP_2209,,none
 spneT4,SP_2210,,none
-spneT4,SP_2214,,none
-spneT4,SP_2215,,none
-spneT4,SP_2216,,none
-spneT4,SP_2217,,none
-spneT4,SP_2218,,none
+spneT4,SP_2214,translation elongation factor Ts,deg_local
+spneT4,SP_2215,30S ribosomal protein S2,deg_local
+spneT4,SP_2216,peptidoglycan hydrolase PcsB,deg_local
+spneT4,SP_2217,rod shape-determining protein MreD,deg_local
+spneT4,SP_2218,rod shape-determining protein MreC,deg_local
 spneT4,SP_2219,,none
 spneT4,SP_2220,,none
 spneT4,SP_2221,,none
-spneT4,SP_2222,,none
+spneT4,SP_2222,CDP-diacylglycerol--glycerol-3-phosphate 3-phosphatidyltransferase,deg_local
 spneT4,SP_2223,,none
 spneT4,SP_2224,,none
 spneT4,SP_2225,,none
 spneT4,SP_2226,,none
-spneT4,SP_2227,,none
-spneT4,SP_2228,,none
-spneT4,SP_2229,,none
+spneT4,SP_2227,DNA replication/repair protein RecF,deg_local
+spneT4,SP_2228,IMP dehydrogenase,deg_local
+spneT4,SP_2229,tryptophan--tRNA ligase,deg_local
 spneT4,SP_2230,,none
 spneT4,SP_2231,,none
 spneT4,SP_2233,,none
-spneT4,SP_2236,,none
-spneT4,SP_2238,,none
+spneT4,SP_2236,competence system sensor histidine kinase ComD,deg_local
+spneT4,SP_2238,23S rRNA (pseudouridine(1915)-N(3))-methyltransferase RlmH,deg_local
 spneT4,SP_2239,,none
-spneT4,SP_0532,,none
+spneT4,SP_0532,bacteriocin-like peptide BlpJ,deg_local
 spneT4,SP_2004,,none
 spneT4,SP_0049,,none
 spneT4,SP_0137,,none
 spneT4,SP_1357,,none
 spneT4,SP_0139,,none
 spneT4,SP_1358,,none
-spneT4,SP_1756,,none
-spneT4,SP_1759,,none
-spneT4,SP_2016,,none
+spneT4,SP_1756,accessory Sec system protein Asp4,deg_local
+spneT4,SP_1759,accessory Sec system translocase SecA2,deg_local
+spneT4,SP_2016,carboxylating nicotinate-nucleotide diphosphorylase,deg_local
 spneT4,SP_1634,,none
 spneT4,SP_0817,,none
 spneT4,SP_2021,,none
 spneT4,SP_0265,,none
-spneT4,SP_2022,,none
+spneT4,SP_2022,PTS cellobiose transporter subunit IIC,deg_local
 spneT4,SP_1892,,none
 spneT4,SP_0823,,none
 spneT4,SP_0151,,none
 spneT4,SP_0152,,none
 spneT4,SP_0195,,none
-spneT4,SP_1644,,none
+spneT4,SP_1644,D-aminoacyl-tRNA deacylase,deg_local
 spneT4,SP_1150,,none
-spneT4,SP_1238,,none
+spneT4,SP_1238,excinuclease ABC subunit UvrB,deg_local
 spneT4,SP_0831,,none
 spneT4,SP_0029,,none
 spneT4,SP_0030,,none
@@ -2887,13 +2887,13 @@ spneT4,SP_0174,,none
 spneT4,SP_0183,,none
 spneT4,SP_1258,,none
 spneT4,SP_0176,,none
-spneT4,SP_0048,,none
+spneT4,SP_0048,phosphoribosylglycinamide formyltransferase,deg_local
 spneT4,SP_1836,,none
 spneT4,SP_1796,,none
 spneT4,SP_0093,,none
 spneT4,SP_0582,,none
 spneT4,SP_1840,,none
-spneT4,SP_2058,,none
+spneT4,SP_2058,tRNA guanosine(34) transglycosylase Tgt,deg_local
 spneT4,SP_1451,,none
 spneT4,SP_1804,,none
 spneT4,SP_1002,,none
@@ -2908,7 +2908,7 @@ spneT4,SP_0324,,none
 spneT4,SP_1728,,none
 spneT4,SP_0524,,none
 spneT4,SP_1281,,none
-spneT4,SP_2136,,none
+spneT4,SP_2136,choline-binding protein PcpA,deg_local
 spneT4,SP_0069,,none
 spneT4,SP_2073,,none
 spneT4,SP_0071,,none
@@ -2924,7 +2924,7 @@ spneT4,SP_1565,,none
 spneT4,SP_0123,,none
 spneT4,SP_0082,,none
 spneT4,SP_0083,,none
-spneT4,SP_1830,,none
+spneT4,SP_1830,phosphate signaling complex protein PhoU,deg_local
 spneT4,SP_2130,,none
 spneT4,SP_1032,,none
 spneT4,SP_0089,,none
@@ -2956,12 +2956,12 @@ spneT4,SP_1602,,none
 spneT4,SP_0243,,none
 spneT4,SP_1336,,none
 spneT4,SP_1948,,none
-spneT4,SP_2169,,none
+spneT4,SP_2169,zinc ABC transporter substrate-binding lipoprotein AdcA,deg_local
 spneT4,SP_0119,,none
 spneT4,SP_0699,,none
 spneT4,SP_1824,,none
 spneT4,SP_1611,,none
-spneT4,SP_0979,,none
+spneT4,SP_0979,oligoendopeptidase F,deg_local
 spneT4,SP_0124,,none
 spneT4,SP_0126,,none
 spneT4,SP_0906,,none
@@ -2973,22 +2973,22 @@ spneT4,SP_1805,,none
 spneT4,SP_1531,,none
 spneT4,SP_0535,,none
 spneT4,SP_1579,,none
-spneT4,SP_2235,,none
+spneT4,SP_2235,competence system response regulator transcription factor ComE,deg_local
 spneT4,SP_1449,,none
-spneT4,SP_2237,,none
+spneT4,SP_2237,competence-stimulating peptide ComC,deg_local
 spneT4,SP_1816,,none
 spneT4,SP_0270,,none
 spneT4,SP_1585,,none
-spneT4,SP_0726,,none
+spneT4,SP_0726,bifunctional hydroxymethylpyrimidine kinase/phosphomethylpyrimidine kinase,deg_local
 spneT4,SP_1406,,none
 spneT4,SP_1547,,none
-spneT4,SP_1894,,none
+spneT4,SP_1894,sucrose phosphorylase,deg_local
 spneT4,SP_1146,,none
 spneT4,SP_1276,,none
 spneT4,SP_1523,,none
 spneT4,SP_1899,,none
-spneT4,SP_0981,,none
-spneT4,SP_0603,,none
+spneT4,SP_0981,peptidylprolyl isomerase PrsA,deg_local
+spneT4,SP_0603,response regulator transcription factor VncR,deg_local
 spneT4,SP_2193,,none
 spneT4,SP_1946,,none
 spneT4,SP_0560,,none
@@ -3000,11 +3000,11 @@ spneT4,SP_1384,,none
 spneT4,SP_0731,,none
 spneT4,SP_1446,,none
 spneT4,SP_1912,,none
-spneT4,SP_0601,,none
+spneT4,SP_0601,ABC transporter permease subunit Vex3,deg_local
 spneT4,SP_1295,,none
 spneT4,SP_1556,,none
 spneT4,SP_1793,,none
-spneT4,SP_1124,,none
+spneT4,SP_1124,glycogen synthase GlgA,deg_local
 spneT4,SP_1860,,none
 spneT4,SP_0246,,none
 spneT4,SP_2234,,none
@@ -3024,7 +3024,7 @@ spneT4,SP_0661,,none
 spneT4,SP_1911,,none
 spneT4,SP_1997,,none
 spneT4,SP_2041,,none
-spneT4,SP_1416,,none
+spneT4,SP_1416,tRNA preQ1(34) S-adenosylmethionine ribosyltransferase-isomerase QueA,deg_local
 spneT4,SP_1170,,none
 spneT4,SP_0398,,none
 spneT4,SP_1604,,none
@@ -208878,8 +208878,8 @@ saur_NCTC8325_biotradis,SAOUHSC_01074,hypothetical protein,direct_hypo
 saur_NCTC8325_biotradis,SAOUHSC_01075,phosphopantetheine adenylyltransferase,direct
 saur_NCTC8325_biotradis,SAOUHSC_01076,hypothetical protein,direct_hypo
 saur_NCTC8325_biotradis,SAOUHSC_01077,hypothetical protein,direct_hypo
-saur_NCTC8325_biotradis,SAOUHSC_A01041,,none
-saur_NCTC8325_biotradis,SAOUHSC_01078,,none
+saur_NCTC8325_biotradis,SAOUHSC_A01041,hypothetical protein,deg_local
+saur_NCTC8325_biotradis,SAOUHSC_01078,ribosomal protein L32,deg_local
 saur_NCTC8325_biotradis,SAOUHSC_01079,neurofilament protein,direct
 saur_NCTC8325_biotradis,SAOUHSC_01081,hypothetical protein,direct_hypo
 saur_NCTC8325_biotradis,SAOUHSC_01082,hypothetical protein,direct_hypo
@@ -209367,7 +209367,7 @@ saur_NCTC8325_biotradis,SAOUHSC_01721,hypothetical protein,direct_hypo
 saur_NCTC8325_biotradis,SAOUHSC_01722,alanyl-tRNA synthetase,direct
 saur_NCTC8325_biotradis,SAOUHSC_01723,hypothetical protein,direct_hypo
 saur_NCTC8325_biotradis,SAOUHSC_01724,hypothetical protein,direct_hypo
-saur_NCTC8325_biotradis,SAOUHSC_01726,,none
+saur_NCTC8325_biotradis,SAOUHSC_01726,(5-methylaminomethyl-2-thiouridylate)-methyltransferase,deg_local
 saur_NCTC8325_biotradis,SAOUHSC_01727,hypothetical protein,direct_hypo
 saur_NCTC8325_biotradis,SAOUHSC_01728,hypothetical protein,direct_hypo
 saur_NCTC8325_biotradis,SAOUHSC_01729,hypothetical protein,direct_hypo
