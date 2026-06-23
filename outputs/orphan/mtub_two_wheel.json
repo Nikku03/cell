@@ -1,0 +1,28 @@
+{
+  "organism": "mtub",
+  "n_genes": 3638,
+  "n_essential": 760,
+  "wheel2_predictable": 1142,
+  "wheel2_auc": 0.725,
+  "wheel1_auc": 0.518,
+  "ess_cov_p90": 0.005,
+  "ne_cov_p90": 0.155,
+  "broad_n": 760,
+  "broad_auc": 0.74,
+  "slot_counts": {
+    "ribosomal": 35,
+    "synthetase": 27,
+    "trna": 11,
+    "transcription": 25,
+    "replication": 12,
+    "translation": 14,
+    "cell_division": 3,
+    "membrane": 98,
+    "energy": 47,
+    "lipid": 15,
+    "nucleotide": 5,
+    "amino_acid": 19,
+    "cofactor": 6
+  },
+  "core_complete": "6/6"
+}
