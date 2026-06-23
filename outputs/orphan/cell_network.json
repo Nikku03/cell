@@ -1,0 +1,108 @@
+{
+  "organism": "beril_Keio",
+  "n_nodes": 605,
+  "n_edges": 1633,
+  "n_operon_edges": 215,
+  "n_phyletic_edges": 1418,
+  "n_universal_core": 336,
+  "n_genomes": 48,
+  "n_components": 261,
+  "giant_component": 253,
+  "giant_fraction": 0.418,
+  "n_wired": 499,
+  "wired_fraction": 0.825,
+  "n_isolated": 203,
+  "module_sizes": {
+    "ribosomal": 59,
+    "trna": 32,
+    "synthetase": 4,
+    "transcription": 70,
+    "replication": 10,
+    "translation": 17,
+    "cell_division": 8,
+    "membrane": 32,
+    "energy": 14,
+    "lipid": 8,
+    "nucleotide": 4,
+    "amino_acid": 7,
+    "cofactor": 5,
+    "other": 335
+  },
+  "top_hubs": [
+    {
+      "gene": "16339",
+      "module": "other",
+      "degree": 58
+    },
+    {
+      "gene": "18284",
+      "module": "transcription",
+      "degree": 57
+    },
+    {
+      "gene": "17106",
+      "module": "replication",
+      "degree": 56
+    },
+    {
+      "gene": "14551",
+      "module": "transcription",
+      "degree": 49
+    },
+    {
+      "gene": "15775",
+      "module": "other",
+      "degree": 49
+    },
+    {
+      "gene": "17883",
+      "module": "other",
+      "degree": 48
+    },
+    {
+      "gene": "14554",
+      "module": "transcription",
+      "degree": 42
+    },
+    {
+      "gene": "17522",
+      "module": "transcription",
+      "degree": 42
+    },
+    {
+      "gene": "17375",
+      "module": "ribosomal",
+      "degree": 41
+    },
+    {
+      "gene": "17250",
+      "module": "other",
+      "degree": 41
+    },
+    {
+      "gene": "17142",
+      "module": "replication",
+      "degree": 41
+    },
+    {
+      "gene": "14326",
+      "module": "other",
+      "degree": 41
+    },
+    {
+      "gene": "18068",
+      "module": "other",
+      "degree": 40
+    },
+    {
+      "gene": "1937098",
+      "module": "replication",
+      "degree": 40
+    },
+    {
+      "gene": "17620",
+      "module": "trna",
+      "degree": 40
+    }
+  ]
+}
