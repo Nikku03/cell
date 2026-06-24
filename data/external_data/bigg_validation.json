@@ -1,0 +1,695 @@
+[
+  {
+    "bigg_id": "e_coli_core",
+    "rxns": 95,
+    "mets": 72,
+    "genes": 137,
+    "growth": 0.8739
+  },
+  {
+    "bigg_id": "iAF1260",
+    "rxns": 2382,
+    "mets": 1668,
+    "genes": 1261,
+    "growth": 0.7367
+  },
+  {
+    "bigg_id": "iAF1260b",
+    "rxns": 2388,
+    "mets": 1668,
+    "genes": 1261,
+    "growth": 0.7367
+  },
+  {
+    "bigg_id": "iAF692",
+    "rxns": 690,
+    "mets": 628,
+    "genes": 692,
+    "growth": 0.0268
+  },
+  {
+    "bigg_id": "iAF987",
+    "rxns": 1285,
+    "mets": 1109,
+    "genes": 987,
+    "growth": 0.0473
+  },
+  {
+    "bigg_id": "iAM_Pb448",
+    "rxns": 1067,
+    "mets": 903,
+    "genes": 448,
+    "growth": 0.6587
+  },
+  {
+    "bigg_id": "iAM_Pc455",
+    "rxns": 1074,
+    "mets": 907,
+    "genes": 455,
+    "growth": 0.6587
+  },
+  {
+    "bigg_id": "iAM_Pf480",
+    "rxns": 1083,
+    "mets": 909,
+    "genes": 480,
+    "growth": 0.6872
+  },
+  {
+    "bigg_id": "iAM_Pk459",
+    "rxns": 1079,
+    "mets": 909,
+    "genes": 459,
+    "growth": 0.6872
+  },
+  {
+    "bigg_id": "iAM_Pv461",
+    "rxns": 1078,
+    "mets": 909,
+    "genes": 461,
+    "growth": 0.6872
+  },
+  {
+    "bigg_id": "iAPECO1_1312",
+    "rxns": 2735,
+    "mets": 1942,
+    "genes": 1313,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iB21_1397",
+    "rxns": 2741,
+    "mets": 1943,
+    "genes": 1337,
+    "growth": 0.9756
+  },
+  {
+    "bigg_id": "iBWG_1329",
+    "rxns": 2741,
+    "mets": 1949,
+    "genes": 1329,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "ic_1306",
+    "rxns": 2726,
+    "mets": 1936,
+    "genes": 1307,
+    "growth": 1.0319
+  },
+  {
+    "bigg_id": "iCN718",
+    "rxns": 1015,
+    "mets": 888,
+    "genes": 709,
+    "growth": 1.3136
+  },
+  {
+    "bigg_id": "iCN900",
+    "rxns": 1229,
+    "mets": 885,
+    "genes": 900,
+    "growth": 0
+  },
+  {
+    "bigg_id": "iE2348C_1286",
+    "rxns": 2703,
+    "mets": 1919,
+    "genes": 1287,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iEC042_1314",
+    "rxns": 2714,
+    "mets": 1926,
+    "genes": 1314,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iEC1344_C",
+    "rxns": 2726,
+    "mets": 1934,
+    "genes": 1344,
+    "growth": 0.9824
+  },
+  {
+    "bigg_id": "iEC1349_Crooks",
+    "rxns": 2756,
+    "mets": 1946,
+    "genes": 1349,
+    "growth": 0.9866
+  },
+  {
+    "bigg_id": "iEC1356_Bl21DE3",
+    "rxns": 2740,
+    "mets": 1918,
+    "genes": 1356,
+    "growth": 0.9767
+  },
+  {
+    "bigg_id": "iEC1364_W",
+    "rxns": 2764,
+    "mets": 1927,
+    "genes": 1364,
+    "growth": 0.9854
+  },
+  {
+    "bigg_id": "iEC1368_DH5a",
+    "rxns": 2779,
+    "mets": 1951,
+    "genes": 1368,
+    "growth": 0.9824
+  },
+  {
+    "bigg_id": "iEC1372_W3110",
+    "rxns": 2758,
+    "mets": 1918,
+    "genes": 1372,
+    "growth": 0.9824
+  },
+  {
+    "bigg_id": "iEC55989_1330",
+    "rxns": 2756,
+    "mets": 1953,
+    "genes": 1330,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECABU_c1320",
+    "rxns": 2731,
+    "mets": 1942,
+    "genes": 1320,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECB_1328",
+    "rxns": 2748,
+    "mets": 1951,
+    "genes": 1329,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECBD_1354",
+    "rxns": 2748,
+    "mets": 1952,
+    "genes": 1354,
+    "growth": 0.9756
+  },
+  {
+    "bigg_id": "iECD_1391",
+    "rxns": 2741,
+    "mets": 1943,
+    "genes": 1333,
+    "growth": 0.9756
+  },
+  {
+    "bigg_id": "iECDH10B_1368",
+    "rxns": 2742,
+    "mets": 1947,
+    "genes": 1327,
+    "growth": 1.0375
+  },
+  {
+    "bigg_id": "iEcDH1_1363",
+    "rxns": 2750,
+    "mets": 1949,
+    "genes": 1363,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECDH1ME8569_1439",
+    "rxns": 2755,
+    "mets": 1950,
+    "genes": 1439,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iEcE24377_1341",
+    "rxns": 2763,
+    "mets": 1972,
+    "genes": 1341,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECED1_1282",
+    "rxns": 2706,
+    "mets": 1929,
+    "genes": 1279,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECH74115_1262",
+    "rxns": 2694,
+    "mets": 1918,
+    "genes": 1262,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iEcHS_1320",
+    "rxns": 2753,
+    "mets": 1963,
+    "genes": 1321,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECIAI1_1343",
+    "rxns": 2765,
+    "mets": 1968,
+    "genes": 1343,
+    "growth": 20.5222
+  },
+  {
+    "bigg_id": "iECIAI39_1322",
+    "rxns": 2721,
+    "mets": 1953,
+    "genes": 1321,
+    "growth": 0.9828
+  },
+  {
+    "bigg_id": "iECNA114_1301",
+    "rxns": 2718,
+    "mets": 1927,
+    "genes": 1301,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECO103_1326",
+    "rxns": 2758,
+    "mets": 1958,
+    "genes": 1327,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECO111_1330",
+    "rxns": 2760,
+    "mets": 1959,
+    "genes": 1328,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECO26_1355",
+    "rxns": 2780,
+    "mets": 1965,
+    "genes": 1355,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECOK1_1307",
+    "rxns": 2729,
+    "mets": 1941,
+    "genes": 1304,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iEcolC_1368",
+    "rxns": 2768,
+    "mets": 1969,
+    "genes": 1368,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECP_1309",
+    "rxns": 2739,
+    "mets": 1941,
+    "genes": 1309,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECs_1301",
+    "rxns": 2720,
+    "mets": 1923,
+    "genes": 1301,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECS88_1305",
+    "rxns": 2729,
+    "mets": 1942,
+    "genes": 1305,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECSE_1348",
+    "rxns": 2768,
+    "mets": 1957,
+    "genes": 1348,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECSF_1327",
+    "rxns": 2742,
+    "mets": 1951,
+    "genes": 1327,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iEcSMS35_1347",
+    "rxns": 2746,
+    "mets": 1947,
+    "genes": 1347,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECSP_1301",
+    "rxns": 2712,
+    "mets": 1920,
+    "genes": 1299,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iECUMN_1333",
+    "rxns": 2740,
+    "mets": 1935,
+    "genes": 1332,
+    "growth": 0.9827
+  },
+  {
+    "bigg_id": "iECW_1372",
+    "rxns": 2782,
+    "mets": 1973,
+    "genes": 1372,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iEK1008",
+    "rxns": 1226,
+    "mets": 998,
+    "genes": 1008,
+    "growth": 0.0582
+  },
+  {
+    "bigg_id": "iEKO11_1354",
+    "rxns": 2778,
+    "mets": 1972,
+    "genes": 1354,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iETEC_1333",
+    "rxns": 2756,
+    "mets": 1962,
+    "genes": 1333,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iG2583_1286",
+    "rxns": 2704,
+    "mets": 1919,
+    "genes": 1283,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iHN637",
+    "rxns": 785,
+    "mets": 698,
+    "genes": 637,
+    "growth": 0.2245
+  },
+  {
+    "bigg_id": "iIS312",
+    "rxns": 519,
+    "mets": 606,
+    "genes": 312,
+    "growth": 50.6781
+  },
+  {
+    "bigg_id": "iIS312_Amastigote",
+    "rxns": 519,
+    "mets": 606,
+    "genes": 312,
+    "growth": 25.339
+  },
+  {
+    "bigg_id": "iIS312_Epimastigote",
+    "rxns": 519,
+    "mets": 606,
+    "genes": 312,
+    "growth": 50.6781
+  },
+  {
+    "bigg_id": "iIS312_Trypomastigote",
+    "rxns": 520,
+    "mets": 606,
+    "genes": 312,
+    "growth": 53.0363
+  },
+  {
+    "bigg_id": "iIT341",
+    "rxns": 554,
+    "mets": 485,
+    "genes": 339,
+    "growth": 0.6928
+  },
+  {
+    "bigg_id": "iJB785",
+    "rxns": 849,
+    "mets": 768,
+    "genes": 785,
+    "growth": 0.0539
+  },
+  {
+    "bigg_id": "iJN1463",
+    "rxns": 2927,
+    "mets": 2153,
+    "genes": 1462,
+    "growth": 0.5861
+  },
+  {
+    "bigg_id": "iJN678",
+    "rxns": 863,
+    "mets": 795,
+    "genes": 622,
+    "growth": 0.0631
+  },
+  {
+    "bigg_id": "iJN746",
+    "rxns": 1054,
+    "mets": 907,
+    "genes": 746,
+    "growth": 1.4
+  },
+  {
+    "bigg_id": "iJO1366",
+    "rxns": 2583,
+    "mets": 1805,
+    "genes": 1367,
+    "growth": 0.9824
+  },
+  {
+    "bigg_id": "iJR904",
+    "rxns": 1075,
+    "mets": 761,
+    "genes": 904,
+    "growth": 0.9219
+  },
+  {
+    "bigg_id": "iLB1027_lipid",
+    "rxns": 4456,
+    "mets": 2172,
+    "genes": 1027,
+    "growth": 0.3596
+  },
+  {
+    "bigg_id": "iLF82_1304",
+    "rxns": 2726,
+    "mets": 1938,
+    "genes": 1302,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iLJ478",
+    "rxns": 652,
+    "mets": 570,
+    "genes": 482,
+    "growth": 0.2284
+  },
+  {
+    "bigg_id": "iML1515",
+    "rxns": 2712,
+    "mets": 1877,
+    "genes": 1516,
+    "growth": 0.877
+  },
+  {
+    "bigg_id": "iNF517",
+    "rxns": 754,
+    "mets": 650,
+    "genes": 516,
+    "growth": 0.0426
+  },
+  {
+    "bigg_id": "iNJ661",
+    "rxns": 1025,
+    "mets": 825,
+    "genes": 661,
+    "growth": 0.0525
+  },
+  {
+    "bigg_id": "iNRG857_1313",
+    "rxns": 2735,
+    "mets": 1943,
+    "genes": 1311,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iPC815",
+    "rxns": 1961,
+    "mets": 1552,
+    "genes": 815,
+    "growth": 0.2836
+  },
+  {
+    "bigg_id": "iRC1080",
+    "rxns": 2191,
+    "mets": 1706,
+    "genes": 1086,
+    "growth": 0
+  },
+  {
+    "bigg_id": "iS_1188",
+    "rxns": 2619,
+    "mets": 1914,
+    "genes": 1188,
+    "growth": 0.8571
+  },
+  {
+    "bigg_id": "iSB619",
+    "rxns": 743,
+    "mets": 655,
+    "genes": 619,
+    "growth": 0.1581
+  },
+  {
+    "bigg_id": "iSbBS512_1146",
+    "rxns": 2591,
+    "mets": 1910,
+    "genes": 1147,
+    "growth": 0.9828
+  },
+  {
+    "bigg_id": "iSBO_1134",
+    "rxns": 2591,
+    "mets": 1908,
+    "genes": 1134,
+    "growth": 0.3999
+  },
+  {
+    "bigg_id": "iSDY_1059",
+    "rxns": 2539,
+    "mets": 1888,
+    "genes": 1059,
+    "growth": 0.9379
+  },
+  {
+    "bigg_id": "iSF_1195",
+    "rxns": 2630,
+    "mets": 1917,
+    "genes": 1195,
+    "growth": 0.9146
+  },
+  {
+    "bigg_id": "iSFV_1184",
+    "rxns": 2621,
+    "mets": 1917,
+    "genes": 1184,
+    "growth": 0.8939
+  },
+  {
+    "bigg_id": "iSFxv_1172",
+    "rxns": 2638,
+    "mets": 1918,
+    "genes": 1169,
+    "growth": 0.8941
+  },
+  {
+    "bigg_id": "iSSON_1240",
+    "rxns": 2693,
+    "mets": 1936,
+    "genes": 1240,
+    "growth": 0.9826
+  },
+  {
+    "bigg_id": "iSynCJ816",
+    "rxns": 1044,
+    "mets": 928,
+    "genes": 816,
+    "growth": 0
+  },
+  {
+    "bigg_id": "iUMN146_1321",
+    "rxns": 2735,
+    "mets": 1942,
+    "genes": 1319,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iUMNK88_1353",
+    "rxns": 2777,
+    "mets": 1969,
+    "genes": 1353,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iUTI89_1310",
+    "rxns": 2725,
+    "mets": 1940,
+    "genes": 1310,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iWFL_1372",
+    "rxns": 2782,
+    "mets": 1973,
+    "genes": 1372,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iY75_1357",
+    "rxns": 2759,
+    "mets": 1953,
+    "genes": 1358,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "iYL1228",
+    "rxns": 2262,
+    "mets": 1658,
+    "genes": 1229,
+    "growth": 1.0426
+  },
+  {
+    "bigg_id": "iYO844",
+    "rxns": 1250,
+    "mets": 990,
+    "genes": 844,
+    "growth": 0.118
+  },
+  {
+    "bigg_id": "iYS1720",
+    "rxns": 3357,
+    "mets": 2436,
+    "genes": 1707,
+    "growth": 0.4885
+  },
+  {
+    "bigg_id": "iYS854",
+    "rxns": 1455,
+    "mets": 1335,
+    "genes": 866,
+    "growth": 1.3602
+  },
+  {
+    "bigg_id": "iZ_1308",
+    "rxns": 2721,
+    "mets": 1923,
+    "genes": 1308,
+    "growth": 0.9825
+  },
+  {
+    "bigg_id": "STM_v1_0",
+    "rxns": 2545,
+    "mets": 1802,
+    "genes": 1271,
+    "growth": 0.4778
+  }
+]

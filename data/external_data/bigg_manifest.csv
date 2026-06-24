@@ -1,0 +1,203 @@
+our_organism,bigg_id,organism,file_basename
+beril_Putida,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_Putida,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+beril_Keio,e_coli_core,Escherichia coli str. K-12 substr. MG1655,e_coli_core.xml.gz
+beril_Keio,iAF1260,Escherichia coli str. K-12 substr. MG1655,iAF1260.xml.gz
+beril_Keio,iAF1260b,Escherichia coli str. K-12 substr. MG1655,iAF1260b.xml.gz
+beril_Keio,iAPECO1_1312,Escherichia coli APEC O1,iAPECO1_1312.xml.gz
+beril_Keio,iB21_1397,Escherichia coli BL21(DE3),iB21_1397.xml.gz
+beril_Keio,iBWG_1329,Escherichia coli BW2952,iBWG_1329.xml.gz
+beril_Keio,ic_1306,Escherichia coli CFT073,ic_1306.xml.gz
+beril_Keio,iE2348C_1286,Escherichia coli O127:H6 str. E2348/69,iE2348C_1286.xml.gz
+beril_Keio,iEC042_1314,Escherichia coli 042,iEC042_1314.xml.gz
+beril_Keio,iEC1344_C,Escherichia coli C,iEC1344_C.xml.gz
+beril_Keio,iEC1349_Crooks,Escherichia coli ATCC 8739,iEC1349_Crooks.xml.gz
+beril_Keio,iEC1356_Bl21DE3,Escherichia coli BL21(DE3),iEC1356_Bl21DE3.xml.gz
+beril_Keio,iEC1364_W,Escherichia coli W,iEC1364_W.xml.gz
+beril_Keio,iEC1368_DH5a,Escherichia coli DH5[alpha],iEC1368_DH5a.xml.gz
+beril_Keio,iEC1372_W3110,Escherichia coli str. K-12 substr. W3110,iEC1372_W3110.xml.gz
+beril_Keio,iEC55989_1330,Escherichia coli 55989,iEC55989_1330.xml.gz
+beril_Keio,iECABU_c1320,Escherichia coli ABU 83972,iECABU_c1320.xml.gz
+beril_Keio,iECB_1328,Escherichia coli B str. REL606,iECB_1328.xml.gz
+beril_Keio,iECBD_1354,Escherichia coli 'BL21-Gold(DE3)pLysS AG',iECBD_1354.xml.gz
+beril_Keio,iECD_1391,Escherichia coli BL21(DE3),iECD_1391.xml.gz
+beril_Keio,iECDH10B_1368,Escherichia coli str. K-12 substr. DH10B,iECDH10B_1368.xml.gz
+beril_Keio,iEcDH1_1363,Escherichia coli DH1,iEcDH1_1363.xml.gz
+beril_Keio,iECDH1ME8569_1439,Escherichia coli DH1,iECDH1ME8569_1439.xml.gz
+beril_Keio,iEcE24377_1341,Escherichia coli O139:H28 str. E24377A,iEcE24377_1341.xml.gz
+beril_Keio,iECED1_1282,Escherichia coli ED1a,iECED1_1282.xml.gz
+beril_Keio,iECH74115_1262,Escherichia coli O157:H7 str. EC4115,iECH74115_1262.xml.gz
+beril_Keio,iEcHS_1320,Escherichia coli HS,iEcHS_1320.xml.gz
+beril_Keio,iECIAI1_1343,Escherichia coli IAI1,iECIAI1_1343.xml.gz
+beril_Keio,iECIAI39_1322,Escherichia coli IAI39,iECIAI39_1322.xml.gz
+beril_Keio,iECNA114_1301,Escherichia coli NA114,iECNA114_1301.xml.gz
+beril_Keio,iECO103_1326,Escherichia coli O103:H2 str. 12009,iECO103_1326.xml.gz
+beril_Keio,iECO111_1330,Escherichia coli O111:H- str. 11128,iECO111_1330.xml.gz
+beril_Keio,iECO26_1355,Escherichia coli O26:H11 str. 11368,iECO26_1355.xml.gz
+beril_Keio,iECOK1_1307,Escherichia coli IHE3034,iECOK1_1307.xml.gz
+beril_Keio,iEcolC_1368,Escherichia coli ATCC 8739,iEcolC_1368.xml.gz
+beril_Keio,iECP_1309,Escherichia coli 536,iECP_1309.xml.gz
+beril_Keio,iECs_1301,Escherichia coli O157:H7 str. Sakai,iECs_1301.xml.gz
+beril_Keio,iECS88_1305,Escherichia coli S88,iECS88_1305.xml.gz
+beril_Keio,iECSE_1348,Escherichia coli SE11,iECSE_1348.xml.gz
+beril_Keio,iECSF_1327,Escherichia coli SE15,iECSF_1327.xml.gz
+beril_Keio,iEcSMS35_1347,Escherichia coli SMS-3-5,iEcSMS35_1347.xml.gz
+beril_Keio,iECSP_1301,Escherichia coli O157:H7 str. TW14359,iECSP_1301.xml.gz
+beril_Keio,iECUMN_1333,Escherichia coli UMN026,iECUMN_1333.xml.gz
+beril_Keio,iECW_1372,Escherichia coli W,iECW_1372.xml.gz
+beril_Keio,iEKO11_1354,Escherichia coli KO11FL,iEKO11_1354.xml.gz
+beril_Keio,iETEC_1333,Escherichia coli ETEC H10407,iETEC_1333.xml.gz
+beril_Keio,iG2583_1286,Escherichia coli O55:H7 str. CB9615,iG2583_1286.xml.gz
+beril_Keio,iJO1366,Escherichia coli str. K-12 substr. MG1655,iJO1366.xml.gz
+beril_Keio,iJR904,Escherichia coli str. K-12 substr. MG1655,iJR904.xml.gz
+beril_Keio,iLF82_1304,Escherichia coli LF82,iLF82_1304.xml.gz
+beril_Keio,iML1515,Escherichia coli str. K-12 substr. MG1655,iML1515.xml.gz
+beril_Keio,iNRG857_1313,Escherichia coli O83:H1 str. NRG 857C,iNRG857_1313.xml.gz
+beril_Keio,iUMN146_1321,Escherichia coli UM146,iUMN146_1321.xml.gz
+beril_Keio,iUMNK88_1353,Escherichia coli UMNK88,iUMNK88_1353.xml.gz
+beril_Keio,iUTI89_1310,Escherichia coli UTI89,iUTI89_1310.xml.gz
+beril_Keio,iWFL_1372,Escherichia coli W,iWFL_1372.xml.gz
+beril_Keio,iY75_1357,Escherichia coli str. K-12 substr. W3110,iY75_1357.xml.gz
+beril_Keio,iZ_1308,Escherichia coli O157:H7 str. EDL933,iZ_1308.xml.gz
+beril_pseudo1_N1B4,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_pseudo1_N1B4,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+beril_WCS417,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_WCS417,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+beril_pseudo5_N2C3_1,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_pseudo5_N2C3_1,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+beril_Koxy,iYL1228,Klebsiella pneumoniae subsp. pneumoniae MGH 78578,iYL1228.xml.gz
+beril_SyringaeB728a,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_SyringaeB728a,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+beril_pseudo6_N2E2,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_pseudo6_N2E2,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+beril_SyringaeB728a_mexBdelta,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_SyringaeB728a_mexBdelta,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+beril_psRCH2,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_psRCH2,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+beril_pseudo13_GW456_L13,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_pseudo13_GW456_L13,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+beril_PS,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_PS,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+beril_pseudo3_N2E3,iJN1463,Pseudomonas putida KT2440,iJN1463.xml.gz
+beril_pseudo3_N2E3,iJN746,Pseudomonas putida KT2440,iJN746.xml.gz
+mtub,iEK1008,Mycobacterium tuberculosis H37Rv,iEK1008.xml.gz
+mtub,iNJ661,Mycobacterium tuberculosis H37Rv,iNJ661.xml.gz
+beril_SynE,iJB785,Synechococcus elongatus PCC 7942,iJB785.xml.gz
+beril_Keio,e_coli_core,Escherichia coli str. K-12 substr. MG1655,e_coli_core.xml.gz
+beril_Keio,iAF1260,Escherichia coli str. K-12 substr. MG1655,iAF1260.xml.gz
+beril_Keio,iAF1260b,Escherichia coli str. K-12 substr. MG1655,iAF1260b.xml.gz
+beril_Keio,iAPECO1_1312,Escherichia coli APEC O1,iAPECO1_1312.xml.gz
+beril_Keio,iB21_1397,Escherichia coli BL21(DE3),iB21_1397.xml.gz
+beril_Keio,iBWG_1329,Escherichia coli BW2952,iBWG_1329.xml.gz
+beril_Keio,ic_1306,Escherichia coli CFT073,ic_1306.xml.gz
+beril_Keio,iE2348C_1286,Escherichia coli O127:H6 str. E2348/69,iE2348C_1286.xml.gz
+beril_Keio,iEC042_1314,Escherichia coli 042,iEC042_1314.xml.gz
+beril_Keio,iEC1344_C,Escherichia coli C,iEC1344_C.xml.gz
+beril_Keio,iEC1349_Crooks,Escherichia coli ATCC 8739,iEC1349_Crooks.xml.gz
+beril_Keio,iEC1356_Bl21DE3,Escherichia coli BL21(DE3),iEC1356_Bl21DE3.xml.gz
+beril_Keio,iEC1364_W,Escherichia coli W,iEC1364_W.xml.gz
+beril_Keio,iEC1368_DH5a,Escherichia coli DH5[alpha],iEC1368_DH5a.xml.gz
+beril_Keio,iEC1372_W3110,Escherichia coli str. K-12 substr. W3110,iEC1372_W3110.xml.gz
+beril_Keio,iEC55989_1330,Escherichia coli 55989,iEC55989_1330.xml.gz
+beril_Keio,iECABU_c1320,Escherichia coli ABU 83972,iECABU_c1320.xml.gz
+beril_Keio,iECB_1328,Escherichia coli B str. REL606,iECB_1328.xml.gz
+beril_Keio,iECBD_1354,Escherichia coli 'BL21-Gold(DE3)pLysS AG',iECBD_1354.xml.gz
+beril_Keio,iECD_1391,Escherichia coli BL21(DE3),iECD_1391.xml.gz
+beril_Keio,iECDH10B_1368,Escherichia coli str. K-12 substr. DH10B,iECDH10B_1368.xml.gz
+beril_Keio,iEcDH1_1363,Escherichia coli DH1,iEcDH1_1363.xml.gz
+beril_Keio,iECDH1ME8569_1439,Escherichia coli DH1,iECDH1ME8569_1439.xml.gz
+beril_Keio,iEcE24377_1341,Escherichia coli O139:H28 str. E24377A,iEcE24377_1341.xml.gz
+beril_Keio,iECED1_1282,Escherichia coli ED1a,iECED1_1282.xml.gz
+beril_Keio,iECH74115_1262,Escherichia coli O157:H7 str. EC4115,iECH74115_1262.xml.gz
+beril_Keio,iEcHS_1320,Escherichia coli HS,iEcHS_1320.xml.gz
+beril_Keio,iECIAI1_1343,Escherichia coli IAI1,iECIAI1_1343.xml.gz
+beril_Keio,iECIAI39_1322,Escherichia coli IAI39,iECIAI39_1322.xml.gz
+beril_Keio,iECNA114_1301,Escherichia coli NA114,iECNA114_1301.xml.gz
+beril_Keio,iECO103_1326,Escherichia coli O103:H2 str. 12009,iECO103_1326.xml.gz
+beril_Keio,iECO111_1330,Escherichia coli O111:H- str. 11128,iECO111_1330.xml.gz
+beril_Keio,iECO26_1355,Escherichia coli O26:H11 str. 11368,iECO26_1355.xml.gz
+beril_Keio,iECOK1_1307,Escherichia coli IHE3034,iECOK1_1307.xml.gz
+beril_Keio,iEcolC_1368,Escherichia coli ATCC 8739,iEcolC_1368.xml.gz
+beril_Keio,iECP_1309,Escherichia coli 536,iECP_1309.xml.gz
+beril_Keio,iECs_1301,Escherichia coli O157:H7 str. Sakai,iECs_1301.xml.gz
+beril_Keio,iECS88_1305,Escherichia coli S88,iECS88_1305.xml.gz
+beril_Keio,iECSE_1348,Escherichia coli SE11,iECSE_1348.xml.gz
+beril_Keio,iECSF_1327,Escherichia coli SE15,iECSF_1327.xml.gz
+beril_Keio,iEcSMS35_1347,Escherichia coli SMS-3-5,iEcSMS35_1347.xml.gz
+beril_Keio,iECSP_1301,Escherichia coli O157:H7 str. TW14359,iECSP_1301.xml.gz
+beril_Keio,iECUMN_1333,Escherichia coli UMN026,iECUMN_1333.xml.gz
+beril_Keio,iECW_1372,Escherichia coli W,iECW_1372.xml.gz
+beril_Keio,iEKO11_1354,Escherichia coli KO11FL,iEKO11_1354.xml.gz
+beril_Keio,iETEC_1333,Escherichia coli ETEC H10407,iETEC_1333.xml.gz
+beril_Keio,iG2583_1286,Escherichia coli O55:H7 str. CB9615,iG2583_1286.xml.gz
+beril_Keio,iJO1366,Escherichia coli str. K-12 substr. MG1655,iJO1366.xml.gz
+beril_Keio,iJR904,Escherichia coli str. K-12 substr. MG1655,iJR904.xml.gz
+beril_Keio,iLF82_1304,Escherichia coli LF82,iLF82_1304.xml.gz
+beril_Keio,iML1515,Escherichia coli str. K-12 substr. MG1655,iML1515.xml.gz
+beril_Keio,iNRG857_1313,Escherichia coli O83:H1 str. NRG 857C,iNRG857_1313.xml.gz
+beril_Keio,iUMN146_1321,Escherichia coli UM146,iUMN146_1321.xml.gz
+beril_Keio,iUMNK88_1353,Escherichia coli UMNK88,iUMNK88_1353.xml.gz
+beril_Keio,iUTI89_1310,Escherichia coli UTI89,iUTI89_1310.xml.gz
+beril_Keio,iWFL_1372,Escherichia coli W,iWFL_1372.xml.gz
+beril_Keio,iY75_1357,Escherichia coli str. K-12 substr. W3110,iY75_1357.xml.gz
+beril_Keio,iZ_1308,Escherichia coli O157:H7 str. EDL933,iZ_1308.xml.gz
+saur_NCTC8325_biotradis,iSB619,Staphylococcus aureus subsp. aureus N315,iSB619.xml.gz
+saur_NCTC8325_biotradis,iYS854,Staphylococcus aureus subsp. aureus USA300_TCH1516,iYS854.xml.gz
+ecoli_BW25113_tradis,e_coli_core,Escherichia coli str. K-12 substr. MG1655,e_coli_core.xml.gz
+ecoli_BW25113_tradis,iAF1260,Escherichia coli str. K-12 substr. MG1655,iAF1260.xml.gz
+ecoli_BW25113_tradis,iAF1260b,Escherichia coli str. K-12 substr. MG1655,iAF1260b.xml.gz
+ecoli_BW25113_tradis,iAPECO1_1312,Escherichia coli APEC O1,iAPECO1_1312.xml.gz
+ecoli_BW25113_tradis,iB21_1397,Escherichia coli BL21(DE3),iB21_1397.xml.gz
+ecoli_BW25113_tradis,iBWG_1329,Escherichia coli BW2952,iBWG_1329.xml.gz
+ecoli_BW25113_tradis,ic_1306,Escherichia coli CFT073,ic_1306.xml.gz
+ecoli_BW25113_tradis,iE2348C_1286,Escherichia coli O127:H6 str. E2348/69,iE2348C_1286.xml.gz
+ecoli_BW25113_tradis,iEC042_1314,Escherichia coli 042,iEC042_1314.xml.gz
+ecoli_BW25113_tradis,iEC1344_C,Escherichia coli C,iEC1344_C.xml.gz
+ecoli_BW25113_tradis,iEC1349_Crooks,Escherichia coli ATCC 8739,iEC1349_Crooks.xml.gz
+ecoli_BW25113_tradis,iEC1356_Bl21DE3,Escherichia coli BL21(DE3),iEC1356_Bl21DE3.xml.gz
+ecoli_BW25113_tradis,iEC1364_W,Escherichia coli W,iEC1364_W.xml.gz
+ecoli_BW25113_tradis,iEC1368_DH5a,Escherichia coli DH5[alpha],iEC1368_DH5a.xml.gz
+ecoli_BW25113_tradis,iEC1372_W3110,Escherichia coli str. K-12 substr. W3110,iEC1372_W3110.xml.gz
+ecoli_BW25113_tradis,iEC55989_1330,Escherichia coli 55989,iEC55989_1330.xml.gz
+ecoli_BW25113_tradis,iECABU_c1320,Escherichia coli ABU 83972,iECABU_c1320.xml.gz
+ecoli_BW25113_tradis,iECB_1328,Escherichia coli B str. REL606,iECB_1328.xml.gz
+ecoli_BW25113_tradis,iECBD_1354,Escherichia coli 'BL21-Gold(DE3)pLysS AG',iECBD_1354.xml.gz
+ecoli_BW25113_tradis,iECD_1391,Escherichia coli BL21(DE3),iECD_1391.xml.gz
+ecoli_BW25113_tradis,iECDH10B_1368,Escherichia coli str. K-12 substr. DH10B,iECDH10B_1368.xml.gz
+ecoli_BW25113_tradis,iEcDH1_1363,Escherichia coli DH1,iEcDH1_1363.xml.gz
+ecoli_BW25113_tradis,iECDH1ME8569_1439,Escherichia coli DH1,iECDH1ME8569_1439.xml.gz
+ecoli_BW25113_tradis,iEcE24377_1341,Escherichia coli O139:H28 str. E24377A,iEcE24377_1341.xml.gz
+ecoli_BW25113_tradis,iECED1_1282,Escherichia coli ED1a,iECED1_1282.xml.gz
+ecoli_BW25113_tradis,iECH74115_1262,Escherichia coli O157:H7 str. EC4115,iECH74115_1262.xml.gz
+ecoli_BW25113_tradis,iEcHS_1320,Escherichia coli HS,iEcHS_1320.xml.gz
+ecoli_BW25113_tradis,iECIAI1_1343,Escherichia coli IAI1,iECIAI1_1343.xml.gz
+ecoli_BW25113_tradis,iECIAI39_1322,Escherichia coli IAI39,iECIAI39_1322.xml.gz
+ecoli_BW25113_tradis,iECNA114_1301,Escherichia coli NA114,iECNA114_1301.xml.gz
+ecoli_BW25113_tradis,iECO103_1326,Escherichia coli O103:H2 str. 12009,iECO103_1326.xml.gz
+ecoli_BW25113_tradis,iECO111_1330,Escherichia coli O111:H- str. 11128,iECO111_1330.xml.gz
+ecoli_BW25113_tradis,iECO26_1355,Escherichia coli O26:H11 str. 11368,iECO26_1355.xml.gz
+ecoli_BW25113_tradis,iECOK1_1307,Escherichia coli IHE3034,iECOK1_1307.xml.gz
+ecoli_BW25113_tradis,iEcolC_1368,Escherichia coli ATCC 8739,iEcolC_1368.xml.gz
+ecoli_BW25113_tradis,iECP_1309,Escherichia coli 536,iECP_1309.xml.gz
+ecoli_BW25113_tradis,iECs_1301,Escherichia coli O157:H7 str. Sakai,iECs_1301.xml.gz
+ecoli_BW25113_tradis,iECS88_1305,Escherichia coli S88,iECS88_1305.xml.gz
+ecoli_BW25113_tradis,iECSE_1348,Escherichia coli SE11,iECSE_1348.xml.gz
+ecoli_BW25113_tradis,iECSF_1327,Escherichia coli SE15,iECSF_1327.xml.gz
+ecoli_BW25113_tradis,iEcSMS35_1347,Escherichia coli SMS-3-5,iEcSMS35_1347.xml.gz
+ecoli_BW25113_tradis,iECSP_1301,Escherichia coli O157:H7 str. TW14359,iECSP_1301.xml.gz
+ecoli_BW25113_tradis,iECUMN_1333,Escherichia coli UMN026,iECUMN_1333.xml.gz
+ecoli_BW25113_tradis,iECW_1372,Escherichia coli W,iECW_1372.xml.gz
+ecoli_BW25113_tradis,iEKO11_1354,Escherichia coli KO11FL,iEKO11_1354.xml.gz
+ecoli_BW25113_tradis,iETEC_1333,Escherichia coli ETEC H10407,iETEC_1333.xml.gz
+ecoli_BW25113_tradis,iG2583_1286,Escherichia coli O55:H7 str. CB9615,iG2583_1286.xml.gz
+ecoli_BW25113_tradis,iJO1366,Escherichia coli str. K-12 substr. MG1655,iJO1366.xml.gz
+ecoli_BW25113_tradis,iJR904,Escherichia coli str. K-12 substr. MG1655,iJR904.xml.gz
+ecoli_BW25113_tradis,iLF82_1304,Escherichia coli LF82,iLF82_1304.xml.gz
+ecoli_BW25113_tradis,iML1515,Escherichia coli str. K-12 substr. MG1655,iML1515.xml.gz
+ecoli_BW25113_tradis,iNRG857_1313,Escherichia coli O83:H1 str. NRG 857C,iNRG857_1313.xml.gz
+ecoli_BW25113_tradis,iUMN146_1321,Escherichia coli UM146,iUMN146_1321.xml.gz
+ecoli_BW25113_tradis,iUMNK88_1353,Escherichia coli UMNK88,iUMNK88_1353.xml.gz
+ecoli_BW25113_tradis,iUTI89_1310,Escherichia coli UTI89,iUTI89_1310.xml.gz
+ecoli_BW25113_tradis,iWFL_1372,Escherichia coli W,iWFL_1372.xml.gz
+ecoli_BW25113_tradis,iY75_1357,Escherichia coli str. K-12 substr. W3110,iY75_1357.xml.gz
+ecoli_BW25113_tradis,iZ_1308,Escherichia coli O157:H7 str. EDL933,iZ_1308.xml.gz
