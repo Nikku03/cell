@@ -1,0 +1,209 @@
+{
+  "n_features_per_config": [
+    6,
+    9,
+    13,
+    17,
+    25,
+    38,
+    39,
+    41,
+    50
+  ],
+  "results": [
+    {
+      "essCov": 0.361,
+      "neCov": 0.0,
+      "combined": 0.166,
+      "n": 65166,
+      "label": "B0 baseline (6)"
+    },
+    {
+      "essCov": 0.574,
+      "neCov": 0.635,
+      "combined": 0.607,
+      "n": 65166,
+      "label": "+ orth+ (9)"
+    },
+    {
+      "essCov": 0.574,
+      "neCov": 0.632,
+      "combined": 0.605,
+      "n": 65166,
+      "label": "+ cooccur (13)"
+    },
+    {
+      "essCov": 0.571,
+      "neCov": 0.637,
+      "combined": 0.607,
+      "n": 65166,
+      "label": "+ regulator (17)"
+    },
+    {
+      "essCov": 0.571,
+      "neCov": 0.637,
+      "combined": 0.607,
+      "n": 65166,
+      "label": "+ codon (25)"
+    },
+    {
+      "essCov": 0.57,
+      "neCov": 0.634,
+      "combined": 0.605,
+      "n": 65166,
+      "label": "+ slot (38)"
+    },
+    {
+      "essCov": 0.57,
+      "neCov": 0.633,
+      "combined": 0.604,
+      "n": 65166,
+      "label": "+ universal (39)"
+    },
+    {
+      "essCov": 0.569,
+      "neCov": 0.637,
+      "combined": 0.605,
+      "n": 65166,
+      "label": "+ FBA (41)"
+    },
+    {
+      "essCov": 0.567,
+      "neCov": 0.627,
+      "combined": 0.6,
+      "n": 65166,
+      "label": "+ JEPA (50)"
+    }
+  ],
+  "top_features": [
+    [
+      "family_essrate_fold_mean",
+      3.7193
+    ],
+    [
+      "family_essrate_lf",
+      -1.1406
+    ],
+    [
+      "og_univ_loco",
+      -0.721
+    ],
+    [
+      "log_family_size",
+      -0.6675
+    ],
+    [
+      "jepa_emb_6",
+      -0.4254
+    ],
+    [
+      "log_paralogs",
+      0.398
+    ],
+    [
+      "jepa_emb_4",
+      -0.3135
+    ],
+    [
+      "p",
+      -0.2313
+    ],
+    [
+      "log_breadth",
+      0.2179
+    ],
+    [
+      "jepa_emb_5",
+      -0.1494
+    ],
+    [
+      "fba_available",
+      -0.1335
+    ],
+    [
+      "is_conditional",
+      0.1308
+    ],
+    [
+      "slot_ribosomal",
+      0.1244
+    ],
+    [
+      "is_transporter",
+      0.1187
+    ],
+    [
+      "jepa_emb_0",
+      -0.0986
+    ],
+    [
+      "cai",
+      0.087
+    ],
+    [
+      "jepa_emb_2",
+      0.0714
+    ],
+    [
+      "universal_core",
+      -0.0591
+    ],
+    [
+      "jepa_emb_1",
+      0.057
+    ],
+    [
+      "gc3",
+      0.0545
+    ],
+    [
+      "slot_synthetase",
+      0.0533
+    ],
+    [
+      "is_regulator",
+      0.0521
+    ],
+    [
+      "slot_membrane",
+      -0.0496
+    ],
+    [
+      "log_cds_len",
+      -0.0467
+    ],
+    [
+      "slot_transcription",
+      0.0463
+    ]
+  ],
+  "per_clade_lift": {
+    "acidovorax": 0.099,
+    "archaea_methanococcus": 0.041,
+    "azotobacter": 0.082,
+    "bacteroides": 0.023,
+    "beril_PS_unknown": 0.13,
+    "beril_cola_unknown": 0.1,
+    "beril_korea_unknown": 0.224,
+    "beril_miya_unknown": 0.064,
+    "beril_ponti_unknown": 0.118,
+    "burkholderia": 0.251,
+    "caulobacter": 0.188,
+    "desulfovibrio": 0.287,
+    "dickeya": 0.187,
+    "dinoroseobacter": 0.176,
+    "dyella": 0.217,
+    "escherichia": 0.088,
+    "herbaspirillum": 0.114,
+    "klebsiella": 0.111,
+    "magnetospirillum": 0.248,
+    "marinobacter": 0.163,
+    "pedobacter": -0.045,
+    "phaeobacter": 0.209,
+    "pseudomonas": 0.251,
+    "pseudovibrio": 0.119,
+    "ralstonia": 0.33,
+    "shewanella": 0.209,
+    "sinorhizobium": -0.006
+  }
+}
