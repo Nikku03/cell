@@ -1,0 +1,290 @@
+{
+  "n_modeled": 15,
+  "n_og_with_fba": 1578,
+  "n_unmodeled_validated": 35,
+  "mean_fba_transfer_auc": 0.653,
+  "mean_conservation_auc": 0.871,
+  "mean_combined_auc": 0.853,
+  "per_org": [
+    {
+      "organism": "beril_BFirm",
+      "n": 2578,
+      "ess": 1497,
+      "fba_transfer_auc": 0.677,
+      "conservation_auc": 0.805,
+      "combined_auc": 0.783
+    },
+    {
+      "organism": "beril_Cup4G11",
+      "n": 2570,
+      "ess": 1100,
+      "fba_transfer_auc": 0.683,
+      "conservation_auc": 0.891,
+      "combined_auc": 0.871
+    },
+    {
+      "organism": "beril_Burk376",
+      "n": 2394,
+      "ess": 1304,
+      "fba_transfer_auc": 0.693,
+      "conservation_auc": 0.845,
+      "combined_auc": 0.82
+    },
+    {
+      "organism": "beril_Smeli",
+      "n": 2045,
+      "ess": 739,
+      "fba_transfer_auc": 0.632,
+      "conservation_auc": 0.83,
+      "combined_auc": 0.816
+    },
+    {
+      "organism": "beril_HerbieS",
+      "n": 1857,
+      "ess": 786,
+      "fba_transfer_auc": 0.677,
+      "conservation_auc": 0.902,
+      "combined_auc": 0.884
+    },
+    {
+      "organism": "beril_azobra",
+      "n": 1744,
+      "ess": 741,
+      "fba_transfer_auc": 0.689,
+      "conservation_auc": 0.897,
+      "combined_auc": 0.886
+    },
+    {
+      "organism": "beril_Dda3937",
+      "n": 1742,
+      "ess": 448,
+      "fba_transfer_auc": 0.656,
+      "conservation_auc": 0.918,
+      "combined_auc": 0.896
+    },
+    {
+      "organism": "beril_Ddia6719",
+      "n": 1682,
+      "ess": 444,
+      "fba_transfer_auc": 0.674,
+      "conservation_auc": 0.876,
+      "combined_auc": 0.854
+    },
+    {
+      "organism": "beril_DdiaME23",
+      "n": 1678,
+      "ess": 389,
+      "fba_transfer_auc": 0.665,
+      "conservation_auc": 0.879,
+      "combined_auc": 0.859
+    },
+    {
+      "organism": "beril_RalstoniaPSI07",
+      "n": 1675,
+      "ess": 544,
+      "fba_transfer_auc": 0.631,
+      "conservation_auc": 0.885,
+      "combined_auc": 0.863
+    },
+    {
+      "organism": "beril_acidovorax_3H11",
+      "n": 1651,
+      "ess": 692,
+      "fba_transfer_auc": 0.668,
+      "conservation_auc": 0.901,
+      "combined_auc": 0.885
+    },
+    {
+      "organism": "beril_RalstoniaGMI1000",
+      "n": 1643,
+      "ess": 699,
+      "fba_transfer_auc": 0.596,
+      "conservation_auc": 0.883,
+      "combined_auc": 0.86
+    },
+    {
+      "organism": "beril_RalstoniaBSBF1503",
+      "n": 1624,
+      "ess": 654,
+      "fba_transfer_auc": 0.624,
+      "conservation_auc": 0.88,
+      "combined_auc": 0.855
+    },
+    {
+      "organism": "beril_RalstoniaUW163",
+      "n": 1616,
+      "ess": 708,
+      "fba_transfer_auc": 0.656,
+      "conservation_auc": 0.875,
+      "combined_auc": 0.85
+    },
+    {
+      "organism": "beril_Marino",
+      "n": 1366,
+      "ess": 530,
+      "fba_transfer_auc": 0.694,
+      "conservation_auc": 0.92,
+      "combined_auc": 0.908
+    },
+    {
+      "organism": "beril_Phaeo",
+      "n": 1360,
+      "ess": 584,
+      "fba_transfer_auc": 0.684,
+      "conservation_auc": 0.882,
+      "combined_auc": 0.872
+    },
+    {
+      "organism": "beril_ANA3",
+      "n": 1336,
+      "ess": 400,
+      "fba_transfer_auc": 0.595,
+      "conservation_auc": 0.914,
+      "combined_auc": 0.895
+    },
+    {
+      "organism": "beril_Dino",
+      "n": 1331,
+      "ess": 556,
+      "fba_transfer_auc": 0.662,
+      "conservation_auc": 0.817,
+      "combined_auc": 0.816
+    },
+    {
+      "organism": "beril_Dyella79",
+      "n": 1246,
+      "ess": 401,
+      "fba_transfer_auc": 0.675,
+      "conservation_auc": 0.888,
+      "combined_auc": 0.862
+    },
+    {
+      "organism": "beril_PV4",
+      "n": 1233,
+      "ess": 471,
+      "fba_transfer_auc": 0.607,
+      "conservation_auc": 0.882,
+      "combined_auc": 0.862
+    },
+    {
+      "organism": "beril_MR1",
+      "n": 1228,
+      "ess": 334,
+      "fba_transfer_auc": 0.643,
+      "conservation_auc": 0.927,
+      "combined_auc": 0.904
+    },
+    {
+      "organism": "beril_SB2B",
+      "n": 1188,
+      "ess": 394,
+      "fba_transfer_auc": 0.66,
+      "conservation_auc": 0.918,
+      "combined_auc": 0.887
+    },
+    {
+      "organism": "beril_Korea",
+      "n": 1148,
+      "ess": 433,
+      "fba_transfer_auc": 0.661,
+      "conservation_auc": 0.906,
+      "combined_auc": 0.885
+    },
+    {
+      "organism": "beril_Caulo",
+      "n": 1138,
+      "ess": 391,
+      "fba_transfer_auc": 0.684,
+      "conservation_auc": 0.894,
+      "combined_auc": 0.872
+    },
+    {
+      "organism": "beril_Magneto",
+      "n": 1096,
+      "ess": 660,
+      "fba_transfer_auc": 0.638,
+      "conservation_auc": 0.839,
+      "combined_auc": 0.857
+    },
+    {
+      "organism": "beril_Ponti",
+      "n": 964,
+      "ess": 348,
+      "fba_transfer_auc": 0.686,
+      "conservation_auc": 0.901,
+      "combined_auc": 0.875
+    },
+    {
+      "organism": "beril_Pedo557",
+      "n": 942,
+      "ess": 332,
+      "fba_transfer_auc": 0.686,
+      "conservation_auc": 0.925,
+      "combined_auc": 0.895
+    },
+    {
+      "organism": "beril_Cola",
+      "n": 938,
+      "ess": 312,
+      "fba_transfer_auc": 0.719,
+      "conservation_auc": 0.903,
+      "combined_auc": 0.88
+    },
+    {
+      "organism": "beril_Btheta",
+      "n": 834,
+      "ess": 261,
+      "fba_transfer_auc": 0.694,
+      "conservation_auc": 0.863,
+      "combined_auc": 0.85
+    },
+    {
+      "organism": "beril_Miya",
+      "n": 791,
+      "ess": 266,
+      "fba_transfer_auc": 0.67,
+      "conservation_auc": 0.862,
+      "combined_auc": 0.855
+    },
+    {
+      "organism": "beril_Kang",
+      "n": 781,
+      "ess": 305,
+      "fba_transfer_auc": 0.707,
+      "conservation_auc": 0.895,
+      "combined_auc": 0.875
+    },
+    {
+      "organism": "beril_DvH",
+      "n": 769,
+      "ess": 270,
+      "fba_transfer_auc": 0.679,
+      "conservation_auc": 0.9,
+      "combined_auc": 0.893
+    },
+    {
+      "organism": "beril_SynE",
+      "n": 705,
+      "ess": 397,
+      "fba_transfer_auc": 0.636,
+      "conservation_auc": 0.8,
+      "combined_auc": 0.805
+    },
+    {
+      "organism": "beril_Methanococcus_S2",
+      "n": 358,
+      "ess": 144,
+      "fba_transfer_auc": 0.515,
+      "conservation_auc": 0.72,
+      "combined_auc": 0.703
+    },
+    {
+      "organism": "beril_Methanococcus_JJ",
+      "n": 347,
+      "ess": 100,
+      "fba_transfer_auc": 0.446,
+      "conservation_auc": 0.657,
+      "combined_auc": 0.627
+    }
+  ]
+}
