@@ -1,0 +1,314 @@
+{
+  "model": "iJO1366",
+  "reactions": 2583,
+  "metabolites": 1805,
+  "genes": 1367,
+  "growth": 0.9824,
+  "gaps": {
+    "blocked_reactions": 878,
+    "dead_end_metabolites": 127
+  },
+  "fba_essential_minimal": 208,
+  "fba_essential_rich": 118,
+  "keio_in_model": 1036,
+  "soup": {
+    "total": 1756,
+    "in_model": 559,
+    "essential": 52,
+    "base_rate": 0.093
+  },
+  "rescue_minimal": {
+    "n": 92,
+    "true_essential": 16,
+    "precision": 0.174,
+    "lift_pp": 8.1
+  },
+  "rescue": {
+    "medium": "rich",
+    "n": 29,
+    "true_essential": 12,
+    "precision": 0.414,
+    "lift_pp": 32.1
+  },
+  "orthogonal_wins": 1,
+  "rescued_pathways": {
+    "Cofactor and Prosthetic Group Biosynthesis": 7,
+    "Threonine and Lysine Metabolism": 2,
+    "Cell Envelope Biosynthesis": 1,
+    "Nucleotide Salvage Pathway": 1,
+    "Glycerophospholipid Metabolism": 1
+  },
+  "rescue_detail": [
+    {
+      "locus": "14507",
+      "b": "b0369",
+      "product": "porphobilinogen synthase",
+      "truth": 1,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.71,
+      "model_p": 0.83
+    },
+    {
+      "locus": "18006",
+      "b": "b3967",
+      "product": "glutamate racemase",
+      "truth": 1,
+      "subsystem": "Cell Envelope Biosynthesis",
+      "conservation": 0.64,
+      "model_p": 0.72
+    },
+    {
+      "locus": "16262",
+      "b": "b2153",
+      "product": "GTP cyclohydrolase I FolE",
+      "truth": 1,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.7,
+      "model_p": 0.8
+    },
+    {
+      "locus": "14776",
+      "b": "b0639",
+      "product": "nicotinate-nucleotide adenylyltransferase",
+      "truth": 1,
+      "subsystem": "Nucleotide Salvage Pathway",
+      "conservation": 0.77,
+      "model_p": 0.79
+    },
+    {
+      "locus": "17858",
+      "b": "b3809",
+      "product": "diaminopimelate epimerase",
+      "truth": 1,
+      "subsystem": "Threonine and Lysine Metabolism",
+      "conservation": 0.78,
+      "model_p": 0.69
+    },
+    {
+      "locus": "16418",
+      "b": "b2311",
+      "product": "UbiX family flavin prenyltransferase",
+      "truth": 1,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.8,
+      "model_p": 0.82
+    },
+    {
+      "locus": "17094",
+      "b": "b3018",
+      "product": "lysophospholipid acyltransferase family protein",
+      "truth": 1,
+      "subsystem": "Glycerophospholipid Metabolism",
+      "conservation": 0.59,
+      "model_p": 0.59
+    },
+    {
+      "locus": "18029",
+      "b": "b3997",
+      "product": "uroporphyrinogen decarboxylase",
+      "truth": 1,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.86,
+      "model_p": 0.83
+    },
+    {
+      "locus": "15783",
+      "b": "b1662",
+      "product": "riboflavin synthase",
+      "truth": 1,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.76,
+      "model_p": 0.77
+    },
+    {
+      "locus": "16577",
+      "b": "b2478",
+      "product": "4-hydroxy-tetrahydrodipicolinate synthase",
+      "truth": 1,
+      "subsystem": "Threonine and Lysine Metabolism",
+      "conservation": 0.79,
+      "model_p": 0.83
+    },
+    {
+      "locus": "17117",
+      "b": "b3041",
+      "product": "3%2C4-dihydroxy-2-butanone-4-phosphate synthase",
+      "truth": 1,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.2,
+      "model_p": 0.31
+    },
+    {
+      "locus": "15858",
+      "b": "b1740",
+      "product": "ammonia-dependent NAD(+) synthetase",
+      "truth": 1,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.64,
+      "model_p": 0.83
+    },
+    {
+      "locus": "17269",
+      "b": "b3198",
+      "product": "KdsC family phosphatase",
+      "truth": 0,
+      "subsystem": "Lipopolysaccharide Biosynthesis / Recycling",
+      "conservation": 0.47,
+      "model_p": 0.56
+    },
+    {
+      "locus": "14950",
+      "b": "b0827",
+      "product": "transaldolase",
+      "truth": 0,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.19,
+      "model_p": 0.31
+    },
+    {
+      "locus": "17488",
+      "b": "b3608",
+      "product": "glycerol-3-phosphate dehydrogenase",
+      "truth": 0,
+      "subsystem": "Alternate Carbon Metabolism",
+      "conservation": 0.45,
+      "model_p": 0.39
+    },
+    {
+      "locus": "18289",
+      "b": "b4262",
+      "product": "LacI family DNA-binding transcriptional regulator",
+      "truth": 0,
+      "subsystem": "Lipopolysaccharide Biosynthesis / Recycling",
+      "conservation": 0.31,
+      "model_p": 0.6
+    },
+    {
+      "locus": "16436",
+      "b": "b2329",
+      "product": "chorismate synthase",
+      "truth": 0,
+      "subsystem": "Tyrosine, Tryptophan, and Phenylalanine Metabolism",
+      "conservation": 0.72,
+      "model_p": 0.7
+    },
+    {
+      "locus": "15032",
+      "b": "b0908",
+      "product": "3-phosphoshikimate 1-carboxyvinyltransferase",
+      "truth": 0,
+      "subsystem": "Tyrosine, Tryptophan, and Phenylalanine Metabolism",
+      "conservation": 0.62,
+      "model_p": 0.69
+    },
+    {
+      "locus": "15218",
+      "b": "b1096",
+      "product": "D-amino-acid transaminase",
+      "truth": 0,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.14,
+      "model_p": 0.17
+    },
+    {
+      "locus": "16570",
+      "b": "b2472",
+      "product": "arsenate reductase (glutaredoxin)",
+      "truth": 0,
+      "subsystem": "Threonine and Lysine Metabolism",
+      "conservation": 0.43,
+      "model_p": 0.64
+    },
+    {
+      "locus": "17452",
+      "b": "b3389",
+      "product": "3-dehydroquinate synthase",
+      "truth": 0,
+      "subsystem": "Tyrosine, Tryptophan, and Phenylalanine Metabolism",
+      "conservation": 0.73,
+      "model_p": 0.76
+    },
+    {
+      "locus": "15811",
+      "b": "b1693",
+      "product": "shikimate dehydrogenase",
+      "truth": 0,
+      "subsystem": "Tyrosine, Tryptophan, and Phenylalanine Metabolism",
+      "conservation": 0.41,
+      "model_p": 0.63
+    },
+    {
+      "locus": "17892",
+      "b": "b3843",
+      "product": "3-hydroxyacyl-CoA dehydrogenase NAD-binding domain-cont",
+      "truth": 0,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.16,
+      "model_p": 0.26
+    },
+    {
+      "locus": "17267",
+      "b": "b3196",
+      "product": "calcium/sodium antiporter",
+      "truth": 0,
+      "subsystem": "Inorganic Ion Transport and Metabolism",
+      "conservation": 0.12,
+      "model_p": 0.22
+    },
+    {
+      "locus": "17423",
+      "b": "b3359",
+      "product": "aminodeoxychorismate/anthranilate synthase component II",
+      "truth": 0,
+      "subsystem": "Arginine and Proline Metabolism",
+      "conservation": 0.31,
+      "model_p": 0.56
+    },
+    {
+      "locus": "14949",
+      "b": "b0826",
+      "product": "pyruvate formate lyase 1-activating protein",
+      "truth": 0,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.0,
+      "model_p": 0.19
+    },
+    {
+      "locus": "17897",
+      "b": "b3857",
+      "product": "molybdopterin-guanine dinucleotide biosynthesis protein",
+      "truth": 0,
+      "subsystem": "Cofactor and Prosthetic Group Biosynthesis",
+      "conservation": 0.05,
+      "model_p": 0.15
+    },
+    {
+      "locus": "17498",
+      "b": "b3433",
+      "product": "gluconokinase",
+      "truth": 0,
+      "subsystem": "Threonine and Lysine Metabolism",
+      "conservation": 0.32,
+      "model_p": 0.43
+    },
+    {
+      "locus": "17327",
+      "b": "b3256",
+      "product": "YhdT family protein",
+      "truth": 0,
+      "subsystem": "Membrane Lipid Metabolism",
+      "conservation": null,
+      "model_p": 0.21
+    }
+  ],
+  "gapfill_demo": {
+    "removed_gene": "14507",
+    "removed_b": "b0369",
+    "removed_reaction": "PPBNGS",
+    "reaction_name": "Porphobilinogen synthase",
+    "growth_before": 0.9824,
+    "growth_after": -0.0,
+    "product": "porphobilinogen synthase"
+  },
+  "runtime_sec": 30.3
+}
