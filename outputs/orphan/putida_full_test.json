@@ -1,0 +1,111 @@
+{
+  "organism": "beril_Putida",
+  "inventory": {
+    "genes": 4715,
+    "essential": 917,
+    "annotated": 3606,
+    "fba": 1462,
+    "model_preds": 4715
+  },
+  "staged_loop": {
+    "stages": [
+      {
+        "name": "S1 W1 confident",
+        "n": 485,
+        "P": 0.761,
+        "R": 0.402,
+        "F1": 0.526
+      },
+      {
+        "name": "S2 W2 assemble",
+        "n": 485,
+        "P": 0.761,
+        "R": 0.402,
+        "F1": 0.526
+      },
+      {
+        "name": "S3 W1 re-score",
+        "n": 516,
+        "P": 0.758,
+        "R": 0.426,
+        "F1": 0.546
+      },
+      {
+        "name": "S4 W2 final",
+        "n": 516,
+        "P": 0.758,
+        "R": 0.426,
+        "F1": 0.546
+      }
+    ],
+    "final_per_gene_accuracy": 0.846,
+    "core_machinery_complete": "6/6"
+  },
+  "three_source": {
+    "n_joinable": 1296,
+    "w1": {
+      "P": 0.573,
+      "R": 0.729,
+      "F1": 0.642
+    },
+    "w2": {
+      "P": 0.721,
+      "R": 0.786,
+      "F1": 0.752
+    },
+    "w3": {
+      "P": 0.565,
+      "R": 0.381,
+      "F1": 0.455
+    },
+    "ttt": {
+      "n": 130,
+      "p_ess": 0.885
+    },
+    "nnn": {
+      "n": 680,
+      "p_non": 0.926
+    },
+    "maj": {
+      "n": 362,
+      "p_ess": 0.724
+    },
+    "w1w2": {
+      "n": 336,
+      "p_ess": 0.753
+    },
+    "fba_blind_ess": 138,
+    "fba_only_ess": 15
+  },
+  "knockouts": [
+    {
+      "gene": "FtsZ",
+      "locus": "PP_1342",
+      "slot": "cell_division",
+      "verdict": "DEAD",
+      "cascade": 53
+    },
+    {
+      "gene": "GyrA",
+      "locus": "PP_1767",
+      "slot": "replication",
+      "verdict": "DEAD",
+      "cascade": 2
+    },
+    {
+      "gene": "RpoB",
+      "locus": "PP_0447",
+      "slot": "transcription",
+      "verdict": "DEAD",
+      "cascade": 4
+    },
+    {
+      "gene": "nonessential DH",
+      "locus": "PP_2589",
+      "slot": "metabolism",
+      "verdict": "VIABLE",
+      "cascade": 0
+    }
+  ],
+  "leak_clean_audit": "stage skipped \u2014 hung on 200k-row resolve loop; have signal from earlier all_features test (likely partial leakage in fold_mean)"
+}
