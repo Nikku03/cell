@@ -1,0 +1,133 @@
+{
+  "organism": "beril_Keio",
+  "clade": "escherichia",
+  "soup_size": 824,
+  "soup_essentials": 79,
+  "baseline_precision": 0.0959,
+  "topK_precision": 0.2025,
+  "lift_pp": 10.67,
+  "K_at_p80": 0,
+  "coverage_at_p80": 0.0,
+  "top_15": [
+    {
+      "lt": "15777",
+      "gene": NaN,
+      "og": "OG00052",
+      "score": 0.9051,
+      "consensus_product": "superoxide dismutase [Fe]",
+      "true_essential": 0
+    },
+    {
+      "lt": "16658",
+      "gene": NaN,
+      "og": "OG00613",
+      "score": 0.9051,
+      "consensus_product": "tRNA adenosine(34) deaminase TadA",
+      "true_essential": 1
+    },
+    {
+      "lt": "18202",
+      "gene": NaN,
+      "og": "OG01216",
+      "score": 0.8809,
+      "consensus_product": "adenylosuccinate synthase",
+      "true_essential": 0
+    },
+    {
+      "lt": "16977",
+      "gene": NaN,
+      "og": "OG02317",
+      "score": 0.865,
+      "consensus_product": "FAD assembly factor SdhE",
+      "true_essential": 0
+    },
+    {
+      "lt": "14238",
+      "gene": NaN,
+      "og": "OG01251",
+      "score": 0.86,
+      "consensus_product": "D-alanine--D-alanine ligase",
+      "true_essential": 0
+    },
+    {
+      "lt": "14519",
+      "gene": NaN,
+      "og": "OG01251",
+      "score": 0.86,
+      "consensus_product": "D-alanine--D-alanine ligase",
+      "true_essential": 0
+    },
+    {
+      "lt": "17858",
+      "gene": NaN,
+      "og": "OG01685",
+      "score": 0.846,
+      "consensus_product": "diaminopimelate epimerase",
+      "true_essential": 1
+    },
+    {
+      "lt": "16385",
+      "gene": NaN,
+      "og": "OG00415",
+      "score": 0.8342,
+      "consensus_product": "NADH-quinone oxidoreductase subunit L",
+      "true_essential": 0
+    },
+    {
+      "lt": "14228",
+      "gene": NaN,
+      "og": "OG02458",
+      "score": 0.8289,
+      "consensus_product": "16S rRNA (cytosine(1402)-N(4))-methyltransferase RsmH",
+      "true_essential": 0
+    },
+    {
+      "lt": "1937123",
+      "gene": NaN,
+      "og": "OG00583",
+      "score": 0.825,
+      "consensus_product": "UvrD-helicase domain-containing protein",
+      "true_essential": 0
+    },
+    {
+      "lt": "17889",
+      "gene": NaN,
+      "og": "OG02245",
+      "score": 0.8209,
+      "consensus_product": "4-hydroxy-3-polyprenylbenzoate decarboxylase",
+      "true_essential": 1
+    },
+    {
+      "lt": "16308",
+      "gene": NaN,
+      "og": "OG02528",
+      "score": 0.82,
+      "consensus_product": "cytochrome c biogenesis ABC transporter permease component CcmB",
+      "true_essential": 0
+    },
+    {
+      "lt": "16607",
+      "gene": NaN,
+      "og": "OG00629",
+      "score": 0.8174,
+      "consensus_product": "IMP dehydrogenase",
+      "true_essential": 1
+    },
+    {
+      "lt": "14660",
+      "gene": NaN,
+      "og": "OG01770",
+      "score": 0.8174,
+      "consensus_product": "5-(carboxyamino)imidazole ribonucleotide mutase",
+      "true_essential": 0
+    },
+    {
+      "lt": "17246",
+      "gene": NaN,
+      "og": "OG01502",
+      "score": 0.8147,
+      "consensus_product": "preprotein translocase subunit SecG",
+      "true_essential": 1
+    }
+  ]
+}

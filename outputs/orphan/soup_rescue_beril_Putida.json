@@ -1,0 +1,238 @@
+{
+  "organism": "beril_Putida",
+  "clade": "pseudomonas",
+  "soup_size": 1412,
+  "soup_essentials": 464,
+  "baseline_precision": 0.3286118980169972,
+  "topK_precision": 0.6767241379310345,
+  "lift_pp": 34.81122399140373,
+  "K_max_p80": 343,
+  "cov_at_p80": 0.7392241379310345,
+  "soup_with_og": 1412,
+  "soup_with_leak_clean_rate": 1375,
+  "min_og_members": 5,
+  "weights": {
+    "universality": 0.7,
+    "breadth": 0.3,
+    "breadth_norm": 30.0
+  },
+  "top_15": [
+    {
+      "lt": "PP_0470",
+      "gene": "",
+      "og": "OG00858",
+      "score": 1.0,
+      "consensus_product": "50S ribosomal protein L18",
+      "true_essential": 1,
+      "p": 0.6816295981407166,
+      "brightness": 0.5011637210845947,
+      "og_rate_loco": 1.0,
+      "family_breadth": 46
+    },
+    {
+      "lt": "PP_0471",
+      "gene": "",
+      "og": "OG02783",
+      "score": 1.0,
+      "consensus_product": "30S ribosomal protein S5",
+      "true_essential": 1,
+      "p": 0.6989029049873352,
+      "brightness": 0.5351424813270569,
+      "og_rate_loco": 1.0,
+      "family_breadth": 44
+    },
+    {
+      "lt": "PP_5419",
+      "gene": "",
+      "og": "OG00895",
+      "score": 1.0,
+      "consensus_product": "F0F1 ATP synthase subunit A",
+      "true_essential": 1,
+      "p": 0.684999942779541,
+      "brightness": 0.5171995759010315,
+      "og_rate_loco": 1.0,
+      "family_breadth": 42
+    },
+    {
+      "lt": "PP_0519",
+      "gene": "",
+      "og": "OG00056",
+      "score": 1.0,
+      "consensus_product": "thiamine-phosphate kinase",
+      "true_essential": 1,
+      "p": 0.6583796739578247,
+      "brightness": 0.4940105974674225,
+      "og_rate_loco": 1.0,
+      "family_breadth": 44
+    },
+    {
+      "lt": "PP_5413",
+      "gene": "",
+      "og": "OG02483",
+      "score": 1.0,
+      "consensus_product": "F0F1 ATP synthase subunit beta",
+      "true_essential": 1,
+      "p": 0.626035213470459,
+      "brightness": 0.47625797986984253,
+      "og_rate_loco": 1.0,
+      "family_breadth": 46
+    },
+    {
+      "lt": "PP_4877",
+      "gene": "",
+      "og": "OG02736",
+      "score": 1.0,
+      "consensus_product": "30S ribosomal protein S6",
+      "true_essential": 1,
+      "p": 0.6988075375556946,
+      "brightness": 0.5353838205337524,
+      "og_rate_loco": 1.0,
+      "family_breadth": 46
+    },
+    {
+      "lt": "PP_0390",
+      "gene": "",
+      "og": "OG00039",
+      "score": 1.0,
+      "consensus_product": "tRNA (adenosine(37)-N6)-threonylcarbamoyltransferase complex transferase subunit TsaD",
+      "true_essential": 1,
+      "p": 0.6255716681480408,
+      "brightness": 0.47584691643714905,
+      "og_rate_loco": 1.0,
+      "family_breadth": 46
+    },
+    {
+      "lt": "PP_0723",
+      "gene": "",
+      "og": "OG00038",
+      "score": 1.0,
+      "consensus_product": "4-(cytidine 5'-diphospho)-2-C-methyl-D-erythritol kinase",
+      "true_essential": 1,
+      "p": 0.6608705520629883,
+      "brightness": 0.46904462575912476,
+      "og_rate_loco": 1.0,
+      "family_breadth": 45
+    },
+    {
+      "lt": "PP_1607",
+      "gene": "",
+      "og": "OG02734",
+      "score": 1.0,
+      "consensus_product": "acetyl-CoA carboxylase carboxyltransferase subunit alpha",
+      "true_essential": 1,
+      "p": 0.6997228264808655,
+      "brightness": 0.5259068012237549,
+      "og_rate_loco": 1.0,
+      "family_breadth": 39
+    },
+    {
+      "lt": "PP_0853",
+      "gene": "",
+      "og": "OG02721",
+      "score": 1.0,
+      "consensus_product": "flavodoxin-dependent (E)-4-hydroxy-3-methylbut-2-enyl-diphosphate synthase",
+      "true_essential": 1,
+      "p": 0.6584427356719971,
+      "brightness": 0.4938737154006958,
+      "og_rate_loco": 1.0,
+      "family_breadth": 42
+    },
+    {
+      "lt": "PP_0933",
+      "gene": "",
+      "og": "OG02723",
+      "score": 1.0,
+      "consensus_product": "rod shape-determining protein",
+      "true_essential": 1,
+      "p": 0.6714280843734741,
+      "brightness": 0.4482099711894989,
+      "og_rate_loco": 1.0,
+      "family_breadth": 45
+    },
+    {
+      "lt": "PP_5418",
+      "gene": "",
+      "og": "OG00456",
+      "score": 1.0,
+      "consensus_product": "F0F1 ATP synthase subunit C",
+      "true_essential": 1,
+      "p": 0.6025879979133606,
+      "brightness": 0.4710416793823242,
+      "og_rate_loco": 1.0,
+      "family_breadth": 32
+    },
+    {
+      "lt": "PP_4796",
+      "gene": "",
+      "og": "OG00971",
+      "score": 1.0,
+      "consensus_product": "DNA polymerase III subunit delta",
+      "true_essential": 1,
+      "p": 0.6639276742935181,
+      "brightness": 0.5076053738594055,
+      "og_rate_loco": 1.0,
+      "family_breadth": 36
+    },
+    {
+      "lt": "PP_0431",
+      "gene": "",
+      "og": "OG01044",
+      "score": 1.0,
+      "consensus_product": "CopD family protein",
+      "true_essential": 1,
+      "p": 0.6589234471321106,
+      "brightness": 0.4941437542438507,
+      "og_rate_loco": 1.0,
+      "family_breadth": 33
+    },
+    {
+      "lt": "PP_0476",
+      "gene": "",
+      "og": "OG02092",
+      "score": 1.0,
+      "consensus_product": "30S ribosomal protein S13",
+      "true_essential": 1,
+      "p": 0.6355746388435364,
+      "brightness": 0.4892827570438385,
+      "og_rate_loco": 1.0,
+      "family_breadth": 48
+    }
+  ],
+  "top_5": [
+    {
+      "lt": "PP_0470",
+      "gene": "",
+      "product": "50S ribosomal protein L18",
+      "score": 1.0,
+      "truth": 1
+    },
+    {
+      "lt": "PP_0471",
+      "gene": "",
+      "product": "30S ribosomal protein S5",
+      "score": 1.0,
+      "truth": 1
+    },
+    {
+      "lt": "PP_5419",
+      "gene": "",
+      "product": "F0F1 ATP synthase subunit A",
+      "score": 1.0,
+      "truth": 1
+    },
+    {
+      "lt": "PP_0519",
+      "gene": "",
+      "product": "thiamine-phosphate kinase",
+      "score": 1.0,
+      "truth": 1
+    },
+    {
+      "lt": "PP_5413",
+      "gene": "",
+      "product": "F0F1 ATP synthase subunit beta",
+      "score": 1.0,
+      "truth": 1
+    }
+  ]
+}
