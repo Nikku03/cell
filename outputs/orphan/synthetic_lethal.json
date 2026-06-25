@@ -1,0 +1,291 @@
+{
+  "model": "iML1515",
+  "g0": 16.084515257940552,
+  "individually_essential": 105,
+  "essential_reactions": 150,
+  "isozyme_redundant_essential_reactions": 32,
+  "functionally_essential_genes": 58,
+  "func_ess_joinable": 52,
+  "func_ess_truth_essential": 9,
+  "shared_blind_spot_genes": 43,
+  "mean_paralogs_funcess": 1.3846153846153846,
+  "mean_paralogs_noness": 1.5818005808325266,
+  "frac_paralog_funcess": 0.46153846153846156,
+  "frac_paralog_noness": 0.3920619554695063,
+  "examples": [
+    [
+      "SHK3Dr",
+      "Shikimate dehydrogenase",
+      [
+        "ydiB",
+        "aroE"
+      ]
+    ],
+    [
+      "PPA",
+      "Inorganic diphosphatase",
+      [
+        "ppx",
+        "ppa",
+        "umpG"
+      ]
+    ],
+    [
+      "ALAR",
+      "Alanine racemase",
+      [
+        "dadX",
+        "alr"
+      ]
+    ],
+    [
+      "A5PISO",
+      "Arabinose-5-phosphate isomerase",
+      [
+        "kdsD",
+        "srlQ"
+      ]
+    ],
+    [
+      "PMDPHT",
+      "Pyrimidine phosphatase",
+      [
+        "yigB",
+        "ybjI"
+      ]
+    ],
+    [
+      "HCO3E",
+      "HCO3 equilibration reaction",
+      [
+        "can",
+        "cynT"
+      ]
+    ],
+    [
+      "ADCL",
+      "4-aminobenzoate synthase",
+      [
+        "ubiC",
+        "pabC"
+      ]
+    ],
+    [
+      "UMPK",
+      "UMP kinase",
+      [
+        "cmk",
+        "pyrH"
+      ]
+    ],
+    [
+      "FCLT",
+      "Ferrochelatase",
+      [
+        "yfeX",
+        "hemH",
+        "efeB"
+      ]
+    ],
+    [
+      "SDPTA",
+      "Succinyldiaminopimelate transaminase",
+      [
+        "gabT",
+        "puuE",
+        "serC",
+        "argD",
+        "astC"
+      ]
+    ],
+    [
+      "DDPA",
+      "3-deoxy-D-arabino-heptulosonate 7-phosphate synthetase",
+      [
+        "aroH",
+        "aroF",
+        "aroG"
+      ]
+    ],
+    [
+      "ASPK",
+      "Aspartate kinase",
+      [
+        "lysC",
+        "metL",
+        "thrA"
+      ]
+    ],
+    [
+      "CHRPL",
+      "Chorismate pyruvate lyase",
+      [
+        "ubiC",
+        "pabC"
+      ]
+    ],
+    [
+      "UDCPDP",
+      "Undecaprenyl-diphosphatase",
+      [
+        "ybjG",
+        "bacA",
+        "pgpB"
+      ]
+    ],
+    [
+      "Ktex",
+      "Potassium transport via diffusion (extracellular to periplasm)",
+      [
+        "ompC",
+        "ompF",
+        "ompN",
+        "phoE"
+      ]
+    ],
+    [
+      "PItex",
+      "Phosphate transport via diffusion (extracellular to periplasm)",
+      [
+        "ompC",
+        "ompF",
+        "ompN",
+        "phoE"
+      ]
+    ],
+    [
+      "METS",
+      "Methionine synthase",
+      [
+        "metE",
+        "metH"
+      ]
+    ],
+    [
+      "MOBDabcpp",
+      "Molybdate transport via ABC system (periplasm)",
+      [
+        "modA",
+        "cysU",
+        "sbp",
+        "cysP",
+        "modB",
+        "modC",
+        "cysW",
+        "cysA"
+      ]
+    ],
+    [
+      "MOBDtex",
+      "Molybdate transport via diffusion (extracellular to periplasm)",
+      [
+        "ompC",
+        "ompF",
+        "ompN",
+        "phoE"
+      ]
+    ],
+    [
+      "NI2tex",
+      "Nickel transport via diffusion (extracellular to periplasm)",
+      [
+        "ompC",
+        "ompF",
+        "ompN",
+        "phoE"
+      ]
+    ],
+    [
+      "DNTPPA",
+      "Dihydroneopterin triphosphate pyrophosphatase",
+      [
+        "mutT",
+        "nudB"
+      ]
+    ],
+    [
+      "MG2tex",
+      "Magnesium (Mg+2) transport via diffusion (extracellular to periplasm)",
+      [
+        "ompC",
+        "ompF",
+        "ompN",
+        "phoE"
+      ]
+    ],
+    [
+      "Zn2tex",
+      "Zinc (Zn+2) transport via diffusion (extracellular to periplasm)",
+      [
+        "ompC",
+        "ompF",
+        "ompN",
+        "phoE"
+      ]
+    ],
+    [
+      "COBALT2tex",
+      "Cobalt (Co+2) transport via diffusion (extracellular to periplasm)",
+      [
+        "ompC",
+        "ompF",
+        "ompN",
+        "phoE"
+      ]
+    ],
+    [
+      "DHFR",
+      "Dihydrofolate reductase",
+      [
+        "folA",
+        "folM"
+      ]
+    ],
+    [
+      "SHKK",
+      "Shikimate kinase",
+      [
+        "aroL",
+        "aroK"
+      ]
+    ],
+    [
+      "CU2tex",
+      "Copper (Cu+2) transport via diffusion (extracellular to periplasm)",
+      [
+        "ompF",
+        "phoE",
+        "ompN",
+        "ompC"
+      ]
+    ],
+    [
+      "ALAALAr",
+      "D-alanine-D-alanine ligase (reversible)",
+      [
+        "ddlB",
+        "ddlA"
+      ]
+    ],
+    [
+      "CLtex",
+      "Chloride (Cl-1) transport via diffusion (extracellular to periplasm)",
+      [
+        "ompC",
+        "ompF",
+        "ompN",
+        "phoE"
+      ]
+    ],
+    [
+      "MNtex",
+      "Manganese (Mn+2) transport via diffusion (extracellular to periplasm)",
+      [
+        "ompC",
+        "ompF",
+        "ompN",
+        "phoE"
+      ]
+    ]
+  ]
+}
