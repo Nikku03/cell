@@ -1,0 +1,24 @@
+{
+  "model": "iML1515",
+  "no_fba": true,
+  "sole_connection": {
+    "precision": 0.212,
+    "recall": 0.588,
+    "called": 538
+  },
+  "scope_essential": {
+    "precision": 0.091,
+    "recall": 0.005,
+    "called": 11,
+    "tp": 1,
+    "pos": 194
+  },
+  "fba": {
+    "precision": 0.794,
+    "recall": 0.397
+  },
+  "scope_recovers_fba": 0.041,
+  "scope_only": 7,
+  "fba_only": 93,
+  "overlap": 4
+}

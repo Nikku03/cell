@@ -1,0 +1,22 @@
+{
+  "model": "iML1515",
+  "no_fba": true,
+  "n_graph_essential": 711,
+  "n_joinable": 1130,
+  "graph_precision": 0.212,
+  "graph_recall": 0.588,
+  "fba_precision": 0.794,
+  "fba_recall": 0.397,
+  "graph_recovers_fba_frac": 0.804,
+  "graph_only": 459,
+  "fba_only": 19,
+  "overlap": 78,
+  "worked_example": {
+    "gene": "b0474",
+    "orphan_metabolite": "DADP C10H12N5O9P2",
+    "reaction": "DADK",
+    "eq": "atp_c + damp_c <=> adp_c + dadp_c",
+    "ec": "2.7.4.11",
+    "name": "Deoxyadenylate kinase"
+  }
+}
