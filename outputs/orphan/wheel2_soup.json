@@ -1,0 +1,278 @@
+{
+  "per_org": [
+    {
+      "organism": "beril_Putida",
+      "model": "iJN1463",
+      "soup_n": 3350,
+      "soup_ess": 192,
+      "soup_base": 0.057,
+      "necessity_called": 53,
+      "necessity_P": 0.075,
+      "necessity_cov": 0.021,
+      "lift": 1.32,
+      "ess_in_model": 45,
+      "ess_recovered": 4,
+      "ess_unreachable": 147,
+      "frac_ess_reachable": 0.234
+    },
+    {
+      "organism": "beril_Keio",
+      "model": "iML1515",
+      "soup_n": 2520,
+      "soup_ess": 119,
+      "soup_base": 0.047,
+      "necessity_called": 9,
+      "necessity_P": 0.111,
+      "necessity_cov": 0.008,
+      "lift": 2.35,
+      "ess_in_model": 27,
+      "ess_recovered": 1,
+      "ess_unreachable": 92,
+      "frac_ess_reachable": 0.227
+    },
+    {
+      "organism": "mtub",
+      "model": "iEK1008",
+      "soup_n": 3638,
+      "soup_ess": 760,
+      "soup_base": 0.209,
+      "necessity_called": 203,
+      "necessity_P": 0.675,
+      "necessity_cov": 0.18,
+      "lift": 3.23,
+      "ess_in_model": 321,
+      "ess_recovered": 137,
+      "ess_unreachable": 439,
+      "frac_ess_reachable": 0.422
+    },
+    {
+      "organism": "beril_Koxy",
+      "model": "iYL1228",
+      "soup_n": 3228,
+      "soup_ess": 436,
+      "soup_base": 0.135,
+      "necessity_called": 1,
+      "necessity_P": 0.0,
+      "necessity_cov": 0.0,
+      "lift": 0.0,
+      "ess_in_model": 4,
+      "ess_recovered": 0,
+      "ess_unreachable": 432,
+      "frac_ess_reachable": 0.009
+    }
+  ],
+  "soup_n": 12736,
+  "soup_ess": 1507,
+  "soup_base": 0.11832600502512562,
+  "necessity_called": 266,
+  "necessity_precision": 0.5338308270676692,
+  "necessity_recovered": 142,
+  "recovered_frac": 0.09422694094226941,
+  "ess_reachable": 397,
+  "ess_reachable_frac": 0.26343729263437293,
+  "ess_unreachable": 1110,
+  "recovered_top_words": [
+    [
+      "synthase",
+      22
+    ],
+    [
+      "phosphate",
+      14
+    ],
+    [
+      "subunit",
+      13
+    ],
+    [
+      "kinase",
+      12
+    ],
+    [
+      "protein",
+      10
+    ],
+    [
+      "cytochrome",
+      10
+    ],
+    [
+      "ligase",
+      9
+    ],
+    [
+      "transporter",
+      8
+    ],
+    [
+      "bifunctional",
+      8
+    ],
+    [
+      "reductase",
+      8
+    ],
+    [
+      "alpha",
+      7
+    ],
+    [
+      "oxidase",
+      7
+    ],
+    [
+      "sulfate",
+      6
+    ],
+    [
+      "synthetase",
+      5
+    ],
+    [
+      "binding",
+      5
+    ],
+    [
+      "permease",
+      5
+    ],
+    [
+      "alanine",
+      5
+    ],
+    [
+      "dehydrogenase",
+      5
+    ],
+    [
+      "beta",
+      5
+    ],
+    [
+      "glucose",
+      4
+    ],
+    [
+      "acid",
+      4
+    ],
+    [
+      "methyl",
+      4
+    ],
+    [
+      "acetylglucosamine",
+      4
+    ],
+    [
+      "ubiquinol",
+      4
+    ],
+    [
+      "glutamate",
+      3
+    ]
+  ],
+  "unreachable_top_words": [
+    [
+      "protein",
+      416
+    ],
+    [
+      "family",
+      170
+    ],
+    [
+      "transporter",
+      122
+    ],
+    [
+      "hypothetical",
+      92
+    ],
+    [
+      "regulator",
+      50
+    ],
+    [
+      "binding",
+      47
+    ],
+    [
+      "subunit",
+      39
+    ],
+    [
+      "transcriptional",
+      39
+    ],
+    [
+      "ribosomal",
+      37
+    ],
+    [
+      "permease",
+      36
+    ],
+    [
+      "domain",
+      35
+    ],
+    [
+      "containing",
+      35
+    ],
+    [
+      "trna",
+      31
+    ],
+    [
+      "membrane",
+      28
+    ],
+    [
+      "factor",
+      24
+    ],
+    [
+      "helix",
+      24
+    ],
+    [
+      "hydrolase",
+      24
+    ],
+    [
+      "synthase",
+      23
+    ],
+    [
+      "reductase",
+      23
+    ],
+    [
+      "type",
+      21
+    ],
+    [
+      "ligase",
+      20
+    ],
+    [
+      "transmembrane",
+      20
+    ],
+    [
+      "acid",
+      20
+    ],
+    [
+      "secretion",
+      17
+    ],
+    [
+      "amino",
+      17
+    ]
+  ]
+}
