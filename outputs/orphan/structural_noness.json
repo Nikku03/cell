@@ -1,0 +1,49 @@
+{
+  "model": "iML1515",
+  "universe": 1130,
+  "essential": 194,
+  "nonessential": 936,
+  "flags": [
+    {
+      "flag": "redundant",
+      "calls": 566,
+      "precision": 0.866,
+      "recall": 0.524
+    },
+    {
+      "flag": "disconnected",
+      "calls": 48,
+      "precision": 0.896,
+      "recall": 0.046
+    },
+    {
+      "flag": "orphans-nothing",
+      "calls": 592,
+      "precision": 0.865,
+      "recall": 0.547
+    },
+    {
+      "flag": "strict (red|disc)",
+      "calls": 591,
+      "precision": 0.87,
+      "recall": 0.549
+    },
+    {
+      "flag": "loose (+orphans)",
+      "calls": 814,
+      "precision": 0.865,
+      "recall": 0.752
+    }
+  ],
+  "coverage": {
+    "target": 0.95,
+    "w1_neCov": 0.9358974358974359,
+    "w1_P": 0.954248366013072,
+    "combo_strict_neCov": 0.0,
+    "combo_strict_P": 0.0,
+    "gain_strict_pp": -93.58974358974359,
+    "combo_loose_neCov": 0.0,
+    "combo_loose_P": 0.0,
+    "gain_loose_pp": -93.58974358974359
+  }
+}
