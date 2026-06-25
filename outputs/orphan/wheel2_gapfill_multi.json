@@ -1,0 +1,154 @@
+[
+  {
+    "model": "iJN1463",
+    "label": "P. putida",
+    "n_holes": 183,
+    "shrink": 29.857142857142858,
+    "tiers": [
+      {
+        "tier": "T0 truck (EC-1 only)",
+        "median": 209,
+        "mean": 185.72677595628414,
+        "retained": 183
+      },
+      {
+        "tier": "T1 +cofactor",
+        "median": 110,
+        "mean": 90.30601092896175,
+        "retained": 183
+      },
+      {
+        "tier": "T2 +direction",
+        "median": 91,
+        "mean": 88.25136612021858,
+        "retained": 183
+      },
+      {
+        "tier": "T3 +substrate size",
+        "median": 33,
+        "mean": 39.830601092896174,
+        "retained": 183
+      },
+      {
+        "tier": "T4 +EC 3-level",
+        "median": 7,
+        "mean": 8.890710382513662,
+        "retained": 183
+      }
+    ]
+  },
+  {
+    "model": "iML1515",
+    "label": "E. coli (Keio)",
+    "n_holes": 115,
+    "shrink": 32.25,
+    "tiers": [
+      {
+        "tier": "T0 truck (EC-1 only)",
+        "median": 258,
+        "mean": 206.02608695652174,
+        "retained": 115
+      },
+      {
+        "tier": "T1 +cofactor",
+        "median": 130,
+        "mean": 103.22608695652174,
+        "retained": 115
+      },
+      {
+        "tier": "T2 +direction",
+        "median": 130,
+        "mean": 101.87826086956522,
+        "retained": 115
+      },
+      {
+        "tier": "T3 +substrate size",
+        "median": 47,
+        "mean": 46.87826086956522,
+        "retained": 115
+      },
+      {
+        "tier": "T4 +EC 3-level",
+        "median": 8,
+        "mean": 8.765217391304347,
+        "retained": 115
+      }
+    ]
+  },
+  {
+    "model": "iEK1008",
+    "label": "M. tuberculosis",
+    "n_holes": 154,
+    "shrink": 27.6,
+    "tiers": [
+      {
+        "tier": "T0 truck (EC-1 only)",
+        "median": 138,
+        "mean": 140.5194805194805,
+        "retained": 154
+      },
+      {
+        "tier": "T1 +cofactor",
+        "median": 82,
+        "mean": 69.12987012987013,
+        "retained": 154
+      },
+      {
+        "tier": "T2 +direction",
+        "median": 82,
+        "mean": 68.34415584415585,
+        "retained": 154
+      },
+      {
+        "tier": "T3 +substrate size",
+        "median": 25,
+        "mean": 32.61038961038961,
+        "retained": 154
+      },
+      {
+        "tier": "T4 +EC 3-level",
+        "median": 5,
+        "mean": 6.571428571428571,
+        "retained": 154
+      }
+    ]
+  },
+  {
+    "model": "iYL1228",
+    "label": "K. oxytoca",
+    "n_holes": 98,
+    "shrink": 20.76923076923077,
+    "tiers": [
+      {
+        "tier": "T0 truck (EC-1 only)",
+        "median": 270,
+        "mean": 206.73469387755102,
+        "retained": 98
+      },
+      {
+        "tier": "T1 +cofactor",
+        "median": 122,
+        "mean": 103.54081632653062,
+        "retained": 98
+      },
+      {
+        "tier": "T2 +direction",
+        "median": 122,
+        "mean": 102.36734693877551,
+        "retained": 98
+      },
+      {
+        "tier": "T3 +substrate size",
+        "median": 122,
+        "mean": 102.36734693877551,
+        "retained": 98
+      },
+      {
+        "tier": "T4 +EC 3-level",
+        "median": 13,
+        "mean": 15.673469387755102,
+        "retained": 98
+      }
+    ]
+  }
+]
