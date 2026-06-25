@@ -1,0 +1,571 @@
+{
+  "loo": [
+    [
+      "beril_Putida",
+      1462,
+      197,
+      0.7240906081338657
+    ],
+    [
+      "beril_Keio",
+      1130,
+      97,
+      0.7494535982674824
+    ],
+    [
+      "mtub",
+      988,
+      203,
+      0.6301277022998965
+    ],
+    [
+      "beril_Koxy",
+      84,
+      4,
+      0.809375
+    ]
+  ],
+  "three_wheel_modeled": [
+    {
+      "organism": "beril_Putida",
+      "n": 1296,
+      "ess": 365,
+      "ttt_real_n": 112,
+      "ttt_real_P": 0.955,
+      "ttt_proxy_n": 5,
+      "ttt_proxy_P": 1.0,
+      "delta": 0.045
+    },
+    {
+      "organism": "beril_Keio",
+      "n": 997,
+      "ess": 189,
+      "ttt_real_n": 83,
+      "ttt_real_P": 0.916,
+      "ttt_proxy_n": 2,
+      "ttt_proxy_P": 1.0,
+      "delta": 0.084
+    },
+    {
+      "organism": "beril_Koxy",
+      "n": 78,
+      "ess": 18,
+      "ttt_real_n": 2,
+      "ttt_real_P": 1.0,
+      "ttt_proxy_n": 4,
+      "ttt_proxy_P": 1.0,
+      "delta": 0.0
+    }
+  ],
+  "three_wheel_unmodeled": [
+    {
+      "organism": "beril_BFirm",
+      "n": 4705,
+      "ess": 2251,
+      "proxy_AUC": 0.371,
+      "w1w2_P": 0.895,
+      "ttt_proxy_P": 0.899,
+      "delta_pp": 0.5
+    },
+    {
+      "organism": "beril_Cup4G11",
+      "n": 4574,
+      "ess": 1493,
+      "proxy_AUC": 0.465,
+      "w1w2_P": 0.865,
+      "ttt_proxy_P": 0.925,
+      "delta_pp": 6.0
+    },
+    {
+      "organism": "beril_Burk376",
+      "n": 4365,
+      "ess": 1915,
+      "proxy_AUC": 0.384,
+      "w1w2_P": 0.907,
+      "ttt_proxy_P": 0.968,
+      "delta_pp": 6.1
+    },
+    {
+      "organism": "beril_Smeli",
+      "n": 3554,
+      "ess": 1115,
+      "proxy_AUC": 0.516,
+      "w1w2_P": 0.744,
+      "ttt_proxy_P": 0.859,
+      "delta_pp": 11.5
+    },
+    {
+      "organism": "beril_HerbieS",
+      "n": 3521,
+      "ess": 1174,
+      "proxy_AUC": 0.53,
+      "w1w2_P": 0.848,
+      "ttt_proxy_P": 0.938,
+      "delta_pp": 9.0
+    },
+    {
+      "organism": "beril_acidovorax_3H11",
+      "n": 3228,
+      "ess": 1089,
+      "proxy_AUC": 0.567,
+      "w1w2_P": 0.852,
+      "ttt_proxy_P": 0.908,
+      "delta_pp": 5.6
+    },
+    {
+      "organism": "beril_RalstoniaGMI1000",
+      "n": 3180,
+      "ess": 1137,
+      "proxy_AUC": 0.555,
+      "w1w2_P": 0.862,
+      "ttt_proxy_P": 0.866,
+      "delta_pp": 0.3
+    },
+    {
+      "organism": "beril_azobra",
+      "n": 3176,
+      "ess": 1186,
+      "proxy_AUC": 0.531,
+      "w1w2_P": 0.879,
+      "ttt_proxy_P": 0.937,
+      "delta_pp": 5.8
+    },
+    {
+      "organism": "beril_RalstoniaPSI07",
+      "n": 3153,
+      "ess": 882,
+      "proxy_AUC": 0.669,
+      "w1w2_P": 0.751,
+      "ttt_proxy_P": 0.944,
+      "delta_pp": 19.4
+    },
+    {
+      "organism": "beril_RalstoniaBSBF1503",
+      "n": 3080,
+      "ess": 1058,
+      "proxy_AUC": 0.592,
+      "w1w2_P": 0.832,
+      "ttt_proxy_P": 0.927,
+      "delta_pp": 9.5
+    },
+    {
+      "organism": "beril_RalstoniaUW163",
+      "n": 3060,
+      "ess": 1126,
+      "proxy_AUC": 0.563,
+      "w1w2_P": 0.896,
+      "ttt_proxy_P": 0.951,
+      "delta_pp": 5.6
+    },
+    {
+      "organism": "beril_Dda3937",
+      "n": 3021,
+      "ess": 692,
+      "proxy_AUC": 0.612,
+      "w1w2_P": 0.729,
+      "ttt_proxy_P": 0.831,
+      "delta_pp": 10.2
+    },
+    {
+      "organism": "beril_Ddia6719",
+      "n": 2940,
+      "ess": 717,
+      "proxy_AUC": 0.61,
+      "w1w2_P": 0.697,
+      "ttt_proxy_P": 0.861,
+      "delta_pp": 16.4
+    },
+    {
+      "organism": "beril_DdiaME23",
+      "n": 2915,
+      "ess": 626,
+      "proxy_AUC": 0.66,
+      "w1w2_P": 0.646,
+      "ttt_proxy_P": 0.82,
+      "delta_pp": 17.5
+    },
+    {
+      "organism": "beril_ANA3",
+      "n": 2854,
+      "ess": 726,
+      "proxy_AUC": 0.622,
+      "w1w2_P": 0.73,
+      "ttt_proxy_P": 0.868,
+      "delta_pp": 13.8
+    },
+    {
+      "organism": "beril_Marino",
+      "n": 2792,
+      "ess": 799,
+      "proxy_AUC": 0.647,
+      "w1w2_P": 0.806,
+      "ttt_proxy_P": 0.94,
+      "delta_pp": 13.4
+    },
+    {
+      "organism": "beril_PV4",
+      "n": 2765,
+      "ess": 925,
+      "proxy_AUC": 0.585,
+      "w1w2_P": 0.803,
+      "ttt_proxy_P": 0.869,
+      "delta_pp": 6.5
+    },
+    {
+      "organism": "beril_Dyella79",
+      "n": 2696,
+      "ess": 683,
+      "proxy_AUC": 0.623,
+      "w1w2_P": 0.68,
+      "ttt_proxy_P": 0.85,
+      "delta_pp": 17.0
+    },
+    {
+      "organism": "beril_MR1",
+      "n": 2660,
+      "ess": 602,
+      "proxy_AUC": 0.635,
+      "w1w2_P": 0.67,
+      "ttt_proxy_P": 0.849,
+      "delta_pp": 17.9
+    },
+    {
+      "organism": "beril_SB2B",
+      "n": 2563,
+      "ess": 654,
+      "proxy_AUC": 0.62,
+      "w1w2_P": 0.739,
+      "ttt_proxy_P": 0.909,
+      "delta_pp": 17.0
+    },
+    {
+      "organism": "beril_Phaeo",
+      "n": 2499,
+      "ess": 898,
+      "proxy_AUC": 0.582,
+      "w1w2_P": 0.827,
+      "ttt_proxy_P": 0.898,
+      "delta_pp": 7.1
+    },
+    {
+      "organism": "beril_Dino",
+      "n": 2497,
+      "ess": 928,
+      "proxy_AUC": 0.616,
+      "w1w2_P": 0.784,
+      "ttt_proxy_P": 0.897,
+      "delta_pp": 11.2
+    },
+    {
+      "organism": "beril_Korea",
+      "n": 2449,
+      "ess": 728,
+      "proxy_AUC": 0.657,
+      "w1w2_P": 0.773,
+      "ttt_proxy_P": 0.937,
+      "delta_pp": 16.4
+    },
+    {
+      "organism": "beril_Caulo",
+      "n": 2324,
+      "ess": 599,
+      "proxy_AUC": 0.678,
+      "w1w2_P": 0.678,
+      "ttt_proxy_P": 0.816,
+      "delta_pp": 13.8
+    },
+    {
+      "organism": "beril_Magneto",
+      "n": 2218,
+      "ess": 1079,
+      "proxy_AUC": 0.63,
+      "w1w2_P": 0.876,
+      "ttt_proxy_P": 0.98,
+      "delta_pp": 10.4
+    },
+    {
+      "organism": "beril_Pedo557",
+      "n": 1976,
+      "ess": 521,
+      "proxy_AUC": 0.694,
+      "w1w2_P": 0.742,
+      "ttt_proxy_P": 0.884,
+      "delta_pp": 14.1
+    },
+    {
+      "organism": "beril_Ponti",
+      "n": 1914,
+      "ess": 529,
+      "proxy_AUC": 0.687,
+      "w1w2_P": 0.719,
+      "ttt_proxy_P": 0.868,
+      "delta_pp": 14.9
+    },
+    {
+      "organism": "beril_Cola",
+      "n": 1900,
+      "ess": 532,
+      "proxy_AUC": 0.694,
+      "w1w2_P": 0.752,
+      "ttt_proxy_P": 0.899,
+      "delta_pp": 14.8
+    },
+    {
+      "organism": "beril_Btheta",
+      "n": 1622,
+      "ess": 519,
+      "proxy_AUC": 0.695,
+      "w1w2_P": 0.705,
+      "ttt_proxy_P": 0.87,
+      "delta_pp": 16.5
+    },
+    {
+      "organism": "beril_Miya",
+      "n": 1558,
+      "ess": 522,
+      "proxy_AUC": 0.653,
+      "w1w2_P": 0.726,
+      "ttt_proxy_P": 0.842,
+      "delta_pp": 11.7
+    },
+    {
+      "organism": "beril_DvH",
+      "n": 1529,
+      "ess": 491,
+      "proxy_AUC": 0.694,
+      "w1w2_P": 0.749,
+      "ttt_proxy_P": 0.883,
+      "delta_pp": 13.4
+    },
+    {
+      "organism": "beril_Methanococcus_S2",
+      "n": 557,
+      "ess": 196,
+      "proxy_AUC": 0.713,
+      "w1w2_P": 0.66,
+      "ttt_proxy_P": 0.875,
+      "delta_pp": 21.5
+    },
+    {
+      "organism": "beril_Methanococcus_JJ",
+      "n": 539,
+      "ess": 139,
+      "proxy_AUC": 0.694,
+      "w1w2_P": 0.44,
+      "ttt_proxy_P": 0.708,
+      "delta_pp": 26.8
+    }
+  ],
+  "feat_importance": [
+    [
+      "log_paralogs",
+      -0.07622774528154481
+    ],
+    [
+      "kw_transferase",
+      0.07174084723986197
+    ],
+    [
+      "kw_synthase",
+      0.05771783253865451
+    ],
+    [
+      "kw_kinase",
+      0.05001600580274413
+    ],
+    [
+      "log_n_neigh80",
+      0.04930637081546407
+    ],
+    [
+      "own_fold",
+      -0.048135399032914
+    ],
+    [
+      "kw_synthetase",
+      0.04268677931430698
+    ],
+    [
+      "kw_transport",
+      -0.04247750160378342
+    ],
+    [
+      "kw_dehydrogenase",
+      -0.03706966570136964
+    ],
+    [
+      "cai",
+      0.03354402700006919
+    ],
+    [
+      "gc",
+      0.03326584590744368
+    ],
+    [
+      "gc3",
+      0.03312027426429203
+    ],
+    [
+      "log_cdslen",
+      0.03057335399740561
+    ],
+    [
+      "log_intergenic_next",
+      0.0270642414020611
+    ],
+    [
+      "kw_permease",
+      -0.026083861794311693
+    ],
+    [
+      "kw_decarboxylase",
+      0.02541553451329485
+    ],
+    [
+      "kw_ligase",
+      0.025138502984583068
+    ],
+    [
+      "is_orphan",
+      0.024915081529693676
+    ],
+    [
+      "kw_hydrolase",
+      -0.01924880433645509
+    ],
+    [
+      "log_family_size",
+      -0.01773415035783177
+    ],
+    [
+      "kw_atp",
+      -0.017142551216895324
+    ],
+    [
+      "log_intergenic_prev",
+      0.015692602556301286
+    ],
+    [
+      "kw_abc",
+      -0.014852847897594997
+    ],
+    [
+      "kw_biosynth",
+      0.012158166499399554
+    ],
+    [
+      "kw_hypothetical",
+      -0.010866846643640186
+    ],
+    [
+      "kw_ribosom",
+      0.010246911543192586
+    ],
+    [
+      "kw_phosphatase",
+      0.01011730208458793
+    ],
+    [
+      "kw_regulator",
+      -0.009697127457790158
+    ],
+    [
+      "kw_cofactor",
+      0.009040162361749635
+    ],
+    [
+      "kw_reductase",
+      0.008420097027876994
+    ],
+    [
+      "kw_peptidoglycan",
+      0.007124498758512394
+    ],
+    [
+      "log_family_n_orgs",
+      0.006288092091485337
+    ],
+    [
+      "kw_sensor",
+      -0.006245264607001629
+    ],
+    [
+      "kw_membrane",
+      -0.005172441107863288
+    ],
+    [
+      "kw_histidine_kinase",
+      -0.005126972975978258
+    ],
+    [
+      "log_n_neigh50",
+      0.005090291253581083
+    ],
+    [
+      "kw_secretion",
+      -0.004994307268720935
+    ],
+    [
+      "kw_conjugat",
+      -0.00465975208161008
+    ],
+    [
+      "kw_gtp",
+      0.0038126792157930833
+    ],
+    [
+      "kw_metabolism",
+      -0.0035589310911420405
+    ],
+    [
+      "kw_isomerase",
+      0.0015975312104606167
+    ],
+    [
+      "cooccur_jaccard",
+      -0.000989780627965194
+    ],
+    [
+      "kw_trna",
+      0.0005937848365561575
+    ],
+    [
+      "same_strand_prev",
+      0.0
+    ],
+    [
+      "same_strand_next",
+      0.0
+    ],
+    [
+      "is_regulator",
+      0.0
+    ],
+    [
+      "is_signaling",
+      0.0
+    ],
+    [
+      "is_transporter",
+      0.0
+    ],
+    [
+      "is_conditional",
+      0.0
+    ],
+    [
+      "kw_rrna",
+      0.0
+    ],
+    [
+      "kw_cell_wall",
+      0.0
+    ],
+    [
+      "kw_unknown",
+      0.0
+    ]
+  ],
+  "n_features": 52,
+  "n_train_genes": 3664
+}
