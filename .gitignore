@@ -61,3 +61,4 @@ cell_sim/features/cache/*
 figures/output/
 outputs/synthlet/.wt_*.pkl
 data/external_data/feba/
+data/external_data/transformer_inputs/
