@@ -53,6 +53,10 @@ def pad_comp(idx_list):
         a=a[:MAXC]; out[i,:len(a)]=a
     return out
 
+# precompute per-org padded compound matrix once (n_cond, MAXC) -> vectorized gather
+for fb in PILOT:
+    ORG[fb]["comp_pad"]=pad_comp(ORG[fb]["comp"])
+
 # ---- models ----
 class MLP(nn.Module):
     def __init__(s,g,c,D=64,h=128):
@@ -104,8 +108,7 @@ def gather(org_rows, sel):
         if not m.any(): continue
         d=ORG[fb]
         gv[m]=d["G"][gi[m]]; cv[m]=d["C"][ci[m]]
-        cl=[d["comp"][c] for c in ci[m]]
-        comp[m]=pad_comp(cl)
+        comp[m]=d["comp_pad"][ci[m]]      # vectorized -- no python loop
     return gv,cv,comp
 
 def train_model(Model, train, eval_, epochs, bs=4096, lr=1e-3, sample=None):
