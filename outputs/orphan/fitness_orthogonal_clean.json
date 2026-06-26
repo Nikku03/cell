@@ -1,0 +1,16 @@
+{
+  "n": 1038,
+  "ess": 332,
+  "auc_cons": 0.7220297621079218,
+  "auc_fit": 0.7735801563193283,
+  "auc_both": 0.8193880337212874,
+  "essCov_cons": 0.0,
+  "essCov_both": 0.0,
+  "essCov_delta_pp": 0.0,
+  "fitness_auc_on_cons_missed": 0.6663693901035673,
+  "weights": {
+    "conservation": 0.13982262505959697,
+    "absent": 0.2253908957376277,
+    "min_fit": -0.006607668827616928
+  }
+}
