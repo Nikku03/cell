@@ -1,0 +1,29 @@
+{
+  "model": "iML1515",
+  "n_test": 1263,
+  "symbol_map": 4593,
+  "tf_mapped": 194,
+  "regulated_genes": 1733,
+  "plain_fba": {
+    "called": 97,
+    "tp": 77,
+    "P": 0.794,
+    "R": 0.342,
+    "pos": 225
+  },
+  "regulatory_fba": {
+    "called": 111,
+    "tp": 82,
+    "P": 0.739,
+    "R": 0.364,
+    "pos": 225
+  },
+  "reg_only_calls": 14,
+  "reg_only_tp": 5,
+  "by_category": {
+    "regulator(off-model)": {
+      "new_calls": 14,
+      "tp": 5
+    }
+  }
+}
