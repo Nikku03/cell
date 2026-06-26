@@ -1,0 +1,345 @@
+{
+  "self_test": {
+    "DdiaME23": {
+      "our": "beril_DdiaME23",
+      "auc": 0.11275932146960971,
+      "ess": 679,
+      "n": 3864,
+      "absent": 527
+    },
+    "MR1": {
+      "our": "beril_MR1",
+      "auc": 0.10292764872368304,
+      "ess": 657,
+      "n": 3589,
+      "absent": 527
+    },
+    "pseudo3_N2E3": {
+      "our": "beril_pseudo3_N2E3",
+      "auc": 0.11096097331967612,
+      "ess": 918,
+      "n": 5206,
+      "absent": 683
+    },
+    "azobra": {
+      "our": "beril_azobra",
+      "auc": 0.15668087747848808,
+      "ess": 1329,
+      "n": 3780,
+      "absent": 869
+    },
+    "SyringaeB728a": {
+      "our": "beril_SyringaeB728a",
+      "auc": 0.12377624826656491,
+      "ess": 1111,
+      "n": 5069,
+      "absent": 799
+    },
+    "WCS417": {
+      "our": "beril_WCS417",
+      "auc": 0.18336925884098004,
+      "ess": 1709,
+      "n": 5055,
+      "absent": 1038
+    },
+    "Methanococcus_JJ": {
+      "our": "beril_Methanococcus_JJ",
+      "auc": 0.016975614919488218,
+      "ess": 366,
+      "n": 1605,
+      "absent": 354
+    },
+    "PS": {
+      "our": "beril_PS",
+      "auc": 0.11588912679084785,
+      "ess": 1003,
+      "n": 2650,
+      "absent": 766
+    },
+    "Pedo557": {
+      "our": "beril_Pedo557",
+      "auc": 0.06706127808773438,
+      "ess": 633,
+      "n": 3003,
+      "absent": 536
+    },
+    "Ponti": {
+      "our": "beril_Ponti",
+      "auc": 0.082756594971013,
+      "ess": 656,
+      "n": 2789,
+      "absent": 540
+    },
+    "pseudo1_N1B4": {
+      "our": "beril_pseudo1_N1B4",
+      "auc": 0.16767485781382416,
+      "ess": 1997,
+      "n": 5004,
+      "absent": 1284
+    },
+    "Ddia6719": {
+      "our": "beril_Ddia6719",
+      "auc": 0.10937342060042454,
+      "ess": 832,
+      "n": 3876,
+      "absent": 628
+    },
+    "DvH": {
+      "our": "beril_DvH",
+      "auc": 0.05827648379018242,
+      "ess": 616,
+      "n": 2514,
+      "absent": 544
+    },
+    "Magneto": {
+      "our": "beril_Magneto",
+      "auc": 0.08759148936170212,
+      "ess": 1175,
+      "n": 2650,
+      "absent": 957
+    },
+    "pseudo5_N2C3_1": {
+      "our": "beril_pseudo5_N2C3_1",
+      "auc": 0.20429472588161007,
+      "ess": 1331,
+      "n": 5643,
+      "absent": 776
+    },
+    "RalstoniaGMI1000": {
+      "our": "beril_RalstoniaGMI1000",
+      "auc": 0.15247452900943553,
+      "ess": 1361,
+      "n": 4445,
+      "absent": 949
+    },
+    "Caulo": {
+      "our": "beril_Caulo",
+      "auc": 0.09900651768237181,
+      "ess": 646,
+      "n": 2680,
+      "absent": 511
+    },
+    "SyringaeB728a_mexBdelta": {
+      "our": "beril_SyringaeB728a_mexBdelta",
+      "auc": 0.13110986752779716,
+      "ess": 1176,
+      "n": 5069,
+      "absent": 834
+    },
+    "Korea": {
+      "our": "beril_Korea",
+      "auc": 0.10485957977948825,
+      "ess": 805,
+      "n": 2895,
+      "absent": 620
+    },
+    "Burk376": {
+      "our": "beril_Burk376",
+      "auc": 0.2215705814460348,
+      "ess": 2140,
+      "n": 5549,
+      "absent": 1125
+    },
+    "HerbieS": {
+      "our": "beril_HerbieS",
+      "auc": 0.19299690937323688,
+      "ess": 1212,
+      "n": 3856,
+      "absent": 730
+    },
+    "Smeli": {
+      "our": "beril_Smeli",
+      "auc": 0.20376669520020857,
+      "ess": 1263,
+      "n": 4221,
+      "absent": 775
+    },
+    "pseudo6_N2E2": {
+      "our": "beril_pseudo6_N2E2",
+      "auc": 0.14836544764248263,
+      "ess": 1169,
+      "n": 5413,
+      "absent": 772
+    },
+    "acidovorax_3H11": {
+      "our": "beril_acidovorax_3H11",
+      "auc": 0.13928869180588438,
+      "ess": 1164,
+      "n": 3633,
+      "absent": 784
+    },
+    "Phaeo": {
+      "our": "beril_Phaeo",
+      "auc": 0.1436291457070129,
+      "ess": 981,
+      "n": 3065,
+      "absent": 712
+    },
+    "Cola": {
+      "our": "beril_Cola",
+      "auc": 0.06566850503319768,
+      "ess": 644,
+      "n": 2964,
+      "absent": 548
+    },
+    "RalstoniaUW163": {
+      "our": "beril_RalstoniaUW163",
+      "auc": 0.13907394572717346,
+      "ess": 1393,
+      "n": 4519,
+      "absent": 1008
+    },
+    "Dyella79": {
+      "our": "beril_Dyella79",
+      "auc": 0.3904644120042925,
+      "ess": 733,
+      "n": 3076,
+      "absent": 3076
+    },
+    "RalstoniaPSI07": {
+      "our": "beril_RalstoniaPSI07",
+      "auc": 0.11161635806892195,
+      "ess": 1033,
+      "n": 4343,
+      "absent": 790
+    },
+    "Btheta": {
+      "our": "beril_Btheta",
+      "auc": 0.06919659151667248,
+      "ess": 597,
+      "n": 2295,
+      "absent": 496
+    },
+    "Marino": {
+      "our": "beril_Marino",
+      "auc": 0.13409300896307938,
+      "ess": 844,
+      "n": 3142,
+      "absent": 633
+    },
+    "Putida": {
+      "our": "beril_Putida",
+      "auc": 0.1204531111191507,
+      "ess": 917,
+      "n": 4715,
+      "absent": 672
+    },
+    "BFirm": {
+      "our": "beril_BFirm",
+      "auc": 0.21758965089103127,
+      "ess": 2560,
+      "n": 5983,
+      "absent": 1389
+    },
+    "PV4": {
+      "our": "beril_PV4",
+      "auc": 0.12743177703882497,
+      "ess": 1024,
+      "n": 3458,
+      "absent": 813
+    },
+    "SynE": {
+      "our": "beril_SynE",
+      "auc": 0.05655137281079277,
+      "ess": 755,
+      "n": 1509,
+      "absent": 668
+    },
+    "Kang": {
+      "our": "beril_Kang",
+      "auc": 0.05109050353461115,
+      "ess": 507,
+      "n": 1928,
+      "absent": 461
+    },
+    "SB2B": {
+      "our": "beril_SB2B",
+      "auc": 0.0980519430596696,
+      "ess": 681,
+      "n": 3355,
+      "absent": 531
+    },
+    "Dda3937": {
+      "our": "beril_Dda3937",
+      "auc": 0.11981597711879556,
+      "ess": 759,
+      "n": 3943,
+      "absent": 552
+    },
+    "Methanococcus_S2": {
+      "our": "beril_Methanococcus_S2",
+      "auc": 0.11981679731321394,
+      "ess": 507,
+      "n": 1634,
+      "absent": 490
+    },
+    "Koxy": {
+      "our": "beril_Koxy",
+      "auc": 0.20161982798605335,
+      "ess": 1232,
+      "n": 4480,
+      "absent": 719
+    },
+    "pseudo13_GW456_L13": {
+      "our": "beril_pseudo13_GW456_L13",
+      "auc": 0.14636709475501836,
+      "ess": 1025,
+      "n": 4641,
+      "absent": 692
+    },
+    "RalstoniaBSBF1503": {
+      "our": "beril_RalstoniaBSBF1503",
+      "auc": 0.12015914307574599,
+      "ess": 1307,
+      "n": 4557,
+      "absent": 969
+    },
+    "Keio": {
+      "our": "beril_Keio",
+      "auc": 0.12285040767652117,
+      "ess": 605,
+      "n": 3585,
+      "absent": 456
+    },
+    "Miya": {
+      "our": "beril_Miya",
+      "auc": 0.07499358211393498,
+      "ess": 690,
+      "n": 2553,
+      "absent": 594
+    },
+    "ANA3": {
+      "our": "beril_ANA3",
+      "auc": 0.11758662865039592,
+      "ess": 820,
+      "n": 3891,
+      "absent": 649
+    },
+    "Cup4G11": {
+      "our": "beril_Cup4G11",
+      "auc": 0.24297688369585582,
+      "ess": 1612,
+      "n": 5506,
+      "absent": 795
+    },
+    "Dino": {
+      "our": "beril_Dino",
+      "auc": 0.1236185841733287,
+      "ess": 1050,
+      "n": 3105,
+      "absent": 798
+    },
+    "psRCH2": {
+      "our": "beril_psRCH2",
+      "auc": 0.11674938010171762,
+      "ess": 1050,
+      "n": 3681,
+      "absent": 787
+    }
+  },
+  "self_test_mean": 0.13177648691495378,
+  "absent_only_mean": 0.10610621996486573,
+  "transfer_same_division_mean": null,
+  "transfer_cross_division_mean": null,
+  "transfer_rows": []
+}

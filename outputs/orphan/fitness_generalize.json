@@ -1,0 +1,958 @@
+{
+  "n_matched_orgs": 48,
+  "self_test": {
+    "Ponti": {
+      "our": "beril_Ponti",
+      "auc": 0.39969401415184547,
+      "ess": 21,
+      "n": 270
+    },
+    "Dino": {
+      "our": "beril_Dino",
+      "auc": 0.46870882740447956,
+      "ess": 24,
+      "n": 277
+    },
+    "MR1": {
+      "our": "beril_MR1",
+      "auc": 0.43956319369853203,
+      "ess": 38,
+      "n": 773
+    },
+    "pseudo1_N1B4": {
+      "our": "beril_pseudo1_N1B4",
+      "auc": 0.5326774001192606,
+      "ess": 65,
+      "n": 323
+    },
+    "Caulo": {
+      "our": "beril_Caulo",
+      "auc": 0.48598484848484846,
+      "ess": 24,
+      "n": 354
+    },
+    "pseudo13_GW456_L13": {
+      "our": "beril_pseudo13_GW456_L13",
+      "auc": 0.4447331947331947,
+      "ess": 52,
+      "n": 496
+    },
+    "ANA3": {
+      "our": "beril_ANA3",
+      "auc": 0.545609548167093,
+      "ess": 34,
+      "n": 586
+    },
+    "PS": {
+      "our": "beril_PS",
+      "auc": 0.4002826633165829,
+      "ess": 32,
+      "n": 231
+    },
+    "BFirm": {
+      "our": "beril_BFirm",
+      "auc": 0.6634926338483651,
+      "ess": 121,
+      "n": 489
+    },
+    "DvH": {
+      "our": "beril_DvH",
+      "auc": 0.3635687732342007,
+      "ess": 10,
+      "n": 279
+    },
+    "Miya": {
+      "our": "beril_Miya",
+      "auc": 0.41872427983539096,
+      "ess": 27,
+      "n": 387
+    },
+    "Btheta": {
+      "our": "beril_Btheta",
+      "auc": 0.5468331846565566,
+      "ess": 19,
+      "n": 314
+    },
+    "Kang": {
+      "our": "beril_Kang",
+      "auc": 0.6396501457725947,
+      "ess": 7,
+      "n": 252
+    },
+    "Phaeo": {
+      "our": "beril_Phaeo",
+      "auc": 0.5869082840236687,
+      "ess": 52,
+      "n": 468
+    },
+    "Cola": {
+      "our": "beril_Cola",
+      "auc": 0.5681818181818182,
+      "ess": 11,
+      "n": 355
+    },
+    "Marino": {
+      "our": "beril_Marino",
+      "auc": 0.6094047619047619,
+      "ess": 30,
+      "n": 310
+    },
+    "azobra": {
+      "our": "beril_azobra",
+      "auc": 0.5297150139017609,
+      "ess": 52,
+      "n": 384
+    },
+    "acidovorax_3H11": {
+      "our": "beril_acidovorax_3H11",
+      "auc": 0.5298816012027814,
+      "ess": 68,
+      "n": 381
+    },
+    "Pedo557": {
+      "our": "beril_Pedo557",
+      "auc": 0.47076541459957477,
+      "ess": 17,
+      "n": 349
+    },
+    "pseudo5_N2C3_1": {
+      "our": "beril_pseudo5_N2C3_1",
+      "auc": 0.5648399246704331,
+      "ess": 75,
+      "n": 783
+    },
+    "WCS417": {
+      "our": "beril_WCS417",
+      "auc": 0.5369388117656017,
+      "ess": 91,
+      "n": 524
+    },
+    "Methanococcus_JJ": {
+      "our": "beril_Methanococcus_JJ",
+      "auc": 0.30765171503957783,
+      "ess": 5,
+      "n": 384
+    },
+    "pseudo6_N2E2": {
+      "our": "beril_pseudo6_N2E2",
+      "auc": 0.5629563624662756,
+      "ess": 67,
+      "n": 670
+    },
+    "Burk376": {
+      "our": "beril_Burk376",
+      "auc": 0.5678391959798995,
+      "ess": 41,
+      "n": 240
+    },
+    "Cup4G11": {
+      "our": "beril_Cup4G11",
+      "auc": 0.5816395663956639,
+      "ess": 72,
+      "n": 441
+    },
+    "Keio": {
+      "our": "beril_Keio",
+      "auc": 0.42685345103307104,
+      "ess": 27,
+      "n": 606
+    },
+    "HerbieS": {
+      "our": "beril_HerbieS",
+      "auc": 0.6005859375,
+      "ess": 32,
+      "n": 320
+    },
+    "Korea": {
+      "our": "beril_Korea",
+      "auc": 0.5220797720797721,
+      "ess": 26,
+      "n": 296
+    },
+    "Koxy": {
+      "our": "beril_Koxy",
+      "auc": 0.6223715077841757,
+      "ess": 90,
+      "n": 611
+    },
+    "Dda3937": {
+      "our": "beril_Dda3937",
+      "auc": 0.5023041474654378,
+      "ess": 21,
+      "n": 238
+    },
+    "pseudo3_N2E3": {
+      "our": "beril_pseudo3_N2E3",
+      "auc": 0.510042735042735,
+      "ess": 45,
+      "n": 565
+    },
+    "psRCH2": {
+      "our": "beril_psRCH2",
+      "auc": 0.5545020797651089,
+      "ess": 61,
+      "n": 597
+    },
+    "Putida": {
+      "our": "beril_Putida",
+      "auc": 0.4736051663287527,
+      "ess": 46,
+      "n": 625
+    },
+    "Methanococcus_S2": {
+      "our": "beril_Methanococcus_S2",
+      "auc": 0.47847025495750706,
+      "ess": 10,
+      "n": 363
+    },
+    "Smeli": {
+      "our": "beril_Smeli",
+      "auc": 0.6091228070175438,
+      "ess": 38,
+      "n": 413
+    },
+    "PV4": {
+      "our": "beril_PV4",
+      "auc": 0.4942040388145817,
+      "ess": 62,
+      "n": 677
+    },
+    "SB2B": {
+      "our": "beril_SB2B",
+      "auc": 0.507537688442211,
+      "ess": 46,
+      "n": 643
+    }
+  },
+  "self_test_mean_auc": 0.5153493179401532,
+  "transfer_same_division_mean": 0.42437777777777774,
+  "transfer_cross_division_mean": 0.39695238095238095,
+  "transfer_rows": [
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "pseudo1_N1B4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 231,
+      "ess_in_target": 104,
+      "auc": 0.519
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "pseudo13_GW456_L13",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 244,
+      "ess_in_target": 66,
+      "auc": 0.428
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "SyringaeB728a",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 233,
+      "ess_in_target": 70,
+      "auc": 0.418
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "RalstoniaPSI07",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 276,
+      "ess_in_target": 102,
+      "auc": 0.315
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "SyringaeB728a_mexBdelta",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 233,
+      "ess_in_target": 75,
+      "auc": 0.362
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "acidovorax_3H11",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 244,
+      "ess_in_target": 105,
+      "auc": 0.408
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "RalstoniaGMI1000",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 283,
+      "ess_in_target": 120,
+      "auc": 0.347
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "pseudo5_N2C3_1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 254,
+      "ess_in_target": 72,
+      "auc": 0.437
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "WCS417",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 238,
+      "ess_in_target": 110,
+      "auc": 0.467
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "pseudo6_N2E2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 250,
+      "ess_in_target": 80,
+      "auc": 0.366
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "Burk376",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 445,
+      "ess_in_target": 158,
+      "auc": 0.464
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "Cup4G11",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 305,
+      "ess_in_target": 111,
+      "auc": 0.409
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "HerbieS",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 278,
+      "ess_in_target": 109,
+      "auc": 0.4
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "RalstoniaUW163",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 269,
+      "ess_in_target": 122,
+      "auc": 0.327
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "pseudo3_N2E3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 238,
+      "ess_in_target": 66,
+      "auc": 0.426
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "RalstoniaBSBF1503",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 270,
+      "ess_in_target": 115,
+      "auc": 0.341
+    },
+    {
+      "source": "BFirm",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6634926338483651,
+      "target": "Putida",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 239,
+      "ess_in_target": 60,
+      "auc": 0.42
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "MR1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 282,
+      "ess_in_target": 57,
+      "auc": 0.529
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "pseudo1_N1B4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 286,
+      "ess_in_target": 148,
+      "auc": 0.459
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "pseudo13_GW456_L13",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 277,
+      "ess_in_target": 91,
+      "auc": 0.422
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "ANA3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 284,
+      "ess_in_target": 70,
+      "auc": 0.582
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "BFirm",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n_joinable": 255,
+      "ess_in_target": 119,
+      "auc": 0.575
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "SyringaeB728a",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 288,
+      "ess_in_target": 105,
+      "auc": 0.341
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "DdiaME23",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 437,
+      "ess_in_target": 75,
+      "auc": 0.414
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "RalstoniaPSI07",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n_joinable": 222,
+      "ess_in_target": 78,
+      "auc": 0.3
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "SyringaeB728a_mexBdelta",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 288,
+      "ess_in_target": 109,
+      "auc": 0.326
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "Ddia6719",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 439,
+      "ess_in_target": 88,
+      "auc": 0.49
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "Marino",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 210,
+      "ess_in_target": 90,
+      "auc": 0.323
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "acidovorax_3H11",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n_joinable": 209,
+      "ess_in_target": 97,
+      "auc": 0.381
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "RalstoniaGMI1000",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n_joinable": 227,
+      "ess_in_target": 111,
+      "auc": 0.329
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "pseudo5_N2C3_1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 290,
+      "ess_in_target": 91,
+      "auc": 0.415
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "WCS417",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 286,
+      "ess_in_target": 137,
+      "auc": 0.398
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "pseudo6_N2E2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 283,
+      "ess_in_target": 101,
+      "auc": 0.339
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "Burk376",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n_joinable": 241,
+      "ess_in_target": 100,
+      "auc": 0.409
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "Cup4G11",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n_joinable": 233,
+      "ess_in_target": 90,
+      "auc": 0.345
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "Keio",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 499,
+      "ess_in_target": 49,
+      "auc": 0.543
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "HerbieS",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n_joinable": 218,
+      "ess_in_target": 96,
+      "auc": 0.374
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "Dda3937",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 443,
+      "ess_in_target": 92,
+      "auc": 0.432
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "RalstoniaUW163",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n_joinable": 215,
+      "ess_in_target": 99,
+      "auc": 0.28
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "pseudo3_N2E3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 289,
+      "ess_in_target": 90,
+      "auc": 0.39
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "psRCH2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 238,
+      "ess_in_target": 94,
+      "auc": 0.384
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "RalstoniaBSBF1503",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n_joinable": 216,
+      "ess_in_target": 99,
+      "auc": 0.354
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "Putida",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 272,
+      "ess_in_target": 85,
+      "auc": 0.385
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "PV4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 284,
+      "ess_in_target": 92,
+      "auc": 0.569
+    },
+    {
+      "source": "Koxy",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6223715077841757,
+      "target": "SB2B",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 278,
+      "ess_in_target": 71,
+      "auc": 0.548
+    },
+    {
+      "source": "Marino",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6094047619047619,
+      "target": "pseudo1_N1B4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 206,
+      "ess_in_target": 90,
+      "auc": 0.52
+    },
+    {
+      "source": "Marino",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6094047619047619,
+      "target": "pseudo13_GW456_L13",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 210,
+      "ess_in_target": 47,
+      "auc": 0.467
+    },
+    {
+      "source": "Marino",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6094047619047619,
+      "target": "pseudo5_N2C3_1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 207,
+      "ess_in_target": 59,
+      "auc": 0.505
+    },
+    {
+      "source": "Marino",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6094047619047619,
+      "target": "pseudo6_N2E2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 202,
+      "ess_in_target": 62,
+      "auc": 0.447
+    },
+    {
+      "source": "Marino",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6094047619047619,
+      "target": "pseudo3_N2E3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 208,
+      "ess_in_target": 41,
+      "auc": 0.413
+    },
+    {
+      "source": "Marino",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6094047619047619,
+      "target": "psRCH2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 215,
+      "ess_in_target": 56,
+      "auc": 0.517
+    },
+    {
+      "source": "Marino",
+      "source_division": "Gammaproteobacteria",
+      "source_self_auc": 0.6094047619047619,
+      "target": "Putida",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n_joinable": 202,
+      "ess_in_target": 47,
+      "auc": 0.538
+    },
+    {
+      "source": "Smeli",
+      "source_division": "Alphaproteobacteria",
+      "source_self_auc": 0.6091228070175438,
+      "target": "Dino",
+      "target_division": "Alphaproteobacteria",
+      "same_division": true,
+      "n_joinable": 222,
+      "ess_in_target": 83,
+      "auc": 0.295
+    },
+    {
+      "source": "Smeli",
+      "source_division": "Alphaproteobacteria",
+      "source_self_auc": 0.6091228070175438,
+      "target": "Caulo",
+      "target_division": "Alphaproteobacteria",
+      "same_division": true,
+      "n_joinable": 223,
+      "ess_in_target": 50,
+      "auc": 0.407
+    },
+    {
+      "source": "Smeli",
+      "source_division": "Alphaproteobacteria",
+      "source_self_auc": 0.6091228070175438,
+      "target": "Phaeo",
+      "target_division": "Alphaproteobacteria",
+      "same_division": true,
+      "n_joinable": 249,
+      "ess_in_target": 96,
+      "auc": 0.451
+    },
+    {
+      "source": "Smeli",
+      "source_division": "Alphaproteobacteria",
+      "source_self_auc": 0.6091228070175438,
+      "target": "azobra",
+      "target_division": "Alphaproteobacteria",
+      "same_division": true,
+      "n_joinable": 228,
+      "ess_in_target": 95,
+      "auc": 0.425
+    },
+    {
+      "source": "Smeli",
+      "source_division": "Alphaproteobacteria",
+      "source_self_auc": 0.6091228070175438,
+      "target": "pseudo5_N2C3_1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 203,
+      "ess_in_target": 59,
+      "auc": 0.44
+    },
+    {
+      "source": "Smeli",
+      "source_division": "Alphaproteobacteria",
+      "source_self_auc": 0.6091228070175438,
+      "target": "pseudo6_N2E2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 202,
+      "ess_in_target": 64,
+      "auc": 0.346
+    },
+    {
+      "source": "Smeli",
+      "source_division": "Alphaproteobacteria",
+      "source_self_auc": 0.6091228070175438,
+      "target": "pseudo3_N2E3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n_joinable": 203,
+      "ess_in_target": 60,
+      "auc": 0.36
+    },
+    {
+      "source": "HerbieS",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6005859375,
+      "target": "BFirm",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 233,
+      "ess_in_target": 85,
+      "auc": 0.514
+    },
+    {
+      "source": "HerbieS",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6005859375,
+      "target": "RalstoniaPSI07",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 218,
+      "ess_in_target": 66,
+      "auc": 0.342
+    },
+    {
+      "source": "HerbieS",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6005859375,
+      "target": "RalstoniaGMI1000",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 218,
+      "ess_in_target": 77,
+      "auc": 0.373
+    },
+    {
+      "source": "HerbieS",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6005859375,
+      "target": "Burk376",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 228,
+      "ess_in_target": 83,
+      "auc": 0.505
+    },
+    {
+      "source": "HerbieS",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6005859375,
+      "target": "Cup4G11",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 201,
+      "ess_in_target": 59,
+      "auc": 0.418
+    },
+    {
+      "source": "HerbieS",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6005859375,
+      "target": "RalstoniaUW163",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 212,
+      "ess_in_target": 78,
+      "auc": 0.299
+    },
+    {
+      "source": "HerbieS",
+      "source_division": "Betaproteobacteria",
+      "source_self_auc": 0.6005859375,
+      "target": "RalstoniaBSBF1503",
+      "target_division": "Betaproteobacteria",
+      "same_division": true,
+      "n_joinable": 212,
+      "ess_in_target": 76,
+      "auc": 0.361
+    }
+  ]
+}
