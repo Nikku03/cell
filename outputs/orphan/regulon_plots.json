@@ -1,0 +1,43 @@
+{
+  "n_tf": 211,
+  "n_targets": 1847,
+  "n_edges": 4670,
+  "effect_split": {
+    "repressor": 2199,
+    "activator": 2446,
+    "unknown": 25
+  },
+  "top_regulators": {
+    "CRP": 531,
+    "FNR": 302,
+    "Fis": 233,
+    "IHF": 230,
+    "H-NS": 194,
+    "ArcA": 180,
+    "Fur": 130,
+    "NarL": 124,
+    "Lrp": 106,
+    "NsrR": 84,
+    "FlhDC": 82,
+    "Cra": 79,
+    "CpxR": 70,
+    "LexA": 61,
+    "PhoB": 60,
+    "PhoP": 56,
+    "NarP": 51,
+    "NtrC": 50,
+    "MarA": 48,
+    "ModE": 46
+  },
+  "median_targets": 7,
+  "mean_inputs_per_gene": 2.53,
+  "max_inputs": 15,
+  "genome_base_essential": 0.169,
+  "essential_rate_by_connectivity": {
+    "1-2\n(n=23)": 0.304,
+    "3-5\n(n=31)": 0.226,
+    "6-15\n(n=53)": 0.189,
+    "16-50\n(n=18)": 0.167,
+    "51-+\n(n=11)": 0.455
+  }
+}
