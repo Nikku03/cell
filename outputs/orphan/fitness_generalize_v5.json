@@ -1,0 +1,2362 @@
+{
+  "mtub_self": {
+    "auc": 0.731544665012407,
+    "essCov": 0.0,
+    "absent_only_auc": 0.7588077429501481,
+    "n": 3638,
+    "ess": 760
+  },
+  "self_test_all": {
+    "ANA3": {
+      "our": "beril_ANA3",
+      "auc": 0.9034746765572508,
+      "essCov": 0.7987804878048781,
+      "n": 3891,
+      "ess": 820
+    },
+    "BFirm": {
+      "our": "beril_BFirm",
+      "auc": 0.79225368828513,
+      "essCov": 0.556640625,
+      "n": 5983,
+      "ess": 2560
+    },
+    "Btheta": {
+      "our": "beril_Btheta",
+      "auc": 0.9121579629596747,
+      "essCov": 0.8341708542713567,
+      "n": 2295,
+      "ess": 597
+    },
+    "Burk376": {
+      "our": "beril_Burk376",
+      "auc": 0.8069028382812949,
+      "essCov": 0.5350467289719626,
+      "n": 5549,
+      "ess": 2140
+    },
+    "Caulo": {
+      "our": "beril_Caulo",
+      "auc": 0.9030186519569791,
+      "essCov": 0.7941176470588235,
+      "n": 2680,
+      "ess": 646
+    },
+    "Cola": {
+      "our": "beril_Cola",
+      "auc": 0.931232597986721,
+      "essCov": 0.8540372670807453,
+      "n": 2964,
+      "ess": 644
+    },
+    "Cup4G11": {
+      "our": "beril_Cup4G11",
+      "auc": 0.7556498768226488,
+      "essCov": 0.5018610421836228,
+      "n": 5506,
+      "ess": 1612
+    },
+    "Dda3937": {
+      "our": "beril_Dda3937",
+      "auc": 0.8920334544924888,
+      "essCov": 0.7325428194993412,
+      "n": 3943,
+      "ess": 759
+    },
+    "Ddia6719": {
+      "our": "beril_Ddia6719",
+      "auc": 0.9032175528151218,
+      "essCov": 0.7608173076923077,
+      "n": 3876,
+      "ess": 832
+    },
+    "DdiaME23": {
+      "our": "beril_DdiaME23",
+      "auc": 0.9161108195402325,
+      "essCov": 0.7790868924889544,
+      "n": 3864,
+      "ess": 679
+    },
+    "Dino": {
+      "our": "beril_Dino",
+      "auc": 0.882687985169737,
+      "essCov": 0.7704761904761904,
+      "n": 3105,
+      "ess": 1050
+    },
+    "DvH": {
+      "our": "beril_DvH",
+      "auc": 0.9403165327822862,
+      "essCov": 0.8863636363636364,
+      "n": 2514,
+      "ess": 616
+    },
+    "Dyella79": {
+      "our": "beril_Dyella79",
+      "auc": 0.3904644120042925,
+      "essCov": 0.0,
+      "n": 3076,
+      "ess": 733
+    },
+    "HerbieS": {
+      "our": "beril_HerbieS",
+      "auc": 0.7992462540505185,
+      "essCov": 0.6064356435643564,
+      "n": 3856,
+      "ess": 1212
+    },
+    "Kang": {
+      "our": "beril_Kang",
+      "auc": 0.954851640717499,
+      "essCov": 0.9092702169625246,
+      "n": 1928,
+      "ess": 507
+    },
+    "Keio": {
+      "our": "beril_Keio",
+      "auc": 0.8727927228354319,
+      "essCov": 0.7586776859504132,
+      "n": 3585,
+      "ess": 605
+    },
+    "Korea": {
+      "our": "beril_Korea",
+      "auc": 0.8976272697554162,
+      "essCov": 0.7763975155279503,
+      "n": 2895,
+      "ess": 805
+    },
+    "Koxy": {
+      "our": "beril_Koxy",
+      "auc": 0.8103078417887531,
+      "essCov": 0.588474025974026,
+      "n": 4480,
+      "ess": 1232
+    },
+    "MR1": {
+      "our": "beril_MR1",
+      "auc": 0.9107019379917397,
+      "essCov": 0.8051750380517504,
+      "n": 3589,
+      "ess": 657
+    },
+    "Magneto": {
+      "our": "beril_Magneto",
+      "auc": 0.9099995672556798,
+      "essCov": 0.8280851063829787,
+      "n": 2650,
+      "ess": 1175
+    },
+    "Marino": {
+      "our": "beril_Marino",
+      "auc": 0.8847993722132165,
+      "essCov": 0.7559241706161137,
+      "n": 3142,
+      "ess": 844
+    },
+    "Methanococcus_JJ": {
+      "our": "beril_Methanococcus_JJ",
+      "auc": 0.9844357118599963,
+      "essCov": 0.9672131147540983,
+      "n": 1605,
+      "ess": 366
+    },
+    "Methanococcus_S2": {
+      "our": "beril_Methanococcus_S2",
+      "auc": 0.9634802210053046,
+      "essCov": 0.9684418145956607,
+      "n": 1634,
+      "ess": 507
+    },
+    "Miya": {
+      "our": "beril_Miya",
+      "auc": 0.9288517040459909,
+      "essCov": 0.8652173913043478,
+      "n": 2553,
+      "ess": 690
+    },
+    "PS": {
+      "our": "beril_PS",
+      "auc": 0.8892315161376829,
+      "essCov": 0.7796610169491526,
+      "n": 2650,
+      "ess": 1003
+    },
+    "PV4": {
+      "our": "beril_PV4",
+      "auc": 0.899774756701931,
+      "essCov": 0.7998046875,
+      "n": 3458,
+      "ess": 1024
+    },
+    "Pedo557": {
+      "our": "beril_Pedo557",
+      "auc": 0.9349497736983489,
+      "essCov": 0.8483412322274881,
+      "n": 3003,
+      "ess": 633
+    },
+    "Phaeo": {
+      "our": "beril_Phaeo",
+      "auc": 0.8545243503730182,
+      "essCov": 0.7308868501529052,
+      "n": 3065,
+      "ess": 981
+    },
+    "Ponti": {
+      "our": "beril_Ponti",
+      "auc": 0.9159984505963203,
+      "essCov": 0.8353658536585366,
+      "n": 2789,
+      "ess": 656
+    },
+    "Putida": {
+      "our": "beril_Putida",
+      "auc": 0.8772748441899341,
+      "essCov": 0.7393675027262814,
+      "n": 4715,
+      "ess": 917
+    },
+    "RalstoniaBSBF1503": {
+      "our": "beril_RalstoniaBSBF1503",
+      "auc": 0.9310703313518922,
+      "essCov": 0.7444529456771232,
+      "n": 4557,
+      "ess": 1307
+    },
+    "RalstoniaGMI1000": {
+      "our": "beril_RalstoniaGMI1000",
+      "auc": 0.9135987595906344,
+      "essCov": 0.7105069801616458,
+      "n": 4445,
+      "ess": 1361
+    },
+    "RalstoniaPSI07": {
+      "our": "beril_RalstoniaPSI07",
+      "auc": 0.9301784319861489,
+      "essCov": 0.7763794772507261,
+      "n": 4343,
+      "ess": 1033
+    },
+    "RalstoniaUW163": {
+      "our": "beril_RalstoniaUW163",
+      "auc": 0.9169058435399738,
+      "essCov": 0.7307968413496052,
+      "n": 4519,
+      "ess": 1393
+    },
+    "SB2B": {
+      "our": "beril_SB2B",
+      "auc": 0.899039206059987,
+      "essCov": 0.7812041116005873,
+      "n": 3355,
+      "ess": 681
+    },
+    "Smeli": {
+      "our": "beril_Smeli",
+      "auc": 0.8193331609543373,
+      "essCov": 0.6167854315122724,
+      "n": 4221,
+      "ess": 1263
+    },
+    "SynE": {
+      "our": "beril_SynE",
+      "auc": 0.9493983522757216,
+      "essCov": 0.9059602649006623,
+      "n": 1509,
+      "ess": 755
+    },
+    "SyringaeB728a": {
+      "our": "beril_SyringaeB728a",
+      "auc": 0.8868281219228542,
+      "essCov": 0.7245724572457246,
+      "n": 5069,
+      "ess": 1111
+    },
+    "SyringaeB728a_mexBdelta": {
+      "our": "beril_SyringaeB728a_mexBdelta",
+      "auc": 0.8999492810224526,
+      "essCov": 0.7227891156462585,
+      "n": 5069,
+      "ess": 1176
+    },
+    "WCS417": {
+      "our": "beril_WCS417",
+      "auc": 0.8141634055072876,
+      "essCov": 0.6214160327677004,
+      "n": 5055,
+      "ess": 1709
+    },
+    "acidovorax_3H11": {
+      "our": "beril_acidovorax_3H11",
+      "auc": 0.8467536977420356,
+      "essCov": 0.6941580756013745,
+      "n": 3633,
+      "ess": 1164
+    },
+    "azobra": {
+      "our": "beril_azobra",
+      "auc": 0.8394647966969763,
+      "essCov": 0.6613995485327314,
+      "n": 3780,
+      "ess": 1329
+    },
+    "psRCH2": {
+      "our": "beril_psRCH2",
+      "auc": 0.8730361441421874,
+      "essCov": 0.7571428571428571,
+      "n": 3681,
+      "ess": 1050
+    },
+    "pseudo13_GW456_L13": {
+      "our": "beril_pseudo13_GW456_L13",
+      "auc": 0.848300507230736,
+      "essCov": 0.6839024390243903,
+      "n": 4641,
+      "ess": 1025
+    },
+    "pseudo1_N1B4": {
+      "our": "beril_pseudo1_N1B4",
+      "auc": 0.828437368390464,
+      "essCov": 0.6554832248372559,
+      "n": 5004,
+      "ess": 1997
+    },
+    "pseudo3_N2E3": {
+      "our": "beril_pseudo3_N2E3",
+      "auc": 0.8822221104445095,
+      "essCov": 0.7538126361655774,
+      "n": 5206,
+      "ess": 918
+    },
+    "pseudo5_N2C3_1": {
+      "our": "beril_pseudo5_N2C3_1",
+      "auc": 0.7954979307480112,
+      "essCov": 0.5897821187077386,
+      "n": 5643,
+      "ess": 1331
+    },
+    "pseudo6_N2E2": {
+      "our": "beril_pseudo6_N2E2",
+      "auc": 0.8485429840467174,
+      "essCov": 0.6689478186484175,
+      "n": 5413,
+      "ess": 1169
+    },
+    "MycoTube": {
+      "our": "mtub",
+      "auc": 0.7785560147763432,
+      "essCov": 0.0,
+      "n": 3638,
+      "ess": 760
+    }
+  },
+  "self_mean_auc": 0.8718294986387737,
+  "self_mean_essCov": 0.7176769947461846,
+  "transfer_rows": [
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "ANA3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 372,
+      "ess": 172,
+      "auc": 0.726,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "BFirm",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 512,
+      "ess": 272,
+      "auc": 0.602,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Btheta",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 262,
+      "ess": 143,
+      "auc": 0.702,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Burk376",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 490,
+      "ess": 255,
+      "auc": 0.692,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Caulo",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 417,
+      "ess": 191,
+      "auc": 0.738,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Cola",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 331,
+      "ess": 185,
+      "auc": 0.776,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Cup4G11",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 507,
+      "ess": 254,
+      "auc": 0.71,
+      "essCov": 0.063
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Dda3937",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 383,
+      "ess": 162,
+      "auc": 0.756,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Ddia6719",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 390,
+      "ess": 176,
+      "auc": 0.755,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "DdiaME23",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 380,
+      "ess": 165,
+      "auc": 0.773,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Dino",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 375,
+      "ess": 222,
+      "auc": 0.736,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "DvH",
+      "target_division": "Deltaproteobacteria",
+      "same_division": false,
+      "n": 294,
+      "ess": 161,
+      "auc": 0.72,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "HerbieS",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 411,
+      "ess": 207,
+      "auc": 0.747,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Kang",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 316,
+      "ess": 170,
+      "auc": 0.782,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Keio",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 410,
+      "ess": 150,
+      "auc": 0.737,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Korea",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 388,
+      "ess": 191,
+      "auc": 0.76,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Koxy",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 429,
+      "ess": 200,
+      "auc": 0.665,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "MR1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 365,
+      "ess": 165,
+      "auc": 0.726,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Magneto",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 400,
+      "ess": 286,
+      "auc": 0.787,
+      "essCov": 0.073
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Marino",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 423,
+      "ess": 219,
+      "auc": 0.777,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Miya",
+      "target_division": "Deltaproteobacteria",
+      "same_division": false,
+      "n": 279,
+      "ess": 142,
+      "auc": 0.688,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "PS",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 364,
+      "ess": 221,
+      "auc": 0.733,
+      "essCov": 0.054
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "PV4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 360,
+      "ess": 189,
+      "auc": 0.716,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Pedo557",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 337,
+      "ess": 180,
+      "auc": 0.777,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Phaeo",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 379,
+      "ess": 211,
+      "auc": 0.776,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Ponti",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 351,
+      "ess": 177,
+      "auc": 0.763,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Putida",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 457,
+      "ess": 202,
+      "auc": 0.724,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "RalstoniaBSBF1503",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 448,
+      "ess": 241,
+      "auc": 0.724,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "RalstoniaGMI1000",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 437,
+      "ess": 236,
+      "auc": 0.709,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "RalstoniaPSI07",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 453,
+      "ess": 223,
+      "auc": 0.769,
+      "essCov": 0.085
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "RalstoniaUW163",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 447,
+      "ess": 251,
+      "auc": 0.758,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "SB2B",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 365,
+      "ess": 176,
+      "auc": 0.729,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "Smeli",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 441,
+      "ess": 196,
+      "auc": 0.666,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "SynE",
+      "target_division": "Cyanobacteria",
+      "same_division": false,
+      "n": 332,
+      "ess": 222,
+      "auc": 0.779,
+      "essCov": 0.185
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "SyringaeB728a",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 450,
+      "ess": 216,
+      "auc": 0.699,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "SyringaeB728a_mexBdelta",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 450,
+      "ess": 219,
+      "auc": 0.708,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "WCS417",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 492,
+      "ess": 259,
+      "auc": 0.658,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "acidovorax_3H11",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 407,
+      "ess": 219,
+      "auc": 0.726,
+      "essCov": 0.068
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "azobra",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 447,
+      "ess": 238,
+      "auc": 0.725,
+      "essCov": 0.08
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "psRCH2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 429,
+      "ess": 228,
+      "auc": 0.727,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "pseudo13_GW456_L13",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 483,
+      "ess": 203,
+      "auc": 0.706,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "pseudo1_N1B4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 479,
+      "ess": 263,
+      "auc": 0.681,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "pseudo3_N2E3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 476,
+      "ess": 203,
+      "auc": 0.716,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "pseudo5_N2C3_1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 486,
+      "ess": 200,
+      "auc": 0.715,
+      "essCov": 0.0
+    },
+    {
+      "source": "MycoTube",
+      "source_division": "Actinomycetes",
+      "target": "pseudo6_N2E2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 468,
+      "ess": 217,
+      "auc": 0.748,
+      "essCov": 0.0
+    },
+    {
+      "source": "Methanococcus_JJ",
+      "source_division": "Euryarchaeota",
+      "target": "Methanococcus_S2",
+      "target_division": "Euryarchaeota",
+      "same_division": true,
+      "n": 1576,
+      "ess": 502,
+      "auc": 0.841,
+      "essCov": 0.0
+    },
+    {
+      "source": "Methanococcus_S2",
+      "source_division": "Euryarchaeota",
+      "target": "Methanococcus_JJ",
+      "target_division": "Euryarchaeota",
+      "same_division": true,
+      "n": 1576,
+      "ess": 360,
+      "auc": 0.819,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "ANA3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1142,
+      "ess": 441,
+      "auc": 0.843,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "BFirm",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 808,
+      "ess": 454,
+      "auc": 0.726,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Btheta",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 361,
+      "ess": 193,
+      "auc": 0.813,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Burk376",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 773,
+      "ess": 449,
+      "auc": 0.76,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Caulo",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 562,
+      "ess": 262,
+      "auc": 0.842,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Cola",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 460,
+      "ess": 222,
+      "auc": 0.87,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Cup4G11",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 844,
+      "ess": 436,
+      "auc": 0.803,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Dda3937",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 856,
+      "ess": 380,
+      "auc": 0.815,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Ddia6719",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 857,
+      "ess": 376,
+      "auc": 0.799,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "DdiaME23",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 855,
+      "ess": 356,
+      "auc": 0.812,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Dino",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 533,
+      "ess": 317,
+      "auc": 0.793,
+      "essCov": 0.404
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "DvH",
+      "target_division": "Deltaproteobacteria",
+      "same_division": false,
+      "n": 391,
+      "ess": 216,
+      "auc": 0.859,
+      "essCov": 0.343
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "HerbieS",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 798,
+      "ess": 440,
+      "auc": 0.827,
+      "essCov": 0.05
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Keio",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 883,
+      "ess": 325,
+      "auc": 0.817,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Korea",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 562,
+      "ess": 283,
+      "auc": 0.858,
+      "essCov": 0.35
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Koxy",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 906,
+      "ess": 423,
+      "auc": 0.775,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "MR1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1082,
+      "ess": 391,
+      "auc": 0.87,
+      "essCov": 0.046
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Magneto",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 561,
+      "ess": 376,
+      "auc": 0.783,
+      "essCov": 0.556
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Marino",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1024,
+      "ess": 490,
+      "auc": 0.854,
+      "essCov": 0.645
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Miya",
+      "target_division": "Deltaproteobacteria",
+      "same_division": false,
+      "n": 372,
+      "ess": 211,
+      "auc": 0.82,
+      "essCov": 0.27
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "PS",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 815,
+      "ess": 457,
+      "auc": 0.822,
+      "essCov": 0.317
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "PV4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1154,
+      "ess": 531,
+      "auc": 0.801,
+      "essCov": 0.017
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Pedo557",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 462,
+      "ess": 224,
+      "auc": 0.871,
+      "essCov": 0.085
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Phaeo",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 572,
+      "ess": 316,
+      "auc": 0.832,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Ponti",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 503,
+      "ess": 228,
+      "auc": 0.889,
+      "essCov": 0.167
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Putida",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 976,
+      "ess": 436,
+      "auc": 0.837,
+      "essCov": 0.083
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "RalstoniaBSBF1503",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 808,
+      "ess": 439,
+      "auc": 0.813,
+      "essCov": 0.212
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "RalstoniaGMI1000",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 817,
+      "ess": 452,
+      "auc": 0.8,
+      "essCov": 0.208
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "RalstoniaPSI07",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 811,
+      "ess": 419,
+      "auc": 0.819,
+      "essCov": 0.205
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "RalstoniaUW163",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 804,
+      "ess": 445,
+      "auc": 0.811,
+      "essCov": 0.602
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "SB2B",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1133,
+      "ess": 434,
+      "auc": 0.859,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "Smeli",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 591,
+      "ess": 309,
+      "auc": 0.795,
+      "essCov": 0.068
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "SynE",
+      "target_division": "Cyanobacteria",
+      "same_division": false,
+      "n": 398,
+      "ess": 246,
+      "auc": 0.84,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "SyringaeB728a",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 967,
+      "ess": 458,
+      "auc": 0.809,
+      "essCov": 0.203
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "SyringaeB728a_mexBdelta",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 967,
+      "ess": 461,
+      "auc": 0.815,
+      "essCov": 0.039
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "WCS417",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1012,
+      "ess": 557,
+      "auc": 0.758,
+      "essCov": 0.056
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "acidovorax_3H11",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 774,
+      "ess": 433,
+      "auc": 0.814,
+      "essCov": 0.021
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "azobra",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 597,
+      "ess": 338,
+      "auc": 0.773,
+      "essCov": 0.03
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "psRCH2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1066,
+      "ess": 522,
+      "auc": 0.814,
+      "essCov": 0.077
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "pseudo13_GW456_L13",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 995,
+      "ess": 443,
+      "auc": 0.819,
+      "essCov": 0.192
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "pseudo1_N1B4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1006,
+      "ess": 565,
+      "auc": 0.762,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "pseudo3_N2E3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1038,
+      "ess": 447,
+      "auc": 0.831,
+      "essCov": 0.051
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "pseudo5_N2C3_1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1031,
+      "ess": 455,
+      "auc": 0.824,
+      "essCov": 0.026
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "pseudo6_N2E2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": true,
+      "n": 1013,
+      "ess": 466,
+      "auc": 0.831,
+      "essCov": 0.0
+    },
+    {
+      "source": "Kang",
+      "source_division": "Gammaproteobacteria",
+      "target": "MycoTube",
+      "target_division": "Actinomycetes",
+      "same_division": false,
+      "n": 302,
+      "ess": 157,
+      "auc": 0.745,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "ANA3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 423,
+      "ess": 197,
+      "auc": 0.762,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "BFirm",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 482,
+      "ess": 256,
+      "auc": 0.684,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Btheta",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 317,
+      "ess": 177,
+      "auc": 0.687,
+      "essCov": 0.056
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Burk376",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 471,
+      "ess": 260,
+      "auc": 0.734,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Caulo",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 398,
+      "ess": 199,
+      "auc": 0.764,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Cola",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 353,
+      "ess": 200,
+      "auc": 0.805,
+      "essCov": 0.1
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Cup4G11",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 467,
+      "ess": 257,
+      "auc": 0.784,
+      "essCov": 0.043
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Dda3937",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 448,
+      "ess": 202,
+      "auc": 0.777,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Ddia6719",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 437,
+      "ess": 209,
+      "auc": 0.745,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "DdiaME23",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 438,
+      "ess": 203,
+      "auc": 0.794,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Dino",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 407,
+      "ess": 241,
+      "auc": 0.759,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "DvH",
+      "target_division": "Deltaproteobacteria",
+      "same_division": false,
+      "n": 390,
+      "ess": 217,
+      "auc": 0.754,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "HerbieS",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 432,
+      "ess": 237,
+      "auc": 0.767,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Kang",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 398,
+      "ess": 214,
+      "auc": 0.818,
+      "essCov": 0.084
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Keio",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 427,
+      "ess": 174,
+      "auc": 0.734,
+      "essCov": 0.075
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Korea",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 382,
+      "ess": 212,
+      "auc": 0.757,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Koxy",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 457,
+      "ess": 221,
+      "auc": 0.722,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "MR1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 414,
+      "ess": 196,
+      "auc": 0.773,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Magneto",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 426,
+      "ess": 303,
+      "auc": 0.854,
+      "essCov": 0.868
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Marino",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 453,
+      "ess": 257,
+      "auc": 0.8,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Miya",
+      "target_division": "Deltaproteobacteria",
+      "same_division": false,
+      "n": 361,
+      "ess": 197,
+      "auc": 0.737,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "PS",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 458,
+      "ess": 287,
+      "auc": 0.793,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "PV4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 414,
+      "ess": 223,
+      "auc": 0.72,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Pedo557",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 372,
+      "ess": 203,
+      "auc": 0.755,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Phaeo",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 412,
+      "ess": 243,
+      "auc": 0.78,
+      "essCov": 0.058
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Ponti",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 387,
+      "ess": 199,
+      "auc": 0.781,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Putida",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 496,
+      "ess": 238,
+      "auc": 0.763,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "RalstoniaBSBF1503",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 430,
+      "ess": 256,
+      "auc": 0.79,
+      "essCov": 0.039
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "RalstoniaGMI1000",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 432,
+      "ess": 259,
+      "auc": 0.8,
+      "essCov": 0.042
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "RalstoniaPSI07",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 435,
+      "ess": 248,
+      "auc": 0.798,
+      "essCov": 0.048
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "RalstoniaUW163",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 428,
+      "ess": 265,
+      "auc": 0.803,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "SB2B",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 418,
+      "ess": 213,
+      "auc": 0.755,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "Smeli",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 442,
+      "ess": 213,
+      "auc": 0.751,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "SyringaeB728a",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 493,
+      "ess": 242,
+      "auc": 0.782,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "SyringaeB728a_mexBdelta",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 493,
+      "ess": 243,
+      "auc": 0.768,
+      "essCov": 0.091
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "WCS417",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 482,
+      "ess": 276,
+      "auc": 0.718,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "acidovorax_3H11",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 407,
+      "ess": 234,
+      "auc": 0.724,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "azobra",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 479,
+      "ess": 259,
+      "auc": 0.757,
+      "essCov": 0.058
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "psRCH2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 482,
+      "ess": 279,
+      "auc": 0.768,
+      "essCov": 0.075
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "pseudo13_GW456_L13",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 484,
+      "ess": 239,
+      "auc": 0.753,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "pseudo1_N1B4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 487,
+      "ess": 289,
+      "auc": 0.738,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "pseudo3_N2E3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 507,
+      "ess": 237,
+      "auc": 0.73,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "pseudo5_N2C3_1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 490,
+      "ess": 236,
+      "auc": 0.753,
+      "essCov": 0.0
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "pseudo6_N2E2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 487,
+      "ess": 259,
+      "auc": 0.771,
+      "essCov": 0.054
+    },
+    {
+      "source": "SynE",
+      "source_division": "Cyanobacteria",
+      "target": "MycoTube",
+      "target_division": "Actinomycetes",
+      "same_division": false,
+      "n": 325,
+      "ess": 177,
+      "auc": 0.665,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "ANA3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 517,
+      "ess": 234,
+      "auc": 0.803,
+      "essCov": 0.244
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "BFirm",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 546,
+      "ess": 321,
+      "auc": 0.676,
+      "essCov": 0.037
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Btheta",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 404,
+      "ess": 196,
+      "auc": 0.815,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Burk376",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 529,
+      "ess": 297,
+      "auc": 0.739,
+      "essCov": 0.195
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Caulo",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 419,
+      "ess": 217,
+      "auc": 0.821,
+      "essCov": 0.166
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Cola",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 365,
+      "ess": 203,
+      "auc": 0.838,
+      "essCov": 0.709
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Cup4G11",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 511,
+      "ess": 286,
+      "auc": 0.789,
+      "essCov": 0.601
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Dda3937",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 547,
+      "ess": 231,
+      "auc": 0.843,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Ddia6719",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 537,
+      "ess": 243,
+      "auc": 0.783,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "DdiaME23",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 554,
+      "ess": 227,
+      "auc": 0.804,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Dino",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 415,
+      "ess": 235,
+      "auc": 0.819,
+      "essCov": 0.209
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "HerbieS",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 531,
+      "ess": 287,
+      "auc": 0.819,
+      "essCov": 0.714
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Kang",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 396,
+      "ess": 220,
+      "auc": 0.847,
+      "essCov": 0.341
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Keio",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 546,
+      "ess": 208,
+      "auc": 0.812,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Korea",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 411,
+      "ess": 234,
+      "auc": 0.784,
+      "essCov": 0.41
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Koxy",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 549,
+      "ess": 260,
+      "auc": 0.772,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "MR1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 515,
+      "ess": 215,
+      "auc": 0.82,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Magneto",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 522,
+      "ess": 352,
+      "auc": 0.794,
+      "essCov": 0.719
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Marino",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 513,
+      "ess": 276,
+      "auc": 0.851,
+      "essCov": 0.736
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Miya",
+      "target_division": "Deltaproteobacteria",
+      "same_division": true,
+      "n": 2120,
+      "ess": 616,
+      "auc": 0.81,
+      "essCov": 0.099
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "PS",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 546,
+      "ess": 315,
+      "auc": 0.821,
+      "essCov": 0.73
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "PV4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 499,
+      "ess": 253,
+      "auc": 0.795,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Pedo557",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 360,
+      "ess": 203,
+      "auc": 0.828,
+      "essCov": 0.099
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Phaeo",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 433,
+      "ess": 247,
+      "auc": 0.806,
+      "essCov": 0.555
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Ponti",
+      "target_division": "Bacteroidetes",
+      "same_division": false,
+      "n": 368,
+      "ess": 203,
+      "auc": 0.835,
+      "essCov": 0.325
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Putida",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 543,
+      "ess": 247,
+      "auc": 0.832,
+      "essCov": 0.457
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "RalstoniaBSBF1503",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 502,
+      "ess": 289,
+      "auc": 0.806,
+      "essCov": 0.689
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "RalstoniaGMI1000",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 498,
+      "ess": 288,
+      "auc": 0.783,
+      "essCov": 0.635
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "RalstoniaPSI07",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 505,
+      "ess": 276,
+      "auc": 0.829,
+      "essCov": 0.623
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "RalstoniaUW163",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 501,
+      "ess": 312,
+      "auc": 0.789,
+      "essCov": 0.667
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "SB2B",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 500,
+      "ess": 231,
+      "auc": 0.811,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "Smeli",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 493,
+      "ess": 235,
+      "auc": 0.746,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "SynE",
+      "target_division": "Cyanobacteria",
+      "same_division": false,
+      "n": 394,
+      "ess": 255,
+      "auc": 0.798,
+      "essCov": 0.263
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "SyringaeB728a",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 538,
+      "ess": 260,
+      "auc": 0.817,
+      "essCov": 0.692
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "SyringaeB728a_mexBdelta",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 538,
+      "ess": 271,
+      "auc": 0.813,
+      "essCov": 0.664
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "WCS417",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 543,
+      "ess": 316,
+      "auc": 0.767,
+      "essCov": 0.497
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "acidovorax_3H11",
+      "target_division": "Betaproteobacteria",
+      "same_division": false,
+      "n": 472,
+      "ess": 274,
+      "auc": 0.787,
+      "essCov": 0.679
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "azobra",
+      "target_division": "Alphaproteobacteria",
+      "same_division": false,
+      "n": 542,
+      "ess": 298,
+      "auc": 0.801,
+      "essCov": 0.658
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "psRCH2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 563,
+      "ess": 311,
+      "auc": 0.825,
+      "essCov": 0.691
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "pseudo13_GW456_L13",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 551,
+      "ess": 247,
+      "auc": 0.818,
+      "essCov": 0.049
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "pseudo1_N1B4",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 555,
+      "ess": 323,
+      "auc": 0.747,
+      "essCov": 0.61
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "pseudo3_N2E3",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 562,
+      "ess": 249,
+      "auc": 0.824,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "pseudo5_N2C3_1",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 567,
+      "ess": 259,
+      "auc": 0.807,
+      "essCov": 0.0
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "pseudo6_N2E2",
+      "target_division": "Gammaproteobacteria",
+      "same_division": false,
+      "n": 573,
+      "ess": 292,
+      "auc": 0.815,
+      "essCov": 0.616
+    },
+    {
+      "source": "DvH",
+      "source_division": "Deltaproteobacteria",
+      "target": "MycoTube",
+      "target_division": "Actinomycetes",
+      "same_division": false,
+      "n": 280,
+      "ess": 156,
+      "auc": 0.732,
+      "essCov": 0.0
+    }
+  ],
+  "transfer_same_mean": 0.8180434782608694,
+  "transfer_cross_mean": 0.7714025157232705
+}
