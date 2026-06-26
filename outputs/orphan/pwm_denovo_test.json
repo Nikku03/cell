@@ -1,0 +1,290 @@
+{
+  "n": 40,
+  "W": 20,
+  "mean_auc": 0.555,
+  "median_auc": 0.548,
+  "n_strong": 2,
+  "per_tf": [
+    {
+      "tf": "crp",
+      "n_targets": 530,
+      "auc": 0.513,
+      "consensus": "TTTTGTTGATGAAATTAACG",
+      "infocontent": 7.7
+    },
+    {
+      "tf": "fnr",
+      "n_targets": 302,
+      "auc": 0.483,
+      "consensus": "ATTGTTTAACATCATTAACA",
+      "infocontent": 8.4
+    },
+    {
+      "tf": "fis",
+      "n_targets": 233,
+      "auc": 0.548,
+      "consensus": "GAAAATCAGCAGGATAAAGA",
+      "infocontent": 9.1
+    },
+    {
+      "tf": "arca",
+      "n_targets": 180,
+      "auc": 0.544,
+      "consensus": "AAAATTTACAACAGTGATAA",
+      "infocontent": 8.8
+    },
+    {
+      "tf": "fur",
+      "n_targets": 130,
+      "auc": 0.594,
+      "consensus": "GATAATCATTATCATTATCA",
+      "infocontent": 10.0
+    },
+    {
+      "tf": "narl",
+      "n_targets": 124,
+      "auc": 0.473,
+      "consensus": "TTTTAATGCTGTTGCTGATG",
+      "infocontent": 9.1
+    },
+    {
+      "tf": "lrp",
+      "n_targets": 106,
+      "auc": 0.667,
+      "consensus": "GGATTAAAATCTTATCTTAA",
+      "infocontent": 11.3
+    },
+    {
+      "tf": "nsrr",
+      "n_targets": 84,
+      "auc": 0.444,
+      "consensus": "GCAATGCGCTTAAAAAACAA",
+      "infocontent": 11.0
+    },
+    {
+      "tf": "cra",
+      "n_targets": 79,
+      "auc": 0.48,
+      "consensus": "TCAATGTTGTTGACTATAAC",
+      "infocontent": 10.7
+    },
+    {
+      "tf": "cpxr",
+      "n_targets": 70,
+      "auc": 0.553,
+      "consensus": "ATGGTGAAAAAATTAAGGAA",
+      "infocontent": 10.9
+    },
+    {
+      "tf": "lexa",
+      "n_targets": 61,
+      "auc": 0.675,
+      "consensus": "CTGTATAAATATACAGCATA",
+      "infocontent": 13.0
+    },
+    {
+      "tf": "phob",
+      "n_targets": 60,
+      "auc": 0.466,
+      "consensus": "CCGGCTGCTTTTTTTTATGC",
+      "infocontent": 11.7
+    },
+    {
+      "tf": "phop",
+      "n_targets": 56,
+      "auc": 0.513,
+      "consensus": "TTGCCATCTTTTTATTTATT",
+      "infocontent": 11.8
+    },
+    {
+      "tf": "narp",
+      "n_targets": 51,
+      "auc": 0.54,
+      "consensus": "CTCACAAATGCCTTTCTGCC",
+      "infocontent": 12.0
+    },
+    {
+      "tf": "mara",
+      "n_targets": 48,
+      "auc": 0.545,
+      "consensus": "ATAACCTCTTGATTAAAATA",
+      "infocontent": 11.6
+    },
+    {
+      "tf": "mode",
+      "n_targets": 46,
+      "auc": 0.476,
+      "consensus": "TTGACGGCGACCGCATCACT",
+      "infocontent": 12.6
+    },
+    {
+      "tf": "soxs",
+      "n_targets": 44,
+      "auc": 0.684,
+      "consensus": "ATTATGCCAAGTAAAACAAC",
+      "infocontent": 12.4
+    },
+    {
+      "tf": "oxyr",
+      "n_targets": 43,
+      "auc": 0.645,
+      "consensus": "TATAACCTATTGCTATGATT",
+      "infocontent": 13.4
+    },
+    {
+      "tf": "pdhr",
+      "n_targets": 41,
+      "auc": 0.573,
+      "consensus": "CCGGCTGCTGCTGCTAATTG",
+      "infocontent": 12.0
+    },
+    {
+      "tf": "argr",
+      "n_targets": 38,
+      "auc": 0.713,
+      "consensus": "TAAACGGCATTTTTTTTCAG",
+      "infocontent": 12.3
+    },
+    {
+      "tf": "nagc",
+      "n_targets": 37,
+      "auc": 0.567,
+      "consensus": "TTTCAACGATAAAAAAAGAG",
+      "infocontent": 12.9
+    },
+    {
+      "tf": "slya",
+      "n_targets": 37,
+      "auc": 0.575,
+      "consensus": "AATAATGGATGCTGGTGGAA",
+      "infocontent": 11.8
+    },
+    {
+      "tf": "gadx",
+      "n_targets": 34,
+      "auc": 0.521,
+      "consensus": "ATTTAGAAAAAGATAATAAA",
+      "infocontent": 13.8
+    },
+    {
+      "tf": "gade",
+      "n_targets": 32,
+      "auc": 0.667,
+      "consensus": "GATCTGGTTGGTGATGATAA",
+      "infocontent": 12.7
+    },
+    {
+      "tf": "iscr",
+      "n_targets": 32,
+      "auc": 0.56,
+      "consensus": "CCAGTTTGACCTCGTCAGTA",
+      "infocontent": 12.2
+    },
+    {
+      "tf": "purr",
+      "n_targets": 32,
+      "auc": 0.659,
+      "consensus": "CGGCAAAAATTCGGGCAAAA",
+      "infocontent": 12.7
+    },
+    {
+      "tf": "cysb",
+      "n_targets": 31,
+      "auc": 0.646,
+      "consensus": "TCGCCAAGTTAACAAAGAAA",
+      "infocontent": 12.5
+    },
+    {
+      "tf": "fhla",
+      "n_targets": 30,
+      "auc": 0.663,
+      "consensus": "GAACGTCAGCGACAGTCAGC",
+      "infocontent": 12.7
+    },
+    {
+      "tf": "csgd",
+      "n_targets": 28,
+      "auc": 0.386,
+      "consensus": "GCTTGCGGAAAATTTTTGAA",
+      "infocontent": 13.9
+    },
+    {
+      "tf": "nac",
+      "n_targets": 26,
+      "auc": 0.623,
+      "consensus": "GGGTAATAAATCTTATTGCG",
+      "infocontent": 12.2
+    },
+    {
+      "tf": "rcsb",
+      "n_targets": 26,
+      "auc": 0.79,
+      "consensus": "AATATCAATATCAAGAATTT",
+      "infocontent": 13.9
+    },
+    {
+      "tf": "rob",
+      "n_targets": 26,
+      "auc": 0.355,
+      "consensus": "ATGTAAAAACAAGACAACCT",
+      "infocontent": 13.6
+    },
+    {
+      "tf": "fadr",
+      "n_targets": 23,
+      "auc": 0.549,
+      "consensus": "TAAAAATTAATGGTGAAGGC",
+      "infocontent": 12.4
+    },
+    {
+      "tf": "ompr",
+      "n_targets": 23,
+      "auc": 0.358,
+      "consensus": "TCTTTTACGATTGACCGCTG",
+      "infocontent": 13.5
+    },
+    {
+      "tf": "fliz",
+      "n_targets": 21,
+      "auc": 0.669,
+      "consensus": "AATATTTTTGTTTTGATTCA",
+      "infocontent": 12.8
+    },
+    {
+      "tf": "ydeo",
+      "n_targets": 21,
+      "auc": 0.527,
+      "consensus": "GATTTTTTTTCTCTGTTCGC",
+      "infocontent": 13.4
+    },
+    {
+      "tf": "leuo",
+      "n_targets": 20,
+      "auc": 0.405,
+      "consensus": "ATTTGTGGTAAATATCATTG",
+      "infocontent": 12.3
+    },
+    {
+      "tf": "evga",
+      "n_targets": 19,
+      "auc": 0.652,
+      "consensus": "ATCGATAAAAATATTAATGT",
+      "infocontent": 13.8
+    },
+    {
+      "tf": "mraz",
+      "n_targets": 17,
+      "auc": 0.364,
+      "consensus": "GCCGTAGTTTCCTCAATAAA",
+      "infocontent": 12.5
+    },
+    {
+      "tf": "rutr",
+      "n_targets": 17,
+      "auc": 0.534,
+      "consensus": "AGTCGCAATTTTGCTTGCAT",
+      "infocontent": 12.9
+    }
+  ],
+  "family_consensus_baseline": 0.505
+}
