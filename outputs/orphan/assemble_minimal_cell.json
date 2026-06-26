@@ -1,0 +1,163 @@
+[
+  {
+    "organism": "beril_Putida",
+    "n_genes": 4715,
+    "n_essential": 917,
+    "L1_scaffold": {
+      "n": 262,
+      "essential": 176,
+      "precision": 0.672,
+      "categories": {
+        "cell_division": [
+          15,
+          10
+        ],
+        "replication": [
+          37,
+          19
+        ],
+        "ribosome": [
+          69,
+          59
+        ],
+        "translation": [
+          19,
+          14
+        ],
+        "transcription": [
+          36,
+          27
+        ],
+        "envelope": [
+          51,
+          18
+        ],
+        "tRNA_system": [
+          26,
+          20
+        ],
+        "energy": [
+          9,
+          9
+        ]
+      }
+    },
+    "L2_metabolic": {
+      "n": 194,
+      "essential": 124,
+      "precision": 0.639
+    },
+    "structural_core": {
+      "n": 444,
+      "covers_essentials": 288,
+      "coverage_frac": 0.314
+    },
+    "L3_regulators": {
+      "n_tf": 273,
+      "essential": 53,
+      "effector_families": {
+        "lysr": 107,
+        "merr": 8,
+        "arac": 25,
+        "iclr": 4,
+        "gntr": 19,
+        "sigma": 24,
+        "tetr": 44,
+        "asnc": 13,
+        "arsr": 7,
+        "deor": 2,
+        "ompr": 3,
+        "marr": 7,
+        "lacl": 5,
+        "crp": 4,
+        "rrf2": 1
+      }
+    },
+    "L4_edges": {
+      "n_local_edges": 546,
+      "ffl_motifs": 0,
+      "single_input": 273
+    },
+    "remaining_essentials": 629,
+    "remaining_frac": 0.686
+  },
+  {
+    "organism": "mtub",
+    "n_genes": 3638,
+    "n_essential": 760,
+    "L1_scaffold": {
+      "n": 184,
+      "essential": 107,
+      "precision": 0.582,
+      "categories": {
+        "ribosome": [
+          60,
+          35
+        ],
+        "energy": [
+          8,
+          8
+        ],
+        "envelope": [
+          17,
+          12
+        ],
+        "replication": [
+          29,
+          11
+        ],
+        "transcription": [
+          26,
+          8
+        ],
+        "tRNA_system": [
+          22,
+          18
+        ],
+        "translation": [
+          13,
+          10
+        ],
+        "cell_division": [
+          9,
+          5
+        ]
+      }
+    },
+    "L2_metabolic": {
+      "n": 203,
+      "essential": 137,
+      "precision": 0.675
+    },
+    "structural_core": {
+      "n": 380,
+      "covers_essentials": 238,
+      "coverage_frac": 0.313
+    },
+    "L3_regulators": {
+      "n_tf": 65,
+      "essential": 13,
+      "effector_families": {
+        "sigma": 18,
+        "tetr": 27,
+        "arac": 2,
+        "deor": 1,
+        "arsr": 4,
+        "gntr": 1,
+        "merr": 1,
+        "asnc": 4,
+        "lacl": 2,
+        "ompr": 3,
+        "crp": 1,
+        "lysr": 1
+      }
+    },
+    "L4_edges": {
+      "n_local_edges": 130,
+      "ffl_motifs": 0,
+      "single_input": 65
+    },
+    "remaining_essentials": 522,
+    "remaining_frac": 0.687
+  }
+]
