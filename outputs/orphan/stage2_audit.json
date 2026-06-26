@@ -1,0 +1,62 @@
+[
+  {
+    "org": "Btheta",
+    "model": "MLP",
+    "R_agg": 0.547,
+    "R_genemean": 0.593,
+    "R_resid": 0.237,
+    "defect_AUC": 0.447,
+    "frac_strong_defect": 0.02,
+    "n_eval": 437832
+  },
+  {
+    "org": "Btheta",
+    "model": "XAttn",
+    "R_agg": 0.502,
+    "R_genemean": 0.556,
+    "R_resid": 0.213,
+    "defect_AUC": 0.418,
+    "frac_strong_defect": 0.0232,
+    "n_eval": 437832
+  },
+  {
+    "org": "Keio",
+    "model": "MLP",
+    "R_agg": 0.328,
+    "R_genemean": 0.615,
+    "R_resid": 0.088,
+    "defect_AUC": 0.224,
+    "frac_strong_defect": 0.0355,
+    "n_eval": 118305
+  },
+  {
+    "org": "Keio",
+    "model": "XAttn",
+    "R_agg": 0.415,
+    "R_genemean": 0.713,
+    "R_resid": 0.174,
+    "defect_AUC": 0.535,
+    "frac_strong_defect": 0.0351,
+    "n_eval": 118305
+  },
+  {
+    "org": "Putida",
+    "model": "MLP",
+    "R_agg": 0.549,
+    "R_genemean": 0.688,
+    "R_resid": 0.107,
+    "defect_AUC": 0.524,
+    "frac_strong_defect": 0.0142,
+    "n_eval": 295678
+  },
+  {
+    "org": "Putida",
+    "model": "XAttn",
+    "R_agg": 0.564,
+    "R_genemean": 0.679,
+    "R_resid": 0.134,
+    "defect_AUC": 0.491,
+    "frac_strong_defect": 0.0155,
+    "n_eval": 295678
+  }
+]
