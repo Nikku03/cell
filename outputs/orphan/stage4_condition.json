@@ -1,0 +1,44 @@
+[
+  {
+    "org": "Btheta",
+    "cond_enc": "ESM-XATTN media-only",
+    "R_dc": 0.312,
+    "defect_AUC": 0.604,
+    "n_def": 10997
+  },
+  {
+    "org": "Btheta",
+    "cond_enc": "ESM-XATTN +stress",
+    "R_dc": 0.354,
+    "defect_AUC": 0.6,
+    "n_def": 10997
+  },
+  {
+    "org": "Keio",
+    "cond_enc": "ESM-XATTN media-only",
+    "R_dc": 0.381,
+    "defect_AUC": 0.651,
+    "n_def": 3790
+  },
+  {
+    "org": "Keio",
+    "cond_enc": "ESM-XATTN +stress",
+    "R_dc": 0.423,
+    "defect_AUC": 0.722,
+    "n_def": 3790
+  },
+  {
+    "org": "Putida",
+    "cond_enc": "ESM-XATTN media-only",
+    "R_dc": 0.173,
+    "defect_AUC": 0.599,
+    "n_def": 5609
+  },
+  {
+    "org": "Putida",
+    "cond_enc": "ESM-XATTN +stress",
+    "R_dc": 0.223,
+    "defect_AUC": 0.687,
+    "n_def": 5609
+  }
+]
