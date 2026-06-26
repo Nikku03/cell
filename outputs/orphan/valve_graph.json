@@ -1,0 +1,72 @@
+{
+  "model": "iML1515",
+  "n_genes": 1130,
+  "tf_count": 4,
+  "tf_mapped": 4,
+  "fba_overall": {
+    "called": 97,
+    "tp": 77,
+    "P": 0.794,
+    "R": 0.397
+  },
+  "valve_overall": {
+    "called": 14,
+    "tp": 2,
+    "P": 0.143,
+    "R": 0.01
+  },
+  "per_category": {
+    "metabolic": {
+      "n": 784,
+      "ess": 157,
+      "fba_call": 85,
+      "fba_tp": 71,
+      "valve_call": 13,
+      "valve_tp": 2
+    },
+    "transporter": {
+      "n": 343,
+      "ess": 36,
+      "fba_call": 11,
+      "fba_tp": 5,
+      "valve_call": 1,
+      "valve_tp": 0
+    },
+    "regulator": {
+      "n": 3,
+      "ess": 1,
+      "fba_call": 1,
+      "fba_tp": 1,
+      "valve_call": 0,
+      "valve_tp": 0
+    },
+    "other": {
+      "n": 0,
+      "ess": 0,
+      "fba_call": 0,
+      "fba_tp": 0,
+      "valve_call": 0,
+      "valve_tp": 0
+    }
+  },
+  "valve_only_calls": 8,
+  "valve_only_tp": 0,
+  "valve_only_by_cat": {
+    "metabolic": {
+      "calls": 7,
+      "tp": 0
+    },
+    "transporter": {
+      "calls": 1,
+      "tp": 0
+    },
+    "regulator": {
+      "calls": 0,
+      "tp": 0
+    },
+    "other": {
+      "calls": 0,
+      "tp": 0
+    }
+  }
+}
