@@ -1,0 +1,202 @@
+[
+  {
+    "family": "CRP/FNR",
+    "fold": "winged HTH",
+    "motif": "TGTGA-N6-TCACA",
+    "length": "~22 bp",
+    "symmetry": "inverted (palindrome)",
+    "role": "cAMP / O2 sensing, global"
+  },
+  {
+    "family": "LysR (LTTR)",
+    "fold": "winged HTH",
+    "motif": "T-N11-A core",
+    "length": "~15 bp + auxiliary distal",
+    "symmetry": "palindromic core, two half-sites",
+    "role": "aa biosynthesis, catabolism (largest bacterial family)"
+  },
+  {
+    "family": "TetR",
+    "fold": "HTH (3-helix bundle)",
+    "motif": "palindromic ~15bp",
+    "length": "~15 bp",
+    "symmetry": "palindrome",
+    "role": "efflux, drug response, biosynth repression"
+  },
+  {
+    "family": "MarR",
+    "fold": "winged HTH",
+    "motif": "TTGTC-N6-GACAA (AT-rich)",
+    "length": "~15-20 bp",
+    "symmetry": "palindrome",
+    "role": "multi-antibiotic resistance, oxidative stress"
+  },
+  {
+    "family": "GntR",
+    "fold": "HTH",
+    "motif": "subfamily-specific palindromes (FadR/HutC/MocR)",
+    "length": "~15-20 bp",
+    "symmetry": "palindrome",
+    "role": "catabolism, metabolism"
+  },
+  {
+    "family": "AraC/XylS",
+    "fold": "dual HTH",
+    "motif": "two half-sites (often direct repeat)",
+    "length": "~17-20 bp pair",
+    "symmetry": "direct or inverted, two halves",
+    "role": "sugar utilization, virulence"
+  },
+  {
+    "family": "OmpR/PhoB (RR)",
+    "fold": "winged HTH",
+    "motif": "tandem direct repeats",
+    "length": "~10bp half x 2",
+    "symmetry": "direct repeat (head-to-tail dimer)",
+    "role": "two-component response regulators"
+  },
+  {
+    "family": "NtrC/Fis (sigma54)",
+    "fold": "HTH + AAA+",
+    "motif": "TGCAC-N5-GTGCA (enhancer, distal)",
+    "length": "~17 bp",
+    "symmetry": "palindrome",
+    "role": "enhancer-binding, sigma54-dependent"
+  },
+  {
+    "family": "LacI/GalR",
+    "fold": "HTH (lambda-like)",
+    "motif": "AATTGTGAGC-GCTCACAATT",
+    "length": "~16-22 bp",
+    "symmetry": "palindrome",
+    "role": "sugar/sugar-derivative metabolism"
+  },
+  {
+    "family": "MerR",
+    "fold": "winged HTH",
+    "motif": "CCTTGA-N19-TAAGGT",
+    "length": "~20+19 bp",
+    "symmetry": "palindrome with unusual 19 bp spacer",
+    "role": "metal/stress sensing"
+  },
+  {
+    "family": "ArsR/SmtB",
+    "fold": "HTH",
+    "motif": "small palindrome",
+    "length": "~12-18 bp",
+    "symmetry": "palindrome",
+    "role": "metal sensing (As, Cd, Zn)"
+  },
+  {
+    "family": "Lrp/AsnC",
+    "fold": "HTH",
+    "motif": "YAGHAWATTWDTRCT (weak)",
+    "length": "~13-15 bp",
+    "symmetry": "palindromic, multimerizes",
+    "role": "leucine, feast-famine global"
+  },
+  {
+    "family": "IclR",
+    "fold": "HTH",
+    "motif": "palindrome ~15 bp",
+    "length": "~15 bp",
+    "symmetry": "palindrome",
+    "role": "acetate/glyoxylate catabolism"
+  },
+  {
+    "family": "DeoR",
+    "fold": "HTH",
+    "motif": "palindrome ~15 bp",
+    "length": "~14-16 bp",
+    "symmetry": "palindrome",
+    "role": "sugar/nucleoside catabolism"
+  },
+  {
+    "family": "LuxR/UhpA",
+    "fold": "HTH",
+    "motif": "lux box CTGTA-N12-TACAG",
+    "length": "~20 bp",
+    "symmetry": "inverted",
+    "role": "quorum sensing, RR"
+  },
+  {
+    "family": "Rrf2 (IscR/NsrR)",
+    "fold": "HTH",
+    "motif": "palindrome ~24 bp",
+    "length": "~24 bp",
+    "symmetry": "palindrome",
+    "role": "Fe-S cluster, NO sensing"
+  },
+  {
+    "family": "ROK (XylR/NagC)",
+    "fold": "HTH",
+    "motif": "palindrome ~15 bp",
+    "length": "~15 bp",
+    "symmetry": "palindrome",
+    "role": "sugar catabolism"
+  },
+  {
+    "family": "GntR/FadR-sub",
+    "fold": "HTH",
+    "motif": "palindrome ~13 bp",
+    "length": "~13 bp",
+    "symmetry": "palindrome",
+    "role": "fatty acid metabolism"
+  },
+  {
+    "family": "Cro/CI (lambda)",
+    "fold": "HTH",
+    "motif": "palindromic operator",
+    "length": "~17 bp",
+    "symmetry": "palindrome",
+    "role": "phage / cell cycle"
+  },
+  {
+    "family": "MetJ/Arc",
+    "fold": "ribbon-helix-helix (not HTH)",
+    "motif": "met box AGACGTCT",
+    "length": "~8 bp x repeats",
+    "symmetry": "direct/inverted repeats",
+    "role": "methionine, repressor"
+  },
+  {
+    "family": "sigma70 (RpoD)",
+    "fold": "sigma",
+    "motif": "-35 TTGACA, -10 TATAAT, 17 bp spacer",
+    "length": "-35 to +1",
+    "symmetry": "bipartite",
+    "role": "housekeeping promoters"
+  },
+  {
+    "family": "sigma32 (RpoH)",
+    "fold": "sigma",
+    "motif": "-35 CTTGAA, -10 CCCCATNT",
+    "length": "bipartite",
+    "symmetry": "bipartite",
+    "role": "heat shock"
+  },
+  {
+    "family": "sigmaS (RpoS)",
+    "fold": "sigma",
+    "motif": "-35 TTGACA, -10 CTATACT (extended)",
+    "length": "bipartite",
+    "symmetry": "bipartite",
+    "role": "stationary / general stress"
+  },
+  {
+    "family": "sigmaE (RpoE)",
+    "fold": "sigma",
+    "motif": "-35 GAACTT, -10 TCTGA",
+    "length": "bipartite",
+    "symmetry": "bipartite",
+    "role": "envelope stress"
+  },
+  {
+    "family": "sigma54 (RpoN)",
+    "fold": "sigma",
+    "motif": "-24 TGGCAC, -12 TTGCA",
+    "length": "-24/-12",
+    "symmetry": "bipartite",
+    "role": "N starvation, alt-C, enhancer-dependent"
+  }
+]
