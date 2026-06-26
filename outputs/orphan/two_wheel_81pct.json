@@ -1,0 +1,431 @@
+{
+  "total_nofba_genes": 206749,
+  "with_2wheel": 131806,
+  "w1_only": 41560,
+  "neither": 33383,
+  "n_orgs": 46,
+  "mean_essCov": 0.45332608695652177,
+  "median_essCov": 0.5015000000000001,
+  "mean_neCov": 0.7584565217391305,
+  "median_neCov": 0.844,
+  "essCov_range": [
+    0.0,
+    0.685
+  ],
+  "per_org": [
+    {
+      "org": "beril_BFirm",
+      "n2wheel": 4705,
+      "base": 0.478,
+      "essP": 0.9,
+      "essCov": 0.361,
+      "neP": 0.9,
+      "neCov": 0.213
+    },
+    {
+      "org": "beril_Cup4G11",
+      "n2wheel": 4574,
+      "base": 0.326,
+      "essP": 0.9,
+      "essCov": 0.518,
+      "neP": 0.9,
+      "neCov": 0.858
+    },
+    {
+      "org": "beril_Burk376",
+      "n2wheel": 4365,
+      "base": 0.439,
+      "essP": 0.9,
+      "essCov": 0.498,
+      "neP": 0.9,
+      "neCov": 0.514
+    },
+    {
+      "org": "beril_pseudo5_N2C3_1",
+      "n2wheel": 4179,
+      "base": 0.283,
+      "essP": 0.901,
+      "essCov": 0.423,
+      "neP": 0.9,
+      "neCov": 0.853
+    },
+    {
+      "org": "beril_pseudo6_N2E2",
+      "n2wheel": 4001,
+      "base": 0.258,
+      "essP": 0.907,
+      "essCov": 0.085,
+      "neP": 0.9,
+      "neCov": 0.846
+    },
+    {
+      "org": "beril_pseudo3_N2E3",
+      "n2wheel": 3900,
+      "base": 0.207,
+      "essP": 0.904,
+      "essCov": 0.093,
+      "neP": 0.9,
+      "neCov": 0.944
+    },
+    {
+      "org": "beril_WCS417",
+      "n2wheel": 3867,
+      "base": 0.395,
+      "essP": 0.9,
+      "essCov": 0.449,
+      "neP": 0.9,
+      "neCov": 0.556
+    },
+    {
+      "org": "beril_pseudo1_N1B4",
+      "n2wheel": 3781,
+      "base": 0.45,
+      "essP": 0.9,
+      "essCov": 0.483,
+      "neP": 0.9,
+      "neCov": 0.32
+    },
+    {
+      "org": "beril_Koxy",
+      "n2wheel": 3651,
+      "base": 0.308,
+      "essP": 0.9,
+      "essCov": 0.481,
+      "neP": 0.9,
+      "neCov": 0.722
+    },
+    {
+      "org": "beril_pseudo13_GW456_L13",
+      "n2wheel": 3580,
+      "base": 0.254,
+      "essP": 0.901,
+      "essCov": 0.507,
+      "neP": 0.9,
+      "neCov": 0.927
+    },
+    {
+      "org": "beril_Smeli",
+      "n2wheel": 3554,
+      "base": 0.314,
+      "essP": 0.902,
+      "essCov": 0.346,
+      "neP": 0.9,
+      "neCov": 0.732
+    },
+    {
+      "org": "beril_HerbieS",
+      "n2wheel": 3521,
+      "base": 0.333,
+      "essP": 0.9,
+      "essCov": 0.631,
+      "neP": 0.9,
+      "neCov": 0.842
+    },
+    {
+      "org": "beril_SyringaeB728a",
+      "n2wheel": 3404,
+      "base": 0.274,
+      "essP": 0.9,
+      "essCov": 0.068,
+      "neP": 0.9,
+      "neCov": 0.9
+    },
+    {
+      "org": "beril_SyringaeB728a_mexBdelta",
+      "n2wheel": 3404,
+      "base": 0.29,
+      "essP": 0.9,
+      "essCov": 0.064,
+      "neP": 0.9,
+      "neCov": 0.821
+    },
+    {
+      "org": "beril_acidovorax_3H11",
+      "n2wheel": 3228,
+      "base": 0.337,
+      "essP": 0.901,
+      "essCov": 0.583,
+      "neP": 0.9,
+      "neCov": 0.728
+    },
+    {
+      "org": "beril_RalstoniaGMI1000",
+      "n2wheel": 3180,
+      "base": 0.358,
+      "essP": 0.9,
+      "essCov": 0.547,
+      "neP": 0.9,
+      "neCov": 0.719
+    },
+    {
+      "org": "beril_azobra",
+      "n2wheel": 3176,
+      "base": 0.373,
+      "essP": 0.9,
+      "essCov": 0.594,
+      "neP": 0.9,
+      "neCov": 0.721
+    },
+    {
+      "org": "beril_RalstoniaPSI07",
+      "n2wheel": 3153,
+      "base": 0.28,
+      "essP": 0.9,
+      "essCov": 0.5,
+      "neP": 0.9,
+      "neCov": 0.869
+    },
+    {
+      "org": "beril_RalstoniaBSBF1503",
+      "n2wheel": 3080,
+      "base": 0.344,
+      "essP": 0.9,
+      "essCov": 0.503,
+      "neP": 0.9,
+      "neCov": 0.757
+    },
+    {
+      "org": "beril_RalstoniaUW163",
+      "n2wheel": 3060,
+      "base": 0.368,
+      "essP": 0.9,
+      "essCov": 0.576,
+      "neP": 0.9,
+      "neCov": 0.726
+    },
+    {
+      "org": "beril_Dda3937",
+      "n2wheel": 3021,
+      "base": 0.229,
+      "essP": 0.901,
+      "essCov": 0.658,
+      "neP": 0.9,
+      "neCov": 0.981
+    },
+    {
+      "org": "beril_psRCH2",
+      "n2wheel": 2967,
+      "base": 0.314,
+      "essP": 0.901,
+      "essCov": 0.401,
+      "neP": 0.9,
+      "neCov": 0.811
+    },
+    {
+      "org": "beril_Ddia6719",
+      "n2wheel": 2940,
+      "base": 0.244,
+      "essP": 0.901,
+      "essCov": 0.442,
+      "neP": 0.9,
+      "neCov": 0.912
+    },
+    {
+      "org": "beril_DdiaME23",
+      "n2wheel": 2915,
+      "base": 0.215,
+      "essP": 0.902,
+      "essCov": 0.454,
+      "neP": 0.9,
+      "neCov": 0.938
+    },
+    {
+      "org": "beril_ANA3",
+      "n2wheel": 2854,
+      "base": 0.254,
+      "essP": 0.902,
+      "essCov": 0.457,
+      "neP": 0.9,
+      "neCov": 0.92
+    },
+    {
+      "org": "beril_Marino",
+      "n2wheel": 2792,
+      "base": 0.286,
+      "essP": 0.901,
+      "essCov": 0.638,
+      "neP": 0.9,
+      "neCov": 0.947
+    },
+    {
+      "org": "beril_PV4",
+      "n2wheel": 2765,
+      "base": 0.335,
+      "essP": 0.901,
+      "essCov": 0.509,
+      "neP": 0.9,
+      "neCov": 0.709
+    },
+    {
+      "org": "beril_Dyella79",
+      "n2wheel": 2696,
+      "base": 0.253,
+      "essP": 0.901,
+      "essCov": 0.546,
+      "neP": 0.9,
+      "neCov": 0.915
+    },
+    {
+      "org": "beril_MR1",
+      "n2wheel": 2660,
+      "base": 0.226,
+      "essP": 0.901,
+      "essCov": 0.47,
+      "neP": 0.9,
+      "neCov": 0.954
+    },
+    {
+      "org": "beril_SB2B",
+      "n2wheel": 2563,
+      "base": 0.255,
+      "essP": 0.9,
+      "essCov": 0.621,
+      "neP": 0.9,
+      "neCov": 0.96
+    },
+    {
+      "org": "beril_Phaeo",
+      "n2wheel": 2499,
+      "base": 0.359,
+      "essP": 0.901,
+      "essCov": 0.569,
+      "neP": 0.9,
+      "neCov": 0.779
+    },
+    {
+      "org": "beril_Dino",
+      "n2wheel": 2497,
+      "base": 0.372,
+      "essP": 0.9,
+      "essCov": 0.468,
+      "neP": 0.901,
+      "neCov": 0.618
+    },
+    {
+      "org": "beril_Korea",
+      "n2wheel": 2449,
+      "base": 0.297,
+      "essP": 0.9,
+      "essCov": 0.581,
+      "neP": 0.9,
+      "neCov": 0.908
+    },
+    {
+      "org": "beril_PS",
+      "n2wheel": 2372,
+      "base": 0.404,
+      "essP": 0.901,
+      "essCov": 0.532,
+      "neP": 0.9,
+      "neCov": 0.562
+    },
+    {
+      "org": "beril_Putida",
+      "n2wheel": 2354,
+      "base": 0.197,
+      "essP": 0.907,
+      "essCov": 0.084,
+      "neP": 0.9,
+      "neCov": 0.914
+    },
+    {
+      "org": "beril_Caulo",
+      "n2wheel": 2324,
+      "base": 0.258,
+      "essP": 0.902,
+      "essCov": 0.491,
+      "neP": 0.9,
+      "neCov": 0.94
+    },
+    {
+      "org": "beril_Magneto",
+      "n2wheel": 2218,
+      "base": 0.486,
+      "essP": 0.901,
+      "essCov": 0.566,
+      "neP": 0.901,
+      "neCov": 0.263
+    },
+    {
+      "org": "beril_Pedo557",
+      "n2wheel": 1976,
+      "base": 0.264,
+      "essP": 0.902,
+      "essCov": 0.685,
+      "neP": 0.9,
+      "neCov": 0.971
+    },
+    {
+      "org": "beril_Keio",
+      "n2wheel": 1962,
+      "base": 0.182,
+      "essP": 0.904,
+      "essCov": 0.525,
+      "neP": 0.9,
+      "neCov": 0.989
+    },
+    {
+      "org": "beril_Ponti",
+      "n2wheel": 1914,
+      "base": 0.276,
+      "essP": 0.901,
+      "essCov": 0.633,
+      "neP": 0.9,
+      "neCov": 0.945
+    },
+    {
+      "org": "beril_Cola",
+      "n2wheel": 1900,
+      "base": 0.28,
+      "essP": 0.901,
+      "essCov": 0.581,
+      "neP": 0.9,
+      "neCov": 0.909
+    },
+    {
+      "org": "beril_Btheta",
+      "n2wheel": 1622,
+      "base": 0.32,
+      "essP": 0.903,
+      "essCov": 0.482,
+      "neP": 0.901,
+      "neCov": 0.74
+    },
+    {
+      "org": "beril_Miya",
+      "n2wheel": 1558,
+      "base": 0.335,
+      "essP": 0.903,
+      "essCov": 0.515,
+      "neP": 0.9,
+      "neCov": 0.699
+    },
+    {
+      "org": "beril_DvH",
+      "n2wheel": 1529,
+      "base": 0.321,
+      "essP": 0.901,
+      "essCov": 0.558,
+      "neP": 0.9,
+      "neCov": 0.853
+    },
+    {
+      "org": "beril_Methanococcus_S2",
+      "n2wheel": 557,
+      "base": 0.352,
+      "essP": 0.938,
+      "essCov": 0.077,
+      "neP": 0.909,
+      "neCov": 0.139
+    },
+    {
+      "org": "beril_Methanococcus_JJ",
+      "n2wheel": 539,
+      "base": 0.258,
+      "essP": 0.0,
+      "essCov": 0.0,
+      "neP": 0.9,
+      "neCov": 0.045
+    }
+  ]
+}
