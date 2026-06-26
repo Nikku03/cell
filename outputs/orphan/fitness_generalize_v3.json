@@ -1,0 +1,340 @@
+{
+  "self_test": {
+    "Cup4G11": {
+      "our": "beril_Cup4G11",
+      "auc": 0.47916104806754767,
+      "ess": 817,
+      "n": 4711,
+      "essCov_P090": 0.0
+    },
+    "Methanococcus_S2": {
+      "our": "beril_Methanococcus_S2",
+      "auc": 0.32527793726186127,
+      "ess": 17,
+      "n": 1144,
+      "essCov_P090": 0.0
+    },
+    "Smeli": {
+      "our": "beril_Smeli",
+      "auc": 0.5123387257672996,
+      "ess": 488,
+      "n": 3446,
+      "essCov_P090": 0.0
+    },
+    "Ddia6719": {
+      "our": "beril_Ddia6719",
+      "auc": 0.4460719898997707,
+      "ess": 204,
+      "n": 3248,
+      "essCov_P090": 0.0
+    },
+    "Burk376": {
+      "our": "beril_Burk376",
+      "auc": 0.46682860639830526,
+      "ess": 1015,
+      "n": 4424,
+      "essCov_P090": 0.0
+    },
+    "Methanococcus_JJ": {
+      "our": "beril_Methanococcus_JJ",
+      "auc": 0.5177562550443906,
+      "ess": 12,
+      "n": 1251,
+      "essCov_P090": 0.0
+    },
+    "psRCH2": {
+      "our": "beril_psRCH2",
+      "auc": 0.46383497145037306,
+      "ess": 263,
+      "n": 2894,
+      "essCov_P090": 0.0
+    },
+    "SyringaeB728a": {
+      "our": "beril_SyringaeB728a",
+      "auc": 0.4407545250774154,
+      "ess": 312,
+      "n": 4270,
+      "essCov_P090": 0.0
+    },
+    "Cola": {
+      "our": "beril_Cola",
+      "auc": 0.4405262212643678,
+      "ess": 96,
+      "n": 2416,
+      "essCov_P090": 0.0
+    },
+    "pseudo5_N2C3_1": {
+      "our": "beril_pseudo5_N2C3_1",
+      "auc": 0.4899392435106721,
+      "ess": 555,
+      "n": 4867,
+      "essCov_P090": 0.0
+    },
+    "Ponti": {
+      "our": "beril_Ponti",
+      "auc": 0.46582035986226294,
+      "ess": 116,
+      "n": 2249,
+      "essCov_P090": 0.0
+    },
+    "Korea": {
+      "our": "beril_Korea",
+      "auc": 0.4338316306737359,
+      "ess": 185,
+      "n": 2275,
+      "essCov_P090": 0.0
+    },
+    "Kang": {
+      "our": "beril_Kang",
+      "auc": 0.5401258615522925,
+      "ess": 47,
+      "n": 1467,
+      "essCov_P090": 0.0
+    },
+    "pseudo1_N1B4": {
+      "our": "beril_pseudo1_N1B4",
+      "auc": 0.4696307027408231,
+      "ess": 713,
+      "n": 3720,
+      "essCov_P090": 0.0
+    },
+    "RalstoniaBSBF1503": {
+      "our": "beril_RalstoniaBSBF1503",
+      "auc": 0.4646008192990442,
+      "ess": 338,
+      "n": 3588,
+      "essCov_P090": 0.0
+    },
+    "azobra": {
+      "our": "beril_azobra",
+      "auc": 0.44804693736363155,
+      "ess": 460,
+      "n": 2911,
+      "essCov_P090": 0.0
+    },
+    "PV4": {
+      "our": "beril_PV4",
+      "auc": 0.47121544314938063,
+      "ess": 211,
+      "n": 2645,
+      "essCov_P090": 0.0
+    },
+    "Miya": {
+      "our": "beril_Miya",
+      "auc": 0.4393786902844874,
+      "ess": 96,
+      "n": 1959,
+      "essCov_P090": 0.0
+    },
+    "Btheta": {
+      "our": "beril_Btheta",
+      "auc": 0.4090135161926087,
+      "ess": 101,
+      "n": 1799,
+      "essCov_P090": 0.0
+    },
+    "Putida": {
+      "our": "beril_Putida",
+      "auc": 0.443616941247273,
+      "ess": 245,
+      "n": 4043,
+      "essCov_P090": 0.0
+    },
+    "Dda3937": {
+      "our": "beril_Dda3937",
+      "auc": 0.4393252494355837,
+      "ess": 207,
+      "n": 3391,
+      "essCov_P090": 0.0
+    },
+    "DdiaME23": {
+      "our": "beril_DdiaME23",
+      "auc": 0.5037077584070065,
+      "ess": 152,
+      "n": 3337,
+      "essCov_P090": 0.0
+    },
+    "pseudo13_GW456_L13": {
+      "our": "beril_pseudo13_GW456_L13",
+      "auc": 0.45052934571739883,
+      "ess": 333,
+      "n": 3949,
+      "essCov_P090": 0.0
+    },
+    "acidovorax_3H11": {
+      "our": "beril_acidovorax_3H11",
+      "auc": 0.4266632559527616,
+      "ess": 380,
+      "n": 2849,
+      "essCov_P090": 0.0
+    },
+    "Marino": {
+      "our": "beril_Marino",
+      "auc": 0.5233172055651112,
+      "ess": 211,
+      "n": 2509,
+      "essCov_P090": 0.0
+    },
+    "Caulo": {
+      "our": "beril_Caulo",
+      "auc": 0.4737645216504607,
+      "ess": 135,
+      "n": 2169,
+      "essCov_P090": 0.0
+    },
+    "SyringaeB728a_mexBdelta": {
+      "our": "beril_SyringaeB728a_mexBdelta",
+      "auc": 0.4508384369606266,
+      "ess": 342,
+      "n": 4235,
+      "essCov_P090": 0.0
+    },
+    "pseudo6_N2E2": {
+      "our": "beril_pseudo6_N2E2",
+      "auc": 0.43595818782242884,
+      "ess": 397,
+      "n": 4641,
+      "essCov_P090": 0.0
+    },
+    "Pedo557": {
+      "our": "beril_Pedo557",
+      "auc": 0.43529514115446516,
+      "ess": 97,
+      "n": 2467,
+      "essCov_P090": 0.0
+    },
+    "Keio": {
+      "our": "beril_Keio",
+      "auc": 0.4957411828296023,
+      "ess": 149,
+      "n": 3129,
+      "essCov_P090": 0.0
+    },
+    "RalstoniaUW163": {
+      "our": "beril_RalstoniaUW163",
+      "auc": 0.5028873877242399,
+      "ess": 385,
+      "n": 3511,
+      "essCov_P090": 0.0
+    },
+    "PS": {
+      "our": "beril_PS",
+      "auc": 0.48483974391700785,
+      "ess": 238,
+      "n": 1884,
+      "essCov_P090": 0.0
+    },
+    "DvH": {
+      "our": "beril_DvH",
+      "auc": 0.4906260976466456,
+      "ess": 72,
+      "n": 1970,
+      "essCov_P090": 0.0
+    },
+    "RalstoniaPSI07": {
+      "our": "beril_RalstoniaPSI07",
+      "auc": 0.47453905735208185,
+      "ess": 243,
+      "n": 3553,
+      "essCov_P090": 0.0
+    },
+    "BFirm": {
+      "our": "beril_BFirm",
+      "auc": 0.47256827214704966,
+      "ess": 1171,
+      "n": 4594,
+      "essCov_P090": 0.0
+    },
+    "Magneto": {
+      "our": "beril_Magneto",
+      "auc": 0.47211009174311924,
+      "ess": 218,
+      "n": 1693,
+      "essCov_P090": 0.0
+    },
+    "ANA3": {
+      "our": "beril_ANA3",
+      "auc": 0.45881772704854507,
+      "ess": 171,
+      "n": 3242,
+      "essCov_P090": 0.0
+    },
+    "HerbieS": {
+      "our": "beril_HerbieS",
+      "auc": 0.48128542821451215,
+      "ess": 482,
+      "n": 3126,
+      "essCov_P090": 0.0
+    },
+    "pseudo3_N2E3": {
+      "our": "beril_pseudo3_N2E3",
+      "auc": 0.43345605747856464,
+      "ess": 235,
+      "n": 4523,
+      "essCov_P090": 0.0
+    },
+    "Dino": {
+      "our": "beril_Dino",
+      "auc": 0.5135364770401267,
+      "ess": 252,
+      "n": 2307,
+      "essCov_P090": 0.0
+    },
+    "MR1": {
+      "our": "beril_MR1",
+      "auc": 0.47317137160247663,
+      "ess": 130,
+      "n": 3062,
+      "essCov_P090": 0.0
+    },
+    "Phaeo": {
+      "our": "beril_Phaeo",
+      "auc": 0.5237925350876567,
+      "ess": 269,
+      "n": 2353,
+      "essCov_P090": 0.0
+    },
+    "SynE": {
+      "our": "beril_SynE",
+      "auc": 0.4907619134729717,
+      "ess": 87,
+      "n": 841,
+      "essCov_P090": 0.0
+    },
+    "SB2B": {
+      "our": "beril_SB2B",
+      "auc": 0.44515582149090005,
+      "ess": 150,
+      "n": 2824,
+      "essCov_P090": 0.0
+    },
+    "RalstoniaGMI1000": {
+      "our": "beril_RalstoniaGMI1000",
+      "auc": 0.5006130923148603,
+      "ess": 412,
+      "n": 3496,
+      "essCov_P090": 0.0
+    },
+    "WCS417": {
+      "our": "beril_WCS417",
+      "auc": 0.46425743129906655,
+      "ess": 671,
+      "n": 4017,
+      "essCov_P090": 0.0
+    },
+    "Koxy": {
+      "our": "beril_Koxy",
+      "auc": 0.4721195949644226,
+      "ess": 513,
+      "n": 3761,
+      "essCov_P090": 0.0
+    }
+  },
+  "self_mean_auc": 0.4671797619605796,
+  "self_mean_essCov": 0.0,
+  "transfer_same_division_auc": null,
+  "transfer_cross_division_auc": null,
+  "transfer_same_essCov": null,
+  "transfer_cross_essCov": null,
+  "transfer_rows": []
+}
