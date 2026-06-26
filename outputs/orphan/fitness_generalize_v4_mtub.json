@@ -1,0 +1,37 @@
+{
+  "truth_source": "DeJesus 2017 (MTBseq)",
+  "feba_org": "MycoTube",
+  "schemes": {
+    "min_fit_all (no t-filter)": {
+      "n": 2607,
+      "n_ess": 245,
+      "auc": 0.3
+    },
+    "min_fit_sig (|t|>4)": {
+      "n": 574,
+      "n_ess": 76,
+      "auc": 0.303
+    },
+    "n_severe_sig (count fit<-3, |t|>4)": {
+      "n": 3638,
+      "n_ess": 760,
+      "auc": 0.514
+    },
+    "median_fit_sig": {
+      "n": 574,
+      "n_ess": 76,
+      "auc": 0.375
+    },
+    "absent_from_GeneFitness (binary)": {
+      "n": 3638,
+      "n_ess": 760,
+      "auc": 0.259
+    },
+    "combined_absent+min_fit_sig": {
+      "n": 3638,
+      "n_ess": 760,
+      "auc": 0.231,
+      "n_absent": 1031
+    }
+  }
+}
