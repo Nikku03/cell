@@ -1,0 +1,74 @@
+[
+  {
+    "org": "Btheta",
+    "encoder": "classical-MLP",
+    "R_agg": 0.568,
+    "R_dc": 0.253,
+    "defect_AUC": 0.455,
+    "heldgene_R": 0.093
+  },
+  {
+    "org": "Btheta",
+    "encoder": "ESM-MLP",
+    "R_agg": 0.636,
+    "R_dc": 0.323,
+    "defect_AUC": 0.556,
+    "heldgene_R": 0.217
+  },
+  {
+    "org": "Btheta",
+    "encoder": "ESM-XATTN",
+    "R_agg": 0.629,
+    "R_dc": 0.311,
+    "defect_AUC": 0.563,
+    "heldgene_R": 0.234
+  },
+  {
+    "org": "Keio",
+    "encoder": "classical-MLP",
+    "R_agg": 0.337,
+    "R_dc": 0.26,
+    "defect_AUC": 0.335,
+    "heldgene_R": 0.093
+  },
+  {
+    "org": "Keio",
+    "encoder": "ESM-MLP",
+    "R_agg": 0.517,
+    "R_dc": 0.371,
+    "defect_AUC": 0.541,
+    "heldgene_R": 0.159
+  },
+  {
+    "org": "Keio",
+    "encoder": "ESM-XATTN",
+    "R_agg": 0.536,
+    "R_dc": 0.383,
+    "defect_AUC": 0.528,
+    "heldgene_R": 0.178
+  },
+  {
+    "org": "Putida",
+    "encoder": "classical-MLP",
+    "R_agg": 0.556,
+    "R_dc": 0.17,
+    "defect_AUC": 0.476,
+    "heldgene_R": 0.145
+  },
+  {
+    "org": "Putida",
+    "encoder": "ESM-MLP",
+    "R_agg": 0.631,
+    "R_dc": 0.237,
+    "defect_AUC": 0.472,
+    "heldgene_R": 0.152
+  },
+  {
+    "org": "Putida",
+    "encoder": "ESM-XATTN",
+    "R_agg": 0.625,
+    "R_dc": 0.222,
+    "defect_AUC": 0.499,
+    "heldgene_R": 0.185
+  }
+]
