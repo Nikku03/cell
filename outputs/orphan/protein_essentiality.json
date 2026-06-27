@@ -1,0 +1,7 @@
+{
+  "within_pilot_auc": 0.798,
+  "crossorg_mtub_esm_auc": 0.667,
+  "conservation_mtub_auc": NaN,
+  "n_mtub": 3635,
+  "ess_mtub": 760
+}
