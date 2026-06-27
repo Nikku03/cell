@@ -1,0 +1,741 @@
+{
+  "overall": {
+    "cofit": 0.071,
+    "adj": 0.226,
+    "combined": 0.155
+  },
+  "by_family": {
+    "LysR": {
+      "n": 17,
+      "cofit": 0.107,
+      "adj": 0.191,
+      "comb": 0.162
+    },
+    "other": {
+      "n": 14,
+      "cofit": 0.092,
+      "adj": 0.28,
+      "comb": 0.195
+    },
+    "OmpR": {
+      "n": 11,
+      "cofit": 0.008,
+      "adj": 0.131,
+      "comb": 0.081
+    },
+    "Sigma": {
+      "n": 5,
+      "cofit": 0.02,
+      "adj": 0.295,
+      "comb": 0.147
+    },
+    "GntR": {
+      "n": 3,
+      "cofit": 0.133,
+      "adj": 0.2,
+      "comb": 0.2
+    },
+    "AraC": {
+      "n": 3,
+      "cofit": 0.0,
+      "adj": 0.6,
+      "comb": 0.233
+    },
+    "Crp/FNR": {
+      "n": 2,
+      "cofit": 0.034,
+      "adj": 0.034,
+      "comb": 0.034
+    },
+    "MerR": {
+      "n": 2,
+      "cofit": 0.0,
+      "adj": 0.143,
+      "comb": 0.072
+    },
+    "Fis": {
+      "n": 1,
+      "cofit": 0.029,
+      "adj": 0.057,
+      "comb": 0.029
+    },
+    "Lrp/AsnC": {
+      "n": 1,
+      "cofit": 0.03,
+      "adj": 0.061,
+      "comb": 0.03
+    },
+    "MarR": {
+      "n": 1,
+      "cofit": 0.0,
+      "adj": 0.0,
+      "comb": 0.0
+    },
+    "Rrf2": {
+      "n": 1,
+      "cofit": 0.0,
+      "adj": 0.0,
+      "comb": 0.0
+    },
+    "DeoR": {
+      "n": 1,
+      "cofit": 0.714,
+      "adj": 0.429,
+      "comb": 0.714
+    },
+    "IclR": {
+      "n": 1,
+      "cofit": 0.0,
+      "adj": 0.667,
+      "comb": 0.333
+    },
+    "LacI": {
+      "n": 1,
+      "cofit": 0.0,
+      "adj": 0.4,
+      "comb": 0.2
+    }
+  },
+  "per_activator": [
+    {
+      "activator": "crp",
+      "family": "Crp/FNR",
+      "n_targets": 399,
+      "n_cand": 10,
+      "prec_cofit": 0.003,
+      "prec_adj": 0.003,
+      "prec_comb": 0.003,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "fnr",
+      "family": "Crp/FNR",
+      "n_targets": 183,
+      "n_cand": 86,
+      "prec_cofit": 0.066,
+      "prec_adj": 0.066,
+      "prec_comb": 0.066,
+      "enrich_comb": 1.5
+    },
+    {
+      "activator": "fis",
+      "family": "Fis",
+      "n_targets": 70,
+      "n_cand": 85,
+      "prec_cofit": 0.029,
+      "prec_adj": 0.057,
+      "prec_comb": 0.029,
+      "enrich_comb": 1.7
+    },
+    {
+      "activator": "phob",
+      "family": "OmpR",
+      "n_targets": 49,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.02,
+      "prec_comb": 0.02,
+      "enrich_comb": 1.7
+    },
+    {
+      "activator": "arca",
+      "family": "OmpR",
+      "n_targets": 45,
+      "n_cand": 7,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "narl",
+      "family": "Sigma",
+      "n_targets": 43,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.093,
+      "prec_comb": 0.047,
+      "enrich_comb": 4.5
+    },
+    {
+      "activator": "cpxr",
+      "family": "OmpR",
+      "n_targets": 34,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.059,
+      "prec_comb": 0.059,
+      "enrich_comb": 7.2
+    },
+    {
+      "activator": "phop",
+      "family": "OmpR",
+      "n_targets": 34,
+      "n_cand": 85,
+      "prec_cofit": 0.088,
+      "prec_adj": 0.059,
+      "prec_comb": 0.088,
+      "enrich_comb": 10.8
+    },
+    {
+      "activator": "soxs",
+      "family": "LysR",
+      "n_targets": 34,
+      "n_cand": 86,
+      "prec_cofit": 0.147,
+      "prec_adj": 0.147,
+      "prec_comb": 0.118,
+      "enrich_comb": 14.3
+    },
+    {
+      "activator": "lrp",
+      "family": "Lrp/AsnC",
+      "n_targets": 33,
+      "n_cand": 86,
+      "prec_cofit": 0.03,
+      "prec_adj": 0.061,
+      "prec_comb": 0.03,
+      "enrich_comb": 3.8
+    },
+    {
+      "activator": "narp",
+      "family": "Sigma",
+      "n_targets": 32,
+      "n_cand": 86,
+      "prec_cofit": 0.031,
+      "prec_adj": 0.156,
+      "prec_comb": 0.094,
+      "enrich_comb": 12.1
+    },
+    {
+      "activator": "mode",
+      "family": "other",
+      "n_targets": 31,
+      "n_cand": 83,
+      "prec_cofit": 0.129,
+      "prec_adj": 0.129,
+      "prec_comb": 0.129,
+      "enrich_comb": 17.3
+    },
+    {
+      "activator": "gade",
+      "family": "other",
+      "n_targets": 30,
+      "n_cand": 84,
+      "prec_cofit": 0.033,
+      "prec_adj": 0.267,
+      "prec_comb": 0.133,
+      "enrich_comb": 18.4
+    },
+    {
+      "activator": "fhla",
+      "family": "Sigma",
+      "n_targets": 29,
+      "n_cand": 85,
+      "prec_cofit": 0.069,
+      "prec_adj": 0.172,
+      "prec_comb": 0.103,
+      "enrich_comb": 14.8
+    },
+    {
+      "activator": "mara",
+      "family": "LysR",
+      "n_targets": 26,
+      "n_cand": 86,
+      "prec_cofit": 0.154,
+      "prec_adj": 0.154,
+      "prec_comb": 0.231,
+      "enrich_comb": 36.8
+    },
+    {
+      "activator": "oxyr",
+      "family": "LysR",
+      "n_targets": 25,
+      "n_cand": 86,
+      "prec_cofit": 0.12,
+      "prec_adj": 0.04,
+      "prec_comb": 0.12,
+      "enrich_comb": 19.9
+    },
+    {
+      "activator": "gadx",
+      "family": "LysR",
+      "n_targets": 24,
+      "n_cand": 83,
+      "prec_cofit": 0.167,
+      "prec_adj": 0.25,
+      "prec_comb": 0.25,
+      "enrich_comb": 43.2
+    },
+    {
+      "activator": "slya",
+      "family": "MarR",
+      "n_targets": 23,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "cysb",
+      "family": "LysR",
+      "n_targets": 21,
+      "n_cand": 10,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "rob",
+      "family": "LysR",
+      "n_targets": 21,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "rcsb",
+      "family": "other",
+      "n_targets": 19,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "fur",
+      "family": "other",
+      "n_targets": 17,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "ydeo",
+      "family": "LysR",
+      "n_targets": 16,
+      "n_cand": 85,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "evga",
+      "family": "other",
+      "n_targets": 15,
+      "n_cand": 85,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.467,
+      "prec_comb": 0.267,
+      "enrich_comb": 73.7
+    },
+    {
+      "activator": "argp",
+      "family": "LysR",
+      "n_targets": 13,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "fadr",
+      "family": "GntR",
+      "n_targets": 12,
+      "n_cand": 85,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "qseb",
+      "family": "OmpR",
+      "n_targets": 12,
+      "n_cand": 85,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.083,
+      "prec_comb": 0.083,
+      "enrich_comb": 28.8
+    },
+    {
+      "activator": "csgd",
+      "family": "other",
+      "n_targets": 11,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.545,
+      "prec_comb": 0.273,
+      "enrich_comb": 102.8
+    },
+    {
+      "activator": "cusr",
+      "family": "OmpR",
+      "n_targets": 11,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.455,
+      "prec_comb": 0.273,
+      "enrich_comb": 102.8
+    },
+    {
+      "activator": "hyfr",
+      "family": "Sigma",
+      "n_targets": 11,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.455,
+      "prec_comb": 0.091,
+      "enrich_comb": 34.3
+    },
+    {
+      "activator": "leuo",
+      "family": "LysR",
+      "n_targets": 11,
+      "n_cand": 79,
+      "prec_cofit": 0.091,
+      "prec_adj": 0.455,
+      "prec_comb": 0.455,
+      "enrich_comb": 171.3
+    },
+    {
+      "activator": "nac",
+      "family": "LysR",
+      "n_targets": 11,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "arac",
+      "family": "AraC",
+      "n_targets": 10,
+      "n_cand": 85,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.3,
+      "prec_comb": 0.2,
+      "enrich_comb": 82.9
+    },
+    {
+      "activator": "basr",
+      "family": "OmpR",
+      "n_targets": 10,
+      "n_cand": 84,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "caif",
+      "family": "other",
+      "n_targets": 10,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.5,
+      "prec_comb": 0.2,
+      "enrich_comb": 82.9
+    },
+    {
+      "activator": "gadw",
+      "family": "LysR",
+      "n_targets": 10,
+      "n_cand": 85,
+      "prec_cofit": 0.1,
+      "prec_adj": 0.6,
+      "prec_comb": 0.2,
+      "enrich_comb": 82.9
+    },
+    {
+      "activator": "iscr",
+      "family": "Rrf2",
+      "n_targets": 10,
+      "n_cand": 85,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "malt",
+      "family": "other",
+      "n_targets": 10,
+      "n_cand": 84,
+      "prec_cofit": 0.7,
+      "prec_adj": 0.2,
+      "prec_comb": 0.7,
+      "enrich_comb": 290.2
+    },
+    {
+      "activator": "appy",
+      "family": "LysR",
+      "n_targets": 9,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "mlra",
+      "family": "MerR",
+      "n_targets": 9,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "torr",
+      "family": "OmpR",
+      "n_targets": 9,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.333,
+      "prec_comb": 0.222,
+      "enrich_comb": 102.4
+    },
+    {
+      "activator": "adiy",
+      "family": "LysR",
+      "n_targets": 8,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.125,
+      "prec_comb": 0.125,
+      "enrich_comb": 64.8
+    },
+    {
+      "activator": "baer",
+      "family": "OmpR",
+      "n_targets": 7,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.429,
+      "prec_comb": 0.143,
+      "enrich_comb": 84.6
+    },
+    {
+      "activator": "cbl",
+      "family": "LysR",
+      "n_targets": 7,
+      "n_cand": 84,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "dcur",
+      "family": "other",
+      "n_targets": 7,
+      "n_cand": 85,
+      "prec_cofit": 0.143,
+      "prec_adj": 0.143,
+      "prec_comb": 0.286,
+      "enrich_comb": 169.2
+    },
+    {
+      "activator": "dnaa",
+      "family": "other",
+      "n_targets": 7,
+      "n_cand": 10,
+      "prec_cofit": 0.286,
+      "prec_adj": 0.286,
+      "prec_comb": 0.286,
+      "enrich_comb": 169.2
+    },
+    {
+      "activator": "fucr",
+      "family": "DeoR",
+      "n_targets": 7,
+      "n_cand": 82,
+      "prec_cofit": 0.714,
+      "prec_adj": 0.429,
+      "prec_comb": 0.714,
+      "enrich_comb": 423.1
+    },
+    {
+      "activator": "gutm",
+      "family": "other",
+      "n_targets": 7,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.714,
+      "prec_comb": 0.286,
+      "enrich_comb": 169.2
+    },
+    {
+      "activator": "soxr",
+      "family": "MerR",
+      "n_targets": 7,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.286,
+      "prec_comb": 0.143,
+      "enrich_comb": 84.6
+    },
+    {
+      "activator": "xylr",
+      "family": "LysR",
+      "n_targets": 7,
+      "n_cand": 82,
+      "prec_cofit": 0.714,
+      "prec_adj": 0.571,
+      "prec_comb": 0.714,
+      "enrich_comb": 423.1
+    },
+    {
+      "activator": "chbr",
+      "family": "AraC",
+      "n_targets": 6,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.667,
+      "prec_comb": 0.333,
+      "enrich_comb": 230.3
+    },
+    {
+      "activator": "mhpr",
+      "family": "IclR",
+      "n_targets": 6,
+      "n_cand": 85,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.667,
+      "prec_comb": 0.333,
+      "enrich_comb": 230.3
+    },
+    {
+      "activator": "ompr",
+      "family": "OmpR",
+      "n_targets": 6,
+      "n_cand": 85,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "rhas",
+      "family": "AraC",
+      "n_targets": 6,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.833,
+      "prec_comb": 0.167,
+      "enrich_comb": 115.2
+    },
+    {
+      "activator": "tdca",
+      "family": "LysR",
+      "n_targets": 6,
+      "n_cand": 83,
+      "prec_cofit": 0.333,
+      "prec_adj": 0.5,
+      "prec_comb": 0.333,
+      "enrich_comb": 230.3
+    },
+    {
+      "activator": "tdcr",
+      "family": "other",
+      "n_targets": 6,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.667,
+      "prec_comb": 0.167,
+      "enrich_comb": 115.2
+    },
+    {
+      "activator": "argr",
+      "family": "other",
+      "n_targets": 5,
+      "n_cand": 85,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "glcc",
+      "family": "GntR",
+      "n_targets": 5,
+      "n_cand": 83,
+      "prec_cofit": 0.4,
+      "prec_adj": 0.6,
+      "prec_comb": 0.6,
+      "enrich_comb": 497.5
+    },
+    {
+      "activator": "hcar",
+      "family": "LysR",
+      "n_targets": 5,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.4,
+      "prec_comb": 0.2,
+      "enrich_comb": 165.8
+    },
+    {
+      "activator": "idnr",
+      "family": "LacI",
+      "n_targets": 5,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.4,
+      "prec_comb": 0.2,
+      "enrich_comb": 165.8
+    },
+    {
+      "activator": "pdhr",
+      "family": "GntR",
+      "n_targets": 5,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "pspf",
+      "family": "Sigma",
+      "n_targets": 5,
+      "n_cand": 85,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.6,
+      "prec_comb": 0.4,
+      "enrich_comb": 331.7
+    },
+    {
+      "activator": "rsta",
+      "family": "OmpR",
+      "n_targets": 5,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    },
+    {
+      "activator": "sdia",
+      "family": "other",
+      "n_targets": 5,
+      "n_cand": 86,
+      "prec_cofit": 0.0,
+      "prec_adj": 0.0,
+      "prec_comb": 0.0,
+      "enrich_comb": 0.0
+    }
+  ]
+}
