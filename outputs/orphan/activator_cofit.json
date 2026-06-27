@@ -1,0 +1,640 @@
+{
+  "n_activators": 60,
+  "overall_recall": 0.109,
+  "overall_precK": 0.071,
+  "overall_enrichment": 33.4,
+  "by_family": {
+    "LysR": {
+      "n": 16,
+      "mean_recall": 0.164,
+      "mean_precK": 0.114,
+      "mean_enrich": 51.3
+    },
+    "other": {
+      "n": 13,
+      "mean_recall": 0.105,
+      "mean_precK": 0.077,
+      "mean_enrich": 30.5
+    },
+    "OmpR": {
+      "n": 10,
+      "mean_recall": 0.047,
+      "mean_precK": 0.009,
+      "mean_enrich": 1.1
+    },
+    "Sigma": {
+      "n": 5,
+      "mean_recall": 0.06,
+      "mean_precK": 0.02,
+      "mean_enrich": 2.8
+    },
+    "GntR": {
+      "n": 3,
+      "mean_recall": 0.228,
+      "mean_precK": 0.133,
+      "mean_enrich": 110.6
+    },
+    "AraC": {
+      "n": 3,
+      "mean_recall": 0.0,
+      "mean_precK": 0.0,
+      "mean_enrich": 0.0
+    },
+    "MerR": {
+      "n": 2,
+      "mean_recall": 0.0,
+      "mean_precK": 0.0,
+      "mean_enrich": 0.0
+    },
+    "Crp/FNR": {
+      "n": 1,
+      "mean_recall": 0.066,
+      "mean_precK": 0.066,
+      "mean_enrich": 1.5
+    },
+    "Fis": {
+      "n": 1,
+      "mean_recall": 0.057,
+      "mean_precK": 0.029,
+      "mean_enrich": 1.7
+    },
+    "Lrp/AsnC": {
+      "n": 1,
+      "mean_recall": 0.091,
+      "mean_precK": 0.03,
+      "mean_enrich": 3.8
+    },
+    "MarR": {
+      "n": 1,
+      "mean_recall": 0.0,
+      "mean_precK": 0.0,
+      "mean_enrich": 0.0
+    },
+    "Rrf2": {
+      "n": 1,
+      "mean_recall": 0.0,
+      "mean_precK": 0.0,
+      "mean_enrich": 0.0
+    },
+    "DeoR": {
+      "n": 1,
+      "mean_recall": 0.714,
+      "mean_precK": 0.714,
+      "mean_enrich": 423.1
+    },
+    "IclR": {
+      "n": 1,
+      "mean_recall": 0.167,
+      "mean_precK": 0.0,
+      "mean_enrich": 0.0
+    },
+    "LacI": {
+      "n": 1,
+      "mean_recall": 0.0,
+      "mean_precK": 0.0,
+      "mean_enrich": 0.0
+    }
+  },
+  "per_activator": [
+    {
+      "activator": "fnr",
+      "family": "Crp/FNR",
+      "n_targets": 183,
+      "recall_at_cofit": 0.066,
+      "precision_at_K": 0.066,
+      "base_rate": 0.0441,
+      "enrichment": 1.5
+    },
+    {
+      "activator": "fis",
+      "family": "Fis",
+      "n_targets": 70,
+      "recall_at_cofit": 0.057,
+      "precision_at_K": 0.029,
+      "base_rate": 0.0169,
+      "enrichment": 1.7
+    },
+    {
+      "activator": "phob",
+      "family": "OmpR",
+      "n_targets": 49,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0118,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "narl",
+      "family": "Sigma",
+      "n_targets": 43,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0104,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "cpxr",
+      "family": "OmpR",
+      "n_targets": 34,
+      "recall_at_cofit": 0.029,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0082,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "phop",
+      "family": "OmpR",
+      "n_targets": 34,
+      "recall_at_cofit": 0.088,
+      "precision_at_K": 0.088,
+      "base_rate": 0.0082,
+      "enrichment": 10.8
+    },
+    {
+      "activator": "soxs",
+      "family": "LysR",
+      "n_targets": 34,
+      "recall_at_cofit": 0.176,
+      "precision_at_K": 0.147,
+      "base_rate": 0.0082,
+      "enrichment": 17.9
+    },
+    {
+      "activator": "lrp",
+      "family": "Lrp/AsnC",
+      "n_targets": 33,
+      "recall_at_cofit": 0.091,
+      "precision_at_K": 0.03,
+      "base_rate": 0.008,
+      "enrichment": 3.8
+    },
+    {
+      "activator": "narp",
+      "family": "Sigma",
+      "n_targets": 32,
+      "recall_at_cofit": 0.031,
+      "precision_at_K": 0.031,
+      "base_rate": 0.0077,
+      "enrichment": 4.0
+    },
+    {
+      "activator": "mode",
+      "family": "other",
+      "n_targets": 31,
+      "recall_at_cofit": 0.161,
+      "precision_at_K": 0.129,
+      "base_rate": 0.0075,
+      "enrichment": 17.3
+    },
+    {
+      "activator": "gade",
+      "family": "other",
+      "n_targets": 30,
+      "recall_at_cofit": 0.033,
+      "precision_at_K": 0.033,
+      "base_rate": 0.0072,
+      "enrichment": 4.6
+    },
+    {
+      "activator": "fhla",
+      "family": "Sigma",
+      "n_targets": 29,
+      "recall_at_cofit": 0.069,
+      "precision_at_K": 0.069,
+      "base_rate": 0.007,
+      "enrichment": 9.9
+    },
+    {
+      "activator": "mara",
+      "family": "LysR",
+      "n_targets": 26,
+      "recall_at_cofit": 0.154,
+      "precision_at_K": 0.154,
+      "base_rate": 0.0063,
+      "enrichment": 24.5
+    },
+    {
+      "activator": "oxyr",
+      "family": "LysR",
+      "n_targets": 25,
+      "recall_at_cofit": 0.12,
+      "precision_at_K": 0.12,
+      "base_rate": 0.006,
+      "enrichment": 19.9
+    },
+    {
+      "activator": "gadx",
+      "family": "LysR",
+      "n_targets": 24,
+      "recall_at_cofit": 0.208,
+      "precision_at_K": 0.167,
+      "base_rate": 0.0058,
+      "enrichment": 28.8
+    },
+    {
+      "activator": "slya",
+      "family": "MarR",
+      "n_targets": 23,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0055,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "rob",
+      "family": "LysR",
+      "n_targets": 21,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0051,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "rcsb",
+      "family": "other",
+      "n_targets": 19,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0046,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "fur",
+      "family": "other",
+      "n_targets": 17,
+      "recall_at_cofit": 0.059,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0041,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "ydeo",
+      "family": "LysR",
+      "n_targets": 16,
+      "recall_at_cofit": 0.062,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0039,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "evga",
+      "family": "other",
+      "n_targets": 15,
+      "recall_at_cofit": 0.067,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0036,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "argp",
+      "family": "LysR",
+      "n_targets": 13,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0031,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "fadr",
+      "family": "GntR",
+      "n_targets": 12,
+      "recall_at_cofit": 0.083,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0029,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "qseb",
+      "family": "OmpR",
+      "n_targets": 12,
+      "recall_at_cofit": 0.083,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0029,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "csgd",
+      "family": "other",
+      "n_targets": 11,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0027,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "cusr",
+      "family": "OmpR",
+      "n_targets": 11,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0027,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "hyfr",
+      "family": "Sigma",
+      "n_targets": 11,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0027,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "leuo",
+      "family": "LysR",
+      "n_targets": 11,
+      "recall_at_cofit": 0.455,
+      "precision_at_K": 0.091,
+      "base_rate": 0.0027,
+      "enrichment": 34.3
+    },
+    {
+      "activator": "nac",
+      "family": "LysR",
+      "n_targets": 11,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0027,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "arac",
+      "family": "AraC",
+      "n_targets": 10,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0024,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "basr",
+      "family": "OmpR",
+      "n_targets": 10,
+      "recall_at_cofit": 0.1,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0024,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "caif",
+      "family": "other",
+      "n_targets": 10,
+      "recall_at_cofit": 0.2,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0024,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "gadw",
+      "family": "LysR",
+      "n_targets": 10,
+      "recall_at_cofit": 0.1,
+      "precision_at_K": 0.1,
+      "base_rate": 0.0024,
+      "enrichment": 41.5
+    },
+    {
+      "activator": "iscr",
+      "family": "Rrf2",
+      "n_targets": 10,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0024,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "malt",
+      "family": "other",
+      "n_targets": 10,
+      "recall_at_cofit": 0.7,
+      "precision_at_K": 0.7,
+      "base_rate": 0.0024,
+      "enrichment": 290.2
+    },
+    {
+      "activator": "appy",
+      "family": "LysR",
+      "n_targets": 9,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0022,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "mlra",
+      "family": "MerR",
+      "n_targets": 9,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0022,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "torr",
+      "family": "OmpR",
+      "n_targets": 9,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0022,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "adiy",
+      "family": "LysR",
+      "n_targets": 8,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0019,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "baer",
+      "family": "OmpR",
+      "n_targets": 7,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0017,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "cbl",
+      "family": "LysR",
+      "n_targets": 7,
+      "recall_at_cofit": 0.143,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0017,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "dcur",
+      "family": "other",
+      "n_targets": 7,
+      "recall_at_cofit": 0.143,
+      "precision_at_K": 0.143,
+      "base_rate": 0.0017,
+      "enrichment": 84.6
+    },
+    {
+      "activator": "fucr",
+      "family": "DeoR",
+      "n_targets": 7,
+      "recall_at_cofit": 0.714,
+      "precision_at_K": 0.714,
+      "base_rate": 0.0017,
+      "enrichment": 423.1
+    },
+    {
+      "activator": "gutm",
+      "family": "other",
+      "n_targets": 7,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0017,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "soxr",
+      "family": "MerR",
+      "n_targets": 7,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0017,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "xylr",
+      "family": "LysR",
+      "n_targets": 7,
+      "recall_at_cofit": 0.714,
+      "precision_at_K": 0.714,
+      "base_rate": 0.0017,
+      "enrichment": 423.1
+    },
+    {
+      "activator": "chbr",
+      "family": "AraC",
+      "n_targets": 6,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0014,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "mhpr",
+      "family": "IclR",
+      "n_targets": 6,
+      "recall_at_cofit": 0.167,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0014,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "ompr",
+      "family": "OmpR",
+      "n_targets": 6,
+      "recall_at_cofit": 0.167,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0014,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "rhas",
+      "family": "AraC",
+      "n_targets": 6,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0014,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "tdca",
+      "family": "LysR",
+      "n_targets": 6,
+      "recall_at_cofit": 0.5,
+      "precision_at_K": 0.333,
+      "base_rate": 0.0014,
+      "enrichment": 230.3
+    },
+    {
+      "activator": "tdcr",
+      "family": "other",
+      "n_targets": 6,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0014,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "argr",
+      "family": "other",
+      "n_targets": 5,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0012,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "glcc",
+      "family": "GntR",
+      "n_targets": 5,
+      "recall_at_cofit": 0.6,
+      "precision_at_K": 0.4,
+      "base_rate": 0.0012,
+      "enrichment": 331.7
+    },
+    {
+      "activator": "hcar",
+      "family": "LysR",
+      "n_targets": 5,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0012,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "idnr",
+      "family": "LacI",
+      "n_targets": 5,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0012,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "pdhr",
+      "family": "GntR",
+      "n_targets": 5,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0012,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "pspf",
+      "family": "Sigma",
+      "n_targets": 5,
+      "recall_at_cofit": 0.2,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0012,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "rsta",
+      "family": "OmpR",
+      "n_targets": 5,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0012,
+      "enrichment": 0.0
+    },
+    {
+      "activator": "sdia",
+      "family": "other",
+      "n_targets": 5,
+      "recall_at_cofit": 0.0,
+      "precision_at_K": 0.0,
+      "base_rate": 0.0012,
+      "enrichment": 0.0
+    }
+  ]
+}
