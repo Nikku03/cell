@@ -1,0 +1,17 @@
+{
+  "n": 1038,
+  "ess": 332,
+  "pfam_vocab": 400,
+  "results": {
+    "conservation": 0.725,
+    "active": 0.626,
+    "kinetics": 0.636,
+    "active+kinetics": 0.698,
+    "ESM": 0.727,
+    "ESM+active": 0.737,
+    "ESM+active+kinetics": 0.741,
+    "active+kinetics+cons": 0.745,
+    "ESM+cons": 0.768,
+    "ESM+active+kinetics+cons": 0.773
+  }
+}
