@@ -1,0 +1,37 @@
+{
+  "universe": 1036,
+  "n_truth_ess": 199,
+  "wt_uncon": 0.9824,
+  "P": 0.010152984925955667,
+  "wt_plain": 0.9824,
+  "wt_ec": 0.9725,
+  "plain": {
+    "n_pred": 190,
+    "tp": 86,
+    "fp": 104,
+    "precision": 0.453,
+    "recall": 0.432,
+    "f1": 0.442
+  },
+  "kinetic": {
+    "n_pred": 190,
+    "tp": 86,
+    "fp": 104,
+    "precision": 0.453,
+    "recall": 0.432,
+    "f1": 0.442
+  },
+  "kin_only": 0,
+  "kin_only_true": 0,
+  "kin_only_precision": 0.0,
+  "examples": [],
+  "ec_kcat": {
+    "1": 13.0,
+    "2": 25.0,
+    "3": 50.0,
+    "4": 15.0,
+    "5": 13.0,
+    "6": 8.0
+  },
+  "kcat_default": 14.0
+}
