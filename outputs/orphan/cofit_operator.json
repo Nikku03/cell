@@ -1,0 +1,268 @@
+{
+  "n": 26,
+  "mean_cofit_operator": 0.493,
+  "mean_supervised": 0.543,
+  "n_strong": 3,
+  "per_tf": [
+    {
+      "tf": "fnr",
+      "n_tgt": 302,
+      "n_part": 38,
+      "n_held": 142,
+      "auc_cofit_operator": 0.42262910798122066,
+      "auc_supervised": 0.44652582159624415,
+      "motif_cofit": "TTTTCTGTGCCAAAATTAAT",
+      "ic_cofit": 10.2
+    },
+    {
+      "tf": "fis",
+      "n_tgt": 233,
+      "n_part": 29,
+      "n_held": 116,
+      "auc_cofit_operator": 0.4206609195402299,
+      "auc_supervised": 0.5191091954022988,
+      "motif_cofit": "TAAAACTTATTTAATAATCT",
+      "ic_cofit": 11.5
+    },
+    {
+      "tf": "fur",
+      "n_tgt": 130,
+      "n_part": 32,
+      "n_held": 65,
+      "auc_cofit_operator": 0.5457435897435897,
+      "auc_supervised": 0.5903076923076923,
+      "motif_cofit": "TAATTACGCTTCAGTTAAAT",
+      "ic_cofit": 11.0
+    },
+    {
+      "tf": "narl",
+      "n_tgt": 124,
+      "n_part": 31,
+      "n_held": 62,
+      "auc_cofit_operator": 0.36376344086021506,
+      "auc_supervised": 0.4796236559139785,
+      "motif_cofit": "AAACACATCAAAAAAATATT",
+      "ic_cofit": 11.8
+    },
+    {
+      "tf": "lrp",
+      "n_tgt": 106,
+      "n_part": 36,
+      "n_held": 51,
+      "auc_cofit_operator": 0.47420222991157246,
+      "auc_supervised": 0.6458285274894271,
+      "motif_cofit": "CGCCAACCGAAAAATAAGGA",
+      "ic_cofit": 10.3
+    },
+    {
+      "tf": "cra",
+      "n_tgt": 79,
+      "n_part": 32,
+      "n_held": 40,
+      "auc_cofit_operator": 0.5085,
+      "auc_supervised": 0.417625,
+      "motif_cofit": "TTCATCGAAATCTTTATCAA",
+      "ic_cofit": 9.8
+    },
+    {
+      "tf": "cpxr",
+      "n_tgt": 70,
+      "n_part": 33,
+      "n_held": 35,
+      "auc_cofit_operator": 0.515265306122449,
+      "auc_supervised": 0.48375510204081634,
+      "motif_cofit": "GGGAGAAGAGACAAAAACAT",
+      "ic_cofit": 10.7
+    },
+    {
+      "tf": "phob",
+      "n_tgt": 60,
+      "n_part": 36,
+      "n_held": 30,
+      "auc_cofit_operator": 0.4746666666666667,
+      "auc_supervised": 0.47733333333333333,
+      "motif_cofit": "TGCTGATGACAATTTCCTGT",
+      "ic_cofit": 10.3
+    },
+    {
+      "tf": "phop",
+      "n_tgt": 56,
+      "n_part": 36,
+      "n_held": 26,
+      "auc_cofit_operator": 0.5443786982248521,
+      "auc_supervised": 0.5872781065088757,
+      "motif_cofit": "ATAAAACAAAAAAACGCCGG",
+      "ic_cofit": 10.4
+    },
+    {
+      "tf": "narp",
+      "n_tgt": 51,
+      "n_part": 31,
+      "n_held": 25,
+      "auc_cofit_operator": 0.47072,
+      "auc_supervised": 0.55968,
+      "motif_cofit": "GAAAAAATTCAGCGACAACA",
+      "ic_cofit": 11.8
+    },
+    {
+      "tf": "mara",
+      "n_tgt": 48,
+      "n_part": 36,
+      "n_held": 20,
+      "auc_cofit_operator": 0.479,
+      "auc_supervised": 0.5325,
+      "motif_cofit": "ATTTGGTTGATTAAATGCAA",
+      "ic_cofit": 10.2
+    },
+    {
+      "tf": "soxs",
+      "n_tgt": 44,
+      "n_part": 35,
+      "n_held": 21,
+      "auc_cofit_operator": 0.507482993197279,
+      "auc_supervised": 0.6943310657596372,
+      "motif_cofit": "CTTAACGGCAGCACTCTCTT",
+      "ic_cofit": 10.5
+    },
+    {
+      "tf": "oxyr",
+      "n_tgt": 43,
+      "n_part": 34,
+      "n_held": 21,
+      "auc_cofit_operator": 0.46122448979591835,
+      "auc_supervised": 0.526984126984127,
+      "motif_cofit": "CGCAATGCTGATTTACTGGA",
+      "ic_cofit": 10.4
+    },
+    {
+      "tf": "pdhr",
+      "n_tgt": 41,
+      "n_part": 38,
+      "n_held": 21,
+      "auc_cofit_operator": 0.3750566893424036,
+      "auc_supervised": 0.7668934240362811,
+      "motif_cofit": "AGCGCAAAAAAAGAATAAAA",
+      "ic_cofit": 10.8
+    },
+    {
+      "tf": "argr",
+      "n_tgt": 38,
+      "n_part": 32,
+      "n_held": 18,
+      "auc_cofit_operator": 0.445679012345679,
+      "auc_supervised": 0.512962962962963,
+      "motif_cofit": "TTGTGATGTTGTTCTCCATT",
+      "ic_cofit": 11.1
+    },
+    {
+      "tf": "nagc",
+      "n_tgt": 37,
+      "n_part": 37,
+      "n_held": 19,
+      "auc_cofit_operator": 0.5700831024930748,
+      "auc_supervised": 0.5878116343490305,
+      "motif_cofit": "CATCACCGTTACCATTACCA",
+      "ic_cofit": 10.4
+    },
+    {
+      "tf": "slya",
+      "n_tgt": 37,
+      "n_part": 30,
+      "n_held": 19,
+      "auc_cofit_operator": 0.5950138504155125,
+      "auc_supervised": 0.4371191135734072,
+      "motif_cofit": "ATTCACAGTGAAGAAAAATC",
+      "ic_cofit": 11.1
+    },
+    {
+      "tf": "gadx",
+      "n_tgt": 34,
+      "n_part": 27,
+      "n_held": 14,
+      "auc_cofit_operator": 0.6969387755102041,
+      "auc_supervised": 0.7255102040816327,
+      "motif_cofit": "TTTAAAAATGAAAATAACGA",
+      "ic_cofit": 12.2
+    },
+    {
+      "tf": "gade",
+      "n_tgt": 32,
+      "n_part": 34,
+      "n_held": 15,
+      "auc_cofit_operator": 0.49777777777777776,
+      "auc_supervised": 0.3537777777777778,
+      "motif_cofit": "TTTATTATCAATGAGTATGA",
+      "ic_cofit": 11.3
+    },
+    {
+      "tf": "iscr",
+      "n_tgt": 32,
+      "n_part": 32,
+      "n_held": 16,
+      "auc_cofit_operator": 0.2828125,
+      "auc_supervised": 0.375,
+      "motif_cofit": "TAATACACAAAAATGATATT",
+      "ic_cofit": 10.9
+    },
+    {
+      "tf": "purr",
+      "n_tgt": 32,
+      "n_part": 36,
+      "n_held": 15,
+      "auc_cofit_operator": 0.4915555555555556,
+      "auc_supervised": 0.6568888888888889,
+      "motif_cofit": "AAATCATTATTTTTCTGATG",
+      "ic_cofit": 10.9
+    },
+    {
+      "tf": "fhla",
+      "n_tgt": 30,
+      "n_part": 30,
+      "n_held": 14,
+      "auc_cofit_operator": 0.5846938775510204,
+      "auc_supervised": 0.6683673469387755,
+      "motif_cofit": "GTGATTTTTTTCGCCAATGT",
+      "ic_cofit": 10.3
+    },
+    {
+      "tf": "csgd",
+      "n_tgt": 28,
+      "n_part": 27,
+      "n_held": 14,
+      "auc_cofit_operator": 0.6081632653061224,
+      "auc_supervised": 0.5040816326530613,
+      "motif_cofit": "TCGTTATTGTTTTTTAATAA",
+      "ic_cofit": 11.9
+    },
+    {
+      "tf": "nac",
+      "n_tgt": 26,
+      "n_part": 39,
+      "n_held": 13,
+      "auc_cofit_operator": 0.3656804733727811,
+      "auc_supervised": 0.4260355029585799,
+      "motif_cofit": "TAAACAGAAAAAAAGTCAGC",
+      "ic_cofit": 10.7
+    },
+    {
+      "tf": "rcsb",
+      "n_tgt": 26,
+      "n_part": 31,
+      "n_held": 13,
+      "auc_cofit_operator": 0.6106508875739645,
+      "auc_supervised": 0.6189349112426036,
+      "motif_cofit": "CAAAAAAAAATTCACCGTGG",
+      "ic_cofit": 11.2
+    },
+    {
+      "tf": "rob",
+      "n_tgt": 26,
+      "n_part": 32,
+      "n_held": 13,
+      "auc_cofit_operator": 0.4958579881656805,
+      "auc_supervised": 0.5124260355029586,
+      "motif_cofit": "ATTGCCCGTTATCAACAACT",
+      "ic_cofit": 10.7
+    }
+  ]
+}
