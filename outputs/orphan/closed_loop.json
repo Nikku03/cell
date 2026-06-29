@@ -1,0 +1,88 @@
+{
+  "growth_table": [
+    {
+      "env": "glucose",
+      "crp": false,
+      "on": [],
+      "growth_reg": 0.982,
+      "growth_blind": 0.982
+    },
+    {
+      "env": "arabinose",
+      "crp": true,
+      "on": [
+        "araBAD"
+      ],
+      "growth_reg": 0.806,
+      "growth_blind": 0.806
+    },
+    {
+      "env": "glycerol",
+      "crp": true,
+      "on": [
+        "glpFK"
+      ],
+      "growth_reg": 0.563,
+      "growth_blind": 0.563
+    },
+    {
+      "env": "maltose",
+      "crp": true,
+      "on": [
+        "malPQ"
+      ],
+      "growth_reg": 1.978,
+      "growth_blind": 1.978
+    },
+    {
+      "env": "arabinose+glucose",
+      "crp": false,
+      "on": [],
+      "growth_reg": 0.982,
+      "growth_blind": 1.802
+    }
+  ],
+  "arabinose_decisive": {
+    "crp_active": 0.806,
+    "crp_inactive": 0.0,
+    "fba_blind": 0.806
+  },
+  "conditional_essentiality": {
+    "glucose": {
+      "araA": "ne",
+      "araB": "ne",
+      "glpK": "ne",
+      "glpA": "ne",
+      "glpF": "ne",
+      "malQ": "ne",
+      "malP": "ne"
+    },
+    "arabinose": {
+      "araA": "ESS",
+      "araB": "ESS",
+      "glpK": "ne",
+      "glpA": "ne",
+      "glpF": "ne",
+      "malQ": "ne",
+      "malP": "ne"
+    },
+    "glycerol": {
+      "araA": "ne",
+      "araB": "ne",
+      "glpK": "ne",
+      "glpA": "ne",
+      "glpF": "ne",
+      "malQ": "ne",
+      "malP": "ne"
+    },
+    "maltose": {
+      "araA": "ne",
+      "araB": "ne",
+      "glpK": "ne",
+      "glpA": "ne",
+      "glpF": "ne",
+      "malQ": "ESS",
+      "malP": "ne"
+    }
+  }
+}
