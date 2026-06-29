@@ -1,0 +1,28 @@
+{
+  "n_tf": 44,
+  "within_mean": 0.544,
+  "between_mean": 0.52,
+  "self_mean": 0.541,
+  "within_by_family": {
+    "AraC": 0.595,
+    "OmpR": 0.544,
+    "LysR": 0.502,
+    "Crp/FNR": 0.495,
+    "LacI": 0.542,
+    "NarL/LuxR": 0.534,
+    "GntR": 0.498,
+    "bEBP": 0.575,
+    "MarR": 0.551
+  },
+  "palindrome_by_family": {
+    "AraC": 0.025,
+    "OmpR": 0.054,
+    "LysR": 0.093,
+    "Crp/FNR": 0.094,
+    "LacI": 0.143,
+    "NarL/LuxR": 0.032,
+    "GntR": -0.002,
+    "bEBP": 0.034,
+    "MarR": 0.199
+  }
+}
