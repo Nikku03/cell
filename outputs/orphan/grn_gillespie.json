@@ -1,0 +1,54 @@
+{
+  "sos_genes": [
+    "reca",
+    "sula",
+    "uvra",
+    "dinb",
+    "ruva",
+    "umud",
+    "lexa"
+  ],
+  "sos": {
+    "reca": {
+      "basal": 703.8,
+      "induced": 3295.8,
+      "fold": 4.7
+    },
+    "sula": {
+      "basal": 679.8,
+      "induced": 3085.6,
+      "fold": 4.5
+    },
+    "uvra": {
+      "basal": 968.9,
+      "induced": 3700.0,
+      "fold": 3.8
+    },
+    "dinb": {
+      "basal": 516.0,
+      "induced": 3727.9,
+      "fold": 7.2
+    },
+    "ruva": {
+      "basal": 864.2,
+      "induced": 3234.4,
+      "fold": 3.7
+    },
+    "umud": {
+      "basal": 557.0,
+      "induced": 2957.3,
+      "fold": 5.3
+    },
+    "lexa": {
+      "basal": 729.5,
+      "induced": 2993.6,
+      "fold": 4.1
+    }
+  },
+  "ffl": {
+    "Y_t_half": 41.0,
+    "Z_t_half": 43.0
+  },
+  "params": "beta20-25/min, mRNA t1/2 5min, protein dilution 40min, Hill n=2, K=40",
+  "note": "topology+sign from RegulonDB; rate params literature-typical defaults"
+}
