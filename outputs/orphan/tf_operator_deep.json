@@ -1,0 +1,13 @@
+{
+  "n_tf": 57,
+  "n_dbd": 57,
+  "corr_dbd_operator": -0.149,
+  "op_sim_within": 0.42,
+  "op_sim_between": 0.426,
+  "transfer": {
+    "self": 0.745,
+    "dbd_nn": 0.549,
+    "family_mate": 0.552,
+    "random": 0.503
+  }
+}
