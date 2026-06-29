@@ -62,3 +62,6 @@ figures/output/
 outputs/synthlet/.wt_*.pkl
 data/external_data/feba/
 data/external_data/transformer_inputs/
+
+# co-expression compendium (PRECISE) - large matrix re-fetched via script
+data/external_data/coexpression/log_tpm.csv
