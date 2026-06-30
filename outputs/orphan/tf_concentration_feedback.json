@@ -1,0 +1,9 @@
+{
+  "total": 211,
+  "neg_autoreg": 93,
+  "pos_autoreg": 27,
+  "no_autoreg": 90,
+  "neg_and_specific_computable": 78,
+  "pos_and_specific": 22,
+  "pct_computable_via_feedback": 47
+}
