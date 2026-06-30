@@ -86,12 +86,13 @@ function tags(g){let s='';if(g.essential===1)s+='<span class="tag t-ess">essenti
   if(state.kos.has(g.name))s+='<span class="tag t-ko">KO</span>';return s;}
 function renderList(){const q=($('search').value||'').toLowerCase();
   const arr=DATA.genes.filter(g=>!q||g.name.includes(q)||(g.product||'').toLowerCase().includes(q)).slice(0,300);
-  $('list').innerHTML=arr.map(g=>`<div class="gene" onclick="sel('${g.name}')"><span>${g.name}</span><span>${tags(g)}</span></div>`).join('');}
+  $('list').innerHTML=arr.map(g=>`<div class="gene" onclick="sel('${g.name}')"><span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${g.pred_prob>=.5?'#ef4444':g.pred_prob>=.3?'#fbbf24':'#22c55e'};margin-right:6px"></span>${g.name}</span><span>${tags(g)}</span></div>`).join('');}
 function sel(n){state.sel=n;const g=byName[n];if(!g)return;
   $('detail').innerHTML=`<div class="big">${g.name} <span class="muted">${g.b||''}</span></div>
    <div class="muted" style="margin:4px 0 10px">${g.product||''}</div>
-   <div class="row"><span>essential (Keio)</span><b>${g.essential===1?'YES':g.essential===0?'no':'?'}</b></div>
-   <div class="row"><span>predicted essential (full stack)</span><b>${g.pred_essential?'YES':'no'}</b></div>
+   <div class="row"><span>essential (Keio truth)</span><b>${g.essential===1?'YES':g.essential===0?'no':'?'}</b></div>
+   <div class="row"><span>P(essential) — learned model</span><b style="color:${g.pred_prob>=.5?'#f87171':'#34d399'}">${g.pred_prob!==undefined?g.pred_prob:'–'}</b></div>
+   <div style="height:7px;background:#16203a;border-radius:4px;margin:3px 0 8px"><div style="height:7px;border-radius:4px;width:${(g.pred_prob||0)*100}%;background:${g.pred_prob>=.5?'#ef4444':'#22c55e'}"></div></div>
    <div class="row"><span>metabolic (iJO1366)</span><b>${g.metabolic?'yes':'no'}</b></div>
    <div class="row"><span>conservation (panel)</span><b>${g.conservation}</b></div>
    <div class="row"><span>transcription factor</span><b>${g.is_tf?g.tf_class+' (regulon '+g.regulon+', autoreg '+(g.autoreg||'none')+')':'no'}</b></div>
