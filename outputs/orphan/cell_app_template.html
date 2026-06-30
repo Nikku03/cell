@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E. coli — Interactive Cell</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:#0b1220;color:#e2e8f0}
+.bar{display:flex;align-items:center;gap:16px;padding:12px 18px;background:#0f172a;border-bottom:1px solid #1e293b;flex-wrap:wrap}
+.bar h1{font-size:18px;margin:0;background:linear-gradient(90deg,#38bdf8,#34d399);-webkit-background-clip:text;background-clip:text;color:transparent}
+select,input,button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:6px 9px;font-size:13px}
+button{cursor:pointer} button:hover{background:#334155}
+.badge{font-size:12px;color:#94a3b8;background:#111827;border:1px solid #1e293b;border-radius:6px;padding:5px 9px}
+.grid{display:grid;grid-template-columns:300px 1fr 360px;gap:12px;padding:12px;height:calc(100vh - 58px)}
+.panel{background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:12px;overflow:auto}
+.panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#7dd3fc;margin:0 0 8px}
+.gene{padding:5px 8px;border-radius:5px;cursor:pointer;font-size:13px;display:flex;justify-content:space-between;gap:6px}
+.gene:hover{background:#1e293b}
+.tag{font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid}
+.t-ess{color:#f87171;border-color:#7f1d1d} .t-met{color:#60a5fa;border-color:#1e3a8a}
+.t-tf{color:#c084fc;border-color:#581c87} .t-ko{color:#fbbf24;border-color:#78350f}
+.row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;border-bottom:1px solid #16203a}
+.big{font-size:26px;font-weight:700} .grow{color:#34d399} .dead{color:#f87171}
+.chip{display:inline-block;background:#78350f;color:#fde68a;border-radius:12px;padding:2px 9px;margin:2px;font-size:12px;cursor:pointer}
+svg{width:100%;display:block} .muted{color:#64748b;font-size:12px}
+.tabs{display:flex;gap:6px;margin-bottom:8px} .tab{padding:5px 10px;border-radius:6px;background:#111827;cursor:pointer;font-size:12px;border:1px solid #1e293b}
+.tab.on{background:#1e3a5f;border-color:#38bdf8}
+textarea{width:100%;background:#0b1220;color:#86efac;border:1px solid #334155;border-radius:6px;font-family:monospace;font-size:11px;padding:6px}
+</style></head><body>
+<div class="bar">
+  <h1>🧫 E. coli K-12 — Interactive Cell</h1>
+  <label class="muted">Carbon: <select id="cond"></select></label>
+  <span class="badge">WT growth: <b id="wt">–</b> /h</span>
+  <span class="badge" id="verdict">viable</span>
+  <span class="badge" id="metrics"></span>
+  <button onclick="resetAll()">reset</button>
+</div>
+<div class="grid">
+  <div class="panel">
+    <h2>Genome — <span id="ngenes"></span> genes</h2>
+    <input id="search" placeholder="search gene / product…" oninput="renderList()" style="width:100%;margin-bottom:8px">
+    <div id="list"></div>
+  </div>
+  <div class="panel">
+    <div class="tabs">
+      <div class="tab on" data-t="perturb" onclick="tab('perturb')">Perturbation</div>
+      <div class="tab" data-t="dyn" onclick="tab('dyn')">Dynamics (time)</div>
+      <div class="tab" data-t="net" onclick="tab('net')">Regulatory network</div>
+    </div>
+    <div id="perturb">
+      <h2>Knockouts / mutations</h2>
+      <div id="kos" class="muted">none — click a gene then “knock out”, or click chips to restore.</div>
+      <div style="margin-top:14px" id="presult"></div>
+    </div>
+    <div id="dyn" style="display:none">
+      <h2>SOS response (live ODE) — DNA damage at <span id="dmgv">120</span> min</h2>
+      <input type="range" id="dmg" min="40" max="300" value="120" oninput="document.getElementById('dmgv').innerText=this.value;runDyn()">
+      <button onclick="playDyn()">▶ play</button>
+      <div id="dynsvg"></div><div class="muted">LexA represses the SOS genes; damage inactivates LexA → derepression; repair restores it.</div>
+    </div>
+    <div id="net" style="display:none">
+      <h2>Regulon of <span id="nettf">—</span></h2>
+      <div id="netsvg"></div><div class="muted">green = activates, red = represses. Click a node to inspect.</div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Gene detail</h2>
+    <div id="detail" class="muted">click a gene</div>
+  </div>
+</div>
+<script>
+const DATA = __DATA__;
+const byName={}, byB={}; DATA.genes.forEach(g=>{byName[g.name]=g; if(g.b)byB[g.b]=g;});
+const coreSet=new Set(DATA.core_b);
+const state={cond:DATA.carbons[0], kos:new Set(), sel:null};
+const $=id=>document.getElementById(id);
+// condition select
+DATA.carbons.forEach(c=>{const o=document.createElement('option');o.value=c;o.text=c;$('cond').add(o);});
+$('cond').onchange=e=>{state.cond=e.target.value;update();};
+$('ngenes').innerText=DATA.n_genes;
+$('metrics').innerHTML="full-stack essentiality P="+DATA.metrics.fused.precision+" R="+DATA.metrics.fused.recall;
+
+function tab(t){['perturb','dyn','net'].forEach(x=>{$(x).style.display=x===t?'block':'none';});
+  document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.dataset.t===t));
+  if(t==='dyn')runDyn();}
+function tags(g){let s='';if(g.essential===1)s+='<span class="tag t-ess">essential</span>';
+  if(g.metabolic)s+='<span class="tag t-met">metabolic</span>';
+  if(g.is_tf)s+='<span class="tag t-tf">TF·'+g.tf_class+'</span>';
+  if(state.kos.has(g.name))s+='<span class="tag t-ko">KO</span>';return s;}
+function renderList(){const q=($('search').value||'').toLowerCase();
+  const arr=DATA.genes.filter(g=>!q||g.name.includes(q)||(g.product||'').toLowerCase().includes(q)).slice(0,300);
+  $('list').innerHTML=arr.map(g=>`<div class="gene" onclick="sel('${g.name}')"><span>${g.name}</span><span>${tags(g)}</span></div>`).join('');}
+function sel(n){state.sel=n;const g=byName[n];if(!g)return;
+  $('detail').innerHTML=`<div class="big">${g.name} <span class="muted">${g.b||''}</span></div>
+   <div class="muted" style="margin:4px 0 10px">${g.product||''}</div>
+   <div class="row"><span>essential (Keio)</span><b>${g.essential===1?'YES':g.essential===0?'no':'?'}</b></div>
+   <div class="row"><span>predicted essential (full stack)</span><b>${g.pred_essential?'YES':'no'}</b></div>
+   <div class="row"><span>metabolic (iJO1366)</span><b>${g.metabolic?'yes':'no'}</b></div>
+   <div class="row"><span>conservation (panel)</span><b>${g.conservation}</b></div>
+   <div class="row"><span>transcription factor</span><b>${g.is_tf?g.tf_class+' (regulon '+g.regulon+', autoreg '+(g.autoreg||'none')+')':'no'}</b></div>
+   <div style="margin-top:10px"><b>sequence / function</b> <span class="muted">(edit to mutate; clearing = loss-of-function)</span>
+   <textarea id="seq" rows="3" oninput="mutEdit('${g.name}')">${g.metabolic?'ATG...['+g.name+' intact]...TAA':'['+g.name+' product]'}</textarea></div>
+   <div style="margin-top:8px">
+     ${state.kos.has(n)?`<button onclick="restore('${n}')">restore</button>`:`<button onclick="ko('${n}')">⛔ knock out</button>`}
+     ${g.is_tf?`<button onclick="showNet('${n}')">view regulon</button>`:''}</div>`;}
+function mutEdit(n){const v=$('seq').value; if(v.trim().length<6){state.kos.add(n);} update();}
+function ko(n){state.kos.add(n);update();sel(n);}
+function restore(n){state.kos.delete(n);update();sel(n);}
+function resetAll(){state.kos.clear();update();}
+// ---- perturbation engine ----
+const activators={}; Object.keys(DATA.net).forEach(tf=>DATA.net[tf].forEach(([tg,s])=>{if(s===1){(activators[tg]=activators[tg]||[]).push(tf);}}));
+function tfActive(tf,c){if(tf==='crp')return c!=='glucose'; if(tf==='fnr')return false; return null;}
+function cascade(kos,c){const off=new Set([...kos].filter(g=>tfActive(g,c)===true));let ch=true;
+  while(ch){ch=false;for(const g in activators){if(!off.has(g)&&activators[g].every(a=>off.has(a))){off.add(g);ch=true;}}}return off;}
+function compute(){const c=state.cond;const kos=state.kos;
+  const off=cascade(kos,c);const blocked=new Set();
+  kos.forEach(n=>{const g=byName[n];if(g&&g.metabolic)blocked.add(g.b);});
+  off.forEach(n=>{const g=byName[n];if(g&&g.metabolic&&!kos.has(n))blocked.add(g.b);});
+  let frac=1;blocked.forEach(b=>{const v=(DATA.ko[b]||{})[c];if(v!==undefined)frac=Math.min(frac,v);});
+  let coreHit=[...kos].filter(n=>{const g=byName[n];return g&&(coreSet.has(g.b)||(!g.metabolic&&g.essential===1));});
+  let lethal=coreHit.length>0||frac<0.01;
+  return {frac,lethal,off:[...off].filter(x=>!kos.has(x)),coreHit,blocked:[...blocked]};}
+function update(){
+  $('wt').innerText=DATA.wt_growth[state.cond];
+  const r=compute();const wt=DATA.wt_growth[state.cond];
+  $('verdict').innerHTML=r.lethal?'<span class="dead">✖ LETHAL</span>':'<span class="grow">✔ viable</span>';
+  $('kos').innerHTML=state.kos.size? [...state.kos].map(n=>`<span class="chip" onclick="restore('${n}')">${n} ✕</span>`).join('') : '<span class="muted">none</span>';
+  let html=`<div class="big ${r.lethal?'dead':'grow'}">${(r.frac*wt).toFixed(2)} /h <span class="muted" style="font-size:13px">(${(r.frac*100).toFixed(0)}% of WT)</span></div>`;
+  if(r.coreHit.length)html+=`<div class="muted">lethal — essential core hit: ${r.coreHit.join(', ')}</div>`;
+  if(r.off.length)html+=`<div style="margin-top:8px"><b>regulatory cascade:</b> ${r.off.length} genes lose regulation<div class="muted">${r.off.slice(0,30).join(', ')}${r.off.length>30?' …':''}</div></div>`;
+  $('presult').innerHTML=html; renderList();}
+// ---- dynamics: SOS ODE ----
+function simSOS(dmg){const genes=DATA.sos.genes,T=DATA.sos.T,rep=DATA.sos.t_repair,dt=0.5;
+  const dm=Math.log(2)/5,dp=Math.log(2)/40,ktl=5,beta=22,K=40,n=2,leak=0.03;
+  let P={},M={};genes.forEach(g=>{P[g]=120;M[g]=2;});const traj=genes.map(()=>[]),ts=[];
+  for(let t=0;t<=T;t+=dt){const phi=(t>=dmg&&t<rep)?0.05:1;const lexA=P['lexA']*phi;
+    const rif=leak+(1-leak)*(Math.pow(K,n)/(Math.pow(K,n)+Math.pow(lexA,n)));
+    genes.forEach((g,i)=>{M[g]+=dt*(beta*rif-dm*M[g]);P[g]+=dt*(ktl*M[g]-dp*P[g]);});
+    if(Math.round(t)%2===0){ts.push(t);genes.forEach((g,i)=>traj[i].push(P[g]));}}
+  return {ts,traj,genes};}
+let dynCursor=0,dynData=null,dynTimer=null;
+function runDyn(){dynData=simSOS(+$('dmg').value);dynCursor=dynData.ts.length;drawDyn();}
+function playDyn(){if(dynTimer)clearInterval(dynTimer);dynData=simSOS(+$('dmg').value);dynCursor=0;
+  dynTimer=setInterval(()=>{dynCursor+=3;if(dynCursor>=dynData.ts.length){dynCursor=dynData.ts.length;clearInterval(dynTimer);}drawDyn();},30);}
+function drawDyn(){if(!dynData)return;const W=700,H=300,pad=40;const mx=Math.max(...dynData.traj.flat());
+  const cols=['#38bdf8','#f87171','#34d399','#fbbf24','#c084fc','#fb923c'];
+  const X=i=>pad+(dynData.ts[i]/DATA.sos.T)*(W-2*pad),Y=v=>H-pad-(v/mx)*(H-2*pad);
+  let s=`<svg viewBox="0 0 ${W} ${H}">`;
+  const dmg=+$('dmg').value,rep=DATA.sos.t_repair;
+  s+=`<rect x="${pad+dmg/DATA.sos.T*(W-2*pad)}" y="${pad}" width="${(rep-dmg)/DATA.sos.T*(W-2*pad)}" height="${H-2*pad}" fill="#7f1d1d" opacity=".15"/>`;
+  dynData.traj.forEach((tr,gi)=>{let d='';for(let i=0;i<dynCursor;i++){d+=(i?'L':'M')+X(i)+' '+Y(tr[i]);}
+    s+=`<path d="${d}" fill="none" stroke="${cols[gi%6]}" stroke-width="2"/>`;});
+  dynData.genes.forEach((g,i)=>s+=`<text x="${W-90}" y="${55+i*16}" fill="${cols[i%6]}" font-size="12">${g}</text>`);
+  s+=`<text x="${pad}" y="${H-12}" fill="#64748b" font-size="11">time (min) →</text></svg>`;
+  $('dynsvg').innerHTML=s;}
+// ---- network radial ----
+function showNet(tf){tab('net');$('nettf').innerText=tf;const tgts=(DATA.net[tf.toLowerCase()]||DATA.net[tf]||[]).slice(0,40);
+  const W=700,H=420,cx=W/2,cy=H/2,R=170;let s=`<svg viewBox="0 0 ${W} ${H}">`;
+  tgts.forEach((t,i)=>{const a=2*Math.PI*i/tgts.length,x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
+    s+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="${t[1]===1?'#34d399':t[1]===-1?'#f87171':'#475569'}" opacity=".5"/>`;});
+  tgts.forEach((t,i)=>{const a=2*Math.PI*i/tgts.length,x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
+    s+=`<circle cx="${x}" cy="${y}" r="6" fill="#1e293b" stroke="#475569" onclick="sel('${t[0]}')" style="cursor:pointer"/><text x="${x}" y="${y-9}" fill="#94a3b8" font-size="9" text-anchor="middle">${t[0]}</text>`;});
+  s+=`<circle cx="${cx}" cy="${cy}" r="14" fill="#581c87" stroke="#c084fc"/><text x="${cx}" y="${cy+4}" fill="#fff" font-size="11" text-anchor="middle">${tf}</text></svg>`;
+  $('netsvg').innerHTML=s;}
+renderList();update();
+</script></body></html>
