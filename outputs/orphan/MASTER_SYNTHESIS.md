@@ -110,3 +110,40 @@ topology* and *conditional logic* well where data exists; we cannot compute the
 measured. The working system is **hybrid by necessity**: sequence + conservation
 for proteins, FBA for metabolism, functional data for regulation, and a dynamic
 loop that couples them for conditional essentiality.
+
+---
+
+## UPDATE — current position: genome -> annotated cell blueprint
+
+Later work substantially upgraded the regulatory/quantitative layer from
+"measured-only" to "mostly computable". Current cell-layout status:
+
+| layer | status | how |
+|---|---|---|
+| parts (genes->products->families) | computable | gene-calling, ESM, Pfam |
+| essential core | computable | ESM+conservation 0.768 + auto-FBA necessity |
+| metabolism + conditional essentiality | computable | auto-reconstruct + FBA + thermo directionality |
+| promoter strength beta | computable (intrinsic) | Urtecho MPRA model R^2 0.6-0.97 |
+| TF concentration [TF] | mostly computable | beta/gamma + feedback(57%) + inheritance + multiplier |
+| global condition multiplier | verified (57%) | master-regulator activities from FBA-growth + conserved effectors |
+| specific-TF targets | computable | sequence affinity ordering 0.5-1.0 |
+| operons | computable | gene order |
+| global-TF activity | computable | conserved effector logic |
+| global-TF specific targets | data / anchored | coincidence on specific partner (H-NS+RcsB 0.84); else measured |
+| network motifs | computable | edge graph (Milo/Alon reproduced) |
+| dynamics -> conditional essentiality | computable | Gillespie + closed loop |
+
+DELIVERABLE: a universal, confidence-tagged cell BLUEPRINT from genome+condition,
+every element labeled computed/transferred/measured.
+
+NOT delivered: a complete universal quantitative whole-cell simulator (needs
+per-organism measured params; doesn't robustly exist even for one organism).
+
+Residual walls (narrow, bounded): global-TF target identity from sequence; fine
+~43% of condition multiplier (supercoiling/org-specific -> calibration); absolute
+kinetic/occupancy scales (one constant each); ~30-40% dark genome.
+
+Key chain now closed & verified end-to-end:
+  in-vivo beta = intrinsic beta(promoter seq) x SUM master-program activities(effectors)
+  [TF] = beta/gamma, with feedback setpoints + inherited bistable states
+  specific-TF occupancy -> targets (affinity ordering) -> conditional essentiality (FBA-coupled)
