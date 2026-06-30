@@ -1,0 +1,9 @@
+{
+  "validation": {
+    "n": 1036,
+    "precision": 0.453,
+    "recall": 0.432,
+    "accuracy": 0.791
+  },
+  "note": "metabolic viability = FBA(iJO1366); regulatory KO = network propagation; conditional = medium"
+}
