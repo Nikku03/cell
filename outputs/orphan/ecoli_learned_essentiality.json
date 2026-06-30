@@ -1,0 +1,26 @@
+{
+  "conservation only": {
+    "auc": 0.694,
+    "essCov": 0.0,
+    "neCov": 0.493,
+    "total": 0.493
+  },
+  "non-ESM features": {
+    "auc": 0.841,
+    "essCov": 0.092,
+    "neCov": 0.898,
+    "total": 0.99
+  },
+  "ESM only": {
+    "auc": 0.641,
+    "essCov": 0.0,
+    "neCov": 0.0,
+    "total": 0.0
+  },
+  "FULL (ESM+all)": {
+    "auc": 0.783,
+    "essCov": 0.01,
+    "neCov": 0.846,
+    "total": 0.857
+  }
+}

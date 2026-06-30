@@ -68,3 +68,4 @@ data/external_data/coexpression/log_tpm.csv
 data/external_data/promoter_mpra/rlp5Min_SplitVariants.txt
 data/external_data/promoter_mpra/revLP5_Min_MOPS_glu_expression.txt
 outputs/orphan/cell_app_data.json
+outputs/orphan/ecoli_esm.npz
