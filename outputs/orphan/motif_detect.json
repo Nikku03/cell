@@ -1,0 +1,42 @@
+{
+  "n_genes": 1909,
+  "n_tf": 211,
+  "n_edges": 4670,
+  "motifs": {
+    "auto_neg": {
+      "observed": 93,
+      "null_mean": 1.4,
+      "z": 93.5
+    },
+    "auto_pos": {
+      "observed": 27,
+      "null_mean": 1.4,
+      "z": 25.4
+    },
+    "ffl": {
+      "observed": 1956,
+      "null_mean": 816.2,
+      "z": 11.0
+    },
+    "ffl_coherent": {
+      "observed": 1056,
+      "null_mean": 410.7,
+      "z": 12.0
+    },
+    "ffl_incoherent": {
+      "observed": 881,
+      "null_mean": 382.6,
+      "z": 9.8
+    },
+    "bifan": {
+      "observed": 61924,
+      "null_mean": 28186.4,
+      "z": 23.3
+    },
+    "sim": {
+      "observed": 51,
+      "null_mean": 41.9,
+      "z": 3.2
+    }
+  }
+}
