@@ -1,0 +1,13 @@
+{
+  "fba_only": {
+    "precision": 0.453,
+    "recall": 0.163,
+    "accuracy": 0.821
+  },
+  "fba_plus_core": {
+    "precision": 0.543,
+    "recall": 0.264,
+    "accuracy": 0.834
+  },
+  "n_core": 81
+}
