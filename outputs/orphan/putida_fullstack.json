@@ -1,0 +1,19 @@
+{
+  "organism": "P. putida KT2440",
+  "n": 4715,
+  "ess_rate": 0.194,
+  "results": {
+    "conservation only": {
+      "auc": 0.865,
+      "total_cov": 0.983
+    },
+    "genome-only (cons+FBA)": {
+      "auc": 0.868,
+      "total_cov": 0.976
+    },
+    "data-rich (+fitness)": {
+      "auc": 0.959,
+      "total_cov": 1.057
+    }
+  }
+}
