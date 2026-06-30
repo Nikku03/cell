@@ -1,0 +1,8 @@
+{
+  "n": 179237,
+  "pooled_auc": 0.785,
+  "mean_org_auc": 0.805,
+  "essCov": 0.096,
+  "neCov": 0.6,
+  "total_cov": 0.696
+}
