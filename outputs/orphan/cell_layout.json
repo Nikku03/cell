@@ -1,0 +1,11 @@
+{
+  "total": 4689,
+  "essential": 412,
+  "metabolic": 1217,
+  "essential_metabolic": 168,
+  "TFs": 193,
+  "global_TF": 8,
+  "specific_TF": 49,
+  "autoreg_TF": 120,
+  "neg_autoreg": 93
+}
