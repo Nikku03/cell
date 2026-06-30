@@ -1,0 +1,182 @@
+{
+  "media": [
+    "glucose",
+    "arabinose",
+    "glycerol",
+    "maltose",
+    "galactose",
+    "succinate",
+    "acetate"
+  ],
+  "n_genes": 1367,
+  "core": 207,
+  "conditional": 26,
+  "never": 1134,
+  "core_vs_keio": {
+    "n": 189,
+    "tp": 86,
+    "precision": 0.455,
+    "recall": 0.432
+  },
+  "core_cond_vs_keio": {
+    "n": 211,
+    "tp": 97,
+    "precision": 0.46,
+    "recall": 0.487
+  },
+  "example_conditional": [
+    {
+      "gene": "sdhC",
+      "essential_in": [
+        "succinate"
+      ]
+    },
+    {
+      "gene": "malQ",
+      "essential_in": [
+        "maltose"
+      ]
+    },
+    {
+      "gene": "malF",
+      "essential_in": [
+        "maltose"
+      ]
+    },
+    {
+      "gene": "malK",
+      "essential_in": [
+        "maltose"
+      ]
+    },
+    {
+      "gene": "araB",
+      "essential_in": [
+        "arabinose"
+      ]
+    },
+    {
+      "gene": "sdhA",
+      "essential_in": [
+        "succinate"
+      ]
+    },
+    {
+      "gene": "malG",
+      "essential_in": [
+        "maltose"
+      ]
+    },
+    {
+      "gene": "tpiA",
+      "essential_in": [
+        "succinate",
+        "acetate"
+      ]
+    },
+    {
+      "gene": "galE",
+      "essential_in": [
+        "galactose"
+      ]
+    },
+    {
+      "gene": "atpF",
+      "essential_in": [
+        "acetate"
+      ]
+    },
+    {
+      "gene": "atpA",
+      "essential_in": [
+        "acetate"
+      ]
+    },
+    {
+      "gene": "atpD",
+      "essential_in": [
+        "acetate"
+      ]
+    },
+    {
+      "gene": "araA",
+      "essential_in": [
+        "arabinose"
+      ]
+    },
+    {
+      "gene": "pgk",
+      "essential_in": [
+        "succinate",
+        "acetate"
+      ]
+    },
+    {
+      "gene": "malE",
+      "essential_in": [
+        "maltose"
+      ]
+    },
+    {
+      "gene": "atpH",
+      "essential_in": [
+        "acetate"
+      ]
+    },
+    {
+      "gene": "atpB",
+      "essential_in": [
+        "acetate"
+      ]
+    },
+    {
+      "gene": "sdhD",
+      "essential_in": [
+        "succinate"
+      ]
+    },
+    {
+      "gene": "atpG",
+      "essential_in": [
+        "acetate"
+      ]
+    },
+    {
+      "gene": "atpC",
+      "essential_in": [
+        "acetate"
+      ]
+    },
+    {
+      "gene": "sdhB",
+      "essential_in": [
+        "succinate"
+      ]
+    },
+    {
+      "gene": "lamB",
+      "essential_in": [
+        "maltose"
+      ]
+    },
+    {
+      "gene": "gapA",
+      "essential_in": [
+        "succinate",
+        "acetate"
+      ]
+    },
+    {
+      "gene": "atpE",
+      "essential_in": [
+        "acetate"
+      ]
+    },
+    {
+      "gene": "galT",
+      "essential_in": [
+        "galactose"
+      ]
+    }
+  ]
+}
