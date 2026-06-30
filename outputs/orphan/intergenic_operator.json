@@ -1,0 +1,514 @@
+{
+  "coding_pct": 88.8,
+  "intergenic_pct": 11.2,
+  "n_tf": 63,
+  "mean_pct_hits_coding": 77.8444,
+  "mean_prec_genome": 0.0705,
+  "mean_prec_intergenic": 0.1393,
+  "per_tf": [
+    {
+      "tf": "torr",
+      "n_targets": 12,
+      "hits": 6,
+      "pct_hits_coding": 50.0,
+      "prec_genome": 1.0,
+      "prec_intergenic": 1.0
+    },
+    {
+      "tf": "trpr",
+      "n_targets": 12,
+      "hits": 6,
+      "pct_hits_coding": 33.3,
+      "prec_genome": 0.8333,
+      "prec_intergenic": 1.0
+    },
+    {
+      "tf": "hypt",
+      "n_targets": 13,
+      "hits": 17,
+      "pct_hits_coding": 94.1,
+      "prec_genome": 0.3529,
+      "prec_intergenic": 1.0
+    },
+    {
+      "tf": "tyrr",
+      "n_targets": 12,
+      "hits": 23,
+      "pct_hits_coding": 65.2,
+      "prec_genome": 0.2609,
+      "prec_intergenic": 0.5
+    },
+    {
+      "tf": "hyfr",
+      "n_targets": 12,
+      "hits": 24,
+      "pct_hits_coding": 75.0,
+      "prec_genome": 0.2083,
+      "prec_intergenic": 0.1667
+    },
+    {
+      "tf": "qseb",
+      "n_targets": 12,
+      "hits": 27,
+      "pct_hits_coding": 92.6,
+      "prec_genome": 0.1852,
+      "prec_intergenic": 0.5
+    },
+    {
+      "tf": "gntr",
+      "n_targets": 12,
+      "hits": 32,
+      "pct_hits_coding": 62.5,
+      "prec_genome": 0.1875,
+      "prec_intergenic": 0.3333
+    },
+    {
+      "tf": "basr",
+      "n_targets": 13,
+      "hits": 42,
+      "pct_hits_coding": 61.9,
+      "prec_genome": 0.1429,
+      "prec_intergenic": 0.3125
+    },
+    {
+      "tf": "argp",
+      "n_targets": 14,
+      "hits": 52,
+      "pct_hits_coding": 80.8,
+      "prec_genome": 0.1346,
+      "prec_intergenic": 0.5
+    },
+    {
+      "tf": "metj",
+      "n_targets": 15,
+      "hits": 67,
+      "pct_hits_coding": 89.6,
+      "prec_genome": 0.1045,
+      "prec_intergenic": 0.5714
+    },
+    {
+      "tf": "cusr",
+      "n_targets": 12,
+      "hits": 69,
+      "pct_hits_coding": 76.8,
+      "prec_genome": 0.0725,
+      "prec_intergenic": 0.1875
+    },
+    {
+      "tf": "dnaa",
+      "n_targets": 14,
+      "hits": 102,
+      "pct_hits_coding": 73.5,
+      "prec_genome": 0.0588,
+      "prec_intergenic": 0.0741
+    },
+    {
+      "tf": "cytr",
+      "n_targets": 13,
+      "hits": 104,
+      "pct_hits_coding": 61.5,
+      "prec_genome": 0.0577,
+      "prec_intergenic": 0.15
+    },
+    {
+      "tf": "gadw",
+      "n_targets": 15,
+      "hits": 112,
+      "pct_hits_coding": 52.7,
+      "prec_genome": 0.0536,
+      "prec_intergenic": 0.0755
+    },
+    {
+      "tf": "rcsb-bglj",
+      "n_targets": 16,
+      "hits": 118,
+      "pct_hits_coding": 72.9,
+      "prec_genome": 0.0847,
+      "prec_intergenic": 0.25
+    },
+    {
+      "tf": "evga",
+      "n_targets": 19,
+      "hits": 149,
+      "pct_hits_coding": 50.3,
+      "prec_genome": 0.0604,
+      "prec_intergenic": 0.0946
+    },
+    {
+      "tf": "rcsab",
+      "n_targets": 16,
+      "hits": 164,
+      "pct_hits_coding": 92.1,
+      "prec_genome": 0.0488,
+      "prec_intergenic": 0.2308
+    },
+    {
+      "tf": "hprr",
+      "n_targets": 12,
+      "hits": 207,
+      "pct_hits_coding": 89.9,
+      "prec_genome": 0.029,
+      "prec_intergenic": 0.1905
+    },
+    {
+      "tf": "rutr",
+      "n_targets": 17,
+      "hits": 232,
+      "pct_hits_coding": 81.9,
+      "prec_genome": 0.0302,
+      "prec_intergenic": 0.0952
+    },
+    {
+      "tf": "arac",
+      "n_targets": 14,
+      "hits": 278,
+      "pct_hits_coding": 65.1,
+      "prec_genome": 0.0288,
+      "prec_intergenic": 0.0722
+    },
+    {
+      "tf": "fliz",
+      "n_targets": 21,
+      "hits": 290,
+      "pct_hits_coding": 50.0,
+      "prec_genome": 0.0379,
+      "prec_intergenic": 0.0621
+    },
+    {
+      "tf": "ydeo",
+      "n_targets": 21,
+      "hits": 299,
+      "pct_hits_coding": 66.2,
+      "prec_genome": 0.0334,
+      "prec_intergenic": 0.0495
+    },
+    {
+      "tf": "leuo",
+      "n_targets": 20,
+      "hits": 362,
+      "pct_hits_coding": 91.4,
+      "prec_genome": 0.0276,
+      "prec_intergenic": 0.129
+    },
+    {
+      "tf": "paax",
+      "n_targets": 14,
+      "hits": 467,
+      "pct_hits_coding": 95.5,
+      "prec_genome": 0.015,
+      "prec_intergenic": 0.0952
+    },
+    {
+      "tf": "cysb",
+      "n_targets": 31,
+      "hits": 503,
+      "pct_hits_coding": 74.0,
+      "prec_genome": 0.0298,
+      "prec_intergenic": 0.0534
+    },
+    {
+      "tf": "mraz",
+      "n_targets": 17,
+      "hits": 505,
+      "pct_hits_coding": 86.9,
+      "prec_genome": 0.0139,
+      "prec_intergenic": 0.0152
+    },
+    {
+      "tf": "ompr",
+      "n_targets": 23,
+      "hits": 722,
+      "pct_hits_coding": 65.2,
+      "prec_genome": 0.018,
+      "prec_intergenic": 0.0239
+    },
+    {
+      "tf": "fhla",
+      "n_targets": 30,
+      "hits": 894,
+      "pct_hits_coding": 94.5,
+      "prec_genome": 0.0179,
+      "prec_intergenic": 0.0408
+    },
+    {
+      "tf": "rob",
+      "n_targets": 26,
+      "hits": 945,
+      "pct_hits_coding": 81.7,
+      "prec_genome": 0.0138,
+      "prec_intergenic": 0.0405
+    },
+    {
+      "tf": "nac",
+      "n_targets": 26,
+      "hits": 1204,
+      "pct_hits_coding": 93.0,
+      "prec_genome": 0.0108,
+      "prec_intergenic": 0.0714
+    },
+    {
+      "tf": "purr",
+      "n_targets": 32,
+      "hits": 1261,
+      "pct_hits_coding": 84.0,
+      "prec_genome": 0.0159,
+      "prec_intergenic": 0.0693
+    },
+    {
+      "tf": "gade",
+      "n_targets": 32,
+      "hits": 1308,
+      "pct_hits_coding": 72.6,
+      "prec_genome": 0.0138,
+      "prec_intergenic": 0.0279
+    },
+    {
+      "tf": "slya",
+      "n_targets": 37,
+      "hits": 1992,
+      "pct_hits_coding": 81.9,
+      "prec_genome": 0.0115,
+      "prec_intergenic": 0.0222
+    },
+    {
+      "tf": "oxyr",
+      "n_targets": 43,
+      "hits": 2212,
+      "pct_hits_coding": 75.6,
+      "prec_genome": 0.0122,
+      "prec_intergenic": 0.039
+    },
+    {
+      "tf": "argr",
+      "n_targets": 38,
+      "hits": 2408,
+      "pct_hits_coding": 78.9,
+      "prec_genome": 0.01,
+      "prec_intergenic": 0.0276
+    },
+    {
+      "tf": "fadr",
+      "n_targets": 23,
+      "hits": 2429,
+      "pct_hits_coding": 75.7,
+      "prec_genome": 0.0054,
+      "prec_intergenic": 0.0169
+    },
+    {
+      "tf": "rcsb",
+      "n_targets": 26,
+      "hits": 2904,
+      "pct_hits_coding": 66.7,
+      "prec_genome": 0.0065,
+      "prec_intergenic": 0.0145
+    },
+    {
+      "tf": "gadx",
+      "n_targets": 34,
+      "hits": 4073,
+      "pct_hits_coding": 62.6,
+      "prec_genome": 0.0098,
+      "prec_intergenic": 0.021
+    },
+    {
+      "tf": "soxs",
+      "n_targets": 44,
+      "hits": 4293,
+      "pct_hits_coding": 74.7,
+      "prec_genome": 0.0093,
+      "prec_intergenic": 0.0295
+    },
+    {
+      "tf": "csgd",
+      "n_targets": 28,
+      "hits": 4479,
+      "pct_hits_coding": 93.5,
+      "prec_genome": 0.004,
+      "prec_intergenic": 0.0205
+    },
+    {
+      "tf": "ntrc",
+      "n_targets": 50,
+      "hits": 6077,
+      "pct_hits_coding": 87.9,
+      "prec_genome": 0.0061,
+      "prec_intergenic": 0.0177
+    },
+    {
+      "tf": "iscr",
+      "n_targets": 32,
+      "hits": 6789,
+      "pct_hits_coding": 92.0,
+      "prec_genome": 0.0031,
+      "prec_intergenic": 0.0093
+    },
+    {
+      "tf": "lexa",
+      "n_targets": 61,
+      "hits": 8546,
+      "pct_hits_coding": 79.1,
+      "prec_genome": 0.0071,
+      "prec_intergenic": 0.0134
+    },
+    {
+      "tf": "pdhr",
+      "n_targets": 41,
+      "hits": 12458,
+      "pct_hits_coding": 92.2,
+      "prec_genome": 0.0034,
+      "prec_intergenic": 0.0072
+    },
+    {
+      "tf": "phob",
+      "n_targets": 60,
+      "hits": 12538,
+      "pct_hits_coding": 79.0,
+      "prec_genome": 0.0053,
+      "prec_intergenic": 0.0179
+    },
+    {
+      "tf": "mode",
+      "n_targets": 46,
+      "hits": 12633,
+      "pct_hits_coding": 93.9,
+      "prec_genome": 0.0032,
+      "prec_intergenic": 0.0065
+    },
+    {
+      "tf": "narp",
+      "n_targets": 51,
+      "hits": 15405,
+      "pct_hits_coding": 94.6,
+      "prec_genome": 0.003,
+      "prec_intergenic": 0.0108
+    },
+    {
+      "tf": "nagc",
+      "n_targets": 37,
+      "hits": 15411,
+      "pct_hits_coding": 86.5,
+      "prec_genome": 0.0031,
+      "prec_intergenic": 0.0096
+    },
+    {
+      "tf": "mara",
+      "n_targets": 48,
+      "hits": 18035,
+      "pct_hits_coding": 68.9,
+      "prec_genome": 0.005,
+      "prec_intergenic": 0.012
+    },
+    {
+      "tf": "phop",
+      "n_targets": 56,
+      "hits": 20040,
+      "pct_hits_coding": 79.0,
+      "prec_genome": 0.0054,
+      "prec_intergenic": 0.0186
+    },
+    {
+      "tf": "cra",
+      "n_targets": 79,
+      "hits": 22936,
+      "pct_hits_coding": 86.6,
+      "prec_genome": 0.0044,
+      "prec_intergenic": 0.0205
+    },
+    {
+      "tf": "nsrr",
+      "n_targets": 84,
+      "hits": 27497,
+      "pct_hits_coding": 84.4,
+      "prec_genome": 0.0047,
+      "prec_intergenic": 0.0163
+    },
+    {
+      "tf": "cpxr",
+      "n_targets": 70,
+      "hits": 30257,
+      "pct_hits_coding": 77.3,
+      "prec_genome": 0.0055,
+      "prec_intergenic": 0.0145
+    },
+    {
+      "tf": "lrp",
+      "n_targets": 106,
+      "hits": 36812,
+      "pct_hits_coding": 80.2,
+      "prec_genome": 0.0084,
+      "prec_intergenic": 0.0346
+    },
+    {
+      "tf": "flhdc",
+      "n_targets": 82,
+      "hits": 37777,
+      "pct_hits_coding": 91.0,
+      "prec_genome": 0.0047,
+      "prec_intergenic": 0.0165
+    },
+    {
+      "tf": "narl",
+      "n_targets": 124,
+      "hits": 41034,
+      "pct_hits_coding": 92.0,
+      "prec_genome": 0.0068,
+      "prec_intergenic": 0.0205
+    },
+    {
+      "tf": "arca",
+      "n_targets": 180,
+      "hits": 43777,
+      "pct_hits_coding": 78.6,
+      "prec_genome": 0.0123,
+      "prec_intergenic": 0.0381
+    },
+    {
+      "tf": "fur",
+      "n_targets": 130,
+      "hits": 77501,
+      "pct_hits_coding": 78.9,
+      "prec_genome": 0.0086,
+      "prec_intergenic": 0.0279
+    },
+    {
+      "tf": "fis",
+      "n_targets": 233,
+      "hits": 84987,
+      "pct_hits_coding": 80.2,
+      "prec_genome": 0.0134,
+      "prec_intergenic": 0.0479
+    },
+    {
+      "tf": "ihf",
+      "n_targets": 229,
+      "hits": 145827,
+      "pct_hits_coding": 84.6,
+      "prec_genome": 0.0116,
+      "prec_intergenic": 0.0403
+    },
+    {
+      "tf": "h-ns",
+      "n_targets": 194,
+      "hits": 171117,
+      "pct_hits_coding": 72.6,
+      "prec_genome": 0.018,
+      "prec_intergenic": 0.0513
+    },
+    {
+      "tf": "fnr",
+      "n_targets": 302,
+      "hits": 196472,
+      "pct_hits_coding": 80.2,
+      "prec_genome": 0.0172,
+      "prec_intergenic": 0.054
+    },
+    {
+      "tf": "crp",
+      "n_targets": 530,
+      "hits": 320356,
+      "pct_hits_coding": 78.2,
+      "prec_genome": 0.0315,
+      "prec_intergenic": 0.0992
+    }
+  ]
+}
