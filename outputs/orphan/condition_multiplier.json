@@ -1,0 +1,21 @@
+{
+  "programs": [
+    "crp",
+    "fnr",
+    "arca",
+    "fur",
+    "lexa",
+    "fis",
+    "ihf",
+    "lrp",
+    "narl",
+    "soxs",
+    "oxyr",
+    "phob",
+    "ompr",
+    "nac",
+    "growth_ribo"
+  ],
+  "recon_r2": 0.571,
+  "growth_corr": 0.464
+}
