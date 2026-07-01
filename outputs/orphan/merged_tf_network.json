@@ -1,0 +1,142 @@
+{
+  "total_edges": 326125,
+  "high_conf": 72648,
+  "tfs": 1366,
+  "trrust_edges": 8427,
+  "collectri_edges": 62411,
+  "overlap": 7849,
+  "ceg_covered_trrust": 82,
+  "ceg_covered_merged": 332,
+  "ceg_total": 684,
+  "tf_median_loeuf": 0.46,
+  "ffl": {
+    "obs": 77982,
+    "z": 57.3
+  },
+  "mutual": {
+    "obs": 1002,
+    "z": 73.8
+  },
+  "master_regulators": [
+    {
+      "tf": "MYC",
+      "ess_targets": 91,
+      "targets": 902,
+      "loeuf": 0.164
+    },
+    {
+      "tf": "E2F4",
+      "ess_targets": 69,
+      "targets": 544,
+      "loeuf": 0.49
+    },
+    {
+      "tf": "TP53",
+      "ess_targets": 53,
+      "targets": 1241,
+      "loeuf": 0.469
+    },
+    {
+      "tf": "E2F1",
+      "ess_targets": 45,
+      "targets": 677,
+      "loeuf": 0.225
+    },
+    {
+      "tf": "SP1",
+      "ess_targets": 29,
+      "targets": 1349,
+      "loeuf": 0.1
+    },
+    {
+      "tf": "ETS1",
+      "ess_targets": 24,
+      "targets": 642,
+      "loeuf": 0.389
+    },
+    {
+      "tf": "NFKB1",
+      "ess_targets": 24,
+      "targets": 948,
+      "loeuf": 0.138
+    },
+    {
+      "tf": "REL",
+      "ess_targets": 23,
+      "targets": 816,
+      "loeuf": 0.229
+    },
+    {
+      "tf": "RELB",
+      "ess_targets": 23,
+      "targets": 815,
+      "loeuf": 0.262
+    },
+    {
+      "tf": "NFKB2",
+      "ess_targets": 22,
+      "targets": 821,
+      "loeuf": 0.163
+    },
+    {
+      "tf": "RELA",
+      "ess_targets": 22,
+      "targets": 972,
+      "loeuf": 0.181
+    },
+    {
+      "tf": "NFKB2_RELB",
+      "ess_targets": 22,
+      "targets": 797,
+      "loeuf": null
+    },
+    {
+      "tf": "NFKB2_RELA",
+      "ess_targets": 22,
+      "targets": 797,
+      "loeuf": null
+    },
+    {
+      "tf": "NFKB1_REL",
+      "ess_targets": 22,
+      "targets": 797,
+      "loeuf": null
+    },
+    {
+      "tf": "NFKB1_RELA",
+      "ess_targets": 22,
+      "targets": 797,
+      "loeuf": null
+    },
+    {
+      "tf": "RELA_RELB",
+      "ess_targets": 22,
+      "targets": 797,
+      "loeuf": null
+    },
+    {
+      "tf": "NFKB1_RELB",
+      "ess_targets": 22,
+      "targets": 797,
+      "loeuf": null
+    },
+    {
+      "tf": "NFKB2_REL",
+      "ess_targets": 22,
+      "targets": 797,
+      "loeuf": null
+    },
+    {
+      "tf": "REL_RELA",
+      "ess_targets": 22,
+      "targets": 797,
+      "loeuf": null
+    },
+    {
+      "tf": "NFKB1_NFKB2",
+      "ess_targets": 22,
+      "targets": 797,
+      "loeuf": null
+    }
+  ]
+}
