@@ -1,0 +1,19 @@
+{
+  "curated_attractors": {
+    "silent": 1,
+    "monocyte": 2,
+    "granulocyte": 1,
+    "megakaryocyte": 1,
+    "erythrocyte": 1
+  },
+  "n_distinct_fates": 5,
+  "progenitor_forcing": {
+    "GATA1(force)": "mixed/progenitor(FOG1,GATA1,TAL1)",
+    "SPI1/PU.1(force)": "granulocyte",
+    "GATA1+KLF1": "erythrocyte",
+    "GATA1+FLI1": "megakaryocyte",
+    "SPI1+GFI1": "granulocyte",
+    "SPI1+EGR1": "monocyte"
+  },
+  "note": "raw measured/aggregate network collapses to all-on under naive Boolean dynamics; distinct cell-fate attractors require curated mutual-repression logic (or cell-type-specific active subnetworks). Curated hematopoiesis model reproduces the 4 blood fates."
+}
