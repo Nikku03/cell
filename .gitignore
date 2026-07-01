@@ -77,3 +77,6 @@ data/external_data/human/gnomad_constraint.txt.bgz
 
 data/external_data/human/cCREs.bed
 data/external_data/human/refGene.txt.gz
+
+data/external_data/human/string_physical.txt.gz
+data/external_data/human/string_aliases.txt.gz

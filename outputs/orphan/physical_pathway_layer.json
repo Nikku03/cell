@@ -1,0 +1,180 @@
+{
+  "ppi_proteins": 10611,
+  "ppi_edges": 170496,
+  "ppi_degree": {
+    "essential": 48.4,
+    "nonessential": 5.1,
+    "disease": 16.7,
+    "all": 16.1,
+    "TF": 17.1
+  },
+  "ppi_disease_enrichment": 54.3,
+  "reactome_pathways": 2311,
+  "reactome_genes": 11272,
+  "metabolic_genes_reactome": 587,
+  "metabolic_union": 3085,
+  "disease_to_pathway": [
+    {
+      "gene": "LDLR",
+      "pathways": [
+        "LDL clearance",
+        "Chylomicron clearance"
+      ]
+    },
+    {
+      "gene": "PAH",
+      "pathways": [
+        "Phenylketonuria",
+        "Phenylalanine metabolism"
+      ]
+    },
+    {
+      "gene": "TP53",
+      "pathways": [
+        "Pyroptosis",
+        "G2/M Checkpoints"
+      ]
+    },
+    {
+      "gene": "CFTR",
+      "pathways": [
+        "Aggrephagy",
+        "RHOQ GTPase cycle"
+      ]
+    },
+    {
+      "gene": "HBB",
+      "pathways": [
+        "Heme signaling",
+        "Heme assimilation"
+      ]
+    },
+    {
+      "gene": "BRCA1",
+      "pathways": [
+        "Neddylation",
+        "Meiotic synapsis"
+      ]
+    },
+    {
+      "gene": "MLH1",
+      "pathways": [
+        "Meiotic recombination",
+        "Defective Mismatch Repair Associated With PMS2"
+      ]
+    },
+    {
+      "gene": "PTEN",
+      "pathways": [
+        "Downstream TCR signaling",
+        "TP53 Regulates Metabolic Genes"
+      ]
+    },
+    {
+      "gene": "G6PD",
+      "pathways": [
+        "Pentose phosphate pathway",
+        "TP53 Regulates Metabolic Genes"
+      ]
+    },
+    {
+      "gene": "GATA4",
+      "pathways": [
+        "Cardiogenesis",
+        "Physiological factors"
+      ]
+    },
+    {
+      "gene": "RET",
+      "pathways": [
+        "RET signaling",
+        "RAF/MAP kinase cascade"
+      ]
+    },
+    {
+      "gene": "VHL",
+      "pathways": [
+        "Neddylation",
+        "RHOBTB3 ATPase cycle"
+      ]
+    }
+  ],
+  "pathway_disease_modules": 505,
+  "top_modules": [
+    {
+      "pathway": "Complex I biogenesis",
+      "shared": 29,
+      "genes": 47
+    },
+    {
+      "pathway": "Major pathway of rRNA processing in the nucleolus and cytosol",
+      "shared": 22,
+      "genes": 50
+    },
+    {
+      "pathway": "Nonsense Mediated Decay (NMD) independent of the Exon Junction Complex (EJC)",
+      "shared": 22,
+      "genes": 33
+    },
+    {
+      "pathway": "Nonsense Mediated Decay (NMD) enhanced by the Exon Junction Complex (EJC)",
+      "shared": 22,
+      "genes": 40
+    },
+    {
+      "pathway": "Regulation of expression of SLITs and ROBOs",
+      "shared": 22,
+      "genes": 52
+    },
+    {
+      "pathway": "L13a-mediated translational silencing of Ceruloplasmin expression",
+      "shared": 22,
+      "genes": 37
+    },
+    {
+      "pathway": "Peptide chain elongation",
+      "shared": 22,
+      "genes": 33
+    },
+    {
+      "pathway": "SRP-dependent cotranslational protein targeting to membrane",
+      "shared": 22,
+      "genes": 38
+    },
+    {
+      "pathway": "Viral mRNA Translation",
+      "shared": 22,
+      "genes": 33
+    },
+    {
+      "pathway": "Selenocysteine synthesis",
+      "shared": 22,
+      "genes": 36
+    },
+    {
+      "pathway": "Formation of a pool of free 40S subunits",
+      "shared": 22,
+      "genes": 33
+    },
+    {
+      "pathway": "GTP hydrolysis and joining of the 60S ribosomal subunit",
+      "shared": 22,
+      "genes": 37
+    },
+    {
+      "pathway": "Eukaryotic Translation Termination",
+      "shared": 22,
+      "genes": 32
+    },
+    {
+      "pathway": "Response of EIF2AK4 (GCN2) to amino acid deficiency",
+      "shared": 22,
+      "genes": 36
+    },
+    {
+      "pathway": "PELO:HBS1L and ABCE1 dissociate a ribosome on a non-stop mRNA",
+      "shared": 22,
+      "genes": 32
+    }
+  ]
+}
