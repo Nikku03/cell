@@ -1,0 +1,66 @@
+{
+  "model": "Human-GEM",
+  "n_genes": 2848,
+  "n_reactions": 12931,
+  "truth": {
+    "CEG": 684,
+    "NEG": 926
+  },
+  "metabolic_coverage": {
+    "ceg_in_model": 119,
+    "ceg_total": 684,
+    "ceg_frac": 0.174,
+    "neg_in_model": 89,
+    "neg_total": 926
+  },
+  "fba_essential_metabolic": 88,
+  "benchmark_metabolic_only": {
+    "precision": 1.0,
+    "recall": 0.252,
+    "mcc": 0.355,
+    "tp": 30,
+    "fp": 0,
+    "fn": 89,
+    "tn": 89,
+    "n_eval": 208
+  },
+  "bacterial_reference": {
+    "ecoli_fba_precision": 0.455,
+    "ecoli_fba_recall": 0.163
+  },
+  "warburg": {
+    "glucose_removed_new_ess": 0,
+    "glutamine_removed_new_ess": 0
+  },
+  "oncology_targets": {
+    "in_model": [
+      "HK2",
+      "SHMT1",
+      "PKM",
+      "GLS",
+      "NAMPT",
+      "SHMT2",
+      "ODC1",
+      "GART",
+      "HPRT1",
+      "TYMS",
+      "ATIC",
+      "RRM1",
+      "DHFR",
+      "TK1",
+      "PPAT",
+      "MTHFD2",
+      "DHODH",
+      "LDHA",
+      "PNP",
+      "MTHFD1",
+      "RRM2",
+      "PHGDH",
+      "ADA",
+      "TYMP",
+      "IMPDH2",
+      "IMPDH1"
+    ],
+    "fba_essential": []
+  }
+}

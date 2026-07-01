@@ -1,0 +1,2849 @@
+gene,ensg,fba_essential,hart_truth,subsystem,druggability
+AARS1,ENSG00000090861,1,,Aminoacyl-tRNA biosynthesis,0.9
+AHCTF1,ENSG00000153207,1,,Transport reactions,0.9
+CARS1,ENSG00000110619,1,,Aminoacyl-tRNA biosynthesis,0.9
+CYP1A2,ENSG00000140505,1,,Arachidonic acid metabolism,0.9
+CYP24A1,ENSG00000019186,1,,Vitamin D metabolism,0.9
+CYP26A1,ENSG00000095596,1,,Retinol metabolism,0.9
+CYP26B1,ENSG00000003137,1,,Retinol metabolism,0.9
+DARS1,ENSG00000115866,1,,Aminoacyl-tRNA biosynthesis,0.9
+DDX19B,ENSG00000157349,1,,Transport reactions,0.9
+DTYMK,ENSG00000168393,1,1,Pyrimidine metabolism,0.9
+EPRS1,ENSG00000136628,1,,Aminoacyl-tRNA biosynthesis,0.9
+FARSA,ENSG00000179115,1,1,Aminoacyl-tRNA biosynthesis,0.9
+FARSB,ENSG00000116120,1,1,Aminoacyl-tRNA biosynthesis,0.9
+GARS1,ENSG00000106105,1,,Aminoacyl-tRNA biosynthesis,0.9
+GLE1,ENSG00000119392,1,,Transport reactions,0.9
+HARS1,ENSG00000170445,1,,Aminoacyl-tRNA biosynthesis,0.9
+IARS1,ENSG00000196305,1,,Aminoacyl-tRNA biosynthesis,0.9
+KARS1,ENSG00000065427,1,,Aminoacyl-tRNA biosynthesis,0.9
+LARS1,ENSG00000133706,1,,Aminoacyl-tRNA biosynthesis,0.9
+MARS1,ENSG00000166986,1,,Aminoacyl-tRNA biosynthesis,0.9
+MMAA,ENSG00000151611,1,,Transport reactions,0.9
+MTPAP,ENSG00000107951,1,,Nucleotide metabolism,0.9
+NADK,ENSG00000008130,1,,Nicotinate and nicotinamide metabolism,0.9
+NARS1,ENSG00000134440,1,,Aminoacyl-tRNA biosynthesis,0.9
+NDC1,ENSG00000058804,1,,Transport reactions,0.9
+NUP107,ENSG00000111581,1,,Transport reactions,0.9
+NUP133,ENSG00000069248,1,1,Transport reactions,0.9
+NUP153,ENSG00000124789,1,,Transport reactions,0.9
+NUP155,ENSG00000113569,1,1,Transport reactions,0.9
+NUP160,ENSG00000030066,1,1,Transport reactions,0.9
+NUP188,ENSG00000095319,1,,Transport reactions,0.9
+NUP205,ENSG00000155561,1,,Transport reactions,0.9
+NUP210,ENSG00000132182,1,,Transport reactions,0.9
+NUP214,ENSG00000126883,1,1,Transport reactions,0.9
+NUP35,ENSG00000163002,1,,Transport reactions,0.9
+NUP37,ENSG00000075188,1,,Transport reactions,0.9
+NUP42,ENSG00000136243,1,,Transport reactions,0.9
+NUP43,ENSG00000120253,1,,Transport reactions,0.9
+NUP50,ENSG00000093000,1,,Transport reactions,0.9
+NUP54,ENSG00000138750,1,,Transport reactions,0.9
+NUP58,ENSG00000139496,1,,Transport reactions,0.9
+NUP62,ENSG00000213024,1,,Transport reactions,0.9
+NUP85,ENSG00000125450,1,1,Transport reactions,0.9
+NUP88,ENSG00000108559,1,1,Transport reactions,0.9
+NUP93,ENSG00000102900,1,1,Transport reactions,0.9
+NUP98,ENSG00000110713,1,,Transport reactions,0.9
+POLR1A,ENSG00000068654,1,1,Nucleotide metabolism,0.9
+POLR1B,ENSG00000125630,1,1,Nucleotide metabolism,0.9
+POLR1C,ENSG00000171453,1,1,Nucleotide metabolism,0.9
+POLR1D,ENSG00000186184,1,,Nucleotide metabolism,0.9
+POLR1E,ENSG00000137054,1,,Nucleotide metabolism,0.9
+POLR1H,ENSG00000066379,1,,Nucleotide metabolism,0.9
+POLR2A,ENSG00000181222,1,1,Nucleotide metabolism,0.9
+POLR2B,ENSG00000047315,1,1,Nucleotide metabolism,0.9
+POLR2C,ENSG00000102978,1,1,Nucleotide metabolism,0.9
+POLR2D,ENSG00000144231,1,1,Nucleotide metabolism,0.9
+POLR2E,ENSG00000099817,1,1,Nucleotide metabolism,0.9
+POLR2F,ENSG00000100142,1,,Nucleotide metabolism,0.9
+POLR2G,ENSG00000168002,1,1,Nucleotide metabolism,0.9
+POLR2H,ENSG00000163882,1,1,Nucleotide metabolism,0.9
+POLR2I,ENSG00000105258,1,1,Nucleotide metabolism,0.9
+POLR2J,ENSG00000005075,1,,Nucleotide metabolism,0.9
+POLR2K,ENSG00000147669,1,,Nucleotide metabolism,0.9
+POLR2L,ENSG00000177700,1,1,Nucleotide metabolism,0.9
+POLR3A,ENSG00000148606,1,1,Nucleotide metabolism,0.9
+POLR3B,ENSG00000013503,1,,Nucleotide metabolism,0.9
+POLR3C,ENSG00000186141,1,1,Nucleotide metabolism,0.9
+POLR3D,ENSG00000168495,1,,Nucleotide metabolism,0.9
+POLR3E,ENSG00000058600,1,,Nucleotide metabolism,0.9
+POLR3F,ENSG00000132664,1,,Nucleotide metabolism,0.9
+POLR3H,ENSG00000100413,1,1,Nucleotide metabolism,0.9
+POLR3K,ENSG00000161980,1,1,Nucleotide metabolism,0.9
+POLRMT,ENSG00000099821,1,1,Nucleotide metabolism,0.9
+POM121,ENSG00000196313,1,,Transport reactions,0.9
+QARS1,ENSG00000172053,1,,Aminoacyl-tRNA biosynthesis,0.9
+RAE1,ENSG00000101146,1,1,Transport reactions,0.9
+RANBP2,ENSG00000153201,1,,Transport reactions,0.9
+RARS1,ENSG00000113643,1,,Aminoacyl-tRNA biosynthesis,0.9
+SARS1,ENSG00000031698,1,,Aminoacyl-tRNA biosynthesis,0.9
+SEC13,ENSG00000157020,1,1,Transport reactions,0.9
+SEH1L,ENSG00000085415,1,1,Transport reactions,0.9
+SLC5A6,ENSG00000138074,1,,Transport reactions,0.9
+TARS1,ENSG00000113407,1,,Aminoacyl-tRNA biosynthesis,0.9
+TPK1,ENSG00000196511,1,,Thiamine metabolism,0.9
+TPR,ENSG00000047410,1,,Transport reactions,0.9
+VARS1,ENSG00000204394,1,,Aminoacyl-tRNA biosynthesis,0.9
+WARS1,ENSG00000140105,1,,Aminoacyl-tRNA biosynthesis,0.9
+YARS1,ENSG00000134684,1,,Aminoacyl-tRNA biosynthesis,0.9
+81689,ENSG00000135070,0,,Lipoic acid metabolism,0.9
+A4GALT,ENSG00000128274,0,,Glycosphingolipid biosynthesis-globo ser,0.9
+A4GNT,ENSG00000118017,0,,Sphingolipid metabolism,0.9
+AACS,ENSG00000081760,0,,Butanoate metabolism,0.9
+AADAC,ENSG00000114771,0,,Acylglycerides metabolism,0.9
+AADAT,ENSG00000109576,0,,Tryptophan metabolism,0.9
+AANAT,ENSG00000129673,0,,Serotonin and melatonin biosynthesis,0.9
+AASDH,ENSG00000157426,0,,Arachidonic acid metabolism,0.9
+AASDHPPT,ENSG00000149313,0,,Pantothenate and CoA metabolism,0.9
+AASS,ENSG00000008311,0,,Lysine metabolism,0.9
+ABAT,ENSG00000183044,0,,"Valine, leucine, and isoleucine metaboli",0.9
+ABCA1,ENSG00000165029,0,,Transport reactions,0.9
+ABCA3,ENSG00000167972,0,,Transport reactions,0.9
+ABCA4,ENSG00000198691,0,,Transport reactions,0.9
+ABCA8,ENSG00000141338,0,,Transport reactions,0.9
+ABCB1,ENSG00000085563,0,,Transport reactions,0.9
+ABCB11,ENSG00000073734,0,,Bile acid recycling,0.9
+ABCB4,ENSG00000005471,0,,Transport reactions,0.9
+ABCB6,ENSG00000115657,0,,Transport reactions,0.9
+ABCC1,ENSG00000103222,0,,Transport reactions,0.9
+ABCC11,ENSG00000121270,0,,Bile acid recycling,0.9
+ABCC2,ENSG00000023839,0,,Bile acid recycling,0.9
+ABCC3,ENSG00000108846,0,,Bile acid recycling,0.9
+ABCC4,ENSG00000125257,0,,Bile acid recycling,0.9
+ABCC5,ENSG00000114770,0,,Transport reactions,0.9
+ABCC8,ENSG00000006071,0,,Transport reactions,0.9
+ABCC9,ENSG00000069431,0,,Transport reactions,0.9
+ABCD1,ENSG00000101986,0,,Bile acid biosynthesis,0.9
+ABCD2,ENSG00000173208,0,,Transport reactions,0.9
+ABCD3,ENSG00000117528,0,,Transport reactions,0.9
+ABCG1,ENSG00000160179,0,,Transport reactions,0.9
+ABCG2,ENSG00000118777,0,,Transport reactions,0.9
+ABCG5,ENSG00000138075,0,,Transport reactions,0.9
+ABCG8,ENSG00000143921,0,0,Transport reactions,0.9
+ABHD12,ENSG00000100997,0,,Acylglycerides metabolism,0.9
+ABHD5,ENSG00000011198,0,,Glycerophospholipid metabolism,0.9
+ABHD6,ENSG00000163686,0,,Acylglycerides metabolism,0.9
+ABO,ENSG00000175164,0,,Glycosphingolipid biosynthesis-lacto and,0.9
+ABTB2,ENSG00000166016,0,,Glyoxylate and dicarboxylate metabolism,0.9
+ACAA1,ENSG00000060971,0,,Fatty acid oxidation,0.9
+ACAA2,ENSG00000167315,0,,Arachidonic acid metabolism,0.9
+ACACA,ENSG00000278540,0,,Fatty acid biosynthesis (even-chain),0.9
+ACACB,ENSG00000076555,0,,Fatty acid biosynthesis (even-chain),0.9
+ACAD11,ENSG00000240303,0,,Butanoate metabolism,0.9
+ACAD8,ENSG00000151498,0,,Butanoate metabolism,0.9
+ACAD9,ENSG00000177646,0,,Fatty acid oxidation,0.9
+ACADL,ENSG00000115361,0,,Fatty acid oxidation,0.9
+ACADM,ENSG00000117054,0,,Fatty acid oxidation,0.9
+ACADS,ENSG00000122971,0,,Fatty acid oxidation,0.9
+ACADSB,ENSG00000196177,0,,Beta oxidation of even-chain fatty acids,0.9
+ACADVL,ENSG00000072778,0,,Beta oxidation of even-chain fatty acids,0.9
+ACAT1,ENSG00000075239,0,,Tryptophan metabolism,0.9
+ACAT2,ENSG00000120437,0,,Butanoate metabolism,0.9
+ACE,ENSG00000159640,0,,Miscellaneous,0.9
+ACE2,ENSG00000130234,0,,Miscellaneous,0.9
+ACER1,ENSG00000167769,0,,Sphingolipid metabolism,0.9
+ACER2,ENSG00000177076,0,,Sphingolipid metabolism,0.9
+ACER3,ENSG00000078124,0,,Sphingolipid metabolism,0.9
+ACHE,ENSG00000087085,0,,Glycerophospholipid metabolism,0.9
+ACLY,ENSG00000131473,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+ACMSD,ENSG00000153086,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+ACO1,ENSG00000122729,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+ACO2,ENSG00000100412,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+ACOD1,ENSG00000102794,0,,C5-branched dibasic acid metabolism,0.9
+ACOT1,ENSG00000184227,0,,Acyl-CoA hydrolysis,0.9
+ACOT11,ENSG00000162390,0,,Fatty acid oxidation,0.9
+ACOT12,ENSG00000172497,0,,Pyruvate metabolism,0.9
+ACOT13,ENSG00000112304,0,,Acyl-CoA hydrolysis,0.9
+ACOT2,ENSG00000119673,0,,Fatty acid activation (cytosolic),0.9
+ACOT4,ENSG00000177465,0,,Fatty acid activation (cytosolic),0.9
+ACOT6,ENSG00000205669,0,,Acyl-CoA hydrolysis,0.9
+ACOT7,ENSG00000097021,0,,Acyl-CoA hydrolysis,0.9
+ACOT8,ENSG00000101473,0,,Arachidonic acid metabolism,0.9
+ACOT9,ENSG00000123130,0,,Bile acid biosynthesis,0.9
+ACOX1,ENSG00000161533,0,,Fatty acid oxidation,0.9
+ACOX2,ENSG00000168306,0,,Leukotriene metabolism,0.9
+ACOX3,ENSG00000087008,0,,Arachidonic acid metabolism,0.9
+ACP2,ENSG00000134575,0,,Purine metabolism,0.9
+ACP3,ENSG00000014257,0,,Purine metabolism,0.9
+ACP4,ENSG00000142513,0,,Nicotinate and nicotinamide metabolism,0.9
+ACP5,ENSG00000102575,0,,Purine metabolism,0.9
+ACP6,ENSG00000162836,0,,Nicotinate and nicotinamide metabolism,0.9
+ACP7,ENSG00000183760,0,,Nicotinate and nicotinamide metabolism,0.9
+ACSBG1,ENSG00000103740,0,,Fatty acid activation (cytosolic),0.9
+ACSBG2,ENSG00000130377,0,,Fatty acid activation (cytosolic),0.9
+ACSF2,ENSG00000167107,0,,Arachidonic acid metabolism,0.9
+ACSF3,ENSG00000176715,0,,Arachidonic acid metabolism,0.9
+ACSL1,ENSG00000151726,0,,Fatty acid activation (cytosolic),0.9
+ACSL3,ENSG00000123983,0,,Fatty acid activation (cytosolic),0.9
+ACSL4,ENSG00000068366,0,,Fatty acid activation (cytosolic),0.9
+ACSL5,ENSG00000197142,0,,Fatty acid activation (cytosolic),0.9
+ACSL6,ENSG00000164398,0,,Fatty acid activation (cytosolic),0.9
+ACSM1,ENSG00000166743,0,,Fatty acid activation (cytosolic),0.9
+ACSM2A,ENSG00000183747,0,,Fatty acid activation (cytosolic),0.9
+ACSM2B,ENSG00000066813,0,,Fatty acid activation (cytosolic),0.9
+ACSM3,ENSG00000005187,0,,Fatty acid activation (cytosolic),0.9
+ACSM4,ENSG00000215009,0,,Fatty acid activation (cytosolic),0.9
+ACSM5,ENSG00000183549,0,,Fatty acid activation (cytosolic),0.9
+ACSS1,ENSG00000154930,0,,Propanoate metabolism,0.9
+ACSS2,ENSG00000131069,0,,Propanoate metabolism,0.9
+ACSS3,ENSG00000111058,0,,Propanoate metabolism,0.9
+ACY1,ENSG00000243989,0,,Cysteine and methionine metabolism,0.9
+ACY3,ENSG00000132744,0,,Histidine metabolism,0.9
+ACYP1,ENSG00000119640,0,,Glycolysis / Gluconeogenesis,0.9
+ACYP2,ENSG00000170634,0,,Glycolysis / Gluconeogenesis,0.9
+ADA,ENSG00000196839,0,,Purine metabolism,0.9
+ADA2,ENSG00000093072,0,,Purine metabolism,0.9
+ADCY1,ENSG00000164742,0,,Purine metabolism,0.9
+ADCY10,ENSG00000143199,0,,Purine metabolism,0.9
+ADCY2,ENSG00000078295,0,,Purine metabolism,0.9
+ADCY3,ENSG00000138031,0,,Purine metabolism,0.9
+ADCY4,ENSG00000129467,0,,Purine metabolism,0.9
+ADCY5,ENSG00000173175,0,,Purine metabolism,0.9
+ADCY6,ENSG00000174233,0,,Purine metabolism,0.9
+ADCY7,ENSG00000121281,0,,Purine metabolism,0.9
+ADCY8,ENSG00000155897,0,,Purine metabolism,0.9
+ADCY9,ENSG00000162104,0,,Purine metabolism,0.9
+ADH1A,ENSG00000187758,0,,Glycerolipid metabolism,0.9
+ADH1B,ENSG00000196616,0,,Glycerolipid metabolism,0.9
+ADH1C,ENSG00000248144,0,,Glycerolipid metabolism,0.9
+ADH4,ENSG00000198099,0,,Glycerolipid metabolism,0.9
+ADH5,ENSG00000197894,0,,Glycerolipid metabolism,0.9
+ADH6,ENSG00000172955,0,,Glycerolipid metabolism,0.9
+ADH7,ENSG00000196344,0,0,Leukotriene metabolism,0.9
+ADHFE1,ENSG00000147576,0,,Leukotriene metabolism,0.9
+ADI1,ENSG00000182551,0,,Cysteine and methionine metabolism,0.9
+ADK,ENSG00000156110,0,,Purine metabolism,0.9
+ADO,ENSG00000181915,0,,Bile acid biosynthesis,0.9
+ADPGK,ENSG00000159322,0,,Glycolysis / Gluconeogenesis,0.9
+ADPRH,ENSG00000144843,0,,Protein modification,0.9
+ADPRM,ENSG00000170222,0,,Glycerophospholipid metabolism,0.9
+ADSL,ENSG00000239900,0,1,Purine metabolism,0.9
+ADSS1,ENSG00000185100,0,,Purine metabolism,0.9
+ADSS2,ENSG00000035687,0,,Purine metabolism,0.9
+AFMID,ENSG00000183077,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+AGA,ENSG00000038002,0,,Keratan sulfate degradation,0.9
+AGK,ENSG00000006530,0,,Glycerolipid metabolism,0.9
+AGL,ENSG00000162688,0,,Starch and sucrose metabolism,0.9
+AGMAT,ENSG00000116771,0,,Arginine and proline metabolism,0.9
+AGPAT1,ENSG00000204310,0,,Glycerophospholipid metabolism,0.9
+AGPAT2,ENSG00000169692,0,,Glycerophospholipid metabolism,0.9
+AGPAT3,ENSG00000160216,0,,Glycerophospholipid metabolism,0.9
+AGPAT4,ENSG00000026652,0,,Glycerophospholipid metabolism,0.9
+AGPAT5,ENSG00000155189,0,,Glycerophospholipid metabolism,0.9
+AGPS,ENSG00000018510,0,,Glycerophospholipid metabolism,0.9
+AGXT,ENSG00000172482,0,,"Glycine, serine and threonine metabolism",0.9
+AGXT2,ENSG00000113492,0,,"Valine, leucine, and isoleucine metaboli",0.9
+AHCY,ENSG00000101444,0,1,Cysteine and methionine metabolism,0.9
+AHCYL2,ENSG00000158467,0,,Cysteine and methionine metabolism,0.9
+AICDA,ENSG00000111732,0,0,Pyrimidine metabolism,0.9
+AK1,ENSG00000106992,0,,Purine metabolism,0.9
+AK2,ENSG00000004455,0,,Purine metabolism,0.9
+AK3,ENSG00000147853,0,,Purine metabolism,0.9
+AK4,ENSG00000162433,0,,Purine metabolism,0.9
+AK5,ENSG00000154027,0,,Purine metabolism,0.9
+AK6,ENSG00000085231,0,,Purine metabolism,0.9
+AK7,ENSG00000140057,0,,Purine metabolism,0.9
+AK8,ENSG00000165695,0,,Purine metabolism,0.9
+AK9,ENSG00000155085,0,,Purine metabolism,0.9
+AKR1A1,ENSG00000117448,0,,Glycerolipid metabolism,0.9
+AKR1B1,ENSG00000085662,0,,Glycerolipid metabolism,0.9
+AKR1B10,ENSG00000198074,0,,Glycerolipid metabolism,0.9
+AKR1B15,ENSG00000227471,0,,Leukotriene metabolism,0.9
+AKR1C1,ENSG00000187134,0,,Leukotriene metabolism,0.9
+AKR1C2,ENSG00000151632,0,,Bile acid biosynthesis,0.9
+AKR1C3,ENSG00000196139,0,,Prostaglandin biosynthesis,0.9
+AKR1C4,ENSG00000198610,0,,Leukotriene metabolism,0.9
+AKR1D1,ENSG00000122787,0,,Bile acid biosynthesis,0.9
+AKR7A2,ENSG00000053371,0,,Xenobiotics metabolism,0.9
+AKR7A3,ENSG00000162482,0,,Xenobiotics metabolism,0.9
+ALAD,ENSG00000148218,0,,Porphyrin metabolism,0.9
+ALAS1,ENSG00000023330,0,,"Glycine, serine and threonine metabolism",0.9
+ALAS2,ENSG00000158578,0,,Porphyrin metabolism,0.9
+ALB,ENSG00000163631,0,,Protein assembly,0.9
+ALDH18A1,ENSG00000059573,0,,Pyruvate metabolism,0.9
+ALDH1A1,ENSG00000165092,0,,Retinol metabolism,0.9
+ALDH1A2,ENSG00000128918,0,,Retinol metabolism,0.9
+ALDH1A3,ENSG00000184254,0,,Pyruvate metabolism,0.9
+ALDH1B1,ENSG00000137124,0,,Tryptophan metabolism,0.9
+ALDH1L1,ENSG00000144908,0,,Folate metabolism,0.9
+ALDH1L2,ENSG00000136010,0,,Folate metabolism,0.9
+ALDH2,ENSG00000111275,0,,Tryptophan metabolism,0.9
+ALDH3A1,ENSG00000108602,0,,Pyruvate metabolism,0.9
+ALDH3A2,ENSG00000072210,0,,Fatty acid oxidation,0.9
+ALDH3B1,ENSG00000006534,0,,Pyruvate metabolism,0.9
+ALDH3B2,ENSG00000132746,0,,Pyruvate metabolism,0.9
+ALDH4A1,ENSG00000159423,0,,Vitamin C metabolism,0.9
+ALDH5A1,ENSG00000112294,0,,Pyruvate metabolism,0.9
+ALDH6A1,ENSG00000119711,0,,Pyruvate metabolism,0.9
+ALDH7A1,ENSG00000164904,0,,Glycerolipid metabolism,0.9
+ALDH8A1,ENSG00000118514,0,,Arginine and proline metabolism,0.9
+ALDH9A1,ENSG00000143149,0,,Glycerolipid metabolism,0.9
+ALDOA,ENSG00000149925,0,,Fructose and mannose metabolism,0.9
+ALDOB,ENSG00000136872,0,,Galactose metabolism,0.9
+ALDOC,ENSG00000109107,0,,Glycolysis / Gluconeogenesis,0.9
+ALG1,ENSG00000033011,0,1,N-glycan metabolism,0.9
+ALG10,ENSG00000139133,0,,N-glycan metabolism,0.9
+ALG10B,ENSG00000175548,0,,N-glycan metabolism,0.9
+ALG11,ENSG00000253710,0,,N-glycan metabolism,0.9
+ALG12,ENSG00000182858,0,,N-glycan metabolism,0.9
+ALG13,ENSG00000101901,0,,N-glycan metabolism,0.9
+ALG14,ENSG00000172339,0,1,N-glycan metabolism,0.9
+ALG1L2,ENSG00000251287,0,,Sphingolipid metabolism,0.9
+ALG2,ENSG00000119523,0,1,N-glycan metabolism,0.9
+ALG3,ENSG00000214160,0,,N-glycan metabolism,0.9
+ALG5,ENSG00000120697,0,,N-glycan metabolism,0.9
+ALG6,ENSG00000088035,0,,N-glycan metabolism,0.9
+ALG8,ENSG00000159063,0,,N-glycan metabolism,0.9
+ALG9,ENSG00000086848,0,,N-glycan metabolism,0.9
+ALLC,ENSG00000151360,0,,Purine metabolism,0.9
+ALOX12,ENSG00000108839,0,,Arachidonic acid metabolism,0.9
+ALOX12B,ENSG00000179477,0,,"Valine, leucine, and isoleucine metaboli",0.9
+ALOX15,ENSG00000161905,0,,Arachidonic acid metabolism,0.9
+ALOX15B,ENSG00000179593,0,,Arachidonic acid metabolism,0.9
+ALOX5,ENSG00000012779,0,,Arachidonic acid metabolism,0.9
+ALOXE3,ENSG00000179148,0,,"Valine, leucine, and isoleucine metaboli",0.9
+ALPG,ENSG00000163286,0,0,Glycerophospholipid metabolism,0.9
+ALPI,ENSG00000163295,0,0,Glycerophospholipid metabolism,0.9
+ALPL,ENSG00000162551,0,,Glycerophospholipid metabolism,0.9
+ALPP,ENSG00000163283,0,,Glycerophospholipid metabolism,0.9
+AMACR,ENSG00000242110,0,,Bile acid biosynthesis,0.9
+AMD1,ENSG00000123505,0,,Arginine and proline metabolism,0.9
+AMDHD1,ENSG00000139344,0,,Histidine metabolism,0.9
+AMDHD2,ENSG00000162066,0,,Amino sugar and nucleotide sugar metabol,0.9
+AMFR,ENSG00000159461,0,,Isolated,0.9
+AMN,ENSG00000166126,0,,Transport reactions,0.9
+AMPD1,ENSG00000116748,0,,Purine metabolism,0.9
+AMPD2,ENSG00000116337,0,,Purine metabolism,0.9
+AMPD3,ENSG00000133805,0,,Purine metabolism,0.9
+AMT,ENSG00000145020,0,,"Glycine, serine and threonine metabolism",0.9
+AMY1A,ENSG00000237763,0,,Starch and sucrose metabolism,0.9
+AMY1B,ENSG00000174876,0,,Starch and sucrose metabolism,0.9
+AMY1C,ENSG00000187733,0,,Starch and sucrose metabolism,0.9
+AMY2A,ENSG00000243480,0,,Starch and sucrose metabolism,0.9
+AMY2B,ENSG00000240038,0,,Starch and sucrose metabolism,0.9
+ANAPC11,ENSG00000141552,0,,Fatty acid biosynthesis,0.9
+ANPEP,ENSG00000166825,0,,Glutathione metabolism,0.9
+ANXA3,ENSG00000138772,0,,Isolated,0.9
+AOAH,ENSG00000136250,0,,Isolated,0.9
+AOC1,ENSG00000002726,0,,Arginine and proline metabolism,0.9
+AOC2,ENSG00000131480,0,,Arginine and proline metabolism,0.9
+AOC3,ENSG00000131471,0,,"Glycine, serine and threonine metabolism",0.9
+AOX1,ENSG00000138356,0,,"Valine, leucine, and isoleucine metaboli",0.9
+AP1G1,ENSG00000166747,0,,Transport reactions,0.9
+APIP,ENSG00000149089,0,,Cysteine and methionine metabolism,0.9
+APOB,ENSG00000084674,0,,Protein assembly,0.9
+APOBEC4,ENSG00000173627,0,,Pyrimidine metabolism,0.9
+APOC1,ENSG00000130208,0,,Protein assembly,0.9
+APOC2,ENSG00000234906,0,,Protein assembly,0.9
+APOC3,ENSG00000110245,0,,Protein assembly,0.9
+APOE,ENSG00000130203,0,,Protein assembly,0.9
+APRT,ENSG00000198931,0,,Purine metabolism,0.9
+AQP1,ENSG00000240583,0,,Transport reactions,0.9
+AQP10,ENSG00000143595,0,,Transport reactions,0.9
+AQP2,ENSG00000167580,0,,Transport reactions,0.9
+AQP3,ENSG00000165272,0,,Transport reactions,0.9
+AQP4,ENSG00000171885,0,,Transport reactions,0.9
+AQP5,ENSG00000161798,0,,Transport reactions,0.9
+AQP6,ENSG00000086159,0,,Transport reactions,0.9
+AQP7,ENSG00000165269,0,,Transport reactions,0.9
+AQP8,ENSG00000103375,0,0,Transport reactions,0.9
+AQP9,ENSG00000103569,0,,Transport reactions,0.9
+ARCN1,ENSG00000095139,0,1,Transport reactions,0.9
+ARG1,ENSG00000118520,0,,Arginine and proline metabolism,0.9
+ARG2,ENSG00000081181,0,,Arginine and proline metabolism,0.9
+ARID4B,ENSG00000054267,0,,Histidine metabolism,0.9
+ARSA,ENSG00000100299,0,,Glycosphingolipid metabolism,0.9
+ARSB,ENSG00000113273,0,,Chondroitin sulfate degradation,0.9
+ARSD,ENSG00000006756,0,,Glycosphingolipid metabolism,0.9
+ARSL,ENSG00000157399,0,,Glycosphingolipid metabolism,0.9
+ART1,ENSG00000129744,0,0,Nicotinate and nicotinamide metabolism,0.9
+ART3,ENSG00000156219,0,,Nicotinate and nicotinamide metabolism,0.9
+ART4,ENSG00000111339,0,,Nicotinate and nicotinamide metabolism,0.9
+ART5,ENSG00000167311,0,,Nicotinate and nicotinamide metabolism,0.9
+AS3MT,ENSG00000214435,0,,Isolated,0.9
+ASAH1,ENSG00000104763,0,,Sphingolipid metabolism,0.9
+ASAH2,ENSG00000188611,0,,Sphingolipid metabolism,0.9
+ASB12,ENSG00000198881,0,,Inositol phosphate metabolism,0.9
+ASH1L,ENSG00000116539,0,,Lysine metabolism,0.9
+ASL,ENSG00000126522,0,,"Alanine, aspartate and glutamate metabol",0.9
+ASMT,ENSG00000196433,0,,Serotonin and melatonin biosynthesis,0.9
+ASNS,ENSG00000070669,0,,"Alanine, aspartate and glutamate metabol",0.9
+ASPA,ENSG00000108381,0,,"Alanine, aspartate and glutamate metabol",0.9
+ASPG,ENSG00000166183,0,,Glycerophospholipid metabolism,0.9
+ASPH,ENSG00000198363,0,,Isolated,0.9
+ASRGL1,ENSG00000162174,0,,"Alanine, aspartate and glutamate metabol",0.9
+ASS1,ENSG00000130707,0,,"Alanine, aspartate and glutamate metabol",0.9
+ATE1,ENSG00000107669,0,,Isolated,0.9
+ATIC,ENSG00000138363,0,,Purine metabolism,0.9
+ATP10A,ENSG00000206190,0,,Transport reactions,0.9
+ATP11A,ENSG00000068650,0,,Transport reactions,0.9
+ATP11C,ENSG00000101974,0,,Transport reactions,0.9
+ATP12A,ENSG00000075673,0,,Transport reactions,0.9
+ATP1A1,ENSG00000163399,0,,Transport reactions,0.9
+ATP1A2,ENSG00000018625,0,,Transport reactions,0.9
+ATP1A3,ENSG00000105409,0,,Transport reactions,0.9
+ATP1A4,ENSG00000132681,0,,Transport reactions,0.9
+ATP1B1,ENSG00000143153,0,,Transport reactions,0.9
+ATP1B2,ENSG00000129244,0,,Transport reactions,0.9
+ATP1B3,ENSG00000069849,0,,Transport reactions,0.9
+ATP1B4,ENSG00000101892,0,,Transport reactions,0.9
+ATP2A1,ENSG00000196296,0,,Transport reactions,0.9
+ATP2A2,ENSG00000174437,0,1,Transport reactions,0.9
+ATP2A3,ENSG00000074370,0,,Transport reactions,0.9
+ATP2B1,ENSG00000070961,0,,Transport reactions,0.9
+ATP2B2,ENSG00000157087,0,,Transport reactions,0.9
+ATP2B3,ENSG00000067842,0,,Transport reactions,0.9
+ATP2B4,ENSG00000058668,0,,Transport reactions,0.9
+ATP2C1,ENSG00000017260,0,,Transport reactions,0.9
+ATP2C2,ENSG00000064270,0,,Transport reactions,0.9
+ATP4A,ENSG00000105675,0,,Transport reactions,0.9
+ATP4B,ENSG00000186009,0,0,Transport reactions,0.9
+ATP5F1A,ENSG00000152234,0,1,Oxidative phosphorylation,0.9
+ATP5F1B,ENSG00000110955,0,1,Oxidative phosphorylation,0.9
+ATP5F1C,ENSG00000165629,0,1,Oxidative phosphorylation,0.9
+ATP5F1D,ENSG00000099624,0,1,Oxidative phosphorylation,0.9
+ATP5F1E,ENSG00000124172,0,,Oxidative phosphorylation,0.9
+ATP5F1EP2,ENSG00000180389,0,,Oxidative phosphorylation,0.9
+ATP5MC1,ENSG00000159199,0,,Oxidative phosphorylation,0.9
+ATP5MC2,ENSG00000135390,0,,Oxidative phosphorylation,0.9
+ATP5MC3,ENSG00000154518,0,,Oxidative phosphorylation,0.9
+ATP5ME,ENSG00000169020,0,,Oxidative phosphorylation,0.9
+ATP5MF,ENSG00000241468,0,,Oxidative phosphorylation,0.9
+ATP5MG,ENSG00000167283,0,1,Oxidative phosphorylation,0.9
+ATP5MGL,ENSG00000249222,0,,Oxidative phosphorylation,0.9
+ATP5MJ,ENSG00000156411,0,,Oxidative phosphorylation,0.9
+ATP5MK,ENSG00000173915,0,,Oxidative phosphorylation,0.9
+ATP5PB,ENSG00000116459,0,,Oxidative phosphorylation,0.9
+ATP5PD,ENSG00000167863,0,,Oxidative phosphorylation,0.9
+ATP5PF,ENSG00000154723,0,,Oxidative phosphorylation,0.9
+ATP5PO,ENSG00000241837,0,1,Oxidative phosphorylation,0.9
+ATP6AP1,ENSG00000071553,0,,Transport reactions,0.9
+ATP6V0A1,ENSG00000033627,0,,Transport reactions,0.9
+ATP6V0A2,ENSG00000185344,0,,Transport reactions,0.9
+ATP6V0A4,ENSG00000105929,0,,Transport reactions,0.9
+ATP6V0B,ENSG00000117410,0,1,Transport reactions,0.9
+ATP6V0C,ENSG00000185883,0,1,Transport reactions,0.9
+ATP6V0D1,ENSG00000159720,0,,Transport reactions,0.9
+ATP6V0D2,ENSG00000147614,0,,Transport reactions,0.9
+ATP6V0E1,ENSG00000113732,0,,Transport reactions,0.9
+ATP6V1A,ENSG00000114573,0,1,Transport reactions,0.9
+ATP6V1B1,ENSG00000116039,0,,Transport reactions,0.9
+ATP6V1B2,ENSG00000147416,0,,Transport reactions,0.9
+ATP6V1C1,ENSG00000155097,0,,Transport reactions,0.9
+ATP6V1C2,ENSG00000143882,0,,Transport reactions,0.9
+ATP6V1D,ENSG00000100554,0,1,Transport reactions,0.9
+ATP6V1E1,ENSG00000131100,0,1,Transport reactions,0.9
+ATP6V1E2,ENSG00000250565,0,,Transport reactions,0.9
+ATP6V1F,ENSG00000128524,0,,Transport reactions,0.9
+ATP6V1G1,ENSG00000136888,0,,Transport reactions,0.9
+ATP6V1G2,ENSG00000213760,0,,Transport reactions,0.9
+ATP6V1G3,ENSG00000151418,0,0,Transport reactions,0.9
+ATP6V1H,ENSG00000047249,0,,Transport reactions,0.9
+ATP8A1,ENSG00000124406,0,,Transport reactions,0.9
+ATP8B1,ENSG00000081923,0,,Transport reactions,0.9
+ATP8B2,ENSG00000143515,0,,Transport reactions,0.9
+AUH,ENSG00000148090,0,,"Valine, leucine, and isoleucine metaboli",0.9
+AWAT1,ENSG00000204195,0,0,Retinol metabolism,0.9
+AWAT2,ENSG00000147160,0,0,Retinol metabolism,0.9
+B3GALNT1,ENSG00000169255,0,,Sphingolipid metabolism,0.9
+B3GALNT2,ENSG00000162885,0,,Sphingolipid metabolism,0.9
+B3GALT1,ENSG00000172318,0,,Sphingolipid metabolism,0.9
+B3GALT2,ENSG00000162630,0,,Sphingolipid metabolism,0.9
+B3GALT4,ENSG00000235863,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+B3GALT5,ENSG00000183778,0,,Sphingolipid metabolism,0.9
+B3GALT6,ENSG00000176022,0,,Chondroitin / heparan sulfate biosynthes,0.9
+B3GAT1,ENSG00000109956,0,,Chondroitin / heparan sulfate biosynthes,0.9
+B3GAT2,ENSG00000112309,0,,Chondroitin / heparan sulfate biosynthes,0.9
+B3GAT3,ENSG00000149541,0,,Chondroitin / heparan sulfate biosynthes,0.9
+B3GLCT,ENSG00000187676,0,,Sphingolipid metabolism,0.9
+B3GNT2,ENSG00000170340,0,,Glycosphingolipid biosynthesis-lacto and,0.9
+B3GNT3,ENSG00000179913,0,,Blood group biosynthesis,0.9
+B3GNT4,ENSG00000176383,0,,Sphingolipid metabolism,0.9
+B3GNT5,ENSG00000176597,0,,Sphingolipid metabolism,0.9
+B3GNT6,ENSG00000198488,0,0,O-glycan metabolism,0.9
+B3GNT7,ENSG00000156966,0,,Sphingolipid metabolism,0.9
+B3GNT8,ENSG00000177191,0,,Sphingolipid metabolism,0.9
+B3GNT9,ENSG00000237172,0,,Sphingolipid metabolism,0.9
+B4GALNT1,ENSG00000135454,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+B4GALNT2,ENSG00000167080,0,,Sphingolipid metabolism,0.9
+B4GALNT3,ENSG00000139044,0,,Sphingolipid metabolism,0.9
+B4GALNT4,ENSG00000182272,0,,Sphingolipid metabolism,0.9
+B4GALT1,ENSG00000086062,0,,Sphingolipid metabolism,0.9
+B4GALT2,ENSG00000117411,0,,Sphingolipid metabolism,0.9
+B4GALT3,ENSG00000158850,0,,Sphingolipid metabolism,0.9
+B4GALT4,ENSG00000121578,0,,Sphingolipid metabolism,0.9
+B4GALT5,ENSG00000158470,0,,Sphingolipid metabolism,0.9
+B4GALT6,ENSG00000118276,0,,Sphingolipid metabolism,0.9
+B4GALT7,ENSG00000027847,0,,Sphingolipid metabolism,0.9
+B4GAT1,ENSG00000174684,0,,Glycosphingolipid biosynthesis-lacto and,0.9
+BAAT,ENSG00000136881,0,,Bile acid biosynthesis,0.9
+BARD1,ENSG00000138376,0,,Isolated,0.9
+BBOX1,ENSG00000129151,0,,Lysine metabolism,0.9
+BCAP31,ENSG00000185825,0,,Bile acid biosynthesis,0.9
+BCAT1,ENSG00000060982,0,,"Valine, leucine, and isoleucine metaboli",0.9
+BCAT2,ENSG00000105552,0,,"Valine, leucine, and isoleucine metaboli",0.9
+BCHE,ENSG00000114200,0,,Glycerophospholipid metabolism,0.9
+BCKDHA,ENSG00000248098,0,,Propanoate metabolism,0.9
+BCKDHB,ENSG00000083123,0,,Propanoate metabolism,0.9
+BCKDK,ENSG00000103507,0,,Isolated,0.9
+BCO1,ENSG00000135697,0,,Retinol metabolism,0.9
+BCO2,ENSG00000197580,0,,Glucocorticoid biosynthesis,0.9
+BDH1,ENSG00000161267,0,,Butanoate metabolism,0.9
+BDH2,ENSG00000164039,0,,Leukotriene metabolism,0.9
+BHMT,ENSG00000145692,0,,"Glycine, serine and threonine metabolism",0.9
+BHMT2,ENSG00000132840,0,,"Glycine, serine and threonine metabolism",0.9
+BIRC6,ENSG00000115760,0,,Isolated,0.9
+BLVRA,ENSG00000106605,0,,Porphyrin metabolism,0.9
+BLVRB,ENSG00000090013,0,,Porphyrin metabolism,0.9
+BMP1,ENSG00000168487,0,,Protein assembly,0.9
+BPGM,ENSG00000172331,0,,Glycolysis / Gluconeogenesis,0.9
+BPNT1,ENSG00000162813,0,,Sulfur metabolism,0.9
+BPNT2,ENSG00000104331,0,,Sulfur metabolism,0.9
+BRAP,ENSG00000089234,0,,Isolated,0.9
+BRPF1,ENSG00000156983,0,,Isolated,0.9
+BSCL2,ENSG00000168000,0,,Pool reactions,0.9
+BST1,ENSG00000109743,0,,Nicotinate and nicotinamide metabolism,0.9
+BTD,ENSG00000169814,0,,Biotin metabolism,0.9
+C1GALT1,ENSG00000106392,0,,O-glycan metabolism,0.9
+C1GALT1C1,ENSG00000171155,0,,O-glycan metabolism,0.9
+CA1,ENSG00000133742,0,,Miscellaneous,0.9
+CA12,ENSG00000074410,0,,Miscellaneous,0.9
+CA13,ENSG00000185015,0,,Miscellaneous,0.9
+CA14,ENSG00000118298,0,,Miscellaneous,0.9
+CA2,ENSG00000104267,0,,Miscellaneous,0.9
+CA3,ENSG00000164879,0,,Miscellaneous,0.9
+CA4,ENSG00000167434,0,,Miscellaneous,0.9
+CA5A,ENSG00000174990,0,,Transport reactions,0.9
+CA5B,ENSG00000169239,0,,Arginine and proline metabolism,0.9
+CA6,ENSG00000131686,0,,Miscellaneous,0.9
+CA7,ENSG00000168748,0,,Miscellaneous,0.9
+CA9,ENSG00000107159,0,,Miscellaneous,0.9
+CAD,ENSG00000084774,0,,Pyrimidine metabolism,0.9
+CALM1,ENSG00000198668,0,,Isolated,0.9
+CALM2,ENSG00000143933,0,,Isolated,0.9
+CALM3,ENSG00000160014,0,,Isolated,0.9
+CANT1,ENSG00000171302,0,,Purine metabolism,0.9
+CARNS1,ENSG00000172508,0,,Beta-alanine metabolism,0.9
+CAT,ENSG00000121691,0,,ROS detoxification,0.9
+CBL,ENSG00000110395,0,,Isolated,0.9
+CBLB,ENSG00000114423,0,,Isolated,0.9
+CBLC,ENSG00000142273,0,,Isolated,0.9
+CBLIF,ENSG00000134812,0,,Transport reactions,0.9
+CBLL1,ENSG00000105879,0,,Isolated,0.9
+CBLL2,ENSG00000175809,0,0,Isolated,0.9
+CBR1,ENSG00000159228,0,,Arachidonic acid metabolism,0.9
+CBR3,ENSG00000159231,0,,Arachidonic acid metabolism,0.9
+CBR4,ENSG00000145439,0,,Leukotriene metabolism,0.9
+CBS,ENSG00000160200,0,,Cysteine and methionine metabolism,0.9
+CCNB1IP1,ENSG00000100814,0,,Isolated,0.9
+CD36,ENSG00000135218,0,,Transport reactions,0.9
+CD38,ENSG00000004468,0,,Nicotinate and nicotinamide metabolism,0.9
+CDA,ENSG00000158825,0,,Pyrimidine metabolism,0.9
+CDC34,ENSG00000099804,0,,Isolated,0.9
+CDIPT,ENSG00000103502,0,,Glycerophospholipid metabolism,0.9
+CDO1,ENSG00000129596,0,,Bile acid biosynthesis,0.9
+CDS1,ENSG00000163624,0,,Glycerophospholipid metabolism,0.9
+CDS2,ENSG00000101290,0,,Glycerophospholipid metabolism,0.9
+CDY1,ENSG00000172288,0,0,Isolated,0.9
+CDY1B,ENSG00000172352,0,0,Isolated,0.9
+CDY2A,ENSG00000182415,0,0,Isolated,0.9
+CDY2B,ENSG00000129873,0,0,Isolated,0.9
+CEL,ENSG00000170835,0,,Acylglycerides metabolism,0.9
+CEMP1,ENSG00000205923,0,,Amino sugar and nucleotide sugar metabol,0.9
+CEPT1,ENSG00000134255,0,,Glycerophospholipid metabolism,0.9
+CERK,ENSG00000100422,0,,Sphingolipid metabolism,0.9
+CERS1,ENSG00000223802,0,,Sphingolipid metabolism,0.9
+CERS2,ENSG00000143418,0,,Sphingolipid metabolism,0.9
+CERS3,ENSG00000154227,0,,Sphingolipid metabolism,0.9
+CERS4,ENSG00000090661,0,,Sphingolipid metabolism,0.9
+CERS5,ENSG00000139624,0,,Sphingolipid metabolism,0.9
+CERS6,ENSG00000172292,0,,Sphingolipid metabolism,0.9
+CERT1,ENSG00000113163,0,,Transport reactions,0.9
+CES1,ENSG00000198848,0,,Retinol metabolism,0.9
+CES2,ENSG00000172831,0,,Retinol metabolism,0.9
+CES3,ENSG00000172828,0,,Retinol metabolism,0.9
+CES5A,ENSG00000159398,0,,Retinol metabolism,0.9
+CH25H,ENSG00000138135,0,,Bile acid biosynthesis,0.9
+CHAT,ENSG00000070748,0,0,Glycerophospholipid metabolism,0.9
+CHDH,ENSG00000016391,0,,"Glycine, serine and threonine metabolism",0.9
+CHFR,ENSG00000072609,0,,Isolated,0.9
+CHIA,ENSG00000134216,0,,Amino sugar and nucleotide sugar metabol,0.9
+CHIT1,ENSG00000133063,0,,Amino sugar and nucleotide sugar metabol,0.9
+CHKA,ENSG00000110721,0,,Glycerophospholipid metabolism,0.9
+CHKB,ENSG00000100288,0,,Glycerophospholipid metabolism,0.9
+CHPF,ENSG00000123989,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CHPF2,ENSG00000033100,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CHPT1,ENSG00000111666,0,,Glycerophospholipid metabolism,0.9
+CHST1,ENSG00000175264,0,,Keratan sulfate biosynthesis,0.9
+CHST10,ENSG00000115526,0,,Serotonin and melatonin biosynthesis,0.9
+CHST11,ENSG00000171310,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CHST12,ENSG00000136213,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CHST13,ENSG00000180767,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CHST14,ENSG00000169105,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CHST15,ENSG00000182022,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CHST2,ENSG00000175040,0,,Keratan sulfate biosynthesis,0.9
+CHST3,ENSG00000122863,0,,Keratan sulfate biosynthesis,0.9
+CHST4,ENSG00000140835,0,,Keratan sulfate biosynthesis,0.9
+CHST5,ENSG00000135702,0,,Serotonin and melatonin biosynthesis,0.9
+CHST6,ENSG00000183196,0,,Keratan sulfate biosynthesis,0.9
+CHST7,ENSG00000147119,0,,Serotonin and melatonin biosynthesis,0.9
+CHST9,ENSG00000154080,0,,Serotonin and melatonin biosynthesis,0.9
+CHSY1,ENSG00000131873,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CHSY3,ENSG00000198108,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CKB,ENSG00000166165,0,,"Glycine, serine and threonine metabolism",0.9
+CKM,ENSG00000104879,0,,"Glycine, serine and threonine metabolism",0.9
+CKMT1A,ENSG00000223572,0,,"Glycine, serine and threonine metabolism",0.9
+CKMT1B,ENSG00000237289,0,,"Glycine, serine and threonine metabolism",0.9
+CKMT2,ENSG00000131730,0,,"Glycine, serine and threonine metabolism",0.9
+CLCF1,ENSG00000175505,0,,Glycerophospholipid metabolism,0.9
+CLOCK,ENSG00000134852,0,,Isolated,0.9
+CLPS,ENSG00000137392,0,,Isolated,0.9
+CLTRN,ENSG00000147003,0,,Transport reactions,0.9
+CLYBL,ENSG00000125246,0,,C5-branched dibasic acid metabolism,0.9
+CMA1,ENSG00000092009,0,,Miscellaneous,0.9
+CMAS,ENSG00000111726,0,,Amino sugar and nucleotide sugar metabol,0.9
+CMPK1,ENSG00000162368,0,1,Nucleotide metabolism,0.9
+CMPK2,ENSG00000134326,0,,Nucleotide metabolism,0.9
+CMTR1,ENSG00000137200,0,1,Isolated,0.9
+CNDP1,ENSG00000150656,0,,Beta-alanine metabolism,0.9
+CNDP2,ENSG00000133313,0,,Beta-alanine metabolism,0.9
+CNOT4,ENSG00000080802,0,,Isolated,0.9
+CNP,ENSG00000173786,0,,Miscellaneous,0.9
+COASY,ENSG00000068120,0,,Pantothenate and CoA metabolism,0.9
+COLGALT1,ENSG00000130309,0,,Lysine metabolism,0.9
+COLGALT2,ENSG00000198756,0,,Lysine metabolism,0.9
+COMT,ENSG00000093010,0,,Estrogen metabolism,0.9
+COP1,ENSG00000143207,0,,Isolated,0.9
+COPE,ENSG00000105669,0,,Transport reactions,0.9
+COPG1,ENSG00000181789,0,,Transport reactions,0.9
+COPG2,ENSG00000158623,0,,Transport reactions,0.9
+COQ2,ENSG00000173085,0,,Terpenoid backbone biosynthesis,0.9
+COQ3,ENSG00000132423,0,,Ubiquinone synthesis,0.9
+COQ5,ENSG00000110871,0,,Terpenoid backbone biosynthesis,0.9
+COQ6,ENSG00000119723,0,,Ubiquinone synthesis,0.9
+COQ7,ENSG00000167186,0,,Ubiquinone synthesis,0.9
+COX10,ENSG00000006695,0,1,Porphyrin metabolism,0.9
+COX4I1,ENSG00000131143,0,1,Oxidative phosphorylation,0.9
+COX4I2,ENSG00000131055,0,,Oxidative phosphorylation,0.9
+COX5A,ENSG00000178741,0,,Oxidative phosphorylation,0.9
+COX5B,ENSG00000135940,0,1,Oxidative phosphorylation,0.9
+COX6A1,ENSG00000111775,0,,Oxidative phosphorylation,0.9
+COX6A2,ENSG00000156885,0,,Oxidative phosphorylation,0.9
+COX6B1,ENSG00000126267,0,1,Oxidative phosphorylation,0.9
+COX6B2,ENSG00000160471,0,,Oxidative phosphorylation,0.9
+COX6C,ENSG00000164919,0,,Oxidative phosphorylation,0.9
+COX7A1,ENSG00000161281,0,,Oxidative phosphorylation,0.9
+COX7A2,ENSG00000112695,0,,Oxidative phosphorylation,0.9
+COX7B,ENSG00000131174,0,,Oxidative phosphorylation,0.9
+COX7B2,ENSG00000170516,0,0,Oxidative phosphorylation,0.9
+COX7C,ENSG00000127184,0,,Oxidative phosphorylation,0.9
+COX8A,ENSG00000176340,0,,Oxidative phosphorylation,0.9
+CP,ENSG00000047457,0,,Porphyrin metabolism,0.9
+CPA1,ENSG00000091704,0,,Miscellaneous,0.9
+CPA2,ENSG00000158516,0,,Miscellaneous,0.9
+CPA3,ENSG00000163751,0,,Isolated,0.9
+CPA5,ENSG00000158525,0,,Miscellaneous,0.9
+CPA6,ENSG00000165078,0,,Miscellaneous,0.9
+CPNE7,ENSG00000178773,0,,"Glycine, serine and threonine metabolism",0.9
+CPOX,ENSG00000080819,0,,Porphyrin metabolism,0.9
+CPS1,ENSG00000021826,0,,"Alanine, aspartate and glutamate metabol",0.9
+CPT1A,ENSG00000110090,0,,Fatty acid oxidation,0.9
+CPT1B,ENSG00000205560,0,,Fatty acid oxidation,0.9
+CPT1C,ENSG00000169169,0,,Fatty acid oxidation,0.9
+CPT2,ENSG00000157184,0,,Fatty acid oxidation,0.9
+CRAT,ENSG00000095321,0,,Fatty acid oxidation,0.9
+CREBBP,ENSG00000005339,0,,Isolated,0.9
+CRISP3,ENSG00000096006,0,,Glycolysis / Gluconeogenesis,0.9
+CRLS1,ENSG00000088766,0,,Glycerophospholipid metabolism,0.9
+CROT,ENSG00000005469,0,,Fatty acid oxidation,0.9
+CRYL1,ENSG00000165475,0,,Pentose and glucuronate interconversions,0.9
+CRYZ,ENSG00000116791,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+CS,ENSG00000062485,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+CSAD,ENSG00000139631,0,,Bile acid biosynthesis,0.9
+CSGALNACT1,ENSG00000147408,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CSGALNACT2,ENSG00000169826,0,,Chondroitin / heparan sulfate biosynthes,0.9
+CSNK1G2,ENSG00000133275,0,,Transport reactions,0.9
+CTBP1,ENSG00000159692,0,,Leukotriene metabolism,0.9
+CTDSPL2,ENSG00000137770,0,,Inositol phosphate metabolism,0.9
+CTH,ENSG00000116761,0,,Cysteine and methionine metabolism,0.9
+CTPS1,ENSG00000171793,0,1,Pyrimidine metabolism,0.9
+CTPS2,ENSG00000047230,0,,Pyrimidine metabolism,0.9
+CTSA,ENSG00000064601,0,,Protein degradation,0.9
+CTSB,ENSG00000164733,0,,Protein degradation,0.9
+CTSC,ENSG00000109861,0,,Protein degradation,0.9
+CTSD,ENSG00000117984,0,,Protein degradation,0.9
+CTSE,ENSG00000196188,0,,Protein degradation,0.9
+CTSF,ENSG00000174080,0,,Protein degradation,0.9
+CTSG,ENSG00000100448,0,,Protein degradation,0.9
+CTSH,ENSG00000103811,0,,Protein degradation,0.9
+CTSK,ENSG00000143387,0,,Protein degradation,0.9
+CTSL,ENSG00000135047,0,,Protein degradation,0.9
+CTSO,ENSG00000256043,0,,Protein degradation,0.9
+CTSS,ENSG00000163131,0,,Protein degradation,0.9
+CTSV,ENSG00000136943,0,,Protein degradation,0.9
+CTSW,ENSG00000172543,0,,Protein degradation,0.9
+CTSZ,ENSG00000101160,0,,Protein degradation,0.9
+CUBN,ENSG00000107611,0,,Vitamin D metabolism,0.9
+CWC27,ENSG00000153015,0,,Isolated,0.9
+CYB5D1,ENSG00000182224,0,,Pyruvate metabolism,0.9
+CYB5R1,ENSG00000159348,0,,Nicotinate and nicotinamide metabolism,0.9
+CYB5R2,ENSG00000166394,0,,Nicotinate and nicotinamide metabolism,0.9
+CYB5R3,ENSG00000100243,0,,Nicotinate and nicotinamide metabolism,0.9
+CYB5R4,ENSG00000065615,0,,Nicotinate and nicotinamide metabolism,0.9
+CYB5RL,ENSG00000215883,0,,Nicotinate and nicotinamide metabolism,0.9
+CYBRD1,ENSG00000071967,0,,Porphyrin metabolism,0.9
+CYC1,ENSG00000179091,0,,Oxidative phosphorylation,0.9
+CYLD,ENSG00000083799,0,,Isolated,0.9
+CYP11A1,ENSG00000140459,0,,Steroid metabolism,0.9
+CYP11B1,ENSG00000160882,0,0,Steroid metabolism,0.9
+CYP11B2,ENSG00000179142,0,0,Steroid metabolism,0.9
+CYP17A1,ENSG00000148795,0,,Steroid metabolism,0.9
+CYP19A1,ENSG00000137869,0,,Estrogen metabolism,0.9
+CYP1A1,ENSG00000140465,0,,Arachidonic acid metabolism,0.9
+CYP1B1,ENSG00000138061,0,,Arachidonic acid metabolism,0.9
+CYP21A2,ENSG00000231852,0,,Steroid metabolism,0.9
+CYP27A1,ENSG00000135929,0,,Cholesterol metabolism,0.9
+CYP27B1,ENSG00000111012,0,,Vitamin D metabolism,0.9
+CYP2A13,ENSG00000197838,0,0,Arachidonic acid metabolism,0.9
+CYP2A6,ENSG00000255974,0,,Arachidonic acid metabolism,0.9
+CYP2A7,ENSG00000198077,0,,Arachidonic acid metabolism,0.9
+CYP2B6,ENSG00000197408,0,,Arachidonic acid metabolism,0.9
+CYP2C18,ENSG00000108242,0,,Arachidonic acid metabolism,0.9
+CYP2C19,ENSG00000165841,0,0,Arachidonic acid metabolism,0.9
+CYP2C8,ENSG00000138115,0,,Arachidonic acid metabolism,0.9
+CYP2C9,ENSG00000138109,0,,Arachidonic acid metabolism,0.9
+CYP2D6,ENSG00000100197,0,,Arachidonic acid metabolism,0.9
+CYP2E1,ENSG00000130649,0,,Arachidonic acid metabolism,0.9
+CYP2F1,ENSG00000197446,0,,Arachidonic acid metabolism,0.9
+CYP2J2,ENSG00000134716,0,,Arachidonic acid metabolism,0.9
+CYP2R1,ENSG00000186104,0,,Vitamin D metabolism,0.9
+CYP2S1,ENSG00000167600,0,,Arachidonic acid metabolism,0.9
+CYP2U1,ENSG00000155016,0,,Arachidonic acid metabolism,0.9
+CYP39A1,ENSG00000146233,0,,Bile acid biosynthesis,0.9
+CYP3A4,ENSG00000160868,0,,Arachidonic acid metabolism,0.9
+CYP3A43,ENSG00000021461,0,,Arachidonic acid metabolism,0.9
+CYP3A5,ENSG00000106258,0,,Arachidonic acid metabolism,0.9
+CYP3A7,ENSG00000160870,0,,Arachidonic acid metabolism,0.9
+CYP46A1,ENSG00000036530,0,,Bile acid biosynthesis,0.9
+CYP4A11,ENSG00000187048,0,,Arachidonic acid metabolism,0.9
+CYP4A22,ENSG00000162365,0,0,Xenobiotics metabolism,0.9
+CYP4B1,ENSG00000142973,0,,Arachidonic acid metabolism,0.9
+CYP4F11,ENSG00000171903,0,,Arachidonic acid metabolism,0.9
+CYP4F12,ENSG00000186204,0,,Arachidonic acid metabolism,0.9
+CYP4F2,ENSG00000186115,0,,Arachidonic acid metabolism,0.9
+CYP4F22,ENSG00000171954,0,,Arachidonic acid metabolism,0.9
+CYP4F3,ENSG00000186529,0,,Arachidonic acid metabolism,0.9
+CYP4F8,ENSG00000186526,0,0,Arachidonic acid metabolism,0.9
+CYP4V2,ENSG00000145476,0,,Vitamin D metabolism,0.9
+CYP4X1,ENSG00000186377,0,,Arachidonic acid metabolism,0.9
+CYP4Z1,ENSG00000186160,0,,Arachidonic acid metabolism,0.9
+CYP51A1,ENSG00000001630,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+CYP7A1,ENSG00000167910,0,0,Cholesterol metabolism,0.9
+CYP7B1,ENSG00000172817,0,,Bile acid biosynthesis,0.9
+CYP8B1,ENSG00000180432,0,,Bile acid biosynthesis,0.9
+DAD1,ENSG00000129562,0,1,N-glycan metabolism,0.9
+DAGLA,ENSG00000134780,0,,Acylglycerides metabolism,0.9
+DAGLB,ENSG00000164535,0,,Acylglycerides metabolism,0.9
+DAO,ENSG00000110887,0,,Arginine and proline metabolism,0.9
+DBH,ENSG00000123454,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+DBI,ENSG00000155368,0,,Transport reactions,0.9
+DBP,ENSG00000105516,0,,Sphingolipid metabolism,0.9
+DBT,ENSG00000137992,0,,"Valine, leucine, and isoleucine metaboli",0.9
+DCK,ENSG00000156136,0,,Purine metabolism,0.9
+DCT,ENSG00000080166,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+DCTD,ENSG00000129187,0,,Nucleotide metabolism,0.9
+DCTPP1,ENSG00000179958,0,,Nucleotide metabolism,0.9
+DCXR,ENSG00000169738,0,,Pentose and glucuronate interconversions,0.9
+DDAH1,ENSG00000153904,0,,Isolated,0.9
+DDC,ENSG00000132437,0,,Serotonin and melatonin biosynthesis,0.9
+DDO,ENSG00000203797,0,,"Alanine, aspartate and glutamate metabol",0.9
+DDOST,ENSG00000244038,0,1,N-glycan metabolism,0.9
+DECR1,ENSG00000104325,0,,Fatty acid oxidation,0.9
+DECR2,ENSG00000242612,0,,Leukotriene metabolism,0.9
+DEGS1,ENSG00000143753,0,,Sphingolipid metabolism,0.9
+DEGS2,ENSG00000168350,0,,Sphingolipid metabolism,0.9
+DERA,ENSG00000023697,0,,Pentose phosphate pathway,0.9
+DGAT1,ENSG00000185000,0,,Acylglycerides metabolism,0.9
+DGAT2,ENSG00000062282,0,,Acylglycerides metabolism,0.9
+DGKA,ENSG00000065357,0,,Acylglycerides metabolism,0.9
+DGKB,ENSG00000136267,0,,Acylglycerides metabolism,0.9
+DGKD,ENSG00000077044,0,,Acylglycerides metabolism,0.9
+DGKE,ENSG00000153933,0,,Acylglycerides metabolism,0.9
+DGKG,ENSG00000058866,0,,Acylglycerides metabolism,0.9
+DGKH,ENSG00000102780,0,,Acylglycerides metabolism,0.9
+DGKI,ENSG00000157680,0,,Glycerophospholipid metabolism,0.9
+DGKK,ENSG00000274588,0,0,Acylglycerides metabolism,0.9
+DGKQ,ENSG00000145214,0,,Acylglycerides metabolism,0.9
+DGKZ,ENSG00000149091,0,,Glycerophospholipid metabolism,0.9
+DGUOK,ENSG00000114956,0,,Purine metabolism,0.9
+DHCR24,ENSG00000116133,0,,Cholesterol metabolism,0.9
+DHCR7,ENSG00000172893,0,,Cholesterol metabolism,0.9
+DHDDS,ENSG00000117682,0,,N-glycan metabolism,0.9
+DHDH,ENSG00000104808,0,,Pentose and glucuronate interconversions,0.9
+DHFR,ENSG00000228716,0,,Folate metabolism,0.9
+DHFR2,ENSG00000178700,0,,Folate metabolism,0.9
+DHODH,ENSG00000102967,0,1,Pyrimidine metabolism,0.9
+DHPS,ENSG00000095059,0,1,Arginine and proline metabolism,0.9
+DHRS2,ENSG00000100867,0,,Leukotriene metabolism,0.9
+DHRS3,ENSG00000162496,0,,Retinol metabolism,0.9
+DHRS4,ENSG00000157326,0,,Arachidonic acid metabolism,0.9
+DHRS4L2,ENSG00000187630,0,,Retinol metabolism,0.9
+DHRS9,ENSG00000073737,0,,Retinol metabolism,0.9
+DHTKD1,ENSG00000181192,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+DIO1,ENSG00000211452,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+DIO2,ENSG00000211448,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+DIO3,ENSG00000197406,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+DLAT,ENSG00000150768,0,,Glycolysis / Gluconeogenesis,0.9
+DLD,ENSG00000091140,0,,Lipoic acid metabolism,0.9
+DLST,ENSG00000119689,0,1,Lysine metabolism,0.9
+DMGDH,ENSG00000132837,0,,"Glycine, serine and threonine metabolism",0.9
+DNM1,ENSG00000106976,0,,Nucleotide metabolism,0.9
+DNM1L,ENSG00000087470,0,,Nucleotide metabolism,0.9
+DNM2,ENSG00000079805,0,1,Nucleotide metabolism,0.9
+DNM3,ENSG00000197959,0,,Nucleotide metabolism,0.9
+DNMT1,ENSG00000130816,0,1,Cysteine and methionine metabolism,0.9
+DNMT3A,ENSG00000119772,0,,Cysteine and methionine metabolism,0.9
+DNMT3B,ENSG00000088305,0,,Cysteine and methionine metabolism,0.9
+DNMT3L,ENSG00000142182,0,,Cysteine and methionine metabolism,0.9
+DOLK,ENSG00000175283,0,1,N-glycan metabolism,0.9
+DOLPP1,ENSG00000167130,0,,N-glycan metabolism,0.9
+DOT1L,ENSG00000104885,0,,Lysine metabolism,0.9
+DPAGT1,ENSG00000172269,0,1,N-glycan metabolism,0.9
+DPEP1,ENSG00000015413,0,,Leukotriene metabolism,0.9
+DPEP2,ENSG00000167261,0,,Leukotriene metabolism,0.9
+DPH5,ENSG00000117543,0,,Isolated,0.9
+DPM1,ENSG00000000419,0,,N-glycan metabolism,0.9
+DPM2,ENSG00000136908,0,,N-glycan metabolism,0.9
+DPM3,ENSG00000179085,0,,N-glycan metabolism,0.9
+DPYD,ENSG00000188641,0,,Pyrimidine metabolism,0.9
+DPYS,ENSG00000147647,0,,Pyrimidine metabolism,0.9
+DSE,ENSG00000111817,0,,Chondroitin / heparan sulfate biosynthes,0.9
+DUOX1,ENSG00000137857,0,,Tyrosine metabolism,0.9
+DUOX2,ENSG00000140279,0,,Tyrosine metabolism,0.9
+DUSP11,ENSG00000144048,0,,Inositol phosphate metabolism,0.9
+DUT,ENSG00000128951,0,,Nucleotide metabolism,0.9
+DZIP3,ENSG00000198919,0,,Isolated,0.9
+EBP,ENSG00000147155,0,,Cholesterol metabolism,0.9
+ECH1,ENSG00000104823,0,,Fatty acid oxidation,0.9
+ECHDC2,ENSG00000121310,0,,Butanoate metabolism,0.9
+ECHS1,ENSG00000127884,0,,Arachidonic acid metabolism,0.9
+ECI1,ENSG00000167969,0,,Fatty acid oxidation,0.9
+ECI2,ENSG00000198721,0,,Fatty acid oxidation,0.9
+EEF1A1,ENSG00000156508,0,,Nucleotide metabolism,0.9
+EEF2,ENSG00000167658,0,1,Nucleotide metabolism,0.9
+EFL1,ENSG00000140598,0,,Nucleotide metabolism,0.9
+EGFL8,ENSG00000241404,0,,Fatty acid biosynthesis,0.9
+EHHADH,ENSG00000113790,0,,Fatty acid oxidation,0.9
+EHMT1,ENSG00000181090,0,,Lysine metabolism,0.9
+EHMT2,ENSG00000204371,0,,Lysine metabolism,0.9
+ELOVL1,ENSG00000066322,0,,Fatty acid elongation (even-chain),0.9
+ELOVL2,ENSG00000197977,0,,Fatty acid biosynthesis,0.9
+ELOVL3,ENSG00000119915,0,,Fatty acid elongation (even-chain),0.9
+ELOVL4,ENSG00000118402,0,,Fatty acid biosynthesis,0.9
+ELOVL5,ENSG00000012660,0,,Fatty acid biosynthesis,0.9
+ELOVL6,ENSG00000170522,0,,Fatty acid biosynthesis,0.9
+ELOVL7,ENSG00000164181,0,,Fatty acid elongation (even-chain),0.9
+ENGASE,ENSG00000167280,0,,N-glycan metabolism,0.9
+ENO1,ENSG00000074800,0,,Glycolysis / Gluconeogenesis,0.9
+ENO2,ENSG00000111674,0,,Glycolysis / Gluconeogenesis,0.9
+ENO3,ENSG00000108515,0,,Glycolysis / Gluconeogenesis,0.9
+ENOPH1,ENSG00000145293,0,,Cysteine and methionine metabolism,0.9
+ENPP1,ENSG00000197594,0,,Starch and sucrose metabolism,0.9
+ENPP2,ENSG00000136960,0,,Ether lipid metabolism,0.9
+ENPP3,ENSG00000154269,0,,Starch and sucrose metabolism,0.9
+ENPP6,ENSG00000164303,0,,Ether lipid metabolism,0.9
+ENPP7,ENSG00000182156,0,,Sphingolipid metabolism,0.9
+ENTPD1,ENSG00000138185,0,,Pyrimidine metabolism,0.9
+ENTPD2,ENSG00000054179,0,,Purine metabolism,0.9
+ENTPD3,ENSG00000168032,0,,Pyrimidine metabolism,0.9
+ENTPD4,ENSG00000197217,0,,Pyrimidine metabolism,0.9
+ENTPD5,ENSG00000187097,0,,Purine metabolism,0.9
+ENTPD6,ENSG00000197586,0,,Purine metabolism,0.9
+ENTPD8,ENSG00000188833,0,,Pyrimidine metabolism,0.9
+EP300,ENSG00000100393,0,,Isolated,0.9
+EPHX1,ENSG00000143819,0,,Arachidonic acid metabolism,0.9
+EPHX2,ENSG00000120915,0,,Arachidonic acid metabolism,0.9
+EPX,ENSG00000121053,0,,Estrogen metabolism,0.9
+ESCO1,ENSG00000141446,0,,Leukotriene metabolism,0.9
+ESCO2,ENSG00000171320,0,,Transport reactions,0.9
+ESD,ENSG00000139684,0,,Glutathione metabolism,0.9
+ETFA,ENSG00000140374,0,,Oxidative phosphorylation,0.9
+ETFB,ENSG00000105379,0,,Oxidative phosphorylation,0.9
+ETFDH,ENSG00000171503,0,,Oxidative phosphorylation,0.9
+ETHE1,ENSG00000105755,0,,Sulfur metabolism,0.9
+ETNK1,ENSG00000139163,0,,Glycerophospholipid metabolism,0.9
+ETNK2,ENSG00000143845,0,,Glycerophospholipid metabolism,0.9
+ETNPPL,ENSG00000164089,0,,Glycerolipid metabolism,0.9
+EXT1,ENSG00000182197,0,,Chondroitin / heparan sulfate biosynthes,0.9
+EXT2,ENSG00000151348,0,,Chondroitin / heparan sulfate biosynthes,0.9
+EXTL1,ENSG00000158008,0,,Chondroitin / heparan sulfate biosynthes,0.9
+EXTL2,ENSG00000162694,0,,Chondroitin / heparan sulfate biosynthes,0.9
+EXTL3,ENSG00000012232,0,,Chondroitin / heparan sulfate biosynthes,0.9
+EZH1,ENSG00000108799,0,,Lysine metabolism,0.9
+EZH2,ENSG00000106462,0,,Lysine metabolism,0.9
+F13A1,ENSG00000124491,0,,Isolated,0.9
+F13B,ENSG00000143278,0,0,Isolated,0.9
+F2,ENSG00000180210,0,,Protein assembly,0.9
+FAAH,ENSG00000117480,0,,Arachidonic acid metabolism,0.9
+FAAH2,ENSG00000165591,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+FABP1,ENSG00000163586,0,,Transport reactions,0.9
+FABP12,ENSG00000197416,0,,Transport reactions,0.9
+FABP2,ENSG00000145384,0,0,Transport reactions,0.9
+FABP3,ENSG00000121769,0,,Transport reactions,0.9
+FABP4,ENSG00000170323,0,,Transport reactions,0.9
+FABP5,ENSG00000164687,0,,Transport reactions,0.9
+FABP6,ENSG00000170231,0,,Transport reactions,0.9
+FABP7,ENSG00000164434,0,,Transport reactions,0.9
+FABP9,ENSG00000205186,0,,Transport reactions,0.9
+FADS1,ENSG00000149485,0,,Fatty acid biosynthesis,0.9
+FADS2,ENSG00000134824,0,,Fatty acid biosynthesis,0.9
+FADS3,ENSG00000221968,0,,Fatty acid desaturation (even-chain),0.9
+FAH,ENSG00000103876,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+FAHD1,ENSG00000180185,0,,Miscellaneous,0.9
+FAM20B,ENSG00000116199,0,,Fructose and mannose metabolism,0.9
+FAM227B,ENSG00000166262,0,,Galactose metabolism,0.9
+FANCL,ENSG00000115392,0,,Isolated,0.9
+FAR1,ENSG00000197601,0,,Ether lipid metabolism,0.9
+FAR2,ENSG00000064763,0,,Ether lipid metabolism,0.9
+FASN,ENSG00000169710,0,,Fatty acid biosynthesis,0.9
+FAXDC2,ENSG00000170271,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+FBP1,ENSG00000165140,0,,Glycolysis / Gluconeogenesis,0.9
+FBP2,ENSG00000130957,0,,Glycolysis / Gluconeogenesis,0.9
+FCSK,ENSG00000157353,0,,Fructose and mannose metabolism,0.9
+FDFT1,ENSG00000079459,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+FDPS,ENSG00000160752,0,,Cholesterol metabolism,0.9
+FDX1,ENSG00000137714,0,,Lipoic acid metabolism,0.9
+FDX2,ENSG00000267673,0,,Sulfur metabolism,0.9
+FDXR,ENSG00000161513,0,,Lipoic acid metabolism,0.9
+FECH,ENSG00000066926,0,,Porphyrin metabolism,0.9
+FGA,ENSG00000171560,0,,Protein assembly,0.9
+FGGY,ENSG00000172456,0,,Fructose and mannose metabolism,0.9
+FH,ENSG00000091483,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+FHIT,ENSG00000189283,0,,Isolated,0.9
+FIG4,ENSG00000112367,0,,Inositol phosphate metabolism,0.9
+FITM1,ENSG00000139914,0,,Pool reactions,0.9
+FITM2,ENSG00000197296,0,,Pool reactions,0.9
+FKBP10,ENSG00000141756,0,,Isolated,0.9
+FKBP11,ENSG00000134285,0,,Isolated,0.9
+FKBP14,ENSG00000106080,0,,Isolated,0.9
+FKBP1A,ENSG00000088832,0,,Isolated,0.9
+FKBP1B,ENSG00000119782,0,,Isolated,0.9
+FKBP2,ENSG00000173486,0,,Isolated,0.9
+FKBP3,ENSG00000100442,0,,Isolated,0.9
+FKBP4,ENSG00000004478,0,,Isolated,0.9
+FKBP5,ENSG00000096060,0,,Isolated,0.9
+FKBP6,ENSG00000077800,0,,Isolated,0.9
+FKBP7,ENSG00000079150,0,,Isolated,0.9
+FKBP8,ENSG00000105701,0,,Isolated,0.9
+FKBP9,ENSG00000122642,0,,Isolated,0.9
+FLAD1,ENSG00000160688,0,,Riboflavin metabolism,0.9
+FMO1,ENSG00000010932,0,,Metabolism of other amino acids,0.9
+FMO2,ENSG00000094963,0,,Metabolism of other amino acids,0.9
+FMO3,ENSG00000007933,0,,Metabolism of other amino acids,0.9
+FMO4,ENSG00000076258,0,,Metabolism of other amino acids,0.9
+FMO5,ENSG00000131781,0,,Metabolism of other amino acids,0.9
+FN3K,ENSG00000167363,0,,Fructose and mannose metabolism,0.9
+FN3KRP,ENSG00000141560,0,,Isolated,0.9
+FNTA,ENSG00000168522,0,1,Terpenoid backbone biosynthesis,0.9
+FNTB,ENSG00000257365,0,1,Terpenoid backbone biosynthesis,0.9
+FOLR1,ENSG00000110195,0,,Transport reactions,0.9
+FOLR2,ENSG00000165457,0,,Transport reactions,0.9
+FOLR3,ENSG00000110203,0,,Transport reactions,0.9
+FPGS,ENSG00000136877,0,,"Glycine, serine and threonine metabolism",0.9
+FPGT,ENSG00000254685,0,,Fructose and mannose metabolism,0.9
+FTCD,ENSG00000160282,0,,Folate metabolism,0.9
+FTH1,ENSG00000167996,0,,Porphyrin metabolism,0.9
+FTMT,ENSG00000181867,0,,Porphyrin metabolism,0.9
+FUCA1,ENSG00000179163,0,,Keratan sulfate degradation,0.9
+FUCA2,ENSG00000001036,0,,Keratan sulfate degradation,0.9
+FUT1,ENSG00000174951,0,,Glycosphingolipid biosynthesis-globo ser,0.9
+FUT10,ENSG00000172728,0,,Glycosphingolipid metabolism,0.9
+FUT11,ENSG00000196968,0,,Sphingolipid metabolism,0.9
+FUT2,ENSG00000176920,0,,Glycosphingolipid biosynthesis-globo ser,0.9
+FUT3,ENSG00000171124,0,,Glycosphingolipid biosynthesis-lacto and,0.9
+FUT4,ENSG00000196371,0,,Glycosphingolipid biosynthesis-lacto and,0.9
+FUT5,ENSG00000130383,0,0,Glycosphingolipid biosynthesis-lacto and,0.9
+FUT6,ENSG00000156413,0,,Glycosphingolipid biosynthesis-lacto and,0.9
+FUT7,ENSG00000180549,0,,Glycosphingolipid biosynthesis-lacto and,0.9
+FUT8,ENSG00000033170,0,,N-glycan metabolism,0.9
+FUT9,ENSG00000172461,0,0,Glycosphingolipid biosynthesis-lacto and,0.9
+FXN,ENSG00000165060,0,,Porphyrin metabolism,0.9
+FXYD2,ENSG00000137731,0,,Transport reactions,0.9
+G6PC1,ENSG00000131482,0,,Glycolysis / Gluconeogenesis,0.9
+G6PC2,ENSG00000152254,0,,Glycolysis / Gluconeogenesis,0.9
+G6PC3,ENSG00000141349,0,,Glycolysis / Gluconeogenesis,0.9
+G6PD,ENSG00000160211,0,,Pentose phosphate pathway,0.9
+GAA,ENSG00000171298,0,,Starch and sucrose metabolism,0.9
+GAD1,ENSG00000128683,0,,Bile acid biosynthesis,0.9
+GAD2,ENSG00000136750,0,,Beta-alanine metabolism,0.9
+GAL3ST1,ENSG00000128242,0,,Glycosphingolipid metabolism,0.9
+GAL3ST2,ENSG00000154252,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+GAL3ST4,ENSG00000197093,0,,Serotonin and melatonin biosynthesis,0.9
+GALC,ENSG00000054983,0,,Glycosphingolipid metabolism,0.9
+GALE,ENSG00000117308,0,,Galactose metabolism,0.9
+GALK1,ENSG00000108479,0,,Galactose metabolism,0.9
+GALK2,ENSG00000156958,0,,Galactose metabolism,0.9
+GALM,ENSG00000143891,0,,Glycolysis / Gluconeogenesis,0.9
+GALNS,ENSG00000141012,0,,Keratan sulfate degradation,0.9
+GALNT1,ENSG00000141429,0,,O-glycan metabolism,0.9
+GALNT10,ENSG00000164574,0,,O-glycan metabolism,0.9
+GALNT11,ENSG00000178234,0,,O-glycan metabolism,0.9
+GALNT12,ENSG00000119514,0,,O-glycan metabolism,0.9
+GALNT13,ENSG00000144278,0,,O-glycan metabolism,0.9
+GALNT14,ENSG00000158089,0,,O-glycan metabolism,0.9
+GALNT15,ENSG00000131386,0,,O-glycan metabolism,0.9
+GALNT16,ENSG00000100626,0,,O-glycan metabolism,0.9
+GALNT17,ENSG00000185274,0,,O-glycan metabolism,0.9
+GALNT18,ENSG00000110328,0,,O-glycan metabolism,0.9
+GALNT2,ENSG00000143641,0,,O-glycan metabolism,0.9
+GALNT3,ENSG00000115339,0,,O-glycan metabolism,0.9
+GALNT4,ENSG00000257594,0,,O-glycan metabolism,0.9
+GALNT5,ENSG00000136542,0,,O-glycan metabolism,0.9
+GALNT6,ENSG00000139629,0,,O-glycan metabolism,0.9
+GALNT7,ENSG00000109586,0,,Sphingolipid metabolism,0.9
+GALNT8,ENSG00000130035,0,,O-glycan metabolism,0.9
+GALNT9,ENSG00000182870,0,,O-glycan metabolism,0.9
+GALNTL6,ENSG00000174473,0,,O-glycan metabolism,0.9
+GALT,ENSG00000213930,0,,Galactose metabolism,0.9
+GAMT,ENSG00000130005,0,,Arginine and proline metabolism,0.9
+GANAB,ENSG00000089597,0,,N-glycan metabolism,0.9
+GANC,ENSG00000214013,0,,Starch and sucrose metabolism,0.9
+GAPDH,ENSG00000111640,0,1,Glycolysis / Gluconeogenesis,0.9
+GAPDHS,ENSG00000105679,0,,Glycolysis / Gluconeogenesis,0.9
+GART,ENSG00000159131,0,1,Purine metabolism,0.9
+GATM,ENSG00000171766,0,,"Glycine, serine and threonine metabolism",0.9
+GBA,ENSG00000177628,0,,Sphingolipid metabolism,0.9
+GBA2,ENSG00000070610,0,,Sphingolipid metabolism,0.9
+GBA3,ENSG00000249948,0,,Sphingolipid metabolism,0.9
+GBE1,ENSG00000114480,0,,Starch and sucrose metabolism,0.9
+GBGT1,ENSG00000148288,0,,Sphingolipid metabolism,0.9
+GC,ENSG00000145321,0,,Vitamin D metabolism,0.9
+GCAT,ENSG00000100116,0,,"Glycine, serine and threonine metabolism",0.9
+GCDH,ENSG00000105607,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+GCH1,ENSG00000131979,0,,Biopterin metabolism,0.9
+GCK,ENSG00000106633,0,,Glycolysis / Gluconeogenesis,0.9
+GCLC,ENSG00000001084,0,,Glutathione metabolism,0.9
+GCLM,ENSG00000023909,0,,Glutathione metabolism,0.9
+GCNT1,ENSG00000187210,0,,O-glycan metabolism,0.9
+GCNT2,ENSG00000111846,0,,Glycosphingolipid biosynthesis-lacto and,0.9
+GCNT3,ENSG00000140297,0,,O-glycan metabolism,0.9
+GCNT4,ENSG00000176928,0,,O-glycan metabolism,0.9
+GCNT7,ENSG00000124091,0,,Sphingolipid metabolism,0.9
+GCSH,ENSG00000140905,0,,Lipoic acid metabolism,0.9
+GDA,ENSG00000119125,0,,Purine metabolism,0.9
+GDE1,ENSG00000006007,0,,Isolated,0.9
+GDPD2,ENSG00000130055,0,,Isolated,0.9
+GFM1,ENSG00000168827,0,1,Nucleotide metabolism,0.9
+GFM2,ENSG00000164347,0,,Nucleotide metabolism,0.9
+GFPT1,ENSG00000198380,0,,Amino sugar and nucleotide sugar metabol,0.9
+GFPT2,ENSG00000131459,0,,Amino sugar and nucleotide sugar metabol,0.9
+GFUS,ENSG00000104522,0,,Fructose and mannose metabolism,0.9
+GGACT,ENSG00000134864,0,,Glutathione metabolism,0.9
+GGCT,ENSG00000006625,0,,Glutathione metabolism,0.9
+GGH,ENSG00000137563,0,,"Glycine, serine and threonine metabolism",0.9
+GGPS1,ENSG00000152904,0,1,Cholesterol metabolism,0.9
+GGT1,ENSG00000100031,0,,Leukotriene metabolism,0.9
+GGT5,ENSG00000099998,0,,Leukotriene metabolism,0.9
+GGT6,ENSG00000167741,0,,Leukotriene metabolism,0.9
+GGT7,ENSG00000131067,0,,Leukotriene metabolism,0.9
+GGTLC1,ENSG00000149435,0,,Leukotriene metabolism,0.9
+GGTLC2,ENSG00000100121,0,,Leukotriene metabolism,0.9
+GGTLC3,ENSG00000274252,0,,Omega-3 fatty acid metabolism,0.9
+GK,ENSG00000198814,0,,Glycerophospholipid metabolism,0.9
+GK2,ENSG00000196475,0,0,Glycerophospholipid metabolism,0.9
+GK3P,ENSG00000229894,0,,Glycerophospholipid metabolism,0.9
+GK5,ENSG00000175066,0,,Glycerophospholipid metabolism,0.9
+GLA,ENSG00000102393,0,,Glycosphingolipid biosynthesis-globo ser,0.9
+GLB1,ENSG00000170266,0,,Sphingolipid metabolism,0.9
+GLB1L,ENSG00000163521,0,,Sphingolipid metabolism,0.9
+GLCE,ENSG00000138604,0,,Chondroitin / heparan sulfate biosynthes,0.9
+GLDC,ENSG00000178445,0,,"Glycine, serine and threonine metabolism",0.9
+GLO1,ENSG00000124767,0,,Pyruvate metabolism,0.9
+GLOD4,ENSG00000167699,0,,Pyruvate metabolism,0.9
+GLRX,ENSG00000173221,0,,Ascorbate and aldarate metabolism,0.9
+GLRX2,ENSG00000023572,0,,Ascorbate and aldarate metabolism,0.9
+GLRX5,ENSG00000182512,0,,Sulfur metabolism,0.9
+GLS,ENSG00000115419,0,,"Alanine, aspartate and glutamate metabol",0.9
+GLS2,ENSG00000135423,0,,"Alanine, aspartate and glutamate metabol",0.9
+GLT6D1,ENSG00000204007,0,0,Sphingolipid metabolism,0.9
+GLT8D1,ENSG00000016864,0,,Sphingolipid metabolism,0.9
+GLT8D2,ENSG00000120820,0,,Sphingolipid metabolism,0.9
+GLTP,ENSG00000139433,0,,Transport reactions,0.9
+GLUD1,ENSG00000148672,0,,"Alanine, aspartate and glutamate metabol",0.9
+GLUD2,ENSG00000182890,0,,"Alanine, aspartate and glutamate metabol",0.9
+GLUL,ENSG00000135821,0,,"Alanine, aspartate and glutamate metabol",0.9
+GLYAT,ENSG00000149124,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+GLYATL1,ENSG00000166840,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+GLYATL2,ENSG00000156689,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+GLYCTK,ENSG00000168237,0,,"Glycine, serine and threonine metabolism",0.9
+GM2A,ENSG00000196743,0,,Glycosphingolipid metabolism,0.9
+GMDS,ENSG00000112699,0,,Fructose and mannose metabolism,0.9
+GMPPA,ENSG00000144591,0,,Fructose and mannose metabolism,0.9
+GMPPB,ENSG00000173540,0,1,Fructose and mannose metabolism,0.9
+GMPR,ENSG00000137198,0,,Purine metabolism,0.9
+GMPR2,ENSG00000100938,0,,Purine metabolism,0.9
+GMPS,ENSG00000163655,0,1,Purine metabolism,0.9
+GNE,ENSG00000159921,0,,Amino sugar and nucleotide sugar metabol,0.9
+GNMT,ENSG00000124713,0,,"Glycine, serine and threonine metabolism",0.9
+GNPAT,ENSG00000116906,0,,Ether lipid metabolism,0.9
+GNPDA1,ENSG00000113552,0,,Amino sugar and nucleotide sugar metabol,0.9
+GNPDA2,ENSG00000163281,0,,Amino sugar and nucleotide sugar metabol,0.9
+GNPNAT1,ENSG00000100522,0,,Amino sugar and nucleotide sugar metabol,0.9
+GNPTAB,ENSG00000111670,0,,Isolated,0.9
+GNS,ENSG00000135677,0,,Heparan sulfate degradation,0.9
+GOT1,ENSG00000120053,0,,"Alanine, aspartate and glutamate metabol",0.9
+GOT1L1,ENSG00000169154,0,0,"Alanine, aspartate and glutamate metabol",0.9
+GOT2,ENSG00000125166,0,,Phenylalanine metabolism,0.9
+GPAA1,ENSG00000197858,0,,Phosphatidylinositol phosphate metabolis,0.9
+GPAM,ENSG00000119927,0,,Glycerolipid metabolism,0.9
+GPAT2,ENSG00000186281,0,,Glycerolipid metabolism,0.9
+GPAT3,ENSG00000138678,0,,Glycerolipid metabolism,0.9
+GPAT4,ENSG00000158669,0,,Glycerolipid metabolism,0.9
+GPCPD1,ENSG00000125772,0,,Glycerophospholipid metabolism,0.9
+GPD1,ENSG00000167588,0,,Glycerophospholipid metabolism,0.9
+GPD1L,ENSG00000152642,0,,Glycerophospholipid metabolism,0.9
+GPD2,ENSG00000115159,0,,Acylglycerides metabolism,0.9
+GPHN,ENSG00000171723,0,,Folate metabolism,0.9
+GPI,ENSG00000105220,0,,Glycolysis / Gluconeogenesis,0.9
+GPIHBP1,ENSG00000277494,0,,Acylglycerides metabolism,0.9
+GPLD1,ENSG00000112293,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+GPT,ENSG00000167701,0,,"Alanine, aspartate and glutamate metabol",0.9
+GPT2,ENSG00000166123,0,,"Alanine, aspartate and glutamate metabol",0.9
+GPX1,ENSG00000233276,0,,Arachidonic acid metabolism,0.9
+GPX2,ENSG00000176153,0,,Arachidonic acid metabolism,0.9
+GPX3,ENSG00000211445,0,,Arachidonic acid metabolism,0.9
+GPX4,ENSG00000167468,0,,Arachidonic acid metabolism,0.9
+GPX5,ENSG00000224586,0,0,Arachidonic acid metabolism,0.9
+GPX6,ENSG00000198704,0,0,Arachidonic acid metabolism,0.9
+GPX7,ENSG00000116157,0,,Arachidonic acid metabolism,0.9
+GPX8,ENSG00000164294,0,,Arachidonic acid metabolism,0.9
+GRHPR,ENSG00000137106,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+GRK1,ENSG00000185974,0,0,Isolated,0.9
+GRK2,ENSG00000173020,0,,Isolated,0.9
+GRK3,ENSG00000100077,0,,Isolated,0.9
+GRK7,ENSG00000114124,0,,Isolated,0.9
+GSR,ENSG00000104687,0,,Glutathione metabolism,0.9
+GSS,ENSG00000100983,0,,Glutathione metabolism,0.9
+GSTA1,ENSG00000243955,0,,Arachidonic acid metabolism,0.9
+GSTA2,ENSG00000244067,0,,Arachidonic acid metabolism,0.9
+GSTA3,ENSG00000174156,0,,Arachidonic acid metabolism,0.9
+GSTA4,ENSG00000170899,0,,Arachidonic acid metabolism,0.9
+GSTA5,ENSG00000182793,0,0,Arachidonic acid metabolism,0.9
+GSTK1,ENSG00000197448,0,,Arachidonic acid metabolism,0.9
+GSTM1,ENSG00000134184,0,,Arachidonic acid metabolism,0.9
+GSTM2,ENSG00000213366,0,,Arachidonic acid metabolism,0.9
+GSTM3,ENSG00000134202,0,,Arachidonic acid metabolism,0.9
+GSTM4,ENSG00000168765,0,,Arachidonic acid metabolism,0.9
+GSTM5,ENSG00000134201,0,,Arachidonic acid metabolism,0.9
+GSTO1,ENSG00000148834,0,,Arachidonic acid metabolism,0.9
+GSTO2,ENSG00000065621,0,,Arachidonic acid metabolism,0.9
+GSTP1,ENSG00000084207,0,,Arachidonic acid metabolism,0.9
+GSTT2B,ENSG00000133433,0,,Arachidonic acid metabolism,0.9
+GSTZ1,ENSG00000100577,0,,Arachidonic acid metabolism,0.9
+GTF3C4,ENSG00000125484,0,,Isolated,0.9
+GUCY1A1,ENSG00000164116,0,,Purine metabolism,0.9
+GUCY1A2,ENSG00000152402,0,,Purine metabolism,0.9
+GUCY1B1,ENSG00000061918,0,,Purine metabolism,0.9
+GUCY2C,ENSG00000070019,0,,Purine metabolism,0.9
+GUCY2D,ENSG00000132518,0,,Purine metabolism,0.9
+GUCY2F,ENSG00000101890,0,0,Purine metabolism,0.9
+GUK1,ENSG00000143774,0,1,Purine metabolism,0.9
+GUSB,ENSG00000169919,0,,Miscellaneous,0.9
+GYG1,ENSG00000163754,0,,Starch and sucrose metabolism,0.9
+GYG2,ENSG00000056998,0,,Starch and sucrose metabolism,0.9
+GYS1,ENSG00000104812,0,,Starch and sucrose metabolism,0.9
+GYS2,ENSG00000111713,0,,Starch and sucrose metabolism,0.9
+H6PD,ENSG00000049239,0,,Pentose phosphate pathway,0.9
+HAAO,ENSG00000162882,0,,Nicotinate and nicotinamide metabolism,0.9
+HACD1,ENSG00000165996,0,,Fatty acid elongation (even-chain),0.9
+HACD2,ENSG00000206527,0,,Fatty acid elongation (even-chain),0.9
+HACD3,ENSG00000074696,0,,Fatty acid elongation (even-chain),0.9
+HACD4,ENSG00000188921,0,,Fatty acid elongation (even-chain),0.9
+HACE1,ENSG00000085382,0,,Isolated,0.9
+HACL1,ENSG00000131373,0,,Fatty acid oxidation,0.9
+HADH,ENSG00000138796,0,,Arachidonic acid metabolism,0.9
+HADHA,ENSG00000084754,0,,Fatty acid oxidation,0.9
+HADHB,ENSG00000138029,0,,Fatty acid oxidation,0.9
+HAGH,ENSG00000063854,0,,Pyruvate metabolism,0.9
+HAGHL,ENSG00000103253,0,,Pyruvate metabolism,0.9
+HAL,ENSG00000084110,0,,Histidine metabolism,0.9
+HAO1,ENSG00000101323,0,0,"Glycine, serine and threonine metabolism",0.9
+HAS1,ENSG00000105509,0,,Transport reactions,0.9
+HAS2,ENSG00000170961,0,,Transport reactions,0.9
+HAS3,ENSG00000103044,0,,Transport reactions,0.9
+HAT1,ENSG00000128708,0,,Isolated,0.9
+HCCS,ENSG00000004961,0,,Porphyrin metabolism,0.9
+HCN1,ENSG00000164588,0,,Transport reactions,0.9
+HCN4,ENSG00000138622,0,,Transport reactions,0.9
+HDC,ENSG00000140287,0,,Histidine metabolism,0.9
+HDLBP,ENSG00000115677,0,,Transport reactions,0.9
+HECTD1,ENSG00000092148,0,,Isolated,0.9
+HECTD2,ENSG00000165338,0,,Isolated,0.9
+HECTD3,ENSG00000126107,0,,Isolated,0.9
+HECW1,ENSG00000002746,0,,Isolated,0.9
+HECW2,ENSG00000138411,0,,Isolated,0.9
+HEPH,ENSG00000089472,0,,Transport reactions,0.9
+HERC1,ENSG00000103657,0,,Isolated,0.9
+HERC2,ENSG00000128731,0,,Isolated,0.9
+HERC3,ENSG00000138641,0,,Isolated,0.9
+HERC4,ENSG00000148634,0,,Isolated,0.9
+HEXA,ENSG00000213614,0,,Glycosphingolipid metabolism,0.9
+HEXB,ENSG00000049860,0,,Glycosphingolipid metabolism,0.9
+HEXD,ENSG00000169660,0,,Glycosphingolipid metabolism,0.9
+HGD,ENSG00000113924,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+HGSNAT,ENSG00000165102,0,,Heparan sulfate degradation,0.9
+HIBADH,ENSG00000106049,0,,"Valine, leucine, and isoleucine metaboli",0.9
+HIBCH,ENSG00000198130,0,,Beta-alanine metabolism,0.9
+HIF1A,ENSG00000100644,0,,Transport reactions,0.9
+HIF1AN,ENSG00000166135,0,,Isolated,0.9
+HIGD2A,ENSG00000146066,0,,Fatty acid elongation (even-chain),0.9
+HIRIP3,ENSG00000149929,0,,Fatty acid biosynthesis,0.9
+HK1,ENSG00000156515,0,,Fructose and mannose metabolism,0.9
+HK2,ENSG00000159399,0,,Fructose and mannose metabolism,0.9
+HK3,ENSG00000160883,0,,Fructose and mannose metabolism,0.9
+HKDC1,ENSG00000156510,0,,Fructose and mannose metabolism,0.9
+HLCS,ENSG00000159267,0,,Biotin metabolism,0.9
+HLTF,ENSG00000071794,0,,Isolated,0.9
+HMBS,ENSG00000256269,0,,Porphyrin metabolism,0.9
+HMGCL,ENSG00000117305,0,,Cholesterol metabolism,0.9
+HMGCLL1,ENSG00000146151,0,,Cholesterol metabolism,0.9
+HMGCR,ENSG00000113161,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+HMGCS1,ENSG00000112972,0,,Cholesterol metabolism,0.9
+HMGCS2,ENSG00000134240,0,,Terpenoid backbone biosynthesis,0.9
+HMOX1,ENSG00000100292,0,,Heme degradation,0.9
+HMOX2,ENSG00000103415,0,,Heme degradation,0.9
+HNMT,ENSG00000150540,0,,Sulfur metabolism,0.9
+HOGA1,ENSG00000241935,0,,Arginine and proline metabolism,0.9
+HPD,ENSG00000158104,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+HPGD,ENSG00000164120,0,,Leukotriene metabolism,0.9
+HPGDS,ENSG00000163106,0,,Arachidonic acid metabolism,0.9
+HPRT1,ENSG00000165704,0,,Purine metabolism,0.9
+HPS3,ENSG00000163755,0,,Porphyrin metabolism,0.9
+HPSE,ENSG00000173083,0,,Heparan sulfate degradation,0.9
+HPSE2,ENSG00000172987,0,,Heparan sulfate degradation,0.9
+HS2ST1,ENSG00000153936,0,,Serotonin and melatonin biosynthesis,0.9
+HS3ST1,ENSG00000002587,0,,Chondroitin / heparan sulfate biosynthes,0.9
+HS3ST2,ENSG00000122254,0,,Chondroitin / heparan sulfate biosynthes,0.9
+HS3ST3A1,ENSG00000153976,0,,Chondroitin / heparan sulfate biosynthes,0.9
+HS3ST3B1,ENSG00000125430,0,,Chondroitin / heparan sulfate biosynthes,0.9
+HS3ST4,ENSG00000182601,0,,Chondroitin / heparan sulfate biosynthes,0.9
+HS3ST5,ENSG00000249853,0,,Chondroitin / heparan sulfate biosynthes,0.9
+HS3ST6,ENSG00000162040,0,,Chondroitin / heparan sulfate biosynthes,0.9
+HS6ST1,ENSG00000136720,0,,Chondroitin / heparan sulfate biosynthes,0.9
+HS6ST2,ENSG00000171004,0,,Chondroitin / heparan sulfate biosynthes,0.9
+HS6ST3,ENSG00000185352,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+HSCB,ENSG00000100209,0,,Sulfur metabolism,0.9
+HSD11B1,ENSG00000117594,0,,Glucocorticoid biosynthesis,0.9
+HSD11B1L,ENSG00000167733,0,,Leukotriene metabolism,0.9
+HSD11B2,ENSG00000176387,0,,Bile acid biosynthesis,0.9
+HSD17B1,ENSG00000108786,0,,Androgen metabolism,0.9
+HSD17B10,ENSG00000072506,0,1,Arachidonic acid metabolism,0.9
+HSD17B11,ENSG00000198189,0,,Leukotriene metabolism,0.9
+HSD17B12,ENSG00000149084,0,,Arachidonic acid metabolism,0.9
+HSD17B14,ENSG00000087076,0,,Bile acid biosynthesis,0.9
+HSD17B2,ENSG00000086696,0,,Androgen metabolism,0.9
+HSD17B3,ENSG00000130948,0,,Androgen metabolism,0.9
+HSD17B4,ENSG00000133835,0,,Cholesterol metabolism,0.9
+HSD17B6,ENSG00000025423,0,,Androgen metabolism,0.9
+HSD17B7,ENSG00000132196,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+HSD17B8,ENSG00000204228,0,,Leukotriene metabolism,0.9
+HSD3B1,ENSG00000203857,0,,Bile acid biosynthesis,0.9
+HSD3B2,ENSG00000203859,0,,Bile acid biosynthesis,0.9
+HSD3B7,ENSG00000099377,0,,Leukotriene metabolism,0.9
+HSPA9,ENSG00000113013,0,1,Sulfur metabolism,0.9
+HTATIP2,ENSG00000109854,0,,Leukotriene metabolism,0.9
+HUWE1,ENSG00000086758,0,1,Isolated,0.9
+HYAL1,ENSG00000114378,0,,Chondroitin sulfate degradation,0.9
+HYAL2,ENSG00000068001,0,,Chondroitin sulfate degradation,0.9
+HYAL3,ENSG00000186792,0,,Chondroitin sulfate degradation,0.9
+HYAL4,ENSG00000106302,0,,Chondroitin sulfate degradation,0.9
+HYI,ENSG00000178922,0,,"Glycine, serine and threonine metabolism",0.9
+HYKK,ENSG00000188266,0,,Isolated,0.9
+IBA57,ENSG00000181873,0,,Sulfur metabolism,0.9
+ICMT,ENSG00000116237,0,,Terpenoid backbone biosynthesis,0.9
+IDH1,ENSG00000138413,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+IDH2,ENSG00000182054,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+IDH3A,ENSG00000166411,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+IDH3B,ENSG00000101365,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+IDH3G,ENSG00000067829,0,,Bile acid biosynthesis,0.9
+IDI1,ENSG00000067064,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+IDI2,ENSG00000148377,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+IDNK,ENSG00000148057,0,,Pentose phosphate pathway,0.9
+IDO1,ENSG00000131203,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+IDO2,ENSG00000188676,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+IDS,ENSG00000010404,0,,Heparan sulfate degradation,0.9
+IDUA,ENSG00000127415,0,,Heparan sulfate degradation,0.9
+IL4I1,ENSG00000104951,0,,Cysteine and methionine metabolism,0.9
+IMPA1,ENSG00000133731,0,,Inositol phosphate metabolism,0.9
+IMPA2,ENSG00000141401,0,,Inositol phosphate metabolism,0.9
+IMPDH1,ENSG00000106348,0,,Purine metabolism,0.9
+IMPDH2,ENSG00000178035,0,,Purine metabolism,0.9
+INMT,ENSG00000241644,0,,Serotonin and melatonin biosynthesis,0.9
+INPP1,ENSG00000151689,0,,Inositol phosphate metabolism,0.9
+INPP4A,ENSG00000040933,0,,Inositol phosphate metabolism,0.9
+INPP4B,ENSG00000109452,0,,Inositol phosphate metabolism,0.9
+INPP5A,ENSG00000068383,0,,Inositol phosphate metabolism,0.9
+INPP5B,ENSG00000204084,0,,Inositol phosphate metabolism,0.9
+INPP5D,ENSG00000168918,0,,Inositol phosphate metabolism,0.9
+INPP5E,ENSG00000148384,0,,Inositol phosphate metabolism,0.9
+INPP5F,ENSG00000198825,0,,Inositol phosphate metabolism,0.9
+INPP5J,ENSG00000185133,0,,Inositol phosphate metabolism,0.9
+INPP5K,ENSG00000132376,0,,Inositol phosphate metabolism,0.9
+INPPL1,ENSG00000165458,0,,Inositol phosphate metabolism,0.9
+IP6K1,ENSG00000176095,0,,Inositol phosphate metabolism,0.9
+IP6K2,ENSG00000068745,0,,Inositol phosphate metabolism,0.9
+IP6K3,ENSG00000161896,0,,Inositol phosphate metabolism,0.9
+IPMK,ENSG00000151151,0,,Inositol phosphate metabolism,0.9
+IPPK,ENSG00000127080,0,,Inositol phosphate metabolism,0.9
+ISCA2,ENSG00000165898,0,,Lipoic acid metabolism,0.9
+ISCU,ENSG00000136003,0,1,Sulfur metabolism,0.9
+ISYNA1,ENSG00000105655,0,,Inositol phosphate metabolism,0.9
+ITCH,ENSG00000078747,0,,Isolated,0.9
+ITPA,ENSG00000125877,0,,Pyrimidine metabolism,0.9
+ITPK1,ENSG00000100605,0,,Inositol phosphate metabolism,0.9
+ITPKA,ENSG00000137825,0,,Inositol phosphate metabolism,0.9
+ITPKB,ENSG00000143772,0,,Inositol phosphate metabolism,0.9
+ITPKC,ENSG00000086544,0,,Inositol phosphate metabolism,0.9
+IVD,ENSG00000128928,0,,"Glycine, serine and threonine metabolism",0.9
+KANSL3,ENSG00000114982,0,1,Isolated,0.9
+KAT2A,ENSG00000108773,0,,Isolated,0.9
+KAT2B,ENSG00000114166,0,,Isolated,0.9
+KAT5,ENSG00000172977,0,,Isolated,0.9
+KAT6A,ENSG00000083168,0,,Isolated,0.9
+KAT6B,ENSG00000156650,0,,Isolated,0.9
+KAT7,ENSG00000136504,0,,Isolated,0.9
+KAT8,ENSG00000103510,0,1,Isolated,0.9
+KCNJ11,ENSG00000187486,0,,Transport reactions,0.9
+KCNJ8,ENSG00000121361,0,,Transport reactions,0.9
+KDSR,ENSG00000119537,0,,Sphingolipid metabolism,0.9
+KHK,ENSG00000138030,0,,Galactose metabolism,0.9
+KL,ENSG00000133116,0,,Miscellaneous,0.9
+KLHL23,ENSG00000213160,0,,Vitamin B6 metabolism,0.9
+KLK1,ENSG00000167748,0,,Isolated,0.9
+KLK2,ENSG00000167751,0,,Isolated,0.9
+KMO,ENSG00000117009,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+KMT2A,ENSG00000118058,0,,Lysine metabolism,0.9
+KMT2B,ENSG00000272333,0,,Lysine metabolism,0.9
+KMT2C,ENSG00000055609,0,,Lysine metabolism,0.9
+KMT2D,ENSG00000167548,0,,Lysine metabolism,0.9
+KMT5A,ENSG00000183955,0,,Lysine metabolism,0.9
+KMT5B,ENSG00000110066,0,,Lysine metabolism,0.9
+KMT5C,ENSG00000133247,0,,Lysine metabolism,0.9
+KPNA6,ENSG00000025800,0,,Transport reactions,0.9
+KYAT1,ENSG00000171097,0,,"Alanine, aspartate and glutamate metabol",0.9
+KYAT3,ENSG00000137944,0,,Tryptophan metabolism,0.9
+KYNU,ENSG00000115919,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+L2HGDH,ENSG00000087299,0,,Butanoate metabolism,0.9
+LALBA,ENSG00000167531,0,0,Galactose metabolism,0.9
+LAP3,ENSG00000002549,0,,Glutathione metabolism,0.9
+LBR,ENSG00000143815,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+LCAT,ENSG00000213398,0,,Glycerophospholipid metabolism,0.9
+LCLAT1,ENSG00000172954,0,,Glycerophospholipid metabolism,0.9
+LCT,ENSG00000115850,0,0,Sphingolipid metabolism,0.9
+LDHA,ENSG00000134333,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+LDHAL6A,ENSG00000166800,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+LDHAL6B,ENSG00000171989,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+LDHB,ENSG00000111716,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+LDHC,ENSG00000166796,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+LDHD,ENSG00000166816,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+LDLR,ENSG00000130164,0,,Transport reactions,0.9
+LENEP,ENSG00000163352,0,,Riboflavin metabolism,0.9
+LGMN,ENSG00000100600,0,,Protein degradation,0.9
+LHPP,ENSG00000107902,0,,Oxidative phosphorylation,0.9
+LIAS,ENSG00000121897,0,,Lipoic acid metabolism,0.9
+LIPA,ENSG00000107798,0,,Formation and hydrolysis of cholesterol ,0.9
+LIPC,ENSG00000166035,0,,Acylglycerides metabolism,0.9
+LIPE,ENSG00000079435,0,,Acylglycerides metabolism,0.9
+LIPF,ENSG00000182333,0,,Acylglycerides metabolism,0.9
+LIPG,ENSG00000101670,0,,Acylglycerides metabolism,0.9
+LIPT1,ENSG00000144182,0,,Miscellaneous,0.9
+LIPT2,ENSG00000175536,0,,Lipoic acid metabolism,0.9
+LOX,ENSG00000113083,0,,Isolated,0.9
+LOXL2,ENSG00000134013,0,,Fatty acid biosynthesis,0.9
+LPCAT1,ENSG00000153395,0,,Glycerophospholipid metabolism,0.9
+LPCAT2,ENSG00000087253,0,,Glycerophospholipid metabolism,0.9
+LPCAT3,ENSG00000111684,0,,Glycerophospholipid metabolism,0.9
+LPCAT4,ENSG00000176454,0,,Glycerophospholipid metabolism,0.9
+LPGAT1,ENSG00000123684,0,,Glycerophospholipid metabolism,0.9
+LPIN1,ENSG00000134324,0,,Glycerolipid metabolism,0.9
+LPIN2,ENSG00000101577,0,,Glycerolipid metabolism,0.9
+LPIN3,ENSG00000132793,0,,Glycerolipid metabolism,0.9
+LPL,ENSG00000175445,0,,Acylglycerides metabolism,0.9
+LPO,ENSG00000167419,0,,Estrogen metabolism,0.9
+LRAT,ENSG00000121207,0,,Vitamin A metabolism,0.9
+LRP2,ENSG00000081479,0,,Vitamin D metabolism,0.9
+LRSAM1,ENSG00000148356,0,,Isolated,0.9
+LRTOMT,ENSG00000184154,0,,Estrogen metabolism,0.9
+LSS,ENSG00000160285,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+LTA4H,ENSG00000111144,0,,Leukotriene metabolism,0.9
+LTC4S,ENSG00000213316,0,,Leukotriene metabolism,0.9
+LYPLA1,ENSG00000120992,0,,Glycerophospholipid metabolism,0.9
+LYPLA2,ENSG00000011009,0,,Glycerophospholipid metabolism,0.9
+LYRM4,ENSG00000214113,0,,Sulfur metabolism,0.9
+LYZL1,ENSG00000120563,0,0,Starch and sucrose metabolism,0.9
+MACROD1,ENSG00000133315,0,,Histidine metabolism,0.9
+MACROD2,ENSG00000172264,0,,Histidine metabolism,0.9
+MAN1A1,ENSG00000111885,0,,N-glycan metabolism,0.9
+MAN1A2,ENSG00000198162,0,,N-glycan metabolism,0.9
+MAN1B1,ENSG00000177239,0,,N-glycan metabolism,0.9
+MAN1C1,ENSG00000117643,0,,N-glycan metabolism,0.9
+MAN2A1,ENSG00000112893,0,,N-glycan metabolism,0.9
+MAN2A2,ENSG00000196547,0,,N-glycan metabolism,0.9
+MAN2B1,ENSG00000104774,0,,N-glycan metabolism,0.9
+MAN2B2,ENSG00000013288,0,,N-glycan metabolism,0.9
+MAN2C1,ENSG00000140400,0,,N-glycan metabolism,0.9
+MANBA,ENSG00000109323,0,,N-glycan metabolism,0.9
+MANSC1,ENSG00000111261,0,,Amino sugar and nucleotide sugar metabol,0.9
+MAOA,ENSG00000189221,0,,Histidine metabolism,0.9
+MAOB,ENSG00000069535,0,,Histidine metabolism,0.9
+MARCHF1,ENSG00000145416,0,,Isolated,0.9
+MARCHF10,ENSG00000173838,0,,Isolated,0.9
+MARCHF11,ENSG00000183654,0,,Isolated,0.9
+MARCHF2,ENSG00000099785,0,,Isolated,0.9
+MARCHF3,ENSG00000173926,0,,Isolated,0.9
+MARCHF4,ENSG00000144583,0,,Isolated,0.9
+MARCHF5,ENSG00000198060,0,,Isolated,0.9
+MARCHF6,ENSG00000145495,0,,Isolated,0.9
+MARCHF7,ENSG00000136536,0,,Isolated,0.9
+MARCHF8,ENSG00000165406,0,,Isolated,0.9
+MARCHF9,ENSG00000139266,0,,Isolated,0.9
+MARS2,ENSG00000247626,0,1,Metabolism of other amino acids,0.9
+MAT1A,ENSG00000151224,0,,Cysteine and methionine metabolism,0.9
+MAT2A,ENSG00000168906,0,,Cysteine and methionine metabolism,0.9
+MAT2B,ENSG00000038274,0,,Cysteine and methionine metabolism,0.9
+MBOAT1,ENSG00000172197,0,,Glycerophospholipid metabolism,0.9
+MBOAT2,ENSG00000143797,0,,Glycerophospholipid metabolism,0.9
+MBOAT4,ENSG00000177669,0,,Leukotriene metabolism,0.9
+MBOAT7,ENSG00000125505,0,,Leukotriene metabolism,0.9
+MCAT,ENSG00000100294,0,,Fatty acid oxidation,0.9
+MCCC1,ENSG00000078070,0,,"Valine, leucine, and isoleucine metaboli",0.9
+MCCC2,ENSG00000131844,0,,"Valine, leucine, and isoleucine metaboli",0.9
+MCEE,ENSG00000124370,0,,"Valine, leucine, and isoleucine metaboli",0.9
+MDH1,ENSG00000014641,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+MDH1B,ENSG00000138400,0,,Leukotriene metabolism,0.9
+MDH2,ENSG00000146701,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+MDM2,ENSG00000135679,0,,Isolated,0.9
+MDP1,ENSG00000213920,0,,Inositol phosphate metabolism,0.9
+ME1,ENSG00000065833,0,,Pyruvate metabolism,0.9
+ME2,ENSG00000082212,0,,Pyruvate metabolism,0.9
+ME3,ENSG00000151376,0,,Pyruvate metabolism,0.9
+MECR,ENSG00000116353,0,,Fatty acid oxidation,0.9
+METTL1,ENSG00000037897,0,,Isolated,0.9
+METTL3,ENSG00000165819,0,,Isolated,0.9
+MGAM,ENSG00000257335,0,,Starch and sucrose metabolism,0.9
+MGAT1,ENSG00000131446,0,,N-glycan metabolism,0.9
+MGAT2,ENSG00000168282,0,,N-glycan metabolism,0.9
+MGAT3,ENSG00000128268,0,,N-glycan metabolism,0.9
+MGAT4A,ENSG00000071073,0,,N-glycan metabolism,0.9
+MGAT4B,ENSG00000161013,0,,N-glycan metabolism,0.9
+MGAT4C,ENSG00000182050,0,,N-glycan metabolism,0.9
+MGAT5,ENSG00000152127,0,,N-glycan metabolism,0.9
+MGAT5B,ENSG00000167889,0,,Glycosphingolipid metabolism,0.9
+MGLL,ENSG00000074416,0,,Acylglycerides metabolism,0.9
+MGMT,ENSG00000170430,0,,Isolated,0.9
+MGRN1,ENSG00000102858,0,,Isolated,0.9
+MGST1,ENSG00000008394,0,,Arachidonic acid metabolism,0.9
+MGST2,ENSG00000085871,0,,Arachidonic acid metabolism,0.9
+MGST3,ENSG00000143198,0,,Arachidonic acid metabolism,0.9
+MIB1,ENSG00000101752,0,,Isolated,0.9
+MIB2,ENSG00000197530,0,,Isolated,0.9
+MID1,ENSG00000101871,0,,Isolated,0.9
+MIF,ENSG00000240972,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+MINPP1,ENSG00000107789,0,,Inositol phosphate metabolism,0.9
+MIOX,ENSG00000100253,0,,Inositol phosphate metabolism,0.9
+MKRN1,ENSG00000133606,0,,Isolated,0.9
+MKRN2,ENSG00000075975,0,,Isolated,0.9
+MKRN3,ENSG00000179455,0,,Isolated,0.9
+MLYCD,ENSG00000103150,0,,"Valine, leucine, and isoleucine metaboli",0.9
+MMAB,ENSG00000139428,0,,Vitamin B12 metabolism,0.9
+MMUT,ENSG00000146085,0,,"Valine, leucine, and isoleucine metaboli",0.9
+MOCS1,ENSG00000124615,0,,Folate metabolism,0.9
+MOCS2,ENSG00000164172,0,,Folate metabolism,0.9
+MOGAT1,ENSG00000124003,0,,Acylglycerides metabolism,0.9
+MOGAT2,ENSG00000166391,0,,Acylglycerides metabolism,0.9
+MOGAT3,ENSG00000106384,0,0,Acylglycerides metabolism,0.9
+MOGS,ENSG00000115275,0,,N-glycan metabolism,0.9
+MPC1,ENSG00000060762,0,,Transport reactions,0.9
+MPC1L,ENSG00000238205,0,,Transport reactions,0.9
+MPC2,ENSG00000143158,0,,Transport reactions,0.9
+MPI,ENSG00000178802,0,,Fructose and mannose metabolism,0.9
+MPO,ENSG00000005381,0,,Estrogen metabolism,0.9
+MPST,ENSG00000128309,0,,Cysteine and methionine metabolism,0.9
+MRI1,ENSG00000037757,0,,Cysteine and methionine metabolism,0.9
+MRPL58,ENSG00000167862,0,,Isolated,0.9
+MSMO1,ENSG00000052802,0,,Cholesterol metabolism,0.9
+MSRA,ENSG00000175806,0,,Isolated,0.9
+MT-ATP6,ENSG00000198899,0,,Oxidative phosphorylation,0.9
+MT-ATP8,ENSG00000228253,0,,Oxidative phosphorylation,0.9
+MT-CO1,ENSG00000198804,0,,Oxidative phosphorylation,0.9
+MT-CO2,ENSG00000198712,0,,Oxidative phosphorylation,0.9
+MT-CO3,ENSG00000198938,0,,Oxidative phosphorylation,0.9
+MT-CYB,ENSG00000198727,0,,Oxidative phosphorylation,0.9
+MT-ND1,ENSG00000198888,0,,Oxidative phosphorylation,0.9
+MT-ND2,ENSG00000198763,0,,Oxidative phosphorylation,0.9
+MT-ND3,ENSG00000198840,0,,Oxidative phosphorylation,0.9
+MT-ND4,ENSG00000198886,0,,Oxidative phosphorylation,0.9
+MT-ND4L,ENSG00000212907,0,,Oxidative phosphorylation,0.9
+MT-ND5,ENSG00000198786,0,,Oxidative phosphorylation,0.9
+MT-ND6,ENSG00000198695,0,,Oxidative phosphorylation,0.9
+MTAP,ENSG00000099810,0,,Arginine and proline metabolism,0.9
+MTFMT,ENSG00000103707,0,,Aminoacyl-tRNA biosynthesis,0.9
+MTHFD1,ENSG00000100714,0,,Folate metabolism,0.9
+MTHFD1L,ENSG00000120254,0,,Folate metabolism,0.9
+MTHFD2,ENSG00000065911,0,,Folate metabolism,0.9
+MTHFD2L,ENSG00000163738,0,,Folate metabolism,0.9
+MTHFR,ENSG00000177000,0,,Folate metabolism,0.9
+MTHFS,ENSG00000136371,0,,Folate metabolism,0.9
+MTM1,ENSG00000171100,0,,Inositol phosphate metabolism,0.9
+MTMR1,ENSG00000063601,0,,Inositol phosphate metabolism,0.9
+MTMR12,ENSG00000150712,0,,Inositol phosphate metabolism,0.9
+MTMR14,ENSG00000163719,0,,Inositol phosphate metabolism,0.9
+MTMR2,ENSG00000087053,0,,Transport reactions,0.9
+MTMR6,ENSG00000139505,0,,Inositol phosphate metabolism,0.9
+MTMR7,ENSG00000003987,0,,Inositol phosphate metabolism,0.9
+MTMR8,ENSG00000102043,0,,Inositol phosphate metabolism,0.9
+MTR,ENSG00000116984,0,,Cysteine and methionine metabolism,0.9
+MTREX,ENSG00000039123,0,,Transport reactions,0.9
+MTRR,ENSG00000124275,0,,Isolated,0.9
+MUL1,ENSG00000090432,0,,Isolated,0.9
+MVD,ENSG00000167508,0,,Cholesterol metabolism,0.9
+MVK,ENSG00000110921,0,1,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+MYCBP2,ENSG00000005810,0,,Isolated,0.9
+MYLIP,ENSG00000007944,0,,Isolated,0.9
+MYLK,ENSG00000065534,0,,Isolated,0.9
+MYLK2,ENSG00000101306,0,,Isolated,0.9
+MYLK3,ENSG00000140795,0,,Isolated,0.9
+MYLK4,ENSG00000145949,0,,Isolated,0.9
+MYO5B,ENSG00000167306,0,,Leukotriene metabolism,0.9
+NAA10,ENSG00000102030,0,1,Leukotriene metabolism,0.9
+NAA40,ENSG00000110583,0,,Leukotriene metabolism,0.9
+NAA60,ENSG00000122390,0,,Leukotriene metabolism,0.9
+NAA80,ENSG00000243477,0,,Leukotriene metabolism,0.9
+NAAA,ENSG00000138744,0,,Histidine metabolism,0.9
+NADK2,ENSG00000152620,0,,Nicotinate and nicotinamide metabolism,0.9
+NADSYN1,ENSG00000172890,0,,Nicotinate and nicotinamide metabolism,0.9
+NAE1,ENSG00000159593,0,,Transport reactions,0.9
+NAGA,ENSG00000198951,0,,Glycosphingolipid biosynthesis-globo ser,0.9
+NAGK,ENSG00000124357,0,,Amino sugar and nucleotide sugar metabol,0.9
+NAGLU,ENSG00000108784,0,,Heparan sulfate degradation,0.9
+NAGPA,ENSG00000103174,0,,Isolated,0.9
+NAGS,ENSG00000161653,0,,Cysteine and methionine metabolism,0.9
+NALCN,ENSG00000102452,0,,Transport reactions,0.9
+NAMPT,ENSG00000105835,0,1,Nicotinate and nicotinamide metabolism,0.9
+NANP,ENSG00000170191,0,,Amino sugar and nucleotide sugar metabol,0.9
+NANS,ENSG00000095380,0,,Amino sugar and nucleotide sugar metabol,0.9
+NAPRT,ENSG00000147813,0,,Nicotinate and nicotinamide metabolism,0.9
+NAT1,ENSG00000171428,0,,Isolated,0.9
+NAT14,ENSG00000090971,0,,Leukotriene metabolism,0.9
+NAT16,ENSG00000167011,0,,Leukotriene metabolism,0.9
+NAT2,ENSG00000156006,0,,Isolated,0.9
+NAT8,ENSG00000144035,0,,Leukotriene metabolism,0.9
+NAT8L,ENSG00000185818,0,,"Alanine, aspartate and glutamate metabol",0.9
+NAT9,ENSG00000109065,0,,Leukotriene metabolism,0.9
+NCOA1,ENSG00000084676,0,,Isolated,0.9
+NCOA3,ENSG00000124151,0,,Isolated,0.9
+NDST1,ENSG00000070614,0,,Serotonin and melatonin biosynthesis,0.9
+NDST2,ENSG00000166507,0,,Chondroitin / heparan sulfate biosynthes,0.9
+NDST3,ENSG00000164100,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+NDST4,ENSG00000138653,0,0,Serotonin and melatonin biosynthesis,0.9
+NDUFA1,ENSG00000125356,0,,Oxidative phosphorylation,0.9
+NDUFA10,ENSG00000130414,0,,Oxidative phosphorylation,0.9
+NDUFA11,ENSG00000174886,0,,Oxidative phosphorylation,0.9
+NDUFA12,ENSG00000184752,0,,Oxidative phosphorylation,0.9
+NDUFA13,ENSG00000186010,0,1,Oxidative phosphorylation,0.9
+NDUFA2,ENSG00000131495,0,,Oxidative phosphorylation,0.9
+NDUFA3,ENSG00000170906,0,,Oxidative phosphorylation,0.9
+NDUFA4,ENSG00000189043,0,,Oxidative phosphorylation,0.9
+NDUFA5,ENSG00000128609,0,,Oxidative phosphorylation,0.9
+NDUFA6,ENSG00000184983,0,,Oxidative phosphorylation,0.9
+NDUFA7,ENSG00000267855,0,,Oxidative phosphorylation,0.9
+NDUFA8,ENSG00000119421,0,,Oxidative phosphorylation,0.9
+NDUFA9,ENSG00000139180,0,,Oxidative phosphorylation,0.9
+NDUFAB1,ENSG00000004779,0,,Lipoic acid metabolism,0.9
+NDUFB1,ENSG00000183648,0,,Oxidative phosphorylation,0.9
+NDUFB10,ENSG00000140990,0,,Oxidative phosphorylation,0.9
+NDUFB11,ENSG00000147123,0,,Oxidative phosphorylation,0.9
+NDUFB2,ENSG00000090266,0,,Oxidative phosphorylation,0.9
+NDUFB3,ENSG00000119013,0,,Oxidative phosphorylation,0.9
+NDUFB4,ENSG00000065518,0,,Oxidative phosphorylation,0.9
+NDUFB5,ENSG00000136521,0,,Oxidative phosphorylation,0.9
+NDUFB6,ENSG00000165264,0,,Oxidative phosphorylation,0.9
+NDUFB7,ENSG00000099795,0,,Oxidative phosphorylation,0.9
+NDUFB8,ENSG00000166136,0,,Oxidative phosphorylation,0.9
+NDUFB9,ENSG00000147684,0,,Oxidative phosphorylation,0.9
+NDUFC1,ENSG00000109390,0,,Oxidative phosphorylation,0.9
+NDUFC2,ENSG00000151366,0,,Oxidative phosphorylation,0.9
+NDUFS1,ENSG00000023228,0,,Oxidative phosphorylation,0.9
+NDUFS2,ENSG00000158864,0,,Oxidative phosphorylation,0.9
+NDUFS3,ENSG00000213619,0,,Oxidative phosphorylation,0.9
+NDUFS4,ENSG00000164258,0,,Oxidative phosphorylation,0.9
+NDUFS5,ENSG00000168653,0,,Oxidative phosphorylation,0.9
+NDUFS6,ENSG00000145494,0,,Oxidative phosphorylation,0.9
+NDUFS7,ENSG00000115286,0,,Oxidative phosphorylation,0.9
+NDUFS8,ENSG00000110717,0,,Oxidative phosphorylation,0.9
+NDUFV1,ENSG00000167792,0,,Oxidative phosphorylation,0.9
+NDUFV2,ENSG00000178127,0,,Oxidative phosphorylation,0.9
+NDUFV3,ENSG00000160194,0,,Oxidative phosphorylation,0.9
+NEDD4,ENSG00000069869,0,,Isolated,0.9
+NEDD4L,ENSG00000049759,0,,Isolated,0.9
+NEU1,ENSG00000204386,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+NEU2,ENSG00000115488,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+NEU3,ENSG00000162139,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+NEU4,ENSG00000204099,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+NEURL1,ENSG00000107954,0,,Isolated,0.9
+NEURL1B,ENSG00000214357,0,,Isolated,0.9
+NFS1,ENSG00000244005,0,,Sulfur metabolism,0.9
+NFU1,ENSG00000169599,0,,Lipoic acid metabolism,0.9
+NGLY1,ENSG00000151092,0,,Isolated,0.9
+NHLRC1,ENSG00000187566,0,,Isolated,0.9
+NIT2,ENSG00000114021,0,,"Alanine, aspartate and glutamate metabol",0.9
+NKTR,ENSG00000114857,0,,Isolated,0.9
+NLN,ENSG00000123213,0,,Miscellaneous,0.9
+NME1,ENSG00000239672,0,,Pyrimidine metabolism,0.9
+NME2,ENSG00000243678,0,,Pyrimidine metabolism,0.9
+NME3,ENSG00000103024,0,,Pyrimidine metabolism,0.9
+NME4,ENSG00000103202,0,,Pyrimidine metabolism,0.9
+NME6,ENSG00000172113,0,,Pyrimidine metabolism,0.9
+NME7,ENSG00000143156,0,,Purine metabolism,0.9
+NMNAT1,ENSG00000173614,0,,Nicotinate and nicotinamide metabolism,0.9
+NMNAT2,ENSG00000157064,0,,Nicotinate and nicotinamide metabolism,0.9
+NMNAT3,ENSG00000163864,0,,Nicotinate and nicotinamide metabolism,0.9
+NMRK1,ENSG00000106733,0,,Nicotinate and nicotinamide metabolism,0.9
+NMRK2,ENSG00000077009,0,,Nicotinate and nicotinamide metabolism,0.9
+NMT1,ENSG00000136448,0,1,Isolated,0.9
+NMT2,ENSG00000152465,0,,Isolated,0.9
+NNMT,ENSG00000166741,0,,Nicotinate and nicotinamide metabolism,0.9
+NNT,ENSG00000112992,0,,Transport reactions,0.9
+NOS1,ENSG00000089250,0,,Arginine and proline metabolism,0.9
+NOS2,ENSG00000007171,0,,Arginine and proline metabolism,0.9
+NOS3,ENSG00000164867,0,,Arginine and proline metabolism,0.9
+NPC1,ENSG00000141458,0,,Transport reactions,0.9
+NPC1L1,ENSG00000015520,0,,Transport reactions,0.9
+NPEPPS,ENSG00000141279,0,,Glutathione metabolism,0.9
+NPL,ENSG00000135838,0,,Amino sugar and nucleotide sugar metabol,0.9
+NPR1,ENSG00000169418,0,,Purine metabolism,0.9
+NPR2,ENSG00000159899,0,,Purine metabolism,0.9
+NQO1,ENSG00000181019,0,,Isolated,0.9
+NQO2,ENSG00000124588,0,,Isolated,0.9
+NSD1,ENSG00000165671,0,,Lysine metabolism,0.9
+NSD2,ENSG00000109685,0,,Lysine metabolism,0.9
+NSD3,ENSG00000147548,0,,Lysine metabolism,0.9
+NSDHL,ENSG00000147383,0,,Cholesterol metabolism,0.9
+NT5C,ENSG00000125458,0,,Pyrimidine metabolism,0.9
+NT5C1A,ENSG00000116981,0,,Pyrimidine metabolism,0.9
+NT5C1B,ENSG00000185013,0,,Pyrimidine metabolism,0.9
+NT5C2,ENSG00000076685,0,,Pyrimidine metabolism,0.9
+NT5C3A,ENSG00000122643,0,,Pyrimidine metabolism,0.9
+NT5C3B,ENSG00000141698,0,,Pyrimidine metabolism,0.9
+NT5DC3,ENSG00000111696,0,,Inositol phosphate metabolism,0.9
+NT5E,ENSG00000135318,0,,Pyrimidine metabolism,0.9
+NT5M,ENSG00000205309,0,,Pyrimidine metabolism,0.9
+NTAN1,ENSG00000157045,0,,Histidine metabolism,0.9
+NTAQ1,ENSG00000156795,0,,Histidine metabolism,0.9
+NTPCR,ENSG00000135778,0,,Thiamine metabolism,0.9
+NUDT10,ENSG00000122824,0,,Inositol phosphate metabolism,0.9
+NUDT11,ENSG00000196368,0,,Inositol phosphate metabolism,0.9
+NUDT12,ENSG00000112874,0,,Nicotinate and nicotinamide metabolism,0.9
+NUDT14,ENSG00000183828,0,,Pyrimidine metabolism,0.9
+NUDT2,ENSG00000164978,0,,Isolated,0.9
+NUDT3,ENSG00000272325,0,,Inositol phosphate metabolism,0.9
+NUDT4,ENSG00000173598,0,1,Inositol phosphate metabolism,0.9
+NUDT5,ENSG00000165609,0,,Purine metabolism,0.9
+NUDT9,ENSG00000170502,0,,Nucleotide metabolism,0.9
+NUP210L,ENSG00000143552,0,,Transport reactions,0.9
+NUP62CL,ENSG00000198088,0,,Transport reactions,0.9
+OARD1,ENSG00000124596,0,,Histidine metabolism,0.9
+OAT,ENSG00000065154,0,,Arginine and proline metabolism,0.9
+OCA2,ENSG00000104044,0,,Transport reactions,0.9
+OCRL,ENSG00000122126,0,,Inositol phosphate metabolism,0.9
+ODC1,ENSG00000115758,0,,Arginine and proline metabolism,0.9
+OGDH,ENSG00000105953,0,1,Tricarboxylic acid cycle and glyoxylate/,0.9
+OLAH,ENSG00000152463,0,,Fatty acid oxidation,0.9
+OPLAH,ENSG00000178814,0,,Glutathione metabolism,0.9
+OTC,ENSG00000036473,0,,Arginine and proline metabolism,0.9
+OTUD5,ENSG00000068308,0,,Isolated,0.9
+OXCT1,ENSG00000083720,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+OXCT2,ENSG00000198754,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+OXSM,ENSG00000151093,0,,Transport reactions,0.9
+P4HA1,ENSG00000122884,0,,Arginine and proline metabolism,0.9
+P4HA2,ENSG00000072682,0,,Arginine and proline metabolism,0.9
+P4HA3,ENSG00000149380,0,,Arginine and proline metabolism,0.9
+P4HB,ENSG00000185624,0,,Arginine and proline metabolism,0.9
+PADI1,ENSG00000142623,0,,Protein modification,0.9
+PADI2,ENSG00000117115,0,,Protein modification,0.9
+PADI3,ENSG00000142619,0,,Protein modification,0.9
+PADI4,ENSG00000159339,0,,Protein modification,0.9
+PADI6,ENSG00000276747,0,,Protein modification,0.9
+PAFAH1B1,ENSG00000007168,0,1,Glycerophospholipid metabolism,0.9
+PAFAH1B2,ENSG00000168092,0,,Glycerophospholipid metabolism,0.9
+PAFAH1B3,ENSG00000079462,0,,Glycerophospholipid metabolism,0.9
+PAFAH2,ENSG00000158006,0,,Glycerophospholipid metabolism,0.9
+PAH,ENSG00000171759,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+PAICS,ENSG00000128050,0,1,Purine metabolism,0.9
+PAM,ENSG00000145730,0,,Isolated,0.9
+PANK1,ENSG00000152782,0,,Pantothenate and CoA metabolism,0.9
+PANK2,ENSG00000125779,0,,Pantothenate and CoA metabolism,0.9
+PANK3,ENSG00000120137,0,,Pantothenate and CoA metabolism,0.9
+PANK4,ENSG00000157881,0,,Pantothenate and CoA metabolism,0.9
+PAOX,ENSG00000148832,0,,Arginine and proline metabolism,0.9
+PAPOLA,ENSG00000090060,0,,Nucleotide metabolism,0.9
+PAPOLB,ENSG00000218823,0,,Nucleotide metabolism,0.9
+PAPOLG,ENSG00000115421,0,,Nucleotide metabolism,0.9
+PAPSS1,ENSG00000138801,0,,Nucleotide metabolism,0.9
+PAPSS2,ENSG00000198682,0,,Nucleotide metabolism,0.9
+PARP1,ENSG00000143799,0,,Isolated,0.9
+PARP10,ENSG00000178685,0,,Isolated,0.9
+PARP11,ENSG00000111224,0,,Isolated,0.9
+PARP12,ENSG00000059378,0,,Isolated,0.9
+PARP14,ENSG00000173193,0,,Isolated,0.9
+PARP15,ENSG00000173200,0,,Isolated,0.9
+PARP16,ENSG00000138617,0,,Isolated,0.9
+PARP2,ENSG00000129484,0,,Isolated,0.9
+PARP3,ENSG00000041880,0,,Isolated,0.9
+PARP4,ENSG00000102699,0,,Isolated,0.9
+PARP6,ENSG00000137817,0,,Isolated,0.9
+PARP8,ENSG00000151883,0,,Isolated,0.9
+PARP9,ENSG00000138496,0,,Isolated,0.9
+PC,ENSG00000173599,0,,Pyruvate metabolism,0.9
+PCBD1,ENSG00000166228,0,,Biopterin metabolism,0.9
+PCBD2,ENSG00000132570,0,,Biopterin metabolism,0.9
+PCCA,ENSG00000175198,0,,"Valine, leucine, and isoleucine metaboli",0.9
+PCCB,ENSG00000114054,0,,"Valine, leucine, and isoleucine metaboli",0.9
+PCK1,ENSG00000124253,0,,Pyruvate metabolism,0.9
+PCK2,ENSG00000100889,0,,Pyruvate metabolism,0.9
+PCMT1,ENSG00000120265,0,,Isolated,0.9
+PCTP,ENSG00000141179,0,,Transport reactions,0.9
+PCYOX1,ENSG00000116005,0,,Terpenoid backbone biosynthesis,0.9
+PCYT1A,ENSG00000161217,0,,Glycerophospholipid metabolism,0.9
+PCYT1B,ENSG00000102230,0,,Glycerophospholipid metabolism,0.9
+PCYT2,ENSG00000185813,0,,Glycerophospholipid metabolism,0.9
+PDE10A,ENSG00000112541,0,,Purine metabolism,0.9
+PDE11A,ENSG00000128655,0,,Purine metabolism,0.9
+PDE1A,ENSG00000115252,0,,Purine metabolism,0.9
+PDE1B,ENSG00000123360,0,,Purine metabolism,0.9
+PDE1C,ENSG00000154678,0,,Purine metabolism,0.9
+PDE2A,ENSG00000186642,0,,Purine metabolism,0.9
+PDE3A,ENSG00000172572,0,,Purine metabolism,0.9
+PDE3B,ENSG00000152270,0,,Purine metabolism,0.9
+PDE4A,ENSG00000065989,0,,Purine metabolism,0.9
+PDE4B,ENSG00000184588,0,,Purine metabolism,0.9
+PDE4C,ENSG00000105650,0,,Purine metabolism,0.9
+PDE4D,ENSG00000113448,0,,Purine metabolism,0.9
+PDE5A,ENSG00000138735,0,,Purine metabolism,0.9
+PDE6A,ENSG00000132915,0,,Purine metabolism,0.9
+PDE6B,ENSG00000133256,0,,Purine metabolism,0.9
+PDE6C,ENSG00000095464,0,,Purine metabolism,0.9
+PDE6G,ENSG00000185527,0,,Purine metabolism,0.9
+PDE6H,ENSG00000139053,0,0,Purine metabolism,0.9
+PDE7A,ENSG00000205268,0,,Purine metabolism,0.9
+PDE7B,ENSG00000171408,0,,Purine metabolism,0.9
+PDE8A,ENSG00000073417,0,,Purine metabolism,0.9
+PDE8B,ENSG00000113231,0,,Purine metabolism,0.9
+PDE9A,ENSG00000160191,0,,Purine metabolism,0.9
+PDF,ENSG00000258429,0,,Isolated,0.9
+PDHA1,ENSG00000131828,0,,Thiamine metabolism,0.9
+PDHA2,ENSG00000163114,0,,Thiamine metabolism,0.9
+PDHB,ENSG00000168291,0,,Thiamine metabolism,0.9
+PDHX,ENSG00000110435,0,,Glycolysis / Gluconeogenesis,0.9
+PDIA3,ENSG00000167004,0,,Isolated,0.9
+PDIA4,ENSG00000155660,0,,Isolated,0.9
+PDIA5,ENSG00000065485,0,,Isolated,0.9
+PDIA6,ENSG00000143870,0,,Isolated,0.9
+PDK1,ENSG00000152256,0,,Isolated,0.9
+PDK2,ENSG00000005882,0,,Isolated,0.9
+PDK3,ENSG00000067992,0,,Isolated,0.9
+PDK4,ENSG00000004799,0,,Isolated,0.9
+PDP1,ENSG00000164951,0,,Isolated,0.9
+PDP2,ENSG00000172840,0,,Isolated,0.9
+PDPR,ENSG00000090857,0,,"Glycine, serine and threonine metabolism",0.9
+PDSS1,ENSG00000148459,0,,Terpenoid backbone biosynthesis,0.9
+PDSS2,ENSG00000164494,0,,Terpenoid backbone biosynthesis,0.9
+PDXK,ENSG00000160209,0,,Vitamin B6 metabolism,0.9
+PDXP,ENSG00000241360,0,,Vitamin B6 metabolism,0.9
+PDZD4,ENSG00000067840,0,,Bile acid biosynthesis,0.9
+PECR,ENSG00000115425,0,,Fatty acid biosynthesis (even-chain),0.9
+PEMT,ENSG00000133027,0,,Glycerophospholipid metabolism,0.9
+PEPD,ENSG00000124299,0,,Peptide metabolism,0.9
+PFAS,ENSG00000178921,0,,Purine metabolism,0.9
+PFKFB1,ENSG00000158571,0,,Fructose and mannose metabolism,0.9
+PFKFB2,ENSG00000123836,0,,Fructose and mannose metabolism,0.9
+PFKFB3,ENSG00000170525,0,,Fructose and mannose metabolism,0.9
+PFKFB4,ENSG00000114268,0,,Fructose and mannose metabolism,0.9
+PFKL,ENSG00000141959,0,,Glycolysis / Gluconeogenesis,0.9
+PFKM,ENSG00000152556,0,,Glycolysis / Gluconeogenesis,0.9
+PFKP,ENSG00000067057,0,,Glycolysis / Gluconeogenesis,0.9
+PGAM1,ENSG00000171314,0,1,Glycolysis / Gluconeogenesis,0.9
+PGAM2,ENSG00000164708,0,,Glycolysis / Gluconeogenesis,0.9
+PGAM4,ENSG00000226784,0,,Glycolysis / Gluconeogenesis,0.9
+PGAP1,ENSG00000197121,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PGD,ENSG00000142657,0,,Pentose phosphate pathway,0.9
+PGGHG,ENSG00000142102,0,,Starch and sucrose metabolism,0.9
+PGK1,ENSG00000102144,0,1,Glycolysis / Gluconeogenesis,0.9
+PGK2,ENSG00000170950,0,0,Glycolysis / Gluconeogenesis,0.9
+PGLS,ENSG00000130313,0,,Pentose phosphate pathway,0.9
+PGLYRP1,ENSG00000008438,0,,Isolated,0.9
+PGLYRP2,ENSG00000161031,0,0,Isolated,0.9
+PGLYRP3,ENSG00000159527,0,0,Isolated,0.9
+PGLYRP4,ENSG00000163218,0,,Isolated,0.9
+PGM1,ENSG00000079739,0,,Glycolysis / Gluconeogenesis,0.9
+PGM2,ENSG00000169299,0,,Pentose phosphate pathway,0.9
+PGM2L1,ENSG00000165434,0,,Starch and sucrose metabolism,0.9
+PGM3,ENSG00000013375,0,,Amino sugar and nucleotide sugar metabol,0.9
+PGP,ENSG00000184207,0,,Isolated,0.9
+PGS1,ENSG00000087157,0,,Glycerophospholipid metabolism,0.9
+PHGDH,ENSG00000092621,0,,Butanoate metabolism,0.9
+PHKA1,ENSG00000067177,0,,Isolated,0.9
+PHKA2,ENSG00000044446,0,,Isolated,0.9
+PHKB,ENSG00000102893,0,,Isolated,0.9
+PHKG1,ENSG00000164776,0,,Isolated,0.9
+PHKG2,ENSG00000156873,0,,Isolated,0.9
+PHOSPHO1,ENSG00000173868,0,,Glycerophospholipid metabolism,0.9
+PHOSPHO2,ENSG00000144362,0,,Vitamin B6 metabolism,0.9
+PHPT1,ENSG00000054148,0,,Transport reactions,0.9
+PHYH,ENSG00000107537,0,,Fatty acid oxidation,0.9
+PHYKPL,ENSG00000175309,0,,Isolated,0.9
+PI4K2A,ENSG00000155252,0,,Inositol phosphate metabolism,0.9
+PI4K2B,ENSG00000038210,0,,Inositol phosphate metabolism,0.9
+PI4KA,ENSG00000241973,0,,Phosphatidylinositol phosphate metabolis,0.9
+PI4KB,ENSG00000143393,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIGA,ENSG00000165195,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGB,ENSG00000069943,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGC,ENSG00000135845,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGF,ENSG00000151665,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIGG,ENSG00000174227,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIGH,ENSG00000100564,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGK,ENSG00000142892,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIGL,ENSG00000108474,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGM,ENSG00000143315,0,,Sphingolipid metabolism,0.9
+PIGN,ENSG00000197563,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGO,ENSG00000165282,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGP,ENSG00000185808,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGQ,ENSG00000007541,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGS,ENSG00000087111,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIGT,ENSG00000124155,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGU,ENSG00000101464,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIGV,ENSG00000060642,0,,Sphingolipid metabolism,0.9
+PIGW,ENSG00000277161,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGX,ENSG00000163964,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGY,ENSG00000255072,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PIGZ,ENSG00000119227,0,,Sphingolipid metabolism,0.9
+PIK3C2A,ENSG00000011405,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIK3C2B,ENSG00000133056,0,,Inositol phosphate metabolism,0.9
+PIK3C2G,ENSG00000139144,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIK3C3,ENSG00000078142,0,,Inositol phosphate metabolism,0.9
+PIK3CA,ENSG00000121879,0,,Inositol phosphate metabolism,0.9
+PIK3CB,ENSG00000051382,0,,Inositol phosphate metabolism,0.9
+PIK3CD,ENSG00000171608,0,,Inositol phosphate metabolism,0.9
+PIK3CG,ENSG00000105851,0,,Inositol phosphate metabolism,0.9
+PIK3R1,ENSG00000145675,0,,Inositol phosphate metabolism,0.9
+PIK3R2,ENSG00000105647,0,,Inositol phosphate metabolism,0.9
+PIK3R3,ENSG00000117461,0,,Inositol phosphate metabolism,0.9
+PIK3R5,ENSG00000141506,0,,Inositol phosphate metabolism,0.9
+PIKFYVE,ENSG00000115020,0,,Inositol phosphate metabolism,0.9
+PIN1,ENSG00000127445,0,,Isolated,0.9
+PIN4,ENSG00000102309,0,,Isolated,0.9
+PIP4K2A,ENSG00000150867,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIP4K2B,ENSG00000276293,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIP4K2C,ENSG00000166908,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIP4P1,ENSG00000165782,0,,Inositol phosphate metabolism,0.9
+PIP4P2,ENSG00000155099,0,,Inositol phosphate metabolism,0.9
+PIP5K1A,ENSG00000143398,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIP5K1B,ENSG00000107242,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIP5K1C,ENSG00000186111,0,,Phosphatidylinositol phosphate metabolis,0.9
+PIP5KL1,ENSG00000167103,0,,Inositol phosphate metabolism,0.9
+PIPOX,ENSG00000179761,0,,"Glycine, serine and threonine metabolism",0.9
+PISD,ENSG00000241878,0,,Glycerophospholipid metabolism,0.9
+PJA1,ENSG00000181191,0,,Isolated,0.9
+PJA2,ENSG00000198961,0,,Isolated,0.9
+PKLR,ENSG00000143627,0,,Purine metabolism,0.9
+PKM,ENSG00000067225,0,,Purine metabolism,0.9
+PLA2G10,ENSG00000069764,0,,Glycerolipid metabolism,0.9
+PLA2G12A,ENSG00000123739,0,,Glycerolipid metabolism,0.9
+PLA2G15,ENSG00000103066,0,,Glycerophospholipid metabolism,0.9
+PLA2G1B,ENSG00000170890,0,,Glycerolipid metabolism,0.9
+PLA2G2A,ENSG00000188257,0,,Glycerolipid metabolism,0.9
+PLA2G2D,ENSG00000117215,0,,Glycerolipid metabolism,0.9
+PLA2G2E,ENSG00000188784,0,0,Glycerolipid metabolism,0.9
+PLA2G2F,ENSG00000158786,0,0,Glycerolipid metabolism,0.9
+PLA2G3,ENSG00000100078,0,,Glycerolipid metabolism,0.9
+PLA2G4A,ENSG00000116711,0,,Glycerolipid metabolism,0.9
+PLA2G4B,ENSG00000243708,0,,Glycerolipid metabolism,0.9
+PLA2G4C,ENSG00000105499,0,,Glycerolipid metabolism,0.9
+PLA2G4D,ENSG00000159337,0,,Glycerolipid metabolism,0.9
+PLA2G4E,ENSG00000188089,0,0,Glycerolipid metabolism,0.9
+PLA2G4F,ENSG00000168907,0,,Glycerolipid metabolism,0.9
+PLA2G5,ENSG00000127472,0,,Glycerolipid metabolism,0.9
+PLA2G6,ENSG00000184381,0,,Glycerolipid metabolism,0.9
+PLA2G7,ENSG00000146070,0,,Glycerophospholipid metabolism,0.9
+PLAAT2,ENSG00000133328,0,,Leukotriene metabolism,0.9
+PLAAT3,ENSG00000176485,0,,Glycerolipid metabolism,0.9
+PLB1,ENSG00000163803,0,,Glycerolipid metabolism,0.9
+PLCB1,ENSG00000182621,0,,Inositol phosphate metabolism,0.9
+PLCB2,ENSG00000137841,0,,Inositol phosphate metabolism,0.9
+PLCB3,ENSG00000149782,0,,Inositol phosphate metabolism,0.9
+PLCB4,ENSG00000101333,0,,Inositol phosphate metabolism,0.9
+PLCD1,ENSG00000187091,0,,Inositol phosphate metabolism,0.9
+PLCD3,ENSG00000161714,0,,Inositol phosphate metabolism,0.9
+PLCD4,ENSG00000115556,0,,Inositol phosphate metabolism,0.9
+PLCE1,ENSG00000138193,0,,Inositol phosphate metabolism,0.9
+PLCG1,ENSG00000124181,0,,Inositol phosphate metabolism,0.9
+PLCG2,ENSG00000197943,0,,Inositol phosphate metabolism,0.9
+PLCH1,ENSG00000114805,0,,Inositol phosphate metabolism,0.9
+PLCH2,ENSG00000149527,0,,Inositol phosphate metabolism,0.9
+PLCXD2,ENSG00000240891,0,,Inositol phosphate metabolism,0.9
+PLCZ1,ENSG00000139151,0,,Inositol phosphate metabolism,0.9
+PLD1,ENSG00000075651,0,,Glycerophospholipid metabolism,0.9
+PLD2,ENSG00000129219,0,,Glycerophospholipid metabolism,0.9
+PLD6,ENSG00000179598,0,,Glycerophospholipid metabolism,0.9
+PLG,ENSG00000122194,0,,Protein assembly,0.9
+PLIN1,ENSG00000166819,0,,Pool reactions,0.9
+PLIN2,ENSG00000147872,0,,Pool reactions,0.9
+PLIN3,ENSG00000105355,0,,Pool reactions,0.9
+PLIN4,ENSG00000167676,0,,Pool reactions,0.9
+PLOD1,ENSG00000083444,0,,Lysine metabolism,0.9
+PLOD2,ENSG00000152952,0,,Lysine metabolism,0.9
+PLOD3,ENSG00000106397,0,,Lysine metabolism,0.9
+PLPP1,ENSG00000067113,0,,Glycerolipid metabolism,0.9
+PLPP2,ENSG00000141934,0,,Glycerolipid metabolism,0.9
+PLPP3,ENSG00000162407,0,,Glycerolipid metabolism,0.9
+PLPP4,ENSG00000203805,0,,Glycerolipid metabolism,0.9
+PLPP5,ENSG00000147535,0,,Glycerolipid metabolism,0.9
+PLPP6,ENSG00000205808,0,,Inositol phosphate metabolism,0.9
+PLPPR2,ENSG00000105520,0,,Glycerolipid metabolism,0.9
+PLPPR3,ENSG00000129951,0,,Glycerolipid metabolism,0.9
+PLPPR4,ENSG00000117600,0,,Glycerolipid metabolism,0.9
+PMM1,ENSG00000100417,0,,Fructose and mannose metabolism,0.9
+PMM2,ENSG00000140650,0,,Fructose and mannose metabolism,0.9
+PMPCA,ENSG00000165688,0,1,Inositol phosphate metabolism,0.9
+PMVK,ENSG00000163344,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+PNCK,ENSG00000130822,0,,Transport reactions,0.9
+PNKP,ENSG00000039650,0,1,Isolated,0.9
+PNLIP,ENSG00000175535,0,0,Acylglycerides metabolism,0.9
+PNLIPRP1,ENSG00000187021,0,0,Acylglycerides metabolism,0.9
+PNLIPRP2,ENSG00000266200,0,0,Acylglycerides metabolism,0.9
+PNLIPRP3,ENSG00000203837,0,,Acylglycerides metabolism,0.9
+PNMT,ENSG00000141744,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+PNP,ENSG00000198805,0,,Purine metabolism,0.9
+PNPLA2,ENSG00000177666,0,,Acylglycerides metabolism,0.9
+PNPLA3,ENSG00000100344,0,,Acylglycerides metabolism,0.9
+PNPLA4,ENSG00000006757,0,,Acylglycerides metabolism,0.9
+PNPLA6,ENSG00000032444,0,,Glycerophospholipid metabolism,0.9
+PNPLA7,ENSG00000130653,0,,Glycerophospholipid metabolism,0.9
+PNPLA8,ENSG00000135241,0,,Glycerophospholipid metabolism,0.9
+PNPO,ENSG00000108439,0,,Vitamin B6 metabolism,0.9
+POLA1,ENSG00000101868,0,,Nucleotide metabolism,0.9
+POLA2,ENSG00000014138,0,1,Nucleotide metabolism,0.9
+POLB,ENSG00000070501,0,,Nucleotide metabolism,0.9
+POLD1,ENSG00000062822,0,,Nucleotide metabolism,0.9
+POLD2,ENSG00000106628,0,,Nucleotide metabolism,0.9
+POLD3,ENSG00000077514,0,,Nucleotide metabolism,0.9
+POLD4,ENSG00000175482,0,,Nucleotide metabolism,0.9
+POLE,ENSG00000177084,0,,Nucleotide metabolism,0.9
+POLE2,ENSG00000100479,0,,Nucleotide metabolism,0.9
+POLE3,ENSG00000148229,0,,Nucleotide metabolism,0.9
+POLE4,ENSG00000115350,0,,Nucleotide metabolism,0.9
+POLG,ENSG00000140521,0,,Nucleotide metabolism,0.9
+POLG2,ENSG00000256525,0,,Nucleotide metabolism,0.9
+POLH,ENSG00000170734,0,,Nucleotide metabolism,0.9
+POLI,ENSG00000101751,0,,Nucleotide metabolism,0.9
+POLK,ENSG00000122008,0,,Nucleotide metabolism,0.9
+POLL,ENSG00000166169,0,,Nucleotide metabolism,0.9
+POLM,ENSG00000122678,0,,Nucleotide metabolism,0.9
+POLN,ENSG00000130997,0,,Nucleotide metabolism,0.9
+POLQ,ENSG00000051341,0,,Nucleotide metabolism,0.9
+POLR3G,ENSG00000113356,0,,Nucleotide metabolism,0.9
+POLR3GL,ENSG00000121851,0,,Nucleotide metabolism,0.9
+POMGNT1,ENSG00000085998,0,,Glycosphingolipid metabolism,0.9
+POMT1,ENSG00000130714,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+POMT2,ENSG00000009830,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+PON1,ENSG00000005421,0,,Cysteine and methionine metabolism,0.9
+PON2,ENSG00000105854,0,,Cysteine and methionine metabolism,0.9
+PON3,ENSG00000105852,0,,Cysteine and methionine metabolism,0.9
+POR,ENSG00000127948,0,,Isolated,0.9
+PORCN,ENSG00000102312,0,,Leukotriene metabolism,0.9
+PPA1,ENSG00000180817,0,1,Oxidative phosphorylation,0.9
+PPA2,ENSG00000138777,0,,Oxidative phosphorylation,0.9
+PPAT,ENSG00000128059,0,1,Purine metabolism,0.9
+PPCDC,ENSG00000138621,0,,Pantothenate and CoA metabolism,0.9
+PPCS,ENSG00000127125,0,,Pantothenate and CoA metabolism,0.9
+PPIA,ENSG00000196262,0,,Isolated,0.9
+PPIAL4A,ENSG00000263353,0,,Isolated,0.9
+PPIAL4C,ENSG00000263464,0,,Isolated,0.9
+PPIAL4E,ENSG00000271567,0,,Isolated,0.9
+PPIAL4G,ENSG00000236334,0,,Isolated,0.9
+PPIB,ENSG00000166794,0,,Isolated,0.9
+PPIC,ENSG00000168938,0,,Isolated,0.9
+PPID,ENSG00000171497,0,,Isolated,0.9
+PPIE,ENSG00000084072,0,,Isolated,0.9
+PPIF,ENSG00000108179,0,,Isolated,0.9
+PPIG,ENSG00000138398,0,,Isolated,0.9
+PPIH,ENSG00000171960,0,,Isolated,0.9
+PPIL1,ENSG00000137168,0,,Isolated,0.9
+PPIL2,ENSG00000100023,0,1,Isolated,0.9
+PPIL3,ENSG00000240344,0,,Isolated,0.9
+PPIL4,ENSG00000131013,0,,Isolated,0.9
+PPIP5K1,ENSG00000168781,0,,Inositol phosphate metabolism,0.9
+PPIP5K2,ENSG00000145725,0,,Inositol phosphate metabolism,0.9
+PPM1L,ENSG00000163590,0,,Transport reactions,0.9
+PPOX,ENSG00000143224,0,,Porphyrin metabolism,0.9
+PPP1R3B,ENSG00000173281,0,,Starch and sucrose metabolism,0.9
+PPP1R3C,ENSG00000119938,0,,Starch and sucrose metabolism,0.9
+PPT1,ENSG00000131238,0,,Fatty acid biosynthesis,0.9
+PPT2,ENSG00000221988,0,,Fatty acid biosynthesis,0.9
+PPWD1,ENSG00000113593,0,1,Isolated,0.9
+PRDX1,ENSG00000117450,0,,Glutathione metabolism,0.9
+PRDX2,ENSG00000167815,0,,Glutathione metabolism,0.9
+PRDX3,ENSG00000165672,0,,Glutathione metabolism,0.9
+PRDX5,ENSG00000126432,0,,Glutathione metabolism,0.9
+PRDX6,ENSG00000117592,0,,Arachidonic acid metabolism,0.9
+PREP,ENSG00000085377,0,,Isolated,0.9
+PRKD1,ENSG00000184304,0,,Transport reactions,0.9
+PRKN,ENSG00000185345,0,,Isolated,0.9
+PRODH,ENSG00000100033,0,,Oxidative phosphorylation,0.9
+PRODH2,ENSG00000250799,0,,Oxidative phosphorylation,0.9
+PRPS1,ENSG00000147224,0,,Pentose phosphate pathway,0.9
+PRPS1L1,ENSG00000229937,0,,Pentose phosphate pathway,0.9
+PRPS2,ENSG00000101911,0,,Pentose phosphate pathway,0.9
+PRUNE1,ENSG00000143363,0,,Oxidative phosphorylation,0.9
+PSAP,ENSG00000197746,0,,Sphingolipid metabolism,0.9
+PSAT1,ENSG00000135069,0,,"Glycine, serine and threonine metabolism",0.9
+PSPH,ENSG00000146733,0,,"Glycine, serine and threonine metabolism",0.9
+PTDSS1,ENSG00000156471,0,,Glycerophospholipid metabolism,0.9
+PTDSS2,ENSG00000174915,0,,Glycerophospholipid metabolism,0.9
+PTEN,ENSG00000171862,0,,Inositol phosphate metabolism,0.9
+PTGDS,ENSG00000107317,0,,Prostaglandin biosynthesis,0.9
+PTGES,ENSG00000148344,0,,Arachidonic acid metabolism,0.9
+PTGES2,ENSG00000148334,0,,Prostaglandin biosynthesis,0.9
+PTGES3,ENSG00000110958,0,,Prostaglandin biosynthesis,0.9
+PTGIS,ENSG00000124212,0,,Prostaglandin biosynthesis,0.9
+PTGR1,ENSG00000106853,0,,Arachidonic acid metabolism,0.9
+PTGS1,ENSG00000095303,0,,Arachidonic acid metabolism,0.9
+PTGS2,ENSG00000073756,0,,Arachidonic acid metabolism,0.9
+PTPMT1,ENSG00000110536,0,,Glycerophospholipid metabolism,0.9
+PTPRQ,ENSG00000139304,0,,Inositol phosphate metabolism,0.9
+PTRH1,ENSG00000187024,0,,Isolated,0.9
+PTRH2,ENSG00000141378,0,,Isolated,0.9
+PTS,ENSG00000150787,0,,Biopterin metabolism,0.9
+PUS1,ENSG00000177192,0,,Isolated,0.9
+PXDN,ENSG00000130508,0,,Miscellaneous,0.9
+PXYLP1,ENSG00000155893,0,,Nicotinate and nicotinamide metabolism,0.9
+PYCR1,ENSG00000183010,0,,Arginine and proline metabolism,0.9
+PYCR2,ENSG00000143811,0,,Arginine and proline metabolism,0.9
+PYCR3,ENSG00000104524,0,,Arginine and proline metabolism,0.9
+PYGB,ENSG00000100994,0,,Starch and sucrose metabolism,0.9
+PYGL,ENSG00000100504,0,,Starch and sucrose metabolism,0.9
+PYGM,ENSG00000068976,0,,Starch and sucrose metabolism,0.9
+PYURF,ENSG00000145337,0,,Glycosylphosphatidylinositol (GPI)-ancho,0.9
+QDPR,ENSG00000151552,0,,Folate metabolism,0.9
+QPCT,ENSG00000115828,0,,Isolated,0.9
+QPRT,ENSG00000103485,0,,Nicotinate and nicotinamide metabolism,0.9
+QTRT1,ENSG00000213339,0,,Isolated,0.9
+QTRT2,ENSG00000151576,0,,Isolated,0.9
+RAD1,ENSG00000113456,0,,Nucleotide metabolism,0.9
+RAD18,ENSG00000070950,0,,Isolated,0.9
+RAD9A,ENSG00000172613,0,,Nucleotide metabolism,0.9
+RAG1,ENSG00000166349,0,,Isolated,0.9
+RALBP1,ENSG00000017797,0,,Transport reactions,0.9
+RBAK,ENSG00000146587,0,,Purine metabolism,0.9
+RBBP6,ENSG00000122257,0,1,Isolated,0.9
+RBKS,ENSG00000171174,0,,Pentose phosphate pathway,0.9
+RBP1,ENSG00000114115,0,,Transport reactions,0.9
+RBP2,ENSG00000114113,0,,Transport reactions,0.9
+RBP3,ENSG00000265203,0,0,Retinol metabolism,0.9
+RBP4,ENSG00000138207,0,,Transport reactions,0.9
+RCHY1,ENSG00000163743,0,,Isolated,0.9
+RDH10,ENSG00000121039,0,,Bile acid biosynthesis,0.9
+RDH11,ENSG00000072042,0,,Vitamin A metabolism,0.9
+RDH12,ENSG00000139988,0,,Leukotriene metabolism,0.9
+RDH13,ENSG00000160439,0,,Vitamin A metabolism,0.9
+RDH14,ENSG00000240857,0,,Leukotriene metabolism,0.9
+RDH16,ENSG00000139547,0,,Retinol metabolism,0.9
+RDH5,ENSG00000135437,0,,Retinol metabolism,0.9
+RDH8,ENSG00000080511,0,0,Vitamin A metabolism,0.9
+RENBP,ENSG00000102032,0,,Amino sugar and nucleotide sugar metabol,0.9
+REV3L,ENSG00000009413,0,,Nucleotide metabolism,0.9
+RFC5,ENSG00000111445,0,1,Nucleotide metabolism,0.9
+RFK,ENSG00000135002,0,1,Riboflavin metabolism,0.9
+RFWD3,ENSG00000168411,0,,Isolated,0.9
+RGN,ENSG00000130988,0,,Ascorbate and aldarate metabolism,0.9
+RHAG,ENSG00000112077,0,,Transport reactions,0.9
+RHBG,ENSG00000132677,0,,Transport reactions,0.9
+RHCG,ENSG00000140519,0,,Transport reactions,0.9
+RING1,ENSG00000204227,0,,Isolated,0.9
+RLBP1,ENSG00000140522,0,,Retinol metabolism,0.9
+RNF103,ENSG00000239305,0,,Isolated,0.9
+RNF115,ENSG00000265491,0,,Isolated,0.9
+RNF123,ENSG00000164068,0,,Isolated,0.9
+RNF125,ENSG00000101695,0,,Isolated,0.9
+RNF126,ENSG00000070423,0,,Isolated,0.9
+RNF128,ENSG00000133135,0,,Isolated,0.9
+RNF13,ENSG00000082996,0,,Isolated,0.9
+RNF130,ENSG00000113269,0,,Isolated,0.9
+RNF133,ENSG00000188050,0,,Isolated,0.9
+RNF138,ENSG00000134758,0,,Isolated,0.9
+RNF139,ENSG00000170881,0,,Isolated,0.9
+RNF14,ENSG00000013561,0,,Isolated,0.9
+RNF144A,ENSG00000151692,0,,Isolated,0.9
+RNF144B,ENSG00000137393,0,,Isolated,0.9
+RNF146,ENSG00000118518,0,,Isolated,0.9
+RNF149,ENSG00000163162,0,,Isolated,0.9
+RNF152,ENSG00000176641,0,,Isolated,0.9
+RNF167,ENSG00000108523,0,,Isolated,0.9
+RNF180,ENSG00000164197,0,,Isolated,0.9
+RNF182,ENSG00000180537,0,,Isolated,0.9
+RNF185,ENSG00000138942,0,,Isolated,0.9
+RNF187,ENSG00000168159,0,,Isolated,0.9
+RNF19A,ENSG00000034677,0,,Isolated,0.9
+RNF19B,ENSG00000116514,0,,Isolated,0.9
+RNF2,ENSG00000121481,0,,Isolated,0.9
+RNF20,ENSG00000155827,0,1,Isolated,0.9
+RNF216,ENSG00000011275,0,,Isolated,0.9
+RNF217,ENSG00000146373,0,,Isolated,0.9
+RNF25,ENSG00000163481,0,,Isolated,0.9
+RNF31,ENSG00000092098,0,,Isolated,0.9
+RNF40,ENSG00000103549,0,,Isolated,0.9
+RNF41,ENSG00000181852,0,,Isolated,0.9
+RNF5,ENSG00000204308,0,,Isolated,0.9
+RNF8,ENSG00000112130,0,,Isolated,0.9
+RNGTT,ENSG00000111880,0,1,Isolated,0.9
+RNMT,ENSG00000101654,0,,Isolated,0.9
+RNPEP,ENSG00000176393,0,,Leukotriene metabolism,0.9
+RPE,ENSG00000197713,0,,Pentose phosphate pathway,0.9
+RPE65,ENSG00000116745,0,0,Retinol metabolism,0.9
+RPEL1,ENSG00000235376,0,,Pentose phosphate pathway,0.9
+RPIA,ENSG00000153574,0,,Pentose phosphate pathway,0.9
+RPN1,ENSG00000163902,0,,N-glycan metabolism,0.9
+RPN2,ENSG00000118705,0,,N-glycan metabolism,0.9
+RPUSD4,ENSG00000165526,0,,Pyrimidine metabolism,0.9
+RRM1,ENSG00000167325,0,1,Miscellaneous,0.9
+RRM2,ENSG00000171848,0,,Miscellaneous,0.9
+RRM2B,ENSG00000048392,0,,Miscellaneous,0.9
+RTCA,ENSG00000137996,0,,Isolated,0.9
+RWDD2A,ENSG00000013392,0,,Pyruvate metabolism,0.9
+SACM1L,ENSG00000211456,0,1,Inositol phosphate metabolism,0.9
+SAE1,ENSG00000142230,0,1,Isolated,0.9
+SAPCD1,ENSG00000228727,0,,Glycosphingolipid metabolism,0.9
+SARDH,ENSG00000123453,0,,"Glycine, serine and threonine metabolism",0.9
+SAT1,ENSG00000130066,0,,Arginine and proline metabolism,0.9
+SAT2,ENSG00000141504,0,,Arginine and proline metabolism,0.9
+SATL1,ENSG00000184788,0,,Leukotriene metabolism,0.9
+SC5D,ENSG00000109929,0,,Cholesterol metabolism,0.9
+SCARB1,ENSG00000073060,0,,Transport reactions,0.9
+SCARF2,ENSG00000244486,0,,Prostaglandin biosynthesis,0.9
+SCCPDH,ENSG00000143653,0,,Lysine metabolism,0.9
+SCD,ENSG00000099194,0,,Fatty acid biosynthesis,0.9
+SCD5,ENSG00000145284,0,,Miscellaneous,0.9
+SCLY,ENSG00000132330,0,,Metabolism of other amino acids,0.9
+SCN10A,ENSG00000185313,0,0,Transport reactions,0.9
+SCN11A,ENSG00000168356,0,,Transport reactions,0.9
+SCN1A,ENSG00000144285,0,,Transport reactions,0.9
+SCN2A,ENSG00000136531,0,,Transport reactions,0.9
+SCN3A,ENSG00000153253,0,,Transport reactions,0.9
+SCN4A,ENSG00000007314,0,,Transport reactions,0.9
+SCN5A,ENSG00000183873,0,,Transport reactions,0.9
+SCN7A,ENSG00000136546,0,,Transport reactions,0.9
+SCN8A,ENSG00000196876,0,,Transport reactions,0.9
+SCN9A,ENSG00000169432,0,,Transport reactions,0.9
+SCNN1A,ENSG00000111319,0,,Transport reactions,0.9
+SCNN1B,ENSG00000168447,0,,Transport reactions,0.9
+SCNN1D,ENSG00000162572,0,,Transport reactions,0.9
+SCNN1G,ENSG00000166828,0,,Transport reactions,0.9
+SCP2,ENSG00000116171,0,,Bile acid biosynthesis,0.9
+SDC1,ENSG00000115884,0,,Acylglycerides metabolism,0.9
+SDHA,ENSG00000073578,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+SDHB,ENSG00000117118,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+SDHC,ENSG00000143252,0,1,Tricarboxylic acid cycle and glyoxylate/,0.9
+SDHD,ENSG00000204370,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+SDR16C5,ENSG00000170786,0,,Leukotriene metabolism,0.9
+SDR42E1,ENSG00000184860,0,,Leukotriene metabolism,0.9
+SDR42E2,ENSG00000183921,0,,Leukotriene metabolism,0.9
+SDR9C7,ENSG00000170426,0,0,Leukotriene metabolism,0.9
+SDS,ENSG00000135094,0,,"Glycine, serine and threonine metabolism",0.9
+SDSL,ENSG00000139410,0,,"Glycine, serine and threonine metabolism",0.9
+SEC11A,ENSG00000140612,0,,Lysine metabolism,0.9
+SEC11C,ENSG00000166562,0,,Lysine metabolism,0.9
+SELENOI,ENSG00000138018,0,,Glycerophospholipid metabolism,0.9
+SEPHS1,ENSG00000086475,0,,Metabolism of other amino acids,0.9
+SEPHS2,ENSG00000179918,0,,Metabolism of other amino acids,0.9
+SERPINA1,ENSG00000197249,0,,Protein assembly,0.9
+SERPINA3,ENSG00000196136,0,,Protein assembly,0.9
+SETD1A,ENSG00000099381,0,,Lysine metabolism,0.9
+SETD1B,ENSG00000139718,0,,Lysine metabolism,0.9
+SETD2,ENSG00000181555,0,,Lysine metabolism,0.9
+SETD7,ENSG00000145391,0,,Lysine metabolism,0.9
+SETDB1,ENSG00000143379,0,,Lysine metabolism,0.9
+SETDB2,ENSG00000136169,0,,Lysine metabolism,0.9
+SETMAR,ENSG00000170364,0,,Lysine metabolism,0.9
+SFXN1,ENSG00000164466,0,,Transport reactions,0.9
+SFXN3,ENSG00000107819,0,,Transport reactions,0.9
+SGMS1,ENSG00000198964,0,,Sphingolipid metabolism,0.9
+SGMS2,ENSG00000164023,0,,Sphingolipid metabolism,0.9
+SGPL1,ENSG00000166224,0,,Sphingolipid metabolism,0.9
+SGPP1,ENSG00000126821,0,,Inositol phosphate metabolism,0.9
+SGPP2,ENSG00000163082,0,,Sphingolipid metabolism,0.9
+SGSH,ENSG00000181523,0,,Heparan sulfate degradation,0.9
+SH3BP1,ENSG00000100092,0,,Vitamin B6 metabolism,0.9
+SH3GLB1,ENSG00000097033,0,,Leukotriene metabolism,0.9
+SH3RF1,ENSG00000154447,0,,Isolated,0.9
+SH3RF2,ENSG00000156463,0,,Isolated,0.9
+SH3RF3,ENSG00000172985,0,,Isolated,0.9
+SHMT1,ENSG00000176974,0,,"Glycine, serine and threonine metabolism",0.9
+SHMT2,ENSG00000182199,0,,Lysine metabolism,0.9
+SHPK,ENSG00000197417,0,,Pentose phosphate pathway,0.9
+SHPRH,ENSG00000146414,0,,Isolated,0.9
+SI,ENSG00000090402,0,0,Starch and sucrose metabolism,0.9
+SIAE,ENSG00000110013,0,,Isolated,0.9
+SIAH1,ENSG00000196470,0,,Isolated,0.9
+SIAH2,ENSG00000181788,0,,Isolated,0.9
+SIRT1,ENSG00000096717,0,,Histidine metabolism,0.9
+SIRT2,ENSG00000068903,0,,Histidine metabolism,0.9
+SIRT3,ENSG00000142082,0,,Histidine metabolism,0.9
+SIRT5,ENSG00000124523,0,,Histidine metabolism,0.9
+SIRT6,ENSG00000077463,0,,Histidine metabolism,0.9
+SIRT7,ENSG00000187531,0,,Histidine metabolism,0.9
+SLC10A1,ENSG00000100652,0,,Transport reactions,0.9
+SLC10A2,ENSG00000125255,0,0,Bile acid recycling,0.9
+SLC10A6,ENSG00000145283,0,,Transport reactions,0.9
+SLC11A1,ENSG00000018280,0,,Transport reactions,0.9
+SLC11A2,ENSG00000110911,0,,Transport reactions,0.9
+SLC12A1,ENSG00000074803,0,,Transport reactions,0.9
+SLC12A2,ENSG00000064651,0,,Transport reactions,0.9
+SLC12A3,ENSG00000070915,0,,Transport reactions,0.9
+SLC12A4,ENSG00000124067,0,,Transport reactions,0.9
+SLC12A5,ENSG00000124140,0,,Transport reactions,0.9
+SLC12A6,ENSG00000140199,0,,Transport reactions,0.9
+SLC12A7,ENSG00000113504,0,,Transport reactions,0.9
+SLC13A1,ENSG00000081800,0,0,Transport reactions,0.9
+SLC13A2,ENSG00000007216,0,,Transport reactions,0.9
+SLC13A3,ENSG00000158296,0,,Transport reactions,0.9
+SLC13A4,ENSG00000164707,0,,Transport reactions,0.9
+SLC13A5,ENSG00000141485,0,,Transport reactions,0.9
+SLC14A1,ENSG00000141469,0,,Transport reactions,0.9
+SLC14A2,ENSG00000132874,0,,Transport reactions,0.9
+SLC15A1,ENSG00000088386,0,,Transport reactions,0.9
+SLC15A2,ENSG00000163406,0,,Transport reactions,0.9
+SLC15A3,ENSG00000110446,0,,Transport reactions,0.9
+SLC15A4,ENSG00000139370,0,,Transport reactions,0.9
+SLC16A1,ENSG00000155380,0,,Transport reactions,0.9
+SLC16A10,ENSG00000112394,0,,Transport reactions,0.9
+SLC16A12,ENSG00000152779,0,,Transport reactions,0.9
+SLC16A13,ENSG00000174327,0,,Transport reactions,0.9
+SLC16A2,ENSG00000147100,0,,Transport reactions,0.9
+SLC16A3,ENSG00000141526,0,,Transport reactions,0.9
+SLC16A4,ENSG00000168679,0,,Transport reactions,0.9
+SLC16A5,ENSG00000170190,0,,Transport reactions,0.9
+SLC16A6,ENSG00000108932,0,,Transport reactions,0.9
+SLC16A7,ENSG00000118596,0,,Transport reactions,0.9
+SLC16A8,ENSG00000100156,0,,Transport reactions,0.9
+SLC16A9,ENSG00000165449,0,,Transport reactions,0.9
+SLC17A1,ENSG00000124568,0,,Transport reactions,0.9
+SLC17A2,ENSG00000112337,0,,Transport reactions,0.9
+SLC17A3,ENSG00000124564,0,,Transport reactions,0.9
+SLC17A4,ENSG00000146039,0,,Transport reactions,0.9
+SLC17A5,ENSG00000119899,0,,Transport reactions,0.9
+SLC17A6,ENSG00000091664,0,0,Transport reactions,0.9
+SLC17A7,ENSG00000104888,0,,Transport reactions,0.9
+SLC17A8,ENSG00000179520,0,,Transport reactions,0.9
+SLC18A1,ENSG00000036565,0,,Transport reactions,0.9
+SLC18A2,ENSG00000165646,0,,Transport reactions,0.9
+SLC18A3,ENSG00000187714,0,0,Transport reactions,0.9
+SLC19A1,ENSG00000173638,0,,Transport reactions,0.9
+SLC19A2,ENSG00000117479,0,,Transport reactions,0.9
+SLC19A3,ENSG00000135917,0,,Transport reactions,0.9
+SLC1A1,ENSG00000106688,0,,Transport reactions,0.9
+SLC1A2,ENSG00000110436,0,,Transport reactions,0.9
+SLC1A3,ENSG00000079215,0,,Transport reactions,0.9
+SLC1A4,ENSG00000115902,0,,Transport reactions,0.9
+SLC1A5,ENSG00000105281,0,,Transport reactions,0.9
+SLC1A6,ENSG00000105143,0,,Transport reactions,0.9
+SLC1A7,ENSG00000162383,0,,Transport reactions,0.9
+SLC20A1,ENSG00000144136,0,,Transport reactions,0.9
+SLC20A2,ENSG00000168575,0,,Transport reactions,0.9
+SLC22A1,ENSG00000175003,0,,Carnitine shuttle (mitochondrial),0.9
+SLC22A10,ENSG00000184999,0,,Transport reactions,0.9
+SLC22A11,ENSG00000168065,0,,Transport reactions,0.9
+SLC22A12,ENSG00000197891,0,0,Transport reactions,0.9
+SLC22A13,ENSG00000172940,0,0,Transport reactions,0.9
+SLC22A15,ENSG00000163393,0,,Transport reactions,0.9
+SLC22A16,ENSG00000004809,0,,Transport reactions,0.9
+SLC22A18,ENSG00000110628,0,,Transport reactions,0.9
+SLC22A2,ENSG00000112499,0,,Transport reactions,0.9
+SLC22A3,ENSG00000146477,0,,Transport reactions,0.9
+SLC22A4,ENSG00000197208,0,,Transport reactions,0.9
+SLC22A5,ENSG00000197375,0,,Transport reactions,0.9
+SLC22A6,ENSG00000197901,0,0,Transport reactions,0.9
+SLC22A7,ENSG00000137204,0,,Transport reactions,0.9
+SLC22A8,ENSG00000149452,0,0,Transport reactions,0.9
+SLC22A9,ENSG00000149742,0,0,Carnitine shuttle (mitochondrial),0.9
+SLC23A1,ENSG00000170482,0,,Transport reactions,0.9
+SLC23A2,ENSG00000089057,0,,Transport reactions,0.9
+SLC24A1,ENSG00000074621,0,,Transport reactions,0.9
+SLC24A2,ENSG00000155886,0,,Transport reactions,0.9
+SLC24A3,ENSG00000185052,0,,Transport reactions,0.9
+SLC24A4,ENSG00000140090,0,,Transport reactions,0.9
+SLC24A5,ENSG00000188467,0,,Transport reactions,0.9
+SLC25A1,ENSG00000100075,0,,Transport reactions,0.9
+SLC25A10,ENSG00000183048,0,,Transport reactions,0.9
+SLC25A11,ENSG00000108528,0,,Transport reactions,0.9
+SLC25A12,ENSG00000115840,0,,Transport reactions,0.9
+SLC25A13,ENSG00000004864,0,,Transport reactions,0.9
+SLC25A14,ENSG00000102078,0,,Transport reactions,0.9
+SLC25A15,ENSG00000102743,0,,Transport reactions,0.9
+SLC25A16,ENSG00000122912,0,,Transport reactions,0.9
+SLC25A17,ENSG00000100372,0,,Transport reactions,0.9
+SLC25A18,ENSG00000182902,0,,Transport reactions,0.9
+SLC25A19,ENSG00000125454,0,,Transport reactions,0.9
+SLC25A2,ENSG00000120329,0,0,Transport reactions,0.9
+SLC25A20,ENSG00000178537,0,,Transport reactions,0.9
+SLC25A21,ENSG00000183032,0,,Transport reactions,0.9
+SLC25A22,ENSG00000177542,0,,Transport reactions,0.9
+SLC25A26,ENSG00000144741,0,,Transport reactions,0.9
+SLC25A27,ENSG00000153291,0,,Transport reactions,0.9
+SLC25A28,ENSG00000155287,0,,Transport reactions,0.9
+SLC25A3,ENSG00000075415,0,,Transport reactions,0.9
+SLC25A32,ENSG00000164933,0,,Transport reactions,0.9
+SLC25A33,ENSG00000171612,0,,Transport reactions,0.9
+SLC25A36,ENSG00000114120,0,,Transport reactions,0.9
+SLC25A37,ENSG00000147454,0,,Transport reactions,0.9
+SLC25A38,ENSG00000144659,0,,Transport reactions,0.9
+SLC25A39,ENSG00000013306,0,,Transport reactions,0.9
+SLC25A4,ENSG00000151729,0,,Transport reactions,0.9
+SLC25A40,ENSG00000075303,0,,Transport reactions,0.9
+SLC25A42,ENSG00000181035,0,,Transport reactions,0.9
+SLC25A5,ENSG00000005022,0,,Transport reactions,0.9
+SLC25A6,ENSG00000169100,0,,Transport reactions,0.9
+SLC26A1,ENSG00000145217,0,,Transport reactions,0.9
+SLC26A11,ENSG00000181045,0,,Transport reactions,0.9
+SLC26A2,ENSG00000155850,0,,Transport reactions,0.9
+SLC26A3,ENSG00000091138,0,,Transport reactions,0.9
+SLC26A4,ENSG00000091137,0,,Transport reactions,0.9
+SLC26A6,ENSG00000225697,0,,Transport reactions,0.9
+SLC26A7,ENSG00000147606,0,,Transport reactions,0.9
+SLC26A8,ENSG00000112053,0,,Transport reactions,0.9
+SLC26A9,ENSG00000174502,0,,Transport reactions,0.9
+SLC27A1,ENSG00000130304,0,,Transport reactions,0.9
+SLC27A2,ENSG00000140284,0,,Fatty acid activation (cytosolic),0.9
+SLC27A3,ENSG00000143554,0,,Transport reactions,0.9
+SLC27A4,ENSG00000167114,0,,Transport reactions,0.9
+SLC27A5,ENSG00000083807,0,,Transport reactions,0.9
+SLC27A6,ENSG00000113396,0,,Transport reactions,0.9
+SLC28A1,ENSG00000156222,0,,Transport reactions,0.9
+SLC28A2,ENSG00000137860,0,,Transport reactions,0.9
+SLC28A3,ENSG00000197506,0,,Transport reactions,0.9
+SLC29A1,ENSG00000112759,0,,Transport reactions,0.9
+SLC29A2,ENSG00000174669,0,,Transport reactions,0.9
+SLC29A3,ENSG00000198246,0,,Transport reactions,0.9
+SLC29A4,ENSG00000164638,0,,Transport reactions,0.9
+SLC2A1,ENSG00000117394,0,,Transport reactions,0.9
+SLC2A10,ENSG00000197496,0,,Transport reactions,0.9
+SLC2A11,ENSG00000133460,0,,Transport reactions,0.9
+SLC2A12,ENSG00000146411,0,,Transport reactions,0.9
+SLC2A13,ENSG00000151229,0,,Transport reactions,0.9
+SLC2A14,ENSG00000173262,0,,Transport reactions,0.9
+SLC2A2,ENSG00000163581,0,0,Transport reactions,0.9
+SLC2A3,ENSG00000059804,0,,Transport reactions,0.9
+SLC2A4,ENSG00000181856,0,,Transport reactions,0.9
+SLC2A5,ENSG00000142583,0,,Transport reactions,0.9
+SLC2A6,ENSG00000160326,0,,Transport reactions,0.9
+SLC2A7,ENSG00000197241,0,0,Transport reactions,0.9
+SLC2A8,ENSG00000136856,0,,Transport reactions,0.9
+SLC2A9,ENSG00000109667,0,,Transport reactions,0.9
+SLC30A1,ENSG00000170385,0,,Transport reactions,0.9
+SLC30A6,ENSG00000152683,0,,Transport reactions,0.9
+SLC30A7,ENSG00000162695,0,,Transport reactions,0.9
+SLC31A1,ENSG00000136868,0,,Transport reactions,0.9
+SLC32A1,ENSG00000101438,0,0,Transport reactions,0.9
+SLC33A1,ENSG00000169359,0,,Transport reactions,0.9
+SLC34A1,ENSG00000131183,0,0,Transport reactions,0.9
+SLC34A2,ENSG00000157765,0,,Transport reactions,0.9
+SLC34A3,ENSG00000198569,0,,Transport reactions,0.9
+SLC35A1,ENSG00000164414,0,,Transport reactions,0.9
+SLC35A2,ENSG00000102100,0,,Transport reactions,0.9
+SLC35B2,ENSG00000157593,0,,Transport reactions,0.9
+SLC35B4,ENSG00000205060,0,,Transport reactions,0.9
+SLC35C1,ENSG00000181830,0,,Transport reactions,0.9
+SLC35D1,ENSG00000116704,0,,Transport reactions,0.9
+SLC35D2,ENSG00000130958,0,,Transport reactions,0.9
+SLC36A1,ENSG00000123643,0,,Transport reactions,0.9
+SLC36A2,ENSG00000186335,0,,Transport reactions,0.9
+SLC36A3,ENSG00000186334,0,0,Transport reactions,0.9
+SLC36A4,ENSG00000180773,0,,Transport reactions,0.9
+SLC37A4,ENSG00000281500,0,,Transport reactions,0.9
+SLC38A1,ENSG00000111371,0,,Transport reactions,0.9
+SLC38A2,ENSG00000134294,0,,Transport reactions,0.9
+SLC38A3,ENSG00000188338,0,,Transport reactions,0.9
+SLC38A4,ENSG00000139209,0,,Transport reactions,0.9
+SLC38A5,ENSG00000017483,0,,Transport reactions,0.9
+SLC39A1,ENSG00000143570,0,,Transport reactions,0.9
+SLC39A10,ENSG00000196950,0,,Transport reactions,0.9
+SLC39A14,ENSG00000104635,0,,Transport reactions,0.9
+SLC39A2,ENSG00000165794,0,,Transport reactions,0.9
+SLC39A3,ENSG00000141873,0,,Transport reactions,0.9
+SLC39A4,ENSG00000147804,0,,Transport reactions,0.9
+SLC39A5,ENSG00000139540,0,,Transport reactions,0.9
+SLC39A6,ENSG00000141424,0,,Transport reactions,0.9
+SLC39A7,ENSG00000112473,0,,Transport reactions,0.9
+SLC39A8,ENSG00000138821,0,,Transport reactions,0.9
+SLC3A1,ENSG00000138079,0,,Transport reactions,0.9
+SLC3A2,ENSG00000168003,0,,Starch and sucrose metabolism,0.9
+SLC40A1,ENSG00000138449,0,,Transport reactions,0.9
+SLC41A1,ENSG00000133065,0,,Transport reactions,0.9
+SLC41A2,ENSG00000136052,0,,Transport reactions,0.9
+SLC43A1,ENSG00000149150,0,,Transport reactions,0.9
+SLC43A2,ENSG00000167703,0,,Transport reactions,0.9
+SLC44A1,ENSG00000070214,0,,Transport reactions,0.9
+SLC44A2,ENSG00000129353,0,,Transport reactions,0.9
+SLC44A3,ENSG00000143036,0,,Transport reactions,0.9
+SLC44A4,ENSG00000204385,0,,Transport reactions,0.9
+SLC44A5,ENSG00000137968,0,,Transport reactions,0.9
+SLC46A1,ENSG00000076351,0,,Transport reactions,0.9
+SLC47A1,ENSG00000142494,0,,Transport reactions,0.9
+SLC47A2,ENSG00000180638,0,,Transport reactions,0.9
+SLC4A1,ENSG00000004939,0,,Transport reactions,0.9
+SLC4A10,ENSG00000144290,0,,Transport reactions,0.9
+SLC4A2,ENSG00000164889,0,,Transport reactions,0.9
+SLC4A3,ENSG00000114923,0,,Transport reactions,0.9
+SLC4A4,ENSG00000080493,0,,Transport reactions,0.9
+SLC4A5,ENSG00000188687,0,,Transport reactions,0.9
+SLC4A7,ENSG00000033867,0,,Transport reactions,0.9
+SLC4A8,ENSG00000050438,0,,Transport reactions,0.9
+SLC4A9,ENSG00000113073,0,,Transport reactions,0.9
+SLC51A,ENSG00000163959,0,,Bile acid recycling,0.9
+SLC51B,ENSG00000186198,0,,Bile acid recycling,0.9
+SLC52A1,ENSG00000132517,0,,Transport reactions,0.9
+SLC52A2,ENSG00000185803,0,,Transport reactions,0.9
+SLC52A3,ENSG00000101276,0,,Transport reactions,0.9
+SLC5A1,ENSG00000100170,0,,Transport reactions,0.9
+SLC5A10,ENSG00000154025,0,,Transport reactions,0.9
+SLC5A11,ENSG00000158865,0,,Transport reactions,0.9
+SLC5A2,ENSG00000140675,0,,Transport reactions,0.9
+SLC5A3,ENSG00000198743,0,,Transport reactions,0.9
+SLC5A5,ENSG00000105641,0,,Transport reactions,0.9
+SLC5A7,ENSG00000115665,0,,Transport reactions,0.9
+SLC5A8,ENSG00000256870,0,,Transport reactions,0.9
+SLC5A9,ENSG00000117834,0,,Transport reactions,0.9
+SLC6A1,ENSG00000157103,0,,Transport reactions,0.9
+SLC6A11,ENSG00000132164,0,,Transport reactions,0.9
+SLC6A12,ENSG00000111181,0,,Transport reactions,0.9
+SLC6A13,ENSG00000010379,0,,Transport reactions,0.9
+SLC6A14,ENSG00000268104,0,,Transport reactions,0.9
+SLC6A15,ENSG00000072041,0,,Transport reactions,0.9
+SLC6A18,ENSG00000164363,0,0,Transport reactions,0.9
+SLC6A19,ENSG00000174358,0,,Transport reactions,0.9
+SLC6A2,ENSG00000103546,0,,Transport reactions,0.9
+SLC6A20,ENSG00000163817,0,,Transport reactions,0.9
+SLC6A3,ENSG00000142319,0,,Transport reactions,0.9
+SLC6A4,ENSG00000108576,0,,Transport reactions,0.9
+SLC6A5,ENSG00000165970,0,0,Transport reactions,0.9
+SLC6A6,ENSG00000131389,0,,Transport reactions,0.9
+SLC6A7,ENSG00000011083,0,0,Transport reactions,0.9
+SLC6A8,ENSG00000130821,0,,Transport reactions,0.9
+SLC6A9,ENSG00000196517,0,,Transport reactions,0.9
+SLC7A1,ENSG00000139514,0,,Transport reactions,0.9
+SLC7A10,ENSG00000130876,0,,Transport reactions,0.9
+SLC7A11,ENSG00000151012,0,,Transport reactions,0.9
+SLC7A2,ENSG00000003989,0,,Transport reactions,0.9
+SLC7A3,ENSG00000165349,0,,Transport reactions,0.9
+SLC7A5,ENSG00000103257,0,,Transport reactions,0.9
+SLC7A6,ENSG00000103064,0,,Transport reactions,0.9
+SLC7A7,ENSG00000155465,0,,Transport reactions,0.9
+SLC7A8,ENSG00000092068,0,,Transport reactions,0.9
+SLC7A9,ENSG00000021488,0,,Bile acid recycling,0.9
+SLC8A1,ENSG00000183023,0,,Transport reactions,0.9
+SLC8A2,ENSG00000118160,0,,Transport reactions,0.9
+SLC8A3,ENSG00000100678,0,,Transport reactions,0.9
+SLC8B1,ENSG00000089060,0,,Transport reactions,0.9
+SLC9A1,ENSG00000090020,0,,Transport reactions,0.9
+SLC9A2,ENSG00000115616,0,,Transport reactions,0.9
+SLC9A3,ENSG00000066230,0,,Transport reactions,0.9
+SLC9A4,ENSG00000180251,0,,Transport reactions,0.9
+SLC9A5,ENSG00000135740,0,,Transport reactions,0.9
+SLC9A7,ENSG00000065923,0,,Transport reactions,0.9
+SLC9A8,ENSG00000197818,0,,Transport reactions,0.9
+SLC9A9,ENSG00000181804,0,,Transport reactions,0.9
+SLCO1A2,ENSG00000084453,0,,Bile acid recycling,0.9
+SLCO1B1,ENSG00000134538,0,0,Transport reactions,0.9
+SLCO1B3,ENSG00000111700,0,,Bile acid recycling,0.9
+SLCO1C1,ENSG00000139155,0,,Transport reactions,0.9
+SLCO2A1,ENSG00000174640,0,,Transport reactions,0.9
+SLCO2B1,ENSG00000137491,0,,Transport reactions,0.9
+SLCO3A1,ENSG00000176463,0,,Transport reactions,0.9
+SLCO4A1,ENSG00000101187,0,,Transport reactions,0.9
+SMOX,ENSG00000088826,0,,Beta-alanine metabolism,0.9
+SMPD1,ENSG00000166311,0,,Sphingolipid metabolism,0.9
+SMPD2,ENSG00000135587,0,,Sphingolipid metabolism,0.9
+SMPD3,ENSG00000103056,0,,Sphingolipid metabolism,0.9
+SMPD4,ENSG00000136699,0,,Sphingolipid metabolism,0.9
+SMS,ENSG00000102172,0,,Arginine and proline metabolism,0.9
+SMURF1,ENSG00000198742,0,,Isolated,0.9
+SMURF2,ENSG00000108854,0,,Isolated,0.9
+SMYD3,ENSG00000185420,0,,Lysine metabolism,0.9
+SOAT1,ENSG00000057252,0,,Miscellaneous,0.9
+SOAT2,ENSG00000167780,0,,Miscellaneous,0.9
+SOD1,ENSG00000142168,0,,ROS detoxification,0.9
+SOD2,ENSG00000112096,0,,ROS detoxification,0.9
+SOD3,ENSG00000109610,0,,ROS detoxification,0.9
+SORD,ENSG00000140263,0,,Fructose and mannose metabolism,0.9
+SPAM1,ENSG00000106304,0,,Chondroitin sulfate degradation,0.9
+SPCS1,ENSG00000114902,0,,Lysine metabolism,0.9
+SPCS2,ENSG00000118363,0,,Lysine metabolism,0.9
+SPCS3,ENSG00000129128,0,,Lysine metabolism,0.9
+SPHK1,ENSG00000176170,0,,Sphingolipid metabolism,0.9
+SPHK2,ENSG00000063176,0,,Sphingolipid metabolism,0.9
+SPR,ENSG00000116096,0,,Biopterin metabolism,0.9
+SPTLC1,ENSG00000090054,0,,Sphingolipid metabolism,0.9
+SPTLC2,ENSG00000100596,0,,Sphingolipid metabolism,0.9
+SPTLC3,ENSG00000172296,0,,Sphingolipid metabolism,0.9
+SQLE,ENSG00000104549,0,,Cholesterol biosynthesis 1 (Bloch pathwa,0.9
+SQOR,ENSG00000137767,0,,Oxidative phosphorylation,0.9
+SRD5A1,ENSG00000145545,0,,Androgen metabolism,0.9
+SRD5A2,ENSG00000277893,0,,Androgen metabolism,0.9
+SRD5A3,ENSG00000128039,0,,Androgen metabolism,0.9
+SRM,ENSG00000116649,0,,Arginine and proline metabolism,0.9
+SRPK3,ENSG00000184343,0,,Bile acid biosynthesis,0.9
+SRR,ENSG00000167720,0,,"Glycine, serine and threonine metabolism",0.9
+ST3GAL1,ENSG00000008513,0,,Glycosphingolipid biosynthesis-globo ser,0.9
+ST3GAL2,ENSG00000157350,0,,Glycosphingolipid biosynthesis-globo ser,0.9
+ST3GAL3,ENSG00000126091,0,,Glycosphingolipid biosynthesis-lacto and,0.9
+ST3GAL4,ENSG00000110080,0,,Glycosphingolipid biosynthesis-globo ser,0.9
+ST3GAL5,ENSG00000115525,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+ST3GAL6,ENSG00000064225,0,,Glycosphingolipid biosynthesis-lacto and,0.9
+ST6GAL1,ENSG00000073849,0,,N-glycan metabolism,0.9
+ST6GAL2,ENSG00000144057,0,,N-glycan metabolism,0.9
+ST6GALNAC1,ENSG00000070526,0,,O-glycan metabolism,0.9
+ST6GALNAC2,ENSG00000070731,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+ST6GALNAC3,ENSG00000184005,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+ST6GALNAC4,ENSG00000136840,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+ST6GALNAC5,ENSG00000117069,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+ST6GALNAC6,ENSG00000160408,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+ST8SIA1,ENSG00000111728,0,,Glycosphingolipid biosynthesis-globo ser,0.9
+ST8SIA4,ENSG00000113532,0,,Sphingolipid metabolism,0.9
+ST8SIA5,ENSG00000101638,0,,Glycosphingolipid biosynthesis-ganglio s,0.9
+STAMBP,ENSG00000124356,0,,Isolated,0.9
+STAMBPL1,ENSG00000138134,0,,Isolated,0.9
+STAR,ENSG00000147465,0,,Steroid metabolism,0.9
+STARD10,ENSG00000214530,0,,Steroid metabolism,0.9
+STARD13,ENSG00000133121,0,,Steroid metabolism,0.9
+STARD3,ENSG00000131748,0,,Transport reactions,0.9
+STARD4,ENSG00000164211,0,,Steroid metabolism,0.9
+STARD5,ENSG00000172345,0,,Steroid metabolism,0.9
+STARD6,ENSG00000174448,0,,Steroid metabolism,0.9
+STARD7,ENSG00000084090,0,,Steroid metabolism,0.9
+STARD8,ENSG00000130052,0,,Steroid metabolism,0.9
+STARD9,ENSG00000159433,0,,Steroid metabolism,0.9
+STRA6,ENSG00000137868,0,,Transport reactions,0.9
+STS,ENSG00000101846,0,,Glycosphingolipid metabolism,0.9
+STT3A,ENSG00000134910,0,,Sphingolipid metabolism,0.9
+STT3B,ENSG00000163527,0,,Sphingolipid metabolism,0.9
+STUB1,ENSG00000103266,0,,Isolated,0.9
+SUCLA2,ENSG00000136143,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+SUCLG1,ENSG00000163541,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+SUCLG2,ENSG00000172340,0,,Tricarboxylic acid cycle and glyoxylate/,0.9
+SULT1A1,ENSG00000196502,0,,Estrogen metabolism,0.9
+SULT1A2,ENSG00000197165,0,,Xenobiotics metabolism,0.9
+SULT1A3,ENSG00000261052,0,,Transport reactions,0.9
+SULT1A4,ENSG00000213648,0,,Xenobiotics metabolism,0.9
+SULT1B1,ENSG00000173597,0,,Serotonin and melatonin biosynthesis,0.9
+SULT1C2,ENSG00000198203,0,,Serotonin and melatonin biosynthesis,0.9
+SULT1C4,ENSG00000198075,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+SULT1E1,ENSG00000109193,0,,Androgen metabolism,0.9
+SULT2A1,ENSG00000105398,0,,Bile acid biosynthesis,0.9
+SULT2B1,ENSG00000088002,0,,Transport reactions,0.9
+SULT4A1,ENSG00000130540,0,,Serotonin and melatonin biosynthesis,0.9
+SUOX,ENSG00000139531,0,,Transport reactions,0.9
+SUV39H1,ENSG00000101945,0,,Lysine metabolism,0.9
+SUV39H2,ENSG00000152455,0,,Lysine metabolism,0.9
+SYNJ1,ENSG00000159082,0,,Inositol phosphate metabolism,0.9
+SYNJ2,ENSG00000078269,0,,Inositol phosphate metabolism,0.9
+SYVN1,ENSG00000162298,0,,Isolated,0.9
+TAF9,ENSG00000273841,0,,Purine metabolism,0.9
+TALDO1,ENSG00000177156,0,,Pentose phosphate pathway,0.9
+TAT,ENSG00000198650,0,,Phenylalanine metabolism,0.9
+TBCB,ENSG00000105254,0,,Omega-3 fatty acid metabolism,0.9
+TBXAS1,ENSG00000059377,0,,Prostaglandin biosynthesis,0.9
+TCIRG1,ENSG00000110719,0,,Transport reactions,0.9
+TDO2,ENSG00000151790,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+TECR,ENSG00000099797,0,,Fatty acid elongation (even-chain),0.9
+TECRL,ENSG00000205678,0,,Arachidonic acid metabolism,0.9
+TENT2,ENSG00000164329,0,,Nucleotide metabolism,0.9
+TENT4A,ENSG00000112941,0,,Nucleotide metabolism,0.9
+TFRC,ENSG00000072274,0,1,Protein assembly,0.9
+TGDS,ENSG00000088451,0,,Amino sugar and nucleotide sugar metabol,0.9
+TGM1,ENSG00000092295,0,,Isolated,0.9
+TGM2,ENSG00000198959,0,,Isolated,0.9
+TGM3,ENSG00000125780,0,,Isolated,0.9
+TGM4,ENSG00000163810,0,,Isolated,0.9
+TGM5,ENSG00000104055,0,,Isolated,0.9
+TGM6,ENSG00000166948,0,0,Isolated,0.9
+TGM7,ENSG00000159495,0,,Isolated,0.9
+TH,ENSG00000180176,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+THEM4,ENSG00000159445,0,,Acyl-CoA hydrolysis,0.9
+THEM5,ENSG00000196407,0,,Fatty acid biosynthesis,0.9
+THNSL1,ENSG00000185875,0,,"Glycine, serine and threonine metabolism",0.9
+THOP1,ENSG00000172009,0,,Isolated,0.9
+THTPA,ENSG00000259431,0,,Thiamine metabolism,0.9
+TIGAR,ENSG00000078237,0,,Fructose and mannose metabolism,0.9
+TIPARP,ENSG00000163659,0,,Isolated,0.9
+TK1,ENSG00000167900,0,,Nucleotide metabolism,0.9
+TK2,ENSG00000166548,0,,Nucleotide metabolism,0.9
+TKFC,ENSG00000149476,0,,Glycerophospholipid metabolism,0.9
+TKT,ENSG00000163931,0,,Pentose phosphate pathway,0.9
+TKTL1,ENSG00000007350,0,,Pentose phosphate pathway,0.9
+TKTL2,ENSG00000151005,0,0,Pentose phosphate pathway,0.9
+TM7SF2,ENSG00000149809,0,,Cholesterol metabolism,0.9
+TMLHE,ENSG00000185973,0,,Lysine metabolism,0.9
+TMPPE,ENSG00000188167,0,,Sphingolipid metabolism,0.9
+TMX3,ENSG00000166479,0,,Isolated,0.9
+TNKS,ENSG00000173273,0,,Isolated,0.9
+TNKS2,ENSG00000107854,0,,Isolated,0.9
+TNRC6B,ENSG00000100354,0,,Purine metabolism,0.9
+TNS2,ENSG00000111077,0,,Inositol phosphate metabolism,0.9
+TOPORS,ENSG00000197579,0,,Isolated,0.9
+TPCN1,ENSG00000186815,0,,Transport reactions,0.9
+TPCN2,ENSG00000162341,0,,Transport reactions,0.9
+TPH1,ENSG00000129167,0,,Biopterin metabolism,0.9
+TPH2,ENSG00000139287,0,0,Biopterin metabolism,0.9
+TPI1,ENSG00000111669,0,,Glycolysis / Gluconeogenesis,0.9
+TPMT,ENSG00000137364,0,,Isolated,0.9
+TPO,ENSG00000115705,0,,Estrogen metabolism,0.9
+TPP1,ENSG00000166340,0,,Miscellaneous,0.9
+TPSAB1,ENSG00000172236,0,,Isolated,0.9
+TPSB2,ENSG00000197253,0,,Isolated,0.9
+TPSD1,ENSG00000095917,0,,Isolated,0.9
+TPST1,ENSG00000169902,0,,Protein modification,0.9
+TPST2,ENSG00000128294,0,,Protein modification,0.9
+TPTE2,ENSG00000132958,0,,Phosphatidylinositol phosphate metabolis,0.9
+TRAF7,ENSG00000131653,0,,Isolated,0.9
+TRDMT1,ENSG00000107614,0,,Cysteine and methionine metabolism,0.9
+TREH,ENSG00000118094,0,,Starch and sucrose metabolism,0.9
+TREX1,ENSG00000213689,0,,Nucleotide metabolism,0.9
+TREX2,ENSG00000183479,0,,Nucleotide metabolism,0.9
+TRHDE,ENSG00000072657,0,,Isolated,0.9
+TRIM11,ENSG00000154370,0,,Isolated,0.9
+TRIM32,ENSG00000119401,0,,Isolated,0.9
+TRIM33,ENSG00000197323,0,,Isolated,0.9
+TRIM5,ENSG00000132256,0,,Isolated,0.9
+TRIM63,ENSG00000158022,0,,Isolated,0.9
+TRIP12,ENSG00000153827,0,,Isolated,0.9
+TRIT1,ENSG00000043514,0,,Isolated,0.9
+TRMT1,ENSG00000104907,0,,Isolated,0.9
+TRMT11,ENSG00000066651,0,,Isolated,0.9
+TRMU,ENSG00000100416,0,,Isolated,0.9
+TST,ENSG00000128311,0,,Cysteine and methionine metabolism,0.9
+TTC3,ENSG00000182670,0,,Isolated,0.9
+TTL,ENSG00000114999,0,,Isolated,0.9
+TUSC3,ENSG00000104723,0,,N-glycan metabolism,0.9
+TUT1,ENSG00000149016,0,1,Nucleotide metabolism,0.9
+TUT4,ENSG00000134744,0,,Nucleotide metabolism,0.9
+TUT7,ENSG00000083223,0,,Nucleotide metabolism,0.9
+TXN,ENSG00000136810,0,1,Miscellaneous,0.9
+TXN2,ENSG00000100348,0,,Miscellaneous,0.9
+TXNRD1,ENSG00000198431,0,,Miscellaneous,0.9
+TXNRD2,ENSG00000184470,0,,Cysteine and methionine metabolism,0.9
+TXNRD3,ENSG00000197763,0,,Pyrimidine metabolism,0.9
+TYMP,ENSG00000025708,0,,Pyrimidine metabolism,0.9
+TYMS,ENSG00000176890,0,,Pyrimidine metabolism,0.9
+TYR,ENSG00000077498,0,0,Tyrosine metabolism,0.9
+TYRP1,ENSG00000107165,0,,Tyrosine metabolism,0.9
+UAP1,ENSG00000117143,0,,Amino sugar and nucleotide sugar metabol,0.9
+UAP1L1,ENSG00000197355,0,,Amino sugar and nucleotide sugar metabol,0.9
+UBA1,ENSG00000130985,0,1,Isolated,0.9
+UBA2,ENSG00000126261,0,,Isolated,0.9
+UBA3,ENSG00000144744,0,,Isolated,0.9
+UBA6,ENSG00000033178,0,,Isolated,0.9
+UBA7,ENSG00000182179,0,,Isolated,0.9
+UBAC2,ENSG00000134882,0,,"Glycine, serine and threonine metabolism",0.9
+UBE2A,ENSG00000077721,0,,Isolated,0.9
+UBE2B,ENSG00000119048,0,,Isolated,0.9
+UBE2C,ENSG00000175063,0,,Isolated,0.9
+UBE2D1,ENSG00000072401,0,,Isolated,0.9
+UBE2D2,ENSG00000131508,0,,Isolated,0.9
+UBE2D3,ENSG00000109332,0,,Isolated,0.9
+UBE2D4,ENSG00000078967,0,,Isolated,0.9
+UBE2E1,ENSG00000170142,0,,Isolated,0.9
+UBE2E2,ENSG00000182247,0,,Isolated,0.9
+UBE2E3,ENSG00000170035,0,,Isolated,0.9
+UBE2F,ENSG00000184182,0,,Isolated,0.9
+UBE2G1,ENSG00000132388,0,,Isolated,0.9
+UBE2G2,ENSG00000184787,0,,Isolated,0.9
+UBE2H,ENSG00000186591,0,,Isolated,0.9
+UBE2I,ENSG00000103275,0,,Isolated,0.9
+UBE2J1,ENSG00000198833,0,,Isolated,0.9
+UBE2J2,ENSG00000160087,0,,Isolated,0.9
+UBE2K,ENSG00000078140,0,,Isolated,0.9
+UBE2L3,ENSG00000185651,0,1,Isolated,0.9
+UBE2L6,ENSG00000156587,0,,Isolated,0.9
+UBE2M,ENSG00000130725,0,1,Isolated,0.9
+UBE2N,ENSG00000177889,0,1,Isolated,0.9
+UBE2O,ENSG00000175931,0,,Isolated,0.9
+UBE2Q1,ENSG00000160714,0,,Isolated,0.9
+UBE2Q2,ENSG00000140367,0,,Isolated,0.9
+UBE2QL1,ENSG00000215218,0,,Isolated,0.9
+UBE2R2,ENSG00000107341,0,,Isolated,0.9
+UBE2S,ENSG00000108106,0,,Isolated,0.9
+UBE2T,ENSG00000077152,0,,Isolated,0.9
+UBE2U,ENSG00000177414,0,,Isolated,0.9
+UBE2W,ENSG00000104343,0,,Isolated,0.9
+UBE2Z,ENSG00000159202,0,,Isolated,0.9
+UBE3A,ENSG00000114062,0,,Isolated,0.9
+UBE3B,ENSG00000151148,0,,Isolated,0.9
+UBE3C,ENSG00000009335,0,,Isolated,0.9
+UBE4A,ENSG00000110344,0,,Isolated,0.9
+UBE4B,ENSG00000130939,0,,Isolated,0.9
+UBIAD1,ENSG00000120942,0,,Histidine metabolism,0.9
+UBR1,ENSG00000159459,0,,Isolated,0.9
+UBR2,ENSG00000024048,0,,Isolated,0.9
+UBR3,ENSG00000144357,0,,Isolated,0.9
+UBR4,ENSG00000127481,0,,Isolated,0.9
+UBR5,ENSG00000104517,0,,Isolated,0.9
+UBR7,ENSG00000012963,0,,Isolated,0.9
+UCK1,ENSG00000130717,0,,Pyrimidine metabolism,0.9
+UCK2,ENSG00000143179,0,,Pyrimidine metabolism,0.9
+UCKL1,ENSG00000198276,0,,Nucleotide metabolism,0.9
+UCP1,ENSG00000109424,0,,Transport reactions,0.9
+UCP2,ENSG00000175567,0,,Transport reactions,0.9
+UCP3,ENSG00000175564,0,,Transport reactions,0.9
+UGCG,ENSG00000148154,0,,Sphingolipid metabolism,0.9
+UGDH,ENSG00000109814,0,,Starch and sucrose metabolism,0.9
+UGP2,ENSG00000169764,0,,Galactose metabolism,0.9
+UGT1A1,ENSG00000241635,0,,Linoleate metabolism,0.9
+UGT1A10,ENSG00000242515,0,,Linoleate metabolism,0.9
+UGT1A3,ENSG00000288702,0,,Linoleate metabolism,0.9
+UGT1A4,ENSG00000244474,0,,Linoleate metabolism,0.9
+UGT1A5,ENSG00000288705,0,,Linoleate metabolism,0.9
+UGT1A6,ENSG00000167165,0,,Linoleate metabolism,0.9
+UGT1A7,ENSG00000244122,0,,Linoleate metabolism,0.9
+UGT1A8,ENSG00000242366,0,,Steroid metabolism,0.9
+UGT1A9,ENSG00000241119,0,,Linoleate metabolism,0.9
+UGT2A1,ENSG00000173610,0,,Linoleate metabolism,0.9
+UGT2A3,ENSG00000135220,0,,Linoleate metabolism,0.9
+UGT2B10,ENSG00000109181,0,,Linoleate metabolism,0.9
+UGT2B11,ENSG00000213759,0,,Linoleate metabolism,0.9
+UGT2B15,ENSG00000196620,0,,Linoleate metabolism,0.9
+UGT2B17,ENSG00000197888,0,,Linoleate metabolism,0.9
+UGT2B28,ENSG00000135226,0,,Linoleate metabolism,0.9
+UGT2B4,ENSG00000156096,0,,Linoleate metabolism,0.9
+UGT2B7,ENSG00000171234,0,,Linoleate metabolism,0.9
+UGT3A1,ENSG00000145626,0,,Linoleate metabolism,0.9
+UGT3A2,ENSG00000168671,0,,Linoleate metabolism,0.9
+UGT8,ENSG00000174607,0,,Glycosphingolipid metabolism,0.9
+UHRF1,ENSG00000276043,0,,Isolated,0.9
+UHRF2,ENSG00000147854,0,,Isolated,0.9
+UMPS,ENSG00000114491,0,,Pyrimidine metabolism,0.9
+UPB1,ENSG00000100024,0,,Beta-alanine metabolism,0.9
+UPP1,ENSG00000183696,0,,Pyrimidine metabolism,0.9
+UPP2,ENSG00000007001,0,,Pyrimidine metabolism,0.9
+UPRT,ENSG00000094841,0,,Pyrimidine metabolism,0.9
+UQCR10,ENSG00000184076,0,,Oxidative phosphorylation,0.9
+UQCR11,ENSG00000127540,0,,Oxidative phosphorylation,0.9
+UQCRB,ENSG00000156467,0,,Oxidative phosphorylation,0.9
+UQCRC1,ENSG00000010256,0,1,Oxidative phosphorylation,0.9
+UQCRC2,ENSG00000140740,0,,Oxidative phosphorylation,0.9
+UQCRFS1,ENSG00000169021,0,1,Oxidative phosphorylation,0.9
+UQCRH,ENSG00000173660,0,,Oxidative phosphorylation,0.9
+UQCRQ,ENSG00000164405,0,,Oxidative phosphorylation,0.9
+URAD,ENSG00000183463,0,,Purine metabolism,0.9
+UROC1,ENSG00000159650,0,0,Histidine metabolism,0.9
+UROD,ENSG00000126088,0,1,Miscellaneous,0.9
+UROS,ENSG00000188690,0,,Porphyrin metabolism,0.9
+USP1,ENSG00000162607,0,,Isolated,0.9
+USP10,ENSG00000103194,0,,Isolated,0.9
+USP11,ENSG00000102226,0,,Isolated,0.9
+USP12,ENSG00000152484,0,,Isolated,0.9
+USP13,ENSG00000058056,0,,Isolated,0.9
+USP14,ENSG00000101557,0,,Isolated,0.9
+USP15,ENSG00000135655,0,,Isolated,0.9
+USP16,ENSG00000156256,0,,Isolated,0.9
+USP17L2,ENSG00000223443,0,0,Isolated,0.9
+USP17L22,ENSG00000248933,0,,Isolated,0.9
+USP17L24,ENSG00000232264,0,,Isolated,0.9
+USP17L25,ENSG00000230430,0,,Isolated,0.9
+USP17L26,ENSG00000229579,0,,Isolated,0.9
+USP17L27,ENSG00000235780,0,,Isolated,0.9
+USP17L28,ENSG00000231051,0,,Isolated,0.9
+USP17L29,ENSG00000231637,0,,Isolated,0.9
+USP17L30,ENSG00000228856,0,,Isolated,0.9
+USP17L5,ENSG00000227140,0,,Isolated,0.9
+USP18,ENSG00000184979,0,,Isolated,0.9
+USP19,ENSG00000172046,0,,Isolated,0.9
+USP2,ENSG00000036672,0,,Isolated,0.9
+USP20,ENSG00000136878,0,,Isolated,0.9
+USP21,ENSG00000143258,0,,Isolated,0.9
+USP22,ENSG00000124422,0,,Isolated,0.9
+USP24,ENSG00000162402,0,,Isolated,0.9
+USP25,ENSG00000155313,0,,Isolated,0.9
+USP26,ENSG00000134588,0,0,Isolated,0.9
+USP27X,ENSG00000273820,0,,Isolated,0.9
+USP28,ENSG00000048028,0,,Isolated,0.9
+USP29,ENSG00000131864,0,0,Isolated,0.9
+USP3,ENSG00000140455,0,,Isolated,0.9
+USP30,ENSG00000135093,0,,Isolated,0.9
+USP31,ENSG00000103404,0,,Isolated,0.9
+USP32,ENSG00000170832,0,,Isolated,0.9
+USP33,ENSG00000077254,0,,Isolated,0.9
+USP34,ENSG00000115464,0,,Isolated,0.9
+USP35,ENSG00000118369,0,,Isolated,0.9
+USP36,ENSG00000055483,0,,Isolated,0.9
+USP37,ENSG00000135913,0,,Isolated,0.9
+USP38,ENSG00000170185,0,,Isolated,0.9
+USP4,ENSG00000114316,0,,Isolated,0.9
+USP40,ENSG00000085982,0,,Isolated,0.9
+USP41,ENSG00000161133,0,,Isolated,0.9
+USP42,ENSG00000106346,0,,Isolated,0.9
+USP43,ENSG00000154914,0,,Isolated,0.9
+USP44,ENSG00000136014,0,,Isolated,0.9
+USP45,ENSG00000123552,0,,Isolated,0.9
+USP46,ENSG00000109189,0,,Isolated,0.9
+USP47,ENSG00000170242,0,,Isolated,0.9
+USP48,ENSG00000090686,0,,Isolated,0.9
+USP49,ENSG00000164663,0,,Isolated,0.9
+USP5,ENSG00000111667,0,1,Isolated,0.9
+USP51,ENSG00000247746,0,,Isolated,0.9
+USP6,ENSG00000129204,0,,Isolated,0.9
+USP7,ENSG00000187555,0,,Isolated,0.9
+USP8,ENSG00000138592,0,,Isolated,0.9
+USP9X,ENSG00000124486,0,,Isolated,0.9
+USP9Y,ENSG00000114374,0,,Isolated,0.9
+UST,ENSG00000111962,0,,"Phenylalanine, tyrosine and tryptophan b",0.9
+UXS1,ENSG00000115652,0,,Amino sugar and nucleotide sugar metabol,0.9
+VAPB,ENSG00000124164,0,,Transport reactions,0.9
+VKORC1,ENSG00000167397,0,,Isolated,0.9
+VNN1,ENSG00000112299,0,,Pantothenate and CoA metabolism,0.9
+VNN2,ENSG00000112303,0,,Pantothenate and CoA metabolism,0.9
+WWOX,ENSG00000186153,0,,Leukotriene metabolism,0.9
+WWP1,ENSG00000123124,0,,Isolated,0.9
+WWP2,ENSG00000198373,0,,Isolated,0.9
+XDH,ENSG00000158125,0,,Purine metabolism,0.9
+XPO6,ENSG00000169180,0,,Transport reactions,0.9
+XPO7,ENSG00000130227,0,,Transport reactions,0.9
+XPR1,ENSG00000143324,0,,Transport reactions,0.9
+XYLB,ENSG00000093217,0,,Pentose and glucuronate interconversions,0.9
+XYLT1,ENSG00000103489,0,,Chondroitin / heparan sulfate biosynthes,0.9
+XYLT2,ENSG00000015532,0,,Chondroitin / heparan sulfate biosynthes,0.9
+ZADH2,ENSG00000180011,0,,Pyruvate metabolism,0.9
+ZC3HAV1,ENSG00000105939,0,,Isolated,0.9
+ZDHHC1,ENSG00000159714,0,,Leukotriene metabolism,0.9
+ZDHHC11,ENSG00000188818,0,,Leukotriene metabolism,0.9
+ZDHHC11B,ENSG00000206077,0,,Leukotriene metabolism,0.9
+ZDHHC12,ENSG00000160446,0,,Leukotriene metabolism,0.9
+ZDHHC13,ENSG00000177054,0,,Leukotriene metabolism,0.9
+ZDHHC14,ENSG00000175048,0,,Leukotriene metabolism,0.9
+ZDHHC15,ENSG00000102383,0,,Leukotriene metabolism,0.9
+ZDHHC17,ENSG00000186908,0,,Leukotriene metabolism,0.9
+ZDHHC19,ENSG00000163958,0,,Leukotriene metabolism,0.9
+ZDHHC2,ENSG00000104219,0,,Leukotriene metabolism,0.9
+ZDHHC21,ENSG00000175893,0,,Leukotriene metabolism,0.9
+ZDHHC22,ENSG00000177108,0,,Leukotriene metabolism,0.9
+ZDHHC24,ENSG00000174165,0,,Leukotriene metabolism,0.9
+ZDHHC3,ENSG00000163812,0,,Leukotriene metabolism,0.9
+ZDHHC4,ENSG00000136247,0,,Leukotriene metabolism,0.9
+ZDHHC5,ENSG00000156599,0,,Leukotriene metabolism,0.9
+ZDHHC6,ENSG00000023041,0,,Leukotriene metabolism,0.9
+ZDHHC7,ENSG00000153786,0,,Leukotriene metabolism,0.9
+ZDHHC8,ENSG00000099904,0,,Leukotriene metabolism,0.9
+ZDHHC9,ENSG00000188706,0,,Leukotriene metabolism,0.9
+ZMPSTE24,ENSG00000084073,0,,Terpenoid backbone biosynthesis,0.9
+ZNRF1,ENSG00000186187,0,,Isolated,0.9
+ZNRF2,ENSG00000180233,0,,Isolated,0.9
+ZSWIM2,ENSG00000163012,0,0,Isolated,0.9

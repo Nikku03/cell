@@ -70,3 +70,6 @@ data/external_data/promoter_mpra/revLP5_Min_MOPS_glu_expression.txt
 outputs/orphan/cell_app_data.json
 outputs/orphan/ecoli_esm.npz
 outputs/orphan/cell_map_data.json
+
+# large human GEM (re-fetchable via URL in colab/target_intel_human.py)
+data/external_data/human/Human-GEM.xml
