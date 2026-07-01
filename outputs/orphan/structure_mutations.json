@@ -1,0 +1,118 @@
+{
+  "per_gene": {
+    "LDLR": {
+      "acc": "P01130",
+      "residues": 860,
+      "pathogenic": 740,
+      "common": 4
+    },
+    "PAH": {
+      "acc": "P00439",
+      "residues": 452,
+      "pathogenic": 503,
+      "common": 3
+    },
+    "TP53": {
+      "acc": "P04637",
+      "residues": 393,
+      "pathogenic": 244,
+      "common": 2
+    },
+    "CFTR": {
+      "acc": "P13569",
+      "residues": 1480,
+      "pathogenic": 287,
+      "common": 17
+    },
+    "VHL": {
+      "acc": "P40337",
+      "residues": 213,
+      "pathogenic": 179,
+      "common": 1
+    },
+    "RB1": {
+      "acc": "P06400",
+      "residues": 928,
+      "pathogenic": 40,
+      "common": 2
+    },
+    "MLH1": {
+      "acc": "P40692",
+      "residues": 756,
+      "pathogenic": 182,
+      "common": 8
+    },
+    "PTEN": {
+      "acc": "P60484",
+      "residues": 403,
+      "pathogenic": 251,
+      "common": 0
+    },
+    "HBB": {
+      "acc": "P68871",
+      "residues": 147,
+      "pathogenic": 107,
+      "common": 1
+    },
+    "G6PD": {
+      "acc": "P11413",
+      "residues": 515,
+      "pathogenic": 193,
+      "common": 6
+    },
+    "SLC24A5": {
+      "acc": "Q71RS6",
+      "residues": 500,
+      "pathogenic": 3,
+      "common": 1
+    },
+    "SLC45A2": {
+      "acc": "Q9UMX9",
+      "residues": 530,
+      "pathogenic": 33,
+      "common": 3
+    },
+    "MC1R": {
+      "acc": "Q01726",
+      "residues": 317,
+      "pathogenic": 0,
+      "common": 13
+    },
+    "EPAS1": {
+      "acc": "Q99814",
+      "residues": 870,
+      "pathogenic": 8,
+      "common": 5
+    },
+    "ACKR1": {
+      "acc": "Q16570",
+      "residues": 336,
+      "pathogenic": 0,
+      "common": 7
+    }
+  },
+  "by_class": {
+    "pathogenic": {
+      "n": 2770,
+      "mean_contacts": 19.3,
+      "mean_plddt": 90.9,
+      "frac_buried": 0.78,
+      "frac_ordered": 0.96
+    },
+    "common_benign": {
+      "n": 73,
+      "mean_contacts": 14.8,
+      "mean_plddt": 77.6,
+      "frac_buried": 0.42,
+      "frac_ordered": 0.68
+    },
+    "adaptive": {
+      "n": 6,
+      "mean_contacts": 14.0,
+      "mean_plddt": 69.4,
+      "frac_buried": 0.33,
+      "frac_ordered": 0.5
+    }
+  },
+  "hypothesis": "pathogenic mutations sit in buried/ordered core; common+adaptive on flexible surface"
+}
