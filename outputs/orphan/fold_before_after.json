@@ -1,0 +1,24 @@
+[
+  {
+    "gene": "HBB",
+    "mutation": "E6V (sickle, surface)",
+    "kind": "DISEASE-surface",
+    "length": 147,
+    "global_rmsd": 0.012,
+    "local_rmsd_around_site": 0.022,
+    "wt_plddt_site": 0.9,
+    "mut_plddt_site": 0.9,
+    "dplddt": -0.0
+  },
+  {
+    "gene": "SOD1",
+    "mutation": "A4V (ALS, buried)",
+    "kind": "DISEASE-buried",
+    "length": 154,
+    "global_rmsd": 0.263,
+    "local_rmsd_around_site": 0.382,
+    "wt_plddt_site": 1.0,
+    "mut_plddt_site": 0.9,
+    "dplddt": -0.0
+  }
+]
