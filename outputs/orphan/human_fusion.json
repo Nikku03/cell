@@ -1,0 +1,13 @@
+{
+  "n_genes": 1479,
+  "n_ess": 636,
+  "results": {
+    "LOEUF alone (ref)": 0.823,
+    "constraint (6 metrics)": 0.886,
+    "conservation (yeast+ecoli)": 0.86,
+    "ESM-2 8M alone": 0.953,
+    "constraint+conservation": 0.932,
+    "constraint+conservation+ESM (FUSION)": 0.982
+  },
+  "esm_dim": 320
+}
