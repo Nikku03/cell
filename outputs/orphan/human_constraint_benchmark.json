@@ -1,0 +1,41 @@
+{
+  "source": "gnomAD v2.1.1 constraint",
+  "genes_with_constraint": 19658,
+  "benchmarks": [
+    {
+      "label": "GENOME-WIDE (all essential vs non-essential)",
+      "ceg_cov": 659,
+      "ceg_total": 684,
+      "neg_cov": 878,
+      "neg_total": 926,
+      "n_eval": 1457,
+      "auc_pLI": 0.708,
+      "auc_LOEUF": 0.864,
+      "auc_mis_z": 0.849
+    },
+    {
+      "label": "METABOLIC essentials (the 17% FBA can see)",
+      "ceg_cov": 113,
+      "ceg_total": 119,
+      "neg_cov": 878,
+      "neg_total": 926,
+      "n_eval": 911,
+      "auc_pLI": 0.704,
+      "auc_LOEUF": 0.849,
+      "auc_mis_z": 0.841
+    },
+    {
+      "label": "NON-METABOLIC essentials (the 83% FBA CANNOT see)",
+      "ceg_cov": 546,
+      "ceg_total": 565,
+      "neg_cov": 878,
+      "neg_total": 926,
+      "n_eval": 1344,
+      "auc_pLI": 0.709,
+      "auc_LOEUF": 0.866,
+      "auc_mis_z": 0.85
+    }
+  ],
+  "non_metabolic_constraint_coverage": 0.966,
+  "fba_comparison": "FBA metabolic wheel: 17% coverage, 0/26 drug targets; constraint: genome-wide"
+}

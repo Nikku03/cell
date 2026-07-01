@@ -73,3 +73,4 @@ outputs/orphan/cell_map_data.json
 
 # large human GEM (re-fetchable via URL in colab/target_intel_human.py)
 data/external_data/human/Human-GEM.xml
+data/external_data/human/gnomad_constraint.txt.bgz
