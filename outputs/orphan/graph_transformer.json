@@ -1,0 +1,27 @@
+{
+  "auc": {
+    "MLP": 0.973,
+    "GCN": 0.947,
+    "GAT": 0.945
+  },
+  "best": "MLP",
+  "edges": 291034,
+  "labeled": 1610,
+  "top_dark_essential": [
+    "PA2G4",
+    "SELENOS",
+    "DIDO1",
+    "BAG6",
+    "PLXNB2",
+    "SERBP1",
+    "FXR2",
+    "PCGF1",
+    "CCAR2",
+    "HACD3",
+    "CFAP20",
+    "ETS2",
+    "NUMBL",
+    "BTF3",
+    "MSL1"
+  ]
+}
