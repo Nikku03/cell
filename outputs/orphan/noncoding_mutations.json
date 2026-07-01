@@ -1,0 +1,193 @@
+{
+  "by_element": {
+    "coding_ORF": 18656,
+    "splice": 2737,
+    "regulatory_noncoding": 323,
+    "other": 22
+  },
+  "total": 21738,
+  "frac_noncoding": 0.141,
+  "regulatory_breakdown": {
+    "3_prime_UTR_variant": 5,
+    "intron_variant": 306,
+    "5_prime_UTR_variant": 12
+  },
+  "per_gene": [
+    {
+      "gene": "TERT",
+      "total": 161,
+      "coding": 132,
+      "splice": 29,
+      "regulatory": 0,
+      "other": 0
+    },
+    {
+      "gene": "HBB",
+      "total": 373,
+      "coding": 310,
+      "splice": 45,
+      "regulatory": 15,
+      "other": 3
+    },
+    {
+      "gene": "F9",
+      "total": 300,
+      "coding": 270,
+      "splice": 20,
+      "regulatory": 8,
+      "other": 2
+    },
+    {
+      "gene": "LDLR",
+      "total": 1917,
+      "coding": 1707,
+      "splice": 187,
+      "regulatory": 18,
+      "other": 5
+    },
+    {
+      "gene": "HBA2",
+      "total": 167,
+      "coding": 134,
+      "splice": 30,
+      "regulatory": 0,
+      "other": 3
+    },
+    {
+      "gene": "PAH",
+      "total": 878,
+      "coding": 761,
+      "splice": 91,
+      "regulatory": 25,
+      "other": 1
+    },
+    {
+      "gene": "RB1",
+      "total": 912,
+      "coding": 684,
+      "splice": 183,
+      "regulatory": 45,
+      "other": 0
+    },
+    {
+      "gene": "BRCA1",
+      "total": 3998,
+      "coding": 3668,
+      "splice": 276,
+      "regulatory": 54,
+      "other": 0
+    },
+    {
+      "gene": "MLH1",
+      "total": 1841,
+      "coding": 1497,
+      "splice": 305,
+      "regulatory": 39,
+      "other": 0
+    },
+    {
+      "gene": "CFTR",
+      "total": 1438,
+      "coding": 1197,
+      "splice": 217,
+      "regulatory": 23,
+      "other": 1
+    },
+    {
+      "gene": "TP53",
+      "total": 1122,
+      "coding": 960,
+      "splice": 154,
+      "regulatory": 6,
+      "other": 2
+    },
+    {
+      "gene": "GATA1",
+      "total": 78,
+      "coding": 70,
+      "splice": 8,
+      "regulatory": 0,
+      "other": 0
+    },
+    {
+      "gene": "FOXP3",
+      "total": 57,
+      "coding": 41,
+      "splice": 14,
+      "regulatory": 2,
+      "other": 0
+    },
+    {
+      "gene": "HNF4A",
+      "total": 151,
+      "coding": 128,
+      "splice": 21,
+      "regulatory": 2,
+      "other": 0
+    },
+    {
+      "gene": "RET",
+      "total": 170,
+      "coding": 155,
+      "splice": 11,
+      "regulatory": 3,
+      "other": 1
+    },
+    {
+      "gene": "VHL",
+      "total": 397,
+      "coding": 364,
+      "splice": 29,
+      "regulatory": 3,
+      "other": 1
+    },
+    {
+      "gene": "PTEN",
+      "total": 1260,
+      "coding": 1095,
+      "splice": 143,
+      "regulatory": 22,
+      "other": 0
+    },
+    {
+      "gene": "SOX9",
+      "total": 138,
+      "coding": 131,
+      "splice": 7,
+      "regulatory": 0,
+      "other": 0
+    },
+    {
+      "gene": "PAX6",
+      "total": 418,
+      "coding": 335,
+      "splice": 70,
+      "regulatory": 11,
+      "other": 2
+    },
+    {
+      "gene": "TBX5",
+      "total": 191,
+      "coding": 163,
+      "splice": 26,
+      "regulatory": 2,
+      "other": 0
+    },
+    {
+      "gene": "ATM",
+      "total": 3724,
+      "coding": 3103,
+      "splice": 594,
+      "regulatory": 26,
+      "other": 1
+    },
+    {
+      "gene": "MSH2",
+      "total": 2047,
+      "coding": 1751,
+      "splice": 277,
+      "regulatory": 19,
+      "other": 0
+    }
+  ]
+}
