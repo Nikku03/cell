@@ -95,6 +95,7 @@ code("# [7] load a SUBSAMPLED cell set from CELLxGENE census (avoids the million
    "    adata=cellxgene_census.get_anndata(census,'Homo sapiens',obs_coords=ids,",
    "        column_names={'obs':['cell_type','tissue_general'],'var':['feature_name']})",
    "adata.var_names=adata.var['feature_name'].astype(str)",
+   "adata.var=adata.var.drop(columns=['feature_name'],errors='ignore'); adata.var.index.name='gene'  # avoid h5ad index/col clash",
    "adata.write(f'{PROJ}/tabula_subset.h5ad')",
    "print(adata.shape,'|',int(adata.obs.cell_type.nunique()),'cell types (subsampled to <=%d each)'%N_PER_TYPE)"),
 code("# [8] per-cell-type mean expression -> active gene set per cell type -> save to Drive",
