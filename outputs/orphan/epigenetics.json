@@ -1,0 +1,63 @@
+{
+  "groups": {
+    "essential (CEG)": {
+      "n": 665,
+      "cpg_promoter": 0.95,
+      "enhancers": 99.02,
+      "promoters": 6.66,
+      "ctcf": 3.02
+    },
+    "non-essential (NEG)": {
+      "n": 895,
+      "cpg_promoter": 0.24,
+      "enhancers": 52.62,
+      "promoters": 2.67,
+      "ctcf": 4.97
+    },
+    "all genes": {
+      "n": 28278,
+      "cpg_promoter": 0.58,
+      "enhancers": 84.96,
+      "promoters": 4.75,
+      "ctcf": 3.56
+    },
+    "TFs": {
+      "n": 1297,
+      "cpg_promoter": 0.86,
+      "enhancers": 102.53,
+      "promoters": 5.89,
+      "ctcf": 3.44
+    },
+    "disease TFs": {
+      "n": 521,
+      "cpg_promoter": 0.87,
+      "enhancers": 104.82,
+      "promoters": 5.56,
+      "ctcf": 3.59
+    }
+  },
+  "n_genes": 28278,
+  "top_enhancer_dense": [
+    "MIRLET7BHG",
+    "MIR3619",
+    "HOXA5",
+    "HOXA-AS3",
+    "LOC642648",
+    "HOXA6",
+    "HOXB3",
+    "HOXA3",
+    "HOXB-AS3",
+    "HOXA7",
+    "HOXB5",
+    "LINC00899",
+    "H1-9P",
+    "HOXA9",
+    "MIR661",
+    "TNS4",
+    "HOXA4",
+    "HOXC8",
+    "SGCA",
+    "HOXB4"
+  ],
+  "top50_tf_fraction": 0.34
+}
