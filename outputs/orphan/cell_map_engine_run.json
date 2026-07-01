@@ -1,0 +1,23 @@
+{
+  "scorecard": {
+    "selected_tau": 0.7,
+    "WT_alive_all_carbons": "6/6",
+    "essential_KO_lethal_recall": 0.442,
+    "nonessential_KO_survive_spec": 0.93,
+    "overkill_breakdown": {
+      "metabolic_FBA": 9,
+      "informational": 5
+    },
+    "conditional_flips": "4/4",
+    "SOS_derepression": true,
+    "crp_logic_ok": true,
+    "essentiality_MCC_vs_Keio": 0.411,
+    "essentiality_conf": {
+      "tp": 28,
+      "fp": 23,
+      "tn": 314,
+      "fn": 35
+    }
+  },
+  "failures": []
+}
