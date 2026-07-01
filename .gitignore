@@ -80,3 +80,5 @@ data/external_data/human/refGene.txt.gz
 
 data/external_data/human/string_physical.txt.gz
 data/external_data/human/string_aliases.txt.gz
+
+data/external_data/human/uniprot_localization.tsv
