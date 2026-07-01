@@ -1,0 +1,187 @@
+{
+  "tf_median_loeuf": 0.416,
+  "all_median_loeuf": 0.911,
+  "tf_essential_frac": 0.039,
+  "genome_essential_frac": 0.034,
+  "ceg_mean_regulators": 0.42,
+  "neg_mean_regulators": 0.25,
+  "master_regulators": [
+    {
+      "tf": "E2F1",
+      "ess_targets": 14,
+      "targets": 134,
+      "frac": 0.1,
+      "loeuf": 0.225
+    },
+    {
+      "tf": "MYC",
+      "ess_targets": 11,
+      "targets": 100,
+      "frac": 0.11,
+      "loeuf": 0.164
+    },
+    {
+      "tf": "TP53",
+      "ess_targets": 11,
+      "targets": 164,
+      "frac": 0.07,
+      "loeuf": 0.469
+    },
+    {
+      "tf": "SP1",
+      "ess_targets": 8,
+      "targets": 472,
+      "frac": 0.02,
+      "loeuf": 0.1
+    },
+    {
+      "tf": "MYCN",
+      "ess_targets": 6,
+      "targets": 45,
+      "frac": 0.13,
+      "loeuf": 0.412
+    },
+    {
+      "tf": "E2F4",
+      "ess_targets": 5,
+      "targets": 23,
+      "frac": 0.22,
+      "loeuf": 0.49
+    },
+    {
+      "tf": "EP300",
+      "ess_targets": 5,
+      "targets": 56,
+      "frac": 0.09,
+      "loeuf": 0.099
+    },
+    {
+      "tf": "YY1",
+      "ess_targets": 5,
+      "targets": 91,
+      "frac": 0.05,
+      "loeuf": 0.198
+    },
+    {
+      "tf": "CREB1",
+      "ess_targets": 4,
+      "targets": 90,
+      "frac": 0.04,
+      "loeuf": 0.223
+    },
+    {
+      "tf": "EZH2",
+      "ess_targets": 4,
+      "targets": 40,
+      "frac": 0.1,
+      "loeuf": 0.146
+    },
+    {
+      "tf": "HDAC1",
+      "ess_targets": 4,
+      "targets": 71,
+      "frac": 0.06,
+      "loeuf": 0.405
+    },
+    {
+      "tf": "HIF1A",
+      "ess_targets": 4,
+      "targets": 83,
+      "frac": 0.05,
+      "loeuf": 0.309
+    },
+    {
+      "tf": "JUN",
+      "ess_targets": 4,
+      "targets": 149,
+      "frac": 0.03,
+      "loeuf": 1.02
+    },
+    {
+      "tf": "RB1",
+      "ess_targets": 4,
+      "targets": 31,
+      "frac": 0.13,
+      "loeuf": 0.126
+    },
+    {
+      "tf": "RELA",
+      "ess_targets": 4,
+      "targets": 301,
+      "frac": 0.01,
+      "loeuf": 0.181
+    },
+    {
+      "tf": "STAT3",
+      "ess_targets": 4,
+      "targets": 142,
+      "frac": 0.03,
+      "loeuf": 0.095
+    },
+    {
+      "tf": "WT1",
+      "ess_targets": 4,
+      "targets": 57,
+      "frac": 0.07,
+      "loeuf": 0.247
+    },
+    {
+      "tf": "APC",
+      "ess_targets": 3,
+      "targets": 12,
+      "frac": 0.25,
+      "loeuf": 0.161
+    },
+    {
+      "tf": "CTCF",
+      "ess_targets": 3,
+      "targets": 30,
+      "frac": 0.1,
+      "loeuf": 0.148
+    },
+    {
+      "tf": "E2F3",
+      "ess_targets": 3,
+      "targets": 13,
+      "frac": 0.23,
+      "loeuf": 0.349
+    }
+  ],
+  "adaptation_regulators": {
+    "EPAS1": [
+      "HIF3A",
+      "HOXA1",
+      "RELA",
+      "STAT3",
+      "USF2",
+      "YY1"
+    ],
+    "EGLN1": [
+      "ETV4",
+      "HIF1A",
+      "SIRT1"
+    ],
+    "SLC24A5": [],
+    "SLC45A2": [],
+    "MC1R": [
+      "MITF"
+    ],
+    "LCT": [
+      "CDX2",
+      "HNF1A",
+      "HOXC11",
+      "POU2F1"
+    ],
+    "FADS1": [],
+    "UCP1": [
+      "PPARA",
+      "VDR"
+    ],
+    "G6PD": [
+      "CREM"
+    ],
+    "ACKR1": [
+      "DBP"
+    ]
+  }
+}
