@@ -1,0 +1,187 @@
+{
+  "env_table": {
+    "UV_exposure": {
+      "afr": 9,
+      "amr": 7,
+      "eas": 5,
+      "sas": 9,
+      "nfe": 3,
+      "fin": 2
+    },
+    "latitude_abs": {
+      "afr": 5,
+      "amr": 15,
+      "eas": 35,
+      "sas": 20,
+      "nfe": 50,
+      "fin": 62
+    },
+    "winter_cold": {
+      "afr": 1,
+      "amr": 3,
+      "eas": 6,
+      "sas": 2,
+      "nfe": 7,
+      "fin": 9
+    },
+    "dairy_history": {
+      "afr": 2,
+      "amr": 4,
+      "eas": 1,
+      "sas": 5,
+      "nfe": 9,
+      "fin": 9
+    },
+    "malaria_burden": {
+      "afr": 9,
+      "amr": 4,
+      "eas": 2,
+      "sas": 7,
+      "nfe": 1,
+      "fin": 0
+    }
+  },
+  "results": [
+    {
+      "gene": "EPAS1",
+      "variant": "p.Thr766Pro",
+      "expected": "altitude/hypoxia (high-altitude, e.g. Tibet",
+      "best_env": "malaria_burden",
+      "r": 0.64,
+      "all_corr": {
+        "UV_exposure": 0.47,
+        "latitude_abs": -0.57,
+        "winter_cold": -0.51,
+        "dairy_history": -0.6,
+        "malaria_burden": 0.64
+      }
+    },
+    {
+      "gene": "EGLN1",
+      "variant": "p.Gln157His",
+      "expected": "altitude/hypoxia (EAS/Andean)",
+      "best_env": "dairy_history",
+      "r": 0.89,
+      "all_corr": {
+        "UV_exposure": -0.82,
+        "latitude_abs": 0.85,
+        "winter_cold": 0.8,
+        "dairy_history": 0.89,
+        "malaria_burden": -0.69
+      }
+    },
+    {
+      "gene": "SLC24A5",
+      "variant": "p.Thr111Ala",
+      "expected": "UV/latitude",
+      "best_env": "dairy_history",
+      "r": -0.97,
+      "all_corr": {
+        "UV_exposure": 0.48,
+        "latitude_abs": -0.61,
+        "winter_cold": -0.47,
+        "dairy_history": -0.97,
+        "malaria_burden": 0.42
+      }
+    },
+    {
+      "gene": "SLC45A2",
+      "variant": "p.Leu374Phe",
+      "expected": "UV/latitude",
+      "best_env": "dairy_history",
+      "r": 0.93,
+      "all_corr": {
+        "UV_exposure": -0.8,
+        "latitude_abs": 0.78,
+        "winter_cold": 0.74,
+        "dairy_history": 0.93,
+        "malaria_burden": -0.69
+      }
+    },
+    {
+      "gene": "MC1R",
+      "variant": "p.Arg163Gln",
+      "expected": "UV",
+      "best_env": "dairy_history",
+      "r": -0.45,
+      "all_corr": {
+        "UV_exposure": -0.24,
+        "latitude_abs": 0.11,
+        "winter_cold": 0.29,
+        "dairy_history": -0.45,
+        "malaria_burden": -0.43
+      }
+    },
+    {
+      "gene": "LCT",
+      "variant": "p.Asn1639Ser",
+      "expected": "diet",
+      "best_env": "latitude_abs",
+      "r": 0.92,
+      "all_corr": {
+        "UV_exposure": -0.92,
+        "latitude_abs": 0.92,
+        "winter_cold": 0.88,
+        "dairy_history": 0.91,
+        "malaria_burden": -0.85
+      }
+    },
+    {
+      "gene": "FADS1",
+      "variant": "p.Thr106Pro",
+      "expected": "diet",
+      "best_env": "latitude_abs",
+      "r": 0.39,
+      "all_corr": {
+        "UV_exposure": -0.36,
+        "latitude_abs": 0.39,
+        "winter_cold": 0.38,
+        "dairy_history": 0.35,
+        "malaria_burden": -0.17
+      }
+    },
+    {
+      "gene": "UCP1",
+      "variant": "p.Met229Leu",
+      "expected": "cold/temperature",
+      "best_env": "malaria_burden",
+      "r": -0.38,
+      "all_corr": {
+        "UV_exposure": -0.13,
+        "latitude_abs": 0.2,
+        "winter_cold": 0.19,
+        "dairy_history": 0.21,
+        "malaria_burden": -0.38
+      }
+    },
+    {
+      "gene": "G6PD",
+      "variant": "p.Asn156Asp",
+      "expected": "pathogen",
+      "best_env": "malaria_burden",
+      "r": 0.72,
+      "all_corr": {
+        "UV_exposure": 0.53,
+        "latitude_abs": -0.61,
+        "winter_cold": -0.59,
+        "dairy_history": -0.44,
+        "malaria_burden": 0.72
+      }
+    },
+    {
+      "gene": "ACKR1",
+      "variant": "p.Gly44Asp",
+      "expected": "pathogen",
+      "best_env": "malaria_burden",
+      "r": 0.47,
+      "all_corr": {
+        "UV_exposure": 0.24,
+        "latitude_abs": -0.28,
+        "winter_cold": -0.34,
+        "dairy_history": 0.19,
+        "malaria_burden": 0.47
+      }
+    }
+  ],
+  "caveat": "n=6 ancestry groups with representative ancestral-environment values; illustrative of the approach, not a measured biobank GxE analysis. Direction depends on ancestral/derived polarization."
+}
