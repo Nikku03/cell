@@ -1,0 +1,335 @@
+{
+  "trrust_edges": 8427,
+  "tfs": 795,
+  "disease_genes": 5268,
+  "validation": {
+    "known_share_disease": 0.042,
+    "random_share_disease": 0.001,
+    "enrichment": 53.5,
+    "jaccard_auc": 0.53
+  },
+  "new_candidate_edges": 2059,
+  "grown_network_edges": 10486,
+  "top_new_edges": [
+    {
+      "tf": "HEY2",
+      "gene": "MAT2A",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:91387"
+      ]
+    },
+    {
+      "tf": "FHL2",
+      "gene": "TAF1A",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "FHL2",
+      "gene": "HAND2",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "FHL2",
+      "gene": "TMPO",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "FHL2",
+      "gene": "ANKRD1",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "HAND2",
+      "gene": "TAF1A",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "HAND2",
+      "gene": "FHL2",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "HAND2",
+      "gene": "TMPO",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "HAND2",
+      "gene": "ANKRD1",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "ANKRD1",
+      "gene": "TAF1A",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "ANKRD1",
+      "gene": "FHL2",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "ANKRD1",
+      "gene": "HAND2",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "ANKRD1",
+      "gene": "TMPO",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "ORPHA:154"
+      ]
+    },
+    {
+      "tf": "NR0B2",
+      "gene": "GHRL",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:601665"
+      ]
+    },
+    {
+      "tf": "NR0B2",
+      "gene": "AGRP",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:601665"
+      ]
+    },
+    {
+      "tf": "NR0B2",
+      "gene": "CARTPT",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:601665"
+      ]
+    },
+    {
+      "tf": "NR0B2",
+      "gene": "SDC3",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:601665"
+      ]
+    },
+    {
+      "tf": "NR0B2",
+      "gene": "ADRB3",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:601665"
+      ]
+    },
+    {
+      "tf": "NR0B2",
+      "gene": "UCP3",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:601665"
+      ]
+    },
+    {
+      "tf": "RB1CC1",
+      "gene": "NQO2",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:114480"
+      ]
+    },
+    {
+      "tf": "RB1CC1",
+      "gene": "HMMR",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:114480"
+      ]
+    },
+    {
+      "tf": "RB1CC1",
+      "gene": "XRCC3",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:114480"
+      ]
+    },
+    {
+      "tf": "RB1CC1",
+      "gene": "PHB1",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:114480"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "IRS2",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "MAPK8IP1",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "SLC30A8",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "HMGA1",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "IRS1",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "RETN",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "IGF2BP2",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "PTPN1",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "PPP1R3A",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "MTNR1B",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "TCF7L2",
+      "gene": "GPD2",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "HMGA1",
+      "gene": "IRS2",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "HMGA1",
+      "gene": "TCF7L2",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "HMGA1",
+      "gene": "MAPK8IP1",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "HMGA1",
+      "gene": "SLC30A8",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "HMGA1",
+      "gene": "IRS1",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    },
+    {
+      "tf": "HMGA1",
+      "gene": "RETN",
+      "jaccard": 1.0,
+      "shared_disease": [
+        "OMIM:125853"
+      ]
+    }
+  ]
+}
