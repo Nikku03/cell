@@ -1,0 +1,54 @@
+{
+  "by_part": {
+    "active_site": {
+      "pathogenic": 0.3,
+      "common_benign": 0.0,
+      "adaptive": 0.0
+    },
+    "metal_binding": {
+      "pathogenic": 1.0,
+      "common_benign": 0.0,
+      "adaptive": 0.0
+    },
+    "ligand_binding": {
+      "pathogenic": 1.8,
+      "common_benign": 0.0,
+      "adaptive": 0.0
+    },
+    "dna_binding": {
+      "pathogenic": 7.7,
+      "common_benign": 0.0,
+      "adaptive": 0.0
+    },
+    "disulfide": {
+      "pathogenic": 8.9,
+      "common_benign": 0.0,
+      "adaptive": 0.0
+    },
+    "near_active_site": {
+      "pathogenic": 6.9,
+      "common_benign": 2.7,
+      "adaptive": 0.0
+    },
+    "transmembrane": {
+      "pathogenic": 3.0,
+      "common_benign": 16.4,
+      "adaptive": 33.3
+    },
+    "buried_core": {
+      "pathogenic": 52.9,
+      "common_benign": 26.0,
+      "adaptive": 16.7
+    },
+    "surface": {
+      "pathogenic": 17.6,
+      "common_benign": 54.8,
+      "adaptive": 50.0
+    }
+  },
+  "n": {
+    "pathogenic": 2770,
+    "common_benign": 73,
+    "adaptive": 6
+  }
+}
