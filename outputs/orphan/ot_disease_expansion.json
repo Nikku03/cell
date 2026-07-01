@@ -1,0 +1,1073 @@
+{
+  "n_tfs": 48,
+  "total_associations": 94977,
+  "drug_target_tfs": [],
+  "evidence_totals": {
+    "genetic_literature": 135.65741650332598,
+    "literature": 90.89358029092222,
+    "genetic_association": 242.26807545761758,
+    "somatic_mutation": 35.018119033566265,
+    "animal_model": 78.44999281030123,
+    "clinical": 0.22797404910435792,
+    "affected_pathway": 31.13997724908906,
+    "rna_expression": 0.07404727982527316
+  },
+  "per_tf": [
+    {
+      "gene": "TP53",
+      "n_diseases": 5638,
+      "top": [
+        [
+          "Li-Fraumeni syndrome",
+          0.88
+        ],
+        [
+          "hepatocellular carcinoma",
+          0.8
+        ],
+        [
+          "head and neck squamous cell carcinoma",
+          0.78
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 5.0,
+      "genetic": 7.2
+    },
+    {
+      "gene": "MYC",
+      "n_diseases": 2146,
+      "top": [
+        [
+          "Burkitt lymphoma",
+          0.63
+        ],
+        [
+          "neurodegenerative disease",
+          0.54
+        ],
+        [
+          "urinary bladder carcinoma",
+          0.54
+        ]
+      ],
+      "dominant_evidence": "literature",
+      "druggable": false,
+      "somatic": 2.4,
+      "genetic": 4.1
+    },
+    {
+      "gene": "MYCN",
+      "n_diseases": 1891,
+      "top": [
+        [
+          "Feingold syndrome type 1",
+          0.82
+        ],
+        [
+          "Feingold syndrome",
+          0.69
+        ],
+        [
+          "megalencephaly-polydactyly syndrome",
+          0.68
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 1.0,
+      "genetic": 5.2
+    },
+    {
+      "gene": "E2F1",
+      "n_diseases": 1068,
+      "top": [
+        [
+          "benign prostatic hyperplasia",
+          0.45
+        ],
+        [
+          "neurodegenerative disease",
+          0.45
+        ],
+        [
+          "Alzheimer disease",
+          0.31
+        ]
+      ],
+      "dominant_evidence": "affected_pathway",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 1.0
+    },
+    {
+      "gene": "SP1",
+      "n_diseases": 826,
+      "top": [
+        [
+          "neurodegenerative disease",
+          0.54
+        ],
+        [
+          "severe acute respiratory syndrome",
+          0.37
+        ],
+        [
+          "autoimmune disorder of central nervous system",
+          0.37
+        ]
+      ],
+      "dominant_evidence": "literature",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 0.0
+    },
+    {
+      "gene": "NFKB1",
+      "n_diseases": 2909,
+      "top": [
+        [
+          "common variable immunodeficiency",
+          0.72
+        ],
+        [
+          "primary biliary cholangitis",
+          0.53
+        ],
+        [
+          "immunodeficiency disease",
+          0.53
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 6.5
+    },
+    {
+      "gene": "RELA",
+      "n_diseases": 1146,
+      "top": [
+        [
+          "mucocutaneous ulceration, chronic",
+          0.64
+        ],
+        [
+          "neurodegenerative disease",
+          0.46
+        ],
+        [
+          "Alzheimer disease",
+          0.38
+        ]
+      ],
+      "dominant_evidence": "affected_pathway",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 0.9
+    },
+    {
+      "gene": "STAT3",
+      "n_diseases": 1976,
+      "top": [
+        [
+          "Autosomal dominant hyper-IgE syndrome",
+          0.78
+        ],
+        [
+          "autoimmune disease",
+          0.76
+        ],
+        [
+          "hyper-IgE recurrent infection syndrome 1, autosomal dominant",
+          0.75
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 5.9
+    },
+    {
+      "gene": "HIF1A",
+      "n_diseases": 1827,
+      "top": [
+        [
+          "Enchondromatosis",
+          0.38
+        ],
+        [
+          "breast ductal adenocarcinoma",
+          0.37
+        ],
+        [
+          "colorectal adenocarcinoma",
+          0.37
+        ]
+      ],
+      "dominant_evidence": "somatic_mutation",
+      "druggable": false,
+      "somatic": 4.3,
+      "genetic": 0.6
+    },
+    {
+      "gene": "PAX6",
+      "n_diseases": 3569,
+      "top": [
+        [
+          "isolated aniridia",
+          0.85
+        ],
+        [
+          "Peters anomaly",
+          0.8
+        ],
+        [
+          "aniridia",
+          0.76
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 6.7
+    },
+    {
+      "gene": "PAX3",
+      "n_diseases": 2202,
+      "top": [
+        [
+          "Waardenburg syndrome type 1",
+          0.85
+        ],
+        [
+          "Waardenburg syndrome type 3",
+          0.76
+        ],
+        [
+          "craniofacial-deafness-hand syndrome",
+          0.74
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0.6,
+      "genetic": 6.5
+    },
+    {
+      "gene": "PAX8",
+      "n_diseases": 3248,
+      "top": [
+        [
+          "hypothyroidism, congenital, nongoitrous, 2",
+          0.72
+        ],
+        [
+          "congenital hypothyroidism",
+          0.6
+        ],
+        [
+          "hypothyroidism",
+          0.57
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 5.4
+    },
+    {
+      "gene": "GATA4",
+      "n_diseases": 1653,
+      "top": [
+        [
+          "atrial septal defect 2",
+          0.79
+        ],
+        [
+          "ventricular septal defect 1",
+          0.76
+        ],
+        [
+          "atrioventricular septal defect 4",
+          0.74
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 5.8
+    },
+    {
+      "gene": "GATA1",
+      "n_diseases": 709,
+      "top": [
+        [
+          "thrombocytopenia, X-linked, with or without dyserythropoietic anemia",
+          0.77
+        ],
+        [
+          "X-linked dyserythropoetic anemia with abnormal platelets and neutropenia",
+          0.76
+        ],
+        [
+          "Diamond-Blackfan anemia",
+          0.74
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 6.4
+    },
+    {
+      "gene": "GATA3",
+      "n_diseases": 4855,
+      "top": [
+        [
+          "hypoparathyroidism-deafness-renal disease syndrome",
+          0.82
+        ],
+        [
+          "Hypoparathyroidism - deafness - renal disease",
+          0.78
+        ],
+        [
+          "breast adenocarcinoma",
+          0.57
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 1.2,
+      "genetic": 5.1
+    },
+    {
+      "gene": "TBX5",
+      "n_diseases": 1281,
+      "top": [
+        [
+          "Holt-Oram syndrome",
+          0.83
+        ],
+        [
+          "aortic valve disease 2",
+          0.57
+        ],
+        [
+          "atrial fibrillation",
+          0.56
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 5.9
+    },
+    {
+      "gene": "SOX9",
+      "n_diseases": 3690,
+      "top": [
+        [
+          "campomelic dysplasia",
+          0.86
+        ],
+        [
+          "Pierre-Robin sequence",
+          0.56
+        ],
+        [
+          "neurodegenerative disease",
+          0.55
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0.8,
+      "genetic": 3.7
+    },
+    {
+      "gene": "SOX2",
+      "n_diseases": 4297,
+      "top": [
+        [
+          "anophthalmia/microphthalmia-esophageal atresia syndrome",
+          0.82
+        ],
+        [
+          "Anophthalmia/microphthalmia - esophageal atresia",
+          0.77
+        ],
+        [
+          "neurodegenerative disease",
+          0.55
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 5.1
+    },
+    {
+      "gene": "SOX10",
+      "n_diseases": 1728,
+      "top": [
+        [
+          "PCWH syndrome",
+          0.81
+        ],
+        [
+          "Waardenburg syndrome type 2E",
+          0.8
+        ],
+        [
+          "Neurologic Waardenburg-Shah syndrome",
+          0.77
+        ]
+      ],
+      "dominant_evidence": "genetic_literature",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 4.9
+    },
+    {
+      "gene": "RUNX1",
+      "n_diseases": 1379,
+      "top": [
+        [
+          "hereditary thrombocytopenia and hematological cancer predisposition syndrome associated with RUNX1",
+          0.81
+        ],
+        [
+          "acute myeloid leukemia",
+          0.75
+        ],
+        [
+          "hereditary thrombocytopenia and hematologic cancer predisposition syndrome",
+          0.72
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0.8,
+      "genetic": 7.0
+    },
+    {
+      "gene": "RUNX2",
+      "n_diseases": 4257,
+      "top": [
+        [
+          "cleidocranial dysplasia 1",
+          0.85
+        ],
+        [
+          "metaphyseal dysplasia-maxillary hypoplasia-brachydacty syndrome",
+          0.72
+        ],
+        [
+          "Metaphyseal dysplasia - maxillary hypoplasia - brachydacty",
+          0.72
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 4.8
+    },
+    {
+      "gene": "HNF1A",
+      "n_diseases": 1892,
+      "top": [
+        [
+          "MODY",
+          0.84
+        ],
+        [
+          "type 2 diabetes mellitus",
+          0.78
+        ],
+        [
+          "diabetes mellitus",
+          0.73
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0.7,
+      "genetic": 7.2
+    },
+    {
+      "gene": "HNF1B",
+      "n_diseases": 695,
+      "top": [
+        [
+          "renal cysts and diabetes syndrome",
+          0.85
+        ],
+        [
+          "type 2 diabetes mellitus",
+          0.77
+        ],
+        [
+          "maturity-onset diabetes of the young",
+          0.68
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0.0,
+      "genetic": 5.9
+    },
+    {
+      "gene": "HNF4A",
+      "n_diseases": 1631,
+      "top": [
+        [
+          "MODY",
+          0.82
+        ],
+        [
+          "type 2 diabetes mellitus",
+          0.76
+        ],
+        [
+          "renal cysts and diabetes syndrome",
+          0.74
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0.2,
+      "genetic": 6.9
+    },
+    {
+      "gene": "PDX1",
+      "n_diseases": 712,
+      "top": [
+        [
+          "pancreatic agenesis 1",
+          0.72
+        ],
+        [
+          "maturity-onset diabetes of the young type 4",
+          0.71
+        ],
+        [
+          "MODY",
+          0.71
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0.4,
+      "genetic": 5.5
+    },
+    {
+      "gene": "NKX2-5",
+      "n_diseases": 1575,
+      "top": [
+        [
+          "Atrial septal defect - atrioventricular conduction defects",
+          0.78
+        ],
+        [
+          "atrial septal defect 7",
+          0.76
+        ],
+        [
+          "Tetralogy of Fallot",
+          0.76
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 1.1,
+      "genetic": 6.7
+    },
+    {
+      "gene": "NKX2-1",
+      "n_diseases": 2151,
+      "top": [
+        [
+          "brain-lung-thyroid syndrome",
+          0.83
+        ],
+        [
+          "Benign familial chorea",
+          0.81
+        ],
+        [
+          "choreatic disease",
+          0.66
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0.3,
+      "genetic": 4.8
+    },
+    {
+      "gene": "CRX",
+      "n_diseases": 757,
+      "top": [
+        [
+          "Leber congenital amaurosis",
+          0.74
+        ],
+        [
+          "cone-rod dystrophy 2",
+          0.73
+        ],
+        [
+          "Leber congenital amaurosis 7",
+          0.72
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 6.7
+    },
+    {
+      "gene": "NRL",
+      "n_diseases": 701,
+      "top": [
+        [
+          "retinitis pigmentosa",
+          0.8
+        ],
+        [
+          "Retinal dystrophy",
+          0.51
+        ],
+        [
+          "enhanced S-cone syndrome",
+          0.5
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 4.4
+    },
+    {
+      "gene": "FOXP2",
+      "n_diseases": 1234,
+      "top": [
+        [
+          "childhood apraxia of speech",
+          0.78
+        ],
+        [
+          "hereditary disease",
+          0.53
+        ],
+        [
+          "attention deficit-hyperactivity disorder",
+          0.53
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 6.5
+    },
+    {
+      "gene": "FOXP3",
+      "n_diseases": 3498,
+      "top": [
+        [
+          "immune dysregulation-polyendocrinopathy-enteropathy-X-linked syndrome",
+          0.85
+        ],
+        [
+          "type 1 diabetes mellitus",
+          0.55
+        ],
+        [
+          "hydrops fetalis",
+          0.5
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 3.9
+    },
+    {
+      "gene": "FOXA2",
+      "n_diseases": 445,
+      "top": [
+        [
+          "hypothyroidism",
+          0.49
+        ],
+        [
+          "nodular goiter",
+          0.46
+        ],
+        [
+          "nontoxic goiter",
+          0.45
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0.7,
+      "genetic": 4.9
+    },
+    {
+      "gene": "MECP2",
+      "n_diseases": 3231,
+      "top": [
+        [
+          "Rett syndrome",
+          0.88
+        ],
+        [
+          "X-linked intellectual disability-psychosis-macroorchidism syndrome",
+          0.81
+        ],
+        [
+          "severe neonatal-onset encephalopathy with microcephaly",
+          0.79
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 7.0
+    },
+    {
+      "gene": "WT1",
+      "n_diseases": 1638,
+      "top": [
+        [
+          "Denys-Drash syndrome",
+          0.85
+        ],
+        [
+          "Wilms tumor 1",
+          0.83
+        ],
+        [
+          "Frasier syndrome",
+          0.79
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0.5,
+      "genetic": 6.7
+    },
+    {
+      "gene": "CEBPA",
+      "n_diseases": 1091,
+      "top": [
+        [
+          "acute myeloid leukemia",
+          0.84
+        ],
+        [
+          "Inherited cancer-predisposing syndrome",
+          0.39
+        ],
+        [
+          "hereditary neoplastic syndrome",
+          0.39
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 2.5,
+      "genetic": 2.8
+    },
+    {
+      "gene": "SPI1",
+      "n_diseases": 1007,
+      "top": [
+        [
+          "agammaglobulinemia 10, autosomal dominant",
+          0.72
+        ],
+        [
+          "agammaglobulinemia",
+          0.54
+        ],
+        [
+          "neurodegenerative disease",
+          0.53
+        ]
+      ],
+      "dominant_evidence": "affected_pathway",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 2.6
+    },
+    {
+      "gene": "IKZF1",
+      "n_diseases": 814,
+      "top": [
+        [
+          "pancytopenia due to IKZF1 mutations",
+          0.8
+        ],
+        [
+          "acute lymphoblastic leukemia",
+          0.66
+        ],
+        [
+          "immunodeficiency disease",
+          0.5
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 2.5,
+      "genetic": 4.4
+    },
+    {
+      "gene": "MEF2C",
+      "n_diseases": 607,
+      "top": [
+        [
+          "neurodevelopmental disorder with hypotonia, stereotypic hand movements, and impaired language",
+          0.77
+        ],
+        [
+          "5q14.3 microdeletion syndrome",
+          0.65
+        ],
+        [
+          "autism spectrum disorder",
+          0.55
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 5.5
+    },
+    {
+      "gene": "TBX1",
+      "n_diseases": 4170,
+      "top": [
+        [
+          "22q11.2 deletion syndrome",
+          0.84
+        ],
+        [
+          "conotruncal heart malformations",
+          0.65
+        ],
+        [
+          "Tetralogy of Fallot",
+          0.57
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 4.3
+    },
+    {
+      "gene": "GLI3",
+      "n_diseases": 5592,
+      "top": [
+        [
+          "Greig cephalopolysyndactyly syndrome",
+          0.84
+        ],
+        [
+          "Pallister-Hall syndrome",
+          0.81
+        ],
+        [
+          "polydactyly, postaxial, type A1",
+          0.78
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 6.2
+    },
+    {
+      "gene": "ATRX",
+      "n_diseases": 720,
+      "top": [
+        [
+          "alpha thalassemia-X-linked intellectual disability syndrome",
+          0.85
+        ],
+        [
+          "Alpha-thalassemia - X-linked intellectual disability syndrome",
+          0.84
+        ],
+        [
+          "intellectual disability-hypotonic facies syndrome, X-linked, 1",
+          0.79
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 1.4,
+      "genetic": 6.9
+    },
+    {
+      "gene": "SMAD4",
+      "n_diseases": 1117,
+      "top": [
+        [
+          "juvenile polyposis syndrome",
+          0.84
+        ],
+        [
+          "juvenile polyposis/hereditary hemorrhagic telangiectasia syndrome",
+          0.83
+        ],
+        [
+          "Myhre syndrome",
+          0.81
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 2.4,
+      "genetic": 5.3
+    },
+    {
+      "gene": "CTCF",
+      "n_diseases": 611,
+      "top": [
+        [
+          "CTCF-related neurodevelopmental disorder",
+          0.78
+        ],
+        [
+          "Intellectual disability",
+          0.66
+        ],
+        [
+          "hereditary disease",
+          0.54
+        ]
+      ],
+      "dominant_evidence": "somatic_mutation",
+      "druggable": false,
+      "somatic": 2.5,
+      "genetic": 2.5
+    },
+    {
+      "gene": "KLF1",
+      "n_diseases": 338,
+      "top": [
+        [
+          "Congenital dyserythropoietic anemia type IV",
+          0.76
+        ],
+        [
+          "congenital dyserythropoietic anemia type 4",
+          0.76
+        ],
+        [
+          "Hereditary persistence of fetal hemoglobin - beta-thalassemia",
+          0.56
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 4.5
+    },
+    {
+      "gene": "CREBBP",
+      "n_diseases": 2727,
+      "top": [
+        [
+          "Rubinstein-Taybi syndrome due to CREBBP mutations",
+          0.84
+        ],
+        [
+          "Menke-Hennekam syndrome 1",
+          0.77
+        ],
+        [
+          "Rubinstein-Taybi syndrome",
+          0.76
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 1.6,
+      "genetic": 4.5
+    },
+    {
+      "gene": "EP300",
+      "n_diseases": 1938,
+      "top": [
+        [
+          "Rubinstein-Taybi syndrome due to EP300 haploinsufficiency",
+          0.8
+        ],
+        [
+          "Menke-Hennekam syndrome 2",
+          0.68
+        ],
+        [
+          "cancer",
+          0.6
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 2.1,
+      "genetic": 4.2
+    },
+    {
+      "gene": "TCF4",
+      "n_diseases": 1192,
+      "top": [
+        [
+          "Pitt-Hopkins syndrome",
+          0.85
+        ],
+        [
+          "corneal dystrophy, Fuchs endothelial, 3",
+          0.69
+        ],
+        [
+          "Fuchs endothelial corneal dystrophy",
+          0.62
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 6.6
+    },
+    {
+      "gene": "ZEB2",
+      "n_diseases": 598,
+      "top": [
+        [
+          "Mowat-Wilson syndrome",
+          0.83
+        ],
+        [
+          "hereditary disease",
+          0.55
+        ],
+        [
+          "coronary artery disorder",
+          0.5
+        ]
+      ],
+      "dominant_evidence": "genetic_association",
+      "druggable": false,
+      "somatic": 0,
+      "genetic": 6.3
+    }
+  ]
+}
