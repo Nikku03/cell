@@ -1,0 +1,105 @@
+{
+  "per_tf": [
+    {
+      "tf": "TP53",
+      "path": 244,
+      "in_dna": 229,
+      "frac_mut_in_dna": 0.94,
+      "dna_domain_frac": 0.49
+    },
+    {
+      "tf": "PAX6",
+      "path": 90,
+      "in_dna": 69,
+      "frac_mut_in_dna": 0.77,
+      "dna_domain_frac": 0.44
+    },
+    {
+      "tf": "GATA4",
+      "path": 20,
+      "in_dna": 8,
+      "frac_mut_in_dna": 0.4,
+      "dna_domain_frac": 0.11
+    },
+    {
+      "tf": "TBX5",
+      "path": 32,
+      "in_dna": 25,
+      "frac_mut_in_dna": 0.78,
+      "dna_domain_frac": 0.35
+    },
+    {
+      "tf": "HNF1A",
+      "path": 140,
+      "in_dna": 113,
+      "frac_mut_in_dna": 0.81,
+      "dna_domain_frac": 0.28
+    },
+    {
+      "tf": "HNF4A",
+      "path": 67,
+      "in_dna": 25,
+      "frac_mut_in_dna": 0.37,
+      "dna_domain_frac": 0.16
+    },
+    {
+      "tf": "RUNX1",
+      "path": 47,
+      "in_dna": 33,
+      "frac_mut_in_dna": 0.7,
+      "dna_domain_frac": 0.28
+    },
+    {
+      "tf": "MECP2",
+      "path": 133,
+      "in_dna": 2,
+      "frac_mut_in_dna": 0.02,
+      "dna_domain_frac": 0.05
+    },
+    {
+      "tf": "FOXP2",
+      "path": 5,
+      "in_dna": 3,
+      "frac_mut_in_dna": 0.6,
+      "dna_domain_frac": 0.22
+    },
+    {
+      "tf": "SOX9",
+      "path": 47,
+      "in_dna": 37,
+      "frac_mut_in_dna": 0.79,
+      "dna_domain_frac": 0.14
+    },
+    {
+      "tf": "NKX2-5",
+      "path": 27,
+      "in_dna": 20,
+      "frac_mut_in_dna": 0.74,
+      "dna_domain_frac": 0.19
+    },
+    {
+      "tf": "GATA1",
+      "path": 14,
+      "in_dna": 10,
+      "frac_mut_in_dna": 0.71,
+      "dna_domain_frac": 0.12
+    },
+    {
+      "tf": "FOXP3",
+      "path": 23,
+      "in_dna": 21,
+      "frac_mut_in_dna": 0.91,
+      "dna_domain_frac": 0.36
+    },
+    {
+      "tf": "POU3F4",
+      "path": 28,
+      "in_dna": 25,
+      "frac_mut_in_dna": 0.89,
+      "dna_domain_frac": 0.37
+    }
+  ],
+  "total_pathogenic": 917,
+  "in_dna_binding": 620,
+  "frac": 0.676
+}

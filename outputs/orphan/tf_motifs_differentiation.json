@@ -1,0 +1,63 @@
+{
+  "tfs": 795,
+  "tf_tf_edges": 2056,
+  "ffl": {
+    "obs": 1254,
+    "z": 6.1
+  },
+  "mutual": {
+    "obs": 103,
+    "z": 12.3
+  },
+  "autoreg": {
+    "pos": 7,
+    "neg": 4
+  },
+  "toggle_switches": 4,
+  "toggle_examples": [
+    [
+      "BCL6",
+      "IRF4"
+    ],
+    [
+      "HOXA9",
+      "NFKB1"
+    ],
+    [
+      "KLF12",
+      "TFAP2A"
+    ],
+    [
+      "PGR",
+      "RELA"
+    ]
+  ],
+  "mutual_pairs": 103,
+  "sim_distinct_fates": 2,
+  "sim_finals": [
+    [
+      0.06,
+      4.0
+    ],
+    [
+      4.0,
+      0.06
+    ],
+    [
+      0.06,
+      4.0
+    ],
+    [
+      4.0,
+      0.06
+    ],
+    [
+      4.0,
+      0.06
+    ],
+    [
+      0.06,
+      4.0
+    ]
+  ]
+}
