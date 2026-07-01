@@ -1,0 +1,87 @@
+{
+  "n_variants": 17122,
+  "labeled": 3706,
+  "path": 3020,
+  "benign": 686,
+  "vus": 13416,
+  "oof_auc": 0.886,
+  "single_feature_auc": {
+    "esm_llr": 0.649,
+    "burial": 0.84,
+    "plddt": 0.788,
+    "at_func": 0.576,
+    "dist_func": 0.68,
+    "loeuf": 0.71
+  },
+  "weights": {
+    "esm_llr": -0.826,
+    "burial": 0.792,
+    "plddt": 0.619,
+    "at_func": 0.159,
+    "dist_func": -0.011,
+    "loeuf": 0.58
+  },
+  "vus_likely_pathogenic": 8952,
+  "top_vus": [
+    {
+      "gene": "LDLR",
+      "var": "G478W",
+      "path_score": 0.998
+    },
+    {
+      "gene": "LDLR",
+      "var": "W490S",
+      "path_score": 0.998
+    },
+    {
+      "gene": "LDLR",
+      "var": "W533G",
+      "path_score": 0.998
+    },
+    {
+      "gene": "STK11",
+      "var": "L183P",
+      "path_score": 0.998
+    },
+    {
+      "gene": "LDLR",
+      "var": "L479P",
+      "path_score": 0.997
+    },
+    {
+      "gene": "LDLR",
+      "var": "P563H",
+      "path_score": 0.997
+    },
+    {
+      "gene": "LDLR",
+      "var": "W577C",
+      "path_score": 0.997
+    },
+    {
+      "gene": "LDLR",
+      "var": "W577C",
+      "path_score": 0.997
+    },
+    {
+      "gene": "LDLR",
+      "var": "W620S",
+      "path_score": 0.997
+    },
+    {
+      "gene": "LDLR",
+      "var": "W620C",
+      "path_score": 0.997
+    },
+    {
+      "gene": "PTEN",
+      "var": "I122N",
+      "path_score": 0.997
+    },
+    {
+      "gene": "PTEN",
+      "var": "H123P",
+      "path_score": 0.997
+    }
+  ]
+}
