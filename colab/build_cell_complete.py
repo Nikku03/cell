@@ -1,0 +1,124 @@
+"""Assemble the COMPLETE cell data model: every localized protein with its compartment,
+cellular PROCESS (transcription/translation/trafficking/transport/metabolism/replication/
+signaling/degradation/...), pathway, all our layers, the regulatory + PPI networks (for
+perturbation propagation), HIV hijack map, and dark-gene flags. -> cell_complete.json
+(consumed by the interactive perturbable cell app)."""
+import csv, json, gzip, re
+from collections import defaultdict
+from pathlib import Path
+OUT=Path("outputs/orphan"); H=Path("data/external_data/human")
+loc=json.load(open(H/"gene_compartment.json"))
+# Entrez -> symbol (for HIV host mapping)
+entrez2sym={}
+with gzip.open(H/"gene_info.gz","rt") as f:
+    next(f)
+    for l in f:
+        p=l.split("\t")
+        if len(p)>2 and p[0]=="9606": entrez2sym[p[1]]=p[2]
+# ENSG -> symbol; gene -> pathways
+ensp2sym={}; ensp2ensg={}
+for l in gzip.open(H/"string_aliases.txt.gz","rt"):
+    p=l.rstrip("\n").split("\t")
+    if len(p)<3: continue
+    if p[2]=="Ensembl_HGNC_symbol": ensp2sym[p[0]]=p[1]
+    elif p[2]=="Ensembl_HGNC_ensembl_gene_id": ensp2ensg[p[0]]=p[1]
+ensg2sym={ensp2ensg[e]:ensp2sym[e] for e in ensp2sym if e in ensp2ensg}
+GEN={"Metabolism","Signal Transduction","Immune System","Disease","Gene expression (Transcription)","Metabolism of proteins","Developmental Biology","Homeostasis","Metabolism of RNA"}
+paths=defaultdict(list)
+for l in open(H/"reactome_human.txt"):
+    p=l.rstrip("\n").split("\t")
+    if len(p)<4 or not p[0].startswith("ENSG"): continue
+    s=ensg2sym.get(p[0])
+    if s: paths[s].append(p[3])
+def toppath(g):
+    ps=[x for x in paths.get(g,[]) if x not in GEN]
+    return min(ps,key=len) if ps else (paths.get(g,[None])[0] or "")
+# PROCESS assignment
+def process(g,comp,istf):
+    t=" ".join(paths.get(g,[])).lower()
+    if istf or "transcription" in t or "rna polymerase ii" in t or "chromatin" in t: return "transcription"
+    if "translation" in t or "ribosom" in t or "trna aminoacyl" in t or "rrna" in t or "elongation" in t: return "translation"
+    if "dna replication" in t or "cell cycle" in t or "mitotic" in t or "s phase" in t or "dna repair" in t: return "replication/repair"
+    if "slc" in t or ("transport" in t) or "ion channel" in t or "aquaporin" in t: return "transport/uptake"
+    if any(k in t for k in["glycolysis","citric acid","oxidative phosphorylation","fatty acid","amino acid metab","nucleotide metab","pentose","cholesterol","gluconeogen","beta-oxidation","biosynthesis of","metabolism of"]): return "metabolism"
+    if "proteasome" in t or "ubiquitin" in t or "autophagy" in t or "lysosom" in t or "degradation" in t: return "degradation"
+    if "secret" in t or comp in("ER","Golgi") or "vesicle" in t or "exocyt" in t or "endocyt" in t: return "trafficking/secretion"
+    if "signal" in t or "receptor" in t or "kinase" in t or "gpcr" in t or "mapk" in t: return "signaling"
+    if "immune" in t or "interferon" in t or "cytokine" in t or "antigen" in t or "complement" in t: return "immune"
+    if "apopto" in t or "cell death" in t or "pyropto" in t: return "cell-death"
+    if comp=="mitochondrion": return "metabolism"
+    if comp in("plasma membrane","membrane"): return "transport/uptake"
+    if comp=="extracellular": return "trafficking/secretion"
+    if comp=="cytoskeleton": return "structure/cytoskeleton"
+    return "other"
+# integrated map (localized proteins)
+rows=[r for r in csv.DictReader(open(OUT/"integrated_cell_human.csv")) if r["gene"] and loc.get(r["gene"],"unknown")!="unknown"]
+idx={r["gene"]:i for i,r in enumerate(rows)}
+def fv(v,d=-1.0):
+    try:return float(v)
+    except:return d
+G=[]
+for r in rows:
+    g=r["gene"]; comp=loc.get(g,"unknown"); istf=r["is_tf"]=="1"
+    G.append(dict(name=g,comp=comp,proc=process(g,comp,istf),
+        ess=1 if r["essential"]=="1" else (0 if r["essential"]=="0" else -1),
+        loeuf=round(fv(r["loeuf"]),3),tf=int(istf),ppi=int(fv(r["ppi_degree"],0)),
+        ndis=int(fv(r["n_diseases"],0)),master=r["lineage_master"],npath=int(fv(r["n_pathways"],0)),
+        path=toppath(g)[:44]))
+# networks for perturbation propagation
+reg=[];
+for r in csv.DictReader(open(H/"collectri.tsv"),delimiter="\t"):
+    a=idx.get(r["source_genesymbol"]); b=idx.get(r["target_genesymbol"])
+    if a is not None and b is not None and a!=b: reg.append([a,b])
+ppi=[]
+for l in gzip.open(H/"string_physical.txt.gz","rt"):
+    if l.startswith("protein1"): continue
+    a,b,s=l.split()
+    if int(s)<700: continue
+    ga=ensp2sym.get(a); gb=ensp2sym.get(b)
+    if ga in idx and gb in idx and ga!=gb: ppi.append([idx[ga],idx[gb]])
+# HIV hijack map
+def normhiv(n):
+    n=n.lower()
+    for k,v in {"tat":"Tat","rev":"Rev","nef":"Nef","vif":"Vif","vpr":"Vpr","vpu":"Vpu","retropepsin":"Protease","protease":"Protease","integrase":"Integrase","reverse transcriptase":"RT","gp120":"gp120(Env)","gp41":"gp41(Env)","envelope":"Env","gag":"Gag","capsid":"Capsid(Gag)","matrix":"Matrix(Gag)","nucleocapsid":"Gag"}.items():
+        if k in n: return v
+    return n.split()[0].title()
+hiv=defaultdict(list); hivhost=defaultdict(set)
+for l in open(H/"hiv_interactions"):
+    if l.startswith("#"): continue
+    p=l.rstrip("\n").split("\t")
+    if len(p)<9 or p[0]!="11676": continue
+    hp=normhiv(p[3]); host=entrez2sym.get(p[6]); typ=p[4]
+    if host and host in idx:
+        hiv[hp].append([idx[host],typ]); hivhost[host].add(hp)
+# HIV weak points: host dependency factors = host genes HIV binds/needs that are essential or hubs
+DEP=["binds","complexes with","interacts with","incorporates","requires","activated by","enhanced by"]
+def is_dep(host):
+    i=idx[host]
+    for hp in hivhost[host]:
+        for i2,t in hiv[hp]:
+            if i2==i and any(dep in t for dep in DEP): return True
+    return False
+weak=[]
+for host,hps in hivhost.items():
+    g=G[idx[host]]
+    if (g["ess"]==1 or g["ppi"]>=25) and is_dep(host):
+        weak.append(dict(gene=host,by=sorted(hps),ess=g["ess"],ppi=g["ppi"],comp=g["comp"]))
+weak.sort(key=lambda x:-x["ppi"])
+# dark genes: no pathway, no disease, low PPI, unknown-ish (function frontier)
+dark=[i for i,g in enumerate(G) if g["npath"]==0 and g["ndis"]==0 and g["path"]=="" ]
+DATA=dict(genes=G,reg=reg,ppi=ppi,
+    procs=sorted(set(g["proc"] for g in G)),comps=sorted(set(g["comp"] for g in G)),
+    hiv={k:v for k,v in hiv.items()},hiv_targets={k:len(v) for k,v in hiv.items()},
+    hiv_weakpoints=weak[:40],dark_count=len(dark),
+    celltypes={"hepatocyte":["HNF4A","HNF1A","FOXA2"],"cardiac muscle cell":["NKX2-5","GATA4","TBX5"],
+     "natural killer cell":["EOMES","TBX21"],"macrophage":["SPI1","CEBPB"],"endothelial cell":["ERG","FLI1"],
+     "T cell":["GATA3","TCF7"],"neuron":["NEUROG2","NEUROD1"],"CD4 T cell(HIV target)":["GATA3","TCF7","CD4"]})
+json.dump(DATA,open(OUT/"cell_complete.json","w"),separators=(",",":"))
+from collections import Counter
+print("proteins:",len(G),"| reg edges:",len(reg),"| ppi edges:",len(ppi))
+print("processes:",dict(Counter(g["proc"] for g in G).most_common()))
+print("HIV proteins mapped:",len(hiv),"-> host targets:",{k:len(v) for k,v in sorted(hiv.items(),key=lambda x:-len(x[1]))[:8]})
+print("HIV host-dependency weak points:",len(weak),"e.g.",[w["gene"] for w in weak[:10]])
+print("dark genes (no pathway/disease):",len(dark))
+print("wrote cell_complete.json (%d KB)"%(len(json.dumps(DATA))//1024))

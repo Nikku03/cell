@@ -82,3 +82,9 @@ data/external_data/human/string_physical.txt.gz
 data/external_data/human/string_aliases.txt.gz
 
 data/external_data/human/uniprot_localization.tsv
+
+data/external_data/human/gene_info.gz
+data/external_data/human/hiv_interactions
+data/external_data/human/hiv_interactions.gz
+
+outputs/orphan/cell_complete.json
