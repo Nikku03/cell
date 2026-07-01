@@ -62,9 +62,22 @@ for r in rows:
     g=r["gene"]; comp=loc.get(g,"unknown"); istf=r["is_tf"]=="1"
     G.append(dict(name=g,comp=comp,proc=process(g,comp,istf),
         ess=1 if r["essential"]=="1" else (0 if r["essential"]=="0" else -1),
+        ess_src="measured" if r["essential"] in("0","1") else "none",
         loeuf=round(fv(r["loeuf"]),3),tf=int(istf),ppi=int(fv(r["ppi_degree"],0)),
         ndis=int(fv(r["n_diseases"],0)),master=r["lineage_master"],npath=int(fv(r["n_pathways"],0)),
         path=toppath(g)[:44]))
+# === MODEL 1 enrichment: our trained essentiality model fills the UNLABELED genes ===
+# (produced by the notebook -> outputs/orphan/predicted_essentiality.csv: gene,pred,prob)
+m1=OUT/"predicted_essentiality.csv"
+if m1.exists():
+    n_fill=0
+    for r in csv.DictReader(open(m1)):
+        i=idx.get(r["gene"])
+        if i is not None and G[i]["ess"]==-1:
+            G[i]["ess"]=1 if r["pred"]=="1" else 0; G[i]["ess_src"]="model1"; G[i]["ess_prob"]=round(fv(r["prob"],0),3); n_fill+=1
+    print("Model 1 (our essentiality model): filled",n_fill,"unlabeled genes")
+else:
+    print("Model 1: predicted_essentiality.csv absent -> using measured labels only")
 # networks for perturbation propagation
 reg=[];
 for r in csv.DictReader(open(H/"collectri.tsv"),delimiter="\t"):
@@ -134,13 +147,31 @@ RAW_RX=[
 reactions=[]
 for pw,enz,sub,prod in RAW_RX:
     if enz in idx: reactions.append(dict(enz=enz,i=idx[enz],sub=sub,prod=prod,pathway=pw))
-DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,
+# === MODEL 2 enrichment: cell-type master TFs derived from the atlas (Tabula Sapiens) ===
+# (produced by the notebook -> outputs/orphan/celltype_masters.json: {cell_type:[TF,...]})
+celltypes={"hepatocyte":["HNF4A","HNF1A","FOXA2"],"cardiac muscle cell":["NKX2-5","GATA4","TBX5"],
+     "natural killer cell":["EOMES","TBX21"],"macrophage":["SPI1","CEBPB"],"endothelial cell":["ERG","FLI1"],
+     "T cell":["GATA3","TCF7"],"neuron":["NEUROG2","NEUROD1"],"CD4 T cell(HIV target)":["GATA3","TCF7","CD4"]}
+m2=OUT/"celltype_masters.json"; ct_src="curated defaults"
+if m2.exists():
+    dd=json.load(open(m2))
+    if dd: celltypes={k:v for k,v in dd.items()}; ct_src="atlas-derived (Model 2)"
+print("Model 2 (cell-type layer):",len(celltypes),"cell types from",ct_src)
+# === MODEL 3 enrichment: Geneformer in-silico perturbation direction ===
+# (produced by the notebook -> outputs/orphan/gf_perturb.json: {gene:[downstream_gene,...]})
+gf={}
+m3=OUT/"gf_perturb.json"
+if m3.exists():
+    raw=json.load(open(m3))
+    for g,ds in raw.items():
+        if g in idx: gf[idx[g]]=[idx[d] for d in ds if d in idx][:40]
+    print("Model 3 (Geneformer perturbation):",len(gf),"genes with in-silico downstream targets")
+else:
+    print("Model 3: gf_perturb.json absent -> cascade uses measured reg+PPI graph only")
+DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,gf_perturb=gf,
     procs=sorted(set(g["proc"] for g in G)),comps=sorted(set(g["comp"] for g in G)),
     hiv={k:v for k,v in hiv.items()},hiv_targets={k:len(v) for k,v in hiv.items()},
-    hiv_weakpoints=weak[:40],dark_count=len(dark),
-    celltypes={"hepatocyte":["HNF4A","HNF1A","FOXA2"],"cardiac muscle cell":["NKX2-5","GATA4","TBX5"],
-     "natural killer cell":["EOMES","TBX21"],"macrophage":["SPI1","CEBPB"],"endothelial cell":["ERG","FLI1"],
-     "T cell":["GATA3","TCF7"],"neuron":["NEUROG2","NEUROD1"],"CD4 T cell(HIV target)":["GATA3","TCF7","CD4"]})
+    hiv_weakpoints=weak[:40],dark_count=len(dark),celltypes=celltypes)
 json.dump(DATA,open(OUT/"cell_complete.json","w"),separators=(",",":"))
 from collections import Counter
 print("proteins:",len(G),"| reg edges:",len(reg),"| ppi edges:",len(ppi))

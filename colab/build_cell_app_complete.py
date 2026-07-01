@@ -106,19 +106,22 @@ cv.addEventListener('mousemove',e=>{if(drag){view.ox=drag.ox+(e.offsetX-drag.x)*
  if(i>=0){t.style.display='block';t.style.left=(e.offsetX+12)+'px';t.style.top=(e.offsetY+8)+'px';t.innerHTML=`<b>${G[i].name}</b> &middot; ${G[i].comp} &middot; ${G[i].proc}`;}else t.style.display='none';});
 function pick(px,py){let wx=(px-view.ox)/view.s,wy=(py-view.oy)/view.s,b=-1,bd=90;for(let i=0;i<N;i++){let dx=POS[i*2]-wx,dy=POS[i*2+1]-wy,d=dx*dx+dy*dy;if(d<bd){bd=d;b=i;}}return b;}
 cv.addEventListener('click',e=>{if(drag&&Math.abs(e.offsetX-drag.x)>3)return;let i=pick(e.offsetX*devicePixelRatio,e.offsetY*devicePixelRatio);if(i>=0){sel=i;if(mode=='Remove/Mutate')perturb(i,false);else info(i);draw();}});
-// perturbation: BFS 2 hops over reg(out)+ppi
+// perturbation: BFS 2 hops over reg(out)+ppi, enriched with Geneformer in-silico downstream (Model 3)
+const GF=D.gf_perturb||{};
 function perturb(i,mut){let set=new Set([i]),dist={};dist[i]=0;let q=[i];
  while(q.length){let x=q.shift();if(dist[x]>=2)continue;for(const j of [...(OUT[x]||[]),...(PP[x]||[])]){if(!set.has(j)){set.add(j);dist[j]=dist[x]+1;q.push(j);}}}
- const from=new Set(); // count processes among affected (excluding seed)
+ // Model 3: add Geneformer-predicted downstream genes that the measured graph missed
+ const gfHit=new Set();(GF[i]||[]).forEach(j=>{if(!set.has(j)){set.add(j);dist[j]=2;gfHit.add(j);}else gfHit.add(j);});
  const proc={},path={};set.forEach(j=>{if(j==i)return;proc[G[j].proc]=(proc[G[j].proc]||0)+1;if(G[j].path)path[G[j].path]=(path[G[j].path]||0)+1;});
- affected={set,col:j=>j==i?'#fff':(dist[j]==1?'#ff6b6b':'#ffb36b')};
+ affected={set,col:j=>j==i?'#fff':(gfHit.has(j)?'#c792ea':(dist[j]==1?'#ff6b6b':'#ffb36b'))};
  const lethal=G[i].ess==1||(mut&&G[i].loeuf>=0&&G[i].loeuf<0.35);
+ const essNote=G[i].ess==1?(G[i].ess_src==='model1'?'essential (predicted by our model'+(G[i].ess_prob?', p='+G[i].ess_prob:'')+')':'essential gene'):'';
  const topP=Object.entries(proc).sort((a,b)=>b[1]-a[1]).slice(0,6);
  const topPath=Object.entries(path).sort((a,b)=>b[1]-a[1]).slice(0,6);
  document.getElementById('info').innerHTML=`<h2>${mut?'Mutate':'Remove'}: ${G[i].name}</h2>
-  <div class=row>${lethal?'<span class=warn>&#9888; predicted cell-inviable</span> — '+(G[i].ess==1?'essential gene':'constrained (LOEUF '+G[i].loeuf+'), likely loss-of-function is lethal'):'<span class=ok>cell likely survives</span> — dispensable / buffered'}</div>
+  <div class=row>${lethal?'<span class=warn>&#9888; predicted cell-inviable</span> — '+(G[i].ess==1?essNote:'constrained (LOEUF '+G[i].loeuf+'), likely loss-of-function is lethal'):'<span class=ok>cell likely survives</span> — dispensable / buffered'}</div>
   <div class=row><span class=k>compartment</span> <span class=v>${G[i].comp}</span> &middot; <span class=k>process</span> <span class=v>${G[i].proc}</span></div>
-  <div class=row><span class=k>direct + 2-hop affected</span> <span class=v>${set.size-1}</span> proteins</div>
+  <div class=row><span class=k>direct + 2-hop affected</span> <span class=v>${set.size-1}</span> proteins${gfHit.size?` &middot; <span style="color:#c792ea">+${gfHit.size} via Geneformer</span>`:''}</div>
   <h3>processes disrupted</h3>${topP.map(([p,n])=>`<div class=row><span style="color:${pcol[p]}">&#9679;</span> ${p}: <span class=v>${n}</span></div>`).join('')}
   <h3>pathways hit</h3>${topPath.map(([p,n])=>`<div class=row class=lg>${p} (${n})</div>`).join('')||'<div class=lg>-</div>'}
   <div class=row style=margin-top:8px><span class=btn onclick="perturb(${i},true)">as mutation (LoF)</span> <span class=btn onclick="clearP()">clear</span></div>`;}
@@ -130,7 +133,7 @@ function info(i){let g=G[i];let tg=(OUT[i]||[]).slice(0,10).map(j=>`<a onclick=g
   <div class=row><span class=k>compartment</span> <span class=v>${g.comp}</span></div>
   <div class=row><span class=k>process</span> <span class=v style="color:${pcol[g.proc]}">${g.proc}</span></div>
   <div class=row><span class=k>pathway</span> <span class=v>${g.path||'-'}</span></div>
-  <div class=row><span class=k>essential</span> <span class=v>${g.ess==1?'yes':g.ess==0?'no':'?'}</span> &middot; <span class=k>LOEUF</span> <span class=v>${g.loeuf<0?'-':g.loeuf}</span> &middot; <span class=k>TF</span> <span class=v>${g.tf?'yes':'no'}</span></div>
+  <div class=row><span class=k>essential</span> <span class=v>${g.ess==1?'yes':g.ess==0?'no':'?'}</span>${g.ess_src==='model1'?' <span class=lg>(our model'+(g.ess_prob?', p='+g.ess_prob:'')+')</span>':(g.ess_src==='measured'&&g.ess>=0?' <span class=lg>(measured)</span>':'')} &middot; <span class=k>LOEUF</span> <span class=v>${g.loeuf<0?'-':g.loeuf}</span> &middot; <span class=k>TF</span> <span class=v>${g.tf?'yes':'no'}</span></div>
   <div class=row><span class=k>PPI</span> <span class=v>${g.ppi}</span> &middot; <span class=k>diseases</span> <span class=v>${g.ndis}</span>${g.master?' &middot; <span class=k>master:</span> <span class=v>'+g.master+'</span>':''}</div>
   ${hivHost[i]?`<div class=row><span class=warn>HIV-targeted by:</span> <span class=v>${hivHost[i].join(', ')}</span></div>`:''}
   <div class=row style=margin-top:6px><span class=k>regulates:</span> ${tg||'-'}</div>
