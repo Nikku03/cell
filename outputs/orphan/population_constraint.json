@@ -1,0 +1,505 @@
+{
+  "genes": [
+    {
+      "sym": "RPL4",
+      "category": "essential",
+      "environment": "",
+      "length": 426,
+      "n_missense": 209,
+      "missense_density": 0.491,
+      "max_missense_AF": 0.0007,
+      "tolerant_positions": 0,
+      "tolerant_frac": 0.0,
+      "max_pop_spread": 0.01,
+      "top_diff_variant": {
+        "hgvsp": "p.Pro376Ala",
+        "spread": 0.01,
+        "afs": {
+          "afr": 0.01,
+          "amr": 0.0,
+          "eas": 0.0,
+          "sas": 0.0,
+          "nfe": 0.0,
+          "fin": 0.0
+        }
+      }
+    },
+    {
+      "sym": "RPS3",
+      "category": "essential",
+      "environment": "",
+      "length": 259,
+      "n_missense": 73,
+      "missense_density": 0.282,
+      "max_missense_AF": 0.0014,
+      "tolerant_positions": 2,
+      "tolerant_frac": 0.0077,
+      "max_pop_spread": 0.004,
+      "top_diff_variant": {
+        "hgvsp": "p.Val92Ile",
+        "spread": 0.004,
+        "afs": {
+          "afr": 0.0,
+          "amr": 0.0,
+          "eas": 0.004,
+          "sas": 0.0,
+          "nfe": 0.0,
+          "fin": 0.0
+        }
+      }
+    },
+    {
+      "sym": "POLR2A",
+      "category": "essential",
+      "environment": "",
+      "length": 1969,
+      "n_missense": 583,
+      "missense_density": 0.296,
+      "max_missense_AF": 0.9999,
+      "tolerant_positions": 1,
+      "tolerant_frac": 0.0005,
+      "max_pop_spread": 0.003,
+      "top_diff_variant": {
+        "hgvsp": "p.Met637Thr",
+        "spread": 0.003,
+        "afs": {
+          "afr": 0.0,
+          "amr": 0.0,
+          "eas": 0.0,
+          "sas": 0.003,
+          "nfe": 0.0,
+          "fin": 0.0
+        }
+      }
+    },
+    {
+      "sym": "EEF2",
+      "category": "essential",
+      "environment": "",
+      "length": 858,
+      "n_missense": 333,
+      "missense_density": 0.388,
+      "max_missense_AF": 0.0132,
+      "tolerant_positions": 4,
+      "tolerant_frac": 0.0047,
+      "max_pop_spread": 0.055,
+      "top_diff_variant": {
+        "hgvsp": "p.Thr52Ile",
+        "spread": 0.055,
+        "afs": {
+          "afr": 0.055,
+          "amr": 0.004,
+          "eas": 0.0,
+          "sas": 0.0,
+          "nfe": 0.0
+        }
+      }
+    },
+    {
+      "sym": "SNRNP200",
+      "category": "essential",
+      "environment": "",
+      "length": 2132,
+      "n_missense": 660,
+      "missense_density": 0.31,
+      "max_missense_AF": 0.0068,
+      "tolerant_positions": 6,
+      "tolerant_frac": 0.0028,
+      "max_pop_spread": 0.02,
+      "top_diff_variant": {
+        "hgvsp": "p.Ala1995Thr",
+        "spread": 0.02,
+        "afs": {
+          "afr": 0.0,
+          "amr": 0.0,
+          "eas": 0.0,
+          "sas": 0.02,
+          "nfe": 0.0,
+          "fin": 0.0
+        }
+      }
+    },
+    {
+      "sym": "PSMB2",
+      "category": "essential",
+      "environment": "",
+      "length": 201,
+      "n_missense": 88,
+      "missense_density": 0.438,
+      "max_missense_AF": 0.0029,
+      "tolerant_positions": 3,
+      "tolerant_frac": 0.0149,
+      "max_pop_spread": 0.024,
+      "top_diff_variant": {
+        "hgvsp": "p.Ser179Gly",
+        "spread": 0.024,
+        "afs": {
+          "afr": 0.0,
+          "amr": 0.0,
+          "eas": 0.0,
+          "sas": 0.024,
+          "nfe": 0.0,
+          "fin": 0.0
+        }
+      }
+    },
+    {
+      "sym": "OR2T33",
+      "category": "non_essential",
+      "environment": "",
+      "length": 320,
+      "n_missense": 271,
+      "missense_density": 0.847,
+      "max_missense_AF": 0.6756,
+      "tolerant_positions": 19,
+      "tolerant_frac": 0.0594,
+      "max_pop_spread": 0.277,
+      "top_diff_variant": {
+        "hgvsp": "p.Val160Ala",
+        "spread": 0.277,
+        "afs": {
+          "afr": 0.191,
+          "amr": 0.269,
+          "eas": 0.118,
+          "sas": 0.212,
+          "nfe": 0.327,
+          "fin": 0.395
+        }
+      }
+    },
+    {
+      "sym": "OR51B4",
+      "category": "non_essential",
+      "environment": "",
+      "length": 310,
+      "n_missense": 207,
+      "missense_density": 0.668,
+      "max_missense_AF": 0.7182,
+      "tolerant_positions": 9,
+      "tolerant_frac": 0.029,
+      "max_pop_spread": 0.597,
+      "top_diff_variant": {
+        "hgvsp": "p.Met147Thr",
+        "spread": 0.597,
+        "afs": {
+          "afr": 0.158,
+          "amr": 0.463,
+          "eas": 0.754,
+          "sas": 0.542,
+          "nfe": 0.436,
+          "fin": 0.436
+        }
+      }
+    },
+    {
+      "sym": "OR4C11",
+      "category": "non_essential",
+      "environment": "",
+      "length": 310,
+      "n_missense": 241,
+      "missense_density": 0.777,
+      "max_missense_AF": 0.2922,
+      "tolerant_positions": 7,
+      "tolerant_frac": 0.0226,
+      "max_pop_spread": 0.205,
+      "top_diff_variant": {
+        "hgvsp": "p.Leu15Ile",
+        "spread": 0.205,
+        "afs": {
+          "afr": 0.152,
+          "amr": 0.357,
+          "eas": 0.226,
+          "sas": 0.278,
+          "nfe": 0.301,
+          "fin": 0.3
+        }
+      }
+    },
+    {
+      "sym": "ANKRD30A",
+      "category": "non_essential",
+      "environment": "",
+      "length": 1341,
+      "n_missense": 929,
+      "missense_density": 0.693,
+      "max_missense_AF": 0.504,
+      "tolerant_positions": 26,
+      "tolerant_frac": 0.0194,
+      "max_pop_spread": 0.356,
+      "top_diff_variant": {
+        "hgvsp": "p.Lys861Asn",
+        "spread": 0.356,
+        "afs": {
+          "afr": 0.641,
+          "amr": 0.493,
+          "eas": 0.336,
+          "sas": 0.285,
+          "nfe": 0.568,
+          "fin": 0.517
+        }
+      }
+    },
+    {
+      "sym": "EPAS1",
+      "category": "adaptation",
+      "environment": "altitude/hypoxia (high-altitude, e.g. Tibet -> EAS)",
+      "length": 869,
+      "n_missense": 535,
+      "missense_density": 0.616,
+      "max_missense_AF": 0.0518,
+      "tolerant_positions": 5,
+      "tolerant_frac": 0.0058,
+      "max_pop_spread": 0.419,
+      "top_diff_variant": {
+        "hgvsp": "p.Thr766Pro",
+        "spread": 0.419,
+        "afs": {
+          "afr": 0.427,
+          "amr": 0.022,
+          "eas": 0.131,
+          "sas": 0.007,
+          "nfe": 0.017,
+          "fin": 0.019
+        }
+      }
+    },
+    {
+      "sym": "EGLN1",
+      "category": "adaptation",
+      "environment": "altitude/hypoxia (EAS/Andean)",
+      "length": 425,
+      "n_missense": 173,
+      "missense_density": 0.407,
+      "max_missense_AF": 0.1004,
+      "tolerant_positions": 3,
+      "tolerant_frac": 0.0071,
+      "max_pop_spread": 0.042,
+      "top_diff_variant": {
+        "hgvsp": "p.Gln157His",
+        "spread": 0.042,
+        "afs": {
+          "afr": 0.004,
+          "amr": 0.006,
+          "eas": 0.0,
+          "sas": 0.003,
+          "nfe": 0.027,
+          "fin": 0.042
+        }
+      }
+    },
+    {
+      "sym": "SLC24A5",
+      "category": "adaptation",
+      "environment": "UV/latitude -> skin pigmentation (low-UV Europe -> NFE)",
+      "length": 499,
+      "n_missense": 277,
+      "missense_density": 0.555,
+      "max_missense_AF": 0.23,
+      "tolerant_positions": 1,
+      "tolerant_frac": 0.002,
+      "max_pop_spread": 0.99,
+      "top_diff_variant": {
+        "hgvsp": "p.Thr111Ala",
+        "spread": 0.99,
+        "afs": {
+          "afr": 0.811,
+          "amr": 0.521,
+          "eas": 0.993,
+          "sas": 0.225,
+          "nfe": 0.003,
+          "fin": 0.012
+        }
+      }
+    },
+    {
+      "sym": "SLC45A2",
+      "category": "adaptation",
+      "environment": "UV/latitude -> pigmentation (NFE)",
+      "length": 527,
+      "n_missense": 398,
+      "missense_density": 0.755,
+      "max_missense_AF": 0.8994,
+      "tolerant_positions": 3,
+      "tolerant_frac": 0.0057,
+      "max_pop_spread": 0.981,
+      "top_diff_variant": {
+        "hgvsp": "p.Leu374Phe",
+        "spread": 0.981,
+        "afs": {
+          "afr": 0.148,
+          "amr": 0.381,
+          "eas": 0.002,
+          "sas": 0.097,
+          "nfe": 0.955,
+          "fin": 0.982
+        }
+      }
+    },
+    {
+      "sym": "MC1R",
+      "category": "adaptation",
+      "environment": "UV -> pigmentation/hair (NFE/EAS)",
+      "length": 382,
+      "n_missense": 373,
+      "missense_density": 0.976,
+      "max_missense_AF": 0.1515,
+      "tolerant_positions": 13,
+      "tolerant_frac": 0.034,
+      "max_pop_spread": 0.623,
+      "top_diff_variant": {
+        "hgvsp": "p.Arg163Gln",
+        "spread": 0.623,
+        "afs": {
+          "afr": 0.017,
+          "amr": 0.397,
+          "eas": 0.64,
+          "sas": 0.038,
+          "nfe": 0.048,
+          "fin": 0.227
+        }
+      }
+    },
+    {
+      "sym": "LCT",
+      "category": "adaptation",
+      "environment": "diet -> lactase persistence (dairy cultures -> NFE)",
+      "length": 1927,
+      "n_missense": 810,
+      "missense_density": 0.42,
+      "max_missense_AF": 0.9951,
+      "tolerant_positions": 12,
+      "tolerant_frac": 0.0062,
+      "max_pop_spread": 0.342,
+      "top_diff_variant": {
+        "hgvsp": "p.Asn1639Ser",
+        "spread": 0.342,
+        "afs": {
+          "afr": 0.392,
+          "amr": 0.502,
+          "eas": 0.477,
+          "sas": 0.455,
+          "nfe": 0.726,
+          "fin": 0.734
+        }
+      }
+    },
+    {
+      "sym": "FADS1",
+      "category": "adaptation",
+      "environment": "diet -> fatty-acid metabolism (diet-dependent)",
+      "length": 501,
+      "n_missense": 134,
+      "missense_density": 0.267,
+      "max_missense_AF": 0.0005,
+      "tolerant_positions": 0,
+      "tolerant_frac": 0.0,
+      "max_pop_spread": 0.002,
+      "top_diff_variant": {
+        "hgvsp": "p.Thr106Pro",
+        "spread": 0.002,
+        "afs": {
+          "afr": 0.001,
+          "amr": 0.0,
+          "eas": 0.0,
+          "sas": 0.0,
+          "nfe": 0.0,
+          "fin": 0.002
+        }
+      }
+    },
+    {
+      "sym": "UCP1",
+      "category": "adaptation",
+      "environment": "cold/temperature -> thermogenesis (cold climates)",
+      "length": 305,
+      "n_missense": 182,
+      "missense_density": 0.597,
+      "max_missense_AF": 0.089,
+      "tolerant_positions": 4,
+      "tolerant_frac": 0.0131,
+      "max_pop_spread": 0.1,
+      "top_diff_variant": {
+        "hgvsp": "p.Met229Leu",
+        "spread": 0.1,
+        "afs": {
+          "afr": 0.023,
+          "amr": 0.122,
+          "eas": 0.091,
+          "sas": 0.116,
+          "nfe": 0.08,
+          "fin": 0.091
+        }
+      }
+    },
+    {
+      "sym": "G6PD",
+      "category": "adaptation",
+      "environment": "pathogen -> malaria resistance (malaria-endemic -> AFR/SAS)",
+      "length": 544,
+      "n_missense": 220,
+      "missense_density": 0.404,
+      "max_missense_AF": 0.0257,
+      "tolerant_positions": 6,
+      "tolerant_frac": 0.011,
+      "max_pop_spread": 0.319,
+      "top_diff_variant": {
+        "hgvsp": "p.Asn156Asp",
+        "spread": 0.319,
+        "afs": {
+          "afr": 0.319,
+          "amr": 0.015,
+          "eas": 0.0,
+          "sas": 0.001,
+          "nfe": 0.001,
+          "fin": 0.0
+        }
+      }
+    },
+    {
+      "sym": "ACKR1",
+      "category": "adaptation",
+      "environment": "pathogen -> malaria (Duffy-null, AFR)",
+      "length": 333,
+      "n_missense": 206,
+      "missense_density": 0.619,
+      "max_missense_AF": 0.512,
+      "tolerant_positions": 7,
+      "tolerant_frac": 0.021,
+      "max_pop_spread": 0.884,
+      "top_diff_variant": {
+        "hgvsp": "p.Gly44Asp",
+        "spread": 0.884,
+        "afs": {
+          "afr": 0.933,
+          "amr": 0.434,
+          "eas": 0.05,
+          "sas": 0.383,
+          "nfe": 0.579,
+          "fin": 0.511
+        }
+      }
+    }
+  ],
+  "by_category": {
+    "essential": {
+      "n": 6,
+      "mean_max_AF": 0.1708,
+      "mean_tolerant_frac": 0.0051,
+      "mean_max_spread": 0.019
+    },
+    "non_essential": {
+      "n": 4,
+      "mean_max_AF": 0.5475,
+      "mean_tolerant_frac": 0.0326,
+      "mean_max_spread": 0.359
+    },
+    "adaptation": {
+      "n": 10,
+      "mean_max_AF": 0.3055,
+      "mean_tolerant_frac": 0.0106,
+      "mean_max_spread": 0.47
+    }
+  },
+  "caveat": "gnomAD populations are ancestry groups, not environmental measurements; the altitude/UV/diet/cold/pathogen link for these loci is from adaptation literature.",
+  "finding": "essential genes carry ~no common missense (vital core protected by purifying selection); adaptation genes carry common, population-differentiated missense (tolerant periphery where environmental selection acts)."
+}
