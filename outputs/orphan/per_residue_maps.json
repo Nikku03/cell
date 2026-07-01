@@ -1,0 +1,17 @@
+{
+  "EEF2": {
+    "mean_esm_logprob": -2.686,
+    "n_common_missense": 5,
+    "n_obs_missense": 547
+  },
+  "SLC24A5": {
+    "mean_esm_logprob": -2.413,
+    "n_common_missense": 1,
+    "n_obs_missense": 291
+  },
+  "MC1R": {
+    "mean_esm_logprob": -2.285,
+    "n_common_missense": 6,
+    "n_obs_missense": 295
+  }
+}

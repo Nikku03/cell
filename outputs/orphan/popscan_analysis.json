@@ -1,0 +1,1333 @@
+{
+  "n_scanned": 376,
+  "top": [
+    {
+      "gene": "SLC24A5",
+      "category": "known_adaptation",
+      "spread": 0.99,
+      "variant": "p.Thr111Ala",
+      "afs": {
+        "afr": 0.811,
+        "amr": 0.521,
+        "eas": 0.993,
+        "sas": 0.225,
+        "nfe": 0.003,
+        "fin": 0.012
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "nfe",
+        "derived_freq": 0.997
+      }
+    },
+    {
+      "gene": "SLC45A2",
+      "category": "known_adaptation",
+      "spread": 0.981,
+      "variant": "p.Leu374Phe",
+      "afs": {
+        "afr": 0.148,
+        "amr": 0.381,
+        "eas": 0.002,
+        "sas": 0.097,
+        "nfe": 0.955,
+        "fin": 0.982
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "fin",
+        "derived_freq": 0.982
+      }
+    },
+    {
+      "gene": "ACKR1",
+      "category": "known_adaptation",
+      "spread": 0.884,
+      "variant": "p.Gly44Asp",
+      "afs": {
+        "afr": 0.933,
+        "amr": 0.434,
+        "eas": 0.05,
+        "sas": 0.383,
+        "nfe": 0.579,
+        "fin": 0.511
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "eas",
+        "derived_freq": 0.95
+      }
+    },
+    {
+      "gene": "SLC39A4",
+      "category": "background",
+      "spread": 0.816,
+      "variant": "p.Leu372Val",
+      "afs": {
+        "afr": 0.816,
+        "amr": 0.04,
+        "eas": 0.0,
+        "sas": 0.001,
+        "nfe": 0.004,
+        "fin": 0.0
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "eas",
+        "derived_freq": 1.0
+      }
+    },
+    {
+      "gene": "G6PD",
+      "category": "known_adaptation",
+      "spread": 0.786,
+      "variant": null,
+      "afs": {
+        "afr": 0.865,
+        "amr": 0.242,
+        "eas": 0.117,
+        "sas": 0.423,
+        "nfe": 0.136,
+        "fin": 0.078
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "fin",
+        "derived_freq": 0.922
+      }
+    },
+    {
+      "gene": "SLC38A10",
+      "category": "background",
+      "spread": 0.663,
+      "variant": "p.Ala831Gly",
+      "afs": {
+        "afr": 0.077,
+        "amr": 0.564,
+        "eas": 0.739,
+        "sas": 0.603,
+        "nfe": 0.454,
+        "fin": 0.448
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.739
+      }
+    },
+    {
+      "gene": "OR3A1",
+      "category": "background",
+      "spread": 0.647,
+      "variant": "p.Arg125Gln",
+      "afs": {
+        "afr": 0.28,
+        "amr": 0.601,
+        "eas": 0.928,
+        "sas": 0.543,
+        "nfe": 0.547,
+        "fin": 0.615
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.928
+      }
+    },
+    {
+      "gene": "ATRX",
+      "category": "TF",
+      "spread": 0.627,
+      "variant": "p.Gln929Glu",
+      "afs": {
+        "afr": 0.88,
+        "amr": 0.253,
+        "eas": 0.448,
+        "sas": 0.495,
+        "nfe": 0.313,
+        "fin": 0.319
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "amr",
+        "derived_freq": 0.747
+      }
+    },
+    {
+      "gene": "MC1R",
+      "category": "known_adaptation",
+      "spread": 0.623,
+      "variant": "p.Arg163Gln",
+      "afs": {
+        "afr": 0.017,
+        "amr": 0.397,
+        "eas": 0.64,
+        "sas": 0.038,
+        "nfe": 0.048,
+        "fin": 0.227
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.64
+      }
+    },
+    {
+      "gene": "KIF15",
+      "category": "background",
+      "spread": 0.621,
+      "variant": "p.Leu1206Met",
+      "afs": {
+        "afr": 0.213,
+        "amr": 0.553,
+        "eas": 0.834,
+        "sas": 0.673,
+        "nfe": 0.477,
+        "fin": 0.498
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.834
+      }
+    },
+    {
+      "gene": "OR51B4",
+      "category": "background",
+      "spread": 0.597,
+      "variant": "p.Met147Thr",
+      "afs": {
+        "afr": 0.158,
+        "amr": 0.463,
+        "eas": 0.754,
+        "sas": 0.542,
+        "nfe": 0.436,
+        "fin": 0.436
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.754
+      }
+    },
+    {
+      "gene": "GLI3",
+      "category": "TF",
+      "spread": 0.596,
+      "variant": "p.Pro998Leu",
+      "afs": {
+        "afr": 0.192,
+        "amr": 0.569,
+        "eas": 0.788,
+        "sas": 0.468,
+        "nfe": 0.329,
+        "fin": 0.34
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.788
+      }
+    },
+    {
+      "gene": "SNRNP200",
+      "category": "background",
+      "spread": 0.584,
+      "variant": "p.Leu1184Leu",
+      "afs": {
+        "afr": 0.076,
+        "amr": 0.262,
+        "eas": 0.177,
+        "sas": 0.66,
+        "nfe": 0.304,
+        "fin": 0.231
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "sas",
+        "derived_freq": 0.66
+      }
+    },
+    {
+      "gene": "CORO7",
+      "category": "background",
+      "spread": 0.582,
+      "variant": "p.Arg193Gln",
+      "afs": {
+        "afr": 0.187,
+        "amr": 0.587,
+        "eas": 0.769,
+        "sas": 0.571,
+        "nfe": 0.725,
+        "fin": 0.707
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.769
+      }
+    },
+    {
+      "gene": "FADS1",
+      "category": "known_adaptation",
+      "spread": 0.581,
+      "variant": null,
+      "afs": {
+        "afr": 0.07,
+        "amr": 0.651,
+        "eas": 0.567,
+        "sas": 0.177,
+        "nfe": 0.341
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "amr",
+        "derived_freq": 0.651
+      }
+    },
+    {
+      "gene": "GSTA2",
+      "category": "background",
+      "spread": 0.575,
+      "variant": "p.Glu210Ala",
+      "afs": {
+        "afr": 0.63,
+        "amr": 0.065,
+        "eas": 0.162,
+        "sas": 0.072,
+        "nfe": 0.055,
+        "fin": 0.056
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "nfe",
+        "derived_freq": 0.945
+      }
+    },
+    {
+      "gene": "NRK",
+      "category": "background",
+      "spread": 0.566,
+      "variant": "p.Val359Met",
+      "afs": {
+        "afr": 0.685,
+        "amr": 0.118,
+        "eas": 0.21,
+        "sas": 0.278,
+        "nfe": 0.206,
+        "fin": 0.184
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "amr",
+        "derived_freq": 0.882
+      }
+    },
+    {
+      "gene": "TMBIM1",
+      "category": "background",
+      "spread": 0.565,
+      "variant": "p.Pro21Leu",
+      "afs": {
+        "afr": 0.118,
+        "amr": 0.495,
+        "eas": 0.618,
+        "sas": 0.648,
+        "nfe": 0.566,
+        "fin": 0.683
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "fin",
+        "derived_freq": 0.683
+      }
+    },
+    {
+      "gene": "EEF2",
+      "category": "background",
+      "spread": 0.549,
+      "variant": null,
+      "afs": {
+        "afr": 0.574,
+        "amr": 0.055,
+        "eas": 0.025,
+        "sas": 0.179,
+        "nfe": 0.095,
+        "fin": 0.085
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "eas",
+        "derived_freq": 0.975
+      }
+    },
+    {
+      "gene": "ZNF30",
+      "category": "background",
+      "spread": 0.549,
+      "variant": "p.Arg380Lys",
+      "afs": {
+        "afr": 0.877,
+        "amr": 0.328,
+        "eas": 0.626,
+        "sas": 0.603,
+        "nfe": 0.484,
+        "fin": 0.518
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "amr",
+        "derived_freq": 0.672
+      }
+    },
+    {
+      "gene": "SNAI1",
+      "category": "TF",
+      "spread": 0.548,
+      "variant": "p.Val118Ala",
+      "afs": {
+        "afr": 0.649,
+        "amr": 0.281,
+        "eas": 0.101,
+        "sas": 0.152,
+        "nfe": 0.123,
+        "fin": 0.104
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "eas",
+        "derived_freq": 0.899
+      }
+    },
+    {
+      "gene": "EPAS1",
+      "category": "known_adaptation",
+      "spread": 0.537,
+      "variant": null,
+      "afs": {
+        "afr": 0.333,
+        "amr": 0.332,
+        "eas": 0.773,
+        "sas": 0.237,
+        "nfe": 0.262,
+        "fin": 0.242
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.773
+      }
+    },
+    {
+      "gene": "TMED5",
+      "category": "background",
+      "spread": 0.527,
+      "variant": "p.Thr175Ile",
+      "afs": {
+        "afr": 0.138,
+        "amr": 0.518,
+        "eas": 0.65,
+        "sas": 0.665,
+        "nfe": 0.632,
+        "fin": 0.642
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "sas",
+        "derived_freq": 0.665
+      }
+    },
+    {
+      "gene": "DHDH",
+      "category": "background",
+      "spread": 0.515,
+      "variant": "p.Ser66Asn",
+      "afs": {
+        "afr": 0.729,
+        "amr": 0.455,
+        "eas": 0.515,
+        "sas": 0.403,
+        "nfe": 0.214,
+        "fin": 0.344
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "nfe",
+        "derived_freq": 0.786
+      }
+    },
+    {
+      "gene": "E2F2",
+      "category": "TF",
+      "spread": 0.505,
+      "variant": "p.Gln226His",
+      "afs": {
+        "afr": 0.108,
+        "amr": 0.365,
+        "eas": 0.613,
+        "sas": 0.348,
+        "nfe": 0.507,
+        "fin": 0.576
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.613
+      }
+    },
+    {
+      "gene": "LCT",
+      "category": "known_adaptation",
+      "spread": 0.501,
+      "variant": null,
+      "afs": {
+        "afr": 0.209,
+        "amr": 0.459,
+        "eas": 0.397,
+        "sas": 0.41,
+        "nfe": 0.699,
+        "fin": 0.709
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "fin",
+        "derived_freq": 0.709
+      }
+    },
+    {
+      "gene": "IRF7",
+      "category": "TF",
+      "spread": 0.496,
+      "variant": "p.Lys192Glu",
+      "afs": {
+        "afr": 0.524,
+        "amr": 0.323,
+        "eas": 0.028,
+        "sas": 0.14,
+        "nfe": 0.266,
+        "fin": 0.188
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "eas",
+        "derived_freq": 0.972
+      }
+    },
+    {
+      "gene": "RNF168",
+      "category": "background",
+      "spread": 0.496,
+      "variant": "p.Pro401Gln",
+      "afs": {
+        "afr": 0.29,
+        "amr": 0.401,
+        "eas": 0.165,
+        "sas": 0.618,
+        "nfe": 0.618,
+        "fin": 0.661
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "fin",
+        "derived_freq": 0.661
+      }
+    },
+    {
+      "gene": "SREBF2",
+      "category": "TF",
+      "spread": 0.492,
+      "variant": "p.Gly595Ala",
+      "afs": {
+        "afr": 0.586,
+        "amr": 0.665,
+        "eas": 0.173,
+        "sas": 0.354,
+        "nfe": 0.255,
+        "fin": 0.212
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "eas",
+        "derived_freq": 0.827
+      }
+    },
+    {
+      "gene": "FSIP1",
+      "category": "background",
+      "spread": 0.481,
+      "variant": "p.Cys402Arg",
+      "afs": {
+        "afr": 0.675,
+        "amr": 0.194,
+        "eas": 0.346,
+        "sas": 0.278,
+        "nfe": 0.288,
+        "fin": 0.313
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "amr",
+        "derived_freq": 0.806
+      }
+    },
+    {
+      "gene": "MYO7A",
+      "category": "background",
+      "spread": 0.48,
+      "variant": "p.Leu16Ser",
+      "afs": {
+        "afr": 0.773,
+        "amr": 0.37,
+        "eas": 0.499,
+        "sas": 0.417,
+        "nfe": 0.345,
+        "fin": 0.294
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "fin",
+        "derived_freq": 0.706
+      }
+    },
+    {
+      "gene": "ZNF804B",
+      "category": "background",
+      "spread": 0.477,
+      "variant": "p.Phe634Ile",
+      "afs": {
+        "afr": 0.705,
+        "amr": 0.386,
+        "eas": 0.686,
+        "sas": 0.395,
+        "nfe": 0.228,
+        "fin": 0.228
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "nfe",
+        "derived_freq": 0.772
+      }
+    },
+    {
+      "gene": "MZF1",
+      "category": "TF",
+      "spread": 0.475,
+      "variant": "p.Ile331Val",
+      "afs": {
+        "afr": 0.627,
+        "amr": 0.337,
+        "eas": 0.152,
+        "sas": 0.309,
+        "nfe": 0.225,
+        "fin": 0.231
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "eas",
+        "derived_freq": 0.848
+      }
+    },
+    {
+      "gene": "HOXA1",
+      "category": "TF",
+      "spread": 0.473,
+      "variant": "p.Arg73His",
+      "afs": {
+        "afr": 0.438,
+        "amr": 0.799,
+        "eas": 0.911,
+        "sas": 0.823,
+        "nfe": 0.751,
+        "fin": 0.766
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.911
+      }
+    },
+    {
+      "gene": "MGAT5B",
+      "category": "background",
+      "spread": 0.47,
+      "variant": "p.Val81Ile",
+      "afs": {
+        "afr": 0.603,
+        "amr": 0.448,
+        "eas": 0.393,
+        "sas": 0.306,
+        "nfe": 0.134,
+        "fin": 0.19
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "nfe",
+        "derived_freq": 0.866
+      }
+    },
+    {
+      "gene": "OR51E1",
+      "category": "background",
+      "spread": 0.464,
+      "variant": "p.Arg50His",
+      "afs": {
+        "afr": 0.234,
+        "amr": 0.423,
+        "eas": 0.06,
+        "sas": 0.401,
+        "nfe": 0.524,
+        "fin": 0.427
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "nfe",
+        "derived_freq": 0.524
+      }
+    },
+    {
+      "gene": "PTF1A",
+      "category": "TF",
+      "spread": 0.455,
+      "variant": "p.Ser263Pro",
+      "afs": {
+        "afr": 0.568,
+        "amr": 0.684,
+        "eas": 0.893,
+        "sas": 0.536,
+        "nfe": 0.48,
+        "fin": 0.438
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "fin",
+        "derived_freq": 0.562
+      }
+    },
+    {
+      "gene": "POLR2A",
+      "category": "background",
+      "spread": 0.446,
+      "variant": null,
+      "afs": {
+        "afr": 0.519,
+        "amr": 0.864,
+        "eas": 0.965,
+        "sas": 0.69,
+        "nfe": 0.756,
+        "fin": 0.824
+      },
+      "polar": {
+        "derived": "ref",
+        "adapted_pop": "afr",
+        "derived_freq": 0.481
+      }
+    },
+    {
+      "gene": "C11orf96",
+      "category": "background",
+      "spread": 0.431,
+      "variant": "p.Thr26Ala",
+      "afs": {
+        "afr": 0.479,
+        "amr": 0.783,
+        "eas": 0.91,
+        "sas": 0.775,
+        "nfe": 0.638,
+        "fin": 0.7
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "eas",
+        "derived_freq": 0.91
+      }
+    },
+    {
+      "gene": "ADAMTS9",
+      "category": "background",
+      "spread": 0.423,
+      "variant": "p.Asp1674Glu",
+      "afs": {
+        "afr": 0.144,
+        "amr": 0.428,
+        "eas": 0.218,
+        "sas": 0.011,
+        "nfe": 0.005,
+        "fin": 0.013
+      },
+      "polar": {
+        "derived": "alt",
+        "adapted_pop": "amr",
+        "derived_freq": 0.428
+      }
+    }
+  ],
+  "novel_candidates": [
+    {
+      "gene": "SLC39A4",
+      "category": "background",
+      "spread": 0.816,
+      "variant": "p.Leu372Val",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "SLC38A10",
+      "category": "background",
+      "spread": 0.663,
+      "variant": "p.Ala831Gly",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "OR3A1",
+      "category": "background",
+      "spread": 0.647,
+      "variant": "p.Arg125Gln",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "ATRX",
+      "category": "TF",
+      "spread": 0.627,
+      "variant": "p.Gln929Glu",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "KIF15",
+      "category": "background",
+      "spread": 0.621,
+      "variant": "p.Leu1206Met",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "OR51B4",
+      "category": "background",
+      "spread": 0.597,
+      "variant": "p.Met147Thr",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "GLI3",
+      "category": "TF",
+      "spread": 0.596,
+      "variant": "p.Pro998Leu",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "SNRNP200",
+      "category": "background",
+      "spread": 0.584,
+      "variant": "p.Leu1184Leu",
+      "adapted_pop": "sas"
+    },
+    {
+      "gene": "CORO7",
+      "category": "background",
+      "spread": 0.582,
+      "variant": "p.Arg193Gln",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "GSTA2",
+      "category": "background",
+      "spread": 0.575,
+      "variant": "p.Glu210Ala",
+      "adapted_pop": "nfe"
+    },
+    {
+      "gene": "NRK",
+      "category": "background",
+      "spread": 0.566,
+      "variant": "p.Val359Met",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "TMBIM1",
+      "category": "background",
+      "spread": 0.565,
+      "variant": "p.Pro21Leu",
+      "adapted_pop": "fin"
+    },
+    {
+      "gene": "EEF2",
+      "category": "background",
+      "spread": 0.549,
+      "variant": null,
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "ZNF30",
+      "category": "background",
+      "spread": 0.549,
+      "variant": "p.Arg380Lys",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "SNAI1",
+      "category": "TF",
+      "spread": 0.548,
+      "variant": "p.Val118Ala",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "TMED5",
+      "category": "background",
+      "spread": 0.527,
+      "variant": "p.Thr175Ile",
+      "adapted_pop": "sas"
+    },
+    {
+      "gene": "DHDH",
+      "category": "background",
+      "spread": 0.515,
+      "variant": "p.Ser66Asn",
+      "adapted_pop": "nfe"
+    },
+    {
+      "gene": "E2F2",
+      "category": "TF",
+      "spread": 0.505,
+      "variant": "p.Gln226His",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "IRF7",
+      "category": "TF",
+      "spread": 0.496,
+      "variant": "p.Lys192Glu",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "RNF168",
+      "category": "background",
+      "spread": 0.496,
+      "variant": "p.Pro401Gln",
+      "adapted_pop": "fin"
+    },
+    {
+      "gene": "SREBF2",
+      "category": "TF",
+      "spread": 0.492,
+      "variant": "p.Gly595Ala",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "FSIP1",
+      "category": "background",
+      "spread": 0.481,
+      "variant": "p.Cys402Arg",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "MYO7A",
+      "category": "background",
+      "spread": 0.48,
+      "variant": "p.Leu16Ser",
+      "adapted_pop": "fin"
+    },
+    {
+      "gene": "ZNF804B",
+      "category": "background",
+      "spread": 0.477,
+      "variant": "p.Phe634Ile",
+      "adapted_pop": "nfe"
+    },
+    {
+      "gene": "MZF1",
+      "category": "TF",
+      "spread": 0.475,
+      "variant": "p.Ile331Val",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "HOXA1",
+      "category": "TF",
+      "spread": 0.473,
+      "variant": "p.Arg73His",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "MGAT5B",
+      "category": "background",
+      "spread": 0.47,
+      "variant": "p.Val81Ile",
+      "adapted_pop": "nfe"
+    },
+    {
+      "gene": "OR51E1",
+      "category": "background",
+      "spread": 0.464,
+      "variant": "p.Arg50His",
+      "adapted_pop": "nfe"
+    },
+    {
+      "gene": "PTF1A",
+      "category": "TF",
+      "spread": 0.455,
+      "variant": "p.Ser263Pro",
+      "adapted_pop": "fin"
+    },
+    {
+      "gene": "POLR2A",
+      "category": "background",
+      "spread": 0.446,
+      "variant": null,
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "C11orf96",
+      "category": "background",
+      "spread": 0.431,
+      "variant": "p.Thr26Ala",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "ADAMTS9",
+      "category": "background",
+      "spread": 0.423,
+      "variant": "p.Asp1674Glu",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "RBBP7",
+      "category": "TF",
+      "spread": 0.421,
+      "variant": "p.Arg37His",
+      "adapted_pop": "sas"
+    },
+    {
+      "gene": "SP100",
+      "category": "TF",
+      "spread": 0.42,
+      "variant": "p.Met826Thr",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "GLI1",
+      "category": "TF",
+      "spread": 0.41,
+      "variant": "p.Glu1100Gln",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "IRF6",
+      "category": "TF",
+      "spread": 0.41,
+      "variant": "p.Val274Ile",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "ZNF335",
+      "category": "TF",
+      "spread": 0.403,
+      "variant": "p.Ser294Thr",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "IKZF1",
+      "category": "TF",
+      "spread": 0.402,
+      "variant": "p.Arg164Gly",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "PRR21",
+      "category": "background",
+      "spread": 0.402,
+      "variant": "p.Gly58Ser",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "OR4C46",
+      "category": "background",
+      "spread": 0.398,
+      "variant": "p.Ser240Phe",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "FAM27E2",
+      "category": "background",
+      "spread": 0.398,
+      "variant": "p.Met70Arg",
+      "adapted_pop": "sas"
+    },
+    {
+      "gene": "NPVF",
+      "category": "background",
+      "spread": 0.396,
+      "variant": "p.Asp42Gly",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "ZNF626",
+      "category": "background",
+      "spread": 0.39,
+      "variant": "p.Arg444Lys",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "OR10Z1",
+      "category": "background",
+      "spread": 0.39,
+      "variant": "p.Asn294Thr",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "ZNF683",
+      "category": "background",
+      "spread": 0.388,
+      "variant": "p.Asp48Gly",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "HMGA2",
+      "category": "TF",
+      "spread": 0.387,
+      "variant": "p.Arg132Gly",
+      "adapted_pop": "fin"
+    },
+    {
+      "gene": "MSRB1",
+      "category": "background",
+      "spread": 0.387,
+      "variant": "p.Ile156Met",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "NFATC1",
+      "category": "TF",
+      "spread": 0.386,
+      "variant": "p.His634Arg",
+      "adapted_pop": "sas"
+    },
+    {
+      "gene": "STK4",
+      "category": "background",
+      "spread": 0.386,
+      "variant": "p.Val312Met",
+      "adapted_pop": "fin"
+    },
+    {
+      "gene": "GABPB2",
+      "category": "TF",
+      "spread": 0.382,
+      "variant": "p.Lys315Gln",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "ELK1",
+      "category": "TF",
+      "spread": 0.374,
+      "variant": "p.Ser183Asn",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "DNAH17",
+      "category": "background",
+      "spread": 0.373,
+      "variant": "p.Thr1507Ala",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "ESR2",
+      "category": "TF",
+      "spread": 0.368,
+      "variant": "p.Val497Met",
+      "adapted_pop": "nfe"
+    },
+    {
+      "gene": "ANKRD30A",
+      "category": "background",
+      "spread": 0.356,
+      "variant": "p.Lys861Asn",
+      "adapted_pop": "sas"
+    },
+    {
+      "gene": "TNFAIP3",
+      "category": "TF",
+      "spread": 0.349,
+      "variant": "p.Phe127Cys",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "ADAMTS3",
+      "category": "background",
+      "spread": 0.348,
+      "variant": "p.Arg138Lys",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "JDP2",
+      "category": "TF",
+      "spread": 0.347,
+      "variant": "p.Thr24Ala",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "ZNF175",
+      "category": "TF",
+      "spread": 0.346,
+      "variant": "p.Ser133Cys",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "ZBTB46",
+      "category": "background",
+      "spread": 0.345,
+      "variant": "p.Thr11Ala",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "MYBBP1A",
+      "category": "TF",
+      "spread": 0.343,
+      "variant": "p.Arg570His",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "PRB3",
+      "category": "background",
+      "spread": 0.34,
+      "variant": "p.Pro228Ser",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "VPREB1",
+      "category": "background",
+      "spread": 0.332,
+      "variant": "p.Glu132Lys",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "IGSF5",
+      "category": "background",
+      "spread": 0.331,
+      "variant": "p.Arg49Thr",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "PER2",
+      "category": "TF",
+      "spread": 0.33,
+      "variant": "p.Gly1244Glu",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "GUF1",
+      "category": "background",
+      "spread": 0.33,
+      "variant": "p.Leu58Pro",
+      "adapted_pop": "fin"
+    },
+    {
+      "gene": "ZNF527",
+      "category": "background",
+      "spread": 0.326,
+      "variant": "p.His213Arg",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "XYLT2",
+      "category": "background",
+      "spread": 0.324,
+      "variant": "p.Thr801Arg",
+      "adapted_pop": "fin"
+    },
+    {
+      "gene": "ZNF559-ZNF177",
+      "category": "background",
+      "spread": 0.319,
+      "variant": "p.Thr112Met",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "CWC22",
+      "category": "background",
+      "spread": 0.318,
+      "variant": "p.Arg742Lys",
+      "adapted_pop": "amr"
+    },
+    {
+      "gene": "ZPBP2",
+      "category": "background",
+      "spread": 0.318,
+      "variant": "p.Ser173Ile",
+      "adapted_pop": "fin"
+    },
+    {
+      "gene": "NDUFS7",
+      "category": "background",
+      "spread": 0.314,
+      "variant": "p.Pro23Leu",
+      "adapted_pop": "nfe"
+    },
+    {
+      "gene": "OR2T6",
+      "category": "background",
+      "spread": 0.312,
+      "variant": "p.Asn21Asp",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "CP",
+      "category": "background",
+      "spread": 0.311,
+      "variant": "p.Glu544Asp",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "PRRC2A",
+      "category": "background",
+      "spread": 0.311,
+      "variant": "p.Thr544Lys",
+      "adapted_pop": "afr"
+    },
+    {
+      "gene": "SIGLEC1",
+      "category": "background",
+      "spread": 0.308,
+      "variant": "p.Ala974Val",
+      "adapted_pop": "eas"
+    },
+    {
+      "gene": "GPR162",
+      "category": "background",
+      "spread": 0.308,
+      "variant": "p.Arg459Gly",
+      "adapted_pop": "nfe"
+    },
+    {
+      "gene": "TRIB3",
+      "category": "TF",
+      "spread": 0.305,
+      "variant": "p.Gln84Arg",
+      "adapted_pop": "sas"
+    },
+    {
+      "gene": "SIM2",
+      "category": "TF",
+      "spread": 0.303,
+      "variant": "p.Leu483Met",
+      "adapted_pop": "nfe"
+    },
+    {
+      "gene": "CALML6",
+      "category": "background",
+      "spread": 0.302,
+      "variant": "p.Trp60Arg",
+      "adapted_pop": "afr"
+    }
+  ],
+  "known_ranks": {
+    "SLC24A5": 1,
+    "SLC45A2": 2,
+    "ACKR1": 3,
+    "G6PD": 5,
+    "MC1R": 9,
+    "FADS1": 15,
+    "EPAS1": 22,
+    "LCT": 26,
+    "UCP1": 146,
+    "EGLN1": 151
+  },
+  "method": "differentiation=max between-population AF gap; polarization=AFR-as-ancestral baseline",
+  "caveat": "~400-gene targeted panel (TFs+background+controls), not all 20k; AFR-baseline polarization is a heuristic (validate top hits with an outgroup ancestral allele)."
+}
