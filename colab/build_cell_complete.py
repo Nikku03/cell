@@ -107,7 +107,34 @@ for host,hps in hivhost.items():
 weak.sort(key=lambda x:-x["ppi"])
 # dark genes: no pathway, no disease, low PPI, unknown-ish (function frontier)
 dark=[i for i,g in enumerate(G) if g["npath"]==0 and g["ndis"]==0 and g["path"]=="" ]
-DATA=dict(genes=G,reg=reg,ppi=ppi,
+darkset=set(dark)
+for i,g in enumerate(G): g["dark"]=1 if i in darkset else 0
+# curated core metabolic reactions (enzyme genes -> substrate -> product), so the cell can
+# show REACTIONS, not just proteins. Only genes present in the map are kept per reaction.
+RAW_RX=[
+ ("glycolysis","HK1","glucose","glucose-6-P"),("glycolysis","GPI","glucose-6-P","fructose-6-P"),
+ ("glycolysis","PFKL","fructose-6-P","fructose-1,6-bisP"),("glycolysis","ALDOA","fructose-1,6-bisP","G3P + DHAP"),
+ ("glycolysis","GAPDH","G3P","1,3-bisphosphoglycerate"),("glycolysis","PGK1","1,3-BPG","3-phosphoglycerate"),
+ ("glycolysis","ENO1","2-phosphoglycerate","phosphoenolpyruvate"),("glycolysis","PKM","phosphoenolpyruvate","pyruvate"),
+ ("pyruvate->acetyl-CoA","PDHA1","pyruvate","acetyl-CoA"),("pyruvate->acetyl-CoA","LDHA","pyruvate","lactate"),
+ ("TCA cycle","CS","acetyl-CoA + OAA","citrate"),("TCA cycle","ACO2","citrate","isocitrate"),
+ ("TCA cycle","IDH2","isocitrate","alpha-ketoglutarate"),("TCA cycle","OGDH","alpha-KG","succinyl-CoA"),
+ ("TCA cycle","SUCLA2","succinyl-CoA","succinate"),("TCA cycle","SDHA","succinate","fumarate"),
+ ("TCA cycle","FH","fumarate","malate"),("TCA cycle","MDH2","malate","oxaloacetate"),
+ ("oxidative phosphorylation","NDUFS1","NADH","NAD+ + H+ (Complex I)"),("oxidative phosphorylation","SDHB","FADH2","FAD (Complex II)"),
+ ("oxidative phosphorylation","UQCRC1","ubiquinol","cytochrome c (Complex III)"),("oxidative phosphorylation","MT-CO1","cytochrome c","H2O (Complex IV)"),
+ ("oxidative phosphorylation","ATP5F1A","ADP + Pi","ATP (Complex V)"),
+ ("pentose phosphate","G6PD","glucose-6-P","6-phosphogluconolactone + NADPH"),
+ ("fatty acid synthesis","FASN","acetyl-CoA + malonyl-CoA","palmitate"),("fatty acid oxidation","CPT1A","fatty acyl-CoA","acylcarnitine (into mito)"),
+ ("urea cycle","OTC","ornithine + carbamoyl-P","citrulline"),("urea cycle","ASS1","citrulline + aspartate","argininosuccinate"),
+ ("urea cycle","ARG1","arginine","urea + ornithine"),
+ ("nucleotide synthesis","IMPDH1","IMP","XMP -> GMP"),("nucleotide synthesis","TYMS","dUMP","dTMP"),
+ ("serine/glycine","PHGDH","3-phosphoglycerate","3-phosphohydroxypyruvate"),("folate","MTHFR","5,10-methylene-THF","5-methyl-THF"),
+]
+reactions=[]
+for pw,enz,sub,prod in RAW_RX:
+    if enz in idx: reactions.append(dict(enz=enz,i=idx[enz],sub=sub,prod=prod,pathway=pw))
+DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,
     procs=sorted(set(g["proc"] for g in G)),comps=sorted(set(g["comp"] for g in G)),
     hiv={k:v for k,v in hiv.items()},hiv_targets={k:len(v) for k,v in hiv.items()},
     hiv_weakpoints=weak[:40],dark_count=len(dark),
@@ -121,4 +148,5 @@ print("processes:",dict(Counter(g["proc"] for g in G).most_common()))
 print("HIV proteins mapped:",len(hiv),"-> host targets:",{k:len(v) for k,v in sorted(hiv.items(),key=lambda x:-len(x[1]))[:8]})
 print("HIV host-dependency weak points:",len(weak),"e.g.",[w["gene"] for w in weak[:10]])
 print("dark genes (no pathway/disease):",len(dark))
+print("curated reactions present:",len(reactions),"across",len(set(r["pathway"] for r in reactions)),"pathways")
 print("wrote cell_complete.json (%d KB)"%(len(json.dumps(DATA))//1024))
