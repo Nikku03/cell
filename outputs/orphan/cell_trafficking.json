@@ -1,0 +1,669 @@
+{
+  "SLC2A1": {
+    "acc": "P11166",
+    "name": "Solute carrier family 2, facilitated glucose transporter member 1",
+    "locations": [
+      "Cell membrane",
+      "Melanosome",
+      "Photoreceptor inner segment"
+    ],
+    "signal": false,
+    "n_tm": 12,
+    "route": "secretory",
+    "chrom": "chr1",
+    "steps": [
+      {
+        "step": "gene",
+        "loc": "nucleus",
+        "species": "DNA",
+        "machinery": "chromosome chr1",
+        "desc": "SLC2A1 gene in the genome"
+      },
+      {
+        "step": "transcription",
+        "loc": "nucleus",
+        "species": "pre-mRNA (hnRNA)",
+        "machinery": "RNA Polymerase II",
+        "desc": "DNA transcribed to hnRNA; 5' cap added"
+      },
+      {
+        "step": "splicing",
+        "loc": "nucleus",
+        "species": "mRNA",
+        "machinery": "spliceosome (snRNPs)",
+        "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"
+      },
+      {
+        "step": "export",
+        "loc": "nuclear pore",
+        "species": "mRNA",
+        "machinery": "nuclear pore complex + NXF1/TAP",
+        "desc": "mRNA exported to cytoplasm"
+      },
+      {
+        "step": "translation+targeting",
+        "loc": "ER",
+        "species": "nascent chain",
+        "machinery": "ribosome + SRP + SRP receptor",
+        "desc": "signal peptide emerges -> SRP pauses translation, docks ribosome on the ER"
+      },
+      {
+        "step": "translocation",
+        "loc": "ER",
+        "species": "membrane protein",
+        "machinery": "Sec61 translocon (+ signal peptidase)",
+        "desc": "co-translational insertion into ER membrane"
+      },
+      {
+        "step": "ER folding",
+        "loc": "ER",
+        "species": "folded protein",
+        "machinery": "BiP/calnexin chaperones + N-glycosylation",
+        "desc": "folding + glycosylation, quality control"
+      },
+      {
+        "step": "ER->Golgi",
+        "loc": "Golgi",
+        "species": "cargo",
+        "machinery": "COPII vesicles",
+        "desc": "vesicle transport to the Golgi"
+      },
+      {
+        "step": "Golgi",
+        "loc": "Golgi",
+        "species": "mature glycoprotein",
+        "machinery": "Golgi glycosyltransferases",
+        "desc": "glycan maturation + sorting"
+      },
+      {
+        "step": "Golgi->surface",
+        "loc": "plasma membrane",
+        "species": "cargo vesicle",
+        "machinery": "secretory vesicle + SNAREs (exocytosis)",
+        "desc": "delivered to plasma membrane"
+      },
+      {
+        "step": "FINAL",
+        "loc": "plasma membrane",
+        "species": "Solute carrier family 2, facilitated glucose transporter member 1",
+        "machinery": "",
+        "desc": "final location: plasma membrane"
+      }
+    ]
+  },
+  "INSR": {
+    "acc": "P06213",
+    "name": "Insulin receptor",
+    "locations": [
+      "Cell membrane",
+      "Late endosome",
+      "Lysosome"
+    ],
+    "signal": true,
+    "n_tm": 1,
+    "route": "secretory",
+    "chrom": "chr19",
+    "steps": [
+      {
+        "step": "gene",
+        "loc": "nucleus",
+        "species": "DNA",
+        "machinery": "chromosome chr19",
+        "desc": "INSR gene in the genome"
+      },
+      {
+        "step": "transcription",
+        "loc": "nucleus",
+        "species": "pre-mRNA (hnRNA)",
+        "machinery": "RNA Polymerase II",
+        "desc": "DNA transcribed to hnRNA; 5' cap added"
+      },
+      {
+        "step": "splicing",
+        "loc": "nucleus",
+        "species": "mRNA",
+        "machinery": "spliceosome (snRNPs)",
+        "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"
+      },
+      {
+        "step": "export",
+        "loc": "nuclear pore",
+        "species": "mRNA",
+        "machinery": "nuclear pore complex + NXF1/TAP",
+        "desc": "mRNA exported to cytoplasm"
+      },
+      {
+        "step": "translation+targeting",
+        "loc": "ER",
+        "species": "nascent chain",
+        "machinery": "ribosome + SRP + SRP receptor",
+        "desc": "signal peptide emerges -> SRP pauses translation, docks ribosome on the ER"
+      },
+      {
+        "step": "translocation",
+        "loc": "ER",
+        "species": "membrane protein",
+        "machinery": "Sec61 translocon (+ signal peptidase)",
+        "desc": "co-translational insertion into ER membrane"
+      },
+      {
+        "step": "ER folding",
+        "loc": "ER",
+        "species": "folded protein",
+        "machinery": "BiP/calnexin chaperones + N-glycosylation",
+        "desc": "folding + glycosylation, quality control"
+      },
+      {
+        "step": "ER->Golgi",
+        "loc": "Golgi",
+        "species": "cargo",
+        "machinery": "COPII vesicles",
+        "desc": "vesicle transport to the Golgi"
+      },
+      {
+        "step": "Golgi",
+        "loc": "Golgi",
+        "species": "mature glycoprotein",
+        "machinery": "Golgi glycosyltransferases",
+        "desc": "glycan maturation + sorting"
+      },
+      {
+        "step": "Golgi->surface",
+        "loc": "plasma membrane",
+        "species": "cargo vesicle",
+        "machinery": "secretory vesicle + SNAREs (exocytosis)",
+        "desc": "delivered to plasma membrane"
+      },
+      {
+        "step": "FINAL",
+        "loc": "plasma membrane",
+        "species": "Insulin receptor",
+        "machinery": "",
+        "desc": "final location: plasma membrane"
+      }
+    ]
+  },
+  "ALB": {
+    "acc": "P02768",
+    "name": "Albumin",
+    "locations": [
+      "Secreted"
+    ],
+    "signal": true,
+    "n_tm": 0,
+    "route": "secretory",
+    "chrom": "chr4",
+    "steps": [
+      {
+        "step": "gene",
+        "loc": "nucleus",
+        "species": "DNA",
+        "machinery": "chromosome chr4",
+        "desc": "ALB gene in the genome"
+      },
+      {
+        "step": "transcription",
+        "loc": "nucleus",
+        "species": "pre-mRNA (hnRNA)",
+        "machinery": "RNA Polymerase II",
+        "desc": "DNA transcribed to hnRNA; 5' cap added"
+      },
+      {
+        "step": "splicing",
+        "loc": "nucleus",
+        "species": "mRNA",
+        "machinery": "spliceosome (snRNPs)",
+        "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"
+      },
+      {
+        "step": "export",
+        "loc": "nuclear pore",
+        "species": "mRNA",
+        "machinery": "nuclear pore complex + NXF1/TAP",
+        "desc": "mRNA exported to cytoplasm"
+      },
+      {
+        "step": "translation+targeting",
+        "loc": "ER",
+        "species": "nascent chain",
+        "machinery": "ribosome + SRP + SRP receptor",
+        "desc": "signal peptide emerges -> SRP pauses translation, docks ribosome on the ER"
+      },
+      {
+        "step": "translocation",
+        "loc": "ER",
+        "species": "protein",
+        "machinery": "Sec61 translocon (+ signal peptidase)",
+        "desc": "co-translational insertion into ER lumen"
+      },
+      {
+        "step": "ER folding",
+        "loc": "ER",
+        "species": "folded protein",
+        "machinery": "BiP/calnexin chaperones + N-glycosylation",
+        "desc": "folding + glycosylation, quality control"
+      },
+      {
+        "step": "ER->Golgi",
+        "loc": "Golgi",
+        "species": "cargo",
+        "machinery": "COPII vesicles",
+        "desc": "vesicle transport to the Golgi"
+      },
+      {
+        "step": "Golgi",
+        "loc": "Golgi",
+        "species": "mature glycoprotein",
+        "machinery": "Golgi glycosyltransferases",
+        "desc": "glycan maturation + sorting"
+      },
+      {
+        "step": "Golgi->surface",
+        "loc": "extracellular",
+        "species": "cargo vesicle",
+        "machinery": "secretory vesicle + SNAREs (exocytosis)",
+        "desc": "delivered to secreted"
+      },
+      {
+        "step": "FINAL",
+        "loc": "extracellular",
+        "species": "Albumin",
+        "machinery": "",
+        "desc": "final location: secreted"
+      }
+    ]
+  },
+  "TP53": {
+    "acc": "P04637",
+    "name": "Cellular tumor antigen p53",
+    "locations": [
+      "Cytoplasm",
+      "Nucleus",
+      "Nucleus, PML body",
+      "Endoplasmic reticulum",
+      "Mitochondrion matrix",
+      "Cytoplasm, cytoskeleton, microtubule organizing center, centrosome",
+      "Nucleus",
+      "Cytoplasm",
+      "Nucleus",
+      "Cytoplasm",
+      "Nucleus",
+      "Cytoplasm",
+      "Nucleus",
+      "Cytoplasm",
+      "Nucleus",
+      "Cytoplasm",
+      "Nucleus",
+      "Cytoplasm",
+      "Cytoplasm"
+    ],
+    "signal": false,
+    "n_tm": 0,
+    "route": "nuclear",
+    "chrom": "chr17",
+    "steps": [
+      {
+        "step": "gene",
+        "loc": "nucleus",
+        "species": "DNA",
+        "machinery": "chromosome chr17",
+        "desc": "TP53 gene in the genome"
+      },
+      {
+        "step": "transcription",
+        "loc": "nucleus",
+        "species": "pre-mRNA (hnRNA)",
+        "machinery": "RNA Polymerase II",
+        "desc": "DNA transcribed to hnRNA; 5' cap added"
+      },
+      {
+        "step": "splicing",
+        "loc": "nucleus",
+        "species": "mRNA",
+        "machinery": "spliceosome (snRNPs)",
+        "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"
+      },
+      {
+        "step": "export",
+        "loc": "nuclear pore",
+        "species": "mRNA",
+        "machinery": "nuclear pore complex + NXF1/TAP",
+        "desc": "mRNA exported to cytoplasm"
+      },
+      {
+        "step": "translation",
+        "loc": "cytoplasm",
+        "species": "protein",
+        "machinery": "free ribosome",
+        "desc": "translated in cytosol"
+      },
+      {
+        "step": "nuclear import",
+        "loc": "nuclear pore",
+        "species": "protein",
+        "machinery": "importin-a/b (NLS)",
+        "desc": "NLS recognized, imported through nuclear pore"
+      },
+      {
+        "step": "FINAL",
+        "loc": "nucleus",
+        "species": "Cellular tumor antigen p53",
+        "machinery": "",
+        "desc": "final location: nucleus"
+      }
+    ]
+  },
+  "GAPDH": {
+    "acc": "P04406",
+    "name": "Glyceraldehyde-3-phosphate dehydrogenase",
+    "locations": [
+      "Cytoplasm, cytosol",
+      "Nucleus",
+      "Cytoplasm, perinuclear region",
+      "Membrane",
+      "Cytoplasm, cytoskeleton"
+    ],
+    "signal": false,
+    "n_tm": 0,
+    "route": "cytosolic",
+    "chrom": "chr12",
+    "steps": [
+      {
+        "step": "gene",
+        "loc": "nucleus",
+        "species": "DNA",
+        "machinery": "chromosome chr12",
+        "desc": "GAPDH gene in the genome"
+      },
+      {
+        "step": "transcription",
+        "loc": "nucleus",
+        "species": "pre-mRNA (hnRNA)",
+        "machinery": "RNA Polymerase II",
+        "desc": "DNA transcribed to hnRNA; 5' cap added"
+      },
+      {
+        "step": "splicing",
+        "loc": "nucleus",
+        "species": "mRNA",
+        "machinery": "spliceosome (snRNPs)",
+        "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"
+      },
+      {
+        "step": "export",
+        "loc": "nuclear pore",
+        "species": "mRNA",
+        "machinery": "nuclear pore complex + NXF1/TAP",
+        "desc": "mRNA exported to cytoplasm"
+      },
+      {
+        "step": "translation",
+        "loc": "cytoplasm",
+        "species": "protein",
+        "machinery": "free ribosome",
+        "desc": "translated on free ribosomes in the cytosol"
+      },
+      {
+        "step": "FINAL",
+        "loc": "cytoplasm",
+        "species": "Glyceraldehyde-3-phosphate dehydrogenase",
+        "machinery": "",
+        "desc": "final location: cytosol"
+      }
+    ]
+  },
+  "SOD2": {
+    "acc": "P04179",
+    "name": "Superoxide dismutase [Mn], mitochondrial",
+    "locations": [
+      "Mitochondrion matrix"
+    ],
+    "signal": false,
+    "n_tm": 0,
+    "route": "mitochondrial",
+    "chrom": "chr6",
+    "steps": [
+      {
+        "step": "gene",
+        "loc": "nucleus",
+        "species": "DNA",
+        "machinery": "chromosome chr6",
+        "desc": "SOD2 gene in the genome"
+      },
+      {
+        "step": "transcription",
+        "loc": "nucleus",
+        "species": "pre-mRNA (hnRNA)",
+        "machinery": "RNA Polymerase II",
+        "desc": "DNA transcribed to hnRNA; 5' cap added"
+      },
+      {
+        "step": "splicing",
+        "loc": "nucleus",
+        "species": "mRNA",
+        "machinery": "spliceosome (snRNPs)",
+        "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"
+      },
+      {
+        "step": "export",
+        "loc": "nuclear pore",
+        "species": "mRNA",
+        "machinery": "nuclear pore complex + NXF1/TAP",
+        "desc": "mRNA exported to cytoplasm"
+      },
+      {
+        "step": "translation",
+        "loc": "cytoplasm",
+        "species": "precursor",
+        "machinery": "free ribosome",
+        "desc": "translated with mitochondrial targeting sequence (MTS)"
+      },
+      {
+        "step": "mito import",
+        "loc": "mitochondrion",
+        "species": "protein",
+        "machinery": "TOM/TIM translocase + MPP",
+        "desc": "imported through outer/inner membranes; MTS cleaved"
+      },
+      {
+        "step": "FINAL",
+        "loc": "mitochondrion",
+        "species": "Superoxide dismutase [Mn], mitochondrial",
+        "machinery": "",
+        "desc": "final location: mitochondrion"
+      }
+    ]
+  },
+  "LDLR": {
+    "acc": "P01130",
+    "name": "Low-density lipoprotein receptor",
+    "locations": [
+      "Cell membrane",
+      "Membrane, clathrin-coated pit",
+      "Golgi apparatus",
+      "Early endosome",
+      "Late endosome",
+      "Lysosome"
+    ],
+    "signal": true,
+    "n_tm": 1,
+    "route": "secretory",
+    "chrom": "chr19",
+    "steps": [
+      {
+        "step": "gene",
+        "loc": "nucleus",
+        "species": "DNA",
+        "machinery": "chromosome chr19",
+        "desc": "LDLR gene in the genome"
+      },
+      {
+        "step": "transcription",
+        "loc": "nucleus",
+        "species": "pre-mRNA (hnRNA)",
+        "machinery": "RNA Polymerase II",
+        "desc": "DNA transcribed to hnRNA; 5' cap added"
+      },
+      {
+        "step": "splicing",
+        "loc": "nucleus",
+        "species": "mRNA",
+        "machinery": "spliceosome (snRNPs)",
+        "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"
+      },
+      {
+        "step": "export",
+        "loc": "nuclear pore",
+        "species": "mRNA",
+        "machinery": "nuclear pore complex + NXF1/TAP",
+        "desc": "mRNA exported to cytoplasm"
+      },
+      {
+        "step": "translation+targeting",
+        "loc": "ER",
+        "species": "nascent chain",
+        "machinery": "ribosome + SRP + SRP receptor",
+        "desc": "signal peptide emerges -> SRP pauses translation, docks ribosome on the ER"
+      },
+      {
+        "step": "translocation",
+        "loc": "ER",
+        "species": "membrane protein",
+        "machinery": "Sec61 translocon (+ signal peptidase)",
+        "desc": "co-translational insertion into ER membrane"
+      },
+      {
+        "step": "ER folding",
+        "loc": "ER",
+        "species": "folded protein",
+        "machinery": "BiP/calnexin chaperones + N-glycosylation",
+        "desc": "folding + glycosylation, quality control"
+      },
+      {
+        "step": "ER->Golgi",
+        "loc": "Golgi",
+        "species": "cargo",
+        "machinery": "COPII vesicles",
+        "desc": "vesicle transport to the Golgi"
+      },
+      {
+        "step": "Golgi",
+        "loc": "Golgi",
+        "species": "mature glycoprotein",
+        "machinery": "Golgi glycosyltransferases",
+        "desc": "glycan maturation + sorting"
+      },
+      {
+        "step": "Golgi->surface",
+        "loc": "plasma membrane",
+        "species": "cargo vesicle",
+        "machinery": "secretory vesicle + SNAREs (exocytosis)",
+        "desc": "delivered to plasma membrane"
+      },
+      {
+        "step": "FINAL",
+        "loc": "plasma membrane",
+        "species": "Low-density lipoprotein receptor",
+        "machinery": "",
+        "desc": "final location: plasma membrane"
+      }
+    ]
+  },
+  "EGFR": {
+    "acc": "P00533",
+    "name": "Epidermal growth factor receptor",
+    "locations": [
+      "Cell membrane",
+      "Endoplasmic reticulum membrane",
+      "Golgi apparatus membrane",
+      "Nucleus membrane",
+      "Endosome",
+      "Endosome membrane",
+      "Nucleus",
+      "Secreted"
+    ],
+    "signal": true,
+    "n_tm": 1,
+    "route": "secretory",
+    "chrom": "chr7",
+    "steps": [
+      {
+        "step": "gene",
+        "loc": "nucleus",
+        "species": "DNA",
+        "machinery": "chromosome chr7",
+        "desc": "EGFR gene in the genome"
+      },
+      {
+        "step": "transcription",
+        "loc": "nucleus",
+        "species": "pre-mRNA (hnRNA)",
+        "machinery": "RNA Polymerase II",
+        "desc": "DNA transcribed to hnRNA; 5' cap added"
+      },
+      {
+        "step": "splicing",
+        "loc": "nucleus",
+        "species": "mRNA",
+        "machinery": "spliceosome (snRNPs)",
+        "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"
+      },
+      {
+        "step": "export",
+        "loc": "nuclear pore",
+        "species": "mRNA",
+        "machinery": "nuclear pore complex + NXF1/TAP",
+        "desc": "mRNA exported to cytoplasm"
+      },
+      {
+        "step": "translation+targeting",
+        "loc": "ER",
+        "species": "nascent chain",
+        "machinery": "ribosome + SRP + SRP receptor",
+        "desc": "signal peptide emerges -> SRP pauses translation, docks ribosome on the ER"
+      },
+      {
+        "step": "translocation",
+        "loc": "ER",
+        "species": "membrane protein",
+        "machinery": "Sec61 translocon (+ signal peptidase)",
+        "desc": "co-translational insertion into ER membrane"
+      },
+      {
+        "step": "ER folding",
+        "loc": "ER",
+        "species": "folded protein",
+        "machinery": "BiP/calnexin chaperones + N-glycosylation",
+        "desc": "folding + glycosylation, quality control"
+      },
+      {
+        "step": "ER->Golgi",
+        "loc": "Golgi",
+        "species": "cargo",
+        "machinery": "COPII vesicles",
+        "desc": "vesicle transport to the Golgi"
+      },
+      {
+        "step": "Golgi",
+        "loc": "Golgi",
+        "species": "mature glycoprotein",
+        "machinery": "Golgi glycosyltransferases",
+        "desc": "glycan maturation + sorting"
+      },
+      {
+        "step": "Golgi->surface",
+        "loc": "plasma membrane",
+        "species": "cargo vesicle",
+        "machinery": "secretory vesicle + SNAREs (exocytosis)",
+        "desc": "delivered to plasma membrane"
+      },
+      {
+        "step": "FINAL",
+        "loc": "plasma membrane",
+        "species": "Epidermal growth factor receptor",
+        "machinery": "",
+        "desc": "final location: plasma membrane"
+      }
+    ]
+  }
+}

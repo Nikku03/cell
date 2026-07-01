@@ -1,0 +1,108 @@
+<!doctype html><html><head><meta charset=utf-8><title>Cell trafficking — gene to final location</title>
+<style>
+ body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#0d1b2a;color:#e0e6ed}
+ #wrap{display:flex;height:100vh}
+ #left{flex:1;position:relative}
+ #right{width:380px;background:#122135;padding:14px 16px;overflow:auto;box-shadow:-2px 0 12px #0006}
+ h2{margin:.2em 0;font-size:17px;color:#7fd1ff}
+ .genebtn{display:inline-block;margin:3px;padding:5px 9px;border-radius:6px;background:#1b3a5c;color:#cfe8ff;cursor:pointer;font-size:12px;border:1px solid #2a5580}
+ .genebtn:hover{background:#26547f}.genebtn.on{background:#2e86de;color:#fff;border-color:#7fd1ff}
+ .step{margin:6px 0;padding:7px 9px;border-left:3px solid #2e86de;background:#0f2237;border-radius:0 6px 6px 0;font-size:12px;opacity:.4;transition:.3s}
+ .step.active{opacity:1;border-left-color:#ffd166;background:#14304d}
+ .step b{color:#7fd1ff}.mach{color:#ffd166;font-size:11px}.sp{color:#9be7a0}
+ svg{width:100%;height:100%}
+ .cmp{font-size:12px;fill:#8fa8c0;font-weight:600}
+ #meta{font-size:12px;color:#9fb3c8;margin-top:8px;line-height:1.5}
+ .wp{fill:#ffd166;stroke:#0d1b2a;stroke-width:1.5}
+ .wpt{font-size:10px;fill:#0d1b2a;font-weight:700;text-anchor:middle}
+</style></head><body><div id=wrap>
+<div id=left><svg id=cell viewBox="0 0 920 660" preserveAspectRatio=xMidYMid meet>
+ <defs><marker id=arw markerWidth=8 markerHeight=8 refX=6 refY=3 orient=auto><path d="M0,0 L6,3 L0,6 z" fill=#ffd166/></marker></defs>
+ <!-- extracellular -->
+ <rect x=0 y=0 width=920 height=660 fill=#0d1b2a/>
+ <!-- cell / plasma membrane -->
+ <ellipse cx=455 cy=330 rx=445 ry=305 fill=#12263d stroke=#5aa0e0 stroke-width=6/>
+ <ellipse cx=455 cy=330 rx=445 ry=305 fill=none stroke=#274b6e stroke-width=2 stroke-dasharray="2 5"/>
+ <text class=cmp x=770 y=120>plasma membrane</text>
+ <text class=cmp x=560 y=70>cytoplasm</text>
+ <!-- nucleus -->
+ <circle cx=270 cy=330 r=155 fill=#1a2f4d stroke=#8f7fd1 stroke-width=5/>
+ <circle cx=270 cy=330 r=155 fill=none stroke=#6a5ba8 stroke-width=2 stroke-dasharray="1 6"/>
+ <text class=cmp x=225 y=200 fill=#b9a9ff>nucleus</text>
+ <!-- nuclear pore -->
+ <rect x=415 y=316 width=16 height=28 rx=3 fill=#8f7fd1/>
+ <text class=cmp x=398 y=372 fill=#b9a9ff font-size=10>pore</text>
+ <!-- ER -->
+ <path d="M455 400 q40 -30 80 -8 q40 22 78 -2 q35 -20 70 4" fill=none stroke=#e08a5a stroke-width=9 opacity=.8/>
+ <text class=cmp x=520 y=440 fill=#e0a58a>ER</text>
+ <!-- Golgi -->
+ <g stroke=#5ad1c0 stroke-width=6 fill=none opacity=.85>
+  <path d="M600 300 q35 -12 70 0"/><path d="M596 315 q40 -13 78 0"/><path d="M600 330 q35 -12 70 0"/></g>
+ <text class=cmp x=612 y=285 fill=#8ce0d4>Golgi</text>
+ <!-- mitochondrion -->
+ <ellipse cx=640 cy=500 rx=70 ry=34 fill=#2d1a3a stroke=#d15a9e stroke-width=4/>
+ <path d="M585 500 q15 -20 30 0 q15 20 30 0 q15 -20 30 0" fill=none stroke=#d15a9e stroke-width=2/>
+ <text class=cmp x=605 y=548 fill=#e08ac0>mitochondrion</text>
+ <!-- ribosomes -->
+ <g fill=#7fd1ff opacity=.5><circle cx=500 cy=250 r=5 /><circle cx=540 cy=520 r=5 /><circle cx=470 cy=180 r=5 /><circle cx=700 cy=200 r=5 /></g>
+ <g id=path></g>
+</svg></div>
+<div id=right>
+ <h2>Gene → product → location</h2>
+ <div id=genes></div>
+ <div id=meta></div>
+ <h2 style="margin-top:12px">Journey</h2>
+ <div id=steps></div>
+</div></div>
+<script>
+const DATA={"SLC2A1": {"acc": "P11166", "name": "Solute carrier family 2, facilitated glucose transporter member 1", "locations": ["Cell membrane", "Melanosome", "Photoreceptor inner segment"], "signal": false, "n_tm": 12, "route": "secretory", "chrom": "chr1", "steps": [{"step": "gene", "loc": "nucleus", "species": "DNA", "machinery": "chromosome chr1", "desc": "SLC2A1 gene in the genome"}, {"step": "transcription", "loc": "nucleus", "species": "pre-mRNA (hnRNA)", "machinery": "RNA Polymerase II", "desc": "DNA transcribed to hnRNA; 5' cap added"}, {"step": "splicing", "loc": "nucleus", "species": "mRNA", "machinery": "spliceosome (snRNPs)", "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"}, {"step": "export", "loc": "nuclear pore", "species": "mRNA", "machinery": "nuclear pore complex + NXF1/TAP", "desc": "mRNA exported to cytoplasm"}, {"step": "translation+targeting", "loc": "ER", "species": "nascent chain", "machinery": "ribosome + SRP + SRP receptor", "desc": "signal peptide emerges -> SRP pauses translation, docks ribosome on the ER"}, {"step": "translocation", "loc": "ER", "species": "membrane protein", "machinery": "Sec61 translocon (+ signal peptidase)", "desc": "co-translational insertion into ER membrane"}, {"step": "ER folding", "loc": "ER", "species": "folded protein", "machinery": "BiP/calnexin chaperones + N-glycosylation", "desc": "folding + glycosylation, quality control"}, {"step": "ER->Golgi", "loc": "Golgi", "species": "cargo", "machinery": "COPII vesicles", "desc": "vesicle transport to the Golgi"}, {"step": "Golgi", "loc": "Golgi", "species": "mature glycoprotein", "machinery": "Golgi glycosyltransferases", "desc": "glycan maturation + sorting"}, {"step": "Golgi->surface", "loc": "plasma membrane", "species": "cargo vesicle", "machinery": "secretory vesicle + SNAREs (exocytosis)", "desc": "delivered to plasma membrane"}, {"step": "FINAL", "loc": "plasma membrane", "species": "Solute carrier family 2, facilitated glucose transporter member 1", "machinery": "", "desc": "final location: plasma membrane"}]}, "INSR": {"acc": "P06213", "name": "Insulin receptor", "locations": ["Cell membrane", "Late endosome", "Lysosome"], "signal": true, "n_tm": 1, "route": "secretory", "chrom": "chr19", "steps": [{"step": "gene", "loc": "nucleus", "species": "DNA", "machinery": "chromosome chr19", "desc": "INSR gene in the genome"}, {"step": "transcription", "loc": "nucleus", "species": "pre-mRNA (hnRNA)", "machinery": "RNA Polymerase II", "desc": "DNA transcribed to hnRNA; 5' cap added"}, {"step": "splicing", "loc": "nucleus", "species": "mRNA", "machinery": "spliceosome (snRNPs)", "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"}, {"step": "export", "loc": "nuclear pore", "species": "mRNA", "machinery": "nuclear pore complex + NXF1/TAP", "desc": "mRNA exported to cytoplasm"}, {"step": "translation+targeting", "loc": "ER", "species": "nascent chain", "machinery": "ribosome + SRP + SRP receptor", "desc": "signal peptide emerges -> SRP pauses translation, docks ribosome on the ER"}, {"step": "translocation", "loc": "ER", "species": "membrane protein", "machinery": "Sec61 translocon (+ signal peptidase)", "desc": "co-translational insertion into ER membrane"}, {"step": "ER folding", "loc": "ER", "species": "folded protein", "machinery": "BiP/calnexin chaperones + N-glycosylation", "desc": "folding + glycosylation, quality control"}, {"step": "ER->Golgi", "loc": "Golgi", "species": "cargo", "machinery": "COPII vesicles", "desc": "vesicle transport to the Golgi"}, {"step": "Golgi", "loc": "Golgi", "species": "mature glycoprotein", "machinery": "Golgi glycosyltransferases", "desc": "glycan maturation + sorting"}, {"step": "Golgi->surface", "loc": "plasma membrane", "species": "cargo vesicle", "machinery": "secretory vesicle + SNAREs (exocytosis)", "desc": "delivered to plasma membrane"}, {"step": "FINAL", "loc": "plasma membrane", "species": "Insulin receptor", "machinery": "", "desc": "final location: plasma membrane"}]}, "ALB": {"acc": "P02768", "name": "Albumin", "locations": ["Secreted"], "signal": true, "n_tm": 0, "route": "secretory", "chrom": "chr4", "steps": [{"step": "gene", "loc": "nucleus", "species": "DNA", "machinery": "chromosome chr4", "desc": "ALB gene in the genome"}, {"step": "transcription", "loc": "nucleus", "species": "pre-mRNA (hnRNA)", "machinery": "RNA Polymerase II", "desc": "DNA transcribed to hnRNA; 5' cap added"}, {"step": "splicing", "loc": "nucleus", "species": "mRNA", "machinery": "spliceosome (snRNPs)", "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"}, {"step": "export", "loc": "nuclear pore", "species": "mRNA", "machinery": "nuclear pore complex + NXF1/TAP", "desc": "mRNA exported to cytoplasm"}, {"step": "translation+targeting", "loc": "ER", "species": "nascent chain", "machinery": "ribosome + SRP + SRP receptor", "desc": "signal peptide emerges -> SRP pauses translation, docks ribosome on the ER"}, {"step": "translocation", "loc": "ER", "species": "protein", "machinery": "Sec61 translocon (+ signal peptidase)", "desc": "co-translational insertion into ER lumen"}, {"step": "ER folding", "loc": "ER", "species": "folded protein", "machinery": "BiP/calnexin chaperones + N-glycosylation", "desc": "folding + glycosylation, quality control"}, {"step": "ER->Golgi", "loc": "Golgi", "species": "cargo", "machinery": "COPII vesicles", "desc": "vesicle transport to the Golgi"}, {"step": "Golgi", "loc": "Golgi", "species": "mature glycoprotein", "machinery": "Golgi glycosyltransferases", "desc": "glycan maturation + sorting"}, {"step": "Golgi->surface", "loc": "extracellular", "species": "cargo vesicle", "machinery": "secretory vesicle + SNAREs (exocytosis)", "desc": "delivered to secreted"}, {"step": "FINAL", "loc": "extracellular", "species": "Albumin", "machinery": "", "desc": "final location: secreted"}]}, "TP53": {"acc": "P04637", "name": "Cellular tumor antigen p53", "locations": ["Cytoplasm", "Nucleus", "Nucleus, PML body", "Endoplasmic reticulum", "Mitochondrion matrix", "Cytoplasm, cytoskeleton, microtubule organizing center, centrosome", "Nucleus", "Cytoplasm", "Nucleus", "Cytoplasm", "Nucleus", "Cytoplasm", "Nucleus", "Cytoplasm", "Nucleus", "Cytoplasm", "Nucleus", "Cytoplasm", "Cytoplasm"], "signal": false, "n_tm": 0, "route": "nuclear", "chrom": "chr17", "steps": [{"step": "gene", "loc": "nucleus", "species": "DNA", "machinery": "chromosome chr17", "desc": "TP53 gene in the genome"}, {"step": "transcription", "loc": "nucleus", "species": "pre-mRNA (hnRNA)", "machinery": "RNA Polymerase II", "desc": "DNA transcribed to hnRNA; 5' cap added"}, {"step": "splicing", "loc": "nucleus", "species": "mRNA", "machinery": "spliceosome (snRNPs)", "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"}, {"step": "export", "loc": "nuclear pore", "species": "mRNA", "machinery": "nuclear pore complex + NXF1/TAP", "desc": "mRNA exported to cytoplasm"}, {"step": "translation", "loc": "cytoplasm", "species": "protein", "machinery": "free ribosome", "desc": "translated in cytosol"}, {"step": "nuclear import", "loc": "nuclear pore", "species": "protein", "machinery": "importin-a/b (NLS)", "desc": "NLS recognized, imported through nuclear pore"}, {"step": "FINAL", "loc": "nucleus", "species": "Cellular tumor antigen p53", "machinery": "", "desc": "final location: nucleus"}]}, "GAPDH": {"acc": "P04406", "name": "Glyceraldehyde-3-phosphate dehydrogenase", "locations": ["Cytoplasm, cytosol", "Nucleus", "Cytoplasm, perinuclear region", "Membrane", "Cytoplasm, cytoskeleton"], "signal": false, "n_tm": 0, "route": "cytosolic", "chrom": "chr12", "steps": [{"step": "gene", "loc": "nucleus", "species": "DNA", "machinery": "chromosome chr12", "desc": "GAPDH gene in the genome"}, {"step": "transcription", "loc": "nucleus", "species": "pre-mRNA (hnRNA)", "machinery": "RNA Polymerase II", "desc": "DNA transcribed to hnRNA; 5' cap added"}, {"step": "splicing", "loc": "nucleus", "species": "mRNA", "machinery": "spliceosome (snRNPs)", "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"}, {"step": "export", "loc": "nuclear pore", "species": "mRNA", "machinery": "nuclear pore complex + NXF1/TAP", "desc": "mRNA exported to cytoplasm"}, {"step": "translation", "loc": "cytoplasm", "species": "protein", "machinery": "free ribosome", "desc": "translated on free ribosomes in the cytosol"}, {"step": "FINAL", "loc": "cytoplasm", "species": "Glyceraldehyde-3-phosphate dehydrogenase", "machinery": "", "desc": "final location: cytosol"}]}, "SOD2": {"acc": "P04179", "name": "Superoxide dismutase [Mn], mitochondrial", "locations": ["Mitochondrion matrix"], "signal": false, "n_tm": 0, "route": "mitochondrial", "chrom": "chr6", "steps": [{"step": "gene", "loc": "nucleus", "species": "DNA", "machinery": "chromosome chr6", "desc": "SOD2 gene in the genome"}, {"step": "transcription", "loc": "nucleus", "species": "pre-mRNA (hnRNA)", "machinery": "RNA Polymerase II", "desc": "DNA transcribed to hnRNA; 5' cap added"}, {"step": "splicing", "loc": "nucleus", "species": "mRNA", "machinery": "spliceosome (snRNPs)", "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"}, {"step": "export", "loc": "nuclear pore", "species": "mRNA", "machinery": "nuclear pore complex + NXF1/TAP", "desc": "mRNA exported to cytoplasm"}, {"step": "translation", "loc": "cytoplasm", "species": "precursor", "machinery": "free ribosome", "desc": "translated with mitochondrial targeting sequence (MTS)"}, {"step": "mito import", "loc": "mitochondrion", "species": "protein", "machinery": "TOM/TIM translocase + MPP", "desc": "imported through outer/inner membranes; MTS cleaved"}, {"step": "FINAL", "loc": "mitochondrion", "species": "Superoxide dismutase [Mn], mitochondrial", "machinery": "", "desc": "final location: mitochondrion"}]}, "LDLR": {"acc": "P01130", "name": "Low-density lipoprotein receptor", "locations": ["Cell membrane", "Membrane, clathrin-coated pit", "Golgi apparatus", "Early endosome", "Late endosome", "Lysosome"], "signal": true, "n_tm": 1, "route": "secretory", "chrom": "chr19", "steps": [{"step": "gene", "loc": "nucleus", "species": "DNA", "machinery": "chromosome chr19", "desc": "LDLR gene in the genome"}, {"step": "transcription", "loc": "nucleus", "species": "pre-mRNA (hnRNA)", "machinery": "RNA Polymerase II", "desc": "DNA transcribed to hnRNA; 5' cap added"}, {"step": "splicing", "loc": "nucleus", "species": "mRNA", "machinery": "spliceosome (snRNPs)", "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"}, {"step": "export", "loc": "nuclear pore", "species": "mRNA", "machinery": "nuclear pore complex + NXF1/TAP", "desc": "mRNA exported to cytoplasm"}, {"step": "translation+targeting", "loc": "ER", "species": "nascent chain", "machinery": "ribosome + SRP + SRP receptor", "desc": "signal peptide emerges -> SRP pauses translation, docks ribosome on the ER"}, {"step": "translocation", "loc": "ER", "species": "membrane protein", "machinery": "Sec61 translocon (+ signal peptidase)", "desc": "co-translational insertion into ER membrane"}, {"step": "ER folding", "loc": "ER", "species": "folded protein", "machinery": "BiP/calnexin chaperones + N-glycosylation", "desc": "folding + glycosylation, quality control"}, {"step": "ER->Golgi", "loc": "Golgi", "species": "cargo", "machinery": "COPII vesicles", "desc": "vesicle transport to the Golgi"}, {"step": "Golgi", "loc": "Golgi", "species": "mature glycoprotein", "machinery": "Golgi glycosyltransferases", "desc": "glycan maturation + sorting"}, {"step": "Golgi->surface", "loc": "plasma membrane", "species": "cargo vesicle", "machinery": "secretory vesicle + SNAREs (exocytosis)", "desc": "delivered to plasma membrane"}, {"step": "FINAL", "loc": "plasma membrane", "species": "Low-density lipoprotein receptor", "machinery": "", "desc": "final location: plasma membrane"}]}, "EGFR": {"acc": "P00533", "name": "Epidermal growth factor receptor", "locations": ["Cell membrane", "Endoplasmic reticulum membrane", "Golgi apparatus membrane", "Nucleus membrane", "Endosome", "Endosome membrane", "Nucleus", "Secreted"], "signal": true, "n_tm": 1, "route": "secretory", "chrom": "chr7", "steps": [{"step": "gene", "loc": "nucleus", "species": "DNA", "machinery": "chromosome chr7", "desc": "EGFR gene in the genome"}, {"step": "transcription", "loc": "nucleus", "species": "pre-mRNA (hnRNA)", "machinery": "RNA Polymerase II", "desc": "DNA transcribed to hnRNA; 5' cap added"}, {"step": "splicing", "loc": "nucleus", "species": "mRNA", "machinery": "spliceosome (snRNPs)", "desc": "introns removed, exons joined; poly-A tail added -> mature mRNA"}, {"step": "export", "loc": "nuclear pore", "species": "mRNA", "machinery": "nuclear pore complex + NXF1/TAP", "desc": "mRNA exported to cytoplasm"}, {"step": "translation+targeting", "loc": "ER", "species": "nascent chain", "machinery": "ribosome + SRP + SRP receptor", "desc": "signal peptide emerges -> SRP pauses translation, docks ribosome on the ER"}, {"step": "translocation", "loc": "ER", "species": "membrane protein", "machinery": "Sec61 translocon (+ signal peptidase)", "desc": "co-translational insertion into ER membrane"}, {"step": "ER folding", "loc": "ER", "species": "folded protein", "machinery": "BiP/calnexin chaperones + N-glycosylation", "desc": "folding + glycosylation, quality control"}, {"step": "ER->Golgi", "loc": "Golgi", "species": "cargo", "machinery": "COPII vesicles", "desc": "vesicle transport to the Golgi"}, {"step": "Golgi", "loc": "Golgi", "species": "mature glycoprotein", "machinery": "Golgi glycosyltransferases", "desc": "glycan maturation + sorting"}, {"step": "Golgi->surface", "loc": "plasma membrane", "species": "cargo vesicle", "machinery": "secretory vesicle + SNAREs (exocytosis)", "desc": "delivered to plasma membrane"}, {"step": "FINAL", "loc": "plasma membrane", "species": "Epidermal growth factor receptor", "machinery": "", "desc": "final location: plasma membrane"}]}};
+const LOC={ 'nucleus':[250,330],'nuclear pore':[423,330],'cytoplasm':[540,150],'ER':[520,405],
+ 'Golgi':[635,315],'plasma membrane':[880,300],'extracellular':[905,250],'mitochondrion':[640,500]};
+const NUCSPOTS=[[200,300],[250,360],[320,300]]; // gene, transcription, splicing inside nucleus
+function coord(step,i,seen){
+  if(step.step=='gene')return NUCSPOTS[0];
+  if(step.step=='transcription')return NUCSPOTS[1];
+  if(step.step=='splicing')return NUCSPOTS[2];
+  let b=LOC[step.loc]||[540,150]; let n=seen[step.loc]||0; seen[step.loc]=n+1;
+  return [b[0]+n*26, b[1]+n*22];
+}
+function draw(gene){
+  document.querySelectorAll('.genebtn').forEach(b=>b.classList.toggle('on',b.dataset.g==gene));
+  const d=DATA[gene]; const g=document.getElementById('path'); g.innerHTML='';
+  document.getElementById('meta').innerHTML=`<b style=color:#7fd1ff>${gene}</b> — ${d.name}<br>chr ${d.chrom} · route: <b>${d.route}</b> · TM:${d.n_tm} · signal:${d.signal}<br>locations: ${d.locations.join(', ')}`;
+  let seen={}; let pts=d.steps.map((s,i)=>coord(s,i,seen));
+  // polyline
+  for(let i=1;i<pts.length;i++){
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',pts[i-1][0]);l.setAttribute('y1',pts[i-1][1]);l.setAttribute('x2',pts[i][0]);l.setAttribute('y2',pts[i][1]);
+    l.setAttribute('stroke','#ffd166');l.setAttribute('stroke-width','2.2');l.setAttribute('marker-end','url(#arw)');l.setAttribute('opacity','.85');
+    g.appendChild(l);
+  }
+  pts.forEach((p,i)=>{
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',11);c.setAttribute('class','wp');g.appendChild(c);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',p[0]);t.setAttribute('y',p[1]+3.5);t.setAttribute('class','wpt');t.textContent=(i+1);g.appendChild(t);
+  });
+  // steps list
+  document.getElementById('steps').innerHTML=d.steps.map((s,i)=>
+    `<div class=step id=st${i}><b>${i+1}. ${s.step}</b> <span style=color:#8fa8c0>@ ${s.loc}</span><br>
+     <span class=sp>${s.species}</span>${s.machinery?` · <span class=mach>${s.machinery}</span>`:''}<br>${s.desc}</div>`).join('');
+  // animate token + step highlight
+  let tok=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  tok.setAttribute('r',7);tok.setAttribute('fill','#9be7a0');tok.setAttribute('stroke','#0d1b2a');tok.setAttribute('stroke-width','1.5');g.appendChild(tok);
+  let i=0;
+  function hop(){
+    if(i>=pts.length){return;}
+    tok.setAttribute('cx',pts[i][0]);tok.setAttribute('cy',pts[i][1]);
+    document.querySelectorAll('.step').forEach(e=>e.classList.remove('active'));
+    let el=document.getElementById('st'+i); if(el){el.classList.add('active');el.scrollIntoView({block:'nearest'});}
+    i++; setTimeout(hop,900);
+  }
+  hop();
+}
+const gd=document.getElementById('genes');
+Object.keys(DATA).forEach(g=>{const b=document.createElement('span');b.className='genebtn';b.dataset.g=g;
+  b.textContent=g+' ('+DATA[g].route[0]+')';b.onclick=()=>draw(g);gd.appendChild(b);});
+draw('SLC2A1');
+</script></body></html>
