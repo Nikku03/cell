@@ -1,0 +1,35 @@
+{
+ "random_baseline": 0.015,
+ "coessentiality": {
+  "share_complex_or_pathway": 0.113,
+  "enrichment_vs_random": 7.6,
+  "pairs": 68664
+ },
+ "guilt_by_association": {
+  "pathway_recovery_top1": 0.234,
+  "genes_tested": 9152
+ },
+ "synthetic_lethal": {
+  "functionally_related": 0.372,
+  "enrichment_vs_random": 25.1,
+  "pairs": 1518
+ },
+ "biomarker_method": [
+  {
+   "target": "MDM2",
+   "marker": "TP53",
+   "expected": "resistant",
+   "delta": 0.694,
+   "got": "resistant",
+   "correct": true
+  },
+  {
+   "target": "CTNNB1",
+   "marker": "APC",
+   "expected": "sensitive",
+   "delta": -0.794,
+   "got": "sensitive",
+   "correct": true
+  }
+ ]
+}
