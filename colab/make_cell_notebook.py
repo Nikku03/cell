@@ -83,6 +83,8 @@ code("# [2b] fetch the raw data build_cell_complete.py needs (the big files are 
    "    if not (os.path.exists(pth) and os.path.getsize(pth)>1e7):",
    "        print('downloading',fn,'...'); urllib.request.urlretrieve(f'https://ndownloader.figshare.com/files/{fid}', pth)",
    "_sp.run([sys.executable,'colab/compute_biomarkers.py'],check=True)      # -> biomarkers.json",
+   "_sp.run([sys.executable,'colab/compute_metabolic_graph.py'],check=True) # -> metabolic_graph.json",
+   "_sp.run([sys.executable,'colab/build_metabolic_routes.py'],check=True)  # -> metabolic_routes.html (alternative pathways)",
    "for fn in ['gene_compartment.json','collectri.tsv','reactome_human.txt','gene_info.gz','string_aliases.txt.gz','string_physical.txt.gz','hiv_interactions','human_gem.txt','signor.tsv','complexportal.tsv','cellphonedb.csv','dgidb.tsv','uniprot_acc_ptm.tsv']:",
    "    ok=os.path.exists(f'{H}/{fn}'); print(('OK  ' if ok else 'MISSING  ')+fn)",
    "    assert ok, fn+' missing — build will fail'"),
