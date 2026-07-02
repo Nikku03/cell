@@ -99,3 +99,7 @@ data/external_data/human/hiccups_loops.txt.gz
 data/external_data/human/gene2pubmed.gz
 data/external_data/human/CCLE_expression.csv
 data/external_data/human/CCLE_mutations_damaging.csv
+data/external_data/human/hpa_sc.tsv.zip
+data/external_data/human/omnipath_ligrec.tsv
+data/external_data/human/cpdb_gene.csv
+data/external_data/human/cpdb_complex.csv
