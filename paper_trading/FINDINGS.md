@@ -164,6 +164,45 @@ Reproduce: `python -m paper_trading.markov`.
   durable gain being risk control. The absence of a free lunch is the single most
   reproduced result here. That is informative, not pessimistic.
 
+## Experiment 5 — The "20% a week" loophole, found and detonated
+
+There *is* a strategy that prints 20% weekly: **selling options / volatility**
+("theta harvesting"). You collect premium every week; most weeks nothing bad
+happens and you keep it. `python -m paper_trading.shortvol` writes a weekly BTC
+strangle, priced by Black-Scholes on real data:
+
+| metric | value |
+|---|--:|
+| median weekly return | **+12.0%** |
+| weeks green | 77% |
+| longest winning streak | 6 weeks |
+| peak equity from $100 | $140 |
+| worst single week | **−231%** |
+| outcome | **$0 by week 13** |
+
+### What this honestly says
+
+- **The loophole is real and it is a time bomb.** Sized to target ~12–20% a
+  week, the account showed a seductive winning streak and then a single week
+  erased every gain *and* the principal. Sizing for 20%/week (not 12%) blew up
+  even faster — week 11.
+- **Those weekly "returns" were never returns.** They were insurance premiums
+  held in trust for the crash. The strategy has *negative skew*: many tiny gains,
+  one catastrophic loss whose expectation cancels them. You are not earning — you
+  are borrowing from your future self at a ruinous rate and hiding the bill.
+- **This is the real-world graveyard:** Victor Niederhoffer (blew up 1997 & 2007
+  selling puts), LTCM (1998), the XIV note ("Volmageddon", −96% in a day, Feb
+  2018), and the 20%-yield crypto products of 2022. Every one printed gorgeous
+  steady returns until the week it didn't.
+- **Small size does not save it.** Negligible size removes market impact, not the
+  negative skew. A $100 short-vol book and a $100M one both go to zero on the
+  same bad week; only the headline changes.
+
+**Conclusion of the whole study:** the number "20% weekly, sustainably" is not
+merely hard — across every path we tested it is either (a) a real edge scaled by
+leverage into guaranteed ruin, (b) short-vol premium that is a deferred loss, or
+(c) illegal. Points (a) and (b) are demonstrated here on real data.
+
 ## Takeaways for how we evolve
 
 - Keep parameters fixed a priori; treat any in-sample optimization with deep
