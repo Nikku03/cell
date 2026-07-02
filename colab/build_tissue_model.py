@@ -33,6 +33,30 @@ for r in csv.DictReader(open(H/"omnipath_ligrec.tsv"),delimiter="\t"):
         s=1 if r.get("is_stimulation")=="1" else (-1 if r.get("is_inhibition")=="1" else 0)
         LR.append((l,rec,s))
 LR=list({(l,rec,s) for l,rec,s in LR})
+# LOOP 1: signaling pathway families (CellChat via Omnipath)
+pathway={}
+try:
+    for l in open(H/"omnipath_cellchat.tsv",encoding="utf-8",errors="ignore"):
+        p=l.rstrip("\n").split("\t")
+        if len(p)>=6 and p[4]=="pathway" and p[1] and p[1] not in pathway: pathway[p[1]]=p[5]
+except Exception as e: print("cellchat:",e)
+# LOOP 2: signaling MODE (secreted=paracrine vs transmembrane=juxtacrine) from CellPhoneDB
+u2s={}
+try:
+    for r in csv.DictReader(open(H/"cpdb_gene.csv")):
+        if r.get("uniprot") and r.get("hgnc_symbol"): u2s[r["uniprot"]]=r["hgnc_symbol"]
+except Exception as e: print("cpdb_gene:",e)
+secreted=set(); membrane=set()
+try:
+    for r in csv.DictReader(open(H/"cpdb_protein.csv")):
+        s=u2s.get(r.get("uniprot"))
+        if not s: continue
+        if (r.get("secreted") or "").upper()=="TRUE": secreted.add(s)
+        if (r.get("transmembrane") or "").upper()=="TRUE": membrane.add(s)
+except Exception as e: print("cpdb_protein:",e)
+def lmode(l): return "paracrine" if l in secreted else ("juxtacrine" if l in membrane else "signal")
+def lr_path(l,rec): return pathway.get(l) or pathway.get(rec) or ""
+print("pathway families:",len(set(pathway.values())),"| secreted ligands:",len(secreted),"| membrane:",len(membrane))
 print("ligand-receptor pairs:",len(LR))
 # --- curated tissues (HPA cell type names) ---
 TISSUES={
@@ -56,15 +80,21 @@ for tis,cts in TISSUES.items():
             for l,rec,sg in LR:
                 if is_ligand_of(s,l) and expressed(r,rec,1):
                     score=spec(s,l)*max(1,spec(r,rec))
-                    pairs.append([l,rec,sg,round(score,1)])
+                    md="autocrine" if s==r else lmode(l)
+                    pairs.append([l,rec,sg,round(score,1),lr_path(l,rec),md])
             if pairs:
                 pairs.sort(key=lambda x:-x[3])
                 comm.append([s,r,pairs[:25]])
     cells={c:dict(markers=top_markers(c),
                   ligands=sorted({l for l,rec,sg in LR if is_ligand_of(c,l)}),
                   receptors=sorted({rec for l,rec,sg in LR if expressed(c,rec,1)})) for c in cts}
-    model[tis]=dict(cells=cts,cellinfo=cells,comm=comm)
-    print(f"  {tis}: {len(cts)} cell types, {len(comm)} communication channels")
+    pwcount=defaultdict(int)
+    for s,r,pairs in comm:
+        for p in pairs:
+            if len(p)>4 and p[4]: pwcount[p[4]]+=1
+    model[tis]=dict(cells=cts,cellinfo=cells,comm=comm,
+                    pathways=dict(sorted(pwcount.items(),key=lambda x:-x[1])[:15]))
+    print(f"  {tis}: {len(cts)} cell types, {len(comm)} channels, top pathways: {list(dict(sorted(pwcount.items(),key=lambda x:-x[1])[:4]))}")
 # --- downstream effect INSIDE the receiver (reuse the CELL MODEL's shared network data:
 #     SIGNOR receptor->signaling + CollecTRI TF->target). Baked into the tissue file; no cell files touched. ---
 from collections import defaultdict as dd

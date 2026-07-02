@@ -103,3 +103,6 @@ data/external_data/human/hpa_sc.tsv.zip
 data/external_data/human/omnipath_ligrec.tsv
 data/external_data/human/cpdb_gene.csv
 data/external_data/human/cpdb_complex.csv
+data/external_data/human/omnipath_intercell.tsv
+data/external_data/human/omnipath_cellchat.tsv
+data/external_data/human/cpdb_protein.csv
