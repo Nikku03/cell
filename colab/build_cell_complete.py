@@ -66,6 +66,7 @@ for r in rows:
         loeuf=round(fv(r["loeuf"]),3),tf=int(istf),ppi=int(fv(r["ppi_degree"],0)),
         ndis=int(fv(r["n_diseases"],0)),master=r["lineage_master"],npath=int(fv(r["n_pathways"],0)),
         chrom=r.get("chrom","") or "",tss=r.get("tss","") or "",
+        cpg=1 if r.get("cpg_promoter")=="1" else 0,enh=int(fv(r.get("enhancers"),0)),
         path=toppath(g)[:44]))
 # === MODEL 1 enrichment: our trained essentiality model fills the UNLABELED genes ===
 # (produced by the notebook -> outputs/orphan/predicted_essentiality.csv: gene,pred,prob)

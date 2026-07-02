@@ -30,7 +30,7 @@ HTML=r"""<!doctype html><html><head><meta charset=utf-8><title>The cell</title><
 <div id=top>
  <span class=btn id=mExplore>Explore</span><span class=btn id=mProc>Processes</span>
  <span class=btn id=mMetab>Metabolism</span><span class=btn id=mPerturb>Remove/Mutate</span>
- <span class=btn id=mDark>Dark genes</span><span class=btn hiv id=mHIV>Infect: HIV</span>
+ <span class=btn id=mOE>Overexpress</span><span class=btn id=mDark>Dark genes</span><span class=btn hiv id=mHIV>Infect: HIV</span>
  <select id=ct title="cell type — highlights its master-TF network"></select>
  <select id=pw title="pathway — highlights its member proteins"></select>
  <input id=q placeholder="search protein"><span class=btn id=reset>Reset</span>
@@ -114,7 +114,7 @@ cv.addEventListener('mousemove',e=>{if(drag){view.ox=drag.ox+(e.offsetX-drag.x)*
  let i=pick(e.offsetX*devicePixelRatio,e.offsetY*devicePixelRatio),t=document.getElementById('tip');
  if(i>=0){t.style.display='block';t.style.left=(e.offsetX+12)+'px';t.style.top=(e.offsetY+8)+'px';t.innerHTML=`<b>${G[i].name}</b> &middot; ${G[i].comp} &middot; ${G[i].proc}`;}else t.style.display='none';});
 function pick(px,py){let wx=(px-view.ox)/view.s,wy=(py-view.oy)/view.s,b=-1,bd=90;for(let i=0;i<N;i++){let dx=POS[i*2]-wx,dy=POS[i*2+1]-wy,d=dx*dx+dy*dy;if(d<bd){bd=d;b=i;}}return b;}
-cv.addEventListener('click',e=>{if(drag&&Math.abs(e.offsetX-drag.x)>3)return;let i=pick(e.offsetX*devicePixelRatio,e.offsetY*devicePixelRatio);if(i>=0){sel=i;if(mode=='Remove/Mutate')perturb(i,false);else info(i);draw();}});
+cv.addEventListener('click',e=>{if(drag&&Math.abs(e.offsetX-drag.x)>3)return;let i=pick(e.offsetX*devicePixelRatio,e.offsetY*devicePixelRatio);if(i>=0){sel=i;if(mode=='Remove/Mutate')perturb(i,false);else if(mode=='Overexpress')overexpress(i);else info(i);draw();}});
 // perturbation: BFS 2 hops over reg(out)+ppi, enriched with Geneformer in-silico downstream (Model 3)
 const GF=D.gf_perturb||{};
 function perturb(i,mut){let set=new Set([i]),dist={};dist[i]=0;let q=[i];
@@ -138,6 +138,28 @@ function perturb(i,mut){let set=new Set([i]),dist={};dist[i]=0;let q=[i];
   ${mut?'<h3>mutation impact</h3>'+mutImpact(G[i]):''}
   <div class=row style=margin-top:8px><span class=btn onclick="perturb(${i},true)">as mutation (LoF)</span> <span class=btn onclick="clearP()">clear</span></div>`;}
 window.perturb=perturb;window.clearP=()=>{affected=null;draw();};
+// OVEREXPRESSION / ACTIVATION: push a gene UP, propagate signed regulation (up/down) 2 hops
+function overexpress(i){const gate=activeCT?activeCT.set:null;
+ const st={};st[i]=1;let q=[[i,0]];        // +1 up, -1 down
+ while(q.length){let [x,d]=q.shift();if(d>=2)continue;
+   for(const j of (OUT[x]||[])){if(gate&&!gate.has(j))continue;const s=SGN[x+','+j];if(!s)continue;
+     const nv=st[x]*s;if(st[j]===undefined){st[j]=nv;q.push([j,d+1]);}}}
+ const up=[],down=[];for(const k in st){if(+k===i)continue;(st[k]>0?up:down).push(+k);}
+ const set=new Set([i,...up,...down]);
+ affected={set,col:j=>j===i?'#fff':(st[j]>0?'#43a047':'#e53935')};
+ const proc={};set.forEach(j=>{if(j!==i)proc[G[j].proc]=(proc[G[j].proc]||0)+1;});
+ const topP=Object.entries(proc).sort((a,b)=>b[1]-a[1]).slice(0,6);
+ const lnk=arr=>arr.slice(0,12).map(j=>`<a onclick=go('${G[j].name}')>${G[j].name}</a>`).join(', ');
+ document.getElementById('info').innerHTML=`<h2>Overexpress / activate: ${G[i].name}</h2>
+  <div class=lg>Driving ${G[i].name} UP and following signed regulation${G[i].tf?'':' — note: this gene has few/no outgoing regulatory edges, so effect may be local'}.</div>
+  ${activeCT?`<div class=row class=lg>cell-type context: <b>${activeCT.name}</b></div>`:''}
+  <div class=row><span style="color:#43a047">upregulated</span> <span class=v>${up.length}</span> &middot; <span style="color:#e53935">downregulated</span> <span class=v>${down.length}</span></div>
+  <h3>processes shifted</h3>${topP.map(([p,n])=>`<div class=row><span style="color:${pcol[p]}">&#9679;</span> ${p}: <span class=v>${n}</span></div>`).join('')||'<div class=lg>-</div>'}
+  <h3 style="color:#43a047">turned up</h3><div class=lg>${lnk(up)||'-'}</div>
+  <h3 style="color:#e53935">turned down</h3><div class=lg>${lnk(down)||'-'}</div>
+  <div class=row style=margin-top:8px><span class=btn onclick="clearP()">clear</span></div>`;
+ draw();}
+window.overexpress=overexpress;
 function info(i){let g=G[i];
  const lnk=j=>`<a onclick=go('${G[j].name}')>${G[j].name}</a>`;
  const outs=OUT[i]||[];
@@ -149,7 +171,8 @@ function info(i){let g=G[i];
   <div class=row><span class=k>compartment</span> <span class=v>${g.comp}</span></div>
   <div class=row><span class=k>process</span> <span class=v style="color:${pcol[g.proc]}">${g.proc}</span></div>
   <div class=row><span class=k>pathway</span> <span class=v>${g.path||'-'}</span></div>
-  <div class=row><span class=k>essential</span> <span class=v>${g.ess==1?'yes':g.ess==0?'no':'?'}</span>${g.ess_src==='model1'?' <span class=lg>(our model'+(g.ess_prob?', p='+g.ess_prob:'')+')</span>':(g.ess_src==='measured'&&g.ess>=0?' <span class=lg>(measured)</span>':'')} &middot; <span class=k>LOEUF</span> <span class=v>${g.loeuf<0?'-':g.loeuf}</span> &middot; <span class=k>TF</span> <span class=v>${g.tf?'yes':'no'}</span></div>
+  <div class=row><span class=k>regulation</span> <span class=v>${g.cpg?'CpG-island promoter':'non-CpG promoter'}</span> &middot; <span class=v>${g.enh}</span> <span class=k>enhancers</span> ${g.enh>=100?'<span class=lg>(highly regulated)</span>':''}</div>
+  <div class=row><span class=k>essential</span> <span class=v>${g.ess==1?'yes':g.ess==0?'no':'?'}</span>${g.ess_src==='model1'?' <span class=lg>(our model'+(g.ess_prob?', p='+g.ess_prob+', '+essConf(g)+' confidence':'')+')</span>':(g.ess_src==='measured'&&g.ess>=0?' <span class=lg>(measured)</span>':'')} &middot; <span class=k>LOEUF</span> <span class=v>${g.loeuf<0?'-':g.loeuf}</span> &middot; <span class=k>TF</span> <span class=v>${g.tf?'yes':'no'}</span></div>
   <div class=row><span class=k>PPI</span> <span class=v>${g.ppi}</span> &middot; <span class=k>diseases</span> <span class=v>${g.ndis}</span>${g.master?' &middot; <span class=k>master:</span> <span class=v>'+g.master+'</span>':''}</div>
   ${ABUND[i]!==undefined?`<div class=row><span class=k>abundance</span> <span class=v>${'▮'.repeat(Math.max(1,Math.round(ABUND[i]/2)))}</span> <span class=lg>${ABUND[i]}/15${activeCT?' &middot; '+(exprIn(i,activeCT.t)?'<span class=ok>expressed in '+activeCT.name+'</span>':'<span class=lg>silent in '+activeCT.name+'</span>'):''}</span></div>`:''}
   ${hivHost[i]?`<div class=row><span class=warn>HIV-targeted by:</span> <span class=v>${hivHost[i].join(', ')}</span></div>`:''}
@@ -162,7 +185,8 @@ function info(i){let g=G[i];
   <h3>functioning pipeline — input &rarr; gene &rarr; product &rarr; function &rarr; output</h3>${pipeline(i).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
   <h3>mutation impact</h3>${mutImpact(g)}
   <h3>trafficking journey — molecular detail</h3>${journey(g).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
-  <div class=row style=margin-top:8px><span class=btn onclick="setMode('Remove/Mutate');perturb(${i},false)">remove this protein &rarr;</span></div>`;}
+  <div class=row style=margin-top:8px><span class=btn onclick="setMode('Remove/Mutate');perturb(${i},false)">remove &rarr;</span> <span class=btn onclick="setMode('Overexpress');overexpress(${i})">overexpress &rarr;</span></div>
+  ${provenance(g,i)}`;}
 // FUNCTIONING PIPELINE: input -> gene -> product -> function -> output, all linked
 function pipeline(i){let g=G[i];const lnk=j=>`<a onclick=go('${G[j].name}')>${G[j].name}</a>`;
  const acts=(IN[i]||[]).filter(j=>SGN[j+','+i]>0).slice(0,5).map(lnk);
@@ -215,6 +239,17 @@ function journey(g){
    S.push({t:`<b>${c}</b> — mature protein at work here`,m:'chaperone-assisted folding'});
  }
  return S;}
+// confidence of the essentiality prediction (how far our model's prob is from the 0.5 fence)
+function essConf(g){if(g.ess_prob===undefined)return'';let d=Math.abs(g.ess_prob-0.5);return d>0.35?'high':d>0.2?'medium':'low';}
+// provenance footer: where each shown label comes from
+function provenance(g,i){const s=[];
+ s.push('location: UniProt');s.push('networks: CollecTRI/DoRothEA + STRING');
+ s.push('essentiality: '+(g.ess_src==='measured'?'measured (DepMap/Hart)':g.ess_src==='model1'?'our model (predicted)':'—'));
+ if(g.path)s.push('pathway: Reactome');
+ if(D.otdis[g.name])s.push('disease: Open Targets');
+ if(ABUND[i]!==undefined)s.push('abundance/expression: Tabula Sapiens atlas');
+ if((GF||{})[i])s.push('perturbation enrichment: Geneformer');
+ return `<div class=lg style="margin-top:8px;border-top:1px solid #1d3350;padding-top:5px">sources &middot; ${s.join(' &middot; ')}</div>`;}
 // mutation -> structure/disease impact block (curated where available; LOEUF readout for all)
 function mutImpact(g){let n=g.name,out='';
  // genome-wide tolerance from constraint
@@ -323,9 +358,11 @@ window.differentiate=differentiate;
 // modes  (note: activeCT cell-type context PERSISTS across modes so Remove/Mutate stays cell-type-specific)
 function setMode(m){mode=m;affected=null;mark=null;metabOn=false;
  document.querySelectorAll('#top .btn').forEach(b=>b.classList.remove('on'));
- ({Explore:'mExplore',Processes:'mProc','Remove/Mutate':'mPerturb'})[m]&&document.getElementById(({Explore:'mExplore',Processes:'mProc','Remove/Mutate':'mPerturb'})[m]).classList.add('on');
+ const B={Explore:'mExplore',Processes:'mProc','Remove/Mutate':'mPerturb',Overexpress:'mOE'};
+ B[m]&&document.getElementById(B[m]).classList.add('on');
  const hints={Explore:'click a protein to inspect',Processes:'colored by cellular process',
-  'Remove/Mutate':'click a protein to KNOCK IT OUT and see the cascade'};
+  'Remove/Mutate':'click a protein to KNOCK IT OUT and see the cascade',
+  Overexpress:'click a protein to OVEREXPRESS it — green up, red down via signed regulation'};
  document.getElementById('hint').textContent=' '+hints[m];
  if(m=='Processes')document.getElementById('info').innerHTML='<h2>Processes</h2>'+PROC.map(p=>`<div class=row><span class=dot style="background:${pcol[p]}"></span>${p}</div>`).join('');
  draw();}
@@ -333,6 +370,7 @@ window.setMode=setMode;
 document.getElementById('mExplore').onclick=()=>{hivOn=false;document.getElementById('mHIV').classList.remove('on');setMode('Explore');};
 document.getElementById('mProc').onclick=()=>{hivOn=false;document.getElementById('mHIV').classList.remove('on');setMode('Processes');};
 document.getElementById('mPerturb').onclick=()=>{hivOn=false;document.getElementById('mHIV').classList.remove('on');setMode('Remove/Mutate');};
+document.getElementById('mOE').onclick=()=>{hivOn=false;document.getElementById('mHIV').classList.remove('on');setMode('Overexpress');};
 document.getElementById('mHIV').onclick=()=>{hivOn=!hivOn;document.getElementById('mHIV').classList.toggle('on',hivOn);affected=null;mark=null;metabOn=false;if(hivOn){mode='Explore';hivReport();}else setMode('Explore');draw();};
 function clearTopOn(){document.querySelectorAll('#top .btn').forEach(b=>b.classList.remove('on'));hivOn=false;document.getElementById('mHIV').classList.remove('on');}
 document.getElementById('mMetab').onclick=()=>{clearTopOn();document.getElementById('ct').value='';document.getElementById('mMetab').classList.add('on');metabView();};
@@ -349,6 +387,7 @@ const welcome=`<h2>The cell</h2><div class=lg>${N} proteins in their real compar
  <b>Processes</b>: colored by function.<br>
  <b>Metabolism</b>: core reactions substrate&rarr;product.<br>
  <b>Remove/Mutate</b>: knock out a protein &rarr; watch the cascade &amp; whether the cell survives.<br>
+ <b>Overexpress</b>: drive a gene up &rarr; green up / red down via signed regulation.<br>
  <b>Dark genes</b>: the function frontier (no known pathway/disease).<br>
  <b>cell type</b> (dropdown): same genome, different master-TF network.<br>
  <b>Infect: HIV</b>: what HIV hijacks + its weak points.</div>
