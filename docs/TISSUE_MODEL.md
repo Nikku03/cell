@@ -42,3 +42,13 @@ don't mix.
 ## Files
 - `colab/build_tissue_model.py` → `tissue_model.json`
 - `colab/build_tissue_explorer.py` → `tissue_explorer.html` (the app)
+
+
+## Advanced version (6 data loops + premium explorer)
+- **Loop 1 — pathway families:** every channel tagged with its CellChat signaling pathway (285 families); dominant pathways per tissue are textbook (Intestine BMP/WNT, Brain NRXN/CNTN, Immune MHC/CD80).
+- **Loop 2 — communication mode:** ligands classified paracrine (secreted) / juxtacrine (membrane) / autocrine (self) from CellPhoneDB.
+- **Loop 3 — druggable communication:** DGIdb → 1,162 ligand/receptor genes with drugs (which signals a drug can block).
+- **Loop 4 — richer tissues:** 9 tissues (added Pancreas) × 6–7 cell types with immune infiltration (t-cells/macrophages), microglia, pericytes, goblet/paneth, islet cells.
+- **Loop 5 — dominant links:** strongest cell-cell links per tissue by signaling strength.
+- **Loop 6 — cross-tissue endocrine:** 12 curated systemic hormone axes (INS/GCG pancreas→liver, EPO kidney→blood, FGF19 gut→liver, IL6 immune→liver…) for a **body-level view**.
+- **Premium explorer** (`tissue_explorer.html`): a **BODY view** — 9 organs on a silhouette wired by animated endocrine hormones — that zooms into a **TISSUE view** — cell types wired by cell-cell communication colored by pathway family, animated signal flow, paracrine/juxtacrine styling, druggable channels, downstream propagation, pathway filter, and gene knockout. Data sources added: CellChat (Omnipath), CellPhoneDB annotations, DGIdb.
