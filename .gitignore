@@ -95,3 +95,4 @@ data/external_data/human/hiv_interactions
 data/external_data/human/hiv_interactions.gz
 
 outputs/orphan/cell_complete.json
+data/external_data/human/hiccups_loops.txt.gz

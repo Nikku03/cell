@@ -332,7 +332,60 @@ if cte.exists():
     print("Model 2 expression: abundance for",len(abund),"genes across",T,"cell types")
 else:
     print("Model 2: no celltype_expression.csv -> no abundance / cell-type wiring / differentiation")
+# === BUCKET 1: co-essentiality + synthetic lethality (DepMap), 3D loops, ensemble confidence ===
+codep={}; sl=[]
+cdp=OUT/"depmap_codep.json"
+if cdp.exists():
+    raw=json.load(open(cdp))
+    for g,parts in raw.items():
+        i=idx.get(g)
+        if i is None: continue
+        codep[i]=[[idx[p],r] for p,r in parts if p in idx][:8]
+    codep={k:v for k,v in codep.items() if v}
+    print("DepMap co-essential partners:",len(codep),"genes")
+slp=OUT/"depmap_sl.json"
+if slp.exists():
+    for a,b,r in json.load(open(slp)):
+        if a in idx and b in idx: sl.append([idx[a],idx[b],r])
+    print("DepMap synthetic-lethal candidate pairs:",len(sl))
+# 3D chromatin loops: map each gene TSS to a loop anchor -> distal looped region(s)
+loops3d={}; lf=H/"hiccups_loops.txt.gz"
+if lf.exists():
+    by_chr=defaultdict(list)
+    with gzip.open(lf,"rt") as f:
+        next(f)
+        for l in f:
+            p=l.split("\t")
+            if len(p)<6: continue
+            try:
+                c1,x1,x2,c2,y1,y2=p[0],int(p[1]),int(p[2]),p[3],int(p[4]),int(p[5])
+            except: continue
+            by_chr[c1].append((x1,x2,f"{c2}:{y1//1000}kb")); by_chr[c2].append((y1,y2,f"{c1}:{x1//1000}kb"))
+    for i,g in enumerate(G):
+        c=g["chrom"].replace("chr","");
+        try: tss=int(g["tss"])
+        except: continue
+        hits=[d for (s,e,d) in by_chr.get(c,[]) if s<=tss<=e]
+        if hits: loops3d[i]=hits[:5]
+    print("3D chromatin loops mapped to",len(loops3d),"genes")
+# ensemble confidence: agreement across measured (DepMap) + constraint (LOEUF) + model (M1)
+n_conf=0; n_flag=0
+for i,g in enumerate(G):
+    votes=[]
+    df=g.get("dep_frac")
+    if df is not None: votes.append(1 if df>=0.5 else 0)
+    if g["loeuf"]>=0: votes.append(1 if g["loeuf"]<0.35 else 0)
+    if g["ess_src"]=="model1": votes.append(g["ess"])
+    if len(votes)>=2:
+        frac=sum(votes)/len(votes)
+        g["conf"]="high" if frac in (0.0,1.0) else "split"; n_conf+=1
+        if df is not None and df>=0.5 and g["loeuf"]>=0.7:
+            g["flag"]="cancer-dependency: essential in cancer lines, loss-of-function tolerated in population"; n_flag+=1
+        elif df is not None and df<0.1 and 0<=g["loeuf"]<0.2:
+            g["flag"]="germline-constrained yet cancer-dispensable"; n_flag+=1
+print("ensemble confidence set on",n_conf,"genes |",n_flag,"disagreement flags (novelty candidates)")
 DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in generxn.items()},gf_perturb=gf,
+    codep=codep,sl=sl,loops3d=loops3d,
     struct=struct,fold=fold,otdis=otdis,pathways=pathsel,
     sig=sig,complexes=complexes,gene2cplx={k:v for k,v in gene2cplx.items()},
     drugs={k:v for k,v in drugs.items()},lr=lr,ptm=ptm,cellcycle=cellcycle,

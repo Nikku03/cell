@@ -51,6 +51,9 @@ const hivHost={};for(const hp in D.hiv)for(const[i,t]of D.hiv[hp]){(hivHost[i]=h
 const SIGO={},SIGI={};for(const e of (D.sig||[])){(SIGO[e[0]]=SIGO[e[0]]||[]).push([e[1],e[2]]);(SIGI[e[1]]=SIGI[e[1]]||[]).push([e[0],e[2]]);}
 const CPLX=D.complexes||{},G2C=D.gene2cplx||{},DRUGS=D.drugs||{},PTM=D.ptm||{},CCYC=D.cellcycle||{};
 const LRO={},LRI={};for(const[a,b]of (D.lr||[])){(LRO[a]=LRO[a]||[]).push(b);(LRI[b]=LRI[b]||[]).push(a);}
+// Bucket 1: DepMap co-essentiality, synthetic-lethal pairs, 3D chromatin loops
+const CODEP=D.codep||{},LOOPS3D=D.loops3d||{};
+const SLmap={};for(const[a,b,r] of (D.sl||[])){(SLmap[a]=SLmap[a]||{})[b]=r;(SLmap[b]=SLmap[b]||{})[a]=r;}
 // Model 2: abundance + per-cell-type expression mask (drives abundance, cell-type wiring, differentiation)
 const ABUND=D.abund||{};const CTN=D.ctnames||[];const ctBit={};CTN.forEach((n,t)=>ctBit[n]=t);
 const EMASK=new Map();for(const k in (D.emask||{}))EMASK.set(+k,BigInt(D.emask[k]));
@@ -156,11 +159,13 @@ function doubleKO(i,j){const A=cascadeSet(i),B=cascadeSet(j),U=new Set([...A,...
  // essential genes / a much larger joint cascade than either alone
  const jointEss=[...U].filter(x=>G[x].ess==1&&x!==i&&x!==j).length;
  const sl=!lethA&&!lethB&&(both.length>=3||jointEss>Math.max([...A].filter(x=>G[x].ess==1).length,[...B].filter(x=>G[x].ess==1).length));
+ const depR=(SLmap[i]&&SLmap[i][j])||(CODEP[i]&&(CODEP[i].find(([k])=>k===j)||[])[1]);
  affected={set:U,col:x=>(x===i||x===j)?'#fff':(A.has(x)&&B.has(x))?'#c792ea':(A.has(x)?'#ff6b6b':'#ffb36b')};
  const lnk=arr=>arr.slice(0,12).map(x=>`<a onclick=go('${G[x].name}')>${G[x].name}</a>`).join(', ');
  document.getElementById('info').innerHTML=`<h2>Double knockout: ${G[i].name} + ${G[j].name}</h2>
   ${activeCT?`<div class=row class=lg>cell-type context: <b>${activeCT.name}</b></div>`:''}
   <div class=row>${lethA||lethB?'<span class=warn>&#9888; already lethal singly</span> ('+(lethA?G[i].name:'')+(lethA&&lethB?' & ':'')+(lethB?G[j].name:'')+')':(sl?'<span class=warn>&#9888; candidate SYNTHETIC LETHAL</span> — neither is essential alone, but together they converge on essential machinery':'<span class=ok>likely tolerated</span> — buffered even as a double KO')}</div>
+  ${depR?`<div class=row><span class=k>DepMap co-dependency</span> <span class=v style="color:#c792ea">r=${depR}</span> <span class=lg>— measured co-essential across cancer lines${SLmap[i]&&SLmap[i][j]?'; flagged synthetic-lethal candidate':''}</span></div>`:''}
   <div class=row><span class=k>combined affected</span> <span class=v>${U.size-2}</span> &middot; <span style="color:#c792ea">hit by both</span> <span class=v>${both.length}</span> &middot; <span class=k>essential in joint cascade</span> <span class=v>${jointEss}</span></div>
   <h3 style="color:#c792ea">shared targets (both KOs converge here)</h3><div class=lg>${lnk(both)||'-'}</div>
   <div class=row style=margin-top:8px><span class=btn onclick="clearP()">clear</span></div>`;
@@ -202,6 +207,7 @@ function info(i){let g=G[i];
   <div class=row><span class=k>regulation</span> <span class=v>${g.cpg?'CpG-island promoter':'non-CpG promoter'}</span> &middot; <span class=v>${g.enh}</span> <span class=k>enhancers</span> ${g.enh>=100?'<span class=lg>(highly regulated)</span>':''}</div>
   <div class=row><span class=k>essential</span> <span class=v>${g.ess==1?'yes':g.ess==0?'no':'?'}</span>${g.ess_src==='model1'?' <span class=lg>(our model'+(g.ess_prob?', p='+g.ess_prob+', '+essConf(g)+' confidence':'')+')</span>':(g.dep_frac!==undefined?' <span class=lg>(measured — DepMap: dependent in '+Math.round(g.dep_frac*100)+'% of cancer lines)</span>':(g.ess_src==='measured'&&g.ess>=0?' <span class=lg>(measured)</span>':''))} &middot; <span class=k>LOEUF</span> <span class=v>${g.loeuf<0?'-':g.loeuf}</span> &middot; <span class=k>TF</span> <span class=v>${g.tf?'yes':'no'}</span></div>
   <div class=row><span class=k>PPI</span> <span class=v>${g.ppi}</span> &middot; <span class=k>diseases</span> <span class=v>${g.ndis}</span>${g.master?' &middot; <span class=k>master:</span> <span class=v>'+g.master+'</span>':''}</div>
+  ${confBadge(g)}
   ${ABUND[i]!==undefined?`<div class=row><span class=k>abundance</span> <span class=v>${'▮'.repeat(Math.max(1,Math.round(ABUND[i]/2)))}</span> <span class=lg>${ABUND[i]}/15${activeCT?' &middot; '+(exprIn(i,activeCT.t)?'<span class=ok>expressed in '+activeCT.name+'</span>':'<span class=lg>silent in '+activeCT.name+'</span>'):''}</span></div>`:''}
   ${hivHost[i]?`<div class=row><span class=warn>HIV-targeted by:</span> <span class=v>${hivHost[i].join(', ')}</span></div>`:''}
   ${act.length?`<div class=row style=margin-top:6px><span style="color:#43a047">activates &#9650;:</span> ${act.slice(0,10).map(lnk).join(', ')}${act.length>10?' +'+(act.length-10):''}</div>`:''}
@@ -284,7 +290,14 @@ function extLayers(i){const lnk=j=>`<a onclick=go('${G[j].name}')>${G[j].name}</
  if(PTM[i])h+=`<div class=row><span class=k>PTMs</span> <span class=v>${PTM[i].n}</span> sites${PTM[i].c&&PTM[i].c.length?' <span class=lg>('+PTM[i].c.join(', ')+')</span>':''}</div>`;
  if(DRUGS[i]&&DRUGS[i].length){const ds=DRUGS[i].slice(0,6).map(d=>{const tag=[d.t,d.a?'approved':''].filter(Boolean).join(', ');return `${d.d}${tag?'<span class=lg> ('+tag+')</span>':''}`;}).join(', ');
    h+=`<div class=row><span class=k>drugs</span> ${ds}${DRUGS[i].length>6?' +'+(DRUGS[i].length-6):''}</div>`;}
+ if(CODEP[i])h+=`<div class=row><span class=k>co-essential (DepMap):</span> ${CODEP[i].slice(0,6).map(([j,r])=>`${lnk(j)} <span class=lg>${r}</span>`).join(', ')}</div>`;
+ if(LOOPS3D[i])h+=`<div class=row><span class=k>3D chromatin loops:</span> <span class=v>${LOOPS3D[i].length}</span> <span class=lg>&rarr; ${LOOPS3D[i].slice(0,3).join(', ')}</span></div>`;
  return h?`<h3>molecular layers</h3>${h}`:'';}
+// ensemble confidence badge + novelty flag
+function confBadge(g){let h='';
+ if(g.conf)h+=`<div class=row><span class=k>model confidence</span> <span class=v style="color:${g.conf==='high'?'#43a047':'#fb8c00'}">${g.conf==='high'?'high (measured, constraint &amp; model agree)':'split — models disagree'}</span></div>`;
+ if(g.flag)h+=`<div class=row><span class=warn>&#9888; ${g.flag}</span></div>`;
+ return h;}
 // provenance footer: where each shown label comes from
 function provenance(g,i){const s=[];
  s.push('location: UniProt');s.push('networks: CollecTRI/DoRothEA + STRING');
