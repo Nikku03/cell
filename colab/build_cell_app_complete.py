@@ -124,6 +124,7 @@ function perturb(i,mut){let set=new Set([i]),dist={};dist[i]=0;let q=[i];
   <div class=row><span class=k>direct + 2-hop affected</span> <span class=v>${set.size-1}</span> proteins${gfHit.size?` &middot; <span style="color:#c792ea">+${gfHit.size} via Geneformer</span>`:''}</div>
   <h3>processes disrupted</h3>${topP.map(([p,n])=>`<div class=row><span style="color:${pcol[p]}">&#9679;</span> ${p}: <span class=v>${n}</span></div>`).join('')}
   <h3>pathways hit</h3>${topPath.map(([p,n])=>`<div class=row class=lg>${p} (${n})</div>`).join('')||'<div class=lg>-</div>'}
+  ${mut?'<h3>mutation impact</h3>'+mutImpact(G[i]):''}
   <div class=row style=margin-top:8px><span class=btn onclick="perturb(${i},true)">as mutation (LoF)</span> <span class=btn onclick="clearP()">clear</span></div>`;}
 window.perturb=perturb;window.clearP=()=>{affected=null;draw();};
 function info(i){let g=G[i];
@@ -145,6 +146,7 @@ function info(i){let g=G[i];
   ${!outs.length?'<div class=row><span class=k>regulates:</span> -</div>':''}
   <div class=row><span class=k>regulated by:</span> ${rgl||'-'}</div>
   <div class=row><span class=k>binds (PPI):</span> ${pp||'-'}</div>
+  <h3>mutation impact</h3>${mutImpact(g)}
   <h3>trafficking journey — gene &rarr; final location</h3>${journey(g).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
   <div class=row style=margin-top:8px><span class=btn onclick="setMode('Remove/Mutate');perturb(${i},false)">remove this protein &rarr;</span></div>`;}
 // derive the full birth-to-destination journey of a protein from its compartment + role
@@ -179,6 +181,29 @@ function journey(g){
    S.push({t:`<b>${c}</b> — mature protein at work here`,m:'chaperone-assisted folding'});
  }
  return S;}
+// mutation -> structure/disease impact block (curated where available; LOEUF readout for all)
+function mutImpact(g){let n=g.name,out='';
+ // genome-wide tolerance from constraint
+ let tol=g.loeuf<0?'unknown (no constraint estimate)':(g.loeuf<0.35?'<span class=warn>intolerant</span> — most loss-of-function mutations are damaging':(g.loeuf<0.7?'moderately constrained':'<span class=ok>tolerant</span> — loss-of-function is usually benign'));
+ out+=`<div class=row><span class=k>mutation tolerance (LOEUF ${g.loeuf<0?'?':g.loeuf}):</span> ${tol}</div>`;
+ let s=D.struct[n];
+ if(s){let tot=(s.pathogenic||0)+(s.common||0),fp=tot?Math.round(100*(s.pathogenic||0)/tot):0;
+  out+=`<h3>structural mutation profile</h3>
+   <div class=row><span class=k>UniProt</span> <span class=v>${s.acc}</span> &middot; <span class=k>${s.residues} residues</span></div>
+   <div class=row><span class=k>known variants:</span> <span style="color:#e53935">${s.pathogenic} pathogenic</span> vs <span style="color:#43a047">${s.common} common/benign</span></div>
+   <div style="height:8px;background:#43a047;border-radius:4px;overflow:hidden;margin:3px 0"><div style="height:100%;width:${fp}%;background:#e53935"></div></div>
+   <div class=lg>${fp}% of catalogued variants are pathogenic &middot; ~${(s.pathogenic/s.residues).toFixed(2)} pathogenic hits per residue</div>`;}
+ let f=D.fold[n];
+ if(f){let same=f.global_rmsd<0.1;
+  out+=`<h3>fold: wild-type vs mutant</h3>
+   <div class=row><span class=k>${f.mutation}</span></div>
+   <div class=row><span class=k>backbone RMSD</span> <span class=v>${f.global_rmsd} &#8491;</span> (local ${f.local_rmsd_around_site} &#8491;) &rarr; ${same?'<span class=ok>fold essentially unchanged</span> — damage is functional, not structural':'<span class=warn>fold distorted</span> — structure is destabilized'}</div>`;}
+ let d=D.otdis[n];
+ if(d){out+=`<h3>disease associations (Open Targets)</h3>
+   <div class=row><span class=k>${d.ndis} associations</span> &middot; evidence: ${d.ev} &middot; ${d.druggable?'<span class=ok>druggable</span>':'<span class=lg>not an established drug target</span>'}</div>
+   ${d.top.map(t=>`<div class=row class=lg>${t[0]} <span class=v>(${t[1]})</span></div>`).join('')}`;}
+ return out;}
+window.mutImpact=mutImpact;
 window.go=n=>{let i=idxByName[n];if(i>=0){sel=i;info(i);view.s=3;view.ox=W/2-POS[i*2]*view.s;view.oy=Hh/2-POS[i*2+1]*view.s;draw();}};
 // HIV mode
 function hivReport(){let proc={};for(const i in hivHost)proc[G[i].proc]=(proc[G[i].proc]||0)+1;

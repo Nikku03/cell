@@ -170,7 +170,26 @@ if m3.exists():
     print("Model 3 (Geneformer perturbation):",len(gf),"genes with in-silico downstream targets")
 else:
     print("Model 3: gf_perturb.json absent -> cascade uses measured reg+PPI graph only")
+# === mutation -> structure effect (curated) + Open Targets disease/druggability ===
+struct={}
+try:
+    sm=json.load(open(OUT/"structure_mutations.json"))["per_gene"]
+    struct={g:v for g,v in sm.items() if g in idx}
+except Exception as e: print("no structure_mutations:",e)
+fold={}
+try:
+    for x in json.load(open(OUT/"fold_before_after.json")):
+        if x["gene"] in idx: fold[x["gene"]]=x
+except Exception as e: print("no fold_before_after:",e)
+otdis={}
+try:
+    for t in json.load(open(OUT/"ot_disease_expansion.json"))["per_tf"]:
+        if t["gene"] in idx: otdis[t["gene"]]=dict(top=t.get("top",[])[:3],druggable=t.get("druggable",False),
+            ndis=t.get("n_diseases",0),ev=t.get("dominant_evidence",""))
+except Exception as e: print("no ot_disease:",e)
+print("structure genes:",len(struct),"| fold examples:",len(fold),"| OT disease genes:",len(otdis))
 DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,gf_perturb=gf,
+    struct=struct,fold=fold,otdis=otdis,
     procs=sorted(set(g["proc"] for g in G)),comps=sorted(set(g["comp"] for g in G)),
     hiv={k:v for k,v in hiv.items()},hiv_targets={k:len(v) for k,v in hiv.items()},
     hiv_weakpoints=weak[:40],dark_count=len(dark),celltypes=celltypes)
