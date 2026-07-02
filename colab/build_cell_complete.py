@@ -399,8 +399,14 @@ for i,g in enumerate(G):
     if g["name"] in pri: g["ti"]="priority"
     elif g["name"] in wss: g["ti"]="whitespace"
 print("Target Intelligence: literature on",len(lit),"genes | priority table",len(ti_priority),"| white-space",len(ti_ws))
+# biomarkers of sensitivity (#4/#5): per-target expression + mutation correlates (CCLE)
+biomarkers={}
+bmf=OUT/"biomarkers.json"
+if bmf.exists():
+    raw=json.load(open(bmf)); biomarkers={g:v for g,v in raw.items() if g in idx}
+    print("biomarkers (CCLE expression + mutation) for",len(biomarkers),"targets")
 DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in generxn.items()},gf_perturb=gf,
-    codep=codep,sl=sl,loops3d=loops3d,ti_priority=ti_priority,ti_whitespace=ti_ws,
+    codep=codep,sl=sl,loops3d=loops3d,ti_priority=ti_priority,ti_whitespace=ti_ws,biomarkers=biomarkers,
     struct=struct,fold=fold,otdis=otdis,pathways=pathsel,
     sig=sig,complexes=complexes,gene2cplx={k:v for k,v in gene2cplx.items()},
     drugs={k:v for k,v in drugs.items()},lr=lr,ptm=ptm,cellcycle=cellcycle,

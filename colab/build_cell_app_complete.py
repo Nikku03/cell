@@ -51,8 +51,8 @@ const hivHost={};for(const hp in D.hiv)for(const[i,t]of D.hiv[hp]){(hivHost[i]=h
 const SIGO={},SIGI={};for(const e of (D.sig||[])){(SIGO[e[0]]=SIGO[e[0]]||[]).push([e[1],e[2]]);(SIGI[e[1]]=SIGI[e[1]]||[]).push([e[0],e[2]]);}
 const CPLX=D.complexes||{},G2C=D.gene2cplx||{},DRUGS=D.drugs||{},PTM=D.ptm||{},CCYC=D.cellcycle||{};
 const LRO={},LRI={};for(const[a,b]of (D.lr||[])){(LRO[a]=LRO[a]||[]).push(b);(LRI[b]=LRI[b]||[]).push(a);}
-// Bucket 1: DepMap co-essentiality, synthetic-lethal pairs, 3D chromatin loops
-const CODEP=D.codep||{},LOOPS3D=D.loops3d||{};
+// Bucket 1: DepMap co-essentiality, synthetic-lethal pairs, 3D chromatin loops, biomarkers
+const CODEP=D.codep||{},LOOPS3D=D.loops3d||{},BIOM=D.biomarkers||{};
 const SLmap={};for(const[a,b,r] of (D.sl||[])){(SLmap[a]=SLmap[a]||{})[b]=r;(SLmap[b]=SLmap[b]||{})[a]=r;}
 // Model 2: abundance + per-cell-type expression mask (drives abundance, cell-type wiring, differentiation)
 const ABUND=D.abund||{};const CTN=D.ctnames||[];const ctBit={};CTN.forEach((n,t)=>ctBit[n]=t);
@@ -218,6 +218,7 @@ function info(i){let g=G[i];
   <div class=row><span class=k>binds (PPI):</span> ${pp||'-'}</div>
   <h3>functioning pipeline — input &rarr; gene &rarr; product &rarr; function &rarr; output</h3>${pipeline(i).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
   ${extLayers(i)}
+  ${biomarkerPanel(g.name)}
   ${GRXN[i]?`<h3>reactions catalyzed (Human-GEM)</h3>${GRXN[i].map(r=>`<div class=row class=lg>${r}</div>`).join('')}`:''}
   <h3>mutation impact</h3>${mutImpact(g)}
   <h3>trafficking journey — molecular detail</h3>${journey(g).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
@@ -303,6 +304,17 @@ function confBadge(g){let h='';
  if(g.ti==='priority')h+=`<div class=row><span style="color:#ffd54f">&#9733; target-priority candidate</span> <span class=lg>(cancer-essential · druggable · wide safety window)</span></div>`;
  if(g.ti==='whitespace')h+=`<div class=row><span style="color:#c792ea">&#9733; white-space target</span> <span class=lg>(essential · undrugged · understudied)</span></div>`;
  return h;}
+// biomarkers of sensitivity to targeting this gene (CCLE expression + mutation correlates)
+function biomarkerPanel(name){const bm=BIOM[name];if(!bm)return'';
+ const lnk=s=>idxByName[s]!==undefined?`<a onclick=go('${s}')>${s}</a>`:s;
+ const es=(bm.expr||[]).filter(x=>x[1]<0),er=(bm.expr||[]).filter(x=>x[1]>0);
+ const ms=(bm.mut||[]).filter(x=>x[1]<0),mr=(bm.mut||[]).filter(x=>x[1]>0);
+ let h='<h3>biomarkers of sensitivity (CCLE) — who responds to targeting this</h3>';
+ if(es.length)h+=`<div class=row><span style="color:#43a047">sensitive if high:</span> ${es.map(x=>`${lnk(x[0])} <span class=lg>(r ${x[1]})</span>`).join(', ')}</div>`;
+ if(ms.length)h+=`<div class=row><span style="color:#43a047">sensitive if mutant:</span> ${ms.map(x=>`${lnk(x[0])} <span class=lg>(&Delta; ${x[1]})</span>`).join(', ')}</div>`;
+ if(mr.length)h+=`<div class=row><span style="color:#e53935">resistant if mutant:</span> ${mr.map(x=>`${lnk(x[0])} <span class=lg>(&Delta; +${x[1]})</span>`).join(', ')}</div>`;
+ if(er.length)h+=`<div class=row><span style="color:#e53935">resistant if high:</span> ${er.map(x=>`${lnk(x[0])}`).join(', ')}</div>`;
+ return (es.length||ms.length||mr.length||er.length)?h:'';}
 // provenance footer: where each shown label comes from
 function provenance(g,i){const s=[];
  s.push('location: UniProt');s.push('networks: CollecTRI/DoRothEA + STRING');
