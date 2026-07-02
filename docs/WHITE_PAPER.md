@@ -93,6 +93,9 @@ Legend for **Stage**: 0 download · 1 substrate build · 2 model input · 3 reas
 | 18 | HiCCUPS 3D loops (GSE63525) | ftp.ncbi (GEO) | public | 0.6 MB | 1 | TSS→anchor mapping | enhancer-promoter chromatin loops |
 | 19 | Tabula Sapiens (CELLxGENE) | census S3 | CC BY 4.0 | streamed | 2 | per-cell-type mean expression | abundance, cell-type wiring, differentiation |
 | 20 | Geneformer weights | HuggingFace | Apache-2.0 | ~GB | 2 | gene embeddings / perturbation | dark-gene function; cascade enrichment |
+| 21 | CCLE expression (24Q2) | figshare | CC BY 4.0 | 461 MB | 3 | dependency×expression correlation | **biomarkers of target sensitivity** |
+| 22 | CCLE damaging mutations (24Q2) | figshare | CC BY 4.0 | 136 MB | 3 | dependency×mutation delta | **mutation biomarkers / line-specific MoA** |
+| 23 | NCBI gene2pubmed | ftp.ncbi.nlm.nih.gov | public domain | 259 MB | 3 | per-gene publication count | literature coverage → white-space discovery |
 | — | RNAcentral (ncRNA) | ftp.ebi.ac.uk | CC0 | 160 MB | (pending) | id-mapping | ncRNA inventory (needs targets) |
 | — | ARCHS4 / GEO | maayanlab | CC BY | 57.6 GB | (pending) | per-condition expression | disease/condition states |
 | — | Hart CEGv2 / NEGv1 | repo | free | tiny | 2 | truth labels | Model-1 training set |
@@ -147,6 +150,21 @@ This layer is where the models *complete each other*: agreement → confidence, 
 embeddings → dark-gene function, co-dependency → combinations.
 
 ---
+
+## 8b. TARGET INTELLIGENCE ENGINE — the ranked answers pharma asks
+The per-gene attribute table + co-dependency graph are exposed as **ranked decision queries** — not
+new modeling, a scoring layer over measured data. Live now:
+
+| query | combines | example output |
+|---|---|---|
+| **Target prioritization** | DepMap essentiality × LOEUF safety-window × DGIdb druggability, **selectivity-weighted** | 385 druggable candidates; FEN1 (selective, dep 0.78, in-development inhibitors) ranks; pan-essential/toxic down-weighted |
+| **Combination therapy** | co-essentiality ∩ druggability | per gene: druggable co-essential partners to co-target |
+| **White-space discovery** | high dependency ∧ undrugged ∧ low literature (gene2pubmed) | SPATA31A6 (dep 0.99, 3 pubs) — understudied essential genes |
+| **Biomarkers of sensitivity** | dependency × CCLE expression (1,100 lines) | "sensitive if high X / resistant if high Y" per target |
+| **Line-specific MoA / mutation biomarkers** | dependency × CCLE damaging mutations | "sensitive if mutant" — validated: MDM2 needs WT-TP53 (Δ+0.69), CTNNB1 in APC-mutant (Δ−0.79) |
+
+Surfaced in the cell as a **"Targets" mode** (ranked tables on the map) and per-gene badges
+(literature count, ★priority / ★white-space, combo candidates, biomarker panel).
 
 ## 9. THE CELL MODEL — what each part does
 - **Spatial scaffold:** proteins drawn in their real compartments (nucleus, cytoplasm, ER, Golgi,
@@ -224,6 +242,9 @@ The build emits a report showing recovery of known biology:
 - Cell-type masters recover textbook identities (HNF4A→liver, etc.).
 - Drugs: EGFR→gefitinib/osimertinib/cetuximab; BRAF→vemurafenib.
 - Perturbation: POLR2A KO → inviable; tissue-restricted genes → tissue-specific lethality.
+- **Biomarkers (blind-recovered from CCLE):** MDM2 dependency requires wild-type TP53 (TP53-mutant
+  lines resistant, Δ+0.69); CTNNB1 (β-catenin) dependency in APC-mutant colorectal lines (Δ−0.79) —
+  both textbook results reproduced with no prior knowledge.
 
 ## 14. NOVELTY — what new it produces
 Novel, evidence-backed **hypotheses** (not proven results), concentrated in three places:
