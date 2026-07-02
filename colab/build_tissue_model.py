@@ -65,6 +65,40 @@ for tis,cts in TISSUES.items():
                   receptors=sorted({rec for l,rec,sg in LR if expressed(c,rec,1)})) for c in cts}
     model[tis]=dict(cells=cts,cellinfo=cells,comm=comm)
     print(f"  {tis}: {len(cts)} cell types, {len(comm)} communication channels")
-DATA=dict(tissues=model,n_lr=len(LR))
+# --- downstream effect INSIDE the receiver (reuse the CELL MODEL's shared network data:
+#     SIGNOR receptor->signaling + CollecTRI TF->target). Baked into the tissue file; no cell files touched. ---
+from collections import defaultdict as dd
+sig_out=dd(list)
+try:
+    for l in open(H/"signor.tsv",encoding="utf-8",errors="ignore"):
+        p=l.split("\t")
+        if len(p)>=9 and p[0] and p[4] and p[0]!=p[4]: sig_out[p[0]].append(p[4])
+except Exception as e: print("signor:",e)
+reg_out=dd(list); tfset=set()
+try:
+    for r in csv.DictReader(open(H/"collectri.tsv"),delimiter="\t"):
+        a=r["source_genesymbol"]; b=r["target_genesymbol"]
+        if a and b and a!=b: reg_out[a].append(b); tfset.add(a)
+except Exception as e: print("collectri:",e)
+receptors=set()
+for tis in model.values():
+    for s,r,pairs in tis["comm"]:
+        for p in pairs: receptors.add(p[1])
+downstream={}
+for rec in receptors:
+    seen=set([rec]); q=[(rec,0)]
+    while q:
+        x,d=q.pop()
+        if d>=2: continue
+        for y in sig_out.get(x,[])[:25]:
+            if y not in seen: seen.add(y); q.append((y,d+1))
+    seen.discard(rec)
+    tfs=[g for g in seen if g in tfset][:6]
+    targets=set()
+    for tf in tfs: targets.update(reg_out.get(tf,[])[:15])
+    if seen or targets:
+        downstream[rec]=dict(sig=sorted(seen)[:10],tfs=tfs,targets=sorted(targets)[:18])
+print("receptors with downstream response wired:",len(downstream),"of",len(receptors))
+DATA=dict(tissues=model,n_lr=len(LR),downstream=downstream)
 json.dump(DATA,open(OUT/"tissue_model.json","w"),separators=(",",":"))
 print("wrote tissue_model.json (%d KB)"%(len(json.dumps(DATA))//1024))

@@ -10,8 +10,8 @@ don't mix.
 - **~5 cell types each**, with identity markers.
 - **Cell–cell communication**: for every ordered pair of cell types, the ligand→receptor channels where
   the **ligand is specifically produced by the sender** and the **receptor is expressed on the receiver**.
-- **Perturbation**: knock out a gene → the channels that use it as ligand or receptor break → you see
-  which cell–cell links weaken.
+- **Perturbation**: knock out a gene → the channels that use it break → you see which cell–cell links
+  weaken **and which downstream genes lose input inside the receiving cells** (receptor → SIGNOR → TF → targets).
 
 ## Data (self-contained — no census/GPU needed)
 | source | role | scale |
@@ -37,7 +37,7 @@ don't mix.
 - **No spatial architecture** — cell types are shown in a ring, not their real tissue geometry (no spatial-transcriptomics layer yet).
 - **Expression is HPA reference** (healthy), and specificity thresholds are tunable — a few real axes (e.g. VEGFA from AT2) fall below threshold.
 - **Tissue composition is curated** (the major cell types per organ), not exhaustive.
-- Downstream *inside* the receiver (receptor → signaling → transcription) is not yet wired — that's the natural next step (reuse the cell model's SIGNOR/CollecTRI networks).
+- Downstream *inside* the receiver IS now wired (receptor → SIGNOR signaling → CollecTRI TFs → target genes), reusing the cell model's shared network data — so a perturbation in one cell propagates through the broken signal into the next cell's genes. Still **topological, not kinetic** (which genes respond, not by how much).
 
 ## Files
 - `colab/build_tissue_model.py` → `tissue_model.json`

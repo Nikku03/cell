@@ -32,7 +32,7 @@ h3{color:#8fd0ff;font-size:12.5px;margin:16px 0 5px;border-bottom:1px solid #122
 <div id=wrap><canvas id=cv></canvas><div id=side><div id=body></div></div></div>
 <div id=hud></div>
 <script>
-const D=__DATA__;const TIS=D.tissues;const names=Object.keys(TIS);
+const D=__DATA__;const TIS=D.tissues;const names=Object.keys(TIS);const DOWNSTREAM=D.downstream||{};
 let tissue=names[0],selCell=null,selEdge=null,koGene='',hover=null;
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');let W,H,DPR=Math.min(devicePixelRatio||1,2);
 let nodes=[]; // {name, x, y, r}
@@ -100,18 +100,24 @@ function showEdge(e){const[s,r,pairs]=e;const live=pairs.filter(p=>p[0]!==koGene
  let h=`<h1>${s} &rarr; ${r}</h1><div class=sub>${tissue} &middot; cell-cell communication &middot; ${pairs.length} channels${koGene?` &middot; <span class=warn>${pairs.length-live.length} broken by ${koGene} KO</span>`:''}</div>
   <h3>ligand &rarr; receptor channels</h3>
   ${pairs.map(p=>{const brk=p[0]===koGene||p[1]===koGene;return `<div class="lr ${brk?'brk':''}"><span class=lig>${p[0]}</span> <span class=arrow>&rarr;</span> <span class=rec>${p[1]}</span> ${p[2]>0?'<span class=act>(activates)</span>':p[2]<0?'<span class=inh>(inhibits)</span>':''}${brk?' <span class=warn>&#9888; lost</span>':''}</div>`;}).join('')}`;
+ const recs=[...new Set(pairs.map(p=>p[1]))].filter(rc=>DOWNSTREAM[rc]).slice(0,4);
+ if(recs.length){h+=`<h3>downstream response inside ${r}</h3><div class=lg>what these receptors trigger in the receiving cell (SIGNOR + CollecTRI)</div>`;
+  recs.forEach(rc=>{const ds=DOWNSTREAM[rc];h+=`<div class=lr><span class=rec>${rc}</span> <span class=arrow>&rarr;</span> ${ds.tfs.length?'TFs <span class=v>'+ds.tfs.slice(0,4).join(', ')+'</span> <span class=arrow>&rarr;</span> ':''}<span class=lg>${(ds.targets||[]).slice(0,8).join(', ')||ds.sig.slice(0,6).join(', ')}</span></div>`;});}
  document.getElementById('body').innerHTML=h;}
 window.showEdgeByName=showEdgeByName;
 // knockout
 const koI=document.getElementById('ko');
 koI.addEventListener('change',()=>{koGene=koI.value.trim().toUpperCase();applyKO();});
 document.getElementById('clr').onclick=()=>{koGene='';koI.value='';applyKO();};
-function applyKO(){let broke=0,ch=0;const affected=new Set();
- channels().forEach(([s,r,pairs])=>{pairs.forEach(p=>{ch++;if(p[0]===koGene||p[1]===koGene){broke++;affected.add(s+' -> '+r);}});});
+function applyKO(){let broke=0,ch=0;const affected=new Set();const lostRec=new Set();
+ channels().forEach(([s,r,pairs])=>{pairs.forEach(p=>{ch++;if(p[0]===koGene||p[1]===koGene){broke++;affected.add(s+' -> '+r);if(p[0]===koGene&&DOWNSTREAM[p[1]])lostRec.add(r+'|'+p[1]);if(p[1]===koGene)lostRec.add(r+'|'+koGene);}});});
+ // downstream genes that lose input in the receivers
+ const dnGenes=new Set();lostRec.forEach(x=>{const rc=x.split('|')[1];(DOWNSTREAM[rc]&&DOWNSTREAM[rc].targets||[]).forEach(g=>dnGenes.add(g));});
  if(koGene){document.getElementById('body').innerHTML=`<h1 class=warn>Knock out ${koGene}</h1><div class=sub>${tissue} &middot; effect on cell-cell communication</div>
    <div class=row>${broke?`<span class=warn>&#9888; ${broke} communication channels lost</span> across <span class=v>${affected.size}</span> cell-cell links`:'<span class=ok>no cell-cell channel in this tissue uses '+koGene+'</span>'}</div>
    ${broke?'<h3>disrupted links</h3>'+[...affected].map(a=>`<div class=row>${a}</div>`).join(''):''}
-   <div class=lg style=margin-top:8px>Red/thin edges on the map = weakened. Click a link for the lost channels.</div>`;}
+   ${lostRec.size?`<h3>propagated into receivers</h3><div class=lg>receptors losing input &rarr; downstream genes affected inside the receiving cell</div>${[...lostRec].slice(0,8).map(x=>{const[cell,rc]=x.split('|');return `<div class=lr><span class=v>${cell}</span>: <span class=rec>${rc}</span> input lost</div>`;}).join('')}${dnGenes.size?`<div class=row style=margin-top:6px><span class=k>downstream genes affected:</span> <span class=lg>${[...dnGenes].slice(0,20).join(', ')}</span></div>`:''}`:''}
+   <div class=lg style=margin-top:8px>Red/thin edges on the map = weakened. Click a link for the lost channels + receiver response.</div>`;}
  draw();}
 // tissue tabs
 const bar=document.getElementById('top');const spacer=bar.querySelector('.spacer');
