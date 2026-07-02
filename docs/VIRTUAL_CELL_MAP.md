@@ -124,25 +124,32 @@ open is a database or a different-class-of-model (kinetics) job.
 🟡 = doable but needs a workaround (primary source gated/down → use the alternative)
 🔴 = hard (huge / gated / needs a separate model)
 
-| gap | verified source | verdict |
+**DONE — integrated into the cell (verified + wired):**
+| gap | source used | result |
 |---|---|---|
-| Signaling chains (directed, signed) | **SIGNOR** `getData.php?organism=9606` — by gene symbol, has effect+sign | ✅ closeable |
-| Named complexes | **EBI Complex Portal** `9606.tsv` — name + UniProt members + stoichiometry (CORUM host was down) | ✅ closeable |
-| Drug → target → effect | **ChEMBL API** — `mechanism` (drug→target→action) + `target`→UniProt→gene | ✅ closeable |
-| Tissue / cell–cell | **CellPhoneDB** `interaction_input.csv` — ligand-receptor UniProt pairs | ✅ closeable |
-| PTMs (phospho, etc.) | **UniProt** `ft_mod_res` — per-protein modified residues (PhosphoSitePlus/dbPTM gated/blocked) | ✅ closeable |
-| Metabolites as discrete nodes | Human-GEM (already fetched) | ✅ data present — app-rendering work |
-| Membrane bilayer w/ transporters | localization already present | ✅ rendering work, no data gap |
-| Per-gene methylation/chromatin | **ENCODE cCREs** (`cCREs.bed` already in repo) | 🟡 have elements; per-gene ATAC needs more |
-| Cell cycle program | Reactome cell-cycle (already have) / curated Whitfield set — Cyclebase was down | 🟡 via Reactome/curated |
-| Synthetic lethality (human) | **DepMap co-dependencies** (notebook has DepMap) — SynLethDB download path 404 | 🟡 via DepMap |
-| RNAs / lipids / ions | RNAcentral (reachable, huge) / SwissLipids (path 404) | 🔴 big / needs filtering |
-| 3D genome | Hi-C / 4DN — large matrices | 🔴 heavy |
-| True kinetics | BRENDA (gated) / SABIO-RK + ODE/FBA | 🔴 gated + separate model |
-| Conditions / environment | GEO / perturbation atlases | 🔴 no single clean file |
+| Signaling chains (directed, signed) | **SIGNOR** | ✅ 17,432 signal edges; per-gene "signals to ↑/↓ / signaled by" |
+| Named complexes | **EBI Complex Portal** | ✅ 2,039 complexes; per-gene complex membership |
+| Drug → target → effect | **DGIdb** (by gene symbol; simpler than ChEMBL) | ✅ 4,275 drug-targeted genes; per-gene drugs (action, approved) |
+| Tissue / cell–cell | **CellPhoneDB** | ✅ 948 ligand-receptor pairs; per-gene ligand/receptor partners |
+| PTMs | **UniProt** `ft_mod_res` | ✅ 8,425 genes; PTM count + types (Phospho/Acetyl/…) |
+| Genome-scale metabolism | **Human-GEM** | ✅ 2,549 enzymes with real reactions |
+| Cell cycle program | **Reactome** cell-cycle | ✅ 153 genes tagged by phase (G1/S/G2/M) |
 
-Note: DrugBank, CORUM, PhosphoSitePlus, dbPTM, Cyclebase were gated or unreachable from the
-sandbox; each has an **open, verified alternative** above (ChEMBL, Complex Portal, UniProt, Reactome).
+**Still open:**
+| gap | source | verdict |
+|---|---|---|
+| Metabolites as discrete nodes | Human-GEM (present) | 🟡 data here — app-rendering work |
+| Membrane bilayer w/ transporters | localization present | 🟡 rendering work, no data gap |
+| Per-gene methylation/chromatin | ENCODE cCREs (`cCREs.bed` in repo) | 🟡 have CpG/enhancers; per-gene ATAC needs more |
+| Synthetic lethality (human) | DepMap co-dependencies | 🟡 via DepMap (SynLethDB download 404) — double-KO mechanic pending |
+| RNAs / lipids / ions | RNAcentral (huge) / SwissLipids (404) | 🔴 big / needs filtering |
+| 3D genome | Hi-C / 4DN | 🔴 heavy matrices |
+| True kinetics | BRENDA (gated) / SABIO-RK (export empty) | 🔴 no clean source — skipped per plan |
+| Conditions / environment | GEO | 🔴 no single clean file |
+
+Note: DrugBank, CORUM, PhosphoSitePlus, dbPTM, Cyclebase were gated/unreachable → replaced with
+verified open alternatives (DGIdb, Complex Portal, UniProt, Reactome). Kinetics has no clean bulk
+source (SABIO-RK export returned empty), so it stays skipped as planned.
 
 **Bottom line:** the 3 models' half is complete; the substrate half is largely integrated
 (UniProt, networks, Reactome, Human-GEM, structure, disease, HIV). What remains red is each a

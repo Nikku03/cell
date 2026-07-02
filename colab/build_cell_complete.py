@@ -222,6 +222,80 @@ pathmembers={k:v for k,v in pathmembers.items() if 3<=len(v)<=400}
 pathlist=sorted(pathmembers,key=lambda k:-len(pathmembers[k]))[:60]  # 60 biggest for the selector
 pathsel={k:pathmembers[k] for k in pathlist}
 print("pathways indexed:",len(pathmembers),"| offered in selector:",len(pathsel))
+# === EXTERNAL LAYERS: UniProt PTMs + acc->sym, SIGNOR signaling, Complex Portal, DGIdb drugs,
+#     CellPhoneDB ligand-receptor, Reactome cell-cycle phase ===
+acc2sym={}; ptm={}
+up=H/"uniprot_acc_ptm.tsv"
+if up.exists():
+    for l in open(up,encoding="utf-8",errors="ignore"):
+        p=l.rstrip("\n").split("\t")
+        if len(p)<2 or p[0]=="Entry": continue
+        acc,sym=p[0],p[1]; mod=p[2] if len(p)>2 else ""
+        if sym: acc2sym[acc]=sym
+        if mod and sym in idx:
+            n=mod.count("MOD_RES")
+            cats=[kw for kw in["Phospho","Acetyl","Methyl","Ubiquitin","Sumoyl","Hydroxy","GlcNAc","Nitros","Malonyl","Succinyl","Palmit"] if kw.lower() in mod.lower()]
+            if n: ptm[idx[sym]]=dict(n=n,c=cats[:5])
+print("UniProt: acc->sym",len(acc2sym),"| PTM-annotated genes",len(ptm))
+sig=[]; sgf=H/"signor.tsv"
+if sgf.exists():
+    seen=set()
+    for l in open(sgf,encoding="utf-8",errors="ignore"):
+        p=l.split("\t")
+        if len(p)<9: continue
+        a=idx.get(p[0]); b=idx.get(p[4])
+        if a is None or b is None or a==b: continue
+        eff=p[8].lower(); s=1 if "up-regulat" in eff else(-1 if "down-regulat" in eff else 0)
+        k=(a,b)
+        if k in seen: continue
+        seen.add(k); sig.append([a,b,s])
+print("SIGNOR signaling edges:",len(sig))
+complexes={}; gene2cplx=defaultdict(list); cpf=H/"complexportal.tsv"
+if cpf.exists():
+    rd=csv.reader(open(cpf),delimiter="\t"); next(rd,None)
+    for row in rd:
+        if len(row)<5: continue
+        name=row[1]; syms=set()
+        for tok in row[4].split("|"):
+            acc=tok.split("(")[0].split("-")[0]
+            s=acc2sym.get(acc)
+            if s and s in idx: syms.add(s)
+        if len(syms)>=2:
+            complexes[name]=[idx[s] for s in sorted(syms)]
+            for s in syms:
+                if len(gene2cplx[idx[s]])<4: gene2cplx[idx[s]].append(name)
+print("Complex Portal complexes:",len(complexes))
+drugs=defaultdict(list); dgf=H/"dgidb.tsv"
+if dgf.exists():
+    rows_dg=list(csv.reader(open(dgf),delimiter="\t"))[1:]
+    # prefer approved, named drugs (skip raw ChEMBL/ID-like names)
+    rows_dg.sort(key=lambda r:0 if (len(r)>10 and r[10] in("TRUE","True")) else 1)
+    seen=set()
+    for row in rows_dg:
+        if len(row)<10: continue
+        i=idx.get(row[2]); drug=(row[9] or "").strip()
+        if i is None or not drug or drug.lower().startswith("chembl"): continue
+        typ=row[5] if row[5] not in("NULL","","N/A") else ""
+        k=(i,drug.lower())
+        if k in seen or len(drugs[i])>=8: continue
+        seen.add(k); drugs[i].append(dict(d=drug.title(),t=typ,a=(len(row)>10 and row[10] in("TRUE","True"))))
+print("DGIdb drug-targeted genes:",len(drugs))
+lr=[]; cpdb=H/"cellphonedb.csv"
+if cpdb.exists():
+    rd=csv.DictReader(open(cpdb)); seen=set()
+    for row in rd:
+        a=acc2sym.get((row.get("partner_a") or "").strip()); b=acc2sym.get((row.get("partner_b") or "").strip())
+        ia=idx.get(a) if a else None; ib=idx.get(b) if b else None
+        if ia is not None and ib is not None and ia!=ib and (ia,ib) not in seen:
+            seen.add((ia,ib)); lr.append([ia,ib])
+print("CellPhoneDB ligand-receptor pairs:",len(lr))
+cellcycle={}
+for i,g in enumerate(G):
+    ps=" ".join(paths.get(g["name"],[]))
+    if "Cell Cycle" in ps or "Mitotic" in ps or "M Phase" in ps:
+        ph=next((k for k in["G1/S Transition","G2/M","S Phase","M Phase","Mitotic","G1","G2"] if k in ps),"cell cycle")
+        cellcycle[i]=ph
+print("Reactome cell-cycle genes:",len(cellcycle))
 # === MODEL 2: abundance + cell-type expression (drives abundance, cell-type wiring, differentiation) ===
 # celltype_expression.csv = cell types (rows) x genes (cols); log1p CP10k means from the atlas.
 ctnames=[]; abund={}; emask={}
@@ -248,6 +322,8 @@ else:
     print("Model 2: no celltype_expression.csv -> no abundance / cell-type wiring / differentiation")
 DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in generxn.items()},gf_perturb=gf,
     struct=struct,fold=fold,otdis=otdis,pathways=pathsel,
+    sig=sig,complexes=complexes,gene2cplx={k:v for k,v in gene2cplx.items()},
+    drugs={k:v for k,v in drugs.items()},lr=lr,ptm=ptm,cellcycle=cellcycle,
     ctnames=ctnames,abund=abund,emask=emask,
     procs=sorted(set(g["proc"] for g in G)),comps=sorted(set(g["comp"] for g in G)),
     hiv={k:v for k,v in hiv.items()},hiv_targets={k:len(v) for k,v in hiv.items()},

@@ -74,6 +74,11 @@ outputs/orphan/cell_map_data.json
 # large human GEM (re-fetchable via URL in colab/target_intel_human.py)
 data/external_data/human/Human-GEM.xml
 data/external_data/human/human_gem.txt
+data/external_data/human/signor.tsv
+data/external_data/human/complexportal.tsv
+data/external_data/human/cellphonedb.csv
+data/external_data/human/dgidb.tsv
+data/external_data/human/uniprot_acc_ptm.tsv
 data/external_data/human/gnomad_constraint.txt.bgz
 
 data/external_data/human/cCREs.bed

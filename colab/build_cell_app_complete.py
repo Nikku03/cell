@@ -47,6 +47,10 @@ for(const[a,b]of D.ppi){(PP[a]=PP[a]||[]).push(b);(PP[b]=PP[b]||[]).push(a);}
 const RXN={};(D.reactions||[]).forEach(r=>RXN[r.i]=r);
 const GRXN=D.generxn||{};   // gene index -> [ "substrate → product", ... ]
 const hivHost={};for(const hp in D.hiv)for(const[i,t]of D.hiv[hp]){(hivHost[i]=hivHost[i]||[]).push(hp);}
+// external layers: signaling, complexes, drugs, PTMs, ligand-receptor, cell cycle
+const SIGO={},SIGI={};for(const e of (D.sig||[])){(SIGO[e[0]]=SIGO[e[0]]||[]).push([e[1],e[2]]);(SIGI[e[1]]=SIGI[e[1]]||[]).push([e[0],e[2]]);}
+const CPLX=D.complexes||{},G2C=D.gene2cplx||{},DRUGS=D.drugs||{},PTM=D.ptm||{},CCYC=D.cellcycle||{};
+const LRO={},LRI={};for(const[a,b]of (D.lr||[])){(LRO[a]=LRO[a]||[]).push(b);(LRI[b]=LRI[b]||[]).push(a);}
 // Model 2: abundance + per-cell-type expression mask (drives abundance, cell-type wiring, differentiation)
 const ABUND=D.abund||{};const CTN=D.ctnames||[];const ctBit={};CTN.forEach((n,t)=>ctBit[n]=t);
 const EMASK=new Map();for(const k in (D.emask||{}))EMASK.set(+k,BigInt(D.emask[k]));
@@ -184,6 +188,7 @@ function info(i){let g=G[i];
   <div class=row><span class=k>regulated by:</span> ${rgl||'-'}</div>
   <div class=row><span class=k>binds (PPI):</span> ${pp||'-'}</div>
   <h3>functioning pipeline — input &rarr; gene &rarr; product &rarr; function &rarr; output</h3>${pipeline(i).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
+  ${extLayers(i)}
   ${GRXN[i]?`<h3>reactions catalyzed (Human-GEM)</h3>${GRXN[i].map(r=>`<div class=row class=lg>${r}</div>`).join('')}`:''}
   <h3>mutation impact</h3>${mutImpact(g)}
   <h3>trafficking journey — molecular detail</h3>${journey(g).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
@@ -244,6 +249,19 @@ function journey(g){
  return S;}
 // confidence of the essentiality prediction (how far our model's prob is from the 0.5 fence)
 function essConf(g){if(g.ess_prob===undefined)return'';let d=Math.abs(g.ess_prob-0.5);return d>0.35?'high':d>0.2?'medium':'low';}
+// external molecular layers for a gene: complex, signaling, PTMs, drugs, ligand/receptor, cell cycle
+function extLayers(i){const lnk=j=>`<a onclick=go('${G[j].name}')>${G[j].name}</a>`;let h='';
+ if(CCYC[i])h+=`<div class=row><span class=k>cell cycle</span> <span class=v>${CCYC[i]}</span></div>`;
+ if(G2C[i])h+=`<div class=row><span class=k>complex</span> ${G2C[i].map(n=>`<span class=v>${n}</span>`).join('; ')}</div>`;
+ const so=(SIGO[i]||[]),si=(SIGI[i]||[]);
+ if(so.length)h+=`<div class=row><span class=k>signals to:</span> ${so.slice(0,8).map(([j,s])=>`${lnk(j)}${s>0?'<span style="color:#43a047">↑</span>':s<0?'<span style="color:#e53935">↓</span>':''}`).join(', ')}${so.length>8?' +'+(so.length-8):''}</div>`;
+ if(si.length)h+=`<div class=row><span class=k>signaled by:</span> ${si.slice(0,8).map(([j,s])=>`${lnk(j)}`).join(', ')}${si.length>8?' +'+(si.length-8):''}</div>`;
+ if(LRO[i])h+=`<div class=row><span class=k>ligand &rarr; receptors:</span> ${LRO[i].slice(0,6).map(lnk).join(', ')}</div>`;
+ if(LRI[i])h+=`<div class=row><span class=k>receptor &larr; ligands:</span> ${LRI[i].slice(0,6).map(lnk).join(', ')}</div>`;
+ if(PTM[i])h+=`<div class=row><span class=k>PTMs</span> <span class=v>${PTM[i].n}</span> sites${PTM[i].c&&PTM[i].c.length?' <span class=lg>('+PTM[i].c.join(', ')+')</span>':''}</div>`;
+ if(DRUGS[i]&&DRUGS[i].length){const ds=DRUGS[i].slice(0,6).map(d=>{const tag=[d.t,d.a?'approved':''].filter(Boolean).join(', ');return `${d.d}${tag?'<span class=lg> ('+tag+')</span>':''}`;}).join(', ');
+   h+=`<div class=row><span class=k>drugs</span> ${ds}${DRUGS[i].length>6?' +'+(DRUGS[i].length-6):''}</div>`;}
+ return h?`<h3>molecular layers</h3>${h}`:'';}
 // provenance footer: where each shown label comes from
 function provenance(g,i){const s=[];
  s.push('location: UniProt');s.push('networks: CollecTRI/DoRothEA + STRING');
@@ -252,6 +270,12 @@ function provenance(g,i){const s=[];
  if(D.otdis[g.name])s.push('disease: Open Targets');
  if(ABUND[i]!==undefined)s.push('abundance/expression: Tabula Sapiens atlas');
  if((GF||{})[i])s.push('perturbation enrichment: Geneformer');
+ if(GRXN[i])s.push('metabolism: Human-GEM');
+ if(SIGO[i]||SIGI[i])s.push('signaling: SIGNOR');
+ if(G2C[i])s.push('complex: Complex Portal');
+ if(DRUGS[i])s.push('drugs: DGIdb');
+ if(PTM[i])s.push('PTMs: UniProt');
+ if(LRO[i]||LRI[i])s.push('ligand-receptor: CellPhoneDB');
  return `<div class=lg style="margin-top:8px;border-top:1px solid #1d3350;padding-top:5px">sources &middot; ${s.join(' &middot; ')}</div>`;}
 // mutation -> structure/disease impact block (curated where available; LOEUF readout for all)
 function mutImpact(g){let n=g.name,out='';
