@@ -82,7 +82,9 @@ else:
 reg=[];
 for r in csv.DictReader(open(H/"collectri.tsv"),delimiter="\t"):
     a=idx.get(r["source_genesymbol"]); b=idx.get(r["target_genesymbol"])
-    if a is not None and b is not None and a!=b: reg.append([a,b])
+    if a is not None and b is not None and a!=b:
+        sg=1 if r.get("is_stimulation")=="True" else (-1 if r.get("is_inhibition")=="True" else 0)
+        reg.append([a,b,sg])
 ppi=[]
 for l in gzip.open(H/"string_physical.txt.gz","rt"):
     if l.startswith("protein1"): continue

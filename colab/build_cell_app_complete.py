@@ -40,7 +40,7 @@ HTML=r"""<!doctype html><html><head><meta charset=utf-8><title>The cell</title><
 const D=__DATA__;const G=D.genes,N=G.length;
 const idxByName={};G.forEach((g,i)=>idxByName[g.name]=i);
 // networks
-const OUT={},IN={},PP={};for(const[a,b]of D.reg){(OUT[a]=OUT[a]||[]).push(b);(IN[b]=IN[b]||[]).push(a);}
+const OUT={},IN={},PP={},SGN={};for(const e of D.reg){const a=e[0],b=e[1],s=e[2]||0;(OUT[a]=OUT[a]||[]).push(b);(IN[b]=IN[b]||[]).push(a);SGN[a+','+b]=s;}
 for(const[a,b]of D.ppi){(PP[a]=PP[a]||[]).push(b);(PP[b]=PP[b]||[]).push(a);}
 // HIV host index
 const hivHost={};for(const hp in D.hiv)for(const[i,t]of D.hiv[hp]){(hivHost[i]=hivHost[i]||[]).push(hp);}
@@ -126,8 +126,11 @@ function perturb(i,mut){let set=new Set([i]),dist={};dist[i]=0;let q=[i];
   <h3>pathways hit</h3>${topPath.map(([p,n])=>`<div class=row class=lg>${p} (${n})</div>`).join('')||'<div class=lg>-</div>'}
   <div class=row style=margin-top:8px><span class=btn onclick="perturb(${i},true)">as mutation (LoF)</span> <span class=btn onclick="clearP()">clear</span></div>`;}
 window.perturb=perturb;window.clearP=()=>{affected=null;draw();};
-function info(i){let g=G[i];let tg=(OUT[i]||[]).slice(0,10).map(j=>`<a onclick=go('${G[j].name}')>${G[j].name}</a>`).join(', ');
- let rgl=(IN[i]||[]).slice(0,10).map(j=>`<a onclick=go('${G[j].name}')>${G[j].name}</a>`).join(', ');
+function info(i){let g=G[i];
+ const lnk=j=>`<a onclick=go('${G[j].name}')>${G[j].name}</a>`;
+ const outs=OUT[i]||[];
+ let act=outs.filter(j=>SGN[i+','+j]>0),rep=outs.filter(j=>SGN[i+','+j]<0),unk=outs.filter(j=>!SGN[i+','+j]);
+ let rgl=(IN[i]||[]).slice(0,10).map(lnk).join(', ');
  let pp=(PP[i]||[]).slice(0,10).map(j=>`<a onclick=go('${G[j].name}')>${G[j].name}</a>`).join(', ');
  document.getElementById('info').innerHTML=`<h2>${g.name}</h2>
   <div class=row><span class=k>compartment</span> <span class=v>${g.comp}</span></div>
@@ -136,7 +139,10 @@ function info(i){let g=G[i];let tg=(OUT[i]||[]).slice(0,10).map(j=>`<a onclick=g
   <div class=row><span class=k>essential</span> <span class=v>${g.ess==1?'yes':g.ess==0?'no':'?'}</span>${g.ess_src==='model1'?' <span class=lg>(our model'+(g.ess_prob?', p='+g.ess_prob:'')+')</span>':(g.ess_src==='measured'&&g.ess>=0?' <span class=lg>(measured)</span>':'')} &middot; <span class=k>LOEUF</span> <span class=v>${g.loeuf<0?'-':g.loeuf}</span> &middot; <span class=k>TF</span> <span class=v>${g.tf?'yes':'no'}</span></div>
   <div class=row><span class=k>PPI</span> <span class=v>${g.ppi}</span> &middot; <span class=k>diseases</span> <span class=v>${g.ndis}</span>${g.master?' &middot; <span class=k>master:</span> <span class=v>'+g.master+'</span>':''}</div>
   ${hivHost[i]?`<div class=row><span class=warn>HIV-targeted by:</span> <span class=v>${hivHost[i].join(', ')}</span></div>`:''}
-  <div class=row style=margin-top:6px><span class=k>regulates:</span> ${tg||'-'}</div>
+  ${act.length?`<div class=row style=margin-top:6px><span style="color:#43a047">activates &#9650;:</span> ${act.slice(0,10).map(lnk).join(', ')}${act.length>10?' +'+(act.length-10):''}</div>`:''}
+  ${rep.length?`<div class=row><span style="color:#e53935">represses &#9660;:</span> ${rep.slice(0,10).map(lnk).join(', ')}${rep.length>10?' +'+(rep.length-10):''}</div>`:''}
+  ${unk.length?`<div class=row><span class=k>regulates (unsigned):</span> ${unk.slice(0,10).map(lnk).join(', ')}${unk.length>10?' +'+(unk.length-10):''}</div>`:''}
+  ${!outs.length?'<div class=row><span class=k>regulates:</span> -</div>':''}
   <div class=row><span class=k>regulated by:</span> ${rgl||'-'}</div>
   <div class=row><span class=k>binds (PPI):</span> ${pp||'-'}</div>
   <h3>trafficking journey — gene &rarr; final location</h3>${journey(g).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
