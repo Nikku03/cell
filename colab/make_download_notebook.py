@@ -37,8 +37,13 @@ DATASETS = [
  ("rna_ncrna","rnacentral_homo_sapiens.bed.gz","https://ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/genome_coordinates/bed/homo_sapiens.GRCh38.bed.gz",False,None),
  ("rna_ncrna","rnacentral_ensembl_mapping.tsv","https://ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/id_mapping/database_mappings/ensembl.tsv",False,"WITH_RNACENTRAL_MAPPING"),
  ("genome_3d","GM12878_HiCCUPS_loops.txt.gz","https://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_GM12878_primary%2Breplicate_HiCCUPS_looplist.txt.gz",False,None),
- # DepMap CRISPR (~200 MB) -> Model 1 truth + real synthetic-lethal co-dependencies
+ # DepMap CRISPR (~380 MB) -> Model 1 truth + co-essentiality + synthetic lethality
  ("depmap","CRISPRGeneEffect.csv","https://ndownloader.figshare.com/files/43346616",False,None),
+ # DepMap 24Q2 CCLE omics -> biomarker + line-specific mechanism-of-action
+ ("depmap","OmicsExpressionProteinCodingGenesTPMLogp1.csv","https://ndownloader.figshare.com/files/46490878",False,None),
+ ("depmap","OmicsSomaticMutationsMatrixDamaging.csv","https://ndownloader.figshare.com/files/46500376",False,None),
+ # literature coverage (NCBI) -> white-space / under-studied target discovery
+ ("literature","gene2pubmed.gz","https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz",False,None),
  # GEO expression compendium: ARCHS4 human, ~57.6 GB -> needs Drive space (Google One 100GB+)
  ("expression_geo","archs4_human_gene.h5","https://s3.dev.maayanlab.cloud/archs4/files/human_gene_v2.latest.h5",False,"WITH_FULL_GEO"),
 ]
