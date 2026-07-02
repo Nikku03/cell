@@ -141,7 +141,7 @@ open is a database or a different-class-of-model (kinetics) job.
 | Metabolites as discrete nodes | Human-GEM (present) | 🟡 data here — app-rendering work |
 | Membrane bilayer w/ transporters | localization present | 🟡 rendering work, no data gap |
 | Per-gene methylation/chromatin | ENCODE cCREs (`cCREs.bed` in repo) | 🟡 have CpG/enhancers; per-gene ATAC needs more |
-| Synthetic lethality (human) | DepMap co-dependencies | 🟡 via DepMap (SynLethDB download 404) — double-KO mechanic pending |
+| Synthetic lethality (human) | DepMap co-dependencies | 🟡 double-KO mechanic DONE (combined cascade + SL heuristic); real SL pairs still need DepMap |
 | RNAs / lipids / ions | RNAcentral (huge) / SwissLipids (404) | 🔴 big / needs filtering |
 | 3D genome | Hi-C / 4DN | 🔴 heavy matrices |
 | True kinetics | BRENDA (gated) / SABIO-RK (export empty) | 🔴 no clean source — skipped per plan |

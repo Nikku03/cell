@@ -119,7 +119,7 @@ cv.addEventListener('mousemove',e=>{if(drag){view.ox=drag.ox+(e.offsetX-drag.x)*
  let i=pick(e.offsetX*devicePixelRatio,e.offsetY*devicePixelRatio),t=document.getElementById('tip');
  if(i>=0){t.style.display='block';t.style.left=(e.offsetX+12)+'px';t.style.top=(e.offsetY+8)+'px';t.innerHTML=`<b>${G[i].name}</b> &middot; ${G[i].comp} &middot; ${G[i].proc}`;}else t.style.display='none';});
 function pick(px,py){let wx=(px-view.ox)/view.s,wy=(py-view.oy)/view.s,b=-1,bd=90;for(let i=0;i<N;i++){let dx=POS[i*2]-wx,dy=POS[i*2+1]-wy,d=dx*dx+dy*dy;if(d<bd){bd=d;b=i;}}return b;}
-cv.addEventListener('click',e=>{if(drag&&Math.abs(e.offsetX-drag.x)>3)return;let i=pick(e.offsetX*devicePixelRatio,e.offsetY*devicePixelRatio);if(i>=0){sel=i;if(mode=='Remove/Mutate')perturb(i,false);else if(mode=='Overexpress')overexpress(i);else info(i);draw();}});
+cv.addEventListener('click',e=>{if(drag&&Math.abs(e.offsetX-drag.x)>3)return;let i=pick(e.offsetX*devicePixelRatio,e.offsetY*devicePixelRatio);if(i>=0){sel=i;if(mode=='Remove/Mutate'){if(koSeed!=null&&koSeed!==i){doubleKO(koSeed,i);koSeed=null;}else perturb(i,false);}else if(mode=='Overexpress')overexpress(i);else info(i);draw();}});
 // perturbation: BFS 2 hops over reg(out)+ppi, enriched with Geneformer in-silico downstream (Model 3)
 const GF=D.gf_perturb||{};
 function perturb(i,mut){let set=new Set([i]),dist={};dist[i]=0;let q=[i];
@@ -141,8 +141,31 @@ function perturb(i,mut){let set=new Set([i]),dist={};dist[i]=0;let q=[i];
   <h3>processes disrupted</h3>${topP.map(([p,n])=>`<div class=row><span style="color:${pcol[p]}">&#9679;</span> ${p}: <span class=v>${n}</span></div>`).join('')}
   <h3>pathways hit</h3>${topPath.map(([p,n])=>`<div class=row class=lg>${p} (${n})</div>`).join('')||'<div class=lg>-</div>'}
   ${mut?'<h3>mutation impact</h3>'+mutImpact(G[i]):''}
-  <div class=row style=margin-top:8px><span class=btn onclick="perturb(${i},true)">as mutation (LoF)</span> <span class=btn onclick="clearP()">clear</span></div>`;}
-window.perturb=perturb;window.clearP=()=>{affected=null;draw();};
+  <div class=row style=margin-top:8px><span class=btn onclick="perturb(${i},true)">as mutation (LoF)</span> <span class=btn onclick="koSeed=${i};document.getElementById('hint').textContent=' now click a 2nd protein to co-knock-out with ${G[i].name}'">+ 2nd knockout</span> <span class=btn onclick="clearP()">clear</span></div>`;}
+window.perturb=perturb;window.clearP=()=>{affected=null;koSeed=null;draw();};
+// helper: 2-hop cascade set for one gene (cell-type gated), for double-KO
+function cascadeSet(i){const set=new Set([i]),dist={};dist[i]=0;let q=[i];const gate=activeCT?activeCT.set:null;
+ while(q.length){let x=q.shift();if(dist[x]>=2)continue;for(const j of[...(OUT[x]||[]),...(PP[x]||[])]){if(gate&&!gate.has(j))continue;if(!set.has(j)){set.add(j);dist[j]=dist[x]+1;q.push(j);}}}
+ (GF[i]||[]).forEach(j=>{if(!(gate&&!gate.has(j)))set.add(j);});return set;}
+let koSeed=null;
+// DOUBLE KNOCKOUT / synthetic lethality: combine two KOs, flag emergent lethality
+function doubleKO(i,j){const A=cascadeSet(i),B=cascadeSet(j),U=new Set([...A,...B]);
+ const both=[...A].filter(x=>B.has(x)&&x!==i&&x!==j);   // hit by BOTH single KOs
+ const lethA=G[i].ess==1,lethB=G[j].ess==1;
+ // synthetic-lethal signal: neither individually essential, but together they converge on
+ // essential genes / a much larger joint cascade than either alone
+ const jointEss=[...U].filter(x=>G[x].ess==1&&x!==i&&x!==j).length;
+ const sl=!lethA&&!lethB&&(both.length>=3||jointEss>Math.max([...A].filter(x=>G[x].ess==1).length,[...B].filter(x=>G[x].ess==1).length));
+ affected={set:U,col:x=>(x===i||x===j)?'#fff':(A.has(x)&&B.has(x))?'#c792ea':(A.has(x)?'#ff6b6b':'#ffb36b')};
+ const lnk=arr=>arr.slice(0,12).map(x=>`<a onclick=go('${G[x].name}')>${G[x].name}</a>`).join(', ');
+ document.getElementById('info').innerHTML=`<h2>Double knockout: ${G[i].name} + ${G[j].name}</h2>
+  ${activeCT?`<div class=row class=lg>cell-type context: <b>${activeCT.name}</b></div>`:''}
+  <div class=row>${lethA||lethB?'<span class=warn>&#9888; already lethal singly</span> ('+(lethA?G[i].name:'')+(lethA&&lethB?' & ':'')+(lethB?G[j].name:'')+')':(sl?'<span class=warn>&#9888; candidate SYNTHETIC LETHAL</span> — neither is essential alone, but together they converge on essential machinery':'<span class=ok>likely tolerated</span> — buffered even as a double KO')}</div>
+  <div class=row><span class=k>combined affected</span> <span class=v>${U.size-2}</span> &middot; <span style="color:#c792ea">hit by both</span> <span class=v>${both.length}</span> &middot; <span class=k>essential in joint cascade</span> <span class=v>${jointEss}</span></div>
+  <h3 style="color:#c792ea">shared targets (both KOs converge here)</h3><div class=lg>${lnk(both)||'-'}</div>
+  <div class=row style=margin-top:8px><span class=btn onclick="clearP()">clear</span></div>`;
+ draw();}
+window.doubleKO=doubleKO;
 // OVEREXPRESSION / ACTIVATION: push a gene UP, propagate signed regulation (up/down) 2 hops
 function overexpress(i){const gate=activeCT?activeCT.set:null;
  const st={};st[i]=1;let q=[[i,0]];        // +1 up, -1 down
