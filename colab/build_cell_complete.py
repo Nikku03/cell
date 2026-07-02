@@ -65,6 +65,7 @@ for r in rows:
         ess_src="measured" if r["essential"] in("0","1") else "none",
         loeuf=round(fv(r["loeuf"]),3),tf=int(istf),ppi=int(fv(r["ppi_degree"],0)),
         ndis=int(fv(r["n_diseases"],0)),master=r["lineage_master"],npath=int(fv(r["n_pathways"],0)),
+        chrom=r.get("chrom","") or "",tss=r.get("tss","") or "",
         path=toppath(g)[:44]))
 # === MODEL 1 enrichment: our trained essentiality model fills the UNLABELED genes ===
 # (produced by the notebook -> outputs/orphan/predicted_essentiality.csv: gene,pred,prob)
@@ -188,8 +189,16 @@ try:
             ndis=t.get("n_diseases",0),ev=t.get("dominant_evidence",""))
 except Exception as e: print("no ot_disease:",e)
 print("structure genes:",len(struct),"| fold examples:",len(fold),"| OT disease genes:",len(otdis))
+# pathway -> member gene indices (from each gene's displayed top pathway); keep sizeable ones
+pathmembers=defaultdict(list)
+for i,g in enumerate(G):
+    if g["path"]: pathmembers[g["path"]].append(i)
+pathmembers={k:v for k,v in pathmembers.items() if 3<=len(v)<=400}
+pathlist=sorted(pathmembers,key=lambda k:-len(pathmembers[k]))[:60]  # 60 biggest for the selector
+pathsel={k:pathmembers[k] for k in pathlist}
+print("pathways indexed:",len(pathmembers),"| offered in selector:",len(pathsel))
 DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,gf_perturb=gf,
-    struct=struct,fold=fold,otdis=otdis,
+    struct=struct,fold=fold,otdis=otdis,pathways=pathsel,
     procs=sorted(set(g["proc"] for g in G)),comps=sorted(set(g["comp"] for g in G)),
     hiv={k:v for k,v in hiv.items()},hiv_targets={k:len(v) for k,v in hiv.items()},
     hiv_weakpoints=weak[:40],dark_count=len(dark),celltypes=celltypes)

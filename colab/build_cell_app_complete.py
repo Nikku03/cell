@@ -32,6 +32,7 @@ HTML=r"""<!doctype html><html><head><meta charset=utf-8><title>The cell</title><
  <span class=btn id=mMetab>Metabolism</span><span class=btn id=mPerturb>Remove/Mutate</span>
  <span class=btn id=mDark>Dark genes</span><span class=btn hiv id=mHIV>Infect: HIV</span>
  <select id=ct title="cell type — highlights its master-TF network"></select>
+ <select id=pw title="pathway — highlights its member proteins"></select>
  <input id=q placeholder="search protein"><span class=btn id=reset>Reset</span>
  <span class=lg id=hint>&nbsp; click a protein to inspect; switch modes above</span>
 </div>
@@ -42,7 +43,8 @@ const idxByName={};G.forEach((g,i)=>idxByName[g.name]=i);
 // networks
 const OUT={},IN={},PP={},SGN={};for(const e of D.reg){const a=e[0],b=e[1],s=e[2]||0;(OUT[a]=OUT[a]||[]).push(b);(IN[b]=IN[b]||[]).push(a);SGN[a+','+b]=s;}
 for(const[a,b]of D.ppi){(PP[a]=PP[a]||[]).push(b);(PP[b]=PP[b]||[]).push(a);}
-// HIV host index
+// reaction-by-enzyme + HIV host index
+const RXN={};(D.reactions||[]).forEach(r=>RXN[r.i]=r);
 const hivHost={};for(const hp in D.hiv)for(const[i,t]of D.hiv[hp]){(hivHost[i]=hivHost[i]||[]).push(hp);}
 // compartment regions
 const CX=560,CY=400,RX=520,RY=360;
@@ -134,6 +136,7 @@ function info(i){let g=G[i];
  let rgl=(IN[i]||[]).slice(0,10).map(lnk).join(', ');
  let pp=(PP[i]||[]).slice(0,10).map(j=>`<a onclick=go('${G[j].name}')>${G[j].name}</a>`).join(', ');
  document.getElementById('info').innerHTML=`<h2>${g.name}</h2>
+  <div class=row><span class=k>genome</span> <span class=v>${g.chrom?(g.chrom+(g.tss?' : '+Number(g.tss).toLocaleString():'')):'-'}</span></div>
   <div class=row><span class=k>compartment</span> <span class=v>${g.comp}</span></div>
   <div class=row><span class=k>process</span> <span class=v style="color:${pcol[g.proc]}">${g.proc}</span></div>
   <div class=row><span class=k>pathway</span> <span class=v>${g.path||'-'}</span></div>
@@ -146,9 +149,30 @@ function info(i){let g=G[i];
   ${!outs.length?'<div class=row><span class=k>regulates:</span> -</div>':''}
   <div class=row><span class=k>regulated by:</span> ${rgl||'-'}</div>
   <div class=row><span class=k>binds (PPI):</span> ${pp||'-'}</div>
+  <h3>functioning pipeline — input &rarr; gene &rarr; product &rarr; function &rarr; output</h3>${pipeline(i).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
   <h3>mutation impact</h3>${mutImpact(g)}
-  <h3>trafficking journey — gene &rarr; final location</h3>${journey(g).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
+  <h3>trafficking journey — molecular detail</h3>${journey(g).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
   <div class=row style=margin-top:8px><span class=btn onclick="setMode('Remove/Mutate');perturb(${i},false)">remove this protein &rarr;</span></div>`;}
+// FUNCTIONING PIPELINE: input -> gene -> product -> function -> output, all linked
+function pipeline(i){let g=G[i];const lnk=j=>`<a onclick=go('${G[j].name}')>${G[j].name}</a>`;
+ const acts=(IN[i]||[]).filter(j=>SGN[j+','+i]>0).slice(0,5).map(lnk);
+ const reps=(IN[i]||[]).filter(j=>SGN[j+','+i]<0).slice(0,5).map(lnk);
+ // FUNCTION at destination
+ let fn='';
+ if(RXN[i]) fn=`catalyzes: <span class=v>${RXN[i].sub}</span> <span class=arrow>&rarr;</span> <span class=v>${RXN[i].prod}</span> <span class=lg>(${RXN[i].pathway})</span>`;
+ else if(g.tf){let a=(OUT[i]||[]).filter(j=>SGN[i+','+j]>0).length,r=(OUT[i]||[]).filter(j=>SGN[i+','+j]<0).length;
+   fn=`transcription factor &rarr; <span style="color:#43a047">activates ${a}</span> / <span style="color:#e53935">represses ${r}</span> genes`;}
+ else if((PP[i]||[]).length) fn=`works in a complex — binds ${(PP[i]||[]).slice(0,4).map(lnk).join(', ')}${PP[i].length>4?' +'+(PP[i].length-4):''}`;
+ else fn=`acts in <span class=v>${g.comp}</span> (${g.proc})`;
+ const outs=(OUT[i]||[]).slice(0,6).map(lnk);
+ const steps=[
+  {t:`<b>GENOME</b> ${g.chrom?(g.chrom+(g.tss?':'+Number(g.tss).toLocaleString():'')):'(locus)'}`,m:'the gene'},
+  {t:`<b>INPUT</b> — turned on by ${acts.length?acts.join(', '):'(basal)'}${reps.length?'; repressed by '+reps.join(', '):''}`,m:'regulatory signals'},
+  {t:`<b>EXPRESSED</b> &rarr; mRNA &rarr; protein &rarr; ${g.comp}`,m:'transcription → translation → trafficking'},
+  {t:`<b>FUNCTION</b> — ${fn}`,m:'what it does at its destination'},
+  {t:`<b>OUTPUT</b> — ${g.tf&&outs.length?'drives '+outs.join(', '):(g.path?'feeds '+g.path:'contributes to '+g.proc)}`,m:'downstream effect'},
+ ];
+ return steps;}
 // derive the full birth-to-destination journey of a protein from its compartment + role
 function journey(g){
  const S=[{t:'<b>DNA</b> — gene locus (nucleus)',m:'chromatin, promoter'}];
@@ -232,6 +256,17 @@ function darkView(){metabOn=false;mode='Explore';affected=null;
   <h3>where they sit</h3>${Object.entries(byC).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([c,n])=>`<div class=row><span class=k>${c}</span> <span class=v>${n}</span></div>`).join('')}
   <div class=lg style=margin-top:6px>Click any purple node: even with no pathway, its regulators/targets/binders hint at function (guilt-by-association).</div>`;
  draw();}
+// pathway: highlight all member proteins of a Reactome pathway
+function setPathway(pw){metabOn=false;affected=null;
+ if(!pw){mark=null;draw();document.getElementById('info').innerHTML=welcome;return;}
+ const mem=D.pathways[pw]||[];mark={set:new Set(mem),color:'#00bcd4',dim:true};mode='Explore';
+ const byC={};mem.forEach(i=>{byC[G[i].comp]=(byC[G[i].comp]||0)+1;});
+ document.getElementById('info').innerHTML=`<h2>${pw}</h2>
+  <div class=lg>${mem.length} proteins in this pathway (cyan). This is a functioning module — the proteins that act together to carry out this process, across compartments.</div>
+  <h3>where it runs</h3>${Object.entries(byC).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([c,n])=>`<div class=row><span class=k>${c}</span> <span class=v>${n}</span></div>`).join('')}
+  <h3>members</h3><div class=lg>${mem.slice(0,60).map(i=>`<a onclick=go('${G[i].name}')>${G[i].name}</a>`).join(', ')}${mem.length>60?' +'+(mem.length-60):''}</div>`;
+ draw();}
+window.setPathway=setPathway;
 // cell type: highlight the master-TF network active in that lineage
 function setCellType(ct){metabOn=false;affected=null;
  if(!ct){mark=null;draw();document.getElementById('info').innerHTML=welcome;return;}
@@ -260,10 +295,12 @@ document.getElementById('mHIV').onclick=()=>{hivOn=!hivOn;document.getElementByI
 function clearTopOn(){document.querySelectorAll('#top .btn').forEach(b=>b.classList.remove('on'));hivOn=false;document.getElementById('mHIV').classList.remove('on');}
 document.getElementById('mMetab').onclick=()=>{clearTopOn();document.getElementById('ct').value='';document.getElementById('mMetab').classList.add('on');metabView();};
 document.getElementById('mDark').onclick=()=>{clearTopOn();document.getElementById('ct').value='';document.getElementById('mDark').classList.add('on');darkView();};
-// populate cell-type selector
+// populate cell-type + pathway selectors
 (function(){const s=document.getElementById('ct');s.innerHTML='<option value="">— cell type —</option>'+Object.keys(D.celltypes).map(c=>`<option>${c}</option>`).join('');
- s.onchange=()=>{clearTopOn();metabOn=false;setCellType(s.value);};})();
-document.getElementById('reset').onclick=()=>{sel=-1;affected=null;hivOn=false;mark=null;metabOn=false;document.getElementById('ct').value='';document.getElementById('mHIV').classList.remove('on');setMode('Explore');fit();document.getElementById('info').innerHTML=welcome;draw();};
+ s.onchange=()=>{clearTopOn();metabOn=false;document.getElementById('pw').value='';setCellType(s.value);};
+ const p=document.getElementById('pw');p.innerHTML='<option value="">— pathway —</option>'+Object.keys(D.pathways||{}).map(c=>`<option>${c}</option>`).join('');
+ p.onchange=()=>{clearTopOn();metabOn=false;document.getElementById('ct').value='';setPathway(p.value);};})();
+document.getElementById('reset').onclick=()=>{sel=-1;affected=null;hivOn=false;mark=null;metabOn=false;document.getElementById('ct').value='';document.getElementById('pw').value='';document.getElementById('mHIV').classList.remove('on');setMode('Explore');fit();document.getElementById('info').innerHTML=welcome;draw();};
 document.getElementById('q').addEventListener('change',e=>{let n=e.target.value.trim();if(idxByName[n]!==undefined)go(n);});
 const welcome=`<h2>The cell</h2><div class=lg>${N} proteins in their real compartments, wired by ${D.reg.length} regulatory + ${D.ppi.length} physical edges.<br><br>
  <b>Explore</b>: click any protein &rarr; see its full trafficking journey (gene&rarr;mRNA&rarr;ribosome&rarr;final location) + networks.<br>
