@@ -68,6 +68,18 @@ for r in rows:
         chrom=r.get("chrom","") or "",tss=r.get("tss","") or "",
         cpg=1 if r.get("cpg_promoter")=="1" else 0,enh=int(fv(r.get("enhancers"),0)),
         path=toppath(g)[:44]))
+# === DepMap MEASURED essentiality (1,100 cancer cell lines) — the ground truth, overrides all ===
+dep=OUT/"depmap_essentiality.csv"
+if dep.exists():
+    n=0
+    for r in csv.DictReader(open(dep)):
+        i=idx.get(r["gene"])
+        if i is not None:
+            G[i]["ess"]=1 if r["essential"]=="1" else 0
+            G[i]["ess_src"]="measured"; G[i]["dep_frac"]=round(fv(r["frac_dep"],0),2); n+=1
+    print("DepMap measured essentiality: set",n,"genes (overrides predictions)")
+else:
+    print("DepMap absent -> essentiality from Hart labels + model")
 # === MODEL 1 enrichment: our trained essentiality model fills the UNLABELED genes ===
 # (produced by the notebook -> outputs/orphan/predicted_essentiality.csv: gene,pred,prob)
 m1=OUT/"predicted_essentiality.csv"
