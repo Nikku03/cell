@@ -20,7 +20,7 @@ DATASETS = [
  ("ligand_receptor","cellphonedb_interactions.csv","https://raw.githubusercontent.com/ventolab/cellphonedb-data/master/data/interaction_input.csv",False,None),
  # metabolism / pathways
  ("metabolism","human_gem.txt","https://raw.githubusercontent.com/SysBioChalmers/Human-GEM/main/model/Human-GEM.txt",False,None),
- ("pathways","reactome_ensembl.txt","https://reactome.org/download/current/Ensembl2Reactome.txt",False,None),
+ ("pathways","reactome_human.txt","https://raw.githubusercontent.com/nikku03/cell/claude/vectorize-gex-propensity-NRqBW/data/external_data/human/reactome_human.txt",False,None),
  # drugs / PTMs
  ("drugs","dgidb_interactions.tsv","https://dgidb.org/data/latest/interactions.tsv",False,None),
  ("ptms","uniprot_acc_ptm.tsv","https://rest.uniprot.org/uniprotkb/stream?query=organism_id:9606+AND+reviewed:true&fields=accession,gene_primary,ft_mod_res&format=tsv",False,None),
@@ -52,6 +52,9 @@ cells=[
     "Set *Runtime → any* (CPU is fine; this is just downloading)."),
  code("from google.colab import drive; drive.mount('/content/drive')",
     "import os, urllib.request, gzip, shutil, time",
+    "# some hosts (e.g. reactome.org) 403 the default Python-urllib UA -> use a browser UA",
+    "op=urllib.request.build_opener(); op.addheaders=[('User-Agent','Mozilla/5.0 (virtual-cell-downloader)')]",
+    "urllib.request.install_opener(op)",
     "ROOT='/content/drive/MyDrive/virtual_cell_data'",
     "os.makedirs(ROOT, exist_ok=True)",
     "print('data root ->', ROOT)"),
