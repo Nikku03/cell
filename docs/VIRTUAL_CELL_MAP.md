@@ -118,23 +118,31 @@ open is a database or a different-class-of-model (kinetics) job.
   Reactome (pathways), **Human-GEM (genome-scale metabolism)**, gnomAD (constraint),
   Open Targets/ClinVar (disease), NCBI (HIV), AlphaFold/ESMFold (structure).
 
-**Still open, and the dataset/method to get there:**
-| gap | get it from |
-|---|---|
-| Membrane bilayer w/ transporters | rendering (data present) |
-| Metabolites as discrete nodes | promote Human-GEM species (app work) |
-| Named complexes | CORUM |
-| RNAs / lipids / ions | RNAcentral, SwissLipids |
-| Per-gene methylation/chromatin | ENCODE / Roadmap |
-| 3D genome | Hi-C / 4DN |
-| PTMs / turnover | PhosphoSitePlus, dbPTM |
-| Signaling chains | SIGNOR / Reactome reactions |
-| Cell cycle program | Cyclebase |
-| Conditions / environment | GEO / perturbation atlases |
-| True kinetics | BRENDA / SABIO-RK + ODE/FBA |
-| Drug → effect | DrugBank / ChEMBL |
-| Synthetic lethality (human) | SynLethDB / DepMap co-dependencies |
-| Tissue / cell–cell | CellPhoneDB + spatial atlas |
+**Still open — verified from the sandbox (reachability + format checked):**
+
+✅ = source confirmed reachable + open + correct format → **closeable now**
+🟡 = doable but needs a workaround (primary source gated/down → use the alternative)
+🔴 = hard (huge / gated / needs a separate model)
+
+| gap | verified source | verdict |
+|---|---|---|
+| Signaling chains (directed, signed) | **SIGNOR** `getData.php?organism=9606` — by gene symbol, has effect+sign | ✅ closeable |
+| Named complexes | **EBI Complex Portal** `9606.tsv` — name + UniProt members + stoichiometry (CORUM host was down) | ✅ closeable |
+| Drug → target → effect | **ChEMBL API** — `mechanism` (drug→target→action) + `target`→UniProt→gene | ✅ closeable |
+| Tissue / cell–cell | **CellPhoneDB** `interaction_input.csv` — ligand-receptor UniProt pairs | ✅ closeable |
+| PTMs (phospho, etc.) | **UniProt** `ft_mod_res` — per-protein modified residues (PhosphoSitePlus/dbPTM gated/blocked) | ✅ closeable |
+| Metabolites as discrete nodes | Human-GEM (already fetched) | ✅ data present — app-rendering work |
+| Membrane bilayer w/ transporters | localization already present | ✅ rendering work, no data gap |
+| Per-gene methylation/chromatin | **ENCODE cCREs** (`cCREs.bed` already in repo) | 🟡 have elements; per-gene ATAC needs more |
+| Cell cycle program | Reactome cell-cycle (already have) / curated Whitfield set — Cyclebase was down | 🟡 via Reactome/curated |
+| Synthetic lethality (human) | **DepMap co-dependencies** (notebook has DepMap) — SynLethDB download path 404 | 🟡 via DepMap |
+| RNAs / lipids / ions | RNAcentral (reachable, huge) / SwissLipids (path 404) | 🔴 big / needs filtering |
+| 3D genome | Hi-C / 4DN — large matrices | 🔴 heavy |
+| True kinetics | BRENDA (gated) / SABIO-RK + ODE/FBA | 🔴 gated + separate model |
+| Conditions / environment | GEO / perturbation atlases | 🔴 no single clean file |
+
+Note: DrugBank, CORUM, PhosphoSitePlus, dbPTM, Cyclebase were gated or unreachable from the
+sandbox; each has an **open, verified alternative** above (ChEMBL, Complex Portal, UniProt, Reactome).
 
 **Bottom line:** the 3 models' half is complete; the substrate half is largely integrated
 (UniProt, networks, Reactome, Human-GEM, structure, disease, HIV). What remains red is each a
