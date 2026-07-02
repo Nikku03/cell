@@ -384,8 +384,23 @@ for i,g in enumerate(G):
         elif df is not None and df<0.1 and 0<=g["loeuf"]<0.2:
             g["flag"]="germline-constrained yet cancer-dispensable"; n_flag+=1
 print("ensemble confidence set on",n_conf,"genes |",n_flag,"disagreement flags (novelty candidates)")
+# === TARGET INTELLIGENCE: literature coverage + ranked target-priority / white-space tables ===
+lit={}
+lp2=OUT/"literature_counts.json"
+if lp2.exists(): lit=json.load(open(lp2))
+for i,g in enumerate(G): g["pubs"]=lit.get(g["name"],0)
+ti_priority=[]; ti_ws=[]
+tpf=OUT/"ti_target_priority.json"
+if tpf.exists(): ti_priority=[t for t in json.load(open(tpf)) if t["gene"] in idx][:200]
+wsf=OUT/"ti_whitespace.json"
+if wsf.exists(): ti_ws=[w for w in json.load(open(wsf)) if w["gene"] in idx][:200]
+pri=set(t["gene"] for t in ti_priority); wss=set(w["gene"] for w in ti_ws)
+for i,g in enumerate(G):
+    if g["name"] in pri: g["ti"]="priority"
+    elif g["name"] in wss: g["ti"]="whitespace"
+print("Target Intelligence: literature on",len(lit),"genes | priority table",len(ti_priority),"| white-space",len(ti_ws))
 DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in generxn.items()},gf_perturb=gf,
-    codep=codep,sl=sl,loops3d=loops3d,
+    codep=codep,sl=sl,loops3d=loops3d,ti_priority=ti_priority,ti_whitespace=ti_ws,
     struct=struct,fold=fold,otdis=otdis,pathways=pathsel,
     sig=sig,complexes=complexes,gene2cplx={k:v for k,v in gene2cplx.items()},
     drugs={k:v for k,v in drugs.items()},lr=lr,ptm=ptm,cellcycle=cellcycle,

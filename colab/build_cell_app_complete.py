@@ -30,7 +30,7 @@ HTML=r"""<!doctype html><html><head><meta charset=utf-8><title>The cell</title><
 <div id=top>
  <span class=btn id=mExplore>Explore</span><span class=btn id=mProc>Processes</span>
  <span class=btn id=mMetab>Metabolism</span><span class=btn id=mPerturb>Remove/Mutate</span>
- <span class=btn id=mOE>Overexpress</span><span class=btn id=mDark>Dark genes</span><span class=btn hiv id=mHIV>Infect: HIV</span>
+ <span class=btn id=mOE>Overexpress</span><span class=btn id=mDark>Dark genes</span><span class=btn id=mTargets>Targets</span><span class=btn hiv id=mHIV>Infect: HIV</span>
  <select id=ct title="cell type — highlights its master-TF network"></select>
  <select id=pw title="pathway — highlights its member proteins"></select>
  <input id=q placeholder="search protein"><span class=btn id=reset>Reset</span>
@@ -291,12 +291,17 @@ function extLayers(i){const lnk=j=>`<a onclick=go('${G[j].name}')>${G[j].name}</
  if(DRUGS[i]&&DRUGS[i].length){const ds=DRUGS[i].slice(0,6).map(d=>{const tag=[d.t,d.a?'approved':''].filter(Boolean).join(', ');return `${d.d}${tag?'<span class=lg> ('+tag+')</span>':''}`;}).join(', ');
    h+=`<div class=row><span class=k>drugs</span> ${ds}${DRUGS[i].length>6?' +'+(DRUGS[i].length-6):''}</div>`;}
  if(CODEP[i])h+=`<div class=row><span class=k>co-essential (DepMap):</span> ${CODEP[i].slice(0,6).map(([j,r])=>`${lnk(j)} <span class=lg>${r}</span>`).join(', ')}</div>`;
+ if(CODEP[i]){const dc=CODEP[i].filter(([j])=>DRUGS[j]&&DRUGS[j].length).slice(0,4);
+   if(dc.length)h+=`<div class=row><span class=k>combo candidates (druggable co-essential):</span> ${dc.map(([j,r])=>`${lnk(j)} <span class=lg>${r}</span>`).join(', ')}</div>`;}
  if(LOOPS3D[i])h+=`<div class=row><span class=k>3D chromatin loops:</span> <span class=v>${LOOPS3D[i].length}</span> <span class=lg>&rarr; ${LOOPS3D[i].slice(0,3).join(', ')}</span></div>`;
  return h?`<h3>molecular layers</h3>${h}`:'';}
-// ensemble confidence badge + novelty flag
+// ensemble confidence badge + novelty flag + target-intelligence flags
 function confBadge(g){let h='';
  if(g.conf)h+=`<div class=row><span class=k>model confidence</span> <span class=v style="color:${g.conf==='high'?'#43a047':'#fb8c00'}">${g.conf==='high'?'high (measured, constraint &amp; model agree)':'split — models disagree'}</span></div>`;
  if(g.flag)h+=`<div class=row><span class=warn>&#9888; ${g.flag}</span></div>`;
+ if(g.pubs!==undefined)h+=`<div class=row><span class=k>literature</span> <span class=v>${g.pubs}</span> publications${g.pubs<5&&g.ess==1?' <span class=warn>(understudied essential)</span>':''}</div>`;
+ if(g.ti==='priority')h+=`<div class=row><span style="color:#ffd54f">&#9733; target-priority candidate</span> <span class=lg>(cancer-essential · druggable · wide safety window)</span></div>`;
+ if(g.ti==='whitespace')h+=`<div class=row><span style="color:#c792ea">&#9733; white-space target</span> <span class=lg>(essential · undrugged · understudied)</span></div>`;
  return h;}
 // provenance footer: where each shown label comes from
 function provenance(g,i){const s=[];
@@ -376,6 +381,21 @@ function setPathway(pw){metabOn=false;affected=null;activeCT=null;
   <h3>members</h3><div class=lg>${mem.slice(0,60).map(i=>`<a onclick=go('${G[i].name}')>${G[i].name}</a>`).join(', ')}${mem.length>60?' +'+(mem.length-60):''}</div>`;
  draw();}
 window.setPathway=setPathway;
+// Target Intelligence: ranked drug-target candidates (priority + white-space)
+function targetsView(){metabOn=false;mode='Explore';affected=null;activeCT=null;
+ const pri=(D.ti_priority||[]).map(t=>idxByName[t.gene]).filter(i=>i!==undefined);
+ const wsp=(D.ti_whitespace||[]).map(w=>idxByName[w.gene]).filter(i=>i!==undefined);
+ mark={set:new Set([...pri,...wsp]),colFn:i=>pri.includes(i)?'#ffd54f':'#c792ea',color:'#ffd54f',dim:true};
+ const drug=(D.ti_priority||[]).filter(t=>t.druggable);
+ document.getElementById('info').innerHTML=`<h2>Target Intelligence</h2>
+  <div class=lg>Ranked drug-target candidates: DepMap essentiality &times; LOEUF safety window &times; DGIdb druggability &times; literature. <span style="color:#ffd54f">gold=priority</span>, <span style="color:#c792ea">purple=white-space</span>.</div>
+  <h3>&#9733; priority targets — cancer-essential, druggable, wide safety window</h3>
+  ${drug.slice(0,15).map(t=>`<div class=row><a onclick=go('${t.gene}')>${t.gene}</a> <span class=lg>window ${t.window} &middot; dep ${t.frac_dep} &middot; LOEUF ${t.loeuf}${t.selective?' &middot; <span style="color:#43a047">selective</span>':' &middot; pan-ess'} &middot; ${t.drugs.slice(0,2).join(', ')}</span></div>`).join('')}
+  <h3>&#9733; white-space — essential, undrugged, understudied (discovery)</h3>
+  ${(D.ti_whitespace||[]).slice(0,12).map(w=>`<div class=row><a onclick=go('${w.gene}')>${w.gene}</a> <span class=lg>dep ${w.frac_dep} &middot; ${w.pubs} pubs</span></div>`).join('')}
+  <div class=lg style=margin-top:6px>Click any gene to inspect; combo candidates appear in its molecular layers.</div>`;
+ draw();}
+window.targetsView=targetsView;
 // cell type: show the cell that is ACTUALLY expressed in this lineage (Model 2), with its own wiring
 function setCellType(ct){metabOn=false;affected=null;
  if(!ct){activeCT=null;mark=null;draw();document.getElementById('info').innerHTML=welcome;return;}
@@ -439,6 +459,7 @@ document.getElementById('mHIV').onclick=()=>{hivOn=!hivOn;document.getElementByI
 function clearTopOn(){document.querySelectorAll('#top .btn').forEach(b=>b.classList.remove('on'));hivOn=false;document.getElementById('mHIV').classList.remove('on');}
 document.getElementById('mMetab').onclick=()=>{clearTopOn();document.getElementById('ct').value='';document.getElementById('mMetab').classList.add('on');metabView();};
 document.getElementById('mDark').onclick=()=>{clearTopOn();document.getElementById('ct').value='';document.getElementById('mDark').classList.add('on');darkView();};
+document.getElementById('mTargets').onclick=()=>{clearTopOn();document.getElementById('ct').value='';document.getElementById('mTargets').classList.add('on');targetsView();};
 // populate cell-type + pathway selectors
 (function(){const s=document.getElementById('ct');s.innerHTML='<option value="">— cell type —</option>'+Object.keys(D.celltypes).map(c=>`<option>${c}</option>`).join('');
  s.onchange=()=>{clearTopOn();metabOn=false;document.getElementById('pw').value='';setCellType(s.value);};
