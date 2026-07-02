@@ -46,6 +46,12 @@ for(const[a,b]of D.ppi){(PP[a]=PP[a]||[]).push(b);(PP[b]=PP[b]||[]).push(a);}
 // reaction-by-enzyme + HIV host index
 const RXN={};(D.reactions||[]).forEach(r=>RXN[r.i]=r);
 const hivHost={};for(const hp in D.hiv)for(const[i,t]of D.hiv[hp]){(hivHost[i]=hivHost[i]||[]).push(hp);}
+// Model 2: abundance + per-cell-type expression mask (drives abundance, cell-type wiring, differentiation)
+const ABUND=D.abund||{};const CTN=D.ctnames||[];const ctBit={};CTN.forEach((n,t)=>ctBit[n]=t);
+const EMASK=new Map();for(const k in (D.emask||{}))EMASK.set(+k,BigInt(D.emask[k]));
+let activeCT=null;   // {name,t,set} when a cell type with expression data is selected
+function exprIn(i,t){const m=EMASK.get(i);return m!==undefined&&((m>>BigInt(t))&1n)===1n;}
+function exprSet(t){const s=new Set();for(const[i,m]of EMASK)if(((m>>BigInt(t))&1n)===1n)s.add(i);return s;}
 // compartment regions
 const CX=560,CY=400,RX=520,RY=360;
 const REG={nucleus:{x:320,y:400,rx:165,ry:145},cytoplasm:{x:630,y:420,rx:330,ry:250},
@@ -85,12 +91,13 @@ function draw(){ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#080e16';ctx.fillRe
      if(a.pathway!==b.pathway)continue;let x1=POS[a.i*2],y1=POS[a.i*2+1],x2=POS[b.i*2],y2=POS[b.i*2+1];
      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}}
  for(let i=0;i<N;i++){let X=POS[i*2],Y=POS[i*2+1],r=1.3+Math.min(G[i].ppi/45,2.4);
+   if(activeCT&&ABUND[i]!==undefined)r+=(ABUND[i]/15)*2.2;   // size by abundance in the active cell type
    let inMark=mark&&mark.set.has(i);
    let dim=(affected&&!affected.set.has(i)&&i!=sel)||(mark&&mark.dim&&!inMark&&i!=sel);
    let hl=(affected&&affected.set.has(i));
    if(inMark)r+=1;
    ctx.globalAlpha=dim?0.05:0.9;ctx.beginPath();ctx.arc(X,Y,hl?r+1:r,0,7);
-   ctx.fillStyle=hl?affected.col(i):(inMark?mark.color:baseColor(i));ctx.fill();
+   ctx.fillStyle=hl?affected.col(i):(inMark?(mark.colFn?mark.colFn(i):mark.color):baseColor(i));ctx.fill();
    if(hivOn&&hivHost[i]){ctx.globalAlpha=.9;ctx.strokeStyle='#ff3b6b';ctx.lineWidth=1.4;ctx.stroke();}
    else if(G[i].ndis>=5){ctx.globalAlpha=dim?.1:.7;ctx.strokeStyle='#ff9800';ctx.lineWidth=.7;ctx.stroke();}
    if(G[i].tf){ctx.globalAlpha=dim?.12:.8;ctx.strokeStyle='#2e86de';ctx.lineWidth=.9;ctx.stroke();}}
@@ -111,9 +118,10 @@ cv.addEventListener('click',e=>{if(drag&&Math.abs(e.offsetX-drag.x)>3)return;let
 // perturbation: BFS 2 hops over reg(out)+ppi, enriched with Geneformer in-silico downstream (Model 3)
 const GF=D.gf_perturb||{};
 function perturb(i,mut){let set=new Set([i]),dist={};dist[i]=0;let q=[i];
- while(q.length){let x=q.shift();if(dist[x]>=2)continue;for(const j of [...(OUT[x]||[]),...(PP[x]||[])]){if(!set.has(j)){set.add(j);dist[j]=dist[x]+1;q.push(j);}}}
+ const gate=activeCT?activeCT.set:null;   // cell-type-specific wiring: only propagate through expressed genes
+ while(q.length){let x=q.shift();if(dist[x]>=2)continue;for(const j of [...(OUT[x]||[]),...(PP[x]||[])]){if(gate&&!gate.has(j))continue;if(!set.has(j)){set.add(j);dist[j]=dist[x]+1;q.push(j);}}}
  // Model 3: add Geneformer-predicted downstream genes that the measured graph missed
- const gfHit=new Set();(GF[i]||[]).forEach(j=>{if(!set.has(j)){set.add(j);dist[j]=2;gfHit.add(j);}else gfHit.add(j);});
+ const gfHit=new Set();(GF[i]||[]).forEach(j=>{if(gate&&!gate.has(j))return;if(!set.has(j)){set.add(j);dist[j]=2;gfHit.add(j);}else gfHit.add(j);});
  const proc={},path={};set.forEach(j=>{if(j==i)return;proc[G[j].proc]=(proc[G[j].proc]||0)+1;if(G[j].path)path[G[j].path]=(path[G[j].path]||0)+1;});
  affected={set,col:j=>j==i?'#fff':(gfHit.has(j)?'#c792ea':(dist[j]==1?'#ff6b6b':'#ffb36b'))};
  const lethal=G[i].ess==1||(mut&&G[i].loeuf>=0&&G[i].loeuf<0.35);
@@ -123,6 +131,7 @@ function perturb(i,mut){let set=new Set([i]),dist={};dist[i]=0;let q=[i];
  document.getElementById('info').innerHTML=`<h2>${mut?'Mutate':'Remove'}: ${G[i].name}</h2>
   <div class=row>${lethal?'<span class=warn>&#9888; predicted cell-inviable</span> — '+(G[i].ess==1?essNote:'constrained (LOEUF '+G[i].loeuf+'), likely loss-of-function is lethal'):'<span class=ok>cell likely survives</span> — dispensable / buffered'}</div>
   <div class=row><span class=k>compartment</span> <span class=v>${G[i].comp}</span> &middot; <span class=k>process</span> <span class=v>${G[i].proc}</span></div>
+  ${activeCT?`<div class=row class=lg>cell-type context: <b>${activeCT.name}</b> — cascade propagates only through genes active here${!activeCT.set.has(i)?' <span class=warn>(this gene is silent in '+activeCT.name+')</span>':''}</div>`:''}
   <div class=row><span class=k>direct + 2-hop affected</span> <span class=v>${set.size-1}</span> proteins${gfHit.size?` &middot; <span style="color:#c792ea">+${gfHit.size} via Geneformer</span>`:''}</div>
   <h3>processes disrupted</h3>${topP.map(([p,n])=>`<div class=row><span style="color:${pcol[p]}">&#9679;</span> ${p}: <span class=v>${n}</span></div>`).join('')}
   <h3>pathways hit</h3>${topPath.map(([p,n])=>`<div class=row class=lg>${p} (${n})</div>`).join('')||'<div class=lg>-</div>'}
@@ -142,6 +151,7 @@ function info(i){let g=G[i];
   <div class=row><span class=k>pathway</span> <span class=v>${g.path||'-'}</span></div>
   <div class=row><span class=k>essential</span> <span class=v>${g.ess==1?'yes':g.ess==0?'no':'?'}</span>${g.ess_src==='model1'?' <span class=lg>(our model'+(g.ess_prob?', p='+g.ess_prob:'')+')</span>':(g.ess_src==='measured'&&g.ess>=0?' <span class=lg>(measured)</span>':'')} &middot; <span class=k>LOEUF</span> <span class=v>${g.loeuf<0?'-':g.loeuf}</span> &middot; <span class=k>TF</span> <span class=v>${g.tf?'yes':'no'}</span></div>
   <div class=row><span class=k>PPI</span> <span class=v>${g.ppi}</span> &middot; <span class=k>diseases</span> <span class=v>${g.ndis}</span>${g.master?' &middot; <span class=k>master:</span> <span class=v>'+g.master+'</span>':''}</div>
+  ${ABUND[i]!==undefined?`<div class=row><span class=k>abundance</span> <span class=v>${'▮'.repeat(Math.max(1,Math.round(ABUND[i]/2)))}</span> <span class=lg>${ABUND[i]}/15${activeCT?' &middot; '+(exprIn(i,activeCT.t)?'<span class=ok>expressed in '+activeCT.name+'</span>':'<span class=lg>silent in '+activeCT.name+'</span>'):''}</span></div>`:''}
   ${hivHost[i]?`<div class=row><span class=warn>HIV-targeted by:</span> <span class=v>${hivHost[i].join(', ')}</span></div>`:''}
   ${act.length?`<div class=row style=margin-top:6px><span style="color:#43a047">activates &#9650;:</span> ${act.slice(0,10).map(lnk).join(', ')}${act.length>10?' +'+(act.length-10):''}</div>`:''}
   ${rep.length?`<div class=row><span style="color:#e53935">represses &#9660;:</span> ${rep.slice(0,10).map(lnk).join(', ')}${rep.length>10?' +'+(rep.length-10):''}</div>`:''}
@@ -241,14 +251,14 @@ function hivReport(){let proc={};for(const i in hivHost)proc[G[i].proc]=(proc[G[
   ${wk.map(w=>`<div class=row><a onclick=go('${w.gene}')>${w.gene}</a> <span class=lg>(${w.comp}, PPI ${w.ppi}${w.ess==1?', essential':''}) &larr; ${w.by.slice(0,3).join(',')}</span></div>`).join('')}
   <h3>integration preference</h3><div class=lg>HIV integrase inserts the provirus into transcriptionally ACTIVE, open chromatin (high-enhancer, expressed genes) — biasing toward active immune/host genes.</div>`;}
 // Metabolism mode: show curated reactions as enzyme->substrate->product chains
-function metabView(){metabOn=true;mode='Explore';affected=null;
+function metabView(){metabOn=true;mode='Explore';affected=null;activeCT=null;
  mark={set:new Set(D.reactions.map(r=>r.i)),color:'#fdd835',dim:true};
  const byPw={};D.reactions.forEach(r=>{(byPw[r.pathway]=byPw[r.pathway]||[]).push(r);});
  document.getElementById('info').innerHTML='<h2>Metabolism</h2><div class=lg>Core enzymatic reactions wired substrate&rarr;product. Yellow nodes = enzymes; yellow lines trace pathway flow. Click an enzyme to inspect.</div>'+
   Object.entries(byPw).map(([pw,rs])=>`<h3>${pw}</h3>`+rs.map(r=>`<div class=row><a onclick=go('${r.enz}')>${r.enz}</a> <span class=lg>${r.sub} <span class=arrow>&rarr;</span> ${r.prod}</span></div>`).join('')).join('');
  draw();}
 // Dark genes: the function frontier (no known pathway/disease)
-function darkView(){metabOn=false;mode='Explore';affected=null;
+function darkView(){metabOn=false;mode='Explore';affected=null;activeCT=null;
  const ds=[];for(let i=0;i<N;i++)if(G[i].dark)ds.push(i);
  mark={set:new Set(ds),color:'#c792ea',dim:true};
  const byC={};ds.forEach(i=>{byC[G[i].comp]=(byC[G[i].comp]||0)+1;});
@@ -257,7 +267,7 @@ function darkView(){metabOn=false;mode='Explore';affected=null;
   <div class=lg style=margin-top:6px>Click any purple node: even with no pathway, its regulators/targets/binders hint at function (guilt-by-association).</div>`;
  draw();}
 // pathway: highlight all member proteins of a Reactome pathway
-function setPathway(pw){metabOn=false;affected=null;
+function setPathway(pw){metabOn=false;affected=null;activeCT=null;
  if(!pw){mark=null;draw();document.getElementById('info').innerHTML=welcome;return;}
  const mem=D.pathways[pw]||[];mark={set:new Set(mem),color:'#00bcd4',dim:true};mode='Explore';
  const byC={};mem.forEach(i=>{byC[G[i].comp]=(byC[G[i].comp]||0)+1;});
@@ -267,18 +277,50 @@ function setPathway(pw){metabOn=false;affected=null;
   <h3>members</h3><div class=lg>${mem.slice(0,60).map(i=>`<a onclick=go('${G[i].name}')>${G[i].name}</a>`).join(', ')}${mem.length>60?' +'+(mem.length-60):''}</div>`;
  draw();}
 window.setPathway=setPathway;
-// cell type: highlight the master-TF network active in that lineage
+// cell type: show the cell that is ACTUALLY expressed in this lineage (Model 2), with its own wiring
 function setCellType(ct){metabOn=false;affected=null;
- if(!ct){mark=null;draw();document.getElementById('info').innerHTML=welcome;return;}
- const masters=D.celltypes[ct]||[];const mi=masters.map(n=>idxByName[n]).filter(i=>i!==undefined);
- const net=new Set(mi);mi.forEach(i=>(OUT[i]||[]).forEach(j=>net.add(j)));
- mark={set:net,color:'#4dd0a0',dim:true};mode='Explore';
- document.getElementById('info').innerHTML=`<h2>${ct}</h2>
-  <div class=lg>Same genome, different cell. The <b>master transcription factors</b> for this lineage switch on a distinct gene network (green). This is how one zygote genome yields many cell types.</div>
-  <h3>master regulators</h3>${masters.map(n=>idxByName[n]!==undefined?`<a onclick=go('${n}')>${n}</a>`:`<span class=lg>${n}</span>`).join(' &middot; ')}
-  <div class=row style=margin-top:6px><span class=k>active network (masters + direct targets)</span> <span class=v>${net.size}</span> genes</div>`;
+ if(!ct){activeCT=null;mark=null;draw();document.getElementById('info').innerHTML=welcome;return;}
+ const masters=D.celltypes[ct]||[];const t=ctBit[ct];mode='Explore';
+ if(t!==undefined&&EMASK.size){                       // real expression data for this cell type
+   const eset=exprSet(t);activeCT={name:ct,t,set:eset};
+   mark={set:eset,color:'#4dd0a0',dim:true};
+   // active edges = measured edges with both ends expressed here
+   let re=0;for(const e of D.reg){if(eset.has(e[0])&&eset.has(e[1]))re++;}
+   let pe=0;for(const[a,b]of D.ppi){if(eset.has(a)&&eset.has(b))pe++;}
+   const others=CTN.filter(n=>n!==ct&&D.celltypes[n]!==undefined);
+   document.getElementById('info').innerHTML=`<h2>${ct}</h2>
+    <div class=lg>Same genome, this actual cell. <b>${eset.size}</b> genes are expressed here (green, sized by abundance); the network is pruned to what's active in this cell type — a neuron and a hepatocyte get different wiring.</div>
+    <div class=row><span class=k>active network</span> <span class=v>${eset.size}</span> genes &middot; <span class=v>${re}</span> regulatory &middot; <span class=v>${pe}</span> physical edges</div>
+    <h3>master regulators</h3>${masters.map(n=>idxByName[n]!==undefined?`<a onclick=go('${n}')>${n}</a>`:`<span class=lg>${n}</span>`).join(' &middot; ')}
+    <div class=lg style=margin-top:4px>Remove/Mutate now propagates only through genes active in this cell.</div>
+    <h3>differentiate to &rarr;</h3><div>${others.map(n=>`<span class=chip onclick="differentiate('${ct}','${n.replace(/'/g,"")}')">${n}</span>`).join('')||'<span class=lg>-</span>'}</div>`;
+ } else {                                              // fallback: master-TF highlight only
+   activeCT=null;const mi=masters.map(n=>idxByName[n]).filter(i=>i!==undefined);
+   const net=new Set(mi);mi.forEach(i=>(OUT[i]||[]).forEach(j=>net.add(j)));
+   mark={set:net,color:'#4dd0a0',dim:true};
+   document.getElementById('info').innerHTML=`<h2>${ct}</h2>
+    <div class=lg>Same genome, different cell. The <b>master transcription factors</b> switch on a distinct network (green). <span class=warn>Run the notebook for real per-cell-type expression</span> (abundance + pruned wiring + differentiation).</div>
+    <h3>master regulators</h3>${masters.map(n=>idxByName[n]!==undefined?`<a onclick=go('${n}')>${n}</a>`:`<span class=lg>${n}</span>`).join(' &middot; ')}
+    <div class=row style=margin-top:6px><span class=k>active network (masters + targets)</span> <span class=v>${net.size}</span> genes</div>`;
+ }
  draw();}
-// modes
+// differentiation: start cell type -> target; which genes switch ON / OFF (Model 2 expression delta)
+function differentiate(fromName,toName){const a=ctBit[fromName],b=ctBit[toName];
+ if(a===undefined||b===undefined)return;
+ const on=[],off=[];for(const[i,m]of EMASK){const ea=((m>>BigInt(a))&1n)===1n,eb=((m>>BigInt(b))&1n)===1n;
+   if(eb&&!ea)on.push(i);else if(ea&&!eb)off.push(i);}
+ const onS=new Set(on);activeCT={name:toName,t:b,set:exprSet(b)};
+ mark={set:new Set([...on,...off]),colFn:i=>onS.has(i)?'#43a047':'#e53935',color:'#888',dim:true};
+ const tf=n=>idxByName[n]!==undefined?`<a onclick=go('${n}')>${n}</a>`:`<span class=lg>${n}</span>`;
+ document.getElementById('info').innerHTML=`<h2>${fromName} &rarr; ${toName}</h2>
+  <div class=lg>Differentiation as a state transition (Model 2). <span style="color:#43a047">green = genes switched ON</span>, <span style="color:#e53935">red = switched OFF</span> to become the target cell.</div>
+  <div class=row><span style="color:#43a047">turn ON</span> <span class=v>${on.length}</span> genes &middot; <span style="color:#e53935">turn OFF</span> <span class=v>${off.length}</span></div>
+  <h3>drive with these master TFs</h3><div class=lg>${(D.celltypes[toName]||[]).map(tf).join(' &middot; ')||'-'}</div>
+  <h3>key genes switching ON</h3><div class=lg>${on.slice(0,24).map(i=>`<a onclick=go('${G[i].name}')>${G[i].name}</a>`).join(', ')||'-'}</div>
+  <h3>key genes switching OFF</h3><div class=lg>${off.slice(0,24).map(i=>`<a onclick=go('${G[i].name}')>${G[i].name}</a>`).join(', ')||'-'}</div>`;
+ draw();}
+window.differentiate=differentiate;
+// modes  (note: activeCT cell-type context PERSISTS across modes so Remove/Mutate stays cell-type-specific)
 function setMode(m){mode=m;affected=null;mark=null;metabOn=false;
  document.querySelectorAll('#top .btn').forEach(b=>b.classList.remove('on'));
  ({Explore:'mExplore',Processes:'mProc','Remove/Mutate':'mPerturb'})[m]&&document.getElementById(({Explore:'mExplore',Processes:'mProc','Remove/Mutate':'mPerturb'})[m]).classList.add('on');
@@ -300,7 +342,7 @@ document.getElementById('mDark').onclick=()=>{clearTopOn();document.getElementBy
  s.onchange=()=>{clearTopOn();metabOn=false;document.getElementById('pw').value='';setCellType(s.value);};
  const p=document.getElementById('pw');p.innerHTML='<option value="">— pathway —</option>'+Object.keys(D.pathways||{}).map(c=>`<option>${c}</option>`).join('');
  p.onchange=()=>{clearTopOn();metabOn=false;document.getElementById('ct').value='';setPathway(p.value);};})();
-document.getElementById('reset').onclick=()=>{sel=-1;affected=null;hivOn=false;mark=null;metabOn=false;document.getElementById('ct').value='';document.getElementById('pw').value='';document.getElementById('mHIV').classList.remove('on');setMode('Explore');fit();document.getElementById('info').innerHTML=welcome;draw();};
+document.getElementById('reset').onclick=()=>{sel=-1;affected=null;hivOn=false;mark=null;metabOn=false;activeCT=null;document.getElementById('ct').value='';document.getElementById('pw').value='';document.getElementById('mHIV').classList.remove('on');setMode('Explore');fit();document.getElementById('info').innerHTML=welcome;draw();};
 document.getElementById('q').addEventListener('change',e=>{let n=e.target.value.trim();if(idxByName[n]!==undefined)go(n);});
 const welcome=`<h2>The cell</h2><div class=lg>${N} proteins in their real compartments, wired by ${D.reg.length} regulatory + ${D.ppi.length} physical edges.<br><br>
  <b>Explore</b>: click any protein &rarr; see its full trafficking journey (gene&rarr;mRNA&rarr;ribosome&rarr;final location) + networks.<br>

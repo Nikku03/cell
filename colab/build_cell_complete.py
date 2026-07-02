@@ -197,8 +197,33 @@ pathmembers={k:v for k,v in pathmembers.items() if 3<=len(v)<=400}
 pathlist=sorted(pathmembers,key=lambda k:-len(pathmembers[k]))[:60]  # 60 biggest for the selector
 pathsel={k:pathmembers[k] for k in pathlist}
 print("pathways indexed:",len(pathmembers),"| offered in selector:",len(pathsel))
+# === MODEL 2: abundance + cell-type expression (drives abundance, cell-type wiring, differentiation) ===
+# celltype_expression.csv = cell types (rows) x genes (cols); log1p CP10k means from the atlas.
+ctnames=[]; abund={}; emask={}
+cte=OUT/"celltype_expression.csv"
+if cte.exists():
+    rd=csv.reader(open(cte)); header=next(rd)
+    gcols=header[1:]; mat=[]
+    for row in rd:
+        ctnames.append(row[0]); mat.append([float(x) if x else 0.0 for x in row[1:]])
+    T=len(ctnames); THR=1.0    # "expressed" if log1p CP10k > 1 in that cell type
+    for ci,gname in enumerate(gcols):
+        gi=idx.get(gname)
+        if gi is None: continue
+        vals=[mat[t][ci] for t in range(T)]
+        mx=max(vals) if vals else 0.0
+        if mx<=0: continue
+        abund[gi]=min(15,int(round(mx*2)))          # baseline abundance 0-15
+        m=0
+        for t,v in enumerate(vals):
+            if v>THR: m|=(1<<t)
+        if m: emask[gi]=str(m)                        # bitmask over cell types (string: can exceed 2^53)
+    print("Model 2 expression: abundance for",len(abund),"genes across",T,"cell types")
+else:
+    print("Model 2: no celltype_expression.csv -> no abundance / cell-type wiring / differentiation")
 DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,gf_perturb=gf,
     struct=struct,fold=fold,otdis=otdis,pathways=pathsel,
+    ctnames=ctnames,abund=abund,emask=emask,
     procs=sorted(set(g["proc"] for g in G)),comps=sorted(set(g["comp"] for g in G)),
     hiv={k:v for k,v in hiv.items()},hiv_targets={k:len(v) for k,v in hiv.items()},
     hiv_weakpoints=weak[:40],dark_count=len(dark),celltypes=celltypes)
