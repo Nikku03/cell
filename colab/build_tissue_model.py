@@ -57,17 +57,31 @@ except Exception as e: print("cpdb_protein:",e)
 def lmode(l): return "paracrine" if l in secreted else ("juxtacrine" if l in membrane else "signal")
 def lr_path(l,rec): return pathway.get(l) or pathway.get(rec) or ""
 print("pathway families:",len(set(pathway.values())),"| secreted ligands:",len(secreted),"| membrane:",len(membrane))
+# LOOP 3: druggable communication — DGIdb drugs on ligands/receptors
+lrgenes=set(l for l,rec,sg in LR)|set(rec for l,rec,sg in LR)
+drugs=defaultdict(list)
+try:
+    rd=csv.reader(open(H/"dgidb.tsv"),delimiter="\t"); next(rd)
+    seen=set()
+    for row in rd:
+        if len(row)>9 and row[2] in lrgenes and row[9] and not row[9].lower().startswith("chembl"):
+            k=(row[2],row[9].lower())
+            if k in seen or len(drugs[row[2]])>=5: continue
+            seen.add(k); drugs[row[2]].append(row[9].title())
+except Exception as e: print("dgidb:",e)
+print("druggable LR genes:",len(drugs))
 print("ligand-receptor pairs:",len(LR))
 # --- curated tissues (HPA cell type names) ---
 TISSUES={
- "Liver":["hepatocytes","cholangiocytes","kupffer cells","hepatic stellate cells","vascular endothelial cells"],
- "Heart":["cardiomyocytes","fibroblasts","vascular endothelial cells","macrophages","epicardial cells"],
- "Lung":["alveolar cells type 1","alveolar cells type 2","macrophages","vascular endothelial cells","fibroblasts"],
- "Brain":["brain excitatory neurons","brain inhibitory neurons","astrocytes","oligodendrocytes","vascular endothelial cells"],
- "Kidney":["proximal tubule cells","distal convoluted tubule cells","podocytes","vascular endothelial cells","macrophages"],
- "Intestine":["enterocytes","colonocytes","enteric stem cells","fibroblasts","t-cells"],
- "Skin":["basal keratinocytes","suprabasal keratinocytes","melanocytes","fibroblasts","vascular endothelial cells"],
- "Immune (blood)":["t-cells","b-cells","nk-cells","macrophages","cdc"],
+ "Liver":["hepatocytes","cholangiocytes","kupffer cells","hepatic stellate cells","vascular endothelial cells","t-cells"],
+ "Heart":["cardiomyocytes","fibroblasts","vascular endothelial cells","macrophages","pericytes","t-cells"],
+ "Lung":["alveolar cells type 1","alveolar cells type 2","macrophages","vascular endothelial cells","fibroblasts","t-cells"],
+ "Brain":["brain excitatory neurons","brain inhibitory neurons","astrocytes","oligodendrocytes","microglia","vascular endothelial cells"],
+ "Kidney":["proximal tubule cells","distal convoluted tubule cells","podocytes","vascular endothelial cells","macrophages","fibroblasts"],
+ "Intestine":["enterocytes","colonocytes","goblet cells","paneth cells","enteric stem cells","t-cells","macrophages"],
+ "Skin":["basal keratinocytes","suprabasal keratinocytes","melanocytes","fibroblasts","vascular endothelial cells","t-cells"],
+ "Pancreas":["pancreatic acinar cells","pancreatic duct cells","pancreatic islet cells","fibroblasts","vascular endothelial cells","macrophages"],
+ "Immune (blood)":["t-cells","b-cells","nk-cells","macrophages","cdc","plasma cells"],
 }
 avail=set(expr)
 model={}
@@ -92,8 +106,11 @@ for tis,cts in TISSUES.items():
     for s,r,pairs in comm:
         for p in pairs:
             if len(p)>4 and p[4]: pwcount[p[4]]+=1
+    links=[[s,r,round(sum(p[3] for p in pairs)),len(pairs)] for s,r,pairs in comm if s!=r]
+    links.sort(key=lambda x:-x[2])
     model[tis]=dict(cells=cts,cellinfo=cells,comm=comm,
-                    pathways=dict(sorted(pwcount.items(),key=lambda x:-x[1])[:15]))
+                    pathways=dict(sorted(pwcount.items(),key=lambda x:-x[1])[:15]),
+                    toplinks=links[:8])
     print(f"  {tis}: {len(cts)} cell types, {len(comm)} channels, top pathways: {list(dict(sorted(pwcount.items(),key=lambda x:-x[1])[:4]))}")
 # --- downstream effect INSIDE the receiver (reuse the CELL MODEL's shared network data:
 #     SIGNOR receptor->signaling + CollecTRI TF->target). Baked into the tissue file; no cell files touched. ---
@@ -129,6 +146,23 @@ for rec in receptors:
     if seen or targets:
         downstream[rec]=dict(sig=sorted(seen)[:10],tfs=tfs,targets=sorted(targets)[:18])
 print("receptors with downstream response wired:",len(downstream),"of",len(receptors))
-DATA=dict(tissues=model,n_lr=len(LR),downstream=downstream)
+# LOOP 6: cross-tissue ENDOCRINE axes — organs signalling systemically by hormones (curated, textbook)
+ENDOCRINE=[
+ ["INS","Pancreas","Liver","INSR","lowers blood glucose (uptake/storage)"],
+ ["GCG","Pancreas","Liver","GCGR","raises blood glucose (glycogenolysis)"],
+ ["GCG","Intestine","Pancreas","GLP1R","GLP-1 stimulates insulin secretion (incretin)"],
+ ["FGF19","Intestine","Liver","FGFR4","bile-acid synthesis feedback"],
+ ["HAMP","Liver","Intestine","SLC40A1","hepcidin blocks iron export (iron homeostasis)"],
+ ["EPO","Kidney","Immune (blood)","EPOR","drives red-blood-cell production"],
+ ["REN","Kidney","Liver","AGT","renin-angiotensin: blood pressure"],
+ ["IGF1","Liver","Heart","IGF1R","systemic growth signal"],
+ ["FGF21","Liver","Pancreas","FGFR1","metabolic/fasting hormone"],
+ ["IL6","Immune (blood)","Liver","IL6R","acute-phase response (CRP)"],
+ ["ANGPT2","Liver","Heart","TEK","vascular remodeling"],
+ ["NPPB","Heart","Kidney","NPR1","natriuretic peptide: fluid balance"],
+]
+DATA=dict(tissues=model,n_lr=len(LR),downstream=downstream,drugs={k:v for k,v in drugs.items()},
+          endocrine=ENDOCRINE)
+print("endocrine cross-tissue axes:",len(ENDOCRINE))
 json.dump(DATA,open(OUT/"tissue_model.json","w"),separators=(",",":"))
 print("wrote tissue_model.json (%d KB)"%(len(json.dumps(DATA))//1024))
