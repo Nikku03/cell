@@ -59,7 +59,7 @@ cells=[
     "WITH_FULL_GEO=False              # True = download the ~59 GB ARCHS4 human compendium",
     "WITH_RNACENTRAL_MAPPING=True     # ~139 MB id-mapping (set False to skip)",
     "print('WITH_FULL_GEO =',WITH_FULL_GEO,'| WITH_RNACENTRAL_MAPPING =',WITH_RNACENTRAL_MAPPING)"),
- code("DATASETS = "+json.dumps([list(d) for d in DATASETS], indent=1),
+ code("DATASETS = "+repr([list(d) for d in DATASETS]),
     "",
     "def fetch(cat, fn, url, gunzip, flag):",
     "    if flag and not globals().get(flag, False):",
