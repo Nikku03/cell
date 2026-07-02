@@ -151,6 +151,30 @@ RAW_RX=[
 reactions=[]
 for pw,enz,sub,prod in RAW_RX:
     if enz in idx: reactions.append(dict(enz=enz,i=idx[enz],sub=sub,prod=prod,pathway=pw))
+# genome-scale metabolism from Human-GEM: real reaction (substrate=>product) per enzyme gene
+generxn=defaultdict(list); ENSG=re.compile(r"ENSG\d+")
+hg=H/"human_gem.txt"
+if hg.exists():
+    seen=set()
+    with open(hg) as f:
+        next(f)
+        for l in f:
+            p=l.split("\t")
+            if len(p)<3: continue
+            formula=p[1].strip(); gpr=p[2]
+            if not formula or "=>" not in formula and "<=>" not in formula: continue
+            eq=formula.replace(" <=> "," ⇌ ").replace(" => "," → ")
+            if len(eq)>90: eq=eq[:88]+"…"
+            for ensg in set(ENSG.findall(gpr)):
+                s=ensg2sym.get(ensg)
+                i=idx.get(s) if s else None
+                if i is None: continue
+                key=(i,eq)
+                if key in seen or len(generxn[i])>=8: continue
+                seen.add(key); generxn[i].append(eq)
+    print("Human-GEM: reactions attached to",len(generxn),"enzyme genes")
+else:
+    print("Human-GEM absent -> only",len(reactions),"curated reactions")
 # === MODEL 2 enrichment: cell-type master TFs derived from the atlas (Tabula Sapiens) ===
 # (produced by the notebook -> outputs/orphan/celltype_masters.json: {cell_type:[TF,...]})
 celltypes={"hepatocyte":["HNF4A","HNF1A","FOXA2"],"cardiac muscle cell":["NKX2-5","GATA4","TBX5"],
@@ -222,7 +246,7 @@ if cte.exists():
     print("Model 2 expression: abundance for",len(abund),"genes across",T,"cell types")
 else:
     print("Model 2: no celltype_expression.csv -> no abundance / cell-type wiring / differentiation")
-DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,gf_perturb=gf,
+DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in generxn.items()},gf_perturb=gf,
     struct=struct,fold=fold,otdis=otdis,pathways=pathsel,
     ctnames=ctnames,abund=abund,emask=emask,
     procs=sorted(set(g["proc"] for g in G)),comps=sorted(set(g["comp"] for g in G)),

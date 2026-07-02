@@ -43,8 +43,9 @@ const idxByName={};G.forEach((g,i)=>idxByName[g.name]=i);
 // networks
 const OUT={},IN={},PP={},SGN={};for(const e of D.reg){const a=e[0],b=e[1],s=e[2]||0;(OUT[a]=OUT[a]||[]).push(b);(IN[b]=IN[b]||[]).push(a);SGN[a+','+b]=s;}
 for(const[a,b]of D.ppi){(PP[a]=PP[a]||[]).push(b);(PP[b]=PP[b]||[]).push(a);}
-// reaction-by-enzyme + HIV host index
+// reaction-by-enzyme (curated pathway-flow) + genome-scale reactions per gene (Human-GEM) + HIV host index
 const RXN={};(D.reactions||[]).forEach(r=>RXN[r.i]=r);
+const GRXN=D.generxn||{};   // gene index -> [ "substrate → product", ... ]
 const hivHost={};for(const hp in D.hiv)for(const[i,t]of D.hiv[hp]){(hivHost[i]=hivHost[i]||[]).push(hp);}
 // Model 2: abundance + per-cell-type expression mask (drives abundance, cell-type wiring, differentiation)
 const ABUND=D.abund||{};const CTN=D.ctnames||[];const ctBit={};CTN.forEach((n,t)=>ctBit[n]=t);
@@ -183,6 +184,7 @@ function info(i){let g=G[i];
   <div class=row><span class=k>regulated by:</span> ${rgl||'-'}</div>
   <div class=row><span class=k>binds (PPI):</span> ${pp||'-'}</div>
   <h3>functioning pipeline — input &rarr; gene &rarr; product &rarr; function &rarr; output</h3>${pipeline(i).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
+  ${GRXN[i]?`<h3>reactions catalyzed (Human-GEM)</h3>${GRXN[i].map(r=>`<div class=row class=lg>${r}</div>`).join('')}`:''}
   <h3>mutation impact</h3>${mutImpact(g)}
   <h3>trafficking journey — molecular detail</h3>${journey(g).map(s=>`<div class=step>${s.t}${s.m?` <span class=mach>&middot; ${s.m}</span>`:''}</div>`).join('')}
   <div class=row style=margin-top:8px><span class=btn onclick="setMode('Remove/Mutate');perturb(${i},false)">remove &rarr;</span> <span class=btn onclick="setMode('Overexpress');overexpress(${i})">overexpress &rarr;</span></div>
@@ -194,6 +196,7 @@ function pipeline(i){let g=G[i];const lnk=j=>`<a onclick=go('${G[j].name}')>${G[
  // FUNCTION at destination
  let fn='';
  if(RXN[i]) fn=`catalyzes: <span class=v>${RXN[i].sub}</span> <span class=arrow>&rarr;</span> <span class=v>${RXN[i].prod}</span> <span class=lg>(${RXN[i].pathway})</span>`;
+ else if(GRXN[i]) fn=`catalyzes (Human-GEM): <span class=v>${GRXN[i][0]}</span>${GRXN[i].length>1?` <span class=lg>+${GRXN[i].length-1} more</span>`:''}`;
  else if(g.tf){let a=(OUT[i]||[]).filter(j=>SGN[i+','+j]>0).length,r=(OUT[i]||[]).filter(j=>SGN[i+','+j]<0).length;
    fn=`transcription factor &rarr; <span style="color:#43a047">activates ${a}</span> / <span style="color:#e53935">represses ${r}</span> genes`;}
  else if((PP[i]||[]).length) fn=`works in a complex — binds ${(PP[i]||[]).slice(0,4).map(lnk).join(', ')}${PP[i].length>4?' +'+(PP[i].length-4):''}`;
@@ -287,9 +290,10 @@ function hivReport(){let proc={};for(const i in hivHost)proc[G[i].proc]=(proc[G[
   <h3>integration preference</h3><div class=lg>HIV integrase inserts the provirus into transcriptionally ACTIVE, open chromatin (high-enhancer, expressed genes) — biasing toward active immune/host genes.</div>`;}
 // Metabolism mode: show curated reactions as enzyme->substrate->product chains
 function metabView(){metabOn=true;mode='Explore';affected=null;activeCT=null;
- mark={set:new Set(D.reactions.map(r=>r.i)),color:'#fdd835',dim:true};
+ const enzAll=new Set([...D.reactions.map(r=>r.i),...Object.keys(GRXN).map(Number)]);   // full metabolic enzyme complement
+ mark={set:enzAll,color:'#fdd835',dim:true};
  const byPw={};D.reactions.forEach(r=>{(byPw[r.pathway]=byPw[r.pathway]||[]).push(r);});
- document.getElementById('info').innerHTML='<h2>Metabolism</h2><div class=lg>Core enzymatic reactions wired substrate&rarr;product. Yellow nodes = enzymes; yellow lines trace pathway flow. Click an enzyme to inspect.</div>'+
+ document.getElementById('info').innerHTML=`<h2>Metabolism</h2><div class=lg><b>${enzAll.size}</b> metabolic enzymes (yellow) — ${Object.keys(GRXN).length} carry genome-scale reactions from Human-GEM; yellow lines trace the core curated pathways. Click any enzyme for the reactions it catalyzes.</div>`+
   Object.entries(byPw).map(([pw,rs])=>`<h3>${pw}</h3>`+rs.map(r=>`<div class=row><a onclick=go('${r.enz}')>${r.enz}</a> <span class=lg>${r.sub} <span class=arrow>&rarr;</span> ${r.prod}</span></div>`).join('')).join('');
  draw();}
 // Dark genes: the function frontier (no known pathway/disease)
