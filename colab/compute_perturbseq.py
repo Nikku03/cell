@@ -49,10 +49,23 @@ def pick_perturbation(obs):
     print(f"  perturbation label field='{best[2]}' matched {best[0]} HGNC symbols; examples {list(best[1][:5])}")
     return best[1]
 
+def _readout_symbols(var):
+    """Readout gene symbols from A.var (for per-perturbation target genes)."""
+    def score(vals):
+        v=[str(x).split("|")[0].split(".")[0].strip() for x in vals]
+        return (sum(1 for x in set(v) if x in REF) if REF else len(set(v)), np.array(v))
+    best=None
+    cands=[var.index.values]+[var[c].values for c in var.columns]
+    for vals in cands:
+        h,nv=score(vals)
+        if best is None or h>best[0]: best=(h,nv)
+    return best[1]
+
 def neighbors_from(f):
-    """One dataset -> {gene:[[neighbor,corr],...]} from perturbation-response similarity."""
+    """One dataset -> (neighbors {gene:[[nb,corr]]}, targets {gene:[[readout,sign]]})."""
     A=ad.read_h5ad(f); obs=A.obs
     perts=pick_perturbation(obs)
+    vgenes=_readout_symbols(A.var)
     X=A.X; X=np.asarray(X.todense()) if sp.issparse(X) else np.asarray(X)
     bad=np.array([any(k in p.lower() for k in ["non-targeting","control","ntc","scramble","safe"]) or p in("","nan") for p in perts])
     X=X[~bad]; perts=perts[~bad]
@@ -61,7 +74,7 @@ def neighbors_from(f):
     genes=sorted(uniq)
     inref=sum(1 for g in genes if g in REF) if REF else len(genes)
     if len(genes)<3:
-        print(f"  {f.name}: only {len(genes)} perturbations parsed -> skipping this file"); return {}
+        print(f"  {f.name}: only {len(genes)} perturbations parsed -> skipping this file"); return {},{}
     M=np.vstack([X[uniq[g]].mean(0) for g in genes]).astype(np.float64)
     M=np.nan_to_num(M, nan=0.0, posinf=0.0, neginf=0.0)   # zero out inf/nan (NOT float-max)
     sd=M.std(1,keepdims=True); sd[sd==0]=1.0
@@ -69,21 +82,26 @@ def neighbors_from(f):
     # cosine similarity on L2-normalised signatures (bounded [-1,1], robust)
     Mn=M/(np.linalg.norm(M,axis=1,keepdims=True)+1e-9)
     C=Mn@Mn.T; np.fill_diagonal(C,-9)
-    out={}
+    out={}; tgt={}
     for i,g in enumerate(genes):
         order=np.argsort(-C[i])[:10]
         part=[[genes[j],round(float(C[i,j]),3)] for j in order if C[i,j]>0.15]
         if part: out[g]=part[:8]
-    print(f"  {f.name}: {len(genes)} perturbed genes ({inref} match HGNC) -> neighbors for {len(out)}")
-    return out
+        # per-perturbation TARGET genes: readout genes most moved by this KO (|z|), with sign
+        if len(vgenes)==M.shape[1]:
+            top=np.argsort(-np.abs(M[i]))[:30]
+            tgt[g]=[[str(vgenes[k]), (1 if M[i,k]>0 else -1)] for k in top if abs(M[i,k])>=2.0][:25]
+    print(f"  {f.name}: {len(genes)} perturbed genes ({inref} match HGNC) -> neighbors for {len(out)}, targets for {len(tgt)}")
+    return out,tgt
 
-# merge neighbor lists across datasets (keep the strongest correlation per neighbor)
-merged={}
+# merge neighbor lists + target lists across datasets
+merged={}; merged_tgt={}
 for f in files:
     try:
-        parts_by_gene=neighbors_from(f)
+        parts_by_gene,tgt_by_gene=neighbors_from(f)
     except Exception as e:
         print(f"  !! {f.name} unreadable ({repr(e)[:80]}) - skipping this file"); continue
+    for g,t in tgt_by_gene.items(): merged_tgt.setdefault(g,t)
     for g,parts in parts_by_gene.items():
         d=merged.setdefault(g,{})
         for nb,r in parts:
@@ -92,4 +110,5 @@ if not merged:
     print("no readable Perturb-seq data -> skipping"); raise SystemExit(0)
 nb={g:sorted(([n,r] for n,r in d.items()),key=lambda x:-x[1])[:8] for g,d in merged.items()}
 json.dump(nb,open(OUT/"perturbseq_neighbors.json","w"))
-print(f"Perturb-seq ({len(files)} dataset(s)): merged functional neighbors for {len(nb)} genes")
+json.dump(merged_tgt,open(OUT/"perturbseq_targets.json","w"))   # per-KO responder genes (for causal regulome)
+print(f"Perturb-seq ({len(files)} dataset(s)): merged functional neighbors for {len(nb)} genes | KO-target genes for {len(merged_tgt)}")

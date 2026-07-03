@@ -132,6 +132,8 @@ code("# [2b] fetch the raw data build_cell_complete.py needs (the big files are 
    "if WITH_COEXPR:",
    "    !pip -q install h5py",
    "    _sp.run([sys.executable,'colab/compute_coexpr.py'])                     # -> coexpr_neighbors.json (auto-finds ARCHS4 in expression_geo/)",
+   "# Phase-3 causal regulome: ReMap binding x Perturb-seq response -> signed causal edges (needs both above)",
+   "_sp.run([sys.executable,'colab/compute_causal_reg.py'])                     # -> causal_reg.tsv + causal_reg.json",
    "lp=f'{H}/hiccups_loops.txt.gz'   # 3D chromatin loops (GM12878 HiCCUPS)",
    "if not (os.path.exists(lp) and os.path.getsize(lp)>1000):",
    "    urllib.request.urlretrieve('https://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_GM12878_primary%2Breplicate_HiCCUPS_looplist.txt.gz', lp)",

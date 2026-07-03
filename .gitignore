@@ -131,3 +131,6 @@ outputs/orphan/nichenet_ligand_targets.json
 data/external_data/human/archs4_human_gene.h5
 outputs/orphan/coexpr_neighbors.json
 outputs/orphan/convergence.json
+outputs/orphan/perturbseq_targets.json
+outputs/orphan/causal_reg.tsv
+outputs/orphan/causal_reg.json

@@ -118,7 +118,20 @@ if (OUT/"gtex_trans_edges.tsv").exists():
         p=l.rstrip("\n").split("\t"); a=idx.get(p[0]); b=idx.get(p[1]) if len(p)>1 else None
         if a is not None and b is not None and a!=b and (a,b) not in regset:
             regset.add((a,b)); reg.append([a,b,0])
-print(f"regulatory edges: CollecTRI {nCollec} + ReMap/GTEx {len(reg)-nCollec} = {len(reg)}")
+# Causal regulome (Phase 3): ReMap-binding x Perturb-seq-response -> SIGNED, high-confidence edges
+n_causal=0
+if (OUT/"causal_reg.tsv").exists():
+    regmap={(e[0],e[1]):e for e in reg}
+    for l in open(OUT/"causal_reg.tsv"):
+        p=l.rstrip("\n").split("\t")
+        if len(p)<3: continue
+        a=idx.get(p[0]); b=idx.get(p[1])
+        if a is None or b is None or a==b: continue
+        sg=int(p[2])
+        if (a,b) in regmap: regmap[(a,b)][2]=sg          # upgrade the candidate edge with a measured sign
+        else: e=[a,b,sg]; reg.append(e); regmap[(a,b)]=e
+        n_causal+=1
+print(f"regulatory edges: CollecTRI {nCollec} + ReMap/GTEx {len(reg)-nCollec-0} total {len(reg)} | causal (signed, binding x response) {n_causal}")
 ppi=[]; ppiset=set()
 def add_ppi(ga,gb):
     a=idx.get(ga); b=idx.get(gb)
