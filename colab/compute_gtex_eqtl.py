@@ -62,9 +62,10 @@ with _open(trans) as f:
         if hdr:
             vid=p[hdr.get("variant_id",0)] if hdr.get("variant_id",0)<len(p) else p[0]
             gid=p[hdr.get("gene_id",1)] if hdr.get("gene_id",1)<len(p) else p[1]
+            gname=p[hdr["gene_name"]] if "gene_name" in hdr and hdr["gene_name"]<len(p) else ""
         else:
-            vid,gid=(p+["",""])[0],(p+["",""])[1]
-        eg=ensg2sym.get(gid.split(".")[0])
+            vid,gid,gname=(p+["",""])[0],(p+["",""])[1],""
+        eg=gname if gname else ensg2sym.get(gid.split(".")[0])   # prefer the symbol column when present
         if not eg or not vid: continue
         vp=vid.split("_")
         if len(vp)<2: continue

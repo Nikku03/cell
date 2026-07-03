@@ -103,6 +103,22 @@ for r in csv.DictReader(open(H/"collectri.tsv"),delimiter="\t"):
     if a is not None and b is not None and a!=b:
         sg=1 if r.get("is_stimulation")=="True" else (-1 if r.get("is_inhibition")=="True" else 0)
         reg.append([a,b,sg])
+# DoRothEA + TRRUST curated TF->target (union with CollecTRI, dedup, keep a sign if any source has one)
+regsign={(e[0],e[1]):e for e in reg}
+def add_reg(a,b,sg):
+    if a is None or b is None or a==b: return
+    if (a,b) in regsign:
+        if sg and not regsign[(a,b)][2]: regsign[(a,b)][2]=sg
+    else:
+        e=[a,b,sg]; reg.append(e); regsign[(a,b)]=e
+if (H/"dorothea.tsv").exists():
+    for r in csv.DictReader(open(H/"dorothea.tsv"),delimiter="\t"):
+        sg=1 if r.get("is_stimulation")=="True" else (-1 if r.get("is_inhibition")=="True" else 0)
+        add_reg(idx.get(r.get("source_genesymbol")),idx.get(r.get("target_genesymbol")),sg)
+if (H/"trrust_human.tsv").exists():
+    for l in open(H/"trrust_human.tsv"):
+        p=l.rstrip("\n").split("\t")
+        if len(p)>=3: add_reg(idx.get(p[0]),idx.get(p[1]),1 if p[2]=="Activation" else (-1 if p[2]=="Repression" else 0))
 nCollec=len(reg)
 # ReMap ChIP-seq TF->target (measured binding) — unsigned candidate regulation
 if (OUT/"remap_tf_targets.tsv").exists():

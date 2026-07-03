@@ -117,7 +117,7 @@ code("# [2b] fetch the raw data build_cell_complete.py needs (the big files are 
    "    _get('remap.bed.gz', os.environ.get('REMAP_URL','https://remap.univ-amu.fr/storage/remap2022/hg38/MACS2/remap2022_nr_macs2_hg38_v1_0.bed.gz'), minkb=1000)",
    "    _sp.run([sys.executable,'colab/compute_remap.py'])                      # -> remap_tf_targets.tsv",
    "    # (2) GTEx v8 trans-eQTLs -> cross-gene regulatory candidates (set GTEX_TRANS_URL to a direct link)",
-   "    _get('gtex_trans_pairs.txt.gz', os.environ.get('GTEX_TRANS_URL',''))",
+   "    _get('gtex_trans_pairs.txt', os.environ.get('GTEX_TRANS_URL','https://storage.googleapis.com/adult-gtex/bulk-qtl/v8/single-tissue-trans-qtl/GTEx_Analysis_v8_trans_eGenes_fdr05.txt'))",
    "    _sp.run([sys.executable,'colab/compute_gtex_eqtl.py'])                  # -> gtex_trans_edges.tsv",
    "    # (3) LINCS L1000 Level-5 signatures -> perturbation neighbors (set LINCS_GCTX_URL + LINCS_SIGINFO_URL; large)",
    "    _get('lincs_level5.gctx', os.environ.get('LINCS_GCTX_URL',''), minkb=10000)",
