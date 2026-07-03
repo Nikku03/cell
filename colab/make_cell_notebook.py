@@ -52,6 +52,8 @@ code("# [2b] fetch the raw data build_cell_complete.py needs (the big files are 
    " 'cellphonedb.csv':'https://raw.githubusercontent.com/ventolab/cellphonedb-data/master/data/interaction_input.csv',  # ligand-receptor",
    " 'dgidb.tsv':'https://dgidb.org/data/latest/interactions.tsv',                                            # drug-gene",
    " 'uniprot_acc_ptm.tsv':'https://rest.uniprot.org/uniprotkb/stream?query=organism_id:9606+AND+reviewed:true&fields=accession,gene_primary,ft_mod_res&format=tsv',  # PTMs + acc->sym",
+   " 'bioplex.tsv':'https://bioplex.hms.harvard.edu/data/BioPlex_293T_Network_10K_Dec_2019.tsv',           # AP-MS interactome",
+   " 'opencell.csv':'https://opencell.czbiohub.org/data/datasets/opencell-protein-interactions.csv',       # proximity-labeling interactome",
    "}",
    "for fn,url in SRC.items():",
    "    p=f'{H}/{fn}'",

@@ -99,13 +99,29 @@ for r in csv.DictReader(open(H/"collectri.tsv"),delimiter="\t"):
     if a is not None and b is not None and a!=b:
         sg=1 if r.get("is_stimulation")=="True" else (-1 if r.get("is_inhibition")=="True" else 0)
         reg.append([a,b,sg])
-ppi=[]
-for l in gzip.open(H/"string_physical.txt.gz","rt"):
+ppi=[]; ppiset=set()
+def add_ppi(ga,gb):
+    a=idx.get(ga); b=idx.get(gb)
+    if a is None or b is None or a==b: return
+    k=(a,b) if a<b else (b,a)
+    if k not in ppiset: ppiset.add(k); ppi.append([a,b])
+for l in gzip.open(H/"string_physical.txt.gz","rt"):        # STRING physical >=700
     if l.startswith("protein1"): continue
     a,b,s=l.split()
     if int(s)<700: continue
-    ga=ensp2sym.get(a); gb=ensp2sym.get(b)
-    if ga in idx and gb in idx and ga!=gb: ppi.append([idx[ga],idx[gb]])
+    add_ppi(ensp2sym.get(a),ensp2sym.get(b))
+nS=len(ppi)
+# MEASURED interactome (AP-MS): BioPlex 3.0 high-confidence + OpenCell proximity-labeling
+if (H/"bioplex.tsv").exists():
+    for r in csv.DictReader(open(H/"bioplex.tsv"),delimiter="\t"):
+        try:
+            if float(r["pInt"])>=0.75: add_ppi(r["SymbolA"],r["SymbolB"])
+        except: pass
+nB=len(ppi)
+if (H/"opencell.csv").exists():
+    for r in csv.DictReader(open(H/"opencell.csv")):
+        add_ppi(r.get("target_gene_name"),r.get("interactor_gene_name"))
+print(f"PPI edges: STRING {nS} + BioPlex {nB-nS} + OpenCell {len(ppi)-nB} = {len(ppi)} total measured interactions")
 # HIV hijack map
 def normhiv(n):
     n=n.lower()

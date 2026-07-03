@@ -106,3 +106,6 @@ data/external_data/human/cpdb_complex.csv
 data/external_data/human/omnipath_intercell.tsv
 data/external_data/human/omnipath_cellchat.tsv
 data/external_data/human/cpdb_protein.csv
+data/external_data/human/bioplex.tsv
+data/external_data/human/opencell.csv
+data/external_data/human/perturbseq_gwps_bulk.h5ad
