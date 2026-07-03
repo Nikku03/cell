@@ -451,6 +451,20 @@ if lcf.exists():
             if j is not None and j not in have: psn[i].append(j); have.add(j)
         psn[i]=psn[i][:12]; nadd+=1
     print("LINCS L1000: merged perturbation neighbors, genes with neighbors now",len(psn))
+# ARCHS4 co-expression neighbors (Phase 1) — an independent lens; kept as its own layer AND merged into darkfn pool
+coexpr={}
+cxf=OUT/"coexpr_neighbors.json"
+if cxf.exists():
+    raw=json.load(open(cxf))
+    for g,parts in raw.items():
+        i=idx.get(g)
+        if i is None: continue
+        coexpr[i]=[[idx[p],r] for p,r in parts if p in idx][:12]
+        have=set(psn.get(i,[]))
+        for p,r in parts:
+            j=idx.get(p)
+            if j is not None and j not in have and len(psn[i])<16: psn[i].append(j); have.add(j)
+    print("ARCHS4 co-expression: neighbors for",len(coexpr),"genes (independent lens)")
 # PPI adjacency for neighbor lookup
 ppiadj=defaultdict(list)
 for a,b in ppi: ppiadj[a].append(b); ppiadj[b].append(a)
@@ -509,7 +523,8 @@ DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in ge
     hiv={k:v for k,v in hiv.items()},hiv_targets={k:len(v) for k,v in hiv.items()},
     hiv_weakpoints=weak[:40],dark_count=len(dark),celltypes=celltypes,
     darkfn={str(k):v for k,v in darkfn.items()},
-    model4=model4,model4_meta=model4_meta)
+    model4=model4,model4_meta=model4_meta,
+    coexpr={str(k):v for k,v in coexpr.items()})
 json.dump(DATA,open(OUT/"cell_complete.json","w"),separators=(",",":"))
 print("proteins:",len(G),"| reg edges:",len(reg),"| ppi edges:",len(ppi))
 print("processes:",dict(Counter(g["proc"] for g in G).most_common()))

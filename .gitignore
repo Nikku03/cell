@@ -128,3 +128,5 @@ outputs/orphan/lincs_neighbors.json
 outputs/orphan/remap_tf_targets.tsv
 outputs/orphan/gtex_trans_edges.tsv
 outputs/orphan/nichenet_ligand_targets.json
+data/external_data/human/archs4_human_gene.h5
+outputs/orphan/coexpr_neighbors.json
