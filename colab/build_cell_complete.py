@@ -428,6 +428,15 @@ for i,g in enumerate(G):
         src="Perturb-seq+co-essentiality" if i in psn else ("co-essentiality" if i in codep else "interaction")
         darkfn[i]=dict(pred=pred,ev=ev[:5],n=len(neigh),conf="high" if cnt>=3 else "low",src=src)
 print("dark genes with a predicted function (from measured neighbors):",len(darkfn),"of",len(dark))
+# === MODEL 4: predicted perturbation response (trained on Perturb-seq, held-out validated) ===
+model4={}; model4_meta={}
+m4f=OUT/"model4_predictions.json"
+if m4f.exists():
+    raw=json.load(open(m4f)); model4_meta=raw.get("_meta",{})
+    for g,v in raw.get("predictions",{}).items():
+        i=idx.get(g)
+        if i is not None: model4[str(i)]=v
+    print("Model 4: predicted perturbation response for",len(model4),"never-perturbed genes | held-out lift %.1fx"%(model4_meta.get("lift",0)))
 # === TARGET INTELLIGENCE: literature coverage + ranked target-priority / white-space tables ===
 lit={}
 lp2=OUT/"literature_counts.json"
@@ -458,7 +467,8 @@ DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in ge
     procs=sorted(set(g["proc"] for g in G)),comps=sorted(set(g["comp"] for g in G)),
     hiv={k:v for k,v in hiv.items()},hiv_targets={k:len(v) for k,v in hiv.items()},
     hiv_weakpoints=weak[:40],dark_count=len(dark),celltypes=celltypes,
-    darkfn={str(k):v for k,v in darkfn.items()})
+    darkfn={str(k):v for k,v in darkfn.items()},
+    model4=model4,model4_meta=model4_meta)
 json.dump(DATA,open(OUT/"cell_complete.json","w"),separators=(",",":"))
 print("proteins:",len(G),"| reg edges:",len(reg),"| ppi edges:",len(ppi))
 print("processes:",dict(Counter(g["proc"] for g in G).most_common()))

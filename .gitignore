@@ -114,3 +114,4 @@ data/external_data/human/perturbseq_gwps_bulk.h5ad
 outputs/orphan/perturbseq_neighbors.json
 outputs/orphan/cell_complete.json.gz
 outputs/orphan/cell_model_summary.json
+outputs/orphan/model4_predictions.json

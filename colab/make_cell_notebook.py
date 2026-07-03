@@ -22,6 +22,7 @@ md("# Build the complete cell — all three models, all the data",
    "| **1. our integrated model** | trains a classifier on our 14-layer features + DepMap truth | DepMap CRISPRGeneEffect, repo features | `predicted_essentiality.csv` | fills essentiality for genes with no CRISPR label |",
    "| **2. atlas / scGPT cell-type** | per-cell-type expression from the human atlas | CELLxGENE census (Tabula Sapiens) | `celltype_masters.json`, `celltype_expression.csv` | data-driven master TFs → cell-type active networks |",
    "| **3. Geneformer** | in-silico *delete* perturbation | Geneformer weights (HF) + tokenized atlas cells | `gf_perturb.json` | enriches the knockout cascade with predicted downstream genes |",
+   "| **4. perturbation-response predictor** | trains gene features → Perturb-seq KO-signature space, held-out validated (recall@10 vs random) | Perturb-seq (Replogle 2022) + our 34-layer features | `model4_predictions.json` | predicted functional neighbors + affected pathway for the ~14k never-perturbed genes, tagged *predicted, not measured* |",
    "",
    "**Runtime:** set *Runtime → A100* (Model 2 census + Model 3 Geneformer want a GPU and ~15–40 min).",
    "Each model cell is guarded — if one environment isn't available the notebook still completes and builds a cell,",
@@ -299,8 +300,10 @@ md("## Assemble → build → serve\n"
 code("# build with hard failure if anything is missing (so we never silently ship the old committed HTML)",
    "import subprocess, time",
    "if os.path.exists(f'{OUT}/cell_complete.json'): os.remove(f'{OUT}/cell_complete.json')",
-   "# builds all THREE cell apps: analysis cell, premium explorer, metabolic-routes",
-   "for s in ['build_cell_complete.py','build_cell_app_complete.py','build_cell_explorer.py','compute_metabolic_graph.py','build_metabolic_routes.py']:",
+   "# builds all THREE cell apps: analysis cell, premium explorer, metabolic-routes.",
+   "# Model 4 needs the assembled features + the Perturb-seq h5ad, and its output feeds back in,",
+   "# so build_cell_complete runs once to make features, then compute_model4, then build again to fold it in.",
+   "for s in ['build_cell_complete.py','compute_model4.py','build_cell_complete.py','build_cell_app_complete.py','build_cell_explorer.py','compute_metabolic_graph.py','build_metabolic_routes.py']:",
    "    r=subprocess.run([sys.executable,f'colab/{s}'],capture_output=True,text=True)",
    "    print(r.stdout[-800:])",
    "    if r.returncode!=0:",
@@ -361,6 +364,7 @@ md("## What you can now do — with all three models live\n"
    "- **cell type** dropdown → data-driven master-TF networks from the atlas (Model 2).\n"
    "- **Remove/Mutate** → cascade over the **measured** reg+PPI graph (validated). Geneformer embedding-neighbors were checked and are ~random, so they are NOT fed into the cascade; run RUN_ISP=True for real in-silico perturbation.\n"
    "- **Dark genes** → the function frontier now carries a **predicted function** per gene: guilt-by-association from *measured* functional neighbors (Perturb-seq perturbation-response similarity + co-essentiality + physical interactions), each tagged *predicted, not known*.\n"
+   "- **Predicted perturbation response (Model 4)** → click a never-perturbed gene: its predicted KO-signature neighbors + affected pathway, with the **held-out recall-vs-random lift** shown so you know how much to trust it (honest by construction — a ~1x lift is reported as noise).\n"
    "- **Metabolism / Infect: HIV** → reactions, and HIV's weak points."),
 ]
 nb={"cells":cells,"metadata":{"kernelspec":{"display_name":"Python 3","name":"python3"},"language_info":{"name":"python"}},"nbformat":4,"nbformat_minor":5}
