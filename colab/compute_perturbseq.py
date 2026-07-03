@@ -2,7 +2,7 @@
 Each perturbed gene has a transcriptional signature = what changes when you delete it. Genes whose
 signatures correlate share function. -> perturbseq_neighbors.json {gene:[[neighbor,corr],...]}
 (same shape as depmap_codep, so the cell uses it as a MEASURED functional-partner layer for dark genes)."""
-import json, numpy as np
+import json, gzip, numpy as np
 from pathlib import Path
 H=Path("data/external_data/human"); OUT=Path("outputs/orphan")
 # every Perturb-seq dataset present (K562 genome-wide, RPE1, Norman combinatorial, ...)
@@ -10,18 +10,42 @@ files=[f for f in sorted(H.glob("perturbseq_*.h5ad")) if f.stat().st_size>1_000_
 if not files:
     print("no valid perturbseq_*.h5ad present -> skipping (runs on Colab where figshare is reachable)"); raise SystemExit(0)
 import anndata as ad, scipy.sparse as sp
+# reference HGNC symbol set (to auto-detect which obs field holds the perturbed-gene symbol)
+REF=set()
+if (H/"gene_info.gz").exists():
+    with gzip.open(H/"gene_info.gz","rt") as fh:
+        next(fh)
+        for l in fh:
+            p=l.split("\t")
+            if len(p)>2 and p[0]=="9606": REF.add(p[2])
+
+def pick_perturbation(obs):
+    """Per-row perturbed-gene label, auto-picking whichever obs field best overlaps HGNC symbols."""
+    def variants(vals):
+        return [np.array([str(v).strip() for v in vals]),
+                np.array([str(v).split("|")[0].split(",")[0].split("_")[0].strip() for v in vals])]
+    cands=[obs.index.values]+[obs[c].values for c in obs.columns]
+    best=None
+    for vals in cands:
+        for nv in variants(vals):
+            hits=len(set(nv)&REF) if REF else len(set(nv))
+            if best is None or hits>best[0]: best=(hits,nv)
+    return best[1]
 
 def neighbors_from(f):
     """One dataset -> {gene:[[neighbor,corr],...]} from perturbation-response similarity."""
     A=ad.read_h5ad(f); obs=A.obs
-    gcol=next((c for c in ["gene","gene_symbol","target_gene","perturbation","perturbed_gene"] if c in obs.columns), None)
-    perts=(obs[gcol] if gcol else obs.index).astype(str).values
+    perts=pick_perturbation(obs)
     X=A.X; X=np.asarray(X.todense()) if sp.issparse(X) else np.asarray(X)
     bad=np.array([any(k in p.lower() for k in ["non-targeting","control","ntc","scramble","safe"]) or p in("","nan") for p in perts])
     X=X[~bad]; perts=perts[~bad]
     uniq={}
     for i,g in enumerate(perts): uniq.setdefault(g,[]).append(i)
-    genes=sorted(uniq); M=np.vstack([X[uniq[g]].mean(0) for g in genes])
+    genes=sorted(uniq)
+    inref=sum(1 for g in genes if g in REF) if REF else len(genes)
+    if len(genes)<3:
+        print(f"  {f.name}: only {len(genes)} perturbations parsed -> skipping this file"); return {}
+    M=np.vstack([X[uniq[g]].mean(0) for g in genes])
     M=np.nan_to_num(M); M=(M-M.mean(1,keepdims=True))/(M.std(1,keepdims=True)+1e-6)
     C=(M@M.T)/M.shape[1]; np.fill_diagonal(C,-9)
     out={}
@@ -29,7 +53,7 @@ def neighbors_from(f):
         order=np.argsort(-C[i])[:10]
         part=[[genes[j],round(float(C[i,j]),3)] for j in order if C[i,j]>0.15]
         if part: out[g]=part[:8]
-    print(f"  {f.name}: {len(genes)} perturbed genes -> neighbors for {len(out)}")
+    print(f"  {f.name}: {len(genes)} perturbed genes ({inref} match HGNC) -> neighbors for {len(out)}")
     return out
 
 # merge neighbor lists across datasets (keep the strongest correlation per neighbor)

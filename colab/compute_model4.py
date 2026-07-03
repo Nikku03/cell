@@ -46,6 +46,23 @@ def load_features():
               dark=[g["dark"] for g in G], names=[g["name"] for g in G])
     return meta["names"], X, meta
 
+# ---------------------------------------------------------------- perturbation-identity detection
+def pick_perturbation(obs, ref):
+    """Return the per-row perturbed-gene label, auto-picking whichever obs field (or the index)
+    best overlaps a reference gene-symbol set — robust to Ensembl IDs, suffixes, unknown columns."""
+    def norm_variants(vals):
+        raw=np.array([str(v).strip() for v in vals])
+        # strip a trailing guide/suffix and split composite labels on common separators
+        stripped=np.array([str(v).split("|")[0].split(",")[0].split("_")[0].strip() for v in vals])
+        return [raw, stripped]
+    cands=[obs.index.values]+[obs[c].values for c in obs.columns]
+    best=None
+    for vals in cands:
+        for nv in norm_variants(vals):
+            hits=len(set(nv)&ref)
+            if best is None or hits>best[0]: best=(hits,nv)
+    return best[1]
+
 # ---------------------------------------------------------------- targets
 def load_targets_perturbseq(names_idx, k=50):
     """Measured KO signatures -> PCA(k). Returns (gene_names_measured, Y) aligned to features,
@@ -59,14 +76,17 @@ def load_targets_perturbseq(names_idx, k=50):
     except Exception as e:
         print("Model 4: could not read",f.name,"(",repr(e)[:80],") -> skipping"); return None,None
     obs=A.obs
-    gcol=next((c for c in ["gene","gene_symbol","target_gene","perturbation","perturbed_gene"] if c in obs.columns),None)
-    perts=(obs[gcol] if gcol else obs.index).astype(str).values
+    ref=set(names_idx)
+    perts=pick_perturbation(obs, ref)   # auto-detect the field whose values are our gene symbols
     Xm=A.X; Xm=np.asarray(Xm.todense()) if sp.issparse(Xm) else np.asarray(Xm)
     bad=np.array([any(t in p.lower() for t in ["non-targeting","control","ntc","scramble","safe"]) or p in ("","nan") for p in perts])
     Xm=Xm[~bad]; perts=perts[~bad]
     uniq=defaultdict(list)
     for i,g in enumerate(perts): uniq[g].append(i)
     genes=[g for g in uniq if g in names_idx]              # only genes we also have features for
+    print(f"Model 4: {len(genes)} perturbed genes matched to our features (from {f.name})")
+    if len(genes)<30:
+        print("Model 4: too few matched perturbations (<30) -> skipping (check perturbation labels)"); return None,None
     M=np.vstack([Xm[uniq[g]].mean(0) for g in genes])
     M=np.nan_to_num(M); M=(M-M.mean(1,keepdims=True))/(M.std(1,keepdims=True)+1e-6)
     # PCA to k dims (SVD on centered signatures)
