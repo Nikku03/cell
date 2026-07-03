@@ -521,6 +521,15 @@ if m4f.exists():
         i=idx.get(g)
         if i is not None: model4[str(i)]=v
     print("Model 4: predicted perturbation response for",len(model4),"never-perturbed genes | held-out lift %.1fx"%(model4_meta.get("lift",0)))
+# ncRNA -> target regulatory layer (Phase 5): miRTarBase + LncTarD
+ncrna={}
+ncf=OUT/"ncrna_targets.json"
+if ncf.exists():
+    raw=json.load(open(ncf)); g2n=raw.get("gene2ncrna",{})
+    for g,ncs in g2n.items():
+        i=idx.get(g)
+        if i is not None: ncrna[str(i)]=ncs[:20]
+    print("ncRNA regulation: regulating ncRNAs for",len(ncrna),"genes")
 # === TARGET INTELLIGENCE: literature coverage + ranked target-priority / white-space tables ===
 lit={}
 lp2=OUT/"literature_counts.json"
@@ -553,7 +562,8 @@ DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in ge
     hiv_weakpoints=weak[:40],dark_count=len(dark),celltypes=celltypes,
     darkfn={str(k):v for k,v in darkfn.items()},
     model4=model4,model4_meta=model4_meta,
-    coexpr={str(k):v for k,v in coexpr.items()})
+    coexpr={str(k):v for k,v in coexpr.items()},
+    ncrna=ncrna)
 json.dump(DATA,open(OUT/"cell_complete.json","w"),separators=(",",":"))
 print("proteins:",len(G),"| reg edges:",len(reg),"| ppi edges:",len(ppi))
 print("processes:",dict(Counter(g["proc"] for g in G).most_common()))

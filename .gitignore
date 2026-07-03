@@ -134,3 +134,6 @@ outputs/orphan/convergence.json
 outputs/orphan/perturbseq_targets.json
 outputs/orphan/causal_reg.tsv
 outputs/orphan/causal_reg.json
+data/external_data/human/mirtarbase_hsa.xlsx
+data/external_data/human/lnctard.txt
+outputs/orphan/ncrna_targets.json
