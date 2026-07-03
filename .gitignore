@@ -109,3 +109,6 @@ data/external_data/human/cpdb_protein.csv
 data/external_data/human/bioplex.tsv
 data/external_data/human/opencell.csv
 data/external_data/human/perturbseq_gwps_bulk.h5ad
+
+# Perturb-seq derived functional neighbors (regenerated on Colab from the h5ad)
+outputs/orphan/perturbseq_neighbors.json

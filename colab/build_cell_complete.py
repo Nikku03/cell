@@ -4,7 +4,7 @@ signaling/degradation/...), pathway, all our layers, the regulatory + PPI networ
 perturbation propagation), HIV hijack map, and dark-gene flags. -> cell_complete.json
 (consumed by the interactive perturbable cell app)."""
 import csv, json, gzip, re
-from collections import defaultdict
+from collections import defaultdict, Counter
 from pathlib import Path
 OUT=Path("outputs/orphan"); H=Path("data/external_data/human")
 loc=json.load(open(H/"gene_compartment.json"))
@@ -400,6 +400,34 @@ for i,g in enumerate(G):
         elif df is not None and df<0.1 and 0<=g["loeuf"]<0.2:
             g["flag"]="germline-constrained yet cancer-dispensable"; n_flag+=1
 print("ensemble confidence set on",n_conf,"genes |",n_flag,"disagreement flags (novelty candidates)")
+# === DARK-GENE FUNCTION from MEASURED neighbors (Perturb-seq + co-essentiality + PPI) ===
+# Perturb-seq functional neighbors (measured perturbation-response similarity)
+psn=defaultdict(list)
+psf=OUT/"perturbseq_neighbors.json"
+if psf.exists():
+    raw=json.load(open(psf))
+    for g,parts in raw.items():
+        i=idx.get(g)
+        if i is not None: psn[i]=[idx[p] for p,r in parts if p in idx][:8]
+    print("Perturb-seq: measured functional neighbors for",len(psn),"genes")
+# PPI adjacency for neighbor lookup
+ppiadj=defaultdict(list)
+for a,b in ppi: ppiadj[a].append(b); ppiadj[b].append(a)
+darkfn={}
+for i,g in enumerate(G):
+    if not g["dark"]: continue
+    # gather MEASURED functional neighbors: Perturb-seq (best) + co-essential + top PPI
+    neigh=list(psn.get(i,[]))+[j for j,r in codep.get(i,[])]+ppiadj.get(i,[])[:6]
+    if not neigh: continue
+    votes=Counter(); ev=[]
+    for j in neigh:
+        p=G[j]["path"] or G[j]["proc"]
+        if p and p!="other": votes[p]+=1; ev.append(G[j]["name"])
+    if votes:
+        pred,cnt=votes.most_common(1)[0]
+        src="Perturb-seq+co-essentiality" if i in psn else ("co-essentiality" if i in codep else "interaction")
+        darkfn[i]=dict(pred=pred,ev=ev[:5],n=len(neigh),conf="high" if cnt>=3 else "low",src=src)
+print("dark genes with a predicted function (from measured neighbors):",len(darkfn),"of",len(dark))
 # === TARGET INTELLIGENCE: literature coverage + ranked target-priority / white-space tables ===
 lit={}
 lp2=OUT/"literature_counts.json"
@@ -429,9 +457,9 @@ DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in ge
     ctnames=ctnames,abund=abund,emask=emask,
     procs=sorted(set(g["proc"] for g in G)),comps=sorted(set(g["comp"] for g in G)),
     hiv={k:v for k,v in hiv.items()},hiv_targets={k:len(v) for k,v in hiv.items()},
-    hiv_weakpoints=weak[:40],dark_count=len(dark),celltypes=celltypes)
+    hiv_weakpoints=weak[:40],dark_count=len(dark),celltypes=celltypes,
+    darkfn={str(k):v for k,v in darkfn.items()})
 json.dump(DATA,open(OUT/"cell_complete.json","w"),separators=(",",":"))
-from collections import Counter
 print("proteins:",len(G),"| reg edges:",len(reg),"| ppi edges:",len(ppi))
 print("processes:",dict(Counter(g["proc"] for g in G).most_common()))
 print("HIV proteins mapped:",len(hiv),"-> host targets:",{k:len(v) for k,v in sorted(hiv.items(),key=lambda x:-len(x[1]))[:8]})

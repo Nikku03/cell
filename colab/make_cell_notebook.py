@@ -71,6 +71,16 @@ code("# [2b] fetch the raw data build_cell_complete.py needs (the big files are 
    "    urllib.request.urlretrieve('https://ndownloader.figshare.com/files/43346616', dmp)",
    "import subprocess as _sp; _sp.run([sys.executable,'colab/compute_depmap_essentiality.py'],check=True)  # -> depmap_essentiality.csv",
    "_sp.run([sys.executable,'colab/compute_depmap_codep.py'],check=True)  # -> depmap_codep.json + depmap_sl.json (co-essentiality + SL)",
+   "# Perturb-seq (Replogle 2022 genome-wide K562 pseudobulk, ~375 MB) -> MEASURED functional neighbors for dark genes.",
+   "# One transcriptional signature per perturbed gene; correlating signatures gives function by guilt-by-association.",
+   "WITH_PERTURBSEQ=os.environ.get('WITH_PERTURBSEQ','1')=='1'   # set 0 to skip the 375 MB download",
+   "if WITH_PERTURBSEQ:",
+   "    psh=f'{H}/perturbseq_gwps_bulk.h5ad'",
+   "    if not (os.path.exists(psh) and os.path.getsize(psh)>1e7):",
+   "        print('downloading Perturb-seq genome-wide pseudobulk (~375 MB) ...')",
+   "        urllib.request.urlretrieve('https://plus.figshare.com/ndownloader/files/35773217', psh)",
+   "    _sp.run([sys.executable,'colab/compute_perturbseq.py'],check=True)  # -> perturbseq_neighbors.json",
+   "else: print('WITH_PERTURBSEQ=0 -> dark-gene function falls back to co-essentiality + PPI neighbors only')",
    "lp=f'{H}/hiccups_loops.txt.gz'   # 3D chromatin loops (GM12878 HiCCUPS)",
    "if not (os.path.exists(lp) and os.path.getsize(lp)>1000):",
    "    urllib.request.urlretrieve('https://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_GM12878_primary%2Breplicate_HiCCUPS_looplist.txt.gz', lp)",
@@ -315,7 +325,8 @@ md("## What you can now do — with all three models live\n"
    "- **Explore** → click any protein: full trafficking journey + networks; essentiality tagged *measured* vs *our model* (Model 1).\n"
    "- **cell type** dropdown → data-driven master-TF networks from the atlas (Model 2).\n"
    "- **Remove/Mutate** → cascade over the **measured** reg+PPI graph (validated). Geneformer embedding-neighbors were checked and are ~random, so they are NOT fed into the cascade; run RUN_ISP=True for real in-silico perturbation.\n"
-   "- **Metabolism / Dark genes / Infect: HIV** → reactions, the function frontier, and HIV's weak points."),
+   "- **Dark genes** → the function frontier now carries a **predicted function** per gene: guilt-by-association from *measured* functional neighbors (Perturb-seq perturbation-response similarity + co-essentiality + physical interactions), each tagged *predicted, not known*.\n"
+   "- **Metabolism / Infect: HIV** → reactions, and HIV's weak points."),
 ]
 nb={"cells":cells,"metadata":{"kernelspec":{"display_name":"Python 3","name":"python3"},"language_info":{"name":"python"}},"nbformat":4,"nbformat_minor":5}
 out=Path("colab/build_complete_cell.ipynb"); out.write_text(json.dumps(nb,indent=1))
