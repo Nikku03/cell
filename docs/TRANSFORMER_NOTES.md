@@ -34,4 +34,22 @@ A hybrid **graph-aware expression transformer**:
   test the model's link-prediction generalization.
 - Feeds a **link-prediction auxiliary head** (does the model rediscover convergent links from expression?).
 
-_(P3+ entries appended as phases clear.)_
+### P3 — Causal regulome → the DIRECTED, causal backbone (Tower A's highest-value edges)
+- `causal_reg.tsv` (signed TF→target from binding × response) → the **directed causal edges** Tower A
+  needs; pure-expression FMs capture co-expression, not this. These are the edges most likely to make
+  the perturbation embedding `p` extrapolate correctly.
+- `perturbseq_targets.json` (per-KO responders) → direct **Stage-3 supervision** (measured Δ per gene).
+
+### P4 — GTEx + DoRothEA/TRRUST union → more regulatory edges + a genetic-regulation edge type
+- DoRothEA/TRRUST/CollecTRI union → denser TF→target edges (Tower A regulatory backbone).
+- GTEx trans-eQTL edges → a distinct **genetic-regulation edge type** (orthogonal to ChIP/curated).
+
+### P5 — ncRNA → a new node/edge type (miRNA & lncRNA regulators)
+- `ncrna_targets.json` → ncRNA→gene edges. In the transformer, ncRNAs become **new node types** with
+  their own (sequence-derived) embeddings, extending the graph beyond the 16,492 proteins.
+
+## Consolidated: the transformer's typed edge set is now assembled across P1-P5
+co-expression (P1) · convergence high-confidence (P2) · causal TF→target signed (P3) · curated
+regulatory union + GTEx genetic (P4) · ncRNA→target (P5) · plus the pre-existing PPI / complex /
+co-essentiality / pathway / metabolic edges. Next concrete step (post-phases): a `build_kg_edges.py`
+that emits one heterogeneous typed edge list — the direct input to Tower A. See `TRANSFORMER_PLAN.md`.

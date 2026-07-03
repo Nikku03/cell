@@ -137,3 +137,5 @@ outputs/orphan/causal_reg.json
 data/external_data/human/mirtarbase_hsa.xlsx
 data/external_data/human/lnctard.txt
 outputs/orphan/ncrna_targets.json
+outputs/orphan/cell_instances.json
+outputs/orphan/celltype_expression.csv

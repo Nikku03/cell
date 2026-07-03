@@ -10,12 +10,15 @@ formats/synthetic data; "pending Colab" = needs the big data + GPU run.
 | **P1 — ARCHS4 co-expression** | ✅ code-complete, sandbox-validated | `compute_coexpr.py`; recovers planted modules 29/29; chunked FUSE-friendly reader; wired into build + notebook (`WITH_COEXPR`). Real 59 GB run pending Colab. |
 | **P2 — Convergence engine** | ✅ **built + run on real data** | `compute_convergence.py`; 4,031 convergent / 1,204 novel / 2,118 known-control; live PubMed novelty ranking; top novel links (HIRA-TLK2, DDX24-RBM28, PKP2-SCN5A) verified sensible. |
 | P1+P2 combined | ✅ verified | co-expression correctly becomes a 3rd lens (n_lens=3). |
-| **P3 — Causal regulome (ReMap × Perturb-seq)** | ⏳ next | |
-| **P4 — context / GTEx / NicheNet / DoRothEA∪TRRUST** | ⏳ | |
-| **P5 — ncRNA (needs target DB)** | ⏳ | |
-| Self-progression analysis | ⏳ | |
-| Tissue model (check → plan → phases) | ⏳ | |
-| Transformer (running notes + final build) | 🟡 notes started (`TRANSFORMER_NOTES.md`) | |
+| **P3 — Causal regulome (ReMap × Perturb-seq)** | ✅ code-complete, sandbox-validated | `compute_causal_reg.py` + `perturbseq_targets.json`; signs/intersection verified; upgrades reg edges. |
+| **P4 — GTEx + DoRothEA∪TRRUST** | ✅ built (union run on real data) | GTEx URL verified live; reg union 45,499 → **278,387** edges. NicheNet already wired (tissue). |
+| **P5 — ncRNA (miRTarBase + LncTarD)** | ✅ code-complete, sandbox-validated | `compute_ncrna.py`; weak-evidence drop + reverse map verified. miRTarBase URL release-specific (env). |
+| Self-progression analysis | ✅ | `SELF_PROGRESSION.md` |
+| Tissue model (check → plan → phases) | 🟡 checked + planned | `TISSUE_PLAN.md` |
+| Transformer (running notes + final architecture) | ✅ plan + notes | `TRANSFORMER_PLAN.md`, `TRANSFORMER_NOTES.md`, `HOMEWORK_BRIEF.md` |
+
+**Homework brief (research workflow):** ARCHS4 layout confirmed, co-expression validation via EGAD
+(target GO-AUROC 0.70-0.75), GTEx URL, ncRNA DBs, full transformer review — `HOMEWORK_BRIEF.md`.
 
 ## Runbook (what the user runs on Colab)
 1. `WITH_COEXPR=1` in `[2b]` reads ARCHS4 from `virtual_cell_data/expression_geo/` in place (no 59 GB copy) → `coexpr_neighbors.json`.
