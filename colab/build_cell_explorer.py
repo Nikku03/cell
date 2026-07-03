@@ -179,17 +179,23 @@ function drawCell(){
    for(let i=0;i<N;i++){if(sel>=0&&i!==sel&&!selNeighbors.has(i))continue;const X=POS[i*2],Y=POS[i*2+1];
     const[sx,sy]=[X,Y];if(X<toWorld(0,0)[0]-50||X>toWorld(W,0)[0]+50)continue;ctx.fillText(G[i].name,X,Y-rbase-3/z*3);}ctx.textAlign='left';}
  }
- // ---- pathway / interaction edges (selective, animated) ----
+ // ---- interaction edges (what X interacts with), mechanism-colored, arrows + flow ----
  if(edges.length){anim+=0.03;
-  for(const e of edges){const[x1,y1]=[POS[e.a*2],POS[e.a*2+1]],[x2,y2]=[POS[e.b*2],POS[e.b*2+1]];
-   const col=e.kind=='sig'?'#e0d040':e.kind=='ppi'?'#00c0b0':e.kind=='codep'?'#c792ea':e.sign>0?'#4dd97a':e.sign<0?'#e0555f':'#4a9eff';
-   ctx.strokeStyle=col;ctx.globalAlpha=.55;ctx.lineWidth=1.6/z;ctx.setLineDash([6/z,6/z]);ctx.lineDashOffset=-anim*40/z;
-   ctx.beginPath();ctx.moveTo(x1,y1);
-   const mx=(x1+x2)/2+(y2-y1)*0.12,my=(y1+y2)/2-(x2-x1)*0.12;ctx.quadraticCurveTo(mx,my,x2,y2);ctx.stroke();
-   // flowing pulse
-   const t=(anim*0.3)%1,px=(1-t)*(1-t)*x1+2*(1-t)*t*mx+t*t*x2,py=(1-t)*(1-t)*y1+2*(1-t)*t*my+t*t*y2;
-   ctx.setLineDash([]);ctx.globalAlpha=.9;ctx.beginPath();ctx.arc(px,py,2.4/z,0,7);ctx.fillStyle=col;ctx.fill();}
-  ctx.setLineDash([]);ctx.globalAlpha=1;}
+  for(const e of edges){const x1=POS[e.a*2],y1=POS[e.a*2+1],x2=POS[e.b*2],y2=POS[e.b*2+1];const col=ecol(e);
+   const mx=(x1+x2)/2+(y2-y1)*0.13,my=(y1+y2)/2-(x2-x1)*0.13;
+   ctx.strokeStyle=col;ctx.globalAlpha=.8;ctx.lineWidth=(e.kind=='ppi'?1.4:2)/z;
+   ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo(mx,my,x2,y2);ctx.stroke();
+   // arrowhead (directed: reg/sig get a head; ppi/codep are undirected)
+   if(e.kind=='reg'||e.kind=='sig'){const t2=0.9,ax=(1-t2)*(1-t2)*x1+2*(1-t2)*t2*mx+t2*t2*x2,ay=(1-t2)*(1-t2)*y1+2*(1-t2)*t2*my+t2*t2*y2;const ang=Math.atan2(y2-ay,x2-ax);
+    ctx.fillStyle=col;ctx.globalAlpha=.9;ctx.beginPath();ctx.moveTo(x2-Math.cos(ang)*5/z,y2-Math.sin(ang)*5/z);ctx.lineTo(x2-Math.cos(ang-0.5)*9/z,y2-Math.sin(ang-0.5)*9/z);ctx.lineTo(x2-Math.cos(ang+0.5)*9/z,y2-Math.sin(ang+0.5)*9/z);ctx.closePath();ctx.fill();
+    if(e.kind=='reg'&&e.sign){ctx.fillStyle=col;ctx.font=(7/z)+'px Inter';ctx.textAlign='center';ctx.fillText(e.sign>0?'▲':'▼',mx,my);}}
+   // flow pulse along the edge
+   const t=(anim*0.35+ (e.b%7)/7)%1,px=(1-t)*(1-t)*x1+2*(1-t)*t*mx+t*t*x2,py=(1-t)*(1-t)*y1+2*(1-t)*t*my+t*t*y2;
+   ctx.globalAlpha=.95;ctx.beginPath();ctx.arc(px,py,2/z,0,7);ctx.fillStyle=col;ctx.fill();}
+  ctx.globalAlpha=1;ctx.textAlign='left';
+  // interaction legend near the selected node
+  if(sel>=0){const X=POS[sel*2],Y=POS[sel*2+1];ctx.font=(8/z)+'px Inter';ctx.textAlign='left';let ly=Y-26/z;
+   [['⬜ binds (complex)',KCOL.ppi],['▲ activates',KCOL.reg_up],['▼ represses',KCOL.reg_dn],['→ signals',KCOL.sig],['co-essential',KCOL.codep]].forEach(([t,c])=>{ctx.fillStyle=c;ctx.fillText(t,X+14/z,ly);ly-=11/z;});ctx.textAlign='left';}}
  // selection halo
  if(sel>=0){const X=POS[sel*2],Y=POS[sel*2+1];ctx.beginPath();ctx.arc(X,Y,10/z,0,7);ctx.strokeStyle='#7fd1ff';ctx.lineWidth=2/z;ctx.globalAlpha=.9;ctx.stroke();
   ctx.beginPath();ctx.arc(X,Y,(10+4*Math.sin(anim*4))/z,0,7);ctx.globalAlpha=.3;ctx.stroke();ctx.globalAlpha=1;}
@@ -223,14 +229,17 @@ function onClick(e){const i=pick(e.clientX*DPR,e.clientY*DPR);if(i<0){return;}
  if(mutMode){mutate(i);}else select(i);}
 // ---------- selection ----------
 function flyTo(i,zoom){const X=POS[i*2],Y=POS[i*2+1];tgt.s=zoom||Math.max(view.s,2.6);tgt.x=W/2-X*tgt.s;tgt.y=H/2-Y*tgt.s;}
-function neighbors(i){const s=new Set([i]);(OUT[i]||[]).slice(0,6).forEach(j=>s.add(j));(IN[i]||[]).slice(0,4).forEach(j=>s.add(j));(PP[i]||[]).slice(0,6).forEach(j=>s.add(j));return s;}
-function buildEdges(i){const e=[];const add=(list,kind,dir)=>{(list||[]).slice(0,8-e.length).forEach(j=>{if(j!==i)e.push({a:dir?i:j,b:dir?j:i,kind,sign:SGN[(dir?i:j)+','+(dir?j:i)]||0});});};
- if(layer=='auto'||layer=='reg'){add(OUT[i],'reg',1);}
- if(layer=='auto'||layer=='sig'){add(SIGO[i],'sig',1);}
- if(layer=='ppi'){add(PP[i],'ppi',1);}
- if(layer=='codep'){(CODEP[i]||[]).slice(0,8).forEach(([j])=>e.push({a:i,b:j,kind:'codep'}));}
- if(layer=='auto'&&e.length<6){add(PP[i],'ppi',1);}
- return e.slice(0,10);}
+function neighbors(i){const s=new Set([i]);buildEdges(i).forEach(e=>s.add(e.b));return s;}
+// gather X's DIRECT interactions, by mechanism (this is "what X interacts with", from measured data)
+function buildEdges(i){const e=[],seen=new Set();
+ const add=(j,kind,sign,dir)=>{const key=j+kind;if(j===i||seen.has(key))return;seen.add(key);e.push({a:dir?i:j,b:dir?j:i,kind,sign:sign||0});};
+ (OUT[i]||[]).slice(0,8).forEach(j=>add(j,'reg',SGN[i+','+j],1));      // X regulates -> (signed)
+ (SIGO[i]||[]).slice(0,5).forEach(j=>add(j,'sig',0,1));                // X signals to ->
+ (PP[i]||[]).slice(0,8).forEach(j=>add(j,'ppi',0,1));                  // X binds (physical)
+ (CODEP[i]||[]).slice(0,5).forEach(([j])=>add(j,'codep',0,1));         // X co-essential with
+ return e.slice(0,22);}
+const KCOL={reg_up:'#4dd97a',reg_dn:'#e0555f',sig:'#e0d040',ppi:'#00c0b0',codep:'#c792ea'};
+function ecol(e){return e.kind=='reg'?(e.sign>0?KCOL.reg_up:e.sign<0?KCOL.reg_dn:'#6aa0d0'):KCOL[e.kind]||'#6aa0d0';}
 function select(i){sel=i;affected=null;mutSeed=-1;selNeighbors=neighbors(i);edges=buildEdges(i);flyTo(i);openPanel(i);}
 function relayout(){edges=sel>=0?buildEdges(sel):[];}
 // ---------- mutation propagation ----------
