@@ -103,6 +103,22 @@ for r in csv.DictReader(open(H/"collectri.tsv"),delimiter="\t"):
     if a is not None and b is not None and a!=b:
         sg=1 if r.get("is_stimulation")=="True" else (-1 if r.get("is_inhibition")=="True" else 0)
         reg.append([a,b,sg])
+nCollec=len(reg)
+# ReMap ChIP-seq TF->target (measured binding) — unsigned candidate regulation
+if (OUT/"remap_tf_targets.tsv").exists():
+    regset={(e[0],e[1]) for e in reg}
+    for l in open(OUT/"remap_tf_targets.tsv"):
+        p=l.rstrip("\n").split("\t"); a=idx.get(p[0]); b=idx.get(p[1]) if len(p)>1 else None
+        if a is not None and b is not None and a!=b and (a,b) not in regset:
+            regset.add((a,b)); reg.append([a,b,0])
+# GTEx trans-eQTL source->eGene — unsigned candidate cross-gene regulation
+if (OUT/"gtex_trans_edges.tsv").exists():
+    regset={(e[0],e[1]) for e in reg}
+    for l in open(OUT/"gtex_trans_edges.tsv"):
+        p=l.rstrip("\n").split("\t"); a=idx.get(p[0]); b=idx.get(p[1]) if len(p)>1 else None
+        if a is not None and b is not None and a!=b and (a,b) not in regset:
+            regset.add((a,b)); reg.append([a,b,0])
+print(f"regulatory edges: CollecTRI {nCollec} + ReMap/GTEx {len(reg)-nCollec} = {len(reg)}")
 ppi=[]; ppiset=set()
 def add_ppi(ga,gb):
     a=idx.get(ga); b=idx.get(gb)
@@ -422,6 +438,19 @@ if psf.exists():
         i=idx.get(g)
         if i is not None: psn[i]=[idx[p] for p,r in parts if p in idx][:8]
     print("Perturb-seq: measured functional neighbors for",len(psn),"genes")
+# LINCS L1000 perturbation neighbors — merged into the same measured-neighbor layer
+lcf=OUT/"lincs_neighbors.json"
+if lcf.exists():
+    raw=json.load(open(lcf)); nadd=0
+    for g,parts in raw.items():
+        i=idx.get(g)
+        if i is None: continue
+        have=set(psn.get(i,[]))
+        for p,r in parts:
+            j=idx.get(p)
+            if j is not None and j not in have: psn[i].append(j); have.add(j)
+        psn[i]=psn[i][:12]; nadd+=1
+    print("LINCS L1000: merged perturbation neighbors, genes with neighbors now",len(psn))
 # PPI adjacency for neighbor lookup
 ppiadj=defaultdict(list)
 for a,b in ppi: ppiadj[a].append(b); ppiadj[b].append(a)

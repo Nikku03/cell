@@ -118,3 +118,13 @@ outputs/orphan/model4_predictions.json
 data/external_data/human/huri.tsv
 data/external_data/human/perturbseq_rpe1_bulk.h5ad
 data/external_data/human/perturbseq_norman.h5ad
+data/external_data/human/huri.tsv
+data/external_data/human/remap.bed.gz
+data/external_data/human/lincs_level5.gctx
+data/external_data/human/lincs_siginfo.txt.gz
+data/external_data/human/gtex_trans_pairs.txt.gz
+data/external_data/human/nichenet_ligand_target_matrix.rds
+outputs/orphan/lincs_neighbors.json
+outputs/orphan/remap_tf_targets.tsv
+outputs/orphan/gtex_trans_edges.tsv
+outputs/orphan/nichenet_ligand_targets.json

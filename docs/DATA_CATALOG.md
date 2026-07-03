@@ -90,13 +90,19 @@ gene_info, genes.tsv, string_aliases — Entrez/Ensembl/symbol cross-mapping so 
 | **HuRI** (interactome-atlas) | PPIs | systematic Y2H binary edges, ENSG→symbol via gene_info; added to the PPI layer alongside STRING/BioPlex/OpenCell |
 | **Replogle RPE1 + Norman 2019 Perturb-seq** | perturbation (2nd/3rd cell type + combinatorial) | `compute_perturbseq.py` now merges every `perturbseq_*.h5ad`; Model 4 auto-uses the largest. Drop the h5ads in via `PERTURBSEQ_RPE1_URL` / `PERTURBSEQ_NORMAN_URL` |
 
-**Staged (need a dedicated processor — honest follow-ups, not silently pretended):**
-| add | fills gap | why not auto-wired yet |
+**Wired in — first-pass processors (verified on synthetic real-format input; run on Colab, `WITH_EXTRA=1`):**
+| add | fills gap | processor → output → consumer | status |
+|---|---|---|---|
+| **LINCS L1000 / CMap** | perturbation | `compute_lincs.py` (GCTX+siginfo via h5py) → `lincs_neighbors.json` → merged into dark-gene/Model-4 neighbors | needs large GCTX; set `LINCS_GCTX_URL`+`LINCS_SIGINFO_URL` |
+| **ReMap TF ChIP-seq** | regulation | `compute_remap.py` (peaks→nearest-TSS) → `remap_tf_targets.tsv` → reg layer | ✓ verified (MYC→TP53, E2F1→MDM2) |
+| **GTEx trans-eQTLs** | regulation | `compute_gtex_eqtl.py` (variant→nearest-TSS→eGene) → `gtex_trans_edges.tsv` → reg layer | ✓ verified (MDM2→TP53); set `GTEX_TRANS_URL` |
+| **NicheNet** | cell-cell comm (tissue) | `compute_nichenet.py` (pyreadr .rds) → `nichenet_ligand_targets.json` → tissue model | Zenodo default URL |
+
+*First-pass caveat:* ChIP binding and eQTL association are **candidate**, not proven-causal, regulation (edges added unsigned). Validate counts on the real files.
+
+**Still not wired:**
+| skip | gap | why |
 |---|---|---|
-| **LINCS L1000 / CMap** | perturbation (biggest win) | GCTX format + ~GB Level-5 signatures; needs a cmapPy reader and a mapping into the Model 4 target space |
-| **ReMap TF ChIP-seq** | regulation | huge peak set; needs peak→target-gene derivation before it becomes reg edges |
-| **GTEx eQTLs** | regulation | per-tissue significant-eQTL parse + variant→gene mapping |
-| **NicheNet** | cell-cell comm (tissue) | ligand→target matrix ships as R `.rds`; needs conversion |
 | **PhosphoSitePlus** | PTMs | **license blocker** — bulk download requires a signed license; free substitute = iPTMnet / keep UniProt |
 
 **Won't close from public data:** enzyme kinetics / rate constants (BRENDA/SABIO-RK sparse for human) — the dynamics frontier needs new experiments, not re-integration.

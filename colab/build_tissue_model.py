@@ -161,8 +161,15 @@ ENDOCRINE=[
  ["ANGPT2","Liver","Heart","TEK","vascular remodeling"],
  ["NPPB","Heart","Kidney","NPR1","natriuretic peptide: fluid balance"],
 ]
+# NicheNet ligand -> target regulatory potential: what a ligand ultimately moves in the receiver
+nichenet={}
+nnf=OUT/"nichenet_ligand_targets.json"
+if nnf.exists():
+    raw=json.load(open(nnf)); ligs=set(l for l,rec,sg in LR)
+    nichenet={l:t[:20] for l,t in raw.items() if l in ligs}
+    print("NicheNet: ligand->target wiring for",len(nichenet),"communicating ligands")
 DATA=dict(tissues=model,n_lr=len(LR),downstream=downstream,drugs={k:v for k,v in drugs.items()},
-          endocrine=ENDOCRINE)
+          endocrine=ENDOCRINE,nichenet=nichenet)
 print("endocrine cross-tissue axes:",len(ENDOCRINE))
 json.dump(DATA,open(OUT/"tissue_model.json","w"),separators=(",",":"))
 print("wrote tissue_model.json (%d KB)"%(len(json.dumps(DATA))//1024))
