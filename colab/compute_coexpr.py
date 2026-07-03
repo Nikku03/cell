@@ -13,9 +13,10 @@ partners per gene. Skips gracefully if the h5 is absent (the 59 GB file lives on
 The h5 internal layout varies by ARCHS4 version, so the dataset/gene/orientation are auto-detected.
 """
 import json, numpy as np
+from collections import defaultdict
 from pathlib import Path
 H=Path("data/external_data/human"); OUT=Path("outputs/orphan")
-N_SAMPLES=int(__import__("os").environ.get("COEXPR_SAMPLES","80000"))  # subsample size
+N_SAMPLES=int(__import__("os").environ.get("COEXPR_SAMPLES","20000"))  # ~10k plateau (Lachmann 2018); 20k for margin
 TOPK=50; MIN_R=0.30; BLOCK=2000
 
 def _find_h5():
@@ -60,16 +61,31 @@ def load_expression(f, our_genes):
     n_samples=cols if genes_axis==0 else rows
     gi=np.arange(nG) if not our_genes else np.where(np.array([g in our_genes for g in genes]))[0]
     kept_genes=genes[gi]
-    # evenly-spaced contiguous chunks whose total ~= N_SAMPLES
-    csize=1000
-    n_chunks=max(1, min(n_samples//csize, N_SAMPLES//csize))
-    starts=np.linspace(0, max(0,n_samples-csize), n_chunks).astype(int)
-    cols_out=[]
+    # sample-quality metadata (research brief): drop single-cell, cap samples per GEO series (batch)
+    def _meta(*paths):
+        p=_pick(h5,*paths); return h5[p][:] if p else None
+    scp=_meta("meta/samples/singlecellprobability","meta/samples/single_cell_probability")
+    ser=_meta("meta/samples/series_id","meta/samples/series")
+    series=None if ser is None else np.array([s.decode() if isinstance(s,bytes) else str(s) for s in ser])
+    PER_SERIES=int(__import__("os").environ.get("COEXPR_PER_SERIES","20"))
+    # walk evenly-spaced contiguous chunks; within each, keep non-single-cell + series-capped columns
+    csize=2000; seen=defaultdict(int); cols_out=[]; kept=0
+    starts=np.linspace(0, max(0,n_samples-csize), max(1,n_samples//csize)).astype(int)
     for st in starts:
-        en=min(st+csize, n_samples)
-        block = dset[:, st:en] if genes_axis==0 else dset[st:en, :].T   # (allGenes x chunk)
-        cols_out.append(np.asarray(block[gi], dtype=np.float32))
-    X=np.concatenate(cols_out, axis=1)
+        if kept>=N_SAMPLES: break
+        en=min(st+csize, n_samples); rng=np.arange(st,en)
+        mask=np.ones(len(rng),bool)
+        if scp is not None: mask &= (np.asarray(scp[st:en],dtype=float)<0.5)
+        if series is not None:
+            keepcol=[]
+            for k,s in zip(np.where(mask)[0], series[st:en][mask]):
+                if seen[s]<PER_SERIES: seen[s]+=1; keepcol.append(k)
+            m2=np.zeros(len(rng),bool); m2[keepcol]=True; mask=m2
+        if not mask.any(): continue
+        block = dset[:, st:en] if genes_axis==0 else dset[st:en, :].T
+        cols_out.append(np.asarray(block[np.ix_(gi, np.where(mask)[0])], dtype=np.float32))
+        kept+=int(mask.sum())
+    X=np.concatenate(cols_out, axis=1) if cols_out else np.zeros((len(gi),0),np.float32)
     h5.close()
     return kept_genes, X
 
