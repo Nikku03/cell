@@ -48,6 +48,25 @@ A hybrid **graph-aware expression transformer**:
 - `ncrna_targets.json` → ncRNA→gene edges. In the transformer, ncRNAs become **new node types** with
   their own (sequence-derived) embeddings, extending the graph beyond the 16,492 proteins.
 
+## Tower A — BUILT + TESTED (sandbox prototype)
+`build_kg_edges.py` assembles the heterogeneous typed edge list: **16,492 nodes, 533k typed edges**
+(reg 278k, ppi 158k, codep 77k, complex 19k, convergence) + 35-dim node features.
+`train_tower_a.py` (SVD graph-embedding + feature-fusion link-prediction, leakage-free hold-out) tests
+the core claim on real data:
+| model | held-out link AUC |
+|---|---|
+| KG embedding (structure) | 0.944 |
+| KG embedding + node features | 0.946 |
+| Adamic-Adar baseline (honest) | 0.888 |
+| **HYBRID (embedding + features + structure)** | **0.954** |
+
+**Verdict: the multi-omic KG is highly predictive; the learned model beats the AA heuristic; the hybrid
+modification beats both.** This validates Tower A before spending GPU. Production version:
+`train_tower_a_gnn.py` (torch GraphSAGE, Colab) → `tower_a_embeddings.npz` (the g_i that feed Tower C).
+Reasoning-derived edges (5,422 confirmed transitive links) and convergence edges are available to add as
+extra typed edges — expected to lift AUC further. **Next upgrade:** typed R-GCN (per-edge-type weights)
++ ESM2 node init (unseen-gene generalization).
+
 ## Consolidated: the transformer's typed edge set is now assembled across P1-P5
 co-expression (P1) · convergence high-confidence (P2) · causal TF→target signed (P3) · curated
 regulatory union + GTEx genetic (P4) · ncRNA→target (P5) · plus the pre-existing PPI / complex /

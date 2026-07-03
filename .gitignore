@@ -140,3 +140,6 @@ outputs/orphan/ncrna_targets.json
 outputs/orphan/cell_instances.json
 outputs/orphan/celltype_expression.csv
 outputs/orphan/reasoning.json
+outputs/orphan/kg_edges.tsv
+outputs/orphan/kg_nodes.npz
+outputs/orphan/tower_a_embeddings.npz
