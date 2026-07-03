@@ -62,9 +62,13 @@ def neighbors_from(f):
     inref=sum(1 for g in genes if g in REF) if REF else len(genes)
     if len(genes)<3:
         print(f"  {f.name}: only {len(genes)} perturbations parsed -> skipping this file"); return {}
-    M=np.vstack([X[uniq[g]].mean(0) for g in genes])
-    M=np.nan_to_num(M); M=(M-M.mean(1,keepdims=True))/(M.std(1,keepdims=True)+1e-6)
-    C=(M@M.T)/M.shape[1]; np.fill_diagonal(C,-9)
+    M=np.vstack([X[uniq[g]].mean(0) for g in genes]).astype(np.float64)
+    M=np.nan_to_num(M, nan=0.0, posinf=0.0, neginf=0.0)   # zero out inf/nan (NOT float-max)
+    sd=M.std(1,keepdims=True); sd[sd==0]=1.0
+    M=np.clip((M-M.mean(1,keepdims=True))/sd, -10, 10)     # z-score + cap outliers
+    # cosine similarity on L2-normalised signatures (bounded [-1,1], robust)
+    Mn=M/(np.linalg.norm(M,axis=1,keepdims=True)+1e-9)
+    C=Mn@Mn.T; np.fill_diagonal(C,-9)
     out={}
     for i,g in enumerate(genes):
         order=np.argsort(-C[i])[:10]

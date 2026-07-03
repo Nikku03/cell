@@ -113,12 +113,16 @@ def load_targets_perturbseq(names_idx, k=50):
     print(f"Model 4: {len(genes)} perturbed genes matched to our features (from {f.name})")
     if len(genes)<30:
         print("Model 4: too few matched perturbations (<30) -> skipping (check perturbation labels)"); return None,None
-    M=np.vstack([Xm[uniq[g]].mean(0) for g in genes])
-    M=np.nan_to_num(M); M=(M-M.mean(1,keepdims=True))/(M.std(1,keepdims=True)+1e-6)
-    # PCA to k dims (SVD on centered signatures)
+    M=np.vstack([Xm[uniq[g]].mean(0) for g in genes]).astype(np.float64)
+    M=np.nan_to_num(M, nan=0.0, posinf=0.0, neginf=0.0)   # zero out inf/nan (NOT float-max)
+    sd=M.std(1,keepdims=True); sd[sd==0]=1.0
+    M=(M-M.mean(1,keepdims=True))/sd                       # per-signature z-score
+    M=np.clip(np.nan_to_num(M, nan=0.0, posinf=0.0, neginf=0.0), -10, 10)  # cap outliers
+    # PCA to k dims via robust truncated SVD (randomized — converges where full SVD fails)
+    from sklearn.utils.extmath import randomized_svd
     Mc=M-M.mean(0,keepdims=True)
-    U,S,Vt=np.linalg.svd(Mc,full_matrices=False)
-    Y=U[:,:k]*S[:k]
+    U,S,Vt=randomized_svd(Mc, n_components=min(k, min(Mc.shape)-1), random_state=0)
+    Y=U*S
     return genes, Y
 
 # ---------------------------------------------------------------- train / validate
