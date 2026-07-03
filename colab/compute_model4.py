@@ -46,21 +46,38 @@ def load_features():
               dark=[g["dark"] for g in G], names=[g["name"] for g in G])
     return meta["names"], X, meta
 
+def load_ensg2sym():
+    """Ensembl-gene-id -> HGNC symbol, from gene_info dbXrefs (for Perturb-seq labels stored as ENSG)."""
+    import gzip
+    m={}; gi=H/"gene_info.gz"
+    if gi.exists():
+        with gzip.open(gi,"rt") as f:
+            next(f)
+            for l in f:
+                p=l.split("\t")
+                if len(p)>5 and p[0]=="9606" and "Ensembl:ENSG" in p[5]:
+                    for x in p[5].split("|"):
+                        if x.startswith("Ensembl:ENSG"): m[x.split(":")[1]]=p[2]
+    return m
+
 # ---------------------------------------------------------------- perturbation-identity detection
-def pick_perturbation(obs, ref):
+def pick_perturbation(obs, ref, ensg2sym=None):
     """Return the per-row perturbed-gene label, auto-picking whichever obs field (or the index)
     best overlaps a reference gene-symbol set — robust to Ensembl IDs, suffixes, unknown columns."""
+    ensg2sym=ensg2sym or {}
+    def tok(v):  # first token of a composite label, version-stripped
+        return str(v).split("|")[0].split(",")[0].split("_")[0].strip().split(".")[0]
     def norm_variants(vals):
         raw=np.array([str(v).strip() for v in vals])
-        # strip a trailing guide/suffix and split composite labels on common separators
-        stripped=np.array([str(v).split("|")[0].split(",")[0].split("_")[0].strip() for v in vals])
-        return [raw, stripped]
-    cands=[obs.index.values]+[obs[c].values for c in obs.columns]
+        stripped=np.array([tok(v) for v in vals])
+        mapped=np.array([ensg2sym.get(tok(v), tok(v)) for v in vals])   # ENSG -> symbol where possible
+        return [raw, stripped, mapped]
     best=None
-    for vals in cands:
+    for name,vals in [("index",obs.index.values)]+[(c,obs[c].values) for c in obs.columns]:
         for nv in norm_variants(vals):
             hits=len(set(nv)&ref)
-            if best is None or hits>best[0]: best=(hits,nv)
+            if best is None or hits>best[0]: best=(hits,nv,name)
+    print(f"Model 4: perturbation label field='{best[2]}' matched {best[0]} gene symbols; examples {list(best[1][:5])}")
     return best[1]
 
 # ---------------------------------------------------------------- targets
@@ -77,7 +94,7 @@ def load_targets_perturbseq(names_idx, k=50):
         print("Model 4: could not read",f.name,"(",repr(e)[:80],") -> skipping"); return None,None
     obs=A.obs
     ref=set(names_idx)
-    perts=pick_perturbation(obs, ref)   # auto-detect the field whose values are our gene symbols
+    perts=pick_perturbation(obs, ref, load_ensg2sym())   # auto-detect the field whose values are our gene symbols
     Xm=A.X; Xm=np.asarray(Xm.todense()) if sp.issparse(Xm) else np.asarray(Xm)
     bad=np.array([any(t in p.lower() for t in ["non-targeting","control","ntc","scramble","safe"]) or p in ("","nan") for p in perts])
     Xm=Xm[~bad]; perts=perts[~bad]

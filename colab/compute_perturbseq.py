@@ -10,26 +10,32 @@ files=[f for f in sorted(H.glob("perturbseq_*.h5ad")) if f.stat().st_size>1_000_
 if not files:
     print("no valid perturbseq_*.h5ad present -> skipping (runs on Colab where figshare is reachable)"); raise SystemExit(0)
 import anndata as ad, scipy.sparse as sp
-# reference HGNC symbol set (to auto-detect which obs field holds the perturbed-gene symbol)
-REF=set()
+# reference HGNC symbols + Ensembl->symbol map (to auto-detect the perturbed-gene field)
+REF=set(); ENSG2SYM={}
 if (H/"gene_info.gz").exists():
     with gzip.open(H/"gene_info.gz","rt") as fh:
         next(fh)
         for l in fh:
             p=l.split("\t")
-            if len(p)>2 and p[0]=="9606": REF.add(p[2])
+            if len(p)>2 and p[0]=="9606":
+                REF.add(p[2])
+                if len(p)>5 and "Ensembl:ENSG" in p[5]:
+                    for x in p[5].split("|"):
+                        if x.startswith("Ensembl:ENSG"): ENSG2SYM[x.split(":")[1]]=p[2]
 
 def pick_perturbation(obs):
     """Per-row perturbed-gene label, auto-picking whichever obs field best overlaps HGNC symbols."""
+    def tok(v): return str(v).split("|")[0].split(",")[0].split("_")[0].strip().split(".")[0]
     def variants(vals):
         return [np.array([str(v).strip() for v in vals]),
-                np.array([str(v).split("|")[0].split(",")[0].split("_")[0].strip() for v in vals])]
-    cands=[obs.index.values]+[obs[c].values for c in obs.columns]
+                np.array([tok(v) for v in vals]),
+                np.array([ENSG2SYM.get(tok(v),tok(v)) for v in vals])]   # ENSG -> symbol
     best=None
-    for vals in cands:
+    for name,vals in [("index",obs.index.values)]+[(c,obs[c].values) for c in obs.columns]:
         for nv in variants(vals):
             hits=len(set(nv)&REF) if REF else len(set(nv))
-            if best is None or hits>best[0]: best=(hits,nv)
+            if best is None or hits>best[0]: best=(hits,nv,name)
+    print(f"  perturbation label field='{best[2]}' matched {best[0]} HGNC symbols; examples {list(best[1][:5])}")
     return best[1]
 
 def neighbors_from(f):
