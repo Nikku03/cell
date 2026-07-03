@@ -25,6 +25,27 @@ formats/synthetic data; "pending Colab" = needs the big data + GPU run.
 2. Assemble runs build → model4 → coexpr fold-in → build → **convergence** (`CONV_PUBMED=1`) → `convergence.json`.
 3. New outputs to grab: `convergence.json` (the novel-links asset), plus the usual `cell_complete.json.gz`.
 
+## Verification done in sandbox
+- Every processor unit-tested on real formats / synthetic data (module recovery, sign logic, dedup,
+  weak-evidence filtering, both ARCHS4 orientations, series-cap + single-cell filter).
+- Full assemble chain runs end-to-end; all external-data steps skip gracefully when files are absent.
+- **Convergence engine run on real data**: 4,031 convergent / 1,204 novel / 2,118 known-control, with
+  live PubMed novelty ranking (top novel links validated sensible).
+- Self-adversarial review of the 5 new processors (the review workflow failed to launch on a permission
+  error; reviewed manually instead) — no correctness bugs found beyond graceful-empty edge cases.
+
+## Full Colab runbook (enhanced pipeline)
+1. Open `colab/build_complete_cell.ipynb` (branch `claude/vectorize-gex-propensity-NRqBW`), A100.
+2. Ensure ARCHS4 is at `MyDrive/virtual_cell_data/expression_geo/archs4_human_gene.h5` (read in place).
+3. Env (optional): `WITH_COEXPR=1` (default), `MIRTARBASE_URL=<hsa_MTI.xlsx link>` for ncRNA,
+   `REMAP_URL` already defaulted. `[2b]` now also fetches GTEx (URL defaulted) + refGene.
+4. Run all. New/updated outputs: `coexpr_neighbors.json`, `convergence.json` (the novel-links asset),
+   `causal_reg.json`, `ncrna_targets.json`, `perturbseq_targets.json`, plus the usual `cell_complete.json.gz`.
+5. Grab `convergence.json` — that's the ranked novel functional links to look at first.
+
 ## Honest notes
-- Model 4 stays **weak** (9.2× lift but negative R²) — the value pivoted to convergence across measured lenses, exactly as planned.
+- Model 4 stays **weak** (9.2× lift but negative R²) — the value pivoted to convergence across measured
+  lenses, exactly as planned. The transformer research *independently confirms* this is a known-hard
+  problem (pure-expression FMs don't beat trivial baselines), and points the way (KG prior + predict Δ).
 - Convergence **de-risks, doesn't validate** — outputs are credible novel hypotheses, not proven facts.
+- Kinetics remains the wall — no combination of these datasets can infer it (`SELF_PROGRESSION.md`).
