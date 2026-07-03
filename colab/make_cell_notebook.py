@@ -370,6 +370,8 @@ code("# build with hard failure if anything is missing (so we never silently shi
    "# Phase 2 — convergence engine: novel functional links where independent lenses agree (reads the final model)",
    "import os as _os; _os.environ.setdefault('CONV_PUBMED','1')   # rank top novel pairs by PubMed novelty",
    "rc=subprocess.run([sys.executable,'colab/compute_convergence.py'],capture_output=True,text=True); print(rc.stdout[-1500:])",
+   "# Reasoning engine: derive new facts by logical composition (signed paths, transitive closure) + flag gaps",
+   "rr=subprocess.run([sys.executable,'colab/compute_reasoning.py'],capture_output=True,text=True); print(rr.stdout[-1200:])",
    "for f in ['cell_complete.html','cell_explorer.html','metabolic_routes.html']:",
    "    print('FRESH',f+':', os.path.getsize(f'{OUT}/{f}')//1024,'KB')",
    "if PROJ:",
