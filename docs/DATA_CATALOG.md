@@ -82,6 +82,25 @@ communication map (`tissue_model.json`). A dataset's "used by" column says which
 gene_info, genes.tsv, string_aliases — Entrez/Ensembl/symbol cross-mapping so every source lands on the same gene.
 
 ---
+## Roadmap — filling the partial gaps (Tier 1 / Tier 2)
+
+**Wired in now (plug into existing engines, verified):**
+| add | fills gap | how |
+|---|---|---|
+| **HuRI** (interactome-atlas) | PPIs | systematic Y2H binary edges, ENSG→symbol via gene_info; added to the PPI layer alongside STRING/BioPlex/OpenCell |
+| **Replogle RPE1 + Norman 2019 Perturb-seq** | perturbation (2nd/3rd cell type + combinatorial) | `compute_perturbseq.py` now merges every `perturbseq_*.h5ad`; Model 4 auto-uses the largest. Drop the h5ads in via `PERTURBSEQ_RPE1_URL` / `PERTURBSEQ_NORMAN_URL` |
+
+**Staged (need a dedicated processor — honest follow-ups, not silently pretended):**
+| add | fills gap | why not auto-wired yet |
+|---|---|---|
+| **LINCS L1000 / CMap** | perturbation (biggest win) | GCTX format + ~GB Level-5 signatures; needs a cmapPy reader and a mapping into the Model 4 target space |
+| **ReMap TF ChIP-seq** | regulation | huge peak set; needs peak→target-gene derivation before it becomes reg edges |
+| **GTEx eQTLs** | regulation | per-tissue significant-eQTL parse + variant→gene mapping |
+| **NicheNet** | cell-cell comm (tissue) | ligand→target matrix ships as R `.rds`; needs conversion |
+| **PhosphoSitePlus** | PTMs | **license blocker** — bulk download requires a signed license; free substitute = iPTMnet / keep UniProt |
+
+**Won't close from public data:** enzyme kinetics / rate constants (BRENDA/SABIO-RK sparse for human) — the dynamics frontier needs new experiments, not re-integration.
+
 **Honest note on provenance:** every dataset above is public. The model's value is not the raw data
 (anyone can download it) but the integration + the derived, validated inferences on top (co-essentiality,
 SL, dark-gene function, Model 4). See `docs/NOVELTY_STRESS_TEST.md`.

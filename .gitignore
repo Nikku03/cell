@@ -115,3 +115,6 @@ outputs/orphan/perturbseq_neighbors.json
 outputs/orphan/cell_complete.json.gz
 outputs/orphan/cell_model_summary.json
 outputs/orphan/model4_predictions.json
+data/external_data/human/huri.tsv
+data/external_data/human/perturbseq_rpe1_bulk.h5ad
+data/external_data/human/perturbseq_norman.h5ad

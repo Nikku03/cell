@@ -9,12 +9,16 @@ from pathlib import Path
 OUT=Path("outputs/orphan"); H=Path("data/external_data/human")
 loc=json.load(open(H/"gene_compartment.json"))
 # Entrez -> symbol (for HIV host mapping)
-entrez2sym={}
+entrez2sym={}; ensg2sym={}
 with gzip.open(H/"gene_info.gz","rt") as f:
     next(f)
     for l in f:
         p=l.split("\t")
-        if len(p)>2 and p[0]=="9606": entrez2sym[p[1]]=p[2]
+        if len(p)>2 and p[0]=="9606":
+            entrez2sym[p[1]]=p[2]
+            if len(p)>5 and "Ensembl:" in p[5]:              # dbXrefs -> ENSG for HuRI mapping
+                for x in p[5].split("|"):
+                    if x.startswith("Ensembl:ENSG"): ensg2sym[x.split(":")[1]]=p[2]
 # ENSG -> symbol; gene -> pathways
 ensp2sym={}; ensp2ensg={}
 for l in gzip.open(H/"string_aliases.txt.gz","rt"):
@@ -121,7 +125,15 @@ nB=len(ppi)
 if (H/"opencell.csv").exists():
     for r in csv.DictReader(open(H/"opencell.csv")):
         add_ppi(r.get("target_gene_name"),r.get("interactor_gene_name"))
-print(f"PPI edges: STRING {nS} + BioPlex {nB-nS} + OpenCell {len(ppi)-nB} = {len(ppi)} total measured interactions")
+nO=len(ppi)
+# HuRI — systematic, unbiased Y2H binary interactome (orthogonal to AP-MS above); ENSG-ENSG edges
+if (H/"huri.tsv").exists():
+    for l in open(H/"huri.tsv"):
+        p=l.replace(",","\t").split("\t")
+        if len(p)>=2:
+            ga=ensg2sym.get(p[0].strip()); gb=ensg2sym.get(p[1].strip())
+            if ga and gb: add_ppi(ga,gb)
+print(f"PPI edges: STRING {nS} + BioPlex {nB-nS} + OpenCell {nO-nB} + HuRI {len(ppi)-nO} = {len(ppi)} total measured interactions")
 # HIV hijack map
 def normhiv(n):
     n=n.lower()

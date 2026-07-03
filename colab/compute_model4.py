@@ -50,8 +50,9 @@ def load_features():
 def load_targets_perturbseq(names_idx, k=50):
     """Measured KO signatures -> PCA(k). Returns (gene_names_measured, Y) aligned to features,
     or (None,None) if the h5ad is absent."""
-    f=H/"perturbseq_gwps_bulk.h5ad"
-    if not f.exists(): return None,None
+    files=sorted(H.glob("perturbseq_*.h5ad"))
+    if not files: return None,None
+    f=max(files, key=lambda p: p.stat().st_size)   # largest = genome-wide dataset (richest target space)
     import anndata as ad, scipy.sparse as sp
     A=ad.read_h5ad(f); obs=A.obs
     gcol=next((c for c in ["gene","gene_symbol","target_gene","perturbation","perturbed_gene"] if c in obs.columns),None)
