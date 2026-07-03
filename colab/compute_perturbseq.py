@@ -6,9 +6,9 @@ import json, numpy as np
 from pathlib import Path
 H=Path("data/external_data/human"); OUT=Path("outputs/orphan")
 # every Perturb-seq dataset present (K562 genome-wide, RPE1, Norman combinatorial, ...)
-files=sorted(H.glob("perturbseq_*.h5ad"))
+files=[f for f in sorted(H.glob("perturbseq_*.h5ad")) if f.stat().st_size>1_000_000]  # ignore empty/truncated
 if not files:
-    print("no perturbseq_*.h5ad present -> skipping (runs on Colab where figshare is reachable)"); raise SystemExit(0)
+    print("no valid perturbseq_*.h5ad present -> skipping (runs on Colab where figshare is reachable)"); raise SystemExit(0)
 import anndata as ad, scipy.sparse as sp
 
 def neighbors_from(f):
@@ -35,10 +35,16 @@ def neighbors_from(f):
 # merge neighbor lists across datasets (keep the strongest correlation per neighbor)
 merged={}
 for f in files:
-    for g,parts in neighbors_from(f).items():
+    try:
+        parts_by_gene=neighbors_from(f)
+    except Exception as e:
+        print(f"  !! {f.name} unreadable ({repr(e)[:80]}) - skipping this file"); continue
+    for g,parts in parts_by_gene.items():
         d=merged.setdefault(g,{})
         for nb,r in parts:
             if r>d.get(nb,-9): d[nb]=r
+if not merged:
+    print("no readable Perturb-seq data -> skipping"); raise SystemExit(0)
 nb={g:sorted(([n,r] for n,r in d.items()),key=lambda x:-x[1])[:8] for g,d in merged.items()}
 json.dump(nb,open(OUT/"perturbseq_neighbors.json","w"))
 print(f"Perturb-seq ({len(files)} dataset(s)): merged functional neighbors for {len(nb)} genes")
