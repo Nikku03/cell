@@ -243,7 +243,11 @@ code("# PRIMARY: Geneformer pretrained gene embeddings -> cosine neighbors (func
    "    print('Model 3 (embeddings): downstream sets for',len(gf_out),'regulators')",
    "except Exception as e:",
    "    import traceback; traceback.print_exc(); print('Geneformer embeddings skipped:',repr(e)[:200])",
-   "if gf_out: json.dump(gf_out,open(f'{OUT}/gf_perturb.json','w'))",
+   "# NOTE: embedding cosine-neighbors were VALIDATED as ~random (0.8x baseline) for recovering real",
+   "# targets — Geneformer static embeddings are weak (same as the 0.53 essentiality result). So we do",
+   "# NOT feed these into the knockout cascade; they are saved for reference only. Real signal needs the",
+   "# InSilicoPerturber (RUN_ISP=True below). Cascade uses the measured graph unless ISP writes gf_perturb.json.",
+   "if gf_out: json.dump(gf_out,open(f'{OUT}/gf_embedding_neighbors.json','w'))  # reference only, not used by the cell",
    "print('gf_perturb.json written:',bool(gf_out),'| source:',gf_src)"),
 md("### (optional upgrade) true in-silico *delete* with InSilicoPerturber\n"
    "Heavier and version-sensitive (needs the tokenized dataset + GPU). If it succeeds it **overwrites** "
@@ -308,7 +312,7 @@ code("# render inline (Colab) or print the localhost command (local)",
 md("## What you can now do — with all three models live\n"
    "- **Explore** → click any protein: full trafficking journey + networks; essentiality tagged *measured* vs *our model* (Model 1).\n"
    "- **cell type** dropdown → data-driven master-TF networks from the atlas (Model 2).\n"
-   "- **Remove/Mutate** → cascade over the measured graph **plus Geneformer-predicted downstream genes** (Model 3, shown in purple).\n"
+   "- **Remove/Mutate** → cascade over the **measured** reg+PPI graph (validated). Geneformer embedding-neighbors were checked and are ~random, so they are NOT fed into the cascade; run RUN_ISP=True for real in-silico perturbation.\n"
    "- **Metabolism / Dark genes / Infect: HIV** → reactions, the function frontier, and HIV's weak points."),
 ]
 nb={"cells":cells,"metadata":{"kernelspec":{"display_name":"Python 3","name":"python3"},"language_info":{"name":"python"}},"nbformat":4,"nbformat_minor":5}
