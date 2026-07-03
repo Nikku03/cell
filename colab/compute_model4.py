@@ -61,22 +61,31 @@ def load_ensg2sym():
     return m
 
 # ---------------------------------------------------------------- perturbation-identity detection
+import re
+def _extract_symbols(vals, ref, ensg2sym):
+    """For each label, scan ALL tokens for a known gene symbol, else an ENSG that maps to one.
+    Handles composite labels like '0_A1BG_P1_ENSG00000121410' regardless of symbol position."""
+    out=[]
+    for v in vals:
+        s=str(v).strip()
+        if any(t in s.lower() for t in ["non-targeting","control","ntc","scramble","safe-harbor"]):
+            out.append("non-targeting"); continue
+        parts=re.split(r'[|,;_\s]+', s)
+        sym=next((p for p in parts if p in ref), None)
+        if sym is None:
+            sym=next((ensg2sym[p.split('.')[0]] for p in parts if p.split('.')[0] in ensg2sym), None)
+        out.append(sym if sym else (parts[0] if parts else s))
+    return np.array(out)
+
 def pick_perturbation(obs, ref, ensg2sym=None):
-    """Return the per-row perturbed-gene label, auto-picking whichever obs field (or the index)
-    best overlaps a reference gene-symbol set — robust to Ensembl IDs, suffixes, unknown columns."""
+    """Return the per-row perturbed-gene symbol, auto-picking whichever obs field (or the index)
+    yields the most gene-symbol hits after token-scanning."""
     ensg2sym=ensg2sym or {}
-    def tok(v):  # first token of a composite label, version-stripped
-        return str(v).split("|")[0].split(",")[0].split("_")[0].strip().split(".")[0]
-    def norm_variants(vals):
-        raw=np.array([str(v).strip() for v in vals])
-        stripped=np.array([tok(v) for v in vals])
-        mapped=np.array([ensg2sym.get(tok(v), tok(v)) for v in vals])   # ENSG -> symbol where possible
-        return [raw, stripped, mapped]
     best=None
     for name,vals in [("index",obs.index.values)]+[(c,obs[c].values) for c in obs.columns]:
-        for nv in norm_variants(vals):
-            hits=len(set(nv)&ref)
-            if best is None or hits>best[0]: best=(hits,nv,name)
+        nv=_extract_symbols(vals, ref, ensg2sym)
+        hits=len(set(nv)&ref)
+        if best is None or hits>best[0]: best=(hits,nv,name)
     print(f"Model 4: perturbation label field='{best[2]}' matched {best[0]} gene symbols; examples {list(best[1][:5])}")
     return best[1]
 

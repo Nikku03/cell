@@ -23,18 +23,29 @@ if (H/"gene_info.gz").exists():
                     for x in p[5].split("|"):
                         if x.startswith("Ensembl:ENSG"): ENSG2SYM[x.split(":")[1]]=p[2]
 
+import re
+def _extract_symbols(vals):
+    """Scan ALL tokens of each label for a known symbol, else an ENSG that maps to one
+    (handles '0_A1BG_P1_ENSG00000121410' regardless of symbol position)."""
+    out=[]
+    for v in vals:
+        s=str(v).strip()
+        if any(t in s.lower() for t in ["non-targeting","control","ntc","scramble","safe-harbor"]):
+            out.append("non-targeting"); continue
+        parts=re.split(r'[|,;_\s]+', s)
+        sym=next((p for p in parts if p in REF), None) if REF else None
+        if sym is None:
+            sym=next((ENSG2SYM[p.split('.')[0]] for p in parts if p.split('.')[0] in ENSG2SYM), None)
+        out.append(sym if sym else (parts[0] if parts else s))
+    return np.array(out)
+
 def pick_perturbation(obs):
-    """Per-row perturbed-gene label, auto-picking whichever obs field best overlaps HGNC symbols."""
-    def tok(v): return str(v).split("|")[0].split(",")[0].split("_")[0].strip().split(".")[0]
-    def variants(vals):
-        return [np.array([str(v).strip() for v in vals]),
-                np.array([tok(v) for v in vals]),
-                np.array([ENSG2SYM.get(tok(v),tok(v)) for v in vals])]   # ENSG -> symbol
+    """Per-row perturbed-gene symbol, auto-picking whichever obs field yields the most symbol hits."""
     best=None
     for name,vals in [("index",obs.index.values)]+[(c,obs[c].values) for c in obs.columns]:
-        for nv in variants(vals):
-            hits=len(set(nv)&REF) if REF else len(set(nv))
-            if best is None or hits>best[0]: best=(hits,nv,name)
+        nv=_extract_symbols(vals)
+        hits=len(set(nv)&REF) if REF else len(set(nv))
+        if best is None or hits>best[0]: best=(hits,nv,name)
     print(f"  perturbation label field='{best[2]}' matched {best[0]} HGNC symbols; examples {list(best[1][:5])}")
     return best[1]
 
