@@ -531,6 +531,22 @@ for i,g in enumerate(G):
         src="Perturb-seq+co-essentiality" if i in psn else ("co-essentiality" if i in codep else "interaction")
         darkfn[i]=dict(pred=pred,ev=ev[:5],n=len(neigh),conf="high" if cnt>=3 else "low",src=src)
 print("dark genes with a predicted function (from measured neighbors):",len(darkfn),"of",len(dark))
+# merge STRUCTURE (Foldseek) + DOMAIN (Pfam/InterPro) lenses — reach dark genes with no neighbor signal,
+# and upgrade confidence where an independent lens agrees
+for fn,tag in [("structure_function.json","structure"),("domain_function.json","domain")]:
+    p=OUT/fn
+    if not p.exists(): continue
+    raw=json.load(open(p)); added=0; agreed=0
+    for g,v in raw.items():
+        i=idx.get(g)
+        if i is None or not G[i]["dark"]: continue
+        if i not in darkfn:
+            darkfn[i]=dict(pred=v["pred"],ev=v.get("ev",[])[:5],n=v.get("n_hits",0),
+                           conf=v.get("conf","low"),src=v.get("src",tag)); added+=1
+        elif darkfn[i]["pred"]==v["pred"]:                 # independent lens agrees -> promote to high
+            darkfn[i]["conf"]="high"; darkfn[i]["src"]+="+"+tag; agreed+=1
+    print(f"  {tag} lens: +{added} newly-covered dark genes, {agreed} confirmed by agreement")
+print("dark genes with a predicted function (all lenses):",len(darkfn),"of",len(dark))
 # === MODEL 4: predicted perturbation response (trained on Perturb-seq, held-out validated) ===
 model4={}; model4_meta={}
 m4f=OUT/"model4_predictions.json"

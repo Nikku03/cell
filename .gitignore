@@ -143,3 +143,12 @@ outputs/orphan/reasoning.json
 outputs/orphan/kg_edges.tsv
 outputs/orphan/kg_nodes.npz
 outputs/orphan/tower_a_embeddings.npz
+data/external_data/human/uniprot_domains.tsv
+data/external_data/human/alphafold/
+data/external_data/human/af_human.tar
+outputs/orphan/structure_function.json
+outputs/orphan/domain_function.json
+outputs/orphan/conditions.json
+outputs/orphan/foldseek_hits.m8
+outputs/orphan/af_query/
+outputs/orphan/af_target/
