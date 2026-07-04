@@ -20,19 +20,30 @@ if not src or not rg.exists():
     print("ReMap bed / refGene absent -> skipping (runs on Colab)"); raise SystemExit(0)
 
 def _open(p): return gzip.open(p,"rt") if str(p).endswith(".gz") else open(p)
-# TSS per chrom: sorted [(pos, symbol)]
-tss=defaultdict(list)
+# TSS per chrom: sorted [(pos, symbol)]; also collect the full gene-symbol set to resolve TF names
+tss=defaultdict(list); all_syms=set()
 with gzip.open(rg,"rt") as f:
     for l in f:
         p=l.rstrip("\n").split("\t")
         if len(p)<13: continue
         chrom,strand,txStart,txEnd,sym=p[2],p[3],p[4],p[5],p[12]
         if "_" in chrom or not sym: continue
+        all_syms.add(sym.upper())
         try: pos=int(txStart) if strand=="+" else int(txEnd)
         except: continue
         tss[chrom].append((pos,sym))
 for c in tss: tss[c].sort()
 pos_by_chrom={c:[x[0] for x in v] for c,v in tss.items()}
+
+import re
+def parse_tf(name):
+    """ReMap name -> TF symbol. Formats vary: 'GSE123.TP53.K-562' (dots), 'TP53:MCF-7' (colon), or 'TP53'.
+    Pick the token that is a real gene symbol (so it shares Perturb-seq's HGNC space); fall back to the
+    old positional heuristic if none matches (keeps parsing robust to unseen accession layouts)."""
+    toks=[t for t in re.split(r'[.:|\s]+', name.strip()) if t]
+    for t in toks:
+        if t.upper() in all_syms: return t.upper()
+    return (toks[1] if name.count(".")>=2 and len(toks)>1 else (toks[0] if toks else "")).upper()
 
 def genes_near(chrom,mid):
     arr=pos_by_chrom.get(chrom)
@@ -51,15 +62,14 @@ with _open(src) as f:
         try: mid=(int(p[1])+int(p[2]))//2
         except: continue
         name=p[3]
-        # ReMap 'all' name = GSE.TF.biotype (3 parts); 'nr' name = TF directly
-        tf=name.split(".")[1] if name.count(".")>=2 else name.split(".")[0]
-        tf=tf.strip().upper()
+        tf=parse_tf(name)                       # symbol-aware: matches ReMap TF to HGNC (see parse_tf)
         if not tf: continue
         npeaks+=1; tfs_seen.add(tf)
         if len(sample)<3: sample.append(name)
         for g in genes_near(chrom,mid):
             if g.upper()!=tf: pair[(tf,g)]+=1
-print(f"ReMap: {npeaks} peaks, {len(tfs_seen)} unique TFs (name samples: {sample})")
+resolved=sum(1 for tf in tfs_seen if tf in all_syms)
+print(f"ReMap: {npeaks} peaks, {len(tfs_seen)} unique TFs ({resolved} resolve to HGNC symbols; name samples: {sample})")
 
 bytf=defaultdict(list)
 for (tf,g),n in pair.items():

@@ -492,7 +492,7 @@ code("# [OUTPUT] bundle the WHOLE model into a single JSON you can download and 
    "# also bundle the analysis deliverables (novel links, reasoning, KG) into one archive",
    "import tarfile",
    "with tarfile.open(f'{OUT}/analysis_outputs.tgz','w:gz') as tar:",
-   "    for f in ['convergence.json','reasoning.json','coexpr_neighbors.json','causal_reg.json','cell_instances.json','ncrna_targets.json','conditions.json','structure_function.json','domain_function.json','paxdb_abundance.json','context_networks.json','go_terms.json','calibration.json','cell_model_summary.json']:",
+   "    for f in ['convergence.json','reasoning.json','coexpr_neighbors.json','causal_reg.json','cell_instances.json','ncrna_targets.json','conditions.json','condition_multipliers.json','kinetics.json','concentration.json','nichenet_ligand_targets.json','structure_function.json','domain_function.json','paxdb_abundance.json','context_networks.json','go_terms.json','calibration.json','cell_model_summary.json']:",
    "        if os.path.exists(f'{OUT}/{f}'): tar.add(f'{OUT}/{f}', arcname=f)",
    "print('analysis   :', os.path.getsize(f'{OUT}/analysis_outputs.tgz')//1024,'KB  ->  analysis_outputs.tgz   (convergence + reasoning + lenses)')",
    "if PROJ:",
