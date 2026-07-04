@@ -129,18 +129,31 @@ def main():
     adj=defaultdict(list); enzset=set(enz)
     for a,b in D.get("ppi",[]):
         if a in enzset and b in enzset: adj[a].append(b); adj[b].append(a)
-    def ec_of(i): return ec_map.get(G[i]["name"])
+    # hierarchical EC medians for backoff (exact EC missing -> use EC subclass / class median)
+    ec_levels=defaultdict(list)
+    for ec,lk in ec_kcat.items():
+        parts=ec.split(".")
+        for L in range(1,len(parts)): ec_levels[".".join(parts[:L])].append(lk)
+    ec_level_med={k:float(np.median(v)) for k,v in ec_levels.items()}
+    def ec_est(ec):
+        if not ec: return None,None
+        if ec in ec_kcat: return ec_kcat[ec],"EC-measured"
+        parts=ec.split(".")
+        for L in range(len(parts)-1,0,-1):
+            pre=".".join(parts[:L])
+            if pre in ec_level_med: return ec_level_med[pre],"EC-class"
+        return None,None
     est={}; tier={}
     for i in enz:
-        ec=ec_of(i)
+        ee,et=ec_est(ec_map.get(G[i]["name"]))
         if i in log_anchor: est[i]=log_anchor[i]; tier[i]="measured"                    # gene-level, with conditions
-        elif ec and ec in ec_kcat: est[i]=ec_kcat[ec]; tier[i]="EC-measured"            # real human kcat for this EC (DLKcat)
+        elif ee is not None: est[i]=ee; tier[i]=et                                      # real human kcat for the EC (DLKcat), exact or class-backoff
         elif fam[i] in fam_prior: est[i]=fam_prior[fam[i]]; tier[i]="family-prior"
         else: est[i]=global_prior; tier[i]="global-prior"
     for _ in range(15):                                  # harmonic label propagation (anchors fixed)
         new={}
         for i in enz:
-            if tier[i] in ("measured","EC-measured"): continue
+            if tier[i] in ("measured","EC-measured","EC-class"): continue
             nb=[est[j] for j in adj.get(i,[])]
             if nb:
                 blended=0.6*(fam_prior.get(fam[i],global_prior))+0.4*float(np.mean(nb))
@@ -164,14 +177,14 @@ def main():
     val=validate(enz, log_anchor, fam, adj, global_prior) if len(log_anchor)>=12 else None
     payload=dict(kinetics=out, bottlenecks=bottleneck, validation=val,
                  summary=dict(enzymes=len(enz), measured=tiers.get("measured",0),
-                              ec_measured=tiers.get("EC-measured",0),
+                              ec_measured=tiers.get("EC-measured",0), ec_class=tiers.get("EC-class",0),
                               family_prior=tiers.get("family-prior",0),
                               network_propagated=tiers.get("network-propagated",0),
                               n_families=len(set(fam[i] for i in enz)),
                               with_abundance=sum(1 for i in enz if i in ppm)))
     json.dump(payload, open(OUT/"kinetics.json","w"))
     print(f"kinetics: {len(enz)} enzymes | measured {tiers.get('measured',0)}, EC-measured(DLKcat) "
-          f"{tiers.get('EC-measured',0)}, family {tiers.get('family-prior',0)}, propagated {tiers.get('network-propagated',0)} "
+          f"{tiers.get('EC-measured',0)}, EC-class {tiers.get('EC-class',0)}, family {tiers.get('family-prior',0)}, propagated {tiers.get('network-propagated',0)} "
           f"| {payload['summary']['with_abundance']} with abundance -> Vmax | {len(bottleneck)} bottlenecks")
     if val: print(f"  imputation validation (held-out kcat): median fold-error {val['median_fold_error']}x, "
                   f"within-2x {val['within_2x']:.0%}, within-10x {val['within_10x']:.0%}, log-R {val['log_pearson_r']} (n={val['n_test']})")
