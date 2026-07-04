@@ -30,6 +30,7 @@ class Cell:
         self.conv=self._load("convergence.json"); self.cond=self._load("conditions.json")
         self.reason=self._load("reasoning.json"); self.cal=self._load("calibration.json")
         self.kin=(self._load("kinetics.json") or {}).get("kinetics",{})
+        self.conc=(self._load("concentration.json") or {}).get("concentration",{})
     def _load(self,fn):
         p=OUT/fn
         return json.load(open(p)) if p.exists() else None
@@ -42,11 +43,26 @@ def _conf(n, hi=3): return "high" if n>=hi else ("medium" if n>=1 else "low")
 
 def answer(q, C=None):
     C=C or Cell(); ql=q.lower(); g=C.gene(q)
-    # truly-not-knowable DYNAMICS (concentration over time, flux dynamics) — no data supports these
-    if re.search(r"\b(concentration|over time|time.?course|dynamics|at t=|after \d|minutes|seconds|trajectory|simulate)\b", ql):
-        return dict(q=q, answer="NOT KNOWABLE — time-resolved concentrations/dynamics need a kinetic "
-                    "simulation the data can't support (see KINETICS_ASSESSMENT.md). The model gives "
-                    "structure + relative rate estimates, not a dynamic simulator.", confidence="n/a", source="honest-limit")
+    # truly-not-knowable DYNAMICS (time-resolved) — static concentration IS now estimable (below), dynamics is not
+    if re.search(r"\b(over time|time.?course|dynamics|at t=|after \d|minutes|seconds|trajectory|simulate|per second changes)\b", ql):
+        return dict(q=q, answer="NOT KNOWABLE — TIME-RESOLVED dynamics need a kinetic simulation the data can't "
+                    "support (see KINETICS_ASSESSMENT.md). I can give static concentration, velocity, and TF "
+                    "occupancy, but not their trajectory over time.", confidence="n/a", source="honest-limit")
+    # static concentration / occupancy / velocity (the concentration layer — E. coli method ported to human)
+    if re.search(r"\b(concentration|how much|abundance|copies|\bnM\b|occupancy|expression level|velocity|how many molecules|\[.*\])\b", ql):
+        gg2=C.gene(q); r=C.conc.get(gg2) if gg2 else None
+        if r:
+            occ=f"; TF occupancy {r['occupancy']} (fraction above its Kd)" if "occupancy" in r else ""
+            vel=f"; est. reaction velocity {r['velocity_rel_per_s']}/s (kcat x [E])" if "velocity_rel_per_s" in r else ""
+            condc=""
+            if re.search(r"hypox|heat|acid|oxidat|inflam|stress|starv|damage|under|condition", ql) and r.get("per_condition"):
+                condc="; per-condition (nM): "+", ".join(f"{k}={v}" for k,v in list(r["per_condition"].items())[:4])
+            return dict(q=q, gene=gg2,
+                        answer=f"{gg2} ≈ {r['baseline_nM']} nM ({r['tier']}){occ}{vel}{condc}",
+                        confidence="medium" if "PaxDb" in r["tier"] else "low", source="concentration layer",
+                        caveat="absolute conversion is order-of-magnitude (cell-count/volume anchors)")
+        return dict(q=q, answer=f"no concentration estimate for this gene (abundance layer absent or unmapped).",
+                    confidence="n/a", source="concentration")
     # kcat / turnover / reaction-rate of an ENZYME -> tiered ESTIMATE (measured with conditions, else imputed)
     if re.search(r"\b(rate|kcat|turnover|kinetic|km|how fast|catalyt|vmax|reaction speed)\b", ql):
         gg2=C.gene(q); k=C.kin.get(gg2) if gg2 else None

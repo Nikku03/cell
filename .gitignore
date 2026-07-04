@@ -167,3 +167,4 @@ data/external_data/human/dlkcat.json
 outputs/orphan/ec_kcat.tsv
 data/external_data/human/catpred_kcat.csv
 data/external_data/human/catpred_km.csv
+outputs/orphan/concentration.json
