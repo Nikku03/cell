@@ -28,7 +28,7 @@ class Cell:
         self.go=self.D.get("go",{}); self.drugs=self.D.get("drugs",{})
         self.g2c=self.D.get("gene2cplx",{})
         self.conv=self._load("convergence.json"); self.cond=self._load("conditions.json")
-        self.reason=self._load("reasoning.json")
+        self.reason=self._load("reasoning.json"); self.cal=self._load("calibration.json")
     def _load(self,fn):
         p=OUT/fn
         return json.load(open(p)) if p.exists() else None
@@ -58,8 +58,14 @@ def answer(q, C=None):
             return A(f"{g}: {gg.get('path') or gg['proc']}"+(f"; GO molecular function: {ann[0]}" if ann else ""),
                      "high","annotation", process=gg["proc"], compartment=gg["comp"])
         d=C.darkfn.get(i)
-        if d: return A(f"{g} is a DARK gene; predicted function: {d['pred']} (evidence: {', '.join(d.get('ev',[])[:3])})",
-                       d.get("conf","low"), "prediction:"+d.get("src","?"), tag="predicted, not measured")
+        if d:
+            acc=""
+            if C.cal and "dark_gene_function" in C.cal:
+                f=C.cal["dark_gene_function"]
+                rate=f["high_conf_accuracy"] if d.get("conf")=="high" else f["low_conf_accuracy"]
+                acc=f" [measured accuracy of {d.get('conf','low')}-confidence dark-gene predictions: ~{round(rate*100)}% exact pathway, ~{round(f['same_process']*100)}% right process]"
+            return A(f"{g} is a DARK gene; predicted function: {d['pred']} (evidence: {', '.join(d.get('ev',[])[:3])}){acc}",
+                     d.get("conf","low"), "prediction:"+d.get("src","?"), tag="predicted, not measured")
         return A(f"{g} is a dark gene with no confident functional prediction.","low","dark")
     if re.search(r"synthetic leth|co-?essential|co-?depend|buffer|synthetic|sl partner|sl pair", ql):
         cd=[C.G[j]["name"] for j,r in C.codep.get(i,[])[:8]]
