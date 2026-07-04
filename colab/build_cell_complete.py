@@ -559,6 +559,20 @@ for i,g in enumerate(G):
         src="Perturb-seq+co-essentiality" if i in psn else ("co-essentiality" if i in codep else "interaction")
         darkfn[i]=dict(pred=pred,ev=ev[:5],n=len(neigh),conf="high" if cnt>=3 else "low",src=src)
 print("dark genes with a predicted function (from measured neighbors):",len(darkfn),"of",len(dark))
+# GO molecular-function annotation — a DIRECT function for dark genes that have a GO term (not a transfer)
+go_terms={}
+gof=OUT/"go_terms.json"
+if gof.exists():
+    go_terms=json.load(open(gof)); nGO=0
+    for i,g in enumerate(G):
+        if not g["dark"]: continue
+        mf=(go_terms.get(g["name"]) or {}).get("F")
+        if mf:
+            if i not in darkfn:
+                darkfn[i]=dict(pred=mf[0],ev=mf[:3],n=len(mf),conf="high",src="GO(annotation)"); nGO+=1
+            elif darkfn[i]["conf"]!="high":
+                darkfn[i]["src"]+="+GO"; darkfn[i]["conf"]="high"
+    print(f"  GO lens: direct molecular-function for +{nGO} dark genes (annotation, not prediction)")
 # merge STRUCTURE (Foldseek) + DOMAIN (Pfam/InterPro) lenses — reach dark genes with no neighbor signal,
 # and upgrade confidence where an independent lens agrees
 for fn,tag in [("structure_function.json","structure"),("domain_function.json","domain")]:
@@ -627,7 +641,8 @@ DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in ge
     model4=model4,model4_meta=model4_meta,
     coexpr={str(k):v for k,v in coexpr.items()},
     ncrna=ncrna,
-    ppm={str(k):v for k,v in ppm.items()})
+    ppm={str(k):v for k,v in ppm.items()},
+    go={g:v for g,v in go_terms.items() if idx.get(g) is not None})
 json.dump(DATA,open(OUT/"cell_complete.json","w"),separators=(",",":"))
 print("proteins:",len(G),"| reg edges:",len(reg),"| ppi edges:",len(ppi))
 print("processes:",dict(Counter(g["proc"] for g in G).most_common()))
