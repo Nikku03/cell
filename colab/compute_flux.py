@@ -71,29 +71,42 @@ def _ensg2sym():
         elif p[2]=="Ensembl_HGNC_ensembl_gene_id": ensp2ensg[p[0]]=p[1]
     return {ensp2ensg[e]:ensp2sym[e] for e in ensp2sym if e in ensp2ensg}
 
+# physical constants for the ABSOLUTE Vmax units pass (env-overridable). Vmax=kcat*[E] is a volumetric
+# rate (per L cell); convert to mmol/gDW/hr to match the measured exchange fluxes.
+CELL_VOL_L   =float(__import__("os").environ.get("CELL_VOL_L","2.0e-12"))     # L per cell (matches concentration.py)
+GDW_PER_CELL =float(__import__("os").environ.get("GDW_PER_CELL","3.0e-10"))   # gDW per cell (~0.3 ng, mammalian)
+IMPUTED_SLACK=float(__import__("os").environ.get("VMAX_IMPUTED_SLACK","5.0")) # headroom for 6x-noisy imputed kcat
+#   nM(=1e-9 mol/L) * (1/s) * V_cell[L/cell] / mass[gDW/cell] * 1000(mmol/mol) * 3600(s/hr)
+VMAX_CONV = 1e-9 * CELL_VOL_L / GDW_PER_CELL * 1000.0 * 3600.0
+
 def vmax_bounds(rxns):
-    """Vmax = kcat x [E] per reaction (max over isozymes). Returns (vmax{ri:val}, tier{ri:str}).
-    Relative units: kcat_per_s (kinetics.json) x baseline_nM (concentration.json) -> normalised so the
-    median maps to a generous cap; the ecFBA point is that LOW-capacity enzymes bind, not the scale."""
+    """ABSOLUTE enzyme capacity Vmax = SUM_isozymes kcat*[E], in mmol/gDW/hr (commensurable with the
+    measured exchange fluxes). kcat from kinetics.json, [E] (nM) from concentration.json (real once PaxDb
+    is present). Falls back to a relative normalisation only if no absolute [E] is available.
+    Returns (vmax{ri:mmol/gDW/hr}, tier{ri}, units_str)."""
     kin=(json.load(open(OUT/"kinetics.json")).get("kinetics",{}) if (OUT/"kinetics.json").exists() else {})
     conc=(json.load(open(OUT/"concentration.json")).get("concentration",{}) if (OUT/"concentration.json").exists() else {})
-    raw={}; meas={}
+    cap={}; meas={}
     for ri,r in enumerate(rxns):
-        best=None; best_meas=False
-        for g in r["genes"]:
+        tot=0.0; got=False; is_meas=False
+        for g in r["genes"]:                              # SUM over isozymes = total reaction capacity
             k=kin.get(g)
             if not k or not k.get("kcat_per_s"): continue
             E=conc.get(g,{}).get("baseline_nM")
             if E is None or E<=0: continue
-            cap=k["kcat_per_s"]*E
-            if best is None or cap>best:
-                best=cap; best_meas=(k.get("tier")=="measured")
-        if best is not None: raw[ri]=best; meas[ri]=best_meas
-    if not raw: return {},{}
-    med=float(np.median(list(raw.values())))
-    vmax={ri: (v/med)*BIG for ri,v in raw.items()}        # median enzyme -> BIG; slower/scarcer bind first
-    tier={ri: ("vmax(measured-kcat)" if meas[ri] else "vmax(imputed-kcat)") for ri in raw}
-    return vmax, tier
+            tot += k["kcat_per_s"]*E; got=True
+            if k.get("tier")=="measured": is_meas=True
+        if got: cap[ri]=tot; meas[ri]=is_meas
+    if not cap: return {},{},"none"
+    have_E = bool(conc)
+    if have_E:                                            # ABSOLUTE: kcat*[E] -> mmol/gDW/hr
+        vmax={ri: v*VMAX_CONV*(1.0 if meas[ri] else IMPUTED_SLACK) for ri,v in cap.items()}
+        units="mmol/gDW/hr(absolute)"
+    else:                                                 # fallback: relative normalisation (no abundance)
+        med=float(np.median(list(cap.values())))
+        vmax={ri:(v/med)*BIG for ri,v in cap.items()}; units="relative(normalised)"
+    tier={ri: ("vmax(measured-kcat)" if meas[ri] else "vmax(imputed-kcat)") for ri in cap}
+    return vmax, tier, units
 
 def load_medium():
     """exchange bounds: tsv 'key<TAB>lb<TAB>ub' (uptake negative). key = Human-GEM rxn id OR metabolite
@@ -230,46 +243,48 @@ def main():
         print("Human-GEM (human_gem.txt) absent -> flux skipped (runs on Colab)"); return
     nmet=len(met_idx); n=len(rxns)
     S=build_S(rxns, nmet)
-    # bounds
-    lb=np.array([-BIG if r["rev"] else 0.0 for r in rxns]); ub=np.array([BIG]*n)
-    vmax, vtier = vmax_bounds(rxns)
-    for ri,cap in vmax.items():
-        ub[ri]=min(ub[ri],cap)
-        if rxns[ri]["rev"]: lb[ri]=max(lb[ri],-cap)
-    # medium / exchange constraints — key may be a Human-GEM rxn id or a metabolite name
-    medium=load_medium(); id2i={r["id"]:i for i,r in enumerate(rxns)}
-    met2ex=met_to_exchange(rxns, met_idx); n_med=0
+    id2i={r["id"]:i for i,r in enumerate(rxns)}
+    # BASE bounds: reversibility + medium/exchange anchors (NO Vmax yet) — key may be a rxn id or metabolite
+    blb=np.array([-BIG if r["rev"] else 0.0 for r in rxns]); bub=np.array([BIG]*n)
+    medium=load_medium(); met2ex=met_to_exchange(rxns, met_idx); n_med=0
     for key,(l,u) in medium.items():
         mx=met2ex.get(key) or met2ex.get(key.lower())
-        if key in id2i:
-            lb[id2i[key]]=l; ub[id2i[key]]=u; n_med+=1
+        if key in id2i: blb[id2i[key]]=l; bub[id2i[key]]=u; n_med+=1
         elif mx:
             j,sign=mx
-            # medium is written uptake-negative; if the exchange metabolite has +coef (source-oriented),
-            # flip so 'uptake' still means metabolite entering the cell.
-            lo,hi=(l,u) if sign<0 else (-u,-l)
-            lb[j]=lo; ub[j]=hi; n_med+=1
-    # gene -> reaction indices (for enzyme-keyed flux validation)
+            lo,hi=(l,u) if sign<0 else (-u,-l)      # medium is uptake-negative; flip if exchange is source-oriented
+            blb[j]=lo; bub[j]=hi; n_med+=1
+    # enzyme Vmax overlay — ABSOLUTE mmol/gDW/hr (kcat x [E]); commensurable with the exchange anchor
+    vmax, vtier, vunits = vmax_bounds(rxns)
+    def with_vmax(scale):
+        lb=blb.copy(); ub=bub.copy()
+        for ri,cap in vmax.items():
+            ub[ri]=min(ub[ri], cap*scale)
+            if rxns[ri]["rev"]: lb[ri]=max(lb[ri], -cap*scale)
+        return lb,ub
     gene2rxn=defaultdict(list)
     for j,r in enumerate(rxns):
         for gsym in r["genes"]: gene2rxn[gsym].append(j)
-    # objective
-    bio=find_biomass(rxns)
-    c=np.zeros(n)
-    driver="biomass" if bio is not None else None
-    if bio is not None: c[bio]=1.0
-    if driver is None:
-        print("no biomass reaction found and no exchange objective -> emitting capacity map only "
-              "(Vmax bounds), no flux solve");
-        payload=dict(flux={}, summary=dict(reactions=n, metabolites=nmet, vmax_bounded=len(vmax),
-                     note="no objective/driver; ran capacity analysis only"), validation=None)
-        json.dump(payload, open(OUT/"flux.json","w")); return
-    z=solve_fba(S, lb, ub, c, maximize=True)
+    bio=find_biomass(rxns); c=np.zeros(n)
+    if bio is None:
+        print("no biomass reaction found -> emitting Vmax capacity map only, no flux solve")
+        json.dump(dict(flux={}, summary=dict(reactions=n, metabolites=nmet, vmax_bounded=len(vmax),
+                  vmax_units=vunits, note="no biomass objective"), validation=None), open(OUT/"flux.json","w")); return
+    c[bio]=1.0
+    # feasibility ladder: KEEP the exchange anchor (absolute scale); relax Vmax before abandoning it.
+    z=None; vmax_scale=None; used_vmax=True; anchored=(n_med>0)
+    for scale in (1,10,100,1000):
+        lb,ub=with_vmax(scale); z=solve_fba(S,lb,ub,c,True)
+        if z is not None: vmax_scale=scale; break
+    if z is None:                                   # drop Vmax bounds, keep exchange anchor
+        lb,ub=blb.copy(),bub.copy(); z=solve_fba(S,lb,ub,c,True); used_vmax=False
+    if z is None:                                   # last resort: open exchange too (loses absolute anchor)
+        lb=np.array([-BIG if r["rev"] else 0.0 for r in rxns]); ub=np.array([BIG]*n)
+        z=solve_fba(S,lb,ub,c,True); anchored=False
     if z is None:
-        print("FBA infeasible with current bounds -> relaxing exchange to default medium and retrying")
-        z=solve_fba(S, np.array([-BIG if r["rev"] else 0.0 for r in rxns]), np.array([BIG]*n), c, True)
-    if z is None:
-        print("FBA infeasible even relaxed -> skipping (check Human-GEM parse / biomass)"); return
+        print("FBA infeasible even fully relaxed -> skipping (check Human-GEM parse / biomass)"); return
+    if vmax_scale and vmax_scale>1:
+        print(f"  note: Vmax bounds relaxed x{vmax_scale} for feasibility (cell-mass/kcat scale); enzyme layer still applied")
     zstar=float(z[bio])
     v=pfba(S, lb, ub, c, zstar) if zstar>1e-9 else z
     if v is None: v=z
@@ -309,19 +324,23 @@ def main():
         if val: val["kind"]=val_kind
     from collections import Counter
     tc=Counter(ntier.values())
+    flux_units = "mmol/gDW/hr(absolute)" if anchored else "relative"
     payload=dict(flux=out, biomass=round(zstar,4),
         summary=dict(reactions=n, metabolites=nmet, active_reactions=active,
-                     vmax_bounded=len(vmax), measured_kcat_bounds=tc.get("vmax(measured-kcat)",0),
+                     flux_units=flux_units, absolute=bool(anchored), vmax_units=vunits,
+                     vmax_bounded=len(vmax), vmax_applied=used_vmax, vmax_relaxation=vmax_scale,
+                     measured_kcat_bounds=tc.get("vmax(measured-kcat)",0),
                      imputed_kcat_bounds=tc.get("vmax(imputed-kcat)",0),
-                     exchange_anchored=tc.get("exchange-anchored",0), objective=driver),
+                     exchange_anchored=tc.get("exchange-anchored",0), exchange_constraints=n_med,
+                     objective="biomass"),
         validation=val)
     json.dump(payload, open(OUT/"flux.json","w"))
-    print(f"flux: {n} reactions / {nmet} metabolites | biomass={zstar:.3g} | {active} active fluxes")
-    print(f"  ecFBA bounds: {len(vmax)} Vmax-bounded ({tc.get('vmax(measured-kcat)',0)} measured-kcat, "
-          f"{tc.get('vmax(imputed-kcat)',0)} imputed), {tc.get('exchange-anchored',0)} exchange-anchored")
-    if val: print(f"  13C validation: median fold-error {val['median_fold_error']}x, within-2x {val['within_2x']:.0%}, "
+    print(f"flux: {n} reactions / {nmet} metabolites | biomass={zstar:.3g} | {active} active fluxes | units={flux_units}")
+    print(f"  ecFBA bounds: {len(vmax)} Vmax-bounded [{vunits}] ({tc.get('vmax(measured-kcat)',0)} measured-kcat, "
+          f"{tc.get('vmax(imputed-kcat)',0)} imputed), {n_med} exchange constraints applied")
+    if val: print(f"  {val.get('kind','')} validation: median fold-error {val['median_fold_error']}x, within-2x {val['within_2x']:.0%}, "
                   f"within-3x {val['within_3x']:.0%}, log-R {val['log_pearson_r']} (n={val['n']})")
-    else: print("  (no 13C-MFA measured-flux file present -> validation skipped; add flux_measured_13c.tsv)")
+    else: print("  (no measured-flux file present -> validation skipped)")
 
 if __name__=="__main__":
     main()

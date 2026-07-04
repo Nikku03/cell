@@ -33,6 +33,7 @@ class Cell:
         self.kin=(self._load("kinetics.json") or {}).get("kinetics",{})
         self.conc=(self._load("concentration.json") or {}).get("concentration",{})
         fx=self._load("flux.json") or {}; self.flux=fx.get("flux",{}); self.flux_val=fx.get("validation")
+        self.flux_units=fx.get("summary",{}).get("flux_units","relative")
         self.gene2flux=defaultdict(list)                    # gene -> [(rxn_id, rec)] from ecFBA solution
         for rid,rec in self.flux.items():
             for g in rec.get("genes",[]): self.gene2flux[g].append((rid,rec))
@@ -77,9 +78,10 @@ def answer(q, C=None):
             parts=[f"{rid} v={rec['v']} [{rec['tier']}]" for rid,rec in fl]
             vnote=(f" | model validated vs 13C-MFA at {C.flux_val['median_fold_error']}x median fold-error, "
                    f"within-2x {C.flux_val['within_2x']:.0%}" if C.flux_val else "")
-            return dict(q=q, gene=gg2, answer=f"{gg2} carries flux through: "+"; ".join(parts)+vnote,
+            return dict(q=q, gene=gg2, answer=f"{gg2} carries flux through: "+"; ".join(parts)+f" ({C.flux_units})"+vnote,
                         confidence="medium", source="enzyme-constrained FBA (Human-GEM)",
-                        caveat="relative flux (normalise to an exchange anchor for absolute mmol/gDW/h)")
+                        caveat=("absolute, anchored to measured exchange fluxes" if "absolute" in C.flux_units
+                                else "relative flux (add measured exchange data for absolute mmol/gDW/hr)"))
         if C.flux:
             return dict(q=q, answer=f"{gg2 or 'that gene'} carries ~no flux in the current ecFBA solution (inactive "
                         "reaction, or not enzyme-associated).", confidence="low", source="enzyme-constrained FBA")
