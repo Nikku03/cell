@@ -31,6 +31,8 @@ class Cell:
         self.metab=(self._load("metabolites.json") or {}).get("metabolites",{})   # first-class metabolites
         _at=self._load("attractors.json") or {}
         self.attractors=_at.get("attractors",[]); self.transitions=_at.get("transitions",[])
+        self.space=(self._load("space.json") or {}).get("locations",{})            # HPA subcellular localization
+        self.variants=(self._load("variants.json") or {}).get("variants",{})        # ClinVar + constraint vulnerability
         self.metab_lower={k.lower():k for k in self.metab}
         self._metab_keys=sorted(self.metab_lower, key=len, reverse=True)   # longest-first for matching
         self.conv=self._load("convergence.json"); self.cond=self._load("conditions.json")
@@ -239,8 +241,23 @@ def answer(q, C=None):
         names=[n for n in names if n]
         return A(f"{g} drugs/ligands (DGIdb): {', '.join(names[:6]) or '(no known drug)'}",
                  _conf(len(names)),"DGIdb")
-    if re.search(r"where|locali|compartment|located", ql):
-        return A(f"{g} localizes to: {gg['comp']} (process: {gg['proc']})","high","UniProt/HPA localization")
+    if re.search(r"where|locali|compartment|located|subcellular", ql):
+        sp=C.space.get(g)
+        if sp:
+            multi=" [multi-localized]" if sp.get("multi") else ""
+            return A(f"{g} localizes to: {', '.join(sp['locations'])}{multi} (HPA {sp.get('reliability','')}; "
+                     f"main {', '.join(sp.get('main',[])) or '-'})","high","HPA immunofluorescence (subcellular)")
+        return A(f"{g} localizes to: {gg['comp']} (process: {gg['proc']})","medium","model compartment tag")
+    if re.search(r"variant|mutation|pathogenic|clinvar|vulnerab|disease.?gene|missense", ql):
+        v=C.variants.get(g)
+        if v:
+            cv=(f"; ClinVar: {v['clinvar_pathogenic']} pathogenic / {v['clinvar_benign']} benign / {v['clinvar_vus']} VUS "
+                f"({v.get('review_stars',0)}★)" if "clinvar_pathogenic" in v else "")
+            eg=f"; e.g. {', '.join(v.get('example_pathogenic',[])[:2])}" if v.get("example_pathogenic") else ""
+            return A(f"{g} variant vulnerability: {v['vulnerability_tier']} (LOEUF {v['loeuf']}, "
+                     f"essential={v['essential']}){cv}{eg}",
+                     "high" if v.get("review_stars",0)>=2 else "medium", "ClinVar + gnomAD constraint")
+        return A(f"no variant profile for {g} (variants layer absent or gene unmapped).","n/a","variants")
     if re.search(r"condition|heat|temperature|\bph\b|acid|pressure|hypoxia|stress|inflam|dna damage|damage|oxidat|osmotic|starv|xenobiotic|\bunder\b", ql) and C.cond:
         hit=[(c,v) for c,v in C.cond.items() if g in (v.get("up",[])+v.get("down",[]))]
         return A(f"{g} responds to condition(s): "+(", ".join(f"{c} ({'up' if g in C.cond[c].get('up',[]) else 'down'})" for c,_ in hit[:5]) or "(not in a curated condition response set)"),
