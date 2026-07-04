@@ -82,13 +82,25 @@ def answer(q, C=None):
                  (f", dependent in {round(gg.get('dep_frac',0)*100)}% of cancer lines" if gg.get('dep_frac') else "")+")",
                  "high" if gg["ess_src"]=="measured" else "medium","DepMap")
     if re.search(r"knock ?out|knock ?down|remove|delete|what happens if|perturb", ql):
-        aff=set()
-        for t in C.OUTr.get(i,[])[:20]: aff.add(C.G[t]["name"])
-        for t in C.ppi.get(i,[])[:10]: aff.add(C.G[t]["name"])
-        return A(f"removing {g} would directly perturb (regulatory targets + binding partners): "
-                 f"{', '.join(sorted(aff)[:20]) or '(no downstream mapped)'}",
-                 _conf(len(aff)),"cascade over measured reg+PPI graph", n_affected=len(aff),
-                 caveat="qualitative propagation, not a quantitative simulation")
+        # SIGNED multi-hop cascade: removing X removes its output. If X activates T (+), T goes DOWN on KO;
+        # if X represses T (-), T goes UP. Propagate the composed sign 2 hops. (effect on X itself = loss)
+        eff={}  # gene -> net sign of change (-1 down, +1 up)
+        for t in C.OUTr.get(i,[]):
+            s=C.sgn.get((i,t),0)
+            if s==0: continue
+            eff[t]=eff.get(t,0) - s                         # KO removes X's activation -> -s
+        first=dict(eff)
+        for t,st in first.items():
+            for u in C.OUTr.get(t,[])[:15]:
+                s2=C.sgn.get((t,u),0)
+                if s2 and u!=i: eff[u]=eff.get(u,0)+ (1 if st*s2>0 else -1)
+        up=[C.G[t]["name"] for t,s in sorted(eff.items(),key=lambda x:-x[1]) if s>0][:12]
+        dn=[C.G[t]["name"] for t,s in sorted(eff.items(),key=lambda x:x[1]) if s<0][:12]
+        binders=[C.G[t]["name"] for t in C.ppi.get(i,[])[:8]]
+        return A(f"knocking out {g}: predicted DOWN {', '.join(dn) or '-'}; predicted UP {', '.join(up) or '-'}; "
+                 f"complexes/binders disrupted: {', '.join(binders) or '-'}",
+                 _conf(len(eff),hi=5),"signed 2-hop cascade over the regulatory network",
+                 n_affected=len(eff), caveat="directional prediction, not quantitative; unvalidated vs measured KO")
     if re.search(r"regulat|transcription factor|\btf\b|target of|upstream|downstream", ql):
         tg=[C.G[t]["name"] for t in C.OUTr.get(i,[])[:12]]; up=[C.G[t]["name"] for t in C.INr.get(i,[])[:8]]
         return A(f"{g} regulates: {', '.join(tg) or '-'}; regulated by: {', '.join(up) or '-'}",
