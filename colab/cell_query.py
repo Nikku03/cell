@@ -27,6 +27,7 @@ class Cell:
         self.ppm={int(k):v for k,v in self.D.get("ppm",{}).items()}
         self.go=self.D.get("go",{}); self.drugs=self.D.get("drugs",{})
         self.g2c=self.D.get("gene2cplx",{})
+        self.nichenet=self.D.get("nichenet",{})            # ligand -> downstream target genes (NicheNet)
         self.conv=self._load("convergence.json"); self.cond=self._load("conditions.json")
         self.reason=self._load("reasoning.json"); self.cal=self._load("calibration.json")
         self.kin=(self._load("kinetics.json") or {}).get("kinetics",{})
@@ -86,6 +87,17 @@ def answer(q, C=None):
     def A(ans,conf,src,**kw): return dict(q=q, gene=g, answer=ans, confidence=conf, source=src, **kw)
 
     # --- route by intent ---
+    # NicheNet ligand->target signaling (checked early so "signal/ligand" beats the generic function/regulation routes)
+    if re.search(r"signal|ligand|paracrine|secret|downstream target", ql) and C.nichenet:
+        if g in C.nichenet:                                        # g is a ligand -> its downstream targets
+            tg=C.nichenet[g]
+            return A(f"{g} (ligand) signals downstream to: {', '.join(tg[:15])}"+(" ..." if len(tg)>15 else ""),
+                     _conf(len(tg)),"NicheNet ligand->target regulatory potential")
+        upstream=[lig for lig,ts in C.nichenet.items() if g in ts]  # g is a target -> which ligands move it
+        if upstream:
+            return A(f"{g} is a downstream target of ligand(s): {', '.join(upstream[:15])}",
+                     _conf(len(upstream)),"NicheNet ligand->target regulatory potential")
+        return A(f"{g} is not a NicheNet ligand and no modeled ligand is predicted to move it.","low","NicheNet")
     if re.search(r"what (does|is)|function|role|do\b|does\b", ql) and not re.search(r"interact|bind|regulat|essential|drug|express|abund|where|locali", ql):
         if not gg["dark"]:
             ann=(C.go.get(g,{}) or {}).get("F",[])

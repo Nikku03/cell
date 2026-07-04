@@ -628,6 +628,17 @@ bmf=OUT/"biomarkers.json"
 if bmf.exists():
     raw=json.load(open(bmf)); biomarkers={g:v for g,v in raw.items() if g in idx}
     print("biomarkers (CCLE expression + mutation) for",len(biomarkers),"targets")
+# NicheNet ligand -> downstream target genes (signaling propagation): merge into the model so the query
+# engine can answer "which genes does ligand X ultimately move?". Filter both ligand and targets to model.
+nichenet={}
+nnf=OUT/"nichenet_ligand_targets.json"
+if nnf.exists():
+    raw=json.load(open(nnf))
+    for lig,targets in raw.items():
+        if lig not in idx: continue
+        tg=[t for t in targets if t in idx][:25]
+        if tg: nichenet[lig]=tg
+    print("NicheNet: ligand -> downstream targets for",len(nichenet),"ligands (signaling layer)")
 DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in generxn.items()},gf_perturb=gf,
     codep=codep,sl=sl,loops3d=loops3d,ti_priority=ti_priority,ti_whitespace=ti_ws,biomarkers=biomarkers,
     struct=struct,fold=fold,otdis=otdis,pathways=pathsel,
@@ -640,7 +651,7 @@ DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in ge
     darkfn={str(k):v for k,v in darkfn.items()},
     model4=model4,model4_meta=model4_meta,
     coexpr={str(k):v for k,v in coexpr.items()},
-    ncrna=ncrna,
+    ncrna=ncrna,nichenet=nichenet,
     ppm={str(k):v for k,v in ppm.items()},
     go={g:v for g,v in go_terms.items() if idx.get(g) is not None})
 json.dump(DATA,open(OUT/"cell_complete.json","w"),separators=(",",":"))
