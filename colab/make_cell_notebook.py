@@ -184,7 +184,7 @@ code("# [2b] fetch the raw data build_cell_complete.py needs (the big files are 
    "    AF=f'{H}/alphafold'",
    "    if os.environ.get('WITH_ALPHAFOLD','1')=='1' and not (os.path.isdir(AF) and any(p.endswith('.pdb') for p in os.listdir(AF))):",
    "        os.makedirs(AF,exist_ok=True); print('downloading AlphaFold human proteome (~4 GB) ...')",
-   "        if _get('af_human.tar', 'https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/UP000005640_9606_HUMAN_v4.tar', minkb=100000):",
+   "        if _get('af_human.tar', os.environ.get('ALPHAFOLD_URL','https://ftp.ebi.ac.uk/pub/databases/alphafold/v4/UP000005640_9606_HUMAN_v4.tar'), minkb=100000):",
    "            _sp.run(['tar','xf',f'{H}/af_human.tar','-C',AF],check=False)",
    "            import glob,gzip as _gz",
    "            for gzf in glob.glob(f'{AF}/*.pdb.gz'):",
