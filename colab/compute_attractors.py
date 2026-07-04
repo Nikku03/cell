@@ -72,20 +72,24 @@ def main():
             if j>=0.9: hit=k; break
         if hit is None: attractors.append((act, fp)); hit=len(attractors)-1
         seed_of[hit].append(label)
-    # transition map: from attractor A, activate attractor B's driver sensors -> does the network settle
-    # into B? If so, that driver set is the route A->B (e.g. reach hypoxia by activating HIF1A).
-    def jac(a,b): u=len(a|b); return len(a&b)/u if u else 1.0
+    # transition map: the REPROGRAMMING SIGNATURE between basins -- which TFs must turn ON and which must
+    # turn OFF to move from A to B (not just the target's own sensor). Ranked by regulatory influence
+    # (out-degree); barrier = number of TF state changes = how far apart the two basins are.
+    outdeg=defaultdict(int)
+    for j,ins in W_in.items():
+        for i,_ in ins: outdeg[i]+=1
     transitions=[]
-    for kb,(b_act,b_fp) in enumerate(attractors):
-        blabel=(seed_of[kb] or [None])[0]; bclamp=clamps.get(blabel,{})
-        if not bclamp: continue                            # baseline / undriven -> no driver route
-        drivers=[name[i] for i in bclamp]
-        for ka,(a_act,a_fp) in enumerate(attractors):
+    for ka,(a_act,_) in enumerate(attractors):
+        for kb,(b_act,_) in enumerate(attractors):
             if ka==kb: continue
-            landed=active(iterate(a_fp, W_in, order, bclamp))
-            if jac(landed, b_act)>=0.85:
-                transitions.append(dict(**{"from":ka}, to=kb, drivers=drivers, driver_flip="activate",
-                                        barrier=len(drivers)))
+            turn_on=b_act-a_act; turn_off=a_act-b_act
+            barrier=len(turn_on)+len(turn_off)
+            if barrier==0: continue
+            on=sorted((name[i] for i in turn_on), key=lambda n:-outdeg.get(idx.get(n,-1),0))[:6]
+            off=sorted((name[i] for i in turn_off), key=lambda n:-outdeg.get(idx.get(n,-1),0))[:6]
+            transitions.append(dict(**{"from":ka}, to=kb, activate=on, repress=off, barrier=barrier))
+    transitions.sort(key=lambda t:t["barrier"])            # easiest reprogramming first
+    transitions=transitions[:250]
     out_att=[]
     for k,(a_act,fp) in enumerate(attractors):
         tops=sorted((name[i] for i in a_act), key=lambda x:x)[:15]
