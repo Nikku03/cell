@@ -203,6 +203,7 @@ code("# [2b] fetch the raw data build_cell_complete.py needs (the big files are 
    "    urllib.request.urlretrieve('https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2pubmed.gz', g2p)",
    "_sp.run([sys.executable,'colab/compute_literature.py'],check=True)      # -> literature_counts.json",
    "_sp.run([sys.executable,'colab/compute_go.py'])                         # -> go_terms.json (Gene Ontology)",
+   "_sp.run([sys.executable,'colab/compute_kinetics_data.py'])              # -> ec_kcat.tsv (DLKcat human kcat anchors)",
    "_sp.run([sys.executable,'colab/target_intelligence.py'],check=True)     # -> ti_*.json (target-priority, white-space, combos)",
    "# CCLE omics -> biomarkers of sensitivity (#4/#5)",
    "for fn,fid in [('CCLE_expression.csv','46490878'),('CCLE_mutations_damaging.csv','46500376')]:",

@@ -108,27 +108,39 @@ def main():
     anchors=load_anchors(idx)
     ec_map=load_ec(); pfam_map=load_pfam()
     fam=families(G, ec_map, pfam_map)
+    # DLKcat: real human kcat per EC number -> ec -> log_kcat
+    ec_kcat={}
+    ekf=OUT/"ec_kcat.tsv"
+    if ekf.exists():
+        for l in open(ekf).readlines()[1:]:
+            p=l.rstrip("\n").split("\t")
+            try: ec_kcat[p[0]]=math.log10(float(p[1]))
+            except: pass
     # enzymes = genes with a metabolic reaction (Human-GEM); kinetics is defined for these
     enz=[i for i in range(N) if (str(i) in generxn or i in generxn)]
     log_anchor={idx[g]:v[0] for g,v in anchors.items() if g in idx}
-    # (2) family prior: median log_kcat per family from anchors
+    # (2) family prior from gene-level anchors
     fam_vals=defaultdict(list)
     for i,lk in log_anchor.items(): fam_vals[fam[i]].append(lk)
     fam_prior={f:float(np.median(v)) for f,v in fam_vals.items()}
-    global_prior=float(np.median(list(log_anchor.values()))) if log_anchor else 1.0  # ~10 1/s default
-    # (3) propagation graph: PPI (within enzymes) + same-pathway; label-propagate log_kcat
+    allvals=list(log_anchor.values())+list(ec_kcat.values())
+    global_prior=float(np.median(allvals)) if allvals else 1.0
+    # (3) propagation graph: PPI (within enzymes); label-propagate log_kcat
     adj=defaultdict(list); enzset=set(enz)
     for a,b in D.get("ppi",[]):
         if a in enzset and b in enzset: adj[a].append(b); adj[b].append(a)
+    def ec_of(i): return ec_map.get(G[i]["name"])
     est={}; tier={}
     for i in enz:
-        if i in log_anchor: est[i]=log_anchor[i]; tier[i]="measured"
+        ec=ec_of(i)
+        if i in log_anchor: est[i]=log_anchor[i]; tier[i]="measured"                    # gene-level, with conditions
+        elif ec and ec in ec_kcat: est[i]=ec_kcat[ec]; tier[i]="EC-measured"            # real human kcat for this EC (DLKcat)
         elif fam[i] in fam_prior: est[i]=fam_prior[fam[i]]; tier[i]="family-prior"
         else: est[i]=global_prior; tier[i]="global-prior"
     for _ in range(15):                                  # harmonic label propagation (anchors fixed)
         new={}
         for i in enz:
-            if tier[i]=="measured": continue
+            if tier[i] in ("measured","EC-measured"): continue
             nb=[est[j] for j in adj.get(i,[])]
             if nb:
                 blended=0.6*(fam_prior.get(fam[i],global_prior))+0.4*float(np.mean(nb))
@@ -152,14 +164,15 @@ def main():
     val=validate(enz, log_anchor, fam, adj, global_prior) if len(log_anchor)>=12 else None
     payload=dict(kinetics=out, bottlenecks=bottleneck, validation=val,
                  summary=dict(enzymes=len(enz), measured=tiers.get("measured",0),
+                              ec_measured=tiers.get("EC-measured",0),
                               family_prior=tiers.get("family-prior",0),
                               network_propagated=tiers.get("network-propagated",0),
                               n_families=len(set(fam[i] for i in enz)),
                               with_abundance=sum(1 for i in enz if i in ppm)))
     json.dump(payload, open(OUT/"kinetics.json","w"))
-    print(f"kinetics: {len(enz)} enzymes | measured {tiers.get('measured',0)}, "
-          f"family-prior {tiers.get('family-prior',0)}, network-propagated {tiers.get('network-propagated',0)} "
-          f"| {payload['summary']['with_abundance']} with abundance -> Vmax | {len(bottleneck)} pathway bottlenecks")
+    print(f"kinetics: {len(enz)} enzymes | measured {tiers.get('measured',0)}, EC-measured(DLKcat) "
+          f"{tiers.get('EC-measured',0)}, family {tiers.get('family-prior',0)}, propagated {tiers.get('network-propagated',0)} "
+          f"| {payload['summary']['with_abundance']} with abundance -> Vmax | {len(bottleneck)} bottlenecks")
     if val: print(f"  imputation validation (held-out kcat): median fold-error {val['median_fold_error']}x, "
                   f"within-2x {val['within_2x']:.0%}, within-10x {val['within_10x']:.0%}, log-R {val['log_pearson_r']} (n={val['n_test']})")
     print(f"  families: {payload['summary']['n_families']}")

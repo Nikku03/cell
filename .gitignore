@@ -163,3 +163,5 @@ outputs/orphan/kinetics.json
 data/external_data/human/kinetics_measured.tsv
 outputs/orphan/kinetics_measured.tsv
 data/external_data/human/uniprot_ec.tsv
+data/external_data/human/dlkcat.json
+outputs/orphan/ec_kcat.tsv

@@ -53,12 +53,14 @@ def answer(q, C=None):
         if k:
             cond=(f" at pH {k.get('pH')}, {k.get('temp')}C ({k.get('source')}{', in-vitro' if k.get('in_vitro') else ''})"
                   if k.get('tier')=="measured" else "")
-            note={"measured":"MEASURED (fact)","family-prior":"ESTIMATE from enzyme family (not measured)",
+            note={"measured":"MEASURED (fact, this protein)",
+                  "EC-measured":"real measured human kcat for this enzyme's EC class (DLKcat, in-vitro)",
+                  "family-prior":"ESTIMATE from enzyme family (not measured)",
                   "network-propagated":"ESTIMATE propagated from network neighbours (weak, not measured)",
                   "global-prior":"crude default (no family data)"}.get(k["tier"],k["tier"])
             vm=f"; relative in-vivo capacity Vmax(log10)={k['vmax_rel']} (kcat x PaxDb abundance)" if k.get("vmax_rel") is not None else ""
             return dict(q=q, gene=gg2, answer=f"{gg2} kcat ≈ {k['kcat_per_s']} /s [{note}]{cond}{vm}",
-                        confidence="high" if k["tier"]=="measured" else ("medium" if k["tier"]=="family-prior" else "low"),
+                        confidence="high" if k["tier"]=="measured" else ("medium" if k["tier"] in ("EC-measured","family-prior") else "low"),
                         source="kinetics ("+k["tier"]+")", tier=k["tier"])
         return dict(q=q, answer="no kinetic estimate for this gene (not an annotated enzyme, or kinetics layer "
                     "absent). Measured human kcat exists for <10% of enzymes.", confidence="n/a", source="kinetics")
