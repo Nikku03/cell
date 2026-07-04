@@ -45,9 +45,13 @@ def parse_gem():
         if len(p)<3 or p[0]=="Rxn name": continue
         rid,formula,gpr=p[0],p[1],p[2]
         rev="<=>" in formula
-        sep=" <=> " if rev else (" => " if " => " in formula else None)
-        if not sep: continue
-        L,R=formula.split(sep,1)
+        # split on the arrow with flexible whitespace; ONE side may be empty (exchange/sink/demand rxns)
+        if "<=>" in formula: parts=re.split(r"\s*<=>\s*", formula, maxsplit=1)
+        elif "=>" in formula: parts=re.split(r"\s*=>\s*", formula, maxsplit=1)
+        elif "-->" in formula: parts=re.split(r"\s*-->\s*", formula, maxsplit=1)
+        else: continue
+        if len(parts)!=2: continue
+        L,R=parts
         subs=side(L); prods=side(R)
         stoich={}
         for n,c in subs.items(): stoich[mid(n)]=stoich.get(mid(n),0.0)-c

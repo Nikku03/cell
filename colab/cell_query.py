@@ -28,6 +28,9 @@ class Cell:
         self.go=self.D.get("go",{}); self.drugs=self.D.get("drugs",{})
         self.g2c=self.D.get("gene2cplx",{})
         self.nichenet=self.D.get("nichenet",{})            # ligand -> downstream target genes (NicheNet)
+        self.metab=(self._load("metabolites.json") or {}).get("metabolites",{})   # first-class metabolites
+        self.metab_lower={k.lower():k for k in self.metab}
+        self._metab_keys=sorted(self.metab_lower, key=len, reverse=True)   # longest-first for matching
         self.conv=self._load("convergence.json"); self.cond=self._load("conditions.json")
         self.reason=self._load("reasoning.json"); self.cal=self._load("calibration.json")
         self.kin=(self._load("kinetics.json") or {}).get("kinetics",{})
@@ -44,6 +47,13 @@ class Cell:
         for tok in re.findall(r"[A-Za-z0-9\-]+", q):
             if tok.upper() in self.upper: return self.upper[tok.upper()]
         return None
+    def metabolite(self,q):
+        """longest metabolite name (>=3 chars) appearing in the question -> its canonical name."""
+        ql=q.lower()
+        for k in self._metab_keys:
+            if len(k)>=3 and re.search(r"(?<![a-z0-9])"+re.escape(k)+r"(?![a-z0-9])", ql):
+                return self.metab_lower[k]
+        return None
 
 def _conf(n, hi=3): return "high" if n>=hi else ("medium" if n>=1 else "low")
 
@@ -54,6 +64,26 @@ def answer(q, C=None):
         return dict(q=q, answer="NOT KNOWABLE — TIME-RESOLVED dynamics need a kinetic simulation the data can't "
                     "support (see KINETICS_ASSESSMENT.md). I can give static concentration, velocity, and TF "
                     "occupancy, but not their trajectory over time.", confidence="n/a", source="honest-limit")
+    # --- METABOLITE as a first-class species (production/consumption/concentration/turnover) ---
+    mm=C.metabolite(q) if C.metab else None
+    if mm and re.search(r"produc|make|synthesi|form\b|consum|degrad|break|reaction|turnover|flux through|"
+                        r"concentration|how much|level|\bhub\b|currency|what is|what'?s", ql):
+        r=C.metab[mm]
+        if re.search(r"concentration|how much|level|how many", ql):
+            if "concentration_uM" in r:
+                return dict(q=q, metabolite=mm, source="metabolite concentration",
+                            answer=f"{mm} ≈ {r['concentration_uM']} µM intracellular ({r['conc_tier']})",
+                            confidence="medium" if r["conc_tier"]=="measured" else "low",
+                            caveat="order-of-magnitude central-metabolome value")
+            return dict(q=q, metabolite=mm, confidence="n/a", source="metabolite",
+                        answer=f"{mm}: present in the network but no mapped concentration (measured metabolomics absent).")
+        prod=r.get("produced_by",[]); cons=r.get("consumed_by",[])
+        extra=f" | flux turnover {r['turnover']}" if "turnover" in r else ""
+        cc=f" ≈ {r['concentration_uM']} µM" if "concentration_uM" in r else ""
+        return dict(q=q, metabolite=mm, source="metabolite network (Human-GEM)", confidence="high",
+                    answer=f"{mm} [{', '.join(r['compartments']) or 'metabolite'}]{cc}: produced by {r['n_producers']} "
+                           f"reaction(s) ({', '.join(prod[:6])}); consumed by {r['n_consumers']} ({', '.join(cons[:6])})"
+                           f"{extra}"+(" [hub/currency metabolite]" if r["hub"] else ""))
     # static concentration / occupancy / velocity (the concentration layer — E. coli method ported to human)
     if re.search(r"\b(concentration|how much|abundance|copies|\bnM\b|occupancy|expression level|velocity|how many molecules|\[.*\])\b", ql):
         gg2=C.gene(q); r=C.conc.get(gg2) if gg2 else None
