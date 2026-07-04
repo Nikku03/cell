@@ -45,28 +45,69 @@ def load_anchors(idx):
         if prev is None or (prev[4] and not invitro): a[g]=rec
     return a
 
-def families(G, generxn, dom):
-    """gene -> family key (EC class from Human-GEM reaction, else top Pfam domain, else process)."""
+def load_ec():
+    """gene -> EC number, from uniprot_ec.tsv (accession, gene_primary, ec)."""
+    import csv
+    m={}; f=H/"uniprot_ec.tsv"
+    if f.exists():
+        rd=csv.reader(open(f),delimiter="\t"); hdr=[h.lower() for h in next(rd,[])]
+        gi=next((i for i,h in enumerate(hdr) if "gene" in h),1); ei=next((i for i,h in enumerate(hdr) if h=="ec number" or h=="ec"),-1)
+        for r in rd:
+            if ei>=0 and gi<len(r) and ei<len(r) and r[gi] and r[ei]:
+                g=r[gi].split()[0]; ec=r[ei].split(";")[0].strip()
+                if g and ec and ec[0].isdigit(): m[g]=ec
+    return m
+
+def load_pfam():
+    import csv
+    m={}; f=H/"uniprot_domains.tsv"
+    if f.exists():
+        rd=csv.reader(open(f),delimiter="\t"); hdr=[h.lower() for h in next(rd,[])]
+        gi=next((i for i,h in enumerate(hdr) if "gene" in h),1); pi=next((i for i,h in enumerate(hdr) if "pfam" in h),-1)
+        for r in rd:
+            if pi>=0 and gi<len(r) and pi<len(r) and r[gi] and r[pi]:
+                g=r[gi].split()[0]; d=[x for x in r[pi].replace(",",";").split(";") if x.strip()]
+                if g and d: m[g]=d[0].strip()
+    return m
+
+def families(G, ec_map, pfam_map):
+    """gene -> family key: EC (class.subclass.sub-subclass) > top Pfam domain > cellular process."""
     fam={}
     for i,g in enumerate(G):
-        rx=generxn.get(str(i)) or generxn.get(i)
-        ec=None
-        if rx:
-            for r in rx:
-                m=[t for t in str(r).replace(";"," ").split() if t.count(".")>=2 and t.replace(".","").isdigit()]
-                if m: ec=".".join(m[0].split(".")[:2]); break   # EC class.subclass
-        d=(dom.get(g["name"]) or [None])[0] if dom else None
-        fam[i]= ("EC:"+ec) if ec else (("PF:"+d) if d else ("proc:"+g["proc"]))
+        nm=g["name"]; ec=ec_map.get(nm)
+        if ec: fam[i]="EC:"+".".join(ec.split(".")[:3])
+        elif pfam_map.get(nm): fam[i]="PF:"+pfam_map[nm]
+        else: fam[i]="proc:"+g["proc"]
     return fam
+
+def validate(enz, log_anchor, fam, adj, global_prior, seed=0):
+    """hold out 25% of anchors, predict via family-median(+propagation), report median fold-error + logR."""
+    import random
+    anc=list(log_anchor); random.Random(seed).shuffle(anc)
+    te=set(anc[:max(1,len(anc)//4)]); tr={i:log_anchor[i] for i in anc if i not in te}
+    fv=defaultdict(list)
+    for i,lk in tr.items(): fv[fam[i]].append(lk)
+    fprior={f:float(np.median(v)) for f,v in fv.items()}
+    gp=float(np.median(list(tr.values()))) if tr else global_prior
+    errs=[]; preds=[]; trues=[]
+    for i in te:
+        nb=[tr[j] for j in adj.get(i,[]) if j in tr]
+        pred=0.5*fprior.get(fam[i],gp)+0.5*float(np.mean(nb)) if nb else fprior.get(fam[i],gp)
+        errs.append(abs(pred-log_anchor[i])); preds.append(pred); trues.append(log_anchor[i])
+    if len(errs)<3: return None
+    fold=10**float(np.median(errs))
+    r=float(np.corrcoef(preds,trues)[0,1]) if np.std(preds)>0 else 0.0
+    return dict(n_test=len(te), median_fold_error=round(fold,2), log_pearson_r=round(r,3),
+               within_2x=round(sum(1 for e in errs if e<=np.log10(2))/len(errs),2),
+               within_10x=round(sum(1 for e in errs if e<=1)/len(errs),2))
 
 def main():
     D=json.load(open(OUT/"cell_complete.json")); G=D["genes"]; N=len(G)
     idx={g["name"]:i for i,g in enumerate(G)}
     generxn=D.get("generxn",{}); ppm={int(k):v for k,v in D.get("ppm",{}).items()}
-    dom={}
-    df=OUT/"domain_function.json"        # reuse if present; else Pfam from build not needed here
     anchors=load_anchors(idx)
-    fam=families(G, generxn, {})
+    ec_map=load_ec(); pfam_map=load_pfam()
+    fam=families(G, ec_map, pfam_map)
     # enzymes = genes with a metabolic reaction (Human-GEM); kinetics is defined for these
     enz=[i for i in range(N) if (str(i) in generxn or i in generxn)]
     log_anchor={idx[g]:v[0] for g,v in anchors.items() if g in idx}
@@ -108,15 +149,20 @@ def main():
         if p and vmax: path_v[p].append((g["name"], math.log10(vmax)))
     bottleneck={p:min(v,key=lambda x:x[1])[0] for p,v in path_v.items() if len(v)>=2}
     tiers=Counter(tier.values())
-    payload=dict(kinetics=out, bottlenecks=bottleneck,
+    val=validate(enz, log_anchor, fam, adj, global_prior) if len(log_anchor)>=12 else None
+    payload=dict(kinetics=out, bottlenecks=bottleneck, validation=val,
                  summary=dict(enzymes=len(enz), measured=tiers.get("measured",0),
                               family_prior=tiers.get("family-prior",0),
                               network_propagated=tiers.get("network-propagated",0),
+                              n_families=len(set(fam[i] for i in enz)),
                               with_abundance=sum(1 for i in enz if i in ppm)))
     json.dump(payload, open(OUT/"kinetics.json","w"))
     print(f"kinetics: {len(enz)} enzymes | measured {tiers.get('measured',0)}, "
           f"family-prior {tiers.get('family-prior',0)}, network-propagated {tiers.get('network-propagated',0)} "
           f"| {payload['summary']['with_abundance']} with abundance -> Vmax | {len(bottleneck)} pathway bottlenecks")
+    if val: print(f"  imputation validation (held-out kcat): median fold-error {val['median_fold_error']}x, "
+                  f"within-2x {val['within_2x']:.0%}, within-10x {val['within_10x']:.0%}, log-R {val['log_pearson_r']} (n={val['n_test']})")
+    print(f"  families: {payload['summary']['n_families']}")
     if not anchors: print("  (no measured anchors present -> all estimates are family/global priors; add kinetics_measured.tsv on Colab)")
 
 if __name__=="__main__":

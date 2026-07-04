@@ -79,6 +79,7 @@ code("# [2b] fetch the raw data build_cell_complete.py needs (the big files are 
    " 'opencell.csv':'https://opencell.czbiohub.org/data/datasets/opencell-protein-interactions.csv',       # proximity-labeling interactome",
    " 'huri.tsv':'https://interactome-atlas.org/data/HuRI.tsv',                                             # HuRI systematic Y2H binary interactome (ENSG-ENSG); note: bare host (www. has a bad cert)",
    " 'gene2go.gz':'https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz',                                     # Gene Ontology annotations (function/process/component)",
+   " 'uniprot_ec.tsv':'https://rest.uniprot.org/uniprotkb/stream?query=organism_id:9606+AND+reviewed:true&fields=accession,gene_primary,ec&format=tsv',  # EC numbers -> enzyme families for kinetics",
    "}",
    "def _dl(url,p):",
    "    try:",
