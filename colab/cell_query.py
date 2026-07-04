@@ -29,6 +29,8 @@ class Cell:
         self.g2c=self.D.get("gene2cplx",{})
         self.nichenet=self.D.get("nichenet",{})            # ligand -> downstream target genes (NicheNet)
         self.metab=(self._load("metabolites.json") or {}).get("metabolites",{})   # first-class metabolites
+        _at=self._load("attractors.json") or {}
+        self.attractors=_at.get("attractors",[]); self.transitions=_at.get("transitions",[])
         self.metab_lower={k.lower():k for k in self.metab}
         self._metab_keys=sorted(self.metab_lower, key=len, reverse=True)   # longest-first for matching
         self.conv=self._load("convergence.json"); self.cond=self._load("conditions.json")
@@ -64,6 +66,22 @@ def answer(q, C=None):
         return dict(q=q, answer="NOT KNOWABLE — TIME-RESOLVED dynamics need a kinetic simulation the data can't "
                     "support (see KINETICS_ASSESSMENT.md). I can give static concentration, velocity, and TF "
                     "occupancy, but not their trajectory over time.", confidence="n/a", source="honest-limit")
+    # --- ATTRACTOR STATES / basin transitions (kinetics-free dynamics) ---
+    if C.attractors and re.search(r"attractor|stable state|cell state|basin|transition|switch|how (to|do).*(get|move|reach)|driver|reprogram", ql):
+        labels={a["id"]:a["label"] for a in C.attractors}
+        # transition drivers into/out of a state whose label matches a token in the query
+        tgt=next((a for a in C.attractors if any(w and w in ql for w in a["label"].lower().split("/"))), None)
+        if tgt and re.search(r"transition|switch|how|driver|reprogram|reach|into|to ", ql):
+            drv=[t for t in C.transitions if t["to"]==tgt["id"]]
+            routes=[f"{labels.get(t['from'],t['from'])} --{t['driver_flip']} {t['driver']}--> {tgt['label']}" for t in drv[:8]]
+            return dict(q=q, answer=f"to reach attractor '{tgt['label']}': "+("; ".join(routes) or "no single-TF driver found"),
+                        confidence="medium", source="attractor transition map (regulatory basins)")
+        # otherwise list the attractor landscape
+        parts=[f"[{a['id']}] {a['label']} ({a['size']} active TFs)" for a in C.attractors[:8]]
+        return dict(q=q, answer=f"{len(C.attractors)} regulatory attractor states: "+"; ".join(parts)+
+                    f" | {len(C.transitions)} single-TF transitions between basins",
+                    confidence="medium", source="attractor landscape (Boolean regulatory network)",
+                    caveat="kinetics-free basin analysis, not a timed trajectory")
     # --- METABOLITE as a first-class species (production/consumption/concentration/turnover) ---
     mm=C.metabolite(q) if C.metab else None
     if mm and re.search(r"produc|make|synthesi|form\b|consum|degrad|break|reaction|turnover|flux through|"
