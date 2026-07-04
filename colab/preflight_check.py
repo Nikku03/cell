@@ -58,6 +58,33 @@ def reachable(url):
             with urllib.request.urlopen(url, timeout=15) as r: r.read(1); return True
         except Exception: return False
 
+def archs4_report():
+    """find the ARCHS4/GEO h5 (excluding .part), report size + HDF5 validity BEFORE the long run."""
+    cands=[]
+    for d in [H]+DRIVE:
+        if not d.exists(): continue
+        for fn in os.listdir(d):
+            low=fn.lower()
+            if low.endswith(".h5") and ("archs4" in low or ("human" in low and "gene" in low)):
+                try:
+                    if (d/fn).stat().st_size>1e8: cands.append(d/fn)
+                except OSError: pass
+    parts=[str(d/fn) for d in [H]+DRIVE if d.exists() for fn in os.listdir(d) if fn.lower().endswith(".part")]
+    print("\n[ARCHS4 / GEO expression — the 59 GB file for coexpr + context + #1 condition multipliers]")
+    if parts: print(f"  note: ignoring partial download(s): {parts} (these are never used)")
+    if not cands:
+        print("  MISSING: no complete *.h5 found -> coexpr / context-networks / #1 will SKIP"); return
+    src=max(cands, key=lambda p:p.stat().st_size)
+    size=src.stat().st_size/1e9
+    valid=None
+    try:
+        import h5py
+        with h5py.File(src,"r") as h:
+            ok=(("data/expression" in h) or ("expression" in h)) and any(k in h for k in ("meta/genes/symbol","meta/genes/genes"))
+            valid = "VALID (datasets present)" if ok else "INVALID (missing data/expression or meta/genes)"
+    except Exception as e: valid=f"UNREADABLE ({repr(e)[:50]})"
+    print(f"  {'OK ' if valid and valid.startswith('VALID') else 'CHECK'} {src}  ({size:.1f} GB)  -> {valid}")
+
 def main():
     print("="*70+"\nPREFLIGHT — data source verification\n"+"="*70)
     miss_crit=0
@@ -70,6 +97,7 @@ def main():
     for label,names,role,pats in LAYER:
         p=present(names,pats); print(f"  {'OK ' if p else 'skip':7} {label:22} {p or '('+role+')'}")
         if not p: miss_layer.append(label)
+    archs4_report()
     print("\n[RUNTIME fetches — reachability check]")
     for label,url,role in RUNTIME:
         ok=reachable(url); print(f"  {'OK ' if ok else 'UNREACH':7} {label:34} {'' if ok else '('+role+')'}")

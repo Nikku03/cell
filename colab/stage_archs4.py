@@ -30,27 +30,45 @@ def find_src():
                 except OSError: pass
     return max(cands, key=os.path.getsize) if cands else None
 
+def valid_h5(p):
+    """True if p opens as HDF5 with the datasets the readers need (rejects truncated/partial files)."""
+    try:
+        import h5py
+        with h5py.File(p,"r") as h:
+            has_expr = ("data/expression" in h) or ("expression" in h)
+            has_genes = any(k in h for k in ("meta/genes/symbol","meta/genes/genes","meta/genes/gene_symbol"))
+            return bool(has_expr and has_genes)
+    except Exception as e:
+        print(f"  stage_archs4: '{os.path.basename(p)}' is NOT a valid/complete HDF5 ({repr(e)[:60]})"); return False
+
 def main():
-    src=find_src()
+    # clean any stale LOCAL partial from a previously-killed copy (never touches the Drive .part)
+    stale=str(LOCAL)+".part"
+    if os.path.exists(stale):
+        try: os.remove(stale); print(f"stage_archs4: removed stale local partial {stale}")
+        except OSError: pass
+    src=find_src()                                    # find_src already ignores anything not ending .h5 (so .part is never picked)
     if src is None:
-        print("stage_archs4: no ARCHS4/GEO h5 found on Drive (expression_geo/ or human_raw/) "
-              "-> co-expression / context-networks / condition-multiplier(#1) steps will skip"); return
+        print("stage_archs4: no ARCHS4/GEO .h5 found (expression_geo/ or human_raw/) -> coexpr / context / #1 will skip"); return
+    print(f"stage_archs4: found ARCHS4 -> {src} ({os.path.getsize(src)/1e9:.1f} GB)")
+    if not valid_h5(src):
+        print("stage_archs4: the .h5 is unreadable/incomplete -> coexpr / context / #1 will skip. "
+              "Re-upload a complete archs4_human_gene.h5 (the .part is an unfinished download; delete it)."); return
+    # DEFAULT: read in place from Drive (reliable; worked in prior runs). Copy to SSD only if opted in.
+    if os.environ.get("STAGE_ARCHS4","0")!="1":
+        print("stage_archs4: reading ARCHS4 IN PLACE from Drive (validated). "
+              "Set STAGE_ARCHS4=1 to copy it to local SSD for faster reads (needs ~64 GB free; risks a long copy)."); return
     if os.path.abspath(src)==os.path.abspath(LOCAL):
-        print(f"stage_archs4: ARCHS4/GEO already on local SSD ({os.path.getsize(LOCAL)/1e9:.1f} GB)"); return
-    if LOCAL.exists() and abs(LOCAL.stat().st_size-os.path.getsize(src))<1e6:
-        print(f"stage_archs4: already staged ({LOCAL.stat().st_size/1e9:.1f} GB) on local SSD -> reusing"); return
+        print(f"stage_archs4: already local ({os.path.getsize(LOCAL)/1e9:.1f} GB)"); return
+    if LOCAL.exists() and valid_h5(LOCAL) and abs(LOCAL.stat().st_size-os.path.getsize(src))<1e6:
+        print(f"stage_archs4: already staged ({LOCAL.stat().st_size/1e9:.1f} GB) -> reusing"); return
     need=os.path.getsize(src); free=shutil.disk_usage(str(H)).free
-    print(f"stage_archs4: source '{os.path.basename(src)}' = {need/1e9:.1f} GB on Drive; "
-          f"local SSD free = {free/1e9:.1f} GB")
     if free < need*1.08:
-        print("stage_archs4: NOT enough local SSD to stage -> leaving on Drive (h5py reads in place, slow). "
-              "Use a larger-disk runtime (or free space) to enable fast staging."); return
-    print("stage_archs4: copying ARCHS4/GEO -> local SSD (one-time sequential copy; turns hours of random "
-          "FUSE seeks into fast local reads) ...")
-    tmp=str(LOCAL)+".part"
-    shutil.copyfile(src, tmp); os.replace(tmp, LOCAL)
-    print(f"stage_archs4: staged -> {LOCAL} ({LOCAL.stat().st_size/1e9:.1f} GB). "
-          f"co-expression / context-networks / #1 now read from local SSD.")
+        print(f"stage_archs4: STAGE_ARCHS4=1 but only {free/1e9:.1f} GB free < {need/1e9:.1f} GB needed "
+              "-> reading in place from Drive instead."); return
+    print(f"stage_archs4: copying {need/1e9:.1f} GB -> local SSD (one-time) ...")
+    shutil.copyfile(src, stale); os.replace(stale, LOCAL)
+    print(f"stage_archs4: staged -> {LOCAL} ({LOCAL.stat().st_size/1e9:.1f} GB).")
 
 if __name__=="__main__":
     main()
