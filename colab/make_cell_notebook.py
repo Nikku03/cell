@@ -384,7 +384,7 @@ code("# build with hard failure if anything is missing (so we never silently shi
    "    print('FRESH',f+':', os.path.getsize(f'{OUT}/{f}')//1024,'KB')",
    "if PROJ:",
    "    import shutil",
-    for f in ['cell_complete.html','cell_explorer.html','metabolic_routes.html','cell_complete.json','predicted_essentiality.csv','depmap_essentiality.csv','celltype_masters.json','gf_perturb.json','convergence.json','reasoning.json','coexpr_neighbors.json','causal_reg.json','cell_instances.json','kg_edges.tsv']:",
+   "    for f in ['cell_complete.html','cell_explorer.html','metabolic_routes.html','cell_complete.json','predicted_essentiality.csv','depmap_essentiality.csv','celltype_masters.json','gf_perturb.json','convergence.json','reasoning.json','coexpr_neighbors.json','causal_reg.json','cell_instances.json','kg_edges.tsv']:",
    "        p=f'{OUT}/{f}'",
    "        if os.path.exists(p): shutil.copy(p,f'{PROJ}/{f}')",
    "    print('copied all 3 apps + data to Drive:', PROJ)"),
