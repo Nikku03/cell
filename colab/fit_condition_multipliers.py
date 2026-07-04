@@ -43,17 +43,21 @@ CTRL_KW=["control","untreated","normal","wild type","wild-type","wildtype","heal
 NEG_STRESS=[kw for kws in COND_KW.values() for kw in kws]   # a control must match none of these
 
 def find_h5():
-    # same resolution as compute_context_networks / compute_coexpr so it reuses the in-place ARCHS4 h5
+    # IDENTICAL resolution to compute_coexpr._find_h5 so #1 reuses the exact same in-place 59 GB ARCHS4
+    # file the co-expression lens already reads (any divergence = #1 silently skips while coexpr succeeds).
     for env in ("ARCHS4_H5","COEXPR_H5"):
         v=os.environ.get(env)
         if v and Path(v).exists(): return Path(v)
-    for d in [H, Path("/content/drive/MyDrive/virtual_cell_data/expression_geo")]:
-        if not d.exists(): continue
-        for n in ["archs4_human_gene.h5","archs4_gene_human.h5","human_gene_v2.latest.h5"]:
+    names=["archs4_human_gene.h5","archs4_gene_human.h5","human_gene_v2.h5","archs4_human.h5","human_gene_v2.latest.h5"]
+    dirs=[H, Path("/content/drive/MyDrive/virtual_cell_data/expression_geo"),
+          Path("/content/drive/MyDrive/virtual_cell_data/human_raw")]
+    for d in dirs:
+        for n in names:
             p=d/n
             if p.exists() and p.stat().st_size>1e7: return p
-        for pat in ("archs4*.h5","*human*gene*.h5"):
-            hits=[p for p in sorted(d.glob(pat)) if p.stat().st_size>1e7]
+        if d.exists():
+            hits=sorted(d.glob("archs4*.h5"))+sorted(d.glob("*human*gene*.h5"))
+            hits=[p for p in hits if p.stat().st_size>1e7]
             if hits: return hits[0]
     return None
 
