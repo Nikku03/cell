@@ -434,6 +434,8 @@ code("# build with hard failure if anything is missing (so we never silently shi
    "rcal=subprocess.run([sys.executable,'colab/compute_calibration.py'],capture_output=True,text=True); print(rcal.stdout[-800:])",
    "# Condition awareness: wire each condition (pH/temperature/pressure/hypoxia/...) to its sensor regulon",
    "rq=subprocess.run([sys.executable,'colab/compute_conditions.py'],capture_output=True,text=True); print(rq.stdout[-1400:])",
+   "# Kinetics (imputed, honest): measured anchors (SABIO/eHMN/BRENDA, with conditions) + family prior + network propagation x PaxDb abundance",
+   "rkin=subprocess.run([sys.executable,'colab/compute_kinetics.py'],capture_output=True,text=True); print(rkin.stdout[-900:])",
    "# Tissue bridge (T1): instantiate the cell model per cell type from Model-2 expression",
    "rt=subprocess.run([sys.executable,'colab/build_tissue_from_cells.py'],capture_output=True,text=True); print(rt.stdout[-800:])",
    "# Transformer Tower A: assemble the typed KG + test link-prediction (is the KG predictive?)",

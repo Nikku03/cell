@@ -29,6 +29,7 @@ class Cell:
         self.g2c=self.D.get("gene2cplx",{})
         self.conv=self._load("convergence.json"); self.cond=self._load("conditions.json")
         self.reason=self._load("reasoning.json"); self.cal=self._load("calibration.json")
+        self.kin=(self._load("kinetics.json") or {}).get("kinetics",{})
     def _load(self,fn):
         p=OUT/fn
         return json.load(open(p)) if p.exists() else None
@@ -41,11 +42,26 @@ def _conf(n, hi=3): return "high" if n>=hi else ("medium" if n>=1 else "low")
 
 def answer(q, C=None):
     C=C or Cell(); ql=q.lower(); g=C.gene(q)
-    # honest refusal: quantitative / dynamic / kinetic questions the data cannot support
-    if re.search(r"\b(rate|kinetic|kcat|km|concentration|how fast|flux|velocity|over time|time.?course|dynamics|at t=|minutes|seconds)\b", ql):
-        return dict(q=q, answer="NOT KNOWABLE from this model — rates/concentrations/dynamics need kinetics "
-                    "data that is <10% measured for human (see KINETICS_ASSESSMENT.md). The model is "
-                    "structural/relational, not a dynamic simulator.", confidence="n/a", source="honest-limit")
+    # truly-not-knowable DYNAMICS (concentration over time, flux dynamics) — no data supports these
+    if re.search(r"\b(concentration|over time|time.?course|dynamics|at t=|after \d|minutes|seconds|trajectory|simulate)\b", ql):
+        return dict(q=q, answer="NOT KNOWABLE — time-resolved concentrations/dynamics need a kinetic "
+                    "simulation the data can't support (see KINETICS_ASSESSMENT.md). The model gives "
+                    "structure + relative rate estimates, not a dynamic simulator.", confidence="n/a", source="honest-limit")
+    # kcat / turnover / reaction-rate of an ENZYME -> tiered ESTIMATE (measured with conditions, else imputed)
+    if re.search(r"\b(rate|kcat|turnover|kinetic|km|how fast|catalyt|vmax|reaction speed)\b", ql):
+        gg2=C.gene(q); k=C.kin.get(gg2) if gg2 else None
+        if k:
+            cond=(f" at pH {k.get('pH')}, {k.get('temp')}C ({k.get('source')}{', in-vitro' if k.get('in_vitro') else ''})"
+                  if k.get('tier')=="measured" else "")
+            note={"measured":"MEASURED (fact)","family-prior":"ESTIMATE from enzyme family (not measured)",
+                  "network-propagated":"ESTIMATE propagated from network neighbours (weak, not measured)",
+                  "global-prior":"crude default (no family data)"}.get(k["tier"],k["tier"])
+            vm=f"; relative in-vivo capacity Vmax(log10)={k['vmax_rel']} (kcat x PaxDb abundance)" if k.get("vmax_rel") is not None else ""
+            return dict(q=q, gene=gg2, answer=f"{gg2} kcat ≈ {k['kcat_per_s']} /s [{note}]{cond}{vm}",
+                        confidence="high" if k["tier"]=="measured" else ("medium" if k["tier"]=="family-prior" else "low"),
+                        source="kinetics ("+k["tier"]+")", tier=k["tier"])
+        return dict(q=q, answer="no kinetic estimate for this gene (not an annotated enzyme, or kinetics layer "
+                    "absent). Measured human kcat exists for <10% of enzymes.", confidence="n/a", source="kinetics")
     if g is None:
         return dict(q=q, answer="no gene from the model recognized in the question.", confidence="n/a", source="parser")
     i=C.idx[g]; gg=C.G[i]
