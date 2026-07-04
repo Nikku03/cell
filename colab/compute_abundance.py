@@ -49,29 +49,39 @@ def main():
               "Set PAXDB_FILE=/full/path, or place a *paxdb*.txt there -> skipping abundance lens"); return
     print(f"abundance: using PaxDb file {f}")
     e2s=ensp2sym()
-    ab={}
+    import re
+    SYM=re.compile(r"^[A-Za-z][A-Za-z0-9\-\.@_]{0,20}$")   # plausible HGNC symbol (has a leading letter)
+    ab={}; via_name=0; via_ensp=0
     for l in _open(f):
         if l.startswith("#") or not l.strip(): continue
-        p=l.replace(",","\t").split("\t")
-        # find the string id token (9606.ENSP...) and the abundance (first float after it)
-        sid=next((t for t in p if "ENSP" in t), None)
-        if not sid: continue
-        ensp=sid.split(".")[-1] if "." in sid else sid
-        sym=e2s.get("9606."+ensp) or e2s.get(ensp)
+        p=[t.strip() for t in l.replace(",","\t").split("\t") if t.strip()]
+        # 1) prefer the explicit gene_name column (PaxDb integrated files carry it) -> no alias dependency
+        sym=next((t for t in p if "ENSP" not in t and "." not in t and SYM.match(t)
+                  and not t.replace("-","").isdigit()), None)
+        # 2) fall back to string id (9606.ENSP...) -> symbol via string_aliases
+        if not sym:
+            sid=next((t for t in p if "ENSP" in t), None)
+            if sid:
+                ensp=sid.split(".")[-1] if "." in sid else sid
+                sym=e2s.get("9606."+ensp) or e2s.get(ensp)
+                if sym: via_ensp+=1
+        else: via_name+=1
         if not sym: continue
+        # abundance = the last positive float on the line (PaxDb 'abundance' is the final column)
         val=None
-        for t in p:
+        for t in reversed(p):
             try:
                 v=float(t)
                 if v>0: val=v; break
             except: continue
         if val is None: continue
-        ab[sym]=max(ab.get(sym,0.0), round(val,3))
+        ab[sym.upper()]=max(ab.get(sym.upper(),0.0), round(val,3))
     json.dump(ab, open(OUT/"paxdb_abundance.json","w"))
     if ab:
         import statistics
         vals=sorted(ab.values())
-        print(f"abundance (PaxDb): {len(ab)} genes | ppm range {vals[0]:.2g}..{vals[-1]:.2g} | median {statistics.median(vals):.2g}")
+        print(f"abundance (PaxDb): {len(ab)} genes ({via_name} via gene_name col, {via_ensp} via ENSP map) | "
+              f"ppm range {vals[0]:.2g}..{vals[-1]:.2g} | median {statistics.median(vals):.2g}")
     else:
         print("abundance: PaxDb parsed 0 genes (check id mapping / format)")
 
