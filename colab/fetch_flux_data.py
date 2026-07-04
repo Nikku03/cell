@@ -96,10 +96,11 @@ def fetch_fluxprofile():
         except: continue
         cands=_SYN.get(name,[name])
         for c in cands:
-            if f<0:                                   # uptake -> constrain availability (glucose tight = scale anchor)
-                t=0.1 if name=="glucose" else tol
-                med.append((c, round(f*(1+t),6), round(f*(1-t),6)))   # both negative; lb more negative
-            else:                                     # secretion -> leave free-ish, predict & validate it
+            if f<0:                                   # uptake -> UPPER BOUND on availability (0..max), not a
+                # forced band; forcing every uptake made Human-GEM infeasible. biomass-max still pulls flux
+                # up to the bound, so the absolute scale is preserved while the model stays feasible.
+                med.append((c, round(f*(1+tol),6), 0.0))          # lb=max uptake (neg), ub=0 (no secretion)
+            else:                                     # secretion -> free to predict (0..1.3x), validated separately
                 med.append((c, 0.0, round(f*(1+tol),6)))
         val.append((cands[0], f))                     # measured value for validation (first candidate name)
     with open(OUT/"flux_medium.tsv","w") as o:

@@ -22,7 +22,7 @@ import numpy as np
 OUT=Path("outputs/orphan"); H=Path("data/external_data/human")
 CLIP_LO,CLIP_HI=0.1,10.0
 MIN_CASE=6; MIN_CTRL=6           # need at least this many samples on each side to trust a condition
-MAX_SAMPLES=4000                 # cap case/control sample reads per condition for speed
+MAX_SAMPLES=1500                 # cap case/control sample reads per condition (memory over Drive FUSE)
 
 # condition -> positive metadata keywords (must match the CONDITIONS keys in compute_conditions.py)
 COND_KW = {
@@ -100,24 +100,36 @@ def cpm_median(expr, genes_axis, sample_idx):
     return np.median(M, axis=1)
 
 def main():
+    # wrapper: any failure (OOM, h5 read error over Drive FUSE, ...) is surfaced to STDOUT and a diagnostic
+    # condition_multipliers.json is always written, so the run never leaves this step invisible.
+    try:
+        _fit()
+    except BaseException as e:
+        import traceback
+        tb=traceback.format_exc()
+        print("fit_condition_multipliers FAILED:", repr(e)[:200], flush=True)
+        print(tb[-1500:], flush=True)
+        try: json.dump({"_report":{"error":repr(e)[:300]}, "_meta":{"status":"failed"}},
+                       open(OUT/"condition_multipliers.json","w"))
+        except Exception: pass
+
+def _fit():
     f=find_h5()
     if f is None:
-        print("no ARCHS4 h5 found (set ARCHS4_H5 or place human_gene_v2*.h5 in data/external_data/human) "
-              "-> condition_multipliers.json NOT written; compute_concentration falls back to flat COND_FOLD"); return
-    try:
-        import h5py  # noqa
-    except Exception:
-        print("h5py not installed -> cannot fit; skipping"); return
+        print("no ARCHS4 h5 found (set ARCHS4_H5) -> condition_multipliers.json NOT written; flat COND_FOLD used", flush=True)
+        json.dump({"_report":{"status":"no ARCHS4 h5 found"}}, open(OUT/"condition_multipliers.json","w")); return
+    import h5py  # noqa
     D=json.load(open(OUT/"cell_complete.json")); model_genes=set(g["name"] for g in D["genes"])
-    print(f"fitting condition multipliers from {f.name} ({f.stat().st_size/1e9:.1f} GB) ...")
+    print(f"fitting condition multipliers from {f} ({f.stat().st_size/1e9:.1f} GB) ...", flush=True)
     sym, txt, expr, ga, h = load_meta(f)
     sym_up=np.array([s.upper() for s in sym])
     keep=np.array([s in model_genes for s in sym_up])                    # only emit model genes
     print(f"  {len(sym)} genes, {len(txt)} samples; {keep.sum()} genes overlap the model")
     ctrl=match_idx(txt, CTRL_KW, exclude=NEG_STRESS)
-    print(f"  baseline/control pool: {len(ctrl)} samples")
+    print(f"  baseline/control pool: {len(ctrl)} samples (reading control CPM ...)", flush=True)
     out={}; report={}
     ctrl_med=cpm_median(expr, ga, ctrl) if len(ctrl)>=MIN_CTRL else None
+    print(f"  control CPM read OK; fitting {len(COND_KW)} conditions ...", flush=True)
     for cond,kws in COND_KW.items():
         case=match_idx(txt, kws)
         if len(case)<MIN_CASE or ctrl_med is None or len(ctrl)<MIN_CTRL:
