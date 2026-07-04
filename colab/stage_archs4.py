@@ -17,7 +17,10 @@ DIRS=["/content/drive/MyDrive/virtual_cell_data/expression_geo",
       "/content/drive/MyDrive/virtual_cell_data/human_raw", str(H)]
 
 def find_src():
-    """largest ARCHS4/GEO .h5 across the Drive folders (and H, in case it is already local)."""
+    """largest ARCHS4/GEO .h5 across the Drive folders (and H). Explicit env path wins."""
+    for env in ("ARCHS4_H5","COEXPR_H5"):
+        v=os.environ.get(env,"")
+        if v and os.path.exists(v) and not v.endswith(".part"): return v
     cands=[]
     for d in DIRS:
         if not os.path.isdir(d): continue
