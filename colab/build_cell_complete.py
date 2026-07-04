@@ -349,7 +349,26 @@ if cpf.exists():
             complexes[name]=[idx[s] for s in sorted(syms)]
             for s in syms:
                 if len(gene2cplx[idx[s]])<4: gene2cplx[idx[s]].append(name)
-print("Complex Portal complexes:",len(complexes))
+nCP=len(complexes)
+# CORUM curated complexes (subunit gene symbols in a 'subunits(Gene name)' column) — union with ComplexPortal
+crf=H/"corum.txt"
+if crf.exists():
+    rd=csv.reader(open(crf,encoding="utf-8",errors="ignore"),delimiter="\t"); hdr=[h.lower() for h in next(rd,[])]
+    def col(row,*keys):
+        for k in keys:
+            for i,h in enumerate(hdr):
+                if k in h and i<len(row): return row[i]
+        return ""
+    for row in rd:
+        if not row: continue
+        name="CORUM:"+(col(row,"complexname","complex name") or col(row,"complexid") or "?")
+        gsyms=col(row,"subunits(gene name)","subunits gene name","gene name")
+        syms={s.strip() for s in gsyms.replace(",",";").split(";") if s.strip() in idx}
+        if len(syms)>=2 and name not in complexes:
+            complexes[name]=[idx[s] for s in sorted(syms)]
+            for s in syms:
+                if len(gene2cplx[idx[s]])<5: gene2cplx[idx[s]].append(name)
+print(f"Complexes: ComplexPortal {nCP} + CORUM {len(complexes)-nCP} = {len(complexes)}")
 drugs=defaultdict(list); dgf=H/"dgidb.tsv"
 if dgf.exists():
     rows_dg=list(csv.reader(open(dgf),delimiter="\t"))[1:]
@@ -424,6 +443,15 @@ if cte.exists():
           f"(orientation: {'genes x celltypes' if row_hits>hdr_hits else 'celltypes x genes'})")
 else:
     print("Model 2: no celltype_expression.csv -> no abundance / cell-type wiring / differentiation")
+# PaxDb integrated protein abundance (ppm) — the QUANTITATIVE "how much" layer
+ppm={}
+pxf=OUT/"paxdb_abundance.json"
+if pxf.exists():
+    raw=json.load(open(pxf))
+    for g,v in raw.items():
+        i=idx.get(g)
+        if i is not None: ppm[i]=v
+    print("PaxDb abundance: measured protein ppm for",len(ppm),"genes (quantitative layer)")
 # === BUCKET 1: co-essentiality + synthetic lethality (DepMap), 3D loops, ensemble confidence ===
 codep={}; sl=[]
 cdp=OUT/"depmap_codep.json"
@@ -598,7 +626,8 @@ DATA=dict(genes=G,reg=reg,ppi=ppi,reactions=reactions,generxn={k:v for k,v in ge
     darkfn={str(k):v for k,v in darkfn.items()},
     model4=model4,model4_meta=model4_meta,
     coexpr={str(k):v for k,v in coexpr.items()},
-    ncrna=ncrna)
+    ncrna=ncrna,
+    ppm={str(k):v for k,v in ppm.items()})
 json.dump(DATA,open(OUT/"cell_complete.json","w"),separators=(",",":"))
 print("proteins:",len(G),"| reg edges:",len(reg),"| ppi edges:",len(ppi))
 print("processes:",dict(Counter(g["proc"] for g in G).most_common()))

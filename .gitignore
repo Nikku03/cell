@@ -152,3 +152,7 @@ outputs/orphan/conditions.json
 outputs/orphan/foldseek_hits.m8
 outputs/orphan/af_query/
 outputs/orphan/af_target/
+data/external_data/human/paxdb_human.txt
+data/external_data/human/corum.txt
+data/external_data/human/corum.zip
+outputs/orphan/paxdb_abundance.json
