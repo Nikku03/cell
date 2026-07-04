@@ -156,3 +156,5 @@ data/external_data/human/paxdb_human.txt
 data/external_data/human/corum.txt
 data/external_data/human/corum.zip
 outputs/orphan/paxdb_abundance.json
+outputs/orphan/context_networks.json
+outputs/orphan/go_terms.json
