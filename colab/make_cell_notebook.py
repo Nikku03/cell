@@ -418,6 +418,9 @@ code("RUN_ISP=False   # set True on a GPU runtime to run the real deletion pertu
 
 md("## Assemble → build → serve\n"
    "The builder now folds in whatever the three models produced (present files override the fallbacks)."),
+code("# PREFLIGHT: verify every data source is in place + which layer each missing file affects (informational)",
+   "import subprocess, sys",
+   "subprocess.run([sys.executable,'colab/preflight_check.py'])"),
 code("# build with hard failure if anything is missing (so we never silently ship the old committed HTML)",
    "import subprocess, time",
    "if os.path.exists(f'{OUT}/cell_complete.json'): os.remove(f'{OUT}/cell_complete.json')",
