@@ -41,7 +41,8 @@ def genes_near(chrom,mid):
     return [tss[chrom][k][1] for k in range(lo,hi)]
 
 # ReMap BED name field encodes the TF (e.g. "GSE.TF.cell" or just "TF")
-pair=defaultdict(int)
+print(f"ReMap: {sum(len(v) for v in tss.values())} TSS across {len(tss)} chroms indexed from refGene")
+pair=defaultdict(int); npeaks=0; tfs_seen=set(); sample=[]
 with _open(src) as f:
     for l in f:
         p=l.split("\t")
@@ -49,11 +50,16 @@ with _open(src) as f:
         chrom=p[0]
         try: mid=(int(p[1])+int(p[2]))//2
         except: continue
-        name=p[3]; tf=name.split(".")[1] if name.count(".")>=2 else name.split(".")[0]
+        name=p[3]
+        # ReMap 'all' name = GSE.TF.biotype (3 parts); 'nr' name = TF directly
+        tf=name.split(".")[1] if name.count(".")>=2 else name.split(".")[0]
         tf=tf.strip().upper()
         if not tf: continue
+        npeaks+=1; tfs_seen.add(tf)
+        if len(sample)<3: sample.append(name)
         for g in genes_near(chrom,mid):
             if g.upper()!=tf: pair[(tf,g)]+=1
+print(f"ReMap: {npeaks} peaks, {len(tfs_seen)} unique TFs (name samples: {sample})")
 
 bytf=defaultdict(list)
 for (tf,g),n in pair.items():

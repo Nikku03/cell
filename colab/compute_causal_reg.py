@@ -42,8 +42,15 @@ def load_gtex():
 
 def main():
     remap=load_remap(); pert=load_pert_targets(); gtex=load_gtex()
+    diag=dict(n_remap_tfs=len(remap), n_pert_genes=len(pert),
+              remap_file_exists=(OUT/"remap_tf_targets.tsv").exists(),
+              pert_file_exists=(OUT/"perturbseq_targets.json").exists(),
+              tf_overlap=len(set(remap)&set(pert)))
     if not remap or not pert:
-        print(f"causal regulome: need both ReMap ({len(remap)} TFs) and Perturb-seq targets ({len(pert)} TFs) -> skipping"); return
+        print(f"causal regulome: ReMap TFs={len(remap)} (file={diag['remap_file_exists']}), "
+              f"Perturb-seq target-genes={len(pert)} (file={diag['pert_file_exists']}) -> skipping (one input empty)")
+        json.dump(dict(n_edges=0, n_tfs=0, n_triple=0, edges=[], diagnostics=diag), open(OUT/"causal_reg.json","w"))
+        return
     edges=[]; both_tf=set(remap)&set(pert)
     for tf in both_tf:
         bound=remap[tf]; responders=pert[tf]

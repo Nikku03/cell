@@ -382,27 +382,46 @@ for i,g in enumerate(G):
         cellcycle[i]=ph
 print("Reactome cell-cycle genes:",len(cellcycle))
 # === MODEL 2: abundance + cell-type expression (drives abundance, cell-type wiring, differentiation) ===
-# celltype_expression.csv = cell types (rows) x genes (cols); log1p CP10k means from the atlas.
+# celltype_expression.csv is log1p CP10k means. Orientation varies (fresh census = celltypes x genes;
+# a restored file may be genes x celltypes), so auto-detect which axis is genes by matching our index.
 ctnames=[]; abund={}; emask={}
 cte=OUT/"celltype_expression.csv"
 if cte.exists():
     rd=csv.reader(open(cte)); header=next(rd)
-    gcols=header[1:]; mat=[]
-    for row in rd:
-        ctnames.append(row[0]); mat.append([float(x) if x else 0.0 for x in row[1:]])
-    T=len(ctnames); THR=1.0    # "expressed" if log1p CP10k > 1 in that cell type
-    for ci,gname in enumerate(gcols):
-        gi=idx.get(gname)
-        if gi is None: continue
-        vals=[mat[t][ci] for t in range(T)]
-        mx=max(vals) if vals else 0.0
-        if mx<=0: continue
-        abund[gi]=min(15,int(round(mx*2)))          # baseline abundance 0-15
-        m=0
-        for t,v in enumerate(vals):
-            if v>THR: m|=(1<<t)
-        if m: emask[gi]=str(m)                        # bitmask over cell types (string: can exceed 2^53)
-    print("Model 2 expression: abundance for",len(abund),"genes across",T,"cell types")
+    rows=[r for r in rd if r]
+    hdr_hits=sum(1 for h in header[1:] if h in idx)                 # genes-as-columns?
+    row_hits=sum(1 for r in rows if r and r[0] in idx)              # genes-as-rows?
+    if row_hits>hdr_hits:                                           # file is genes x celltypes -> transpose logic
+        ctnames=header[1:]; T=len(ctnames); THR=1.0
+        for r in rows:
+            gi=idx.get(r[0])
+            if gi is None: continue
+            vals=[float(x) if x else 0.0 for x in r[1:1+T]]
+            mx=max(vals) if vals else 0.0
+            if mx<=0: continue
+            abund[gi]=min(15,int(round(mx*2)))
+            m=0
+            for t,v in enumerate(vals):
+                if v>THR: m|=(1<<t)
+            if m: emask[gi]=str(m)
+    else:                                                           # file is celltypes x genes (fresh census)
+        gcols=header[1:]; mat=[]
+        for row in rows:
+            ctnames.append(row[0]); mat.append([float(x) if x else 0.0 for x in row[1:]])
+        T=len(ctnames); THR=1.0
+        for ci,gname in enumerate(gcols):
+            gi=idx.get(gname)
+            if gi is None: continue
+            vals=[mat[t][ci] for t in range(T) if ci<len(mat[t])]
+            mx=max(vals) if vals else 0.0
+            if mx<=0: continue
+            abund[gi]=min(15,int(round(mx*2)))
+            m=0
+            for t,v in enumerate(vals):
+                if v>THR: m|=(1<<t)
+            if m: emask[gi]=str(m)
+    print(f"Model 2 expression: abundance for {len(abund)} genes across {len(ctnames)} cell types "
+          f"(orientation: {'genes x celltypes' if row_hits>hdr_hits else 'celltypes x genes'})")
 else:
     print("Model 2: no celltype_expression.csv -> no abundance / cell-type wiring / differentiation")
 # === BUCKET 1: co-essentiality + synthetic lethality (DepMap), 3D loops, ensemble confidence ===
