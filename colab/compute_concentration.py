@@ -86,11 +86,14 @@ def main():
     hl=load_halflife(idx)
 
     # #2 CALIBRATE expression -> ppm on genes with BOTH; apply to PaxDb-missing genes
-    both=[i for i in ppm if i in mean_expr and mean_expr[i]>0]
+    both=[i for i in ppm if i in mean_expr and mean_expr[i]>0 and ppm[i]>0]   # ppm/expr>0 (log10 needs it)
     calib=None
     if len(both)>=50:
         X=np.log10([mean_expr[i] for i in both]); Y=np.log10([ppm[i] for i in both])
-        a,b=np.polyfit(X,Y,1); calib=(a,b)
+        m=np.isfinite(X)&np.isfinite(Y)
+        if m.sum()>=50:
+            a,b=np.polyfit(X[m],Y[m],1)
+            if np.isfinite(a) and np.isfinite(b): calib=(a,b)
     med_hl=float(np.median(list(hl.values()))) if hl else 1.0
 
     out={}

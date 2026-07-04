@@ -142,19 +142,28 @@ def base_met(name):
     import re
     return re.sub(r"\[[^\]]*\]\s*$","",name).strip()
 
+def _chir(s):
+    import re
+    return re.sub(r"^[ld]-","", s.lower())        # strip L-/D- chirality prefix for robust matching
+
 def met_to_exchange(rxns, met_idx):
     """metabolite base-name -> (rxn_index, coef_sign) for single-metabolite boundary reactions.
-    Prefers extracellular/system compartments. coef_sign tells uptake direction. Keys are registered
-    both exact and lower-cased so a medium/validation name resolves regardless of Human-GEM casing."""
+    Prefers extracellular/system compartments. coef_sign tells uptake direction. Keys registered
+    exact, lower-cased, AND chirality-stripped so 'L-arginine' <-> 'arginine' resolve regardless of
+    Human-GEM naming."""
     inv={i:n for n,i in met_idx.items()}
     out={}
     for j,r in enumerate(rxns):
         if not r["is_exchange"] or len(r["stoich"])!=1: continue
         mi,coef=next(iter(r["stoich"].items())); nm=inv[mi]
         bn=base_met(nm); ext = any(t in nm for t in ["[e]","[s]","[x]"])
-        for key in (bn, bn.lower()):
+        for key in (bn, bn.lower(), _chir(bn)):
             if key not in out or (ext and "[" in nm): out[key]=(j, 1.0 if coef>0 else -1.0)
     return out
+
+def mx_get(met2ex, key):
+    """resolve a metabolite name to its exchange (idx,sign), trying exact/lower/chirality-stripped."""
+    return met2ex.get(key) or met2ex.get(key.lower()) or met2ex.get(_chir(key))
 
 def build_S(rxns, nmet):
     from scipy import sparse
@@ -210,7 +219,7 @@ def _pred_flux(key, v, id2i, gene2rxn, met2ex=None):
     carry; metabolite name -> |flux| of its exchange reaction (for measured exchange fluxes)."""
     if key in id2i: return abs(v[id2i[key]])
     if met2ex:
-        mx=met2ex.get(key) or met2ex.get(key.lower())
+        mx=mx_get(met2ex, key)
         if mx: return abs(v[mx[0]])
     if key in gene2rxn: return float(sum(abs(v[j]) for j in gene2rxn[key]))
     return None
@@ -251,13 +260,21 @@ def main():
     # BASE bounds: reversibility + medium/exchange anchors (NO Vmax yet) — key may be a rxn id or metabolite
     blb=np.array([-BIG if r["rev"] else 0.0 for r in rxns]); bub=np.array([BIG]*n)
     medium=load_medium(); met2ex=met_to_exchange(rxns, met_idx); n_med=0
+    unresolved=[]
     for key,(l,u) in medium.items():
-        mx=met2ex.get(key) or met2ex.get(key.lower())
+        mx=mx_get(met2ex, key)
         if key in id2i: blb[id2i[key]]=l; bub[id2i[key]]=u; n_med+=1
         elif mx:
             j,sign=mx
             lo,hi=(l,u) if sign<0 else (-u,-l)      # medium is uptake-negative; flip if exchange is source-oriented
             blb[j]=lo; bub[j]=hi; n_med+=1
+        else: unresolved.append(key)
+    if unresolved:
+        _inv={i:n for n,i in met_idx.items()}
+        ex_names=sorted({base_met(_inv[next(iter(r["stoich"]))]) for r in rxns
+                         if r["is_exchange"] and len(r["stoich"])==1})[:15]
+        print(f"  medium: {n_med} exchange constraints mapped; UNRESOLVED {sorted(set(unresolved))[:12]} "
+              f"| sample Human-GEM exchange metabolites: {ex_names}")
     # enzyme Vmax overlay — ABSOLUTE mmol/gDW/hr (kcat x [E]); commensurable with the exchange anchor
     vmax, vtier, vunits = vmax_bounds(rxns)
     def with_vmax(scale):
@@ -295,7 +312,7 @@ def main():
     # tiers
     ntier={}
     anchored_ids=set(id2i[k] for k in medium if k in id2i)|set(
-        (met2ex.get(k) or met2ex.get(k.lower()))[0] for k in medium if (met2ex.get(k) or met2ex.get(k.lower())))
+        mx_get(met2ex,k)[0] for k in medium if mx_get(met2ex,k))
     for ri,r in enumerate(rxns):
         if ri in anchored_ids: ntier[ri]="exchange-anchored"
         elif ri in vtier: ntier[ri]=vtier[ri]

@@ -24,7 +24,7 @@ X0=float(os.environ.get("DFBA_X0","0.01"))            # gDW/L initial biomass
 def main():
     try:
         import scipy  # noqa
-        from compute_flux import parse_gem, build_S, solve_fba, met_to_exchange, load_medium
+        from compute_flux import parse_gem, build_S, solve_fba, met_to_exchange, load_medium, mx_get
     except Exception as e:
         print("dFBA needs scipy + compute_flux:",repr(e)[:80]); return
     rxns, met_idx = parse_gem()
@@ -35,10 +35,19 @@ def main():
     if bio is None: print("no biomass reaction -> dFBA needs a growth objective; skipping"); return
     met2ex=met_to_exchange(rxns, met_idx)
     medium=load_medium()                                  # measured max uptake capacities (mmol/gDW/hr)
+    # BASE bounds = the measured medium (constrains ALL mapped exchanges, not just tracked ones, so
+    # growth is limited by the defined medium and doesn't exploit open nutrients -> realistic mu)
+    base_lb=np.array([-1000.0 if r["rev"] else 0.0 for r in rxns]); base_ub=np.array([1000.0]*n)
+    id2i={r["id"]:i for i,r in enumerate(rxns)}; n_med=0
+    for key,(l,u) in medium.items():
+        mx=mx_get(met2ex,key)
+        if key in id2i: base_lb[id2i[key]]=l; base_ub[id2i[key]]=u; n_med+=1
+        elif mx:
+            j,sgn=mx; lo,hi=(l,u) if sgn<0 else (-u,-l); base_lb[j]=lo; base_ub[j]=hi; n_med+=1
     # resolve tracked metabolites -> exchange reaction index, orientation sign, max uptake capacity
     track={}
     for name,(S0,Km) in TRACK.items():
-        mx=met2ex.get(name) or met2ex.get(name.lower())
+        mx=mx_get(met2ex,name)
         if not mx: continue
         j,sgn=mx; cap=None
         for key in (name, name.lower()):
@@ -46,9 +55,8 @@ def main():
         track[name]=dict(rxn=j, sign=sgn, S=S0, Km=Km, cap=cap or (10.0 if name=="glucose" else 1.0), traj=[])
     if "glucose" not in track:
         print("glucose exchange not found in Human-GEM -> dFBA skipped"); return
-    base_lb=np.array([-1000.0 if r["rev"] else 0.0 for r in rxns]); base_ub=np.array([1000.0]*n)
     c=np.zeros(n); c[bio]=1.0
-    X=X0; ts=[]; Xs=[]; mus=[]; t=0.0; steps=int(TMAX/DT)
+    X=X0; ts=[]; Xs=[]; mus=[]; t=0.0; steps=int(TMAX/DT); warn_explode=False
     for _ in range(steps):
         lb=base_lb.copy(); ub=base_ub.copy()
         for name,tk in track.items():
@@ -63,23 +71,32 @@ def main():
         z=solve_fba(S, lb, ub, c, maximize=True)
         if z is None: break
         mu=float(z[bio])
+        if not np.isfinite(mu) or not np.isfinite(X): break
         ts.append(round(t,3)); Xs.append(round(X,5)); mus.append(round(mu,5))
         for name,tk in track.items(): tk["traj"].append(round(tk["S"],4))
         if mu<1e-4 and t>1: break                         # growth stopped (substrate exhausted)
+        if X > X0*1e6: warn_explode=True; break           # runaway (medium under-constrained) -> stop, flag
         # step slow variables: net secretion into medium = -sign*v (>0 secretion, <0 uptake)
         for name,tk in track.items():
             sec = -tk["sign"]*float(z[tk["rxn"]])         # mmol/gDW/hr into the medium
-            tk["S"]=max(0.0, tk["S"] + sec*X*DT)          # dS = sec * X * dt
-        X = X*math.exp(mu*DT); t += DT
+            tk["S"]=max(0.0, min(tk["S"] + sec*X*DT, TRACK.get(name,(1e4,))[0]*20))   # clamp, no inf
+        X = min(X*math.exp(mu*DT), X0*1e7); t += DT
     traj={name:tk["traj"] for name,tk in track.items()}
+    mu0=mus[0] if mus else 0.0
+    under_constrained = warn_explode or mu0>0.5              # mammalian mu ~0.02-0.06/hr; >0.5 = medium too open
     payload=dict(t_hr=ts, biomass_gDW_L=Xs, growth_rate_per_hr=mus, metabolites_mM=traj,
-                 params=dict(dt=DT, tmax=TMAX, X0=X0, tracked=list(track)),
+                 params=dict(dt=DT, tmax=TMAX, X0=X0, tracked=list(track), n_medium_bounds=n_med),
+                 medium_under_constrained=bool(under_constrained),
                  note="Born-Oppenheimer dFBA: FBA steady state per slow step; culture-scale dynamics, no kinetic ODEs")
     json.dump(payload, open(OUT/"dfba.json","w"))
     g=track.get("glucose",{}).get("traj",[])
-    print(f"dFBA: simulated {len(ts)} steps to t={ts[-1] if ts else 0}h | biomass {X0}->{Xs[-1] if Xs else X0:.3g} gDW/L "
-          f"| glucose {g[0] if g else '?'}->{g[-1] if g else '?'} mM")
-    print("  (culture-scale trajectory: growth curve + substrate drawdown + product build-up; no rate constants)")
+    print(f"dFBA: {len(ts)} steps to t={ts[-1] if ts else 0}h | biomass {X0}->{Xs[-1] if Xs else X0:.3g} gDW/L "
+          f"| glucose {g[0] if g else '?'}->{g[-1] if g else '?'} mM | mu0={mu0:.3g}/hr")
+    if under_constrained:
+        print("  WARNING: growth rate implausibly high -> the defined medium is under-constrained (few exchange "
+              "bounds mapped); trajectory is QUALITATIVE. Fix exchange-name mapping / add a full medium for realism.")
+    else:
+        print("  (culture-scale trajectory: growth curve + substrate drawdown + product build-up; no rate constants)")
 
 if __name__=="__main__":
     main()

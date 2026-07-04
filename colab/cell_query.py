@@ -73,8 +73,8 @@ def answer(q, C=None):
         tgt=next((a for a in C.attractors if any(w and w in ql for w in a["label"].lower().split("/"))), None)
         if tgt and re.search(r"transition|switch|how|driver|reprogram|reach|into|to ", ql):
             drv=[t for t in C.transitions if t["to"]==tgt["id"]]
-            routes=[f"{labels.get(t['from'],t['from'])} --{t['driver_flip']} {t['driver']}--> {tgt['label']}" for t in drv[:8]]
-            return dict(q=q, answer=f"to reach attractor '{tgt['label']}': "+("; ".join(routes) or "no single-TF driver found"),
+            routes=[f"from {labels.get(t['from'],t['from'])}: activate {', '.join(t.get('drivers',[]))}" for t in drv[:6]]
+            return dict(q=q, answer=f"to reach attractor '{tgt['label']}': "+("; ".join(routes) or "no driver route found"),
                         confidence="medium", source="attractor transition map (regulatory basins)")
         # otherwise list the attractor landscape
         parts=[f"[{a['id']}] {a['label']} ({a['size']} active TFs)" for a in C.attractors[:8]]
