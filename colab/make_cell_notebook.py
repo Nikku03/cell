@@ -447,6 +447,7 @@ code("# build with hard failure if anything is missing (so we never silently shi
    "rconc=subprocess.run([sys.executable,'colab/compute_concentration.py'],capture_output=True,text=True); print(rconc.stdout[-900:])",
    "# Flux (enzyme-constrained FBA on Human-GEM): Vmax=kcat x [E] as ceilings + exchange anchors -> genome-wide flux, validated vs 13C-MFA",
    "import subprocess as _sp2; _sp2.run([sys.executable,'-m','pip','install','-q','scipy'],capture_output=True)",
+   "rfd=subprocess.run([sys.executable,'colab/fetch_flux_data.py'],capture_output=True,text=True); print(rfd.stdout[-500:])   # exchange bounds + 13C validation set (set JAIN_CORE_URL/CECAFDB_URL for real per-line data)",
    "rflux=subprocess.run([sys.executable,'colab/compute_flux.py'],capture_output=True,text=True); print(rflux.stdout[-900:])",
    "# Tissue bridge (T1): instantiate the cell model per cell type from Model-2 expression",
    "rt=subprocess.run([sys.executable,'colab/build_tissue_from_cells.py'],capture_output=True,text=True); print(rt.stdout[-800:])",

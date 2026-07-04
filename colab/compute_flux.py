@@ -96,29 +96,46 @@ def vmax_bounds(rxns):
     return vmax, tier
 
 def load_medium():
-    """optional measured exchange bounds: tsv 'rxn_id\tlb\tub' (uptake negative). env FLUX_MEDIUM."""
+    """exchange bounds: tsv 'key<TAB>lb<TAB>ub' (uptake negative). key = Human-GEM rxn id OR metabolite
+    name (resolved to its exchange reaction in main). env FLUX_MEDIUM."""
     import os
     m={}; f=Path(os.environ.get("FLUX_MEDIUM", str(OUT/"flux_medium.tsv")))
     if f.exists():
         for l in open(f):
             p=l.rstrip("\n").split("\t")
-            if len(p)>=3 and not p[0].lower().startswith("rxn"):
+            if len(p)>=3 and p[0].lower() not in ("rxn","rxn_id","metabolite"):
                 try: m[p[0]]=(float(p[1]),float(p[2]))
                 except: pass
     return m
 
 def load_measured_flux():
-    """optional 13C-MFA validation set: tsv 'rxn_id\tflux' (relative, e.g. glucose uptake=100).
-    env FLUX_MEASURED -> {rxn_id: flux}."""
+    """13C-MFA validation set: tsv 'key<TAB>flux[...]' (relative, glucose uptake=100). key = rxn id OR
+    gene symbol (resolved via GPR in validate). env FLUX_MEASURED -> {key: flux}."""
     import os
     m={}; f=Path(os.environ.get("FLUX_MEASURED", str(OUT/"flux_measured_13c.tsv")))
     if f.exists():
         for l in open(f):
             p=l.rstrip("\n").split("\t")
-            if len(p)>=2 and not p[0].lower().startswith("rxn"):
+            if len(p)>=2 and p[0].lower() not in ("rxn","rxn_id","gene"):
                 try: m[p[0]]=float(p[1])
                 except: pass
     return m
+
+def base_met(name):
+    import re
+    return re.sub(r"\[[^\]]*\]\s*$","",name).strip()
+
+def met_to_exchange(rxns, met_idx):
+    """metabolite base-name -> (rxn_index, coef_sign) for single-metabolite boundary reactions.
+    Prefers extracellular/system compartments. coef_sign tells uptake direction."""
+    inv={i:n for n,i in met_idx.items()}
+    out={}
+    for j,r in enumerate(rxns):
+        if not r["is_exchange"] or len(r["stoich"])!=1: continue
+        mi,coef=next(iter(r["stoich"].items())); nm=inv[mi]
+        bn=base_met(nm); ext = any(t in nm for t in ["[e]","[s]","[x]"])
+        if bn not in out or (ext and "[" in nm): out[bn]=(j, 1.0 if coef>0 else -1.0)
+    return out
 
 def build_S(rxns, nmet):
     from scipy import sparse
@@ -169,25 +186,33 @@ def find_biomass(rxns):
         if "biomass" in (r["id"]+" "+r["eq"]).lower(): return j
     return None
 
-def validate(rxns, v, measured, ref_id):
-    """compare predicted vs measured relative flux (both normalised to |ref|). hold-out fold-error."""
+def _pred_flux(key, v, id2i, gene2rxn):
+    """predicted flux for a measured key: a Human-GEM rxn id -> its flux; a gene -> total |flux| it carries."""
+    if key in id2i: return abs(v[id2i[key]])
+    if key in gene2rxn: return float(sum(abs(v[j]) for j in gene2rxn[key]))
+    return None
+
+def validate(rxns, v, measured, ref_key, gene2rxn):
+    """compare predicted vs measured relative flux, both normalised to the reference key. Predicted flux
+    resolves a measured key by rxn-id or by gene (sum of |flux| over that gene's reactions)."""
     id2i={r["id"]:i for i,r in enumerate(rxns)}
-    ri=id2i.get(ref_id)
-    if ri is None or abs(v[ri])<1e-9: return None
-    scale=abs(v[ri])
-    errs=[]; pv=[]; mv=[]
-    for rid,mf in measured.items():
-        i=id2i.get(rid)
-        if i is None: continue
-        pred=v[i]/scale*abs(measured.get(ref_id,100.0))
-        if abs(mf)<1e-9 or abs(pred)<1e-9: continue
-        errs.append(abs(math.log10(abs(pred)/abs(mf)))); pv.append(pred); mv.append(mf)
+    pref=_pred_flux(ref_key, v, id2i, gene2rxn)
+    if not pref or pref<1e-9: return None
+    mref=abs(measured.get(ref_key,100.0)) or 100.0
+    errs=[]; pv=[]; mv=[]; used=[]
+    for key,mf in measured.items():
+        if key==ref_key: continue
+        pf=_pred_flux(key, v, id2i, gene2rxn)
+        if pf is None: continue
+        pred=pf/pref*mref
+        if abs(mf)<1e-9 or pred<1e-9: continue
+        errs.append(abs(math.log10(pred/abs(mf)))); pv.append(pred); mv.append(abs(mf)); used.append(key)
     if len(errs)<3: return None
     return dict(n=len(errs), median_fold_error=round(10**float(np.median(errs)),2),
                 within_2x=round(sum(1 for e in errs if e<=math.log10(2))/len(errs),2),
                 within_3x=round(sum(1 for e in errs if e<=math.log10(3))/len(errs),2),
-                log_pearson_r=round(float(np.corrcoef(np.log10(np.abs(pv)),np.log10(np.abs(mv)))[0,1]),3)
-                            if np.std(pv)>0 else 0.0)
+                log_pearson_r=round(float(np.corrcoef(np.log10(pv),np.log10(mv))[0,1]),3) if np.std(pv)>0 else 0.0,
+                ref=ref_key, compared=used[:20])
 
 def main():
     try:
@@ -205,10 +230,22 @@ def main():
     for ri,cap in vmax.items():
         ub[ri]=min(ub[ri],cap)
         if rxns[ri]["rev"]: lb[ri]=max(lb[ri],-cap)
-    # medium / exchange constraints
+    # medium / exchange constraints — key may be a Human-GEM rxn id or a metabolite name
     medium=load_medium(); id2i={r["id"]:i for i,r in enumerate(rxns)}
-    for rid,(l,u) in medium.items():
-        if rid in id2i: lb[id2i[rid]]=l; ub[id2i[rid]]=u
+    met2ex=met_to_exchange(rxns, met_idx); n_med=0
+    for key,(l,u) in medium.items():
+        if key in id2i:
+            lb[id2i[key]]=l; ub[id2i[key]]=u; n_med+=1
+        elif key in met2ex:
+            j,sign=met2ex[key]
+            # medium is written uptake-negative; if the exchange metabolite has +coef (source-oriented),
+            # flip so 'uptake' still means metabolite entering the cell.
+            lo,hi=(l,u) if sign<0 else (-u,-l)
+            lb[j]=lo; ub[j]=hi; n_med+=1
+    # gene -> reaction indices (for enzyme-keyed flux validation)
+    gene2rxn=defaultdict(list)
+    for j,r in enumerate(rxns):
+        for gsym in r["genes"]: gene2rxn[gsym].append(j)
     # objective
     bio=find_biomass(rxns)
     c=np.zeros(n)
@@ -231,8 +268,9 @@ def main():
     if v is None: v=z
     # tiers
     ntier={}
+    anchored_ids=set(id2i[k] for k in medium if k in id2i)|set(met2ex[k][0] for k in medium if k in met2ex)
     for ri,r in enumerate(rxns):
-        if r["id"] in medium: ntier[ri]="exchange-anchored"
+        if ri in anchored_ids: ntier[ri]="exchange-anchored"
         elif ri in vtier: ntier[ri]=vtier[ri]
         else: ntier[ri]="network-only"
     active=int(np.sum(np.abs(v)>1e-6))
@@ -245,8 +283,10 @@ def main():
     measured=load_measured_flux()
     val=None
     if measured:
-        ref=next((k for k in ("MAR09034","EX_glc__D_e","glucose") if k in id2i), None) or next(iter(measured))
-        val=validate(rxns, v, measured, ref)
+        # reference for normalisation = glucose-uptake proxy: a glucose exchange, else HK1/HK2, else first key
+        ref=next((k for k in ("MAR09034","EX_glc__D_e","glucose","HK1","HK2") if k in measured or k in gene2rxn or k in id2i), None)
+        if ref is None or _pred_flux(ref,v,id2i,gene2rxn) in (None,0): ref=next(iter(measured))
+        val=validate(rxns, v, measured, ref, gene2rxn)
     from collections import Counter
     tc=Counter(ntier.values())
     payload=dict(flux=out, biomass=round(zstar,4),
