@@ -32,6 +32,10 @@ class Cell:
         self.reason=self._load("reasoning.json"); self.cal=self._load("calibration.json")
         self.kin=(self._load("kinetics.json") or {}).get("kinetics",{})
         self.conc=(self._load("concentration.json") or {}).get("concentration",{})
+        fx=self._load("flux.json") or {}; self.flux=fx.get("flux",{}); self.flux_val=fx.get("validation")
+        self.gene2flux=defaultdict(list)                    # gene -> [(rxn_id, rec)] from ecFBA solution
+        for rid,rec in self.flux.items():
+            for g in rec.get("genes",[]): self.gene2flux[g].append((rid,rec))
     def _load(self,fn):
         p=OUT/fn
         return json.load(open(p)) if p.exists() else None
@@ -64,6 +68,23 @@ def answer(q, C=None):
                         caveat="absolute conversion is order-of-magnitude (cell-count/volume anchors)")
         return dict(q=q, answer=f"no concentration estimate for this gene (abundance layer absent or unmapped).",
                     confidence="n/a", source="concentration")
+    # metabolic FLUX through an enzyme's reaction(s) — ecFBA on Human-GEM (validated vs 13C-MFA).
+    # Checked before kinetics so "rate-limiting"/"bottleneck" route here, not to kcat.
+    if re.search(r"\b(flux|throughput|carbon flow|rate.?limiting|bottleneck|carries|flowing through)\b", ql):
+        gg2=C.gene(q); fl=C.gene2flux.get(gg2) if gg2 else None
+        if fl:
+            fl=sorted(fl,key=lambda x:-abs(x[1]["v"]))[:4]
+            parts=[f"{rid} v={rec['v']} [{rec['tier']}]" for rid,rec in fl]
+            vnote=(f" | model validated vs 13C-MFA at {C.flux_val['median_fold_error']}x median fold-error, "
+                   f"within-2x {C.flux_val['within_2x']:.0%}" if C.flux_val else "")
+            return dict(q=q, gene=gg2, answer=f"{gg2} carries flux through: "+"; ".join(parts)+vnote,
+                        confidence="medium", source="enzyme-constrained FBA (Human-GEM)",
+                        caveat="relative flux (normalise to an exchange anchor for absolute mmol/gDW/h)")
+        if C.flux:
+            return dict(q=q, answer=f"{gg2 or 'that gene'} carries ~no flux in the current ecFBA solution (inactive "
+                        "reaction, or not enzyme-associated).", confidence="low", source="enzyme-constrained FBA")
+        return dict(q=q, answer="flux layer absent (run compute_flux on Colab: needs Human-GEM + kinetics + concentration).",
+                    confidence="n/a", source="flux")
     # kcat / turnover / reaction-rate of an ENZYME -> tiered ESTIMATE (measured with conditions, else imputed)
     if re.search(r"\b(rate|kcat|turnover|kinetic|km|how fast|catalyt|vmax|reaction speed)\b", ql):
         gg2=C.gene(q); k=C.kin.get(gg2) if gg2 else None
