@@ -127,14 +127,16 @@ def base_met(name):
 
 def met_to_exchange(rxns, met_idx):
     """metabolite base-name -> (rxn_index, coef_sign) for single-metabolite boundary reactions.
-    Prefers extracellular/system compartments. coef_sign tells uptake direction."""
+    Prefers extracellular/system compartments. coef_sign tells uptake direction. Keys are registered
+    both exact and lower-cased so a medium/validation name resolves regardless of Human-GEM casing."""
     inv={i:n for n,i in met_idx.items()}
     out={}
     for j,r in enumerate(rxns):
         if not r["is_exchange"] or len(r["stoich"])!=1: continue
         mi,coef=next(iter(r["stoich"].items())); nm=inv[mi]
         bn=base_met(nm); ext = any(t in nm for t in ["[e]","[s]","[x]"])
-        if bn not in out or (ext and "[" in nm): out[bn]=(j, 1.0 if coef>0 else -1.0)
+        for key in (bn, bn.lower()):
+            if key not in out or (ext and "[" in nm): out[key]=(j, 1.0 if coef>0 else -1.0)
     return out
 
 def build_S(rxns, nmet):
@@ -186,23 +188,27 @@ def find_biomass(rxns):
         if "biomass" in (r["id"]+" "+r["eq"]).lower(): return j
     return None
 
-def _pred_flux(key, v, id2i, gene2rxn):
-    """predicted flux for a measured key: a Human-GEM rxn id -> its flux; a gene -> total |flux| it carries."""
+def _pred_flux(key, v, id2i, gene2rxn, met2ex=None):
+    """predicted flux for a measured key: Human-GEM rxn id -> its flux; gene -> total |flux| its reactions
+    carry; metabolite name -> |flux| of its exchange reaction (for measured exchange fluxes)."""
     if key in id2i: return abs(v[id2i[key]])
+    if met2ex:
+        mx=met2ex.get(key) or met2ex.get(key.lower())
+        if mx: return abs(v[mx[0]])
     if key in gene2rxn: return float(sum(abs(v[j]) for j in gene2rxn[key]))
     return None
 
-def validate(rxns, v, measured, ref_key, gene2rxn):
-    """compare predicted vs measured relative flux, both normalised to the reference key. Predicted flux
-    resolves a measured key by rxn-id or by gene (sum of |flux| over that gene's reactions)."""
+def validate(rxns, v, measured, ref_key, gene2rxn, met2ex=None):
+    """compare predicted vs measured flux, both normalised to the reference key. A measured key resolves
+    by rxn-id, metabolite (exchange), or gene (sum of |flux| over its reactions)."""
     id2i={r["id"]:i for i,r in enumerate(rxns)}
-    pref=_pred_flux(ref_key, v, id2i, gene2rxn)
+    pref=_pred_flux(ref_key, v, id2i, gene2rxn, met2ex)
     if not pref or pref<1e-9: return None
     mref=abs(measured.get(ref_key,100.0)) or 100.0
     errs=[]; pv=[]; mv=[]; used=[]
     for key,mf in measured.items():
         if key==ref_key: continue
-        pf=_pred_flux(key, v, id2i, gene2rxn)
+        pf=_pred_flux(key, v, id2i, gene2rxn, met2ex)
         if pf is None: continue
         pred=pf/pref*mref
         if abs(mf)<1e-9 or pred<1e-9: continue
@@ -234,10 +240,11 @@ def main():
     medium=load_medium(); id2i={r["id"]:i for i,r in enumerate(rxns)}
     met2ex=met_to_exchange(rxns, met_idx); n_med=0
     for key,(l,u) in medium.items():
+        mx=met2ex.get(key) or met2ex.get(key.lower())
         if key in id2i:
             lb[id2i[key]]=l; ub[id2i[key]]=u; n_med+=1
-        elif key in met2ex:
-            j,sign=met2ex[key]
+        elif mx:
+            j,sign=mx
             # medium is written uptake-negative; if the exchange metabolite has +coef (source-oriented),
             # flip so 'uptake' still means metabolite entering the cell.
             lo,hi=(l,u) if sign<0 else (-u,-l)
@@ -268,7 +275,8 @@ def main():
     if v is None: v=z
     # tiers
     ntier={}
-    anchored_ids=set(id2i[k] for k in medium if k in id2i)|set(met2ex[k][0] for k in medium if k in met2ex)
+    anchored_ids=set(id2i[k] for k in medium if k in id2i)|set(
+        (met2ex.get(k) or met2ex.get(k.lower()))[0] for k in medium if (met2ex.get(k) or met2ex.get(k.lower())))
     for ri,r in enumerate(rxns):
         if ri in anchored_ids: ntier[ri]="exchange-anchored"
         elif ri in vtier: ntier[ri]=vtier[ri]
@@ -280,13 +288,25 @@ def main():
         out[r["id"]]=dict(v=round(float(v[ri]),4), tier=ntier[ri], genes=r["genes"][:6],
                           rev=r["rev"])
     # validation vs measured 13C flux
-    measured=load_measured_flux()
+    # validation — prefer the REAL measured exchange set (FluxProfilingREGP, absolute) if present,
+    # else the internal 13C set. Reference for normalisation = glucose.
+    import os as _os
+    exch_f=OUT/"flux_measured_exch.tsv"; measured={}; val_kind=None
+    if exch_f.exists():
+        for l in open(exch_f):
+            p=l.rstrip("\n").split("\t")
+            if len(p)>=2 and p[0].lower() not in ("metabolite","gene","rxn"):
+                try: measured[p[0]]=float(p[1])
+                except: pass
+        val_kind="measured-exchange(FluxProfilingREGP)"
+    if not measured:
+        measured=load_measured_flux(); val_kind="internal-13C(curated)"
     val=None
     if measured:
-        # reference for normalisation = glucose-uptake proxy: a glucose exchange, else HK1/HK2, else first key
-        ref=next((k for k in ("MAR09034","EX_glc__D_e","glucose","HK1","HK2") if k in measured or k in gene2rxn or k in id2i), None)
-        if ref is None or _pred_flux(ref,v,id2i,gene2rxn) in (None,0): ref=next(iter(measured))
-        val=validate(rxns, v, measured, ref, gene2rxn)
+        ref=next((k for k in ("glucose","D-glucose","MAR09034","EX_glc__D_e","HK1","HK2")
+                  if _pred_flux(k,v,id2i,gene2rxn,met2ex) not in (None,0)), None) or next(iter(measured))
+        val=validate(rxns, v, measured, ref, gene2rxn, met2ex)
+        if val: val["kind"]=val_kind
     from collections import Counter
     tc=Counter(ntier.values())
     payload=dict(flux=out, biomass=round(zstar,4),

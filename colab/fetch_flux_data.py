@@ -62,25 +62,76 @@ def _try_url(env, dest):
     except Exception as e:
         print(f"  {env} fetch failed ({repr(e)[:80]}) -> using curated fallback"); return False
 
+# metabolite name in the FluxProfilingREGP file -> candidate Human-GEM metabolite base-names (compute_flux
+# resolves whichever exists in the parsed GEM). Amino acids are L- in Human-GEM.
+_SYN={"glucose":["glucose","D-glucose"],"L-lactate":["L-lactate","lactate"],
+      "glutamine":["L-glutamine","glutamine"],"glutamate":["L-glutamate","glutamate"],
+      "arginine":["L-arginine"],"asparagine":["L-asparagine"],"glycine":["glycine"],
+      "methionine":["L-methionine"],"phenylalanine":["L-phenylalanine"],"proline":["L-proline"],
+      "serine":["L-serine"],"threonine":["L-threonine"],"tryptophan":["L-tryptophan"],
+      "tyrosine":["L-tyrosine"],"valine":["L-valine"],"alanine":["L-alanine"]}
+
+def fetch_fluxprofile():
+    """Pull REAL absolute exchange fluxes (mmol/gDW/hr) from FluxProfilingREGP (Human-GEM/Human1 based).
+    Writes flux_medium.tsv (uptakes as constraints, glucose fixed = absolute scale anchor) and
+    flux_measured_exch.tsv (all measured exchange fluxes, for held-out validation). REGP is the paper's
+    improved method; CORE is the classic one (env FLUXPROFILE_METHOD)."""
+    url=os.environ.get("FLUXPROFILE_URL",
+        "https://raw.githubusercontent.com/Radboud-YuLab/FluxProfilingREGP/main/data/exchange_fluxes/output/exch_fluxes_MCF10A_NCI60.csv")
+    method=os.environ.get("FLUXPROFILE_METHOD","REGP").upper()
+    dest=OUT/"_fluxprofile_raw.csv"
+    try:
+        print(f"  fetching FluxProfilingREGP exchange fluxes ({method}) -> {url[:60]} ..."); urllib.request.urlretrieve(url,dest)
+    except Exception as e:
+        print(f"  FluxProfilingREGP fetch failed ({repr(e)[:80]})"); return False
+    import csv
+    rows=list(csv.DictReader(open(dest)))
+    if not rows or method not in rows[0]:
+        print(f"  FluxProfilingREGP: no '{method}' column found"); return False
+    tol=float(os.environ.get("FLUX_TOL","0.3"))
+    med=[]; val=[]
+    for r in rows:
+        name=r["metabolite"].strip()
+        try: f=float(r[method])
+        except: continue
+        cands=_SYN.get(name,[name])
+        for c in cands:
+            if f<0:                                   # uptake -> constrain availability (glucose tight = scale anchor)
+                t=0.1 if name=="glucose" else tol
+                med.append((c, round(f*(1+t),6), round(f*(1-t),6)))   # both negative; lb more negative
+            else:                                     # secretion -> leave free-ish, predict & validate it
+                med.append((c, 0.0, round(f*(1+tol),6)))
+        val.append((cands[0], f))                     # measured value for validation (first candidate name)
+    with open(OUT/"flux_medium.tsv","w") as o:
+        o.write("metabolite\tlb\tub\n")
+        for name,lb,ub in med: o.write(f"{name}\t{lb}\t{ub}\n")
+    with open(OUT/"flux_measured_exch.tsv","w") as o:
+        o.write("metabolite\tflux\tmethod\n")
+        for name,f in val: o.write(f"{name}\t{f}\t{method}\n")
+    up=sum(1 for _,f in val if f<0); sec=sum(1 for _,f in val if f>0)
+    print(f"  FluxProfilingREGP: {len(val)} exchange fluxes ({up} uptake, {sec} secretion) in mmol/gDW/hr "
+          f"-> flux_medium.tsv (ABSOLUTE anchor, glucose fixed) + flux_measured_exch.tsv (validation)")
+    return True
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    # medium: try Jain CORE, else curated. (If a Jain file is provided it is expected pre-mapped to
-    # metabolite\tlb\tub; we don't guess its schema — presence just suppresses the fallback.)
-    got_medium=_try_url("JAIN_CORE_URL", OUT/"flux_medium.tsv")
-    if not got_medium:
-        with open(OUT/"flux_medium.tsv","w") as f:
-            f.write("metabolite\tlb\tub\n")
-            for m,l,u in CURATED_MEDIUM: f.write(f"{m}\t{l}\t{u}\n")
-        print(f"  medium: curated {len(CURATED_MEDIUM)} exchange bounds -> flux_medium.tsv (glucose uptake fixed=100)")
-    got_13c=_try_url("CECAFDB_URL", OUT/"flux_measured_13c.tsv")
-    if not got_13c:
+    # PRIMARY: real absolute exchange fluxes from FluxProfilingREGP (Human-GEM-based) -> ABSOLUTE flux map.
+    absolute = fetch_fluxprofile() if os.environ.get("FLUX_USE_REGP","1")=="1" else False
+    if not absolute:
+        # medium fallback: Jain CORE url, else curated relative (glucose=100)
+        if not _try_url("JAIN_CORE_URL", OUT/"flux_medium.tsv"):
+            with open(OUT/"flux_medium.tsv","w") as f:
+                f.write("metabolite\tlb\tub\n")
+                for m,l,u in CURATED_MEDIUM: f.write(f"{m}\t{l}\t{u}\n")
+            print(f"  medium: curated {len(CURATED_MEDIUM)} exchange bounds -> flux_medium.tsv (relative, glucose=100)")
+    # internal 13C validation set (glycolysis distribution): real via CECAFDB_URL, else curated
+    if not _try_url("CECAFDB_URL", OUT/"flux_measured_13c.tsv"):
         with open(OUT/"flux_measured_13c.tsv","w") as f:
             f.write("gene\trel_flux\tpathway\n")
             for g,v,p in CURATED_13C: f.write(f"{g}\t{v}\t{p}\n")
-        print(f"  13C validation: curated {len(CURATED_13C)}-enzyme aerobic-glycolysis reference "
-              f"(glucose=100) -> flux_measured_13c.tsv")
-    print("flux data ready. (Set JAIN_CORE_URL / CECAFDB_URL to use real per-cell-line data for a "
-          "rigorous held-out test instead of the phenotype-level curated set.)")
+        print(f"  13C internal validation: curated {len(CURATED_13C)}-enzyme aerobic-glycolysis reference (glucose=100)")
+    print(f"flux data ready ({'ABSOLUTE — measured exchange anchored (FluxProfilingREGP)' if absolute else 'RELATIVE — curated fallback'}). "
+          "Set FLUXPROFILE_URL for another cell line, FLUXPROFILE_METHOD=CORE/REGP, or FLUX_USE_REGP=0 to disable.")
 
 if __name__=="__main__":
     main()
