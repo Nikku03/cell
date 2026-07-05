@@ -89,22 +89,18 @@ def fetch_fluxprofile():
     if not rows or method not in rows[0]:
         print(f"  FluxProfilingREGP: no '{method}' column found"); return False
     tol=float(os.environ.get("FLUX_TOL","0.3"))
-    gtol=float(os.environ.get("FLUX_GLUCOSE_TOL","0.05"))   # tight band forcing glucose uptake to the measured rate
     med=[]; val=[]
     for r in rows:
         name=r["metabolite"].strip()
         try: f=float(r[method])
         except: continue
         cands=_SYN.get(name,[name])
-        is_glc = name.lower() in ("glucose","d-glucose","glc")
         for c in cands:
-            if f<0 and is_glc:                        # GLUCOSE forced to a tight band: it anchors the absolute
-                # scale AND must carry a known flux so validation has a reference. Forcing only glucose (not every
-                # uptake) keeps Human-GEM feasible while pinning the carbon-flux magnitude.
-                med.append((c, round(f*(1+gtol),6), round(f*(1-gtol),6)))   # lb<ub, both negative (uptake band)
-            elif f<0:                                 # other uptakes -> UPPER BOUND on availability (0..max), not a
-                # forced band; forcing every uptake made Human-GEM infeasible. biomass-max still pulls flux
-                # up to the bound, so the absolute scale is preserved while the model stays feasible.
+            if f<0:                                   # uptake -> UPPER BOUND on availability (0..max). We do NOT
+                # force a band: forcing glucose fought the enzyme (Vmax=kcat*[E]) bound and made the model
+                # infeasible at Vmax scale x1, which pushed the feasibility ladder to x100 and inflated EVERY
+                # flux ~100x (biomass 6/hr, nonphysical). The enzyme-capacity bound is the real absolute anchor;
+                # the measured uptake is just a ceiling the biomass objective pulls flux up to.
                 med.append((c, round(f*(1+tol),6), 0.0))          # lb=max uptake (neg), ub=0 (no secretion)
             else:                                     # secretion -> free to predict (0..1.3x), validated separately
                 med.append((c, 0.0, round(f*(1+tol),6)))
