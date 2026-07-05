@@ -76,7 +76,9 @@ def main():
             if prior and unc and unc>0.5: return 10**(0.5*math.log10(cc)+0.5*math.log10(prior)), "catpred+ECprior"
             return cc, "catpred(calibrated)"
         k=kin.get(g,{})
-        if k.get("kcat_per_s"): return k["kcat_per_s"], k.get("tier","imputed")
+        # fall back to an IMPUTED value only -- NEVER the gene's own measured value (that would leak into
+        # the held-out validation and falsely report ~0 error).
+        if k.get("kcat_per_s") and k.get("tier")!="measured": return k["kcat_per_s"], k.get("tier","imputed")
         return None, None
 
     bias, n_cal = fit_bias()

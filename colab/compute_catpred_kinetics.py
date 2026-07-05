@@ -38,8 +38,16 @@ def uniprot_seqs(accs):
     return {a:seq[a] for a in accs if a in seq}
 
 def smiles_map():
-    """metabolite name (lower) -> SMILES, from CatPred-DB's metabolite_inchi_smiles table if present."""
+    """metabolite name (lower) -> SMILES, from CatPred-DB's metabolite_inchi_smiles table (fetched if absent)."""
     m={}
+    prim=H/"metabolite_inchi_smiles_brenda_pubchem.tsv"
+    if not (prim.exists() and prim.stat().st_size>1000):
+        url=os.environ.get("CATPRED_SMILES_URL",
+            "https://raw.githubusercontent.com/maranasgroup/CatPred-DB/main/datasets/metabolite_inchi_smiles_brenda_pubchem.tsv")
+        try:
+            print("  fetching CatPred-DB metabolite SMILES map ..."); urllib.request.urlretrieve(url, prim)
+        except Exception as e:
+            print("  SMILES map fetch failed:",repr(e)[:100],"-> CatPred substrates cannot be mapped")
     for fn in ["metabolite_inchi_smiles_brenda_pubchem.tsv","metabolite_smiles.tsv"]:
         f=H/fn
         if f.exists():
@@ -84,9 +92,11 @@ def prepare():
             if best is None or v>best[1]: best=(r,v)
         if not best: continue
         r=best[0]
-        # representative substrate with a SMILES (skip hubs)
+        # representative substrate with a SMILES (skip hubs; try all substrates, chirality-insensitive)
         subs=[mets[i] for i in r.get("s",[]) if i<len(mets)]
-        smi=next((sm[s.lower()] for s in subs if s not in HUB and s.lower() in sm), None)
+        def find_smi(name):
+            n=name.lower(); return sm.get(n) or sm.get(re.sub(r"^[ld]-","",n)) or sm.get("d-"+n) or sm.get("l-"+n)
+        smi=next((find_smi(s) for s in subs if s not in HUB and find_smi(s)), None)
         if not smi: continue
         pdb=""
         if AF.exists():

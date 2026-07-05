@@ -91,8 +91,10 @@ def main():
             rid,tier=gene2rxn[nm]
             metabolic.append(dict(gene=nm, pathogenic=npath, reaction=rid, flux=flux.get(rid,{}).get("v"),
                                   flux_tier=tier))
-        if constrained and ess and npath==0 and pubs<20:  # should matter, not catalogued, understudied
-            understudied.append(dict(gene=nm, loeuf=loeuf, pubs=pubs, dark=bool(dark)))
+        # should matter (constrained+essential) but under-explored: few/no pathogenic variants AND under-studied.
+        # (ClinVar now covers ~16k genes, so 'zero pathogenic' alone is too strict -- allow a small burden.)
+        if constrained and ess and npath<=1 and pubs<40:
+            understudied.append(dict(gene=nm, loeuf=loeuf, pubs=pubs, clinvar_pathogenic=npath, dark=bool(dark)))
     # rank understudied: dark + most-constrained + least-studied first (Play E: highest-value unknowns)
     understudied.sort(key=lambda x:(not x["dark"], x["loeuf"], x["pubs"]))
     n_cv=sum(1 for r in out.values() if "clinvar_pathogenic" in r)

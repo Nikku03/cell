@@ -24,7 +24,7 @@ X0=float(os.environ.get("DFBA_X0","0.01"))            # gDW/L initial biomass
 def main():
     try:
         import scipy  # noqa
-        from compute_flux import parse_gem, build_S, solve_fba, met_to_exchange, load_medium, mx_get
+        from compute_flux import parse_gem, build_S, solve_fba, met_to_exchange, load_medium, mx_get, vmax_bounds
     except Exception as e:
         print("dFBA needs scipy + compute_flux:",repr(e)[:80]); return
     rxns, met_idx = parse_gem()
@@ -38,6 +38,12 @@ def main():
     # BASE bounds = the measured medium (constrains ALL mapped exchanges, not just tracked ones, so
     # growth is limited by the defined medium and doesn't exploit open nutrients -> realistic mu)
     base_lb=np.array([-1000.0 if r["rev"] else 0.0 for r in rxns]); base_ub=np.array([1000.0]*n)
+    # ENZYME Vmax bounds (same as compute_flux) so growth is enzyme-limited, not unbounded. Relax x10 for
+    # feasibility headroom (dFBA has no ladder). Without these, biomass-max explodes on the open medium.
+    vmax,_,vunits = vmax_bounds(rxns); VSC=float(os.environ.get("DFBA_VMAX_SCALE","10"))
+    for ri,cap in vmax.items():
+        base_ub[ri]=min(base_ub[ri], cap*VSC)
+        if rxns[ri]["rev"]: base_lb[ri]=max(base_lb[ri], -cap*VSC)
     id2i={r["id"]:i for i,r in enumerate(rxns)}; n_med=0
     for key,(l,u) in medium.items():
         mx=mx_get(met2ex,key)
