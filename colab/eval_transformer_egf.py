@@ -56,7 +56,7 @@ def main():
         def forward(s,p,c,x):
             B=p.shape[0]; g=(s.gid(s.gidx)+s.gp(gfeat)).unsqueeze(0).expand(B,-1,-1)
             gamma,beta=s.film(torch.cat([s.pe(p),s.ce(c),s.cx(x)],-1)).chunk(2,-1)
-            g=g*(1+gamma.unsqueeze(1))+beta.unsqueeze(1); return s.head(s.tr(g)).squeeze(-1)
+            g=g*(1+torch.tanh(gamma.unsqueeze(1)))+beta.unsqueeze(1); return s.head(s.tr(g)).squeeze(-1)
     model=Model().to(dev); model.load_state_dict(C["state"]); model.eval()
     # locate EGF + its most common cell line in LINCS
     if "EGF" not in pert_names: print("EGF not among LINCS perturbations -> cannot run this transfer test"); return

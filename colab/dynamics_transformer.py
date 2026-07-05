@@ -80,12 +80,13 @@ def main():
             g=g.unsqueeze(0).expand(B,-1,-1)                # [B,n_gene,DIM]
             ctxv=torch.cat([s.pe(p),s.ce(c),s.cx(x)],-1)    # [B,3*DIM]
             gamma,beta=s.film(ctxv).chunk(2,-1)             # FiLM condition on perturbation+cell+dose+time
-            g=g*(1+gamma.unsqueeze(1))+beta.unsqueeze(1)
+            g=g*(1+torch.tanh(gamma.unsqueeze(1)))+beta.unsqueeze(1)   # tanh-bound the multiplier -> stable
             return s.head(s.tr(g)).squeeze(-1)              # [B,n_gene] predicted LFC
     model=Model().to(dev)
-    opt=torch.optim.AdamW(model.parameters(),lr=2e-3,weight_decay=1e-4)
+    opt=torch.optim.AdamW(model.parameters(),lr=float(os.environ.get("DTF_LR","8e-4")),weight_decay=1e-4)
     lossf=nn.MSELoss()
-    Y=torch.tensor(lfc,device=dev); P=torch.tensor(pert,device=dev); C=torch.tensor(cell,device=dev); Xc=torch.tensor(ctx,device=dev)
+    Y=torch.tensor(np.clip(lfc,-10,10).astype("float32"),device=dev)   # clamp extreme LINCS z-score outliers
+    P=torch.tensor(pert,device=dev); C=torch.tensor(cell,device=dev); Xc=torch.tensor(ctx,device=dev)
     EP=int(os.environ.get("DTF_EPOCHS","12")); BS=int(os.environ.get("DTF_BATCH","256"))
     import time as _t; amp=(dev=="cuda")                          # bf16 autocast on GPU -> ~2-3x faster on L4
     for ep in range(EP):
@@ -94,7 +95,10 @@ def main():
             b=perm[i:i+BS]; bi=torch.tensor(b,device=dev)
             with torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=amp):
                 pred=model(P[bi],C[bi],Xc[bi]); loss=lossf(pred,Y[bi])
-            opt.zero_grad(); loss.backward(); opt.step(); tot+=loss.item()*len(b)
+            if not torch.isfinite(loss): continue           # skip a bad batch instead of poisoning weights
+            opt.zero_grad(); loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(),1.0)   # gradient clipping -> no NaN blow-up
+            opt.step(); tot+=loss.item()*len(b)
         print(f"  epoch {ep+1}/{EP}  train MSE {tot/len(perm):.4f}  ({_t.time()-t0:.0f}s)", flush=True)
     # ---- held-out eval: per-signature Pearson r (pred vs true across genes) + MSE, vs baselines ----
     model.eval()
