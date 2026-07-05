@@ -492,6 +492,7 @@ code("# build with hard failure if anything is missing (so we never silently shi
    "    if not os.path.isdir('CatPred'):   # clone + install + download pretrained checkpoints (capsule_data, ~GBs, one-time)",
    "        _cp.run('git clone --depth 1 https://github.com/maranasgroup/CatPred.git', shell=True)",
    "        _cp.run('cd CatPred && pip install -q -e . && wget -q -c https://catpred.s3.us-east-1.amazonaws.com/capsule_data_update.tar.gz && tar -xzf capsule_data_update.tar.gz', shell=True)",
+   "    _cp.run('pip install -q ipdb', shell=True)   # CatPred featurization.py has a stray 'import ipdb' not in its deps; install unconditionally",
    "    inp=os.path.abspath(f'{OUT}/catpred_input.csv')",
    "    # demo_run.py: --parameter <kcat|km> --input_file <csv> --checkpoint_dir <dir> --use_gpu ; runs from inside CatPred/, output -> ../results",
    "    for param in ['kcat','km']:",
