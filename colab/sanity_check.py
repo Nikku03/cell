@@ -24,6 +24,8 @@ CHAINS=[
  ("fetch_kinetics_extra.py","kinetics_measured_extra.tsv","compute_kinetics.py"),
  ("fetch_metabolite_conc.py","metabolite_conc_measured.tsv","compute_metabolite_conc.py"),
  ("fetch_dynamics_data.py","protein_halflife.tsv","compute_dynamics.py"),
+ ("fetch_dynamics_data.py","mrna_halflife.tsv","compute_timeresolved.py"),
+ ("fetch_timecourse.py","timecourse_egf.tsv","compute_timeresolved.py"),
  ("fetch_kinetics_extra.py","ki_measured.tsv","refine_kinetics.py"),
  ("compute_concentration.py","concentration.json","compute_davidi_kcat.py"),
  ("compute_metabolic_graph.py","metabolic_graph.json","refine_kinetics.py"),
