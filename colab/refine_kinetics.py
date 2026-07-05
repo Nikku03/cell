@@ -91,22 +91,19 @@ def main():
 
     def predict(g, bias, baseline=False):
         """refined kcat for g WITHOUT using g's own measured value. Estimate priority:
-          tier 2  CatPred(calibrated)  -- sequence+chemistry, the real error-cutter (~3-4x). Raised to the
-                  Davidi max if the observed in-vivo turnover exceeds it (that's a hard lower bound on kcat).
-          tier 3  Davidi max-over-conditions -- max_c v/[E] across the NCI-60 conditions (independent, flux)
-          tier 4  EC/family prior      -- the imputed ~9.6x baseline, when a non-measured kin entry exists
-          tier 5  global-median prior  -- last resort (validation only, so the held-out score always runs)
-        Single-condition flux-deconvolution is NOT used (v/[E] from one state is utilization, not kcat, 48x);
-        the max-over-conditions Davidi estimate replaces it. Returns (kcat, tier)."""
-        c=cat.get(g,{}); dmax=(dav.get(g) or {}).get("kcat_max_per_s")
+          tier 2  CatPred(calibrated)  -- sequence+chemistry, the real error-cutter (~3-4x)
+          tier 3  EC/family prior      -- the imputed ~9.6x baseline, when a non-measured kin entry exists
+          tier 4  global-median prior  -- last resort (validation only, so the held-out score always runs)
+        Flux-based kcat is NOT in the estimate: neither single-condition v/[E] (125x, utilization not
+        capacity) NOR the Davidi max-over-conditions (96x, ~24x systematically LOW -- our internal fluxes
+        are FBA-inferred, not measured, and no condition drives enzymes to capacity) beats the EC prior.
+        Both live as annotations (invivo_apparent, davidi_kcat_max) instead. Returns (kcat, tier)."""
+        c=cat.get(g,{})
         if c.get("kcat"):
             cc=10**(math.log10(c["kcat"])+bias); unc=c.get("kcat_unc")
             prior=kin.get(g,{}).get("kcat_per_s") if kin.get(g,{}).get("tier") in ("EC-measured","EC-class") else None
-            if prior and unc and unc>0.5: cc=10**(0.5*math.log10(cc)+0.5*math.log10(prior))
-            # in-vivo observed turnover is a lower bound on kcat: if Davidi max exceeds CatPred, CatPred is low
-            if dmax and dmax>cc*1.3: return dmax, "davidi>catpred(raised)"
-            return cc, ("catpred+ECprior" if (prior and unc and unc>0.5) else "catpred(calibrated)")
-        if dmax and dmax>0: return dmax, "davidi-max"      # no CatPred: the flux-based estimate leads
+            if prior and unc and unc>0.5: return 10**(0.5*math.log10(cc)+0.5*math.log10(prior)), "catpred+ECprior"
+            return cc, "catpred(calibrated)"
         k=kin.get(g,{})
         if k.get("kcat_per_s") and k.get("tier")!="measured": return k["kcat_per_s"], k.get("tier","imputed")
         ecp=ec_prior(g)                                   # class median from OTHER measured genes (the 9.6x baseline)
@@ -183,10 +180,13 @@ def main():
         print(f"  >>> {tag}: refined held-out fold-error {val['median_fold_error']}x vs imputed baseline "
               f"{val['imputed_baseline_fold_error']}x | within-2x {val['within_2x']:.0%}, within-3x {val['within_3x']:.0%} "
               f"(n={val['n']}, tiers {val['tier_mix']})")
+    if dav:
+        print("  Davidi max-over-conditions kcat is an ANNOTATION only (davidi_kcat_max): it scored ~96x / ~24x-low")
+        print("  vs measured, so it stays out of the estimate path (FBA-inferred fluxes, no capacity-saturating condition).")
     if not cat:
-        print("  NOTE: CatPred not run -> estimate path is measured + EC/global-median baseline only. Flux-deconvolution")
-        print("        is DEMOTED to an annotation (invivo_apparent = v/[E], enzyme utilization <= kcat; one FBA")
-        print("        condition can't recover kcat). Run CatPred (RUN_CATPRED=1) for the real error cut.")
+        print("  NOTE: CatPred not run -> estimate path is measured + EC/global-median baseline only. Flux-based kcat")
+        print("        (single v/[E] AND max-over-conditions) is annotation-only; neither beats the EC prior.")
+        print("        Run CatPred (RUN_CATPRED=1) for the real error cut (~3-4x).")
 
 if __name__=="__main__":
     main()
