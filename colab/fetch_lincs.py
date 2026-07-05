@@ -60,6 +60,7 @@ def main():
         import shutil
         with gzip.open(gctx,"rb") as i, open(raw,"wb") as o: shutil.copyfileobj(i,o)
     try:
+        import warnings; warnings.simplefilter("ignore")     # silence cmapPy's deprecated-pandas FutureWarnings
         from cmapPy.pandasGEXpress.parse import parse
         g=parse(raw, cid=sig_ids, rid=[str(x) for x in gene_ids])
         df=g.data_df                                        # genes x sigs
