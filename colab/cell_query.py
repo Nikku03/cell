@@ -38,6 +38,7 @@ class Cell:
         self.conv=self._load("convergence.json"); self.cond=self._load("conditions.json")
         self.reason=self._load("reasoning.json"); self.cal=self._load("calibration.json")
         self.kin=(self._load("kinetics.json") or {}).get("kinetics",{})
+        self.ivk=(self._load("invivo_kcat.json") or {}).get("invivo_kcat",{})   # in-vivo apparent kcat (flux/[E])
         self.conc=(self._load("concentration.json") or {}).get("concentration",{})
         fx=self._load("flux.json") or {}; self.flux=fx.get("flux",{}); self.flux_val=fx.get("validation")
         self.flux_units=fx.get("summary",{}).get("flux_units","relative")
@@ -141,6 +142,14 @@ def answer(q, C=None):
     # kcat / turnover / reaction-rate of an ENZYME -> tiered ESTIMATE (measured with conditions, else imputed)
     if re.search(r"\b(rate|kcat|turnover|kinetic|km|how fast|catalyt|vmax|reaction speed)\b", ql):
         gg2=C.gene(q); k=C.kin.get(gg2) if gg2 else None
+        iv=C.ivk.get(gg2) if gg2 else None
+        # PREFER in-vivo apparent kcat (flux/[E]) when the in-vitro value is only imputed -- it is
+        # data-derived (from the flux + abundance layers) rather than an EC-median/family guess.
+        if iv and iv.get("kcat_app_per_s") and (not k or k.get("tier") not in ("measured","EC-measured")):
+            note=f"IN-VIVO apparent (flux/[E]); {iv.get('interpretation','')}"
+            comp=f"; in-vitro {iv['kcat_invitro_per_s']}/s [{iv.get('kcat_invitro_tier')}], saturation {iv.get('saturation_ratio')}" if iv.get("kcat_invitro_per_s") else ""
+            return dict(q=q, gene=gg2, answer=f"{gg2} kcat ≈ {iv['kcat_app_per_s']} /s [{note}]{comp}",
+                        confidence="medium", source="in-vivo kcat (flux/abundance)", tier="in-vivo")
         if k:
             cond=(f" at pH {k.get('pH')}, {k.get('temp')}C ({k.get('source')}{', in-vitro' if k.get('in_vitro') else ''})"
                   if k.get('tier')=="measured" else "")
