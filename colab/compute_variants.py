@@ -65,6 +65,13 @@ def main():
     cc=OUT/"cell_complete.json"
     if not cc.exists(): print("cell_complete.json absent -> variants skipped"); return
     D=json.load(open(cc)); G=D["genes"]; names=set(g["name"] for g in G)
+    idx={g["name"]:i for i,g in enumerate(G)}
+    drugs=D.get("drugs",{}); otdis=D.get("otdis",{})     # DGIdb interactions (by index) + OpenTargets druggability (by name)
+    def druggable_of(nm):
+        """(is_druggable, drug_names) — a DGIdb drug interaction OR an OpenTargets 'druggable' flag."""
+        dl=drugs.get(str(idx[nm])) if nm in idx else None
+        dn=[d.get("d") for d in (dl or []) if d.get("d")]
+        return (bool(dn) or bool(otdis.get(nm,{}).get("druggable"))), dn[:5]
     cv=load_clinvar(names)
     flux=(json.load(open(OUT/"flux.json")).get("flux",{}) if (OUT/"flux.json").exists() else {})
     gene2rxn={}                                          # gene -> (reaction id, tier) it carries most flux through
@@ -72,12 +79,14 @@ def main():
         for gg in r.get("genes",[]):
             if gg not in gene2rxn or abs(r.get("v",0))>abs(flux.get(gene2rxn[gg][0],{}).get("v",0)):
                 gene2rxn[gg]=(rid, r.get("tier"))
-    out={}; metabolic=[]; understudied=[]
+    out={}; metabolic=[]; understudied=[]; validated_targets=[]; unmet_need=[]
     for g in G:
         nm=g["name"]; c=cv.get(nm)
         loeuf=g.get("loeuf",-1); ess=g.get("ess",0); pubs=g.get("pubs",0); dark=g.get("dark",0)
         constrained = 0<=loeuf<0.35                     # top LoF-intolerant decile-ish
-        rec=dict(loeuf=loeuf, essential=bool(ess), pubs=pubs)
+        drug_ok, drug_names = druggable_of(nm)
+        rec=dict(loeuf=loeuf, essential=bool(ess), pubs=pubs, druggable=drug_ok)
+        if drug_names: rec["drugs"]=drug_names
         if c: rec.update(clinvar_pathogenic=c["path"], clinvar_missense_pathogenic=c["missense_path"],
                          clinvar_benign=c["benign"], clinvar_vus=c["vus"],
                          review_stars=c["stars"], example_pathogenic=c["examples"])
@@ -95,17 +104,31 @@ def main():
         # (ClinVar now covers ~16k genes, so 'zero pathogenic' alone is too strict -- allow a small burden.)
         if constrained and ess and npath<=1 and pubs<40:
             understudied.append(dict(gene=nm, loeuf=loeuf, pubs=pubs, clinvar_pathogenic=npath, dark=bool(dark)))
+        # CROSS-LAYER (genetics x pharmacology): a confident disease gene that is ALSO druggable = a drug target
+        # with human genetic validation. If it is NOT druggable but constrained/essential = an unmet-need target.
+        if rec.get("known_disease_gene") and drug_ok:
+            validated_targets.append(dict(gene=nm, pathogenic=npath, drugs=drug_names, loeuf=loeuf,
+                                          essential=bool(ess), review_stars=(c or {}).get("stars",0)))
+        elif (npath>=1 or ess) and constrained and not drug_ok:
+            unmet_need.append(dict(gene=nm, pathogenic=npath, essential=bool(ess), loeuf=loeuf, pubs=pubs, dark=bool(dark)))
     # rank understudied: dark + most-constrained + least-studied first (Play E: highest-value unknowns)
     understudied.sort(key=lambda x:(not x["dark"], x["loeuf"], x["pubs"]))
+    validated_targets.sort(key=lambda x:(-x["pathogenic"], x["loeuf"]))       # strongest genetic evidence first
+    unmet_need.sort(key=lambda x:(not x["dark"], x["loeuf"], x["pubs"]))      # most-constrained, least-studied first
     n_cv=sum(1 for r in out.values() if "clinvar_pathogenic" in r)
     n_path=sum(1 for r in out.values() if r.get("clinvar_pathogenic",0)>0)
     payload=dict(variants=out, metabolic_variant_nodes=metabolic[:200],
                  predicted_vulnerable_understudied=understudied[:150],
+                 genetically_validated_targets=validated_targets[:200],
+                 unmet_need_targets=unmet_need[:200],
                  summary=dict(genes=len(out), with_clinvar=n_cv, genes_with_pathogenic=n_path,
                               known_disease_genes=sum(1 for r in out.values() if r.get("known_disease_gene")),
+                              druggable_genes=sum(1 for r in out.values() if r.get("druggable")),
                               metabolic_variant_nodes=len(metabolic),
                               understudied_candidates=len(understudied),
                               understudied_dark=sum(1 for u in understudied if u["dark"]),
+                              genetically_validated_targets=len(validated_targets),
+                              unmet_need_targets=len(unmet_need),
                               high_vulnerability=sum(1 for r in out.values() if r["vulnerability_tier"]=="high")))
     json.dump(payload, open(OUT/"variants.json","w"))
     s=payload["summary"]
@@ -113,6 +136,9 @@ def main():
           f"{s['known_disease_genes']} high-confidence disease genes) | {s['high_vulnerability']} high-vulnerability | "
           f"{s['metabolic_variant_nodes']} metabolic-variant (IEM) nodes | {s['understudied_candidates']} understudied "
           f"candidates ({s['understudied_dark']} also DARK -> highest-value unknowns)")
+    print(f"  genetics x pharmacology: {s['genetically_validated_targets']} genetically-VALIDATED druggable targets "
+          f"(disease variants + a drug), {s['unmet_need_targets']} UNMET-NEED targets (disease/essential + constrained + undrugged) "
+          f"| {s['druggable_genes']} druggable genes total")
 
 if __name__=="__main__":
     main()

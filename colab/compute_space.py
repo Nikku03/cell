@@ -110,8 +110,24 @@ def main():
     except Exception as e:
         print("  compartment transport skipped:",repr(e)[:80])
     # co-localization: same-compartment PPIs are spatially plausible; CROSS-compartment interacting pairs
-    # are the actionable output -- contact-site / trafficking / shuttling candidates. Capture them.
-    same=0; cross=0; checked=0; cross_pairs=[]
+    # are the actionable output -- contact-site / trafficking / shuttling candidates. We TIER them by HPA
+    # reliability (so a candidate isn't driven by an 'Uncertain' localization) and FLAG pairs that span a
+    # known membrane-contact-site organelle combination (ER-mito MAM, ER-PM junction, ...).
+    REL={"enhanced":3,"supported":2,"approved":1,"uncertain":0}
+    def rel_score(nm): return REL.get((loc.get(nm,{}).get("reliability") or "").lower(),0)
+    CONTACT={frozenset({"endoplasmic reticulum","mitochondria"}):"ER-mitochondria (MAM)",
+             frozenset({"endoplasmic reticulum","membrane"}):"ER-plasma membrane junction",
+             frozenset({"mitochondria","membrane"}):"mitochondria-plasma membrane",
+             frozenset({"endoplasmic reticulum","Golgi"}):"ER-Golgi",
+             frozenset({"mitochondria","lysosome"}):"mitochondria-lysosome",
+             frozenset({"endoplasmic reticulum","peroxisome"}):"ER-peroxisome"}
+    def contact_site(la,lb):
+        oa={c for c in (coarse(x) for x in la) if c}; ob={c for c in (coarse(x) for x in lb) if c}
+        for A in oa:
+            for B in ob:
+                if A!=B and frozenset({A,B}) in CONTACT: return CONTACT[frozenset({A,B})]
+        return None
+    same=0; cross=0; checked=0; cross_all=[]
     for a,b in D.get("ppi",[])[:200000]:
         na,nb=G[a]["name"],G[b]["name"]
         la=set(loc.get(na,{}).get("locations",[])); lb=set(loc.get(nb,{}).get("locations",[]))
@@ -120,25 +136,38 @@ def main():
             if la&lb: same+=1
             else:
                 cross+=1
-                if len(cross_pairs)<300:
-                    cross_pairs.append(dict(a=na, b=nb, a_loc=sorted(la)[:3], b_loc=sorted(lb)[:3]))
+                conf=min(rel_score(na),rel_score(nb)); cs=contact_site(la,lb)
+                if conf>=1 or cs:                        # drop pairs driven purely by 'Uncertain' localizations
+                    cross_all.append(dict(a=na, b=nb, a_loc=sorted(la)[:3], b_loc=sorted(lb)[:3],
+                                          confidence=conf, contact_site=cs))
+    cross_all.sort(key=lambda x:(x["contact_site"] is None, -x["confidence"]))   # known contact sites + reliable first
+    cross_pairs=cross_all[:300]; contact_ppi=[p for p in cross_all if p["contact_site"]]
+    # surfaceome (plasma-membrane) + secretome (secreted/extracellular): the drug-accessible protein sets
+    surfaceome=sorted(n for n,v in loc.items() if any("plasma membrane" in x.lower() for x in v["locations"]))
+    secretome =sorted(n for n,v in loc.items() if any(("secreted" in x.lower() or "extracellular" in x.lower())
+                                                       for x in v["locations"]))
     disagree=[n for n,v in loc.items() if v.get("model_hpa_agree") is False]
     multi=sum(1 for v in loc.values() if v["multi"])
     comp_occ=Counter(l for v in loc.values() for l in v["locations"])
     payload=dict(locations=loc, compartment_transport=transport,
-                 cross_compartment_ppi=cross_pairs, model_hpa_disagreements=disagree[:200],
+                 cross_compartment_ppi=cross_pairs, contact_site_ppi=contact_ppi[:200],
+                 surfaceome=surfaceome[:2000], secretome=secretome[:2000],
+                 model_hpa_disagreements=disagree[:200],
                  colocalization=dict(ppi_checked=checked, same_compartment=same, cross_compartment=cross,
                                      same_frac=round(same/checked,3) if checked else None),
                  summary=dict(proteins_localized=len(loc), multi_localized=multi,
                               n_transport_edges=len(transport), cross_compartment_ppi=len(cross_pairs),
+                              contact_site_ppi=len(contact_ppi), surfaceome=len(surfaceome), secretome=len(secretome),
                               model_hpa_disagreements=len(disagree),
                               top_compartments=comp_occ.most_common(12)))
     json.dump(payload, open(OUT/"space.json","w"))
     s=payload["summary"]
     print(f"space: {s['proteins_localized']} proteins with HPA localization ({s['multi_localized']} multi-localized) | "
           f"{s['n_transport_edges']} compartment-transport edges | {s['cross_compartment_ppi']} cross-compartment "
-          f"PPIs (contact-site candidates) | {s['model_hpa_disagreements']} model/HPA localization disagreements | "
-          f"{payload['colocalization']['same_frac']} of PPIs share a compartment")
+          f"PPIs ({s['contact_site_ppi']} at known membrane-contact sites) | {s['model_hpa_disagreements']} model/HPA "
+          f"disagreements | {payload['colocalization']['same_frac']} of PPIs share a compartment")
+    print(f"  drug-accessible sets: {s['surfaceome']} surfaceome (plasma-membrane) + {s['secretome']} secretome "
+          f"(secreted/extracellular) proteins")
 
 if __name__=="__main__":
     main()
