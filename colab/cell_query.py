@@ -38,6 +38,7 @@ class Cell:
         self.conv=self._load("convergence.json"); self.cond=self._load("conditions.json")
         self.reason=self._load("reasoning.json"); self.cal=self._load("calibration.json")
         self.kin=(self._load("kinetics.json") or {}).get("kinetics",{})
+        self.kinref=(self._load("kinetics_refined.json") or {}).get("kinetics_refined",{})  # best: measured>flux-deconv>CatPred
         self.ivk=(self._load("invivo_kcat.json") or {}).get("invivo_kcat",{})   # in-vivo apparent kcat (flux/[E])
         self.conc=(self._load("concentration.json") or {}).get("concentration",{})
         fx=self._load("flux.json") or {}; self.flux=fx.get("flux",{}); self.flux_val=fx.get("validation")
@@ -143,6 +144,15 @@ def answer(q, C=None):
     if re.search(r"\b(rate|kcat|turnover|kinetic|km|how fast|catalyt|vmax|reaction speed)\b", ql):
         gg2=C.gene(q); k=C.kin.get(gg2) if gg2 else None
         iv=C.ivk.get(gg2) if gg2 else None
+        kr=C.kinref.get(gg2) if gg2 else None
+        # the refined value is the best: measured > flux-deconvolved > CatPred(calibrated)+prior, with Km/saturation
+        if kr and kr.get("kcat_per_s"):
+            km=f"; Km {kr['km_uM']} µM" if kr.get("km_uM") else ""
+            sat=f"; saturation {kr['saturation']}" if kr.get("saturation") is not None else ""
+            cx=f"; vs CatPred {kr['catpred_kcat']} ({kr['deconv_vs_catpred']}x)" if kr.get("catpred_kcat") else ""
+            return dict(q=q, gene=gg2, answer=f"{gg2} kcat ≈ {kr['kcat_per_s']} /s [{kr['tier']}]{km}{sat}{cx}",
+                        confidence="high" if kr["tier"]=="measured" else "medium",
+                        source="refined kinetics ("+kr["tier"]+")", tier=kr["tier"])
         # PREFER in-vivo apparent kcat (flux/[E]) when the in-vitro value is only imputed -- it is
         # data-derived (from the flux + abundance layers) rather than an EC-median/family guess.
         if iv and iv.get("kcat_app_per_s") and (not k or k.get("tier") not in ("measured","EC-measured")):
