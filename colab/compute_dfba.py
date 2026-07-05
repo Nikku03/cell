@@ -24,7 +24,7 @@ X0=float(os.environ.get("DFBA_X0","0.01"))            # gDW/L initial biomass
 def main():
     try:
         import scipy  # noqa
-        from compute_flux import parse_gem, build_S, solve_fba, met_to_exchange, load_medium, mx_get, vmax_bounds
+        from compute_flux import parse_gem, build_S, solve_fba, met_to_exchange, load_medium, mx_get, vmax_bounds, close_undefined_uptakes
     except Exception as e:
         print("dFBA needs scipy + compute_flux:",repr(e)[:80]); return
     rxns, met_idx = parse_gem()
@@ -44,12 +44,19 @@ def main():
     for ri,cap in vmax.items():
         base_ub[ri]=min(base_ub[ri], cap*VSC)
         if rxns[ri]["rev"]: base_lb[ri]=max(base_lb[ri], -cap*VSC)
-    id2i={r["id"]:i for i,r in enumerate(rxns)}; n_med=0
+    id2i={r["id"]:i for i,r in enumerate(rxns)}; n_med=0; anchored_ex=set()
     for key,(l,u) in medium.items():
         mx=mx_get(met2ex,key)
-        if key in id2i: base_lb[id2i[key]]=l; base_ub[id2i[key]]=u; n_med+=1
+        if key in id2i: base_lb[id2i[key]]=l; base_ub[id2i[key]]=u; n_med+=1; anchored_ex.add(id2i[key])
         elif mx:
-            j,sgn=mx; lo,hi=(l,u) if sgn<0 else (-u,-l); base_lb[j]=lo; base_ub[j]=hi; n_med+=1
+            j,sgn=mx; lo,hi=(l,u) if sgn<0 else (-u,-l); base_lb[j]=lo; base_ub[j]=hi; n_med+=1; anchored_ex.add(j)
+    # DEFINED MEDIUM: close non-measured, non-inorganic uptakes so growth is limited by the tracked substrates
+    # (otherwise it feeds on free open exchanges and glucose never depletes). Falls back to open if infeasible.
+    if os.environ.get("DFBA_OPEN_MEDIUM","0")!="1":
+        _dlb,_dub,_nc=close_undefined_uptakes(rxns, met_idx, anchored_ex, base_lb, base_ub)
+        _c=np.zeros(n); _c[bio]=1.0
+        if solve_fba(S,_dlb,_dub,_c,True) is not None: base_lb,base_ub=_dlb,_dub   # defined medium feasible -> use it
+        else: print("  dFBA: defined medium infeasible -> using open medium (growth may be under-constrained)")
     # resolve tracked metabolites -> exchange reaction index, orientation sign, max uptake capacity
     track={}
     for name,(S0,Km) in TRACK.items():

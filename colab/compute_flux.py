@@ -14,7 +14,7 @@ even to reactions with no kinetics. We therefore:
 Every flux carries a tier: exchange-anchored > vmax(measured-kcat) > vmax(imputed-kcat) > network-only.
 Skips gracefully if Human-GEM or scipy is absent (heavy solve -> Colab). -> flux.json
 """
-import json, re, math
+import json, re, math, os
 from collections import defaultdict
 from pathlib import Path
 import numpy as np
@@ -165,6 +165,26 @@ def mx_get(met2ex, key):
     """resolve a metabolite name to its exchange (idx,sign), trying exact/lower/chirality-stripped."""
     return met2ex.get(key) or met2ex.get(key.lower()) or met2ex.get(_chir(key))
 
+# essential inorganics/gases/water kept freely available even under a defined medium
+INORG={"H2O","H+","H","O2","CO2","Pi","PPi","phosphate","diphosphate","Na+","K+","Cl-","Ca2+","Mg2+","Mn2+",
+       "Fe2+","Fe3+","Zn2+","Cu2+","Co2+","Ni2+","sulfate","SO4","HSO4-","HCO3-","NH3","NH4+","H2S","NO3-",
+       "NO2-","I-","O2-","OH-","H2O2","selenate","selenite","molybdate","biotin","pantothenate"}
+
+def close_undefined_uptakes(rxns, met_idx, anchored_ex, lb, ub):
+    """defined medium: forbid UPTAKE on single-metabolite boundary exchanges that are neither measured
+    (anchored_ex) nor an essential inorganic -> the model must feed through the measured sources.
+    Returns (lb2, ub2, n_closed). Orientation-aware (sink v>=0, source v<=0)."""
+    inv={i:n for n,i in met_idx.items()}
+    lb2=lb.copy(); ub2=ub.copy(); n=0
+    for ri,r in enumerate(rxns):
+        if not r["is_exchange"] or ri in anchored_ex or len(r["stoich"])!=1: continue
+        mi,coef=next(iter(r["stoich"].items()))
+        if base_met(inv[mi]) in INORG: continue
+        if coef<0: lb2[ri]=max(lb2[ri],0.0)
+        else:      ub2[ri]=min(ub2[ri],0.0)
+        n+=1
+    return lb2, ub2, n
+
 def build_S(rxns, nmet):
     from scipy import sparse
     rows=[]; cols=[]; vals=[]
@@ -277,8 +297,13 @@ def main():
               f"| sample Human-GEM exchange metabolites: {ex_names}")
     # enzyme Vmax overlay — ABSOLUTE mmol/gDW/hr (kcat x [E]); commensurable with the exchange anchor
     vmax, vtier, vunits = vmax_bounds(rxns)
-    def with_vmax(scale):
-        lb=blb.copy(); ub=bub.copy()
+    # DEFINED MEDIUM: close uptake on every exchange EXCEPT the measured medium + essential inorganics, so the
+    # model must feed through the measured carbon/nitrogen sources. Without this it routes around them via the
+    # ~1500 open exchanges -> the measured fluxes come out ~0 and validation can't run. Fallback: open medium.
+    anchored_ex=set(id2i[k] for k in medium if k in id2i)|set(mx_get(met2ex,k)[0] for k in medium if mx_get(met2ex,k))
+    dlb,dub,n_closed=close_undefined_uptakes(rxns, met_idx, anchored_ex, blb, bub)
+    def with_vmax(scale, L, U):
+        lb=L.copy(); ub=U.copy()
         for ri,cap in vmax.items():
             ub[ri]=min(ub[ri], cap*scale)
             if rxns[ri]["rev"]: lb[ri]=max(lb[ri], -cap*scale)
@@ -292,20 +317,23 @@ def main():
         json.dump(dict(flux={}, summary=dict(reactions=n, metabolites=nmet, vmax_bounded=len(vmax),
                   vmax_units=vunits, note="no biomass objective"), validation=None), open(OUT/"flux.json","w")); return
     c[bio]=1.0
-    # feasibility ladder: KEEP the exchange anchor (absolute scale); relax Vmax before abandoning it.
-    z=None; vmax_scale=None; used_vmax=True; anchored=(n_med>0)
-    for scale in (1,10,100,1000):
-        lb,ub=with_vmax(scale); z=solve_fba(S,lb,ub,c,True)
-        if z is not None: vmax_scale=scale; break
-    if z is None:                                   # drop Vmax bounds, keep exchange anchor
+    # feasibility ladder: DEFINED medium first (so measured exchanges carry flux), then open medium, relaxing Vmax.
+    z=None; vmax_scale=None; used_vmax=True; anchored=(n_med>0); defined=False
+    open_medium=os.environ.get("FLUX_OPEN_MEDIUM","0")=="1"
+    for use_def in ((False,) if open_medium else (True, False)):
+        L,U=(dlb,dub) if use_def else (blb,bub)
+        for scale in (1,10,100,1000):
+            lb,ub=with_vmax(scale,L,U); z=solve_fba(S,lb,ub,c,True)
+            if z is not None: vmax_scale=scale; defined=use_def; break
+        if z is not None: break
+    if z is None:                                   # drop Vmax bounds, keep (open) exchange anchor
         lb,ub=blb.copy(),bub.copy(); z=solve_fba(S,lb,ub,c,True); used_vmax=False
-    if z is None:                                   # last resort: open exchange too (loses absolute anchor)
+    if z is None:                                   # last resort: fully open (loses absolute anchor)
         lb=np.array([-BIG if r["rev"] else 0.0 for r in rxns]); ub=np.array([BIG]*n)
         z=solve_fba(S,lb,ub,c,True); anchored=False
     if z is None:
         print("FBA infeasible even fully relaxed -> skipping (check Human-GEM parse / biomass)"); return
-    if vmax_scale and vmax_scale>1:
-        print(f"  note: Vmax bounds relaxed x{vmax_scale} for feasibility (cell-mass/kcat scale); enzyme layer still applied")
+    print(f"  medium: {'DEFINED — '+str(n_closed)+' non-medium uptakes closed (model feeds through measured exchanges)' if defined else 'OPEN — measured exchanges may carry ~0 flux'} | Vmax scale x{vmax_scale}")
     zstar=float(z[bio])
     v=pfba(S, lb, ub, c, zstar) if zstar>1e-9 else z
     if v is None: v=z
@@ -348,7 +376,7 @@ def main():
     flux_units = "mmol/gDW/hr(absolute)" if anchored else "relative"
     payload=dict(flux=out, biomass=round(zstar,4),
         summary=dict(reactions=n, metabolites=nmet, active_reactions=active,
-                     flux_units=flux_units, absolute=bool(anchored), vmax_units=vunits,
+                     flux_units=flux_units, absolute=bool(anchored), defined_medium=bool(defined), vmax_units=vunits,
                      vmax_bounded=len(vmax), vmax_applied=used_vmax, vmax_relaxation=vmax_scale,
                      measured_kcat_bounds=tc.get("vmax(measured-kcat)",0),
                      imputed_kcat_bounds=tc.get("vmax(imputed-kcat)",0),
