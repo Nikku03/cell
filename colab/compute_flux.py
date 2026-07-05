@@ -318,13 +318,20 @@ def main():
                   vmax_units=vunits, note="no biomass objective"), validation=None), open(OUT/"flux.json","w")); return
     c[bio]=1.0
     # feasibility ladder: DEFINED medium first (so measured exchanges carry flux), then open medium, relaxing Vmax.
+    # CRITICAL: the defined medium is only accepted if it actually SUPPORTS GROWTH. Human-GEM's biomass needs
+    # nutrients (vitamins, nucleosides, lipids) that the ~15-metabolite measured medium doesn't supply, so a
+    # naive defined medium starves biomass to 0 -> useless flux + broken validation. If defined can't grow, we
+    # fall back to the open medium (which grows, ~0.06/hr). Override the viability floor with FLUX_MIN_BIOMASS.
     z=None; vmax_scale=None; used_vmax=True; anchored=(n_med>0); defined=False
     open_medium=os.environ.get("FLUX_OPEN_MEDIUM","0")=="1"
+    VIABLE=float(os.environ.get("FLUX_MIN_BIOMASS","1e-4"))
     for use_def in ((False,) if open_medium else (True, False)):
         L,U=(dlb,dub) if use_def else (blb,bub)
+        need=VIABLE if use_def else 0.0        # defined medium must GROW to be accepted; open medium: feasibility
         for scale in (1,10,100,1000):
-            lb,ub=with_vmax(scale,L,U); z=solve_fba(S,lb,ub,c,True)
-            if z is not None: vmax_scale=scale; defined=use_def; break
+            lb,ub=with_vmax(scale,L,U); zc=solve_fba(S,lb,ub,c,True)
+            if zc is not None and float(zc[bio])>need:
+                z=zc; vmax_scale=scale; defined=use_def; break
         if z is not None: break
     if z is None:                                   # drop Vmax bounds, keep (open) exchange anchor
         lb,ub=blb.copy(),bub.copy(); z=solve_fba(S,lb,ub,c,True); used_vmax=False
@@ -333,7 +340,8 @@ def main():
         z=solve_fba(S,lb,ub,c,True); anchored=False
     if z is None:
         print("FBA infeasible even fully relaxed -> skipping (check Human-GEM parse / biomass)"); return
-    print(f"  medium: {'DEFINED — '+str(n_closed)+' non-medium uptakes closed (model feeds through measured exchanges)' if defined else 'OPEN — measured exchanges may carry ~0 flux'} | Vmax scale x{vmax_scale}")
+    _openwhy="OPEN medium requested" if open_medium else "DEFINED medium starved biomass (<%g/hr) -> fell back to OPEN"%VIABLE
+    print(f"  medium: {'DEFINED — '+str(n_closed)+' non-medium uptakes closed (model feeds through measured exchanges)' if defined else _openwhy+' — measured exchanges carry flux via forced glucose anchor'} | biomass={float(z[bio]):.4g}/hr | Vmax scale x{vmax_scale}")
     zstar=float(z[bio])
     v=pfba(S, lb, ub, c, zstar) if zstar>1e-9 else z
     if v is None: v=z

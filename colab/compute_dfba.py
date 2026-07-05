@@ -55,8 +55,12 @@ def main():
     if os.environ.get("DFBA_OPEN_MEDIUM","0")!="1":
         _dlb,_dub,_nc=close_undefined_uptakes(rxns, met_idx, anchored_ex, base_lb, base_ub)
         _c=np.zeros(n); _c[bio]=1.0
-        if solve_fba(S,_dlb,_dub,_c,True) is not None: base_lb,base_ub=_dlb,_dub   # defined medium feasible -> use it
-        else: print("  dFBA: defined medium infeasible -> using open medium (growth may be under-constrained)")
+        _z=solve_fba(S,_dlb,_dub,_c,True)
+        # accept the defined medium ONLY if it supports growth; else the measured medium starves biomass
+        # (missing vitamins/nucleosides/lipids) and dFBA flatlines -> use the open medium instead.
+        if _z is not None and float(_z[bio])>float(os.environ.get("DFBA_MIN_BIOMASS","1e-4")):
+            base_lb,base_ub=_dlb,_dub
+        else: print("  dFBA: defined medium starves biomass -> using open medium (growth may be under-constrained)")
     # resolve tracked metabolites -> exchange reaction index, orientation sign, max uptake capacity
     track={}
     for name,(S0,Km) in TRACK.items():
