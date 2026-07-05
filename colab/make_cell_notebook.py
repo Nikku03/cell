@@ -469,6 +469,8 @@ code("# build with hard failure if anything is missing (so we never silently shi
    "rpd=subprocess.run([sys.executable,'colab/validate_prospective_dense.py'],capture_output=True,text=True); print(rpd.stdout[-900:])",
    "# BILLION-DOLLAR TEST: can biology + the dense network DISCOVER (approved) drug targets? held-out AUC + shortlist",
    "rtd=subprocess.run([sys.executable,'colab/validate_target_discovery.py'],capture_output=True,text=True); print(rtd.stdout[-900:])",
+   "# GNN over the FULL dense multi-lens network (GPU): does propagating biology over every dataset find targets?",
+   "rtg=subprocess.run([sys.executable,'colab/build_target_gnn.py'],capture_output=True,text=True); print(rtg.stdout[-900:])",
    "# Phase 2 — convergence engine: novel functional links where independent lenses agree (reads the final model)",
    "import os as _os; _os.environ.setdefault('CONV_PUBMED','1')   # rank top novel pairs by PubMed novelty",
    "rc=subprocess.run([sys.executable,'colab/compute_convergence.py'],capture_output=True,text=True); print(rc.stdout[-1500:])",
