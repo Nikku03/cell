@@ -38,9 +38,10 @@ def main():
     # BASE bounds = the measured medium (constrains ALL mapped exchanges, not just tracked ones, so
     # growth is limited by the defined medium and doesn't exploit open nutrients -> realistic mu)
     base_lb=np.array([-1000.0 if r["rev"] else 0.0 for r in rxns]); base_ub=np.array([1000.0]*n)
-    # ENZYME Vmax bounds (same as compute_flux) so growth is enzyme-limited, not unbounded. Relax x10 for
-    # feasibility headroom (dFBA has no ladder). Without these, biomass-max explodes on the open medium.
-    vmax,_,vunits = vmax_bounds(rxns); VSC=float(os.environ.get("DFBA_VMAX_SCALE","10"))
+    # ENZYME Vmax bounds (same as compute_flux) so growth is enzyme-limited, not unbounded. Scale x1 to match
+    # compute_flux's physiological anchor (biomass ~0.06/hr); x10 inflated mu to ~0.6/hr (10x too fast) and
+    # blew biomass up to 1e4 g/L. Without these bounds, biomass-max explodes on the open medium (DFBA_VMAX_SCALE).
+    vmax,_,vunits = vmax_bounds(rxns); VSC=float(os.environ.get("DFBA_VMAX_SCALE","1"))
     for ri,cap in vmax.items():
         base_ub[ri]=min(base_ub[ri], cap*VSC)
         if rxns[ri]["rev"]: base_lb[ri]=max(base_lb[ri], -cap*VSC)
