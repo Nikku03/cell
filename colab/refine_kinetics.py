@@ -31,6 +31,7 @@ def load(name, key=None):
 def main():
     kin=load("kinetics.json","kinetics")
     cat=load("catpred_kinetics.json","catpred")
+    dav=load("davidi_kcat.json","davidi_kcat")            # max-over-conditions in-vivo kcat (independent, flux-based)
     flux=load("flux.json"); fx=flux.get("flux",{}); absolute=("absolute" in flux.get("summary",{}).get("flux_units",""))
     conc=load("concentration.json","concentration")
     metab=load("metabolites.json","metabolites")
@@ -90,17 +91,22 @@ def main():
 
     def predict(g, bias, baseline=False):
         """refined kcat for g WITHOUT using g's own measured value. Estimate priority:
-          tier 2  CatPred(calibrated)  -- sequence+chemistry, the real error-cutter (~3-4x)
-          tier 3  EC/family prior      -- the imputed ~9.6x baseline, when a non-measured kin entry exists
-          tier 4  global-median prior  -- last resort (validation only, so the held-out score always runs)
-        Flux-deconvolution is NOT used here: v/[E] from one condition is utilization, not kcat (48x error),
-        so it can't beat the prior; it lives in `invivo_apparent` as an annotation instead. Returns (kcat, tier)."""
-        c=cat.get(g,{})
+          tier 2  CatPred(calibrated)  -- sequence+chemistry, the real error-cutter (~3-4x). Raised to the
+                  Davidi max if the observed in-vivo turnover exceeds it (that's a hard lower bound on kcat).
+          tier 3  Davidi max-over-conditions -- max_c v/[E] across the NCI-60 conditions (independent, flux)
+          tier 4  EC/family prior      -- the imputed ~9.6x baseline, when a non-measured kin entry exists
+          tier 5  global-median prior  -- last resort (validation only, so the held-out score always runs)
+        Single-condition flux-deconvolution is NOT used (v/[E] from one state is utilization, not kcat, 48x);
+        the max-over-conditions Davidi estimate replaces it. Returns (kcat, tier)."""
+        c=cat.get(g,{}); dmax=(dav.get(g) or {}).get("kcat_max_per_s")
         if c.get("kcat"):
             cc=10**(math.log10(c["kcat"])+bias); unc=c.get("kcat_unc")
             prior=kin.get(g,{}).get("kcat_per_s") if kin.get(g,{}).get("tier") in ("EC-measured","EC-class") else None
-            if prior and unc and unc>0.5: return 10**(0.5*math.log10(cc)+0.5*math.log10(prior)), "catpred+ECprior"
-            return cc, "catpred(calibrated)"
+            if prior and unc and unc>0.5: cc=10**(0.5*math.log10(cc)+0.5*math.log10(prior))
+            # in-vivo observed turnover is a lower bound on kcat: if Davidi max exceeds CatPred, CatPred is low
+            if dmax and dmax>cc*1.3: return dmax, "davidi>catpred(raised)"
+            return cc, ("catpred+ECprior" if (prior and unc and unc>0.5) else "catpred(calibrated)")
+        if dmax and dmax>0: return dmax, "davidi-max"      # no CatPred: the flux-based estimate leads
         k=kin.get(g,{})
         if k.get("kcat_per_s") and k.get("tier")!="measured": return k["kcat_per_s"], k.get("tier","imputed")
         ecp=ec_prior(g)                                   # class median from OTHER measured genes (the 9.6x baseline)
@@ -112,7 +118,7 @@ def main():
 
     bias, n_cal = fit_bias()
     out={}; tiers=Counter()
-    for g in set(kin)|set(cat)|set(g2flux):
+    for g in set(kin)|set(cat)|set(g2flux)|set(dav):
         k=kin.get(g,{}); c=cat.get(g,{}); km=c.get("km"); rec=dict(km_uM=km)
         if k.get("tier")=="measured" and k.get("kcat_per_s"):
             rec.update(kcat_per_s=round(k["kcat_per_s"],4), tier="measured")
@@ -132,6 +138,13 @@ def main():
             rec["invivo_apparent_kcat_per_s"]=round(iv,4)
             if rec.get("kcat_per_s") and rec["tier"]!="invivo-apparent(lower-bound)":
                 rec["utilization_vs_estimate"]=round(min(iv/rec["kcat_per_s"],1.0),3)
+        # annotate the independent Davidi max-over-conditions estimate + its agreement with CatPred
+        d=dav.get(g)
+        if d and d.get("kcat_max_per_s"):
+            rec["davidi_kcat_max_per_s"]=d["kcat_max_per_s"]; rec["davidi_n_conditions"]=d.get("n_active_conditions")
+            if c.get("kcat"):
+                cc=10**(math.log10(c["kcat"])+bias)
+                if cc>0: rec["davidi_vs_catpred"]=round(d["kcat_max_per_s"]/cc,3)
         if g in g2flux and km:
             S=Sconc(g2flux[g][0])
             if S: rec["saturation"]=round(S/(km+S),3)
@@ -155,11 +168,12 @@ def main():
                      within_2x=round(sum(1 for e in errs if e<=math.log10(2))/len(errs),2),
                      within_3x=round(sum(1 for e in errs if e<=math.log10(3))/len(errs),2),
                      tier_mix=dict(by), imputed_baseline_fold_error=9.61,
-                     catpred_present=bool(cat))
+                     catpred_present=bool(cat), davidi_present=bool(dav))
     payload=dict(kinetics_refined=out, calibration=dict(catpred_log10_bias=round(bias,3), n_calibration=n_cal),
                  validation=val,
                  summary=dict(enzymes=len(out), by_tier=dict(tiers), with_km=sum(1 for r in out.values() if r.get("km_uM")),
-                              flux_absolute=absolute, catpred_available=bool(cat)))
+                              flux_absolute=absolute, catpred_available=bool(cat), davidi_available=bool(dav),
+                              with_davidi=sum(1 for r in out.values() if r.get("davidi_kcat_max_per_s"))))
     json.dump(payload, open(OUT/"kinetics_refined.json","w"))
     s=payload["summary"]
     print(f"refined kinetics: {s['enzymes']} enzymes | tiers {dict(tiers)}")

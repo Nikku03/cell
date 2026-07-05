@@ -483,6 +483,8 @@ code("# build with hard failure if anything is missing (so we never silently shi
    "rmc=subprocess.run([sys.executable,'colab/compute_metabolite_conc.py'],capture_output=True,text=True); print(rmc.stdout[-700:])",
    "# In-vivo kcat (data-generating): apparent turnover = flux / abundance (Davidi method) -> novel human in-vivo kcat + saturation",
    "rik=subprocess.run([sys.executable,'colab/compute_invivo_kcat.py'],capture_output=True,text=True); print(rik.stdout[-600:])",
+   "# Davidi MAX-over-conditions kcat: ecFBA across ~13 NCI-60 conditions, kcat_max = max_c v/[E] -> the legitimate flux-based kcat estimate",
+   "rdk=subprocess.run([sys.executable,'colab/compute_davidi_kcat.py'],capture_output=True,text=True); print(rdk.stdout[-700:])",
    "# CatPred kcat/Km: prepare input (SMILES+sequence+AF structure) and parse predictions if a CatPred GPU run already produced them",
    "rcp=subprocess.run([sys.executable,'colab/compute_catpred_kinetics.py'],capture_output=True,text=True); print(rcp.stdout[-500:])",
    "if os.environ.get('RUN_CATPRED','0')=='1':   # OPTIONAL CatPred kcat/Km inference (needs a GPU runtime e.g. L4). OFF by default.",

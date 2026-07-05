@@ -21,8 +21,10 @@ CHAINS=[
  ("compute_metabolites.py","metabolites.json","compute_metabolite_conc.py"),
  ("compute_flux.py","flux.json","compute_invivo_kcat.py"),
  ("compute_flux.py","flux.json","compute_catpred_kinetics.py"),
+ ("compute_concentration.py","concentration.json","compute_davidi_kcat.py"),
  ("compute_metabolic_graph.py","metabolic_graph.json","refine_kinetics.py"),
  ("compute_catpred_kinetics.py","catpred_kinetics.json","refine_kinetics.py"),
+ ("compute_davidi_kcat.py","davidi_kcat.json","refine_kinetics.py"),
  ("compute_flux.py","flux.json","refine_kinetics.py"),
  ("compute_conditions.py","conditions.json","compute_attractors.py"),
  ("compute_flux.py","flux.json","compute_variants.py"),
@@ -31,6 +33,7 @@ CHAINS=[
 # cross-module imports that must resolve
 IMPORTS=[("compute_metabolites.py",["parse_gem","base_met"]),
          ("compute_dfba.py",["parse_gem","build_S","solve_fba","met_to_exchange","load_medium","mx_get"]),
+         ("compute_davidi_kcat.py",["parse_gem","build_S","solve_fba","pfba","met_to_exchange","mx_get","vmax_bounds","find_biomass"]),
          ("compute_space.py",["parse_gem"]),
          ("compute_invivo_kcat.py",[])]
 PKGS=["numpy","scipy","pandas","h5py"]
