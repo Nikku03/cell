@@ -514,7 +514,7 @@ code("# build with hard failure if anything is missing (so we never silently shi
    "        print(f'CatPred {param}:', r.stdout[-500:]); print(f'  {param} ERR:', r.stderr[-300:])",
    "        # BOTH params write the SAME output name (catpred_input_input_output.csv) -> km would overwrite kcat, and",
    "        # the name carries no kcat/km marker for the parser. Copy each result to a param-named file right away.",
-   "        _src=next((c for c in [f'{OUT}/catpred_input_input_output.csv','results/catpred_input_input_output.csv','CatPred/../results/catpred_input_input_output.csv'] if os.path.exists(c)), None)",
+   "        _src=next((c for c in ['results/catpred_input_input_output.csv','CatPred/../results/catpred_input_input_output.csv',f'{OUT}/catpred_input_input_output.csv'] if os.path.exists(c)), None)   # prefer postprocessed (Prediction_ + SD_total cols)",
    "        if _src: _sh.copy(_src, f'{OUT}/catpred_{param}_output.csv'); os.environ[f'CATPRED_{param.upper()}_OUT']=os.path.abspath(f'{OUT}/catpred_{param}_output.csv')",
    "        else: print(f'  WARNING: no CatPred output CSV found for {param}')",
    "    _cp.run([sys.executable,'colab/compute_catpred_kinetics.py'])   # parse results (Prediction_(s^-1)+SD_total, by sequence) -> catpred_kinetics.json",

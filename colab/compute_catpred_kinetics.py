@@ -126,49 +126,68 @@ def prepare():
     return len(rows)
 
 def parse_output():
-    """parse CatPred per-parameter result CSVs -> catpred_kinetics.json. CatPred output columns are
-    'Prediction_(s^(-1))' (kcat, 1/s) or 'Prediction_(...)' (Km) + 'SD_total'; rows keyed by 'sequence'.
-    We map sequence -> gene via catpred_input.csv. Km is converted mM -> uM to match our [S] (env CATPRED_KM_UNIT)."""
-    import glob
+    """parse CatPred result CSVs -> catpred_kinetics.json. Handles BOTH CatPred output formats:
+      - POSTPROCESSED (results/): 'Prediction_(s^(-1))'/'Prediction_(mM)' (linear) + 'SD_total' (log10 units).
+      - RAW (predict.py --preds_path): 'log10kcat_max'/'log10km_mean' (log10) + '<target>_mve_uncal_var'.
+    Value = linear kcat (1/s) / Km (mM->uM); uncertainty is the log10-scale SD refine_kinetics blends on.
+    Rows keyed by 'sequence' -> gene via catpred_input.csv."""
+    import glob, math
     seq2gene={}
     inp=OUT/"catpred_input.csv"
     if inp.exists():
         for r in csv.DictReader(open(inp)):
             if r.get("sequence") and r.get("gene"): seq2gene[r["sequence"]]=r["gene"]
-    km_to_uM=float(os.environ.get("CATPRED_KM_TO_UM","1000"))    # CatPred Km assumed mM -> uM
+    km_to_uM=float(os.environ.get("CATPRED_KM_TO_UM","1000"))    # CatPred Km is mM -> uM
+    TARGET={"kcat":"log10kcat_max","km":"log10km_mean"}
+    def _hdr_ok(path, param):
+        try: h=open(path).readline().lower()
+        except OSError: return False
+        return ("prediction_(" in h) or (TARGET[param] in h)     # postprocessed OR raw target column
     def find_result(param, envk):
         p=os.environ.get(envk)
-        if p and os.path.exists(p): return p
+        if p and os.path.exists(p) and _hdr_ok(p, param): return p
         cands=set()
         for pat in ["CatPred/results/**/*.csv","CatPred/../results/**/*.csv","results/**/*.csv",f"{OUT}/*.csv"]:
             cands.update(glob.glob(pat, recursive=True))
-        # require the parameter to appear in the file PATH (CatPred separates kcat/km by dir or filename),
-        # so kcat and km results never collide, and the file must carry a Prediction column
-        hits=[]
-        for c in cands:
-            low=c.lower()
-            if param not in low: continue
-            if param=="km" and ("kcat" in low and "km" not in low.replace("kcat","")): continue
-            try:
-                if "prediction_(" in open(c).readline().lower(): hits.append(c)
-            except OSError: pass
+        hits=[c for c in cands if param in c.lower()
+              and not (param=="km" and "kcat" in c.lower() and "km" not in c.lower().replace("kcat",""))
+              and _hdr_ok(c, param)]
         return sorted(hits)[-1] if hits else None
+    def row_value(r, param):
+        """(linear value, log10-SD) from either format, or (None,None)."""
+        tcol=TARGET[param]; var_col=tcol+"_mve_uncal_var"
+        lin=next((r[c] for c in r if c.lower().startswith("prediction_(") and r[c] not in (None,"")), None)
+        val=None
+        if lin not in (None,""):
+            try: val=float(lin)
+            except ValueError: val=None
+        for logc in (r.get("Prediction_log10"), r.get(tcol)):
+            if val is None and logc not in (None,""):
+                try: val=10**float(logc)
+                except ValueError: pass
+        sd=r.get("SD_total") or r.get("SD_epistemic")
+        if not sd and r.get(var_col) not in (None,""):
+            try: sd=math.sqrt(max(float(r[var_col]),0.0))
+            except ValueError: sd=None
+        return val, sd
     out={}
     for param, envk in [("kcat","CATPRED_KCAT_OUT"), ("km","CATPRED_KM_OUT")]:
         f=find_result(param, envk)
         if not f: continue
+        n=0
         for r in csv.DictReader(open(f)):
             g=seq2gene.get(r.get("sequence"))
             if not g: continue
-            pred=next((r[c] for c in r if c.lower().startswith("prediction_(")), r.get("Prediction_log10"))
-            try: val=float(pred)
-            except (TypeError,ValueError): continue
-            rec=out.setdefault(g, {}); sd=r.get("SD_total") or r.get("SD_epistemic")
+            val, sd = row_value(r, param)
+            if val is None or val<=0: continue
+            rec=out.setdefault(g, {})
             if param=="kcat": rec["kcat"]=val
             else: rec["km"]=val*km_to_uM
             if sd:
                 try: rec[param+"_unc"]=float(sd)
-                except ValueError: pass
+                except (TypeError,ValueError): pass
+            n+=1
+        print(f"  parsed {n} {param} predictions from {f}")
     if not out: return False
     json.dump(dict(catpred=out, n=len(out)), open(OUT/"catpred_kinetics.json","w"))
     print(f"CatPred predictions parsed: {len(out)} enzymes -> catpred_kinetics.json "
