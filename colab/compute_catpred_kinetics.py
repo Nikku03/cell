@@ -78,10 +78,20 @@ def prepare():
     HUB={"H2O","H+","H","CO2","O2","ATP","ADP","AMP","NAD+","NADH","NADP+","NADPH","Pi","PPi","CoA","NH3"}
     sm=smiles_map(); g2a=gene2acc()
     seqs=uniprot_seqs(set(g2a.get(g["name"],"") for g in G if g["name"] in g2a))
-    rows=[]
+    # CatPred's sequence validator accepts ONLY the 20 standard amino acids and ABORTS THE WHOLE RUN on the
+    # first violation (e.g. a selenocysteine 'U'). Sanitize every sequence up front: substitute the two
+    # translated non-standard residues (U=selenocysteine->Cys, O=pyrrolysine->Lys) and drop any sequence that
+    # still contains a non-standard char (B/Z/J/X/* etc.) so no invalid row ever reaches CatPred.
+    _VALID=set("ACDEFGHIKLMNPQRSTVWY")
+    def clean_seq(s):
+        if not s: return None
+        s=s.strip().upper().replace("U","C").replace("O","K")
+        return s if (s and all(ch in _VALID for ch in s)) else None
+    rows=[]; n_dropped=0
     for g in G:
-        nm=g["name"]; ac=g2a.get(nm); seq=seqs.get(ac)
+        nm=g["name"]; ac=g2a.get(nm); seq=clean_seq(seqs.get(ac))
         rxns=g2r.get(nm, [])
+        if seqs.get(ac) and not seq: n_dropped+=1
         if not seq or not rxns: continue
         # pick the highest-flux reaction for this gene, else the first
         best=None
@@ -107,7 +117,8 @@ def prepare():
         w=csv.DictWriter(f, fieldnames=["SMILES","sequence","pdbpath","gene","reaction"]); w.writeheader()
         for r in rows: w.writerow(r)
     print(f"CatPred input prepared: {len(rows)} enzyme-reaction rows -> catpred_input.csv "
-          f"({sum(1 for r in rows if r['pdbpath'])} with AlphaFold structure)")
+          f"({sum(1 for r in rows if r['pdbpath'])} with AlphaFold structure"
+          f"{f', {n_dropped} dropped for non-standard residues' if n_dropped else ''})")
     return len(rows)
 
 def parse_output():
