@@ -277,3 +277,36 @@ interactive cell that answers importance/context/wiring/perturbation/drug/varian
 types — each with a source and a confidence — and hands you a ranked shortlist of testable, non-obvious
 leads.** That is exactly what an integrative map should do, and it is honest about being a map, not a
 simulator.
+
+---
+
+## 18. ADDENDUM — capabilities added since (the map/simulator line, crossed honestly)
+
+The document above was written as a **map, not simulator** (§4, §15): kinetics, rates, concentrations, flux,
+and time-courses were explicitly out of scope. Subsequent work crossed that line. Every item is
+confidence-tiered and honestly bounded; several carry pending validation flagged below.
+
+**Now present (were "out of scope"):**
+- **Quantitative metabolic flux** — enzyme-constrained FBA on Human-GEM, absolute mmol/gDW/hr, 13C-anchored.
+- **Enzyme kinetics** — measured + CatPred kcat (held-out error 9.6× → **3.9×**, leak-verified), Km for 1,487
+  enzymes, and a new **measured Ki** layer (inhibition constants) — none of which existed before.
+- **Concentrations** — protein nM (PaxDb) + ~94 **measured** metabolite concentrations (Park 2016).
+- **Dynamics** — measured protein/mRNA half-lives → per-gene response times, turnover class, cell-cycle phase.
+- **Time resolution** — a validated relaxation equation (0.29) + a learned model (**0.25**); the ceiling is
+  mapped (~0.10 needs new experiments; a LINCS transformer confirmed hours→minutes doesn't transfer).
+- **Reverse inference** — phenotype → candidate causal genes (discovery, not just validation). *Accuracy
+  pending the LINCS real-data test — treat as hypothesis until then.*
+- **The agent** — a grounded orchestrator turning macro questions into cited, multi-hop, confidence-scored
+  answers (target dossier, disease→target, perturbation effect).
+- **Propagation therapy** — a simulated self-spreading cure (~45× coverage/dose, percolation-gated) + a
+  circuit finder for real self-amplifying ligand→receptor loops.
+
+**Validation added (novel predictions, not just recovery):**
+- Dark-gene hypotheses beat chance **2.18×** vs future GO (z=31.6); **3.11× / 84% hit rate when ≥2 independent
+  datasets agree** — consensus is the accuracy signal.
+- Biology-only prediction of **approved drug targets: AUC 0.83**; shortlist enriched for constraint/essentiality
+  and surfaced hot clinical targets (MCL1, TMPRSS2, SNAI1).
+
+**What is still NOT claimed:** molecule design / medicinal chemistry, PK/ADMET, clinical outcome, or
+organism-level effect. The model reasons **disease → target → cellular consequence**, with a source and a
+confidence on every answer — not the chemistry and not the clinic.

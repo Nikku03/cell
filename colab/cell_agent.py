@@ -187,6 +187,40 @@ class CellAgent:
         L.append("  [reverse-inference accuracy pending the LINCS real-data test — treat as hypothesis]")
         return "\n".join(L)
 
+    # ---------- optional LLM layer: route free-form questions + phrase grounded facts (never invents) ----------
+    def _llm(self, system, user, max_tokens=700):
+        """call an LLM IF a key is set (Anthropic then OpenAI); else None. Used only to route + phrase."""
+        try:
+            key=os.environ.get("ANTHROPIC_API_KEY")
+            if key:
+                import anthropic
+                m=anthropic.Anthropic(api_key=key).messages.create(
+                    model=os.environ.get("AGENT_MODEL","claude-sonnet-5"), max_tokens=max_tokens,
+                    system=system, messages=[{"role":"user","content":user}])
+                return "".join(b.text for b in m.content if getattr(b,"type","")=="text")
+        except Exception: pass
+        try:
+            key=os.environ.get("OPENAI_API_KEY")
+            if key:
+                import openai
+                r=openai.OpenAI(api_key=key).chat.completions.create(
+                    model=os.environ.get("AGENT_MODEL","gpt-4o"), max_tokens=max_tokens,
+                    messages=[{"role":"system","content":system},{"role":"user","content":user}])
+                return r.choices[0].message.content
+        except Exception: pass
+        return None
+
+    def chat(self, question, signature=None):
+        """LLM-fronted: the model gets the GROUNDED tool output and writes the answer. No key -> deterministic ask()."""
+        grounded=self.ask(question, signature)                # every fact, sourced, from tools
+        sys_p=("You are a cautious drug-discovery analyst. You are given GROUNDED facts from a virtual-cell "
+               "model, each with a source and confidence. Write a clear, honest answer to the user's question "
+               "USING ONLY these facts. Never add biology not in the facts. Keep the sources/confidence. If the "
+               "facts don't answer it, say so. Note that the model gives cellular target-level evidence, not a "
+               "clinical or molecule-design claim.")
+        out=self._llm(sys_p, f"Question: {question}\n\nGrounded facts:\n{grounded}")
+        return out or grounded                                # graceful fallback
+
 def main():
     import sys
     a=CellAgent()

@@ -42,6 +42,9 @@ IMPORTS=[("compute_metabolites.py",["parse_gem","base_met"]),
          ("compute_dfba.py",["parse_gem","build_S","solve_fba","met_to_exchange","load_medium","mx_get"]),
          ("compute_davidi_kcat.py",["parse_gem","build_S","solve_fba","pfba","met_to_exchange","mx_get","vmax_bounds","find_biomass"]),
          ("compute_space.py",["parse_gem"]),
+         ("validate_reverse_inference.py",["load_model","reverse_infer","master_regulators","diffuse","cascade_match"]),
+         ("lincs_reverse_test.py",["load_model","reverse_infer"]),
+         ("cell_agent.py",[]),
          ("compute_invivo_kcat.py",[])]
 PKGS=["numpy","scipy","pandas","h5py"]
 
