@@ -16,7 +16,7 @@ other 75%), and report median fold-error vs the imputed baseline (compute_kineti
 measure whether the error was cut. -> kinetics_refined.json + validation
 """
 import json, math, random
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 import numpy as np
 OUT=Path("outputs/orphan")
@@ -59,11 +59,22 @@ def main():
             if mk and ck and mk>0 and ck>0: diffs.append(math.log10(mk)-math.log10(ck))
         return (float(np.median(diffs)), len(diffs)) if len(diffs)>=8 else (0.0, len(diffs))
 
-    # global median of measured kcat = the "no-information" baseline predictor (leave-one-out safe: a
-    # median over ~388 values barely moves when one is dropped). Used as the last-resort estimate so the
-    # held-out validation always has SOMETHING to score against (and reports the honest baseline).
+    # global median of measured kcat = the "no-information" last-resort predictor (leave-one-out safe: a
+    # median over ~388 values barely moves when one is dropped).
     meas_all=[k["kcat_per_s"] for k in kin.values() if k.get("tier")=="measured" and k.get("kcat_per_s")]
     gmed=float(np.median(meas_all)) if meas_all else None
+    # EC-class medians of MEASURED kcat, keyed by compute_kinetics' `family` ("EC:x.y.z"). This reproduces
+    # the EC-class imputation that sets the 9.6x baseline, so a held-out measured gene gets its EC-class
+    # prior (from OTHER genes in the class) instead of the dumber global median -> a fair baseline.
+    ecfam=defaultdict(list)
+    for g,k in kin.items():
+        if k.get("tier")=="measured" and k.get("kcat_per_s") and k.get("family"):
+            ecfam[k["family"]].append((g, k["kcat_per_s"]))
+    def ec_prior(g):
+        fam=kin.get(g,{}).get("family")
+        if not fam: return None
+        vals=[kc for gg,kc in ecfam.get(fam,[]) if gg!=g]     # leave-one-out: never the gene's own value
+        return float(np.median(vals)) if vals else None
 
     def invivo_apparent(g):
         """in-vivo APPARENT turnover kcat_app = v/[E] from a SINGLE FBA condition. This is enzyme
@@ -92,7 +103,11 @@ def main():
             return cc, "catpred(calibrated)"
         k=kin.get(g,{})
         if k.get("kcat_per_s") and k.get("tier")!="measured": return k["kcat_per_s"], k.get("tier","imputed")
-        if baseline and gmed: return gmed, "global-median-prior"   # validation fallback only
+        ecp=ec_prior(g)                                   # class median from OTHER measured genes (the 9.6x baseline)
+        if ecp:
+            fam=kin.get(g,{}).get("family","")
+            return ecp, ("EC-class-prior" if fam.startswith("EC:") else "family-prior")
+        if baseline and gmed: return gmed, "global-median-prior"   # last-resort validation fallback only
         return None, None
 
     bias, n_cal = fit_bias()
