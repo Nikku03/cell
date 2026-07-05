@@ -21,6 +21,8 @@ CHAINS=[
  ("compute_metabolites.py","metabolites.json","compute_metabolite_conc.py"),
  ("compute_flux.py","flux.json","compute_invivo_kcat.py"),
  ("compute_flux.py","flux.json","compute_catpred_kinetics.py"),
+ ("fetch_kinetics_extra.py","kinetics_measured_extra.tsv","compute_kinetics.py"),
+ ("fetch_kinetics_extra.py","ki_measured.tsv","refine_kinetics.py"),
  ("compute_concentration.py","concentration.json","compute_davidi_kcat.py"),
  ("compute_metabolic_graph.py","metabolic_graph.json","refine_kinetics.py"),
  ("compute_catpred_kinetics.py","catpred_kinetics.json","refine_kinetics.py"),

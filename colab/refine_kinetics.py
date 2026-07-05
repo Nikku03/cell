@@ -32,6 +32,13 @@ def main():
     kin=load("kinetics.json","kinetics")
     cat=load("catpred_kinetics.json","catpred")
     dav=load("davidi_kcat.json","davidi_kcat")            # max-over-conditions in-vivo kcat (independent, flux-based)
+    ki_meas={}                                            # measured inhibition constants (new layer, CatPred-DB MIT)
+    kif=OUT/"ki_measured.tsv"
+    if kif.exists():
+        import csv as _csv
+        for r in _csv.DictReader(open(kif), delimiter="\t"):
+            try: ki_meas[r["gene"]]=float(r["ki_uM"])
+            except (KeyError, ValueError, TypeError): pass
     flux=load("flux.json"); fx=flux.get("flux",{}); absolute=("absolute" in flux.get("summary",{}).get("flux_units",""))
     conc=load("concentration.json","concentration")
     metab=load("metabolites.json","metabolites")
@@ -135,6 +142,7 @@ def main():
             rec["invivo_apparent_kcat_per_s"]=round(iv,4)
             if rec.get("kcat_per_s") and rec["tier"]!="invivo-apparent(lower-bound)":
                 rec["utilization_vs_estimate"]=round(min(iv/rec["kcat_per_s"],1.0),3)
+        if g in ki_meas: rec["measured_ki_uM"]=ki_meas[g]     # measured inhibition constant (fact)
         # annotate the independent Davidi max-over-conditions estimate + its agreement with CatPred
         d=dav.get(g)
         if d and d.get("kcat_max_per_s"):
@@ -150,7 +158,11 @@ def main():
     # ---- held-out validation: predict measured kcat as if unmeasured, compare to truth ----
     # Without CatPred this reduces to the EC/global-median baseline (so ERROR CUT ~= 9.6x = "no improvement
     # yet, need CatPred"). With CatPred present it should beat the baseline. Honest either way.
-    meas={g:k["kcat_per_s"] for g,k in kin.items() if k.get("tier")=="measured" and k.get("kcat_per_s")}
+    # LEAK GUARD: CatPred was trained on CatPred-DB, so genes anchored from CatPred-DB are NOT held-out for it.
+    # Exclude them from the test set so the reported fold-error isn't optimistic. (Our BRENDA-derived anchors may
+    # still have partial overlap with CatPred's training -- an unavoidable residual caveat, noted honestly.)
+    meas={g:k["kcat_per_s"] for g,k in kin.items() if k.get("tier")=="measured" and k.get("kcat_per_s")
+          and "catpred" not in str(k.get("source","")).lower()}
     val=None
     if len(meas)>=12:
         keys=list(meas); random.Random(0).shuffle(keys); test=set(keys[:max(3,len(keys)//4)])
@@ -170,11 +182,12 @@ def main():
                  validation=val,
                  summary=dict(enzymes=len(out), by_tier=dict(tiers), with_km=sum(1 for r in out.values() if r.get("km_uM")),
                               flux_absolute=absolute, catpred_available=bool(cat), davidi_available=bool(dav),
-                              with_davidi=sum(1 for r in out.values() if r.get("davidi_kcat_max_per_s"))))
+                              with_davidi=sum(1 for r in out.values() if r.get("davidi_kcat_max_per_s")),
+                              with_measured_ki=sum(1 for r in out.values() if r.get("measured_ki_uM"))))
     json.dump(payload, open(OUT/"kinetics_refined.json","w"))
     s=payload["summary"]
     print(f"refined kinetics: {s['enzymes']} enzymes | tiers {dict(tiers)}")
-    print(f"  CatPred bias calibration: {bias:+.3f} log10 (n={n_cal}) | Km for {s['with_km']}")
+    print(f"  CatPred bias calibration: {bias:+.3f} log10 (n={n_cal}) | Km for {s['with_km']} | measured Ki for {s['with_measured_ki']}")
     if val:
         tag="ERROR CUT" if val["median_fold_error"]<val["imputed_baseline_fold_error"] else "BASELINE (no CatPred -> no error cut yet)"
         print(f"  >>> {tag}: refined held-out fold-error {val['median_fold_error']}x vs imputed baseline "

@@ -22,27 +22,32 @@ import numpy as np
 OUT=Path("outputs/orphan"); H=Path("data/external_data/human")
 
 def load_anchors(idx):
-    """gene -> (log_kcat, source, ph, temp, in_vitro). tsv cols: gene kcat[1/s] km ph temp source in_vitro"""
-    a={}; f=OUT/"kinetics_measured.tsv"
-    if not f.exists(): return a
+    """gene -> (log_kcat, source, ph, temp, in_vitro). tsv cols: gene kcat[1/s] km ph temp source in_vitro.
+    Reads BOTH our assembled anchors (kinetics_measured.tsv) and the fetched extras (kinetics_measured_extra.tsv:
+    CatPred-DB MIT + UniProt CC-BY). Source is preserved so refine_kinetics can exclude CatPred-DB from the
+    CatPred held-out validation (CatPred was trained on CatPred-DB)."""
     import csv
-    rd=csv.reader(open(f),delimiter="\t"); hdr=[h.lower() for h in next(rd,[])]
-    def c(row,*k):
-        for kk in k:
-            for i,h in enumerate(hdr):
-                if kk in h and i<len(row): return row[i]
-        return ""
-    for r in rd:
-        g=c(r,"gene","symbol")
-        if g not in idx: continue
-        try: kc=float(c(r,"kcat"))
-        except: continue
-        if kc<=0: continue
-        invitro = str(c(r,"in_vitro","invitro")).strip() in ("1","true","True")
-        prev=a.get(g)
-        rec=(math.log10(kc), c(r,"source") or "?", c(r,"ph") or "?", c(r,"temp") or "?", invitro)
-        # prefer non-in-vitro (SABIO/eHMN) over BRENDA in-vitro
-        if prev is None or (prev[4] and not invitro): a[g]=rec
+    a={}
+    for fn in ("kinetics_measured.tsv","kinetics_measured_extra.tsv"):
+        f=OUT/fn
+        if not f.exists(): continue
+        rd=csv.reader(open(f),delimiter="\t"); hdr=[h.lower() for h in next(rd,[])]
+        def c(row,*k,_hdr=hdr):
+            for kk in k:
+                for i,h in enumerate(_hdr):
+                    if kk in h and i<len(row): return row[i]
+            return ""
+        for r in rd:
+            g=c(r,"gene","symbol")
+            if g not in idx: continue
+            try: kc=float(c(r,"kcat"))
+            except: continue
+            if kc<=0: continue
+            invitro = str(c(r,"in_vitro","invitro")).strip() in ("1","true","True")
+            prev=a.get(g)
+            rec=(math.log10(kc), c(r,"source") or "?", c(r,"ph") or "?", c(r,"temp") or "?", invitro)
+            # prefer non-in-vitro (SABIO/eHMN) over BRENDA/CatPred-DB in-vitro; our own file wins ties (seen first)
+            if prev is None or (prev[4] and not invitro): a[g]=rec
     return a
 
 def load_ec():
