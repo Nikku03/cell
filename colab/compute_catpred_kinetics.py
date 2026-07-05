@@ -108,7 +108,11 @@ def prepare():
             n=name.lower(); return sm.get(n) or sm.get(re.sub(r"^[ld]-","",n)) or sm.get("d-"+n) or sm.get("l-"+n)
         smi=next((find_smi(s) for s in subs if s not in HUB and find_smi(s)), None)
         if not smi: continue
-        pdb=""
+        # CatPred uses pdbpath ONLY as a unique per-sequence KEY for its protein-records JSON (name+seq); the
+        # inference path does NOT read the file. But it REQUIRES a non-empty pdbpath with a unique basename per
+        # sequence and errors on empty cells (which pandas reads as NaN -> os.path.basename(float) crash). Key it
+        # on the UniProt accession (1:1 with the sequence): a real AlphaFold model if present, else '{ac}.pdb'.
+        pdb=f"{ac}.pdb"
         if AF.exists():
             p=AF/f"AF-{ac}-F1-model_v4.pdb"
             if p.exists(): pdb=str(p)
