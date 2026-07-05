@@ -50,11 +50,24 @@ def load_model(path=None):
     A=sp.coo_matrix((w,(r,c)),shape=(N,N)).tocsr()+sp.identity(N)
     d=np.asarray(A.sum(1)).ravel(); di=1.0/np.sqrt(np.maximum(d,1e-9))
     A=sp.diags(di)@A@sp.diags(di)
+    codep={}                                                 # co-essentiality (INDEPENDENT of the reg network)
+    for k,v in (D.get("codep") or {}).items():
+        codep[int(k)]=[(p[0],float(p[1])) for p in v if isinstance(p,(list,tuple)) and len(p)>=2]
     prior=np.zeros(N)
     for i,g in enumerate(G):
         lo=g.get("loeuf",-1); pc=(1.0 if (isinstance(lo,(int,float)) and 0<=lo<0.35) else 0.0)
         prior[i]=pc+float(g.get("ess",0))
-    return dict(D=D,G=G,N=N,nm=nm,ni=ni,regulon=regulon,targets_of=targets_of,A=A.tocsr(),prior=prior)
+    return dict(D=D,G=G,N=N,nm=nm,ni=ni,regulon=regulon,targets_of=targets_of,codep=codep,A=A.tocsr(),prior=prior)
+
+def codep_coherence(cands, s, M):
+    """INDEPENDENT lens (DepMap co-essentiality, not the reg network): is the candidate co-essential with the
+    strongly-dysregulated genes? A true causal gene is functionally coupled to what it dysregulates."""
+    codep=M.get("codep",{}); out={}
+    dys=set(np.argsort(-np.abs(s))[:250].tolist())
+    for g in cands:
+        sc=sum(r for j,r in codep.get(g,[]) if j in dys)
+        if sc>0: out[g]=sc
+    return out
 
 def _sig_array(sig, M):
     s=np.zeros(M["N"])
@@ -102,7 +115,7 @@ def _z(d):
     v=np.array(list(d.values())); mu,sd=v.mean(),v.std()+1e-9
     return {k:(x-mu)/sd for k,x in d.items()}
 
-def reverse_infer(signature, M=None, top=25, w_mr=1.0, w_diff=1.0, w_casc=1.0, w_prior=0.3):
+def reverse_infer(signature, M=None, top=25, w_mr=1.0, w_diff=0.6, w_casc=1.0, w_codep=0.8, w_prior=0.3):
     """signature: {gene: signed_score}. -> ranked candidate causal genes with per-lens breakdown."""
     M=M or load_model(); s=_sig_array(signature,M)
     mr_signed=master_regulators(s,M)                          # compute ONCE (signed = direction)
@@ -110,10 +123,11 @@ def reverse_infer(signature, M=None, top=25, w_mr=1.0, w_diff=1.0, w_casc=1.0, w
     h=diffuse(s,M); diff={i:h[i] for i in np.argsort(-h)[:300]}
     cands=set(mr)|set(diff)
     casc=cascade_match(cands, s, M)
-    zmr,zdiff,zcasc=_z(mr),_z(diff),_z(casc)
+    cdp=codep_coherence(cands, s, M)                          # independent (co-essentiality) lens
+    zmr,zdiff,zcasc,zcdp=_z(mr),_z(diff),_z(casc),_z(cdp)
     pr=M["prior"]; score={}
     for g in cands:
-        score[g]=(w_mr*zmr.get(g,0)+w_diff*zdiff.get(g,0)+w_casc*zcasc.get(g,0)+w_prior*pr[g])
+        score[g]=(w_mr*zmr.get(g,0)+w_diff*zdiff.get(g,0)+w_casc*zcasc.get(g,0)+w_codep*zcdp.get(g,0)+w_prior*pr[g])
     ranked=sorted(score, key=lambda g:-score[g])[:top]
     G=M["G"]
     res=[dict(gene=G[g]["name"], score=round(score[g],3),

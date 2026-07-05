@@ -19,7 +19,7 @@ OUT=Path("outputs/orphan")
 
 def main():
     from compute_reverse_inference import (load_model, reverse_infer, master_regulators, diffuse,
-                                            cascade_match, _sig_array, _z)
+                                            cascade_match, codep_coherence, _sig_array, _z)
     M=load_model(); G=M["G"]; reg=M["regulon"]; N=M["N"]
     seeds=[i for i in reg if len(reg[i])>=25]
     rng=np.random.RandomState(0); rng.shuffle(seeds); seeds=seeds[:60]
@@ -47,14 +47,16 @@ def main():
         rob[f"noise_{noise}"]=dict(recall_1=round(float((ranks<=1).mean()),3), recall_5=round(float((ranks<=5).mean()),3),
                                    recall_10=round(float((ranks<=10).mean()),3), median_rank=int(np.median(ranks)))
     # (B) per-lens recovery at moderate noise (which lens carries the signal?)
-    perlens={"master_reg":[], "diffusion":[], "cascade":[], "combined":[]}
+    perlens={"master_reg":[], "diffusion":[], "cascade":[], "codep(independent)":[], "combined":[]}
     for seed in seeds:
         sig=make_sig(seed, 1.0, keepK=300); s=_sig_array(sig,M)
         mr={g:abs(v) for g,v in master_regulators(s,M).items()}
         h=diffuse(s,M); diff={i:h[i] for i in range(N)}
-        casc=cascade_match(set(np.argsort(-h)[:300]).union(mr), s, M)
+        cset=set(np.argsort(-h)[:300]).union(mr)
+        casc=cascade_match(cset, s, M); cdp=codep_coherence(cset, s, M)
         def rk(d): return int(np.where(np.argsort(-np.array([d.get(i,-1e9) for i in range(N)]))==seed)[0][0])+1
-        perlens["master_reg"].append(rk(mr)); perlens["diffusion"].append(rk(diff)); perlens["cascade"].append(rk(casc))
+        perlens["master_reg"].append(rk(mr)); perlens["diffusion"].append(rk(diff))
+        perlens["cascade"].append(rk(casc)); perlens["codep(independent)"].append(rk(cdp))
         res=reverse_infer(sig,M,top=N); perlens["combined"].append(rank_of(res,seed))
     lens_rec={k:dict(recall_10=round(float((np.array(v)<=10).mean()),3), median_rank=int(np.median(v))) for k,v in perlens.items()}
     payload=dict(n_seeds=len(seeds), random_baseline_recall_10=round(10/N,4),
