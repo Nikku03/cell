@@ -173,8 +173,8 @@ def answer(q, C=None):
         kr=C.kinref.get(gg2) if gg2 else None
         # the refined value is the best: measured > flux-deconvolved > CatPred(calibrated)+prior, with Km/saturation
         if kr and kr.get("kcat_per_s"):
-            km=f"; Km {kr['km_uM']} µM" if kr.get("km_uM") else ""
-            ki=f"; measured Ki {kr['measured_ki_uM']} µM" if kr.get("measured_ki_uM") else ""
+            km=f"; Km {round(kr['km_uM'],3)} µM" if kr.get("km_uM") else ""
+            ki=f"; measured Ki {round(kr['measured_ki_uM'],4)} µM" if kr.get("measured_ki_uM") else ""
             sat=f"; saturation {kr['saturation']}" if kr.get("saturation") is not None else ""
             cx=f"; Davidi in-vivo max {kr['davidi_kcat_max_per_s']}/s" if kr.get("davidi_kcat_max_per_s") else ""
             return dict(q=q, gene=gg2, answer=f"{gg2} kcat ≈ {kr['kcat_per_s']} /s [{kr['tier']}]{km}{ki}{sat}{cx}",
