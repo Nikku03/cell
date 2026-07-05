@@ -44,18 +44,21 @@ def load_clinvar(names):
             if len(p)<len(hdr): continue
             row=dict(zip(hdr,p))
             if row.get("Assembly")!="GRCh38": continue
-            g=row.get("GeneSymbol","")
-            if g not in names: continue
-            sig=(row.get("ClinicalSignificance") or "").lower(); typ=(row.get("Type") or "").lower()
-            r=out[g]
-            if "conflicting" in sig: r["vus"]+=1
-            elif "pathogenic" in sig:
-                r["path"]+=1
-                if "single nucleotide" in typ or "missense" in (row.get("Name","").lower()): r["missense_path"]+=1
-                if len(r["examples"])<5 and row.get("Name"): r["examples"].append(row["Name"][:60])
-            elif "benign" in sig: r["benign"]+=1
-            elif "uncertain" in sig: r["vus"]+=1
-            r["stars"]=max(r["stars"], STAR.get((row.get("ReviewStatus") or "").lower(),0))
+            sig=(row.get("ClinicalSignificance") or "").lower(); nm=row.get("Name","")
+            is_missense = "missense" in nm.lower() or ("p." in nm and ">" in nm)
+            # a ClinVar row can list several genes (e.g. "BRCA1;NBR2"); credit each modelled gene
+            for g in (row.get("GeneSymbol","") or "").split(";"):
+                g=g.strip()
+                if g not in names: continue
+                r=out[g]
+                if "conflicting" in sig: r["vus"]+=1
+                elif "pathogenic" in sig:
+                    r["path"]+=1
+                    if is_missense: r["missense_path"]+=1
+                    if len(r["examples"])<5 and nm: r["examples"].append(nm[:60])
+                elif "benign" in sig: r["benign"]+=1
+                elif "uncertain" in sig: r["vus"]+=1
+                r["stars"]=max(r["stars"], STAR.get((row.get("ReviewStatus") or "").lower(),0))
     return dict(out)
 
 def main():
@@ -64,38 +67,50 @@ def main():
     D=json.load(open(cc)); G=D["genes"]; names=set(g["name"] for g in G)
     cv=load_clinvar(names)
     flux=(json.load(open(OUT/"flux.json")).get("flux",{}) if (OUT/"flux.json").exists() else {})
-    flux_genes=set(g for r in flux.values() for g in r.get("genes",[]))
+    gene2rxn={}                                          # gene -> (reaction id, tier) it carries most flux through
+    for rid,r in flux.items():
+        for gg in r.get("genes",[]):
+            if gg not in gene2rxn or abs(r.get("v",0))>abs(flux.get(gene2rxn[gg][0],{}).get("v",0)):
+                gene2rxn[gg]=(rid, r.get("tier"))
     out={}; metabolic=[]; understudied=[]
     for g in G:
         nm=g["name"]; c=cv.get(nm)
-        loeuf=g.get("loeuf",-1); ess=g.get("ess",0); pubs=g.get("pubs",0)
+        loeuf=g.get("loeuf",-1); ess=g.get("ess",0); pubs=g.get("pubs",0); dark=g.get("dark",0)
         constrained = 0<=loeuf<0.35                     # top LoF-intolerant decile-ish
         rec=dict(loeuf=loeuf, essential=bool(ess), pubs=pubs)
-        if c: rec.update(clinvar_pathogenic=c["path"], clinvar_benign=c["benign"], clinvar_vus=c["vus"],
+        if c: rec.update(clinvar_pathogenic=c["path"], clinvar_missense_pathogenic=c["missense_path"],
+                         clinvar_benign=c["benign"], clinvar_vus=c["vus"],
                          review_stars=c["stars"], example_pathogenic=c["examples"])
         npath=(c or {}).get("path",0)
         # vulnerability tier: constraint + essentiality + known pathogenic burden
         score=(2 if constrained else 0)+(2 if ess else 0)+(1 if npath>=1 else 0)+(1 if npath>=10 else 0)
         rec["vulnerability_tier"]="high" if score>=4 else ("medium" if score>=2 else "low")
+        if npath>=1 and c and c["stars"]>=2: rec["known_disease_gene"]=True
         out[nm]=rec
-        if npath>=1 and nm in flux_genes:               # enzyme with disease variants + carries flux
-            metabolic.append(dict(gene=nm, pathogenic=npath, flux_enzyme=True))
+        if npath>=1 and nm in gene2rxn:                 # enzyme with disease variants that carries flux -> IEM candidate
+            rid,tier=gene2rxn[nm]
+            metabolic.append(dict(gene=nm, pathogenic=npath, reaction=rid, flux=flux.get(rid,{}).get("v"),
+                                  flux_tier=tier))
         if constrained and ess and npath==0 and pubs<20:  # should matter, not catalogued, understudied
-            understudied.append(dict(gene=nm, loeuf=loeuf, pubs=pubs))
-    understudied.sort(key=lambda x:(x["loeuf"], x["pubs"]))
+            understudied.append(dict(gene=nm, loeuf=loeuf, pubs=pubs, dark=bool(dark)))
+    # rank understudied: dark + most-constrained + least-studied first (Play E: highest-value unknowns)
+    understudied.sort(key=lambda x:(not x["dark"], x["loeuf"], x["pubs"]))
     n_cv=sum(1 for r in out.values() if "clinvar_pathogenic" in r)
     n_path=sum(1 for r in out.values() if r.get("clinvar_pathogenic",0)>0)
     payload=dict(variants=out, metabolic_variant_nodes=metabolic[:200],
                  predicted_vulnerable_understudied=understudied[:150],
                  summary=dict(genes=len(out), with_clinvar=n_cv, genes_with_pathogenic=n_path,
+                              known_disease_genes=sum(1 for r in out.values() if r.get("known_disease_gene")),
                               metabolic_variant_nodes=len(metabolic),
                               understudied_candidates=len(understudied),
+                              understudied_dark=sum(1 for u in understudied if u["dark"]),
                               high_vulnerability=sum(1 for r in out.values() if r["vulnerability_tier"]=="high")))
     json.dump(payload, open(OUT/"variants.json","w"))
     s=payload["summary"]
-    print(f"variants: {s['genes']} genes | {s['with_clinvar']} with ClinVar ({s['genes_with_pathogenic']} carry pathogenic "
-          f"variants) | {s['high_vulnerability']} high-vulnerability | {s['metabolic_variant_nodes']} metabolic-variant nodes | "
-          f"{s['understudied_candidates']} predicted-vulnerable-but-understudied")
+    print(f"variants: {s['genes']} genes | {s['with_clinvar']} with ClinVar ({s['genes_with_pathogenic']} carry pathogenic, "
+          f"{s['known_disease_genes']} high-confidence disease genes) | {s['high_vulnerability']} high-vulnerability | "
+          f"{s['metabolic_variant_nodes']} metabolic-variant (IEM) nodes | {s['understudied_candidates']} understudied "
+          f"candidates ({s['understudied_dark']} also DARK -> highest-value unknowns)")
 
 if __name__=="__main__":
     main()

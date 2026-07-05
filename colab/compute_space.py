@@ -17,6 +17,20 @@ from collections import defaultdict, Counter
 from pathlib import Path
 H=Path("data/external_data/human"); OUT=Path("outputs/orphan")
 HPA_URL=os.environ.get("HPA_SUBCELL_URL","https://www.proteinatlas.org/download/tsv/subcellular_location.tsv.zip")
+# Human-GEM compartment codes -> readable names
+COMP_NAME={"c":"cytosol","m":"mitochondria","n":"nucleus","r":"endoplasmic reticulum","g":"Golgi",
+           "l":"lysosome","x":"peroxisome","e":"extracellular","s":"extracellular","i":"mito intermembrane",
+           "p":"periplasm"}
+def cname(code): return COMP_NAME.get(code, code)
+# map an HPA location string to the coarse compartment vocabulary the model uses (for agreement checks)
+def coarse(loc):
+    l=loc.lower()
+    for key,tag in [("nucle","nucleus"),("mitochond","mitochondria"),("golgi","Golgi"),
+                    ("endoplasmic","endoplasmic reticulum"),("lysosom","lysosome"),("peroxisom","peroxisome"),
+                    ("plasma membrane","membrane"),("cytosol","cytoplasm"),("cytoplasm","cytoplasm"),
+                    ("secreted","extracellular"),("extracellular","extracellular")]:
+        if key in l: return tag
+    return None
 
 def load_hpa():
     """symbol -> {main:[...], additional:[...], all:[...], reliability}. From HPA immunofluorescence."""
@@ -77,41 +91,54 @@ def main():
     for g in G:
         h=hpa.get(g["name"])
         if h:
+            # does the HPA localization agree with the model's coarse comp tag?
+            hpa_coarse=set(c for c in (coarse(x) for x in h["all"]) if c)
+            mc=(g.get("comp") or "").strip()
+            agree=(mc in hpa_coarse) if (mc and hpa_coarse) else None
             loc[g["name"]]=dict(locations=h["all"], main=h["main"], n_loc=len(h["all"]),
-                                multi=len(h["all"])>1, reliability=h["reliability"], model_comp=g.get("comp"))
-    # compartment transport from Human-GEM
+                                multi=len(h["all"])>1, reliability=h["reliability"], model_comp=mc,
+                                model_hpa_agree=agree)
+    # compartment transport from Human-GEM (readable compartment names)
     transport=[]
     try:
         from compute_flux import parse_gem
         rxns, met_idx = parse_gem()
         if rxns:
             edges, rxn_ex = compartment_transport(rxns, met_idx)
-            transport=[dict(**{"from":a}, to=b, n_reactions=n, example=rxn_ex.get((a,b)))
+            transport=[dict(**{"from":cname(a)}, to=cname(b), n_reactions=n, example=rxn_ex.get((a,b)))
                        for (a,b),n in edges.most_common(60)]
     except Exception as e:
         print("  compartment transport skipped:",repr(e)[:80])
-    # co-localization consistency of PPIs (share a compartment vs cross-compartment)
-    same=0; cross=0; checked=0
+    # co-localization: same-compartment PPIs are spatially plausible; CROSS-compartment interacting pairs
+    # are the actionable output -- contact-site / trafficking / shuttling candidates. Capture them.
+    same=0; cross=0; checked=0; cross_pairs=[]
     for a,b in D.get("ppi",[])[:200000]:
         na,nb=G[a]["name"],G[b]["name"]
         la=set(loc.get(na,{}).get("locations",[])); lb=set(loc.get(nb,{}).get("locations",[]))
         if la and lb:
             checked+=1
             if la&lb: same+=1
-            else: cross+=1
+            else:
+                cross+=1
+                if len(cross_pairs)<300:
+                    cross_pairs.append(dict(a=na, b=nb, a_loc=sorted(la)[:3], b_loc=sorted(lb)[:3]))
+    disagree=[n for n,v in loc.items() if v.get("model_hpa_agree") is False]
     multi=sum(1 for v in loc.values() if v["multi"])
     comp_occ=Counter(l for v in loc.values() for l in v["locations"])
     payload=dict(locations=loc, compartment_transport=transport,
+                 cross_compartment_ppi=cross_pairs, model_hpa_disagreements=disagree[:200],
                  colocalization=dict(ppi_checked=checked, same_compartment=same, cross_compartment=cross,
                                      same_frac=round(same/checked,3) if checked else None),
                  summary=dict(proteins_localized=len(loc), multi_localized=multi,
-                              n_transport_edges=len(transport),
+                              n_transport_edges=len(transport), cross_compartment_ppi=len(cross_pairs),
+                              model_hpa_disagreements=len(disagree),
                               top_compartments=comp_occ.most_common(12)))
     json.dump(payload, open(OUT/"space.json","w"))
     s=payload["summary"]
     print(f"space: {s['proteins_localized']} proteins with HPA localization ({s['multi_localized']} multi-localized) | "
-          f"{s['n_transport_edges']} compartment-transport edges | PPI co-localization: "
-          f"{payload['colocalization']['same_frac']} share a compartment (n={checked})")
+          f"{s['n_transport_edges']} compartment-transport edges | {s['cross_compartment_ppi']} cross-compartment "
+          f"PPIs (contact-site candidates) | {s['model_hpa_disagreements']} model/HPA localization disagreements | "
+          f"{payload['colocalization']['same_frac']} of PPIs share a compartment")
 
 if __name__=="__main__":
     main()
