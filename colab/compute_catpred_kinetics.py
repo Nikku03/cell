@@ -101,28 +101,53 @@ def prepare():
     return len(rows)
 
 def parse_output():
-    """parse CatPred predictions (catpred_predictions.csv) -> catpred_kinetics.json."""
-    p=OUT/"catpred_predictions.csv"
-    if not p.exists(): return False
-    rd=csv.DictReader(open(p)); hdr=[h.lower() for h in (rd.fieldnames or [])]
-    def col(*keys): return next((c for c in rd.fieldnames if any(k in c.lower() for k in keys)), None)
-    gc=col("gene"); kc=col("kcat"); mc=col("km"); ku=col("kcat_unc","kcat_sd","kcat_uncertain"); mu=col("km_unc","km_sd")
+    """parse CatPred per-parameter result CSVs -> catpred_kinetics.json. CatPred output columns are
+    'Prediction_(s^(-1))' (kcat, 1/s) or 'Prediction_(...)' (Km) + 'SD_total'; rows keyed by 'sequence'.
+    We map sequence -> gene via catpred_input.csv. Km is converted mM -> uM to match our [S] (env CATPRED_KM_UNIT)."""
+    import glob
+    seq2gene={}
+    inp=OUT/"catpred_input.csv"
+    if inp.exists():
+        for r in csv.DictReader(open(inp)):
+            if r.get("sequence") and r.get("gene"): seq2gene[r["sequence"]]=r["gene"]
+    km_to_uM=float(os.environ.get("CATPRED_KM_TO_UM","1000"))    # CatPred Km assumed mM -> uM
+    def find_result(param, envk):
+        p=os.environ.get(envk)
+        if p and os.path.exists(p): return p
+        cands=set()
+        for pat in ["CatPred/results/**/*.csv","CatPred/../results/**/*.csv","results/**/*.csv",f"{OUT}/*.csv"]:
+            cands.update(glob.glob(pat, recursive=True))
+        # require the parameter to appear in the file PATH (CatPred separates kcat/km by dir or filename),
+        # so kcat and km results never collide, and the file must carry a Prediction column
+        hits=[]
+        for c in cands:
+            low=c.lower()
+            if param not in low: continue
+            if param=="km" and ("kcat" in low and "km" not in low.replace("kcat","")): continue
+            try:
+                if "prediction_(" in open(c).readline().lower(): hits.append(c)
+            except OSError: pass
+        return sorted(hits)[-1] if hits else None
     out={}
-    for r in csv.DictReader(open(p)):
-        g=r.get(gc) if gc else None
-        if not g: continue
-        rec={}
-        try: rec["kcat"]=float(r[kc])
-        except: pass
-        try: rec["km"]=float(r[mc])
-        except: pass
-        for src,dst in [(ku,"kcat_unc"),(mu,"km_unc")]:
-            if src:
-                try: rec[dst]=float(r[src])
-                except: pass
-        if rec: out[g]=rec
+    for param, envk in [("kcat","CATPRED_KCAT_OUT"), ("km","CATPRED_KM_OUT")]:
+        f=find_result(param, envk)
+        if not f: continue
+        for r in csv.DictReader(open(f)):
+            g=seq2gene.get(r.get("sequence"))
+            if not g: continue
+            pred=next((r[c] for c in r if c.lower().startswith("prediction_(")), r.get("Prediction_log10"))
+            try: val=float(pred)
+            except (TypeError,ValueError): continue
+            rec=out.setdefault(g, {}); sd=r.get("SD_total") or r.get("SD_epistemic")
+            if param=="kcat": rec["kcat"]=val
+            else: rec["km"]=val*km_to_uM
+            if sd:
+                try: rec[param+"_unc"]=float(sd)
+                except ValueError: pass
+    if not out: return False
     json.dump(dict(catpred=out, n=len(out)), open(OUT/"catpred_kinetics.json","w"))
-    print(f"CatPred predictions parsed: {len(out)} enzymes -> catpred_kinetics.json")
+    print(f"CatPred predictions parsed: {len(out)} enzymes -> catpred_kinetics.json "
+          f"({sum(1 for v in out.values() if 'kcat' in v)} kcat, {sum(1 for v in out.values() if 'km' in v)} Km)")
     return True
 
 def main():
