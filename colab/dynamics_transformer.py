@@ -81,13 +81,15 @@ def main():
     lossf=nn.MSELoss()
     Y=torch.tensor(lfc,device=dev); P=torch.tensor(pert,device=dev); C=torch.tensor(cell,device=dev); Xc=torch.tensor(ctx,device=dev)
     EP=int(os.environ.get("DTF_EPOCHS","12")); BS=int(os.environ.get("DTF_BATCH","256"))
+    import time as _t; amp=(dev=="cuda")                          # bf16 autocast on GPU -> ~2-3x faster on L4
     for ep in range(EP):
-        model.train(); perm=np.random.permutation(tr); tot=0.0
+        model.train(); perm=np.random.permutation(tr); tot=0.0; t0=_t.time()
         for i in range(0,len(perm),BS):
             b=perm[i:i+BS]; bi=torch.tensor(b,device=dev)
-            pred=model(P[bi],C[bi],Xc[bi]); loss=lossf(pred,Y[bi])
+            with torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=amp):
+                pred=model(P[bi],C[bi],Xc[bi]); loss=lossf(pred,Y[bi])
             opt.zero_grad(); loss.backward(); opt.step(); tot+=loss.item()*len(b)
-        print(f"  epoch {ep+1}/{EP}  train MSE {tot/len(perm):.4f}")
+        print(f"  epoch {ep+1}/{EP}  train MSE {tot/len(perm):.4f}  ({_t.time()-t0:.0f}s)", flush=True)
     # ---- held-out eval: per-signature Pearson r (pred vs true across genes) + MSE, vs baselines ----
     model.eval()
     gene_mean=torch.tensor(lfc[tr].mean(0),device=dev)                # per-gene bias baseline (from train)
