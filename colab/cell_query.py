@@ -31,8 +31,14 @@ class Cell:
         self.metab=(self._load("metabolites.json") or {}).get("metabolites",{})   # first-class metabolites
         _at=self._load("attractors.json") or {}
         self.attractors=_at.get("attractors",[]); self.transitions=_at.get("transitions",[])
-        self.space=(self._load("space.json") or {}).get("locations",{})            # HPA subcellular localization
-        self.variants=(self._load("variants.json") or {}).get("variants",{})        # ClinVar + constraint vulnerability
+        _sp=self._load("space.json") or {}
+        self.space=_sp.get("locations",{})                                          # HPA subcellular localization
+        self.surfaceome=set(_sp.get("surfaceome",[])); self.secretome=set(_sp.get("secretome",[]))
+        _var=self._load("variants.json") or {}
+        self.variants=_var.get("variants",{})                                       # ClinVar + constraint vulnerability
+        self.validated_targets={t["gene"] for t in _var.get("genetically_validated_targets",[])}  # disease variant + drug
+        self.unmet_targets={t["gene"] for t in _var.get("unmet_need_targets",[])}   # disease/essential + constrained + undrugged
+        self.dyn=(self._load("dynamics.json") or {}).get("dynamics",{})             # turnover half-lives -> response times
         self.metab_lower={k.lower():k for k in self.metab}
         self._metab_keys=sorted(self.metab_lower, key=len, reverse=True)   # longest-first for matching
         self.conv=self._load("convergence.json"); self.cond=self._load("conditions.json")
@@ -65,11 +71,31 @@ def _conf(n, hi=3): return "high" if n>=hi else ("medium" if n>=1 else "low")
 
 def answer(q, C=None):
     C=C or Cell(); ql=q.lower(); g=C.gene(q)
-    # truly-not-knowable DYNAMICS (time-resolved) — static concentration IS now estimable (below), dynamics is not
-    if re.search(r"\b(over time|time.?course|dynamics|at t=|after \d|minutes|seconds|trajectory|simulate|per second changes)\b", ql):
-        return dict(q=q, answer="NOT KNOWABLE — TIME-RESOLVED dynamics need a kinetic simulation the data can't "
-                    "support (see KINETICS_ASSESSMENT.md). I can give static concentration, velocity, and TF "
-                    "occupancy, but not their trajectory over time.", confidence="n/a", source="honest-limit")
+    # --- DYNAMICS (turnover / linear-response level): measured half-lives -> response time, synthesis rate, cell-cycle phase ---
+    if C.dyn and re.search(r"half.?life|turn ?over|response time|how fast.*(respond|turn|deplet|chang)|synthesis rate|"
+                           r"degrad|how long.*(knock|deplet|last|take)|cell.?cycle|which phase|when.*(express|peak)|"
+                           r"rapid|synthesis.?vulnerab", ql):
+        gg2=C.gene(q); d=C.dyn.get(gg2) if gg2 else None
+        if d:
+            parts=[]
+            if d.get("protein_half_life_h"): parts.append(f"protein t½ {d['protein_half_life_h']}h (response time {d['response_time_h']}h, {d.get('turnover_class','')}-turnover)")
+            if d.get("mrna_half_life_h"): parts.append(f"mRNA t½ {d['mrna_half_life_h']}h")
+            if d.get("synthesis_rate_nM_per_h"): parts.append(f"needs ~{d['synthesis_rate_nM_per_h']} nM/h synthesis to hold steady state")
+            if d.get("cell_cycle_phase"): parts.append(f"peaks in {d['cell_cycle_phase']} phase")
+            if d.get("essential") and d.get("turnover_class")=="fast": parts.append("ESSENTIAL + fast → synthesis-vulnerable (translation-block depletes it fastest)")
+            return dict(q=q, gene=gg2, answer=f"{gg2}: "+"; ".join(parts or ["no turnover data"]),
+                        confidence="medium", source="dynamics (measured half-lives: Mathieson/RNADecayCafe + Whitfield cell-cycle)",
+                        caveat="turnover/linear-response level (response time = t½/ln2); not a full timed simulation")
+        if re.search(r"synthesis.?vulnerab|fast.?turnover|rapid respond", ql):     # landscape query
+            fv=[gn for gn,r in C.dyn.items() if r.get("essential") and r.get("turnover_class")=="fast"][:20]
+            return dict(q=q, answer="synthesis-vulnerable (essential + fast-turnover) genes: "+", ".join(fv),
+                        confidence="medium", source="dynamics x essentiality")
+    # truly-not-knowable: a full TIME-RESOLVED trajectory/simulation (we have turnover response times, not trajectories)
+    if re.search(r"\b(over time|time.?course|at t=|after \d+\s*(min|sec|hour)|trajectory|simulate the|per second changes)\b", ql):
+        return dict(q=q, answer="NOT KNOWABLE at full resolution — a time-resolved TRAJECTORY needs a kinetic simulation "
+                    "the data can't support. I CAN give per-gene response time / half-life (dynamics layer), static "
+                    "concentration, velocity, and TF occupancy — just not the second-by-second trajectory.",
+                    confidence="n/a", source="honest-limit")
     # --- ATTRACTOR STATES / basin transitions (kinetics-free dynamics) ---
     if C.attractors and re.search(r"attractor|stable state|cell state|basin|transition|switch|how (to|do).*(get|move|reach)|driver|reprogram", ql):
         labels={a["id"]:a["label"] for a in C.attractors}
@@ -148,9 +174,10 @@ def answer(q, C=None):
         # the refined value is the best: measured > flux-deconvolved > CatPred(calibrated)+prior, with Km/saturation
         if kr and kr.get("kcat_per_s"):
             km=f"; Km {kr['km_uM']} µM" if kr.get("km_uM") else ""
+            ki=f"; measured Ki {kr['measured_ki_uM']} µM" if kr.get("measured_ki_uM") else ""
             sat=f"; saturation {kr['saturation']}" if kr.get("saturation") is not None else ""
-            cx=f"; vs CatPred {kr['catpred_kcat']} ({kr['deconv_vs_catpred']}x)" if kr.get("catpred_kcat") else ""
-            return dict(q=q, gene=gg2, answer=f"{gg2} kcat ≈ {kr['kcat_per_s']} /s [{kr['tier']}]{km}{sat}{cx}",
+            cx=f"; Davidi in-vivo max {kr['davidi_kcat_max_per_s']}/s" if kr.get("davidi_kcat_max_per_s") else ""
+            return dict(q=q, gene=gg2, answer=f"{gg2} kcat ≈ {kr['kcat_per_s']} /s [{kr['tier']}]{km}{ki}{sat}{cx}",
                         confidence="high" if kr["tier"]=="measured" else "medium",
                         source="refined kinetics ("+kr["tier"]+")", tier=kr["tier"])
         # PREFER in-vivo apparent kcat (flux/[E]) when the in-vitro value is only imputed -- it is
@@ -265,18 +292,23 @@ def answer(q, C=None):
         sp=C.space.get(g)
         if sp:
             multi=" [multi-localized]" if sp.get("multi") else ""
-            return A(f"{g} localizes to: {', '.join(sp['locations'])}{multi} (HPA {sp.get('reliability','')}; "
+            acc=(" [SURFACEOME — plasma-membrane, drug-accessible]" if g in C.surfaceome
+                 else " [SECRETOME — secreted]" if g in C.secretome else "")
+            return A(f"{g} localizes to: {', '.join(sp['locations'])}{multi}{acc} (HPA {sp.get('reliability','')}; "
                      f"main {', '.join(sp.get('main',[])) or '-'})","high","HPA immunofluorescence (subcellular)")
         return A(f"{g} localizes to: {gg['comp']} (process: {gg['proc']})","medium","model compartment tag")
-    if re.search(r"variant|mutation|pathogenic|clinvar|vulnerab|disease.?gene|missense", ql):
+    if re.search(r"variant|mutation|pathogenic|clinvar|vulnerab|disease.?gene|missense|target|druggable", ql):
         v=C.variants.get(g)
         if v:
             cv=(f"; ClinVar: {v['clinvar_pathogenic']} pathogenic / {v['clinvar_benign']} benign / {v['clinvar_vus']} VUS "
                 f"({v.get('review_stars',0)}★)" if "clinvar_pathogenic" in v else "")
             eg=f"; e.g. {', '.join(v.get('example_pathogenic',[])[:2])}" if v.get("example_pathogenic") else ""
+            tgt=(" ⚑ GENETICALLY-VALIDATED druggable target (disease variants + a drug)" if g in C.validated_targets
+                 else " ⚑ UNMET-NEED target (disease/essential + LoF-constrained + undrugged)" if g in C.unmet_targets else "")
+            dr=f"; drugs: {', '.join(v['drugs'][:4])}" if v.get("drugs") else ""
             return A(f"{g} variant vulnerability: {v['vulnerability_tier']} (LOEUF {v['loeuf']}, "
-                     f"essential={v['essential']}){cv}{eg}",
-                     "high" if v.get("review_stars",0)>=2 else "medium", "ClinVar + gnomAD constraint")
+                     f"essential={v['essential']}){cv}{eg}{dr}{tgt}",
+                     "high" if v.get("review_stars",0)>=2 else "medium", "ClinVar + gnomAD constraint + DGIdb/OpenTargets")
         return A(f"no variant profile for {g} (variants layer absent or gene unmapped).","n/a","variants")
     if re.search(r"condition|heat|temperature|\bph\b|acid|pressure|hypoxia|stress|inflam|dna damage|damage|oxidat|osmotic|starv|xenobiotic|\bunder\b", ql) and C.cond:
         hit=[(c,v) for c,v in C.cond.items() if g in (v.get("up",[])+v.get("down",[]))]
