@@ -39,6 +39,20 @@ RXN=[
 # metabolites fixed to their measured/curated value (anchors); the rest are predicted
 ANCHORS=["glucose","ATP","ADP","NAD+","NADH","pyruvate","L-lactate","Pi"]
 LOG_LO,LOG_HI=-7.0,-1.0                      # 0.1 uM .. 100 mM physiological window (log10 M)
+# Park2016 metabolite name -> our Human-GEM name, where spelling differs (central metabolites)
+CONC_SYN={"a-ketoglutarate":"2-oxoglutarate","dihydroxyacetonephosphate":"dihydroxyacetone phosphate",
+          "sn-glycerol-3-phosphate":"glycerol-3-phosphate","6-phospho-d-gluconate":"6-phosphogluconate"}
+
+def load_measured_conc():
+    """Park2016 measured absolute concentrations (fetch_metabolite_conc.py): metabolite name -> (uM, bigg)."""
+    import csv
+    f=OUT/"metabolite_conc_measured.tsv"; m={}
+    if not f.exists(): return m
+    for r in csv.DictReader(open(f), delimiter="\t"):
+        try: uM=float(r["conc_uM"])
+        except (KeyError, ValueError, TypeError): continue
+        if r.get("metabolite") and uM>0: m[r["metabolite"].strip()]=(uM, (r.get("bigg") or "").strip())
+    return m
 
 def net_estimate(anchor_uM):
     """LP feasible min/max of log10[M] for each free central metabolite given anchors + dG0' + forward flux."""
@@ -82,6 +96,20 @@ def main():
         M[k]["concentration_uM"]=round(float(uM),4); M[k]["conc_tier"]=tier
         if rng: M[k]["conc_range_uM"]=[round(rng[0],4),round(rng[1],4)]
         return True
+    # 0) MEASURED absolute concentrations (Park 2016) -> anchor at measured-literature tier. Matches by
+    #    normalized name (spaces/hyphens/chirality-insensitive) or an explicit synonym. Highest-priority tier.
+    import re
+    def _norm(s): return re.sub(r"[\s\-,]", "", re.sub(r"^[ld]-","", s.lower()))
+    nlookup={}
+    for k in M: nlookup.setdefault(_norm(k), k)
+    n_meas=0
+    for pname,(uM,bigg) in load_measured_conc().items():
+        syn=CONC_SYN.get(pname.lower(), pname)
+        k=lower.get(syn.lower()) or lower.get(pname.lower()) or nlookup.get(_norm(syn)) or nlookup.get(_norm(pname))
+        if k is None: continue
+        if M[k].get("conc_tier")=="measured": continue          # don't override a real measured value
+        M[k]["concentration_uM"]=round(float(uM),4); M[k]["conc_tier"]="measured-literature"
+        M[k]["conc_source"]="Park2016"; n_meas+=1
     # 1) ions -> physiological constants (only set if not already measured)
     n_ion=0
     for ion,uM in IONS_UM.items():
@@ -100,13 +128,13 @@ def main():
             k=lower.get(m.lower())
             prev=M[k].get("concentration_uM") if k else None
             prev_tier=M[k].get("conc_tier") if k else None
-            if prev and prev_tier in ("measured","curated-literature"):
-                checks.append((m,prev,e))               # cross-check vs curated, don't overwrite
+            if prev and prev_tier in ("measured","measured-literature","curated-literature"):
+                checks.append((m,prev,e))               # cross-check vs measured/curated, don't overwrite
             elif put(m,e,"thermodynamic-estimate",(mn,mx)):
                 n_thermo+=1
     json.dump(D, open(f,"w"))
-    print(f"metabolite concentrations: +{n_ion} ions (physiological constants), +{n_thermo} central metabolites "
-          f"(thermodynamic NET estimate, with ranges)")
+    print(f"metabolite concentrations: +{n_meas} MEASURED (Park2016 absolute, measured-literature tier), "
+          f"+{n_ion} ions (physiological constants), +{n_thermo} central metabolites (thermodynamic NET estimate)")
     if checks:
         fold=[abs(math.log10(e/p)) for m,p,e in checks if p>0 and e>0]
         med=10**(sorted(fold)[len(fold)//2]) if fold else None
