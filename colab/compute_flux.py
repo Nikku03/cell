@@ -79,37 +79,51 @@ def _ensg2sym():
 # rate (per L cell); convert to mmol/gDW/hr to match the measured exchange fluxes.
 CELL_VOL_L   =float(__import__("os").environ.get("CELL_VOL_L","2.0e-12"))     # L per cell (matches concentration.py)
 GDW_PER_CELL =float(__import__("os").environ.get("GDW_PER_CELL","3.0e-10"))   # gDW per cell (~0.3 ng, mammalian)
-IMPUTED_SLACK=float(__import__("os").environ.get("VMAX_IMPUTED_SLACK","5.0")) # headroom for 6x-noisy imputed kcat
+IMPUTED_SLACK=float(__import__("os").environ.get("VMAX_IMPUTED_SLACK","5.0")) # headroom for ~9.6x-noisy imputed kcat
+CATPRED_SLACK=float(__import__("os").environ.get("VMAX_CATPRED_SLACK","2.0"))  # tighter headroom for ~3.9x CatPred-refined kcat
 #   nM(=1e-9 mol/L) * (1/s) * V_cell[L/cell] / mass[gDW/cell] * 1000(mmol/mol) * 3600(s/hr)
 VMAX_CONV = 1e-9 * CELL_VOL_L / GDW_PER_CELL * 1000.0 * 3600.0
 
 def vmax_bounds(rxns):
     """ABSOLUTE enzyme capacity Vmax = SUM_isozymes kcat*[E], in mmol/gDW/hr (commensurable with the
-    measured exchange fluxes). kcat from kinetics.json, [E] (nM) from concentration.json (real once PaxDb
-    is present). Falls back to a relative normalisation only if no absolute [E] is available.
+    measured exchange fluxes). kcat PREFERS kinetics_refined.json (measured > CatPred-calibrated ~3.9x >
+    EC prior) and falls back to kinetics.json; [E] (nM) from concentration.json. Vmax headroom scales with
+    kcat quality: measured x1, CatPred-refined x2, imputed x5 (so trusted kcats bind tighter).
     Returns (vmax{ri:mmol/gDW/hr}, tier{ri}, units_str)."""
+    ref=(json.load(open(OUT/"kinetics_refined.json")).get("kinetics_refined",{}) if (OUT/"kinetics_refined.json").exists() else {})
     kin=(json.load(open(OUT/"kinetics.json")).get("kinetics",{}) if (OUT/"kinetics.json").exists() else {})
     conc=(json.load(open(OUT/"concentration.json")).get("concentration",{}) if (OUT/"concentration.json").exists() else {})
-    cap={}; meas={}
+    def kcat_of(g):                                       # refined first, then imputed. -> (kcat, quality 2/1/0)
+        r=ref.get(g)
+        if r and r.get("kcat_per_s"):
+            t=str(r.get("tier",""))
+            q=2 if t=="measured" else (1 if t.startswith(("catpred","EC-measured")) else 0)
+            return r["kcat_per_s"], q
+        k=kin.get(g)
+        if k and k.get("kcat_per_s"):
+            return k["kcat_per_s"], (2 if k.get("tier")=="measured" else 0)
+        return None, None
+    cap={}; qual={}
     for ri,r in enumerate(rxns):
-        tot=0.0; got=False; is_meas=False
+        tot=0.0; got=False; best_q=0
         for g in r["genes"]:                              # SUM over isozymes = total reaction capacity
-            k=kin.get(g)
-            if not k or not k.get("kcat_per_s"): continue
+            kc,q=kcat_of(g)
+            if kc is None: continue
             E=conc.get(g,{}).get("baseline_nM")
             if E is None or E<=0: continue
-            tot += k["kcat_per_s"]*E; got=True
-            if k.get("tier")=="measured": is_meas=True
-        if got: cap[ri]=tot; meas[ri]=is_meas
+            tot += kc*E; got=True; best_q=max(best_q,q)
+        if got: cap[ri]=tot; qual[ri]=best_q
     if not cap: return {},{},"none"
+    SLACK={2:1.0, 1:CATPRED_SLACK, 0:IMPUTED_SLACK}
     have_E = bool(conc)
     if have_E:                                            # ABSOLUTE: kcat*[E] -> mmol/gDW/hr
-        vmax={ri: v*VMAX_CONV*(1.0 if meas[ri] else IMPUTED_SLACK) for ri,v in cap.items()}
+        vmax={ri: v*VMAX_CONV*SLACK[qual[ri]] for ri,v in cap.items()}
         units="mmol/gDW/hr(absolute)"
     else:                                                 # fallback: relative normalisation (no abundance)
         med=float(np.median(list(cap.values())))
         vmax={ri:(v/med)*BIG for ri,v in cap.items()}; units="relative(normalised)"
-    tier={ri: ("vmax(measured-kcat)" if meas[ri] else "vmax(imputed-kcat)") for ri in cap}
+    tier={ri: ("vmax(measured-kcat)" if qual[ri]==2 else
+               ("vmax(catpred-kcat)" if qual[ri]==1 else "vmax(imputed-kcat)")) for ri in cap}
     return vmax, tier, units
 
 def load_medium():
@@ -387,6 +401,7 @@ def main():
                      flux_units=flux_units, absolute=bool(anchored), defined_medium=bool(defined), vmax_units=vunits,
                      vmax_bounded=len(vmax), vmax_applied=used_vmax, vmax_relaxation=vmax_scale,
                      measured_kcat_bounds=tc.get("vmax(measured-kcat)",0),
+                     catpred_kcat_bounds=tc.get("vmax(catpred-kcat)",0),
                      imputed_kcat_bounds=tc.get("vmax(imputed-kcat)",0),
                      exchange_anchored=tc.get("exchange-anchored",0), exchange_constraints=n_med,
                      objective="biomass"),
@@ -394,7 +409,7 @@ def main():
     json.dump(payload, open(OUT/"flux.json","w"))
     print(f"flux: {n} reactions / {nmet} metabolites | biomass={zstar:.3g} | {active} active fluxes | units={flux_units}")
     print(f"  ecFBA bounds: {len(vmax)} Vmax-bounded [{vunits}] ({tc.get('vmax(measured-kcat)',0)} measured-kcat, "
-          f"{tc.get('vmax(imputed-kcat)',0)} imputed), {n_med} exchange constraints applied")
+          f"{tc.get('vmax(catpred-kcat)',0)} CatPred-kcat, {tc.get('vmax(imputed-kcat)',0)} imputed), {n_med} exchange constraints applied")
     if val: print(f"  {val.get('kind','')} validation: median fold-error {val['median_fold_error']}x, within-2x {val['within_2x']:.0%}, "
                   f"within-3x {val['within_3x']:.0%}, log-R {val['log_pearson_r']} (n={val['n']})")
     else: print("  (no measured-flux file present -> validation skipped)")
