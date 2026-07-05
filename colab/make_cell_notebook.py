@@ -471,6 +471,8 @@ code("# build with hard failure if anything is missing (so we never silently shi
    "rtd=subprocess.run([sys.executable,'colab/validate_target_discovery.py'],capture_output=True,text=True); print(rtd.stdout[-900:])",
    "# GNN over the FULL dense multi-lens network (GPU): does propagating biology over every dataset find targets?",
    "rtg=subprocess.run([sys.executable,'colab/build_target_gnn.py'],capture_output=True,text=True); print(rtg.stdout[-900:])",
+   "# REVERSE INFERENCE (phenotype -> cause): self-consistency + noise robustness (real test = lincs_reverse_test on Colab)",
+   "rri=subprocess.run([sys.executable,'colab/validate_reverse_inference.py'],capture_output=True,text=True); print(rri.stdout[-800:])",
    "# Phase 2 — convergence engine: novel functional links where independent lenses agree (reads the final model)",
    "import os as _os; _os.environ.setdefault('CONV_PUBMED','1')   # rank top novel pairs by PubMed novelty",
    "rc=subprocess.run([sys.executable,'colab/compute_convergence.py'],capture_output=True,text=True); print(rc.stdout[-1500:])",
