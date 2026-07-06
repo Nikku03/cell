@@ -20,8 +20,10 @@ improvements. Run `colab/fetch_external_data.ipynb`; everything lands in `MyDriv
 | 2 | **Disease-state expression** (TCGA via UCSC Xena) + dev/disease scRNA (census) | beyond cancer/healthy (Diverse 3), disease attractors | Xena GDC hub direct ✅; census API | ~1–20 GB | open / CC-BY | `atlases/` |
 | 3 | **Spatial transcriptomics** (10x Xenium, Vizgen MERFISH) | real tissue geometry (Diverse 2) | 10x/Vizgen direct S3 | ~1–30 GB/sample | CC-BY | `spatial/` |
 | 4 | **Cross-species conservation** (UCSC phyloP100way) | conservation prior for dark genes (Diverse 4) | `hgdownload.soe.ucsc.edu` direct ✅ | ~9 GB bigWig → tiny per-gene TSV | open | `conservation/` |
-| 5 | **Tahoe-100M** (Arc Institute) | large drug-perturbation model (Better 1) | HuggingFace `arcinstitute/Tahoe-100M` 🔑 token | ~100s GB (fetch a subset) | CC-BY | `tahoe100m/` |
+| 5 | **Tahoe drug/CRISPR DE signatures** (`tahoebio/tahoe-de-rhaister`, `tahoebio/replogle-nadig-de-rhaister`) | perturbation-response model + reverse-inference (Better 1/2) — per-gene fold changes per (line, drug/gene), CMap-style | HuggingFace, **public — no token needed** ✅ | small configs ~0.2–1 GB; full `pdex` 30–40 GB | CC0 / CC-BY-4.0 | `perturbation_signatures/` |
 | 6 | _(optional)_ **Perturb-seq Norman** combinatorial | combinatorial perturbation | Zenodo `13350497` direct ✅ | ~0.5 GB | CC-BY | `perturbseq/` |
+
+**Correction:** the Tahoe org is **`tahoebio`**, not `arcinstitute` — that wrong id was the source of the earlier 401. The `tahoebio` datasets are **public** (no token required to download). The differential-expression *summary statistics* (`*-de-rhaister`) are far more useful than the raw 100M/1.8M-cell atlases (`Tahoe-100M`, `EmeraldBay`): they give perturbation **signatures** directly. Start with the small configs (`control_expression`, `cell_eval`, `cell_centroids`); add `pdex` only for the full fold-change matrix.
 
 **Not needed** — Perturb-seq (Replogle) and AlphaFold are already on Drive (see above); the notebook detects them and skips.
 

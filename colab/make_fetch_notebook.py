@@ -32,7 +32,7 @@ cells.append(md(
     "| Dev + disease atlases (census) + TCGA (Xena) | beyond cancer/healthy, disease attractors | ~1–20 GB | census API + Xena direct | CC-BY / open |",
     "| Spatial (10x Xenium / Vizgen MERFISH) | real tissue geometry | ~1–30 GB/sample | direct S3 | CC-BY |",
     "| Cross-species conservation (UCSC phyloP) | conservation prior for dark genes | ~9 GB bigWig → tiny TSV | direct | open |",
-    "| Tahoe-100M (Arc) | large drug-perturbation model | ~100s GB (fetch a subset) | HuggingFace (token) | CC-BY |",
+    "| Tahoe drug/CRISPR **DE signatures** (`tahoebio/*-de-rhaister`) | perturbation-response model, reverse-inference | small configs ~0.2–1 GB (full pdex 30–40 GB) | HuggingFace, **public/no token** | CC0 / CC-BY |",
     "| _(optional)_ Perturb-seq **Norman** combinatorial | combinatorial perturbation | ~0.5 GB | Zenodo direct | CC-BY |",
 ))
 
@@ -144,28 +144,34 @@ cells.append(code(
 ))
 
 cells.append(md(
-    "## 6 · Tahoe-100M (Arc Institute) — large drug-perturbation corpus (OPTIONAL, subset)",
-    "**Gated + huge (100s of GB).** Needs a HuggingFace token. Steps: (a) make an HF account, (b) accept the",
-    "dataset terms at huggingface.co/datasets/arcinstitute/Tahoe-100M if prompted, (c) create a **Read** token",
-    "at huggingface.co/settings/tokens, (d) add it as a Colab **secret** named `HF_TOKEN` (🔑 icon, enable",
-    "Notebook access). Then this cell reads it and pulls only a small subset."))
+    "## 6 · Tahoe perturbation data (**tahoebio** — not arcinstitute) — drug + CRISPR response SIGNATURES",
+    "The smart pick is NOT the 100M raw atlas — it's the **differential-expression summary statistics**:",
+    "per-gene fold changes per (cell line, drug/gene) = CMap-style signatures the reverse-inference engine",
+    "consumes directly. All PUBLIC (CC0 / CC-BY-4.0) — **no token needed** (a token only helps rate limits).",
+    "",
+    "| dataset | what | pdex (full) | small configs to start |",
+    "|---|---|---|---|",
+    "| `tahoebio/tahoe-de-rhaister` | 50 lines × 384 drugs × 3 doses, drug DE | 40.6 GB | control_expression 186 MB · cell_eval ~1 GB · centroids ~10 MB |",
+    "| `tahoebio/replogle-nadig-de-rhaister` | CRISPR KD ~2000 genes × 4 lines, DE | 29.8 GB | cell_eval 6.5 GB |",
+    "| `tahoebio/EmeraldBay` | 1.8M raw single cells, 52 lines × 91 drugs (combos) | expr 57.7 GB | metadata configs KB–MB |",
+    "| `tahoebio/Tahoe-100M` | the full 100M-cell atlas | ~TB | — |"))
 cells.append(code(
     "pipi('huggingface_hub')",
     "from huggingface_hub import snapshot_download, list_repo_files",
     "import os",
-    "# read the token from the Colab secret named HF_TOKEN (preferred), else set it manually.",
+    "# token OPTIONAL for these public datasets (only helps rate limits). Colab secret named HF_TOKEN if you have one:",
     "try:",
     "    from google.colab import userdata; os.environ['HF_TOKEN'] = userdata.get('HF_TOKEN')",
-    "except Exception: pass   # fallback: os.environ['HF_TOKEN'] = 'hf_...'  (avoid hardcoding in shared notebooks)",
-    "tok = os.environ.get('HF_TOKEN')",
-    "assert tok, 'No HF_TOKEN found — add it as a Colab secret (key icon) and enable notebook access.'",
-    "dest = DATA/'tahoe100m'; dest.mkdir(parents=True, exist_ok=True)",
-    "# 1) inspect the file list first, then pick a SMALL subset (never the whole 100s of GB):",
-    "files = list_repo_files('arcinstitute/Tahoe-100M', repo_type='dataset', token=tok)",
-    "print(f'{len(files)} files; examples:', files[:20])",
-    "# 2) edit allow_patterns to match ONE real shard from the list above, then fetch:",
-    "snapshot_download(repo_id='arcinstitute/Tahoe-100M', repo_type='dataset', token=tok,",
-    "    local_dir=str(dest), allow_patterns=['README*'])  # e.g. add one '*.parquet' shard pattern",
+    "except Exception: pass",
+    "tok = os.environ.get('HF_TOKEN')   # may be None -> fine for public repos",
+    "repo = 'tahoebio/tahoe-de-rhaister'         # drug-perturbation SIGNATURES (best fit for reverse-inference)",
+    "dest = DATA/'perturbation_signatures/tahoe_de'; dest.mkdir(parents=True, exist_ok=True)",
+    "print('files:', list_repo_files(repo, repo_type='dataset', token=tok)[:30])",
+    "# start SMALL: baseline + eval + centroids (a few hundred MB). Add '*pdex*' for the full 40 GB fold-change matrix.",
+    "snapshot_download(repo, repo_type='dataset', token=tok, local_dir=str(dest),",
+    "    allow_patterns=['*control_expression*','*cell_centroids*','*cell_eval*','*.md','*.json'])",
+    "print('drug DE signatures ->', dest, '| add allow_patterns=[\"*pdex*\"] for the full per-gene matrix')",
+    "# CRISPR signatures too (complements your Perturb-seq):  repo='tahoebio/replogle-nadig-de-rhaister'",
 ))
 
 cells.append(md(
@@ -191,7 +197,7 @@ cells.append(md(
     "  atlases/tcga/          -> NEW: disease-state attractors for reversal",
     "  spatial/               -> NEW: tissue-model geometry",
     "  conservation/          -> NEW: phyloP_pergene.tsv (dark-gene prior)",
-    "  tahoe100m/             -> NEW (optional): large drug-perturbation model",
+    "  perturbation_signatures/ -> NEW (optional): Tahoe drug/CRISPR DE signatures (tahoebio/*-de-rhaister)",
     "  perturbseq/            -> NEW (optional): Norman combinatorial only (Replogle already in human_raw/)",
     "```",
     "Then re-run `build_complete_cell.ipynb` with the new env vars set. Each addition should be gated by",
