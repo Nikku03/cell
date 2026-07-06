@@ -1,10 +1,10 @@
-"""DEFINITIVE reverse-inference test — recover a LINCS-knocked-down gene from its REAL signature.
+"""DEFINITIVE reverse-inference test — recover a LINCS-perturbed gene from its REAL signature.
 
-The honest, non-circular validation: LINCS shRNA (trt_sh) and overexpression (trt_oe) signatures are REAL
-experimental readouts of "gene X was perturbed -> the cell's response". We feed only the signature (978
-landmark gene changes) to reverse_infer and ask: does it recover X as the causal source? The signature is
-independent experimental data; the inference uses only the model's network. Recall@K vs the 1/N random rate.
-Needs lincs_train.npz (from fetch_lincs / Drive). -> lincs_reverse_test.json
+Now with the CMap signature-matching lens (Lever 1). We split LINCS signatures into a LIBRARY half and a
+TEST half (disjoint), build a per-gene reference library from the library half, and test recovery on the
+test half -- so matching a test signature to the library is CROSS-CONTEXT (non-circular): a gene is
+recovered only if its signature is CONSISTENT across independent measurements. Reports network-only vs
++signature-matching so the improvement is explicit. Needs lincs_train.npz. -> lincs_reverse_test.json
 """
 import json, os
 from pathlib import Path
@@ -12,41 +12,48 @@ import numpy as np
 OUT=Path("outputs/orphan")
 
 def main():
-    from compute_reverse_inference import load_model, reverse_infer
+    from compute_reverse_inference import load_model, reverse_infer, build_signature_library
     npz=OUT/"lincs_train.npz"
     if not npz.exists(): print("lincs_train.npz absent -> run fetch_lincs / restore from Drive"); return
     M=load_model(); nmset=set(M["nm"]); N=M["N"]
     D=np.load(npz, allow_pickle=True)
     lfc=D["lfc"]; syms=list(D["gene_symbols"]); pert=D["pert_of_row"]
-    # keep signatures whose perturbed gene (shRNA/oe target = the pert name) is a node in the model
-    idxs=[i for i in range(len(pert)) if str(pert[i]) in nmset]
-    if len(idxs)>2000:                                          # cap for runtime; one signature per perturbed gene
-        seen=set(); keep=[]
-        for i in idxs:
-            if pert[i] not in seen: seen.add(pert[i]); keep.append(i)
-        idxs=keep[:800]
-    ranks=[]; ranks_tf=[]; ranks_ntf=[]
+    rng=np.random.RandomState(0)
+    allrows=np.arange(len(pert)); rng.shuffle(allrows)
+    libset=set(allrows[:len(allrows)//2].tolist())            # LIBRARY half
+    lib, lib_cols = build_signature_library(lfc, syms, pert, nmset, rows=list(libset))
+    print(f"  signature library: {len(lib)} genes (from {len(libset)} held-out signatures)")
+    # test on the OTHER half: one signature per gene, gene present in the model AND in the library
+    testrows=[i for i in allrows if i not in libset and str(pert[i]) in nmset and str(pert[i]) in lib]
+    seen=set(); test=[]
+    for i in testrows:
+        if pert[i] not in seen: seen.add(pert[i]); test.append(i)
+    test=test[:800]
     reg=M["regulon"]; is_tf=set(M["G"][i]["name"] for i in reg)
-    for c,i in enumerate(idxs):
-        sig={syms[j]:float(lfc[i][j]) for j in range(len(syms)) if abs(lfc[i][j])>0.5}   # differential genes
+    r_net=[]; r_full=[]; r_tf=[]; r_ntf=[]
+    for i in test:
+        sig={syms[j]:float(lfc[i][j]) for j in range(len(syms)) if abs(lfc[i][j])>0.5}
         if len(sig)<20: continue
-        res=reverse_infer(sig, M, top=100)
-        gene=str(pert[i]); r=next((k+1 for k,x in enumerate(res) if x["gene"]==gene), 999)
-        ranks.append(r); (ranks_tf if gene in is_tf else ranks_ntf).append(r)
-    ranks=np.array(ranks)
+        gene=str(pert[i])
+        res_net=reverse_infer(sig, M, top=100)                                 # network-only
+        res_full=reverse_infer(sig, M, top=100, library=lib, lib_cols=lib_cols) # + signature matching
+        rn=next((k+1 for k,x in enumerate(res_net) if x["gene"]==gene), 999)
+        rf=next((k+1 for k,x in enumerate(res_full) if x["gene"]==gene), 999)
+        r_net.append(rn); r_full.append(rf); (r_tf if gene in is_tf else r_ntf).append(rf)
     def rec(a,k): return round(float((np.array(a)<=k).mean()),3) if len(a) else None
-    res=dict(n_tested=len(ranks), random_recall_10=round(100/N,4),
-             recall_1=rec(ranks,1), recall_10=rec(ranks,10), recall_30=rec(ranks,30),
-             median_rank=int(np.median(ranks)) if len(ranks) else None,
-             tf_recall_10=rec(ranks_tf,10), nontf_recall_10=rec(ranks_ntf,10),
-             n_tf=len(ranks_tf), n_nontf=len(ranks_ntf))
+    res=dict(n_tested=len(r_full), random_recall_10=round(10/N,5),
+             network_only=dict(recall_1=rec(r_net,1), recall_10=rec(r_net,10), recall_30=rec(r_net,30), median_rank=int(np.median(r_net))),
+             with_signature_matching=dict(recall_1=rec(r_full,1), recall_10=rec(r_full,10), recall_30=rec(r_full,30), median_rank=int(np.median(r_full))),
+             tf_recall_10=rec(r_tf,10), nontf_recall_10=rec(r_ntf,10), n_tf=len(r_tf), n_nontf=len(r_ntf))
     json.dump(res, open(OUT/"lincs_reverse_test.json","w"))
-    print(f"LINCS REVERSE TEST — recover the perturbed gene from its real signature ({res['n_tested']} genes)")
-    print(f"  recall@1 {res['recall_1']} | recall@10 {res['recall_10']} | recall@30 {res['recall_30']} "
-          f"| median rank {res['median_rank']} (random recall@10 = {res['random_recall_10']})")
-    print(f"  by type: TF recall@10 {res['tf_recall_10']} (n={res['n_tf']}) | non-TF {res['nontf_recall_10']} (n={res['n_nontf']})")
-    v=res['recall_10'] or 0
-    print(f"  >>> {'RECOVERS THE CAUSE from real signatures — %dx over random'%round(v/(100/N)) if v>3*(100/N) else 'weak recovery on real data — needs a different inference strategy'}")
+    rn=res["network_only"]; rf=res["with_signature_matching"]
+    print(f"LINCS REVERSE TEST — recover perturbed gene from REAL signature ({res['n_tested']} genes, random recall@10 = {res['random_recall_10']})")
+    print(f"  NETWORK ONLY        : recall@10 {rn['recall_10']} | recall@30 {rn['recall_30']} | median rank {rn['median_rank']}")
+    print(f"  + SIGNATURE MATCHING: recall@10 {rf['recall_10']} | recall@30 {rf['recall_30']} | median rank {rf['median_rank']}")
+    print(f"  by type (full): TF recall@10 {res['tf_recall_10']} (n={res['n_tf']}) | non-TF {res['nontf_recall_10']} (n={res['n_nontf']})")
+    v=rf['recall_10'] or 0; base=res['random_recall_10']
+    print(f"  >>> signature matching: {round(v/base) if base else '?'}x over random "
+          f"({'strong recovery' if v>0.15 else 'improved but still modest' if v>0.05 else 'still weak — need cleaner perturbation data / learned retrieval'})")
 
 if __name__=="__main__":
     main()

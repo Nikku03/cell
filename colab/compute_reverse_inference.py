@@ -69,6 +69,32 @@ def codep_coherence(cands, s, M):
         if sc>0: out[g]=sc
     return out
 
+def build_signature_library(lfc, cols, pert_of_row, name_set, rows=None):
+    """LINCS reference library: per perturbed gene, the MEAN of its signatures. `rows` restricts to a subset
+    (for held-out validation: build from library-half rows, test on the other half). cols = landmark symbols."""
+    from collections import defaultdict
+    idx=defaultdict(list)
+    it = rows if rows is not None else range(len(pert_of_row))
+    for i in it:
+        p=str(pert_of_row[i])
+        if p in name_set: idx[p].append(i)
+    lib={g: lfc[r].mean(0) for g,r in idx.items() if r}
+    return lib, list(cols)
+
+def signature_match(query_sig, lib, lib_cols, M):
+    """Match the query signature to each library gene's signature (cosine). The disease phenotype most
+    RESEMBLES the perturbation that caused it (CMap connectivity) -> gene_idx: similarity."""
+    if not lib: return {}
+    q=np.array([float(query_sig.get(g,0.0)) for g in lib_cols]); nq=np.linalg.norm(q)
+    if nq==0: return {}
+    out={}
+    for g,vec in lib.items():
+        i=M["ni"].get(g)
+        if i is None: continue
+        nv=np.linalg.norm(vec)
+        if nv>0: out[i]=float(np.dot(vec,q)/(nv*nq))
+    return out
+
 def _sig_array(sig, M):
     s=np.zeros(M["N"])
     for k,v in sig.items():
@@ -115,19 +141,23 @@ def _z(d):
     v=np.array(list(d.values())); mu,sd=v.mean(),v.std()+1e-9
     return {k:(x-mu)/sd for k,x in d.items()}
 
-def reverse_infer(signature, M=None, top=25, w_mr=1.0, w_diff=0.6, w_casc=1.0, w_codep=0.8, w_prior=0.3):
-    """signature: {gene: signed_score}. -> ranked candidate causal genes with per-lens breakdown."""
+def reverse_infer(signature, M=None, top=25, library=None, lib_cols=None,
+                  w_mr=1.0, w_diff=0.6, w_casc=1.0, w_codep=0.8, w_sig=2.5, w_prior=0.3):
+    """signature: {gene: signed_score}. If a LINCS `library` is given, signature-matching (CMap) is added as a
+    strong lens. -> ranked candidate causal genes with per-lens breakdown."""
     M=M or load_model(); s=_sig_array(signature,M)
     mr_signed=master_regulators(s,M)                          # compute ONCE (signed = direction)
     mr={g:abs(v) for g,v in mr_signed.items()}
     h=diffuse(s,M); diff={i:h[i] for i in np.argsort(-h)[:300]}
-    cands=set(mr)|set(diff)
+    sigm=signature_match(signature, library, lib_cols, M) if library else {}   # CMap lens (strongest when present)
+    cands=set(mr)|set(diff)|set(sigm)
     casc=cascade_match(cands, s, M)
     cdp=codep_coherence(cands, s, M)                          # independent (co-essentiality) lens
-    zmr,zdiff,zcasc,zcdp=_z(mr),_z(diff),_z(casc),_z(cdp)
+    zmr,zdiff,zcasc,zcdp,zsig=_z(mr),_z(diff),_z(casc),_z(cdp),_z(sigm)
     pr=M["prior"]; score={}
     for g in cands:
-        score[g]=(w_mr*zmr.get(g,0)+w_diff*zdiff.get(g,0)+w_casc*zcasc.get(g,0)+w_codep*zcdp.get(g,0)+w_prior*pr[g])
+        score[g]=(w_mr*zmr.get(g,0)+w_diff*zdiff.get(g,0)+w_casc*zcasc.get(g,0)+w_codep*zcdp.get(g,0)
+                  +w_sig*zsig.get(g,0)+w_prior*pr[g])
     ranked=sorted(score, key=lambda g:-score[g])[:top]
     G=M["G"]
     res=[dict(gene=G[g]["name"], score=round(score[g],3),
