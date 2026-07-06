@@ -59,6 +59,16 @@ def scorecard():
             dict(random=l.get("random_baseline")), ">=2 lenses: >=10x random & >=1.5x single-lens",
             ">=2 independent lenses -> calibrated high-confidence tier")
 
+    # 4) IEM biomarker mechanism recovery (Play B — clinical ground truth, non-computational)
+    m = _load("iem_mechanism_validation.json")
+    if m:
+        s = m["summary"]
+        add("iem_mechanism_recovery",
+            (s["recall"] or 0) >= 0.6 and (s["specificity_lift"] or 0) >= 20,
+            dict(recall=s["recall"], specificity_lift=s["specificity_lift"], coverage=s["coverage"]),
+            dict(random=s["random_pair_baseline"]), "recall>=0.6 & >=20x over random",
+            "recovers documented inborn-error-of-metabolism biomarkers (clinical ground truth)")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
