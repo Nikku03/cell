@@ -22,15 +22,18 @@ cells.append(md(
     "Each dataset cell is independent, **skip-if-exists**, and prints size + license. Sources were",
     "reachability-checked 2026-07-06. Big/gated sources (Tahoe-100M, spatial) note their access method.",
     "",
+    "Already on your Drive (verified) — **skipped**: ARCHS4, `lincs_train.npz`, Replogle Perturb-seq",
+    "(`human_raw/perturbseq_{rpe1,gwps}_bulk.h5ad`), AlphaFold (`human_raw/af_human.tar`), and all",
+    "substrate/kinetics layers. This notebook fetches only what is genuinely missing.",
+    "",
     "| dataset | unblocks | size | access | license |",
     "|---|---|---|---|---|",
-    "| Perturb-seq (scPerturb) | trained perturbation model, causal edges | ~1–10 GB | Zenodo direct | CC-BY |",
-    "| Cell-type expression (CELLxGENE census) | context-specific networks, cell↔tissue (emask/abund) | ~2 GB | `cellxgene-census` API | CC-BY |",
+    "| **Cell-type expression (CELLxGENE census)** | context-specific networks, cell↔tissue — **the empty `emask`/`abund`** | ~2 GB | `cellxgene-census` API | CC-BY |",
     "| Dev + disease atlases (census) + TCGA (Xena) | beyond cancer/healthy, disease attractors | ~1–20 GB | census API + Xena direct | CC-BY / open |",
     "| Spatial (10x Xenium / Vizgen MERFISH) | real tissue geometry | ~1–30 GB/sample | direct S3 | CC-BY |",
     "| Cross-species conservation (UCSC phyloP) | conservation prior for dark genes | ~9 GB bigWig → tiny TSV | direct | open |",
     "| Tahoe-100M (Arc) | large drug-perturbation model | ~100s GB (fetch a subset) | HuggingFace (token) | CC-BY |",
-    "| AlphaFold (per-accession) | structure layer (fixes the 404) | ~KB/protein | AFDB API | CC-BY 4.0 |",
+    "| _(optional)_ Perturb-seq **Norman** combinatorial | combinatorial perturbation | ~0.5 GB | Zenodo direct | CC-BY |",
 ))
 
 cells.append(md("## Setup — mount Drive + a robust skip-if-exists fetcher"))
@@ -51,28 +54,32 @@ cells.append(code(
     "def pipi(*pkgs): subprocess.run([sys.executable,'-m','pip','install','-q',*pkgs], check=False)",
 ))
 
-cells.append(md("## 0 · Sanity — confirm the two you already have are on Drive"))
+cells.append(md("## 0 · Sanity — confirm what you already have (skip these)"))
 cells.append(code(
-    "for p in ['expression_geo/archs4_human_gene.h5', 'lincs_train.npz',",
-    "          '../cell_count_dynamics/multiorg']:",
-    "    q=DATA/p; print(('OK  ' if q.exists() else 'MISSING '), q)",
-    "# lincs_train.npz may live under outputs/orphan on Drive — adjust the path if so.",
+    "already = ['expression_geo/archs4_human_gene.h5', 'lincs_train.npz',",
+    "           'human_raw/perturbseq_rpe1_bulk.h5ad', 'human_raw/perturbseq_gwps_bulk.h5ad',",
+    "           'human_raw/af_human.tar', 'human_raw/catpred_kcat.csv', 'paxdb_human.txt']",
+    "for p in already:",
+    "    q=DATA/p; print(('OK  ' if q.exists() else 'MISSING '), p, (sh(q.stat().st_size/1e6) if q.exists() else ''))",
+    "# reclaim space: a stale partial download can be removed",
+    "stale=DATA/'expression_geo/archs4_human_gene.h5.part'",
+    "if stale.exists(): print('stale (safe to delete):', stale, sh(stale.stat().st_size/1e6))",
+    "# lincs_train.npz may live under a different folder on Drive — adjust the path above if so.",
 ))
 
 cells.append(md(
-    "## 1 · Perturb-seq (scPerturb) — for the trained perturbation model + causal edges",
-    "Standardized h5ad (Norman 2019 combinatorial, Replogle 2022 genome-scale). Zenodo record 13350497.",
-    "Wire into the build with `PERTURBSEQ_NORMAN_URL` / `PERTURBSEQ_RPE1_URL` = the local paths."))
+    "## 1 · (optional) Perturb-seq **Norman** combinatorial — you already have Replogle (RPE1 + GWPS)",
+    "Skip unless you want the combinatorial (two-gene) screen. Replogle is already in `human_raw/`."))
 cells.append(code(
     "import urllib.request, json",
-    "rec=json.load(urllib.request.urlopen('https://zenodo.org/api/records/13350497'))",
-    "want=('Norman','Replogle')  # pick the key screens; drop this filter to grab all",
-    "dest=DATA/'perturbseq'",
-    "for f in rec['files']:",
-    "    nm=f['key']",
-    "    if nm.endswith('.h5ad') and any(w in nm for w in want):",
-    "        print(nm, sh(f['size']/1e6)); fetch(f['links']['self'], dest/nm)",
-    "print('PERTURBSEQ dir:', dest)",
+    "have = (DATA/'human_raw/perturbseq_gwps_bulk.h5ad').exists()",
+    "print('Replogle Perturb-seq present:', have, '(RPE1 + genome-wide) -> set PERTURBSEQ_RPE1_URL to that path)')",
+    "GET_NORMAN = False  # flip to True to also fetch the Norman 2019 combinatorial screen",
+    "if GET_NORMAN:",
+    "    rec=json.load(urllib.request.urlopen('https://zenodo.org/api/records/13350497'))",
+    "    for f in rec['files']:",
+    "        if f['key'].endswith('.h5ad') and 'Norman' in f['key']:",
+    "            fetch(f['links']['self'], DATA/'perturbseq'/f['key'])",
 ))
 
 cells.append(md(
@@ -151,30 +158,30 @@ cells.append(code(
 ))
 
 cells.append(md(
-    "## 7 · AlphaFold structures — fixes the 404 (per-accession AFDB API, targeted)",
-    "The EBI proteome tar path 404s; fetch only the accessions the model uses, via the stable AFDB API."))
+    "## 7 · AlphaFold — you already have the full proteome (`human_raw/af_human.tar`, 5.1 GB)",
+    "Nothing to fetch. The build-time 404 was a re-download URL, not missing data. Just point the build at",
+    "the existing tar (extract on demand). Per-accession API fallback shown only for gaps."))
 cells.append(code(
-    "dest=DATA/'alphafold'; dest.mkdir(parents=True, exist_ok=True)",
-    "# accs = list of UniProt accessions from cell_complete.json (D['acc']); example:",
-    "accs=['P04637','P01116','Q9Y6K9']  # TP53, KRAS, NEMO — replace with the model's acc list",
-    "for a in accs:",
-    "    url=f'https://alphafold.ebi.ac.uk/files/AF-{a}-F1-model_v4.pdb'",
-    "    try: fetch(url, dest/f'AF-{a}-F1-model_v4.pdb')",
-    "    except Exception as e: print('  no model for', a, e)",
-    "# Bulk alternative: gs://public-datasets-deepmind-alphafold-v4/ via gsutil (whole proteomes).",
+    "af=DATA/'human_raw/af_human.tar'",
+    "print('AlphaFold proteome present:', af.exists(), sh(af.stat().st_size/1e6) if af.exists() else '')",
+    "# extract a single model when needed:  tar -xf af_human.tar AF-P04637-F1-model_v4.pdb",
+    "# gap fallback (only if a specific accession is missing from the tar):",
+    "# fetch(f'https://alphafold.ebi.ac.uk/files/AF-{acc}-F1-model_v4.pdb', DATA/'alphafold'/f'AF-{acc}.pdb')",
 ))
 
 cells.append(md(
     "## Done — where things landed + how to wire them in",
     "```",
     "MyDrive/virtual_cell_data/",
-    "  perturbseq/            -> PERTURBSEQ_NORMAN_URL / PERTURBSEQ_RPE1_URL (Model 4, causal edges)",
-    "  celltype_expression/   -> populates emask/abund (context networks, cell<->tissue)",
-    "  atlases/tcga/          -> disease-state attractors for reversal",
-    "  spatial/               -> tissue-model geometry",
-    "  conservation/          -> phyloP_pergene.tsv (dark-gene prior)",
-    "  tahoe100m/             -> large drug-perturbation model",
-    "  alphafold/             -> structure/fold layer",
+    "  human_raw/             -> ALREADY PRESENT: perturbseq_{rpe1,gwps}_bulk.h5ad, af_human.tar,",
+    "                            catpred_kcat.csv, all substrate lenses (skipped by this notebook)",
+    "  expression_geo/        -> ALREADY PRESENT: archs4_human_gene.h5",
+    "  celltype_expression/   -> NEW: populates emask/abund (context networks, cell<->tissue)  ** run first **",
+    "  atlases/tcga/          -> NEW: disease-state attractors for reversal",
+    "  spatial/               -> NEW: tissue-model geometry",
+    "  conservation/          -> NEW: phyloP_pergene.tsv (dark-gene prior)",
+    "  tahoe100m/             -> NEW (optional): large drug-perturbation model",
+    "  perturbseq/            -> NEW (optional): Norman combinatorial only (Replogle already in human_raw/)",
     "```",
     "Then re-run `build_complete_cell.ipynb` with the new env vars set. Each addition should be gated by",
     "the recovery scorecard (`colab/recovery_scorecard.py`) — commit only what keeps it at all-PASS.",

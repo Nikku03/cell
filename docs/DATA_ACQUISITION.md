@@ -5,19 +5,25 @@ sandbox — acquisition runs **on Colab with Drive mounted** (ample disk, in-pla
 existing `download_all_data.ipynb`. This runbook covers the datasets that unblock the Better/Diverse
 improvements. Run `colab/fetch_external_data.ipynb`; everything lands in `MyDrive/virtual_cell_data/`.
 
-**Already on Drive (skipped):** ARCHS4 (`expression_geo/archs4_human_gene.h5`, 59 GB) and `lincs_train.npz`.
+**Already on Drive — verified by inspecting the account, so the notebook SKIPS these:**
+- ARCHS4 (`expression_geo/archs4_human_gene.h5`, 61.9 GB) and `lincs_train.npz`
+- **Replogle Perturb-seq** — `human_raw/perturbseq_rpe1_bulk.h5ad` (95 MB) + `human_raw/perturbseq_gwps_bulk.h5ad` (374 MB)
+- **AlphaFold human proteome** — `human_raw/af_human.tar` (5.1 GB); the build-time "404" was a re-download URL, not missing data
+- All substrate lenses + kinetics (STRING/BioPlex/HuRI/OpenCell, CollecTRI/DoRothEA/TRRUST/SIGNOR, Human-GEM, Reactome, DGIdb, CellPhoneDB, ClinVar, ReMap, GTEx, HiCCUPS, `catpred_kcat.csv`, `paxdb_human.txt`, DepMap/CCLE) in `human_raw/`
+- (a stale `expression_geo/archs4_human_gene.h5.part`, 1.4 GB — safe to delete to reclaim space)
 
-All URLs below were reachability-checked 2026-07-06.
+**Genuinely missing → what the notebook fetches** (URLs reachability-checked 2026-07-06):
 
 | # | dataset | unblocks | access (verified) | size | license | Drive path |
 |---|---|---|---|---|---|---|
-| 1 | **Perturb-seq** (scPerturb: Norman 2019, Replogle 2022) | trained perturbation model (Better 1), causal edges (Better 2) | Zenodo record `13350497`, direct h5ad ✅ | ~1–10 GB | CC-BY | `perturbseq/` |
-| 2 | **Cell-type expression** (CELLxGENE census / Tabula Sapiens) | context-specific networks (Diverse 1), cell↔tissue (Better 3) — **populates the empty `emask`/`abund`** | `cellxgene-census` Python API ✅ | ~2 GB | CC-BY | `celltype_expression/` |
-| 3 | **Disease-state expression** (TCGA via UCSC Xena) + dev/disease scRNA (census) | beyond cancer/healthy (Diverse 3), disease attractors | Xena GDC hub direct ✅; census API | ~1–20 GB | open / CC-BY | `atlases/` |
-| 4 | **Spatial transcriptomics** (10x Xenium, Vizgen MERFISH) | real tissue geometry (Diverse 2) | 10x/Vizgen direct S3 | ~1–30 GB/sample | CC-BY | `spatial/` |
-| 5 | **Cross-species conservation** (UCSC phyloP100way) | conservation prior for dark genes (Diverse 4) | `hgdownload.soe.ucsc.edu` direct ✅ | ~9 GB bigWig → tiny per-gene TSV | open | `conservation/` |
-| 6 | **Tahoe-100M** (Arc Institute) | large drug-perturbation model (Better 1) | HuggingFace `arcinstitute/Tahoe-100M` 🔑 token | ~100s GB (fetch a subset) | CC-BY | `tahoe100m/` |
-| 7 | **AlphaFold** (per-accession) | structure/fold layer (fixes the 404) | AFDB API `alphafold.ebi.ac.uk/files/AF-{acc}-F1-model_v4.pdb` ✅ | ~KB/protein | CC-BY 4.0 | `alphafold/` |
+| 1 | **Cell-type expression** (CELLxGENE census / Tabula Sapiens) | context-specific networks (Diverse 1), cell↔tissue (Better 3) — **populates the empty `emask`/`abund`; run this first** | `cellxgene-census` Python API ✅ | ~2 GB | CC-BY | `celltype_expression/` |
+| 2 | **Disease-state expression** (TCGA via UCSC Xena) + dev/disease scRNA (census) | beyond cancer/healthy (Diverse 3), disease attractors | Xena GDC hub direct ✅; census API | ~1–20 GB | open / CC-BY | `atlases/` |
+| 3 | **Spatial transcriptomics** (10x Xenium, Vizgen MERFISH) | real tissue geometry (Diverse 2) | 10x/Vizgen direct S3 | ~1–30 GB/sample | CC-BY | `spatial/` |
+| 4 | **Cross-species conservation** (UCSC phyloP100way) | conservation prior for dark genes (Diverse 4) | `hgdownload.soe.ucsc.edu` direct ✅ | ~9 GB bigWig → tiny per-gene TSV | open | `conservation/` |
+| 5 | **Tahoe-100M** (Arc Institute) | large drug-perturbation model (Better 1) | HuggingFace `arcinstitute/Tahoe-100M` 🔑 token | ~100s GB (fetch a subset) | CC-BY | `tahoe100m/` |
+| 6 | _(optional)_ **Perturb-seq Norman** combinatorial | combinatorial perturbation | Zenodo `13350497` direct ✅ | ~0.5 GB | CC-BY | `perturbseq/` |
+
+**Not needed** — Perturb-seq (Replogle) and AlphaFold are already on Drive (see above); the notebook detects them and skips.
 
 ## Notes / access quirks found during verification
 - **AlphaFold** — the EBI *proteome tar* path (`.../latest/UP000005640_9606_HUMAN_v4.tar`) returns **404**;
