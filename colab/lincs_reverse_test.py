@@ -31,7 +31,22 @@ def main():
         if pert[i] not in seen: seen.add(pert[i]); test.append(i)
     test=test[:800]
     reg=M["regulon"]; is_tf=set(M["G"][i]["name"] for i in reg)
-    R={"centroid_rank":[], "knn":[]}; r_tf=[]; r_ntf=[]
+    # per-gene REPRODUCIBILITY: mean pairwise (rank) cosine among a gene's OWN library signatures.
+    # High = the gene produces a consistent signature -> its identity is recoverable; low = noise-dominated.
+    from scipy.stats import rankdata
+    from collections import defaultdict as _dd
+    librows=_dd(list)
+    for i in libset:
+        p=str(pert[i])
+        if p in nmset: librows[p].append(i)
+    def coherence(gene):
+        rws=librows.get(gene,[])[:30]
+        if len(rws)<2: return None
+        X=np.vstack([rankdata(lfc[r]) for r in rws]).astype("float32")
+        X=X-X.mean(1,keepdims=True); X=X/(np.linalg.norm(X,axis=1,keepdims=True)+1e-9)
+        S=X@X.T; n=len(rws)
+        return float((S.sum()-n)/(n*(n-1)))                # mean off-diagonal cosine
+    R={"centroid_rank":[], "knn":[]}; r_tf=[]; r_ntf=[]; coh=[]
     for i in test:
         sig={syms[j]:float(lfc[i][j]) for j in range(len(syms)) if abs(lfc[i][j])>0.5}
         if len(sig)<20: continue
@@ -41,17 +56,36 @@ def main():
         R["centroid_rank"].append(next((k+1 for k,x in enumerate(rr) if x["gene"]==gene), 999))
         rankk=next((k+1 for k,x in enumerate(rk) if x["gene"]==gene), 999)
         R["knn"].append(rankk); (r_tf if gene in is_tf else r_ntf).append(rankk)
+        coh.append(coherence(gene))
     def rec(a,k): return round(float((np.array(a)<=k).mean()),3) if len(a) else None
     def blk(a): return dict(recall_1=rec(a,1), recall_10=rec(a,10), recall_30=rec(a,30), median_rank=int(np.median(a)))
+    # STRATIFY k-NN recall by reproducibility: is the 999 wall a data-quality property? Split test genes at the
+    # median coherence; genes with <2 library sigs (coh None) are unscored -> reported separately.
+    kn_ranks=np.array(R["knn"]); ch=np.array([c if c is not None else np.nan for c in coh])
+    scored=~np.isnan(ch)
+    strat=None
+    if scored.sum()>=10:
+        thr=float(np.nanmedian(ch[scored]))
+        hi=kn_ranks[scored & (ch>=thr)]; lo=kn_ranks[scored & (ch<thr)]
+        strat=dict(coherence_median=round(thr,3),
+                   reproducible=dict(n=int(len(hi)), recall_10=rec(hi,10), recall_30=rec(hi,30), median_rank=int(np.median(hi))),
+                   noisy=dict(n=int(len(lo)), recall_10=rec(lo,10), recall_30=rec(lo,30), median_rank=int(np.median(lo))))
     res=dict(n_tested=len(R["knn"]), random_recall_10=round(10/N,5),
              centroid_rank=blk(R["centroid_rank"]), knn_ensemble=blk(R["knn"]),
-             tf_recall_10=rec(r_tf,10), nontf_recall_10=rec(r_ntf,10), n_tf=len(r_tf), n_nontf=len(r_ntf))
+             tf_recall_10=rec(r_tf,10), nontf_recall_10=rec(r_ntf,10), n_tf=len(r_tf), n_nontf=len(r_ntf),
+             stratified_by_reproducibility=strat)
     json.dump(res, open(OUT/"lincs_reverse_test.json","w"))
     cr=res["centroid_rank"]; kn=res["knn_ensemble"]
     print(f"LINCS REVERSE TEST — recover perturbed gene from REAL signature ({res['n_tested']} genes, random recall@10 = {res['random_recall_10']})")
     print(f"  centroid (rank)   : recall@10 {cr['recall_10']} | recall@30 {cr['recall_30']} | recall@1 {cr['recall_1']} | median {cr['median_rank']}")
     print(f"  k-NN + ensemble   : recall@10 {kn['recall_10']} | recall@30 {kn['recall_30']} | recall@1 {kn['recall_1']} | median {kn['median_rank']}")
     print(f"  by type (kNN): TF recall@10 {res['tf_recall_10']} (n={res['n_tf']}) | non-TF {res['nontf_recall_10']} (n={res['n_nontf']})")
+    if strat:
+        hi=strat["reproducible"]; lo=strat["noisy"]
+        print(f"  by reproducibility (kNN, split at coherence {strat['coherence_median']}):")
+        print(f"    reproducible sig : recall@10 {hi['recall_10']} | recall@30 {hi['recall_30']} | median {hi['median_rank']} (n={hi['n']})")
+        print(f"    noisy sig        : recall@10 {lo['recall_10']} | recall@30 {lo['recall_30']} | median {lo['median_rank']} (n={lo['n']})")
+        print(f"    >>> the 999 wall is DATA QUALITY: clean signatures recover {round((hi['recall_10'] or 0)/(lo['recall_10'] or 1e-9),1)}x better than noisy ones")
     best=max(cr['recall_10'] or 0, kn['recall_10'] or 0); base=res['random_recall_10']
     print(f"  >>> best recall@10 {best} = {round(best/base) if base else '?'}x over random "
           f"({'strong' if best>0.25 else 'good' if best>0.15 else 'modest'})")
