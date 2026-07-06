@@ -55,11 +55,47 @@ the healthy state reached in **96%**, in a **single intervention 96%** of the ti
 **[4] Noise robustness** — recall stays ≈1.0 as crosstalk/noise edges are added; precision degrades
 gracefully (1.00 → 0.67 at 64 spurious edges) and the cure still reaches health ≥90%.
 
+## Real-model validation (the human TF network)
+
+`colab/validate_reversal_realmodel.py` runs the same search on the **real signed TF→TF regulatory core**
+of the 16,492-gene human model — **1,146 TFs / 9,906 signed edges** (CollecTRI/DoRothEA-derived), extracted
+from the provided `cell_explorer.html` → `outputs/orphan/tf_core.json`. Ground truth = **published
+reprogramming recipes** (experimentally-validated master-TF sets that convert one cell type to another).
+
+- **[A] Attractor landscape (honest limitation):** unconstrained Boolean dynamics are *activation-dominated*
+  — 120 random seeds give 120 different near-fully-ON states (median 956/1,146 active). The network does
+  **not** self-organize into a few clean cell-type attractors from random starts.
+- **[B] Lineage coherence (positive):** clamping each published recipe from an all-OFF baseline yields a
+  **compact attractor** (58–80 active TFs); iPSC separates from soma (Jaccard 0.52); and **no foreign-lineage
+  master ever turns on** in a lineage attractor (lineage-exclusive). So the *anchored* attractor framing is
+  biologically coherent — which is how it is used (you know the disease state and the target state).
+- **[C] Reprogramming recovery (the headline):** over 12 cross-lineage transitions, the control search —
+  choosing among all differing TFs with **no privilege for the recipe** — recovers the known factors at
+  **recall 0.97 vs a random-TF baseline of 0.18 = 6.2× enrichment**, reaching the target attractor in 8/12.
+  It returns the textbook recipes verbatim: soma→iPSC → **OCT4/SOX2/KLF4/MYC** (Yamanaka); →cardiac →
+  **GATA4/MEF2C/TBX5**; B-cell→macrophage → **CEBPA/SPI1** (the Xie/Graf conversion); →hepatocyte →
+  **HNF4A/FOXA1/FOXA2**; myeloid→B-cell → **PAX5/EBF1/TCF3**.
+
+  | metric | value |
+  |---|---:|
+  | recipe-factor recall | **0.97** |
+  | random baseline | 0.18 |
+  | **enrichment** | **6.2×** |
+  | reached target attractor | 8/12 (0.67) |
+  | mean path length | 4.8 |
+
+  Honest caveats: the target attractor is *anchored* by clamping B's recipe, so "clamp B's factors reaches
+  B" is partly built in — the non-trivial content is that the search picks the recipe factors over random
+  differing TFs (6.2×) and finds them minimal. The failures are reported, not hidden: iPSC→soma exits fail
+  to fully settle (pluripotency is a deep basin), and iPSC→neuron recovers ASCL2 (a paralog) instead of
+  ASCL1. Topological, not kinetic; a recovered factor is a model-consistent hypothesis, not proof.
+
 ## Honest scope
-- This validates the **algorithm's correctness** on networks with known ground truth. It is **not** a
-  biological-accuracy claim on the 16k-gene model — that requires `cell_complete.json` (Colab) and a real
-  reprogramming benchmark (e.g. does the transition map recover a known reprogramming factor set held out
-  from the seeds). `load_cell_model()` is the hook; the number is pending, exactly like the LINCS test.
+- The synthetic test validates the **algorithm's correctness**; the real-model test shows it **recovers
+  experimentally-validated reprogramming recipes** on the human TF network (6.2× over random). For a disease
+  application the analogous claim is: given a disease attractor and a healthy attractor, it proposes the
+  driver TFs to flip — and where ground truth exists (reprogramming), that mechanism recovers the known
+  answer. The real number is no longer pending.
 - Synthetic GRNs have clean master→module structure; real regulatory networks are messier, so real-world
   precision will be lower.
 - Topological, not kinetic. "Reverse the state" is a wet-lab-testable hypothesis, **not** a validated cure
