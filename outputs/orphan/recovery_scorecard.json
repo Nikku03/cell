@@ -1,6 +1,6 @@
 {
-  "n_pass": 5,
-  "n_total": 5,
+  "n_pass": 6,
+  "n_total": 6,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -66,6 +66,20 @@
       },
       "bar": "recall>=0.6 & >=20x over random",
       "detail": "recovers documented inborn-error-of-metabolism biomarkers (clinical ground truth)"
+    },
+    {
+      "test": "celltype_identity_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.857,
+        "enrichment": 6.2,
+        "coverage": 0.757
+      },
+      "baseline": {
+        "random": 0.293
+      },
+      "bar": "recall>=0.6 & enrich>=2x & >=2x over random",
+      "detail": "populated emask recovers cell-type-lineage master TFs (Phase 1)"
     }
   ],
   "tests": [
@@ -133,6 +147,20 @@
       },
       "bar": "recall>=0.6 & >=20x over random",
       "detail": "recovers documented inborn-error-of-metabolism biomarkers (clinical ground truth)"
+    },
+    {
+      "test": "celltype_identity_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.857,
+        "enrichment": 6.2,
+        "coverage": 0.757
+      },
+      "baseline": {
+        "random": 0.293
+      },
+      "bar": "recall>=0.6 & enrich>=2x & >=2x over random",
+      "detail": "populated emask recovers cell-type-lineage master TFs (Phase 1)"
     }
   ]
 }
