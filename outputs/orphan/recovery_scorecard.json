@@ -1,0 +1,110 @@
+{
+  "n_pass": 4,
+  "n_total": 4,
+  "all_pass": [
+    {
+      "test": "algorithm_correctness",
+      "passed": true,
+      "value": {
+        "recall": 1.0,
+        "precision": 0.938
+      },
+      "baseline": {
+        "setdiff_precision": 0.214
+      },
+      "bar": "recall>=0.9 & precision>=0.8",
+      "detail": "Boolean target-control recovers known drivers on synthetic GRNs"
+    },
+    {
+      "test": "reprogramming_recovery",
+      "passed": true,
+      "value": {
+        "recipe_recall": 0.972,
+        "enrichment": 6.18,
+        "reached": 0.667
+      },
+      "baseline": {
+        "random": 0.176
+      },
+      "bar": "recall>=0.5 & enrichment>=2x",
+      "detail": "recovers Yamanaka/GMT/CEBPA recipes blind from the real network"
+    },
+    {
+      "test": "reversal_robustness",
+      "passed": true,
+      "value": {
+        "recipe_stability": 1.0,
+        "passenger_stability": 0.333
+      },
+      "baseline": null,
+      "bar": "recipe - passenger stability >= 0.3",
+      "detail": "edge-bootstrap separates robust drivers from fragile passengers"
+    },
+    {
+      "test": "lens_calibration",
+      "passed": true,
+      "value": {
+        "ge2_over_random": 157.2,
+        "ge2_over_1lens": 2.76
+      },
+      "baseline": {
+        "random": 0.00192
+      },
+      "bar": ">=2 lenses: >=10x random & >=1.5x single-lens",
+      "detail": ">=2 independent lenses -> calibrated high-confidence tier"
+    }
+  ],
+  "tests": [
+    {
+      "test": "algorithm_correctness",
+      "passed": true,
+      "value": {
+        "recall": 1.0,
+        "precision": 0.938
+      },
+      "baseline": {
+        "setdiff_precision": 0.214
+      },
+      "bar": "recall>=0.9 & precision>=0.8",
+      "detail": "Boolean target-control recovers known drivers on synthetic GRNs"
+    },
+    {
+      "test": "reprogramming_recovery",
+      "passed": true,
+      "value": {
+        "recipe_recall": 0.972,
+        "enrichment": 6.18,
+        "reached": 0.667
+      },
+      "baseline": {
+        "random": 0.176
+      },
+      "bar": "recall>=0.5 & enrichment>=2x",
+      "detail": "recovers Yamanaka/GMT/CEBPA recipes blind from the real network"
+    },
+    {
+      "test": "reversal_robustness",
+      "passed": true,
+      "value": {
+        "recipe_stability": 1.0,
+        "passenger_stability": 0.333
+      },
+      "baseline": null,
+      "bar": "recipe - passenger stability >= 0.3",
+      "detail": "edge-bootstrap separates robust drivers from fragile passengers"
+    },
+    {
+      "test": "lens_calibration",
+      "passed": true,
+      "value": {
+        "ge2_over_random": 157.2,
+        "ge2_over_1lens": 2.76
+      },
+      "baseline": {
+        "random": 0.00192
+      },
+      "bar": ">=2 lenses: >=10x random & >=1.5x single-lens",
+      "detail": ">=2 independent lenses -> calibrated high-confidence tier"
+    }
+  ]
+}
