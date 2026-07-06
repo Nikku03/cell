@@ -91,13 +91,19 @@ cells.append(code(
 
 cells.append(md(
     "## 4 · Model 2 — CELLxGENE census (fills `emask`)  ·  census_version='stable'",
-    "Per-cell-type mean CP10k expression → `celltype_expression.csv`. Needs internet (and GPU/RAM for speed)."))
+    "Pulls ~200 cell types across ~18 tissues with real depth (250 cells/type) → `celltype_expression.csv`.",
+    "**Use a High-RAM runtime**; the deeper pull takes ~30–60 min. Lower `CENSUS_PER_TYPE` if it OOMs."))
 cells.append(code(
     "import cellxgene_census, scipy.sparse as sp, traceback",
     "TFset=set(bb.loc[bb.is_tf==1,'gene'])",
     "adata=None; cell_means=None",
-    "TISSUES=['blood','liver','heart','lung','brain','kidney']",
-    "N_TYPES=40; PER_TYPE=60; MIN_CELLS=25",
+    "# BREADTH (tissues + #cell types) and DEPTH (cells/type). Defaults now cover ~200 major cell types with",
+    "# real depth. All env-tunable. If Colab OOMs: use a High-RAM runtime or lower CENSUS_PER_TYPE.",
+    "TISSUES=os.environ.get('CENSUS_TISSUES','blood,bone marrow,liver,heart,lung,brain,kidney,intestine,"
+    "pancreas,spleen,thymus,lymph node,skin of body,adipose tissue,muscle tissue,stomach,breast,vasculature').split(',')",
+    "N_TYPES=int(os.environ.get('CENSUS_N_TYPES','200'))     # up to ~200 distinct cell types",
+    "PER_TYPE=int(os.environ.get('CENSUS_PER_TYPE','250'))   # cells per type (depth) — was 60; more = fewer missed masters",
+    "MIN_CELLS=int(os.environ.get('CENSUS_MIN_CELLS','30'))",
     "try:",
     "    with cellxgene_census.open_soma(census_version='stable') as census:",
     "        VF=\"is_primary_data==True and tissue_general in \"+repr(TISSUES)",
