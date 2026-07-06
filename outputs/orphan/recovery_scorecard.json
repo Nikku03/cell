@@ -1,6 +1,6 @@
 {
-  "n_pass": 4,
-  "n_total": 4,
+  "n_pass": 5,
+  "n_total": 5,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -52,6 +52,20 @@
       },
       "bar": ">=2 lenses: >=10x random & >=1.5x single-lens",
       "detail": ">=2 independent lenses -> calibrated high-confidence tier"
+    },
+    {
+      "test": "iem_mechanism_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.786,
+        "specificity_lift": 157.1,
+        "coverage": 0.875
+      },
+      "baseline": {
+        "random": 0.005
+      },
+      "bar": "recall>=0.6 & >=20x over random",
+      "detail": "recovers documented inborn-error-of-metabolism biomarkers (clinical ground truth)"
     }
   ],
   "tests": [
@@ -105,6 +119,20 @@
       },
       "bar": ">=2 lenses: >=10x random & >=1.5x single-lens",
       "detail": ">=2 independent lenses -> calibrated high-confidence tier"
+    },
+    {
+      "test": "iem_mechanism_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.786,
+        "specificity_lift": 157.1,
+        "coverage": 0.875
+      },
+      "baseline": {
+        "random": 0.005
+      },
+      "bar": "recall>=0.6 & >=20x over random",
+      "detail": "recovers documented inborn-error-of-metabolism biomarkers (clinical ground truth)"
     }
   ]
 }
