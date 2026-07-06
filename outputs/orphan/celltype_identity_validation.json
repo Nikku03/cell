@@ -1,0 +1,320 @@
+{
+  "summary": {
+    "n_masters": 37,
+    "n_present": 28,
+    "coverage": 0.757,
+    "recall": 0.857,
+    "median_enrichment": 6.2,
+    "random_baseline": 0.293,
+    "recall_over_random": 2.9,
+    "recipe_coverage": 0.571,
+    "recipe_missing": [
+      "POU5F1",
+      "SOX2",
+      "CEBPA",
+      "PAX5",
+      "FOXA1",
+      "FOXA2"
+    ],
+    "context_pruning_safe": false
+  },
+  "per_master": [
+    {
+      "tf": "GATA4",
+      "lineage": "cardiac",
+      "present": true,
+      "hit": true,
+      "in_lineage": 2,
+      "n_types": 3,
+      "enrichment": 7.5
+    },
+    {
+      "tf": "TBX5",
+      "lineage": "cardiac",
+      "present": true,
+      "hit": true,
+      "in_lineage": 1,
+      "n_types": 1,
+      "enrichment": 11.2
+    },
+    {
+      "tf": "NKX2-5",
+      "lineage": "cardiac",
+      "present": true,
+      "hit": true,
+      "in_lineage": 1,
+      "n_types": 1,
+      "enrichment": 11.2
+    },
+    {
+      "tf": "MEF2C",
+      "lineage": "cardiac",
+      "present": true,
+      "hit": true,
+      "in_lineage": 4,
+      "n_types": 35,
+      "enrichment": 1.3
+    },
+    {
+      "tf": "HAND2",
+      "lineage": "cardiac",
+      "present": true,
+      "hit": false,
+      "in_lineage": 0,
+      "n_types": 2,
+      "enrichment": 0.0
+    },
+    {
+      "tf": "MYOCD",
+      "lineage": "cardiac",
+      "present": true,
+      "hit": true,
+      "in_lineage": 3,
+      "n_types": 3,
+      "enrichment": 11.2
+    },
+    {
+      "tf": "TBX20",
+      "lineage": "cardiac",
+      "present": true,
+      "hit": true,
+      "in_lineage": 1,
+      "n_types": 2,
+      "enrichment": 5.6
+    },
+    {
+      "tf": "HNF4A",
+      "lineage": "hepatic",
+      "present": true,
+      "hit": true,
+      "in_lineage": 1,
+      "n_types": 2,
+      "enrichment": 9.9
+    },
+    {
+      "tf": "FOXA2",
+      "lineage": "hepatic",
+      "present": false
+    },
+    {
+      "tf": "HNF1A",
+      "lineage": "hepatic",
+      "present": false
+    },
+    {
+      "tf": "FOXA1",
+      "lineage": "hepatic",
+      "present": false
+    },
+    {
+      "tf": "ONECUT1",
+      "lineage": "hepatic",
+      "present": true,
+      "hit": true,
+      "in_lineage": 1,
+      "n_types": 2,
+      "enrichment": 9.9
+    },
+    {
+      "tf": "SPI1",
+      "lineage": "myeloid",
+      "present": true,
+      "hit": true,
+      "in_lineage": 16,
+      "n_types": 16,
+      "enrichment": 6.2
+    },
+    {
+      "tf": "CEBPA",
+      "lineage": "myeloid",
+      "present": false
+    },
+    {
+      "tf": "CEBPB",
+      "lineage": "myeloid",
+      "present": true,
+      "hit": true,
+      "in_lineage": 10,
+      "n_types": 16,
+      "enrichment": 3.9
+    },
+    {
+      "tf": "IRF8",
+      "lineage": "myeloid",
+      "present": true,
+      "hit": true,
+      "in_lineage": 4,
+      "n_types": 5,
+      "enrichment": 4.9
+    },
+    {
+      "tf": "KLF4",
+      "lineage": "myeloid",
+      "present": true,
+      "hit": true,
+      "in_lineage": 3,
+      "n_types": 3,
+      "enrichment": 6.2
+    },
+    {
+      "tf": "PAX5",
+      "lineage": "Bcell",
+      "present": false
+    },
+    {
+      "tf": "EBF1",
+      "lineage": "Bcell",
+      "present": true,
+      "hit": true,
+      "in_lineage": 1,
+      "n_types": 23,
+      "enrichment": 0.5
+    },
+    {
+      "tf": "TCF3",
+      "lineage": "Bcell",
+      "present": false
+    },
+    {
+      "tf": "POU2AF1",
+      "lineage": "Bcell",
+      "present": true,
+      "hit": true,
+      "in_lineage": 4,
+      "n_types": 4,
+      "enrichment": 11.2
+    },
+    {
+      "tf": "POU2F2",
+      "lineage": "Bcell",
+      "present": true,
+      "hit": false,
+      "in_lineage": 0,
+      "n_types": 1,
+      "enrichment": 0.0
+    },
+    {
+      "tf": "IRF4",
+      "lineage": "Bcell",
+      "present": false
+    },
+    {
+      "tf": "GATA3",
+      "lineage": "Tcell",
+      "present": true,
+      "hit": true,
+      "in_lineage": 4,
+      "n_types": 5,
+      "enrichment": 4.9
+    },
+    {
+      "tf": "TCF7",
+      "lineage": "Tcell",
+      "present": true,
+      "hit": true,
+      "in_lineage": 3,
+      "n_types": 5,
+      "enrichment": 3.7
+    },
+    {
+      "tf": "LEF1",
+      "lineage": "Tcell",
+      "present": true,
+      "hit": true,
+      "in_lineage": 3,
+      "n_types": 5,
+      "enrichment": 3.7
+    },
+    {
+      "tf": "TBX21",
+      "lineage": "Tcell",
+      "present": true,
+      "hit": false,
+      "in_lineage": 0,
+      "n_types": 1,
+      "enrichment": 0.0
+    },
+    {
+      "tf": "FOXP3",
+      "lineage": "Tcell",
+      "present": true,
+      "hit": true,
+      "in_lineage": 1,
+      "n_types": 1,
+      "enrichment": 6.2
+    },
+    {
+      "tf": "BCL11B",
+      "lineage": "Tcell",
+      "present": true,
+      "hit": false,
+      "in_lineage": 0,
+      "n_types": 1,
+      "enrichment": 0.0
+    },
+    {
+      "tf": "GATA1",
+      "lineage": "erythroid",
+      "present": true,
+      "hit": true,
+      "in_lineage": 1,
+      "n_types": 1,
+      "enrichment": 29.8
+    },
+    {
+      "tf": "KLF1",
+      "lineage": "erythroid",
+      "present": true,
+      "hit": true,
+      "in_lineage": 4,
+      "n_types": 4,
+      "enrichment": 29.8
+    },
+    {
+      "tf": "TAL1",
+      "lineage": "erythroid",
+      "present": false
+    },
+    {
+      "tf": "NFE2",
+      "lineage": "erythroid",
+      "present": true,
+      "hit": true,
+      "in_lineage": 1,
+      "n_types": 1,
+      "enrichment": 29.8
+    },
+    {
+      "tf": "ERG",
+      "lineage": "endothelial",
+      "present": true,
+      "hit": true,
+      "in_lineage": 9,
+      "n_types": 9,
+      "enrichment": 11.9
+    },
+    {
+      "tf": "FLI1",
+      "lineage": "endothelial",
+      "present": true,
+      "hit": true,
+      "in_lineage": 6,
+      "n_types": 12,
+      "enrichment": 6.0
+    },
+    {
+      "tf": "SOX17",
+      "lineage": "endothelial",
+      "present": false
+    },
+    {
+      "tf": "SOX18",
+      "lineage": "endothelial",
+      "present": true,
+      "hit": true,
+      "in_lineage": 1,
+      "n_types": 1,
+      "enrichment": 11.9
+    }
+  ]
+}

@@ -69,6 +69,17 @@ def scorecard():
             dict(random=s["random_pair_baseline"]), "recall>=0.6 & >=20x over random",
             "recovers documented inborn-error-of-metabolism biomarkers (clinical ground truth)")
 
+    # 5) Cell-type identity recovery (Phase 1 — the populated emask encodes real lineage biology)
+    c = _load("celltype_identity_validation.json")
+    if c:
+        s = c["summary"]
+        add("celltype_identity_recovery",
+            (s["recall"] or 0) >= 0.6 and (s["median_enrichment"] or 0) >= 2
+            and (s["recall_over_random"] or 0) >= 2,
+            dict(recall=s["recall"], enrichment=s["median_enrichment"], coverage=s["coverage"]),
+            dict(random=s["random_baseline"]), "recall>=0.6 & enrich>=2x & >=2x over random",
+            "populated emask recovers cell-type-lineage master TFs (Phase 1)")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
