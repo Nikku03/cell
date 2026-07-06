@@ -144,17 +144,28 @@ cells.append(code(
 ))
 
 cells.append(md(
-    "## 6 · Tahoe-100M (Arc Institute) — large drug-perturbation corpus (subset)",
-    "**Gated:** needs a HuggingFace token (`huggingface-cli login`). Full set is 100s of GB — fetch one plate."))
+    "## 6 · Tahoe-100M (Arc Institute) — large drug-perturbation corpus (OPTIONAL, subset)",
+    "**Gated + huge (100s of GB).** Needs a HuggingFace token. Steps: (a) make an HF account, (b) accept the",
+    "dataset terms at huggingface.co/datasets/arcinstitute/Tahoe-100M if prompted, (c) create a **Read** token",
+    "at huggingface.co/settings/tokens, (d) add it as a Colab **secret** named `HF_TOKEN` (🔑 icon, enable",
+    "Notebook access). Then this cell reads it and pulls only a small subset."))
 cells.append(code(
     "pipi('huggingface_hub')",
-    "from huggingface_hub import snapshot_download",
-    "dest=DATA/'tahoe100m'; dest.mkdir(parents=True, exist_ok=True)",
-    "# set HF_TOKEN in the environment first. allow_patterns limits to a single shard/plate to stay small.",
+    "from huggingface_hub import snapshot_download, list_repo_files",
+    "import os",
+    "# read the token from the Colab secret named HF_TOKEN (preferred), else set it manually.",
     "try:",
-    "    snapshot_download(repo_id='arcinstitute/Tahoe-100M', repo_type='dataset',",
-    "        local_dir=str(dest), allow_patterns=['*plate1*','README*'])",
-    "except Exception as e: print('Tahoe needs HF auth / correct shard pattern:', e)",
+    "    from google.colab import userdata; os.environ['HF_TOKEN'] = userdata.get('HF_TOKEN')",
+    "except Exception: pass   # fallback: os.environ['HF_TOKEN'] = 'hf_...'  (avoid hardcoding in shared notebooks)",
+    "tok = os.environ.get('HF_TOKEN')",
+    "assert tok, 'No HF_TOKEN found — add it as a Colab secret (key icon) and enable notebook access.'",
+    "dest = DATA/'tahoe100m'; dest.mkdir(parents=True, exist_ok=True)",
+    "# 1) inspect the file list first, then pick a SMALL subset (never the whole 100s of GB):",
+    "files = list_repo_files('arcinstitute/Tahoe-100M', repo_type='dataset', token=tok)",
+    "print(f'{len(files)} files; examples:', files[:20])",
+    "# 2) edit allow_patterns to match ONE real shard from the list above, then fetch:",
+    "snapshot_download(repo_id='arcinstitute/Tahoe-100M', repo_type='dataset', token=tok,",
+    "    local_dir=str(dest), allow_patterns=['README*'])  # e.g. add one '*.parquet' shard pattern",
 ))
 
 cells.append(md(
