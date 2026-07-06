@@ -81,18 +81,27 @@ def build_signature_library(lfc, cols, pert_of_row, name_set, rows=None):
     lib={g: lfc[r].mean(0) for g,r in idx.items() if r}
     return lib, list(cols)
 
-def signature_match(query_sig, lib, lib_cols, M):
-    """Match the query signature to each library gene's signature (cosine). The disease phenotype most
-    RESEMBLES the perturbation that caused it (CMap connectivity) -> gene_idx: similarity."""
+def signature_match(query_sig, lib, lib_cols, M, metric="rank"):
+    """Match the query signature to each library gene's signature. metric='cosine' (magnitude) or 'rank'
+    (Spearman-like: rank-transform both, robust to LINCS magnitude noise -- CMap-style). The disease phenotype
+    most RESEMBLES the perturbation that caused it -> gene_idx: similarity."""
     if not lib: return {}
-    q=np.array([float(query_sig.get(g,0.0)) for g in lib_cols]); nq=np.linalg.norm(q)
-    if nq==0: return {}
+    q=np.array([float(query_sig.get(g,0.0)) for g in lib_cols])
+    if np.linalg.norm(q)==0: return {}
+    if metric=="rank":
+        from scipy.stats import rankdata
+        q=rankdata(q); q=q-q.mean()
+    nq=np.linalg.norm(q)
     out={}
     for g,vec in lib.items():
         i=M["ni"].get(g)
         if i is None: continue
-        nv=np.linalg.norm(vec)
-        if nv>0: out[i]=float(np.dot(vec,q)/(nv*nq))
+        v=vec
+        if metric=="rank":
+            from scipy.stats import rankdata as _rd
+            v=_rd(vec); v=v-v.mean()
+        nv=np.linalg.norm(v)
+        if nv>0 and nq>0: out[i]=float(np.dot(v,q)/(nv*nq))
     return out
 
 def _sig_array(sig, M):
@@ -141,15 +150,15 @@ def _z(d):
     v=np.array(list(d.values())); mu,sd=v.mean(),v.std()+1e-9
     return {k:(x-mu)/sd for k,x in d.items()}
 
-def reverse_infer(signature, M=None, top=25, library=None, lib_cols=None,
+def reverse_infer(signature, M=None, top=25, library=None, lib_cols=None, sig_metric="rank",
                   w_mr=1.0, w_diff=0.6, w_casc=1.0, w_codep=0.8, w_sig=2.5, w_prior=0.3):
     """signature: {gene: signed_score}. If a LINCS `library` is given, signature-matching (CMap) is added as a
-    strong lens. -> ranked candidate causal genes with per-lens breakdown."""
+    strong lens (sig_metric 'rank'=robust or 'cosine'). -> ranked candidate causal genes with per-lens breakdown."""
     M=M or load_model(); s=_sig_array(signature,M)
     mr_signed=master_regulators(s,M)                          # compute ONCE (signed = direction)
     mr={g:abs(v) for g,v in mr_signed.items()}
     h=diffuse(s,M); diff={i:h[i] for i in np.argsort(-h)[:300]}
-    sigm=signature_match(signature, library, lib_cols, M) if library else {}   # CMap lens (strongest when present)
+    sigm=signature_match(signature, library, lib_cols, M, sig_metric) if library else {}   # CMap lens
     cands=set(mr)|set(diff)|set(sigm)
     casc=cascade_match(cands, s, M)
     cdp=codep_coherence(cands, s, M)                          # independent (co-essentiality) lens

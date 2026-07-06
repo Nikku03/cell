@@ -30,30 +30,30 @@ def main():
         if pert[i] not in seen: seen.add(pert[i]); test.append(i)
     test=test[:800]
     reg=M["regulon"]; is_tf=set(M["G"][i]["name"] for i in reg)
-    r_net=[]; r_full=[]; r_tf=[]; r_ntf=[]
+    r_cos=[]; r_rank=[]; r_tf=[]; r_ntf=[]
     for i in test:
         sig={syms[j]:float(lfc[i][j]) for j in range(len(syms)) if abs(lfc[i][j])>0.5}
         if len(sig)<20: continue
         gene=str(pert[i])
-        res_net=reverse_infer(sig, M, top=100)                                 # network-only
-        res_full=reverse_infer(sig, M, top=100, library=lib, lib_cols=lib_cols) # + signature matching
-        rn=next((k+1 for k,x in enumerate(res_net) if x["gene"]==gene), 999)
-        rf=next((k+1 for k,x in enumerate(res_full) if x["gene"]==gene), 999)
-        r_net.append(rn); r_full.append(rf); (r_tf if gene in is_tf else r_ntf).append(rf)
+        rc=reverse_infer(sig, M, top=100, library=lib, lib_cols=lib_cols, sig_metric="cosine")
+        rr=reverse_infer(sig, M, top=100, library=lib, lib_cols=lib_cols, sig_metric="rank")
+        rankc=next((k+1 for k,x in enumerate(rc) if x["gene"]==gene), 999)
+        rankr=next((k+1 for k,x in enumerate(rr) if x["gene"]==gene), 999)
+        r_cos.append(rankc); r_rank.append(rankr); (r_tf if gene in is_tf else r_ntf).append(rankr)
     def rec(a,k): return round(float((np.array(a)<=k).mean()),3) if len(a) else None
-    res=dict(n_tested=len(r_full), random_recall_10=round(10/N,5),
-             network_only=dict(recall_1=rec(r_net,1), recall_10=rec(r_net,10), recall_30=rec(r_net,30), median_rank=int(np.median(r_net))),
-             with_signature_matching=dict(recall_1=rec(r_full,1), recall_10=rec(r_full,10), recall_30=rec(r_full,30), median_rank=int(np.median(r_full))),
+    res=dict(n_tested=len(r_rank), random_recall_10=round(10/N,5),
+             signature_cosine=dict(recall_1=rec(r_cos,1), recall_10=rec(r_cos,10), recall_30=rec(r_cos,30), median_rank=int(np.median(r_cos))),
+             signature_rank=dict(recall_1=rec(r_rank,1), recall_10=rec(r_rank,10), recall_30=rec(r_rank,30), median_rank=int(np.median(r_rank))),
              tf_recall_10=rec(r_tf,10), nontf_recall_10=rec(r_ntf,10), n_tf=len(r_tf), n_nontf=len(r_ntf))
     json.dump(res, open(OUT/"lincs_reverse_test.json","w"))
-    rn=res["network_only"]; rf=res["with_signature_matching"]
+    rc=res["signature_cosine"]; rr=res["signature_rank"]
     print(f"LINCS REVERSE TEST — recover perturbed gene from REAL signature ({res['n_tested']} genes, random recall@10 = {res['random_recall_10']})")
-    print(f"  NETWORK ONLY        : recall@10 {rn['recall_10']} | recall@30 {rn['recall_30']} | median rank {rn['median_rank']}")
-    print(f"  + SIGNATURE MATCHING: recall@10 {rf['recall_10']} | recall@30 {rf['recall_30']} | median rank {rf['median_rank']}")
-    print(f"  by type (full): TF recall@10 {res['tf_recall_10']} (n={res['n_tf']}) | non-TF {res['nontf_recall_10']} (n={res['n_nontf']})")
-    v=rf['recall_10'] or 0; base=res['random_recall_10']
-    print(f"  >>> signature matching: {round(v/base) if base else '?'}x over random "
-          f"({'strong recovery' if v>0.15 else 'improved but still modest' if v>0.05 else 'still weak — need cleaner perturbation data / learned retrieval'})")
+    print(f"  SIGNATURE (cosine)      : recall@10 {rc['recall_10']} | recall@30 {rc['recall_30']} | recall@1 {rc['recall_1']}")
+    print(f"  SIGNATURE (rank, robust): recall@10 {rr['recall_10']} | recall@30 {rr['recall_30']} | recall@1 {rr['recall_1']}")
+    print(f"  by type (rank): TF recall@10 {res['tf_recall_10']} (n={res['n_tf']}) | non-TF {res['nontf_recall_10']} (n={res['n_nontf']})")
+    best=max(rc['recall_10'] or 0, rr['recall_10'] or 0); base=res['random_recall_10']
+    print(f"  >>> best recall@10 {best} = {round(best/base) if base else '?'}x over random "
+          f"({'strong' if best>0.2 else 'good' if best>0.12 else 'modest'})")
 
 if __name__=="__main__":
     main()
