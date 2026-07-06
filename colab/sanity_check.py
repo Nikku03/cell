@@ -78,11 +78,15 @@ def main():
         try: return {n.name for node in ast.walk(ast.parse(open(COLAB/fname).read()))
                      if isinstance(node,(ast.FunctionDef,ast.Assign)) for n in ([node] if isinstance(node,ast.FunctionDef) else node.targets) if hasattr(n,'name') or isinstance(n,ast.Name)}
         except Exception: return set()
-    flux_syms={n.name for node in ast.walk(ast.parse(open(COLAB/"compute_flux.py").read())) if isinstance(node,ast.FunctionDef) for n in [node]}
+    def defs(fn):  # top-level function names defined in a module
+        try: return {n.name for n in ast.walk(ast.parse(open(COLAB/fn).read())) if isinstance(n,ast.FunctionDef)}
+        except Exception: return set()
+    # cross-module symbols may come from compute_flux OR compute_reverse_inference (the two shared libraries)
+    provider_syms=defs("compute_flux.py")|defs("compute_reverse_inference.py")
     imp_ok=True
     for fname,needs in IMPORTS:
-        miss=[s for s in needs if s not in flux_syms]
-        if miss: print(f"[2] import: {fname} needs {miss} from compute_flux -> MISSING"); imp_ok=False; ok=False
+        miss=[s for s in needs if s not in provider_syms]
+        if miss: print(f"[2] import: {fname} needs {miss} -> MISSING from provider modules"); imp_ok=False; ok=False
     print(f"[2] cross-imports: {'PASS' if imp_ok else 'FAIL'}")
     # 3. order
     ord_ok=True

@@ -81,6 +81,34 @@ def build_signature_library(lfc, cols, pert_of_row, name_set, rows=None):
     lib={g: lfc[r].mean(0) for g,r in idx.items() if r}
     return lib, list(cols)
 
+def build_signature_index(lfc, cols, pert_of_row, name_set, rows=None, rank=True):
+    """keep INDIVIDUAL library signatures (not per-gene averages) + their gene labels, for k-NN retrieval.
+    Rank-transforms each signature (robust). Returns (matrix[n_sig,978] normalized, gene_labels, cols)."""
+    it = rows if rows is not None else range(len(pert_of_row))
+    idx=[i for i in it if str(pert_of_row[i]) in name_set]
+    X=lfc[idx].astype("float32"); labels=[str(pert_of_row[i]) for i in idx]
+    if rank:
+        from scipy.stats import rankdata
+        X=np.vstack([rankdata(r) for r in X]).astype("float32")
+    X=X-X.mean(1,keepdims=True); X=X/(np.linalg.norm(X,axis=1,keepdims=True)+1e-9)
+    return X, labels, list(cols)
+
+def knn_signature_match(query_sig, index, M, k=40, rank=True):
+    """match the query to its NEAREST individual library signatures and VOTE by gene (sharper than centroid)."""
+    X,labels,cols=index
+    q=np.array([float(query_sig.get(g,0.0)) for g in cols],dtype="float32")
+    if np.linalg.norm(q)==0: return {}
+    if rank:
+        from scipy.stats import rankdata; q=rankdata(q).astype("float32")
+    q=q-q.mean(); q=q/(np.linalg.norm(q)+1e-9)
+    sims=X@q                                                 # cosine to every library signature (BLAS)
+    top=np.argpartition(-sims, min(k,len(sims)-1))[:k]
+    out={}
+    for j in top:
+        i=M["ni"].get(labels[j])
+        if i is not None and sims[j]>0: out[i]=out.get(i,0.0)+float(sims[j])
+    return out
+
 def signature_match(query_sig, lib, lib_cols, M, metric="rank"):
     """Match the query signature to each library gene's signature. metric='cosine' (magnitude) or 'rank'
     (Spearman-like: rank-transform both, robust to LINCS magnitude noise -- CMap-style). The disease phenotype
@@ -150,15 +178,17 @@ def _z(d):
     v=np.array(list(d.values())); mu,sd=v.mean(),v.std()+1e-9
     return {k:(x-mu)/sd for k,x in d.items()}
 
-def reverse_infer(signature, M=None, top=25, library=None, lib_cols=None, sig_metric="rank",
+def reverse_infer(signature, M=None, top=25, library=None, lib_cols=None, index=None, sig_metric="rank",
                   w_mr=1.0, w_diff=0.6, w_casc=1.0, w_codep=0.8, w_sig=2.5, w_prior=0.3):
-    """signature: {gene: signed_score}. If a LINCS `library` is given, signature-matching (CMap) is added as a
-    strong lens (sig_metric 'rank'=robust or 'cosine'). -> ranked candidate causal genes with per-lens breakdown."""
+    """signature: {gene: signed_score}. Signature-matching lens: k-NN over `index` (sharpest) if given, else
+    centroid `library` (CMap). -> ranked candidate causal genes with per-lens breakdown."""
     M=M or load_model(); s=_sig_array(signature,M)
     mr_signed=master_regulators(s,M)                          # compute ONCE (signed = direction)
     mr={g:abs(v) for g,v in mr_signed.items()}
     h=diffuse(s,M); diff={i:h[i] for i in np.argsort(-h)[:300]}
-    sigm=signature_match(signature, library, lib_cols, M, sig_metric) if library else {}   # CMap lens
+    if index is not None: sigm=knn_signature_match(signature, index, M)         # k-NN retrieval (sharpest)
+    elif library: sigm=signature_match(signature, library, lib_cols, M, sig_metric)  # centroid CMap
+    else: sigm={}
     cands=set(mr)|set(diff)|set(sigm)
     casc=cascade_match(cands, s, M)
     cdp=codep_coherence(cands, s, M)                          # independent (co-essentiality) lens
