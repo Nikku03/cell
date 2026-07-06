@@ -1,6 +1,6 @@
 {
-  "n_pass": 6,
-  "n_total": 6,
+  "n_pass": 7,
+  "n_total": 7,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -80,6 +80,20 @@
       },
       "bar": "recall>=0.6 & enrich>=2x & >=2x over random",
       "detail": "populated emask recovers cell-type-lineage master TFs (Phase 1)"
+    },
+    {
+      "test": "tissue_communication_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.812,
+        "context_recall": 0.562,
+        "lift": 106.0
+      },
+      "baseline": {
+        "random": 0.0077
+      },
+      "bar": "recall>=0.6 & >=20x over random",
+      "detail": "tissue model recovers textbook cell-cell signaling axes in the right cells"
     }
   ],
   "tests": [
@@ -161,6 +175,20 @@
       },
       "bar": "recall>=0.6 & enrich>=2x & >=2x over random",
       "detail": "populated emask recovers cell-type-lineage master TFs (Phase 1)"
+    },
+    {
+      "test": "tissue_communication_recovery",
+      "passed": true,
+      "value": {
+        "recall": 0.812,
+        "context_recall": 0.562,
+        "lift": 106.0
+      },
+      "baseline": {
+        "random": 0.0077
+      },
+      "bar": "recall>=0.6 & >=20x over random",
+      "detail": "tissue model recovers textbook cell-cell signaling axes in the right cells"
     }
   ]
 }

@@ -80,6 +80,16 @@ def scorecard():
             dict(random=s["random_baseline"]), "recall>=0.6 & enrich>=2x & >=2x over random",
             "populated emask recovers cell-type-lineage master TFs (Phase 1)")
 
+    # 6) Tissue layer — cell-cell communication recovery
+    t = _load("tissue_communication_validation.json")
+    if t:
+        s = t["summary"]
+        add("tissue_communication_recovery",
+            (s["recall"] or 0) >= 0.6 and (s["recall_over_random"] or 0) >= 20,
+            dict(recall=s["recall"], context_recall=s["context_recall"], lift=s["recall_over_random"]),
+            dict(random=s["random_baseline"]), "recall>=0.6 & >=20x over random",
+            "tissue model recovers textbook cell-cell signaling axes in the right cells")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
