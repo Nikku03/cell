@@ -90,12 +90,32 @@ reprogramming recipes** (experimentally-validated master-TF sets that convert on
   to fully settle (pluripotency is a deep basin), and iPSC→neuron recovers ASCL2 (a paralog) instead of
   ASCL1. Topological, not kinetic; a recovered factor is a model-consistent hypothesis, not proof.
 
+## Interactome-robustness (Robust axis)
+
+The human interactome is incomplete (Menche 2015) and this TF network is **83% activating / 17% repressing**
+(45% of nodes have zero repressive input — curated regulatory DBs under-annotate repression). A prediction
+that only holds on the exact edge set is fragile. `bootstrap_stability()` resamples the network (drop 15% of
+edges, K resamples), re-runs the reversal, and scores each driver by selection frequency; `flag_by_stability()`
+splits robust from fragile.
+
+**Result (`cardiac→iPSC`, drop 15% ×6):** the recipe factors POU5F1/SOX2/KLF4/MYC survive at **stability 1.0**;
+the passenger MEF2C at **0.33** and is flagged fragile. The bootstrap cleanly separates real drivers from
+passengers (recipe 1.0 vs passenger 0.33), so every recovered driver now carries an honest stability score
+instead of a bare point prediction.
+
+**A tested negative (kept for honesty):** we also tried fixing the activation-dominated Boolean dynamics with
+absolute/degree thresholds. A positive threshold reduces the random-seed ON-collapse only marginally
+(71%→63%) and **regresses reprogramming recall (1.00→0.72)** — because any rule that suppresses the activation
+runaway also suppresses the legitimate master→target activation reversal depends on. The activation-dominance
+is a **data-completeness property**, not a dynamics-rule bug, so no threshold change was committed.
+
 ## Honest scope
 - The synthetic test validates the **algorithm's correctness**; the real-model test shows it **recovers
-  experimentally-validated reprogramming recipes** on the human TF network (6.2× over random). For a disease
-  application the analogous claim is: given a disease attractor and a healthy attractor, it proposes the
-  driver TFs to flip — and where ground truth exists (reprogramming), that mechanism recovers the known
-  answer. The real number is no longer pending.
+  experimentally-validated reprogramming recipes** on the human TF network (6.2× over random), and the
+  bootstrap adds a **robustness/confidence flag** per driver. For a disease application the analogous claim
+  is: given a disease attractor and a healthy attractor, it proposes the driver TFs to flip (with a stability
+  score) — and where ground truth exists (reprogramming), that mechanism recovers the known answer. The real
+  number is no longer pending.
 - Synthetic GRNs have clean master→module structure; real regulatory networks are messier, so real-world
   precision will be lower.
 - Topological, not kinetic. "Reverse the state" is a wet-lab-testable hypothesis, **not** a validated cure

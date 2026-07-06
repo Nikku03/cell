@@ -24,6 +24,7 @@ fast) — kinetics is the model's acknowledged wall. Output is a ranked, wet-lab
 hypothesis, not a validated cure.
 """
 import json
+import random
 from collections import defaultdict
 from pathlib import Path
 
@@ -173,6 +174,47 @@ def classify_intervention(step, out_deg, target_active):
     if step.get("is_hub"):
         return "root_cause_driver"          # high out-degree master whose flip cascades
     return "local_corrector"
+
+
+# ---------------------------------------------------------------------------
+# Robustness to the incomplete/noisy interactome (Menche 2015): the human
+# interactome is incomplete and the reg network is 83% activating (under-annotated
+# for repression). A prediction that only holds on the exact edge set is fragile.
+# Resample the network (drop/add a fraction of edges), re-run the reversal, and
+# score each driver by how often it survives -> a stability/confidence flag.
+# ---------------------------------------------------------------------------
+def resample_edges(edges, drop_p, rng, add_p=0.0, node_pool=None):
+    """Drop a `drop_p` fraction of edges; optionally add `add_p`*|E| random edges (the interactome is both
+    incomplete AND noisy). Returns a resampled edge list."""
+    keep = [e for e in edges if rng.random() > drop_p]
+    if add_p > 0 and node_pool:
+        for _ in range(int(add_p * len(edges))):
+            a = rng.choice(node_pool); b = rng.choice(node_pool)
+            if a != b:
+                keep.append((a, b, rng.choice([1, -1])))
+    return keep
+
+
+def bootstrap_stability(run_fn, edges, K=8, drop_p=0.15, add_p=0.0, rng_seed=0):
+    """Engine-agnostic robustness wrapper. `run_fn(edges) -> iterable of predicted items` does the full
+    prediction on a given edge list; we resample the network K times and return {item: selection_frequency}.
+    A frequency near 1.0 = robust to interactome incompleteness; low = fragile, should be flagged."""
+    rng = random.Random(rng_seed)
+    node_pool = list({e[0] for e in edges} | {e[1] for e in edges})
+    freq = defaultdict(int)
+    for _ in range(K):
+        keep = resample_edges(edges, drop_p, rng, add_p, node_pool)
+        for item in set(run_fn(keep)):
+            freq[item] += 1
+    return {k: v / K for k, v in freq.items()}
+
+
+def flag_by_stability(items, stability, robust_thresh=0.6):
+    """Split predicted items into robust (stability >= threshold) and fragile (flagged)."""
+    robust = [i for i in items if stability.get(i, 0.0) >= robust_thresh]
+    fragile = [i for i in items if stability.get(i, 0.0) < robust_thresh]
+    return dict(robust=robust, fragile=fragile,
+                stability={i: round(stability.get(i, 0.0), 3) for i in items})
 
 
 # ---------------------------------------------------------------------------

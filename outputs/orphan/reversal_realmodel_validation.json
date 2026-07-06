@@ -261,5 +261,29 @@
         ]
       }
     ]
-  }
+  },
+  "bootstrap_robustness": [
+    {
+      "pair": "cardiac->iPSC",
+      "recovered": [
+        "KLF4",
+        "MEF2C",
+        "MYC",
+        "POU5F1",
+        "SOX2"
+      ],
+      "recipe_stability": 1.0,
+      "passenger_stability": 0.333,
+      "robust": [
+        "KLF4",
+        "MYC",
+        "POU5F1",
+        "SOX2"
+      ],
+      "fragile": [
+        "MEF2C"
+      ],
+      "separates": true
+    }
+  ]
 }

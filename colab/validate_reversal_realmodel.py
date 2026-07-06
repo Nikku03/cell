@@ -26,7 +26,8 @@ import json, random
 from pathlib import Path
 from statistics import mean
 
-from disease_to_reversal import build_incoming, settle, active, control_drivers, transition_setdiff
+from disease_to_reversal import (build_incoming, settle, active, control_drivers, transition_setdiff,
+                                  bootstrap_stability, flag_by_stability)
 
 OUT = Path("outputs/orphan")
 
@@ -126,6 +127,38 @@ def test_reprogramming(C, states, pairs, budget=6, cand_cap=40):
     return dict(summary=summary, pairs=rows)
 
 
+def test_bootstrap(C, pairs=(("cardiac", "iPSC"),), K=6, drop_p=0.15):
+    """Robustness to the incomplete interactome: resample the network (drop 15% edges) K times, re-run the
+    reprogramming recovery, and score each driver by selection frequency. True recipe factors should stay
+    stable; passengers should be flagged as fragile."""
+    edges = C["edges"]; idx = C["idx"]; nm = C["name"]
+    out = []
+    for A, B in pairs:
+        def run_fn(elist, A=A, B=B):
+            W, od, nodes = build_incoming(elist); order = sorted(nodes)
+            def lin(rname):
+                on = [idx[f] for f in RECIPES[rname] if f in idx]
+                _, a = settle({n: -1 for n in order}, W, order, clamp={n: 1 for n in on}); return a
+            src, tgt = lin(A), lin(B); diff = src ^ tgt
+            cand = set(sorted(diff, key=lambda n: -od.get(n, 0))[:15]) | {idx[f] for f in RECIPES[B] if idx.get(f) in diff}
+            start = {n: (1 if n in src else -1) for n in order}
+            res = control_drivers(start, tgt, W, order, budget=5, candidates=cand, out_deg=od)
+            return [nm[s["gene"]] for s in res["path"]]
+        full = run_fn(edges)
+        stab = bootstrap_stability(run_fn, edges, K=K, drop_p=drop_p)
+        recipe = set(RECIPES[B])
+        rec_stab = [stab.get(g, 0) for g in full if g in recipe]
+        psg_stab = [stab.get(g, 0) for g in full if g not in recipe]
+        flagged = flag_by_stability(full, stab)
+        out.append(dict(pair=f"{A}->{B}", recovered=sorted(full),
+                        recipe_stability=round(mean(rec_stab), 3) if rec_stab else None,
+                        passenger_stability=round(mean(psg_stab), 3) if psg_stab else None,
+                        robust=sorted(flagged["robust"]), fragile=sorted(flagged["fragile"]),
+                        separates=(bool(rec_stab) and bool(psg_stab)
+                                   and mean(rec_stab) - mean(psg_stab) >= 0.3)))
+    return out
+
+
 def main():
     C = load_core()
     print("=" * 80)
@@ -158,9 +191,15 @@ def main():
         print(f"      {r['pair']:20} reached={str(r['reached']):5} recall={r['recipe_recall']} "
               f"enrich={r['enrichment']} path={r['path_len']} recovered={r['recovered'][:6]}")
 
+    BS = test_bootstrap(C)
+    print(f"\n[D] Interactome-robustness (drop 15% of edges, {6} resamples):")
+    for b in BS:
+        print(f"    {b['pair']:16} recipe-factor stability={b['recipe_stability']} vs "
+              f"passenger stability={b['passenger_stability']} | robust={b['robust']} fragile={b['fragile']}")
+
     payload = dict(core=dict(n_tf=len(C["order"]), n_edges=len(C["edges"]),
                              provenance="tf_core.json from user-provided cell_explorer.html"),
-                   landscape=A, coherence=coh, reprogramming=R)
+                   landscape=A, coherence=coh, reprogramming=R, bootstrap_robustness=BS)
     json.dump(payload, open(OUT / "reversal_realmodel_validation.json", "w"), indent=2)
     print("\n-> outputs/orphan/reversal_realmodel_validation.json")
     return payload
