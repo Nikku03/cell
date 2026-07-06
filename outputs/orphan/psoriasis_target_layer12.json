@@ -1,0 +1,108 @@
+{
+  "ok": true,
+  "disease": "psoriasis (IL23/IL17 axis)",
+  "apex": [
+    "IL23A",
+    "IL12B"
+  ],
+  "readout": [
+    "IL17A",
+    "IL17F",
+    "IL22",
+    "CCL20",
+    "IL21"
+  ],
+  "readout_on_disease": [
+    "IL17A",
+    "IL17F",
+    "IL22",
+    "CCL20",
+    "IL21"
+  ],
+  "n_nodes": 39,
+  "alpha": 0.55,
+  "khop": 5,
+  "candidates": [
+    {
+      "gene": "IL23R",
+      "idx": 6369,
+      "influence": 0.031,
+      "disable": 1.0,
+      "activate": 0.0,
+      "rescue": 1.0,
+      "best_dir": "disable",
+      "druggable": true,
+      "drug_actions": []
+    },
+    {
+      "gene": "IL23A",
+      "idx": 6368,
+      "influence": 0.017,
+      "disable": 1.0,
+      "activate": 0.0,
+      "rescue": 1.0,
+      "best_dir": "disable",
+      "druggable": true,
+      "drug_actions": [
+        "inhibitor"
+      ]
+    },
+    {
+      "gene": "STAT4",
+      "idx": 13545,
+      "influence": 0.101,
+      "disable": 0.6,
+      "activate": 0.0,
+      "rescue": 0.6,
+      "best_dir": "disable",
+      "druggable": true,
+      "drug_actions": []
+    },
+    {
+      "gene": "STAT3",
+      "idx": 13544,
+      "influence": 0.125,
+      "disable": 0.2,
+      "activate": 0.0,
+      "rescue": 0.2,
+      "best_dir": "disable",
+      "druggable": true,
+      "drug_actions": []
+    },
+    {
+      "gene": "STAT1",
+      "idx": 13542,
+      "influence": 0.045,
+      "disable": 0.0,
+      "activate": 0.2,
+      "rescue": 0.2,
+      "best_dir": "activate",
+      "druggable": true,
+      "drug_actions": []
+    },
+    {
+      "gene": "IRF4",
+      "idx": 6521,
+      "influence": 0.113,
+      "disable": 0.0,
+      "activate": 0.0,
+      "rescue": 0.0,
+      "best_dir": "disable",
+      "druggable": false,
+      "drug_actions": []
+    },
+    {
+      "gene": "JAK2",
+      "idx": 6628,
+      "influence": 0.012,
+      "disable": 0.0,
+      "activate": 0.0,
+      "rescue": 0.0,
+      "best_dir": "disable",
+      "druggable": true,
+      "drug_actions": [
+        "inhibitor"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "summary": {
+    "n_diseases": 2,
+    "n_ran": 2,
+    "n_recovered": 2,
+    "recovery_rate": 1.0
+  },
+  "diseases": [
+    {
+      "disease": "psoriasis (IL23/IL17)",
+      "ok": true,
+      "n_readout": 5,
+      "top_rescuers": [
+        [
+          "IL23A",
+          1.0
+        ],
+        [
+          "IL23R",
+          1.0
+        ],
+        [
+          "STAT4",
+          0.6
+        ],
+        [
+          "JAK2",
+          0.4
+        ],
+        [
+          "STAT3",
+          0.2
+        ],
+        [
+          "IL12B",
+          0.0
+        ]
+      ],
+      "strong_rescuers": [
+        "IL23A",
+        "IL23R",
+        "STAT4"
+      ],
+      "known_targets": [
+        "IL23A",
+        "IL23R",
+        "IL12B",
+        "IL17A",
+        "IL17RA",
+        "TNF"
+      ],
+      "recovered_known_target": true,
+      "hits": [
+        "IL23A",
+        "IL23R"
+      ],
+      "precision_strong": 0.667,
+      "random_label_baseline": 0.316
+    },
+    {
+      "disease": "atopic dermatitis (Type-2)",
+      "ok": true,
+      "n_readout": 5,
+      "top_rescuers": [
+        [
+          "IL4R",
+          1.0
+        ],
+        [
+          "IL13",
+          0.6
+        ],
+        [
+          "JAK1",
+          0.4
+        ],
+        [
+          "STAT6",
+          0.4
+        ],
+        [
+          "IL4",
+          0.0
+        ],
+        [
+          "JAK3",
+          0.0
+        ]
+      ],
+      "strong_rescuers": [
+        "IL4R",
+        "IL13"
+      ],
+      "known_targets": [
+        "IL4R",
+        "IL13",
+        "IL4",
+        "IL5",
+        "STAT6",
+        "TSLP"
+      ],
+      "recovered_known_target": true,
+      "hits": [
+        "IL4R",
+        "IL13"
+      ],
+      "precision_strong": 1.0,
+      "random_label_baseline": 0.5
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
-  "n_pass": 7,
-  "n_total": 7,
+  "n_pass": 8,
+  "n_total": 8,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -94,6 +94,23 @@
       },
       "bar": "recall>=0.6 & >=20x over random",
       "detail": "tissue model recovers textbook cell-cell signaling axes in the right cells"
+    },
+    {
+      "test": "disease_target_recovery",
+      "passed": true,
+      "value": {
+        "recovered": 2,
+        "ran": 2,
+        "rate": 1.0
+      },
+      "baseline": {
+        "random_label": [
+          0.316,
+          0.5
+        ]
+      },
+      "bar": "recover a known target as a top rescuer in every OOD disease & beat random-label baseline",
+      "detail": "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind"
     }
   ],
   "tests": [
@@ -189,6 +206,23 @@
       },
       "bar": "recall>=0.6 & >=20x over random",
       "detail": "tissue model recovers textbook cell-cell signaling axes in the right cells"
+    },
+    {
+      "test": "disease_target_recovery",
+      "passed": true,
+      "value": {
+        "recovered": 2,
+        "ran": 2,
+        "rate": 1.0
+      },
+      "baseline": {
+        "random_label": [
+          0.316,
+          0.5
+        ]
+      },
+      "bar": "recover a known target as a top rescuer in every OOD disease & beat random-label baseline",
+      "detail": "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind"
     }
   ]
 }

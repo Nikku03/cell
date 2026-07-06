@@ -90,6 +90,19 @@ def scorecard():
             dict(random=s["random_baseline"]), "recall>=0.6 & >=20x over random",
             "tissue model recovers textbook cell-cell signaling axes in the right cells")
 
+    # 7) Disease->target pipeline — recover a known drug target on OOD diseases (mechanism->intervention)
+    dt = _load("disease_target_validation.json")
+    if dt:
+        ran = [d for d in dt["diseases"] if d.get("ok")]
+        all_rec = len(ran) >= 2 and all(d["recovered_known_target"] for d in ran)
+        beats = all(d["precision_strong"] >= d["random_label_baseline"] for d in ran) if ran else False
+        add("disease_target_recovery", all_rec and beats,
+            dict(recovered=dt["summary"]["n_recovered"], ran=dt["summary"]["n_ran"],
+                 rate=dt["summary"]["recovery_rate"]),
+            dict(random_label=[d["random_label_baseline"] for d in ran]),
+            "recover a known target as a top rescuer in every OOD disease & beat random-label baseline",
+            "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
