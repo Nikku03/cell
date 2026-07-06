@@ -72,8 +72,8 @@ cells.append(md(
     "Skip unless you want the combinatorial (two-gene) screen. Replogle is already in `human_raw/`."))
 cells.append(code(
     "import urllib.request, json",
-    "have = (DATA/'human_raw/perturbseq_gwps_bulk.h5ad').exists()",
-    "print('Replogle Perturb-seq present:', have, '(RPE1 + genome-wide) -> set PERTURBSEQ_RPE1_URL to that path)')",
+    "have_replogle = (DATA/'human_raw/perturbseq_gwps_bulk.h5ad').exists()",
+    "print('Replogle Perturb-seq present:', have_replogle, '(RPE1 + genome-wide) -> set PERTURBSEQ_RPE1_URL to that path)')",
     "GET_NORMAN = False  # flip to True to also fetch the Norman 2019 combinatorial screen",
     "if GET_NORMAN:",
     "    rec=json.load(urllib.request.urlopen('https://zenodo.org/api/records/13350497'))",
