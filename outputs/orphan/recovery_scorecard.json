@@ -1,6 +1,6 @@
 {
-  "n_pass": 11,
-  "n_total": 11,
+  "n_pass": 12,
+  "n_total": 12,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -154,6 +154,27 @@
       },
       "bar": "no fitted correction beats CatPred-as-is on real measurements (optimal shrinkage=1.0)",
       "detail": "measured kcat kept as ground truth; the 'recalibration win' is a label-quality artifact, not adopted"
+    },
+    {
+      "test": "ddg_stability",
+      "passed": true,
+      "value": {
+        "pearson_r": 0.405,
+        "rmse": 1.59,
+        "anti_symmetry": 0.993
+      },
+      "baseline": {
+        "baselines": {
+          "DDGun": 0.404,
+          "DDGun3D": 0.432,
+          "ACDC-NN": 0.46,
+          "ThermoNet": 0.391,
+          "FoldX": 0.214,
+          "mCSM": 0.359
+        }
+      },
+      "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
+      "detail": "predicts mutation stability \u0394\u0394G from structure+sequence; keystone of the mutation->phenotype chain"
     }
   ],
   "tests": [
@@ -309,6 +330,27 @@
       },
       "bar": "no fitted correction beats CatPred-as-is on real measurements (optimal shrinkage=1.0)",
       "detail": "measured kcat kept as ground truth; the 'recalibration win' is a label-quality artifact, not adopted"
+    },
+    {
+      "test": "ddg_stability",
+      "passed": true,
+      "value": {
+        "pearson_r": 0.405,
+        "rmse": 1.59,
+        "anti_symmetry": 0.993
+      },
+      "baseline": {
+        "baselines": {
+          "DDGun": 0.404,
+          "DDGun3D": 0.432,
+          "ACDC-NN": 0.46,
+          "ThermoNet": 0.391,
+          "FoldX": 0.214,
+          "mCSM": 0.359
+        }
+      },
+      "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
+      "detail": "predicts mutation stability \u0394\u0394G from structure+sequence; keystone of the mutation->phenotype chain"
     }
   ]
 }

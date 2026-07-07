@@ -137,6 +137,16 @@ def scorecard():
             "no fitted correction beats CatPred-as-is on real measurements (optimal shrinkage=1.0)",
             "measured kcat kept as ground truth; the 'recalibration win' is a label-quality artifact, not adopted")
 
+    # 11) ΔΔG stability predictor — blind S669 benchmark, thermodynamically consistent
+    dg = _load("ddg_validation.json")
+    if dg:
+        s = dg["summary"]
+        add("ddg_stability", dg["passed"],
+            dict(pearson_r=s["pearson_r"], rmse=s["rmse_kcal_mol"], anti_symmetry=s["anti_symmetry_corr"]),
+            dict(baselines=dg.get("baselines_S669_abs_r")),
+            "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
+            "predicts mutation stability ΔΔG from structure+sequence; keystone of the mutation->phenotype chain")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
