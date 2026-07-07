@@ -47,5 +47,17 @@
       "auc": 0.749,
       "positive_rate": 0.078
     }
+  },
+  "perturbation": {
+    "direction": {
+      "n_test_edges": 9167,
+      "sign_accuracy": 0.8088,
+      "baseline": 0.5
+    },
+    "codependency": {
+      "n_sources": 126,
+      "auc": 0.5317,
+      "random_auc": 0.492
+    }
   }
 }

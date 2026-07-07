@@ -194,6 +194,94 @@ def node_function_eval(H, G, seed=0):
     return out
 
 
+# ---------------- Round 3: perturbation -> downstream effect predictor ----------------
+def directed_signed(D, n):
+    """directed signed out-adjacency from reg + sig (unknown sign -> +1). For perturbation propagation."""
+    rows, cols, vals = [], [], []
+    for e in D.get("reg", []) + D.get("sig", []):
+        s = 1.0 if (len(e) < 3 or e[2] >= 0) else -1.0
+        rows.append(e[0]); cols.append(e[1]); vals.append(s)
+    return sparse.csr_matrix((vals, (rows, cols)), shape=(n, n), dtype=np.float32)
+
+
+def perturb_downstream(seed_idx, W, alpha=0.5, hops=3):
+    """Signed propagation of a knockout from `seed_idx` through the directed signed network W (out-adjacency).
+    Returns a vector of net signed downstream effect on every gene. |effect| ranks the affected genes;
+    sign gives up/down. This answers: remove protein X -> what changes, and which way."""
+    n = W.shape[0]
+    v = np.zeros(n, np.float32)
+    cur = np.zeros(n, np.float32)
+    for s in np.atleast_1d(seed_idx):
+        cur[s] = -1.0                                     # knockout = remove the gene's activity
+    Wt = W.T.tocsr()                                      # to propagate along out-edges via matrix-vector
+    for _ in range(hops):
+        cur = alpha * (W.T @ cur)                         # effect flows source->target
+        v = v + cur
+    return v
+
+
+def validate_perturbation(D, n, W, seed=0, max_sources=400):
+    """Does knockout propagation predict DepMap CO-DEPENDENCY (an independent signal)? For each source gene
+    with >=3 codep partners, rank all genes by |downstream effect| and score recovery of its codep partners
+    (ROC-AUC) vs a degree-matched random baseline."""
+    from sklearn.metrics import roc_auc_score
+    rng = np.random.default_rng(seed)
+    codep = D.get("codep", {}) or {}
+    srcs = []
+    for k, lst in codep.items():
+        partners = [it[0] if isinstance(it, (list, tuple)) else it for it in lst]
+        partners = [p for p in partners if isinstance(p, int) and p != int(k)]
+        if len(partners) >= 3:
+            srcs.append((int(k), set(partners)))
+    rng.shuffle(srcs); srcs = srcs[:max_sources]
+    aucs, rand = [], []
+    for s, partners in srcs:
+        eff = np.abs(perturb_downstream(s, W))
+        eff[s] = 0.0
+        y = np.zeros(n, np.int8);
+        for p in partners:
+            if p < n: y[p] = 1
+        if y.sum() < 3 or eff.max() == 0:
+            continue
+        aucs.append(roc_auc_score(y, eff))
+        rand.append(roc_auc_score(y, rng.random(n)))
+    return dict(n_sources=len(aucs), auc=round(float(np.mean(aucs)), 4) if aucs else None,
+                random_auc=round(float(np.mean(rand)), 4) if rand else None)
+
+
+def validate_perturbation_direction(D, n, seed=0, test_frac=0.15):
+    """Honest directional test: hold out 15% of KNOWN-SIGN reg/sig edges, rebuild the network WITHOUT them,
+    propagate each source's knockout, and check whether the predicted downstream SIGN on the held-out target
+    matches biology (KO of an activator -> target DOWN; KO of a repressor -> target UP). Accuracy vs 0.5."""
+    rng = np.random.default_rng(seed)
+    signed = [(e[0], e[1], (1 if e[2] > 0 else -1)) for e in D.get("reg", []) + D.get("sig", [])
+              if len(e) > 2 and e[2] != 0]
+    signed = list({(a, b, s) for a, b, s in signed})
+    rng.shuffle(signed)
+    n_test = int(len(signed) * test_frac)
+    test = signed[:n_test]; train = signed[n_test:]
+    rows = [a for a, b, s in train]; cols = [b for a, b, s in train]; vals = [float(s) for a, b, s in train]
+    # add the unsigned edges (sign 0 -> +1) so the network stays connected
+    for e in D.get("reg", []) + D.get("sig", []):
+        if len(e) < 3 or e[2] == 0:
+            rows.append(e[0]); cols.append(e[1]); vals.append(1.0)
+    W = sparse.csr_matrix((vals, (rows, cols)), shape=(n, n), dtype=np.float32)
+    by_src = {}
+    for a, b, s in test:
+        by_src.setdefault(a, []).append((b, s))
+    correct = tot = 0
+    for src, tgts in by_src.items():
+        eff = perturb_downstream(src, W)
+        for b, s in tgts:
+            pred = eff[b]
+            if pred == 0:
+                continue
+            if np.sign(pred) == -s:                        # KO of activator(+) -> down(-); repressor(-) -> up(+)
+                correct += 1
+            tot += 1
+    return dict(n_test_edges=tot, sign_accuracy=round(correct / tot, 4) if tot else None, baseline=0.5)
+
+
 def main():
     D, G, name, idx = load_model()
     n = len(G)
@@ -216,8 +304,16 @@ def main():
             print(f"     {k:5} acc {v['accuracy']} (majority {v['majority_baseline']}, {v['n_classes']} classes)")
         else:
             print(f"     {k:5} AUC {v['auc']} (positive rate {v['positive_rate']})")
+    print("  [R3] perturbation -> downstream effect:")
+    W = directed_signed(D, n)
+    pdir = validate_perturbation_direction(D, n)
+    print(f"     downstream DIRECTION (held-out signed edges): sign-accuracy {pdir['sign_accuracy']} "
+          f"(baseline {pdir['baseline']}, {pdir['n_test_edges']} held-out targets)")
+    pert = validate_perturbation(D, n, W)
+    print(f"     (co-dependency recovery — different signal — AUC {pert['auc']} vs random {pert['random_auc']})")
     json.dump(dict(n_nodes=n, feat_dim=int(X.shape[1]), struct_emb_dim=int(Hs.shape[1]),
-                   link_prediction=res, node_function=fn),
+                   link_prediction=res, node_function=fn,
+                   perturbation=dict(direction=pdir, codependency=pert)),
               open(OUT / "cellgraph_metrics.json", "w"), indent=2)
     print("-> outputs/orphan/cellgraph_metrics.json")
     return dict(link_prediction=res, node_function=fn)
