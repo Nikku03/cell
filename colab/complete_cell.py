@@ -70,6 +70,31 @@ class CompleteCell:
                 if isinstance(i, int):
                     self.gene2path[i].append(pname)
 
+    # ---- apply the Phase-2 verified additions -> cell v2 (predicted edges tagged, facts untouched) ----
+    def apply_additions(self, path=f"{OUT}/cell_v2_additions.json"):
+        """fold the audit's VERIFIED additions into the graph: new PPI edges (co-complex implied) go into the
+        adjacency tagged predicted. Never touches measured/curated edges — additive only. Returns what changed."""
+        add = _load(path)
+        if not add:
+            return {"applied": False}
+        self.added_ppi = set()
+        n = 0
+        for e in add.get("ppi_edges_added", []):
+            ia, ib = self.idx.get(e["a"]), self.idx.get(e["b"])
+            if ia is None or ib is None:
+                continue
+            if ib not in self.ppi_adj[ia]:
+                self.ppi_adj[ia].add(ib); self.ppi_adj[ib].add(ia)
+                self.added_ppi.add((min(ia, ib), max(ia, ib))); n += 1
+        self.version = "v2"
+        return {"applied": True, "ppi_edges_added": n,
+                "kcat_corrections": add.get("counts", {}).get("kcat_corrections"),
+                "function_fills": add.get("counts", {}).get("function_fills")}
+
+    def is_predicted_ppi(self, a, b):
+        ia, ib = self._i(a), self._i(b)
+        return getattr(self, "added_ppi", set()) and (min(ia, ib), max(ia, ib)) in self.added_ppi
+
     # ---- resolve a gene arg to an index ----
     def _i(self, x):
         if isinstance(x, int):
