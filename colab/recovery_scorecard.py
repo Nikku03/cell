@@ -147,6 +147,17 @@ def scorecard():
             "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
             "predicts mutation stability ΔΔG from structure+sequence; keystone of the mutation->phenotype chain")
 
+    # 13) Enzyme-constrained flux — quantitative enzyme→flux (essentiality recovery + metabolic dominance)
+    ec = _load("ecflux_validation.json")
+    if ec:
+        e = ec["essentiality"]; d = ec["dominance"]
+        add("ecflux_quantitative", ec["passed"],
+            dict(ess_precision_lift=e["precision_lift"], ess_precision=e["precision"],
+                 buffered_at_50pct=d["buffered_at_50pct"], essential_at_KO=d["essential_fraction_at_KO"]),
+            dict(base_rate=e["base_rate"]),
+            "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
+            "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 

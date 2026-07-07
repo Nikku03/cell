@@ -1,6 +1,6 @@
 {
-  "n_pass": 12,
-  "n_total": 12,
+  "n_pass": 13,
+  "n_total": 13,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -175,6 +175,21 @@
       },
       "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
       "detail": "predicts mutation stability \u0394\u0394G from structure+sequence; keystone of the mutation->phenotype chain"
+    },
+    {
+      "test": "ecflux_quantitative",
+      "passed": true,
+      "value": {
+        "ess_precision_lift": 8.35,
+        "ess_precision": 0.819,
+        "buffered_at_50pct": 1.0,
+        "essential_at_KO": 0.253
+      },
+      "baseline": {
+        "base_rate": 0.098
+      },
+      "bar": "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
+      "detail": "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)"
     }
   ],
   "tests": [
@@ -351,6 +366,21 @@
       },
       "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
       "detail": "predicts mutation stability \u0394\u0394G from structure+sequence; keystone of the mutation->phenotype chain"
+    },
+    {
+      "test": "ecflux_quantitative",
+      "passed": true,
+      "value": {
+        "ess_precision_lift": 8.35,
+        "ess_precision": 0.819,
+        "buffered_at_50pct": 1.0,
+        "essential_at_KO": 0.253
+      },
+      "baseline": {
+        "base_rate": 0.098
+      },
+      "bar": "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
+      "detail": "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)"
     }
   ]
 }
