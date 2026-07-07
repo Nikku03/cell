@@ -1,6 +1,6 @@
 {
-  "n_pass": 19,
-  "n_total": 19,
+  "n_pass": 20,
+  "n_total": 20,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -274,6 +274,21 @@
       },
       "bar": "anomaly engine's completion proposals recover held-out real edges at triadic-closure AUC >= 0.75",
       "detail": "model checks itself: hard-constraint > measured > predicted; flags never auto-applied; completions validated leakage-free"
+    },
+    {
+      "test": "reasoned_variant",
+      "passed": true,
+      "value": {
+        "alphamissense_auc": 0.678,
+        "gain_over_chain": 0.157,
+        "sickle_cell_am": 0.227,
+        "blind_spot_caught": true
+      },
+      "baseline": {
+        "chain_baseline": 0.521
+      },
+      "bar": "AlphaMissense beats the stability chain by >=0.1 AUC AND the sickle-cell GOF blind spot is flagged (not trusted benign)",
+      "detail": "reliable+reasoned variant call: AlphaMissense drives accuracy, mechanism rungs explain, GOF pattern overrides false-benign (the sickle-cell lesson)"
     }
   ],
   "tests": [
@@ -549,6 +564,21 @@
       },
       "bar": "anomaly engine's completion proposals recover held-out real edges at triadic-closure AUC >= 0.75",
       "detail": "model checks itself: hard-constraint > measured > predicted; flags never auto-applied; completions validated leakage-free"
+    },
+    {
+      "test": "reasoned_variant",
+      "passed": true,
+      "value": {
+        "alphamissense_auc": 0.678,
+        "gain_over_chain": 0.157,
+        "sickle_cell_am": 0.227,
+        "blind_spot_caught": true
+      },
+      "baseline": {
+        "chain_baseline": 0.521
+      },
+      "bar": "AlphaMissense beats the stability chain by >=0.1 AUC AND the sickle-cell GOF blind spot is flagged (not trusted benign)",
+      "detail": "reliable+reasoned variant call: AlphaMissense drives accuracy, mechanism rungs explain, GOF pattern overrides false-benign (the sickle-cell lesson)"
     }
   ]
 }

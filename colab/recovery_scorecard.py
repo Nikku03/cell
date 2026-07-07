@@ -225,6 +225,17 @@ def scorecard():
             "anomaly engine's completion proposals recover held-out real edges at triadic-closure AUC >= 0.75",
             "model checks itself: hard-constraint > measured > predicted; flags never auto-applied; completions validated leakage-free")
 
+    # 18) Reasoned variant predictor — AlphaMissense (reliable) + mechanism reasoning + honest blind-spot flag
+    rvv = _load("reasoned_variant_validation.json")
+    if rvv:
+        s = rvv["summary"]
+        add("reasoned_variant", rvv["passed"],
+            dict(alphamissense_auc=s["alphamissense_auc_ourset"], gain_over_chain=s["reliability_gain"],
+                 sickle_cell_am=s["sickle_cell_alphamissense"], blind_spot_caught=s["sickle_cell_caught_by_reasoning"]),
+            dict(chain_baseline=s["chain_auc_baseline"]),
+            "AlphaMissense beats the stability chain by >=0.1 AUC AND the sickle-cell GOF blind spot is flagged (not trusted benign)",
+            "reliable+reasoned variant call: AlphaMissense drives accuracy, mechanism rungs explain, GOF pattern overrides false-benign (the sickle-cell lesson)")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 

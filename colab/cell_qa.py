@@ -30,6 +30,7 @@ class CellQA:
         self._ddg = None
         self._kin = None
         self._ctc = None
+        self._rv = None
         # regulatory edges as directed sets (fact layer)
         self._reg_out = {}; self._reg_in = {}
         for e in self.D.get("reg", []):
@@ -122,26 +123,26 @@ class CellQA:
                 f"conditioned on {cell_type}: only downstream genes expressed there are shown (emask gate)")
         return dict(question=q, predicted=out, cell_type=cell_type, note=note)
 
-    # ---- 3. mutation -> effect ----
+    # ---- 3. mutation -> effect (reliable + reasoned) ----
     def mutation_effect(self, gene, uniprot, pos, wt, mut):
+        """Reliable, reasoned variant call: AlphaMissense drives the call (function-aware, far beyond the old
+        stability-only ΔΔG coin-flip), mechanism rungs (ΔΔG, active-site) explain WHY, and a gain-of-function
+        pattern overrides a false-benign call (the sickle-cell lesson — no per-residue predictor sees aggregation)."""
         q = f"what happens when {gene} {wt}{pos}{mut} occurs?"
-        if self._ddg is None:
-            from ddg_predictor import DDGPredictor
-            mp = "outputs/orphan/ddg_model.pkl"
-            self._ddg = DDGPredictor(mp) if os.path.exists(mp) else False
-        if not self._ddg:
-            return self._abstain(q, "ΔΔG model not available")
         try:
-            pdb = self._ddg.alphafold_pdb(uniprot)
-            ddg, used = self._ddg.predict_from_structure(pdb, "A", pos, wt, mut)
+            if self._rv is None:
+                from reasoned_variant import ReasonedVariant
+                self._rv = ReasonedVariant()
+            r = self._rv.predict(gene, uniprot, pos, wt, mut)
         except Exception as e:
-            return self._abstain(q, f"structure/prediction failed: {e}")
-        # DDGun-tier reliability: only large |ΔΔG| is trustworthy per-call
-        conf = min(0.6, abs(ddg) / 8.0)      # capped — honest about per-call noise
-        call = "destabilizing" if ddg > 1.0 else ("stabilizing" if ddg < -1.0 else "near-neutral")
-        return dict(question=q, ddg_kcal_mol=round(float(ddg), 2), call=call, tier="predicted",
-                    confidence=round(conf, 3), provenance="ΔΔG predictor (DDGun-tier)",
-                    caveat="per-call noisy at r~0.4; trust the ranking of strong destabilizers, not single small calls")
+            return self._abstain(q, f"variant prediction failed: {e}")
+        return dict(question=q, call=r["call"], score=r.get("score"), source=r.get("source"),
+                    tier="predicted", confidence=r.get("confidence"),
+                    ml_blind_spot=r.get("ml_blind_spot"),
+                    mechanisms=r["reasoning"]["mechanisms"], why=r["reasoning"]["why"],
+                    provenance="AlphaMissense (call) + ΔΔG/active-site (mechanism) + GOF blind-spot guard",
+                    caveat="'being sure' is a field-wide limit: even AlphaMissense misses gain-of-function "
+                           "(sickle cell); on those the predictor flags 'possible ML blind spot', not benign")
 
     # ---- 4. drug -> interactions ----
     def drug_interactions(self, drug, k=8):
@@ -301,7 +302,7 @@ class CellQA:
 COVERAGE = {
     "what_binds":         dict(engine="CellGraph link (R-GCN/hybrid)", validated="PPI link AUC 0.89", tier="fact+prediction"),
     "knockout":           dict(engine="CellGraph perturbation",        validated="direction acc 0.81",  tier="prediction"),
-    "mutation_effect":    dict(engine="ΔΔG (ProteinMPNN+biophysical)",  validated="S669 r=0.47 (top-benchmark)", tier="prediction"),
+    "mutation_effect":    dict(engine="AlphaMissense + mechanism + GOF guard", validated="+0.16 over chain; flags sickle-cell blind spot", tier="prediction"),
     "drug_interactions":  dict(engine="CellGraph polypharmacology",    validated="drug AUC 0.80",       tier="fact+prediction"),
     "disease_target":     dict(engine="disease->target simulation",    validated="5/6 OOD diseases, 2.1x", tier="prediction"),
     "regulates":          dict(engine="regulatory network",           validated="curated edges",       tier="fact"),
