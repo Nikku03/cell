@@ -193,6 +193,17 @@ def scorecard():
             "measured ppm×kcat covers>=70% central-carbon enzymes & Vmax spread(log10 std)>=0.5",
             "per-enzyme capacity is data-backed (measured abundance×kcat); buffered-vs-dose-sensitive is measured, not assumed")
 
+    # 15) Structure-based function transfer — AlphaFold + Foldseek (structure > sequence for the dark proteome)
+    ff = _load("foldseek_function_validation.json")
+    if ff:
+        s = ff["summary"]
+        add("foldseek_function", ff["passed"],
+            dict(accuracy=s["accuracy"], n_ran=s["n_ran"],
+                 twilight_recoveries=s["n_with_twilight_homolog"]),
+            dict(sequence_methods="fail in the <30% seqId twilight zone"),
+            "function keyword-match accuracy>=0.8 on>=4 proteins & >=2 recovered via a <30% seqId structural homolog",
+            "AlphaFold structure + Foldseek transfers correct function, incl. from twilight-zone homologs sequence methods miss")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 

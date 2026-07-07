@@ -231,6 +231,40 @@ class CellQA:
                     provenance=("literature measurement" if measured else
                                 "CatPred prediction (~3.3x, at noise floor)" if "catpred" in tier else "EC/family prior"))
 
+    # ---- 7. function of an unknown/dark protein (structure-based) ----
+    def function(self, gene, uniprot=None):
+        """What does this (possibly dark) protein DO? Two independent lines of evidence:
+          - structure: AlphaFold + Foldseek structural homology (recovers the molecular fold/activity, incl.
+            from twilight-zone homologs sequence methods miss);
+          - the model's own darkfn (Perturb-seq co-essentiality guilt-by-association → the pathway it acts in).
+        Agreement raises confidence; each is tagged with its provenance."""
+        q = f"what does {gene} do?"
+        ans = dict(question=q)
+        # (a) model's co-essentiality dark-function call (fact-adjacent, from measured Perturb-seq)
+        i = self.idx.get(gene)
+        df = (self.D.get("darkfn") or {}).get(str(i)) if i is not None else None
+        if df:
+            ans["coessentiality"] = dict(prediction=df.get("pred"), confidence_tier=df.get("conf"),
+                                         source=df.get("src"), evidence_genes=(df.get("ev") or [])[:5],
+                                         provenance="Perturb-seq co-essentiality (pathway-level)")
+        # (b) structure-based transfer (molecular activity of the fold)
+        try:
+            from foldseek_function import predict_function
+            r = predict_function(gene, self_uniprot=uniprot)
+            if not r.get("abstain"):
+                ans["structure"] = dict(prediction=r["prediction"], confidence=r["confidence"],
+                                        homolog=r.get("homolog"), homolog_seqId=r.get("homolog_seqId"),
+                                        twilight_homologs=(r.get("twilight_homologs") or [])[:3],
+                                        provenance=r["provenance"])
+            else:
+                ans["structure"] = dict(abstain=True, reason=r["reason"])
+        except Exception as e:
+            ans["structure"] = dict(abstain=True, reason=f"structure pipeline unavailable: {e}")
+        if "coessentiality" not in ans and ans.get("structure", {}).get("abstain"):
+            return self._abstain(q, "no co-essentiality call and no confident structural homolog")
+        ans["note"] = "structure (molecular activity of the fold) + co-essentiality (pathway) — independent evidence"
+        return ans
+
     def _load_kinetics(self, path):
         # committed/Drive path preferred; falls back to the session's Drive-read copy
         for p in ([path] if path else []) + ["outputs/orphan/kinetics_refined.json"]:
@@ -253,6 +287,7 @@ COVERAGE = {
     "disease_target":     dict(engine="disease->target simulation",    validated="5/6 OOD diseases, 2.1x", tier="prediction"),
     "regulates":          dict(engine="regulatory network",           validated="curated edges",       tier="fact"),
     "kcat":               dict(engine="tiered kinetics (CatPred)",     validated="3.3x, at noise floor", tier="fact or prediction"),
+    "function":           dict(engine="AlphaFold+Foldseek + co-essentiality", validated="5/5, twilight-zone", tier="prediction"),
     "cell_type_gate":     dict(engine="emask conditioning (200 types)", validated="marker specificity 9x bg", tier="conditioning"),
 }
 

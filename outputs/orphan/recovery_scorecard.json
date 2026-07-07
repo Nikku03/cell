@@ -1,6 +1,6 @@
 {
-  "n_pass": 16,
-  "n_total": 16,
+  "n_pass": 17,
+  "n_total": 17,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -232,6 +232,20 @@
       },
       "bar": "measured ppm\u00d7kcat covers>=70% central-carbon enzymes & Vmax spread(log10 std)>=0.5",
       "detail": "per-enzyme capacity is data-backed (measured abundance\u00d7kcat); buffered-vs-dose-sensitive is measured, not assumed"
+    },
+    {
+      "test": "foldseek_function",
+      "passed": true,
+      "value": {
+        "accuracy": 1.0,
+        "n_ran": 5,
+        "twilight_recoveries": 5
+      },
+      "baseline": {
+        "sequence_methods": "fail in the <30% seqId twilight zone"
+      },
+      "bar": "function keyword-match accuracy>=0.8 on>=4 proteins & >=2 recovered via a <30% seqId structural homolog",
+      "detail": "AlphaFold structure + Foldseek transfers correct function, incl. from twilight-zone homologs sequence methods miss"
     }
   ],
   "tests": [
@@ -465,6 +479,20 @@
       },
       "bar": "measured ppm\u00d7kcat covers>=70% central-carbon enzymes & Vmax spread(log10 std)>=0.5",
       "detail": "per-enzyme capacity is data-backed (measured abundance\u00d7kcat); buffered-vs-dose-sensitive is measured, not assumed"
+    },
+    {
+      "test": "foldseek_function",
+      "passed": true,
+      "value": {
+        "accuracy": 1.0,
+        "n_ran": 5,
+        "twilight_recoveries": 5
+      },
+      "baseline": {
+        "sequence_methods": "fail in the <30% seqId twilight zone"
+      },
+      "bar": "function keyword-match accuracy>=0.8 on>=4 proteins & >=2 recovered via a <30% seqId structural homolog",
+      "detail": "AlphaFold structure + Foldseek transfers correct function, incl. from twilight-zone homologs sequence methods miss"
     }
   ]
 }
