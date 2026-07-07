@@ -1,6 +1,6 @@
 {
-  "n_pass": 10,
-  "n_total": 10,
+  "n_pass": 11,
+  "n_total": 11,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -140,6 +140,20 @@
       },
       "bar": "link>=0.7 & perturb-dir>=0.7 & drug>=0.7 & struct-fn>=0.65",
       "detail": "learned graph model: predicts binding, downstream direction, drug off-targets, function"
+    },
+    {
+      "test": "kcat_calibration_honest",
+      "passed": true,
+      "value": {
+        "catpred_fold_error": 3.3005449858578735,
+        "optimal_shrinkage": 1.0,
+        "correction_generalises": false
+      },
+      "baseline": {
+        "rtm_r": -0.3068122132336511
+      },
+      "bar": "no fitted correction beats CatPred-as-is on real measurements (optimal shrinkage=1.0)",
+      "detail": "measured kcat kept as ground truth; the 'recalibration win' is a label-quality artifact, not adopted"
     }
   ],
   "tests": [
@@ -281,6 +295,20 @@
       },
       "bar": "link>=0.7 & perturb-dir>=0.7 & drug>=0.7 & struct-fn>=0.65",
       "detail": "learned graph model: predicts binding, downstream direction, drug off-targets, function"
+    },
+    {
+      "test": "kcat_calibration_honest",
+      "passed": true,
+      "value": {
+        "catpred_fold_error": 3.3005449858578735,
+        "optimal_shrinkage": 1.0,
+        "correction_generalises": false
+      },
+      "baseline": {
+        "rtm_r": -0.3068122132336511
+      },
+      "bar": "no fitted correction beats CatPred-as-is on real measurements (optimal shrinkage=1.0)",
+      "detail": "measured kcat kept as ground truth; the 'recalibration win' is a label-quality artifact, not adopted"
     }
   ]
 }

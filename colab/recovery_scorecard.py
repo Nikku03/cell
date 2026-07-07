@@ -126,6 +126,17 @@ def scorecard():
             dict(random=0.5), "link>=0.7 & perturb-dir>=0.7 & drug>=0.7 & struct-fn>=0.65",
             "learned graph model: predicts binding, downstream direction, drug off-targets, function")
 
+    # 10) Kinetics calibration honesty — no spurious kcat correction (guardrail against label leakage)
+    kc = _load("kcat_calibration_validation.json")
+    if kc:
+        s = kc["summary"]
+        add("kcat_calibration_honest", kc["passed"],
+            dict(catpred_fold_error=s["catpred_raw_fold_error"], optimal_shrinkage=s["cv_optimal_shrinkage"],
+                 correction_generalises=s["correction_generalises"]),
+            dict(rtm_r=s["residual_regression_to_mean_r"]),
+            "no fitted correction beats CatPred-as-is on real measurements (optimal shrinkage=1.0)",
+            "measured kcat kept as ground truth; the 'recalibration win' is a label-quality artifact, not adopted")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
