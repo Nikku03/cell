@@ -31,6 +31,7 @@ class CellQA:
         self._kin = None
         self._ctc = None
         self._rv = None
+        self._sc = None
         # regulatory edges as directed sets (fact layer)
         self._reg_out = {}; self._reg_in = {}
         for e in self.D.get("reg", []):
@@ -285,6 +286,29 @@ class CellQA:
                     self._dft = json.load(open(p)).get("table", {}); break
         return self._dft
 
+    # ---- 8. audit: the model checks ITSELF (self-consistency + fill-and-verify) ----
+    def audit(self, k=8, fill=True):
+        """Run the self-consistency engine over all layers: find parts that don't fit (bad numbers, localization
+        conflicts, missing edges, pathway gaps), then propose+VERIFY fixes. Strict hierarchy: hard-constraint >
+        measured > predicted; nothing auto-applied; a verified fix touching a MEASURED value is escalated for
+        human sign-off, never silently changed."""
+        try:
+            if self._sc is None:
+                from self_consistency import SelfConsistency
+                self._sc = SelfConsistency()
+            rep = self._sc.scan()
+            out = dict(question="what in the model doesn't fit the rest?",
+                       n_flags=rep["n_flags"], by_tier=rep["by_tier"],
+                       hierarchy=rep["hierarchy"], top_flags=rep["flags"][:k])
+            if fill:
+                fixes = self._sc.fill_and_verify(rep["flags"])
+                out["verified_fixes"] = [x for x in fixes if x.get("verified")][:k]
+                out["note"] = ("fixes are proposed + verified by re-running the mechanism; measured-value "
+                               "corrections are ESCALATED, not auto-applied")
+            return out
+        except Exception as e:
+            return self._abstain("audit", f"self-consistency engine unavailable: {e}")
+
     def _load_kinetics(self, path):
         # committed/Drive path preferred; falls back to the session's Drive-read copy
         for p in ([path] if path else []) + ["outputs/orphan/kinetics_refined.json"]:
@@ -309,6 +333,7 @@ COVERAGE = {
     "kcat":               dict(engine="tiered kinetics (CatPred)",     validated="3.3x, at noise floor", tier="fact or prediction"),
     "function":           dict(engine="AlphaFold+Foldseek + co-essentiality", validated="5/5, twilight-zone", tier="prediction"),
     "cell_type_gate":     dict(engine="emask conditioning (200 types)", validated="marker specificity 9x bg", tier="conditioning"),
+    "audit":              dict(engine="self-consistency + fill/verify",  validated="completion AUC 0.77; anti-trap held", tier="self-check"),
 }
 
 

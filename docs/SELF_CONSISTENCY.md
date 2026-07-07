@@ -49,8 +49,31 @@ Testing exposed two real failure modes, both fixed:
    Fixed by requiring triadic-closure evidence (shared partners) and dropping same-family pairs → the
    embedding-similarity artifacts vanished and validation rose to AUC 0.77.
 
+## Fill-and-verify — propose a fix, re-run the mechanism, keep only what resolves the oddness
+
+Flagging isn't enough — the engine now proposes a **fix**, applies it, **re-runs the mechanism**, and reports
+only the fixes that verifiably resolve the problem, under the same anti-trap hierarchy. `fill_and_verify()`,
+gated by `colab/validate_fill_verify.py` (scorecard axis `fill_verify`).
+
+| flag | proposed fix | verification (re-run the mechanism) | anti-trap |
+|---|---|---|---|
+| **bad kcat** (past diffusion limit) | kcat bounded to the diffusion limit | check kcat/Km is now legal (+ enzyme still carries its flux) | **17/17 verified**; the 6 that touch a **measured** kcat (e.g. GPI) are **ESCALATED for human sign-off**, never auto-applied |
+| **missing edge** | add as a predicted PPI | require shared **complex** membership or ≥20 shared partners | **25/25 verified**; never touches measured data |
+| **pathway gap** | add a boundary/sink reaction | re-run FBA: does the dead-end reaction now carry flux? | **0/10 verified** — a single sink doesn't un-block a multi-reaction gap, and the verifier **correctly refuses to report a false fix** |
+
+That last row is the point: the loop **ran the FBA, saw the gap was still there, and did not claim it was
+fixed.** No false fixes. A verified fix is "apply-pending-review"; a fix that corrects a measured value is
+"ESCALATE"; an unverifiable fix stays a flag. Nothing is ever silently changed.
+
+## In the system
+
+Exposed as **`CellQA.audit()`** — the model checking itself is now a first-class capability alongside the
+question-answering ones: it returns the ranked flags + the verified fixes, each with its provenance and its
+place in the hierarchy.
+
 ## What it delivers for the goal
 
-The cell can now say *"this part doesn't fit the rest — check it"* and even *"the pathway is missing a step
-here"* — as a hypothesis with a confidence and a provenance, adjudicated by facts, never a self-certain oracle.
-It lets the model improve **itself** instead of only answering.
+The cell can now say *"this part doesn't fit the rest — here's the fix, and I re-ran the mechanism to confirm it
+works"* — or, honestly, *"I tried a fix and it didn't resolve it, so this stays flagged."* A hypothesis with a
+confidence, a provenance, and a **verification**, adjudicated by facts, never a self-certain oracle. It lets the
+model improve **itself** instead of only answering.

@@ -1,6 +1,6 @@
 {
-  "n_pass": 20,
-  "n_total": 20,
+  "n_pass": 21,
+  "n_total": 21,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -289,6 +289,21 @@
       },
       "bar": "AlphaMissense beats the stability chain by >=0.1 AUC AND the sickle-cell GOF blind spot is flagged (not trusted benign)",
       "detail": "reliable+reasoned variant call: AlphaMissense drives accuracy, mechanism rungs explain, GOF pattern overrides false-benign (the sickle-cell lesson)"
+    },
+    {
+      "test": "fill_verify",
+      "passed": true,
+      "value": {
+        "kcat_verified": 17,
+        "measured_escalated": 6,
+        "edge_verified": 25,
+        "physics_restored": true
+      },
+      "baseline": {
+        "anti_trap": true
+      },
+      "bar": "verified fixes resolve the oddness (physics restored / shared-complex); measured values ESCALATED not auto-applied; no false fixes",
+      "detail": "fill-and-verify: propose a fix, re-run the mechanism, report only what verifiably resolves \u2014 the anti-trap loop"
     }
   ],
   "tests": [
@@ -579,6 +594,21 @@
       },
       "bar": "AlphaMissense beats the stability chain by >=0.1 AUC AND the sickle-cell GOF blind spot is flagged (not trusted benign)",
       "detail": "reliable+reasoned variant call: AlphaMissense drives accuracy, mechanism rungs explain, GOF pattern overrides false-benign (the sickle-cell lesson)"
+    },
+    {
+      "test": "fill_verify",
+      "passed": true,
+      "value": {
+        "kcat_verified": 17,
+        "measured_escalated": 6,
+        "edge_verified": 25,
+        "physics_restored": true
+      },
+      "baseline": {
+        "anti_trap": true
+      },
+      "bar": "verified fixes resolve the oddness (physics restored / shared-complex); measured values ESCALATED not auto-applied; no false fixes",
+      "detail": "fill-and-verify: propose a fix, re-run the mechanism, report only what verifiably resolves \u2014 the anti-trap loop"
     }
   ]
 }

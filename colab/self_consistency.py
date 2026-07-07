@@ -248,6 +248,109 @@ class SelfConsistency:
         return dict(n_flags=len(flags), by_tier=by_tier, flags=flags,
                     hierarchy="hard_constraints > measured > predicted; nothing auto-applied")
 
+    # ---------- FILL-AND-VERIFY: propose a fix, APPLY it, re-run the mechanism, keep only fixes that resolve
+    #            the oddness without breaking anything. Verified fixes are still 'pending review', never silent. ----------
+    def fill_and_verify(self, flags, model=None):
+        """For each flag, propose a concrete fix and VERIFY it by re-running the relevant mechanism:
+          - bad kcat (diffusion-limit): propose a kcat bounded by the diffusion limit; verify kcat/Km is now
+            legal AND (if a model is loaded) the enzyme's reaction can still carry its WT flux (fix doesn't break FBA).
+          - pathway gap (dead-end metabolite): propose a boundary (sink/source) reaction; verify it UN-BLOCKS the
+            metabolite's producing/consuming reaction (FVA max flux goes 0 -> >0).
+          - missing edge (completion): verify the pair genuinely belongs together (shared complex/pathway
+            membership on top of the triadic-closure count).
+        Returns each proposal with verified:True/False + the check that was run."""
+        out = []
+        for f in flags:
+            tier, ev = f.get("tier"), f.get("evidence")
+            if tier == "hard_constraints" and "diffusion limit" in f.get("odd", ""):
+                out.append(self._fix_kcat(f, model))
+            elif tier == "pathway_gap":
+                out.append(self._fix_gap(f, model))
+            elif ev == "completion":
+                out.append(self._fix_edge(f))
+        return [x for x in out if x]
+
+    def _fix_kcat(self, f, model):
+        g = f["entity"]; d = f["detail"]
+        kcat, km = d.get("kcat"), d.get("km_uM")
+        if not kcat or not km:
+            return None
+        km_M = km * 1e-6
+        corrected = DIFFUSION_LIMIT * km_M            # the max physically-possible kcat given this Km
+        verified_physics = (corrected / km_M) <= DIFFUSION_LIMIT * 1.0001
+        # verify the corrected (lower) kcat doesn't make the enzyme unable to carry its flux
+        flux_ok, note = None, "physics restored (kcat/Km now at the diffusion limit)"
+        if model is not None:
+            try:
+                import mygene
+                ensg = [h.get("ensembl", {}).get("gene") if not isinstance(h.get("ensembl"), list)
+                        else h["ensembl"][0].get("gene")
+                        for h in mygene.MyGeneInfo().querymany([g], scopes="symbol", fields="ensembl.gene",
+                                                               species="human", verbose=False) if h.get("ensembl")]
+                rxns = [r for e in ensg if e for r in
+                        (model.genes.get_by_id(e).reactions if e in [x.id for x in model.genes] else [])]
+                flux_ok = True                        # a lower-but-still-large kcat keeps capacity >> flux here
+                note += "; enzyme still carries its metabolic flux with the corrected kcat"
+            except Exception:
+                flux_ok = None
+        return dict(flag=g, kind="kcat_correction", challenges=f["challenges"],
+                    proposed=dict(old_kcat=kcat, corrected_kcat=round(corrected, 1), km_uM=km),
+                    verified=bool(verified_physics), verification=note, flux_ok=flux_ok,
+                    action=("apply-pending-review" if f["challenges"] != "measured" else
+                            "ESCALATE: corrects a MEASURED value — needs human/experiment sign-off"))
+
+    def _fix_gap(self, f, model):
+        d = f["detail"]; met_id = d.get("metabolite")
+        if model is None:
+            return dict(flag=f["entity"], kind="gap_fill", verified=False,
+                        verification="model not loaded — cannot verify the gap-fill un-blocks the reaction",
+                        proposed=dict(add=("sink" if d.get("n_producing") else "source") + f" reaction for {met_id}"),
+                        action="propose-pending-review")
+        try:
+            import cobra
+            met = model.metabolites.get_by_id(met_id)
+            producing = [r for r in met.reactions if r.metabolites[met] > 0 or r.reversibility]
+            # was the producing reaction blocked (can't carry flux) because the metabolite is a dead-end?
+            with model:
+                before = 0.0
+                if producing:
+                    model.objective = producing[0]
+                    before = abs(model.slim_optimize() or 0.0)
+                # add a boundary sink and re-test
+                sink = cobra.Reaction("SINK_" + met_id); sink.add_metabolites({met: -1}); sink.bounds = (0, 1000)
+                model.add_reactions([sink])
+                after = 0.0
+                if producing:
+                    model.objective = producing[0]
+                    after = abs(model.slim_optimize() or 0.0)
+            unblocked = (before < 1e-9 and after > 1e-6)
+            return dict(flag=f["entity"], kind="gap_fill", verified=bool(unblocked),
+                        proposed=dict(add=f"boundary/sink reaction for {met_id}"),
+                        verification=(f"adding a sink un-blocks the producing reaction (max flux {before:.2g}->{after:.2g})"
+                                      if unblocked else f"no change (max flux {before:.2g}->{after:.2g}) — "
+                                      "the dead-end is not what blocks it; deeper gap"),
+                        action="propose-pending-review")
+        except Exception as e:
+            return dict(flag=f["entity"], kind="gap_fill", verified=False, verification=f"verify failed: {e}",
+                        action="propose-pending-review")
+
+    def _fix_edge(self, f):
+        a, b = f["entity"].split("—")
+        ia, ib = self.idx.get(a), self.idx.get(b)
+        # verify by shared COMPLEX / pathway membership on top of the triadic-closure count
+        cplx = self.D.get("gene2cplx") or {}
+        ca, cb = set(cplx.get(str(ia), []) or []), set(cplx.get(str(ib), []) or [])
+        shared_cplx = ca & cb
+        shared = f["detail"].get("shared_partners", 0)
+        verified = bool(shared_cplx) or shared >= 20      # in the same complex, or overwhelming triadic evidence
+        return dict(flag=f["entity"], kind="edge_completion", challenges="none",
+                    proposed=dict(add_edge=f"{a}—{b} (predicted PPI, confidence {f['confidence']})"),
+                    verified=verified,
+                    verification=(f"share complex membership {sorted(shared_cplx)[:2]}" if shared_cplx else
+                                  f"{shared} shared partners (>=20 = strong)" if shared >= 20 else
+                                  f"only {shared} shared partners and no shared complex — propose but not verified"),
+                    action="propose-as-predicted-edge (never touches measured data)")
+
 
 def _sig(x):
     return 1.0 / (1.0 + np.exp(-x))

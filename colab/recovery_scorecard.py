@@ -236,6 +236,17 @@ def scorecard():
             "AlphaMissense beats the stability chain by >=0.1 AUC AND the sickle-cell GOF blind spot is flagged (not trusted benign)",
             "reliable+reasoned variant call: AlphaMissense drives accuracy, mechanism rungs explain, GOF pattern overrides false-benign (the sickle-cell lesson)")
 
+    # 19) Fill-and-verify — the engine proposes fixes, re-runs the mechanism, and never rewrites a measured fact
+    fv = _load("fill_verify_validation.json")
+    if fv:
+        s = fv["summary"]
+        add("fill_verify", fv["passed"],
+            dict(kcat_verified=s["kcat_verified"], measured_escalated=s["kcat_measured_escalated"],
+                 edge_verified=s["edge_verified"], physics_restored=s["physics_restored"]),
+            dict(anti_trap=s["anti_trap_measured_escalated"]),
+            "verified fixes resolve the oddness (physics restored / shared-complex); measured values ESCALATED not auto-applied; no false fixes",
+            "fill-and-verify: propose a fix, re-run the mechanism, report only what verifiably resolves — the anti-trap loop")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 

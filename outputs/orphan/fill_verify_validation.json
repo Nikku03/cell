@@ -1,0 +1,65 @@
+{
+  "passed": true,
+  "summary": {
+    "kcat_fixes": 17,
+    "kcat_verified": 17,
+    "kcat_measured_escalated": 6,
+    "edge_fixes": 25,
+    "edge_verified": 25,
+    "physics_restored": true,
+    "edges_evidenced": true,
+    "anti_trap_measured_escalated": true,
+    "gap_fill_note": "single-sink gap-fills were re-run through FBA in the build; 0/10 un-blocked the dead-end, so 0 were falsely reported as fixed (gaps are multi-reaction \u2014 the verifier correctly rejects the naive fix)"
+  },
+  "examples": {
+    "kcat": [
+      {
+        "gene": "ATP2A2",
+        "old": 29103.435,
+        "corrected": 2426.6,
+        "action": "apply-pending-review"
+      },
+      {
+        "gene": "GPI",
+        "old": 1000000.0,
+        "corrected": 90902.8,
+        "action": "ESCALATE: corrects a MEASURED value \u2014 needs human/experiment sign-off"
+      },
+      {
+        "gene": "ATP2A1",
+        "old": 55332.9364,
+        "corrected": 3160.2,
+        "action": "apply-pending-review"
+      },
+      {
+        "gene": "ATP2B1",
+        "old": 12539.7328,
+        "corrected": 1501.0,
+        "action": "apply-pending-review"
+      }
+    ],
+    "edges": [
+      {
+        "edge": "CPSF6\u2014SNRPA",
+        "verified": true,
+        "why": "169 shared partners (>=20 = strong)"
+      },
+      {
+        "edge": "NBPF19\u2014NOTCH2NLA",
+        "verified": true,
+        "why": "158 shared partners (>=20 = strong)"
+      },
+      {
+        "edge": "CPSF6\u2014SNRPB",
+        "verified": true,
+        "why": "156 shared partners (>=20 = strong)"
+      },
+      {
+        "edge": "PSPC1\u2014SRP9",
+        "verified": true,
+        "why": "152 shared partners (>=20 = strong)"
+      }
+    ]
+  },
+  "bar": "verified fixes actually resolve the oddness; measured values ESCALATED not auto-applied; unverifiable fixes not reported as fixed"
+}
