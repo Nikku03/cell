@@ -1,6 +1,6 @@
 {
-  "n_pass": 9,
-  "n_total": 9,
+  "n_pass": 10,
+  "n_total": 10,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -125,6 +125,21 @@
       },
       "bar": "driver recall>=0.7 & suppressor flagged protector & separation>=0.5",
       "detail": "measured knockout effects separate DRIVER from PROTECTOR (real interventional causality)"
+    },
+    {
+      "test": "cellgraph_capabilities",
+      "passed": true,
+      "value": {
+        "link_ppi": 0.7543,
+        "perturb_dir": 0.8088,
+        "drug": 0.8032,
+        "struct_fn": 0.749
+      },
+      "baseline": {
+        "random": 0.5
+      },
+      "bar": "link>=0.7 & perturb-dir>=0.7 & drug>=0.7 & struct-fn>=0.65",
+      "detail": "learned graph model: predicts binding, downstream direction, drug off-targets, function"
     }
   ],
   "tests": [
@@ -251,6 +266,21 @@
       },
       "bar": "driver recall>=0.7 & suppressor flagged protector & separation>=0.5",
       "detail": "measured knockout effects separate DRIVER from PROTECTOR (real interventional causality)"
+    },
+    {
+      "test": "cellgraph_capabilities",
+      "passed": true,
+      "value": {
+        "link_ppi": 0.7543,
+        "perturb_dir": 0.8088,
+        "drug": 0.8032,
+        "struct_fn": 0.749
+      },
+      "baseline": {
+        "random": 0.5
+      },
+      "bar": "link>=0.7 & perturb-dir>=0.7 & drug>=0.7 & struct-fn>=0.65",
+      "detail": "learned graph model: predicts binding, downstream direction, drug off-targets, function"
     }
   ]
 }

@@ -116,6 +116,16 @@ def scorecard():
             "driver recall>=0.7 & suppressor flagged protector & separation>=0.5",
             "measured knockout effects separate DRIVER from PROTECTOR (real interventional causality)")
 
+    # 9) CellGraph — learned whole-cell model (link / perturbation-direction / drug / structure->function)
+    cg = _load("cellgraph_validation.json")
+    if cg:
+        s = cg["summary"]
+        add("cellgraph_capabilities", cg["all_pass"],
+            dict(link_ppi=s["link_ppi_auc"], perturb_dir=s["perturb_direction_acc"],
+                 drug=s["drug_auc"], struct_fn=s["structure_function_auc"]),
+            dict(random=0.5), "link>=0.7 & perturb-dir>=0.7 & drug>=0.7 & struct-fn>=0.65",
+            "learned graph model: predicts binding, downstream direction, drug off-targets, function")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
