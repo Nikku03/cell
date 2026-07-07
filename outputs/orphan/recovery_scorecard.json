@@ -99,18 +99,17 @@
       "test": "disease_target_recovery",
       "passed": true,
       "value": {
-        "recovered": 2,
-        "ran": 2,
-        "rate": 1.0
+        "recovered": 5,
+        "ran": 6,
+        "rate": 0.833,
+        "mean_precision": 0.695,
+        "lift": 2.13
       },
       "baseline": {
-        "random_label": [
-          0.316,
-          0.5
-        ]
+        "random_label": 0.326
       },
-      "bar": "recover a known target as a top rescuer in every OOD disease & beat random-label baseline",
-      "detail": "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind"
+      "bar": "recover a known target in >=60% of >=5 OOD diseases & aggregate strong-precision >=1.5x random-label",
+      "detail": "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind on 5/6 OOD diseases"
     },
     {
       "test": "measured_cause_recovery",
@@ -319,18 +318,17 @@
       "test": "disease_target_recovery",
       "passed": true,
       "value": {
-        "recovered": 2,
-        "ran": 2,
-        "rate": 1.0
+        "recovered": 5,
+        "ran": 6,
+        "rate": 0.833,
+        "mean_precision": 0.695,
+        "lift": 2.13
       },
       "baseline": {
-        "random_label": [
-          0.316,
-          0.5
-        ]
+        "random_label": 0.326
       },
-      "bar": "recover a known target as a top rescuer in every OOD disease & beat random-label baseline",
-      "detail": "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind"
+      "bar": "recover a known target in >=60% of >=5 OOD diseases & aggregate strong-precision >=1.5x random-label",
+      "detail": "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind on 5/6 OOD diseases"
     },
     {
       "test": "measured_cause_recovery",

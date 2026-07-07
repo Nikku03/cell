@@ -26,8 +26,9 @@ or explicitly abstained.
 |---|---|---|---|
 | `what_binds(X)` | CellGraph link (R-GCN/hybrid) | PPI link AUC **0.89** | fact + prediction |
 | `knockout(X)` → downstream | CellGraph perturbation | direction acc **0.81** | prediction |
-| `mutation_effect(X, mut)` | ΔΔG predictor | S669 r=**0.41** (DDGun-tier) | prediction (low per-call) |
+| `mutation_effect(X, mut)` | ΔΔG (ProteinMPNN+biophysical) | S669 r=**0.47** (top-benchmark) | prediction (low per-call) |
 | `drug_interactions(drug)` | CellGraph polypharmacology | drug AUC **0.80** | fact + prediction |
+| `disease_target(driver, readout)` | disease→target simulation | **5/6** OOD diseases, 2.1× random | prediction |
 | `regulates(X)` | regulatory network | curated | fact |
 | `kcat(enzyme)` | tiered kinetics (CatPred) | **3.3×**, at the noise floor | fact or prediction |
 

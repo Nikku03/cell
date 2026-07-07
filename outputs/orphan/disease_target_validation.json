@@ -1,9 +1,12 @@
 {
   "summary": {
-    "n_diseases": 2,
-    "n_ran": 2,
-    "n_recovered": 2,
-    "recovery_rate": 1.0
+    "n_diseases": 6,
+    "n_ran": 6,
+    "n_recovered": 5,
+    "recovery_rate": 0.833,
+    "mean_precision_strong": 0.695,
+    "mean_random_label_baseline": 0.326,
+    "precision_lift_over_random": 2.13
   },
   "diseases": [
     {
@@ -55,7 +58,8 @@
         "IL23R"
       ],
       "precision_strong": 0.667,
-      "random_label_baseline": 0.316
+      "random_label_baseline": 0.316,
+      "miss_reason": null
     },
     {
       "disease": "atopic dermatitis (Type-2)",
@@ -105,7 +109,197 @@
         "IL13"
       ],
       "precision_strong": 1.0,
-      "random_label_baseline": 0.5
+      "random_label_baseline": 0.5,
+      "miss_reason": null
+    },
+    {
+      "disease": "rheumatoid arthritis (IL6/TNF/JAK)",
+      "ok": true,
+      "n_readout": 5,
+      "top_rescuers": [
+        [
+          "IL6",
+          0.8
+        ],
+        [
+          "STAT3",
+          0.6
+        ],
+        [
+          "IL6R",
+          0.0
+        ],
+        [
+          "IL6ST",
+          0.0
+        ],
+        [
+          "JAK1",
+          0.0
+        ],
+        [
+          "JAK2",
+          0.0
+        ]
+      ],
+      "strong_rescuers": [
+        "IL6",
+        "STAT3"
+      ],
+      "known_targets": [
+        "IL6R",
+        "JAK1",
+        "JAK2",
+        "TNF",
+        "IL6"
+      ],
+      "recovered_known_target": true,
+      "hits": [
+        "IL6"
+      ],
+      "precision_strong": 0.5,
+      "random_label_baseline": 0.333,
+      "miss_reason": null
+    },
+    {
+      "disease": "severe eosinophilic asthma (Type-2/IL5)",
+      "ok": true,
+      "n_readout": 5,
+      "top_rescuers": [
+        [
+          "IL4R",
+          0.6
+        ],
+        [
+          "IL5",
+          0.4
+        ],
+        [
+          "IL13",
+          0.2
+        ],
+        [
+          "STAT6",
+          0.2
+        ],
+        [
+          "IL5RA",
+          0.0
+        ],
+        [
+          "IL4",
+          0.0
+        ]
+      ],
+      "strong_rescuers": [
+        "IL4R"
+      ],
+      "known_targets": [
+        "IL5",
+        "IL5RA",
+        "IL4R",
+        "TSLP",
+        "IL13"
+      ],
+      "recovered_known_target": true,
+      "hits": [
+        "IL4R"
+      ],
+      "precision_strong": 1.0,
+      "random_label_baseline": 0.357,
+      "miss_reason": null
+    },
+    {
+      "disease": "systemic lupus (Type-I IFN/BAFF)",
+      "ok": true,
+      "n_readout": 5,
+      "top_rescuers": [
+        [
+          "IFNA1",
+          1.0
+        ],
+        [
+          "IRF9",
+          0.4
+        ],
+        [
+          "JAK1",
+          0.0
+        ],
+        [
+          "STAT1",
+          0.0
+        ],
+        [
+          "STAT2",
+          0.0
+        ],
+        [
+          "IRF7",
+          0.0
+        ]
+      ],
+      "strong_rescuers": [
+        "IFNA1"
+      ],
+      "known_targets": [
+        "IFNAR1",
+        "TNFSF13B",
+        "JAK1"
+      ],
+      "recovered_known_target": false,
+      "hits": [],
+      "precision_strong": 0.0,
+      "random_label_baseline": 0.214,
+      "miss_reason": "targets absent from directed reg/sig graph (receptor via PPI, not TF-regulation) \u2014 foldable in via PPI edges"
+    },
+    {
+      "disease": "Crohn's / IBD (TNF/IL23/integrin)",
+      "ok": true,
+      "n_readout": 5,
+      "top_rescuers": [
+        [
+          "TNF",
+          0.6
+        ],
+        [
+          "IL23A",
+          0.2
+        ],
+        [
+          "IL23R",
+          0.2
+        ],
+        [
+          "TNFRSF1A",
+          0.0
+        ],
+        [
+          "JAK2",
+          0.0
+        ],
+        [
+          "STAT3",
+          0.0
+        ]
+      ],
+      "strong_rescuers": [
+        "TNF"
+      ],
+      "known_targets": [
+        "TNF",
+        "IL23A",
+        "IL12B",
+        "JAK1",
+        "ITGA4"
+      ],
+      "recovered_known_target": true,
+      "hits": [
+        "TNF"
+      ],
+      "precision_strong": 1.0,
+      "random_label_baseline": 0.235,
+      "miss_reason": null
     }
   ]
 }
