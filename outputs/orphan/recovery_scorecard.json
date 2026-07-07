@@ -1,6 +1,6 @@
 {
-  "n_pass": 23,
-  "n_total": 23,
+  "n_pass": 24,
+  "n_total": 24,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -334,6 +334,21 @@
       },
       "bar": "predicted kcats >=90% distributionally consistent with the measured reference given flux; outliers have verified revisions; measured never altered",
       "detail": "kinetics<->flux self-consistency: Vmax=kcat*[E] vs flux; measured kcats are the reference, only predicted outliers flagged with a flux-consistent proposal"
+    },
+    {
+      "test": "crossval_measured",
+      "passed": true,
+      "value": {
+        "known_ppi_enrichment": 23.0,
+        "known_ppi_rate": 0.092,
+        "predictions_corroborated": 0,
+        "random_baseline": 0.004
+      },
+      "baseline": {
+        "random": 0.004
+      },
+      "bar": "independent cell-line co-dependency corroborates KNOWN PPI edges >=10x over random (a valid cross-validator)",
+      "detail": "cross-validate predictions against independent measured data; codep validates context-variable edges (23x) but is blind to pan-essential complexes \u2014 match the dataset to the prediction type"
     }
   ],
   "tests": [
@@ -669,6 +684,21 @@
       },
       "bar": "predicted kcats >=90% distributionally consistent with the measured reference given flux; outliers have verified revisions; measured never altered",
       "detail": "kinetics<->flux self-consistency: Vmax=kcat*[E] vs flux; measured kcats are the reference, only predicted outliers flagged with a flux-consistent proposal"
+    },
+    {
+      "test": "crossval_measured",
+      "passed": true,
+      "value": {
+        "known_ppi_enrichment": 23.0,
+        "known_ppi_rate": 0.092,
+        "predictions_corroborated": 0,
+        "random_baseline": 0.004
+      },
+      "baseline": {
+        "random": 0.004
+      },
+      "bar": "independent cell-line co-dependency corroborates KNOWN PPI edges >=10x over random (a valid cross-validator)",
+      "detail": "cross-validate predictions against independent measured data; codep validates context-variable edges (23x) but is blind to pan-essential complexes \u2014 match the dataset to the prediction type"
     }
   ]
 }

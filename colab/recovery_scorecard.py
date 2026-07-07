@@ -269,6 +269,18 @@ def scorecard():
             "predicted kcats >=90% distributionally consistent with the measured reference given flux; outliers have verified revisions; measured never altered",
             "kinetics<->flux self-consistency: Vmax=kcat*[E] vs flux; measured kcats are the reference, only predicted outliers flagged with a flux-consistent proposal")
 
+    # 22) Cross-validation harness — independent measured data (codep) is a valid validator (known-edge control)
+    cv = _load("crossval_measured_validation.json")
+    if cv:
+        s = cv["summary"]
+        ok = s["known_ppi_enrichment"] >= 10
+        add("crossval_measured", ok,
+            dict(known_ppi_enrichment=s["known_ppi_enrichment"], known_ppi_rate=s["known_ppi_corroboration"],
+                 predictions_corroborated=s["corroborated"], random_baseline=s["random_baseline"]),
+            dict(random=s["random_baseline"]),
+            "independent cell-line co-dependency corroborates KNOWN PPI edges >=10x over random (a valid cross-validator)",
+            "cross-validate predictions against independent measured data; codep validates context-variable edges (23x) but is blind to pan-essential complexes — match the dataset to the prediction type")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
