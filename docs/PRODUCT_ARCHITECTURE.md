@@ -141,5 +141,15 @@ cellgraph-capabilities · learned-GNN-beats-fixed · kcat-calibration-honesty ·
 - **Deliberately not done** (honest negatives, don't re-try): cell-context kcat correction, CatPred
   recalibration — see `docs/KINETICS_CALIBRATION.md`.
 
+## 8 · Fixed ⇄ ML — the hybrid spine
+
+The layers above are not "fixed *or* ML" — they run **side by side and feed each other** (see `docs/HYBRID.md`):
+- **Fixed → ML** (validated): the fixed SIGN embedding is fed to the learned R-GCN as input features →
+  PPI link AUC 0.886 → **0.893**. The fixed method's global structure aids the ML's accuracy.
+- **ML → fixed**: the ML's high-confidence predicted edges + quantitative outputs (ΔΔG, ec-flux) enrich the
+  graph and supply magnitudes the fixed methods lack.
+- **Shared substrate**: enriching node features (ΔΔG fragility, AlphaFold descriptors, kinetic tier) helps
+  both. Fixed stays the interpretable spine; ML is the always-learning extension.
+
 The through-line of the whole product: **every layer predicts, every prediction carries confidence, and the
 scorecard keeps all of it honest.** See `docs/FUTURE_IDEAS.md` for the sequenced build plan.

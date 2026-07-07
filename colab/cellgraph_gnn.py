@@ -155,18 +155,32 @@ def _learned_rgcn_auc(D, X, test_pos, train_pos, train_neg, test_all, yte, epoch
     return roc_auc_score(yte, ps), average_precision_score(yte, ps)
 
 
-def head_to_head(D, X, A_base, relation="ppi", epochs=200, device=None, seed=0):
-    """Fixed SIGN vs learned GraphSAGE vs learned R-GCN on the IDENTICAL leakage-free split. R-GCN is the
-    headline `learned_auc` (best encoder); GraphSAGE reported alongside."""
+def fixed_input_features(X, A_tr):
+    """The FIXED method's output as ML input: standardized SIGN embedding [X|SX|S²X] (leakage-free — A_tr has
+    the test edges removed). Concatenated to X so the learned GNN also sees global multi-hop structure."""
+    H = embed(X, A_tr, hops=2).astype(np.float32)
+    H = (H - H.mean(0)) / (H.std(0) + 1e-6)
+    return np.hstack([X, H]).astype(np.float32)
+
+
+def head_to_head(D, X, A_base, relation="ppi", epochs=200, device=None, seed=0, hybrid=False):
+    """Fixed SIGN vs learned GraphSAGE vs R-GCN vs (optional) HYBRID R-GCN that takes the fixed embedding as
+    input, on the IDENTICAL leakage-free split. `learned_auc` = the best available encoder (hybrid if run)."""
     tp, tn, sp, sn, A_tr = _split_and_negatives(D, A_base, relation, seed=seed)
-    yte = np.r_[np.ones(len(sp)), np.zeros(len(sn))]
+    yte = np.r_[np.ones(len(sp)), np.zeros(len(sn))]; test_all = np.vstack([sp, sn])
     f_auc, f_ap = _fixed_auc(X, A_tr, tp, tn, sp, sn, yte)
-    s_auc, s_ap = _learned_auc(X, A_tr, tp, tn, sp, sn, yte, epochs=epochs, device=device, seed=seed)
-    r_auc, r_ap = _learned_rgcn_auc(D, X, sp, tp, tn, np.vstack([sp, sn]), yte,
-                                    epochs=epochs, device=device, seed=seed)
-    return dict(relation=relation, n_edges=int(len(tp) + len(sp)),
-                fixed_auc=round(float(f_auc), 4), fixed_ap=round(float(f_ap), 4),
-                sage_auc=round(float(s_auc), 4),
-                learned_auc=round(float(r_auc), 4), learned_ap=round(float(r_ap), 4),  # R-GCN = headline
-                delta=round(float(r_auc - f_auc), 4),
-                device=(device or ('cuda' if torch.cuda.is_available() else 'cpu')))
+    s_auc, _ = _learned_auc(X, A_tr, tp, tn, sp, sn, yte, epochs=epochs, device=device, seed=seed)
+    r_auc, r_ap = _learned_rgcn_auc(D, X, sp, tp, tn, test_all, yte, epochs=epochs, device=device, seed=seed)
+    out = dict(relation=relation, n_edges=int(len(tp) + len(sp)),
+               fixed_auc=round(float(f_auc), 4), sage_auc=round(float(s_auc), 4),
+               rgcn_auc=round(float(r_auc), 4),
+               device=(device or ('cuda' if torch.cuda.is_available() else 'cpu')))
+    if hybrid:  # ML takes input from FIXED: R-GCN over [X | fixed SIGN embedding]
+        h_auc, h_ap = _learned_rgcn_auc(D, fixed_input_features(X, A_tr), sp, tp, tn, test_all, yte,
+                                        epochs=epochs, device=device, seed=seed)
+        out["hybrid_auc"] = round(float(h_auc), 4)
+    best = out.get("hybrid_auc", out["rgcn_auc"])
+    out["learned_auc"] = round(float(best), 4); out["fixed_ap"] = round(float(f_ap), 4)
+    out["learned_ap"] = round(float(h_ap if hybrid else r_ap), 4)
+    out["delta"] = round(float(best - f_auc), 4)
+    return out
