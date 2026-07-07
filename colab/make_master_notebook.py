@@ -117,13 +117,21 @@ cells = [
        "flagged, each with a proposed value."),
     code("!python colab/whole_cell_kcat.py"),
 
-    md("## 7. Optional deep runs *(heavier: Human-GEM / ESM / network)*",
-       "Uncomment to run the flux-based kinetics⇄flux check, the cross-validation harness, or measured capacity."),
-    code("# !pip -q install cobra mygene fair-esm torch --quiet",
-         "# !python colab/kinetics_flux_consistency.py     # flux-based capacity check (needs Human-GEM + mygene)",
-         "# !python colab/crossval_measured.py             # cross-validate predictions vs cell-line codep",
-         "# !python colab/validate_ecflux_ppm.py           # measured per-enzyme capacity",
-         "print('see docs/ for each capability; DATASET_TRAINING_PLAN.md for adding DepMap/Tahoe/GEO')"),
+    md("## 7. Deep runs on the in-model data — actually runs (no external download needed)",
+       "These run on data already in the model (`cell_complete.json` from cell 1b + committed kinetics). The "
+       "**cross-validation** cell is light (numpy only). The **flux** cells download Human-GEM (~1–2 min) and "
+       "need `cobra`+`mygene`, installed here.",
+       "",
+       "> Note: the *external* datasets (DepMap / Tahoe / GEO) in `DATASET_TRAINING_PLAN.md` are **not** bundled — "
+       "those you download first (the morning job), then point `crossval_measured.py` at them. Everything below "
+       "runs on data that's already loaded."),
+    code("# light — runs on the in-model cell-line co-dependency signal (numpy only, already installed)",
+         "!python colab/crossval_measured.py"),
+    code("# heavier — installs cobra+mygene and downloads Human-GEM (~1-2 min), then runs the flux checks",
+         "!pip -q install cobra mygene 2>/dev/null",
+         "!python colab/kinetics_flux_consistency.py     # flux-based capacity check on flux-carrying enzymes",
+         "!python colab/validate_ecflux_ppm.py           # measured per-enzyme capacity (ppm x kcat)",
+         "print('\\nsee docs/ for each capability; DATASET_TRAINING_PLAN.md for adding DepMap/Tahoe/GEO')"),
 ]
 
 nb = {"cells": cells, "metadata": {"colab": {"provenance": []},
