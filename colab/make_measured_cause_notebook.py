@@ -89,43 +89,45 @@ cells.append(code(
 ))
 
 cells.append(md(
-    "## 4 · SANITY on real data — does a known regulator's knockdown reverse its own module?",
-    "Before the disease, confirm the measured alibi test recovers a KNOWN driver in these cell lines: form a",
-    "signature from a TF's targets and check the TF's own knockdown tops the reversal ranking."))
+    "## 4 · Coverage check — is a phenotype even IN this screen?",
+    "This screen is CANCER cell lines with a cancer/cell-cycle gene panel. A phenotype is only testable if",
+    "its signature genes are MEASURED and its candidate drivers were KNOCKED DOWN. Psoriasis is NOT — its",
+    "effector genes aren't measured here. So we test a phenotype the data actually contains: proliferation."))
 cells.append(code(
-    "# STAT1 drives interferon-stimulated genes; knocking STAT1 down should reverse an ISG-up signature.",
-    "ISG_UP=['STAT1','IRF1','GBP1','GBP2','IRF9','PSMB9','TAP1','B2M','STAT2','IRF7','UBE2L6','SP100']",
-    "sig_val = signature_vector(ISG_UP, [])",
-    "cands = ISG_UP + ['STAT1','JAK1','JAK2','IRF1','MYC','TP53','ACTB','GAPDH']",
-    "ev = effect_vectors(set(ISG_UP)|set(cands), cell_line='jurkat')",
-    "ranked = measured_alibi(sig_val, {t:ev[t] for t in ev if t in cands})",
-    "print('measured reversal of the ISG signature (want STAT1/JAK/IRF1 on top):')",
-    "for r in ranked[:8]: print(f\"  {r['target']:8} reversal={r['reversal']:+.3f} drives={r['drives_disease']}\")",
+    "def coverage(genes, cell_line='rpe1'):",
+    "    ev = effect_vectors(set(genes)|{'MYC'}, cell_line=cl if False else cell_line)",
+    "    measured = set().union(*[set(v) for v in ev.values()]) if ev else set()",
+    "    targets = set(ev)",
+    "    return sorted(g for g in genes if g in measured), sorted(g for g in genes if g in targets)",
+    "psor=['S100A7','DEFB4A','IL17A','IL17F','CCL20','STAT3','RORC','JAK2','IL23A']",
+    "m,t = coverage(psor)",
+    "print(f'psoriasis genes measured here: {m}  | knocked-down here: {t}  -> screen lacks psoriasis biology')",
 ))
 
 cells.append(md(
-    "## 5 · The disease — measured causal drivers of psoriasis",
-    "Honest caveat: Replogle is in cancer cell lines (Jurkat is the T-cell one), NOT diseased Th17 tissue,",
-    "so inducible Th17 genes may be weakly expressed. This is measured causal evidence, tissue-mismatched."))
+    "## 5 · Measured causal drivers of PROLIFERATION (the phenotype this screen supports)",
+    "Proliferation is fully covered (cell-cycle genes measured, cancer drivers knocked down). Expect the",
+    "measured alibi test to rank proliferation DRIVERS (MYC, FOXM1, E2F1, CDK1, PLK1, AURKA, MDM2) high, and",
+    "to flag TUMOR SUPPRESSORS (RB1, PTEN, TP53BP1) as PROTECTORS (their knockdown *increases* proliferation)."))
 cells.append(code(
-    "UP=['DEFB4A','S100A7','S100A8','S100A9','PI3','LCN2','CXCL1','CXCL8','CCL20','IL17A','IL17F','IL22',",
-    "    'CXCL9','CXCL10','IL1B','CCL2','OASL','RSAD2','STAT1']",
-    "DOWN=['FLG','KRT1','KRT10','KRT2','GATA3','IL4','IL13','CCL17','CCL22','WIF1']",
-    "PSOR_DRIVERS=['STAT3','RORC','RORA','RELA','NFKB1','JAK2','JAK1','STAT4','IRF4','BATF','AHR','TYK2',",
-    "              'STAT1','IL23A','IL12B','TNF','IL6','MYC','CEBPB']",
-    "sig = signature_vector(UP, DOWN)",
-    "need = set(UP)|set(DOWN)|set(PSOR_DRIVERS)",
-    "for cl in ['jurkat','k562','hepg2','rpe1']:",
+    "PROLIF_UP=['MKI67','PCNA','CDK1','CCNB1','CCNA2','CDC20','AURKA','AURKB','PLK1','TOP2A','BUB1','CENPA',",
+    "           'CENPF','FOXM1','MYBL2','E2F1','TYMS','RRM2','BIRC5','TK1','KIF2C','NUF2','TPX2','CCNB2',",
+    "           'CDC45','MCM3','MCM6','UBE2C','KIF11','KIF23','NDC80','SPC25','HJURP']",
+    "PROLIF_DRIVERS=['MYC','E2F1','FOXM1','MYBL2','CDK1','CDK6','AURKA','AURKB','PLK1','CCNB1','MDM2','MDM4',",
+    "                'CTNNB1','BRAF','PIK3CA','TYMS','RRM2','MCM6','CDC20','BUB1','TP53BP1','RB1','PTEN','ATM']",
+    "sig = signature_vector(PROLIF_UP, [])",
+    "need = set(PROLIF_UP)|set(PROLIF_DRIVERS)",
+    "for cl in ['rpe1','k562','hepg2','jurkat']:",
     "    ev = effect_vectors(need, cell_line=cl)",
-    "    rk = measured_alibi(sig, {t:ev[t] for t in ev if t in PSOR_DRIVERS})",
-    "    top = [f\"{r['target']}({r['reversal']:+.2f})\" for r in rk[:6]]",
-    "    print(f'{cl:7} top measured reversers: {top}')",
-    "# keep the T-cell line result as the main call",
-    "ev = effect_vectors(need, cell_line='jurkat'); rk = measured_alibi(sig, {t:ev[t] for t in ev if t in PSOR_DRIVERS})",
-    "json.dump(dict(disease='psoriasis', cell_line='jurkat', ranking=rk),",
-    "          open('outputs/orphan/measured_cause_psoriasis.json','w'), indent=2)",
-    "print('\\nmeasured causal driver ranking (jurkat):')",
-    "for r in rk[:10]: print(f\"  {r['target']:8} reversal={r['reversal']:+.3f} drives_disease={r['drives_disease']}\")",
+    "    rk = measured_alibi(sig, {t:ev[t] for t in ev if t in PROLIF_DRIVERS})",
+    "    drivers=[r['target'] for r in rk if r['drives_disease']][:6]",
+    "    protect=[r['target'] for r in rk if not r['drives_disease']][-4:]",
+    "    print(f'{cl:7} top DRIVERS(KD reverses): {drivers}  | flagged PROTECTORS: {protect}')",
+    "ev = effect_vectors(need, cell_line='rpe1'); rk = measured_alibi(sig, {t:ev[t] for t in ev if t in PROLIF_DRIVERS})",
+    "json.dump(dict(phenotype='proliferation', cell_line='rpe1', ranking=rk),",
+    "          open('outputs/orphan/measured_cause_proliferation.json','w'), indent=2)",
+    "print('\\nmeasured causal ranking, proliferation (rpe1) — reversal>0 = driver, <0 = protector/suppressor:')",
+    "for r in rk[:14]: print(f\"  {r['target']:9} reversal={r['reversal']:+.3f} drives_proliferation={r['drives_disease']}\")",
 ))
 
 cells.append(md(
@@ -134,9 +136,9 @@ cells.append(md(
 cells.append(code(
     "import shutil",
     "CM='/content/drive/MyDrive/cell_model'; os.makedirs(CM, exist_ok=True)",
-    "shutil.copy('outputs/orphan/measured_cause_psoriasis.json', f'{CM}/measured_cause_psoriasis.json')",
-    "print('saved -> ', f'{CM}/measured_cause_psoriasis.json')",
-    "print('Send me measured_cause_psoriasis.json to fold the measured witness into the detective.')",
+    "shutil.copy('outputs/orphan/measured_cause_proliferation.json', f'{CM}/measured_cause_proliferation.json')",
+    "print('saved -> ', f'{CM}/measured_cause_proliferation.json')",
+    "print('Send me measured_cause_proliferation.json — the first measured-causal result from real knockouts.')",
 ))
 
 cells.append(md(

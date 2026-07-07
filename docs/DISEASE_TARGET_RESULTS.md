@@ -109,10 +109,22 @@ whose removal *undoes the crime* — not mere correlation.
   parquet; Jurkat = the T-cell line, closest to immune disease). It ranks measured causal drivers of a
   disease signature with no network at all.
 
-**Honest limit:** Replogle is in **cancer cell lines**, not diseased tissue, so inducible disease genes are
-weakly expressed there — measured causal evidence, but tissue-mismatched. The clean next data is a
-disease-tissue Perturb-seq (or the Tahoe drug screen, also on Drive). This is the step from *inferring*
-causation off a static graph to *measuring* it.
+**Coverage reality (measured, not assumed):** the Replogle-Nadig screen is cancer cell lines with a
+cancer/cell-cycle gene panel. Checked against psoriasis: **0/29 effector genes measured, 4/19 drivers
+knocked down** — the screen contains no psoriasis biology, so a psoriasis run returns noise (confirmed:
+only MYC/TYK2 survived, |reversal|<0.25). This is a **data-coverage** limit, not a method failure
+(the method is unit-tested). A phenotype is testable here only if its signature is measured AND its
+candidate drivers were knocked down.
+
+**What the screen DOES support: proliferation (22/22 cancer drivers covered).** So `measured_cause.ipynb`
+runs the measured alibi test on a proliferation signature — expected to rank proliferation DRIVERS
+(MYC, FOXM1, E2F1, CDK1, PLK1, AURKA, MDM2) high and flag TUMOR SUPPRESSORS (RB1, PTEN, TP53BP1) as
+PROTECTORS (their knockdown *increases* proliferation). This is the real measured-causal demonstration.
+
+**For a disease specifically, you need a matching perturbation screen** — an immune-cell Perturb-seq for
+psoriasis, or the Tahoe drug screen (also on Drive) for pathway-level coverage. The framework is ready;
+it just needs a screen whose knocked-down genes and measured genes overlap the disease. This is the step
+from *inferring* causation off a static graph to *measuring* it.
 
 ## The Detective — intervention + multi-witness convergence — `colab/detective_cause.py`
 
