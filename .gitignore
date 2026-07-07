@@ -63,3 +63,10 @@ outputs/synthlet/.wt_*.pkl
 
 # large local working model (reconstructed from Drive / the .gz; not committed)
 outputs/orphan/cell_complete.json
+
+# large local models fetched at runtime (not committed)
+HumanGEM.xml
+colab/HumanGEM.xml
+pdbs/
+s669.csv
+s2648.csv
