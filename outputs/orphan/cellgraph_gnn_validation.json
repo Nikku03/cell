@@ -5,9 +5,10 @@
       "n_edges": 191447,
       "fixed_auc": 0.8261,
       "fixed_ap": 0.8234,
-      "learned_auc": 0.8754,
-      "learned_ap": 0.8776,
-      "delta": 0.0493,
+      "sage_auc": 0.8676,
+      "learned_auc": 0.8826,
+      "learned_ap": 0.885,
+      "delta": 0.0565,
       "device": "cpu"
     },
     {
@@ -15,9 +16,10 @@
       "n_edges": 606178,
       "fixed_auc": 0.8127,
       "fixed_ap": 0.7871,
-      "learned_auc": 0.8621,
-      "learned_ap": 0.8359,
-      "delta": 0.0494,
+      "sage_auc": 0.8603,
+      "learned_auc": 0.8413,
+      "learned_ap": 0.8071,
+      "delta": 0.0285,
       "device": "cpu"
     },
     {
@@ -25,9 +27,10 @@
       "n_edges": 17084,
       "fixed_auc": 0.7636,
       "fixed_ap": 0.7303,
-      "learned_auc": 0.8087,
-      "learned_ap": 0.7811,
-      "delta": 0.0451,
+      "sage_auc": 0.804,
+      "learned_auc": 0.9413,
+      "learned_ap": 0.9331,
+      "delta": 0.1777,
       "device": "cpu"
     }
   ],
@@ -35,11 +38,13 @@
   "learned_wins": 3,
   "headline_ppi": {
     "fixed": 0.8261,
-    "learned": 0.8754,
-    "delta": 0.0493
+    "sage": 0.8676,
+    "learned": 0.8826,
+    "delta": 0.0565
   },
+  "best_encoder": "R-GCN (per-relation weights)",
   "device": "cpu",
-  "epochs": 200,
+  "epochs": 150,
   "passed": true,
-  "detail": "trained 2-layer GraphSAGE vs fixed SIGN propagation, identical leakage-free split"
+  "detail": "fixed SIGN vs learned GraphSAGE vs learned R-GCN; identical leakage-free split; learned_auc = R-GCN (best encoder)"
 }

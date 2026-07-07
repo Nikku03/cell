@@ -96,14 +96,77 @@ def _learned_auc(X, A_tr, train_pos, train_neg, test_pos, test_neg, yte, epochs=
     return roc_auc_score(yte, ps), average_precision_score(yte, ps)
 
 
+class RGCN(nn.Module):
+    """R-GCN: a separate weight matrix per relation (reg/ppi/sig/codep/lr) + a self-loop weight, so the model
+    distinguishes edge types instead of merging them into one adjacency (as GraphSAGE does)."""
+    def __init__(self, din, nrel, dh=64, do=64, p=0.3):
+        super().__init__()
+        self.self1 = nn.Linear(din, dh); self.rel1 = nn.ModuleList([nn.Linear(din, dh) for _ in range(nrel)])
+        self.self2 = nn.Linear(dh, do);  self.rel2 = nn.ModuleList([nn.Linear(dh, do) for _ in range(nrel)])
+        self.drop = nn.Dropout(p)
+        self.dec = nn.Sequential(nn.Linear(do*3, 64), nn.ReLU(), nn.Dropout(p), nn.Linear(64, 1))
+
+    def encode(self, X, As):
+        h = self.self1(X) + sum(self.rel1[i](torch.sparse.mm(As[i], X)) for i in range(len(As)))
+        h = self.drop(torch.relu(h))
+        h = self.self2(h) + sum(self.rel2[i](torch.sparse.mm(As[i], h)) for i in range(len(As)))
+        return torch.relu(h)
+
+    def score(self, h, pairs):
+        u, v = h[pairs[:, 0]], h[pairs[:, 1]]
+        return self.dec(torch.cat([u*v, torch.abs(u-v), u+v], 1)).squeeze(1)
+
+
+def _per_relation_adj(D, n, test_pos, relations=("reg", "ppi", "sig", "codep", "lr"), device="cpu"):
+    """Row-normalized adjacency per relation; the held-out PPI test edges are removed from the ppi relation."""
+    from cellgraph import build_adj
+    mask = sparse.csr_matrix((np.ones(len(test_pos)), (test_pos[:, 0], test_pos[:, 1])), shape=(n, n))
+    mask = mask.maximum(mask.T)
+    out = []
+    for r in relations:
+        A = build_adj(D, n, relations=(r,))
+        if r == "ppi":
+            A = (A - A.multiply(mask)); A.eliminate_zeros()
+        d = np.asarray(A.sum(1)).ravel(); d[d == 0] = 1; A = A.tocoo()
+        out.append(torch.sparse_coo_tensor(np.vstack([A.row, A.col]), (A.data / d[A.row]).astype(np.float32),
+                                           (n, n)).coalesce().to(device))
+    return out
+
+
+def _learned_rgcn_auc(D, X, test_pos, train_pos, train_neg, test_all, yte, epochs=200, device=None, seed=0):
+    torch.manual_seed(seed)
+    device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
+    n = X.shape[0]; nrel = 5
+    As = _per_relation_adj(D, n, test_pos, device=device)
+    Xt = torch.from_numpy(X.astype(np.float32)).to(device)
+    tp = torch.from_numpy(train_pos).to(device); tn = torch.from_numpy(train_neg).to(device)
+    te = torch.from_numpy(test_all).to(device)
+    model = RGCN(X.shape[1], nrel).to(device)
+    opt = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4); bce = nn.BCEWithLogitsLoss()
+    bs = 20000; y = torch.cat([torch.ones(bs), torch.zeros(bs)]).to(device)
+    for ep in range(epochs):
+        model.train(); opt.zero_grad()
+        h = model.encode(Xt, As)
+        pi = torch.randint(0, len(tp), (bs,), device=device); ni = torch.randint(0, len(tn), (bs,), device=device)
+        bce(model.score(h, torch.cat([tp[pi], tn[ni]])), y).backward(); opt.step()
+    model.eval()
+    with torch.no_grad():
+        ps = torch.sigmoid(model.score(model.encode(Xt, As), te)).cpu().numpy()
+    return roc_auc_score(yte, ps), average_precision_score(yte, ps)
+
+
 def head_to_head(D, X, A_base, relation="ppi", epochs=200, device=None, seed=0):
-    """Fixed SIGN vs learned GraphSAGE on the IDENTICAL leakage-free split. Returns both AUC/AP."""
+    """Fixed SIGN vs learned GraphSAGE vs learned R-GCN on the IDENTICAL leakage-free split. R-GCN is the
+    headline `learned_auc` (best encoder); GraphSAGE reported alongside."""
     tp, tn, sp, sn, A_tr = _split_and_negatives(D, A_base, relation, seed=seed)
     yte = np.r_[np.ones(len(sp)), np.zeros(len(sn))]
     f_auc, f_ap = _fixed_auc(X, A_tr, tp, tn, sp, sn, yte)
-    l_auc, l_ap = _learned_auc(X, A_tr, tp, tn, sp, sn, yte, epochs=epochs, device=device, seed=seed)
+    s_auc, s_ap = _learned_auc(X, A_tr, tp, tn, sp, sn, yte, epochs=epochs, device=device, seed=seed)
+    r_auc, r_ap = _learned_rgcn_auc(D, X, sp, tp, tn, np.vstack([sp, sn]), yte,
+                                    epochs=epochs, device=device, seed=seed)
     return dict(relation=relation, n_edges=int(len(tp) + len(sp)),
                 fixed_auc=round(float(f_auc), 4), fixed_ap=round(float(f_ap), 4),
-                learned_auc=round(float(l_auc), 4), learned_ap=round(float(l_ap), 4),
-                delta=round(float(l_auc - f_auc), 4),
+                sage_auc=round(float(s_auc), 4),
+                learned_auc=round(float(r_auc), 4), learned_ap=round(float(r_ap), 4),  # R-GCN = headline
+                delta=round(float(r_auc - f_auc), 4),
                 device=(device or ('cuda' if torch.cuda.is_available() else 'cpu')))

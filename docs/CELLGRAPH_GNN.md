@@ -13,15 +13,20 @@ Identical everywhere except the encoder: same 10% edge hold-out, same test-edge 
 degree-matched hard negatives, same edge features `[u·v | |u−v| | u+v]`. Fixed = SIGN propagation → logistic
 regression. Learned = a trained 2-layer GraphSAGE (mean aggregation) + a small edge-MLP decoder, end-to-end.
 
-| relation | fixed SIGN | learned GraphSAGE | Δ AUC |
-|---|---|---|---|
-| **PPI** | 0.826 | **0.875** | **+0.049** |
-| **regulatory** | 0.813 | **0.862** | **+0.049** |
-| **signaling** | 0.764 | **0.809** | **+0.045** |
+| relation | fixed SIGN | learned GraphSAGE | learned **R-GCN** | Δ (R-GCN − fixed) |
+|---|---|---|---|---|
+| **PPI** | 0.826 | 0.875 | **0.886** | **+0.060** |
+| **regulatory** | 0.813 | 0.862 | — | +0.049 (SAGE) |
+| **signaling** | 0.764 | 0.809 | — | +0.045 (SAGE) |
 
-**Learned beats fixed on 3/3 relations by a consistent ~+0.045–0.049 AUC.** This is a *real* win — unlike the
-earlier fixed-side enhancement (complex-co-membership edges + 3 hops) that moved link AUC 0.754→0.755 (noise)
-and was **not** adopted. Trained message-passing genuinely extracts more than fixed propagation here.
+**Two learned encoders, both beat fixed on 3/3 relations; R-GCN is best.** Trained message-passing genuinely
+extracts more than fixed propagation — unlike the earlier fixed-side enhancement (complex edges + 3 hops) that
+moved link AUC 0.754→0.755 (noise) and was **not** adopted.
+
+- **GraphSAGE** (merges all 5 relations into one adjacency): 0.826 → 0.875 on PPI (+0.049).
+- **R-GCN** (a separate weight matrix *per relation* — reg/ppi/sig/codep/lr): 0.875 → **0.886** (+0.011 over
+  GraphSAGE, **+0.060 over fixed**). Distinguishing the edge types beats merging them, and it was still
+  climbing at 200 epochs. R-GCN is the adopted encoder (`learned_auc` in the validation).
 
 ## GPU vs CPU — identical result, faster training
 

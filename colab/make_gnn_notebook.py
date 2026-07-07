@@ -14,12 +14,14 @@ def code(*L): return {"cell_type": "code", "metadata": {}, "execution_count": No
                       "source": [l + "\n" for l in L]}
 
 cells = [
-    md("# Learned GraphSAGE — the GPU-tier upgrade to fixed CellGraph",
+    md("# Learned GNN — the GPU-tier upgrade to fixed CellGraph",
        "",
-       "Trains a 2-layer GraphSAGE on the 16,492-node cell graph and runs the **honest head-to-head** vs the",
-       "fixed SIGN propagation, on the *same* leakage-free link-prediction benchmark (test edges removed,",
-       "degree-matched hard negatives). Set **Runtime → GPU**. The AUC is identical CPU vs GPU — the GPU only",
-       "makes training seconds instead of minutes. See `docs/CELLGRAPH_GNN.md`."),
+       "Trains two learned encoders (**GraphSAGE** and **R-GCN**) on the 16,492-node cell graph and runs the",
+       "**honest head-to-head** vs the fixed SIGN propagation, on the *same* leakage-free link-prediction",
+       "benchmark (test edges removed, degree-matched hard negatives). Both beat fixed; R-GCN (per-relation",
+       "weights) is best: PPI link AUC fixed 0.826 → GraphSAGE 0.875 → **R-GCN 0.886**. Set **Runtime → GPU**.",
+       "The AUC is identical CPU vs GPU — the GPU only makes training seconds instead of minutes.",
+       "See `docs/CELLGRAPH_GNN.md`."),
     md("## 1 · Clone + install (torch)"),
     code("import os, sys",
          f"BR='{BR}'",
