@@ -258,6 +258,17 @@ def scorecard():
             "function de-ghosts >=3000 (curated literature) & predicted pathway agrees with function theme >=0.4 & >=1.8x shuffled",
             "ghost genes patched into the cell: function (fact tier) + pathway membership (prediction tier, cross-validated by the independent function signal)")
 
+    # 21) Kinetics<->flux consistency — predicted kcats agree with the flux they carry vs the measured reference
+    kf = _load("kinetics_flux_validation.json")
+    if kf:
+        s = kf["summary"]
+        add("kinetics_flux_consistency", kf["passed"],
+            dict(predicted_consistent=s["predicted_consistent"], n_predicted=s["n_predicted"],
+                 consistency_rate=s["predicted_consistency_rate"], outliers=s["predicted_outliers_flagged"]),
+            dict(measured_reference=s["n_measured"]),
+            "predicted kcats >=90% distributionally consistent with the measured reference given flux; outliers have verified revisions; measured never altered",
+            "kinetics<->flux self-consistency: Vmax=kcat*[E] vs flux; measured kcats are the reference, only predicted outliers flagged with a flux-consistent proposal")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 

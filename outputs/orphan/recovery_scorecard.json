@@ -1,6 +1,6 @@
 {
-  "n_pass": 22,
-  "n_total": 22,
+  "n_pass": 23,
+  "n_total": 23,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -319,6 +319,21 @@
       },
       "bar": "function de-ghosts >=3000 (curated literature) & predicted pathway agrees with function theme >=0.4 & >=1.8x shuffled",
       "detail": "ghost genes patched into the cell: function (fact tier) + pathway membership (prediction tier, cross-validated by the independent function signal)"
+    },
+    {
+      "test": "kinetics_flux_consistency",
+      "passed": true,
+      "value": {
+        "predicted_consistent": 107,
+        "n_predicted": 117,
+        "consistency_rate": 0.915,
+        "outliers": 10
+      },
+      "baseline": {
+        "measured_reference": 80
+      },
+      "bar": "predicted kcats >=90% distributionally consistent with the measured reference given flux; outliers have verified revisions; measured never altered",
+      "detail": "kinetics<->flux self-consistency: Vmax=kcat*[E] vs flux; measured kcats are the reference, only predicted outliers flagged with a flux-consistent proposal"
     }
   ],
   "tests": [
@@ -639,6 +654,21 @@
       },
       "bar": "function de-ghosts >=3000 (curated literature) & predicted pathway agrees with function theme >=0.4 & >=1.8x shuffled",
       "detail": "ghost genes patched into the cell: function (fact tier) + pathway membership (prediction tier, cross-validated by the independent function signal)"
+    },
+    {
+      "test": "kinetics_flux_consistency",
+      "passed": true,
+      "value": {
+        "predicted_consistent": 107,
+        "n_predicted": 117,
+        "consistency_rate": 0.915,
+        "outliers": 10
+      },
+      "baseline": {
+        "measured_reference": 80
+      },
+      "bar": "predicted kcats >=90% distributionally consistent with the measured reference given flux; outliers have verified revisions; measured never altered",
+      "detail": "kinetics<->flux self-consistency: Vmax=kcat*[E] vs flux; measured kcats are the reference, only predicted outliers flagged with a flux-consistent proposal"
     }
   ]
 }
