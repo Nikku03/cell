@@ -109,12 +109,54 @@ def propagate(out, sources, removed=frozenset(), alpha=ALPHA, khop=KHOP):
     return v
 
 
+# ---- LAYER 0: cell-type localization (uses the deeper Phase-1 emask over the 200-type census) ----
+# The census is HEALTHY resting tissue, so inducible disease genes (IL23A/IL17A) read as "off". We therefore
+# use the emask ONLY to LOCALIZE the disease (which cell compartment the pathway's constitutive machinery
+# lives in) and to ANNOTATE targets (cell-autonomous vs paracrine/inducible) — NEVER to filter the network.
+def celltype_localization(D, idx, name, pathway_genes, topk=12):
+    ct = D.get("ctnames"); emask = D.get("emask")
+    if not ct or not emask:
+        return None
+    pmask = {g: int(emask[str(idx[g])]) for g in pathway_genes
+             if g in idx and str(idx[g]) in emask}
+    if not pmask:
+        return None
+    scored = []
+    for t, cname in enumerate(ct):
+        n = sum(1 for m in pmask.values() if (m >> t) & 1)
+        if n:
+            scored.append((n, cname, t))
+    scored.sort(reverse=True)
+    return dict(ctnames=ct, emask=emask, n_pathway_in_mask=len(pmask),
+                top=[(n, c, t) for n, c, t in scored[:topk]],
+                disease_ct_idx=[t for _, _, t in scored[:topk]])
+
+
+def celltype_of(target_idx, emask, disease_ct_idx, ctnames):
+    """which of the disease's cell types express this target (cell-autonomous), or census-blind (inducible)."""
+    m = emask.get(str(target_idx))
+    if m is None:
+        return None, "census-blind (inducible/absent in healthy census)"
+    hits = [ctnames[t] for t in disease_ct_idx if (int(m) >> t) & 1]
+    return hits, ("cell-autonomous in disease compartment" if hits else "not in disease compartment (paracrine/inducible)")
+
+
 def main():
     D, G, name, idx = load()
     ro = [idx[g] for g in READOUT if g in idx]
     apex = [idx[g] for g in APEX if g in idx]
+
+    # ---- LAYER 0: localize the disease to its cell compartment (deeper 200-type emask) ----
+    loc = celltype_localization(D, idx, name, [g for g in SEED if g in idx])
+    if loc:
+        print("LAYER 0 — cell-type localization (which compartment the disease pathway lives in):")
+        for n, c, _ in loc["top"][:8]:
+            print(f"   {n:2}/{loc['n_pathway_in_mask']}  {c}")
+    else:
+        print("LAYER 0 — no emask in model (skipped; run on the deeper Phase-1 model to enable).")
+
     keep, out = cascade_subgraph(D, apex, ro)
-    print(f"readout {len(ro)} | apex {APEX} | cascade sub-graph {len(keep)} nodes (apex->readout signal flow)")
+    print(f"\nreadout {len(ro)} | apex {APEX} | cascade sub-graph {len(keep)} nodes (apex->readout signal flow)")
 
     # ---- disease baseline: IL-23 injected -> does the pathogenic readout receive net-activating flow? ----
     v0 = propagate(out, apex)
@@ -154,20 +196,26 @@ def main():
         v_act = propagate(out, list(apex) + [n])
         act = frac_collapsed(v_act, ro_eff)
         best_dir = "disable" if dis >= act else "activate"
+        ct_hits, ct_role = (None, None)
+        if loc:
+            ct_hits, ct_role = celltype_of(n, loc["emask"], loc["disease_ct_idx"], loc["ctnames"])
         results.append(dict(gene=name[n], idx=n, influence=round(cand_infl[n], 3),
                             disable=round(dis, 3), activate=round(act, 3),
                             rescue=round(max(dis, act), 3), best_dir=best_dir,
                             druggable=str(n) in D["drugs"],
-                            drug_actions=sorted({d.get("t", "") for d in D["drugs"].get(str(n), []) if d.get("t")})))
+                            drug_actions=sorted({d.get("t", "") for d in D["drugs"].get(str(n), []) if d.get("t")}),
+                            celltype_role=ct_role, celltype_hits=(ct_hits or [])[:4]))
     results.sort(key=lambda r: (-r["rescue"], -r["influence"]))
     print("\nLAYER 2 — perturbation-to-wild-type (rescue = fraction of pathogenic readout collapsed):")
-    print(f"  {'gene':9} {'rescue':>6} {'dir':>8} {'disable':>7} {'activate':>8} drug?  actions")
+    print(f"  {'gene':9} {'rescue':>6} {'dir':>8} drug?  cell-type role (in the disease compartment)")
     for r in results:
-        print(f"  {r['gene']:9} {r['rescue']:>6.2f} {r['best_dir']:>8} {r['disable']:>7.2f} "
-              f"{r['activate']:>8.2f} {'yes' if r['druggable'] else ' no'}  {r['drug_actions']}")
+        print(f"  {r['gene']:9} {r['rescue']:>6.2f} {r['best_dir']:>8} {'yes' if r['druggable'] else ' no'}  "
+              f"{r['celltype_role'] or 'n/a'}")
 
     json.dump(dict(ok=True, disease="psoriasis (IL23/IL17 axis)", apex=APEX,
                    readout=[name[r] for r in ro], readout_on_disease=ro_on,
+                   celltype_localization=([f"{n}/{loc['n_pathway_in_mask']} {c}" for n, c, _ in loc["top"]]
+                                          if loc else None),
                    n_nodes=len(keep), alpha=ALPHA, khop=KHOP, candidates=results),
               open(OUT / "psoriasis_target_layer12.json", "w"), indent=2)
     print("\n-> outputs/orphan/psoriasis_target_layer12.json")

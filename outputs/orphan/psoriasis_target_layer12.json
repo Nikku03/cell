@@ -19,6 +19,20 @@
     "CCL20",
     "IL21"
   ],
+  "celltype_localization": [
+    "13/21 group 3 innate lymphoid cell, human",
+    "7/21 CD14-positive monocyte",
+    "6/21 regulatory T cell",
+    "6/21 innate lymphoid cell",
+    "5/21 neutrophil",
+    "5/21 microglial cell",
+    "5/21 leukocyte",
+    "5/21 central nervous system macrophage",
+    "4/21 perivascular cell",
+    "4/21 myeloid cell",
+    "4/21 monocyte",
+    "4/21 mature T cell"
+  ],
   "n_nodes": 39,
   "alpha": 0.55,
   "khop": 5,
@@ -32,7 +46,11 @@
       "rescue": 1.0,
       "best_dir": "disable",
       "druggable": true,
-      "drug_actions": []
+      "drug_actions": [],
+      "celltype_role": "cell-autonomous in disease compartment",
+      "celltype_hits": [
+        "group 3 innate lymphoid cell, human"
+      ]
     },
     {
       "gene": "IL23A",
@@ -45,7 +63,9 @@
       "druggable": true,
       "drug_actions": [
         "inhibitor"
-      ]
+      ],
+      "celltype_role": "not in disease compartment (paracrine/inducible)",
+      "celltype_hits": []
     },
     {
       "gene": "STAT4",
@@ -56,7 +76,14 @@
       "rescue": 0.6,
       "best_dir": "disable",
       "druggable": true,
-      "drug_actions": []
+      "drug_actions": [],
+      "celltype_role": "cell-autonomous in disease compartment",
+      "celltype_hits": [
+        "group 3 innate lymphoid cell, human",
+        "innate lymphoid cell",
+        "leukocyte",
+        "mature T cell"
+      ]
     },
     {
       "gene": "STAT3",
@@ -67,7 +94,14 @@
       "rescue": 0.2,
       "best_dir": "disable",
       "druggable": true,
-      "drug_actions": []
+      "drug_actions": [],
+      "celltype_role": "cell-autonomous in disease compartment",
+      "celltype_hits": [
+        "group 3 innate lymphoid cell, human",
+        "CD14-positive monocyte",
+        "regulatory T cell",
+        "innate lymphoid cell"
+      ]
     },
     {
       "gene": "STAT1",
@@ -78,7 +112,14 @@
       "rescue": 0.2,
       "best_dir": "activate",
       "druggable": true,
-      "drug_actions": []
+      "drug_actions": [],
+      "celltype_role": "cell-autonomous in disease compartment",
+      "celltype_hits": [
+        "group 3 innate lymphoid cell, human",
+        "CD14-positive monocyte",
+        "regulatory T cell",
+        "microglial cell"
+      ]
     },
     {
       "gene": "IRF4",
@@ -89,7 +130,9 @@
       "rescue": 0.0,
       "best_dir": "disable",
       "druggable": false,
-      "drug_actions": []
+      "drug_actions": [],
+      "celltype_role": "not in disease compartment (paracrine/inducible)",
+      "celltype_hits": []
     },
     {
       "gene": "JAK2",
@@ -102,6 +145,13 @@
       "druggable": true,
       "drug_actions": [
         "inhibitor"
+      ],
+      "celltype_role": "cell-autonomous in disease compartment",
+      "celltype_hits": [
+        "CD14-positive monocyte",
+        "microglial cell",
+        "central nervous system macrophage",
+        "myeloid cell"
       ]
     }
   ]

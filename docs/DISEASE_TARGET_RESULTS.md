@@ -9,9 +9,27 @@ by simulation. Reproduce on Colab with `colab/disease_target.ipynb`; validate wi
 
 | Layer | What it does |
 |-------|--------------|
+| **0 · Cell-type localization** | Using the deeper Phase-1 emask (200-type census), rank the cell types by disease-pathway expression → **which compartment the disease lives in**, and annotate each target as **cell-autonomous** (expressed in the disease cell) vs **paracrine/inducible**. The healthy census is used ONLY to localize/annotate — never to filter (inducible disease genes read as "off"). |
 | **1 · Causal** | Extract the disease's **apex→readout signal-flow subgraph** (nodes on directed paths from the known driver to the pathogenic readout) and rank pathway candidates by net signed influence on the readout. |
 | **2 · Perturb → wild-type** | Degree-normalized **signed influence propagation**. For each candidate, *disable* and *activate* it, re-propagate, and measure how much the pathogenic readout collapses toward wild-type. The required **direction** is read off automatically. |
 | **3 · Druggable** | Fetch protein **family/structure** (UniProt — the model itself has almost no structure data) and decide whether the required direction is achievable by that family's **modality**. |
+
+### Layer 0 in action (psoriasis, deeper 200-type census)
+**Localization** (which compartment the pathway lives in) — correctly immune/innate-lymphoid:
+
+> **group 3 innate lymphoid cell (ILC3)** 13/21 · CD14⁺ monocyte 7 · regulatory T 6 · innate lymphoid 6 · neutrophil 5 …
+
+ILC3 — the RORγt⁺ / IL-23-responsive / IL-17-producing cell — tops the list, exactly where IL-23 acts.
+
+**Cell-autonomous vs paracrine annotation** (and why it matches the drug modality):
+
+| target | rescue | cell-type role | → modality (Layer 3) |
+|--------|:------:|----------------|----------------------|
+| **IL23R** | 1.00 | **cell-autonomous** (receptor on the Th17/ILC3 cell) | antagonist on the cell |
+| **IL23A** | 1.00 | **paracrine** (IL-23 secreted by dendritic cells) | neutralizing antibody / trap |
+| JAK2 / STAT3 / STAT4 | — | cell-autonomous (intracellular machinery) | — |
+
+The layer correctly separates "drug the cell" (IL23R, cell-autonomous receptor) from "mop up the signal between cells" (IL23A, paracrine cytokine) — which is *why* IL-23R gets an antagonist and IL-23 gets a neutralizing antibody. The census-blindness of inducible genes is surfaced honestly, not hidden.
 
 ## Result — 2/2 OOD diseases recover the real approved target
 
