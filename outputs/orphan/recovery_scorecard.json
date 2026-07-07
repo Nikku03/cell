@@ -1,6 +1,6 @@
 {
-  "n_pass": 21,
-  "n_total": 21,
+  "n_pass": 22,
+  "n_total": 22,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -304,6 +304,21 @@
       },
       "bar": "verified fixes resolve the oddness (physics restored / shared-complex); measured values ESCALATED not auto-applied; no false fixes",
       "detail": "fill-and-verify: propose a fix, re-run the mechanism, report only what verifiably resolves \u2014 the anti-trap loop"
+    },
+    {
+      "test": "ghost_patch",
+      "passed": true,
+      "value": {
+        "function_patched": 3933,
+        "pathway_patched": 520,
+        "pathway_function_agreement": 0.463,
+        "lift": 1.94
+      },
+      "baseline": {
+        "shuffled": 0.239
+      },
+      "bar": "function de-ghosts >=3000 (curated literature) & predicted pathway agrees with function theme >=0.4 & >=1.8x shuffled",
+      "detail": "ghost genes patched into the cell: function (fact tier) + pathway membership (prediction tier, cross-validated by the independent function signal)"
     }
   ],
   "tests": [
@@ -609,6 +624,21 @@
       },
       "bar": "verified fixes resolve the oddness (physics restored / shared-complex); measured values ESCALATED not auto-applied; no false fixes",
       "detail": "fill-and-verify: propose a fix, re-run the mechanism, report only what verifiably resolves \u2014 the anti-trap loop"
+    },
+    {
+      "test": "ghost_patch",
+      "passed": true,
+      "value": {
+        "function_patched": 3933,
+        "pathway_patched": 520,
+        "pathway_function_agreement": 0.463,
+        "lift": 1.94
+      },
+      "baseline": {
+        "shuffled": 0.239
+      },
+      "bar": "function de-ghosts >=3000 (curated literature) & predicted pathway agrees with function theme >=0.4 & >=1.8x shuffled",
+      "detail": "ghost genes patched into the cell: function (fact tier) + pathway membership (prediction tier, cross-validated by the independent function signal)"
     }
   ]
 }

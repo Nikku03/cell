@@ -27,6 +27,13 @@ class CellQA:
     def __init__(self):
         self.cg = CellGraph()
         self.D, self.idx, self.name, self.H = self.cg.D, self.cg.idx, self.cg.name, self.cg.H
+        # complete the model: overlay the ghost-gene patch (function=fact, pathway=prediction) so answers use
+        # the de-ghosted cell. Additive + graceful — the model is complete at load, curated vs predicted kept apart.
+        try:
+            from patch_ghosts import apply_patch
+            apply_patch(self.D)
+        except Exception:
+            pass
         self._ddg = None
         self._kin = None
         self._ctc = None

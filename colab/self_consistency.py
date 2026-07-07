@@ -299,7 +299,7 @@ class SelfConsistency:
                     action=("apply-pending-review" if f["challenges"] != "measured" else
                             "ESCALATE: corrects a MEASURED value — needs human/experiment sign-off"))
 
-    def _fix_gap(self, f, model, max_depth=6):
+    def _fix_gap(self, f, model, max_depth=5):
         """ITERATIVE, failure-guided gap-fill. Attempt 1 = open the dead-end metabolite; if the FBA re-run shows
         the producing reaction is still blocked, use the FAILURE DATA (which metabolites are still dead-ends) to
         expand the fix, and retry — up to max_depth rounds. Reports the minimal reaction set that verifiably

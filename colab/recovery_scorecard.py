@@ -247,6 +247,17 @@ def scorecard():
             "verified fixes resolve the oddness (physics restored / shared-complex); measured values ESCALATED not auto-applied; no false fixes",
             "fill-and-verify: propose a fix, re-run the mechanism, report only what verifiably resolves — the anti-trap loop")
 
+    # 20) Ghost-gene patch — de-ghost the dark proteome into the cell (function=fact, pathway=prediction)
+    gp = _load("ghost_patch_validation.json")
+    if gp:
+        s = gp["summary"]
+        add("ghost_patch", gp["passed"],
+            dict(function_patched=s["patched_function"], pathway_patched=s["patched_pathway"],
+                 pathway_function_agreement=s["pathway_function_agreement"], lift=s["lift_over_shuffled"]),
+            dict(shuffled=s["shuffled_baseline"]),
+            "function de-ghosts >=3000 (curated literature) & predicted pathway agrees with function theme >=0.4 & >=1.8x shuffled",
+            "ghost genes patched into the cell: function (fact tier) + pathway membership (prediction tier, cross-validated by the independent function signal)")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
