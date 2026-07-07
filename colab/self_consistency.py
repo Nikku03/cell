@@ -217,6 +217,78 @@ class SelfConsistency:
         pb = re.match(r"[A-Z]+[0-9]*", b or "Y").group()[:4]
         return len(pa) >= 3 and pa == pb
 
+    # ---------- WHOLE-CELL audit: run the completion ML across ALL relations, not just PPI ----------
+    @staticmethod
+    def _undirected_partners(edges):
+        from collections import defaultdict
+        part = defaultdict(set)
+        for e in edges:
+            if len(e) >= 2 and isinstance(e[0], int) and isinstance(e[1], int):
+                part[e[0]].add(e[1]); part[e[1]].add(e[0])
+        return part
+
+    def _triadic_completions(self, part, relation, n_flags=40, n_hubs=500, cap=600):
+        """missing-edge candidates for one relation via triadic closure (shared partners) — the validated signal."""
+        from collections import Counter
+        hubs = sorted(part, key=lambda u: -len(part[u]))[:n_hubs]
+        cand = {}
+        for a in hubs:
+            pa = part[a]
+            if len(pa) > cap:                              # bound the very high-degree regulators
+                continue
+            two = Counter()
+            for p in pa:
+                for b in part.get(p, ()):
+                    if b != a and b not in pa:
+                        two[b] += 1
+            for b, sh in two.items():
+                if sh >= 4 and a < b and not self._same_family(self.name[a], self.name[b]):
+                    cand[(a, b)] = max(cand.get((a, b), 0), sh)
+        out = []
+        for (a, b), sh in sorted(cand.items(), key=lambda kv: -kv[1])[:n_flags]:
+            out.append(self._flag("learned", "completion", f"{self.name[a]}—{self.name[b]}",
+                        f"missing {relation} edge: {sh} shared partners (triadic closure)",
+                        conf=round(min(0.9, 0.4 + 0.04 * sh), 2),
+                        detail=dict(relation=relation, shared_partners=int(sh)),
+                        challenges="none", suggest=f"propose as a predicted {relation} edge (confidence-tagged)"))
+        return out
+
+    def whole_cell_audit(self, relations=("ppi", "reg", "sig"), top_per=40, include_gaps=False, model=None):
+        """FIRE: run every detector across the WHOLE complete cell — physics, localization, per-relation
+        completions (what's missing) + PPI false-positives (what's wrong) + optional metabolic gaps — and
+        aggregate into one ranked, tiered report. Same anti-trap hierarchy; nothing auto-applied."""
+        flags = self.hard_constraints() + self.cross_layer()
+        # PPI also gets the false-positive pass (validated); every relation gets completions
+        try:
+            flags += self.learned_link_anomaly(relation="ppi", n_flags=top_per)
+        except Exception:
+            pass
+        for rel in relations:
+            if rel == "ppi":
+                continue                                   # already covered above (fp + completions)
+            edges = self.D.get(rel, [])
+            if not edges:
+                continue
+            flags += self._triadic_completions(self._undirected_partners(edges), rel, n_flags=top_per)
+        if include_gaps:
+            try:
+                flags += self.pathway_gaps(max_flags=top_per)
+            except Exception:
+                pass
+        flags = [f for f in flags if "error" not in f]
+        flags.sort(key=lambda f: (self._PRIORITY.get(f["tier"], 9), -f["confidence"]))
+        by_tier, by_kind = {}, {}
+        for f in flags:
+            by_tier[f["tier"]] = by_tier.get(f["tier"], 0) + 1
+            key = f.get("evidence", f["tier"])
+            by_kind[key] = by_kind.get(key, 0) + 1
+        # verify the completions (edges) + kcat fixes
+        fixes = self.fill_and_verify(flags, model=model)
+        return dict(n_flags=len(flags), by_tier=by_tier, by_kind=by_kind,
+                    relations_scanned=list(relations), flags=flags,
+                    verified_fixes=[x for x in fixes if x.get("verified")],
+                    hierarchy="hard_constraints > measured > predicted; nothing auto-applied")
+
     # ---------- assembly ----------
     def _flag(self, tier, evidence, entity, what, conf, detail=None, challenges="predicted", suggest=None):
         return dict(tier=tier, evidence=evidence, entity=entity, odd=what,
