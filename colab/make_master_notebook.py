@@ -35,8 +35,27 @@ cells = [
     code(f"!git clone --depth 1 -b {BR} {REPO} 2>/dev/null || (cd cell && git pull)",
          "%cd cell",
          "!pip -q install numpy scipy scikit-learn 2>/dev/null",
-         "import sys; sys.path.insert(0, 'colab')",
+         "import sys, os; sys.path.insert(0, 'colab')",
          "print('ready')"),
+
+    md("## 1b. Restore the core data from Drive  **(required for CellQA / audit)**",
+       "The 36 MB `cell_complete.json` is git-ignored on purpose, so it is **not** in the clone. Put it (or a "
+       "`.json.gz`) in your Google Drive under **`MyDrive/cell_model/`** — the same convention the other "
+       "notebooks use — and this cell restores it. (The scorecard cell below works without it.)"),
+    code("os.makedirs('outputs/orphan', exist_ok=True)",
+         "dst = 'outputs/orphan/cell_complete.json'",
+         "if not os.path.exists(dst):",
+         "    from google.colab import drive; drive.mount('/content/drive')",
+         "    import glob, gzip, shutil",
+         "    c = sorted(glob.glob('/content/drive/MyDrive/cell_model/**/cell_complete*.json*', recursive=True),",
+         "               key=lambda p: os.path.getsize(p), reverse=True)",
+         "    if not c:",
+         "        raise FileNotFoundError('Upload cell_complete.json (or .json.gz) to MyDrive/cell_model/ — '",
+         "                                'it is the 36MB core data, git-ignored on purpose.')",
+         "    src = c[0]; print('restoring from', src)",
+         "    (shutil.copyfileobj(gzip.open(src,'rb'), open(dst,'wb')) if src.endswith('.gz') else shutil.copy(src, dst))",
+         "import json; D = json.load(open(dst))",
+         "print('model loaded:', len(D['genes']), 'genes |', len(D['ctnames']), 'cell types |', len(D['emask']), 'in emask')"),
 
     md("## 2. Recovery scorecard — 24/24 (reads committed results, no network)"),
     code("!python colab/recovery_scorecard.py"),
