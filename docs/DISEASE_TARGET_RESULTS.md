@@ -71,3 +71,23 @@ up-only enrichment:
 - Two network-only ideas for isolating upstream cause from downstream effector both failed: enrichment rewards small effector regulons; multi-hop "upstream-ness" saturates (the dense graph reaches ~100% of the signature in 3 hops from almost any node).
 
 **Bottom line:** cause-finding works as *multi-evidence integration* — genetics names the causal genes, the network + mode-of-action confirm the TF drivers and strip wrong-direction confounds. Ranking the single true culprit #1 from the *network alone* remains open.
+
+## The Detective — intervention + multi-witness convergence — `colab/detective_cause.py`
+
+The naive cause-finder scored *correlation* ("who regulates the up-genes") and arrested the loudest bystander. The detective instead **corroborates independent witnesses** (generative/interventional, regulon mode-of-action, genetics, constraint) and ranks by **convergence** (rank-product) — a suspect scores only if *multiple* witnesses agree.
+
+**Result — it names the chief suspect and clears the bystanders:**
+
+| method | #1 | precision@5 | confounds (DDIT3/STAT6/CEBPE/CRP) |
+|--------|----|:-----------:|-----------------------------------|
+| naive regulon (single witness) | CRP | 0.0 | ranks 1, 40, 3, 2 (top!) |
+| **corroboration (network × genetics)** | **STAT3** ✓ | **1.0** | ranks 3613, 3551, 3821, 2703 (**gone**) |
+
+**STAT3 — the correct master Th17 driver — is named #1.** The mechanism is pure triangulation: neither witness alone names it cleanly (regulon #14, buried under confounds; genetics #1 but among 8 equal GWAS hits), but **the one suspect both independently finger is STAT3.** Every confound collapses because it lacks the second witness.
+
+**Honest limits (why still not a scorecard axis):**
+- **High precision at the top, LOW recall (2/19).** It names the chief suspect but drops the rest of the cast — RORC, NF-κB, and even IL-23 itself (the network-regulon witness can't see cytokines/receptors; they survive only in the genetic witness).
+- **Still needs genetics.** Network-alone corroboration fails.
+- **The interventional "generative" witness failed** — reverse signed propagation from the signature, normalized by reach, produced its own tiny-node artifact (a single correctly-signed edge → perfect score). The static dense network defeats the causal/interventional reformulation.
+
+**So — can the detective solve it?** For the **#1 culprit, yes**: corroboration names STAT3 and eliminates the bystanders that fooled every single method. For the **full causal cast, no** — and **not from the network alone**. The unsolved core is exactly what a real detective would flag as the missing witness: **time** (causes precede effects) — a disease *time-course* is the data the static snapshot cannot substitute for.
