@@ -99,44 +99,99 @@ def embed(X, A, hops=2):
         cur = S @ cur
         feats.append(cur)
     H = np.hstack(feats).astype(np.float32)
-    # L2-normalize rows so dot-products behave
     H = H / (np.linalg.norm(H, axis=1, keepdims=True) + 1e-9)
     return H
 
 
-# ---------------- Round 1 task: link prediction ----------------
-def link_prediction_auc(D, H, relation="ppi", test_frac=0.1, seed=0):
-    """Hold out `test_frac` of `relation` edges; train logistic regression on Hadamard(H[u],H[v]) to
-    distinguish true edges from random non-edges. Report ROC-AUC and average precision on the held-out set."""
+def structural_embedding(A, dim=64, hops=3, seed=0):
+    """LEAKAGE-FREE embedding from pure TOPOLOGY: propagate random Gaussian features through the graph.
+    Contains no node labels, so predicting compartment/process/essentiality from it honestly tests whether
+    the cell's WIRING encodes function."""
+    n = A.shape[0]
+    rng = np.random.default_rng(seed)
+    R = rng.standard_normal((n, dim)).astype(np.float32)
+    return embed(R, A, hops=hops)
+
+
+# ---------------- Round 1/2 task: link prediction (hard negatives + NO test-edge leakage) ----------------
+def link_prediction_auc(D, X, A_base, relation="ppi", test_frac=0.1, seed=0, hard_negatives=True):
+    """Honest link prediction: hold out test edges of `relation`, REMOVE them from the graph, rebuild the
+    embedding, then predict them. Degree-matched hard negatives. This is leakage-free (the model never sees
+    the test edges during representation learning)."""
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import roc_auc_score, average_precision_score
     rng = np.random.default_rng(seed)
-    n = H.shape[0]
+    n = A_base.shape[0]
     edges = np.array([(e[0], e[1]) for e in D[relation] if e[0] != e[1]], dtype=np.int64)
-    edges = np.unique(np.sort(edges, axis=1), axis=0)     # dedupe undirected
+    edges = np.unique(np.sort(edges, axis=1), axis=0)
     rng.shuffle(edges)
     n_test = int(len(edges) * test_frac)
     test_pos, train_pos = edges[:n_test], edges[n_test:]
     edgeset = set(map(tuple, edges))
+    # rebuild adjacency with the TEST edges removed, then embed -> no leakage
+    mask = sparse.csr_matrix((np.ones(len(test_pos)), (test_pos[:, 0], test_pos[:, 1])), shape=(n, n))
+    mask = mask.maximum(mask.T)
+    A_tr = (A_base - A_base.multiply(mask)); A_tr.eliminate_zeros()
+    H = embed(X, A_tr, hops=2)
+    deg = np.bincount(edges.ravel(), minlength=n).astype(np.float64)
+    p_deg = (deg + 1.0); p_deg /= p_deg.sum()             # degree-proportional sampling distribution
     def neg_sample(k):
         out = []
         while len(out) < k:
-            a = rng.integers(0, n, size=k); b = rng.integers(0, n, size=k)
+            if hard_negatives:
+                a = rng.choice(n, size=k * 2, p=p_deg); b = rng.choice(n, size=k * 2, p=p_deg)
+            else:
+                a = rng.integers(0, n, size=k * 2); b = rng.integers(0, n, size=k * 2)
             for x, y in zip(a, b):
                 if x != y and (min(x, y), max(x, y)) not in edgeset:
                     out.append((x, y))
                     if len(out) >= k: break
         return np.array(out[:k], dtype=np.int64)
     train_neg = neg_sample(len(train_pos)); test_neg = neg_sample(len(test_pos))
-    def feats(pairs): return H[pairs[:, 0]] * H[pairs[:, 1]]        # Hadamard product
+    def feats(pairs): return H[pairs[:, 0]] * H[pairs[:, 1]]
     Xtr = np.vstack([feats(train_pos), feats(train_neg)])
     ytr = np.concatenate([np.ones(len(train_pos)), np.zeros(len(train_neg))])
     Xte = np.vstack([feats(test_pos), feats(test_neg)])
     yte = np.concatenate([np.ones(len(test_pos)), np.zeros(len(test_neg))])
     clf = LogisticRegression(max_iter=300, C=1.0).fit(Xtr, ytr)
     p = clf.predict_proba(Xte)[:, 1]
-    return dict(relation=relation, n_edges=len(edges), auc=round(float(roc_auc_score(yte, p)), 4),
-                ap=round(float(average_precision_score(yte, p)), 4), dim=H.shape[1])
+    return dict(relation=relation, n_edges=len(edges),
+                auc=round(float(roc_auc_score(yte, p)), 4),
+                ap=round(float(average_precision_score(yte, p)), 4),
+                negatives="degree-matched" if hard_negatives else "random", dim=H.shape[1])
+
+
+# ---------------- Round 2 task: node function prediction (does the embedding encode biology?) ----------------
+def node_function_eval(H, G, seed=0):
+    """Predict biological node labels from a STRUCTURE-ONLY embedding (pass H = structural_embedding(A), which
+    contains no node labels). 80/20 split vs a majority/prior baseline. Tests whether the cell's WIRING alone
+    encodes compartment, process, essentiality and TF identity -- leakage-free."""
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import accuracy_score, roc_auc_score
+    n = len(G); rng = np.random.default_rng(seed)
+    out = {}
+    # multiclass: compartment, process
+    for field in ("comp", "proc"):
+        labs = [g.get(field, "") for g in G]
+        classes = sorted(set(labs)); ci = {c: k for k, c in enumerate(classes)}
+        y = np.array([ci[l] for l in labs])
+        tr, te = train_test_split(np.arange(n), test_size=0.2, random_state=seed, stratify=y)
+        clf = LogisticRegression(max_iter=300, C=1.0).fit(H[tr], y[tr])   # multinomial is the default
+        acc = accuracy_score(y[te], clf.predict(H[te]))
+        base = max(np.bincount(y).max() / n, 1e-9)
+        out[field] = dict(accuracy=round(float(acc), 3), majority_baseline=round(float(base), 3),
+                          n_classes=len(classes))
+    # binary: essentiality, tf
+    for field in ("ess", "tf"):
+        y = np.array([1 if g.get(field) else 0 for g in G])
+        if y.sum() < 20 or (n - y.sum()) < 20:
+            continue
+        tr, te = train_test_split(np.arange(n), test_size=0.2, random_state=seed, stratify=y)
+        clf = LogisticRegression(max_iter=300, C=1.0, class_weight="balanced").fit(H[tr], y[tr])
+        p = clf.predict_proba(H[te])[:, 1]
+        out[field] = dict(auc=round(float(roc_auc_score(y[te], p)), 3), positive_rate=round(float(y.mean()), 3))
+    return out
 
 
 def main():
@@ -147,17 +202,25 @@ def main():
     print(f"  node features: {X.shape[1]} dims")
     A = build_adj(D, n)
     print(f"  adjacency: {A.nnz//2} undirected edges over reg+ppi+sig+codep+lr")
-    H = embed(X, A, hops=2)
-    print(f"  embedding: {H.shape[1]} dims (SIGN, 2 hops)")
     res = {}
+    print("  [R1/R2] link prediction (hard negatives + test-edge removed = leakage-free):")
     for rel in ["ppi", "reg", "sig"]:
-        r = link_prediction_auc(D, H, relation=rel)
+        r = link_prediction_auc(D, X, A, relation=rel, hard_negatives=True)
         res[rel] = r
-        print(f"  link-prediction[{rel}]: AUC {r['auc']}  AP {r['ap']}  ({r['n_edges']} edges)")
-    json.dump(dict(n_nodes=n, feat_dim=int(X.shape[1]), emb_dim=int(H.shape[1]),
-                   link_prediction=res), open(OUT / "cellgraph_r1.json", "w"), indent=2)
-    print("-> outputs/orphan/cellgraph_r1.json")
-    return res
+        print(f"     {rel:4} AUC {r['auc']}  AP {r['ap']}  ({r['n_edges']} edges, {r['negatives']} neg)")
+    print("  [R2] node-function from STRUCTURE ONLY (leakage-free: does wiring predict function?):")
+    Hs = structural_embedding(A, dim=64, hops=3)
+    fn = node_function_eval(Hs, G)
+    for k, v in fn.items():
+        if "accuracy" in v:
+            print(f"     {k:5} acc {v['accuracy']} (majority {v['majority_baseline']}, {v['n_classes']} classes)")
+        else:
+            print(f"     {k:5} AUC {v['auc']} (positive rate {v['positive_rate']})")
+    json.dump(dict(n_nodes=n, feat_dim=int(X.shape[1]), struct_emb_dim=int(Hs.shape[1]),
+                   link_prediction=res, node_function=fn),
+              open(OUT / "cellgraph_metrics.json", "w"), indent=2)
+    print("-> outputs/orphan/cellgraph_metrics.json")
+    return dict(link_prediction=res, node_function=fn)
 
 
 if __name__ == "__main__":

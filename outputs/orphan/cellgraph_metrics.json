@@ -1,0 +1,51 @@
+{
+  "n_nodes": 16492,
+  "feat_dim": 35,
+  "struct_emb_dim": 256,
+  "link_prediction": {
+    "ppi": {
+      "relation": "ppi",
+      "n_edges": 191447,
+      "auc": 0.7543,
+      "ap": 0.7515,
+      "negatives": "degree-matched",
+      "dim": 105
+    },
+    "reg": {
+      "relation": "reg",
+      "n_edges": 606178,
+      "auc": 0.7307,
+      "ap": 0.6888,
+      "negatives": "degree-matched",
+      "dim": 105
+    },
+    "sig": {
+      "relation": "sig",
+      "n_edges": 17084,
+      "auc": 0.7237,
+      "ap": 0.6862,
+      "negatives": "degree-matched",
+      "dim": 105
+    }
+  },
+  "node_function": {
+    "comp": {
+      "accuracy": 0.272,
+      "majority_baseline": 0.243,
+      "n_classes": 12
+    },
+    "proc": {
+      "accuracy": 0.28,
+      "majority_baseline": 0.261,
+      "n_classes": 12
+    },
+    "ess": {
+      "auc": 0.74,
+      "positive_rate": 0.093
+    },
+    "tf": {
+      "auc": 0.749,
+      "positive_rate": 0.078
+    }
+  }
+}
