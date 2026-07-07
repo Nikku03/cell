@@ -204,6 +204,27 @@ def scorecard():
             "function keyword-match accuracy>=0.8 on>=4 proteins & >=2 recovered via a <30% seqId structural homolog",
             "AlphaFold structure + Foldseek transfers correct function, incl. from twilight-zone homologs sequence methods miss")
 
+    # 16) End-to-end chain — destabilization-mechanism detector (honest scope: NOT a general classifier)
+    ch = _load("chain_validation.json")
+    if ch:
+        s = ch["summary"]
+        add("chain_mechanism", ch["passed"],
+            dict(precision_when_fires=s["precision_when_fires"], lift=s["precision_lift"],
+                 recall=s["recall_destabilizing"], auc_general=s["auc_ddg_general_classifier"]),
+            dict(base_rate=s["base_rate"]),
+            "mutation→ΔΔG→flux chain: precision(pathogenic|ΔΔG>1) >= 1.4x base (high-precision destabilization detector)",
+            "one validated pipeline mutation→phenotype; high-precision LOW-recall (AUC~0.5 as a general classifier — honest scope)")
+
+    # 17) Self-consistency engine — completions ('this edge is missing') recover held-out real edges
+    scv = _load("self_consistency_validation.json")
+    if scv:
+        s = scv["summary"]
+        add("self_consistency", scv["passed"],
+            dict(completion_auc=s["auc_completion_triadic"], triadic_recall=s["heldout_with_triadic_evidence"]),
+            dict(embedding_only=s["auc_embedding_only"]),
+            "anomaly engine's completion proposals recover held-out real edges at triadic-closure AUC >= 0.75",
+            "model checks itself: hard-constraint > measured > predicted; flags never auto-applied; completions validated leakage-free")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 

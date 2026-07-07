@@ -1,6 +1,6 @@
 {
-  "n_pass": 17,
-  "n_total": 17,
+  "n_pass": 19,
+  "n_total": 19,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -246,6 +246,34 @@
       },
       "bar": "function keyword-match accuracy>=0.8 on>=4 proteins & >=2 recovered via a <30% seqId structural homolog",
       "detail": "AlphaFold structure + Foldseek transfers correct function, incl. from twilight-zone homologs sequence methods miss"
+    },
+    {
+      "test": "chain_mechanism",
+      "passed": true,
+      "value": {
+        "precision_when_fires": 0.75,
+        "lift": 1.5,
+        "recall": 0.1,
+        "auc_general": 0.521
+      },
+      "baseline": {
+        "base_rate": 0.5
+      },
+      "bar": "mutation\u2192\u0394\u0394G\u2192flux chain: precision(pathogenic|\u0394\u0394G>1) >= 1.4x base (high-precision destabilization detector)",
+      "detail": "one validated pipeline mutation\u2192phenotype; high-precision LOW-recall (AUC~0.5 as a general classifier \u2014 honest scope)"
+    },
+    {
+      "test": "self_consistency",
+      "passed": true,
+      "value": {
+        "completion_auc": 0.774,
+        "triadic_recall": 0.461
+      },
+      "baseline": {
+        "embedding_only": 0.656
+      },
+      "bar": "anomaly engine's completion proposals recover held-out real edges at triadic-closure AUC >= 0.75",
+      "detail": "model checks itself: hard-constraint > measured > predicted; flags never auto-applied; completions validated leakage-free"
     }
   ],
   "tests": [
@@ -493,6 +521,34 @@
       },
       "bar": "function keyword-match accuracy>=0.8 on>=4 proteins & >=2 recovered via a <30% seqId structural homolog",
       "detail": "AlphaFold structure + Foldseek transfers correct function, incl. from twilight-zone homologs sequence methods miss"
+    },
+    {
+      "test": "chain_mechanism",
+      "passed": true,
+      "value": {
+        "precision_when_fires": 0.75,
+        "lift": 1.5,
+        "recall": 0.1,
+        "auc_general": 0.521
+      },
+      "baseline": {
+        "base_rate": 0.5
+      },
+      "bar": "mutation\u2192\u0394\u0394G\u2192flux chain: precision(pathogenic|\u0394\u0394G>1) >= 1.4x base (high-precision destabilization detector)",
+      "detail": "one validated pipeline mutation\u2192phenotype; high-precision LOW-recall (AUC~0.5 as a general classifier \u2014 honest scope)"
+    },
+    {
+      "test": "self_consistency",
+      "passed": true,
+      "value": {
+        "completion_auc": 0.774,
+        "triadic_recall": 0.461
+      },
+      "baseline": {
+        "embedding_only": 0.656
+      },
+      "bar": "anomaly engine's completion proposals recover held-out real edges at triadic-closure AUC >= 0.75",
+      "detail": "model checks itself: hard-constraint > measured > predicted; flags never auto-applied; completions validated leakage-free"
     }
   ]
 }
