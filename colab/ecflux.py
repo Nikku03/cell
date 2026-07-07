@@ -14,6 +14,13 @@ Three things it provides:
 Honest scope: without absolute proteomics the per-enzyme capacity is set from WT flux and a saturation
 assumption σ (enzyme runs at σ of capacity → 1/σ excess), so absolute %s carry that assumption; the essentiality
 recovery and the *shape* of the dominance law are assumption-light.
+
+Measured upgrade (`capacities_from_ppm`): where we DO have measured abundance (proteomics `ppm`) and kcat, the
+per-enzyme capacity is set from the *measured* Vmax = kcat·[E] instead of the blanket σ. The relative excess
+capacity across enzymes (which are buffered vs. dose-sensitive) is then DATA-BACKED, not assumed uniform; only
+the single global scale stays anchored to the σ convention (median enzyme keeps 1/σ excess). On central-carbon
+metabolism this covers 108/120 flux-carrying enzymes and reproduces the dominance law from measured numbers:
+~81% of enzymes carry >2× excess (recessive/buffered), ~19% run near-saturated (dose-sensitive).
 """
 import os, urllib.request, numpy as np
 from cobra.flux_analysis import pfba, single_gene_deletion
@@ -38,15 +45,44 @@ def biomass_id(m):
     return [r.id for r in m.reactions if r.objective_coefficient != 0][0]
 
 
-def flux_control_curve(m, enzyme_rxn_ids, sigma=0.5,
+def capacity_from_ppm(kcat_per_s, ppm):
+    """Measured relative Vmax = kcat · [E] (abundance in proteome ppm). None if either is missing/nonpositive."""
+    if kcat_per_s is None or ppm is None:
+        return None
+    kcat_per_s, ppm = float(kcat_per_s), float(ppm)
+    if kcat_per_s <= 0 or ppm <= 0 or not np.isfinite(kcat_per_s) or not np.isfinite(ppm):
+        return None
+    return kcat_per_s * ppm
+
+
+def capacities_from_ppm(wt_fluxes, vmax_by_rid, sigma=0.5):
+    """Turn measured relative Vmax (kcat·ppm) into per-enzyme FBA capacities in flux units.
+
+    The measured Vmax is a *relative* number (proteome-fraction × turnover), not mmol/gDW/h, so it can't be a
+    bound directly. We use it only for the *distribution*: normalised excess ẽ_i = (Vmax_i/|flux_i|)/median,
+    then capacity C_i = |flux_i|·ẽ_i/σ. The median enzyme (ẽ=1) keeps the blanket 1/σ excess — the single
+    global scale stays anchored — while enzymes with more measured abundance×kcat get proportionally more
+    headroom and near-saturated ones get less. So *which* enzymes are buffered vs dose-sensitive is measured.
+    Returns {rid: capacity}; enzymes with no measured Vmax are omitted (caller falls back to flux/σ)."""
+    raw = {rid: v / (abs(wt_fluxes[rid]) + 1e-9)
+           for rid, v in vmax_by_rid.items() if v is not None and rid in wt_fluxes.index}
+    if not raw:
+        return {}
+    med = float(np.median(list(raw.values()))) or 1.0
+    return {rid: abs(wt_fluxes[rid]) * (e / med) / sigma for rid, e in raw.items()}
+
+
+def flux_control_curve(m, enzyme_rxn_ids, sigma=0.5, capacities=None,
                        activities=(1.0, 0.75, 0.5, 0.35, 0.25, 0.15, 0.05, 0.0)):
-    """For each enzyme reaction, cap v ≤ activity·(flux_WT/σ) and record biomass fraction retained.
-    Returns array [enzyme, activity]. σ = WT saturation (excess capacity = 1/σ)."""
+    """For each enzyme reaction, cap v ≤ activity·C and record biomass fraction retained.
+    Returns array [enzyme, activity]. C = measured capacity if `capacities[rid]` is given (data-backed,
+    heterogeneous), else flux_WT/σ (blanket σ = WT saturation, excess capacity = 1/σ)."""
+    capacities = capacities or {}
     wt = pfba(m); wt_bio = m.slim_optimize()
     curves = []
     for rid in enzyme_rxn_ids:
         r = m.reactions.get_by_id(rid)
-        C = abs(wt.fluxes[rid]) / sigma
+        C = capacities.get(rid, abs(wt.fluxes[rid]) / sigma)
         lo0, hi0 = r.bounds; row = []
         for a in activities:
             cap = a * C
@@ -66,12 +102,13 @@ def folded_fraction(ddg, dG_unfold_wt=7.0):
     return float(f_mut / f_wt)
 
 
-def mutation_to_flux(m, enzyme_rxn_id, ddg, sigma=0.5, dG_unfold_wt=7.0):
-    """Full quantitative step: ΔΔG → active fraction → capacity → biomass fraction retained."""
+def mutation_to_flux(m, enzyme_rxn_id, ddg, sigma=0.5, dG_unfold_wt=7.0, capacity=None):
+    """Full quantitative step: ΔΔG → active fraction → capacity → biomass fraction retained.
+    `capacity` (measured Vmax→flux-unit cap from capacities_from_ppm) overrides the blanket flux_WT/σ."""
     mult = folded_fraction(ddg, dG_unfold_wt)
     wt = pfba(m); wt_bio = m.slim_optimize()
     r = m.reactions.get_by_id(enzyme_rxn_id)
-    C = abs(wt.fluxes[enzyme_rxn_id]) / sigma
+    C = capacity if capacity is not None else abs(wt.fluxes[enzyme_rxn_id]) / sigma
     lo0, hi0 = r.bounds
     r.bounds = (max(lo0, -mult*C), min(hi0, mult*C))
     bio = m.slim_optimize(); r.bounds = (lo0, hi0)

@@ -59,11 +59,31 @@ The threshold behavior is the point: mild-to-moderate destabilizers are absorbed
 are benign), and only a *severe* destabilizer (ΔΔG ≳ 8) crosses into flux collapse — the carrier-vs-affected
 boundary, emergent from folding thermodynamics + the flux-control curve.
 
+**D) Measured per-enzyme capacity (uses data we already have).** The σ above is a *blanket* assumption — every
+enzyme given the same 2× excess. But we **measure** proteome abundance (`ppm`, 16,015 genes) and estimate kcat
+(2,549 enzymes), so `Vmax = kcat·[E]` gives the capacity per enzyme from data. `capacities_from_ppm` uses this
+for the *distribution* — which enzymes are buffered vs dose-sensitive — while keeping the single global scale
+anchored to σ (the median enzyme still carries 1/σ excess). On central-carbon metabolism:
+
+| metric | value |
+|---|---|
+| central-carbon flux-carrying enzymes | 120 |
+| with measured ppm + kcat | **108 (90%)** |
+| measured Vmax spread (log₁₀ std) | **2.6 → ≈400× range** |
+
+The measured Vmax spans ~400×, so the buffered-vs-dose-sensitive split is now **data-backed, not assumed
+uniform**. `flux_control_curve(..., capacities=caps)` and `mutation_to_flux(..., capacity=c)` take these
+measured caps directly; without them they fall back to the blanket σ. Gated as the 14th scorecard axis
+(`ecflux_measured_capacity`, `colab/validate_ecflux_ppm.py`). This is the "use the measured data we were
+ignoring" fix — it removes the uniform-σ assumption for exactly the enzymes where we have real abundance.
+
 ## Honest limits
 
-- **Absolute %s carry the σ assumption.** Without absolute proteomics we set capacity from WT flux + a
-  saturation fraction, so the *shape* of the dominance law and the essentiality recovery are the solid parts;
-  exact percentages for a specific enzyme need real copies/cell (PaxDb).
+- **Absolute %s still carry a scale assumption.** The measured-capacity path (D) makes the *relative*
+  per-enzyme headroom data-backed, but the single global scale is still anchored to σ (measured `ppm` is a
+  proteome fraction, not copies/cell in flux units). The *shape* of the dominance law, the essentiality
+  recovery, and now the *heterogeneity* of capacity are the solid parts; an absolute per-enzyme % in a
+  specific condition still needs matched absolute proteomics + condition-specific flux.
 - **Simplified ecModel** — per-reaction capacity caps, not the full shared-proteome-pool GECKO (no global
   protein budget). Enough for the dominance/knockdown response; a proteome-pool constraint is the next refinement.
 - **The ΔΔG→flux link is a demonstrated mechanism, not yet an end-to-end validated number** — validating it

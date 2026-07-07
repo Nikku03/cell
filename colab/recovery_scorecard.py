@@ -168,6 +168,17 @@ def scorecard():
             "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
             "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)")
 
+    # 14) ec-flux MEASURED capacity — per-enzyme Vmax=kcat·[E] from proteomics, not the blanket σ
+    ep = _load("ecflux_ppm_validation.json")
+    if ep:
+        s = ep["summary"]
+        add("ecflux_measured_capacity", ep["passed"],
+            dict(coverage=s["coverage"], n_measured=s["n_measured_capacity"],
+                 vmax_spread_log10=s["excess_heterogeneity_log10_std"]),
+            dict(blanket_sigma=0.5),
+            "measured ppm×kcat covers>=70% central-carbon enzymes & Vmax spread(log10 std)>=0.5",
+            "per-enzyme capacity is data-backed (measured abundance×kcat); buffered-vs-dose-sensitive is measured, not assumed")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 

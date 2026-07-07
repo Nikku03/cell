@@ -1,6 +1,6 @@
 {
-  "n_pass": 14,
-  "n_total": 14,
+  "n_pass": 15,
+  "n_total": 15,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -205,6 +205,20 @@
       },
       "bar": "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
       "detail": "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)"
+    },
+    {
+      "test": "ecflux_measured_capacity",
+      "passed": true,
+      "value": {
+        "coverage": 0.9,
+        "n_measured": 108,
+        "vmax_spread_log10": 2.604
+      },
+      "baseline": {
+        "blanket_sigma": 0.5
+      },
+      "bar": "measured ppm\u00d7kcat covers>=70% central-carbon enzymes & Vmax spread(log10 std)>=0.5",
+      "detail": "per-enzyme capacity is data-backed (measured abundance\u00d7kcat); buffered-vs-dose-sensitive is measured, not assumed"
     }
   ],
   "tests": [
@@ -411,6 +425,20 @@
       },
       "bar": "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
       "detail": "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)"
+    },
+    {
+      "test": "ecflux_measured_capacity",
+      "passed": true,
+      "value": {
+        "coverage": 0.9,
+        "n_measured": 108,
+        "vmax_spread_log10": 2.604
+      },
+      "baseline": {
+        "blanket_sigma": 0.5
+      },
+      "bar": "measured ppm\u00d7kcat covers>=70% central-carbon enzymes & Vmax spread(log10 std)>=0.5",
+      "detail": "per-enzyme capacity is data-backed (measured abundance\u00d7kcat); buffered-vs-dose-sensitive is measured, not assumed"
     }
   ]
 }
