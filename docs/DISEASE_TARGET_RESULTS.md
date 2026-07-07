@@ -90,6 +90,30 @@ up-only enrichment:
 
 **Bottom line:** cause-finding works as *multi-evidence integration* — genetics names the causal genes, the network + mode-of-action confirm the TF drivers and strip wrong-direction confounds. Ranking the single true culprit #1 from the *network alone* remains open.
 
+## Measured causal cause-finder — the alibi test with REAL knockout data — `colab/measured_cause.py`
+
+Every network-only method above hit the same wall: a static correlation graph can't separate the *driver*
+from its *downstream effects*. The fix is **interventional data** — the measured effect of actually knocking
+each gene down. The Drive holds the **Replogle-Nadig Perturb-seq screen** (~2,000 gene knockdowns × 4 cell
+lines, transcriptome-wide measured deltas) in `virtual_cell_data/perturbation_signatures/replogle_nadig/`.
+
+**The measured alibi test:** for a disease signature `s`, and each knockdown target `T` with measured effect
+vector `e_T`, score `reversal(T) = -cosine(e_T, s)`. High reversal = knocking `T` down pushes the cell
+*away* from disease → causal, interventional evidence that `T` **drives** the disease. This is the suspect
+whose removal *undoes the crime* — not mere correlation.
+
+- **Correctness is unit-tested** (`measured_cause.py` self-test): on synthetic knockouts it ranks the true
+  DRIVER #1 (reversal +1.00), scores a PASSENGER low, and correctly flags a PROTECTOR as *not* a target
+  (its knockdown makes disease worse) — the exact driver/effect discrimination the network method lacked.
+- **Real-data run** is `colab/measured_cause.ipynb` (memory-safe pyarrow column projection over the 6.5 GB
+  parquet; Jurkat = the T-cell line, closest to immune disease). It ranks measured causal drivers of a
+  disease signature with no network at all.
+
+**Honest limit:** Replogle is in **cancer cell lines**, not diseased tissue, so inducible disease genes are
+weakly expressed there — measured causal evidence, but tissue-mismatched. The clean next data is a
+disease-tissue Perturb-seq (or the Tahoe drug screen, also on Drive). This is the step from *inferring*
+causation off a static graph to *measuring* it.
+
 ## The Detective — intervention + multi-witness convergence — `colab/detective_cause.py`
 
 The naive cause-finder scored *correlation* ("who regulates the up-genes") and arrested the loudest bystander. The detective instead **corroborates independent witnesses** (generative/interventional, regulon mode-of-action, genetics, constraint) and ranks by **convergence** (rank-product) — a suspect scores only if *multiple* witnesses agree.
