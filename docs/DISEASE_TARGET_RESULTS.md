@@ -48,3 +48,26 @@ recovering a known target in every OOD disease above a random-label baseline).
 - ❌ **Not autonomous driver discovery.** In an open driver competition (IL-23 vs TNF/IL-6/IL-1β/IFN-γ) IL-23 does **not** uniquely win — STAT3/IL-6 tie higher. The clinical fact "IL-23 blockade > IL-6 blockade in psoriasis" is not in the network topology.
 - **Re-discovery**, not novel targets. **Cytokine-cascade diseases** only (metabolic/structural diseases lack the transcriptional readout — e.g. gout's key genes are dynamical dead-ends).
 - **Topological, not kinetic.** JAK2 missed in psoriasis (network shortcut). n = 2 diseases.
+
+## Cause inference (reverse: phenotype → driver) — `colab/cause_inference.py`
+
+Can it find the *cause* from the phenotype alone (driver never supplied)? Signed VIPER (up **and** down
+genes + regulon mode-of-action) + an independent genetic prior (GWAS risk genes). Benchmarked vs the naive
+up-only enrichment:
+
+| method | precision@5 | precision@10 | top-5 |
+|--------|:-----------:|:------------:|-------|
+| A — naive up-only z | 0.20 | 0.20 | DDIT3, STAT6, CEBPE, STAT3, CEBPB |
+| B — +down/mode-of-action | — | — | (kills the wrong-direction confound) |
+| **C — +genetic prior** | **0.80** | **0.90** | STAT3, REL, CRP, KLF4, RUNX3 |
+
+**What genuinely improved**
+- **Mode-of-action kills wrong-*direction* confounds.** STAT6 (Th2 driver — its targets are *down* in psoriasis) drops **#2 → #42**. Signed VIPER penalizes it instead of merely not rewarding it.
+- **The integrated shortlist is far cleaner:** top-5 precision **0.2 → 0.8**; the effector-arm confounds (DDIT3/CEBPE) fall out of the top-10.
+
+**The honest boundary (why this is *not* a scorecard axis)**
+- On **non-circular** drivers (mechanism TFs *not* in the genetic prior — RORC, NF-κB…), the combined method is **worse**, not better (RORC 25→57, NFKB1 14→101). The network *alone* does not out-rank the naive baseline.
+- The clean top-5 is **genetics-driven**. This is **evidence integration (network + human genetics)**, exactly how Open Targets works — **not autonomous network cause-discovery.**
+- Two network-only ideas for isolating upstream cause from downstream effector both failed: enrichment rewards small effector regulons; multi-hop "upstream-ness" saturates (the dense graph reaches ~100% of the signature in 3 hops from almost any node).
+
+**Bottom line:** cause-finding works as *multi-evidence integration* — genetics names the causal genes, the network + mode-of-action confirm the TF drivers and strip wrong-direction confounds. Ranking the single true culprit #1 from the *network alone* remains open.
