@@ -1,6 +1,6 @@
 {
-  "n_pass": 8,
-  "n_total": 8,
+  "n_pass": 9,
+  "n_total": 9,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -111,6 +111,20 @@
       },
       "bar": "recover a known target as a top rescuer in every OOD disease & beat random-label baseline",
       "detail": "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind"
+    },
+    {
+      "test": "measured_cause_recovery",
+      "passed": true,
+      "value": {
+        "driver_recall": 0.875,
+        "suppressor_protector": 1.0,
+        "separation": 1.518
+      },
+      "baseline": {
+        "random": 0.5
+      },
+      "bar": "driver recall>=0.7 & suppressor flagged protector & separation>=0.5",
+      "detail": "measured knockout effects separate DRIVER from PROTECTOR (real interventional causality)"
     }
   ],
   "tests": [
@@ -223,6 +237,20 @@
       },
       "bar": "recover a known target as a top rescuer in every OOD disease & beat random-label baseline",
       "detail": "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind"
+    },
+    {
+      "test": "measured_cause_recovery",
+      "passed": true,
+      "value": {
+        "driver_recall": 0.875,
+        "suppressor_protector": 1.0,
+        "separation": 1.518
+      },
+      "baseline": {
+        "random": 0.5
+      },
+      "bar": "driver recall>=0.7 & suppressor flagged protector & separation>=0.5",
+      "detail": "measured knockout effects separate DRIVER from PROTECTOR (real interventional causality)"
     }
   ]
 }

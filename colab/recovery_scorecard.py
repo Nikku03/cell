@@ -103,6 +103,19 @@ def scorecard():
             "recover a known target as a top rescuer in every OOD disease & beat random-label baseline",
             "3-layer pipeline (causal->perturb-to-wildtype->druggability) selects the real drug target blind")
 
+    # 8) Measured causal cause-finder — the alibi test on REAL knockout data (Replogle Perturb-seq)
+    mc = _load("measured_cause_validation.json")
+    if mc:
+        s = mc["summary"]
+        add("measured_cause_recovery",
+            (s["driver_recall"] or 0) >= 0.7 and (s["suppressor_flagged_protector"] or 0) >= 0.99
+            and (s["driver_vs_suppressor_separation"] or 0) >= 0.5,
+            dict(driver_recall=s["driver_recall"], suppressor_protector=s["suppressor_flagged_protector"],
+                 separation=s["driver_vs_suppressor_separation"]),
+            dict(random=s["random_sign_baseline"]),
+            "driver recall>=0.7 & suppressor flagged protector & separation>=0.5",
+            "measured knockout effects separate DRIVER from PROTECTOR (real interventional causality)")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
