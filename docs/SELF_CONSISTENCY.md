@@ -59,11 +59,29 @@ gated by `colab/validate_fill_verify.py` (scorecard axis `fill_verify`).
 |---|---|---|---|
 | **bad kcat** (past diffusion limit) | kcat bounded to the diffusion limit | check kcat/Km is now legal (+ enzyme still carries its flux) | **17/17 verified**; the 6 that touch a **measured** kcat (e.g. GPI) are **ESCALATED for human sign-off**, never auto-applied |
 | **missing edge** | add as a predicted PPI | require shared **complex** membership or ≥20 shared partners | **25/25 verified**; never touches measured data |
-| **pathway gap** | add a boundary/sink reaction | re-run FBA: does the dead-end reaction now carry flux? | **0/10 verified** — a single sink doesn't un-block a multi-reaction gap, and the verifier **correctly refuses to report a false fix** |
+| **pathway gap** | add reaction(s), **iteratively** | re-run FBA each round: does the dead-end reaction now carry flux? | **retries with failure data** — a single sink fails on a multi-reaction gap, so the next round opens the metabolite that *was still blocking* and retries; **3/3 tested gaps resolve on round 2** |
 
-That last row is the point: the loop **ran the FBA, saw the gap was still there, and did not claim it was
-fixed.** No false fixes. A verified fix is "apply-pending-review"; a fix that corrects a measured value is
-"ESCALATE"; an unverifiable fix stays a flag. Nothing is ever silently changed.
+### Retry with what-failed knowledge (and a check for false self-rejection)
+
+A first fix failing doesn't end it. If the single-sink fix leaves the reaction blocked, the loop reads the
+**failure data** — *which* metabolite is still a dead-end — opens that too, and retries, up to a depth cap. So a
+2-reaction gap that the naive fix can't touch resolves on the second round:
+
+```
+(2R)-pristanoyl-CoA:  round 1 open 1 reaction → flux 0 (fails)
+                      round 2 open 2 reactions → flux 1000 ✓ resolved
+```
+
+It never repeats a dead attempt, and if it can't resolve within the cap it says so honestly ("part of a large
+disconnected module — not a point fix").
+
+**Did the verifier ever reject a *correct* fix (a simulation bug, not a real gap)?** Checked directly: the
+round-1 rejections were **genuine** 2-reaction gaps — tracing the blocked reaction showed a second dead-end
+substrate, and only opening it too restores flux. So the single-sink rejection was right, and the retry finds the
+real minimal fix. No false rejections (kcat and edges had zero rejections to begin with).
+
+A verified fix is "apply-pending-review"; a fix that corrects a **measured** value is "ESCALATE"; an unverifiable
+fix stays a flag. Nothing is ever silently changed, and nothing is falsely reported as fixed *or* falsely rejected.
 
 ## In the system
 

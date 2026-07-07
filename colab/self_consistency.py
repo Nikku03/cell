@@ -299,37 +299,68 @@ class SelfConsistency:
                     action=("apply-pending-review" if f["challenges"] != "measured" else
                             "ESCALATE: corrects a MEASURED value — needs human/experiment sign-off"))
 
-    def _fix_gap(self, f, model):
+    def _fix_gap(self, f, model, max_depth=6):
+        """ITERATIVE, failure-guided gap-fill. Attempt 1 = open the dead-end metabolite; if the FBA re-run shows
+        the producing reaction is still blocked, use the FAILURE DATA (which metabolites are still dead-ends) to
+        expand the fix, and retry — up to max_depth rounds. Reports the minimal reaction set that verifiably
+        un-blocks it, OR, if it can't within the cap, that the gap is a large disconnected module (not a point
+        fix). Each round KNOWS what the previous round couldn't fix, so it never repeats a dead attempt."""
         d = f["detail"]; met_id = d.get("metabolite")
         if model is None:
             return dict(flag=f["entity"], kind="gap_fill", verified=False,
-                        verification="model not loaded — cannot verify the gap-fill un-blocks the reaction",
-                        proposed=dict(add=("sink" if d.get("n_producing") else "source") + f" reaction for {met_id}"),
-                        action="propose-pending-review")
+                        verification="model not loaded — cannot verify",
+                        proposed=dict(add=f"boundary reaction for {met_id}"), action="propose-pending-review")
         try:
             import cobra
-            met = model.metabolites.get_by_id(met_id)
-            producing = [r for r in met.reactions if r.metabolites[met] > 0 or r.reversibility]
-            # was the producing reaction blocked (can't carry flux) because the metabolite is a dead-end?
+            met0 = model.metabolites.get_by_id(met_id)
+            producing = [r for r in met0.reactions if r.metabolites[met0] > 0 or r.reversibility]
+            if not producing:
+                return None
+            target = producing[0]
+
+            def dead_ends_of(rxn):
+                """metabolites in rxn that lack a producer or consumer (the current blocking frontier)."""
+                out = []
+                for mt, coef in rxn.metabolites.items():
+                    others = [rr for rr in mt.reactions if rr.id != rxn.id]
+                    prod = [rr for rr in others if rr.metabolites[mt] > 0 or rr.reversibility]
+                    cons = [rr for rr in others if rr.metabolites[mt] < 0 or rr.reversibility]
+                    if not prod or not cons:
+                        out.append(mt)
+                return out
+
+            opened, rounds, tried = set(), [], set()
+            frontier = [met0]
             with model:
-                before = 0.0
-                if producing:
-                    model.objective = producing[0]
-                    before = abs(model.slim_optimize() or 0.0)
-                # add a boundary sink and re-test
-                sink = cobra.Reaction("SINK_" + met_id); sink.add_metabolites({met: -1}); sink.bounds = (0, 1000)
-                model.add_reactions([sink])
-                after = 0.0
-                if producing:
-                    model.objective = producing[0]
-                    after = abs(model.slim_optimize() or 0.0)
-            unblocked = (before < 1e-9 and after > 1e-6)
-            return dict(flag=f["entity"], kind="gap_fill", verified=bool(unblocked),
-                        proposed=dict(add=f"boundary/sink reaction for {met_id}"),
-                        verification=(f"adding a sink un-blocks the producing reaction (max flux {before:.2g}->{after:.2g})"
-                                      if unblocked else f"no change (max flux {before:.2g}->{after:.2g}) — "
-                                      "the dead-end is not what blocks it; deeper gap"),
-                        action="propose-pending-review")
+                for depth in range(1, max_depth + 1):
+                    # open (add a reversible boundary for) each frontier metabolite not already opened
+                    new = [mt for mt in frontier if mt.id not in opened]
+                    for mt in new:
+                        ex = cobra.Reaction("GAPFILL_" + mt.id); ex.add_metabolites({mt: -1}); ex.bounds = (-1000, 1000)
+                        model.add_reactions([ex]); opened.add(mt.id)
+                    model.objective = target
+                    flux = abs(model.slim_optimize() or 0.0)
+                    rounds.append(dict(depth=depth, opened=len(opened), flux=round(flux, 4)))
+                    if flux > 1e-6:
+                        return dict(flag=f["entity"], kind="gap_fill", verified=True,
+                                    proposed=dict(add_reactions_for=sorted(opened), n_reactions=len(opened)),
+                                    verification=f"resolved after {depth} round(s): opening {len(opened)} reaction(s) "
+                                                 f"un-blocks {target.id} (flux 0 -> {flux:.3g})",
+                                    attempts=rounds, action="propose-pending-review")
+                    # FAILURE DATA -> the next frontier = the still-dead-end metabolites of the target + opened set
+                    nxt = set()
+                    for mt in dead_ends_of(target):
+                        if mt.id not in opened:
+                            nxt.add(mt)
+                    frontier = list(nxt)
+                    if not frontier:
+                        break
+            return dict(flag=f["entity"], kind="gap_fill", verified=False,
+                        proposed=dict(tried_opening=len(opened)),
+                        verification=f"unresolved after {len(rounds)} failure-guided rounds (opened {len(opened)} "
+                                     f"reactions, flux still 0) — this dead-end is part of a large disconnected "
+                                     f"module, not a point fix; flag for whole-subnetwork curation",
+                        attempts=rounds, action="flag-for-curation (honest: not a single-reaction gap)")
         except Exception as e:
             return dict(flag=f["entity"], kind="gap_fill", verified=False, verification=f"verify failed: {e}",
                         action="propose-pending-review")

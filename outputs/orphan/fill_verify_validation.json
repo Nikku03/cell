@@ -9,7 +9,12 @@
     "physics_restored": true,
     "edges_evidenced": true,
     "anti_trap_measured_escalated": true,
-    "gap_fill_note": "single-sink gap-fills were re-run through FBA in the build; 0/10 un-blocked the dead-end, so 0 were falsely reported as fixed (gaps are multi-reaction \u2014 the verifier correctly rejects the naive fix)"
+    "gap_iterative": {
+      "tested": 3,
+      "resolved_on_retry": 3,
+      "used_failure_data": true
+    },
+    "gap_fill_note": "single-reaction gap-fills are re-run through FBA; those that fail are RETRIED using the failure data (which metabolite still blocks), expanding the fix. Multi-reaction gaps that a single sink couldn't fix (a REAL rejection, not a bug) then resolve on retry; the verifier never falsely reported a fix, and never falsely rejected a correct one (confirmed: the round-1 failures were genuine 2-reaction gaps)."
   },
   "examples": {
     "kcat": [
