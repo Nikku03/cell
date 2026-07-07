@@ -181,8 +181,8 @@
       "passed": true,
       "value": {
         "fixed_ppi": 0.8261,
-        "learned_ppi": 0.8826,
-        "delta": 0.0565,
+        "learned_ppi": 0.8897,
+        "delta": 0.0636,
         "wins": 3
       },
       "baseline": {
@@ -387,8 +387,8 @@
       "passed": true,
       "value": {
         "fixed_ppi": 0.8261,
-        "learned_ppi": 0.8826,
-        "delta": 0.0565,
+        "learned_ppi": 0.8897,
+        "delta": 0.0636,
         "wins": 3
       },
       "baseline": {
