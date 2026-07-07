@@ -1,0 +1,28 @@
+{
+  "n_nodes": 16492,
+  "feat_dim": 35,
+  "emb_dim": 105,
+  "link_prediction": {
+    "ppi": {
+      "relation": "ppi",
+      "n_edges": 191447,
+      "auc": 0.8706,
+      "ap": 0.8753,
+      "dim": 105
+    },
+    "reg": {
+      "relation": "reg",
+      "n_edges": 606178,
+      "auc": 0.9664,
+      "ap": 0.9606,
+      "dim": 105
+    },
+    "sig": {
+      "relation": "sig",
+      "n_edges": 17084,
+      "auc": 0.89,
+      "ap": 0.9046,
+      "dim": 105
+    }
+  }
+}
