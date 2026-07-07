@@ -95,6 +95,25 @@ class CompleteCell:
         ia, ib = self._i(a), self._i(b)
         return getattr(self, "added_ppi", set()) and (min(ia, ib), max(ia, ib)) in self.added_ppi
 
+    def apply_coessential(self, path=f"{OUT}/cell_v3_additions.json"):
+        """cell v3: DepMap co-essentiality functional links. Kept in a SEPARATE adjacency (coess_adj) — these are
+        functional/co-essential, NOT proven physical PPI, so they don't inflate the physical-interaction degree."""
+        from collections import defaultdict
+        add = _load(path)
+        if not add:
+            return {"applied": False}
+        self.coess_adj = defaultdict(set); self.coess_conf = {}
+        n = 0
+        for e in add.get("ppi_edges_added", []):
+            ia, ib = self.idx.get(e["a"]), self.idx.get(e["b"])
+            if ia is None or ib is None:
+                continue
+            self.coess_adj[ia].add(ib); self.coess_adj[ib].add(ia)
+            self.coess_conf[(min(ia, ib), max(ia, ib))] = e.get("coess")
+            n += 1
+        self.version = "v3"
+        return {"applied": True, "coessential_links_added": n}
+
     # ---- resolve a gene arg to an index ----
     def _i(self, x):
         if isinstance(x, int):
@@ -130,6 +149,7 @@ class CompleteCell:
             "synthetic_lethal": [(self.name[j], s) for j, s in self.sl_adj.get(i, [])],
             "ligand_of_receptors": self._names(self.lig2rec.get(i, [])),
             "receptor_for_ligands": self._names(self.rec2lig.get(i, [])),
+            "coessential_depmap": sorted(self._names(getattr(self, "coess_adj", {}).get(i, ()))),
             # --- function / annotation ---
             "go": D.get("go", {}).get(nm),
             "function_literature": (self.ghost.get(nm) or {}).get("func"),

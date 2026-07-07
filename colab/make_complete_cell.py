@@ -25,16 +25,25 @@ def build(version="v1"):
     kin = (load("kinetics_refined.json") or {}).get("kinetics_refined", {})
     kinc = (load("kinetics_refined_corrected.json") or {}).get("kinetics_refined", {})
     sc = load("recovery_scorecard.json") or {}
-    # ---- v2: the Phase-2 ML audit's verified additions + per-field report ----
-    adds = load("cell_v2_additions.json") if version == "v2" else None
-    audit = load("phase2_audit.json") if version == "v2" else None
-    ml_added = {}                                        # gene idx -> # ML-added PPI edges (co-complex verified)
+    # ---- v2/v3: the ML audit's verified additions + per-field report ----
+    adds = load("cell_v2_additions.json") if version in ("v2", "v3") else None
+    audit = load("phase2_audit.json") if version in ("v2", "v3") else None
+    v3adds = load("cell_v3_additions.json") if version == "v3" else None
+    ph3 = load("phase3_depmap_validation.json") if version == "v3" else None
+    ml_added = {}                                        # gene idx -> # co-complex PPI edges added (v2)
     if adds:
         for e in adds.get("ppi_edges_added", []):
             ia, ib = name2i.get(e["a"]), name2i.get(e["b"])
             if ia is not None and ib is not None:
                 ml_added[ia] = ml_added.get(ia, 0) + 1
                 ml_added[ib] = ml_added.get(ib, 0) + 1
+    dep_added = {}                                       # gene idx -> # DepMap co-essential functional links (v3)
+    if v3adds:
+        for e in v3adds.get("ppi_edges_added", []):
+            ia, ib = name2i.get(e["a"]), name2i.get(e["b"])
+            if ia is not None and ib is not None:
+                dep_added[ia] = dep_added.get(ia, 0) + 1
+                dep_added[ib] = dep_added.get(ib, 0) + 1
 
     # PPI / reg / sig degree per gene
     deg = {"ppi": {}, "reg": {}, "sig": {}}
@@ -75,6 +84,7 @@ def build(version="v1"):
             g.get("pubs", 0),                                      # 16 publications
             1 if g.get("tf") else 0,                               # 17 is TF
             ml_added.get(i, 0),                                    # 18 ML-added PPI edges (v2, co-complex verified)
+            dep_added.get(i, 0),                                   # 19 DepMap co-essential links added (v3)
         ])
 
     # ---- summary stats across every layer ----
@@ -99,6 +109,8 @@ def build(version="v1"):
         "GO-annotated": len(go),
         "scorecard": f"{sc.get('n_pass','?')}/{sc.get('n_total','?')} axes pass",
     }
+    if version == "v3":
+        stats["DepMap co-essential links"] = f"+{sum(dep_added.values())//2 if dep_added else 0}"
 
     # ---- v2: the Phase-2 audit panel (what the ML found / changed, per field) ----
     audit_panel = None
@@ -121,13 +133,23 @@ def build(version="v1"):
                 (f"{pf.get('dark_without_function',0)}", "dark, still no function", "all fillable from Perturb-seq / co-essentiality predictions"),
             ],
         }
+        # ---- v3: Phase-3 DepMap group appended ----
+        if ph3:
+            ex = ph3.get("extend", {}); tr = ph3.get("train", {}); co = ph3.get("corroborate_v2", {})
+            audit_panel["depmap"] = [
+                (f"+{ex.get('n_added',0)}", "co-essential links (DepMap-trained)", "new functional edges from DepMap co-essentiality; confidence = Pearson r across 1,150 cell lines"),
+                (f"{int(100*ex.get('triadic_blind_frac',0))}%", "triadic-blind (only DepMap finds)", "share ZERO PPI partners — triadic closure is structurally blind; co-essentiality is the only signal that reaches them (mito gene-expression module)"),
+                (f"{co.get('enrichment_vs_random','?')}×", "v2 additions corroborated", "the 978 co-complex edges are independently enriched for DepMap co-essentiality vs random"),
+                (f"AUC {tr.get('auc_triadic_only','?')}→{tr.get('auc_combined','?')}", "known-edge redundancy (honest)", "on KNOWN edges triadic closure already dominates; DepMap adds ~0.01 there — its value is the missing edges above, not this metric"),
+            ]
 
     cols = ["gene", "chr", "compartment", "function", "PPI", "reg", "kcat", "tier", "kcat*", "ess",
-            "dark", "fn+", "dis", "drug", "cellT", "ppm", "pubs", "TF", "ML+"]
+            "dark", "fn+", "dis", "drug", "cellT", "ppm", "pubs", "TF", "ML+", "DEP+"]
     payload = json.dumps({"cols": cols, "rows": rows, "stats": stats, "version": version,
                           "audit": audit_panel}, separators=(",", ":"))
     htmlstr = TEMPLATE.replace("__PAYLOAD__", payload)
-    dst = os.path.join(OUT, "complete_cell.html" if version == "v1" else "complete_cell_v2.html")
+    dst = os.path.join(OUT, {"v1": "complete_cell.html", "v2": "complete_cell_v2.html",
+                             "v3": "complete_cell_v3.html"}[version])
     open(dst, "w").write(htmlstr)
     print(f"wrote {dst}  ({round(os.path.getsize(dst)/1e6,1)} MB)  [{version}]")
     print("layers:", " · ".join(f"{k}={v}" for k, v in list(stats.items())[:6]))
@@ -159,6 +181,7 @@ tr:hover td{background:var(--panel)}
 .d{background:rgba(210,153,34,.15);color:var(--warn)}.e{background:rgba(248,81,73,.15);color:var(--bad)}
 .g{background:rgba(63,185,80,.15);color:var(--good)}.a{background:rgba(76,141,255,.15);color:var(--accent)}
 .m{background:rgba(163,113,247,.18);color:#a371f7}
+.dep{background:rgba(219,109,40,.18);color:#db6d28}
 .cnt{color:var(--mut);font-size:12px}
 .audit{margin:0 24px 6px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .audit h2{margin:0;padding:11px 16px;font-size:13px;background:var(--panel);border-bottom:1px solid var(--line)}
@@ -175,26 +198,30 @@ tr:hover td{background:var(--panel)}
 <div class=grid id=cards></div>
 <div class=bar>
 <input id=q placeholder="search gene / function (e.g. GATA1, kinase, transporter)…" autocomplete=off>
-<select id=f><option value="">all genes</option><option value=ml>ML-added edges (v2)</option><option value=dark>dark proteome</option><option value=fnpatch>ghost-patched function</option><option value=ess>essential</option><option value=enz>has kinetics</option><option value=corr>kcat corrected</option><option value=drug>drug target</option><option value=tf>transcription factor</option><option value=dis>disease-linked</option></select>
+<select id=f><option value="">all genes</option><option value=ml>ML-added edges (v2)</option><option value=dep>DepMap co-essential (v3)</option><option value=dark>dark proteome</option><option value=fnpatch>ghost-patched function</option><option value=ess>essential</option><option value=enz>has kinetics</option><option value=corr>kcat corrected</option><option value=drug>drug target</option><option value=tf>transcription factor</option><option value=dis>disease-linked</option></select>
 <span class=cnt id=count></span></div>
 <div class=wrap><table><thead id=head></thead><tbody id=body></tbody></table></div>
 <script>
 const DATA=__PAYLOAD__;const {cols,rows,stats,version,audit}=DATA;
-document.getElementById('ver').textContent = version==='v2'
+document.getElementById('ver').textContent = version==='v3'
+  ? '· v3 — Phase-2 audit + DepMap-co-essentiality-trained additions'
+  : version==='v2'
   ? '· v2 — with the Phase-2 ML audit’s verified additions'
   : '· v1 (all measured + predicted layers)';
 if(audit){const P=document.getElementById('auditpanel');
  const grp=(cls,title,items)=>`<div class="acol ${cls}"><h3>${title}</h3>`+items.map(a=>`<div class=arow><span class=n>${a[0]}</span><span class=l>${a[1]}<small>${a[2]}</small></span></div>`).join('')+'</div>';
- P.innerHTML='<div class=audit><h2>🔬 Phase-2 ML audit — the model checked itself across every field (anti-trap: facts flagged, never overwritten; only verified additions applied)</h2><div class=acols>'
-  +grp('add','➕ added (verified)',audit.added)+grp('flag','⚠ flagged for review',audit.flagged)+grp('gap','◳ coverage gaps',audit.gaps)+'</div></div>';}
+ let html='<div class=audit><h2>🔬 Phase-2 ML audit — the model checked itself across every field (anti-trap: facts flagged, never overwritten; only verified additions applied)</h2><div class=acols>'
+  +grp('add','➕ added (verified)',audit.added)+grp('flag','⚠ flagged for review',audit.flagged)+grp('gap','◳ coverage gaps',audit.gaps)+'</div></div>';
+ if(audit.depmap) html+='<div class=audit style="margin-top:8px"><h2>🧬 Phase-3 — edge model trained on DepMap co-essentiality (1,150 cell lines), then re-audited</h2><div class=acols>'+grp('add','➕ DepMap-trained additions',audit.depmap)+'</div></div>';
+ P.innerHTML=html;}
 const cards=document.getElementById('cards');
 for(const [k,v] of Object.entries(stats)){const d=document.createElement('div');d.className='card';d.innerHTML=`<div class=v>${v}</div><div class=k>${k}</div>`;cards.appendChild(d);}
 const head=document.getElementById('head');head.innerHTML='<tr>'+cols.map((c,i)=>`<th data-i=${i}>${c}</th>`).join('')+'</tr>';
 const body=document.getElementById('body'),count=document.getElementById('count');
 const q=document.getElementById('q'),f=document.getElementById('f');
 let sortI=4,sortDir=-1,view=rows;
-function tag(r){let t='';if(r[18])t+='<span class="tag m">ML+'+r[18]+'</span> ';if(r[10])t+='<span class="tag d">dark</span> ';if(r[11])t+='<span class="tag g">fn+</span> ';if(r[9])t+='<span class="tag e">ess</span> ';if(r[13])t+='<span class="tag a">drug</span> ';return t;}
-function cell(r,i){const v=r[i];if(v===null||v===''||v===0&&i===18){return '<span class=cnt>·</span>';}
+function tag(r){let t='';if(r[18])t+='<span class="tag m">ML+'+r[18]+'</span> ';if(r[19])t+='<span class="tag dep">DEP+'+r[19]+'</span> ';if(r[10])t+='<span class="tag d">dark</span> ';if(r[11])t+='<span class="tag g">fn+</span> ';if(r[9])t+='<span class="tag e">ess</span> ';if(r[13])t+='<span class="tag a">drug</span> ';return t;}
+function cell(r,i){const v=r[i];if(v===null||v===''||v===0&&(i===18||i===19)){return '<span class=cnt>·</span>';}
  if(i===3)return `<td class=fn>${(''+v).replace(/</g,'&lt;')}</td>`;
  if(i===10||i===11||i===9||i===13||i===17)return v? '✓':'<span class=cnt>·</span>';
  return v;}
@@ -208,7 +235,7 @@ function render(){
 function apply(){const s=q.value.trim().toLowerCase(),ff=f.value;
  view=rows.filter(r=>{
    if(s&&!( (''+r[0]).toLowerCase().includes(s) || (''+r[3]).toLowerCase().includes(s) ))return false;
-   if(ff==='ml'&&!r[18])return false;
+   if(ff==='ml'&&!r[18])return false;if(ff==='dep'&&!r[19])return false;
    if(ff==='dark'&&!r[10])return false;if(ff==='fnpatch'&&!r[11])return false;if(ff==='ess'&&!r[9])return false;
    if(ff==='enz'&&r[6]===null)return false;if(ff==='corr'&&!r[8])return false;if(ff==='drug'&&!r[13])return false;
    if(ff==='tf'&&!r[17])return false;if(ff==='dis'&&!r[12])return false;return true;});
