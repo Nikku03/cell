@@ -138,6 +138,44 @@ cells = [
          "!python colab/kinetics_flux_consistency.py     # flux-based capacity check on flux-carrying enzymes",
          "!python colab/validate_ecflux_ppm.py           # measured per-enzyme capacity (ppm x kcat)",
          "print('\\nsee docs/ for each capability; DATASET_TRAINING_PLAN.md for adding DepMap/Tahoe/GEO')"),
+
+    md("---",
+       "# The three-phase build: complete cell → deep audit → DepMap-trained re-audit",
+       "Phase 1 assembles the full-fidelity cell an ML can query for anything; Phase 2 audits every field and "
+       "builds cell v2 from the verified additions; Phase 3 trains the edge model on DepMap co-essentiality and "
+       "re-audits into cell v3. All under the anti-trap rule (facts flagged, never overwritten)."),
+
+    md("## Phase 1 — the full-fidelity ML entry point (`CompleteCell`)",
+       "Every layer reachable per gene at full resolution — the object the audit consumes (not the summary HTML)."),
+    code("from complete_cell import CompleteCell",
+         "cell = CompleteCell()",
+         "lay = cell.layers(); print('layers:', len(lay['coverage']), '| genes:', lay['n_genes'])",
+         "r = cell.gene('TP53')",
+         "print('TP53 -> ppi', len(r['ppi_partners']), '| regulates', len(r['regulates']),",
+         "      '| GO F', len((r['go'] or {}).get('F',[])), '| complexes', r['complexes'][:2])",
+         "# build the human-facing complete HTML too (v1)",
+         "!python colab/make_complete_cell.py v1"),
+
+    md("## Phase 2 — deep audit across every field → cell v2",
+       "Physics/localization/completeness/coverage per field; applies only verified additions (nothing overwritten)."),
+    code("!python colab/phase2_audit.py",
+         "!python colab/make_complete_cell.py v2     # cell v2 with the verified additions + audit panel"),
+
+    md("## Phase 3 — train on DepMap co-essentiality → cell v3  *(downloads 419 MB)*",
+       "DepMap 24Q2 gene-effect over ~1,150 lines. Trains an edge predictor, corroborates the v2 additions "
+       "independently, and finds the edges triadic closure is blind to (understudied mito module). Honest: DepMap "
+       "is redundant on KNOWN edges — its value is the MISSING ones."),
+    code("import os, urllib.request, json",
+         "os.makedirs('depmap', exist_ok=True)",
+         "dst = 'depmap/CRISPRGeneEffect.csv'",
+         "if not os.path.exists(dst):",
+         "    j = json.loads(urllib.request.urlopen('https://api.figshare.com/v2/articles/25880521').read())",
+         "    url = next(f['download_url'] for f in j['files'] if f['name']=='CRISPRGeneEffect.csv')",
+         "    print('downloading DepMap gene-effect (419 MB)…'); urllib.request.urlretrieve(url, dst)",
+         "os.environ['DEPMAP_DIR'] = 'depmap'",
+         "print('DepMap ready:', os.path.getsize(dst)//10**6, 'MB')"),
+    code("!DEPMAP_DIR=depmap python colab/phase3_depmap.py",
+         "!python colab/make_complete_cell.py v3     # cell v3 with the DepMap-trained co-essential links"),
 ]
 
 nb = {"cells": cells, "metadata": {"colab": {"provenance": []},
