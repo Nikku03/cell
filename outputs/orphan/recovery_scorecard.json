@@ -1,6 +1,6 @@
 {
-  "n_pass": 26,
-  "n_total": 26,
+  "n_pass": 27,
+  "n_total": 27,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -380,6 +380,21 @@
       },
       "bar": "disease\u2192target's blind predictions corroborated by real Open Targets disease genes: mean>=0.4 & majority of diseases",
       "detail": "grounds disease\u2192target in real disease evidence (Open Targets: GWAS+expression/GEO+literature); blind picks are real disease genes ~244x over chance"
+    },
+    {
+      "test": "kcat_fixes_applied",
+      "passed": true,
+      "value": {
+        "corrected": 228,
+        "capped_by_physics": 3,
+        "new_violations": 0,
+        "uncapped_below_floor": 0
+      },
+      "baseline": {
+        "measured_untouched": true
+      },
+      "bar": "228 too-low PREDICTED kcats raised to the in-vivo floor; 0 new physics violations; 0 uncapped still-below; measured never changed",
+      "detail": "fill-and-verify applied to kinetics: provably-wrong predicted kcats corrected to evidence-backed floors, capped by the diffusion limit; original kept as source of truth"
     }
   ],
   "tests": [
@@ -761,6 +776,21 @@
       },
       "bar": "disease\u2192target's blind predictions corroborated by real Open Targets disease genes: mean>=0.4 & majority of diseases",
       "detail": "grounds disease\u2192target in real disease evidence (Open Targets: GWAS+expression/GEO+literature); blind picks are real disease genes ~244x over chance"
+    },
+    {
+      "test": "kcat_fixes_applied",
+      "passed": true,
+      "value": {
+        "corrected": 228,
+        "capped_by_physics": 3,
+        "new_violations": 0,
+        "uncapped_below_floor": 0
+      },
+      "baseline": {
+        "measured_untouched": true
+      },
+      "bar": "228 too-low PREDICTED kcats raised to the in-vivo floor; 0 new physics violations; 0 uncapped still-below; measured never changed",
+      "detail": "fill-and-verify applied to kinetics: provably-wrong predicted kcats corrected to evidence-backed floors, capped by the diffusion limit; original kept as source of truth"
     }
   ]
 }

@@ -303,6 +303,17 @@ def scorecard():
             "disease→target's blind predictions corroborated by real Open Targets disease genes: mean>=0.4 & majority of diseases",
             "grounds disease→target in real disease evidence (Open Targets: GWAS+expression/GEO+literature); blind picks are real disease genes ~244x over chance")
 
+    # 25) Applied kcat fixes — the 228 flagged errors turned into evidence-backed corrections, safely
+    kfx = _load("kcat_fixes_validation.json")
+    if kfx:
+        s = kfx["summary"]
+        add("kcat_fixes_applied", kfx["passed"],
+            dict(corrected=s["n_corrected"], capped_by_physics=s["n_capped_by_diffusion_limit"],
+                 new_violations=s["new_violations_created"], uncapped_below_floor=s["still_below_floor_uncapped"]),
+            dict(measured_untouched=s["measured_untouched"]),
+            "228 too-low PREDICTED kcats raised to the in-vivo floor; 0 new physics violations; 0 uncapped still-below; measured never changed",
+            "fill-and-verify applied to kinetics: provably-wrong predicted kcats corrected to evidence-backed floors, capped by the diffusion limit; original kept as source of truth")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
