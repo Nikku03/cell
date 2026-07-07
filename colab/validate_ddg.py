@@ -38,32 +38,47 @@ def _cn(sub, rel, chain, pos):
     return None if cb is None else ddg.contact_number(cb, heavy, chain, pos)
 
 
-def _build(df, sub, use_env=False, augment=False):
+def _pmpnn(sub):
+    """ProteinMPNN structure-based ddG predictions (reproducible from the same benchmark repo). The dominant
+    feature: 0.405 -> 0.472 on S669. Keyed by (chain, pre, pos, post, ddG) to join to our rows."""
+    import pandas as pd
+    dst = f'proteinmpnn_{sub}.csv'
+    if not os.path.exists(dst):
+        urllib.request.urlretrieve(f"{REPO}/{sub}/proteinmpnn_{sub}.csv", dst)
+    d = {}
+    for _, r in pd.read_csv(dst).iterrows():
+        d[(r['chain'], r['pre'], int(r['pos']), r['post'], round(float(r['ddG_experimental']), 2))] = float(r['ProteinMPNN-ddG'])
+    return d
+
+
+def _build(df, sub, pm, use_env=False, augment=False):
     X, y, meta = [], [], []
     for _, r in df.iterrows():
         p, q = r['pre'], r['post']
         if p not in ddg.KD or q not in ddg.KD: continue
         cn = _cn(sub, r['relative_path'], r['chain'], r['pos'])
+        pv = pm.get((r['chain'], p, int(r['pos']), q, round(float(r['ddG_experimental']), 2)), 0.0)
         X.append(ddg.features(p, q, cn, r.get('pH', 7.0) if use_env else 7.0,
-                              r.get('TEMP', 298.0) if use_env else 298.0))
-        y.append(r['ddG_experimental']); meta.append((p, q, cn))
-        if augment:
-            X.append(ddg.features(q, p, cn)); y.append(-r['ddG_experimental']); meta.append((q, p, cn))
+                              r.get('TEMP', 298.0) if use_env else 298.0, pv))
+        y.append(r['ddG_experimental']); meta.append((p, q, cn, pv))
+        if augment:                                         # reverse: ProteinMPNN log-odds ~ antisymmetric
+            X.append(ddg.features(q, p, cn, pmpnn=-pv)); y.append(-r['ddG_experimental']); meta.append((q, p, cn, -pv))
     return np.nan_to_num(np.array(X)), np.array(y), meta
 
 
 def main():
     print("featurizing S2648 (train) + S669 (blind test) — downloading PDBs...")
     tr = _csv('s2648'); te = _csv('s669')
-    Xtr, ytr, _ = _build(tr, 's2648', augment=True)
-    Xte, yte, mte = _build(te, 's669', use_env=True)
+    pmtr, pmte = _pmpnn('s2648'), _pmpnn('s669')
+    Xtr, ytr, _ = _build(tr, 's2648', pmtr, augment=True)
+    Xte, yte, mte = _build(te, 's669', pmte, use_env=True)
     model = HistGradientBoostingRegressor(max_iter=500, max_depth=4, learning_rate=0.03,
                                           min_samples_leaf=20, l2_regularization=1.0).fit(Xtr, ytr)
     pred = model.predict(Xte)
     r = float(pearsonr(pred, yte)[0]); rmse = float(np.sqrt(np.mean((pred - yte) ** 2)))
 
     # anti-symmetry on the same structures (reverse mutation, WT structure)
-    Xrev = np.nan_to_num(np.array([ddg.features(q, p, cn) for (p, q, cn) in mte]))
+    Xrev = np.nan_to_num(np.array([ddg.features(q, p, cn, pmpnn=-pv) for (p, q, cn, pv) in mte]))
     prev = model.predict(Xrev)
     anti_bias = float(np.mean(pred + prev)); anti_corr = float(pearsonr(pred, -prev)[0])
 

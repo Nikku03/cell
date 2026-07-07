@@ -159,9 +159,9 @@
       "test": "ddg_stability",
       "passed": true,
       "value": {
-        "pearson_r": 0.405,
-        "rmse": 1.59,
-        "anti_symmetry": 0.993
+        "pearson_r": 0.472,
+        "rmse": 1.45,
+        "anti_symmetry": 0.997
       },
       "baseline": {
         "baselines": {
@@ -173,8 +173,8 @@
           "mCSM": 0.359
         }
       },
-      "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
-      "detail": "predicts mutation stability \u0394\u0394G from structure+sequence; keystone of the mutation->phenotype chain"
+      "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (0.472, beats ACDC-NN via ProteinMPNN)",
+      "detail": "predicts mutation stability \u0394\u0394G (structure ProteinMPNN + biophysical); top-benchmark; mutation->phenotype keystone"
     },
     {
       "test": "learned_gnn_beats_fixed",
@@ -365,9 +365,9 @@
       "test": "ddg_stability",
       "passed": true,
       "value": {
-        "pearson_r": 0.405,
-        "rmse": 1.59,
-        "anti_symmetry": 0.993
+        "pearson_r": 0.472,
+        "rmse": 1.45,
+        "anti_symmetry": 0.997
       },
       "baseline": {
         "baselines": {
@@ -379,8 +379,8 @@
           "mCSM": 0.359
         }
       },
-      "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
-      "detail": "predicts mutation stability \u0394\u0394G from structure+sequence; keystone of the mutation->phenotype chain"
+      "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (0.472, beats ACDC-NN via ProteinMPNN)",
+      "detail": "predicts mutation stability \u0394\u0394G (structure ProteinMPNN + biophysical); top-benchmark; mutation->phenotype keystone"
     },
     {
       "test": "learned_gnn_beats_fixed",

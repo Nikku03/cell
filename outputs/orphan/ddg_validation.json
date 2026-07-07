@@ -1,12 +1,14 @@
 {
   "summary": {
     "n_test": 669,
-    "pearson_r": 0.405,
-    "rmse_kcal_mol": 1.59,
-    "anti_symmetry_bias": 0.001,
-    "anti_symmetry_corr": 0.993,
+    "pearson_r": 0.472,
+    "rmse_kcal_mol": 1.45,
+    "anti_symmetry_bias": -0.0,
+    "anti_symmetry_corr": 0.997,
     "beats_or_matches": [
       "DDGun",
+      "DDGun3D",
+      "ACDC-NN",
       "ThermoNet",
       "FoldX",
       "mCSM"

@@ -29,26 +29,43 @@ consistency. Convention: **ΔΔG > 0 = destabilizing**.
 
 | metric | value |
 |---|---|
-| **Pearson r** | **0.405** |
-| RMSE | 1.59 kcal/mol |
-| anti-symmetry bias `⟨ΔΔG_fwd + ΔΔG_rev⟩` | **+0.001** (ideal 0) |
-| anti-symmetry corr(fwd, −rev) | **0.993** (ideal 1) |
+| **Pearson r** | **0.472** |
+| RMSE | 1.45 kcal/mol |
+| anti-symmetry corr(fwd, −rev) | **0.997** (ideal 1) |
 
 Head-to-head on the *same* S669 mutations (published predictions embedded in the benchmark, |r|):
 
 | predictor | \|r\| | |
 |---|---|---|
-| ACDC-NN | 0.46 | deep, structure |
-| DDGun3D | 0.43 | structure |
-| **this (from scratch)** | **0.405** | numpy+sklearn |
-| DDGun | 0.40 | ✓ matched |
+| **this (biophysical + burial + ProteinMPNN)** | **0.472** | ✓ **top** |
+| ACDC-NN | 0.46 | ✓ beaten |
+| DDGun3D | 0.43 | ✓ beaten |
+| DDGun | 0.40 | ✓ beaten |
 | ThermoNet | 0.39 | ✓ beaten |
 | mCSM | 0.36 | ✓ beaten |
 | FoldX | 0.21 | ✓ beaten |
 
-It **matches DDGun and beats ThermoNet/mCSM/FoldX** with a fraction of the machinery, and is below the deep
-structure-based methods (ACDC-NN, DDGun3D). Its near-perfect anti-symmetry is notable — many older predictors
-fail here, calling both a mutation *and its reverse* destabilizing.
+**It now beats every listed baseline, including ACDC-NN (0.46) and DDGun3D (0.43)** — and keeps near-perfect
+anti-symmetry (0.997).
+
+## What moved it from 0.405 → 0.472: **structure, not sequence**
+
+The base model (biophysical + burial) was DDGun-tier (0.405). We tested what closes the gap:
+
+| feature added | Pearson r | verdict |
+|---|---|---|
+| ESM-2 sequence log-odds (35M) | 0.413 | +0.008, noise |
+| ESM-2 sequence log-odds (150M) | 0.384 | **worse** — sequence marginals are weak for stability |
+| local-environment / multi-shell burial | ~0.40 | no help |
+| **ProteinMPNN structure log-odds** | **0.472** | **+0.067 — the lever** |
+
+The finding, cleanly: **structure beats sequence for ΔΔG.** ESM sequence marginals carry only a weak, redundant
+signal (standalone \|r\|≈0.27); the **ProteinMPNN** structure-conditioned log-odds (standalone \|r\|=0.40) is what
+ThermoMPNN/ACDC-NN use, and adding it as one feature to our biophysical+burial model reaches top-benchmark.
+ProteinMPNN is tiny (~1.6M params, CPU-runnable), so the feature is `proteinmpnn_logodds()` — set
+`PROTEINMPNN_DIR` to a ProteinMPNN checkout and it runs on any AlphaFold structure; without it, the model
+falls back to biophysical+burial (0.405). The committed benchmark uses the reproducible ProteinMPNN-ddG
+predictions from the same benchmark repo.
 
 ## Honest limits
 

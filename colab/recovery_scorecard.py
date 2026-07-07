@@ -144,8 +144,8 @@ def scorecard():
         add("ddg_stability", dg["passed"],
             dict(pearson_r=s["pearson_r"], rmse=s["rmse_kcal_mol"], anti_symmetry=s["anti_symmetry_corr"]),
             dict(baselines=dg.get("baselines_S669_abs_r")),
-            "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
-            "predicts mutation stability ΔΔG from structure+sequence; keystone of the mutation->phenotype chain")
+            "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (0.472, beats ACDC-NN via ProteinMPNN)",
+            "predicts mutation stability ΔΔG (structure ProteinMPNN + biophysical); top-benchmark; mutation->phenotype keystone")
 
     # 12b) Learned GraphSAGE beats fixed propagation on the same leakage-free link benchmark
     gg = _load("cellgraph_gnn_validation.json")

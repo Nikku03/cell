@@ -161,7 +161,7 @@ class CellQA:
 COVERAGE = {
     "what_binds":         dict(engine="CellGraph link (R-GCN/hybrid)", validated="PPI link AUC 0.89", tier="fact+prediction"),
     "knockout":           dict(engine="CellGraph perturbation",        validated="direction acc 0.81",  tier="prediction"),
-    "mutation_effect":    dict(engine="ΔΔG predictor",                 validated="S669 r=0.41 (DDGun-tier)", tier="prediction (low per-call)"),
+    "mutation_effect":    dict(engine="ΔΔG (ProteinMPNN+biophysical)",  validated="S669 r=0.47 (top-benchmark)", tier="prediction"),
     "drug_interactions":  dict(engine="CellGraph polypharmacology",    validated="drug AUC 0.80",       tier="fact+prediction"),
     "regulates":          dict(engine="regulatory network",           validated="curated edges",       tier="fact"),
     "kcat":               dict(engine="tiered kinetics (CatPred)",     validated="3.3x, at noise floor", tier="fact or prediction"),
