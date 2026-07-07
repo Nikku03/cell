@@ -60,3 +60,6 @@ cell_sim/features/cache/*
 !cell_sim/features/cache/.gitkeep
 figures/output/
 outputs/synthlet/.wt_*.pkl
+
+# large local working model (reconstructed from Drive / the .gz; not committed)
+outputs/orphan/cell_complete.json
