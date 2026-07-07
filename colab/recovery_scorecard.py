@@ -292,6 +292,17 @@ def scorecard():
             "test ALL 2,549 kcats (not the ~334 flux-carriers) vs provable bounds: physics ceiling + independent in-vivo floor; measured=facts, predicted outliers flagged with proposals",
             "whole-cell kcat audit: found 228 predicted kcats provably too low vs in-vivo (transporters/COX where CatPred underestimates); measured never flagged as error")
 
+    # 24) Disease data — pipeline predictions corroborated by REAL Open Targets disease genes (GWAS+expr+lit)
+    dd = _load("disease_data_validation.json")
+    if dd:
+        s = dd["summary"]
+        add("disease_data", dd["passed"],
+            dict(mean_corroboration=s["mean_corroboration"], diseases_with_hit=s["diseases_with_a_hit"],
+                 n_diseases=s["n_diseases"], random_baseline=s["random_baseline"]),
+            dict(random=s["random_baseline"]),
+            "disease→target's blind predictions corroborated by real Open Targets disease genes: mean>=0.4 & majority of diseases",
+            "grounds disease→target in real disease evidence (Open Targets: GWAS+expression/GEO+literature); blind picks are real disease genes ~244x over chance")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 

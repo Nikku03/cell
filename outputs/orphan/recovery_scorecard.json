@@ -1,6 +1,6 @@
 {
-  "n_pass": 25,
-  "n_total": 25,
+  "n_pass": 26,
+  "n_total": 26,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -365,6 +365,21 @@
       },
       "bar": "test ALL 2,549 kcats (not the ~334 flux-carriers) vs provable bounds: physics ceiling + independent in-vivo floor; measured=facts, predicted outliers flagged with proposals",
       "detail": "whole-cell kcat audit: found 228 predicted kcats provably too low vs in-vivo (transporters/COX where CatPred underestimates); measured never flagged as error"
+    },
+    {
+      "test": "disease_data",
+      "passed": true,
+      "value": {
+        "mean_corroboration": 0.611,
+        "diseases_with_hit": 4,
+        "n_diseases": 6,
+        "random_baseline": 0.0025
+      },
+      "baseline": {
+        "random": 0.0025
+      },
+      "bar": "disease\u2192target's blind predictions corroborated by real Open Targets disease genes: mean>=0.4 & majority of diseases",
+      "detail": "grounds disease\u2192target in real disease evidence (Open Targets: GWAS+expression/GEO+literature); blind picks are real disease genes ~244x over chance"
     }
   ],
   "tests": [
@@ -731,6 +746,21 @@
       },
       "bar": "test ALL 2,549 kcats (not the ~334 flux-carriers) vs provable bounds: physics ceiling + independent in-vivo floor; measured=facts, predicted outliers flagged with proposals",
       "detail": "whole-cell kcat audit: found 228 predicted kcats provably too low vs in-vivo (transporters/COX where CatPred underestimates); measured never flagged as error"
+    },
+    {
+      "test": "disease_data",
+      "passed": true,
+      "value": {
+        "mean_corroboration": 0.611,
+        "diseases_with_hit": 4,
+        "n_diseases": 6,
+        "random_baseline": 0.0025
+      },
+      "baseline": {
+        "random": 0.0025
+      },
+      "bar": "disease\u2192target's blind predictions corroborated by real Open Targets disease genes: mean>=0.4 & majority of diseases",
+      "detail": "grounds disease\u2192target in real disease evidence (Open Targets: GWAS+expression/GEO+literature); blind picks are real disease genes ~244x over chance"
     }
   ]
 }

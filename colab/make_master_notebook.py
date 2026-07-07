@@ -117,6 +117,12 @@ cells = [
        "flagged, each with a proposed value."),
     code("!python colab/whole_cell_kcat.py"),
 
+    md("## 6b. Disease data — ground disease→target in REAL disease evidence *(network: Open Targets)*",
+       "Fetches each disease's real associated genes from **Open Targets** (GWAS + expression/GEO + literature) "
+       "and checks whether the pipeline's *blind* network predictions are actually real disease genes. No "
+       "download needed — it's a live API."),
+    code("!python colab/disease_data.py"),
+
     md("## 7. Deep runs on the in-model data — actually runs (no external download needed)",
        "These run on data already in the model (`cell_complete.json` from cell 1b + committed kinetics). The "
        "**cross-validation** cell is light (numpy only). The **flux** cells download Human-GEM (~1–2 min) and "
