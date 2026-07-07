@@ -1,6 +1,6 @@
 {
-  "n_pass": 13,
-  "n_total": 13,
+  "n_pass": 14,
+  "n_total": 14,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -175,6 +175,21 @@
       },
       "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
       "detail": "predicts mutation stability \u0394\u0394G from structure+sequence; keystone of the mutation->phenotype chain"
+    },
+    {
+      "test": "learned_gnn_beats_fixed",
+      "passed": true,
+      "value": {
+        "fixed_ppi": 0.8261,
+        "learned_ppi": 0.8754,
+        "delta": 0.0493,
+        "wins": 3
+      },
+      "baseline": {
+        "fixed": 0.8261
+      },
+      "bar": "trained GraphSAGE beats fixed SIGN propagation on PPI link AUC (\u0394>0.01) & wins >=2/3 relations",
+      "detail": "the GPU-tier learned encoder measurably improves link prediction over fixed message-passing"
     },
     {
       "test": "ecflux_quantitative",
@@ -366,6 +381,21 @@
       },
       "bar": "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
       "detail": "predicts mutation stability \u0394\u0394G from structure+sequence; keystone of the mutation->phenotype chain"
+    },
+    {
+      "test": "learned_gnn_beats_fixed",
+      "passed": true,
+      "value": {
+        "fixed_ppi": 0.8261,
+        "learned_ppi": 0.8754,
+        "delta": 0.0493,
+        "wins": 3
+      },
+      "baseline": {
+        "fixed": 0.8261
+      },
+      "bar": "trained GraphSAGE beats fixed SIGN propagation on PPI link AUC (\u0394>0.01) & wins >=2/3 relations",
+      "detail": "the GPU-tier learned encoder measurably improves link prediction over fixed message-passing"
     },
     {
       "test": "ecflux_quantitative",

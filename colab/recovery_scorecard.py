@@ -147,6 +147,16 @@ def scorecard():
             "S669 blind Pearson>=0.38 & anti-symmetry corr>=0.9 (matches DDGun)",
             "predicts mutation stability ΔΔG from structure+sequence; keystone of the mutation->phenotype chain")
 
+    # 12b) Learned GraphSAGE beats fixed propagation on the same leakage-free link benchmark
+    gg = _load("cellgraph_gnn_validation.json")
+    if gg:
+        h = gg["headline_ppi"]
+        add("learned_gnn_beats_fixed", gg["passed"],
+            dict(fixed_ppi=h["fixed"], learned_ppi=h["learned"], delta=h["delta"], wins=gg["learned_wins"]),
+            dict(fixed=h["fixed"]),
+            "trained GraphSAGE beats fixed SIGN propagation on PPI link AUC (Δ>0.01) & wins >=2/3 relations",
+            "the GPU-tier learned encoder measurably improves link prediction over fixed message-passing")
+
     # 13) Enzyme-constrained flux — quantitative enzyme→flux (essentiality recovery + metabolic dominance)
     ec = _load("ecflux_validation.json")
     if ec:
