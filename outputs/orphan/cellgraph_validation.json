@@ -2,7 +2,7 @@
   "all_pass": true,
   "checks": {
     "link_prediction_ppi": {
-      "value": 0.7543,
+      "value": 0.8261,
       "bar": 0.7,
       "ok": true
     },
@@ -23,7 +23,7 @@
     }
   },
   "summary": {
-    "link_ppi_auc": 0.7543,
+    "link_ppi_auc": 0.8261,
     "perturb_direction_acc": 0.8088,
     "drug_auc": 0.8032,
     "structure_function_auc": 0.749

@@ -6,24 +6,24 @@
     "ppi": {
       "relation": "ppi",
       "n_edges": 191447,
-      "auc": 0.7543,
-      "ap": 0.7515,
+      "auc": 0.8261,
+      "ap": 0.8234,
       "negatives": "degree-matched",
       "dim": 105
     },
     "reg": {
       "relation": "reg",
       "n_edges": 606178,
-      "auc": 0.7307,
-      "ap": 0.6888,
+      "auc": 0.8127,
+      "ap": 0.7871,
       "negatives": "degree-matched",
       "dim": 105
     },
     "sig": {
       "relation": "sig",
       "n_edges": 17084,
-      "auc": 0.7237,
-      "ap": 0.6862,
+      "auc": 0.7636,
+      "ap": 0.7303,
       "negatives": "degree-matched",
       "dim": 105
     }

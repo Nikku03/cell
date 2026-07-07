@@ -130,7 +130,7 @@
       "test": "cellgraph_capabilities",
       "passed": true,
       "value": {
-        "link_ppi": 0.7543,
+        "link_ppi": 0.8261,
         "perturb_dir": 0.8088,
         "drug": 0.8032,
         "struct_fn": 0.749
@@ -271,7 +271,7 @@
       "test": "cellgraph_capabilities",
       "passed": true,
       "value": {
-        "link_ppi": 0.7543,
+        "link_ppi": 0.8261,
         "perturb_dir": 0.8088,
         "drug": 0.8032,
         "struct_fn": 0.749

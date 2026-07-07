@@ -10,7 +10,7 @@ as the 10th recovery-scorecard axis.
 
 | capability | question it answers | metric | vs random |
 |---|---|---|---|
-| **link prediction** | what can this protein **bind**? | PPI **AUC 0.754** (hard negatives, test edges removed) | 0.5 |
+| **link prediction** | what can this protein **bind**? | PPI **AUC 0.826** (hard negatives, test edges removed) | 0.5 |
 | **perturbation → downstream** | remove protein X → what changes, which way? | **sign-accuracy 0.81** on held-out signed edges | 0.5 |
 | **drug polypharmacology** | give a drug → what else can it hit? | held-out drug-target **AUC 0.80** (1,433 drugs) | 0.5 |
 | **structure → function** | does the wiring encode function? | essentiality/TF **AUC 0.74/0.75** (pure topology) | 0.5 |

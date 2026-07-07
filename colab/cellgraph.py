@@ -148,7 +148,9 @@ def link_prediction_auc(D, X, A_base, relation="ppi", test_frac=0.1, seed=0, har
                     if len(out) >= k: break
         return np.array(out[:k], dtype=np.int64)
     train_neg = neg_sample(len(train_pos)); test_neg = neg_sample(len(test_pos))
-    def feats(pairs): return H[pairs[:, 0]] * H[pairs[:, 1]]
+    def feats(pairs):                                     # richer edge features (R10): Hadamard | |diff| | sum
+        u, v = H[pairs[:, 0]], H[pairs[:, 1]]
+        return np.hstack([u * v, np.abs(u - v), u + v])
     Xtr = np.vstack([feats(train_pos), feats(train_neg)])
     ytr = np.concatenate([np.ones(len(train_pos)), np.zeros(len(train_neg))])
     Xte = np.vstack([feats(test_pos), feats(test_neg)])
