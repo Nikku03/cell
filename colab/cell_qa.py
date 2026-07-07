@@ -29,6 +29,7 @@ class CellQA:
         self.D, self.idx, self.name, self.H = self.cg.D, self.cg.idx, self.cg.name, self.cg.H
         self._ddg = None
         self._kin = None
+        self._ctc = None
         # regulatory edges as directed sets (fact layer)
         self._reg_out = {}; self._reg_in = {}
         for e in self.D.get("reg", []):
@@ -41,38 +42,85 @@ class CellQA:
     def _abstain(self, q, why):
         return dict(question=q, abstain=True, reason=why)
 
+    def _conditioner(self):
+        """lazy cell-type conditioner (emask gate). Novel dimension: same question, cell-type-specific answer.
+        The gate is validated cell-type-specific (markers land in their own lineage ~9x background); it gates
+        answers by expression, it is not a predictive lift over the global model (see docs/CELLTYPE_CONDITIONING)."""
+        if self._ctc is None:
+            try:
+                from celltype_conditioning import CellTypeConditioner
+                self._ctc = CellTypeConditioner()
+            except Exception:
+                self._ctc = False
+        return self._ctc or None
+
+    def _ct_gate(self, i, cell_type):
+        """(conditioner, t, expressed_set) if cell_type resolves and gene i is expressed there; else a reason."""
+        c = self._conditioner()
+        if not c:
+            return None, None, "cell-type conditioner unavailable"
+        t = c.resolve_celltype(cell_type)
+        if t is None:
+            return c, None, f"cell type '{cell_type}' not found"
+        if not c.is_expressed(i, t):
+            return c, t, f"not expressed in {c.ct[t]}"
+        return c, t, None
+
     # ---- 1. binding ----
-    def what_binds(self, protein, k=8):
-        q = f"what does {protein} bind?"
+    def what_binds(self, protein, k=8, cell_type=None):
+        q = f"what does {protein} bind?" + (f" (in {cell_type})" if cell_type else "")
         if protein not in self.idx:
             return self._abstain(q, f"{protein} not in model")
         i = self.idx[protein]; known = self.cg._known_partners()[i]
-        facts = [self._a(self.name[j], "measured", 1.0, source="PPI database") for j in sorted(known)][:k]
+        # cell-type conditioning: gate partners to those co-expressed in the cell type (interaction can occur there)
+        gate = None
+        if cell_type is not None:
+            c, t, why = self._ct_gate(i, cell_type)
+            if t is None or why:
+                return self._abstain(q, f"cell-type conditioning: {why}")
+            gate = lambda j: c.is_expressed(j, t)
+        facts = [self._a(self.name[j], "measured", 1.0, source="PPI database")
+                 for j in sorted(known) if (gate is None or gate(j))][:k]
         sim = self.H @ self.H[i]; preds = []
         for j in np.argsort(-sim):
-            if j == i or j in known:
+            if j == i or j in known or (gate is not None and not gate(j)):
                 continue
-            c = float(sim[j])
-            if c < MIN_CONF:
+            c2 = float(sim[j])
+            if c2 < MIN_CONF:
                 break
-            preds.append(self._a(self.name[j], "predicted", c, source="CellGraph link"))
+            preds.append(self._a(self.name[j], "predicted", c2, source="CellGraph link"))
             if len(preds) >= k:
                 break
-        return dict(question=q, measured=facts, predicted=preds,
-                    note=f"{len(known)} known partners (fact) + top predicted novel bindings")
+        note = (f"{len(known)} known partners (fact) + top predicted novel bindings"
+                if cell_type is None else
+                f"conditioned on {cell_type}: only partners co-expressed there are active (emask gate)")
+        return dict(question=q, measured=facts, predicted=preds, cell_type=cell_type, note=note)
 
     # ---- 2. knockout -> downstream ----
-    def knockout(self, protein, k=10):
-        q = f"remove {protein} -> downstream effect?"
-        eff = self.cg.knockout_effect(protein, k)
+    def knockout(self, protein, k=10, cell_type=None):
+        q = f"remove {protein} -> downstream effect?" + (f" (in {cell_type})" if cell_type else "")
+        eff = self.cg.knockout_effect(protein, k if cell_type is None else max(k, 40))
         if not eff:
             return self._abstain(q, "no downstream signal (not in model or no out-edges)")
+        gate = None
+        if cell_type is not None:
+            i = self.idx.get(protein)
+            c, t, why = self._ct_gate(i, cell_type) if i is not None else (None, None, "not in model")
+            if t is None or why:
+                return self._abstain(q, f"cell-type conditioning: {why}")
+            gate = lambda nm: (nm in self.idx) and c.is_expressed(self.idx[nm], t)
         out = []
         for nm, d, v in eff:
+            if gate is not None and not gate(nm):
+                continue
             conf = min(1.0, abs(v)) if v is not None else 0.3
             out.append(self._a(nm, "predicted", conf, direction=d, source="CellGraph perturbation"))
-        return dict(question=q, predicted=out,
-                    note="direction (up/down) is calibrated (~0.81); magnitude is relative, not absolute")
+            if len(out) >= k:
+                break
+        note = ("direction (up/down) is calibrated (~0.81); magnitude is relative, not absolute"
+                if cell_type is None else
+                f"conditioned on {cell_type}: only downstream genes expressed there are shown (emask gate)")
+        return dict(question=q, predicted=out, cell_type=cell_type, note=note)
 
     # ---- 3. mutation -> effect ----
     def mutation_effect(self, gene, uniprot, pos, wt, mut):
@@ -205,6 +253,7 @@ COVERAGE = {
     "disease_target":     dict(engine="disease->target simulation",    validated="5/6 OOD diseases, 2.1x", tier="prediction"),
     "regulates":          dict(engine="regulatory network",           validated="curated edges",       tier="fact"),
     "kcat":               dict(engine="tiered kinetics (CatPred)",     validated="3.3x, at noise floor", tier="fact or prediction"),
+    "cell_type_gate":     dict(engine="emask conditioning (200 types)", validated="marker specificity 9x bg", tier="conditioning"),
 }
 
 
@@ -230,6 +279,8 @@ def demo():
                            pathway=["IL23A", "IL12B", "IL23R", "JAK2", "STAT3", "RORC", "IL17A", "STAT4"], k=5)),
         ("kcat of HK1?", qa.kcat("HK1")),
         ("SOD1 A4V mutation effect?", qa.mutation_effect("SOD1", "P00441", 5, "A", "V")),
+        ("GATA1 binds — in erythroid?", qa.what_binds("GATA1", 5, cell_type="erythroid progenitor")),
+        ("GATA1 binds — in T cell? (gated off)", qa.what_binds("GATA1", 5, cell_type="regulatory T cell")),
         ("unknown gene?", qa.what_binds("NOTAGENE")),
     ]:
         print(f"\nQ: {label}")

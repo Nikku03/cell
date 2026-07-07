@@ -1,6 +1,6 @@
 {
-  "n_pass": 15,
-  "n_total": 15,
+  "n_pass": 16,
+  "n_total": 16,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -204,6 +204,20 @@
       },
       "bar": "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
       "detail": "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)"
+    },
+    {
+      "test": "celltype_conditioning_gate",
+      "passed": true,
+      "value": {
+        "min_specificity": 0.6,
+        "mean_specificity": 0.833,
+        "mean_fold": 9.4
+      },
+      "baseline": {
+        "background": "cell-type expression base rate"
+      },
+      "bar": "external canonical markers: min specificity>=0.4 across>=5 lineages & mean>=4x background",
+      "detail": "emask gate is cell-type-specific (markers land in their own lineage ~9x background) -> conditioned answers are correct; honest negatives (no predictive lift) recorded, not gated"
     },
     {
       "test": "ecflux_measured_capacity",
@@ -423,6 +437,20 @@
       },
       "bar": "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
       "detail": "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)"
+    },
+    {
+      "test": "celltype_conditioning_gate",
+      "passed": true,
+      "value": {
+        "min_specificity": 0.6,
+        "mean_specificity": 0.833,
+        "mean_fold": 9.4
+      },
+      "baseline": {
+        "background": "cell-type expression base rate"
+      },
+      "bar": "external canonical markers: min specificity>=0.4 across>=5 lineages & mean>=4x background",
+      "detail": "emask gate is cell-type-specific (markers land in their own lineage ~9x background) -> conditioned answers are correct; honest negatives (no predictive lift) recorded, not gated"
     },
     {
       "test": "ecflux_measured_capacity",

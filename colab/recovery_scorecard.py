@@ -171,6 +171,17 @@ def scorecard():
             "FBA gene-deletion precision-lift>=3x & dominance reproduced (buffered@50%>=0.8, collapse@KO<=0.2)",
             "enzyme-constrained Human-GEM: known essential genes recovered + quantitative mutation->flux (dominance)")
 
+    # 14b) Cell-type conditioning — the emask gate is cell-type-specific (external canonical markers)
+    cc = _load("celltype_conditioning_validation.json")
+    if cc:
+        s = cc["summary"]
+        add("celltype_conditioning_gate", cc["passed"],
+            dict(min_specificity=s["min_specificity"], mean_specificity=s["mean_specificity"],
+                 mean_fold=s["mean_fold_over_background"]),
+            dict(background="cell-type expression base rate"),
+            "external canonical markers: min specificity>=0.4 across>=5 lineages & mean>=4x background",
+            "emask gate is cell-type-specific (markers land in their own lineage ~9x background) -> conditioned answers are correct; honest negatives (no predictive lift) recorded, not gated")
+
     # 14) ec-flux MEASURED capacity — per-enzyme Vmax=kcat·[E] from proteomics, not the blanket σ
     ep = _load("ecflux_ppm_validation.json")
     if ep:
