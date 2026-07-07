@@ -231,16 +231,24 @@ class CellQA:
                     provenance=("literature measurement" if measured else
                                 "CatPred prediction (~3.3x, at noise floor)" if "catpred" in tier else "EC/family prior"))
 
-    # ---- 7. function of an unknown/dark protein (structure-based) ----
+    # ---- 7. function of an unknown/dark protein (literature -> structure -> co-essentiality) ----
     def function(self, gene, uniprot=None):
-        """What does this (possibly dark) protein DO? Two independent lines of evidence:
-          - structure: AlphaFold + Foldseek structural homology (recovers the molecular fold/activity, incl.
-            from twilight-zone homologs sequence methods miss);
-          - the model's own darkfn (Perturb-seq co-essentiality guilt-by-association → the pathway it acts in).
-        Agreement raises confidence; each is tagged with its provenance."""
+        """What does this (possibly dark) protein DO? Up to three tiers, strongest first:
+          - literature: UniProt curated FUNCTION (distilled from papers), tagged experimental/by-similarity;
+          - structure : AlphaFold + Foldseek structural homology (molecular activity of the fold);
+          - co-essentiality: the model's darkfn (Perturb-seq guilt-by-association → the pathway it acts in).
+        Most 'dark' genes were only blank in OUR model — the literature tier fills that from curated papers;
+        structure/co-essentiality carry the genuinely uncharacterized tail. Agreement across tiers = confidence."""
         q = f"what does {gene} do?"
         ans = dict(question=q)
-        # (a) model's co-essentiality dark-function call (fact-adjacent, from measured Perturb-seq)
+        # (a) LITERATURE tier — UniProt curated function (from papers), the authoritative fill for model gaps
+        lit = self._dark_function_table().get(gene)
+        if lit and lit.get("function"):
+            ans["literature"] = dict(function=lit["function"], name=lit.get("name"),
+                                     evidence=lit.get("evidence"), location=lit.get("location"),
+                                     keywords=lit.get("keywords"),
+                                     provenance=f"UniProt curated function ({lit.get('evidence')})")
+        # (b) model's co-essentiality dark-function call (from measured Perturb-seq)
         i = self.idx.get(gene)
         df = (self.D.get("darkfn") or {}).get(str(i)) if i is not None else None
         if df:
@@ -260,10 +268,21 @@ class CellQA:
                 ans["structure"] = dict(abstain=True, reason=r["reason"])
         except Exception as e:
             ans["structure"] = dict(abstain=True, reason=f"structure pipeline unavailable: {e}")
-        if "coessentiality" not in ans and ans.get("structure", {}).get("abstain"):
-            return self._abstain(q, "no co-essentiality call and no confident structural homolog")
-        ans["note"] = "structure (molecular activity of the fold) + co-essentiality (pathway) — independent evidence"
+        if ("literature" not in ans and "coessentiality" not in ans
+                and ans.get("structure", {}).get("abstain")):
+            return self._abstain(q, "no curated function, no co-essentiality call, no confident structural homolog")
+        ans["note"] = "literature (curated from papers) > structure (fold activity) > co-essentiality (pathway)"
         return ans
+
+    def _dark_function_table(self):
+        """lazy load of the UniProt curated-function table for dark genes (function extracted from papers)."""
+        if not hasattr(self, "_dft"):
+            self._dft = {}
+            for p in ("outputs/orphan/dark_function_table.json",
+                      os.path.join(os.path.dirname(__file__), "..", "outputs/orphan/dark_function_table.json")):
+                if os.path.exists(p):
+                    self._dft = json.load(open(p)).get("table", {}); break
+        return self._dft
 
     def _load_kinetics(self, path):
         # committed/Drive path preferred; falls back to the session's Drive-read copy
