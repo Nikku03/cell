@@ -23,13 +23,12 @@ Built so far: **ΔΔG node** (`docs/DDG_STABILITY.md`, commit 13b7eaa) and **ec-
 - **Status/blocker:** sequence kcat models are known to be **insensitive to single-point mutations** (why RealKcat exists). Expect an honest test first — CatPred may return ~0 Δ. Needs running the model itself (torch + weights) → Colab, not sandbox.
 - **Value:** completes the fork; without it, only the stability arm (→[E]) drives the flux effect.
 
-### A2. End-to-end chain validation on metabolic IEM mutations 🟡
-- **What:** run the whole fork (mutation → ΔΔG → [E] → ec-flux → biomarker) on real inborn-errors-of-metabolism mutations and check it reconstructs the *known* mechanism.
-- **Where:** integration test over `ddg_predictor` + `ecflux` + the IEM biomarker set already validated in `colab/validate_iem_mechanism.py`.
-- **Plan:** pick IEMs with a destabilizing disease allele + known biomarker (PKU/PAH R408W, G6PD deficiency, MTHFR A222V); predict ΔΔG → reduced capacity → blocked flux → check the accumulating metabolite matches the clinical biomarker.
-- **Sources:** ClinVar (variants), the existing `iem_mechanism_validation.json` ground truth, AlphaFold structures (EBI API).
-- **Status:** not started; it's the honest "reconstruct a known mechanism, not tell a story" test for the chain. Would become a scorecard axis.
-- **Value:** turns the chain from "each node validated separately" into "chain validated end-to-end."
+### A2. End-to-end chain validation on metabolic IEM mutations 🟡 — BUILT, honest negative (blocked on ΔΔG strength)
+- **What:** run the whole fork (mutation → ΔΔG → [E] → ec-flux → biomarker) on real IEM mutations; reconstruct the *known* mechanism.
+- **Where:** `colab/probe_iem_chain.py` (AlphaFold fetch → ΔΔG → folded fraction → ec-flux), residue-verified against the AlphaFold sequence (the numbering check correctly caught a BCKDHA mismatch).
+- **RESULT (honest):** the chain **runs end-to-end** but does **not** recover the IEM mechanism yet — 0/6 documented pathogenic mutations (PAH R408W, MTHFR A222V, GALT Q188R, ALDOB A150P, G6PD S188F, SOD1 A5V) were called destabilizing. **Two diagnosed causes:** (1) the DDGun-tier ΔΔG predictor (r=0.40) regresses to the mean and **under-calls the high-ΔΔG tail** where disease mutations live (they came out ~neutral/−); (2) the folding step at `dG_unfold_wt=7` is **too lenient** (a correct ΔΔG=4 → 99% active). The chain **logic is sound** — a correct ΔΔG (+3.5) with realistic marginal stability (dG_unfold≈4–5) → 50% active → collapse — so the block is **predictor accuracy, not wiring**.
+- **Unblock:** a stronger ΔΔG node (**ESM-2 / ThermoMPNN**, GPU-tier — see §A1/B3 and the CellGraph_GNN precedent that learning beats fixed) + per-protein marginal-stability estimate for the folding step. This re-orders the plan: the chain isn't "wire it up," it needs the better ΔΔG first.
+- **Sources:** ClinVar/literature (variants), AlphaFold (EBI API), `ecflux` + `iem_mechanism_validation.json`.
 
 ---
 
