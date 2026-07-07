@@ -1,6 +1,6 @@
 {
-  "n_pass": 24,
-  "n_total": 24,
+  "n_pass": 25,
+  "n_total": 25,
   "all_pass": [
     {
       "test": "algorithm_correctness",
@@ -349,6 +349,22 @@
       },
       "bar": "independent cell-line co-dependency corroborates KNOWN PPI edges >=10x over random (a valid cross-validator)",
       "detail": "cross-validate predictions against independent measured data; codep validates context-variable edges (23x) but is blind to pan-essential complexes \u2014 match the dataset to the prediction type"
+    },
+    {
+      "test": "whole_cell_kcat",
+      "passed": true,
+      "value": {
+        "enzymes": 2549,
+        "predicted": 2129,
+        "tested_invivo": 581,
+        "flagged_too_low": 228,
+        "flagged_too_high": 0
+      },
+      "baseline": {
+        "measured_left_as_fact": 20
+      },
+      "bar": "test ALL 2,549 kcats (not the ~334 flux-carriers) vs provable bounds: physics ceiling + independent in-vivo floor; measured=facts, predicted outliers flagged with proposals",
+      "detail": "whole-cell kcat audit: found 228 predicted kcats provably too low vs in-vivo (transporters/COX where CatPred underestimates); measured never flagged as error"
     }
   ],
   "tests": [
@@ -699,6 +715,22 @@
       },
       "bar": "independent cell-line co-dependency corroborates KNOWN PPI edges >=10x over random (a valid cross-validator)",
       "detail": "cross-validate predictions against independent measured data; codep validates context-variable edges (23x) but is blind to pan-essential complexes \u2014 match the dataset to the prediction type"
+    },
+    {
+      "test": "whole_cell_kcat",
+      "passed": true,
+      "value": {
+        "enzymes": 2549,
+        "predicted": 2129,
+        "tested_invivo": 581,
+        "flagged_too_low": 228,
+        "flagged_too_high": 0
+      },
+      "baseline": {
+        "measured_left_as_fact": 20
+      },
+      "bar": "test ALL 2,549 kcats (not the ~334 flux-carriers) vs provable bounds: physics ceiling + independent in-vivo floor; measured=facts, predicted outliers flagged with proposals",
+      "detail": "whole-cell kcat audit: found 228 predicted kcats provably too low vs in-vivo (transporters/COX where CatPred underestimates); measured never flagged as error"
     }
   ]
 }

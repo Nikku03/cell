@@ -109,10 +109,18 @@ cells = [
          "    print('  AlphaMissense', r.get('score'), '-> call:', r['call'], '| blind_spot:', r.get('ml_blind_spot'))",
          "    print('  why:', r['reasoning']['why'][:160])"),
 
-    md("## 6. Optional deep runs *(heavier: Human-GEM / ESM / network)*",
-       "Uncomment to run the enzyme-constrained flux, kinetics⇄flux consistency, or the cross-validation harness."),
+    md("## 6. Whole-cell kcat consistency — test the PREDICTED kcats (not just central carbon)",
+       "The flux-based check only reaches the ~334 enzymes carrying flux in one condition (central carbon, mostly "
+       "measured). This tests **all 2,549** kcats — especially the ~2,100 predicted ones — against provable, "
+       "flux-free bounds: the physics ceiling (kcat/Km < diffusion limit) and the independent in-vivo floor "
+       "(an enzyme can't run faster than its own kcat). Measured kcats stay facts; only predicted outliers are "
+       "flagged, each with a proposed value."),
+    code("!python colab/whole_cell_kcat.py"),
+
+    md("## 7. Optional deep runs *(heavier: Human-GEM / ESM / network)*",
+       "Uncomment to run the flux-based kinetics⇄flux check, the cross-validation harness, or measured capacity."),
     code("# !pip -q install cobra mygene fair-esm torch --quiet",
-         "# !python colab/kinetics_flux_consistency.py     # kinetics<->flux (needs Human-GEM + mygene)",
+         "# !python colab/kinetics_flux_consistency.py     # flux-based capacity check (needs Human-GEM + mygene)",
          "# !python colab/crossval_measured.py             # cross-validate predictions vs cell-line codep",
          "# !python colab/validate_ecflux_ppm.py           # measured per-enzyme capacity",
          "print('see docs/ for each capability; DATASET_TRAINING_PLAN.md for adding DepMap/Tahoe/GEO')"),

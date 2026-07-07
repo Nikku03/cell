@@ -281,6 +281,17 @@ def scorecard():
             "independent cell-line co-dependency corroborates KNOWN PPI edges >=10x over random (a valid cross-validator)",
             "cross-validate predictions against independent measured data; codep validates context-variable edges (23x) but is blind to pan-essential complexes — match the dataset to the prediction type")
 
+    # 23) Whole-cell kcat consistency — test ALL predicted kcats vs provable bounds (not just flux-carriers)
+    wk = _load("whole_cell_kcat_validation.json")
+    if wk:
+        s = wk["summary"]
+        add("whole_cell_kcat", wk["passed"],
+            dict(enzymes=s["n_enzymes"], predicted=s["n_predicted"], tested_invivo=s["n_tested_against_invivo"],
+                 flagged_too_low=s["predicted_flagged_too_low"], flagged_too_high=s["predicted_flagged_too_high"]),
+            dict(measured_left_as_fact=s["measured_below_invivo_left_as_fact"]),
+            "test ALL 2,549 kcats (not the ~334 flux-carriers) vs provable bounds: physics ceiling + independent in-vivo floor; measured=facts, predicted outliers flagged with proposals",
+            "whole-cell kcat audit: found 228 predicted kcats provably too low vs in-vivo (transporters/COX where CatPred underestimates); measured never flagged as error")
+
     n_pass = sum(1 for x in rows if x["passed"])
     return dict(n_pass=n_pass, n_total=len(rows), all_pass=(n_pass == len(rows) and rows), tests=rows)
 
