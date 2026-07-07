@@ -59,5 +59,11 @@
       "auc": 0.5317,
       "random_auc": 0.492
     }
+  },
+  "drug_polypharmacology": {
+    "n_drugs": 1433,
+    "auc": 0.8032,
+    "random": 0.5,
+    "note": "held-out drug-target recovery from embedding similarity"
   }
 }

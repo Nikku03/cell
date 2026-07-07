@@ -282,6 +282,105 @@ def validate_perturbation_direction(D, n, seed=0, test_frac=0.15):
     return dict(n_test_edges=tot, sign_accuracy=round(correct / tot, 4) if tot else None, baseline=0.5)
 
 
+# ---------------- Round 4: drug polypharmacology — "what else can this drug hit" ----------------
+def drug_polypharmacology_eval(D, H, seed=0, min_t=3, max_t=40):
+    """For each drug with several protein targets, hold out ONE target and predict it by ranking all genes by
+    embedding similarity to the drug's OTHER targets. Tests whether the cell embedding captures shared drug
+    targeting (off-target / polypharmacology prediction). ROC-AUC of recovering the held-out target."""
+    from sklearn.metrics import roc_auc_score
+    rng = np.random.default_rng(seed)
+    n = H.shape[0]
+    drug2genes = {}
+    for gi, lst in (D.get("drugs", {}) or {}).items():
+        for d in lst:
+            nm = d.get("d")
+            if nm and nm != "Null":
+                drug2genes.setdefault(nm, set()).add(int(gi))
+    aucs, rnd = [], []
+    for drug, genes in drug2genes.items():
+        genes = list(genes)
+        if not (min_t <= len(genes) <= max_t):
+            continue
+        held = genes[rng.integers(len(genes))]
+        rest = [g for g in genes if g != held]
+        centroid = H[rest].mean(0)
+        sim = H @ centroid                                # cosine-ish (H is L2-normalized)
+        for g in rest:
+            sim[g] = -np.inf                              # exclude the known targets from ranking
+        y = np.zeros(n, np.int8); y[held] = 1
+        mask = np.ones(n, bool); mask[rest] = False
+        aucs.append(roc_auc_score(y[mask], sim[mask]))
+        rnd.append(0.5)
+    return dict(n_drugs=len(aucs), auc=round(float(np.mean(aucs)), 4) if aucs else None,
+                random=0.5, note="held-out drug-target recovery from embedding similarity")
+
+
+# ---------------- Round 5: unified queryable model ----------------
+class CellGraph:
+    """One object that answers the mechanistic questions, built on the validated capabilities:
+      .bind_partners(gene)   — what proteins can this bind? (link prediction, R1)
+      .knockout_effect(gene) — remove this protein -> what changes downstream & which way (R3, 81% direction)
+      .drug_off_targets(drug)— give a drug -> what else can it hit (polypharmacology, R4)
+    """
+    def __init__(self):
+        self.D, self.G, self.name, self.idx = load_model()
+        self.n = len(self.G)
+        X = node_features(self.G)
+        self.A = build_adj(self.D, self.n)
+        self.H = embed(X, self.A, hops=2)                 # feature+structure embedding (binding, drugs)
+        self.W = directed_signed(self.D, self.n)          # directed signed (perturbation)
+        self.indeg = np.sqrt(np.asarray(np.abs(self.W).sum(0)).ravel() + 1.0)  # for specificity weighting
+        self._partners = None
+
+    def _known_partners(self):
+        if self._partners is None:
+            p = {i: set() for i in range(self.n)}
+            for e in self.D["ppi"]:
+                p[e[0]].add(e[1]); p[e[1]].add(e[0])
+            self._partners = p
+        return self._partners
+
+    def bind_partners(self, gene, k=10):
+        if gene not in self.idx: return []
+        i = self.idx[gene]; sim = self.H @ self.H[i]
+        known = self._known_partners()[i]
+        order = np.argsort(-sim)
+        out = [self.name[j] for j in order if j != i and j not in known][:k]
+        return out
+
+    def knockout_effect(self, gene, k=12):
+        """Remove protein -> ranked downstream genes (up/down). Specificity-weighted (÷√in-degree) so hubs
+        don't dominate. Effectors with no transcriptional out-edges fall back to their physical (PPI) partners
+        — they act locally, not by transcription."""
+        if gene not in self.idx: return []
+        i = self.idx[gene]
+        eff = perturb_downstream(i, self.W, hops=1)         # DIRECT downstream — multi-hop floods hubs
+        if np.abs(eff).sum() == 0:                          # no transcriptional downstream (e.g. secreted effector)
+            partners = sorted(self._known_partners()[i])
+            return [(self.name[j], "local", None) for j in partners[:k]] or \
+                   [("(no downstream — acts post-transcriptionally)", "", None)]
+        order = np.argsort(-np.abs(eff))
+        return [(self.name[j], "down" if eff[j] < 0 else "up", round(float(eff[j]), 2))
+                for j in order if j != i][:k]
+
+    def drug_off_targets(self, drug, k=10):
+        genes = [int(gi) for gi, lst in self.D["drugs"].items()
+                 for d in lst if d.get("d") == drug]
+        if not genes: return []
+        centroid = self.H[genes].mean(0); sim = self.H @ centroid
+        gs = set(genes); order = np.argsort(-sim)
+        return [self.name[j] for j in order if j not in gs][:k]
+
+
+def demo():
+    cg = CellGraph()
+    print("\n" + "=" * 74 + "\nCellGraph — live query demo (the model answering the questions)\n" + "=" * 74)
+    print("Q: what can TP53 bind? ->", cg.bind_partners("TP53", 8))
+    print("Q: remove SREBF2 -> downstream? ->", cg.knockout_effect("SREBF2", 8))
+    print("Q: remove PCSK9 -> downstream? ->", cg.knockout_effect("PCSK9", 6))
+    print("Q: give Imatinib -> what else can it hit? ->", cg.drug_off_targets("Imatinib", 8))
+
+
 def main():
     D, G, name, idx = load_model()
     n = len(G)
@@ -304,6 +403,10 @@ def main():
             print(f"     {k:5} acc {v['accuracy']} (majority {v['majority_baseline']}, {v['n_classes']} classes)")
         else:
             print(f"     {k:5} AUC {v['auc']} (positive rate {v['positive_rate']})")
+    print("  [R4] drug polypharmacology — recover a held-out drug target from the embedding:")
+    Hf = embed(X, A, hops=2)
+    drug = drug_polypharmacology_eval(D, Hf)
+    print(f"     off-target/polypharmacology AUC {drug['auc']} (random {drug['random']}, {drug['n_drugs']} drugs)")
     print("  [R3] perturbation -> downstream effect:")
     W = directed_signed(D, n)
     pdir = validate_perturbation_direction(D, n)
@@ -313,7 +416,7 @@ def main():
     print(f"     (co-dependency recovery — different signal — AUC {pert['auc']} vs random {pert['random_auc']})")
     json.dump(dict(n_nodes=n, feat_dim=int(X.shape[1]), struct_emb_dim=int(Hs.shape[1]),
                    link_prediction=res, node_function=fn,
-                   perturbation=dict(direction=pdir, codependency=pert)),
+                   perturbation=dict(direction=pdir, codependency=pert), drug_polypharmacology=drug),
               open(OUT / "cellgraph_metrics.json", "w"), indent=2)
     print("-> outputs/orphan/cellgraph_metrics.json")
     return dict(link_prediction=res, node_function=fn)
