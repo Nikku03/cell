@@ -201,6 +201,13 @@ class SignalCombiner:
         per-cell embeddings. Two genes that respond alike across 50 lines × 384 drugs × 3 doses are functionally
         linked — an independent signal (drug-response co-regulation), orthogonal to STRING. Covers only the ~2,000
         analysis genes, so it's 0 outside them (honest)."""
+        # fast path: derived per-gene vectors cached (built once, then persisted to Drive) -> no re-download
+        cache = "outputs/orphan/tahoe_vecs.npz"
+        if os.path.exists(cache):
+            z = np.load(cache)
+            vecs = {int(i): z["vecs"][k] for k, i in enumerate(z["ids"])}
+            print(f"  tahoe_corr: loaded {len(vecs):,} gene vectors from cache (no download)")
+            return vecs
         if not d or not os.path.isdir(d):
             return None
         try:
@@ -225,7 +232,9 @@ class SignalCombiner:
             Z = (M - mu) / sd; Z[np.isnan(Z)] = 0.0
             Z /= (np.linalg.norm(Z, axis=1, keepdims=True) + 1e-8)
             vecs = {idx[g]: Z[i] for i, g in enumerate(gene_cols)}
-            print(f"  tahoe_corr loaded: {len(vecs):,} genes x {M.shape[1]} perturbation conditions (cell_eval)")
+            ids = list(vecs)
+            np.savez_compressed(cache, ids=np.array(ids), vecs=np.array([vecs[i] for i in ids], dtype=np.float32))
+            print(f"  tahoe_corr loaded: {len(vecs):,} genes x {M.shape[1]} conditions (cell_eval) -> cached")
             return vecs
         except Exception as e:
             print("  (tahoe_corr off:", str(e)[:60], ")")
