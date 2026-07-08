@@ -122,30 +122,33 @@ class SignalCombiner:
             z = np.load(npz, allow_pickle=True)
             keys = list(z.keys())
             print(f"  npz keys: {[(k, z[k].shape, str(z[k].dtype)) for k in keys]}")
-            names = next((z[k] for k in keys if z[k].ndim == 1), None)
+            # names = the 1D STRING/object array (e.g. 'genes'); NOT the bool 'have' mask or an int array
+            names_arr = next((z[k] for k in keys if z[k].ndim == 1 and z[k].dtype.kind in ("U", "S", "O")), None)
             mat = next((z[k] for k in keys if z[k].ndim == 2), None)
-            if names is None or mat is None or len(names) != len(mat):
+            have = next((z[k] for k in keys if z[k].ndim == 1 and z[k].dtype == bool), None)
+            if names_arr is None or mat is None or len(names_arr) != len(mat):
                 print("  (embedding feature off: could not identify names+matrix in npz)")
                 return None
-            names = [str(n) for n in names]
-            print(f"  npz name sample: {names[:3]}")
+            names = [str(n) for n in names_arr]
+            valid = set(range(len(names))) if have is None else {i for i, h in enumerate(have) if h}
+            print(f"  npz name sample: {[names[i] for i in list(valid)[:3]]}  ({len(valid):,} with have=True)")
             mat = mat.astype(np.float32)
             mat /= (np.linalg.norm(mat, axis=1, keepdims=True) + 1e-8)
             idx = self.C.idx
             # names may be gene symbols (map directly) or Ensembl gene ids (map ENSG->symbol via mygene)
             name2i = {}
-            direct = sum(1 for n in names if n in idx)
-            if direct >= 0.2 * len(names):
-                name2i = {i: n for i, n in enumerate(names) if n in idx}
-            elif names and names[0].split(".")[0].startswith("ENSG"):
+            direct = sum(1 for i in valid if names[i] in idx)
+            if direct >= 0.2 * len(valid):
+                name2i = {i: names[i] for i in valid if names[i] in idx}
+            elif names and names[list(valid)[0]].split(".")[0].startswith("ENSG"):
                 try:
                     import mygene
-                    q = [n.split(".")[0] for n in names]
+                    q = sorted({names[i].split(".")[0] for i in valid})
                     hits = mygene.MyGeneInfo().querymany(q, scopes="ensembl.gene", fields="symbol",
                                                          species="human", verbose=False, as_dataframe=False)
                     ens2sym = {h["query"]: h["symbol"] for h in hits if h.get("symbol")}
-                    name2i = {i: ens2sym[n.split(".")[0]] for i, n in enumerate(names)
-                              if ens2sym.get(n.split(".")[0]) in idx}
+                    name2i = {i: ens2sym[names[i].split(".")[0]] for i in valid
+                              if ens2sym.get(names[i].split(".")[0]) in idx}
                     print(f"  mapped {len(name2i):,} Ensembl ids -> symbols via mygene")
                 except Exception as e:
                     print("  (embedding: ENSG->symbol map failed:", str(e)[:50], ")")
