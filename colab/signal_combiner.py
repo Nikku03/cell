@@ -606,7 +606,8 @@ class SignalCombiner:
         self.model, self.scaler, self.uses_scaler, self.threshold = best, sk, uses_scaler, chosen
         self.kept, self.kept_idx = kept, ki
         self.informative_independent = [f for f in kept if f not in self.STRUCT]
-        return dict(counts=counts, features_all=F, kept_features=kept,
+        import sklearn
+        return dict(counts=counts, features_all=F, kept_features=kept, sklearn_version=sklearn.__version__,
                     dropped={f: ablation.get(f) for f in dropped},
                     per_feature_auc=ablation, auc_structural_only=auc_struct, auc_independent_only=auc_indep,
                     combined_auc=round(best_auc, 3), combined_auc_all_features=round(auc_all_gb, 3),

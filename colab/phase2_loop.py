@@ -499,6 +499,11 @@ class Phase2Loop:
         # finds nothing new to fix, so extra headroom costs nothing once converged.
         if max_processes is None:
             max_processes = int(os.environ.get("MAX_PROCESSES", 6))
+        # CONVERGED = a process heals fewer than CONVERGE_MIN things. The bulk drains in the first ~3 processes;
+        # after that, locked completions keep exposing a few new triadic candidates off the (300-capped) backlog,
+        # so it settles into a small steady trickle rather than hitting exactly 0 — that trickle IS convergence.
+        converge_min = int(os.environ.get("CONVERGE_MIN", 10))
+        self.converged = False
         processes = []
         for p in range(1, max_processes + 1):
             # Run 1: analyse — state already carries all locked fixes (they were applied in place)
@@ -523,8 +528,9 @@ class Phase2Loop:
                                   regressions=regressions, sample=details[:8]))
             print(f"  process {p}: {len(flags):4d} new flags -> {fixed} fixed, {needs} needs-data, "
                   f"{accepted} accepted | regressions: {len(regressions)}")
-            if fixed == 0:                      # CONVERGED: nothing new got fixed this process
-                print(f"  converged at process {p} (no new fixes)")
+            if fixed < converge_min:            # CONVERGED: only a diminishing trickle left (or nothing)
+                self.converged = True
+                print(f"  converged at process {p} ({fixed} new fixes < {converge_min} — diminishing returns)")
                 break
         return processes
 
@@ -546,7 +552,7 @@ class Phase2Loop:
             design="3 processes x {analyse, detect, fix-verify}; failure-guided redo (5); 3 outcomes; "
                    "locked ledger + regression check; stop on convergence",
             n_processes_run=len(processes),
-            converged=processes[-1]["fixed"] == 0 if processes else False,
+            converged=getattr(self, "converged", processes[-1]["fixed"] == 0 if processes else False),
             total_locked_fixes=len(self.ledger), locked_by_kind=by_kind,
             total_needs_data=len(self.needs_data_ids), needs_data_by_kind=needs_by_kind,
             total_accepted=len(self.accepted_ids), accepted_by_kind=acc_by_kind,

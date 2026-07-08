@@ -26,6 +26,7 @@
     "same_complex",
     "coessentiality"
   ],
+  "sklearn_version": "1.9.0",
   "dropped": {
     "coexpression": 0.51,
     "codependency": 0.509
