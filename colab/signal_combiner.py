@@ -14,6 +14,11 @@ carry little alone (independent-only AUC ~0.57); these dense signals are what pu
 STRING_LINKS / STRING_ALIASES / GENEFORMER_NPZ at the Drive files and re-run — the pipeline is unchanged and
 the model records which features it was trained with.
 
+Honesty note on STRING: STRING physical shares source databases (IntAct/BioGRID/…) with our own PPI layer, so
+it is a strong but only PARTLY-independent feature — its single-feature training AUC is somewhat inflated by
+that overlap. It is most valuable in the LOOP, where STRING confirming an edge that is MISSING from our graph
+is genuinely new information (STRING's databases know something ours didn't).
+
 Labels: positives = known curated PPI edges; negatives = a MIX of easy (random) and HARD (non-edges that share
 ≥3 partners) — the hard negatives force the model to use the *independent* signals, not just triadic closure.
 
@@ -70,39 +75,42 @@ class SignalCombiner:
         if not links or not os.path.exists(links):
             return None
         try:
-            op = gzip.open if links.endswith(".gz") else open
-            # map STRING protein ids -> gene symbol (if an aliases file is given), else assume symbols already
-            id2sym = {}
+            idx = self.C.idx
+            # map STRING protein id -> OUR gene index. A STRING protein has many aliases (RefSeq, UniProt, symbol,
+            # …); keep the one that IS a known gene symbol (in our index). That is the fix — "first alias" grabbed
+            # the wrong id and mapped almost nothing.
+            id2i = {}
             if aliases and os.path.exists(aliases):
                 aop = gzip.open if aliases.endswith(".gz") else open
                 with aop(aliases, "rt") as fh:
                     for line in fh:
                         p = line.rstrip("\n").split("\t")
-                        if len(p) >= 2 and p[0] not in id2sym:
-                            id2sym[p[0]] = p[1]
-            idx = self.C.idx
+                        if len(p) >= 2 and p[0] not in id2i and p[1] in idx:
+                            id2i[p[0]] = idx[p[1]]
+                print(f"  STRING aliases mapped {len(id2i):,} proteins -> gene symbols")
+            op = gzip.open if links.endswith(".gz") else open
             d = {}
             with op(links, "rt") as fh:
                 header = fh.readline()
-                sep = " " if " " in header and "\t" not in header else "\t"
+                sep = " " if (" " in header and "\t" not in header) else "\t"
                 for line in fh:
                     p = line.rstrip("\n").split(sep)
                     if len(p) < 3:
                         continue
-                    a = id2sym.get(p[0], p[0]); b = id2sym.get(p[1], p[1])
-                    ia, ib = idx.get(a), idx.get(b)
+                    ia = id2i.get(p[0], idx.get(p[0]))         # aliases first, else the id may already be a symbol
+                    ib = id2i.get(p[1], idx.get(p[1]))
                     if ia is None or ib is None:
                         continue
                     try:
                         s = float(p[-1])
                     except ValueError:
                         continue
-                    s = s / 1000.0 if s > 1.5 else s               # STRING scores are 0-1000
+                    s = s / 1000.0 if s > 1.5 else s           # STRING scores are 0-1000
                     key = (min(ia, ib), max(ia, ib))
                     if s > d.get(key, 0):
                         d[key] = s
             print(f"  STRING loaded: {len(d):,} scored gene pairs")
-            return d
+            return d if d else None
         except Exception as e:
             print("  (STRING feature off:", str(e)[:60], ")")
             return None
@@ -113,17 +121,37 @@ class SignalCombiner:
         try:
             z = np.load(npz, allow_pickle=True)
             keys = list(z.keys())
-            names = next((z[k] for k in keys if z[k].dtype.kind in "US" or z[k].ndim == 1), None)
+            print(f"  npz keys: {[(k, z[k].shape, str(z[k].dtype)) for k in keys]}")
+            names = next((z[k] for k in keys if z[k].ndim == 1), None)
             mat = next((z[k] for k in keys if z[k].ndim == 2), None)
             if names is None or mat is None or len(names) != len(mat):
                 print("  (embedding feature off: could not identify names+matrix in npz)")
                 return None
+            names = [str(n) for n in names]
+            print(f"  npz name sample: {names[:3]}")
             mat = mat.astype(np.float32)
             mat /= (np.linalg.norm(mat, axis=1, keepdims=True) + 1e-8)
             idx = self.C.idx
-            emb = {idx[str(n)]: mat[i] for i, n in enumerate(names) if str(n) in idx}
+            # names may be gene symbols (map directly) or Ensembl gene ids (map ENSG->symbol via mygene)
+            name2i = {}
+            direct = sum(1 for n in names if n in idx)
+            if direct >= 0.2 * len(names):
+                name2i = {i: n for i, n in enumerate(names) if n in idx}
+            elif names and names[0].split(".")[0].startswith("ENSG"):
+                try:
+                    import mygene
+                    q = [n.split(".")[0] for n in names]
+                    hits = mygene.MyGeneInfo().querymany(q, scopes="ensembl.gene", fields="symbol",
+                                                         species="human", verbose=False, as_dataframe=False)
+                    ens2sym = {h["query"]: h["symbol"] for h in hits if h.get("symbol")}
+                    name2i = {i: ens2sym[n.split(".")[0]] for i, n in enumerate(names)
+                              if ens2sym.get(n.split(".")[0]) in idx}
+                    print(f"  mapped {len(name2i):,} Ensembl ids -> symbols via mygene")
+                except Exception as e:
+                    print("  (embedding: ENSG->symbol map failed:", str(e)[:50], ")")
+            emb = {idx[sym]: mat[i] for i, sym in name2i.items()}
             print(f"  Geneformer embeddings loaded: {len(emb):,} genes")
-            return emb
+            return emb if emb else None
         except Exception as e:
             print("  (embedding feature off:", str(e)[:60], ")")
             return None

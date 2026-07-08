@@ -36,7 +36,7 @@ cells = [
     md("## 1. Setup — clone the branch + deps"),
     code(f"!git clone --depth 1 -b {BR} {REPO} 2>/dev/null || (cd cell && git pull)",
          "%cd cell",
-         "!pip -q install numpy scipy scikit-learn pandas 2>/dev/null",
+         "!pip -q install numpy scipy scikit-learn pandas mygene 2>/dev/null   # mygene: Ensembl->symbol for Geneformer",
          "import sys, os; sys.path.insert(0, 'colab')",
          "os.makedirs('outputs/orphan', exist_ok=True)",
          "print('ready')"),
