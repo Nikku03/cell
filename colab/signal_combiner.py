@@ -76,7 +76,10 @@ class SignalCombiner:
         # which get loaded — the loop passes the restored models' feature set so it never drags in a big feature the
         # models were trained WITHOUT (e.g. ESM): that both wastes RAM (cell-5 OOM) and would mismatch anyway.
         _only = set(only) if only is not None else None
-        want = lambda nm: _only is None or nm in _only
+        _skip = {f.strip() for f in os.environ.get("SKIP_FEATURES", "").split(",") if f.strip()}
+        want = lambda nm: (_only is None or nm in _only) and nm not in _skip   # SKIP_FEATURES force-drops a feature
+        if _skip:
+            print(f"  SKIP_FEATURES active -> not loading: {sorted(_skip)}")
         self.string = self._load_string(string_links or os.environ.get("STRING_LINKS"),
                                         string_aliases or os.environ.get("STRING_ALIASES")) if want("string_score") else None
         _mem("after STRING")
