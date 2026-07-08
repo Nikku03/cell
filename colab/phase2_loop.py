@@ -85,24 +85,32 @@ class Phase2Loop:
         self.sc = None
         if self.combiner:
             self.sc = signal_combiner.SignalCombiner(C=self.C, dm=self.dm)
-            if self.sc.features_list != self.combiner.get("features"):
-                print(f"  (combiner off: feature mismatch — model trained on {self.combiner.get('features')}, "
-                      f"runtime has {self.sc.features_list})")
+            kept = self.combiner.get("features", [])            # the KEPT features the model was trained on
+            allf = self.combiner.get("features_all", kept)
+            if self.sc.features_list != allf:
+                print(f"  (combiner off: available features {self.sc.features_list} != model's {allf})")
                 self.combiner = None
             else:
-                print(f"  signal-combiner on ({len(self.sc.features_list)} features, "
-                      f"threshold {round(self.combiner['threshold'],3)}) — calibrated lens")
-
-    def _combiner_feats(self, u, v):
-        return self.sc.features(u, v)
+                self.kept_idx = [self.sc.features_list.index(f) for f in kept]
+                self.indep_names = self.combiner.get("informative_independent", [])
+                print(f"  signal-combiner on (kept {kept}, threshold {round(self.combiner['threshold'],3)}) "
+                      f"— calibrated lens; gates only on {self.indep_names}")
 
     def _combiner_prob(self, u, v):
         import numpy as _np
         f = self.combiner
-        x = _np.array([self.sc.features(u, v)])
+        full = self.sc.features(u, v)
+        x = _np.array([[full[i] for i in self.kept_idx]])       # subset to the kept features
         if f.get("uses_scaler"):
             x = f["scaler"].transform(x)
         return float(f["model"].predict_proba(x)[0, 1])
+
+    def _independent_present(self, u, v):
+        """an INFORMATIVE independent feature (one that survived the AUC cut) is meaningfully present — so a
+        dropped/dead feature (e.g. tahoe_corr at 0.50) can no longer gate a completion."""
+        full = self.sc.features(u, v); F = self.sc.features_list
+        return any(full[F.index(nm)] >= _INDEP_THRESH.get(nm, 0.5)
+                   for nm in self.indep_names if nm in _INDEP_THRESH)
 
     def _reset_base(self):
         """rebuild ppi adjacency from the base cell (no additions) so the loop's ledger is the whole ML layer."""
@@ -319,12 +327,9 @@ class Phase2Loop:
         # AND an INDEPENDENT signal is actually present (guard: don't let the structural features close cliques
         # on their own — that would be the graph confirming itself). One-shot, so it runs on attempt 1 only.
         if self.combiner and attempt == 1:
-            feats = self._combiner_feats(u, v)
-            # independence guard (name-based so it survives adding features): at least one signal INDEPENDENT of
-            # the PPI graph must be present, so the structural features (shared_partners/jaccard) can't close
-            # cliques on their own. Each independent feature has a "meaningfully present" threshold.
-            indep_present = any(feats[i] >= _INDEP_THRESH[nm]
-                                for i, nm in enumerate(self.sc.features_list) if nm in _INDEP_THRESH)
+            # independence guard: at least one INFORMATIVE independent signal (survived the AUC cut) must be
+            # present, so neither the structural features nor a dead feature can lock an edge on their own.
+            indep_present = self._independent_present(u, v)
             p = self._combiner_prob(u, v)
             if p >= self.combiner["threshold"] and indep_present:
                 self.C.ppi_adj[u].add(v); self.C.ppi_adj[v].add(u)

@@ -12,7 +12,7 @@
       "coessentiality"
     ]
   },
-  "features": [
+  "features_all": [
     "shared_partners",
     "jaccard",
     "same_complex",
@@ -20,10 +20,16 @@
     "codependency",
     "coessentiality"
   ],
-  "auc_logistic": 0.719,
-  "auc_gbm": 0.81,
-  "chosen_model": "gbm",
-  "combined_auc": 0.81,
+  "kept_features": [
+    "shared_partners",
+    "jaccard",
+    "same_complex",
+    "coessentiality"
+  ],
+  "dropped": {
+    "coexpression": 0.51,
+    "codependency": 0.509
+  },
   "per_feature_auc": {
     "shared_partners": 0.635,
     "jaccard": 0.693,
@@ -34,16 +40,17 @@
   },
   "auc_structural_only": 0.717,
   "auc_independent_only": 0.565,
-  "logistic_weights": {
-    "shared_partners": -1.232,
-    "jaccard": 3.28,
-    "same_complex": 0.527,
-    "coexpression": 0.048,
-    "codependency": 0.304,
-    "coessentiality": 0.046
-  },
-  "brier": 0.1669,
-  "threshold_at_0p9_precision": 0.571,
-  "recall_at_that_threshold": 0.588,
-  "note": "hard negatives force use of INDEPENDENT signals; grouped structural-vs-independent AUC shows how much is the graph confirming itself vs genuinely independent evidence"
+  "combined_auc": 0.808,
+  "combined_auc_all_features": 0.81,
+  "auc_logistic": 0.719,
+  "auc_gbm": 0.808,
+  "chosen_model": "gbm",
+  "brier": 0.1675,
+  "threshold_at_0p9_precision": 0.588,
+  "recall_at_that_threshold": 0.581,
+  "informative_independent": [
+    "same_complex",
+    "coessentiality"
+  ],
+  "note": "add->measure->keep: any independent feature below AUC 0.53 alone is DROPPED (and can no longer gate the loop). combined_auc vs combined_auc_all_features shows dropping the dead weight did not cost anything."
 }

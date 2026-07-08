@@ -2,19 +2,19 @@
   "design": "3 processes x {analyse, detect, fix-verify}; failure-guided redo (5); 3 outcomes; locked ledger + regression check; stop on convergence",
   "n_processes_run": 2,
   "converged": true,
-  "total_locked_fixes": 1020,
+  "total_locked_fixes": 1018,
   "locked_by_kind": {
     "kcat_physics": 11,
-    "completion": 8,
+    "completion": 6,
     "complex_ppi": 978,
     "function_fill": 23
   },
   "total_needs_data": 326,
   "needs_data_by_kind": {
     "completion": 300,
-    "coverage": 2,
+    "function_fill": 14,
     "localization": 10,
-    "function_fill": 14
+    "coverage": 2
   },
   "total_accepted": 7,
   "accepted_by_kind": {
@@ -22,14 +22,14 @@
   },
   "total_regressions": 0,
   "base_ppi_pairs": 191447,
-  "final_ppi_pairs": 192433,
+  "final_ppi_pairs": 192431,
   "processes": [
     {
       "process": 1,
       "ppi_edges_at_start": 191447,
       "new_flags": 1345,
-      "fixed": 1020,
-      "needs_data": 318,
+      "fixed": 1018,
+      "needs_data": 320,
       "accepted": 7,
       "regressions": [],
       "sample": [
@@ -129,10 +129,10 @@
     },
     {
       "process": 2,
-      "ppi_edges_at_start": 192433,
-      "new_flags": 8,
+      "ppi_edges_at_start": 192431,
+      "new_flags": 6,
       "fixed": 0,
-      "needs_data": 8,
+      "needs_data": 6,
       "accepted": 0,
       "regressions": [],
       "sample": [
@@ -143,16 +143,6 @@
           "field": "ppi",
           "status": "needs_data",
           "why": "triadic candidate (82 shared partners) with NO independent corroboration (complex/co-essentiality/co-expression/co-dependency) \u2014 kept as a predicted candidate, not locked",
-          "fix": null,
-          "attempts": 5
-        },
-        {
-          "id": "completion::ABCE1\u2014XBP1",
-          "kind": "completion",
-          "entity": "ABCE1\u2014XBP1",
-          "field": "ppi",
-          "status": "needs_data",
-          "why": "triadic candidate (81 shared partners) with NO independent corroboration (complex/co-essentiality/co-expression/co-dependency) \u2014 kept as a predicted candidate, not locked",
           "fix": null,
           "attempts": 5
         },
@@ -200,16 +190,6 @@
           "id": "completion::RBM42\u2014RPLP0",
           "kind": "completion",
           "entity": "RBM42\u2014RPLP0",
-          "field": "ppi",
-          "status": "needs_data",
-          "why": "triadic candidate (80 shared partners) with NO independent corroboration (complex/co-essentiality/co-expression/co-dependency) \u2014 kept as a predicted candidate, not locked",
-          "fix": null,
-          "attempts": 5
-        },
-        {
-          "id": "completion::RPL30\u2014SRSF5",
-          "kind": "completion",
-          "entity": "RPL30\u2014SRSF5",
           "field": "ppi",
           "status": "needs_data",
           "why": "triadic candidate (80 shared partners) with NO independent corroboration (complex/co-essentiality/co-expression/co-dependency) \u2014 kept as a predicted candidate, not locked",

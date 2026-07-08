@@ -314,8 +314,10 @@ class SignalCombiner:
         return X, y, dict(n_pos=int(y.sum()), n_hard_neg=len(hard), n_easy_neg=len(easy),
                           features=self.features_list)
 
-    # ---------- train + honest evaluation ----------
-    def train(self, seed=0):
+    STRUCT = ("shared_partners", "jaccard")
+
+    # ---------- train + honest evaluation (with add->measure->KEEP: auto-drop features below the bar) ----------
+    def train(self, seed=0, keep_auc=0.53):
         from sklearn.linear_model import LogisticRegression
         from sklearn.ensemble import HistGradientBoostingClassifier
         from sklearn.preprocessing import StandardScaler
@@ -324,8 +326,8 @@ class SignalCombiner:
         X, y, counts = self.build_examples(seed=seed)
         F = self.features_list
         Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=seed, stratify=y)
-        scaler = StandardScaler().fit(Xtr)
-        Xtr_s, Xte_s = scaler.transform(Xtr), scaler.transform(Xte)
+        sf = StandardScaler().fit(Xtr); Xtr_s, Xte_s = sf.transform(Xtr), sf.transform(Xte)
+        # per-feature AUC (each signal ALONE)
         ablation = {}
         for j, f in enumerate(F):
             try:
@@ -333,44 +335,62 @@ class SignalCombiner:
                 ablation[f] = round(float(roc_auc_score(yte, m.predict_proba(Xte_s[:, [j]])[:, 1])), 3)
             except Exception:
                 ablation[f] = None
-        struct_idx = [F.index(x) for x in ("shared_partners", "jaccard") if x in F]
-        indep_idx = [i for i in range(len(F)) if i not in struct_idx]
+        # grouped structural-vs-independent (on ALL features)
         def grp(idx):
             m = LogisticRegression(max_iter=800).fit(Xtr_s[:, idx], ytr)
             return round(float(roc_auc_score(yte, m.predict_proba(Xte_s[:, idx])[:, 1])), 3)
-        auc_struct, auc_indep = grp(struct_idx), grp(indep_idx)
-        lr = LogisticRegression(max_iter=1000).fit(Xtr_s, ytr)
-        gb = HistGradientBoostingClassifier(max_iter=300, learning_rate=0.08).fit(Xtr, ytr)
-        auc_lr = float(roc_auc_score(yte, lr.predict_proba(Xte_s)[:, 1]))
-        auc_gb = float(roc_auc_score(yte, gb.predict_proba(Xte)[:, 1]))
+        s_idx = [F.index(x) for x in self.STRUCT if x in F]
+        auc_struct = grp(s_idx); auc_indep = grp([i for i in range(len(F)) if i not in s_idx])
+        auc_all_gb = float(roc_auc_score(yte, HistGradientBoostingClassifier(max_iter=300, learning_rate=0.08)
+                                         .fit(Xtr, ytr).predict_proba(Xte)[:, 1]))
+        # KEEP: structural always; an independent feature must clear keep_auc on its own to earn a slot
+        kept = [f for f in F if f in self.STRUCT or (ablation.get(f) or 0) >= keep_auc]
+        if len(kept) < 2:
+            kept = list(F)
+        dropped = [f for f in F if f not in kept]
+        ki = [F.index(f) for f in kept]
+        # refit scaler + models on KEPT columns only
+        Xtr_k, Xte_k = Xtr[:, ki], Xte[:, ki]
+        sk = StandardScaler().fit(Xtr_k); Xtr_ks, Xte_ks = sk.transform(Xtr_k), sk.transform(Xte_k)
+        lr = LogisticRegression(max_iter=1000).fit(Xtr_ks, ytr)
+        gb = HistGradientBoostingClassifier(max_iter=300, learning_rate=0.08).fit(Xtr_k, ytr)
+        auc_lr = float(roc_auc_score(yte, lr.predict_proba(Xte_ks)[:, 1]))
+        auc_gb = float(roc_auc_score(yte, gb.predict_proba(Xte_k)[:, 1]))
         best, best_auc, uses_scaler = (gb, auc_gb, False) if auc_gb >= auc_lr else (lr, auc_lr, True)
-        p_te = best.predict_proba(Xte_s if uses_scaler else Xte)[:, 1]
+        p_te = best.predict_proba(Xte_ks if uses_scaler else Xte_k)[:, 1]
         brier = float(brier_score_loss(yte, p_te))
         prec, rec, thr = precision_recall_curve(yte, p_te)
         chosen, chosen_rec = 0.5, 0.0
         for p, r, t in zip(prec[:-1], rec[:-1], thr):
             if p >= 0.9:
                 chosen, chosen_rec = float(t), float(r); break
-        self.model, self.scaler, self.uses_scaler, self.threshold = best, scaler, uses_scaler, chosen
-        return dict(counts=counts, features=F, auc_logistic=round(auc_lr, 3), auc_gbm=round(auc_gb, 3),
-                    chosen_model="gbm" if not uses_scaler else "logistic", combined_auc=round(best_auc, 3),
+        self.model, self.scaler, self.uses_scaler, self.threshold = best, sk, uses_scaler, chosen
+        self.kept, self.kept_idx = kept, ki
+        self.informative_independent = [f for f in kept if f not in self.STRUCT]
+        return dict(counts=counts, features_all=F, kept_features=kept,
+                    dropped={f: ablation.get(f) for f in dropped},
                     per_feature_auc=ablation, auc_structural_only=auc_struct, auc_independent_only=auc_indep,
-                    logistic_weights=dict(zip(F, [round(float(c), 3) for c in lr.coef_[0]])),
+                    combined_auc=round(best_auc, 3), combined_auc_all_features=round(auc_all_gb, 3),
+                    auc_logistic=round(auc_lr, 3), auc_gbm=round(auc_gb, 3),
+                    chosen_model="gbm" if not uses_scaler else "logistic",
                     brier=round(brier, 4), threshold_at_0p9_precision=round(chosen, 3),
                     recall_at_that_threshold=round(chosen_rec, 3),
-                    note="hard negatives force use of INDEPENDENT signals; grouped structural-vs-independent AUC "
-                         "shows how much is the graph confirming itself vs genuinely independent evidence")
+                    informative_independent=self.informative_independent,
+                    note="add->measure->keep: any independent feature below AUC %.2f alone is DROPPED (and can no "
+                         "longer gate the loop). combined_auc vs combined_auc_all_features shows dropping the dead "
+                         "weight did not cost anything." % keep_auc)
 
     def save(self, res):
         pickle.dump(dict(model=self.model, scaler=self.scaler, uses_scaler=self.uses_scaler,
-                         features=self.features_list, threshold=self.threshold,
-                         use_depmap=self.dm is not None, has_string=self.string is not None,
-                         has_emb=self.emb is not None),
+                         features=self.kept, features_all=self.features_list, threshold=self.threshold,
+                         informative_independent=self.informative_independent,
+                         use_depmap=self.dm is not None, has_string=self.string is not None),
                     open("outputs/orphan/signal_combiner.pkl", "wb"))
         json.dump(res, open("outputs/orphan/signal_combiner_validation.json", "w"), indent=2)
 
     def proba(self, a, b):
-        x = np.array([self.features(a, b)])
+        full = self.features(a, b)
+        x = np.array([[full[i] for i in self.kept_idx]])
         return float(self.model.predict_proba(self.scaler.transform(x) if self.uses_scaler else x)[0, 1])
 
 
@@ -391,7 +411,13 @@ def main():
     for f, a in res["per_feature_auc"].items():
         print(f"    {f:16} {a}")
     print(f"\nGROUPED (honest): structural-only {res['auc_structural_only']}  vs  independent-only {res['auc_independent_only']}")
-    print(f"combined AUC: logistic {res['auc_logistic']}  |  gbm {res['auc_gbm']}  -> using {res['chosen_model']}")
+    if res["dropped"]:
+        print(f"\nDROPPED (below AUC 0.53 alone — dead weight, and can no longer gate the loop):")
+        for f, a in res["dropped"].items():
+            print(f"    {f:16} {a}")
+    print(f"KEPT: {res['kept_features']}")
+    print(f"combined AUC (kept): {res['combined_auc']}   vs  all features: {res['combined_auc_all_features']}  "
+          f"(dropping cost {round(res['combined_auc_all_features']-res['combined_auc'],3)})")
     print(f"calibration (Brier): {res['brier']}   threshold@0.9-precision: {res['threshold_at_0p9_precision']} "
           f"(recall {int(100*res['recall_at_that_threshold'])}%)")
     print("\n-> outputs/orphan/signal_combiner.pkl  +  signal_combiner_validation.json")
