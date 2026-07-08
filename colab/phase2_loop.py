@@ -49,6 +49,11 @@ _INCOMPAT = {frozenset(("nuclear", "secretory")), frozenset(("nuclear", "mitocho
 # capped, by strongest evidence first.
 CAP_COMPLETION = 300
 
+# "meaningfully present" thresholds for the combiner's INDEPENDENT features (structural ones excluded), used by
+# the completion independence guard. Keyed by name so adding features never breaks the indices.
+_INDEP_THRESH = {"same_complex": 0.5, "coexpression": 1e-6, "codependency": 1e-6, "coessentiality": 0.2,
+                 "string_score": 0.3, "embedding_cos": 0.5, "expr_corr": 0.3, "tahoe_corr": 0.3}
+
 
 def _groups(t):
     t = (t or "").lower()
@@ -315,12 +320,11 @@ class Phase2Loop:
         # on their own — that would be the graph confirming itself). One-shot, so it runs on attempt 1 only.
         if self.combiner and attempt == 1:
             feats = self._combiner_feats(u, v)
-            # independence guard: at least one signal INDEPENDENT of the PPI graph must be present, so the
-            # structural features (shared_partners/jaccard, indices 0-1) can't close cliques on their own.
-            # independent = same_complex/coexpr/codep/coess (2-5) + STRING(6)/embedding(7) when present.
-            indep_present = (feats[2] > 0 or feats[3] > 0 or feats[4] > 0 or feats[5] >= 0.2
-                             or (len(feats) > 6 and feats[6] >= 0.3)      # STRING physical score
-                             or (len(feats) > 7 and feats[7] >= 0.5))     # embedding cosine
+            # independence guard (name-based so it survives adding features): at least one signal INDEPENDENT of
+            # the PPI graph must be present, so the structural features (shared_partners/jaccard) can't close
+            # cliques on their own. Each independent feature has a "meaningfully present" threshold.
+            indep_present = any(feats[i] >= _INDEP_THRESH[nm]
+                                for i, nm in enumerate(self.sc.features_list) if nm in _INDEP_THRESH)
             p = self._combiner_prob(u, v)
             if p >= self.combiner["threshold"] and indep_present:
                 self.C.ppi_adj[u].add(v); self.C.ppi_adj[v].add(u)

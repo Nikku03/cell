@@ -54,6 +54,7 @@ class SignalCombiner:
                                          string_aliases or os.environ.get("STRING_ALIASES"))
         self.emb = self._load_emb(geneformer_npz or os.environ.get("GENEFORMER_NPZ"))
         self.expr = self._load_expr(os.environ.get("EXPR_MATRIX"))
+        self.tahoe = self._load_tahoe(os.environ.get("TAHOE_DE_DIR"))
         self.features_list = list(CORE)
         if self.string is not None:
             self.features_list.append("string_score")
@@ -61,6 +62,8 @@ class SignalCombiner:
             self.features_list.append("embedding_cos")
         if self.expr is not None:
             self.features_list.append("expr_corr")
+        if self.tahoe is not None:
+            self.features_list.append("tahoe_corr")
 
     @staticmethod
     def _nbr_map(layer):
@@ -192,6 +195,42 @@ class SignalCombiner:
             print("  (expr_corr off:", str(e)[:60], ")")
             return None
 
+    def _load_tahoe(self, d):
+        """Tahoe-100M drug-perturbation co-response. Uses the FILTERED cell_eval table (wide pseudobulk deltas:
+        one row per cell_line×treatment, ~2,000 gene columns) — NOT pdex (4.1B-row long format) and NOT the
+        per-cell embeddings. Two genes that respond alike across 50 lines × 384 drugs × 3 doses are functionally
+        linked — an independent signal (drug-response co-regulation), orthogonal to STRING. Covers only the ~2,000
+        analysis genes, so it's 0 outside them (honest)."""
+        if not d or not os.path.isdir(d):
+            return None
+        try:
+            import glob as _g, pandas as pd
+            files = _g.glob(os.path.join(d, "**", "cell_eval", "*.parquet"), recursive=True)
+            if not files:                                      # fall back to any parquet, but never pdex (huge/raw)
+                files = [f for f in _g.glob(os.path.join(d, "**", "*.parquet"), recursive=True)
+                         if "pdex" not in f.lower()]
+            if not files:
+                print("  (tahoe_corr off: no cell_eval parquet found)")
+                return None
+            df = pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)
+            idx = self.C.idx
+            gene_cols = [c for c in df.columns if c in idx]    # gene columns = symbols in our index
+            if len(gene_cols) < 50:
+                print(f"  (tahoe_corr off: only {len(gene_cols)} gene columns matched)")
+                return None
+            M = df[gene_cols].to_numpy(dtype=np.float32).T      # genes x conditions
+            if M.shape[1] > 8000:                               # subsample conditions (plenty for correlation)
+                sel = np.random.default_rng(0).choice(M.shape[1], 8000, replace=False); M = M[:, sel]
+            mu = np.nanmean(M, 1, keepdims=True); sd = np.nanstd(M, 1, keepdims=True); sd[sd == 0] = 1
+            Z = (M - mu) / sd; Z[np.isnan(Z)] = 0.0
+            Z /= (np.linalg.norm(Z, axis=1, keepdims=True) + 1e-8)
+            vecs = {idx[g]: Z[i] for i, g in enumerate(gene_cols)}
+            print(f"  tahoe_corr loaded: {len(vecs):,} genes x {M.shape[1]} perturbation conditions (cell_eval)")
+            return vecs
+        except Exception as e:
+            print("  (tahoe_corr off:", str(e)[:60], ")")
+            return None
+
     # ---------- features ----------
     def _sym(self, m, a, b):
         return max(m.get(a, {}).get(b, 0.0), m.get(b, {}).get(a, 0.0))
@@ -216,6 +255,9 @@ class SignalCombiner:
         if self.expr is not None:
             va, vb = self.expr.get(a), self.expr.get(b)
             f.append(float(va @ vb) if va is not None and vb is not None else 0.0)
+        if self.tahoe is not None:
+            ta, tb = self.tahoe.get(a), self.tahoe.get(b)
+            f.append(float(ta @ tb) if ta is not None and tb is not None else 0.0)
         return f
 
     # ---------- labelled examples ----------
