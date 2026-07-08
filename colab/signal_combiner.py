@@ -84,6 +84,8 @@ class SignalCombiner:
         _mem("after Tahoe")
         self.esm = self._load_esm(os.environ.get("ESM_PARQUET"))
         _mem("after ESM")
+        self.feba = self._load_feba(os.environ.get("FEBA_COFIT"))
+        _mem("after FEBA")
         self.features_list = list(CORE)
         if self.string is not None:
             self.features_list.append("string_score")
@@ -95,6 +97,8 @@ class SignalCombiner:
             self.features_list.append("tahoe_corr")
         if self.esm is not None:
             self.features_list.append("esm_cos")
+        if self.feba is not None:
+            self.features_list.append("cofitness_score")
 
     def for_relation(self, relation):
         """cheap clone sharing ALL loaded feature data (STRING/expr/emb/tahoe/esm/coess maps) but with this
@@ -345,6 +349,8 @@ class SignalCombiner:
                 pass
             df = pd.read_parquet(path)
             idx = self.C.idx
+            if not any(df[c].dtype == object for c in df.columns) and (df.index.dtype == object or df.index.name):
+                df = df.reset_index()          # id is often the parquet INDEX (common ESM export) -> make it a column
             print(f"  esm columns: {[(c, str(df[c].dtype)) for c in df.columns][:8]}")
             # id column: the string/object column with the most matches to our symbols; else a UniProt-looking one
             id_col, best = None, 0
@@ -371,13 +377,19 @@ class SignalCombiner:
                     print("  (esm_cos off: no embedding matrix found)"); return None
                 mat = num.to_numpy(dtype=np.float32)
             ids = df[id_col].astype(str).tolist()
+            print(f"  esm id column '{id_col}' sample: {ids[:3]}  (direct symbol-matches: {best})")
             if ensembl:
+                clean = [self._clean_prot_id(i) for i in ids]
                 try:
                     import mygene
-                    hits = mygene.MyGeneInfo().querymany([i.split(".")[0] for i in ids], scopes="uniprot,ensembl.gene",
-                                                         fields="symbol", species="human", verbose=False)
+                    # ESM exports usually key on ENSP / UniProt / RefSeq ids — query ALL those scopes, not just two.
+                    hits = mygene.MyGeneInfo().querymany(
+                        list(dict.fromkeys(clean)),
+                        scopes="symbol,uniprot,ensembl.gene,ensembl.protein,ensembl.transcript,refseq,entrezgene",
+                        fields="symbol", species="human", verbose=False)
                     m2s = {h["query"]: h["symbol"] for h in hits if h.get("symbol")}
-                    ids = [m2s.get(i.split(".")[0], i) for i in ids]
+                    ids = [m2s.get(c, orig) for c, orig in zip(clean, ids)]
+                    print(f"  esm: mygene mapped {len(m2s):,}/{len(set(clean)):,} unique ids -> human symbols")
                 except Exception as e:
                     print("  (esm_cos: id->symbol map failed:", str(e)[:40], ")")
             mat = mat / (np.linalg.norm(mat, axis=1, keepdims=True) + 1e-8)
@@ -387,6 +399,39 @@ class SignalCombiner:
         except Exception as e:
             print("  (esm_cos off:", str(e)[:60], ")")
             return None
+
+    def _load_feba(self, path):
+        """FEBA bacterial co-fitness, KO-bridged to human. `feba.py` precomputes a SPARSE human-pair table
+        (two genes whose conserved bacterial orthologs track in fitness across 1000s of RB-TnSeq experiments) —
+        an independent functional-coupling signal for the conserved core (metabolism/translation/repair), 0
+        elsewhere (honest). Same sparse-pair shape as STRING; judged by add->measure->keep."""
+        path = path or "outputs/orphan/feba_cofit.json"
+        if not path or not os.path.exists(path):
+            return None
+        try:
+            d = json.load(open(path))
+            edges = d.get("edges", d) if isinstance(d, dict) else d
+            feba = {}
+            for e in edges:
+                i, j = int(e[0]), int(e[1])
+                feba[(min(i, j), max(i, j))] = float(e[2])
+            if len(feba) < 50:
+                print(f"  (cofitness off: only {len(feba)} human pairs bridged)"); return None
+            print(f"  cofitness_score loaded: {len(feba):,} KO-bridged human gene pairs")
+            return feba
+        except Exception as e:
+            print("  (cofitness off:", str(e)[:60], ")")
+            return None
+
+    @staticmethod
+    def _clean_prot_id(i):
+        """normalize a protein id for mapping: UniProt FASTA 'sp|P12345|NAME' -> 'P12345'; strip version
+        'ENSP00000362117.3' -> 'ENSP00000362117'."""
+        i = str(i).strip()
+        if "|" in i:
+            parts = i.split("|")
+            i = parts[1] if len(parts) >= 3 else parts[0]
+        return i.split(".")[0]
 
     # ---------- features ----------
     def _sym(self, m, a, b):
@@ -418,6 +463,8 @@ class SignalCombiner:
         if self.esm is not None:
             ea, eb = self.esm.get(a), self.esm.get(b)
             f.append(float(ea @ eb) if ea is not None and eb is not None else 0.0)
+        if self.feba is not None:
+            f.append(self.feba.get((min(a, b), max(a, b)), 0.0))     # bacterial co-fitness (KO-bridged) sparse pair
         return f
 
     # ---------- labelled examples ----------

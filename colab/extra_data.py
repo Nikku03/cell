@@ -23,6 +23,11 @@ def _open(p):
     return gzip.open(p, "rt") if p.endswith(".gz") else open(p, "r")
 
 
+def _sep(line):
+    """detect the column separator from a header line — TSV is the norm for these, but CollecTRI is often CSV."""
+    return "\t" if "\t" in line else ("," if "," in line else "\t")
+
+
 def reactome(path, C):
     """parse a Reactome human file -> {pathway_name: [gene_idx]}. Handles GMT (name<TAB>desc<TAB>gene…) and
     long formats (…<TAB>gene_symbol<TAB>…<TAB>pathway_name…) by locating the column that best matches our genes."""
@@ -31,11 +36,12 @@ def reactome(path, C):
     idx = C.idx
     with _open(path) as fh:
         head = [fh.readline().rstrip("\n") for _ in range(4)]
+    sep = _sep(head[0])
     print("  reactome sample:", [h[:90] for h in head[:2]])
     paths = {}
     with _open(path) as fh:
         for line in fh:
-            p = line.rstrip("\n").split("\t")
+            p = line.rstrip("\n").split(sep)
             if len(p) < 3:
                 continue
             genes = [c for c in p if c in idx]          # any column that is one of our gene symbols
@@ -66,7 +72,9 @@ def _directed(path, C, a_cols, b_cols, eff_cols, src):
         return []
     idx = C.idx
     with _open(path) as fh:
-        header = fh.readline().rstrip("\n").split("\t")
+        header_line = fh.readline().rstrip("\n")
+    sep = _sep(header_line)
+    header = header_line.split(sep)
     print(f"  {src} columns:", header[:12])
     low = [h.lower() for h in header]
     def col(names):
@@ -82,7 +90,7 @@ def _directed(path, C, a_cols, b_cols, eff_cols, src):
     with _open(path) as fh:
         fh.readline()
         for line in fh:
-            p = line.rstrip("\n").split("\t")
+            p = line.rstrip("\n").split(sep)
             if len(p) <= max(ia, ib):
                 continue
             a, b = p[ia], p[ib]
