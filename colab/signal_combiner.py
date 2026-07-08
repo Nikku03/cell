@@ -51,7 +51,7 @@ def _mem(label=""):
 
 class SignalCombiner:
     def __init__(self, C=None, dm=None, use_depmap=True, relation="ppi",
-                 string_links=None, string_aliases=None, geneformer_npz=None):
+                 string_links=None, string_aliases=None, geneformer_npz=None, only=None):
         self.C = C or CompleteCell()
         if hasattr(self.C, "_reset_base"):
             self.C._reset_base()
@@ -72,19 +72,23 @@ class SignalCombiner:
             except Exception as e:
                 print("  (co-essentiality feature off — DepMap CSV not found:", str(e)[:50], ")")
         _mem("after DepMap (co-essentiality)")
-        # optional dense features (auto-on when the Drive files are present)
+        # optional dense features (auto-on when the Drive files are present). `only` (a set of feature names) LIMITS
+        # which get loaded — the loop passes the restored models' feature set so it never drags in a big feature the
+        # models were trained WITHOUT (e.g. ESM): that both wastes RAM (cell-5 OOM) and would mismatch anyway.
+        _only = set(only) if only is not None else None
+        want = lambda nm: _only is None or nm in _only
         self.string = self._load_string(string_links or os.environ.get("STRING_LINKS"),
-                                         string_aliases or os.environ.get("STRING_ALIASES"))
+                                        string_aliases or os.environ.get("STRING_ALIASES")) if want("string_score") else None
         _mem("after STRING")
-        self.emb = self._load_emb(geneformer_npz or os.environ.get("GENEFORMER_NPZ"))
+        self.emb = self._load_emb(geneformer_npz or os.environ.get("GENEFORMER_NPZ")) if want("embedding_cos") else None
         _mem("after Geneformer")
-        self.expr = self._load_expr(os.environ.get("EXPR_MATRIX"))
+        self.expr = self._load_expr(os.environ.get("EXPR_MATRIX")) if want("expr_corr") else None
         _mem("after expr matrix")
-        self.tahoe = self._load_tahoe(os.environ.get("TAHOE_DE_DIR"))
+        self.tahoe = self._load_tahoe(os.environ.get("TAHOE_DE_DIR")) if want("tahoe_corr") else None
         _mem("after Tahoe")
-        self.esm = self._load_esm(os.environ.get("ESM_PARQUET"))
+        self.esm = self._load_esm(os.environ.get("ESM_PARQUET")) if want("esm_cos") else None
         _mem("after ESM")
-        self.feba = self._load_feba(os.environ.get("FEBA_COFIT"))
+        self.feba = self._load_feba(os.environ.get("FEBA_COFIT")) if want("cofitness_score") else None
         _mem("after FEBA")
         self.features_list = list(CORE)
         if self.string is not None:
@@ -337,7 +341,13 @@ class SignalCombiner:
             return None
         try:
             import pandas as pd
-            try:                                              # check size FIRST — a per-residue parquet is huge
+            dsz = os.path.getsize(path) / 1e9
+            print(f"  esm parquet: {os.path.basename(path)} ({dsz:.2f} GB on disk)")
+            if dsz > 3.0:                                     # a per-protein embedding table is <1 GB; >3 GB is
+                print("  (esm_cos off: >3 GB on disk — looks per-RESIDUE, not per-protein; would blow RAM. "
+                      "Use a mean-pooled per-protein embedding.)")
+                return None
+            try:                                              # rows FIRST — a per-residue parquet has millions
                 import pyarrow.parquet as pq
                 nrows = pq.ParquetFile(path).metadata.num_rows
                 print(f"  esm parquet: {nrows:,} rows")
@@ -376,7 +386,12 @@ class SignalCombiner:
                 if num.shape[1] < 8:
                     print("  (esm_cos off: no embedding matrix found)"); return None
                 mat = num.to_numpy(dtype=np.float32)
+            if mat.ndim != 2 or mat.nbytes > 4e9:            # a normal per-protein matrix is <0.5 GB; cap the rest
+                print(f"  (esm_cos off: embedding matrix is {mat.shape} / {mat.nbytes/1e9:.1f} GB — not a flat "
+                      "per-protein table; skipping to avoid an OOM)")
+                return None
             ids = df[id_col].astype(str).tolist()
+            import gc; del df; gc.collect()                   # free the parquet DataFrame — keep only ids + mat
             print(f"  esm id column '{id_col}' sample: {ids[:3]}  (direct symbol-matches: {best})")
             if ensembl:
                 clean = [self._clean_prot_id(i) for i in ids]

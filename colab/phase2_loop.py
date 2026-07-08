@@ -85,14 +85,22 @@ class Phase2Loop:
         # network, not just PPI. All relation combiners share one feature load (for_relation clone).
         import signal_combiner
         self.rel = {}
-        base = None
+        models = {}
         for rel in ("ppi", "reg", "sig"):
             pkl = "outputs/orphan/signal_combiner.pkl" if rel == "ppi" else f"outputs/orphan/signal_combiner_{rel}.pkl"
             m = signal_combiner.load(pkl)
-            if not m:
-                continue
-            if base is None:
-                base = signal_combiner.SignalCombiner(C=self.C, dm=self.dm)
+            if m:
+                models[rel] = m
+        base = None
+        if models:
+            # load ONLY the features the restored models actually use (union of their features_all). Otherwise the
+            # loop rebuilds the FULL feature set — dragging in a big feature the models were trained WITHOUT (e.g.
+            # ESM) — which OOMs (cell 5) and mismatches features_list anyway, disabling the combiner for nothing.
+            need = set()
+            for m in models.values():
+                need |= set(m.get("features_all", m.get("features")))
+            base = signal_combiner.SignalCombiner(C=self.C, dm=self.dm, only=need)
+        for rel, m in models.items():
             allf = m.get("features_all", m.get("features"))
             if base.features_list != allf:
                 print(f"  ({rel} combiner off: features {base.features_list} != model's {allf})")
