@@ -126,6 +126,12 @@ cells = [
        "`completion` count to cell 5."),
     code("!python colab/phase2_loop.py"),
 
+    md("## 7b. WHOLE-CELL summary — every layer, not just PPI",
+       "Genome · all three networks (ppi/reg/sig) with their per-relation combiner AUCs · complexes/SL/LR · "
+       "kinetics & metabolism · pathways/PTMs · single-cell expression & context · disease/drugs · the ML "
+       "self-healing outcomes across every field · the capability scorecard."),
+    code("!python colab/cell_stats.py"),
+
     md("## 8. DepMap co-essentiality (Phase 3) — train the edge model + corroborate the additions",
        "Uses the Drive DepMap matrix from cell 2b (or downloads from figshare if absent)."),
     code("import os",
