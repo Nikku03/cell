@@ -493,7 +493,12 @@ class Phase2Loop:
         return regressions
 
     # ================= the loop =================
-    def loop(self, max_processes=3):
+    def loop(self, max_processes=None):
+        # default 6 (was 3): the whole-cell run now heals reg + sig too, so the cascade needs a few more passes to
+        # fully drain before it converges. Tunable via MAX_PROCESSES. It still STOPS early the moment a process
+        # finds nothing new to fix, so extra headroom costs nothing once converged.
+        if max_processes is None:
+            max_processes = int(os.environ.get("MAX_PROCESSES", 6))
         processes = []
         for p in range(1, max_processes + 1):
             # Run 1: analyse — state already carries all locked fixes (they were applied in place)
