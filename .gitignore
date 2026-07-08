@@ -71,3 +71,8 @@ pdbs/
 s669.csv
 s2648.csv
 outputs/orphan/dark_function_ckpt.json
+
+# derived z-scored feature caches (built at runtime, persisted to Drive by persist.py — not committed)
+outputs/orphan/depmap_vecs.npz
+outputs/orphan/expr_vecs.npz
+outputs/orphan/tahoe_vecs.npz
