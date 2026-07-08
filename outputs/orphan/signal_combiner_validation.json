@@ -1,0 +1,41 @@
+{
+  "counts": {
+    "n_pos": 6000,
+    "n_hard_neg": 3000,
+    "n_easy_neg": 3000
+  },
+  "auc_logistic": 0.702,
+  "auc_gbm": 0.79,
+  "chosen_model": "gbm",
+  "combined_auc": 0.79,
+  "per_feature_auc": {
+    "shared_partners": 0.623,
+    "jaccard": 0.676,
+    "same_complex": 0.532,
+    "coexpression": 0.51,
+    "codependency": 0.508,
+    "coessentiality": 0.557
+  },
+  "auc_structural_only": 0.697,
+  "auc_independent_only": 0.575,
+  "logistic_weights": {
+    "shared_partners": -1.292,
+    "jaccard": 3.427,
+    "same_complex": 0.529,
+    "coexpression": 0.056,
+    "codependency": 0.292,
+    "coessentiality": 0.013
+  },
+  "brier": 0.175,
+  "threshold_at_0p9_precision": 0.598,
+  "recall_at_that_threshold": 0.557,
+  "features": [
+    "shared_partners",
+    "jaccard",
+    "same_complex",
+    "coexpression",
+    "codependency",
+    "coessentiality"
+  ],
+  "note": "hard negatives (non-edges sharing >=3 partners) force the model to use INDEPENDENT signals, not just triadic closure; single-feature AUCs show which evidence actually carries"
+}

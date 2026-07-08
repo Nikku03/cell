@@ -72,6 +72,41 @@ class Phase2Loop:
                 self.dm = DepMapEdges()
             except Exception as e:
                 print("  (DepMap co-essentiality lens unavailable:", str(e)[:60], "- continuing without it)")
+        # trained signal-combiner (calibrated P(edge) from all signals) — optional; used as a calibrated lens
+        import signal_combiner
+        self.combiner = signal_combiner.load()
+        self._cx = self._nbrmap(self.C.D.get("coexpr", {}))
+        self._cd = self._nbrmap(self.C.D.get("codep", {}))
+        self._cplx = {int(k): set(v) for k, v in (self.C.D.get("gene2cplx", {}) or {}).items()}
+        if self.combiner:
+            print(f"  signal-combiner loaded (AUC~0.79, threshold {self.combiner['threshold']}) — calibrated lens on")
+
+    @staticmethod
+    def _nbrmap(layer):
+        out = {}
+        for k, lst in (layer or {}).items():
+            out[int(k)] = {int(p[0]): float(p[1]) for p in lst if isinstance(p, (list, tuple)) and len(p) >= 2}
+        return out
+
+    def _combiner_feats(self, u, v):
+        adj = self.C.ppi_adj; na, nb = adj.get(u, set()), adj.get(v, set())
+        shared = len(na & nb); union = len(na | nb)
+        jac = shared / union if union else 0.0
+        same_cplx = 1.0 if (self._cplx.get(u, set()) & self._cplx.get(v, set())) else 0.0
+        coex = max(self._cx.get(u, {}).get(v, 0.0), self._cx.get(v, {}).get(u, 0.0))
+        cod = max(self._cd.get(u, {}).get(v, 0.0), self._cd.get(v, {}).get(u, 0.0))
+        coess = 0.0
+        if self.dm is not None:
+            c = self.dm.coess(self.C.name[u], self.C.name[v]); coess = float(c) if c is not None else 0.0
+        return [float(shared), float(jac), same_cplx, coex, cod, coess]
+
+    def _combiner_prob(self, u, v):
+        import numpy as _np
+        f = self.combiner
+        x = _np.array([self._combiner_feats(u, v)])
+        if f.get("uses_scaler"):
+            x = f["scaler"].transform(x)
+        return float(f["model"].predict_proba(x)[0, 1])
 
     def _reset_base(self):
         """rebuild ppi adjacency from the base cell (no additions) so the loop's ledger is the whole ML layer."""
@@ -284,6 +319,20 @@ class Phase2Loop:
     #    with no independent support is parked as needs_data, not locked. --
     def _fx_completion(self, flag, failures, attempt):
         C = self.C; d = flag["detail"]; u, v = d["u"], d["v"]; a, b = C.name[u], C.name[v]
+        # calibrated path: if the trained combiner is loaded, lock when P(edge) clears the 0.9-precision threshold
+        # AND an INDEPENDENT signal is actually present (guard: don't let the structural features close cliques
+        # on their own — that would be the graph confirming itself). One-shot, so it runs on attempt 1 only.
+        if self.combiner and attempt == 1:
+            feats = self._combiner_feats(u, v)
+            indep_present = feats[2] > 0 or feats[3] > 0 or feats[4] > 0 or feats[5] >= 0.2   # cplx/coex/codep/coess
+            p = self._combiner_prob(u, v)
+            if p >= self.combiner["threshold"] and indep_present:
+                self.C.ppi_adj[u].add(v); self.C.ppi_adj[v].add(u)
+                return self._outcome(flag, "fixed",
+                                     f"signal-combiner P(edge)={p:.2f} (>= {self.combiner['threshold']}, ~0.9 precision) "
+                                     f"WITH independent support; predicted PPI edge added",
+                                     fix=dict(add_edge=[a, b], relation="ppi", lens="combiner", prob=round(p, 3)))
+            # combiner didn't clear the bar -> fall through to the single-lens attempts below (still may corroborate)
         lenses = ["shared_complex", "coessential", "coexpression", "codependency"]
         if attempt > len(lenses):
             return self._outcome(flag, "needs_data",
