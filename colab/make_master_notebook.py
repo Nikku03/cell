@@ -76,11 +76,17 @@ cells = [
          "sl = first(f'{D}/virtual_cell_data/networks/string_physical*.gz', f'{D}/**/string_physical*.gz')",
          "sa = first(f'{D}/virtual_cell_data/networks/string_aliases*.gz', f'{D}/**/string_aliases*.gz')",
          "gf = first(f'{D}/cell_model/geneformer_gene_emb.npz', f'{D}/**/geneformer_gene_emb.npz')",
+         "ex = first(f'{D}/depmap_data/**/OmicsExpression*.csv', f'{D}/cell_model/celltype_expression.csv',",
+         "           f'{D}/**/celltype_expression.csv')   # dense co-expression matrix",
          "if sl: os.environ['STRING_LINKS'] = sl",
          "if sa: os.environ['STRING_ALIASES'] = sa",
          "if gf: os.environ['GENEFORMER_NPZ'] = gf",
-         "print('STRING:', bool(sl), '| STRING aliases:', bool(sa), '| Geneformer:', bool(gf),",
-         "      '| DepMap:', os.path.exists('depmap/CRISPRGeneEffect.csv'))"),
+         "if ex: os.environ['EXPR_MATRIX'] = ex",
+         "print('STRING:', bool(sl), '| aliases:', bool(sa), '| Geneformer:', bool(gf),",
+         "      '| expr-matrix:', bool(ex), '| DepMap:', os.path.exists('depmap/CRISPRGeneEffect.csv'))",
+         "",
+         "# --- 2d. restore any saved trained artifacts (so a reconnect doesn't start from scratch) ---",
+         "import persist; persist.restore_from_drive(D)"),
 
     md("## 3. Recovery scorecard"),
     code("!python colab/recovery_scorecard.py"),
@@ -119,7 +125,13 @@ cells = [
          "    print('downloading DepMap (419 MB)…'); urllib.request.urlretrieve(url, 'depmap/CRISPRGeneEffect.csv')",
          "!DEPMAP_DIR=depmap python colab/phase3_depmap.py"),
 
-    md("## 9. Extras — audit detail, reasoned variant, whole-cell kcat, disease  *(optional)*"),
+    md("## 9. SAVE the trained artifacts to Drive  **(so a disconnect doesn't reset anything)**",
+       "Colab wipes the VM on disconnect. This copies the trained combiner, the healed-cell ledger, and every "
+       "result JSON to `MyDrive/cell_model/artifacts/`. Cell 2d restores them next session — reconnect = instant, "
+       "and expensive derived features (Tahoe/FEBA later) are cached under `caches/`."),
+    code("import persist; persist.save_to_drive(D)"),
+
+    md("## 10. Extras — reasoned variant, whole-cell kcat, disease  *(optional)*"),
     code("!python colab/whole_cell_kcat.py            # test all predicted kcats vs physics + in-vivo floor",
          "!python colab/disease_data.py               # blind disease->target vs real Open Targets genes",
          "from reasoned_variant import ReasonedVariant",

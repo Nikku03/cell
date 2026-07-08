@@ -53,11 +53,14 @@ class SignalCombiner:
         self.string = self._load_string(string_links or os.environ.get("STRING_LINKS"),
                                          string_aliases or os.environ.get("STRING_ALIASES"))
         self.emb = self._load_emb(geneformer_npz or os.environ.get("GENEFORMER_NPZ"))
+        self.expr = self._load_expr(os.environ.get("EXPR_MATRIX"))
         self.features_list = list(CORE)
         if self.string is not None:
             self.features_list.append("string_score")
         if self.emb is not None:
             self.features_list.append("embedding_cos")
+        if self.expr is not None:
+            self.features_list.append("expr_corr")
 
     @staticmethod
     def _nbr_map(layer):
@@ -159,6 +162,36 @@ class SignalCombiner:
             print("  (embedding feature off:", str(e)[:60], ")")
             return None
 
+    def _load_expr(self, path):
+        """dense CO-EXPRESSION from an expression matrix (Tabula / DepMap expression). Same machinery as DepMap
+        co-essentiality: z-score each gene across samples, correlation = dot of unit vectors. Much denser than
+        the stored top-k coexpr lists (which barely help, AUC ~0.51). Auto-detects which axis is genes by
+        matching our symbols."""
+        if not path or not os.path.exists(path):
+            return None
+        try:
+            import pandas as pd
+            df = pd.read_csv(path, index_col=0)
+            idx = self.C.idx
+            col_hit = sum(1 for c in df.columns if c in idx)
+            row_hit = sum(1 for r in df.index if r in idx)
+            if col_hit >= row_hit:                             # columns are genes -> want genes as rows
+                df = df.T
+            df = df.loc[[g for g in df.index if g in idx]]     # keep only rows that are known genes
+            if df.shape[0] < 50:
+                print("  (expr_corr off: too few genes matched)")
+                return None
+            X = df.to_numpy(dtype=np.float32)                  # genes x samples
+            mu = np.nanmean(X, 1, keepdims=True); sd = np.nanstd(X, 1, keepdims=True); sd[sd == 0] = 1
+            Z = (X - mu) / sd; Z[np.isnan(Z)] = 0.0
+            Z /= (np.linalg.norm(Z, axis=1, keepdims=True) + 1e-8)
+            vecs = {idx[g]: Z[i] for i, g in enumerate(df.index)}
+            print(f"  expr_corr loaded: {len(vecs):,} genes x {X.shape[1]} samples")
+            return vecs
+        except Exception as e:
+            print("  (expr_corr off:", str(e)[:60], ")")
+            return None
+
     # ---------- features ----------
     def _sym(self, m, a, b):
         return max(m.get(a, {}).get(b, 0.0), m.get(b, {}).get(a, 0.0))
@@ -180,6 +213,9 @@ class SignalCombiner:
         if self.emb is not None:
             ea, eb = self.emb.get(a), self.emb.get(b)
             f.append(float(ea @ eb) if ea is not None and eb is not None else 0.0)
+        if self.expr is not None:
+            va, vb = self.expr.get(a), self.expr.get(b)
+            f.append(float(va @ vb) if va is not None and vb is not None else 0.0)
         return f
 
     # ---------- labelled examples ----------
