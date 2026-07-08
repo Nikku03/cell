@@ -95,6 +95,31 @@ class CompleteCell:
         ia, ib = self._i(a), self._i(b)
         return getattr(self, "added_ppi", set()) and (min(ia, ib), max(ia, ib)) in self.added_ppi
 
+    def apply_ledger(self, path=f"{OUT}/phase2_ledger.json"):
+        """cell = base + the self-healing loop's LOCKED, verified fixes (the definitive Phase-2 output). Folds
+        verified PPI edges (co-complex + independently-corroborated completions) into ppi_adj, kcat corrections
+        into kin, and function fills into a ledger_func overlay. Measured facts untouched — additive only."""
+        led = _load(path)
+        if not led:
+            return {"applied": False}
+        self.ledger_func = {}; self.ledger_edges = set()
+        counts = {}
+        for e in led.get("ledger", []):
+            k = e["kind"]; fx = e.get("fix") or {}; counts[k] = counts.get(k, 0) + 1
+            if k in ("complex_ppi", "completion") and fx.get("add_edge"):
+                a, b = fx["add_edge"]; ia, ib = self.idx.get(a), self.idx.get(b)
+                if ia is not None and ib is not None:
+                    self.ppi_adj[ia].add(ib); self.ppi_adj[ib].add(ia)
+                    self.ledger_edges.add((min(ia, ib), max(ia, ib)))
+            elif k in ("kcat_physics", "kcat_low") and fx.get("new") is not None:
+                r = self.kin.get(e["entity"], {})
+                self.kin[e["entity"]] = {**r, "kcat_per_s": fx["new"], "kcat_original": fx.get("old"),
+                                         "kcat_source": "phase2_loop"}
+            elif k == "function_fill" and fx.get("function"):
+                self.ledger_func[e["entity"]] = fx["function"]
+        self.version = "healed"
+        return {"applied": True, "locked_fixes": len(led.get("ledger", [])), "by_kind": counts}
+
     def apply_coessential(self, path=f"{OUT}/cell_v3_additions.json"):
         """cell v3: DepMap co-essentiality functional links. Kept in a SEPARATE adjacency (coess_adj) — these are
         functional/co-essential, NOT proven physical PPI, so they don't inflate the physical-interaction degree."""

@@ -1,0 +1,173 @@
+{
+  "design": "3 processes x {analyse, detect, fix-verify}; failure-guided redo (5); 3 outcomes; locked ledger + regression check; stop on convergence",
+  "n_processes_run": 2,
+  "converged": true,
+  "total_locked_fixes": 1015,
+  "locked_by_kind": {
+    "kcat_physics": 11,
+    "completion": 3,
+    "complex_ppi": 978,
+    "function_fill": 23
+  },
+  "total_needs_data": 326,
+  "needs_data_by_kind": {
+    "completion": 300,
+    "function_fill": 14,
+    "localization": 10,
+    "coverage": 2
+  },
+  "total_accepted": 7,
+  "accepted_by_kind": {
+    "kcat_physics": 7
+  },
+  "total_regressions": 0,
+  "base_ppi_pairs": 191447,
+  "final_ppi_pairs": 192428,
+  "processes": [
+    {
+      "process": 1,
+      "ppi_edges_at_start": 191447,
+      "new_flags": 1345,
+      "fixed": 1015,
+      "needs_data": 323,
+      "accepted": 7,
+      "regressions": [],
+      "sample": [
+        {
+          "id": "kcat_physics::ABCB6",
+          "kind": "kcat_physics",
+          "entity": "ABCB6",
+          "field": "kinetics",
+          "status": "accepted",
+          "why": "measured kcat violates physics -> label noise; a fact is not overwritten (escalate to human)",
+          "fix": null,
+          "attempts": 1
+        },
+        {
+          "id": "kcat_physics::ALDH2",
+          "kind": "kcat_physics",
+          "entity": "ALDH2",
+          "field": "kinetics",
+          "status": "accepted",
+          "why": "measured kcat violates physics -> label noise; a fact is not overwritten (escalate to human)",
+          "fix": null,
+          "attempts": 1
+        },
+        {
+          "id": "kcat_physics::ACHE",
+          "kind": "kcat_physics",
+          "entity": "ACHE",
+          "field": "kinetics",
+          "status": "accepted",
+          "why": "measured kcat violates physics -> label noise; a fact is not overwritten (escalate to human)",
+          "fix": null,
+          "attempts": 1
+        },
+        {
+          "id": "kcat_physics::COX6B2",
+          "kind": "kcat_physics",
+          "entity": "COX6B2",
+          "field": "kinetics",
+          "status": "accepted",
+          "why": "kcat/Km is at the diffusion limit within tolerance \u2014 physically legal, no change",
+          "fix": null,
+          "attempts": 1
+        },
+        {
+          "id": "kcat_physics::ATP2C2",
+          "kind": "kcat_physics",
+          "entity": "ATP2C2",
+          "field": "kinetics",
+          "status": "fixed",
+          "why": "kcat 1.1e+04->3.8e+03/s; kcat/Km now <= diffusion limit",
+          "fix": {
+            "old": 11173.2797,
+            "new": 3800.888
+          },
+          "attempts": 1
+        },
+        {
+          "id": "kcat_physics::ATP2B2",
+          "kind": "kcat_physics",
+          "entity": "ATP2B2",
+          "field": "kinetics",
+          "status": "fixed",
+          "why": "kcat 1.1e+04->1.7e+03/s; kcat/Km now <= diffusion limit",
+          "fix": {
+            "old": 11082.0018,
+            "new": 1724.998
+          },
+          "attempts": 1
+        },
+        {
+          "id": "kcat_physics::ATP2A3",
+          "kind": "kcat_physics",
+          "entity": "ATP2A3",
+          "field": "kinetics",
+          "status": "fixed",
+          "why": "kcat 1.8e+04->2.5e+03/s; kcat/Km now <= diffusion limit",
+          "fix": {
+            "old": 17993.9559,
+            "new": 2518.426
+          },
+          "attempts": 1
+        },
+        {
+          "id": "kcat_physics::ATP2C1",
+          "kind": "kcat_physics",
+          "entity": "ATP2C1",
+          "field": "kinetics",
+          "status": "fixed",
+          "why": "kcat 9.1e+03->5.4e+03/s; kcat/Km now <= diffusion limit",
+          "fix": {
+            "old": 9068.1813,
+            "new": 5436.443
+          },
+          "attempts": 1
+        }
+      ]
+    },
+    {
+      "process": 2,
+      "ppi_edges_at_start": 192428,
+      "new_flags": 3,
+      "fixed": 0,
+      "needs_data": 3,
+      "accepted": 0,
+      "regressions": [],
+      "sample": [
+        {
+          "id": "completion::SEC61A1\u2014SRP14",
+          "kind": "completion",
+          "entity": "SEC61A1\u2014SRP14",
+          "field": "ppi",
+          "status": "needs_data",
+          "why": "triadic candidate (81 shared partners) with NO independent corroboration (complex/co-essentiality/co-expression/co-dependency) \u2014 kept as a predicted candidate, not locked",
+          "fix": null,
+          "attempts": 5
+        },
+        {
+          "id": "completion::ILF3\u2014RPL34",
+          "kind": "completion",
+          "entity": "ILF3\u2014RPL34",
+          "field": "ppi",
+          "status": "needs_data",
+          "why": "triadic candidate (80 shared partners) with NO independent corroboration (complex/co-essentiality/co-expression/co-dependency) \u2014 kept as a predicted candidate, not locked",
+          "fix": null,
+          "attempts": 5
+        },
+        {
+          "id": "completion::ILF3\u2014RPL38",
+          "kind": "completion",
+          "entity": "ILF3\u2014RPL38",
+          "field": "ppi",
+          "status": "needs_data",
+          "why": "triadic candidate (80 shared partners) with NO independent corroboration (complex/co-essentiality/co-expression/co-dependency) \u2014 kept as a predicted candidate, not locked",
+          "fix": null,
+          "attempts": 5
+        }
+      ]
+    }
+  ],
+  "hierarchy": "physics > measured > predicted; measured facts never overwritten"
+}
