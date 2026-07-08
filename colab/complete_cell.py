@@ -69,6 +69,25 @@ class CompleteCell:
             for i in members:
                 if isinstance(i, int):
                     self.gene2path[i].append(pname)
+        self._fold_reactome()                                              # fold the 2,792 Reactome pathways in
+
+    def _fold_reactome(self, path=f"{OUT}/reactome_pathways.json"):
+        """Fold the Reactome pathway overlay into the complete cell: a distinct D['reactome'] layer PLUS the
+        per-gene reverse index, so .gene(x)['pathways'] returns Reactome memberships too. ADDITIVE — the curated
+        D['pathways'] is never touched (anti-trap: overlays add, they don't overwrite). No-op if absent."""
+        rx = _load(path)
+        self.reactome = (rx or {}).get("pathways", {}) or {}
+        if not self.reactome:
+            return 0
+        self.D["reactome"] = self.reactome
+        curated = set(self.D.get("pathways", {}))
+        for pname, members in self.reactome.items():
+            if pname in curated:                                           # keep the curated one; don't double-list
+                continue
+            for i in members:
+                if isinstance(i, int):
+                    self.gene2path[i].append(pname)
+        return len(self.reactome)
 
     # ---- apply the Phase-2 verified additions -> cell v2 (predicted edges tagged, facts untouched) ----
     def apply_additions(self, path=f"{OUT}/cell_v2_additions.json"):
