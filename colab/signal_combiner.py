@@ -33,6 +33,22 @@ from complete_cell import CompleteCell
 CORE = ["shared_partners", "jaccard", "same_complex", "coexpression", "codependency", "coessentiality"]
 
 
+def _mem(label=""):
+    """print current + peak RSS in GB so we can SEE which feature load spikes RAM (the 103 GB question)."""
+    try:
+        import resource
+        peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / (1024 ** 2)   # KB -> GB on Linux
+        cur = 0.0
+        try:
+            with open("/proc/self/statm") as fh:
+                cur = int(fh.read().split()[1]) * (os.sysconf("SC_PAGE_SIZE") / (1024 ** 3))  # pages -> GB
+        except Exception:
+            pass
+        print(f"    [RAM {cur:.1f} GB now, {peak:.1f} GB peak]  {label}")
+    except Exception:
+        pass
+
+
 class SignalCombiner:
     def __init__(self, C=None, dm=None, use_depmap=True, relation="ppi",
                  string_links=None, string_aliases=None, geneformer_npz=None):
@@ -47,6 +63,7 @@ class SignalCombiner:
         self._coexpr = self._nbr_map(self.C.D.get("coexpr", {}))
         self._codep = self._nbr_map(self.C.D.get("codep", {}))
         self._cplx = {int(k): set(v) for k, v in (self.C.D.get("gene2cplx", {}) or {}).items()}
+        _mem("after cell + graph")
         self.dm = dm
         if self.dm is None and use_depmap:
             try:
@@ -54,13 +71,19 @@ class SignalCombiner:
                 self.dm = DepMapEdges()
             except Exception as e:
                 print("  (co-essentiality feature off — DepMap CSV not found:", str(e)[:50], ")")
+        _mem("after DepMap (co-essentiality)")
         # optional dense features (auto-on when the Drive files are present)
         self.string = self._load_string(string_links or os.environ.get("STRING_LINKS"),
                                          string_aliases or os.environ.get("STRING_ALIASES"))
+        _mem("after STRING")
         self.emb = self._load_emb(geneformer_npz or os.environ.get("GENEFORMER_NPZ"))
+        _mem("after Geneformer")
         self.expr = self._load_expr(os.environ.get("EXPR_MATRIX"))
+        _mem("after expr matrix")
         self.tahoe = self._load_tahoe(os.environ.get("TAHOE_DE_DIR"))
+        _mem("after Tahoe")
         self.esm = self._load_esm(os.environ.get("ESM_PARQUET"))
+        _mem("after ESM")
         self.features_list = list(CORE)
         if self.string is not None:
             self.features_list.append("string_score")
@@ -288,6 +311,16 @@ class SignalCombiner:
             return None
         try:
             import pandas as pd
+            try:                                              # check size FIRST — a per-residue parquet is huge
+                import pyarrow.parquet as pq
+                nrows = pq.ParquetFile(path).metadata.num_rows
+                print(f"  esm parquet: {nrows:,} rows")
+                if nrows > 500_000:
+                    print("  (esm_cos off: too many rows — looks per-RESIDUE, not per-protein; would blow RAM. "
+                          "Use a mean-pooled per-protein embedding.)")
+                    return None
+            except Exception:
+                pass
             df = pd.read_parquet(path)
             idx = self.C.idx
             print(f"  esm columns: {[(c, str(df[c].dtype)) for c in df.columns][:8]}")

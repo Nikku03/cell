@@ -42,14 +42,14 @@ def load_gene_effect(path=GENE_EFFECT):
     import pandas as pd
     df = pd.read_csv(path, index_col=0)                       # lines x genes
     syms = [c.split(" (")[0] for c in df.columns]
-    X = df.to_numpy(dtype=np.float32).T                       # genes x lines
-    # z-score each gene across lines (ignoring NaN), then fill NaN with 0 (=mean) so dot-products are valid
+    X = df.to_numpy(dtype=np.float32).T                       # genes x lines (float32)
+    del df                                                    # free the DataFrame promptly (lower peak RAM)
     mu = np.nanmean(X, axis=1, keepdims=True)
     sd = np.nanstd(X, axis=1, keepdims=True); sd[sd == 0] = 1.0
-    Z = (X - mu) / sd
-    Z[np.isnan(Z)] = 0.0
-    valid = (~np.isnan(X)).sum(1)                             # #lines with a value per gene
-    return syms, Z, valid, mu.ravel(), sd.ravel()            # raw mean/std for pan-essential detection
+    valid = (~np.isnan(X)).sum(1)
+    X -= mu; X /= sd                                          # z-score IN PLACE (no extra full-size copy)
+    np.nan_to_num(X, copy=False)                             # NaN -> 0 in place; X is now Z
+    return syms, X, valid, mu.ravel(), sd.ravel()
 
 
 class DepMapEdges:
