@@ -49,6 +49,40 @@ def _mem(label=""):
         pass
 
 
+def _load_vec_cache(cache, label, max_uncompressed_gb=8.0, max_samples=20000):
+    """Load a derived per-gene vector cache (.npz: ids + vecs) — but REFUSE a poisoned/oversized cache (one built
+    from a per-cell matrix before the size guards existed) that would OOM the moment it's decompressed. This is
+    why the SAME 172 GB OOM recurred despite the source-file guards: the cache load runs before all of them.
+    An .npz is a zip, so read the TRUE uncompressed size from the zip headers WITHOUT decompressing a byte, and
+    delete anything absurd so the caller rebuilds a BOUNDED cache (a sane bulk cache is <1 GB uncompressed)."""
+    if not os.path.exists(cache):
+        return None
+    def _kill(msg):
+        print(f"  ({label} cache {msg} — deleting + rebuilding bounded)")
+        try: os.remove(cache)
+        except OSError: pass
+        return None
+    try:
+        import zipfile
+        with zipfile.ZipFile(cache) as zf:
+            unc = sum(zi.file_size for zi in zf.infolist()) / 1e9   # uncompressed size, no decompression
+        if unc > max_uncompressed_gb:
+            return _kill(f"would expand to {unc:.1f} GB uncompressed — poisoned")
+    except Exception:
+        pass                                                   # not a zip / unreadable header -> fall through
+    try:
+        z = np.load(cache)
+        V = z["vecs"]
+        if V.ndim != 2 or V.shape[1] > max_samples:
+            return _kill(f"shape {V.shape} implausible")
+        vecs = {int(i): V[k] for k, i in enumerate(z["ids"])}
+        print(f"  {label}: loaded {len(vecs):,} gene vectors from cache")
+        return vecs
+    except Exception as e:
+        print(f"  ({label} cache unreadable: {str(e)[:40]} — rebuilding)")
+        return None
+
+
 class SignalCombiner:
     def __init__(self, C=None, dm=None, use_depmap=True, relation="ppi",
                  string_links=None, string_aliases=None, geneformer_npz=None, only=None):
@@ -234,11 +268,9 @@ class SignalCombiner:
         the stored top-k coexpr lists (which barely help, AUC ~0.51). Auto-detects which axis is genes by
         matching our symbols."""
         cache = "outputs/orphan/expr_vecs.npz"
-        if os.path.exists(cache):                              # reuse derived vectors -> no 305 MB CSV re-parse
-            z = np.load(cache)
-            vecs = {int(i): z["vecs"][k] for k, i in enumerate(z["ids"])}
-            print(f"  expr_corr: loaded {len(vecs):,} gene vectors from cache (no CSV re-parse)")
-            return vecs
+        cached = _load_vec_cache(cache, "expr_corr")           # guarded: refuses a poisoned oversized cache
+        if cached is not None:
+            return cached
         if not path or not os.path.exists(path):
             return None
         try:
@@ -266,11 +298,14 @@ class SignalCombiner:
                 print(f"  (expr_corr off: only {df.shape[0]} genes matched)")
                 return None
             X = df.to_numpy(dtype=np.float32)                  # genes x samples
+            genes = list(df.index)
+            del df
+            if X.shape[1] > 8000:                              # bound the sample dim (plenty for correlation) so the
+                sel = np.random.default_rng(0).choice(X.shape[1], 8000, replace=False)  # cache can never be a giant
+                X = X[:, sel]
             mu = np.nanmean(X, 1, keepdims=True); sd = np.nanstd(X, 1, keepdims=True); sd[sd == 0] = 1
             Z = (X - mu) / sd; Z[np.isnan(Z)] = 0.0
             Z /= (np.linalg.norm(Z, axis=1, keepdims=True) + 1e-8)
-            genes = list(df.index)
-            del df
             vecs = {idx[g]: Z[i] for i, g in enumerate(genes)}
             ids = list(vecs)
             try:
@@ -292,11 +327,9 @@ class SignalCombiner:
         analysis genes, so it's 0 outside them (honest)."""
         # fast path: derived per-gene vectors cached (built once, then persisted to Drive) -> no re-download
         cache = "outputs/orphan/tahoe_vecs.npz"
-        if os.path.exists(cache):
-            z = np.load(cache)
-            vecs = {int(i): z["vecs"][k] for k, i in enumerate(z["ids"])}
-            print(f"  tahoe_corr: loaded {len(vecs):,} gene vectors from cache (no download)")
-            return vecs
+        cached = _load_vec_cache(cache, "tahoe_corr")          # guarded: refuses a poisoned oversized cache
+        if cached is not None:
+            return cached
         if not d or not os.path.isdir(d):
             return None
         try:

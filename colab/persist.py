@@ -57,6 +57,13 @@ def restore_from_drive(drive="/content/drive/MyDrive"):
     for f in ARTIFACTS:
         src = os.path.join(adir, f)
         if os.path.exists(src):
+            if f.endswith("_vecs.npz") and os.path.getsize(src) / 1e9 > 2.0:   # poisoned derived cache -> purge it
+                print(f"  purging poisoned cache from Drive: {f} ({os.path.getsize(src)/1e9:.1f} GB)")
+                try:
+                    os.remove(src)
+                except OSError:
+                    pass
+                continue
             shutil.copy(src, os.path.join(OUT, f)); restored.append(f)
     print(f"restored {len(restored)} artifacts from {adir}" if restored else
           f"no saved artifacts in {adir} (fresh run)")
