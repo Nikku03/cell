@@ -128,15 +128,18 @@ cells = [
        "actually predict IT (add→measure→keep, per relation) — so watch where the dense datasets land: STRING "
        "tends to win PPI, while co-essentiality / co-expression / **Tahoe drug-response** should matter more for "
        "**reg** (co-regulation), the relation they're actually about. All Drive features from cell 2c apply."),
-    code("# train once, reuse: skip any relation whose model was restored from Drive (cell 2d).",
-         "# set FORCE_RETRAIN=1 to retrain (e.g. after adding a NEW dataset so it gets folded in).",
+    code("# train once, reuse: skip any relation whose model was restored (cell 2d); train the REST in ONE",
+         "# process so the big features (DepMap/expr/ESM/STRING) load ONCE, not per-relation (that 3x re-load",
+         "# was the ~45-min cost — and it's all CPU, the GPU is idle). FORCE_RETRAIN=1 redoes all (after new data).",
          "import os",
-         "for rel in ('ppi','reg','sig'):",
-         "    pkl = 'outputs/orphan/signal_combiner.pkl' if rel=='ppi' else f'outputs/orphan/signal_combiner_{rel}.pkl'",
-         "    if os.path.exists(pkl) and not os.environ.get('FORCE_RETRAIN'):",
-         "        print(f'{rel}: restored model present -> skipping retrain (FORCE_RETRAIN=1 to redo)')",
-         "    else:",
-         "        os.system(f'python colab/signal_combiner.py {rel}')"),
+         "need = [rel for rel in ('ppi','reg','sig')",
+         "        if os.environ.get('FORCE_RETRAIN') or not os.path.exists(",
+         "            'outputs/orphan/signal_combiner.pkl' if rel=='ppi' else f'outputs/orphan/signal_combiner_{rel}.pkl')]",
+         "if need:",
+         "    print('training (one feature load):', need)",
+         "    os.system('python colab/signal_combiner.py ' + ' '.join(need))",
+         "else:",
+         "    print('all combiners restored from Drive -> skipping retrain (FORCE_RETRAIN=1 to redo)')"),
 
     md("## 7. Loop again — now with the trained, stronger combiner",
        "The combiner is picked up as a calibrated lens (with the independence guard). Compare the locked "

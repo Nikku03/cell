@@ -489,34 +489,42 @@ def load(path="outputs/orphan/signal_combiner.pkl"):
     return pickle.load(open(path, "rb")) if os.path.exists(path) else None
 
 
-def main(relation="ppi"):
-    print("=" * 84)
-    print(f"SIGNAL COMBINER [{relation}] — calibrated P(edge) for the '{relation}' relation, from many signals")
-    print("=" * 84)
-    sc = SignalCombiner(relation=relation)
-    print("features:", sc.features_list, "| edges in relation:", sum(len(v) for v in sc.adj.values()) // 2)
-    res = sc.train()
-    sc.save(res)
+def _report(sc, res):
     print(f"examples: {res['counts']}")
-    print("\nper-feature AUC (each evidence source ALONE):")
+    print("per-feature AUC (each evidence source ALONE):")
     for f, a in res["per_feature_auc"].items():
         print(f"    {f:16} {a}")
-    print(f"\nGROUPED (honest): structural-only {res['auc_structural_only']}  vs  independent-only {res['auc_independent_only']}")
+    print(f"GROUPED (honest): structural-only {res['auc_structural_only']}  vs  independent-only {res['auc_independent_only']}")
     if res["dropped"]:
-        print(f"\nDROPPED (below AUC 0.53 alone — dead weight, and can no longer gate the loop):")
+        print("DROPPED (below AUC 0.53 alone — dead weight, can no longer gate the loop):")
         for f, a in res["dropped"].items():
             print(f"    {f:16} {a}")
     print(f"KEPT: {res['kept_features']}")
-    print(f"combined AUC (kept): {res['combined_auc']}   vs  all features: {res['combined_auc_all_features']}  "
+    print(f"combined AUC (kept): {res['combined_auc']}  vs  all features: {res['combined_auc_all_features']}  "
           f"(dropping cost {round(res['combined_auc_all_features']-res['combined_auc'],3)})")
-    print(f"calibration (Brier): {res['brier']}   threshold@0.9-precision: {res['threshold_at_0p9_precision']} "
+    print(f"calibration (Brier): {res['brier']}  threshold@0.9-precision: {res['threshold_at_0p9_precision']} "
           f"(recall {int(100*res['recall_at_that_threshold'])}%)")
-    print(f"\n-> {sc._pkl()}")
-    return res
+    print(f"-> {sc._pkl()}\n")
+
+
+def main(relations=("ppi",)):
+    """Load the (big) features ONCE, then train every relation off cheap clones — so cell 6 doesn't re-parse
+    DepMap/expr/ESM/STRING per relation (that 3x re-parse was the ~45-min cost; it's all CPU, the GPU is idle)."""
+    if isinstance(relations, str):
+        relations = [relations]
+    base = SignalCombiner(relation=relations[0])            # <-- the single, shared feature load
+    print("features:", base.features_list, "| loaded ONCE, shared across", list(relations))
+    for rel in relations:
+        sc = base if rel == relations[0] else base.for_relation(rel)
+        print("=" * 84)
+        print(f"SIGNAL COMBINER [{rel}]  ({sum(len(v) for v in sc.adj.values())//2:,} edges in relation)")
+        print("=" * 84)
+        res = sc.train()
+        sc.save(res)
+        _report(sc, res)
+    return True
 
 
 if __name__ == "__main__":
     import sys
-    for rel in (sys.argv[1:] or ["ppi"]):
-        main(rel)
-        print()
+    main(sys.argv[1:] or ["ppi"])
