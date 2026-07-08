@@ -56,6 +56,10 @@ def report():
         L.append(f"    {rel:4} {lab:22} {_n(e):>9} edges | {s}")
     L.append(f"    complexes {_n(len(D.get('complexes', {})))} | synthetic-lethal {_n(len(D.get('sl', [])))}"
              f" | ligand-receptor {_n(len(D.get('lr', [])))}")
+    cm = D.get("causal_meta")
+    if cm:
+        L.append(f"    causal direction (SIGNOR+CollecTRI) {_n(cm.get('total', 0))} directed edges, "
+                 f"{_n(cm.get('signed', 0))} signed (activate/inhibit)")
     L.append("")
     L.append("  KINETICS / METABOLISM:")
     L.append(f"    enzymes with kinetics  {_n(len(kin))}  (measured {_n(meas)}, predicted {_n(len(kin)-meas)},"

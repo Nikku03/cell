@@ -70,6 +70,7 @@ class CompleteCell:
                 if isinstance(i, int):
                     self.gene2path[i].append(pname)
         self._fold_reactome()                                              # fold the 2,792 Reactome pathways in
+        self._fold_causal()                                                # fold SIGNOR + CollecTRI signed direction
 
     def _fold_reactome(self, path=f"{OUT}/reactome_pathways.json"):
         """Fold the Reactome pathway overlay into the complete cell: a distinct D['reactome'] layer PLUS the
@@ -88,6 +89,26 @@ class CompleteCell:
                 if isinstance(i, int):
                     self.gene2path[i].append(pname)
         return len(self.reactome)
+
+    def _fold_causal(self, path=f"{OUT}/causal_edges.json"):
+        """Fold the SIGNOR + CollecTRI causal-direction overlay in as a SEPARATE signed layer: per-gene indexes of
+        what x activates/inhibits (downstream) and what activates/inhibits x (upstream), each tagged +1/-1/0 and
+        with its source db. ADDITIVE and non-destructive — the reg/sig networks and their signs are left exactly
+        as measured; this adds a signed causal VIEW alongside them (so a real sign never silently overwrites ours,
+        and a consumer can compare the two). No-op if the overlay isn't present."""
+        from collections import defaultdict
+        self.causal_out = defaultdict(list)                                # x -> [(target_idx, sign, db)]
+        self.causal_in = defaultdict(list)                                 # x -> [(source_idx, sign, db)]
+        cz = _load(path)
+        edges = (cz or {}).get("edges", []) if isinstance(cz, dict) else (cz or [])
+        for e in edges:
+            if len(e) >= 3 and isinstance(e[0], int) and isinstance(e[1], int):
+                db = e[3] if len(e) > 3 else ""
+                self.causal_out[e[0]].append((e[1], e[2], db))
+                self.causal_in[e[1]].append((e[0], e[2], db))
+        if edges:
+            self.D["causal_meta"] = (cz or {}).get("meta", {})
+        return len(edges)
 
     # ---- apply the Phase-2 verified additions -> cell v2 (predicted edges tagged, facts untouched) ----
     def apply_additions(self, path=f"{OUT}/cell_v2_additions.json"):
@@ -190,6 +211,9 @@ class CompleteCell:
             "regulated_by": [(self.name[j], s) for j, s in self.reg_in.get(i, [])],
             "signals_to": [(self.name[j], s) for j, s in self.sig_out.get(i, [])],
             "signaled_by": [(self.name[j], s) for j, s in self.sig_in.get(i, [])],
+            # signed causal direction (SIGNOR/CollecTRI): +1 activates, -1 inhibits, 0 unsigned
+            "causal_downstream": [(self.name[j], s, db) for j, s, db in self.causal_out.get(i, []) if j < len(self.name)],
+            "causal_upstream": [(self.name[j], s, db) for j, s, db in self.causal_in.get(i, []) if j < len(self.name)],
             "synthetic_lethal": [(self.name[j], s) for j, s in self.sl_adj.get(i, [])],
             "ligand_of_receptors": self._names(self.lig2rec.get(i, [])),
             "receptor_for_ligands": self._names(self.rec2lig.get(i, [])),
