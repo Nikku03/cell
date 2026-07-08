@@ -80,30 +80,48 @@ class Phase2Loop:
         # trained signal-combiner (calibrated P(edge) from all signals) — optional; used as a calibrated lens.
         # feature computation goes through a SignalCombiner sharing this cell + DepMap, so the loop AUTOMATICALLY
         # uses whatever features the model was trained with (6 core here; 7-8 with STRING/embeddings in Colab).
+        # WHOLE-CELL: load a trained combiner for EACH relation (ppi/reg/sig) so the loop heals the whole
+        # network, not just PPI. All relation combiners share one feature load (for_relation clone).
         import signal_combiner
-        self.combiner = signal_combiner.load()
-        self.sc = None
-        if self.combiner:
-            self.sc = signal_combiner.SignalCombiner(C=self.C, dm=self.dm)
-            kept = self.combiner.get("features", [])            # the KEPT features the model was trained on
-            allf = self.combiner.get("features_all", kept)
-            if self.sc.features_list != allf:
-                print(f"  (combiner off: available features {self.sc.features_list} != model's {allf})")
-                self.combiner = None
-            else:
-                self.kept_idx = [self.sc.features_list.index(f) for f in kept]
-                self.indep_names = self.combiner.get("informative_independent", [])
-                print(f"  signal-combiner on (kept {kept}, threshold {round(self.combiner['threshold'],3)}) "
-                      f"— calibrated lens; gates only on {self.indep_names}")
+        self.rel = {}
+        base = None
+        for rel in ("ppi", "reg", "sig"):
+            pkl = "outputs/orphan/signal_combiner.pkl" if rel == "ppi" else f"outputs/orphan/signal_combiner_{rel}.pkl"
+            m = signal_combiner.load(pkl)
+            if not m:
+                continue
+            if base is None:
+                base = signal_combiner.SignalCombiner(C=self.C, dm=self.dm)
+            allf = m.get("features_all", m.get("features"))
+            if base.features_list != allf:
+                print(f"  ({rel} combiner off: features {base.features_list} != model's {allf})")
+                continue
+            sc_rel = base if rel == "ppi" else base.for_relation(rel)
+            self.rel[rel] = dict(m=m, sc=sc_rel, thr=m["threshold"],
+                                 kept_idx=[base.features_list.index(f) for f in m["features"]],
+                                 indep=m.get("informative_independent", []))
+            print(f"  combiner[{rel}] on (kept {m['features']}, thr {round(m['threshold'],3)}, "
+                  f"gates on {m.get('informative_independent', [])})")
+        # ppi back-compat handles for the existing PPI completion path
+        self.combiner = self.rel.get("ppi", {}).get("m")
+        self.sc = self.rel.get("ppi", {}).get("sc")
+        if "ppi" in self.rel:
+            self.kept_idx = self.rel["ppi"]["kept_idx"]; self.indep_names = self.rel["ppi"]["indep"]
+
+    def _prob(self, rel, u, v):
+        import numpy as _np
+        R = self.rel[rel]; full = R["sc"].features(u, v)
+        x = _np.array([[full[i] for i in R["kept_idx"]]])
+        if R["m"].get("uses_scaler"):
+            x = R["m"]["scaler"].transform(x)
+        return float(R["m"]["model"].predict_proba(x)[0, 1])
+
+    def _indep(self, rel, u, v):
+        R = self.rel[rel]; full = R["sc"].features(u, v); F = R["sc"].features_list
+        return any(full[F.index(nm)] >= _INDEP_THRESH.get(nm, 0.5) for nm in R["indep"] if nm in _INDEP_THRESH)
 
     def _combiner_prob(self, u, v):
-        import numpy as _np
-        f = self.combiner
-        full = self.sc.features(u, v)
-        x = _np.array([[full[i] for i in self.kept_idx]])       # subset to the kept features
-        if f.get("uses_scaler"):
-            x = f["scaler"].transform(x)
-        return float(f["model"].predict_proba(x)[0, 1])
+        return self._prob("ppi", u, v)
 
     def _independent_present(self, u, v):
         """an INFORMATIVE independent feature (one that survived the AUC cut) is meaningfully present — so a
@@ -159,6 +177,16 @@ class Phase2Loop:
             add("completion", f"{C.name[u]}—{C.name[v]}", "ppi",
                 dict(u=u, v=v, shared=sh), "corroborate", min(0.9, 0.4 + 0.04 * sh))
 
+        # --- WHOLE-CELL: missing REG / SIG edges too (each scored by its own relation combiner). Skip a relation
+        #     whose combiner has NO informative independent feature to gate on — it couldn't lock anything anyway
+        #     (and the triadic scan over 600k edges isn't worth running). ---
+        for rel in ("reg", "sig"):
+            if rel not in self.rel or not self.rel[rel]["indep"]:
+                continue
+            for (u, v, sh) in self._triadic(CAP_COMPLETION, adj=self.rel[rel]["sc"].adj, n_hubs=200):
+                add(f"completion_{rel}", f"{C.name[u]}—{C.name[v]}", rel,
+                    dict(u=u, v=v, shared=sh, rel=rel), "corroborate", min(0.9, 0.4 + 0.04 * sh))
+
         # --- localization: model comp vs GO curated location (mutually exclusive) — UNCAPPED (finite) ---
         for nm, m, l, gm, gl in self._loc_conflicts():
             add("localization", nm, "compartment", dict(model=gm, go=gl, model_comp=m),
@@ -191,9 +219,11 @@ class Phase2Loop:
                     seen.add(key); out.append((key[0], key[1], cname))
         return out
 
-    def _triadic(self, n_flags, n_hubs=500, cap=600, min_shared=4):
+    def _triadic(self, n_flags, adj=None, n_hubs=500, cap=600, min_shared=4):
         from collections import Counter
-        C = self.C; adj = C.ppi_adj
+        C = self.C
+        if adj is None:
+            adj = C.ppi_adj
         hubs = sorted(adj, key=lambda u: -len(adj[u]))[:n_hubs]
         cand = {}
         for a in hubs:
@@ -254,7 +284,12 @@ class Phase2Loop:
         HANDLERS = {"kcat_physics": self._fx_kcat, "kcat_low": self._fx_kcat,
                     "complex_ppi": self._fx_complex, "completion": self._fx_completion,
                     "localization": self._fx_localization, "function_fill": self._fx_function}
-        handler = self._fx_coverage if kind.startswith("coverage") else HANDLERS.get(kind)
+        if kind.startswith("completion_"):                      # completion_reg / completion_sig
+            handler = self._fx_completion_rel
+        elif kind.startswith("coverage"):
+            handler = self._fx_coverage
+        else:
+            handler = HANDLERS.get(kind)
         if handler is None:
             return self._outcome(flag, "needs_data", "no fix mechanism for this field", attempts=0)
         failures = []
@@ -316,6 +351,24 @@ class Phase2Loop:
         self.C.ppi_adj[u].add(v); self.C.ppi_adj[v].add(u)
         return self._outcome(flag, "fixed", f"co-members of curated complex '{d['complex'][:40]}' -> PPI edge added",
                              fix=dict(add_edge=[self.C.name[u], self.C.name[v]], relation="ppi"))
+
+    # -- WHOLE-CELL: reg/sig completion — same calibrated + independence-gated logic as PPI, but scored by that
+    #    relation's own combiner and added to that relation's graph. --
+    def _fx_completion_rel(self, flag, failures, attempt):
+        d = flag["detail"]; rel = d["rel"]; u, v = d["u"], d["v"]; a, b = self.C.name[u], self.C.name[v]
+        R = self.rel.get(rel)
+        if R is None:
+            return self._outcome(flag, "needs_data", f"no {rel} combiner loaded")
+        p = self._prob(rel, u, v)
+        if p >= R["thr"] and self._indep(rel, u, v):
+            R["sc"].adj[u].add(v); R["sc"].adj[v].add(u)        # add to THAT relation's graph -> cascades next process
+            return self._outcome(flag, "fixed",
+                                 f"{rel} combiner P={p:.2f} (>= {round(R['thr'],2)}) with independent support "
+                                 f"-> predicted {rel} edge added",
+                                 fix=dict(add_edge=[a, b], relation=rel, prob=round(p, 3)))
+        return self._outcome(flag, "needs_data",
+                             f"{rel} candidate ({d.get('shared')} shared): P={p:.2f} or no independent support "
+                             "-> kept as candidate, not locked")
 
     # -- completion: FAILURE-GUIDED multi-lens corroboration. Each redo tries a different INDEPENDENT evidence
     #    source (independent of the PPI graph itself). Triadic closure is what SURFACED the candidate — it is NOT
@@ -416,6 +469,12 @@ class Phase2Loop:
                 ia, ib = self.C.idx.get(a), self.C.idx.get(b)
                 ok = ib in self.C.ppi_adj.get(ia, set())
                 why = "edge missing from graph" if not ok else ""
+            elif e["kind"].startswith("completion_"):          # reg/sig edge in that relation's graph
+                rel = e["kind"].split("_", 1)[1]
+                a, b = e["entity"].split("—")
+                ia, ib = self.C.idx.get(a), self.C.idx.get(b)
+                ok = rel in self.rel and ib in self.rel[rel]["sc"].adj.get(ia, set())
+                why = f"{rel} edge missing from graph" if not ok else ""
             elif e["kind"] in ("kcat_physics", "kcat_low"):
                 r = self.C.kin.get(e["entity"], {}); kc, km = r.get("kcat_per_s"), r.get("km_uM")
                 ok = not (km and km > 0 and kc and kc / (km * 1e-6) > DIFFUSION_LIMIT * 1.001)

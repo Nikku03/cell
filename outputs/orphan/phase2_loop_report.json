@@ -11,8 +11,8 @@
   },
   "total_needs_data": 326,
   "needs_data_by_kind": {
-    "localization": 10,
     "completion": 300,
+    "localization": 10,
     "function_fill": 14,
     "coverage": 2
   },

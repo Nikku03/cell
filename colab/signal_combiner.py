@@ -73,6 +73,16 @@ class SignalCombiner:
         if self.esm is not None:
             self.features_list.append("esm_cos")
 
+    def for_relation(self, relation):
+        """cheap clone sharing ALL loaded feature data (STRING/expr/emb/tahoe/esm/coess maps) but with this
+        relation's adjacency — so the loop can score reg/sig without re-loading the big features."""
+        other = object.__new__(SignalCombiner)
+        other.__dict__.update(self.__dict__)
+        other.relation = relation
+        other.adj = other._reladj(relation)
+        other.features_list = list(self.features_list)
+        return other
+
     def _reladj(self, relation):
         """undirected adjacency for the chosen relation (ppi reuses the cell's; reg/sig built from the edge list)."""
         if relation == "ppi":
@@ -280,6 +290,7 @@ class SignalCombiner:
             import pandas as pd
             df = pd.read_parquet(path)
             idx = self.C.idx
+            print(f"  esm columns: {[(c, str(df[c].dtype)) for c in df.columns][:8]}")
             # id column: the string/object column with the most matches to our symbols; else a UniProt-looking one
             id_col, best = None, 0
             for c in df.columns:

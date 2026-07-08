@@ -63,8 +63,16 @@ def report():
     L.append(f"    metabolic reactions    12,931 (Human-GEM) | reactions with genes {_n(len(D.get('generxn', {})))}")
     L.append("")
     L.append("  FUNCTION / PATHWAYS:")
-    L.append(f"    curated pathways       {_n(len(D.get('pathways', {})))} covering {_n(len(pw_cov))}/{_n(n)}"
-             f" genes ({round(100*len(pw_cov)/n)}%)")
+    rx = _load("reactome_pathways.json")
+    if rx and rx.get("pathways"):
+        rxcov = set(g for v in rx["pathways"].values() for g in v)
+        allcov = pw_cov | rxcov
+        L.append(f"    curated pathways       {_n(len(D.get('pathways', {})))} base + {_n(len(rx['pathways']))} "
+                 f"Reactome -> covering {_n(len(allcov))}/{_n(n)} genes ({round(100*len(allcov)/n)}%, was "
+                 f"{round(100*len(pw_cov)/n)}%)")
+    else:
+        L.append(f"    curated pathways       {_n(len(D.get('pathways', {})))} covering {_n(len(pw_cov))}/{_n(n)}"
+                 f" genes ({round(100*len(pw_cov)/n)}%)")
     L.append(f"    PTMs {_n(len(D.get('ptm', {})))} | dark-function predictions {_n(len(D.get('darkfn', {})))}")
     L.append("")
     L.append("  EXPRESSION / CONTEXT:")
