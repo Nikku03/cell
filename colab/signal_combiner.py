@@ -5,57 +5,57 @@ the calibrated probability these two interact, given everything at once?"
 This is a small, honest supervised model (logistic regression / gradient boosting over a handful of features),
 NOT a deep net — its job is to WEIGH evidence, and to be calibrated and interpretable while doing it.
 
-Features per candidate gene pair (a,b):
-  shared_partners  |N(a) ∩ N(b)|                         (structural — from the PPI graph)
-  jaccard          shared / |N(a) ∪ N(b)|                (structural, degree-normalised)
-  same_complex     1 if a,b share a curated complex      (curated, independent of the graph edges)
-  coexpression     co-expression score if present        (independent)
-  codependency     DepMap co-dependency score if present (independent)
-  coessentiality   Pearson r of gene-effect profiles     (independent — needs the DepMap CSV)
+CORE features (always available, from the committed cell): shared_partners, jaccard (structural) + same_complex,
+co-expression, co-dependency, co-essentiality (independent of the PPI graph).
+
+OPTIONAL DENSE features (strictly stronger; activate automatically when the files are mounted — i.e. in Colab
+with Drive): STRING physical score, and Geneformer gene-embedding cosine. The sparse top-k coexpr/codep lists
+carry little alone (independent-only AUC ~0.57); these dense signals are what push it up. Point the env vars
+STRING_LINKS / STRING_ALIASES / GENEFORMER_NPZ at the Drive files and re-run — the pipeline is unchanged and
+the model records which features it was trained with.
 
 Labels: positives = known curated PPI edges; negatives = a MIX of easy (random) and HARD (non-edges that share
-≥3 partners) — the hard negatives force the model to use the *independent* signals, not just triadic closure
-(otherwise it would trivially rate every triadic candidate as positive, which is useless inside the loop).
-
-Honest reporting: per-feature single-signal AUC (ablation — shows which evidence actually carries), a grouped
-STRUCTURAL-only vs INDEPENDENT-only AUC (shows how much is the graph confirming itself vs genuinely independent
-evidence), combined AUC, calibration (Brier), and the precision/threshold trade-off.
-
-Extending it: STRING physical score and Geneformer/ESM embedding cosine are strictly stronger, DENSE features
-(the sparse top-k coexpr/codep lists carry little alone). They are on disk in Drive but too large to stream
-here; add them as extra columns in features()/FEATURES when the files are mounted (e.g. in Colab) and retrain —
-the pipeline is otherwise unchanged.
+≥3 partners) — the hard negatives force the model to use the *independent* signals, not just triadic closure.
 
 -> outputs/orphan/signal_combiner.pkl              (model + scaler + feature list + chosen threshold)
 -> outputs/orphan/signal_combiner_validation.json  (AUCs, ablation, calibration, threshold)
 """
-import os, sys, json, pickle
+import os, sys, json, pickle, gzip
 import numpy as np
 sys.path.insert(0, os.path.dirname(__file__))
 from complete_cell import CompleteCell
 
+CORE = ["shared_partners", "jaccard", "same_complex", "coexpression", "codependency", "coessentiality"]
+
 
 class SignalCombiner:
-    FEATURES = ["shared_partners", "jaccard", "same_complex", "coexpression", "codependency", "coessentiality"]
-
-    def __init__(self, use_depmap=True):
-        self.C = CompleteCell()
-        self.C._reset_base() if hasattr(self.C, "_reset_base") else None
-        # build fast lookups for the independent signals
+    def __init__(self, C=None, dm=None, use_depmap=True,
+                 string_links=None, string_aliases=None, geneformer_npz=None):
+        self.C = C or CompleteCell()
+        if hasattr(self.C, "_reset_base"):
+            self.C._reset_base()
         self._coexpr = self._nbr_map(self.C.D.get("coexpr", {}))
         self._codep = self._nbr_map(self.C.D.get("codep", {}))
         self._cplx = {int(k): set(v) for k, v in (self.C.D.get("gene2cplx", {}) or {}).items()}
-        self.dm = None
-        if use_depmap:
+        self.dm = dm
+        if self.dm is None and use_depmap:
             try:
                 from phase3_depmap import DepMapEdges
                 self.dm = DepMapEdges()
             except Exception as e:
                 print("  (co-essentiality feature off — DepMap CSV not found:", str(e)[:50], ")")
+        # optional dense features (auto-on when the Drive files are present)
+        self.string = self._load_string(string_links or os.environ.get("STRING_LINKS"),
+                                         string_aliases or os.environ.get("STRING_ALIASES"))
+        self.emb = self._load_emb(geneformer_npz or os.environ.get("GENEFORMER_NPZ"))
+        self.features_list = list(CORE)
+        if self.string is not None:
+            self.features_list.append("string_score")
+        if self.emb is not None:
+            self.features_list.append("embedding_cos")
 
     @staticmethod
     def _nbr_map(layer):
-        """idx -> {partner_idx: score} for a top-k neighbour layer (coexpr/codep)."""
         out = {}
         for k, lst in (layer or {}).items():
             d = {}
@@ -65,6 +65,69 @@ class SignalCombiner:
             out[int(k)] = d
         return out
 
+    # ---- optional dense-feature loaders (defensive: any failure -> feature simply off, pipeline still runs) ----
+    def _load_string(self, links, aliases):
+        if not links or not os.path.exists(links):
+            return None
+        try:
+            op = gzip.open if links.endswith(".gz") else open
+            # map STRING protein ids -> gene symbol (if an aliases file is given), else assume symbols already
+            id2sym = {}
+            if aliases and os.path.exists(aliases):
+                aop = gzip.open if aliases.endswith(".gz") else open
+                with aop(aliases, "rt") as fh:
+                    for line in fh:
+                        p = line.rstrip("\n").split("\t")
+                        if len(p) >= 2 and p[0] not in id2sym:
+                            id2sym[p[0]] = p[1]
+            idx = self.C.idx
+            d = {}
+            with op(links, "rt") as fh:
+                header = fh.readline()
+                sep = " " if " " in header and "\t" not in header else "\t"
+                for line in fh:
+                    p = line.rstrip("\n").split(sep)
+                    if len(p) < 3:
+                        continue
+                    a = id2sym.get(p[0], p[0]); b = id2sym.get(p[1], p[1])
+                    ia, ib = idx.get(a), idx.get(b)
+                    if ia is None or ib is None:
+                        continue
+                    try:
+                        s = float(p[-1])
+                    except ValueError:
+                        continue
+                    s = s / 1000.0 if s > 1.5 else s               # STRING scores are 0-1000
+                    key = (min(ia, ib), max(ia, ib))
+                    if s > d.get(key, 0):
+                        d[key] = s
+            print(f"  STRING loaded: {len(d):,} scored gene pairs")
+            return d
+        except Exception as e:
+            print("  (STRING feature off:", str(e)[:60], ")")
+            return None
+
+    def _load_emb(self, npz):
+        if not npz or not os.path.exists(npz):
+            return None
+        try:
+            z = np.load(npz, allow_pickle=True)
+            keys = list(z.keys())
+            names = next((z[k] for k in keys if z[k].dtype.kind in "US" or z[k].ndim == 1), None)
+            mat = next((z[k] for k in keys if z[k].ndim == 2), None)
+            if names is None or mat is None or len(names) != len(mat):
+                print("  (embedding feature off: could not identify names+matrix in npz)")
+                return None
+            mat = mat.astype(np.float32)
+            mat /= (np.linalg.norm(mat, axis=1, keepdims=True) + 1e-8)
+            idx = self.C.idx
+            emb = {idx[str(n)]: mat[i] for i, n in enumerate(names) if str(n) in idx}
+            print(f"  Geneformer embeddings loaded: {len(emb):,} genes")
+            return emb
+        except Exception as e:
+            print("  (embedding feature off:", str(e)[:60], ")")
+            return None
+
     # ---------- features ----------
     def _sym(self, m, a, b):
         return max(m.get(a, {}).get(b, 0.0), m.get(b, {}).get(a, 0.0))
@@ -72,36 +135,34 @@ class SignalCombiner:
     def features(self, a, b):
         adj = self.C.ppi_adj
         na, nb = adj.get(a, set()), adj.get(b, set())
-        shared = len(na & nb)
-        union = len(na | nb)
-        jac = shared / union if union else 0.0
-        same_cplx = 1.0 if (self._cplx.get(a, set()) & self._cplx.get(b, set())) else 0.0
-        coex = self._sym(self._coexpr, a, b)
-        cod = self._sym(self._codep, a, b)
+        shared = len(na & nb); union = len(na | nb)
+        f = [float(shared), shared / union if union else 0.0,
+             1.0 if (self._cplx.get(a, set()) & self._cplx.get(b, set())) else 0.0,
+             self._sym(self._coexpr, a, b), self._sym(self._codep, a, b)]
         coess = 0.0
         if self.dm is not None:
             v = self.dm.coess(self.C.name[a], self.C.name[b])
             coess = float(v) if v is not None else 0.0
-        return [float(shared), float(jac), same_cplx, coex, cod, coess]
+        f.append(coess)
+        if self.string is not None:
+            f.append(self.string.get((min(a, b), max(a, b)), 0.0))
+        if self.emb is not None:
+            ea, eb = self.emb.get(a), self.emb.get(b)
+            f.append(float(ea @ eb) if ea is not None and eb is not None else 0.0)
+        return f
 
     # ---------- labelled examples ----------
     def build_examples(self, n_pos=6000, seed=0):
         rng = np.random.default_rng(seed)
         adj = self.C.ppi_adj; name = self.C.name; n = len(name)
-        inset = set(self.dm.col) if self.dm is not None else None      # keep pairs scorable by co-essentiality
-
-        def ok(i):
-            return inset is None or name[i] in inset
-        # positives: known PPI edges
+        inset = set(self.dm.col) if self.dm is not None else None
+        ok = (lambda i: inset is None or name[i] in inset)
         edges = [(u, v) for u, ps in adj.items() for v in ps if u < v and ok(u) and ok(v)]
         rng.shuffle(edges); edges = edges[:n_pos]
-        pos = set(edges)
         edgeset = {(min(u, v), max(u, v)) for u, ps in adj.items() for v in ps}
-        # HARD negatives: non-edges that share >=3 partners (structurally look like edges)
-        hard = []
-        hubs = sorted(adj, key=lambda u: -len(adj[u]))[:600]
         from collections import Counter
-        for a in hubs:
+        hard = []
+        for a in sorted(adj, key=lambda u: -len(adj[u]))[:600]:
             pa = adj[a]
             if len(pa) > 600:
                 continue
@@ -114,20 +175,16 @@ class SignalCombiner:
                 if sh >= 3 and a < c and (a, c) not in edgeset and ok(a) and ok(c):
                     hard.append((a, c))
         rng.shuffle(hard); hard = hard[:n_pos // 2]
-        # EASY negatives: random non-edges
         easy = set()
         while len(easy) < n_pos - len(hard):
             a, b = int(rng.integers(n)), int(rng.integers(n))
-            if a == b or not ok(a) or not ok(b):
-                continue
-            key = (min(a, b), max(a, b))
-            if key in edgeset:
-                continue
-            easy.add(key)
-        rows = [(a, b, 1) for a, b in pos] + [(a, b, 0) for a, b in hard] + [(a, b, 0) for a, b in easy]
+            if a != b and ok(a) and ok(b) and (min(a, b), max(a, b)) not in edgeset:
+                easy.add((min(a, b), max(a, b)))
+        rows = [(a, b, 1) for a, b in edges] + [(a, b, 0) for a, b in hard] + [(a, b, 0) for a, b in easy]
         X = np.array([self.features(a, b) for a, b, _ in rows], dtype=float)
         y = np.array([lab for _, _, lab in rows])
-        return X, y, dict(n_pos=int(y.sum()), n_hard_neg=len(hard), n_easy_neg=len(easy))
+        return X, y, dict(n_pos=int(y.sum()), n_hard_neg=len(hard), n_easy_neg=len(easy),
+                          features=self.features_list)
 
     # ---------- train + honest evaluation ----------
     def train(self, seed=0):
@@ -137,27 +194,23 @@ class SignalCombiner:
         from sklearn.model_selection import train_test_split
         from sklearn.metrics import roc_auc_score, brier_score_loss, precision_recall_curve
         X, y, counts = self.build_examples(seed=seed)
+        F = self.features_list
         Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=seed, stratify=y)
         scaler = StandardScaler().fit(Xtr)
         Xtr_s, Xte_s = scaler.transform(Xtr), scaler.transform(Xte)
-        # per-feature ablation: single-signal AUC (how much each evidence source carries ALONE)
         ablation = {}
-        for j, f in enumerate(self.FEATURES):
+        for j, f in enumerate(F):
             try:
                 m = LogisticRegression(max_iter=500).fit(Xtr_s[:, [j]], ytr)
                 ablation[f] = round(float(roc_auc_score(yte, m.predict_proba(Xte_s[:, [j]])[:, 1])), 3)
             except Exception:
                 ablation[f] = None
-        # grouped ablation: STRUCTURAL-only vs INDEPENDENT-only — shows honestly how much of the signal is the
-        # graph confirming itself vs genuinely independent evidence
-        struct_idx = [0, 1]                                   # shared_partners, jaccard
-        indep_idx = [2, 3, 4, 5]                              # same_complex, coexpr, codep, coessentiality
-        def grouped_auc(idx):
+        struct_idx = [F.index(x) for x in ("shared_partners", "jaccard") if x in F]
+        indep_idx = [i for i in range(len(F)) if i not in struct_idx]
+        def grp(idx):
             m = LogisticRegression(max_iter=800).fit(Xtr_s[:, idx], ytr)
             return round(float(roc_auc_score(yte, m.predict_proba(Xte_s[:, idx])[:, 1])), 3)
-        auc_struct = grouped_auc(struct_idx)
-        auc_indep = grouped_auc(indep_idx)
-        # combined models
+        auc_struct, auc_indep = grp(struct_idx), grp(indep_idx)
         lr = LogisticRegression(max_iter=1000).fit(Xtr_s, ytr)
         gb = HistGradientBoostingClassifier(max_iter=300, learning_rate=0.08).fit(Xtr, ytr)
         auc_lr = float(roc_auc_score(yte, lr.predict_proba(Xte_s)[:, 1]))
@@ -165,32 +218,29 @@ class SignalCombiner:
         best, best_auc, uses_scaler = (gb, auc_gb, False) if auc_gb >= auc_lr else (lr, auc_lr, True)
         p_te = best.predict_proba(Xte_s if uses_scaler else Xte)[:, 1]
         brier = float(brier_score_loss(yte, p_te))
-        # choose the threshold at ~0.9 precision (so a "verified" edge is really verified)
         prec, rec, thr = precision_recall_curve(yte, p_te)
-        target = 0.9; chosen = 0.5; chosen_rec = 0.0
+        chosen, chosen_rec = 0.5, 0.0
         for p, r, t in zip(prec[:-1], rec[:-1], thr):
-            if p >= target:
+            if p >= 0.9:
                 chosen, chosen_rec = float(t), float(r); break
-        coef = dict(zip(self.FEATURES, [round(float(c), 3) for c in lr.coef_[0]]))
-        self.model = best; self.scaler = scaler; self.uses_scaler = uses_scaler; self.threshold = chosen
-        res = dict(counts=counts,
-                   auc_logistic=round(auc_lr, 3), auc_gbm=round(auc_gb, 3),
-                   chosen_model="gbm" if not uses_scaler else "logistic", combined_auc=round(best_auc, 3),
-                   per_feature_auc=ablation, auc_structural_only=auc_struct, auc_independent_only=auc_indep,
-                   logistic_weights=coef, brier=round(brier, 4),
-                   threshold_at_0p9_precision=round(chosen, 3), recall_at_that_threshold=round(chosen_rec, 3),
-                   features=self.FEATURES,
-                   note="hard negatives (non-edges sharing >=3 partners) force the model to use INDEPENDENT signals, "
-                        "not just triadic closure; single-feature AUCs show which evidence actually carries")
-        return res
+        self.model, self.scaler, self.uses_scaler, self.threshold = best, scaler, uses_scaler, chosen
+        return dict(counts=counts, features=F, auc_logistic=round(auc_lr, 3), auc_gbm=round(auc_gb, 3),
+                    chosen_model="gbm" if not uses_scaler else "logistic", combined_auc=round(best_auc, 3),
+                    per_feature_auc=ablation, auc_structural_only=auc_struct, auc_independent_only=auc_indep,
+                    logistic_weights=dict(zip(F, [round(float(c), 3) for c in lr.coef_[0]])),
+                    brier=round(brier, 4), threshold_at_0p9_precision=round(chosen, 3),
+                    recall_at_that_threshold=round(chosen_rec, 3),
+                    note="hard negatives force use of INDEPENDENT signals; grouped structural-vs-independent AUC "
+                         "shows how much is the graph confirming itself vs genuinely independent evidence")
 
     def save(self, res):
         pickle.dump(dict(model=self.model, scaler=self.scaler, uses_scaler=self.uses_scaler,
-                         features=self.FEATURES, threshold=self.threshold, use_depmap=self.dm is not None),
+                         features=self.features_list, threshold=self.threshold,
+                         use_depmap=self.dm is not None, has_string=self.string is not None,
+                         has_emb=self.emb is not None),
                     open("outputs/orphan/signal_combiner.pkl", "wb"))
         json.dump(res, open("outputs/orphan/signal_combiner_validation.json", "w"), indent=2)
 
-    # ---------- inference (used by the loop) ----------
     def proba(self, a, b):
         x = np.array([self.features(a, b)])
         return float(self.model.predict_proba(self.scaler.transform(x) if self.uses_scaler else x)[0, 1])
@@ -205,19 +255,17 @@ def main():
     print("SIGNAL COMBINER — train one calibrated edge-probability from many independent signals")
     print("=" * 84)
     sc = SignalCombiner()
+    print("features:", sc.features_list)
     res = sc.train()
     sc.save(res)
     print(f"examples: {res['counts']}")
-    print(f"\nper-feature AUC (how much each evidence source carries ALONE):")
+    print("\nper-feature AUC (each evidence source ALONE):")
     for f, a in res["per_feature_auc"].items():
         print(f"    {f:16} {a}")
-    print(f"\nGROUPED (honest): structural-only AUC {res['auc_structural_only']}  vs  "
-          f"independent-only AUC {res['auc_independent_only']}")
-    print(f"logistic weights: {res['logistic_weights']}")
-    print(f"\ncombined AUC: logistic {res['auc_logistic']}  |  gbm {res['auc_gbm']}  -> using {res['chosen_model']}")
-    print(f"calibration (Brier, lower=better): {res['brier']}")
-    print(f"threshold at 0.9 precision: {res['threshold_at_0p9_precision']}  "
-          f"(catches {int(100*res['recall_at_that_threshold'])}% of true edges at that precision)")
+    print(f"\nGROUPED (honest): structural-only {res['auc_structural_only']}  vs  independent-only {res['auc_independent_only']}")
+    print(f"combined AUC: logistic {res['auc_logistic']}  |  gbm {res['auc_gbm']}  -> using {res['chosen_model']}")
+    print(f"calibration (Brier): {res['brier']}   threshold@0.9-precision: {res['threshold_at_0p9_precision']} "
+          f"(recall {int(100*res['recall_at_that_threshold'])}%)")
     print("\n-> outputs/orphan/signal_combiner.pkl  +  signal_combiner_validation.json")
     return res
 

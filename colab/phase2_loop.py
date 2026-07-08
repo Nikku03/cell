@@ -72,38 +72,29 @@ class Phase2Loop:
                 self.dm = DepMapEdges()
             except Exception as e:
                 print("  (DepMap co-essentiality lens unavailable:", str(e)[:60], "- continuing without it)")
-        # trained signal-combiner (calibrated P(edge) from all signals) — optional; used as a calibrated lens
+        # trained signal-combiner (calibrated P(edge) from all signals) — optional; used as a calibrated lens.
+        # feature computation goes through a SignalCombiner sharing this cell + DepMap, so the loop AUTOMATICALLY
+        # uses whatever features the model was trained with (6 core here; 7-8 with STRING/embeddings in Colab).
         import signal_combiner
         self.combiner = signal_combiner.load()
-        self._cx = self._nbrmap(self.C.D.get("coexpr", {}))
-        self._cd = self._nbrmap(self.C.D.get("codep", {}))
-        self._cplx = {int(k): set(v) for k, v in (self.C.D.get("gene2cplx", {}) or {}).items()}
+        self.sc = None
         if self.combiner:
-            print(f"  signal-combiner loaded (AUC~0.79, threshold {self.combiner['threshold']}) — calibrated lens on")
-
-    @staticmethod
-    def _nbrmap(layer):
-        out = {}
-        for k, lst in (layer or {}).items():
-            out[int(k)] = {int(p[0]): float(p[1]) for p in lst if isinstance(p, (list, tuple)) and len(p) >= 2}
-        return out
+            self.sc = signal_combiner.SignalCombiner(C=self.C, dm=self.dm)
+            if self.sc.features_list != self.combiner.get("features"):
+                print(f"  (combiner off: feature mismatch — model trained on {self.combiner.get('features')}, "
+                      f"runtime has {self.sc.features_list})")
+                self.combiner = None
+            else:
+                print(f"  signal-combiner on ({len(self.sc.features_list)} features, "
+                      f"threshold {round(self.combiner['threshold'],3)}) — calibrated lens")
 
     def _combiner_feats(self, u, v):
-        adj = self.C.ppi_adj; na, nb = adj.get(u, set()), adj.get(v, set())
-        shared = len(na & nb); union = len(na | nb)
-        jac = shared / union if union else 0.0
-        same_cplx = 1.0 if (self._cplx.get(u, set()) & self._cplx.get(v, set())) else 0.0
-        coex = max(self._cx.get(u, {}).get(v, 0.0), self._cx.get(v, {}).get(u, 0.0))
-        cod = max(self._cd.get(u, {}).get(v, 0.0), self._cd.get(v, {}).get(u, 0.0))
-        coess = 0.0
-        if self.dm is not None:
-            c = self.dm.coess(self.C.name[u], self.C.name[v]); coess = float(c) if c is not None else 0.0
-        return [float(shared), float(jac), same_cplx, coex, cod, coess]
+        return self.sc.features(u, v)
 
     def _combiner_prob(self, u, v):
         import numpy as _np
         f = self.combiner
-        x = _np.array([self._combiner_feats(u, v)])
+        x = _np.array([self.sc.features(u, v)])
         if f.get("uses_scaler"):
             x = f["scaler"].transform(x)
         return float(f["model"].predict_proba(x)[0, 1])
@@ -324,7 +315,12 @@ class Phase2Loop:
         # on their own — that would be the graph confirming itself). One-shot, so it runs on attempt 1 only.
         if self.combiner and attempt == 1:
             feats = self._combiner_feats(u, v)
-            indep_present = feats[2] > 0 or feats[3] > 0 or feats[4] > 0 or feats[5] >= 0.2   # cplx/coex/codep/coess
+            # independence guard: at least one signal INDEPENDENT of the PPI graph must be present, so the
+            # structural features (shared_partners/jaccard, indices 0-1) can't close cliques on their own.
+            # independent = same_complex/coexpr/codep/coess (2-5) + STRING(6)/embedding(7) when present.
+            indep_present = (feats[2] > 0 or feats[3] > 0 or feats[4] > 0 or feats[5] >= 0.2
+                             or (len(feats) > 6 and feats[6] >= 0.3)      # STRING physical score
+                             or (len(feats) > 7 and feats[7] >= 0.5))     # embedding cosine
             p = self._combiner_prob(u, v)
             if p >= self.combiner["threshold"] and indep_present:
                 self.C.ppi_adj[u].add(v); self.C.ppi_adj[v].add(u)

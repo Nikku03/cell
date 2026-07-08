@@ -1,9 +1,10 @@
-"""Build colab/master.ipynb — the whole current cell model in one Colab run.
+"""Build colab/master.ipynb — the whole current cell system in one Drive-aware Colab run.
 
-Clones the branch and runs, in order: the 24-axis recovery scorecard, the CellQA question-answering layer, the
-whole-cell self-consistency audit, and the reasoned variant predictor (incl. the sickle-cell blind-spot demo).
-Core cells are dependency-light (stdlib + numpy) and read committed data; heavier cells (AlphaMissense/ESM/
-Human-GEM) are optional and clearly marked. CPU-only.
+Mounts Google Drive, restores the 36 MB cell, wires the STRONG dense features (STRING physical, Geneformer
+embeddings) and the DepMap matrix straight off Drive, then runs the current pipeline end to end:
+  scorecard -> CompleteCell (Phase 1) -> self-healing LOOP (Phase 2) -> signal-combiner (trained WITH the Drive
+  features) -> loop again with the stronger combiner -> DepMap co-essentiality (Phase 3).
+Core cells are dependency-light; the heavy features auto-activate only when the Drive files are present.
 """
 import json
 from pathlib import Path
@@ -18,164 +19,113 @@ def code(*L): return {"cell_type": "code", "metadata": {}, "execution_count": No
 
 
 cells = [
-    md("# The cell model — one Colab run",
+    md("# The cell model — full system, one Colab run (Drive-aware)",
        "",
-       "Clones the branch and runs the whole current system:",
-       "1. **Recovery scorecard** — 24 capability axes, each gated vs known biology (the trust layer).",
-       "2. **CellQA** — ask the cell: what binds X · knock out X · mutation effect · drug off-targets · "
-       "disease→target · kcat · dark-gene function · cell-type-conditioned answers.",
-       "3. **Whole-cell audit** — the model checks ITSELF: physics violations, localization conflicts, "
-       "missing/wrong links, gaps — ranked, verified, nothing auto-applied.",
-       "4. **Reasoned variant predictor** — AlphaMissense + mechanism + the sickle-cell blind-spot guard.",
+       "Everything current, in order, with your Google Drive mounted so the **strong** features load off disk:",
+       "1. **Recovery scorecard** — capability axes gated vs known biology.",
+       "2. **CompleteCell (Phase 1)** — the full-fidelity, per-gene-queryable cell the ML consumes.",
+       "3. **Self-healing LOOP (Phase 2)** — analyse → detect every field → fix/verify (failure-guided, 3 "
+       "outcomes) → repeat until convergence. Locked ledger + regression check.",
+       "4. **Signal-combiner** — one calibrated P(edge) from many signals; trains WITH the Drive dense features "
+       "(STRING physical, Geneformer embeddings) when present.",
+       "5. **Loop again** with the stronger combiner.",
+       "6. **DepMap co-essentiality (Phase 3)**.",
        "",
-       "Core cells need only numpy and the committed data. Heavier cells (network / Human-GEM / ESM) are marked "
-       "**optional**."),
+       "> Anti-trap throughout: physics > measured > predicted; measured facts are never overwritten."),
 
-    md("## 1. Setup — clone the branch + light deps"),
+    md("## 1. Setup — clone the branch + deps"),
     code(f"!git clone --depth 1 -b {BR} {REPO} 2>/dev/null || (cd cell && git pull)",
          "%cd cell",
-         "!pip -q install numpy scipy scikit-learn 2>/dev/null",
+         "!pip -q install numpy scipy scikit-learn pandas 2>/dev/null",
          "import sys, os; sys.path.insert(0, 'colab')",
+         "os.makedirs('outputs/orphan', exist_ok=True)",
          "print('ready')"),
 
-    md("## 1b. Restore the core data from Drive  **(required for CellQA / audit)**",
-       "The 36 MB `cell_complete.json` is git-ignored on purpose, so it is **not** in the clone. Put it (or a "
-       "`.json.gz`) in your Google Drive under **`MyDrive/cell_model/`** — the same convention the other "
-       "notebooks use — and this cell restores it. (The scorecard cell below works without it.)"),
-    code("os.makedirs('outputs/orphan', exist_ok=True)",
+    md("## 2. Mount Drive — restore the cell + wire the STRONG features off disk  **(the key cell)**",
+       "Restores the 36 MB `cell_complete.json`, copies the DepMap matrix local, and points the combiner's "
+       "dense-feature env vars at your Drive files. Paths are tried in a few known locations; adjust if yours "
+       "differ. Every heavy feature is **optional** — a missing file just turns that feature off, the run still "
+       "completes."),
+    code("from google.colab import drive; drive.mount('/content/drive')",
+         "import glob, gzip, shutil, os",
+         "D = '/content/drive/MyDrive'",
+         "def first(*pats):",
+         "    for p in pats:",
+         "        g = sorted(glob.glob(p, recursive=True), key=lambda x: -os.path.getsize(x)) if os.path.sep in p else []",
+         "        if g: return g[0]",
+         "    return None",
+         "",
+         "# --- 2a. cell_complete.json (git-ignored 36 MB core data) ---",
          "dst = 'outputs/orphan/cell_complete.json'",
          "if not os.path.exists(dst):",
-         "    from google.colab import drive; drive.mount('/content/drive')",
-         "    import glob, gzip, shutil",
-         "    c = sorted(glob.glob('/content/drive/MyDrive/cell_model/**/cell_complete*.json*', recursive=True),",
-         "               key=lambda p: os.path.getsize(p), reverse=True)",
-         "    if not c:",
-         "        raise FileNotFoundError('Upload cell_complete.json (or .json.gz) to MyDrive/cell_model/ — '",
-         "                                'it is the 36MB core data, git-ignored on purpose.')",
-         "    src = c[0]; print('restoring from', src)",
+         "    src = first(f'{D}/cell_model/**/cell_complete*.json*', f'{D}/**/cell_complete*.json*')",
+         "    assert src, 'cell_complete.json(.gz) not found under MyDrive/cell_model/'",
+         "    print('restoring', src)",
          "    (shutil.copyfileobj(gzip.open(src,'rb'), open(dst,'wb')) if src.endswith('.gz') else shutil.copy(src, dst))",
-         "import json; D = json.load(open(dst))",
-         "print('model loaded:', len(D['genes']), 'genes |', len(D['ctnames']), 'cell types |', len(D['emask']), 'in emask')"),
+         "import json; print('cell:', len(json.load(open(dst))['genes']), 'genes')",
+         "",
+         "# --- 2b. DepMap gene-effect matrix (co-essentiality) -> copy local for speed ---",
+         "os.makedirs('depmap', exist_ok=True)",
+         "if not os.path.exists('depmap/CRISPRGeneEffect.csv'):",
+         "    ce = first(f'{D}/depmap_data/**/CRISPRGeneEffect.csv', f'{D}/**/CRISPRGeneEffect.csv')",
+         "    if ce: print('copying DepMap', ce); shutil.copy(ce, 'depmap/CRISPRGeneEffect.csv')",
+         "    else:  print('DepMap not on Drive — Phase 3 cell can download it from figshare instead')",
+         "os.environ['DEPMAP_DIR'] = 'depmap'",
+         "",
+         "# --- 2c. STRING physical + Geneformer embeddings -> the combiner auto-uses them ---",
+         "sl = first(f'{D}/virtual_cell_data/networks/string_physical*.gz', f'{D}/**/string_physical*.gz')",
+         "sa = first(f'{D}/virtual_cell_data/networks/string_aliases*.gz', f'{D}/**/string_aliases*.gz')",
+         "gf = first(f'{D}/cell_model/geneformer_gene_emb.npz', f'{D}/**/geneformer_gene_emb.npz')",
+         "if sl: os.environ['STRING_LINKS'] = sl",
+         "if sa: os.environ['STRING_ALIASES'] = sa",
+         "if gf: os.environ['GENEFORMER_NPZ'] = gf",
+         "print('STRING:', bool(sl), '| STRING aliases:', bool(sa), '| Geneformer:', bool(gf),",
+         "      '| DepMap:', os.path.exists('depmap/CRISPRGeneEffect.csv'))"),
 
-    md("## 2. Recovery scorecard — 24/24 (reads committed results, no network)"),
+    md("## 3. Recovery scorecard"),
     code("!python colab/recovery_scorecard.py"),
 
-    md("## 3. CellQA — ask the cell (committed data; fast)"),
-    code("from cell_qa import CellQA, coverage",
-         "coverage()"),
-    code("qa = CellQA()   # loads the complete (ghost-patched) model",
-         "for label, r in [",
-         "    ('what does TP53 bind?', qa.what_binds('TP53', 5)),",
-         "    ('remove SREBF2 -> downstream?', qa.knockout('SREBF2', 6)),",
-         "    ('SREBF2 regulates?', qa.regulates('SREBF2', 6)),",
-         "    ('kcat of HK1?', qa.kcat('HK1')),",
-         "    ('psoriasis (IL23) -> target?', qa.disease_target(['IL23A','IL12B'],",
-         "        ['IL17A','IL17F','IL22','CCL20','IL21'],",
-         "        pathway=['IL23A','IL12B','IL23R','JAK2','STAT3','RORC','IL17A','STAT4'], k=5)),",
-         "    ('GATA1 binds in erythroid?', qa.what_binds('GATA1', 5, cell_type='erythroid progenitor')),",
-         "    ('GATA1 binds in T cell? (gated off)', qa.what_binds('GATA1', 5, cell_type='regulatory T cell')),",
-         "]:",
-         "    print('\\nQ:', label)",
-         "    if r.get('abstain'): print('   ABSTAIN —', r['reason']); continue",
-         "    for k in ('measured','predicted'):",
-         "        if r.get(k): print(f'   {k}: ' + ', '.join(f\"{a['entity']}({a['confidence']})\" for a in r[k][:5]))",
-         "    for k in ('kcat_per_s','tier','note'):",
-         "        if k in r: print(f'   {k}: {r[k]}')"),
-
-    md("## 4. Whole-cell self-consistency audit (numpy + committed data)",
-       "Physics violations · localization conflicts · missing links (triadic closure) · wrong links · gaps — "
-       "ranked, under the anti-trap hierarchy (hard-constraint > measured > predicted; nothing auto-applied)."),
-    code("from self_consistency import SelfConsistency",
-         "from patch_ghosts import apply_patch",
-         "sc = SelfConsistency(); apply_patch(sc.D)",
-         "rep = sc.whole_cell_audit(relations=('ppi','reg','sig'), top_per=40)",
-         "print('flags:', rep['n_flags'], '| by tier:', rep['by_tier'], '| by kind:', rep['by_kind'])",
-         "print('\\ntop missing-link candidates (PPI, triadic closure):')",
-         "for f in [x for x in rep['flags'] if x.get('evidence')=='completion'][:10]:",
-         "    print('  ', f['entity'], '—', f['detail'].get('shared_partners'), 'shared partners')",
-         "print('\\nphysics violations (kcat past the diffusion limit):')",
-         "for f in [x for x in rep['flags'] if x.get('evidence')=='provable'][:5]:",
-         "    print('  ', f['entity'], '::', f['odd'][:60])"),
-
-    md("## 5. Reasoned variant predictor — the sickle-cell lesson  *(optional: network)*",
-       "AlphaMissense drives the call; ΔΔG/active-site give the reason; a gain-of-function guard overrides a "
-       "false-benign call. Even the SOTA scores sickle cell benign — the predictor refuses that false certainty."),
-    code("from reasoned_variant import ReasonedVariant",
-         "rv = ReasonedVariant()",
-         "for g,up,pos,wt,mut,lab in [('HBB','P68871',7,'E','V','sickle cell (gain-of-function)'),",
-         "                            ('PAH','P00439',408,'R','W','PKU R408W (classic pathogenic)')]:",
-         "    r = rv.predict(g, up, pos, wt, mut)",
-         "    print(f\"\\n{lab}: {g} {wt}{pos}{mut}\")",
-         "    print('  AlphaMissense', r.get('score'), '-> call:', r['call'], '| blind_spot:', r.get('ml_blind_spot'))",
-         "    print('  why:', r['reasoning']['why'][:160])"),
-
-    md("## 6. Whole-cell kcat consistency — test the PREDICTED kcats (not just central carbon)",
-       "The flux-based check only reaches the ~334 enzymes carrying flux in one condition (central carbon, mostly "
-       "measured). This tests **all 2,549** kcats — especially the ~2,100 predicted ones — against provable, "
-       "flux-free bounds: the physics ceiling (kcat/Km < diffusion limit) and the independent in-vivo floor "
-       "(an enzyme can't run faster than its own kcat). Measured kcats stay facts; only predicted outliers are "
-       "flagged, each with a proposed value."),
-    code("!python colab/whole_cell_kcat.py"),
-
-    md("## 6b. Disease data — ground disease→target in REAL disease evidence *(network: Open Targets)*",
-       "Fetches each disease's real associated genes from **Open Targets** (GWAS + expression/GEO + literature) "
-       "and checks whether the pipeline's *blind* network predictions are actually real disease genes. No "
-       "download needed — it's a live API."),
-    code("!python colab/disease_data.py"),
-
-    md("## 7. Deep runs on the in-model data — actually runs (no external download needed)",
-       "These run on data already in the model (`cell_complete.json` from cell 1b + committed kinetics). The "
-       "**cross-validation** cell is light (numpy only). The **flux** cells download Human-GEM (~1–2 min) and "
-       "need `cobra`+`mygene`, installed here.",
-       "",
-       "> Note: the *external* datasets (DepMap / Tahoe / GEO) in `DATASET_TRAINING_PLAN.md` are **not** bundled — "
-       "those you download first (the morning job), then point `crossval_measured.py` at them. Everything below "
-       "runs on data that's already loaded."),
-    code("# light — runs on the in-model cell-line co-dependency signal (numpy only, already installed)",
-         "!python colab/crossval_measured.py"),
-    code("# heavier — installs cobra+mygene and downloads Human-GEM (~1-2 min), then runs the flux checks",
-         "!pip -q install cobra mygene 2>/dev/null",
-         "!python colab/kinetics_flux_consistency.py     # flux-based capacity check on flux-carrying enzymes",
-         "!python colab/validate_ecflux_ppm.py           # measured per-enzyme capacity (ppm x kcat)",
-         "print('\\nsee docs/ for each capability; DATASET_TRAINING_PLAN.md for adding DepMap/Tahoe/GEO')"),
-
-    md("---",
-       "# The three-phase build: complete cell → deep audit → DepMap-trained re-audit",
-       "Phase 1 assembles the full-fidelity cell an ML can query for anything; Phase 2 audits every field and "
-       "builds cell v2 from the verified additions; Phase 3 trains the edge model on DepMap co-essentiality and "
-       "re-audits into cell v3. All under the anti-trap rule (facts flagged, never overwritten)."),
-
-    md("## Phase 1 — the full-fidelity ML entry point (`CompleteCell`)",
-       "Every layer reachable per gene at full resolution — the object the audit consumes (not the summary HTML)."),
+    md("## 4. CompleteCell (Phase 1) — the full-fidelity ML entry point",
+       "Every layer reachable per gene at full resolution; `.apply_ledger()` folds in the loop's verified fixes."),
     code("from complete_cell import CompleteCell",
          "cell = CompleteCell()",
-         "lay = cell.layers(); print('layers:', len(lay['coverage']), '| genes:', lay['n_genes'])",
-         "r = cell.gene('TP53')",
-         "print('TP53 -> ppi', len(r['ppi_partners']), '| regulates', len(r['regulates']),",
-         "      '| GO F', len((r['go'] or {}).get('F',[])), '| complexes', r['complexes'][:2])",
-         "# build the human-facing complete HTML too (v1)",
-         "!python colab/make_complete_cell.py v1"),
+         "print('layers:', len(cell.layers()['coverage']), '| genes:', len(cell.genes))",
+         "r = cell.gene('TP53'); print('TP53 -> ppi', len(r['ppi_partners']), '| regulates', len(r['regulates']),",
+         "      '| complexes', r['complexes'][:2])"),
 
-    md("## Phase 2 — deep audit across every field → cell v2",
-       "Physics/localization/completeness/coverage per field; applies only verified additions (nothing overwritten)."),
-    code("!python colab/phase2_audit.py",
-         "!python colab/make_complete_cell.py v2     # cell v2 with the verified additions + audit panel"),
+    md("## 5. Self-healing LOOP (Phase 2) — analyse → detect → fix/verify, until convergence",
+       "First pass (before the combiner is trained it uses the single-lens corroboration). Reports the three "
+       "outcomes per field, the locked ledger, and the regression check."),
+    code("!python colab/phase2_loop.py"),
 
-    md("## Phase 3 — train on DepMap co-essentiality → cell v3  *(downloads 419 MB)*",
-       "DepMap 24Q2 gene-effect over ~1,150 lines. Trains an edge predictor, corroborates the v2 additions "
-       "independently, and finds the edges triadic closure is blind to (understudied mito module). Honest: DepMap "
-       "is redundant on KNOWN edges — its value is the MISSING ones."),
-    code("import os, urllib.request, json",
-         "os.makedirs('depmap', exist_ok=True)",
-         "dst = 'depmap/CRISPRGeneEffect.csv'",
-         "if not os.path.exists(dst):",
+    md("## 6. Signal-combiner — train ONE calibrated P(edge) from every signal  *(uses Drive features)*",
+       "If cell 2c found STRING / Geneformer, they enter as extra feature columns automatically (watch the "
+       "printed feature list + the structural-vs-independent AUC — the dense features are what lift the "
+       "independent AUC)."),
+    code("!python colab/signal_combiner.py"),
+
+    md("## 7. Loop again — now with the trained, stronger combiner",
+       "The combiner is picked up as a calibrated lens (with the independence guard). Compare the locked "
+       "`completion` count to cell 5."),
+    code("!python colab/phase2_loop.py"),
+
+    md("## 8. DepMap co-essentiality (Phase 3) — train the edge model + corroborate the additions",
+       "Uses the Drive DepMap matrix from cell 2b (or downloads from figshare if absent)."),
+    code("import os",
+         "if not os.path.exists('depmap/CRISPRGeneEffect.csv'):",
+         "    import urllib.request, json",
          "    j = json.loads(urllib.request.urlopen('https://api.figshare.com/v2/articles/25880521').read())",
          "    url = next(f['download_url'] for f in j['files'] if f['name']=='CRISPRGeneEffect.csv')",
-         "    print('downloading DepMap gene-effect (419 MB)…'); urllib.request.urlretrieve(url, dst)",
-         "os.environ['DEPMAP_DIR'] = 'depmap'",
-         "print('DepMap ready:', os.path.getsize(dst)//10**6, 'MB')"),
-    code("!DEPMAP_DIR=depmap python colab/phase3_depmap.py",
-         "!python colab/make_complete_cell.py v3     # cell v3 with the DepMap-trained co-essential links"),
+         "    print('downloading DepMap (419 MB)…'); urllib.request.urlretrieve(url, 'depmap/CRISPRGeneEffect.csv')",
+         "!DEPMAP_DIR=depmap python colab/phase3_depmap.py"),
+
+    md("## 9. Extras — audit detail, reasoned variant, whole-cell kcat, disease  *(optional)*"),
+    code("!python colab/whole_cell_kcat.py            # test all predicted kcats vs physics + in-vivo floor",
+         "!python colab/disease_data.py               # blind disease->target vs real Open Targets genes",
+         "from reasoned_variant import ReasonedVariant",
+         "rv = ReasonedVariant()",
+         "r = rv.predict('HBB','P68871',7,'E','V')   # sickle cell — the gain-of-function blind-spot demo",
+         "print('sickle:', r['call'], '| blind_spot:', r.get('ml_blind_spot'))"),
 ]
 
 nb = {"cells": cells, "metadata": {"colab": {"provenance": []},
@@ -183,4 +133,4 @@ nb = {"cells": cells, "metadata": {"colab": {"provenance": []},
       "nbformat": 4, "nbformat_minor": 0}
 out = Path("colab/master.ipynb")
 out.write_text(json.dumps(nb, indent=1))
-print("wrote", out)
+print("wrote", out, "-", len(cells), "cells")
