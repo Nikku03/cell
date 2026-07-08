@@ -83,6 +83,7 @@ def _directed(path, C, a_cols, b_cols, eff_cols, src):
                 return low.index(nm)
         return None
     ia, ib, ie = col(a_cols), col(b_cols), col(eff_cols)
+    istim, iinhib = col(["is_stimulation"]), col(["is_inhibition"])   # OmniPath encodes sign as two booleans
     if ia is None or ib is None:
         print(f"  ({src}: could not find source/target columns — sample header above for refinement)")
         return []
@@ -95,22 +96,27 @@ def _directed(path, C, a_cols, b_cols, eff_cols, src):
                 continue
             a, b = p[ia], p[ib]
             if a in idx and b in idx and a != b:
-                eff = (p[ie] if ie is not None and len(p) > ie else "").lower().strip()
-                try:                                        # numeric weight (e.g. CollecTRI +1/-1)
-                    fv = float(eff); sign = 1 if fv > 0 else (-1 if fv < 0 else 0)
-                except ValueError:                          # text effect (e.g. SIGNOR up/down-regulates)
-                    sign = -1 if any(k in eff for k in ("down", "repress", "inhib")) else \
-                           (1 if any(k in eff for k in ("up", "activ")) else 0)
+                if istim is not None and iinhib is not None and len(p) > max(istim, iinhib):
+                    st = p[istim].strip().lower() in ("true", "1")   # OmniPath: is_stimulation / is_inhibition
+                    inh = p[iinhib].strip().lower() in ("true", "1")
+                    sign = 1 if (st and not inh) else (-1 if (inh and not st) else 0)
+                else:
+                    eff = (p[ie] if ie is not None and len(p) > ie else "").lower().strip()
+                    try:                                    # numeric weight (native CollecTRI +1/-1)
+                        fv = float(eff); sign = 1 if fv > 0 else (-1 if fv < 0 else 0)
+                    except ValueError:                      # text effect (native SIGNOR up/down-regulates)
+                        sign = -1 if any(k in eff for k in ("down", "repress", "inhib")) else \
+                               (1 if any(k in eff for k in ("up", "activ")) else 0)
                 edges.append([idx[a], idx[b], sign, src])
     print(f"  {src}: {len(edges):,} directed edges mapped to our genes")
     return edges
 
 
 def causal(signor_path, collectri_path, C):
-    edges = _directed(signor_path, C, ["entitya", "idagene", "gene_a", "source"],
-                      ["entityb", "idbgene", "gene_b", "target"], ["effect", "mechanism"], "signor")
-    edges += _directed(collectri_path, C, ["source", "tf", "regulator"],
-                       ["target", "gene"], ["weight", "mor", "effect", "sign"], "collectri")
+    edges = _directed(signor_path, C, ["source_genesymbol", "entitya", "gene_a", "idagene"],
+                      ["target_genesymbol", "entityb", "gene_b", "idbgene"], ["effect", "mechanism"], "signor")
+    edges += _directed(collectri_path, C, ["source_genesymbol", "tf", "regulator", "source"],
+                       ["target_genesymbol", "target", "gene"], ["weight", "mor", "effect", "sign"], "collectri")
     if not edges:
         return None
     # how many are NEW vs the model's existing reg/sig (directed pairs)
