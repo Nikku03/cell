@@ -232,7 +232,15 @@ class SignalCombiner:
             return None
         try:
             import pandas as pd
+            sz = os.path.getsize(path) / 1e9
+            print(f"  expr matrix: {os.path.basename(path)} ({sz:.2f} GB on disk)")
+            if sz > 2.0:            # a bulk expression matrix is ~0.1-0.4 GB; >2 GB is per-cell / wrong file -> skip
+                print("  (expr_corr off: file too large for a bulk matrix — looks like per-cell data; skipping to "
+                      "avoid an OOM. Point EXPR_MATRIX at a bulk TPM matrix like "
+                      "OmicsExpressionProteinCodingGenesTPMLogp1.csv or celltype_expression.csv.)")
+                return None
             df = pd.read_csv(path, index_col=0)
+            print(f"  expr raw shape: {df.shape}")
             idx = self.C.idx
             nrm = lambda c: str(c).split(" (")[0]              # DepMap headers look like 'A1BG (1)' -> 'A1BG'
             col_syms = [nrm(c) for c in df.columns]
