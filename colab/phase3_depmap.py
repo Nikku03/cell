@@ -39,6 +39,13 @@ def _json_np(o):
 def load_gene_effect(path=GENE_EFFECT):
     """-> (symbols list, Z matrix [genes x lines] z-scored per gene with NaN->0). Column headers look like
     'A1BG (1)'; rows are ModelIDs."""
+    # cache the derived z-scored matrix: after the first parse, reuse the small .npz -> no 419 MB CSV re-read
+    # (much faster AND much lower peak RAM on every subsequent run / reconnect). Delete the npz to refresh.
+    cache = "outputs/orphan/depmap_vecs.npz"
+    if os.path.exists(cache):
+        z = np.load(cache, allow_pickle=True)
+        print(f"  DepMap: loaded z-scored matrix from cache ({z['Z'].shape[0]:,} genes x {z['Z'].shape[1]} lines)")
+        return list(z["syms"]), z["Z"], z["valid"], z["mu"], z["sd"]
     import pandas as pd
     df = pd.read_csv(path, index_col=0)                       # lines x genes
     syms = [c.split(" (")[0] for c in df.columns]
@@ -49,6 +56,11 @@ def load_gene_effect(path=GENE_EFFECT):
     valid = (~np.isnan(X)).sum(1)
     X -= mu; X /= sd                                          # z-score IN PLACE (no extra full-size copy)
     np.nan_to_num(X, copy=False)                             # NaN -> 0 in place; X is now Z
+    try:
+        np.savez_compressed(cache, syms=np.array(syms), Z=X, valid=valid, mu=mu.ravel(), sd=sd.ravel())
+        print(f"  DepMap: cached z-scored matrix -> {cache}")
+    except Exception as e:
+        print("  (DepMap cache write failed:", str(e)[:50], ")")
     return syms, X, valid, mu.ravel(), sd.ravel()
 
 

@@ -222,6 +222,12 @@ class SignalCombiner:
         co-essentiality: z-score each gene across samples, correlation = dot of unit vectors. Much denser than
         the stored top-k coexpr lists (which barely help, AUC ~0.51). Auto-detects which axis is genes by
         matching our symbols."""
+        cache = "outputs/orphan/expr_vecs.npz"
+        if os.path.exists(cache):                              # reuse derived vectors -> no 305 MB CSV re-parse
+            z = np.load(cache)
+            vecs = {int(i): z["vecs"][k] for k, i in enumerate(z["ids"])}
+            print(f"  expr_corr: loaded {len(vecs):,} gene vectors from cache (no CSV re-parse)")
+            return vecs
         if not path or not os.path.exists(path):
             return None
         try:
@@ -244,8 +250,16 @@ class SignalCombiner:
             mu = np.nanmean(X, 1, keepdims=True); sd = np.nanstd(X, 1, keepdims=True); sd[sd == 0] = 1
             Z = (X - mu) / sd; Z[np.isnan(Z)] = 0.0
             Z /= (np.linalg.norm(Z, axis=1, keepdims=True) + 1e-8)
-            vecs = {idx[g]: Z[i] for i, g in enumerate(df.index)}
-            print(f"  expr_corr loaded: {len(vecs):,} genes x {X.shape[1]} samples")
+            genes = list(df.index)
+            del df
+            vecs = {idx[g]: Z[i] for i, g in enumerate(genes)}
+            ids = list(vecs)
+            try:
+                np.savez_compressed(cache, ids=np.array(ids),
+                                    vecs=np.array([vecs[i] for i in ids], dtype=np.float32))
+            except Exception:
+                pass
+            print(f"  expr_corr loaded: {len(vecs):,} genes x {X.shape[1]} samples -> cached")
             return vecs
         except Exception as e:
             print("  (expr_corr off:", str(e)[:60], ")")
