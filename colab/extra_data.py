@@ -84,12 +84,21 @@ def _directed(path, C, a_cols, b_cols, eff_cols, src):
         return None
     ia, ib, ie = col(a_cols), col(b_cols), col(eff_cols)
     istim, iinhib = col(["is_stimulation"]), col(["is_inhibition"])   # OmniPath encodes sign as two booleans
+    _TYPES = ("protein", "complex", "smallmolecule", "mirna", "gene", "stimulus", "phenotype", "antibody",
+              "chemical", "proteinfamily", "fusion protein", "ncrna")
+    headerless = False
+    if (ia is None or ib is None) and src == "signor" and len(header) >= 9 and low[1] in _TYPES:
+        # native SIGNOR export with NO header row: ENTITYA(0) TYPEA(1) IDA(2) DBA(3) ENTITYB(4) ... EFFECT(8).
+        # The "header" line is really data, so read positionally AND don't skip it.
+        ia, ib, ie, headerless = 0, 4, 8, True
+        print(f"  (signor: headerless native format -> positional cols ENTITYA=0 ENTITYB=4 EFFECT=8)")
     if ia is None or ib is None:
         print(f"  ({src}: could not find source/target columns — sample header above for refinement)")
         return []
     edges = []
     with _open(path) as fh:
-        fh.readline()
+        if not headerless:
+            fh.readline()                                    # skip the header row (headerless SIGNOR has none)
         for line in fh:
             p = line.rstrip("\n").split(sep)
             if len(p) <= max(ia, ib):
