@@ -52,7 +52,7 @@ CAP_COMPLETION = 300
 # "meaningfully present" thresholds for the combiner's INDEPENDENT features (structural ones excluded), used by
 # the completion independence guard. Keyed by name so adding features never breaks the indices.
 _INDEP_THRESH = {"same_complex": 0.5, "coexpression": 1e-6, "codependency": 1e-6, "coessentiality": 0.2,
-                 "string_score": 0.3, "embedding_cos": 0.5, "expr_corr": 0.3, "tahoe_corr": 0.3}
+                 "string_score": 0.3, "embedding_cos": 0.5, "expr_corr": 0.3, "tahoe_corr": 0.3, "esm_cos": 0.5}
 
 
 def _groups(t):

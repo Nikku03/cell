@@ -23,6 +23,7 @@ ARTIFACTS = [
     "phase3_depmap_validation.json", "kinetics_refined_corrected.json",
     "ghost_patch.json", "recovery_scorecard.json",
     "tahoe_vecs.npz",          # derived Tahoe per-gene vectors (58 MB) — cache so the 900 MB download is one-time
+    "extra_data_report.json", "causal_edges.json", "reactome_pathways.json",   # Reactome + SIGNOR/CollecTRI overlays
 ]
 
 

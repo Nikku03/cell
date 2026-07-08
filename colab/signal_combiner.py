@@ -60,6 +60,7 @@ class SignalCombiner:
         self.emb = self._load_emb(geneformer_npz or os.environ.get("GENEFORMER_NPZ"))
         self.expr = self._load_expr(os.environ.get("EXPR_MATRIX"))
         self.tahoe = self._load_tahoe(os.environ.get("TAHOE_DE_DIR"))
+        self.esm = self._load_esm(os.environ.get("ESM_PARQUET"))
         self.features_list = list(CORE)
         if self.string is not None:
             self.features_list.append("string_score")
@@ -69,6 +70,8 @@ class SignalCombiner:
             self.features_list.append("expr_corr")
         if self.tahoe is not None:
             self.features_list.append("tahoe_corr")
+        if self.esm is not None:
+            self.features_list.append("esm_cos")
 
     def _reladj(self, relation):
         """undirected adjacency for the chosen relation (ppi reuses the cell's; reg/sig built from the edge list)."""
@@ -266,6 +269,59 @@ class SignalCombiner:
             print("  (tahoe_corr off:", str(e)[:60], ")")
             return None
 
+    def _load_esm(self, path):
+        """ESM protein-sequence embedding cosine. Sequence-based (orthogonal to Geneformer's expression-based
+        embedding), so it MIGHT catch interaction-interface similarity — an honest test, judged by add->measure->
+        keep. Defensive parquet loader: finds the id column (gene symbol, or UniProt acc mapped via mygene) and
+        the embedding (a list/array column, or many float columns)."""
+        if not path or not os.path.exists(path):
+            return None
+        try:
+            import pandas as pd
+            df = pd.read_parquet(path)
+            idx = self.C.idx
+            # id column: the string/object column with the most matches to our symbols; else a UniProt-looking one
+            id_col, best = None, 0
+            for c in df.columns:
+                if df[c].dtype == object:
+                    hit = sum(1 for v in df[c].astype(str).head(2000) if v in idx)
+                    if hit > best:
+                        best, id_col = hit, c
+            ensembl = False
+            if id_col is None or best < 0.05 * min(len(df), 2000):
+                # maybe UniProt accessions -> map via mygene
+                cand = next((c for c in df.columns if df[c].dtype == object), None)
+                if cand is None:
+                    print("  (esm_cos off: no id column found)"); return None
+                id_col = cand; ensembl = True
+            # embedding: a column of arrays/lists, else all numeric columns
+            arr_col = next((c for c in df.columns if c != id_col and
+                            isinstance(df[c].iloc[0], (list, tuple, np.ndarray))), None)
+            if arr_col is not None:
+                mat = np.array([np.asarray(v, dtype=np.float32) for v in df[arr_col]])
+            else:
+                num = df.select_dtypes("number")
+                if num.shape[1] < 8:
+                    print("  (esm_cos off: no embedding matrix found)"); return None
+                mat = num.to_numpy(dtype=np.float32)
+            ids = df[id_col].astype(str).tolist()
+            if ensembl:
+                try:
+                    import mygene
+                    hits = mygene.MyGeneInfo().querymany([i.split(".")[0] for i in ids], scopes="uniprot,ensembl.gene",
+                                                         fields="symbol", species="human", verbose=False)
+                    m2s = {h["query"]: h["symbol"] for h in hits if h.get("symbol")}
+                    ids = [m2s.get(i.split(".")[0], i) for i in ids]
+                except Exception as e:
+                    print("  (esm_cos: id->symbol map failed:", str(e)[:40], ")")
+            mat = mat / (np.linalg.norm(mat, axis=1, keepdims=True) + 1e-8)
+            emb = {idx[s]: mat[i] for i, s in enumerate(ids) if s in idx}
+            print(f"  esm_cos loaded: {len(emb):,} proteins")
+            return emb if len(emb) >= 50 else None
+        except Exception as e:
+            print("  (esm_cos off:", str(e)[:60], ")")
+            return None
+
     # ---------- features ----------
     def _sym(self, m, a, b):
         return max(m.get(a, {}).get(b, 0.0), m.get(b, {}).get(a, 0.0))
@@ -293,6 +349,9 @@ class SignalCombiner:
         if self.tahoe is not None:
             ta, tb = self.tahoe.get(a), self.tahoe.get(b)
             f.append(float(ta @ tb) if ta is not None and tb is not None else 0.0)
+        if self.esm is not None:
+            ea, eb = self.esm.get(a), self.esm.get(b)
+            f.append(float(ea @ eb) if ea is not None and eb is not None else 0.0)
         return f
 
     # ---------- labelled examples ----------

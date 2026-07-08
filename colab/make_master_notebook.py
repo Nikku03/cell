@@ -86,12 +86,21 @@ cells = [
          "    tah = fetch_tahoe.fetch()                                  # 14 wide plates from HuggingFace",
          "    if not tah: tah = next(iter(glob.glob(f'{D}/**/tahoe_de', recursive=True)), None)   # Drive fallback",
          "    if isinstance(tah, str): os.environ['TAHOE_DE_DIR'] = tah",
+         "esm = first(f'{D}/esm_embeddings.parquet', f'{D}/**/esm_embeddings.parquet')",
+         "rx  = first(f'{D}/virtual_cell_data/pathways/reactome_human.txt', f'{D}/**/reactome_human.txt')",
+         "sig = first(f'{D}/virtual_cell_data/networks/signor.tsv', f'{D}/**/signor.tsv')",
+         "col = first(f'{D}/virtual_cell_data/networks/collectri.tsv', f'{D}/**/collectri.tsv')",
          "if sl: os.environ['STRING_LINKS'] = sl",
          "if sa: os.environ['STRING_ALIASES'] = sa",
          "if gf: os.environ['GENEFORMER_NPZ'] = gf",
          "if ex: os.environ['EXPR_MATRIX'] = ex",
+         "if esm: os.environ['ESM_PARQUET'] = esm",
+         "if rx: os.environ['REACTOME_TXT'] = rx",
+         "if sig: os.environ['SIGNOR_TSV'] = sig",
+         "if col: os.environ['COLLECTRI_TSV'] = col",
          "print('STRING:', bool(sl), '| aliases:', bool(sa), '| Geneformer:', bool(gf),",
-         "      '| expr-matrix:', bool(ex), '| Tahoe:', bool(tah),",
+         "      '| expr-matrix:', bool(ex), '| Tahoe:', bool(tah), '| ESM:', bool(esm),",
+         "      '| Reactome:', bool(rx), '| SIGNOR:', bool(sig), '| CollecTRI:', bool(col),",
          "      '| DepMap:', os.path.exists('depmap/CRISPRGeneEffect.csv'))",
          "",
          "# --- 2d. restore any saved trained artifacts (so a reconnect doesn't start from scratch) ---",
@@ -125,6 +134,12 @@ cells = [
        "The combiner is picked up as a calibrated lens (with the independence guard). Compare the locked "
        "`completion` count to cell 5."),
     code("!python colab/phase2_loop.py"),
+
+    md("## 7a. Field fixes from Drive — full Reactome pathways + SIGNOR/CollecTRI causal edges",
+       "Not combiner features — direct FIELD fixes: full Reactome lifts the pathway-coverage gap (was 23%), and "
+       "SIGNOR + CollecTRI add directed/signed edges (the causal-direction the model lacked). Each prints the "
+       "detected format + what it adds; overlays are written, nothing measured is overwritten."),
+    code("!python colab/extra_data.py"),
 
     md("## 7b. WHOLE-CELL summary — every layer, not just PPI",
        "Genome · all three networks (ppi/reg/sig) with their per-relation combiner AUCs · complexes/SL/LR · "
