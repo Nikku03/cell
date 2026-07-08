@@ -12,9 +12,9 @@
   "total_needs_data": 326,
   "needs_data_by_kind": {
     "completion": 300,
-    "function_fill": 14,
+    "coverage": 2,
     "localization": 10,
-    "coverage": 2
+    "function_fill": 14
   },
   "total_accepted": 7,
   "accepted_by_kind": {
