@@ -176,13 +176,17 @@ class SignalCombiner:
             import pandas as pd
             df = pd.read_csv(path, index_col=0)
             idx = self.C.idx
-            col_hit = sum(1 for c in df.columns if c in idx)
-            row_hit = sum(1 for r in df.index if r in idx)
-            if col_hit >= row_hit:                             # columns are genes -> want genes as rows
-                df = df.T
+            nrm = lambda c: str(c).split(" (")[0]              # DepMap headers look like 'A1BG (1)' -> 'A1BG'
+            col_syms = [nrm(c) for c in df.columns]
+            row_syms = [nrm(r) for r in df.index]
+            if sum(c in idx for c in col_syms) >= sum(r in idx for r in row_syms):
+                df.columns = col_syms; df = df.T               # genes were columns -> now rows
+            else:
+                df.index = row_syms
+            df = df[~df.index.duplicated()]
             df = df.loc[[g for g in df.index if g in idx]]     # keep only rows that are known genes
             if df.shape[0] < 50:
-                print("  (expr_corr off: too few genes matched)")
+                print(f"  (expr_corr off: only {df.shape[0]} genes matched)")
                 return None
             X = df.to_numpy(dtype=np.float32)                  # genes x samples
             mu = np.nanmean(X, 1, keepdims=True); sd = np.nanstd(X, 1, keepdims=True); sd[sd == 0] = 1
@@ -219,13 +223,19 @@ class SignalCombiner:
             if not files:
                 print("  (tahoe_corr off: no cell_eval parquet found)")
                 return None
-            df = pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)
-            idx = self.C.idx
-            gene_cols = [c for c in df.columns if c in idx]    # gene columns = symbols in our index
-            if len(gene_cols) < 50:
-                print(f"  (tahoe_corr off: only {len(gene_cols)} gene columns matched)")
-                return None
-            M = df[gene_cols].to_numpy(dtype=np.float32).T      # genes x conditions
+            files = sorted(files); idx = self.C.idx
+            print(f"  tahoe_corr: building vectors from {len(files)} cell_eval plates…")
+            gene_cols, mats = None, []
+            for k, f in enumerate(files):
+                dfp = pd.read_parquet(f)
+                if gene_cols is None:
+                    gene_cols = [c for c in dfp.columns if c in idx]
+                    if len(gene_cols) < 50:
+                        print(f"  (tahoe_corr off: only {len(gene_cols)} gene columns matched)")
+                        return None
+                mats.append(dfp[gene_cols].to_numpy(dtype=np.float32))   # keep only gene cols, drop the DataFrame
+                print(f"    plate {k+1}/{len(files)}  (+{len(dfp)} conditions)")
+            M = np.vstack(mats).T                               # genes x conditions
             if M.shape[1] > 8000:                               # subsample conditions (plenty for correlation)
                 sel = np.random.default_rng(0).choice(M.shape[1], 8000, replace=False); M = M[:, sel]
             mu = np.nanmean(M, 1, keepdims=True); sd = np.nanstd(M, 1, keepdims=True); sd[sd == 0] = 1
