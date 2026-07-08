@@ -113,11 +113,13 @@ cells = [
        "outcomes per field, the locked ledger, and the regression check."),
     code("!python colab/phase2_loop.py"),
 
-    md("## 6. Signal-combiner — train ONE calibrated P(edge) from every signal  *(uses Drive features)*",
-       "If cell 2c found STRING / Geneformer, they enter as extra feature columns automatically (watch the "
-       "printed feature list + the structural-vs-independent AUC — the dense features are what lift the "
-       "independent AUC)."),
-    code("!python colab/signal_combiner.py"),
+    md("## 6. Signal-combiner — WHOLE-CELL: one calibrated model PER relation  *(uses Drive features)*",
+       "The combiner isn't PPI-only — it predicts ANY relation by swapping the labels. This trains three: **ppi** "
+       "(physical binding), **reg** (TF→target regulation), **sig** (signaling). Each keeps the features that "
+       "actually predict IT (add→measure→keep, per relation) — so watch where the dense datasets land: STRING "
+       "tends to win PPI, while co-essentiality / co-expression / **Tahoe drug-response** should matter more for "
+       "**reg** (co-regulation), the relation they're actually about. All Drive features from cell 2c apply."),
+    code("!python colab/signal_combiner.py ppi reg sig"),
 
     md("## 7. Loop again — now with the trained, stronger combiner",
        "The combiner is picked up as a calibrated lens (with the independence guard). Compare the locked "

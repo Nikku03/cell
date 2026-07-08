@@ -16,6 +16,8 @@ import os, shutil, glob
 OUT = "outputs/orphan"
 ARTIFACTS = [
     "signal_combiner.pkl", "signal_combiner_validation.json",
+    "signal_combiner_reg.pkl", "signal_combiner_reg_validation.json",       # whole-cell: per-relation combiners
+    "signal_combiner_sig.pkl", "signal_combiner_sig_validation.json",
     "phase2_ledger.json", "phase2_loop_report.json",
     "cell_v2_additions.json", "cell_v3_additions.json",
     "phase3_depmap_validation.json", "kinetics_refined_corrected.json",

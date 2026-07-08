@@ -34,11 +34,16 @@ CORE = ["shared_partners", "jaccard", "same_complex", "coexpression", "codepende
 
 
 class SignalCombiner:
-    def __init__(self, C=None, dm=None, use_depmap=True,
+    def __init__(self, C=None, dm=None, use_depmap=True, relation="ppi",
                  string_links=None, string_aliases=None, geneformer_npz=None):
         self.C = C or CompleteCell()
         if hasattr(self.C, "_reset_base"):
             self.C._reset_base()
+        # WHOLE-CELL: the combiner predicts ANY relation — swap the labels. relation="ppi" -> physical binding;
+        # "reg" -> regulatory (TF->target); "sig" -> signaling. Structural features use THAT relation's graph, so
+        # each relation is scored on its own terms and each dataset earns its place per relation (add->measure->keep).
+        self.relation = relation
+        self.adj = self._reladj(relation)
         self._coexpr = self._nbr_map(self.C.D.get("coexpr", {}))
         self._codep = self._nbr_map(self.C.D.get("codep", {}))
         self._cplx = {int(k): set(v) for k, v in (self.C.D.get("gene2cplx", {}) or {}).items()}
@@ -64,6 +69,17 @@ class SignalCombiner:
             self.features_list.append("expr_corr")
         if self.tahoe is not None:
             self.features_list.append("tahoe_corr")
+
+    def _reladj(self, relation):
+        """undirected adjacency for the chosen relation (ppi reuses the cell's; reg/sig built from the edge list)."""
+        if relation == "ppi":
+            return self.C.ppi_adj
+        from collections import defaultdict
+        adj = defaultdict(set)
+        for e in self.C.D.get(relation, []):
+            if isinstance(e[0], int) and isinstance(e[1], int):
+                adj[e[0]].add(e[1]); adj[e[1]].add(e[0])
+        return adj
 
     @staticmethod
     def _nbr_map(layer):
@@ -255,7 +271,7 @@ class SignalCombiner:
         return max(m.get(a, {}).get(b, 0.0), m.get(b, {}).get(a, 0.0))
 
     def features(self, a, b):
-        adj = self.C.ppi_adj
+        adj = self.adj
         na, nb = adj.get(a, set()), adj.get(b, set())
         shared = len(na & nb); union = len(na | nb)
         f = [float(shared), shared / union if union else 0.0,
@@ -282,7 +298,7 @@ class SignalCombiner:
     # ---------- labelled examples ----------
     def build_examples(self, n_pos=6000, seed=0):
         rng = np.random.default_rng(seed)
-        adj = self.C.ppi_adj; name = self.C.name; n = len(name)
+        adj = self.adj; name = self.C.name; n = len(name)
         inset = set(self.dm.col) if self.dm is not None else None
         ok = (lambda i: inset is None or name[i] in inset)
         edges = [(u, v) for u, ps in adj.items() for v in ps if u < v and ok(u) and ok(v)]
@@ -380,13 +396,18 @@ class SignalCombiner:
                          "longer gate the loop). combined_auc vs combined_auc_all_features shows dropping the dead "
                          "weight did not cost anything." % keep_auc)
 
+    def _pkl(self):
+        return "outputs/orphan/signal_combiner.pkl" if self.relation == "ppi" \
+            else f"outputs/orphan/signal_combiner_{self.relation}.pkl"
+
     def save(self, res):
         pickle.dump(dict(model=self.model, scaler=self.scaler, uses_scaler=self.uses_scaler,
-                         features=self.kept, features_all=self.features_list, threshold=self.threshold,
-                         informative_independent=self.informative_independent,
+                         relation=self.relation, features=self.kept, features_all=self.features_list,
+                         threshold=self.threshold, informative_independent=self.informative_independent,
                          use_depmap=self.dm is not None, has_string=self.string is not None),
-                    open("outputs/orphan/signal_combiner.pkl", "wb"))
-        json.dump(res, open("outputs/orphan/signal_combiner_validation.json", "w"), indent=2)
+                    open(self._pkl(), "wb"))
+        suffix = "" if self.relation == "ppi" else "_" + self.relation
+        json.dump(res, open(f"outputs/orphan/signal_combiner{suffix}_validation.json", "w"), indent=2)
 
     def proba(self, a, b):
         full = self.features(a, b)
@@ -398,12 +419,12 @@ def load(path="outputs/orphan/signal_combiner.pkl"):
     return pickle.load(open(path, "rb")) if os.path.exists(path) else None
 
 
-def main():
+def main(relation="ppi"):
     print("=" * 84)
-    print("SIGNAL COMBINER — train one calibrated edge-probability from many independent signals")
+    print(f"SIGNAL COMBINER [{relation}] — calibrated P(edge) for the '{relation}' relation, from many signals")
     print("=" * 84)
-    sc = SignalCombiner()
-    print("features:", sc.features_list)
+    sc = SignalCombiner(relation=relation)
+    print("features:", sc.features_list, "| edges in relation:", sum(len(v) for v in sc.adj.values()) // 2)
     res = sc.train()
     sc.save(res)
     print(f"examples: {res['counts']}")
@@ -420,9 +441,12 @@ def main():
           f"(dropping cost {round(res['combined_auc_all_features']-res['combined_auc'],3)})")
     print(f"calibration (Brier): {res['brier']}   threshold@0.9-precision: {res['threshold_at_0p9_precision']} "
           f"(recall {int(100*res['recall_at_that_threshold'])}%)")
-    print("\n-> outputs/orphan/signal_combiner.pkl  +  signal_combiner_validation.json")
+    print(f"\n-> {sc._pkl()}")
     return res
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    for rel in (sys.argv[1:] or ["ppi"]):
+        main(rel)
+        print()
