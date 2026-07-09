@@ -354,12 +354,23 @@ class Phase2Loop:
         return self._outcome(flag, "fixed", f"predicted kcat {kc:.2g}->{corrected:.2g}/s (in-vivo floor)",
                              fix=dict(old=kc, new=round(corrected, 3)))
 
-    # -- co-complex PPI: verified by curated complex membership -> add edge, lock --
+    # -- co-complex PPI: CORUM (curated) locks on membership; hu.MAP (mass-spec) must be independently corroborated --
     def _fx_complex(self, flag, failures, attempt):
-        d = flag["detail"]; u, v = d["u"], d["v"]
-        self.C.ppi_adj[u].add(v); self.C.ppi_adj[v].add(u)
-        return self._outcome(flag, "fixed", f"co-members of curated complex '{d['complex'][:40]}' -> PPI edge added",
-                             fix=dict(add_edge=[self.C.name[u], self.C.name[v]], relation="ppi"))
+        d = flag["detail"]; u, v = d["u"], d["v"]; cname = str(d.get("complex", ""))
+        if not cname.startswith("huMAP:"):                       # curated CORUM membership is itself the evidence
+            self.C.ppi_adj[u].add(v); self.C.ppi_adj[v].add(u)
+            return self._outcome(flag, "fixed", f"co-members of curated complex '{cname[:40]}' -> PPI edge added",
+                                 fix=dict(add_edge=[self.C.name[u], self.C.name[v]], relation="ppi", source="CORUM"))
+        # hu.MAP is computational clustering -> require an independent lens (co-essentiality / co-expression / STRING)
+        if self._independent_present(u, v):
+            self.C.ppi_adj[u].add(v); self.C.ppi_adj[v].add(u)
+            return self._outcome(flag, "fixed",
+                                 f"hu.MAP co-members corroborated (independent support) -> PPI edge added",
+                                 fix=dict(add_edge=[self.C.name[u], self.C.name[v]], relation="ppi",
+                                          source="huMAP+corroborated"))
+        return self._outcome(flag, "needs_data",
+                             f"hu.MAP co-members '{cname[:26]}' not independently corroborated — candidate, not locked",
+                             terminal="needs_data")
 
     # -- WHOLE-CELL: reg/sig completion — same calibrated + independence-gated logic as PPI, but scored by that
     #    relation's own combiner and added to that relation's graph. --

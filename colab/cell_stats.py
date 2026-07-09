@@ -74,6 +74,10 @@ def report():
     L.append(f"    enzymes with kinetics  {_n(len(kin))}  (measured {_n(meas)}, predicted {_n(len(kin)-meas)},"
              f" corrected {_n(corrected)})")
     L.append(f"    metabolic reactions    12,931 (Human-GEM) | reactions with genes {_n(len(D.get('generxn', {})))}")
+    mem = D.get("met_enzyme_meta", {})
+    if mem:
+        L.append(f"    metabolite<->enzyme    {_n(mem.get('n_metabolites', 0))} metabolites linked to "
+                 f"{_n(mem.get('n_enzymes_linked', 0))} enzymes  (metabolite -> enzyme -> pathway traversal)")
     mm = D.get("metabolite_meta", {})
     if mm:
         L.append(f"    metabolites (HMDB)     {_n(mm.get('n', 0))} ({_n(mm.get('n_with_conc', 0))} with a measured "

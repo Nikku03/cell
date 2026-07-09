@@ -136,8 +136,10 @@ def run():
             key = (min(gi, p), max(gi, p))
             codep[key] = max(codep.get(key, 0.0), s)
     g2c = {int(k): set(v) for k, v in D.get("gene2cplx", {}).items()}
+    diso = getattr(C, "disorder", {}) or {}                 # #4 disorder->PPI (present only on the Colab run)
+    has_diso = len(diso) > 0
 
-    def feats(a, b, with_domain):
+    def feats(a, b, with_domain, with_disorder=False):
         ua, ub = adj.get(a, set()), adj.get(b, set())
         sp = len(ua & ub)
         jac = sp / (len(ua | ub) or 1)
@@ -146,6 +148,8 @@ def run():
         row = [sp, jac, sc, ce]
         if with_domain:
             row.append(compat(a, b))
+        if with_disorder:
+            row.append(diso.get(a, 0.0) * diso.get(b, 0.0))    # both disordered -> promiscuous interaction
         return row
 
     marg = None
@@ -154,14 +158,14 @@ def run():
         from sklearn.linear_model import LogisticRegression
         from sklearn.preprocessing import StandardScaler
 
-        def design(pairs_pos, pairs_neg, wd):
-            X = [feats(a, b, wd) for (a, b) in pairs_pos] + [feats(a, b, wd) for (a, b) in pairs_neg]
+        def design(pairs_pos, pairs_neg, wd, wdis=False):
+            X = [feats(a, b, wd, wdis) for (a, b) in pairs_pos] + [feats(a, b, wd, wdis) for (a, b) in pairs_neg]
             y = [1] * len(pairs_pos) + [0] * len(pairs_neg)
             return np.array(X, float), np.array(y)
 
-        def fit_auc(wd):
-            Xtr, ytr = design(tr_pos, tr_neg, wd)
-            Xte, yte = design(te_pos, te_neg, wd)
+        def fit_auc(wd, wdis=False):
+            Xtr, ytr = design(tr_pos, tr_neg, wd, wdis)
+            Xte, yte = design(te_pos, te_neg, wd, wdis)
             sc = StandardScaler().fit(Xtr)
             m = LogisticRegression(max_iter=1000).fit(sc.transform(Xtr), ytr)
             pte = m.predict_proba(sc.transform(Xte))[:, 1]
@@ -172,6 +176,12 @@ def run():
         auc_both = fit_auc(True)
         marg = {"auc_structural_only": round(auc_struct, 4), "auc_with_domain": round(auc_both, 4),
                 "delta_auc": round(auc_both - auc_struct, 4)}
+        if has_diso:                                         # #4 disorder->PPI (Colab only)
+            auc_dd = fit_auc(True, True)
+            marg["auc_with_domain_and_disorder"] = round(auc_dd, 4)
+            marg["delta_auc_disorder"] = round(auc_dd - auc_both, 4)
+        else:
+            marg["disorder"] = "absent in this run (Colab-generated) — #4 validates there"
     except Exception as e:
         marg = {"error": str(e)[:80]}
 

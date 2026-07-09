@@ -254,6 +254,13 @@ cells = [
        "in-vivo 0.5. Uses cobra + Human-GEM (already downloaded by the ecflux cell)."),
     code("!python colab/incell_rates.py"),
 
+    md("## 7a-4. New inter-layer connections — wire the dead-end layers in",
+       "Connections between data layers that were not made before, each built only from data we already hold: "
+       "**metabolite ↔ enzyme** (parsed from the Human-GEM reactions in generxn — opens metabolite→enzyme→pathway) "
+       "and **domains → PPI** (self-supervised domain-pair interaction feature; validated +0.077 AUC over the "
+       "structural features, and the disorder→PPI check runs here too once MobiDB disorder is present)."),
+    code("!python colab/metabolite_enzyme.py\n!python colab/domain_ppi.py"),
+
     md("## 7b. WHOLE-CELL summary — every layer, not just PPI",
        "Genome · all three networks (ppi/reg/sig) with their per-relation combiner AUCs · complexes/SL/LR · "
        "kinetics & metabolism · pathways/PTMs · single-cell expression & context · disease/drugs · the ML "

@@ -30,6 +30,7 @@ ARTIFACTS = [
     "structure.json", "concentration.json", "translation.json",                # data-hunt: pLDDT/copies/translation
     "enhancers.json", "chip_reg.json", "ppi_extra.json",                       # data-hunt: enhancers/ChIP/extra-PPI
     "celltype_capacity.json", "saturation_kapp.json", "incell_rates_validation.json",  # in-cell rates from kcat
+    "domain_ppi_validation.json", "metabolite_enzyme.json",                    # new inter-layer connections
 ]
 
 

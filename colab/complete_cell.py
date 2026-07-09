@@ -172,6 +172,17 @@ class CompleteCell:
         _dm = _load(domains)
         if _dm:
             self.D["domain_meta"] = _dm.get("meta", {})
+        # metabolite <-> enzyme bipartite (parsed from Human-GEM reactions) — connects the metabolite layer
+        self.enz2met = {}
+        _me = _load(f"{OUT}/metabolite_enzyme.json")
+        if _me:
+            for k, v in (_me.get("enz2met", {}) or {}).items():
+                try:
+                    self.enz2met[int(k)] = v
+                except (TypeError, ValueError):
+                    pass
+            self.D["met2enz"] = _me.get("met2enz", {})
+            self.D["met_enzyme_meta"] = _me.get("meta", {})
         mb = _load(metabolites)
         if mb and mb.get("metabolites"):
             self.D["metabolites"] = mb["metabolites"]
@@ -326,6 +337,7 @@ class CompleteCell:
             "target_level": self.tdl.get(i),                     # Pharos Tclin/Tchem/Tbio/Tdark
             "domains": self.domains.get(i, []),                  # InterPro domain architecture
             "domain_positions": self.domain_pos.get(i),          # named domains + residue ranges (variant context)
+            "metabolites": self.enz2met.get(i),                  # metabolites this enzyme produces/consumes (Human-GEM)
             "plddt": self.plddt.get(i),                          # mean AlphaFold confidence
             "copies_per_cell": self.copies.get(i),               # absolute abundance (enzyme-constrained flux)
             "translation": self.translation.get(i),              # {te, t_half_h}
