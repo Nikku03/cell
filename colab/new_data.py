@@ -479,14 +479,19 @@ def _colidx(cols, *keys):
 AF_HUMAN_TAR = "https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/UP000005640_9606_HUMAN_v6.tar"
 
 
+_UA = "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0"  # HMDB 403s scripted UAs
+
+
 def _fetch_big(url, dest):
-    """stream a GB-scale file straight to disk (never into memory); cached under OUT so it is one-time."""
+    """stream a GB-scale file straight to disk (never into memory); cached under OUT so it is one-time. Sends a
+    browser User-Agent — HMDB (and some hosts) 403 the default urllib agent."""
     path = os.path.join(OUT, dest)
     if os.path.exists(path) and os.path.getsize(path) > 1e8:
         print(f"  (using cached {dest})"); return path
     ctx = ssl.create_default_context(cafile=_CA) if os.path.exists(_CA) else None
-    print(f"  fetching {url.split('/')[-1]} (~5 GB, one-time) ...")
-    with urllib.request.urlopen(url, timeout=3600, context=ctx) as r, open(path, "wb") as out:
+    print(f"  fetching {url.split('/')[-1]} (one-time) ...")
+    req = urllib.request.Request(url, headers={"User-Agent": _UA, "Accept": "*/*"})
+    with urllib.request.urlopen(req, timeout=3600, context=ctx) as r, open(path, "wb") as out:
         shutil.copyfileobj(r, out, length=1 << 20)
     return path
 
@@ -514,6 +519,21 @@ def _cif_plddt(text):
     return sum(vals) / len(vals) if vals else None
 
 
+_UNIPROT_RE = __import__("re").compile(r"[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9](?:[A-Z][A-Z0-9]{2}[0-9]){1,2}")
+
+
+def _pdb_plddt(text):
+    """mean pLDDT from a PDB model: CA B-factor at fixed columns 61-66 (AlphaFold writes pLDDT there)."""
+    vals = []
+    for ln in text.splitlines():
+        if ln.startswith("ATOM") and ln[12:16].strip() == "CA":
+            try:
+                vals.append(float(ln[60:66]))
+            except ValueError:
+                pass
+    return sum(vals) / len(vals) if vals else None
+
+
 def _iter_af_cifs(src, cap):
     """yield (basename, cif_text) from an AlphaFold source: a .tar/.tar.gz of .cif(.gz) — streamed, NOT extracted
     (the 5 GB human tar holds ~23k .cif.gz) — or a directory of .cif(.gz). gzip handled transparently."""
@@ -536,7 +556,18 @@ def _iter_af_cifs(src, cap):
                 if n >= cap:
                     break
     elif os.path.isdir(src):
-        files = _g.glob(os.path.join(src, "*model_*.cif*")) or _g.glob(os.path.join(src, "*.cif*"))
+        files = []
+        for pat in ("**/*.cif", "**/*.cif.gz", "**/*.pdb", "**/*.pdb.gz"):   # recursive: CIFs are often nested
+            files += _g.glob(os.path.join(src, pat), recursive=True)
+        if not files:                                       # maybe a tar sits inside the dir
+            tars = _g.glob(os.path.join(src, "**/*.tar"), recursive=True) + \
+                   _g.glob(os.path.join(src, "**/*.tar.gz"), recursive=True)
+            if tars:
+                yield from _iter_af_cifs(tars[0], cap)
+                return
+            sample = [os.path.basename(x) for x in _g.glob(os.path.join(src, "**/*"), recursive=True)[:8]]
+            print(f"  (structure: no .cif/.pdb/.tar under {src} — found e.g. {sample})")
+            return
         for f in files[:cap]:
             try:
                 raw = open(f, "rb").read()
@@ -557,18 +588,27 @@ def structure(af_src=None, C=None, cap=40000):
     if not src or not os.path.exists(src):
         print("  (structure off: set AF_DIR/AF_TAR to an AlphaFold tar or CIF dir, or AF_AUTOFETCH=1 — ~5 GB)")
         return None
-    acc_plddt = {}
+    acc_plddt, sym_plddt = {}, {}                        # UniProt-acc-keyed (needs mapping) + symbol-keyed (direct)
     for base, text in _iter_af_cifs(src, cap):
-        if not base.startswith("AF-"):
+        p = _pdb_plddt(text) if base.endswith((".pdb", ".pdb.gz")) else _cif_plddt(text)
+        if p is None:
             continue
-        acc = base.split("-")[1]
-        p = _cif_plddt(text)
-        if p is not None:
-            acc_plddt[acc] = round(p, 1)                 # keyed by UniProt accession
-    if not acc_plddt:
-        print("  (structure off: parsed 0 CIFs from", src, ")"); return None
-    a2s = _acc2sym(list(acc_plddt), idx)                 # UniProt acc -> our gene symbol
+        p = round(p, 1)
+        if base.startswith("AF-"):                       # AF-<acc>-F1-model_v*.cif
+            acc_plddt[base.split("-")[1]] = p
+            continue
+        m = _UNIPROT_RE.search(base) or _UNIPROT_RE.search(text[:3000])   # acc in filename, else in header
+        stem = base.split(".")[0]
+        if m:
+            acc_plddt[m.group(0)] = p
+        elif stem in idx:                                # filename is a gene symbol
+            sym_plddt[stem] = p
+    if not acc_plddt and not sym_plddt:
+        print("  (structure off: parsed 0 usable structures from", src, ")"); return None
+    a2s = _acc2sym(list(acc_plddt), idx) if acc_plddt else {}   # UniProt acc -> our gene symbol
     plddt = {idx[a2s[a]]: p for a, p in acc_plddt.items() if a2s.get(a) in idx}
+    for s, p in sym_plddt.items():
+        plddt[idx[s]] = p
     if not plddt:
         print("  (structure off: 0 mapped to genes)"); return None
     json.dump({"plddt": {str(k): v for k, v in plddt.items()},
