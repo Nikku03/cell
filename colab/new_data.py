@@ -200,13 +200,13 @@ PHAROS_GQL = "https://pharos-api.ncats.io/graphql"
 
 def darkness(C=None):
     """Pharos TDL (Tclin/Tchem/Tbio/Tdark) per gene — a standard 'how studied is this target' label that
-    validates our 5,006-gene dark set. One GraphQL query for all human targets."""
+    validates our 5,006-gene dark set. Paginated over all ~20,412 human targets (2,500 per GraphQL call)."""
     C = C or CompleteCell(); idx = C.idx
     ctx = ssl.create_default_context(cafile=_CA) if os.path.exists(_CA) else None
     tgts = []
-    try:                                                    # paginate: one 25k call times out; 2.5k batches don't
-        for skip in range(0, 25000, 2500):
-            q = ('{"query":"{ targets(top:2500 skip:%d){ targets{ sym tdl } } }"}' % skip).encode()
+    try:                                                    # paginate the INNER targets field (top/skip on the outer
+        for skip in range(0, 25000, 2500):                  # query are ignored -> capped at 10); 20,412 total
+            q = ('{"query":"{ targets{ targets(top:2500 skip:%d){ sym tdl } } }"}' % skip).encode()
             req = urllib.request.Request(PHAROS_GQL, data=q, headers={"Content-Type": "application/json"})
             batch = json.loads(urllib.request.urlopen(req, timeout=120, context=ctx).read())
             got = batch.get("data", {}).get("targets", {}).get("targets", [])
