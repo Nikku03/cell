@@ -67,13 +67,17 @@ def ddg_layer(calls, panel_meta):
 
 # ---- cell-type baseline (emask): which tissue this cancer arises in, and its restricted genes ----
 def emask_layer(C, tissue_kw):
-    """the 200-cell-type healthy census -> pick the baseline tissue for this cancer and report the genes it
-    restricts. This is the tissue starting-state the generic map lacked."""
+    """the 200-cell-type healthy census -> pick the baseline tissue for this cancer. U8: try keywords in PRIORITY
+    order (the specific tissue term first, generic ones like 'epitheli' only as a last resort) so an ovarian
+    tumour no longer matches kidney epithelium via a generic substring."""
     ct = C.D.get("ctnames") or []
-    if not ct:
+    if not ct or not tissue_kw:
         return None
-    hits = [i for i, nm in enumerate(ct) if any(k in nm.lower() for k in tissue_kw)]
-    return {"tissue_types_matched": [ct[i] for i in hits][:6], "n_types": len(hits)} if hits else None
+    for k in tissue_kw:                                          # specific -> generic; take the first that hits
+        hits = [i for i, nm in enumerate(ct) if k in nm.lower()]
+        if hits:
+            return {"tissue_types_matched": [ct[i] for i in hits][:6], "n_types": len(hits), "matched_on": k}
+    return None
 
 
 # ---- independent perturbation lens (fixed CellGraph, numpy) ----
@@ -89,10 +93,13 @@ def cellgraph_layer(C, clamps):
         if not seeds or W is None:
             return None
         v = cg.perturb_downstream(np.array(seeds), W, alpha=0.5, hops=3)
+        # U9: perturb_downstream is unnormalised and floods; keep only genes above a real magnitude threshold and
+        # report the STRONGLY-affected count, not the raw fan-out.
+        thr = max(0.05, float(np.percentile(np.abs(v[v != 0]), 99)) if (v != 0).any() else 0.05)
         idx = np.argsort(v)
-        down = [(C.name[i], round(float(v[i]), 3)) for i in idx[:8] if v[i] < -1e-3]
-        up = [(C.name[i], round(float(v[i]), 3)) for i in idx[::-1][:8] if v[i] > 1e-3]
-        return {"n_affected": int((np.abs(v) > 1e-3).sum()), "top_down": down, "top_up": up}
+        down = [(C.name[i], round(float(v[i]), 3)) for i in idx[:8] if v[i] < -thr]
+        up = [(C.name[i], round(float(v[i]), 3)) for i in idx[::-1][:8] if v[i] > thr]
+        return {"n_strongly_affected": int((np.abs(v) > thr).sum()), "top_down": down, "top_up": up}
     except Exception as e:
         return {"error": str(e)[:60]}
 
@@ -147,6 +154,11 @@ def full_map(C, panel, dm=None, seldep=None, panel_meta=None, tissue_kw=None):
             pos = dict(panel).get(g)
             c["in_domain"] = [d["name"] for d in dp if d.get("start", 0) <= (pos or -1) <= d.get("end", 0)] or None
             c["selective_dep_rank"] = seldep_rank.get(g)          # None if not a selective dependency
+            cdp = getattr(C, "context_dep", {}).get(C.idx[g])     # U13: surface the attribution inline
+            if cdp:
+                c["attribution"] = (f"addiction:{cdp['addiction_context'][0][0]}" if cdp.get("addiction_context")
+                                    else f"lesion:{cdp['lesion_context']}" if cdp.get("lesion_context")
+                                    else "ORPHAN (selective-dep, lesion unattributed — needs Colab table)")
     ddg_status = ddg_layer(calls, panel_meta)                     # structural LOF refinement (ML)
 
     # ---- B. pathway layer ----
@@ -282,7 +294,7 @@ def _print(name, r):
           ", ".join(f"{s}" for s, _ in dep["context_selective_dependencies_genomewide"][:10]))
     cg = r.get("G_cellgraph_perturbation")
     if cg and "error" not in cg:
-        print(f"G. CELLGRAPH perturbation (independent lens): {cg['n_affected']} affected; "
+        print(f"G. CELLGRAPH perturbation (independent lens): {cg['n_strongly_affected']} strongly affected; "
               f"top-down {[x[0] for x in cg['top_down'][:5]]}")
     t = r.get("H_tissue_baseline")
     if t:

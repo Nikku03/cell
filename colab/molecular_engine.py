@@ -124,6 +124,16 @@ def variant_effect(gene, pos, wt, mut, acc=None, recurrent=False, at_catalytic=F
     if ck in cache:
         return cache[ck]
 
+    # truncating variants (frameshift / nonsense) destroy the protein -> LOF, no sequence model needed
+    if mut in ("*", "fs", "fs*", "del", "X"):
+        out = {"gene": gene, "variant": f"{wt}{pos}{mut}", "esm_llr": None, "esm_entropy": None, "ddg": None,
+               "functional_score": 1.0, "call": "LOF", "confidence": "high",
+               "evidence": ["truncating (frameshift/nonsense) -> protein destroyed"]}
+        cache[ck] = out
+        try: json.dump(cache, open(_CACHE, "w"))
+        except Exception: pass
+        return out
+
     acc2, seq = uniprot_seq(gene, acc)
     llr = ent = None
     if seq:

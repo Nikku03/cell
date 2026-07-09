@@ -86,20 +86,49 @@ def _signed_out(C):
     return out
 
 
-def classify(panel, C):
-    """genome -> {gene_idx: +1 (GOF, clamp ON) | -1 (LOF, clamp OFF)} + per-gene call. Role first; ΔΔG/absence
-    refine unknowns; passengers get no clamp."""
+def classify(panel, C, variant_meta=None):
+    """genome -> {gene_idx: +1 (GOF, clamp ON) | -1 (LOF, clamp OFF)} + per-gene call.
+
+    U3: when variant_meta[gene] gives the actual residue substitution ({wt,mut,uniprot,recurrent}), the
+    per-mutation call comes from the LEARNED variant-effect engine (ESM + ΔΔG + truncation) instead of the static
+    role list -- so an activating mutation off the active site (JAK2 V617F) is called GOF, and a context-loss
+    (JAK1 frameshift) is called LOF, from the mutation itself. Role list is the fallback when no variant is given.
+    """
+    variant_meta = variant_meta or {}
     clamps, calls = {}, []
     for sym, pos in panel:
         if sym not in C.idx:
             calls.append({"gene": sym, "call": "not in model", "clamp": 0}); continue
         i = C.idx[sym]
+        vm = variant_meta.get(sym)
+        if vm:
+            try:
+                import molecular_engine as me
+                r = me.variant_effect(sym, vm.get("pos", pos), vm["wt"], vm["mut"],
+                                      acc=vm.get("uniprot"), recurrent=vm.get("recurrent", False),
+                                      at_catalytic=vm.get("at_catalytic", False))
+                call = r["call"]
+                if call.startswith("GOF"):
+                    clamps[i] = 1; eff = f"GOF (variant-effect: {r['confidence']})"
+                elif call == "LOF":
+                    clamps[i] = -1; eff = f"LOF (variant-effect: {r['confidence']})"
+                elif call == "likely-neutral":
+                    eff = "neutral (variant-effect)"
+                else:                                            # functional but direction unresolved -> lean on role
+                    if sym in ONCOGENE: clamps[i] = 1; eff = "GOF (role; variant functional, dir. unresolved)"
+                    elif sym in SUPPRESSOR: clamps[i] = -1; eff = "LOF (role; variant functional)"
+                    else: eff = "functional, direction unresolved"
+                calls.append({"gene": sym, "role": "variant-effect", "effect": eff,
+                              "clamp": clamps.get(i, 0), "variant_call": r["call"], "esm_llr": r.get("esm_llr"),
+                              "ddg": r.get("ddg")})
+                continue
+            except Exception:
+                pass
         if sym in ONCOGENE:
             clamps[i] = 1;  calls.append({"gene": sym, "role": "oncogene", "effect": "GOF (activated)", "clamp": 1})
         elif sym in SUPPRESSOR:
             clamps[i] = -1; calls.append({"gene": sym, "role": "suppressor", "effect": "LOF (lost)", "clamp": -1})
         else:
-            # unknown role: only clamp if there is positive evidence of loss (disease-linked). Default passenger.
             ndis = (C.genes[i].get("ndis") or 0)
             if ndis >= 6:
                 clamps[i] = -1; calls.append({"gene": sym, "role": "unknown", "effect": "LOF? (disease-linked)", "clamp": -1})
