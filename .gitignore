@@ -67,6 +67,8 @@ outputs/orphan/cell_complete.json
 # large local models fetched at runtime (not committed)
 HumanGEM.xml
 colab/HumanGEM.xml
+HumanGEM_genes.tsv
+colab/HumanGEM_genes.tsv
 pdbs/
 s669.csv
 s2648.csv
