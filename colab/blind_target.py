@@ -18,11 +18,37 @@ activating-vs-inactivating (GOF/LOF), and a lost tumour-suppressor needs a synth
 may not hold. Both are flagged per gene, not hidden.
 -> outputs/orphan/blind_target_report.json
 """
-import os, sys, json
+import os, sys, json, re, urllib.request, ssl
 sys.path.insert(0, os.path.dirname(__file__))
 from complete_cell import CompleteCell
 
 OUT = "outputs/orphan"
+_CA = "/root/.ccr/ca-bundle.crt"
+_SITE_RE = re.compile(r"(?:ACT_SITE|BINDING|SITE)\s+(\d+)(?:\.\.(\d+))?")
+SITE_WINDOW = 30                                    # residues: a driver mutation sits near the catalytic machinery
+
+
+def fetch_functional_sites(genes):
+    """UniProt per-residue functional sites (active/binding/site) -> {gene: sorted[positions]}. The principled
+    driver signal: a mutation NEAR the catalytic machinery vs a structural passenger far from any functional site."""
+    ctx = ssl.create_default_context(cafile=_CA) if os.path.exists(_CA) else None
+    out = {}
+    for g in genes:
+        q = (f"https://rest.uniprot.org/uniprotkb/search?query=gene:{g}+AND+organism_id:9606+AND+reviewed:true"
+             f"&fields=gene_primary,ft_act_site,ft_binding,ft_site&format=tsv&size=1")
+        try:
+            d = urllib.request.urlopen(q, timeout=60, context=ctx).read().decode().splitlines()
+            if len(d) < 2:
+                out[g] = []; continue
+            text = "\t".join(d[1].split("\t")[1:])
+            pos = set()
+            for a, b in _SITE_RE.findall(text):
+                a = int(a); b = int(b) if b else a
+                pos.update(range(a, b + 1))
+            out[g] = sorted(pos)
+        except Exception:
+            out[g] = []
+    return out
 ONCO_KW = ("signaling", "signal transduction", "mapk", "ras", "raf", "kinase", "cell cycle", "apoptos",
            "pi3k", "akt", "mtor", "receptor tyrosine", "egfr", "growth factor", "wnt", "notch", "dna repair",
            "p53", "cell division", "proliferat", "erk", "gpcr")
@@ -46,23 +72,33 @@ def _reactome_names(C):
     return rx
 
 
-def analyze(panel, C, rx):
+def analyze(panel, C, rx, sites):
     idx = C.idx
     rows = []
     for sym, pos in panel:
         if sym not in idx:
             rows.append({"gene": sym, "in_model": False}); continue
         i = idx[sym]; raw = C.genes[i]; g = C.gene(sym)
-        # 1) does the mutation hit a functional domain? — and is it CATALYTIC (driver) or STRUCTURAL (passenger)?
+        # 1) PRIMARY: is the mutation NEAR the catalytic machinery? (functional-site proximity — principled)
+        sp = sites.get(sym, [])
         dp = g.get("domain_positions") or []
         in_dom = [d["name"] for d in dp if d["start"] <= pos <= d["end"]]
-        has_dom = bool(g.get("domains"))
-        hit = 1.0 if in_dom else (0.35 if has_dom else 0.0)
-        dname = " ".join(in_dom).lower()
-        if any(k in dname for k in CATALYTIC):
-            hit *= 2.5                                          # catalytic/regulatory module -> driver-like
-        elif any(k in dname for k in STRUCTURAL):
-            hit *= 0.12                                         # structural repeat -> passenger noise (TTN etc.)
+        if sp:
+            dmin = min(abs(pos - s) for s in sp)
+            if dmin <= SITE_WINDOW:
+                hit, site_note = 2.5, f"{dmin} aa from a functional site"          # near active site -> driver-like
+            else:
+                hit, site_note = 0.12, f"far ({dmin} aa) from any functional site"  # structural region -> passenger
+        else:
+            # FALLBACK (no site annotation): catalytic vs structural domain type
+            has_dom = bool(g.get("domains"))
+            hit = 1.0 if in_dom else (0.35 if has_dom else 0.0)
+            dname = " ".join(in_dom).lower()
+            if any(k in dname for k in CATALYTIC):
+                hit *= 2.5
+            elif any(k in dname for k in STRUCTURAL):
+                hit *= 0.12
+            site_note = "no functional-site data (domain-type fallback)"
         # 2) oncogenic pathway membership
         paths = rx.get(i, [])
         onco = [p for p in paths if any(k in p.lower() for k in ONCO_KW)]
@@ -75,8 +111,8 @@ def analyze(panel, C, rx):
         drug = (gi in C.D.get("drugs", {})) or (str(gi) in C.D.get("drugs", {}))
         deg = len(C.ppi_adj.get(i, ()))
         score = hit * (0.4 + onco_s) * (0.5 + dz)
-        rows.append({"gene": sym, "in_model": True, "mut_pos": pos,
-                     "domain_hit": in_dom or ("(no positioned domain)" if has_dom else "(no domains)"),
+        rows.append({"gene": sym, "in_model": True, "mut_pos": pos, "site_note": site_note,
+                     "domain_hit": in_dom or "(none)",
                      "onco_pathway": onco[:2], "ndis": ndis, "ppi_deg": deg, "druggable": drug,
                      "driver_score": round(score, 3)})
     rows.sort(key=lambda r: -r.get("driver_score", -1))
@@ -100,24 +136,26 @@ def run(panels=None):
     panels = panels or {
         # real, documented alterations used as INPUT (driver + classic passengers TTN/MUC16 + hub ACTB)
         "A375 (melanoma)":  [("BRAF", 600), ("CDKN2A", 58), ("TTN", 20000), ("MUC16", 5000), ("ACTB", 150)],
-        "HCC827 (lung adeno)": [("EGFR", 746), ("CDKN2A", 58), ("TTN", 18000), ("MUC16", 4000), ("ACTB", 150)],
+        "HCC827 (lung adeno)": [("EGFR", 858), ("CDKN2A", 58), ("TTN", 18000), ("MUC16", 4000), ("ACTB", 150)],
     }
+    allgenes = sorted({g for panel in panels.values() for g, _ in panel})
+    print(f"  fetching UniProt functional sites for {len(allgenes)} genes ...")
+    sites = fetch_functional_sites(allgenes)
     report = {}
     for name, panel in panels.items():
-        rows = analyze(panel, C, rx)
+        rows = analyze(panel, C, rx, sites)
         top = next((r for r in rows if r.get("in_model")), {})
         call = target_call(top) if top else "no genes mapped"
         report[name] = {"ranking": rows, "proposed_target": top.get("gene"), "call": call}
         print("=" * 76)
         print(f"TUMOR: {name}   —   input: {[p[0] for p in panel]}")
         print("=" * 76)
-        print(f"  {'gene':8}{'score':>7}  {'dom-hit':<22}{'onco-path':<10}{'ndis':>5} {'drug':>5}")
+        print(f"  {'gene':8}{'score':>7}  {'functional-site test':<36}{'onco':<6}{'drug':>5}")
         for r in rows:
             if not r.get("in_model"):
                 print(f"  {r['gene']:8}   (not in model)"); continue
-            dh = r["domain_hit"][0] if isinstance(r["domain_hit"], list) and r["domain_hit"] else str(r["domain_hit"])
-            print(f"  {r['gene']:8}{r['driver_score']:>7}  {dh[:20]:<22}{'yes' if r['onco_pathway'] else '-':<10}"
-                  f"{r['ndis']:>5} {'yes' if r['druggable'] else '-':>5}")
+            print(f"  {r['gene']:8}{r['driver_score']:>7}  {r['site_note'][:34]:<36}"
+                  f"{'yes' if r['onco_pathway'] else '-':<6}{'yes' if r['druggable'] else '-':>5}")
         print(f"  -> PROPOSED TARGET: {top.get('gene')}")
         print(f"     {call}")
         print()
