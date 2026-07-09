@@ -326,13 +326,40 @@ def domains(path=None, C=None):
 
 
 # ---------------- HMDB metabolite layer ----------------
+HMDB_URLS = ["https://hmdb.ca/system/downloads/current/hmdb_metabolites.zip",   # ~220k, full (best coverage)
+             "https://hmdb.ca/system/downloads/current/serum_metabolites.zip"]  # smaller quantified fallback
+
+
+def _hmdb_xml():
+    """return a path to an HMDB metabolites XML: HMDB_XML if staged, else autofetch+unzip the HMDB download
+    (default ON; HMDB_AUTOFETCH=0 disables). The zip holds one big .xml; extracted once, then persist caches the
+    small parsed metabolites.json so the multi-GB download never repeats."""
+    p = os.environ.get("HMDB_XML")
+    if p and os.path.exists(p):
+        return p
+    if os.environ.get("HMDB_AUTOFETCH", "1") not in ("1", "true", "True"):
+        return None
+    for url in HMDB_URLS:
+        try:
+            zpath = _fetch_big(url, os.path.basename(url))
+            with zipfile.ZipFile(zpath) as z:
+                xmls = [n for n in z.namelist() if n.endswith(".xml")]
+                if not xmls:
+                    continue
+                z.extract(xmls[0], OUT)
+                return os.path.join(OUT, xmls[0])
+        except Exception as e:
+            print("  (hmdb fetch failed:", os.path.basename(url), "-", str(e)[:50], ")")
+    return None
+
+
 def metabolites(path=None, C=None, cap=400000):
     """HMDB -> a metabolite layer the cell entirely lacks: {hmdb_id: {name, formula, chebi, kegg}} plus any
-    quantified blood concentration. Streams the big hmdb_metabolites.xml (iterparse) so 5 GB never lands in RAM.
-    Path-driven (Colab downloads the zip; sandbox host is 403)."""
-    src = path or os.environ.get("HMDB_XML")
+    quantified blood concentration. Streams the big hmdb_metabolites.xml (iterparse) so it never lands in RAM.
+    Autofetches the HMDB zip by default (HMDB_XML overrides; HMDB_AUTOFETCH=0 disables); sandbox host is 403."""
+    src = path or _hmdb_xml()
     if not src or not os.path.exists(src):
-        print("  (metabolites off: set HMDB_XML to hmdb_metabolites.xml — Colab only)"); return None
+        print("  (metabolites off: no HMDB source — set HMDB_XML or allow HMDB_AUTOFETCH)"); return None
     import xml.etree.ElementTree as ET
     mets = {}
     try:
