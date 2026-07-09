@@ -200,11 +200,20 @@ Plus the standing **context-dependency attribution** layer on `CompleteCell.gene
   and print the attribution (or "orphan — needs lesion table").
 - **Effort:** low.
 
-### U14. Full 8-layer HTML visualisation
-- **Problem:** `cancer_cell_html` renders only the pathway sub-map; the molecular/ΔΔG/dependency/tissue layers
-  aren't in the plot.
-- **Fix:** extend the card: mutation chips with ΔΔG + GOF/LOF, a dependency-target panel (with attribution), the
-  tissue baseline, and the complex-disruption list. One card = the whole cell.
+### U14. Honest-by-design (self-diagnosing) HTML visualisation
+- **Problem:** `cancer_cell_html` is a *results view* — it renders answers with UNIFORM confidence and hides the
+  gaps. The MSI-H HTML labelled WRN (the actual trial target) a plain "passenger" and showed JAK1 (a miscall) as
+  a confident driver, with no ΔΔG, no selective-dep rank, no orphan flag, no missing-gene markers. A viewer
+  cannot read the roadmap off it — the most important items (U2 attribution, P0 missing genes) are invisible or
+  actively contradicted.
+- **Fix:** make the cell a *diagnostic view*. Every call carries **confidence + evidence** (ΔΔG, selective-dep
+  rank, orphan flag, which layer produced it); a panel **derived from the cell's own annotations** lists the
+  roadmap items it exposes (passenger-but-top-selective-dep-and-orphan → U2; GOF-by-role ΔΔG-can't-confirm → U3;
+  driver gene absent from index → P0). Prototype built: `outputs/orphan/msih_selfdiagnosing.html` — it read U2
+  (WRN #92 orphan), U3 (GOF unconfirmed), and P0 (PIK3CA/TYK2 missing) straight off the cell. Generalise it to
+  the full 8-layer card and every tumour.
+- **Why it matters:** an honest model surfaces its own uncertainty. If the cell can't tell you where it's weak,
+  a user will trust a wrong call (JAK1) as much as a right one (BRAF). This is the honesty rule applied to the UI.
 - **Effort:** low–medium.
 
 ---
