@@ -25,6 +25,79 @@ Plus the standing **context-dependency attribution** layer on `CompleteCell.gene
 
 ---
 
+---
+
+## ✅ DONE THIS SESSION (overnight build) — discovery engine + roadmap patches
+
+### The five discovery-engine pieces (recall → discovery)
+
+The roadmap below makes the model a complete, honest RECALL engine. Discovery is a different axis — built and
+MEASURED this session:
+
+1. **Blind holdout harness** (`discovery_validation.py`) — the epistemic foundation. Hold out true edges, rebuild
+   the graph without them, score recovery split by hardness. EASY (triadic-recoverable) = interpolation; HARD
+   (zero shared train-neighbours) = the discovery metric. **Baseline result: ppi AUC 0.795 overall but HARD-edge
+   AUC 0.516 (chance), discovery_lift 0.016 — the model INTERPOLATES, it does not discover.** This is the
+   yardstick every future change must move.
+2. **Learned variant-effect engine** (`molecular_engine.py`) — UniProt seq → ESM-2 zero-shot LLR + AlphaFold ΔΔG
+   + truncation. GENERALISES to unseen variants. Tested: BRAF V600E / KRAS G12D / **JAK2 V617F → GOF-candidate**
+   (the case proximity could never call); frameshift → LOF. Runs on CPU.
+3. **Perturbation→response** — the fixed CellGraph lens is wired (layer G) + normalised (U9). The LEARNED torch
+   GNN / Replogle forward-test remain GPU/Colab (Piece 3 partial — see U4).
+4. **Discovery from measured data** (`discovery_engine.py`) — propose co-essential non-edges from DepMap, validate
+   against a held-out oracle. **22 proposals validated (precision 0.099 vs random ~0), top novel candidate
+   ATIC–CAD (both nucleotide-biosynthesis enzymes) — a real, modest discovery signal in the high-confidence
+   tail.** Bulk co-essentiality still weak (consistent with piece 1).
+5. **Test oracle / closed loop** — held-out edges as the oracle in `discovery_engine.py`; a proposal is accepted
+   only if it validates against data the proposer never saw.
+
+**Honest verdict:** the model is quantifiably a recall engine (HARD-edge AUC ≈ 0.5). The variant engine adds a
+generalising component; the measured-data tail shows a real but small discovery signal. Discovery is now
+*measurable*, which is the prerequisite for improving it.
+
+### Where AlphaFold / Foldseek / UniProt / ESM come in (all four, concretely)
+
+These are the sequence→structure→function substrate — the extrapolation engine that turns a gene ID + mutation
+into a generalising call instead of a lookup. Each does a job the others can't:
+
+| Tool | Role | Wired in |
+|---|---|---|
+| **UniProt** | canonical SEQUENCE + per-residue functional sites (active/binding). The input everything needs. | `molecular_engine.uniprot_seq`, `blind_target` sites, `gene_universe` accessions |
+| **ESM-2** | protein LANGUAGE model. Zero-shot variant effect = masked-marginal logP(mut)−logP(wt). GENERALISES to unseen variants — the "is it functional?" extrapolator. | `molecular_engine.esm_scores` (runs on CPU) |
+| **AlphaFold** | 3D STRUCTURE → burial/contact → ΔΔG stability (destabilising = LOF) + interface/pocket. Direction evidence ESM can't give. | `ddg_predictor` (fetches structures on demand), `molecular_engine._ddg` |
+| **Foldseek** | STRUCTURAL-homology search → transfer function to a query by FOLD when sequence homology is absent (dark proteome) + find structural analogues of a mutated site. | `foldseek_function.py` (built); to be wired into the variant call for dark genes |
+
+Together they are the honest path from retrodiction toward discovery on the sequence axis: ESM extrapolates
+effect, AlphaFold gives structural direction, UniProt grounds both, Foldseek covers the un-annotated fold space.
+
+### Roadmap items patched this session
+
+- **P0 ✅** — `gene_universe.py`: 84.1% coverage quantified (3,004 missing, 2,071 isolated nodes); priority
+  disease genes (globins, TYK2, PIK3CA, SMN1/2, PAH, GBA, F8/9, …) ADDED as real nodes with independent STRING
+  edges, folded into CompleteCell (16,492 → 16,509). Unblocks Bucket A (TYK2) and the PIK3CA cancer gap.
+  *Remaining: add the other ~2,990 in Colab; add signed regulatory edges (BCL11A⊣HBG) for the sickle-cell test.*
+- **U1 ✅** — `degradation.py`: E3→substrate degradation edge layer (sign −1). VHL-KO now raises HIF1A/EPAS1 (the
+  belzutifan axis). Seed of 22 E3s / 55 edges; extend from UbiBrowser in Colab.
+- **U3 ✅** — `classify()` now calls the variant-effect engine per mutation. **MSI-H driver flipped JAK1→BRAF**
+  (fixed the context miscall from the mutation itself). Needs the real variant identity per gene (VCF/MAF) to
+  generalise beyond the hand `variant_meta`.
+- **U8 ✅** — tissue matcher priority-ordered (ovarian no longer matches kidney).
+- **U9 ✅** — CellGraph perturbation reports strongly-affected, not raw fan-out.
+- **U13 ✅** — full_cell_map surfaces the context attribution inline per selective-dep (addiction / lesion /
+  ORPHAN), so the data states its own gaps.
+
+### Still open (need GPU/Colab or larger data)
+
+- **U2** — loss-context attribution (WRN→MSI): the `resolve_orphans_colab` hook + notebook cell exist; needs the
+  DepMap per-line lesion table (Colab).
+- **U4** — learned torch GNN / perturbation→wildtype (GPU).
+- **U5/U6/U7** — live FBA, real regulatory propagation, concentration/structure restore.
+- **U10** — ΔΔG under-calls destabilisation (TP53 R175H / VHL R167W read neutral) → strengthen with ESM features
+  or AlphaMissense; and pull variant identity from a VCF/MAF so U3 runs on real genomes.
+- **U11/U12/U14** — fusions, TMB/immuno readout, honest-by-design HTML (prototype done).
+
+---
+
 ## P0 — FOUNDATIONAL: complete the gene universe (the model is only ~83% of the genome)
 
 - **Problem:** the model holds **16,492 of ~19,800 human protein-coding genes — ~17% (≈3,300) are absent**, and
