@@ -69,6 +69,16 @@ def _signed_out(C):
             w = item[0]; s = item[1] if isinstance(item, (list, tuple)) and len(item) > 1 else 1
             if s:
                 raw[u].append((w, 1 if s > 0 else -1))
+    # U1: degradation edges (E3 -> substrate, sign -1). An E3 loss stabilises its substrate -- the edge type the
+    # signalling network lacked (why VHL loss never lit up HIF2A). Added BEFORE row-normalisation so it shares the
+    # bounded-outflow treatment.
+    try:
+        import degradation
+        for a, b, s in degradation.signed_edges(C):
+            if b < len(C.name):
+                raw[a].append((b, s))
+    except Exception:
+        pass
     out = {}
     for u, edges in raw.items():
         d = len(edges)
