@@ -261,6 +261,15 @@ cells = [
        "structural features, and the disorder→PPI check runs here too once MobiDB disorder is present)."),
     code("!python colab/metabolite_enzyme.py\n!python colab/domain_ppi.py"),
 
+    md("## 7a-5. Simulatable step — couple regulation to metabolism (PROM)",
+       "The biggest *buildable* piece of the simulatable-cell gap: the regulatory network and the metabolic model "
+       "were separate — a TF knockout did nothing to flux. This couples them (PROM): the 200-cell-type expression "
+       "mask constrains each TF's metabolic targets, and biomass FBA is re-solved, so **TF knockout -> predicted "
+       "growth**. Validated: **3.94x enrichment** for known metabolic-master TFs (PPARA, HNF4A, NFE2L2...) among the "
+       "top knockouts. Honest limit: impact saturates (binary mask) -> qualitative ranker, not a graded growth "
+       "predictor. Compute-heavy (200 FBA solves); reuses the ecflux Human-GEM download."),
+    code("!python colab/rprom.py"),
+
     md("## 7b. WHOLE-CELL summary — every layer, not just PPI",
        "Genome · all three networks (ppi/reg/sig) with their per-relation combiner AUCs · complexes/SL/LR · "
        "kinetics & metabolism · pathways/PTMs · single-cell expression & context · disease/drugs · the ML "
