@@ -1,0 +1,402 @@
+{
+  "panel": [
+    [
+      "MLH1",
+      300
+    ],
+    [
+      "MSH6",
+      1088
+    ],
+    [
+      "PMS2",
+      600
+    ],
+    [
+      "TGFBR2",
+      128
+    ],
+    [
+      "ACVR2A",
+      400
+    ],
+    [
+      "RNF43",
+      117
+    ],
+    [
+      "BAX",
+      41
+    ],
+    [
+      "BRAF",
+      600
+    ],
+    [
+      "B2M",
+      50
+    ],
+    [
+      "JAK1",
+      860
+    ],
+    [
+      "WRN",
+      577
+    ]
+  ],
+  "mutation_calls": [
+    {
+      "gene": "MLH1",
+      "role": "suppressor",
+      "effect": "LOF (lost)",
+      "clamp": -1
+    },
+    {
+      "gene": "MSH6",
+      "role": "suppressor",
+      "effect": "LOF (lost)",
+      "clamp": -1
+    },
+    {
+      "gene": "PMS2",
+      "role": "suppressor",
+      "effect": "LOF (lost)",
+      "clamp": -1
+    },
+    {
+      "gene": "TGFBR2",
+      "role": "suppressor",
+      "effect": "LOF (lost)",
+      "clamp": -1
+    },
+    {
+      "gene": "ACVR2A",
+      "role": "suppressor",
+      "effect": "LOF (lost)",
+      "clamp": -1
+    },
+    {
+      "gene": "RNF43",
+      "role": "suppressor",
+      "effect": "LOF (lost)",
+      "clamp": -1
+    },
+    {
+      "gene": "BAX",
+      "role": "suppressor",
+      "effect": "LOF (lost)",
+      "clamp": -1
+    },
+    {
+      "gene": "BRAF",
+      "role": "oncogene",
+      "effect": "GOF (activated)",
+      "clamp": 1
+    },
+    {
+      "gene": "B2M",
+      "role": "unknown",
+      "effect": "neutral / passenger",
+      "clamp": 0
+    },
+    {
+      "gene": "JAK1",
+      "role": "oncogene",
+      "effect": "GOF (activated)",
+      "clamp": 1
+    },
+    {
+      "gene": "WRN",
+      "role": "unknown",
+      "effect": "neutral / passenger",
+      "clamp": 0
+    }
+  ],
+  "n_genes_perturbed": 96,
+  "hyperactive_pathways": [
+    {
+      "pathway": "Signalling to p38 via RIT and RIN",
+      "delta": 0.248,
+      "n_perturbed": 4,
+      "score": 0.497
+    },
+    {
+      "pathway": "Negative feedback regulation of MAPK pathway",
+      "delta": 0.189,
+      "n_perturbed": 6,
+      "score": 0.464
+    },
+    {
+      "pathway": "MAPK1 (ERK2) activation",
+      "delta": 0.158,
+      "n_perturbed": 8,
+      "score": 0.446
+    },
+    {
+      "pathway": "IFNG signaling activates MAPKs",
+      "delta": 0.157,
+      "n_perturbed": 8,
+      "score": 0.444
+    },
+    {
+      "pathway": "Interleukin-27 signaling",
+      "delta": 0.153,
+      "n_perturbed": 8,
+      "score": 0.434
+    },
+    {
+      "pathway": "Interleukin-6 signaling",
+      "delta": 0.143,
+      "n_perturbed": 9,
+      "score": 0.428
+    },
+    {
+      "pathway": "MAPK3 (ERK1) activation",
+      "delta": 0.14,
+      "n_perturbed": 9,
+      "score": 0.419
+    },
+    {
+      "pathway": "Interleukin-35 Signalling",
+      "delta": 0.136,
+      "n_perturbed": 9,
+      "score": 0.409
+    },
+    {
+      "pathway": "Interleukin-9 signaling",
+      "delta": 0.134,
+      "n_perturbed": 9,
+      "score": 0.403
+    },
+    {
+      "pathway": "Interleukin-21 signaling",
+      "delta": 0.121,
+      "n_perturbed": 10,
+      "score": 0.384
+    },
+    {
+      "pathway": "Regulation of IFNG signaling",
+      "delta": 0.105,
+      "n_perturbed": 13,
+      "score": 0.38
+    },
+    {
+      "pathway": "Gain-of-function MRAS complexes activate RAF signaling",
+      "delta": 0.142,
+      "n_perturbed": 7,
+      "score": 0.377
+    }
+  ],
+  "lost_pathways": [
+    {
+      "pathway": "Diseases of Mismatch Repair (MMR)",
+      "delta": -0.75,
+      "n_perturbed": 4,
+      "score": -1.499
+    },
+    {
+      "pathway": "Mismatch Repair",
+      "delta": -0.231,
+      "n_perturbed": 13,
+      "score": -0.831
+    },
+    {
+      "pathway": "Mismatch repair (MMR) directed by MSH2:MSH6 (MutSalpha)",
+      "delta": -0.231,
+      "n_perturbed": 13,
+      "score": -0.831
+    },
+    {
+      "pathway": "SMAD2/3 Phosphorylation Motif Mutants in Cancer",
+      "delta": -0.29,
+      "n_perturbed": 6,
+      "score": -0.711
+    },
+    {
+      "pathway": "TGFBR1 KD Mutants in Cancer",
+      "delta": -0.29,
+      "n_perturbed": 6,
+      "score": -0.711
+    },
+    {
+      "pathway": "Somatic hypermutation of immunoglobulin genes by error-prone mismatch repair (MMR)",
+      "delta": -0.166,
+      "n_perturbed": 18,
+      "score": -0.706
+    },
+    {
+      "pathway": "Loss of Function of TGFBR2 in Cancer",
+      "delta": -0.389,
+      "n_perturbed": 3,
+      "score": -0.674
+    },
+    {
+      "pathway": "TGFBR2 Kinase Domain Mutants in Cancer",
+      "delta": -0.389,
+      "n_perturbed": 3,
+      "score": -0.674
+    },
+    {
+      "pathway": "Loss of Function of TGFBR1 in Cancer",
+      "delta": -0.249,
+      "n_perturbed": 7,
+      "score": -0.658
+    },
+    {
+      "pathway": "Diseases of DNA repair",
+      "delta": -0.104,
+      "n_perturbed": 39,
+      "score": -0.649
+    },
+    {
+      "pathway": "Loss of Function of SMAD2/3 in Cancer",
+      "delta": -0.233,
+      "n_perturbed": 7,
+      "score": -0.615
+    },
+    {
+      "pathway": "TGFBR1 LBD Mutants in Cancer",
+      "delta": -0.292,
+      "n_perturbed": 4,
+      "score": -0.584
+    }
+  ],
+  "top_genes_up": [
+    [
+      1.057,
+      "JAK1"
+    ],
+    [
+      0.995,
+      "BRAF"
+    ],
+    [
+      0.283,
+      "CDH1"
+    ],
+    [
+      0.278,
+      "TP53"
+    ],
+    [
+      0.114,
+      "SMAD4"
+    ],
+    [
+      0.103,
+      "XIAP"
+    ],
+    [
+      0.08,
+      "BCL2"
+    ],
+    [
+      0.079,
+      "JAK2"
+    ],
+    [
+      0.072,
+      "ABL1"
+    ],
+    [
+      0.07,
+      "PAX3"
+    ],
+    [
+      0.07,
+      "MAPK7"
+    ],
+    [
+      0.07,
+      "MAP2K2"
+    ],
+    [
+      0.069,
+      "MAP2K1"
+    ],
+    [
+      0.059,
+      "PTPN11"
+    ],
+    [
+      0.059,
+      "RIPK1"
+    ]
+  ],
+  "top_genes_down": [
+    [
+      -1.016,
+      "BAX"
+    ],
+    [
+      -1.001,
+      "TGFBR2"
+    ],
+    [
+      -1.0,
+      "MSH6"
+    ],
+    [
+      -1.0,
+      "RNF43"
+    ],
+    [
+      -1.0,
+      "ACVR2A"
+    ],
+    [
+      -0.999,
+      "PMS2"
+    ],
+    [
+      -0.999,
+      "MLH1"
+    ],
+    [
+      -0.7,
+      "BLM"
+    ],
+    [
+      -0.49,
+      "UIMC1"
+    ],
+    [
+      -0.342,
+      "BRCA1"
+    ],
+    [
+      -0.339,
+      "SMAD2"
+    ],
+    [
+      -0.246,
+      "ACVR1"
+    ],
+    [
+      -0.234,
+      "ACVR1B"
+    ],
+    [
+      -0.199,
+      "TGFBR1"
+    ],
+    [
+      -0.183,
+      "DIABLO"
+    ]
+  ],
+  "driver": "JAK1",
+  "target_note": "revert JAK1 (GOF driver of the hyperactive programme) \u2014 its activation propagates to 24 genes; collapsing it should restore the map toward healthy",
+  "footprint_per_mutation": {
+    "MLH1": 1,
+    "MSH6": 4,
+    "PMS2": 1,
+    "TGFBR2": 22,
+    "ACVR2A": 12,
+    "RNF43": 14,
+    "BAX": 16,
+    "BRAF": 17,
+    "JAK1": 24
+  }
+}

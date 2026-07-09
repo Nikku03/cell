@@ -48,6 +48,7 @@ SUPPRESSOR = {
     "MLH1", "MSH2", "MSH6", "PMS2", "WT1", "SMARCB1", "SMARCA4", "MEN1", "FBXW7", "PBRM1", "SETD2", "NF1",
     "PTCH1", "DAXX", "ATRX", "CIC", "FUBP1", "GATA3", "RUNX1", "CEBPA", "TET2", "DNMT3A", "ASXL1", "EP300",
     "CREBBP", "KMT2D", "KMT2C", "NCOR1", "SPEN", "CHEK2", "PALB2", "RAD51", "STAG2",
+    "TGFBR2", "ACVR2A", "RNF43", "BAX", "TGFBR1", "AXIN2",       # recurrent MSI-H frameshift-target suppressors
 }
 
 
