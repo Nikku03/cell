@@ -12,7 +12,7 @@ Layers (each = 0 in the current cell unless noted):
 
 Nothing measured is overwritten; every output is an additive overlay.
 """
-import os, sys, json, io, zipfile, urllib.request, ssl
+import os, sys, json, io, zipfile, tarfile, gzip, shutil, urllib.request, ssl
 sys.path.insert(0, os.path.dirname(__file__))
 from complete_cell import CompleteCell
 
@@ -392,42 +392,107 @@ def _colidx(cols, *keys):
 
 
 # ---------------- AlphaFold structural confidence ----------------
-def structure(af_dir=None, C=None):
-    """Per-gene mean pLDDT from AlphaFold model CIFs (b-factor = pLDDT). A 'how confidently foldable' score that,
-    with MobiDB disorder, structurally characterises the dark proteome. Dir-gated (the human tar is ~5 GB)."""
-    C = C or CompleteCell(); idx = C.idx
-    d = af_dir or os.environ.get("AF_DIR")
-    if not d or not os.path.isdir(d):
-        print("  (structure off: set AF_DIR to an AlphaFold CIF dir — ~5 GB, Colab only)"); return None
+# AlphaFold human proteome (~5.2 GB tar of per-protein .cif.gz); autofetch fallback if no Drive file is found
+AF_HUMAN_TAR = "https://ftp.ebi.ac.uk/pub/databases/alphafold/latest/UP000005640_9606_HUMAN_v6.tar"
+
+
+def _fetch_big(url, dest):
+    """stream a GB-scale file straight to disk (never into memory); cached under OUT so it is one-time."""
+    path = os.path.join(OUT, dest)
+    if os.path.exists(path) and os.path.getsize(path) > 1e8:
+        print(f"  (using cached {dest})"); return path
+    ctx = ssl.create_default_context(cafile=_CA) if os.path.exists(_CA) else None
+    print(f"  fetching {url.split('/')[-1]} (~5 GB, one-time) ...")
+    with urllib.request.urlopen(url, timeout=3600, context=ctx) as r, open(path, "wb") as out:
+        shutil.copyfileobj(r, out, length=1 << 20)
+    return path
+
+
+def _cif_plddt(text):
+    """mean pLDDT of an AlphaFold model CIF: the global QA metric (fast, exact) else the mean CA B-factor."""
+    k = "_ma_qa_metric_global.metric_value"
+    i = text.find(k)                                        # fast path: no full-file scan of the atom records
+    if i != -1:
+        seg = text[i + len(k): i + len(k) + 40].split()
+        if seg:
+            try:
+                return float(seg[0])
+            except ValueError:
+                pass
+    vals = []
+    for ln in text.splitlines():
+        if ln.startswith("ATOM"):
+            p = ln.split()
+            if len(p) > 14 and p[3] == "CA":
+                try:
+                    vals.append(float(p[14]))            # B_iso_or_equiv col = per-residue pLDDT
+                except ValueError:
+                    pass
+    return sum(vals) / len(vals) if vals else None
+
+
+def _iter_af_cifs(src, cap):
+    """yield (basename, cif_text) from an AlphaFold source: a .tar/.tar.gz of .cif(.gz) — streamed, NOT extracted
+    (the 5 GB human tar holds ~23k .cif.gz) — or a directory of .cif(.gz). gzip handled transparently."""
     import glob as _g
-    files = _g.glob(os.path.join(d, "AF-*-model_*.cif")) + _g.glob(os.path.join(d, "*.cif"))
-    acc_plddt, pending = {}, []
-    for f in files[:30000]:
-        acc = os.path.basename(f).split("-")[1] if os.path.basename(f).startswith("AF-") else None
-        try:
-            vals = []
-            for ln in open(f):
-                if ln.startswith("ATOM") and " CA " in ln:
-                    parts = ln.split()
-                    if len(parts) > 14:
-                        vals.append(float(parts[14]))    # b-factor col (pLDDT); position is CIF-layout dependent
-            if vals:
-                pending.append((acc, sum(vals) / len(vals)))
-        except Exception:
+    if os.path.isfile(src) and src.endswith((".tar", ".tar.gz", ".tgz")):
+        mode = "r|gz" if src.endswith((".tar.gz", ".tgz")) else "r|*"
+        with tarfile.open(src, mode) as tf:
+            n = 0
+            for m in tf:
+                if not m.isfile() or "model_" not in m.name or not m.name.endswith((".cif", ".cif.gz")):
+                    continue
+                f = tf.extractfile(m)
+                if not f:
+                    continue
+                raw = f.read()
+                if m.name.endswith(".gz"):
+                    raw = gzip.decompress(raw)
+                yield os.path.basename(m.name), raw.decode("utf-8", "replace")
+                n += 1
+                if n >= cap:
+                    break
+    elif os.path.isdir(src):
+        files = _g.glob(os.path.join(src, "*model_*.cif*")) or _g.glob(os.path.join(src, "*.cif*"))
+        for f in files[:cap]:
+            try:
+                raw = open(f, "rb").read()
+                yield os.path.basename(f), (gzip.decompress(raw) if f.endswith(".gz") else raw).decode("utf-8", "replace")
+            except Exception:
+                continue
+
+
+def structure(af_src=None, C=None, cap=40000):
+    """Per-gene mean AlphaFold pLDDT ('how confidently foldable'). Reads the AlphaFold human-proteome TAR
+    (~5 GB, .cif.gz inside, streamed) or a CIF directory — from AF_DIR/AF_TAR or a Drive file; autofetches the
+    EBI human tar when AF_AUTOFETCH is set and nothing local is found. With MobiDB disorder this structurally
+    characterises the whole proteome including the dark set."""
+    C = C or CompleteCell(); idx = C.idx
+    src = af_src or os.environ.get("AF_DIR") or os.environ.get("AF_TAR")
+    if (not src or not os.path.exists(src)) and os.environ.get("AF_AUTOFETCH"):
+        src = _fetch_big(AF_HUMAN_TAR, "UP000005640_9606_HUMAN_v6.tar")
+    if not src or not os.path.exists(src):
+        print("  (structure off: set AF_DIR/AF_TAR to an AlphaFold tar or CIF dir, or AF_AUTOFETCH=1 — ~5 GB)")
+        return None
+    acc_plddt = {}
+    for base, text in _iter_af_cifs(src, cap):
+        if not base.startswith("AF-"):
             continue
-    if not pending:
-        print("  (structure off: parsed 0 CIFs)"); return None
-    a2s = _acc2sym([a for a, _ in pending if a], idx)
-    for a, p in pending:
-        s = a2s.get(a)
-        if s:
-            acc_plddt[idx[s]] = round(p, 1)
+        acc = base.split("-")[1]
+        p = _cif_plddt(text)
+        if p is not None:
+            acc_plddt[acc] = round(p, 1)                 # keyed by UniProt accession
     if not acc_plddt:
-        print("  (structure off: 0 mapped)"); return None
-    json.dump({"plddt": {str(k): v for k, v in acc_plddt.items()}, "meta": {"n": len(acc_plddt)}},
-              open(f"{OUT}/structure.json", "w"))
-    print(f"  structure: {len(acc_plddt):,} genes given mean AlphaFold pLDDT -> structure.json")
-    return {"n": len(acc_plddt)}
+        print("  (structure off: parsed 0 CIFs from", src, ")"); return None
+    a2s = _acc2sym(list(acc_plddt), idx)                 # UniProt acc -> our gene symbol
+    plddt = {idx[a2s[a]]: p for a, p in acc_plddt.items() if a2s.get(a) in idx}
+    if not plddt:
+        print("  (structure off: 0 mapped to genes)"); return None
+    json.dump({"plddt": {str(k): v for k, v in plddt.items()},
+               "meta": {"n": len(plddt), "n_structures": len(acc_plddt)}}, open(f"{OUT}/structure.json", "w"))
+    print(f"  structure: {len(plddt):,} genes given mean AlphaFold pLDDT (from {len(acc_plddt):,} structures) "
+          f"-> structure.json")
+    return {"n": len(plddt)}
 
 
 # ---------------- absolute protein concentration (copies/cell) ----------------
