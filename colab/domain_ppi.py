@@ -127,6 +127,54 @@ def run():
     blind_neg_s = te_neg_s
     auc_blind = _auc(blind_s, blind_neg_s)
 
+    # ---- MARGINAL GAIN: does domain_compat add over the structural + co-essentiality features? ----
+    D = C.D
+    codep = {}
+    for g, lst in D.get("codep", {}).items():
+        gi = int(g)
+        for p, s in lst:
+            key = (min(gi, p), max(gi, p))
+            codep[key] = max(codep.get(key, 0.0), s)
+    g2c = {int(k): set(v) for k, v in D.get("gene2cplx", {}).items()}
+
+    def feats(a, b, with_domain):
+        ua, ub = adj.get(a, set()), adj.get(b, set())
+        sp = len(ua & ub)
+        jac = sp / (len(ua | ub) or 1)
+        sc = 1.0 if (g2c.get(a, set()) & g2c.get(b, set())) else 0.0
+        ce = codep.get((min(a, b), max(a, b)), 0.0)
+        row = [sp, jac, sc, ce]
+        if with_domain:
+            row.append(compat(a, b))
+        return row
+
+    marg = None
+    try:
+        import numpy as np
+        from sklearn.linear_model import LogisticRegression
+        from sklearn.preprocessing import StandardScaler
+
+        def design(pairs_pos, pairs_neg, wd):
+            X = [feats(a, b, wd) for (a, b) in pairs_pos] + [feats(a, b, wd) for (a, b) in pairs_neg]
+            y = [1] * len(pairs_pos) + [0] * len(pairs_neg)
+            return np.array(X, float), np.array(y)
+
+        def fit_auc(wd):
+            Xtr, ytr = design(tr_pos, tr_neg, wd)
+            Xte, yte = design(te_pos, te_neg, wd)
+            sc = StandardScaler().fit(Xtr)
+            m = LogisticRegression(max_iter=1000).fit(sc.transform(Xtr), ytr)
+            pte = m.predict_proba(sc.transform(Xte))[:, 1]
+            return _auc([pte[i] for i in range(len(yte)) if yte[i] == 1],
+                        [pte[i] for i in range(len(yte)) if yte[i] == 0])
+
+        auc_struct = fit_auc(False)
+        auc_both = fit_auc(True)
+        marg = {"auc_structural_only": round(auc_struct, 4), "auc_with_domain": round(auc_both, 4),
+                "delta_auc": round(auc_both - auc_struct, 4)}
+    except Exception as e:
+        marg = {"error": str(e)[:80]}
+
     # top interacting domain pairs (sanity)
     top = sorted(enr.items(), key=lambda kv: -kv[1])[:8]
     res = {
@@ -137,6 +185,7 @@ def run():
         "test_edges_triadic_blind": len(blind),
         "auc_on_triadic_blind": round(auc_blind, 3) if auc_blind else None,
         "top_interacting_domain_pairs": [{"pair": list(dp), "log2_enrich": round(e, 2)} for dp, e in top],
+        "marginal_gain_vs_structural": marg,
         "verdict": None,
     }
     res["verdict"] = ("domain compatibility predicts held-out PPI out-of-sample"
@@ -150,6 +199,9 @@ def run():
     print(f"  AUC on triadic-BLIND edges          {res['auc_on_triadic_blind']}  "
           f"({res['test_edges_triadic_blind']:,} edges with 0 shared partners)")
     print(f"  domain pairs scored                 {res['n_domain_pairs_scored']:,}")
+    if marg and "delta_auc" in marg:
+        print(f"  combiner AUC: structural {marg['auc_structural_only']} -> +domain {marg['auc_with_domain']}"
+              f"  (Δ {marg['delta_auc']:+})")
     print(f"  -> {res['verdict']}")
     print("=" * 70)
     return res
