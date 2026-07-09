@@ -87,7 +87,13 @@ def _isnum(x):
 
 
 # ---------------- CORUM + hu.MAP complexes ----------------
-CORUM_URL = "https://mips.helmholtz-muenchen.de/corum/download/releaseDownload?file=allComplexes.txt.zip"
+# CORUM 5.x serves the direct-path form (used by the maintained BioPlex R pkg); the older releaseDownload?file=
+# query form is kept as a fallback. Try them in order so a scheme change on either side doesn't silently no-op.
+CORUM_URLS = [
+    "https://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip",
+    "http://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip",
+    "https://mips.helmholtz-muenchen.de/corum/download/releaseDownload?file=allComplexes.txt.zip",
+]
 
 
 def complexes(corum_url=None, C=None):
@@ -96,14 +102,21 @@ def complexes(corum_url=None, C=None):
     C = C or CompleteCell()
     idx = C.idx
     have = {tuple(sorted(v)) for v in (C.D.get("complexes", {}) or {}).values() if isinstance(v, list)}
-    src = corum_url or os.environ.get("CORUM_TXT") or CORUM_URL
-    try:
-        raw = open(src, "rb").read() if os.path.exists(src) else _fetch(src)
-        if raw[:2] == b"PK":
-            z = zipfile.ZipFile(io.BytesIO(raw)); raw = z.read(z.namelist()[0])
-        lines = raw.decode("utf-8", "replace").splitlines()
-    except Exception as e:
-        print("  (complexes off:", str(e)[:60], ")"); return None
+    srcs = [corum_url] if corum_url else ([os.environ["CORUM_TXT"]] if os.environ.get("CORUM_TXT") else CORUM_URLS)
+    raw, err = None, ""
+    for src in srcs:                                         # first source that yields a real table wins
+        try:
+            raw = open(src, "rb").read() if os.path.exists(src) else _fetch(src)
+            if raw and raw[:2] == b"PK":
+                z = zipfile.ZipFile(io.BytesIO(raw)); raw = z.read(z.namelist()[0])
+            if raw and b"\t" in raw[:4000]:
+                break
+            raw = None
+        except Exception as e:
+            err = str(e)[:60]; raw = None
+    if not raw:
+        print(f"  (complexes off: no CORUM source reachable — {err})"); return None
+    lines = raw.decode("utf-8", "replace").splitlines()
     hdr = lines[0].split("\t"); low = [h.lower() for h in hdr]
     ci = next((i for i, h in enumerate(low) if "complexname" in h or h == "complex name"), 1)
     # subunit gene names column (CORUM: 'subunits(Gene name)')
