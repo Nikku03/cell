@@ -138,12 +138,12 @@ def coessential(dm, gene, topn=8):
     return out[:topn]
 
 
-def full_map(C, panel, dm=None, seldep=None, panel_meta=None, tissue_kw=None):
+def full_map(C, panel, dm=None, seldep=None, panel_meta=None, tissue_kw=None, variant_meta=None):
     dm = dm if dm is not None else _depmap()
     seldep = seldep if seldep is not None else (selective_dependencies(dm) if dm else [])
     panel_meta = panel_meta or {}
     out = ccm._signed_out(C); paths = ccm._pathways(C)
-    clamps, calls = ccm.classify(panel, C)
+    clamps, calls = ccm.classify(panel, C, variant_meta=variant_meta)
 
     # ---- A. molecular: enrich each call with domain + DepMap selectivity ----
     seldep_rank = {s: k for k, (_, _, s) in enumerate(seldep)}    # rank in the genome-wide selective-dep table
@@ -162,7 +162,7 @@ def full_map(C, panel, dm=None, seldep=None, panel_meta=None, tissue_kw=None):
     ddg_status = ddg_layer(calls, panel_meta)                     # structural LOF refinement (ML)
 
     # ---- B. pathway layer ----
-    pmap = ccm.plot_cell(C, panel, out, paths)
+    pmap = ccm.plot_cell(C, panel, out, paths, variant_meta=variant_meta)
 
     # ---- C. regulatory: which mutated genes are TFs, and how much transcriptome they command ----
     reg_hits = []

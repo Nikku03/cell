@@ -185,10 +185,10 @@ def pathway_delta(pert, paths, min_hit=3):
     return up, down
 
 
-def plot_cell(C, panel, out=None, paths=None):
+def plot_cell(C, panel, out=None, paths=None, variant_meta=None):
     out = out if out is not None else _signed_out(C)
     paths = paths if paths is not None else _pathways(C)
-    clamps, calls = classify(panel, C)
+    clamps, calls = classify(panel, C, variant_meta=variant_meta)
     pert = propagate_signed(out, clamps)
     up, down = pathway_delta(pert, paths)
 
