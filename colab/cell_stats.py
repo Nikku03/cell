@@ -54,7 +54,9 @@ def report():
     for rel, lab in (("ppi", "protein-protein"), ("reg", "regulatory TF->target"), ("sig", "signaling")):
         s, e = relstat(rel)
         L.append(f"    {rel:4} {lab:22} {_n(e):>9} edges | {s}")
-    L.append(f"    complexes {_n(len(D.get('complexes', {})))} | synthetic-lethal {_n(len(D.get('sl', [])))}"
+    cx_extra = getattr(C, "n_complexes_extra", 0)
+    cx_note = f" (+{_n(cx_extra)} hu.MAP/CORUM)" if cx_extra else ""
+    L.append(f"    complexes {_n(len(D.get('complexes', {})))}{cx_note} | synthetic-lethal {_n(len(D.get('sl', [])))}"
              f" | ligand-receptor {_n(len(D.get('lr', [])))}")
     cm = D.get("causal_meta")
     if cm:

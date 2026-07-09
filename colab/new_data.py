@@ -86,9 +86,12 @@ def _isnum(x):
         return False
 
 
-# ---------------- CORUM + hu.MAP complexes ----------------
-# CORUM 5.x serves the direct-path form (used by the maintained BioPlex R pkg); the older releaseDownload?file=
-# query form is kept as a fallback. Try them in order so a scheme change on either side doesn't silently no-op.
+# ---------------- hu.MAP 3.0 + CORUM complexes ----------------
+# Our BASE 2,039 complexes ARE CORUM (verified by their curated names), so re-fetching CORUM adds only membership
+# variants. hu.MAP 3.0 is the genuinely-orthogonal source: 15,326 complexes derived from >25,000 mass-spec
+# experiments, independent of CORUM's literature curation — the real new complex layer.
+HUMAP_URL = ("https://humap3.proteincomplexes.org/static/downloads/humap3/"
+             "hu.MAP3.0_complexes_wConfidenceScores_total15326_wGenenames_20240922.csv")
 CORUM_URLS = [
     "https://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip",
     "http://mips.helmholtz-muenchen.de/corum/download/allComplexes.txt.zip",
@@ -96,12 +99,46 @@ CORUM_URLS = [
 ]
 
 
-def complexes(corum_url=None, C=None):
-    """CORUM curated complexes -> complexes beyond our 2,039, mapped to gene idx. (hu.MAP 3.0 can be added the
-    same way from its pairs+membership TSV.)"""
-    C = C or CompleteCell()
-    idx = C.idx
-    have = {tuple(sorted(v)) for v in (C.D.get("complexes", {}) or {}).values() if isinstance(v, list)}
+def _humap(idx, have):
+    """hu.MAP 3.0 CSV (HuMAP3_ID, ComplexConfidence, Uniprot_ACCs, genenames) -> {name: [idx]}, mass-spec complexes
+    not already in `have` (deduped by mapped member-set). Keeps confidence <= HUMAP_MAXCONF (1=Extremely High ..
+    4=Moderate; default 4). Columns are header-detected so a column reorder does not silently break the parse."""
+    src = os.environ.get("HUMAP_CSV") or HUMAP_URL
+    try:
+        maxconf = int(os.environ.get("HUMAP_MAXCONF", "4"))
+    except ValueError:
+        maxconf = 4
+    try:
+        raw = open(src, "rb").read() if os.path.exists(src) else _fetch(src)
+        lines = raw.decode("utf-8", "replace").splitlines()
+    except Exception as e:
+        print("  (huMAP off:", str(e)[:60], ")"); return {}
+    if not lines:
+        return {}
+    hdr = [h.strip().lower() for h in lines[0].split(",")]
+    gi = next((i for i, h in enumerate(hdr) if "genename" in h), 3)      # 'genenames' (space-separated symbols)
+    ci = next((i for i, h in enumerate(hdr) if "confidence" in h), 1)
+    seen, new = set(have), {}
+    for ln in lines[1:]:
+        p = ln.split(",")
+        if len(p) <= max(gi, ci):
+            continue
+        try:
+            if int(float(p[ci])) > maxconf:
+                continue
+        except ValueError:
+            pass
+        members = tuple(sorted(set(idx[g] for g in p[gi].replace('"', " ").split() if g.strip() in idx)))
+        if len(members) >= 2 and members not in seen:
+            seen.add(members); new[f"huMAP:{p[0].strip()}"] = list(members)
+    if new:
+        print(f"  huMAP: {len(new):,} mass-spec complexes (conf<={maxconf}) beyond our CORUM base")
+    return new
+
+
+def _corum(idx, have, corum_url=None):
+    """CORUM allComplexes -> {name: [idx]} for member-sets not in `have`. Our base already IS CORUM, so this
+    surfaces only membership variants / complexes we filtered out. Tries several download URL forms."""
     srcs = [corum_url] if corum_url else ([os.environ["CORUM_TXT"]] if os.environ.get("CORUM_TXT") else CORUM_URLS)
     raw, err = None, ""
     for src in srcs:                                         # first source that yields a real table wins
@@ -115,29 +152,44 @@ def complexes(corum_url=None, C=None):
         except Exception as e:
             err = str(e)[:60]; raw = None
     if not raw:
-        print(f"  (complexes off: no CORUM source reachable — {err})"); return None
+        print(f"  (CORUM off: no source reachable — {err})"); return {}
     lines = raw.decode("utf-8", "replace").splitlines()
     hdr = lines[0].split("\t"); low = [h.lower() for h in hdr]
     ci = next((i for i, h in enumerate(low) if "complexname" in h or h == "complex name"), 1)
-    # subunit gene names column (CORUM: 'subunits(Gene name)')
     gi = next((i for i, h in enumerate(low) if "gene name" in h or "gene_name" in h or "genes" in h), None)
     org = next((i for i, h in enumerate(low) if "organism" in h), None)
     if gi is None:
-        print(f"  (complexes off: no gene-name column; header={hdr[:8]})"); return None
-    new = {}
+        print(f"  (CORUM off: no gene-name column; header={hdr[:8]})"); return {}
+    seen, new = set(have), {}
     for ln in lines[1:]:
         p = ln.split("\t")
         if len(p) <= gi or (org is not None and len(p) > org and p[org] != "Human"):
             continue
         genes = [g.strip() for g in p[gi].replace(",", ";").split(";") if g.strip() in idx]
-        members = sorted({idx[g] for g in genes})
-        if len(members) >= 2 and tuple(members) not in have:
-            new[p[ci] if len(p) > ci else f"cplx{len(new)}"] = members
+        members = tuple(sorted(set(idx[g] for g in genes)))
+        if len(members) >= 2 and members not in seen:
+            seen.add(members); new[p[ci] if len(p) > ci else f"CORUM:{len(new)}"] = list(members)
+    if new:
+        print(f"  CORUM: {len(new):,} complexes beyond base (membership variants — our base already IS CORUM)")
+    return new
+
+
+def complexes(corum_url=None, C=None):
+    """Genuinely-new complexes beyond our base (which our 2,039 already ARE CORUM). Primary source is hu.MAP 3.0
+    (mass-spec-derived, orthogonal to CORUM curation); CORUM is re-scanned only for membership variants. Members
+    mapped to gene idx, deduped by member-set against the base and each other, written to complexes_extra.json."""
+    C = C or CompleteCell()
+    idx = C.idx
+    have = {tuple(sorted(v)) for v in (C.D.get("complexes", {}) or {}).values() if isinstance(v, list)}
+    new = {}
+    new.update(_humap(idx, have))                            # the real new layer (mass-spec complexes)
+    have2 = have | {tuple(sorted(v)) for v in new.values()}
+    new.update(_corum(idx, have2, corum_url))               # CORUM variants beyond base + hu.MAP
     if not new:
-        print("  (complexes: 0 new complexes)"); return None
-    json.dump({"complexes": {k: v for k, v in new.items()},
-               "meta": {"n_new": len(new)}}, open(f"{OUT}/complexes_extra.json", "w"))
-    print(f"  complexes_extra: {len(new):,} complexes beyond our {len(have):,} -> complexes_extra.json")
+        print("  (complexes: 0 new beyond base)"); return None
+    json.dump({"complexes": new, "meta": {"n_new": len(new), "n_base": len(have)}},
+              open(f"{OUT}/complexes_extra.json", "w"))
+    print(f"  complexes_extra: {len(new):,} new complexes beyond our {len(have):,} base -> complexes_extra.json")
     return {"n_new": len(new)}
 
 
