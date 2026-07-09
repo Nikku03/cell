@@ -146,6 +146,27 @@ class CompleteCell:
         if mb and mb.get("metabolites"):
             self.D["metabolites"] = mb["metabolites"]
             self.D["metabolite_meta"] = mb.get("meta", {})
+        # heavy-tier overlays (structure, absolute concentration, translation, enhancers, ChIP reg, extra PPI)
+        self.plddt = _pg(f"{OUT}/structure.json", "plddt")
+        self.copies = _pg(f"{OUT}/concentration.json", "copies")
+        self.translation = _pg(f"{OUT}/translation.json", "translation")
+        self.enhancers = _pg(f"{OUT}/enhancers.json", "enhancers")
+        self.chip_out, self.chip_in = {}, {}
+        cr = _load(f"{OUT}/chip_reg.json")
+        for k, tgts in ((cr or {}).get("chip_reg", {}) or {}).items():
+            try:
+                t = int(k)
+            except (TypeError, ValueError):
+                continue
+            self.chip_out[t] = tgts
+            for g in tgts:
+                self.chip_in.setdefault(g, []).append(t)
+        if cr:
+            self.D["chip_meta"] = cr.get("meta", {})
+        pe = _load(f"{OUT}/ppi_extra.json")
+        if pe and pe.get("channels"):
+            self.D["ppi_extra"] = pe["channels"]
+            self.D["ppi_extra_meta"] = pe.get("meta", {})
 
     # ---- apply the Phase-2 verified additions -> cell v2 (predicted edges tagged, facts untouched) ----
     def apply_additions(self, path=f"{OUT}/cell_v2_additions.json"):
@@ -255,6 +276,12 @@ class CompleteCell:
             "disorder_fraction": self.disorder.get(i),           # MobiDB intrinsic-disorder content
             "target_level": self.tdl.get(i),                     # Pharos Tclin/Tchem/Tbio/Tdark
             "domains": self.domains.get(i, []),                  # InterPro domain architecture
+            "plddt": self.plddt.get(i),                          # mean AlphaFold confidence
+            "copies_per_cell": self.copies.get(i),               # absolute abundance (enzyme-constrained flux)
+            "translation": self.translation.get(i),              # {te, t_half_h}
+            "enhancers": self.enhancers.get(i),                  # {n, score} enhancer->gene links
+            "chip_regulates": [self.name[t] for t in self.chip_out.get(i, []) if t < len(self.name)],
+            "chip_regulated_by": [self.name[s] for s in self.chip_in.get(i, []) if s < len(self.name)],
             "synthetic_lethal": [(self.name[j], s) for j, s in self.sl_adj.get(i, [])],
             "ligand_of_receptors": self._names(self.lig2rec.get(i, [])),
             "receptor_for_ligands": self._names(self.rec2lig.get(i, [])),

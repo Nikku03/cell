@@ -26,6 +26,9 @@ ARTIFACTS = [
     "depmap_vecs.npz", "expr_vecs.npz",   # derived z-scored matrices — skip the 419/305 MB CSV re-parse (time+RAM)
     "extra_data_report.json", "causal_edges.json", "reactome_pathways.json",   # Reactome + SIGNOR/CollecTRI overlays
     "tf_motifs.json", "complexes_extra.json", "new_data_report.json",          # data-hunt overlays (motifs, complexes)
+    "disorder.json", "darkness.json", "domains.json", "metabolites.json",      # data-hunt: disorder/Pharos/domains/HMDB
+    "structure.json", "concentration.json", "translation.json",                # data-hunt: pLDDT/copies/translation
+    "enhancers.json", "chip_reg.json", "ppi_extra.json",                       # data-hunt: enhancers/ChIP/extra-PPI
 ]
 
 

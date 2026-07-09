@@ -60,6 +60,13 @@ def report():
     if cm:
         L.append(f"    causal direction (SIGNOR+CollecTRI) {_n(cm.get('total', 0))} directed edges, "
                  f"{_n(cm.get('signed', 0))} signed (activate/inhibit)")
+    chm = D.get("chip_meta")
+    if chm:
+        L.append(f"    ChIP-derived TF->target {_n(chm.get('n_edges', 0))} edges ({_n(chm.get('n_tf', 0))} TFs) "
+                 f"- experimental-binding channel")
+    pem = D.get("ppi_extra_meta")
+    if pem:
+        L.append(f"    extra PPI channels     {pem}  (orthogonal evidence + negatives)")
     L.append("")
     L.append("  KINETICS / METABOLISM:")
     L.append(f"    enzymes with kinetics  {_n(len(kin))}  (measured {_n(meas)}, predicted {_n(len(kin)-meas)},"
@@ -93,9 +100,13 @@ def report():
     if tfm:
         L.append(f"    TF binding motifs      {_n(tfm.get('n_tf', 0))} TFs with a JASPAR PWM (mechanism under reg edges)")
     dom = getattr(C, "domains", {}) or {}
-    dis = getattr(C, "disorder", {}) or {}
-    if dom or dis:
-        L.append(f"    domains / disorder     {_n(len(dom))} genes w/ InterPro domains | {_n(len(dis))} w/ MobiDB disorder")
+    disr = getattr(C, "disorder", {}) or {}
+    if dom or disr:
+        L.append(f"    domains / disorder     {_n(len(dom))} genes w/ InterPro domains | {_n(len(disr))} w/ MobiDB disorder")
+    plddt = getattr(C, "plddt", {}) or {}
+    enh = getattr(C, "enhancers", {}) or {}
+    if plddt or enh:
+        L.append(f"    structure / enhancers  {_n(len(plddt))} genes w/ AlphaFold pLDDT | {_n(len(enh))} w/ enhancer links")
     tdl = getattr(C, "tdl", {}) or {}
     if tdl:
         import collections as _c
@@ -107,6 +118,11 @@ def report():
              f" across {_n(len(D.get('ctnames', [])))} cell types")
     L.append(f"    abundance (ppm)        {_n(len(D.get('ppm', {})))} | co-expression {_n(len(D.get('coexpr', {})))}"
              f" | co-dependency {_n(len(D.get('codep', {})))}")
+    cop = getattr(C, "copies", {}) or {}
+    tr = getattr(C, "translation", {}) or {}
+    if cop or tr:
+        L.append(f"    absolute copies/cell   {_n(len(cop))} genes | translation/half-life {_n(len(tr))} genes"
+                 f"  (enzyme-constrained flux inputs)")
     L.append("")
     L.append("  DISEASE / DRUGS:")
     L.append(f"    disease-linked genes   {_n(dis)} | drug targets {_n(len(drugs))} | structures {_n(len(D.get('struct', {})))}")
