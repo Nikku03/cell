@@ -32,6 +32,7 @@ ARTIFACTS = [
     "celltype_capacity.json", "saturation_kapp.json", "incell_rates_validation.json",  # in-cell rates from kcat
     "domain_ppi_validation.json", "metabolite_enzyme.json",                    # new inter-layer connections
     "rprom_validation.json", "blind_target_report.json", "blind_sweep_report.json",           # reg<->metabolic + cancer sweep
+    "cancer_cell_map.json",                                                                    # whole perturbed-cell map
 ]
 
 
