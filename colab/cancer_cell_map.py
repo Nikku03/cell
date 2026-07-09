@@ -79,6 +79,12 @@ def _signed_out(C):
                 raw[a].append((b, s))
     except Exception:
         pass
+    try:
+        import curated_edges                                    # curated signed regulation (e.g. BCL11A ⊣ HBG)
+        for a, b, s in curated_edges.signed_edges(C):
+            raw[a].append((b, s))
+    except Exception:
+        pass
     out = {}
     for u, edges in raw.items():
         d = len(edges)
