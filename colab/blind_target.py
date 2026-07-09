@@ -72,8 +72,68 @@ def _reactome_names(C):
     return rx
 
 
-def analyze(panel, C, rx, sites):
+def load_ml_prob(C):
+    """Load the cell WITH the trained ML model, exactly the earlier-times way (CompleteCell + DepMap
+    co-essentiality + the trained signal_combiner). Returns prob(i, j) -> calibrated P(the two genes interact),
+    or None if the ML artifacts are absent. This is the SAME edge model phase2_loop heals the network with —
+    here it replaces the hand-set disease-popularity term with an ML view of how a gene wires into the cancer
+    machinery."""
+    try:
+        import numpy as np, signal_combiner
+        m = signal_combiner.load(f"{OUT}/signal_combiner.pkl")
+        if not m:
+            print("  (no trained combiner -> ML lens off, hand-scored fallback)")
+            return None
+        try:
+            from phase3_depmap import DepMapEdges
+            dm = DepMapEdges()                                     # DepMap co-essentiality (from the cached matrix)
+        except Exception as e:
+            dm = None; print("  (co-essentiality off:", str(e)[:50], ")")
+        feats = set(m.get("features_all", m.get("features")))
+        sc = signal_combiner.SignalCombiner(C=C, dm=dm, only=feats)
+        kept = [sc.features_list.index(f) for f in m["features"]]
+        def prob(u, v):
+            full = sc.features(u, v)
+            x = np.array([[full[i] for i in kept]])
+            if m.get("uses_scaler"):
+                x = m["scaler"].transform(x)
+            return float(m["model"].predict_proba(x)[0, 1])
+        print(f"  ML combiner loaded (features {m['features']}, thr {round(m['threshold'],3)})")
+        return prob
+    except Exception as e:
+        print("  (ML combiner unavailable:", str(e)[:80], ") -> hand-scored fallback")
+        return None
+
+
+def oncogenic_core(C, rx):
+    """the cancer machinery, as model indices: genes sitting in an oncogenic Reactome pathway. Defined from the
+    pathway layer alone (blind to which gene is any tumour's answer)."""
+    core = set()
+    for i, paths in rx.items():
+        if any(k in p.lower() for p in paths for k in ONCO_KW):
+            core.add(i)
+    return core
+
+
+def ml_wiring(i, C, prob, core, cache):
+    """ML network-corroboration for gene index i: how tightly the trained combiner wires it into the cancer
+    machinery. mean of its top-3 calibrated edge probabilities to oncogenic-core neighbours — a driver sits in
+    the signalling core; a giant structural passenger does not. Blind to the answer (uses network + ML only)."""
+    if prob is None:
+        return None
+    if i in cache:
+        return cache[i]
+    partners = [j for j in C.ppi_adj.get(i, ()) if j in core and j != i][:60]   # cap for cost
+    ps = sorted((prob(i, j) for j in partners), reverse=True)[:3]
+    val = round(sum(ps) / len(ps), 3) if ps else 0.0
+    cache[i] = val
+    return val
+
+
+def analyze(panel, C, rx, sites, prob=None, core=None, mlcache=None):
     idx = C.idx
+    core = core if core is not None else set()
+    mlcache = mlcache if mlcache is not None else {}
     rows = []
     for sym, pos in panel:
         if sym not in idx:
@@ -103,16 +163,23 @@ def analyze(panel, C, rx, sites):
         paths = rx.get(i, [])
         onco = [p for p in paths if any(k in p.lower() for k in ONCO_KW)]
         onco_s = 1.0 if onco else 0.0
-        # 3) disease link
+        # 3) NETWORK term. ML-loaded: the trained combiner's wiring into the cancer core (earlier-times cell+ML).
+        #    Falls back to the hand disease-popularity term (ndis) only when the ML artifacts are absent.
         ndis = raw.get("ndis") or 0
-        dz = min(ndis / 12.0, 1.5)
+        mlw = ml_wiring(i, C, prob, core, mlcache) if prob is not None else None
+        if mlw is not None:
+            net_term = mlw
+            net_note = f"ML-wire {mlw:.2f}"
+        else:
+            net_term = min(ndis / 12.0, 1.5)
+            net_note = f"dz {net_term:.2f} (hand)"
         # 4) druggable + centrality (context, not driver signal)
         gi = idx[sym]
         drug = (gi in C.D.get("drugs", {})) or (str(gi) in C.D.get("drugs", {}))
         deg = len(C.ppi_adj.get(i, ()))
-        score = hit * (0.4 + onco_s) * (0.5 + dz)
+        score = hit * (0.4 + onco_s) * (0.5 + net_term)
         rows.append({"gene": sym, "in_model": True, "mut_pos": pos, "site_note": site_note,
-                     "domain_hit": in_dom or "(none)",
+                     "domain_hit": in_dom or "(none)", "net_note": net_note, "ml_wiring": mlw,
                      "onco_pathway": onco[:2], "ndis": ndis, "ppi_deg": deg, "druggable": drug,
                      "driver_score": round(score, 3)})
     rows.sort(key=lambda r: -r.get("driver_score", -1))
@@ -133,6 +200,10 @@ def target_call(top):
 def run(panels=None):
     C = CompleteCell()
     rx = _reactome_names(C)
+    prob = load_ml_prob(C)                                     # load the cell WITH the ML model (earlier-times way)
+    core = oncogenic_core(C, rx)
+    mlcache = {}
+    print(f"  oncogenic core (pathway layer): {len(core):,} genes | ML lens: {'ON' if prob else 'off'}")
     panels = panels or {
         # real, documented alterations used as INPUT (driver + classic passengers TTN/MUC16 + hub ACTB)
         "A375 (melanoma)":  [("BRAF", 600), ("CDKN2A", 58), ("TTN", 20000), ("MUC16", 5000), ("ACTB", 150)],
@@ -143,19 +214,19 @@ def run(panels=None):
     sites = fetch_functional_sites(allgenes)
     report = {}
     for name, panel in panels.items():
-        rows = analyze(panel, C, rx, sites)
+        rows = analyze(panel, C, rx, sites, prob=prob, core=core, mlcache=mlcache)
         top = next((r for r in rows if r.get("in_model")), {})
         call = target_call(top) if top else "no genes mapped"
         report[name] = {"ranking": rows, "proposed_target": top.get("gene"), "call": call}
-        print("=" * 76)
+        print("=" * 78)
         print(f"TUMOR: {name}   —   input: {[p[0] for p in panel]}")
-        print("=" * 76)
-        print(f"  {'gene':8}{'score':>7}  {'functional-site test':<36}{'onco':<6}{'drug':>5}")
+        print("=" * 78)
+        print(f"  {'gene':8}{'score':>7}  {'functional-site test':<32}{'network(ML)':<14}{'onco':<5}{'drug':>5}")
         for r in rows:
             if not r.get("in_model"):
                 print(f"  {r['gene']:8}   (not in model)"); continue
-            print(f"  {r['gene']:8}{r['driver_score']:>7}  {r['site_note'][:34]:<36}"
-                  f"{'yes' if r['onco_pathway'] else '-':<6}{'yes' if r['druggable'] else '-':>5}")
+            print(f"  {r['gene']:8}{r['driver_score']:>7}  {r['site_note'][:30]:<32}{r.get('net_note',''):<14}"
+                  f"{'yes' if r['onco_pathway'] else '-':<5}{'yes' if r['druggable'] else '-':>5}")
         print(f"  -> PROPOSED TARGET: {top.get('gene')}")
         print(f"     {call}")
         print()
