@@ -74,6 +74,26 @@ class CompleteCell:
         self._fold_motifs()                                                # fold JASPAR TF binding motifs
         self._fold_complexes()                                             # merge CORUM/hu.MAP complexes
         self._fold_extras()                                                # disorder, Pharos TDL, domains, metabolites
+        self._fold_gene_additions()                                        # P0: append missing genes + STRING edges
+
+    def _fold_gene_additions(self, path=f"{OUT}/gene_additions.json"):
+        """P0: append missing protein-coding genes (globins, TYK2, PIK3CA, …) as REAL nodes with INDEPENDENT
+        STRING physical edges. Additive: assigns each a fresh index, extends name/idx/genes, and adds undirected
+        PPI edges to partners already in the model. Marked added=True so provenance is explicit."""
+        self.added_genes = set()
+        d = _load(path)
+        for sym, meta in ((d or {}).get("genes", {}) or {}).items():
+            if sym in self.idx:
+                continue
+            i = len(self.name)
+            rec = {"name": sym, "added": True, "uniprot": meta.get("uniprot"),
+                   "ndis": 0, "func": "(added protein-coding gene; edges from STRING)"}
+            self.genes.append(rec); self.name.append(sym); self.idx[sym] = i
+            self.added_genes.add(i)
+            for partner, score in meta.get("string_partners", []):
+                j = self.idx.get(partner)
+                if j is not None and j != i:
+                    self.ppi_adj[i].add(j); self.ppi_adj[j].add(i)
 
     def _fold_reactome(self, path=f"{OUT}/reactome_pathways.json"):
         """Fold the Reactome pathway overlay into the complete cell: a distinct D['reactome'] layer PLUS the
