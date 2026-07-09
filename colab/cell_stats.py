@@ -77,6 +77,17 @@ def report():
     else:
         L.append(f"    curated pathways       {_n(len(D.get('pathways', {})))} covering {_n(len(pw_cov))}/{_n(n)}"
                  f" genes ({round(100*len(pw_cov)/n)}%)")
+    # honest coverage: NAMED-pathway membership (Reactome/curated) is distinct from any FUNCTIONAL annotation.
+    # We already hold GO for ~all genes, so functional coverage is far higher than the named-pathway number.
+    go = D.get("go", {})
+    func = set(C.idx[g] for g in go if g in C.idx) | pw_cov
+    if rx and rx.get("pathways"):
+        func |= set(g for v in rx["pathways"].values() for g in v)
+    L.append(f"    functional annotation  {_n(len(func))}/{_n(n)} genes ({round(100*len(func)/n)}%) have a GO "
+             f"process/function term or a named pathway  ({n-len(func)} have neither)")
+    tfm = D.get("motif_meta", {})
+    if tfm:
+        L.append(f"    TF binding motifs      {_n(tfm.get('n_tf', 0))} TFs with a JASPAR PWM (mechanism under reg edges)")
     L.append(f"    PTMs {_n(len(D.get('ptm', {})))} | dark-function predictions {_n(len(D.get('darkfn', {})))}")
     L.append("")
     L.append("  EXPRESSION / CONTEXT:")

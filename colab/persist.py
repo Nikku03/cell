@@ -25,6 +25,7 @@ ARTIFACTS = [
     "tahoe_vecs.npz",          # derived Tahoe per-gene vectors (58 MB) — cache so the 900 MB download is one-time
     "depmap_vecs.npz", "expr_vecs.npz",   # derived z-scored matrices — skip the 419/305 MB CSV re-parse (time+RAM)
     "extra_data_report.json", "causal_edges.json", "reactome_pathways.json",   # Reactome + SIGNOR/CollecTRI overlays
+    "tf_motifs.json", "complexes_extra.json", "new_data_report.json",          # data-hunt overlays (motifs, complexes)
 ]
 
 

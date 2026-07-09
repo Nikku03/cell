@@ -71,6 +71,7 @@ class CompleteCell:
                     self.gene2path[i].append(pname)
         self._fold_reactome()                                              # fold the 2,792 Reactome pathways in
         self._fold_causal()                                                # fold SIGNOR + CollecTRI signed direction
+        self._fold_motifs()                                                # fold JASPAR TF binding motifs
 
     def _fold_reactome(self, path=f"{OUT}/reactome_pathways.json"):
         """Fold the Reactome pathway overlay into the complete cell: a distinct D['reactome'] layer PLUS the
@@ -109,6 +110,20 @@ class CompleteCell:
         if edges:
             self.D["causal_meta"] = (cz or {}).get("meta", {})
         return len(edges)
+
+    def _fold_motifs(self, path=f"{OUT}/tf_motifs.json"):
+        """Fold JASPAR TF binding motifs in: a per-gene tf_motif = {id, pwm}, the mechanistic layer beneath our
+        TF->target edges (a TF's curated DNA-binding preference). ADDITIVE; no-op if the overlay is absent."""
+        self.tf_motif = {}
+        m = _load(path)
+        for k, v in ((m or {}).get("motifs", {}) or {}).items():
+            try:
+                self.tf_motif[int(k)] = v
+            except (TypeError, ValueError):
+                pass
+        if self.tf_motif:
+            self.D["motif_meta"] = (m or {}).get("meta", {})
+        return len(self.tf_motif)
 
     # ---- apply the Phase-2 verified additions -> cell v2 (predicted edges tagged, facts untouched) ----
     def apply_additions(self, path=f"{OUT}/cell_v2_additions.json"):
@@ -214,6 +229,7 @@ class CompleteCell:
             # signed causal direction (SIGNOR/CollecTRI): +1 activates, -1 inhibits, 0 unsigned
             "causal_downstream": [(self.name[j], s, db) for j, s, db in self.causal_out.get(i, []) if j < len(self.name)],
             "causal_upstream": [(self.name[j], s, db) for j, s, db in self.causal_in.get(i, []) if j < len(self.name)],
+            "tf_motif": self.tf_motif.get(i),                    # JASPAR binding motif (PWM) if this gene is a TF
             "synthetic_lethal": [(self.name[j], s) for j, s in self.sl_adj.get(i, [])],
             "ligand_of_receptors": self._names(self.lig2rec.get(i, [])),
             "receptor_for_ligands": self._names(self.rec2lig.get(i, [])),

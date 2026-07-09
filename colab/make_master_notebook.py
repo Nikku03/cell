@@ -207,6 +207,12 @@ cells = [
        "detected format + what it adds; overlays are written, nothing measured is overwritten."),
     code("!python colab/extra_data.py"),
 
+    md("## 7a-2. New layers from the data hunt — TF motifs + extra complexes",
+       "Genuinely-NEW layers (verified not already held): JASPAR binding motifs per TF (the mechanism beneath the "
+       "reg edges) and CORUM/hu.MAP complexes beyond our 2,039. Downloads that the sandbox blocked run fine here on "
+       "Colab's open internet; overlays are folded into the cell. GO was skipped — we already hold it for ~all genes."),
+    code("!python colab/new_data.py"),
+
     md("## 7b. WHOLE-CELL summary — every layer, not just PPI",
        "Genome · all three networks (ppi/reg/sig) with their per-relation combiner AUCs · complexes/SL/LR · "
        "kinetics & metabolism · pathways/PTMs · single-cell expression & context · disease/drugs · the ML "
