@@ -235,6 +235,14 @@ cells = [
        "Colab's open internet; overlays are folded into the cell. GO was skipped — we already hold it for ~all genes."),
     code("!python colab/new_data.py"),
 
+    md("## 7a-3. In-cell rates from kcat — cell-type capacity + substrate saturation",
+       "Two in-cell quantities derived from the in-vitro kcat, neither needing measured flux: (A) cell-type "
+       "**capacity** Vmax=kcat·ppm gated by the 200-cell-type expression mask; (B) the **saturation operating "
+       "rate** v=kcat·[S]/([S]+Km) using each enzyme's Human-GEM primary substrate against measured mammalian "
+       "intracellular concentrations. Validated: the saturation sigma distribution centres near Davidi's measured "
+       "in-vivo 0.5. Uses cobra + Human-GEM (already downloaded by the ecflux cell)."),
+    code("!python colab/incell_rates.py"),
+
     md("## 7b. WHOLE-CELL summary — every layer, not just PPI",
        "Genome · all three networks (ppi/reg/sig) with their per-relation combiner AUCs · complexes/SL/LR · "
        "kinetics & metabolism · pathways/PTMs · single-cell expression & context · disease/drugs · the ML "

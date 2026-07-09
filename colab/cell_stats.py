@@ -125,6 +125,13 @@ def report():
     if cop or tr:
         L.append(f"    absolute copies/cell   {_n(len(cop))} genes | translation/half-life {_n(len(tr))} genes"
                  f"  (enzyme-constrained flux inputs)")
+    vmax = getattr(C, "vmax_ref", {}) or {}
+    icr = getattr(C, "incell_rate", {}) or {}
+    if vmax or icr:
+        sm = D.get("saturation_kapp_meta", {})
+        L.append(f"    in-cell rates (from kcat)  {_n(len(vmax))} cell-type capacities (Vmax=kcat*ppm) | "
+                 f"{_n(len(icr))} saturation operating rates (median sigma {sm.get('median_sigma')}, "
+                 f"Davidi 0.5)")
     L.append("")
     L.append("  DISEASE / DRUGS:")
     L.append(f"    disease-linked genes   {_n(dis)} | drug targets {_n(len(drugs))} | structures {_n(len(D.get('struct', {})))}")

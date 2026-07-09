@@ -29,6 +29,7 @@ ARTIFACTS = [
     "disorder.json", "darkness.json", "domains.json", "metabolites.json",      # data-hunt: disorder/Pharos/domains/HMDB
     "structure.json", "concentration.json", "translation.json",                # data-hunt: pLDDT/copies/translation
     "enhancers.json", "chip_reg.json", "ppi_extra.json",                       # data-hunt: enhancers/ChIP/extra-PPI
+    "celltype_capacity.json", "saturation_kapp.json", "incell_rates_validation.json",  # in-cell rates from kcat
 ]
 
 

@@ -193,6 +193,25 @@ class CompleteCell:
         if pe and pe.get("channels"):
             self.D["ppi_extra"] = pe["channels"]
             self.D["ppi_extra_meta"] = pe.get("meta", {})
+        # in-cell rates from kcat (no measured flux needed): cell-type capacity (Vmax=kcat*ppm) + saturation rate
+        self.vmax_ref = {}
+        cap = _load(f"{OUT}/celltype_capacity.json")
+        for k, v in ((cap or {}).get("capacity", {}) or {}).items():
+            try:
+                self.vmax_ref[int(k)] = v
+            except (TypeError, ValueError):
+                pass
+        if cap:
+            self.D["celltype_capacity_meta"] = cap.get("meta", {})
+        self.incell_rate = {}
+        sat = _load(f"{OUT}/saturation_kapp.json")
+        for k, v in ((sat or {}).get("kapp", {}) or {}).items():
+            try:
+                self.incell_rate[int(k)] = v
+            except (TypeError, ValueError):
+                pass
+        if sat:
+            self.D["saturation_kapp_meta"] = sat.get("meta", {})
 
     # ---- apply the Phase-2 verified additions -> cell v2 (predicted edges tagged, facts untouched) ----
     def apply_additions(self, path=f"{OUT}/cell_v2_additions.json"):
@@ -305,6 +324,9 @@ class CompleteCell:
             "plddt": self.plddt.get(i),                          # mean AlphaFold confidence
             "copies_per_cell": self.copies.get(i),               # absolute abundance (enzyme-constrained flux)
             "translation": self.translation.get(i),              # {te, t_half_h}
+            "vmax_ref": (self.vmax_ref.get(i) or {}).get("vmax_ref"),          # kcat*ppm capacity (cell-type gated)
+            "n_celltypes_active": (self.vmax_ref.get(i) or {}).get("n_celltypes"),  # emask presence (dropout-conservative)
+            "incell_rate": self.incell_rate.get(i),              # {substrate, sigma, v_incell_per_s} saturation rate
             "enhancers": self.enhancers.get(i),                  # {n, score} enhancer->gene links
             "chip_regulates": [self.name[t] for t in self.chip_out.get(i, []) if t < len(self.name)],
             "chip_regulated_by": [self.name[s] for s in self.chip_in.get(i, []) if s < len(self.name)],
