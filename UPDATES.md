@@ -25,6 +25,52 @@ Plus the standing **context-dependency attribution** layer on `CompleteCell.gene
 
 ---
 
+## P0 — FOUNDATIONAL: complete the gene universe (the model is only ~83% of the genome)
+
+- **Problem:** the model holds **16,492 of ~19,800 human protein-coding genes — ~17% (≈3,300) are absent**, and
+  the gap is *idiosyncratic*, not a clean tissue-specificity filter. Category probe (evidence):
+  - **Entire hemoglobin locus missing** — HBB, HBA1/2, HBG1/2, HBD, HBE1 (0/7). No hemoglobinopathy (sickle cell,
+    β-thalassaemia) can be modelled; the BCL11A→fetal-Hb test was un-runnable for this reason.
+  - **Major signalling / cancer genes missing** — TYK2 (autoimmune, deucravacitinib), PIK3CA (one of the most
+    mutated genes in cancer — this is what broke the MCF7 case).
+  - **Major monogenic-disease genes missing** — PAH (phenylketonuria), SMN1/SMN2 (spinal muscular atrophy),
+    PKLR (pyruvate-kinase deficiency), LPA (Lp(a)).
+  - Present by contrast: ion channels, GPCRs, keratins, HLA, and every well-studied cancer driver
+    (TP53/BRAF/KRAS/EGFR/MYC) — which is exactly why the cancer demo looked strong.
+- **What sort of genes we don't have (and the likely cause):** the index appears to come from a dataset
+  INTERSECTION (genes surviving DepMap ∩ expression ∩ network QC), which silently drops:
+  1. **Paralogs / near-identical duplicates** removed by dedup — SMN1/SMN2, some globins.
+  2. **Symbol / ID-resolution failures** — PIK3CA absent while PIK3CB is present points to an Ensembl↔HGNC
+     mismatch, not a real biological exclusion.
+  3. **Genes absent from a specific source matrix** — globins are low-variance / excluded from some CRISPR
+     libraries, so an intersection filter drops them.
+  4. **Tissue-restricted genes with sparse interactome annotation** — erythroid, germline, some secreted factors.
+  So the missing set is not "the unimportant genes" — it is a scattered ~3,300 that INCLUDES disease-causal genes.
+- **Why it's needed (thorough):**
+  1. **The stated goal is "map the whole cell, miss nothing."** 83% is not that — ~1 in 6 genes cannot be queried,
+     perturbed, or mutated at all.
+  2. **Disease coverage is holed exactly where it matters.** The missing set contains disease-CAUSAL genes
+     (globins, SMN1, PAH, TYK2, PIK3CA). A cell model without a disease's causal gene cannot model that disease —
+     Bucket A proved it: the first two non-cancer tests both hit missing-gene walls immediately.
+  3. **The cancer results are flattered by selection bias.** Cancer drivers are the most heavily annotated genes
+     in the genome, so they are all present with rich edges; measured capability drops the moment you leave that
+     corner of the genome. Coverage must be uniform before cross-disease claims are honest.
+  4. **No perturbation without the node.** You cannot knock out or mutate a gene that is not in the graph.
+  5. **Edge completeness, not just nodes.** Even present genes miss key edges — BCL11A is in the model but its
+     BCL11A⊣HBG repression (the sickle-cell mechanism) is absent.
+- **Fix:**
+  1. Reconcile the index against the full HGNC/GENCODE protein-coding set (~19,800); enumerate the ~3,300 missing.
+  2. Add them as nodes; pull edges from INDEPENDENT sources (STRING, BioGRID, SIGNOR, Reactome, GTEx
+     co-expression) — never curated to an answer, so downstream prospective tests stay fair.
+  3. Fix paralog dedup (keep SMN1 AND SMN2) and symbol/ID resolution (restore PIK3CA, audit all HGNC aliases).
+  4. Tag every gene fully-wired / sparse / isolated-node, so the model reports its OWN coverage per query instead
+     of silently returning a partial answer.
+  5. Prioritise by disease relevance: OMIM/ClinVar disease genes first (globins, SMN, PAH, TYK2, PIK3CA, …).
+- **Effort:** medium–high (reconciliation + multi-source edge fetch + dedup/ID fixes). **Foundational — unblocks
+  Bucket A and essentially every non-cancer disease; do before broad cross-disease claims.**
+
+---
+
 ## P1 — unblocks a named failure class
 
 ### U1. Degradation / E3-ubiquitin-ligase → substrate edge layer
@@ -165,6 +211,8 @@ Plus the standing **context-dependency attribution** layer on `CompleteCell.gene
 
 ## Suggested order
 
+0. **P0 gene-universe completion** — foundational; without it every non-cancer disease hits a missing-gene wall.
+   Can run in parallel with the P1 items (it's data plumbing, they're modelling).
 1. **U2** (loss-context attribution, Colab) — highest value, lowest effort, unblocks the whole SL trial-target class.
 2. **U1** (degradation edges) — unblocks VHL→HIF2A and the ubiquitin class.
 3. **U3** (context GOF/LOF) — fixes the JAK1-type miscalls that survive all 8 layers.
