@@ -14,6 +14,12 @@
         20000
       ]
     ],
+    "layers_active": {
+      "ddg": "on",
+      "emask": true,
+      "cellgraph": true,
+      "depmap": true
+    },
     "A_molecular": [
       {
         "gene": "BRAF",
@@ -23,7 +29,9 @@
         "in_domain": [
           "Protein kinase"
         ],
-        "selective_dep_rank": 4
+        "selective_dep_rank": 4,
+        "ddg": 0.51,
+        "ddg_note": "stability-neutral"
       },
       {
         "gene": "CDKN2A",
@@ -31,7 +39,9 @@
         "effect": "LOF (lost)",
         "clamp": -1,
         "in_domain": null,
-        "selective_dep_rank": 12801
+        "selective_dep_rank": 12801,
+        "ddg": 0.56,
+        "ddg_note": "stability-neutral"
       },
       {
         "gene": "TTN",
@@ -41,7 +51,8 @@
         "in_domain": [
           "Fibronectin type-III 44"
         ],
-        "selective_dep_rank": 3097
+        "selective_dep_rank": 3097,
+        "ddg": null
       }
     ],
     "B_pathway": {
@@ -210,7 +221,84 @@
         ]
       ]
     },
-    "G_conclusion": {
+    "G_cellgraph_perturbation": {
+      "n_affected": 13824,
+      "top_down": [
+        [
+          "CDKN1A",
+          -17.375
+        ],
+        [
+          "TRIP12",
+          -16.0
+        ],
+        [
+          "CHD1L",
+          -15.75
+        ],
+        [
+          "MBNL1",
+          -15.75
+        ],
+        [
+          "TGIF1",
+          -15.625
+        ],
+        [
+          "TP53",
+          -15.625
+        ],
+        [
+          "NKIRAS1",
+          -15.25
+        ],
+        [
+          "HNRNPH1",
+          -14.875
+        ]
+      ],
+      "top_up": [
+        [
+          "CCNA2",
+          3.375
+        ],
+        [
+          "CDK2",
+          2.75
+        ],
+        [
+          "CDK4",
+          2.625
+        ],
+        [
+          "CDK1",
+          2.625
+        ],
+        [
+          "BIRC5",
+          2.125
+        ],
+        [
+          "PCK1",
+          2.125
+        ],
+        [
+          "BCL2",
+          2.0
+        ],
+        [
+          "RUNX2",
+          1.875
+        ]
+      ]
+    },
+    "H_tissue_baseline": {
+      "tissue_types_matched": [
+        "skin fibroblast"
+      ],
+      "n_types": 1
+    },
+    "conclusion": {
       "driver": "BRAF",
       "phenotype_pathways_up": [
         "Signalling to p38 via RIT and RIN",
@@ -350,6 +438,12 @@
         577
       ]
     ],
+    "layers_active": {
+      "ddg": "on",
+      "emask": true,
+      "cellgraph": true,
+      "depmap": true
+    },
     "A_molecular": [
       {
         "gene": "MLH1",
@@ -357,7 +451,9 @@
         "effect": "LOF (lost)",
         "clamp": -1,
         "in_domain": null,
-        "selective_dep_rank": 2127
+        "selective_dep_rank": 2127,
+        "ddg": 0.54,
+        "ddg_note": "stability-neutral"
       },
       {
         "gene": "MSH6",
@@ -365,7 +461,9 @@
         "effect": "LOF (lost)",
         "clamp": -1,
         "in_domain": null,
-        "selective_dep_rank": 11597
+        "selective_dep_rank": 11597,
+        "ddg": 1.05,
+        "ddg_note": "mildly destabilizing"
       },
       {
         "gene": "PMS2",
@@ -373,7 +471,8 @@
         "effect": "LOF (lost)",
         "clamp": -1,
         "in_domain": null,
-        "selective_dep_rank": null
+        "selective_dep_rank": null,
+        "ddg": null
       },
       {
         "gene": "TGFBR2",
@@ -381,7 +480,9 @@
         "effect": "LOF (lost)",
         "clamp": -1,
         "in_domain": null,
-        "selective_dep_rank": 635
+        "selective_dep_rank": 635,
+        "ddg": 0.56,
+        "ddg_note": "stability-neutral"
       },
       {
         "gene": "ACVR2A",
@@ -391,7 +492,8 @@
         "in_domain": [
           "Protein kinase"
         ],
-        "selective_dep_rank": 1569
+        "selective_dep_rank": 1569,
+        "ddg": null
       },
       {
         "gene": "RNF43",
@@ -399,7 +501,8 @@
         "effect": "LOF (lost)",
         "clamp": -1,
         "in_domain": null,
-        "selective_dep_rank": null
+        "selective_dep_rank": null,
+        "ddg": null
       },
       {
         "gene": "BAX",
@@ -407,7 +510,8 @@
         "effect": "LOF (lost)",
         "clamp": -1,
         "in_domain": null,
-        "selective_dep_rank": null
+        "selective_dep_rank": null,
+        "ddg": null
       },
       {
         "gene": "BRAF",
@@ -417,7 +521,9 @@
         "in_domain": [
           "Protein kinase"
         ],
-        "selective_dep_rank": 4
+        "selective_dep_rank": 4,
+        "ddg": 0.51,
+        "ddg_note": "stability-neutral"
       },
       {
         "gene": "B2M",
@@ -427,7 +533,9 @@
         "in_domain": [
           "Ig-like C1-type"
         ],
-        "selective_dep_rank": 12038
+        "selective_dep_rank": 12038,
+        "ddg": -0.7,
+        "ddg_note": "stability-neutral"
       },
       {
         "gene": "JAK1",
@@ -435,7 +543,9 @@
         "effect": "GOF (activated)",
         "clamp": 1,
         "in_domain": null,
-        "selective_dep_rank": 1375
+        "selective_dep_rank": 1375,
+        "ddg": 0.09,
+        "ddg_note": "stability-neutral"
       },
       {
         "gene": "WRN",
@@ -445,7 +555,9 @@
         "in_domain": [
           "Helicase ATP-binding"
         ],
-        "selective_dep_rank": 92
+        "selective_dep_rank": 92,
+        "ddg": 1.06,
+        "ddg_note": "mildly destabilizing"
       }
     ],
     "B_pathway": {
@@ -679,7 +791,84 @@
         ]
       ]
     },
-    "G_conclusion": {
+    "G_cellgraph_perturbation": {
+      "n_affected": 13837,
+      "top_down": [
+        [
+          "CCNA2",
+          -2.125
+        ],
+        [
+          "CCN2",
+          -2.0
+        ],
+        [
+          "BIRC5",
+          -2.0
+        ],
+        [
+          "SMAD2",
+          -2.0
+        ],
+        [
+          "TGFB1",
+          -2.0
+        ],
+        [
+          "ACTG2",
+          -1.75
+        ],
+        [
+          "MMP13",
+          -1.625
+        ],
+        [
+          "CCNE1",
+          -1.625
+        ]
+      ],
+      "top_up": [
+        [
+          "CDKN1A",
+          14.625
+        ],
+        [
+          "TRIP12",
+          14.375
+        ],
+        [
+          "MFSD11",
+          13.625
+        ],
+        [
+          "CHD1L",
+          13.25
+        ],
+        [
+          "MUC1",
+          13.0
+        ],
+        [
+          "MBNL1",
+          12.875
+        ],
+        [
+          "DPP9",
+          12.875
+        ],
+        [
+          "HNRNPH1",
+          12.875
+        ]
+      ]
+    },
+    "H_tissue_baseline": {
+      "tissue_types_matched": [
+        "enterocyte"
+      ],
+      "n_types": 1
+    },
+    "conclusion": {
       "driver": "JAK1",
       "phenotype_pathways_up": [
         "Signalling to p38 via RIT and RIN",

@@ -38,6 +38,65 @@ def _depmap():
     return {"syms": syms, "Z": z["Z"], "col": {s: i for i, s in enumerate(syms)}}
 
 
+# ---- ΔΔG structural layer: refine the LOF call from protein stability (ML) ----
+def ddg_layer(calls, panel_meta):
+    """for mutations with a known residue substitution, predict ΔΔG from the AlphaFold structure and refine the
+    call: a strongly DESTABILIZING mutation is confident LOF; a stability-neutral one is consistent with GOF or a
+    non-destabilizing LOF (so it does NOT overturn the role call, only corroborates a suppressor as LOF)."""
+    try:
+        import ddg_predictor as ddg
+        P = ddg.DDGPredictor(f"{OUT}/ddg_model.pkl")
+    except Exception as e:
+        for c in calls:
+            c["ddg"] = None
+        return f"unavailable ({str(e)[:40]})"
+    for c in calls:
+        meta = panel_meta.get(c["gene"])
+        if not meta:
+            c["ddg"] = None; continue
+        try:
+            pdb = P.alphafold_pdb(meta["uniprot"])
+            d, _ = P.predict_from_structure(pdb, "A", meta["pos"], meta["wt"], meta["mut"])
+            c["ddg"] = round(d, 2)
+            c["ddg_note"] = ("destabilizing -> LOF" if d > 1.5 else
+                             "mildly destabilizing" if d > 0.6 else "stability-neutral")
+        except Exception:
+            c["ddg"] = None
+    return "on"
+
+
+# ---- cell-type baseline (emask): which tissue this cancer arises in, and its restricted genes ----
+def emask_layer(C, tissue_kw):
+    """the 200-cell-type healthy census -> pick the baseline tissue for this cancer and report the genes it
+    restricts. This is the tissue starting-state the generic map lacked."""
+    ct = C.D.get("ctnames") or []
+    if not ct:
+        return None
+    hits = [i for i, nm in enumerate(ct) if any(k in nm.lower() for k in tissue_kw)]
+    return {"tissue_types_matched": [ct[i] for i in hits][:6], "n_types": len(hits)} if hits else None
+
+
+# ---- independent perturbation lens (fixed CellGraph, numpy) ----
+def cellgraph_layer(C, clamps):
+    """propagate the knockouts through the fixed CellGraph directed-signed network — an INDEPENDENT perturbation
+    lens (different construction from the causal map) so agreement is corroboration, disagreement is a flag."""
+    try:
+        import cellgraph as cg
+        import scipy.sparse as sp
+        n = len(C.name)
+        W = cg.directed_signed(C.D, n)                      # sparse signed out-adjacency
+        seeds = [i for i, s in clamps.items() if s < 0]     # knockouts (lost genes)
+        if not seeds or W is None:
+            return None
+        v = cg.perturb_downstream(np.array(seeds), W, alpha=0.5, hops=3)
+        idx = np.argsort(v)
+        down = [(C.name[i], round(float(v[i]), 3)) for i in idx[:8] if v[i] < -1e-3]
+        up = [(C.name[i], round(float(v[i]), 3)) for i in idx[::-1][:8] if v[i] > 1e-3]
+        return {"n_affected": int((np.abs(v) > 1e-3).sum()), "top_down": down, "top_up": up}
+    except Exception as e:
+        return {"error": str(e)[:60]}
+
+
 def selective_dependencies(dm, min_lines=100):
     """genome-wide: genes that are STRONG SELECTIVE dependencies (lethal in a subset of lines, neutral overall) —
     the pool a context (MSI, HRD, amplification) can fall into. WRN-type targets live here, not in co-essentiality.
@@ -72,9 +131,10 @@ def coessential(dm, gene, topn=8):
     return out[:topn]
 
 
-def full_map(C, panel, dm=None, seldep=None):
+def full_map(C, panel, dm=None, seldep=None, panel_meta=None, tissue_kw=None):
     dm = dm if dm is not None else _depmap()
     seldep = seldep if seldep is not None else (selective_dependencies(dm) if dm else [])
+    panel_meta = panel_meta or {}
     out = ccm._signed_out(C); paths = ccm._pathways(C)
     clamps, calls = ccm.classify(panel, C)
 
@@ -87,6 +147,7 @@ def full_map(C, panel, dm=None, seldep=None):
             pos = dict(panel).get(g)
             c["in_domain"] = [d["name"] for d in dp if d.get("start", 0) <= (pos or -1) <= d.get("end", 0)] or None
             c["selective_dep_rank"] = seldep_rank.get(g)          # None if not a selective dependency
+    ddg_status = ddg_layer(calls, panel_meta)                     # structural LOF refinement (ML)
 
     # ---- B. pathway layer ----
     pmap = ccm.plot_cell(C, panel, out, paths)
@@ -136,8 +197,14 @@ def full_map(C, panel, dm=None, seldep=None):
             "context_selective_dependencies_genomewide": [(s, round(mn, 1)) for _, mn, s in seldep[:12]],
         },
     }
+    # ---- H. tissue baseline (emask) + I. independent perturbation lens (CellGraph) ----
+    tissue = emask_layer(C, tissue_kw or ())
+    cg = cellgraph_layer(C, clamps)
+
     return {
         "panel": [(g, p) for g, p in panel],
+        "layers_active": {"ddg": ddg_status, "emask": bool(tissue), "cellgraph": bool(cg and "error" not in cg),
+                          "depmap": dm is not None},
         "A_molecular": calls,
         "B_pathway": {"up": pmap["hyperactive_pathways"][:6], "lost": pmap["lost_pathways"][:6],
                       "n_genes_perturbed": pmap["n_genes_perturbed"]},
@@ -145,8 +212,24 @@ def full_map(C, panel, dm=None, seldep=None):
         "D_complexes_disrupted": [{"complex": cid, "lost_subunits": subs} for cid, subs in complexes],
         "E_metabolic_genes_hit": met_hit,
         "F_dependency": concl["dependency_targets"],
-        "G_conclusion": concl,
+        "G_cellgraph_perturbation": cg,
+        "H_tissue_baseline": tissue,
+        "conclusion": concl,
     }
+
+
+# residue substitution + UniProt for the ΔΔG structural layer (hotspot alleles). Missing genes just skip ΔΔG.
+META = {
+    "BRAF":  {"pos": 600, "wt": "V", "mut": "E", "uniprot": "P15056"},
+    "MLH1":  {"pos": 300, "wt": "R", "mut": "H", "uniprot": "P40692"},
+    "MSH6":  {"pos": 1088, "wt": "R", "mut": "C", "uniprot": "P52701"},
+    "TGFBR2":{"pos": 128, "wt": "R", "mut": "H", "uniprot": "P37173"},
+    "JAK1":  {"pos": 860, "wt": "P", "mut": "S", "uniprot": "P23458"},
+    "WRN":   {"pos": 577, "wt": "R", "mut": "C", "uniprot": "Q14191"},
+    "CDKN2A":{"pos": 58,  "wt": "R", "mut": "H", "uniprot": "P42771"},
+    "B2M":   {"pos": 50,  "wt": "S", "mut": "F", "uniprot": "P61769"},
+}
+TISSUE = {"A375 melanoma": ("melanocyte", "skin"), "MSI-H colorectal": ("colon", "intestin", "enterocyte")}
 
 
 def run(panels=None):
@@ -161,7 +244,7 @@ def run(panels=None):
     }
     report = {}
     for name, panel in panels.items():
-        r = full_map(C, panel, dm, seldep)
+        r = full_map(C, panel, dm, seldep, panel_meta=META, tissue_kw=TISSUE.get(name))
         report[name] = r
         _print(name, r)
     json.dump(report, open(f"{OUT}/full_cell_map.json", "w"), indent=2)
@@ -172,12 +255,14 @@ def _print(name, r):
     print("=" * 88)
     print(f"COMPLETE CELL MAP — {name}")
     print("=" * 88)
-    print("A. MOLECULAR (per-mutation call):")
+    la = r.get("layers_active", {})
+    print(f"[layers active: {', '.join(k for k,v in la.items() if v)}]")
+    print("A. MOLECULAR (role + ΔΔG structural + domain + DepMap selectivity):")
     for c in r["A_molecular"]:
         rk = c.get("selective_dep_rank")
-        sd = f"  [selective-dep #{rk}]" if rk is not None else ""
-        dom = f"  dom={c['in_domain']}" if c.get("in_domain") else ""
-        print(f"     {c['gene']:8} {c.get('role','-'):11} {c.get('effect','-'):22}{dom}{sd}")
+        sd = f"  sel-dep#{rk}" if rk is not None else ""
+        dd = f"  ΔΔG={c['ddg']}({c.get('ddg_note','')})" if c.get("ddg") is not None else ""
+        print(f"     {c['gene']:8} {c.get('effect','-'):22}{dd}{sd}")
     b = r["B_pathway"]
     print(f"B. PATHWAY  ({b['n_genes_perturbed']} genes changed):")
     print(f"     UP:   " + " | ".join(p["pathway"][:34] for p in b["up"][:3]))
@@ -195,7 +280,14 @@ def _print(name, r):
         print(f"     SL of lost suppressors: {dep['synthetic_lethal_of_lost_suppressors'][:4]}")
     print(f"     genome-wide selective deps (context targets): " +
           ", ".join(f"{s}" for s, _ in dep["context_selective_dependencies_genomewide"][:10]))
-    print(f"G. CONCLUSION -> driver {r['G_conclusion']['driver']}")
+    cg = r.get("G_cellgraph_perturbation")
+    if cg and "error" not in cg:
+        print(f"G. CELLGRAPH perturbation (independent lens): {cg['n_affected']} affected; "
+              f"top-down {[x[0] for x in cg['top_down'][:5]]}")
+    t = r.get("H_tissue_baseline")
+    if t:
+        print(f"H. TISSUE baseline (emask): {t['n_types']} matched types e.g. {t['tissue_types_matched'][:3]}")
+    print(f"CONCLUSION -> driver {r['conclusion']['driver']}")
     print()
 
 
