@@ -116,7 +116,36 @@ cells = [
          "from IPython.display import HTML, display",
          "display(HTML(open('outputs/orphan/complete_cancer_cell.html').read()))"),
 
-    md("## 7. (optional, GPU) the learned layers not runnable on a laptop",
+    md("## 7. Context-dependency attribution — turn selective dependencies into THIS-tumour targets",
+       "The selective-dependency scan finds *WRN is a target for somebody* (rank #92). **Attribution** answers "
+       "*is WRN a target for THIS tumour?* Tier 1 (oncogene-addiction, e.g. MEK→BRAF) runs anywhere. Tier 2 "
+       "(loss/synthetic-lethal, e.g. **WRN→MSI**) needs the DepMap per-line table — which downloads here. This "
+       "cell resolves the orphans and folds the result back into `.gene(g)['context_dependency']`."),
+    code("import context_dependency as cd",
+         "cd.build()                     # Tier 1 (self-contained): MEK->BRAF, SOX10->melanoma; WRN stays orphan",
+         "",
+         "# Tier 2: download the DepMap per-line table (MSI status + lineage) and resolve the orphans",
+         "import urllib.request, os",
+         "for f,url in [('depmap/CRISPRGeneEffect.csv','https://ndownloader.figshare.com/files/43346616'),",
+         "              ('depmap/Model.csv','https://ndownloader.figshare.com/files/43746708')]:",
+         "    os.makedirs('depmap', exist_ok=True)",
+         "    if not os.path.exists(f):",
+         "        try: urllib.request.urlretrieve(url, f); print('downloaded', f)",
+         "        except Exception as e: print('  (adjust the DepMap release URL:', str(e)[:50], ')')",
+         "orphans = ['WRN','PRMT5','POLQ','USP1','PKMYT1','WRNIP1','RNF43']",
+         "if os.path.exists('depmap/Model.csv'):",
+         "    res = cd.resolve_orphans_colab('depmap/CRISPRGeneEffect.csv','depmap/Model.csv', orphans)",
+         "    for g,ctx in res.items(): print(f'  {g:8} -> {ctx}')",
+         "    # merge into the layer + re-save so .gene() carries the resolved attribution",
+         "    import json; L=json.load(open('outputs/orphan/context_dependency.json'))",
+         "    for g,ctx in res.items():",
+         "        L.setdefault(g,{}).update({'lesion_context':ctx,'orphan':False})",
+         "    json.dump(L, open('outputs/orphan/context_dependency.json','w'))",
+         "    print('\\nWRN now attributed:', L.get('WRN'))",
+         "else:",
+         "    print('DepMap Model.csv not present -> orphans stay orphan (honest)')"),
+
+    md("## 8. (optional, GPU) the learned layers not runnable on a laptop",
        "The **learned torch GNN / R-GCN** and the **perturbation→wildtype** predictor need a GPU. Run "
        "`colab/make_gnn_notebook.py`'s cells here to train them and feed their embeddings back into layer G. "
        "Likewise the **metabolic FBA** layer (Human-GEM) and **concentration/structure** data-hunt layers activate "

@@ -187,6 +187,14 @@ class CompleteCell:
         if mb and mb.get("metabolites"):
             self.D["metabolites"] = mb["metabolites"]
             self.D["metabolite_meta"] = mb.get("meta", {})
+        # context-dependency attribution: for each selective DepMap dependency, the lesion that explains it
+        # (oncogene-addiction context self-contained; loss/SL context needs the Colab lesion table -> else orphan)
+        self.context_dep = {}
+        _cd = _load(f"{OUT}/context_dependency.json")
+        for sym, v in (_cd or {}).items():
+            i = self.idx.get(sym)
+            if i is not None:
+                self.context_dep[i] = v
         # heavy-tier overlays (structure, absolute concentration, translation, enhancers, ChIP reg, extra PPI)
         self.plddt = _pg(f"{OUT}/structure.json", "plddt")
         self.copies = _pg(f"{OUT}/concentration.json", "copies")
@@ -348,6 +356,7 @@ class CompleteCell:
             "chip_regulates": [self.name[t] for t in self.chip_out.get(i, []) if t < len(self.name)],
             "chip_regulated_by": [self.name[s] for s in self.chip_in.get(i, []) if s < len(self.name)],
             "synthetic_lethal": [(self.name[j], s) for j, s in self.sl_adj.get(i, [])],
+            "context_dependency": self.context_dep.get(i),      # selective-dep rank + attributed lesion / orphan flag
             "ligand_of_receptors": self._names(self.lig2rec.get(i, [])),
             "receptor_for_ligands": self._names(self.rec2lig.get(i, [])),
             "coessential_depmap": sorted(self._names(getattr(self, "coess_adj", {}).get(i, ()))),
