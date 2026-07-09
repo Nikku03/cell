@@ -293,16 +293,75 @@ def darkness(C=None):
     return {"n": len(tdl), "by_level": dict(bd)}
 
 
-# ---------------- InterPro domains ----------------
-def domains(path=None, C=None):
-    """InterPro per-gene domain architecture. Reads a protein2ipr-style TSV (acc<TAB>ipr_id<TAB>ipr_name...),
-    filtered to human on Colab. -> {gene_idx: [domain names]}. Big file, so path-driven (no default fetch)."""
+# ---------------- InterPro domains (UniProt REST — no 180 GB bulk file) ----------------
+import re as _re
+UNIPROT_DOMAINS = ("https://rest.uniprot.org/uniprotkb/search?query=%28organism_id%3A{taxid}%29+AND+%28reviewed%3A"
+                   "true%29&fields=accession,gene_primary,xref_interpro,ft_domain&format=tsv&size=500")
+_DOM_RE = _re.compile(r'DOMAIN\s+(\d+)\.\.(\d+);[^/]*?/note="([^"]+)"')
+
+
+def _uniprot_domain_pages(taxid, ctx):
+    """yield TSV bodies, following UniProt cursor pagination (Link: rel=next). One small paged download, any species."""
+    url = UNIPROT_DOMAINS.format(taxid=taxid)
+    while url:
+        r = urllib.request.urlopen(urllib.request.Request(url), timeout=180, context=ctx)
+        yield r.read().decode("utf-8", "replace")
+        m = _re.search(r'<([^>]+)>;\s*rel="next"', r.headers.get("Link", ""))
+        url = m.group(1) if m else None
+
+
+def domains(path=None, C=None, taxid=9606):
+    """Per-gene domain architecture from UniProt REST — cursor-paginated, ~a few MB, ANY species via taxid; no
+    180 GB protein2ipr bulk file. Each protein yields its InterPro IDs plus named sequence domains WITH residue
+    positions (e.g. 'Protein kinase' 712..979 in EGFR). A staged INTERPRO_TSV still overrides. -> domains.json
+    {gene_idx: [domain names/IPR ids]} with residue positions in 'positions'."""
     C = C or CompleteCell(); idx = C.idx
     src = path or os.environ.get("INTERPRO_TSV")
-    if not src or not os.path.exists(src):
-        print("  (domains off: set INTERPRO_TSV to a protein2ipr TSV — large file, Colab only)"); return None
+    if src and os.path.exists(src):                          # legacy: a staged protein2ipr bulk file overrides
+        return _domains_from_tsv(src, idx)
+    ctx = ssl.create_default_context(cafile=_CA) if os.path.exists(_CA) else None
+    dom, pos = {}, {}
     try:
-        acc2dom, pending = {}, {}
+        for body in _uniprot_domain_pages(taxid, ctx):
+            rows = body.splitlines()
+            for ln in rows[1:] if rows and rows[0].startswith("Entry") else rows:
+                p = ln.split("\t")
+                if len(p) < 3:
+                    continue
+                sym = p[1].strip()
+                if sym not in idx:
+                    continue
+                g = idx[sym]
+                iprs = [x for x in p[2].split(";") if x.strip()] if len(p) > 2 else []
+                feats = _DOM_RE.findall(p[3]) if len(p) > 3 else []   # (start, end, name)
+                names = [f[2] for f in feats] or iprs
+                bucket = dom.setdefault(g, [])
+                for n in names:
+                    if n not in bucket:
+                        bucket.append(n)
+                if feats:
+                    pos[str(g)] = [{"name": n, "start": int(s), "end": int(e)} for s, e, n in feats]
+    except Exception as e:
+        print("  (domains off: UniProt fetch failed -", str(e)[:60], ")")
+        return None if not dom else _write_domains(dom, pos, taxid)
+    if not dom:
+        print("  (domains off: 0 mapped)"); return None
+    return _write_domains(dom, pos, taxid)
+
+
+def _write_domains(dom, pos, taxid):
+    json.dump({"domains": {str(k): v for k, v in dom.items()}, "positions": pos,
+               "meta": {"n": len(dom), "n_with_positions": len(pos), "source": "UniProt", "taxid": taxid}},
+              open(f"{OUT}/domains.json", "w"))
+    print(f"  domains: {len(dom):,} genes w/ domain architecture ({len(pos):,} with residue positions, UniProt) "
+          f"-> domains.json")
+    return {"n": len(dom)}
+
+
+def _domains_from_tsv(src, idx):
+    """legacy path: a staged protein2ipr-style TSV (acc<TAB>?<TAB>ipr_name...) -> {gene_idx: [domain names]}."""
+    try:
+        pending = {}
         with open(src) as fh:
             for ln in fh:
                 p = ln.rstrip("\n").split("\t")
@@ -314,13 +373,10 @@ def domains(path=None, C=None):
         for a, ds in pending.items():
             s = a2s.get(a)
             if s:
-                dom.setdefault(idx[s], set()).update(ds)
+                dom.setdefault(idx[s], []).extend(sorted(ds))
         if not dom:
             print("  (domains off: 0 mapped)"); return None
-        json.dump({"domains": {str(k): sorted(v) for k, v in dom.items()}, "meta": {"n": len(dom)}},
-                  open(f"{OUT}/domains.json", "w"))
-        print(f"  domains: {len(dom):,} genes with InterPro domain architecture -> domains.json")
-        return {"n": len(dom)}
+        return _write_domains(dom, {}, 9606)
     except Exception as e:
         print("  (domains off:", str(e)[:60], ")"); return None
 

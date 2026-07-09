@@ -104,7 +104,9 @@ def report():
     dom = getattr(C, "domains", {}) or {}
     disr = getattr(C, "disorder", {}) or {}
     if dom or disr:
-        L.append(f"    domains / disorder     {_n(len(dom))} genes w/ InterPro domains | {_n(len(disr))} w/ MobiDB disorder")
+        npos = (D.get("domain_meta", {}) or {}).get("n_with_positions")
+        dpart = f"{_n(len(dom))} genes w/ InterPro annotations" + (f" ({_n(npos)} w/ positioned domains)" if npos else "")
+        L.append(f"    domains / disorder     {dpart} | {_n(len(disr))} w/ MobiDB disorder")
     plddt = getattr(C, "plddt", {}) or {}
     enh = getattr(C, "enhancers", {}) or {}
     if plddt or enh:

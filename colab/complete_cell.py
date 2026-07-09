@@ -168,6 +168,10 @@ class CompleteCell:
         self.disorder = _pg(disorder, "disorder")
         self.tdl = _pg(darkness, "tdl")
         self.domains = _pg(domains, "domains")
+        self.domain_pos = _pg(domains, "positions")           # named domains with residue ranges (mutation context)
+        _dm = _load(domains)
+        if _dm:
+            self.D["domain_meta"] = _dm.get("meta", {})
         mb = _load(metabolites)
         if mb and mb.get("metabolites"):
             self.D["metabolites"] = mb["metabolites"]
@@ -321,6 +325,7 @@ class CompleteCell:
             "disorder_fraction": self.disorder.get(i),           # MobiDB intrinsic-disorder content
             "target_level": self.tdl.get(i),                     # Pharos Tclin/Tchem/Tbio/Tdark
             "domains": self.domains.get(i, []),                  # InterPro domain architecture
+            "domain_positions": self.domain_pos.get(i),          # named domains + residue ranges (variant context)
             "plddt": self.plddt.get(i),                          # mean AlphaFold confidence
             "copies_per_cell": self.copies.get(i),               # absolute abundance (enzyme-constrained flux)
             "translation": self.translation.get(i),              # {te, t_half_h}
