@@ -202,15 +202,21 @@ def darkness(C=None):
     """Pharos TDL (Tclin/Tchem/Tbio/Tdark) per gene — a standard 'how studied is this target' label that
     validates our 5,006-gene dark set. One GraphQL query for all human targets."""
     C = C or CompleteCell(); idx = C.idx
-    q = '{"query":"{ targets(top:25000){ targets{ sym tdl } } }"}'
-    try:
-        req = urllib.request.Request(PHAROS_GQL, data=q.encode(),
-                                     headers={"Content-Type": "application/json"})
-        ctx = ssl.create_default_context(cafile=_CA) if os.path.exists(_CA) else None
-        data = json.loads(urllib.request.urlopen(req, timeout=180, context=ctx).read())
-        tgts = data["data"]["targets"]["targets"]
+    ctx = ssl.create_default_context(cafile=_CA) if os.path.exists(_CA) else None
+    tgts = []
+    try:                                                    # paginate: one 25k call times out; 2.5k batches don't
+        for skip in range(0, 25000, 2500):
+            q = ('{"query":"{ targets(top:2500 skip:%d){ targets{ sym tdl } } }"}' % skip).encode()
+            req = urllib.request.Request(PHAROS_GQL, data=q, headers={"Content-Type": "application/json"})
+            batch = json.loads(urllib.request.urlopen(req, timeout=120, context=ctx).read())
+            got = batch.get("data", {}).get("targets", {}).get("targets", [])
+            if not got:
+                break
+            tgts.extend(got)
     except Exception as e:
-        print("  (darkness off:", str(e)[:60], ")"); return None
+        print("  (darkness: partial —", str(e)[:70], ")")
+    if not tgts:
+        print("  (darkness off: Pharos returned nothing)"); return None
     tdl = {idx[t["sym"]]: t["tdl"] for t in tgts if t.get("sym") in idx and t.get("tdl")}
     if not tdl:
         print("  (darkness off: 0 mapped)"); return None

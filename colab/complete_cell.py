@@ -72,6 +72,7 @@ class CompleteCell:
         self._fold_reactome()                                              # fold the 2,792 Reactome pathways in
         self._fold_causal()                                                # fold SIGNOR + CollecTRI signed direction
         self._fold_motifs()                                                # fold JASPAR TF binding motifs
+        self._fold_complexes()                                             # merge CORUM/hu.MAP complexes
         self._fold_extras()                                                # disorder, Pharos TDL, domains, metabolites
 
     def _fold_reactome(self, path=f"{OUT}/reactome_pathways.json"):
@@ -125,6 +126,31 @@ class CompleteCell:
         if self.tf_motif:
             self.D["motif_meta"] = (m or {}).get("meta", {})
         return len(self.tf_motif)
+
+    def _fold_complexes(self, path=f"{OUT}/complexes_extra.json"):
+        """Merge CORUM/hu.MAP complexes beyond the base 2,039 into D['complexes'] AND the gene2cplx reverse index,
+        so the count, the .gene() accessor, and the combiner's same-complex feature all see them. Additive; a name
+        that collides with a base complex is suffixed rather than overwritten. No-op if the overlay is absent."""
+        self.n_complexes_base = len(self.D.get("complexes", {}))
+        cx = _load(path)
+        extra = (cx or {}).get("complexes", {})
+        if not extra:
+            self.n_complexes_extra = 0
+            return 0
+        comp = self.D.setdefault("complexes", {})
+        g2c = self.D.setdefault("gene2cplx", {})
+        added = 0
+        for name, members in extra.items():
+            key = name if name not in comp else f"{name} (CORUM)"
+            if key in comp or not isinstance(members, list):
+                continue
+            comp[key] = members
+            for i in members:
+                if isinstance(i, int):
+                    g2c.setdefault(str(i), []).append(key)
+            added += 1
+        self.n_complexes_extra = added
+        return added
 
     def _fold_extras(self, disorder=f"{OUT}/disorder.json", darkness=f"{OUT}/darkness.json",
                      domains=f"{OUT}/domains.json", metabolites=f"{OUT}/metabolites.json"):
