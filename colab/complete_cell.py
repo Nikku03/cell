@@ -72,6 +72,7 @@ class CompleteCell:
         self._fold_reactome()                                              # fold the 2,792 Reactome pathways in
         self._fold_causal()                                                # fold SIGNOR + CollecTRI signed direction
         self._fold_motifs()                                                # fold JASPAR TF binding motifs
+        self._fold_extras()                                                # disorder, Pharos TDL, domains, metabolites
 
     def _fold_reactome(self, path=f"{OUT}/reactome_pathways.json"):
         """Fold the Reactome pathway overlay into the complete cell: a distinct D['reactome'] layer PLUS the
@@ -124,6 +125,27 @@ class CompleteCell:
         if self.tf_motif:
             self.D["motif_meta"] = (m or {}).get("meta", {})
         return len(self.tf_motif)
+
+    def _fold_extras(self, disorder=f"{OUT}/disorder.json", darkness=f"{OUT}/darkness.json",
+                     domains=f"{OUT}/domains.json", metabolites=f"{OUT}/metabolites.json"):
+        """Fold the remaining data-hunt overlays: per-gene intrinsic disorder, Pharos target-development level,
+        and InterPro domains onto .gene(); the HMDB metabolite layer into D['metabolites']. All additive/no-op."""
+        def _pg(path, key):
+            d = _load(path)
+            out = {}
+            for k, v in ((d or {}).get(key, {}) or {}).items():
+                try:
+                    out[int(k)] = v
+                except (TypeError, ValueError):
+                    pass
+            return out
+        self.disorder = _pg(disorder, "disorder")
+        self.tdl = _pg(darkness, "tdl")
+        self.domains = _pg(domains, "domains")
+        mb = _load(metabolites)
+        if mb and mb.get("metabolites"):
+            self.D["metabolites"] = mb["metabolites"]
+            self.D["metabolite_meta"] = mb.get("meta", {})
 
     # ---- apply the Phase-2 verified additions -> cell v2 (predicted edges tagged, facts untouched) ----
     def apply_additions(self, path=f"{OUT}/cell_v2_additions.json"):
@@ -230,6 +252,9 @@ class CompleteCell:
             "causal_downstream": [(self.name[j], s, db) for j, s, db in self.causal_out.get(i, []) if j < len(self.name)],
             "causal_upstream": [(self.name[j], s, db) for j, s, db in self.causal_in.get(i, []) if j < len(self.name)],
             "tf_motif": self.tf_motif.get(i),                    # JASPAR binding motif (PWM) if this gene is a TF
+            "disorder_fraction": self.disorder.get(i),           # MobiDB intrinsic-disorder content
+            "target_level": self.tdl.get(i),                     # Pharos Tclin/Tchem/Tbio/Tdark
+            "domains": self.domains.get(i, []),                  # InterPro domain architecture
             "synthetic_lethal": [(self.name[j], s) for j, s in self.sl_adj.get(i, [])],
             "ligand_of_receptors": self._names(self.lig2rec.get(i, [])),
             "receptor_for_ligands": self._names(self.rec2lig.get(i, [])),

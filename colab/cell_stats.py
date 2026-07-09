@@ -65,6 +65,10 @@ def report():
     L.append(f"    enzymes with kinetics  {_n(len(kin))}  (measured {_n(meas)}, predicted {_n(len(kin)-meas)},"
              f" corrected {_n(corrected)})")
     L.append(f"    metabolic reactions    12,931 (Human-GEM) | reactions with genes {_n(len(D.get('generxn', {})))}")
+    mm = D.get("metabolite_meta", {})
+    if mm:
+        L.append(f"    metabolites (HMDB)     {_n(mm.get('n', 0))} ({_n(mm.get('n_with_conc', 0))} with a measured "
+                 f"concentration)")
     L.append("")
     L.append("  FUNCTION / PATHWAYS:")
     rx = _load("reactome_pathways.json")
@@ -88,6 +92,14 @@ def report():
     tfm = D.get("motif_meta", {})
     if tfm:
         L.append(f"    TF binding motifs      {_n(tfm.get('n_tf', 0))} TFs with a JASPAR PWM (mechanism under reg edges)")
+    dom = getattr(C, "domains", {}) or {}
+    dis = getattr(C, "disorder", {}) or {}
+    if dom or dis:
+        L.append(f"    domains / disorder     {_n(len(dom))} genes w/ InterPro domains | {_n(len(dis))} w/ MobiDB disorder")
+    tdl = getattr(C, "tdl", {}) or {}
+    if tdl:
+        import collections as _c
+        L.append(f"    target dev. (Pharos)   {_n(len(tdl))} scored  {dict(_c.Counter(tdl.values()))}")
     L.append(f"    PTMs {_n(len(D.get('ptm', {})))} | dark-function predictions {_n(len(D.get('darkfn', {})))}")
     L.append("")
     L.append("  EXPRESSION / CONTEXT:")
