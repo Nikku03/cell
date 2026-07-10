@@ -301,3 +301,33 @@ effect, AlphaFold gives structural direction, UniProt grounds both, Foldseek cov
 4. **U13 + U8 + U9** — cheap correctness/integration wins.
 5. **U5, U6, U4** — fill the stubbed/GPU layers (metabolic, regulatory, learned GNN).
 6. **U10–U12, U7, U14** — accuracy, fusion, immuno, data, visualisation.
+
+---
+
+## Connected reasoning chain (`colab/reasoning_chain.py`) — the integration layer
+
+The full-test scorecard measured the *departments in isolation* (ESM alone, interface alone, propagation alone),
+and each scores mediocre-to-chance on discovery. But that is not how the pieces are meant to run. The value is
+the **coupling**: each step's output conditions the next, so a strong step can carry a weak one and localisation
+changes *what* is propagated. `reason(gene,pos,wt,mut,...)` wires them into one chain:
+
+  1. **molecular** (ESM + ΔΔG) — one piece of evidence, **not** a veto.
+  2. **localisation** (experimental complex via `interface_analysis`) — runs regardless of step 1, so it can
+     **rescue** a weak ESM. A joint gate prunes as passenger only if *neither* molecular *nor* structural evidence
+     is significant.
+  3. **propagation** — localisation decides the injection: an interface break releases **only that substrate**
+     through the signed network (the gene's other arms untouched); a whole-product loss injects −1 on the gene
+     node (all edges); a GOF injects +1.
+  4/5. phenotype → target.
+
+**Demonstration (same gene, two mutations, two different chains):**
+- **VHL Y115H** — ESM scores it *tolerated* (fs 0.0), but 1LM8 places residue 115 **3.2 Å from HIF‑1α**.
+  Structure carries the call (surfaced as an explicit conflict note); the chain releases **HIF1A specifically**
+  → activates the HIF axis → target HIF. `mode=interaction-specific`.
+- **VHL R167W** — ESM catches it (fs 1.74) but it is **not at any partner interface** → whole‑product loss
+  propagating from the VHL node (loses O₂‑dependent proline hydroxylation / RHOBTB3). `mode=whole-product`.
+
+Same gene, opposite department carries the call, different mechanistic conclusion — that specificity is the
+integration the isolated departments cannot show. Honest limits unchanged: this improves *coupling/faithfulness*,
+not the underlying discovery power (still bounded by ESM/ΔΔG/interface availability); confidence is discounted
+when a single uncorroborated step carries the call and conflicts are reported, never silently resolved.
