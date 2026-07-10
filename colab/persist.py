@@ -15,6 +15,7 @@ import os, shutil, glob
 
 OUT = "outputs/orphan"
 ARTIFACTS = [
+    "cell_complete.json",   # 37MB core model data (restored/saved with the rest)
     "signal_combiner.pkl", "signal_combiner_validation.json",
     "signal_combiner_reg.pkl", "signal_combiner_reg_validation.json",       # whole-cell: per-relation combiners
     "signal_combiner_sig.pkl", "signal_combiner_sig_validation.json",
