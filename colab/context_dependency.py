@@ -121,12 +121,35 @@ def attribute_lesion(dm, model_csv=None, mut_csv=None, sel=None, top=400):
     return res
 
 
-def resolve_orphans_colab(gene_effect_csv, model_csv, genes=None):
-    """TIER 2, properly aligned (Colab). Re-parse the DepMap gene-effect CSV KEEPING ModelIDs, join the per-line
-    Model table (MSIStatus, OncotreeLineage), and for each gene test whether its dependency concentrates in a
-    lesion group — the regression the stripped local matrix can't do. Returns {gene: [(context, effect, n)]}.
+def derive_msi(mut_csv, indel_mult=4.0):
+    """DepMap Model.csv dropped MSIStatus, so DERIVE MSI from the mutation file — which is the actual definition:
+    microsatellite instability = a large excess of frameshift/indel mutations (MMR loss can't fix slippage).
+    Counts indels per ModelID; MSI-high = indel burden > indel_mult x the genome-wide median. Returns
+    ({ModelID: bool}, threshold). Reads in chunks (the file is large)."""
+    import pandas as pd, numpy as np
+    head = pd.read_csv(mut_csv, nrows=5)
+    idcol = next((c for c in ("ModelID", "DepMap_ID", "model_id") if c in head.columns), head.columns[0])
+    vtcol = next((c for c in ("VariantType", "Variant_Type", "VariantInfo", "Variant_Classification")
+                  if c in head.columns), None)
+    indels = {}
+    for chunk in pd.read_csv(mut_csv, usecols=[c for c in (idcol, vtcol) if c], chunksize=300000, low_memory=False):
+        if vtcol:
+            isindel = chunk[vtcol].astype(str).str.contains("IN|DEL|ins|del|frame|shift", case=False, na=False)
+            chunk = chunk[isindel]
+        for mid, n in chunk.groupby(idcol).size().items():
+            indels[mid] = indels.get(mid, 0) + int(n)
+    vals = np.array(list(indels.values())) if indels else np.array([0])
+    thr = float(np.median(vals) * indel_mult)
+    return {mid: (c > thr) for mid, c in indels.items()}, thr
 
-    This is the step that turns WRN (orphan #92) into 'WRN = the MSI-lesion dependency'."""
+
+def resolve_orphans_colab(gene_effect_csv, model_csv, genes=None, mut_csv=None):
+    """TIER 2, properly aligned (Colab). Re-parse the DepMap gene-effect CSV KEEPING ModelIDs, attach the lesion
+    features (MSI + lineage), and for each gene test whether its dependency concentrates in a lesion group.
+    Returns {gene: [(context, effect, n)]}. This turns WRN (orphan #92) into 'WRN = the MSI dependency'.
+
+    MSI source, in order: MSIStatus column if present; else DERIVED from `mut_csv` (indel burden — the real
+    definition); else lineage only (which cannot capture MSI because MSI cuts across lineages)."""
     import pandas as pd
     ge = pd.read_csv(gene_effect_csv, index_col=0)                 # rows=ModelID, cols='SYM (id)'
     ge.columns = [c.split(" (")[0] for c in ge.columns]
@@ -134,14 +157,20 @@ def resolve_orphans_colab(gene_effect_csv, model_csv, genes=None):
     common = ge.index.intersection(md.index)
     ge, md = ge.loc[common], md.loc[common]
     feats = {}
-    for col, lab in (("MSIStatus", "MSI"), ("OncotreeLineage", None)):
-        if col not in md.columns:
-            continue
-        if lab:
-            feats["lesion:MSI"] = md[col].astype(str).str.contains("MSI-H|Instable|MSI", case=False, na=False)
-        else:
-            for lin in md[col].dropna().unique():
-                feats[f"lineage:{lin}"] = (md[col] == lin)
+    # --- MSI feature ---
+    if "MSIStatus" in md.columns:
+        feats["lesion:MSI"] = md["MSIStatus"].astype(str).str.contains("MSI-H|Instable|MSI", case=False, na=False)
+    elif mut_csv:
+        msi_map, thr = derive_msi(mut_csv)
+        feats["lesion:MSI(derived)"] = pd.Series({m: msi_map.get(m, False) for m in md.index})
+        print(f"  derived MSI from indel burden (threshold {thr:.0f} indels): "
+              f"{sum(feats['lesion:MSI(derived)'])} MSI-high lines")
+    else:
+        print("  (no MSIStatus and no mutation file -> MSI cannot be tested; lineage only, which dilutes WRN)")
+    # --- lineage features ---
+    if "OncotreeLineage" in md.columns:
+        for lin in md["OncotreeLineage"].dropna().unique():
+            feats[f"lineage:{lin}"] = (md["OncotreeLineage"] == lin)
     genes = genes or list(ge.columns)
     out = {}
     for g in genes:
