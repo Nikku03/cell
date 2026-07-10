@@ -1,0 +1,117 @@
+{
+  "panel": [
+    "VHL/1LM8",
+    "HRAS/1WQ1",
+    "TP53/1YCS",
+    "BRCA1/1T29",
+    "MSH2/2O8B",
+    "RB1/1O9K"
+  ],
+  "skipped": [],
+  "per_protein": [
+    {
+      "gene": "VHL",
+      "pdb": "1LM8",
+      "chain": "V",
+      "interface_density": 0.333,
+      "n_path": 136,
+      "n_benign": 24,
+      "esm_auc": 0.507046568627451,
+      "path_iface": 52,
+      "benign_iface": 8,
+      "path_iface_rate": 0.382,
+      "benign_iface_rate": 0.333
+    },
+    {
+      "gene": "HRAS",
+      "pdb": "1WQ1",
+      "chain": "R",
+      "interface_density": 0.175,
+      "n_path": 19,
+      "n_benign": 3,
+      "esm_auc": 0.8771929824561403,
+      "path_iface": 14,
+      "benign_iface": 0,
+      "path_iface_rate": 0.737,
+      "benign_iface_rate": 0.0
+    },
+    {
+      "gene": "TP53",
+      "pdb": "1YCS",
+      "chain": "A",
+      "interface_density": 0.089,
+      "n_path": 151,
+      "n_benign": 9,
+      "esm_auc": 0.5750551876379691,
+      "path_iface": 20,
+      "benign_iface": 0,
+      "path_iface_rate": 0.132,
+      "benign_iface_rate": 0.0
+    },
+    {
+      "gene": "BRCA1",
+      "pdb": "1T29",
+      "chain": "A",
+      "interface_density": 0.118,
+      "n_path": 84,
+      "n_benign": 76,
+      "esm_auc": 0.8136748120300752,
+      "path_iface": 13,
+      "benign_iface": 3,
+      "path_iface_rate": 0.155,
+      "benign_iface_rate": 0.039
+    },
+    {
+      "gene": "MSH2",
+      "pdb": "2O8B",
+      "chain": "A",
+      "interface_density": 0.105,
+      "n_path": 27,
+      "n_benign": 133,
+      "esm_auc": 0.696463380673907,
+      "path_iface": 6,
+      "benign_iface": 15,
+      "path_iface_rate": 0.222,
+      "benign_iface_rate": 0.113
+    },
+    {
+      "gene": "RB1",
+      "pdb": "1O9K",
+      "chain": "A",
+      "interface_density": 0.5,
+      "n_path": 19,
+      "n_benign": 17,
+      "esm_auc": 0.6625386996904025,
+      "path_iface": 12,
+      "benign_iface": 8,
+      "path_iface_rate": 0.632,
+      "benign_iface_rate": 0.471
+    }
+  ],
+  "pooled_n_path": 436,
+  "pooled_n_benign": 262,
+  "direct_cmh_interface_x_path": {
+    "strata_used": 6,
+    "common_OR": 2.384,
+    "cmh_chi2": 9.759,
+    "p": 0.0018
+  },
+  "esm_missed_cmh_interface_x_path": {
+    "strata_used": 5,
+    "common_OR": 1.845,
+    "cmh_chi2": 2.141,
+    "p": 0.1434
+  },
+  "rescue_pooled": {
+    "n_missed": 324,
+    "missed_base_rate": 0.559,
+    "rescued_total": 64,
+    "rescued_are_path": 44,
+    "rescue_precision": 0.688
+  },
+  "verdict": [
+    "DIRECT (all in-domain): pathogenic ENRICHED at interface (stratified OR 2.384, CMH p=0.0018) -> SIGNIFICANT across 6 proteins",
+    "RESCUE (ESM-missed only): pathogenic ENRICHED at interface (stratified OR 1.845, CMH p=0.1434) -> not significant across 5 proteins",
+    "pooled rescue precision 0.688 vs missed base rate 0.559 (n rescued 64)"
+  ]
+}

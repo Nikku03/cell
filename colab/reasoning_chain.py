@@ -1,13 +1,15 @@
 """reasoning_chain — ONE connected chain, not separate departments. Each step's OUTPUT conditions the next, so
 the whole reasons end-to-end from a mutation to a targetable conclusion.
 
-HONEST division of labour (this is the corrected design; see colab/reasoning_chain_test.py for why):
+HONEST division of labour (this is the corrected design; see colab/reasoning_chain_test.py for the evidence):
   - "does the variant MATTER?" is answered by ESM + ΔΔG + recurrence ONLY. These are the pathogenicity signals.
-  - "IF it matters, HOW?" (which interaction breaks) is answered by interface localisation. This is a MECHANISM
-    signal, NOT a pathogenicity signal — a blind ClinVar test on VHL showed interface membership is identical in
-    pathogenic (34%) and benign (33%) variants (Fisher p=1.0). VHL is a tiny all-interface adaptor, so "at an
-    interface" carries almost no information about whether a variant is damaging. Therefore localisation NEVER
-    rescues significance on its own; it only sets the MODE that conditions how an already-significant break spreads.
+  - "IF it matters, HOW?" (which interaction breaks) is answered by interface localisation. A 6-protein blind
+    ClinVar test (VHL, HRAS, TP53, BRCA1, MSH2, RB1; Cochran-Mantel-Haenszel, stratified by protein) shows
+    interface membership IS a genuine pathogenicity signal overall (OR 2.4, p=0.002) — but its signal is largely
+    REDUNDANT with ESM: the increment among the variants ESM misses is not significant (OR 1.8, p=0.14, n=64).
+    (VHL alone looked null, OR~1.2, because it is a tiny all-interface adaptor — an outlier, not the rule.) So
+    localisation NEVER rescues significance on its own (the beyond-ESM increment isn't proven); it sets the MODE
+    that conditions how an already-significant break spreads, and at most gives a weak conditional lean.
 
 The real, surviving value is coupling (b): localisation changes WHAT gets propagated. If a significant mutation
 breaks a SPECIFIC contact (VHL–HIF), release ONLY that substrate through the signed network — VHL still binds
@@ -78,10 +80,11 @@ def reason(gene, pos, wt, mut, acc=None, recurrent=False,
     role_lof = gene in getattr(ccm, "SUPPRESSOR", set())
 
     # ---- STEP 1: does it MATTER? molecular signal (ESM + ΔΔG) + independent recurrence prior ----
-    # These are the ONLY significance signals. Interface localisation is deliberately NOT one of them: a blind test
-    # on VHL (colab/reasoning_chain_test.py) showed interface membership does NOT separate pathogenic from benign
-    # (34% vs 33%, Fisher p=1.0) -- it is a MECHANISM signal, not a pathogenicity signal, so it must never rescue
-    # significance on its own or the chain manufactures confident calls from a non-discriminative feature.
+    # These are the ONLY significance signals. Interface localisation is deliberately NOT one of them: a 6-protein
+    # blind test (colab/reasoning_chain_test.py) shows interface membership is a genuine pathogenicity signal overall
+    # (CMH OR 2.4, p=0.002) but LARGELY REDUNDANT with ESM -- the increment among ESM-missed variants is not
+    # significant (OR 1.8, p=0.14). So interface is a MECHANISM signal (+ at most a weak lean); using it to rescue
+    # significance on its own is not supported, and would manufacture confident calls from an ESM-redundant feature.
     ve = me.variant_effect(gene, pos, wt, mut, acc=acc, recurrent=recurrent)
     fs = ve["functional_score"]
     mol_sig = (fs is not None and fs >= 0.35)
@@ -136,9 +139,10 @@ def reason(gene, pos, wt, mut, acc=None, recurrent=False,
     # ---- GATE: significance is decided by step 1 ONLY. Structure never rescues it. ----
     if not significant:
         if at_interface:                                       # honest: unconfirmed, but mechanism is localised
-            notes.append("significance UNCONFIRMED — ESM/ΔΔG do not flag this and interface membership is NOT itself "
-                         "evidence of pathogenicity (validated null on VHL, Fisher p=1.0). Reported as a CONDITIONAL "
-                         "mechanism hypothesis, not a call: needs an independent signal (clinical recurrence, assay).")
+            notes.append("significance UNCONFIRMED — ESM/ΔΔG do not flag this. Being at an interface is a weak "
+                         "lean toward pathogenic (6-protein CMH OR 1.8 among ESM-missed, but p=0.14, not "
+                         "significant), NOT enough for a call. Reported as a CONDITIONAL mechanism hypothesis: "
+                         "needs an independent signal (clinical recurrence, assay).")
             return {"gene": gene, "variant": f"{wt}{pos}{mut}", "mode": "significance-uncertain",
                     "conclusion": f"{gene} {wt}{pos}{mut}: cannot confirm it matters (ESM/ΔΔG neutral). IF pathogenic, "
                                   f"mechanism = {'/'.join(broken_partners)} interface loss (conditional hypothesis)",

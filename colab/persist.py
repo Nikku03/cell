@@ -35,7 +35,7 @@ ARTIFACTS = [
     "rprom_validation.json", "blind_target_report.json", "blind_sweep_report.json",           # reg<->metabolic + cancer sweep
     "cancer_cell_map.json", "msih_cell_map.json", "full_cell_map.json", "context_dependency.json",
     "gene_additions.json", "gene_coverage.json", "discovery_validation.json", "discovery_engine.json", "variant_effect_cache.json", "blind_variant_test.json", "mutation_walk.json", "structural_context_validation.json", "full_test_scorecard.json", "interface_analysis.json", "gof_caller_validation.json",   # P0 + discovery-engine pieces   # perturbed-cell + MSI-H + full-stack + dependency attribution
-    "reasoning_chain.json", "reasoning_chain_test.json",   # connected chain + its blind ClinVar test (VHL)
+    "reasoning_chain.json", "reasoning_chain_test.json", "reasoning_chain_multitest.json",   # chain + blind ClinVar tests (VHL + 6-protein panel)
 ]
 
 

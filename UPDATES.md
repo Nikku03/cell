@@ -319,20 +319,24 @@ changes *what* is propagated. `reason(gene,pos,wt,mut,...)` wires them into one 
      node (all edges); a GOF injects +1.
   4/5. phenotype → target.
 
-**Blind test (`colab/reasoning_chain_test.py`) — and the correction it forced.** The first design let interface
-localisation *rescue* a weak ESM call (treat "at an interface" as evidence the variant matters). A blind ClinVar
-test on VHL refuted that:
-- comparing **like‑for‑like** (pathogenic vs benign, both in the folded domain 60–209), interface membership is
-  **identical**: pathogenic 34% vs benign 33% at an interface (Fisher p=1.0; rescued‑set precision 87% = the 87%
-  within‑missed null, binom p=0.62). ESM in‑domain AUC is **0.50 — chance** on VHL.
-- an apparent early "positive" (87% vs 76%) was a **confound**: it compared in‑domain pathogenic against
-  out‑of‑domain benign (VHL's disordered N‑term, 47/80 benign, never at an interface). Removed, the signal is null.
-- root cause: VHL is a tiny all‑interface substrate‑adaptor (~33% of residues contact a partner regardless of
-  pathogenicity), so interface membership is nearly non‑discriminative there.
+**Blind test (`colab/reasoning_chain_test.py`) — VHL first, then a 6‑protein panel.** The first design let interface
+localisation *rescue* a weak ESM call (treat "at an interface" as evidence the variant matters).
+- **VHL alone looked null.** Like‑for‑like (pathogenic vs benign, both in the folded domain), interface membership
+  was identical: pathogenic 34% vs benign 33% (Fisher p=1.0); ESM in‑domain AUC 0.50. An early apparent positive
+  (87% vs 76%) was a confound — in‑domain pathogenic vs out‑of‑domain benign (VHL's disordered N‑term).
+- **A 6‑protein panel corrected the over‑generalisation.** VHL, HRAS, TP53, BRCA1, MSH2, RB1 (numbering‑verified;
+  SMAD4 auto‑excluded at 3% match), pooled with **Cochran‑Mantel‑Haenszel stratified by protein** (436 path / 262
+  benign):
+  - **DIRECT** (all in‑domain): pathogenic **ENRICHED at interface, OR 2.38, p=0.0018 — SIGNIFICANT.** Interface
+    *is* a real pathogenicity signal; VHL (all‑interface adaptor, OR~1.2) was an outlier, not the rule.
+  - **RESCUE** (the increment among the variants ESM *misses*): OR 1.85, **p=0.14 — not significant** (n=64). The
+    interface signal is largely **redundant with ESM**; the part ESM misses is not reliably recovered by interface.
 
-**Corrected design (committed):** significance = **ESM + ΔΔG + recurrence only**; localisation is mechanism,
-conditional, never a rescue. A variant ESM/ΔΔG miss but at a known interface → **low‑confidence conditional
-hypothesis** ("IF pathogenic, mechanism = X interface loss"), not a call.
+**Design decision (committed):** significance = **ESM + ΔΔG + recurrence only**; interface localisation is a
+**mechanism** signal plus at most a *weak conditional lean*, never an independent rescue — because the only thing
+that would justify a rescue (signal *beyond* ESM) is not significant (p=0.14). A variant ESM/ΔΔG miss but at a known
+interface → **low‑confidence conditional hypothesis** ("IF pathogenic, mechanism = X interface loss"), not a call.
+This is well‑calibrated: OR 1.8 / p 0.14 is exactly "weak lean, not a confident call."
 
 **Demonstration (same gene, two mutations, two honest chains):**
 - **VHL R167W** — ESM catches it (fs 1.74), not at any partner interface → confident **whole‑product LOF**
@@ -340,5 +344,6 @@ hypothesis** ("IF pathogenic, mechanism = X interface loss"), not a call.
 - **VHL Y115H** — ESM/ΔΔG neutral; sits 3.2 Å from HIF‑1α in 1LM8 → **significance‑uncertain**: cannot confirm it
   matters, but IF pathogenic the mechanism is HIF‑interface loss. `mode=significance-uncertain`, conf 0.3.
 
-Surviving validated value: **mechanism‑conditioned propagation** + honest abstention. The chain is a mechanism
-reasoner, **not** a pathogenicity classifier — its does‑it‑matter power is exactly ESM/ΔΔG's (VHL is a known hole).
+Surviving validated value: **mechanism‑conditioned propagation** + honest abstention. The chain is primarily a
+mechanism reasoner; its does‑it‑matter power is ESM/ΔΔG plus a *weak* interface lean (real overall, p=0.002, but
+ESM‑redundant so it earns only a conditional hypothesis, not a call).
