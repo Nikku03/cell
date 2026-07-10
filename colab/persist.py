@@ -33,7 +33,7 @@ ARTIFACTS = [
     "domain_ppi_validation.json", "metabolite_enzyme.json",                    # new inter-layer connections
     "rprom_validation.json", "blind_target_report.json", "blind_sweep_report.json",           # reg<->metabolic + cancer sweep
     "cancer_cell_map.json", "msih_cell_map.json", "full_cell_map.json", "context_dependency.json",
-    "gene_additions.json", "gene_coverage.json", "discovery_validation.json", "discovery_engine.json", "variant_effect_cache.json",   # P0 + discovery-engine pieces   # perturbed-cell + MSI-H + full-stack + dependency attribution
+    "gene_additions.json", "gene_coverage.json", "discovery_validation.json", "discovery_engine.json", "variant_effect_cache.json", "blind_variant_test.json",   # P0 + discovery-engine pieces   # perturbed-cell + MSI-H + full-stack + dependency attribution
 ]
 
 
