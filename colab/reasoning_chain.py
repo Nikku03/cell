@@ -157,9 +157,21 @@ def reason(gene, pos, wt, mut, acc=None, recurrent=False,
                 "conclusion": "chain breaks: gene absent from network",
                 "confidence": _agg_conf(evidence), "notes": notes, "chain": trace}
 
-    # ---- decide GOF vs LOF (direction of the gene-level effect) ----
-    is_gof = (mode == "gof-activation") or ve["call"].startswith("GOF") or (role_gof and mode != "whole-product"
-                                                                            and recurrent and mol_sig)
+    # ---- decide GOF vs LOF (direction), ROLE-AWARE ----
+    # variant_effect labels ANY recurrent+functional hotspot "GOF-candidate", but for a tumour SUPPRESSOR a recurrent
+    # damaging hotspot is LOSS of the suppressor programme (the dominant network effect) -- its neomorphic gain is
+    # secondary. Trusting "GOF-candidate" for a suppressor inverts the whole chain (exposed on TP53 hotspots:
+    # R175H/R273H were wrongly read as "activate p53 -> revert the driver").
+    if role_lof:
+        is_gof = False
+        if ve["call"].startswith("GOF"):
+            notes.append(f"{gene} is a tumour suppressor: this recurrent hotspot is scored LOF (loss of the "
+                         f"suppressor programme). The mutant protein may ALSO carry neomorphic gain-of-function "
+                         f"(e.g. mutant-p53 GOF) -- a separate, secondary effect, not the primary network sign.")
+    elif role_gof:
+        is_gof = (mode == "gof-activation") or ve["call"].startswith("GOF") or (recurrent and mol_sig and mode != "whole-product")
+    else:
+        is_gof = (mode == "gof-activation") or ve["call"].startswith("GOF")
 
     # ---- STEP 3: propagate the SPECIFIC break (localisation decides WHAT is injected) ----
     out = ccm._signed_out(C)
