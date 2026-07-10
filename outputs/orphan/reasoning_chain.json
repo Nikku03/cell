@@ -2,11 +2,11 @@
   {
     "gene": "VHL",
     "variant": "Y115H",
-    "mode": "interaction-specific",
-    "conclusion": "VHL Y115H [uncertain] breaks HIF1A -> activates PTK6 Expression -> target the released driver(s): HIF1A (e.g. HIF axis)",
-    "confidence": 0.8,
+    "mode": "significance-uncertain",
+    "conclusion": "VHL Y115H: cannot confirm it matters (ESM/\u0394\u0394G neutral). IF pathogenic, mechanism = HIF1a interface loss (conditional hypothesis)",
+    "confidence": 0.3,
     "notes": [
-      "sequence model (ESM) scored this tolerated, but the experimental complex places it on a partner interface -> structure carries the call"
+      "significance UNCONFIRMED \u2014 ESM/\u0394\u0394G do not flag this and interface membership is NOT itself evidence of pathogenicity (validated null on VHL, Fisher p=1.0). Reported as a CONDITIONAL mechanism hypothesis, not a call: needs an independent signal (clinical recurrence, assay)."
     ],
     "chain": [
       {
@@ -18,41 +18,12 @@
       },
       {
         "step": "2 localisation",
-        "significant": true,
+        "significant": false,
         "confidence": "high",
-        "finding": "AT the HIF1a interface (exp. 1LM8, 3.23 A)",
+        "finding": "mechanism: AT the HIF1a interface (exp. 1LM8, 3.23 A) \u2014 mechanism, not evidence of pathogenicity",
         "detail": {
           "HIF1a": 3.23
         }
-      },
-      {
-        "step": "3 propagation",
-        "mode": "interaction-specific",
-        "confidence": "medium",
-        "finding": "release ['HIF1A'] -> drives UP downstream programme",
-        "inject": {
-          "HIF1A": 1.0
-        },
-        "up": [
-          "PTK6 Expression",
-          "PTK6 promotes HIF1A stabilization",
-          "Regulation of gene expression by Hypoxia-inducible Factor"
-        ],
-        "lost": [
-          "Regulation of CDH1 mRNA translation by microRNAs",
-          "Release of apoptotic factors from the mitochondria",
-          "Nef Mediated CD8 Down-regulation"
-        ]
-      },
-      {
-        "step": "4 phenotype",
-        "confidence": "medium",
-        "finding": "PTK6 Expression / PTK6 promotes HIF1A stabilization"
-      },
-      {
-        "step": "5 target",
-        "finding": "target the released driver(s): HIF1A (e.g. HIF axis)",
-        "confidence": "medium"
       }
     ]
   },
@@ -73,10 +44,10 @@
       },
       {
         "step": "2 localisation",
-        "significant": true,
+        "significant": false,
         "confidence": "medium",
-        "detail": "NOT at any inter-chain interface in this structure -> the mutation's effect is intramolecular (stability/allostery), not a specific partner break",
-        "finding": "not at any partner interface -> intramolecular (stability/allostery), whole-product effect"
+        "finding": "mechanism: not at any partner interface -> intramolecular (stability/allostery), whole-product effect",
+        "detail": "NOT at any inter-chain interface in this structure -> the mutation's effect is intramolecular (stability/allostery), not a specific partner break"
       },
       {
         "step": "3 propagation",
@@ -125,10 +96,16 @@
         "confidence": "medium"
       },
       {
-        "step": "2 localisation",
+        "step": "1b prior",
+        "finding": "recurrent somatic hotspot (independent significance signal)",
         "significant": true,
+        "confidence": "medium"
+      },
+      {
+        "step": "2 localisation",
+        "significant": false,
         "confidence": "medium",
-        "finding": "recurrent, functional, stability-neutral -> activating (exact interface needs AF-Multimer)",
+        "finding": "mechanism: recurrent, functional, stability-neutral -> activating (exact interface needs AF-Multimer)",
         "detail": "burial 167.0"
       },
       {
@@ -181,7 +158,7 @@
         "step": "2 localisation",
         "significant": false,
         "confidence": "low",
-        "finding": "buried, no complex structure -> interface unresolved",
+        "finding": "mechanism: buried, no complex structure -> interface unresolved",
         "detail": "burial 182.0"
       },
       {

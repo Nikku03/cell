@@ -1,29 +1,35 @@
 """reasoning_chain — ONE connected chain, not separate departments. Each step's OUTPUT conditions the next, so
-the whole reasons end-to-end from a mutation to a targetable conclusion. The value is the COUPLING, and two
-couplings in particular:
+the whole reasons end-to-end from a mutation to a targetable conclusion.
 
-  (a) a later, better-grounded step can RESCUE a weaker earlier one. ESM (sequence) misses VHL Y115H (it scores
-      it tolerated). But the experimental complex says residue 115 sits 3.2 A from HIF-1a. The chain does not let
-      the noisy sequence model veto the structure — it INTEGRATES them, and the structure carries the call.
-  (b) localisation changes WHAT gets propagated. If the mutation breaks a SPECIFIC contact (VHL-HIF), we release
-      ONLY that substrate through the signed network — VHL still binds ElonginC, only HIF escapes. If instead the
-      residue is functionally important but NOT a partner contact (VHL R167W: ESM strong, not at any interface),
-      the whole product is compromised and we propagate from the gene node (all its edges). Same gene, two
-      mutations, two different chains, two different mechanistic conclusions.
+HONEST division of labour (this is the corrected design; see colab/reasoning_chain_test.py for why):
+  - "does the variant MATTER?" is answered by ESM + ΔΔG + recurrence ONLY. These are the pathogenicity signals.
+  - "IF it matters, HOW?" (which interaction breaks) is answered by interface localisation. This is a MECHANISM
+    signal, NOT a pathogenicity signal — a blind ClinVar test on VHL showed interface membership is identical in
+    pathogenic (34%) and benign (33%) variants (Fisher p=1.0). VHL is a tiny all-interface adaptor, so "at an
+    interface" carries almost no information about whether a variant is damaging. Therefore localisation NEVER
+    rescues significance on its own; it only sets the MODE that conditions how an already-significant break spreads.
 
-  STEP 1  does it matter?        molecular_engine (ESM + ddG)          -> one piece of evidence, NOT a veto
-  STEP 2  what breaks, exactly?  interface_analysis on the complex     -> a SPECIFIC contact, or 'whole product'
-             (can rescue step 1)                                          <-- localisation
-  --- JOINT GATE: prune as passenger only if NO step found it significant (molecular OR structural) ---
+The real, surviving value is coupling (b): localisation changes WHAT gets propagated. If a significant mutation
+breaks a SPECIFIC contact (VHL–HIF), release ONLY that substrate through the signed network — VHL still binds
+ElonginC, only HIF escapes. If instead it is a whole-product loss (destabilising / not a partner contact), propagate
+from the gene node (all edges). Same gene, two mutations, two different chains — driven by validated mechanism
+attribution, not by a significance claim the data does not support.
+
+  STEP 1  does it matter?        ESM + ΔΔG + recurrence               -> the ONLY significance gate
+  STEP 2  what breaks, exactly?  interface_analysis on the complex     -> MECHANISM (a specific contact / whole
+                                                                          product); conditional on step 1, never a
+                                                                          significance rescue
+  --- GATE: prune if step 1 is neutral. If step 1 neutral but at a known interface -> CONDITIONAL hypothesis (low
+      confidence), explicitly not a call. ---
   STEP 3  so what downstream?    propagate THAT break through the signed network
-             interaction-specific -> inject on the released substrate(s) only (VHL's other arms untouched)
+             interaction-specific -> inject on the released substrate(s) only (the gene's other arms untouched)
              whole-product LOF    -> inject -1 on the gene node (all edges)
              GOF activation       -> inject +1 on the gene node
   STEP 4  therefore phenotype?   read the up/down programme as a hallmark
   STEP 5  therefore target?      the released driver / the gene's context dependency
 
-Confidence accumulates HONESTLY: two corroborating steps raise it; a single uncorroborated step is discounted;
-a contradiction (one step significant, the other not) is surfaced as a note, not silently resolved.
+Confidence is honest: significance drives it; a variant ESM/ΔΔG miss but that sits at an interface is returned as a
+low-confidence conditional hypothesis, never a confident call.
 -> reason(...) returns the connected trace + conclusion + confidence.
 """
 import os, sys, math
@@ -71,7 +77,11 @@ def reason(gene, pos, wt, mut, acc=None, recurrent=False,
     role_gof = gene in getattr(ccm, "ONCOGENE", set())
     role_lof = gene in getattr(ccm, "SUPPRESSOR", set())
 
-    # ---- STEP 1: molecular signal (evidence, NOT a veto) ----
+    # ---- STEP 1: does it MATTER? molecular signal (ESM + ΔΔG) + independent recurrence prior ----
+    # These are the ONLY significance signals. Interface localisation is deliberately NOT one of them: a blind test
+    # on VHL (colab/reasoning_chain_test.py) showed interface membership does NOT separate pathogenic from benign
+    # (34% vs 33%, Fisher p=1.0) -- it is a MECHANISM signal, not a pathogenicity signal, so it must never rescue
+    # significance on its own or the chain manufactures confident calls from a non-discriminative feature.
     ve = me.variant_effect(gene, pos, wt, mut, acc=acc, recurrent=recurrent)
     fs = ve["functional_score"]
     mol_sig = (fs is not None and fs >= 0.35)
@@ -80,54 +90,61 @@ def reason(gene, pos, wt, mut, acc=None, recurrent=False,
                   "detail": f"ESM func {fs}, ddG {ve['ddg']}", "confidence": ve["confidence"]})
     evidence.append(("molecular", bool(mol_sig or destabilising),
                      "high" if (fs and fs >= 0.6) else "medium" if mol_sig else "low"))
+    if recurrent:                                              # recurrence = independent statistical evidence it matters
+        evidence.append(("recurrence", True, "medium"))
+        trace.append({"step": "1b prior", "finding": "recurrent somatic hotspot (independent significance signal)",
+                      "significant": True, "confidence": "medium"})
+    significant = mol_sig or destabilising or recurrent
 
-    # ---- STEP 2: localisation (structural fact; runs regardless of step 1 so it can RESCUE it) ----
-    broken_partners, mode = [], None
+    # ---- STEP 2: localisation — MECHANISM attribution (WHICH interaction breaks), conditional on step 1 ----
+    # Not a significance signal (see above). It sets the MODE that conditions how the break propagates.
+    broken_partners, mode, at_interface = [], None, False
     if complex_pdb and complex_chain:
         import interface_analysis as ia
         r = ia.analyze(complex_pdb, complex_chain, pos, chain_labels)
-        if r["at_interface"]:
+        at_interface = bool(r["at_interface"])
+        if at_interface:
             broken_partners = list(r["contacts"]); mode = "interaction-specific"
-            trace.append({"step": "2 localisation", "significant": True, "confidence": "high",
-                          "finding": f"AT the {'/'.join(broken_partners)} interface (exp. {complex_pdb}, "
-                                     f"{min(r['contacts'].values())} A)", "detail": r["contacts"]})
-            evidence.append(("localisation", True, "high"))
-            if not mol_sig:
-                notes.append("sequence model (ESM) scored this tolerated, but the experimental complex places it "
-                             "on a partner interface -> structure carries the call")
+            trace.append({"step": "2 localisation", "significant": False, "confidence": "high",
+                          "finding": f"mechanism: AT the {'/'.join(broken_partners)} interface (exp. {complex_pdb}, "
+                                     f"{min(r['contacts'].values())} A) — mechanism, not evidence of pathogenicity",
+                          "detail": r["contacts"]})
         else:
             mode = "whole-product"
-            trace.append({"step": "2 localisation", "significant": bool(destabilising or mol_sig),
-                          "confidence": "medium", "detail": r["verdict"],
-                          "finding": "not at any partner interface -> intramolecular (stability/allostery), "
-                                     "whole-product effect"})
-            evidence.append(("localisation", bool(destabilising), "medium"))
+            trace.append({"step": "2 localisation", "significant": False, "confidence": "medium",
+                          "finding": "mechanism: not at any partner interface -> intramolecular "
+                                     "(stability/allostery), whole-product effect", "detail": r["verdict"]})
     else:
         import structural_context as sc
         b, _ = sc.gof_hint(acc, pos)
         buried = (b is not None and b >= 135)
         if destabilising:
             mode = "whole-product"
-            trace.append({"step": "2 localisation", "significant": True, "confidence": "medium",
-                          "finding": "destabilising (ddG) -> whole product lost", "detail": f"burial {b}"})
-            evidence.append(("localisation", True, "medium"))
+            trace.append({"step": "2 localisation", "significant": False, "confidence": "medium",
+                          "finding": "mechanism: destabilising (ΔΔG) -> whole product lost", "detail": f"burial {b}"})
         elif recurrent and mol_sig and not destabilising:
             mode = "gof-activation"
-            trace.append({"step": "2 localisation", "significant": True, "confidence": "medium",
-                          "finding": "recurrent, functional, stability-neutral -> activating "
+            trace.append({"step": "2 localisation", "significant": False, "confidence": "medium",
+                          "finding": "mechanism: recurrent, functional, stability-neutral -> activating "
                                      "(exact interface needs AF-Multimer)", "detail": f"burial {b}"})
-            evidence.append(("localisation", True, "low"))
         else:
             mode = "whole-product" if (mol_sig and (role_lof or not role_gof)) else "interface-unresolved"
             trace.append({"step": "2 localisation", "significant": False, "confidence": "low",
-                          "finding": f"{'buried' if buried else 'surface'}, no complex structure "
+                          "finding": f"mechanism: {'buried' if buried else 'surface'}, no complex structure "
                                      f"-> interface unresolved", "detail": f"burial {b}"})
-            evidence.append(("localisation", False, "low"))
 
-    # ---- JOINT GATE: prune only if NEITHER molecular NOR structural evidence was significant ----
-    if not any(ok for _, ok, _ in evidence):
+    # ---- GATE: significance is decided by step 1 ONLY. Structure never rescues it. ----
+    if not significant:
+        if at_interface:                                       # honest: unconfirmed, but mechanism is localised
+            notes.append("significance UNCONFIRMED — ESM/ΔΔG do not flag this and interface membership is NOT itself "
+                         "evidence of pathogenicity (validated null on VHL, Fisher p=1.0). Reported as a CONDITIONAL "
+                         "mechanism hypothesis, not a call: needs an independent signal (clinical recurrence, assay).")
+            return {"gene": gene, "variant": f"{wt}{pos}{mut}", "mode": "significance-uncertain",
+                    "conclusion": f"{gene} {wt}{pos}{mut}: cannot confirm it matters (ESM/ΔΔG neutral). IF pathogenic, "
+                                  f"mechanism = {'/'.join(broken_partners)} interface loss (conditional hypothesis)",
+                    "confidence": 0.3, "notes": notes, "chain": trace}
         return {"gene": gene, "variant": f"{wt}{pos}{mut}", "mode": "tolerated",
-                "conclusion": "tolerated passenger — no molecular, structural or interface evidence; chain stops",
+                "conclusion": "tolerated passenger — ESM/ΔΔG neutral, no recurrence; chain stops",
                 "confidence": _agg_conf(evidence), "notes": notes, "chain": trace}
 
     if i is None:

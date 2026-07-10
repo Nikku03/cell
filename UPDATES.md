@@ -311,23 +311,34 @@ and each scores mediocre-to-chance on discovery. But that is not how the pieces 
 the **coupling**: each step's output conditions the next, so a strong step can carry a weak one and localisation
 changes *what* is propagated. `reason(gene,pos,wt,mut,...)` wires them into one chain:
 
-  1. **molecular** (ESM + ΔΔG) — one piece of evidence, **not** a veto.
-  2. **localisation** (experimental complex via `interface_analysis`) — runs regardless of step 1, so it can
-     **rescue** a weak ESM. A joint gate prunes as passenger only if *neither* molecular *nor* structural evidence
-     is significant.
+  1. **molecular** (ESM + ΔΔG) + **recurrence** — the ONLY "does it matter?" signals.
+  2. **localisation** (experimental complex via `interface_analysis`) — a **mechanism** signal (WHICH interaction
+     breaks), conditional on step 1; it sets the propagation MODE but **never** decides significance.
   3. **propagation** — localisation decides the injection: an interface break releases **only that substrate**
      through the signed network (the gene's other arms untouched); a whole-product loss injects −1 on the gene
      node (all edges); a GOF injects +1.
   4/5. phenotype → target.
 
-**Demonstration (same gene, two mutations, two different chains):**
-- **VHL Y115H** — ESM scores it *tolerated* (fs 0.0), but 1LM8 places residue 115 **3.2 Å from HIF‑1α**.
-  Structure carries the call (surfaced as an explicit conflict note); the chain releases **HIF1A specifically**
-  → activates the HIF axis → target HIF. `mode=interaction-specific`.
-- **VHL R167W** — ESM catches it (fs 1.74) but it is **not at any partner interface** → whole‑product loss
-  propagating from the VHL node (loses O₂‑dependent proline hydroxylation / RHOBTB3). `mode=whole-product`.
+**Blind test (`colab/reasoning_chain_test.py`) — and the correction it forced.** The first design let interface
+localisation *rescue* a weak ESM call (treat "at an interface" as evidence the variant matters). A blind ClinVar
+test on VHL refuted that:
+- comparing **like‑for‑like** (pathogenic vs benign, both in the folded domain 60–209), interface membership is
+  **identical**: pathogenic 34% vs benign 33% at an interface (Fisher p=1.0; rescued‑set precision 87% = the 87%
+  within‑missed null, binom p=0.62). ESM in‑domain AUC is **0.50 — chance** on VHL.
+- an apparent early "positive" (87% vs 76%) was a **confound**: it compared in‑domain pathogenic against
+  out‑of‑domain benign (VHL's disordered N‑term, 47/80 benign, never at an interface). Removed, the signal is null.
+- root cause: VHL is a tiny all‑interface substrate‑adaptor (~33% of residues contact a partner regardless of
+  pathogenicity), so interface membership is nearly non‑discriminative there.
 
-Same gene, opposite department carries the call, different mechanistic conclusion — that specificity is the
-integration the isolated departments cannot show. Honest limits unchanged: this improves *coupling/faithfulness*,
-not the underlying discovery power (still bounded by ESM/ΔΔG/interface availability); confidence is discounted
-when a single uncorroborated step carries the call and conflicts are reported, never silently resolved.
+**Corrected design (committed):** significance = **ESM + ΔΔG + recurrence only**; localisation is mechanism,
+conditional, never a rescue. A variant ESM/ΔΔG miss but at a known interface → **low‑confidence conditional
+hypothesis** ("IF pathogenic, mechanism = X interface loss"), not a call.
+
+**Demonstration (same gene, two mutations, two honest chains):**
+- **VHL R167W** — ESM catches it (fs 1.74), not at any partner interface → confident **whole‑product LOF**
+  (loses O₂‑dependent proline hydroxylation / RHOBTB3). `mode=whole-product`, conf 0.8.
+- **VHL Y115H** — ESM/ΔΔG neutral; sits 3.2 Å from HIF‑1α in 1LM8 → **significance‑uncertain**: cannot confirm it
+  matters, but IF pathogenic the mechanism is HIF‑interface loss. `mode=significance-uncertain`, conf 0.3.
+
+Surviving validated value: **mechanism‑conditioned propagation** + honest abstention. The chain is a mechanism
+reasoner, **not** a pathogenicity classifier — its does‑it‑matter power is exactly ESM/ΔΔG's (VHL is a known hole).
