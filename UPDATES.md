@@ -347,3 +347,25 @@ This is well‑calibrated: OR 1.8 / p 0.14 is exactly "weak lean, not a confiden
 Surviving validated value: **mechanism‑conditioned propagation** + honest abstention. The chain is primarily a
 mechanism reasoner; its does‑it‑matter power is ESM/ΔΔG plus a *weak* interface lean (real overall, p=0.002, but
 ESM‑redundant so it earns only a conditional hypothesis, not a call).
+
+---
+
+## Session-derived guardrails (added from tested findings)
+
+Two honesty guardrails built from measurements made this session — both fence off regions we *proved* are
+unreliable, rather than adding new predictions:
+
+- **`colab/kinetic_confidence.py`** (fixed model, kinetic layer). Tested: in-vitro kcat overestimates in-vivo by
+  ~1 order of magnitude (Davidi 2016); our `davidi_*` in-vivo field behaves like a **cross-species proxy**
+  (measured-kcat vs it: log-log r=0.22, ~30× offset); enzymes run at ~60% capacity and the kcat→flux mismatch
+  spans ~8.6 orders of magnitude. `annotate()` attaches a **log10 σ / fold-uncertainty** (median **8.7×**) and a
+  provenance caveat to every kcat entry (cross-species proxy flagged on 581), so no kcat-derived rate masquerades
+  as precise.
+- **`colab/ml_guardrail.py`** (ML model, signal_combiner). Tested: the learned edge-scorer **hallucinates on
+  hubs** (TP53 → mitochondrial-ribosomal "partners"; true partners ranked below random). `ml_reliability()` flags
+  any gene above the **p90 PPI degree** (threshold 64) as a hub where the combiner is untrusted → defer to
+  curated + structural lenses. Correctly flags TP53 (219), MRPS25 (117), EGFR (144); passes non-hubs (BRAF, VHL).
+
+Not added (tested, unreliable): **ESM off-target similarity** — auROC 0.85 but ranked imatinib's *primary* target
+ABL1 11th and missed LCK, because ESM captures kinase-family similarity, not the DFG-out binding-pocket that
+decides drug binding. It is a coarse family filter, not a predictor, so it is deliberately excluded.
