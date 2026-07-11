@@ -472,3 +472,32 @@ dependence), so it was not pursued separately.
 **Net:** the cheap, honest discovery feature remains **domain compatibility (0.61)**, already integrated. A
 fetched, PDB-trained interface model does **not** add discovery signal; the GPU notebook is provided to confirm the
 last variant, not because a win is expected.
+
+## 2026-07-11 — Today: what actually helps (three directions), with the evidence that pointed there
+
+Tested whether structure/interface features can beat the discovery ceiling, then pivoted to interventional data.
+Measured today:
+- **Domain compatibility** — real but WEAK discovery signal: 0.50 (topology) → **0.61** AUC on the HARD/zero-shared
+  split, confound-controlled (matched negatives), stable over 3 seeds. Integrated into the combiner (out-of-fold, no
+  regression).
+- **AF-Multimer interface** (fetched Predictomes screen, 1.6M pairs, no GPU) — **chance (0.50)** on genuine
+  discovery; the eye-catching 0.82 was **PDB memorisation** (in_pdb=1 pairs AF was trained on). Median interface
+  contacts for real-but-unsolved interactions = 0, same as non-interactors. GPU notebook built to confirm the one
+  untested variant (careful full-MSA ipTM, templates off); expectation = near chance.
+- **Interventional prioritizer** (Replogle Perturb-seq, cross-cell-line identity recovery — the honest non-circular
+  test) — the existing cosine cause-finder lands the true gene in the **top-10 only ~21%** of the time. That is
+  **44× better than random** (0.005), so interventional data genuinely carries signal correlational data lacked —
+  but it is not yet "good." (Paused mid-improvement: decomposing self-knockdown vs trans-network signal.)
+
+**Conclusion — the three directions that actually move the needle** (a better *predictor* does not; discovery from
+correlational data is now measured at chance across topology / ML / domains / AF structure):
+1. **Interventional data** — the only input with genuine causal (not correlational) signal. Perturb-seq / CRISPR
+   screens as directed causal edges. Being built now (perturb_prioritizer.py).
+2. **Repurpose oracle → experiment-prioritizer** over the calibrated uncertainty we already have: rank the few
+   experiments that most reduce map uncertainty — put the answer in the top-10, not top-100, and name the
+   disambiguating experiment.
+3. **Deepen where we actually win** — mechanism annotation of KNOWN biology (the reasoning chain reproducing
+   TP53/VHL/HRAS residue-by-residue) + the honesty/calibration layer (guardrails, abstention, multi-lens conflict).
+
+**Proven not to help, so stop paying for it:** more correlational features, bigger ML models, better structure
+prediction — all saturate at interpolation, chance on discovery.

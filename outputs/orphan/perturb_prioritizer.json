@@ -1,0 +1,49 @@
+{
+  "benchmark": "cross-cell-line perturbation identity recovery (RPE1 signature -> rank K562 library)",
+  "data": "Replogle 2022 pseudobulk (K562_essential + rpe1)",
+  "cosine": {
+    "top_1": 0.087,
+    "top_5": 0.171,
+    "top_10": 0.214,
+    "top_50": 0.363,
+    "top_100": 0.435,
+    "median_rank": 177,
+    "n": 2056,
+    "method": "cosine",
+    "n_library": 2058,
+    "n_shared_genes": 7226,
+    "genes_kept": 2000,
+    "tested_genes": 2056,
+    "random_top10": 0.0049
+  },
+  "zcosine": {
+    "top_1": 0.086,
+    "top_5": 0.169,
+    "top_10": 0.221,
+    "top_50": 0.363,
+    "top_100": 0.452,
+    "median_rank": 144,
+    "n": 2056,
+    "method": "zcosine",
+    "n_library": 2058,
+    "n_shared_genes": 7226,
+    "genes_kept": 2000,
+    "tested_genes": 2056,
+    "random_top10": 0.0049
+  },
+  "spearman": {
+    "top_1": 0.054,
+    "top_5": 0.112,
+    "top_10": 0.144,
+    "top_50": 0.252,
+    "top_100": 0.323,
+    "median_rank": 352,
+    "n": 2056,
+    "method": "spearman",
+    "n_library": 2058,
+    "n_shared_genes": 7226,
+    "genes_kept": 2000,
+    "tested_genes": 2056,
+    "random_top10": 0.0049
+  }
+}

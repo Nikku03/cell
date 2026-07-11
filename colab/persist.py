@@ -39,6 +39,7 @@ ARTIFACTS = [
     "enzyme_records.json", "chip_reg_edges.json",   # joined kinetic+context records + measured HepG2 ChIP TF->target edges
     "struct_discovery_test.json",   # confound-controlled test: does a structural feature lift the HARD/discovery AUC
     "interface_discovery_test.json", "interface_pairs.json",   # fetched AF-Multimer interface vs discovery + Colab pair set
+    "perturb_prioritizer.json",   # interventional (Perturb-seq) experiment prioritizer: cross-cell-line top-K recall
 ]
 
 
