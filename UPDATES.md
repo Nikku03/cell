@@ -392,3 +392,46 @@ MEASURED)**, **in-vivo kcat (23%, flagged cross-species proxy)**, the **in-vitro
 fold-uncertainty** (via `kinetic_confidence`), Km (58%), pathway membership (91%), and in-cell operating rate
 (11%). Honest gaps stated inline per record: true *pathway flux* is not measured (only per-enzyme in-cell rate for
 ~270); most kcat is predicted; the in-vivo value is a proxy.
+
+## Does a structural feature lift DISCOVERY? (domain compatibility, confound-controlled)
+
+Question tested: *"can we add PPI structural features to the existing combiner to make it stronger?"* — specifically,
+does a structure-derived feature move the **HARD / discovery** AUC (endpoints share ZERO train neighbours; topology
+useless) off its 0.50 chance line? Feasible, leak-CONTROLLABLE structural signal here = **domain–domain interaction
+compatibility** (intrinsic domain architecture, orthogonal to the graph). ESM interface-complementarity needs a
+predicted 3D complex per pair (no GPU here) and leaks if only done for solved co-complexes, so domains are the honest
+proxy.
+
+**Test** (`colab/struct_discovery_test.py`, `outputs/orphan/struct_discovery_test.json`) — the established discovery
+holdout, with two confound controls the older `domain_ppi.py` lacked: **matched negatives** (same anchor, decoy
+matched on #domains + degree) and an **n_domains-only baseline**. Enrichment learned on TRAIN positives only.
+
+| HARD / zero-shared held-out edges | AUC (mean of 3 seeds) |
+|---|---|
+| topology + coessentiality (the current discovery score) | **0.50** (chance) |
+| + domain compatibility, vs **random** negatives | 0.62 |
+| + domain compatibility, vs **matched** decoys (#domains + degree) | **0.61** |
+| n_domains alone, vs matched decoys | 0.50 (controlled) |
+
+**Finding:** domain compatibility is a **real but WEAK** discovery signal — it survives the confound controls
+(0.61 vs matched, stable across seeds), so it is *not* protein-complexity/hubness. It corrects the older
+`domain_ppi.py` headline (0.856 on triadic-blind): that number was inflated by **random negatives** (which lack
+complementary domains and are trivially separable). Honest discovery lift from structure = **+0.10 AUC over
+topology's 0.50**, not the +0.35 the random-negative test implied. Residual paralog leakage means even 0.61 is a
+soft ceiling.
+
+**Integration** (`colab/signal_combiner.py`): `domain_compat` added as a live combiner feature. Two correctness
+points baked in:
+- **Out-of-fold target encoding.** Domain enrichment is target-encoding; fitting it on train positives and scoring
+  those same rows inflated them and the GBM overfit → test AUC craters (measured: 0.796 → 0.72, Brier 0.17 → 0.37).
+  Fixed with OOF within train (each row scored by enrichment that never saw its label) + all-train-fit for the test
+  rows. After the fix: **0.796 → 0.801 aggregate (no regression), Brier 0.1725 → 0.1713**, and `domain_compat` is
+  kept by add→measure→keep.
+- **Deployment vs validation leak boundary.** Validation enrichment = train-positives only (honest AUC); deployed
+  enrichment = ALL known edges (correct — scoring a novel pair should use all known biology). Consumer
+  (`phase2_loop`) verified: rebuilt `features_list` matches the saved model, known interactors still score high.
+
+**Honest bottom line:** yes, a structural feature genuinely strengthens the model — but on the DISCOVERY regime
+(chance → 0.61), not the aggregate (which is easy-edge-dominated, so it barely moves, +0.005). The value is
+concentrated exactly where the mission is (novel edges with no network shortcut), and it was added without leakage
+or regression.

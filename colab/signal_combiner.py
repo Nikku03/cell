@@ -140,6 +140,17 @@ class SignalCombiner:
             self.features_list.append("esm_cos")
         if self.feba is not None:
             self.features_list.append("cofitness_score")
+        # STRUCTURAL feature: domain-domain interaction compatibility. Intrinsic per-protein (domain architecture),
+        # orthogonal to the network graph -> the one feature measured to lift the HARD/discovery split off chance
+        # (struct_discovery_test: 0.50 topology -> 0.61 with domains, confound-controlled). Leak discipline:
+        # enrichment is fit on ALL known edges here (correct for DEPLOYMENT — scoring a novel pair should use all
+        # known biology); train() REFITS it on the train-positive split only before measuring validation AUC, then
+        # restores the all-edge version for the saved/deployed model.
+        self.dom = {int(g): set(v) for g, v in (getattr(self.C, "domains", {}) or {}).items() if v}
+        self.dom_enr = {}
+        if self.dom:
+            self.features_list.append("domain_compat")
+            self.fit_domain_enrichment([(a, b) for a, ps in self.adj.items() for b in ps if a < b])
 
     def for_relation(self, relation):
         """cheap clone sharing ALL loaded feature data (STRING/expr/emb/tahoe/esm/coess maps) but with this
@@ -484,11 +495,56 @@ class SignalCombiner:
             i = parts[1] if len(parts) >= 3 else parts[0]
         return i.split(".")[0]
 
+    # ---------- structural: domain-domain interaction compatibility ----------
+    def _dom_pairs(self, a, b):
+        da, db = self.dom.get(a), self.dom.get(b)
+        if not da or not db:
+            return
+        for di in da:
+            for dj in db:
+                yield (di, dj) if di <= dj else (dj, di)
+
+    def fit_domain_enrichment(self, pos_edges, alpha=1e-4, seed=0):
+        """learn log-odds enrichment of each InterPro domain PAIR among interacting vs random pairs. `pos_edges`
+        controls the leak boundary: pass TRAIN positives for an honest validation fit, ALL edges for deployment."""
+        import math as _m
+        from collections import defaultdict as _dd
+        rng = np.random.default_rng(seed)
+        nodes = [g for g in self.dom]
+        if not nodes:
+            self.dom_enr = {}; return self.dom_enr
+        edgeset = {(min(a, b), max(a, b)) for a, ps in self.adj.items() for b in ps}
+        pos = [(a, b) for a, b in pos_edges if a in self.dom and b in self.dom]
+        neg = []
+        while len(neg) < len(pos):
+            a, b = nodes[int(rng.integers(len(nodes)))], nodes[int(rng.integers(len(nodes)))]
+            if a != b and (min(a, b), max(a, b)) not in edgeset:
+                neg.append((a, b))
+        pc, nc = _dd(int), _dd(int)
+        for a, b in pos:
+            for dp in set(self._dom_pairs(a, b)):
+                pc[dp] += 1
+        for a, b in neg:
+            for dp in set(self._dom_pairs(a, b)):
+                nc[dp] += 1
+        Np, Nn = max(len(pos), 1), max(len(neg), 1)
+        self.dom_enr = {dp: _m.log2((pc.get(dp, 0) / Np + alpha) / (nc.get(dp, 0) / Nn + alpha))
+                        for dp in set(pc) | set(nc)}
+        return self.dom_enr
+
+    def _domain_compat(self, a, b):
+        best = 0.0
+        for dp in self._dom_pairs(a, b):
+            e = self.dom_enr.get(dp)
+            if e is not None and e > best:
+                best = e
+        return best
+
     # ---------- features ----------
     def _sym(self, m, a, b):
         return max(m.get(a, {}).get(b, 0.0), m.get(b, {}).get(a, 0.0))
 
-    def features(self, a, b):
+    def features(self, a, b, with_domain=True):
         adj = self.adj
         na, nb = adj.get(a, set()), adj.get(b, set())
         shared = len(na & nb); union = len(na | nb)
@@ -516,6 +572,8 @@ class SignalCombiner:
             f.append(float(ea @ eb) if ea is not None and eb is not None else 0.0)
         if self.feba is not None:
             f.append(self.feba.get((min(a, b), max(a, b)), 0.0))     # bacterial co-fitness (KO-bridged) sparse pair
+        if with_domain and "domain_compat" in self.features_list:    # structural: LAST column, matches features_list
+            f.append(self._domain_compat(a, b))
         return f
 
     # ---------- labelled examples ----------
@@ -548,7 +606,9 @@ class SignalCombiner:
             if a != b and ok(a) and ok(b) and (min(a, b), max(a, b)) not in edgeset:
                 easy.add((min(a, b), max(a, b)))
         rows = [(a, b, 1) for a, b in edges] + [(a, b, 0) for a, b in hard] + [(a, b, 0) for a, b in easy]
-        X = np.array([self.features(a, b) for a, b, _ in rows], dtype=float)
+        self._rows = rows                                   # kept so train() can add the leak-controlled domain col
+        # base features WITHOUT domain_compat (added in train() with a train-only enrichment fit to avoid leakage)
+        X = np.array([self.features(a, b, with_domain=False) for a, b, _ in rows], dtype=float)
         y = np.array([lab for _, _, lab in rows])
         return X, y, dict(n_pos=int(y.sum()), n_hard_neg=len(hard), n_easy_neg=len(easy),
                           features=self.features_list)
@@ -564,7 +624,29 @@ class SignalCombiner:
         from sklearn.metrics import roc_auc_score, brier_score_loss, precision_recall_curve
         X, y, counts = self.build_examples(seed=seed)
         F = self.features_list
-        Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=seed, stratify=y)
+        rows = self._rows
+        idx = np.arange(len(y))
+        itr, ite = train_test_split(idx, test_size=0.3, random_state=seed, stratify=y)
+        if "domain_compat" in F:
+            # domain_compat is a form of TARGET ENCODING (encode a pair by its domains' association with the label),
+            # so it must be OUT-OF-FOLD or the learner overfits it: fitting enrichment on the train positives and
+            # then scoring those SAME rows inflates them, the GBM leans on it, and test craters. Fix: OOF within the
+            # train split (each train row scored by enrichment fit on OTHER train folds), and test rows scored by
+            # enrichment fit on ALL train positives (never their own label). Both sides on equal footing -> no shift.
+            from sklearn.model_selection import KFold
+            dcol = np.zeros((len(rows), 1))
+            itr_arr = np.array(itr)
+            for sub_tr, sub_val in KFold(n_splits=5, shuffle=True, random_state=seed).split(itr_arr):
+                pos_fit = [(rows[i][0], rows[i][1]) for i in itr_arr[sub_tr] if rows[i][2] == 1]
+                self.fit_domain_enrichment(pos_fit, seed=seed)
+                for i in itr_arr[sub_val]:
+                    dcol[i, 0] = self._domain_compat(rows[i][0], rows[i][1])
+            pos_tr_all = [(rows[i][0], rows[i][1]) for i in itr if rows[i][2] == 1]
+            self.fit_domain_enrichment(pos_tr_all, seed=seed)   # test rows: enrichment fit on ALL train positives
+            for i in ite:
+                dcol[i, 0] = self._domain_compat(rows[i][0], rows[i][1])
+            X = np.hstack([X, dcol])                       # domain_compat is the LAST column -> matches F order
+        Xtr, Xte, ytr, yte = X[itr], X[ite], y[itr], y[ite]
         sf = StandardScaler().fit(Xtr); Xtr_s, Xte_s = sf.transform(Xtr), sf.transform(Xte)
         # per-feature AUC (each signal ALONE)
         ablation = {}
@@ -606,6 +688,9 @@ class SignalCombiner:
         self.model, self.scaler, self.uses_scaler, self.threshold = best, sk, uses_scaler, chosen
         self.kept, self.kept_idx = kept, ki
         self.informative_independent = [f for f in kept if f not in self.STRUCT]
+        if "domain_compat" in F:
+            # DEPLOYMENT: refit enrichment on ALL known edges so proba()/the loop score novel pairs with all biology
+            self.fit_domain_enrichment([(a, b) for a, ps in self.adj.items() for b in ps if a < b], seed=seed)
         import sklearn
         return dict(counts=counts, features_all=F, kept_features=kept, sklearn_version=sklearn.__version__,
                     dropped={f: ablation.get(f) for f in dropped},

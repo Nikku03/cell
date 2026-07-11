@@ -16,6 +16,13 @@ Method (no external data — only domains + our own PPI):
 
 Honest: enrichment is fit on TRAIN and scored on TEST, so the AUC is out-of-sample, not circular.
 -> outputs/orphan/domain_ppi_validation.json
+
+CAVEAT (added after struct_discovery_test.py): the headline numbers here (auc_domain_compat 0.881,
+auc_on_triadic_blind 0.856) use RANDOM negatives — which mostly lack complementary domains, so they are easy to
+separate. Under the confound controls in struct_discovery_test.py (zero-shared-neighbour edges vs negatives
+MATCHED on #domains + degree), the honest discovery AUC is ~0.61, not ~0.85. Domain compatibility is a REAL but
+WEAK discovery signal (topology alone is 0.50 there); the 0.85 was inflated by random-negative selection. The
+combiner integration uses the weak-but-real signal (out-of-fold, no regression) — see signal_combiner.domain_compat.
 """
 import os, sys, json, math
 sys.path.insert(0, os.path.dirname(__file__))

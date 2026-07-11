@@ -37,6 +37,7 @@ ARTIFACTS = [
     "gene_additions.json", "gene_coverage.json", "discovery_validation.json", "discovery_engine.json", "variant_effect_cache.json", "blind_variant_test.json", "mutation_walk.json", "structural_context_validation.json", "full_test_scorecard.json", "interface_analysis.json", "gof_caller_validation.json",   # P0 + discovery-engine pieces   # perturbed-cell + MSI-H + full-stack + dependency attribution
     "reasoning_chain.json", "reasoning_chain_test.json", "reasoning_chain_multitest.json",   # chain + blind ClinVar tests (VHL + 6-protein panel)
     "enzyme_records.json", "chip_reg_edges.json",   # joined kinetic+context records + measured HepG2 ChIP TF->target edges
+    "struct_discovery_test.json",   # confound-controlled test: does a structural feature lift the HARD/discovery AUC
 ]
 
 

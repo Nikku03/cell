@@ -9,7 +9,8 @@
       "same_complex",
       "coexpression",
       "codependency",
-      "coessentiality"
+      "coessentiality",
+      "domain_compat"
     ]
   },
   "features_all": [
@@ -18,40 +19,44 @@
     "same_complex",
     "coexpression",
     "codependency",
-    "coessentiality"
+    "coessentiality",
+    "domain_compat"
   ],
   "kept_features": [
     "shared_partners",
     "jaccard",
     "same_complex",
-    "coessentiality"
+    "coessentiality",
+    "domain_compat"
   ],
   "sklearn_version": "1.9.0",
   "dropped": {
     "coexpression": 0.51,
-    "codependency": 0.509
+    "codependency": 0.51
   },
   "per_feature_auc": {
-    "shared_partners": 0.635,
-    "jaccard": 0.693,
-    "same_complex": 0.536,
+    "shared_partners": 0.634,
+    "jaccard": 0.684,
+    "same_complex": 0.535,
     "coexpression": 0.51,
-    "codependency": 0.509,
-    "coessentiality": 0.549
+    "codependency": 0.51,
+    "coessentiality": 0.557,
+    "domain_compat": 0.549
   },
-  "auc_structural_only": 0.717,
-  "auc_independent_only": 0.565,
-  "combined_auc": 0.808,
-  "combined_auc_all_features": 0.81,
-  "auc_logistic": 0.719,
-  "auc_gbm": 0.808,
+  "auc_structural_only": 0.701,
+  "auc_independent_only": 0.606,
+  "combined_auc": 0.801,
+  "combined_auc_all_features": 0.8,
+  "auc_logistic": 0.71,
+  "auc_gbm": 0.801,
   "chosen_model": "gbm",
-  "brier": 0.1675,
-  "threshold_at_0p9_precision": 0.588,
-  "recall_at_that_threshold": 0.581,
+  "brier": 0.1713,
+  "threshold_at_0p9_precision": 0.657,
+  "recall_at_that_threshold": 0.559,
   "informative_independent": [
     "same_complex",
-    "coessentiality"
+    "coessentiality",
+    "domain_compat"
   ],
   "note": "add->measure->keep: any independent feature below AUC 0.53 alone is DROPPED (and can no longer gate the loop). combined_auc vs combined_auc_all_features shows dropping the dead weight did not cost anything."
 }

@@ -1,0 +1,22 @@
+{
+  "n_test_edges": 38289,
+  "n_hard_pos": 3000,
+  "n_domain_pairs_scored": 1834570,
+  "HARD_pos_vs_random_neg": {
+    "topology+coess": 0.499,
+    "domain_compat": 0.615,
+    "n_domains_only": 0.494
+  },
+  "HARD_pos_vs_MATCHED_neg (decoy = same anchor, #domains+degree matched)": {
+    "n_matched_pairs": 2983,
+    "topology+coess": 0.483,
+    "domain_compat": 0.605,
+    "n_domains_only": 0.5
+  },
+  "decisive": {
+    "domain_compat_vs_random": 0.615,
+    "domain_compat_vs_matched": 0.605,
+    "confound_inflation": 0.01,
+    "verdict": "WEAK: a little real signal survives matching, but far below the vs-random headline."
+  }
+}
