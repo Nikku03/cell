@@ -42,15 +42,24 @@ proper interface confidences. That needs a GPU, so: run it here.
 **Expectation:** modest. If ipTM ≈ 0.5–0.6, structure does not beat domains for discovery, and we close this branch
 honestly instead of shipping a me-too."""),
 
-    md("## 1 · Install ColabFold (GPU runtime required: Runtime → Change runtime type → GPU)"),
+    md("""## 1 · Install ColabFold (GPU runtime required: Runtime → Change runtime type → GPU)
+JAX on Colab is version-fragile: installing ColabFold then letting pip upgrade JAX leaves `jaxlib` mismatched with
+the CUDA plugin (`register_custom_type_id_handler` error). Fix = install ONE consistent CUDA-matched set,
+`jax[cuda12]==0.5.3` (localcolabfold's tested pin). On a fresh runtime this needs no restart. If you already ran a
+broken install this session, run this cell, then **Runtime → Restart session**, then continue at cell 2."""),
     code("""import os
 if not os.path.isfile("COLABFOLD_READY"):
     print("Installing ColabFold — a few minutes…")
-    os.system("pip -q install 'colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold'")
-    os.system("pip -q install --upgrade 'jax[cuda12_pip]' -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html")
+    os.system("pip -q install --no-warn-conflicts "
+              "'colabfold[alphafold-minus-jax] @ git+https://github.com/sokrypton/ColabFold'")
+    # one consistent CUDA-matched JAX (avoids the jaxlib/plugin version collision)
+    os.system("pip -q uninstall -y jax jaxlib jax-cuda12-plugin jax-cuda12-pjrt")
+    os.system("pip -q install --no-warn-conflicts 'jax[cuda12]==0.5.3'")
     open("COLABFOLD_READY", "w").close()
     print("done.")
-import jax; print("JAX devices:", jax.devices())"""),
+import jax
+gpu = any(d.platform == "gpu" for d in jax.devices())
+print("JAX", jax.__version__, "| devices:", jax.devices(), "| GPU OK" if gpu else "| NO GPU: set Runtime -> GPU")"""),
 
     md("""## 2 · Load the honest discovery pair set
 Upload `interface_pairs.json` (from `outputs/orphan/`), or mount Drive and point `PAIRS` at it."""),
