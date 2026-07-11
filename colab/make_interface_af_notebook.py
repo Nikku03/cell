@@ -190,6 +190,51 @@ except Exception as e:
 print("baselines -> domain 0.61 | topology 0.50 | Predictomes throughput contacts 0.50")
 print("\\nVERDICT: ipTM > ~0.66 => careful AF beats domains for discovery (worth pursuing).")
 print("         ipTM ~0.5-0.6 => structure does NOT beat domains on novel pairs; close the branch honestly.")"""),
+
+    md("""## 6 · Confound audit — only believe a high ipTM if it SURVIVES controls
+A >0.66 raw ipTM AUC can be an artifact. Two confounds fake a win: **MSA depth** (AF's signal is co-evolution, so
+if positives just have deeper paired MSAs than the zero-evidence negatives, ipTM separates them by data, not by
+predicting a novel interface) and **length** (the MAX_LEN filter can skew class lengths). This cell checks whether
+the ipTM separation holds when those are controlled. Trust it only if ipTM stays > domains (0.61) within length
+strata AND the ipTM logistic coefficient dominates length/MSA-depth."""),
+    code("""import glob, json, numpy as np
+from sklearn.metrics import roc_auc_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+
+def iptm_for(name):
+    fs = glob.glob(f"af_out/{name}*_scores_rank_001_*.json")
+    return float(json.load(open(fs[0])).get("iptm", 0)) if fs else None
+def msa_depth(name):
+    a = glob.glob(f"af_out/{name}.a3m") + glob.glob(f"af_out/{name}/*.a3m") + glob.glob(f"af_out/{name}_*.a3m")
+    return sum(1 for l in open(a[0]) if l.startswith(">")) if a else 0
+
+rows = []
+for nm, lab in folded:
+    it = iptm_for(nm)
+    if it is None:
+        continue
+    seq = "".join(x.strip() for x in open(f"af_in/{nm}.fasta") if not x.startswith(">"))
+    rows.append((lab, it, len(seq.replace(":", "")), msa_depth(nm)))
+y = np.array([r[0] for r in rows]); iptm = np.array([r[1] for r in rows])
+L = np.array([r[2] for r in rows]); md = np.array([r[3] for r in rows])
+print(f"n={len(rows)}  pos={int(y.sum())}  neg={int((1-y).sum())}")
+print(f"raw ipTM AUC = {roc_auc_score(y, iptm):.3f}   (domain baseline 0.61)")
+print(f"  is LENGTH a confound?   pos-vs-neg length AUC   = {roc_auc_score(y, L):.3f}   (~0.5 = no)")
+if md.any():
+    print(f"  is MSA-DEPTH a confound? pos-vs-neg depth AUC    = {roc_auc_score(y, md):.3f}   (~0.5 = no)")
+feats = [iptm, L] + ([md] if md.any() else [])
+names = ["ipTM", "length"] + (["MSAdepth"] if md.any() else [])
+lr = LogisticRegression(max_iter=1000).fit(StandardScaler().fit_transform(np.column_stack(feats)), y)
+print("  standardized logistic coefs:", {n: round(float(c), 2) for n, c in zip(names, lr.coef_[0])},
+      "(ipTM should dominate)")
+q = np.quantile(L, [1/3, 2/3])
+for lo, hi, tag in [(-1, q[0], "short"), (q[0], q[1], "mid"), (q[1], 1e12, "long")]:
+    m = (L > lo) & (L <= hi)
+    if y[m].sum() >= 5 and (1 - y[m]).sum() >= 5:
+        print(f"  length {tag:5s} n={int(m.sum()):3d}  ipTM AUC = {roc_auc_score(y[m], iptm[m]):.3f}")
+print("\\nTRUST only if ipTM stays > 0.61 within length strata AND its coef dominates length/MSAdepth;")
+print("if it collapses when controlled, the headline AUC was a confound, not interface discovery.")"""),
 ]
 
 
