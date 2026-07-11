@@ -501,3 +501,22 @@ correlational data is now measured at chance across topology / ML / domains / AF
 
 **Proven not to help, so stop paying for it:** more correlational features, bigger ML models, better structure
 prediction — all saturate at interpolation, chance on discovery.
+
+## CellOS — the cell as an operating system (colab/cellos.py)
+
+Took "biology is software" literally (per the DNA-malware article: DNA is untrusted input; you cannot READ the
+source and know behaviour — you must RUN and POKE it). Built a bootable kernel over the real ~16.5k-gene model:
+genes=processes, essentiality=scheduler priority, TFs=the scheduler, compartment=memory segment, causal edges=
+control flow, CRISPR knockout=`kill -9`, Perturb-seq=the debugger, synthetic-lethal=deadlock pairs, mutation=code
+patch, our confound audits=the security layer. Every syscall is backed by real data; causal ones ([C]) use
+INTERVENTIONAL data, correlational ones are flagged [~].
+
+Syscalls (all runnable, `python3 colab/cellos.py --demo`): `top` (kernel threads = most essential), `man`
+(process docs), `strace GENE` (SIGKILL → MEASURED downstream effect from Perturb-seq), `whodunit GENE` (recover the
+implicated module from a knockout's fingerprint — SF3B1 → the whole spliceosome), `diagnose up/down` (root-cause:
+whose knockout reverses a state), `deadlock GENE` (SL partners — FANCI → the Fanconi pathway), `patch GENE:MUT`
+(static-lint a mutation), `lint "CLAIM"` (the security layer: TRUSTED if curated, UNTRUSTED if a novel prediction
+in the 0.5-AUC regime, flags hub-leak). Honest throughout: `whodunit` excludes the trivial self-match and cites the
+measured ~21% cross-context top-10 ceiling; a sign bug (ranking by reversal instead of +cosine match put the true
+cause LAST) was caught and fixed. This reframes the whole project as one coherent system: the debugger (interventional
+data) is the crown jewel, the linter (honesty layer) is the security boundary, everything correlational is flagged.
