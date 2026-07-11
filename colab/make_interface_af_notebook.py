@@ -87,8 +87,12 @@ print("fetched", sum(1 for s in seqs.values() if s), "sequences |", len(missing)
 
     md("""## 4 · Build ColabFold input & fold (AF-Multimer, templates OFF, full MSA)
 Each complex is one FASTA with the two chains joined by `:`. Long pairs are capped to keep folds ~1–2 min. This is
-the slow cell — ~160 folds; use an A100/L4 runtime. Lower `MAX_LEN` or the pair count if you hit the session limit."""),
-    code("""import os, glob
+the slow cell — ~160 folds; use an A100/L4 runtime. Lower `MAX_LEN` or the pair count if you hit the session limit.
+
+The fold runs in the background and this cell **polls for per-fold progress**: `[i/N]`, time for that fold, total
+elapsed, and ETA. The ETA uses the steady-state rate (fold #1 carries a one-time model-compile + MSA warmup, so it
+is excluded from the estimate). The batch log is captured to `af_run.log` — `!tail af_run.log` if something stalls."""),
+    code("""import os, glob, time, subprocess
 os.makedirs("af_in", exist_ok=True); os.makedirs("af_out", exist_ok=True)
 MAX_LEN = 1200  # cap total complex length (residues) so a fold stays ~1-2 min
 folded = []
@@ -99,10 +103,34 @@ for k, p in enumerate(PAIRS):
     name = f"{k:03d}_{p['gene_a']}_{p['gene_b']}_L{p['label']}"
     open(f"af_in/{name}.fasta", "w").write(f">{name}\\n{sa}:{sb}\\n")
     folded.append((name, p["label"]))
-print("folding", len(folded), "pairs (templates OFF, 3 recycles)…")
+N = len(folded)
+print(f"folding {N} pairs (templates OFF, 3 recycles) — first fold is slow (model compile + MSA)…\\n")
+
+def fmt(s):
+    s = int(max(s, 0)); return f"{s//3600}h{(s%3600)//60:02d}m{s%60:02d}s"
+
 # --templates is NOT passed -> no template retrieval (genuine prediction, not PDB recall)
-os.system("colabfold_batch --num-recycle 3 --num-models 1 af_in af_out")
-print("done. outputs:", len(glob.glob('af_out/*_scores_rank_001_*.json')))"""),
+log = open("af_run.log", "w")
+proc = subprocess.Popen(["colabfold_batch", "--num-recycle", "3", "--num-models", "1", "af_in", "af_out"],
+                        stdout=log, stderr=subprocess.STDOUT)
+done_pat = "af_out/*_scores_rank_001_*.json"
+t0 = time.time(); last = t0; t1 = None; done = set()
+while proc.poll() is None or len(done) < N:
+    cur = {os.path.basename(f).split("_scores_rank")[0] for f in glob.glob(done_pat)}
+    for nm in sorted(cur - done):
+        now = time.time(); dt = now - last; last = now
+        done.add(nm); i = len(done)
+        if i == 1:
+            t1 = now; eta = "—  (warmup fold)"
+        else:
+            rate = (now - t1) / (i - 1); eta = fmt(rate * (N - i))
+        print(f"[{i:3d}/{N}]  {nm[:44]:44s}  fold {fmt(dt):>9s}  |  elapsed {fmt(now-t0):>9s}  |  ETA {eta}")
+    if proc.poll() is not None and (cur - done) == set():
+        break                                      # batch ended; stragglers (too-long/errored) won't appear
+    time.sleep(5)
+n_out = len(glob.glob(done_pat))
+print(f"\\ndone. {n_out}/{N} folded in {fmt(time.time()-t0)}"
+      + ("" if n_out else "  — 0 outputs: check  !tail -40 af_run.log"))"""),
 
     md("## 5 · Score: ipTM (and pDockQ) AUC vs labels, against the baselines"),
     code("""import glob, json, numpy as np
