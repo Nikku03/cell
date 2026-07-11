@@ -369,3 +369,26 @@ unreliable, rather than adding new predictions:
 Not added (tested, unreliable): **ESM off-target similarity** — auROC 0.85 but ranked imatinib's *primary* target
 ABL1 11th and missed LCK, because ESM captures kinase-family similarity, not the DFG-out binding-pocket that
 decides drug binding. It is a coarse family filter, not a predictor, so it is deliberately excluded.
+
+---
+
+## ChIP-seq in ML training + joined enzyme records (session build)
+
+**ChIP-seq → measured regulatory edges** (`colab/chip_edges.py`, `outputs/orphan/chip_reg_edges.json`). Pulled
+ENCODE TF ChIP-seq for **12 HepG2 liver TFs**, assigned peaks to genes (±5kb TSS) → **68,233 measured TF→target
+edges**. Result of the experiment ("where does it get us"):
+- **Coverage win:** **97% of the ChIP edges are NEW** (vs ~57k curated) — 12 TFs nearly double the regulatory map
+  with *measured* edges. Scaling to all ~1,600 TFs would add vastly more.
+- **But no discovery:** blind-holdout gives overall CN-AUC **0.824** — yet **96% of held-out edges are EASY**
+  (hub-dense: TFs bind thousands of genes, so interpolation is trivial). On the genuine HARD/discovery set (4%),
+  **AUC 0.15 (below chance)**. ChIP-seq makes interpolation denser; it does **not** enable discovery of novel
+  regulation.
+- **Honest flags on the artifact:** measured **BINDING, not validated regulation**; **HepG2-specific**; TSS-
+  proximity assignment **over-calls** targets. Provided as a flagged binding prior, not universal signed edges.
+
+**Joined enzyme records** (`colab/enzyme_record.py`, `outputs/orphan/enzyme_records.json`). One record per enzyme
+(2,549) joining: uniprot, PPI partners (93%), reaction metabolites (100%), **in-vitro kcat (100%, but only 16%
+MEASURED)**, **in-vivo kcat (23%, flagged cross-species proxy)**, the **in-vitro/in-vivo ratio + honest ~8.7×
+fold-uncertainty** (via `kinetic_confidence`), Km (58%), pathway membership (91%), and in-cell operating rate
+(11%). Honest gaps stated inline per record: true *pathway flux* is not measured (only per-enzyme in-cell rate for
+~270); most kcat is predicted; the in-vivo value is a proxy.
