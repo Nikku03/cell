@@ -435,3 +435,40 @@ points baked in:
 (chance → 0.61), not the aggregate (which is easy-edge-dominated, so it barely moves, +0.005). The value is
 concentrated exactly where the mission is (novel edges with no network shortcut), and it was added without leakage
 or regression.
+
+## Does a TRUE interface feature (AF-Multimer) beat domains on discovery? (fetched, no GPU) — NO
+
+Follow-up to the domain result (0.61 on discovery): would a real structural **interface** feature push it toward
+0.70? Rather than generate, we **fetched** the Predictomes human AF-Multimer screen (Schmid & Walter, Mol Cell 2025)
+— per-pair scores for **1.6M pairs** (28 MB), of which **1.28M map to our genes**. Feature = `num_unique_contacts`
+(raw interface contacts from the predicted complex; purely structural, so — unlike their SPOC score — not circular
+against our DB-sourced edges). `colab/interface_discovery_test.py`.
+
+**The confound that decides it: AlphaFold was trained on the PDB.** A pair whose complex is already solved
+(`in_pdb=1`) is effectively memorised. Splitting on that:
+
+| Clean labels: gold PPI vs zero-evidence non-edge | contacts AUC (ALL) | contacts AUC (**HARD, 0-shared**) |
+|---|---|---|
+| positives **in_pdb=1** (AF memorised the co-structure) | 0.82 | **0.82** |
+| positives **in_pdb=0** (real, AF had to predict) | 0.53 | **0.50** |
+
+Median contacts: memorised pos **65**, genuine pos **0**, non-edges **0**. So AF-Multimer's headline separation is
+**PDB recall, not discovery**. On genuine novel interactions it produces the same (near-zero) interface as
+non-interactors — **AUC 0.50 on the discovery split**. Domains (**0.61**) actually *beat* AF-Multimer contacts here.
+
+**Why this is the answer, honestly:** it matches the known limitation — AF-Multimer's PPI signal comes from
+paired-MSA co-evolution + PDB precedent, both thin for novel human pairs. The 28 MB fetch settled it without a
+minute of GPU.
+
+**One untested variant → Colab GPU notebook** (`colab/make_interface_af_notebook.py` →
+`colab/interface_af_multimer.ipynb`, pair set `colab/export_interface_pairs.py` → `interface_pairs.json`).
+Predictomes ran AF at *high throughput* (reduced MSA, raw contacts). The notebook re-tests the only thing that
+could differ: a **careful full-MSA run reading ipTM + pDockQ**, with **templates DISABLED** (so AF cannot retrieve
+the co-structure — prediction, not recall), on 80 in_pdb=0 real PPIs + 80 degree-matched zero-evidence non-edges.
+Expectation stated in the notebook: near chance. If ipTM ≈ 0.5–0.6, structure does not beat domains for discovery
+and the branch closes honestly; ESM interface-conservation is expected to behave the same (same co-evolution
+dependence), so it was not pursued separately.
+
+**Net:** the cheap, honest discovery feature remains **domain compatibility (0.61)**, already integrated. A
+fetched, PDB-trained interface model does **not** add discovery signal; the GPU notebook is provided to confirm the
+last variant, not because a win is expected.

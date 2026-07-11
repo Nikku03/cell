@@ -38,6 +38,7 @@ ARTIFACTS = [
     "reasoning_chain.json", "reasoning_chain_test.json", "reasoning_chain_multitest.json",   # chain + blind ClinVar tests (VHL + 6-protein panel)
     "enzyme_records.json", "chip_reg_edges.json",   # joined kinetic+context records + measured HepG2 ChIP TF->target edges
     "struct_discovery_test.json",   # confound-controlled test: does a structural feature lift the HARD/discovery AUC
+    "interface_discovery_test.json", "interface_pairs.json",   # fetched AF-Multimer interface vs discovery + Colab pair set
 ]
 
 
