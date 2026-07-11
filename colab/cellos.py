@@ -116,7 +116,8 @@ class CellKernel:
             rows[g].append(k)
         pgenes = sorted(rows)
         M = np.vstack([X[rows[g]].mean(0) for g in pgenes])
-        self._pert = dict(M=M, pgenes=pgenes, pidx={g: k for k, g in enumerate(pgenes)}, syms=syms)
+        self._pert = dict(M=M, pgenes=pgenes, pidx={g: k for k, g in enumerate(pgenes)}, syms=syms,
+                          norms=np.linalg.norm(M, axis=1) + 1e-9)
         return self._pert
 
     # ---------------------------------------------------------------- syscalls
@@ -233,6 +234,19 @@ class CellKernel:
         MATCHES the state; ranking by 'reversal' would be exactly backwards — the sign that broke this the first
         time). Self-match is excluded as trivial; identifying the EXACT cause cross-context is ~21% top-10 (measured,
         perturb_prioritizer.py) — the honest ceiling."""
+        hits = self.whodunit_hits(name, topsig=topsig, k=k)
+        if isinstance(hits, str):
+            return hits
+        nup, ndown, suspects = hits
+        return "\n".join([
+            f"[C] whodunit {name}: crime scene = {nup} genes UP / {ndown} DOWN after the knockout.",
+            f"  knockouts whose MEASURED effect best matches this state (the implicated module):",
+            "    " + ", ".join(f"{g}({m:+.2f})" for g, m in suspects),
+            f"  (self-match excluded as trivial. identifying the EXACT cause CROSS-context is ~21% top-10, measured "
+            f"— the debugger is real; context transfer is the open problem.)"])
+
+    def whodunit_hits(self, name, topsig=25, k=8):
+        """the ranked list behind whodunit(): [(gene, match_cosine)] excluding self, or an error string."""
         dbg = self._load_debugger()
         if not dbg:
             return "whodunit: debugger not mounted."
@@ -248,15 +262,10 @@ class CellKernel:
             if gg in sidx: sig[sidx[gg]] = 1.0
         for gg in down:
             if gg in sidx: sig[sidx[gg]] = -1.0
-        match = (dbg["M"] @ sig) / ((np.linalg.norm(dbg["M"], axis=1) * (np.linalg.norm(sig) + 1e-9)) + 1e-9)
+        match = (dbg["M"] @ sig) / (dbg["norms"] * (np.linalg.norm(sig) + 1e-9))
         ordr = np.argsort(-match)
-        suspects = [(dbg["pgenes"][j], match[j]) for j in ordr if dbg["pgenes"][j] != name][:k]
-        return "\n".join([
-            f"[C] whodunit {name}: crime scene = {len(up)} genes UP / {len(down)} DOWN after the knockout.",
-            f"  knockouts whose MEASURED effect best matches this state (the implicated module):",
-            "    " + ", ".join(f"{g}({m:+.2f})" for g, m in suspects),
-            f"  (self-match excluded as trivial. identifying the EXACT cause CROSS-context is ~21% top-10, measured "
-            f"— the debugger is real; context transfer is the open problem.)"])
+        suspects = [(dbg["pgenes"][j], float(match[j])) for j in ordr if dbg["pgenes"][j] != name][:k]
+        return len(up), len(down), suspects
 
     def deadlock(self, name, k=10):
         """[C] synthetic-lethal partners: processes where killing EITHER alone is survivable but BOTH = kernel
