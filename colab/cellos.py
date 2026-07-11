@@ -267,6 +267,37 @@ class CellKernel:
         suspects = [(dbg["pgenes"][j], float(match[j])) for j in ordr if dbg["pgenes"][j] != name][:k]
         return len(up), len(down), suspects
 
+    def predict(self, name, k=8):
+        """[C~] PREDICT THE NEXT THING (transformer-style): predict the response of an UNMEASURED knockout from the
+        measured responses of its network neighbours (weighted). Causal source, but predicted → tag [C~]. If the
+        gene happens to be in the screen, print the live predicted-vs-real correlation. Measured ceiling
+        (cellformer.py): r≈0.43 when the gene sits in a complex, ≈0.19 for singletons."""
+        dbg = self._load_debugger()
+        if not dbg:
+            return "predict: debugger not mounted."
+        import numpy as np, cellformer as cf
+        screen = set(dbg["pgenes"])
+        w = cf.context_weights(self.C, name, screen, screen_genes=dbg["pgenes"])
+        if not w:
+            return (f"predict {name}: no network neighbours in the screen — a SINGLETON. Cannot predict the next "
+                    f"state (this is the honest failure mode; r≈0.19 even when we can).")
+        ctx = sorted(w, key=lambda x: -w[x])[:25]
+        wv = np.array([w[c] for c in ctx]); wv = wv / wv.sum()
+        pred = wv @ dbg["M"][[dbg["pidx"][c] for c in ctx]]
+        order = np.argsort(pred)
+        down = [(dbg["syms"][j], pred[j]) for j in order[:k] if pred[j] < 0]
+        up = [(dbg["syms"][j], pred[j]) for j in order[::-1][:k] if pred[j] > 0]
+        L = [f"[C~] predict  kill -9 {name}   (PREDICTED from {len(ctx)} network neighbours — unmeasured knockout)",
+             f"  ↓ predicted DOWN: " + ", ".join(f"{g}({v:+.1f})" for g, v in down[:8]),
+             f"  ↑ predicted UP:   " + ", ".join(f"{g}({v:+.1f})" for g, v in up[:8])]
+        if name in dbg["pidx"]:
+            r = cf._pearson(pred, dbg["M"][dbg["pidx"][name]])
+            L.append(f"  [self-check] this gene WAS measured — predicted-vs-real r={r:+.2f}  "
+                     f"({'RECOVERED (sits in a module)' if r > 0.4 else 'weak (singleton-like)'})")
+        else:
+            L.append(f"  (genuine prediction: this knockout is not in the screen)")
+        return "\n".join(L)
+
     def deadlock(self, name, k=10):
         """[C] synthetic-lethal partners: processes where killing EITHER alone is survivable but BOTH = kernel
         panic. A mutual-dependency deadlock. From curated SL screens (interventional double-knockouts)."""
@@ -339,6 +370,7 @@ class CellKernel:
   man GENE             process documentation (role, segment, priority, interfaces)
   top                  kernel threads (highest system-wide dependency)
   strace GENE          [C] SIGKILL + measured downstream effect (Perturb-seq debugger)
+  predict GENE         [C~] predict an UNMEASURED knockout's response from its neighbours
   whodunit GENE        [C] detective: recover the cause from a knockout's fingerprint
   diagnose up=.. down=..  [C] root-cause: whose knockout reverses a corrupted state
   deadlock GENE        [C] synthetic-lethal partners (co-kill = panic)
@@ -365,6 +397,7 @@ class CellShell:
             if cmd == "man": return k.man(args[0])
             if cmd == "top": return k.top()
             if cmd in ("strace", "kill"): return k.strace(args[0])
+            if cmd == "predict": return k.predict(args[0])
             if cmd == "whodunit": return k.whodunit(args[0])
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
@@ -393,6 +426,8 @@ DEMO = [
     "strace SF3B1",
     "# 4) THE DETECTIVE — recover the CAUSE from the fingerprint a knockout leaves (causal, self-consistency proof)",
     "whodunit SF3B1",
+    "# 4b) PREDICT THE NEXT THING — an unmeasured knockout's response, transformer-style, with a live self-check",
+    "predict PSMB5",
     "# 5) ROOT-CAUSE on an arbitrary corrupted state — whose removal reverses it?",
     "diagnose up=HBA1,HBB down=CCNB1,CDK1",
     "# 6) synthetic-lethal deadlocks — co-kill = kernel panic (the SL idea, from curated double-knockouts)",

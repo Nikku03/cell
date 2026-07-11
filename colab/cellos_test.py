@@ -28,6 +28,7 @@ def main():
         "man known": "man TP53", "man unknown": "man NOTAGENE",
         "strace in-screen": "strace SF3B1", "strace not-in-screen": "strace TP53",
         "whodunit in-screen": "whodunit SF3B1", "whodunit not-in-screen": "whodunit TP53",
+        "predict in-complex": "predict PSMB5", "predict singleton": "predict TTN",
         "diagnose": "diagnose up=HBA1,HBB down=CDK1,CCNB1",
         "deadlock has-partners": "deadlock FANCI", "deadlock none": "deadlock ACTB",
         "patch suppressor": "patch TP53:R175H", "patch tolerant": "patch TTN:V100A",
@@ -63,6 +64,12 @@ def main():
     check("whodunit PSMB5 -> proteasome", proteas >= 3, f"{proteas}/8 proteasome genes: {ps[:5]}")
     rp = hits("RPL13"); ribo = sum(1 for g in rp if g.startswith(("RPL", "RPS")))
     check("whodunit RPL13 -> ribosome", ribo >= 3, f"{ribo}/8 ribosomal genes: {rp[:5]}")
+
+    # predict: an unmeasured knockout's response, self-checked. PSMB5 (proteasome) should recover strongly.
+    pp = k.predict("PSMB5")
+    check("predict PSMB5 self-check r>0.4", "RECOVERED" in pp, "predicted-vs-real correlation")
+    check("predict PSMB5 -> proteostasis stress", any(s in pp for s in ("HSPA1A", "UBC", "SQSTM1")),
+          "predicted UP = heat-shock/ubiquitin stress")
 
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")

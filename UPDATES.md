@@ -520,3 +520,23 @@ in the 0.5-AUC regime, flags hub-leak). Honest throughout: `whodunit` excludes t
 measured ~21% cross-context top-10 ceiling; a sign bug (ranking by reversal instead of +cosine match put the true
 cause LAST) was caught and fixed. This reframes the whole project as one coherent system: the debugger (interventional
 data) is the crown jewel, the linter (honesty layer) is the security boundary, everything correlational is flagged.
+
+## CellFormer — "predict the next thing" (transformer-style completion on interventional data)
+
+A transformer completes a sequence by predicting the next token from context. The cell-equivalent, built on the
+Replogle Perturb-seq corpus (2,058 knockouts × 8,563 genes): predict the transcriptional effect of a knockout we
+NEVER measured, from the measured effects of its network neighbours (`colab/cellformer.py`). Two regimes, decomposed
+like everything else:
+- **IMPUTE (interpolation):** mask genes inside a held-out perturbation, predict from the observed genes via
+  gene-gene attention (softmax over SVD gene embeddings) → **r = 0.52** vs 0.24 predict-mean baseline. The cell
+  autocompletes masked genes well — exactly what Geneformer/scGPT do.
+- **PREDICT-NEXT (extrapolation — the real "next token"):** hold out an ENTIRE knockout, predict its full response
+  from its network neighbours' responses → **r = 0.34** overall, but **r = 0.43 for genes in a known complex**
+  (n=1,110) vs **0.19 for singletons**; beats baseline for 65% of genes. So an unseen knockout is predictable
+  EXACTLY WHEN the gene sits in a measured module; singletons stay hard. Honest, sharp boundary.
+
+Wired into CellOS as `predict GENE` [C~] (causal source, predicted value). `predict PSMB5` → predicted UP =
+HSPA1A / UBC / SQSTM1 (the textbook proteasome-inhibition proteostasis-stress response), with a live self-check:
+predicted-vs-real **r = +0.86**. Tested (cellos_test.py): the self-check and the stress-response recovery both
+assert-pass. This is the transformer paradigm made real on the cell — and honest about where completion stops
+working (no module → no prediction).

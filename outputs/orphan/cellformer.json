@@ -1,0 +1,21 @@
+{
+  "impute": {
+    "task": "impute (mask genes in held-out perturbations, gene-gene attention)",
+    "pearson_r": 0.52,
+    "baseline_mean_r": 0.237,
+    "n_masked_entries": 527228,
+    "held_out_perturbations": 411
+  },
+  "predict_next": {
+    "task": "predict-next (predict a held-out knockout's full response from network neighbours)",
+    "n_genes_predicted": 1799,
+    "mean_r_predicted": 0.337,
+    "mean_r_baseline_avg_response": 0.234,
+    "median_r_predicted": 0.28,
+    "frac_beating_baseline": 0.646,
+    "mean_r_genes_WITH_complex": 0.425,
+    "mean_r_genes_WITHOUT_complex": 0.194,
+    "n_with_complex": 1110
+  },
+  "verdict": "IMPUTE (interpolation) r=0.52 vs baseline 0.237 \u2014 the cell autocompletes masked genes well. PREDICT-NEXT (extrapolation) r=0.337 vs baseline 0.234; genes WITH a known complex = 0.425, WITHOUT = 0.194. The next knockout is predictable EXACTLY WHEN the gene sits in a measured module; singletons stay hard \u2014 the honest edge of 'completing the cell'."
+}
