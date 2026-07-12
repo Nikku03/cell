@@ -855,3 +855,19 @@ Which is exactly what you'd expect from how the regulatory genome was charted: m
 best-known part; global knockout-fragility is not written in the edges at all. `induce` (forward, works) and
 `viability`/`strace` (backward, measured) are the two honest ways to ask; `boot`+backward-fragility is the one that
 politely returns "chance." Tests green.
+
+## Whole-software audit — one command, five sections, 13/13 (cellos_full_audit.py)
+
+Before calling it done, a single end-to-end pass over the live product (not "does a file exist" — "does it boot,
+recover known biology, reproduce its headline numbers, and is every claim backed by a committed artifact"):
+
+| section | result |
+|---|---|
+| 1 import audit (each module isolated in a subprocess) | runtime-critical **13/13**; historical **99/101** (2 run-at-import, 0 real breakage) |
+| 2 CellOS integration (every syscall + correctness + coherence) | ALL PASS; whodunit coherence 25% vs 1% random (24×) |
+| 3 running-cell layer | boot converges (32 ticks, 28% ON); reprogram **8/9, AUC 0.99**; essentiality **null 0.47** (null-by-design = pass) |
+| 4 claims ↔ artifacts | FBA AUC 0.68, reprogram 8/9 / 0.988, essentiality null gain-robust, litmine 4,670 genes, epistasis r 0.884 — all backed |
+| 5 artifact integrity | 60 present artifacts all parse as valid JSON |
+
+**13/13 checks pass** — the whole software boots, recovers known biology, and every headline number a syscall
+prints is traceable to the committed evidence that earned it. `python3 colab/cellos_full_audit.py` reproduces it.
