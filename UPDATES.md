@@ -624,3 +624,21 @@ Added a `stat`/`df` syscall to CellOS: a df/htop-style dashboard of how complete
 So "the complete cell" has near-total *descriptive* coverage (what each gene is, its pathways/complexes/edges) but
 the *causal/interventional* layer — the part that actually predicts what happens when you poke it — is the honest
 frontier: 55% trustworthy, and that's the number that matters.
+
+## Trying to raise the 55%: hu.MAP complexes REJECTED (validated, not counted)
+
+To lift the trustworthy-coverage number (55%), fetched two levers: richer complexes (hu.MAP 2.0 — 6,333 physical
+complexes, 8,671 genes) and combined interventional screens (gwps+RPE1+essential).
+
+- **Interventional union barely moved** measured (8,693 → 8,696): the screens are all K562/RPE1 and overlap; gwps is
+  already genome-wide, so that lever is tapped.
+- **hu.MAP raised the COUNT 55% → 67%** — and then the honest re-validation killed it. Leave-one-out predicting a
+  measured gene's knockout effect from its complex partners: **curated complexes r=0.233, but hu.MAP r≈0.09 at EVERY
+  confidence tier** (even conf 5 = 0.087). The ~4,000 hu.MAP-added "complex" genes predict at r≈0.06 — the weak tier.
+  Reason: hu.MAP is *physical co-purification*; two proteins that stick together don't share a knockout effect
+  unless they're a *functional* unit — which curated complexes already capture. So the 67% was relabeling weak
+  genes as trustworthy. **Rejected**; coverage stays the honest **55%** (`outputs/orphan/humap_validation.json`).
+
+Lesson (same as the whole project): adding annotation data raised the metric but not the capability, caught by
+re-validating (predict r) instead of counting membership. The real lever for 55% isn't more complex annotation —
+it's more INTERVENTIONAL measurement, and the readily-available Perturb-seq screens are already folded in.

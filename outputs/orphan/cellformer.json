@@ -9,14 +9,14 @@
   },
   "predict_next": {
     "task": "predict-next (predict a held-out knockout's full response from network neighbours)",
-    "n_genes_predicted": 8645,
-    "mean_r_predicted": 0.098,
+    "n_genes_predicted": 8652,
+    "mean_r_predicted": 0.097,
     "mean_r_baseline_avg_response": 0.098,
-    "median_r_predicted": 0.03,
-    "frac_beating_baseline": 0.42,
-    "mean_r_genes_WITH_complex": 0.226,
-    "mean_r_genes_WITHOUT_complex": 0.047,
-    "n_with_complex": 2466
+    "median_r_predicted": 0.028,
+    "frac_beating_baseline": 0.423,
+    "mean_r_genes_WITH_complex": 0.121,
+    "mean_r_genes_WITHOUT_complex": 0.029,
+    "n_with_complex": 6436
   },
   "completeness": {
     "genome": 16509,
@@ -27,5 +27,5 @@
     "answers_for_frac": 0.863,
     "WELL_covered_frac": 0.552
   },
-  "verdict": "IMPUTE r=0.391 vs 0.121; PREDICT-NEXT r=0.098 (complex 0.226 / singleton 0.047). COMPLETENESS: CellOS answers for 14,240/16,509 genes = 86% (8,693 measured + 5,547 predictable); 2,269 remain dark (no module/context)."
+  "verdict": "IMPUTE r=0.391 vs 0.121; PREDICT-NEXT r=0.097 (complex 0.121 / singleton 0.029). COVERAGE vs ACCURACY: CellOS ANSWERS for 87% of the genome, but only 67% is TRUSTWORTHY (8,693 measured + 2,395 complex-predictable); 3,330 are weak (r~0.05) and 2,091 dark. 'Complete' in coverage, honest about accuracy."
 }

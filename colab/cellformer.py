@@ -68,7 +68,12 @@ def impute(M, d=64, mask_frac=0.15, seed=0, test_frac=0.2, tau=0.1):
 
 def build_context_index(C, screen_set):
     """precompute the maps context_weights needs, ONCE (so complex-partner lookup is O(members), not O(genome^2)).
-    Returns (g2c, coexpr, cx2members) where cx2members[cx_id] = set of SCREEN gene names in that complex."""
+    Returns (g2c, coexpr, cx2members) where cx2members[cx_id] = set of SCREEN gene names in that complex.
+    Merges hu.MAP 2.0 complexes (outputs/orphan/humap_complexes.json) if present — the coverage-boosting overlay."""
+    # NOTE: hu.MAP 2.0 physical complexes were TESTED as a coverage booster and REJECTED — they predict knockout
+    # effects at only r~0.09 (vs curated r=0.23), even at confidence 5, because physical co-purification != a
+    # functional unit whose members share a knockout effect. Counting them inflated 'trustworthy' 55%->67% with
+    # r~0.06 genes. So the predict context uses CURATED complexes only (see epistasis/humap note in UPDATES).
     g2c = {int(x): set(v) for x, v in (C.D.get("gene2cplx", {}) or {}).items()}
     coexpr = {}
     for kk, lst in (C.D.get("coexpr", {}) or {}).items():
@@ -187,7 +192,7 @@ def run(path=None):
     print(f"corpus: {os.path.basename(path)} -> {M.shape[0]} perturbations x {M.shape[1]} genes", flush=True)
     imp = impute(M); print(f"  impute done: r={imp['pearson_r']}", flush=True)
     nxt = predict_next(M, pgenes); print(f"  predict-next done: r={nxt['mean_r_predicted']}", flush=True)
-    cov = coverage(pgenes); print(f"  coverage done: {cov['coverage_frac']:.0%}", flush=True)
+    cov = coverage(pgenes); print(f"  coverage done: trustworthy {cov['WELL_covered_frac']:.0%}", flush=True)
     res = {"corpus": os.path.basename(path), "impute": imp, "predict_next": nxt, "completeness": cov}
     res["verdict"] = (
         f"IMPUTE r={imp['pearson_r']} vs {imp['baseline_mean_r']}; PREDICT-NEXT r={nxt['mean_r_predicted']} "
