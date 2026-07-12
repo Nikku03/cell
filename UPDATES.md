@@ -740,3 +740,24 @@ optimises, honestly:
 Key point: each objective term predicts a different SLICE. survive+grow -> knockout lethality (AUC 0.70).
 compete (rate>yield) -> cancer's Warburg metabolism. reproduce/evolve -> drug-resistance evolution & heterogeneity.
 Adding evolutionary fitness would NOT necessarily improve per-gene survival prediction; it opens a different layer.
+
+## Tried more Perturb-seq screens: +19 genes, 55% ceiling is data-generation-limited
+
+To raise the 55% by measurement, combined every readily-available Perturb-seq screen (surveyed the full scPerturb
+catalog, 50 datasets):
+
+| screen | perturbs (model genes) | new |
+|---|---|---|
+| K562 genome-wide (gwps) | 8,693 | — |
+| + RPE1 | 2,155 | +2 |
+| + K562 essential | 1,854 | +1 |
+| + Norman 2019 | 94 | +16 |
+| **combined** | **8,712 (53%)** | trustworthy **55%** (unchanged) |
+
+**+19 genes total** — the number doesn't move. Why: all the large screens target the same K562-expressed /
+essential-gene space gwps already covers. The only catalog entry that could add many new genes — Joung 2023 TF
+atlas (~1,700 TFs) — is OVEREXPRESSION (wrong modality for the knockdown debugger) and 5.8GB (throttled download,
+abandoned). The real barrier: the ~7,800 unmeasured genes are mostly NOT EXPRESSED in K562, so no K562 screen can
+reach them, and no public GENOME-SCALE KNOCKOUT Perturb-seq exists in a complementary cell type. So the 55% ceiling
+is **data-generation-limited** (needs new wet-lab screens in other cell types), not fetch-limited — confirmed
+empirically, not assumed. (`outputs/orphan/perturb_screens_combined.json`)

@@ -45,6 +45,7 @@ ARTIFACTS = [
     "edge_predict_validation.json",   # fixed-model edge types tested for knockout-predictivity: only complexes work
     "propagation_test.json",   # software analogy test: does knockout perturb annotated connections? (no -- cell is robust)
     "fba_essentiality.json",   # objective-driven FBA (grow+reproduce under physics) predicts knockout survival AUC 0.70
+    "perturb_screens_combined.json",   # tried all public Perturb-seq screens: +19 genes, 55% ceiling is data-gen-limited
 ]
 
 
