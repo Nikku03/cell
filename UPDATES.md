@@ -719,3 +719,24 @@ Wired into CellOS as `viability GENE` [FBA]: RAE1 -> LETHAL (0% growth, unrerout
 (100%, flux reroutes); TP53 -> honestly out of scope (no biomass-flux objective for signalling/TFs). The top-down
 complement to strace's bottom-up. Honest scope: metabolism only (~2,800 genes) — the part of the cell governed by a
 conservation law; there's no clean physical objective for signalling/regulation yet. (`fba_essentiality.json`)
+
+## The fitness objective hierarchy: survive → grow → compete → reproduce (what's captured, what's the frontier)
+
+Extending the objective past "maximise biomass". Mapping the biological lifecycle onto what the model actually
+optimises, honestly:
+- **Survive** = a feasible flux state that meets maintenance ATP (don't die). Captured (FBA feasibility).
+- **Grow** = maximise biomass. Captured — objective-driven FBA predicts knockout survival AUC 0.70.
+- **Compete** = optimise for RATE over YIELD (grow fast even if wasteful) + don't waste (parsimony/pFBA = min flux
+  among max-growth). PARTIALLY captured: the growth-max solution on Human-GEM is fermentative — it secretes lactate
+  and skips respiration even with O2 available (the **Warburg effect**, the cancer signature), i.e. the model
+  already picks the compete/grow-fast strategy over the efficient one. HONEST CAVEAT: simple glucose/O2 bound
+  sweeps did NOT produce a clean rate-yield transition (biomass is capped by other media bounds); a proper
+  rate-yield frontier needs the enzyme-constrained ecModel (proteome allocation), not shown here.
+- **Reproduce (as fitness)** = long-term reproductive success across time, fluctuating environments, and against
+  actual competitors. This is the FRONTIER — beyond steady-state FBA. It needs dynamic FBA (time), community FBA
+  (competitors), or evolutionary/agent-based dynamics, and it answers DIFFERENT questions (population heterogeneity,
+  resistance evolution, bet-hedging) than the per-gene survival prediction we validated.
+
+Key point: each objective term predicts a different SLICE. survive+grow -> knockout lethality (AUC 0.70).
+compete (rate>yield) -> cancer's Warburg metabolism. reproduce/evolve -> drug-resistance evolution & heterogeneity.
+Adding evolutionary fitness would NOT necessarily improve per-gene survival prediction; it opens a different layer.
