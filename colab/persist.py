@@ -48,6 +48,7 @@ ARTIFACTS = [
     "perturb_screens_combined.json",   # tried all public Perturb-seq screens: +19 genes, 55% ceiling is data-gen-limited
     "litmine.json",   # PubMed literature extracted for dark genes (grounded + DOIs) -- descriptive layer
     "grn_validation.json", "grn_diag.json",   # the cell as RUNNING software (dynamical GRN): converges+robust, but knockout fragility does NOT predict essentiality (honest null, gain-robust) -- 'boot' syscall
+    "grn_reprogram.json",   # TF reprogramming: forcing a master TF ON induces its OWN lineage program (8/9, AUC 0.99) -- the FORWARD win vs the backward essentiality null -- 'induce' syscall
 ]
 
 

@@ -28,6 +28,7 @@ def main():
         "viability lethal": "viability RAE1", "viability robust": "viability SLC22A1",
         "viability non-metabolic": "viability TP53",
         "boot bare": "boot", "boot knockout": "boot TP53", "boot off-core": "boot NOTAGENE",
+        "induce master TF": "induce GATA1", "reprogram alias": "reprogram MYOD1", "induce non-TF": "induce TTN",
         "lit dark gene": "lit FNDC5", "lit unmined": "lit ZZZ",
         "man known": "man TP53", "man unknown": "man NOTAGENE",
         "strace in-screen": "strace SF3B1", "strace not-in-screen": "strace TP53",
@@ -104,6 +105,12 @@ def main():
         m = re.search(r"displacement ([\d.]+)", s); return float(m.group(1)) if m else -1.0
     check("boot TP53 (hub) more disruptive than a leaf", _disp(b_hub) > _disp(b_leaf),
           f"TP53 disp {_disp(b_hub):.2f} vs SLC22A1 {_disp(b_leaf):.2f}")
+
+    # induce: forcing a master TF ON specifically reprograms its lineage; a structural gene gets no lineage
+    ig = k.induce(["GATA1"])
+    check("induce GATA1 -> erythroid SPECIFIC", "SPECIFIC (reprogrammed)" in ig and "[GATA1]" in ig)
+    it = k.induce(["TTN"])
+    check("induce non-master TTN -> no lineage label", "SPECIFIC (reprogrammed)" not in it)
 
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")

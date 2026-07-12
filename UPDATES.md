@@ -820,3 +820,38 @@ Honest verdict, stated in the `boot` output itself: the cell genuinely runs, con
 validated demonstration (you can watch a cell-state emerge, and watch it re-settle after a knockout — TP53
 displaces the attractor 2.9 and flips 133 genes, a leaf gene barely moves it) plus a documented null. The layers
 that DO predict knockouts stay the physical/measured ones: `viability` (FBA, AUC 0.70) and `strace` (the debugger).
+
+## Reprogram the running cell with transcription factors — `induce` syscall (the forward win)
+
+The essentiality null was the BACKWARD question ("remove a gene → what breaks"), and running the network can't
+answer it. TFs are built for the FORWARD question, so we asked that instead: force a master TF ON in the resting
+cell, run the program forward, and does the cell flow to that TF's real lineage — SPECIFICALLY? (`grn_reprogram.py`)
+
+9 master TFs with textbook marker programs (erythroid/myeloid/muscle/pluripotency/B-cell/hepatocyte/p53/Treg/HSC),
+programs defined independently of the edge list, forced TF excluded, averaged over 5 resting states:
+
+| metric | result |
+|---|---|
+| reprogramming hit@1 (own program most-induced) | **8 / 9** (only SPI1 loses, to PAX5 — both lympho-myeloid) |
+| matched-vs-mismatched induction AUC | **0.988** |
+| median rank of own program (of 9) | **1** |
+
+Forcing GATA1 on lights up erythroid (SLC25A37, RHAG, HEMGN, ALAS2, KLF1) and almost nothing else; MYOD1→muscle
+(CKMT2, MUSTN1, CHRNG); POU5F1→pluripotency (UTF1, ZSCAN10, ESRG, EED); FOXP3→Treg (IKZF2, PTPN22). Wired into
+CellOS as `induce TF [TF..]` (alias `reprogram`).
+
+HONEST scope (disclosed in the output): this is **not** emergent discovery. The textbook markers are mostly DIRECT
+edge-targets of the TF (e.g. GATA1 6/7, HNF4A 6/6), and the indirect-only markers are too few (8 genes, AUC 0.67)
+to claim the dynamics compute new downstream biology. What it DOES show, cleanly: the curated regulatory wiring
+encodes **correct, lineage-specific** master-TF→program logic, and the running dynamics faithfully express it when
+you flip a master switch. It is master-regulator readback played forward.
+
+**The dichotomy (the real finding).** Same running cell, two directions:
+- **backward** (knock a gene out → what breaks): NULL — the cell is robust, fragility isn't in the wiring (AUC 0.47).
+- **forward** (flip a master switch → what turns on): REAL — the wiring is right and the cell reprograms to the
+  correct lineage, specifically (AUC 0.99).
+
+Which is exactly what you'd expect from how the regulatory genome was charted: master-regulator→target maps are its
+best-known part; global knockout-fragility is not written in the edges at all. `induce` (forward, works) and
+`viability`/`strace` (backward, measured) are the two honest ways to ask; `boot`+backward-fragility is the one that
+politely returns "chance." Tests green.

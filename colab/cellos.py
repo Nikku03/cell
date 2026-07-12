@@ -315,6 +315,46 @@ class CellKernel:
               "  essentiality (validated AUC 0.47) — use  viability {g}  /  strace {g}  for that.".format(g=gene)]
         return "\n".join(L)
 
+    def induce(self, tfs, top=10):
+        """reprogram — force transcription factor(s) ON in the resting cell, run the program forward, and show the
+        lineage that lights up (Yamanaka-style). This is the ONE thing running the regulatory network does WELL:
+        validated, forcing a master TF ON induces its OWN textbook program #1 for 8/9 masters (specificity AUC 0.99)
+        — the FORWARD complement to the backward essentiality null. Honest: this expresses the TF's (correctly-wired,
+        lineage-specific) targets; it is master-regulator readback played forward, not emergent discovery."""
+        import numpy as np
+        g = self._grn()
+        locs, named = {}, []
+        for t in tfs:
+            gi = self._pid(t)
+            if gi is not None and gi in g.g2l:
+                locs[g.g2l[gi]] = 1.0; named.append(t)
+        if not locs:
+            return (f"induce: none of {list(tfs)} are transcription factors in the regulatory core "
+                    f"(need outgoing signed edges to drive a program).")
+        base, _ = g.run(g._seed(seed=0), steps=400)
+        forced, _ = g.run(base.copy(), steps=200, clamp=locs)
+        delta = forced - base
+        order = np.argsort(-delta)
+        up = [(str(g.name[i]), float(delta[i])) for i in order[:top] if delta[i] > 1e-3 and g.name[i] not in named]
+        L = [f"induce {'+'.join(named)}  →  force ON in the resting cell and run the program forward",
+             f"  top induced (the lineage program that lights up):"]
+        L += [f"    {nm:<10} +{d:.2f}" for nm, d in up] or ["    (no genes rose above threshold)"]
+        # if a known master TF was forced, confirm its textbook lineage program specifically rose
+        try:
+            from grn_reprogram import PROGRAMS
+            for t in named:
+                if t in PROGRAMS:
+                    prg = [p for p in PROGRAMS[t] if self._pid(p) in g.g2l and p != t]
+                    mp = float(np.mean([delta[g.g2l[self._pid(p)]] for p in prg])) if prg else 0.0
+                    bg = float(delta[np.where(~g.is_input)[0]].mean())
+                    L.append(f"  [{t}] textbook lineage program induction {mp:+.2f}  vs cell-wide background "
+                             f"{bg:+.2f}  →  {'SPECIFIC (reprogrammed)' if mp > bg + 0.02 else 'not above background'}")
+        except Exception:
+            pass
+        L += ["  forward master-regulator logic works (AUC 0.99, 8/9); the backward direction (essentiality) is null.",
+              "  NB this expresses the TF's correctly-wired targets — reprogramming, not new discovery."]
+        return "\n".join(L)
+
     def man(self, name):
         """process documentation: what this gene 'does', where it runs, its priority, its interfaces."""
         i = self._pid(name)
@@ -644,6 +684,7 @@ class CellKernel:
   top                  kernel threads (highest system-wide dependency)
   viability GENE       [FBA] top-down: does the cell still GROW after knockout? (objective+physics)
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
+  induce TF [TF..]     REPROGRAM: force master TF(s) ON, run forward, watch the lineage program light up
   strace GENE          [C] SIGKILL + measured downstream effect (Perturb-seq debugger)
   predict GENE         [C~] predict an UNMEASURED knockout's response from its neighbours
   whodunit GENE        [C] detective: recover the cause from a knockout's fingerprint
@@ -673,6 +714,7 @@ class CellShell:
             if cmd in ("stat", "df"): return k.stat()
             if cmd == "viability": return k.viability(args[0])
             if cmd in ("boot", "exec", "run"): return k.boot(args[0] if args else None)
+            if cmd in ("induce", "reprogram"): return k.induce(args)
             if cmd == "lit": return k.lit(args[0])
             if cmd == "ps": return k.ps(context=args[0] if args else None)
             if cmd == "man": return k.man(args[0])
@@ -709,6 +751,9 @@ DEMO = [
     "#     knock a gene out and watch the cell RE-SETTLE (robustness). Honest: running it doesn't rank essentiality.",
     "boot",
     "boot TP53",
+    "# 0d) REPROGRAM — force a master TF ON and run forward; the correct lineage program lights up (Yamanaka-style).",
+    "#     The FORWARD direction works (AUC 0.99) where the backward one (essentiality) was null.",
+    "induce GATA1",
     "# 1) kernel threads — the processes the system cannot run without (essentiality = priority)",
     "top",
     "# 2) documentation for one process (real data: role, segment, scheduler, interfaces)",
