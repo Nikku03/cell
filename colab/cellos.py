@@ -207,6 +207,30 @@ class CellKernel:
         L.append("=" * 66)
         return "\n".join(L)
 
+    def viability(self, name):
+        """[FBA] TOP-DOWN survival prediction: does the cell still GROW after knocking this gene out? From
+        objective-driven FBA on Human-GEM — maximise biomass (reproduce) subject to mass balance + enzyme capacity
+        (physics limits). This is the model that PRIORITISES staying alive + reproducing, and it predicts measured
+        essentiality at AUC 0.70 where reading the wiring diagram was chance (0.50). Metabolic genes only."""
+        import os, json
+        if not hasattr(self, "_fba"):
+            p = "outputs/orphan/fba_essentiality.json"
+            self._fba = (json.load(open(p)).get("predicted_growth_on_knockout", {}) if os.path.exists(p) else {})
+        if not self._fba:
+            return "viability: FBA table not built (run ecflux + fba_essentiality)."
+        if name not in self._fba:
+            return (f"viability {name}: not in the metabolic model — objective-driven viability covers ~2,800 "
+                    f"metabolic genes (there is no biomass-flux objective for signalling/TFs).")
+        g = self._fba[name]
+        verdict = ("LETHAL — a bottleneck the cell CANNOT reroute around (predicted essential)" if g < 0.1 else
+                   f"IMPAIRED — growth drops to {g:.0%} of WT (dose-sensitive)" if g < 0.6 else
+                   f"SURVIVES — growth {g:.0%}; flux REROUTES around it (robust / redundant)")
+        return "\n".join([
+            f"[FBA] viability  kill -9 {name}: predicted growth = {g:.0%} of wild-type",
+            f"  -> {verdict}",
+            f"  (objective = maximise biomass under mass-balance + capacity; predicts measured essentiality "
+            f"AUC 0.70 vs wiring-diagram 0.50 — the top-down complement to strace's bottom-up.)"])
+
     def man(self, name):
         """process documentation: what this gene 'does', where it runs, its priority, its interfaces."""
         i = self._pid(name)
@@ -533,6 +557,7 @@ class CellKernel:
   ps [context]         process table (genes) by scheduler priority (essentiality)
   man GENE             process documentation (role, segment, priority, interfaces)
   top                  kernel threads (highest system-wide dependency)
+  viability GENE       [FBA] top-down: does the cell still GROW after knockout? (objective+physics)
   strace GENE          [C] SIGKILL + measured downstream effect (Perturb-seq debugger)
   predict GENE         [C~] predict an UNMEASURED knockout's response from its neighbours
   whodunit GENE        [C] detective: recover the cause from a knockout's fingerprint
@@ -560,6 +585,7 @@ class CellShell:
             if cmd in ("help", "?"): return k.HELP
             if cmd in ("exit", "quit"): return "__EXIT__"
             if cmd in ("stat", "df"): return k.stat()
+            if cmd == "viability": return k.viability(args[0])
             if cmd == "ps": return k.ps(context=args[0] if args else None)
             if cmd == "man": return k.man(args[0])
             if cmd == "top": return k.top()
@@ -588,6 +614,9 @@ DEMO = [
     "help",
     "# 0) whole-cell completeness — coverage of every layer (pathways, complexes, edges, drugs, debugger)",
     "stat",
+    "# 0b) TOP-DOWN survival — objective-driven FBA (grow+reproduce under physics): does knockout kill the cell?",
+    "viability RAE1",
+    "viability SLC22A1",
     "# 1) kernel threads — the processes the system cannot run without (essentiality = priority)",
     "top",
     "# 2) documentation for one process (real data: role, segment, scheduler, interfaces)",

@@ -44,6 +44,7 @@ ARTIFACTS = [
     "humap_validation.json", "humap_complexes.json",   # hu.MAP complexes: REJECTED as a coverage booster (r~0.09)
     "edge_predict_validation.json",   # fixed-model edge types tested for knockout-predictivity: only complexes work
     "propagation_test.json",   # software analogy test: does knockout perturb annotated connections? (no -- cell is robust)
+    "fba_essentiality.json",   # objective-driven FBA (grow+reproduce under physics) predicts knockout survival AUC 0.70
 ]
 
 

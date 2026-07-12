@@ -692,3 +692,30 @@ robustness severs the wiring-diagram → effect link.
 This is the unifying answer to the entire session: you can't predict a knockout's blast radius from the descriptive
 graph because the cell evolved specifically to survive having its components deleted. That is *why* it must be
 MEASURED (the debugger), not read (the map). (`outputs/orphan/propagation_test.json`)
+
+## The paradigm shift that works: prioritise survival+reproduction under physics (FBA), AUC 0.70
+
+The whole session showed BOTTOM-UP fails on robustness: reading the wiring predicts a knockout's blast radius at
+chance (propagation AUC 0.50; edge-predict r 0.03-0.09). The fix is TOP-DOWN — don't read the wiring, give the model
+the objective real cells have (stay alive + REPRODUCE) under the constraints they obey (mass/energy conservation +
+enzyme capacity = physics limits) and ask "can it still hit the objective after I break this part?" This is
+constraint-based modelling / FBA, and it was already in the repo (`ecflux.py`, Human-GEM, cobra).
+
+Ran objective-driven FBA (Human-GEM: maximise biomass s.t. mass balance + capacity) single-gene deletion over 2,848
+metabolic genes, vs measured DepMap essentiality:
+
+| predict knockout SURVIVAL | score |
+|---|---|
+| wiring propagation (bottom-up) | AUC **0.50** (chance) |
+| any descriptive edge | r 0.03-0.09 |
+| **objective-driven FBA (top-down)** | **AUC 0.70** (dep≥0.9), corr 0.49 |
+
+And it reproduces ROBUSTNESS for free: of 2,848 genes FBA calls only 88 lethal — most knockouts survive because the
+model REROUTES flux around them, exactly like the real cell, while still nailing the true bottlenecks. That is the
+user's insight, measured: robustness stops being a mystery and becomes a prediction, because it's a *consequence* of
+optimising survival under constraints.
+
+Wired into CellOS as `viability GENE` [FBA]: RAE1 -> LETHAL (0% growth, unreroutable bottleneck); SLC22A1 -> SURVIVES
+(100%, flux reroutes); TP53 -> honestly out of scope (no biomass-flux objective for signalling/TFs). The top-down
+complement to strace's bottom-up. Honest scope: metabolism only (~2,800 genes) — the part of the cell governed by a
+conservation law; there's no clean physical objective for signalling/regulation yet. (`fba_essentiality.json`)

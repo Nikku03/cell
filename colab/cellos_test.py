@@ -25,6 +25,8 @@ def main():
     print("A) SMOKE TESTS (runs without crashing, returns output)")
     smoke = {
         "help": "help", "stat": "stat", "top": "top",
+        "viability lethal": "viability RAE1", "viability robust": "viability SLC22A1",
+        "viability non-metabolic": "viability TP53",
         "man known": "man TP53", "man unknown": "man NOTAGENE",
         "strace in-screen": "strace SF3B1", "strace not-in-screen": "strace TP53",
         "whodunit in-screen": "whodunit SF3B1", "whodunit not-in-screen": "whodunit TP53",
@@ -80,6 +82,11 @@ def main():
     # cure returns a combination prescription
     cu = k.cure(up=["CCND1", "MYC"], down=["CDKN1A"])
     check("cure -> combination prescription", "prescription: co-knockout" in cu)
+
+    # viability: objective-driven FBA calls a bottleneck lethal, a redundant gene survivable
+    check("viability RAE1 -> LETHAL", "LETHAL" in k.viability("RAE1"))
+    check("viability SLC22A1 -> SURVIVES", "SURVIVES" in k.viability("SLC22A1"))
+    check("viability TP53 -> non-metabolic", "not in the metabolic model" in k.viability("TP53"))
 
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")
