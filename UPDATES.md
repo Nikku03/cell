@@ -780,3 +780,43 @@ genes). HONEST scope, stated in the output: this is a DESCRIPTIVE/QUALITATIVE la
 fills the model's annotation gaps from literature; it does NOT raise the quantitative causal-prediction number
 (that needs measured perturbation signatures). The fetch is deterministic/reproducible; turning abstracts into
 structured facts is an LLM step done downstream, auditable against the stored source papers. Tests green.
+
+## Scale the dark-proteome mine (litmine `--dark`, full run)
+
+Scaled the miner from 8 demo genes to the ENTIRE literature-rich dark proteome: all 4,765 model-dark genes that
+carry ≥5 prior PubMed papers, mined end-to-end (resumable, saves every 25, one retry on transient failure).
+Result (`outputs/orphan/litmine.json`, 36 MB): **4,670 / 4,765 genes (98%) retrieved ≥1 causal/functional paper**,
+95 returned none, 0 fetch errors; **25,934 papers total (5.4/gene), 25,682 with DOIs** — every fact auditable.
+Same honest scope: closes the descriptive/annotation gap for genes no screen can reach; does NOT move the 55%
+causal number.
+
+## The cell as RUNNING software — `boot` syscall + the honest dynamical null (grn.py)
+
+Everything before this was either a photograph (measured snapshot) or a destination without a journey (FBA solves
+the steady operating point directly). `colab/grn.py` adds the one piece with a **clock**: a continuous-state
+recurrent map over the 7,480 genes that have regulators (54k signed SIGNOR/CollecTRI edges), row-normalized (hub
+control) with a negative threshold that fixes activation-domination (the edge set is 4.5:1 activating, so without a
+threshold everything trivially turns on). It **boots from an initial state and flows to an attractor** — genuinely
+*executes* the genome forward. Wired into CellOS as `boot [GENE]` (aliases `exec`/`run`).
+
+Blind validation (`colab/grn_validate.py`; only the ON-fraction operating point was calibrated — nothing tuned to
+the answer):
+
+| test | result | verdict |
+|---|---|---|
+| T1 convergence | 40/40 random starts settle in ~30 ticks | a real, stable dynamical system |
+| T2 non-triviality | attractor 28% ON (not all-on/all-off) | the threshold beat activation-domination |
+| T3 robustness | 68% of single knockouts barely move the attractor | **matches measured biology** (cells are robust) |
+| T4 essentiality (blind) | fragility→essential **AUC 0.47** vs out-degree baseline 0.47; partial ρ 0 | **NULL** |
+
+The null is **gain-robust** (`grn_diag.py`, AUC 0.474/0.470/0.464 across β=4/8/15 — always ≈ the hub baseline), so
+it is not a mushy-dynamics artifact. And it is not a surprise: it is the **dynamical confirmation** of a result we
+already measured statically (`edge_predict_validation.json`: regulatory edges don't predict knockouts; only
+physical complexes do, r=0.23). **You cannot get more causal signal out of running a network than its edges
+contain.**
+
+Honest verdict, stated in the `boot` output itself: the cell genuinely runs, converges, and is robust — a real
+"software executing" — but running it adds **no** causal/predictive power over chance/connectivity. Committed as a
+validated demonstration (you can watch a cell-state emerge, and watch it re-settle after a knockout — TP53
+displaces the attractor 2.9 and flips 133 genes, a leaf gene barely moves it) plus a documented null. The layers
+that DO predict knockouts stay the physical/measured ones: `viability` (FBA, AUC 0.70) and `strace` (the debugger).

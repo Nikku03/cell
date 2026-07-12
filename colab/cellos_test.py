@@ -27,6 +27,7 @@ def main():
         "help": "help", "stat": "stat", "top": "top",
         "viability lethal": "viability RAE1", "viability robust": "viability SLC22A1",
         "viability non-metabolic": "viability TP53",
+        "boot bare": "boot", "boot knockout": "boot TP53", "boot off-core": "boot NOTAGENE",
         "lit dark gene": "lit FNDC5", "lit unmined": "lit ZZZ",
         "man known": "man TP53", "man unknown": "man NOTAGENE",
         "strace in-screen": "strace SF3B1", "strace not-in-screen": "strace TP53",
@@ -92,6 +93,17 @@ def main():
     # lit: PubMed literature for a dark gene, grounded + cited
     lg = k.lit("FNDC5")
     check("lit FNDC5 -> papers + DOI", "PubMed papers" in lg and "doi:" in lg)
+
+    # boot: the RUNNING cell converges to an attractor, and a hub TF perturbs it more than an off-core gene
+    bb = k.boot()
+    check("boot -> converges to attractor", "converged in" in bb and "self-consistent cell state" in bb)
+    check("boot -> honest essentiality caveat", "does NOT predict which genes are essential" in bb)
+    b_hub = k.boot("TP53"); b_leaf = k.boot("SLC22A1")
+    def _disp(s):
+        import re
+        m = re.search(r"displacement ([\d.]+)", s); return float(m.group(1)) if m else -1.0
+    check("boot TP53 (hub) more disruptive than a leaf", _disp(b_hub) > _disp(b_leaf),
+          f"TP53 disp {_disp(b_hub):.2f} vs SLC22A1 {_disp(b_leaf):.2f}")
 
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")

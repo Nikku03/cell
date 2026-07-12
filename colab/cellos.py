@@ -253,6 +253,68 @@ class CellKernel:
             f"  (objective = maximise biomass under mass-balance + capacity; predicts measured essentiality "
             f"AUC 0.70 vs wiring-diagram 0.50 — the top-down complement to strace's bottom-up.)"])
 
+    def _grn(self):
+        """lazily build the regulatory dynamical system — the cell's one RUNNABLE program (a clock, not a snapshot)."""
+        if getattr(self, "_grn_obj", None) is None:
+            import grn as _grnmod
+            self._grn_obj = _grnmod.GRN(C=self.C)
+        return self._grn_obj
+
+    def boot(self, gene=None, steps=400):
+        """exec/boot — RUN the genome forward and watch a cell state emerge. The only syscall with a CLOCK: it
+        starts from an initial state and iterates the regulatory logic tick-by-tick until the cell settles into an
+        attractor (a stable, self-consistent cell-state) — genuinely EXECUTING the software, not reading a snapshot
+        (the debugger) or solving for the endpoint directly (FBA). With a gene arg it knocks that gene out and
+        re-runs, so you can watch the cell's ROBUSTNESS first-hand. Honest limit below."""
+        import numpy as np
+        g = self._grn()
+        x = g._seed(seed=0).copy()
+        traj, checkpoints = [], {0, 1, 2, 4, 8, 16, 32, 64, 128, 256}
+        conv = steps
+        for s in range(steps):
+            xn = g.step(x); d = float(np.abs(xn - x).max()); x = xn
+            if s in checkpoints:
+                traj.append((s + 1, float((x > 0.5).mean()), d))
+            if d < 1e-4:
+                conv = s + 1; traj.append((conv, float((x > 0.5).mean()), d)); break
+        base = x
+        L = [f"boot — executing the regulatory program forward  ({g.n:,} genes, {int((~g.is_input).sum()):,} dynamic,"
+             f" {int(g.is_input.sum()):,} clamped inputs)",
+             "  a CLOCK, not a photograph: state evolving tick-by-tick under the genome's own logic",
+             "",
+             "   tick   ON%    Δmax     (the cell settling into a stable state)",
+             "   ----   ----   -----"]
+        for t, on, d in traj:
+            L.append(f"   {t:>4}   {on*100:>3.0f}%  {d:.1e}")
+        L.append(f"  → converged in {conv} ticks to an attractor: {(base>0.5).mean()*100:.0f}% of genes ON "
+                 f"(a self-consistent cell state)")
+        if gene is None:
+            L += ["",
+                  "  this IS the cell running. it converges and — like a real cell — is ROBUST (validated: 68% of",
+                  "  single knockouts barely move it, matching measured biology).",
+                  "  HONEST LIMIT: running it does NOT predict which genes are essential (AUC 0.47 ≈ chance) —",
+                  "  regulatory wiring doesn't carry knockout outcomes; only the physical/measured layers do",
+                  "  (viability=FBA at 0.70, strace=the debugger). try:  boot <gene>  to watch robustness."]
+            return "\n".join(L)
+        gi = self._pid(gene)
+        if gi is None or gi not in g.g2l:
+            return "\n".join(L) + (f"\n\n  ({gene}: not in the regulatory dynamical core — it has no signed "
+                                   f"transcriptional edges to run, so booting can't perturb through it.)")
+        gl = g.g2l[gi]
+        att_ko, _ = g.run(base.copy(), steps=200, clamp={gl: 0.0})
+        disp = float(np.linalg.norm(att_ko - base))
+        flipped = int(((att_ko > 0.5) != (base > 0.5)).sum())
+        # population context from the validated sweep: median displacement ~0.45, 68% of KOs < 0.5
+        rel = ("LESS disruptive than a typical knockout" if disp < 0.45 else
+               "MORE disruptive than typical (a more connected/critical node)")
+        L += ["",
+              f"  kill -9 {gene}  → re-run the program with {gene} clamped OFF:",
+              f"    attractor displacement {disp:.2f}   ({flipped} of {g.n:,} genes flipped state)",
+              f"    → {rel}   (population median ≈ 0.45; 68% of knockouts barely move the cell)",
+              "  you just watched robustness: the cell mostly re-settles. NB fragility here does NOT rank",
+              "  essentiality (validated AUC 0.47) — use  viability {g}  /  strace {g}  for that.".format(g=gene)]
+        return "\n".join(L)
+
     def man(self, name):
         """process documentation: what this gene 'does', where it runs, its priority, its interfaces."""
         i = self._pid(name)
@@ -581,6 +643,7 @@ class CellKernel:
   lit GENE             the gene's PubMed literature (grounded+cited) — fills DARK genes
   top                  kernel threads (highest system-wide dependency)
   viability GENE       [FBA] top-down: does the cell still GROW after knockout? (objective+physics)
+  boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
   strace GENE          [C] SIGKILL + measured downstream effect (Perturb-seq debugger)
   predict GENE         [C~] predict an UNMEASURED knockout's response from its neighbours
   whodunit GENE        [C] detective: recover the cause from a knockout's fingerprint
@@ -609,6 +672,7 @@ class CellShell:
             if cmd in ("exit", "quit"): return "__EXIT__"
             if cmd in ("stat", "df"): return k.stat()
             if cmd == "viability": return k.viability(args[0])
+            if cmd in ("boot", "exec", "run"): return k.boot(args[0] if args else None)
             if cmd == "lit": return k.lit(args[0])
             if cmd == "ps": return k.ps(context=args[0] if args else None)
             if cmd == "man": return k.man(args[0])
@@ -641,6 +705,10 @@ DEMO = [
     "# 0b) TOP-DOWN survival — objective-driven FBA (grow+reproduce under physics): does knockout kill the cell?",
     "viability RAE1",
     "viability SLC22A1",
+    "# 0c) BOOT THE CELL — the only syscall with a clock: run the genome forward, watch a cell-state emerge, then",
+    "#     knock a gene out and watch the cell RE-SETTLE (robustness). Honest: running it doesn't rank essentiality.",
+    "boot",
+    "boot TP53",
     "# 1) kernel threads — the processes the system cannot run without (essentiality = priority)",
     "top",
     "# 2) documentation for one process (real data: role, segment, scheduler, interfaces)",
