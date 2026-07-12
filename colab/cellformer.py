@@ -43,11 +43,11 @@ def impute(M, d=64, mask_frac=0.15, seed=0, test_frac=0.2, tau=0.1):
     perm = rng.permutation(n_pert)
     te = perm[:int(test_frac * n_pert)]; tr = perm[int(test_frac * n_pert):]
     Mtr = M[tr]
-    # gene 'token' embeddings: SVD of the standardised train matrix -> gene loadings (genes x d)
-    mu = Mtr.mean(0); sd = Mtr.std(0) + 1e-8
-    Z = (Mtr - mu) / sd
-    U, S, Vt = np.linalg.svd(Z, full_matrices=False)
-    emb = Vt[:d].T                                           # genes x d
+    # gene 'token' embeddings: truncated SVD of the standardised train matrix -> gene loadings (genes x d)
+    mu = Mtr.mean(0); sd = Mtr.std(0); sd[sd < 1e-8] = 1.0
+    Z = np.nan_to_num((Mtr - mu) / sd)
+    from sklearn.decomposition import TruncatedSVD
+    emb = TruncatedSVD(n_components=d, random_state=seed).fit(Z).components_.T   # genes x d
     emb = emb / (np.linalg.norm(emb, axis=1, keepdims=True) + 1e-8)
     Sgg = emb @ emb.T                                        # gene-gene similarity (the attention logits)
     preds, actual, base = [], [], []
@@ -66,17 +66,30 @@ def impute(M, d=64, mask_frac=0.15, seed=0, test_frac=0.2, tau=0.1):
             "n_masked_entries": int(a.size), "held_out_perturbations": int(len(te))}
 
 
-def context_weights(C, gene, screen_set, g2c=None, coexpr=None, screen_genes=None):
+def build_context_index(C, screen_set):
+    """precompute the maps context_weights needs, ONCE (so complex-partner lookup is O(members), not O(genome^2)).
+    Returns (g2c, coexpr, cx2members) where cx2members[cx_id] = set of SCREEN gene names in that complex."""
+    g2c = {int(x): set(v) for x, v in (C.D.get("gene2cplx", {}) or {}).items()}
+    coexpr = {}
+    for kk, lst in (C.D.get("coexpr", {}) or {}).items():
+        coexpr[int(kk)] = {int(p[0]): float(p[1]) for p in lst if isinstance(p, (list, tuple)) and len(p) >= 2}
+    cx2members = {}
+    for gi, cxs in g2c.items():
+        nm = C.name[gi] if 0 <= gi < len(C.name) else None
+        if nm in screen_set:
+            for c in cxs:
+                cx2members.setdefault(c, set()).add(nm)
+    return g2c, coexpr, cx2members
+
+
+def context_weights(C, gene, screen_set, g2c=None, coexpr=None, cx2members=None, screen_genes=None):
     """context of an UNSEEN knockout = its network neighbours present in the screen, weighted by structural
     evidence (co-expression 2x, PPI 1x, same-complex 3x). Shared by predict_next() and CellOS 'predict'."""
     gi = C.idx.get(gene)
     if gi is None:
         return {}
-    g2c = g2c if g2c is not None else {int(x): set(v) for x, v in (C.D.get("gene2cplx", {}) or {}).items()}
-    if coexpr is None:
-        coexpr = {}
-        for kk, lst in (C.D.get("coexpr", {}) or {}).items():
-            coexpr[int(kk)] = {int(p[0]): float(p[1]) for p in lst if isinstance(p, (list, tuple)) and len(p) >= 2}
+    if g2c is None or coexpr is None:
+        g2c, coexpr, cx2members = build_context_index(C, screen_set)
     w = {}
     for j in C.ppi_adj.get(gi, []):
         nm = C.name[j]
@@ -87,11 +100,11 @@ def context_weights(C, gene, screen_set, g2c=None, coexpr=None, screen_genes=Non
         if nm in screen_set and nm != gene:
             w[nm] = w.get(nm, 0) + 2.0 * max(cc, 0)
     my_cx = g2c.get(gi, set())
-    if my_cx and screen_genes is not None:
-        for og in screen_genes:
-            oi = C.idx.get(og)
-            if oi is not None and og != gene and (g2c.get(oi, set()) & my_cx):
-                w[og] = w.get(og, 0) + 3.0
+    if my_cx and cx2members is not None:
+        for c in my_cx:
+            for nm in cx2members.get(c, ()):
+                if nm != gene:
+                    w[nm] = w.get(nm, 0) + 3.0
     return w
 
 
@@ -103,17 +116,14 @@ def predict_next(M, pgenes, seed=0, k_ctx=25):
     C = CompleteCell()
     pidx = {g: i for i, g in enumerate(pgenes)}
     screen_set = set(pgenes)
-    g2c = {int(x): set(v) for x, v in (C.D.get("gene2cplx", {}) or {}).items()}
-    coexpr = {}
-    for kk, lst in (C.D.get("coexpr", {}) or {}).items():
-        coexpr[int(kk)] = {int(p[0]): float(p[1]) for p in lst if isinstance(p, (list, tuple)) and len(p) >= 2}
+    g2c, coexpr, cx2members = build_context_index(C, screen_set)
     mu = M.mean(0)
     rows_pred, rows_true, rows_base, meta = [], [], [], []
     for g in pgenes:
         gi = C.idx.get(g)
         if gi is None:
             continue
-        w = context_weights(C, g, screen_set, g2c, coexpr, screen_genes=pgenes)
+        w = context_weights(C, g, screen_set, g2c, coexpr, cx2members)
         ctx = sorted(w, key=lambda x: -w[x])[:k_ctx]
         if not ctx:
             continue
@@ -137,19 +147,55 @@ def predict_next(M, pgenes, seed=0, k_ctx=25):
             "n_with_complex": int(incplx.sum())}
 
 
-def run():
-    M, pert, syms = load_pseudobulk(f"{SCRATCH}/k562.h5ad")
+def coverage(pgenes, C=None):
+    """genome COMPLETENESS: of all genes, how many can CellOS answer for = MEASURED (in the screen -> strace/
+    whodunit) + PREDICTABLE (not measured, but has a complex partner or >=3 network neighbours in the screen ->
+    predict). The 'complete cell as software' number."""
+    if C is None:
+        from complete_cell import CompleteCell
+        C = CompleteCell()
+    screen = set(pgenes)
+    g2c, coexpr, cx2m = build_context_index(C, screen)
+    n = len(C.name)
+    measured = predict_good = predict_weak = dark = 0
+    for gi, nm in enumerate(C.name):
+        if nm in screen:
+            measured += 1; continue
+        has_cx = any(cx2m.get(c) for c in g2c.get(gi, set()))       # complex partner in screen -> r~0.23
+        w = context_weights(C, nm, screen, g2c, coexpr, cx2m)
+        if has_cx:
+            predict_good += 1
+        elif len(w) >= 3:
+            predict_weak += 1                                       # neighbours but no module -> r~0.05
+        else:
+            dark += 1
+    # coverage_frac = ANSWERS-for (measured+any context); well_covered = trustworthy (measured + complex-predictable)
+    return {"genome": n, "measured_debugger": measured,
+            "predictable_complex_r0.23": predict_good, "predictable_weak_r0.05": predict_weak,
+            "dark_no_context": dark,
+            "answers_for_frac": round((measured + predict_good + predict_weak) / n, 3),
+            "WELL_covered_frac": round((measured + predict_good) / n, 3)}
+
+
+def run(path=None):
+    path = path or next((p for p in [f"{SCRATCH}/gwps.h5ad", f"{SCRATCH}/k562.h5ad"] if os.path.exists(p)),
+                        f"{SCRATCH}/k562.h5ad")
+    M, pert, syms = load_pseudobulk(path)
     M, pgenes = _dedup_rows(M, pert)
-    print(f"corpus: {M.shape[0]} perturbations x {M.shape[1]} genes")
-    imp = impute(M)
-    nxt = predict_next(M, pgenes)
-    res = {"impute": imp, "predict_next": nxt}
+    M = np.nan_to_num(M.astype(np.float32), nan=0.0, posinf=0.0, neginf=0.0)   # gwps has NaN AND inf entries
+    M = np.clip(M, -20.0, 20.0)                             # guard against overflow in mean/std / SVD
+    print(f"corpus: {os.path.basename(path)} -> {M.shape[0]} perturbations x {M.shape[1]} genes", flush=True)
+    imp = impute(M); print(f"  impute done: r={imp['pearson_r']}", flush=True)
+    nxt = predict_next(M, pgenes); print(f"  predict-next done: r={nxt['mean_r_predicted']}", flush=True)
+    cov = coverage(pgenes); print(f"  coverage done: {cov['coverage_frac']:.0%}", flush=True)
+    res = {"corpus": os.path.basename(path), "impute": imp, "predict_next": nxt, "completeness": cov}
     res["verdict"] = (
-        f"IMPUTE (interpolation) r={imp['pearson_r']} vs baseline {imp['baseline_mean_r']} — the cell autocompletes "
-        f"masked genes well. PREDICT-NEXT (extrapolation) r={nxt['mean_r_predicted']} vs baseline "
-        f"{nxt['mean_r_baseline_avg_response']}; genes WITH a known complex = {nxt['mean_r_genes_WITH_complex']}, "
-        f"WITHOUT = {nxt['mean_r_genes_WITHOUT_complex']}. The next knockout is predictable EXACTLY WHEN the gene "
-        f"sits in a measured module; singletons stay hard — the honest edge of 'completing the cell'.")
+        f"IMPUTE r={imp['pearson_r']} vs {imp['baseline_mean_r']}; PREDICT-NEXT r={nxt['mean_r_predicted']} "
+        f"(complex {nxt['mean_r_genes_WITH_complex']} / singleton {nxt['mean_r_genes_WITHOUT_complex']}). "
+        f"COVERAGE vs ACCURACY: CellOS ANSWERS for {cov['answers_for_frac']:.0%} of the genome, but only "
+        f"{cov['WELL_covered_frac']:.0%} is TRUSTWORTHY ({cov['measured_debugger']:,} measured + "
+        f"{cov['predictable_complex_r0.23']:,} complex-predictable); {cov['predictable_weak_r0.05']:,} are weak "
+        f"(r~0.05) and {cov['dark_no_context']:,} dark. 'Complete' in coverage, honest about accuracy.")
     json.dump(res, open(f"{OUT}/cellformer.json", "w"), indent=2)
     print("=" * 78)
     print("CELLFORMER — predict the next thing (transformer-style), on interventional data")
@@ -160,8 +206,11 @@ def run():
           f"(baseline avg-response r={nxt['mean_r_baseline_avg_response']})   <- extrapolation")
     print(f"     with a known complex:    r={nxt['mean_r_genes_WITH_complex']}  (n={nxt['n_with_complex']})")
     print(f"     without a known complex: r={nxt['mean_r_genes_WITHOUT_complex']}")
-    print(f"     beats baseline for {nxt['frac_beating_baseline']:.0%} of genes")
-    print(f"  -> {res['verdict']}")
+    print(f"  COMPLETENESS (coverage != accuracy):")
+    print(f"     {cov['measured_debugger']:,} MEASURED (debugger, high quality)")
+    print(f"     {cov['predictable_complex_r0.23']:,} PREDICTABLE via a complex (r~0.23)")
+    print(f"     {cov['predictable_weak_r0.05']:,} weak context only (r~0.05)  |  {cov['dark_no_context']:,} dark")
+    print(f"     -> ANSWERS for {cov['answers_for_frac']:.0%};  TRUSTWORTHY for {cov['WELL_covered_frac']:.0%}")
     print("=" * 78)
     return res
 

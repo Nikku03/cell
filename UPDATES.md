@@ -540,3 +540,30 @@ HSPA1A / UBC / SQSTM1 (the textbook proteasome-inhibition proteostasis-stress re
 predicted-vs-real **r = +0.86**. Tested (cellos_test.py): the self-check and the stress-response recovery both
 assert-pass. This is the transformer paradigm made real on the cell — and honest about where completion stops
 working (no module → no prediction).
+
+## Genome-wide scale-up + the "complete cell" completeness number
+
+Scaled CellFormer/CellOS from the 2,058-gene essential screen to the **genome-wide Replogle screen (9,867
+knockouts × 8,248 genes, 375 MB)** and added a COMPLETENESS metric — the fraction of the ~16,509-gene genome CellOS
+can answer for. The honest, tiered result (coverage ≠ accuracy):
+
+| tier | genes | how |
+|---|---|---|
+| **MEASURED** (debugger, high quality) | 8,693 (53%) | directly in the genome-wide screen |
+| **PREDICTABLE via a complex** (r≈0.23) | 426 (3%) | cellformer predict-next from complex partners |
+| weak context only (r≈0.05) | 5,121 (31%) | has neighbours but no module |
+| dark (no context) | 2,269 (14%) | nothing to predict from |
+
+**→ CellOS ANSWERS for 86% of the genome, but only 55% is TRUSTWORTHY** (measured + complex-predictable). Stated
+that way on purpose: coverage is not accuracy.
+
+Measured coverage↔precision tradeoff: the genome-wide screen (many weak non-essential knockouts) is NOISIER than
+the essential screen. On genome-wide, IMPUTE r=0.39 (vs 0.52 essential), PREDICT-NEXT r=0.10 overall / 0.23 for
+complex genes (vs 0.43 essential), whodunit coherence 4% but still **17.5× random**, `predict PSMB5` self-check
+r=0.30 (vs 0.86 essential). So CellOS DEFAULTS the interactive debugger to the high-precision essential screen
+(syscalls stay sharp — SF3B1→spliceosome 8/8, PSMB5 r=0.86); mount the genome-wide screen for breadth
+(`PERTURB_H5AD=…/gwps.h5ad`). Fixed a real bug found here: `_load_debugger` didn't sanitise the gwps NaN/inf
+entries, so every genome-wide syscall computed with NaN (predict r=nan) until cleaned.
+
+Net "complete cell as software": ~half the genome is directly measured cause-and-effect, another few % confidently
+predictable, ~a third gesturable-but-weak, ~1/7 dark — and CellOS says which tier every answer is in.

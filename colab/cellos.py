@@ -37,7 +37,12 @@ import os, sys, json, math
 sys.path.insert(0, os.path.dirname(__file__))
 
 SCRATCH = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
-PERTURB = os.environ.get("PERTURB_H5AD", f"{SCRATCH}/k562.h5ad")   # interventional debugger data (Replogle Perturb-seq)
+# interventional debugger (Replogle Perturb-seq). DEFAULT = the essential screen (2,058 well-powered knockouts ->
+# high-precision syscalls, e.g. predict PSMB5 r=0.86). Mount the GENOME-WIDE screen for breadth (PERTURB_H5AD=gwps:
+# ~9.9k knockouts, coverage 86% of the genome, but lower per-gene precision r~0.3 — a measured coverage/precision
+# tradeoff). cellformer.coverage() reports the genome-wide completeness regardless of which is mounted here.
+PERTURB = os.environ.get("PERTURB_H5AD") or next(
+    (p for p in [f"{SCRATCH}/k562.h5ad", f"{SCRATCH}/gwps.h5ad"] if os.path.exists(p)), f"{SCRATCH}/k562.h5ad")
 
 
 class CellKernel:
@@ -116,6 +121,7 @@ class CellKernel:
             rows[g].append(k)
         pgenes = sorted(rows)
         M = np.vstack([X[rows[g]].mean(0) for g in pgenes])
+        M = np.clip(np.nan_to_num(M, nan=0.0, posinf=0.0, neginf=0.0), -20.0, 20.0)  # gwps has NaN/inf entries
         self._pert = dict(M=M, pgenes=pgenes, pidx={g: k for k, g in enumerate(pgenes)}, syms=syms,
                           norms=np.linalg.norm(M, axis=1) + 1e-9)
         return self._pert
@@ -277,7 +283,10 @@ class CellKernel:
             return "predict: debugger not mounted."
         import numpy as np, cellformer as cf
         screen = set(dbg["pgenes"])
-        w = cf.context_weights(self.C, name, screen, screen_genes=dbg["pgenes"])
+        if getattr(self, "_ctxidx", None) is None:                # cache the context maps (built once)
+            self._ctxidx = cf.build_context_index(self.C, screen)
+        g2c, coexpr, cx2m = self._ctxidx
+        w = cf.context_weights(self.C, name, screen, g2c, coexpr, cx2m)
         if not w:
             return (f"predict {name}: no network neighbours in the screen — a SINGLETON. Cannot predict the next "
                     f"state (this is the honest failure mode; r≈0.19 even when we can).")
