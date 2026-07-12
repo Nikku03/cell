@@ -567,3 +567,22 @@ entries, so every genome-wide syscall computed with NaN (predict r=nan) until cl
 
 Net "complete cell as software": ~half the genome is directly measured cause-and-effect, another few % confidently
 predictable, ~a third gesturable-but-weak, ~1/7 dark — and CellOS says which tier every answer is in.
+
+## Inspiration from The Matrix: "there is no spoon" + "free the cell"
+
+The Matrix's real idea maps onto this project: a cell is a model of reality you can only wield once you see its code
+AND can bend it. We had "see the code" (CellOS); added "bend it":
+- **`simulate G1 G2 …`** [C~] — "there is no spoon": edit the cell (knock out one or more genes) and propagate to
+  the resulting state by combining measured effects. A single KO is MEASURED (exact); a combination is the additive
+  sum — flagged, because the error IS the genetic interaction (epistasis), which single-perturbation data can't
+  measure. `simulate SF3B1 PSMB5` → amplified proteostasis stress (HSPA1A +5.3, UBC, SQSTM1), the honest sum of a
+  splicing + proteasome knockout.
+- **`cure up=… down=…`** [C] — "free the cell": given a corrupted/disease state, greedily search the knockout that
+  best reverses it, then a complementary second — a combination-therapy search. For a MYC/CCND1-driven proliferative
+  state it prescribes co-knockout of **CSNK2B + NAE1** (CK2 and the NEDD8 E1 — the latter is the target of the drug
+  pevonedistat); reversal values are honestly small (the essential screen is an imperfect context match), but the
+  2nd target adds measurable gain.
+
+Both tested (cellos_test): single-KO simulate is exact (== strace), combos are additive-and-flagged, cure returns a
+combination prescription. Same discipline as everything else — the reality-bending is real for measured single
+perturbations and an honestly-labelled approximation for combinations.

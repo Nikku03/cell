@@ -27,8 +27,14 @@ THE MAPPING (each backed by real data in the model — nothing simulated for sho
     drug .................. a runtime binary patch (hotfix)        disease ............... corrupted state / malware
     dark gene ............. a process with NO debug symbols        our confound audits ... the SECURITY layer (linter)
 
-SYSCALLS      boot · ps · man · top · strace/kill · diagnose · deadlock · patch · lint · help
+SYSCALLS      boot · ps · man · top · strace/kill · predict · whodunit · diagnose · simulate · cure · deadlock
+              · patch · lint · help
 CAUSALITY     [C] = causal (interventional / Perturb-seq or curated intervention).  [~] = correlational (low-trust).
+
+A NOTE OF INSPIRATION (the Matrix lens): a cell is a model of reality you can only truly wield once you see its
+code AND can bend it. `simulate` = "there is no spoon" (edit the cell, watch reality reshape); `cure` = "free the
+cell" (search the perturbation that reverses a corrupted state — combination therapy). Both are honest about the
+edge: a single knockout is measured (real), a combination is additive (its error is epistasis, unmeasured).
 
 -> run:  python3 colab/cellos.py --demo        (scripted tour)
          python3 colab/cellos.py               (interactive shell)
@@ -273,6 +279,94 @@ class CellKernel:
         suspects = [(dbg["pgenes"][j], float(match[j])) for j in ordr if dbg["pgenes"][j] != name][:k]
         return len(up), len(down), suspects
 
+    def _predict_vec(self, name):
+        """predicted effect vector of an unmeasured knockout (neighbour-weighted avg); None if no context.
+        Sets self._last_ctx to the context genes used."""
+        import numpy as np, cellformer as cf
+        dbg = self._load_debugger(); screen = set(dbg["pgenes"])
+        if getattr(self, "_ctxidx", None) is None:
+            self._ctxidx = cf.build_context_index(self.C, screen)
+        g2c, coexpr, cx2m = self._ctxidx
+        w = cf.context_weights(self.C, name, screen, g2c, coexpr, cx2m)
+        self._last_ctx = sorted(w, key=lambda x: -w[x])[:25]
+        if not self._last_ctx:
+            return None
+        wv = np.array([w[c] for c in self._last_ctx]); wv = wv / wv.sum()
+        return wv @ dbg["M"][[dbg["pidx"][c] for c in self._last_ctx]]
+
+    def _effect_vec(self, name):
+        """the effect vector of knocking out `name`: MEASURED if in the screen (exact), else PREDICTED. Returns
+        (vector, 'measured'|'predicted') or (None, None)."""
+        dbg = self._load_debugger()
+        if name in dbg["pidx"]:
+            return dbg["M"][dbg["pidx"][name]], "measured"
+        v = self._predict_vec(name)
+        return (v, "predicted") if v is not None else (None, None)
+
+    def simulate(self, genes, k=10):
+        """[C~] THERE IS NO SPOON — edit the cell (knock out one or more genes) and propagate to the resulting
+        state by combining their effects. Each single KO is MEASURED (exact) where in the screen; a COMBINATION is
+        the additive sum — an approximation whose error IS the genetic interaction (epistasis), which single-
+        perturbation data cannot measure. So: combos are 'first-order reality-bending', flagged honestly."""
+        import numpy as np
+        dbg = self._load_debugger()
+        vecs, tags = [], []
+        for g in genes:
+            v, how = self._effect_vec(g)
+            if v is None:
+                tags.append(f"{g}[SINGLETON:skipped]"); continue
+            vecs.append(v); tags.append(f"{g}[{how}]")
+        if not vecs:
+            return f"simulate: none of {genes} can be applied (no measured/predicted effect)."
+        state = np.sum(vecs, axis=0)
+        order = np.argsort(state)
+        down = [(dbg["syms"][j], state[j]) for j in order[:k] if state[j] < 0][:8]
+        up = [(dbg["syms"][j], state[j]) for j in order[::-1][:k] if state[j] > 0][:8]
+        mode = "MEASURED (exact)" if len(vecs) == 1 and "measured" in tags[0] else \
+               f"ADDITIVE of {len(vecs)} perturbations (epistasis NOT modelled)"
+        return "\n".join([
+            f"[C~] simulate  edit = {{ {', '.join(tags)} }}   -> resulting cell state [{mode}]",
+            f"  ↓ DOWN: " + ", ".join(f"{g}({v:+.1f})" for g, v in down),
+            f"  ↑ UP:   " + ", ".join(f"{g}({v:+.1f})" for g, v in up)])
+
+    def cure(self, up=None, down=None, combo=2, k=6):
+        """[C] FREE THE CELL — given a disease/corrupted state, search the perturbation whose knockout best REVERSES
+        it, then greedily add a SECOND to reverse the residual (a combination-therapy search). Interventional:
+        ranks by measured reversal, exactly like diagnose, but returns a COMBINATION."""
+        import numpy as np
+        dbg = self._load_debugger()
+        up = up or []; down = down or []
+        sidx = {s: j for j, s in enumerate(dbg["syms"])}
+        sig = np.zeros(len(dbg["syms"]))
+        for g in up:
+            if g in sidx: sig[sidx[g]] = 1.0
+        for g in down:
+            if g in sidx: sig[sidx[g]] = -1.0
+        if not sig.any():
+            return "cure: none of the signature genes are measured in the screen."
+        M, norms = dbg["M"], dbg["norms"]
+
+        def reversal_of(vec):
+            return float(-(vec @ sig) / ((np.linalg.norm(vec) + 1e-9) * (np.linalg.norm(sig) + 1e-9)))
+        rev1 = -(M @ sig) / (norms * (np.linalg.norm(sig) + 1e-9))
+        i1 = int(np.argmax(rev1))
+        chosen = [dbg["pgenes"][i1]]; combined = M[i1].copy()
+        lines = [f"[C] cure  (free the cell from the corrupted state — combination-therapy search)",
+                 f"  target state: UP={up or '—'} DOWN={down or '—'}",
+                 f"  1st perturbation: kill {dbg['pgenes'][i1]}  (reversal {rev1[i1]:+.3f})"]
+        for step in range(2, combo + 1):
+            cand = -((M + combined) @ sig) / ((np.linalg.norm(M + combined, axis=1) + 1e-9) * (np.linalg.norm(sig) + 1e-9))
+            for c in chosen:
+                cand[dbg["pidx"][c]] = -9
+            ib = int(np.argmax(cand))
+            gain = cand[ib] - reversal_of(combined)
+            if gain <= 0.001:
+                lines.append(f"  (no {step}-way partner improves reversal — stop; single is best)"); break
+            chosen.append(dbg["pgenes"][ib]); combined = combined + M[ib]
+            lines.append(f"  +{step}: add kill {dbg['pgenes'][ib]}  -> combined reversal {cand[ib]:+.3f}  (gain {gain:+.3f})")
+        lines.append(f"  => prescription: co-knockout [ {', '.join(chosen)} ]  reverses the state best.")
+        return "\n".join(lines)
+
     def predict(self, name, k=8):
         """[C~] PREDICT THE NEXT THING (transformer-style): predict the response of an UNMEASURED knockout from the
         measured responses of its network neighbours (weighted). Causal source, but predicted → tag [C~]. If the
@@ -282,17 +376,11 @@ class CellKernel:
         if not dbg:
             return "predict: debugger not mounted."
         import numpy as np, cellformer as cf
-        screen = set(dbg["pgenes"])
-        if getattr(self, "_ctxidx", None) is None:                # cache the context maps (built once)
-            self._ctxidx = cf.build_context_index(self.C, screen)
-        g2c, coexpr, cx2m = self._ctxidx
-        w = cf.context_weights(self.C, name, screen, g2c, coexpr, cx2m)
-        if not w:
+        pred = self._predict_vec(name)
+        if pred is None:
             return (f"predict {name}: no network neighbours in the screen — a SINGLETON. Cannot predict the next "
                     f"state (this is the honest failure mode; r≈0.19 even when we can).")
-        ctx = sorted(w, key=lambda x: -w[x])[:25]
-        wv = np.array([w[c] for c in ctx]); wv = wv / wv.sum()
-        pred = wv @ dbg["M"][[dbg["pidx"][c] for c in ctx]]
+        ctx = self._last_ctx
         order = np.argsort(pred)
         down = [(dbg["syms"][j], pred[j]) for j in order[:k] if pred[j] < 0]
         up = [(dbg["syms"][j], pred[j]) for j in order[::-1][:k] if pred[j] > 0]
@@ -382,6 +470,8 @@ class CellKernel:
   predict GENE         [C~] predict an UNMEASURED knockout's response from its neighbours
   whodunit GENE        [C] detective: recover the cause from a knockout's fingerprint
   diagnose up=.. down=..  [C] root-cause: whose knockout reverses a corrupted state
+  simulate G1 G2 ..    [C~] "there is no spoon": edit the cell, propagate to the new state
+  cure up=.. down=..    [C] free the cell: combination-therapy search to reverse a state
   deadlock GENE        [C] synthetic-lethal partners (co-kill = panic)
   patch GENE:MUT       static-lint a mutation (no-op / crash / logic-bug)
   lint "CLAIM"         [security] verify a claim; flag untrusted predictions & hub-leak
@@ -411,12 +501,13 @@ class CellShell:
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
             if cmd == "lint": return k.lint(line.split(" ", 1)[1].strip().strip('"'))
-            if cmd == "diagnose":
+            if cmd == "simulate": return k.simulate(args)
+            if cmd in ("diagnose", "cure"):
                 up = down = []
                 for a in args:
                     if a.startswith("up="): up = a[3:].split(",")
                     if a.startswith("down="): down = a[5:].split(",")
-                return k.diagnose(up=up, down=down)
+                return k.diagnose(up=up, down=down) if cmd == "diagnose" else k.cure(up=up, down=down)
             return f"{cmd}: command not found (try 'help')"
         except IndexError:
             return f"{cmd}: missing argument (try 'help')"
@@ -439,6 +530,10 @@ DEMO = [
     "predict PSMB5",
     "# 5) ROOT-CAUSE on an arbitrary corrupted state — whose removal reverses it?",
     "diagnose up=HBA1,HBB down=CCNB1,CDK1",
+    "# 5a) THERE IS NO SPOON — edit the cell (a combination knockout) and propagate to the resulting state",
+    "simulate SF3B1 PSMB5",
+    "# 5b) FREE THE CELL — combination-therapy search to reverse a corrupted state",
+    "cure up=CCND1,MYC down=CDKN1A",
     "# 6) synthetic-lethal deadlocks — co-kill = kernel panic (the SL idea, from curated double-knockouts)",
     "deadlock FANCI",
     "# 7) static-lint a code patch (mutation)",

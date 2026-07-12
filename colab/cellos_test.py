@@ -29,6 +29,7 @@ def main():
         "strace in-screen": "strace SF3B1", "strace not-in-screen": "strace TP53",
         "whodunit in-screen": "whodunit SF3B1", "whodunit not-in-screen": "whodunit TP53",
         "predict in-complex": "predict PSMB5", "predict singleton": "predict TTN",
+        "simulate combo": "simulate SF3B1 PSMB5", "cure": "cure up=CCND1,MYC down=CDKN1A",
         "diagnose": "diagnose up=HBA1,HBB down=CDK1,CCNB1",
         "deadlock has-partners": "deadlock FANCI", "deadlock none": "deadlock ACTB",
         "patch suppressor": "patch TP53:R175H", "patch tolerant": "patch TTN:V100A",
@@ -70,6 +71,15 @@ def main():
     check("predict PSMB5 self-check r>0.4", "RECOVERED" in pp, "predicted-vs-real correlation")
     check("predict PSMB5 -> proteostasis stress", any(s in pp for s in ("HSPA1A", "UBC", "SQSTM1")),
           "predicted UP = heat-shock/ubiquitin stress")
+
+    # simulate: single measured KO is EXACT (matches strace); combo is additive
+    sim1 = k.simulate(["PSMB5"])
+    check("simulate PSMB5 exact (measured)", "MEASURED (exact)" in sim1 and "HSPA1A" in sim1, "single = measured")
+    simc = k.simulate(["SF3B1", "PSMB5"])
+    check("simulate combo is additive+flagged", "ADDITIVE" in simc and "epistasis NOT modelled" in simc)
+    # cure returns a combination prescription
+    cu = k.cure(up=["CCND1", "MYC"], down=["CDKN1A"])
+    check("cure -> combination prescription", "prescription: co-knockout" in cu)
 
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")
