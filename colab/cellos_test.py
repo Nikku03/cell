@@ -76,7 +76,7 @@ def main():
     sim1 = k.simulate(["PSMB5"])
     check("simulate PSMB5 exact (measured)", "MEASURED (exact)" in sim1 and "HSPA1A" in sim1, "single = measured")
     simc = k.simulate(["SF3B1", "PSMB5"])
-    check("simulate combo is additive+flagged", "ADDITIVE" in simc and "epistasis NOT modelled" in simc)
+    check("simulate combo is additive+flagged", "ADDITIVE" in simc and "synergistic" in simc)
     # cure returns a combination prescription
     cu = k.cure(up=["CCND1", "MYC"], down=["CDKN1A"])
     check("cure -> combination prescription", "prescription: co-knockout" in cu)
