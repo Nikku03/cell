@@ -761,3 +761,22 @@ abandoned). The real barrier: the ~7,800 unmeasured genes are mostly NOT EXPRESS
 reach them, and no public GENOME-SCALE KNOCKOUT Perturb-seq exists in a complementary cell type. So the 55% ceiling
 is **data-generation-limited** (needs new wet-lab screens in other cell types), not fetch-limited — confirmed
 empirically, not assumed. (`outputs/orphan/perturb_screens_combined.json`)
+
+## Extract individual gene knowledge from PubMed (litmine + `lit` syscall)
+
+The screens can't reach the ~7,800 genes K562 doesn't express — but 2,540 of the model's DARK genes still have ≥5
+PubMed papers. That focused single-gene literature is the one source of causal/functional knowledge for them.
+`colab/litmine.py` mines it, GROUNDED in real abstracts with DOIs (NCBI E-utilities: search biased to
+function/knockout/regulates/mechanism, fetch abstracts). Demo batch of 8 dark genes (FNDC5, NPPB, POSTN, BMAL1, …)
+→ `outputs/orphan/litmine.json`.
+
+Example — FNDC5, which the model calls DARK, is richly known to the field (per PubMed): cleaved/secreted as the
+myokine irisin, induced by exercise via PGC-1α; drives browning of white adipose tissue; induces hippocampal BDNF
+→ cognitive benefit, therapeutic potential in Alzheimer's (Wrann 2013 doi:10.1016/j.cmet.2013.09.008; Islam 2021
+doi:10.1038/s42255-021-00438-z; Boström 2012 doi:10.1038/nature10777).
+
+Wired into CellOS as `lit GENE` [LIT] — the "read the source papers" syscall (grounded titles + DOIs, flags DARK
+genes). HONEST scope, stated in the output: this is a DESCRIPTIVE/QUALITATIVE layer (function + citations) that
+fills the model's annotation gaps from literature; it does NOT raise the quantitative causal-prediction number
+(that needs measured perturbation signatures). The fetch is deterministic/reproducible; turning abstracts into
+structured facts is an LLM step done downstream, auditable against the stored source papers. Tests green.

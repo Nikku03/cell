@@ -1,0 +1,386 @@
+{
+ "FNDC5": {
+  "gene": "FNDC5",
+  "n_papers": 6,
+  "papers": [
+   {
+    "pmid": "30837717",
+    "title": "Physical activity and muscle-brain crosstalk.",
+    "year": "2019",
+    "doi": "10.1038/s41574-019-0174-x",
+    "abstract": "Neurological and mental illnesses account for a considerable proportion of the global burden of disease. Exercise has many beneficial effects on brain health, contributing to decreased risks of dementia, depression and stress, and it has a role in restoring and maintaining cognitive function and metabolic control. The fact that exercise is sensed by the brain suggests that muscle-induced peripheral factors enable direct crosstalk between muscle and brain function. Muscle secretes myokines that contribute to the regulation of hippocampal function. Evidence is accumulating that the myokine cathepsin B passes through the blood-brain barrier to enhance brain-derived neurotrophic factor production and hence neurogenesis, memory and learning. Exercise increases neuronal gene expression of FNDC5 (which encodes the PGC1\u03b1-dependent myokine FNDC5), which can likewise contribute to increased brain-derived neurotrophic factor levels. Serum levels of the prototype myokine, IL-6, increase with exercise and might contribute to the suppression of central mechanisms of feeding. Exercise also increases the PGC1\u03b1-dependent muscular expression of kynurenine aminotransferase enzymes, which induces a beneficial shift in the balance between the neurotoxic kynurenine and the neuroprotective kynurenic acid, thereby reducing depression-like symptoms. Myokine signalling, other muscular factors and exercise-induced hepatokines and adipokines are implicated in mediating the exercise-induced beneficial im"
+   },
+   {
+    "pmid": "36510115",
+    "title": "Irisin ameliorates age-associated sarcopenia and metabolic dysfunction.",
+    "year": "2023",
+    "doi": "10.1002/jcsm.13141",
+    "abstract": "Age-associated sarcopenia is characterized of progressed loss of skeletal muscle power, mass, and function, which affects human physical activity and life quality. Besides, accompanied with sarcopenia, aged population also faces a series of metabolic dysfunctions. Irisin, the cleaved form of fibronectin type III domain-containing protein 5 (FNDC5), is a myokine induced by exercise and has been shown to exert multiple beneficial effects on health. The goal of the study is to investigate the alterations of Fndc5/irisin in skeletal muscles during ageing and whether irisin administration could ameliorate age-associated sarcopenia and metabolic dysfunction. The mRNA and protein levels of FNDC5/irisin in skeletal muscle and serum from 2- and 24-month-old mice or human subjects were analysed using qRT-PCR and western blot. FNDC5/irisin knockout mice were generated to investigate the consequences of FNDC5/irisin deletion on skeletal muscle mass, as well as morphological and molecular changes in muscle during ageing via histological and molecular analysis. To identify the therapeutic effects of chronic irisin treatment in mice during ageing, in vivo intraperitoneal administration of 2\u00a0mg/kg recombinant irisin was performed three times per week in ageing mice (14-month-old) for 4\u00a0months or in aged mice (22-month-old) for 1\u00a0month to systematically investigate irisin's effects on age-associated sarcopenia and metabolic performances, including grip strength, body weights, body composition"
+   },
+   {
+    "pmid": "35164383",
+    "title": "FNDC5/Irisin: Physiology and Pathophysiology.",
+    "year": "2022",
+    "doi": "10.3390/molecules27031118",
+    "abstract": "A sedentary lifestyle or lack of physical activity increases the risk of different diseases, including obesity, diabetes, heart diseases, certain types of cancers, and some neurological diseases. Physical exercise helps improve quality of life and reduces the risk of many diseases. Irisin, a hormone induced by exercise, is a fragmented product of FNDC5 (a cell membrane protein) and acts as a linkage between muscles and other tissues. Over the past decade, it has become clear that irisin is a molecular mimic of exercise and shows various beneficial effects, such as browning of adipocytes, modulation of metabolic processes, regulation of bone metabolism, and functioning of the nervous system. Irisin has a role in carcinogenesis; numerous studies have shown its impact on migration, invasion, and proliferation of cancer cells. The receptor of irisin is not completely known; however, in some tissues it probably acts via a specific class of integrin receptors. Here, we review research from the past decade that has identified irisin as a potential therapeutic agent in the prevention or treatment of various metabolic-related and other diseases. This article delineates structural and biochemical aspects of irisin and provides an insight into the role of irisin in different pathological conditions."
+   },
+   {
+    "pmid": "24120943",
+    "title": "Exercise induces hippocampal BDNF through a PGC-1\u03b1/FNDC5 pathway.",
+    "year": "2013",
+    "doi": "10.1016/j.cmet.2013.09.008",
+    "abstract": "Exercise can improve cognitive function and has been linked to the increased expression of brain-derived neurotrophic factor (BDNF). However, the underlying molecular mechanisms driving the elevation of this neurotrophin remain unknown. Here we show that FNDC5, a previously identified muscle protein that is induced in exercise and is cleaved and secreted as irisin, is also elevated by endurance exercise in the hippocampus of mice. Neuronal Fndc5 gene expression is regulated by PGC-1\u03b1, and Pgc1a(-/-) mice show reduced Fndc5 expression in the brain. Forced expression of FNDC5 in primary cortical neurons increases Bdnf expression, whereas RNAi-mediated knockdown of FNDC5 reduces Bdnf. Importantly, peripheral delivery of FNDC5 to the liver via adenoviral vectors, resulting in elevated blood irisin, induces expression of Bdnf and other neuroprotective genes in the hippocampus. Taken together, our findings link endurance exercise and the important metabolic mediators, PGC-1\u03b1 and FNDC5, with BDNF expression in the brain."
+   },
+   {
+    "pmid": "22237023",
+    "title": "A PGC1-\u03b1-dependent myokine that drives brown-fat-like development of white fat and thermogenesis.",
+    "year": "2012",
+    "doi": "10.1038/nature10777",
+    "abstract": "Exercise benefits a variety of organ systems in mammals, and some of the best-recognized effects of exercise on muscle are mediated by the transcriptional co-activator PPAR-\u03b3 co-activator-1 \u03b1 (PGC1-\u03b1). Here we show in mouse that PGC1-\u03b1 expression in muscle stimulates an increase in expression of FNDC5, a membrane protein that is cleaved and secreted as a newly identified hormone, irisin. Irisin acts on white adipose cells in culture and in vivo to stimulate UCP1 expression and a broad program of brown-fat-like development. Irisin is induced with exercise in mice and humans, and mildly increased irisin levels in the blood cause an increase in energy expenditure in mice with no changes in movement or food intake. This results in improvements in obesity and glucose homeostasis. Irisin could be therapeutic for human metabolic disease and other disorders that are improved with exercise."
+   },
+   {
+    "pmid": "33493316",
+    "title": "Progress and Challenges in the Biology of FNDC5 and Irisin.",
+    "year": "2021",
+    "doi": "10.1210/endrev/bnab003",
+    "abstract": "In 2002, a transmembrane protein-now known as FNDC5-was discovered and shown to be expressed in skeletal muscle, heart, and brain. It was virtually ignored for 10 years, until a study in 2012 proposed that, in response to exercise, the ectodomain of skeletal muscle FNDC5 was cleaved, traveled to white adipose tissue, and induced browning. The wasted energy of this browning raised the possibility that this myokine, named irisin, might mediate some beneficial effects of exercise. Since then, more than 1000 papers have been published exploring the roles of irisin. A major interest has been on adipose tissue and metabolism, following up the major proposal from 2012. Many studies correlating plasma irisin levels with physiological conditions have been questioned for using flawed assays for irisin concentration. However, experiments altering irisin levels by injecting recombinant irisin or by gene knockout are more promising. Recent discoveries have suggested potential roles of irisin in bone remodeling and in the brain, with effects potentially related to Alzheimer's disease. We discuss some discrepancies between research groups and the mechanisms that are yet to be determined. Some important questions raised in the initial discovery of irisin, such as the role of the mutant start codon of human FNDC5 and the mechanism of ectodomain cleavage, remain to be answered. Apart from these specific questions, a promising new tool has been developed-mice with a global or tissue-specific kn"
+   }
+  ]
+ },
+ "NPPB": {
+  "gene": "NPPB",
+  "n_papers": 6,
+  "papers": [
+   {
+    "pmid": "40593642",
+    "title": "Cardiomyocyte-derived USP13 protects hearts from hypertrophy via deubiquitinating and stabilizing STAT1 in male mice.",
+    "year": "2025",
+    "doi": "10.1038/s41467-025-61028-1",
+    "abstract": "Cardiac hypertrophy leads to ventricular dysfunction and heart failure. Deubiquitinating enzymes are responsible for preserving the substrate protein stability and are essential to myocardial hypertrophy. In this study, we aimed to explore the role and regulatory mechanism of a cardiomyocyte-derived deubiquitinating enzyme, USP13, in cardiac hypertrophy. Here we show that USP13 was increased in hypertrophic myocardium and was mainly distributed in cardiomyocytes. Cardiomyocyte-specific Usp13 knockout aggravated TAC or Ang II-induced myocardial hypertrophy and dysfunction in male mice. Correspondingly, USP13 overexpression by AAV9 in hearts exerted a therapeutic impact on cardiac hypertrophy in male mice. Mechanistically, we identified STAT1 as a substrate of USP13 through interactome analysis. USP13 deubiquitinated STAT1, thereby reducing its degradation. Subsequently, USP13 promoted the STAT1-targeted Nppb gene transcription and enhanced mitochondrial function in cardiomyocytes. This study illustrated a beneficial effect of USP13 in hypertrophic cardiomyocytes and identified a cardiomyocyte-specific USP13-STAT1 axis in regulating cardiac hypertrophy."
+   },
+   {
+    "pmid": "36756875",
+    "title": "Inhibition of Fap Promotes Cardiac Repair by Stabilizing BNP.",
+    "year": "2023",
+    "doi": "10.1161/CIRCRESAHA.122.320781",
+    "abstract": "Myocardial infarction (MI) elicits cardiac fibroblast activation and extracellular matrix (ECM) deposition to maintain the structural integrity of the heart. Recent studies demonstrate that Fap (fibroblast activation protein)-a prolyl-specific serine protease-is an important marker of activated cardiac fibroblasts after MI. Left ventricle and plasma samples from patients and healthy donors were used to analyze the expression level of FAP and its prognostic value. Echocardiography and histological analysis of heart sections were used to analyze cardiac functions, scar formation, ECM deposition and angiogenesis after MI. RNA-Sequencing, biochemical analysis, cardiac fibroblasts (CFs) and endothelial cells co-culture were used to reveal the molecular and cellular mechanisms by which Fap regulates angiogenesis. We found that Fap is upregulated in patient cardiac fibroblasts after cardiac injuries, while plasma Fap is downregulated and functions as a prognostic marker for cardiac repair. Genetic or pharmacological inhibition of Fap in mice significantly improved cardiac function after MI. Histological and transcriptomic analyses showed that Fap inhibition leads to increased angiogenesis in the peri-infarct zone, which promotes ECM deposition and alignment by cardiac fibroblasts and prevents their overactivation, thereby limiting scar expansion. Mechanistically, we found that BNP (brain natriuretic peptide) is a novel substrate of Fap that mediates postischemic angiogenesis. Fap de"
+   },
+   {
+    "pmid": "40242872",
+    "title": "Novel Truncated Peptide Derived From circCDYL Exacerbates Cardiac Hypertrophy.",
+    "year": "2025",
+    "doi": "10.1161/CIRCRESAHA.124.325573",
+    "abstract": "Circular RNAs (circRNAs) have been gradually revealed to regulate the progression of heart disease in depth, showing their clinical significance. However, a mass of cardiac circRNAs still has not been functionally characterized. We aimed to explore the potential candidates that are involved in pathological cardiac hypertrophy. Public substantial RNA-sequencing data of cardiac circRNAs were utilized to search the cardiac hypertrophy-related circRNAs. Cardiomyocyte hypertrophy in vitro was induced by Ang II (angiotensin II) treatment. Mice were subjected to Ang II infusion to induce cardiac hypertrophy in vivo. Gain-of-function and loss-of-function assays were conducted to detect the effect of RNAs or proteins in cardiac hypertrophy. A circRNA derived from the  In summary, our study uncovered an important circRNA-derived peptide and a regulatory mechanism on transcription mediated by N6-methyladenosine-circRNA-histone methylation in pathological cardiac hypertrophy."
+   },
+   {
+    "pmid": "33025817",
+    "title": "Development of a Cardiac Sarcomere Functional Genomics Platform to Enable Scalable Interrogation of Human",
+    "year": "2020",
+    "doi": "10.1161/CIRCULATIONAHA.120.047999",
+    "abstract": "Pathogenic  We created a toolkit of human induced pluripotent stem cell models and functional assays using CRISPR/Cas9 to study  Hypertrophic cardiomyopathy-associated  Our study found that hypertrophic cardiomyopathy-associated"
+   },
+   {
+    "pmid": "39046464",
+    "title": "Empagliflozin prevents heart failure through inhibition of the NHE1-NO pathway, independent of SGLT2.",
+    "year": "2024",
+    "doi": "10.1007/s00395-024-01067-9",
+    "abstract": "Sodium glucose cotransporter 2 inhibitors (SGLT2i) constitute the only medication class that consistently prevents or attenuates human heart failure (HF) independent of ejection fraction. We have suggested earlier that the protective mechanisms of the SGLT2i Empagliflozin (EMPA) are mediated through reductions in the sodium hydrogen exchanger 1 (NHE1)-nitric oxide (NO) pathway, independent of SGLT2. Here, we examined the role of SGLT2, NHE1 and NO in a murine TAC/DOCA model of HF. SGLT2 knockout mice only showed attenuated systolic dysfunction without having an effect on other signs of HF. EMPA protected against systolic and diastolic dysfunction, hypertrophy, fibrosis, increased Nppa/Nppb mRNA expression and lung/liver edema. In addition, EMPA prevented increases in oxidative stress, sodium calcium exchanger expression and calcium/calmodulin-dependent protein kinase II activation to an equal degree in WT and SGLT2 KO animals. In particular, while NHE1 activity was increased in isolated cardiomyocytes from untreated HF, EMPA treatment prevented this. Since SGLT2 is not required for the protective effects of EMPA, the pathway between NHE1 and NO was further explored in SGLT2 KO animals. In vivo treatment with the specific NHE1-inhibitor Cariporide mimicked the protection by EMPA, without additional protection by EMPA. On the other hand, in vivo inhibition of NOS with L-NAME deteriorated HF and prevented protection by EMPA. In conclusion, the data support that the beneficial ef"
+   },
+   {
+    "pmid": "29302701",
+    "title": "Structure and function of the Nppa-Nppb cluster locus during heart development and disease.",
+    "year": "2018",
+    "doi": "10.1007/s00018-017-2737-0",
+    "abstract": "Atrial natriuretic factor and brain natriuretic peptide are two important biomarkers in clinical cardiology. These two natriuretic peptide hormones are encoded by the paralogous genes Nppa and Nppb, which are evolutionary conserved. Both genes are predominantly expressed by the heart muscle during the embryonic and fetal stages, and in particular Nppa expression is strongly reduced in the ventricles after birth. Upon cardiac stress, Nppa and Nppb are strongly upregulated in the ventricular myocardium. Much is known about the molecular and physiological ques inducing Nppa and Nppb expression; however, the transcriptional regulatory mechanisms of the Nppa-Nppb cluster in vivo has proven to be quite complex and is not well understood. In this review, we will provide recent insights into the dynamic and complex regulation of Nppa and Nppb during heart development and hypertrophy, and the association of this gene cluster with the cardiomyocyte-intrinsic program of heart regeneration."
+   }
+  ]
+ },
+ "POSTN": {
+  "gene": "POSTN",
+  "n_papers": 6,
+  "papers": [
+   {
+    "pmid": "40454481",
+    "title": "PIEZO1 mediates periostin+ myofibroblast activation and pulmonary fibrosis in mice.",
+    "year": "2025",
+    "doi": "10.1172/JCI184158",
+    "abstract": "Idiopathic pulmonary fibrosis (IPF) is a devastating interstitial lung disease characterized by the excessive accumulation of activated myofibroblasts that deposit extracellular matrix (ECM) protein, leading to progressive scar formation and mechanical stress. However, the cellular origin and fate of myofibroblasts remain controversial, and the mechanisms by which myofibroblasts sense mechanical cues in the lung are unclear. Here, we report that periostin (Postn) is a reliable and distinctive marker for pulmonary myofibroblasts, while ablation of Postn+ myofibroblasts after injury ameliorated lung fibrosis. PIEZO1 was highly expressed in Postn+ myofibroblast and played a vital role in mechanoactivation of Postn+ myofibroblast and development of lung fibrosis. Conditional deletion of Piezo1 in Postn+ myofibroblasts significantly inhibited lung fibrosis by suppressing myofibroblast activation and proliferation. Loss of Piezo1 led to disruption of actin organization and prevention of Yap/Taz nuclear localization, thus shifting the myofibroblasts from a proliferative state into a stressed and apoptotic state. Furthermore, myofibroblast-specific Yap/Taz deletion fully recapitulated the protective phenotypes of myofibroblast-Piezo1-KO mice. These findings show that periostin marks pulmonary myofibroblasts, and that PIEZO1-mediated mechanosensation is essential for myofibroblast activation in the lung. Targeting PIEZO1 in the periostin-expressing cells is a novel therapeutic option "
+   },
+   {
+    "pmid": "39067872",
+    "title": "POSTN",
+    "year": "2024",
+    "doi": "10.1136/jitc-2023-008721",
+    "abstract": "Hepatocellular carcinoma (HCC) poses a significant clinical challenge because the long-term benefits of immune checkpoint blockade therapy are limited. A comprehensive understanding of the mechanisms underlying immunotherapy resistance in HCC is imperative for improving patient prognosis. In this study, to systematically investigate the characteristics of cancer-associated fibroblast (CAF) subsets and the dynamic communication among the tumor microenvironment (TME) components regulated by CAF subsets, we generated an HCC atlas by compiling single-cell RNA sequencing (scRNA-seq) datasets on 220 samples from six datasets. We combined spatial transcriptomics with scRNA-seq and multiplexed immunofluorescence to identify the specific CAF subsets in the TME that determine the efficacy of immunotherapy in HCC patients. Our findings highlight the pivotal role of POSTN Our research elucidates light on the role of a particular subset of CAFs in immunotherapy resistance, emphasizing the potential benefits of targeting specific CAF subpopulations to improve clinical responses to immunotherapy."
+   },
+   {
+    "pmid": "39910313",
+    "title": "RUNX2 promotes fibrosis via an alveolar-to-pathological fibroblast transition.",
+    "year": "2025",
+    "doi": "10.1038/s41586-024-08542-2",
+    "abstract": "A hallmark of pulmonary fibrosis is the aberrant activation of lung fibroblasts into pathological fibroblasts that produce excessive extracellular matrix"
+   },
+   {
+    "pmid": "40520021",
+    "title": "Integrative Single-Cell and Spatial Transcriptomics Analysis Reveals ECM-remodeling Cancer-associated Fibroblast-Derived POSTN as a Key Mediator in Pancreatic Ductal Adenocarcinoma Progression.",
+    "year": "2025",
+    "doi": "10.7150/ijbs.108618",
+    "abstract": "Pancreatic ductal adenocarcinoma (PDAC) presents significant clinical challenges owing to its dense stroma and complex tumor microenvironment (TME). In this study, large-scale single-cell transcriptomics and spatial transcriptomics (ST) were integrated to dissect the heterogeneity of fibroblasts and their crosstalk with epithelial cells, with a focus on key ligand-receptor interactions. Eight distinct fibroblast subpopulations were identified, among which extracellular matrix (ECM)-remodeling fibroblasts were particularly enriched in tumor tissues and associated with poor prognosis. ECM-remodeling fibroblasts were located at the terminal stage of the fibroblast pseudotime trajectory, and SOX11 was identified as a key transcription factor in this subpopulation. Further analyses revealed that ECM-remodeling fibroblasts can interact with epithelial cells through the POSTN-ITGAV/ITGB5 ligand-receptor axis, a critical pathway that promotes tumor progression. Clinical analyses demonstrated a strong correlation between POSTN expression and poor prognosis in patients with PDAC. Mechanistically, POSTN interacts with integrin ITGAV/ITGB5 on tumor cells, activating the PI3K/AKT/\u03b2-catenin pathway and promoting epithelial-mesenchymal transition (EMT) phenotype. Pharmacological inhibition of the POSTN-integrin axis partially reversed these malignant traits, highlighting its potential as a therapeutic target. This study provides new insights into fibroblast heterogeneity and its role in PDA"
+   },
+   {
+    "pmid": "40048660",
+    "title": "SLC31A1 loss depletes mitochondrial copper and promotes cardiac fibrosis.",
+    "year": "2025",
+    "doi": "10.1093/eurheartj/ehaf130",
+    "abstract": "Metals serve as co-factors for a host of metalloenzymes involved in mitochondrial metabolic reprogramming. Modifications in metal homeostasis are linked to epigenetic mechanisms. However, the epigenetic mechanisms through which metal affects cardiac fibrosis (CF) remain poorly understood. The metal content of mouse heart samples was measured using inductively coupled plasma mass spectrometry. Cardiac fibroblast-specific MeCP2-deficient mice and control mice were treated with isoprenaline/angiotensin II to induce CF. AAV9 carrying POSTN promoter-driven small hairpin RNA targeting MeCP2, YTHDF1, or SLC31A1 and the copper-chelating agent tetrathiomolybdate were administered to investigate their vital roles in CF. Histological and biochemical analyses were performed to determine how YTHDF1/MeCP2 regulated SLC31A1 expression in CF. The reconstitution of SLC31A1 in YTHDF1/MeCP2-deficient cardiac fibroblasts and mouse hearts was performed to study its effect on mitochondrial copper depletion and fibrosis. Human heart tissues from atrial fibrillation patients were used to validate the findings. Lower copper concentrations are accompanied by SLC31A1 down-regulation and mitochondrial copper depletion in CF. Fibroblast-specific SLC31A1 deficiency enhances mitochondrial copper depletion, augments glycolysis, promotes fibroblast proliferation and triggers CF. SLC31A1 inhibition due to increased MeCP2-recognized methylating CpG islands of SLC31A1 in the promoter region restrains its transc"
+   },
+   {
+    "pmid": "38773979",
+    "title": "Cancer-associated fibroblast-derived periostin promotes papillary thyroid tumor growth through integrin-FAK-STAT3 signaling.",
+    "year": "2024",
+    "doi": "10.7150/thno.94207",
+    "abstract": ""
+   }
+  ]
+ },
+ "BMAL1": {
+  "gene": "BMAL1",
+  "n_papers": 6,
+  "papers": [
+   {
+    "pmid": "40269168",
+    "title": "BMAL1-HIF2A heterodimer modulates circadian variations of myocardial injury.",
+    "year": "2025",
+    "doi": "10.1038/s41586-025-08898-z",
+    "abstract": "Acute myocardial infarction is a leading cause of morbidity and mortality worldwide"
+   },
+   {
+    "pmid": "27476975",
+    "title": "Circadian Rhythm Disruption Promotes Lung Tumorigenesis.",
+    "year": "2016",
+    "doi": "10.1016/j.cmet.2016.07.001",
+    "abstract": "Circadian rhythms are 24-hr oscillations that control a variety of biological processes in living systems, including two hallmarks of cancer, cell division and metabolism. Circadian rhythm disruption by shift work is associated with greater risk for cancer development and poor prognosis, suggesting a putative tumor-suppressive role for circadian rhythm homeostasis. Using a genetically engineered mouse model of lung adenocarcinoma, we have characterized the effects of circadian rhythm disruption on lung tumorigenesis. We demonstrate that both physiologic perturbation (jet lag) and genetic mutation of the central circadian clock components decreased survival and promoted lung tumor growth and progression. The core circadian genes Per2 and Bmal1 were shown to have cell-autonomous tumor-suppressive roles in transformation and lung tumor progression. Loss of the central clock components led to increased c-Myc expression, enhanced proliferation, and metabolic dysregulation. Our findings demonstrate that both systemic and somatic disruption of circadian rhythms contribute to cancer progression."
+   },
+   {
+    "pmid": "34493722",
+    "title": "Deficiency of intestinal Bmal1 prevents obesity induced by high-fat feeding.",
+    "year": "2021",
+    "doi": "10.1038/s41467-021-25674-5",
+    "abstract": "The role of intestine clock in energy homeostasis remains elusive. Here we show that mice with Bmal1 specifically deleted in the intestine (Bmal1"
+   },
+   {
+    "pmid": "22460952",
+    "title": "Regulation of circadian behaviour and metabolism by REV-ERB-\u03b1 and REV-ERB-\u03b2.",
+    "year": "2012",
+    "doi": "10.1038/nature11048",
+    "abstract": "The circadian clock acts at the genomic level to coordinate internal behavioural and physiological rhythms via the CLOCK-BMAL1 transcriptional heterodimer. Although the nuclear receptors REV-ERB-\u03b1 and REV-ERB-\u03b2 have been proposed to form an accessory feedback loop that contributes to clock function, their precise roles and importance remain unresolved. To establish their regulatory potential, we determined the genome-wide cis-acting targets (cistromes) of both REV-ERB isoforms in murine liver, which revealed shared recognition at over 50% of their total DNA binding sites and extensive overlap with the master circadian regulator BMAL1. Although REV-ERB-\u03b1 has been shown to regulate Bmal1 expression directly, our cistromic analysis reveals a more profound connection between BMAL1 and the REV-ERB-\u03b1 and REV-ERB-\u03b2 genomic regulatory circuits than was previously suspected. Genes within the intersection of the BMAL1, REV-ERB-\u03b1 and REV-ERB-\u03b2 cistromes are highly enriched for both clock and metabolic functions. As predicted by the cistromic analysis, dual depletion of Rev-erb-\u03b1 and Rev-erb-\u03b2 function by creating double-knockout mice profoundly disrupted circadian expression of core circadian clock and lipid homeostatic gene networks. As a result, double-knockout mice show markedly altered circadian wheel-running behaviour and deregulated lipid metabolism. These data now unite REV-ERB-\u03b1 and REV-ERB-\u03b2 with PER, CRY and other components of the principal feedback loop that drives circadian"
+   },
+   {
+    "pmid": "40049242",
+    "title": "Circadian control of hepatic ischemia/reperfusion injury via HSD17B13-mediated autophagy in hepatocytes.",
+    "year": "2025",
+    "doi": "10.1016/j.jhep.2025.02.029",
+    "abstract": "Studies have illustrated the role of circadian rhythms in hepatic ischemia/reperfusion injury (HIRI), but the mechanisms are poorly understood. Bmal1 plays a significant role in the circadian control of liver physiology and disease; however, its role in HIRI has not been investigated. Here, we aimed to explore the potential contribution of BMAL1 to HIRI. The impact of ischemia/reperfusion timing (Zeitgeber time [ZT]0 vs. ZT12) on liver damage was assessed in mice with Bmal1 specifically depleted in hepatocytes or myeloid cells. RNA sequencing and other techniques were employed to explore the underlying molecular mechanisms. Additionally, we investigated the role of HSD17B13, a lipid droplet-associated protein, in BMAL1-mediated circadian control of HIRI by utilizing global knockout, hepatocyte-specific knockdown, or hepatocyte-specific humanized HSD17B13 overexpression mouse models. We found that initiating ischemia/reperfusion operations at ZT12 instead of ZT0 resulted in significantly more severe liver injury in wild-type mice. Bmal1 in hepatocytes, but not in myeloid cells, mediated this temporal difference. Mechanistically, BMAL1 regulates the diurnal oscillation of HIRI by directly controlling Hsd17b13 transcription via binding to E-box-like elements. Hepatocyte-specific knockdown of Hsd17b13 blunted the diurnal variation of HIRI and exacerbated ZT0 HIRI. Furthermore, depletion of the BMAL1/HSD17B13 axis may inhibit lipid degradation by blocking autophagy flux, contribut"
+   },
+   {
+    "pmid": "28388406",
+    "title": "Mutation of the Human Circadian Clock Gene CRY1 in Familial Delayed Sleep Phase Disorder.",
+    "year": "2017",
+    "doi": "10.1016/j.cell.2017.03.027",
+    "abstract": "Patterns of daily human activity are controlled by an\u00a0intrinsic circadian clock that promotes \u223c24\u00a0hr rhythms in many behavioral and physiological processes. This system is altered in delayed sleep phase disorder (DSPD), a common form of insomnia in which sleep episodes are shifted to later times misaligned with the societal norm. Here, we report a hereditary form of DSPD associated with a dominant coding variation in the core circadian clock gene CRY1, which creates a transcriptional inhibitor with enhanced affinity for circadian activator proteins Clock and Bmal1. This gain-of-function CRY1 variant causes reduced expression of key transcriptional targets and lengthens the period of circadian molecular rhythms, providing a mechanistic link to DSPD symptoms. The allele has a frequency of up to 0.6%, and reverse phenotyping of unrelated families corroborates late and/or fragmented sleep patterns in carriers, suggesting that it affects sleep behavior in a sizeable portion of the human population."
+   }
+  ]
+ },
+ "DISC1": {
+  "gene": "DISC1",
+  "n_papers": 6,
+  "papers": [
+   {
+    "pmid": "18474207",
+    "title": "Disrupted-in-Schizophrenia-1.",
+    "year": "2008",
+    "doi": "10.1007/s11920-008-0025-2",
+    "abstract": "Chromosomal abnormalities can be powerful tools to identify genes that influence disease risk. The study of a chromosome translocation that segregated with severe psychiatric illness in a large family led directly to the discovery of a gene disrupted by a chromosomal breakpoint. Disrupted-in-Schizophrenia-1 (DISC1) is now an important candidate risk gene for schizophrenia and affective disorders. We review the work that led up to this discovery and the evidence that it is important in the wider population with schizophrenia and affective disorders. We also discuss the latest findings on the neuronal functions of the protein DISC1 encoded by the gene."
+   },
+   {
+    "pmid": "37340635",
+    "title": "Smoking and tetramer tryptase accelerate intervertebral disc degeneration by inducing METTL14-mediated DIXDC1 m",
+    "year": "2023",
+    "doi": "10.1016/j.ymthe.2023.06.010",
+    "abstract": "Although cigarette smoking (CS) and low back pain (LBP) are common worldwide, their correlations and the mechanisms of action remain unclear. We have shown that excessive activation of mast cells (MCs) and their proteases play key roles in CS-associated diseases, like asthma, chronic obstructive pulmonary disease (COPD), blood coagulation, and lung cancer. Previous studies have also shown that MCs and their proteases induce degenerative musculoskeletal disease. By using a custom-designed smoke-exposure mouse system, we demonstrated that CS results in intervertebral disc (IVD) degeneration and release of MC-restricted tetramer tryptases (TTs) in the IVDs. TTs were found to regulate the expression of methyltransferase 14 (METTL14) at the epigenetic level by inducing N6-methyladenosine (m"
+   },
+   {
+    "pmid": "27121900",
+    "title": "DISC1 is a coordinator of intracellular trafficking to shape neuronal development and connectivity.",
+    "year": "2016",
+    "doi": "10.1113/JP272187",
+    "abstract": "The long, asymmetric and specialised architecture of neuronal processes necessitates a properly regulated transport network of molecular motors and cytoskeletal tracks. This allows appropriate distribution of cargo for correct formation and activity of the synapse, and thus normal neuronal communication. This communication is impaired in psychiatric disease, and ongoing studies have proposed that Disrupted in schizophrenia 1 (DISC1) is an important genetic risk factor for these disorders. The mechanisms by which DISC1 dysfunction might increase propensity to psychiatric disease are not completely understood; however, an emerging theme is that DISC1 can function as a key regulator of neuronal intracellular trafficking. Transport of a wide range of potential cargoes - including mRNAs, neurotransmitter receptors, vesicles and mitochondria - can be modulated by DISC1, and therefore is susceptible to DISC1 dysfunction. This theme highlights the importance of understanding precisely how DISC1 can regulate intracellular trafficking, and suggests that a novel approach to the treatment of psychiatric disorders could be provided by targeting this protein and the trafficking machinery with which it interacts."
+   },
+   {
+    "pmid": "40371609",
+    "title": "Neuroglial Advances: New Roles for Established Players.",
+    "year": "2025",
+    "doi": "10.1111/jnc.70080",
+    "abstract": "Neuroglial cells perform numerous physiological functions and contribute to the pathogenesis of all diseases of the nervous system. Neuroglial neuroprotection defines the resilience of the nervous tissue to exo- and endogenous pathological challenges, while neuroglial defence determines the progression and outcome of neurological disorders. IN this paper, we overview previously unknown but recently discovered roles of various types of neuroglial cells in diverse physiological and pathological processes. First, we describe the role of ependymal glia in the regulation of cerebrospinal fluid flow from the spinal cord to peripheral tissues through the spinal nerves. This newly discovered pathway provides a highway for the CNS-body volume transmission. Next, we present the mechanism by which astrocytes control migration and differentiation of oligodendrocyte precursor cells (OPCs). In pre- and early postnatal CNS, OPCs migrate using vasculature (which is yet free from glia limitans perivascularis) as a pathfinder. Newly forming astrocytic perivascular endfeet signal (through semaphorin-plexin cascade) to OPCs that detach from the vessels and start to differentiate into myelinating oligodendrocytes. We continue the astrocyte theme by demonstrating the neuroprotective role of APOE-laden astrocytic extracellular vesicles in neuromyelitis optica. Next, we explore the link between astrocytic morphology and stress-induced depression. We discuss the critical role of astrocytic ezrin, the"
+   },
+   {
+    "pmid": "30008190",
+    "title": "Mechanisms underlying the role of DISC1 in synaptic plasticity.",
+    "year": "2018",
+    "doi": "10.1113/JP274330",
+    "abstract": "Disrupted in schizophrenia 1 (DISC1) is an important hub protein, forming multimeric complexes by self-association and interacting with a large number of synaptic and cytoskeletal molecules. The synaptic location of DISC1 in the adult brain suggests a role in synaptic plasticity, and indeed, a number of studies have discovered synaptic plasticity impairments in a variety of different DISC1 mutants. This review explores the possibility that DISC1 is an important molecule for organizing proteins involved in synaptic plasticity and examines why mutations in DISC1 impair plasticity. It concentrates on DISC1's role in interacting with synaptic proteins, controlling dendritic structure and cellular trafficking of mRNA, synaptic vesicles and mitochondria. N-terminal directed mutations appear to impair synaptic plasticity through interactions with phosphodiesterase 4B (PDE4B) and hence protein kinase A (PKA)/GluA1 and PKA/cAMP response element-binding protein (CREB) signalling pathways, and affect spine structure through interactions with kalirin 7 (Kal-7) and Rac1. C-terminal directed mutations also impair plasticity possibly through altered interactions with lissencephaly protein 1 (LIS1) and nuclear distribution protein nudE-like 1 (NDEL1), thereby affecting developmental processes such as dendritic structure and spine maturation. Many of the same molecules involved in DISC1's cytoskeletal interactions are also involved in intracellular trafficking, raising the possibility that im"
+   },
+   {
+    "pmid": "37004850",
+    "title": "GluN2D Subunit in Parvalbumin Interneurons Regulates Prefrontal Cortex Feedforward Inhibitory Circuit and Molecular Networks Relevant to Schizophrenia.",
+    "year": "2023",
+    "doi": "10.1016/j.biopsych.2023.03.020",
+    "abstract": "Parvalbumin interneuron (PVI) activity synchronizes the medial prefrontal cortex circuit for normal cognitive function, and its impairment may contribute to schizophrenia (SZ). NMDA receptors in PVIs participate in these activities and form the basis for the NMDA receptor hypofunction hypothesis of SZ. However, the role of the GluN2D subunit, which is enriched in PVIs, in regulating molecular networks relevant to SZ is unknown. Using electrophysiology and a mouse model with conditional deletion of GluN2D from PVIs (PV-GluN2D knockout [KO]), we examined the cell excitability and neurotransmission in the medial prefrontal cortex. Histochemical, RNA sequencing analysis and immunoblotting were conducted to understand molecular mechanisms. Behavioral analysis was conducted to test cognitive function. PVIs in the medial prefrontal cortex were found to express putative GluN1/2B/2D receptors. In a PV-GluN2D KO model, PVIs were hypoexcitable, whereas pyramidal neurons were hyperexcitable. Excitatory neurotransmission was higher in both cell types in PV-GluN2D KO, whereas inhibitory neurotransmission showed contrasting changes, which could be explained by reduced somatostatin interneuron projections and increased PVI projections. Genes associated with GABA (gamma-aminobutyric acid) synthesis, vesicular release, and uptake as well as those involved in formation of inhibitory synapses, specifically GluD1-Cbln4 and Nlgn2, and regulation of dopamine terminals were downregulated in PV-GluN2"
+   }
+  ]
+ },
+ "SERPINB5": {
+  "gene": "SERPINB5",
+  "n_papers": 6,
+  "papers": [
+   {
+    "pmid": "41037786",
+    "title": "SERPINB5/TGF-\u03b2 signaling modulates desmoplakin membrane localization and ameliorates pemphigus vulgaris skin blistering.",
+    "year": "2025",
+    "doi": "10.1172/jci.insight.183024",
+    "abstract": "Impairment of desmosomal cell-cell adhesion leads to life-threatening diseases, such as the autoimmune skin-blistering disorder pemphigus vulgaris (PV). Disease management strategies that stabilize intercellular adhesion, in addition to the existing immunosuppression therapies, may result in improved clinical outcomes. Previous findings showed that the serine protease inhibitor SERPINB5 promotes intercellular adhesion by binding to and regulating the localization of the desmosomal adapter molecule desmoplakin (DSP) at the plasma membrane. We here show that SERPINB5 overexpression prevents PV-IgG-mediated loss of cell-cell adhesion and DSP dissociation from the cell membrane. We mechanistically demonstrate that SERPINB5 loss deregulates TGF-\u03b2 signaling, a pathway known to destabilize DSP in keratinocytes. TGF-\u03b2 signaling was also activated in skin biopsies of patients with PV and keratinocytes treated with PV autoantibodies, suggesting a contribution to disease. Inhibition of TGF-\u03b2 signaling ameliorated PV-IgG-mediated loss of cell-cell adhesion, increased DSP membrane expression, and prevented PV-IgG-induced blister formation in a human ex vivo skin model. Together, SERPINB5 modulates DSP and intercellular adhesion through the regulation of TGF-\u03b2 signaling. Further, TGF-\u03b2 signaling was identified as a potential target for pemphigus treatment."
+   },
+   {
+    "pmid": "41485180",
+    "title": "METTL3/YTHDF1 drives M1 macrophage polarization and aggravates ulcerative colitis progression by regulating m6A modification of SerpinB5 mRNA and FBXO32-dependent NF-\u03baB pathway.",
+    "year": "2026",
+    "doi": "10.1007/s00535-025-02341-w",
+    "abstract": "Ulcerative colitis (UC) is an idiopathic chronic intestinal inflammation. It has been reported that macrophages are key cells mediating inflammation. Furthermore, Serpin family B member 5 (SerpinB5) plays a role in the regulation of macrophage phenotype conversion. However, the role and underlying mechanism of SerpinB5 in UC are still unclear. Hematoxylin and eosin staining assay was used to assess colon pathological changes. GO enrichment and KEGG pathway enrichment analyses were conducted to assess the function of the DEGs from RNA-seq data. GSE224758 database, RNA-seq, and GeneCards database were applied to analyze the intersection targets. The mRNA and protein levels of the related genes were determined using RT-qPCR and western blot. The in vitro model of UC was established by stimulating colonic epithelial cells with tumor necrosis factor \u03b1 (TNF-\u03b1). Cell viability, proliferation, and apoptosis were determined using CCK-8, EdU, and flow cytometry. Senescence-associated \u03b2-galactosidase (SA-\u03b2-Gal) staining and senescence-related proteins p53 and p16 were detected to evaluate the endothelial cell senescence. Inflammatory cytokines and oxidative stress were detected using ELISA and kits. Flow cytometry analysis assessed the percentage of CD11b SerpinB5 expression was increased in UC patients, TNF-\u03b1-treated FUC cells, and a mouse model of UC. SerpinB5 silencing repressed TNF-\u03b1-induced cell apoptosis, cell senescence, inflammation response, oxidative stress, and M1 macrophage "
+   },
+   {
+    "pmid": "37006240",
+    "title": "BTG2 and SerpinB5, a novel gene pair to evaluate the prognosis of lung adenocarcinoma.",
+    "year": "2023",
+    "doi": "10.3389/fimmu.2023.1098700",
+    "abstract": "Lung adenocarcinoma (LUAD), as the most frequent pathological subtype of non-small cell lung cancer, is often characterized by poor prognosis and low 5-year survival rate. Exploriton of new biomarkers and accurate molecular mechanisms for effectively predicting the prognosis of LUAD patients is still necessary. Presently, BTG2 and SerpinB5, which play important roles in tumors, are studied as a gene pair for the first time with the aim of exploring whether they can be used as potential prognostic markers. Using the bioinformatics method to explore whether BTG2 and SerpinB5 can become independent prognostic factors, and explore their clinical application value and whether they can be used as immunotherapeutic markers. In addition, we also verify the conclusions obtained from external datasets, molecular docking, and SqRT-PCR. The results show that compared with normal lung tissue, BTG2 expression level was down-regulated and SerpinB5 was up-regulated in LUAD. Additionally, Kaplan-Meier survival analysis demonstrate that the prognosis of low expression level of BTG2 was poor, and that of high expression level of SerpinB5 was poor, suggesting that both of them can be used as independent prognostic factors. Moreover, the prognosis models of the two genes were constructed respectively in this study, and their prediction effect was verified by external data. Besides, ESTIMATE algorithm reveals the relationship between this gene pair and the immune microenvironment. Furthermore, pat"
+   },
+   {
+    "pmid": "38460302",
+    "title": "SERPINB5 promotes colorectal cancer invasion and migration by promoting EMT and angiogenesis via the TNF-\u03b1/NF-\u03baB pathway.",
+    "year": "2024",
+    "doi": "10.1016/j.intimp.2024.111759",
+    "abstract": "This study aimed to investigate the role of SERPINB5 in colorectal cancer (CRC). We established knockdown and overexpression models of SERPINB5 in CRC cells and conducted bioinformatics analysis to assess the clinicopathological significance of SERPINB5 expression in CRC patients. Human CRC cells were transfected with LV-SERPINB5 and sh-SERPINB5 lentivirus for subsequent functional and mechanistic studies. Results showed that high SERPINB5 expression correlated positively with CEA levels, N stage and lymphatic infiltration, while displaying a negative correlation with progression-free survival. Overexpression of SERPINB5 in CRC cells upregulated the expression of TNF-\u03b1, p-NF-\u03baB/p65, N-cadherin, MMP2 and MMP9, accompanied by decreased E-cadherin expression. In addition, SERPINB5 overexpression enhanced the migration, invasion, and proliferation of CRC cells. Furthermore, overexpression of SERPINB5 in CRC cells increased VEGFA expression, and the conditioned medium from SERPINB5-overexpressing CRC cells promoted tube formation of HUVECs. Conversely, overexpression of SERPINB5 in HUVECs decreased VEGFA expression and inhibited tube formation. Notably, these changes in CRC cells were reversed by QNZ, a specific inhibitor of the TNF-\u03b1/NF-\u03baB pathway. In summary, our findings revealed that high SERPINB5 expression correlated with poor progression-free survival in CRC patients. Moreover, SERPINB5 could induce EMT and angiogenesis by activating the TNF-\u03b1/NF-\u03baB pathway, thereby promoti"
+   },
+   {
+    "pmid": "41003647",
+    "title": "Mapping the Proteomic Landscape of Pancreatic Cancer: Prognostic Insights and Subtype Stratification.",
+    "year": "2025",
+    "doi": "10.1158/2767-9764.CRC-25-0229",
+    "abstract": "Pancreatic ductal adenocarcinoma (PDA) is an aggressive malignancy that lacks reliable biomarkers to guide treatment decisions. Effective prognostic tools are needed to improve its clinical management. We conducted a comprehensive proteomic analysis on 115 PDA patient samples with matched adjacent normal tissue. A 20-protein diagnostic panel was identified (LGALS1, ANXA2, LGALS3BP, CTSD, S100P, COL12A1, SFN, THBS2, CTHRC1, THBS1, SERPINB5, LAMC2, POSTN, CEACAM6, CTSE, PLEC, PKM, S100A11, TAGLN2, ALDOA). Consensus clustering analysis identified four prognostic proteomic subtypes. Subtypes with poorer prognoses exhibited upregulation of neutrophil degranulation, extracellular matrix remodeling, focal adhesion, Mesenchymal Epithelial Transition, collagen formation, and PI3K-Akt-mTOR-related pathways, indicating a predominance of basal-like and activated stromal features. In tumors with homologous recombination deficiency or Catalogue of Somatic Mutations in Cancer Signature-3, several immune-related proteins were enriched. An 18-protein (PURB, SDCBP2, CD2BP2, GALM, SERPINA3, OAS3, FAN1, ZPR1, KRT2, NUDT2, SMNDC1, SERPINA4, CUTA, WDR36, POSTN, CLEC11A, PEX14, and PI4KA) risk score was developed and validated using multicox regression analyses with LASSO regularization. The risk score demonstrated independent prognostic significance for overall survival and recurrence, and was validated in an independent proteomic dataset generated using a different proteomic technology. This stud"
+   },
+   {
+    "pmid": "27447178",
+    "title": "EGFR Signaling Regulates Maspin/SerpinB5 Phosphorylation and Nuclear Localization in Mammary Epithelial Cells.",
+    "year": "2016",
+    "doi": "10.1371/journal.pone.0159856",
+    "abstract": "Maspin (SerpinB5) is a non-inhibitory serpin (serine protease inhibitor) with very diverse biological activities including regulation of cell adhesion, migration, death, control of gene expression and oxidative stress response. Initially described as a tumor and metastasis suppressor, clinical data brought controversies to the field, as some studies reported no correlation between SerpinB5 expression and prognosis value. These data underscore the importance of understanding SerpinB5 function in a normal physiological context and the molecular mechanism involved. Several SerpinB5 phosphoforms have been detected in different cell lines, but the signaling pathways involved and the biological significance of this post-translational modification in vivo remains to be explored. In this study we investigated SerpinB5 expression, subcellular localization and phosphorylation in different stages of the mouse mammary gland development and the signaling pathway involved. Here we show that SerpinB5 is first detected in late pregnancy, reaches its highest levels in lactation and remains at constant levels during post-lactational regression (involution). Using high resolution isoelectric focusing followed but immunoblot, we found at least 8 different phosphoforms of SerpinB5 during lactation, which decreases steadily at the onset of involution. In order to investigate the signaling pathway involved in SerpinB5 phosphorylation, we took advantage of the non-transformed MCF-10A model system, a"
+   }
+  ]
+ },
+ "CD82": {
+  "gene": "CD82",
+  "n_papers": 6,
+  "papers": [
+   {
+    "pmid": "32482755",
+    "title": "The regulation and function of CD20: an \"enigma\" of B-cell biology and targeted therapy.",
+    "year": "2020",
+    "doi": "10.3324/haematol.2019.243543",
+    "abstract": "The introduction of anti-CD20 monoclonal antibodies such as rituximab, ofatumumab, or obinutuzumab improved the therapy of B-cell malignancies even though the precise physiological role and regulation of CD20 remains unclear. Furthermore, CD20 expression is highly variable between different B-cell malignancies, patients with the same malignancy, and even between intraclonal subpopulations in an individual patient. Several epigenetic (EZH2, HDAC1/2, HDAC1/4, HDAC6, complex Sin3A-HDAC1) and transcription factors (USF, OCT1/2, PU.1, PiP, ELK1, ETS1, SP1, NF\u03baB, FOXO1, CREM, SMAD2/3) regulating CD20 expression (encoded by"
+   },
+   {
+    "pmid": "34817906",
+    "title": "Proteomic dissection of large extracellular vesicle surfaceome unravels interactive surface platform.",
+    "year": "2021",
+    "doi": "10.1002/jev2.12164",
+    "abstract": "The extracellular vesicle (EV) surface proteome (surfaceome) acts as a fundamental signalling gateway by bridging intra- and extracellular signalling networks, dictates EVs' capacity to communicate and interact with their environment, and is a source of potential disease biomarkers and therapeutic targets. However, our understanding of surface protein composition of large EVs (L-EVs, 100-800\u00a0nm, mean 310\u00a0nm, ATP5F1A, ATP5F1B, DHX9, GOT2, HSPA5, HSPD1, MDH2, STOML2), a major EV-subtype that are distinct from small EVs (S-EVs, 30-150\u00a0nm, mean 110\u00a0nm, CD44, CD63, CD81, CD82, CD9, PDCD6IP, SDCBP, TSG101) remains limited. Using a membrane impermeant derivative of biotin to capture surface proteins coupled to mass spectrometry analysis, we show that out of 4143 proteins identified in density-gradient purified L-EVs (1.07-1.11\u00a0g/mL, from multiple cancer cell lines), 961 proteins are surface accessible. The surface molecular diversity of L-EVs include (i) bona fide plasma membrane anchored proteins (cluster of differentiation, transporters, receptors and GPI anchored proteins implicated in cell-cell and cell-ECM interactions); and (ii) membrane surface-associated proteins (that are released by divalent ion chelator EDTA) implicated in actin cytoskeleton regulation, junction organization, glycolysis and platelet activation. Ligand-receptor analysis of L-EV surfaceome (e.g., ITGAV/ITGB1) uncovered interactome spanning 172 experimentally verified cognate binding partners (e.g., ANGPTL3,"
+   },
+   {
+    "pmid": "25613425",
+    "title": "GM3 and cancer.",
+    "year": "2015",
+    "doi": "10.1007/s10719-014-9572-4",
+    "abstract": "Our studies during the early 1970s showed that expression of GM3, the simplest ganglioside and an abundant animal cell membrane component, is reduced during malignant transformation of cells by oncogenic viruses. Levels of mRNA for GM3 synthase were reduced in avian and mammalian cells transformed by oncoprotein \"v-Jun\", and overexpression of GM3 synthase in the transformed cells caused reversion from transformed to normal cell-like phenotype. GM3 has a well-documented inhibitory effect on activation of growth factor receptors (GFRs), particularly epidermal GFR (EGFR). De-N-acetyl GM3, which is expressed in some invasive human cancer cells, has an enhancing effect on EGFR activation. The important role of the sialosyl group of GM3 was demonstrated using NEU3, a plasma membrane-associated sialidase that selectively remove sialic acids from gangliosides GM3 and GD1a and is up-regulated in many human cancer cells. GM3 is highly enriched in a type of membrane microdomain termed \"glycosynapse\", and forms complexes with co-localized cell signaling molecules, including Src family kinases, certain tetraspanins (e.g., CD9, CD81, CD82), integrins, and GFRs (e.g., fibroblast growth factor receptor and hepatocyte growth factor receptor c-Met). Studies by our group and others indicate that GM3 modulates cell adhesion, growth, and motility by altering molecular organization in glycosynaptic microdomains and the activation levels of co-localized signaling molecules that are involved in canc"
+   },
+   {
+    "pmid": "34222025",
+    "title": "Tetraspanins: Novel Molecular Regulators of Gastric Cancer.",
+    "year": "2021",
+    "doi": "10.3389/fonc.2021.702510",
+    "abstract": "Gastric cancer is the fourth and fifth most common cancer worldwide in men and women, respectively. However, patients with an advanced stage of gastric cancer still have a poor prognosis and low overall survival rate. The tetraspanins belong to a protein superfamily with four hydrophobic transmembrane domains and 33 mammalian tetraspanins are ubiquitously distributed in various cells and tissues. They interact with other membrane proteins to form tetraspanin-enriched microdomains and serve a variety of functions including cell adhesion, invasion, motility, cell fusion, virus infection, and signal transduction. In this review, we summarize multiple utilities of tetraspanins in the progression of gastric cancer and the underlying molecular mechanisms. In general, the expression of TSPAN8, CD151, TSPAN1, and TSPAN4 is increased in gastric cancer tissues and enhance the proliferation and invasion of gastric cancer cells, while CD81, CD82, TSPAN5, TSPAN9, and TSPAN21 are downregulated and suppress gastric cancer cell growth. In terms of cell motility regulation, CD9, CD63 and CD82 are metastasis suppressors and the expression level is inversely associated with lymph node metastasis. We also review the clinicopathological significance of tetraspanins in gastric cancer including therapeutic targets, the development of drug resistance and prognosis prediction. Finally, we discuss the potential clinical value and current limitations of tetraspanins in gastric cancer treatments, and pr"
+   },
+   {
+    "pmid": "34534447",
+    "title": "Tetraspanin CD82 regulates S1PR",
+    "year": "2021",
+    "doi": "10.1016/j.stemcr.2021.08.009",
+    "abstract": "Hematopoietic stem and progenitor cell (HSPC) mobilization into the blood occurs under normal physiological conditions and is stimulated in the clinic to enable the isolation of HSPCs for transplantation therapies. In the present study, we identify the tetraspanin CD82 as a novel regulator of HSPC mobilization. Using a global CD82 knockout (CD82KO) mouse, we measure enhanced HSPC mobilization after granulocyte-colony stimulating factor (G-CSF) or AMD3100 treatment, which we find is promoted by increased surface expression of the sphingosine 1-phosphate receptor 1 (S1PR"
+   },
+   {
+    "pmid": "29589089",
+    "title": "Tetraspanin-enriched microdomains regulate digitation junctions.",
+    "year": "2018",
+    "doi": "10.1007/s00018-018-2803-2",
+    "abstract": "Tetraspanins co-emerged with multi-cellular organisms during evolution and are typically localized at the cell\u2013cell interface, [corrected] and form tetraspanin-enriched microdomains (TEMs) by associating with each other and other membrane molecules. Tetraspanins affect various biological functions, but how tetraspanins engage in multi-faceted functions at the cellular level is largely unknown. When cells interact, the membrane microextrusions at the cell-cell interfaces form dynamic, digit-like structures between cells, which we term digitation junctions (DJs). We found that (1) tetraspanins CD9, CD81, and CD82 and (2) TEM-associated molecules integrin \u03b13\u03b21, CD44, EWI2/PGRL, and PI-4P are present in DJs of epithelial, endothelial, and cancer cells. Tetraspanins and their associated molecules also regulate the formation and development of DJs. Moreover, (1) actin cytoskeleton, RhoA, and actomyosin activities and (2) growth factor\u00a0receptor-Src-MAP kinase signaling, but not PI-3 kinase, regulate DJs. Finally, we showed that DJs consist of various forms in different cells. Thus, DJs are common, interactive structures between cells, and likely affect cell adhesion, migration, and communication. TEMs probably modulate various cell functions through DJs. Our findings highlight that DJ morphogenesis reflects the transition between cell-matrix adhesion and cell-cell adhesion and involves both cell-cell and cell-matrix adhesion molecules."
+   }
+  ]
+ },
+ "SHBG": {
+  "gene": "SHBG",
+  "n_papers": 6,
+  "papers": [
+   {
+    "pmid": "31099174",
+    "title": "EAA clinical practice guidelines-gynecomastia evaluation and management.",
+    "year": "2019",
+    "doi": "10.1111/andr.12636",
+    "abstract": "Gynecomastia (GM) is a benign proliferation of the glandular tissue of the breast in men. It is a frequent condition with a reported prevalence of 32-65%, depending on the age and the criteria used for definition. GM of infancy and puberty are common, benign conditions resolving spontaneously in the majority of cases. GM of adulthood is more prevalent among the elderly and proper investigation may reveal an underlying pathology in 45-50% of cases. The aim was to provide clinical practice guidelines for the evaluation and management of GM. A literature search of articles in English for the term 'gynecomastia' was conducted. Evidence-based recommendations were developed using the Grading of Recommendations, Assessment, Development, and Evaluation (GRADE) system. A set of five statements and fifteen clinical recommendations was formulated. The purpose of GM assessment should be the detection of underlying pathological conditions, reversible causes (administration/abuse of aggravating substances), and the discrimination from other breast lumps, particularly breast cancer. Assessment should comprise a thorough medical history and physical examination of the breast and genitalia (including testicular ultrasound). A set of laboratory investigations may integrate the evaluation: testosterone (T), estradiol (E2), sex hormone-binding globulin (SHBG), luteinizing hormone (LH), follicular stimulating hormone (FSH), thyroid stimulating hormone (TSH), prolactin, human chorionic gonadotropi"
+   },
+   {
+    "pmid": "12007895",
+    "title": "Androgen production in women.",
+    "year": "2002",
+    "doi": "10.1016/s0015-0282(02)02985-0",
+    "abstract": "To describe the sources, production rates, circulating concentrations, and regulatory mechanisms of the major androgen precursors and androgens in women. Review of the major published literature. Quantitatively, women secrete greater amounts of androgen than of estrogen. The major circulating steroids generally classified as androgens include dehydroepiandrosterone sulphate (DHEAS), dehydroepiandrosterone (DHEA), androstenedione (A), testosterone (T), and dihydrotestosterone in descending order of serum concentration, though only the latter two bind the androgen receptor. The other three steroids are better considered as pro-androgens. Dehydroepiandrosterone is primarily an adrenal product, regulated by adrenocorticotropic hormone (ACTH) and acting as a precursor for the peripheral synthesis of more potent androgens. Dehydroepiandrosterone is produced by both the ovary and adrenal, as well as being derived from circulating DHEAS. Androstenedione and testosterone are products of the ovary and the adrenal. Testosterone circulates both in its free form, and bound to protein including albumin and sex steroid hormone-binding globulin (SHBG), the levels of which are an important determinant of free testosterone concentration. The postmenopausal ovary is an androgen-secreting organ and the levels of testosterone are not directly influenced by the menopausal transition or the occurrence of menopause. Dihydrotestosterone (DHT) is primarily a peripheral product of testosterone metaboli"
+   },
+   {
+    "pmid": "23994581",
+    "title": "Estrogen: a master regulator of bioenergetic systems in the brain and body.",
+    "year": "2014",
+    "doi": "10.1016/j.yfrne.2013.08.001",
+    "abstract": "Estrogen is a fundamental regulator of the metabolic system of the female brain and body. Within the brain, estrogen regulates glucose transport, aerobic glycolysis, and mitochondrial function to generate ATP. In the body, estrogen protects against adiposity, insulin resistance, and type II diabetes, and regulates energy intake and expenditure. During menopause, decline in circulating estrogen is coincident with decline in brain bioenergetics and shift towards a metabolically compromised phenotype. Compensatory bioenergetic adaptations, or lack thereof, to estrogen loss could determine risk of late-onset Alzheimer's disease. Estrogen coordinates brain and body metabolism, such that peripheral metabolic state can indicate bioenergetic status of the brain. By generating biomarker profiles that encompass peripheral metabolic changes occurring with menopause, individual risk profiles for decreased brain bioenergetics and cognitive decline can be created. Biomarker profiles could identify women at risk while also serving as indicators of efficacy of hormone therapy or other preventative interventions."
+   },
+   {
+    "pmid": "40437610",
+    "title": "Bridging systemic metabolic dysfunction and Alzheimer's disease: the liver interface.",
+    "year": "2025",
+    "doi": "10.1186/s13024-025-00849-6",
+    "abstract": "Alzheimer's disease (AD) is increasingly recognized as a systemic disorder with a substantial metabolic disorder component, where the liver significantly impacts the brain via the liver-brain axis. Key mechanisms include the liver's role in clearing peripheral \u03b2-amyloid (A\u03b2), the influence of hepatic enzymes and metabolites on cognitive decline, and the systemic effects of metabolic disorders on AD progression. Hepatokines, liver-secreted proteins including fibroblast growth factor (FGF)-21, selenoprotein P (SELENOP), Fetuin-A, Midbrain astrocyte-derived neurotrophic factor (MANF), apolipoprotein J (ApoJ), sex hormone-binding globulin (SHBG), Adropin and Angiopoietin-like protein 3 (ANGPTL3), could regulate insulin sensitivity, lipid metabolism, oxidative stress, immune responses, and neurotrophic support. These pathways are closely linked to core AD pathologies, including A\u03b2 aggregation, tau hyperphosphorylation, neuroinflammation, oxidative stress and mitochondrial dysfunction. Lifestyle interventions, including exercise and dietary modifications, that regulate hepatokines expression may offer novel preventive and therapeutic strategies for AD. This review synthesizes current knowledge on the liver-brain crosstalk in AD, emphasizing the mechanistic role of liver in bridging metabolic dysfunction with neurodegeneration and underscores the diagnostic and therapeutic potential of hepatokines in addressing AD's complex pathology."
+   },
+   {
+    "pmid": "40052430",
+    "title": "Approach to the Patient: Low Testosterone Concentrations in Men With Obesity.",
+    "year": "2025",
+    "doi": "10.1210/clinem/dgaf137",
+    "abstract": "Pathologic hypogonadism occurs when serum testosterone is significantly and persistently reduced by irreversible organic (structural, genetic) disorders of the hypothalamic pituitary testicular axis. Men with pathologic hypogonadism require lifelong testosterone replacement. In contrast, mild or moderate reductions in serum testosterone frequently accompany obesity, and its numerous comorbidities in men are best considered nongonadal illness syndromes, wherein reduction in serum testosterone is usually reversible upon amelioration of the underlying nongonadal illness. Obesity can result in nonspecific symptoms in conjunction with reduced serum testosterone and serum SHBG. Obesity-related reductions in SHBG, testosterone's principal circulating carrier protein, are primarily responsible for measured reductions in testosterone. However, obesity is not a cause of pathological hypogonadism, and proportionately reduced testosterone and SHBG concentrations accompanied by normal serum LH and FSH concentrations confirm a eugonadal state, best described as the pseudo-hypogonadism of obesity. Herein we demonstrate how clinically significant weight loss substantially reverses obesity-related reductions in serum testosterone and ameliorates nonspecific symptoms resembling, but not due to, androgen deficiency. The important reversible steps include weight reduction and optimizing management of type 2 diabetes mellitus, obstructive sleep apnea, depression, and other obesity-related comorbi"
+   },
+   {
+    "pmid": "37308949",
+    "title": "Uncovering the mechanism of resveratrol in the treatment of diabetic kidney disease based on network pharmacology, molecular docking, and experimental validation.",
+    "year": "2023",
+    "doi": "10.1186/s12967-023-04233-0",
+    "abstract": "Diabetic kidney disease (DKD) has been the leading cause of chronic kidney disease in developed countries. Evidence of the benefits of resveratrol (RES) for the treatment of DKD is accumulating. However, comprehensive therapeutic targets and underlying mechanisms through which RES exerts its effects against DKD are limited. Drug targets of RES were obtained from Drugbank and SwissTargetPrediction Databases. Disease targets of DKD were obtained from DisGeNET, Genecards, and Therapeutic Target Database. Therapeutic targets for RES against DKD were identified by intersecting the drug targets and disease targets. GO functional enrichment analysis, KEGG pathway analysis, and disease association analysis were performed using the DAVID database and visualized by Cytoscape software. Molecular docking validation of the binding capacity between RES and targets was performed by UCSF Chimera software and SwissDock webserver. The high glucose (HG)-induced podocyte injury model, RT-qPCR, and western blot were used to verify the reliability of the effects of RES on target proteins. After the intersection of the 86 drug targets and 566 disease targets, 25 therapeutic targets for RES against DKD were obtained. And the target proteins were classified into 6 functional categories. A total of 11 cellular components terms and 27 diseases, and the top 20 enriched biological processes, molecular functions, and KEGG pathways potentially involved in the RES action against DKD were recorded. Molecular"
+   }
+  ]
+ }
+}

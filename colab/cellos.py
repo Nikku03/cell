@@ -207,6 +207,28 @@ class CellKernel:
         L.append("=" * 66)
         return "\n".join(L)
 
+    def lit(self, name, k=5):
+        """[LIT] the individual PubMed literature for a gene (grounded, cited). Fills the model's DARK genes from
+        focused single-gene studies — the knowledge high-throughput screens can't reach. QUALITATIVE (function,
+        interactions, phenotypes + DOIs), NOT the measured signatures strace/predict use. Cache: litmine.json."""
+        import os, json
+        if not hasattr(self, "_lit"):
+            p = "outputs/orphan/litmine.json"
+            self._lit = json.load(open(p)) if os.path.exists(p) else {}
+        rec = self._lit.get(name)
+        if not rec or not rec.get("papers"):
+            return f"lit {name}: not mined — run `python3 colab/litmine.py {name}` to fetch its PubMed literature."
+        i = self._pid(name)
+        dark = " (model calls this DARK — literature fills it)" if (i is not None and self.C.genes[i].get("dark")) else ""
+        L = [f"[LIT] {name}: {rec['n_papers']} PubMed papers{dark}   (source: PubMed — cite the DOIs)"]
+        for a in rec["papers"][:k]:
+            L.append(f"  {a['year']:>4}  {a['title'][:72]}")
+            if a["doi"]:
+                L.append(f"         doi:{a['doi']}")
+        L.append("  qualitative layer: grounded in these abstracts, not measured signatures (fills annotation, "
+                 "not the causal-prediction number).")
+        return "\n".join(L)
+
     def viability(self, name):
         """[FBA] TOP-DOWN survival prediction: does the cell still GROW after knocking this gene out? From
         objective-driven FBA on Human-GEM — maximise biomass (reproduce) subject to mass balance + enzyme capacity
@@ -556,6 +578,7 @@ class CellKernel:
   stat / df            whole-cell completeness dashboard (coverage of every layer)
   ps [context]         process table (genes) by scheduler priority (essentiality)
   man GENE             process documentation (role, segment, priority, interfaces)
+  lit GENE             the gene's PubMed literature (grounded+cited) — fills DARK genes
   top                  kernel threads (highest system-wide dependency)
   viability GENE       [FBA] top-down: does the cell still GROW after knockout? (objective+physics)
   strace GENE          [C] SIGKILL + measured downstream effect (Perturb-seq debugger)
@@ -586,6 +609,7 @@ class CellShell:
             if cmd in ("exit", "quit"): return "__EXIT__"
             if cmd in ("stat", "df"): return k.stat()
             if cmd == "viability": return k.viability(args[0])
+            if cmd == "lit": return k.lit(args[0])
             if cmd == "ps": return k.ps(context=args[0] if args else None)
             if cmd == "man": return k.man(args[0])
             if cmd == "top": return k.top()
@@ -621,6 +645,8 @@ DEMO = [
     "top",
     "# 2) documentation for one process (real data: role, segment, scheduler, interfaces)",
     "man TP53",
+    "# 2b) PubMed literature for a DARK gene — the knowledge screens can't reach (grounded + cited)",
+    "lit FNDC5",
     "# 3) THE DEBUGGER — SIGKILL a gene, watch the MEASURED downstream effect (interventional, not correlation)",
     "strace SF3B1",
     "# 4) THE DETECTIVE — recover the CAUSE from the fingerprint a knockout leaves (causal, self-consistency proof)",

@@ -27,6 +27,7 @@ def main():
         "help": "help", "stat": "stat", "top": "top",
         "viability lethal": "viability RAE1", "viability robust": "viability SLC22A1",
         "viability non-metabolic": "viability TP53",
+        "lit dark gene": "lit FNDC5", "lit unmined": "lit ZZZ",
         "man known": "man TP53", "man unknown": "man NOTAGENE",
         "strace in-screen": "strace SF3B1", "strace not-in-screen": "strace TP53",
         "whodunit in-screen": "whodunit SF3B1", "whodunit not-in-screen": "whodunit TP53",
@@ -87,6 +88,10 @@ def main():
     check("viability RAE1 -> LETHAL", "LETHAL" in k.viability("RAE1"))
     check("viability SLC22A1 -> SURVIVES", "SURVIVES" in k.viability("SLC22A1"))
     check("viability TP53 -> non-metabolic", "not in the metabolic model" in k.viability("TP53"))
+
+    # lit: PubMed literature for a dark gene, grounded + cited
+    lg = k.lit("FNDC5")
+    check("lit FNDC5 -> papers + DOI", "PubMed papers" in lg and "doi:" in lg)
 
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")
