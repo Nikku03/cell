@@ -42,6 +42,7 @@ ARTIFACTS = [
     "perturb_prioritizer.json", "cellformer.json",   # interventional prioritizer + transformer-style next-knockout prediction
     "epistasis.json",   # additive-vs-synergy test of combination perturbations (Norman 2019 doubles)
     "humap_validation.json", "humap_complexes.json",   # hu.MAP complexes: REJECTED as a coverage booster (r~0.09)
+    "edge_predict_validation.json",   # fixed-model edge types tested for knockout-predictivity: only complexes work
 ]
 
 

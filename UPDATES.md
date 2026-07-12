@@ -642,3 +642,29 @@ complexes, 8,671 genes) and combined interventional screens (gwps+RPE1+essential
 Lesson (same as the whole project): adding annotation data raised the metric but not the capability, caught by
 re-validating (predict r) instead of counting membership. The real lever for 55% isn't more complex annotation —
 it's more INTERVENTIONAL measurement, and the readily-available Perturb-seq screens are already folded in.
+
+## Can the fixed model's data raise the 55%? Tested every edge type — NO (only complexes predict)
+
+Reasonable idea: the fixed cell model has 90-95% descriptive coverage (PPI 191k, regulatory 612k, causal 60k,
+signaling, pathways, co-expression 99%, co-dependency 81%) — use it as prediction context to raise trustworthy
+coverage. Tested each edge type by leave-one-out (predict a measured gene's knockout effect from its neighbours of
+that type; r vs real):
+
+| relationship | genes | predict r |
+|---|---|---|
+| **complex (curated)** | 2,261 | **0.233** |
+| co-dependency | 7,149 | 0.094 |
+| PPI | 8,045 | 0.091 |
+| pathway (Reactome) | 5,893 | 0.064 |
+| co-expression | 8,524 | 0.063 |
+| regulatory (612k edges) | 8,640 | 0.034 |
+| causal (directed) | 4,602 | 0.032 |
+| signaling | 3,185 | 0.030 |
+
+**None predict knockout effects.** The layers that cover ~half the genome (regulatory, coexpr, PPI, pathway) sit at
+r=0.03-0.09 — the weak-tier floor. Only tightly-curated functional complexes predict (0.23), and they're already
+used. The reason is the project's through-line: **descriptive relationship ≠ causal effect similarity.** Two genes
+can be co-expressed, PPI-linked, in the same pathway, even regulate each other, and still have completely different
+knockout consequences. So the fixed model's 90-95% is DESCRIPTIVE completeness; it does not translate into causal
+PREDICTION. Trustworthy coverage stays **55%** — raising it needs interventional measurement, not more of the map
+we already have. (`outputs/orphan/edge_predict_validation.json`)
