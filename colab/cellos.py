@@ -322,12 +322,15 @@ class CellKernel:
         order = np.argsort(state)
         down = [(dbg["syms"][j], state[j]) for j in order[:k] if state[j] < 0][:8]
         up = [(dbg["syms"][j], state[j]) for j in order[::-1][:k] if state[j] > 0][:8]
-        mode = "MEASURED (exact)" if len(vecs) == 1 and "measured" in tags[0] else \
-               f"ADDITIVE of {len(vecs)} perturbations (epistasis NOT modelled)"
-        return "\n".join([
-            f"[C~] simulate  edit = {{ {', '.join(tags)} }}   -> resulting cell state [{mode}]",
-            f"  ↓ DOWN: " + ", ".join(f"{g}({v:+.1f})" for g, v in down),
-            f"  ↑ UP:   " + ", ".join(f"{g}({v:+.1f})" for g, v in up)])
+        single = len(vecs) == 1 and "measured" in tags[0]
+        mode = "MEASURED (exact)" if single else f"ADDITIVE of {len(vecs)} perturbations"
+        out = [f"[C~] simulate  edit = {{ {', '.join(tags)} }}   -> resulting cell state [{mode}]",
+               f"  ↓ DOWN: " + ", ".join(f"{g}({v:+.1f})" for g, v in down),
+               f"  ↑ UP:   " + ", ".join(f"{g}({v:+.1f})" for g, v in up)]
+        if not single:
+            out.append("  ⚠ additive gets the DIRECTION right (r=0.88 on Norman doubles) but misses ~54% of the "
+                       "magnitude; 36% of pairs are strongly synergistic. Trust the pattern, not the exact scale.")
+        return "\n".join(out)
 
     def cure(self, up=None, down=None, combo=2, k=6):
         """[C] FREE THE CELL — given a disease/corrupted state, search the perturbation whose knockout best REVERSES
@@ -365,6 +368,10 @@ class CellKernel:
             chosen.append(dbg["pgenes"][ib]); combined = combined + M[ib]
             lines.append(f"  +{step}: add kill {dbg['pgenes'][ib]}  -> combined reversal {cand[ib]:+.3f}  (gain {gain:+.3f})")
         lines.append(f"  => prescription: co-knockout [ {', '.join(chosen)} ]  reverses the state best.")
+        if len(chosen) > 1:
+            lines.append("  ⚠ combo reversal assumes additivity (r=0.88 direction, but ~54% magnitude residual on "
+                         "real doubles) — synergy could make the true effect larger or smaller. Confirm with a "
+                         "measured double before trusting the magnitude.")
         return "\n".join(lines)
 
     def predict(self, name, k=8):

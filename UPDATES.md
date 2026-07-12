@@ -586,3 +586,24 @@ AND can bend it. We had "see the code" (CellOS); added "bend it":
 Both tested (cellos_test): single-KO simulate is exact (== strace), combos are additive-and-flagged, cure returns a
 combination prescription. Same discipline as everything else — the reality-bending is real for measured single
 perturbations and an honestly-labelled approximation for combinations.
+
+## Epistasis: does the additive combo model hold? (Norman 2019 real doubles)
+
+Tested `simulate`/`cure`'s additive assumption against MEASURED double perturbations — Norman 2019 CRISPRa
+genetic-interaction map (K562: ~100 singles + 131 doubles), pseudobulked from 111k cells (`colab/epistasis.py`).
+For each double A+B, compared additive (delta_A + delta_B) to the real delta_AB.
+
+- **Additive predicts the real double at r = 0.884** — a strong FIRST-ORDER model (it gets the direction right).
+- It adds only **+0.05 over the best single** (r 0.83 → 0.88): the double is dominated by the stronger single.
+- **But mean epistasis residual = 54% of the double's magnitude**, and **47/131 pairs (36%) are strongly
+  non-additive** (>50% residual). So additive captures the PATTERN but misses the MAGNITUDE/synergy — and synergy
+  is exactly what combination therapy exploits.
+- Top synergy pairs are real biology: **DUSP9+MAPK1** (phosphatase + its ERK kinase), **CEBPE+KLF1** (two
+  differentiation TFs). Synergy concentrates around driver hubs (MAPK1, CEBPE, OSR2 recur) — but is **NOT
+  predictable from our static PPI/pathway annotations** (most synergistic pairs score `related=False`): it needs the
+  measured double.
+
+**Consequence, wired in honestly:** `simulate`/`cure` now flag every combination — "additive gets direction right
+(r=0.88) but misses ~54% magnitude; 36% of pairs strongly synergistic; trust the pattern, not the scale; confirm
+synergy with a measured double." So the reality-bending is a real first-order screen, honestly bounded: exact for
+single perturbations, directional-but-not-quantitative for combinations, and synergy remains a measure-it problem.

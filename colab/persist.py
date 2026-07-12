@@ -40,6 +40,7 @@ ARTIFACTS = [
     "struct_discovery_test.json",   # confound-controlled test: does a structural feature lift the HARD/discovery AUC
     "interface_discovery_test.json", "interface_pairs.json",   # fetched AF-Multimer interface vs discovery + Colab pair set
     "perturb_prioritizer.json", "cellformer.json",   # interventional prioritizer + transformer-style next-knockout prediction
+    "epistasis.json",   # additive-vs-synergy test of combination perturbations (Norman 2019 doubles)
 ]
 
 
