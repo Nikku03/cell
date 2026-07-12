@@ -148,6 +148,65 @@ class CellKernel:
                        f"{(g.get('proc') or '?')[:26]}")
         return "\n".join(out)
 
+    def stat(self):
+        """whole-cell completeness dashboard — coverage of every layer (df/htop for the cell). All counts real."""
+        import os, json
+        C = self.C; D = C.D; n = self.n
+
+        def gc(pred):
+            return sum(1 for g in C.genes if pred(g))
+
+        def line(label, k, extra=""):
+            return f"    {label:26} {k:6,} / {n:,}  {k/n:4.0%}   {extra}"
+        react = D.get("reactome", {}) or {}
+        in_path = len({m for ms in react.values() for m in ms if isinstance(m, int)})
+        enz = {m for ms in (D.get("met2enz", {}) or {}).values() for m in ms if isinstance(m, int)}
+        dbg = self._load_debugger()
+        measured = len(dbg["pgenes"]) if dbg else 0
+        cf = {}
+        p = f"{OUT_DIR}/cellformer.json" if (OUT_DIR := "outputs/orphan") else None
+        if p and os.path.exists(p):
+            cf = (json.load(open(p)) or {}).get("completeness", {})
+        L = []
+        L.append("=" * 66)
+        L.append("  CELL SYSTEM STATS  —  completeness of every layer")
+        L.append("=" * 66)
+        L.append(f"  GENOME: {n:,} genes (processes)   |   scheduler: {len(self.tfs):,} TFs")
+        L.append("  ── ANNOTATION (what each gene IS) ─────────────────────────────")
+        L.append(line("localization/segment", gc(lambda g: g.get("comp"))))
+        L.append(line("role / process", gc(lambda g: g.get("proc"))))
+        L.append(line("GO terms", len(D.get("go", {}) or {})))
+        L.append(line("domains (architecture)", len(getattr(C, "domains", {}) or {})))
+        L.append(line("constraint (LOEUF)", gc(lambda g: g.get("loeuf") is not None)))
+        L.append(line("pathway membership", gc(lambda g: g.get("path"))))
+        L.append(line("PTM sites", len(D.get("ptm", {}) or {})))
+        L.append(line("dark (no known function)", gc(lambda g: g.get("dark")), "<- the unknown"))
+        L.append("  ── NETWORK (control flow) ─────────────────────────────────────")
+        L.append(line("has PPI partner", len(C.ppi_adj)))
+        L.append(line("co-expression", len(D.get("coexpr", {}) or {})))
+        L.append(line("co-dependency", len(D.get("codep", {}) or {})))
+        L.append(f"    edges: PPI {len(D.get('ppi',[])):,}  |  regulatory {len(D.get('reg',[])):,}  |  "
+                 f"signaling {len(D.get('sig',[])):,}  |  causal(dir) {sum(len(v) for v in C.causal_out.values()):,}")
+        L.append(f"    synthetic-lethal pairs {len(D.get('sl',[])):,}  |  ligand-receptor {len(D.get('lr',[])):,}")
+        L.append("  ── MODULES ────────────────────────────────────────────────────")
+        L.append(f"    Reactome pathways {len(react):,}  (cover {in_path:,} genes, {in_path/n:.0%})")
+        L.append(f"    complexes {len(D.get('complexes',{})):,}  (cover {len(D.get('gene2cplx',{})):,} genes)")
+        L.append(f"    metabolism: {len(enz):,} enzymes mapped to reactions")
+        L.append("  ── QUANTITATIVE / PHARMA ──────────────────────────────────────")
+        L.append(line("protein abundance (copies)", len(D.get("ppm", {}) or {})))
+        L.append(line("cell-type expression", len(D.get("emask", {}) or {})))
+        L.append(f"    drugs {len(D.get('drugs',{})):,}")
+        L.append("  ── INTERVENTIONAL (the debugger — CAUSAL) ─────────────────────")
+        L.append(line("measured knockouts (mounted)", measured, f"({os.path.basename(PERTURB)})"))
+        if cf:
+            L.append(f"    genome-wide completeness: {cf.get('measured_debugger',0):,} measured + "
+                     f"{cf.get('predictable_complex_r0.23',0):,} predictable(good) + "
+                     f"{cf.get('predictable_weak_r0.05',0):,} weak + {cf.get('dark_no_context',0):,} dark")
+            L.append(f"    -> ANSWERS for {cf.get('answers_for_frac',0):.0%};  "
+                     f"TRUSTWORTHY for {cf.get('WELL_covered_frac',0):.0%} of the genome")
+        L.append("=" * 66)
+        return "\n".join(L)
+
     def man(self, name):
         """process documentation: what this gene 'does', where it runs, its priority, its interfaces."""
         i = self._pid(name)
@@ -470,6 +529,7 @@ class CellKernel:
         return "\n".join(out)
 
     HELP = """CellOS syscalls  ([C]=causal/interventional, [~]=correlational):
+  stat / df            whole-cell completeness dashboard (coverage of every layer)
   ps [context]         process table (genes) by scheduler priority (essentiality)
   man GENE             process documentation (role, segment, priority, interfaces)
   top                  kernel threads (highest system-wide dependency)
@@ -499,6 +559,7 @@ class CellShell:
         try:
             if cmd in ("help", "?"): return k.HELP
             if cmd in ("exit", "quit"): return "__EXIT__"
+            if cmd in ("stat", "df"): return k.stat()
             if cmd == "ps": return k.ps(context=args[0] if args else None)
             if cmd == "man": return k.man(args[0])
             if cmd == "top": return k.top()
@@ -525,6 +586,8 @@ class CellShell:
 DEMO = [
     "# --- CellOS: the cell as an operating system, booted on the real model ---",
     "help",
+    "# 0) whole-cell completeness — coverage of every layer (pathways, complexes, edges, drugs, debugger)",
+    "stat",
     "# 1) kernel threads — the processes the system cannot run without (essentiality = priority)",
     "top",
     "# 2) documentation for one process (real data: role, segment, scheduler, interfaces)",

@@ -24,7 +24,7 @@ def main():
     # ---------------------------------------------------------------- A) smoke + edge cases
     print("A) SMOKE TESTS (runs without crashing, returns output)")
     smoke = {
-        "help": "help", "top": "top",
+        "help": "help", "stat": "stat", "top": "top",
         "man known": "man TP53", "man unknown": "man NOTAGENE",
         "strace in-screen": "strace SF3B1", "strace not-in-screen": "strace TP53",
         "whodunit in-screen": "whodunit SF3B1", "whodunit not-in-screen": "whodunit TP53",

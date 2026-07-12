@@ -607,3 +607,20 @@ For each double A+B, compared additive (delta_A + delta_B) to the real delta_AB.
 (r=0.88) but misses ~54% magnitude; 36% of pairs strongly synergistic; trust the pattern, not the scale; confirm
 synergy with a measured double." So the reality-bending is a real first-order screen, honestly bounded: exact for
 single perturbations, directional-but-not-quantitative for combinations, and synergy remains a measure-it problem.
+
+## `stat` — whole-cell completeness dashboard
+
+Added a `stat`/`df` syscall to CellOS: a df/htop-style dashboard of how complete the cell model is, layer by layer
+(all counts real, from the model). Snapshot (16,509 genes):
+- ANNOTATION: localization/role/domains/LOEUF 100%, GO 99%, pathway membership 63%, PTM 51%, dark (no known
+  function) 30%.
+- NETWORK: 86% have a PPI partner; edges = PPI 191k, regulatory 612k, signaling 17k, causal(directed) 60k; SL
+  pairs 1,256; ligand-receptor 948; co-expression 99%, co-dependency 81%.
+- MODULES: 2,792 Reactome pathways (cover 64% of genes), 2,039 complexes (3,257 genes), 2,549 metabolic enzymes.
+- QUANTITATIVE/PHARMA: protein abundance 97%, cell-type expression 45%, 4,275 drugs.
+- INTERVENTIONAL (the debugger): 2,058 measured on the default essential screen (12%); genome-wide → 8,693
+  measured + 426 well-predictable + 5,121 weak + 2,269 dark = ANSWERS for 86%, TRUSTWORTHY for 55%.
+
+So "the complete cell" has near-total *descriptive* coverage (what each gene is, its pathways/complexes/edges) but
+the *causal/interventional* layer — the part that actually predicts what happens when you poke it — is the honest
+frontier: 55% trustworthy, and that's the number that matters.
