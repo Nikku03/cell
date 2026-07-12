@@ -668,3 +668,27 @@ can be co-expressed, PPI-linked, in the same pathway, even regulate each other, 
 knockout consequences. So the fixed model's 90-95% is DESCRIPTIVE completeness; it does not translate into causal
 PREDICTION. Trustworthy coverage stays **55%** — raising it needs interventional measurement, not more of the map
 we already have. (`outputs/orphan/edge_predict_validation.json`)
+
+## The software analogy, tested directly: the cell is ROBUST, software is BRITTLE
+
+Sharp challenge: in software, delete a component and everything connected to it breaks — so the dependency graph
+predicts the blast radius. Does the cell work that way? This is a DIFFERENT test than "do connected genes have
+similar effects" (that's interchangeability) — it's PROPAGATION: knock out A, do A's connections move? Tested on
+gwps: is a knockout's annotated targets/partners enriched among the genes that actually change (Mann-Whitney AUC)?
+
+| knock out A → do A's connections move? | AUC | in top-10% vs random |
+|---|---|---|
+| regulatory → targets | **0.499** | 10% vs 10% |
+| PPI partners | 0.516 | 12% vs 10% |
+
+**The analogy breaks.** A TF's targets change no more than random genes (0.50); physical partners barely (0.52). The
+reason is the deepest point of the whole "biology as software" thread: **the cell is ROBUST by evolutionary design**
+— redundancy, feedback, buffering absorb single-gene perturbations, so connected components usually do NOT fall
+apart. Software is brittle (no evolved redundancy), so a deleted function reliably breaks its callers. The ONE place
+the cell is software-like is a tightly-coupled functional COMPLEX (no redundancy: pull one subunit and the machine
+fails) — and complexes are exactly the only relationship that predicts knockout effects (r=0.23). Everywhere else,
+robustness severs the wiring-diagram → effect link.
+
+This is the unifying answer to the entire session: you can't predict a knockout's blast radius from the descriptive
+graph because the cell evolved specifically to survive having its components deleted. That is *why* it must be
+MEASURED (the debugger), not read (the map). (`outputs/orphan/propagation_test.json`)
