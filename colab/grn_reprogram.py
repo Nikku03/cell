@@ -48,7 +48,7 @@ def _auc(score, label):
     return float((ranks[label].sum() - len(pos) * (len(pos) + 1) / 2) / (len(pos) * len(neg)))
 
 
-def main(seeds=(0, 1, 2, 3, 4)):
+def main(seeds=(0, 1, 2, 3, 4), save=True):
     C = CompleteCell()
     g = GRN(C=C)
     incore = {int(x): k for k, x in enumerate(g.nodes)}          # global gene idx -> local
@@ -146,7 +146,8 @@ def main(seeds=(0, 1, 2, 3, 4)):
     out = {"n_tfs": len(tfs), "tfs": tfs, "hit_at_1": hit1, "median_rank_own": int(np.median(ranks)),
            "specificity_auc": spec_auc, "indirect_only_auc": indirect_auc, "n_indirect_program_genes": n_indirect,
            "matrix": S, "per_tf": per_tf, "direct_targets": direct, "seeds": list(seeds), "verdict": verdict}
-    json.dump(out, open(f"{os.path.dirname(__file__)}/../outputs/orphan/grn_reprogram.json", "w"), indent=1)
+    if save:
+        json.dump(out, open(f"{os.path.dirname(__file__)}/../outputs/orphan/grn_reprogram.json", "w"), indent=1)
     return out
 
 

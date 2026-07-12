@@ -116,7 +116,7 @@ def running_cell():
     import grn_reprogram
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
-        rp = grn_reprogram.main(seeds=(0, 1, 2))
+        rp = grn_reprogram.main(seeds=(0, 1, 2), save=False)   # don't clobber the committed 5-seed artifact
     line(b, rp["hit_at_1"] >= 8 and rp["specificity_auc"] > 0.9,
          "reprogram: master TFs induce own lineage (forward)", f"hit@1 {rp['hit_at_1']}/9, AUC {rp['specificity_auc']:.2f}")
     # essentiality null reproduces (from committed artifact — the full sweep is slow)
