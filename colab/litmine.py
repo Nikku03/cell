@@ -19,13 +19,14 @@ import xml.etree.ElementTree as ET
 
 OUT = "outputs/orphan"
 EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+TOOL = "&tool=litmine"                                # NCBI courtesy identifier
 # bias the query toward CAUSAL/functional papers, not mere mentions
 CAUSAL = "(function OR regulates OR knockout OR knockdown OR mechanism OR pathway OR mutation OR deficiency)"
 
 
 def search(gene, retmax=6):
     term = f'{gene}[Title/Abstract] AND {CAUSAL}'
-    url = f"{EUTILS}/esearch.fcgi?db=pubmed&term={urllib.parse.quote(term)}&retmax={retmax}&retmode=json&sort=relevance"
+    url = f"{EUTILS}/esearch.fcgi?db=pubmed&term={urllib.parse.quote(term)}&retmax={retmax}&retmode=json&sort=relevance{TOOL}"
     d = json.loads(urllib.request.urlopen(url, timeout=30).read())
     return d.get("esearchresult", {}).get("idlist", [])
 
@@ -33,7 +34,7 @@ def search(gene, retmax=6):
 def fetch(pmids):
     if not pmids:
         return []
-    url = f"{EUTILS}/efetch.fcgi?db=pubmed&id={','.join(pmids)}&retmode=xml"
+    url = f"{EUTILS}/efetch.fcgi?db=pubmed&id={','.join(pmids)}&retmode=xml{TOOL}"
     root = ET.fromstring(urllib.request.urlopen(url, timeout=45).read())
     out = []
     for art in root.findall(".//PubmedArticle"):
@@ -56,22 +57,46 @@ def mine(gene, retmax=6):
     return {"gene": gene, "n_papers": len(papers), "papers": papers}
 
 
-def mine_genes(genes, path=f"{OUT}/litmine.json"):
+def mine_genes(genes, path=f"{OUT}/litmine.json", save_every=25):
+    """resumable: skips genes already in litmine.json, saves every `save_every`, retries transient failures once."""
     db = json.load(open(path)) if os.path.exists(path) else {}
-    for g in genes:
-        if g in db:
-            continue
-        try:
-            db[g] = mine(g)
-            print(f"  {g:10} {db[g]['n_papers']} papers", flush=True)
-        except Exception as e:
-            print(f"  {g:10} FAILED: {str(e)[:60]}", flush=True)
+    todo = [g for g in genes if g not in db]
+    print(f"mining {len(todo)} genes ({len(db)} already done) -> {path}", flush=True)
+    done = 0
+    for g in todo:
+        for attempt in (1, 2):
+            try:
+                db[g] = mine(g); break
+            except Exception as e:
+                if attempt == 2:
+                    db[g] = {"gene": g, "n_papers": 0, "papers": [], "error": str(e)[:80]}
+                    print(f"  {g:10} FAILED: {str(e)[:50]}", flush=True)
+                else:
+                    time.sleep(3)                            # transient (rate limit / network) -> back off + retry
+        done += 1
+        if done % save_every == 0:
+            json.dump(db, open(path, "w"), indent=1)
+            print(f"  …{done}/{len(todo)} (saved; last: {g} {db[g]['n_papers']}p)", flush=True)
     json.dump(db, open(path, "w"), indent=1)
     return db
 
 
+def dark_lit_genes(min_pubs=5):
+    """dark-in-model genes with >= min_pubs PubMed papers (the literature-rich dark proteome), most-studied first."""
+    sys.path.insert(0, os.path.dirname(__file__))
+    from complete_cell import CompleteCell
+    C = CompleteCell()
+    cands = [(C.name[i], g.get("pubs") or 0) for i, g in enumerate(C.genes)
+             if g.get("dark") and isinstance(g.get("pubs"), (int, float)) and (g.get("pubs") or 0) >= min_pubs]
+    cands.sort(key=lambda x: -x[1])
+    return [nm for nm, _ in cands]
+
+
 if __name__ == "__main__":
-    # default batch: dark-in-model but literature-rich genes (function known to the field, not to our pipeline)
-    genes = sys.argv[1:] or ["FNDC5", "NPPB", "POSTN", "BMAL1", "DISC1", "SERPINB5", "CD82", "SHBG"]
+    if sys.argv[1:2] == ["--dark"]:                          # scale to the full literature-rich dark proteome
+        genes = dark_lit_genes(min_pubs=int(sys.argv[2]) if len(sys.argv) > 2 else 5)
+        print(f"selected {len(genes)} dark+literature genes", flush=True)
+    else:
+        genes = sys.argv[1:] or ["FNDC5", "NPPB", "POSTN", "BMAL1", "DISC1", "SERPINB5", "CD82", "SHBG"]
     db = mine_genes(genes)
-    print(f"\nlitmine.json now covers {len(db)} genes")
+    print(f"\nlitmine.json now covers {len(db)} genes", flush=True)
