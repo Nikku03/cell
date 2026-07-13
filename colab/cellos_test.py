@@ -30,6 +30,7 @@ def main():
         "boot bare": "boot", "boot knockout": "boot TP53", "boot off-core": "boot NOTAGENE",
         "assess 3-layer": "assess RAE1", "assess physics-only": "assess PFKL", "assess unknown": "assess NOTAGENE",
         "cellsim in-screen": "cellsim SF3B1", "cellsim off-screen": "cellsim TP53",
+        "coverage map": "coverage",
         "induce master TF": "induce GATA1", "reprogram alias": "reprogram MYOD1", "induce non-TF": "induce TTN",
         "lit dark gene": "lit FNDC5", "lit unmined": "lit ZZZ",
         "man known": "man TP53", "man unknown": "man NOTAGENE",

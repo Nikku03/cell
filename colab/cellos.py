@@ -305,6 +305,34 @@ class CellKernel:
                           f"  ── combined call: {call}   confidence: {conf}",
                           f"  coverage: {cover}.  (physics+data are blind in different places → together ~2x reach.)"])
 
+    def coverage(self):
+        """the honest whole-cell coverage map: '55%' is only the DEEPEST axis (predict the full knockout response,
+        data-limited); this counts every trustworthy answer the software gives — measured essentiality, response,
+        FBA viability, TF reprogramming, grounded literature — and the fraction with >=1 answer vs truly dark."""
+        import json, os
+        p = "outputs/orphan/coverage.json"
+        if not os.path.exists(p):
+            return "coverage: map not built yet (run colab/coverage.py)."
+        R = json.load(open(p)); N = R["genome"]
+        ax = R["axes"]
+        def row(label, d):
+            return f"  {label:<34}{d['n']:>8}{d['frac']*100:>8.1f}%   [{d['grade'].split()[0]}]"
+        L = [f"whole-cell coverage — {N:,} genes, every trustworthy answer counted (not just the deepest)",
+             f"  {'axis':<34}{'genes':>8}{'genome':>9}",
+             "  " + "-" * 60,
+             row("essentiality (measured DepMap)", ax["essentiality_measured"]),
+             row("RESPONSE prediction ← the 55%", ax["response_predictable_55pct"]) + "  data-limited ceiling",
+             row("viability (FBA physics)", ax["viability_physics_FBA"]),
+             row("reprogrammable (TF, forward 0.99)", ax["reprogrammable_TF"]),
+             row("documented (grounded literature)", ax["documented"]),
+             "  " + "-" * 60,
+             f"  {'≥1 TRUSTWORTHY ANSWER':<34}{R['union_any_trustworthy_answer']['n']:>8}"
+             f"{R['union_any_trustworthy_answer']['frac']*100:>8.1f}%   ← real reach",
+             f"  {'truly dark (nothing)':<34}{R['truly_dark']['n']:>8}{R['truly_dark']['frac']*100:>8.1f}%",
+             "  the deepest answer (full response) is stuck at 55% (needs new wet-lab screens); the SYSTEM's",
+             "  total reach is 99% because it answers many DIFFERENT trustworthy questions — 55% was never the whole story."]
+        return "\n".join(L)
+
     def cellsim(self, gene, frac=0.2, rank=60):
         """checkpoint-anchored simulation: reveal a fraction of a knockout's MEASURED response as data checkpoints,
         reconstruct the REST from the measured co-response structure. This is the honest 'top-down sim with data
@@ -763,6 +791,7 @@ class CellKernel:
 
     HELP = """CellOS syscalls  ([C]=causal/interventional, [~]=correlational):
   stat / df            whole-cell completeness dashboard (coverage of every layer)
+  coverage             honest coverage map: every trustworthy answer, not just the 55% deepest axis
   ps [context]         process table (genes) by scheduler priority (essentiality)
   man GENE             process documentation (role, segment, priority, interfaces)
   lit GENE             the gene's PubMed literature (grounded+cited) — fills DARK genes
@@ -799,6 +828,7 @@ class CellShell:
             if cmd in ("help", "?"): return k.HELP
             if cmd in ("exit", "quit"): return "__EXIT__"
             if cmd in ("stat", "df"): return k.stat()
+            if cmd == "coverage": return k.coverage()
             if cmd == "viability": return k.viability(args[0])
             if cmd == "assess": return k.assess(args[0])
             if cmd in ("boot", "exec", "run"): return k.boot(args[0] if args else None)

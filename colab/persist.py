@@ -51,6 +51,7 @@ ARTIFACTS = [
     "grn_reprogram.json",   # TF reprogramming: forcing a master TF ON induces its OWN lineage program (8/9, AUC 0.99) -- the FORWARD win vs the backward essentiality null -- 'induce' syscall
     "cellos_synthesis.json",   # top-down(FBA)+bottom-up(Perturb-seq) fusion: blind in different places -> router covers ~2x (4,082 genes, effective AUC 0.77 vs 0.71 single) -- 'assess' syscall
     "cellsim.json",   # checkpoint-anchored simulation: data anchors reconstruct a held-out KO response (r 0.42->0.50), mechanistic sim adds ~nothing (r0.01) -- 'cellsim' syscall
+    "coverage.json",   # honest whole-cell coverage map: response prediction 55% (deepest, data-limited), but >=1 trustworthy answer for 99.4% of the genome, only 0.6% truly dark -- 'coverage' syscall
 ]
 
 

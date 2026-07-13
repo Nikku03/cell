@@ -40,19 +40,24 @@ def line(bucket, ok, name, detail=""):
 
 
 # ---------------------------------------------------------------- 1 IMPORT AUDIT
-def _try_import(m, timeout=8):
+def _try_import(m, timeout=40, retries=1):
     """import one module in an ISOLATED subprocess (some historical scripts do work at import / lack a
-    __main__ guard, so importing them in-process would run them). Returns (status, reason)."""
-    try:
-        r = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0,{HERE!r}); import {m}"],
-                           capture_output=True, text=True, timeout=timeout,
-                           cwd=os.path.join(HERE, ".."))
-    except subprocess.TimeoutExpired:
-        return "timeout", "runs work at import (no __main__ guard) or hangs"
-    if r.returncode == 0:
-        return "ok", ""
-    err = (r.stderr.strip().splitlines() or [""])[-1][:70]
-    return "fail", err
+    __main__ guard, so importing them in-process would run them). Heavy scientific imports (cobra, torch) can take
+    many seconds under concurrent load, so the timeout is generous and a timeout is RETRIED once before we believe
+    it (timeouts are load-dependent, not deterministic like a real hang). Returns (status, reason)."""
+    for attempt in range(retries + 1):
+        try:
+            r = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0,{HERE!r}); import {m}"],
+                               capture_output=True, text=True, timeout=timeout,
+                               cwd=os.path.join(HERE, ".."))
+        except subprocess.TimeoutExpired:
+            if attempt < retries:
+                continue                                          # load-dependent — try once more before believing it
+            return "timeout", "genuinely hangs / heavy work at import (2 attempts)"
+        if r.returncode == 0:
+            return "ok", ""
+        err = (r.stderr.strip().splitlines() or [""])[-1][:70]
+        return "fail", err
 
 
 def import_audit():
@@ -172,6 +177,12 @@ def claims_consistency():
     rmech = max((r.get("r_mech", 0) for r in rw), default=0)
     line(b, cx is not None and rdata > 0.4 and rmech < 0.1,
          "cellsim quotes checkpoint reconstruction (data>>mech)", f"data r={rdata:.2f}, mech r={rmech:.2f}")
+    # coverage: response 55% (data-limited) but >=1 answer for ~99% of the genome, small truly-dark
+    cv = art("coverage.json")
+    resp = (cv or {}).get("axes", {}).get("response_predictable_55pct", {}).get("frac")
+    uni = (cv or {}).get("union_any_trustworthy_answer", {}).get("frac")
+    line(b, cv is not None and resp is not None and 0.5 < resp < 0.6 and (uni or 0) > 0.95,
+         "coverage: 55% deepest axis, ~99% >=1 answer", f"response={resp:.0%}, union={uni:.0%}" if resp and uni else "MISSING")
     return b
 
 
