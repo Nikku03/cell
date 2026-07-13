@@ -1438,3 +1438,21 @@ So this is the first science-run input that actually moved a metric. Folded it i
 `reason` engine (regenerated `reason.json` → AUC 0.86) and added a `loc GENE` syscall. Audit calibration check
 updated to require real dynamic range (ΔP>40pt) rather than a fixed top bucket. The ID backbone from the previous
 step is what made the join clean — reference data first, then the layer that uses it. (`localization.py`, `loc` syscall)
+
+## Other reasoning engines — reasoner_core is a factory, not one engine (disease engine added)
+
+reasoner_core reasons about gene essentiality (0.86); the same machinery works for ANY property with independent
+evidence lines + a ground truth. Built a SECOND engine to show it: **disease-gene reasoning** (truth: ndis>0, 4,933
+disease genes). It is a genuinely different axis — disease and essentiality overlap only 11% vs 9% base (nearly
+orthogonal). Lines: constraint, complex, hub, pleiotropy, localization; literature EXCLUDED (circular with disease
+databases).
+
+Honest result: **fused AUC 0.65** (beats best single 0.62, pleiotropy), calibrated P(disease) 22%→62% with
+agreement. It WORKS but is MODEST — far below essentiality's 0.86. The lesson: the reasoning PRINCIPLE generalizes
+to any axis, but engine QUALITY depends on whether strong independent lines exist for that axis. Essentiality has
+them (DepMap, Perturb-seq, FBA, localization → 0.86); disease-association is a harder axis where structural lines
+carry less (→ 0.65, useful as a calibrated triage prior, not a strong classifier). Added the `disease GENE` syscall.
+
+The current engine roster on the one core: essentiality (0.86), disease (0.65), pathway-position (literature 0.85–
+0.99), feedback-order (literature 0.85), mutation (variant×cell fusion), assess (physics+data router). Same
+principle, honestly different strengths. (`disease_reason.py`, `disease` syscall)

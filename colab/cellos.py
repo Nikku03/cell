@@ -405,6 +405,23 @@ class CellKernel:
                  "confidence calibrated 1%→67% (localization line added from the science-run protein layer).")
         return "\n".join(L)
 
+    def disease(self, name):
+        """a SECOND reasoning engine (disease_reason.py): how likely is this gene DISEASE-associated? Reasoned from
+        independent lines (constraint, complex, hub, pleiotropy, localization) — a DIFFERENT axis from essentiality
+        (they overlap only 11% vs 9%). HONEST: modest — fused AUC 0.65 (vs essentiality 0.86); useful as a CALIBRATED
+        PRIOR (P rises 22%→62% with agreement), not a strong classifier. Disease-association is a harder axis."""
+        import json, os
+        if not hasattr(self, "_dis"):
+            p = "outputs/orphan/disease_reason.json"
+            self._dis = json.load(open(p)).get("priors", {}) if os.path.exists(p) else {}
+        r = self._dis.get(name)
+        if not r or r.get("p_disease") is None:
+            return f"disease {name}: too few independent lines to reason a disease prior."
+        known = "  (already a known disease gene)" if r["known_disease"] else ""
+        return (f"disease {name}: {r['n_agree']}/{r['n_lines']} independent lines agree → "
+                f"calibrated P(disease-associated) ≈ {r['p_disease']:.0%}{known}\n"
+                f"  (a second reasoner_core engine; MODEST AUC 0.65 — a prior for triage, not a strong call)")
+
     def _localization(self):
         """lazily load the per-gene subcellular compartments (localization.json)."""
         if not hasattr(self, "_loc"):
@@ -1052,7 +1069,8 @@ class CellKernel:
   top                  kernel threads (highest system-wide dependency)
   viability GENE       [FBA] top-down: does the cell still GROW after knockout? (objective+physics)
   assess GENE          best-evidence essentiality: fuse measured + physics + data; confidence rises when they agree
-  reason GENE          REASON across independent lines to a conclusion, with calibrated confidence (AUC 0.80)
+  reason GENE          REASON essentiality across independent lines, calibrated confidence (AUC 0.86)
+  disease GENE         a 2nd reasoning engine: calibrated prior that a gene is disease-associated (modest, 0.65)
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1107,6 +1125,7 @@ class CellShell:
             if cmd in ("mutate", "variant"): return k.mutate(args)
             if cmd in ("level", "where"): return k.level(args[0])
             if cmd in ("loc", "compartment"): return k.loc(args[0])
+            if cmd in ("disease", "risk"): return k.disease(args[0])
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])

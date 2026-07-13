@@ -161,6 +161,7 @@ def main():
         check("level RELA -> feedback flagged", "FEEDBACK" in k.level("RELA"))
         check("loc TP53 -> nucleus", "Nucleus" in k.loc("TP53"))
         check("loc ALB -> secreted", "Secreted" in k.loc("ALB"))
+        check("disease BRCA1 -> calibrated prior", "P(disease" in k.disease("BRCA1"))
         check("level unknown -> abstain/none", "no pathway level" in k.level("ZZZ999") or "abstain" in k.level("ZZZ999"))
 
     # deadlock recovers the pathway
