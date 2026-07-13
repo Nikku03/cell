@@ -84,6 +84,21 @@ def _model_and_measured():
     return C, universe, k562
 
 
+def coverage_from_geneset(new_line, label):
+    """measure the NEW-gene coverage a screen's perturbed-gene SET adds vs K562 + the model universe.
+    Works from just a gene list (no matrix needed) — the COVERAGE question ('how much can we reach') only needs
+    which genes were perturbed, not their responses."""
+    C, universe, k562 = _model_and_measured()
+    N = len(C.genes)
+    in_model = new_line & universe
+    new = in_model - k562
+    before = len(k562 & universe); after = len((k562 | new_line) & universe)
+    print(f"COVERAGE {label}")
+    print(f"  perturbed genes: {len(new_line):,}   in model: {len(in_model):,}   NEW vs K562: {len(new):,}")
+    print(f"  measured response coverage: {before:,} ({before/N:.1%}) → {after:,} ({after/N:.1%})   (+{after-before:,})")
+    return {"NEW_genes": len(new), "measured_before": before, "measured_after": after, "genome": N}
+
+
 def integrate(h5ad):
     """measure the NEW-gene coverage a fetched screen adds against K562 + the model universe."""
     from cross_cell_line import load_screen
@@ -123,6 +138,9 @@ if __name__ == "__main__":
         download(a[1], a[2])
     elif a[:1] == ["--integrate"] and len(a) > 1:
         integrate(a[1])
+    elif a[:1] == ["--genelist"] and len(a) > 1:
+        genes = {l.strip() for l in open(a[1]) if l.strip()}
+        coverage_from_geneset(genes, os.path.basename(a[1]))
     else:
         # self-test: integrating RPE1 (the 2nd line we have) must report ~0 gain, matching cross_cell_line
         print("self-test — integrate RPE1 (expect 0 new genes):")

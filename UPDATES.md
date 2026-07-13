@@ -988,3 +988,30 @@ adds against K562 + the model universe. The coverage lift is COUNTED from the re
 — self-checked by integrating RPE1, which correctly reports 0 new genes (8,696 → 8,696), matching cross_cell_line.
 When a genome-wide screen in a complementary cell type is provided (primary T-cell / myeloid, 2025), one command
 integrates it and reports the honest lift. This is how "get other cell lines" becomes real coverage, not a promise.
+
+## Got Zhu 2025's data (the gene list) and broke 55% — before/after
+
+Fetched the Marson/Zhu 2025 CD4+ T-cell genome-scale Perturb-seq target library from the analysis repo
+(emdann/GWT_perturbseq_analysis_2025, `metadata/sgRNA_library_curated.csv`) and integrated the perturbed-gene set.
+The raw data is un-fetchable here (every S3 object is 16–170 GB; pseudobulk alone 44.5 GB vs 21 GB free) — but the
+COVERAGE question ("how much can we reach") only needs which genes were perturbed, not their responses.
+
+**BEFORE (K562 only) → AFTER (+ CD4+ T-cell screen):**
+
+| axis | before | after | gain |
+|---|---|---|---|
+| measured response coverage | 8,696 (52.7%) | **11,461 (69.4%)** | **+2,765 genes** |
+| trustworthy "55%" axis | 9,122 (55.3%) | **~11,887 (72.0%)** | **+16.7 pts** |
+
+Zhu targeted 12,783 genes (11,039 in our model); 8,274 were already K562-measured; **2,765 are genuinely NEW —
+T-cell-expressed genes K562 never reached** (A2M, ABCA1/2/3, ABCB1, immune/transporter genes, …). This is the
+FIRST real, non-faked movement of the ceiling, achieved exactly as predicted: new measured data in a complementary
+cell type reaching the genes K562 silences. `fetch_celltype_screen.py --genelist` reproduces it from the committed
+`zhu_targeted_genes.txt`.
+
+Honest caveats (in `zhu_coverage.json`): (1) this is the TARGETED set — an upper bound; the effectively-knocked-down
+set (pseudobulk `keep_effective_guides`) is slightly smaller. (2) COVERAGE is computed; the actual response
+PREDICTIONS on the new genes need the 44.5 GB matrix (Colab step, not run here). (3) These are T-cell-CONTEXT
+measurements — and given cross-line transfer is only r=0.19, they extend coverage IN the T-cell context: the honest
+frame is not "72% of the cell" but "we can now reach ~72% of the genome's knockout responses across K562 + T-cell
+contexts." The cell stays contextual; we just measured one more context.

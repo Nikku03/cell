@@ -53,6 +53,8 @@ ARTIFACTS = [
     "cellsim.json",   # checkpoint-anchored simulation: data anchors reconstruct a held-out KO response (r 0.42->0.50), mechanistic sim adds ~nothing (r0.01) -- 'cellsim' syscall
     "coverage.json",   # honest whole-cell coverage map: response prediction 55% (deepest, data-limited), but >=1 trustworthy answer for 99.4% of the genome, only 0.6% truly dark -- 'coverage' syscall
     "cross_cell_line.json",
+    "zhu_coverage.json",
+    "zhu_targeted_genes.txt",
     "celltype_screen_gain.json",   # payoff meter for a fetched complementary-cell-line screen: NEW measured genes it adds vs K562 (self-checked: RPE1 -> 0)   # K562 vs RPE1: RPE1 adds 0 new genes (essential-scoped); responses transfer only weakly (r0.19 vs 0.06) -> 55% is PER-CELL-LINE, knockout effects are context-specific
 ]
 
