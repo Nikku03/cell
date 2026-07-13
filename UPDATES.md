@@ -1421,3 +1421,20 @@ gaps (response prediction, kcat, essentiality — still "yet to come"). The one 
 `proteins.parquet` (20,431 proteins with subcellular localization + TM + domains), is 23 MB and exceeds the Drive
 connector's 10 MB download cap — needs a slimmer export (uniprot_id + localization + TM columns, or split) to
 ingest as a localization axis. (`id_map.py`, `id_map.parquet`)
+
+## New LAYER from the science run: subcellular localization — and it genuinely lifts reasoning
+
+The `proteins.parquet` upload (20,431 reviewed Swiss-Prot proteins) carried the one thing that was a genuinely new
+LAYER, not just plumbing: **subcellular localization**. `localization.py` parses UniProt compartment keywords,
+joins to the cell through the ID backbone, and — before trusting it — TESTS whether it adds signal:
+
+- **compartment for 100% of genes** (16,451), sanity-checked (TP53→Nucleus, SDHA→Mitochondrion, ALB→Secreted)
+- **it predicts essentiality** (non-circular: UniProt localization vs DepMap): Nucleus **19%** vs 9% base,
+  Mitochondrion 12%, Secreted **0.5%**, Membrane 3.7% — biologically right (core in, periphery out)
+- **it LIFTS the reasoning engine 0.799 → 0.858** (the localization line alone scores 0.73, near the previous best
+  single line 0.75); calibration now 1%→67% over 5 agreement buckets
+
+So this is the first science-run input that actually moved a metric. Folded it in as a 6th evidence line in the
+`reason` engine (regenerated `reason.json` → AUC 0.86) and added a `loc GENE` syscall. Audit calibration check
+updated to require real dynamic range (ΔP>40pt) rather than a fixed top bucket. The ID backbone from the previous
+step is what made the join clean — reference data first, then the layer that uses it. (`localization.py`, `loc` syscall)

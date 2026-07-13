@@ -5,28 +5,33 @@
   "fba": 0.6377533897167404,
   "loeuf": 0.5661267087895876,
   "complex": 0.7507757859566512,
-  "hub": 0.49895609251888495
+  "hub": 0.49895609251888495,
+  "loc": 0.7297341712364744
  },
- "convergence_auc": 0.7574024497731399,
- "weighted_reasoning_auc": 0.7987359501404515,
+ "convergence_auc": 0.7976498450968408,
+ "weighted_reasoning_auc": 0.8578014119671347,
  "best_single": 0.7507757859566512,
  "calibration": {
   "0": {
-   "n": 2062,
-   "p_essential": 0.1037827352085354
+   "n": 4696,
+   "p_essential": 0.012776831345826235
   },
   "1": {
-   "n": 1196,
-   "p_essential": 0.41555183946488294
+   "n": 4604,
+   "p_essential": 0.06233709817549957
   },
   "2": {
-   "n": 590,
-   "p_essential": 0.7627118644067796
+   "n": 2484,
+   "p_essential": 0.1972624798711755
   },
   "3": {
-   "n": 220,
-   "p_essential": 0.8772727272727273
+   "n": 975,
+   "p_essential": 0.4605128205128205
+  },
+  "4": {
+   "n": 230,
+   "p_essential": 0.6652173913043479
   }
  },
- "verdict": "REASONING WORKS: weighing independent lines by reliability predicts essentiality at AUC 0.80, beating the best single line (0.75); and the confidence is CALIBRATED \u2014 P(essential) rises 10%\u219288% with agreement. Reasoning across data gives a better AND trustworthy answer than any single datum."
+ "verdict": "REASONING WORKS: weighing independent lines by reliability predicts essentiality at AUC 0.86, beating the best single line (0.75); and the confidence is CALIBRATED \u2014 P(essential) rises 1%\u219267% with agreement. Reasoning across data gives a better AND trustworthy answer than any single datum."
 }

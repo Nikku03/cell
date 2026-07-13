@@ -372,6 +372,13 @@ class CellKernel:
         lines.append(("complex member", "structural", int(bool(inc)), "in a physical complex" if inc else "no complex"))
         od = len(C.causal_out.get(i, []) or [])
         lines.append(("network hub", "network", int(od >= 20), f"drives {od} genes"))
+        comps = self._localization().get(name)              # L6 localization (science-run layer)
+        if comps:
+            prim = comps[0]
+            if prim in ("Nucleus", "Mitochondrion"):
+                lines.append(("localization", "compartment", 1, f"{prim} (essential-leaning)"))
+            elif prim in ("Secreted", "Cell membrane", "Membrane"):
+                lines.append(("localization", "compartment", 0, f"{prim} (non-essential-leaning)"))
 
         nyes = sum(v for _, _, v, _ in lines); navail = len(lines)
         # calibrated confidence from the validated calibration curve
@@ -394,9 +401,28 @@ class CellKernel:
         L.append(f"  ── {nyes} of {navail} independent lines say essential")
         L.append(f"  CONCLUSION: {concl}   confidence {conf}"
                  + (f"  (calibrated P≈{pe:.0%} at this agreement)" if calib else ""))
-        L.append("  reasoning validated: weighing independent lines → AUC 0.80 > any single layer (0.75); "
-                 "confidence calibrated 10%→88%.")
+        L.append("  reasoning validated: weighing independent lines → AUC 0.86 > any single layer (0.75); "
+                 "confidence calibrated 1%→67% (localization line added from the science-run protein layer).")
         return "\n".join(L)
+
+    def _localization(self):
+        """lazily load the per-gene subcellular compartments (localization.json)."""
+        if not hasattr(self, "_loc"):
+            import json, os
+            p = "outputs/orphan/localization.json"
+            self._loc = json.load(open(p)).get("labels", {}) if os.path.exists(p) else {}
+        return self._loc
+
+    def loc(self, name):
+        """WHERE in the cell does this protein sit? subcellular compartment(s) from reviewed UniProt (the
+        science-run layer). Compartment carries essentiality signal (nuclear/mito enriched, secreted/membrane
+        depleted) and lifts the reason engine 0.80→0.86."""
+        comps = self._localization().get(name)
+        if not comps:
+            return f"loc {name}: no reviewed-UniProt subcellular annotation."
+        lean = ("essential-leaning" if comps[0] in ("Nucleus", "Mitochondrion")
+                else "non-essential-leaning" if comps[0] in ("Secreted", "Cell membrane", "Membrane") else "mixed")
+        return f"loc {name}: {', '.join(comps[:4])}  (primary {comps[0]}, {lean})"
 
     def mutate(self, args):
         """run the cell's reasoning WITH a mutation. Fuses the VARIANT layer (does it break the protein? —
@@ -1029,6 +1055,7 @@ class CellKernel:
   reason GENE          REASON across independent lines to a conclusion, with calibrated confidence (AUC 0.80)
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
+  loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
   needs                 the software's own bill of materials: what it still needs (DATA / METHOD / HARD)
   check ENZYME KCAT    put in a kcat; the cell sanity-checks it vs the flux it must carry — WEAK/one-sided hint (~70%)
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
@@ -1079,6 +1106,7 @@ class CellShell:
             if cmd == "whodunit": return k.whodunit(args[0])
             if cmd in ("mutate", "variant"): return k.mutate(args)
             if cmd in ("level", "where"): return k.level(args[0])
+            if cmd in ("loc", "compartment"): return k.loc(args[0])
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])

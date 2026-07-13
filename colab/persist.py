@@ -64,7 +64,8 @@ ARTIFACTS = [
     "cell_levels.json",
     "needs.json",
     "feedback_order.json",
-    "id_map.parquet", "id_map_summary.json",  # canonical join backbone from the science reference tables (symbol/ensembl/uniprot/entrez + Human-GEM subsystem); 99% uniprot/entrez coverage         # answer to "can the HARD feedback-module level be predicted?" YES: topology fails (-0.39) but literature predicts the forward order (+0.85) -- reclassifies HARD->DATA                  # the software's own bill of materials: what it still needs (6/9 layers DATA-limited, 1 HARD) -- the 'needs' syscall            # the software's COMPLETED per-gene pathway-level table (tier-1 metabolic step + tier-2 signaling tier); 46% of membership genes get a trustworthy level, rest flagged (context-dependent/feedback) or abstained -- served by the 'level' syscall
+    "id_map.parquet", "id_map_summary.json",
+    "localization.json",           # NEW LAYER from the science run: subcellular compartment (UniProt) for 100% of genes; predicts essentiality (nuclear/mito enriched, secreted depleted) and LIFTS reason 0.80->0.86 -- the loc syscall + 6th reason line  # canonical join backbone from the science reference tables (symbol/ensembl/uniprot/entrez + Human-GEM subsystem); 99% uniprot/entrez coverage         # answer to "can the HARD feedback-module level be predicted?" YES: topology fails (-0.39) but literature predicts the forward order (+0.85) -- reclassifies HARD->DATA                  # the software's own bill of materials: what it still needs (6/9 layers DATA-limited, 1 HARD) -- the 'needs' syscall            # the software's COMPLETED per-gene pathway-level table (tier-1 metabolic step + tier-2 signaling tier); 46% of membership genes get a trustworthy level, rest flagged (context-dependent/feedback) or abstained -- served by the 'level' syscall
     "biochem_limit.json",
     "kcat_flag.json",
     "kcat_verify.json",

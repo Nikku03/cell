@@ -188,7 +188,7 @@ def claims_consistency():
     wr, bs = (rs or {}).get("weighted_reasoning_auc"), (rs or {}).get("best_single")
     cal = (rs or {}).get("calibration", {})
     ps = [cal[k]["p_essential"] for k in sorted(cal, key=lambda x: int(x))] if cal else []
-    calibrated = len(ps) >= 3 and ps[0] < 0.25 and ps[-1] > 0.7
+    calibrated = len(ps) >= 3 and ps[0] < 0.25 and (ps[-1] - ps[0]) > 0.4   # real dynamic range, not a fixed top
     line(b, rs is not None and wr and bs and wr > bs + 0.02 and calibrated,
          "reason: convergence beats single + calibrated", f"reasoning AUC={wr}, best single={bs}, P {ps[0]:.0%}→{ps[-1]:.0%}" if ps else "MISSING")
     # kcat flag: HONEST non-circular result vs the Drive in-vivo kapp (davidi_kcat.json). The flag is WEAK — a

@@ -39,7 +39,7 @@ def evidence_lines(C):
     """per-gene dict of independent essential-votes (value in {0,1} or nan if the line is unavailable)."""
     import cellos
     N = len(C.genes)
-    lines = {k: np.full(N, np.nan) for k in ("shock", "fba", "loeuf", "complex", "hub")}
+    lines = {k: np.full(N, np.nan) for k in ("shock", "fba", "loeuf", "complex", "hub", "loc")}
 
     # L1 Perturb-seq shock percentile
     dbg = cellos.CellKernel(quiet=True)._load_debugger()
@@ -69,6 +69,19 @@ def evidence_lines(C):
         lines["complex"][i] = float(i in cplx_genes)
         od = len(C.causal_out.get(i, []) or [])
         lines["hub"][i] = float(od >= 20)
+    # L6 localization (science-run layer): nuclear/mito lean essential; secreted/membrane lean non-essential
+    p = f"{OUT}/localization.json"
+    if os.path.exists(p):
+        loc = json.load(open(p)).get("labels", {})
+        ENR, DEP = {"Nucleus", "Mitochondrion"}, {"Secreted", "Cell membrane", "Membrane"}
+        for i in range(N):
+            comps = loc.get(C.genes[i].get("name"))
+            if comps:
+                prim = comps[0]
+                if prim in ENR:
+                    lines["loc"][i] = 1.0
+                elif prim in DEP:
+                    lines["loc"][i] = 0.0
     return lines
 
 

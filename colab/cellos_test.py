@@ -159,6 +159,8 @@ def main():
     if _os2.path.exists("outputs/orphan/cell_levels.json"):
         check("level FASN -> metabolic step", "METABOLIC" in k.level("FASN"))
         check("level RELA -> feedback flagged", "FEEDBACK" in k.level("RELA"))
+        check("loc TP53 -> nucleus", "Nucleus" in k.loc("TP53"))
+        check("loc ALB -> secreted", "Secreted" in k.loc("ALB"))
         check("level unknown -> abstain/none", "no pathway level" in k.level("ZZZ999") or "abstain" in k.level("ZZZ999"))
 
     # deadlock recovers the pathway
