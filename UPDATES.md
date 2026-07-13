@@ -1456,3 +1456,21 @@ carry less (→ 0.65, useful as a calibrated triage prior, not a strong classifi
 The current engine roster on the one core: essentiality (0.86), disease (0.65), pathway-position (literature 0.85–
 0.99), feedback-order (literature 0.85), mutation (variant×cell fusion), assess (physics+data router). Same
 principle, honestly different strengths. (`disease_reason.py`, `disease` syscall)
+
+## Checked the network/annotation batch (complexes, pathways) — honest null; STRING PPI pending
+
+Fifth science-run batch: complexes/complex_members (Complex Portal EBI, 2,498 complexes), pathways/
+pathway_participants (Reactome release 97, 2,928 pathways, 178k participations), string_ppi. Checked whether they
+IMPROVE anything before integrating:
+
+- **Complex Portal**: high-quality curated, but REDUNDANT with our existing complex data — swapping it into the
+  reasoning engine's complex line moves nothing (line AUC 0.751→0.748, fused reason 0.858→0.857, Δ −0.000). Adds
+  only 145 genes over the current 3,257. No integration — it doesn't improve the model.
+- **Reactome-97 pathways/participants**: a coverage REFRESH (10,176 participants vs current 10,489, +28 new genes),
+  plus a pathway parent-hierarchy we didn't have (enables future pathway drill-down, but closes no current gap).
+- Kept both as current-version, provenanced reference tables in science_data/; no claimed metric improvement.
+
+- **string_ppi.parquet (11.3 MB)**: the one that could genuinely matter — STRING confidence-scored PPIs could
+  expand the network/link layer beyond our current PPI. It's over the connector's 10 MB download cap; needs a
+  direct upload (or a confidence-filtered slice, e.g. combined_score ≥ 700) to test whether it lifts link
+  prediction or the complex/hub lines. Honest so far: 4 of 5 checked, redundant; the potentially-useful 1 is pending.
