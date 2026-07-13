@@ -58,6 +58,7 @@ ARTIFACTS = [
     "reason.json",
     "reason_mutation_demo.json",   # fuse variant-reasoning x cell-dependency on a real panel (TP53 R175H/P72R, MLH1, HBB sickle) -- 'mutate' syscall
     "reason_reactions.json",       # the reasoning PRINCIPLE (reasoner_core) applied to REACTIONS: transfers mechanically, but value is substrate-dependent (indep lines reason to only 0.66 vs FBA truth; genes converge, reactions don't)
+    "pathway_position.json",       # NO-measured-layer property (a protein's LEVEL in a pathway): two independent textbook sources (KEGG topology + PubMed literature) cross-verify + fill gaps -> glycolysis 0.99/0.87, TCA 0.32/0.93, fused 0.99/0.90
     "biochem_limit.json",
     "kcat_flag.json",
     "kcat_verify.json",

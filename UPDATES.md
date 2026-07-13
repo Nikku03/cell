@@ -1254,3 +1254,29 @@ Also fixed a latent honesty bug in the core surfaced by this test: a flat near-z
 the monotonicity check via its ±0.02 tolerance. The verdict now requires real dynamic range (ΔP≥15 points) before
 claiming "calibrated" — the gene case still passes (ΔP=78), the weak reaction case correctly does not.
 (`reasoner_core.py`, `reason_reactions.py`, `reason_reactions.json`)
+
+## Textbook-style reasoning for a property with NO measured layer — a protein's LEVEL in a pathway
+
+We know a protein's pathway membership but often not its LEVEL (step 1 vs step 9), and no dataset gives this
+per-protein. So we go textbook: collect little bits from INDEPENDENT sources and reason them together, exactly
+like the gene case. Two genuinely independent modalities, neither reading the answer:
+- **KEGG topology** (curated stoichiometry): BFS depth of each enzyme's product compound from the pathway entry
+  compound, on the KEGG reaction graph — the order EMERGES from substrate→product edges.
+- **PubMed literature** (the textbook/citation gradient): per enzyme, co-mention with the pathway ENTRY metabolite
+  vs its EXIT metabolite (early enzymes co-cite the substrate, late ones the product) via NCBI eutils counts.
+
+Ground truth = textbook step order (uncontroversial), used only to score. Result (`pathway_position.json`):
+
+| pathway | KEGG topology | literature | fused | note |
+|---|---|---|---|---|
+| glycolysis (10) | **+0.99** | +0.87 | **+0.99** | both independent sources recover the order → cross-verified |
+| TCA cycle (8) | +0.32 | **+0.93** | +0.90 | cyclic: KEGG topology breaks; literature is the robust generalist |
+
+**Honest read — same shape as the gene/reaction findings.** It works, but the value is **coverage + independent
+verification, not a fusion ranking-lift**: fusion does not out-rank the best single source (mean 0.95 vs 0.96).
+What it buys is (1) **cross-verification** — two totally different sources (a curated reaction graph and citation
+counts) independently arrive at the same order, so you can trust it; and (2) **coverage** — where one source is
+blind, the other fills it (PKM is missing from the KEGG topology parse but literature places it last; the whole
+cyclic TCA defeats topology but literature still gets 0.93). Each source has a blind spot; reasoning across them
+buys trustworthy breadth. This is the "no-layer, go-textbook" case: sum up small independent clues, and where they
+agree, trust the answer. (`pathway_position.py`)
