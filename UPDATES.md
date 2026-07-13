@@ -1622,3 +1622,29 @@ Net: pointing the machinery at the unknowns yields ONE validated new discovery e
 enrichment) plus a tractable-target derivative, with the disease axis honestly weak and dark-gene function honestly
 null. The discipline is unchanged — validate before claiming, flag the nulls, and don't fake a number the data won't
 support. Served by the `discover` syscall (`discover selective` for the ranked list).
+
+## causal_reach — "remove any piece and calculate its effect": how far does it actually reach? (an honest limit)
+
+The user's frame: the cell map is a CENSUS (who exists, who lives where, whose family is whose), but cause-and-effect —
+remove any piece and compute the consequence — needs the *behavioural/surveillance* layer. This test quantifies exactly
+how far the census alone carries toward that goal. For measured knockouts (Perturb-seq = ground-truth "removed this
+piece, recorded the neighbourhood"), predict the effect from STRUCTURE ALONE (STRING random-walk propagation, the gene's
+own measurement held out) and score predicted-vs-measured in shells at network distance 1/2/3 from the removed piece.
+
+- **Whole-field Spearman +0.020** (all reached nodes) — reproduces biosim's positive number exactly, confirming the
+  pipeline. But this is only the DISTANCE ENVELOPE: "closer to the removed piece = more affected, on average" — trivially
+  true, and not "the effect."
+- **Within-shell (envelope removed): NULL at every distance.** 1-hop lift −0.022, 2-hop −0.050, 3-hop −0.101 vs a
+  random-source baseline. The larger 2-hop (23-gene) and 3-hop (55-gene) shells are null too, so it is not a
+  small-sample artifact. Structure propagation cannot rank WHICH pieces inside a neighbourhood actually fire.
+- **Structure-only cause screen** (the "eliminate + select candidates" direction, run on the network): near-chance —
+  true cause in the top 10% only 14% of the time, median fractional rank 0.565 (chance 0.50).
+
+**Conclusion (the sharpest form of the structure-vs-dynamics split):** the MAP is done and it is powerful for what a map
+is (who exists, who neighbours whom, which module sits where — biosim's blast radius is real for tight complexes, but
+coarse). It CANNOT compute a removal's effect. Genuine remove-and-calculate lives entirely in the INTERVENTION DATA: for
+the ~2,000 pieces measured (Perturb-seq) the effect is known, and the only engines that work on cause-and-effect
+(strace = direct observation; whodunit/diagnose = the measured co-dependency fingerprint) stand on that measurement, NOT
+on the census. So the bottleneck to "remove ANY piece and calculate its effect" is SURVEILLANCE — measured interventions
+across more pieces and conditions — not more census. More census (localization, PPI, complexes) refines the map; only
+more interventions extend the causal reach. (causal_reach.py → causal_reach.json)
