@@ -1165,3 +1165,18 @@ earlier over-cautious framing that it could only lower-bound it. Honest boundary
 a measurable operating rate (269 of 2,549 in this condition) and not far below saturation; idle enzymes and the
 low-saturation tail (26%) stay under-determined (loose bound only). Non-circular: the flux is kcat-independent
 stoichiometric FBA ÷ measured abundance. (`kcat_verify.json` → kapp_prediction)
+
+## How much flux data / the flag base vs actual kcat (fba_flux_coverage + flag_base_vs_kcat)
+
+Ran the real Human-GEM FBA (12,931 reactions, growth 124.9). Flux data is SPARSE per state: only 1,149 reactions
+(9%) carry flux at the WT optimum; 736 distinct enzyme genes carry flux (26% of 2,848 metabolic genes); ~269 of
+those also have measured abundance → an operating rate; 46 also have a measured kcat. So the "running cell measures
+/ flags kcat" instrument reaches ~736 enzymes PER CONDITION — an enzyme idle in the current state gives no flux,
+hence nothing to flag. That sparsity is the ceiling: you can only read the kcat of a reaction the cell is using.
+
+Flag base = operating rate = FBA flux ÷ measured abundance; the software flags kcat < base as impossible. Against
+the 46 measured kcats: the base sits BELOW the actual kcat 100% of the time (never false-flags a real value), with
+headroom (actual/base) median 2.5x (p10 1.1x, p90 12.5x). So the flag line is drawn at ~40% of the true kcat, and
+the real value sits a median 2.5x above it — tight for saturated enzymes (CAD 1.1x, CS 1.5x), loose for under-used
+ones (LDHA 11x, ARG1 16x). The headroom spread IS the saturation, which is why the bound never crosses a real value
+yet only PREDICTS kcat tightly where the enzyme runs near capacity. (`fba_flux_coverage.json`, `flag_base_vs_kcat.json`)
