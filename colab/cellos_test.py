@@ -154,6 +154,13 @@ def main():
         check("check passes fast kcat", "CONSISTENT" in k.check(_ez, _rate * 1000), f"({_ez})")
     check("check no-kapp enzyme handled", "no independent flux-derived kapp" in k.check("TP53", 5))
 
+    # level: pathway position labels the software completed (metabolic step / signaling tier / feedback / abstain)
+    import os as _os2
+    if _os2.path.exists("outputs/orphan/cell_levels.json"):
+        check("level PKM -> metabolic step", "METABOLIC" in k.level("PKM"))
+        check("level RELA -> feedback flagged", "FEEDBACK" in k.level("RELA"))
+        check("level unknown -> abstain/none", "no pathway level" in k.level("ZZZ999") or "abstain" in k.level("ZZZ999"))
+
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")
     check("deadlock FANCI -> Fanconi pathway", "FANCD2" in dl and "FANCA" in dl, "contains FANCD2/FANCA")

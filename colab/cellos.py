@@ -427,6 +427,33 @@ class CellKernel:
             f"     joint confidence: {o['joint_confidence']}",
             "  (fuses two validated reasoners; essentiality is a cell-FITNESS lens, not pathogenicity — regimes named)"])
 
+    def level(self, name):
+        """WHERE in its pathway does this gene act? metabolic STEP (tier-1, ordered substrate chain) or signaling
+        upstream→downstream TIER (tier-2, SIGNOR directed graph + SCC feedback handling). Honest by construction:
+        genes in a feedback loop, or whose level differs across pathways, are FLAGGED — not given a fake number.
+        (cell_levels.py: completed a trustworthy level for ~46% of the 10.5k pathway-membership genes.)"""
+        import json, os
+        if not hasattr(self, "_levels"):
+            p = "outputs/orphan/cell_levels.json"
+            self._levels = json.load(open(p)).get("labels", {}) if os.path.exists(p) else {}
+        r = self._levels.get(name)
+        if not r:
+            return f"level {name}: not a pathway-membership gene in the map — no pathway level to give."
+        st = r["status"]
+        if st == "metabolic-step":
+            return (f"level {name}: METABOLIC — {r['detail']} in {r['pathway']} "
+                    f"({r['bucket']}, level {r['level']}) — an ordered substrate chain  [{r['source']}]")
+        if st == "signaling-tier":
+            return (f"level {name}: SIGNALING {r['bucket'].upper()} — {r['detail']}; e.g. {r['pathway']}  "
+                    f"[{r['source']}]")
+        if st == "context-dependent":
+            return (f"level {name}: CONTEXT-DEPENDENT — {r['detail']}. No single level; it depends which pathway "
+                    f"you mean (a hub acting at different points).")
+        if st == "feedback-module":
+            return (f"level {name}: FEEDBACK MODULE — {r['detail']} (e.g. {r['pathway']}). Mutually-regulating "
+                    f"genes have no upstream/downstream — the honest answer is 'a loop', not a rank.")
+        return f"level {name}: pathway member but no orderable context — abstaining (no trustworthy level)."
+
     def _pathway_decoder(self):
         """lazily load the co-dependency matrix + pathway labels for data-driven pathway decoding."""
         if getattr(self, "_pwd", None) is None:
@@ -984,6 +1011,7 @@ class CellKernel:
   assess GENE          best-evidence essentiality: fuse measured + physics + data; confidence rises when they agree
   reason GENE          REASON across independent lines to a conclusion, with calibrated confidence (AUC 0.80)
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
+  level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   check ENZYME KCAT    put in a kcat; the cell sanity-checks it vs the flux it must carry — WEAK/one-sided hint (~70%)
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
   induce TF [TF..]     REPROGRAM: force master TF(s) ON, run forward, watch the lineage program light up
@@ -1032,6 +1060,7 @@ class CellShell:
             if cmd == "predict": return k.predict(args[0])
             if cmd == "whodunit": return k.whodunit(args[0])
             if cmd in ("mutate", "variant"): return k.mutate(args)
+            if cmd in ("level", "where"): return k.level(args[0])
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
             if cmd == "lint": return k.lint(line.split(" ", 1)[1].strip().strip('"'))

@@ -1306,3 +1306,25 @@ So the answer to "label all pathway-membership genes with a level": metabolism i
 but signaling is a control system with loops — **level is only partially definable (~half), and the software says
 so** (feed-forward tier / feedback module / no-context) instead of fabricating a number. Same principle, same
 honesty: reason from the wiring where it's ordered, abstain where the biology loops. (`pathway_tier.py`)
+
+## The software completes the pathway-level labeling itself (`cell_levels` + `level` syscall)
+
+Handed the software the new machinery (tier-1 metabolic position + tier-2 signaling tier) and let it label the
+whole cell, completing what it honestly can and abstaining where it can't. `cell_levels.py` runs both labelers at
+scale into one per-gene table, served by the `level GENE` syscall. Whole-cell result (`cell_levels.json`):
+
+- **metabolic step level:** 18 (the validated glycolysis/TCA enzymes; scaling tier-1 to all KEGG maps is the
+  remaining network pass)
+- **signaling upstream→downstream tier:** 4,787 (feed-forward, trustworthy)
+- **context-dependent (flagged):** 160 — a hub whose level DIFFERS across pathways gets no single number
+- **feedback module (flagged):** 329 — mutually-regulating, no linear level
+- **no orderable context (abstain):** 5,196
+- → **a trustworthy level for ~46% of the 10.5k membership genes; the rest it flags or abstains on.**
+
+A real honesty fix surfaced here: the first pass picked each gene's level from its *smallest* pathway, which gave
+a pathway-LOCAL position — so CASP3 (a downstream executioner caspase) came out "upstream" because it's at the top
+of the micro-pathway "CASP5-mediated substrate cleavage." A gene's level is **pathway-relative**. Fixed to average
+across all of a gene's pathways and flag high-variance genes as context-dependent: now `level CASP3` → "context-
+dependent (varies across 18 pathways)", `level MAPK1` → "signaling midstream ±0.25", `level PKM` → "metabolic step
+10/10 glycolysis", `level RELA` → "feedback module — no linear level". The software says WHERE it can place a gene,
+and where the concept of a single level breaks down. (`cell_levels.py`, `level` syscall)
