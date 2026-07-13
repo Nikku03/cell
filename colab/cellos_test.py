@@ -157,7 +157,7 @@ def main():
     # level: pathway position labels the software completed (metabolic step / signaling tier / feedback / abstain)
     import os as _os2
     if _os2.path.exists("outputs/orphan/cell_levels.json"):
-        check("level PKM -> metabolic step", "METABOLIC" in k.level("PKM"))
+        check("level FASN -> metabolic step", "METABOLIC" in k.level("FASN"))
         check("level RELA -> feedback flagged", "FEEDBACK" in k.level("RELA"))
         check("level unknown -> abstain/none", "no pathway level" in k.level("ZZZ999") or "abstain" in k.level("ZZZ999"))
 

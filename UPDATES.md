@@ -1328,3 +1328,32 @@ across all of a gene's pathways and flag high-variance genes as context-dependen
 dependent (varies across 18 pathways)", `level MAPK1` → "signaling midstream ±0.25", `level PKM` → "metabolic step
 10/10 glycolysis", `level RELA` → "feedback module — no linear level". The software says WHERE it can place a gene,
 and where the concept of a single level breaks down. (`cell_levels.py`, `level` syscall)
+
+## Scaled tier-1 to all KEGG metabolic maps — the difference
+
+Scaled the metabolic step-level from the 2 validated pathways to ALL 92 human KEGG metabolic maps
+(`metabolic_levels.py`): auto-detect each map's entry compounds (no hardcoded roots), SCC-condense to survive
+metabolic cycles, longest-path rank → per-enzyme step. Validation holds: glycolysis Spearman **0.90** (TCA −0.74,
+cyclic → flagged, honest). Then re-ran the whole-cell labeling.
+
+**The difference (`cell_levels.json`), metabolic step level: 18 → 746:**
+
+| | before scaling | after |
+|---|---|---|
+| metabolic step (KEGG chains) | 18 | **577** |
+| metabolic cycle (flagged) | — | 169 |
+| signaling tier | 4,787 | 4,513 |
+| **trustworthy level total** | ~4,800 | **5,259** |
+
+Two honest calibrations that fell out of doing it at scale:
+- **It's ~750 metabolic enzymes, not ~2,500.** Only enzymes sitting in an *ordered* KEGG reaction chain get a
+  placeable step; transporters, isozymes, and endpoint enzymes don't. Earlier "~2,500" was the count of metabolic
+  *genes*; the count with a real step level is ~750. (Of 3,773 raw KEGG symbols, only 772 are actual cell genes —
+  the rest were KEGG aliases/outdated names, dropped.)
+- **Metabolism is a small slice of the labelable genome.** Signaling tier-2 (4,513) still dominates; scaling tier-1
+  added ~460 net trustworthy levels. The cell's "levels" live mostly in the regulatory network, not the metabolic
+  pipeline.
+
+Now `level FASN` → metabolic-step downstream (fatty-acid synthesis), `level CS` → upstream (TCA entry), `level PFKL`
+→ midstream (glycolysis). The `level` syscall serves all 5,259 completed levels; the rest stays honestly flagged or
+abstained. (`metabolic_levels.py`, `cell_levels.json`)

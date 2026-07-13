@@ -431,7 +431,8 @@ class CellKernel:
         """WHERE in its pathway does this gene act? metabolic STEP (tier-1, ordered substrate chain) or signaling
         upstream→downstream TIER (tier-2, SIGNOR directed graph + SCC feedback handling). Honest by construction:
         genes in a feedback loop, or whose level differs across pathways, are FLAGGED — not given a fake number.
-        (cell_levels.py: completed a trustworthy level for ~46% of the 10.5k pathway-membership genes.)"""
+        (cell_levels.py: ~5,300 genes get a trustworthy level — ~750 metabolic KEGG steps + ~4,500 signaling
+        tiers — the rest flagged context-dependent/feedback or abstained.)"""
         import json, os
         if not hasattr(self, "_levels"):
             p = "outputs/orphan/cell_levels.json"

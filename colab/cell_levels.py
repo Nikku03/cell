@@ -31,20 +31,38 @@ def build():
 
     labels = {}     # gene name -> record
 
-    # ---- tier-1: metabolic step levels from the validated pathway_position.json ----
-    pp = json.load(open(f"{OUT}/pathway_position.json")).get("pathways", {})
-    n_metab = 0
-    for pname, r in pp.items():
-        rows = r.get("per_enzyme", [])
-        n = len(rows)
-        for row in rows:
-            fp = row.get("fused_pos")
-            if fp is None:
+    # ---- tier-1: metabolic step levels, SCALED across all KEGG metabolic maps (metabolic_levels.py) ----
+    n_metab = n_metab_cyc = n_metab_ctx = 0
+    ml_path = f"{OUT}/metabolic_levels.json"
+    cellgenes = set(name(i) for i in range(len(C.genes)))     # real genes only — drop KEGG aliases (PK1, PKR, …)
+    if os.path.exists(ml_path):
+        mlab = json.load(open(ml_path)).get("labels", {})
+        for g, r in mlab.items():
+            if g not in cellgenes:
                 continue
-            g = row["gene"]
-            labels[g] = {"status": "metabolic-step", "level": round(float(fp), 2), "bucket": _bucket(fp),
-                         "pathway": pname, "detail": f"step {row['true_step']}/{n}", "source": "KEGG topology + literature"}
-            n_metab += 1
+            st = r["status"]
+            if st == "metabolic-step":
+                labels[g] = {"status": "metabolic-step", "level": r["level"], "bucket": r["bucket"],
+                             "pathway": r.get("map"), "detail": r["detail"], "source": "KEGG topology"}
+                n_metab += 1
+            elif st == "metabolic-cycle":
+                labels[g] = {"status": "metabolic-cycle", "level": r["level"], "bucket": r["bucket"],
+                             "pathway": r.get("map"), "detail": r["detail"], "source": "KEGG topology"}
+                n_metab_cyc += 1
+            else:                                          # context-dependent across maps
+                labels[g] = {"status": "context-dependent", "level": None, "bucket": None,
+                             "pathway": r.get("map"), "detail": r["detail"], "source": "KEGG topology"}
+                n_metab_ctx += 1
+    else:                                                  # fallback: the 2 validated pathways
+        pp = json.load(open(f"{OUT}/pathway_position.json")).get("pathways", {})
+        for pname, r in pp.items():
+            for row in r.get("per_enzyme", []):
+                if row.get("fused_pos") is None:
+                    continue
+                labels[row["gene"]] = {"status": "metabolic-step", "level": round(float(row["fused_pos"]), 2),
+                                       "bucket": _bucket(row["fused_pos"]), "pathway": pname,
+                                       "detail": f"step {row['true_step']}", "source": "KEGG topology + literature"}
+                n_metab += 1
 
     # ---- tier-2: signaling tiers over ALL Reactome pathways (SIGNOR SCC) ----
     rp = json.load(open(f"{OUT}/reactome_pathways.json"))["pathways"]
@@ -103,10 +121,13 @@ def build():
                          "detail": "pathway member but no orderable context (abstain)", "source": None}
             n_abstain += 1
 
+    trustworthy = n_metab + n_metab_cyc + n_sig
     census = {"total_genome": len(C.genes), "pathway_membership_genes": len(membership),
-              "metabolic_step_labeled": n_metab, "signaling_tier_labeled": n_sig,
-              "context_dependent_flagged": n_ctxdep, "feedback_module_flagged": n_fb, "no_level_abstain": n_abstain,
-              "completed_frac_of_membership": round((n_metab + n_sig) / len(membership), 3)}
+              "total_genes_labeled": len(labels),
+              "metabolic_step_labeled": n_metab, "metabolic_cycle_labeled": n_metab_cyc,
+              "signaling_tier_labeled": n_sig,
+              "context_dependent_flagged": n_ctxdep + n_metab_ctx, "feedback_module_flagged": n_fb,
+              "no_level_abstain": n_abstain, "trustworthy_level_total": trustworthy}
     return labels, census
 
 
@@ -115,18 +136,19 @@ def main():
     print("=" * 88)
     print("CELL LEVELS — the software labels every gene's pathway level it honestly can")
     print("=" * 88)
-    print(f"  genome                         {census['total_genome']:,}")
-    print(f"  pathway-membership genes       {census['pathway_membership_genes']:,}")
-    print(f"    → metabolic step level        {census['metabolic_step_labeled']:,}  (tier-1, ordered chains)")
+    print(f"  genome                         {census['total_genome']:,}   labeled {census['total_genes_labeled']:,}")
+    print(f"    → metabolic STEP level        {census['metabolic_step_labeled']:,}  (tier-1, KEGG ordered chains)")
+    print(f"    → metabolic CYCLE (conventional) {census['metabolic_cycle_labeled']:,}  (tier-1, cyclic maps — flagged)")
     print(f"    → signaling upstream/downstream tier {census['signaling_tier_labeled']:,}  (tier-2, feed-forward)")
-    print(f"    → context-dependent (flagged) {census['context_dependent_flagged']:,}  (level differs by pathway — honest)")
+    print(f"    → context-dependent (flagged) {census['context_dependent_flagged']:,}  (level differs by pathway/map — honest)")
     print(f"    → feedback module (flagged)   {census['feedback_module_flagged']:,}  (no linear level — honest)")
     print(f"    → no orderable context (abstain) {census['no_level_abstain']:,}")
-    print(f"  COMPLETED a trustworthy level for {census['completed_frac_of_membership']:.0%} of membership genes; "
-          f"the rest it FLAGS or abstains on.")
+    print(f"  TRUSTWORTHY level for {census['trustworthy_level_total']:,} genes "
+          f"(metabolic step+cycle {census['metabolic_step_labeled']+census['metabolic_cycle_labeled']:,} + "
+          f"signaling tier {census['signaling_tier_labeled']:,}); the rest FLAGGED or abstained.")
     # a few example labels
     print("\n  examples:")
-    for g in ("PKM", "TCF7", "RELA", "CASP3", "MAPK1"):
+    for g in ("FASN", "PFKL", "CS", "RELA", "CASP3", "MAPK1"):
         if g in labels:
             r = labels[g]
             print(f"    {g:7} {r['status']:16} level={r['level']}  {r['detail']}  [{r.get('pathway')}]")
