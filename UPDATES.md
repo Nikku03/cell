@@ -1529,3 +1529,24 @@ watch what propagates.
 - **Honest limit:** connectivity is real at the reasoning layer + the ID backbone, but it is NOT a live signal —
   most modules are batch scripts writing artifacts, wired together through the reason engine, not a continuously-
   propagating network. So it's a connected, robust DAG — not a running organism. (`connectivity.py`)
+
+## Replicate biology as software — a RUNNING runtime (biosim): near-field real, whole-cell response null
+
+Made the connected-but-static DAG actually RUN. `biosim.py`: perturb a node → the consequence PROPAGATES through
+the physical (STRING) network by random-walk-with-restart, buffered by robustness, with a checkpoint that fires when
+the blast radius reaches an essential hub. Then tested — honestly — whether the running network reproduces MEASURED
+biology (Perturb-seq M: 2,058 KOs × 8,563 genes).
+
+It splits exactly the way everything in this project has:
+- **NEAR-FIELD — real:** the propagation recovers the functional MODULE. `perturb PSMB5` → the proteasome
+  (PSMB2/PSMA4/PSMB7…), `perturb RPL13` → the ribosome, `perturb SF3B1` → the spliceosome; the checkpoint fires on
+  the essential hubs it reaches. That's genuine (the whodunit complex-coherence, now as a live run).
+- **FAR-FIELD — honest null:** it does NOT reproduce the measured transcriptional RESPONSE. Propagated stress vs
+  Perturb-seq response is Spearman **+0.02** (baseline +0.01, lift +0.01) — barely above chance, because the response
+  is downstream/regulatory, not carried on the physical graph. Same structure-vs-dynamics split as the GRN
+  essentiality null (0.47) and mechanistic sim (r=0.01).
+
+So "biology as running software" is REAL as **propagation + robustness + checkpoint over the near-field** — a live
+`perturb GENE` syscall that shows WHO is in the blast radius — and a NULL for the whole-cell dynamic response. The
+running network tells you who's in the module, not how the whole cell answers. That is the honest ceiling of a
+topology-driven runtime; the far-field needs the measured data, not the graph. (`biosim.py`, `perturb` syscall)

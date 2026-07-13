@@ -30,7 +30,7 @@ def main():
         "boot bare": "boot", "boot knockout": "boot TP53", "boot off-core": "boot NOTAGENE",
         "assess 3-layer": "assess RAE1", "assess physics-only": "assess PFKL", "assess unknown": "assess NOTAGENE",
         "reason essential": "reason RPL13", "reason non-essential": "explain SLC22A1", "reason unknown": "reason NOTAGENE",
-        "check slow kcat": "check SLC2A8 0.001", "check non-enzyme": "check TP53 5",
+        "check slow kcat": "check SLC2A8 0.001", "perturb live": "perturb SF3B1", "perturb off-net": "perturb NOTAGENE", "check non-enzyme": "check TP53 5",
         "cellsim in-screen": "cellsim SF3B1", "cellsim off-screen": "cellsim TP53",
         "coverage map": "coverage",
         "pathway annotated": "pathway PSMB5", "pathway unannotated": "decode NEPRO", "pathway off": "pathway NOTAGENE",

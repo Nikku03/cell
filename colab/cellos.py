@@ -409,6 +409,22 @@ class CellKernel:
                  "confidence calibrated 1%→67% (localization + STRING-PPI lines added from the science run).")
         return "\n".join(L)
 
+    def perturb(self, name):
+        """the cell as a RUNNING program: propagate a perturbation through the physical network and see the blast
+        radius + checkpoint. Validated (biosim.py): the propagation recovers the functional MODULE (PSMB5→proteasome,
+        RPL13→ribosome) — the near-field is real — but does NOT reproduce the whole transcriptional response
+        (Spearman +0.02, downstream/regulatory, off the physical graph). Shows WHO is in the blast radius, not HOW
+        the whole cell responds."""
+        if not hasattr(self, "_bio"):
+            try:
+                from biosim import BioSim
+                self._bio = BioSim(kernel=self)
+            except Exception as e:
+                self._bio = None; self._bio_err = str(e)[:80]
+        if self._bio is None:
+            return f"perturb: runtime unavailable ({getattr(self, '_bio_err', '?')})"
+        return self._bio.run(name)
+
     def _string(self):
         """lazily load the STRING physical-PPI layer (string_degree.json)."""
         if not hasattr(self, "_str"):
@@ -1104,6 +1120,7 @@ class CellKernel:
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
   ppi GENE             top physical interaction partners (STRING v12.0; connectivity lifts reason to 0.89)
+  perturb GENE         RUN it: propagate a perturbation through the network — blast radius + checkpoint (near-field)
   needs                 the software's own bill of materials: what it still needs (DATA / METHOD / HARD)
   check ENZYME KCAT    put in a kcat; the cell sanity-checks it vs the flux it must carry — WEAK/one-sided hint (~70%)
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
@@ -1156,6 +1173,7 @@ class CellShell:
             if cmd in ("level", "where"): return k.level(args[0])
             if cmd in ("loc", "compartment"): return k.loc(args[0])
             if cmd in ("ppi", "partners"): return k.ppi(args[0])
+            if cmd in ("perturb", "live"): return k.perturb(args[0])
             if cmd in ("disease", "risk"): return k.disease(args[0])
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
