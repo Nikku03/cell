@@ -1474,3 +1474,19 @@ IMPROVE anything before integrating:
   expand the network/link layer beyond our current PPI. It's over the connector's 10 MB download cap; needs a
   direct upload (or a confidence-filtered slice, e.g. combined_score ≥ 700) to test whether it lifts link
   prediction or the complex/hub lines. Honest so far: 4 of 5 checked, redundant; the potentially-useful 1 is pending.
+
+## STRING PPI (uploaded) — a real network layer that lifts reasoning 0.86→0.89
+
+The uploaded string_ppi.parquet (STRING v12.0, 929k edges, per-channel scores) is the second science-run input that
+moves a metric. Honest channel choice was the whole game:
+- **physical channels only** (experimental + database): degree → essentiality AUC **0.795**. TEXTMINING excluded
+  because it's literature-derived → CIRCULAR with essentiality (studied genes get more edges); textmining degree
+  scores only 0.668, confirming the trap.
+- Added the physical-STRING-hub as a 7th reason line: **reason 0.858 → 0.887** (the old causal-hub line was
+  near-chance 0.50; STRING physical connectivity is a far better centrality-lethality signal). Calibration 1%→67%.
+
+`string_ppi.py` emits a compact per-gene layer (degree + top partners) — the 929k-edge parquet stays out of git.
+Added `ppi GENE` (top physical partners; `ppi TP53` → TP53BP2/ATM/CREBBP/USP7 …). This makes **two** science-run
+wins (localization +0.06, STRING +0.03) and **one** honest null (complexes/pathways). The reason engine has grown
+from 5 lines (0.80) to 7 (0.89) purely by ingesting validated data — each line tested for lift before wiring, each
+non-circular. (`string_ppi.py`, `ppi` syscall)

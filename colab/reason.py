@@ -39,7 +39,7 @@ def evidence_lines(C):
     """per-gene dict of independent essential-votes (value in {0,1} or nan if the line is unavailable)."""
     import cellos
     N = len(C.genes)
-    lines = {k: np.full(N, np.nan) for k in ("shock", "fba", "loeuf", "complex", "hub", "loc")}
+    lines = {k: np.full(N, np.nan) for k in ("shock", "fba", "loeuf", "complex", "hub", "loc", "string_hub")}
 
     # L1 Perturb-seq shock percentile
     dbg = cellos.CellKernel(quiet=True)._load_debugger()
@@ -82,6 +82,17 @@ def evidence_lines(C):
                     lines["loc"][i] = 1.0
                 elif prim in DEP:
                     lines["loc"][i] = 0.0
+    # L7 STRING physical connectivity (science-run layer): hub proteins lean essential (centrality-lethality)
+    p = f"{OUT}/string_degree.json"
+    if os.path.exists(p):
+        sd = json.load(open(p)).get("layer", {})
+        degs = np.array([sd.get(C.genes[i].get("name"), {}).get("physical_degree", 0) for i in range(N)], float)
+        pos = degs[degs > 0]
+        if len(pos):
+            thr = np.percentile(pos, 75)
+            for i in range(N):
+                if C.genes[i].get("name") in sd:
+                    lines["string_hub"][i] = float(degs[i] >= thr)
     return lines
 
 

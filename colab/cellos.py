@@ -379,6 +379,10 @@ class CellKernel:
                 lines.append(("localization", "compartment", 1, f"{prim} (essential-leaning)"))
             elif prim in ("Secreted", "Cell membrane", "Membrane"):
                 lines.append(("localization", "compartment", 0, f"{prim} (non-essential-leaning)"))
+        sd = self._string().get(name)                        # L7 STRING physical connectivity (science-run layer)
+        if sd:
+            d = sd.get("physical_degree", 0)
+            lines.append(("STRING hub", "network", int(d >= self._string_thr()), f"{d} physical partners"))
 
         nyes = sum(v for _, _, v, _ in lines); navail = len(lines)
         # calibrated confidence from the validated calibration curve
@@ -401,9 +405,34 @@ class CellKernel:
         L.append(f"  ── {nyes} of {navail} independent lines say essential")
         L.append(f"  CONCLUSION: {concl}   confidence {conf}"
                  + (f"  (calibrated P≈{pe:.0%} at this agreement)" if calib else ""))
-        L.append("  reasoning validated: weighing independent lines → AUC 0.86 > any single layer (0.75); "
-                 "confidence calibrated 1%→67% (localization line added from the science-run protein layer).")
+        L.append("  reasoning validated: weighing independent lines → AUC 0.89 > any single layer (0.75); "
+                 "confidence calibrated 1%→67% (localization + STRING-PPI lines added from the science run).")
         return "\n".join(L)
+
+    def _string(self):
+        """lazily load the STRING physical-PPI layer (string_degree.json)."""
+        if not hasattr(self, "_str"):
+            import json, os
+            p = "outputs/orphan/string_degree.json"
+            self._str = json.load(open(p)).get("layer", {}) if os.path.exists(p) else {}
+        return self._str
+
+    def _string_thr(self):
+        if not hasattr(self, "_strthr"):
+            import numpy as np
+            d = np.array([v.get("physical_degree", 0) for v in self._string().values()], float)
+            d = d[d > 0]
+            self._strthr = float(np.percentile(d, 75)) if len(d) else 1e9
+        return self._strthr
+
+    def ppi(self, name):
+        """top physical interaction PARTNERS from STRING v12.0 (the science-run network layer)."""
+        sd = self._string().get(name)
+        if not sd or not sd.get("partners"):
+            return f"ppi {name}: no STRING physical interactions on record."
+        ps = ", ".join(f"{p['gene']}({p['score']})" for p in sd["partners"][:8])
+        return (f"ppi {name}: {sd.get('physical_degree', 0)} physical partners; top by confidence: {ps}\n"
+                f"  (STRING v12.0 physical/curated channels; connectivity lifts reason 0.86→0.89)")
 
     def disease(self, name):
         """a SECOND reasoning engine (disease_reason.py): how likely is this gene DISEASE-associated? Reasoned from
@@ -1074,6 +1103,7 @@ class CellKernel:
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
+  ppi GENE             top physical interaction partners (STRING v12.0; connectivity lifts reason to 0.89)
   needs                 the software's own bill of materials: what it still needs (DATA / METHOD / HARD)
   check ENZYME KCAT    put in a kcat; the cell sanity-checks it vs the flux it must carry — WEAK/one-sided hint (~70%)
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
@@ -1125,6 +1155,7 @@ class CellShell:
             if cmd in ("mutate", "variant"): return k.mutate(args)
             if cmd in ("level", "where"): return k.level(args[0])
             if cmd in ("loc", "compartment"): return k.loc(args[0])
+            if cmd in ("ppi", "partners"): return k.ppi(args[0])
             if cmd in ("disease", "risk"): return k.disease(args[0])
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])

@@ -162,6 +162,7 @@ def main():
         check("loc TP53 -> nucleus", "Nucleus" in k.loc("TP53"))
         check("loc ALB -> secreted", "Secreted" in k.loc("ALB"))
         check("disease BRCA1 -> calibrated prior", "P(disease" in k.disease("BRCA1"))
+        check("ppi TP53 -> STRING partners", "physical partners" in k.ppi("TP53"))
         check("level unknown -> abstain/none", "no pathway level" in k.level("ZZZ999") or "abstain" in k.level("ZZZ999"))
 
     # deadlock recovers the pathway
