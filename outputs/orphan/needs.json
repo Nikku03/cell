@@ -1,0 +1,74 @@
+{
+ "rows": [
+  {
+   "layer": "function / annotation",
+   "current": "16,418/16,509 have \u22651 answer",
+   "gap": "91 truly dark genes",
+   "limiter": "DATA",
+   "closes": "literature / structural-homology / an experiment for the 91 orphans \u2014 a bounded, findable list"
+  },
+  {
+   "layer": "essentiality",
+   "current": "~96% measured (DepMap), reasoned AUC 0.80",
+   "gap": "context/cell-line-specific (cross-line r=0.19)",
+   "limiter": "DATA",
+   "closes": "more genome-wide CRISPR screens in other cell types \u2192 per-context essentiality"
+  },
+  {
+   "layer": "response prediction (KO\u2192transcriptome)",
+   "current": "55% (K562-limited)",
+   "gap": "~45% of genes + all non-K562 contexts",
+   "limiter": "DATA",
+   "closes": "more Perturb-seq across cell types \u2014 the single biggest data-limited axis; a data hunt pays here"
+  },
+  {
+   "layer": "pathway level \u2014 placeable",
+   "current": "5,259/10,489 trustworthy",
+   "gap": "4,781 no directed context",
+   "limiter": "DATA",
+   "closes": "more directed regulatory edges (SIGNOR is sparse) + a 2nd directional source (Reactome preceding-event order) to place & cross-verify the no-context genes"
+  },
+  {
+   "layer": "pathway level \u2014 feedback / hubs",
+   "current": "flagged honestly",
+   "gap": "502 (feedback modules + context-dependent hubs)",
+   "limiter": "HARD",
+   "closes": "NOTHING \u2014 these have no single linear level (loops / multi-position hubs). The end state IS the flag; assigning a number would be fabrication"
+  },
+  {
+   "layer": "kinetics (kcat)",
+   "current": "predict 0.35, flux-flag 70% (weak, non-circular)",
+   "gap": "no reliable per-enzyme in-vivo kcat",
+   "limiter": "DATA",
+   "closes": "measured in-vivo human kcats (the Drive davidi set was cross-condition-noisy, 92\u00d7 off) \u2014 real 13C-flux + absolute proteomics would give kapp within noise as it does in E. coli"
+  },
+  {
+   "layer": "metabolic flux",
+   "current": "FBA 1149/12931 rxns/state, 736 enzymes",
+   "gap": "condition-specific measured flux",
+   "limiter": "DATA",
+   "closes": "13C-MFA flux per condition \u2192 replace the single-optimum FBA state with real per-context fluxes"
+  },
+  {
+   "layer": "dynamics \u2014 KO outcome from wiring",
+   "current": "GRN boots + robust, but essentiality AUC 0.47 (null)",
+   "gap": "the wiring does NOT carry knockout outcomes",
+   "limiter": "METHOD/HARD",
+   "closes": "quantitative kinetic parameters per edge (mostly unmeasured) \u2014 OR accept that robustness makes outcome-from-topology genuinely underdetermined; today it's a measured lookup, not a simulation"
+  },
+  {
+   "layer": "variant effect",
+   "current": "AlphaMissense strong; \u0394\u0394G 0.47; GOF/moonlighting blind",
+   "gap": "gain-of-function & moonlighting (sickle-cell class)",
+   "limiter": "METHOD",
+   "closes": "a function-change (not just destabilization) model, or a functional assay \u2014 flagged today, not solved"
+  }
+ ],
+ "summary": {
+  "data_limited": 6,
+  "method_limited": 2,
+  "hard_limit": 1,
+  "note": "most of the gap is DATA-limited (findable measurements) \u2014 that is where a data hunt / claude-science run moves the needle. A smaller part is METHOD. The HARD rows should stay abstained: 'completing' them would be faking biology that has no single answer."
+ },
+ "headline": "6 of 9 layers are DATA-limited (a data hunt closes them); 2 METHOD-limited; 1 HARD (must stay flagged, not faked)."
+}

@@ -1357,3 +1357,24 @@ Two honest calibrations that fell out of doing it at scale:
 Now `level FASN` → metabolic-step downstream (fatty-acid synthesis), `level CS` → upstream (TCA entry), `level PFKL`
 → midstream (glycolysis). The `level` syscall serves all 5,259 completed levels; the rest stays honestly flagged or
 abstained. (`metabolic_levels.py`, `cell_levels.json`)
+
+## The software's own bill of materials — what it still needs (`needs` syscall)
+
+Because we know the complete-cell end state, the gap is computable. `needs.py` reads every layer's committed
+coverage and tags each gap by what would close it — DATA (a findable measurement), METHOD (need an algorithm), or
+HARD (biology has no single answer → must stay flagged, not faked). Current end-product state: 16,418/16,509 genes
+have ≥1 trustworthy answer (91 truly dark); 5,259 pathway levels placed; reason AUC 0.80; response prediction 55%.
+
+**Gap manifest (`needs.json`, served by `needs`):** 6 of 9 layers are DATA-limited, 2 METHOD, 1 HARD.
+- **DATA (a data hunt / claude-science run closes these):** 91 dark genes (bounded list); per-cell-line
+  essentiality (more CRISPR screens); response prediction 55%→ (more Perturb-seq — the biggest single axis);
+  4,781 no-context pathway genes (more directed edges + Reactome ordering); reliable in-vivo kcat (measured human
+  13C-flux + proteomics); condition-specific metabolic flux (13C-MFA).
+- **METHOD:** gain-of-function / moonlighting variant effect (need a function-change model, not just ΔΔG);
+  knockout-outcome-from-wiring (needs per-edge kinetics — mostly unmeasured).
+- **HARD (must stay abstained):** 502 feedback-module + context-dependent-hub pathway genes have no single linear
+  level; the GRN robustness that makes topology→essentiality genuinely underdetermined. Completing these would be
+  fabrication — the honest end state is the flag.
+
+The headline: **most of what's missing is DATA-limited, not a modeling wall** — which is exactly where new data
+moves the needle. The incompleteness is honest and itemized, not hand-waved. (`needs.py`, `needs` syscall)

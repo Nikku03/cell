@@ -455,6 +455,22 @@ class CellKernel:
                     f"genes have no upstream/downstream — the honest answer is 'a loop', not a rank.")
         return f"level {name}: pathway member but no orderable context — abstaining (no trustworthy level)."
 
+    def needs(self):
+        """the software's own BILL OF MATERIALS: what it still needs to reach the known complete-cell state, tagged
+        DATA (a findable measurement — where a data hunt pays), METHOD (need an algorithm), or HARD (biology has no
+        single answer — must stay flagged, not faked). Grounded in the committed coverage artifacts (needs.py)."""
+        import json, os
+        n = json.load(open("outputs/orphan/needs.json")) if os.path.exists("outputs/orphan/needs.json") else None
+        if not n:
+            return "needs: run needs.py first to compute the gap manifest."
+        tag = {"DATA": "[DATA]", "METHOD": "[METHOD]", "HARD": "[HARD]", "METHOD/HARD": "[METH/HD]"}
+        out = ["needs — what the cell software still needs to reach the complete state:"]
+        for r in n["rows"]:
+            out.append(f"  {tag.get(r['limiter'],'[?]'):8} {r['layer']}: {r['gap']}")
+            out.append(f"           → {r['closes']}")
+        out.append(f"  ── {n['headline']}")
+        return "\n".join(out)
+
     def _pathway_decoder(self):
         """lazily load the co-dependency matrix + pathway labels for data-driven pathway decoding."""
         if getattr(self, "_pwd", None) is None:
@@ -1013,6 +1029,7 @@ class CellKernel:
   reason GENE          REASON across independent lines to a conclusion, with calibrated confidence (AUC 0.80)
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
+  needs                 the software's own bill of materials: what it still needs (DATA / METHOD / HARD)
   check ENZYME KCAT    put in a kcat; the cell sanity-checks it vs the flux it must carry — WEAK/one-sided hint (~70%)
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
   induce TF [TF..]     REPROGRAM: force master TF(s) ON, run forward, watch the lineage program light up
@@ -1062,6 +1079,7 @@ class CellShell:
             if cmd == "whodunit": return k.whodunit(args[0])
             if cmd in ("mutate", "variant"): return k.mutate(args)
             if cmd in ("level", "where"): return k.level(args[0])
+            if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
             if cmd == "lint": return k.lint(line.split(" ", 1)[1].strip().strip('"'))
