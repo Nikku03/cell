@@ -1490,3 +1490,22 @@ Added `ppi GENE` (top physical partners; `ppi TP53` → TP53BP2/ATM/CREBBP/USP7 
 wins (localization +0.06, STRING +0.03) and **one** honest null (complexes/pathways). The reason engine has grown
 from 5 lines (0.80) to 7 (0.89) purely by ingesting validated data — each line tested for lift before wiring, each
 non-circular. (`string_ppi.py`, `ppi` syscall)
+
+## Don't get attached to one metric — a multi-metric data-impact evaluator (data_impact.py)
+
+Correcting my own habit: I evaluated every new science layer against ONE number (the essentiality-reasoning AUC).
+That's the same myopia as the kcat episode. Built `data_impact.py` to score each new layer across ALL engines, and
+the honest matrix shows why it matters:
+
+| layer | essentiality reason | disease reason | pathway-tier (STRING propagation) |
+|---|---|---|---|
+| **localization** | **0.80→0.86 (+0.059)** | 0.646→0.656 (+0.010) | — |
+| **STRING PPI** | **0.80→0.85 (+0.048)** | 0.646→0.645 (−0.001) | ρ=0.22, reaches 2,469 genes — WEAK, not wired |
+
+**A layer that wins one engine is not a win for the cell.** Localization and STRING lift essentiality strongly but
+the disease axis barely — because they're essentiality-correlated signals (hubs, compartments), and disease is a
+near-orthogonal axis. STRING's undirected network can propagate a pathway tier to 2,469 no-context genes but only at
+Spearman 0.22 (undirected smears upstream/downstream), so it's honestly too weak to wire as a trustworthy tier.
+
+The fix is process: every future dataset now gets scored across all engines, not one — so the full impact (and the
+non-impacts) are visible before anything is claimed. (`data_impact.py`, `data_impact.json`)
