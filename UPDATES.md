@@ -1225,3 +1225,32 @@ regime, because cell-fitness essentiality and disease pathogenicity are **differ
 The honest payload: the fusion surfaces the **essentiality ≠ pathogenicity divergence** (tumor-suppressors and
 GOF are pathogenic on a different axis than cell fitness) instead of hiding it. `mutate GENE UNIPROT POS WT MUT`.
 (`reason_mutation.py`, `reason_mutation_demo.json`)
+
+## The reasoning PRINCIPLE generalized to any part of the cell (reasoner_core) — and where it pays off
+
+The `reason` engine was built for genes, but its principle is substrate-agnostic: gather independent,
+differently-blind evidence lines → weight each by measured reliability (out-of-fold, no circularity) → fuse →
+calibrate confidence by how many lines agree. I lifted that machinery out of the gene-specific working into
+`reasoner_core.reason_over(lines, truth)`. It reproduces the validated GENE result **exactly** (fused AUC 0.799,
+best single 0.75, calibration 10%→42%→76%→88%) — proof the generalization is faithful, not asserted.
+
+Then I pointed the SAME core at a different part of the cell — metabolic **reactions** — with an independent
+ground truth (FBA single-reaction deletion: delete the reaction, does growth collapse?). Evidence lines swapped to
+what's observable about a reaction: carries-flux, single-gene (no isozyme), its gene is DepMap-essential
+(measured), metabolite-bottleneck (topology). n=4,000 reactions, 29 FBA-essential (~1%). Honest result:
+
+- **With the `flux` line:** fused AUC 0.99 — but `flux` alone is 0.98 because a reaction carrying no flux at the
+  optimum can't be essential, so `flux` is **near-tautological** with the FBA-deletion truth. That's one line, not
+  convergence.
+- **Independent lines only (drop flux):** the genuinely independent evidence (measured essentiality + topology)
+  reasons to only **AUC 0.66**, with flat calibration (0→1→1→0%) → "rank it, don't quote its confidence."
+
+**The honest lesson: the principle transfers mechanically, but reasoning only ADDS value where the substrate has
+several independent *informative* lines that converge.** Genes have that (5 lines, no single dominates → 0.80 with
+clean calibration). Reaction-essentiality is a physics property that FBA already answers, and measured/topological
+evidence recovers it only weakly — so there, reasoning is redundant with the physics, not additive.
+
+Also fixed a latent honesty bug in the core surfaced by this test: a flat near-zero calibration curve was passing
+the monotonicity check via its ±0.02 tolerance. The verdict now requires real dynamic range (ΔP≥15 points) before
+claiming "calibrated" — the gene case still passes (ΔP=78), the weak reaction case correctly does not.
+(`reasoner_core.py`, `reason_reactions.py`, `reason_reactions.json`)
