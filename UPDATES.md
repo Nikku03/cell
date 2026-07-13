@@ -1648,3 +1648,23 @@ the ~2,000 pieces measured (Perturb-seq) the effect is known, and the only engin
 on the census. So the bottleneck to "remove ANY piece and calculate its effect" is SURVEILLANCE — measured interventions
 across more pieces and conditions — not more census. More census (localization, PPI, complexes) refines the map; only
 more interventions extend the causal reach. (causal_reach.py → causal_reach.json)
+
+## causal_patch — can the on-disk intervention data extend causal reach? (honest null, forecloses the shortcut)
+
+Follow-up to causal_reach ("structure can't compute a removal's effect"). Before asking for new data, test the tempting
+shortcut: we hold a SECOND genome-wide intervention dataset on disk — DepMap CRISPR (18,443 genes × 1,150 knockout
+contexts). Does DepMap CO-ESSENTIALITY (shared knockout-fitness profile) predict the MEASURED Perturb-seq transcriptional
+response, which would let us extend "remove X → here's the effect" from 2,058 pieces to ~18,443 with data already here?
+
+Head-to-head, predicting the measured Perturb-seq response over 7,990 shared genes (n=400 knockouts in both datasets):
+- **DepMap co-essentiality: Spearman +0.009** (median +0.008)
+- STRING structure (the causal_reach null): +0.015
+- random gene: −0.001
+
+**NULL.** DepMap co-essentiality is no better than the structure null and barely above chance. Co-essentiality (which
+genes you ALSO need when you need X — a FITNESS-coupling axis) and the transcriptional RESPONSE to removing X (direct
+targets + stress/compensation) are genuinely different axes. The genome-wide DepMap data is a functional-coupling proxy
+(good for naming the affected MODULE, which `pathway`/`discover` already use) but NOT a response predictor. So there is
+no cheap on-disk substitute — the causal reach can only be extended by ACTUAL measured interventions in more contexts.
+This pins the requirement exactly: the multi-cell-line Perturb-seq (Replogle-Nadig: hepg2/jurkat/k562/rpe1) is the data
+that would extend it, and it must be ingested, not inferred. (causal_patch.py → causal_patch.json)
