@@ -1280,3 +1280,29 @@ blind, the other fills it (PKM is missing from the KEGG topology parse but liter
 cyclic TCA defeats topology but literature still gets 0.93). Each source has a blind spot; reasoning across them
 buys trustworthy breadth. This is the "no-layer, go-textbook" case: sum up small independent clues, and where they
 agree, trust the answer. (`pathway_position.py`)
+
+## Tier-2: pathway LEVEL for the ~10k signaling/regulatory membership genes (SIGNOR directed graph + feedback-honest)
+
+Tier-1 (2,549 metabolic enzymes) has clean substrate-chain levels. Tier-2 is the ~10,489 genes with pathway
+MEMBERSHIP but no substrate chain (mostly signaling). Their "level" is an upstream→downstream tier in the DIRECTED
+CAUSAL GRAPH (SIGNOR) — the stoichiometry source replaced by regulatory wiring: a gene's tier = its topological
+position in the pathway's directed subgraph.
+
+The catch metabolism didn't have: **signaling pathways have FEEDBACK LOOPS**, so a linear level is ill-defined for
+the looped part (ERK→EGFR feedback; NF-κB induces its own regulators). Longest-path and trophic-level both blew up
+on MAPK/TLR. The correct handling is **strongly-connected-component condensation**: collapse each feedback loop to
+one node, tier the resulting DAG, and FLAG every gene in a multi-gene loop as "feedback module — no internal level."
+
+Validated on textbook cascades — the flag is an honest **abstention signal**:
+- apoptosis **+0.94**, Wnt **+0.85** (feed-forward → clean tier); MAPK/ERK −0.36, TLR-NFkB −0.62 (feedback → flagged)
+- pooled: **feed-forward genes Spearman +0.55**, **feedback-loop genes −0.16** → the flag separates trust from noise
+
+**Whole-cell census (10,489 membership genes):**
+- **47% (4,960)** get a trustworthy feed-forward tier
+- **3% (329)** collapse into feedback modules — the honest answer is "a module," not a rank
+- **50% (5,200)** have no directed context within their pathway → abstain
+
+So the answer to "label all pathway-membership genes with a level": metabolism is a clean pipeline (tier-1 done),
+but signaling is a control system with loops — **level is only partially definable (~half), and the software says
+so** (feed-forward tier / feedback module / no-context) instead of fabricating a number. Same principle, same
+honesty: reason from the wiring where it's ordered, abstain where the biology loops. (`pathway_tier.py`)
