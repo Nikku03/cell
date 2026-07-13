@@ -19,9 +19,14 @@ usage:  python3 fetch_celltype_screen.py --probe <url>
         python3 fetch_celltype_screen.py --fetch <url> <dest.h5ad>
         python3 fetch_celltype_screen.py --integrate <dest.h5ad>
 
-candidate datasets (provide the processed-h5ad supplementary URL from the GEO record):
-  Zhu 2025    primary CD4+ T cells, genome-scale Perturb-seq (resting+stimulated)
-  Jung 2025   primary myeloid / macrophage, pooled CRISPR-KO
+candidate datasets (provide the processed-h5ad / pseudobulk URL; the raw 22M-cell files are huge, so fetch a
+per-perturbation pseudobulk and integrate that):
+  Zhu 2025   primary CD4+ T cells, GENOME-SCALE perturb-seq of ALL EXPRESSED genes, rest + stimulated (3 states),
+             22M cells / 4 donors. The complementary line we want — reaches T-cell genes K562 silences, AND its
+             own title reports CONTEXT-SPECIFIC regulators (independently confirming cross_cell_line's r=0.19).
+             data: https://virtualcellmodels.cziscience.com/dataset/genome-scale-tcell-perturb-seq
+             code: https://github.com/emdann/GWT_perturbseq_analysis_2025
+  Jung 2025  primary myeloid / macrophage, pooled CRISPR-KO (inflammatory readouts)
 """
 import os, sys, json, shutil, urllib.request
 sys.path.insert(0, os.path.dirname(__file__))
