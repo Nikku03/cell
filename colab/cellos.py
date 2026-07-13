@@ -305,6 +305,67 @@ class CellKernel:
                           f"  ── combined call: {call}   confidence: {conf}",
                           f"  coverage: {cover}.  (physics+data are blind in different places → together ~2x reach.)"])
 
+    def _pathway_decoder(self):
+        """lazily load the co-dependency matrix + pathway labels for data-driven pathway decoding."""
+        if getattr(self, "_pwd", None) is None:
+            import numpy as np, os
+            p = "outputs/orphan/depmap_vecs.npz"
+            if not os.path.exists(p):
+                self._pwd = False; return False
+            z = np.load(p, allow_pickle=True)
+            syms = [str(s) for s in z["syms"]]
+            Z = np.nan_to_num(z["Z"].astype("float32"), nan=0.0, posinf=0.0, neginf=0.0)
+            nz = np.linalg.norm(Z, axis=1); v = nz > 1e-6; Z[v] /= nz[v][:, None]
+            idx = {s: i for i, s in enumerate(syms)}
+            labels = {}
+            for s in syms:
+                i = self.C.idx.get(s)
+                if i is None or not v[idx[s]]:
+                    continue
+                pp = self.C.genes[i].get("path") or []
+                pp = [pp] if isinstance(pp, str) else pp
+                if pp:
+                    labels[s] = [str(x) for x in pp]
+            lab = list(labels); li = np.array([idx[s] for s in lab])
+            self._pwd = dict(Zn=Z, idx=idx, labels=labels, lab=lab, li=li, valid=v)
+        return self._pwd
+
+    def pathway(self, name, k=15):
+        """decode a gene's pathway from DATA (its co-dependency neighbours across 1,150 cell lines), not a curated
+        label. Validated (pathway_decode.py): recovers the exact Reactome pathway at 21% top-1 = 8x chance — a strong
+        SHORTLIST engine, especially for UNANNOTATED genes; corroborates the annotation where one exists."""
+        import numpy as np
+        D = self._pathway_decoder()
+        if not D:
+            return "pathway: co-dependency matrix not available."
+        if name not in D["idx"] or not D["valid"][D["idx"][name]]:
+            return f"pathway {name}: no co-dependency vector — can't decode its pathway from data."
+        gi = D["idx"][name]; sims = D["Zn"][D["li"]] @ D["Zn"][gi]
+        top = np.argsort(-sims)[:80]; votes, nb, cnt = {}, [], 0
+        for j in top:
+            h = D["lab"][j]
+            if h == name or sims[j] <= 0:
+                continue
+            for pw in D["labels"][h]:
+                votes[pw] = votes.get(pw, 0.0) + float(sims[j])
+            if len(nb) < 6:
+                nb.append(h)
+            cnt += 1
+            if cnt >= k:
+                break
+        if not votes:
+            return f"pathway {name}: no confident functional neighbours."
+        ranked = sorted(votes.items(), key=lambda x: -x[1])[:5]
+        tot = sum(v for _, v in ranked) + 1e-9
+        i = self.C.idx.get(name)
+        known = {str(x) for x in (self.C.genes[i].get("path") or []) if x} if i is not None else set()
+        L = [f"pathway {name} — decoded from co-dependency (top functional neighbours: {', '.join(nb)})"]
+        for pw, w in ranked:
+            tag = "  [matches annotation]" if pw in known else ("  [NEW — gene was unannotated]" if not known else "")
+            L.append(f"  {w/tot:>4.0%}  {pw[:54]}{tag}")
+        L.append("  data-decoded (validated 21% exact top-1 = 8x chance); a shortlist, not a verdict.")
+        return "\n".join(L)
+
     def coverage(self):
         """the honest whole-cell coverage map: '55%' is only the DEEPEST axis (predict the full knockout response,
         data-limited); this counts every trustworthy answer the software gives — measured essentiality, response,
@@ -794,6 +855,7 @@ class CellKernel:
   coverage             honest coverage map: every trustworthy answer, not just the 55% deepest axis
   ps [context]         process table (genes) by scheduler priority (essentiality)
   man GENE             process documentation (role, segment, priority, interfaces)
+  pathway GENE         DECODE the gene's pathway from data (co-dependency), not the curated label (8x chance)
   lit GENE             the gene's PubMed literature (grounded+cited) — fills DARK genes
   top                  kernel threads (highest system-wide dependency)
   viability GENE       [FBA] top-down: does the cell still GROW after knockout? (objective+physics)
@@ -829,6 +891,7 @@ class CellShell:
             if cmd in ("exit", "quit"): return "__EXIT__"
             if cmd in ("stat", "df"): return k.stat()
             if cmd == "coverage": return k.coverage()
+            if cmd in ("pathway", "decode"): return k.pathway(args[0])
             if cmd == "viability": return k.viability(args[0])
             if cmd == "assess": return k.assess(args[0])
             if cmd in ("boot", "exec", "run"): return k.boot(args[0] if args else None)
@@ -883,6 +946,8 @@ DEMO = [
     "top",
     "# 2) documentation for one process (real data: role, segment, scheduler, interfaces)",
     "man TP53",
+    "# 2a) DECODE a gene's pathway from DATA (co-dependency neighbours), not a curated label — works on DARK genes",
+    "pathway NEPRO",
     "# 2b) PubMed literature for a DARK gene — the knowledge screens can't reach (grounded + cited)",
     "lit FNDC5",
     "# 3) THE DEBUGGER — SIGKILL a gene, watch the MEASURED downstream effect (interventional, not correlation)",

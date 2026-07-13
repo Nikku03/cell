@@ -1037,3 +1037,28 @@ essential/regulatory core). A genome-wide screen in a new lineage is worth ~65×
 lines" pays off only for GENOME-WIDE screens in cell types expressing new genes — chasing the many small targeted
 screens is nearly tapped out. Frontier reach today ≈ 70% (across mixed K562/T-cell/… contexts; and with cross-line
 transfer only r=0.19, this is coverage-in-context, not one universal map). (`coverage_stack.json`)
+
+## Can the software DECODE pathways from data? (pathway_decode.py + `pathway` syscall)
+
+Pathways are only 63% labeled and 17% mechanized — so we asked whether the software can recover a gene's pathway
+from MEASURED data (genes in the same pathway are broken together → similar functional fingerprints), and fill the
+unannotated genes. k-NN label transfer on DepMap co-dependency (1,150 cell lines), given all the help — fused with
+Perturb-seq signatures + PPI + complex co-membership:
+
+| signal | top-1 | top-3 |
+|---|---|---|
+| co-dependency only | 17.4% | 24.5% |
+| + Perturb-seq signature | 17.7% | 24.6% |
+| + PPI + complex (all help) | **21.3%** | **26.1%** |
+| baseline (most-common pathway) | 2.8% | — |
+
+**Verdict: partial — real signal, honest ceiling.** The software decodes a gene's exact Reactome pathway at 21%
+top-1 = **8× chance** — the measured data genuinely encodes pathway structure. But exact fine-grained assignment is
+noisy (1,200+ sub-pathways), so it's a strong SHORTLIST/neighbourhood engine, not an auto-annotator: the functional
+NEIGHBOURS are consistently right (PSMB5→PSMB6/7 proteasome; RPL13→ribosomal; unannotated NEPRO→POP4/RPP40/RPP30 =
+the RNase P/MRP complex, a genuinely useful new call) while the aggregated label drifts to a related pathway. The
+"help" ablation is honest too: PPI+complex add +4 pts; Perturb-seq barely moves it (co-dependency already captures
+it). Confident auto-fill of unannotated genes is limited (~2%, ~123 of 8,246) — it suggests, the annotation confirms.
+
+Wired as `pathway GENE` (alias `decode`): decodes any gene's pathway from co-dependency neighbours, tags [matches
+annotation] or [NEW] — turning the 37% unlabeled genes from blank into a ranked, data-grounded shortlist. Tests green.

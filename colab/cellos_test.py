@@ -31,6 +31,7 @@ def main():
         "assess 3-layer": "assess RAE1", "assess physics-only": "assess PFKL", "assess unknown": "assess NOTAGENE",
         "cellsim in-screen": "cellsim SF3B1", "cellsim off-screen": "cellsim TP53",
         "coverage map": "coverage",
+        "pathway annotated": "pathway PSMB5", "pathway unannotated": "decode NEPRO", "pathway off": "pathway NOTAGENE",
         "induce master TF": "induce GATA1", "reprogram alias": "reprogram MYOD1", "induce non-TF": "induce TTN",
         "lit dark gene": "lit FNDC5", "lit unmined": "lit ZZZ",
         "man known": "man TP53", "man unknown": "man NOTAGENE",
@@ -128,6 +129,11 @@ def main():
     check("cellsim RPL13 reconstructs from checkpoints (r>0.4)", m is not None and float(m.group(1)) > 0.4,
           f"r={m.group(1) if m else '?'} from 20% checkpoints")
     check("cellsim off-screen gene handled", "not in the mounted measured screen" in k.cellsim("TP53"))
+
+    # pathway: decode from co-dependency — the functional neighbours of a proteasome gene are proteasome genes
+    pw = k.pathway("PSMB5")
+    check("pathway PSMB5 -> proteasome neighbours", "PSM" in pw.split("neighbours:")[1].split(")")[0] if "neighbours:" in pw else False,
+          "co-dependency neighbours are proteasome genes")
 
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")

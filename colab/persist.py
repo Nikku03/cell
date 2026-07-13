@@ -55,6 +55,7 @@ ARTIFACTS = [
     "cross_cell_line.json",
     "zhu_coverage.json",
     "zhu_targeted_genes.txt",
+    "pathway_decode.json",
     "coverage_stack.json",
     "coverage_stack_genes.txt",
     "celltype_screen_gain.json",   # payoff meter for a fetched complementary-cell-line screen: NEW measured genes it adds vs K562 (self-checked: RPE1 -> 0)   # K562 vs RPE1: RPE1 adds 0 new genes (essential-scoped); responses transfer only weakly (r0.19 vs 0.06) -> 55% is PER-CELL-LINE, knockout effects are context-specific
