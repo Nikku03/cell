@@ -871,3 +871,34 @@ recover known biology, reproduce its headline numbers, and is every claim backed
 
 **13/13 checks pass** — the whole software boots, recovers known biology, and every headline number a syscall
 prints is traceable to the committed evidence that earned it. `python3 colab/cellos_full_audit.py` reproduces it.
+
+## Combine top-down + bottom-up so they help each other — `assess` syscall (the coverage synergy)
+
+The critique of a physics-first CellOS vision landed on: top-down simulation and bottom-up data hit the same wall
+from opposite sides, blind in DIFFERENT places. That difference is exploitable. Tested it (`cellos_synthesis.py`):
+
+- **TOP-DOWN = FBA** (physics): predicts essentiality for metabolic genes even when silent in the assay. Blind to
+  signalling/TFs. AUC **0.81 on the 2,250 genes only it reaches**.
+- **BOTTOM-UP = measured Perturb-seq shock** (a gene whose knockout shocks the transcriptome tends to matter):
+  covers genes expressed in the screen, blind to the ~7,800 K562 doesn't express. AUC **0.72 on its screen-only genes**.
+- They overlap on only **295 of 4,082** covered genes — almost disjoint.
+
+Routing each gene to its specialist modality (calibrated to a real P(essential) out-of-fold, then combined):
+**coverage 2,526 → 4,082 genes (+62%) at effective per-gene accuracy 0.77, above the best single modality (0.71).**
+Broader AND slightly sharper — the first thing in the project to move the coverage/accuracy frontier, because it
+is not more of the same data, it is two modalities reaching different blind spots.
+
+Three honesty guardrails, all in the code/verdict:
+- **naive pooling FAILS** (AUC 0.62): the two populations have very different base rates (metabolic 9% essential vs
+  the K562-essential screen 72%), so averaging raw ranks miscalibrates. HOW you combine is the whole game.
+- the **pooled calibrated AUC (0.93) is base-rate-inflated** — it partly separates genes by which screen they came
+  from, not per-gene skill. The honest number is the within-population **effective accuracy 0.77**, not 0.93.
+- overlap agreement is weak (r=0.20), so this is **coverage complementarity, not mutual confirmation** — stated plainly.
+- (also fixed a tie-handling bug in the AUC: FBA growth ratios have many ties; switched to average-rank Mann-Whitney,
+  which made the numbers deterministic.)
+
+Wired into CellOS as `assess GENE`: gathers every independent layer (measured DepMap, top-down FBA, bottom-up
+Perturb-seq shock) for one gene, shows each with its evidence grade, and gives a combined call whose CONFIDENCE
+rises when independent layers agree (RAE1: all three agree → HIGH; SF3B1: measured-essential but modest shock →
+honestly flagged MIXED). This is the physics↔data synthesis made per-gene: they cover for each other where one is
+blind, and corroborate where both see. Tests green.

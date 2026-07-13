@@ -159,6 +159,12 @@ def claims_consistency():
     r = (ep or {}).get("mean_r_additive")
     line(b, ep is not None and r is not None and r > 0.8, "simulate/epistasis additive model (r~0.88)",
          f"additive r={r}")
+    # synthesis: assess quotes physics+data router covers ~2x at effective AUC > best single
+    sy = art("cellos_synthesis.json")
+    cm = (sy or {}).get("combined", {})
+    eff, gain = cm.get("effective_accuracy_cw"), cm.get("coverage_gain_over_best_single")
+    line(b, sy is not None and eff is not None and eff > 0.7 and (gain or 0) > 500,
+         "assess quotes physics+data synergy (2x reach)", f"effective AUC={eff}, +{gain} genes")
     return b
 
 

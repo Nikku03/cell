@@ -49,6 +49,7 @@ ARTIFACTS = [
     "litmine.json",   # PubMed literature extracted for dark genes (grounded + DOIs) -- descriptive layer
     "grn_validation.json", "grn_diag.json",   # the cell as RUNNING software (dynamical GRN): converges+robust, but knockout fragility does NOT predict essentiality (honest null, gain-robust) -- 'boot' syscall
     "grn_reprogram.json",   # TF reprogramming: forcing a master TF ON induces its OWN lineage program (8/9, AUC 0.99) -- the FORWARD win vs the backward essentiality null -- 'induce' syscall
+    "cellos_synthesis.json",   # top-down(FBA)+bottom-up(Perturb-seq) fusion: blind in different places -> router covers ~2x (4,082 genes, effective AUC 0.77 vs 0.71 single) -- 'assess' syscall
 ]
 
 

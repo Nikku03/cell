@@ -28,6 +28,7 @@ def main():
         "viability lethal": "viability RAE1", "viability robust": "viability SLC22A1",
         "viability non-metabolic": "viability TP53",
         "boot bare": "boot", "boot knockout": "boot TP53", "boot off-core": "boot NOTAGENE",
+        "assess 3-layer": "assess RAE1", "assess physics-only": "assess PFKL", "assess unknown": "assess NOTAGENE",
         "induce master TF": "induce GATA1", "reprogram alias": "reprogram MYOD1", "induce non-TF": "induce TTN",
         "lit dark gene": "lit FNDC5", "lit unmined": "lit ZZZ",
         "man known": "man TP53", "man unknown": "man NOTAGENE",
@@ -111,6 +112,12 @@ def main():
     check("induce GATA1 -> erythroid SPECIFIC", "SPECIFIC (reprogrammed)" in ig and "[GATA1]" in ig)
     it = k.induce(["TTN"])
     check("induce non-master TTN -> no lineage label", "SPECIFIC (reprogrammed)" not in it)
+
+    # assess: fuse independent layers; when measured + physics + data agree, HIGH confidence
+    a3 = k.assess("RAE1")
+    check("assess RAE1 -> 3 layers, HIGH agree", "ESSENTIAL" in a3 and "HIGH" in a3 and "FBA" in a3)
+    ap = k.assess("PFKL")
+    check("assess PFKL -> physics reaches a non-screen gene", "FBA" in ap and "physics" in ap)
 
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")
