@@ -1566,3 +1566,19 @@ Provenance labels corrected by the data run (UniBind release-year not exposed �
 Running tally of the science batches: 2 engine wins (localization +0.06, STRING +0.03), and now 3 honest
 descriptive/null batches (complexes/pathways redundant; tfbs a registry; metabolite_properties descriptive). The
 discipline holds — data that moves a metric gets wired, data that doesn't gets flagged and kept only as reference.
+
+## Batch: intact_interactions — a real curated PPI network, but REDUNDANT with STRING (no engine lift)
+
+IntAct (EBI, 68,499 human curated interactions, each PubMed-cited, 7,187 genes mapped). Tested as a network layer:
+- IntAct degree → essentiality AUC **0.578** (vs STRING physical **0.795**) — weaker, because IntAct degree tracks
+  how much a protein has been STUDIED (bait/prey in pulldowns) = literature bias, not true connectivity.
+- On top of the current 7 lines (which already include STRING): 0.887 → 0.886 (**−0.000**) — no lift.
+- As a REPLACEMENT for STRING: 0.858 — strictly worse.
+
+STRING v12.0 already ingests IntAct plus more channels, so IntAct is subsumed. Kept as reference (its per-edge
+PubMed citations could enrich a literature-backed `ppi` view, but that's descriptive, not an engine gain).
+
+The pattern across the science run is now clear and honest: the FIRST high-quality instance of a data TYPE wins
+(STRING = the PPI win, localization = the compartment win), and SUBSEQUENT instances of the same type are redundant
+(IntAct = another PPI; complexes = another complex source). Diminishing returns per data type — new *axes* move the
+needle, new *copies of an existing axis* don't. Tally: 2 engine wins, 5 descriptive/redundant batches.
