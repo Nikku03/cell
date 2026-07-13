@@ -1,0 +1,23 @@
+{
+ "n_measured": 420,
+ "n_records_total": 2549,
+ "log10_kcat_std": 1.8116332782363709,
+ "variants": {
+  "domain family only": {
+   "spearman": 0.2258666112131527,
+   "rmse_log10": 1.6653926319459238,
+   "fold_error": 46.279923451801466
+  },
+  "+ substrate/partner counts": {
+   "spearman": 0.19684023534234377,
+   "rmse_log10": 1.6946920764282734,
+   "fold_error": 49.509903110289116
+  },
+  "+ Km + abundance (all parts)": {
+   "spearman": 0.3473958140424612,
+   "rmse_log10": 1.5999390735758576,
+   "fold_error": 39.80513247022279
+  }
+ },
+ "verdict": "PARTIAL: the parts decode kcat weakly (Spearman 0.35, within 39.8-fold vs 65x baseline) \u2014 enzyme FAMILY (domains) sets the ballpark, but the precise turnover needs the active-site chemistry we don't encode (protein-LM/substrate features). Real signal, honest ceiling."
+}

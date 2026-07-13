@@ -1087,3 +1087,26 @@ So the software doesn't just answer — it knows *how much to trust its own answ
 Wired as `reason GENE` (alias `explain`): shows the chain of independent evidence, the conclusion, and a calibrated
 confidence (RPL13/PSMB5 → ESSENTIAL, P≈88%; SLC22A1 → NON-ESSENTIAL, P≈10%), and flags UNCERTAIN when lines split.
 This is the layer above the data: not one measurement, but the convergence of independent ones. Tests + audit green.
+
+## Test the biochemical limit — can we decode enzyme kinetics? (biochem_limit.py)
+
+The executable layer (metabolism → FBA 0.68) runs only because the missing quantity — kcat (catalytic turnover) —
+was imputed. So the real limit test: can the software DECODE kcat from the parts it has (domains, substrates,
+partners, Km, abundance), for the enzymes it's NOT measured for? Validated ONLY against the 420 experimentally-
+MEASURED kcats (the other ~2,100 records are themselves model-predicted — using them as truth would be circular),
+cross-validated:
+
+| features | Spearman | fold-error |
+|---|---|---|
+| domain family only | 0.226 | 46× |
+| + substrate/partner counts | 0.197 | 50× |
+| + Km + abundance (all parts) | **0.347** | **40×** |
+| baseline (predict mean) | 0.00 | 65× |
+
+**Verdict: PARTIAL — real signal, honest ceiling.** Enzyme FAMILY (domains) sets the ballpark and Km sharpens it,
+cutting the error from 65-fold to 40-fold — but coarse parts decode kcat only weakly (Spearman 0.35), below the
+deep protein-LM + substrate-chemistry state of the art (~0.5–0.7, which is what CatPred did to fill the other
+records). So the biochemical LIMIT is the kinetics: the quantity you'd need to RUN the non-metabolic 83% of the
+proteome the way we run metabolism is only partially recoverable from the parts we hold — it needs measurement, or
+active-site/sequence-level modelling these features don't carry. Not exposed as a syscall (0.35 is too weak to
+present as a reliable capability — reported as a limit, not a feature). (`biochem_limit.json`)
