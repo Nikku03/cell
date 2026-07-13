@@ -29,6 +29,7 @@ def main():
         "viability non-metabolic": "viability TP53",
         "boot bare": "boot", "boot knockout": "boot TP53", "boot off-core": "boot NOTAGENE",
         "assess 3-layer": "assess RAE1", "assess physics-only": "assess PFKL", "assess unknown": "assess NOTAGENE",
+        "reason essential": "reason RPL13", "reason non-essential": "explain SLC22A1", "reason unknown": "reason NOTAGENE",
         "cellsim in-screen": "cellsim SF3B1", "cellsim off-screen": "cellsim TP53",
         "coverage map": "coverage",
         "pathway annotated": "pathway PSMB5", "pathway unannotated": "decode NEPRO", "pathway off": "pathway NOTAGENE",
@@ -134,6 +135,11 @@ def main():
     pw = k.pathway("PSMB5")
     check("pathway PSMB5 -> proteasome neighbours", "PSM" in pw.split("neighbours:")[1].split(")")[0] if "neighbours:" in pw else False,
           "co-dependency neighbours are proteasome genes")
+
+    # reason: chain independent lines to a calibrated conclusion (essential agrees, non-essential agrees)
+    re_e = k.reason("RPL13"); re_n = k.reason("SLC22A1")
+    check("reason RPL13 -> ESSENTIAL + calibrated", "ESSENTIAL" in re_e and "confidence HIGH" in re_e and "P≈" in re_e)
+    check("reason SLC22A1 -> NON-ESSENTIAL", "NON-ESSENTIAL" in re_n)
 
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")

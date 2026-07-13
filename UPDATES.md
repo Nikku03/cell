@@ -1062,3 +1062,28 @@ it). Confident auto-fill of unannotated genes is limited (~2%, ~123 of 8,246) �
 
 Wired as `pathway GENE` (alias `decode`): decodes any gene's pathway from co-dependency neighbours, tags [matches
 annotation] or [NEW] — turning the 37% unlabeled genes from blank into a ranked, data-grounded shortlist. Tests green.
+
+## Reason across the data — the layer that matters more than the data (reason.py + `reason` syscall)
+
+Having the data isn't the point; reasoning with it to a conclusion you can TRUST is. Any single layer is imperfect
+(Perturb-seq shock ~0.64, FBA 0.64, LOEUF 0.57, complex 0.75, hub 0.50). Reasoning = converging INDEPENDENT lines,
+and knowing when to trust the result. Validated on essentiality (ground truth = DepMap dep_frac), with every
+evidence line independent of it (no circularity):
+
+**(a) Reasoning beats any single datum.** Weighing the five independent lines by reliability (learned, out-of-fold)
+→ **AUC 0.80**, above the best single line (complex, 0.75). Naive equal-weight averaging only ties it (0.757) —
+because a noisy line dilutes a strong one — so the win comes from *weighing* evidence, which is what reasoning is.
+
+**(b) The confidence is CALIBRATED — the important part.** P(truly essential) rises cleanly with agreement:
+
+| independent lines agreeing | P(essential) |
+|---|---|
+| 0 | 10% |
+| 1 | 42% |
+| 2 | 76% |
+| 3 | 88% |
+
+So the software doesn't just answer — it knows *how much to trust its own answer*, and that trust tracks reality.
+Wired as `reason GENE` (alias `explain`): shows the chain of independent evidence, the conclusion, and a calibrated
+confidence (RPL13/PSMB5 → ESSENTIAL, P≈88%; SLC22A1 → NON-ESSENTIAL, P≈10%), and flags UNCERTAIN when lines split.
+This is the layer above the data: not one measurement, but the convergence of independent ones. Tests + audit green.

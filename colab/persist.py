@@ -55,6 +55,7 @@ ARTIFACTS = [
     "cross_cell_line.json",
     "zhu_coverage.json",
     "zhu_targeted_genes.txt",
+    "reason.json",
     "pathway_decode.json",
     "coverage_stack.json",
     "coverage_stack_genes.txt",

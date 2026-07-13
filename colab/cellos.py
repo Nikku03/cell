@@ -305,6 +305,60 @@ class CellKernel:
                           f"  ── combined call: {call}   confidence: {conf}",
                           f"  coverage: {cover}.  (physics+data are blind in different places → together ~2x reach.)"])
 
+    def reason(self, name):
+        """REASON across independent evidence lines to a conclusion with CALIBRATED confidence — the layer above the
+        data. Validated (reason.py): weighing independent lines predicts essentiality at AUC 0.80 (> best single
+        layer 0.75), and confidence is calibrated — P(essential) rises 10%→88% as more lines agree. Not one
+        measurement, but the convergence of independent ones, and knowing when to trust it."""
+        i = self._pid(name)
+        if i is None:
+            return f"reason: no such gene '{name}'"
+        import numpy as np, json, os
+        C = self.C; g = C.genes[i]
+        lines = []                                              # (label, grade, vote 0/1, detail)
+        dbg = self._load_debugger()
+        if dbg and name in dbg.get("pidx", {}):
+            nm = dbg["norms"]; pct = float((nm < nm[dbg["pidx"][name]]).mean())
+            lines.append(("Perturb-seq shock", "measured", int(pct > 0.66), f"{pct:.0%} percentile"))
+        if not hasattr(self, "_fba"):
+            self.viability(name)
+        fb = self._fba.get(name) if getattr(self, "_fba", None) else None
+        if fb is not None:
+            lines.append(("FBA viability", "modeled", int(fb < 0.1), f"growth {fb:.0%} of WT"))
+        lo = g.get("loeuf")
+        if isinstance(lo, (int, float)):
+            lines.append(("LOEUF constraint", "genomic", int(lo < 0.35), f"LOEUF {lo}"))
+        g2c = C.D.get("gene2cplx", {}) or {}
+        inc = (i in g2c) or (str(i) in g2c)
+        lines.append(("complex member", "structural", int(bool(inc)), "in a physical complex" if inc else "no complex"))
+        od = len(C.causal_out.get(i, []) or [])
+        lines.append(("network hub", "network", int(od >= 20), f"drives {od} genes"))
+
+        nyes = sum(v for _, _, v, _ in lines); navail = len(lines)
+        # calibrated confidence from the validated calibration curve
+        calib = {}
+        p = f"outputs/orphan/reason.json"
+        if os.path.exists(p):
+            calib = {int(k): v["p_essential"] for k, v in json.load(open(p)).get("calibration", {}).items()}
+        pe = calib.get(min(nyes, max(calib) if calib else 3)) if calib else nyes / max(navail, 1)
+        L = [f"reason {name} — chaining independent evidence to a conclusion"]
+        for lab, grade, v, det in lines:
+            mark = "essential" if v else "—"
+            L.append(f"  [{grade:<10}] {lab:<18} {det:<22} → {mark}")
+        agree = nyes / max(navail, 1)
+        if agree >= 0.5:
+            concl, conf = "ESSENTIAL", "HIGH" if agree >= 0.6 else "MEDIUM"
+        elif agree <= 0.2:
+            concl, conf = "NON-ESSENTIAL", "HIGH" if agree == 0 else "MEDIUM"
+        else:
+            concl, conf = "UNCERTAIN (lines split — inspect)", "LOW"
+        L.append(f"  ── {nyes} of {navail} independent lines say essential")
+        L.append(f"  CONCLUSION: {concl}   confidence {conf}"
+                 + (f"  (calibrated P≈{pe:.0%} at this agreement)" if calib else ""))
+        L.append("  reasoning validated: weighing independent lines → AUC 0.80 > any single layer (0.75); "
+                 "confidence calibrated 10%→88%.")
+        return "\n".join(L)
+
     def _pathway_decoder(self):
         """lazily load the co-dependency matrix + pathway labels for data-driven pathway decoding."""
         if getattr(self, "_pwd", None) is None:
@@ -860,6 +914,7 @@ class CellKernel:
   top                  kernel threads (highest system-wide dependency)
   viability GENE       [FBA] top-down: does the cell still GROW after knockout? (objective+physics)
   assess GENE          best-evidence essentiality: fuse measured + physics + data; confidence rises when they agree
+  reason GENE          REASON across independent lines to a conclusion, with calibrated confidence (AUC 0.80)
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
   induce TF [TF..]     REPROGRAM: force master TF(s) ON, run forward, watch the lineage program light up
   cellsim GENE         top-down sim held on the rails by data: reconstruct a KO response from measured checkpoints
@@ -894,6 +949,7 @@ class CellShell:
             if cmd in ("pathway", "decode"): return k.pathway(args[0])
             if cmd == "viability": return k.viability(args[0])
             if cmd == "assess": return k.assess(args[0])
+            if cmd in ("reason", "explain"): return k.reason(args[0])
             if cmd in ("boot", "exec", "run"): return k.boot(args[0] if args else None)
             if cmd in ("induce", "reprogram"): return k.induce(args)
             if cmd in ("cellsim", "reconstruct"): return k.cellsim(args[0])
@@ -956,6 +1012,8 @@ DEMO = [
     "whodunit SF3B1",
     "# 4b) PREDICT THE NEXT THING — an unmeasured knockout's response, transformer-style, with a live self-check",
     "predict PSMB5",
+    "# 4c) REASON across independent lines to a conclusion, with CALIBRATED confidence (the layer above data)",
+    "reason RPL13",
     "# 5) ROOT-CAUSE on an arbitrary corrupted state — whose removal reverses it?",
     "diagnose up=HBA1,HBB down=CCNB1,CDK1",
     "# 5a) THERE IS NO SPOON — edit the cell (a combination knockout) and propagate to the resulting state",

@@ -183,6 +183,20 @@ def claims_consistency():
     uni = (cv or {}).get("union_any_trustworthy_answer", {}).get("frac")
     line(b, cv is not None and resp is not None and 0.5 < resp < 0.6 and (uni or 0) > 0.95,
          "coverage: 55% deepest axis, ~99% >=1 answer", f"response={resp:.0%}, union={uni:.0%}" if resp and uni else "MISSING")
+    # reason: weighted cross-layer reasoning beats the best single line, and is calibrated
+    rs = art("reason.json")
+    wr, bs = (rs or {}).get("weighted_reasoning_auc"), (rs or {}).get("best_single")
+    cal = (rs or {}).get("calibration", {})
+    ps = [cal[k]["p_essential"] for k in sorted(cal, key=lambda x: int(x))] if cal else []
+    calibrated = len(ps) >= 3 and ps[0] < 0.25 and ps[-1] > 0.7
+    line(b, rs is not None and wr and bs and wr > bs + 0.02 and calibrated,
+         "reason: convergence beats single + calibrated", f"reasoning AUC={wr}, best single={bs}, P {ps[0]:.0%}→{ps[-1]:.0%}" if ps else "MISSING")
+    # pathway decode: 8x chance
+    pd = art("pathway_decode.json")
+    b1 = (pd or {}).get("ablation", {}).get("+ PPI + complex (all help)", {}).get("top1")
+    base = (pd or {}).get("baseline_top1")
+    line(b, pd is not None and b1 and base and b1 > 4 * base,
+         "pathway: decodes from data >> chance", f"top1={b1:.0%} vs base {base:.0%}" if b1 and base else "MISSING")
     return b
 
 
