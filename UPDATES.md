@@ -902,3 +902,30 @@ Perturb-seq shock) for one gene, shows each with its evidence grade, and gives a
 rises when independent layers agree (RAE1: all three agree → HIGH; SF3B1: measured-essential but modest shock →
 honestly flagged MIXED). This is the physics↔data synthesis made per-gene: they cover for each other where one is
 blind, and corroborate where both see. Tests green.
+
+## Top-down simulation that doesn't drift — data checkpoints on the rails (`cellsim` syscall)
+
+The critique landed on: pure top-down simulation drifts (the free-running GRN lands in arbitrary attractors), so
+run it but ASSIMILATE measured data at checkpoints — the way weather models stay tethered to observations.
+Tested it as a reconstruction task (`cellsim.py`): hold out a knockout's measured response, reveal a fraction K of
+its genes as CHECKPOINTS, reconstruct the rest. Two predictors, same checkpoints, same held-out genes:
+
+| checkpoints | MECH sim (regulatory graph) | MECH fair (only genes w/ a regulator) | DATA fill (measured co-response) | baseline |
+|---|---|---|---|---|
+| 0% | 0.00 | 0.00 | 0.25 | 0.25 |
+| 10% | 0.01 | 0.01 | **0.42** | 0.25 |
+| 25% | 0.01 | 0.01 | **0.48** | 0.25 |
+| 50% | 0.01 | 0.01 | **0.50** | 0.25 |
+
+**The idea works — but the honest split is sharp.** Data checkpoints genuinely rescue the reconstruction: reveal
+10% of a knockout's response and the rest comes back at r=0.42, rising to 0.50 at 50% (baseline 0.25). But the
+mechanistic regulatory SIMULATION contributes ~nothing (r=0.01), even scored only on the 78% of genes that HAVE a
+regulator in the subgraph (so it's not a sparsity artifact) — consistent with the earlier finding that regulatory
+edges don't predict knockout effects. The simulation is a scaffold; the measured data checkpoints are the signal.
+The sim stays on the rails only because the data holds it there — assimilation, not physics.
+
+Wired as `cellsim GENE`: reveals 20% of a knockout's measured response as checkpoints and reconstructs the rest
+(SF3B1 r=0.71, RPL13 r=0.93 — ribosomal responses are highly coherent). Honest label in the output: the data
+anchors carry it, the mechanistic sim adds ~nothing. This is the honest form of "top-down simulation with data
+helpers" — genuinely useful for reconstructing a partially-measured cell, and clear about WHERE the power comes
+from. Tests green.

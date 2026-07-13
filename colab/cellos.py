@@ -305,6 +305,39 @@ class CellKernel:
                           f"  ── combined call: {call}   confidence: {conf}",
                           f"  coverage: {cover}.  (physics+data are blind in different places → together ~2x reach.)"])
 
+    def cellsim(self, gene, frac=0.2, rank=60):
+        """checkpoint-anchored simulation: reveal a fraction of a knockout's MEASURED response as data checkpoints,
+        reconstruct the REST from the measured co-response structure. This is the honest 'top-down sim with data
+        helpers': validated (cellsim.py), from 10–50% observed you recover the held-out response at r=0.42–0.50,
+        while the mechanistic regulatory simulation adds ~nothing (r=0.01) — the signal is the DATA anchors, not the
+        forward-run. The sim runs on the rails the data lays."""
+        import numpy as np
+        dbg = self._load_debugger()
+        if not dbg or gene not in dbg.get("pidx", {}):
+            return (f"cellsim {gene}: not in the mounted measured screen — reconstruction needs a real knockout "
+                    f"response to anchor to (try a gene from the screen, e.g. SF3B1).")
+        M, i, syms = dbg["M"], dbg["pidx"][gene], dbg["syms"]
+        mask = np.ones(M.shape[0], bool); mask[i] = False            # exclude the queried perturbation (no leakage)
+        Mtr = M[mask]; mu = Mtr.mean(0)
+        _, _, Vt = np.linalg.svd(Mtr - mu, full_matrices=False)
+        V = Vt[:rank].T
+        truth = M[i]
+        perm = np.random.RandomState(0).permutation(M.shape[1]); nobs = int(frac * M.shape[1])
+        obs, hid = perm[:nobs], perm[nobs:]
+        z, *_ = np.linalg.lstsq(V[obs], truth[obs] - mu[obs], rcond=None)
+        pred = mu + V @ z
+        a, b = pred[hid] - pred[hid].mean(), truth[hid] - truth[hid].mean()
+        r = float(a @ b / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-12))
+        top = hid[np.argsort(-np.abs(pred[hid]))[:8]]
+        showed = ", ".join(f"{syms[j]}{'↑' if pred[j] > 0 else '↓'}" for j in top)
+        return "\n".join([
+            f"cellsim {gene}  —  reconstruct the knockout response from {int(frac*100)}% measured checkpoints",
+            f"  observed {nobs:,} of {M.shape[1]:,} genes (the anchors); reconstructed the other {len(hid):,}",
+            f"  → reconstruction accuracy r = {r:.2f}   (validated sweep: 10%→0.42, 50%→0.50; baseline 0.25)",
+            f"  strongest reconstructed responders: {showed}",
+            "  the data checkpoints ARE the signal: the mechanistic regulatory sim adds ~nothing (r=0.01, validated).",
+            "  this is top-down simulation held on the rails by measured anchors — assimilation, not free-running."])
+
     def _grn(self):
         """lazily build the regulatory dynamical system — the cell's one RUNNABLE program (a clock, not a snapshot)."""
         if getattr(self, "_grn_obj", None) is None:
@@ -738,6 +771,7 @@ class CellKernel:
   assess GENE          best-evidence essentiality: fuse measured + physics + data; confidence rises when they agree
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
   induce TF [TF..]     REPROGRAM: force master TF(s) ON, run forward, watch the lineage program light up
+  cellsim GENE         top-down sim held on the rails by data: reconstruct a KO response from measured checkpoints
   strace GENE          [C] SIGKILL + measured downstream effect (Perturb-seq debugger)
   predict GENE         [C~] predict an UNMEASURED knockout's response from its neighbours
   whodunit GENE        [C] detective: recover the cause from a knockout's fingerprint
@@ -769,6 +803,7 @@ class CellShell:
             if cmd == "assess": return k.assess(args[0])
             if cmd in ("boot", "exec", "run"): return k.boot(args[0] if args else None)
             if cmd in ("induce", "reprogram"): return k.induce(args)
+            if cmd in ("cellsim", "reconstruct"): return k.cellsim(args[0])
             if cmd == "lit": return k.lit(args[0])
             if cmd == "ps": return k.ps(context=args[0] if args else None)
             if cmd == "man": return k.man(args[0])
@@ -811,6 +846,9 @@ DEMO = [
     "# 0d) REPROGRAM — force a master TF ON and run forward; the correct lineage program lights up (Yamanaka-style).",
     "#     The FORWARD direction works (AUC 0.99) where the backward one (essentiality) was null.",
     "induce GATA1",
+    "# 0e) CHECKPOINT-ANCHORED SIM — a top-down sim held on the rails by measured data: reveal part of a knockout's",
+    "#     response, reconstruct the rest (r=0.42–0.50). Data checkpoints are the signal; the mechanistic sim isn't.",
+    "cellsim SF3B1",
     "# 1) kernel threads — the processes the system cannot run without (essentiality = priority)",
     "top",
     "# 2) documentation for one process (real data: role, segment, scheduler, interfaces)",

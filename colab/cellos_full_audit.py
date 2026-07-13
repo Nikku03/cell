@@ -165,6 +165,13 @@ def claims_consistency():
     eff, gain = cm.get("effective_accuracy_cw"), cm.get("coverage_gain_over_best_single")
     line(b, sy is not None and eff is not None and eff > 0.7 and (gain or 0) > 500,
          "assess quotes physics+data synergy (2x reach)", f"effective AUC={eff}, +{gain} genes")
+    # cellsim: checkpoints reconstruct the response (data), mechanism adds ~nothing
+    cx = art("cellsim.json")
+    rw = (cx or {}).get("rows", [])
+    rdata = max((r.get("r_data", 0) for r in rw), default=0)
+    rmech = max((r.get("r_mech", 0) for r in rw), default=0)
+    line(b, cx is not None and rdata > 0.4 and rmech < 0.1,
+         "cellsim quotes checkpoint reconstruction (data>>mech)", f"data r={rdata:.2f}, mech r={rmech:.2f}")
     return b
 
 
