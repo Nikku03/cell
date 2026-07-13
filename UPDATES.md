@@ -1668,3 +1668,27 @@ targets + stress/compensation) are genuinely different axes. The genome-wide Dep
 no cheap on-disk substitute — the causal reach can only be extended by ACTUAL measured interventions in more contexts.
 This pins the requirement exactly: the multi-cell-line Perturb-seq (Replogle-Nadig: hepg2/jurkat/k562/rpe1) is the data
 that would extend it, and it must be ingested, not inferred. (causal_patch.py → causal_patch.json)
+
+## causal_expand — patching in the genome-wide screen: 2,058 → 9,871 measured removals (breadth up, precision flagged)
+
+The payoff of "patch the available data." causal_reach + causal_patch proved the reach can only grow with MEASURED
+interventions, not inference. The genome-wide Replogle K562 Perturb-seq (gwps: 11,258 guides → 9,867 gene knockdowns)
+was already on disk. The debugger's loader was refactored to MERGE it with the essential screen instead of choosing one:
+essential rows win on overlap (high precision preserved), gwps supplies the other ~7,800 genes as a measured extension,
+on a common response-gene column space. Cosine matching (already used by every causal syscall) makes the merge drop-in.
+
+Honest validation (biology recovery = a knockout's nearest co-perturbation twin is a real STRING physical partner):
+- **Reach: 2,058 → 9,871 knockouts (+7,813 genes now measured, not inferred).** Every causal syscall (strace / whodunit
+  / diagnose / predict) reaches the bigger set.
+- **Essential precision PRESERVED: 16.5% (merge off) → 16.1% (merge on)** — adding 7,813 noisier genes and searching 4.8×
+  more candidates does NOT pollute the high-precision answers (SF3B1 → SF3B3/SF3B2/SNRPA1, its spliceosome, unchanged).
+- **New gwps-only genes: 1.2% vs 0.0% random** — genuinely above chance but WEAK, exactly the coverage/precision tradeoff
+  the genome-wide screen carries (per-gene r~0.3 vs the essential screen's ~0.86).
+
+So the honest result is BREADTH, not precision: the causal engine now gives a MEASURED (if weak) answer for 9,871 pieces
+instead of nothing for 7,813 of them — and every low-precision answer is FLAGGED in the output (`_prec_note`:
+"[LOW-PRECISION: measured only in the genome-wide screen (r~0.3) — a weak lead; verify]"). A weak measured answer beats
+the inference null (causal_reach/causal_patch gave ~0), as long as the confidence is labelled. The merge is default-ON
+when gwps.h5ad is staged (PERTURB_MERGE=0 to disable); it falls back to the essential screen when the file is absent.
+Still pending (user uploading): the RPE1 second cell type, for the cross-cell-type causal-consistency test in
+causal_expand.py (does removing X do the same thing when the context changes?). (causal_expand.py → causal_expand.json)

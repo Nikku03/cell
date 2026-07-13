@@ -1,0 +1,19 @@
+{
+ "staged": [
+  "gwps.h5ad"
+ ],
+ "gwps": {
+  "n_ko": 9867,
+  "n_new_vs_essential": 7813,
+  "n_response_genes": 8248
+ },
+ "merge_validation": {
+  "essential_recovery_merge_off": 0.165,
+  "essential_recovery_merge_on": 0.161,
+  "n_essential_tested": 255,
+  "gwps_only_recovery": 0.012,
+  "n_new_tested": 245,
+  "random_baseline": 0.0
+ },
+ "verdict": "THE PATCH EXTENDS REACH \u2014 BREADTH UP, NEW-GENE PRECISION LOW (honest tradeoff). The genome-wide screen takes the measured causal engine from 2,058 to 9867 pieces (+7813 genes now measured, not inferred). Essential precision is PRESERVED (biology recovery 16% off -> 16% on, searching 4.8x more candidates). The NEW gwps-only genes are only WEAKLY informative (1% vs 0% random) \u2014 a measured but noisy fingerprint, exactly the coverage/precision tradeoff the genome-wide screen carries. So: every causal syscall now REACHES 9,871 pieces (vs 2,058), high-confidence for the essential 2,058 and low-confidence (flagged) for the rest \u2014 real added breadth, honestly the opposite of high precision. Still the right move: a weak measured answer beats the inference null (causal_reach/causal_patch), as long as the confidence is labelled."
+}

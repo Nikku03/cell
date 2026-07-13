@@ -102,15 +102,15 @@ class CellKernel:
         c = (self.C.genes[i].get("comp") or "?")
         return (c[0] if isinstance(c, str) else "?")
 
-    def _load_debugger(self):
-        if self._pert is not None:
-            return self._pert
-        if not os.path.exists(PERTURB):
-            self._pert = False; return False
+    @staticmethod
+    def _read_pert(path):
+        """read a Replogle bulk h5ad -> (M [gene x measured], pgenes, syms), averaging guide replicates per gene."""
         import h5py, numpy as np
-        f = h5py.File(PERTURB, "r")
+        f = h5py.File(path, "r")
         X = f["X"][:]
         idxkey = f["obs"].attrs.get("_index", "gene_transcript")
+        if isinstance(idxkey, bytes):
+            idxkey = idxkey.decode()
         labels = [x.decode() if isinstance(x, bytes) else x for x in f["obs"][idxkey][:]]
         pert = [l.split("_")[1] if len(l.split("_")) > 1 else l for l in labels]
         gn = f["var"]["gene_name"]
@@ -120,7 +120,6 @@ class CellKernel:
         else:
             syms = [x.decode() if isinstance(x, bytes) else x for x in gn[:]]
         f.close()
-        # one row per perturbed gene (average replicates)
         from collections import defaultdict
         rows = defaultdict(list)
         for k, g in enumerate(pert):
@@ -128,8 +127,36 @@ class CellKernel:
         pgenes = sorted(rows)
         M = np.vstack([X[rows[g]].mean(0) for g in pgenes])
         M = np.clip(np.nan_to_num(M, nan=0.0, posinf=0.0, neginf=0.0), -20.0, 20.0)  # gwps has NaN/inf entries
+        return M, pgenes, syms
+
+    def _load_debugger(self):
+        if self._pert is not None:
+            return self._pert
+        import numpy as np
+        # PRIMARY = the essential screen (high per-gene precision). EXTENSION = genome-wide gwps (breadth, lower
+        # precision). Merging keeps essential-precision for its 2,058 genes and adds the other ~7,800 as measured
+        # (if noisier) removals -> the causal syscalls reach ~9,867 pieces instead of 2,058, without degrading the
+        # high-precision answers (essential rows win on overlap). Disable the merge with PERTURB_MERGE=0.
+        primary = PERTURB if os.path.exists(PERTURB) else None
+        ext = f"{SCRATCH}/gwps.h5ad"
+        merge = os.environ.get("PERTURB_MERGE", "1") != "0" and os.path.exists(ext) and ext != primary
+        if primary is None and not (os.path.exists(ext)):
+            self._pert = False; return False
+        if primary is None:                                   # only gwps available
+            M, pgenes, syms = self._read_pert(ext); hi = set()
+        else:
+            M, pgenes, syms = self._read_pert(primary); hi = set(pgenes)
+            if merge:
+                gM, gpg, gsy = self._read_pert(ext)
+                common = [s for s in syms if s in set(gsy)]    # shared response-gene columns
+                ec = {s: j for j, s in enumerate(syms)}; gc = {s: j for j, s in enumerate(gsy)}
+                eci = np.array([ec[s] for s in common]); gci = np.array([gc[s] for s in common])
+                gpidx = {g: k for k, g in enumerate(gpg)}
+                extra = [g for g in gpg if g not in hi]        # genes only in the genome-wide screen
+                M = np.vstack([M[:, eci], gM[np.array([gpidx[g] for g in extra])][:, gci]])
+                pgenes = pgenes + extra; syms = common
         self._pert = dict(M=M, pgenes=pgenes, pidx={g: k for k, g in enumerate(pgenes)}, syms=syms,
-                          norms=np.linalg.norm(M, axis=1) + 1e-9)
+                          norms=np.linalg.norm(M, axis=1) + 1e-9, hi_prec=hi)
         return self._pert
 
     # ---------------------------------------------------------------- syscalls
@@ -892,6 +919,15 @@ class CellKernel:
                        f"{(g.get('proc') or '?')[:34]}")
         return "\n".join(out)
 
+    def _prec_note(self, name):
+        """low-confidence flag for a gene measured ONLY in the genome-wide screen (not the high-precision essential
+        set). The merge extends reach 2,058 -> 9,871 pieces, but the new genes carry a noisier fingerprint (r~0.3 vs
+        the essential screen's ~0.86; biology-recovery 1% vs 16%), so their causal answers are weak leads, not calls."""
+        dbg = self._pert if isinstance(self._pert, dict) else None
+        if dbg and dbg.get("hi_prec") and name in dbg["pidx"] and name not in dbg["hi_prec"]:
+            return "\n  [LOW-PRECISION: measured only in the genome-wide screen (r~0.3) — a weak lead; verify with strace/diagnose]"
+        return ""
+
     def strace(self, name, k=12):
         """[C] THE DEBUGGER. SIGKILL a process (CRISPR knockout) and show the MEASURED downstream state change
         (Perturb-seq). This is causal — the effect of actually removing the gene, not a correlation."""
@@ -916,7 +952,7 @@ class CellKernel:
                f"  ↓ DOWN-regulated on knockout:  " + ", ".join(f"{g}({v:+.1f})" for g, v in down[:8]),
                f"  ↑ UP-regulated on knockout:    " + ", ".join(f"{g}({v:+.1f})" for g, v in up[:8]),
                f"  (interventional: this is what the system does when the process is removed)"]
-        return "\n".join(out)
+        return "\n".join(out) + self._prec_note(name)
 
     def diagnose(self, up=None, down=None, k=10):
         """[C] ROOT-CAUSE debugger. Given a corrupted state (genes UP / DOWN = the 'stack trace'), rank the
@@ -963,7 +999,7 @@ class CellKernel:
             f"  knockouts whose MEASURED effect best matches this state (the implicated module):",
             "    " + ", ".join(f"{g}({m:+.2f})" for g, m in suspects),
             f"  (self-match excluded as trivial. identifying the EXACT cause CROSS-context is ~21% top-10, measured "
-            f"— the debugger is real; context transfer is the open problem.)"])
+            f"— the debugger is real; context transfer is the open problem.)"]) + self._prec_note(name)
 
     def whodunit_hits(self, name, topsig=25, k=8):
         """the ranked list behind whodunit(): [(gene, match_cosine)] excluding self, or an error string."""
