@@ -1509,3 +1509,23 @@ Spearman 0.22 (undirected smears upstream/downstream), so it's honestly too weak
 
 The fix is process: every future dataset now gets scored across all engines, not one — so the full impact (and the
 non-impacts) are visible before anything is claimed. (`data_impact.py`, `data_impact.json`)
+
+## Is the software connected like a cell? Tested by knockout — CONNECTED and ROBUST (and it hides damage the same way)
+
+The user's question: a cell is connected — knock out one line and you see the consequence unless a backup pathway
+buffers it. Is our software the same? Tested it the way you'd test a cell (`connectivity.py`): hide a component,
+watch what propagates.
+
+- **CONNECTED (changes propagate):** removing the localization line drops essentiality reasoning 0.887→0.851
+  (Δ −0.035); removing the STRING line drops it →0.858 (Δ −0.029). The layers are genuinely wired into the answer,
+  not decorative — a change has a direct downstream consequence.
+- **ROBUST (backup pathways):** knocking out localization.json / string_degree.json / reason.json does NOT crash
+  the software — the dependent syscall runs DEGRADED via a fallback (skips the missing line, falls back to the
+  uncalibrated agreement fraction). Exactly like a cell buffering a gene knockout.
+- **The honest catch — same as the cell:** that robustness HIDES damage. A corrupted layer silently lowers accuracy
+  without erroring; you only catch it by RE-RUNNING the audit (which regenerates and re-checks the number). This is
+  precisely why the cell's own knockout→essentiality is null (robustness masks the perturbation) — our software
+  inherited the same trait.
+- **Honest limit:** connectivity is real at the reasoning layer + the ID backbone, but it is NOT a live signal —
+  most modules are batch scripts writing artifacts, wired together through the reason engine, not a continuously-
+  propagating network. So it's a connected, robust DAG — not a running organism. (`connectivity.py`)
