@@ -1110,3 +1110,29 @@ records). So the biochemical LIMIT is the kinetics: the quantity you'd need to R
 proteome the way we run metabolism is only partially recoverable from the parts we hold — it needs measurement, or
 active-site/sequence-level modelling these features don't carry. Not exposed as a syscall (0.35 is too weak to
 present as a reliable capability — reported as a limit, not a feature). (`biochem_limit.json`)
+
+## The right way to use a wrong kcat — the running cell FLAGS it (kcat_flag.py + `check` syscall)
+
+Reframe (correct, and how the field actually does it): don't PREDICT kcat (weak, 0.35) — put it into the running
+cell and if it's wrong, the software can't run and flags it. For metabolism that's exact physics: an enzyme's kcat
+(max turnover) must be ≥ the rate it actually operates at in the cell (incell_rate = measured flux ÷ measured
+abundance). A kcat below that can't carry the flux → the model can't reach measured growth → IMPOSSIBLE.
+
+Tested on 269 enzymes with a cell-imposed operating rate:
+
+| kcat put in | flagged as impossible |
+|---|---|
+| correct value | 6% (false-flag) |
+| 10× too slow | **93%** |
+| 100× too slow | **99%** |
+| too fast (×10–100) | 2–4% (not flagged — one-sided) |
+
+Real measured kcats pass at **100%** — the cell runs with them. **Verdict: the complete-cell model validates its
+own parameters.** You can't *predict* kcat well, but the flux the cell must carry *constrains* it, so a bad value is
+caught 99% of the time with only 6% false-flags. Honest caveat: one-sided — it flags impossibly-SLOW kcats; catching
+impossibly-FAST ones needs the two-sided ecFBA-at-measured-growth bound.
+
+Wired as `check ENZYME KCAT`: put in a turnover number and the running cell returns CONSISTENT / TIGHT / FLAGGED —
+IMPOSSIBLE (SLC2A8 at 100× too slow → flagged; at 100× too fast → passes, honestly noted as the blind side). This is
+the positive flip of the kcat limit: prediction is weak, but the cell is a 99%-accurate parameter LINTER. Tests +
+audit green.

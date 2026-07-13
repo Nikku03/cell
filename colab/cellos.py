@@ -305,6 +305,41 @@ class CellKernel:
                           f"  ── combined call: {call}   confidence: {conf}",
                           f"  coverage: {cover}.  (physics+data are blind in different places → together ~2x reach.)"])
 
+    def check(self, name, kcat):
+        """put in a kcat and let the RUNNING CELL flag it. An enzyme's kcat (max turnover) must be >= the rate it
+        actually operates at in the cell (measured flux / abundance) — a too-slow value can't carry the flux, so the
+        model can't reproduce measured growth: impossible -> FLAG. Validated (kcat_flag.py): a 100x-too-slow kcat is
+        caught 99% of the time, 6% false-flags. You can't PREDICT kcat well (0.35), but the cell VALIDATES it. Note:
+        one-sided — catches impossibly-slow kcats; impossibly-fast ones need the ecFBA-at-measured-growth bound."""
+        import json, os
+        if not hasattr(self, "_erec"):
+            p = "outputs/orphan/enzyme_records.json"
+            self._erec = json.load(open(p)) if os.path.exists(p) else {}
+        r = self._erec.get(name)
+        if not r:
+            return f"check {name}: not an enzyme in the metabolic model — no flux demand to check a kcat against."
+        rate = r.get("incell_rate_per_s")
+        if not isinstance(rate, (int, float)) or rate <= 0:
+            return f"check {name}: no measured in-cell operating rate (flux/abundance) — can't flag without the cell's demand."
+        try:
+            kcat = float(kcat)
+        except (TypeError, ValueError):
+            return "check: kcat must be a number (turnover per second, e.g. `check MGAT2 1.8`)."
+        ratio = kcat / rate
+        if kcat < rate:
+            v = (f"FLAGGED — IMPOSSIBLE. kcat {kcat:g}/s is BELOW the rate this enzyme must run at in the cell "
+                 f"({rate:.3g}/s, = measured flux ÷ abundance). It can't carry the flux → the model can't reach "
+                 f"measured growth. A real complete-cell would refuse to run.")
+        elif ratio < 3:
+            v = (f"TIGHT but ok. kcat {kcat:g}/s is only {ratio:.1f}x the required operating rate ({rate:.3g}/s) — "
+                 f"the enzyme runs near saturation; plausible but leaves little headroom.")
+        else:
+            v = (f"CONSISTENT. kcat {kcat:g}/s comfortably exceeds the required operating rate ({rate:.3g}/s, "
+                 f"{ratio:.0f}x headroom) — the cell can carry its flux. (Can't rule out 'too fast' from this side.)")
+        return "\n".join([f"check {name}: proposed kcat = {kcat:g}/s  vs  cell's flux demand {rate:.3g}/s",
+                          f"  → {v}",
+                          "  (validated: 100x-too-slow kcats flagged 99%, false-flag 6% — the running cell vets its own parameters)"])
+
     def reason(self, name):
         """REASON across independent evidence lines to a conclusion with CALIBRATED confidence — the layer above the
         data. Validated (reason.py): weighing independent lines predicts essentiality at AUC 0.80 (> best single
@@ -915,6 +950,7 @@ class CellKernel:
   viability GENE       [FBA] top-down: does the cell still GROW after knockout? (objective+physics)
   assess GENE          best-evidence essentiality: fuse measured + physics + data; confidence rises when they agree
   reason GENE          REASON across independent lines to a conclusion, with calibrated confidence (AUC 0.80)
+  check ENZYME KCAT    put in a kcat; the running cell FLAGS it if impossibly slow (can't carry flux) — 99% catch
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
   induce TF [TF..]     REPROGRAM: force master TF(s) ON, run forward, watch the lineage program light up
   cellsim GENE         top-down sim held on the rails by data: reconstruct a KO response from measured checkpoints
@@ -950,6 +986,7 @@ class CellShell:
             if cmd == "viability": return k.viability(args[0])
             if cmd == "assess": return k.assess(args[0])
             if cmd in ("reason", "explain"): return k.reason(args[0])
+            if cmd == "check": return k.check(args[0], args[1])
             if cmd in ("boot", "exec", "run"): return k.boot(args[0] if args else None)
             if cmd in ("induce", "reprogram"): return k.induce(args)
             if cmd in ("cellsim", "reconstruct"): return k.cellsim(args[0])
@@ -1024,6 +1061,8 @@ DEMO = [
     "deadlock FANCI",
     "# 7) static-lint a code patch (mutation)",
     "patch TP53:R175H",
+    "# 7b) VALIDATE A PARAMETER — put in a kcat; the RUNNING CELL flags it if impossibly slow (can't carry flux)",
+    "check SLC2A8 0.001",
     "# 8) THE SECURITY LAYER — every claim is untrusted input until verified (the article's lesson)",
     'lint "TP53 binds MDM2"',
     'lint "TP53 binds MRPS25"',

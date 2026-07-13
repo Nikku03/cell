@@ -1,0 +1,19 @@
+{
+ "n": 269,
+ "n_measured": 46,
+ "real_consistent_frac": 0.9442379182156134,
+ "corruption_flag_curve": {
+  "100": 0.022304832713754646,
+  "10": 0.03345724907063197,
+  "3": 0.040892193308550186,
+  "1": 0.055762081784386616,
+  "0.3": 0.758364312267658,
+  "0.1": 0.929368029739777,
+  "0.01": 0.9888475836431226,
+  "0.001": 1.0
+ },
+ "false_flag_rate": 0.055762081784386616,
+ "flag_10x_too_slow": 0.929368029739777,
+ "flag_100x_too_slow": 0.9888475836431226,
+ "verdict": "YES \u2014 the running cell flags wrong kcats: a kcat 100x too slow is caught 99% of the time (10x: 93%), while only 6% of correct kcats are falsely flagged. The complete-cell model validates its own parameters: you can't PREDICT kcat well (0.35), but the flux the cell must carry CONSTRAINS it \u2014 a bad value makes the software unable to run, which is the flag. One-sided: catches impossibly-slow kcats; impossibly-fast ones need the ecFBA-at-measured-growth upper bound."
+}

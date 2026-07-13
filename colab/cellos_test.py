@@ -30,6 +30,7 @@ def main():
         "boot bare": "boot", "boot knockout": "boot TP53", "boot off-core": "boot NOTAGENE",
         "assess 3-layer": "assess RAE1", "assess physics-only": "assess PFKL", "assess unknown": "assess NOTAGENE",
         "reason essential": "reason RPL13", "reason non-essential": "explain SLC22A1", "reason unknown": "reason NOTAGENE",
+        "check slow kcat": "check SLC2A8 0.001", "check non-enzyme": "check TP53 5",
         "cellsim in-screen": "cellsim SF3B1", "cellsim off-screen": "cellsim TP53",
         "coverage map": "coverage",
         "pathway annotated": "pathway PSMB5", "pathway unannotated": "decode NEPRO", "pathway off": "pathway NOTAGENE",
@@ -140,6 +141,16 @@ def main():
     re_e = k.reason("RPL13"); re_n = k.reason("SLC22A1")
     check("reason RPL13 -> ESSENTIAL + calibrated", "ESSENTIAL" in re_e and "confidence HIGH" in re_e and "P≈" in re_e)
     check("reason SLC22A1 -> NON-ESSENTIAL", "NON-ESSENTIAL" in re_n)
+
+    # check: the running cell flags an impossibly-slow kcat, passes a fast one
+    import json as _json
+    _recs = _json.load(open("outputs/orphan/enzyme_records.json"))
+    _ez = next((g for g, v in _recs.items() if v.get("incell_rate_per_s") and v.get("kcat_invitro_per_s")), None)
+    if _ez:
+        _rate = _recs[_ez]["incell_rate_per_s"]
+        check("check flags too-slow kcat", "FLAGGED" in k.check(_ez, _rate / 1000), f"({_ez})")
+        check("check passes fast kcat", "CONSISTENT" in k.check(_ez, _rate * 1000), f"({_ez})")
+    check("check non-enzyme handled", "not an enzyme" in k.check("TP53", 5))
 
     # deadlock recovers the pathway
     dl = k.deadlock("FANCI")

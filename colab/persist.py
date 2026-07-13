@@ -57,6 +57,7 @@ ARTIFACTS = [
     "zhu_targeted_genes.txt",
     "reason.json",
     "biochem_limit.json",
+    "kcat_flag.json",
     "pathway_decode.json",
     "coverage_stack.json",
     "coverage_stack_genes.txt",
