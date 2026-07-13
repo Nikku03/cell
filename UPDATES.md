@@ -1015,3 +1015,25 @@ PREDICTIONS on the new genes need the 44.5 GB matrix (Colab step, not run here).
 measurements — and given cross-line transfer is only r=0.19, they extend coverage IN the T-cell context: the honest
 frame is not "72% of the cell" but "we can now reach ~72% of the genome's knockout responses across K562 + T-cell
 contexts." The cell stays contextual; we just measured one more context.
+
+## Stack more cell lines — the honest diminishing-returns curve (coverage_stack.py)
+
+Extended "get more cell lines" to every published Perturb-seq we could get a gene list for WITHOUT the huge
+matrices: K562 (on disk) + CD4+ T cell (Zhu 2025 committed list) + ~8 scPerturb screens across NEW lineages
+(melanoma FrangiehIzar2021, THP-1 PapalexiSatija2021, iNeuron/iPSC TianKampmann2019/2021, DatlingerBock2017),
+pulling each dataset's perturbed genes straight from its `pairwise_edist` table header (scPerturb repo, no download).
+
+Cumulative measured-response coverage:
+
+| stacking | genes | % genome |
+|---|---|---|
+| K562 alone | 8,696 | 52.7% |
+| + CD4+ T cell (genome-wide) | 11,461 | 69.4%  (**+2,765**) |
+| + 8 targeted scPerturb screens (5 new lineages) | 11,504 | 69.7%  (**+43 total**) |
+
+**The honest lesson, quantified:** the two GENOME-WIDE screens contribute +2,765 genes; all 8 TARGETED screens
+combined add just 43 (melanoma +16, TianKampmann CRISPRa +21, CRISPRi +6, the rest 0 — they re-hit the shared
+essential/regulatory core). A genome-wide screen in a new lineage is worth ~65× a targeted one. So "get more cell
+lines" pays off only for GENOME-WIDE screens in cell types expressing new genes — chasing the many small targeted
+screens is nearly tapped out. Frontier reach today ≈ 70% (across mixed K562/T-cell/… contexts; and with cross-line
+transfer only r=0.19, this is coverage-in-context, not one universal map). (`coverage_stack.json`)
