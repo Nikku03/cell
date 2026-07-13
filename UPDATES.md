@@ -1550,3 +1550,19 @@ So "biology as running software" is REAL as **propagation + robustness + checkpo
 `perturb GENE` syscall that shows WHO is in the blast radius — and a NULL for the whole-cell dynamic response. The
 running network tells you who's in the module, not how the whole cell answers. That is the honest ceiling of a
 topology-driven runtime; the far-field needs the measured data, not the graph. (`biosim.py`, `perturb` syscall)
+
+## Batch: tfbs_datasets + metabolite_properties (provenance-corrected) — descriptive, no gene-engine lift
+
+Provenance labels corrected by the data run (UniBind release-year not exposed → stripped; ChEBI backend labelled
+"ebi.ac.uk/chebi 2025-07"); values verified genuine. Tested for engine lift before claiming, per the standing rule:
+
+- **tfbs_datasets** (3,478 UniBind ChIP datasets, 268 TFs): a dataset REGISTRY, not TF→target edges. #ChIP-datasets
+  per gene → essentiality AUC **0.495**, disease **0.507** (both chance); reason lift **+0.000**. Can't be wired as
+  regulatory edges (no peak→target assignments); kept as descriptive TF annotation.
+- **metabolite_properties** (4,165 Human-GEM metabolites: ChEBI/KEGG/PubChem IDs + SMILES/InChI + mass/charge/logP):
+  genuine metabolite-side ID+structure infrastructure — the metabolite analog of the gene id_map — but metabolite-
+  level chemistry doesn't feed the gene-level engines. Kept as a reference metabolite layer.
+
+Running tally of the science batches: 2 engine wins (localization +0.06, STRING +0.03), and now 3 honest
+descriptive/null batches (complexes/pathways redundant; tfbs a registry; metabolite_properties descriptive). The
+discipline holds — data that moves a metric gets wired, data that doesn't gets flagged and kept only as reference.
