@@ -559,6 +559,79 @@ class CellKernel:
         out.append(f"  ── {n['headline']}")
         return "\n".join(out)
 
+    def _discover(self):
+        """lazily load the discovery results (discover.py → discover.json)."""
+        if not hasattr(self, "_disc"):
+            import json, os
+            p = "outputs/orphan/discover.json"
+            self._disc = json.load(open(p)) if os.path.exists(p) else {}
+        return self._disc
+
+    def discover(self, args):
+        """aim the reasoning machinery at the UNKNOWNS, not at essentiality (already measured). Four engines, each
+        honestly graded (discover.py):
+          discover selective   — genes with a BIMODAL (selective) dependency profile = the drug-target window.
+                                  VALIDATED: recovers 20/22 known oncology targets in the top-500 (33.5x enrichment).
+          discover druggable   — selective AND surface-accessible (membrane/secreted) — a tractable shortlist (partial:
+                                  no Pharos/DGIdb tractability loaded).
+          discover disease     — genes not yet disease-linked scoring in the top disease-prior bucket. HONEST: coarse
+                                  (6 buckets), modest axis (0.65) — a candidate SET, not a ranking.
+          discover function G  — dark-gene function by label transfer. HONEST NULL for the truly dark proteome (neighbours
+                                  scatter); only coherent-module genes (e.g. rRNA) get a real call.
+        usage: discover [selective|druggable|disease|function GENE]"""
+        d = self._discover()
+        if not d:
+            return "discover: run discover.py first to compute the discovery results."
+        sub = args[0] if args else "summary"
+        if sub == "selective":
+            se = d["selective"]
+            out = [f"discover selective — {se['n_selective']} genes with a bimodal (selective) dependency profile",
+                   f"  VALIDATED: {se['known_recovered_top500']}/{se['known_total']} known oncology targets in top-500 "
+                   f"({se['enrichment_top500_vs_chance']}x enrichment vs chance)",
+                   "  top selective dependencies (skew = strength of the bimodal tail):"]
+            for t in se["top_selective_targets"][:12]:
+                tag = "  [known]" if t["known"] else ""
+                out.append(f"    {t['gene']:10} skew {t['skew']:5}  strong in {t['n_strong_dep_lines']:3} lines  "
+                           f"min effect {t['min_effect']}{tag}")
+            out.append("  novel (not in the known set): " + ", ".join(t["gene"] for t in se["top_novel_selective"][:12]))
+            return "\n".join(out)
+        if sub == "druggable":
+            dg = d["druggable"]
+            out = [f"discover druggable — {dg['n']} selective + surface-accessible targets ({dg['note']})"]
+            for t in dg["shortlist"]:
+                tag = "  [known]" if t["known"] else ""
+                out.append(f"    {t['gene']:10} strong in {t['n_strong_dep_lines']:3} lines, {t['compartment']}{tag}")
+            return "\n".join(out)
+        if sub == "disease":
+            dn = d["disease_new"]
+            gs = ", ".join(c["gene"] for c in dn["top_novel_disease_candidates"][:15])
+            return (f"discover disease — {dn['n_in_top_bucket']} not-yet-disease genes in the top prior bucket "
+                    f"(P≈{dn['top_bucket_probability']}); axis AUC {dn['axis_auc']}, {dn['resolution']}\n  {gs}")
+        if sub == "function":
+            fn = d["function"]
+            if len(args) < 2:
+                return "discover function GENE   (e.g. discover function NOL10)"
+            g = args[1]
+            hit = next((p for p in fn["top_predictions"] if p["gene"] == g), None)
+            if hit:
+                return (f"discover function {g}: → {hit['predicted_function']}  (vote margin {hit['margin']}, "
+                        f"a coherent-module call)")
+            return (f"discover function {g}: no concentrated call — {fn['verdict']}")
+        # summary
+        fn, se, dn, dg = d["function"], d["selective"], d["disease_new"], d["druggable"]
+        return "\n".join([
+            "discover — the reasoning machinery aimed at the UNKNOWNS (grade honestly attached to each):",
+            f"  1. selective  [WIN]   {se['n_selective']} bimodal targets; recovered "
+            f"{se['known_recovered_top500']}/{se['known_total']} known oncology targets in top-500 "
+            f"({se['enrichment_top500_vs_chance']}x). Top novel: " + ", ".join(t["gene"] for t in se["top_novel_selective"][:6]),
+            f"  2. druggable  [PART]  {dg['n']} selective + surface targets (no Pharos tractability yet): "
+            + ", ".join(t["gene"] for t in dg["shortlist"][:6]),
+            f"  3. disease    [WEAK]  {dn['n_in_top_bucket']} novel candidates in the top bucket, but coarse (axis "
+            f"{dn['axis_auc']}).",
+            f"  4. function   [NULL]  label transfer is null on the dark proteome (margin "
+            f"{fn['dark_median_vote_margin']}); only {fn['n_dark_high_margin']} coherent-module genes get a real call.",
+            "  → the one validated discovery engine is SELECTIVE dependencies. 'discover selective' for the ranked list."])
+
     def _pathway_decoder(self):
         """lazily load the co-dependency matrix + pathway labels for data-driven pathway decoding."""
         if getattr(self, "_pwd", None) is None:
@@ -1116,6 +1189,7 @@ class CellKernel:
   assess GENE          best-evidence essentiality: fuse measured + physics + data; confidence rises when they agree
   reason GENE          REASON essentiality across independent lines, calibrated confidence (AUC 0.86)
   disease GENE         a 2nd reasoning engine: calibrated prior that a gene is disease-associated (modest, 0.65)
+  discover [sub]       aim the engine at UNKNOWNS: selective [WIN, 33x] / druggable / disease / function GENE
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1175,6 +1249,7 @@ class CellShell:
             if cmd in ("ppi", "partners"): return k.ppi(args[0])
             if cmd in ("perturb", "live"): return k.perturb(args[0])
             if cmd in ("disease", "risk"): return k.disease(args[0])
+            if cmd in ("discover", "unknown"): return k.discover(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])

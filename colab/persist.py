@@ -80,6 +80,7 @@ ARTIFACTS = [
     "flag_base_vs_kcat.json",
     "fba_flux_coverage.json",
     "pathway_decode.json",
+    "discover.json",               # aim the reasoning machinery at the UNKNOWNS: SELECTIVE-dependency discovery is the WIN (skew of raw DepMap gene-effect + robustness floor recovers 20/22 known oncology targets in top-500, 33.5x enrichment; surfaces novel selective targets SHLD3/CD24/FGFR2/MAF); druggable = selective+surface (TNFSF10/CD24/FZD5, partial - no Pharos); disease_new coarse (0.65); dark-gene FUNCTION is an honest NULL (label transfer scatters on the dark proteome, margin 0.02) -- the discover syscall
     "coverage_stack.json",
     "coverage_stack_genes.txt",
     "celltype_screen_gain.json",   # payoff meter for a fetched complementary-cell-line screen: NEW measured genes it adds vs K562 (self-checked: RPE1 -> 0)   # K562 vs RPE1: RPE1 adds 0 new genes (essential-scoped); responses transfer only weakly (r0.19 vs 0.06) -> 55% is PER-CELL-LINE, knockout effects are context-specific

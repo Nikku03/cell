@@ -1582,3 +1582,43 @@ The pattern across the science run is now clear and honest: the FIRST high-quali
 (STRING = the PPI win, localization = the compartment win), and SUBSEQUENT instances of the same type are redundant
 (IntAct = another PPI; complexes = another complex source). Diminishing returns per data type — new *axes* move the
 needle, new *copies of an existing axis* don't. Tally: 2 engine wins, 5 descriptive/redundant batches.
+
+## discover — aiming the validated reasoning machinery at the UNKNOWNS (not essentiality)
+
+The user's directive: essentiality is already measured — stop re-scoring it and point the engine at things WITHOUT a
+known answer. Four discovery engines were built (`discover.py` → `discover.json`, `discover` syscall). Each was graded
+honestly; only the ones that validate are presented as capabilities, the rest are flagged.
+
+**1. SELECTIVE dependencies — the one genuine WIN.** A selective (druggable) dependency has a BIMODAL raw gene-effect:
+a tail of strong dependency in a small subset of lines against a bulk near zero (KRAS in KRAS-mutant lines, FOXA1 in
+lineage-addicted lines). The metric is the LEFT-SKEW of the reconstructed RAW DepMap gene-effect (Z·sd+mu — the per-gene
+z-scoring in `depmap_vecs.npz` had DESTROYED this signal, which is why an earlier frac-in-window attempt gave a 1.01×
+null), floored to genes with ≥3 strongly-dependent lines so a single CRISPR outlier can't score. Validation (the known
+set was NOT used to build the metric): **20/22 known selective oncology targets land in the top-500 of 18,443 genes —
+33.5× enrichment.** Surfaces novel selective targets: SHLD3 (Shieldin, synthetic-lethal with BRCA), CD24, FGFR2, MAF,
+NEDD4L, FZD5.
+
+**2. DRUGGABLE triage — a useful derivative (partial).** Selective dependency AND surface-accessible (membrane/secreted,
+from the localization layer): 9 genes, including real tractable targets — TNFSF10 (TRAIL), CD24, FGFR2, FZD5, IL2RG.
+Honest gap: no Pharos/DGIdb tractability data loaded yet (dgidb_interactions.tsv is available but un-ingested), so this
+is "selective + on the cell surface," not a full druggability call.
+
+**3. NOVEL DISEASE candidates — kept, but flagged WEAK.** Genes not yet disease-linked that score in the top bucket of
+the disease reasoner's prior: 36 genes at P≈0.62 (ARNT, ATF2/4, CDK1, CLOCK, HIF1A, FOXO3…). Honest caveats: the disease
+axis is modest (AUC 0.65) and the calibration is COARSE — only 6 buckets — so this is a candidate SET, not a
+high-resolution ranking.
+
+**4. Dark-gene FUNCTION — an honest NULL.** Co-dependency + STRING label transfer. It VALIDATES on well-connected
+annotated genes (their neighbours are pathway-coherent — tight complexes) but that number does NOT transfer to the
+truly dark proteome: every dark gene has co-dependency neighbours, but they SCATTER across ~50 pathways (median vote
+margin **0.02**), so the "prediction" is noise. Worse, the naive confidence is INVERTED — conf=1.0 came from a handful
+of weak STRING partners all pointing one way (least evidence, not most). The only dark calls that survive a real
+vote-margin threshold (≥0.15) are genes sitting in one tight coherent module — and they're all correct (NOL10, NOM1,
+PPAN, MAK16, GTPBP4 → rRNA processing). So function-by-label-transfer is a narrow coherent-module gap-filler, NOT a
+general dark-gene function predictor. This is the same structure-vs-dynamics / well-connected-vs-dark split seen across
+the GRN (0.47), cellsim (r0.01) and biosim (+0.02) nulls.
+
+Net: pointing the machinery at the unknowns yields ONE validated new discovery engine (selective dependencies, 33.5×
+enrichment) plus a tractable-target derivative, with the disease axis honestly weak and dark-gene function honestly
+null. The discipline is unchanged — validate before claiming, flag the nulls, and don't fake a number the data won't
+support. Served by the `discover` syscall (`discover selective` for the ranked list).
