@@ -398,6 +398,35 @@ class CellKernel:
                  "confidence calibrated 10%→88%.")
         return "\n".join(L)
 
+    def mutate(self, args):
+        """run the cell's reasoning WITH a mutation. Fuses the VARIANT layer (does it break the protein? —
+        AlphaMissense call + ΔΔG/functional-site mechanism + a sickle-cell-style gain-of-function override) with
+        the CELL layer (does the cell depend on it? — reason, AUC 0.80, calibrated). NAMES the regime, because
+        cell-fitness essentiality and disease pathogenicity are DIFFERENT axes (they agree for loss-of-function in
+        load-bearing genes, diverge for tumor-suppressors / GOF / tissue-specific).
+        usage: mutate GENE UNIPROT POS WT MUT   e.g.  mutate TP53 P04637 175 R H   (needs net for AlphaMissense)."""
+        if len(args) < 5:
+            return "mutate GENE UNIPROT POS WT MUT   e.g.  mutate TP53 P04637 175 R H"
+        try:
+            gene, up, pos, wt, mut = args[0], args[1], int(args[2]), args[3].upper(), args[4].upper()
+        except ValueError:
+            return "mutate: POS must be an integer.  usage: mutate GENE UNIPROT POS WT MUT"
+        if not hasattr(self, "_mr"):
+            from reason_mutation import MutationReasoner
+            self._mr = MutationReasoner(kernel=self)     # reuse this kernel for the cell layer (no second boot)
+        o = self._mr.reason(gene, up, pos, wt, mut, verbose=False)
+        v, c = o["variant_layer"], o["cell_layer"]
+        return "\n".join([
+            f"mutate {o['mutation']}  —  reasoning a variant through the whole cell",
+            f"  A) VARIANT : {v['call'].upper()}  (AlphaMissense {v['score']})  — {', '.join(v['mechanisms'])}",
+            f"       why: {v['why']}",
+            f"  B) CELL    : {c['essentiality']}" + (f"  (calibrated P≈{c['p_essential']:.0%})" if c['p_essential'] is not None else "")
+            + "   — does the cell depend on this protein?",
+            f"  ── REGIME  : {o['regime']}",
+            f"     → {o['cell_level_conclusion']}",
+            f"     joint confidence: {o['joint_confidence']}",
+            "  (fuses two validated reasoners; essentiality is a cell-FITNESS lens, not pathogenicity — regimes named)"])
+
     def _pathway_decoder(self):
         """lazily load the co-dependency matrix + pathway labels for data-driven pathway decoding."""
         if getattr(self, "_pwd", None) is None:
@@ -954,6 +983,7 @@ class CellKernel:
   viability GENE       [FBA] top-down: does the cell still GROW after knockout? (objective+physics)
   assess GENE          best-evidence essentiality: fuse measured + physics + data; confidence rises when they agree
   reason GENE          REASON across independent lines to a conclusion, with calibrated confidence (AUC 0.80)
+  mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   check ENZYME KCAT    put in a kcat; the cell sanity-checks it vs the flux it must carry — WEAK/one-sided hint (~70%)
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
   induce TF [TF..]     REPROGRAM: force master TF(s) ON, run forward, watch the lineage program light up
@@ -1001,6 +1031,7 @@ class CellShell:
             if cmd in ("strace", "kill"): return k.strace(args[0])
             if cmd == "predict": return k.predict(args[0])
             if cmd == "whodunit": return k.whodunit(args[0])
+            if cmd in ("mutate", "variant"): return k.mutate(args)
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
             if cmd == "lint": return k.lint(line.split(" ", 1)[1].strip().strip('"'))

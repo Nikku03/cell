@@ -1204,3 +1204,24 @@ flux ÷ abundance with **no kcat input**). Testing my own recent claims against 
 not as a per-enzyme verdict. The `check` syscall now uses the non-circular flux kapp and reports the flag as a WEAK,
 one-sided **hint to re-check**, not a proof of impossibility. `kcat_flag.json`/`kcat_verify.json` are stamped
 `_SUPERSEDED`; the audit now asserts the honest weak/null numbers. (`kcat_invivo_validate.json`)
+
+## Reasoning WITH a mutation — fuse variant-damage × cell-dependency (`mutate` syscall)
+
+Ran the reasoning engine on specific mutations by fusing the two validated reasoners: the VARIANT layer
+(`reasoned_variant`: AlphaMissense call + ΔΔG/functional-site mechanism + a sickle-cell gain-of-function override)
+with the CELL layer (`reason`, AUC 0.80, calibrated: does the cell depend on this protein?). The join NAMES the
+regime, because cell-fitness essentiality and disease pathogenicity are **different axes**. Illustrative panel
+(not a new benchmark — the underlying engines were validated separately), each vs clinical truth:
+
+- **TP53 R175H** → DAMAGING (AM 0.98, at a binding site) × ESSENTIAL → *LOF in a load-bearing gene, both layers
+  agree, HIGH* → pathogenic ✅
+- **TP53 P72R** (same gene) → TOLERATED (AM 0.09) → *no cell consequence* → benign ✅ — the variant layer
+  discriminates WITHIN one gene, which the cell layer alone cannot.
+- **HBB E7V (sickle)** → AlphaMissense says benign (0.23) but the **GOF override fires** → *"do not trust the
+  benign call, needs a functional assay", LOW* ✅ — refuses the false-benign that per-residue predictors give.
+- **MLH1 K618T** → DAMAGING (0.83) but the cell-fitness lens can't resolve it (mismatch-repair loss isn't
+  cell-lethal) → honest MEDIUM-LOW, flagging that essentiality is the *wrong ruler* for a repair/suppressor gene.
+
+The honest payload: the fusion surfaces the **essentiality ≠ pathogenicity divergence** (tumor-suppressors and
+GOF are pathogenic on a different axis than cell fitness) instead of hiding it. `mutate GENE UNIPROT POS WT MUT`.
+(`reason_mutation.py`, `reason_mutation_demo.json`)

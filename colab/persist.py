@@ -56,6 +56,7 @@ ARTIFACTS = [
     "zhu_coverage.json",
     "zhu_targeted_genes.txt",
     "reason.json",
+    "reason_mutation_demo.json",   # fuse variant-reasoning x cell-dependency on a real panel (TP53 R175H/P72R, MLH1, HBB sickle) -- 'mutate' syscall
     "biochem_limit.json",
     "kcat_flag.json",
     "kcat_verify.json",
