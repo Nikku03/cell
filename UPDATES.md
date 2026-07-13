@@ -1136,3 +1136,17 @@ Wired as `check ENZYME KCAT`: put in a turnover number and the running cell retu
 IMPOSSIBLE (SLC2A8 at 100× too slow → flagged; at 100× too fast → passes, honestly noted as the blind side). This is
 the positive flip of the kcat limit: prediction is weak, but the cell is a 99%-accurate parameter LINTER. Tests +
 audit green.
+
+## Verify the kcat flag against MEASURED values (kcat_verify.py)
+
+Grounded the `check` constraint in measurement, not just derived numbers. On the enzymes with an experimentally-
+MEASURED in-vitro kcat AND a flux-derived operating rate (n=46):
+- **100% obey the constraint** the check relies on (measured kcat ≥ operating rate), **0 violations**.
+- enzymes run at a **median 40% of their measured max** (p10–p90: 8%–93%) — which MATCHES the known in-vivo
+  saturation (~50%, Davidi & Milo 2016). Independent grounding, not circular.
+
+Honest caveats: (1) the overlap of measured-kcat AND operating-rate is small (n=46) — verified where we can, and
+no measured kcat contradicts it. (2) Bonus finding — on the ~530 DERIVED/predicted kcats, median in-vivo/in-vitro
+= **1.57** (apparent rate exceeds the predicted kcat for most), i.e. the check FLAGS many predicted values as too
+slow. Since the measured kcats pass cleanly, this points to the predicted (CatPred/EC-prior) kcats running low —
+exactly the linter doing its job: measured values pass, questionable predicted ones get flagged. (`kcat_verify.json`)

@@ -1,0 +1,14 @@
+{
+ "n_measured_kcats": 420,
+ "n_with_operating_rate": 46,
+ "median_saturation": 0.40346031746031746,
+ "p10": 0.08124645616009853,
+ "p90": 0.9297979797979797,
+ "frac_consistent": 1.0,
+ "n_violations": 0,
+ "violations": [],
+ "literature_invivo_saturation": 0.5,
+ "n_derived_kapp": 533,
+ "median_derived_saturation": 1.566,
+ "verdict": "VERIFIED: 100% of measured kcats obey the constraint the check relies on (0 impossible), and enzymes run at a median 40% of their measured max \u2014 matching the known in-vivo saturation (~50%, Davidi & Milo). The flag is grounded in measurement, not circular. Caveat: the overlap of measured-kcat AND operating-rate is small (n=46); the constraint is verified where we can, and no measured kcat contradicts it."
+}

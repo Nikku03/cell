@@ -58,6 +58,7 @@ ARTIFACTS = [
     "reason.json",
     "biochem_limit.json",
     "kcat_flag.json",
+    "kcat_verify.json",
     "pathway_decode.json",
     "coverage_stack.json",
     "coverage_stack_genes.txt",
