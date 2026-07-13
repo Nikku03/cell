@@ -1,0 +1,10 @@
+{
+ "n_shared_ko": 2056,
+ "n_shared_genes": 7226,
+ "mean_cross_line_r": 0.1871116939660505,
+ "median_cross_line_r": 0.14601590484380722,
+ "mean_shuffled_r": 0.0561533981235282,
+ "frac_ko_with_r>0.2": 0.4036964980544747,
+ "new_genes_from_rpe1": 0,
+ "verdict": "PARTIAL TRANSFER: responses are correlated across lines (r=0.19 vs 0.06) but not strongly \u2014 knockout effects are partly context-specific, so other cell lines matter both for new genes AND to re-measure shared ones in a new context."
+}

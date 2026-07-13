@@ -953,3 +953,27 @@ Also shipped an experienceable readout (`viz_cellos_readout.html`, published as 
 dashboard of the coverage map, the capability scorecard, the forward/backward dichotomy, and the honest grades —
 every number traceable to committed evidence. `stat` still shows the deep-axis 55%; `coverage` shows the whole
 reach. Tests + audit green.
+
+## "Get other cell lines" — the honest test (cross_cell_line.py) + why 55% is per-cell-line
+
+Read Pillai/Hochberg/Thornton, "Simple mechanisms for the evolution of protein complexity" (Protein Science 2022):
+complex features sit at the genetic EDGE, reachable by many short paths → chance joins selection. Relevant to us as
+a theory companion to the discovery-null and robustness results (degeneracy = many-to-one = unpredictable from one
+trajectory), but it's an evolution paper, not cell-line data.
+
+The actionable point — the 55% ceiling is single-cell-line (K562). Tested "get another cell line" with the second
+screen already on disk (RPE1):
+- **RPE1 adds 0 NEW genes.** Its 2,394 perturbed genes are a complete SUBSET of K562's 9,871 — because Replogle's
+  RPE1 screen is essential-gene-scoped, and essential genes are housekeeping (expressed in every line). A second
+  cell line's ESSENTIAL screen re-measures the same core; only a GENOME-WIDE screen in that line reaches its unique genes.
+- **Responses barely transfer across lines.** For the 2,056 knockouts measured in BOTH lines, the same KO's response
+  correlates only r=0.19 across K562↔RPE1 (vs 0.06 shuffled — real but weak; 40% clear r>0.2). So a knockout does
+  substantially DIFFERENT things in different cell types.
+
+Implication: **"55%" is really "55% in K562."** Other cell lines matter not only for the ~7,800 genes K562 can't
+express, but because knockout effects are largely context-specific — the cell is a different machine per context.
+The lever is a GENOME-WIDE knockout Perturb-seq in a complementary cell type. That data did NOT exist when the
+ceiling was set, but is now emerging: genome-scale Perturb-seq in primary CD4+ T cells (Zhu 2025), pooled CRISPR-KO
+in primary myeloid cells (Jung 2025), genome-wide CRISPRi (Bradu 2026). Fetching + integrating one is the real
+next step — a heavy multi-GB pull best run in the Colab data pipeline (built for it), not this ephemeral container.
+(`outputs/orphan/cross_cell_line.json`)
