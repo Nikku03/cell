@@ -59,6 +59,8 @@ ARTIFACTS = [
     "biochem_limit.json",
     "kcat_flag.json",
     "kcat_verify.json",
+    "davidi_kcat.json",            # Drive: 592-enzyme in-vivo kapp (max|v|/[E] over 13 NCI-60 conditions)
+    "kcat_invivo_validate.json",   # HONEST non-circular test vs davidi_kcat: flag is WEAK (~70%), kapp does NOT predict kcat (0.08) -- supersedes the circular kcat_flag/kcat_verify
     "flag_base_vs_kcat.json",
     "fba_flux_coverage.json",
     "pathway_decode.json",

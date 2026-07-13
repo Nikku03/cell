@@ -306,39 +306,43 @@ class CellKernel:
                           f"  coverage: {cover}.  (physics+data are blind in different places → together ~2x reach.)"])
 
     def check(self, name, kcat):
-        """put in a kcat and let the RUNNING CELL flag it. An enzyme's kcat (max turnover) must be >= the rate it
-        actually operates at in the cell (measured flux / abundance) — a too-slow value can't carry the flux, so the
-        model can't reproduce measured growth: impossible -> FLAG. Validated (kcat_flag.py): a 100x-too-slow kcat is
-        caught 99% of the time, 6% false-flags. You can't PREDICT kcat well (0.35), but the cell VALIDATES it. Note:
-        one-sided — catches impossibly-slow kcats; impossibly-fast ones need the ecFBA-at-measured-growth bound."""
+        """put in a kcat and let the running cell SANITY-CHECK it against the flux it must carry. An enzyme's kcat
+        (max turnover) must be >= the rate it operates at (kapp = FBA flux ÷ abundance) — a too-slow value can't
+        carry the flux. HONEST caveat (kcat_invivo_validate.py, tested on 148 measured kcats vs an INDEPENDENT
+        flux kapp from davidi_kcat.json): this is a WEAK, one-sided, aggregate signal, NOT a reliable per-enzyme
+        verdict — the flux/abundance estimates are noisy (~92x), so ~30% of correct kcats sit below their own kapp
+        and a 100x-too-slow value is caught only ~65% of the time. (Earlier 99%/0.93 claims were CIRCULAR: they
+        used incell_rate = kcat*sigma; see kcat_invivo_validate.json.) So: a flag here is a HINT to re-check, not a
+        proof of impossibility."""
         import json, os
-        if not hasattr(self, "_erec"):
-            p = "outputs/orphan/enzyme_records.json"
-            self._erec = json.load(open(p)) if os.path.exists(p) else {}
-        r = self._erec.get(name)
-        if not r:
-            return f"check {name}: not an enzyme in the metabolic model — no flux demand to check a kcat against."
-        rate = r.get("incell_rate_per_s")
+        # non-circular operating rate: flux-derived kapp (NO kcat input), from the Drive davidi set
+        if not hasattr(self, "_kapp"):
+            p = "outputs/orphan/davidi_kcat.json"
+            self._kapp = json.load(open(p)).get("davidi_kcat", {}) if os.path.exists(p) else {}
+        rec = self._kapp.get(name)
+        rate = rec.get("kcat_max_per_s") if rec else None
         if not isinstance(rate, (int, float)) or rate <= 0:
-            return f"check {name}: no measured in-cell operating rate (flux/abundance) — can't flag without the cell's demand."
+            return (f"check {name}: no independent flux-derived kapp for this enzyme (not flux-carrying in the "
+                    f"NCI-60 FBA set) — can't sanity-check a kcat against a demand it doesn't have.")
         try:
             kcat = float(kcat)
         except (TypeError, ValueError):
             return "check: kcat must be a number (turnover per second, e.g. `check MGAT2 1.8`)."
         ratio = kcat / rate
         if kcat < rate:
-            v = (f"FLAGGED — IMPOSSIBLE. kcat {kcat:g}/s is BELOW the rate this enzyme must run at in the cell "
-                 f"({rate:.3g}/s, = measured flux ÷ abundance). It can't carry the flux → the model can't reach "
-                 f"measured growth. A real complete-cell would refuse to run.")
+            v = (f"FLAG (weak). kcat {kcat:g}/s is BELOW the flux-derived operating rate ({rate:.3g}/s, kapp = "
+                 f"FBA flux ÷ abundance). If the kapp estimate is right, this enzyme can't carry its flux — re-check "
+                 f"the value. But kapp is noisy (~30% of even CORRECT kcats land here), so treat as a hint, not proof.")
         elif ratio < 3:
-            v = (f"TIGHT but ok. kcat {kcat:g}/s is only {ratio:.1f}x the required operating rate ({rate:.3g}/s) — "
-                 f"the enzyme runs near saturation; plausible but leaves little headroom.")
+            v = (f"TIGHT. kcat {kcat:g}/s is only {ratio:.1f}x the flux-derived rate ({rate:.3g}/s) — near saturation; "
+                 f"plausible, little headroom.")
         else:
-            v = (f"CONSISTENT. kcat {kcat:g}/s comfortably exceeds the required operating rate ({rate:.3g}/s, "
-                 f"{ratio:.0f}x headroom) — the cell can carry its flux. (Can't rule out 'too fast' from this side.)")
-        return "\n".join([f"check {name}: proposed kcat = {kcat:g}/s  vs  cell's flux demand {rate:.3g}/s",
+            v = (f"CONSISTENT. kcat {kcat:g}/s exceeds the flux-derived rate ({rate:.3g}/s, {ratio:.0f}x headroom) — "
+                 f"no contradiction (can't rule out 'too fast' from this side).")
+        return "\n".join([f"check {name}: proposed kcat = {kcat:g}/s  vs  flux-derived operating rate {rate:.3g}/s",
                           f"  → {v}",
-                          "  (validated: 100x-too-slow kcats flagged 99%, false-flag 6% — the running cell vets its own parameters)"])
+                          "  (WEAK/one-sided signal: on 148 measured kcats the flag is ~70% consistent, 30% false-flag; "
+                          "a hint to re-check, not a per-enzyme verdict — kcat_invivo_validate.json)"])
 
     def reason(self, name):
         """REASON across independent evidence lines to a conclusion with CALIBRATED confidence — the layer above the
@@ -950,7 +954,7 @@ class CellKernel:
   viability GENE       [FBA] top-down: does the cell still GROW after knockout? (objective+physics)
   assess GENE          best-evidence essentiality: fuse measured + physics + data; confidence rises when they agree
   reason GENE          REASON across independent lines to a conclusion, with calibrated confidence (AUC 0.80)
-  check ENZYME KCAT    put in a kcat; the running cell FLAGS it if impossibly slow (can't carry flux) — 99% catch
+  check ENZYME KCAT    put in a kcat; the cell sanity-checks it vs the flux it must carry — WEAK/one-sided hint (~70%)
   boot [GENE]          RUN the genome forward (a clock): watch a cell-state emerge; [GENE] = knock out + re-run
   induce TF [TF..]     REPROGRAM: force master TF(s) ON, run forward, watch the lineage program light up
   cellsim GENE         top-down sim held on the rails by data: reconstruct a KO response from measured checkpoints

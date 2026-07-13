@@ -17,5 +17,6 @@
   "within_noise": true,
   "note": "flux-derived kapp predicts measured kcat within experimental noise for FLUXED enzymes (Davidi&Milo 2016) \u2014 but idle enzymes and the far-below-saturation tail escape it"
  },
- "verdict": "VERIFIED: 100% of measured kcats obey the constraint the check relies on (0 impossible), and enzymes run at a median 40% of their measured max \u2014 matching the known in-vivo saturation (~50%, Davidi & Milo). The flag is grounded in measurement, not circular. Caveat: the overlap of measured-kcat AND operating-rate is small (n=46); the constraint is verified where we can, and no measured kcat contradicts it."
+ "verdict": "VERIFIED: 100% of measured kcats obey the constraint the check relies on (0 impossible), and enzymes run at a median 40% of their measured max \u2014 matching the known in-vivo saturation (~50%, Davidi & Milo). The flag is grounded in measurement, not circular. Caveat: the overlap of measured-kcat AND operating-rate is small (n=46); the constraint is verified where we can, and no measured kcat contradicts it.",
+ "_SUPERSEDED": "CIRCULAR (Spearman 0.93 / 1.9x): used incell_rate = kcat*sigma. See kcat_invivo_validate.json for the honest non-circular result (flag ~70%, Spearman +0.08)."
 }

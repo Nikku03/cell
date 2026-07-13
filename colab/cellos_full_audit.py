@@ -191,11 +191,15 @@ def claims_consistency():
     calibrated = len(ps) >= 3 and ps[0] < 0.25 and ps[-1] > 0.7
     line(b, rs is not None and wr and bs and wr > bs + 0.02 and calibrated,
          "reason: convergence beats single + calibrated", f"reasoning AUC={wr}, best single={bs}, P {ps[0]:.0%}→{ps[-1]:.0%}" if ps else "MISSING")
-    # kcat flag: the running cell catches a 100x-too-slow kcat, low false-flag
-    kf = art("kcat_flag.json")
-    d100, ff = (kf or {}).get("flag_100x_too_slow"), (kf or {}).get("false_flag_rate")
-    line(b, kf is not None and d100 and d100 > 0.8 and ff is not None and ff < 0.25,
-         "check: running cell flags wrong kcat", f"100x-slow flagged {d100:.0%}, false-flag {ff:.0%}" if d100 is not None else "MISSING")
+    # kcat flag: HONEST non-circular result vs the Drive in-vivo kapp (davidi_kcat.json). The flag is WEAK — a
+    # documented null. PASS = the honest numbers are recorded (flag ~70%, low Spearman), NOT that it works at 99%
+    # (the old 99%/0.93 were CIRCULAR: incell_rate = kcat*sigma; see kcat_invivo_validate.py).
+    kv = art("kcat_invivo_validate.json")
+    fc = (kv or {}).get("flag", {}).get("frac_kapp_le_measured_kcat")
+    rho = (kv or {}).get("predict", {}).get("spearman_kapp_vs_measured_kcat")
+    line(b, kv is not None and fc is not None and rho is not None and 0.4 <= fc <= 0.95 and abs(rho) < 0.4,
+         "check: kcat flag is a WEAK signal (honest, non-circular)",
+         f"flag {fc:.0%} consistent, kapp→kcat Spearman {rho:+.2f} (weak, documented)" if fc is not None else "MISSING")
     # pathway decode: 8x chance
     pd = art("pathway_decode.json")
     b1 = (pd or {}).get("ablation", {}).get("+ PPI + complex (all help)", {}).get("top1")

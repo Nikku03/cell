@@ -15,5 +15,6 @@
  "false_flag_rate": 0.055762081784386616,
  "flag_10x_too_slow": 0.929368029739777,
  "flag_100x_too_slow": 0.9888475836431226,
- "verdict": "YES \u2014 the running cell flags wrong kcats: a kcat 100x too slow is caught 99% of the time (10x: 93%), while only 6% of correct kcats are falsely flagged. The complete-cell model validates its own parameters: you can't PREDICT kcat well (0.35), but the flux the cell must carry CONSTRAINS it \u2014 a bad value makes the software unable to run, which is the flag. One-sided: catches impossibly-slow kcats; impossibly-fast ones need the ecFBA-at-measured-growth upper bound."
+ "verdict": "YES \u2014 the running cell flags wrong kcats: a kcat 100x too slow is caught 99% of the time (10x: 93%), while only 6% of correct kcats are falsely flagged. The complete-cell model validates its own parameters: you can't PREDICT kcat well (0.35), but the flux the cell must carry CONSTRAINS it \u2014 a bad value makes the software unable to run, which is the flag. One-sided: catches impossibly-slow kcats; impossibly-fast ones need the ecFBA-at-measured-growth upper bound.",
+ "_SUPERSEDED": "CIRCULAR (99% flag / 6% false-flag): used incell_rate = kcat*sigma. See kcat_invivo_validate.json for the honest non-circular result (flag ~70%, Spearman +0.08)."
 }

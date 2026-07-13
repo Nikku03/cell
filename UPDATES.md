@@ -1180,3 +1180,27 @@ headroom (actual/base) median 2.5x (p10 1.1x, p90 12.5x). So the flag line is dr
 the real value sits a median 2.5x above it — tight for saturated enzymes (CAD 1.1x, CS 1.5x), loose for under-used
 ones (LDHA 11x, ARG1 16x). The headroom spread IS the saturation, which is why the bound never crosses a real value
 yet only PREDICTS kcat tightly where the enzyme runs near capacity. (`fba_flux_coverage.json`, `flag_base_vs_kcat.json`)
+
+## ⚠ CORRECTION — the kcat flag/prediction claims above were CIRCULAR; honest result vs Drive in-vivo kapp
+
+Prompted to check the user's Drive set of ~500+ in-vivo kcat values, I found `davidi_kcat.json` (592 enzymes; kapp
+= max over 13 NCI-60 conditions of |v|/[E] — the genuine Davidi & Milo 2016 in-vivo-kcat method, computed from FBA
+flux ÷ abundance with **no kcat input**). Testing my own recent claims against it **overturned them**:
+
+- The "operating rate" behind the flag and the "0.93 Spearman / 1.9× prediction" was `enzyme_records.incell_rate_per_s`,
+  which is **literally `kcat_invitro × sigma`** (`incell_rates.py:161` → `enzyme_record.py:70`). Correlating kcat×sigma
+  against kcat is not a prediction, and "kcat ≥ kcat×sigma" is trivially true. The 0.93, the 99% flag, the "100% obey,
+  2.5× headroom" — all **circular artifacts of sigma**, not physics. (Tell: headroom 2.5× = 1/0.40 = 1/median-sigma.)
+- Tested honestly on the **148** enzymes that have BOTH an experimentally-measured kcat AND an independent flux kapp
+  (`davidi_kcat.json`, measured/EC-measured tiers only): the flux kapp sits ≤ measured kcat only **70%** of the time
+  (→ **30% false-flag** on correct kcats), a 100×-too-slow kcat is caught only **65%**, and kapp does **NOT** predict
+  the kcat value: **Spearman +0.08**, median **92× fold-error** (≫ the 8.7× experimental noise floor). The file's own
+  validation block agrees (median fold-error 95.9×, 21% within 2×).
+- **Why** the same method works in *E. coli* (Davidi 2016, r≈0.6) but fails here: there flux is **measured** (¹³C-MFA)
+  with **absolute** proteomics; our human reconstruction uses **FBA-predicted** flux and a **single reference**
+  proteome — too noisy to flag or recover kcat per enzyme.
+
+**What survives, honestly:** flux-derived kapp is a genuine but noisy *lower-bound* signal — useful in aggregate,
+not as a per-enzyme verdict. The `check` syscall now uses the non-circular flux kapp and reports the flag as a WEAK,
+one-sided **hint to re-check**, not a proof of impossibility. `kcat_flag.json`/`kcat_verify.json` are stamped
+`_SUPERSEDED`; the audit now asserts the honest weak/null numbers. (`kcat_invivo_validate.json`)
