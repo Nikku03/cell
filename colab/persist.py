@@ -62,7 +62,8 @@ ARTIFACTS = [
     "pathway_tier.json",           # tier-2: LEVEL for the ~10k signaling/regulatory MEMBERSHIP genes via SIGNOR directed graph + SCC feedback handling; feed-forward tier trustworthy (+0.55, clean cascades 0.85-0.94), feedback modules flagged (abstain); whole-cell census 47% trustworthy / 3% feedback / 50% no-context
     "metabolic_levels.json",       # tier-1 scaled to all 92 KEGG metabolic maps: ~750 real enzymes get a step/cycle level (glycolysis 0.90); cyclic maps flagged
     "cell_levels.json",
-    "needs.json",                  # the software's own bill of materials: what it still needs (6/9 layers DATA-limited, 1 HARD) -- the 'needs' syscall            # the software's COMPLETED per-gene pathway-level table (tier-1 metabolic step + tier-2 signaling tier); 46% of membership genes get a trustworthy level, rest flagged (context-dependent/feedback) or abstained -- served by the 'level' syscall
+    "needs.json",
+    "feedback_order.json",         # answer to "can the HARD feedback-module level be predicted?" YES: topology fails (-0.39) but literature predicts the forward order (+0.85) -- reclassifies HARD->DATA                  # the software's own bill of materials: what it still needs (6/9 layers DATA-limited, 1 HARD) -- the 'needs' syscall            # the software's COMPLETED per-gene pathway-level table (tier-1 metabolic step + tier-2 signaling tier); 46% of membership genes get a trustworthy level, rest flagged (context-dependent/feedback) or abstained -- served by the 'level' syscall
     "biochem_limit.json",
     "kcat_flag.json",
     "kcat_verify.json",

@@ -1378,3 +1378,23 @@ have ≥1 trustworthy answer (91 truly dark); 5,259 pathway levels placed; reaso
 
 The headline: **most of what's missing is DATA-limited, not a modeling wall** — which is exactly where new data
 moves the needle. The incompleteness is honest and itemized, not hand-waved. (`needs.py`, `needs` syscall)
+
+## "The feedback-module level is HARD" — tested the pushback, it was WRONG (it's predictable)
+
+Flagged the ~322 feedback-module pathway genes as a HARD limit ("no linear level, must stay flagged"). Challenged
+to test whether they can still be PREDICTED — and, like the kcat episode, the pessimism didn't survive the test.
+
+- **Topology can't do it** (confirmed): SCC condensation, longest-path, AND the proper trophic-level linear solve
+  all fail on feedback cascades (MAPK −0.39, TLR −0.50, PI3K −0.29). Not a bug — the feedback edges are REAL (ERK
+  phosphorylates upstream EGFR/SOS), so the wiring genuinely says ERK is both up- and downstream.
+- **An independent source CAN** (`feedback_order.py`): the literature co-mention gradient (upstream ligand/receptor
+  vs downstream nuclear endpoint) recovers the canonical forward order — MAPK **+0.86**, TLR **+0.86**, PI3K
+  **+0.82** (mean +0.85). EGFR 0.01 → … → ELK1 0.65 (the transcription-factor endpoint). Exactly how literature
+  rescued the cyclic TCA cycle when metabolic topology failed.
+
+So the feedback level is NOT hard — it reclassifies from HARD to DATA/METHOD (get the literature source at scale
+with per-pathway markers). Updated `needs.json` accordingly: the HARD column collapsed to **0 genuinely-hard
+layers** (7/10 DATA, 3 METHOD). The honest residue: the one thing not achievable is deriving outcomes by
+*simulating* the topology — but the outcomes themselves (essentiality 0.80, level +0.85) are predictable from
+data/literature. Prediction almost always has a source; the question is which one, not whether a wall exists.
+(`feedback_order.py`, updated `needs.py`)

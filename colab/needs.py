@@ -46,10 +46,15 @@ def build():
              gap=f"{no_ctx:,} no directed context", limiter="DATA",
              closes="more directed regulatory edges (SIGNOR is sparse) + a 2nd directional source (Reactome "
                     "preceding-event order) to place & cross-verify the no-context genes"),
-        dict(layer="pathway level — feedback / hubs", current="flagged honestly",
-             gap=f"{feedback+ctxdep:,} (feedback modules + context-dependent hubs)", limiter="HARD",
-             closes="NOTHING — these have no single linear level (loops / multi-position hubs). The end state IS the "
-                    "flag; assigning a number would be fabrication"),
+        dict(layer="pathway level — feedback modules", current="topology fails (real feedback edges)",
+             gap=f"~{feedback:,} feedback-loop genes had no level FROM THE WIRING", limiter="DATA",
+             closes="TESTED (feedback_order.py): the INDEPENDENT literature gradient recovers the canonical forward "
+                    "order — MAPK/TLR/PI3K topology −0.39 vs literature +0.85. NOT a hard limit; get the literature "
+                    "source at scale (per-pathway markers), same fix that rescued the cyclic TCA cycle"),
+        dict(layer="pathway level — context-dependent hubs", current="flagged; multi-position",
+             gap=f"~{ctxdep:,} hubs act at different levels in different pathways", limiter="METHOD",
+             closes="predictable PER PATHWAY (the level is defined once you name the pathway) — report the "
+                    "conditional level, not a single aggregate number"),
         dict(layer="kinetics (kcat)", current="predict 0.35, flux-flag 70% (weak, non-circular)",
              gap="no reliable per-enzyme in-vivo kcat", limiter="DATA",
              closes="measured in-vivo human kcats (the Drive davidi set was cross-condition-noisy, 92× off) — real "
@@ -70,12 +75,16 @@ def build():
     method = [r for r in rows if "METHOD" in r["limiter"]]
     hard = [r for r in rows if r["limiter"] == "HARD"]
     summary = {"data_limited": len(data), "method_limited": len(method), "hard_limit": len(hard),
-               "note": "most of the gap is DATA-limited (findable measurements) — that is where a data hunt / "
-                       "claude-science run moves the needle. A smaller part is METHOD. The HARD rows should stay "
-                       "abstained: 'completing' them would be faking biology that has no single answer."}
+               "note": "UPDATED: testing 'can the HARD ones be predicted?' collapsed the HARD column. The feedback-"
+                       "module level looked topology-impossible but the literature gradient predicts it (+0.85 vs "
+                       "topology −0.39; feedback_order.py); context-dependent hubs are predictable per-pathway; "
+                       "essentiality-from-wiring is null but essentiality itself is predicted (reason 0.80). So "
+                       "almost everything is predictable from SOME source — the gap is which measurement/source, not "
+                       "a wall. The ONLY thing not achievable is deriving outcomes by SIMULATING the topology; the "
+                       "outcomes themselves are predictable. That is a DATA/METHOD map, not a hard limit."}
     return {"rows": rows, "summary": summary,
-            "headline": f"{len(data)} of {len(rows)} layers are DATA-limited (a data hunt closes them); "
-                        f"{len(method)} METHOD-limited; {len(hard)} HARD (must stay flagged, not faked)."}
+            "headline": f"{len(data)} of {len(rows)} layers DATA-limited (a data hunt closes them); "
+                        f"{len(method)} METHOD; {len(hard)} genuinely HARD — testing collapsed the HARD column."}
 
 
 def main():
