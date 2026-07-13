@@ -977,3 +977,14 @@ ceiling was set, but is now emerging: genome-scale Perturb-seq in primary CD4+ T
 in primary myeloid cells (Jung 2025), genome-wide CRISPRi (Bradu 2026). Fetching + integrating one is the real
 next step — a heavy multi-GB pull best run in the Colab data pipeline (built for it), not this ephemeral container.
 (`outputs/orphan/cross_cell_line.json`)
+
+## The getter for other cell lines (fetch_celltype_screen.py)
+
+Built the mechanism to actually GET a complementary cell line and MEASURE the payoff, parameterized by a
+processed-h5ad URL so the heavy pull runs in the Colab pipeline (this container has a small disk allowance):
+`--probe` HEAD-checks size vs free disk and refuses a download that won't fit (no bricking the session); `--fetch`
+streams it with the guard; `--integrate` parses it into the debugger format and counts the NEW measured genes it
+adds against K562 + the model universe. The coverage lift is COUNTED from the real perturbed-gene set, not asserted
+— self-checked by integrating RPE1, which correctly reports 0 new genes (8,696 → 8,696), matching cross_cell_line.
+When a genome-wide screen in a complementary cell type is provided (primary T-cell / myeloid, 2025), one command
+integrates it and reports the honest lift. This is how "get other cell lines" becomes real coverage, not a promise.
