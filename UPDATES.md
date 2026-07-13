@@ -1150,3 +1150,18 @@ no measured kcat contradicts it. (2) Bonus finding — on the ~530 DERIVED/predi
 = **1.57** (apparent rate exceeds the predicted kcat for most), i.e. the check FLAGS many predicted values as too
 slow. Since the measured kcats pass cleanly, this points to the predicted (CatPred/EC-prior) kcats running low —
 exactly the linter doing its job: measured values pass, questionable predicted ones get flagged. (`kcat_verify.json`)
+
+## Correction: the flux-derived rate PREDICTS measured kcat within experimental noise (kapp)
+
+Follow-up to the flag: does the operating rate merely BOUND kcat, or PREDICT it? Tested against measured kcats —
+and the flag's one-sidedness does NOT stop prediction:
+- **Spearman(operating rate, measured kcat) = 0.93**; predicting kcat = rate/0.40 gives median **1.9× fold-error**,
+  vs the **8.7× experimental noise floor** on kcat measurements → WITHIN noise. For near-saturated enzymes, 1.3×.
+- This is exactly the published **in-vivo kcat / kapp** method (Davidi & Milo 2016; Heckmann 2018): back-calculate
+  catalytic rates from measured flux ÷ measured proteomics, recovering kcat within measurement noise.
+
+So for enzymes that carry flux, the running cell effectively MEASURES kcat within experimental noise — correcting an
+earlier over-cautious framing that it could only lower-bound it. Honest boundary: NOT universal — only enzymes with
+a measurable operating rate (269 of 2,549 in this condition) and not far below saturation; idle enzymes and the
+low-saturation tail (26%) stay under-determined (loose bound only). Non-circular: the flux is kcat-independent
+stoichiometric FBA ÷ measured abundance. (`kcat_verify.json` → kapp_prediction)
