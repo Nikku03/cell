@@ -1398,3 +1398,26 @@ layers** (7/10 DATA, 3 METHOD). The honest residue: the one thing not achievable
 *simulating* the topology — but the outcomes themselves (essentiality 0.80, level +0.85) are predictable from
 data/literature. Prediction almost always has a source; the question is which one, not whether a wall exists.
 (`feedback_order.py`, updated `needs.py`)
+
+## Ingested the claude-science reference data — a canonical ID backbone (id_map)
+
+The data run produced reference/infrastructure tables (Ensembl BioMart GRCh38.p14 + Human-GEM, 2026-07-13), pulled
+from Drive: genes (86,411, Ensembl↔HGNC), gene_xrefs (308,270, Ensembl↔UniProt/RefSeq/Entrez), model_genes (2,848
+Human-GEM genes with uniprot/entrez), reactions (12,931 with subsystem/EC/KEGG/GPR). `id_map.py` folds them into one
+per-gene join backbone (`id_map.parquet`):
+
+- **16,509 cell genes → 100% Ensembl, 99% UniProt, 99% Entrez** — the mismatch problem that lost metabolic enzymes
+  earlier (KEGG symbols → cell genes) is now solved by a real ID bridge; any future dataset joins by any identifier.
+- **2,417 metabolic genes, 2,014 with a Human-GEM subsystem** (147 subsystems) — a clean metabolic pathway
+  membership straight from the model (PKM→Glycolysis, CS→TCA, FASN→Fatty-acid biosynthesis), better than KEGG
+  scraping and a candidate to strengthen the pathway-level layer.
+
+Honest bug caught in build: the first pass used `zip(df['hgnc_symbol'].dropna(), df['ensembl_gene_id'])`, which
+MISALIGNS (dropna shifts one column, not the other) — TP53 mapped to the wrong UniProt (Q8IZL8 not P04637). Fixed
+by dropping rows together; verified on known genes (TP53→P04637, MAPK1→P28482) and coverage jumped 82%→99% UniProt.
+
+Honest scope: these are REFERENCE data (IDs, model tables, gene universe), NOT the measurements that close the deep
+gaps (response prediction, kcat, essentiality — still "yet to come"). The one genuinely-new LAYER in the run,
+`proteins.parquet` (20,431 proteins with subcellular localization + TM + domains), is 23 MB and exceeds the Drive
+connector's 10 MB download cap — needs a slimmer export (uniprot_id + localization + TM columns, or split) to
+ingest as a localization axis. (`id_map.py`, `id_map.parquet`)

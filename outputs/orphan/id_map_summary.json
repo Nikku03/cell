@@ -1,0 +1,10 @@
+{
+ "n_genes": 16509,
+ "with_ensembl": 16488,
+ "with_uniprot": 16324,
+ "with_entrez": 16389,
+ "metabolic": 2417,
+ "with_metabolic_subsystem": 2014,
+ "n_subsystems": 147,
+ "source": "Ensembl BioMart GRCh38.p14 + Human-GEM (user data run, 2026-07-13)"
+}
