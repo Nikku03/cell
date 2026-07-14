@@ -803,6 +803,53 @@ class CellKernel:
         out.append(f"  ({c['n_unresolved']} effects unresolved — far-field that doesn't compose; honestly unrouted.)")
         return "\n".join(out)
 
+    def pertseq(self, args):
+        """the four canonical Perturb-seq applications attempted on this data (K562), each validated & honestly graded
+        (pertseq_apps.py). 'pertseq' shows the scorecard; 'pertseq function GENE' does a live fingerprint lookup — the
+        KNOWN genes whose knockout response most matches GENE's (the validated 84%/4.1x pathway-recovery use).
+          [1] GRN wiring    — does NOT work on this data (co-response, not causal; needs time-resolved data)
+          [2] gene function — WORKS by transcriptomic fingerprint (84%, 4.1x chance)
+          [3] disease conv. — method validated, but thin + wrong cell context
+          [4] immune logic  — not feasible (needs +/- stimulus axis and immune cells)
+        usage: pertseq | pertseq function GENE"""
+        if args and args[0].lower() == "function":
+            if len(args) < 2:
+                return "pertseq function GENE"
+            if not hasattr(self, "_psa"):
+                import pertseq_apps as _P
+                self._psa = _P.PertSeqApps(kernel=self)
+            r = self._psa.nearest_known(args[1])
+            if r["status"] != "ok":
+                return f"pertseq function {args[1]}: not knocked out in the screen (no fingerprint)."
+            tag = " [dark]" if r["is_dark"] else ""
+            out = [f"pertseq function {r['gene']}{tag} — nearest KNOWN genes by KO fingerprint "
+                   f"(consensus: {r['consensus_role']}, {r['consensus_support']}):"]
+            for x in r["neighbours"]:
+                out.append(f"    {x['gene']:10} cos {x['cos']:<5} {str(x['role'])[:52]}")
+            out.append("  (a validated SIMILARITY hint — 84% share a pathway, 4.1x chance — not proof; a shared "
+                       "growth-arrest phenotype can mimic a shared pathway.)")
+            return "\n".join(out)
+        import json, os
+        p = "outputs/orphan/pertseq_apps.json"
+        if not os.path.exists(p):
+            return "pertseq: run pertseq_apps.py first to compute the four-application scorecard."
+        d = json.load(open(p))
+        g = d["grn"]; f = d["fingerprint_function"]; di = d["disease_convergence"]
+        kk = [x for x in f if x.startswith("validation")][0]
+        spl = di["positive_controls"].get("spliceosom", {}).get("z")
+        return "\n".join([
+            "PERTURB-SEQ — the four canonical applications on this K562 data, honestly graded:",
+            f"  [1] GRN WIRING          DOES NOT (on this data): inferred TF->TF edges recover curated direct "
+            f"regulation only {g['curated_fold']}x chance, {g['sign_agreement_on_recovered']:.0%} sign (=chance).",
+            f"                          co-response network, not causal wiring — needs time-resolved / nascent-RNA data.",
+            f"  [2] GENE FUNCTION       WORKS: fingerprint-kNN recovers a held-out gene's pathway {f[kk]:.0%} "
+            f"({f['lift']}x chance); {f['n_dark_confident_gt0.3cos']} confident dark-gene calls.  ('pertseq function GENE')",
+            f"  [3] DISEASE CONVERGENCE method validated (spliceosome control z={spl}), but thin: "
+            f"{di['n_diseases_testable']} disease testable here, and K562 is the wrong context for neuro/immune disease.",
+            f"  [4] IMMUNE BRAKES/GAS   NOT feasible: needs a +/- stimulus axis and immune cells; this is one "
+            f"unstimulated leukemia condition.",
+            "  -> one works, one is a validated hint, one is a method awaiting the right data, one is out of scope."])
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1453,6 +1500,8 @@ class CellKernel:
                        every machine it is a subunit of loses a part (alias: degrade GENE). Complements 'knockout'
   cascade GENE         perturbation as an INFLUENCE network (what a KO affects) with each effect's route reconstructed:
                        direct / measured-mediated / unresolved. 'cascade X P' traces one route. ~16% routed, honest
+  pertseq              the four canonical Perturb-seq applications on this data, honestly graded (GRN/function/disease/
+                       immune); 'pertseq function GENE' = unknown-gene function by KO fingerprint [WORKS, 84%/4.1x]
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1518,6 +1567,7 @@ class CellShell:
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
+            if cmd in ("pertseq", "perturbseq"): return k.pertseq(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
@@ -1589,6 +1639,10 @@ DEMO = [
     "#     route of each effect reconstructed from structure + OTHER measured knockouts: direct / mediated / unresolved.",
     "cascade GATA1",
     "cascade SF3B1 RBM22",
+    "# 4g) THE FOUR CANONICAL PERTURB-SEQ APPLICATIONS, attempted on this data and honestly graded: GRN wiring (fails",
+    "#     on single-condition data), gene function by fingerprint (WORKS), disease convergence (thin), immune (n/a).",
+    "pertseq",
+    "pertseq function TIMM23B",
     "# 4c) REASON across independent lines to a conclusion, with CALIBRATED confidence (the layer above data)",
     "reason RPL13",
     "# 5) ROOT-CAUSE on an arbitrary corrupted state — whose removal reverses it?",

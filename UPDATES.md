@@ -1941,3 +1941,37 @@ identically) — so structure is used only to name the DIRECT entry point, and t
 cascade. That is the honest version of "track at what stage it happened, then follow the cascade down": it follows for
 the ~16% the data can actually support, and says so for the 84% it cannot. (influence.py -> influence.json; `cascade
 GENE` / `cascade GENE TARGET`.)
+
+## pertseq — the four canonical Perturb-seq applications, attempted on our data and honestly graded
+
+Asked whether the perturbation data can do the four textbook Perturb-seq applications (GRN mapping / unknown-gene
+function / disease convergence / immune logic). Built each, VALIDATED each, and graded honestly (pertseq_apps.py ->
+PertSeqApps; the `pertseq` syscall). The structural constraint that drives the answers: our data is K562 (leukemia), a
+single unstimulated bulk-averaged condition.
+
+- **[1] GRN wiring — DOES NOT work on this data.** Inferred 4,132 TF→TF influence edges from the 617 TFs that were
+  knocked out & measured, but they recover curated SIGNED direct regulation (SIGNOR/CollecTRI) at only **1.6x chance**
+  with **48% sign agreement (= chance)**, and the 73,878 feed-forward loops are only **52% sign-coherent (= chance)**.
+  So this is a CO-RESPONSE network (genes that move together), NOT the causal wiring diagram / real FFLs. Why: a single
+  bulk steady-state condition mixes direct+indirect (the 84%-unresolved result from `influence`), so TF→target
+  influence is dominated by indirect effects. Real GRN/FFL mapping needs time-resolved or nascent-RNA data to isolate
+  direct targets. The idea is sound; the data property is the blocker — reported as an honest negative, not dressed up.
+- **[2] Unknown-gene function by transcriptomic fingerprint — WORKS.** A gene whose KO response matches a known gene's
+  KO response shares its role. Held-out validation: fingerprint-kNN recovers a known gene's pathway **84%** of the time
+  (chance 21%, **4.1x**); yields **128 confident dark-gene calls** (TIMM23B → mito import/cristae via HSPA9/DNAJC19;
+  GPN3 → RNA-pol assembly via RPAP2). Honest: it is a validated SIMILARITY hint, not proof — a shared growth-arrest
+  fingerprint can mimic a shared pathway, so it can mislead on the truly dark tail. `pertseq function GENE` does the
+  live lookup. (This beats the earlier co-dependency `discover function`, which was a null on dark genes.)
+- **[3] Disease convergence — method validated, data thin + wrong context.** The convergence test (do a gene set's KO
+  fingerprints cluster tighter than random?) is validated HARD on pathway positive controls (spliceosome z=156,
+  proteasome z=71). But only **1 disease** has enough knocked-out risk genes in the thin OpenTargets annotation, and
+  K562 is the wrong cell context for the neuro/immune polygenic diseases the application targets. Method real; can't be
+  meaningfully applied here.
+- **[4] Immune brakes-vs-gas — NOT feasible.** Defining brakes vs gas needs a ± stimulus axis (KO, then stimulate, read
+  the CHANGE in the response) and immune cells with a response program. Our data has neither (one unstimulated leukemia
+  condition). Only basal regulators of an immune-gene panel can be listed — a different and much weaker claim — and it
+  is labelled as such, not as brakes-vs-gas.
+
+Honest scorecard: one works (function), one is a validated hint awaiting a cleaner apply (disease), one is a method
+waiting for the right data type (GRN needs time resolution), one is out of scope (immune needs stimulus + cell type).
+(pertseq_apps.py -> pertseq_apps.json; `pertseq` / `pertseq function GENE`.)
