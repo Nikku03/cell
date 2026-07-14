@@ -1910,3 +1910,34 @@ isoform-specific knockout (I checked — the gene records don't hold that, so cl
 names the machines that BREAK from curated complex membership; it does not compute the far-field transcriptional
 cascade — that stays the measured `knockout`, and cascades still don't compose. (protein_knockout.py ->
 protein_knockout.json; `protein GENE` / `degrade GENE`.)
+
+## influence / cascade — perturbation as a "what-affects-what" network, with each effect's route reconstructed
+
+Per the spec: use the perturbation data for ONE thing — a directed network of what a gene's removal AFFECTS in other
+gene-products (the measured ENDS; we know the endpoints, not whether it was transcriptional or downstream). Then
+reconstruct the ROUTE of each effect from the structure we DO know, WITHOUT ever predicting an unmeasured effect
+(influence.py -> InfluenceNetwork; the `cascade`/`trace` syscall). Every strong measured effect KO(X)->P is labelled:
+- **DIRECT** — X physically/causally contacts P (STRING PPI / curated causal edge / same complex): stage 1, the entry.
+- **MEASURED-MEDIATED** — a specific, non-hub, MEASURED stepping-stone M: X strongly moves M AND M strongly &
+  specifically moves P, sign-consistent (X→M→P). BOTH hops are real knockout data — this is exactly "keep the earlier
+  knockout data in context": the intermediate is another gene we actually knocked out, so the step is measured, not
+  guessed.
+- **UNRESOLVED** — neither; the distal/regulatory/diffuse far-field that does not compose.
+
+`cascade X` stages X's whole blast radius; `cascade X P` reconstructs the single route (e.g. `cascade SF3B1 RBM22` ->
+DIRECT physical PPI; GATA1's cascade enters through its curated causal targets FCER1G/BST2/HLA-E then routes on through
+measured stepping-stones).
+
+**Honest validation (measured on this screen, 4,981 effects).** DIRECT contact **1.2%** (6.5x chance) — real but
+sparse; MEASURED-MEDIATED **14.3%** (placebo where X does NOT move P: **0.3%**, so **43x** — the stepping-stones are
+non-random); UNRESOLVED **84.4%**. So **~16% of the cascade is reconstructable** and the rest is honestly flagged
+unrouted. The influence network itself is 100% real data.
+
+**The confound that had to be controlled, and a correction to the plan.** Naively, mediators are dominated by pan-hub
+genes (knockout moves everything → M→P holds trivially; the raw search picked 97th-percentile-blast hubs). Excluding
+pan-hubs and requiring M→P to be SPECIFIC to M is essential. And the probe showed that using PPI/pathway structure as a
+mediator *filter* does NOT help (it just re-selects hubs; structural-required and random-order search scored
+identically) — so structure is used only to name the DIRECT entry point, and the MEASURED stepping-stones carry the
+cascade. That is the honest version of "track at what stage it happened, then follow the cascade down": it follows for
+the ~16% the data can actually support, and says so for the 84% it cannot. (influence.py -> influence.json; `cascade
+GENE` / `cascade GENE TARGET`.)

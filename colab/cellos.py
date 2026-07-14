@@ -756,6 +756,53 @@ class CellKernel:
         out.append(f"  (vs 'knockout {p}' = the measured TRANSCRIPTIONAL response of deleting the gene.)")
         return "\n".join(out)
 
+    def cascade(self, args):
+        """use the perturbation data as a directed INFLUENCE network (what a knockout AFFECTS) and reconstruct the
+        ROUTE of each effect from what we know — without predicting any unmeasured effect. `cascade X` stages X's whole
+        blast radius; `cascade X P` reconstructs the single route KO(X)->P. Each effect is DIRECT (X physically/causally
+        contacts P), MEASURED-MEDIATED (a specific non-hub stepping-stone M that is itself a measured knockout: X->M->P,
+        both hops real data), or UNRESOLVED. Honest, measured on this screen: ~1% direct (6.5x chance), ~14% mediated
+        (43x a placebo), ~85% unresolved (the far-field that doesn't compose). The influence network is 100% real; the
+        route is reconstructable for a validated minority.
+        usage: cascade GENE | cascade GENE TARGET"""
+        if not hasattr(self, "_infl"):
+            import influence as _I
+            self._infl = _I.InfluenceNetwork(kernel=self)
+        G = self._infl
+        if not args:
+            return "cascade GENE   (or 'cascade GENE TARGET' to reconstruct one route)"
+        X = args[0]
+        if X not in G.pidx:
+            return f"cascade {X}: not knocked out in the screen (no measured influence to trace)."
+        if len(args) >= 2:                                        # explain a single route X -> P
+            P = args[1]; e = G.explain(X, P)
+            if e["status"] == "not-measured":
+                return f"cascade {X} -> {P}: {P} was not measured."
+            if e.get("route") == "no-effect":
+                return f"cascade {X} -> {P}: no strong measured effect (Δ={e['value']})."
+            if e["route"] == "direct":
+                return f"cascade {X} -> {P}: DIRECT ({e['via']}), stage 1  (Δ={e['value']})."
+            if e["route"] == "mediated":
+                s = e["stepping_stone"]
+                return (f"cascade {X} -> {P}: MEASURED-MEDIATED, stage 2 — route {e['path']}  (Δ={e['value']}; "
+                        f"X→M {s['x_to_m']}, M→P {s['m_to_p']}, M is a measured non-hub knockout).")
+            return (f"cascade {X} -> {P}: UNRESOLVED (Δ={e['value']}) — no direct contact or specific measured "
+                    f"stepping-stone; distal/regulatory/diffuse.")
+        c = G.cascade(X)                                          # stage the whole blast radius
+        out = [f"cascade {X} — measured influence network, route reconstructed for each effect:",
+               f"  {c['n_affected']} gene-products affected → {c['n_direct']} DIRECT entry, {c['n_mediated']} "
+               f"MEASURED-MEDIATED, {c['n_unresolved']} UNRESOLVED  ({c['explained_frac']:.0%} explained)"]
+        if c["stage1_direct"]:
+            out.append("  STAGE 1 (direct contacts — where the effect enters):")
+            for d in c["stage1_direct"][:6]:
+                out.append(f"    {d['gene']:10} via {d['via']:20} Δ={d['value']}")
+        if c["stage2_mediated"]:
+            out.append("  STAGE 2 (via a measured stepping-stone M — X→M→P, both hops real):")
+            for m in c["stage2_mediated"][:6]:
+                out.append(f"    {m['gene']:10} via {m['via']:20} Δ={m['value']}")
+        out.append(f"  ({c['n_unresolved']} effects unresolved — far-field that doesn't compose; honestly unrouted.)")
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1404,6 +1451,8 @@ class CellKernel:
                        ranks genes by blast-radius size. Direct effect real; does NOT propagate to unmeasured cascades
   protein GENE         knock out the PROTEIN (degrade it, PROTAC-style), not the gene: the STRUCTURAL disassembly —
                        every machine it is a subunit of loses a part (alias: degrade GENE). Complements 'knockout'
+  cascade GENE         perturbation as an INFLUENCE network (what a KO affects) with each effect's route reconstructed:
+                       direct / measured-mediated / unresolved. 'cascade X P' traces one route. ~16% routed, honest
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1468,6 +1517,7 @@ class CellShell:
             if cmd in ("network", "wire", "graph"): return k.network(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
+            if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
@@ -1535,6 +1585,10 @@ DEMO = [
     "#     every machine it is a subunit of loses a part at once. Complements the transcriptional gene knockout above.",
     "protein SMARCA4",
     "protein PSMA1",
+    "# 4f) THE INFLUENCE NETWORK + CASCADE — perturbation as 'what a knockout AFFECTS' (we know the ends), then the",
+    "#     route of each effect reconstructed from structure + OTHER measured knockouts: direct / mediated / unresolved.",
+    "cascade GATA1",
+    "cascade SF3B1 RBM22",
     "# 4c) REASON across independent lines to a conclusion, with CALIBRATED confidence (the layer above data)",
     "reason RPL13",
     "# 5) ROOT-CAUSE on an arbitrary corrupted state — whose removal reverses it?",
