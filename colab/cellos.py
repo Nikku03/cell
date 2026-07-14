@@ -850,6 +850,36 @@ class CellKernel:
             f"unstimulated leukemia condition.",
             "  -> one works, one is a validated hint, one is a method awaiting the right data, one is out of scope."])
 
+    def xcell(self, args):
+        """CROSS-CELL-TYPE check using the second screen (Xaira X-Atlas/Orion HCT116) against K562: which of a
+        knockout's responders reproduce in BOTH cell types (cell-type-ROBUST — the trustworthy core of a cascade) vs
+        only one (cell-type-specific). Validated: strong effects agree at Pearson ~0.5-0.6 across the two cancer types
+        (vs ~0.04 shuffled). Needs hct116.h5ad staged (python3 colab/fetch_xaira.py).
+        usage: xcell GENE"""
+        if not hasattr(self, "_xc"):
+            try:
+                import crosscell as _X
+                self._xc = _X.CrossCell(kernel=self)
+            except (FileNotFoundError, RuntimeError) as e:
+                self._xc = None; self._xc_err = str(e)
+        if self._xc is None:
+            return f"xcell: second cell type not staged — {self._xc_err}"
+        if not args:
+            return "xcell GENE   (cross-cell-type robustness of a knockout's effect)"
+        c = self._xc.compare(args[0])
+        if c["status"] == "not-in-both":
+            return f"xcell {args[0]}: measured in {c['measured_in']} only — need it in both K562 and HCT116 to compare."
+        if c["status"] != "ok":
+            return f"xcell {args[0]}: {c['status']}"
+        g = c["gene"]
+        out = [f"xcell {g} — K562 vs HCT116 (consistency r={c['consistency']}):",
+               f"  ROBUST (moved in BOTH cell types, same direction — {c['n_robust']}): the trustworthy core",
+               "    " + ", ".join(f"{s}(K{k}/H{h})" for s, k, h in c["robust"][:8])]
+        out.append(f"  K562-specific ({c['n_K562_only']}): " + ", ".join(c["K562_only"][:8]))
+        out.append(f"  HCT116-specific ({c['n_hct116_only']}): " + ", ".join(c["hct116_only"][:8]))
+        out.append("  (a responder confirmed in both cell types is a property of the gene, not the cell line.)")
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1502,6 +1532,8 @@ class CellKernel:
                        direct / measured-mediated / unresolved. 'cascade X P' traces one route. ~16% routed, honest
   pertseq              the four canonical Perturb-seq applications on this data, honestly graded (GRN/function/disease/
                        immune); 'pertseq function GENE' = unknown-gene function by KO fingerprint [WORKS, 84%/4.1x]
+  xcell GENE           CROSS-CELL-TYPE: which of a knockout's responders reproduce in BOTH K562 and HCT116 (Xaira
+                       X-Atlas/Orion) — cell-type-robust vs cell-type-specific (needs fetch_xaira.py staged)
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1568,6 +1600,7 @@ class CellShell:
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
             if cmd in ("pertseq", "perturbseq"): return k.pertseq(args)
+            if cmd in ("xcell", "crosscell"): return k.xcell(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
