@@ -1879,3 +1879,34 @@ knockout's effect and rank genes by measured impact, but it cannot COMPUTE an un
 dependencies — the same structure(measured)-vs-dynamics(non-composing) split found in causal_reach and confirmed here.
 Use the measured edge; don't trust the propagated one. (dependency.py -> dependency.json; `knockout GENE | knockout
 impact`. Merged essential+genome-wide screen via `_load_debugger`; genome-wide-only genes are flagged lower-precision.)
+
+## protein / degrade — knock out the PROTEIN, not the gene (structural disassembly vs transcriptional response)
+
+Asked to knock out a protein instead of a gene, and the two really are different operations — the software now does
+both (protein_knockout.py -> ProteinKnockout; the `protein`/`degrade` syscall). A GENE knockout (CRISPR, the existing
+`knockout`/`strace`) deletes the coding sequence and you measure the TRANSCRIPTIONAL response (the Perturb-seq blast
+radius). Degrading a PROTEIN (a PROTAC / molecular glue — the real way to remove a protein instead of a gene) removes
+the physical molecule, and its immediate effect is STRUCTURAL: a protein is a shared component wired into several
+molecular machines, so removing it pulls it from EVERY complex it is a subunit of at once. `degrade SMARCA4` collapses
+all four SWI/SNF chromatin-remodeling variants; `degrade PSMA1` all four proteasome assemblies; `degrade SF3B1` the
+spliceosomal complexes — each leaving the co-subunits still expressed but their assembly incomplete. It also lists the
+physical interactions severed, and falls back to PPI partners for proteins that aren't curated complex subunits (PCNA
+-> the RFC clamp loader + CDKN1A).
+
+**Honest validation — is "degrading a protein disables its machine" grounded?** Two tests, and they say different
+things on purpose:
+- **STRUCTURAL (strong).** 46% of complex proteins have a complex-mate among their top co-dependencies, vs 0.04%
+  chance (~1000x) — machine parts are co-essential, so removing one cripples the assembly's function and the DepMap
+  fitness data proves it. This is the real validation.
+- **MEASURED / transcriptional (deliberately weak).** Across 705 knocked-out proteins the complex-mates move a median
+  of only 1.07x the average gene in the protein's OWN measured knockout, and only 18% of machines show a strong (>1.5x)
+  transcriptional bounce (the proteasome, PSMA1 3.1x, and spliceosome are the feedback-wired exceptions). That is not a
+  failure — a protein knockout acts POST-transcriptionally, so mRNA-seq is largely blind to it. The blindness is the
+  point: the structural `degrade` sees exactly the machine-level damage the measured `knockout` cannot, so the two are
+  complementary, not redundant.
+
+**Honest limits.** One-protein-per-gene: the cell image carries no isoform/PTM/domain-resolved network, so there is no
+isoform-specific knockout (I checked — the gene records don't hold that, so claiming it would be fabrication). And it
+names the machines that BREAK from curated complex membership; it does not compute the far-field transcriptional
+cascade — that stays the measured `knockout`, and cascades still don't compose. (protein_knockout.py ->
+protein_knockout.json; `protein GENE` / `degrade GENE`.)

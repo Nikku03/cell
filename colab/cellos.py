@@ -721,6 +721,41 @@ class CellKernel:
                "  goes UP (released by " + g + "): " + (", ".join(f"{x}({v})" for x, v in ko["up"]) or "—")]
         return "\n".join(out)
 
+    def protein(self, args):
+        """knock out the PROTEIN, not the gene. `knockout` deletes the gene and measures the transcriptional response;
+        this DEGRADES the protein (PROTAC-style) — the structural effect: a protein is a shared component wired into
+        several machines, so removing it pulls it from EVERY complex at once, leaving the co-subunits expressed but
+        their assembly incomplete. Grounded: complex parts are co-essential (46% share a top co-dependency vs 0.04%
+        chance); the transcriptional measurement is mostly BLIND to it (post-transcriptional) except where a machine
+        is feedback-wired (proteasome, spliceosome) — which is why this structural view is not the measured knockout.
+        usage: protein GENE   (alias: degrade GENE)"""
+        if not hasattr(self, "_pko"):
+            import protein_knockout as _P
+            self._pko = _P.ProteinKnockout(kernel=self)
+        if not args:
+            return "protein GENE   (degrade the protein product — disassemble its machines)"
+        d = self._pko.degrade(args[0], topn=10)
+        if d["status"] != "ok":
+            return f"protein {args[0]}: no such protein in the cell image."
+        p = d["protein"]
+        if d["n_machines"] == 0:
+            return (f"degrade {p} — not a curated subunit of any complex, so no machine-level disassembly to show. "
+                    f"{d['n_interactions_severed']} physical interactions would be severed: "
+                    f"{', '.join(d['interactions_severed'][:10]) or '—'}. (For its transcriptional effect use "
+                    f"'knockout {p}'.)")
+        out = [f"degrade {p} (PROTEIN knockout) — {d['n_machines']} machine(s) lose a subunit, "
+               f"{d['n_orphaned_subunits']} co-subunits orphaned, {d['n_interactions_severed']} interactions severed:"]
+        for m in d["machines_disrupted"]:
+            out.append(f"  ✗ {m['complex']}")
+            out.append(f"      orphaned co-subunits: {', '.join(m['orphaned_co_subunits']) or '—'}")
+        c = d["measured_confirmation"]
+        if c and c.get("mates_measured"):
+            out.append(f"  measured check: complex-mates move {c['fold']}x the average gene in {p}'s own Perturb-seq "
+                       f"knockout — {'strong feedback' if c['fold'] >= 1.5 else 'weak (protein KO is post-transcriptional)'}"
+                       f"; top: {', '.join(f'{s}({v})' for s, v in c['top_moved_mates'][:5])}")
+        out.append(f"  (vs 'knockout {p}' = the measured TRANSCRIPTIONAL response of deleting the gene.)")
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1367,6 +1402,8 @@ class CellKernel:
                        'network link A B' / 'network path A B [fam]' / 'network hubs [fam]'  (complementary + coherent)
   knockout GENE        the MEASURED Perturb-seq blast radius of removing a gene (what goes up/down); 'knockout impact'
                        ranks genes by blast-radius size. Direct effect real; does NOT propagate to unmeasured cascades
+  protein GENE         knock out the PROTEIN (degrade it, PROTAC-style), not the gene: the STRUCTURAL disassembly —
+                       every machine it is a subunit of loses a part (alias: degrade GENE). Complements 'knockout'
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1430,6 +1467,7 @@ class CellShell:
             if cmd in ("investigate", "dossier", "profile"): return k.investigate(args)
             if cmd in ("network", "wire", "graph"): return k.network(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
+            if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
@@ -1493,6 +1531,10 @@ DEMO = [
     "#     Direct effect is real; it does NOT propagate to unmeasured cascades (transitivity ~chance).",
     "knockout SF3B1",
     "knockout impact",
+    "# 4e) KNOCK OUT THE PROTEIN, NOT THE GENE — degrade the molecule (PROTAC-style): the STRUCTURAL disassembly,",
+    "#     every machine it is a subunit of loses a part at once. Complements the transcriptional gene knockout above.",
+    "protein SMARCA4",
+    "protein PSMA1",
     "# 4c) REASON across independent lines to a conclusion, with CALIBRATED confidence (the layer above data)",
     "reason RPL13",
     "# 5) ROOT-CAUSE on an arbitrary corrupted state — whose removal reverses it?",
