@@ -57,6 +57,57 @@ def required_support(comp, proc, tf, is_enzyme, has_complex):
     return R
 
 
+# ---- library of named cellular MACHINES + their canonical anchor genes. A dark gene's SPECIFIC role = the machine
+#      whose anchors it most co-depends with (co-essentiality recovers complexes strongly). Anchors are well-known
+#      members; the dark/query gene is always excluded when scoring, so this is leave-one-out by construction. ----
+MACHINES = {
+    "EMC (ER membrane-protein insertase)": ["EMC1", "EMC2", "EMC3", "EMC4", "EMC6", "EMC8", "MMGT1"],
+    "OST (N-glycosylation)": ["STT3A", "STT3B", "DDOST", "RPN1", "RPN2", "DAD1", "OSTC", "MAGT1"],
+    "SEC61 translocon (ER import)": ["SEC61A1", "SEC61B", "SEC61G", "SEC62", "SEC63", "SSR1", "SSR2"],
+    "signal peptidase (SPCS)": ["SPCS1", "SPCS2", "SPCS3", "SEC11A", "SEC11C"],
+    "COPII (ER→Golgi vesicles)": ["SEC23A", "SEC23B", "SEC24A", "SEC24C", "SEC13", "SEC31A", "SAR1A", "PREB"],
+    "COPI (Golgi→ER vesicles)": ["COPA", "COPB1", "COPB2", "COPG1", "COPE", "ARCN1", "COPZ1"],
+    "mito ribosome (large)": ["MRPL2", "MRPL3", "MRPL4", "MRPL9", "MRPL11", "MRPL13", "MRPL22", "MRPL44"],
+    "mito ribosome (small)": ["MRPS2", "MRPS5", "MRPS7", "MRPS9", "MRPS12", "MRPS15", "MRPS22", "MRPS27"],
+    "TOM/TIM (mito protein import)": ["TOMM20", "TOMM22", "TOMM40", "TOMM70", "TIMM23", "TIMM17A", "TIMM44", "TIMM50"],
+    "cytosolic ribosome (large)": ["RPL3", "RPL4", "RPL5", "RPL7", "RPL10", "RPL11", "RPL13", "RPL23"],
+    "cytosolic ribosome (small)": ["RPS2", "RPS3", "RPS5", "RPS6", "RPS8", "RPS9", "RPS11", "RPS15"],
+    "proteasome 20S (core protease)": ["PSMA1", "PSMA3", "PSMA5", "PSMB1", "PSMB2", "PSMB5", "PSMB6"],
+    "proteasome 19S (regulatory)": ["PSMC1", "PSMC2", "PSMC3", "PSMD1", "PSMD2", "PSMD4", "PSMD7"],
+    "spliceosome": ["SF3B1", "SF3B2", "SF3B3", "SF3A1", "PRPF8", "SNRNP200", "EFTUD2", "U2AF1"],
+    "RNA exosome": ["EXOSC1", "EXOSC2", "EXOSC3", "EXOSC4", "EXOSC5", "EXOSC7", "EXOSC9", "DIS3"],
+    "CCT/TRiC chaperonin": ["TCP1", "CCT2", "CCT3", "CCT4", "CCT5", "CCT6A", "CCT7", "CCT8"],
+    "V-ATPase (lysosomal pump)": ["ATP6V0C", "ATP6V1A", "ATP6V1B2", "ATP6V1C1", "ATP6V1D", "ATP6V1E1", "ATP6V0D1"],
+    "respiratory complex I": ["NDUFA9", "NDUFB8", "NDUFS1", "NDUFS2", "NDUFS3", "NDUFV1", "NDUFB10"],
+    "respiratory complex III": ["UQCRC1", "UQCRC2", "UQCRB", "UQCRQ", "UQCRFS1", "CYC1"],
+    "respiratory complex IV (COX)": ["COX4I1", "COX5A", "COX6B1", "COX7A2", "COX8A", "COX15", "SCO1"],
+    "ATP synthase": ["ATP5F1A", "ATP5F1B", "ATP5F1C", "ATP5MC1", "ATP5PO", "ATP5PB"],
+    "nuclear pore complex": ["NUP93", "NUP107", "NUP133", "NUP155", "NUP160", "NUP205", "NUP62"],
+    "MCM replicative helicase": ["MCM2", "MCM3", "MCM4", "MCM5", "MCM6", "MCM7"],
+    "origin recognition (ORC)": ["ORC1", "ORC2", "ORC3", "ORC4", "ORC5", "ORC6", "CDC6"],
+    "cohesin": ["SMC1A", "SMC3", "RAD21", "STAG1", "STAG2", "NIPBL"],
+    "condensin": ["SMC2", "SMC4", "NCAPD2", "NCAPG", "NCAPH"],
+    "APC/C (anaphase-promoting)": ["ANAPC1", "ANAPC2", "ANAPC4", "ANAPC5", "CDC16", "CDC23", "CDC27"],
+    "TFIID": ["TAF1", "TAF2", "TAF4", "TAF5", "TAF6", "TAF9", "TBP"],
+    "Mediator": ["MED1", "MED12", "MED14", "MED17", "MED23", "MED24", "MED6"],
+    "Integrator": ["INTS1", "INTS2", "INTS3", "INTS4", "INTS6", "INTS7", "INTS9"],
+    "BAF (SWI/SNF remodeler)": ["SMARCA4", "SMARCB1", "SMARCC1", "SMARCC2", "ARID1A", "PBRM1"],
+    "MICOS (mito cristae)": ["IMMT", "MICOS10", "MICOS13", "APOOL", "APOO", "CHCHD3"],
+    "NDC80 (kinetochore)": ["NDC80", "NUF2", "SPC24", "SPC25"],
+    "TREX/mRNA export": ["THOC1", "THOC2", "THOC3", "ALYREF", "DDX39B"],
+    "GPI-anchor biosynthesis": ["PIGA", "PIGB", "PIGC", "PIGH", "PIGK", "PIGS", "PIGT"],
+    "SRP (co-translational targeting)": ["SRP9", "SRP14", "SRP54", "SRP68", "SRP72", "SRPRA", "SRPRB"],
+    "GET/TRC (tail-anchored insertion)": ["ASNA1", "GET4", "BAG6", "UBL4A", "WRB", "CAMLG", "GET1"],
+    "ALG (N-glycan precursor)": ["ALG1", "ALG2", "ALG3", "ALG5", "ALG8", "ALG11", "ALG13", "ALG14"],
+    "ERAD (ER-associated degradation)": ["SEL1L", "HRD1", "SYVN1", "DERL1", "DERL2", "OS9", "UBE2J1"],
+    "mismatch repair (MMR)": ["MSH2", "MSH6", "MLH1", "PMS2", "MSH3"],
+    "Fanconi anemia core": ["FANCA", "FANCB", "FANCC", "FANCG", "FANCL", "FANCF", "FANCM"],
+    "MTOR/GATOR (nutrient sensing)": ["MTOR", "RPTOR", "RICTOR", "DEPDC5", "NPRL2", "NPRL3", "WDR24"],
+    "TRAPP (Golgi tethering)": ["TRAPPC1", "TRAPPC2", "TRAPPC3", "TRAPPC8", "TRAPPC10", "TRAPPC11"],
+    "retromer / WASH (endosomal recycling)": ["VPS35", "VPS26A", "VPS29", "WASHC2C", "WASHC4", "WASHC5"],
+}
+
+
 class Investigator:
     def __init__(self, kernel=None):
         import cellos
@@ -80,6 +131,10 @@ class Investigator:
         self.lev = json.load(open(f"{OUT}/cell_levels.json")).get("labels", {}) if os.path.exists(f"{OUT}/cell_levels.json") else {}
         self.str = json.load(open(f"{OUT}/string_degree.json")).get("layer", {}) if os.path.exists(f"{OUT}/string_degree.json") else {}
         self.lit = json.load(open(f"{OUT}/litmine.json")) if os.path.exists(f"{OUT}/litmine.json") else {}
+        # machine anchor indices (only anchors present in DepMap)
+        self.machines = {m: np.array([self.didx[a] for a in anch if a in self.didx])
+                         for m, anch in MACHINES.items()}
+        self.machines = {m: idx for m, idx in self.machines.items() if len(idx) >= 3}
 
     def _g(self, gene):
         i = self.name2i.get(gene)
@@ -143,8 +198,10 @@ class Investigator:
         path, ptc = (rec_path, 1.0) if rec_path else self.consensus(nb, "path")
         tf = bool(gd.get("tf")); has_cx = bool(gd.get("npath")) or bool(self.str.get(gene, {}).get("partners"))
         is_enz = (job in ("metabolism",)) or ("metabol" in (job or ""))
+        machine, ms, mm = self.machine_match(gene)              # specific named machine, if any
         dossier = {
             "gene": gene, "dark": bool(gd.get("dark")),
+            "machine": {"name": machine, "score": ms, "margin": mm} if machine else None,
             "record": {"job_proc": rec_proc, "compartment": rec_comp, "pathway": rec_path,
                        "pubs": gd.get("pubs", 0), "litmine_papers": self.lit.get(gene, {}).get("n_papers", 0)},
             "job": {"predicted": job, "confidence": jc, "source": "record" if rec_proc else "family-consensus"},
@@ -173,6 +230,49 @@ class Investigator:
         scored.sort(key=lambda x: -x[1])
         return scored
 
+    # ---- SPECIFIC role: which named MACHINE does the gene belong to? (co-dependency with each machine's anchors) ----
+    def machine_match(self, gene, min_score=0.15):
+        """assign the gene to the named machine whose anchor genes it most co-depends with. Always excludes the gene
+        itself from the anchor set (leave-one-out). Returns (machine, score, margin_over_2nd) or (None, ...)."""
+        i = self.didx.get(gene)
+        if i is None:
+            return None, 0.0, 0.0
+        v = self.Zn[i]
+        scored = []
+        for m, idx in self.machines.items():
+            keep = idx[idx != i]                                # leave-one-out
+            if len(keep) < 3:
+                continue
+            sims = self.Zn[keep] @ v
+            scored.append((m, float(np.mean(np.sort(sims)[-5:]))))   # mean of its top-5 anchor co-deps
+        if not scored:
+            return None, 0.0, 0.0
+        scored.sort(key=lambda x: -x[1])
+        best, s = scored[0]
+        margin = s - (scored[1][1] if len(scored) > 1 else 0.0)
+        return (best, round(s, 3), round(margin, 3)) if s >= min_score else (None, round(s, 3), round(margin, 3))
+
+    @staticmethod
+    def _tier(score):
+        """confidence word for a machine match (the validated global top-1 is ~59%; score calibrates within that)."""
+        return "confident" if score >= 0.40 else "probable" if score >= 0.25 else "tentative"
+
+    def validate_machines(self):
+        """honest check: for the anchor genes themselves (held out one at a time), does machine_match put them back in
+        their OWN machine? Accuracy vs the number of machines (chance)."""
+        hit = tot = 0
+        gene2machine = {}
+        for m, anch in MACHINES.items():
+            for a in anch:
+                gene2machine.setdefault(a, m)
+        for g, true_m in gene2machine.items():
+            if g not in self.didx or true_m not in self.machines:
+                continue
+            pred, s, _ = self.machine_match(g)
+            tot += 1; hit += int(pred == true_m)
+        return {"machine_top1": round(hit / tot, 3) if tot else None, "n": tot,
+                "n_machines": len(self.machines), "chance": round(1 / max(len(self.machines), 1), 3)}
+
     # ---- the UNDERWORLD: dark genes embedded in a characterized co-dependency module = hidden crew ----
     def underworld(self, k=20, min_crew=4, min_sim=0.3):
         """find DARK genes whose strongest co-dependency partners form a COHERENT characterized module — the hidden
@@ -195,10 +295,15 @@ class Investigator:
             place, pc = self.consensus(nb, "comp")
             if not job:
                 continue
-            reqs = required_support(place, job, False, job == "metabolism", True)
+            machine, ms, mm = self.machine_match(g)             # SPECIFIC named machine (sharpened role)
+            crew_names = [c for c, _ in crew[:5]]
+            # fallback role is SPECIFIC to this gene's actual module (its crew), not a generic reasoned service
+            fallback = f"uncharacterized {place} module (co-crew: {', '.join(crew_names[:3])})"
             out.append({"dark_gene": g, "coherence": round(float(np.mean([s for _, s in crew])), 2),
                         "predicted_job": job, "job_conf": jc, "predicted_place": place, "place_conf": pc,
-                        "crew": [c for c, _ in crew[:5]], "likely_role": reqs[0][0],
+                        "crew": crew_names,
+                        "machine": machine, "machine_score": ms, "machine_margin": mm,
+                        "likely_role": machine or fallback,     # specific machine if matched, else this gene's own module
                         "measured": g in self.measured})
         out.sort(key=lambda x: -(x["coherence"] * x["job_conf"]))
         return out[:k]
@@ -230,9 +335,14 @@ def render(d):
     fam = ", ".join("{}({})".format(f["gene"], f["via"]) for f in d["family"][:5]) or "—"
     interact = ", ".join(d["interactors"][:6]) or "—"
     tim = d["timing"].get("status", "—") if isinstance(d["timing"], dict) else str(d["timing"])
+    mach = d.get("machine")
+    machln = (f"{mach['name']}  [{Investigator._tier(mach['score'])}: co-dep score {mach['score']}, "
+              f"margin {mach['margin']} over the next machine]"
+              if mach else "no specific machine matched — see the module named below")
     L = [f"  ┌─ DOSSIER: {d['gene']}" + ("  [DARK — no record on file]" if d["dark"] else "  [has record]"),
          f"  │ RECORD    : job={d['record']['job_proc'] or '—'}, compartment={d['record']['compartment'] or '—'}, "
          f"pathway={d['record']['pathway'] or '—'}, pubs={d['record']['pubs']}, litmine={d['record']['litmine_papers']}",
+         f"  │ MACHINE   : {machln}",
          f"  │ JOB       : {d['job']['predicted']}  (conf {d['job']['confidence']}, {d['job']['source']})",
          f"  │ DESTINATION: {d['destination']['predicted']}  (conf {d['destination']['confidence']}, {d['destination']['source']})",
          f"  │ PATH      : {d['path']['predicted'] or '—'}  ({d['path']['source']})",
@@ -285,14 +395,22 @@ def main():
     for g in show:
         print(render(inv.profile(g, predict_mode=inv._g(g).get("dark") or not inv._proc(g))))
 
-    # THE UNDERWORLD — dark genes embedded in characterized modules (hidden crew)
-    uw = inv.underworld(k=20)
+    # SHARPENED role: validate machine-matching (does it put known members back in their own machine?)
+    mv = inv.validate_machines()
+    out["machine_validation"] = mv
+    print(f"\n  ── MACHINE-MATCH validation (held-out known members → own machine): "
+          f"{mv['machine_top1']:.0%} top-1 across {mv['n_machines']} machines (chance {mv['chance']:.0%}, n={mv['n']}) ──")
+
+    # THE UNDERWORLD — dark genes embedded in characterized modules, now named to the SPECIFIC machine
+    uw = inv.underworld(k=25)
     out["underworld"] = uw
-    print(f"\n  ── THE UNDERWORLD: {len(uw)} dark genes embedded in a coherent characterized module (hidden crew) ──")
-    for u in uw[:10]:
+    named = [u for u in uw if u.get("machine")]
+    print(f"\n  ── THE UNDERWORLD: {len(uw)} dark genes in a coherent module; {len(named)} matched to a SPECIFIC machine ──")
+    for u in uw[:14]:
         tag = "measured" if u["measured"] else "unmeasured"
-        print(f"     {u['dark_gene']:12} → {u['predicted_job']}/{u['predicted_place']} "
-              f"(coherence {u['coherence']}, {tag}) — crew: {', '.join(u['crew'][:4])}; likely role: {u['likely_role']}")
+        role = (f"→ {u['machine']} ({inv._tier(u['machine_score'])} {u['machine_score']})" if u.get("machine")
+                else f"→ {u['likely_role']}")
+        print(f"     {u['dark_gene']:12} {role:60} coh {u['coherence']}, {tag}")
 
     json.dump(out, open(f"{OUT}/investigate.json", "w"), indent=1)
     print("\n" + "=" * 96)

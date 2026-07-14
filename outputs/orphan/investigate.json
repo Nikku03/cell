@@ -20,6 +20,7 @@
     {
      "gene": "BHLHE23",
      "dark": true,
+     "machine": null,
      "record": {
       "job_proc": null,
       "compartment": null,
@@ -113,6 +114,11 @@
     {
      "gene": "DHX16",
      "dark": false,
+     "machine": {
+      "name": "proteasome 19S (regulatory)",
+      "score": 0.225,
+      "margin": 0.087
+     },
      "record": {
       "job_proc": null,
       "compartment": null,
@@ -202,6 +208,7 @@
     {
      "gene": "FAM174C",
      "dark": true,
+     "machine": null,
      "record": {
       "job_proc": null,
       "compartment": null,
@@ -304,6 +311,7 @@
     {
      "gene": "BHLHE23",
      "dark": true,
+     "machine": null,
      "record": {
       "job_proc": null,
       "compartment": null,
@@ -397,6 +405,11 @@
     {
      "gene": "DHX16",
      "dark": false,
+     "machine": {
+      "name": "proteasome 19S (regulatory)",
+      "score": 0.225,
+      "margin": 0.087
+     },
      "record": {
       "job_proc": null,
       "compartment": null,
@@ -486,6 +499,7 @@
     {
      "gene": "FAM174C",
      "dark": true,
+     "machine": null,
      "record": {
       "job_proc": null,
       "compartment": null,
@@ -588,6 +602,7 @@
     {
      "gene": "BHLHE23",
      "dark": true,
+     "machine": null,
      "record": {
       "job_proc": null,
       "compartment": null,
@@ -681,6 +696,11 @@
     {
      "gene": "DHX16",
      "dark": false,
+     "machine": {
+      "name": "proteasome 19S (regulatory)",
+      "score": 0.225,
+      "margin": 0.087
+     },
      "record": {
       "job_proc": null,
       "compartment": null,
@@ -770,6 +790,7 @@
     {
      "gene": "FAM174C",
      "dark": true,
+     "machine": null,
      "record": {
       "job_proc": null,
       "compartment": null,
@@ -854,6 +875,12 @@
    ]
   }
  },
+ "machine_validation": {
+  "machine_top1": 0.586,
+  "n": 297,
+  "n_machines": 44,
+  "chance": 0.023
+ },
  "underworld": [
   {
    "dark_gene": "MTG2",
@@ -869,7 +896,10 @@
     "MRPL20",
     "MRPL43"
    ],
-   "likely_role": "mitochondrial import",
+   "machine": "mito ribosome (small)",
+   "machine_score": 0.653,
+   "machine_margin": 0.002,
+   "likely_role": "mito ribosome (small)",
    "measured": true
   },
   {
@@ -886,7 +916,10 @@
     "SMIM38",
     "SMIM31"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.096,
+   "machine_margin": 0.027,
+   "likely_role": "uncharacterized membrane module (co-crew: VSIG10L2, SMIM32, INAFM2)",
    "measured": false
   },
   {
@@ -903,7 +936,10 @@
     "SELENOF",
     "SLC35G4"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.117,
+   "machine_margin": 0.071,
+   "likely_role": "uncharacterized membrane module (co-crew: SMIM32, SMIM31, VSIG10L2)",
    "measured": false
   },
   {
@@ -920,7 +956,10 @@
     "EMC2",
     "EMC4"
    ],
-   "likely_role": "ER translocation",
+   "machine": "EMC (ER membrane-protein insertase)",
+   "machine_score": 0.587,
+   "machine_margin": 0.415,
+   "likely_role": "EMC (ER membrane-protein insertase)",
    "measured": true
   },
   {
@@ -937,7 +976,10 @@
     "SLC22A24",
     "ZNF595"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.018,
+   "machine_margin": 0.003,
+   "likely_role": "uncharacterized membrane module (co-crew: GSG1L2, NR2E3, COPG2)",
    "measured": false
   },
   {
@@ -954,7 +996,10 @@
     "RAB5IF",
     "EMC6"
    ],
-   "likely_role": "ER translocation",
+   "machine": "EMC (ER membrane-protein insertase)",
+   "machine_score": 0.294,
+   "machine_margin": 0.195,
+   "likely_role": "EMC (ER membrane-protein insertase)",
    "measured": true
   },
   {
@@ -971,7 +1016,10 @@
     "GPHB5",
     "PRSS41"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.123,
+   "machine_margin": 0.081,
+   "likely_role": "uncharacterized membrane module (co-crew: INAFM2, SMIM32, SH2B2)",
    "measured": false
   },
   {
@@ -987,7 +1035,10 @@
     "TM2D3",
     "AUP1"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.141,
+   "machine_margin": 0.037,
+   "likely_role": "uncharacterized membrane module (co-crew: TM2D2, TM2D1, TM2D3)",
    "measured": true
   },
   {
@@ -1004,7 +1055,10 @@
     "INAFM2",
     "SMIM32"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.079,
+   "machine_margin": 0.025,
+   "likely_role": "uncharacterized membrane module (co-crew: SMIM38, CCDC188, VSIG10L2)",
    "measured": false
   },
   {
@@ -1021,7 +1075,10 @@
     "MUC3A",
     "VSIG10L2"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.063,
+   "machine_margin": 0.009,
+   "likely_role": "uncharacterized membrane module (co-crew: PRRT1B, MGAM2, OR10D3)",
    "measured": false
   },
   {
@@ -1038,7 +1095,10 @@
     "SMIM23",
     "PRRT1B"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.076,
+   "machine_margin": 0.031,
+   "likely_role": "uncharacterized membrane module (co-crew: LRRC53, CD8B, TMEM132C)",
    "measured": false
   },
   {
@@ -1055,7 +1115,10 @@
     "APELA",
     "SMIM31"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.069,
+   "machine_margin": 0.004,
+   "likely_role": "uncharacterized membrane module (co-crew: GNG14, NPIPB11, SLC35G4)",
    "measured": false
   },
   {
@@ -1072,7 +1135,10 @@
     "MTG2",
     "MRPS6"
    ],
-   "likely_role": "mitochondrial import",
+   "machine": "mito ribosome (large)",
+   "machine_score": 0.588,
+   "machine_margin": 0.0,
+   "likely_role": "mito ribosome (large)",
    "measured": true
   },
   {
@@ -1089,7 +1155,10 @@
     "KIAA0040",
     "SMIM31"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.085,
+   "machine_margin": 0.044,
+   "likely_role": "uncharacterized membrane module (co-crew: TSPAN10, SMIM32, INAFM2)",
    "measured": true
   },
   {
@@ -1106,7 +1175,10 @@
     "TMEM225B",
     "TMEM132C"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.057,
+   "machine_margin": 0.001,
+   "likely_role": "uncharacterized membrane module (co-crew: XKR5, SRD5A2, DPP6)",
    "measured": false
   },
   {
@@ -1123,7 +1195,10 @@
     "PCSK6",
     "SMIM32"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.122,
+   "machine_margin": 0.072,
+   "likely_role": "uncharacterized membrane module (co-crew: ZDHHC11B, OBP2B, GPHB5)",
    "measured": true
   },
   {
@@ -1139,7 +1214,10 @@
     "ZNF737",
     "ZNF430"
    ],
-   "likely_role": "nuclear import",
+   "machine": null,
+   "machine_score": 0.103,
+   "machine_margin": 0.003,
+   "likely_role": "uncharacterized nucleus module (co-crew: ZNF91, ZNF730, ZNF737)",
    "measured": true
   },
   {
@@ -1156,7 +1234,10 @@
     "XKR5",
     "C2orf74"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.068,
+   "machine_margin": 0.017,
+   "likely_role": "uncharacterized membrane module (co-crew: TMEM225B, UGT2B10, PRRT1B)",
    "measured": false
   },
   {
@@ -1173,7 +1254,10 @@
     "SLC35G4",
     "SH2B2"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.082,
+   "machine_margin": 0.027,
+   "likely_role": "uncharacterized membrane module (co-crew: CCDC188, SMIM38, INAFM2)",
    "measured": false
   },
   {
@@ -1189,7 +1273,109 @@
     "TM2D3",
     "AUP1"
    ],
-   "likely_role": "ER translocation",
+   "machine": null,
+   "machine_score": 0.117,
+   "machine_margin": 0.019,
+   "likely_role": "uncharacterized membrane module (co-crew: TM2D1, TM2D2, TM2D3)",
+   "measured": true
+  },
+  {
+   "dark_gene": "RASSF10",
+   "coherence": 0.58,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.85,
+   "predicted_place": "membrane",
+   "place_conf": 0.7,
+   "crew": [
+    "SMIM33",
+    "SMIM38",
+    "CCDC188",
+    "LRRC53",
+    "SMIM41"
+   ],
+   "machine": null,
+   "machine_score": 0.092,
+   "machine_margin": 0.022,
+   "likely_role": "uncharacterized membrane module (co-crew: SMIM33, SMIM38, CCDC188)",
+   "measured": false
+  },
+  {
+   "dark_gene": "REELD1",
+   "coherence": 0.63,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.78,
+   "predicted_place": "membrane",
+   "place_conf": 0.46,
+   "crew": [
+    "REELD1",
+    "SLC38A3",
+    "HECTD4",
+    "LHFPL3",
+    "MUC13"
+   ],
+   "machine": null,
+   "machine_score": 0.079,
+   "machine_margin": 0.001,
+   "likely_role": "uncharacterized membrane module (co-crew: REELD1, SLC38A3, HECTD4)",
+   "measured": false
+  },
+  {
+   "dark_gene": "BTAF1",
+   "coherence": 0.49,
+   "predicted_job": "transcription",
+   "job_conf": 1.0,
+   "predicted_place": "nucleus",
+   "place_conf": 1.0,
+   "crew": [
+    "BTAF1",
+    "DRAP1",
+    "DR1",
+    "MED19",
+    "MED24"
+   ],
+   "machine": "Mediator",
+   "machine_score": 0.224,
+   "machine_margin": 0.084,
+   "likely_role": "Mediator",
+   "measured": true
+  },
+  {
+   "dark_gene": "MXRA7",
+   "coherence": 0.49,
+   "predicted_job": "transport/uptake",
+   "job_conf": 1.0,
+   "predicted_place": "membrane",
+   "place_conf": 0.84,
+   "crew": [
+    "MXRA7",
+    "CYS1",
+    "MRGPRE",
+    "CEND1"
+   ],
+   "machine": null,
+   "machine_score": 0.124,
+   "machine_margin": 0.03,
+   "likely_role": "uncharacterized membrane module (co-crew: MXRA7, CYS1, MRGPRE)",
+   "measured": true
+  },
+  {
+   "dark_gene": "SYPL2",
+   "coherence": 0.49,
+   "predicted_job": "transport/uptake",
+   "job_conf": 1.0,
+   "predicted_place": "membrane",
+   "place_conf": 0.72,
+   "crew": [
+    "SYPL2",
+    "KCNA10",
+    "GPR61",
+    "SLC6A17",
+    "VTCN1"
+   ],
+   "machine": null,
+   "machine_score": 0.063,
+   "machine_margin": 0.006,
+   "likely_role": "uncharacterized membrane module (co-crew: SYPL2, KCNA10, GPR61)",
    "measured": true
   }
  ]

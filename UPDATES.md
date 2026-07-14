@@ -1722,3 +1722,22 @@ UPGRADE — additive; the essentiality/discover/causal engines are unchanged (re
 labels (job/place) predict well (~2× baseline); fine labels (exact pathway) and the required-support "likely role"
 (often the generic first service, e.g. ER translocation for membrane genes) are weaker reasoned leads, flagged as such.
 (investigate.py → investigate.json; bands 100/200/500)
+
+## investigate — SHARPENED: the specific MACHINE, not the generic service
+
+The required-support "likely role" was too generic (every membrane gene got "ER translocation"). Sharpened it to name
+the SPECIFIC machine a gene belongs to, from a curated library of 44 named cellular machines (EMC, OST, SEC61, COPII/I,
+mito & cytosolic ribosomes, TOM/TIM, proteasome 20S/19S, spliceosome, exosome, TRiC, V-ATPase, respiratory complexes
+I/III/IV, ATP synthase, nuclear pore, MCM, ORC, cohesin/condensin, APC/C, TFIID, Mediator, Integrator, BAF, MICOS,
+NDC80, TREX, GPI, SRP, GET/TRC, ALG, ERAD, MMR, Fanconi, mTOR/GATOR, TRAPP, retromer). A gene's machine = the one whose
+canonical anchor genes it most co-depends with (co-essentiality recovers complexes strongly), always leave-one-out.
+
+**Validation: 59% top-1 across 44 machines (chance 2%, n=297) — ~26× over chance** (held-out known members matched back
+to their own machine; strict top-1, so sibling near-misses like 20S↔19S proteasome count as wrong — the "right
+neighbourhood" rate is higher). Matches carry a confidence tier (confident ≥0.40 / probable ≥0.25 / tentative) plus the
+raw score and margin, so weak calls are visible not hidden: EMC7 → EMC complex [confident 0.587, margin 0.415], MTG2 &
+PTCD1 → mito ribosome [confident], while NCLN → EMC [tentative 0.29] and a borderline DHX16 → proteasome [tentative
+0.22] are flagged as uncertain. When no library machine clears threshold, the fallback now names the gene's OWN module
+by its crew ("uncharacterized membrane module (co-crew: SMIM32, SMIM31, VSIG10L2)") — a real coherent cluster of small
+membrane microproteins — instead of a generic service. Surfaced in the dossier (MACHINE line) and `investigate
+underworld`. Additive; regression-checked (reason/discover/strace unchanged).
