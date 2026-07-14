@@ -1787,3 +1787,27 @@ for 100/100, 200/200, 500/500 of the closest unmeasured genes — median 10 co-d
 real measured associations. Attribute recovery unchanged (proc 60% / comp 40–46% / machine 59%). EMC7's dossier now
 shows its whole complex as edges (co-dep EMC3..MMGT1; PPI all EMC subunits at 999) — the connection map, not a guess at
 what its removal would do. Additive; regression-checked (reason/discover/underworld unchanged).
+
+## anomaly — patch connections + measured perturbation into one map, scan for disagreement (1 of 3 types real)
+
+Assembled the map: the 9,561 genes that have BOTH a measured Perturb-seq knockout fingerprint AND a co-dependency
+vector, plus their physical-PPI edges. Scanned for where the structural connections and the measured perturbation
+DISAGREE, three ways — then verified each against known biology (the honest step):
+
+- **COMPARTMENT-OUTLIER — REAL (92 genes).** A gene whose whole co-dependency module sits in a different compartment
+  than its label. Verified catches: FASTKD5 labeled nucleus, module mitochondrial 10/10 — FASTKD5 IS a mito
+  RNA-processing protein (mislabel); ACTR6 labeled cytoskeleton but nuclear (an INO80 remodeller subunit); ELP5
+  nuclear→cytoplasm (Elongator is cytoplasmic); DIS3/EXOSC10 cytoplasm→nucleus (nuclear exosome). The module CORRECTS
+  the annotation — a genuine annotation-error / incompleteness detector.
+- **DECOUPLED — CONFOUND, not trustworthy.** Even after a magnitude control (both genes strong responders), the top
+  hits are obligate mito/metabolic complex-mates (PET117~COA6 COX assembly, NDUFB3/NDUFA10~NDUFS1 complex I) whose K562
+  knockdown responses are WEAK — weak signal reads as "decoupled," not real biology. TSC1~TSC2 (an obligate complex)
+  appeared before the control and was correctly filtered out.
+- **HIDDEN-LINK — CONFOUND, not trustworthy.** After excluding pan-essential genes, the survivors are spurious
+  correlations between weak responders (AGRN~AQP10, MYB~PTGR2) plus shared erythroid-lineage signal (K562 = CML).
+
+Root cause and honest conclusion: the measured Perturb-seq response in K562 is dominated by response MAGNITUDE and the
+proliferation/stress axis, so "structure vs measured response" disagreement mostly measures assay SIGNAL QUALITY, not
+biology — the same structure(recoverable)-vs-dynamics(noisy) split the whole project keeps hitting. The trustworthy
+anomaly is the cross-ANNOTATION one (compartment vs co-dependency module), which found real mislabels; the
+perturbation-based anomalies are not reliable on this screen. (anomaly.py → anomaly.json)
