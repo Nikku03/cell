@@ -1,0 +1,1196 @@
+{
+ "n_targets": 6753,
+ "bands": {
+  "100": {
+   "proximity_min": 1.0,
+   "proximity_median": 1.0,
+   "validation": {
+    "proc": {
+     "top1": 0.533,
+     "n": 30,
+     "majority_baseline": 0.266
+    },
+    "comp": {
+     "top1": 0.52,
+     "n": 100,
+     "majority_baseline": 0.225
+    }
+   },
+   "examples": [
+    {
+     "gene": "BHLHE23",
+     "dark": true,
+     "record": {
+      "job_proc": null,
+      "compartment": null,
+      "pathway": null,
+      "pubs": 16,
+      "litmine_papers": 5
+     },
+     "job": {
+      "predicted": "transcription",
+      "confidence": 0.33,
+      "source": "family-consensus"
+     },
+     "destination": {
+      "predicted": "nucleus",
+      "confidence": 0.33,
+      "source": "family/loc"
+     },
+     "path": {
+      "predicted": "cGMP effects",
+      "confidence": 0.21,
+      "source": "co-dependency-decode"
+     },
+     "timing": {
+      "status": "no-orderable-context"
+     },
+     "interactors": [
+      "AP3S2",
+      "AP3S1",
+      "TCF3",
+      "VSX1",
+      "VSX2",
+      "AP4M1",
+      "KCNMB2",
+      "KCNMB3"
+     ],
+     "family": [
+      {
+       "gene": "ZNF26",
+       "w": 0.18,
+       "via": "co-dep"
+      },
+      {
+       "gene": "INPP5F",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "TRIB3",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "DMRTA1",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "UTF1",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PLN",
+       "w": 0.16,
+       "via": "co-dep"
+      }
+     ],
+     "surveillance": {
+      "status": "MEASURED",
+      "note": "removal effect on file (Perturb-seq) \u2014 use strace"
+     },
+     "required_support": [
+      {
+       "needs": "nuclear import",
+       "why": "importins (KPNA/KPNB) carry it through the nuclear pore"
+      },
+      {
+       "needs": "chromatin access",
+       "why": "remodelers (SWI/SNF) + the Pol II machinery to actually transcribe"
+      },
+      {
+       "needs": "co-subunit assembly",
+       "why": "its partner subunits must be present and stoichiometric"
+      },
+      {
+       "needs": "chaperone",
+       "why": "HSP70/90 or a dedicated assembly chaperone to fold/assemble it"
+      }
+     ]
+    },
+    {
+     "gene": "DHX16",
+     "dark": false,
+     "record": {
+      "job_proc": null,
+      "compartment": null,
+      "pathway": null,
+      "pubs": 118,
+      "litmine_papers": 0
+     },
+     "job": {
+      "predicted": "transcription",
+      "confidence": 0.62,
+      "source": "family-consensus"
+     },
+     "destination": {
+      "predicted": "nucleus",
+      "confidence": 0.5,
+      "source": "family/loc"
+     },
+     "path": {
+      "predicted": "Neddylation",
+      "confidence": 0.21,
+      "source": "co-dependency-decode"
+     },
+     "timing": {
+      "status": "signaling-tier",
+      "level": 0.91,
+      "bucket": "downstream",
+      "pathway": "mRNA Splicing - Major Pathway",
+      "detail": "downstream across 7 pathway(s) (\u00b10.05)",
+      "source": "SIGNOR directed graph"
+     },
+     "interactors": [],
+     "family": [
+      {
+       "gene": "UPF1",
+       "w": 0.32,
+       "via": "co-dep"
+      },
+      {
+       "gene": "GBF1",
+       "w": 0.28,
+       "via": "co-dep"
+      },
+      {
+       "gene": "SNIP1",
+       "w": 0.26,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PSMC1",
+       "w": 0.25,
+       "via": "co-dep"
+      },
+      {
+       "gene": "TSG101",
+       "w": 0.24,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PSMC4",
+       "w": 0.24,
+       "via": "co-dep"
+      }
+     ],
+     "surveillance": {
+      "status": "MEASURED",
+      "note": "removal effect on file (Perturb-seq) \u2014 use strace"
+     },
+     "required_support": [
+      {
+       "needs": "nuclear import",
+       "why": "importins (KPNA/KPNB) carry it through the nuclear pore"
+      },
+      {
+       "needs": "chromatin access",
+       "why": "remodelers (SWI/SNF) + the Pol II machinery to actually transcribe"
+      },
+      {
+       "needs": "co-subunit assembly",
+       "why": "its partner subunits must be present and stoichiometric"
+      },
+      {
+       "needs": "chaperone",
+       "why": "HSP70/90 or a dedicated assembly chaperone to fold/assemble it"
+      }
+     ]
+    },
+    {
+     "gene": "FAM174C",
+     "dark": true,
+     "record": {
+      "job_proc": null,
+      "compartment": null,
+      "pathway": null,
+      "pubs": 8,
+      "litmine_papers": 0
+     },
+     "job": {
+      "predicted": "transport/uptake",
+      "confidence": 0.37,
+      "source": "family-consensus"
+     },
+     "destination": {
+      "predicted": "membrane",
+      "confidence": 0.29,
+      "source": "family/loc"
+     },
+     "path": {
+      "predicted": "Post-translational protein phosphorylation",
+      "confidence": 0.16,
+      "source": "co-dependency-decode"
+     },
+     "timing": {
+      "status": "no-orderable-context"
+     },
+     "interactors": [],
+     "family": [
+      {
+       "gene": "APC2",
+       "w": 0.28,
+       "via": "co-dep"
+      },
+      {
+       "gene": "BOK",
+       "w": 0.25,
+       "via": "co-dep"
+      },
+      {
+       "gene": "MXRA8",
+       "w": 0.25,
+       "via": "co-dep"
+      },
+      {
+       "gene": "TSPAN4",
+       "w": 0.24,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PCSK4",
+       "w": 0.24,
+       "via": "co-dep"
+      },
+      {
+       "gene": "SYNGR3",
+       "w": 0.24,
+       "via": "co-dep"
+      }
+     ],
+     "surveillance": {
+      "status": "MEASURED",
+      "note": "removal effect on file (Perturb-seq) \u2014 use strace"
+     },
+     "required_support": [
+      {
+       "needs": "ER translocation",
+       "why": "SEC61 translocon \u2014 a secreted/membrane protein must be threaded into the ER"
+      },
+      {
+       "needs": "signal-peptide cleavage",
+       "why": "signal peptidase (SPCS) removes the targeting sequence"
+      },
+      {
+       "needs": "N-glycosylation",
+       "why": "OST transfers glycans in the ER lumen"
+      },
+      {
+       "needs": "vesicle trafficking",
+       "why": "COPII/COPI + SNAREs carry it ER\u2192Golgi\u2192surface"
+      }
+     ]
+    }
+   ]
+  },
+  "200": {
+   "proximity_min": 1.0,
+   "proximity_median": 1.0,
+   "validation": {
+    "proc": {
+     "top1": 0.552,
+     "n": 58,
+     "majority_baseline": 0.266
+    },
+    "comp": {
+     "top1": 0.55,
+     "n": 200,
+     "majority_baseline": 0.225
+    }
+   },
+   "examples": [
+    {
+     "gene": "BHLHE23",
+     "dark": true,
+     "record": {
+      "job_proc": null,
+      "compartment": null,
+      "pathway": null,
+      "pubs": 16,
+      "litmine_papers": 5
+     },
+     "job": {
+      "predicted": "transcription",
+      "confidence": 0.33,
+      "source": "family-consensus"
+     },
+     "destination": {
+      "predicted": "nucleus",
+      "confidence": 0.33,
+      "source": "family/loc"
+     },
+     "path": {
+      "predicted": "cGMP effects",
+      "confidence": 0.21,
+      "source": "co-dependency-decode"
+     },
+     "timing": {
+      "status": "no-orderable-context"
+     },
+     "interactors": [
+      "AP3S2",
+      "AP3S1",
+      "TCF3",
+      "VSX1",
+      "VSX2",
+      "AP4M1",
+      "KCNMB2",
+      "KCNMB3"
+     ],
+     "family": [
+      {
+       "gene": "ZNF26",
+       "w": 0.18,
+       "via": "co-dep"
+      },
+      {
+       "gene": "INPP5F",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "TRIB3",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "DMRTA1",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "UTF1",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PLN",
+       "w": 0.16,
+       "via": "co-dep"
+      }
+     ],
+     "surveillance": {
+      "status": "MEASURED",
+      "note": "removal effect on file (Perturb-seq) \u2014 use strace"
+     },
+     "required_support": [
+      {
+       "needs": "nuclear import",
+       "why": "importins (KPNA/KPNB) carry it through the nuclear pore"
+      },
+      {
+       "needs": "chromatin access",
+       "why": "remodelers (SWI/SNF) + the Pol II machinery to actually transcribe"
+      },
+      {
+       "needs": "co-subunit assembly",
+       "why": "its partner subunits must be present and stoichiometric"
+      },
+      {
+       "needs": "chaperone",
+       "why": "HSP70/90 or a dedicated assembly chaperone to fold/assemble it"
+      }
+     ]
+    },
+    {
+     "gene": "DHX16",
+     "dark": false,
+     "record": {
+      "job_proc": null,
+      "compartment": null,
+      "pathway": null,
+      "pubs": 118,
+      "litmine_papers": 0
+     },
+     "job": {
+      "predicted": "transcription",
+      "confidence": 0.62,
+      "source": "family-consensus"
+     },
+     "destination": {
+      "predicted": "nucleus",
+      "confidence": 0.5,
+      "source": "family/loc"
+     },
+     "path": {
+      "predicted": "Neddylation",
+      "confidence": 0.21,
+      "source": "co-dependency-decode"
+     },
+     "timing": {
+      "status": "signaling-tier",
+      "level": 0.91,
+      "bucket": "downstream",
+      "pathway": "mRNA Splicing - Major Pathway",
+      "detail": "downstream across 7 pathway(s) (\u00b10.05)",
+      "source": "SIGNOR directed graph"
+     },
+     "interactors": [],
+     "family": [
+      {
+       "gene": "UPF1",
+       "w": 0.32,
+       "via": "co-dep"
+      },
+      {
+       "gene": "GBF1",
+       "w": 0.28,
+       "via": "co-dep"
+      },
+      {
+       "gene": "SNIP1",
+       "w": 0.26,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PSMC1",
+       "w": 0.25,
+       "via": "co-dep"
+      },
+      {
+       "gene": "TSG101",
+       "w": 0.24,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PSMC4",
+       "w": 0.24,
+       "via": "co-dep"
+      }
+     ],
+     "surveillance": {
+      "status": "MEASURED",
+      "note": "removal effect on file (Perturb-seq) \u2014 use strace"
+     },
+     "required_support": [
+      {
+       "needs": "nuclear import",
+       "why": "importins (KPNA/KPNB) carry it through the nuclear pore"
+      },
+      {
+       "needs": "chromatin access",
+       "why": "remodelers (SWI/SNF) + the Pol II machinery to actually transcribe"
+      },
+      {
+       "needs": "co-subunit assembly",
+       "why": "its partner subunits must be present and stoichiometric"
+      },
+      {
+       "needs": "chaperone",
+       "why": "HSP70/90 or a dedicated assembly chaperone to fold/assemble it"
+      }
+     ]
+    },
+    {
+     "gene": "FAM174C",
+     "dark": true,
+     "record": {
+      "job_proc": null,
+      "compartment": null,
+      "pathway": null,
+      "pubs": 8,
+      "litmine_papers": 0
+     },
+     "job": {
+      "predicted": "transport/uptake",
+      "confidence": 0.37,
+      "source": "family-consensus"
+     },
+     "destination": {
+      "predicted": "membrane",
+      "confidence": 0.29,
+      "source": "family/loc"
+     },
+     "path": {
+      "predicted": "Post-translational protein phosphorylation",
+      "confidence": 0.16,
+      "source": "co-dependency-decode"
+     },
+     "timing": {
+      "status": "no-orderable-context"
+     },
+     "interactors": [],
+     "family": [
+      {
+       "gene": "APC2",
+       "w": 0.28,
+       "via": "co-dep"
+      },
+      {
+       "gene": "BOK",
+       "w": 0.25,
+       "via": "co-dep"
+      },
+      {
+       "gene": "MXRA8",
+       "w": 0.25,
+       "via": "co-dep"
+      },
+      {
+       "gene": "TSPAN4",
+       "w": 0.24,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PCSK4",
+       "w": 0.24,
+       "via": "co-dep"
+      },
+      {
+       "gene": "SYNGR3",
+       "w": 0.24,
+       "via": "co-dep"
+      }
+     ],
+     "surveillance": {
+      "status": "MEASURED",
+      "note": "removal effect on file (Perturb-seq) \u2014 use strace"
+     },
+     "required_support": [
+      {
+       "needs": "ER translocation",
+       "why": "SEC61 translocon \u2014 a secreted/membrane protein must be threaded into the ER"
+      },
+      {
+       "needs": "signal-peptide cleavage",
+       "why": "signal peptidase (SPCS) removes the targeting sequence"
+      },
+      {
+       "needs": "N-glycosylation",
+       "why": "OST transfers glycans in the ER lumen"
+      },
+      {
+       "needs": "vesicle trafficking",
+       "why": "COPII/COPI + SNAREs carry it ER\u2192Golgi\u2192surface"
+      }
+     ]
+    }
+   ]
+  },
+  "500": {
+   "proximity_min": 1.0,
+   "proximity_median": 1.0,
+   "validation": {
+    "proc": {
+     "top1": 0.574,
+     "n": 129,
+     "majority_baseline": 0.266
+    },
+    "comp": {
+     "top1": 0.529,
+     "n": 497,
+     "majority_baseline": 0.225
+    }
+   },
+   "examples": [
+    {
+     "gene": "BHLHE23",
+     "dark": true,
+     "record": {
+      "job_proc": null,
+      "compartment": null,
+      "pathway": null,
+      "pubs": 16,
+      "litmine_papers": 5
+     },
+     "job": {
+      "predicted": "transcription",
+      "confidence": 0.33,
+      "source": "family-consensus"
+     },
+     "destination": {
+      "predicted": "nucleus",
+      "confidence": 0.33,
+      "source": "family/loc"
+     },
+     "path": {
+      "predicted": "cGMP effects",
+      "confidence": 0.21,
+      "source": "co-dependency-decode"
+     },
+     "timing": {
+      "status": "no-orderable-context"
+     },
+     "interactors": [
+      "AP3S2",
+      "AP3S1",
+      "TCF3",
+      "VSX1",
+      "VSX2",
+      "AP4M1",
+      "KCNMB2",
+      "KCNMB3"
+     ],
+     "family": [
+      {
+       "gene": "ZNF26",
+       "w": 0.18,
+       "via": "co-dep"
+      },
+      {
+       "gene": "INPP5F",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "TRIB3",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "DMRTA1",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "UTF1",
+       "w": 0.17,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PLN",
+       "w": 0.16,
+       "via": "co-dep"
+      }
+     ],
+     "surveillance": {
+      "status": "MEASURED",
+      "note": "removal effect on file (Perturb-seq) \u2014 use strace"
+     },
+     "required_support": [
+      {
+       "needs": "nuclear import",
+       "why": "importins (KPNA/KPNB) carry it through the nuclear pore"
+      },
+      {
+       "needs": "chromatin access",
+       "why": "remodelers (SWI/SNF) + the Pol II machinery to actually transcribe"
+      },
+      {
+       "needs": "co-subunit assembly",
+       "why": "its partner subunits must be present and stoichiometric"
+      },
+      {
+       "needs": "chaperone",
+       "why": "HSP70/90 or a dedicated assembly chaperone to fold/assemble it"
+      }
+     ]
+    },
+    {
+     "gene": "DHX16",
+     "dark": false,
+     "record": {
+      "job_proc": null,
+      "compartment": null,
+      "pathway": null,
+      "pubs": 118,
+      "litmine_papers": 0
+     },
+     "job": {
+      "predicted": "transcription",
+      "confidence": 0.62,
+      "source": "family-consensus"
+     },
+     "destination": {
+      "predicted": "nucleus",
+      "confidence": 0.5,
+      "source": "family/loc"
+     },
+     "path": {
+      "predicted": "Neddylation",
+      "confidence": 0.21,
+      "source": "co-dependency-decode"
+     },
+     "timing": {
+      "status": "signaling-tier",
+      "level": 0.91,
+      "bucket": "downstream",
+      "pathway": "mRNA Splicing - Major Pathway",
+      "detail": "downstream across 7 pathway(s) (\u00b10.05)",
+      "source": "SIGNOR directed graph"
+     },
+     "interactors": [],
+     "family": [
+      {
+       "gene": "UPF1",
+       "w": 0.32,
+       "via": "co-dep"
+      },
+      {
+       "gene": "GBF1",
+       "w": 0.28,
+       "via": "co-dep"
+      },
+      {
+       "gene": "SNIP1",
+       "w": 0.26,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PSMC1",
+       "w": 0.25,
+       "via": "co-dep"
+      },
+      {
+       "gene": "TSG101",
+       "w": 0.24,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PSMC4",
+       "w": 0.24,
+       "via": "co-dep"
+      }
+     ],
+     "surveillance": {
+      "status": "MEASURED",
+      "note": "removal effect on file (Perturb-seq) \u2014 use strace"
+     },
+     "required_support": [
+      {
+       "needs": "nuclear import",
+       "why": "importins (KPNA/KPNB) carry it through the nuclear pore"
+      },
+      {
+       "needs": "chromatin access",
+       "why": "remodelers (SWI/SNF) + the Pol II machinery to actually transcribe"
+      },
+      {
+       "needs": "co-subunit assembly",
+       "why": "its partner subunits must be present and stoichiometric"
+      },
+      {
+       "needs": "chaperone",
+       "why": "HSP70/90 or a dedicated assembly chaperone to fold/assemble it"
+      }
+     ]
+    },
+    {
+     "gene": "FAM174C",
+     "dark": true,
+     "record": {
+      "job_proc": null,
+      "compartment": null,
+      "pathway": null,
+      "pubs": 8,
+      "litmine_papers": 0
+     },
+     "job": {
+      "predicted": "transport/uptake",
+      "confidence": 0.37,
+      "source": "family-consensus"
+     },
+     "destination": {
+      "predicted": "membrane",
+      "confidence": 0.29,
+      "source": "family/loc"
+     },
+     "path": {
+      "predicted": "Post-translational protein phosphorylation",
+      "confidence": 0.16,
+      "source": "co-dependency-decode"
+     },
+     "timing": {
+      "status": "no-orderable-context"
+     },
+     "interactors": [],
+     "family": [
+      {
+       "gene": "APC2",
+       "w": 0.28,
+       "via": "co-dep"
+      },
+      {
+       "gene": "BOK",
+       "w": 0.25,
+       "via": "co-dep"
+      },
+      {
+       "gene": "MXRA8",
+       "w": 0.25,
+       "via": "co-dep"
+      },
+      {
+       "gene": "TSPAN4",
+       "w": 0.24,
+       "via": "co-dep"
+      },
+      {
+       "gene": "PCSK4",
+       "w": 0.24,
+       "via": "co-dep"
+      },
+      {
+       "gene": "SYNGR3",
+       "w": 0.24,
+       "via": "co-dep"
+      }
+     ],
+     "surveillance": {
+      "status": "MEASURED",
+      "note": "removal effect on file (Perturb-seq) \u2014 use strace"
+     },
+     "required_support": [
+      {
+       "needs": "ER translocation",
+       "why": "SEC61 translocon \u2014 a secreted/membrane protein must be threaded into the ER"
+      },
+      {
+       "needs": "signal-peptide cleavage",
+       "why": "signal peptidase (SPCS) removes the targeting sequence"
+      },
+      {
+       "needs": "N-glycosylation",
+       "why": "OST transfers glycans in the ER lumen"
+      },
+      {
+       "needs": "vesicle trafficking",
+       "why": "COPII/COPI + SNAREs carry it ER\u2192Golgi\u2192surface"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "underworld": [
+  {
+   "dark_gene": "MTG2",
+   "coherence": 0.77,
+   "predicted_job": "translation",
+   "job_conf": 0.81,
+   "predicted_place": "mitochondrion",
+   "place_conf": 0.92,
+   "crew": [
+    "MTG2",
+    "HSD17B10",
+    "MARS2",
+    "MRPL20",
+    "MRPL43"
+   ],
+   "likely_role": "mitochondrial import",
+   "measured": true
+  },
+  {
+   "dark_gene": "VSIG10L2",
+   "coherence": 0.72,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.85,
+   "predicted_place": "membrane",
+   "place_conf": 0.78,
+   "crew": [
+    "VSIG10L2",
+    "SMIM32",
+    "INAFM2",
+    "SMIM38",
+    "SMIM31"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "SMIM32",
+   "coherence": 0.79,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.75,
+   "predicted_place": "membrane",
+   "place_conf": 0.75,
+   "crew": [
+    "SMIM32",
+    "SMIM31",
+    "VSIG10L2",
+    "SELENOF",
+    "SLC35G4"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "EMC7",
+   "coherence": 0.64,
+   "predicted_job": "trafficking/secretion",
+   "job_conf": 0.88,
+   "predicted_place": "ER",
+   "place_conf": 1.0,
+   "crew": [
+    "EMC7",
+    "EMC3",
+    "EMC1",
+    "EMC2",
+    "EMC4"
+   ],
+   "likely_role": "ER translocation",
+   "measured": true
+  },
+  {
+   "dark_gene": "GSG1L2",
+   "coherence": 0.81,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.67,
+   "predicted_place": "membrane",
+   "place_conf": 0.26,
+   "crew": [
+    "GSG1L2",
+    "NR2E3",
+    "COPG2",
+    "SLC22A24",
+    "ZNF595"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "NCLN",
+   "coherence": 0.53,
+   "predicted_job": "trafficking/secretion",
+   "job_conf": 1.0,
+   "predicted_place": "ER",
+   "place_conf": 1.0,
+   "crew": [
+    "NCLN",
+    "CCDC47",
+    "TMEM147",
+    "RAB5IF",
+    "EMC6"
+   ],
+   "likely_role": "ER translocation",
+   "measured": true
+  },
+  {
+   "dark_gene": "INAFM2",
+   "coherence": 0.79,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.67,
+   "predicted_place": "membrane",
+   "place_conf": 0.59,
+   "crew": [
+    "INAFM2",
+    "SMIM32",
+    "SH2B2",
+    "GPHB5",
+    "PRSS41"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "TM2D2",
+   "coherence": 0.61,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.86,
+   "predicted_place": "membrane",
+   "place_conf": 0.64,
+   "crew": [
+    "TM2D2",
+    "TM2D1",
+    "TM2D3",
+    "AUP1"
+   ],
+   "likely_role": "ER translocation",
+   "measured": true
+  },
+  {
+   "dark_gene": "SMIM38",
+   "coherence": 0.66,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.78,
+   "predicted_place": "membrane",
+   "place_conf": 0.7,
+   "crew": [
+    "SMIM38",
+    "CCDC188",
+    "VSIG10L2",
+    "INAFM2",
+    "SMIM32"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "PRRT1B",
+   "coherence": 0.61,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.84,
+   "predicted_place": "membrane",
+   "place_conf": 0.77,
+   "crew": [
+    "PRRT1B",
+    "MGAM2",
+    "OR10D3",
+    "MUC3A",
+    "VSIG10L2"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "LRRC53",
+   "coherence": 0.6,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.85,
+   "predicted_place": "membrane",
+   "place_conf": 0.67,
+   "crew": [
+    "LRRC53",
+    "CD8B",
+    "TMEM132C",
+    "SMIM23",
+    "PRRT1B"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "GNG14",
+   "coherence": 0.67,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.76,
+   "predicted_place": "membrane",
+   "place_conf": 0.64,
+   "crew": [
+    "GNG14",
+    "NPIPB11",
+    "SLC35G4",
+    "APELA",
+    "SMIM31"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "PTCD1",
+   "coherence": 0.7,
+   "predicted_job": "translation",
+   "job_conf": 0.72,
+   "predicted_place": "mitochondrion",
+   "place_conf": 1.0,
+   "crew": [
+    "PTCD1",
+    "HSD17B10",
+    "LARS2",
+    "MTG2",
+    "MRPS6"
+   ],
+   "likely_role": "mitochondrial import",
+   "measured": true
+  },
+  {
+   "dark_gene": "RNF187",
+   "coherence": 0.6,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.84,
+   "predicted_place": "membrane",
+   "place_conf": 0.75,
+   "crew": [
+    "TSPAN10",
+    "SMIM32",
+    "INAFM2",
+    "KIAA0040",
+    "SMIM31"
+   ],
+   "likely_role": "ER translocation",
+   "measured": true
+  },
+  {
+   "dark_gene": "XKR5",
+   "coherence": 0.54,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.93,
+   "predicted_place": "membrane",
+   "place_conf": 0.69,
+   "crew": [
+    "XKR5",
+    "SRD5A2",
+    "DPP6",
+    "TMEM225B",
+    "TMEM132C"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "C20orf203",
+   "coherence": 0.77,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.65,
+   "predicted_place": "membrane",
+   "place_conf": 0.51,
+   "crew": [
+    "ZDHHC11B",
+    "OBP2B",
+    "GPHB5",
+    "PCSK6",
+    "SMIM32"
+   ],
+   "likely_role": "ER translocation",
+   "measured": true
+  },
+  {
+   "dark_gene": "ZNF91",
+   "coherence": 0.5,
+   "predicted_job": "transcription",
+   "job_conf": 1.0,
+   "predicted_place": "nucleus",
+   "place_conf": 1.0,
+   "crew": [
+    "ZNF91",
+    "ZNF730",
+    "ZNF737",
+    "ZNF430"
+   ],
+   "likely_role": "nuclear import",
+   "measured": true
+  },
+  {
+   "dark_gene": "TMEM225B",
+   "coherence": 0.54,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.92,
+   "predicted_place": "membrane",
+   "place_conf": 0.84,
+   "crew": [
+    "TMEM225B",
+    "UGT2B10",
+    "PRRT1B",
+    "XKR5",
+    "C2orf74"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "CCDC188",
+   "coherence": 0.72,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.69,
+   "predicted_place": "membrane",
+   "place_conf": 0.69,
+   "crew": [
+    "CCDC188",
+    "SMIM38",
+    "INAFM2",
+    "SLC35G4",
+    "SH2B2"
+   ],
+   "likely_role": "ER translocation",
+   "measured": false
+  },
+  {
+   "dark_gene": "TM2D1",
+   "coherence": 0.57,
+   "predicted_job": "transport/uptake",
+   "job_conf": 0.87,
+   "predicted_place": "membrane",
+   "place_conf": 0.68,
+   "crew": [
+    "TM2D1",
+    "TM2D2",
+    "TM2D3",
+    "AUP1"
+   ],
+   "likely_role": "ER translocation",
+   "measured": true
+  }
+ ]
+}

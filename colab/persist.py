@@ -80,7 +80,8 @@ ARTIFACTS = [
     "flag_base_vs_kcat.json",
     "fba_flux_coverage.json",
     "pathway_decode.json",
-    "discover.json",               # aim the reasoning machinery at the UNKNOWNS: SELECTIVE-dependency discovery is the WIN (skew of raw DepMap gene-effect + robustness floor recovers 20/22 known oncology targets in top-500, 33.5x enrichment; surfaces novel selective targets SHLD3/CD24/FGFR2/MAF); druggable = selective+surface (TNFSF10/CD24/FZD5, partial - no Pharos); disease_new coarse (0.65); dark-gene FUNCTION is an honest NULL (label transfer scatters on the dark proteome, margin 0.02) -- the discover syscall
+    "discover.json",
+    "investigate.json",            # predicted investigative DOSSIERS for under-recorded genes (record/family/destination/path/timing/interactors/surveillance/required-support), closest-relatives-first; validated held-out: JOB ~55% (2x baseline), DESTINATION ~54% (2.4x); THE UNDERWORLD = dark genes embedded in characterized modules (EMC7->EMC complex, MTG2->mito translation, NCLN->ER Nicalin) -- the investigate syscall               # aim the reasoning machinery at the UNKNOWNS: SELECTIVE-dependency discovery is the WIN (skew of raw DepMap gene-effect + robustness floor recovers 20/22 known oncology targets in top-500, 33.5x enrichment; surfaces novel selective targets SHLD3/CD24/FGFR2/MAF); druggable = selective+surface (TNFSF10/CD24/FZD5, partial - no Pharos); disease_new coarse (0.65); dark-gene FUNCTION is an honest NULL (label transfer scatters on the dark proteome, margin 0.02) -- the discover syscall
     "coverage_stack.json",
     "causal_reach.json",
     "causal_patch.json",

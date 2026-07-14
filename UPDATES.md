@@ -1692,3 +1692,33 @@ the inference null (causal_reach/causal_patch gave ~0), as long as the confidenc
 when gwps.h5ad is staged (PERTURB_MERGE=0 to disable); it falls back to the essential screen when the file is absent.
 Still pending (user uploading): the RPE1 second cell type, for the cross-cell-type causal-consistency test in
 causal_expand.py (does removing X do the same thing when the context changes?). (causal_expand.py → causal_expand.json)
+
+## investigate — predicted investigative dossiers for under-recorded genes (the profile-a-person-from-partial-records engine)
+
+The user's method, built: for a gene we lack a full record for, assemble a case file the way you'd profile a person —
+textbook RECORD first, then FAMILY (co-dependent + interacting relatives → guilt-by-association), DESTINATION
+(compartment), PATH (pathway), TIMING (pathway tier, relative to a reference), INTERACTORS (STRING), SURVEILLANCE
+(measured removal-effect if in the 9,871-gene debugger, else PREDICTED from measured neighbours), and the REQUIRED
+SUPPORT its job implies (reasoned, not looked up: a secreted protein needs ER translocation + signal-peptide cleavage +
+glycosylation + vesicle traffic; a mito protein needs TOM/TIM import; an enzyme needs substrate + cofactor + product
+disposal). Closest relatives to the measured set FIRST — that is where prediction is reliable.
+
+**Honest validation (held-out: hide a gene's own record, predict from family, measure recovery):**
+- **JOB (proc, 12 classes): ~55% top-1** vs 27% majority baseline (~2.0×), across the closest 100/200/500.
+- **DESTINATION (compartment, 12 classes): ~54% top-1** vs 22% baseline (~2.4×).
+- Accuracy is stable across the closest 500 (they all have a near-perfect co-dependency twin) and degrades beyond;
+  confidence is reported per line and per band, honestly (many single-gene confidences are ~0.33 even when the top
+  call is right). PATH (fine-grained Reactome) is the weakest line (co-dependency decode ~21%, as in discover).
+
+**THE UNDERWORLD (the standout):** dark genes whose strongest co-dependency partners form a COHERENT CHARACTERIZED
+module — the hidden crew. Ranked by module coherence × job-consensus, it correctly places genuinely dark genes inside
+real machines: **EMC7** → the ER Membrane protein Complex (crew EMC3/EMC1/EMC2), **MTG2** → mito-ribosome assembly
+(crew MARS2/MRPL20/HSD17B10), **NCLN** → the ER Nicalin–NOMO complex (crew CCDC47/TMEM147). These are real assignments
+recoverable at the same ~55% job / ~54% place reliability, and they surface the "someone must be doing this job and
+it's nobody on file" cases the user described.
+
+Served by the `investigate GENE` syscall (full dossier) and `investigate underworld` (hidden-crew list). This is an
+UPGRADE — additive; the essentiality/discover/causal engines are unchanged (regression-checked). Honest scope: coarse
+labels (job/place) predict well (~2× baseline); fine labels (exact pathway) and the required-support "likely role"
+(often the generic first service, e.g. ER translocation for membrane genes) are weaker reasoned leads, flagged as such.
+(investigate.py → investigate.json; bands 100/200/500)

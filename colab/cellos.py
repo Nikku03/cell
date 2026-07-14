@@ -586,6 +586,36 @@ class CellKernel:
         out.append(f"  ── {n['headline']}")
         return "\n".join(out)
 
+    def investigate(self, args):
+        """build a PREDICTED investigative dossier for a gene we lack a full record for — the way you profile a person
+        from partial records: textbook RECORD, FAMILY (co-dependent + interacting relatives), DESTINATION (compartment),
+        PATH (pathway), TIMING (pathway tier), INTERACTORS (PPI), SURVEILLANCE (measured or predicted removal effect),
+        and the REQUIRED SUPPORT its job implies (translocation, folding, transport, energy). Validated: family-consensus
+        recovers a held-out gene's JOB ~55% and DESTINATION ~54% (≈2× the majority baseline) for the closest relatives.
+        'investigate underworld' lists DARK genes embedded in a coherent characterized module (hidden crew: EMC7 in the
+        EMC complex, MTG2 in mito-translation, NCLN in the ER Nicalin complex).
+        usage: investigate GENE | investigate underworld"""
+        if not hasattr(self, "_inv"):
+            import investigate as _I
+            self._invmod = _I
+            self._inv = _I.Investigator(kernel=self)
+        if args and args[0].lower() == "underworld":
+            uw = self._inv.underworld(k=15)
+            out = ["investigate underworld — DARK genes embedded in a coherent characterized module (hidden crew):"]
+            for u in uw:
+                tag = "measured" if u["measured"] else "unmeasured"
+                out.append(f"  {u['dark_gene']:12} → {u['predicted_job']}/{u['predicted_place']} "
+                           f"(coherence {u['coherence']}, {tag}) — crew: {', '.join(u['crew'][:4])}; "
+                           f"likely role: {u['likely_role']}")
+            return "\n".join(out)
+        if not args:
+            return "investigate GENE   (or 'investigate underworld')"
+        g = args[0]
+        if g not in self._inv.name2i:
+            return f"investigate {g}: no such gene in the cell image."
+        dark_or_unlabeled = self._inv._g(g).get("dark") or not self._inv._proc(g)
+        return self._invmod.render(self._inv.profile(g, predict_mode=dark_or_unlabeled))
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1226,6 +1256,8 @@ class CellKernel:
   reason GENE          REASON essentiality across independent lines, calibrated confidence (AUC 0.86)
   disease GENE         a 2nd reasoning engine: calibrated prior that a gene is disease-associated (modest, 0.65)
   discover [sub]       aim the engine at UNKNOWNS: selective [WIN, 33x] / druggable / disease / function GENE
+  investigate GENE     predicted DOSSIER (job/place/path/timing/interactors/support) for an under-recorded gene;
+                       'investigate underworld' = dark genes hidden inside characterized modules (job ~55%, dest ~54%)
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1286,6 +1318,7 @@ class CellShell:
             if cmd in ("perturb", "live"): return k.perturb(args[0])
             if cmd in ("disease", "risk"): return k.disease(args[0])
             if cmd in ("discover", "unknown"): return k.discover(args)
+            if cmd in ("investigate", "dossier", "profile"): return k.investigate(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
