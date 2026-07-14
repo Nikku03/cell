@@ -1811,3 +1811,17 @@ proliferation/stress axis, so "structure vs measured response" disagreement most
 biology — the same structure(recoverable)-vs-dynamics(noisy) split the whole project keeps hitting. The trustworthy
 anomaly is the cross-ANNOTATION one (compartment vs co-dependency module), which found real mislabels; the
 perturbation-based anomalies are not reliable on this screen. (anomaly.py → anomaly.json)
+
+## cell_map — the complete-cell database rendered as an interactive NETWORK MAP
+
+Turned the complete-cell database into a spatial map of the cell and its networks (cell_map.py -> cell_map.json ->
+viz/cell_network_map.html, published as an artifact). Nodes = the connected functional core (3,200 genes: every
+essential gene, TF, complex member, and network hub, of 16,509), placed by SUBCELLULAR COMPARTMENT in a concentric
+cell layout (nucleus + cytoplasm interior, organelles as clusters, membrane on the rim) via a compartment-anchored
+force layout computed in Python (blow-up-guarded, aspect-preserving). Edges = the two real measured networks: physical
+PPI (STRING, 22,000 shown of 191,944) and co-dependency (DepMap). Colour = compartment (12-hue palette, validated 3:1
+on the near-black ground); size = PPI degree; essential/TF/dark are flag-highlightable. Interactive: pan/zoom, hover a
+node (compartment + role tags + degree), toggle PPI vs co-dependency, highlight essential/TF/dark, search a gene.
+Screenshot-verified through Chromium (fixed a canvas-sizing bug and a force-layout blow-up along the way); all
+interactions error-free. It is the honest map — the functional core and its measured wiring, laid out by where each
+gene lives — not a fabricated whole-cell picture.
