@@ -1825,3 +1825,57 @@ node (compartment + role tags + degree), toggle PPI vs co-dependency, highlight 
 Screenshot-verified through Chromium (fixed a canvas-sizing bug and a force-layout blow-up along the way); all
 interactions error-free. It is the honest map — the functional core and its measured wiring, laid out by where each
 gene lives — not a fabricated whole-cell picture.
+
+## network — the complete-cell database wired into ONE interconnected + interdependent graph (in the software)
+
+Took the same complete-cell image that built the cell HTML and wired every gene into one queryable multi-layer
+network object inside CellOS (network.py -> CellNetwork; the `network` syscall). The database's edges split cleanly
+into two families the object keeps distinct:
+
+- **INTERCONNECTED (physical — who TOUCHES whom, undirected):** ppi (STRING, 191,944), complex co-membership (2,039
+  complexes), ligand→receptor. 208,735 edges.
+- **INTERDEPENDENT (functional — who NEEDS / CONTROLS whom):** causal (SIGNOR/CollecTRI signed direction, 60,103),
+  regulatory (TF→target signed, 612,133), signaling (17,432), co-dependency (DepMap co-essentiality), co-expression,
+  synthetic-lethal. 922,265 edges.
+
+Every gene is a node wired across all layers; the object answers `wire(gene)` (its full place in both networks),
+`link(a,b)` (every relationship + direction between two genes — e.g. MDM2↔TP53 returns the full feedback loop: PPI +
+complex + causal both ways + regulatory + signaling), `depends_on`/`controls` (upstream vs downstream in the
+functional graph), `path(a,b,family)` (a physical vs a functional route), and `hubs(family)`.
+
+**Honest validation.** The point of keeping BOTH families is that they are *complementary yet coherent*, and both are
+measured:
+- **Complementary, not duplicates.** Only ~6% of a functional edge (co-dependency/causal/…) is also a physical edge —
+  who-NEEDS-whom is mostly NOT who-TOUCHES-whom, so the interdependent layer carries information the physical layer
+  doesn't (regulatory: 99% non-physical; co-expression 98%; co-dependency 94%; causal 92%).
+- **Coherent, not noise.** That same overlap is 46–214× the 0.14% chance rate — every functional layer recovers real
+  physical complexes far above random (synthetic-lethal 214×, signaling 139×, causal 56×, co-dependency 46×). And
+  physical partners share a curated pathway above chance: PPI 1.6×, complex 3.6×, causal 2.4×.
+- **Connected.** One giant component per family (interconnected 99.7%, interdependent 100%).
+
+**Honest caveats (flagged in the verdict and the syscall).** (1) Co-dependency and co-expression partners do NOT map
+onto curated *literature* pathways (~0.9× chance) — they track physical modules instead; that's expected for
+co-essentiality, but it means those two layers should not be read as pathway annotations. (2) Every edge is an
+observed/curated relationship, not a computed prediction. (3) Consistent with dependency.py and causal_reach.py, the
+wired edges do NOT let you PROPAGATE an unmeasured knockout's far-field cascade — the structure is real and traversable,
+but long-range dynamics don't compose. Use the wired edge; don't trust a propagated one. (network.py -> network.json;
+`network GENE | network link A B | network path A B [fam] | network hubs [fam]`)
+
+## knockout / dependency — the MEASURED Perturb-seq surveillance as a directed knockout-effect engine
+
+Separate from the curated `network` above, this turns the measured Perturb-seq screen (the debugger M, ~9,871
+knockouts × 8,202 measured genes) into a directed dependency network and a knockout-effect syscall (dependency.py ->
+Dependency; the `knockout` syscall). `knockout GENE` returns the REAL measured blast radius of removing a gene — which
+genes go down (need it) and up (released by it) — for the ~7,651 genes that are both knocked out and measured; e.g.
+removing SF3B1 (splicing factor) releases the snoRNA-host lncRNAs GAS5/SNHG1/ZFAS1 (biologically sensible). `knockout
+impact` ranks genes by blast-radius size — a measured load-bearing score (top: spliceosome/proteasome/ribosome/RNA-pol
+machinery — PSMD14, RBM22, POLR3A, RPL7A, SNRPD2, EIF4A3).
+
+**Honest validation (the direct effect is real; propagation is not).** The wired knockout edge is real measured data.
+But the dependencies do NOT chain: only ~0.5% of a knockout's strong responders are the gene's own STRING partners (vs
+~0.1% chance) — most of the effect is distal/regulatory, not direct binding — and propagating one step through the
+graph to predict the 2nd-order effect is Spearman ~0.009 (~chance ~0.019). So the software can SHOW a measured
+knockout's effect and rank genes by measured impact, but it cannot COMPUTE an unmeasured knockout's cascade by chaining
+dependencies — the same structure(measured)-vs-dynamics(non-composing) split found in causal_reach and confirmed here.
+Use the measured edge; don't trust the propagated one. (dependency.py -> dependency.json; `knockout GENE | knockout
+impact`. Merged essential+genome-wide screen via `_load_debugger`; genome-wide-only genes are flagged lower-precision.)

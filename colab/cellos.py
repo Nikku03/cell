@@ -616,6 +616,111 @@ class CellKernel:
         dark_or_unlabeled = self._inv._g(g).get("dark") or not self._inv._proc(g)
         return self._invmod.render(self._inv.profile(g, predict_mode=dark_or_unlabeled))
 
+    def network(self, args):
+        """the whole cell wired into ONE multi-layer graph — INTERCONNECTED (physical: ppi/complex/ligand-receptor)
+        and INTERDEPENDENT (functional: causal/regulatory/signaling/co-dependency/co-expression/synthetic-lethal) —
+        queryable in the running software (network.py). The two families are complementary (a functional edge is
+        who-NEEDS-whom, ~94% not a physical edge) yet coherent (still 46x the chance rate of recovering a real
+        complex). Edges are observed/curated relationships, not predictions.
+          network GENE           — the gene's complete wiring, split physical vs functional
+          network link A B       — every relationship (and its direction) between two genes
+          network path A B [fam] — a shortest chain (fam = interconnected | interdependent)
+          network hubs [fam]     — the most-wired genes in a family
+        usage: network GENE | network link A B | network path A B [interconnected|interdependent] | network hubs [fam]"""
+        if not hasattr(self, "_net"):
+            import network as _N
+            self._net = _N.CellNetwork(kernel=self)
+        G = self._net
+        if args and args[0].lower() == "wire" and len(args) > 1:
+            args = args[1:]                                   # 'network wire GENE' -> wire GENE
+        sub = (args[0].lower() if args else "")
+        if sub == "hubs":
+            fam = args[1] if len(args) > 1 else "interconnected"
+            fam = "interdependent" if fam.startswith("interd") else "interconnected"
+            hs = G.hubs(fam, 15)
+            return f"network hubs ({fam}):\n  " + ", ".join(f"{h['gene']}({h['degree']})" for h in hs)
+        if sub == "link":
+            if len(args) < 3:
+                return "network link A B"
+            lk = G.link(args[1], args[2])
+            if lk["status"] != "ok":
+                return f"network link {args[1]} {args[2]}: unknown gene."
+            if not lk["relationships"]:
+                return f"{args[1]} and {args[2]}: no wired relationship in any layer."
+            out = [f"network link {lk['a']} ↔ {lk['b']} — {lk['n_links']} relationship(s):"]
+            for r in lk["relationships"]:
+                out.append(f"  [{r['family']:15}] {r['layer']:16} {r['direction']}  (w={r['w']})")
+            return "\n".join(out)
+        if sub == "path":
+            if len(args) < 3:
+                return "network path A B [interconnected|interdependent]"
+            fam = args[3] if len(args) > 3 else "interconnected"
+            fam = "interdependent" if fam.startswith("interd") else "interconnected"
+            p = G.path(args[1], args[2], family=fam)
+            if p["status"] != "ok":
+                return f"network path {args[1]} -> {args[2]} ({fam}): {p['status']}"
+            return f"network path ({fam}, {p['hops']} hops): " + " -> ".join(p["path"])
+        if not args:
+            import network as _N
+            n_ic = sum(G.layer_edges(L) for L in _N.INTERCONNECTED)
+            n_id = sum(G.layer_edges(L) for L in _N.INTERDEPENDENT)
+            return (f"network — {G.n:,} genes wired into one graph:\n"
+                    f"  INTERCONNECTED (physical)  {n_ic:,} edges: " + ", ".join(_N.INTERCONNECTED) + "\n"
+                    f"  INTERDEPENDENT (functional) {n_id:,} edges: " + ", ".join(_N.INTERDEPENDENT) + "\n"
+                    f"  try: network GENE | network link A B | network path A B [fam] | network hubs [fam]")
+        w = G.wire(args[0])
+        if w["status"] != "ok":
+            return f"network {args[0]}: no such gene."
+        out = [f"network — {w['gene']} wired into the cell (total degree {w['degree']['total']}):",
+               "  INTERCONNECTED (who it physically touches):"]
+        if not w["interconnected"]:
+            out.append("    (none recorded)")
+        for L, v in w["interconnected"].items():
+            out.append(f"    {L:16}: " + ", ".join(x["gene"] for x in v))
+        out.append("  INTERDEPENDENT (who it needs / controls):")
+        if not w["interdependent"]:
+            out.append("    (none recorded)")
+        for L, v in w["interdependent"].items():
+            if isinstance(v, dict):
+                for side, lst in v.items():
+                    out.append(f"    {L}.{side:11}: " + ", ".join(x["gene"] for x in lst))
+            else:
+                out.append(f"    {L:16}: " + ", ".join(x["gene"] for x in v))
+        return "\n".join(out)
+
+    def knockout(self, args):
+        """the MEASURED downstream effect of removing a gene — its Perturb-seq blast radius (what actually goes up/down),
+        for the ~9,871 knocked-out genes (dependency.py). Distinct from the wired `network` (curated edges): this is the
+        real measured transcriptome response. HONEST: the direct effect is real data, but it does NOT propagate — you
+        cannot chain it to compute an unmeasured knockout's cascade (transitivity ~chance).
+          knockout GENE        — the measured up/down blast radius of removing GENE
+          knockout impact      — genes ranked by measured blast-radius size (a load-bearing score)
+        usage: knockout GENE | knockout impact"""
+        if not hasattr(self, "_dep"):
+            import dependency as _D
+            self._dep = _D.Dependency(kernel=self)
+        D = self._dep
+        if not args:
+            return "knockout GENE   (or 'knockout impact')"
+        if args[0].lower() == "impact":
+            imp = D.impact_ranking(20)
+            out = ["knockout impact — genes ranked by measured blast-radius size (# genes strongly perturbed):"]
+            for r in imp:
+                tag = "" if r["hi_precision"] else "  (genome-wide screen; lower per-gene precision)"
+                out.append(f"  {r['gene']:10} {r['genes_perturbed']:5} genes moved{tag}")
+            return "\n".join(out)
+        g = args[0]
+        ko = D.knockout(g, topn=10)
+        if ko["status"] != "measured":
+            return f"knockout {g}: {ko.get('note', 'not knocked out in the screen — try a measured gene')}"
+        prec = "high-precision (essential screen)" if ko["hi_precision"] else "genome-wide screen (lower precision)"
+        imp = D.impact_of(g)
+        out = [f"knockout {g} — MEASURED blast radius ({prec}); {ko['n_dependents_strong']} genes strongly moved"
+               + (f", top {imp['percentile']:.0%} impact" if imp else "") + ":",
+               "  goes DOWN (needs " + g + "): " + (", ".join(f"{x}({v})" for x, v in ko["down"]) or "—"),
+               "  goes UP (released by " + g + "): " + (", ".join(f"{x}({v})" for x, v in ko["up"]) or "—")]
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1258,6 +1363,10 @@ class CellKernel:
   discover [sub]       aim the engine at UNKNOWNS: selective [WIN, 33x] / druggable / disease / function GENE
   investigate GENE     predicted DOSSIER (job/place/path/timing/interactors/support) for an under-recorded gene;
                        'investigate underworld' = dark genes hidden inside characterized modules (job ~55%, dest ~54%)
+  network GENE         the whole cell wired into one graph — INTERCONNECTED (physical) + INTERDEPENDENT (functional);
+                       'network link A B' / 'network path A B [fam]' / 'network hubs [fam]'  (complementary + coherent)
+  knockout GENE        the MEASURED Perturb-seq blast radius of removing a gene (what goes up/down); 'knockout impact'
+                       ranks genes by blast-radius size. Direct effect real; does NOT propagate to unmeasured cascades
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1319,6 +1428,8 @@ class CellShell:
             if cmd in ("disease", "risk"): return k.disease(args[0])
             if cmd in ("discover", "unknown"): return k.discover(args)
             if cmd in ("investigate", "dossier", "profile"): return k.investigate(args)
+            if cmd in ("network", "wire", "graph"): return k.network(args)
+            if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
