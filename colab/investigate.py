@@ -173,6 +173,29 @@ class Investigator:
         top = max(votes, key=votes.get)
         return top, round(votes[top] / (sum(votes.values()) + 1e-9), 2)
 
+    # ---- CONNECTIONS: the real, MEASURED edges a gene has (associations, not cause-and-effect) ----
+    def connections(self, gene, k=10):
+        """the gene's observed links to others: co-dependency (co-essential across 1,150 lines — a measured functional
+        association), physical PPI (STRING), and pathway/complex co-membership. All REAL/measured, undirected — the
+        'connections it has with others', not a predicted causal effect. Includes dark partners (the map needs them)."""
+        out = {"co_dependency": [], "physical_ppi": [], "pathway": None, "complex_comembers": []}
+        i = self.didx.get(gene)
+        if i is not None:
+            sims = self.Zn @ self.Zn[i]; sims[i] = -1.0
+            for j in np.argsort(-sims)[:k]:
+                if sims[j] > 0.15:
+                    out["co_dependency"].append({"gene": self.dsyms[j], "coessentiality": round(float(sims[j]), 2),
+                                                 "dark": bool(self._g(self.dsyms[j]).get("dark"))})
+        for p in self.str.get(gene, {}).get("partners", [])[:k]:
+            out["physical_ppi"].append({"gene": p["gene"], "string_score": p["score"]})
+        gd = self._g(gene)
+        out["pathway"] = gd.get("path") or self.consensus(self.neighbours(gene), "path")[0]
+        # complex co-members = machine anchors it co-depends with (a curated-complex edge)
+        mm, ms, _ = self.machine_match(gene)
+        if mm and ms >= 0.25:
+            out["complex_comembers"] = [{"machine": mm, "members": [a for a in MACHINES[mm] if a in self.didx][:6]}]
+        return out
+
     def _blast(self, vec, topn=8):
         order = np.argsort(vec)
         down = [(self.dbg["syms"][j], round(float(vec[j]), 2)) for j in order[:topn] if vec[j] < 0]
@@ -246,14 +269,13 @@ class Investigator:
         is_enz = (job in ("metabolism",)) or ("metabol" in (job or ""))
         machine, ms, mm = self.machine_match(gene)              # specific named machine, if any
         interactors = [p["gene"] for p in self.str.get(gene, {}).get("partners", [])[:8]]
-        sv = self.predict_surveillance(gene)
-        # WHAT it is / HOW it acts / WHY it exists — synthesized from the assembled lines
+        conn = self.connections(gene)                          # the REAL measured edges (surveillance, not cause-effect)
+        # WHAT it is / HOW it acts — synthesized from the observed lines (no cause-and-effect claim)
         kind = "transcription factor" if tf else ("enzyme" if is_enz else "membrane protein" if place in ("membrane", "plasma membrane", "ER") else "protein")
         product = f"{kind} product; localizes to {place or 'an unresolved compartment'}"
         how = (f"operates as part of {machine}" if machine else f"operates within its {place or ''} module") + \
               (f", physically via {', '.join(interactors[:3])}" if interactors else "")
-        hit = ", ".join(g for g, _ in (sv.get("down") or [])[:3]) or "—"
-        why = f"serves {path or job or 'its module'}; knocking it out drives down {hit} (its blast radius)"
+        why = f"serves {path or job or 'its module'}"
         dossier = {
             "gene": gene, "dark": bool(gd.get("dark")),
             "product": product, "mechanism_how": how, "purpose_why": why,
@@ -265,8 +287,8 @@ class Investigator:
             "path": {"predicted": path, "confidence": ptc, "source": "record" if rec_path else "co-dependency-decode"},
             "timing": self.lev.get(gene, {"status": "no-orderable-context"}),
             "interactors": interactors,
-            "family": [{"gene": g, "w": round(w, 2), "via": s} for g, w, s in nb[:6]],
-            "surveillance": sv,
+            "connections": conn,                               # the measured surveillance: who it is linked to
+            "surveillance_raw": "measured Perturb-seq on file (use strace)" if gene in self.measured else "not measured",
             "required_support": [{"needs": n, "why": w} for n, w in required_support(place, job, tf, is_enz, has_cx)],
         }
         return dossier
@@ -388,16 +410,15 @@ class Investigator:
 
 def render(d):
     """pretty-print one dossier the way a case file reads."""
-    fam = ", ".join("{}({})".format(f["gene"], f["via"]) for f in d["family"][:5]) or "—"
-    interact = ", ".join(d["interactors"][:6]) or "—"
     tim = d["timing"].get("status", "—") if isinstance(d["timing"], dict) else str(d["timing"])
     mach = d.get("machine")
     machln = (f"{mach['name']}  [{Investigator._tier(mach['score'])}: co-dep score {mach['score']}, "
               f"margin {mach['margin']} over the next machine]"
               if mach else "no specific machine matched — see the module named below")
-    sv = d["surveillance"]
-    down = ", ".join(f"{g}({v})" for g, v in (sv.get("down") or [])[:6]) or "—"
-    up = ", ".join(f"{g}({v})" for g, v in (sv.get("up") or [])[:6]) or "—"
+    conn = d["connections"]
+    codep = ", ".join(f"{c['gene']}({c['coessentiality']}{'*' if c['dark'] else ''})" for c in conn["co_dependency"][:8]) or "—"
+    ppi = ", ".join(f"{c['gene']}({c['string_score']})" for c in conn["physical_ppi"][:8]) or "—"
+    cxc = (conn["complex_comembers"][0]["machine"] + ": " + ", ".join(conn["complex_comembers"][0]["members"])) if conn["complex_comembers"] else "—"
     L = [f"  ┌─ DOSSIER: {d['gene']}" + ("  [DARK — no record on file]" if d["dark"] else "  [has record]"),
          f"  │ RECORD    : job={d['record']['job_proc'] or '—'}, compartment={d['record']['compartment'] or '—'}, "
          f"pathway={d['record']['pathway'] or '—'}, pubs={d['record']['pubs']}, litmine={d['record']['litmine_papers']}",
@@ -408,12 +429,12 @@ def render(d):
          f"  │ WHEN      : {tim}",
          f"  │ HOW       : {d['mechanism_how']}",
          f"  │ WHY       : {d['purpose_why']}",
-         f"  │ PATH      : {d['path']['predicted'] or '—'}  ({d['path']['source']})",
-         f"  │ INTERACTORS: {interact}",
-         f"  │ FAMILY    : {fam}",
-         f"  │ SURVEILLANCE [{sv['status']}]: {sv['note']}",
-         f"  │    ↓ knockout DOWN-regulates: {down}",
-         f"  │    ↑ knockout UP-regulates:   {up}",
+         f"  │ ── CONNECTIONS (measured associations — its edges on the map) ──",
+         f"  │   co-dependency : {codep}   (*=dark partner)",
+         f"  │   physical PPI  : {ppi}",
+         f"  │   complex       : {cxc}",
+         f"  │   pathway       : {conn['pathway'] or '—'}",
+         f"  │ SURVEILLANCE raw: {d['surveillance_raw']}",
          f"  │ REQUIRED SUPPORT (reasoned — the services its job implies):"]
     for r in d["required_support"][:5]:
         L.append(f"  │    • {r['needs']}: {r['why']}")
@@ -432,24 +453,19 @@ def main():
     ranked = inv.rank_targets(need)
     print(f"\n  {len(ranked):,} genes have NO measured surveillance; ranked by proximity to the measured set (closest first).")
 
-    # honest fidelity of the BUILT surveillance (rebuild a measured gene from its neighbours, compare to real)
-    svv = inv.validate_surveillance()
-    print(f"  BUILT-surveillance fidelity (cellformer, Pearson vs real response, self held out; random "
-          f"{svv['random_baseline']}):")
-    print(f"      genes WITH a complex : {svv['with_complex']}  (n={svv['n_complex']})  ← where it works")
-    print(f"      genes WITHOUT (singleton): {svv['without_complex']}  (n={svv['n_singleton']})  ← near-null")
-    print(f"      overall {svv['mean_pearson']} (n={svv['n']}) — a directional lead for complex genes, not a precise vector.")
-
-    out = {"n_targets": len(ranked), "built_surveillance_fidelity": svv, "bands": {}}
+    out = {"n_targets": len(ranked), "bands": {}}
     for N in (100, 200, 500):
         band = [g for g, _ in ranked[:N]]
         prox = [p for _, p in ranked[:N]]
         val = inv.validate(band)                                 # held-out per-line recovery for THIS band
-        dossiers = [inv.profile(g) for g in band]               # real use: textbook where present, predict the gaps
-        n_built = sum(1 for d in dossiers if d["surveillance"]["status"] == "PREDICTED")
-        n_meas = sum(1 for d in dossiers if d["surveillance"]["status"] == "MEASURED")
+        dossiers = [inv.profile(g) for g in band]               # textbook where present, predict the attribute gaps
+        # CONNECTION-MAP coverage: how many real edges each gene gets (co-dep + PPI) — the surveillance we DO have
+        n_codep = [len(d["connections"]["co_dependency"]) for d in dossiers]
+        n_ppi = [len(d["connections"]["physical_ppi"]) for d in dossiers]
+        with_edges = sum(1 for d in dossiers if d["connections"]["co_dependency"] or d["connections"]["physical_ppi"])
         out["bands"][N] = {"proximity_min": round(min(prox), 3), "proximity_median": round(float(np.median(prox)), 3),
-                           "validation": val, "surveillance_built": n_built, "surveillance_measured": n_meas,
+                           "validation": val, "median_codep_edges": int(np.median(n_codep)),
+                           "median_ppi_edges": int(np.median(n_ppi)), "genes_with_edges": with_edges,
                            "dossiers": dossiers if N == 100 else None}   # keep the full 100 as the deliverable
         print(f"\n  ── closest {N} (proximity {min(prox):.2f}–{max(prox):.2f}) ──")
         for f, r in val.items():
@@ -457,10 +473,11 @@ def main():
                 lift = r["top1"] / (r["majority_baseline"] + 1e-9)
                 print(f"     {f:5} recovery: {r['top1']:.0%}  (majority baseline {r['majority_baseline']:.0%}, "
                       f"{lift:.1f}× ; n={r['n']})")
-        print(f"     surveillance BUILT for {n_built}/{N} (predicted blast-radius); {N - n_built - n_meas} singletons unbuildable")
+        print(f"     CONNECTIONS mapped for {with_edges}/{N} genes  (median {int(np.median(n_codep))} co-dependency "
+              f"+ {int(np.median(n_ppi))} physical-PPI edges each) — real measured associations")
 
     # two FULL dossiers so the case file is legible (a dark one + a well-connected one)
-    print("\n  ── full example dossiers (textbook + built surveillance) ──")
+    print("\n  ── full example dossiers (observed profile + connections) ──")
     band100 = [g for g, _ in ranked[:100]]
     show = [g for g in band100 if inv._g(g).get("dark")][:1] + [g for g in band100 if not inv._g(g).get("dark")][:1]
     for g in show:

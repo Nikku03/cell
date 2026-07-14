@@ -1766,3 +1766,24 @@ removal-effect (blast radius: which genes go up/down), built via the VALIDATED c
 So the engine reliably answers what a gene IS / where it goes / what machine it's in (2×–26× baseline), and gives a weak
 directional guess at its removal-effect — with the fidelity printed on every prediction so nothing is oversold. The full
 100 dossiers are saved as the deliverable (investigate.json bands[100].dossiers). Additive; regression-checked.
+
+## investigate — REFOCUSED on connections + raw surveillance, dropped cause-and-effect (per spec)
+
+The user narrowed it: they need the SURVEILLANCE raw data and the CONNECTIONS a gene has with others — NOT the predicted
+cause-and-effect (the removal-response vector, which validated weak at ~0.14). This is exactly the observation-vs-
+intervention cut, and it lands on the reliable side: connections are DIRECTLY MEASURED, not predicted.
+
+The dossier now leads with the observed profile (product / where / when / how / why / function / machine) and a
+CONNECTIONS block of real edges:
+- **co-dependency** — top co-essential partners across 1,150 DepMap lines (weight = correlation), INCLUDING dark
+  partners (flagged *), because the map needs them;
+- **physical PPI** — STRING partners with confidence scores;
+- **complex co-members** — the curated machine it belongs to (EMC7 → EMC1/2/3/4/6/8);
+- **pathway** — its route.
+
+The predicted removal-response VECTOR (cause-and-effect) was removed from the dossier; `SURVEILLANCE raw` now just states
+whether the real Perturb-seq is on file (measured genes → "use strace") or not (unmeasured). Coverage: CONNECTIONS mapped
+for 100/100, 200/200, 500/500 of the closest unmeasured genes — median 10 co-dependency + 8 physical-PPI edges each, all
+real measured associations. Attribute recovery unchanged (proc 60% / comp 40–46% / machine 59%). EMC7's dossier now
+shows its whole complex as edges (co-dep EMC3..MMGT1; PPI all EMC subunits at 999) — the connection map, not a guess at
+what its removal would do. Additive; regression-checked (reason/discover/underworld unchanged).
