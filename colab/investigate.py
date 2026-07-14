@@ -173,18 +173,64 @@ class Investigator:
         top = max(votes, key=votes.get)
         return top, round(votes[top] / (sum(votes.values()) + 1e-9), 2)
 
-    def predicted_surveillance(self, gene):
-        """measured if in the debugger; else predict the removal effect from measured neighbours (the `predict`
-        approach). Honest expected fidelity from how many measured neighbours vote."""
-        if gene in self.measured:
-            return {"status": "MEASURED", "note": "removal effect on file (Perturb-seq) — use strace"}
-        nb = [(g, w) for g, w, _ in self.neighbours(gene) if g in self.measured]
-        if not nb:
-            return {"status": "UNPREDICTABLE", "note": "no measured neighbour — a singleton; honest failure mode"}
-        exp_r = 0.43 if len(nb) >= 4 else 0.30 if len(nb) >= 2 else 0.19
-        return {"status": "PREDICTED", "from_n_measured_neighbours": len(nb),
-                "expected_fidelity_r": exp_r, "top_neighbours": [g for g, _ in nb[:5]],
-                "note": f"removal effect predicted from {len(nb)} measured neighbours (expected r≈{exp_r})"}
+    def _blast(self, vec, topn=8):
+        order = np.argsort(vec)
+        down = [(self.dbg["syms"][j], round(float(vec[j]), 2)) for j in order[:topn] if vec[j] < 0]
+        up = [(self.dbg["syms"][j], round(float(vec[j]), 2)) for j in order[::-1][:topn] if vec[j] > 0]
+        return down, up
+
+    def predict_surveillance(self, gene, exclude_self=False):
+        """BUILD the surveillance data: if the gene is measured, its own removal-effect; else construct the predicted
+        removal-effect (the blast radius) via the VALIDATED cellformer predictor — context-weighted average of its
+        neighbours' Perturb-seq responses (same-complex 3×, co-expression 2×, PPI 1×), which recovers r~0.23 for genes
+        in a complex, ~0.05 for singletons. This is the 'build the surveillance for it too' step, done honestly."""
+        if not self.dbg:
+            return {"status": "no-debugger"}
+        M, pidx = self.dbg["M"], self.dbg["pidx"]
+        if gene in pidx and not exclude_self:
+            down, up = self._blast(M[pidx[gene]])
+            return {"status": "MEASURED", "down": down, "up": up, "note": "removal effect measured on file (Perturb-seq)"}
+        pred = self.k._predict_vec(gene)                        # cellformer context-weighted prediction (leave-one-out)
+        if pred is None:
+            return {"status": "UNPREDICTABLE", "down": [], "up": [],
+                    "note": "no complex partner / <3 network neighbours in the screen (a singleton) — unbuildable"}
+        ctx = self.k._last_ctx
+        down, up = self._blast(pred)
+        in_cx = bool(self.C.genes[self.name2i[gene]].get("npath")) if gene in self.name2i else False
+        exp_r = "~0.23 (has a complex/context)" if len(ctx) >= 6 else "~0.05 (weak context)"
+        return {"status": "PREDICTED", "from_context": ctx[:6], "n_context": len(ctx),
+                "expected_fidelity_r": exp_r, "down": down, "up": up,
+                "note": f"removal effect BUILT via cellformer from {len(ctx)} context genes; expected Pearson {exp_r} "
+                        f"— a directional lead (complex members share responses), not a precise vector"}
+
+    def validate_surveillance(self, sample=250, seed=0):
+        """honest fidelity of the BUILT surveillance via the cellformer predictor (Pearson, matching cellformer),
+        stratified by whether the gene has a curated complex (where the method works). Self held out (the context
+        never includes the gene itself). Reports mean r vs a random-gene baseline."""
+        import cellformer as cf
+        M, pidx, pg = self.dbg["M"], self.dbg["pidx"], self.dbg["pgenes"]
+        rng = np.random.default_rng(seed)
+        genes = [g for g in self.measured if g in self.name2i]
+        genes = list(np.array(genes, dtype=object)[rng.choice(len(genes), min(sample, len(genes)), replace=False)])
+        real, base, cx, nocx = [], [], [], []
+        for g in genes:
+            pred = self.k._predict_vec(g)                       # cellformer context prediction (excludes g itself)
+            if pred is None:
+                continue
+            c = cf._pearson(pred, M[pidx[g]])
+            if np.isfinite(c):
+                real.append(c)
+                (cx if bool(self.C.genes[self.name2i[g]].get("npath")) else nocx).append(c)
+            rg = pg[rng.integers(len(pg))]
+            cb = cf._pearson(M[pidx[rg]], M[pidx[g]])
+            if np.isfinite(cb):
+                base.append(cb)
+        return {"mean_pearson": round(float(np.mean(real)), 3) if real else None, "n": len(real),
+                "with_complex": round(float(np.mean(cx)), 3) if cx else None, "n_complex": len(cx),
+                "without_complex": round(float(np.mean(nocx)), 3) if nocx else None, "n_singleton": len(nocx),
+                "random_baseline": round(float(np.mean(base)), 3) if base else None,
+                "note": "built removal-effect (cellformer, complex 3x/coexpr 2x/PPI 1x) vs real response, self held "
+                        "out — modest for complex genes, near-null for singletons; a directional lead, not a vector"}
 
     def profile(self, gene, predict_mode=False):
         """full dossier. predict_mode=True hides the gene's OWN record (for held-out validation)."""
@@ -199,8 +245,18 @@ class Investigator:
         tf = bool(gd.get("tf")); has_cx = bool(gd.get("npath")) or bool(self.str.get(gene, {}).get("partners"))
         is_enz = (job in ("metabolism",)) or ("metabol" in (job or ""))
         machine, ms, mm = self.machine_match(gene)              # specific named machine, if any
+        interactors = [p["gene"] for p in self.str.get(gene, {}).get("partners", [])[:8]]
+        sv = self.predict_surveillance(gene)
+        # WHAT it is / HOW it acts / WHY it exists — synthesized from the assembled lines
+        kind = "transcription factor" if tf else ("enzyme" if is_enz else "membrane protein" if place in ("membrane", "plasma membrane", "ER") else "protein")
+        product = f"{kind} product; localizes to {place or 'an unresolved compartment'}"
+        how = (f"operates as part of {machine}" if machine else f"operates within its {place or ''} module") + \
+              (f", physically via {', '.join(interactors[:3])}" if interactors else "")
+        hit = ", ".join(g for g, _ in (sv.get("down") or [])[:3]) or "—"
+        why = f"serves {path or job or 'its module'}; knocking it out drives down {hit} (its blast radius)"
         dossier = {
             "gene": gene, "dark": bool(gd.get("dark")),
+            "product": product, "mechanism_how": how, "purpose_why": why,
             "machine": {"name": machine, "score": ms, "margin": mm} if machine else None,
             "record": {"job_proc": rec_proc, "compartment": rec_comp, "pathway": rec_path,
                        "pubs": gd.get("pubs", 0), "litmine_papers": self.lit.get(gene, {}).get("n_papers", 0)},
@@ -208,9 +264,9 @@ class Investigator:
             "destination": {"predicted": place, "confidence": pc, "source": "record" if rec_comp else "family/loc"},
             "path": {"predicted": path, "confidence": ptc, "source": "record" if rec_path else "co-dependency-decode"},
             "timing": self.lev.get(gene, {"status": "no-orderable-context"}),
-            "interactors": [p["gene"] for p in self.str.get(gene, {}).get("partners", [])[:8]],
+            "interactors": interactors,
             "family": [{"gene": g, "w": round(w, 2), "via": s} for g, w, s in nb[:6]],
-            "surveillance": self.predicted_surveillance(gene),
+            "surveillance": sv,
             "required_support": [{"needs": n, "why": w} for n, w in required_support(place, job, tf, is_enz, has_cx)],
         }
         return dossier
@@ -339,17 +395,25 @@ def render(d):
     machln = (f"{mach['name']}  [{Investigator._tier(mach['score'])}: co-dep score {mach['score']}, "
               f"margin {mach['margin']} over the next machine]"
               if mach else "no specific machine matched — see the module named below")
+    sv = d["surveillance"]
+    down = ", ".join(f"{g}({v})" for g, v in (sv.get("down") or [])[:6]) or "—"
+    up = ", ".join(f"{g}({v})" for g, v in (sv.get("up") or [])[:6]) or "—"
     L = [f"  ┌─ DOSSIER: {d['gene']}" + ("  [DARK — no record on file]" if d["dark"] else "  [has record]"),
          f"  │ RECORD    : job={d['record']['job_proc'] or '—'}, compartment={d['record']['compartment'] or '—'}, "
          f"pathway={d['record']['pathway'] or '—'}, pubs={d['record']['pubs']}, litmine={d['record']['litmine_papers']}",
+         f"  │ PRODUCT   : {d['product']}",
          f"  │ MACHINE   : {machln}",
-         f"  │ JOB       : {d['job']['predicted']}  (conf {d['job']['confidence']}, {d['job']['source']})",
-         f"  │ DESTINATION: {d['destination']['predicted']}  (conf {d['destination']['confidence']}, {d['destination']['source']})",
+         f"  │ JOB (fn)  : {d['job']['predicted']}  (conf {d['job']['confidence']}, {d['job']['source']})",
+         f"  │ WHERE     : {d['destination']['predicted']}  (conf {d['destination']['confidence']}, {d['destination']['source']})",
+         f"  │ WHEN      : {tim}",
+         f"  │ HOW       : {d['mechanism_how']}",
+         f"  │ WHY       : {d['purpose_why']}",
          f"  │ PATH      : {d['path']['predicted'] or '—'}  ({d['path']['source']})",
-         f"  │ TIMING    : {tim}",
          f"  │ INTERACTORS: {interact}",
          f"  │ FAMILY    : {fam}",
-         f"  │ SURVEILLANCE: {d['surveillance']['status']} — {d['surveillance']['note']}",
+         f"  │ SURVEILLANCE [{sv['status']}]: {sv['note']}",
+         f"  │    ↓ knockout DOWN-regulates: {down}",
+         f"  │    ↑ knockout UP-regulates:   {up}",
          f"  │ REQUIRED SUPPORT (reasoned — the services its job implies):"]
     for r in d["required_support"][:5]:
         L.append(f"  │    • {r['needs']}: {r['why']}")
@@ -363,37 +427,44 @@ def main():
     print("=" * 96)
     inv = Investigator()
     allnames = [inv.C.genes[i].get("name") for i in range(len(inv.C.genes))]
-    # targets: genes lacking a clear job (dark or proc unknown) — the ones needing prediction
-    need = [g for g in allnames if g and (inv._g(g).get("dark") or not inv._proc(g))]
+    # targets: genes we have NO straight surveillance dataset about (not in the measured debugger), closest first
+    need = [g for g in allnames if g and g not in inv.measured and g in inv.didx]
     ranked = inv.rank_targets(need)
-    print(f"\n  {len(ranked):,} genes need a predicted profile; ranked by proximity to the measured surveillance set.")
+    print(f"\n  {len(ranked):,} genes have NO measured surveillance; ranked by proximity to the measured set (closest first).")
 
-    out = {"n_targets": len(ranked), "bands": {}}
+    # honest fidelity of the BUILT surveillance (rebuild a measured gene from its neighbours, compare to real)
+    svv = inv.validate_surveillance()
+    print(f"  BUILT-surveillance fidelity (cellformer, Pearson vs real response, self held out; random "
+          f"{svv['random_baseline']}):")
+    print(f"      genes WITH a complex : {svv['with_complex']}  (n={svv['n_complex']})  ← where it works")
+    print(f"      genes WITHOUT (singleton): {svv['without_complex']}  (n={svv['n_singleton']})  ← near-null")
+    print(f"      overall {svv['mean_pearson']} (n={svv['n']}) — a directional lead for complex genes, not a precise vector.")
+
+    out = {"n_targets": len(ranked), "built_surveillance_fidelity": svv, "bands": {}}
     for N in (100, 200, 500):
         band = [g for g, _ in ranked[:N]]
         prox = [p for _, p in ranked[:N]]
         val = inv.validate(band)                                 # held-out per-line recovery for THIS band
-        # example dossiers (first 3 of the band)
-        examples = [inv.profile(g, predict_mode=inv._g(g).get("dark") or not inv._proc(g)) for g in band[:3]]
+        dossiers = [inv.profile(g) for g in band]               # real use: textbook where present, predict the gaps
+        n_built = sum(1 for d in dossiers if d["surveillance"]["status"] == "PREDICTED")
+        n_meas = sum(1 for d in dossiers if d["surveillance"]["status"] == "MEASURED")
         out["bands"][N] = {"proximity_min": round(min(prox), 3), "proximity_median": round(float(np.median(prox)), 3),
-                           "validation": val, "examples": examples}
+                           "validation": val, "surveillance_built": n_built, "surveillance_measured": n_meas,
+                           "dossiers": dossiers if N == 100 else None}   # keep the full 100 as the deliverable
         print(f"\n  ── closest {N} (proximity {min(prox):.2f}–{max(prox):.2f}) ──")
         for f, r in val.items():
             if r["top1"] is not None:
                 lift = r["top1"] / (r["majority_baseline"] + 1e-9)
                 print(f"     {f:5} recovery: {r['top1']:.0%}  (majority baseline {r['majority_baseline']:.0%}, "
                       f"{lift:.1f}× ; n={r['n']})")
-        ex = examples[0]
-        print(f"     e.g. {ex['gene']}: job={ex['job']['predicted']}({ex['job']['confidence']}), "
-              f"dest={ex['destination']['predicted']}({ex['destination']['confidence']}), "
-              f"surveillance={ex['surveillance']['status']}")
+        print(f"     surveillance BUILT for {n_built}/{N} (predicted blast-radius); {N - n_built - n_meas} singletons unbuildable")
 
     # two FULL dossiers so the case file is legible (a dark one + a well-connected one)
-    print("\n  ── full example dossiers ──")
+    print("\n  ── full example dossiers (textbook + built surveillance) ──")
     band100 = [g for g, _ in ranked[:100]]
     show = [g for g in band100 if inv._g(g).get("dark")][:1] + [g for g in band100 if not inv._g(g).get("dark")][:1]
     for g in show:
-        print(render(inv.profile(g, predict_mode=inv._g(g).get("dark") or not inv._proc(g))))
+        print(render(inv.profile(g)))
 
     # SHARPENED role: validate machine-matching (does it put known members back in their own machine?)
     mv = inv.validate_machines()

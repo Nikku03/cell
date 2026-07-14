@@ -1741,3 +1741,28 @@ PTCD1 → mito ribosome [confident], while NCLN → EMC [tentative 0.29] and a b
 by its crew ("uncharacterized membrane module (co-crew: SMIM32, SMIM31, VSIG10L2)") — a real coherent cluster of small
 membrane microproteins — instead of a generic service. Surfaced in the dossier (MACHINE line) and `investigate
 underworld`. Additive; regression-checked (reason/discover/strace unchanged).
+
+## investigate — FULL surveillance dossier for the unmeasured genes (built, not just noted; honestly graded)
+
+Re-scoped to the user's spec: (1) target = the closest genes we have NO measured surveillance about (7,303 genes, not
+in the merged debugger), ranked by proximity to the measured set; (2) for each, BUILD the surveillance data itself, not
+a note; (3) full protein-level profile — product, where it goes, when, HOW it acts, WHY it exists, function, PPI.
+
+New dossier lines: PRODUCT (protein type + compartment), HOW (operates as part of {machine}, physically via {PPI}),
+WHY (serves {pathway}; knockout drives down {blast radius}), and the SURVEILLANCE is now the actual predicted
+removal-effect (blast radius: which genes go up/down), built via the VALIDATED cellformer context predictor
+(same-complex 3× / co-expression 2× / PPI 1×), with honest abstention for singletons.
+
+**Honestly graded — the two halves are very different:**
+- **WHAT / WHERE / MACHINE — solid.** proc (job) 60% top-1 vs 27% baseline (2.2×), comp (destination) 40–46% (1.8–2.1×),
+  machine 59% (26× chance). PPI + required-support are direct/reasoned.
+- **The SURVEILLANCE VECTOR — weak, and flagged as such.** Built removal-effect vs the real measured response (Pearson,
+  self held out): **0.14 for genes with a complex, 0.06 for singletons, 0.12 overall** (random 0.01). Buildable for
+  ~77% (the ones with a complex/≥6-gene context); singletons are refused, not faked. My first attempt used a flat
+  co-dependency average and stamped a false "expected r≈0.43" — corrected: the honest number is ~0.14, a DIRECTIONAL
+  lead (complex members share responses), NOT a precise response vector. cellformer's own committed ceiling is r~0.23 on
+  the clean essential screen; ~0.14 here reflects the noisier merged (genome-wide) debugger.
+
+So the engine reliably answers what a gene IS / where it goes / what machine it's in (2×–26× baseline), and gives a weak
+directional guess at its removal-effect — with the fidelity printed on every prediction so nothing is oversold. The full
+100 dossiers are saved as the deliverable (investigate.json bands[100].dossiers). Additive; regression-checked.
