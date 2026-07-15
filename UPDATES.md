@@ -2264,3 +2264,39 @@ So per the "only keep it if it genuinely improves the model" rule, the desolvati
 stays at Pearson 0.528 from sterics + electrostatics + induction. A proper SASA / Poisson-Boltzmann solvation model (what
 FoldX/Rosetta actually use) might extract more than an O(n) occlusion proxy — but on this alanine-heavy validation, the
 cheap version doesn't earn its place, and I'm reporting that rather than dressing up a +0.01. (flex_physics.py [2].)
+
+## ppi_screen / screen — the ΔΔG node as a PPI partner-screening pass (loss-localization; honest NO on novel gain)
+
+After establishing (in the AlphaFold discussion) that our ΔΔG node answers "does this mutation still do the PPI" better
+than AlphaFold does for a point mutation — and that AlphaFold is mutation-blind and can't be fed our data — the natural
+build was a **partner-screening pass**: take a mutation, score it against a panel of candidate partners, flag **loss** of
+a known PPI at the right partner and **spare** the ones it doesn't touch (ppi_screen.py → the `screen` syscall). The
+honest result is a **decomposition**: screening-for-loss is two separable jobs, and the node does the first for free but
+needs its full ΔΔG model for the second.
+
+**[1] LOCALISATION — "which partner's interface is this residue on" — near-exact, but that's structure-reading.**
+In the 91 cached complexes with ≥3 protein chains, scoring each interface residue against the panel of all other chains,
+the node picks the true contacting partner **top-1 98%** of 2,975 interface residues (random baseline 25%). Reported
+honestly as a **sanity check, not the achievement** — localisation is pure geometry / near-field structure (the
+recoverable regime), so ~exact is expected. I deliberately did **not** headline the trivially-perfect
+true-vs-decoy-partner AUC (1.0), because the score and the ground truth are both just proximity.
+
+**[2] MAGNITUDE — "how much does THIS substitution change binding" — the real problem, anchored to measured ΔΔG.**
+The key honest finding: the localisation/burial score **alone does NOT predict magnitude** — across mixed substitutions,
+on-target burial vs measured |ΔΔG| is **r −0.01 (~0)**, because burial ignores *what you mutate to*. Fix the substitution
+(X→Ala) and the on-target signal reappears (**r 0.51**). And burial cleanly separates the **functional** interface from
+the rest: SKEMPI **core** residues (burial 1.5, measured |ΔΔG| **1.97**) vs **surface** (burial 0.1, |ΔΔG| **0.27**). So
+the usable screen is **LOCALISATION (structure, exact) × MAGNITUDE (the full ΔΔG model, Pearson ~0.52)** — flag "this
+mutation sits on partner P's interface AND is predicted to cost a lot" ⇒ predicted **loss of P**, and ~no effect on
+partners the residue never contacts.
+
+**[3] GAIN — the honest limit.** Affinity-increasing mutations are real (**6%** of SKEMPI have ΔΔG < −0.5) and the full
+model can score them **at an existing interface**. But a **novel emergent PPI** — a mutation building a brand-new
+interface with a partner it never bound — is **not** something this pipeline can claim: it would require docking the
+mutant onto every candidate partner (the unreliable step) plus experimental confirmation. I state this plainly rather
+than fabricate a gain result.
+
+**Net:** a good **loss / specificity** screen — "which known partner does this mutation break, and which does it leave
+alone" — which works because it's near-field structure; and an **honest NO** on novel-partner discovery, which is the
+dynamics-side problem the whole project keeps finding does not compose. (ppi_screen.py → ppi_screen.json; `screen` /
+`screen run`.)

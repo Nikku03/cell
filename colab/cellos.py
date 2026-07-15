@@ -1054,6 +1054,30 @@ class CellKernel:
              "  net: rotamers fixed the buried-clash physics; electrostatics+induction added real held-out accuracy on polar/charged muts."]
         return "\n".join(out)
 
+    def screen(self, args):
+        """RESEARCH: the ΔΔG node as a PARTNER-SCREENING pass (ppi_screen.py) — given a mutation, score it against a
+        panel of candidate partners to flag LOSS of a known PPI at the right partner (and spare the ones it doesn't
+        touch). Honest decomposition: LOCALISATION (which partner) is near-exact but that's structure-reading;
+        MAGNITUDE (how much) needs the full ΔΔG model — burial alone is r~0 across substitutions; NOVEL-partner GAIN is
+        NOT claimed (needs docking + experiment).
+        usage: screen | screen run"""
+        if args and args[0].lower() in ("run", "rerun"):
+            import ppi_screen as _S; _S.main(); return "(ppi-screen ran live — see above)"
+        import json, os
+        p = "outputs/orphan/ppi_screen.json"
+        if not os.path.exists(p): return "screen: run 'screen run' (or python3 colab/ppi_screen.py) first."
+        d = json.load(open(p)); L = d["localisation"]; M = d["magnitude"]; G = d["gain"]
+        return "\n".join([
+            "screen — ΔΔG node as a PPI partner-screening pass, decomposed honestly:",
+            f"  LOCALISATION (which partner): top-1 {L['top1_partner']:.0%} vs {L['random_baseline']:.0%} random "
+            f"— reliable, but it's near-field STRUCTURE (reading geometry), not the hard part.",
+            f"  MAGNITUDE (how much): burial ALONE r {M['burial_vs_absddg_all_r']:+.2f} across substitutions (~0 — ignores "
+            f"what you mutate to); controlled X->Ala r {M['burial_vs_absddg_ala_r']:+.2f}; core |ΔΔG| {M['core_absddg']} "
+            f"vs surface {M['surface_absddg']}. Magnitude needs the full ΔΔG model (~{M['full_ddg_model_pearson']}).",
+            f"  GAIN: {G['affinity_increasing_frac']:.0%} of muts increase affinity at existing interfaces; NOVEL-partner "
+            f"gain NOT claimed (needs docking + experiment).",
+            "  net: a good LOSS/specificity screen (localise damage to the right partner x score it with the ΔΔG model); honest NO on new partners."])
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1720,6 +1744,8 @@ class CellKernel:
                        measured) — buried CORE + aromatic/charged residues; barrier-vs-stability; predict ΔΔG r 0.36
   flex                 RESEARCH: physics ΔΔG-binding node w/ clash relief + sp3 ROTAMER sampling + electrostatics/
                        induction vs measured SKEMPI — rotamers fix buried-clash physics (33%->4% expl), chem lifts r->0.52
+  screen               RESEARCH: ΔΔG node as a PPI partner-screen — localise a mutation's LOSS to the right partner
+                       (top-1 98%); magnitude needs the full model (burial alone ~0); NOVEL-partner gain NOT claimed
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1793,6 +1819,7 @@ class CellShell:
             if cmd in ("enzyme", "enzymes"): return k.enzyme(args)
             if cmd in ("interface", "hotspot"): return k.interface(args)
             if cmd in ("flex", "physics"): return k.flex(args)
+            if cmd in ("screen", "ppi_screen"): return k.screen(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
