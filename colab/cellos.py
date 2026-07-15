@@ -1037,6 +1037,8 @@ class CellKernel:
         usage: flex | flex run"""
         if args and args[0].lower() in ("run","rerun"):
             import flex_physics as _F; _F.main(); return "(flex-physics ran live — see above)"
+        if args and args[0].lower() in ("rosetta","compare","vs"):
+            import flex_vs_rosetta as _R; _R.main(); return "(flex-vs-Rosetta comparison ran live — see above)"
         import json, os
         p="outputs/orphan/flex_physics.json"
         if not os.path.exists(p): return "flex: run 'flex run' (or python3 colab/flex_physics.py) first."

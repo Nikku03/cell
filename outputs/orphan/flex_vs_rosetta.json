@@ -1,0 +1,45 @@
+{
+ "ours": {
+  "method": "flex_physics (ours)",
+  "pearson": 0.471,
+  "spearman": 0.479,
+  "rmse": 1.25,
+  "auc_destabilising": 0.764,
+  "n": 2602,
+  "cost_ms_per_mut": 1.9,
+  "split": "complex-held-out (GroupKFold)"
+ },
+ "all_mutation_pearson": 0.359,
+ "literature": [
+  {
+   "method": "Rosetta flex_ddG",
+   "pearson": 0.63,
+   "rmse": 1.5,
+   "cost": "minutes-hours/mut",
+   "note": "full force field + backrub sampling, model-averaged (Barlow 2018)"
+  },
+  {
+   "method": "Rosetta cartesian_ddg",
+   "pearson": 0.5,
+   "rmse": 1.8,
+   "cost": "~1 min/mut",
+   "note": "single-structure"
+  },
+  {
+   "method": "FoldX BuildModel",
+   "pearson": 0.48,
+   "rmse": 1.9,
+   "cost": "seconds/mut",
+   "note": "empirical force field"
+  },
+  {
+   "method": "mCSM-PPI2",
+   "pearson": 0.58,
+   "rmse": 1.6,
+   "cost": "ms (server)",
+   "note": "graph-ML; blind ~0.5-0.6, CV ~0.75 w/ leakage"
+  }
+ ],
+ "rmse_mean_baseline": 1.37,
+ "verdict": "On the field-standard metrics, our node reaches Pearson 0.471 / Spearman 0.479 / RMSE 1.25 kcal/mol / AUC 0.764 for classifying destabilising interface mutations, on a HARD complex-held-out split of 2602 alanine-scan mutations. Placed against published SKEMPI benchmarks: Rosetta flex_ddG is the accuracy leader at Pearson ~0.63 (full force field + backrub sampling, model-averaged, minutes-to-hours per mutation); FoldX ~0.48 and Rosetta cartesian_ddg ~0.50 (seconds-to-a-minute); mCSM-PPI2 ~0.58 blind (its ~0.75 CV number is inflated by train/test similarity). So our reduced node lands around FoldX / cartesian_ddg territory and reaches roughly 75% of flex_ddG's correlation \u2014 while running in ~2 ms/mutation, i.e. ~10^4-10^6x faster than flex_ddG. CRITICAL CAVEAT \u2014 do NOT read our lower RMSE (1.25 vs ~1.5) as beating Rosetta: our alanine subset has a NARROW \u0394\u0394G spread (the mean-predictor RMSE is already 1.37), so a low RMSE mostly reflects the test distribution, not accuracy; Pearson is the only fair cross-benchmark metric here, and on Pearson Rosetta leads. This is also NOT a head-to-head \u2014 different mutation subset, and our complex-held-out split is HARDER than the splits several published numbers use (so like-for-like our gap to Rosetta may be smaller than it looks, and mCSM's CV number is not comparable at all). Bottom line: Rosetta wins on accuracy, as expected from decades of force-field + sampling engineering; our node is a fast TRIAGE predictor at ~FoldX accuracy and a tiny fraction of the compute \u2014 useful for ranking many variants, not for a final energy. The honest way to close the gap is rotamer sampling + a real electrostatics/solvation term."
+}
