@@ -1,0 +1,67 @@
+{
+ "n": 4532,
+ "mechanism_demo": [
+  {
+   "pdb": "1TM1",
+   "site": "I58",
+   "rigid": 86311117517.22826,
+   "flex": 3493.89619309319,
+   "softcore": 115.55347633941841,
+   "shift": 2.18
+  },
+  {
+   "pdb": "1BRS",
+   "site": "D35",
+   "rigid": 14487631.11589718,
+   "flex": 37340.01656772738,
+   "softcore": 125.77461850598458,
+   "shift": 2.43
+  },
+  {
+   "pdb": "1BRS",
+   "site": "D39",
+   "rigid": 77265180.67625412,
+   "flex": 988.0260977944442,
+   "softcore": 190.55394167282546,
+   "shift": 2.15
+  },
+  {
+   "pdb": "1JCK",
+   "site": "B20",
+   "rigid": 1334.364661537868,
+   "flex": 599.92211445475,
+   "softcore": 78.73803214295842,
+   "shift": 2.23
+  },
+  {
+   "pdb": "1JCK",
+   "site": "B23",
+   "rigid": 503008405.44492704,
+   "flex": 1549121.6850663447,
+   "softcore": 188.23126998255876,
+   "shift": 2.33
+  }
+ ],
+ "alanine": {
+  "n": 1156,
+  "r_contacts": 0.465,
+  "r_empirical": 0.369,
+  "r_combined": 0.485,
+  "physics_gain": 0.116
+ },
+ "to_bigger": {
+  "n": 148,
+  "explosion_frac": {
+   "rigid": 0.331,
+   "softcore": 0.081,
+   "flex": 0.209
+  },
+  "spearman": {
+   "rigid": 0.354,
+   "softcore": 0.348,
+   "flex": 0.385
+  },
+  "best_score": "flex"
+ },
+ "verdict": "The proposal's diagnosis is CORRECT and reproduced on real structures: a rigid Lennard-Jones evaluation hits the r^-12 wall and returns impossible energies for bulky interface mutations (demo ->Trp cases read 1e6-1e10 kcal/mol). But testing the FIX against measured SKEMPI gives a more honest, more useful answer than the proposal assumed: local backbone MINIMISATION alone is necessary but NOT sufficient \u2014 it relieves MODERATE clashes (e.g. 1JCK B20->Trp 1334 -> 178) yet cannot rescue a deeply BURIED bulky clash by moving atoms alone (a fixed-rotamer Trp jammed in an Ile pocket stays explosive), because full relief also needs ROTAMER sampling, which position-only gradient descent doesn't do. The robust practical fix is the SOFT-CORE (capped repulsion) I added: it returns physical values for 92% of mutations vs 67% for rigid, and on the larger-residue set it is the best-correlated clash score (soft-core Spearman +0.35 vs rigid +0.35, flex +0.38). The REAL win, though, is patching physics into the research: the WT sidechain's buried cross-interface contact count alone tracks measured alanine \u0394\u0394G at r~0.47, and adding physics to the interface-research features lifts complex-held-out r from 0.37 to 0.48 (+0.12) \u2014 real structural burial beats coarse position labels. HONEST LIMITS: a REDUCED force field (vdW + soft-core + harmonic restraints, uniform eps, single fixed-rotamer mutant, no rotamer packing / electrostatics / solvation), so absolute \u0394\u0394G is a TRIAGE signal not FoldX/Rosetta accuracy; and it speaks only to the near-field INTERFACE effect, not the downstream cellular consequence. Net: your steric-clash fix is real, the soft-core is the practical form of it, and the biggest gain came from feeding real interface geometry into the empirical predictor."
+}

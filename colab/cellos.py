@@ -1028,6 +1028,28 @@ class CellKernel:
               "  -> flag load-bearing interface positions (core, aromatic/charged) where a variant will change the interaction."]
         return "\n".join(out)
 
+    def flex(self, args):
+        """RESEARCH: the physics ΔΔG-of-binding node with LOCAL FLEX / clash relief (flex_physics.py), tested on
+        measured SKEMPI. Reproduces the rigid Lennard-Jones r^-12 explosion for bulky interface mutations; shows local
+        minimisation relieves MODERATE clashes but not deeply-buried ones (needs rotamer sampling too); a SOFT-CORE
+        capped potential is the robust fix (8% explosions vs 33% rigid). Biggest win: patching real interface burial
+        into the interface-research predictor lifts held-out ΔΔG r from 0.37 to 0.48.
+        usage: flex | flex run"""
+        if args and args[0].lower() in ("run","rerun"):
+            import flex_physics as _F; _F.main(); return "(flex-physics ran live — see above)"
+        import json, os
+        p="outputs/orphan/flex_physics.json"
+        if not os.path.exists(p): return "flex: run 'flex run' (or python3 colab/flex_physics.py) first."
+        d=json.load(open(p)); a=d["alanine"]; tb=d["to_bigger"]
+        out=["flex — physics ΔΔG-of-binding with clash relief, tested on measured SKEMPI:",
+             "  [1] rigid Lennard-Jones EXPLODES on a bulky (->Trp) interface mutation (1e6-1e10 kcal/mol) — the r^-12 wall.",
+             f"  [3] clash relief on larger-residue mutations (explosion rate / rank-corr vs measured):",
+             f"      rigid {tb['explosion_frac']['rigid']:.0%} expl (r {tb['spearman']['rigid']:+.2f});  soft-core {tb['explosion_frac']['softcore']:.0%} (r {tb['spearman']['softcore']:+.2f});  flex {tb['explosion_frac']['flex']:.0%} (r {tb['spearman']['flex']:+.2f})",
+             "      -> minimisation relieves MODERATE clashes but not deeply buried ones (needs rotamers); SOFT-CORE is the robust fix.",
+             f"  [2] PATCH w/ research: real interface burial lifts held-out ΔΔG prediction r {a['r_empirical']} -> {a['r_combined']} (+{a['physics_gain']}).",
+             "  net: the steric-clash fix is real; the soft-core is its practical form; feeding real geometry into the predictor helped most."]
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1692,6 +1714,8 @@ class CellKernel:
                        buffering (real); AUC 0.86. self-corrected a confounded proxy ('enzyme run')
   interface            RESEARCH: which amino acids carry a PPI so a mutation there changes binding? (SKEMPI, 4,956
                        measured) — buried CORE + aromatic/charged residues; barrier-vs-stability; predict ΔΔG r 0.36
+  flex                 RESEARCH: physics ΔΔG-binding node w/ clash relief (LJ + soft-core + local flex) vs measured
+                       SKEMPI — rigid explodes, soft-core is the robust fix, real burial lifts prediction 0.37->0.48
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1764,6 +1788,7 @@ class CellShell:
             if cmd in ("pstruct", "pathstruct"): return k.pstruct(args)
             if cmd in ("enzyme", "enzymes"): return k.enzyme(args)
             if cmd in ("interface", "hotspot"): return k.interface(args)
+            if cmd in ("flex", "physics"): return k.flex(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])

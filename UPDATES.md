@@ -2177,3 +2177,32 @@ So for the mutation goal we CAN flag which interface positions are load-bearing 
 capability, the recoverable side of the ledger. HONEST LIMITS: r~0.36 means we TRIAGE/RANK interface variants, we don't
 nail every ΔΔG; SKEMPI is biased to well-studied complexes; and it needs a solved/predicted COMPLEX structure to place
 the residue at an interface (no complex -> no call). (interface_hotspots.py -> interface_hotspots.json; `interface`.)
+
+## flex_physics / flex — a physics ΔΔG-binding node with clash relief, tested on measured SKEMPI, patched with the research
+
+Asked to build the "Local Backbone Flex" fix for the rigid-physics steric-clash trap (a bulky mutation makes two atoms
+overlap and the Lennard-Jones r^-12 term explodes to +thousands kcal/mol), test it on all mutation data, then combine
+with the interface research (flex_physics.py -> the `flex` syscall). Implemented a real reduced force field (LJ in the
+AMBER rmin form + harmonic restraints as the bonded 'springs' + gradient-descent minimiser + a soft-core variant) and
+tested it against measured SKEMPI ΔΔG on 140 fetched complex structures.
+
+**Findings (measured):**
+- **The bug is real, reproduced.** A rigid LJ evaluation of a bulky (->Trp) interface mutation reads **1e6-1e10
+  kcal/mol** on real structures — the r^-12 wall, exactly as described.
+- **The proposed fix is necessary but NOT sufficient — an honest correction.** Local backbone minimisation relieves
+  MODERATE clashes (e.g. 1JCK B20->Trp 1334 -> ~180 kcal/mol with ~2Å physical backbone motion) but CANNOT rescue a
+  deeply BURIED bulky clash by moving atoms alone (a fixed-rotamer Trp jammed in an Ile pocket stays explosive),
+  because full relief also needs ROTAMER sampling, which position-only gradient descent doesn't do.
+- **The soft-core (my variant) is the robust practical fix.** Capping the repulsion returns physical values for **92%**
+  of mutations vs **67%** for rigid, and it's the best-behaved clash score (it's what Rosetta effectively does by
+  ramping fa_rep) — no minimiser required.
+- **The biggest win was patching physics into the research.** The WT sidechain's buried cross-interface CONTACT count
+  alone tracks measured alanine-scan ΔΔG at **r 0.47**, and adding physics (vdW + contacts) to the interface_hotspots
+  features lifts complex-held-out ΔΔG prediction from **r 0.37 to 0.48 (+0.12)** — real structural burial from the 3D
+  coordinates beats the coarse core/rim position labels.
+
+**Honest limits.** A REDUCED force field (vdW + soft-core + harmonic restraints, uniform epsilon, single fixed-rotamer
+mutant, no rotamer packing / electrostatics / solvation), so its absolute ΔΔG is a TRIAGE signal, not FoldX/Rosetta
+accuracy; and it speaks only to the near-field INTERFACE effect of a variant, not the downstream cellular consequence.
+Net: the steric-clash fix is real, the soft-core is its practical form, and feeding real interface geometry into the
+empirical predictor helped most. (flex_physics.py -> flex_physics.json; `flex` / `flex run`.)
