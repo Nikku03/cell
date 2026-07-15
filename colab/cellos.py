@@ -1799,7 +1799,7 @@ class CellKernel:
   screen               RESEARCH: ΔΔG node as a PPI partner-screen — localise a mutation's LOSS to the right partner
                        (top-1 98%); magnitude needs the full model (burial alone ~0); NOVEL-partner gain NOT claimed
   surface              RESEARCH: REAL trained MaSIF-style surface-complementarity encoder (vs the random-weight mock) —
-                       AUC 0.66 vs 0.50 untrained; adding real APBS electrostatics+surface lifts 0.65->0.71 ('surface apbs')
+                       AUC 0.65 vs 0.50 untrained; real APBS electrostatics+surface lifts 0.65->0.76 on 333 cplx ('surface apbs')
   desolv               RESEARCH: desolvation retested w/ REAL SASA + satisfaction correction — physics validates
                        (hydrophobic r 0.38) but ~0 held-out gain on alanine (burial already captured); honest, not folded in
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named

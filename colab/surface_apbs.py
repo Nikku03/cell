@@ -238,7 +238,7 @@ def main(subset=60):
            f"with fine SURFACE-POINT patches (not residue centroids) and learned geodesic convolutions, which this "
            f"controlled test deliberately holds fixed to isolate the feature effect.")
         + f" HONEST LIMITS: coarse APBS grid (dime 65) for speed; Gaussian molecular surface, not an exact MSMS "
-        f"solvent-excluded surface; a {len(cp)}-complex subset (APBS cost), not all 140; residue-centre patches, not "
+        f"solvent-excluded surface; a {len(cp)}-complex subset (APBS cost), not all 345; residue-centre patches, not "
         f"per-surface-point geodesic patches. The tooling is now REAL (APBS + PB potential + marching-cubes surface); "
         f"the remaining gap to MaSIF-grade is the fine surface-point patch representation, the honest next step.")
     print("\n" + "=" * 100 + f"\nVERDICT: {verdict}\n" + "=" * 100, flush=True)
@@ -252,4 +252,5 @@ def main(subset=60):
 
 
 if __name__ == "__main__":
-    main()
+    n = int(sys.argv[1]) if len(sys.argv) > 1 else 60
+    main(subset=n)

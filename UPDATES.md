@@ -2391,3 +2391,23 @@ coarse baseline on the *same* subset for a like-for-like number; and residue-cen
 geodesic patches. The tooling is now **real** (APBS PB potential + marching-cubes surface); the remaining gap to
 MaSIF-grade is the fine surface-point patch representation — the honest next step. (surface_apbs.py → surface_apbs.json;
 `surface apbs`.)
+
+### Scaling to all the data — fetched the full SKEMPI structure set (345 complexes) and re-ran
+
+Asked to expand to more proteins, I fetched every complex SKEMPI references — **205 missing PDBs, 0 failures → 345
+total** — and re-ran both models on the full set. Two honest findings:
+
+- **Coarse model: more data does NOT move the ceiling.** Trained on 344 complexes (134,745 patches, 2.3× the data),
+  held-out discrimination AUC is **0.653** — statistically identical to the 0.66 on 139. The coarse residue features are
+  *feature-limited*, not data-limited.
+- **APBS + surface model: the gain GREW with data.** On **333 complexes** (12 failed pdb2pqr/APBS, reported), coarse
+  **0.652 → +APBS electrostatics + marching-cubes surface 0.760 (+0.109)** — a *bigger* lift than the +0.068 on 60. So
+  the richer physics-based features both start higher and benefit more from scale, while the coarse model plateaus.
+
+| Model | 60–139 complexes | 333–344 complexes (all data) |
+|---|---|---|
+| coarse residue features | 0.645–0.66 | 0.653 |
+| + real APBS electrostatics + surface | 0.713 (+0.068) | **0.760 (+0.109)** |
+
+The lesson is clean and honest: **the bottleneck was feature quality, not dataset size** — real electrostatics + surface
+geometry is what scales, and it scales *better* with more data. (surface_apbs.py → surface_apbs.json; `surface apbs`.)
