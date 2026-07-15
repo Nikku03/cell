@@ -880,6 +880,35 @@ class CellKernel:
         out.append("  (a responder confirmed in both cell types is a property of the gene, not the cell line.)")
         return "\n".join(out)
 
+    def fieldsim(self, args):
+        """the four-layer continuous 'protein-field' whole-cell engine (fieldsim.py), assembled end-to-end and tested
+        HONESTLY: SH field overlap (L1) + mutation->ΔΔG->γ (L2) + SDF reaction-diffusion PDE (L3) + Hill source (L4),
+        run as a closed loop. It RUNS and is internally consistent, but the tests confirm it is a MECHANISTIC
+        DEMONSTRATOR, not a validated predictor (the SH-translation seam is real; γ=exp(ΔΔG/RT) diverges; and per every
+        measured result here the whole-cell mutation->phenotype map does not compose). 'fieldsim run' executes it live.
+        usage: fieldsim | fieldsim run"""
+        if args and args[0].lower() == "run":
+            import fieldsim as _F
+            _F.main()
+            return "(fieldsim ran live — see output above)"
+        import json, os
+        p = "outputs/orphan/fieldsim.json"
+        if not os.path.exists(p):
+            return "fieldsim: run 'fieldsim run' (or python3 colab/fieldsim.py) to build the four-layer engine first."
+        d = json.load(open(p))
+        seam = d.get("L1_seam", {}); g = d.get("L2_gamma", {})
+        return "\n".join([
+            "fieldsim — four-layer protein-field engine, assembled & tested (a mechanistic DEMONSTRATOR, not a predictor):",
+            f"  L1 overlap: coefficient-contraction == direct integral to {d.get('L1_overlap_rel_err',0):.1%}  (co-centred only)",
+            f"  L1 SEAM: a co-centred source is 1 coefficient but needs ~121 once 0.34 off-centre -> diffusing the SH",
+            f"           object is the wrong move (re-centring is an O(L^3) FMM translation).",
+            f"  L2 gamma: spec exp(ΔΔG/RT) explodes ({g.get('10.0',{}).get('spec_exp','?')} at ΔΔG=10) -> bounded form used",
+            f"  L3 SDF gate: field 100% confined without an export motif vs 28% with one (boundary works)",
+            f"  L4 Hill cascade: TF knockout collapses the enzyme field {d.get('L4_tf_knockout_enzyme_drop',0):.0%}",
+            "  VERDICT: runs end-to-end & internally consistent; do NOT trust its whole-cell phenotype without checking",
+            "           each edge vs measured data — long-range dynamics don't compose (transitivity ~0.009).",
+            "  ('fieldsim run' to execute the full test live.)"])
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1534,6 +1563,8 @@ class CellKernel:
                        immune); 'pertseq function GENE' = unknown-gene function by KO fingerprint [WORKS, 84%/4.1x]
   xcell GENE           CROSS-CELL-TYPE: which of a knockout's responders reproduce in BOTH K562 and HCT116 (Xaira
                        X-Atlas/Orion) — cell-type-robust vs cell-type-specific (needs fetch_xaira.py staged)
+  fieldsim             the 4-layer continuous protein-field whole-cell engine (SH overlap + ΔΔG->γ + SDF PDE + Hill),
+                       assembled & tested HONESTLY — runs end-to-end but is a demonstrator, not a predictor ('fieldsim run')
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1601,6 +1632,7 @@ class CellShell:
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
             if cmd in ("pertseq", "perturbseq"): return k.pertseq(args)
             if cmd in ("xcell", "crosscell"): return k.xcell(args)
+            if cmd in ("fieldsim", "fields"): return k.fieldsim(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
