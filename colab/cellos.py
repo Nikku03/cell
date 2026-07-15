@@ -922,6 +922,33 @@ class CellKernel:
             "  ('fieldsim run' = build+physics tests live; 'fieldsim validate' = score vs measured live.)"]
         return "\n".join(out)
 
+    def latent(self, args):
+        """test the load-bearing assumption of a Mechanistic-Latent-Mechanistic architecture BEFORE wiring a real
+        foundation model: can a Geneformer/scGPT-style latent predict a held-out knockout's response, and does it beat
+        'predict the mean perturbation response'? (latent_bridge_test.py). Result: barely (+0.018 AUC), and for NOVEL
+        perturbations — the claimed moat — it is WORSE than the mean; the wall relocates into latent space, it isn't
+        crossed. 'latent run' executes it live.
+        usage: latent | latent run"""
+        if args and args[0].lower() in ("run", "test"):
+            import latent_bridge_test as _L
+            _L.main()
+            return "(latent-bridge test ran live — see output above)"
+        import json, os
+        p = "outputs/orphan/latent_bridge_test.json"
+        if not os.path.exists(p):
+            return "latent: run 'latent run' (or python3 colab/latent_bridge_test.py) first."
+        d = json.load(open(p)); nov = d["by_novelty"].get("novel (far from training)", {})
+        return "\n".join([
+            "latent — does a foundation-model latent beat 'predict the mean' on held-out knockouts? (M-L-M Phase 2 test)",
+            f"  predict which genes move (AUC, chance 0.5):  LATENT {d['auc_latent']}  vs  MEAN baseline {d['auc_mean']}  "
+            f"(gain {d['latent_gain']})",
+            f"  correlation on moved genes:                  LATENT {d['pear_latent']}  vs  MEAN {d['pear_mean']}",
+            f"  NOVEL perturbations (the claimed moat):      LATENT {nov.get('auc_latent')}  vs  MEAN {nov.get('auc_mean')}  "
+            f"(gain {nov.get('latent_gain')} — worse or flat)",
+            "  -> the latent bridge is ~the generic mean response; it helps only when a close twin is already in training,",
+            "     and does NOT help for novel perturbations. Phase 2 relocates the transitivity wall, it doesn't cross it.",
+            "  ('latent run' to execute live.)"])
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1578,6 +1605,8 @@ class CellKernel:
                        X-Atlas/Orion) — cell-type-robust vs cell-type-specific (needs fetch_xaira.py staged)
   fieldsim             the 4-layer continuous protein-field whole-cell engine (SH overlap + ΔΔG->γ + SDF PDE + Hill),
                        assembled & tested HONESTLY — runs end-to-end but is a demonstrator, not a predictor ('fieldsim run')
+  latent               does a foundation-model latent (scGPT/Geneformer-style) beat 'predict the mean' on held-out
+                       knockouts? tested: barely, and WORSE for novel perturbations — the M-L-M Phase-2 premise fails
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1646,6 +1675,7 @@ class CellShell:
             if cmd in ("pertseq", "perturbseq"): return k.pertseq(args)
             if cmd in ("xcell", "crosscell"): return k.xcell(args)
             if cmd in ("fieldsim", "fields"): return k.fieldsim(args)
+            if cmd in ("latent", "bridge"): return k.latent(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])

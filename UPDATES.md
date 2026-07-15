@@ -2072,3 +2072,31 @@ real knockout does NOT beat chance or a trivial network lookup — the same far-
 ~0.009) every engine in this repo hit. The measured `knockout`/`cascade` engines — which report what was observed and
 honestly flag the ~84% they can't route — remain the trustworthy tools. (fieldsim_test.py -> fieldsim_test.json;
 `fieldsim validate`.)
+
+## latent bridge — testing the M-L-M "foundation-model Phase 2" premise before building it
+
+A proposed fix for the transitivity wall: keep the near-field physics, but bridge the far-field with a pre-trained
+single-cell foundation model (scGPT/Geneformer) that "knows the statistical topology" — claim: it fixes recall and
+sign, and the moat is feeding it the physics of NOVEL mutations. Tested the load-bearing assumption directly, with a
+faithful Geneformer-style latent (gene-context embedding from the co-expression graph via truncated SVD — exactly the
+signal Geneformer learns — + k-NN response transfer), held out, vs the baseline that has beaten this whole model class
+in fair benchmarks: **predict the mean perturbation response** (latent_bridge_test.py -> the `latent` syscall).
+
+**Result (200 held-out knockouts with real effects):**
+- predict which genes move: **LATENT AUC 0.711 vs MEAN 0.693** — a gain of just **+0.018**
+- correlation on moved genes: **LATENT 0.518 vs MEAN 0.537** — the mean actually WINS
+- **stratified by novelty (the decisive test of the claimed moat):** for NOVEL perturbations (farthest from any
+  training gene) the latent is **worse** than the mean (gain **−0.017**); it only helps when a close twin is already in
+  training (+0.04).
+
+**Conclusion.** The latent bridge is ~the generic mean response (most of a knockout's signature is a shared stress/
+proliferation/cell-cycle program, which is why "predict the mean" is so hard to beat — and why scGPT/Geneformer/GEARS
+repeatedly fail to beat it in fair benchmarks, Ahlmann-Eltze et al. 2024). Phase 2 does NOT cross the transitivity
+wall — it relocates it into latent space, where it reappears as "this perturbation is unlike anything in training." A
+foundation model is worth wiring for INTERPOLATION (a perturbation observed in another context — which our cross-cell
+`xcell` already does at r~0.6), NOT for the physics-guided novel-missense whole-cell prediction that is the pitch. And
+for the stated metabolic targets (CYP3A4 etc.) there is a second problem: these are transcriptomic models, but
+metabolic phenotype is largely post-transcriptional (a protein knockout's effect is ~invisible to mRNA, median 1.07x —
+see protein_knockout), so an scRNA foundation model is doubly removed from metabolic flux. If a learned model is used,
+it MUST be reported against the mean baseline and the novel stratum or it will look far better than it is.
+(latent_bridge_test.py -> latent_bridge_test.json; `latent` / `latent run`.)
