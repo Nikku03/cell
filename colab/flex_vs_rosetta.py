@@ -50,10 +50,11 @@ def main():
         t = fp.table(r["pdb"])
         if t is None:
             continue
-        sc = fp.sidechain_vdw(t, r["chain"], r["pos"])
+        sc = fp.sidechain_vdw(t, r["chain"], r["pos"], wt=r["wt"])
         if sc is None:
             continue
-        X.append(ih._feat(r) + [sc["vdw"], sc["contacts"]]); Y.append(r["ddg"]); grp.append(r["pdb"])
+        X.append(ih._feat(r) + [sc["vdw"], sc["contacts"], sc["elec"], sc["induc"]])
+        Y.append(r["ddg"]); grp.append(r["pdb"])
     per_mut_ms = 1000 * (time.time() - t0) / max(len(Y), 1)
     X, Y = np.array(X), np.array(Y)
     gkf = GroupKFold(5)
@@ -83,7 +84,7 @@ def main():
     print(f"    {'method':22} {'Pearson':>8} {'RMSE':>6}  {'cost':16} note")
     print("    " + "-" * 92)
     print(f"    {ours['method']:22} {ours['pearson']:>8} {ours['rmse']:>6}  {('%s ms/mut'%ours['cost_ms_per_mut']):16} "
-          f"reduced FF (vdW+softcore) + empirical, HARD complex-held-out split")
+          f"reduced FF (vdW+softcore+electrostatics+induction+rotamers) + empirical, HARD complex-held-out split")
     for m in LIT:
         print(f"    {m['method']:22} {m['pearson']:>8} {m['rmse']:>6}  {m['cost']:16} {m['note']}")
 
@@ -104,7 +105,12 @@ def main():
         f"to Rosetta may be smaller than it looks, and mCSM's CV number is not comparable at all). Bottom line: Rosetta "
         f"wins on accuracy, as expected from decades of force-field + sampling engineering; our node is a fast TRIAGE "
         f"predictor at ~FoldX accuracy and a tiny fraction of the compute — useful for ranking many variants, not for a "
-        f"final energy. The honest way to close the gap is rotamer sampling + a real electrostatics/solvation term.")
+        f"final energy. UPDATE — adding sp3 rotamer sampling + a Coulomb (distance-dependent dielectric) + Debye "
+        f"induction term moved this node from Pearson 0.47 to {ours['pearson']} on the same hard split (Spearman "
+        f"{ours['spearman']}, AUC {ours['auc_destabilising']}), i.e. from ~FoldX to between cartesian_ddg and mCSM-PPI2 "
+        f"blind, and now ~{ours['pearson']/0.63:.0%} of flex_ddG's correlation. The REMAINING gap to Rosetta is the "
+        f"expensive part we still do not do: full partner-sidechain repacking, Dunbrack-probability-weighted rotamers "
+        f"(we select by lowest steric energy, not library likelihood), and explicit solvation/desolvation.")
     print("\n" + "=" * 100 + f"\nVERDICT: {verdict}\n" + "=" * 100)
     out = {"ours": ours, "all_mutation_pearson": allmut.get("predict_ddg_pearson"), "literature": LIT,
            "rmse_mean_baseline": round(rmse_mean, 2), "verdict": verdict}

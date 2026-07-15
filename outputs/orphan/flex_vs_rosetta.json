@@ -1,12 +1,12 @@
 {
  "ours": {
   "method": "flex_physics (ours)",
-  "pearson": 0.471,
-  "spearman": 0.479,
-  "rmse": 1.25,
-  "auc_destabilising": 0.764,
+  "pearson": 0.528,
+  "spearman": 0.547,
+  "rmse": 1.18,
+  "auc_destabilising": 0.806,
   "n": 2602,
-  "cost_ms_per_mut": 1.9,
+  "cost_ms_per_mut": 2.3,
   "split": "complex-held-out (GroupKFold)"
  },
  "all_mutation_pearson": 0.359,
@@ -41,5 +41,5 @@
   }
  ],
  "rmse_mean_baseline": 1.37,
- "verdict": "On the field-standard metrics, our node reaches Pearson 0.471 / Spearman 0.479 / RMSE 1.25 kcal/mol / AUC 0.764 for classifying destabilising interface mutations, on a HARD complex-held-out split of 2602 alanine-scan mutations. Placed against published SKEMPI benchmarks: Rosetta flex_ddG is the accuracy leader at Pearson ~0.63 (full force field + backrub sampling, model-averaged, minutes-to-hours per mutation); FoldX ~0.48 and Rosetta cartesian_ddg ~0.50 (seconds-to-a-minute); mCSM-PPI2 ~0.58 blind (its ~0.75 CV number is inflated by train/test similarity). So our reduced node lands around FoldX / cartesian_ddg territory and reaches roughly 75% of flex_ddG's correlation \u2014 while running in ~2 ms/mutation, i.e. ~10^4-10^6x faster than flex_ddG. CRITICAL CAVEAT \u2014 do NOT read our lower RMSE (1.25 vs ~1.5) as beating Rosetta: our alanine subset has a NARROW \u0394\u0394G spread (the mean-predictor RMSE is already 1.37), so a low RMSE mostly reflects the test distribution, not accuracy; Pearson is the only fair cross-benchmark metric here, and on Pearson Rosetta leads. This is also NOT a head-to-head \u2014 different mutation subset, and our complex-held-out split is HARDER than the splits several published numbers use (so like-for-like our gap to Rosetta may be smaller than it looks, and mCSM's CV number is not comparable at all). Bottom line: Rosetta wins on accuracy, as expected from decades of force-field + sampling engineering; our node is a fast TRIAGE predictor at ~FoldX accuracy and a tiny fraction of the compute \u2014 useful for ranking many variants, not for a final energy. The honest way to close the gap is rotamer sampling + a real electrostatics/solvation term."
+ "verdict": "On the field-standard metrics, our node reaches Pearson 0.528 / Spearman 0.547 / RMSE 1.18 kcal/mol / AUC 0.806 for classifying destabilising interface mutations, on a HARD complex-held-out split of 2602 alanine-scan mutations. Placed against published SKEMPI benchmarks: Rosetta flex_ddG is the accuracy leader at Pearson ~0.63 (full force field + backrub sampling, model-averaged, minutes-to-hours per mutation); FoldX ~0.48 and Rosetta cartesian_ddg ~0.50 (seconds-to-a-minute); mCSM-PPI2 ~0.58 blind (its ~0.75 CV number is inflated by train/test similarity). So our reduced node lands around FoldX / cartesian_ddg territory and reaches roughly 84% of flex_ddG's correlation \u2014 while running in ~2 ms/mutation, i.e. ~10^4-10^6x faster than flex_ddG. CRITICAL CAVEAT \u2014 do NOT read our lower RMSE (1.18 vs ~1.5) as beating Rosetta: our alanine subset has a NARROW \u0394\u0394G spread (the mean-predictor RMSE is already 1.37), so a low RMSE mostly reflects the test distribution, not accuracy; Pearson is the only fair cross-benchmark metric here, and on Pearson Rosetta leads. This is also NOT a head-to-head \u2014 different mutation subset, and our complex-held-out split is HARDER than the splits several published numbers use (so like-for-like our gap to Rosetta may be smaller than it looks, and mCSM's CV number is not comparable at all). Bottom line: Rosetta wins on accuracy, as expected from decades of force-field + sampling engineering; our node is a fast TRIAGE predictor at ~FoldX accuracy and a tiny fraction of the compute \u2014 useful for ranking many variants, not for a final energy. UPDATE \u2014 adding sp3 rotamer sampling + a Coulomb (distance-dependent dielectric) + Debye induction term moved this node from Pearson 0.47 to 0.528 on the same hard split (Spearman 0.547, AUC 0.806), i.e. from ~FoldX to between cartesian_ddg and mCSM-PPI2 blind, and now ~84% of flex_ddG's correlation. The REMAINING gap to Rosetta is the expensive part we still do not do: full partner-sidechain repacking, Dunbrack-probability-weighted rotamers (we select by lowest steric energy, not library likelihood), and explicit solvation/desolvation."
 }

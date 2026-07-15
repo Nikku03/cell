@@ -2201,8 +2201,45 @@ tested it against measured SKEMPI ΔΔG on 140 fetched complex structures.
   features lifts complex-held-out ΔΔG prediction from **r 0.37 to 0.48 (+0.12)** — real structural burial from the 3D
   coordinates beats the coarse core/rim position labels.
 
-**Honest limits.** A REDUCED force field (vdW + soft-core + harmonic restraints, uniform epsilon, single fixed-rotamer
-mutant, no rotamer packing / electrostatics / solvation), so its absolute ΔΔG is a TRIAGE signal, not FoldX/Rosetta
-accuracy; and it speaks only to the near-field INTERFACE effect of a variant, not the downstream cellular consequence.
-Net: the steric-clash fix is real, the soft-core is its practical form, and feeding real interface geometry into the
-empirical predictor helped most. (flex_physics.py -> flex_physics.json; `flex` / `flex run`.)
+**Honest limits (this pass).** A REDUCED force field (vdW + soft-core + harmonic restraints, uniform epsilon, single
+fixed-rotamer mutant, no rotamer packing / electrostatics / solvation), so its absolute ΔΔG is a TRIAGE signal, not
+FoldX/Rosetta accuracy; and it speaks only to the near-field INTERFACE effect of a variant, not the downstream cellular
+consequence. Net: the steric-clash fix is real, the soft-core is its practical form, and feeding real interface geometry
+into the empirical predictor helped most. (flex_physics.py -> flex_physics.json; `flex` / `flex run`.)
+
+### Chemistry added: sp3 rotamer sampling + electrostatics + induction
+
+Then asked to add the chemistry: sp3 sidechains do not rotate freely — steric hindrance around sp3-hybridised carbon
+pins the χ1/χ2 dihedrals into discrete wells at **+60° (gauche+), 180° (trans), −60° (gauche−)** (the Dunbrack
+rotamer-library idea), plus "induction and forces". Implemented (a) **rotamer sampling** — enumerate the χ1 (about the
+CA–CB bond) and χ2 (about CB–CG) wells, rebuild each pose by rotating the sidechain atoms to set that dihedral, score it
+against the partner with the soft-core LJ, and keep the lowest-clash rotamer; (b) **electrostatics** — Coulomb with a
+distance-dependent dielectric ε(r)=r on resname-aware united-atom partial charges; (c) **induction** — the
+charge-induced-dipole (Debye) term U_ind = −½ Σ αᵢ|Eᵢ|²/K, the leading polarisation "force". Measured each against
+SKEMPI — a **two-sided, honest** result:
+
+- **Rotamer sampling is the right PHYSICS for the buried clash minimisation couldn't fix.** Letting a bulky mutant jump
+  to its lowest-clash sp3 well turns impossible energies physical — **1TM1 I58→Trp goes from ~9×10¹⁰ to −2.4 kcal/mol**,
+  1JCK B23→Trp from ~5×10⁸ to −1.8 — and cuts the bulky-mutation explosion rate to **4%** (vs 33% rigid single-rotamer,
+  8% soft-core). This is exactly the escape-by-rotating mechanism, and it's what you need for a usable *absolute* energy.
+- **But — the honest catch, measured not assumed — rotamer sampling does NOT improve bulky-mutation RANKING.** As a
+  standalone rank predictor of measured ΔΔG on the larger-residue set, the *relieved* best-rotamer score correlates
+  **worse (Spearman +0.13)** than the *raw, un-relieved* rigid clash magnitude (**+0.35**). The reason is real: the raw
+  magnitude encodes "how much steric burden this bigger residue imposes", which tracks destabilisation; once you relieve
+  the clash to the best well, that variance is discarded. So the correct use is BOTH — rotamer-relieved energy as the
+  physical absolute value, and the raw steric burden kept as a separate ranking feature.
+- **Electrostatics + induction add real, held-out accuracy on the polar/charged mutations.** The lost cross-interface
+  Coulomb term alone correlates r −0.16 with measured ΔΔG(X→Ala) and the Debye induction term r −0.35; stacking both on
+  top of the steric features lifts complex-held-out r from **0.485 to 0.521** (+0.037), and the full physics+research
+  stack reaches **r 0.52** (+0.15 over the research features alone).
+- **On the Rosetta scoreboard (flex_vs_rosetta.py) this moved the node from Pearson 0.47 → 0.528** on the same hard
+  complex-held-out split (Spearman 0.547, RMSE 1.18, AUC 0.806, n=2602, ~2 ms/mut) — from ~FoldX up to between Rosetta
+  cartesian_ddg (~0.50) and mCSM-PPI2 blind (~0.58), and now **~84% of flex_ddG's** correlation (~0.63) at ~10⁴–10⁶×
+  less compute. The remaining gap is the expensive part we still don't do: full partner-sidechain repacking,
+  Dunbrack-probability-weighted rotamers (we select by lowest steric energy, not library likelihood), and explicit
+  solvation/desolvation.
+
+Net: rotamer sampling fixed the buried-clash PHYSICS (physical energies, no explosions) but not the ranking; the raw
+clash magnitude still ranks better there. Electrostatics + induction gave the genuine held-out accuracy gain
+(0.47→0.53). Both conclusions are measured against real SKEMPI, not assumed. (flex_physics.py, flex_vs_rosetta.py;
+`flex` / `flex run` / `flex rosetta`.)
