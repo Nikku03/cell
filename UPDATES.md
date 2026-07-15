@@ -2361,3 +2361,33 @@ buried *unsatisfied* polar/charged group — which needs the mutant's SASA (rota
 next step. So this is a **correct, more physical, no-longer-harmful** desolvation term that I'm **not** folding into the
 headline (0.528 stays) — same discipline: keep only what measurably helps, and report the rest straight. (desolv_eef1.py
 → desolv_eef1.json; `desolv` / `desolv run`.)
+
+### Adding real MSMS-style surface + APBS electrostatics to the DL model — the physics HELPS (+0.068)
+
+The coarse surface encoder above topped out at AUC 0.66 and I named the reason: no molecular surface, no electrostatics.
+Asked to add MSMS surfaces + APBS, I installed the real tools — **APBS** (apt) + **pdb2pqr** + **scikit-image** (pip) —
+and built surface_apbs.py (the `surface apbs` syscall):
+- **Electrostatics (real APBS):** pdb2pqr assigns AMBER charges + protonates → APBS solves the **Poisson-Boltzmann**
+  equation → the electrostatic-potential grid (kT/e), sampled at each patch. This is the exact APBS pipeline requested.
+- **Molecular surface:** a **marching-cubes** surface over an atomic Gaussian-density grid (the dMaSIF-style substitute
+  for the MSMS *binary*, which isn't installable here) → real surface curvature/planarity at each patch.
+
+**Controlled head-to-head** — identical patch framework, identical complex-held-out split, identical contrastive
+encoder as the coarse model; the *only* change is enriching each patch's features with the APBS potential +
+molecular-surface geometry, so any AUC change is attributable to the real physics:
+
+| Features | Held-out discrimination AUC (60 complexes) |
+|---|---|
+| coarse residue (geometry-from-atoms + chemistry-from-identity) | 0.645 |
+| **+ real APBS electrostatics + marching-cubes surface** | **0.713 (+0.068)** |
+
+**So the real physics genuinely helps** — the APBS potential + true surface shape carry interface-complementarity signal
+beyond residue-identity chemistry, closing part of the gap to real MaSIF, exactly as predicted. This is a *positive*
+result (unlike the desolvation retest, which was redundant) — worth keeping.
+
+**Honest limits:** coarse APBS grid (dime 65) for speed; a Gaussian marching-cubes surface, not an exact MSMS
+solvent-excluded surface; a **60-complex subset** (APBS costs ~5s + a few MB each — stated, not hidden), re-running the
+coarse baseline on the *same* subset for a like-for-like number; and residue-centre patches, not per-surface-point
+geodesic patches. The tooling is now **real** (APBS PB potential + marching-cubes surface); the remaining gap to
+MaSIF-grade is the fine surface-point patch representation — the honest next step. (surface_apbs.py → surface_apbs.json;
+`surface apbs`.)

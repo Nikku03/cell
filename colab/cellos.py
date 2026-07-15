@@ -1087,18 +1087,26 @@ class CellKernel:
         usage: surface | surface run"""
         if args and args[0].lower() in ("run", "rerun"):
             import surface_fingerprint as _S; _S.main(); return "(surface-fingerprint trained live — see above)"
+        if args and args[0].lower() in ("apbs", "msms", "electrostatics"):
+            import surface_apbs as _A; _A.main(); return "(surface-APBS controlled run ran live — see above)"
         import json, os
         p = "outputs/orphan/surface_fingerprint.json"
         if not os.path.exists(p): return "surface: run 'surface run' (or python3 colab/surface_fingerprint.py) first."
         d = json.load(open(p))
-        return "\n".join([
+        out = [
             "surface — REAL trained surface-complementarity encoder (not the random-weight mock):",
             f"  data: {d['n_patches']:,} REAL patches from {d['n_complexes']} interface-labelled complexes; held out BY complex.",
             f"  WORKS: discrimination AUC {d['held_out_auc']} vs {d['untrained_baseline_auc']} untrained baseline "
             f"(training earns +{d['training_gain']}) — real, generalising surface-complementarity signal.",
             f"  MOSTLY DOESN'T: exact partner-patch retrieval top-1 {d['retrieval_top1']:.1%} (chance {d['retrieval_chance_top1']:.1%}), "
             f"top-5 {d['retrieval_top5']:.1%} (chance {d['retrieval_chance_top5']:.1%}) — only weakly above chance.",
-            "  limit: residue-level features, NO MSMS surface mesh / APBS electrostatics -> coarser than real MaSIF; near-field structure, not novel-PPI discovery."])
+            "  limit: residue-level features; coarse run has NO electrostatics/surface (see 'surface apbs')."]
+        pa = "outputs/orphan/surface_apbs.json"
+        if os.path.exists(pa):
+            a = json.load(open(pa))
+            out.append(f"  + APBS/SURFACE (real pdb2pqr->APBS PB + marching-cubes surface, controlled on {a['n_complexes']} complexes): "
+                       f"AUC {a['auc_coarse']} -> {a['auc_apbs_surface']} ({a['gain']:+.3f}) — real electrostatics+surface HELP ('surface apbs').")
+        return "\n".join(out)
 
     def desolv(self, args):
         """RESEARCH: retest of an implicit-DESOLVATION term done the RIGHT way (desolv_eef1.py) — real Shrake-Rupley SASA
@@ -1791,7 +1799,7 @@ class CellKernel:
   screen               RESEARCH: ΔΔG node as a PPI partner-screen — localise a mutation's LOSS to the right partner
                        (top-1 98%); magnitude needs the full model (burial alone ~0); NOVEL-partner gain NOT claimed
   surface              RESEARCH: REAL trained MaSIF-style surface-complementarity encoder (vs the random-weight mock) —
-                       held-out discrimination AUC 0.66 vs 0.50 untrained; exact retrieval only weakly above chance
+                       AUC 0.66 vs 0.50 untrained; adding real APBS electrostatics+surface lifts 0.65->0.71 ('surface apbs')
   desolv               RESEARCH: desolvation retested w/ REAL SASA + satisfaction correction — physics validates
                        (hydrophobic r 0.38) but ~0 held-out gain on alanine (burial already captured); honest, not folded in
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
