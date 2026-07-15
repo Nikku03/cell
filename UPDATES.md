@@ -2441,3 +2441,18 @@ embedding. Trained contrastively (true interface point-pairs close, non-contacti
 multi-scale dMaSIF at native density on GPU), a marching-cubes Gaussian surface (not exact MSMS), a 70-complex subset.
 The representation and physics are real, and the comparison to the residue-patch model is reported straight. (dmasif.py →
 dmasif.json; `dmasif` / `dmasif run`.)
+
+### Complementary layers, tested honestly: fusion of two EXTRINSIC layers is redundant → NEXUS needs intrinsic × extrinsic
+
+Asked whether dMaSIF can *replace* or *augment* the ΔΔG node, I built the leakage-free fusion test (complementary.py):
+feed dMaSIF's geodesic **surface embedding at the mutation site** as extra features into the ΔΔG-binding node, with
+**dMaSIF trained only on TRAIN complexes** and ΔΔG scored on **held-out TEST complexes** (3 splits, node-only baseline on
+the same splits). Result on **82 complexes / 2,456 alanine mutations**: node-only Pearson **0.542 → node+dMaSIF 0.476
+(Δ −0.066)** — fusing them **hurts**.
+
+The reason is structural, not a bug: **`flex_physics` is a *binding* (extrinsic) predictor and dMaSIF is *also* extrinsic
+surface complementarity**, so the 32-d embedding re-expresses interface geometry the node already encodes (buried
+vdW/contacts) and adds variance the RF overfits. Two extrinsic layers are **redundant, not complementary**. The honest
+architectures are (a) a **pipeline** — dMaSIF *localises* which interface/partner, the ΔΔG node scores the *magnitude* —
+or (b) the **NEXUS intrinsic × extrinsic** pairing: a *folding-stability* sensor AND a *binding* sensor, which catch two
+orthogonal failure modes and genuinely stack. Fusion-of-two-extrinsics does not. (complementary.py → complementary.json.)
