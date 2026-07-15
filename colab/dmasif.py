@@ -259,7 +259,7 @@ def main(subset=70):
            if ret_lift > 2.0 else
            "still only a modest lift; finer resolution helps but exact partner-point retrieval stays hard at this "
            "surface density / model size.")
-        + f" HONEST LIMITS: subsampled surface points (~700/complex) and a compact 2-layer geodesic net on CPU (not the "
+        + f" HONEST LIMITS: subsampled surface points (~1500/complex) and a compact 2-layer geodesic net on CPU (not the "
         f"full multi-scale dMaSIF with oriented point-normals at native density on GPU); marching-cubes Gaussian surface, "
         f"not exact MSMS; a {len(data)}-complex subset. This is a genuine geodesic-surface model — surface points + "
         f"learned geodesic convolutions + real electrostatics — and the honest comparison to the residue-patch model is "

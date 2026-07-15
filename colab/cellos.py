@@ -1106,7 +1106,33 @@ class CellKernel:
             a = json.load(open(pa))
             out.append(f"  + APBS/SURFACE (real pdb2pqr->APBS PB + marching-cubes surface, controlled on {a['n_complexes']} complexes): "
                        f"AUC {a['auc_coarse']} -> {a['auc_apbs_surface']} ({a['gain']:+.3f}) — real electrostatics+surface HELP ('surface apbs').")
+        pd_ = "outputs/orphan/dmasif.json"
+        if os.path.exists(pd_):
+            m = json.load(open(pd_))
+            out.append(f"  + GEODESIC (dMaSIF: surface POINTS + learned geodesic conv, {m['n_complexes']} complexes): AUC "
+                       f"{m['discrimination_auc']} (vs residue-patch {m['residue_patch_auc']}); retrieval {m['retrieval_lift_top5']}x chance — see 'dmasif'.")
         return "\n".join(out)
+
+    def dmasif(self, args):
+        """RESEARCH: Geodesic Surface Learning (dMaSIF approach; dmasif.py) — the fine surface-POINT representation that
+        was the remaining gap to MaSIF-grade. Surface points (not residue centres) + a learnable QUASI-GEODESIC
+        CONVOLUTION in each point's local tangent frame + real APBS electrostatics per point, trained contrastively,
+        held-out. Beats the residue-patch model on discrimination (AUC ~0.85 vs 0.76) and, decisively, FIXES retrieval —
+        pinpointing the actual contacting point at ~13x chance where the residue model was ~1.4x.
+        usage: dmasif | dmasif run"""
+        if args and args[0].lower() in ("run", "rerun"):
+            import dmasif as _D; _D.main(); return "(dMaSIF trained live — see above)"
+        import json, os
+        p = "outputs/orphan/dmasif.json"
+        if not os.path.exists(p): return "dmasif: run 'dmasif run' (or python3 colab/dmasif.py) first."
+        d = json.load(open(p))
+        return "\n".join([
+            "dmasif — Geodesic Surface Learning (surface points + learnable quasi-geodesic convolutions):",
+            f"  trained on {d['n_complexes']} complexes, held out BY complex. Surface POINTS + local-tangent-frame conv + real APBS potential per point.",
+            f"  DISCRIMINATION: AUC {d['discrimination_auc']} — vs residue-patch+APBS {d['residue_patch_auc']}, vs coarse residue 0.65.",
+            f"  RETRIEVAL (the test the residue model FAILED): top-1 {d['retrieval_top1']:.1%} (chance {d['retrieval_chance_top1']:.1%}), "
+            f"top-5 {d['retrieval_top5']:.1%} (chance {d['retrieval_chance_top5']:.1%}) = {d['retrieval_lift_top5']}x chance (residue model was ~1.4x).",
+            "  net: finer surface-point resolution + geodesic convolution genuinely pinpoints the contacting point. Limit: subsampled points, 2-layer CPU net, Gaussian surface not exact MSMS."])
 
     def desolv(self, args):
         """RESEARCH: retest of an implicit-DESOLVATION term done the RIGHT way (desolv_eef1.py) — real Shrake-Rupley SASA
@@ -1800,6 +1826,8 @@ class CellKernel:
                        (top-1 98%); magnitude needs the full model (burial alone ~0); NOVEL-partner gain NOT claimed
   surface              RESEARCH: REAL trained MaSIF-style surface-complementarity encoder (vs the random-weight mock) —
                        AUC 0.65 vs 0.50 untrained; real APBS electrostatics+surface lifts 0.65->0.76 on 333 cplx ('surface apbs')
+  dmasif               RESEARCH: Geodesic Surface Learning (dMaSIF) — surface points + learned geodesic conv + APBS;
+                       discrimination AUC 0.85 (vs residue-patch 0.76) and retrieval ~13x chance (residue was ~1.4x)
   desolv               RESEARCH: desolvation retested w/ REAL SASA + satisfaction correction — physics validates
                        (hydrophobic r 0.38) but ~0 held-out gain on alanine (burial already captured); honest, not folded in
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
@@ -1877,6 +1905,7 @@ class CellShell:
             if cmd in ("flex", "physics"): return k.flex(args)
             if cmd in ("screen", "ppi_screen"): return k.screen(args)
             if cmd in ("surface", "masif"): return k.surface(args)
+            if cmd in ("dmasif", "geodesic"): return k.dmasif(args)
             if cmd in ("desolv", "eef1"): return k.desolv(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])

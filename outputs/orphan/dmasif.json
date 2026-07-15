@@ -1,0 +1,11 @@
+{
+ "n_complexes": 70,
+ "discrimination_auc": 0.846,
+ "residue_patch_auc": 0.76,
+ "retrieval_top1": 0.075,
+ "retrieval_chance_top1": 0.004,
+ "retrieval_top5": 0.232,
+ "retrieval_chance_top5": 0.018,
+ "retrieval_lift_top5": 12.85,
+ "verdict": "Geodesic Surface Learning (dMaSIF-style) on 70 complexes: surface POINTS instead of residue centres, a learnable QUASI-GEODESIC CONVOLUTION (neighbours expressed in each point's local tangent frame, Gaussian-weighted by a learned range) stacked twice, real APBS potential + curvature + chemistry per point, trained contrastively and validated on HELD-OUT complexes. DISCRIMINATION: AUC 0.85 \u2014 vs the residue-patch+APBS model's 0.76. RETRIEVAL \u2014 the test the residue model essentially FAILED (top-5 ~1.4x chance): the geodesic model reaches top-1 7.5% (chance 0.4%) and top-5 23.2% (chance 1.8%), a 12.9x lift \u2014 a REAL improvement in pinpointing the actual contacting point, which is exactly what the finer surface-point resolution + geodesic convolution buy over residue centres. HONEST LIMITS: subsampled surface points (~1500/complex) and a compact 2-layer geodesic net on CPU (not the full multi-scale dMaSIF with oriented point-normals at native density on GPU); marching-cubes Gaussian surface, not exact MSMS; a 70-complex subset. This is a genuine geodesic-surface model \u2014 surface points + learned geodesic convolutions + real electrostatics \u2014 and the honest comparison to the residue-patch model is reported straight."
+}

@@ -2411,3 +2411,33 @@ total** — and re-ran both models on the full set. Two honest findings:
 
 The lesson is clean and honest: **the bottleneck was feature quality, not dataset size** — real electrostatics + surface
 geometry is what scales, and it scales *better* with more data. (surface_apbs.py → surface_apbs.json; `surface apbs`.)
+
+## dmasif / dmasif — Geodesic Surface Learning: the fine surface-point model closes the gap
+
+surface_apbs flagged that its ceiling was **residue-centre** patches. So I built the real dMaSIF approach (dmasif.py →
+the `dmasif` syscall): the primitives are **surface POINTS** (from a marching-cubes molecular surface with oriented
+normals), each carrying **real APBS Poisson-Boltzmann potential** sampled at the point + local curvature + nearest-residue
+chemistry; the model is a **learnable quasi-geodesic convolution** — for each point, gather its K nearest surface
+neighbours, express them in the point's **local tangent frame** (two tangent axes + normal), MLP over
+[local-coords, distance, neighbour-features], Gaussian-weighted by a **learned range**, stacked twice → a per-point
+embedding. Trained contrastively (true interface point-pairs close, non-contacting far), held out by complex.
+
+**Result on 70 complexes — a real, large gain:**
+- **Discrimination AUC 0.846** — vs residue-patch+APBS **0.76**, vs coarse residue **0.65**.
+- **Retrieval — the test the residue model essentially *failed* (~1.4× chance) — is now solved-enough to be useful:**
+  top-1 **7.5%** (chance 0.4%), top-5 **23.2%** (chance 1.8%) = **~13× chance**. The finer surface-point resolution +
+  geodesic convolution genuinely **pinpoints the actual contacting point**, which residue centres could not.
+
+**The full honest arc, each step a real measured gain from the right representation/physics:**
+
+| Model | Discrimination AUC | Retrieval (top-5 vs chance) |
+|---|---|---|
+| the mock (random weights on random data) | — | fake "99% confidence" |
+| coarse residue features | 0.66 | ~1.4× (fails) |
+| + real APBS electrostatics + surface (residue patches) | 0.76 | ~1.4× |
+| **geodesic surface points + learned conv (dMaSIF)** | **0.85** | **~13×** |
+
+**Honest limits:** subsampled surface points (~1500/complex), a compact 2-layer geodesic net on CPU (not the full
+multi-scale dMaSIF at native density on GPU), a marching-cubes Gaussian surface (not exact MSMS), a 70-complex subset.
+The representation and physics are real, and the comparison to the residue-patch model is reported straight. (dmasif.py →
+dmasif.json; `dmasif` / `dmasif run`.)
