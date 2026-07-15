@@ -949,6 +949,30 @@ class CellKernel:
             "     and does NOT help for novel perturbations. Phase 2 relocates the transitivity wall, it doesn't cross it.",
             "  ('latent run' to execute live.)"])
 
+    def pstruct(self, args):
+        """structural dossier for the steps of a known pathway (glycolysis) from REAL data (pathway_struct.py): per
+        ordered step — gene/isoenzymes, reaction (substrate->product, before/after), protein FAMILY/fold, residue-level
+        ACTIVE-SITE + binding residues (UniProt), PPI partners (cell DB), oligomeric state + allostery, and an AlphaFold
+        structural analysis with a cross-checked INDUCED-FIT (domain-closure) signal (HK1/PGK1 top; TPI loop-closure
+        honestly missed). The near-field structural layer that this session found trustworthy.
+        usage: pstruct   (regenerate/extend with: python3 colab/pathway_struct.py)"""
+        import json, os
+        p = "outputs/orphan/pathway_struct.json"
+        if not os.path.exists(p):
+            return "pstruct: run 'python3 colab/pathway_struct.py' first to build the pathway structural dossier."
+        d = json.load(open(p))
+        out = [f"pstruct — {d['pathway']} step-by-step structural dossier (gene/reaction/family/active-site/PPI/induced-fit):"]
+        for s in d["steps"]:
+            st = s.get("structure") or {}
+            fit = " [DOMAIN-CLOSURE induced fit]" if st.get("domain_closure_induced_fit") else ""
+            allo = " [allosteric]" if s.get("activity_regulation") else ""
+            asr = ", ".join(f"{(desc or 'cat')}@{pos}" for pos, desc in (s.get("active_sites") or [])[:3]) or "—"
+            out.append(f"  {s['step']:>2}. {s['gene']:6} {s['rxn']:38} [{s['family'] or '?'}]{fit}{allo}")
+            out.append(f"        active site: {asr};  PPI deg {s.get('ppi_degree')};  "
+                       f"{'essential' if s.get('essential') else 'non-essential'}")
+        out.append("  induced-fit ranking: HK1 & PGK1 (domain-closure) top; PGAM1 demoted (compact); TPI1 loop-closure missed.")
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1607,6 +1631,8 @@ class CellKernel:
                        assembled & tested HONESTLY — runs end-to-end but is a demonstrator, not a predictor ('fieldsim run')
   latent               does a foundation-model latent (scGPT/Geneformer-style) beat 'predict the mean' on held-out
                        knockouts? tested: barely, and WORSE for novel perturbations — the M-L-M Phase-2 premise fails
+  pstruct              structural dossier for a known pathway's steps (glycolysis): gene/reaction-order/family/active-
+                       site residues/PPI/allostery + a cross-checked induced-fit (domain-closure) signal — real data
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1676,6 +1702,7 @@ class CellShell:
             if cmd in ("xcell", "crosscell"): return k.xcell(args)
             if cmd in ("fieldsim", "fields"): return k.fieldsim(args)
             if cmd in ("latent", "bridge"): return k.latent(args)
+            if cmd in ("pstruct", "pathstruct"): return k.pstruct(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])

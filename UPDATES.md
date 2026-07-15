@@ -2100,3 +2100,28 @@ metabolic phenotype is largely post-transcriptional (a protein knockout's effect
 see protein_knockout), so an scRNA foundation model is doubly removed from metabolic flux. If a learned model is used,
 it MUST be reported against the mean baseline and the novel stratum or it will look far better than it is.
 (latent_bridge_test.py -> latent_bridge_test.json; `latent` / `latent run`.)
+
+## pathway_struct / pstruct — step-by-step structural dossier of a known pathway (glycolysis), real data
+
+Ran a structural analysis of the ordered steps of glycolysis (pathway_struct.py -> the `pstruct` syscall), assembling
+per step from REAL sources: gene(s)/isoenzymes and reaction order (substrate->product, before/after); protein
+FAMILY/fold and residue-level ACTIVE-SITE + ligand-binding residues (UniProt REST — e.g. GAPDH catalytic Cys152
+nucleophile with NAD+/G3P binding residues, TPI1 electrophile@96 + proton-acceptor@166, PGAM1 phosphohistidine@11);
+oligomeric state + allosteric regulation (UniProt — PFK's ATP/citrate/F2,6BP valve, PKM2's FBP activation); PPI
+partners (our cell DB); essentiality/disease (DB); and an AlphaFold-model structural analysis.
+
+**Induced fit, computed and cross-checked (not asserted).** For each enzyme, split the fold into two lobes and measure
+whether the catalytic residues sit in the inter-lobe cleft — requiring BOTH a split active site AND genuinely
+separated lobes (lobe gap and gap/Rg). Result recovers the textbook DOMAIN-CLOSURE enzymes: HK1 (66Å lobe gap) and
+PGK1 rank top — their active sites in the cleft that closes on substrate — joined by the multidomain PKM and GPI.
+Cross-checked against known biology with the failures disclosed: the gap criterion correctly demotes PGAM1 (a compact
+single domain the raw cleft-span had false-positived by an arbitrary bisection); and NO domain-split metric can see
+LOOP-closure induced fit, so TPI1 (real induced fit via catalytic loop-6) scores flat — a true, stated false negative.
+
+This is the NEAR-FIELD structural layer the whole session found trustworthy: gene, reaction order, family, active-site
+residues, interactions and allostery per step are real and recoverable. HONEST LIMITS: the cleft-span is a
+single-structure PROXY for induced fit (a true apo-vs-holo domain-closure measurement needs two experimental
+conformers, which AlphaFold's single model doesn't provide); active sites/families are curated UniProt facts, not
+predictions; and none of this predicts the far-field cellular consequence of perturbing a step — that stays
+measurement's job. Sources: UniProt REST + AlphaFold DB (v6 via API) + cell DB, cached in scratchpad; biopython for
+structure parsing. (pathway_struct.py -> pathway_struct.json; `pstruct`.)
