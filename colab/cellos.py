@@ -1078,6 +1078,28 @@ class CellKernel:
             f"gain NOT claimed (needs docking + experiment).",
             "  net: a good LOSS/specificity screen (localise damage to the right partner x score it with the ΔΔG model); honest NO on new partners."])
 
+    def surface(self, args):
+        """RESEARCH: a REAL trained MaSIF-style surface-complementarity encoder (surface_fingerprint.py) — the honest
+        version of the surface-DL idea, built from REAL coordinates/chemistry of REAL complexes with a REAL contrastive
+        net, validated on HELD-OUT complexes. Two-sided result: learns interface-patch complementarity (discrimination
+        AUC ~0.66 vs 0.50 untrained -- training earns it) but exact partner-patch retrieval is only WEAKLY above chance
+        (residue-level features, no MSMS surface / APBS electrostatics -> coarser than real MaSIF).
+        usage: surface | surface run"""
+        if args and args[0].lower() in ("run", "rerun"):
+            import surface_fingerprint as _S; _S.main(); return "(surface-fingerprint trained live — see above)"
+        import json, os
+        p = "outputs/orphan/surface_fingerprint.json"
+        if not os.path.exists(p): return "surface: run 'surface run' (or python3 colab/surface_fingerprint.py) first."
+        d = json.load(open(p))
+        return "\n".join([
+            "surface — REAL trained surface-complementarity encoder (not the random-weight mock):",
+            f"  data: {d['n_patches']:,} REAL patches from {d['n_complexes']} interface-labelled complexes; held out BY complex.",
+            f"  WORKS: discrimination AUC {d['held_out_auc']} vs {d['untrained_baseline_auc']} untrained baseline "
+            f"(training earns +{d['training_gain']}) — real, generalising surface-complementarity signal.",
+            f"  MOSTLY DOESN'T: exact partner-patch retrieval top-1 {d['retrieval_top1']:.1%} (chance {d['retrieval_chance_top1']:.1%}), "
+            f"top-5 {d['retrieval_top5']:.1%} (chance {d['retrieval_chance_top5']:.1%}) — only weakly above chance.",
+            "  limit: residue-level features, NO MSMS surface mesh / APBS electrostatics -> coarser than real MaSIF; near-field structure, not novel-PPI discovery."])
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1746,6 +1768,8 @@ class CellKernel:
                        induction vs measured SKEMPI — rotamers fix buried-clash physics (33%->4% expl), chem lifts r->0.52
   screen               RESEARCH: ΔΔG node as a PPI partner-screen — localise a mutation's LOSS to the right partner
                        (top-1 98%); magnitude needs the full model (burial alone ~0); NOVEL-partner gain NOT claimed
+  surface              RESEARCH: REAL trained MaSIF-style surface-complementarity encoder (vs the random-weight mock) —
+                       held-out discrimination AUC 0.66 vs 0.50 untrained; exact retrieval only weakly above chance
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1820,6 +1844,7 @@ class CellShell:
             if cmd in ("interface", "hotspot"): return k.interface(args)
             if cmd in ("flex", "physics"): return k.flex(args)
             if cmd in ("screen", "ppi_screen"): return k.screen(args)
+            if cmd in ("surface", "masif"): return k.surface(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])

@@ -2300,3 +2300,40 @@ than fabricate a gain result.
 alone" — which works because it's near-field structure; and an **honest NO** on novel-partner discovery, which is the
 dynamics-side problem the whole project keeps finding does not compose. (ppi_screen.py → ppi_screen.json; `screen` /
 `screen run`.)
+
+## surface_fingerprint / surface — the REAL trained MaSIF-style model (after a mock was exposed)
+
+A "SurfaceDLFramework" deep-learning model was proposed — geometric surface fingerprinting to screen the proteome for
+"neo-morphic interaction candidates." Running and dissecting it showed it was a **mock**: the "trained Mesh-CNN/PointNet
+weights" were `np.random.normal(seed=42)` (trained on nothing), the "proteome database" was `np.random.uniform` noise,
+the protein IDs were fabricated by arithmetic (`ENSG00000{100000+idx//20}`, and they change with the random seed), the
+"99% match confidence" was an artifact of a rank-6 bottleneck (garbage 6-value patches scored 98–99% too), and the "59×
+speedup" compared two unrelated operations with an O(N²)-as-linear extrapolation (off by 200×). It also claimed to solve
+the exact **novel-PPI** task that `ppi_screen` had just concluded is not solvable without docking + experiment.
+
+So I built the **honest, real version** (surface_fingerprint.py → the `surface` syscall): REAL surface patches from REAL
+atomic coordinates + REAL residue chemistry of REAL interface-labelled complexes (**58,121 patches, 139 complexes,
+13,921 true contacting patch-pairs**), a REAL contrastive encoder **trained by gradient descent** (torch), **validated on
+complexes held out by GroupKFold** (no complex in both train and test). The objective is the real MaSIF one: embed
+surface patches so that patches that actually **contact** across an interface land close (surface complementarity).
+
+**Two-sided honest result:**
+- **What works — pairwise discrimination.** On held-out complexes the trained encoder separates true interface
+  patch-pairs from non-contacting pairs at **AUC 0.66**, versus **0.50** for the untrained raw-feature-cosine baseline —
+  so learning complementarity adds **+0.16** of real, generalising signal, and (unlike the mock) **training earns it**.
+- **What mostly doesn't — exact retrieval.** Given a patch, finding its *actual* partner patch among hard decoys (other
+  surface patches on the same partner protein) is only **weakly above chance** — top-1 **2.2%** vs 1.5%, top-5 **11.2%**
+  vs 7.7% (a consistent ~1.4× lift in every fold, not solved). Pinpointing the one right patch among dozens of
+  near-interface patches needs finer spatial resolution than residue-level features carry.
+
+**Honest limits driving the ceiling:** residue-level features (geometry-from-atoms + chemistry-from-identity), **no MSMS
+molecular-surface mesh and no APBS electrostatics** — coarser than real MaSIF, which uses true surfaces + Poisson-Boltzmann
+fields and reports stronger discrimination *and* usable retrieval. Trained on the 139 real complexes we have, **not
+20,000 proteins**: surface-complementarity training needs **complexes** for interface labels (monomers have none), so the
+20k-monomer "proteome DB" is a downstream fetch that would **not** change this validated accuracy. And this is near-field
+surface **structure**, **not** validated discovery of a novel PPI.
+
+**The point:** the truth (0.66 AUC, at-chance exact retrieval) is *less* impressive than the mock's 99%-confidence
+fiction — and that gap is the lesson. The approach is real and the signal is real; MaSIF-grade performance needs the
+molecular-surface + electrostatics tooling this environment lacks. (surface_fingerprint.py → surface_fingerprint.json;
+`surface` / `surface run`.)
