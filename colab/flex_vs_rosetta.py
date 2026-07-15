@@ -53,6 +53,8 @@ def main():
         sc = fp.sidechain_vdw(t, r["chain"], r["pos"], wt=r["wt"])
         if sc is None:
             continue
+        # NB: sc["desolv"] (implicit desolvation) is available but LEFT OUT — adding it dropped held-out Pearson
+        # 0.528->0.515 on this set (weak, r~-0.18, largely redundant with the buried-contact count). Honest negative.
         X.append(ih._feat(r) + [sc["vdw"], sc["contacts"], sc["elec"], sc["induc"]])
         Y.append(r["ddg"]); grp.append(r["pdb"])
     per_mut_ms = 1000 * (time.time() - t0) / max(len(Y), 1)

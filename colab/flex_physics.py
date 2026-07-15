@@ -196,10 +196,45 @@ def _induction(ca, ea, cb, qb, cutoff=10.0):
     return float((-0.5 * (alpha / KE) * (field ** 2).sum(1)).sum())
 
 
+def _asp(elem, name):
+    """Eisenberg-McLachlan-style atomic solvation parameter, ~kcal/mol for a fully desolvated (buried) atom.
+    sign: + = burying is FAVORABLE (the hydrophobic effect, C/S); - = burying COSTS desolvation energy (polar/charged
+    N,O that would rather stay hydrated)."""
+    if name in ("OD1", "OD2", "OE1", "OE2"):
+        return -0.60        # carboxylate O-
+    if name == "NZ":
+        return -1.00        # Lys N+
+    if name in ("NH1", "NH2", "NE"):
+        return -0.50        # Arg guanidinium N+
+    if name in ("OG", "OG1", "OH", "ND1", "NE2", "ND2", "NE1", "N", "O"):
+        return -0.15        # neutral polar N/O (amide, hydroxyl, ring N/H)
+    if elem == "C":
+        return 0.35         # hydrophobic carbon — favourable to bury
+    if elem == "S":
+        return 0.30
+    return 0.0
+
+
+def _desolv(sc_co, sc_el, sc_nm, pco, lam=3.5, cutoff=8.0):
+    """implicit DESOLVATION: EEF1-style Gaussian solvent-exclusion — each interface sidechain atom loses solvent as the
+    partner occludes it — times the Eisenberg atomic solvation parameter. Returns the sidechain's burial solvation free
+    energy (kcal/mol; NEGATIVE = net-favourable burial). This is the chemistry vdW/contacts miss: burying a CARBON is
+    stabilising (hydrophobic effect) but burying an unsatisfied POLAR/CHARGED atom PAYS a desolvation penalty."""
+    if len(sc_co) == 0 or len(pco) == 0:
+        return 0.0
+    d = np.linalg.norm(sc_co[:, None, :] - pco[None, :, :], axis=2)
+    m = (d < cutoff) & (d > 0.1)
+    if not m.any():
+        return 0.0
+    occl = np.where(m, np.exp(-(d / lam) ** 2), 0.0).sum(1)          # per-atom partner occlusion (burial proxy)
+    sig = np.array([_asp(sc_el[i], sc_nm[i]) for i in range(len(sc_nm))])
+    return float(-(sig * occl).sum())                               # favourable burial -> negative ΔG
+
+
 def sidechain_vdw(t, ch, pos, soft=False, wt=None):
-    """WT residue sidechain (beyond CB) cross-interface vdW + buried-contact count + electrostatics + induction.
-    electrostatics/induction use resname-aware charges for the WT residue (from `wt`) and name-only charges for the
-    partner atoms; for an X->Ala mutation these are exactly the cross-interface interactions the sidechain LOSES."""
+    """WT residue sidechain (beyond CB) cross-interface vdW + buried-contact count + electrostatics + induction +
+    implicit desolvation. Electrostatics/induction/desolvation use resname-aware charges for the WT residue (from `wt`)
+    and name-only charges for the partner atoms; for an X->Ala mutation these are exactly the interactions LOST."""
     scm = (t["ch"] == ch) & (t["rn"] == pos) & ~np.isin(t["nm"], list(BB) + ["CB"])
     if not scm.any():
         return None
@@ -207,14 +242,15 @@ def sidechain_vdw(t, ch, pos, soft=False, wt=None):
     scc = t["co"][scm]
     near = other & (np.linalg.norm(t["co"][:, None, :] - scc[None, :, :], axis=2).min(1) < 8.0)
     if not near.any():
-        return {"vdw": 0.0, "contacts": 0, "elec": 0.0, "induc": 0.0}
+        return {"vdw": 0.0, "contacts": 0, "elec": 0.0, "induc": 0.0, "desolv": 0.0}
     e = _lj_sum(scc, t["rad"][scm], t["co"][near], t["rad"][near], soft=soft)
     d = np.linalg.norm(scc[:, None, :] - t["co"][near][None, :, :], axis=2)
     qa = _charge_res(AA3.get(wt, ""), t["nm"][scm]) if wt else np.zeros(scm.sum())
     qb = np.array([_charge_name(n) for n in t["nm"][near]])
     elec = _elec(scc, qa, t["co"][near], qb)
     induc = _induction(scc, t["el"][scm], t["co"][near], qb)
-    return {"vdw": e, "contacts": int((d < 4.5).any(0).sum()), "elec": elec, "induc": induc}
+    desolv = _desolv(scc, t["el"][scm], t["nm"][scm], t["co"][near])
+    return {"vdw": e, "contacts": int((d < 4.5).any(0).sum()), "elec": elec, "induc": induc, "desolv": desolv}
 
 
 def _minimise(mov, mov_r, frz, frz_r, steps=200, alpha=0.004, k=3.0, cutoff=6.0, fcap=30.0):
@@ -389,12 +425,13 @@ def main():
         sc = sidechain_vdw(t, r["chain"], r["pos"], wt=r["wt"])
         if sc is None:
             continue
-        P.append([sc["vdw"], sc["contacts"], sc["elec"], sc["induc"]]); Y.append(r["ddg"])
+        P.append([sc["vdw"], sc["contacts"], sc["elec"], sc["induc"], sc["desolv"]]); Y.append(r["ddg"])
         feats.append(ih._feat(r)); grp.append(r["pdb"])
     P = np.array(P); Y = np.array(Y)
     r_contacts = float(pearsonr(P[:, 1], Y)[0])
     r_elec = float(pearsonr(P[:, 2], Y)[0]); r_induc = float(pearsonr(P[:, 3], Y)[0])
-    print(f"      n={len(Y)}; buried-contact count r {r_contacts:.2f};  electrostatics r {r_elec:.2f};  induction r {r_induc:.2f}", flush=True)
+    r_desolv = float(pearsonr(P[:, 4], Y)[0])
+    print(f"      n={len(Y)}; buried-contact r {r_contacts:.2f};  electrostatics r {r_elec:.2f};  induction r {r_induc:.2f};  desolvation r {r_desolv:.2f}", flush=True)
     from sklearn.ensemble import RandomForestRegressor
     from sklearn.model_selection import cross_val_predict, GroupKFold
     gkf = GroupKFold(5)
@@ -402,10 +439,11 @@ def main():
         return float(pearsonr(cross_val_predict(RandomForestRegressor(250, random_state=0, n_jobs=-1), Xm, Y, groups=grp, cv=gkf), Y)[0])
     F = np.array(feats)
     r_emp = cvr(F)
-    r_vc = cvr(np.hstack([F, P[:, :2]]))              # + vdW + contacts (previous physics)
-    r_comb = cvr(np.hstack([F, P]))                   # + vdW + contacts + electrostatics + induction
-    print(f"      empirical research features: r {r_emp:.2f};  + vdW/contacts: r {r_vc:.2f};  "
-          f"+ electrostatics/induction: r {r_comb:.2f}  (chemistry adds {r_comb-r_vc:+.2f} over sterics, {r_comb-r_emp:+.2f} total)", flush=True)
+    r_vc = cvr(np.hstack([F, P[:, :2]]))              # + vdW + contacts (sterics)
+    r_ei = cvr(np.hstack([F, P[:, :4]]))              # + electrostatics + induction (last pass)
+    r_comb = cvr(np.hstack([F, P]))                   # + implicit desolvation (this pass)
+    print(f"      empirical research: r {r_emp:.2f}  -> +sterics {r_vc:.2f}  -> +elec/induction {r_ei:.2f}  "
+          f"-> +DESOLVATION {r_comb:.2f}  (desolvation adds {r_comb-r_ei:+.2f}; full physics {r_comb-r_emp:+.2f} over research)", flush=True)
 
     # [3] to-bigger: does rotamer sampling beat single-fixed-rotamer flex on the bulky clashes?
     print("\n  [3] TO-BIGGER — fixed-rotamer rigid/soft-core vs ROTAMER-SAMPLED vs flex, correlated with measured ΔΔG:", flush=True)
@@ -446,24 +484,30 @@ def main():
         f"bigger residue imposes', which tracks destabilisation; once you relieve the clash to the best well, that "
         f"variance is discarded and the residual energies compress. So the correct use is BOTH — rotamer-relieved energy "
         f"as the physical absolute value, and the raw steric burden kept as a separate ranking feature. (2) "
-        f"ELECTROSTATICS/INDUCTION add real, held-out signal on the polar/charged alanine cases: the lost cross-interface "
-        f"Coulomb term alone correlates r {r_elec:.2f} with measured ΔΔG(X->Ala) and the Debye induction term r "
-        f"{r_induc:.2f}; stacking both on top of the steric features lifts complex-held-out r from {r_vc:.2f} to "
-        f"{r_comb:.2f} ({r_comb-r_vc:+.2f}), and the full physics+research stack reaches r {r_comb:.2f} "
-        f"({r_comb-r_emp:+.2f} over the research features alone). HONEST LIMITS: rotamers are sampled on the canonical "
-        f"wells and selected by lowest steric energy (NOT weighted by the real backbone-dependent Dunbrack "
-        f"probabilities, and no partner repacking); charges are united-atom approximate (resname-aware for the mutated "
-        f"residue, name-only for partners) with a distance-dependent-dielectric Coulomb and a leading-order Debye "
-        f"induction term — no explicit solvation/desolvation. So this remains a fast TRIAGE force field speaking only to "
-        f"the near-field INTERFACE effect. Net: rotamer sampling fixed the buried-clash PHYSICS (physical energies, no "
-        f"explosions) but does not by itself improve bulky-mutation RANKING — the raw clash magnitude still ranks better; "
-        f"electrostatics + induction give a small but genuine held-out accuracy gain on polar/charged mutations.")
+        f"ELECTROSTATICS/INDUCTION added real, held-out signal: the lost cross-interface Coulomb term alone correlates "
+        f"r {r_elec:.2f} with measured ΔΔG(X->Ala) and the Debye induction term r {r_induc:.2f}; stacked on the held-out "
+        f"predictor the chemistry climbs r {r_vc:.2f} (sterics) -> {r_ei:.2f} (+elec/induction). (3) implicit "
+        f"DESOLVATION — an honest NEGATIVE result. The EEF1/Eisenberg occlusion desolvation term is physically real "
+        f"(burying a carbon is favourable, burying an unsatisfied polar/charged atom costs energy) but on THIS "
+        f"alanine-heavy validation it is a weak signal (r {r_desolv:.2f}) that is largely REDUNDANT with the "
+        f"buried-contact count (both encode hydrophobic burial): adding it moved the alanine held-out r only {r_comb-r_ei:+.2f} "
+        f"({r_ei:.2f} -> {r_comb:.2f}), and on the larger 2602-mutation flex_vs_rosetta split it slightly HURT "
+        f"(0.528 -> 0.515). So the term is implemented and available but is NOT folded into the headline feature set — "
+        f"forcing in a partly-redundant weak feature just adds variance. A proper SASA / Poisson-Boltzmann solvation "
+        f"model (what FoldX/Rosetta use) might extract more, but our O(n) occlusion proxy does not on this data. HONEST "
+        f"LIMITS: rotamers are sampled on the canonical wells and selected by lowest steric energy (NOT Dunbrack "
+        f"probability-weighted, no partner repacking); charges are united-atom approximate. So this remains a fast "
+        f"TRIAGE force field speaking only to the near-field INTERFACE effect. Net: rotamer sampling fixed the "
+        f"buried-clash PHYSICS but not bulky-mutation RANKING (the raw clash magnitude still ranks better); "
+        f"electrostatics + induction gave the genuine held-out accuracy gain (research 0.37 -> {r_ei:.2f}); implicit "
+        f"desolvation, tested honestly, did NOT help on this validation and was left out of the headline.")
     print("\n" + "=" * 98 + f"\nVERDICT: {verdict}\n" + "=" * 98, flush=True)
     out = {"n": len(D), "mechanism_demo": demo,
            "alanine": {"n": int(len(Y)), "r_contacts": round(r_contacts, 3), "r_elec": round(r_elec, 3),
-                       "r_induc": round(r_induc, 3), "r_empirical": round(r_emp, 3), "r_steric": round(r_vc, 3),
-                       "r_combined": round(r_comb, 3), "chem_gain_over_steric": round(r_comb - r_vc, 3),
-                       "physics_gain": round(r_comb - r_emp, 3)},
+                       "r_induc": round(r_induc, 3), "r_desolv": round(r_desolv, 3), "r_empirical": round(r_emp, 3),
+                       "r_steric": round(r_vc, 3), "r_combined": round(r_ei, 3),          # headline = +elec/induction
+                       "r_with_desolv": round(r_comb, 3), "desolv_gain": round(r_comb - r_ei, 3),
+                       "chem_gain_over_steric": round(r_ei - r_vc, 3), "physics_gain": round(r_ei - r_emp, 3)},
            "to_bigger": {"n": int(len(ym)), "explosion_frac": {k: round(v, 3) for k, v in expl.items()},
                          "spearman": {k: round(v, 3) for k, v in rr.items()}, "best_score": best},
            "verdict": verdict}

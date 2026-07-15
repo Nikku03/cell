@@ -2243,3 +2243,24 @@ Net: rotamer sampling fixed the buried-clash PHYSICS (physical energies, no expl
 clash magnitude still ranks better there. Electrostatics + induction gave the genuine held-out accuracy gain
 (0.47→0.53). Both conclusions are measured against real SKEMPI, not assumed. (flex_physics.py, flex_vs_rosetta.py;
 `flex` / `flex run` / `flex rosetta`.)
+
+### Implicit desolvation — an honest NEGATIVE result (added, tested, left out)
+
+Then asked to add an implicit **desolvation** term (the highest-value *cheap* physics we were missing: burying a carbon
+is favourable via the hydrophobic effect, but burying an unsatisfied polar/charged atom pays a desolvation penalty).
+Implemented an EEF1/Eisenberg-style occlusion term — the partner atoms Gaussian-occlude solvent from each interface
+sidechain atom, times an Eisenberg atomic solvation parameter — which is **O(n)**, so no speed cost. Then measured it,
+and the honest answer is that **it did not help on our validation:**
+
+- On its own it's a weak signal (r **−0.18** with measured ΔΔG(X→Ala)) that is **largely redundant** with the
+  buried-contact count (r 0.47) — both mostly encode hydrophobic burial, and alanine hotspots are hydrophobic/aromatic
+  anyway, so the polar/charged distinction desolvation uniquely adds is a minority of the cases.
+- Folded into the predictor it moved the alanine held-out r only **+0.01** (0.52→0.53, within noise), and on the larger
+  2,602-mutation flex_vs_rosetta split it slightly **HURT** (Pearson **0.528 → 0.515**) — a partly-redundant weak
+  feature just adds variance the RF overfits on the training folds.
+
+So per the "only keep it if it genuinely improves the model" rule, the desolvation term is **implemented and available**
+(`sidechain_vdw(...)["desolv"]`, `_desolv`/`_asp`) but is **NOT folded into the headline feature set**; the honest best
+stays at Pearson 0.528 from sterics + electrostatics + induction. A proper SASA / Poisson-Boltzmann solvation model (what
+FoldX/Rosetta actually use) might extract more than an O(n) occlusion proxy — but on this alanine-heavy validation, the
+cheap version doesn't earn its place, and I'm reporting that rather than dressing up a +0.01. (flex_physics.py [2].)
