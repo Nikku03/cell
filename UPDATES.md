@@ -2337,3 +2337,27 @@ surface **structure**, **not** validated discovery of a novel PPI.
 fiction — and that gap is the lesson. The approach is real and the signal is real; MaSIF-grade performance needs the
 molecular-surface + electrostatics tooling this environment lacks. (surface_fingerprint.py → surface_fingerprint.json;
 `surface` / `surface run`.)
+
+### Desolvation, retested the RIGHT way — real SASA + the satisfaction correction (honest: correct but redundant here)
+
+The crude occlusion desolvation above hurt the model (0.528→0.515). Asked to try it properly — the Lazaridis-Karplus
+(EEF1) idea with real **SASA** and the **hydrophobic-illusion / satisfaction correction** — I built desolv_eef1.py (the
+`desolv` syscall): **real Shrake-Rupley SASA** (Bio.PDB), bound-in-complex vs unbound-isolated-chain, for the burial
+area; hydrophobic (C/S) burial rewarded; and the key fix — a buried **polar/charged** atom is taxed the desolvation cost
+**only when UNSATISFIED** (no H-bond/salt partner N/O within 3.5 Å across the interface); a satisfied one gets the tax
+waived.
+
+**Honest result on the complex-held-out alanine task (n=1156):**
+- **The physics validates.** Hydrophobic-buried area tracks measured ΔΔG at **r +0.38**, and the satisfaction correction
+  genuinely separates **satisfied**-polar burial (r +0.25) from **unsatisfied**-polar burial (r −0.05) — two distinct
+  signals the crude blanket-penalty term collapsed into one.
+- **It fixes the crude term's flaw** — it no longer *hurts*.
+- **But it does not improve held-out accuracy**: baseline (research + sterics + elec/induction) **0.522 → +EEF1-desolv
+  0.522 (+0.000)**. The hydrophobic-burial signal is already captured by the vdW + buried-contact features, and the
+  alanine scan (which *removes* a sidechain) is a weak place for a desolvation term to add orthogonal value.
+
+**Where it *would* matter:** the satisfaction penalty's designed strength is scoring a mutation that **introduces** a
+buried *unsatisfied* polar/charged group — which needs the mutant's SASA (rotamer-placed), a bigger build and the honest
+next step. So this is a **correct, more physical, no-longer-harmful** desolvation term that I'm **not** folding into the
+headline (0.528 stays) — same discipline: keep only what measurably helps, and report the rest straight. (desolv_eef1.py
+→ desolv_eef1.json; `desolv` / `desolv run`.)

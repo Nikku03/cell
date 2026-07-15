@@ -1100,6 +1100,28 @@ class CellKernel:
             f"top-5 {d['retrieval_top5']:.1%} (chance {d['retrieval_chance_top5']:.1%}) — only weakly above chance.",
             "  limit: residue-level features, NO MSMS surface mesh / APBS electrostatics -> coarser than real MaSIF; near-field structure, not novel-PPI discovery."])
 
+    def desolv(self, args):
+        """RESEARCH: retest of an implicit-DESOLVATION term done the RIGHT way (desolv_eef1.py) — real Shrake-Rupley SASA
+        (bound vs unbound) + the 'hydrophobic-illusion' SATISFACTION correction (a buried polar/charged atom is only
+        taxed when it has NO H-bond/salt partner across the interface). Honest outcome: the physics validates
+        (hydrophobic-buried r ~0.38; satisfaction separates satisfied +0.25 vs unsatisfied -0.05 polar burial) and it
+        fixes the crude version's flaw (no longer HURTS), but on the alanine held-out task it adds ~0.00 because the
+        burial signal is already captured by vdW+contacts. Correct term, not a headline gain here.
+        usage: desolv | desolv run"""
+        if args and args[0].lower() in ("run", "rerun"):
+            import desolv_eef1 as _E; _E.main(); return "(desolv-EEF1 retest ran live — see above)"
+        import json, os
+        p = "outputs/orphan/desolv_eef1.json"
+        if not os.path.exists(p): return "desolv: run 'desolv run' (or python3 colab/desolv_eef1.py) first."
+        d = json.load(open(p))
+        return "\n".join([
+            "desolv — implicit desolvation retested with REAL SASA + satisfaction correction (EEF1):",
+            f"  physics validates: hydrophobic-buried r {d['r_hydro']:+.2f}; satisfaction separates polar burial "
+            f"(satisfied r {d['r_sat_polar']:+.2f} vs UNSATISFIED r {d['r_unsat_polar']:+.2f}).",
+            f"  held-out alanine Pearson: baseline {d['r_base']} -> +EEF1-desolv {d['r_eef1']} ({d['eef1_gain']:+.3f}); "
+            f"crude occlusion desolv {d['r_crude']}.",
+            f"  verdict: {'folds in — real gain' if d['eef1_helps'] else 'correct + more physical + no longer HURTS, but ~0 gain on alanine (burial already captured by vdW+contacts) -> NOT folded into headline'}."])
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1770,6 +1792,8 @@ class CellKernel:
                        (top-1 98%); magnitude needs the full model (burial alone ~0); NOVEL-partner gain NOT claimed
   surface              RESEARCH: REAL trained MaSIF-style surface-complementarity encoder (vs the random-weight mock) —
                        held-out discrimination AUC 0.66 vs 0.50 untrained; exact retrieval only weakly above chance
+  desolv               RESEARCH: desolvation retested w/ REAL SASA + satisfaction correction — physics validates
+                       (hydrophobic r 0.38) but ~0 held-out gain on alanine (burial already captured); honest, not folded in
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1845,6 +1869,7 @@ class CellShell:
             if cmd in ("flex", "physics"): return k.flex(args)
             if cmd in ("screen", "ppi_screen"): return k.screen(args)
             if cmd in ("surface", "masif"): return k.surface(args)
+            if cmd in ("desolv", "eef1"): return k.desolv(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
