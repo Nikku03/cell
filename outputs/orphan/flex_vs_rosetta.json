@@ -6,7 +6,7 @@
   "rmse": 1.18,
   "auc_destabilising": 0.806,
   "n": 2602,
-  "cost_ms_per_mut": 2.3,
+  "cost_ms_per_mut": 2.1,
   "split": "complex-held-out (GroupKFold)"
  },
  "all_mutation_pearson": 0.359,
