@@ -973,6 +973,36 @@ class CellKernel:
         out.append("  induced-fit ranking: HK1 & PGK1 (domain-closure) top; PGAM1 demoted (compact); TPI1 loop-closure missed.")
         return "\n".join(out)
 
+    def enzyme(self, args):
+        """RESEARCH finding: what governs metabolic enzyme essentiality? (enzyme_patterns.py, multidimensional over
+        2,511 enzymes, held-out). Two independent axes: CENTRALITY (in a complex / many pathways / PPI hub / specialist)
+        is dominant, and PARALOG BUFFERING (lacking a sequence-family isoenzyme backup) is a real orthogonal second
+        axis. Full model AUC 0.862 vs null 0.51. The run self-corrected: a confounded reaction-redundancy proxy gave a
+        WRONG answer until true sequence-family paralogs were measured.
+        usage: enzyme | enzyme run"""
+        if args and args[0].lower() in ("run", "rerun"):
+            import enzyme_patterns as _E
+            _E.main()
+            return "(enzyme-patterns research ran live — see output above)"
+        import json, os
+        p = "outputs/orphan/enzyme_patterns.json"
+        if not os.path.exists(p):
+            return "enzyme: run 'enzyme run' (or python3 colab/enzyme_patterns.py) first."
+        d = json.load(open(p)); u = d["univariate"]
+        top = sorted(u.items(), key=lambda kv: -abs(kv[1]["effect"]))[:5]
+        out = [f"enzyme — what makes a metabolic enzyme essential? ({d['n_enzymes']:,} enzymes, held-out AUC "
+               f"{d['auc_full']} vs null {d['auc_null']}):",
+               "  dimensions by effect size (essential vs not):"]
+        for f, v in top:
+            arrow = "↑" if v["effect"] > 0 else "↓"
+            out.append(f"    {f:18} {arrow} effect {v['effect']:+.2f}  (AUC alone {d['solo_auc'][f]})")
+        out += ["  TWO INDEPENDENT AXES:",
+                "    1. CENTRALITY (dominant): in a complex, many pathways, PPI hub, and a SPECIALIST (fewer reactions)",
+                "    2. PARALOG BUFFERING (real): essential enzymes lack a sequence-family isoenzyme backup (median 0 vs 2)",
+                "  self-correction: the reaction-redundancy proxy was CONFOUNDED and reversed buffering's sign until",
+                "                   true sequence families were fetched — a confident wrong answer, fixed by measurement."]
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1633,6 +1663,8 @@ class CellKernel:
                        knockouts? tested: barely, and WORSE for novel perturbations — the M-L-M Phase-2 premise fails
   pstruct              structural dossier for a known pathway's steps (glycolysis): gene/reaction-order/family/active-
                        site residues/PPI/allostery + a cross-checked induced-fit (domain-closure) signal — real data
+  enzyme               RESEARCH: what makes a metabolic enzyme essential? two axes — CENTRALITY (dominant) + PARALOG
+                       buffering (real); AUC 0.86. self-corrected a confounded proxy ('enzyme run')
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1703,6 +1735,7 @@ class CellShell:
             if cmd in ("fieldsim", "fields"): return k.fieldsim(args)
             if cmd in ("latent", "bridge"): return k.latent(args)
             if cmd in ("pstruct", "pathstruct"): return k.pstruct(args)
+            if cmd in ("enzyme", "enzymes"): return k.enzyme(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])

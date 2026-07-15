@@ -2125,3 +2125,29 @@ conformers, which AlphaFold's single model doesn't provide); active sites/famili
 predictions; and none of this predicts the far-field cellular consequence of perturbing a step — that stays
 measurement's job. Sources: UniProt REST + AlphaFold DB (v6 via API) + cell DB, cached in scratchpad; biopython for
 structure parsing. (pathway_struct.py -> pathway_struct.json; `pstruct`.)
+
+## enzyme_patterns / enzyme — research: what governs metabolic enzyme essentiality (a self-correcting finding)
+
+Turned the structural work into actual research: a multidimensional analysis over 2,511 metabolic enzymes asking what
+makes one ESSENTIAL (DepMap dep_frac>0.5, 9% of them), with a held-out model, a label-shuffled null, and effect sizes
+(enzyme_patterns.py -> the `enzyme` syscall). Dimensions: reaction-redundancy, sequence-family paralogs, LOEUF
+constraint, PPI degree, co-dependency degree, complex membership, # reactions, # pathways, disease count, master.
+
+**Finding — two independent axes (held-out AUC 0.862 vs null 0.51):**
+1. **CENTRALITY (dominant).** Essential enzymes are embedded and irreplaceable-by-position: in a protein complex
+   (effect +0.50, the single strongest), spanning many pathways (+0.48), PPI hubs (+0.42) — and, notably, SPECIALISTS
+   (they catalyse FEWER reactions, -0.31, not more). Evolutionary constraint (LOEUF -0.35) is a correlated axis.
+2. **PARALOG BUFFERING (real, orthogonal).** Essential enzymes lack a same-family isoenzyme backup — median 0 vs 2
+   sequence-family paralogs (effect -0.30, p=2e-14), and this adds +0.021 AUC on top of centrality alone. An enzyme is
+   indispensable when it sits at a central junction AND has no twin to cover for it.
+
+**The process is the point — a live self-correction.** I went in expecting the paralog-buffering law. My first
+redundancy proxy — genes sharing a REACTION — not only failed but *reversed the sign* (essential enzymes appeared to
+have MORE "backups"), because that proxy counts obligate complex co-members as isoenzymes. Rather than trust the
+confident wrong answer, I fetched UniProt sequence FAMILIES for all 2,549 enzymes and measured true paralogs — and
+buffering came back clean and correct. It's the session's core discipline in miniature: a confounded proxy gives a
+confident wrong answer until a better measurement corrects it. HONEST LIMITS: UniProt family granularity varies (broad
+superfamilies dilute paralog counts); centrality's sub-features are correlated (one latent axis); LOEUF and dep_frac
+are both importance measures; and this explains WHICH enzymes are essential, not the phenotype of removing one — the
+near-field structure/network layer that IS recoverable, unlike the far-field dynamics. (enzyme_patterns.py ->
+enzyme_patterns.json; `enzyme` / `enzyme run`.)
