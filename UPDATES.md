@@ -2151,3 +2151,29 @@ superfamilies dilute paralog counts); centrality's sub-features are correlated (
 are both importance measures; and this explains WHICH enzymes are essential, not the phenotype of removing one — the
 near-field structure/network layer that IS recoverable, unlike the far-field dynamics. (enzyme_patterns.py ->
 enzyme_patterns.json; `enzyme` / `enzyme run`.)
+
+## interface_hotspots / interface — the pattern INSIDE PPIs at the amino-acid level (for the single-nucleotide-mutation goal)
+
+The real ask: for the mutation problem, find which residues at a PPI interface actually CARRY the interaction, so a
+single amino-acid change there predictably alters binding. Built on SKEMPI 2.0 — 4,956 MEASURED single-point interface
+mutations across 345 real complex structures, each with the change in binding affinity (ΔΔG) and, for ~1,400, the on/off
+rates (interface_hotspots.py -> the `interface` syscall). Four findings, all from measured data:
+
+- **Position carries the energy (the hotspot / O-ring law, reproduced).** By SKEMPI's interface classification, buried
+  CORE residues have mean |ΔΔG| **1.92** kcal/mol (**38% hotspots** >2), support 1.48, rim 0.84, surface **0.29 (0%
+  hotspots)**. Binding energy is concentrated in a few buried residues; rim/surface mutations mostly don't matter.
+- **Identity matters.** The strongest hotspot residues are the **aromatic/charged** ones (Y, R, K, F, D, W, L, E);
+  small/flexible ones (S, V, Q, A, N) are weak. Alanine scan: 516/2,878 X→Ala mutations are hotspots (ΔΔG>2).
+- **Barrier vs stability (the energy-barrier / induced-fit axis).** With on/off rates, a mutation weakens binding
+  **~68% by destabilising the bound state** (faster off-rate) and **~32% by raising the association barrier** (slower
+  on-rate) — so the kinetics separate an encounter-barrier effect from a stability/induced-fit effect.
+- **Predict ΔΔG.** From residue change + interface depth ALONE, complex-held-out **Pearson 0.36** (Spearman 0.40) —
+  honest for simple features (full structural predictors like mCSM-PPI2/BeAtMuSiC reach ~0.5-0.6 on blind splits by
+  adding real interface burial/contacts, so there's headroom by fetching the complex geometry). Top features:
+  interface depth, Δvolume, Δhydropathy.
+
+So for the mutation goal we CAN flag which interface positions are load-bearing (core, aromatic/charged, high predicted
+ΔΔG) and whether a variant there will act via the barrier or the stability — a genuine near-field structural
+capability, the recoverable side of the ledger. HONEST LIMITS: r~0.36 means we TRIAGE/RANK interface variants, we don't
+nail every ΔΔG; SKEMPI is biased to well-studied complexes; and it needs a solved/predicted COMPLEX structure to place
+the residue at an interface (no complex -> no call). (interface_hotspots.py -> interface_hotspots.json; `interface`.)

@@ -1003,6 +1003,31 @@ class CellKernel:
                 "                   true sequence families were fetched — a confident wrong answer, fixed by measurement."]
         return "\n".join(out)
 
+    def interface(self, args):
+        """RESEARCH: the pattern INSIDE PPIs at the amino-acid level (interface_hotspots.py) — which interface residues
+        carry a PPI so a mutation there changes binding. From SKEMPI 2.0 (4,956 MEASURED single-point interface
+        mutations, 345 complexes): the buried CORE carries the energy (mean |ΔΔG| 1.92, 38% hotspots) vs rim/surface
+        (~0); hotspot residues are the large/charged/aromatic ones (L,K,W,Y,F,R,D); a mutation acts ~68% by
+        destabilising the bound state and ~32% by raising the association barrier; and ΔΔG is predictable from residue
+        change + interface depth at complex-held-out r 0.36 (triage, not exact). The near-field structural handle on the
+        single-nucleotide-mutation problem.
+        usage: interface | interface run"""
+        if args and args[0].lower() in ("run","rerun"):
+            import interface_hotspots as _I; _I.main(); return "(interface-hotspot research ran live — see above)"
+        import json, os
+        p="outputs/orphan/interface_hotspots.json"
+        if not os.path.exists(p): return "interface: run 'interface run' (or python3 colab/interface_hotspots.py) first."
+        d=json.load(open(p)); bp=d["by_position"]; k=d["kinetics"]
+        out=[f"interface — which amino acids carry a PPI, and will a mutation there change it? ({d['n_mutations']:,} measured, {d['n_complexes']} complexes):",
+             "  POSITION carries the energy (mean |ΔΔG| kcal/mol, %hotspot>2):"]
+        for loc in ("core","support","rim","surface"):
+            if loc in bp: out.append(f"    {loc:8} {bp[loc]['mean_abs_ddg']:>5}  ({bp[loc]['frac_hotspot_gt2']:.0%} hotspot)")
+        out+=["  HOTSPOT residues (mutating them hurts most): "+", ".join(d["alanine_hotspot_residues"][:6])+" (aromatic/charged)",
+              f"  a mutation weakens binding {1-k['barrier_dominated_frac']:.0%} via bound-state STABILITY, {k['barrier_dominated_frac']:.0%} via association BARRIER",
+              f"  PREDICT ΔΔG from residue-change + interface-depth: complex-held-out r {d['predict_ddg_pearson']} (triage, not exact; headroom with full structure)",
+              "  -> flag load-bearing interface positions (core, aromatic/charged) where a variant will change the interaction."]
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1665,6 +1690,8 @@ class CellKernel:
                        site residues/PPI/allostery + a cross-checked induced-fit (domain-closure) signal — real data
   enzyme               RESEARCH: what makes a metabolic enzyme essential? two axes — CENTRALITY (dominant) + PARALOG
                        buffering (real); AUC 0.86. self-corrected a confounded proxy ('enzyme run')
+  interface            RESEARCH: which amino acids carry a PPI so a mutation there changes binding? (SKEMPI, 4,956
+                       measured) — buried CORE + aromatic/charged residues; barrier-vs-stability; predict ΔΔG r 0.36
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
   level GENE            where in its pathway the gene acts: metabolic step / signaling tier / feedback / abstain
   loc GENE              subcellular compartment(s) from reviewed UniProt (the science-run localization layer)
@@ -1736,6 +1763,7 @@ class CellShell:
             if cmd in ("latent", "bridge"): return k.latent(args)
             if cmd in ("pstruct", "pathstruct"): return k.pstruct(args)
             if cmd in ("enzyme", "enzymes"): return k.enzyme(args)
+            if cmd in ("interface", "hotspot"): return k.interface(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
             if cmd == "patch": return k.patch(args[0])
