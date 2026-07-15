@@ -2456,3 +2456,35 @@ vdW/contacts) and adds variance the RF overfits. Two extrinsic layers are **redu
 architectures are (a) a **pipeline** — dMaSIF *localises* which interface/partner, the ΔΔG node scores the *magnitude* —
 or (b) the **NEXUS intrinsic × extrinsic** pairing: a *folding-stability* sensor AND a *binding* sensor, which catch two
 orthogonal failure modes and genuinely stack. Fusion-of-two-extrinsics does not. (complementary.py → complementary.json.)
+
+## nexus / nexus — the dual-sensor enzyme-health node (intrinsic × extrinsic), with the three refinements
+
+The NEXUS design — two orthogonal ways a protein machine dies, each with its own sensor, combined into a graded activity
+that drives the metabolic model — is right, and the complementary.py result proved *why*: fusing two **extrinsic** layers
+was redundant, so the real pairing is **intrinsic × extrinsic**. Built it (nexus.py → the `nexus` syscall) from parts
+already on disk (ddg_predictor stability node, flex_physics binding, ecflux FBA), with the three refinements:
+
+- **#1 Soft AND, not Boolean:** `activity = folded_fraction(ΔΔG_fold) · bound_fraction(ΔΔG_bind)` — a product of two
+  two-state equilibrium fractions in [0,1], so partial damage → partial activity.
+- **#2 Extrinsic = loss only:** `bound_fraction` never rewards a mutation; no neomorphic-gain claim.
+- **#3 Validate, don't assume** — and it holds on **measured, non-circular** data.
+
+**The "you need both" thesis, measured (808 SKEMPI interface mutations):**
+- The two failure modes are **orthogonal**: Pearson(predicted ΔΔG_fold, measured ΔΔG_bind) = **0.15**. A stability-only
+  node **misses 94%** of the strong interface breakers — it literally cannot see them.
+- **Fusion value (complex-held-out CV):** classifying a real interface failure from the intrinsic sensor **alone is
+  near-chance (AUC 0.56)**; adding the extrinsic sensor (flex_physics interface features) lifts it to **0.75 (+0.19)**.
+  The second sensor is what catches the failure the first is blind to. This is non-circular (the extrinsic sensor is a
+  *prediction*, cross-validated — not the measured label).
+
+**Metabolic consequence (HumanGEM, an essential reaction):** the activity→flux mapping **works** — catastrophic damage
+→ activity 0.02 → biomass **0.04** (it propagates). But **moderate** damage is **buffered**: the two-state fractions
+saturate (a single mutation rarely fully unfolds a protein) and metabolic excess capacity absorbs moderate loss. That's
+real physics, not a bug.
+
+**Honest boundary:** the two **sensors** live in near-field **structure** — the recoverable regime, which is why they
+work and why the orthogonality is measurable. The last link — activity → FBA → whole-cell **phenotype** — is the
+**far-field dynamics** step this whole project keeps finding does *not* compose. So the metabolic step is a **wiring
+demonstration**, not a validated phenotype predictor; validating it needs measured IEM/essentiality outcomes. The
+dual-sensor node is real and the orthogonality that makes it necessary is measured; the structural half is trustworthy,
+the phenotype half is the honest open edge. (nexus.py → nexus.json; `nexus` / `nexus run`.)

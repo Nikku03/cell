@@ -1113,6 +1113,34 @@ class CellKernel:
                        f"{m['discrimination_auc']} (vs residue-patch {m['residue_patch_auc']}); retrieval {m['retrieval_lift_top5']}x chance — see 'dmasif'.")
         return "\n".join(out)
 
+    def nexus(self, args):
+        """RESEARCH: the dual-sensor enzyme-health node (nexus.py) — INTRINSIC stability (folding ΔΔG -> folded_fraction)
+        AND EXTRINSIC binding (interface ΔΔG -> bound_fraction) combined by a SOFT AND (graded product) into an activity
+        that drives the FBA. Validated non-circular on measured SKEMPI: the two failure modes are ORTHOGONAL (r 0.15),
+        so a stability-only node MISSES 94% of interface breakers; adding the extrinsic sensor lifts held-out AUC 0.56 ->
+        0.75. Honest boundary: sensors are near-field structure (solid); the FBA->phenotype step is far-field (buffered).
+        usage: nexus | nexus run"""
+        if args and args[0].lower() in ("run", "rerun"):
+            import nexus as _N; _N.main(); return "(nexus dual-sensor ran live — see above)"
+        import json, os
+        p = "outputs/orphan/nexus.json"
+        if not os.path.exists(p): return "nexus: run 'nexus run' (or python3 colab/nexus.py) first."
+        d = json.load(open(p))
+        out = ["nexus — dual-sensor enzyme health (intrinsic stability AND extrinsic binding), soft-AND -> FBA:",
+               f"  WHY BOTH (measured, non-circular, n={d['n']}): the two failure modes are ORTHOGONAL — "
+               f"Pearson(predicted ΔΔG_fold, measured ΔΔG_bind) {d['orthogonality_pearson']} — so the stability sensor "
+               f"MISSES {d['intrinsic_miss_rate']:.0%} of interface breakers.",
+               f"  FUSION (complex-held-out): intrinsic-only AUC {d['auc_intrinsic_only']} (~chance) -> +extrinsic "
+               f"{d['auc_nexus_dualsensor']} ({d['fusion_gain']:+.2f}) — the 2nd sensor catches what the 1st is blind to.",
+               "  SOFT-AND: activity = folded_fraction(ΔΔG_fold) × bound_fraction(ΔΔG_bind), graded not Boolean; binding is LOSS-only (no neomorphic gain)."]
+        if d.get("fba_demo"):
+            cc = {c["case"]: c for c in d["fba_demo"]["cases"]}
+            sev = cc.get("severe both (catastrophic)", {})
+            out.append(f"  FBA (demo, essential rxn): catastrophic damage -> activity {sev.get('activity')} -> biomass "
+                       f"{sev.get('biomass_frac')} (propagates); moderate damage BUFFERED (thermo saturation + excess capacity).")
+        out.append("  HONEST: sensors = near-field STRUCTURE (solid); FBA->phenotype = far-field (buffered/does-not-compose) — a demo, not a validated phenotype predictor.")
+        return "\n".join(out)
+
     def dmasif(self, args):
         """RESEARCH: Geodesic Surface Learning (dMaSIF approach; dmasif.py) — the fine surface-POINT representation that
         was the remaining gap to MaSIF-grade. Surface points (not residue centres) + a learnable QUASI-GEODESIC
@@ -1828,6 +1856,8 @@ class CellKernel:
                        AUC 0.65 vs 0.50 untrained; real APBS electrostatics+surface lifts 0.65->0.76 on 333 cplx ('surface apbs')
   dmasif               RESEARCH: Geodesic Surface Learning (dMaSIF) — surface points + learned geodesic conv + APBS;
                        discrimination AUC 0.85 (vs residue-patch 0.76) and retrieval ~13x chance (residue was ~1.4x)
+  nexus                RESEARCH: dual-sensor enzyme health — intrinsic stability AND extrinsic binding, soft-AND -> FBA;
+                       sensors ORTHOGONAL (stability misses 94% of interface breaks), fusion AUC 0.56->0.75; FBA=far-field
   desolv               RESEARCH: desolvation retested w/ REAL SASA + satisfaction correction — physics validates
                        (hydrophobic r 0.38) but ~0 held-out gain on alanine (burial already captured); honest, not folded in
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
@@ -1906,6 +1936,7 @@ class CellShell:
             if cmd in ("screen", "ppi_screen"): return k.screen(args)
             if cmd in ("surface", "masif"): return k.surface(args)
             if cmd in ("dmasif", "geodesic"): return k.dmasif(args)
+            if cmd in ("nexus", "dualsensor"): return k.nexus(args)
             if cmd in ("desolv", "eef1"): return k.desolv(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])
