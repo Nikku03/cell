@@ -1,0 +1,78 @@
+{
+ "n_genes_tested": 52,
+ "min_movers_filter": 25,
+ "median_auc_fieldsim": 0.5,
+ "median_auc_static_targets": 0.499,
+ "random_auc": 0.5,
+ "median_recall_of_movers": 0.032,
+ "median_reached_neighborhood": 499.0,
+ "pooled_sign_agreement": 0.156,
+ "pooled_sign_n": 32,
+ "examples": [
+  {
+   "gene": "ZBTB16",
+   "n_measured_movers": 141,
+   "n_reached": 499,
+   "reached_movers": 3,
+   "recall": 0.021,
+   "auc_fieldsim": 0.5007355263632532
+  },
+  {
+   "gene": "TAF2",
+   "n_measured_movers": 355,
+   "n_reached": 499,
+   "reached_movers": 15,
+   "recall": 0.042,
+   "auc_fieldsim": 0.5026751210859437
+  },
+  {
+   "gene": "CTNNB1",
+   "n_measured_movers": 168,
+   "n_reached": 499,
+   "reached_movers": 7,
+   "recall": 0.042,
+   "auc_fieldsim": 0.5058140098148445
+  },
+  {
+   "gene": "TAF1",
+   "n_measured_movers": 608,
+   "n_reached": 499,
+   "reached_movers": 17,
+   "recall": 0.028,
+   "auc_fieldsim": 0.5005982042609817
+  },
+  {
+   "gene": "SETDB1",
+   "n_measured_movers": 39,
+   "n_reached": 499,
+   "reached_movers": 3,
+   "recall": 0.077,
+   "auc_fieldsim": 0.5215669829782288
+  },
+  {
+   "gene": "HCFC1",
+   "n_measured_movers": 174,
+   "n_reached": 499,
+   "reached_movers": 2,
+   "recall": 0.011,
+   "auc_fieldsim": 0.49832590244489117
+  },
+  {
+   "gene": "RBM39",
+   "n_measured_movers": 121,
+   "n_reached": 499,
+   "reached_movers": 7,
+   "recall": 0.058,
+   "auc_fieldsim": 0.5143735049080261
+  },
+  {
+   "gene": "PHOX2B",
+   "n_measured_movers": 84,
+   "n_reached": 499,
+   "reached_movers": 3,
+   "recall": 0.036,
+   "auc_fieldsim": 0.5032379544574666
+  }
+ ],
+ "verdict": "Run against measured Perturb-seq (on knockouts that actually DO something \u2014 >=25 moved genes each), the fieldsim engine's forward prediction is at CHANCE: it ranks which genes move at AUC 0.5 (random 0.5), and \u2014 the decisive comparison \u2014 that is no better than the STATIC baseline of just listing the knockout's curated targets with no dynamics (AUC 0.499). So the Hill+decay+diffusion machinery adds nothing over the network topology it was handed. The mechanism is coverage: fieldsim can only touch genes on a curated regulatory path from the knockout, so it reaches only ~3% of the genes that actually moved while lighting up a ~499-gene neighborhood that mostly did NOT move \u2014 huge false reach, near-zero recall. And on the few movers it does reach, direction is if anything WORSE than a coin-flip (pooled sign agreement 0.156, below 0.5 on n=32) \u2014 the propagated curated regulatory signs actively disagree with the measured response, consistent with the earlier finding that curated regulation recovers the measured knockout at ~chance. This is the same far-field-does-not-compose wall every engine here hit (transitivity ~0.009). CONCLUSION: fieldsim is a correct, internally-consistent MECHANISTIC DEMONSTRATOR whose forward prediction of a real knockout does NOT beat chance or a trivial network lookup. The measured `knockout`/`cascade` engines \u2014 which report what was observed and honestly flag the ~84% they can't route \u2014 remain the trustworthy tools."
+}

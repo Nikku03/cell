@@ -891,23 +891,36 @@ class CellKernel:
             import fieldsim as _F
             _F.main()
             return "(fieldsim ran live — see output above)"
+        if args and args[0].lower() in ("validate", "test", "measured"):
+            import fieldsim_test as _T
+            _T.main()
+            return "(fieldsim measured-validation ran live — see output above)"
         import json, os
         p = "outputs/orphan/fieldsim.json"
         if not os.path.exists(p):
             return "fieldsim: run 'fieldsim run' (or python3 colab/fieldsim.py) to build the four-layer engine first."
         d = json.load(open(p))
-        seam = d.get("L1_seam", {}); g = d.get("L2_gamma", {})
-        return "\n".join([
+        g = d.get("L2_gamma", {})
+        t = json.load(open("outputs/orphan/fieldsim_test.json")) if os.path.exists("outputs/orphan/fieldsim_test.json") else None
+        out = [
             "fieldsim — four-layer protein-field engine, assembled & tested (a mechanistic DEMONSTRATOR, not a predictor):",
             f"  L1 overlap: coefficient-contraction == direct integral to {d.get('L1_overlap_rel_err',0):.1%}  (co-centred only)",
             f"  L1 SEAM: a co-centred source is 1 coefficient but needs ~121 once 0.34 off-centre -> diffusing the SH",
             f"           object is the wrong move (re-centring is an O(L^3) FMM translation).",
             f"  L2 gamma: spec exp(ΔΔG/RT) explodes ({g.get('10.0',{}).get('spec_exp','?')} at ΔΔG=10) -> bounded form used",
             f"  L3 SDF gate: field 100% confined without an export motif vs 28% with one (boundary works)",
-            f"  L4 Hill cascade: TF knockout collapses the enzyme field {d.get('L4_tf_knockout_enzyme_drop',0):.0%}",
-            "  VERDICT: runs end-to-end & internally consistent; do NOT trust its whole-cell phenotype without checking",
-            "           each edge vs measured data — long-range dynamics don't compose (transitivity ~0.009).",
-            "  ('fieldsim run' to execute the full test live.)"])
+            f"  L4 Hill cascade: TF knockout collapses the enzyme field {d.get('L4_tf_knockout_enzyme_drop',0):.0%}"]
+        if t:
+            out += [
+            "  --- vs MEASURED Perturb-seq (the real test, 'fieldsim validate') ---",
+            f"  predicting which genes move: AUC {t['median_auc_fieldsim']} (chance 0.5); static-network baseline {t['median_auc_static_targets']}",
+            f"  -> the dynamics add NOTHING over topology; reaches only {t['median_recall_of_movers']:.0%} of real movers (huge false reach)"]
+        out += [
+            "  VERDICT: runs end-to-end & internally consistent, but its knockout prediction does NOT beat chance or a",
+            "           trivial network lookup — long-range dynamics don't compose (transitivity ~0.009). Study tool, not",
+            "           a predictor; the measured 'knockout'/'cascade' engines remain the trustworthy ones.",
+            "  ('fieldsim run' = build+physics tests live; 'fieldsim validate' = score vs measured live.)"]
+        return "\n".join(out)
 
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""

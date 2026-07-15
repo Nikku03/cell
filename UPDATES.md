@@ -2041,3 +2041,34 @@ measured result in this repo (transitivity ~0.009, causal reach ~chance) the who
 does not compose from these local fields. Use it to study the mechanism and generate hypotheses; do not trust its
 quantitative phenotype without checking each edge against measured data. (fieldsim.py -> fieldsim.json; `fieldsim` /
 `fieldsim run`.)
+
+## fieldsim vs measured — the honest knockout test: the field engine's prediction is at chance
+
+Wired the test the internal-consistency checks couldn't give: run REAL gene knockouts through the fieldsim engine's
+forward model (its predictive core = regulatory Hill+decay propagation over the curated network, Layers 2+4; the
+spatial/SH Layers 1+3 spread fields but carry no signal about WHICH genes change) and score the predicted downstream
+signature against the MEASURED Perturb-seq knockout effect, with proper baselines (fieldsim_test.py -> the
+`fieldsim validate` syscall). Tested on 52 knockouts that actually do something (>=25 measured movers each, >=10
+regulatory targets).
+
+**Result — it does not beat chance:**
+- predicting which genes move: **AUC ~0.50** (chance 0.5)
+- **static baseline** (just list the knockout's curated targets, NO dynamics): **AUC ~0.50** — identical, so the
+  Hill+decay+diffusion machinery adds nothing over the network topology it was handed
+- **recall ~3%**: fieldsim only reaches genes on a curated regulatory path from the knockout, so it touches ~3% of the
+  genes that actually moved while lighting up a ~500-gene neighborhood that mostly did NOT move (huge false reach)
+- direction on the few movers it reaches is **below a coin-flip** (pooled sign agreement ~0.16) — the propagated
+  curated regulatory signs actively disagree with the measured response (consistent with the earlier pertseq GRN
+  finding that curated regulation recovers the measured knockout at ~chance)
+
+**Honest process note:** first pass had a broken metric (exactly-0.0 sign agreement) and a backwards coverage label; I
+inspected individual predictions (they were non-degenerate — MYC's few reached movers were 4/4 on direction), found I
+was testing on knockouts with ~no measured effect, restricted to real-effect knockouts, fixed the metrics to
+recall/precision + pooled sign agreement, and corrected a verdict that had called a 0.16 sign-agreement "better than
+chance" (it is worse). The corrected numbers are the ones above.
+
+**Conclusion.** fieldsim is a correct, internally-consistent MECHANISTIC DEMONSTRATOR whose forward prediction of a
+real knockout does NOT beat chance or a trivial network lookup — the same far-field-does-not-compose wall (transitivity
+~0.009) every engine in this repo hit. The measured `knockout`/`cascade` engines — which report what was observed and
+honestly flag the ~84% they can't route — remain the trustworthy tools. (fieldsim_test.py -> fieldsim_test.json;
+`fieldsim validate`.)
