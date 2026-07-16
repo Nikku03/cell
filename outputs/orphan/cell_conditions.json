@@ -1,0 +1,9 @@
+{
+ "validation": {
+  "n": 58,
+  "top1": 0.67,
+  "top3": 0.76
+ },
+ "n_conditions_curated": 16,
+ "note": "Infer a pathway's activation trigger by hypergeometric enrichment of its genes among condition-TF targets (curated directed reg edges). Validated top-1 0.67, top-3 0.76 on 58 condition-named pathways (chance ~0.07/0.20). Constitutive pathways show no enrichment (always-on). Condition-CATEGORY resolution; ~20 curated condition-TFs; reg edges are annotation (regulated-by, not measured-functional). A hypothesis generator, not a proven trigger."
+}

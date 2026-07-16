@@ -3048,3 +3048,34 @@ literature pathways are noisy (~4× chance). **What DOES survive:** the sign/dir
 GOF precision) and measured-mediated downstream tracking (X→M→P with both hops measured = 43× chance for a validated
 minority — the existing `cascade`/`influence` syscall). Not committed as a new syscall — a measured verdict on a proposed
 mechanism (which was already built as fieldsim).
+
+## cell_conditions / `conditions` — infer WHEN a pathway turns on (the subtractive strategy, validated)
+
+The user's idea: remove the always-on (constitutive) pathways and the ones whose condition we already know, then for the
+leftover trace each gene ← its TF ← what controls the TF, to *recover the conditions*. Built exactly this
+(`cell_conditions.py`, `conditions` syscall) — and it validates.
+
+**Key move that keeps it honest:** the backward regulator-trace is a **structural / annotation** query — hypergeometric
+enrichment of a pathway's genes among a curated condition-TF's targets (the 612k directed `reg` edges) — **not** the
+forward dynamical propagation this project measured fails at chance (directed edges predict *which* targets move at only
+1.1×). "Is this gene set enriched for HIF1A targets?" is annotation-level inference, like connect's corroboration.
+
+**It does the whole strategy:**
+- **Constitutive / always-on** → no condition-TF enrichment: translation, rRNA processing, TCA cycle, splitting all
+  correctly flagged CONSTITUTIVE. (Removed, per step 1.)
+- **Conditional** → the top enriched TF names the trigger. Validated on 58 pathways whose condition is stated in their
+  name: the traced condition-TF is recovered **top-1 67% / top-3 76%** (chance ~7%/20% = ~9×/4×). hypoxia→HIF1A,
+  cholesterol→SREBF1, TP53-death→TP53.
+- **The leftover (`conditions scan`)** — pathways whose trigger is NOT in their name but is inferred: TLR2/3/4/7/9
+  cascades → NF-κB inflammation, IL-4/13 → STAT, FOXO-mediated transcription → starvation. All correct — the discovered
+  conditions.
+
+**A real failure caught and fixed:** first attempt included MYC/E2F1 as "growth" conditions — but their targets are the
+constitutive ribosome/translation machinery, so they mislabelled housekeeping as "growth-activated" and outcompeted HIF1A
+on hypoxia. Restricting to genuine transient stress/signal TFs restored the discrimination (validation 52%→67%). ~16
+curated condition-TFs cover the major stress/signal axes.
+
+**HONEST LIMITS:** condition-CATEGORY resolution (can confuse related stresses, e.g. hypoxia vs ER stress); ~16 curated
+TFs (not all conditions — no circadian/developmental); the reg edges are annotation (regulated-by, not
+measured-functional-in-K562). A hypothesis generator for a pathway's trigger, not a proven condition. (cell_conditions.py
+→ cell_conditions.json; `conditions` syscall.)

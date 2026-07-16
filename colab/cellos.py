@@ -1418,6 +1418,44 @@ class CellKernel:
         c = cn.connect(args[0], self._cn)
         return cn.render(c)
 
+    def conditions(self, args):
+        """infer WHEN a pathway turns on (cell_conditions.py): trace its genes back to the stress/signal TFs that control
+        them (curated directed reg edges, hypergeometric enrichment). Pathways with NO condition-TF enrichment are
+        CONSTITUTIVE (always-on housekeeping); enriched ones report the trigger (HIF1A→hypoxia, SREBF→sterol, ATF4/XBP1→ER
+        stress, TP53→DNA damage, NF-kB→inflammation, STAT→cytokine, HSF1→heat). VALIDATED top-1 ~0.67 / top-3 ~0.76 on
+        condition-named pathways (chance 0.07/0.20). Backward regulator-tracing is a STRUCTURAL/annotation query (not the
+        forward dynamical propagation that fails at chance) — a hypothesis for the trigger, not a proven condition.
+        usage: conditions PATHWAY | conditions scan | conditions"""
+        import cell_conditions as cc
+        if not hasattr(self, "_cc"):
+            self._cc = cc._load()
+        names, reg, paths, N = self._cc
+        if args and args[0].lower() in ("scan", "discover"):
+            out = ["conditions — pathways whose trigger is NOT stated in their name but is inferred (the 'leftover'):"]
+            for sc, p, tf, cond in cc.scan(names, reg, paths, N, 12):
+                out.append(f"  {p[:54]:54s} → {cond}  [{tf} {sc}]")
+            return "\n".join(out)
+        if not args:
+            v = cc.validate(names, reg, paths, N)
+            return ("conditions — infer a pathway's activation trigger from the TFs that control its genes:\n"
+                    f"  VALIDATED: traced condition-TF recovers the known trigger top-1 {v['top1']:.0%} / top-3 {v['top3']:.0%} "
+                    f"on {v['n']} condition-named pathways (chance ~7%/20%).\n"
+                    "  Constitutive pathways show no enrichment (always-on); conditional ones report the stimulus.\n"
+                    "  try: conditions hypoxia | conditions cholesterol | conditions scan")
+        query = " ".join(args)
+        hits = [p for p in paths if query.lower() in p.lower()]
+        if not hits:
+            return f"conditions {query}: no matching pathway."
+        out = []
+        for p in sorted(hits, key=lambda p: -len(paths[p]))[:4]:
+            r = cc.infer(p, names, reg, paths, N)
+            if r["constitutive"]:
+                out.append(f"conditions — {p}: CONSTITUTIVE (always-on; no stress/signal TF enrichment) · top {r['top'][:2]}")
+            else:
+                conds = "; ".join(f"{c[2]} [{c[0]} {c[1]}]" for c in r["conditions"][:3])
+                out.append(f"conditions — {p}: {conds}")
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -2124,6 +2162,8 @@ class CellKernel:
                        (no pathway) it adds a literature-inferred candidate function (co-mention HYPOTHESIS, ~4x chance)
   connect GENE         one mechanistic hypothesis for an orphan gene: literature + PPI + spatial, CROSS-CHECKED — the
                        pathway that lit AND a physical partner agree on is the confident tier (~0.71); + a transport lead
+  conditions PATHWAY   infer WHEN a pathway turns on — trace its genes to the stress/signal TFs that control them;
+                       'always-on' (constitutive) vs a named trigger (hypoxia/sterol/DNA-damage/…). 'conditions scan' = discovered
   help / exit"""
 
 
@@ -2170,6 +2210,7 @@ class CellShell:
             if cmd in ("kg", "labeled"): return k.kg(args)
             if cmd in ("ladder", "compartments"): return k.ladder(args)
             if cmd in ("connect", "mechanism"): return k.connect(args)
+            if cmd in ("conditions", "trigger"): return k.conditions(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
