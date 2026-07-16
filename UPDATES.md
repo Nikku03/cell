@@ -3024,3 +3024,27 @@ The overlay makes the disjointness concrete:
 graph shows who-shares-and-touches; the knockout's real downstream effect goes elsewhere (indirect/regulatory, and mRNA is
 blind to signalling). The structural cut is certain; the cascade must be measured, not read off the graph — exactly the
 boundary `impact` and `pathway_remove` draw. (colab/pathway_overlay.py → viz/pathway_overlay.html.)
+
+### Time-forward directed propagation (TF→target causal graph) — measured: direction real, prediction at chance
+
+Proposed: label the TF/literature/pathway edges in a TIME-FORWARD causal state so a knockout only affects downstream,
+then forward-propagate a removal along those directed edges and track how it hits PPIs further down. Engaged with it by
+MEASURING the load-bearing first step — do a TF's directed regulatory targets actually move when it's knocked out?
+
+Tested the 612,133 directed `reg` edges (and the 17,432 curated `sig` edges) against measured Perturb-seq, 1,245 TFs:
+- **Which targets move: at chance.** A TF's annotated targets move only **0.6% vs 0.5% random = 1.1×** (curated sig:
+  1.9×, still 0.6% recall). Directed edges do NOT fix the recall problem — most annotated TF→target edges are ChIP-style
+  binding, not functional regulation in this cell, and redundancy buffers the rest.
+- **Direction IS real: sign 73% correct.** Among targets that did move, activating→down / repressing→up matches the
+  edge sign 73% of the time (vs 50% chance) on the large reg set. So the causal *direction* data is meaningful — we just
+  can't predict *which* edges fire.
+
+**Conclusion:** the directed / time-forward instinct is correct (and better than undirected PPI in principle), but the
+forward-propagation it implies is exactly `fieldsim` (signed regulatory Hill+decay forward model) — which we **built and
+measured at AUC ~0.50 (chance)** for which-genes-move. First-order is at chance (1.1×), so compounding it forward can only
+get worse (the transitivity ~0.009 wall, now confirmed for DIRECTED edges too). Two extra problems: the regulatory network
+has feedback loops (not a DAG → no clean global time order — matches the earlier tier≠order finding), and the "made-up"
+literature pathways are noisy (~4× chance). **What DOES survive:** the sign/direction (73%, already used by regsign, 86%
+GOF precision) and measured-mediated downstream tracking (X→M→P with both hops measured = 43× chance for a validated
+minority — the existing `cascade`/`influence` syscall). Not committed as a new syscall — a measured verdict on a proposed
+mechanism (which was already built as fieldsim).
