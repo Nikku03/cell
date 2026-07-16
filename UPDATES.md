@@ -2906,3 +2906,25 @@ Asked "as a pathway, how accurate are they?" for the orphan_network placements. 
 proxy, likely ~65% on true dark genes), but "exact mechanism" is weaker and the confident tier still lets through
 hub-driven false positives (ubiquitin especially). A strong lead-generator at family resolution, not a proven annotation
 — exactly the honest scope the tool claims.
+
+## cell_pathway_map — the whole cell as interconnected pathways (viz)
+
+Scaled the pathway-crosstalk idea from 5 hand-picked pathways to the **whole cell** (`viz/cell_pathway_map.html`,
+generator `colab/cell_pathway_map.py`). The honest resolution: the **25 top-level Reactome systems** (Signal Transduction,
+Metabolism, Gene expression, Cell Cycle, Immune, DNA repair/replication, …), covering 9,682 annotated genes. A circular
+meta-network — node size = gene count, chord thickness = **how much two systems interconnect** (fraction of proteins they
+share, Jaccard ≥ 0.08, corroborated by cross-system PPI). 42 interconnections above threshold.
+
+Not all 2,792 Reactome pathways: those are mostly nested sub-pathways sharing ~all members (parent-child redundancy), so
+a raw all-pathway graph is a hairball of trivial overlaps. The ~25 roots partition the annotated cell into its major
+systems, and the overlaps *between* roots are the real cross-system interconnection.
+
+The map passes the sanity check — its strongest links are textbook: **DNA Replication–DNA Repair–Cell Cycle** (genome
+maintenance), **Signal Transduction–Development** (551 shared proteins), **Gene expression–Development**, **Vesicle
+transport–Protein modification** (the secretory pathway), **Gene expression/Responses-to-stimuli–Immune**.
+
+**HONEST SCOPE:** interconnection = **shared machinery + physical contact** — descriptive crosstalk, **not** causal signal
+flow and **not** directional. The biggest hubs (Signal transduction, Metabolism, Gene expression) connect broadly partly
+because they're huge and full of multifunctional proteins, and Reactome's annotation choices shape the overlaps. Dark /
+orphan genes aren't here (no pathway — that's the orphan-network view). A map of who-shares-and-touches-whom across the
+cell, not a wiring diagram of control, and not a phenotype predictor. (colab/cell_pathway_map.py → viz/cell_pathway_map.html.)
