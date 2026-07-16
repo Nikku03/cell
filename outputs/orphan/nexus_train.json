@@ -1,11 +1,11 @@
 {
- "n_requested": 5,
- "n_usable": 4,
- "epochs": 10,
+ "n_requested": 11,
+ "n_usable": 10,
+ "epochs": 8,
  "device": "cpu",
- "dmasif_heldout_auc": 0.731,
- "n_train": 3,
- "n_test": 1,
+ "dmasif_heldout_auc": 0.782,
+ "n_train": 8,
+ "n_test": 2,
  "model": "nexus_dmasif.pt",
  "sensor_demo": [
   {

@@ -43,26 +43,36 @@ def rcsb_search(n=1000, max_res=3.0, max_atoms=15000, human_only=False, page=100
     return ids[:n]
 
 
-def download(pdb_ids, cache, limit=None, verbose=True):
-    """download the given PDB ids into `cache`; return the ones that landed (>1KB). Skips already-cached files."""
+def _one(p, cache):
+    dst = f"{cache}/{p}.pdb"
+    if os.path.exists(dst) and os.path.getsize(dst) > 1000:
+        return p
+    for _ in range(3):
+        try:
+            urllib.request.urlretrieve(DL.format(p), dst)
+            break
+        except Exception:
+            time.sleep(1)
+    if os.path.exists(dst) and os.path.getsize(dst) > 1000:
+        return p
+    if os.path.exists(dst):
+        os.remove(dst)
+    return None
+
+
+def download(pdb_ids, cache, limit=None, verbose=True, threads=16):
+    """download the given PDB ids into `cache` IN PARALLEL (IO-bound); return the ones that landed. Skips cached files."""
+    from concurrent.futures import ThreadPoolExecutor
     os.makedirs(cache, exist_ok=True)
-    ok, t0 = [], time.time()
-    for i, p in enumerate(pdb_ids[:limit] if limit else pdb_ids):
-        dst = f"{cache}/{p}.pdb"
-        if os.path.exists(dst) and os.path.getsize(dst) > 1000:
-            ok.append(p); continue
-        for _ in range(3):
-            try:
-                urllib.request.urlretrieve(DL.format(p), dst)
-                break
-            except Exception:
-                time.sleep(1)
-        if os.path.exists(dst) and os.path.getsize(dst) > 1000:
-            ok.append(p)
-        elif os.path.exists(dst):
-            os.remove(dst)
-        if verbose and (i + 1) % 50 == 0:
-            print(f"    downloaded {len(ok)}/{i+1} ({time.time()-t0:.0f}s)", flush=True)
+    ids = pdb_ids[:limit] if limit else pdb_ids
+    ok, t0, done = [], time.time(), 0
+    with ThreadPoolExecutor(max_workers=threads) as ex:
+        for r in ex.map(lambda p: _one(p, cache), ids):
+            done += 1
+            if r:
+                ok.append(r)
+            if verbose and done % 200 == 0:
+                print(f"    downloaded {len(ok)}/{done} ({time.time()-t0:.0f}s)", flush=True)
     return ok
 
 

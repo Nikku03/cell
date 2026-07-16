@@ -11,7 +11,7 @@ driver:
 
 Usage:  python3 nexus_train.py PDB1,PDB2,...  [cache_dir] [epochs] [cpu|cuda]
 """
-import os, sys, json, time, warnings, urllib.request
+import os, sys, json, time, warnings, urllib.request, pickle, multiprocessing as mp
 import numpy as np
 warnings.filterwarnings("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -52,27 +52,66 @@ def fetch(pdbs, cache):
     return ok
 
 
-def build(pdbs):
-    """build surface clouds (marching-cubes + APBS) per complex. This is the SLOW, CPU-BOUND phase (APBS ~3-10s each);
-    the GPU is idle here and only speeds up the tiny training at the end. Prints progress so it doesn't look frozen."""
+def _cloud_path(cache, pdb):
+    return os.path.join(cache, "clouds", f"{pdb}.pkl")
+
+
+def _build_one(args):
+    """worker: build ONE complex's surface cloud and cache it to disk. APBS/pdb2pqr are single-threaded, so N workers =
+    ~N complexes at once. Returns (pdb, usable?)."""
+    pdb, cache = args
     import dmasif as dm
-    data = {}; t0 = time.time()
-    for i, p in enumerate(pdbs):
-        try:
-            pc = dm.point_cloud(p)
-            if pc is None or len(set(pc["ch"])) < 2:
+    fp = _cloud_path(cache, pdb)
+    if os.path.exists(fp):
+        return (pdb, True)                                       # already built (resume)
+    try:
+        pc = dm.point_cloud(pdb)
+        if pc is None or len(set(pc["ch"])) < 2:
+            return (pdb, False)
+        g = dm.precompute_graph(pc); pos, neg = dm.interface_point_pairs(pc)
+        if len(pos) < 12:
+            return (pdb, False)
+        pickle.dump({"pc": pc, "g": g, "pos": pos, "neg": neg}, open(fp, "wb"))
+        return (pdb, True)
+    except Exception:
+        return (pdb, False)
+
+
+def _winit(cache):
+    setup(cache)                                                 # patch module PDBDIRs inside each worker process
+
+
+def build(pdbs, cache, workers=None):
+    """build surface clouds (marching-cubes + APBS) in PARALLEL across CPU cores, CACHED to disk (resumable — a
+    disconnect never loses built clouds, and re-runs skip them). This is the CPU-bound phase; the GPU is idle here."""
+    import dmasif as dm
+    os.makedirs(os.path.join(cache, "clouds"), exist_ok=True)
+    workers = workers or max(1, (os.cpu_count() or 2) - 1)
+    todo = [p for p in pdbs if not os.path.exists(_cloud_path(cache, p))]
+    cached = len(pdbs) - len(todo)
+    print(f"    surfaces (CPU/APBS) on {workers} cores: {cached} already cached, {len(todo)} to build ...", flush=True)
+    t0 = time.time()
+    if todo:
+        if workers > 1:
+            with mp.get_context("fork").Pool(workers, initializer=_winit, initargs=(cache,)) as pool:
+                for i, (pdb, ok) in enumerate(pool.imap_unordered(_build_one, [(p, cache) for p in todo]), 1):
+                    if i % 20 == 0 or i == len(todo):
+                        el = time.time() - t0; print(f"      built {i}/{len(todo)} [{el:.0f}s, ~{el/i*(len(todo)-i):.0f}s left]", flush=True)
+        else:
+            setup(cache)
+            for i, p in enumerate(todo, 1):
+                _build_one((p, cache))
+                if i % 10 == 0 or i == len(todo):
+                    el = time.time() - t0; print(f"      built {i}/{len(todo)} [{el:.0f}s]", flush=True)
+    # load the cached clouds for the requested complexes
+    data = {}
+    for p in pdbs:
+        fp = _cloud_path(cache, p)
+        if os.path.exists(fp):
+            try:
+                data[p] = pickle.load(open(fp, "rb"))
+            except Exception:
                 pass
-            else:
-                g = dm.precompute_graph(pc); pos, neg = dm.interface_point_pairs(pc)
-                if len(pos) >= 12:
-                    data[p] = {"pc": pc, "g": g, "pos": pos, "neg": neg}
-        except Exception:
-            pass
-        done = i + 1
-        if done % 10 == 0 or done == len(pdbs):
-            el = time.time() - t0; eta = el / done * (len(pdbs) - done)
-            print(f"    surfaces (CPU/APBS): {done}/{len(pdbs)} done, {len(data)} usable  "
-                  f"[{el:.0f}s elapsed, ~{eta:.0f}s left]", flush=True)
     return data
 
 
@@ -177,15 +216,16 @@ def run_sensors(pdbs, cache, model_pkl):
     return out
 
 
-def main(pdbs, cache=None, epochs=40, device="cpu"):
+def main(pdbs, cache=None, epochs=40, device="cpu", workers=None):
     cache = cache or os.path.join(HERE, "..", "outputs", "orphan", "pdb_cache")
+    workers = workers or max(1, (os.cpu_count() or 2) - 1)
     print("=" * 90, flush=True)
-    print(f"NEXUS-TRAIN — train dMaSIF surface model + run the sensor stack on {len(pdbs)} complexes  [device={device}]", flush=True)
+    print(f"NEXUS-TRAIN — dMaSIF surface model + sensor stack on {len(pdbs)} complexes  [device={device}, {workers} build-cores]", flush=True)
     print("=" * 90, flush=True)
     setup(cache)
     t0 = time.time(); got = fetch(pdbs, cache)
     print(f"  fetched/cached {len(got)}/{len(pdbs)} complexes ({time.time()-t0:.0f}s)", flush=True)
-    t0 = time.time(); data = build(got)
+    t0 = time.time(); data = build(got, cache, workers)
     print(f"  built surface clouds for {len(data)} usable complexes ({time.time()-t0:.0f}s)", flush=True)
     if len(data) < 2:
         print("  need >=2 usable complexes to train/hold-out. stop."); return {"error": "too few complexes"}
@@ -212,17 +252,17 @@ def main(pdbs, cache=None, epochs=40, device="cpu"):
     return out
 
 
-def fetch_and_train(n, cache=None, epochs=40, device="cpu", human_only=False, max_res=3.0, max_atoms=15000):
+def fetch_and_train(n, cache=None, epochs=40, device="cpu", human_only=False, max_res=3.0, max_atoms=15000, workers=None):
     """AUTO-FETCH n real protein-protein complexes from the PDB (RCSB Search API), then train + validate. This is how
     NEXUS scales past SKEMPI's 345: the dMaSIF surface sensor trains on interface geometry (no labels), so it can use the
-    ~34,000 heteromeric complexes in the PDB."""
+    ~34,000 heteromeric complexes in the PDB. Surface build is parallel across CPU cores and disk-cached (resumable)."""
     import fetch_complexes as fc
     cache = cache or os.path.join(HERE, "..", "outputs", "orphan", "pdb_cache")
     os.makedirs(cache, exist_ok=True)
     print(f"AUTO-FETCH {n} protein-protein complexes from the PDB (human={human_only}) ...", flush=True)
     got = fc.fetch(n, cache, max_res=max_res, max_atoms=max_atoms, human_only=human_only)
     print(f"  -> {len(got)} complexes in cache; training on them\n", flush=True)
-    return main(got, cache=cache, epochs=epochs, device=device)
+    return main(got, cache=cache, epochs=epochs, device=device, workers=workers)
 
 
 if __name__ == "__main__":
