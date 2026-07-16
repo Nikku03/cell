@@ -2837,3 +2837,27 @@ faint spokes tracing each protein back to its gene. This is the **biogenesis** d
 gene in the nucleus — the one origin we're *certain* of), the complement and opposite of the inward signalling layout.
 Same honest scope: rings = observed compartment, PPI edges measured but undirected, spokes mark the central-dogma origin
 not 41 distinct measured edges.
+
+## Testing the nucleus-rooted / compartment-direction idea on `connect` — an honest negative
+
+The radial reframe raised a real question: if compartment/direction is meaningful, does adding it to the `connect`
+predictor sharpen the pathway calls (the 0.538 ppi-only / 0.706 corroborated numbers)? Tested four compartment-aware
+weightings of the PPI-partner vote, held-out on the same 5,409 known genes:
+
+| PPI-vote weighting | ppi-only top-1 | corroborated top-1 |
+|---|---|---|
+| baseline (compartment-blind) | 0.539 | 0.706 |
+| co-localizing partner ×1 / else ×0.35 | 0.540 | 0.698 |
+| only co-localizing partners vote | 0.543 (fires 91%) | 0.702 |
+| directional ring-distance weight | 0.542 | 0.696 |
+
+**It does not help — the numbers are flat (±0.004), and corroboration nudges slightly *down*.** The reason is concrete
+and measured: **84% of a gene's physical partners already share its compartment.** Interacting proteins co-localize (we'd
+already measured 93% for all PPI; 84% here on the held-out set), so the compartment layer is *redundant* with PPI for
+prediction — weighting by it just re-weights an already-co-localized set, and the 16% cross-compartment partners it would
+down-weight are a mix of noise and real transient/transport edges, so dropping them doesn't help.
+
+This is the same lesson as the dMaSIF+physics redundancy: **two layers that encode the same thing don't compose.** The
+compartment/nucleus-rooted layer earns its keep in the *visualization* and in the *transport cross-check* (the ~16% that
+DON'T co-localize — exactly where a carrier is needed), but **not** as a prediction booster. `connect` stays as-is; the
+honest answer to "does direction change the 71%?" is **no, and here's why.**
