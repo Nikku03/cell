@@ -2768,3 +2768,45 @@ Wired into `ladder GENE`: an orphan gene now returns its **known compartment + l
 candidate function**, so the compartment-ladder covers genes with no pathway annotation at all. **HONEST SCOPE:** curated
 regex mining (not full NER), one source capped at ≤6 papers/gene, descriptive near-field — a starting hypothesis for an
 uncharacterised gene, to be confirmed experimentally. (lit_place.py → lit_place.json; `ladder GENE`.)
+
+## connect — triangulate literature + PPI + spatial into one mechanistic hypothesis (`connect` syscall)
+
+The user's next step: don't stop at literature + compartment — *connect*. If a paper puts an orphan gene in pathway X,
+find its physical (PPI) partners, see where they come from and what reactions they run, verify the locations against each
+other, and ask whether some partner could *carry* the gene between compartments to where the reaction happens.
+
+The honest core is **cross-source agreement as the confidence signal**, and it validates decisively (held-out on known
+genes, n=5,409, pathway top-1 precision):
+
+| signal | top-1 precision | fires |
+|---|---|---|
+| literature alone | 0.125 | 100% |
+| PPI partners alone | 0.538 | 98% |
+| **corroborated (lit AND ppi agree)** | **0.706** | 18% |
+
+So a physical partner's pathway is already a *much* stronger vote than literature (0.54 vs 0.13 — PPI is measured, and
+interacting proteins share function), and when the literature co-mention **and** a physical partner independently point
+to the *same* pathway, the call jumps to **71% precise — 5.6× literature alone**, firing for ~18% of genes. That
+agreement is the thing that turns a noisy guess into a confident lead.
+
+**The spatial cross-check is grounded too:** PPI partners share ≥1 compartment **0.927 vs 0.507 for random pairs = 1.83×**
+(interacting proteins co-localize, as they must). So verifying an orphan's location against its partners is sound — and
+the ~7% of partners that *don't* co-localize are exactly where a transport step is needed.
+
+**Transport reasoning is a flagged heuristic** (not validated): when the gene and its inferred reaction sit in different
+compartments, `connect` flags a partner annotated `transport/uptake` or `trafficking/secretion` whose compartments bridge
+the gap — a candidate carrier to test, clearly labelled as a lead.
+
+**The cards are biologically coherent when checked:**
+- `WDHD1` (AND-1) → **corroborated** *DNA strand elongation / unwinding* with its **MCM2-7 helicase** partners; gap =
+  cytoplasm, bridged by KPNA1 (importin-α imports replication factors) — textbook replication-fork biology.
+- `CSE1L` (CAS) → nuclear-transport context via KPNA1 / NUP50; flagged carrier **KPNA1** — CSE1L *is* the exportin that
+  recycles importin-α. Correct machinery.
+- `UNC13C` → *Neurotransmitter Release Cycle* via UNC13B (Munc13 vesicle priming).
+- `STRA8` → honestly **no corroboration** (its partners don't match the meiosis literature), so it falls back to
+  lit-only — no forced high-confidence call.
+
+Confidence **tiers** keep it honest: measured PPI > corroborated > lit-hypothesis > transport-heuristic. Wired as the
+`connect GENE` syscall. **HONEST SCOPE:** descriptive near-field triangulation — a strong *starting mechanism*
+(corroborated ~71% precision) to test experimentally, **not** a proven annotation and **not** a phenotype predictor.
+(connect.py → connect.json; `connect` syscall.)

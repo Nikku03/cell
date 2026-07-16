@@ -1317,6 +1317,27 @@ class CellKernel:
             return "\n".join(out)
         return f"ladder {query}: no matching pathway or gene."
 
+    def connect(self, args):
+        """CONNECT the orphan-gene signals into one mechanistic hypothesis (connect.py): literature (candidate pathway)
+        + PPI (physical partners' pathways) + spatial (compartments), cross-checked. The confidence comes from AGREEMENT:
+        a pathway that BOTH the literature co-mention AND a physical partner point to is the high-confidence tier
+        (held-out top-1 ~0.71, vs 0.54 ppi-only, 0.13 lit-only). Then it checks locations (PPI partners co-localize 1.83x
+        chance) and, where the gene and its inferred reaction sit in DIFFERENT compartments, flags a transport/trafficking
+        partner that could bridge the gap (a HEURISTIC lead). HONEST: descriptive near-field triangulation — a strong
+        starting mechanism, not a proven annotation or phenotype predictor. usage: connect GENE | connect"""
+        import connect as cn
+        if not hasattr(self, "_cn"):
+            self._cn = cn.build()
+        if not args:
+            v = cn.validate(self._cn)
+            return ("connect — triangulate literature + PPI + spatial for an orphan gene:\n"
+                    f"  held-out pathway top-1:  lit-only {v['lit_only_top1']}   ppi-only {v['ppi_only_top1']}   "
+                    f"CORROBORATED {v['corroborated_top1']} (fires {v['corroborated_coverage']:.0%}) = {v['corroboration_lift']}x lit\n"
+                    f"  PPI partners co-localize {v['ppi_colocalize']} vs {v['random_colocalize']} random ({v['coloc_enrichment']}x) — location cross-check is grounded\n"
+                    "  try: connect WDHD1 | connect CSE1L | connect UNC13C")
+        c = cn.connect(args[0], self._cn)
+        return cn.render(c)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -2019,6 +2040,8 @@ class CellKernel:
   ladder [PATHWAY|GENE] a pathway laid out by COMPARTMENT (membrane→nucleus) from localization; occupancy PROFILE, not a
                        route — the directional ladder was MEASURED not to hold (tier ≠ spatial depth). For an ORPHAN gene
                        (no pathway) it adds a literature-inferred candidate function (co-mention HYPOTHESIS, ~4x chance)
+  connect GENE         one mechanistic hypothesis for an orphan gene: literature + PPI + spatial, CROSS-CHECKED — the
+                       pathway that lit AND a physical partner agree on is the confident tier (~0.71); + a transport lead
   help / exit"""
 
 
@@ -2064,6 +2087,7 @@ class CellShell:
             if cmd in ("network", "wire", "graph"): return k.network(args)
             if cmd in ("kg", "labeled"): return k.kg(args)
             if cmd in ("ladder", "compartments"): return k.ladder(args)
+            if cmd in ("connect", "mechanism"): return k.connect(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
