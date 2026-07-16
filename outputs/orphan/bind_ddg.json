@@ -1,0 +1,30 @@
+{
+ "n_mutations": 2410,
+ "n_complexes": 46,
+ "n_alanine": 2052,
+ "n_nonala": 358,
+ "r_all": 0.464,
+ "r_nonala": 0.295,
+ "r_alanine": 0.51,
+ "hotspot_auc": 0.789,
+ "model": "bind_ddg_model.pkl",
+ "features": [
+  "dHyd",
+  "dVol",
+  "dChg",
+  "absdChg",
+  "wt_arom",
+  "wt_vol",
+  "wt_chg",
+  "mut_vol",
+  "mut_chg",
+  "vdw",
+  "contacts",
+  "elec",
+  "induc",
+  "rot_bestwell",
+  "charge_field"
+ ],
+ "esm_used": false,
+ "note": "structure-only physics+rotamer+charge; ESM excluded (partner-blind/fold-axis, r=0.09 on binding). Held-out by complex."
+}

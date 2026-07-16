@@ -2623,3 +2623,33 @@ validated phenotype (activity→phenotype is far-field/buffered, and the soft-AN
 — the ΔΔG is the informative readout, not the occupancy number). Where no structure/partner is given the structural
 sensors abstain and the query still returns the structure-free regulatory direction + cell dependency. Wired as the
 live `nexus GENE ...` syscall; the bare `nexus` report and `nexus run` are unchanged. (nexus_cell.py → nexus_cell.json.)
+
+## bind_ddg — the extrinsic magnitude sensor becomes a PREDICTOR (all 20 AAs); and ESM is the wrong axis for binding
+
+The extrinsic (binding) axis used to be a measured-value lookup — on any mutation not in SKEMPI it abstained. Built a
+trained predictor so it works on **any** interface mutation on a complex, from **structure-derivable features only**:
+property deltas + the WT sidechain's interface contribution (LJ/contacts/Coulomb/induction) + the MUTANT sidechain's
+**best precomputed-χ-well rotamer** clash + a **charge-superposition** field. RandomForest, held-out **by complex**.
+
+- **Accuracy (46-complex sandbox set, held-out by complex): all-AA r 0.46, alanine 0.51, non-alanine 0.30, hotspot
+  (ΔΔG>1) AUC 0.79.** Wired into `nexus_cell` as the extrinsic sensor: measured SKEMPI value when available, else the
+  predictor (labelled `predicted (bind_ddg, r~0.46)`). (bind_ddg.py → bind_ddg_model.pkl / bind_ddg.json.)
+
+**The honest experiments behind the feature choice (measured, held-out by complex):**
+- **All-AA de-biasing lowers the number, doesn't raise it.** Alanine-only r 0.55 → all-AA 0.49 → **non-alanine alone
+  0.22**. Alanine scanning is the *easy* subtractive case; the alanine bias was flattering us for real disease variants.
+- **Best precomputed rotamer helps the hard cases; the Boltzmann ensemble does NOT.** Building the mutant sidechain and
+  placing it in the best χ-well lifts non-ala 0.22 → 0.26; integrating the binding energy over the whole rotamer
+  ensemble (log-sum-exp free energy + Boltzmann mean + flexibility count) is **no better than the single best well**
+  (0.244 vs 0.246) — a clean negative. Charge superposition adds a little more (→ ~0.30). On the **alanine** set these
+  mutant features are correctly **inert** (0.551 → 0.543) — a passing negative control (alanine has no rotamer/charge).
+- **ESM does NOT help binding — and it's illuminating.** ESM-2 WT-marginal log-likelihood-ratio, fused with physics:
+  all-AA 0.460 → 0.468 (nothing); **ESM alone r=0.09** on ΔΔG-binding (0.02 on non-ala). Two reasons, both the
+  dual-sensor thesis restated: (1) ESM reads a **single chain** — it is *partner-blind* by construction, so it cannot
+  see a binding interaction; (2) evolutionary tolerance is the **fold/fitness axis**, which NEXUS measured is orthogonal
+  to binding (Pearson 0.15). So ESM belongs on the **intrinsic fold sensor** (pathogenicity/stability), not the binding
+  sensor. This corrected an earlier over-claim that ESM was the magnitude lever — it is the lever for the *other* axis.
+
+Net: binding magnitude is near its honest ceiling with our tools (~0.46 all-AA / ~0.30 non-ala); the remaining untested
+lever is a *partner-aware* structural net fine-tuned end-to-end on ΔΔG (right axis), not ESM. (esm_channel/rotamer_ensemble
+experiments in scratch; the committed product is bind_ddg.)

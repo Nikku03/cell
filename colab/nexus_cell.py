@@ -30,6 +30,7 @@ class NexusCell:
         self._ddg = None
         self._reg = {}                                          # gene/acc -> (sign, brake_score, snippet) cache
         self._muts = None
+        self._bindp = None                                     # lazy bind_ddg predictor (extrinsic magnitude)
 
     # ---- layer 1: regulatory DIRECTION (structure-free) --------------------------------------------------------
     def _sign(self, gene, uniprot=None):
@@ -94,6 +95,17 @@ class NexusCell:
                 return float(r["ddg"])
         return None
 
+    def _extrinsic_predicted(self, pdb, chain, pos, wt, mut):
+        """trained ΔΔG-binding predictor (bind_ddg) — fires when there's no measured value, so the extrinsic axis works
+        on ANY mutation. Held-out-by-complex accuracy: all-AA r~0.46, non-ala ~0.30, hotspot AUC ~0.79."""
+        try:
+            import bind_ddg
+            if self._bindp is None:
+                self._bindp = bind_ddg.Predictor()
+            return self._bindp.predict(pdb, chain, pos, wt, mut, cache=self.pdbdir)
+        except Exception:
+            return None
+
     # ---- cell layer: essentiality (the dependency context) -----------------------------------------------------
     def _cell(self, gene):
         if self.k is None:
@@ -126,6 +138,9 @@ class NexusCell:
             ddg_fold = self._intrinsic(pdb, chain, int(pos), wt, mut)
             ddg_bind = self._extrinsic_measured(pdb, chain, int(pos), mut)
             bind_src = "measured (SKEMPI)" if ddg_bind is not None else None
+            if ddg_bind is None:                                # no measurement -> use the trained predictor
+                ddg_bind = self._extrinsic_predicted(pdb, chain, int(pos), wt, mut)
+                bind_src = "predicted (bind_ddg, held-out r~0.46)" if ddg_bind is not None else None
         # activity (only meaningful once at least one structural sensor fired)
         act_lof = act_gof = kd_ratio = None
         if ddg_fold is not None or ddg_bind is not None:
