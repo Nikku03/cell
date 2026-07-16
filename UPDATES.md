@@ -3159,3 +3159,20 @@ supports. It matches the field (foundation models barely beat baselines on pertu
 own latent-bridge (+0.018 over mean). **More screens raise base-rate quality but did not break the wall on this
 evidence** — the missing signal is measured, context-specific function, not model capacity or data volume alone.
 (perturb_recall.py → perturb_recall.json.)
+
+### Pushing recall further — autoencoder + multi-screen pooling (measured: no gain / infra-blocked)
+
+Followed the two proposed levers to their honest conclusion.
+
+- **Autoencoder co-response embedding.** Trained a torch AE on the K562 response matrix → a 24-d nonlinear gene embedding,
+  added to the recall model's features. Measured (545 held-out KOs): AUPRC **0.185 → 0.185 (−0.000)**, recall@50
+  **18.1% → 17.4%**. **No gain** — the nonlinear embedding does no better than the SVD that already failed. The
+  bottleneck isn't embedding quality; it's that a held-out knockout's identity gives only its graph position, and
+  graph→response is the wall.
+- **Multi-screen pooling / cross-cell (HCT116, GWPS).** The extra screens are cached, but the large gzip-chunked h5ad
+  matrices read too slowly to load in this sandbox (even 300–500 rows timed out at 70–90 s), so the cross-cell test
+  couldn't be completed here. Not fabricating a number I didn't measure — it runs in a decompressed/Colab environment.
+
+**Net:** both levers confirmed the ceiling — recall@50 stays ~18%. The only lever left that could actually move it is
+genuinely new **measured, context-specific** signal, not a bigger model, a fancier embedding, or more of the same
+annotation. `perturb_recall` stands as the honest maximum the current data supports (graph 3% → fused-model 18%).
