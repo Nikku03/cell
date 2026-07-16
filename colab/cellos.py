@@ -1183,6 +1183,66 @@ class CellKernel:
         out.append("  HONEST: sensors = near-field STRUCTURE (solid); FBA->phenotype = far-field (buffered/does-not-compose) — a demo, not a validated phenotype predictor.")
         return "\n".join(out)
 
+    def _impact_systems(self, i):
+        """which top-level cell systems (cell_pathway_map) a gene index belongs to."""
+        import cell_pathway_map as cpm
+        import json as _j
+        if not hasattr(self, "_cpm_sys"):
+            P = _j.load(open("outputs/orphan/reactome_pathways.json"))["pathways"]
+            self._cpm_sys = [(sh, set(P[nm])) for nm, sh, _ in cpm.SYSTEMS if nm in P]
+        return [sh for sh, mem in self._cpm_sys if i in mem]
+
+    def impact(self, args):
+        """MUTATE or REMOVE a gene and see how far the effect is KNOWABLE — the honest whole-cell chain. It layers only
+        what's validated and ABSTAINS at the wall: [1] near-field (NEXUS: does the mutation break the protein? ~0.75) or
+        full removal; [2] the DIRECT cell effect as MEASURED Perturb-seq data (real, for the ~9,871 knocked-out genes) —
+        or an honest 'unobserved' if there's no measurement; [3] descriptive context (which cell systems, essentiality);
+        [4] the FAR-FIELD wall — propagating to a whole-cell phenotype is MEASURED not to compose (transitivity ~0.009,
+        forward-model AUC ~0.50), so we abstain rather than fake a cascade. usage: impact GENE [UNIPROT POS WT MUT [PDB CHAIN]]"""
+        if not args:
+            return "impact GENE [UNIPROT POS WT MUT [PDB CHAIN]]   — mutate/remove a gene; see how far the effect is knowable"
+        gene = args[0]
+        i = self._pid(gene)
+        if i is None:
+            return f"impact: no such gene '{gene}'"
+        mut = len(args) >= 5
+        out = [f"impact {gene}" + (f" {' '.join(args[1:])}" if len(args) > 1 else "  (full removal / knockout)") + " — how far we can see:\n"]
+        # [1] NEAR-FIELD (validated)
+        if mut:
+            out.append("[1] NEAR-FIELD — does the mutation break the protein?  (VALIDATED, ~0.75 hotspot AUC)")
+            out.append("    " + self.nexus(args).replace("\n", "\n    "))
+        else:
+            g = self.C.genes[i]
+            out.append("[1] NEAR-FIELD — full removal = complete loss of function"
+                       + (" (a DARK gene — little structural detail)" if g.get("dark") else "") + ".")
+        # [2] DIRECT cell effect (measured only)
+        if not hasattr(self, "_dep"):
+            import dependency as _D
+            self._dep = _D.Dependency(kernel=self)
+        ko = self._dep.knockout(gene, topn=8)
+        out.append("")
+        if ko.get("status") == "measured":
+            prec = "high-precision" if ko.get("hi_precision") else "genome-wide, lower precision"
+            out.append(f"[2] DIRECT cell effect — MEASURED (real Perturb-seq, {prec}): {ko['n_dependents_strong']} genes strongly moved")
+            out.append("    goes DOWN (need " + gene + "): " + (", ".join(f"{x}({v})" for x, v in ko["down"]) or "—"))
+            out.append("    goes UP  (released):     " + (", ".join(f"{x}({v})" for x, v in ko["up"]) or "—"))
+        else:
+            out.append("[2] DIRECT cell effect — NO measured knockout for this gene → the direct effect is UNOBSERVED. "
+                       "We do NOT predict it (network edges predict knockout at r~0.03–0.09 = floor).")
+        # [3] descriptive context
+        systems = self._impact_systems(i)
+        dep = self.C.genes[i].get("dep_frac")
+        ess = (f"dep_frac {dep:.2f} → {'ESSENTIAL' if isinstance(dep, (int, float)) and dep > 0.5 else 'non-essential'}"
+               if isinstance(dep, (int, float)) else "essentiality not measured")
+        out.append("")
+        out.append(f"[3] CONTEXT (descriptive) — cell system(s): {', '.join(systems) or '(none — no pathway / dark gene)'};  {ess}")
+        # [4] the wall
+        out.append("")
+        out.append("[4] FAR-FIELD (the wall) — WE ABSTAIN. Propagating past the DIRECT measured set to a whole-cell")
+        out.append("    phenotype is MEASURED not to compose (knockout transitivity ~0.009; forward-model AUC ~0.50 = chance).")
+        out.append("    The pathway map shows who-shares-and-touches — NOT a wiring diagram that carries the effect forward.")
+        return "\n".join(out)
+
     def dmasif(self, args):
         """RESEARCH: Geodesic Surface Learning (dMaSIF approach; dmasif.py) — the fine surface-POINT representation that
         was the remaining gap to MaSIF-grade. Surface points (not residue centres) + a learnable QUASI-GEODESIC
@@ -2012,6 +2072,8 @@ class CellKernel:
                        discrimination AUC 0.85 (vs residue-patch 0.76) and retrieval ~13x chance (residue was ~1.4x)
   nexus [GENE ...]     dual-sensor mutation node, LIVE in the cell: 'nexus GENE [UNIPROT [POS WT MUT [PDB CHAIN]]]' →
                        DIRECTION (regsign LOF/GOF) + fold/bind ΔΔG dual-sensor + cell essentiality. 'nexus'=report, 'nexus run'
+  impact GENE [MUT]    mutate/remove a gene, see HOW FAR the effect is knowable: near-field (NEXUS) + DIRECT measured
+                       effect (real Perturb-seq) + system context, and ABSTAINS at the far-field wall (doesn't fake a cascade)
   regsign              RESEARCH: regulatory-sign annotation = the GAIN-of-function lever — break an inhibitory brake ->
                        GOF; UniProt-derived, 86% precision / 5.4x enrichment vs oncogene-TSG (recall-limited: info gap)
   desolv               RESEARCH: desolvation retested w/ REAL SASA + satisfaction correction — physics validates
@@ -2103,6 +2165,7 @@ class CellShell:
             if cmd in ("surface", "masif"): return k.surface(args)
             if cmd in ("dmasif", "geodesic"): return k.dmasif(args)
             if cmd in ("nexus", "dualsensor"): return k.nexus(args)
+            if cmd in ("impact", "effect"): return k.impact(args)
             if cmd in ("regsign", "gof"): return k.regsign(args)
             if cmd in ("desolv", "eef1"): return k.desolv(args)
             if cmd in ("needs", "todo"): return k.needs()

@@ -2928,3 +2928,25 @@ flow and **not** directional. The biggest hubs (Signal transduction, Metabolism,
 because they're huge and full of multifunctional proteins, and Reactome's annotation choices shape the overlaps. Dark /
 orphan genes aren't here (no pathway — that's the orphan-network view). A map of who-shares-and-touches-whom across the
 cell, not a wiring diagram of control, and not a phenotype predictor. (colab/cell_pathway_map.py → viz/cell_pathway_map.html.)
+
+## impact — mutate/remove anything, see how far the effect is knowable (`impact` syscall)
+
+Answering "now that we have NEXUS + the whole-cell network, can we mutate/remove anything and see the whole-cell effect?"
+— the honest answer is *partly*, and `impact` is the integration that makes the boundary explicit instead of faking a
+cascade. `impact GENE [UNIPROT POS WT MUT [PDB CHAIN]]` chains only the validated layers and abstains at the wall:
+
+- **[1] Near-field** (validated ~0.75): NEXUS — does the mutation break the protein (fold/bind ΔΔG → LOF/GOF via
+  regsign)? Or, for a plain removal, full loss of function.
+- **[2] Direct cell effect** — the **measured** Perturb-seq blast radius (real data, for the ~9,871 knocked-out genes).
+  If the gene has no measurement it says so and **refuses to predict** (network edges predict a knockout at r~0.03–0.09 =
+  floor).
+- **[3] Context** (descriptive) — which top-level cell systems the gene sits in (from cell_pathway_map) + essentiality.
+- **[4] The far-field wall** — explicit **abstention**: propagating past the direct measured set to a whole-cell
+  phenotype is measured *not* to compose (knockout transitivity ~0.009; forward-model AUC ~0.50 = chance). The pathway
+  map shows who-shares-and-touches, not a wiring diagram that carries the effect forward.
+
+Demonstrated live: `impact POLR2A` (removal) → measured collapse of ribosomal/nuclear transcription (RPLP0/RPS12/NPM1
+down, mito genes up) — correct biology, real data; `impact TP53 P04637 175 R H` → near-field LOF-only (tumor suppressor,
+no brake) + weak measured K562 effect; `impact FNDC5` (dark) → honestly *unobserved*, no prediction. So: we can see the
+protein-level break (solid) and the direct measured response (real, subset), and we **stop** at the whole-cell cascade —
+by design, because that's where the data says it stops. Not a whole-cell simulator; an honest "here's how far we can see."
