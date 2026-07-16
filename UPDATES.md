@@ -2950,3 +2950,18 @@ down, mito genes up) — correct biology, real data; `impact TP53 P04637 175 R H
 no brake) + weak measured K562 effect; `impact FNDC5` (dark) → honestly *unobserved*, no prediction. So: we can see the
 protein-level break (solid) and the direct measured response (real, subset), and we **stop** at the whole-cell cascade —
 by design, because that's where the data says it stops. Not a whole-cell simulator; an honest "here's how far we can see."
+
+### Can the graph predict an UNMEASURED removal? (measured: mostly no, with one real exception)
+
+Pushed on: "from the labelled graph + pathway interconnections, can't we remove a protein and see its effect even if not
+measured?" Tested the full labelled graph (PPI + complex + pathway neighbours — its best shot) against real Perturb-seq
+knockouts (n=126): the graph neighbours are **4.1× enriched** for real movers but capture only **~3% of them (recall 2.6%,
+miss ~97%)** — for a *typical* knockout the graph catches **0** of the genes that actually moved. So the transcriptional
+**cascade is not graph-predictable** (the far-field doesn't live on the edges).
+
+**The one thing the graph CAN do without measurement — structural disassembly:** removing a protein deterministically
+breaks every complex it's a subunit of, and complex-mates are co-essential ~1000× chance (validated). Added this to
+`impact` as **[2b] STRUCTURAL** (from `gene2cplx`/`complexes`): e.g. `impact SMAD3` → "disassembles 4 complexes:
+SMAD2-SMAD3-SMAD4 (with SMAD2, SMAD4), SMAD3-TTF-1, …" — real, graph-only, no measurement. The [4] wall now states the
+measured graph-recall (4× enriched / ~3% recall) explicitly. So the honest split: the graph gives you the **structural
+break** (certain) but **not** the functional cascade (~3% recall) — it abstains there rather than fake it.

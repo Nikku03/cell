@@ -1192,6 +1192,18 @@ class CellKernel:
             self._cpm_sys = [(sh, set(P[nm])) for nm, sh, _ in cpm.SYSTEMS if nm in P]
         return [sh for sh, mem in self._cpm_sys if i in mem]
 
+    def _impact_complexes(self, i):
+        """the complexes a gene is a subunit of + their co-members — the STRUCTURAL disassembly, readable from the graph
+        with no measurement (validated: complex-mates are co-essential ~1000x chance)."""
+        D = self.C.D
+        g2c, plx = D.get("gene2cplx", {}), D.get("complexes", {})
+        nm = [g["name"] for g in D["genes"]]
+        out = []
+        for cn in g2c.get(str(i), []):
+            mem = [nm[m] for m in plx.get(cn, []) if isinstance(m, int) and m < len(nm)]
+            out.append((cn, mem))
+        return out
+
     def impact(self, args):
         """MUTATE or REMOVE a gene and see how far the effect is KNOWABLE — the honest whole-cell chain. It layers only
         what's validated and ABSTAINS at the wall: [1] near-field (NEXUS: does the mutation break the protein? ~0.75) or
@@ -1227,8 +1239,15 @@ class CellKernel:
             out.append("    goes DOWN (need " + gene + "): " + (", ".join(f"{x}({v})" for x, v in ko["down"]) or "—"))
             out.append("    goes UP  (released):     " + (", ".join(f"{x}({v})" for x, v in ko["up"]) or "—"))
         else:
-            out.append("[2] DIRECT cell effect — NO measured knockout for this gene → the direct effect is UNOBSERVED. "
-                       "We do NOT predict it (network edges predict knockout at r~0.03–0.09 = floor).")
+            out.append("[2] DIRECT cell effect — NO measured knockout for this gene → the transcriptional response is UNOBSERVED.")
+        # [2b] STRUCTURAL disassembly — from the graph, no measurement needed (this is what the graph CAN tell you)
+        cxs = self._impact_complexes(i)
+        if cxs:
+            show = "; ".join(f"{cn} (with {', '.join([m for m in mem if m != gene][:4]) or '—'})" for cn, mem in cxs[:4])
+            out.append("")
+            out.append(f"[2b] STRUCTURAL — from the graph, NO measurement: removing {gene} disassembles {len(cxs)} complex(es): {show}"
+                       + (" …" if len(cxs) > 4 else ""))
+            out.append("     co-subunits lose their assembly partner (VALIDATED: complex-mates co-essential ~1000x chance). This IS graph-predictable.")
         # [3] descriptive context
         systems = self._impact_systems(i)
         dep = self.C.genes[i].get("dep_frac")
@@ -1238,9 +1257,10 @@ class CellKernel:
         out.append(f"[3] CONTEXT (descriptive) — cell system(s): {', '.join(systems) or '(none — no pathway / dark gene)'};  {ess}")
         # [4] the wall
         out.append("")
-        out.append("[4] FAR-FIELD (the wall) — WE ABSTAIN. Propagating past the DIRECT measured set to a whole-cell")
-        out.append("    phenotype is MEASURED not to compose (knockout transitivity ~0.009; forward-model AUC ~0.50 = chance).")
-        out.append("    The pathway map shows who-shares-and-touches — NOT a wiring diagram that carries the effect forward.")
+        out.append("[4] FAR-FIELD (the wall) — the transcriptional CASCADE is NOT graph-predictable. Measured: graph")
+        out.append("    neighbours (PPI+complex+pathway, the labelled interconnections) are 4x-enriched for real movers but")
+        out.append("    capture only ~3% of them (miss ~97%; a typical knockout: 0 of its movers are graph neighbours).")
+        out.append("    So we ABSTAIN on the whole-cell phenotype — the structural break [2b] is the honest limit of the graph.")
         return "\n".join(out)
 
     def dmasif(self, args):
