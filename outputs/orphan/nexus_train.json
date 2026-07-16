@@ -1,10 +1,10 @@
 {
- "n_requested": 8,
- "n_usable": 7,
- "epochs": 12,
+ "n_requested": 5,
+ "n_usable": 4,
+ "epochs": 10,
  "device": "cpu",
- "dmasif_heldout_auc": 0.761,
- "n_train": 6,
+ "dmasif_heldout_auc": 0.731,
+ "n_train": 3,
  "n_test": 1,
  "model": "nexus_dmasif.pt",
  "sensor_demo": [
@@ -57,5 +57,6 @@
    "activity_if_brake_GOF": 1.0
   }
  ],
+ "sensor_demo_ran": true,
  "working_check": true
 }
