@@ -53,19 +53,26 @@ def fetch(pdbs, cache):
 
 
 def build(pdbs):
+    """build surface clouds (marching-cubes + APBS) per complex. This is the SLOW, CPU-BOUND phase (APBS ~3-10s each);
+    the GPU is idle here and only speeds up the tiny training at the end. Prints progress so it doesn't look frozen."""
     import dmasif as dm
-    data = {}
-    for p in pdbs:
+    data = {}; t0 = time.time()
+    for i, p in enumerate(pdbs):
         try:
             pc = dm.point_cloud(p)
             if pc is None or len(set(pc["ch"])) < 2:
-                continue
-            g = dm.precompute_graph(pc); pos, neg = dm.interface_point_pairs(pc)
-            if len(pos) < 12:
-                continue
-            data[p] = {"pc": pc, "g": g, "pos": pos, "neg": neg}
+                pass
+            else:
+                g = dm.precompute_graph(pc); pos, neg = dm.interface_point_pairs(pc)
+                if len(pos) >= 12:
+                    data[p] = {"pc": pc, "g": g, "pos": pos, "neg": neg}
         except Exception:
-            continue
+            pass
+        done = i + 1
+        if done % 10 == 0 or done == len(pdbs):
+            el = time.time() - t0; eta = el / done * (len(pdbs) - done)
+            print(f"    surfaces (CPU/APBS): {done}/{len(pdbs)} done, {len(data)} usable  "
+                  f"[{el:.0f}s elapsed, ~{eta:.0f}s left]", flush=True)
     return data
 
 
