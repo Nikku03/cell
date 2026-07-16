@@ -1,76 +1,60 @@
 {
- "n_requested": 5,
- "n_usable": 5,
- "epochs": 15,
+ "n_requested": 8,
+ "n_usable": 7,
+ "epochs": 12,
  "device": "cpu",
- "dmasif_heldout_auc": 0.664,
- "n_train": 4,
+ "dmasif_heldout_auc": 0.761,
+ "n_train": 6,
  "n_test": 1,
  "model": "nexus_dmasif.pt",
  "sensor_demo": [
   {
-   "pdb": "1ACB",
+   "pdb": "1CSE",
    "mut": "I45L->G",
-   "ddg_fold_pred": 1.3,
-   "ddg_bind_meas": 6.03,
-   "activity_LOF": 0.992,
-   "activity_if_brake_GOF": 1.024
-  },
-  {
-   "pdb": "1ACB",
-   "mut": "I45L->S",
-   "ddg_fold_pred": 1.66,
-   "ddg_bind_meas": 4.95,
-   "activity_LOF": 0.998,
-   "activity_if_brake_GOF": 1.004
-  },
-  {
-   "pdb": "1ACB",
-   "mut": "I45L->P",
-   "ddg_fold_pred": 1.46,
-   "ddg_bind_meas": 6.85,
-   "activity_LOF": 0.97,
-   "activity_if_brake_GOF": 1.089
-  },
-  {
-   "pdb": "1ACB",
-   "mut": "I45L->I",
-   "ddg_fold_pred": 0.06,
-   "ddg_bind_meas": 4.23,
+   "ddg_fold_pred": 1.06,
+   "ddg_bind_meas": 2.25,
    "activity_LOF": 1.0,
+   "activity_if_brake_GOF": 1.0
+  },
+  {
+   "pdb": "1CSE",
+   "mut": "I45L->S",
+   "ddg_fold_pred": 1.32,
+   "ddg_bind_meas": 1.17,
+   "activity_LOF": 1.0,
+   "activity_if_brake_GOF": 1.0
+  },
+  {
+   "pdb": "1CSE",
+   "mut": "I45L->P",
+   "ddg_fold_pred": 1.45,
+   "ddg_bind_meas": 6.67,
+   "activity_LOF": 0.978,
+   "activity_if_brake_GOF": 1.067
+  },
+  {
+   "pdb": "1CSE",
+   "mut": "I45L->I",
+   "ddg_fold_pred": 0.07,
+   "ddg_bind_meas": 2.94,
+   "activity_LOF": 1.0,
+   "activity_if_brake_GOF": 1.0
+  },
+  {
+   "pdb": "1CSE",
+   "mut": "I45L->D",
+   "ddg_fold_pred": 2.43,
+   "ddg_bind_meas": 4.35,
+   "activity_LOF": 0.999,
    "activity_if_brake_GOF": 1.001
   },
   {
-   "pdb": "1ACB",
-   "mut": "I45L->D",
-   "ddg_fold_pred": 2.4,
-   "ddg_bind_meas": 6.77,
-   "activity_LOF": 0.973,
-   "activity_if_brake_GOF": 1.078
-  },
-  {
-   "pdb": "1ACB",
+   "pdb": "1CSE",
    "mut": "I45L->E",
-   "ddg_fold_pred": 1.72,
-   "ddg_bind_meas": 6.55,
-   "activity_LOF": 0.981,
-   "activity_if_brake_GOF": 1.055
-  },
-  {
-   "pdb": "1BRS",
-   "mut": "A27K->A",
-   "ddg_fold_pred": 0.0,
-   "ddg_bind_meas": 5.38,
-   "activity_LOF": 0.997,
-   "activity_if_brake_GOF": 1.008
-  },
-  {
-   "pdb": "1BRS",
-   "mut": "A59R->A",
-   "ddg_fold_pred": 0.18,
-   "ddg_bind_meas": 5.24,
-   "activity_LOF": 0.998,
-   "activity_if_brake_GOF": 1.007
+   "ddg_fold_pred": 1.75,
+   "ddg_bind_meas": 2.35,
+   "activity_LOF": 1.0,
+   "activity_if_brake_GOF": 1.0
   }
  ],
  "working_check": true

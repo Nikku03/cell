@@ -2544,3 +2544,21 @@ on real mutations as a working-check.
 interface-discrimination AUC **0.664**) → sensor stack ran end-to-end → **WORKING-CHECK PASS**, all in ~70s on CPU. The
 notebook adds a GPU scale-up cell (downloads SKEMPI, trains on all ~345 measured complexes) and accepts any user PDB list
 (incl. AlphaFold-Multimer complexes). (nexus_train.py, nexus_colab.ipynb → nexus_train.json / nexus_dmasif.pt.)
+
+### Auto-fetcher: scale past SKEMPI's 345 to the ~34,000 PDB complexes
+
+345 (SKEMPI) is only the *labelled* set. The dMaSIF surface sensor trains on interface **geometry** — self-supervised on
+cross-chain contacts, **no ΔΔG labels** — so it can consume every protein-protein complex in the PDB. Added
+`fetch_complexes.py`: it queries the **RCSB Search API** for heteromeric protein complexes (resolution ≤3Å, with an
+atom-count cap so ribosomes/viruses don't choke APBS, optional `human_only`), and downloads them. The PDB has
+**~34,000** such complexes — 100× SKEMPI.
+
+`nexus_train.fetch_and_train(n, cache, epochs, device, human_only=)` does it in one call: auto-fetch n complexes → build
+surfaces → train dMaSIF (held out by complex) → run the sensor stack. **Sandbox-verified** with `fetch:8`: RCSB search →
+downloaded 8 → 7 usable surfaces → trained dMaSIF (held-out AUC **0.76**) → sensor stack ran → **WORKING-CHECK PASS**.
+(The sensor demo falls back to a fixed SKEMPI complex when the auto-fetched ones have no measured mutations — the sensor
+stack is independent of which complexes the surface model trained on.)
+
+The Colab notebook now features the auto-fetcher as the scale path (`fetch_and_train(300, human_only=True)`), keeps
+SKEMPI as the labelled validation set, and still accepts any user PDB list (incl. AlphaFold-Multimer complexes for PPIs
+without solved structures). (fetch_complexes.py, nexus_train.py, nexus_colab.ipynb.)

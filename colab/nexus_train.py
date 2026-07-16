@@ -123,11 +123,17 @@ def train_dmasif(data, epochs=40, device="cpu", model_out=None):
 
 
 def run_sensors(pdbs, cache, model_pkl):
-    """working-check of the full NEXUS stack on real SKEMPI mutations in the trained complexes."""
+    """working-check of the full NEXUS stack on real measured mutations. Uses SKEMPI mutations in the trained complexes
+    when available; otherwise (e.g. auto-fetched PDB complexes not in SKEMPI) falls back to a fixed SKEMPI complex so the
+    sensor stack is always exercised — the sensor stack is independent of which complexes the surface model trained on."""
     import flex_physics as fp, ddg_predictor as dp, nexus, regsign, ecflux
     out = []
     ddg = dp.DDGPredictor(model_pkl) if os.path.exists(model_pkl) else None
-    D = [r for r in fp.load_pdb_muts() if r["pdb"] in set(pdbs)][:8]
+    D = [r for r in fp.load_pdb_muts() if r["pdb"] in set(pdbs)]
+    if not D:
+        fetch(["1CSE"], cache)                                  # a SKEMPI complex with many measured mutations
+        D = [r for r in fp.load_pdb_muts() if r["pdb"] == "1CSE"]
+    D = D[:8]
     for r in D:
         t = fp.table(r["pdb"])
         if t is None:
@@ -181,9 +187,25 @@ def main(pdbs, cache=None, epochs=40, device="cpu"):
     return out
 
 
+def fetch_and_train(n, cache=None, epochs=40, device="cpu", human_only=False, max_res=3.0, max_atoms=15000):
+    """AUTO-FETCH n real protein-protein complexes from the PDB (RCSB Search API), then train + validate. This is how
+    NEXUS scales past SKEMPI's 345: the dMaSIF surface sensor trains on interface geometry (no labels), so it can use the
+    ~34,000 heteromeric complexes in the PDB."""
+    import fetch_complexes as fc
+    cache = cache or os.path.join(HERE, "..", "outputs", "orphan", "pdb_cache")
+    os.makedirs(cache, exist_ok=True)
+    print(f"AUTO-FETCH {n} protein-protein complexes from the PDB (human={human_only}) ...", flush=True)
+    got = fc.fetch(n, cache, max_res=max_res, max_atoms=max_atoms, human_only=human_only)
+    print(f"  -> {len(got)} complexes in cache; training on them\n", flush=True)
+    return main(got, cache=cache, epochs=epochs, device=device)
+
+
 if __name__ == "__main__":
-    pdbs = sys.argv[1].split(",") if len(sys.argv) > 1 else ["1BRS", "1JCK", "3SGB", "1ACB", "1AHW"]
+    a1 = sys.argv[1] if len(sys.argv) > 1 else "1BRS,1JCK,3SGB,1ACB,1AHW"
     cache = sys.argv[2] if len(sys.argv) > 2 else None
     epochs = int(sys.argv[3]) if len(sys.argv) > 3 else 40
     device = sys.argv[4] if len(sys.argv) > 4 else "cpu"
-    main(pdbs, cache, epochs, device)
+    if a1.startswith("fetch:"):                                 # e.g.  python3 nexus_train.py fetch:200 CACHE 60 cuda [--human]
+        fetch_and_train(int(a1.split(":")[1]), cache, epochs, device, human_only="--human" in sys.argv)
+    else:
+        main(a1.split(","), cache, epochs, device)
