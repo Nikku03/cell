@@ -2707,3 +2707,34 @@ Built graph: **16,492 nodes, 15,103 with ≥1 labeled edge, 383,246 unique label
 edge types predict a gene's knockout effect at ~floor (r 0.03–0.09; pathway 0.064; only curated complexes 0.23), so the
 labeled graph is the right substrate for **representation / link-prediction / querying / the near-field GNN**, and it is
 honest about **not** composing to phenotype. (graph_label.py → graph_label.json; `kg` syscall.)
+
+## spatial_ladder / `ladder` — pathways laid out by compartment (a measured NO on the directional ladder)
+
+The idea (the user's): lay a pathway out as a **trajectory through compartments** — a signalling pathway that starts at
+the membrane and ends in the nucleus would tell you which reactions happen in which compartment, *in order*. We have both
+ingredients: an ORDER (cell_levels: signalling tier upstream→downstream) and a COMPARTMENT for essentially every protein
+(localization, ~100% coverage). So: does the order track the compartment depth?
+
+**Reality-checked first, and the answer is NO.** Across 4,155 signalling-tier genes with a compartment, the regulatory
+tier does **not** track membrane→nucleus depth:
+- nuclear-annotated vs membrane-annotated signalling genes have **near-identical tier means** (0.68 vs 0.72, difference
+  **−0.039** — if the ladder were real this would be large and positive);
+- the tell: there are **more TFs among UPSTREAM genes (24%) than downstream (8%)** — the *opposite* of a
+  membrane→nucleus flow ending at nuclear TFs.
+
+The cell_levels "tier" is a **regulatory-graph order, not a spatial one**, and every large pathway spans all four
+compartments anyway. So the directional ladder is a just-so story and is **not** claimed.
+
+**What IS delivered (honest):** a per-pathway compartment **LAYOUT** read directly from localization. A subtlety that
+mattered: the localization source lists **every** compartment a protein is seen in, **not in primacy order** (HRAS is
+tagged `Nucleus, Golgi, Cell membrane, Cytoplasm` all at once; taking the first entry would file the membrane GTPase
+HRAS — and EGFR — under "nucleus"). So each protein is counted in **every** layer it's annotated in (multi-compartment
+membership), not one arbitrary pick — giving a compartment **PROFILE / occupancy view** plus per-layer gene lists,
+depth-ordered outside→in for readability only. Example: *Signaling by EGFR* → membrane 38 · cytoplasm 36 · nucleus 11 ·
+extracellular 7.
+
+Wired as the `ladder` syscall: `ladder PATHWAY` (fuzzy name) shows one pathway's compartment layers, `ladder GENE` shows
+a gene's compartments + the pathways it's in, `ladder` shows the reality-check. **HONEST SCOPE:** curated/observed
+annotations joined together (near-field descriptive) — an occupancy profile, **not** a directional route, **not** a
+reaction-localization claim, and **not** a phenotype predictor. (spatial_ladder.py → spatial_ladder.json; `ladder`
+syscall.)

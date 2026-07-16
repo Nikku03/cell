@@ -1255,6 +1255,47 @@ class CellKernel:
                    "representation/link-prediction, not phenotype.")
         return "\n".join(out)
 
+    def ladder(self, args):
+        """the compartment LAYOUT of a pathway (spatial_ladder.py): each protein placed in every compartment it's
+        annotated in (localization, ~100%), grouped membrane→nucleus. 'ladder PATHWAY' (fuzzy name) shows one pathway's
+        layers; 'ladder GENE' shows a gene's compartments + the pathways it's in; 'ladder' shows the reality-check.
+        HONEST: the DIRECTIONAL membrane→nucleus ladder was MEASURED not to hold (regulatory tier ≠ spatial depth), so
+        this is an occupancy PROFILE read straight from localization, NOT a route and NOT a phenotype predictor.
+        usage: ladder | ladder PATHWAY | ladder GENE"""
+        import spatial_ladder as sl
+        if not hasattr(self, "_sl"):
+            self._sl = sl._load()                                  # names, tf, lv, loc, paths
+        names, tf, lv, loc, paths = self._sl
+        if not args:
+            v = sl.validate(names, tf, lv, loc)
+            return ("ladder — pathways laid out by compartment (localization × pathway):\n"
+                    f"  reality check: nuclear vs membrane signalling genes differ in tier by {v['nuclear_more_downstream_by']:+.3f} "
+                    f"(≈0), and MORE TFs are upstream ({v['upstream_tf_frac']:.0%}) than downstream ({v['downstream_tf_frac']:.0%}).\n"
+                    "  → the directional membrane→nucleus ladder is NOT supported; delivering the compartment LAYOUT instead.\n"
+                    "  try: ladder Signaling by EGFR | ladder WNT | ladder TP53")
+        query = " ".join(args)
+        hits = sl.find_pathways(query, paths)
+        if hits:
+            hits = sorted(hits, key=lambda p: -len(paths[p]))[:3]   # biggest matches first, cap the spew
+            out = []
+            for pw in hits:
+                L = sl.ladder(pw, names, tf, lv, loc, paths)
+                span = " | ".join(f"{s} {L['stage_counts'][s]}" for s in L["compartments_present"])
+                out.append(f"ladder — {pw}  ({L['n_localized']}/{L['n_genes']} localized)\n  [{span}]")
+                for s, genes in L["stages"].items():
+                    out.append(f"    {s:14s}: {', '.join(genes[:10])}{' …' if len(genes) > 10 else ''}")
+            out.append("  (* = TF · proteins counted in EVERY compartment they're annotated in · occupancy, not a route)")
+            return "\n".join(out)
+        if query in names:                                          # a gene: its compartments + the pathways it's in
+            deps = sorted(sl._depths(loc, query))
+            comps = ", ".join(sl.DEPTH_NAME[d] for d in deps) or "(no mapped compartment)"
+            pws = sl.gene_pathways(query, names, paths)
+            out = [f"ladder — {query}: localized to [{comps}]"
+                   + ("  *TF" if query in tf else ""),
+                   f"  in {len(pws)} pathway(s)" + (": " + "; ".join(pws[:6]) + (" …" if len(pws) > 6 else "") if pws else "")]
+            return "\n".join(out)
+        return f"ladder {query}: no matching pathway or gene."
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1954,6 +1995,8 @@ class CellKernel:
   lint "CLAIM"         [security] verify a claim; flag untrusted predictions & hub-leak
   kg [GENE]            the LABELED cell knowledge graph — edges TYPED ppi/pathway/literature; 'kg GENE' = typed
                        neighbourhood (HOW it connects). Descriptive near-field substrate (not a phenotype predictor)
+  ladder [PATHWAY|GENE] a pathway laid out by COMPARTMENT (membrane→nucleus) from localization; occupancy PROFILE, not a
+                       route — the directional ladder was MEASURED not to hold (tier ≠ spatial depth)
   help / exit"""
 
 
@@ -1998,6 +2041,7 @@ class CellShell:
             if cmd in ("investigate", "dossier", "profile"): return k.investigate(args)
             if cmd in ("network", "wire", "graph"): return k.network(args)
             if cmd in ("kg", "labeled"): return k.kg(args)
+            if cmd in ("ladder", "compartments"): return k.ladder(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
