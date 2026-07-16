@@ -3079,3 +3079,22 @@ curated condition-TFs cover the major stress/signal axes.
 TFs (not all conditions — no circadian/developmental); the reg edges are annotation (regulated-by, not
 measured-functional-in-K562). A hypothesis generator for a pathway's trigger, not a proven condition. (cell_conditions.py
 → cell_conditions.json; `conditions` syscall.)
+
+### conditions + impact: signed direction (activation/inactivation) & per-partner contribution
+
+Two sign-aware enhancements using the signed regulatory edges (this project measured the sign is ~73% reliable):
+
+- **`conditions` now reports DIRECTION + FEEDBACK.** Beyond naming the trigger TF, it uses the edge signs to say whether
+  the condition turns the pathway **ON (activates)** or **OFF (represses)**, and detects **feedback loops** — pathway
+  genes that regulate the trigger TF back. Textbook-correct: *Cellular response to hypoxia* → hypoxia **ON** via HIF1A,
+  **negative feedback via VHL/HIF3A/LIMD1** (the classic O₂-sensing degradation loop); cholesterol → SREBF1 ON, negative
+  feedback via PPARA; TP53 cell-death → ON, negative feedback via BCL6. Negative feedback = self-limiting; positive =
+  amplifying/switch-like.
+- **`impact` now has [2c] CONTRIBUTION & DIRECTION.** For the removed protein, its signed partners split into **ACTIVATES**
+  (a responder goes DOWN when removed) vs **INHIBITS** (a responder goes UP / released) — so for a multi-interaction
+  protein you see how many partners it drives each way and which. e.g. `impact TP53` → activates 986 / inhibits 263
+  (ABCB1/MDR1, AR go up when p53 is removed — real de-repression). Honest coupling to the wall: the sign gives the
+  *direction* for any partner that responds (~73%); *which* respond is still the [4] wall (~3% recall). Direction is
+  knowable; the responder set is not.
+
+(cell_conditions.py `_direction`; cellos.py `_impact_contribution` / impact [2c].)

@@ -1204,6 +1204,23 @@ class CellKernel:
             out.append((cn, mem))
         return out
 
+    def _impact_contribution(self, gene):
+        """what the protein CONTRIBUTES to each partner, and in what DIRECTION — from the SIGNED edges (sig + reg,
+        ~73% reliable). A partner it ACTIVATES goes DOWN when it's removed; a partner it INHIBITS goes UP (released)."""
+        D = self.C.D
+        nm = [g["name"] for g in D["genes"]]
+        if not hasattr(self, "_sigmap"):
+            import collections as _c
+            sm = _c.defaultdict(dict)
+            for src, tgt, sg in (D.get("sig", []) + D.get("reg", [])):     # sig first (higher quality), reg fills
+                if src < len(nm) and tgt < len(nm) and sg != 0:
+                    sm[nm[src]].setdefault(nm[tgt], sg)
+            self._sigmap = sm
+        edges = self._sigmap.get(gene, {})
+        act = sorted(t for t, sg in edges.items() if sg > 0)
+        inh = sorted(t for t, sg in edges.items() if sg < 0)
+        return act, inh
+
     def impact(self, args):
         """MUTATE or REMOVE a gene and see how far the effect is KNOWABLE — the honest whole-cell chain. It layers only
         what's validated and ABSTAINS at the wall: [1] near-field (NEXUS: does the mutation break the protein? ~0.75) or
@@ -1248,6 +1265,16 @@ class CellKernel:
             out.append(f"[2b] STRUCTURAL — from the graph, NO measurement: removing {gene} disassembles {len(cxs)} complex(es): {show}"
                        + (" …" if len(cxs) > 4 else ""))
             out.append("     co-subunits lose their assembly partner (VALIDATED: complex-mates co-essential ~1000x chance). This IS graph-predictable.")
+        # [2c] DIRECTIONAL contribution — from signed edges: which partners this protein activates vs inhibits
+        act, inh = self._impact_contribution(gene)
+        if act or inh:
+            out.append("")
+            out.append(f"[2c] CONTRIBUTION & DIRECTION (signed edges) — {gene} regulates {len(act)+len(inh)} partners; the sign gives the "
+                       f"DIRECTION of the effect for any partner that DOES respond (~73% reliable); WHICH respond is the [4] wall.")
+            if act:
+                out.append(f"     ACTIVATES {len(act)} (a responder goes DOWN when {gene} removed): {', '.join(act[:8])}" + (" …" if len(act) > 8 else ""))
+            if inh:
+                out.append(f"     INHIBITS  {len(inh)} (a responder goes UP / released): {', '.join(inh[:8])}" + (" …" if len(inh) > 8 else ""))
         # [3] descriptive context
         systems = self._impact_systems(i)
         dep = self.C.genes[i].get("dep_frac")
@@ -1429,7 +1456,7 @@ class CellKernel:
         import cell_conditions as cc
         if not hasattr(self, "_cc"):
             self._cc = cc._load()
-        names, reg, paths, N = self._cc
+        names, reg, paths, N, sgn = self._cc
         if args and args[0].lower() in ("scan", "discover"):
             out = ["conditions — pathways whose trigger is NOT stated in their name but is inferred (the 'leftover'):"]
             for sc, p, tf, cond in cc.scan(names, reg, paths, N, 12):
@@ -1448,12 +1475,15 @@ class CellKernel:
             return f"conditions {query}: no matching pathway."
         out = []
         for p in sorted(hits, key=lambda p: -len(paths[p]))[:4]:
-            r = cc.infer(p, names, reg, paths, N)
+            r = cc.infer(p, names, reg, paths, N, sgn)
             if r["constitutive"]:
                 out.append(f"conditions — {p}: CONSTITUTIVE (always-on; no stress/signal TF enrichment) · top {r['top'][:2]}")
-            else:
-                conds = "; ".join(f"{c[2]} [{c[0]} {c[1]}]" for c in r["conditions"][:3])
-                out.append(f"conditions — {p}: {conds}")
+                continue
+            out.append(f"conditions — {p}:")
+            for c in r["conditions"][:3]:
+                dirn = {"activates": "→ ON", "represses": "→ OFF", "unsigned": "(dir?)"}[c["direction"]]
+                fb = f"  ⟲ {c['feedback'][0]} feedback via {', '.join(c['feedback'][1])}" if c["feedback"] else ""
+                out.append(f"    {c['condition']} {dirn} [{c['tf']} {c['score']}]{fb}")
         return "\n".join(out)
 
     def _discover(self):

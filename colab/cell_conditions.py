@@ -37,12 +37,42 @@ MINK = 50           # ignore condition-TFs with fewer than this many curated tar
 def _load():
     D = json.load(open(OUT / "cell_complete.json"))
     names = [g["name"] for g in D["genes"]]
+    n2i = {x: i for i, x in enumerate(names)}
     reg = collections.defaultdict(set)
-    for s, t, _sg in D["reg"]:
+    sout = collections.defaultdict(list)                 # TF name -> [(target idx, sign)]  (signed edges only)
+    sin = collections.defaultdict(list)                  # target idx -> [(src name, sign)]  (signed edges only)
+    for s, t, sg in D["reg"]:
         if s < len(names) and t < len(names):
             reg[names[s]].add(t)                          # TF name -> set of target indices
+            if sg != 0:
+                sout[names[s]].append((t, sg)); sin[t].append((names[s], sg))
     paths = json.load(open(OUT / "reactome_pathways.json"))["pathways"]
-    return names, reg, paths, len(names)
+    sgn = {"out": sout, "in": sin, "n2i": n2i}
+    return names, reg, paths, len(names), sgn
+
+
+def _direction(tf, mem_set, sgn):
+    """does the condition-TF ACTIVATE or REPRESS the pathway, and is there feedback from the pathway back to the TF?
+    Uses the signed regulatory edges (~73% reliable, this project's measurement)."""
+    edges = [(t, sg) for t, sg in sgn["out"].get(tf, []) if t in mem_set]
+    pos = sum(1 for _, sg in edges if sg > 0)
+    neg = sum(1 for _, sg in edges if sg < 0)
+    if pos + neg == 0:
+        direction, frac = "unsigned", None
+    else:
+        direction = "activates" if pos >= neg else "represses"
+        frac = round(max(pos, neg) / (pos + neg), 2)
+    tfi = sgn["n2i"].get(tf)
+    fb = [(src, sg) for src, sg in sgn["in"].get(tfi, []) if sgn["n2i"].get(src) in mem_set]
+    fb_neg = [s for s, sg in fb if sg < 0]
+    fb_pos = [s for s, sg in fb if sg > 0]
+    feedback = None
+    if fb_neg:
+        feedback = ("negative", fb_neg[:4])              # pathway represses its own activator -> self-limiting
+    elif fb_pos:
+        feedback = ("positive", fb_pos[:4])              # pathway reinforces its activator -> amplifying / switch
+    return {"direction": direction, "sign_frac": frac, "n_signed": pos + neg,
+            "feedback": feedback}
 
 
 def _score(mem, reg, N):
@@ -59,24 +89,31 @@ def _score(mem, reg, N):
     return sorted(out.items(), key=lambda x: -x[1])
 
 
-def infer(pathway, names=None, reg=None, paths=None, N=None):
-    """the activation-condition call for one pathway: constitutive (always-on) or a ranked list of candidate triggers."""
+def infer(pathway, names=None, reg=None, paths=None, N=None, sgn=None):
+    """the activation-condition call for one pathway: constitutive (always-on) or a ranked list of candidate triggers,
+    each with its DIRECTION (activates/represses) and any feedback loop back onto the trigger TF."""
     if names is None:
-        names, reg, paths, N = _load()
+        names, reg, paths, N, sgn = _load()
     if pathway not in paths:
         return None
+    mem_set = {i for i in paths[pathway] if i < N}
     ranked = _score(paths[pathway], reg, N)
-    strong = [(tf, round(v, 1), CONDITION[tf]) for tf, v in ranked if v >= THRESH]
+    strong = []
+    for tf, v in ranked:
+        if v < THRESH:
+            continue
+        df = _direction(tf, mem_set, sgn) if sgn else {"direction": "unsigned", "feedback": None, "sign_frac": None}
+        strong.append({"tf": tf, "score": round(v, 1), "condition": CONDITION[tf],
+                       "direction": df["direction"], "sign_frac": df["sign_frac"], "feedback": df["feedback"]})
     return {"pathway": pathway, "n_genes": len(paths[pathway]),
-            "constitutive": len(strong) == 0,
-            "conditions": strong[:4],
+            "constitutive": len(strong) == 0, "conditions": strong[:4],
             "top": [(tf, round(v, 1)) for tf, v in ranked[:4]]}
 
 
 def validate(names=None, reg=None, paths=None, N=None):
     """does tracing recover the KNOWN condition? test on pathways whose stimulus is stated in their name."""
     if names is None:
-        names, reg, paths, N = _load()
+        names, reg, paths, N, _sgn = _load()
     KW = {"hypoxia": ["HIF1A"], "unfolded protein": ["ATF4", "XBP1", "ATF6", "DDIT3"],
           "endoplasmic reticulum stress": ["ATF4", "XBP1", "ATF6", "DDIT3"], "oxidative": ["NFE2L2"],
           "DNA damage": ["TP53"], "interferon": ["STAT1", "NFKB1", "RELA"], "cholesterol": ["SREBF1", "SREBF2"],
@@ -98,7 +135,7 @@ def validate(names=None, reg=None, paths=None, N=None):
 def scan(names=None, reg=None, paths=None, N=None, limit=12):
     """the leftover: pathways whose condition is NOT stated in their name but IS inferred — discovered triggers."""
     if names is None:
-        names, reg, paths, N = _load()
+        names, reg, paths, N, _sgn = _load()
     stated = ["hypoxia", "unfolded protein", "endoplasmic reticulum", "oxidative", "dna damage", "interferon",
               "cholesterol", "sterol", "tgf", "heat", "inflamm", "cytokine", "starvation", "stress", "immune"]
     out = []
@@ -116,21 +153,23 @@ def main():
     print("=" * 92)
     print("CELL-CONDITIONS — infer a pathway's activation trigger from the TFs that control its genes")
     print("=" * 92)
-    names, reg, paths, N = _load()
+    names, reg, paths, N, sgn = _load()
     v = validate(names, reg, paths, N)
     print(f"\n  VALIDATION (n={v['n']} pathways whose condition is stated in the name):")
     print(f"    traced condition-TF recovered: top-1 {v['top1']:.0%}   top-3 {v['top3']:.0%}   (chance ~7% / 20%)")
     print("\n  CONSTITUTIVE (always-on — no condition-TF enrichment):")
     for p in ["Eukaryotic Translation Elongation", "rRNA processing", "Citric acid cycle (TCA cycle)"]:
-        r = infer(p, names, reg, paths, N)
+        r = infer(p, names, reg, paths, N, sgn)
         if r:
-            print(f"    {p[:42]:42s}: {'CONSTITUTIVE' if r['constitutive'] else r['conditions'][0][2]}")
-    print("\n  CONDITIONAL (trigger inferred):")
+            print(f"    {p[:42]:42s}: {'CONSTITUTIVE' if r['constitutive'] else r['conditions'][0]['condition']}")
+    print("\n  CONDITIONAL (trigger + direction + feedback):")
     for p in ["Cellular response to hypoxia", "Regulation of cholesterol biosynthesis by SREBP (SREBF)",
               "TP53 Regulates Transcription of Cell Death Genes"]:
-        r = infer(p, names, reg, paths, N)
+        r = infer(p, names, reg, paths, N, sgn)
         if r and r["conditions"]:
-            print(f"    {p[:42]:42s}: {r['conditions'][0][2]}  [{r['conditions'][0][0]} {r['conditions'][0][1]}]")
+            c = r["conditions"][0]
+            fb = f"  · {c['feedback'][0]} feedback ({','.join(c['feedback'][1])})" if c["feedback"] else ""
+            print(f"    {p[:40]:40s}: {c['condition']} — {c['direction'].upper()} [{c['tf']} {c['score']}]{fb}")
     print("\n  DISCOVERED (condition NOT in the pathway name, but inferred — the 'leftover'):")
     for sc, p, tf, cond in scan(names, reg, paths, N, 8):
         print(f"    {p[:50]:50s} → {cond}  [{tf} {sc}]")
