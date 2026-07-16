@@ -2983,3 +2983,23 @@ measured PPI edges, and complex-mates that lose a subunit are co-essential ~1000
 the downstream transcriptional **cascade**, because the graph predicts a knockout's real movers at only ~3% recall (4×
 enriched, misses ~97%). We redraw the wiring we can see for certain and stop at the ripple we can't — the same honest
 boundary as `impact`. (colab/pathway_remove.py → viz/pathway_remove.html.)
+
+### Is the cell's "backup" ACTIVATED on removal, or already-on? (measured: already-on)
+
+Prompted by "the cell has a backup plan that is activated when the protein is removed" — the natural explanation for why
+removing PPP2R1A *reduced but didn't sever* the WNT↔MAPK-nuclear bridge. Split it into two testable claims:
+
+- **Do backups exist / matter?** YES (already measured, enzyme_patterns paralog-buffering): genes with a sequence-family
+  paralog are less essential — essential genes have median **0** paralogs vs **2** for non-essential (effect −0.30,
+  p=2e-14). Redundancy is real and predicts survival.
+- **Are backups ACTIVATED (upregulated) in response to the removal?** NO. Tested across ~64,000 paralog pairs (name-stem
+  proxy) in the measured Perturb-seq: when a gene is knocked out its paralog is upregulated only **0.6%** of the time
+  (mean response −0.005) vs **1.2%** for a random gene — i.e. **0.5× random, less than chance**. PPP2R1A KO → PPP2R1B
+  +0.04, AKT1 KO → AKT2 +0.02 (nothing).
+
+**Conclusion:** the backup is **passive / constitutive**, not an on-demand response. The paralog is already expressed at
+its normal level and simply keeps covering the function — the cell is robust by having *spare capacity always running*,
+not by sensing damage and switching on a reserve. This is exactly why the static graph shows "reduced, not severed"
+(the parallel wiring was always there) and why perturbations get buffered (ties to the nexus finding that moderate damage
+is absorbed). Caveats: name-stem paralog proxy; single-timepoint K562 (slow/post-transcriptional compensation not
+captured). Not committed as a syscall — a measured clarification of network robustness.
