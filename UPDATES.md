@@ -2830,3 +2830,10 @@ are **measured but undirected** physical interactions — real crosstalk and sha
 signal hand-off. The downward arrow marks the **textbook** cascade direction for these specific pathways, not something
 derived from the edges. A descriptive near-field map of who-touches-whom-and-where, not a phenotype predictor.
 (colab/pathway_graph.py → viz/pathway_crosstalk.html.)
+
+**Nucleus-rooted view (`viz/pathway_radial.html`):** same five pathways, but rooted at the genome — proteins branch
+*outward* from a central nucleus core through cytoplasm → membrane → extracellular, pathways as angular sectors, with
+faint spokes tracing each protein back to its gene. This is the **biogenesis** direction (every protein is made from a
+gene in the nucleus — the one origin we're *certain* of), the complement and opposite of the inward signalling layout.
+Same honest scope: rings = observed compartment, PPI edges measured but undirected, spokes mark the central-dogma origin
+not 41 distinct measured edges.

@@ -10,7 +10,7 @@ proven directional signal hand-off); the downward arrow marks the TEXTBOOK casca
 not something derived from the edges. A descriptive near-field map -- who touches whom and where -- not a phenotype
 predictor.
 """
-import json, html, collections
+import json, html, collections, math
 from pathlib import Path
 OUT = Path("outputs/orphan")
 VIZ = Path("viz")
@@ -202,12 +202,145 @@ svg {{ display:block; width:100%; height:auto; min-width:940px; }}
 </div>'''
 
 
+_RADIAL_TEMPLATE = '''<style>
+:root {{ --bg:#f6f7f9; --panel:#fff; --ink:#1a2230; --muted:#66707e; --line:#d9dee6;
+  --r0:#eae6f2; --r1:#e7edf4; --r2:#e6f0ef; --r3:#f2eef0; --edge:#c2c9d4; --inter:#5b6472; --core:#2b3448; }}
+@media (prefers-color-scheme: dark) {{ :root {{ --bg:#0e1219; --panel:#151b25; --ink:#e6eaf1; --muted:#8b95a5; --line:#26303d;
+  --r0:#1b1526; --r1:#111a26; --r2:#0f1c1b; --r3:#1c1620; --edge:#2c3644; --inter:#8892a3; --core:#20283a; }} }}
+:root[data-theme="light"] {{ --bg:#f6f7f9; --panel:#fff; --ink:#1a2230; --muted:#66707e; --line:#d9dee6;
+  --r0:#eae6f2; --r1:#e7edf4; --r2:#e6f0ef; --r3:#f2eef0; --edge:#c2c9d4; --inter:#5b6472; --core:#2b3448; }}
+:root[data-theme="dark"] {{ --bg:#0e1219; --panel:#151b25; --ink:#e6eaf1; --muted:#8b95a5; --line:#26303d;
+  --r0:#1b1526; --r1:#111a26; --r2:#0f1c1b; --r3:#1c1620; --edge:#2c3644; --inter:#8892a3; --core:#20283a; }}
+*{{box-sizing:border-box}} body{{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}}
+.wrap{{max-width:1120px;margin:0 auto;padding:28px 20px 48px}}
+h1{{font-size:22px;margin:0 0 4px;letter-spacing:-.01em}}
+.sub{{color:var(--muted);font-size:13.5px;margin:0 0 16px;max-width:880px;line-height:1.5}}
+.legend{{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;margin:0 0 12px;font-size:12.5px}}
+.lg{{display:inline-flex;align-items:center;gap:6px}} .lg i{{width:12px;height:12px;border-radius:50%;display:inline-block}}
+.lg.ring i{{background:{SHARED};box-shadow:0 0 0 2px var(--panel),0 0 0 3.5px {SHARED}}}
+.lg.e span{{display:inline-block;width:22px;border-top:2px solid var(--edge)}} .lg.e.inter span{{border-top:2.5px solid var(--inter)}}
+.lg.sp span{{display:inline-block;width:22px;border-top:1.5px dashed var(--muted);opacity:.7}}
+.card{{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px;overflow-x:auto;box-shadow:0 1px 2px rgba(0,0,0,.04)}}
+svg{{display:block;width:100%;height:auto;min-width:860px}}
+.ring0{{fill:var(--r0)}} .ring1{{fill:var(--r1)}} .ring2{{fill:var(--r2)}} .ring3{{fill:var(--r3)}}
+.ring{{stroke:var(--line);stroke-width:1}}
+.ringlab{{fill:var(--muted);font-size:11px;font-weight:600;text-anchor:middle;text-transform:uppercase;letter-spacing:.08em}}
+.core{{fill:var(--core);stroke:{SHARED};stroke-width:1.5}}
+.corelab{{fill:#fff;font-size:15px;font-weight:700;text-anchor:middle;letter-spacing:.12em}}
+.coresub{{fill:#cfd6e4;font-size:8.5px;text-anchor:middle}}
+.spoke{{stroke:var(--muted);stroke-width:.7;opacity:.22;stroke-dasharray:2 3}}
+.edge{{fill:none}} .edge.intra{{stroke:var(--edge);stroke-width:1;opacity:.5}} .edge.inter{{stroke:var(--inter);stroke-width:1.8;opacity:.8}}
+.node circle{{stroke:var(--panel);stroke-width:2}} .node.shared circle{{stroke:{SHARED};stroke-width:2.5}}
+.glab{{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;fill:var(--ink);text-anchor:middle}}
+.sect{{font-size:12.5px;font-weight:700}}
+.foot{{color:var(--muted);font-size:12px;line-height:1.55;margin-top:16px;max-width:940px}} .foot b{{color:var(--ink);font-weight:600}}
+.stats{{font-family:ui-monospace,monospace;color:var(--ink)}}
+</style>
+<div class="wrap">
+  <h1>Rooted at the genome &mdash; five pathways branching outward</h1>
+  <p class="sub">The same five pathways, but <b>rooted at the nucleus</b>: every protein is expressed from a gene at the
+  centre &mdash; the one origin we're <i>certain</i> of. Rings branch <b>outward</b> from the genome through the cytoplasm
+  to the membrane and outside, following where each protein is deployed. This is the <b>biogenesis</b> direction &mdash;
+  the natural complement, and the opposite, of the inward signalling view.</p>
+  <div class="legend">{legend}
+    <span class="lg ring"><i></i>shared / hand&#8209;off</span>
+    <span class="lg e"><span></span>PPI within pathway</span>
+    <span class="lg e inter"><span></span>PPI across pathways</span>
+    <span class="lg sp"><span></span>traces back to its gene</span>
+  </div>
+  <div class="card">
+    <svg viewBox="0 0 {W} {H}" role="img" aria-label="Radial graph of five pathways rooted at the genome, branching outward by compartment">
+      {svg}
+    </svg>
+  </div>
+  <p class="foot">
+    <b>Why root at the nucleus.</b> Reading outward is the certain direction: DNA in the nucleus is transcribed, the
+    protein is made and trafficked out to where it works. The dashed spokes make it literal &mdash; every node traces
+    back to its gene in the genome core. The RAS relay (<span class="stats">HRAS/KRAS/NRAS/GRB2</span>) and ERK
+    (<span class="stats">MAPK1/MAPK3</span>) sit on the sector boundaries as the shared hand&#8209;off proteins.
+    <b>{nnodes}</b> proteins ({nsh} shared), <b>{intra}</b> within&#8209;pathway + <b>{inter}</b> across&#8209;pathway PPI edges.<br>
+    <b>Honest scope.</b> Ring = <b>observed compartment</b>; outward = the <b>biogenesis</b> sense (made from nuclear
+    genes, deployed out) &mdash; a real material&#8209;flow direction, but the PPI edges are still <b>measured and
+    undirected</b> (crosstalk, not a per&#8209;protein production tree), and the dashed spokes mark the central&#8209;dogma
+    origin, not {nnodes} distinct measured edges. Descriptive near&#8209;field map, not a phenotype predictor.
+  </p>
+</div>'''
+
+
+def render_radial(cols, nodes, edges):
+    """the NUCLEUS-ROOTED view: genome at the centre (every protein is expressed from a gene there -- the one origin we
+    are certain of), rings branching OUTWARD by compartment (nucleus -> cytoplasm -> membrane -> extracellular), pathways
+    as angular sectors. Outward = the biogenesis direction (made from nuclear genes, deployed out), the complement/opposite
+    of the inward signalling view. Edges are still measured, undirected PPI."""
+    W, H, cx, cy = 1060, 1120, 530, 600
+    LEVELR = {0: 150, 1: 250, 2: 340, 3: 415}                    # radius by level (center outward); level = 3-depth
+    RINGSEP = [200, 297, 380, 450]
+    LEVELNAME = ["nucleus", "cytoplasm", "membrane", "extracellular"]
+    nw, ARC, START = len(cols), 300.0, -90.0
+    centers = [START + (k + 0.5) / nw * ARC for k in range(nw)]
+    HW = (ARC / nw) / 2 * 0.72
+    lvl = lambda n: 3 - n["depth"]
+    polar = lambda r, ad: (cx + r * math.cos(math.radians(ad)), cy + r * math.sin(math.radians(ad)))
+    g_single, g_shared = collections.defaultdict(list), collections.defaultdict(list)
+    for n in nodes:
+        (g_shared if n["shared"] else g_single)[(tuple(sorted(n["col"])) if n["shared"] else n["col"][0], lvl(n))].append(n)
+    for (k, lv), ns in g_single.items():
+        m = len(ns)
+        for i, n in enumerate(sorted(ns, key=lambda x: x["g"])):
+            ang = centers[k] - HW + (0.5 if m == 1 else i / (m - 1)) * 2 * HW
+            r = LEVELR[lv] + ((i % 2) * 2 - 1) * (9 if m > 3 else 0)
+            n["x"], n["y"] = polar(r, ang); n["ang"] = ang
+    for (ck, lv), ns in g_shared.items():
+        ca = (centers[ck[0]] + centers[ck[1]]) / 2               # boundary angle between the two wedges
+        m = len(ns)
+        for i, n in enumerate(sorted(ns, key=lambda x: x["g"])):
+            n["x"], n["y"] = polar(LEVELR[lv] + (i - (m - 1) / 2) * 20, ca); n["ang"] = ca
+    byname = {n["g"]: n for n in nodes}
+    esc = lambda s: html.escape(str(s))
+    svg = []
+    for lv in [3, 2, 1, 0]:
+        svg.append(f'<circle cx="{cx}" cy="{cy}" r="{RINGSEP[lv]}" class="ring ring{lv}"/>')
+    for lv in range(4):
+        svg.append(f'<text x="{cx}" y="{cy-RINGSEP[lv]+(16 if lv else 22):.0f}" class="ringlab">{LEVELNAME[lv]}</text>')
+    svg.append(f'<circle cx="{cx}" cy="{cy}" r="70" class="core"/>')
+    svg.append(f'<text x="{cx}" y="{cy-4}" class="corelab">GENOME</text>')
+    svg.append(f'<text x="{cx}" y="{cy+13}" class="coresub">every protein starts as a gene here</text>')
+    for n in nodes:                                              # faint biogenesis spokes back to the genome core
+        x2, y2 = polar(66, n["ang"])
+        svg.append(f'<line x1="{n["x"]:.1f}" y1="{n["y"]:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" class="spoke"/>')
+    for e in edges:
+        a, b = byname.get(e["a"]), byname.get(e["b"])
+        if a and b:
+            svg.append(f'<line x1="{a["x"]:.1f}" y1="{a["y"]:.1f}" x2="{b["x"]:.1f}" y2="{b["y"]:.1f}" '
+                       f'class="edge {"inter" if e["inter"] else "intra"}"/>')
+    for k, c in enumerate(cols):
+        lx, ly = polar(475, centers[k])
+        svg.append(f'<text x="{lx:.0f}" y="{ly:.0f}" class="sect" fill="{PCOL[k]}" text-anchor="middle">{esc(c)}</text>')
+    for n in nodes:
+        col = SHARED if n["shared"] else PCOL[n["col"][0]]
+        r = 12 if n["shared"] else 9
+        tip = f"{n['g']} — {' + '.join(n['pw'])} · {BANDS[n['depth']]}"
+        svg.append(f'<g class="node{" shared" if n["shared"] else ""}"><title>{esc(tip)}</title>'
+                   f'<circle cx="{n["x"]:.1f}" cy="{n["y"]:.1f}" r="{r}" fill="{col}"/>'
+                   f'<text x="{n["x"]:.1f}" y="{n["y"]-r-4:.1f}" class="glab">{esc(n["g"])}</text></g>')
+    nsh = sum(1 for n in nodes if n["shared"])
+    intra = sum(1 for e in edges if not e["inter"]); inter = len(edges) - intra
+    legend = "".join(f'<span class="lg"><i style="background:{PCOL[k]}"></i>{esc(c)}</span>' for k, c in enumerate(cols))
+    page = _RADIAL_TEMPLATE.format(SHARED=SHARED, legend=legend, svg="\n".join(svg), W=W, H=H,
+                                   nnodes=len(nodes), nsh=nsh, intra=intra, inter=inter)
+    VIZ.mkdir(exist_ok=True)
+    (VIZ / "pathway_radial.html").write_text(page)
+    return len(nodes), len(edges), nsh, intra, inter
+
+
 def main():
     cols, nodes, edges = build_graph()
     nn, ne, nsh, intra, inter = render(cols, nodes, edges)
+    render_radial(cols, [dict(n) for n in nodes], edges)         # fresh node dicts (radial mutates x/y/ang)
     print(f"pathway crosstalk graph: {nn} nodes ({nsh} shared), {ne} edges ({intra} intra / {inter} inter)")
     print(f"  pathways: {', '.join(cols)}")
-    print(f"  -> {VIZ/'pathway_crosstalk.html'}")
+    print(f"  -> {VIZ/'pathway_crosstalk.html'}  (top-to-down, signalling inward)")
+    print(f"  -> {VIZ/'pathway_radial.html'}     (nucleus-rooted, branching outward)")
 
 
 if __name__ == "__main__":
