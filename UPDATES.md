@@ -3003,3 +3003,24 @@ not by sensing damage and switching on a reserve. This is exactly why the static
 (the parallel wiring was always there) and why perturbations get buffered (ties to the nexus finding that moderate damage
 is absorbed). Caveats: name-stem paralog proxy; single-timepoint K562 (slow/post-transcriptional compensation not
 captured). Not committed as a syscall — a measured clarification of network robustness.
+
+## pathway_overlay — structural cut vs the REAL measured effect (viz)
+
+The user's idea: for a removed protein that HAS measured knockout data, overlay its real measured movers onto the same
+5-pathway graph. Built it (`viz/pathway_overlay.html`, generator `colab/pathway_overlay.py [GENE]`): removed node struck
+out + edges cut (red), and every graph node that actually moved on knockout badged ▲up (green) / ▼down (blue).
+
+First, the aggregate test (the striking part): of the **32** graph nodes with measured knockout, **31 move ZERO other
+graph nodes** when removed — only CTNNB1 moves any. These proteins are all "connected" in the pathway map, yet knocking
+one out doesn't measurably move the others (signalling acts post-transcriptionally; Perturb-seq reads mRNA).
+
+The overlay makes the disjointness concrete:
+- **PPP2R1A KO moved *nothing*** measurable cell-wide (just its own knockdown) — a scaffold with no transcriptional signature.
+- **CTNNB1 KO moved 168 genes** cell-wide (it's a TF), but only **3** land in the 5-pathway graph and **0** are its
+  structural neighbours. The real effect is almost entirely off-graph: MAP1B (+1.6), APOE (−1.1), ARG2, IGFBP2, PHGDH… —
+  none of them in the pathway wiring.
+
+**Conclusion (the ~3%-recall wall, drawn):** the structural neighbours and the measured movers are **different sets**. The
+graph shows who-shares-and-touches; the knockout's real downstream effect goes elsewhere (indirect/regulatory, and mRNA is
+blind to signalling). The structural cut is certain; the cascade must be measured, not read off the graph — exactly the
+boundary `impact` and `pathway_remove` draw. (colab/pathway_overlay.py → viz/pathway_overlay.html.)
