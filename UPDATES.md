@@ -2861,3 +2861,22 @@ This is the same lesson as the dMaSIF+physics redundancy: **two layers that enco
 compartment/nucleus-rooted layer earns its keep in the *visualization* and in the *transport cross-check* (the ~16% that
 DON'T co-localize — exactly where a carrier is needed), but **not** as a prediction booster. `connect` stays as-is; the
 honest answer to "does direction change the 71%?" is **no, and here's why.**
+
+## orphan_network — wiring the unknowns into the pathway network (viz)
+
+Ties the whole arc together: take the orphan / dark genes that `connect` places (no pathway annotation) and draw them
+*into* the 5-pathway crosstalk network (`viz/orphan_network.html`, generator `colab/orphan_network.py`). Known pathway
+proteins are circles (only the anchors the orphans touch are shown); orphan genes are **diamonds**, wired in by their
+**measured PPI links** to those anchors. Confidence is colour-coded from `connect`'s tiers: **gold filled diamonds + gold
+links = corroborated** (literature and PPI agree on the pathway, ~71% precision), **hollow diamonds + dashed links =
+PPI-only** leads. Same compartment layout (columns = pathways, rows = compartments, top-to-down). ~15 orphans wired to
+~38 known anchors.
+
+103 orphans link into these 5 pathways; the corroborated ones check out: **ERRFI1** (MIG6, an EGFR feedback inhibitor) →
+EGFR; **CSNK1A1L** (a CK1 kinase) → WNT via AXIN1/CTNNB1; **CREB5** (a CREB-family TF) → MAPK nuclear targets; **DISC1** →
+WNT via GSK3B. The caption is generated from the actual shown genes so it always matches the graph.
+
+**HONEST SCOPE:** the **edges are measured** (PPI); the **placement is a hypothesis** — gold is the ~71%-precision
+corroborated tier, hollow is a PPI-only lead. Vertical = observed compartment. A descriptive near-field map that slots
+each unknown next to the machinery it physically touches — a hypothesis to test, not a proven annotation or a phenotype
+predictor. (colab/orphan_network.py → viz/orphan_network.html.)
