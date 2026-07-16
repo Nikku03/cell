@@ -10,9 +10,11 @@ ESM is deliberately NOT a feature: ESM reads a single chain and is partner-blind
 which is orthogonal to binding (measured: ESM-alone r=0.09 on ΔΔG-binding vs physics 0.46). ESM belongs on the intrinsic
 FOLD sensor, not here.
 
-Honest accuracy (held-out BY COMPLEX, 46-complex sandbox set): all-AA r~0.46, alanine ~0.51, non-alanine ~0.30;
-binding-hotspot (ΔΔG>1) AUC ~0.79. The non-alanine number is the real limit — general substitutions are harder and
-SKEMPI is ~85% alanine. Retrain on the full SKEMPI complex set (Colab) for the production model.
+Honest accuracy, held-out BY COMPLEX. FULL SKEMPI (277 complexes, 4,417 muts): all-AA r 0.51, non-alanine 0.51,
+alanine 0.51, hotspot(ΔΔG>1) AUC 0.77 — the substitution-class gap VANISHES at scale. (46-complex sandbox subset:
+all-AA 0.46, non-alanine 0.30 — that low non-ala was DATA-STARVATION, ~358 non-ala examples, NOT intrinsic difficulty:
+given enough non-alanine training data the physics+rotamer+charge features predict general substitutions as well as
+alanine.) The committed bind_ddg_model.pkl is the sandbox fallback; bind_ddg_colab.ipynb trains the full-SKEMPI model.
   train(pdbs, cache) -> outputs/orphan/bind_ddg_model.pkl (+ bind_ddg.json)   |   Predictor.predict(pdb,ch,pos,wt,mut)
 """
 import os, sys, json, pickle, warnings

@@ -2664,3 +2664,15 @@ the encoder can only see the *position* (redundant with physics burial), never t
 information the input doesn't contain. So the surface is confirmed (a second, stronger time) to belong on **Part-1
 recognition, not Part-2 magnitude**, and **physics is the honest ceiling** for binding magnitude (~0.46). `bind_ddg_colab.ipynb`
 runs the full-SKEMPI (~345) physics retrain (the production model) + this e2e test at scale on GPU. (bind_ddg_e2e.py → bind_ddg_e2e.json.)
+
+**Full-SKEMPI result — and a correction to my own conclusion (Colab, held-out by complex):** trained bind_ddg on the
+**full 277-complex / 4,417-mutation SKEMPI set** (vs the 42-complex sandbox subset). Result: **all-AA r 0.51,
+non-alanine 0.51, alanine 0.51, hotspot AUC 0.77.** Two findings: (1) the number rose 0.46 → **0.51**, solidly in
+Rosetta flex_ddG territory (~0.6), a real held-out-by-complex number on a large set; (2) **the "non-alanine is
+intrinsically harder" conclusion was WRONG.** On 42 complexes non-ala was 0.30 and I attributed it to difficulty
+(subtractive+additive substitutions, "alanine bias flatters us"). The full set proves it was **data-starvation**: 42
+complexes held only ~358 non-ala examples; the full set has 1,686, and non-ala jumps to **0.51, dead even with
+alanine.** The physics+rotamer+charge features predict general substitutions *as well as* alanine given enough data to
+fit them — the substitution-class gap vanishes at scale. The through-line holds: **the ceiling was DATA, not the model
+or the features** — scaling 42 → 277 complexes did what ESM, end-to-end nets, rotamer ensembles, and charge
+superposition all could not. (Production model on Colab; the committed .pkl is the 42-complex fallback.)
