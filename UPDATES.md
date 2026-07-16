@@ -2562,3 +2562,32 @@ stack is independent of which complexes the surface model trained on.)
 The Colab notebook now features the auto-fetcher as the scale path (`fetch_and_train(300, human_only=True)`), keeps
 SKEMPI as the labelled validation set, and still accepts any user PDB list (incl. AlphaFold-Multimer complexes for PPIs
 without solved structures). (fetch_complexes.py, nexus_train.py, nexus_colab.ipynb.)
+
+## fusion_test — does the STRONG (0.947) dMaSIF embedding lift the ΔΔG node? Re-run of "complementary layers"
+
+The earlier `complementary.py` found the dMaSIF surface embedding did NOT improve the physics ΔΔG node — but it used a
+WEAK per-split net (trained on ~60 complexes). After the surface net reached **0.947** held-out interface AUC on 2,198
+complexes (Drive run), the fair question is whether a *strong* embedding changes that verdict. Built `fusion_test.py`:
+loads a FIXED pretrained dMaSIF net, pools its geodesic per-point embedding at the mutation site (8Å), concatenates it
+onto the physics node features, and compares node-only vs node+embedding under **GroupKFold-by-complex** (every mutation
+of a complex in one fold; node-only baseline on the SAME folds). The net is a self-supervised geometry feature extractor
+that never saw ΔΔG labels, so using its embedding is pretrain→probe, not leakage; `probe_pdbs` forces the ΔΔG-test
+complexes to be disjoint from the net's training set for a strict check.
+
+**Sandbox result** (net trained on 30 SKEMPI complexes → held-out AUC **0.789**; probed on **12 disjoint held-out
+complexes / 243 alanine mutations** the net never saw):
+- ΔΔG magnitude (Pearson): node-only **0.346** → node+dMaSIF **0.321** (**Δ −0.025**)
+- binding-hotspot ΔΔG>1 (ROC-AUC): node-only **0.744** → node+dMaSIF **0.717** (**Δ −0.027**)
+
+So even a strong surface embedding does **not** improve mutation-effect prediction — it slightly *hurts*. This confirms
+the structural prediction and is not a data-quantity problem: **dMaSIF embeds WILD-TYPE surface geometry, and a point
+mutation's effect is a mutant-minus-WT DELTA the WT embedding cannot express, however good the embedding is.** A better
+WT surface sensor is still a WT surface sensor. (Note the node-only hotspot AUC **0.744** matches the ~0.75 NEXUS binding
+number; the surface embedding adds nothing on top.)
+
+**Honest verdict:** the architecture stays a **PIPELINE, not a fusion** — dMaSIF finds/scores the interface and the
+right partner (its 0.947 strength is real and useful *there*); the physics node scores the specific substitution. The
+0.947 upgrade sharpens interface *recognition*, not mutation-*effect* prediction — the two are orthogonal by construction.
+The definitive check on the exact 2,198-complex / 0.947 net is the one-cell Colab runner (`fusion_test.run` pointed at the
+Drive weights); theory says it will give the same "no lift" result, since the limitation is *what* the embedding encodes,
+not how well. (fusion_test.py → fusion_test.json.)
