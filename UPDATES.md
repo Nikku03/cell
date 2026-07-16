@@ -3127,3 +3127,35 @@ GitHub raw + TRRUST reachable.)
    *measured, context-specific functional* edges — i.e. more Perturb-seq, not more annotation), exactly as the earlier
    tests implied. More annotation regulons sharpen the *structural/condition* queries; only measurement moves the
    *prediction* wall. (trrust_regulon.json; cell_conditions.py merges SIGNOR+TRRUST+reg.)
+
+## perturb_recall — can a neural net + all the data get RECALL? (measured: real lift, partial, wall not broken)
+
+The user's plan: more screen data + a neural network to get the recall the graph can't. Built and measured it honestly.
+Data: we already had FOUR cached Perturb-seq screens (k562 9,871 KOs — used here; plus gwps 11,258, hct116, norman for
+cross-screen). Model: a gradient-boosted classifier predicting, for a HELD-OUT knockout, which genes move — fusing
+**base-rate** (response-proneness), **graph-neighbour co-response transfer**, **reg/SIGNOR targets**, and **PPI**.
+
+**Held-out-by-knockout, 545 test KOs, mean AUPRC / recall@50:**
+
+| method | AUPRC | recall@50 |
+|---|---|---|
+| random | 0.017 | 0.4% |
+| graph edges alone | 0.019 | **3.2%** ← the old 3% wall, reproduced |
+| base-rate (mean response) | 0.152 | 15.4% |
+| transfer (neighbour-KO co-response) | 0.155 | 15.4% |
+| **MODEL (all data)** | **0.183** | **17.9%** |
+
+**Honest reading — it works, but it's a lift, not a breakthrough.** The model beats every baseline (11× random) and
+pushes recall@50 from the graph's **3% → 18%** — a real, useful triage ranker. BUT: recall is **partial** (top-50 catches
+~18% of movers, misses ~82%), and the lift **over the simple base-rate baseline is modest** (+0.03 AUPRC, +2.5pp). Where
+does the recall come from? Almost entirely **base-rate** ("which genes are response-prone") + **co-response transfer**
+("what my network-neighbour knockouts did") — the **graph edges alone are ~random**, and a co-response-from-targets SVD
+feature added nothing. So knockout-**specific** prediction stays hard.
+
+**How the data is best used (the answer to "think how all this data can be used"):** not as a wiring diagram to propagate
+along (that's ~random), but as (1) a **response-proneness prior** per gene, (2) a **co-response transfer** from measured
+neighbour-knockouts, (3) **regulon/PPI priors** — fused by the model. This is the honest maximum the current data
+supports. It matches the field (foundation models barely beat baselines on perturbation prediction) and this project's
+own latent-bridge (+0.018 over mean). **More screens raise base-rate quality but did not break the wall on this
+evidence** — the missing signal is measured, context-specific function, not model capacity or data volume alone.
+(perturb_recall.py → perturb_recall.json.)
