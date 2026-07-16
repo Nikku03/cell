@@ -92,24 +92,36 @@ def run(cache, clouds_dir=None, epochs=60, device="cpu"):
     FD = clouds[samples[0][0]]["pc"]["feat"].shape[1]; PD = len(samples[0][2])
     Y = np.array([s[3] for s in samples]); ymu, ysd = Y.mean(), Y.std()
     grp = np.array([s[0] for s in samples]); muts = np.array([s[4] for s in samples])
-    PH = np.stack([s[2] for s in samples]); pmu, psd = PH.mean(0), PH.std(0) + 1e-6
+    # ROBUST inputs: physics features are heavy-tailed (rotamer-clash / charge-field can be extreme) — a tree ignores
+    # that but an MLP diverges on it. Clean NaN/inf here and quantile-normalise per fold below. Also clean surface feats.
+    PH = np.nan_to_num(np.stack([s[2] for s in samples]).astype(np.float64), nan=0.0, posinf=0.0, neginf=0.0)
+    for cl in clouds.values():
+        cl["pc"]["feat"] = np.nan_to_num(cl["pc"]["feat"].astype(np.float32), nan=0.0, posinf=0.0, neginf=0.0)
     print(f"{len(samples)} mutations / {len(set(grp))} complexes ({time.time()-t0:.0f}s) [device={device}]", flush=True)
 
+    from sklearn.preprocessing import QuantileTransformer
+
     def run_mode(mode):
-        preds = np.zeros(len(samples))
+        preds = np.zeros(len(samples)); rng = np.random.default_rng(0)
         for tr, te in GroupKFold(5).split(samples, Y, grp):
+            qt = QuantileTransformer(n_quantiles=min(1000, len(tr)), output_distribution="normal", random_state=0)
+            PHt = qt.fit(PH[tr]).transform(PH).astype(np.float32)   # robust per-fold feature scaling (no label leak)
             by = {}
             for i in tr:
                 by.setdefault(samples[i][0], []).append(i)
-            net = _make_net(mode, FD, PD, device); opt = torch.optim.Adam(net.parameters(), lr=3e-3); lf = nn.MSELoss()
+            order = list(by.keys())
+            net = _make_net(mode, FD, PD, device)
+            opt = torch.optim.Adam(net.parameters(), lr=1e-3, weight_decay=1e-4); lf = nn.MSELoss()
             for ep in range(epochs):
-                net.train()
-                for pdb, idxs in by.items():
+                rng.shuffle(order); net.train()                    # shuffle complex order each epoch (stability)
+                for pdb in order:
+                    idxs = by[pdb]
                     emb = net.encode(clouds[pdb]) if mode != "phys" else None
                     sites = [samples[i][1] for i in idxs]
-                    phys = torch.tensor(np.stack([(samples[i][2] - pmu) / psd for i in idxs]), device=device)
+                    phys = torch.tensor(PHt[idxs], device=device)
                     yb = torch.tensor([(Y[i] - ymu) / ysd for i in idxs], dtype=torch.float32, device=device)
-                    opt.zero_grad(); lf(net(emb, sites, phys), yb).backward(); opt.step()
+                    opt.zero_grad(); lf(net(emb, sites, phys), yb).backward()
+                    torch.nn.utils.clip_grad_norm_(net.parameters(), 5.0); opt.step()   # grad clip (no divergence)
             net.eval()
             with torch.no_grad():
                 byte = {}
@@ -118,7 +130,7 @@ def run(cache, clouds_dir=None, epochs=60, device="cpu"):
                 for pdb, idxs in byte.items():
                     emb = net.encode(clouds[pdb]) if mode != "phys" else None
                     sites = [samples[i][1] for i in idxs]
-                    phys = torch.tensor(np.stack([(samples[i][2] - pmu) / psd for i in idxs]), device=device)
+                    phys = torch.tensor(PHt[idxs], device=device)
                     p = net(emb, sites, phys).cpu().numpy() * ysd + ymu
                     for j, i in enumerate(idxs):
                         preds[i] = p[j]
