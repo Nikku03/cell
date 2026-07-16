@@ -2965,3 +2965,21 @@ breaks every complex it's a subunit of, and complex-mates are co-essential ~1000
 SMAD2-SMAD3-SMAD4 (with SMAD2, SMAD4), SMAD3-TTF-1, …" — real, graph-only, no measurement. The [4] wall now states the
 measured graph-recall (4× enriched / ~3% recall) explicitly. So the honest split: the graph gives you the **structural
 break** (certain) but **not** the functional cascade (~3% recall) — it abstains there rather than fake it.
+
+## pathway_remove — remove a protein, redraw the graph, show what changes (viz)
+
+Concrete demonstration of "remove a protein and see how the graph changes" (`viz/pathway_remove.html`, generator
+`colab/pathway_remove.py [GENE]`, default PPP2R1A). The removed node is struck out (red ×), its edges cut (dashed red),
+and any complex co-subunit that loses it is flagged (amber ring). Reusable for any gene in the graph.
+
+`remove PPP2R1A` (the PP2A scaffold, a shared WNT↔MAPK-nuclear hand-off node): cuts **6 edges** (1 inter-pathway, all to
+the PP2A module), and — because it scaffolds 4 PP2A/STRIPAK complexes — structurally orphans **PPP2CA** (its co-subunit,
+still expressed but now without a scaffold). The WNT↔MAPK-nuclear hand-off drops from 4 shared bridges to 3 — **reduced,
+not severed**, because the PP2A module is redundant (PPP2CB, PPP2R5D still bridge it). `remove GRB2` for contrast cuts 13
+edges and thins the PI3K↔EGFR bridge (3→2).
+
+**HONEST SCOPE (the whole point):** this is the **direct / structural** rewiring only — deleting a node deletes its
+measured PPI edges, and complex-mates that lose a subunit are co-essential ~1000× chance (validated). It does **not** draw
+the downstream transcriptional **cascade**, because the graph predicts a knockout's real movers at only ~3% recall (4×
+enriched, misses ~97%). We redraw the wiring we can see for certain and stop at the ripple we can't — the same honest
+boundary as `impact`. (colab/pathway_remove.py → viz/pathway_remove.html.)
