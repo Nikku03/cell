@@ -2880,3 +2880,29 @@ WNT via GSK3B. The caption is generated from the actual shown genes so it always
 corroborated tier, hollow is a PPI-only lead. Vertical = observed compartment. A descriptive near-field map that slots
 each unknown next to the machinery it physically touches — a hypothesis to test, not a proven annotation or a phenotype
 predictor. (colab/orphan_network.py → viz/orphan_network.html.)
+
+## How accurate are the orphan pathway placements? (honest accounting)
+
+Asked "as a pathway, how accurate are they?" for the orphan_network placements. The honest answer has three parts:
+
+1. **Directly unmeasurable on the orphans.** All 103 orphans that wire into the 5 pathways have `npath=0` — they are in
+   *no* Reactome pathway at all (capped or uncapped). By construction there is no internal ground truth for them, so we
+   cannot compute a direct accuracy on the actual orphans.
+
+2. **Regime-matched proxy (the graph's real task = "which of these 5 pathway families?").** Leave-one-out on KNOWN genes
+   in the *same* operating regime (a gene wired into these 5 pathways by ≥3 PPI links), family-level:
+   - **PPI-only assignment: 96%** correct family (132/138)
+   - **Corroborated (lit+PPI agree): 85%** correct family (77/91, fires 66%)
+   This is much higher than `connect`'s headline 54%/71% because that number is *exact* pathway top-1 among ~2,000
+   Reactome pathways, whereas the graph only claims one of **5 broad families** — a far easier call.
+
+3. **Manual spot-check of the 12 shown corroborated orphans, and it's lower than the proxy** (as expected for dark
+   genes): ~5–6 clearly correct (ERRFI1→EGFR = MIG6 feedback inhibitor; CSNK1A1L→WNT via LRP5/6/CTNNB1; DISC1→WNT via
+   GSK3B; ATF7→MAPK-nuclear with ATF2/JUN/FOS; CHMP1B→EGFR receptor sorting via HGS/STAM), ~3 plausible, and **~3–4 weak
+   and hub-driven** — the failure mode is generic-hub links (PLEKHB2/TRIM23→EGFR *via ubiquitin* UBB/UBC/RPS27A;
+   SNX27→MAPK *via* fibrinogen). Roughly ~60–70% by eye, so the 85% proxy is somewhat **optimistic** for dark genes.
+
+**Bottom line:** the graph gets the broad pathway *family* right most of the time (~85% corroborated on the matched
+proxy, likely ~65% on true dark genes), but "exact mechanism" is weaker and the confident tier still lets through
+hub-driven false positives (ubiquitin especially). A strong lead-generator at family resolution, not a proven annotation
+— exactly the honest scope the tool claims.
