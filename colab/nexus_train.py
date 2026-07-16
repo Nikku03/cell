@@ -180,6 +180,46 @@ def train_dmasif(data, epochs=40, device="cpu", model_out=None):
     return net, auc, len(train), len(test)
 
 
+def load_clouds(clouds_dir):
+    """load every cached surface cloud (*.pkl) in a directory into the dict train_dmasif expects. Each pkl was written
+    by _build_one as {"pc","g","pos","neg"}; the file stem is the PDB id."""
+    import glob
+    data = {}
+    for fp in sorted(glob.glob(os.path.join(clouds_dir, "*.pkl"))):
+        try:
+            data[os.path.splitext(os.path.basename(fp))[0]] = pickle.load(open(fp, "rb"))
+        except Exception:
+            pass
+    return data
+
+
+def train_from_cache(clouds_dir, epochs=60, device="cpu", model_out=None):
+    """FAST path: train + hold-out-validate the dMaSIF surface net on ALREADY-BUILT clouds — no fetch, no APBS. Use this
+    when the expensive surface build ran in a previous session and the clouds were cached to disk/Drive. Loads every
+    *.pkl in clouds_dir, trains on a 75% split held out BY COMPLEX, and reports the held-out interface AUC. The trained
+    weights are saved next to the clouds dir (so if clouds_dir is on Drive, the model lands on Drive too)."""
+    print("=" * 90, flush=True)
+    print(f"NEXUS-TRAIN (from cache) — dMaSIF surface net on cached clouds  [device={device}]", flush=True)
+    print("=" * 90, flush=True)
+    print(f"  loading cached clouds from {clouds_dir} ...", flush=True)
+    t0 = time.time(); data = load_clouds(clouds_dir)
+    print(f"  {len(data)} clouds loaded ({time.time()-t0:.0f}s)", flush=True)
+    if len(data) < 2:
+        print("  need >=2 clouds to train/hold-out. stop.", flush=True)
+        return {"error": "too few clouds", "n_usable": len(data), "working_check": False}
+    model_out = model_out or os.path.join(clouds_dir, "..", "nexus_dmasif.pt")
+    t0 = time.time(); net, auc, ntr, nte = train_dmasif(data, epochs=epochs, device=device, model_out=model_out)
+    print(f"  trained ({epochs} ep, {ntr} train / {nte} test complexes, {time.time()-t0:.0f}s): "
+          f"held-out interface-discrimination AUC {auc:.3f}  -> weights {model_out}", flush=True)
+    ok = not np.isnan(auc)
+    out = {"n_usable": len(data), "epochs": epochs, "device": device, "dmasif_heldout_auc": round(auc, 3),
+           "n_train": ntr, "n_test": nte, "model": model_out, "working_check": bool(ok)}
+    op = os.path.join(HERE, "..", "outputs", "orphan", "nexus_train_from_cache.json")
+    os.makedirs(os.path.dirname(op), exist_ok=True); json.dump(out, open(op, "w"), indent=1, default=float)
+    print(f"  WORKING-CHECK: {'PASS' if ok else 'FAIL'}  -> {op}", flush=True)
+    return out
+
+
 def run_sensors(pdbs, cache, model_pkl):
     """working-check of the full NEXUS stack on real measured mutations. Uses SKEMPI mutations in the trained complexes
     when available; otherwise (e.g. auto-fetched PDB complexes not in SKEMPI) falls back to a fixed SKEMPI complex so the
