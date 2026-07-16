@@ -3098,3 +3098,32 @@ Two sign-aware enhancements using the signed regulatory edges (this project meas
   knowable; the responder set is not.
 
 (cell_conditions.py `_direction`; cellos.py `_impact_contribution` / impact [2c].)
+
+## Getting more data to improve the graph — a data-quality experiment (and an honest ceiling)
+
+Asked to pull in all available data (perturbation/ChIP-seq etc.) to make the graph better. Inventoried what we have,
+fetched what we could, and — crucially — **measured** each source against the two things that matter, instead of assuming
+more data helps.
+
+**What we already had but were underusing:** `causal_edges.json` = **SIGNOR** (60k curated, signed causal edges).
+**What we fetched fresh:** **TRRUST v2** (grnpedia.org) — 795 TFs / 9,396 PubMed-curated signed TF→target edges (saved as
+`trrust_regulon.json`). (OmniPath/CollecTRI was 502 — external fetch of that one is down right now; UniProt REST 403'd;
+GitHub raw + TRRUST reachable.)
+
+**Measured head-to-head** (vs the raw 612k ChIP-style `reg` edges):
+
+| regulon | which-targets-move (measured KO) | condition-inference top-3 |
+|---|---|---|
+| reg (612k, ChIP-style) | 1.1× (chance) | 76% |
+| **SIGNOR (60k, curated causal)** | **2.7×** | **88%** |
+| TRRUST (9k, curated literature) | 1.1× | 80% |
+
+**Two honest conclusions:**
+1. **Quality beats quantity.** SIGNOR (curated causal) is decisively the best — it predicts measured knockout movers 2.7×
+   vs the noisy reg's 1.1×, and lifts condition top-3 to 88%. We were underusing it. Upgraded `conditions` to MERGE
+   SIGNOR + TRRUST + reg (best-first) → validation top-3 **76% → 81%**, and the fetched TRRUST is now in the pipeline.
+2. **But better data does NOT break the wall.** Across three independent regulons the which-targets-move enrichment tops
+   out at 2.7× with ~0.6% recall — the far-field cascade still isn't predictable. The wall is **informational** (it needs
+   *measured, context-specific functional* edges — i.e. more Perturb-seq, not more annotation), exactly as the earlier
+   tests implied. More annotation regulons sharpen the *structural/condition* queries; only measurement moves the
+   *prediction* wall. (trrust_regulon.json; cell_conditions.py merges SIGNOR+TRRUST+reg.)

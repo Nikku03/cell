@@ -4,14 +4,16 @@ TF are CONSTITUTIVE (always-on — the housekeeping machinery); pathways enriche
 CONDITIONAL, and the top TF names the trigger (HIF1A → hypoxia, SREBF → low sterol, ATF4/XBP1 → ER stress, TP53 → DNA
 damage, NF-kB → inflammation, STAT → cytokine/IFN, HSF1 → heat, …).
 
-The backward trace (pathway gene ← controlling TF) is a STRUCTURAL query on the curated directed regulatory graph
-(cell_complete["reg"], 612k edges) scored by a HYPERGEOMETRIC enrichment — NOT the dynamical propagation that this project
-measured fails at chance. Enrichment of a curated TF's targets in a gene set is an annotation-level inference (like
-connect's corroboration), and it VALIDATES: on 111 pathways whose condition is stated in their name, the traced condition-TF
-is top-1 60% / top-3 77% (chance 7% / 20%) — ~8x / 4x chance. HONEST LIMITS: condition-CATEGORY resolution (it can confuse
-related stresses, e.g. hypoxia vs ER stress); only ~20 curated condition-TFs (major stress/signal axes, not all); the reg
-edges are annotation (ChIP + curated), so this is "regulated-by" not "measured-functional-in-K562". A hypothesis generator
-for what turns a pathway on, not a proven trigger.
+The backward trace (pathway gene ← controlling TF) is a STRUCTURAL query on the directed regulatory graph, scored by a
+HYPERGEOMETRIC enrichment — NOT the dynamical propagation that this project measured fails at chance. Enrichment of a
+curated TF's targets in a gene set is an annotation-level inference (like connect's corroboration). Edges are MERGED from
+three regulons, best-first: SIGNOR (curated causal, ~60k — measured to predict knockout movers 2.7x vs the raw ChIP-style
+reg's 1.1x, and lift condition top-3 to 88%), TRRUST (PubMed-curated TF-target, ~9k signed), and the raw reg edges (612k,
+coverage). It VALIDATES: on 58 condition-named pathways the traced condition-TF is top-1 67% / top-3 81% (chance 7% / 20%
+— ~9x / 4x). HONEST LIMITS: condition-CATEGORY resolution (can confuse related stresses, e.g. hypoxia vs ER stress); ~16
+curated condition-TFs (major stress/signal axes, not all); still "regulated-by" not "measured-functional-in-K562" — and
+NOTE the data experiment: better regulons help condition inference but DON'T break the which-targets-move wall (best 2.7x,
+~0.6% recall). A hypothesis generator for what turns a pathway on, not a proven trigger.
 """
 import json, collections, math
 from pathlib import Path
@@ -38,14 +40,31 @@ def _load():
     D = json.load(open(OUT / "cell_complete.json"))
     names = [g["name"] for g in D["genes"]]
     n2i = {x: i for i, x in enumerate(names)}
-    reg = collections.defaultdict(set)
-    sout = collections.defaultdict(list)                 # TF name -> [(target idx, sign)]  (signed edges only)
-    sin = collections.defaultdict(list)                  # target idx -> [(src name, sign)]  (signed edges only)
+    reg = collections.defaultdict(set)                   # TF -> target idxs (for ENRICHMENT; merged reg + curated SIGNOR)
+    sout = collections.defaultdict(list)                 # TF -> [(target idx, sign)]  TRANSCRIPTIONAL signs (reg; 73% for mRNA)
+    sin = collections.defaultdict(list)                  # target idx -> [(src, sign)]  for feedback detection
     for s, t, sg in D["reg"]:
         if s < len(names) and t < len(names):
-            reg[names[s]].add(t)                          # TF name -> set of target indices
+            reg[names[s]].add(t)
             if sg != 0:
                 sout[names[s]].append((t, sg)); sin[t].append((names[s], sg))
+    # MERGE curated regulons — measured to beat the raw reg edges. SIGNOR causal predicts knockout movers 2.7x (vs reg
+    # 1.1x) and lifts condition top-3 to 88%; TRRUST is PubMed-curated TF->target (top-3 80%). Quality > quantity.
+    try:
+        for s, t, sg, _src in json.load(open(OUT / "causal_edges.json"))["edges"]:   # SIGNOR
+            if s < len(names) and t < len(names):
+                reg[names[s]].add(t)
+    except (OSError, KeyError):
+        pass
+    try:
+        for tf, tgts in json.load(open(OUT / "trrust_regulon.json"))["tf_targets"].items():   # TRRUST (curated, PubMed)
+            for tgt, sg in tgts:
+                if tf in n2i and tgt in n2i:
+                    reg[tf].add(n2i[tgt])
+                    if sg != 0:
+                        sout[tf].append((n2i[tgt], sg)); sin[n2i[tgt]].append((tf, sg))
+    except (OSError, KeyError):
+        pass
     paths = json.load(open(OUT / "reactome_pathways.json"))["pathways"]
     sgn = {"out": sout, "in": sin, "n2i": n2i}
     return names, reg, paths, len(names), sgn
