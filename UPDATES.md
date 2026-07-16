@@ -2810,3 +2810,23 @@ Confidence **tiers** keep it honest: measured PPI > corroborated > lit-hypothesi
 `connect GENE` syscall. **HONEST SCOPE:** descriptive near-field triangulation — a strong *starting mechanism*
 (corroborated ~71% precision) to test experimentally, **not** a proven annotation and **not** a phenotype predictor.
 (connect.py → connect.json; `connect` syscall.)
+
+## pathway_graph — five pathways as one compartment-layered crosstalk graph (viz)
+
+A visual answer to "make a graph of 5 pathways and how they connect, top-to-down and interconnected." Built entirely
+from the model's real data (`viz/pathway_crosstalk.html`, generator `colab/pathway_graph.py`): the connective proteins of
+five Reactome pathways — **EGFR receptor, MAPK activation, MAPK nuclear targets, PI3K/AKT, WNT** — laid out as columns,
+positioned **top-to-down by compartment** (localization: extracellular → membrane → cytoplasm → nucleus) and
+**interconnected by measured PPI** (cell_complete edges). 41 proteins shown, **14 shared** (in two pathways at once — the
+literal hand-off nodes), 113 within-pathway and 21 across-pathway edges.
+
+The story the data tells is the textbook cascade: EGFR at the membrane → the **RAS relay** (HRAS/KRAS/NRAS/GRB2, drawn as
+shared nodes bridging EGFR and the MAPK arm) → splits into the MAPK and PI3K arms → converges on **ERK (MAPK1/MAPK3)** →
+nuclear MAPK targets; WNT crosstalks near the nucleus through the **PP2A phosphatase (PPP2*)**. The shared nodes are
+exactly the right biology — they weren't hand-picked, they fell out of pathway co-membership.
+
+**HONEST SCOPE (same as the ladder):** vertical position is the **observed compartment**, not a proven flow; the edges
+are **measured but undirected** physical interactions — real crosstalk and shared machinery, **not** a proven directional
+signal hand-off. The downward arrow marks the **textbook** cascade direction for these specific pathways, not something
+derived from the edges. A descriptive near-field map of who-touches-whom-and-where, not a phenotype predictor.
+(colab/pathway_graph.py → viz/pathway_crosstalk.html.)
