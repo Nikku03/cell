@@ -1259,6 +1259,8 @@ class CellKernel:
         """the compartment LAYOUT of a pathway (spatial_ladder.py): each protein placed in every compartment it's
         annotated in (localization, ~100%), grouped membrane→nucleus. 'ladder PATHWAY' (fuzzy name) shows one pathway's
         layers; 'ladder GENE' shows a gene's compartments + the pathways it's in; 'ladder' shows the reality-check.
+        For an ORPHAN gene (not in pathway data) it still reads the compartment DIRECTLY and adds a literature-inferred
+        candidate function (lit_place.py: IDF-weighted co-mention vote — a HYPOTHESIS, ~4x chance / top-5 ~1-in-5).
         HONEST: the DIRECTIONAL membrane→nucleus ladder was MEASURED not to hold (regulatory tier ≠ spatial depth), so
         this is an occupancy PROFILE read straight from localization, NOT a route and NOT a phenotype predictor.
         usage: ladder | ladder PATHWAY | ladder GENE"""
@@ -1286,13 +1288,32 @@ class CellKernel:
                     out.append(f"    {s:14s}: {', '.join(genes[:10])}{' …' if len(genes) > 10 else ''}")
             out.append("  (* = TF · proteins counted in EVERY compartment they're annotated in · occupancy, not a route)")
             return "\n".join(out)
-        if query in names:                                          # a gene: its compartments + the pathways it's in
+        if query in names:                                          # a gene
             deps = sorted(sl._depths(loc, query))
             comps = ", ".join(sl.DEPTH_NAME[d] for d in deps) or "(no mapped compartment)"
+            tfmark = "  *TF" if query in tf else ""
             pws = sl.gene_pathways(query, names, paths)
-            out = [f"ladder — {query}: localized to [{comps}]"
-                   + ("  *TF" if query in tf else ""),
-                   f"  in {len(pws)} pathway(s)" + (": " + "; ".join(pws[:6]) + (" …" if len(pws) > 6 else "") if pws else "")]
+            if pws:                                                 # in pathway data: known placement
+                return (f"ladder — {query}: localized to [{comps}]{tfmark}\n"
+                        f"  in {len(pws)} pathway(s): " + "; ".join(pws[:6]) + (" …" if len(pws) > 6 else ""))
+            # ORPHAN gene (no pathway): compartment is still KNOWN; infer functional context from LITERATURE
+            import lit_place as lp
+            if not hasattr(self, "_lp"):
+                self._lp = lp.build()
+            p = lp.place(query, self._lp)
+            out = [f"ladder — {query}: localized to [{comps}]{tfmark}   (NOT in pathway data — orphan)"]
+            if p and p["co_mentioned"]:
+                out.append(f"  literature co-mentions: {', '.join(p['co_mentioned'][:10])}")
+                if p["candidate_pathways"]:
+                    out.append("  candidate function — HYPOTHESIS from lit co-mention (validated ~4x chance, right in top-5 ~1-in-5):")
+                    for pw in p["candidate_pathways"][:5]:
+                        out.append(f"    · {pw}")
+                else:
+                    out.append("  (co-mentioned genes carry no capped-pathway membership — no candidate)")
+            elif p:
+                out.append("  no known-gene literature co-mentions found — compartment only.")
+            else:
+                out.append("  no literature data — compartment only.")
             return "\n".join(out)
         return f"ladder {query}: no matching pathway or gene."
 
@@ -1996,7 +2017,8 @@ class CellKernel:
   kg [GENE]            the LABELED cell knowledge graph — edges TYPED ppi/pathway/literature; 'kg GENE' = typed
                        neighbourhood (HOW it connects). Descriptive near-field substrate (not a phenotype predictor)
   ladder [PATHWAY|GENE] a pathway laid out by COMPARTMENT (membrane→nucleus) from localization; occupancy PROFILE, not a
-                       route — the directional ladder was MEASURED not to hold (tier ≠ spatial depth)
+                       route — the directional ladder was MEASURED not to hold (tier ≠ spatial depth). For an ORPHAN gene
+                       (no pathway) it adds a literature-inferred candidate function (co-mention HYPOTHESIS, ~4x chance)
   help / exit"""
 
 

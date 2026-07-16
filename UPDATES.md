@@ -2738,3 +2738,33 @@ a gene's compartments + the pathways it's in, `ladder` shows the reality-check. 
 annotations joined together (near-field descriptive) — an occupancy profile, **not** a directional route, **not** a
 reaction-localization claim, and **not** a phenotype predictor. (spatial_ladder.py → spatial_ladder.json; `ladder`
 syscall.)
+
+## lit_place — placing orphan / dark genes from their literature (extends `ladder GENE`)
+
+Follow-on to the ladder: **the ladder needs a pathway, and 6,003 genes aren't in one** — but 4,708 of those dark/orphan
+genes have literature abstracts (litmine). Can we place *them*? Two halves, with very different confidence:
+
+- **Compartment — solid.** An orphan gene's compartment is read *directly* from localization (~100% coverage, dark
+  genes included). No prediction. This alone slots the gene into the compartment layers.
+- **Functional context — a validated but noisy hypothesis.** Mine the gene's abstracts for co-mentioned *known* genes
+  (case-sensitive symbol regex + an English-word stoplist so SET/MET/CAD aren't false hits), then transfer those known
+  genes' Reactome pathways by an **IDF-weighted vote** (IDF down-weights promiscuous hubs like TP53 that co-occur with
+  everything, so they don't dominate).
+
+**Validated leave-one-out** (the load-bearing assumption "genes co-mentioned in one abstract share a pathway"): build a
+known–known co-mention graph from the abstracts, hide a known gene's pathway, predict it from its co-mentioned
+neighbours. Result: **pathway top-1 ~0.13 / top-5 ~0.21 vs random-from-candidate-pool ~0.055 = ~3.5–4× chance**
+(IDF-weighted beats raw-count and binary). So literature co-mention is a **real but noisy** pathway signal — a
+*hypothesis generator* (the right pathway lands in the top-5 about 1 in 5 times), **not** a confident annotation and
+**not** a phenotype predictor. (The compartment half is trustworthy precisely because it's *read*, not predicted.)
+
+**The hypotheses are genuinely right when checked:**
+- `FNDC5` (irisin) → co-mentioned UCP1 / PGC-1α / BDNF → *brown & beige adipocyte differentiation / mitochondrial
+  uncoupling* — correct thermogenesis biology.
+- `STRA8`, `DAZL` (germ-cell genes) → *Meiotic recombination* — STRA8 is literally the meiosis gatekeeper.
+- `TNFRSF19` (TROY), `SP5` → *Signaling by WNT / β-catenin* — both are genuine Wnt-pathway genes.
+
+Wired into `ladder GENE`: an orphan gene now returns its **known compartment + literature co-mentions + a ranked
+candidate function**, so the compartment-ladder covers genes with no pathway annotation at all. **HONEST SCOPE:** curated
+regex mining (not full NER), one source capped at ≤6 papers/gene, descriptive near-field — a starting hypothesis for an
+uncharacterised gene, to be confirmed experimentally. (lit_place.py → lit_place.json; `ladder GENE`.)
