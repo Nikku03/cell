@@ -1113,6 +1113,28 @@ class CellKernel:
                        f"{m['discrimination_auc']} (vs residue-patch {m['residue_patch_auc']}); retrieval {m['retrieval_lift_top5']}x chance — see 'dmasif'.")
         return "\n".join(out)
 
+    def regsign(self, args):
+        """RESEARCH: the REGULATORY-SIGN annotation (regsign.py) — the piece that lets the structural sensors reach
+        GAIN-of-function. Sensors detect an interface BREAK; the sign says whether that interface is an ON switch or an
+        OFF switch. Break an INHIBITORY/autoinhibitory brake -> GOF (activity UP), not LOF. Built from UniProt activity-
+        regulation text, tested vs proto-oncogene(GOF)/tumor-suppressor(LOF) labels: when a brake is annotated it calls
+        GOF at 86% precision (5.4x enrichment) — high-precision, recall-limited (annotation-sparse). Wires into NEXUS via
+        directed_activity(inhibitory=True). usage: regsign | regsign run"""
+        if args and args[0].lower() in ("run", "rerun"):
+            import regsign as _R; _R.main(); return "(regsign ran live — see above)"
+        import json, os
+        p = "outputs/orphan/regsign.json"
+        if not os.path.exists(p): return "regsign: run 'regsign run' (or python3 colab/regsign.py) first."
+        d = json.load(open(p))
+        return "\n".join([
+            "regsign — regulatory-sign annotation (breakable brake => GAIN-of-function lever):",
+            f"  built from UniProt activity-regulation text; tested vs {d['n_oncogene']} proto-oncogenes (GOF) / {d['n_tsg']} tumor-suppressors (LOF).",
+            f"  WHEN THE SIGN FIRES (brake annotated): PRECISION {d['precision_brake_is_gof']:.0%} are GOF "
+            f"({d['n_flagged_gof']} onco vs {d['n_flagged_lof']} TSG); {d['odds_ratio']}x enrichment — textbook cases (ABL1, KIT, BRAF, PDGFRA, FGFR2).",
+            f"  LIMIT: RECALL {d['recall_gof_flagged']:.0%} (annotation-sparse; AUC {d['auc']} dragged by un-annotated 0s) — an INFORMATION gap, not compute.",
+            "  NEXUS hook: a mutation breaking an inhibitory brake -> activity UP (GOF) via directed_activity(inhibitory=True), still gated by folding.",
+            "  UNCHANGED: neomorphic GOF (a brand-new interface) stays out of reach — needs docking + experiment."])
+
     def nexus(self, args):
         """RESEARCH: the dual-sensor enzyme-health node (nexus.py) — INTRINSIC stability (folding ΔΔG -> folded_fraction)
         AND EXTRINSIC binding (interface ΔΔG -> bound_fraction) combined by a SOFT AND (graded product) into an activity
@@ -1858,6 +1880,8 @@ class CellKernel:
                        discrimination AUC 0.85 (vs residue-patch 0.76) and retrieval ~13x chance (residue was ~1.4x)
   nexus                RESEARCH: dual-sensor enzyme health — intrinsic stability AND extrinsic binding, soft-AND -> FBA;
                        sensors ORTHOGONAL (stability misses 94% of interface breaks), fusion AUC 0.56->0.75; FBA=far-field
+  regsign              RESEARCH: regulatory-sign annotation = the GAIN-of-function lever — break an inhibitory brake ->
+                       GOF; UniProt-derived, 86% precision / 5.4x enrichment vs oncogene-TSG (recall-limited: info gap)
   desolv               RESEARCH: desolvation retested w/ REAL SASA + satisfaction correction — physics validates
                        (hydrophobic r 0.38) but ~0 held-out gain on alanine (burial already captured); honest, not folded in
   mutate GENE UP POS WT MUT  reason a MUTATION through the cell: variant-damage × cell-dependency, regime-named
@@ -1937,6 +1961,7 @@ class CellShell:
             if cmd in ("surface", "masif"): return k.surface(args)
             if cmd in ("dmasif", "geodesic"): return k.dmasif(args)
             if cmd in ("nexus", "dualsensor"): return k.nexus(args)
+            if cmd in ("regsign", "gof"): return k.regsign(args)
             if cmd in ("desolv", "eef1"): return k.desolv(args)
             if cmd in ("needs", "todo"): return k.needs()
             if cmd == "deadlock": return k.deadlock(args[0])

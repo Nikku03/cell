@@ -35,9 +35,22 @@ def bound_fraction(ddg_bind, dG_bind_wt=9.0):
 
 
 def nexus_activity(ddg_fold, ddg_bind):
-    """SOFT AND (refinement #1): graded product of the two orthogonal health fractions, in [0,1]."""
+    """SOFT AND (refinement #1): graded product of the two orthogonal health fractions, in [0,1] — LOSS-of-function."""
     import ecflux
     return float(ecflux.folded_fraction(ddg_fold) * bound_fraction(ddg_bind))
+
+
+def directed_activity(ddg_fold, ddg_bind, inhibitory=False, released_gain=3.0):
+    """SIGN-AWARE activity — the GAIN-of-function extension (uses regsign.regulatory_sign for the interface's sign).
+    ACTIVATING interface (default): breaking it lowers activity (LOF) — the plain soft-AND. INHIBITORY interface (a
+    breakable brake): breaking it RELEASES the brake, so activity RISES above 1 (GOF). Still gated by folding — an
+    unfolded protein can't gain function either. Schematic: `released_gain` stands in for how strongly the brake
+    suppressed the WT (annotation-limited; the per-interface strength is the honest missing quantity)."""
+    import ecflux
+    fold = ecflux.folded_fraction(ddg_fold); bnd = bound_fraction(ddg_bind)
+    if not inhibitory:
+        return float(fold * bnd)                                   # LOF: soft-AND, activity in [0,1]
+    return float(fold * (1.0 + released_gain * (1.0 - bnd)))        # GOF: releasing the brake raises activity >1
 
 
 def main(n=900):

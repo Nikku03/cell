@@ -2488,3 +2488,30 @@ work and why the orthogonality is measurable. The last link — activity → FBA
 demonstration**, not a validated phenotype predictor; validating it needs measured IEM/essentiality outcomes. The
 dual-sensor node is real and the orthogonality that makes it necessary is measured; the structural half is trustworthy,
 the phenotype half is the honest open edge. (nexus.py → nexus.json; `nexus` / `nexus run`.)
+
+## regsign / regsign — the regulatory-sign annotation: the GAIN-of-function lever (high-precision, annotation-limited)
+
+The structural sensors detect an interface **break** but not its **direction**. The missing piece for gain-of-function
+is the interface's **sign**: break an *activating* interface → loss of function; break an *inhibitory / autoinhibitory
+brake* → **gain** of function (the brake is gone, activity up). Built it (regsign.py → the `regsign` syscall) from real
+UniProt **Activity-regulation** text (autoinhibition / intramolecular-repression / inactive-conformation cues) and tested
+it against real GOF/LOF ground truth (UniProt **proto-oncogene** vs **tumor-suppressor** keywords).
+
+**Result, read the fair way** (a rare, high-confidence flag — precision/recall, not AUC):
+- **When the sign fires** (a brake is annotated), the gene is GOF with **86% precision** (19 oncogenes vs 3 tumor
+  suppressors), a **5.4× enrichment** — and the hits are textbook autoinhibited oncogenes: **ABL1** ("stabilized in the
+  inactive form"), **KIT/PDGFRA/FGFR2** ("inactive conformation in the absence of ligand"), **BRAF** ("maintained in an
+  inactive state via an intramolecular interaction").
+- **Its limit is recall:** only ~**10%** of GOF genes have the brake annotated in this one source (which is why the AUC
+  is only 0.54 — dragged down by the un-annotated 0s, *not* by wrong calls).
+
+So the regulatory sign is the **correct and necessary** lever for GOF, it carries **real directional signal** (high
+precision where it fires), and its bottleneck is **annotation coverage** — an **information gap, not a compute gap**,
+exactly as predicted. That's why running the structural sensors on all 20k proteins couldn't have solved GOF: scale adds
+coverage of *breaks*, but the *sign* is separate information.
+
+**Wired into NEXUS** via `directed_activity(inhibitory=True)`: a mutation breaking a brake-bearing interface pushes
+activity **up** (GOF) instead of down, still **gated by folding** (an unfolded protein can't gain function either — a
+broken brake on a misfolded protein correctly stays LOF). **Still out of reach:** *neomorphic* GOF (a brand-new
+interface) — needs docking + experiment. **Raising recall** means broadening the sign sources (SIGNOR, structural
+autoinhibition annotations) — more information, not more compute. (regsign.py → regsign.json; `regsign` / `regsign run`.)
