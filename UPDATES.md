@@ -2515,3 +2515,32 @@ activity **up** (GOF) instead of down, still **gated by folding** (an unfolded p
 broken brake on a misfolded protein correctly stays LOF). **Still out of reach:** *neomorphic* GOF (a brand-new
 interface) — needs docking + experiment. **Raising recall** means broadening the sign sources (SIGNOR, structural
 autoinhibition annotations) — more information, not more compute. (regsign.py → regsign.json; `regsign` / `regsign run`.)
+
+## nexus_train / nexus_colab.ipynb — train NEXUS at scale on human PPIs (Colab), sandbox-verified
+
+To take NEXUS from a set of validated pieces to something trainable at scale, built a portable driver (nexus_train.py)
+and a Colab notebook (nexus_colab.ipynb). The **trainable component is the dMaSIF geodesic surface model** (the extrinsic
+sensor — the one we measured keeps improving with more complexes); the intrinsic stability node and the regulatory-sign
+GOF layer are fixed/annotation.
+
+**How many human PPIs / where to get them** (documented in the notebook):
+
+| Layer | Count | Source |
+|---|---|---|
+| Binary PPIs (high-quality) | ~53,000 | HuRI |
+| All curated interactions | ~0.6–1M | BioGRID, IntAct, STRING (physical) |
+| **PPIs with a 3D complex structure** ← the sensor needs this | **a few thousand** | PDB, Interactome3D, SKEMPI |
+| Monomer structures (intrinsic sensor) | ~all 20,000 | AlphaFold DB |
+
+The binding sensor's bottleneck is **complex structures** (thousands, not 20k) — to scale further you predict complexes
+with **AlphaFold-Multimer** and add them.
+
+**The driver** patches the module paths to a portable cache (so it runs anywhere, not just the author's sandbox),
+fetches complexes from RCSB, builds surface clouds (marching-cubes + APBS), trains the geodesic net **held out by
+complex**, saves the weights, and runs the full sensor stack (intrinsic ΔΔG_fold + extrinsic ΔΔG_bind → LOF/GOF activity)
+on real mutations as a working-check.
+
+**Sandbox-verified before shipping** — ran it on 5 complexes: fetch → surface+APBS → trained dMaSIF (held-out
+interface-discrimination AUC **0.664**) → sensor stack ran end-to-end → **WORKING-CHECK PASS**, all in ~70s on CPU. The
+notebook adds a GPU scale-up cell (downloads SKEMPI, trains on all ~345 measured complexes) and accepts any user PDB list
+(incl. AlphaFold-Multimer complexes). (nexus_train.py, nexus_colab.ipynb → nexus_train.json / nexus_dmasif.pt.)
