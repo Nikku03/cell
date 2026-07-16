@@ -71,7 +71,8 @@ def _build_one(args):
         g = dm.precompute_graph(pc); pos, neg = dm.interface_point_pairs(pc)
         if len(pos) < 12:
             return (pdb, False)
-        pickle.dump({"pc": pc, "g": g, "pos": pos, "neg": neg}, open(fp, "wb"))
+        pickle.dump({"pc": pc, "g": g, "pos": pos, "neg": neg}, open(fp + ".tmp", "wb"))
+        os.replace(fp + ".tmp", fp)                             # atomic: a background Drive-sync never sees a partial file
         return (pdb, True)
     except Exception:
         return (pdb, False)
