@@ -2687,3 +2687,23 @@ on the hotspot call. So it's not a win for the single sensor but a **free scope 
 variants) at zero cost to single. Shipped as a JOINT model: bind_ddg now trains on single+multi with the n_sites feature
 and exposes `Predictor.predict` (single) + `Predictor.predict_multi(pdb, sites)`; the single number is unchanged and
 `r_multi` is reported separately. (bind_ddg.py — features_agg / _load_all / predict_multi.)
+
+## graph_label / `kg` — the LABELED multi-relational cell graph (ppi + pathway + literature)
+
+The CellGraph adjacency already carried physical/functional edges (ppi, reg, sig, codep, lr) but was missing two
+relations: **pathway co-membership** and **literature co-mention**. Added both and labelled every edge by its source
+relation, so the graph says *how* two genes relate, not just *that* they do:
+- **ppi** — physical interaction (191,447 edges over 14,230 genes)
+- **path** — same Reactome pathway (208,881 edges over 7,282 genes; capped ≤50 genes/pathway so giant generic
+  pathways like *Metabolism* don't hairball)
+- **lit** — co-mentioned in a paper (litmine shared PMID; 4,395 edges over 2,677 genes)
+
+Built graph: **16,492 nodes, 15,103 with ≥1 labeled edge, 383,246 unique labeled pairs.** The three relations are
+**complementary** — cross-type overlap ppi&path 0.11, ppi&lit 0.03, path&lit 0.00 — i.e. each edge type says a
+*different* thing about a gene pair (physical ≠ same-pathway ≠ co-mentioned), not redundant. Wired as the `kg` syscall:
+`kg` = whole-graph label stats, `kg GENE` = a gene's typed neighbourhood.
+
+**HONEST SCOPE (unchanged from the edge-predict finding):** this is a **descriptive near-field knowledge graph**. These
+edge types predict a gene's knockout effect at ~floor (r 0.03–0.09; pathway 0.064; only curated complexes 0.23), so the
+labeled graph is the right substrate for **representation / link-prediction / querying / the near-field GNN**, and it is
+honest about **not** composing to phenotype. (graph_label.py → graph_label.json; `kg` syscall.)

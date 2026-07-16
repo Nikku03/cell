@@ -1226,6 +1226,35 @@ class CellKernel:
             f"crude occlusion desolv {d['r_crude']}.",
             f"  verdict: {'folds in — real gain' if d['eef1_helps'] else 'correct + more physical + no longer HURTS, but ~0 gain on alanine (burial already captured by vdW+contacts) -> NOT folded into headline'}."])
 
+    def kg(self, args):
+        """the LABELED multi-relational cell knowledge graph (graph_label.py): nodes = genes, edges TYPED by relation —
+        ppi (physical interaction), path (same Reactome pathway), lit (co-mentioned in a paper). 'kg GENE' shows a gene's
+        typed neighbourhood (HOW it connects, not just THAT it does); 'kg' shows the whole-graph label stats. HONEST: a
+        DESCRIPTIVE near-field KG — these edge types predict a knockout's effect at ~floor (r 0.03–0.09), so it is the
+        substrate for representation / link-prediction / querying, NOT a causal/phenotype predictor. usage: kg | kg GENE"""
+        import graph_label as gl
+        if not hasattr(self, "_kg"):
+            self._kg = gl.build()
+        if args and args[0] not in ("run", "stats"):
+            nb = gl.neighbors(self._kg, args[0])
+            if nb is None:
+                return f"kg {args[0]}: not a gene in the graph."
+            lab = {"ppi": "physical interaction ", "path": "same pathway        ", "lit": "co-mentioned in paper"}
+            out = [f"kg {args[0]} — labeled neighbourhood (HOW it connects):"]
+            for r, v in nb.items():
+                out.append(f"  [{r:4s} · {lab[r]}] {', '.join(v)}")
+            return "\n".join(out) if nb else f"kg {args[0]}: in the graph but has no labeled edges."
+        s = gl.stats(self._kg)
+        out = ["kg — the labeled multi-relational cell graph (ppi + pathway + literature):",
+               f"  {s['n_nodes']:,} gene nodes; {s['genes_with_any_edge']:,} have ≥1 labeled edge; "
+               f"{s['total_labeled_edges']:,} unique labeled pairs"]
+        for r in s["relations"]:
+            out.append(f"    {r:5s}: {s['edges_by_type'][r]:>8,} edges  over {s['genes_covered_by_type'][r]:,} genes")
+        out.append(f"  cross-type overlap {s['cross_type_overlap_frac']} → the relations are COMPLEMENTARY (each says a different thing).")
+        out.append("  HONEST: descriptive near-field KG (edges predict knockout at ~floor) — a substrate for "
+                   "representation/link-prediction, not phenotype.")
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -1923,6 +1952,8 @@ class CellKernel:
   deadlock GENE        [C] synthetic-lethal partners (co-kill = panic)
   patch GENE:MUT       static-lint a mutation (no-op / crash / logic-bug)
   lint "CLAIM"         [security] verify a claim; flag untrusted predictions & hub-leak
+  kg [GENE]            the LABELED cell knowledge graph — edges TYPED ppi/pathway/literature; 'kg GENE' = typed
+                       neighbourhood (HOW it connects). Descriptive near-field substrate (not a phenotype predictor)
   help / exit"""
 
 
@@ -1966,6 +1997,7 @@ class CellShell:
             if cmd in ("discover", "unknown"): return k.discover(args)
             if cmd in ("investigate", "dossier", "profile"): return k.investigate(args)
             if cmd in ("network", "wire", "graph"): return k.network(args)
+            if cmd in ("kg", "labeled"): return k.kg(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
