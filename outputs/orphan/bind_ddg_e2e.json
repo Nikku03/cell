@@ -1,0 +1,25 @@
+{
+ "n_mutations": 2269,
+ "n_complexes": 42,
+ "epochs": 20,
+ "device": "cpu",
+ "results": {
+  "phys": {
+   "all": 0.426,
+   "nonala": 0.207,
+   "alanine": 0.49
+  },
+  "surf": {
+   "all": 0.113,
+   "nonala": -0.017,
+   "alanine": 0.149
+  },
+  "both": {
+   "all": 0.401,
+   "nonala": 0.133,
+   "alanine": 0.483
+  }
+ },
+ "surface_helps_binding": false,
+ "verdict": "End-to-end surface does NOT beat physics \u2014 the WT surface is mutation-blind (identical cloud per position regardless of substitution), so it encodes POSITION not the MUTATION; it belongs on the recognition axis (Part 1), not binding magnitude (Part 2). Physics is the ceiling."
+}
