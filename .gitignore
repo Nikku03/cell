@@ -78,4 +78,5 @@ outputs/orphan/dark_function_ckpt.json
 outputs/orphan/depmap_vecs.npz
 outputs/orphan/expr_vecs.npz
 outputs/orphan/tahoe_vecs.npz
+outputs/orphan/pdb_cache/
 data/hgnc.txt

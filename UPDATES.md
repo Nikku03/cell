@@ -2591,3 +2591,35 @@ right partner (its 0.947 strength is real and useful *there*); the physics node 
 The definitive check on the exact 2,198-complex / 0.947 net is the one-cell Colab runner (`fusion_test.run` pointed at the
 Drive weights); theory says it will give the same "no lift" result, since the limitation is *what* the embedding encodes,
 not how well. (fusion_test.py → fusion_test.json.)
+
+## nexus_cell / `nexus GENE ...` — NEXUS wired INTO the running cell (live mutation → LOF/GOF → cell dependency)
+
+The nexus.py node was validated in isolation (dual-sensor orthogonality; regsign direction). This makes it a LIVE
+CellOS query — `nexus GENE [UNIPROT [POS WT MUT [PDB CHAIN]]]` — that reasons a real mutation through four
+already-validated layers and hands the result to the cell's own essentiality reasoner, so the cell can now answer a
+question it could not before: **given a mutation, is it LOSS or GAIN of function, does it break FOLDING or BINDING, and
+does the cell DEPEND on the protein?**
+
+- **DIRECTION** (regsign, structure-free): fetches the gene's UniProt *Activity regulation* text live → a breakable
+  inhibitory brake ⇒ **GOF-capable**, else **LOF-only**. Works on any human gene, no structure. Verified live:
+  BRAF/ABL1 ("maintained in an inactive state" / "stabilized in the inactive form") → GOF-capable; TP53 → LOF-only
+  (no brake — a tumor suppressor); KRAS G12D → GOF (fires on the "inactive form bound to GDP" cue — the right
+  direction, though that cue is nucleotide-state, not classic autoinhibition: an honest heuristic edge, flagged).
+- **INTRINSIC** (fold ΔΔG): ddg_predictor on the structure — does it still fold?
+- **EXTRINSIC** (bind ΔΔG): the **measured** SKEMPI value when the mutation is one we have (honestly labelled
+  `[measured (SKEMPI)]`, not a prediction) — abstains otherwise (a calibrated binding-ΔΔG predictor for arbitrary
+  mutations is the physics node at r~0.52, not exposed as a scalar — the honest current limit).
+- **ACTIVITY**: nexus.directed_activity(fold, bind, inhibitory=sign) — soft-AND for LOF, brake-release for GOF.
+- **CELL**: the kernel's own reason() essentiality (calibrated P) as the dependency CONTEXT.
+
+**Full-pipeline demonstration** (the dual-sensor thesis, live on one mutation): **GHR B/W304A** — the classic
+hGH–receptor hot spot (1A22) — comes back **fold ΔΔG +0.64 (still folds) but bind ΔΔG +4.73 = ~2158× weaker binding**:
+a loss-of-function that lives entirely on the **BINDING axis while FOLDING is intact** — exactly the orthogonality the
+two-sensor node exists for (a fold-only sensor is blind to it). Cell: NON-ESSENTIAL (P≈4%), so the loss is tolerated —
+reported as CONTEXT.
+
+**Honest boundary** (unchanged): the structural sensors are near-field (solid); the cell-dependency is CONTEXT, not a
+validated phenotype (activity→phenotype is far-field/buffered, and the soft-AND occupancy SATURATES at high WT affinity
+— the ΔΔG is the informative readout, not the occupancy number). Where no structure/partner is given the structural
+sensors abstain and the query still returns the structure-free regulatory direction + cell dependency. Wired as the
+live `nexus GENE ...` syscall; the bare `nexus` report and `nexus run` are unchanged. (nexus_cell.py → nexus_cell.json.)

@@ -1141,9 +1141,29 @@ class CellKernel:
         that drives the FBA. Validated non-circular on measured SKEMPI: the two failure modes are ORTHOGONAL (r 0.15),
         so a stability-only node MISSES 94% of interface breakers; adding the extrinsic sensor lifts held-out AUC 0.56 ->
         0.75. Honest boundary: sensors are near-field structure (solid); the FBA->phenotype step is far-field (buffered).
-        usage: nexus | nexus run"""
+        LIVE (integrated into the cell): nexus GENE [UNIPROT [POS WT MUT [PDB CHAIN]]] — reason a real mutation through
+        DIRECTION (regsign LOF/GOF) + the structural dual-sensor (fold ΔΔG, bind ΔΔG when a complex+interface residue is
+        given) + the cell's own essentiality. e.g.  nexus BRAF P15056   |   nexus GHR P10912 304 W A 1A22 B
+        usage: nexus | nexus run | nexus GENE [UNIPROT [POS WT MUT [PDB CHAIN]]]"""
         if args and args[0].lower() in ("run", "rerun"):
             import nexus as _N; _N.main(); return "(nexus dual-sensor ran live — see above)"
+        if args and args[0].lower() not in ("report",):
+            # LIVE cell query: reason a mutation through the integrated node (regsign + dual-sensor + cell essentiality)
+            if not hasattr(self, "_nexuscell"):
+                from nexus_cell import NexusCell
+                self._nexuscell = NexusCell(kernel=self)
+            gene = args[0]; up = args[1] if len(args) > 1 else None
+            pos = wt = mut = pdb = chain = None
+            if len(args) >= 5:
+                try:
+                    pos = int(args[2])
+                except ValueError:
+                    return "nexus: POS must be an integer.  usage: nexus GENE [UNIPROT [POS WT MUT [PDB CHAIN]]]"
+                wt, mut = args[3].upper(), args[4].upper()
+            if len(args) >= 7:
+                pdb, chain = args[5].upper(), args[6].upper()
+            r = self._nexuscell.query(gene, uniprot=up, pos=pos, wt=wt, mut=mut, pdb=pdb, chain=chain)
+            return self._nexuscell.render(r)
         import json, os
         p = "outputs/orphan/nexus.json"
         if not os.path.exists(p): return "nexus: run 'nexus run' (or python3 colab/nexus.py) first."
@@ -1878,8 +1898,8 @@ class CellKernel:
                        AUC 0.65 vs 0.50 untrained; real APBS electrostatics+surface lifts 0.65->0.76 on 333 cplx ('surface apbs')
   dmasif               RESEARCH: Geodesic Surface Learning (dMaSIF) — surface points + learned geodesic conv + APBS;
                        discrimination AUC 0.85 (vs residue-patch 0.76) and retrieval ~13x chance (residue was ~1.4x)
-  nexus                RESEARCH: dual-sensor enzyme health — intrinsic stability AND extrinsic binding, soft-AND -> FBA;
-                       sensors ORTHOGONAL (stability misses 94% of interface breaks), fusion AUC 0.56->0.75; FBA=far-field
+  nexus [GENE ...]     dual-sensor mutation node, LIVE in the cell: 'nexus GENE [UNIPROT [POS WT MUT [PDB CHAIN]]]' →
+                       DIRECTION (regsign LOF/GOF) + fold/bind ΔΔG dual-sensor + cell essentiality. 'nexus'=report, 'nexus run'
   regsign              RESEARCH: regulatory-sign annotation = the GAIN-of-function lever — break an inhibitory brake ->
                        GOF; UniProt-derived, 86% precision / 5.4x enrichment vs oncogene-TSG (recall-limited: info gap)
   desolv               RESEARCH: desolvation retested w/ REAL SASA + satisfaction correction — physics validates
