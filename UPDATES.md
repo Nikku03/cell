@@ -2676,3 +2676,14 @@ alanine.** The physics+rotamer+charge features predict general substitutions *as
 fit them — the substitution-class gap vanishes at scale. The through-line holds: **the ceiling was DATA, not the model
 or the features** — scaling 42 → 277 complexes did what ESM, end-to-end nets, rotamer ensembles, and charge
 superposition all could not. (Production model on Colab; the committed .pkl is the 42-complex fallback.)
+
+**Multi-mutant augmentation — a free scope-add (measured):** SKEMPI 2.0's 7,085 entries are ~4,900 single-point +
+~1,973 MULTI-point (2+ substitutions, excluded from the single predictor as a different/epistatic task) + ~200 without
+clean Kd. Tested whether adding the multis helps, representing a multi-mutant by SUMMING its per-site features + an
+`n_sites` feature (63-complex sandbox, held-out by complex): (A) single-only→single 0.454; (B) single+multi→single
+**0.450** — adding multis is NEUTRAL to the single prediction NEXUS uses (as expected, different distribution); (C)
+single+multi→multi **Pearson 0.38 / hotspot AUC 0.76** — we CAN predict multi-point mutations, nearly as well as single
+on the hotspot call. So it's not a win for the single sensor but a **free scope expansion** (engineered / combinatorial
+variants) at zero cost to single. Shipped as a JOINT model: bind_ddg now trains on single+multi with the n_sites feature
+and exposes `Predictor.predict` (single) + `Predictor.predict_multi(pdb, sites)`; the single number is unchanged and
+`r_multi` is reported separately. (bind_ddg.py — features_agg / _load_all / predict_multi.)
