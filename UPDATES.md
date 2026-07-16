@@ -2653,3 +2653,14 @@ property deltas + the WT sidechain's interface contribution (LJ/contacts/Coulomb
 Net: binding magnitude is near its honest ceiling with our tools (~0.46 all-AA / ~0.30 non-ala); the remaining untested
 lever is a *partner-aware* structural net fine-tuned end-to-end on ΔΔG (right axis), not ESM. (esm_channel/rotamer_ensemble
 experiments in scratch; the committed product is bind_ddg.)
+
+**The last lever, tested and dead (bind_ddg_e2e.py):** the one untested option for binding magnitude was a *partner-aware*
+geodesic surface encoder fine-tuned **end-to-end** on ΔΔG (the surface is at least on the right axis — structural,
+sees the partner — where ESM was on the wrong one). Three readouts, held-out by complex, 42 complexes / 2,269 muts:
+**phys all-AA 0.42, surf-alone 0.10, both 0.33.** Decisive negative — the surface encoder alone barely predicts binding,
+and adding it to physics **hurts** (0.42 → 0.33, *worse* than the frozen fusion_test's −0.03). The reason is not small
+data, it's **mutation-blindness**: the surface cloud is the *wild-type* surface — **identical** for W304A vs W304G — so
+the encoder can only see the *position* (redundant with physics burial), never the *substitution*. More data can't add
+information the input doesn't contain. So the surface is confirmed (a second, stronger time) to belong on **Part-1
+recognition, not Part-2 magnitude**, and **physics is the honest ceiling** for binding magnitude (~0.46). `bind_ddg_colab.ipynb`
+runs the full-SKEMPI (~345) physics retrain (the production model) + this e2e test at scale on GPU. (bind_ddg_e2e.py → bind_ddg_e2e.json.)
