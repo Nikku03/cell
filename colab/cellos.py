@@ -1603,6 +1603,33 @@ class CellKernel:
         lines.append("  [in-vivo binding prediction on real ENCODE K562; not regulation]")
         return "\n".join(lines)
 
+    def regulate(self, args):
+        """the honest answer to 'binding != regulation, unless it recruits polymerase' (regulate.py). Tests, on real K562
+        data vs CRISPR enhancer-perturbation ground truth (ENCFF968BZL, Significant=element truly regulates a gene), whether
+        the PRODUCTIVITY signature — Pol II recruited (POLR2A) + eRNA firing (PRO-cap bidirectional) — separates real
+        regulators from merely open/marked elements. Shows the productivity ladder + the full chain (Gate3 which-gene x Gate4
+        productivity). HONEST: ChIP occupancy proxies residence-time x conc, not single-molecule dwell time. usage: regulate"""
+        import json as _j
+        try:
+            R = _j.load(open("outputs/orphan/regulate.json"))
+        except OSError:
+            return "regulate: run colab/regulate.py first (needs K562 Pol II/eRNA marks + CRISPR ground truth)."
+        r = R["result"]; PT = R.get("pair_test", {})
+        out = [f"BINDING vs REGULATION — does recruiting Pol II = regulation? (K562 vs CRISPR, {r['n_elements']} elements, "
+               f"base rate regulator {r['base_rate_regulator']:.1%})",
+               "  productivity ladder (element is a real CRISPR regulator with prob:):"]
+        for s in r["ladder"]:
+            out.append(f"    {s['stage']:26s} n={s['n']:5d}  P(regulator) {s['prec']:.3f}  ({s['enrichment']}x)")
+        a = r["among_active"]
+        out.append(f"  sharp test — among open+active elements, the ACT of transcription beats the H3K27ac mark:")
+        out.append(f"    eRNA firing {a['eRNA_pos'][1]:.3f} vs silent {a['eRNA_neg'][1]:.3f}   |  Pol II+ {a['polII_pos'][1]:.3f} vs Pol II- {a['polII_neg'][1]:.3f}")
+        if PT:
+            out.append(f"  FULL CHAIN (pair-level, base {PT['base_rate']:.1%}): productive AND ABC-linked-to-that-gene "
+                       f"{PT['productive_AND_abc'][1]:.3f} ({round(PT['productive_AND_abc'][1]/PT['base_rate'],1)}x); neither {PT['neither'][1]:.3f}")
+        out.append("  => binding that recruits Pol II AND loops to the gene is ~6x more likely to be real regulation.")
+        out.append("     [strong measured discriminator, not deterministic — capped by CRISPR power + enhancer redundancy]")
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -2319,6 +2346,9 @@ class CellKernel:
   invivo [TF]          take a motif scan IN VIVO: gate 1D hits through real K562 chromatin (DNase open -> H3K27ac active
                        -> ABC 3D target gene), MEASURED vs ChIP-seq. Gating kills sequence-only false positives
                        (degenerate motifs ~20-28x precision). 'invivo TF' = live 3-gate scan + ABC targets. Binding, not regulation
+  regulate             binding != regulation, unless it recruits polymerase: does Pol II recruited + eRNA firing mark the
+                       elements that ACTUALLY regulate a gene? Measured vs CRISPR ground truth. Productive + 3D-linked = ~6x
+                       more likely a real regulator; H3K27ac mark alone barely discriminates
   help / exit"""
 
 
@@ -2369,6 +2399,7 @@ class CellShell:
             if cmd in ("tfbs", "motif"): return k.tfbs(args)
             if cmd in ("cofactor", "dimer"): return k.cofactor(args)
             if cmd in ("invivo", "gate"): return k.invivo(args)
+            if cmd in ("regulate", "productive"): return k.regulate(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)

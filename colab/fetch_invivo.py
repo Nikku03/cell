@@ -113,5 +113,21 @@ manifest["tracks"]["abc"] = {"accession": ABC_ACC, "output_type": "thresholded e
                              "n_links_chr": kept, "n_target_genes": len(set(sym.values()))}
 print(f"abc: {ABC_ACC} -> {kept} element-gene links on {CHR}", flush=True)
 
+# --- 5. Gate 4 (productivity) + CRISPR ground truth (regulate.py) ---
+MK = f"{OUT}/marks"; os.makedirs(MK, exist_ok=True)
+PROD = {"dnase": "ENCFF274YGF", "h3k27ac": "ENCFF706DHK", "polr2a": "ENCFF963IKJ",
+        "polr2s5": "ENCFF053XYZ", "procap_bi": "ENCFF051LUE"}          # genome-wide peaks
+for k, acc in PROD.items():
+    dl(f"/files/{acc}/@@download/{acc}.bed.gz", f"{MK}/{k}.bed.gz")
+    print(f"mark {k}: {acc}", flush=True)
+dl(f"/files/{ABC_ACC}/@@download/{ABC_ACC}.bedpe.gz", f"{MK}/abc_all.bedpe.gz")   # genome-wide ABC for pair test
+crispr = urllib.request.urlopen("https://www.encodeproject.org/files/ENCFF968BZL/@@download/ENCFF968BZL.tsv",
+                                timeout=120).read().decode()
+open(f"{OUT}/crispr_egpairs.tsv", "w").write(crispr)
+manifest["productivity_marks"] = PROD
+manifest["crispr_ground_truth"] = {"accession": "ENCFF968BZL",
+                                   "desc": "combined CRISPR element-gene (Nasser2021/Gasperini2019/Schraivogel2020)"}
+print(f"crispr ground truth: ENCFF968BZL ({len(crispr.splitlines())} pairs)", flush=True)
+
 json.dump(manifest, open(f"{OUT}/manifest.json", "w"), indent=1)
 print("DONE ->", f"{OUT}/manifest.json", flush=True)

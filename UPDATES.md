@@ -3279,3 +3279,59 @@ dynamics wall this project keeps hitting. The recall side is honest too — at t
 low (many real ChIP peaks have no strong canonical motif = indirect/tethered binding), so gating buys precision at the cost
 of recall. All real ENCODE K562 data; nothing simulated. (invivo_gate.py + fetch_invivo.py → invivo_gate.json; `invivo`
 syscall. `invivo` = the table; `invivo TF` = live 3-gate scan + ABC targets for one TF.)
+
+---
+
+## Binding ≠ regulation — unless it recruits polymerase. Measured. (`regulate.py` → `regulate` syscall)
+
+The `invivo` gates predict where a TF **binds**; the honest caveat was that binding isn't regulation. The sharpening:
+**regulation is occupancy that lasts long enough to appoint RNA Pol II and fire transcription.** That turns a philosophical
+caveat into a measurable one — the *productivity* signature is observable:
+- **Pol II recruited** — POLR2A + POLR2AphosphoS5 (initiating, Ser5P) ChIP-seq. Is the polymerase physically there?
+- **eRNA firing** — PRO-cap **bidirectional** peaks. Is the element actually being *transcribed* (the readout of a
+  productively engaged enhancer)?
+
+And it can be validated against the one assay that operationally *defines* regulation: **CRISPR enhancer perturbation** —
+silence the element, does the gene change? Used the ENCODE harmonised CRISPR dataset (ENCFF968BZL; Nasser 2021 / Gasperini
+2019 / Schraivogel 2020), where `Significant` = the element truly regulates the tested gene.
+
+**The productivity ladder** (element-level, 3,961 CRISPR-tested elements, base rate regulator **12.5%**):
+
+```
+all elements       12.5%   →  open (DNase) 14.4%  →  + active (H3K27ac) 20.0%  →  + Pol II 27.6%  →  + eRNA 28.9%  (2.3×)
+```
+
+Recruiting polymerase and firing eRNA **more than doubles** the odds an element is a real regulator.
+
+**The sharp test** — among elements already open *and* H3K27ac-active, does the *act* of transcription add anything over the
+*mark*? **Yes, and it's the whole story:**
+
+```
+eRNA firing → 26.0% regulate      |   silent → 12.9%   (= the base rate; the H3K27ac mark alone barely discriminates)
+Pol II +    → 27.6%               |   Pol II − → 17.7%
+```
+
+An H3K27ac-marked element that **isn't** firing eRNA regulates its gene at the base rate — the mark is necessary but nearly
+worthless as a discriminator on its own. The **act** of transcription is what separates a regulating element from a decorated
+one. Exactly the point.
+
+**The full chain** (pair-level, 10,331 element→gene pairs, base rate `Significant` **5.5%**) — Gate 3 (which gene, via ABC 3D
+loop) × Gate 4 (productivity) together:
+
+```
+productive element alone ............ 9.5%    (weak — a firing element may regulate a DIFFERENT gene than the one tested)
+ABC-linked to that gene alone ....... 25.3%
+productive AND ABC-linked ........... 31.4%   (5.7× base rate)
+neither ............................. 2.4%    (below base — essentially non-regulating)
+```
+
+**Binding that recruits Pol II *and* loops to the gene is ~6× more likely to be real regulation.** That is the honest,
+measured bridge from binding toward regulation.
+
+**HONEST BOUNDARY.** It's a strong discriminator, not a deterministic one — the precision ceilings around 30% because
+(a) **CRISPR power** limits (underpowered true pairs get labelled not-significant), (b) **enhancer redundancy / shadow
+enhancers** (silencing one productive enhancer doesn't move the gene when another compensates — a real biological reason a
+productive element shows no CRISPR effect), and (c) the actual *cause* you named — residence time long enough to appoint
+Pol II — is **not directly measurable**: ChIP occupancy is a population proxy for residence-time × concentration, and true
+single-molecule dwell time has no genome-wide assay. So productivity enriches regulation ~6×; it doesn't make it certain.
+All real K562 data; the answer is measured, not asserted. (regulate.py → regulate.json; `regulate` syscall.)

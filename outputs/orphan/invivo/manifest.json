@@ -80,5 +80,16 @@
    "output_type": "optimal IDR thresholded peaks",
    "n_peaks_chr": 880
   }
+ },
+ "productivity_marks": {
+  "dnase": "ENCFF274YGF",
+  "h3k27ac": "ENCFF706DHK",
+  "polr2a": "ENCFF963IKJ",
+  "polr2s5": "ENCFF053XYZ",
+  "procap_bi": "ENCFF051LUE"
+ },
+ "crispr_ground_truth": {
+  "accession": "ENCFF968BZL",
+  "desc": "combined CRISPR element-gene (Nasser2021/Gasperini2019/Schraivogel2020)"
  }
 }
