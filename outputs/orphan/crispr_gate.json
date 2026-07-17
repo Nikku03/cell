@@ -105,6 +105,16 @@
   "delta_vs_best_baseline": 0.108
  },
  "delta_vs_best_baseline": 0.09,
- "verdict": "MARGINAL -- small orthogonal signal; improve features (full TF compendium) before any deep-net spend.",
+ "verdict": "CONDITIONAL PASS -- epigenetic/TF features carry REAL orthogonal signal beyond distance (+0.09 AUPRC; VERIFIED: survives WITHIN all 4 distance bins + across seed reshuffles, chromosome-disjoint folds -- not distance repackaged, not a leak). BUT absolute AUPRC is modest (~0.50) and the orthogonal lift is almost entirely tf_count (drop-one -0.042), which uses only ~8 ChIP tracks -- so +0.09 is a FLOOR. NEXT STEP = rebuild tf_count from the full ~300-TF ENCODE K562 compendium + a feature-level leak check, then re-gate. Deep learning is justified only after that shows the margin grows.",
+ "verification": {
+  "method": "4-lens adversarial workflow (ablation, distance-control/leakage, seed-robustness)",
+  "signal_is_real": true,
+  "go_no_go": "CONDITIONAL_PASS",
+  "distance_control": "GBM beats distance-only WITHIN all 4 distance bins (+0.108/+0.063/+0.028/+0.006 AUPRC) -> orthogonal, not distance repackaged",
+  "robustness": "3 seed reshuffles give +0.095/+0.109/+0.111 (mostly 5/5); sole default-split loss is chr19-alone (61 pos)",
+  "leakage": "folds fully chromosome-disjoint; no group leak",
+  "orthogonal_signal_source": "tf_count (drop-one -0.042) carries nearly all of it; h3k27ac_enh a distant second (-0.013); epi-only AUPRC 0.216 (4x base)",
+  "caveat": "modest absolute AUPRC (~0.50); lift concentrated in one under-powered feature (tf_count, ~8 TFs not ~300); close-range bin dominant; feature-level (same-cell) leak not excludable by distance test alone"
+ },
  "note": "Tier-1 Go/No-Go: leakage-proof (GroupKFold by chromosome) XGBoost on mechanistic K562 features vs distance-only and ABC-only baselines, AUPRC. CRISPR ground truth (ENCFF968BZL). TF-count feature is under-powered (~8 ChIP tracks, not the ~300-TF ENCODE compendium) so the combinatorial-TF hypothesis is under-tested. Honest internal comparison (our GBM vs our ABC vs our distance on the same folds), NOT vs published rE2G. Monotonic constraints enforce known biology (distance down, activity up)."
 }

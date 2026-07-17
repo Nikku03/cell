@@ -3503,3 +3503,35 @@ This resolves the arc's final question. `invivo` (where it binds) → `regulate`
 `kinetics` (why residence is the uncomputable missing quantity) → `bindreg` (binding vs regulation, and — with literature —
 the confirmation that binding predicts regulation once the regulation map is well-powered). (bind_vs_reg.py
 `compare_literature` → bind_vs_reg.json; `bindreg` syscall.)
+
+---
+
+## Tier-1 Go/No-Go — XGBoost regulation gate, adversarially verified (`crispr_gate.py`)
+
+Executed the first gate of the ML strategy: does a mechanistic feature matrix carry signal for CRISPR-validated element→gene
+regulation *beyond distance and the ABC formula*? — the honest checkpoint before spending on deep learning. Protocol
+(user-designed, corrected in execution): GroupKFold **by chromosome**, AUPRC, monotonic constraints, `scale_pos_weight`, vs
+distance-only and ABC-only baselines on the same folds. 10,331 CRISPR pairs, 5.5% base rate.
+
+**The trap, confirmed empirically:** Significant pairs sit at median 34 kb, non-significant at 388 kb, so distance-only
+already scores **AUPRC 0.405** — the real bar. (ABC-only is 0.247 globally, but that's abstention-deflated: ABC scores only
+~8% of pairs and hits ~0.58 where it fires, so it's not the bar.)
+
+**Result:** XGBoost on raw epigenetic/TF features = **0.495** → **+0.090 over distance**, winning 4/5 folds.
+
+**Adversarially verified (4-lens workflow — ablation, distance-control, seed-robustness):**
+- **Orthogonal, not distance repackaged** — the decisive test: the GBM beats a distance-only ranker *within all four distance
+  bins* (+0.108 / +0.063 / +0.028 / +0.006), not merely across them.
+- **Robust** — +0.09 holds across three seed reshuffles (+0.095 / +0.109 / +0.111); the sole losing fold is chr19-alone (61
+  positives), which dilutes away.
+- **Leak-free** — folds are fully chromosome-disjoint.
+- **Source of the lift** — almost entirely `tf_count` (drop-one −0.042; next feature −0.013); epi-only (no distance) = 0.216,
+  4× base rate. `tf_count` uses only ~**8** ChIP tracks, not the ~300-TF ENCODE compendium.
+
+**Verdict: CONDITIONAL PASS.** The epigenetic/TF features carry *real, verified, orthogonal* signal beyond distance — the
+task is learnable — but the magnitude is modest (~0.50 AUPRC) and rests on one under-powered feature, so **+0.09 is a floor,
+not a ceiling.** The disciplined next step is **not** deep learning: it's to rebuild `tf_count` from the full ~300-TF ENCODE
+K562 ChIP compendium (the sole orthogonal workhorse, currently crippled) plus a feature-level leak check, then re-gate. A
+sequence CNN is justified only once that shows the margin *grows*. This is exactly the outcome the gate was built to produce:
+it stopped a premature deep-net spend and identified the one experiment that decides whether the combinatorial-TF hypothesis
+holds. (crispr_gate.py → crispr_gate.json.)
