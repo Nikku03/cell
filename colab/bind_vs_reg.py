@@ -18,8 +18,16 @@ The comparison (restricted to the ~8.5k genes measured in Perturb-seq, the only 
   - enrichment of the overlap vs chance (hypergeometric) -> is bound-and-regulated more than random?
   - directionality: bound & down on knockdown = ACTIVATED by the TF; bound & up = REPRESSED.
 
-HONEST: 'regulated' includes indirect effects; 'bound' depends on the peak->gene assignment (promoter window + ABC).
-Perturb-seq power caps which TFs are testable. Real data throughout; the gap is measured, not asserted.
+VERIFIED RESULT (GATA1, 4-lens adversarial + permutation): measured binding and measured regulation are largely DISJOINT --
+the overlap is at chance (0.85x promoter-only, 0.96x +ABC; permutation p~0.7). CRUCIAL nuance (do not misread): this is NOT
+evidence that binding is non-functional. It is mostly a power/composition artifact -- the measured 'regulated' set is ~100%
+INDIRECT myeloid lineage-shift genes (all UP on knockdown: LTB/LST1/CTSC) that GATA1 doesn't bind, while its bound DIRECT
+erythroid targets (KLF1/TAL1/NFE2/ALAS2/FECH) sit at |z|<1 and go undetected under a weak knockdown (on-target z=-0.84, zero
+down-genes). Binding overlaps the indirect set at chance because it should; it "misses" the direct set only because the
+perturbation fails to detect it. Genuine buffering surely exists in general but these data can neither measure nor exclude it.
+
+HONEST: 'regulated' mixes direct+indirect effects; 'bound' depends on the peak->gene assignment (promoter window + ABC).
+Perturb-seq power caps which TFs are testable (only GATA1 well-powered here). Real data throughout; the gap is measured, not asserted.
 """
 import json, gzip, bisect
 from pathlib import Path
@@ -177,6 +185,38 @@ def compare(tf, dataset="k562.h5ad", thresh=3.0, W=5000, use_abc=True):
             "bound_regulated_genes": sorted(inter)[:60]}
 
 
+# canonical DIRECT targets for TFs where we know the biology cold — used to show binding marks them even when the
+# under-powered perturbation fails to detect their regulation (the key honest nuance).
+CANONICAL_DIRECT = {
+    "GATA1": ["KLF1", "TAL1", "NFE2", "ALAS2", "FECH", "SLC25A37", "TFRC", "EPOR", "GYPA", "SLC4A1", "EPB42", "AHSP"],
+}
+
+
+def direct_target_check(tf, W=5000):
+    """the honest nuance: are the TF's canonical DIRECT targets BOUND yet UNDETECTED as regulated (weak knockdown)?"""
+    targets = CANONICAL_DIRECT.get(tf)
+    if not targets:
+        return None
+    reg = load_regulation(tf, "k562.h5ad", 3.0)
+    U = reg["U"]; z = reg["z"]
+    peaks = _peak_index(OUT / f"chip_gw/{tf}.bed.gz")
+    g2, _ = _tss()
+    rows = []
+    for g in targets:
+        if g not in U:
+            rows.append({"gene": g, "in_universe": False}); continue
+        c, t = g2.get(g, (None, None))
+        bound = bool(c and _ov(peaks, c, t - W, t + W))
+        rows.append({"gene": g, "in_universe": True, "promoter_bound": bound,
+                     "knockdown_z": round(z.get(g, float("nan")), 2),
+                     "detected_regulated": abs(z.get(g, 0)) > 3})
+    inU = [r for r in rows if r.get("in_universe")]
+    bound_undetected = [r for r in inU if r.get("promoter_bound") and not r.get("detected_regulated")]
+    return {"targets": rows, "n_in_universe": len(inU),
+            "n_bound": sum(r.get("promoter_bound", False) for r in inU),
+            "n_bound_but_undetected": len(bound_undetected)}
+
+
 def main():
     print("=" * 100)
     print("BINDING vs REGULATION — what a TF SITS ON (ChIP) vs what it CHANGES (Perturb-seq knockdown). Real K562.")
@@ -191,18 +231,37 @@ def main():
         print(f"    BINDS      {r['n_bound']:6d} genes  (promoter {r['n_bound_promoter']}, +ABC distal {r['n_bound_distal']})")
         print(f"    REGULATES  {r['n_regulated']:6d} genes  (up {r['n_reg_up']}, down {r['n_reg_down']})")
         print(f"    BOTH       {r['n_bound_and_regulated']:6d} genes")
-        print(f"    -> of genes it BINDS, {r['frac_bound_that_regulate']:.1%} are regulated  (most binding is non-functional)")
+        print(f"    -> of genes it BINDS, {r['frac_bound_that_regulate']:.1%} are detectably regulated in THIS knockdown (see nuance below)")
         print(f"    -> of genes it REGULATES, {r['frac_regulated_that_bound']:.0%} are directly bound  (rest are indirect/downstream)")
         e = r["enrichment"]
         print(f"    -> overlap {r['n_bound_and_regulated']} vs {e['expected_overlap']} expected by chance = {e['fold_enrichment']}x enrichment")
         d = r["direction"]
-        print(f"    -> direction: {d['activated_bound_down']} bound+down (activated by {tf}), {d['repressed_bound_up']} bound+up (repressed)")
-    out = {"results": res,
+        print(f"    -> direction: {d['activated_bound_down']} bound+down (activated by {tf}), {d['repressed_bound_up']} bound+up (repressed on knockdown)")
+    # the honest nuance for GATA1: direct targets are BOUND but the weak knockdown fails to detect them as regulated
+    dt = direct_target_check("GATA1")
+    if dt:
+        print(f"\n  WHY the overlap is at chance (verified) — GATA1's canonical DIRECT targets are BOUND but UNDETECTED:")
+        print(f"    {dt['n_bound']}/{dt['n_in_universe']} canonical erythroid targets are promoter-bound, but "
+              f"{dt['n_bound_but_undetected']} of them sit at |z|<3 (undetected as regulated) under this weak knockdown:")
+        for r in dt["targets"]:
+            if r.get("in_universe") and r.get("promoter_bound"):
+                print(f"      {r['gene']:8s} bound=yes  knockdown z={r['knockdown_z']:+.2f}  detected={r['detected_regulated']}")
+        print("    => the measured 'regulated' set is dominated by INDIRECT lineage-shift genes (all UP: LTB, LST1, CTSC...)")
+        print("       that GATA1 doesn't bind; its bound DIRECT targets are under-detected. The near-chance overlap is")
+        print("       mostly a POWER/composition artifact, NOT proof that binding is non-functional.")
+    out = {"results": res, "direct_target_check_GATA1": dt,
            "note": "Binding (ENCODE K562 ChIP, peak->gene via promoter TSS+/-5kb + ABC 3D distal) vs regulation (Replogle "
-                   "K562 Perturb-seq, |z|>3 on knockdown), on the ~8.5k measured-gene universe. Only well-powered knockdowns "
-                   "give a trustworthy regulation set (GATA1 clean; most TFs underpowered). Measures the binding<->regulation "
-                   "gap: binding is vast, regulation is small, overlap is enriched over chance but a small fraction of binding "
-                   "is functional and much regulation is indirect. 'Regulated' includes indirect effects. Real data."}
+                   "K562 Perturb-seq, |z|>3 on knockdown), ~8.5k measured-gene universe. VERIFIED (4-lens adversarial + "
+                   "permutation): the overlap is at chance (0.85x promoter-only, 0.96x +ABC; perm p~0.7), robustly. BUT this is "
+                   "NOT evidence that binding is non-functional -- it is mostly a power/composition artifact: the measured "
+                   "regulated set is ~100% INDIRECT myeloid lineage-shift genes (all UP on knockdown: LTB/LST1/CTSC) that GATA1 "
+                   "doesn't bind, while its bound DIRECT erythroid targets (KLF1/TAL1/NFE2/ALAS2/FECH) sit at |z|<1 and go "
+                   "undetected under a weak knockdown (on-target z=-0.84, 0 down-genes). So binding overlaps the indirect set at "
+                   "chance because it should, and misses the direct set only because that set is undetected. Real buffering "
+                   "(genuinely non-functional binding) surely exists in general but these data can neither measure nor exclude "
+                   "it. The durable finding: only GATA1 is well-powered enough to even attempt this (most TFs underpowered), and "
+                   "measured binding and measured regulation are largely DISJOINT here -- direct targets under-detected, "
+                   "measured regulation dominated by indirect effects. 'Regulated' mixes direct+indirect. Real data throughout."}
     json.dump(out, open("outputs/orphan/bind_vs_reg.json", "w"), indent=1)
     print("\n  -> outputs/orphan/bind_vs_reg.json")
     return out

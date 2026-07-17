@@ -3423,3 +3423,46 @@ eRNA predict CRISPR regulation ~6×). The one link that breaks is **getting resi
 gives Kd not k_off (flat, r≈0), and a per-TF average is confounded by function class (CTCF). The missing measurement is
 per-site in-vivo dwell time, and it doesn't exist genome-wide. That's not a gap in the model; it's a gap in the world's data.
 (kinetics.py `measured_residence_test` → kinetics.json; `kinetics` syscall.)
+
+---
+
+## Binding vs regulation — put the two measured maps side by side (`bind_vs_reg.py` → `bindreg` syscall)
+
+The whole TF arc pointed here: for a TF where we have **both** a measured *binding* map (ENCODE K562 ChIP-seq) and a measured
+*regulation* map (Replogle K562 Perturb-seq — which genes change when the TF is knocked down), compare the two gene sets
+directly. Peak→gene via promoter (TSS±5kb) + ABC 3D distal; regulated = |z|>3 on the ~8.5k measured-gene universe.
+
+**First finding, before any comparison: only GATA1 is well-powered enough to even ask.** Of ~30 TFs with both ChIP and a
+Perturb-seq knockdown, only GATA1 has a clean regulation signature (56 genes; MAX marginal; the rest sit at the noise floor,
+because genome-scale Perturb-seq has few cells per knockdown). GATA1 is also the textbook TF for this question.
+
+**The raw comparison (GATA1):** binds ~4,621 genes, regulates 56, overlap 29 — **overlap at chance** (0.85× promoter-only,
+0.96× with ABC). Binding, as measured against this regulated set, does not beat a random gene set.
+
+**I did not trust that number at face value** — it's exactly the kind of result that can be an artifact — so I ran a
+**4-lens adversarial verification workflow** (parameter robustness, direct-vs-indirect split, a 5,000-draw permutation null,
+and an under-detection check on canonical direct targets). The verdict was decisive and *nuanced*:
+
+- **The number is real and robust.** All lenses reproduce the chance-level overlap; permutation p≈0.7; it holds across
+  thresholds, promoter windows, and with/without ABC.
+- **But "binding doesn't predict regulation" would be the wrong read.** The near-chance overlap is **mostly a
+  power/composition artifact**, for two verified reasons:
+  1. **The measured regulation is ~100% indirect.** All 56 regulated genes go *up* on knockdown — a lineage-identity shift
+     (top genes LTB z=40, LST1, CTSC, S100A4 are the myeloid program de-repressed when erythroid identity is lost). GATA1
+     doesn't bind those, so binding *should* overlap them at chance — and does. (This is real biology: the textbook
+     GATA1↔PU.1 lineage antagonism.)
+  2. **GATA1's genuinely bound direct targets are under-detected.** 8/9 canonical erythroid targets (KLF1, TAL1, NFE2,
+     ALAS2, FECH, SLC25A37, TFRC…) are promoter-bound — but all sit at |z|<1 (e.g. ALAS2 −0.36, KLF1 −0.55) and never cross
+     threshold, because the knockdown is weak (on-target z=−0.84, zero down-genes). Binding correctly marks the direct
+     regulon; the perturbation just can't see it.
+
+**Honest conclusion.** As *measured here*, binding and regulation are largely **disjoint** — but that's dominated by what the
+Perturb-seq can detect, not by proven non-function. Genuine buffering (bound-but-non-functional sites) certainly exists in
+biology, but **these data can neither measure nor exclude it**, because the direct arm is under-powered. The durable,
+honest findings: (1) measured binding and measured regulation don't line up on this dataset; (2) *most* TFs can't even be
+tested (Perturb-seq power) — which is itself why "what does a TF regulate" stays hard to pin down; (3) the direction that
+*is* detected (de-repression of the myeloid program) is real, textbook GATA1 biology.
+
+This closes the arc honestly: `invivo` (where it binds) → `regulate` (whether binding regulates) → `kinetics` (why residence
+is the missing quantity) → `bindreg` (binding and regulation maps compared directly — and the measurement limits laid bare).
+(bind_vs_reg.py → bind_vs_reg.json; `bindreg` syscall. Verified by a 4-lens adversarial workflow + permutation test.)

@@ -129,5 +129,12 @@ manifest["crispr_ground_truth"] = {"accession": "ENCFF968BZL",
                                    "desc": "combined CRISPR element-gene (Nasser2021/Gasperini2019/Schraivogel2020)"}
 print(f"crispr ground truth: ENCFF968BZL ({len(crispr.splitlines())} pairs)", flush=True)
 
+
+# --- 6. genome-wide TF ChIP for binding-vs-regulation (bind_vs_reg.py) ---
+GW = f"{OUT}/chip_gw"; os.makedirs(GW, exist_ok=True)
+for tf, acc in {"GATA1": "ENCFF148JKK", "MAX": "ENCFF900NVQ", "GATA2": "ENCFF173TXA"}.items():
+    dl(f"/files/{acc}/@@download/{acc}.bed.gz", f"{GW}/{tf}.bed.gz")
+    print(f"chip_gw {tf}: {acc}", flush=True)
+
 json.dump(manifest, open(f"{OUT}/manifest.json", "w"), indent=1)
 print("DONE ->", f"{OUT}/manifest.json", flush=True)

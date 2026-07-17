@@ -87,5 +87,87 @@
    ]
   }
  ],
- "note": "Binding (ENCODE K562 ChIP, peak->gene via promoter TSS+/-5kb + ABC 3D distal) vs regulation (Replogle K562 Perturb-seq, |z|>3 on knockdown), on the ~8.5k measured-gene universe. Only well-powered knockdowns give a trustworthy regulation set (GATA1 clean; most TFs underpowered). Measures the binding<->regulation gap: binding is vast, regulation is small, overlap is enriched over chance but a small fraction of binding is functional and much regulation is indirect. 'Regulated' includes indirect effects. Real data."
+ "direct_target_check_GATA1": {
+  "targets": [
+   {
+    "gene": "KLF1",
+    "in_universe": true,
+    "promoter_bound": true,
+    "knockdown_z": -0.55,
+    "detected_regulated": false
+   },
+   {
+    "gene": "TAL1",
+    "in_universe": true,
+    "promoter_bound": true,
+    "knockdown_z": -0.41,
+    "detected_regulated": false
+   },
+   {
+    "gene": "NFE2",
+    "in_universe": true,
+    "promoter_bound": true,
+    "knockdown_z": -0.53,
+    "detected_regulated": false
+   },
+   {
+    "gene": "ALAS2",
+    "in_universe": true,
+    "promoter_bound": true,
+    "knockdown_z": -0.36,
+    "detected_regulated": false
+   },
+   {
+    "gene": "FECH",
+    "in_universe": true,
+    "promoter_bound": true,
+    "knockdown_z": 0.01,
+    "detected_regulated": false
+   },
+   {
+    "gene": "SLC25A37",
+    "in_universe": true,
+    "promoter_bound": true,
+    "knockdown_z": -0.45,
+    "detected_regulated": false
+   },
+   {
+    "gene": "TFRC",
+    "in_universe": true,
+    "promoter_bound": true,
+    "knockdown_z": -0.62,
+    "detected_regulated": false
+   },
+   {
+    "gene": "EPOR",
+    "in_universe": true,
+    "promoter_bound": true,
+    "knockdown_z": 0.16,
+    "detected_regulated": false
+   },
+   {
+    "gene": "GYPA",
+    "in_universe": true,
+    "promoter_bound": false,
+    "knockdown_z": -1.0,
+    "detected_regulated": false
+   },
+   {
+    "gene": "SLC4A1",
+    "in_universe": false
+   },
+   {
+    "gene": "EPB42",
+    "in_universe": false
+   },
+   {
+    "gene": "AHSP",
+    "in_universe": false
+   }
+  ],
+  "n_in_universe": 9,
+  "n_bound": 8,
+  "n_bound_but_undetected": 8
+ },
+ "note": "Binding (ENCODE K562 ChIP, peak->gene via promoter TSS+/-5kb + ABC 3D distal) vs regulation (Replogle K562 Perturb-seq, |z|>3 on knockdown), ~8.5k measured-gene universe. VERIFIED (4-lens adversarial + permutation): the overlap is at chance (0.85x promoter-only, 0.96x +ABC; perm p~0.7), robustly. BUT this is NOT evidence that binding is non-functional -- it is mostly a power/composition artifact: the measured regulated set is ~100% INDIRECT myeloid lineage-shift genes (all UP on knockdown: LTB/LST1/CTSC) that GATA1 doesn't bind, while its bound DIRECT erythroid targets (KLF1/TAL1/NFE2/ALAS2/FECH) sit at |z|<1 and go undetected under a weak knockdown (on-target z=-0.84, 0 down-genes). So binding overlaps the indirect set at chance because it should, and misses the direct set only because that set is undetected. Real buffering (genuinely non-functional binding) surely exists in general but these data can neither measure nor exclude it. The durable finding: only GATA1 is well-powered enough to even attempt this (most TFs underpowered), and measured binding and measured regulation are largely DISJOINT here -- direct targets under-detected, measured regulation dominated by indirect effects. 'Regulated' mixes direct+indirect. Real data throughout."
 }

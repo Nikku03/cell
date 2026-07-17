@@ -1630,6 +1630,33 @@ class CellKernel:
         out.append("     [strong measured discriminator, not deterministic — capped by CRISPR power + enhancer redundancy]")
         return "\n".join(out)
 
+    def bindreg(self, args):
+        """compare what a TF BINDS (ChIP-seq) vs what it REGULATES (Perturb-seq knockdown) — the two measured maps side by
+        side (bind_vs_reg.py). Only GATA1 is well-powered in this K562 Perturb-seq. VERIFIED (4-lens adversarial): the two
+        maps overlap only at CHANCE (0.85x promoter-only) -- but this is NOT proof binding is non-functional; it's mostly a
+        power/composition artifact (measured regulation dominated by INDIRECT lineage-shift genes GATA1 doesn't bind, while
+        its bound DIRECT targets sit under the detection threshold on a weak knockdown). usage: bindreg"""
+        import json as _j
+        try:
+            R = _j.load(open("outputs/orphan/bind_vs_reg.json"))
+        except OSError:
+            return "bindreg: run colab/bind_vs_reg.py first (needs ChIP + Perturb-seq)."
+        out = ["BINDING vs REGULATION — what a TF SITS ON (ChIP) vs what it CHANGES (Perturb-seq knockdown). Real K562."]
+        for r in R["results"]:
+            e = r["enrichment"]
+            out.append(f"  {r['tf']}: BINDS {r['n_bound']} genes, REGULATES {r['n_regulated']} (up {r['n_reg_up']}/down {r['n_reg_down']}), "
+                       f"BOTH {r['n_bound_and_regulated']}  ->  overlap {e['fold_enrichment']}x chance "
+                       f"({r['frac_regulated_that_bound']:.0%} of regulated are directly bound)")
+        dt = R.get("direct_target_check_GATA1")
+        if dt:
+            out.append(f"  VERIFIED nuance: {dt['n_bound']}/{dt['n_in_universe']} of GATA1's canonical DIRECT erythroid targets "
+                       f"(KLF1/TAL1/NFE2/ALAS2/FECH...) are BOUND, but {dt['n_bound_but_undetected']} sit at |z|<3 = undetected")
+        out.append("  => the near-chance overlap is mostly a POWER/composition artifact (regulation dominated by indirect")
+        out.append("     lineage-shift genes; bound direct targets under-detected), NOT proof that binding is non-functional.")
+        out.append("     Durable finding: measured binding and measured regulation are largely DISJOINT here, and only GATA1")
+        out.append("     is even well-powered enough to ask -- most TFs' knockdowns are too weak to define a regulation set.")
+        return "\n".join(out)
+
     def kinetics(self, args):
         """the kinetic-competition model of productive initiation, MEASURED (kinetics.py). A bound TF races: fall off (k_off)
         vs appoint Pol II (k_init). P(productive)=tau_res/(tau_res+tau_appoint). The deep catch: affinity (Kd=k_off/k_on) is
@@ -2388,6 +2415,9 @@ class CellKernel:
   kinetics             the competition model: residence time (from affinity) vs time to appoint Pol II. MEASURED: sequence
                        affinity is FLAT vs productivity (r~0), measured occupancy predicts it (r~0.2-0.3) -> mechanism right,
                        but residence (k_off) is NOT computable from affinity (Kd). The measured k_off!=Kd wall
+  bindreg              compare what a TF BINDS (ChIP) vs what it REGULATES (Perturb-seq knockdown). VERIFIED: the two maps
+                       overlap at chance for GATA1 -- but mostly a power/composition artifact (indirect regulation + bound
+                       direct targets under-detected), not proof binding is non-functional. Only GATA1 well-powered
   help / exit"""
 
 
@@ -2440,6 +2470,7 @@ class CellShell:
             if cmd in ("invivo", "gate"): return k.invivo(args)
             if cmd in ("regulate", "productive"): return k.regulate(args)
             if cmd in ("kinetics", "residence"): return k.kinetics(args)
+            if cmd in ("bindreg", "bind_vs_reg"): return k.bindreg(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
