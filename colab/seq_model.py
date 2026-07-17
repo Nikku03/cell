@@ -20,7 +20,7 @@ NT = {"A": 0, "C": 1, "G": 2, "T": 3}
 TAB = ["log_dist", "atac_enh", "h3k27ac_enh", "polr2a_enh", "procap_enh", "promoter_atac", "promoter_polii", "gene_expr"]
 
 
-def _onehot(seq, L=400):
+def _onehot(seq, L=600):
     a = np.zeros((4, L), dtype=np.float32)
     for i, ch in enumerate(seq[:L]):
         j = NT.get(ch)
@@ -36,7 +36,7 @@ def load_data():
     et = comp["element_tfs"]; ntf = len(comp["tf_list"])
     df = pd.read_csv("outputs/orphan/crispr_features_compendium.csv")
     df = df[df["element"].isin(seqs)].reset_index(drop=True)
-    L = min(len(next(iter(seqs.values()))), 400)
+    L = min(len(next(iter(seqs.values()))), 600)
     X = np.stack([_onehot(seqs[e], L) for e in df["element"]])
     # standardize tabular
     T = df[TAB].values.astype(np.float32)
@@ -57,10 +57,11 @@ def _model(ntf, ntab, L):
         def __init__(self):
             super().__init__()
             self.enc = nn.Sequential(
-                nn.Conv1d(4, 64, 19, padding=9, stride=2), nn.BatchNorm1d(64), nn.ReLU(),
-                nn.Conv1d(64, 64, 7, padding=6, dilation=2), nn.BatchNorm1d(64), nn.ReLU())
-            self.aux = nn.Linear(128, ntf)                      # predict TF binding from seq
-            self.main = nn.Sequential(nn.Linear(128 + ntab, 48), nn.ReLU(), nn.Dropout(0.3), nn.Linear(48, 1))
+                nn.Conv1d(4, 128, 19, padding=9), nn.BatchNorm1d(128), nn.ReLU(), nn.MaxPool1d(2),
+                nn.Conv1d(128, 128, 7, padding=6, dilation=2), nn.BatchNorm1d(128), nn.ReLU(),
+                nn.Conv1d(128, 128, 7, padding=12, dilation=4), nn.BatchNorm1d(128), nn.ReLU())
+            self.aux = nn.Linear(256, ntf)                      # predict TF binding from seq
+            self.main = nn.Sequential(nn.Linear(256 + ntab, 64), nn.ReLU(), nn.Dropout(0.3), nn.Linear(64, 1))
 
         def embed(self, x):
             h = self.enc(x)
@@ -79,10 +80,11 @@ def _seeded_folds(chrom, seed):
     return np.array([fold[c] for c in chrom])
 
 
-def run(seed=0, lam=1.0, epochs=30, shuffle_labels=False, tag=""):
+def run(seed=0, lam=1.0, epochs=40, shuffle_labels=False, tag="", device=None):
     import torch, torch.nn as nn, time
     from sklearn.metrics import average_precision_score
-    torch.manual_seed(seed); torch.set_num_threads(4)
+    torch.manual_seed(seed)
+    dev = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
     X, T, A, y, chrom, ntf, L = load_data()
     if shuffle_labels:
         yy = y.copy()
@@ -97,12 +99,13 @@ def run(seed=0, lam=1.0, epochs=30, shuffle_labels=False, tag=""):
         tr = folds != k; te = folds == k
         if y[te].sum() < 3:
             continue
-        net = _model(ntf, T.shape[1], L)
+        net = _model(ntf, T.shape[1], L).to(dev)
         opt = torch.optim.Adam(net.parameters(), lr=1e-3, weight_decay=1e-4)
-        pos_w = torch.tensor(max((y[tr] == 0).sum() / max((y[tr] == 1).sum(), 1), 1.0), dtype=torch.float32)
+        pos_w = torch.tensor(max((y[tr] == 0).sum() / max((y[tr] == 1).sum(), 1), 1.0), dtype=torch.float32).to(dev)
         bce_main = nn.BCEWithLogitsLoss(pos_weight=pos_w)
         bce_aux = nn.BCEWithLogitsLoss()
-        Xtr = torch.tensor(X[tr]); Ttr = torch.tensor(T[tr]); Atr = torch.tensor(A[tr]); ytr = torch.tensor(y[tr])
+        Xtr = torch.tensor(X[tr]).to(dev); Ttr = torch.tensor(T[tr]).to(dev)
+        Atr = torch.tensor(A[tr]).to(dev); ytr = torch.tensor(y[tr]).to(dev)
         idx = np.arange(len(ytr))
         net.train()
         for ep in range(epochs):
@@ -115,8 +118,8 @@ def run(seed=0, lam=1.0, epochs=30, shuffle_labels=False, tag=""):
                 loss.backward(); opt.step()
         net.eval()
         with torch.no_grad():
-            pm, _ = net(torch.tensor(X[te]), torch.tensor(T[te]))
-            oof[te] = torch.sigmoid(pm).numpy()
+            pm, _ = net(torch.tensor(X[te]).to(dev), torch.tensor(T[te]).to(dev))
+            oof[te] = torch.sigmoid(pm).cpu().numpy()
         ap = average_precision_score(y[te], oof[te]) if y[te].sum() >= 3 else float("nan")
         print(f"    [{tag}] fold {k+1}/5  AUPRC {ap:.3f}  ({time.time()-t0:.0f}s, {int(te.sum())} test)", flush=True)
     # per-fold AUPRC then mean (match the GBM protocol)
@@ -129,8 +132,10 @@ def run(seed=0, lam=1.0, epochs=30, shuffle_labels=False, tag=""):
 
 
 def main():
+    import torch
+    dev = "cuda" if torch.cuda.is_available() else "cpu"
     print("=" * 92)
-    print("TIER-2 — multi-task sequence CNN for regulation (CPU). Go/No-Go vs the Tier-1 GBM.")
+    print(f"TIER-2 — multi-task sequence CNN for regulation (device: {dev.upper()}). Go/No-Go vs the Tier-1 GBM.")
     print("=" * 92)
     scores = []
     for s in (0, 1, 2):
