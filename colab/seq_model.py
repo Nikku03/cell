@@ -167,14 +167,12 @@ def load_pretrain():
     """cCRE codes (N,600) int8 + 311-TF labels (N,311) — the genome-wide auxiliary dataset."""
     import gzip
     meta = json.load(open(PT / "pretrain_meta.json"))
-    seqs = gzip.open(PT / "pretrain_seqs.txt.gz", "rt").read().split("\n")
     L = meta["window"]
-    codes = np.full((len(seqs), L), 4, dtype=np.int8)
-    for i, s in enumerate(seqs):
-        for j, ch in enumerate(s[:L]):
-            v = NT.get(ch)
-            if v is not None:
-                codes[i, j] = v
+    seqs = [s for s in gzip.open(PT / "pretrain_seqs.txt.gz", "rt").read().split("\n") if len(s) >= L]
+    buf = np.frombuffer("".join(s[:L] for s in seqs).encode(), dtype=np.uint8).reshape(len(seqs), L)
+    codes = np.full((len(seqs), L), 4, dtype=np.int8)          # 4 = N
+    for ch, v in NT.items():
+        codes[buf == ord(ch)] = v
     lab = np.load(PT / "pretrain_labels.npz")
     labels = np.unpackbits(lab["labels"], axis=1)[:, :int(lab["n_tf"])].astype(np.float32)
     return codes, labels, meta["tf_list"]
