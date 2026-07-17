@@ -1486,6 +1486,33 @@ class CellKernel:
                 out.append(f"    {c['condition']} {dirn} [{c['tf']} {c['score']}]{fb}")
         return "\n".join(out)
 
+    def tfbs(self, args):
+        """score how a DNA variant changes a TF's BINDING SITE (tfbs_score.py) — the honest protein-DNA analogue of the
+        NEXUS binding node, built the right way (JASPAR PWM log-odds over 743 TFs, neighbour-aware motif window) rather
+        than retrofitting NEXUS's amino-acid physics. 'tfbs GENE' shows the motif; 'tfbs GENE SEQ' scores a window;
+        'tfbs GENE SEQ POS ALT' scores a variant's effect (Δ log-odds, ± = strengthen/weaken). HONEST: predicts INTRINSIC
+        in-vitro sequence preference (validated by construction), NOT in-vivo binding/regulation (chromatin/cofactor/conc =
+        the context wall); DNA-shape ('rotation') is the documented Rohs add-on. usage: tfbs GENE [SEQ [POS ALT]]"""
+        import tfbs_score as tb
+        if not hasattr(self, "_pwm"):
+            self._pwm = tb._load()
+        if not args:
+            return f"tfbs GENE [SEQ [POS ALT]]   — TF binding-site variant scorer ({len(self._pwm)} JASPAR TFs)"
+        tf = args[0]
+        if tf not in self._pwm:
+            return f"tfbs {tf}: no JASPAR motif (have {len(self._pwm)} TFs)."
+        lo = self._pwm[tf]["lo"]
+        cons = "".join("ACGT"[max(range(4), key=lambda b: lo[p][b])] for p in range(len(lo)))
+        if len(args) == 1:
+            return f"tfbs {tf}: motif {self._pwm[tf]['id']}, {len(lo)}bp, consensus {cons}"
+        seq = args[1]
+        if len(args) >= 4:
+            v = tb.variant_effect(tf, seq, int(args[2]), args[3], self._pwm)
+            return (f"tfbs {tf} ({v['motif']}, consensus {cons}) — variant {seq[int(args[2])]}->{args[3].upper()} @ {args[2]}:\n"
+                    f"  best score {v['ref_score']} -> {v['alt_score']}  (Δ {v['delta']:+.2f})  → {v['call']}\n"
+                    "  [intrinsic in-vitro preference; not in-vivo binding — chromatin/cofactor/conc is the wall]")
+        return f"tfbs {tf} on {seq.upper()}: best motif log-odds {tb.score(tf, seq, self._pwm):.2f}  (consensus {cons})"
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -2194,6 +2221,8 @@ class CellKernel:
                        pathway that lit AND a physical partner agree on is the confident tier (~0.71); + a transport lead
   conditions PATHWAY   infer WHEN a pathway turns on — trace its genes to the stress/signal TFs that control them;
                        'always-on' (constitutive) vs a named trigger (hypoxia/sterol/DNA-damage/…). 'conditions scan' = discovered
+  tfbs GENE [SEQ POS ALT] score how a DNA variant changes a TF's binding site (JASPAR PWM, 743 TFs, neighbour-aware);
+                       intrinsic in-vitro preference, NOT in-vivo binding (chromatin/cofactor = the wall)
   help / exit"""
 
 
@@ -2241,6 +2270,7 @@ class CellShell:
             if cmd in ("ladder", "compartments"): return k.ladder(args)
             if cmd in ("connect", "mechanism"): return k.connect(args)
             if cmd in ("conditions", "trigger"): return k.conditions(args)
+            if cmd in ("tfbs", "motif"): return k.tfbs(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)

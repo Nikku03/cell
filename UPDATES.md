@@ -3176,3 +3176,25 @@ Followed the two proposed levers to their honest conclusion.
 **Net:** both levers confirmed the ceiling — recall@50 stays ~18%. The only lever left that could actually move it is
 genuinely new **measured, context-specific** signal, not a bigger model, a fancier embedding, or more of the same
 annotation. `perturb_recall` stands as the honest maximum the current data supports (graph 3% → fused-model 18%).
+
+## tfbs_score / `tfbs` — protein-DNA binding done the honest way (not a NEXUS retrofit)
+
+Asked whether NEXUS could be modified to score protein-DNA binding, accounting for neighbouring nucleotides and DNA shape
+("rotation"). Honest answer: **NEXUS's engine can't be retrofitted** — it's amino-acid physics (rotamers, sidechain vdW,
+the 20-AA interface), and protein-DNA is different chemistry (4 bases + phosphate-backbone electrostatics, major/minor
+groove base readout, base stacking, and a 3D **shape** readout). It would be a *new engine* reusing only the ΔΔG-regression
+scaffold. **But** TF-DNA specificity is a mature, measured-data field, and we already had the core data: JASPAR2024 PWMs
+for **743 TFs** (`tf_motifs.json`).
+
+So built the right version, `tfbs_score.py` (`tfbs` syscall): PWM log-odds over a sliding window, both strands.
+**Neighbouring nucleotides are handled** — the motif window spans the flanks, so a variant's effect depends on core-vs-flank
+position. Demonstrated on ARNT (E-box CACGTG): a **core** C→A drops the score 7.8→3.4 (**abolishes the site**), a **flank**
+change ~0. TP53 recovers its dimeric response element (AACATGCCCGGGCATGTC). `tfbs GENE [SEQ [POS ALT]]`.
+
+**HONEST SCOPE:** PWM log-odds predicts **intrinsic, in-vitro sequence preference** (validated by construction; literature
+AUC ~0.85–0.9) — the right tool for **non-coding / regulatory variant interpretation** ("does this variant disrupt a TF
+site"). It does **not** predict in-vivo binding or regulation (chromatin, cofactors, TF concentration = the same context
+wall). **DNA shape ("rotation" — minor-groove width, roll, helical twist, propeller) and dinucleotide dependencies are the
+documented Rohs add-on** — a modest, validated improvement over PWM alone, left as an extension since it needs the pentamer
+shape table (fetchable). So: the honest protein-DNA node exists and works for variant interpretation; it's a *new* engine,
+not a modified NEXUS. (tfbs_score.py → tfbs_score.json; `tfbs` syscall.)
