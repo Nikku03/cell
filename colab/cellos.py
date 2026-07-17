@@ -1513,6 +1513,45 @@ class CellKernel:
                     "  [intrinsic in-vitro preference; not in-vivo binding — chromatin/cofactor/conc is the wall]")
         return f"tfbs {tf} on {seq.upper()}: best motif log-odds {tb.score(tf, seq, self._pwm):.2f}  (consensus {cons})"
 
+    def cofactor(self, args):
+        """the cofactor SWITCH — a TF binds a DIFFERENT sequence depending on which partner it dimerises with (cofactor.py).
+        Solved the DATA way: JASPAR composite (heterodimer) motifs = the measured site the PAIR binds, gated by which
+        cofactor is EXPRESSED in a cell (emask). 'cofactor TF' lists partners with a composite motif; 'cofactor TF CELLTYPE'
+        keeps only those expressed there; 'cofactor TF1 TF2' shows the switch (composite vs each solo site). HONEST: delivers
+        the pair's in-vitro binding site (the concrete switch), NOT de-novo complex formation (the AF-Multimer route we skip)
+        nor in-vivo regulation. ~479 measured pairs. usage: cofactor TF [CELLTYPE] | cofactor TF1 TF2"""
+        import cofactor as cf
+        if not hasattr(self, "_cof"):
+            self._cof = cf._load()
+        G = self._cof
+        if not args:
+            return f"cofactor TF [CELLTYPE] | cofactor TF1 TF2   — the cofactor switch ({len(G['comp'])} composite motifs)"
+        tf = args[0]
+        # two TFs both with a composite -> show the switch
+        if len(args) == 2 and frozenset((args[0], args[1])) in G["pair2mid"]:
+            s = cf.switch(args[0], args[1], G)
+            solo = "  ".join(f"{t}={c}" for t, c in s["solo"].items() if c)
+            return (f"cofactor SWITCH {s['pair']} ({s['composite_id']}):\n"
+                    f"  composite (pair binds): {s['composite_consensus']}  [{s['composite_len']}bp]\n"
+                    f"  solo (each alone):      {solo}\n"
+                    "  [measured HT-SELEX site of the dimer; in-vitro specificity, not in-vivo binding]")
+        ct = args[1] if len(args) >= 2 else None
+        c = cf.cofactors(tf, ct, G)
+        if not c["cofactors"]:
+            where = f" expressed in '{c['celltype']}'" if ct else ""
+            return f"cofactor {tf}: no partner with a composite motif{where} (have {len(G['comp'])} pairs)."
+        head = f"cofactor {tf}" + (f" in '{c['celltype']}'" if c["celltype"] else "") + f": {c['n']} partner(s) with a measured composite site"
+        rows = []
+        for x in c["cofactors"][:12]:
+            flags = []
+            if x["physical_pair"]:
+                flags.append("PPI")
+            if x["expressed"]:
+                flags.append("expressed")
+            fl = f" [{', '.join(flags)}]" if flags else ""
+            rows.append(f"    {x['cofactor']}{fl}  → switch: cofactor {tf} {x['cofactor']}")
+        return head + "\n" + "\n".join(rows)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -2223,6 +2262,9 @@ class CellKernel:
                        'always-on' (constitutive) vs a named trigger (hypoxia/sterol/DNA-damage/…). 'conditions scan' = discovered
   tfbs GENE [SEQ POS ALT] score how a DNA variant changes a TF's binding site (JASPAR PWM, 743 TFs, neighbour-aware);
                        intrinsic in-vitro preference, NOT in-vivo binding (chromatin/cofactor = the wall)
+  cofactor TF [CELLTYPE]  the cofactor SWITCH — the DIFFERENT site a TF binds with each dimer partner (479 composite
+  cofactor TF1 TF2     motifs, gated by which cofactor is expressed); 'TF1 TF2' shows composite-vs-solo. In-vitro site,
+                       not de-novo complex formation (AF-Multimer route skipped) nor in-vivo regulation
   help / exit"""
 
 
@@ -2271,6 +2313,7 @@ class CellShell:
             if cmd in ("connect", "mechanism"): return k.connect(args)
             if cmd in ("conditions", "trigger"): return k.conditions(args)
             if cmd in ("tfbs", "motif"): return k.tfbs(args)
+            if cmd in ("cofactor", "dimer"): return k.cofactor(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)

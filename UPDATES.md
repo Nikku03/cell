@@ -3198,3 +3198,39 @@ wall). **DNA shape ("rotation" — minor-groove width, roll, helical twist, prop
 documented Rohs add-on** — a modest, validated improvement over PWM alone, left as an extension since it needs the pentamer
 shape table (fetchable). So: the honest protein-DNA node exists and works for variant interpretation; it's a *new* engine,
 not a modified NEXUS. (tfbs_score.py → tfbs_score.json; `tfbs` syscall.)
+
+---
+
+## The cofactor switch, solved the data way (`cofactor.py` → `cofactor` syscall)
+
+Asked to *solve the cofactor-switch problem*: a TF binds a **different sequence** depending on which partner it dimerises
+with — SMAD3+FOXH1 vs SMAD3+RUNX land on different sites; FLI1 alone reads an ETS site, but FLI1+CEBPB reads a fused
+composite. My own list of "what a real version would need" had four parts: AlphaFold-Multimer structures of the candidate
+complexes → an absolute-affinity model → a composite-motif database → measured cofactor expression per condition.
+
+**The honest engineering call was to skip the first two and use the last two.** The structural route (AF-Multimer of every
+candidate complex → absolute affinity) is compute-blocked in this sandbox *and* unreliable, and — the real point — cofactor
+choice in a cell is driven more by **which partner is present** (concentration) and measured cooperativity than by raw
+ΔΔG_bind. So the data route isn't a fallback; it's the better model of the actual mechanism.
+
+Built it: fetched the **JASPAR2024 composite (heterodimer) motifs** — `composite_motifs.json`, **479 TF1::TF2 pairs**, each
+measured by HT-SELEX **of the dimer**. That composite motif *is* the switch: it's the sequence the **pair** binds, and it's
+different from either partner's solo motif. `cofactor.py` loads these, the solo motifs (`tfbs_score`), the cell-type
+expression mask (`emask`, 200 types), and PPI, then answers:
+
+- `cofactor TF1 TF2` — the switch made concrete: the pair's **composite** consensus vs each partner's **solo**.
+- `cofactor TF [CELLTYPE]` — which partners have a composite motif *and are expressed* in that context.
+
+**MEASURED — the switch is real:** composite motifs are longer/distinct from either solo — mean **14.4 bp vs 10.6 bp**, and
+**82% of composites are longer than either partner's solo**. The consensuses are visibly fused half-sites:
+`FLI1::CEBPB = acCGGAAGT·TGCGCAAt` (ETS + C/EBP), `ATF3::FLI1 = ACCGGAA·ATGCGTCAT` (ETS + bZIP), `GATA1::TAL1 = GATA + E-box`.
+
+**Context-gating demonstrated** (same TF, different cell → different available cofactor → different site): FLI1 in a
+**monocyte** finds **CEBPB/CEBPD** (the myeloid C/EBP partners) expressed; in a **T cell**, BHLHE40; in a **B cell**,
+TCF4/ZBTB20. So in a monocyte, FLI1::CEBPB forms and binds the fused composite above — not FLI1's solo ETS site.
+
+**HONEST SCOPE:** this delivers the pair's **in-vitro** binding site (the concrete switch, measured) — not (a) de-novo
+complex formation from structure/affinity (the AF-Multimer route we deliberately skip), nor (b) the in-vivo wall (whether
+the pair actually binds a given promoter and regulates it — chromatin/context, the same wall this project keeps hitting).
+Limited to the **~479 pairs** with a measured composite motif. A real, data-grounded cofactor-specificity layer for variant
+reasoning — not a de-novo complex predictor. (cofactor.py → cofactor.json; `cofactor` syscall.)
