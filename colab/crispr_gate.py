@@ -107,7 +107,8 @@ MONO = {"log_dist": -1, "atac_enh": 1, "h3k27ac_enh": 1, "polr2a_enh": 1, "proca
         "tf_count": 1, "promoter_atac": 1, "promoter_polii": 1, "gene_expr": 0}
 
 
-def build_matrix():
+def build_matrix(compendium=None, out_csv="outputs/orphan/crispr_features.csv"):
+    """compendium: optional {element_key -> tf_count} from the full ENCODE compendium; overrides the ~8-TF count."""
     dnase = _signal_index(OUT / "marks/dnase.bed.gz", 6)
     h3k = _signal_index(OUT / "marks/h3k27ac.bed.gz", 6)
     pol = _signal_index(OUT / "marks/polr2a.bed.gz", 6)
@@ -125,11 +126,13 @@ def build_matrix():
         chrom = p[ci["chrom"]]; s = int(p[ci["chromStart"]]); e = int(p[ci["chromEnd"]]); ec = (s + e) // 2
         tchr = p[ci["chrTSS"]]; tss = int(p[ci["startTSS"]]); gene = p[ci["measuredGeneSymbol"]]
         dist = abs(ec - tss)
-        row = {"chromosome": chrom, "gene": gene, "crispr_hit": 1 if p[ci["Significant"]] == "TRUE" else 0,
+        ekey = f"{chrom}:{s}-{e}"
+        tfc = compendium[ekey] if (compendium and ekey in compendium) else sum(1 for ix in tfidx.values() if _max_signal(ix, chrom, s, e) > 0)
+        row = {"chromosome": chrom, "gene": gene, "element": ekey, "crispr_hit": 1 if p[ci["Significant"]] == "TRUE" else 0,
                "log_dist": math.log10(dist + 1),
                "atac_enh": _max_signal(dnase, chrom, s, e), "h3k27ac_enh": _max_signal(h3k, chrom, s, e),
                "polr2a_enh": _max_signal(pol, chrom, s, e), "procap_enh": _max_signal(era, chrom, s, e),
-               "tf_count": sum(1 for ix in tfidx.values() if _max_signal(ix, chrom, s, e) > 0),
+               "tf_count": tfc,
                "promoter_atac": _max_signal(dnase, tchr, tss - 1000, tss + 1000),
                "promoter_polii": _max_signal(pol, tchr, tss - 1000, tss + 1000),
                "gene_expr": expr.get(gene, 0.0),
@@ -137,7 +140,7 @@ def build_matrix():
         X.append(row)
     import pandas as pd
     df = pd.DataFrame(X)
-    df.to_csv("outputs/orphan/crispr_features.csv", index=False)
+    df.to_csv(out_csv, index=False)
     return df
 
 
@@ -174,6 +177,74 @@ def run_cv(df=None, use_abc_feature=False):
             "best_baseline_auprc": round(float(np.mean(best_fold)), 3),
             "gbm_beats_best_baseline_folds": f"{wins}/5",
             "delta_vs_best_baseline": round(float(np.mean(gbm)) - float(np.mean(best_fold)), 3)}
+
+
+def regate_compendium():
+    """the decisive experiment: rebuild tf_count from the full ~300-TF ENCODE compendium and re-gate.
+    Does the +0.09 margin GROW (combinatorial-TF hypothesis holds -> deep learning justified) or plateau (ceiling)?"""
+    import pandas as pd, numpy as np, json as _j
+    comp = _j.load(open(OUT / "compendium_tf.json"))
+    etc = comp["element_tf_count"]
+    print(f"  compendium: {comp['n_tf_ok']} TFs intersected; rebuilding tf_count from {comp['n_tf_ok']} TFs (was ~8)...")
+    df = build_matrix(compendium=etc, out_csv="outputs/orphan/crispr_features_compendium.csv")
+    print(f"  tf_count now: mean {df['tf_count'].mean():.1f} (was ~1-2 with 8 TFs), max {df['tf_count'].max()}")
+    r_old = run_cv(pd.read_csv("outputs/orphan/crispr_features.csv"), use_abc_feature=False)
+    r_new = run_cv(df, use_abc_feature=False)
+    # feature-level leak check: element-level label vs each TF's binding (point-biserial); flag suspiciously high
+    et = comp["element_tfs"]; tfl = comp["tf_list"]
+    # element -> is significant for >=1 gene
+    esig = df.groupby("element")["crispr_hit"].max().to_dict()
+    ekeys = [k for k in et if k in esig]
+    y = np.array([esig[k] for k in ekeys])
+    leak = []
+    for ti, tf in enumerate(tfl):
+        x = np.array([1 if ti in et[k] else 0 for k in ekeys])
+        if x.sum() < 10 or x.sum() > len(x) - 10:
+            continue
+        r = float(np.corrcoef(x, y)[0, 1])
+        leak.append((tf, round(r, 3), int(x.sum())))
+    leak.sort(key=lambda t: -t[1])
+    return {"old": r_old, "new": r_new, "n_tf": comp["n_tf_ok"],
+            "delta_old": r_old["delta_vs_best_baseline"], "delta_new": r_new["delta_vs_best_baseline"],
+            "margin_grew": r_new["delta_vs_best_baseline"] > r_old["delta_vs_best_baseline"] + 0.01,
+            "top_tf_corr": leak[:12]}
+
+
+def main_compendium():
+    print("=" * 96)
+    print("RE-GATE with the FULL ~300-TF ENCODE K562 ChIP compendium — does the +0.09 margin GROW?")
+    print("=" * 96)
+    R = regate_compendium()
+    o, n = R["old"], R["new"]
+    print(f"\n  {'':30s} {'8 TFs':>16s} {'~300 TFs':>16s}")
+    print(f"  {'XGBoost(raw) AUPRC':30s} {o['gbm_auprc'][0]:8.3f}+/-{o['gbm_auprc'][1]:.3f} {n['gbm_auprc'][0]:8.3f}+/-{n['gbm_auprc'][1]:.3f}")
+    print(f"  {'distance baseline':30s} {o['dist_auprc'][0]:16.3f} {n['dist_auprc'][0]:16.3f}")
+    print(f"  {'delta over best baseline':30s} {o['delta_vs_best_baseline']:+16.3f} {n['delta_vs_best_baseline']:+16.3f}")
+    print(f"  {'beats baseline in folds':30s} {o['gbm_beats_best_baseline_folds']:>16s} {n['gbm_beats_best_baseline_folds']:>16s}")
+    grew = R["margin_grew"]
+    print(f"\n  MARGIN {'GREW' if grew else 'did NOT grow'}: {o['delta_vs_best_baseline']:+.3f} -> {n['delta_vs_best_baseline']:+.3f}")
+    print("  feature-level leak check — top TFs by element-level correlation with regulation (should be erythroid biology, not artifact):")
+    for tf, r, nb in R["top_tf_corr"][:8]:
+        print(f"    {tf:10s} r={r:+.3f} (binds {nb} elements)")
+    if grew and n["delta_vs_best_baseline"] >= 0.12:
+        verdict = ("PASS -- the combinatorial-TF hypothesis HOLDS: the full compendium grows the orthogonal margin substantially. "
+                   "Deep learning (dense-to-sparse sequence model) is now justified.")
+    elif grew:
+        verdict = ("PARTIAL -- the compendium grows the margin but modestly; the ceiling is closer than hoped. A sequence CNN "
+                   "may add a little; weigh compute vs the gain.")
+    else:
+        verdict = ("CEILING -- the full compendium did NOT grow the margin beyond the 8-TF version. The combinatorial-TF signal "
+                   "is largely captured already; deep learning is NOT justified on these features. This is the honest ceiling.")
+    print(f"\n  VERDICT: {verdict}")
+    out = {"result": R, "verdict": verdict,
+           "note": "Decisive experiment: rebuilt tf_count from the full ENCODE K562 TF-ChIP compendium (~300 TFs) vs the "
+                   "prior ~8, re-ran the leakage-proof (chromosome GroupKFold) XGBoost gate. Tests whether the +0.09 "
+                   "orthogonal margin over distance GROWS (combinatorial-TF hypothesis, justifies deep learning) or plateaus "
+                   "(ceiling). Includes a feature-level leak check (per-TF element-level correlation; top TFs should be real "
+                   "erythroid biology, not an assay artifact). Real ENCODE data; the decision is measured, not asserted."}
+    _j = __import__("json"); _j.dump(out, open("outputs/orphan/crispr_gate_compendium.json", "w"), indent=1)
+    print("\n  -> outputs/orphan/crispr_gate_compendium.json")
+    return out
 
 
 def main():
