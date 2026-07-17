@@ -3651,3 +3651,69 @@ the data reality (measured ≫ predicted) decides it.** Production model stays t
 and both honestly lose to the gradient-boosted model on measured features. The deliverable is a **SOTA-competitive, leakage-
 controlled CRISPR element→gene regulation predictor at AUPRC ~0.61**, and a deep-learning arc that earned its "no" on a
 complete, fair test. (seq_model.py `main_full` + build_pretrain.py + tier2_seq_model.ipynb → seq_model_full.json.)
+
+---
+
+## Forward propagation: mutate any protein → flow through the whole network (`propagate`)
+
+The regulation work so far stopped at the *direct* regulon (`mutreg`: a TF mutation → its immediate targets). The network
+had all the downstream layers wired — gene products, PPI, complexes, Reactome pathways, pathway crosstalk — but nothing
+*flowed a perturbation forward through them*. `propagate` closes that: mutate **any** protein or gene (NEXUS is the entry
+point), and the effect flows layer by layer.
+
+```
+L0  NEXUS         mutation (ΔΔG_fold, ΔΔG_bind) -> the mutated protein's graded ACTIVITY (soft-AND, LOF/GOF)
+L1  REGULATION    if it's a TF: its TRRUST-signed direct regulon = the first affected genes + direction
+L2  PRODUCTS+PPI  the mutated protein + regulon targets -> their physical partners (PPI) and complex co-members
+L3  PATHWAYS      every affected protein -> the Reactome pathways it sits in
+L4  CROSSTALK     pathways sharing >=3 proteins with a hit pathway -> the interconnected downstream pathways
+```
+
+**Transcription rate — the promoter's role (the user's point: "don't forget how promoter and TF regulate the rate").**
+L1 doesn't just list targets, it *orders* them by a mechanistic rate model:
+
+```
+ΔRate(target) = sign * (activity - 1) * promoter_PolII
+                 └ TF direction         └ how much TF drive changed   └ POLR2A ChIP at the target's TSS±1kb
+```
+
+The **promoter sets the baseline** transcription rate (its resident Pol II), the **TF modulates** it. Direction falls out
+correctly: an *activated* target follows the TF (GATA1 LOF → CDC6, BST2 down), a *repressed* target is *relieved*
+(GATA1 LOF → CBFB, SPI1 **up**).
+
+```
+MUTATE GATA1 (ΔΔG_fold=7.5 -> NEXUS activity 0.31, LOF). Forward blast radius:
+  L1 regulation  :    50 direct-regulon genes   (rate-ordered: CBFB up +112, CDC6 down -107, BST2 down -62, ...)
+  L2 PPI/complex :  1136 physical partners
+  L3 pathways    :  1874 pathways hit, spanning 10,489 genes
+  L4 crosstalk   :   521 interconnected downstream pathways
+```
+
+**A sign bug caught and fixed (honesty pass).** Wiring up the rate model surfaced a flipped sign that had also been sitting
+in the earlier `mutreg` chain: the formula was `-sign*(activity-1)` when biology (and the code's own comment, "activated
+target follows activity") requires `+sign*(activity-1)`. An activator losing function makes its target go **down**, not up.
+Checked against the *measured* K562 Perturb-seq direction: for GATA1's headline targets the fixed sign matches and the old one
+didn't — CBFB (repressed, relieved) measured **z=+1.08 UP**, SPI1 measured **z=+1.85 UP**, CDC6 (activated) measured
+**z=−0.27 DOWN**. Across all signed GATA1 targets with a measurable move the fixed sign agrees 5/8 vs 3/8 for the old one.
+Fixed in both `nexus_regulate.py` and `propagate.py`.
+
+**What it is, honestly — a map of the *possible*, not a simulator of the *actual*.** `validate()` measures each layer against
+GATA1's real Perturb-seq movers, and the number tells the whole story:
+
+```
+                                      reach   captures   precision   vs chance
+L1 regulation (direct regulon)          29        2        0.069       9.2x     <- enriched
+L2 + PPI/complex                       631       10        0.016       2.1x
+L3 + pathway members (blast radius)   5183       42        0.008       1.08x    <- diluted to chance
+```
+
+The blast radius is **enriched ~9× at the tight regulon layer and dilutes to chance** as it balloons through PPI and pathways.
+That is exactly the session's measured wall: *which* things are mechanistically connected is knowable (structural reachability),
+*how much each actually moves* does not compose. Two honest caveats on the rate model: its **direction** beats chance, but its
+**magnitudes** don't match measured effect sizes (r~0) — the per-TF→target rate coefficient (how strongly *this* TF drives
+*that* promoter) is the unmeasured quantity. So `propagate` is an honest forward-reachability engine with a mechanistic
+rate-ordering on the first layer, not a quantitative cascade predictor.
+
+**Still missing (acknowledged, not built):** splicing, 5′ capping, poly-A tail, and full epigenetic state — each its own hard
+problem (e.g. SpliceAI-class splicing). Partial hooks exist (chromatin gating via `invivo`), but these post-transcriptional
+and chromatin layers remain TODO. (`propagate.py`, `propagate`/`blastradius` syscall → propagate.json.)

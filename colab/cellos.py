@@ -1692,6 +1692,48 @@ class CellKernel:
         out.append("  [first-order direct regulon only; NOT the genome-wide cascade (dynamics wall). NEXUS activity ~0.5 Pearson near-field]")
         return "\n".join(out)
 
+    def propagate(self, args):
+        """FORWARD multi-layer propagation (propagate.py): mutate any protein/gene (NEXUS entry) and flow the effect through
+        regulation -> gene products/PPI/complex -> pathways -> interconnected pathways, layer by layer. L1 adds a transcription-
+        RATE model (Δrate = |ΔTF-activity| x promoter Pol II x sign) -- the promoter sets the baseline rate, the TF modulates it.
+        HONEST: a STRUCTURAL blast-radius / forward-reachability map (what is mechanistically connected and COULD move), not the
+        quantitative dynamical cascade (measured wall). Enriched at the tight regulon layer, dilutes to ~chance through PPI/
+        pathways; rate DIRECTION is more reliable than rate MAGNITUDE (per-TF->target coefficient is unmeasured). Missing layers:
+        splicing, capping, poly-A, epigenetics. usage: propagate GENE [ddg_fold] [ddg_bind]"""
+        import propagate as pr
+        if not args:
+            return "propagate GENE [ddg_fold] [ddg_bind]   — mutate a protein and flow forward through regulation->PPI->pathways"
+        gene = args[0]
+        ddgf = float(args[1]) if len(args) > 1 else 6.0
+        ddgb = float(args[2]) if len(args) > 2 else 0.0
+        G = getattr(self, "_prop_G", None)
+        if G is None:
+            G = pr._load(); self._prop_G = G
+        rate = getattr(self, "_prop_rate", None)
+        if rate is None:
+            try:
+                rate = pr._promoter_rate(G)
+            except Exception:
+                rate = {}
+            self._prop_rate = rate
+        P = pr.propagate(gene, ddgf, ddgb, G=G, rate=rate)
+        if "error" in P:
+            return f"propagate {gene}: {P['error']}"
+        out = [f"propagate {gene}: ΔΔG_fold={ddgf} ΔΔG_bind={ddgb} -> NEXUS activity {P['nexus_activity']:.2f}  (TF={P['is_tf']})",
+               f"  L1 regulation  : {P['L1_regulation']['n']:5d} direct-regulon genes"]
+        rw = P["L1_regulation"]["rate_weighted_top"]
+        if rw:
+            out.append("     transcription-RATE (promoter sets baseline, TF modulates) — mechanistic ordering:")
+            for r in rw[:6]:
+                arrow = "down" if r["delta_rate"] < 0 else "up"
+                out.append(f"       {r['target']:10s} promoter-rate {r['promoter_rate']:6.1f} -> transcription {arrow} (Δrate {r['delta_rate']:+.0f})")
+        out += [f"  L2 PPI/complex : {P['L2_ppi_complex']['n']:5d} physical partners",
+                f"  L3 pathways    : {P['L3_pathways']['n_pathways']:5d} pathways hit, spanning {P['L3_pathways']['n_genes']} genes",
+                f"  L4 crosstalk   : {P['L4_crosstalk_pathways']['n']:5d} interconnected downstream pathways",
+                "  [STRUCTURAL blast-radius map of the POSSIBLE — enriched at the regulon, dilutes to ~chance through PPI/pathways.",
+                "   Rate DIRECTION > rate MAGNITUDE (per-TF->target coefficient unmeasured). Not the dynamical cascade (the wall).]"]
+        return "\n".join(out)
+
     def kinetics(self, args):
         """the kinetic-competition model of productive initiation, MEASURED (kinetics.py). A bound TF races: fall off (k_off)
         vs appoint Pol II (k_init). P(productive)=tau_res/(tau_res+tau_appoint). The deep catch: affinity (Kd=k_off/k_on) is
@@ -2453,6 +2495,12 @@ class CellKernel:
   bindreg              compare what a TF BINDS (ChIP) vs what it REGULATES (Perturb-seq knockdown). VERIFIED: the two maps
                        overlap at chance for GATA1 -- but mostly a power/composition artifact (indirect regulation + bound
                        direct targets under-detected), not proof binding is non-functional. Only GATA1 well-powered
+  mutreg TF [df] [db]  NEXUS -> REGULATION: a mutation in a TF's protein scaled onto its curated direct regulon. NEXUS turns
+                       (ΔΔG_fold, ΔΔG_bind) into a graded activity (LOF/GOF); each signed target moves first-order. Direct
+                       regulon only -- NOT the genome-wide cascade (dynamics wall)
+  propagate GENE [df] [db]  FORWARD multi-layer flow: mutate any protein (NEXUS) -> regulation (+ transcription-RATE: promoter
+                       sets baseline, TF modulates) -> PPI/complex -> pathways -> crosstalk. STRUCTURAL blast-radius map of the
+                       POSSIBLE: enriched at the regulon (9x chance), dilutes to ~chance through PPI/pathways. Not the cascade
   help / exit"""
 
 
@@ -2507,6 +2555,7 @@ class CellShell:
             if cmd in ("kinetics", "residence"): return k.kinetics(args)
             if cmd in ("bindreg", "bind_vs_reg"): return k.bindreg(args)
             if cmd in ("mutreg", "nexus_regulate"): return k.mutreg(args)
+            if cmd in ("propagate", "blastradius"): return k.propagate(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
