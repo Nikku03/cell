@@ -1,0 +1,84 @@
+{
+ "chrom": "chr22",
+ "cell": "K562",
+ "tracks": {
+  "dnase": {
+   "accession": "ENCFF274YGF",
+   "output_type": "peaks",
+   "n_peaks_chr": 3344
+  },
+  "h3k27ac": {
+   "accession": "ENCFF706DHK",
+   "output_type": "replicated peaks",
+   "n_peaks_chr": 849
+  },
+  "abc": {
+   "accession": "ENCFF902VSE",
+   "output_type": "thresholded element gene links (ENCODE-rE2G/ABC)",
+   "n_links_chr": 6276,
+   "n_target_genes": 328
+  }
+ },
+ "tf_chip": {
+  "CTCF": {
+   "accession": "ENCFF519CXF",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 1082
+  },
+  "REST": {
+   "accession": "ENCFF023ZUW",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 285
+  },
+  "GATA1": {
+   "accession": "ENCFF148JKK",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 298
+  },
+  "GATA2": {
+   "accession": "ENCFF173TXA",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 306
+  },
+  "SPI1": {
+   "accession": "ENCFF414ECK",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 737
+  },
+  "MYC": {
+   "accession": "ENCFF265LDE",
+   "output_type": "conservative IDR thresholded peaks",
+   "n_peaks_chr": 229
+  },
+  "MAX": {
+   "accession": "ENCFF900NVQ",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 1614
+  },
+  "YY1": {
+   "accession": "ENCFF635XCI",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 212
+  },
+  "NRF1": {
+   "accession": "ENCFF782YFS",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 919
+  },
+  "JUND": {
+   "accession": "ENCFF213EYD",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 1015
+  },
+  "USF1": {
+   "accession": "ENCFF717KGR",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 480
+  },
+  "EGR1": {
+   "accession": "ENCFF175VSS",
+   "output_type": "optimal IDR thresholded peaks",
+   "n_peaks_chr": 880
+  }
+ }
+}

@@ -80,3 +80,6 @@ outputs/orphan/expr_vecs.npz
 outputs/orphan/tahoe_vecs.npz
 outputs/orphan/pdb_cache/
 data/hgnc.txt
+
+# large regenerable reference chromosome (UCSC; refetch via colab/fetch_invivo.py)
+outputs/orphan/invivo/*.fa

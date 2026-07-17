@@ -1552,6 +1552,57 @@ class CellKernel:
             rows.append(f"    {x['cofactor']}{fl}  → switch: cofactor {tf} {x['cofactor']}")
         return head + "\n" + "\n".join(rows)
 
+    def invivo(self, args):
+        """take a TF motif scan IN VIVO — gate 1D sequence hits through real cell-type chromatin, MEASURED vs ChIP-seq
+        (invivo_gate.py). Gate1 DNase/ATAC (open) -> Gate2 H3K27ac (active) -> Gate3 ABC/Hi-C (which gene). Ground truth =
+        ENCODE K562 TF ChIP-seq (never trained on). 'invivo' shows the precision table (gating kills sequence-only false
+        positives); 'invivo TF' runs the live 3-gate scan for one TF on chr22 and lists its in-vivo sites + ABC target genes.
+        HONEST: real ENCODE K562, one-chromosome slice of a genome-wide method; predicts in-vivo BINDING, not regulation
+        (which-gene-moves is the separate dynamics wall). usage: invivo [TF]"""
+        import json as _j
+        try:
+            R = _j.load(open("outputs/orphan/invivo_gate.json"))
+        except OSError:
+            return "invivo: run colab/invivo_gate.py first (needs ENCODE K562 tracks in outputs/orphan/invivo/)."
+        rows = R["result"]["rows"]; S = R["summary"]
+        if not args:
+            out = [f"IN-VIVO GATING — TF motif -> open (DNase) -> active (H3K27ac), measured vs K562 ChIP-seq ({R['result']['chrom']})",
+                   f"  {'TF':6s} {'ChIP':>5s} {'1Dhits':>7s} {'active':>6s} | {'P.1D':>5s} {'P.act':>5s} {'lift':>5s} {'FPkill':>6s}"]
+            for r in rows:
+                out.append(f"  {r['tf']:6s} {r['chip_peaks']:5d} {r['hits_1d']:7d} {r['hits_active']:6d} | "
+                           f"{r['prec_1d']:5.2f} {r['prec_active']:5.2f} {str(r['prec_lift_open'])+'x':>5s} {r['fp_killed_open']*100:4.0f}%")
+            out.append(f"  MEAN precision {S['mean_prec_1d']} -> {S['mean_prec_active']} ({S['mean_lift']}x). Degenerate motifs "
+                       "gain most (~20-28x); long specific motifs are already precise. Binding, not regulation.")
+            g3 = R.get("gate3_gata1")
+            if g3 and g3.get("frac_abc_neq_nearest") is not None:
+                out.append(f"  Gate3 (ABC 3D): GATA1 {g3['sites_with_abc_target']} sites linked to a target gene; ABC target "
+                           f"differs from nearest gene {g3['frac_abc_neq_nearest']:.0%} of the time. 'invivo TF' for detail.")
+            return "\n".join(out)
+        tf = args[0]
+        row = next((r for r in rows if r["tf"] == tf), None)
+        import invivo_gate as ig
+        p = ig.pipeline(tf)
+        if p is None:
+            return f"invivo {tf}: no JASPAR motif for this TF."
+        head = f"invivo {tf} (chr22): {p['surviving_sites']} open+active in-vivo sites"
+        if row:
+            head += f"; precision {row['prec_1d']}->{row['prec_active']} vs ChIP ({row['prec_lift_open']}x, {row['fp_killed_open']*100:.0f}% FP killed)"
+        lines = [head]
+        if p.get("frac_abc_neq_nearest") is not None:
+            lines.append(f"  Gate3 ABC: {p['sites_with_abc_target']} sites 3D-linked to a gene; target differs from nearest "
+                         f"{p['frac_abc_neq_nearest']:.0%} of the time")
+        shown = 0
+        for s in p["sites"]:
+            if not s["abc_targets"]:
+                continue
+            flag = "  <- not the nearest gene" if s["abc_differs_from_nearest"] else ""
+            lines.append(f"    chr22:{s['pos']} ABC->{','.join(s['abc_targets'][:3])} (nearest={s['nearest_gene']}){flag}")
+            shown += 1
+            if shown >= 10:
+                break
+        lines.append("  [in-vivo binding prediction on real ENCODE K562; not regulation]")
+        return "\n".join(lines)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -2265,6 +2316,9 @@ class CellKernel:
   cofactor TF [CELLTYPE]  the cofactor SWITCH — the DIFFERENT site a TF binds with each dimer partner (479 composite
   cofactor TF1 TF2     motifs, gated by which cofactor is expressed); 'TF1 TF2' shows composite-vs-solo. In-vitro site,
                        not de-novo complex formation (AF-Multimer route skipped) nor in-vivo regulation
+  invivo [TF]          take a motif scan IN VIVO: gate 1D hits through real K562 chromatin (DNase open -> H3K27ac active
+                       -> ABC 3D target gene), MEASURED vs ChIP-seq. Gating kills sequence-only false positives
+                       (degenerate motifs ~20-28x precision). 'invivo TF' = live 3-gate scan + ABC targets. Binding, not regulation
   help / exit"""
 
 
@@ -2314,6 +2368,7 @@ class CellShell:
             if cmd in ("conditions", "trigger"): return k.conditions(args)
             if cmd in ("tfbs", "motif"): return k.tfbs(args)
             if cmd in ("cofactor", "dimer"): return k.cofactor(args)
+            if cmd in ("invivo", "gate"): return k.invivo(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)

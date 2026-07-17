@@ -3234,3 +3234,48 @@ complex formation from structure/affinity (the AF-Multimer route we deliberately
 the pair actually binds a given promoter and regulates it — chromatin/context, the same wall this project keeps hitting).
 Limited to the **~479 pairs** with a measured composite motif. A real, data-grounded cofactor-specificity layer for variant
 reasoning — not a de-novo complex predictor. (cofactor.py → cofactor.json; `cofactor` syscall.)
+
+---
+
+## Taking the motif scan IN VIVO — the 3-gate chromatin pipeline, measured (`invivo_gate.py` → `invivo` syscall)
+
+The last piece (`tfbs`) predicted a TF's **intrinsic, in-vitro** sequence preference and was explicit that it does *not*
+predict in-vivo binding — chromatin, cofactors, concentration. This closes that gap with the standard pipeline
+(ATAC/DNase → H3K27ac → ABC/Hi-C), built on **real ENCODE K562 data** and — the point — **measured against a ground truth we
+never train on: ENCODE K562 TF ChIP-seq** (where each TF *actually* binds). Run on chr22 as a real slice of a genome-wide
+method (the whole genome just needs the 3 Gb reference; the method is identical).
+
+**The gates:**
+- **Gate 1 — open (DNase/ATAC).** Intersect PWM hits with accessible chromatin. A TF can't bind DNA wound in a nucleosome.
+- **Gate 2 — active (H3K27ac).** Keep survivors that also sit in an active enhancer/promoter mark. Open ≠ functional.
+- **Gate 3 — 3D (ABC/Hi-C).** Map the bound enhancer to the **gene it loops to** (ENCODE-rE2G links), not the nearest gene.
+
+**MEASURED result (precision = predicted sites that are truly bound, vs ChIP-seq):**
+
+```
+TF     motif  P.1D  P.active  lift   FP-killed        TF     motif  P.1D  P.active  lift  FP-killed
+GATA1   7bp   0.02    0.50   20.5x    97%             CTCF   15bp   0.69    0.80   1.2x     29%
+GATA2   7bp   0.02    0.39   19.4x    96%             REST   20bp   1.00    —      1.0x     32%
+YY1     8bp   0.01    0.53   28.4x    99%             NRF1   12bp   0.62    0.92   1.4x     55%
+MAX     6bp   0.09    0.80    7.9x    96%             SPI1   13bp   0.30    1.00   3.0x     97%
+JUND    9bp   0.10    0.93    7.8x    94%             mean precision 0.27 → 0.66 (2.4x)
+```
+
+**The result confirms the theory and is honest about where gating matters.** For **degenerate short motifs** — the majority,
+and the ones that matter — gating is transformative: GATA1's motif matches **7,361** places on chr22 at 1.6% precision;
+gating leaves **76** at 50% precision, **killing 97% of the false positives** and lifting precision **20×**. YY1 gains 28×.
+This *is* the "kills ~80%+ of false positives" claim, measured. For **long specific motifs** (CTCF 15bp, REST 20bp) the
+sequence is rare enough to be self-filtering — already 69–100% precise from sequence alone — so gating adds little. The mean
+2.4× understates the win for the degenerate-motif majority.
+
+**Gate 3 measured the user's key point directly:** of GATA1's 56 open+active sites that fall in an ABC enhancer, the 3D
+target gene **differs from the linear-nearest gene 39% of the time** — e.g. a GATA1 site nearest *YPEL1* actually loops to
+**MAPK1**; one nearest *ATP6V1E1* loops to *BCL2L13/PEX26*. Nearest-neighbour guessing is wrong that often.
+
+**HONEST BOUNDARY:** this converts an in-vitro sequence preference into an in-vivo **binding** prediction and shows, gate by
+gate on measured ChIP, how much each helps. It answers *"does the TF physically land here, in this cell"* — well. It does
+**not** thereby predict which genes **move** on knockout: **binding ≠ regulation**, and which-gene-moves is the separate
+dynamics wall this project keeps hitting. The recall side is honest too — at this stringent threshold, motif→ChIP recall is
+low (many real ChIP peaks have no strong canonical motif = indirect/tethered binding), so gating buys precision at the cost
+of recall. All real ENCODE K562 data; nothing simulated. (invivo_gate.py + fetch_invivo.py → invivo_gate.json; `invivo`
+syscall. `invivo` = the table; `invivo TF` = live 3-gate scan + ABC targets for one TF.)
