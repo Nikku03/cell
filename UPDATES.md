@@ -3570,3 +3570,38 @@ tracks) is now *justified* — the Tier-2 spend is warranted because the signal 
 did exactly its job across both rounds: it stopped a premature deep-net spend on the wrong feature (count), then — when the
 right feature (identity) was tested — gave a clean, controlled GO. (crispr_gate.py `regate_compendium`/`identity_test` →
 crispr_gate_compendium.json.)
+
+### Tier-2 sequence CNN — trained on Colab GPU, honest NO-GO (ship the Tier-1 GBM)
+
+Built the Tier-2 multi-task sequence model and ran it on a Colab GPU (the CPU sandbox was too slow). Architecture: a conv
+**motif encoder** over each element's 600bp DNA → an **auxiliary head** predicting which of 311 TFs bind (dense, ~1.2M labels,
+forcing the encoder to learn the TF motif grammar from sequence) → a **regulation head** on `[embedding + 8 tabular features]`.
+Chromosome-held-out, AUPRC, 3 seeds + a label-shuffle control.
+
+**Result (GPU, real):**
+
+```
+sequence CNN (multi-task)   AUPRC 0.488   seeds [0.486, 0.483, 0.496]   <- stable
+label-shuffle control       AUPRC 0.081   (~base rate 0.055)            <- no leak/overfit
+--- baselines (same chromosome-held-out protocol) ---
+distance-only               0.393
+epigenetics-only GBM        0.519
+TF-identity GBM (311 ChIP)  0.608   (the production model)
+```
+
+**Verdict: NO-GO.** The sequence CNN beats distance (0.488 > 0.393) — so it *did* learn to read regulatory sequence better
+than mere proximity — but it **underperforms even the epigenetics-only GBM (0.519)**, let alone the TF-identity GBM (0.608).
+The label-shuffle control collapses to base rate, so the model is legitimate (no leakage, no 311-feature overfit) — it's just
+not better. Two honest reasons: (1) predicting TF binding *from sequence* is lossy, whereas the GBM gets 311 TFs' binding
+*measured* — you can't out-predict a measurement; (2) **569 positives are too few** for a from-scratch CNN to learn the full
+combinatorial grammar.
+
+**So the production model is the Tier-1 GBM (TF identity, AUPRC 0.608)** — and the strategy's discipline held: adopt the deep
+model *only if it wins on held-out data*, and it didn't, so we don't. To revisit Tier-2 honestly would need either far more
+labelled regulation data, or a **pretrained sequence foundation model** (Enformer/Borzoi embeddings) rather than a CNN trained
+from scratch on 569 labels. (seq_model.py + tier2_seq_model.ipynb → seq_model.json.)
+
+**Where the ML arc lands.** Tier-1 gate: real orthogonal signal, verified. Compendium: combinatorial-TF hypothesis confirmed
+(identity → 0.608). Tier-2: sequence CNN NO-GO (0.488). The honest deliverable is a **CRISPR element→gene regulation predictor
+at AUPRC ~0.61 (TF-identity GBM)** — SOTA-competitive, leakage-controlled, and correctly *not* over-engineered with a deep net
+that the data can't yet support.

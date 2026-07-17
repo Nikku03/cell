@@ -1,0 +1,12 @@
+{
+ "device": "cuda (Colab T4)",
+ "seq_cnn_auprc": 0.488,
+ "seeds": [0.486, 0.483, 0.496],
+ "per_fold_seed0": [0.538, 0.434, 0.442, 0.592, 0.427],
+ "per_fold_seed1": [0.478, 0.507, 0.473, 0.468, 0.487],
+ "per_fold_seed2": [0.426, 0.452, 0.583, 0.576, 0.440],
+ "shuffle_control": 0.081,
+ "baselines": {"distance": 0.393, "epigenetics_gbm": 0.519, "tf_identity_gbm": 0.608},
+ "verdict": "NO-GO -- the multi-task sequence CNN (0.488, 3-seed stable) beats distance (0.393) but underperforms epigenetics-only (0.519) and the TF-identity GBM (0.608). Ship the Tier-1 GBM. The label-shuffle control collapses to 0.081 (~base rate 0.055), so the model is legit (no leak/overfit) -- just not better. 569 positives are too few for a from-scratch CNN to out-predict measured ChIP.",
+ "note": "Tier-2 multi-task sequence CNN (element DNA -> aux 311-TF-binding head [learns motif grammar] + regulation head on embedding+8 tabular), trained on Colab GPU, chromosome-held-out AUPRC, 3 seeds + label-shuffle control. Real ENCODE K562 CRISPR data. Honest disciplined NO-GO: the deep model reads regulatory sequence better than proximity (0.488>0.393) but cannot match measured epigenetic/ChIP features; sequence->binding is lossy and 569 positives are too few to learn the full combinatorial grammar from scratch. Production model = Tier-1 GBM (TF identity, 0.608). To revisit Tier-2: (a) far more labelled regulation data, or (b) a pretrained sequence foundation model (Enformer/Borzoi embeddings) instead of a from-scratch CNN."
+}
