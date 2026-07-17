@@ -1630,6 +1630,32 @@ class CellKernel:
         out.append("     [strong measured discriminator, not deterministic — capped by CRISPR power + enhancer redundancy]")
         return "\n".join(out)
 
+    def kinetics(self, args):
+        """the kinetic-competition model of productive initiation, MEASURED (kinetics.py). A bound TF races: fall off (k_off)
+        vs appoint Pol II (k_init). P(productive)=tau_res/(tau_res+tau_appoint). The deep catch: affinity (Kd=k_off/k_on) is
+        NOT residence time (1/k_off); getting residence from affinity assumes k_on const. TEST on real K562 ChIP-bound sites:
+        does higher-affinity => more Pol II/eRNA? MEASURED: sequence affinity is FLAT (r~0), but measured occupancy (ChIP
+        signal) predicts productivity (r~0.2-0.3) -> the mechanism is right, but residence is not computable from sequence.
+        usage: kinetics"""
+        import json as _j, math as _m
+        try:
+            K = _j.load(open("outputs/orphan/kinetics.json"))
+        except OSError:
+            return "kinetics: run colab/kinetics.py first."
+        V = K["validation"]; pr = V["params"]
+        out = ["KINETIC COMPETITION — residence time (from affinity) vs time to appoint Pol II",
+               f"  P(productive) = tau_res/(tau_res+tau_appoint);  tau_res = {pr['tau_max_s']}s * exp(-dDDG/kT)  [k_on const]",
+               "  model: dDDG below consensus -> residence -> P(productive):"]
+        for ddg in [0, 1, 2, 3]:
+            tr = pr["tau_max_s"] * _m.exp(-ddg)
+            out.append(f"    {ddg} kT  tau_res {tr:6.2f}s  P {tr/(tr+pr['tau_appoint_s']):.3f}")
+        out.append(f"  MEASURED on {V['n_bound_sites']} real ChIP-bound sites ({len(V['per_tf'])} TFs, {V['chrom']}):")
+        out.append(f"    SEQUENCE AFFINITY vs productivity:  r(PolII)={V['pooled_r_affinity_polII']:+.3f}  r(eRNA)={V['pooled_r_affinity_eRNA']:+.3f}  (flat)")
+        out.append(f"    MEASURED OCCUPANCY vs productivity:  r(PolII)={V['pooled_r_occupancy_polII']:+.3f}  r(eRNA)={V['pooled_r_occupancy_eRNA']:+.3f}  (real)")
+        out.append("  => the mechanism is RIGHT (occupancy/residence predicts productivity) but residence is NOT computable")
+        out.append("     from sequence affinity: Kd=k_off/k_on is thermodynamic; residence=1/k_off is kinetic. Needs measurement (SMT).")
+        return "\n".join(out)
+
     def _discover(self):
         """lazily load the discovery results (discover.py → discover.json)."""
         if not hasattr(self, "_disc"):
@@ -2349,6 +2375,9 @@ class CellKernel:
   regulate             binding != regulation, unless it recruits polymerase: does Pol II recruited + eRNA firing mark the
                        elements that ACTUALLY regulate a gene? Measured vs CRISPR ground truth. Productive + 3D-linked = ~6x
                        more likely a real regulator; H3K27ac mark alone barely discriminates
+  kinetics             the competition model: residence time (from affinity) vs time to appoint Pol II. MEASURED: sequence
+                       affinity is FLAT vs productivity (r~0), measured occupancy predicts it (r~0.2-0.3) -> mechanism right,
+                       but residence (k_off) is NOT computable from affinity (Kd). The measured k_off!=Kd wall
   help / exit"""
 
 
@@ -2400,6 +2429,7 @@ class CellShell:
             if cmd in ("cofactor", "dimer"): return k.cofactor(args)
             if cmd in ("invivo", "gate"): return k.invivo(args)
             if cmd in ("regulate", "productive"): return k.regulate(args)
+            if cmd in ("kinetics", "residence"): return k.kinetics(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)

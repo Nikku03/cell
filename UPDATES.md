@@ -3335,3 +3335,50 @@ productive element shows no CRISPR effect), and (c) the actual *cause* you named
 Pol II — is **not directly measurable**: ChIP occupancy is a population proxy for residence-time × concentration, and true
 single-molecule dwell time has no genome-wide assay. So productivity enriches regulation ~6×; it doesn't make it certain.
 All real K562 data; the answer is measured, not asserted. (regulate.py → regulate.json; `regulate` syscall.)
+
+---
+
+## The kinetic-competition model — residence time vs polymerase appointment. Built, then measured. (`kinetics.py` → `kinetics` syscall)
+
+The `regulate` result showed Pol II recruitment marks regulation but left the *cause* — "binds long enough to appoint
+polymerase" — unmeasured. This formalizes that cause and tests it. The mechanism is a **race**: each instant a TF is bound,
+it can fall off (rate `k_off`) or hold on long enough for the machinery to appoint Pol II and fire (rate `k_init`):
+
+```
+P(productive per binding event) = k_init / (k_init + k_off) = τ_res / (τ_res + τ_appoint)
+```
+
+The model is real biophysics and the curve is sharp: with τ_appoint ≈ 30 s (Pol II/PIC assembly, literature order-of-
+magnitude) and a consensus-site residence τ_max ≈ 12 s, a max-affinity site fires ~29% of the time, but just **2 kT down in
+affinity (τ_res ≈ 1.6 s) it mostly falls off before polymerase arrives (5%)**. Threshold behaviour, exactly the intuition.
+
+**The deep catch, stated up front:** affinity and residence time are different quantities.
+- Affinity is **thermodynamic**: `Kd = k_off / k_on`.
+- Residence time is **kinetic**: `τ_res = 1 / k_off`.
+
+A PWM gives the equilibrium binding energy → `Kd`. It says **nothing about `k_off` alone** — two sites can share a `Kd`
+and have 100× different residence times. Turning affinity into residence *requires assuming `k_on` is constant*
+(diffusion-limited) — exactly what the single-molecule field disputes. True `k_off` needs single-molecule tracking (SMT),
+which exists per-TF, not genome-wide. So the affinity→residence step is a **model, not a measurement**.
+
+**So I measured whether the model's central prediction survives contact with real data** — among 2,101 real K562 ChIP-bound
+motif sites (10 TFs, chr22), does higher affinity (→ longer predicted residence → more likely to win the race) actually give
+more Pol II / eRNA?
+
+```
+affinity quartile   Pol II+   eRNA+          pooled correlation with productivity
+Q1 low               0.065    0.203          SEQUENCE AFFINITY :  r(Pol II) = +0.017   r(eRNA) = −0.013   (FLAT)
+Q4 high              0.091    0.202          MEASURED OCCUPANCY:  r(Pol II) = +0.205   r(eRNA) = +0.292   (REAL)
+```
+
+**The precise conclusion — and it's the cleanest statement of the wall yet.** The *mechanism is right*: **measured
+occupancy predicts productivity** (r ≈ 0.2–0.3) — how much/how long the TF is actually there does drive polymerase
+recruitment, just as the model says. But the link from **sequence/affinity to occupancy/residence is broken**: motif
+affinity is *flat* against productivity (r ≈ 0). Two reasons, both real: (1) `Kd ≠ k_off` — the thing that matters
+(residence) simply isn't the thing sequence gives you (equilibrium energy); (2) functional enhancers famously use
+**deliberately low-affinity** sites, so affinity is decoupled from function by design.
+
+So the `k_off ≠ Kd` wall is now **measured, not just argued**: you can write the rate equation *and* confirm that occupancy
+drives productivity — but you **cannot fill in residence time from the motif**. It has to be measured (SMT), and there is no
+genome-wide dwell-time assay. This locates the wall one layer deeper than "binding vs regulation": it's precisely at
+**sequence → residence time**. (kinetics.py → kinetics.json; `kinetics` syscall.)
