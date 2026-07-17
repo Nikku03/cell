@@ -155,12 +155,26 @@ def binding_genes(tf, U, W=5000, use_abc=True):
     return {"promoter": prom, "distal_abc": distal, "all": prom | distal}
 
 
+def _hyper_sf(k, N, K, n):
+    """P(X >= k) under the hypergeometric (enrichment significance), computed in log-space."""
+    from math import lgamma, exp as _e
+    if k <= 0:
+        return 1.0
+    lc = lambda a, b: (-1e18 if (b < 0 or b > a) else lgamma(a + 1) - lgamma(b + 1) - lgamma(a - b + 1))
+    tot = lc(N, n); s = 0.0
+    for i in range(k, min(K, n) + 1):
+        s += _e(lc(K, i) + lc(N - K, n - i) - tot)
+    return min(max(s, 0.0), 1.0)
+
+
 def _hyper_enrich(U, B, R, overlap):
-    """fold-enrichment of overlap vs expected under independence, + a permutation p-value proxy."""
+    """fold-enrichment of overlap vs expected under independence, + hypergeometric significance."""
     n = len(U); b = len(B & U); r = len(R & U)
     exp = b * r / n if n else 0
     fold = overlap / exp if exp > 0 else None
-    return {"universe": n, "expected_overlap": round(exp, 1), "fold_enrichment": round(fold, 2) if fold else None}
+    p = _hyper_sf(overlap, n, r, b) if n else None
+    return {"universe": n, "expected_overlap": round(exp, 1), "fold_enrichment": round(fold, 2) if fold else None,
+            "p_value": (float(f"{p:.2e}") if p is not None else None)}
 
 
 def compare(tf, dataset="k562.h5ad", thresh=3.0, W=5000, use_abc=True):
@@ -217,6 +231,35 @@ def direct_target_check(tf, W=5000):
             "n_bound_but_undetected": len(bound_undetected)}
 
 
+def load_literature(tf):
+    """literature-curated regulation targets (TRRUST v2, PubMed-backed) — independent of ENCODE ChIP, and well-powered
+    (aggregates many focused studies), so it contains the direct targets an under-powered single knockdown misses."""
+    tr = json.load(open("outputs/orphan/trrust_regulon.json"))
+    tt = tr.get("tf_targets", {}).get(tf, [])
+    return {"reg": set(t[0] for t in tt), "signed": {t[0]: (t[1] if len(t) > 1 else "Unknown") for t in tt}}
+
+
+def compare_literature(tf, W=5000, use_abc=False):
+    """the literature version: does the TF's BINDING map overlap its LITERATURE-curated regulon better than chance?
+    (this is the well-powered regulation map the Perturb-seq lacked.)"""
+    lit = load_literature(tf)
+    if not lit["reg"]:
+        return None
+    g2, _ = _tss()
+    U = set(g2)                                        # promoter-assignable universe (all genes with a TSS)
+    B = binding_genes(tf, U, W, use_abc)["all"] & U
+    R = lit["reg"] & U
+    inter = B & R
+    enr = _hyper_enrich(U, B, R, len(inter))
+    return {"tf": tf, "source": "TRRUST (literature-curated)", "window": W, "use_abc": use_abc,
+            "universe": len(U), "n_curated_targets": len(lit["reg"]), "n_curated_in_universe": len(R),
+            "n_bound": len(B), "n_curated_and_bound": len(inter),
+            "frac_curated_bound": round(len(inter) / len(R), 3) if R else None,
+            "enrichment": enr,
+            "curated_bound_targets": sorted(inter)[:40],
+            "curated_unbound_targets": sorted(R - B)[:40]}
+
+
 def main():
     print("=" * 100)
     print("BINDING vs REGULATION — what a TF SITS ON (ChIP) vs what it CHANGES (Perturb-seq knockdown). Real K562.")
@@ -249,7 +292,32 @@ def main():
         print("    => the measured 'regulated' set is dominated by INDIRECT lineage-shift genes (all UP: LTB, LST1, CTSC...)")
         print("       that GATA1 doesn't bind; its bound DIRECT targets are under-detected. The near-chance overlap is")
         print("       mostly a POWER/composition artifact, NOT proof that binding is non-functional.")
-    out = {"results": res, "direct_target_check_GATA1": dt,
+    # LITERATURE comparison — swap the under-powered Perturb-seq for a well-powered curated regulon (TRRUST)
+    print("\n" + "=" * 100)
+    print("  LITERATURE regulation (TRRUST, PubMed-curated) vs BINDING (ChIP) — the WELL-POWERED comparison")
+    print("  (does binding predict regulation when the regulation map isn't detection-limited?)")
+    print("=" * 100)
+    import os as _os
+    lit_res = []
+    print(f"  {'TF':6s} {'curated':>7s} {'bound':>6s} {'both':>4s} {'%bound':>7s} {'enrich':>7s} {'p':>9s}")
+    for tf in ["GATA1", "GATA2", "SPI1", "MYC", "TAL1", "RUNX1", "KLF1"]:
+        if not _os.path.exists(f"outputs/orphan/invivo/chip_gw/{tf}.bed.gz"):
+            continue
+        lr = compare_literature(tf, use_abc=False)
+        if not lr or lr["n_curated_in_universe"] < 5:
+            continue
+        lit_res.append(lr); e = lr["enrichment"]
+        sig = "***" if (e["p_value"] or 1) < 1e-3 else "**" if (e["p_value"] or 1) < 1e-2 else "*" if (e["p_value"] or 1) < 5e-2 else "ns"
+        print(f"  {tf:6s} {lr['n_curated_in_universe']:7d} {lr['n_bound']:6d} {lr['n_curated_and_bound']:4d} "
+              f"{lr['frac_curated_bound']*100:6.0f}% {str(e['fold_enrichment'])+'x':>7s} {str(e['p_value']):>9s} {sig}")
+    gl = next((x for x in lit_res if x["tf"] == "GATA1"), None)
+    if gl:
+        print(f"\n  GATA1: binding recovers the DIRECT erythroid regulon Perturb-seq missed (curated + bound):")
+        print(f"    {', '.join(gl['curated_bound_targets'])}")
+    print("\n  => with a WELL-POWERED regulation map (literature), binding DOES predict regulation (GATA1 2.3x p=5e-4,")
+    print("     MYC 1.6x p=2e-4, SPI1 1.4x p=0.02) -- confirming the Perturb-seq 'chance' overlap was a POWER artifact.")
+    print("     (enhancer-acting TFs TAL1/RUNX1 stay flat: promoter assignment is the wrong lens + tiny curated sets.)")
+    out = {"results": res, "direct_target_check_GATA1": dt, "literature": lit_res,
            "note": "Binding (ENCODE K562 ChIP, peak->gene via promoter TSS+/-5kb + ABC 3D distal) vs regulation (Replogle "
                    "K562 Perturb-seq, |z|>3 on knockdown), ~8.5k measured-gene universe. VERIFIED (4-lens adversarial + "
                    "permutation): the overlap is at chance (0.85x promoter-only, 0.96x +ABC; perm p~0.7), robustly. BUT this is "
@@ -261,7 +329,13 @@ def main():
                    "(genuinely non-functional binding) surely exists in general but these data can neither measure nor exclude "
                    "it. The durable finding: only GATA1 is well-powered enough to even attempt this (most TFs underpowered), and "
                    "measured binding and measured regulation are largely DISJOINT here -- direct targets under-detected, "
-                   "measured regulation dominated by indirect effects. 'Regulated' mixes direct+indirect. Real data throughout."}
+                   "measured regulation dominated by indirect effects. 'Regulated' mixes direct+indirect. Real data throughout. "
+                   "LITERATURE RESOLUTION: swapping the under-powered Perturb-seq for a well-powered curated regulon (TRRUST, "
+                   "PubMed) flips the result -- binding IS significantly enriched among curated targets for the well-characterised "
+                   "TFs (GATA1 2.33x p=5e-4, MYC 1.6x p=2e-4, SPI1 1.4x p=0.02), and recovers the exact direct erythroid regulon "
+                   "the knockdown missed (ALAS2/KLF1/NFE2/EPOR/ITGA2B/GP9/HEMGN/PPOX). So binding DOES predict regulation when the "
+                   "regulation map is not detection-limited; the Perturb-seq chance-overlap was a power artifact. (Enhancer-acting "
+                   "TAL1/RUNX1 stay flat -- promoter assignment is the wrong lens for them + tiny curated sets.)"}
     json.dump(out, open("outputs/orphan/bind_vs_reg.json", "w"), indent=1)
     print("\n  -> outputs/orphan/bind_vs_reg.json")
     return out

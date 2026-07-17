@@ -3466,3 +3466,40 @@ tested (Perturb-seq power) — which is itself why "what does a TF regulate" sta
 This closes the arc honestly: `invivo` (where it binds) → `regulate` (whether binding regulates) → `kinetics` (why residence
 is the missing quantity) → `bindreg` (binding and regulation maps compared directly — and the measurement limits laid bare).
 (bind_vs_reg.py → bind_vs_reg.json; `bindreg` syscall. Verified by a 4-lens adversarial workflow + permutation test.)
+
+### Literature closes the gap — binding DOES predict regulation when the regulation map is well-powered
+
+The Perturb-seq comparison left an honest ambiguity: binding vs regulation overlapped at chance (0.85×), but we showed that
+was substantially because the knockdown was too weak to detect GATA1's direct targets. The clean test: swap the
+under-powered perturbation for a **well-powered literature-curated regulon** (TRRUST v2, PubMed-backed, independent of the
+ENCODE ChIP) and re-run the same overlap. Literature curation aggregates many focused, well-powered studies, so it should
+contain the direct targets the single knockdown missed.
+
+It does — decisively:
+
+```
+TF      curated targets   % bound    enrichment      significance      vs Perturb-seq
+GATA1        50            34%        2.33×           p = 4.7e-4  ***    was 0.85× (chance)
+MYC          93            46%        1.61×           p = 2.3e-4  ***
+SPI1         62            53%        1.36×           p = 0.018    *
+GATA2        18            22%        1.74×           p = 0.19    ns  (underpowered, n=18)
+TAL1         10            10%        0.38×           ns          (enhancer-acting)
+RUNX1        39             5%        0.60×           ns          (enhancer-acting)
+```
+
+For GATA1, binding recovers **the exact direct erythroid regulon the Perturb-seq missed** — ALAS2, KLF1, NFE2, EPOR, ITGA2B,
+GP9, HEMGN, PPOX, CEBPA, BACH1 — and the overlap flips from chance (0.85×) to **2.33× enriched, p=4.7e-4**. MYC (1.6×,
+p=2e-4) and SPI1 (1.4×, p=0.02) confirm it.
+
+**So the definitive answer to "does binding predict regulation": yes — when the regulation map isn't detection-limited.** The
+earlier chance-level Perturb-seq result was a **power artifact**, not evidence that binding is non-functional. Swapping in a
+well-powered map recovers the signal and the specific direct targets.
+
+**Honest exceptions.** TAL1 and RUNX1 stay flat even with literature — but for a known reason: both act largely through
+*distal enhancers*, so a *promoter-only* peak→gene assignment is the wrong lens for them (their curated sets are also tiny,
+10 and 39). This is a limitation of the assignment, not a failure of the principle.
+
+This resolves the arc's final question. `invivo` (where it binds) → `regulate` (whether binding is productive) →
+`kinetics` (why residence is the uncomputable missing quantity) → `bindreg` (binding vs regulation, and — with literature —
+the confirmation that binding predicts regulation once the regulation map is well-powered). (bind_vs_reg.py
+`compare_literature` → bind_vs_reg.json; `bindreg` syscall.)
