@@ -1,0 +1,27 @@
+{
+ "demo_GATA1_LOF": {
+  "tf": "GATA1",
+  "ddg_fold": 3.0,
+  "ddg_bind": 0.0,
+  "inhibitory_interface": false,
+  "nexus_activity": 0.999,
+  "call": "near-neutral",
+  "n_direct_targets": 66,
+  "n_signed": 0,
+  "targets_up": [],
+  "targets_down": [],
+  "targets_unknown_sign": [
+   "ALAS2",
+   "BACE1",
+   "BDKRB1",
+   "CCR3",
+   "COPS5",
+   "DPYSL2",
+   "EPOR",
+   "F13A1",
+   "FCER1A",
+   "FLI1"
+  ]
+ },
+ "note": "Cross-layer integration: NEXUS (protein-mutation dual-sensor activity, soft-AND of folding x binding fractions, validated near-field ~0.5 Pearson/0.77 hotspot AUC) wired into the regulation layer via the TF. A TF mutation -> NEXUS activity a in [0,1] (LOF) or >1 (GOF) -> each direct target (TRRUST signed regulon) predicted to move by -sign*(a-1). Gives the FIRST-ORDER regulatory consequence of a TF mutation; does NOT predict the genome-wide cascade (dynamics wall). Extrinsic sensor needs a known protein interface; folding is general. Composes two separately-validated layers -- honest, bounded at the direct regulon."
+}

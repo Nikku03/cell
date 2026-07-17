@@ -1664,6 +1664,34 @@ class CellKernel:
             out.append("     knockdown just couldn't see the direct regulon. Literature recovers it (ALAS2/KLF1/NFE2/EPOR...).")
         return "\n".join(out)
 
+    def mutreg(self, args):
+        """NEXUS -> REGULATION: a mutation in a TF's protein, scaled onto its direct regulon (nexus_regulate.py). NEXUS turns
+        (ΔΔG_fold, ΔΔG_bind) into a graded ACTIVITY (soft-AND, LOF/GOF); the TF's curated direct targets (TRRUST, signed) then
+        move first-order: activated target follows activity, repressed target opposes it. Connects the protein-mutation layer
+        to the regulation layer via the shared object (the TF). HONEST: first-order direct regulon only -- NOT the genome-wide
+        cascade (dynamics wall); extrinsic sensor needs a known interface. usage: mutreg TF [ddg_fold] [ddg_bind]"""
+        import nexus_regulate as nr
+        if not args:
+            return "mutreg TF [ddg_fold] [ddg_bind]   — a TF mutation's NEXUS activity scaled onto its direct regulon"
+        tf = args[0]
+        ddgf = float(args[1]) if len(args) > 1 else 6.0
+        ddgb = float(args[2]) if len(args) > 2 else 0.0
+        r = nr.mutate_tf(tf, ddgf, ddgb)
+        if r["n_direct_targets"] == 0:
+            return f"mutreg {tf}: no curated (TRRUST) direct regulon for this TF."
+        out = [f"mutreg {tf}: mutation ΔΔG_fold={ddgf} ΔΔG_bind={ddgb} -> NEXUS activity {r['nexus_activity']:.2f}  [{r['call']}]",
+               f"  {r['n_direct_targets']} curated direct targets ({r['n_signed']} signed)"]
+        nmove = len(r["targets_down"]) + len(r["targets_up"])
+        if nmove == 0:
+            out.append("  activity near wild-type -> no substantial first-order regulatory change")
+        else:
+            if r["targets_down"]:
+                out.append(f"  predicted DOWN: {', '.join(g for g,_ in r['targets_down'][:12])}")
+            if r["targets_up"]:
+                out.append(f"  predicted UP:   {', '.join(g for g,_ in r['targets_up'][:12])}")
+        out.append("  [first-order direct regulon only; NOT the genome-wide cascade (dynamics wall). NEXUS activity ~0.5 Pearson near-field]")
+        return "\n".join(out)
+
     def kinetics(self, args):
         """the kinetic-competition model of productive initiation, MEASURED (kinetics.py). A bound TF races: fall off (k_off)
         vs appoint Pol II (k_init). P(productive)=tau_res/(tau_res+tau_appoint). The deep catch: affinity (Kd=k_off/k_on) is
@@ -2478,6 +2506,7 @@ class CellShell:
             if cmd in ("regulate", "productive"): return k.regulate(args)
             if cmd in ("kinetics", "residence"): return k.kinetics(args)
             if cmd in ("bindreg", "bind_vs_reg"): return k.bindreg(args)
+            if cmd in ("mutreg", "nexus_regulate"): return k.mutreg(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
