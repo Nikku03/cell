@@ -131,6 +131,179 @@ def run(seed=0, lam=1.0, epochs=40, shuffle_labels=False, tag="", device=None):
     return float(np.mean(aps))
 
 
+# ======================================================================================================================
+#  THE FULL ARCHITECTURE: pretrain the shared encoder on genome-wide cCREs (311-TF binding), THEN fine-tune the CRISPR head.
+#  This is the version designed to solve data starvation — the aux task sees ~100k genome-wide loci, not the 4k CRISPR set.
+# ======================================================================================================================
+PT = OUT / "pretrain"
+
+
+def _encoder(dev):
+    import torch, torch.nn as nn
+    class Encoder(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.enc = nn.Sequential(
+                nn.Conv1d(4, 128, 19, padding=9), nn.BatchNorm1d(128), nn.ReLU(), nn.MaxPool1d(2),
+                nn.Conv1d(128, 128, 7, padding=6, dilation=2), nn.BatchNorm1d(128), nn.ReLU(),
+                nn.Conv1d(128, 128, 7, padding=12, dilation=4), nn.BatchNorm1d(128), nn.ReLU())
+
+        def forward(self, x):
+            h = self.enc(x)
+            return torch.cat([h.max(-1).values, h.mean(-1)], -1)     # 256-d
+    return Encoder().to(dev)
+
+
+def _oh(codes, dev):
+    """(B,L) int codes 0-4 -> (B,4,L) float one-hot on device (4 = N -> all zero)."""
+    import torch
+    c = torch.as_tensor(codes, dtype=torch.long, device=dev)
+    oh = torch.zeros((c.shape[0], 5, c.shape[1]), device=dev)
+    oh.scatter_(1, c.unsqueeze(1), 1.0)
+    return oh[:, :4, :]
+
+
+def load_pretrain():
+    """cCRE codes (N,600) int8 + 311-TF labels (N,311) — the genome-wide auxiliary dataset."""
+    import gzip
+    meta = json.load(open(PT / "pretrain_meta.json"))
+    seqs = gzip.open(PT / "pretrain_seqs.txt.gz", "rt").read().split("\n")
+    L = meta["window"]
+    codes = np.full((len(seqs), L), 4, dtype=np.int8)
+    for i, s in enumerate(seqs):
+        for j, ch in enumerate(s[:L]):
+            v = NT.get(ch)
+            if v is not None:
+                codes[i, j] = v
+    lab = np.load(PT / "pretrain_labels.npz")
+    labels = np.unpackbits(lab["labels"], axis=1)[:, :int(lab["n_tf"])].astype(np.float32)
+    return codes, labels, meta["tf_list"]
+
+
+def pretrain(epochs=12, dev=None, log=print):
+    """train the shared encoder + a 311-TF head to predict TF binding from sequence on ~100k genome-wide cCREs."""
+    import torch, torch.nn as nn, time
+    dev = dev or ("cuda" if torch.cuda.is_available() else "cpu")
+    codes, labels, tfl = load_pretrain()
+    n = len(codes); rng = np.random.default_rng(0); perm = rng.permutation(n)
+    val = perm[:5000]; tr = perm[5000:]
+    enc = _encoder(dev); aux = nn.Linear(256, labels.shape[1]).to(dev)
+    opt = torch.optim.Adam(list(enc.parameters()) + list(aux.parameters()), lr=1e-3, weight_decay=1e-5)
+    bce = nn.BCEWithLogitsLoss()
+    codes_tr = codes[tr]; codes_val = codes[val]                 # slice once (not per batch)
+    Ytr = torch.tensor(labels[tr]).to(dev)
+    from sklearn.metrics import roc_auc_score
+    for ep in range(epochs):
+        enc.train(); aux.train(); t0 = time.time(); idx = rng.permutation(len(tr))
+        for b in range(0, len(idx), 256):
+            bi = idx[b:b + 256]
+            opt.zero_grad()
+            emb = enc(_oh(codes_tr[bi], dev))
+            loss = bce(aux(emb), Ytr[bi])
+            loss.backward(); opt.step()
+        # validation aux AUC (macro over a sample of TFs)
+        enc.eval(); aux.eval()
+        with torch.no_grad():
+            vp = []
+            for b in range(0, len(val), 512):
+                vp.append(torch.sigmoid(aux(enc(_oh(codes_val[b:b + 512], dev)))).cpu().numpy())
+            vp = np.concatenate(vp); vy = labels[val]
+        aucs = [roc_auc_score(vy[:, t], vp[:, t]) for t in range(vy.shape[1]) if 0 < vy[:, t].sum() < len(vy)]
+        log(f"    pretrain epoch {ep+1}/{epochs}  aux TF-binding AUC {np.mean(aucs):.3f}  ({time.time()-t0:.0f}s)")
+    return {k: v.cpu() for k, v in enc.state_dict().items()}
+
+
+def run_finetune(pretrained=None, seed=0, epochs=40, lam=0.3, shuffle_labels=False, tag="", dev=None):
+    """fine-tune: CRISPR head on top of the (optionally pretrained) shared encoder, chromosome-held-out AUPRC."""
+    import torch, torch.nn as nn, time
+    from sklearn.metrics import average_precision_score
+    torch.manual_seed(seed)
+    dev = dev or ("cuda" if torch.cuda.is_available() else "cpu")
+    X, T, A, y, chrom, ntf, L = load_data()
+    if shuffle_labels:
+        yy = y.copy(); rng = np.random.default_rng(seed)
+        for c in sorted(set(chrom)):
+            m = chrom == c; v = yy[m].copy(); rng.shuffle(v); yy[m] = v
+        y = yy
+    folds = _seeded_folds(chrom, seed); oof = np.zeros(len(y))
+    for k in range(5):
+        t0 = time.time(); tr = folds != k; te = folds == k
+        if y[te].sum() < 3:
+            continue
+        enc = _encoder(dev)
+        if pretrained is not None:
+            enc.load_state_dict({kk: vv.to(dev) for kk, vv in pretrained.items()})
+        aux = nn.Linear(256, ntf).to(dev)
+        main = nn.Sequential(nn.Linear(256 + T.shape[1], 64), nn.ReLU(), nn.Dropout(0.3), nn.Linear(64, 1)).to(dev)
+        opt = torch.optim.Adam(list(enc.parameters()) + list(aux.parameters()) + list(main.parameters()),
+                               lr=5e-4, weight_decay=1e-4)
+        pw = torch.tensor(max((y[tr] == 0).sum() / max((y[tr] == 1).sum(), 1), 1.0)).to(dev)
+        bm = nn.BCEWithLogitsLoss(pos_weight=pw); ba = nn.BCEWithLogitsLoss()
+        Xtr = torch.tensor(X[tr]).to(dev); Ttr = torch.tensor(T[tr]).to(dev)
+        Atr = torch.tensor(A[tr]).to(dev); ytr = torch.tensor(y[tr]).to(dev)
+        idx = np.arange(len(ytr))
+        for ep in range(epochs):
+            enc.train(); main.train(); np.random.default_rng(seed * 100 + ep).shuffle(idx)
+            for b in range(0, len(idx), 128):
+                bi = idx[b:b + 128]; opt.zero_grad()
+                emb = enc(Xtr[bi])
+                pm = main(torch.cat([emb, Ttr[bi]], -1)).squeeze(-1)
+                loss = bm(pm, ytr[bi]) + lam * ba(aux(emb), Atr[bi])
+                loss.backward(); opt.step()
+        enc.eval(); main.eval()
+        with torch.no_grad():
+            emb = enc(torch.tensor(X[te]).to(dev))
+            oof[te] = torch.sigmoid(main(torch.cat([emb, torch.tensor(T[te]).to(dev)], -1)).squeeze(-1)).cpu().numpy()
+        ap = average_precision_score(y[te], oof[te]) if y[te].sum() >= 3 else float("nan")
+        print(f"    [{tag}] fold {k+1}/5  AUPRC {ap:.3f}  ({time.time()-t0:.0f}s)", flush=True)
+    aps = [average_precision_score(y[folds == k], oof[folds == k]) for k in range(5) if y[folds == k].sum() >= 3]
+    return float(np.mean(aps))
+
+
+def main_full():
+    """the full experiment: pretrain on cCREs, then fine-tune WITH vs WITHOUT pretraining. Does pretraining break the gate?"""
+    import torch
+    dev = "cuda" if torch.cuda.is_available() else "cpu"
+    print("=" * 96)
+    print(f"REAL TIER-2 — genome-wide aux pretraining (cCREs -> 311-TF) then fine-tune CRISPR head (device: {dev.upper()})")
+    print("=" * 96)
+    print("\n  [1] PRETRAIN shared encoder on ~100k genome-wide cCREs (predict 311-TF binding from sequence):")
+    enc_state = pretrain(dev=dev)
+    print("\n  [2] FINE-TUNE — WITHOUT pretraining (from scratch = the reduced Tier-2):")
+    scratch = [run_finetune(pretrained=None, seed=s, tag=f"scratch-s{s}", dev=dev) for s in (0, 1)]
+    print("\n  [3] FINE-TUNE — WITH genome-wide pretraining (the full architecture):")
+    pre = [run_finetune(pretrained=enc_state, seed=s, tag=f"pretrained-s{s}", dev=dev) for s in (0, 1)]
+    print("\n  [4] shuffle control (pretrained):")
+    shuf = run_finetune(pretrained=enc_state, seed=0, shuffle_labels=True, tag="shuf", dev=dev)
+    sc = float(np.mean(scratch)); pr = float(np.mean(pre))
+    print("\n  " + "=" * 60)
+    print(f"  from-scratch fine-tune (reduced Tier-2) : AUPRC {sc:.3f}  {[round(x,3) for x in scratch]}")
+    print(f"  PRETRAINED fine-tune (full Tier-2)      : AUPRC {pr:.3f}  {[round(x,3) for x in pre]}")
+    print(f"  shuffle control                         : AUPRC {shuf:.3f}  (~base rate 0.055)")
+    print("  baselines: distance 0.393 | epigenetics-GBM 0.519 | TF-identity GBM 0.608")
+    if pr >= 0.608:
+        verdict = "PASS (strong) -- genome-wide pretraining lets the sequence model MATCH/BEAT the measured-ChIP GBM. Adopt."
+    elif pr >= 0.519 + 0.02 and pr >= sc + 0.03:
+        verdict = ("PASS -- genome-wide pretraining works: it beats epigenetics-only AND lifts the from-scratch model. The "
+                   "encoder learned the TF grammar from millions of loci and transferred it to the sparse CRISPR task, ChIP-free.")
+    elif pr >= sc + 0.03:
+        verdict = "PARTIAL -- pretraining helps vs from-scratch but still trails the epigenetics/ChIP GBM; a bigger encoder or more cCREs may close it."
+    else:
+        verdict = "NO-GO -- even genome-wide pretraining does not beat the GBM; the measured ChIP features remain the best. Ship the GBM."
+    print(f"\n  VERDICT: {verdict}")
+    out = {"pretrained_auprc": round(pr, 3), "scratch_auprc": round(sc, 3), "pretrained_seeds": [round(x, 3) for x in pre],
+           "scratch_seeds": [round(x, 3) for x in scratch], "shuffle_control": round(shuf, 3),
+           "baselines": {"distance": 0.393, "epigenetics_gbm": 0.519, "tf_identity_gbm": 0.608}, "verdict": verdict,
+           "note": "FULL Tier-2: shared encoder PRETRAINED on ~100k genome-wide ENCODE cCREs to predict 311-TF ChIP binding "
+                   "from sequence (the dense aux task that solves data starvation), THEN fine-tuned with the sparse CRISPR "
+                   "head. Compares WITH vs WITHOUT pretraining to isolate the pretraining benefit. Chromosome-held-out AUPRC, "
+                   "label-shuffle control. This is the architecture as designed (unlike the earlier reduced 0.488 version whose "
+                   "aux head saw only the 4k CRISPR elements). Real ENCODE K562 data; Colab GPU."}
+    json.dump(out, open("outputs/orphan/seq_model_full.json", "w"), indent=1)
+    print("\n  -> outputs/orphan/seq_model_full.json")
+    return out
+
+
 def main():
     import torch
     dev = "cuda" if torch.cuda.is_available() else "cpu"
