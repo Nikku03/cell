@@ -3605,3 +3605,12 @@ from scratch on 569 labels. (seq_model.py + tier2_seq_model.ipynb → seq_model.
 (identity → 0.608). Tier-2: sequence CNN NO-GO (0.488). The honest deliverable is a **CRISPR element→gene regulation predictor
 at AUPRC ~0.61 (TF-identity GBM)** — SOTA-competitive, leakage-controlled, and correctly *not* over-engineered with a deep net
 that the data can't yet support.
+
+**Correction — the tested Tier-2 was a REDUCED architecture.** The multi-task design's key idea is to train the auxiliary
+311-TF-binding head on **millions of genome-wide loci** (to solve data starvation), then attach the sparse CRISPR head. The
+version tested above did NOT do this: the aux head was trained on **only ~3,961 CRISPR-tested elements** (the same tiny set as
+the flagship head), and the input was 600bp with a from-scratch CNN (not ~2kb / a pretrained encoder). So the 0.488 NO-GO
+refutes a *data-limited* version, **not the full architecture** — the from-scratch CNN was asked to learn the TF combinatorial
+grammar from ~4,000 sequences, exactly the starvation the genome-wide aux-pretraining was meant to avoid but here didn't. The
+real Tier-2 to build: pretrain the shared encoder on ~1–2M genome-wide candidate elements (ENCODE cCREs) with their measured
+311-TF ChIP vectors, THEN fine-tune the CRISPR head.
