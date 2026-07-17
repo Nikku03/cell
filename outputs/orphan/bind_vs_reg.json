@@ -1,0 +1,91 @@
+{
+ "results": [
+  {
+   "tf": "GATA1",
+   "dataset": "k562.h5ad",
+   "thresh": 3.0,
+   "window": 5000,
+   "use_abc": true,
+   "on_target_z": -0.84,
+   "n_bound": 4621,
+   "n_bound_promoter": 1614,
+   "n_bound_distal": 4186,
+   "n_regulated": 56,
+   "n_reg_up": 56,
+   "n_reg_down": 0,
+   "n_bound_and_regulated": 29,
+   "frac_bound_that_regulate": 0.0063,
+   "frac_regulated_that_bound": 0.518,
+   "enrichment": {
+    "universe": 8561,
+    "expected_overlap": 30.2,
+    "fold_enrichment": 0.96
+   },
+   "direction": {
+    "activated_bound_down": 0,
+    "repressed_bound_up": 29
+   },
+   "bound_regulated_genes": [
+    "ADA",
+    "ADAM10",
+    "AIF1",
+    "ARHGAP18",
+    "ATF7IP2",
+    "BHLHE40",
+    "BST2",
+    "CKLF",
+    "CYBA",
+    "EGLN3",
+    "EML4",
+    "FNBP1",
+    "FUCA1",
+    "GNPTAB",
+    "HIPK2",
+    "KTN1",
+    "LST1",
+    "PIM1",
+    "PNRC1",
+    "RUFY3",
+    "S100A13",
+    "SAT1",
+    "SLC5A3",
+    "SOCS1",
+    "SOCS2",
+    "SSBP2",
+    "STK17B",
+    "TMSB4X",
+    "TXNIP"
+   ]
+  },
+  {
+   "tf": "MAX",
+   "dataset": "k562.h5ad",
+   "thresh": 3.0,
+   "window": 5000,
+   "use_abc": true,
+   "on_target_z": -0.52,
+   "n_bound": 7066,
+   "n_bound_promoter": 6897,
+   "n_bound_distal": 6559,
+   "n_regulated": 4,
+   "n_reg_up": 4,
+   "n_reg_down": 0,
+   "n_bound_and_regulated": 1,
+   "frac_bound_that_regulate": 0.0001,
+   "frac_regulated_that_bound": 0.25,
+   "enrichment": {
+    "universe": 8561,
+    "expected_overlap": 3.3,
+    "fold_enrichment": 0.3
+   },
+   "direction": {
+    "activated_bound_down": 0,
+    "repressed_bound_up": 1
+   },
+   "bound_regulated_genes": [
+    "BLVRB"
+   ]
+  }
+ ],
+ "note": "Binding (ENCODE K562 ChIP, peak->gene via promoter TSS+/-5kb + ABC 3D distal) vs regulation (Replogle K562 Perturb-seq, |z|>3 on knockdown), on the ~8.5k measured-gene universe. Only well-powered knockdowns give a trustworthy regulation set (GATA1 clean; most TFs underpowered). Measures the binding<->regulation gap: binding is vast, regulation is small, overlap is enriched over chance but a small fraction of binding is functional and much regulation is indirect. 'Regulated' includes indirect effects. Real data."
+}
