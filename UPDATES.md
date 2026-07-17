@@ -3382,3 +3382,44 @@ So the `k_off ≠ Kd` wall is now **measured, not just argued**: you can write t
 drives productivity — but you **cannot fill in residence time from the motif**. It has to be measured (SMT), and there is no
 genome-wide dwell-time assay. This locates the wall one layer deeper than "binding vs regulation": it's precisely at
 **sequence → residence time**. (kinetics.py → kinetics.json; `kinetics` syscall.)
+
+### Closing the loop — plug MEASURED residence times in (the honest end of the arc)
+
+The `kinetics` result said residence would predict productivity but *can't be computed from sequence*. The proposed next
+step was to stop computing it and use **measured** single-molecule tracking (SMT) residence times. Did that.
+
+**The literature (real, cited).** Most sequence-specific TFs have "stable-bound" residence times in a **narrow ~5–20 s
+range** ([Chen 2014 / reviews](https://pmc.ncbi.nlm.nih.gov/articles/PMC9117886/)); **CTCF** is a robustly-measured **long
+outlier at ~1–2 min** ([Hansen 2017, eLife](https://elifesciences.org/articles/25776)); **GATA2** shows a stable fraction
+**>5 s**. And the causal law is real — mutating a Gal4 site from high→low affinity reduced *both* its residence *and* its
+target's transcriptional burst duration; GR and p53 residence correlate with their own output.
+
+**But plugging measured residence into the competition model does NOT close the loop across TFs:**
+
+```
+TF     measured τ_res   model P(productive)   measured eRNA+     (real K562 binding)
+CTCF        90 s             0.75  (highest)       0.032  (near lowest)   ← model maximally wrong
+NRF1       ~10 s             0.25                  0.693
+YY1        ~10 s             0.25                  0.638
+...
+cross-TF r(measured residence, eRNA) = −0.32   (negative)
+```
+
+**The CTCF natural experiment is decisive.** CTCF has the longest *measured* residence, so the model predicts it should be
+the *most* productive — but it's near the *least* productive, because its minute-long residence is **architectural**
+(insulator / loop anchor), not transcription-activating. (Honesty: 8 of 10 non-CTCF TFs share a class-typical ~10 s
+placeholder — TF-specific K562 SMT doesn't exist for them — so the claim rests on the **CTCF measured point + the biology**,
+not on a 10-point regression.)
+
+**The resolution — and the honest end of this whole thread.** The residence→output law is *real and experimentally proven*,
+but it is **intra-TF / per-site**: it holds for *one factor varying its own site or condition* (Gal4, GR, p53), where
+"everything else" is held constant. It does **not** transfer across TFs of different function class, and the per-site
+*in-vivo* residence that would test it genome-wide **has no assay**. So even *measured* residence can't be scaled into a
+genome-wide productivity predictor with today's data.
+
+Net: the mechanism you proposed — affinity → residence → win the polymerase race → regulation — is **correct and
+experimentally demonstrated**, and every measurable link in it checks out (occupancy predicts productivity r≈0.3; Pol II +
+eRNA predict CRISPR regulation ~6×). The one link that breaks is **getting residence from anything computable** — sequence
+gives Kd not k_off (flat, r≈0), and a per-TF average is confounded by function class (CTCF). The missing measurement is
+per-site in-vivo dwell time, and it doesn't exist genome-wide. That's not a gap in the model; it's a gap in the world's data.
+(kinetics.py `measured_residence_test` → kinetics.json; `kinetics` syscall.)

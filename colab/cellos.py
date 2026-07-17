@@ -1654,6 +1654,16 @@ class CellKernel:
         out.append(f"    MEASURED OCCUPANCY vs productivity:  r(PolII)={V['pooled_r_occupancy_polII']:+.3f}  r(eRNA)={V['pooled_r_occupancy_eRNA']:+.3f}  (real)")
         out.append("  => the mechanism is RIGHT (occupancy/residence predicts productivity) but residence is NOT computable")
         out.append("     from sequence affinity: Kd=k_off/k_on is thermodynamic; residence=1/k_off is kinetic. Needs measurement (SMT).")
+        MR = K.get("measured_residence_test")
+        if MR:
+            out.append("  CLOSING THE LOOP with MEASURED single-molecule residence times (across TFs):")
+            c = MR.get("ctcf")
+            if c:
+                out.append(f"    CTCF natural experiment: longest MEASURED residence ({c['tau_res_s']:.0f}s) -> model predicts "
+                           f"P(prod)={c['model_P_productive']:.2f} (highest), but measured eRNA+ only {c['measured_eRNA_frac']:.3f} (near lowest)")
+            out.append(f"    cross-TF r(measured residence, eRNA) = {MR['r_measured_residence_vs_eRNA']:+.3f} (negative) -- function class")
+            out.append("    dominates: CTCF's long residence is architectural. The residence->output law (Gal4/GR/p53) is INTRA-TF/")
+            out.append("    per-site, not cross-TF; per-site in-vivo residence has no genome-wide assay. Loop does NOT close at TF level.")
         return "\n".join(out)
 
     def _discover(self):
