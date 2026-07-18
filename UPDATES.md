@@ -3950,3 +3950,30 @@ half-life is degron/context-specific, not sequence-predictable (unlike mRNA half
 So abundance *is* a modest, real predictor of a knockout's **seed** importance — better than "weak." But it ranks the seed, not
 the genome-wide response; "how much effect to the whole cell" (the cascade) stays the measured wall. (`colab/protein_abundance.py`;
 `pabund` syscall.)
+
+---
+
+## Layers — the graph made manageable, organized by readout
+
+The 889k→1.25M-edge graph was one tangled union. This reorganizes it into **12 named layers in 6 readout tiers**, using the
+principle the last few turns *measured*: the cell isn't one network — it's several typed networks, each predicting its **own**
+readout, and collapsing them loses that. So layers are grouped by *what an edge means and what it predicts*, not lumped:
+
+```
+PHYSICAL     ppi / complex / ligand_receptor        -> binding & complex assembly     [complementary, 46-214x coherent]
+REGULATORY   regulatory / signaling / causal        -> transcription (Perturb-seq)    [propagate L1 = 9.2x; sign 73%]
+REACTION     reaction_metabolic (substrate->product)-> metabolic flux                 [ecFlux mutation->flux VALIDATED]
+DEPENDENCY   codependency / synthetic_lethal / coexpr-> fitness / essentiality         [centrality+paralog AUC 0.86]
+SPATIAL      chromatin_loops                        -> enhancer->gene 3D contact      [invivo ABC; nearest wrong 39%]
+MEMBERSHIP   reactome_pathway                       -> shared-process grouping        [condition top-1 67%]
+```
+
+`layers` prints this tiered manifest; `layers GENE` shows one gene across the tiers (e.g. GATA1: heavy in REGULATORY as a TF,
+sparse in PHYSICAL). It's a registry/manifest + per-tier query on top of `network.py`, so you can pull a single layer or a whole
+readout tier instead of the union — and, crucially, apply each layer to its *right* target.
+
+The honest record from the reaction-network test is baked into the manifest: a Reactome 15k-reaction co-membership superset
+**did not beat abstract PPI for the transcriptional readout** once size-controlled (Wilcoxon p=0.32) — a readout mismatch
+(reaction predicts flux, not transcription). Recording it here is the point: the layering exists so each typed network is used
+against the readout it actually predicts, not collapsed into one graph and pointed at the wrong target. (`colab/layers.py`;
+`layers` syscall.)

@@ -1826,6 +1826,37 @@ class CellKernel:
         out.append("  [site strength + variant DIRECTION reliable; cell-type APA ratio + tail-length->half-life need 3'-seq/TAIL-seq]")
         return "\n".join(out)
 
+    def layers(self, args):
+        """the cell graph made MANAGEABLE (layers.py): the ~1.25M-edge blob reorganized into 12 named LAYERS in 6 READOUT
+        TIERS, each tagged with what an edge MEANS and what the layer PREDICTS (the measured finding that the cell is several
+        typed networks, each predicting its OWN readout): PHYSICAL->binding, REGULATORY->transcription (propagate L1 9.2x),
+        REACTION->flux (ecFlux), DEPENDENCY->fitness (AUC 0.86), SPATIAL->3D link, MEMBERSHIP->process grouping. 'layers' shows
+        the tiered manifest; 'layers GENE' shows that gene across the tiers. usage: layers [GENE]"""
+        import json as _j
+        if args:
+            import layers as ly
+            r = ly.of(args[0])
+            if r.get("status") != "ok":
+                return f"layers {args[0]}: unknown gene"
+            out = [f"layers {r['gene']} — across readout tiers:"]
+            for t, d in r["by_readout_tier"].items():
+                out.append(f"  {t:11s} ({d['readout']}): {d['layers']}")
+            return "\n".join(out)
+        try:
+            M = _j.load(open("outputs/orphan/layers.json"))
+        except OSError:
+            return "layers: run colab/layers.py first."
+        out = [f"layers — the cell graph as {M['n_layers']} managed layers in {M['n_tiers']} readout tiers "
+               f"(~{M['total_edges']:,} edges over {M['n_genes']:,} genes):"]
+        for t in M["tiers"]:
+            out.append(f"  ── {t['tier'].upper():11s} -> {t['readout']}")
+            for L in t["layers"]:
+                d = "→" if L["directed"] else "—"
+                out.append(f"       {L['layer']:20s} {d} {L['edges']:>8,}  [{L['validated']}]")
+        out.append("  [each typed network predicts its OWN readout -- pull a single layer/tier, don't collapse the union.")
+        out.append("   HONEST: Reactome reaction co-membership did NOT beat abstract PPI for transcription (readout mismatch, p=0.32).]")
+        return "\n".join(out)
+
     def pabund(self, args):
         """PROTEIN ABUNDANCE (protein_abundance.py): the missing lifecycle segment mRNA-level -> PROTEIN concentration
         ([protein]=k_translation*[mRNA]/k_protein_decay), tested held-out vs measured ppm. Modeling TRANSLATION on top of
@@ -2596,6 +2627,9 @@ class CellKernel:
                        'investigate underworld' = dark genes hidden inside characterized modules (job ~55%, dest ~54%)
   network GENE         the whole cell wired into one graph — INTERCONNECTED (physical) + INTERDEPENDENT (functional);
                        'network link A B' / 'network path A B [fam]' / 'network hubs [fam]'  (complementary + coherent)
+  layers [GENE]        the graph made MANAGEABLE: 12 layers in 6 READOUT tiers, each tagged with what it predicts (physical->
+                       binding, regulatory->transcription, reaction->flux, dependency->fitness, spatial->3D, membership->group).
+                       'layers' = tiered manifest; 'layers GENE' = a gene across tiers. Each network predicts its OWN readout
   knockout GENE        the MEASURED Perturb-seq blast radius of removing a gene (what goes up/down); 'knockout impact'
                        ranks genes by blast-radius size. Direct effect real; does NOT propagate to unmeasured cascades
   protein GENE         knock out the PROTEIN (degrade it, PROTAC-style), not the gene: the STRUCTURAL disassembly —
@@ -2763,6 +2797,7 @@ class CellShell:
             if cmd in ("halflife", "decay", "mrna_decay"): return k.halflife(args)
             if cmd in ("epi", "epigenetics", "chromatin"): return k.epi(args)
             if cmd in ("pabund", "protein_abundance", "concentration"): return k.pabund(args)
+            if cmd in ("layers", "tiers"): return k.layers(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
