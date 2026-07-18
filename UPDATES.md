@@ -3977,3 +3977,32 @@ The honest record from the reaction-network test is baked into the manifest: a R
 (reaction predicts flux, not transcription). Recording it here is the point: the layering exists so each typed network is used
 against the readout it actually predicts, not collapsed into one graph and pointed at the wrong target. (`colab/layers.py`;
 `layers` syscall.)
+
+---
+
+## The whole model, end-to-end — how much we get
+
+The culminating integration: chain every validated steady-state layer into one pipeline and measure the total against real
+ground truth. **genome → regulation (promoter Pol II) → mRNA level → protein level**, scored at each hand-off and end-to-end
+vs measured K562 mRNA (RPKM) and protein (ppm), chromosome-held-out, 7,515 genes.
+
+```
+STAGE 1  genome/regulation → mRNA:   promoter Pol II only  r 0.29  →  + decay model  r 0.60
+STAGE 2  mRNA → protein (oracle):    measured mRNA + sequence         r 0.71   ← ceiling
+END-TO-END  genome/promoter → PROTEIN (no measured mRNA anywhere):
+   promoter only   r 0.15   →   + decay   r 0.61   →   FULL CHAIN   r 0.63  (R² 0.40)
+```
+
+**The steady-state chain composes.** Chaining promoter → decay → translation → protein-degradation retains **r = 0.63 /
+R² = 0.40** end-to-end from genome to protein — close to the oracle ceiling of **0.71** you'd get with a perfect (measured)
+mRNA level. The gap is the single lossy hand-off: **promoter → mRNA** (one Pol II track is a crude transcription-rate proxy).
+Each layer earns its place — the decay model is the big jump (r 0.29 → 0.60 for mRNA), because `[mRNA] = k_txn / k_deg` genuinely
+needs *both* the transcription rate and the decay rate.
+
+This is the honest answer to "how much do we get": **the assembled steady-state cell predicts protein abundance from genome +
+regulation at r ≈ 0.63 held-out** — a real, composed, quantitative whole-model number, not a demo.
+
+And the honest boundary, unchanged: this is the **steady-state abundance arm**, the part that composes. The **mutation arm**
+(NEXUS mutation → network propagation → genome-wide cascade) is separate — near-field validated (regulon 9.2×) and far-field the
+measured wall. Assembling the layers didn't move that wall; it produced a genuine end-to-end *abundance* predictor alongside it.
+(`colab/wholecell.py`; `wholecell` syscall.)

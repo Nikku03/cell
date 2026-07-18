@@ -1826,6 +1826,29 @@ class CellKernel:
         out.append("  [site strength + variant DIRECTION reliable; cell-type APA ratio + tail-length->half-life need 3'-seq/TAIL-seq]")
         return "\n".join(out)
 
+    def wholecell(self, args):
+        """the WHOLE steady-state model chained end-to-end and MEASURED (wholecell.py): genome -> regulation (promoter Pol II) ->
+        mRNA level (k_deg from sequence) -> protein level (translation+degradation), scored at every hand-off and end-to-end vs
+        measured K562 mRNA (RPKM) + protein (ppm), chromosome-held-out. RESULT: the steady-state chain COMPOSES -- end-to-end
+        genome->protein r 0.63 (R2 0.40), vs oracle ceiling (measured mRNA) r 0.71; the loss is the promoter->mRNA hand-off. This
+        is the part of the cell that composes; the MUTATION arm (NEXUS -> network cascade) is separate (near-field 9.2x, far-field
+        wall). usage: wholecell"""
+        import json as _j
+        try:
+            r = _j.load(open("outputs/orphan/wholecell.json"))
+        except OSError:
+            return "wholecell: run colab/wholecell.py first (needs GENCODE + RNAdecayCafe + ppm + Pol II track)."
+        out = [f"wholecell — genome -> regulation -> mRNA -> protein, chained end-to-end ({r['n_genes']} genes, chrom-held-out):",
+               f"  STAGE1 regulation->mRNA : promoter {r['S1_promoter_to_mRNA']['r']} -> +decay {r['S1_promoter+decay_to_mRNA']['r']} (r vs measured RPKM)",
+               f"  STAGE2 mRNA->protein    : measured mRNA + sequence r {r['ORACLE_measured_mRNA+all']['r']}  [oracle ceiling]",
+               f"  END-TO-END genome->PROTEIN (no measured mRNA):",
+               f"     promoter only {r['ENDTOEND_promoter_only']['r']} -> +decay {r['ENDTOEND_promoter+decay']['r']} -> FULL CHAIN "
+               f"r {r['ENDTOEND_full_chain']['r']} (R2 {r['ENDTOEND_full_chain']['R2']})",
+               f"  => the STEADY-STATE chain COMPOSES: end-to-end r {r['ENDTOEND_full_chain']['r']} vs oracle {r['ORACLE_measured_mRNA+all']['r']} "
+               f"(gap = the promoter->mRNA hand-off).",
+               "  [the mutation arm (NEXUS -> network cascade) is separate: near-field validated 9.2x, far-field = the wall]"]
+        return "\n".join(out)
+
     def layers(self, args):
         """the cell graph made MANAGEABLE (layers.py): the ~1.25M-edge blob reorganized into 12 named LAYERS in 6 READOUT
         TIERS, each tagged with what an edge MEANS and what the layer PREDICTS (the measured finding that the cell is several
@@ -2630,6 +2653,9 @@ class CellKernel:
   layers [GENE]        the graph made MANAGEABLE: 12 layers in 6 READOUT tiers, each tagged with what it predicts (physical->
                        binding, regulatory->transcription, reaction->flux, dependency->fitness, spatial->3D, membership->group).
                        'layers' = tiered manifest; 'layers GENE' = a gene across tiers. Each network predicts its OWN readout
+  wholecell            the WHOLE steady-state model chained end-to-end & MEASURED: genome->regulation->mRNA->protein. Composes:
+                       end-to-end genome->protein r 0.63 (R2 0.40) vs oracle ceiling 0.71, chrom-held-out. Mutation arm (NEXUS->
+                       network cascade) separate: near-field 9.2x, far-field wall. 'how much we get' from the assembled chain
   knockout GENE        the MEASURED Perturb-seq blast radius of removing a gene (what goes up/down); 'knockout impact'
                        ranks genes by blast-radius size. Direct effect real; does NOT propagate to unmeasured cascades
   protein GENE         knock out the PROTEIN (degrade it, PROTAC-style), not the gene: the STRUCTURAL disassembly —
@@ -2798,6 +2824,7 @@ class CellShell:
             if cmd in ("epi", "epigenetics", "chromatin"): return k.epi(args)
             if cmd in ("pabund", "protein_abundance", "concentration"): return k.pabund(args)
             if cmd in ("layers", "tiers"): return k.layers(args)
+            if cmd in ("wholecell", "endtoend", "steadystate"): return k.wholecell(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
