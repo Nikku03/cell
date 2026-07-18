@@ -4152,3 +4152,38 @@ coefficient*, which is not in the graph geometry at all — so no propagator (sc
 equivariant or not) can manufacture it. Consistent with the earlier learned-GNN head-to-heads (R-GCN / GraphSAGE never beat fixed
 propagation for the far-field). Caveat kept explicit: with no physical 3D, the equivariance is over a *manufactured* embedding, so
 this fairly tests richer geometric/tensor propagation — not physical E(3) symmetry, which would need Hi-C coordinates we don't have.
+
+---
+
+## What would break the far-field wall? — the learning-curve diagnosis
+
+The decisive test of *why* held-out G-specific mechanism sits at chance: grow the number of training knockouts against a **fixed
+held-out set** and watch whether mechanism recall rises (data-volume problem) or stays flat (data-*kind* problem).
+(`colab/wall_diagnosis.py`.)
+
+```
+#train KOs   MECHANISM lift   PRIOR lift
+    20            1.03×          3.09×
+    40            1.01×          4.31×
+    80            1.03×          6.12×
+   160            1.00×          7.81×
+   178            0.96×          7.79×
+```
+
+**Mechanism is flat at chance while the prior climbs 3×→7.8×.** More single-knockout steady-state Perturb-seq does **not** break
+the wall — it only sharpens the generic responsiveness prior. The per-edge transmission coefficient is not being under-sampled;
+it is **not recoverable from single-KO pseudobulk endpoints at any scale** (direct vs indirect are confounded; buffering is
+unobserved). What would break it is a *different kind* of measurement that observes the coefficient directly:
+
+1. **Combinatorial double-KO Perturb-seq** (Norman 2019 GI, K562, same context) — observes epistasis/buffering directly: if KO(A)
+   is silent but KO(A)+KO(B) is not, you've measured the bypass. This is the most on-point, and it's in-context.
+2. **Time-course / 4sU nascent-RNA** after perturbation — separates direct targets (early) from cascade (late), de-confounding
+   the steady-state mixture that makes single-KO endpoints unpredictable.
+3. **Dense multi-context Perturb-seq** (Replogle–Nadig multi-cell-line) — learns conserved transmission vs context-specific
+   responsiveness. (Caveat: this session's RPE1 check already showed weak cross-line transfer, r≈0.19 — so multi-context helps
+   least of the three.)
+
+Honest ceiling note: even with these, "predict which specific genes move for an arbitrary knockout" is partly irreducible —
+biological buffering and stochasticity mean the ~9× responsiveness prior may be near the achievable far-field ceiling. The
+realistic win is *measurable G-specific signal above the 1× mechanism floor*, which combinatorial and time-course data are where
+it demonstrably exists.
