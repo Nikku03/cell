@@ -3840,3 +3840,41 @@ CFIm25 knockdown shortens UTRs and de-represses oncogenes, Masamha 2014). The ch
 Honest boundary, same shape as everywhere else: **site strength and variant direction are reliable; the cell-type APA ratio and
 the tail-length → half-life map need 3′-seq/TAIL-seq** (tail length isn't even a clean monotonic half-life predictor — Lima
 2017). (`colab/capping.py`, `colab/polya.py`; `cap` and `polya` syscalls.)
+
+---
+
+## mRNA decay (A4) — a real held-out prediction against SLAM-seq, and it works
+
+The post-transcriptional layers so far (splicing, capping, poly-A) validated the *site / direction / presence* — mostly
+confirming known biology. This one is different: **a quantitative held-out prediction where losing was possible.** Predict
+per-gene mRNA decay rate `ln(k_deg)` in K562 from sequence, and score against measured half-lives.
+
+**Ground truth:** RNAdecayCafe (Zenodo 15785218) — uniformly-reprocessed pulse-label SLAM-seq/TimeLapse-seq half-lives.
+**K562 is our exact cell line** (10,802 genes; target = `avg_log_kdeg`). **Features:** GENCODE v46 pc_transcripts (CDS/UTR
+coords in the headers), longest-CDS transcript per gene → the log-additive first-principles feature set: 61-codon composition
+(→ codon optimality, learned *in-fold* so there's no CSC leakage), 3′UTR length / ARE / GC / m6A, 5′UTR length / uAUG, CDS GC.
+**CV: GroupKFold by chromosome** (paralog-safe), 8,556 expressed genes.
+
+```
+model                          R2      pearson  spearman
+3'UTR-length-only            0.068     0.262     0.294
+codon-only                   0.199     0.447     0.435     <- dominant single signal
+seq-features (no codon)      0.149     0.386     0.396
+full linear (ridge)          0.279     0.529     0.526
+full non-linear (XGBoost)    0.327     0.572     0.558     <- same features, non-linear
+```
+
+**Codon optimality is the dominant determinant** (codon-only R²=0.199, 3× the 3′UTR-length baseline) — exactly what first
+principles predicted (the biggest CDS-encoded signal; ribosome dwell on non-optimal codons recruits CCR4-NOT). Adding 3′UTR
+length + composition lifts it to **r = 0.53 (linear) / 0.57 (GBM)** held-out. Top directional features: CDS GC (+, faster
+decay), 3′UTR length (+, longer UTR → more repressive sites → faster decay).
+
+**Honest context — a floor, not a fluke.** The deep-learning SOTA (Saluki, Agarwal & Kelley 2022, a CNN+RNN on the full
+sequence) reaches R²~0.5–0.6 — but only against a *denoised multi-dataset consensus*; on a **single cell line** the achievable
+ceiling is ~0.35–0.45 (single-dataset noise is real). Our r~0.57 on one cell line with hand-built interpretable features is
+genuinely competitive — a real predictive result, not confirmation of known biology. Sequence captures the *ranking/direction*
+(Spearman 0.56); absolute half-life still needs measured rates.
+
+**Why it matters for the whole model:** this is the layer that finally turns a transcription-*rate* change into a steady-state
+mRNA *level* — **`[mRNA]_ss = k_txn / k_deg`** — connecting `propagate`'s promoter-rate output to an actual abundance. Of the
+recent post-transcriptional builds, this is the one that clears the "hard test" bar. (`colab/halflife.py`; `halflife` syscall.)

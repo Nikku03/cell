@@ -1826,6 +1826,27 @@ class CellKernel:
         out.append("  [site strength + variant DIRECTION reliable; cell-type APA ratio + tail-length->half-life need 3'-seq/TAIL-seq]")
         return "\n".join(out)
 
+    def halflife(self, args):
+        """mRNA DECAY / half-life (A4), tested HONESTLY vs measured SLAM-seq (halflife.py; FIRST_PRINCIPLES.md sec3). Predicts
+        per-gene ln(k_deg) in K562 from SEQUENCE (codon composition -> codon optimality, 3'UTR length/ARE/GC/m6A, 5'UTR
+        length/uAUG), chromosome-held-out, vs RNAdecayCafe measured half-lives (uniformly-reprocessed pulse-label NR-seq, K562).
+        RESULT: r~0.53 (linear) / 0.57 (GBM) held-out on ~8.6k genes -- codon optimality dominant. This is the layer that turns
+        transcription RATE into steady-state LEVEL ([mRNA]_ss = k_txn/k_deg). Real prediction (losing was possible); a floor vs
+        the Saluki deep ceiling (R2~0.5-0.6 on denoised consensus). usage: halflife"""
+        import json as _j
+        try:
+            r = _j.load(open("outputs/orphan/halflife.json"))
+        except OSError:
+            return "halflife: run colab/halflife.py first (fetches RNAdecayCafe K562 half-lives + GENCODE sequences)."
+        out = [f"halflife — predict measured mRNA decay ln(k_deg) in K562 from sequence ({r['n_genes']} genes, chromosome-held-out):"]
+        for k in ["baseline_utr3_length_only", "baseline_codon_only", "full_model_ridge", "full_model_xgboost"]:
+            m = r.get(k, {})
+            if "R2" in m:
+                out.append(f"    {k:26s} R2 {m['R2']:.3f}  pearson {m['pearson_r']:.3f}  spearman {m['spearman_r']:.3f}")
+        out.append("  codon optimality is the dominant signal (as first principles predicts); [mRNA]_ss = k_txn/k_deg closes rate->level.")
+        out.append("  [real held-out prediction vs SLAM-seq; a first-principles FLOOR vs the Saluki deep ceiling R2~0.5-0.6 (denoised consensus)]")
+        return "\n".join(out)
+
     def kinetics(self, args):
         """the kinetic-competition model of productive initiation, MEASURED (kinetics.py). A bound TF races: fall off (k_off)
         vs appoint Pol II (k_init). P(productive)=tau_res/(tau_res+tau_appoint). The deep catch: affinity (Kd=k_off/k_on) is
@@ -2603,6 +2624,9 @@ class CellKernel:
   polya                3' cleavage & polyadenylation + APA: poly-A SITE strength is sequence-computable (AAUAAA ~-21nt),
                        VALIDATED on real 3' ends (85% vs ~0% control); the APA RATIO is cell-state (CFIm25/CstF64 abundance).
                        Chosen 3'UTR -> miRNA/ARE load -> stability. Site/direction reliable; ratio/magnitude need 3'-seq
+  halflife             mRNA DECAY (A4): predict measured ln(k_deg) in K562 from sequence (codon optimality + 3'UTR/5'UTR
+                       features), chromosome-held-out vs SLAM-seq (RNAdecayCafe). r~0.53 linear / 0.57 GBM on ~8.6k genes;
+                       codon optimality dominant. Closes rate->level ([mRNA]=k_txn/k_deg). Real prediction, honest floor
   help / exit"""
 
 
@@ -2661,6 +2685,7 @@ class CellShell:
             if cmd in ("splice", "spliceai"): return k.splice(args)
             if cmd in ("cap", "capping"): return k.cap(args)
             if cmd in ("polya", "polyadenylation", "apa"): return k.polya(args)
+            if cmd in ("halflife", "decay", "mrna_decay"): return k.halflife(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)

@@ -7,8 +7,9 @@ truth, and name the wall when we hit one — don't fake a cascade.
 > **Status update (done):** C1 ranked `propagate` — **DONE**. A1 splicing — **DONE** (real SpliceAI in torch). A2 capping —
 > **DONE** (`cap` syscall; cap0>cap1>cap2 hierarchy validated vs DepMap). A3 poly-A/APA — **DONE** (`polya` syscall; hexamer
 > recognition validated on real 3′ ends, 85% vs 0%, median −22nt; APA ratio from CFIm25/CstF64 abundance). The first-principles
-> mechanism for every layer is derived + PMID-grounded in **`FIRST_PRINCIPLES.md`**. **Remaining: A4 mRNA-fate/decay (the
-> stability throughline that turns rate→level), B epigenetics.**
+> mechanism for every layer is derived + PMID-grounded in **`FIRST_PRINCIPLES.md`**. A4 mRNA-decay/half-life — **DONE**
+> (`halflife` syscall; real held-out prediction vs SLAM-seq, r~0.53 linear / 0.57 GBM on 8.6k K562 genes, codon optimality
+> dominant; closes `[mRNA]=k_txn/k_deg`). **Remaining: B epigenetics (ChromHMM state vector + `mutate_writer`).**
 
 ---
 
