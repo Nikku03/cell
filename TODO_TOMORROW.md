@@ -9,7 +9,10 @@ truth, and name the wall when we hit one — don't fake a cascade.
 > recognition validated on real 3′ ends, 85% vs 0%, median −22nt; APA ratio from CFIm25/CstF64 abundance). The first-principles
 > mechanism for every layer is derived + PMID-grounded in **`FIRST_PRINCIPLES.md`**. A4 mRNA-decay/half-life — **DONE**
 > (`halflife` syscall; real held-out prediction vs SLAM-seq, r~0.53 linear / 0.57 GBM on 8.6k K562 genes, codon optimality
-> dominant; closes `[mRNA]=k_txn/k_deg`). **Remaining: B epigenetics (ChromHMM state vector + `mutate_writer`).**
+> dominant; closes `[mRNA]=k_txn/k_deg`). B epigenetics — **DONE** (`epi` syscall; ChromHMM state validated vs expression,
+> bivalent ~100x lower; `mutate_writer` validated vs Perturb-seq, EZH2 KD → H3K27me3 de-repression 5.3x > controls).
+> **All acknowledged post-transcriptional + epigenetic layers are now built.** What remains is not new layers but the measurement
+> gaps (Section D) that would turn the honest "direction/ranking" tiers into quantitative magnitude.
 
 ---
 

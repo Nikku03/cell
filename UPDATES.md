@@ -3878,3 +3878,47 @@ genuinely competitive — a real predictive result, not confirmation of known bi
 **Why it matters for the whole model:** this is the layer that finally turns a transcription-*rate* change into a steady-state
 mRNA *level* — **`[mRNA]_ss = k_txn / k_deg`** — connecting `propagate`'s promoter-rate output to an actual abundance. Of the
 recent post-transcriptional builds, this is the one that clears the "hard test" bar. (`colab/halflife.py`; `halflife` syscall.)
+
+---
+
+## Epigenetics (layer B) — static state knowable, writer→target first-order, cascade is the wall
+
+The last acknowledged-missing layer. Built as the three tractable pieces `FIRST_PRINCIPLES.md` §4 named, each held to the
+honest three-tier ceiling. Fetched four more ENCODE K562 marks (H3K4me1/me3, H3K27me3, H3K9me3) to join the existing
+H3K27ac/DNase.
+
+**(a) Static chromatin state — a labeling of measured data, and it discriminates expression.** A ChromHMM-style promoter state
+from the 6 marks at TSS±2kb → {active / bivalent / polycomb / heterochromatin / primed / quiescent}. Validated against measured
+K562 mRNA expression (RNAdecayCafe RPKM — independent of the ChIP tracks):
+
+```
+active_promoter   median log10 RPKM +1.08
+bivalent          median log10 RPKM -1.00   (~100x lower)   4.07x enriched for silencing
+```
+
+Bivalent promoters (H3K4me3 **and** H3K27me3) are ~100× lower-expressed than active ones — the state vector genuinely
+discriminates repression. (H3K27me3-*presence* alone is a weak continuous predictor, AUC 0.57; the bivalent *class* is what
+carries the signal.)
+
+**(c) `mutate_writer` — the epigenetic analogue of `mutreg`, validated with a specificity control.** A writer/eraser mutation →
+NEXUS activity → its mark-carrying loci move first-order (EZH2 → H3K27me3 loci; loss → de-repression). Tested against real
+Perturb-seq, **with a control I insisted on**: do H3K27me3 genes go up *only* under PRC2 loss, or under any perturbation?
+
+```
+KD EZH2   H3K27me3 genes 5.33x enriched among up-movers   (Δ mean z +0.069)   <- catalytic writer
+KD SUZ12  2.48x                                                                <- within control range
+KD EED    1.53x                                                                <- within control range
+control KDs (MYC/SPI1/TP53/GATA1/RPL13): max 2.86x
+```
+
+**EZH2 (5.33×) cleanly beats every control** — real, specific de-repression of its H3K27me3 targets. But the accessory PRC2
+subunits (EED/SUZ12) fall *within* the control range, and the effect magnitude is small (Δz ~0.07). That's reported honestly: it
+is exactly the predicted first-order direction, enriched but weak — **PRC2 redundancy + the bistability wall**, not a clean
+quantitative cascade.
+
+**The honest three-tier ceiling** (the same shape as the project's knockout-cascade wall, now derived from the chromatin
+mechanism): static state is **knowable** (a measured labeling); writer→direct-target is **first-order, direction-only**
+(enriched but weak); the **genome-wide decompaction cascade does not compose** — because read-write feedback makes marks
+bistable and hysteretic (losing one writer often does nothing; surviving marks re-propagate) and writers are redundant
+(EZH1/EZH2, DNMT3A/3B). A real static-state + first-order-writer engine, stopped honestly at the wall. (`colab/epigenetics.py`;
+`epi` syscall.)

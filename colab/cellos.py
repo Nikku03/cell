@@ -1826,6 +1826,50 @@ class CellKernel:
         out.append("  [site strength + variant DIRECTION reliable; cell-type APA ratio + tail-length->half-life need 3'-seq/TAIL-seq]")
         return "\n".join(out)
 
+    def epi(self, args):
+        """EPIGENETICS (layer B; epigenetics.py, FIRST_PRINCIPLES.md sec4). (a) STATIC ChromHMM-style chromatin state per
+        promoter from 6 ENCODE K562 marks (H3K4me3/me1, H3K27ac, H3K27me3, H3K9me3, DNase at TSS+-2kb) -- VALIDATED: state
+        predicts measured K562 expression (bivalent promoters ~100x lower RPKM than active, ~4x enriched for silencing). (c)
+        mutate_writer = the epigenetic analogue of mutreg: a writer/eraser mutation -> NEXUS activity -> its mark-carrying loci
+        move first-order; VALIDATED direction vs real Perturb-seq (EZH2 KD -> H3K27me3 genes 5.3x enriched among up-movers,
+        beating all non-writer controls; EED/SUZ12 within control range = PRC2 redundancy + the wall). HONEST: static state
+        knowable, writer->direct-target first-order/direction-only, genome-wide chromatin cascade does NOT compose (bistability/
+        hysteresis). usage: epi [GENE | writer WORKER [ddg]]"""
+        import epigenetics as ep, json as _j
+        if args and args[0] == "writer" and len(args) > 1:
+            G = {"marks": ep._marks()}
+            r = ep.mutate_writer(args[1], float(args[2]) if len(args) > 2 else 7.5, G=G)
+            if "error" in r:
+                return r["error"]
+            return (f"epi writer {r['writer']} (mark {r['mark']}) -> NEXUS activity {r['nexus_activity']} -> "
+                    f"{r['n_direct_targets']} direct targets ({r['target_note']}) predicted {r['predicted_target_direction']}\n"
+                    f"  e.g. {', '.join(r['example_targets'][:12])}\n"
+                    f"  [first-order DIRECTION only; genome-wide chromatin cascade doesn't compose (bistability/redundancy = the wall)]")
+        if args:
+            g = args[0]
+            D = _j.load(open("outputs/orphan/cell_complete.json"))
+            idxmap = {x["name"]: x for x in D["genes"]}
+            v = ep.state_vector(g, idxmap, ep._marks())
+            if v is None:
+                return f"epi {g}: no chrom/tss annotation"
+            return (f"epi {g}: chromatin state = {ep.classify(v)}  "
+                    f"(H3K4me3 {v['h3k4me3']:.0f}, H3K27me3 {v['h3k27me3']:.0f}, H3K27ac {v['h3k27ac']:.0f}, "
+                    f"H3K9me3 {v['h3k9me3']:.0f}, H3K4me1 {v['h3k4me1']:.0f}, DNase {v['dnase']:.0f})")
+        try:
+            r = _j.load(open("outputs/orphan/epigenetics.json"))
+        except OSError:
+            return "epi: run colab/epigenetics.py first (needs ENCODE K562 marks)."
+        VE = r["validation_state_expression"]; VW = r["validation_writer_PRC2"]
+        out = ["epi — chromatin state + writer perturbation (layer B):"]
+        out.append("  state counts: " + ", ".join(f"{s} {n}" for s, n in sorted(VE["state_counts"].items(), key=lambda x: -x[1])[:6]))
+        out.append(f"  state->expression: active {VE['active_vs_bivalent_log10rpkm'][0]} vs bivalent {VE['active_vs_bivalent_log10rpkm'][1]} "
+                   f"log10 RPKM (~100x); bivalent {VE['bivalent_silencing_enrichment']}x enriched for silencing")
+        ez = VW["writers"].get("EZH2", {})
+        out.append(f"  mutate_writer validated: EZH2 KD -> H3K27me3 genes {ez.get('top200up_enrichment')}x up-enriched "
+                   f"(> control max {VW['control_enrichment_max']}x; EED/SUZ12 within control range = PRC2 redundancy/wall)")
+        out.append("  [static state knowable; writer->direct-target direction-only; genome-wide chromatin cascade = the wall]")
+        return "\n".join(out)
+
     def halflife(self, args):
         """mRNA DECAY / half-life (A4), tested HONESTLY vs measured SLAM-seq (halflife.py; FIRST_PRINCIPLES.md sec3). Predicts
         per-gene ln(k_deg) in K562 from SEQUENCE (codon composition -> codon optimality, 3'UTR length/ARE/GC/m6A, 5'UTR
@@ -2627,6 +2671,9 @@ class CellKernel:
   halflife             mRNA DECAY (A4): predict measured ln(k_deg) in K562 from sequence (codon optimality + 3'UTR/5'UTR
                        features), chromosome-held-out vs SLAM-seq (RNAdecayCafe). r~0.53 linear / 0.57 GBM on ~8.6k genes;
                        codon optimality dominant. Closes rate->level ([mRNA]=k_txn/k_deg). Real prediction, honest floor
+  epi [GENE|writer W]  EPIGENETICS (B): ChromHMM-style chromatin state per promoter from 6 ENCODE K562 marks -- state predicts
+                       expression (bivalent ~100x lower RPKM). 'epi writer EZH2' = writer LoF -> its H3K27me3 loci de-repress
+                       (VALIDATED vs Perturb-seq, EZH2 5.3x > controls). Static state knowable; genome-wide cascade = the wall
   help / exit"""
 
 
@@ -2686,6 +2733,7 @@ class CellShell:
             if cmd in ("cap", "capping"): return k.cap(args)
             if cmd in ("polya", "polyadenylation", "apa"): return k.polya(args)
             if cmd in ("halflife", "decay", "mrna_decay"): return k.halflife(args)
+            if cmd in ("epi", "epigenetics", "chromatin"): return k.epi(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
