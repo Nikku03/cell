@@ -1874,6 +1874,73 @@ class CellKernel:
                "  [the mutation arm (NEXUS -> network cascade) is separate: near-field validated 9.2x, far-field = the wall]"]
         return "\n".join(out)
 
+    def viper(self, args):
+        """regulator ACTIVITY from the target footprint, not its own abundance (viper.py, aREA/DoRothEA on CollecTRI). 'viper'
+        prints the validation; 'viper GENE' infers, from GENE's Perturb-seq knockout signature, which regulators are most
+        inactivated/activated (reading activity off the regulon footprint). MEASURED honest result: standard footprint inference
+        on the pan-tissue regulon recovers the perturbed TF only weakly (AUC 0.56 vs 0.50), because (1) most K562 pseudobulk
+        TF-KO footprints are near-empty and (2) the pan-tissue regulon mis-signs the K562 response (GATA1 agreement 0.33<chance).
+        activity!=abundance is the right idea; a K562-specific regulon is the missing piece. usage: viper [GENE]"""
+        import json as _j
+        if args:
+            import viper as vp
+            r = vp.infer_gene(args[0])
+            if "error" in r:
+                return f"viper {args[0]}: {r['error']}"
+            return (f"viper {r['knockout']} — regulator activity inferred from the target footprint:\n"
+                    f"  most INACTIVATED: {', '.join(f'{t}({v})' for t, v in r['most_inactivated'][:8])}\n"
+                    f"  most ACTIVATED  : {', '.join(f'{t}({v})' for t, v in r['most_activated'][:8])}\n"
+                    "  [honest: pan-tissue CollecTRI regulon; inference is weak in K562 -- see 'viper' for the validation]")
+        try:
+            r = _j.load(open("outputs/orphan/viper.json"))
+        except OSError:
+            return "viper: run colab/viper.py first (needs CollecTRI + gwps Perturb-seq)."
+        d = r["diagnosis"]
+        return (f"viper — activity from the target footprint (aREA/CollecTRI), {r['n_ko']} Perturb-seq TF KOs:\n"
+                f"  recovery AUC {r['recovery_AUC']} vs shuffled {r['shuffled_regulon_AUC']} (0.5=chance); true TF in top-10 "
+                f"{r['true_TF_in_top10_frac']:.0%}\n"
+                f"  WHY weak: {d['frac_KO_footprint_lt5']:.0%} of KOs have <5 movers (empty footprint); where a footprint exists the\n"
+                f"  pan-tissue regulon mis-signs K562 (GATA1 agreement 0.33<chance) and |NES| tracks regulon size (r={d['abs_NES_vs_regulon_size_r']}).\n"
+                "  => activity!=abundance is right, but needs a K562-SPECIFIC regulon. Honest negative, precisely diagnosed.")
+
+    def metabridge(self, args):
+        """the far-field cascade routed through mass-balanced METABOLISM instead of a diluting RWR walk (metabridge.py, Point 5).
+        Pipeline: knockout -> enzyme capacity -> Human-GEM FBA reroute -> metabolite shift -> metabolite-sensing TF
+        (SREBP/LXR/PPAR/FXR/RAR/HIF) -> near-field regulon = predicted second wave. 'metabridge' prints the analysis; 'metabridge
+        GENE' runs the pipeline for a knockout. MEASURED honest result: the metabolic core is itself heavily buffered -- only
+        ~22% of genes are a sole catalyst, and even most sole-catalyst biosynthetic enzymes lose no flux (open-exchange model
+        imports the product); the transcriptional closure is concrete but NOT broadly validatable (Perturb-seq metabolic-KO
+        footprints near-empty). Correct architecture; locates the wall (bypass + import buffering + data sparsity). usage:
+        metabridge [GENE]"""
+        import json as _j
+        if args:
+            import metabridge as mb
+            b = mb.bridge(args[0])
+            if "error" in b:
+                return f"metabridge {args[0]}: {b['error']}"
+            fired = sorted({tf for h in b["sensor_hits"] if h["sensor_fires"] for tf in h["sensor_TFs"]})
+            return (f"metabridge {b['knockout']} — knockout routed through mass-balanced metabolism (biomass x{b['biomass_frac']}):\n"
+                    f"  top metabolite shifts: {', '.join(s['name'] for s in b['top_metabolite_shifts'][:5])}\n"
+                    f"  sensors fired: {', '.join(fired) if fired else '(none)'}  -> {b['n_second_wave_genes']} predicted second-wave genes\n"
+                    "  [illustrative: FBA flux points are non-unique/over-buffered; see 'metabridge' for the honest characterization]")
+        try:
+            r = _j.load(open("outputs/orphan/metabridge.json"))
+        except OSError:
+            return "metabridge: run colab/metabridge.py first (needs HumanGEM + cobra + gwps)."
+        rr = r["reroute_validation"]; b = r["footprint_blocker"]
+        out = [f"metabridge (Point 5) — far-field cascade via mass-balanced metabolism, not RWR:",
+               f"  metabolic core is BUFFERED: only {rr['n_sole_catalyst_genes']}/{rr['n_genes']} genes ({rr['frac_sole_catalyst']:.0%}) "
+               "are a sole catalyst; the rest have isozymes (0 flux lost).",
+               "  even most sole-catalyst biosynthetic enzymes lose nothing (open-exchange model imports the product); only a few (DHODH) bite.",
+               "  CLOSURE MAP (stated metabolite -> sensor -> near-field regulon):"]
+        for d in r["closure_map_demo"]:
+            if d["sensors_fired"]:
+                out.append(f"     {d['metabolite']+' '+d['direction']:20s} -> {', '.join(d['sensors_fired']):16s} -> {d['second_wave_size']} genes")
+        out.append(f"  BLOCKER: of {b['metabolic_KOs_in_perturbseq']} metabolic KOs in Perturb-seq, only {b['with_ge10_movers']} move >=10 genes "
+                   "-> the transcriptional readout to validate the closure is absent.")
+        out.append("  => architecture correct; LOCATES the wall (bypass + import buffering + data sparsity), does not break it.")
+        return "\n".join(out)
+
     def layers(self, args):
         """the cell graph made MANAGEABLE (layers.py): the ~1.25M-edge blob reorganized into 12 named LAYERS in 6 READOUT
         TIERS, each tagged with what an edge MEANS and what the layer PREDICTS (the measured finding that the cell is several
@@ -2684,6 +2751,12 @@ class CellKernel:
   cascadeall           the FAIR combined shot at the 3rd arm: predict the genome-wide knockout cascade with ALL layers, held-out
                        knockouts. Cascade IS predictable ~9x (AUPRC 0.57) but via GENERIC responsiveness, NOT mechanism:
                        G-specific layers alone ~chance (1.06x); combining adds +0.008 over the prior. The wall, precisely located
+  viper [GENE]         regulator ACTIVITY from the target footprint, not its own abundance (aREA/CollecTRI). 'viper GENE' infers
+                       which regulators are (in)activated in GENE's KO signature. Honest: pan-tissue regulon -> weak in K562 (AUC
+                       0.56); activity!=abundance is right but needs a K562-specific regulon [~]
+  metabridge [GENE]    the far-field cascade routed through mass-balanced METABOLISM (Human-GEM FBA) not an RWR walk: KO->flux
+                       reroute->metabolite shift->sensing-TF (SREBP/PPAR/HIF)->near-field regulon. Honest: metabolic core itself
+                       buffered (isozymes+import), closure not broadly validatable (footprint sparsity). Locates the wall [C]
   knockout GENE        the MEASURED Perturb-seq blast radius of removing a gene (what goes up/down); 'knockout impact'
                        ranks genes by blast-radius size. Direct effect real; does NOT propagate to unmeasured cascades
   protein GENE         knock out the PROTEIN (degrade it, PROTAC-style), not the gene: the STRUCTURAL disassembly —
@@ -2854,6 +2927,8 @@ class CellShell:
             if cmd in ("layers", "tiers"): return k.layers(args)
             if cmd in ("wholecell", "endtoend", "steadystate"): return k.wholecell(args)
             if cmd in ("cascadeall", "thirdarm", "koresponse"): return k.cascadeall(args)
+            if cmd in ("viper", "activity"): return k.viper(args)
+            if cmd in ("metabridge", "fbabridge"): return k.metabridge(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)

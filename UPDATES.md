@@ -4060,3 +4060,64 @@ most common gene appears in 79/88 of them.** The model predicts **nearly the sam
 ~2 hits are generic "usual-suspect" responders, not the knockout's specific cascade — and the knockout-specific mechanism scores
 **0/10**. This is the concrete face of the wall: useful as a static "these genes tend to respond" list, useless as "knock out X →
 these particular genes."
+
+---
+
+## Engineering roadmap, argued and measured: activity-inference, supervised regulon, and the FBA metabolic bridge
+
+A four-point roadmap proposed to break the far-field wall. Argued each within the project's measured findings, built the three
+whose data existed, and measured them honestly. All three are recorded as **precisely-diagnosed negatives that locate the wall**
+— not solved. (`colab/viper.py`, `colab/regulon_learn.py`, `colab/metabridge.py`; `viper` and `metabridge` syscalls.)
+
+### Point 4 — VIPER/DoRothEA activity inference (the clear winner conceptually)
+
+Read a regulator's **activity** from its target **footprint**, not its own mRNA (aREA on the canonical CollecTRI signed
+regulon). Fixes "activity ≠ abundance" in principle. Validated on Perturb-seq: knocking out TF X should leave X's activity —
+computed from its **targets**, zero info from X's own mRNA — among the most-inactivated regulons.
+
+```
+recovery AUC (true TF more-inactivated)   0.564   vs shuffled control 0.495   (0.5 = chance)
+true TF in top-10 most-inactivated        6.6%
+```
+
+**Honest negative, precisely diagnosed** (the method is faithful, not buggy): (1) 97% of pseudobulk TF-KO footprints are
+near-empty (<5 movers) — nothing to read; (2) where a footprint exists the **pan-tissue** regulon *mis-signs* the K562 response
+(GATA1 sign-agreement **0.33 < chance** — wrong direction); (3) |NES| tracks regulon size (r=0.64). The recurring wall in the
+**inference** direction: the generic regulon doesn't carry K562-specific wiring. It *does* work where signal exists — `viper
+GATA1` returns MYC/E2F inactivated (cell-cycle arrest) + SPI1 activated (the GATA1–SPI1 antagonism), biologically correct.
+
+### Point 1 — Perturb-seq-supervised K562 regulon (fix the recall collapse)
+
+For the 8 erythroid TFs with genome-wide K562 ChIP: candidates = ChIP-bound promoters, label = moves in that TF's Perturb-seq
+KO, model learns the functional subset (binding ≠ function). Honesty gate = **leave-one-TF-out vs a responsiveness prior**.
+
+**Untestable / honest negative:** only **23 functional positives** across 8 TFs (mostly GATA1=19); **6 of 8 TF knockouts have
+zero** promoter-bound movers → <4 evaluable held-out TFs, so the AUPRC (mechanism 0.032 vs prior 0.006) is noise. Two real
+causes: these TFs act through **distal enhancers** (promoter-binding is the wrong candidate set), and the footprints are too
+**sparse** (same emptiness that sank VIPER). No regulon exported, no generalization claimed.
+
+### Point 5 — the FBA metabolic bridge (replace the RWR walk with mass-balance)
+
+The strongest idea, and it matches what `REACTION_CHAIN.md` reached independently: the one place a bypass model is exactly
+computable is metabolism. Pipeline: knockout → enzyme capacity (Human-GEM) → **FBA reroute** → metabolite shift →
+metabolite-sensing TF (SREBP/LXR/PPAR/FXR/RAR/HIF, curated) → near-field regulon = predicted second wave — two accurate 1-step
+hops bridged by a metabolic solve instead of a 4-step guess.
+
+**Correct architecture; it locates the wall, does not break it — three quantified buffering layers:**
+
+```
+sole-catalyst genes (no isozyme)       625 / 2848  (22%)   ← the other 78% lose ZERO flux on KO
+sole-catalyst biosynthetic enzymes     mostly lose nothing too — open-exchange model IMPORTS the product
+                                        (only a few, e.g. DHODH, actually bite)
+metabolic KOs in Perturb-seq           1441; only 6 move ≥10 genes  ← closure has no ground truth to validate against
+```
+
+The bypass/redundancy that defeats far-field prediction is **baked into metabolism itself** (isozymes + import). The
+metabolite→sensor→regulon closure is concrete (shown on *stated* metabolite changes — cholesterol↓→SREBF2, FA↑→PPAR,
+succinate↑→HIF — decoupled from the non-unique pfba flux step) but its transcriptional readout is absent in the data. Also
+honest: steady-state FBA gives fluxes, not concentration transients ("substrate spikes" need dFBA/kinetics we only partly have).
+
+**Bottom line for the roadmap:** the two deferred points were the honest calls (Point 3 ODE needs time-course data we don't
+have; Point 2 chromatin-imputation needs multi-cell-type paired data and is partly circular). The three built points all hit the
+**same two-headed wall from different directions — pan-tissue/generic wiring that doesn't transfer to K562, and Perturb-seq
+footprints too sparse to supervise or validate against.** That convergence, measured three independent ways, is the finding.
