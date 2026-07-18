@@ -1751,6 +1751,35 @@ class CellKernel:
                 "   make the far field precise — that's the measured wall (missing edges to the secondary program). Not the cascade.]"]
         return "\n".join(out)
 
+    def splice(self, args):
+        """SPLICING mode of NEXUS (splice_nexus.py + spliceai_torch.py): a genomic SNV can be protein-silent yet destroy/create a
+        splice site -> mis-splicing / truncation / NMD -> LOF. The REAL pretrained SpliceAI (Jaganathan 2019), run in torch from
+        Illumina's weights, reads +-5kb of pre-mRNA and scores the variant's DELTA (max acceptor/donor prob change within +-50nt);
+        delta -> NEXUS activity (1 = normal, ->0 = splice-disrupting LOF), which then flows through the regulation/propagate stack
+        like any loss-of-function. Sequence context fetched from Ensembl (GRCh38). VALIDATED: HBB exon-2 junctions predicted
+        exactly (acceptor/donor prob 1.0); donor GT disruption -> delta 0.999 -> activity 0.001; mid-exon control -> ~0. HONEST:
+        strong on canonical splice-disrupting variants, weaker on deep-intronic/tissue-specific; predicts splice-site USAGE change,
+        not the exact isoform ratio. usage: splice GENE POS REF ALT  (POS = GRCh38 genomic coord, REF/ALT = plus-strand alleles)"""
+        if len(args) < 4:
+            return "splice GENE POS REF ALT   — real SpliceAI variant effect (GRCh38 genomic pos) -> NEXUS splice activity"
+        gene = args[0]
+        try:
+            pos = int(args[1])
+        except ValueError:
+            return "splice: POS must be a GRCh38 genomic integer coordinate"
+        ref, alt = args[2].upper(), args[3].upper()
+        import splice_nexus as sn
+        r = sn.nexus_splice(gene, pos, ref, alt)
+        if "error" in r:
+            return f"splice {gene} {pos}{ref}>{alt}: {r['error']}"
+        out = [f"splice {gene} chr{r['chrom']}:{pos}{ref}>{alt} (strand {r['strand']:+d}) — SpliceAI delta {r['delta_score']}",
+               f"  acceptor gain {r['acceptor_gain']}  loss {r['acceptor_loss']}   |   donor gain {r['donor_gain']}  loss {r['donor_loss']}",
+               f"  -> NEXUS splice activity {r['activity']}  [{r['call']}]"]
+        if r["activity"] < 0.5:
+            out.append("  splice-disrupting -> treat as LOF: this activity feeds the regulation/propagate stack like any loss-of-function")
+        out.append("  [real pretrained SpliceAI (torch); strong on canonical sites, weaker deep-intronic; site-usage change, not exact isoform ratio]")
+        return "\n".join(out)
+
     def kinetics(self, args):
         """the kinetic-competition model of productive initiation, MEASURED (kinetics.py). A bound TF races: fall off (k_off)
         vs appoint Pol II (k_init). P(productive)=tau_res/(tau_res+tau_appoint). The deep catch: affinity (Kd=k_off/k_on) is
@@ -2517,7 +2546,11 @@ class CellKernel:
                        regulon only -- NOT the genome-wide cascade (dynamics wall)
   propagate GENE [df] [db]  FORWARD multi-layer flow: mutate any protein (NEXUS) -> regulation (+ transcription-RATE: promoter
                        sets baseline, TF modulates) -> PPI/complex -> pathways -> crosstalk. STRUCTURAL blast-radius map of the
-                       POSSIBLE: enriched at the regulon (9x chance), dilutes to ~chance through PPI/pathways. Not the cascade
+                       POSSIBLE: enriched at the regulon (9x chance), dilutes to ~chance through PPI/pathways; also RANKS the
+                       radius (composite regulon x rate + RWR) so the top is usable (top decile ~2.4x, P@10 ~12x). Not the cascade
+  splice GENE POS REF ALT  SPLICING mode of NEXUS: the REAL pretrained SpliceAI (torch) scores a genomic SNV's splice-DELTA
+                       (+-5kb pre-mRNA context, Ensembl GRCh38) -> NEXUS activity (->0 = splice-disrupting LOF) that feeds the
+                       propagate stack. Validated on HBB junctions; strong on canonical sites, weaker deep-intronic
   help / exit"""
 
 
@@ -2573,6 +2606,7 @@ class CellShell:
             if cmd in ("bindreg", "bind_vs_reg"): return k.bindreg(args)
             if cmd in ("mutreg", "nexus_regulate"): return k.mutreg(args)
             if cmd in ("propagate", "blastradius"): return k.propagate(args)
+            if cmd in ("splice", "spliceai"): return k.splice(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)

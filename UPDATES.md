@@ -3754,3 +3754,40 @@ enriched for the SPI1/CEBPA curated relay targets — the edges that connect a T
 our network. So the precision ceiling is a **missing-edge** problem, not an algorithm problem; a fancier propagator won't move it,
 more measured edges would. That relocates the wall precisely. (`propagate.py` `rank_targets`/`validate_ranked`; shown in the
 `propagate` syscall and propagate.json.)
+
+---
+
+## SpliceAI as a NEXUS splicing sensor — real pretrained weights, in torch
+
+NEXUS reads a mutation's effect on the *protein* (ΔΔG_fold × ΔΔG_bind). But a variant can be protein-silent and still wreck
+the transcript by destroying or creating a **splice site** — a different worker (the spliceosome reading the pre-mRNA), so it
+needs its own sensor. SpliceAI (Jaganathan et al., Cell 2019) is that sensor. We integrated the **real pretrained weights**.
+
+**No TensorFlow — reimplemented in torch.** The official `spliceai` wheel ships the 5 trained Keras models
+(spliceai1–5.h5). Rather than install TensorFlow (and risk the numpy/scipy env), `spliceai_torch.py` parses the Keras
+functional-model graph and re-executes it with torch ops, loading every Conv1D/BatchNorm weight by name and averaging the
+5-model ensemble. It is a faithful re-host of the published weights — not a retrain, not an approximation; only the framework
+changed. The architecture is the standard SpliceAI-10k pre-activation dilated-ResNet (39 Conv1D, 32 BN, 20 residual/skip adds,
+Cropping1D 5000/side, W=[11×4,21×4,41×4…], dilation=[1,4,10,25] per group).
+
+**Validated against real junctions.** On HBB (β-globin) fetched live from Ensembl, SpliceAI-torch fires an **acceptor at
+exon-2's exact 5′ boundary (prob 1.00)** and a **donor at its exact 3′ boundary (prob 1.00)** — both matching the annotated
+exon coordinates to the base. On a random sequence, max splice probability is ~0.000. The weights load correctly.
+
+**Wired into NEXUS as a splicing mode** (`splice_nexus.py`, `splice` syscall). For a genomic SNV it computes the standard
+SpliceAI **delta score** (ref vs alt, max acceptor/donor probability change within ±50 nt), then maps it to NEXUS's activity
+currency: `activity = 1 − delta` (1 = protein made normally, →0 = splice-disrupting LOF). A splice-disrupting variant therefore
+flows through the regulation → PPI → pathway `propagate` stack exactly like any other loss-of-function. Sequence context is
+fetched on demand from Ensembl REST (GRCh38) — no local genome needed; weights auto-download from PyPI on a fresh session.
+
+```
+splice HBB chr11:5226576 C>A  (exon-2 donor GT)  -> donor_loss 0.999, delta 0.999 -> activity 0.001  [splice-disrupting (LOF)]
+splice HBB chr11:5226690 C>T  (mid-exon body)    -> delta 0.004           -> activity 0.996  [no substantial splice effect]
+```
+
+**Honest scope.** SpliceAI is the field standard and strong on *canonical* splice-disrupting variants (published ~0.9 top-k /
+high auPRC on ClinVar splice variants); it is weaker on deep-intronic, tissue-specific, and weak-effect splicing, and it
+predicts splice-site *usage change*, not the exact resulting isoform ratio in a given cell (that needs RNA-seq junctions). So
+direction (does it disrupt a site) is reliable; precise isoform outcome and quantitative penetrance are not. This is the first
+of the acknowledged post-transcriptional layers (splicing / capping / poly-A / decay) to be built. (`colab/spliceai_torch.py`
++ `colab/splice_nexus.py`; `splice`/`spliceai` syscall.)
