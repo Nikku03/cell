@@ -1845,7 +1845,11 @@ class CellKernel:
                 f"  G-specific layers only      : AUPRC {r['Gspecific_only_AUPRC']} ({r['Gspecific_lift']}x)  [regulon/RWR/network = ~chance]\n"
                 f"  FULL (everything combined)  : AUPRC {r['full_AUPRC']} ({r['full_lift']}x)\n"
                 f"  => full - prior = {r['full_minus_prior']:+.4f}: combining all mechanistic layers adds ~nothing over the generic\n"
-                f"     prior. The cascade is predictable but by gene-intrinsic RESPONSIVENESS, not knockout-specific MECHANISM = the wall.")
+                f"     prior. The cascade is predictable but by gene-intrinsic RESPONSIVENESS, not knockout-specific MECHANISM = the wall.\n"
+                + (f"  PRECISION@10 (of top-10 predicted movers, how many move): full {r['precision_at_10']['full_model']}/10, "
+                   f"mechanism-only {r['precision_at_10']['g_specific_mechanism_only']}/10, prior {r['precision_at_10']['responsiveness_prior_only']}/10;\n"
+                   f"     but the top-10 uses only {r['precision_at_10']['generic_top10_distinct_genes_across_88_knockouts']} distinct genes across 88 knockouts "
+                   f"(one in {r['precision_at_10']['most_common_top10_gene_appears_in']}) = nearly the SAME list every time." if "precision_at_10" in r else ""))
 
     def wholecell(self, args):
         """the WHOLE steady-state model chained end-to-end and MEASURED (wholecell.py): genome -> regulation (promoter Pol II) ->

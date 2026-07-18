@@ -4042,3 +4042,21 @@ washes out.
 AUPRC is mildly optimistic; the leakage-free number is the **G-specific-only 1.06×**, which is the clean measurement — combined
 mechanistic layers predict an unseen knockout's cascade at chance. That is the wall, taken at with everything and measured.
 (`colab/cascade_all.py`; `cascadeall` syscall.)
+
+### Precision@10 — the concrete "top 10, how many right?"
+
+Ranking the full gene set for each held-out knockout and taking the top 10 predicted movers:
+
+```
+                              of top 10, how many actually move
+random baseline               ~0/10
+G-specific mechanism only     0.0/10   ← the mechanistic layers alone: ZERO
+responsiveness prior only     1.3/10
+FULL model (everything)       1.8/10   (~18%)
+```
+
+**~2 of 10** — but the killer stat: across **88 different knockouts, the top-10 lists use only 57 distinct genes, and the single
+most common gene appears in 79/88 of them.** The model predicts **nearly the same 10 genes no matter what you knock out.** So the
+~2 hits are generic "usual-suspect" responders, not the knockout's specific cascade — and the knockout-specific mechanism scores
+**0/10**. This is the concrete face of the wall: useful as a static "these genes tend to respond" list, useless as "knock out X →
+these particular genes."
