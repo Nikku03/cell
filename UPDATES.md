@@ -3791,3 +3791,52 @@ predicts splice-site *usage change*, not the exact resulting isoform ratio in a 
 direction (does it disrupt a site) is reliable; precise isoform outcome and quantitative penetrance are not. This is the first
 of the acknowledged post-transcriptional layers (splicing / capping / poly-A / decay) to be built. (`colab/spliceai_torch.py`
 + `colab/splice_nexus.py`; `splice`/`spliceai` syscall.)
+
+---
+
+## Capping & poly-A — the next two post-transcriptional layers, built from first principles
+
+Following `FIRST_PRINCIPLES.md`, the next two layers after splicing. Both validated against measured ground truth.
+
+### 5′ capping — a provenance-gated machinery layer (`cap`)
+
+Capping is *not* sequence-regulated: a transcript is capped iff it's a **Ser5-phosphorylated Pol II product AND the machinery
+is intact**. So cap status is a near-constitutive Boolean (Ser5P provenance at the TSS × machinery integrity) that *gates*
+cap-dependent stability/translation — not something to predict from sequence.
+
+The testable first-principles claim is the **obligatory-role hierarchy cap0 > cap1 > cap2**, derived purely from each worker's
+role. It validates cleanly against measured DepMap essentiality:
+
+```
+cap0 hub (RNGTT/RNMT)   dep_frac 1.0 / 0.97   obligatory for eIF4E  -> lethal
+cap1 important (CMTR1)   dep_frac 0.85        immunity + translation
+cap2 modifier (CMTR2)    dep_frac 0.04        pure refinement       -> dispensable
+CBC reader (NCBP1/2)     dep_frac 1.0 / 1.0   + eIF4E essential
+```
+
+Monotone **cap0 > cap1 > cap2**, cap2 dispensable — predicted from role, confirmed by data. Mutating a worker via NEXUS: an
+RNGTT/RNMT hub LoF is a **global** cap-dependent-translation collapse (short-half-life / 5′TOP transcripts first; measured-
+lethal); a CMTR2 modifier LoF is a viable subset effect + an innate-immune "non-self" flag. Honest boundary: cap *presence* on
+an ordinary mRNA is deterministic; the per-transcript cap0:cap1:cap2 methylation fractions need cap-specific sequencing.
+
+### 3′ cleavage & polyadenylation + APA — sequence sets the site, cell-state sets the ratio (`polya`)
+
+The poly-A machine reads a cis-element barcode and cuts ~10–30 nt downstream of an AAUAAA hexamer. **Site strength is
+sequence-computable** (tiered hexamer × position-weight peaking at −21 nt, + GU/U downstream element, + upstream UGUA, + CA
+cut). Validated against **real transcript 3′ ends from Ensembl**:
+
+```
+20 genes: canonical/variant AAUAAA hexamer in the -40..-1 upstream window = 85%
+          vs downstream control window = 0%   (34x, 0.5 pseudocount)
+          median hexamer position = -22 nt    (textbook ~-21)
+```
+
+The machinery's recognition signal is exactly where first principles says it should be. But the **APA ratio** (which poly-A
+site the cell picks → 3′UTR length) is **cell-state, not sequence**: set by CFIm25(NUDT21)/CstF64(CSTF2) abundance + Pol II
+speed. This cell's measured ppm ratio is **115 / 13.6 = 8.5 → distal / long-3′UTR bias** (high CFIm25 favors distal sites;
+CFIm25 knockdown shortens UTRs and de-represses oncogenes, Masamha 2014). The chosen 3′UTR then fixes its miRNA-seed + ARE load
+→ a stability *direction* for the decay layer (shorter UTR = fewer repressive sites = more stable).
+
+Honest boundary, same shape as everywhere else: **site strength and variant direction are reliable; the cell-type APA ratio and
+the tail-length → half-life map need 3′-seq/TAIL-seq** (tail length isn't even a clean monotonic half-life predictor — Lima
+2017). (`colab/capping.py`, `colab/polya.py`; `cap` and `polya` syscalls.)

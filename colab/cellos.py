@@ -1780,6 +1780,52 @@ class CellKernel:
         out.append("  [real pretrained SpliceAI (torch); strong on canonical sites, weaker deep-intronic; site-usage change, not exact isoform ratio]")
         return "\n".join(out)
 
+    def cap(self, args):
+        """5' CAPPING as a PROVENANCE-GATED machinery layer (capping.py; FIRST_PRINCIPLES.md sec1). Cap status is a near-
+        constitutive Boolean (Ser5P-Pol II provenance x machinery integrity), NOT sequence-regulated. The first-principles
+        obligatory-role hierarchy cap0 > cap1 > cap2 is VALIDATED vs measured DepMap: RNGTT/RNMT (cap0) dep_frac ~1.0 = lethal
+        hubs, CMTR1 (cap1) 0.85, CMTR2 (cap2) 0.04 = dispensable modifier. usage: cap [GENE | mutate WORKER [ddg]]"""
+        import capping as cp
+        if not args:
+            V = cp.validate()
+            out = ["cap — 5' m7G capping machinery (obligatory-role hierarchy validated vs measured essentiality):"]
+            for r in cp.machinery():
+                out.append(f"  {r['worker']:7s} [{r['predicted_class']:9s}] dep_frac {r['dep_frac']}  {r['role']}")
+            out.append(f"  => cap0 {V['tier_mean_dep_frac']['cap0_hub']} > cap1 {V['tier_mean_dep_frac']['cap1_important']} "
+                       f"> cap2 {V['tier_mean_dep_frac']['cap2_modifier']}  (monotone: {V['monotone_cap0_gt_cap1_gt_cap2']}, cap2 dispensable: {V['cap2_dispensable']})")
+            out.append("  [cap presence on an ordinary Pol II mRNA is deterministic; methylation-state fractions need measurement]")
+            return "\n".join(out)
+        if args[0] == "mutate" and len(args) > 1:
+            r = cp.mutate_capping(args[1], float(args[2]) if len(args) > 2 else 7.5)
+            if "error" in r:
+                return r["error"]
+            return (f"cap mutate {r['worker']} [{r['predicted_class']}] -> NEXUS activity {r['nexus_activity']} ({r['scope']})\n"
+                    f"  {r['predicted_effect']}\n  measured dep_frac {r['measured_dep_frac']}")
+        s = cp.cap_status(args[0])
+        if "error" in s:
+            return s["error"]
+        return (f"cap {s['gene']}: Ser5P provenance {s['ser5p_provenance']} -> Pol II product {s['is_polII_product']} "
+                f"-> capped {s['capped']}  (machinery intact {s['cap0_machinery_intact']})")
+
+    def polya(self, args):
+        """3' CLEAVAGE & POLYADENYLATION + APA (polya.py; FIRST_PRINCIPLES.md sec2). Poly-A SITE STRENGTH is sequence-computable
+        (AAUAAA hexamer read at ~3nM + position ~-21, GU/U downstream, UGUA upstream, CA cut) -- VALIDATED on real transcript
+        3' ends (hexamer ~85% upstream vs ~0% control, median -22nt). The APA RATIO (proximal/distal 3'UTR) is CELL-STATE: set
+        by CFIm25(NUDT21)/CstF64(CSTF2) abundance + Pol II speed. Chosen 3'UTR -> miRNA/ARE load -> stability. usage: polya"""
+        import polya as pa, json as _j
+        out = ["polya — 3' cleavage & polyadenylation (sequence sets site strength; cell-state sets APA ratio):"]
+        try:
+            V = _j.load(open("outputs/orphan/polya.json"))["validation_recognition"]
+            out.append(f"  recognition (real 3' ends): hexamer {V['upstream_hexamer_frac']:.0%} upstream vs {V['control_downstream_frac']:.0%} "
+                       f"control ({V['enrichment_vs_control']}x), median position {V['median_hexamer_position']}nt (expect ~-21)")
+        except Exception:
+            out.append("  (run colab/polya.py for the Ensembl recognition validation)")
+        A = pa.apa_bias()
+        out.append(f"  this cell's APA bias: CFIm25/NUDT21 {A['CFIm25_NUDT21_ppm']} vs CstF64/CSTF2 {A['CstF64_CSTF2_ppm']} ppm "
+                   f"-> ratio {A['cfim_over_cstf']} -> {A['predicted_apa_bias']}")
+        out.append("  [site strength + variant DIRECTION reliable; cell-type APA ratio + tail-length->half-life need 3'-seq/TAIL-seq]")
+        return "\n".join(out)
+
     def kinetics(self, args):
         """the kinetic-competition model of productive initiation, MEASURED (kinetics.py). A bound TF races: fall off (k_off)
         vs appoint Pol II (k_init). P(productive)=tau_res/(tau_res+tau_appoint). The deep catch: affinity (Kd=k_off/k_on) is
@@ -2551,6 +2597,12 @@ class CellKernel:
   splice GENE POS REF ALT  SPLICING mode of NEXUS: the REAL pretrained SpliceAI (torch) scores a genomic SNV's splice-DELTA
                        (+-5kb pre-mRNA context, Ensembl GRCh38) -> NEXUS activity (->0 = splice-disrupting LOF) that feeds the
                        propagate stack. Validated on HBB junctions; strong on canonical sites, weaker deep-intronic
+  cap [GENE|mutate W]  5' CAPPING as a provenance-gated machinery layer (not sequence-regulated): cap status = Ser5P-Pol II
+                       provenance x machinery. First-principles cap0>cap1>cap2 hierarchy VALIDATED vs DepMap (RNGTT/RNMT lethal,
+                       CMTR2 dispensable). 'cap GENE' = is it capped; 'cap mutate RNGTT' = hub LoF = global collapse
+  polya                3' cleavage & polyadenylation + APA: poly-A SITE strength is sequence-computable (AAUAAA ~-21nt),
+                       VALIDATED on real 3' ends (85% vs ~0% control); the APA RATIO is cell-state (CFIm25/CstF64 abundance).
+                       Chosen 3'UTR -> miRNA/ARE load -> stability. Site/direction reliable; ratio/magnitude need 3'-seq
   help / exit"""
 
 
@@ -2607,6 +2659,8 @@ class CellShell:
             if cmd in ("mutreg", "nexus_regulate"): return k.mutreg(args)
             if cmd in ("propagate", "blastradius"): return k.propagate(args)
             if cmd in ("splice", "spliceai"): return k.splice(args)
+            if cmd in ("cap", "capping"): return k.cap(args)
+            if cmd in ("polya", "polyadenylation", "apa"): return k.polya(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)

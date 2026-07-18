@@ -4,10 +4,11 @@ Everything we said we'd add, scoped honestly. Each item: **what / why / how (con
 Ordered by leverage. The through-line rule stays the same as the whole project: build it, measure it against ground
 truth, and name the wall when we hit one — don't fake a cascade.
 
-> **Status update (done today):** C1 ranked/calibrated `propagate` — **DONE** (2.32× AUPRC, committed). A1 splicing — **DONE**
-> (real SpliceAI in torch, `splice` syscall, validated on HBB). The first-principles mechanism for every remaining layer
-> (capping, poly-A/APA, mRNA-decay, epigenetics) is now derived and PMID-grounded in **`FIRST_PRINCIPLES.md`** — the "how"
-> sections below are summarized; that doc is the build spec.
+> **Status update (done):** C1 ranked `propagate` — **DONE**. A1 splicing — **DONE** (real SpliceAI in torch). A2 capping —
+> **DONE** (`cap` syscall; cap0>cap1>cap2 hierarchy validated vs DepMap). A3 poly-A/APA — **DONE** (`polya` syscall; hexamer
+> recognition validated on real 3′ ends, 85% vs 0%, median −22nt; APA ratio from CFIm25/CstF64 abundance). The first-principles
+> mechanism for every layer is derived + PMID-grounded in **`FIRST_PRINCIPLES.md`**. **Remaining: A4 mRNA-fate/decay (the
+> stability throughline that turns rate→level), B epigenetics.**
 
 ---
 
