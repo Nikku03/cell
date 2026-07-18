@@ -4006,3 +4006,39 @@ And the honest boundary, unchanged: this is the **steady-state abundance arm**, 
 (NEXUS mutation → network propagation → genome-wide cascade) is separate — near-field validated (regulon 9.2×) and far-field the
 measured wall. Assembling the layers didn't move that wall; it produced a genuine end-to-end *abundance* predictor alongside it.
 (`colab/wholecell.py`; `wholecell` syscall.)
+
+---
+
+## The fair shot at the third arm — and an honest correction
+
+I've repeatedly called the far-field cascade "~chance." That was loose. Here is the fair, exhaustive test: predict the
+genome-wide knockout response (which genes move, vs Perturb-seq) by **combining every layer** into one supervised model —
+regulon, RWR over the multi-layer graph, PPI/complex/coexpression, the reaction network, signaling, plus a generic
+gene-responsiveness prior — tested on **held-out knockouts** (GroupKFold by knockout, so we predict cascades of genes never
+seen perturbed in training).
+
+```
+88 held-out knockouts, 23,040 (G,J) pairs, base mover rate 6.2%
+model                          AUPRC    lift
+J-responsiveness prior only    0.559    8.95×   ← "which genes are generically responsive"
+G-specific layers only         0.066    1.06×   ← regulon+RWR+network+reaction, NO prior = ~CHANCE
+FULL (everything combined)     0.567    9.08×
+full − prior = +0.008          top feature: J_movefreq (0.78); every mechanistic feature ≈ 0.02–0.04
+```
+
+**The correction:** the cascade is **not** ~chance — it is **~9× predictable** (AUPRC 0.57). But the fair test reveals *why*,
+and it's not what the mechanistic story hoped: the predictability is almost entirely a **generic responsiveness prior** — some
+genes (stress/identity programs) move under *many* different knockouts, and simply knowing which genes are generically
+responsive predicts the cascade at AUPRC 0.56. The **G-specific mechanistic layers alone are ~chance (1.06×)** for unseen
+knockouts, and combining *everything* adds only **+0.008** over the prior.
+
+So the honest, precise reframing of the wall: **the knockout response is predictable, but by gene-intrinsic responsiveness, not
+by knockout-specific mechanism.** You can guess *that* a responsive gene will move; you cannot compose *which* of a given
+knockout's specific downstream targets move — the mechanistic cascade — for a knockout you haven't measured. GATA1's 9.2×
+direct-regulon enrichment was the well-powered *exception*, not a composable rule; pooled across held-out knockouts, mechanism
+washes out.
+
+*Caveat (honest):* the responsiveness prior is computed cross-fold (leave-self-out but across all knockouts), so its absolute
+AUPRC is mildly optimistic; the leakage-free number is the **G-specific-only 1.06×**, which is the clean measurement — combined
+mechanistic layers predict an unseen knockout's cascade at chance. That is the wall, taken at with everything and measured.
+(`colab/cascade_all.py`; `cascadeall` syscall.)

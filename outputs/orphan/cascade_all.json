@@ -1,0 +1,46 @@
+{
+ "n_knockouts": 88,
+ "n_pairs": 23040,
+ "base_rate": 0.0625,
+ "full_AUPRC": 0.5672,
+ "full_lift": 9.08,
+ "prior_only_AUPRC": 0.5591,
+ "prior_lift": 8.95,
+ "Gspecific_only_AUPRC": 0.0661,
+ "Gspecific_lift": 1.06,
+ "top_features": [
+  [
+   "J_movefreq",
+   0.783
+  ],
+  [
+   "G_outdeg",
+   0.059
+  ],
+  [
+   "reg_sign",
+   0.037
+  ],
+  [
+   "J_expr",
+   0.036
+  ],
+  [
+   "rwr",
+   0.03
+  ],
+  [
+   "G_is_tf",
+   0.023
+  ],
+  [
+   "ppi_adj",
+   0.02
+  ],
+  [
+   "coexpr",
+   0.013
+  ]
+ ],
+ "full_minus_prior": 0.0081
+}

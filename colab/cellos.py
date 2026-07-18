@@ -1826,6 +1826,27 @@ class CellKernel:
         out.append("  [site strength + variant DIRECTION reliable; cell-type APA ratio + tail-length->half-life need 3'-seq/TAIL-seq]")
         return "\n".join(out)
 
+    def cascadeall(self, args):
+        """the FAIR SHOT at the third arm (cascade_all.py): predict the genome-wide knockout cascade by COMBINING every layer
+        (regulon, RWR over the multi-layer graph, PPI/complex/coexpression, reaction network, signaling) into one supervised
+        model, tested on HELD-OUT knockouts. MEASURED result: the cascade IS predictable (~9x base, AUPRC ~0.57) but almost
+        ENTIRELY through a GENERIC responsiveness prior (some genes move under many knockouts) -- the G-SPECIFIC mechanistic
+        layers alone are ~chance (1.06x) for unseen knockouts, and combining everything adds only ~+0.008 AUPRC over the prior.
+        So the predictable part is gene-intrinsic responsiveness, NOT knockout-specific mechanism = the wall, precisely located.
+        usage: cascadeall"""
+        import json as _j
+        try:
+            r = _j.load(open("outputs/orphan/cascade_all.json"))
+        except OSError:
+            return "cascadeall: run colab/cascade_all.py first (needs gwps Perturb-seq + the graph layers)."
+        return ("cascadeall — fair combined shot at the genome-wide knockout cascade (held-out knockouts):\n"
+                f"  {r['n_knockouts']} knockouts, {r['n_pairs']:,} pairs, base {r['base_rate']:.1%}\n"
+                f"  J-responsiveness prior only : AUPRC {r['prior_only_AUPRC']} ({r['prior_lift']}x)  [some genes just move]\n"
+                f"  G-specific layers only      : AUPRC {r['Gspecific_only_AUPRC']} ({r['Gspecific_lift']}x)  [regulon/RWR/network = ~chance]\n"
+                f"  FULL (everything combined)  : AUPRC {r['full_AUPRC']} ({r['full_lift']}x)\n"
+                f"  => full - prior = {r['full_minus_prior']:+.4f}: combining all mechanistic layers adds ~nothing over the generic\n"
+                f"     prior. The cascade is predictable but by gene-intrinsic RESPONSIVENESS, not knockout-specific MECHANISM = the wall.")
+
     def wholecell(self, args):
         """the WHOLE steady-state model chained end-to-end and MEASURED (wholecell.py): genome -> regulation (promoter Pol II) ->
         mRNA level (k_deg from sequence) -> protein level (translation+degradation), scored at every hand-off and end-to-end vs
@@ -2656,6 +2677,9 @@ class CellKernel:
   wholecell            the WHOLE steady-state model chained end-to-end & MEASURED: genome->regulation->mRNA->protein. Composes:
                        end-to-end genome->protein r 0.63 (R2 0.40) vs oracle ceiling 0.71, chrom-held-out. Mutation arm (NEXUS->
                        network cascade) separate: near-field 9.2x, far-field wall. 'how much we get' from the assembled chain
+  cascadeall           the FAIR combined shot at the 3rd arm: predict the genome-wide knockout cascade with ALL layers, held-out
+                       knockouts. Cascade IS predictable ~9x (AUPRC 0.57) but via GENERIC responsiveness, NOT mechanism:
+                       G-specific layers alone ~chance (1.06x); combining adds +0.008 over the prior. The wall, precisely located
   knockout GENE        the MEASURED Perturb-seq blast radius of removing a gene (what goes up/down); 'knockout impact'
                        ranks genes by blast-radius size. Direct effect real; does NOT propagate to unmeasured cascades
   protein GENE         knock out the PROTEIN (degrade it, PROTAC-style), not the gene: the STRUCTURAL disassembly —
@@ -2825,6 +2849,7 @@ class CellShell:
             if cmd in ("pabund", "protein_abundance", "concentration"): return k.pabund(args)
             if cmd in ("layers", "tiers"): return k.layers(args)
             if cmd in ("wholecell", "endtoend", "steadystate"): return k.wholecell(args)
+            if cmd in ("cascadeall", "thirdarm", "koresponse"): return k.cascadeall(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
