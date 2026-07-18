@@ -4224,3 +4224,41 @@ pairs, a coarse 3-feature relational set; the GEARS/GI literature reports *modes
 pairs and richer features — so this bounds the claim rather than closing it. The genuinely different lever left untested here is
 **time-resolved** data (4sU/nascent-RNA), which de-confounds direct from indirect rather than adding more endpoints — that remains
 the one measurement type this project has never been able to source.
+
+---
+
+## The NEXUS Thermodynamic Mass-Action Sub-Network Simulator — computing the transmission coefficient from first principles
+
+The one proposal that attacks the *actual* missing quantity (the per-edge transmission coefficient) with real physics instead of
+a fancier propagator: treat each PPI edge as a coupled binding equilibrium `Kd = [A][B]/[AB] = exp(ΔG/RT)`, let a mutation's
+NEXUS ΔΔG shift one interface's Kd (`Kd_mut = Kd_wt·exp(ΔΔG/RT)`), and re-solve the whole system so the perturbation propagates
+*quantitatively* downstream. (`colab/nexus_massaction.py`.)
+
+**Tested four ways — the physics is correct:**
+```
+[1] SOLVER       2-body [AB] = 0.5 (matches analytic exactly); mass conservation residual 0.0
+[2] FUNNELING    weakening A:B (+4 kcal) reroutes A from B onto Z (0.06→0.36) — mass action routes by affinity, kills the hairball
+[3] TRANSMISSION downstream ABCD collapses 1.0→0.43 as ΔΔG→4; coefficient d ln[Y]/d ΔΔG = −0.20 /kcal
+[5] MAPK demo    active ERK-complex fraction 1.0→0.29 as RAF:MEK ΔΔG→3
+```
+
+**The payoff — run on real data, the same physics reproduces the wall and names its cause:**
+```
+[4] SKEMPI (6,798 real measured ΔΔG): mass action SELF-BUFFERS. Median destabilizing mutation loses
+      87% of complex near Kd  →  but only 18% when [conc] = 100·Kd (saturated).
+[5] REACH: at cellular saturation the cascade collapses to an effective reach of ~2–3 hops
+      (fractional terminal loss 54% → 3% → ~0 by node 5–8) — MIRRORING the measured regulon decay 9.2×→2.1×→1.08×.
+```
+
+So the far-field decay we measured all session is **re-derived from first principles**: it is not topological dilution (an
+obligate chain near Kd reaches deep, 63% at node 8) — it is **per-step saturation-buffering**, because cellular complexes sit at
+[conc] ≫ Kd and are saturated, so mutations barely move them. This is the physical mechanism behind every "buffering" result in
+this project (bypass in metabolism, epistasis-saturation in Norman, RWR dilution).
+
+**The honest verdict (arguing with the idea):** the engine is *correct* and genuinely computes the transmission coefficient —
+but only where it's parameterizable, and that's the catch the user pre-named: (a) we have WT Kd + absolute concentrations for
+curated pathways and SKEMPI, not for all 191k PPI edges, so it's a **sub-network** engine, not whole-cell — it cannot itself
+break the *genome-wide* wall; (b) binding ≠ catalysis (no kcat for kinase steps); (c) it closes to the transcriptional far-field
+only through a *terminal TF's* near-field regulon — the same two-hop structure as the metabolic bridge. **Net: the right physics.
+It doesn't remove the wall; it explains it, and it delivers a validated mutation→known-pathway-output quantifier for the circuits
+we can parameterize** (variant/drug effect on MAPK, apoptosis, etc.) — which is a genuinely useful, honest deliverable.
