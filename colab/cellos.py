@@ -1698,8 +1698,10 @@ class CellKernel:
         RATE model (Δrate = |ΔTF-activity| x promoter Pol II x sign) -- the promoter sets the baseline rate, the TF modulates it.
         HONEST: a STRUCTURAL blast-radius / forward-reachability map (what is mechanistically connected and COULD move), not the
         quantitative dynamical cascade (measured wall). Enriched at the tight regulon layer, dilutes to ~chance through PPI/
-        pathways; rate DIRECTION is more reliable than rate MAGNITUDE (per-TF->target coefficient is unmeasured). Missing layers:
-        splicing, capping, poly-A, epigenetics. usage: propagate GENE [ddg_fold] [ddg_bind]"""
+        pathways; rate DIRECTION is more reliable than rate MAGNITUDE (per-TF->target coefficient is unmeasured). PRECISION FIX:
+        also RANKS the radius (composite = regulon x rate + RWR near-field) so real movers float to the top -- measured GATA1
+        top decile ~2.4x, P@10 ~12x base, beats degree/rate/RWR-alone, shuffle-significant; ranks the top but does not make the
+        far field precise. Missing layers: splicing, capping, poly-A, epigenetics. usage: propagate GENE [ddg_fold] [ddg_bind]"""
         import propagate as pr
         if not args:
             return "propagate GENE [ddg_fold] [ddg_bind]   — mutate a protein and flow forward through regulation->PPI->pathways"
@@ -1729,9 +1731,24 @@ class CellKernel:
                 out.append(f"       {r['target']:10s} promoter-rate {r['promoter_rate']:6.1f} -> transcription {arrow} (Δrate {r['delta_rate']:+.0f})")
         out += [f"  L2 PPI/complex : {P['L2_ppi_complex']['n']:5d} physical partners",
                 f"  L3 pathways    : {P['L3_pathways']['n_pathways']:5d} pathways hit, spanning {P['L3_pathways']['n_genes']} genes",
-                f"  L4 crosstalk   : {P['L4_crosstalk_pathways']['n']:5d} interconnected downstream pathways",
-                "  [STRUCTURAL blast-radius map of the POSSIBLE — enriched at the regulon, dilutes to ~chance through PPI/pathways.",
-                "   Rate DIRECTION > rate MAGNITUDE (per-TF->target coefficient unmeasured). Not the dynamical cascade (the wall).]"]
+                f"  L4 crosstalk   : {P['L4_crosstalk_pathways']['n']:5d} interconnected downstream pathways"]
+        # PRECISION FIX: rank the radius (composite = regulon x rate + RWR near-field) instead of a flat equal-prob set
+        W = getattr(self, "_prop_W", None)
+        if W is None:
+            try:
+                W = pr._transition(G); self._prop_W = W
+            except Exception:
+                W = None
+        if W is not None:
+            R = pr.rank_targets(gene, ddgf, ddgb, G=G, rate=rate, W=W, topn=10)
+            if "ranked" in R and R["ranked"]:
+                out.append("  RANKED (precision fix — top of the radius, composite score, most-likely movers first):")
+                line = ", ".join(f"{x['gene']}{'('+x['direction']+')' if x['direction'] not in ('', '?') else ''}"
+                                 for x in R["ranked"][:10])
+                out.append(f"     {line}")
+        out += ["  [flat radius = STRUCTURAL map of the POSSIBLE (enriched at regulon, ~chance through PPI/pathways). The RANKED",
+                "   score makes the TOP usable (GATA1: top decile ~2.4x, P@10 ~12x base, beats degree/rate/RWR-alone) but does NOT",
+                "   make the far field precise — that's the measured wall (missing edges to the secondary program). Not the cascade.]"]
         return "\n".join(out)
 
     def kinetics(self, args):

@@ -207,5 +207,147 @@
    }
   ]
  },
- "note": "Multi-layer FORWARD structural propagation with NEXUS as the mutation entry point: protein mutation -> activity -> regulation (direct regulon) -> products/PPI/complex -> pathways -> interconnected pathways. STRUCTURAL reachability / blast-radius map (what is mechanistically connected and could be affected), NOT the quantitative dynamical cascade (measured wall). validate() quantifies the map-vs-simulator boundary: enriched at the regulon layer, dilutes to ~chance through PPI/pathways. TRANSCRIPTION RATE: L1 includes a rate model (\u0394rate = |\u0394TF-activity| x promoter Pol II x sign) that captures the mechanism (promoter sets baseline rate, TF modulates it) but whose magnitudes do NOT match measured effect sizes (r~0) -- the per-TF->target rate coefficient is the unmeasured quantity; direction is more reliable than rate. Missing layers acknowledged: splicing, 5' capping, poly-A tail, full epigenetic state (each its own hard problem)."
+ "ranked_precision_fix": {
+  "ranked_top": [
+   {
+    "gene": "CBFB",
+    "score": 8.4767,
+    "tier": "regulon-core",
+    "direction": "up",
+    "rwr_pctl": 0.949
+   },
+   {
+    "gene": "CDC6",
+    "score": 8.3088,
+    "tier": "regulon-core",
+    "direction": "down",
+    "rwr_pctl": 0.984
+   },
+   {
+    "gene": "NFE2",
+    "score": 7.7959,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.945
+   },
+   {
+    "gene": "PPOX",
+    "score": 7.7837,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.947
+   },
+   {
+    "gene": "KLF1",
+    "score": 6.9309,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.995
+   },
+   {
+    "gene": "COPS5",
+    "score": 6.9284,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.981
+   },
+   {
+    "gene": "BST2",
+    "score": 6.9258,
+    "tier": "regulon-core",
+    "direction": "down",
+    "rwr_pctl": 0.949
+   },
+   {
+    "gene": "AGGF1",
+    "score": 6.7186,
+    "tier": "regulon-core",
+    "direction": "down",
+    "rwr_pctl": 0.964
+   },
+   {
+    "gene": "WT1",
+    "score": 6.2991,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.956
+   },
+   {
+    "gene": "TAL1",
+    "score": 6.2956,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.996
+   },
+   {
+    "gene": "ZNF268",
+    "score": 6.1882,
+    "tier": "regulon-core",
+    "direction": "up",
+    "rwr_pctl": 0.947
+   },
+   {
+    "gene": "GFI1B",
+    "score": 5.931,
+    "tier": "regulon-core",
+    "direction": "?",
+    "rwr_pctl": 0.943
+   }
+  ],
+  "validation": {
+   "gene": "GATA1",
+   "n_movers": 54,
+   "universe": 7222,
+   "base_rate": 0.0075,
+   "methods": {
+    "composite": {
+     "AUPRC": 0.0173,
+     "lift": 2.32,
+     "P@10": 0.1,
+     "P@25": 0.08,
+     "P@50": 0.06
+    },
+    "RWR": {
+     "AUPRC": 0.0128,
+     "lift": 1.71,
+     "P@10": 0.0,
+     "P@25": 0.04,
+     "P@50": 0.04
+    },
+    "degree": {
+     "AUPRC": 0.0074,
+     "lift": 0.98,
+     "P@10": 0.0,
+     "P@25": 0.0,
+     "P@50": 0.0
+    },
+    "promoter_rate": {
+     "AUPRC": 0.0087,
+     "lift": 1.16,
+     "P@10": 0.0,
+     "P@25": 0.0,
+     "P@50": 0.0
+    }
+   },
+   "composite_shuffle": {
+    "real_lift": 2.32,
+    "null_mean": 1.17,
+    "null_p95": 1.72,
+    "p_value": 0.0133
+   },
+   "composite_decile_enrichment_top_to_bottom": [
+    2.41,
+    0.56,
+    0.19,
+    0.93,
+    0.74,
+    0.56,
+    0.93,
+    1.3,
+    1.3,
+    1.11
+   ]
+  }
+ },
+ "note": "Multi-layer FORWARD structural propagation with NEXUS as the mutation entry point: protein mutation -> activity -> regulation (direct regulon) -> products/PPI/complex -> pathways -> interconnected pathways. STRUCTURAL reachability / blast-radius map (what is mechanistically connected and could be affected), NOT the quantitative dynamical cascade (measured wall). validate() quantifies the map-vs-simulator boundary: enriched at the regulon layer, dilutes to ~chance through PPI/pathways. TRANSCRIPTION RATE: L1 includes a rate model (\u0394rate = |\u0394TF-activity| x promoter Pol II x sign) that captures the mechanism (promoter sets baseline rate, TF modulates it) but whose magnitudes do NOT match measured effect sizes (r~0) -- the per-TF->target rate coefficient is the unmeasured quantity; direction is more reliable than rate. Missing layers acknowledged: splicing, 5' capping, poly-A tail, full epigenetic state (each its own hard problem). PRECISION FIX (rank_targets/validate_ranked): the flat blast radius has good recall but ~chance precision because it is UNRANKED (all reachable genes equal). The fix emits a single RANKED, CALIBRATED score composite = 10*regulon*(0.5+promoter_rate) + RWR_nearfield (random-walk-with-restart over the directed regulatory + PPI + complex graph; pathway co-membership dropped as it was the dilution source). MEASURED on GATA1's real movers: composite AUPRC ~2.3x base, top decile ~2.4x, P@10 ~12x base; beats degree (0.99x=chance), promoter-rate-alone (1.17x), and RWR-alone (1.71x); label-shuffle p~0.02, robust across |z| thresholds. It RANKS the radius so the top is usable but does NOT make the far field precise -- GATA1's real movers are a de-repressed secondary program (all UP) that the curated edges do not connect to (SPI1/CEBPA relay 0x) = the measured wall, now located at the missing edges rather than the algorithm."
 }

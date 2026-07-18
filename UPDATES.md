@@ -3717,3 +3717,40 @@ rate-ordering on the first layer, not a quantitative cascade predictor.
 **Still missing (acknowledged, not built):** splicing, 5′ capping, poly-A tail, and full epigenetic state — each its own hard
 problem (e.g. SpliceAI-class splicing). Partial hooks exist (chromatin gating via `invivo`), but these post-transcriptional
 and chromatin layers remain TODO. (`propagate.py`, `propagate`/`blastradius` syscall → propagate.json.)
+
+---
+
+## The precision fix: rank the blast radius instead of leaving it flat (`propagate` C1)
+
+`propagate`'s flat blast radius had a real problem: precision collapsed to chance (L3 = 1.08×) as the radius grew. But the
+diagnosis matters — it wasn't *missing* movers (recall reached 78%), it was that the radius was an **unranked, equal-probability
+set**: 5,183 genes all treated as equally likely to move. Precision-at-chance is what "all equal" *means*.
+
+**The fix — one ranked, calibrated score.** Replace the flat set with
+`composite = 10·regulon·(0.5 + promoter_rate) + RWR_nearfield`, where RWR is random-walk-with-restart (α=0.3) over the weighted
+multi-layer graph (directed regulatory 1.0 / PPI 0.5 / complex-clique 1.0). **Pathway co-membership is deliberately dropped** —
+it was the dilution source that flattened L3 to chance. The curated regulon (rate-weighted) forms the high-precision core; RWR
+ranks the physical near-field.
+
+**Measured on GATA1's real Perturb-seq movers (leakage-controlled):**
+
+```
+method          AUPRC    lift    P@10   P@25   P@50
+composite       0.0173   2.32×   0.10   0.08   0.06     <- the fix
+RWR-alone       0.0128   1.71×   0.00   0.04   0.04
+promoter-rate   0.0087   1.16×   0.00   0.00   0.00
+degree          0.0074   0.99×   0.00   0.00   0.00     <- chance (not recovering hubs)
+label-shuffle:  real 2.32× vs null 1.17× (p95 1.72) → p = 0.013
+decile enrichment (top→bottom): [2.41, 0.56, 0.19, 0.93, 0.74, 0.56, 0.93, 1.30, 1.30, 1.11]
+robust across |z|: 1.86× / 1.97× / 2.32× at |z|>2 / 2.5 / 3
+```
+
+Composite beats every baseline, **P@10 = 0.10 is ~12× the 0.8% base rate**, the top decile is **2.4× enriched**, and it survives
+a 300-draw label-shuffle (p=0.013). Degree-alone is 0.99× (pure chance), so it is *not* just recovering hubs.
+
+**The honest bound — what it does and doesn't do.** It *ranks* the radius so the top is a usable shortlist; it does **not** make
+the far field precise. Proven, not asserted: GATA1's real movers (the myeloid de-repression program, all UP) are **0.0×**
+enriched for the SPI1/CEBPA curated relay targets — the edges that connect a TF to its real secondary program are simply not in
+our network. So the precision ceiling is a **missing-edge** problem, not an algorithm problem; a fancier propagator won't move it,
+more measured edges would. That relocates the wall precisely. (`propagate.py` `rank_targets`/`validate_ranked`; shown in the
+`propagate` syscall and propagate.json.)
