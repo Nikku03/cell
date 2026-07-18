@@ -4187,3 +4187,40 @@ Honest ceiling note: even with these, "predict which specific genes move for an 
 biological buffering and stochasticity mean the ~9× responsiveness prior may be near the achievable far-field ceiling. The
 realistic win is *measurable G-specific signal above the 1× mechanism floor*, which combinatorial and time-course data are where
 it demonstrably exists.
+
+---
+
+## Getting the right data: combinatorial double-perturbation (Norman 2019 K562) — the wall reproduces one level up
+
+The learning curve proved single-KO data can't break the wall, so I fetched the *kind* the diagnosis pointed to:
+**Norman & Weissman 2019** combinatorial CRISPRa Perturb-seq (K562 — our own context), 699 MB from scPerturb/Zenodo, 111k
+cells, 105 singles + 131 doubles. The test measures the buffering/interaction signal single-KO endpoints structurally cannot
+see: **epistasis = double response − additive(sum of singles)** — and whether it's predictable for *held-out pairs*.
+(`colab/norman_epistasis.py`.)
+
+```
+additive (sum of singles) predicts the double:     r = 0.858
+epistasis variance fraction (non-additive):        46%
+held-out epistasis prediction (GroupKFold by pair):
+   saturation-only  (from additive magnitude)      r = 0.45
+   + the two singles' per-gene effects             r = 0.459
+   + relational pair features (PPI/reg/pathway)    r = 0.45
+   => PAIR-SPECIFIC gain over generic saturation   −0.001
+```
+
+**The wall reproduces exactly, one level up.** Epistasis is large (46%) and predictable (r=0.45) — but the control shows it's
+**~entirely the generic saturation nonlinearity** (a gene strongly moved by both singles sub-adds in the double). Pair identity —
+*which* two genes, and whether they're connected/co-pathway in the graph — adds essentially **nothing** on held-out pairs
+(+0.009 from the singles, −0.001 from relational features). This is the **same generic-predictable / specific-unpredictable
+split** as single-KO: there, the generic *responsiveness* prior predicted and the *G-specific* mechanism was chance; here, the
+generic *saturation* nonlinearity predicts and the *pair-specific* interaction is chance.
+
+**So what would break the wall — the honest, now-measured answer:** the missing quantity is a *specific* coefficient (which
+gene→which gene, which pair→which interaction), and across every probe — single-KO scale, equivariant tensor fields, metabolic
+mass-balance, and now combinatorial data in-context — the **specific** signal fails to generalize while the **generic magnitude**
+signal is easy. The far-field wall is not a data-volume problem and not (only) a data-*kind* problem within transcriptomics; it is
+that gene-identity-specific transmission generalizes poorly, period. **Honest caveats:** CRISPRa (activation) doubles, only 131
+pairs, a coarse 3-feature relational set; the GEARS/GI literature reports *modest* above-chance pair-level GI prediction with more
+pairs and richer features — so this bounds the claim rather than closing it. The genuinely different lever left untested here is
+**time-resolved** data (4sU/nascent-RNA), which de-confounds direct from indirect rather than adding more endpoints — that remains
+the one measurement type this project has never been able to source.

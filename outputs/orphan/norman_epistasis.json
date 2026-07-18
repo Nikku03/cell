@@ -1,0 +1,13 @@
+{
+ "n_singles": 105,
+ "n_doubles": 131,
+ "additive_predicts_double_r": 0.858,
+ "epistasis_variance_fraction": 0.461,
+ "heldout_saturation_only_r": 0.45,
+ "heldout_plus_singles_r": 0.459,
+ "heldout_plus_relational_r": 0.45,
+ "heldout_epistasis_pred_r": 0.45,
+ "pair_specific_gain": -0.001,
+ "verdict": "PARTIAL -- epistasis is real (46%) and predictable held-out (r=0.45), BUT almost all of it is the GENERIC SATURATION nonlinearity (additive-only control r=0.45; pair-specific gain only -0.001). So combinatorial data reveals a predictable nonlinearity, but little PAIR-SPECIFIC transmission -- the responsiveness-prior story repeating one level up. A real but limited win.",
+ "note": "Combinatorial (double-perturbation) test of what would break the far-field wall, on Norman&Weissman 2019 K562 (scPerturb). Epistasis = double response - additive(sum of singles) = the buffering/transmission signal single-KO endpoints cannot see. Reports how non-additive doubles are and whether per-gene epistasis is predictable for HELD-OUT pairs (GroupKFold). Directly tests whether the data KIND the wall_diagnosis learning curve pointed to actually recovers the missing coefficient."
+}
