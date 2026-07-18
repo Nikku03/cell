@@ -4121,3 +4121,34 @@ honest: steady-state FBA gives fluxes, not concentration transients ("substrate 
 have; Point 2 chromatin-imputation needs multi-cell-type paired data and is partly circular). The three built points all hit the
 **same two-headed wall from different directions — pan-tissue/generic wiring that doesn't transfer to K562, and Perturb-seq
 footprints too sparse to supervise or validate against.** That convergence, measured three independent ways, is the finding.
+
+---
+
+## "Replace the Random Walk (Stage 4) with a Continuous Equivariant Tensor Field" — built and measured
+
+Directly testing the proposal: signal shouldn't diffuse as an equal scalar down every edge — carry a directional/tensor field
+instead. So each gene is a point in a manufactured continuous geometry (randomized-SVD spectral embedding of the reg+PPI graph —
+there is **no physical 3D substrate**: `loops3d` is 767 anchors, no Hi-C, so E(3)-equivariance is literally undefined and the
+geometry is *learned*). The knockout seeds a scalar RWR field **and** an E(d)-equivariant vector field
+`v_i = Σ_j K_ij h_j (x_j − x_i)`; the rotation-invariant readouts `‖v‖` and alignment go into the **same xgboost, GroupKFold by
+knockout** as `cascade_all`. Parameter-free operator on purpose (a trained net can silently relearn the prior — and a torch EGNN
+was tried first but sparse-autograd **segfaulted in-sandbox**, so the fixed operator is the robust equivalent).
+(`colab/tensorfield_cascade.py`.)
+
+```
+model (held-out, 88 knockouts, base 6.2%)          AUPRC    lift
+responsiveness prior only                          0.5542   8.87×   (control)
+RWR scalar mechanism  (the thing being replaced)   0.0637   1.02×   ← the wall
+TENSOR FIELD mechanism (‖v‖ + alignment)           0.0699   1.12×   ← the replacement
+RWR + tensor field (mechanism)                     0.0841   1.35×
+FULL (+ prior)                                     0.5588   8.94×
+```
+
+**Honest negative.** The continuous equivariant tensor field lands at the **same chance-level wall as the scalar RWR** (1.12× vs
+1.02×). The directional/rotation-equivariant information carries only a *sliver* (combined 1.35×), a rounding error next to the
+responsiveness prior (8.87×), and adding it to the full model moves nothing (0.559 vs 0.55). This is the **decisive** evidence
+that Stage 4's far-field wall is **informational, not representational**: the missing quantity is the per-edge *transmission
+coefficient*, which is not in the graph geometry at all — so no propagator (scalar, vector, or tensor; learned or fixed;
+equivariant or not) can manufacture it. Consistent with the earlier learned-GNN head-to-heads (R-GCN / GraphSAGE never beat fixed
+propagation for the far-field). Caveat kept explicit: with no physical 3D, the equivariance is over a *manufactured* embedding, so
+this fairly tests richer geometric/tensor propagation — not physical E(3) symmetry, which would need Hi-C coordinates we don't have.
