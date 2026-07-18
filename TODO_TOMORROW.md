@@ -4,6 +4,11 @@ Everything we said we'd add, scoped honestly. Each item: **what / why / how (con
 Ordered by leverage. The through-line rule stays the same as the whole project: build it, measure it against ground
 truth, and name the wall when we hit one — don't fake a cascade.
 
+> **Status update (done today):** C1 ranked/calibrated `propagate` — **DONE** (2.32× AUPRC, committed). A1 splicing — **DONE**
+> (real SpliceAI in torch, `splice` syscall, validated on HBB). The first-principles mechanism for every remaining layer
+> (capping, poly-A/APA, mRNA-decay, epigenetics) is now derived and PMID-grounded in **`FIRST_PRINCIPLES.md`** — the "how"
+> sections below are summarized; that doc is the build spec.
+
 ---
 
 ## A. Post-transcriptional layers (your explicit list: splicing, capping, tail)
@@ -11,16 +16,12 @@ truth, and name the wall when we hit one — don't fake a cascade.
 The regulation stack currently stops at *transcription* (a TF sets a gene's rate). A real gene product goes
 **pre-mRNA → spliced → capped → cleaved+polyadenylated → exported → translated → degraded**. Four missing stages:
 
-### A1. Splicing — variant → isoform
-- **Why:** a mutation can be silent for the protein sequence yet destroy a splice site (or create one), changing the
-  isoform entirely. `propagate`/NEXUS today see coding ΔΔG only; they're blind to splicing.
-- **How:** SpliceAI-class model. Two honest routes: (a) run the published **SpliceAI** (donor/acceptor probability from
-  ±5kb sequence) on a variant — pretrained weights exist, no training needed; (b) if weights aren't fetchable, a
-  MaxEntScan-style 5′/3′ splice-site strength delta from the local sequence (weaker, but self-contained). Wire the output
-  as a new NEXUS entry mode: `splice_delta → truncation/exon-skip → activity 0` (nonsense-mediated decay ≈ LOF).
-- **Ceiling (honest):** SpliceAI is strong on *canonical* splice-disrupting variants (published auPRC ~0.9 on ClinVar
-  splice variants). It is weak on deep-intronic / tissue-specific / weak-effect splicing. We can predict *disruption*
-  well; we cannot predict the *quantitative isoform ratio shift* in K562 without RNA-seq junction counts.
+### A1. Splicing — variant → isoform  ✅ DONE
+- **Built:** the real pretrained **SpliceAI** re-hosted in torch (`spliceai_torch.py`, no TensorFlow) + wired into NEXUS
+  (`splice_nexus.py`, `splice` syscall): variant → SpliceAI delta → activity (1−delta) → feeds `propagate` as LOF.
+  Validated on HBB (exon-2 junctions predicted exactly; donor GT disruption → delta 0.999 → activity 0.001; mid-exon → ~0).
+- **Ceiling (confirmed):** strong on *canonical* splice-disrupting variants; weak on deep-intronic/tissue-specific; predicts
+  splice-site *usage* change, not the exact isoform ratio (needs RNA-seq junctions). See `FIRST_PRINCIPLES.md`.
 
 ### A2. 5′ capping — m7G cap state
 - **Why:** capping gates stability + translation initiation. Uncapped mRNA is degraded; cap methylation (CMTR1) tunes
@@ -77,7 +78,7 @@ The regulation stack currently stops at *transcription* (a TF sets a gene's rate
 
 ## C. Precision & dynamics (today's thread)
 
-### C1. Ranked + calibrated `propagate` (the precision fix) — **build pending adversarial-verify verdict**
+### C1. Ranked + calibrated `propagate` (the precision fix) — ✅ DONE (committed)
 - **What:** replace the flat blast-radius set (5,183 genes @ ~chance precision) with a single **ranked, calibrated**
   propagation score: `composite = 10·regulon·(0.5+promoter_rate) + RWR_nearfield`, RWR over the weighted multi-layer
   graph (reg 1.0 / PPI 0.5 / complex 1.0 / pathway 0.0).
