@@ -3922,3 +3922,31 @@ mechanism): static state is **knowable** (a measured labeling); writer→direct-
 bistable and hysteretic (losing one writer often does nothing; surviving marks re-propagate) and writers are redundant
 (EZH1/EZH2, DNMT3A/3B). A real static-state + first-order-writer engine, stopped honestly at the wall. (`colab/epigenetics.py`;
 `epi` syscall.)
+
+---
+
+## Protein abundance — closing the lifecycle to protein, and testing the knockout-importance claim
+
+Following the chain [protein] = k_translation · [mRNA] / k_protein_decay: does modeling **translation (production) + protein
+degradation** beat the mRNA-level-alone baseline? Target = measured protein `ppm`; base = measured K562 mRNA (RNAdecayCafe RPKM);
+translation features (codon composition/optimality, 5′UTR len/uORF/GC, CDS len) + degradation features (protein length, N-end-rule
+class, PEST/disorder/hydrophobic fractions from the translated CDS). Chromosome-held-out, 7,515 genes.
+
+```
+model               R2      pearson
+mRNA-only          0.352    0.594
++ translation      0.501    0.708     <- +0.11: production dominates
++ degradation      0.372    0.610     <- +0.02: protein decay barely helps
+full (XGBoost)     0.538    0.734
+```
+
+**The production half of the chain works (r 0.59 → 0.73); the protein-decay half barely adds (+0.02).** That's the honest, and
+biologically correct, asymmetry — Schwanhäusser 2011: translation is the bigger determinant of protein level, and protein
+half-life is degron/context-specific, not sequence-predictable (unlike mRNA half-life). So the abundance lifecycle now closes:
+**transcription rate → mRNA (r~0.57) → protein (r~0.73)**, with absolute concentration coming from measured `ppm` where needed.
+
+**Step 5 — does abundance predict a knockout's importance?** Tested directly: protein abundance vs essentiality (dep_frac)
+**Spearman +0.35** (essential proteins are ~40× more abundant, median log 1.03 vs −0.59), **on par with network degree (+0.37)**.
+So abundance *is* a modest, real predictor of a knockout's **seed** importance — better than "weak." But it ranks the seed, not
+the genome-wide response; "how much effect to the whole cell" (the cascade) stays the measured wall. (`colab/protein_abundance.py`;
+`pabund` syscall.)

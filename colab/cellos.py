@@ -1826,6 +1826,31 @@ class CellKernel:
         out.append("  [site strength + variant DIRECTION reliable; cell-type APA ratio + tail-length->half-life need 3'-seq/TAIL-seq]")
         return "\n".join(out)
 
+    def pabund(self, args):
+        """PROTEIN ABUNDANCE (protein_abundance.py): the missing lifecycle segment mRNA-level -> PROTEIN concentration
+        ([protein]=k_translation*[mRNA]/k_protein_decay), tested held-out vs measured ppm. Modeling TRANSLATION on top of
+        measured mRNA lifts prediction from r 0.59 (mRNA-alone) to 0.73 (full) -- translation dominates (+0.11), protein
+        degradation adds little (+0.02, it's degron/context-specific not sequence-predictable), matching Schwanhausser 2011.
+        Also: protein abundance predicts a knockout's essentiality at spearman ~0.35 (essential proteins ~40x more abundant),
+        on par with network degree -- ranks the SEED's importance, not the genome-wide cascade (the wall). usage: pabund"""
+        import json as _j
+        try:
+            r = _j.load(open("outputs/orphan/protein_abundance.json"))
+        except OSError:
+            return "pabund: run colab/protein_abundance.py first (needs GENCODE + RNAdecayCafe + ppm)."
+        out = [f"pabund — predict measured protein abundance log10(ppm) from mRNA + translation + degradation ({r['n_genes']} genes, chrom-held-out):"]
+        for k in ["mrna_only", "mrna+translation", "mrna+degradation", "full_xgboost"]:
+            m = r.get(k, {})
+            if "R2" in m:
+                out.append(f"    {k:18s} R2 {m['R2']:.3f}  pearson {m['pearson_r']:.3f}")
+        out.append("  -> translation (production) dominates (+0.11 over mRNA); protein DECAY adds little (+0.02, degron/context-specific).")
+        ec = r["essentiality_vs_abundance"]
+        out.append(f"  knockout importance: abundance vs essentiality spearman {ec['abundance_vs_dep_frac_spearman']} "
+                   f"(essential proteins log-abundance {ec['median_log_abundance_essential']} vs {ec['median_log_abundance_nonessential']}); "
+                   f"ranks the seed, not the cascade")
+        out.append("  [closes the abundance lifecycle: rate -> mRNA (r~0.57) -> protein (r~0.73). Absolute [protein] uses measured ppm]")
+        return "\n".join(out)
+
     def epi(self, args):
         """EPIGENETICS (layer B; epigenetics.py, FIRST_PRINCIPLES.md sec4). (a) STATIC ChromHMM-style chromatin state per
         promoter from 6 ENCODE K562 marks (H3K4me3/me1, H3K27ac, H3K27me3, H3K9me3, DNase at TSS+-2kb) -- VALIDATED: state
@@ -2674,6 +2699,9 @@ class CellKernel:
   epi [GENE|writer W]  EPIGENETICS (B): ChromHMM-style chromatin state per promoter from 6 ENCODE K562 marks -- state predicts
                        expression (bivalent ~100x lower RPKM). 'epi writer EZH2' = writer LoF -> its H3K27me3 loci de-repress
                        (VALIDATED vs Perturb-seq, EZH2 5.3x > controls). Static state knowable; genome-wide cascade = the wall
+  pabund               PROTEIN ABUNDANCE: [protein]=k_transl*[mRNA]/k_decay, held-out vs measured ppm. Modeling translation
+                       lifts r 0.59 (mRNA) -> 0.73 (full); translation dominates, protein-decay adds little. Closes the
+                       abundance lifecycle (rate->mRNA r0.57 ->protein r0.73). Abundance predicts essentiality ~0.35 (seed, not cascade)
   help / exit"""
 
 
@@ -2734,6 +2762,7 @@ class CellShell:
             if cmd in ("polya", "polyadenylation", "apa"): return k.polya(args)
             if cmd in ("halflife", "decay", "mrna_decay"): return k.halflife(args)
             if cmd in ("epi", "epigenetics", "chromatin"): return k.epi(args)
+            if cmd in ("pabund", "protein_abundance", "concentration"): return k.pabund(args)
             if cmd in ("knockout", "ko"): return k.knockout(args)
             if cmd in ("protein", "degrade"): return k.protein(args)
             if cmd in ("cascade", "influence", "trace"): return k.cascade(args)
