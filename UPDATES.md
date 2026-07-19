@@ -4467,3 +4467,54 @@ the generic responsiveness prior — reached by breadth — remains. (Even step 
 earlier finding that the curated regulon predicts *which* genes move ~6× far better than the *direction* they move.)
 
 ---
+
+## Rebuilding the graph as a typed causal reaction network (CellOS 2.0, step 1) — SIGNOR + ComplexPortal + Reactome
+
+The directive: stop drawing flat `A — B` lines and rebuild every interaction as a **typed reaction** — `source --(effect / mechanism /
+residue)--> target` — where the effect is signed *and* typed as activity-change (signaling state), quantity-change (transcription),
+or complex-formation. Fetched and parsed three curated sources: **SIGNOR 2.0** (43k signed causal relations with mechanism, residue,
+and confidence), **ComplexPortal** (2,498 named macromolecular *products*, each with GO function), and **Reactome** (58 MB
+interactions). Built 24,210 typed protein→protein causal edges mapped to our gene universe, then verified against K562 Perturb-seq.
+
+```
+COVERAGE — the typed causal core:
+  SIGNOR protein→protein causal edges   24,210   {quantity 5,765 · activity 7,521 · complex 5,394 · other 5,530}
+  ComplexPortal named products           2,498   (all with GO function)
+  vs current graph: 612,133 bulk-reg (0.97× NOISE) + 191,447 flat PPI; trustworthy core was 9,396 TRRUST edges
+
+EXAMPLE TYPED REACTIONS (signed / mechanism / residue):
+  PTPN1 --−/dephosphorylation@Tyr1190--> INSR
+  PRKCA --+/phosphorylation@Thr159--> SRF
+
+VERIFICATION vs Perturb-seq:
+  T3 signaling A→TF → TF's regulon      7.62×   (n=1,250)   ← the interesting positive
+     shuffled-KO generic control        1.91×   (sd 1.0, 30 shuffles)   → bridge ~4× above generic, several sd out
+     direct TF→its regulon (baseline)   6.32×
+  T2 generic causal hop-2 reach         1.79×   ← does not compound
+  T1 per-class direct edge verify       underpowered (n=69/136 intersect the KO set) — 0.0× is small-N noise, not a result
+```
+
+**Two clean results and one honest limitation:**
+
+- **Coverage win (real, needs no wall to fall).** The signed/typed/residue-resolved causal edges plus named products-with-function
+  *replace* the 612k bulk-inferred reg edges (measured at 0.97× = chance) and upgrade flat PPI lines into **directional reactions
+  carrying a residue**. A mutation now lands on a specific residue of a specific reaction — which feeds NEXUS directly. The
+  trustworthy, mutation-addressable fraction of the graph goes up.
+- **The signaling→terminal-TF→regulon bridge — the positive that beat my prediction.** I expected composing a signaling edge with a
+  regulon to be generic-dominated. It wasn't: **7.62× vs a 30-shuffle generic control of 1.91× (±1.0)** — ~4× above the generic
+  floor, several sd out, and this is *after* excluding any target A already regulates directly. So it's a true 2-step
+  signaling→transcription bridge, and it's a genuine **capability extension**: you can now predict the transcriptional footprint of
+  knocking out a *signaling protein* (a kinase/phosphatase has no regulon of its own) by routing through its terminal TF — something
+  the flat regulon alone could not do. Bounded, though: near-field (2 hops, terminal-TF-gated), **descriptive** (needs A's curated
+  annotation), and it does not compound (generic hop-2 reach was 1.79×).
+- **Honest limitation.** The direct per-class edge verification is underpowered — only 69/136 SIGNOR transcriptional/activity edges
+  have a source that is also CRISPR-knocked-out here with a measured target. Those 0.0× readings are small-N noise, *not* evidence the
+  classes fail.
+
+**Bottom line:** the rebuild is worth doing and is now started — it swaps 612k noise edges for a signed, typed, residue-level causal
+core (mutation-addressable, a real signaling layer, an explicit universal-biochemistry / cell-specific-mask split), and it *extends*
+the trustworthy near-field one signaling hop upstream. As predicted, it **explains** the far-field wall rather than breaking it: the
+causal edges carry sign and mechanism, not the per-edge magnitude, so far-field mRNA prediction past the terminal TF remains a
+measurement gap. (`reaction_graph.py` → reaction_graph.json.)
+
+---
