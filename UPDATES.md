@@ -4357,3 +4357,33 @@ Q2  held-out AUPRC lift (chance = 1.0×):
 So combining "how fast" with everything makes a genuine difference on the **generic axis** (a cleaner prior + the near-field
 time-stamp from kinetics_ode) but does **not** break the far-field wall. The instinct was partly right — it adds real signal —
 it just lands on responsiveness, not transmission.
+
+---
+
+## Boosting the interconnections — weights + conditions + rates on the edges (controlled honestly)
+
+The directive: enrich the network's interconnections with edge WEIGHTS, CONDITIONS (when an edge fires), and RATES (how fast) —
+the exact missing ingredients of the transmission coefficient. Built (`colab/cond_network.py`): weighted edges (reg-sign,
+coexpression strength, co-dependency strength, signaling), every edge gated on BOTH endpoints being expressed in K562 (removing
+edges that can't fire), and each target annotated with its measured mRNA half-life (response rate). Weighted-RWR propagation vs
+the plain binary graph, held-out cascade, 25k pairs, 237 knockouts.
+
+```
+plain binary graph (reg + RWR)                          1.01×
+enriched conditional-dynamic (all features)             3.64×   ← looks like a boost
+  → G-SPECIFIC relational only (cond-RWR/coexpr/codep)   1.12×   ← the real transmission test
+  → GENERIC per-gene only (half-life/expressed)          3.62×   ← what actually drives it
+responsiveness prior only                               8.65×
+```
+
+**The boost is generic, not transmission — and the decomposition control is what proved it.** Enriching the edges appears to lift
+the mechanism 1.0×→3.6×, but almost all of that is the generic per-gene features (half-life + expressed = 3.62× on their own,
+consistent with `kinetics_prior`). The purely G-specific relational part — the conditioned, weighted edges plus coexpression and
+co-dependency — gives only **1.12×**, essentially the plain graph. So weighting/conditioning/rating the interconnections sharpens
+edge quality and re-imports the generic half-life prior, but it does **not** manufacture the per-edge *transmission coefficient*.
+
+This is the same lesson every enrichment has taught, now controlled directly on the specific "rates + conditions" idea: **the
+far-field wall is a measurement gap (the unmeasured per-edge transmission coefficient), not a graph-richness gap.** No amount of
+weighting, conditioning, or rate-annotating the edges we have supplies a number that was never measured — you can only *read* the
+transmission coefficient from a perturbation experiment, not compute it from a richer static graph. The honest control (splitting
+G-specific from generic) is what keeps this from looking like a win it isn't.
