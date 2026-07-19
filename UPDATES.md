@@ -4326,3 +4326,34 @@ APPLICATION — time-resolved near-field (GATA1 KO): its regulon (9.2×, predict
 but *when*. **Honest limit, unchanged:** this is the DYNAMICS of each gene given a synthesis change; it does **not** supply the
 TRANSMISSION (which genes' k_syn a knockout actually changes = the far-field wall). It's resting-cell kinetics, not a perturbation
 time-course — so it upgrades the near-field into a time-resolved readout, and cannot by itself break the far field.
+
+---
+
+## Does "how fast" (half-life), combined with everything, make a difference? — tested
+
+The intuition: maybe combining the measured response speed (half-life) with the rest moves the cascade. Tested in the exact
+cascade_all held-out protocol (`colab/kinetics_prior.py`), 20,351 (G,J) pairs, 237 knockouts.
+
+```
+Q1  does half-life EXPLAIN the responsiveness prior?   Spearman(half-life, movefreq) = 0.007  → NO, independent axes
+Q2  held-out AUPRC lift (chance = 1.0×):
+      mechanism only (reg/ppi)                 0.99×   (transmission = chance, as always)
+      half-life / k_deg only (measured)        4.04×   ← its own real, non-leaky generic predictor
+      movefreq prior only (leaky)              8.30×
+      mechanism + kinetics                     4.32×   ≈ kinetics-alone → mechanism adds ~nothing
+      kinetics replaces movefreq (no leak)     5.92×
+      full (everything)                        8.64×   (+0.34× over movefreq)
+```
+
+**A real but bounded difference — exactly where theory says it should land.** Three findings:
+1. Half-life does **not** explain the responsiveness prior (correlation ~0). "Twitchy" and "short-lived" are *independent* axes —
+   that part of the intuition is wrong.
+2. Half-life **is** its own measured, **non-leaky** generic predictor of movers (4.04× held-out) — weaker than the leaky
+   movefreq prior (8.3×) but leak-free, so it's an honest prior for a genuinely-new knockout where movefreq can't be computed,
+   and it adds a small real gain stacked on top (full 8.64× vs 8.3×).
+3. It adds **no transmission**: mechanism+kinetics (4.32×) ≈ kinetics-alone (4.04×); the mechanism (which genes X *hits*) stays
+   chance. Half-life is a property of the *target gene J*, not of the *G→J edge* — the wrong side of the equation for the wall.
+
+So combining "how fast" with everything makes a genuine difference on the **generic axis** (a cleaner prior + the near-field
+time-stamp from kinetics_ode) but does **not** break the far-field wall. The instinct was partly right — it adds real signal —
+it just lands on responsiveness, not transmission.
