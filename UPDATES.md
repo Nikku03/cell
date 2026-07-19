@@ -4424,3 +4424,46 @@ not through physical/membership structure — a complex member's knockout doesn'
 the "how does a KO affect the network" answer is: through the curated regulon, and there it's real (6×); everywhere else the
 labelled structure describes who-groups-with-whom, not who-moves-when-you-knock-out. This both **verifies** the network (curated
 regulon = real; bulk-inferred reg = noise) and shows which layer actually carries KO transmission.
+
+## Doing it step by step — one validated hop, re-lay-out the graph, next hop (where does the chain die?)
+
+The idea: stop predicting the far field all at once. Take **one** validated near-field hop — the curated regulon (~6×) — then
+**re-lay-out the graph**: which of the predicted movers are themselves TFs ("carriers")? Seed the *next* hop from only those,
+and iterate. Score at **every** hop so you can watch exactly where a chained-one-step cascade holds and where it dies. Built
+(`colab/iterative_cascade.py`): discrete, **sign-aware** (compose activation/repression signs down the chain), **TF-gated** (only
+carriers seed the next step). Pooled over the 24 K562 TF knockouts that have a curated TRRUST regulon (17 reach scoreable steps),
+scored against Perturb-seq.
+
+```
+step   new pred  correct  precision   ENRICH  sign acc  cum recall
+step1     3          2       2.1%      6.63×     50%       0.2%     ← the validated regulon (small N)
+step2    26          3       0.4%      2.83×     67%       0.7%
+step3   164         21       0.6%      3.78×     52%      15.8%
+step4   370         27       0.5%      3.12×     44%      31.8%     ← sign now worse than a coin flip
+```
+
+**It does not die the naive way I expected (a clean monotonic decay). Two things happen at once, and together they *are* the wall:**
+
+- **(A) Precision collapses after hop 1 and never recovers.** Step 1 (the direct curated regulon) is 2.1% correct at 6.63×
+  enrichment — real, but tiny in absolute terms (2 pooled hits). Steps 2–4 sit at the ~0.5% floor. Only the first hop is
+  meaningfully better than a coin toss about *which* genes move.
+- **(B) Enrichment does *not* decay — it plateaus at ~3×. But that plateau is the responsiveness prior re-entering by breadth.**
+  By step 3–4 the TF-gated fan-out has ballooned to a median of 164→370 predictions and simply *reaches the generically-responsive
+  hub genes* — the ones that move under almost any knockout. The tells that it's generic, not transmission: precision is pinned at
+  the floor, and **sign accuracy drifts to chance/below** (50→67→52→**44%** — worse than a coin flip by step 4), so the composed
+  up/down direction is no longer preserved.
+- **(C) Cumulative recall reaches 32% by step 4 — but only by carpet-bombing.** You must emit ~370 predictions to recover that
+  fraction. Recall is available *only* at <1% precision — the wall stated as a trade-off.
+
+**The GATA1 layout makes it concrete:** step 1 → 56 predicted (14 are TFs, carry forward); step 2 → 204 (35 carriers); step 3 →
+806 (146 carriers). The prediction set balloons via carriers while the confident signal is already gone.
+
+**Bottom line:** doing it step-by-step and re-laying-out the graph each hop is **more honest and interpretable than diffuse RWR** —
+you can point to exactly which TF carries what and watch confidence evaporate hop by hop — and it confirms the wall from a new
+angle. The **only** genuinely confident hop is step 1, the validated near-field regulon. Every subsequent hop is either
+precise-but-negligible or broad-but-generic; the chain never compounds into a correct far field, because each discrete step carries
+**sign + topology but not per-edge magnitude** (the transmission coefficient). After one hop the confident signal is gone and only
+the generic responsiveness prior — reached by breadth — remains. (Even step 1's sign is at chance here on small N, matching the
+earlier finding that the curated regulon predicts *which* genes move ~6× far better than the *direction* they move.)
+
+---
