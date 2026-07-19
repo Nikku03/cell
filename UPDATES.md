@@ -4293,3 +4293,36 @@ the TF and having its curated regulon (driven by the annotated core), not blind 
 biology, but the definitive test — a **fast-degron / 4sU, many-TF, dense (hours) time-course in K562** — does not exist as clean
 public data. That is the honest frontier: not a modeling gap, a measurement that hasn't been made at the scale and timescale the
 question needs.
+
+---
+
+## The mRNA-dynamics ODE with MEASURED K562 rates — the response-time half, validated
+
+We don't have a K562 *perturbation* time-course, but we do have K562 4sU labeling-time snapshots of the *resting* cell
+(RNAdecayCafe SLAM-seq), which give per-gene synthesis and decay **rates**. Those parameterize the dynamics ODE with real
+numbers instead of guesses. (`colab/kinetics_ode.py`.)
+
+```
+d[mRNA]/dt = k_syn − k_deg·[mRNA]      steady state [mRNA]_ss = k_syn/k_deg
+response time: the transition is governed ENTIRELY by k_deg → t_half-response = ln2/k_deg = the mRNA half-life
+```
+The mRNA half-life **is** the response time — a gene can only change as fast as its old copies decay.
+
+```
+8,867 K562 genes; ODE solver exact (Euler vs analytic err 1e-6)
+half-life (= response half-time):  median 3.0 h   (q10 1.0 h → q90 8.4 h)
+t90 response time (ln10/k_deg):    median 10 h     (fast 3.2 h → slow 28 h)
+
+VALIDATION 1 — immediate-early genes respond fast:  13 IEGs median 0.47 h vs genome 3.0 h
+               = 6.4× faster, Mann-Whitney p = 4×10⁻⁹   ✓ (built to respond fast, as τ=1/k_deg predicts)
+VALIDATION 2 — TFs turn over faster than non-TFs:   686 TFs median 1.9 h vs 3.1 h, p ≈ 0   ✓
+
+APPLICATION — time-resolved near-field (GATA1 KO): its regulon (9.2×, predictable) now has a WHEN —
+              NFE2 (t90 2.6 h), RUNX1/WT1 (3.4 h), GFI1B (3.8 h) move fast; others slow.
+```
+
+**What this adds:** the **time axis** the steady-state models never had, from *measured* rates and *biologically validated*
+(IEGs 6.4× faster). For the near-field regulon — the part we *can* predict — we can now say not just *which* direct targets move
+but *when*. **Honest limit, unchanged:** this is the DYNAMICS of each gene given a synthesis change; it does **not** supply the
+TRANSMISSION (which genes' k_syn a knockout actually changes = the far-field wall). It's resting-cell kinetics, not a perturbation
+time-course — so it upgrades the near-field into a time-resolved readout, and cannot by itself break the far field.
