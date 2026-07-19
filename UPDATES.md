@@ -4387,3 +4387,40 @@ far-field wall is a measurement gap (the unmeasured per-edge transmission coeffi
 weighting, conditioning, or rate-annotating the edges we have supplies a number that was never measured — you can only *read* the
 transmission coefficient from a perturbation experiment, not compute it from a richer static graph. The honest control (splitting
 G-specific from generic) is what keeps this from looking like a win it isn't.
+
+---
+
+## Verifying the labelled network against knockout ground truth — which edges are real?
+
+Instead of predicting the far cascade, verify the network we labelled: for each labelled edge type A→B, when we knock out A
+(K562 Perturb-seq), does B actually move? Enrichment over base = whether that edge *type* carries real functional signal.
+(`colab/pathway_ko_verify.py`, 237 knockouts.)
+
+```
+edge type                         n tested    enrichment
+regulatory (curated TRRUST)            99        6.0×    ← VERIFIED real (transcriptional, near-field)
+coexpression                        2,631        1.44×   ← weak but real
+PPI (physical)                     12,553        1.29×   ← weak but real
+co-dependency (fitness)             1,241        1.15×
+regulatory (bulk inferred, 612k)   10,376        0.97×   ← NOISE (chance)
+signaling                             245        0.0×
+complex co-membership               3,686        0.0×    ← NOT transcriptional
+pathway co-membership                 483        0.0×    ← NOT transcriptional
+pathway cases (KO inside a pathway → members co-move):  0 qualify
+```
+
+**A clean QC of the network, per label type — this is genuinely useful:**
+- **Trustworthy:** the *curated* regulatory edges (TRRUST TF→target, 6×). Knock out a TF, its curated targets move. This is the
+  transcriptionally-real sub-graph.
+- **Weak but real:** coexpression (1.44×) and PPI (1.29×) — co-expressed / physically-bound partners co-move a little.
+- **Noise:** the **bulk inferred** regulatory network — 10,376 tested edges at **0.97× = chance**. Most of the 612k "reg" labels
+  do **not** predict KO effects and should be treated as low-confidence. (Only the curated subset is real.)
+- **Not transcriptional:** complex/pathway co-membership and signaling (~0×). Knocking out one member of a complex or pathway
+  does **not** move the others' mRNA — these labels mark *protein/functional modules*, not transcriptional co-response. No pathway
+  showed member co-movement above threshold.
+
+**How a KO affects the network structure (aim 1):** the perturbation propagates through **directed regulatory** edges (TF→target),
+not through physical/membership structure — a complex member's knockout doesn't transcriptionally ripple to its complex-mates. So
+the "how does a KO affect the network" answer is: through the curated regulon, and there it's real (6×); everywhere else the
+labelled structure describes who-groups-with-whom, not who-moves-when-you-knock-out. This both **verifies** the network (curated
+regulon = real; bulk-inferred reg = noise) and shows which layer actually carries KO transmission.
