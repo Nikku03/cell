@@ -4262,3 +4262,34 @@ break the *genome-wide* wall; (b) binding ≠ catalysis (no kcat for kinase step
 only through a *terminal TF's* near-field regulon — the same two-hop structure as the metabolic bridge. **Net: the right physics.
 It doesn't remove the wall; it explains it, and it delivers a validated mutation→known-pathway-output quantifier for the circuits
 we can parameterize** (variant/drug effect on MAPK, apoptosis, etc.) — which is a genuinely useful, honest deliverable.
+
+---
+
+## Found and tested the last lever: time-resolved perturbation data (RENGE / GSE213069)
+
+The one lever this project had never sourced. Fetched **RENGE (Ishikawa 2023, GSE213069)** — hiPSC, **23 pluripotency-TF CRISPR
+knockouts, genome-wide scRNA-seq at 4 time points (day2–day5)** with CRISPR guide capture (~375 MB, GEO). Knocking out
+OCT4/SOX2/NANOG etc. drives a differentiation cascade over days, so in principle early = direct targets, late = cascade.
+(`colab/renge_timecourse.py`.)
+
+```
+[A] direct-target (regulon) enrichment among movers, by day:   2.0× → 2.4× → 1.9× → 30× (day5)
+[B] held-out (GroupKFold by KO) MECHANISM lift, by day:        1.18 → 1.24 → 1.21 → 1.20   (FLAT)
+    held-out prior lift, by day:                               5.3  → 8.2  → 8.5  → 7.8
+```
+
+**The wall held, even with time.** Held-out mechanism lift is **flat at ~1.2×** at every time point — predicting which genes move
+for a *held-out* knockout does not improve with time-resolution here; the responsiveness prior still does all the work. The KO's
+own direct regulon *is* strongly enriched among its movers (up to 30× by day5), but that's **descriptive** — it requires knowing
+the TF and having its curated regulon (driven by the annotated core), not blind held-out prediction.
+
+**Two honest confounds bound this result (it's not a clean disproof of the lever):**
+1. **Wrong timescale.** RENGE uses CRISPR-KO — protein depletes over *days*, so even day2 is post-establishment. This is not the
+   *minutes-to-hours* window a **degron (dTAG) or 4sU** metabolic-labeling experiment gives, where direct and indirect cleanly
+   separate. The RENGE window samples the differentiation cascade, not the primary response.
+2. **Too few TFs.** 23 knockouts is underpowered for held-out generalization, and most lack curated regulons to transfer.
+
+**Verdict on the lever:** bounded, not disproven. Time-resolution is the right idea and the direct-target enrichment confirms the
+biology, but the definitive test — a **fast-degron / 4sU, many-TF, dense (hours) time-course in K562** — does not exist as clean
+public data. That is the honest frontier: not a modeling gap, a measurement that hasn't been made at the scale and timescale the
+question needs.
