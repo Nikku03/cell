@@ -203,6 +203,50 @@ merely hard — across every path we tested it is either (a) a real edge scaled 
 leverage into guaranteed ruin, (b) short-vol premium that is a deferred loss, or
 (c) illegal. Points (a) and (b) are demonstrated here on real data.
 
+## Experiment 6 — The institutional-accumulation footprint (the intuition is backwards)
+
+Thesis under test: *"Big money quietly accumulates for days before a catalyst,
+leaving a volume/price footprint; detect the pile-up, ride the pop."* Tested on
+596,305 leak-free events across 504 stocks. `python -m paper_trading.accumulation`.
+
+**Test 1 — does the footprint predict forward returns?** No — it *inversely*
+predicts, significantly:
+
+| horizon | baseline | after accumulation signal | t vs baseline |
+|---|--:|--:|--:|
+| 2-day | +0.114% | +0.054% | **−3.18** |
+| 5-day | +0.284% | +0.168% | **−4.24** |
+| 10-day | +0.568% | +0.393% | **−4.76** |
+
+**Test 2 — the crux: what actually precedes real 2-day pops?**
+
+| lead-in to… | volume z | prior 5-day drift | OBV slope |
+|---|--:|--:|--:|
+| **a POP** | 0.157 | **−0.90%** | **−0.083** |
+| a crash | 0.085 | −0.15% | −0.013 |
+| nothing | −0.051 | +0.45% | +0.061 |
+
+### What this honestly says
+
+1. **The footprint is real but points the WRONG way.** Buying *after* visible
+   "accumulation" (elevated volume + up-drift + rising OBV) *underperformed*
+   baseline at every horizon, with t-stats of −3 to −4.8. The signal you'd read
+   as "institutions piling in" is mostly *you arriving late* — chasing a move
+   that already happened. The retail money buying the footprint is the exit
+   liquidity for whoever made it.
+2. **Real pops follow WEAKNESS, not pile-up.** Looking backward from actual 2-day
+   pops, the lead-in showed *negative* 5-day drift (−0.90%) and *negative* OBV
+   slope — i.e., selling pressure, not accumulation. Pops are overwhelmingly
+   oversold bounces and reactions to *fresh* news, not the visible culmination of
+   quiet buying. The mechanism the thesis assumes runs in reverse.
+3. **Volume is directionless.** Elevated pre-event volume preceded pops (0.157)
+   and crashes (0.085) alike — it flags *a move is coming*, never *which way*.
+4. **Why it must be so:** if a public footprint reliably preceded pops, it would
+   be arbitraged; and if institutions were trading a known unannounced catalyst
+   outcome, that is insider trading — illegal, so the *legal* public footprint
+   cannot contain the outcome. What's left in the visible data is noise plus
+   late-chasers, which is exactly what the numbers show.
+
 ## Takeaways for how we evolve
 
 - Keep parameters fixed a priori; treat any in-sample optimization with deep
