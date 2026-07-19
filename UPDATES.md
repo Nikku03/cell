@@ -4518,3 +4518,46 @@ causal edges carry sign and mechanism, not the per-edge magnitude, so far-field 
 measurement gap. (`reaction_graph.py` → reaction_graph.json.)
 
 ---
+
+## CellOS 2.0 runtime, built both ways — boolean vs magnitude termination, gates measured (the blueprint, tested)
+
+Took the typed causal graph and implemented the blueprint's runtime loop as an honest experiment: apply the cell-specific mask
+(spatial compartment + abundance/K562-expressed gates) to get an **Operational Interactome**, propagate step-wise from each
+knockout, read out mRNA at terminal TFs (respecting the readout mismatch — only mRNA-terminal predictions are scored), and compare
+**four conditions** — {ungated, gated} × {boolean termination, magnitude termination} — against a shuffled-KO generic control.
+
+```
+condition            FULL SET (n_pred med/KO prec ENRICH)     TOP-10 ranked (prec ENRICH)
+ungated_boolean      10,373   265   0.004   3.38×             0.003    2.54×
+ungated_magnitude     3,640    99   0.006   4.19×             0.016   13.61×
+gated_boolean         9,837   265   0.004   3.13×             0.003    2.67×
+gated_magnitude       3,408    68   0.006   4.21×             0.016   13.61×
+generic control (shuffled-KO):   full set 3.37× (sd 0.7)   |   TOP-10 3.86× (sd 2.94)
+```
+
+**Q1 — does gating help?** Barely, here. Spatial + abundance prune only **8.2%** of state edges and move enrichment 4.19×→4.21×.
+Gating removes biochemically-impossible edges (real, and it raises precision of the *possible* set) but it does **not** manufacture
+magnitude — exactly the `cond_network` lesson (abundance-gated G-specific signal was 1.12×). The gates would matter more for
+*cross-cell-type transfer*, which this test doesn't exercise. **An agent handed the blueprint would over-credit the gates.**
+
+**Q2 — whose termination law wins? (the real result)** **Magnitude beats boolean, decisively, at the actionable end.** The
+blueprint's boolean law ("reach = full strength, die only at a closed gate") over-propagates into a 265-gene/KO unranked set at
+~3.1× — a cleaner hairball. The magnitude law (attenuate by SIGNOR confidence × per-hop factor, threshold, and **rank**) predicts
+68 genes/KO and its **ranked top-10 hits 13.61× vs boolean's unranked top-10 at 2.67×**. Mass-action attenuation concentrates the
+signal; boolean smears it. **Ship the magnitude termination law, not the boolean one.**
+
+**Q3 — does it break the far field?** No — and the control says exactly where the line is. The **full-set** enrichment (4.21×) is
+barely above the generic full-set floor (3.37×): the broad prediction is mostly the responsiveness prior, as always. But the
+**ranked top-10** (13.61×) is **clearly specific** — ~3 sd above the top-10 generic control (3.86× ± 2.94). So the confident top
+predictions are a *real, specific* signal: the terminal-TF near-field, reached through gated signaling hops. It does not compound
+into a far field (only 31 KOs even route to a terminal TF within 3 hops — the scope is signaling-protein knockouts, not
+genome-wide).
+
+**The verdict for CellOS 2.0:** build it — bipartite typed graph + cell-mask gates + **magnitude (mass-action) termination**. That
+yields a cleaner, mutation-addressable Operational Interactome whose confident predictions for signaling-protein knockouts are
+genuinely specific (a capability the flat regulon lacked). But architecture does not recover far-field predictability: the broad
+response stays generic, and the per-edge magnitude past the terminal TF remains the measurement gap. The blueprint's data model is
+right; its boolean termination and its implicit "gating makes the far field predictable" promise are the two things to correct
+before handing it to a coding agent. (`reaction_sim.py` → reaction_sim.json.)
+
+---
