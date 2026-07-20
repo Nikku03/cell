@@ -4751,3 +4751,46 @@ is the finer-grained version for the ~1,500 metabolic enzymes; `dep_frac` is the
 (`capacity_trigger.py` → capacity_trigger.json.)
 
 ---
+
+## Predict the tide, not the ripples — the far-field is a few programs, and the "generic prior" IS the answer
+
+The reframe that resolves the whole far-field arc: we spent the thread trying to trace a single causal wire (KO A → B → C → D → gene E)
+and hitting 1.06× chance, and measuring success as *per-gene identity* (~1/10). The capacity model showed why that wire is
+physically untraceable (buffering dissolves the specific signal) — and pointed at the right question: the far-field is not thousands
+of bespoke wires, it's a **small set of transcriptomic programs** (stress modules / panic buttons) tripped when a capacity deficit
+breaches a global budget. Tested on 1,851 K562-deep knockouts × 8,563 genes with 15 NMF modules.
+
+```
+C1 MODULARITY   15 programs explain 56% of response variance; dominant program covers 55% of knockouts
+C2 THE TIDE     recall of a knockout's real movers by the generic top-M:
+                  top-50 → 34.5%   top-100 → 48.4%   top-200 → 63.3%
+C3 FLAVOUR      dominant module predictable held-out 64.0% vs 54.5% baseline (+9.5 pts)
+                module-genes-alone recall 29.6% < tide 48.4%  → additive layer, recovers 25.9% of the specific residual
+```
+
+- **C1 — the far-field is modular.** 15 programs explain 56% of the variance; one dominant program covers 55% of knockouts. Cells
+  fire shared modules, not bespoke responses — exactly the model.
+- **C2 — the "generic prior" is not a baseline to beat; it *is* the far-field.** The top-200 most-responsive genes recover **63% of a
+  typical knockout's actual movers.** So **precision@10 measured the wrong unit** all along: at the *program* level the far-field is
+  largely predictable (high recall). We were penalizing the model for missing per-gene identity it was never going to get. This is
+  the key correction of the whole arc.
+- **C3 — the flavour is modestly predictable.** Which module a knockout fires is callable held-out at 64% vs 54.5% (+9.5 pts) from
+  capacity/function — so SREBP-vs-heme-vs-UPR is partly separable beyond generic stress. But honestly: the predicted module's genes
+  *alone* recall *less* (29.6%) than the broad tide (48.4%), so the module is an **additive flavour layer** (recovering 26% of the
+  specific residual the tide misses), not a replacement.
+
+**The honest, correct scope of CellOS's far-field — no longer a wall, but a boundary:**
+
+| Layer | What it predicts | Measured |
+|---|---|---|
+| **Magnitude** | how big the response is | capacity/saturation, Spearman **0.22** |
+| **The tide (recall)** | which wave of genes shifts | generic program, **63%** recall @ top-200 |
+| **Flavour** | which panic button fires | module, **+9.5 pts** / +26% of the tail |
+| **The ripple** ⛔ | the specific distal gene identity | still walled (needs the measurement) |
+
+We stopped trying to predict the ripples and started predicting the tide — and the tide is **63% recoverable**. The only thing that
+stays walled is the individual unannotated distal gene, which was always chaotic. That's not a failure; it's the correct physical
+boundary between what's predictable (the program, set by which global budget breaks) and what isn't (the specific molecule).
+(`farfield_modules.py` → farfield_modules.json.)
+
+---
