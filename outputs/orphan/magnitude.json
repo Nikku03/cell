@@ -1,0 +1,51 @@
+{
+ "n_knockouts": 1851,
+ "grid": {
+  "old_features -> n_movers (the ~0.22 baseline)": 0.521,
+  "old_features -> total_displacement": 0.487,
+  "RICH_features -> n_movers": 0.558,
+  "RICH_features -> total_displacement": 0.498
+ },
+ "coverage_floor_vs_nmovers": NaN,
+ "coverage_floor_vs_displacement": NaN,
+ "rich+coverage -> displacement": 0.497,
+ "top_features": [
+  {
+   "f": "dep_frac",
+   "imp": 0.234
+  },
+  {
+   "f": "log_cent",
+   "imp": 0.139
+  },
+  {
+   "f": "ppi_deg",
+   "imp": 0.094
+  },
+  {
+   "f": "log_ppm",
+   "imp": 0.056
+  },
+  {
+   "f": "reach2",
+   "imp": 0.052
+  },
+  {
+   "f": "reach1",
+   "imp": 0.052
+  },
+  {
+   "f": "regulon_size",
+   "imp": 0.051
+  },
+  {
+   "f": "log_rpkm",
+   "imp": 0.05
+  }
+ ],
+ "verdict": "MAGNITUDE -- genuinely improved, but I have to be precise about by how much, because the raw numbers are easy to over-read. THE HONEST MATCHED COMPARISON (same deep-k562 data, 1851 knockouts): old features -> n_movers = 0.521; my RICH features -> n_movers = 0.558, a real but MODEST +0.037 from adding connectivity/centrality/reach. IMPORTANT CORRECTION: the '0.22 baseline' this was supposed to beat came from a DIFFERENT, harder dataset (gwps, pre-filtered to knockouts that already respond -- the 'how much among responders' question). On the FULL knockout spectrum here (which includes the many non-responders), even the OLD features already reach 0.521, because essentiality cleanly separates 'big response' from 'barely responds'. So most of the apparent jump is dataset, not model -- my actual contribution is the +0.037. TWO OF MY THREE FIXES FAILED, honestly: (target) total displacement did WORSE than the plain n_movers count (0.498 vs 0.558), so that hypothesis was wrong; (coverage) n_measured is constant here (dense matrix) so it is not a confound at all -- neither the noisy-target nor the technical-coverage worry applied. What DID work is the features: the top drivers are dep_frac, log_cent, ppi_deg, log_ppm -- essentiality plus CENTRALITY / connectivity / reach (how many things the gene reaches), exactly the 'how important is this node' intuition. NET: on the full spectrum, magnitude is moderately predictable at ~0.558 (essentiality + connectivity), and my connectivity features add a real +0.037 on top of the old ones. It is NOT the ~0.22-to-0.56 leap it first looks like; it is a modest, honest feature improvement on a dataset where magnitude was already ~0.5. The heavy tail (a GATA1-scale surprise from a non-essential gene) stays the unpredictable part -- essentiality can't see it. Weak spot improved, modestly and honestly, and probably near the ceiling for static-feature prediction.",
+ "matched_baseline_this_data": 0.521,
+ "best": 0.558,
+ "feature_improvement": 0.037,
+ "note": "Improved the magnitude predictor -- modestly and honestly. HONEST MATCHED COMPARISON on deep k562 (1851 KOs): old features->n_movers 0.521, RICH features->n_movers 0.558 = a real +0.037 from connectivity/centrality/reach features. CORRECTION: the old '0.22' came from a DIFFERENT harder dataset (gwps, pre-filtered to responders); on the full spectrum here even old features reach 0.521 because essentiality separates big-vs-tiny response, so most of the apparent jump is dataset not model -- my contribution is the +0.037. Two fixes FAILED: total displacement did worse than n_movers (0.498 vs 0.558); coverage was constant (dense matrix) so not a confound. Top drivers: dep_frac, log_cent, ppi_deg, log_ppm -- essentiality + centrality/connectivity/reach ('how important is this node'). NET: magnitude is moderately predictable (~0.558) on the full spectrum; my features add a real modest +0.037; the heavy tail (GATA1-scale surprise from a non-essential gene) stays unpredictable; likely near the static-feature ceiling."
+}

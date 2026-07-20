@@ -4988,3 +4988,39 @@ the specific far field, and it does **not** secretly contain the magnitude. Know
 (`forecast_decompose.py` → forecast_decompose.json.)
 
 ---
+
+## Solving the magnitude weak spot — how big will the response be?
+
+Magnitude ("how many genes move") was the honest weak spot — the capacity model was Spearman ~0.22 and tail-blind. Three levers:
+a cleaner target (total displacement vs thresholded count), richer features (centrality/connectivity/reach, not just essentiality),
+and log-space regression. Built and measured on deep k562 (1,851 knockouts, held-out 5-fold).
+
+```
+                                        Spearman(predicted, actual)
+old features   → n_movers                     0.521   ← matched baseline ON THIS data
+old features   → total displacement           0.487
+RICH features  → n_movers                      0.558   ← best (+0.037 from features)
+RICH features  → total displacement           0.498
+top drivers: dep_frac, centrality, ppi_deg, reach, regulon_size
+```
+
+**It improved — modestly and honestly — and the raw numbers are easy to over-read, so here's the precise version:**
+
+- **The matched, apples-to-apples gain from my features is +0.037** (0.521 → 0.558). Real, held-out, driven by the connectivity
+  features I'd never added — centrality, 2-hop reach, regulon size, PPI/coexpr/co-dependency degree — i.e. *how central / how much
+  the gene reaches*. That's the genuine improvement.
+- **The "0.22 → 0.56" is mostly a dataset artifact, not my model.** The old 0.22 came from gwps, *pre-filtered to knockouts that
+  already respond* — the hard "how much among responders" question. On the full spectrum here (including the many non-responders),
+  even the *old* features reach 0.52, because essentiality cleanly separates "big response" from "barely responds." Honesty demands
+  I not claim a 2.5× leap I didn't make.
+- **Two of my three fixes failed, and I'm reporting them:** total displacement did *worse* than the plain count (0.50 vs 0.56), so
+  that hypothesis was wrong; and coverage (`n_measured`) is constant on this dense matrix, so the technical-coverage worry never
+  applied.
+
+**Net:** magnitude is moderately predictable (~0.56) on the full knockout spectrum — it tracks how essential and connected the
+knocked-out gene is — and my connectivity features add a real, modest **+0.037** on top. This is probably near the ceiling for
+predicting response size from static gene properties: the heavy tail (a GATA1-scale surprise from a *non-essential* master regulator)
+stays unpredictable, because essentiality literally can't see it. The weak spot is genuinely improved, honestly bounded — not solved
+to precision, but no longer the 0.22 embarrassment either. (`magnitude.py` → magnitude.json.)
+
+---
