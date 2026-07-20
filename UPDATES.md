@@ -5057,3 +5057,44 @@ The model is a strong, high-coverage *mutation/structure* engine and an honest-b
 per-request specific-knockout oracle. (`coverage_delivery.py` → coverage_delivery.json.)
 
 ---
+
+## Full-stack run on 60 held-out knockouts — the honest deployment picture (and a correction to my correction)
+
+Ran the whole current stack on 60 held-out knockouts at the real deployment protocol (train on the other ~1,790, score *every*
+gene — no subsampling). It refined *both* earlier overstatements.
+
+```
+per-knockout (strongest shown):
+  knockout  actual  pred_mag  top10 hits
+  EIF2S3     201      22          9
+  RPL27      129      25         10
+  RPL27A      84      32          9
+  RBM25       82       4         10
+  CTR9        80      30          9
+  ...
+  KCTD10       5       0          1
+  CHMP1A       7       1          1
+
+AGGREGATE (60 KOs):
+  MAGNITUDE (how big):     Spearman = 0.459
+  IDENTITY (which genes):  average 2.02/10 — but it SCALES with strength:
+       STRONG KOs (≥50 movers, n=7):  9.0/10
+       WEAK   KOs (<15,        n=48):  0.81/10
+  NEAR-FIELD: 4 panel KOs are TFs; regulon top-10 = 0/10 (too small to conclude)
+```
+
+**The key finding corrects my own over-correction from the prior turn.** I'd said the "9/10" was a subsampling artifact that
+doesn't survive deployment. That was too harsh. The truth: **top-10 deployment precision scales with how strong the knockout is.**
+Strong knockouts (that move ≥50 genes) genuinely get **9/10** in their top-10 on real full-universe deployment; weak knockouts get
+**~1/10**; the average is ~2/10. What the subsampling did was inflate the *average* to look uniformly 9/10. So both extremes I'd
+stated were wrong — it's neither a flat 9/10 nor a flat 1/10; it's **9/10 for strong knockouts, 1/10 for weak.**
+
+The essential caveat holds in every case: even the 9/10 for strong knockouts is on the **generic usual-suspect genes** — a strong
+knockout disrupts so much of the transcriptome that predicting "the genes that usually move" simply lands. It's not protein-specific
+biology; it's the model correctly betting that a badly-stressed cell runs its generic program.
+
+**So what you actually get, at scale, honestly:** the response *size* (Spearman ~0.46 — usable order-of-magnitude), and the *which
+genes* at a precision that runs from ~9/10 for a strong knockout down to ~1/10 for a weak one — always the generic stress genes,
+never the protein-unique fingerprint. That is the complete, corrected deployment picture. (`fullstack_run.py` → fullstack_run.json.)
+
+---
