@@ -5299,3 +5299,24 @@ transfers only weakly to another lineage — but there is no cell-type-invariant
 (`reproduce_rpe1.py` → reproduce_rpe1.json.)
 
 ---
+
+## Sci-Plex Saturation Index: dose titration (`sciplex_saturation.py`)
+
+Downloaded Sci-Plex 3 (Srivatsan-Trapnell 2020) from scPerturb — 188 drugs × 4 doses (10/100/1000/10000 nM) in K562/24h, the
+graded "capacity choke" the user wanted for the Saturation Index. Streamed the 800k-cell matrix, restricted to the ~8.4k genes
+shared with our K562 set. **Honest split result:**
+
+- **Q1 confirmed — magnitude scales with dose.** Median Spearman(log dose, n_movers) = **0.40**; **71%** of drugs show the response
+  growing with dose. So response *size* is a graded, dose-tunable quantity — exactly the capacity/saturation prediction, and it
+  extends the K562-knockout magnitude finding (~0.5) to graded chemical perturbation.
+- **Q2 not supported — no dose-invariant program.** I expected the same program to simply scale up with dose. It doesn't: low-vs-high
+  dose profile Spearman **0.007**, and even between the two *highest* (both-responding) doses only **0.022**. Either the program
+  genuinely reorganizes with dose, or (more likely) per-drug pseudobulk profiles are too noisy at these doses for a stable-program
+  rank-correlation to survive — only a few drugs (HDAC inhibitors Panobinostat/Dacinostat/Quisinostat/Givinostat; CDK: Flavopiridol)
+  drive large responses. **I will not claim program stability.**
+
+Net: Sci-Plex confirms **magnitude is dose-tunable** (the predictable axis) but does **not** here demonstrate a fixed
+dose-invariant identity program. "Dose predicts how big"; "which genes" stays the hard part — consistent with the whole
+investigation. (`sciplex_saturation.py` → sciplex_saturation.json.)
+
+---
