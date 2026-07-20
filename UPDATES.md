@@ -4866,3 +4866,38 @@ ceiling — and it's a genuine predictor at the right unit, not the 1-in-10 the 
 full_stack.json.)
 
 ---
+
+## Trying the Google Maps algorithm — routing (Dijkstra) instead of flooding (diffusion)
+
+Diffusion (Random Walk / PageRank) already hit the wall — it floods the graph and re-finds the generic hubs. So we tried the *other*
+Google algorithm: **Dijkstra shortest weighted path** — find the single best *route* from the knockout to each gene, not flood.
+Given its best shot: edges weighted by verified trustworthiness (curated regulon / SIGNOR = fast roads, noisy bulk reg = slow roads),
+cost = 1/log(trust). 25k (knockout, gene) pairs, held-out by knockout.
+
+```
+Does a gene move, by shortest-path distance from the knockout? (base rate 7.7%)
+  dist~1   10.1%   ← direct regulon, modestly enriched
+  dist~2    6.4%   ← already back to chance
+  dist~3+   ~8%    ← flat around base
+
+Held-out AUPRC lift (chance = 1.0x):
+  shortest-path closeness (Google Maps)          1.19×
+  generic closeness (from a RANDOM knockout)     1.16×   ← the control
+  responsiveness prior                           8.69×
+  shortest-path + prior                          8.77×   (+0.08)
+```
+
+**Google Maps recovers the near-field, then hits the exact same wall.** Distance-1 neighbours (the direct regulon) move a bit more
+than chance, but by distance 2 you're already back to the base rate — there's no "closer = more likely to move." And the decisive
+control settles it: shortest-path closeness (**1.19×**) is essentially identical to closeness *from a random knockout* (**1.16×**) —
+so the "signal" is just **centrality wearing a costume**. Being close to *this* knockout is no better than being close to *any*
+knockout. It adds nothing over the generic tide (8.69× → 8.77×).
+
+**Why the algorithm that conquered city navigation fails here:** Google Maps works because every road has a *measured* travel time
+and a trip is a single *physical* route. In the cell, the edge "travel times" are the transmission coefficients that were never
+measured — so "shortest path" collapses to plain topological distance, which is just centrality. And the far-field isn't a *route*
+anyway: it's a **flood** — the generic stress tide triggered by a global budget breach — which no path-finder addresses. **The
+far-field is weather, not traffic.** The right tools remain capacity (how big the flood) and the tide (which flood), not routing.
+(`gmaps.py` → gmaps.json.)
+
+---
