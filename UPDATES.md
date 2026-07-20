@@ -5320,3 +5320,36 @@ dose-invariant identity program. "Dose predicts how big"; "which genes" stays th
 investigation. (`sciplex_saturation.py` → sciplex_saturation.json.)
 
 ---
+
+## The "missing wire" test: is the tide routed by open chromatin? (`missing_wire.py`)
+
+Hypothesis (user): since PPI/regulon fail to predict the reproducible tide, maybe it's routed by the *physical genome* — genes
+become "usual suspects" because their chromatin is already open. Tested directly with **real K562 ATAC-seq** (ENCODE IDR peaks,
+promoter signal), predicting each gene's tide score (mover frequency across ~2,000 KOs), with the crucial **expression control**
+(accessible ≈ expressed) and a genomic-neighborhood TAD proxy.
+
+```
+held-out Spearman, predicting tide score (7,211 genes)
+   baseline EXPRESSION ....... 0.150
+   PPI / regulon control ..... 0.108
+   ACCESSIBILITY (ATAC+enh) .. 0.068     <- weakest group
+   neighborhood (TAD proxy) .. 0.050
+   expression + PPI .......... 0.203
+   + ATAC .................... 0.221     (delta +0.018)
+   FULL ...................... 0.219
+   corr(ATAC promoter, tide) = -0.095    top importance: PPI degree 0.31
+```
+
+**Honest negative on the promoter-ATAC version.** Accessibility is the *weakest* predictor, doesn't beat PPI or expression, and
+adds only +0.018. Most telling: ATAC promoter signal **anti-correlates** with the tide (−0.095) — the widest-open promoters are
+housekeeping genes that are *stable and don't move*. The tide movers are inducible/poised stress genes, not the constitutively
+open ones. So "open doors get bound" is the wrong picture for the tide.
+
+**But two caveats keep the broader idea alive, honestly:** (1) *no* static per-gene feature explains the tide well — the full model
+is only 0.22, so the "usual suspects" are only weakly a fixed per-gene property; (2) I tested promoter ATAC + a crude neighborhood
+proxy — I did **not** test real Hi-C 3D TAD co-localization or the metabolic-messenger wire (Acetyl-CoA/ATP → HAT → global
+chromatin). Those are the genuinely untested parts and the honest next fetch. Net: the specific "open chromatin routes the tide"
+claim is falsified for promoter accessibility; the tide stays weakly-and-best explained by network connectivity + expression; the
+3D-Hi-C and metabolite versions remain open. (`missing_wire.py` → missing_wire.json.)
+
+---
