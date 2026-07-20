@@ -5271,3 +5271,31 @@ an additive-from-singles model is a decent combo predictor (ρ 0.40), and the no
 interaction model — trained on Norman GIs — earns its keep. (`norman_gi.py` → norman_gi.json.)
 
 ---
+
+## A third cell line, downloaded and tested: K562 vs RPE1 (`reproduce_rpe1.py`)
+
+The CELLxGENE Census route was checked first and **does not carry guide-labeled perturbation screens** — I searched all 2,203
+catalog datasets and every "perturbation" match was a cell *atlas*, not a screen. The correct source is **scPerturb (Zenodo)**,
+which works via direct HTTPS through the proxy. Downloaded **Replogle-Weissman 2022 RPE1** (non-cancer retinal epithelium, 2,394
+CRISPRi knockouts × 247,914 cells; streamed the gzip-dense matrix in cell-blocks and pseudobulked). RPE1 is the *same lab, same
+CRISPRi protocol* as our deep K562 — so K562-vs-RPE1 is the cleanest cross-cell-line test possible (protocol held fixed).
+
+```
+K562 vs RPE1 (same lab/protocol)   1126 shared KOs   profile ρ   top-20/20
+   ALL                                                  0.132        1.6
+   STRONG                                               0.24         1.3
+   WEAK                                                 0.089        1.8
+   (compare: K562 vs HCT116 cross-protocol = 0.132;  K562 vs gwps same-line = 0.32)
+```
+
+**The key control result:** K562-vs-RPE1 reproducibility is **0.132 — identical to the cross-protocol K562-vs-HCT116 (0.132)**.
+Removing the protocol confound did **not** raise cross-line reproducibility at all. That proves the ~half loss of signal across
+cell lines is **real cell-type biology, not a batch/protocol artifact.** Strong knockouts (conserved essential machinery) transfer
+best (ρ 0.24); weak knockouts sit near the floor (ρ 0.089) — their specific movers are genuinely cell-type-specific.
+
+So the third cell line confirms and sharpens the reproducibility verdict: within-line ρ≈0.32, cross-line ρ≈0.13 *regardless of how
+carefully protocols are matched*. Multi-cell-line data is essential **conditioning** signal — a K562-trained far-field predictor
+transfers only weakly to another lineage — but there is no cell-type-invariant weak-KO far-field to recover.
+(`reproduce_rpe1.py` → reproduce_rpe1.json.)
+
+---
