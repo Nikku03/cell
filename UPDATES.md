@@ -4561,3 +4561,42 @@ right; its boolean termination and its implicit "gating makes the far field pred
 before handing it to a coding agent. (`reaction_sim.py` → reaction_sim.json.)
 
 ---
+
+## The full stack, run end to end: 10 predictions per knockout, how many are true
+
+The concrete forward test — no enrichment multiples, just "emit 10 predictions, reveal the measured answer, count the hits."
+The full-stack ranker uses mechanism first (curated regulon tier → the CellOS-2.0 signaling→terminal-TF→regulon bridge tier)
+and backs off to the leave-one-out responsiveness prior (held-out for the target knockout), takes the top 10, and scores against
+K562 Perturb-seq. Run over all 237 knockouts, no cherry-picking.
+
+```
+KNOCKOUT   moves   full-stack top-10                                              hits
+GATA1       68     PRG2 ALAS2 GYPB GP1BB HEMGN [DPYSL2✓] LTBP4 [BST2✓] TAL1 EPOR   2/10
+RIPOR1      78     [PRG2✓] [FTH1✓] MT-ATP6 TPT1 MT-CO3 [MALAT1✓] MT-CO2 ALAS2 ...   3/10
+EIF2S1      14     APOE TRIB3 HSPA5 SIRT2 DDIT4 SIRT1 ATG5 VEGFA NDC80 ATF3         0/10  ← textbook ISR targets, right biology, data-blind
+
+AGGREGATE (237 KOs)      avg/10   median   ≥1 correct   best
+  full stack (mech+prior)  1.00      1         56%        7/10
+  prior only (generic)     1.07      1         60%        7/10
+  → mechanism adds        −0.06 hits/10
+```
+
+**The answer: about 1 in 10.** Best-powered knockouts reach 3–7; the median knockout gets exactly 1; many get 0.
+
+**The mechanism layer does not improve the absolute count.** The entire CellOS-2.0 causal rebuild — the typed reactions, the curated
+regulon, the signaling bridge — adds **−0.06 hits/10** over the dumb generic prior. Its members are genuinely enriched (6–13×) but
+they are *less* likely to actually move than the top handful of usual-suspect genes, so tiering them into the top-10 slightly
+displaces better bets. The one prediction that lands is a **generic** mover (FTH1, MALAT1, PRG2 — genes that move under many
+knockouts), not knockout-specific biology.
+
+**And "0/10" sometimes means the biology was right and the data was blind.** EIF2S1 (eIF2α) knockout predicted ATF3, DDIT4, TRIB3,
+HSPA5 — the canonical integrated-stress-response targets, exactly correct mechanistically — and scored 0, because the sparse
+pseudobulk didn't register those 14 movers as those genes. So this honest count, if anything, *understates* mechanistic
+correctness; it is the true score against measured ground truth.
+
+**Why the ceiling is here:** precision@10 is pinned by (a) the far-field wall — specific transmission is unpredictable held-out,
+so only the generic prior works — and (b) data sparsity — the median knockout moves only 6 genes out of ~8,000 at pseudobulk, so
+even a perfect oracle is capped. Denser per-knockout signal (single-cell, or a 4sU/degron time-course), not more graph, is the only
+lever that moves this number. (`predict10.py` → predict10.json.)
+
+---
