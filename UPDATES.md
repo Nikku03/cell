@@ -4794,3 +4794,42 @@ boundary between what's predictable (the program, set by which global budget bre
 (`farfield_modules.py` → farfield_modules.json.)
 
 ---
+
+## The whole stack + LLM reasoning, re-run at the module level — does reasoning finally help?
+
+The reasoning layer failed at the per-gene level (correct biology backfired). The tide/module reframe said the predictable unit is
+the *program*, so we re-ran it there: strict held-out, the reasoner sees each knockout's identity/function/capacity plus the 15 NMF
+program fingerprints and commits *which module(s) each knockout fires* before any reveal — scored against the mechanical XGBoost
+module-classifier and the plain generic tide, recall at a 100-gene budget. Panel = the 8 biggest responders (GATA1 + essential
+ribosome/spliceosome machinery).
+
+```
+ko         movers  trueM  mechM  reasonM   recall: tide  mech  reason
+GATA1        722    14     13     [10]           0.09   0.06   0.06
+RPL7A        466     9      9     [1]            0.12   0.12   0.09
+AQR          392     4      4     [5]            0.08   0.11   0.07
+SNRPD2       358     4      4     [5,1]          0.11   0.13   0.08
+...
+AVG RECALL @ 100:  tide 0.095   mechanical 0.094   REASONED 0.075
+MODULE-SELECTION accuracy:  reasoned 0/8 (0%)   mechanical 62.5%
+```
+
+**Reasoning does not help even at the module level — it slightly hurts — and *why* is the real finding.** My biologically-"obvious"
+calls were **wrong on all 8**: I picked heme (M10) for GATA1, ribosome (M01) for RPL7A, ISR (M05) for the spliceosome knockouts — and
+every one missed, because **a strong knockout's *dominant* module is not its functional pathway, it's a generic one.** GATA1's
+dominant response is an inflammatory/generic program, not the heme module; RPL7A's is generic, not the ribosome module; the
+spliceosome knockouts' is generic, not the ISR.
+
+**The mechanical classifier wins (62.5%) precisely because it learns "big essential knockout → generic panic button" — which is
+exactly what the capacity model predicts.** The largest deficits breach the global budget and trip the *same* generic stress program
+regardless of which gene was hit. So reasoning about specific biology *fights the capacity logic* — and loses at every level, gene
+**and** module. This is the EIF2S1 lesson, now proven one level up.
+
+**Honest caveat:** this panel is the top-8 by response size — the strongest, most generic-dominated knockouts. A weaker, more
+specific perturbation (a single lipid enzyme nudging SREBP) might let a reasoned specific module help; that's the one place left to
+look. **Bottom line for the whole stack:** the recoverable far-field is the **tide** (the generic dominant program, recovered by the
+generic prior) plus a **capacity-driven mechanical module classifier**; an LLM biology reasoner adds nothing there. Reasoning earns
+its keep in the **near-field** (mechanism, mutations, ΔΔG); the far-field belongs to **capacity + the tide.** (`reason_modules.py`
+→ reason_modules.json.)
+
+---
