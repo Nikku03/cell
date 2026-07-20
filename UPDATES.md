@@ -5353,3 +5353,36 @@ claim is falsified for promoter accessibility; the tide stays weakly-and-best ex
 3D-Hi-C and metabolite versions remain open. (`missing_wire.py` → missing_wire.json.)
 
 ---
+
+## The combination that works: analogy / transfer (`analogy.py`)
+
+The reproducibility result reframed the far-field wall: the specific movers are **reproducible signal our graph can't read**
+(ρ 0.25 within-line), not noise. So instead of routing through the PPI graph, predict a held-out knockout's movers by **analogy** —
+borrow from its most **functionally-similar other knockouts** (k-NN / collaborative filtering). Similarity is built *only* from
+response-independent annotation (shared protein complexes, pathway, process, coexpression + codependency partners, PPI
+neighborhood) — never the held-out KO's own response. Deployment on 1,160 K562 knockouts, K=15 neighbors.
+
+```
+                              TOP-10 precision    specific-mover recall@50
+                              (full universe)     (movers OUTSIDE tide top-100)
+   ANALOGY (functional nbrs)      0.307                 0.288
+   RANDOM neighbours (control)    0.103                 0.044
+   PRIOR (generic tide)           0.168                 0.000  (can't, by construction)
+   cross-KO prediction overlap:   0.232   (old forecast was 0.779 → genuinely KO-specific)
+```
+
+**This is the first real partial breach of the far-field wall — and it survives the control.** The decisive test is recovering
+the *specific* movers that lie outside the global tide, which the climatology prior cannot get. Functional-neighbor transfer
+recovers **28.8%** of them, vs **4.4%** for random neighbors (a **6.5× gain from functional similarity**, not from averaging strong
+profiles) and **0%** for the prior. Its predictions are genuinely KO-specific (cross-KO overlap 0.23 vs the forecast's 0.78).
+
+The biology is clean: knockouts of **complex/pathway partners share each other's specific movers**, so borrowing across the
+functional neighborhood reads a slice of the reproducible far-field the protein graph missed. The right lens was analogy, not the
+graph — the payoff of the "signal is real, graph is the wrong lens" reframe.
+
+**Honest caveats:** absolute specific-recall is ~29% (the wall is bent, not broken); it's a functional-*neighborhood* signal, not
+per-gene mechanism; and the similarity includes coexpression/codependency (baseline data, not KO-response, so not circular, but
+response-adjacent — an annotation-only complex+pathway+PPI variant would be even cleaner). Still, it's a genuine, buildable gain,
+worth wiring in as a forecast component. (`analogy.py` → analogy.json.)
+
+---
