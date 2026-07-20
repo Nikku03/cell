@@ -4600,3 +4600,39 @@ even a perfect oracle is capped. Denser per-knockout signal (single-cell, or a 4
 lever that moves this number. (`predict10.py` → predict10.json.)
 
 ---
+
+## Is the 1/10 ceiling the model or the data? — re-run against better-resolved ground truth
+
+The forward test said ~1/10. To find out whether that's the *model* or the *sparse pseudobulk* (median knockout moves only 6 genes),
+I re-ran the identical full-stack predictor against better-resolved ground truth. We don't have raw single-cell K562 (our Perturb-seq
+is already Replogle's per-perturbation pseudobulk z-scores), so the honest proxy is the **deeper** k562.h5ad essential-gene screen
+(many more cells per perturbation, wider z dynamic range) vs the shallow genome-wide gwps, plus a mover-threshold sweep.
+
+```
+dataset                          thr   #KO   movers/KO   FULL/10   PRIOR/10   mech adds
+genome-wide (shallow) baseline   2.0   237      6          1.00      1.07       −0.06
+genome-wide (shallow)            1.5   507      6          1.17      1.21       −0.04
+genome-wide (shallow)            1.0  1125     10          1.77      1.81       −0.04
+essential (DEEP) resolved        2.0   232      6          1.33      1.34       −0.01
+essential (DEEP) resolved        1.5   448      8          1.56      1.57       −0.01
+essential (DEEP) resolved        1.0   824     16          2.04      2.05       −0.01
+```
+
+**Yes — the ceiling was partly a data-sparsity artifact.** At matched threshold, deeper data alone lifts precision@10 from **1.0 →
+1.33/10 (+33%)**; adding a richer mover set takes it to **2.04/10** (median 16 movers). With only ~6 measured movers a top-10
+*physically* cannot score high; give it more real movers and the absolute count roughly doubles. So the honest headline isn't
+"~1/10", it's "**~1/10 on shallow data, ~2/10 on the best-resolved data we have.**"
+
+**But two things keep this from being a break of the wall:**
+
+1. **Mechanism still adds ~0 at every single setting** (−0.01 to −0.06 hits/10). The entire lift comes from the generic
+   responsiveness prior having *more true movers to hit* — not from any new knockout-specific transmission. Better data makes the
+   *generic* predictor look better; it does nothing for the *specific* one.
+2. **Part of the lift is a looser threshold** admitting easier (noisier) targets, not purely more real signal.
+
+**Net:** the ~1/10 number was depressed by pseudobulk sparsity, and with denser measurement the true number is ~2/10 — but it's
+still the generic prior doing all the work, and the far-field specific-transmission wall is exactly where it was. The lever that
+would raise the *specific* count — per-edge magnitude from a degron/4sU time-course — remains the missing measurement, not something
+resolution alone can supply. (`predict10_deep.py` → predict10_deep.json.)
+
+---
