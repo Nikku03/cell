@@ -4901,3 +4901,46 @@ far-field is weather, not traffic.** The right tools remain capacity (how big th
 (`gmaps.py` → gmaps.json.)
 
 ---
+
+## Trying the weather-forecast algorithm — accept the chaos, deliver a calibrated forecast
+
+Google Maps failed because the far-field is weather, not traffic. So we ran the *weather* playbook. Its genius isn't one algorithm —
+it's a stance: you can't predict the microstate (which molecule, which gene — chaos), so you forecast a **calibrated probability**
+per outcome, attach **confidence**, and accept a **predictability horizon**. We tested whether CellOS can deliver that *form*.
+
+```
+1 CALIBRATION (ECE = 0.006 — near perfect)
+   forecast says   →  observed move-rate
+      0.94                 0.94
+      0.75                 0.78
+      0.45                 0.48
+      0.02                 0.02
+
+2 CONFIDENCE — commit only the surest genes:
+   top-2%  → 93% move   (12× base)
+   top-5%  → 81%        (10.6×)
+   top-10% → 56%        (7.3×)
+
+3 HORIZON — near-field lift 4.6× · far-field 9.1×  (a base-rate effect, see below)
+```
+
+**This is the first idea that landed cleanly — because it stopped trying to break the wall and found the right *shape* for the
+answer.**
+
+- **Calibration (ECE 0.006).** When the forecast says a gene has a 94% chance of moving, 94% of them move; 2% means 2%. **The
+  probabilities are honest** — the single most important property of a forecast, and the one thing every point-accuracy metric we ran
+  was blind to.
+- **Confidence → an abstaining forecast that works.** Commit only the genes we're surest of and we're right **93% of the time**
+  (top-2%). The "1 in 10" that haunted this whole thread was the *wrong framing* — it forced a blanket top-10 for *every* knockout,
+  including where there's no signal. The honest forecast says "here are the few I'm sure of," and it's right 9 times in 10.
+- **Horizon (honest caveat).** The lift numbers look backwards (far 9.1× > near 4.6×), but that's a **base-rate artifact**, not the
+  far field being more predictable: near-field genes (regulon/PPI neighbours) simply *move a lot* (high base, low lift-room), while
+  the far-field forecast is pure **climatology** — "which genes usually move," the tide — which scores high lift against a sparse
+  base, exactly like "it usually rains in Seattle" beats a dry baseline. Both are honestly forecast; neither names the specific gene.
+
+**The bottom line — and the right final form for the whole project:** weather forecasting doesn't break the wall, and doesn't try
+to. It gives the correct *output form*: an honest **knockout weather report** — a calibrated move-probability for every gene, a
+high-confidence subset it will commit to, a magnitude (how big the storm), a tide (which program), and an explicit "beyond here it's
+climatology" for the chaotic far field. **Not a GPS route — a weather report.** (`weather.py` → weather.json.)
+
+---
