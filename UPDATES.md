@@ -4710,3 +4710,44 @@ honest path is a **high-precision, abstaining near-field tool per cell line**, n
 stands from two independent cell types. (`conserved_signal.py` → conserved_signal.json.)
 
 ---
+
+## Can the Capacity/Saturation model work? — predict response MAGNITUDE from node capacity (bypassing k_f)
+
+The proposal: don't try to predict *which* far-field genes move (conceded — the far-field is a generic stress program). Instead
+compute a **capacity/saturation** state for each node from the DNA→protein lifecycle + FBA, and predict the **magnitude** of a
+knockout's response from its **capacity deficit** — a saturated chokepoint causes a big biomass hit → big stress response; a
+buffered node is absorbed. This bypasses the missing per-edge $k_f$ entirely: it predicts response *size* from a node property, not
+response *identity* from an edge. Tested with `dep_frac` (DepMap dependency = an empirical saturation index that folds in
+buffering+redundancy) plus abundance, centrality, and half-life, against response magnitude (n_movers, total stress).
+
+```
+Per-feature Spearman with response magnitude (n_movers):
+  ess         +0.189      essential → bigger response          ✓ chokepoint
+  dep_frac    +0.113      more dependent → bigger response      ✓ empirical saturation
+  log_ppm     −0.100      MORE abundant → SMALLER response      ✓ buffering (excess capacity absorbs)
+  log_hl      −0.164 ·  is_tf +0.083 ·  ppi_deg +0.081
+
+Held-out (5-fold) Spearman(predicted, actual) response magnitude:
+  capacity model (no technical)          +0.224
+  n_measured ALONE (technical confound)  −0.038   ← so the signal is NOT technical
+```
+
+**It works — for what it actually claims, which is the right claim.** Response magnitude is predictable held-out at **Spearman
+0.224** from capacity features alone (~5% of variance — modest, but real and it beats the technical confound cleanly). And the
+*directions* all confirm the model:
+
+- **Essential / chokepoint nodes drive bigger responses** (ess +0.19, dep_frac +0.11) — low-tolerance nodes whose deficit isn't buffered.
+- **The non-obvious confirmation:** **high abundance → *smaller* response** (log_ppm −0.10). More protein = more excess capacity =
+  more buffered = smaller perturbation. That's exactly Step 2 of the model (the Saturation Index), and it's a directional
+  prediction we didn't put in by hand.
+
+**What this settles:** the architecture does **not** bypass the which-genes wall — nothing can without the missing measurement, and
+the model itself concedes the far-field is generic. But it does two valuable things the wall-chasing never did: (1) it **explains**
+why the far-field is generic — a global biomass/budget breach trips the *same* stress program regardless of which gene you hit, which
+is precisely why the response is gene-nonspecific and matches everything we measured; and (2) it converts the wall from a failure
+into a **correctly-scoped capability** — predict *how disruptive* a perturbation is (response size, variant impact) from node
+capacity, even though not *which* genes. **Magnitude yes, identity no.** The metabolic Saturation Index (FBA flux / kcat·abundance)
+is the finer-grained version for the ~1,500 metabolic enzymes; `dep_frac` is the empirical proxy that generalizes to all knockouts.
+(`capacity_trigger.py` → capacity_trigger.json.)
+
+---
