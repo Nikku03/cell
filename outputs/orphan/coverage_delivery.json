@@ -1,0 +1,29 @@
+{
+ "n_knockouts_tested": 237,
+ "A_structural_mutation": {
+  "genes_covered_approx": 16492,
+  "accuracy": "r~0.63",
+  "note": "mutation->\u0394\u0394G ~proteome-wide"
+ },
+ "B_specific_nearfield": {
+  "curated_TF_knockouts_with_regulon": 24,
+  "fraction_of_knockouts": 0.101
+ },
+ "C_highconf_forecast": {
+  "threshold_prob": 0.5,
+  "frac_KOs_with_any_highconf": 1.0,
+  "median_highconf_per_KO": 34,
+  "median_precision_when_predicting": 0.029,
+  "frac_KOs_9of10_quality": 0.0,
+  "frac_9of10_STRONG": 0.0,
+  "frac_9of10_WEAK": 0.0
+ },
+ "D_real_deployment_precision_full_universe": {
+  "precision_top1_per_KO": 0.148,
+  "precision_top5_per_KO": 0.112,
+  "precision_top10_per_KO": 0.086,
+  "note": "scoring EVERY gene (real deployment), not the subsampled eval set that inflated the earlier 93%"
+ },
+ "verdict": "COVERAGE -- and it forces an honest CORRECTION of the '9/10' I cited earlier. That 93% was measured on a negatively-SUBSAMPLED evaluation set (~13x enriched with movers); it does NOT survive real deployment. When you actually score EVERY gene for a knockout (the real per-request scenario), the top prediction is right 15% of the time, top-5 11%, top-10 9%, and NO knockout (0%) reaches a genuine 9/10 bar. The '9/10' was an evaluation artifact of subsampling, not a deployable capability -- I was wrong to present it as the confident operating point without that caveat. SO THE HONEST COVERAGE, by question: (A) MUTATION EFFECT (does a variant break/destabilise a protein): ~proteome-wide (~16.5k genes, r~0.63) -- reliable almost always, the model's real strength. (B) SPECIFIC DIRECT TARGETS of a knockout: only 10% of knockouts (24 curated TFs + some signalling) have the annotation for a specific near-field list. (C/D) DOWNSTREAM RESPONSE: every knockout gets a calibrated forecast + a magnitude estimate, but on real deployment its top guesses are only ~9% precise (the predict10 ~1-2/10 was the honest number all along), and the confident calls are generic climatology genes, not protein-specific. BOTTOM LINE for a researcher: near-always reliable for MUTATION effects; a specific direct-target list only for ~10% (annotated TFs); and for the broad downstream, a calibrated-but-generic forecast whose top picks are right a small fraction of the time -- NOT a 9/10 per-request deliverable. The 9/10 corrected to the truth: it was the subsampled eval, not deployment.",
+ "note": "Coverage by question type -- and an HONEST CORRECTION of the earlier '9/10'. That 93% was on a negatively-subsampled eval set (~13x enriched); it does NOT survive real deployment. Scoring EVERY gene per knockout (real per-request), precision is top-1 15% / top-5 11% / top-10 9%, and 0% of knockouts reach a genuine 9/10 bar (predict10's ~1-2/10 was the honest number). By question: (A) MUTATION effect ~proteome-wide (r~0.63), reliable almost always -- the real strength. (B) SPECIFIC direct targets only 10% of knockouts (24 curated TFs + signalling). (C/D) downstream response: every KO gets a calibrated forecast + magnitude, but top guesses are only a small fraction precise on real deployment and the confident calls are generic climatology, not protein-specific. 9/10 was a subsampling artifact, not a deployable capability."
+}

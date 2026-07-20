@@ -5024,3 +5024,36 @@ stays unpredictable, because essentiality literally can't see it. The weak spot 
 to precision, but no longer the 0.22 embarrassment either. (`magnitude.py` → magnitude.json.)
 
 ---
+
+## Coverage — and a correction: the "9/10" was an evaluation artifact
+
+The practical question: a researcher brings a knockout; for how many can the model deliver a useful high-confidence result? Measuring
+it exposed — and forced me to retract — the "9 out of 10" I'd been citing.
+
+```
+A  MUTATION effect (does a variant break/destabilise the protein)   ~proteome-wide (~16.5k genes), r≈0.63
+B  SPECIFIC direct targets of a knockout                            only 24/237 (10%) — curated TFs (+ signalling)
+C  high-confidence forecast, P≥0.5, on the FULL universe            2.9% precision, 0% of KOs reach a 9/10 bar
+D  REAL DEPLOYMENT (score every gene, top-K per KO):
+     top-1  15%     top-5  11%     top-10  9%
+```
+
+**The "93% / 9-out-of-10" does not survive real deployment — it was a subsampling artifact.** That number (`weather.py`, top-2%) was
+measured on a **negatively-subsampled evaluation set**: to balance training, ~12 of every 13 non-moving genes were thrown out, so
+movers were ~13× over-represented (base 7.7% vs a true ~1%). On that mover-rich set the top predictions look 93% precise. But when
+you **deploy** — point it at a knockout and score *every* gene, as a researcher actually would — the probabilities are calibrated to
+the wrong base rate and collapse: **top guess right 15%, top-10 ~9%, and no knockout reaches a genuine 9/10.** The honest deployment
+number was `predict10`'s ~1–2 in 10 all along; I let the shinier 93% overshadow it and should have flagged that it came from an
+easier evaluation. Correcting it here, front and center.
+
+**So the honest coverage for a researcher:**
+- **"Will this mutation break/destabilise the protein?"** → reliable, nearly every gene (r≈0.63). The model's genuine strength.
+- **"Which genes does this knockout *directly* control?"** → only ~**10%** of knockouts (the annotated TFs) get a specific list.
+- **"Give me a confident downstream 9/10 list on demand"** → **no.** Every knockout gets a calibrated forecast + a magnitude
+  estimate, but its top picks are right ~1–2 in 10 on real deployment, and the confident ones are generic climatology genes, not
+  protein-specific. There is no on-demand 9/10.
+
+The model is a strong, high-coverage *mutation/structure* engine and an honest-but-generic *downstream forecaster* — not a
+per-request specific-knockout oracle. (`coverage_delivery.py` → coverage_delivery.json.)
+
+---
