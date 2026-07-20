@@ -4677,3 +4677,36 @@ tool-augmented reasoner might differ. But the direction is unambiguous and consi
 (`reason_layer.py` → reason_layer.json.)
 
 ---
+
+## The recommended lever, tested: does cross-cell-line conservation add specific signal? (K562 + HCT116)
+
+The plan to actually *improve* the specific prediction: use a second cell line (HCT116, colon) alongside K562 (erythroleukemia).
+A gene that moves under knockout X in *both* lineages is a stronger candidate real target than one that moves in one noisy line.
+1,694 knockouts are measured in both; movers defined rank-based (top-100 by |z| per line, since the two matrices are on very
+different scales).
+
+```
+Q1 CONSERVATION   median Jaccard(K562, HCT116 top-100 movers) = 0.025   (~6 of 100 reproduce)
+Q2 GENERIC        responsiveness-prior:  conserved 167.7   vs   cell-specific 91.1   (conserved ~2× more generic)
+Q3 MECHANISM      mechanism-fraction:    conserved 0.0146  vs   cell-specific 0.0068 (~2.1× — but off a ~1% base)
+precision@10      vs K562-only 2.73 (mech −0.07)   |   vs CONSERVED target 0.98 (mech −0.01)
+```
+
+**The lever did not pan out — it confirms the wall from a second lineage rather than breaking it.**
+
+- **Q1 — responses are overwhelmingly cell-specific.** Only ~6 of a knockout's top-100 movers reproduce across K562 and HCT116
+  (Jaccard 0.025). A knockout's transcriptional response barely transfers between lineages. This also **falsifies the CellOS-2.0
+  "cell-agnostic simulator" premise** — you cannot read one line's response off another.
+- **Q2 — the conserved core is the usual suspects.** The handful of genes that *do* conserve are ~2× more generically responsive
+  (prior 168 vs 91) — conservation preferentially re-selects genes that move under many knockouts in any line.
+- **Q3 — conservation does concentrate mechanism ~2×, but off a negligible base.** 1.46% vs 0.68%: even in the conserved core,
+  **98.5% is still non-mechanism.** And it doesn't translate — precision@10 against the conserved target is *lower* (0.98, because
+  the target is only ~6 genes) and mechanism still adds ~0.
+
+**Conclusion:** a second cell line confirms that knockout responses are lineage-specific and the conserved signal is dominated by
+generic movers. The 2× mechanism concentration is real but far too small and non-actionable to build a specific predictor on. The
+genuinely useful takeaway is a **negative that reframes the goal**: a "universal" cross-line predictor is the wrong target — the
+honest path is a **high-precision, abstaining near-field tool per cell line**, not a broad cross-line one. The far-field wall now
+stands from two independent cell types. (`conserved_signal.py` → conserved_signal.json.)
+
+---
