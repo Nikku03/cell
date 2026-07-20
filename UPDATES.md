@@ -5151,3 +5151,52 @@ mover **identity** is not — the size is set by the node's importance in the ne
 → strong_vs_weak.json.)
 
 ---
+
+## Can we crack the weak knockouts? Testing "Compensatory Shunting" (`compensation.py`)
+
+The proposal: to raise the global top-10 average from ~2/10 to 6–7/10 you can't lean on the generic tide — you have to predict the
+1–5 specific genes that move when a redundant/peripheral node is buffered. Mechanism 1 of the proposed *Structural Compensation
+Engine*: when you knock down a redundant gene, the cell shifts load to its **closest structural paralog**, which is **upregulated**
+and is one of those specific movers. This is directly falsifiable, so I tested it rather than debating it.
+
+**Method honesty (a detour worth recording).** I first used the on-hand ESM-2 matrix (`esm_normal.parquet`) as the proposed
+"continuous structural field" and took cosine-nearest-neighbors. A **positive control killed that route**: the matrix is
+per-dimension *standardized* (per-dim mean ≈ 0, std ≈ 1), which destroys cosine geometry — known paralogs scored at chance
+(RPL7/RPL7A cos **0.043**, ACTB/ACTG1 **0.024**, vs a random 99th-percentile of 0.063). Any negative from it would be an artifact,
+so I discarded it and switched to a **curated Ensembl paralog map** (10,627 genes; correct where present: GATA1 → GATA2/3/4/5).
+
+**Result — a clean negative.** Of the 123 deep-k562 knockouts that have ≥1 *measured* paralog:
+
+```
+                     paralog is a mover   paralog upregulation
+                     vs base  -> lift     above KO's own drift
+ALL (n=123)          0.000 / 0.004  0.0x        -0.001
+WEAK (n=79)          0.000 / 0.001  0.0x        +0.017
+STRONG (n=21)        0.000 / 0.017  0.0x        +0.001
+```
+
+**Literally zero** paralogs crossed the mover threshold, and paralog upregulation above the knockout's own drift is ≈0. Even with
+real curated paralogs, knocking a gene down does **not** light up its paralog in this data. Three reasons, and they matter:
+
+1. **Assay modality.** K562 Perturb-seq is CRISPRi knock*down* (dCas9-KRAB transcriptional repression). The classic
+   paralog/genetic-compensation pathway (transcriptional adaptation) is triggered by *mutant-mRNA degradation*, which CRISPRi does
+   not produce — so the mechanism the engine models is largely **absent from the measurement**.
+2. **Steady-state timing.** It's a single snapshot ~days post-perturbation. A transient paralog that fired at hour 4 and returned
+   to baseline **cannot be in the data** — exactly the "photograph of the calm lake" point. This is the one mechanism from the
+   proposal I fully agree diagnoses the ceiling — but it's a **data** limit, not an architecture we can out-engineer here.
+3. **Coverage ceiling.** Only ~123 of ~1,123 knockouts (**~11%**) even *have* a measured paralog. So paralog compensation — even
+   if it worked perfectly — could touch ~11% of knockouts and **structurally cannot** lift the global average to 6–7/10. The weak
+   set is dominated by genes without a clean paralog (and it's *not* mostly zinc fingers — those were 1% of the weak set, just the
+   alphabetical tail of an earlier example list; the weak set is a broad mix of "other"/transcription/translation/transport genes).
+
+**And the metric itself is capped.** Precision@10 ≤ n_movers/10, so a weak knockout like KCTD10 with 5 true movers can *never*
+exceed 5/10 on a fixed top-10 list, regardless of the model — the "raise the average" framing is partly a metric-design problem,
+not only a modeling one.
+
+**Bottom line.** The Structural Compensation Engine is biologically reasonable, but it has **no signal to learn or be validated
+against in this data**, and too little reach to move the average even in principle. The weak-knockout ceiling is a
+**data/measurement limit** (knockdown modality + steady-state timing) plus a **metric cap** — not something a bigger model on this
+dataset can fix. The honest path to it is a better *metric* (recall of the true movers, k=n_movers) and new *data* (time-resolved
+and/or true-knockout Perturb-seq), not a heavier architecture. (`compensation.py` → compensation.json.)
+
+---
