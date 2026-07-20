@@ -4944,3 +4944,47 @@ high-confidence subset it will commit to, a magnitude (how big the storm), a tid
 climatology" for the chaotic far field. **Not a GPS route — a weather report.** (`weather.py` → weather.json.)
 
 ---
+
+## Is the forecast near or far field, and do we still need magnitude? — the capstone decomposition
+
+Two questions about the weather forecast, answered with a decisive cross-knockout control (the forecast's confident 93% could be
+real far-field skill, or just the near-field + climatology re-confirmed — this settles which).
+
+```
+Q1  Where does the forecast's confident-correct accuracy come from?
+      near-field (direct neighbour)        1%
+      climatology (usual-suspect gene)    63%
+      "specific far-field" (neither)      36%      ← looks like far-field skill...
+
+    forecast lift by stratum:
+      near-field pairs                    5.08×    ← the one real KO-specific signal
+      climatology pairs                   1.11×
+      "specific-far" pairs                8.52×    ← ...but this is climatology in disguise
+
+    CROSS-KNOCKOUT CONTROL (decisive):
+      similarity of predictions between two RANDOM knockouts = 0.779
+      → the forecast issues nearly the SAME "which genes move" list for ANY knockout
+
+Q2  Does the forecast already contain the magnitude?
+      summed-forecast vs actual response size   Spearman −0.063   (noise)
+      standalone capacity model                 Spearman ~0.11–0.22
+```
+
+**Q1 — it's near-field + climatology. No genuine specific far-field skill.** The tempting misread was the 8.52× lift on
+"specific-far" genes — but the cross-knockout control kills it: the forecast predicts almost the *same gene ranking regardless of
+which gene you knock out* (0.779 similarity between random knockout pairs). It has exactly one knockout-specific feature — the
+near-field neighbour flag (a real 5.08× there) — and for every far gene it ranks by *generic responsiveness*, which is a property of
+the gene, not the knockout. So the 8.52× is the responsiveness gradient sorted finer: **finer-grained climatology, not
+transmission.** The specific far field stays walled.
+
+**Q2 — no, the forecast does not give the magnitude.** Summing the calibrated probabilities predicts response size at **−0.06**
+(noise) — worse than the weak capacity model (~0.11–0.22), because the sum is dominated by universe size and the constant
+climatology, not by how big the response is. So the magnitude stays a separate, still-weak job for the capacity model. (This is the
+honest answer to the earlier "we never improved magnitude" — we don't get it for free from the forecast either.)
+
+**Bottom line:** the weather forecast's value is exactly two honest things — **calibration** (when it says 70%, it's 70%) and a
+**confident near-field + tide subset** — and it issues essentially the same list for every knockout. It does **not** secretly crack
+the specific far field, and it does **not** secretly contain the magnitude. Knowing precisely what it is (and isn't) is the point.
+(`forecast_decompose.py` → forecast_decompose.json.)
+
+---
