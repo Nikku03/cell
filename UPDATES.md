@@ -5248,3 +5248,26 @@ Multi-dataset data reframes the wall and enables cell-type conditioning; it does
 (`reproduce.py` → reproduce.json.)
 
 ---
+
+## The combinatorial testbed: Norman 2019 genetic interactions (`norman_gi.py`)
+
+The one dataset that can actually *show* compensation is combinatorial: Norman 2019 (K562, 106 single + 131 double CRISPRa,
+all doubles have both singles + 11,855 controls). If two genes buffer each other, the double should deviate from the sum of the
+singles and reveal movers that neither single shows. Pseudobulked by streaming the 2.9 GB sparse matrix.
+
+- **Predictability (Q1):** the simple additive model (double ≈ single_A + single_B) predicts the real double at **Spearman 0.40**
+  and recovers **37%** of the double's top movers. So combinatorial responses are *largely, not fully* predictable from singles —
+  a real capability number for combo screens we didn't have before.
+- **Compensation/emergence (Q2):** only **28%** of a double's movers are *emergent* (move in the double but neither single), and
+  **15%** of doubles are strongly non-additive (additive ρ<0.3). The strongest genetic-interaction pairs are exactly the
+  functionally-redundant partners — **KIF18B_KIF2C** (two kinesins), PLK4_STIL (centriole), BCL2L11_BAK1 (apoptosis) — so the
+  biology validates.
+
+**Verdict:** buffering / genetic interaction is **real and measurable in combinatorial data** — unlike the steady-state
+single-KO knockdown data, where paralog compensation was at chance (`compensation.py`). But it's the **minority** of the signal,
+concentrated in specific redundant pairs, not a large hidden reservoir that would lift weak *single*-KO prediction to 6–7/10.
+It's a third independent line pointing the same way: compensation shows up only when you actually remove both copies. Practically:
+an additive-from-singles model is a decent combo predictor (ρ 0.40), and the non-additive 15% is exactly where a dedicated
+interaction model — trained on Norman GIs — earns its keep. (`norman_gi.py` → norman_gi.json.)
+
+---
