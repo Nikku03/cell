@@ -5098,3 +5098,56 @@ genes* at a precision that runs from ~9/10 for a strong knockout down to ~1/10 f
 never the protein-unique fingerprint. That is the complete, corrected deployment picture. (`fullstack_run.py` → fullstack_run.json.)
 
 ---
+
+## Strong vs weak knockouts — what actually makes the difference (`strong_vs_weak.py`)
+
+Follow-up to the full-stack run: if the top-10 precision is ~9/10 for strong knockouts and ~1/10 for weak ones, **what
+separates them?** Split all deep-k562 knockouts into **strong (≥50 movers, n=189)** vs **weak (<15 movers, n=1412)** and compare
+their gene properties head-to-head (medians, Mann-Whitney), plus a function/process enrichment.
+
+```
+property             STRONG       WEAK  strong/weak
+dep_frac               0.99       0.77         1.3x *
+essential               1.0        1.0         1.0x *   (binary flag ~1 for both)
+ppi_degree             65.0       13.0         5.0x *
+coexpr_degree          12.0       12.0         1.0x     (FLAT — not a separator)
+codep_degree            7.0        7.0         1.0x     (FLAT — not a separator)
+centrality           8244.0     2461.0         3.3x *
+abundance_ppm          11.8       5.44         2.2x *
+n_pathways              7.0        2.0         3.5x *
+
+FUNCTION (fraction of KOs by process):
+transcription   strong 42%  weak 20%   (2.1x)
+translation     strong 31%  weak 13%   (2.4x)
+other           strong 18%  weak 31%   (0.56x)
+
+example STRONG: GATA1, POT1, RPL7A, SUPT6H, RBM22, AQR, SNRPD2, POLR2K, MED9, INTS2, MED30
+example WEAK:   ZNF100, ZNF133, ZNF207, ZNF24, ZNF253, ZNF284, ZNF407, ZNF468, ZMAT2, ...
+```
+
+Strong knockouts separate from weak on **three measured axes** — and, correcting a guess I'd made before, **not** on a fourth:
+
+1. **Essentiality, by degree.** dep_frac 0.99 vs 0.77. The *binary* essential flag is ~1 for **both** groups (nearly every
+   profiled knockout is essential-ish — that's why it has movers at all); the separation is in the *degree* of dependence, not
+   essential-yes/no.
+2. **Physical connectivity.** PPI degree 65 vs 13 (5×, p≈3e-30), network centrality 3.3×, pathway membership 7 vs 2 (3.5×) —
+   strong knockouts sit at physical/pathway hubs. **Correction:** I'd expected coexpression/codependency degree to separate them
+   too; they're **flat** (12 vs 12, p=0.19; 7 vs 7). So it's specifically *physical-interaction + pathway* centrality that
+   separates strong from weak, not transcriptional co-regulation breadth.
+3. **Function.** Strong knockouts are heavily enriched for the **core gene-expression machinery** — transcription 42% vs 20%,
+   translation 31% vs 13%, and "other/peripheral" is depleted (18% vs 31%). Concretely: strong = GATA1, RPL7A (ribosome),
+   SUPT6H/POLR2K/MED9/MED30/INTS2 (Pol II / Mediator / Integrator), RBM22/AQR/SNRPD2 (spliceosome). Weak = **zinc-finger paralog
+   families** (ZNF100/133/207/253/468, ZMAT2…) — redundant, specialised, low-connectivity. Strong knockouts are also themselves
+   more highly **expressed** (11.8 vs 5.4 ppm), consistent with being abundant core machinery.
+
+**Mechanism — the capacity model, made concrete.** Knock out an essential, physically-central, core-machinery gene and you punch
+a large **capacity deficit** into a fundamental process (transcription, translation, splicing); the cell mounts a large *generic*
+stress response — so many genes move that predicting the usual-suspect movers lands 9/10. Knock out a peripheral/redundant gene
+(a zinc finger with paralogs to cover for it) and the loss is **buffered** — few genes move, so there's little to predict (~1/10).
+
+So "strong vs weak" is essentially "**essential + PPI/pathway-central + core-machinery**" vs "**dispensable + peripheral +
+redundant**." That is exactly why the response **size** is predictable (Spearman ~0.5 from these same features) while the specific
+mover **identity** is not — the size is set by the node's importance in the network; the identity, by chaos. (`strong_vs_weak.py`
+→ strong_vs_weak.json.)
+
+---
