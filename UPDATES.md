@@ -5200,3 +5200,51 @@ dataset can fix. The honest path to it is a better *metric* (recall of the true 
 and/or true-knockout Perturb-seq), not a heavier architecture. (`compensation.py` → compensation.json.)
 
 ---
+
+## Do the other cell lines help? Cross-dataset reproducibility (`reproduce.py`)
+
+We downloaded perturb-seq from more than one cell line — genome-wide K562 (`gwps`) and HCT116 colon. The highest-value use isn't
+"more training rows"; it's the one test K562-alone can't run: **when the same gene is knocked out in two independent experiments,
+do the same genes move?** That decides whether the far-field wall is real signal our features miss, or irreproducible noise.
+
+*Metric honesty:* the |z|>1 "mover %" and its fold-over-chance are threshold/scale-sensitive across datasets (HCT116's z is
+compressed — almost nothing clears |z|>1, so its chance rate ≈ 0 and the fold blows up). The fair, rank-based metrics are the
+**z-profile Spearman** and the **top-20 mover overlap**, so those lead.
+
+```
+                              n     profile ρ    top-20 movers recur (/20)
+K562 deep vs gwps  ALL     1208       0.323              8.0
+   (same cell line) STRONG  197       0.53               9.4
+                    WEAK    734       0.251              7.2
+K562 vs HCT116     ALL     1063       0.132              2.1
+   (cross line)     STRONG  125       0.281              2.0
+                    WEAK    714       0.075              2.1
+```
+
+This is a genuine two-sided refinement — and it **corrects the pure-noise framing** of the wall:
+
+1. **Within a cell line, the specific movers are reproducible — including the far field, including weak knockouts.** A weak
+   knockout's response replicates at Spearman 0.25 with **7 of its 20 biggest movers recurring** in an independent experiment,
+   far above chance. So the far-field is *not* pure noise, and the 1.06× graph-prediction "wall" is largely a **feature/model gap**
+   — our PPI/regulon graph doesn't encode the paths that generate the reproducible response — not a noise floor. That's more
+   hopeful than "microstate chaos." The sobering rider: the obvious features to close that gap already failed (paralogs →
+   `compensation.py`; graph propagation → earlier).
+2. **Much of the reproducibility is the generic tide.** The mover *sets* overlap a lot because the same usual-suspect stress genes
+   recur, yet the graded Spearman is only ~0.32 — identities and magnitudes are only weakly pinned even where the set overlaps.
+   Same climatology result, from a new angle.
+3. **The response is strongly cell-type-specific.** K562 → HCT116 roughly **halves** reproducibility (ρ 0.32 → 0.13; top-20 8 → 2),
+   and for weak knockouts cross-line it hits the floor (ρ **0.075**). Those specific movers are largely context-specific.
+
+**So, answering "why not use the other datasets" — we should, for what they actually add:**
+
+- They **prove** the response (even the weak-KO far-field) is reproducible real biology within a cell line, relocating the wall
+  from *"noise"* to *"missing features"* — a harder but more honest and more attackable target.
+- They **quantify** cell-type specificity (~half the signal is K562-specific) — which is exactly the conditioning signal a
+  cross-cell-line model needs, and a caution that a K562-trained predictor transfers only weakly (ρ 0.13) to another lineage.
+- They make the **near-field + generic tide** more trustworthy to fold in.
+
+What they do **not** do is hand us a reproducible weak-KO far-field that transfers *across* cell lines — that's near the floor.
+Multi-dataset data reframes the wall and enables cell-type conditioning; it doesn't by itself breach the far field.
+(`reproduce.py` → reproduce.json.)
+
+---
