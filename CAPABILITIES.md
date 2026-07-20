@@ -40,10 +40,12 @@ strongly cell-type-specific.
 | What does a double perturbation do? | additive-from-singles **ρ 0.40**, 37% of top movers; 15% strong genetic interaction (Norman) | Moderate |
 | Does a K562 prediction transfer to another cell type? | **ρ 0.13** cross-line (RPE1 & HCT116 both), vs 0.32 within-line | Weak (cell-type-specific) |
 
-## ⑥ The walls
+## ⑥ The walls (one now partially breached)
 - **Name the specific far-field genes of a weak KO** — chance from the graph (1.06×), **but reproducible within a cell line**
-  (ρ 0.25, 7/20 top movers recur). It's a missing-feature problem, not noise. Paralogs, graph propagation, and promoter ATAC were
-  all tested and failed to close it.
+  (ρ 0.25, 7/20 top movers recur). It's a missing-feature problem, not noise. Paralogs, graph propagation, and promoter ATAC failed
+  to close it — but the **analogy/transfer model does partially** (see below): borrowing from functionally-similar knockouts
+  recovers **28.8%** of the specific (non-tide) movers vs 4.4% for random neighbors and 0% for the prior. The wall is bent, not
+  broken.
 - **Predict compensation from a single steady-state knockdown** — paralog upregulation is at chance (0/123). Buffering is real but
   only visible in combinatorial data (Norman), and even there it's the minority (15%).
 
@@ -60,10 +62,13 @@ came from **scPerturb/Zenodo**.
 | Time-resolved perturb-seq | Untested | would break the transient-compensation wall — **highest-value next fetch** (GEO, not Census) |
 | Perturb-ATAC / multiome, real Hi-C TADs | Untested | the real per-cell chromatin + 3D wire (vs our bulk-ATAC proxy) |
 
-## ⑧ What was missed → best combinations to try next
+## ⑧ What was missed → combinations (one tested and it worked)
 The far field is **reproducible signal our graph can't read** (ρ 0.25 within-line), not noise — so the target is the right
-*feature*, not a bigger model. Ranked:
-1. **Time-resolved perturb-seq** — the one wire that breaks a real wall (catch the hour-2–12 transient before buffering resets). A data acquisition, not an architecture.
-2. **Real 3D Hi-C TADs + metabolic messenger (Acetyl-CoA/FBA→chromatin)** — genuinely untested; the missing-wire test only ruled out *promoter* ATAC.
-3. **Analogy / transfer model** — predict a KO's movers from its most functionally-similar *other* KOs (collaborative filtering) instead of the graph.
-4. **Fix the metric** — for weak KOs score recall at k = n_movers, not hits@10; part of the low average is a metric artifact.
+*feature*, not a bigger model.
+
+- ✅ **Analogy / transfer model — TESTED, WORKS.** Predict a KO's movers from its most functionally-similar *other* KOs. Recovers
+  28.8% of specific movers vs 4.4% random / 0% prior; top-10 0.307 vs 0.168 prior; survives the random-neighbor control. First
+  partial breach of the far-field wall. Worth wiring into the forecast. (`analogy.py`)
+- **Time-resolved perturb-seq** — still the one wire that breaks the *compensation* wall (catch the hour-2–12 transient). A data acquisition, not an architecture. Highest remaining value.
+- **Real 3D Hi-C TADs + metabolic messenger (Acetyl-CoA/FBA→chromatin)** — untested; the missing-wire test only ruled out *promoter* ATAC.
+- **Fix the metric** — for weak KOs score recall at k = n_movers, not hits@10; part of the low average is a metric artifact.
