@@ -4833,3 +4833,36 @@ its keep in the **near-field** (mechanism, mutations, ΔΔG); the far-field belo
 → reason_modules.json.)
 
 ---
+
+## The full stack with reasoning OUT — the honest measured ceiling of CellOS's far-field
+
+With the LLM reasoner removed (it helped only the near-field), here is the purely mechanical far-field predictor, scored over all
+824 knockouts at the resolution each layer actually works:
+
+```
+resolution     what it answers              full stack (reasoning out)
+MAGNITUDE      how big the response is       Spearman 0.224           (capacity / saturation)
+TIDE (recall)  which wave of genes moves     48% @ top-100,  63% @ top-200   (generic program)
+FLAVOUR        which panic-button program    64% module accuracy
+  + on tide    tide + mechanical module      48% recall  (beats tide-only in only 24% of KOs → ~a wash)
+IDENTITY       the one specific distal gene  2.04/10 precision@10      (WALLED)
+```
+
+**This is the whole story, honestly, in one place.** The far-field is not one number — it's predictable at three resolutions and
+unpredictable at a fourth:
+
+- **Magnitude** — *how disruptive* a knockout is — Spearman **0.224** from node capacity. Real, useful for variant-effect.
+- **The tide** — *which wave of genes shifts* — the generic program recovers **48%** of a knockout's real movers at a 100-gene
+  budget, **63%** at 200. **This is the far-field, and it is predictable** — precision@10's "~2/10" was measuring the wrong unit
+  (per-gene identity) all along.
+- **Flavour** — *which panic button* — the mechanical capacity/function classifier calls the dominant module **64%** of the time.
+  But at a 100-gene budget, layering it on the tide is **a wash** (48% vs 48%, wins in only 24% of KOs) — the dominant program the
+  tide already carries is usually the answer.
+- **Identity** — *the one specific distal gene* — stays **walled** at ~2.04/10, and no measurement we have changes that.
+
+**Bottom line:** reasoning removed, CellOS predicts the far-field as **magnitude (capacity) + tide (generic program, ~half to
+two-thirds of the movers) + a modest flavour call.** Only the chaotic per-gene ripple is unpredictable. That's the honest, measured
+ceiling — and it's a genuine predictor at the right unit, not the 1-in-10 the wrong metric implied. (`full_stack.py` →
+full_stack.json.)
+
+---
