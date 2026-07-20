@@ -4636,3 +4636,44 @@ would raise the *specific* count — per-edge magnitude from a degron/4sU time-c
 resolution alone can supply. (`predict10_deep.py` → predict10_deep.json.)
 
 ---
+
+## Adding a biology-expert reasoning layer on top — does reasoning beat the mechanical predictor?
+
+The idea: put a reasoning layer over the full stack — give a biology expert (the LLM) all the context *except* the answer, and let
+it rerank the predictions. Strict held-out protocol: a script dumps each knockout's identity, function, network context (regulon,
+signaling partners) and the full-stack candidate pool, but **hides which genes actually moved**; the reasoner commits a top-10 per
+knockout **in writing before any reveal**; a second script reveals and scores. Panel = 6 well-powered K562-deep knockouts —
+GATA1 (erythroid TF) plus five essential core-machinery genes (POT1, SUPT6H, CHMP3, RPL7A, AQR).
+
+```
+knockout   movers   REASONED   full-stack   prior    reasoned correct
+GATA1        295      0/10        2/10       1/10     — (bet erythroid ALAS2/GYPB/HEMGN/GP1BB — none moved)
+POT1         201      2/10        2/10       2/10     SNHG1, EEF1A1
+SUPT6H       168      4/10        5/10       5/10     (bet histone HIST1H1C — cost a slot)
+CHMP3        126      3/10        1/10       1/10     FTH1, MALAT1, FTL  (generic reorder luck)
+RPL7A        124      6/10        7/10       7/10     RPS9, RPS12, ... (bet RP genes — net −1)
+AQR          117      4/10        3/10       3/10     SNHG1, GAS5, MT-CO3, TPT1 (generic reorder luck)
+
+AVERAGE:   reasoned 3.17/10   full-stack 3.33/10   prior 3.17/10
+           reasoning adds −0.17 vs full-stack, +0.00 vs prior
+```
+
+**The reasoning layer did not help — and its confident biology bets backfired.** Reasoned (3.17) ties the *dumb generic prior*
+(3.17) and lands slightly below the mechanical full-stack (3.33). Every place the reasoner deviated toward specific, biologically-
+correct mechanism, it lost ground:
+
+- **GATA1 → 0/10.** I bet the canonical erythroid effector program (ALAS2, GYPB, HEMGN, GP1BB). With **295 genes moving**, essentially
+  none were the erythroid targets — the movers are generic. The textbook answer scored zero.
+- **SUPT6H → 4 vs 5.** SPT6's known specialty is histone-gene control; betting HIST1H1C cost a slot.
+- **RPL7A → 6 vs 7.** The ribosomal-stress bet (RP genes) half-worked (RPS9, RPS12 moved) but was net negative.
+- Where reasoning "won" (CHMP3 +2, AQR +1) it was **luck reordering generic prior genes** (MALAT1, FTL, TPT1), not insight.
+
+**This is the EIF2S1 lesson, generalized and now measured head-to-head:** the transcriptomic readout is dominated by generic
+stress-responsive genes, so betting on the biologically-correct *specific* program strictly hurts. **The far-field wall is a
+measurement gap, not a reasoning gap** — a domain-expert reasoner handed everything except the answer cannot beat the prior, because
+what's missing is the *measurement* of specific transmission, not its interpretation. Honest caveats: n=6 (the −0.17 is within
+noise), single-shot (iterative feedback would leak the test set), and the reasoner reranked a mostly-generic candidate pool — a
+tool-augmented reasoner might differ. But the direction is unambiguous and consistent with every prior result in this thread.
+(`reason_layer.py` → reason_layer.json.)
+
+---
