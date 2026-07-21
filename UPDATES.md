@@ -5480,3 +5480,31 @@ result (K562→RPE1/HCT116, ρ 0.13) says cell-type specificity actually bites. 
 expressed transcriptome, so masking is redundant. (`fullstack_celltype.py` → fullstack_celltype.json.)
 
 ---
+
+## Closing the loop: does expression → function reconstruct cell identity? (`celltype_coherence.py`)
+
+Your integrative idea: reverse the per-cell-type mRNA to the genes it expresses, then check those genes' **functions** against the
+cell's own function — and pair with protein and 3D. Built it on the `emask` (200 atlas cell types) + GO Biological Process.
+
+- **Q1 — marker coherence (fixed a display bug first).** Each cell type's expressed genes recover its *specific* biology:
+  hepatocyte → xenobiotic/fatty-acid/steroid metabolism + bile acid + coagulation; CD4 T cell → TCR signaling + adaptive immunity;
+  neuron → synaptic transmission + axon guidance; monocyte → antigen processing + MHC; cardiac muscle → sarcomere + force of heart
+  contraction. (My first pass ranked terms vs the global background and showed housekeeping "translation" for *every* cell type — I
+  caught it and switched to cross-cell-type *specificity* ranking. Q2 below was always correct since it uses the full profile.)
+- **Q2 — reverse identification (decisive).** Cell identity is reconstructable from function *alone*: each cell type's nearest
+  neighbor by expressed-gene-function profile shares its lineage **78%** of the time vs **11%** chance (**lift 7.08×**), across 997
+  GO-BP terms. Monocyte→monocyte, CD8-memory→CD4-memory (both T), cDC→DC, etc. **The mRNA layer and the gene-function layer are
+  mutually consistent — the loop closes.**
+
+**Honest limits on the other two pairings you asked for:**
+- **Protein** — we have only a *generic* proteome (one `ppm` per gene, not per cell type). Active genes are 2.88× background
+  abundance, but a true per-cell-type mRNA↔protein comparison is **not possible** without cell-type proteomes (a real data gap;
+  HPA/Tabula proteomes would fill it).
+- **3D chromatin** — only K562 Hi-C exists, and `missing_wire_3d` already showed TAD co-localization is a weak wire (0.016).
+  Per-cell-type 3D for the 200 atlas types isn't in our data.
+
+**Bottom line:** where the model *is* cell-type-resolved (mRNA + gene-function) it's internally coherent and reconstructs cell
+identity (~7× lift); it is *not* cell-type-resolved for protein or 3D chromatin — those are the honest missing modalities to
+acquire. (`celltype_coherence.py` → celltype_coherence.json.)
+
+---
