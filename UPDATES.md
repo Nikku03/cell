@@ -5606,3 +5606,44 @@ problem — a tissue is a *mixture* of cell types with cell–cell signaling and
 *plus* an intercellular layer we have neither built nor measured. (`celltype_scaling.py` → celltype_scaling.json.)
 
 ---
+
+## Fine-tune WITHOUT a perturbation screen? Building the prior from annotation alone (`annotation_prior.py`)
+
+`celltype_scaling` says a new cell type needs *some* of its own knockouts; the availability audit says most of the 200 atlas
+cell types have **none**. So the question: can we build a cell type's tide **prior** — which genes usually move in the far field —
+from **annotation alone** (gene function/proc, protein abundance `ppm`, TF in-degree, essentiality `dep_frac`, PPI degree), with no
+perturbation data for that cell type? The cell-type-specific ingredient would then come only from *which genes the cell expresses*
+(obtainable from ordinary scRNA-seq, not a screen). Validated on the three lines that *do* have ground-truth movers: rank each
+cell's expressed genes by a score, count true movers in the held-out **top-10**.
+
+```
+                       K562 hit@10   HCT116 hit@10   RPE1 hit@10
+real_tide (ceiling)      3.73          3.00           0.53        ← perturbation-learned prior
+annot_apriori            1.28          0.72           0.13        ← annotation only, fixed weights
+annot_xline (learned)    1.50          0.15           0.20        ← annotation→mover map learned on OTHER lines
+depfrac_only             0.27          0.45           0.08
+random                   0.17          0.12           0.15
+```
+*(Reproducible: candidate lists sorted + `PYTHONHASHSEED=0`; earlier unseeded runs drifted on the tie-heavy / near-floor scorers.)*
+
+**Annotation is a weak cold-start, not a substitute for a screen.** Measured as *fraction of the real-tide ceiling recovered
+above the random floor*, the fixed a-priori score recaptures only **~31% (K562) / ~21% (HCT116)** — roughly a fifth-to-a-third —
+and effectively **0 on RPE1** (uninformative there: RPE1's own `real_tide` sits near the random floor, noisy pseudobulk, so nothing
+could score). It *does* beat essentiality-alone and random on the clean lines, and ranks genes like the true mover-frequency at
+**Spearman 0.14 / 0.35 / ~0** (K562 / HCT116 / RPE1). So the tide *is* partly written in gene annotation — essential,
+highly-expressed, transcription/translation machinery move most — just a **minority** of it.
+
+Two honest negatives fell out. (1) The **learned** cross-line map — training "what makes a frequent mover" on the *other* two
+lines and transferring it — **does not transfer**: 37% recovery on K562 but it *collapses to ~1% (the random floor)* on HCT116,
+because the annotation→tide mapping is itself cell-type-specific. The fixed a-priori score is the more trustworthy of the two. (2) Annotation gives a **generic** per-gene propensity; the only cell-type-specific ingredient available without a screen is
+the expressed-gene gate, which is broad and weakly discriminating — so an annotation prior can only ever behave like a
+generic/transferred tide, never the fine-tuned one. That is exactly the part that made K562→other transfer lose half its accuracy
+(`fullstack_multicell`).
+
+**Bottom line:** "fine-tune without perturbation data" buys a real but small cold-start (~21–31% of the deployable top-10 on clean
+lines) for the **conserved, essential** part of the tide — genuinely better than random or essentiality-alone, and usable for the
+~185 zero-screen atlas cell types — but it recovers only a minority of the signal and **cannot supply the cell-type-specific
+reweighting**. That last part still needs some of the cell's own perturbations. Annotation narrows the cold-start gap; it does not
+close it. (`annotation_prior.py` → annotation_prior.json.)
+
+---
