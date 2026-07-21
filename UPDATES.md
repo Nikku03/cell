@@ -5690,3 +5690,38 @@ annotation prior: knowledge can nudge and *decompose* a prior, but it cannot **m
 the normal cell still has to be measured. (`cancer_reversal.py` → cancer_reversal.json.)
 
 ---
+
+## A 500–800-gene screen costs $200–400k — so what's the cheapest route? (`cheap_screen.py`)
+
+The economic wall: a 500–800-gene KO Perturb-seq screen runs ~$200–400k (~$400–500/knockout). `celltype_scaling` already showed
+~50–100 knockouts recover most of the deployable accuracy. Can we go *further* by choosing **which** genes to knock out smartly —
+a-priori, from annotation, before running anything — rather than at random? On K562/HCT116 we fixed a held-out panel and built the
+training set of size *n* by four strategies, learning the tide prior from only those *n* knockouts:
+
+```
+K562  top-10        n=20  n=30  n=50  n=100  n=200  n=400        HCT116       n=20  n=30  n=50  n=100 n=200 n=400
+random              4.10  4.57  5.09  6.23   6.37   7.10         random       5.01  5.36  6.32  7.42  7.85  8.33
+ppi_hub (degree)    2.62  3.57  4.15  5.28   5.88   7.37         ppi_hub      4.80  4.93  6.35  6.95  7.88  8.42
+essential (dep)     3.93  4.45  5.62  6.10   7.45   7.07         essential    4.98  5.92  6.57  6.80  7.98  8.13
+diverse (pathway)   3.92  4.28  4.73  5.70   6.27   7.02         diverse      4.77  4.82  6.80  7.93  8.28  8.63
+```
+
+**Smart guide selection is essentially a wash — and I corrected my own auto-verdict.** A "90%-of-best" threshold first made it look
+like smart selection *halved* the screen, but that was a single noisy spike. The robust metric — mean top-10 delta vs random, pooled
+over both lines and all sizes — says: **ppi_hub −0.46** (pure network-hub selection actually *hurts*, badly at small n), **essential
++0.10** (negligible), **diverse −0.05** (helps HCT116 +0.16, hurts K562 −0.26). No a-priori strategy reliably beats random on both
+lines; the wins are scattered within run-to-run noise, and the one clear signal is that picking pure hubs is *worse*. So **which**
+genes you knock out barely matters — a modest *random* targeted panel works about as well as any clever guide list (mild hedge:
+prefer pathway-diverse/essential over pure hubs).
+
+**The real cost lever is screen *size*, and it's strong.** At ~$400–500/KO, the ~50–100-KO plateau (K562 50→5.1 / 100→6.2 vs
+400→7.1; HCT116 50→6.3 / 100→7.4 vs 400→8.3 — 70–90% of full accuracy) cuts cost to **~$20–40k (~10×)**, and even ~20–30 random KOs
+give a usable model (K562 4.1–4.6, HCT116 5.0–5.4 top-10).
+
+**Bottom line:** the cheapest *reliable* route to a per-cell-type model is a **small random (or mildly pathway-diverse) targeted
+screen of a few tens of knockouts (~$10–40k)** — ~10× cheaper than 500–800 genes. Being clever about which genes buys little; the
+money is saved by running *fewer*, not smarter. Honest limits carry over: it still needs *some* of the cell type's own perturbations
+(cheaper, not free — the annotation-only prior recovers just ~21–31% of the ceiling), and the gain is on the deployable tide, not the
+still-walled specific far field. (`cheap_screen.py` → cheap_screen.json.)
+
+---
