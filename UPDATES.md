@@ -5553,3 +5553,30 @@ remaining misses are near-twin sub-types (memory vs effector CD8 T, monocyte fla
 combination fully separates from expression annotation alone. (`celltype_id_combined.py` → celltype_id_combined.json.)
 
 ---
+
+## Do we need a model per cell type? Fine-tune vs transfer across 3 lines (`fullstack_multicell.py`)
+
+Tested knockouts on three cell lines with their own genome-scale perturb-seq — K562 (leukemia), RPE1 (retinal epithelium),
+HCT116 (colon) — comparing a model **fine-tuned on each line** against **transferring the K562 model unchanged**. Held-out
+deployment, scale-free rank-based movers (top ~1.5% by |z| per KO, so HCT116's compressed z-scale is comparable).
+
+```
+line      own fine-tuned top10    K562 transferred    gain from fine-tuning
+K562            5.05                   (self)              —
+RPE1            2.22                    0.95              +1.27  (>2x)
+HCT116          6.98                    3.35              +3.63  (~2x)
+```
+
+**Yes — you clearly need a model per cell type.** Applying the K562 model unchanged to another line roughly **halves** deployment
+(RPE1 0.95 vs its own 2.22; HCT116 3.35 vs its own 6.98). The reason is exactly the cross-line finding (ρ 0.13): the K562 model's
+**tide prior** — which genes usually move in K562 — is the *wrong* prior for a different cell type, so transfer lands few of the
+other line's top movers. Each line's own perturb-seq re-fits that prior to its own usual-suspect program and roughly **doubles**
+deployment.
+
+**Honest caveats:** (1) HCT116 needed the rank-based mover definition to be scorable at all (fixed |z|>1 gave ~0 movers). (2) Only
+the forecast's **tide prior** is fine-tuned here — magnitude and near-field/regulon features are still generic, so a *fully*
+cell-type-specific model would gain even more from cell-type essentiality + cell-type regulons (which we largely lack). (3) RPE1's
+absolute number is lower (essential-gene screen, noisier pseudobulk), but the fine-tune ≫ transfer gap holds on every line.
+(`fullstack_multicell.py` → fullstack_multicell.json.)
+
+---
