@@ -1,0 +1,51 @@
+{
+ "onc_program_size": {
+  "K562": 1242,
+  "RPE1": 1015,
+  "HCT116": 1111
+ },
+ "tsg_program_size": {
+  "K562": 164,
+  "RPE1": 0,
+  "HCT116": 0
+ },
+ "prolif_genes": 1015,
+ "oncogene_program_fraction_of_tide": {
+  "K562": 0.165,
+  "HCT116": 0.14
+ },
+ "tide_spearman": {
+  "K562~HCT116": {
+   "raw_full": 0.18,
+   "corrected_full": 0.346,
+   "random_zeroed_control": 0.101,
+   "raw_surviving_only": 0.184,
+   "n_common": 7221,
+   "n_surviving": 6279
+  },
+  "K562~RPE1": {
+   "raw_full": 0.245,
+   "corrected_full": 0.427,
+   "random_zeroed_control": 0.119,
+   "raw_surviving_only": 0.243,
+   "n_common": 6295,
+   "n_surviving": 5458
+  },
+  "HCT116~RPE1": {
+   "raw_full": -0.003,
+   "corrected_full": 0.22,
+   "random_zeroed_control": -0.007,
+   "raw_surviving_only": 0.012,
+   "n_common": 7546,
+   "n_surviving": 6732
+  }
+ },
+ "verdict": "A SPECIFIC BUT MECHANICAL EFFECT -- NOT NORMAL-CELL RECOVERY, and I corrected myself twice getting here (first guessed 'small effect', then 'mostly artifact'; the controls refuted both). De-oncogenifying (zeroing the oncogene/proliferation program + restoring p53 targets) raised EVERY cross-line tide correlation by ~+0.19 on average, including toward the normal-ish RPE1 anchor. CONTROL 1: zeroing a RANDOM equal-size block does NOT reproduce it -- random zeroing actually LOWERS correlation (~-0.07), so the gain is SPECIFIC to the oncogene/proliferation program, not a generic zeroing artifact. CONTROL 2 (decisive, artifact-free): the agreement among the SURVIVING (non-oncogene) genes is UNCHANGED (+0.006 vs the raw full tide) -- so removing the cancer program does NOT make the remaining tide agree any better; the +0.19 comes almost entirely from replacing the high-magnitude, cross-line-DISCORDANT proliferation block with zeros, which mechanically lifts the full-vector Spearman. SO WHAT IS ACTUALLY TRUE: (i) the proliferation/cell-cycle program is a real, high-magnitude, cell-line-SPECIFIC (discordant) slice of the tide -- only {'K562': 0.165, 'HCT116': 0.14} of the tide mass but the part where cancer lines DIFFER; the shared agreement lives in the essential-machinery remainder; (ii) but removing it yields NO cleaner universal signal in the genes that remain. WHY THIS STILL CANNOT DELIVER NORMAL-CELL DATA (the decisive honesty): (1) NO GROUND TRUTH -- there is no normal, lineage-matched perturbation screen to validate against; RPE1 is our only near-normal anchor and is itself a PROLIFERATING immortalised line (it carries the same cell-cycle tide) of a DIFFERENT lineage, and the 'toward RPE1' gain is the same shared-zero mechanism, not de-cancered resemblance; (2) a driver lesion rewires the network NON-linearly -- the normal response is not the cancer response minus a fixed oncogene term; (3) the tide is dominated by cancer-AGNOSTIC essential machinery (ribosome/proteostasis/translation) shared by normal and cancer cells, leaving little cancer-specific signal to remove. BOTTOM LINE: the sign-aware framing (subtract activated oncogenes, restore lost suppressors) is mechanistically sound and does isolate a real cell-line-specific (proliferation) component of the tide -- a defensible covariate correction -- but it neither produces a cleaner tide in the surviving genes NOR, absent a normal ground-truth screen, can it be shown to recover a normal-cell response. Same lesson as the annotation prior: knowledge can nudge and decompose a prior, but it cannot manufacture the cell-type-specific ground truth -- the normal cell still has to be measured.",
+ "note": "A SPECIFIC BUT MECHANICAL EFFECT -- NOT NORMAL-CELL RECOVERY, and I corrected myself twice getting here (first guessed 'small effect', then 'mostly artifact'; the controls refuted both). De-oncogenifying (zeroing the oncogene/proliferation program + restoring p53 targets) raised EVERY cross-line tide correlation by ~+0.19 on average, including toward the normal-ish RPE1 anchor. CONTROL 1: zeroing a RANDOM equal-size block does NOT reproduce it -- random zeroing actually LOWERS correlation (~-0.07), so the gain is SPECIFIC to the oncogene/proliferation program, not a generic zeroing artifact. CONTROL 2 (decisive, artifact-free): the agreement among the SURVIVING (non-oncogene) genes is UNCHANGED (+0.006 vs the raw full tide) -- so removing the cancer program does NOT make the remaining tide agree any better; the +0.19 comes almost entirely from replacing the high-magnitude, cross-line-DISCORDANT proliferation block with zeros, which mechanically lifts the full-vector Spearman. SO WHAT IS ACTUALLY TRUE: (i) the proliferation/cell-cycle program is a real, high-magnitude, cell-line-SPECIFIC (discordant) slice of the tide -- only {'K562': 0.165, 'HCT116': 0.14} of the tide mass but the part where cancer lines DIFFER; the shared agreement lives in the essential-machinery remainder; (ii) but removing it yields NO cleaner universal signal in the genes that remain. WHY THIS STILL CANNOT DELIVER NORMAL-CELL DATA (the decisive honesty): (1) NO GROUND TRUTH -- there is no normal, lineage-matched perturbation screen to validate against; RPE1 is our only near-normal anchor and is itself a PROLIFERATING immortalised line (it carries the same cell-cycle tide) of a DIFFERENT lineage, and the 'toward RPE1' gain is the same shared-zero mechanism, not de-cancered resemblance; (2) a driver lesion rewires the network NON-linearly -- the normal response is not the cancer response minus a fixed oncogene term; (3) the tide is dominated by cancer-AGNOSTIC essential machinery (ribosome/proteostasis/translation) shared by normal and cancer cells, leaving little cancer-specific signal to remove. BOTTOM LINE: the sign-aware framing (subtract activated oncogenes, restore lost suppressors) is mechanistically sound and does isolate a real cell-line-specific (proliferation) component of the tide -- a defensible covariate correction -- but it neither produces a cleaner tide in the surviving genes NOR, absent a normal ground-truth screen, can it be shown to recover a normal-cell response. Same lesson as the annotation prior: knowledge can nudge and decompose a prior, but it cannot manufacture the cell-type-specific ground truth -- the normal cell still has to be measured.",
+ "mean_corrected_gain": 0.19,
+ "mean_random_artifact": -0.07,
+ "net_gain_beyond_artifact": 0.26,
+ "surviving_vs_full_agreement_delta": 0.006,
+ "effect_specific_not_random": true,
+ "surviving_tide_unchanged": true
+}

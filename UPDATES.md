@@ -5647,3 +5647,46 @@ reweighting**. That last part still needs some of the cell's own perturbations. 
 close it. (`annotation_prior.py` → annotation_prior.json.)
 
 ---
+
+## Can we "reverse the cancer" to get normal-cell models? (`cancer_reversal.py`)
+
+Almost all our perturbation data comes from **cancer lines**, but we want *normal*-cell models. The idea: take a cancer line's
+knockout tide and **reverse the cancer** using knowledge of its driver lesion and *how* it acts — sign-aware, per the biology:
+**subtract** an activating oncogene's program (ON in cancer, OFF in normal), **add back** a lost tumor-suppressor's program (OFF in
+cancer, ON in normal). Implemented as: K562 (BCR-ABL + MYC-amp → subtract; **TP53-null** → add p53 targets), HCT116 (KRAS/PIK3CA/
+β-catenin/MYC → subtract; **TP53-wt** → no add), RPE1 (near-normal hTERT line → the normal-ish anchor). Oncogene program =
+GO cell-cycle/proliferation + measured driver-KO movers + MYC targets (~1,100 genes/line, only **14–16.5%** of the tide mass).
+
+```
+pair            raw ρ   corrected ρ   random-zero ctrl   surviving-genes ρ
+K562~HCT116      0.18       0.35            0.10               0.18
+K562~RPE1        0.245      0.43            0.12               0.243
+HCT116~RPE1     -0.003      0.22           -0.01               0.012
+```
+
+**I corrected myself twice here** (this is the honest-iteration discipline working). First I guessed the effect would be *small*;
+the run showed every correlation jumping **+0.19**. Then I guessed **tie-inflation artifact** (zeroing ~1,100 shared genes forces a
+concordant (0,0) block). Both wrong:
+
+- **Control 1 (random-block):** zeroing a *random* equal-size block does **not** reproduce the gain — it *lowers* correlation
+  (~−0.07). So the effect is **specific** to the oncogene/proliferation program, not generic zeroing.
+- **Control 2 (decisive, artifact-free):** agreement among the **surviving (non-oncogene) genes is unchanged** (Δ ≈ +0.006). So
+  removing the cancer program yields **no cleaner universal signal** in the genes that remain — the +0.19 comes almost entirely from
+  replacing the high-magnitude, cross-line-**discordant** proliferation block with zeros, which mechanically lifts the full-vector
+  Spearman.
+
+**What's actually true:** the proliferation/cell-cycle program is a real, high-magnitude, **cell-line-specific (discordant)** slice
+of the tide — the part where cancer lines *differ*; the shared agreement lives in the essential-machinery remainder. **Why it still
+cannot deliver normal-cell data:** (1) **no ground truth** — there is no normal, lineage-matched perturbation screen to validate
+against; RPE1 is our only near-normal anchor and is itself a *proliferating* immortalized line (carries the same cell-cycle tide) of
+a *different* lineage, so the "toward RPE1" gain is the same shared-zero mechanism, not de-cancered resemblance; (2) driver rewiring
+is **non-linear** — normal ≠ cancer minus a fixed oncogene term; (3) the tide is dominated by cancer-**agnostic** essential
+machinery, leaving little cancer-specific signal to remove.
+
+**Bottom line:** the sign-aware framing (subtract activated oncogenes, restore lost suppressors) is mechanistically sound and does
+isolate a real cell-line-specific proliferation component — a defensible covariate correction — but it neither cleans up the
+surviving tide **nor**, absent a normal ground-truth screen, can be shown to recover a normal-cell response. Same lesson as the
+annotation prior: knowledge can nudge and *decompose* a prior, but it cannot **manufacture** the cell-type-specific ground truth —
+the normal cell still has to be measured. (`cancer_reversal.py` → cancer_reversal.json.)
+
+---
