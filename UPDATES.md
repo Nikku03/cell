@@ -5840,3 +5840,34 @@ the 2-line version, **this is the version worth a researcher's time, led by the 
 novel_links.json + novel_links_candidates.csv.)
 
 ---
+
+## Validating the top lead: exosome→PPP1R10 vs literature + our own stack (`exosome_pnuts_stack.py`)
+
+I took the strongest discovery — **RNA exosome knockout → PPP1R10/PNUTS mRNA up**, reproducible in ≥3 of 6 lines — and cross-checked
+it against the literature and ran it back through our own model.
+
+**Literature: novel, but mechanistically predicted.** PubMed has **zero** co-mentions of PPP1R10 and "exosome" (despite 69 PPP1R10
+papers), so the direct link is undocumented. But it fits a *known paradigm*: PNUTS/PPP1R10 is itself a core premature-termination
+factor (PP1-PNUTS is *required* for the Restrictor complex ZC3H4/WDR82,
+[Cell Reports 2025](https://www.cell.com/cell-reports/fulltext/S2211-1247(25)00335-3)); the RNA exosome degrades prematurely-
+terminated protein-coding transcripts ([Davidson 2019](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6403362/)); and termination-
+factor genes autoregulate via exosome-sensitive premature termination (NRD1/HRP1/PCF11,
+[PMC7471841](https://pmc.ncbi.nlm.nih.gov/articles/PMC7471841/)). So "exosome KO → PNUTS mRNA up" is a termination factor
+autoregulating its own message via the exosome — applied to a gene where it has never been shown.
+
+**Our own stack confirms it's a genuinely missing edge, not something the model knew:**
+- **Forecast** — our predictor emits the *same generic tide* (FTH1, MT-ATP6, MALAT1…) for every exosome KO and *never* predicts
+  PPP1R10 (which moves in only 7/237 KOs — specific, not tide). The model could not have surfaced this by forward prediction; it had
+  to be **mined from the measured far field** (the wall in action).
+- **Propagate** — *no* exosome subunit reaches PPP1R10 through any known edge (PPI/complex/pathway/regulon) → a **missing edge** in
+  our knowledge graph, matching the zero PubMed co-mentions. Meanwhile PPP1R10's *own* blast radius is coherent and validates the
+  graph: PPP1CC/CA/CB (the PP1 catalytic subunits PNUTS regulates), **WDR82** (the Restrictor/termination component PNUTS activates),
+  SSRP1/TOP1 (transcription), CPSF6/SNRP* (RNA 3′-processing/splicing).
+- **NEXUS / dependency** — all 8 exosome subunits *and* PPP1R10 are core essential dependencies (dep_frac 0.90–1.0), so this
+  autoregulatory loop sits on essential machinery. NEXUS's structural ΔΔG sensors don't score an expression change (this is
+  regulatory, not a coding mutation), so NEXUS contributes the essentiality context, not a stability number.
+
+**Bottom line:** our model neither predicted nor can explain exosome→PPP1R10 — which is exactly the point. It's a real, measured,
+mechanistically-plausible but **un-annotated** link — a missing edge — and a concrete, testable hypothesis to hand a researcher:
+*does the exosome directly degrade a prematurely-terminated PPP1R10 transcript (autoregulation of PNUTS via exosome-sensitive
+premature termination)?* (`exosome_pnuts_stack.py` → exosome_pnuts_stack.json.)
