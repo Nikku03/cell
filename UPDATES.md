@@ -5580,3 +5580,29 @@ absolute number is lower (essential-gene screen, noisier pseudobulk), but the fi
 (`fullstack_multicell.py` → fullstack_multicell.json.)
 
 ---
+
+## Can it scale to all cell types? Data efficiency of fine-tuning (`celltype_scaling.py`)
+
+The determinant of scaling: how much perturbation data does a new cell type need? Varied the number of training knockouts and
+measured held-out top-10 deployment (tide prior learned from only those training KOs).
+
+```
+train KOs      K562 top-10     HCT116 top-10
+   50            4.8             6.35
+  100            5.4             7.08
+  200            6.4             7.47
+  400            6.4             8.73
+  800            7.1             8.53
+```
+
+**Encouraging: the curve rises fast and flattens.** ~90% of full performance is reached by **~200–400 knockouts**, and even
+**50–100 gives a usable model**. So a new cell type does NOT need a genome-wide screen to be covered — a few hundred well-chosen
+knockouts fine-tune its tide prior to most of the achievable accuracy. That makes covering **many/most cell types realistic** as
+perturb-seq atlases accumulate (the field already runs genome-wide screens on a few lines and smaller screens on many).
+
+Honest limits carried forward: (1) each cell type still needs *some* of its own perturbation data — no free zero-shot transfer;
+(2) the gain is on the deployable top-10 / generic tide, not the specific far field (still walled); (3) tissue/organ is a *different*
+problem — a tissue is a *mixture* of cell types with cell–cell signaling and spatial structure, so it needs per-cell-type models
+*plus* an intercellular layer we have neither built nor measured. (`celltype_scaling.py` → celltype_scaling.json.)
+
+---
