@@ -5531,3 +5531,25 @@ effector CD8 T cells, monocyte subsets) that share most genes. So the corrected 
 cell often and near-top otherwise" — **not** a literal ~80% exact ID. (`celltype_id.py` → celltype_id.json.)
 
 ---
+
+## Combining all the feature views to identify the cell (`celltype_id_combined.py`)
+
+The right version of the question: fuse gene FUNCTION + protein TYPE + LOCATION + PATHWAY into one profile, held-out exactly as
+before (out of all 200 cell types, chance 0.5%).
+
+```
+feature (alone)        exact top-1   top-5   family   med.rank
+FUNCTION (GO-BP)          26%         56%      68%        3
+TYPE (GO-MF)              18%         50%      44%        4
+LOCATION (GO-CC)         24%         54%      60%        4
+PATHWAY (Reactome)       22%         57%      57%        3
+COMBINED (all four)      38%         67%      71%        1
+raw mRNA-content (Jaccard, family) ......... 72%  (not held-out; reported for context)
+```
+
+**Combining helps and the views are complementary:** exact top-1 rises from 26% (best single) to **38%** (+12 pts), top-5 to
+**67%**, and the correct cell's **median rank drops to 1 of 200** — it's usually the single best pick. Right family ~71%. The
+remaining misses are near-twin sub-types (memory vs effector CD8 T, monocyte flavors) that share most of their biology, which no
+combination fully separates from expression annotation alone. (`celltype_id_combined.py` → celltype_id_combined.json.)
+
+---
