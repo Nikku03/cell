@@ -5725,3 +5725,38 @@ money is saved by running *fewer*, not smarter. Honest limits carry over: it sti
 still-walled specific far field. (`cheap_screen.py` → cheap_screen.json.)
 
 ---
+
+## The other cost lever: a cheaper *readout* (L1000/TAP-seq landmark panel) (`cheap_readout.py`)
+
+An exhaustive research sweep (13 agents) flagged the second cost lever: not fewer knockouts, but measuring **fewer genes** —
+L1000/TAP-seq read a ~1000-gene targeted panel instead of the whole transcriptome (~10–50× cheaper sequencing). Does that preserve
+the deployable tide? On K562/HCT116 I restricted the measured universe to a panel of size *P* — `tide_hub` (the *P* most-frequently-
+moving genes from training, the "landmark" analogue) vs `random` — and re-ran the fine-tuned forecast.
+
+**I caught my own metric trap.** The `tide_hub` panel made held-out top-10 look like **95–158% of full** — *higher than whole-
+transcriptome*. That's a **circular artifact**: restricting the candidate pool to pre-vetted frequent movers (and grading against
+panel-restricted movers) makes "predict a mover" trivially easy and just re-reports the generic tide. The honest, unambiguous metric
+is **coverage** — what fraction of a knockout's *true* whole-transcriptome movers the panel even contains:
+
+```
+panel size      tide_hub coverage    random coverage
+   300              29%                  3%
+   500              37%                  5%
+  1000              52%                  9%       (5.5× more efficient than random)
+  2000              70%                 20%
+```
+
+**The tide is concentrated, so a smart landmark panel is far more efficient than random** — a 1000-gene hub panel covers ~52% of
+true movers vs ~9% for random. **But even 1000 genes miss ~half of each knockout's movers, and 2000 still miss ~30%** — and the
+missed part is the diffuse, knockout-specific far field.
+
+**Net for cost:** a cheap targeted readout (~10–50× cheaper sequencing; TAP-seq keeps single cells + pooled guides) is a genuine
+lever for the deployable **generic tide** — ~half the response with ~5% of the genes — and stacks with the small-screen (~50–200 KO)
+lever. But (1) it discards ~30–55% of the response, all knockout-specific, so it *cannot* recover the far field; (2) the apparent
+top-10 "parity" is a metric artifact, not real parity; (3) sequencing is only part of cost — library synthesis, delivery, and labor
+are fixed; (4) it presumes a fixed landmark panel transfers across cell types (true for the generic tide, not cell-type-specific
+movers). **Bottom line:** cheaper readout + fewer knockouts together bring a per-cell-type *tide* model to the low tens of $k, but
+the cheap readout buys the generic tide (~half the response), not the specific movers — and neither lever removes the need for *some*
+of the target cell's own perturbations. (`cheap_readout.py` → cheap_readout.json.)
+
+---
