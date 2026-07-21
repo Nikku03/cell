@@ -59,8 +59,11 @@ came from **scPerturb/Zenodo**.
 | Replogle RPE1 (3rd cell line) | Tested | cross-line ρ 0.13 even same-protocol → cell-type specificity is real biology |
 | Sci-Plex 3 (dose titration) | Tested | magnitude scales with dose (ρ 0.40, 71%); no dose-invariant program shown |
 | ENCODE K562 ATAC | Tested | promoter openness does not explain the tide (0.068, anti-correlated) — "open doors" wire falsified |
-| Time-resolved perturb-seq | Untested | would break the transient-compensation wall — **highest-value next fetch** (GEO, not Census) |
-| Perturb-ATAC / multiome, real Hi-C TADs | Untested | the real per-cell chromatin + 3D wire (vs our bulk-ATAC proxy) |
+| Real K562 Hi-C TADs | Tested | 3D-TAD neighborhood is a weak wire for the tide (0.016, below linear proxy) — physical-genome hypothesis not supported |
+| Sci-Plex 24h vs 72h (A549) | Tested | response reshapes massively over time (ρ 0.062, 77% transient movers) — time matters, but a 24/72h chemical proxy |
+| Primary CD4⁺ T cells (Shifrut) | Tested | generic tide does **not** transfer to a primary cell type (ρ −0.065); magnitude intuition does (0.29–0.40) |
+| Sub-24h genetic perturb-seq | Not available | the ideal data to break the transient-compensation wall — not a clean h5ad; needs GEO MTX assembly. **Real unmet need.** |
+| Perturb-ATAC / multiome | Not available | no guide-labeled multiome h5ad in scPerturb; ENCODE has perturbation-snATAC but not ready-to-use |
 
 ## ⑧ What was missed → combinations (one tested and it worked)
 The far field is **reproducible signal our graph can't read** (ρ 0.25 within-line), not noise — so the target is the right
