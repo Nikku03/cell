@@ -5449,3 +5449,34 @@ transient-compensation wall isn't cleanly fetchable; 3D-TAD chromatin and primar
 thing that *did* move a wall this stretch was the analogy/transfer model, not a new data source.
 
 ---
+
+## Cell-type-specific network: does masking to K562-active genes help? (`fullstack_celltype.py`)
+
+Your idea: run the same 60-KO deployment but activate the network **only for genes expressed in K562**, not all ~16.5k. Every
+network feature (PPI degree, regulon, coexpr/codep degree, centrality, near-field) and the candidate universe restricted to
+K562-active genes (baseline `clean_mean` > 0.05 in the K562 data itself; 8,561 of 16,492 network genes). Same panel + seed, run
+both ways.
+
+```
+metric                 BASELINE(all)   MASKED(active)   delta
+magnitude Spearman         0.459           0.426        -0.033
+top-10 (all KOs)           1.98            2.03         +0.05
+top-10 STRONG KOs          9.0             9.29         +0.29   (~7 KOs → within noise)
+top-10 WEAK KOs            0.77            0.79         +0.02
+```
+
+**~Neutral on native K562 deployment** — every delta is within xgboost run-to-run noise (~±0.1 on top-10). (An earlier
+too-aggressive threshold, `clean_mean`>0.2, actually *hurt* because it dropped ~48% of real movers from the universe; even at
+0.05, 37% of real movers are lowly-expressed and become unreachable — masking by expression inherently loses some movers.)
+
+**Two honest reasons it's a wash here:** (1) the deployment universe was *already* cell-type-specific — it scores each knockout's
+*measured* (= K562-expressed) genes, so inactive genes were never candidates; masking mostly changes network-*degree* features the
+magnitude model already handles. (2) The forecast's dominant signal is the generic expression/abundance prior, not fine graph
+topology.
+
+**The strategic point:** cell-type activation is the *correct*, principled thing to do (and it can't hurt much) — but its real
+payoff is for **transfer to a different cell line** (mask to *that* line's active subgraph), which is exactly where the cross-line
+result (K562→RPE1/HCT116, ρ 0.13) says cell-type specificity actually bites. On K562's own data the readout was already K562's
+expressed transcriptome, so masking is redundant. (`fullstack_celltype.py` → fullstack_celltype.json.)
+
+---
