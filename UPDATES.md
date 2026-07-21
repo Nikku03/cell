@@ -5508,3 +5508,26 @@ identity (~7× lift); it is *not* cell-type-resolved for protein or 3D chromatin
 acquire. (`celltype_coherence.py` → celltype_coherence.json.)
 
 ---
+
+## Correction: how well can we actually "guess the exact cell"? (`celltype_id.py`)
+
+The earlier coherence test's "78–80%" was **family** matching (same lineage) and was **not** held-out — so it overstated
+"guessing the cell." Proper held-out identification (split genes in half; use one half to identify a profile built from the other;
+out of all 200 cell types, chance 0.5%):
+
+```
+                              gene function   protein type
+exact cell = #1 match .......    26%             18%
+exact cell in top-3 .........    48%             38%
+exact cell in top-5 .........    56%             50%
+right family (#1) ...........    68%             44%
+median rank of correct cell .   3 of 200        4 of 200
+```
+
+**Honest reading:** from just the functions/types of a cell's expressed genes we almost always get the right **family** (~68%),
+and we pick the **exact** cell as #1 about **26%** of the time — far above the 0.5% chance, with the correct cell usually near the
+very top (median rank 3 of 200, top-5 ~56%). Where exact-top-1 loses points is distinguishing near-identical sub-types (memory vs
+effector CD8 T cells, monocyte subsets) that share most genes. So the corrected claim is "right family almost always, right exact
+cell often and near-top otherwise" — **not** a literal ~80% exact ID. (`celltype_id.py` → celltype_id.json.)
+
+---
