@@ -5764,37 +5764,64 @@ of the target cell's own perturbations. (`cheap_readout.py` → cheap_readout.js
 ## Fine-tuning cancer cell models from *free* perturbation data (`scperturb_finetune.py`)
 
 If a $20–40k screen is out of budget, the honest $0 route is to use screens **other labs already paid for** and released free on
-scPerturb/Zenodo. This asks: how many distinct *cancer* cell types can we actually fine-tune from that free corpus? A general
-loader (pseudobulk by gene, guide→gene mapping, CSR/CSC sparse) feeds the *same* fine-tune + held-out top-10 as our K562/HCT116
-pipeline, so the numbers are comparable.
+scPerturb/Zenodo. How many distinct cell types can we actually fine-tune from that free corpus? A general loader (per-cell CP10k
+log-normalization, pseudobulk by gene, guide→gene mapping, OOM-safe in-place CSR/CSC) + control-relative variance-shrunk z feeds the
+*same* fine-tune + held-out top-10 as our K562/HCT116 pipeline.
+
+**The normalization mattered enormously — and it's a clean worked example of the honesty loop.** A first *crude* pseudobulk
+(sum-CPM + cross-KO z) gave low scores, and I flagged them as a likely **processing floor, not biology**. Fixing the normalization
+then *confirmed it* — every raw-count line roughly **tripled**:
 
 ```
-cell type (source)          KOs    cells/KO   held-out top-10
-K562  (Replogle, ref)      ~1300   deep       5.05     ← pre-z-scored matrix
-HCT116 (ref)               ~1300   deep       6.98     ← pre-z-scored matrix
-Melanoma (Frangieh)          218   ~1000      3.00     ← raw-count pseudobulk
-Jurkat  (Nadig 2024)        2151   ~122       2.50     ← raw-count pseudobulk
-HepG2   (Nadig 2024)        2151   ~68        1.43     ← raw-count pseudobulk
-RPE1   (Replogle, ref)     ~1300   ~pseudobulk 2.22    ← raw-count pseudobulk
-THP-1   (Papalexi)            23   ~900       0.57     ← only 23 distinct KOs, below the fine-tuning floor
+cell type (source)     KOs   cells/KO   crude → IMPROVED   ≥5/10?
+Melanoma (Frangieh)    218    ~1000      3.00 → 7.85         ✅
+RPE1 (Replogle)       2151    ~115       2.22 → 7.72         ✅
+HCT116 (pre-z-scored) ~1300   deep       —    → 6.98         ✅
+HepG2 (Nadig 2024)    2151    ~68        1.43 → 5.47         ✅
+Jurkat (Nadig 2024)   2151    ~122       2.50 → 5.42         ✅
+K562 (pre-z-scored)   ~1300   deep       —    → 5.05         ✅
+THP-1 (Papalexi)        23    ~900       0.57 → 2.86         (23 KOs, below floor)
 ```
 
-**Yes — we fine-tuned 4 more distinct cancer cell types from free data, at zero wet-lab cost** (melanoma, Jurkat, HepG2, THP-1),
-on top of K562 and HCT116. But I corrected my own auto-verdict, which claimed the scores "track screen size" — **wrong**: HepG2 and
-Jurkat have 2,151 KOs (10× melanoma's 218) yet score *lower*.
+**Six distinct cell types now score ≥5/10 held-out top-10 — all from free data, zero wet-lab cost:** Melanoma 7.85, RPE1 7.72,
+HCT116 6.98, HepG2 5.47, Jurkat 5.42, K562 5.05. (K562/HCT116 come from pre-z-scored matrices; the rest were fine-tuned here from
+raw counts.) The earlier low numbers really were the crude pipeline — RPE1 went 2.22 → 7.72 under the same fine-tune, just better
+normalization.
 
-Two honest corrections drive the real reading:
-- **The gap vs K562/HCT116 is a *processing* artifact, not biology.** K562/HCT116 use professionally pre-z-scored matrices; the new
-  lines are pseudobulked from *raw counts* by a crude recipe. **RPE1, processed the same raw way, sits at 2.22** — right in the
-  1.4–3.0 band of the new lines. So melanoma/Jurkat/HepG2 aren't "harder" cancers; better normalization would lift them. Treat these
-  numbers as a **floor**, not a ceiling.
-- **What actually drives the score is pseudobulk *depth* (cells per perturbation), not KO count:** melanoma (~1000 cells/KO) 3.0 >
-  Jurkat (~122) 2.5 > HepG2 (~68) 1.43.
+**Honest caveats:** (1) this is the deployable **tide** (which genes tend to move) — a cleaner tide is more *predictable*, so much of
+the gain is measuring the generic stress program well, **not** cracking the knockout-specific far field (still walled); (2) THP-1's
+2.86 rides only 23 distinct KOs (below the fine-tuning floor); (3) the normalizer is proper but still simple — a scran/edgeR-style
+pipeline could refine further; (4) all cancer/immortalized lines plus RPE1 (near-normal) — normal tissue stays uncovered.
 
-**Bottom line:** the free cancer perturb-seq corpus already supports fine-tuned models for **~6 distinct cancer cell types** at $0 (a
-real multi-cell-type asset), with more addable as screens accumulate (Datlinger, Dixit, McFarland MIX-seq, …). Per-line accuracy is
-limited by pseudobulk depth + quick processing, not by the cell type; the hard ceiling stays the deployable *generic tide*, not the
-cell-type-specific far field. All are cancer/immortalized lines — the only ones with free genetic screens; normal tissue remains
-uncovered. (`scperturb_finetune.py` → scperturb_finetune.json.)
+**Bottom line:** with correct normalization the free perturb-seq corpus yields **six fine-tuned cell-type models at ≥5/10** at $0 — a
+real multi-cell-type asset, more addable as screens accumulate (Datlinger, Dixit, McFarland MIX-seq, …). The hard ceiling is
+unchanged: the deployable generic tide, not the cell-type-specific far field. (`scperturb_finetune.py` → scperturb_finetune.json.)
+
+---
+
+## Can we mine novel hypotheses for researchers? Turning the "wall" into a discovery list (`novel_links.py`)
+
+We can't *predict* the knockout-specific far field, but it's **measured**. So: for each knockout X, take its strongest *specific*
+movers Y (rank-based, non-tide) and keep only those with **no known relationship** to X in any layer (PPI, TRRUST regulon, complex,
+Reactome pathway, GO-BP process, co-expression, co-dependency) — measured strong effects with no annotated mechanism. The intended
+deliverable: the ones **reproducible in both K562 and HCT116**, with a **permutation chance control**.
+
+**Honest result: not a credible list from two lines — the chance control is decisive.** Of 15,923 unexplained specific effects
+(K562 11,192; HCT116 4,741), only **9 reproduce in both lines vs 4.1 ± 2.0 expected by chance (~2.2×)** — marginally above in
+*count*, but the reproducible candidates are **weak** (median max |z| ≈ 0.7): HCT116's compressed z inflates near-noise genes into
+its rank-based "top movers," so "reproducible" mostly means "weakly present in both," plus recurrent stress genes (SOD2 appears
+twice). So there is **no credible set of cross-line-reproducible strong novel links** from these two lines — the strong specific far
+field is overwhelmingly *cell-line-specific* (or noise), consistent with the cross-line tide ρ ≈ 0.13.
+
+Two hard limits made it under-deliver: (1) **"unexplained by *our* knowledge base" ≠ novel** — the single-line lists are dominated
+by *annotation gaps* (HSPA5→UPR chaperones SDF2L1/HSP90B1/PDIA4 is textbook; GATA1→many is just untabulated erythroid targets);
+(2) **HCT116's compressed z cripples the reproducibility filter.**
+
+**The real path** (now feasible): require reproducibility across **≥3 deep, well-normalized screens** — we now have six fine-tunable
+lines (`scperturb_finetune`), so re-running this with proper pseudobulk across them is the honest way to get a credible list — and
+denoise against a *complete* interactome (STRING/OmniPath), not our partial tables. The output `novel_links_candidates.csv` is
+**speculative per-line leads** requiring literature triage + independent validation — hypothesis *generation* on measured data, not
+validated discovery. Honest answer to "find novel things to send researchers": **not yet from two lines; it needs more deep,
+well-normalized cell lines.** (`novel_links.py` → novel_links.json + novel_links_candidates.csv.)
 
 ---

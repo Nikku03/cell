@@ -1,0 +1,2135 @@
+{
+ "n_candidates": 15923,
+ "n_reproducible": 9,
+ "expected_reproducible_by_chance": 4.1,
+ "chance_sd": 2.0,
+ "enrichment_over_chance": 2.2,
+ "reproducible_median_abs_z": 0.72,
+ "n_dark_involved": 6137,
+ "per_line_counts": {
+  "K562": 11192,
+  "HCT116": 4741
+ },
+ "candidates": [
+  {
+   "KO": "CPSF6",
+   "moved_gene": "VMA21",
+   "in_lines": [
+    "K562",
+    "HCT116"
+   ],
+   "z_by_line": {
+    "K562": 1.26,
+    "HCT116": 0.46
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": true,
+   "max_abs_z": 1.26
+  },
+  {
+   "KO": "PTMA",
+   "moved_gene": "SNX4",
+   "in_lines": [
+    "K562",
+    "HCT116"
+   ],
+   "z_by_line": {
+    "K562": -0.76,
+    "HCT116": -0.11
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": true,
+   "max_abs_z": 0.76
+  },
+  {
+   "KO": "SRP14",
+   "moved_gene": "ACOT13",
+   "in_lines": [
+    "K562",
+    "HCT116"
+   ],
+   "z_by_line": {
+    "K562": -0.72,
+    "HCT116": -0.23
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": true,
+   "max_abs_z": 0.72
+  },
+  {
+   "KO": "RPL36AL",
+   "moved_gene": "NLRP2",
+   "in_lines": [
+    "K562",
+    "HCT116"
+   ],
+   "z_by_line": {
+    "K562": -0.53,
+    "HCT116": -0.11
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": true,
+   "max_abs_z": 0.53
+  },
+  {
+   "KO": "ORC3",
+   "moved_gene": "RARS2",
+   "in_lines": [
+    "K562",
+    "HCT116"
+   ],
+   "z_by_line": {
+    "K562": -0.41,
+    "HCT116": -0.12
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": true,
+   "max_abs_z": 0.41
+  },
+  {
+   "KO": "CPSF6",
+   "moved_gene": "SOD2",
+   "in_lines": [
+    "K562",
+    "HCT116"
+   ],
+   "z_by_line": {
+    "K562": 2.79,
+    "HCT116": 0.32
+   },
+   "best_rank": 1,
+   "dark": true,
+   "reproducible": true,
+   "max_abs_z": 2.79
+  },
+  {
+   "KO": "THOC3",
+   "moved_gene": "SOD2",
+   "in_lines": [
+    "K562",
+    "HCT116"
+   ],
+   "z_by_line": {
+    "K562": 0.97,
+    "HCT116": 0.29
+   },
+   "best_rank": 4,
+   "dark": true,
+   "reproducible": true,
+   "max_abs_z": 0.97
+  },
+  {
+   "KO": "RPL36AL",
+   "moved_gene": "SAV1",
+   "in_lines": [
+    "K562",
+    "HCT116"
+   ],
+   "z_by_line": {
+    "K562": -0.29,
+    "HCT116": -0.1
+   },
+   "best_rank": 5,
+   "dark": false,
+   "reproducible": true,
+   "max_abs_z": 0.29
+  },
+  {
+   "KO": "ABCB10",
+   "moved_gene": "TIMELESS",
+   "in_lines": [
+    "K562",
+    "HCT116"
+   ],
+   "z_by_line": {
+    "K562": -0.66,
+    "HCT116": -0.22
+   },
+   "best_rank": 18,
+   "dark": false,
+   "reproducible": true,
+   "max_abs_z": 0.66
+  },
+  {
+   "KO": "CHMP3",
+   "moved_gene": "SOD2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 19.61
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 19.61
+  },
+  {
+   "KO": "CSE1L",
+   "moved_gene": "RASSF1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 4.32
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 4.32
+  },
+  {
+   "KO": "DIS3",
+   "moved_gene": "PPP1R10",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 3.99
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 3.99
+  },
+  {
+   "KO": "RPL7A",
+   "moved_gene": "PLAGL1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 3.96
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 3.96
+  },
+  {
+   "KO": "SLU7",
+   "moved_gene": "TRMT112",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 3.35
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 3.35
+  },
+  {
+   "KO": "EXOSC9",
+   "moved_gene": "MTHFD2L",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 3.16
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 3.16
+  },
+  {
+   "KO": "KPNB1",
+   "moved_gene": "RASSF1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 2.4
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 2.4
+  },
+  {
+   "KO": "EIF4A3",
+   "moved_gene": "DNAJC13",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 2.15
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 2.15
+  },
+  {
+   "KO": "FDPS",
+   "moved_gene": "CYBRD1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 2.1
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 2.1
+  },
+  {
+   "KO": "DDX6",
+   "moved_gene": "ARID5B",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 2.03
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 2.03
+  },
+  {
+   "KO": "NAPA",
+   "moved_gene": "RIT1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.93
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.93
+  },
+  {
+   "KO": "HNRNPC",
+   "moved_gene": "CHAMP1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.83
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.83
+  },
+  {
+   "KO": "THAP11",
+   "moved_gene": "NAA38",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.57
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.57
+  },
+  {
+   "KO": "YTHDC1",
+   "moved_gene": "ZNF292",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.55
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.55
+  },
+  {
+   "KO": "THOC1",
+   "moved_gene": "GOLGA4",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.53
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.53
+  },
+  {
+   "KO": "NDUFAF7",
+   "moved_gene": "LIPH",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.44
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.44
+  },
+  {
+   "KO": "NXF1",
+   "moved_gene": "TBCD",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.43
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.43
+  },
+  {
+   "KO": "SMNDC1",
+   "moved_gene": "ZNF8",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.37
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 1.37
+  },
+  {
+   "KO": "WDR77",
+   "moved_gene": "ATP5PB",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.33
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.33
+  },
+  {
+   "KO": "ISY1",
+   "moved_gene": "NECAP1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.31
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.31
+  },
+  {
+   "KO": "ORC6",
+   "moved_gene": "ST13",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.31
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.31
+  },
+  {
+   "KO": "ARPC3",
+   "moved_gene": "NAXE",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.28
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.28
+  },
+  {
+   "KO": "USP8",
+   "moved_gene": "HSPA1B",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.2
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.2
+  },
+  {
+   "KO": "OSGEP",
+   "moved_gene": "APEX1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.16
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.16
+  },
+  {
+   "KO": "PPIL1",
+   "moved_gene": "SYVN1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.16
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.16
+  },
+  {
+   "KO": "GNL3",
+   "moved_gene": "PARK7",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.15
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.15
+  },
+  {
+   "KO": "KIN",
+   "moved_gene": "ATP5F1C",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.14
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.14
+  },
+  {
+   "KO": "NDUFB10",
+   "moved_gene": "HSBP1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.1
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.1
+  },
+  {
+   "KO": "ZBTB17",
+   "moved_gene": "MRPS23",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.09
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.09
+  },
+  {
+   "KO": "PAK1IP1",
+   "moved_gene": "ECHDC3",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.08
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 1.08
+  },
+  {
+   "KO": "EEF1A1",
+   "moved_gene": "COBL",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.07
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 1.07
+  },
+  {
+   "KO": "RRP1",
+   "moved_gene": "LAMTOR1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.07
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.07
+  },
+  {
+   "KO": "TPT1",
+   "moved_gene": "ATP6V0E1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.05
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 1.05
+  },
+  {
+   "KO": "JAZF1",
+   "moved_gene": "MYCBP2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.04
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 1.04
+  },
+  {
+   "KO": "SDC1",
+   "moved_gene": "NDUFB1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.03
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.03
+  },
+  {
+   "KO": "EXOC8",
+   "moved_gene": "DCLRE1A",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.0
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.0
+  },
+  {
+   "KO": "OR7A10",
+   "moved_gene": "MSMO1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 1.0
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.0
+  },
+  {
+   "KO": "ARIH1",
+   "moved_gene": "FKBP3",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.0
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 1.0
+  },
+  {
+   "KO": "VEZT",
+   "moved_gene": "VBP1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.0
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 1.0
+  },
+  {
+   "KO": "PPP4C",
+   "moved_gene": "NDUFA8",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -1.0
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 1.0
+  },
+  {
+   "KO": "RNPC3",
+   "moved_gene": "MTHFD2L",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.99
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.99
+  },
+  {
+   "KO": "SRCAP",
+   "moved_gene": "TXN2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.99
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.99
+  },
+  {
+   "KO": "BGLAP",
+   "moved_gene": "PMF1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.97
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.97
+  },
+  {
+   "KO": "ELOVL1",
+   "moved_gene": "GHITM",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.96
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.96
+  },
+  {
+   "KO": "PRMT5",
+   "moved_gene": "PRPF39",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.94
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.94
+  },
+  {
+   "KO": "CHTF8",
+   "moved_gene": "HOXC8",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.94
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.94
+  },
+  {
+   "KO": "NCAPH2",
+   "moved_gene": "KDELR1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.93
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.93
+  },
+  {
+   "KO": "COQ4",
+   "moved_gene": "TRUB2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.93
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.93
+  },
+  {
+   "KO": "GNB1L",
+   "moved_gene": "RTL10",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.92
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.92
+  },
+  {
+   "KO": "METTL17",
+   "moved_gene": "PPIH",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.91
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.91
+  },
+  {
+   "KO": "NPEPPS",
+   "moved_gene": "XRCC6",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.91
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.91
+  },
+  {
+   "KO": "XRCC3",
+   "moved_gene": "OSTC",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.9
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.9
+  },
+  {
+   "KO": "POP7",
+   "moved_gene": "MPG",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.9
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.9
+  },
+  {
+   "KO": "ACIN1",
+   "moved_gene": "CDK6",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.89
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.89
+  },
+  {
+   "KO": "CENPI",
+   "moved_gene": "ZFAND2B",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.88
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.88
+  },
+  {
+   "KO": "RPS25",
+   "moved_gene": "SLC18B1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.88
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.88
+  },
+  {
+   "KO": "TMED2",
+   "moved_gene": "CALU",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.88
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.88
+  },
+  {
+   "KO": "RCOR1",
+   "moved_gene": "INVS",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.87
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.87
+  },
+  {
+   "KO": "HJURP",
+   "moved_gene": "LAMTOR1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.87
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.87
+  },
+  {
+   "KO": "DPPA2",
+   "moved_gene": "DIAPH1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.86
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.86
+  },
+  {
+   "KO": "NPM1",
+   "moved_gene": "RPL39L",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.85
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.85
+  },
+  {
+   "KO": "TOP2A",
+   "moved_gene": "MADD",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.83
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.83
+  },
+  {
+   "KO": "URB1",
+   "moved_gene": "EFHC1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.81
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.81
+  },
+  {
+   "KO": "PXN",
+   "moved_gene": "OSTC",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.81
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.81
+  },
+  {
+   "KO": "ERVW-1",
+   "moved_gene": "TENT4A",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.8
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.8
+  },
+  {
+   "KO": "ARPC4",
+   "moved_gene": "TADA3",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.8
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.8
+  },
+  {
+   "KO": "PEX1",
+   "moved_gene": "FKBP3",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.79
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.79
+  },
+  {
+   "KO": "UBQLN4",
+   "moved_gene": "POLR2G",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.79
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.79
+  },
+  {
+   "KO": "EIF1",
+   "moved_gene": "FAM162A",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.79
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.79
+  },
+  {
+   "KO": "CPSF4",
+   "moved_gene": "MSH4",
+   "in_lines": [
+    "HCT116"
+   ],
+   "z_by_line": {
+    "HCT116": 0.78
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.78
+  },
+  {
+   "KO": "DNAJC11",
+   "moved_gene": "NKIRAS1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.78
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.78
+  },
+  {
+   "KO": "POLR1C",
+   "moved_gene": "TGDS",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.77
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.77
+  },
+  {
+   "KO": "NCAPD2",
+   "moved_gene": "CDK13",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.77
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.77
+  },
+  {
+   "KO": "SETD2",
+   "moved_gene": "UBE2D3",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.75
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.75
+  },
+  {
+   "KO": "HTATSF1",
+   "moved_gene": "ZNHIT1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.75
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.75
+  },
+  {
+   "KO": "TUBGCP2",
+   "moved_gene": "ZNF511",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.75
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.75
+  },
+  {
+   "KO": "OSBP",
+   "moved_gene": "ATE1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.74
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.74
+  },
+  {
+   "KO": "PPP2R3C",
+   "moved_gene": "EFHC1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.74
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.74
+  },
+  {
+   "KO": "DICER1",
+   "moved_gene": "YES1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.73
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.73
+  },
+  {
+   "KO": "NUP35",
+   "moved_gene": "CYB5D2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.73
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.73
+  },
+  {
+   "KO": "ANAPC5",
+   "moved_gene": "SUPT3H",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.7
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.7
+  },
+  {
+   "KO": "KAT5",
+   "moved_gene": "TXNDC17",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.7
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.7
+  },
+  {
+   "KO": "MVK",
+   "moved_gene": "HEBP2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.7
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.7
+  },
+  {
+   "KO": "COQ2",
+   "moved_gene": "TMEM39A",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.7
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.7
+  },
+  {
+   "KO": "AHCTF1",
+   "moved_gene": "CD99",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.7
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.7
+  },
+  {
+   "KO": "KDM8",
+   "moved_gene": "RASGRP2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.69
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.69
+  },
+  {
+   "KO": "RAB6A",
+   "moved_gene": "GPR107",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.69
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.69
+  },
+  {
+   "KO": "SNRNP40",
+   "moved_gene": "ZCCHC17",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.69
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.69
+  },
+  {
+   "KO": "NAPG",
+   "moved_gene": "MRFAP1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.69
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.69
+  },
+  {
+   "KO": "EDC4",
+   "moved_gene": "UBE2V1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.69
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.69
+  },
+  {
+   "KO": "TAMM41",
+   "moved_gene": "STOML2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.68
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.68
+  },
+  {
+   "KO": "RAD9A",
+   "moved_gene": "CETN3",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.68
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.68
+  },
+  {
+   "KO": "SMAGP",
+   "moved_gene": "KDELR1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.68
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.68
+  },
+  {
+   "KO": "NAA10",
+   "moved_gene": "SAMD1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.68
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.68
+  },
+  {
+   "KO": "AQP7",
+   "moved_gene": "CDCA7",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.68
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.68
+  },
+  {
+   "KO": "ANKRD49",
+   "moved_gene": "MRE11",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.68
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.68
+  },
+  {
+   "KO": "GUK1",
+   "moved_gene": "RPL39L",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.68
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.68
+  },
+  {
+   "KO": "CBLN1",
+   "moved_gene": "UBAP2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.67
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.67
+  },
+  {
+   "KO": "ATP6AP2",
+   "moved_gene": "PPIF",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.67
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.67
+  },
+  {
+   "KO": "CCP110",
+   "moved_gene": "USP32",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.66
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.66
+  },
+  {
+   "KO": "KIF18A",
+   "moved_gene": "TBCE",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.66
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.66
+  },
+  {
+   "KO": "GAK",
+   "moved_gene": "ECI2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.65
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.65
+  },
+  {
+   "KO": "EGLN2",
+   "moved_gene": "USP14",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.65
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.65
+  },
+  {
+   "KO": "SMG6",
+   "moved_gene": "CHD6",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.64
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.64
+  },
+  {
+   "KO": "CENPT",
+   "moved_gene": "ARF6",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.64
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.64
+  },
+  {
+   "KO": "PPA2",
+   "moved_gene": "DOK3",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.63
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.63
+  },
+  {
+   "KO": "AASDHPPT",
+   "moved_gene": "CDK19",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.63
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.63
+  },
+  {
+   "KO": "NISCH",
+   "moved_gene": "IREB2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.62
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.62
+  },
+  {
+   "KO": "ACD",
+   "moved_gene": "B4GALT4",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.62
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.62
+  },
+  {
+   "KO": "EMC4",
+   "moved_gene": "RNF19A",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.62
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.62
+  },
+  {
+   "KO": "DPH3",
+   "moved_gene": "TSPAN3",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.62
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.62
+  },
+  {
+   "KO": "PPP1R7",
+   "moved_gene": "RELL2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.62
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.62
+  },
+  {
+   "KO": "STIL",
+   "moved_gene": "UQCC2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.62
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.62
+  },
+  {
+   "KO": "TIMM10",
+   "moved_gene": "CNOT11",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.61
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.61
+  },
+  {
+   "KO": "ACTR3",
+   "moved_gene": "SASS6",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.59
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.59
+  },
+  {
+   "KO": "NSMCE1",
+   "moved_gene": "BEST1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.59
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.59
+  },
+  {
+   "KO": "SBDS",
+   "moved_gene": "DENND5B",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.59
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.59
+  },
+  {
+   "KO": "TUBA3D",
+   "moved_gene": "NUP35",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.58
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.58
+  },
+  {
+   "KO": "TARDBP",
+   "moved_gene": "RWDD1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.58
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.58
+  },
+  {
+   "KO": "KIF4A",
+   "moved_gene": "PDZD11",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.58
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.58
+  },
+  {
+   "KO": "GTF3C1",
+   "moved_gene": "NFIA",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.58
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.58
+  },
+  {
+   "KO": "ADAT2",
+   "moved_gene": "SHOX2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.58
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.58
+  },
+  {
+   "KO": "PIK3R4",
+   "moved_gene": "PPIL1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.58
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.58
+  },
+  {
+   "KO": "CBX1",
+   "moved_gene": "GNPNAT1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.58
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.58
+  },
+  {
+   "KO": "SEC61A1",
+   "moved_gene": "SAR1B",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.57
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.57
+  },
+  {
+   "KO": "TRMT6",
+   "moved_gene": "MCM8",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.57
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.57
+  },
+  {
+   "KO": "USP39",
+   "moved_gene": "AGTPBP1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.57
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.57
+  },
+  {
+   "KO": "UBE2Z",
+   "moved_gene": "ZNF205",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.56
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.56
+  },
+  {
+   "KO": "RBMXL1",
+   "moved_gene": "TMEM268",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.56
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.56
+  },
+  {
+   "KO": "NHLRC2",
+   "moved_gene": "PEX7",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.55
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.55
+  },
+  {
+   "KO": "OR4F4",
+   "moved_gene": "ZNF263",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.55
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.55
+  },
+  {
+   "KO": "RAC3",
+   "moved_gene": "PREB",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.54
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.54
+  },
+  {
+   "KO": "PPIL2",
+   "moved_gene": "HEPH",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.54
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.54
+  },
+  {
+   "KO": "EARS2",
+   "moved_gene": "TMED10",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.54
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.54
+  },
+  {
+   "KO": "SLC1A5",
+   "moved_gene": "TMEM106C",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": -0.54
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.54
+  },
+  {
+   "KO": "REV3L",
+   "moved_gene": "ABHD2",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.53
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.53
+  },
+  {
+   "KO": "KRT10",
+   "moved_gene": "ATG13",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.53
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.53
+  },
+  {
+   "KO": "ARF4",
+   "moved_gene": "TEDC1",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.52
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.52
+  },
+  {
+   "KO": "UPF3A",
+   "moved_gene": "PSMA4",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.52
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.52
+  },
+  {
+   "KO": "DHODH",
+   "moved_gene": "KBTBD8",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.52
+   },
+   "best_rank": 0,
+   "dark": false,
+   "reproducible": false,
+   "max_abs_z": 0.52
+  },
+  {
+   "KO": "SENP6",
+   "moved_gene": "VPS13A",
+   "in_lines": [
+    "K562"
+   ],
+   "z_by_line": {
+    "K562": 0.52
+   },
+   "best_rank": 0,
+   "dark": true,
+   "reproducible": false,
+   "max_abs_z": 0.52
+  }
+ ],
+ "verdict": "HONEST (QUALIFIED-NEGATIVE) DISCOVERY RESULT -- the chance control is decisive. The knockout-SPECIFIC far field is unpredictable (the wall) but MEASURED, so we mined it for strong, SPECIFIC (non-tide) gene->gene effects with NO known relationship (PPI, TRRUST regulon, complex, shared Reactome pathway, shared GO process, co-expression, co-dependency): 15923 across K562/HCT116 ({'K562': 11192, 'HCT116': 4741}). The intended deliverable was the set REPRODUCIBLE in both a leukemia (K562) and a colon-cancer (HCT116) line -- but only 9 reproduce, versus 4.1+/-2.0 expected by CHANCE (permuting KO labels), i.e. enrichment ~2.2x. That is marginally above chance in COUNT (~2.2x) but NOT a credible deliverable, because the reproducible candidates are WEAK: their median max |z| is only 0.72 -- i.e. HCT116's compressed z inflates near-noise genes into its rank-based 'top movers', so 'reproducible' here mostly means 'weakly present in both', plus recurrent stress genes (SOD2 appears twice). So there is NO credible set of cross-line-reproducible STRONG novel links from these two lines; the strong specific far field is overwhelmingly CELL-LINE-SPECIFIC (or noise) and does not reproduce across a leukemia and a colon line -- consistent with everything measured (cross-line tide rho ~0.13). TWO HARD LIMITS made this under-deliver: (1) 'unexplained by OUR knowledge base' is NOT 'novel' -- the single-line lists are dominated by ANNOTATION GAPS (HSPA5->UPR chaperones is textbook; GATA1->many is just untabulated erythroid targets); (2) HCT116's z-scale is COMPRESSED, so its rank-based 'top movers' are near-noise, which cripples the reproducibility filter. WHAT WOULD ACTUALLY WORK: require reproducibility across >=3 DEEP, well-normalised screens (we now have 6 fine-tunable lines -- re-running this across all of them with proper pseudobulk is the real path), and denoise against a complete interactome (STRING/OmniPath) not our partial tables. BOTTOM LINE: mining the measured far field for novel links is a sound idea, but with only two lines (one compressed) it yields ~chance cross-line overlap -- NOT a validated hypothesis list to send researchers. The per-line candidates (outputs/orphan/novel_links_candidates.csv) are speculative leads requiring literature triage + independent validation, not a discovery. Honest answer: not yet -- needs more deep lines.",
+ "note": "HONEST (QUALIFIED-NEGATIVE) DISCOVERY RESULT -- the chance control is decisive. The knockout-SPECIFIC far field is unpredictable (the wall) but MEASURED, so we mined it for strong, SPECIFIC (non-tide) gene->gene effects with NO known relationship (PPI, TRRUST regulon, complex, shared Reactome pathway, shared GO process, co-expression, co-dependency): 15923 across K562/HCT116 ({'K562': 11192, 'HCT116': 4741}). The intended deliverable was the set REPRODUCIBLE in both a leukemia (K562) and a colon-cancer (HCT116) line -- but only 9 reproduce, versus 4.1+/-2.0 expected by CHANCE (permuting KO labels), i.e. enrichment ~2.2x. That is marginally above chance in COUNT (~2.2x) but NOT a credible deliverable, because the reproducible candidates are WEAK: their median max |z| is only 0.72 -- i.e. HCT116's compressed z inflates near-noise genes into its rank-based 'top movers', so 'reproducible' here mostly means 'weakly present in both', plus recurrent stress genes (SOD2 appears twice). So there is NO credible set of cross-line-reproducible STRONG novel links from these two lines; the strong specific far field is overwhelmingly CELL-LINE-SPECIFIC (or noise) and does not reproduce across a leukemia and a colon line -- consistent with everything measured (cross-line tide rho ~0.13). TWO HARD LIMITS made this under-deliver: (1) 'unexplained by OUR knowledge base' is NOT 'novel' -- the single-line lists are dominated by ANNOTATION GAPS (HSPA5->UPR chaperones is textbook; GATA1->many is just untabulated erythroid targets); (2) HCT116's z-scale is COMPRESSED, so its rank-based 'top movers' are near-noise, which cripples the reproducibility filter. WHAT WOULD ACTUALLY WORK: require reproducibility across >=3 DEEP, well-normalised screens (we now have 6 fine-tunable lines -- re-running this across all of them with proper pseudobulk is the real path), and denoise against a complete interactome (STRING/OmniPath) not our partial tables. BOTTOM LINE: mining the measured far field for novel links is a sound idea, but with only two lines (one compressed) it yields ~chance cross-line overlap -- NOT a validated hypothesis list to send researchers. The per-line candidates (outputs/orphan/novel_links_candidates.csv) are speculative leads requiring literature triage + independent validation, not a discovery. Honest answer: not yet -- needs more deep lines."
+}
