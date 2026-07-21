@@ -5425,3 +5425,27 @@ No sub-24h genetic perturb-seq exists as a clean h5ad (the ideal transient-windo
 scPerturb file turned out to be single-timepoint. The best available real time contrast is Sci-Plex 24h vs 72h.
 
 ---
+
+### Time-resolved — Sci-Plex 24h vs 72h reshape (`sciplex_time.py`)
+No sub-24h *genetic* perturb-seq exists as a clean h5ad (the Aissa scPerturb file was single-timepoint; the ideal data needs GEO
+MTX assembly). The best available real time contrast is Sci-Plex 24h vs 72h — and only **A549** has both timepoints (K562/MCF7 are
+24h-only). 47 A549 drugs with both:
+
+```
+profile Spearman(24h, 72h) ...... 0.062     (near zero — profiles barely correlate)
+mover-set Jaccard(24h, 72h) ..... 0.128
+transient (24h-only movers) ..... 77%
+adaptive  (72h-only movers) ..... 77%
+```
+**Time demonstrably matters** — the response reshapes massively between 24h and 72h; a single steady-state snapshot misses most of
+the time-specific structure. That's direct (proxy) support for the transient hypothesis behind the compensation wall. **Honest
+caveats:** (1) for weak drugs the mover sets are near-noise, so the 77% is likely inflated by pseudobulk noise — but the near-zero
+profile correlation and the biology (24h acute vs 72h survivor state) support a genuine large reshape for responding drugs; (2)
+this is 24h-vs-72h *chemical* (A549), not the 2–12h *genetic* window where paralog compensation is expected. So it shows
+time-resolution matters, but it's a proxy — the exact sub-24h genetic perturb-seq remains the real highest-value unmet fetch (GEO).
+
+**Across all three requested sources:** time-resolution matters (Sci-Plex), but the ideal dataset to break the
+transient-compensation wall isn't cleanly fetchable; 3D-TAD chromatin and primary-CD4 transfer were both honest negatives. The one
+thing that *did* move a wall this stretch was the analogy/transfer model, not a new data source.
+
+---
