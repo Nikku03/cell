@@ -5386,3 +5386,42 @@ response-adjacent — an annotation-only complex+pathway+PPI variant would be ev
 worth wiring in as a forecast component. (`analogy.py` → analogy.json.)
 
 ---
+
+## Working the last three data sources (user-requested, one by one)
+
+### 3D chromatin — real Hi-C TADs (`missing_wire_3d.py`)
+Follow-up to `missing_wire.py`, replacing the crude ±1Mb linear proxy with **real K562 in-situ Hi-C TADs** (ENCODE ENCFF271SAF,
+5,703 Arrowhead contact domains). Does sharing a physical 3D TAD neighborhood with other high-tide genes make a gene a "usual
+suspect"?
+
+```
+held-out Spearman predicting tide score (4,337 genes, 1,923 TADs, median 1 gene/TAD)
+   real TAD 3D-neighborhood ... 0.016   (corr 0.038 ≈ 0)
+   linear ±1Mb proxy .......... 0.039
+   baseline expression ........ 0.194
+   PPI/regulon control ........ 0.091
+   + TAD3D over expr+PPI ...... +0.017 ;  over linear proxy +0.018
+```
+**Weak/negative.** Real 3D TAD co-localization is barely better than 1D proximity and far short of a dominant wire. With the
+promoter-ATAC negative, the physical-genome hypothesis for the tide is only weakly supported — the "usual suspects" are best
+explained by baseline expression + network connectivity, not chromatin geography. Caveat: median 1 measured gene/TAD limits power;
+shared stress *enhancers* within a TAD, or per-cell Perturb-ATAC, remain untested (Perturb-ATAC isn't cleanly available as an h5ad).
+
+### Primary CD4⁺ T cells — cross-cell-type transfer (`cd4_transfer.py`)
+Downloaded Shifrut-Marson 2018 (primary human CD4⁺ T-cell CRISPR KO, 52k cells, 20 immune-gene KOs) as the tractable stand-in for
+the 22M-cell CD4 screen. **Zero knockouts overlap with K562** (the CD4 screen targets T-cell signaling genes), so a same-KO test
+is impossible; tested generic transfer.
+
+- **Tide conservation: ρ = −0.065** (0/50 usual-suspect overlap). The generic "usual suspect" program does **not** transfer to a
+  primary immune cell — unlike between cancer lines (K562↔RPE1↔HCT116, which shared it). Honest reason: both the cell type *and* the
+  perturbation biology (T-cell activation vs essential-gene stress) differ.
+- **Magnitude transfer: ρ 0.29 (essentiality), 0.40 (PPI degree).** The size-vs-importance intuition *does* carry across cell types.
+
+Net: the model's generic tide is a **cancer-cell-stress program, not a universal one**; only the magnitude/importance axis is
+portable. Strongly reinforces the cross-cell-line finding.
+
+### Time-resolved — see next section (Sci-Plex 24h vs 72h)
+No sub-24h genetic perturb-seq exists as a clean h5ad (the ideal transient-window data would need GEO MTX assembly); the Aissa
+scPerturb file turned out to be single-timepoint. The best available real time contrast is Sci-Plex 24h vs 72h.
+
+---
