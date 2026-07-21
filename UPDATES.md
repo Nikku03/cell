@@ -5871,3 +5871,55 @@ autoregulating its own message via the exosome — applied to a gene where it ha
 mechanistically-plausible but **un-annotated** link — a missing edge — and a concrete, testable hypothesis to hand a researcher:
 *does the exosome directly degrade a prematurely-terminated PPP1R10 transcript (autoregulation of PNUTS via exosome-sensitive
 premature termination)?* (`exosome_pnuts_stack.py` → exosome_pnuts_stack.json.)
+
+---
+
+## Making the discovery self-contained: the software proposes the connection with a confidence score (`connection_proposer.py`)
+
+**The honest critique that prompted this.** On exosome→PPP1R10 the division of labour was uncomfortable: the *model* couldn't
+predict it, the *graph* couldn't connect it, so it was **I (the reasoner)** who eyeballed the mined table, noticed a whole complex
+converging on one gene, and called it a hypothesis. That is "Opus did it," not "the software did it." The fix is to move the
+*judgement that makes a convergence credible* out of the reasoner and into deterministic code that emits a **ranked proposal with a
+confidence number**, run by anyone, agent-independent.
+
+**What the tool does (no LLM in the loop for the score).** From the six lines' measured z-profiles it (1) finds reproducible,
+knockout-specific gene→gene effects; (2) for each moved target, takes the set of knockouts that reproducibly move it and asks *does
+that knockout set form a real annotated machine?* — a hypergeometric enrichment against CORUM complexes + Reactome pathways + GO
+cellular-components (capped at 120 members so a loose compartment like "nucleus" can't score); (3) gates that complex-coherence by
+cross-line reproducibility. The confidence is `coherence · (0.4 + 0.6·reproducibility)`, both bounded to [0,1].
+
+**Result — the tool emits the hypothesis on its own, ranked #1:**
+
+```
+target     confidence  machine (annotated)                       converging KOs / in-complex
+PPP1R10    0.82        nuclear exosome (RNase complex)           11 / 10   EXOSC2/3/4/5/6/7/8/9,DIS3,MTREX  ← NOVEL, #1
+HYOU1      0.79        oligosaccharyltransferase / ER (UPR)      12 / 4    HSPA5,DDOST,RPN1,DAD1,…          (known UPR)
+LETMD1     0.78        exon-exon junction complex (NMD)          6  / 4    UPF1,UPF2,RBM8A,MAGOH,SMG5/7     (known NMD)
+HSPA1B     0.76        proteasome complex                        7  / 6    PSMC1,PSMA3,PSMB5/6,…            (known → HSP70)
+MTHFD2L    0.75        nuclear RNA decay (PAXT/exosome)          17 / 12   EXOSC…,ZFC3H1                    (novel-ish)
+SCO2       0.74        m6A methyltransferase complex             4  / 4    METTL3,METTL14,RBM15,ZC3H13      (novel)
+SNRNP40    0.73        Ino80 chromatin-remodeller                5  / 4    INO80,ACTR8,INO80B,NFRKB        (novel)
+```
+
+`PPP1R10 ← nuclear exosome, confidence 0.82` (coherence p≈2×10⁻³¹, 10 of 11 converging knockouts inside the named complex) is now
+produced by **code, not by me**. The full ranked novel list (80 rows, `connection_proposer_candidates.csv`) is a coherent set of
+RNA-metabolism machine→target hypotheses.
+
+**Calibration — and its honest weakness.** Confidence separates convergences that map to a real annotated complex from random gene
+sets at **AUC 1.0** — but that is *partly definitional*, because coherence is literally in the score, so I flag it rather than sell
+it. **The decisive validation is the positive control:** the highest-confidence proposals are dominated by **known machine→response
+programs the method was never told** — proteasome→HSP70 (HSPA1B), UPR (HYOU1/DNAJB11 ← OST/ER machinery), NMD (LETMD1 ← exon-junction
+complex), splicing. It re-derives textbook biology at the top on its own, so a high score genuinely tracks real coherent machinery —
+and the novel proposals (exosome→PPP1R10 0.82, m6A→SCO2, Ino80→SNRNP40) sit in the **same range** as those knowns.
+
+**Honest bounds — what the number is and isn't.** The confidence is `P(this reproducible convergent effect looks like a real
+coherent-machine effect)`, **not** `P(true direct mechanism/edge)`: high means "very unlikely a fluke, and it matches a real
+machine," not "proven edge." The tool **cannot** supply the mechanism or the novelty-vs-literature judgement — that still needs a
+reasoner. It only scores machine→target *convergences*; a lone pairwise effect with no complex behind it earns no coherence and
+stays low, so genuinely novel one-off edges are invisible to it by construction.
+
+**What actually changed (the point of the critique).** The ranking and the number are now deterministic code from data. "Opus
+eyeballed a table" becomes "the software proposes X ← machine, confidence Y." The **honest division of labour**: the software
+scores and ranks the convergences; a reasoner still owns choosing *which* high-confidence proposal to chase and reasoning out *why*
+(the mechanism, the literature novelty, the experiment). (`connection_proposer.py` → connection_proposer.json +
+connection_proposer_candidates.csv.)
