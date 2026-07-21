@@ -5806,22 +5806,37 @@ movers Y (rank-based, non-tide) and keep only those with **no known relationship
 Reactome pathway, GO-BP process, co-expression, co-dependency) — measured strong effects with no annotated mechanism. The intended
 deliverable: the ones **reproducible in both K562 and HCT116**, with a **permutation chance control**.
 
-**Honest result: not a credible list from two lines — the chance control is decisive.** Of 15,923 unexplained specific effects
-(K562 11,192; HCT116 4,741), only **9 reproduce in both lines vs 4.1 ± 2.0 expected by chance (~2.2×)** — marginally above in
-*count*, but the reproducible candidates are **weak** (median max |z| ≈ 0.7): HCT116's compressed z inflates near-noise genes into
-its rank-based "top movers," so "reproducible" mostly means "weakly present in both," plus recurrent stress genes (SOD2 appears
-twice). So there is **no credible set of cross-line-reproducible strong novel links** from these two lines — the strong specific far
-field is overwhelmingly *cell-line-specific* (or noise), consistent with the cross-line tide ρ ≈ 0.13.
+**First pass (2 lines) was at chance; the 6-line version works.** With only K562+HCT116, of 15,923 unexplained effects just 9
+reproduced vs ~4 by chance (2.2×) and those were weak — no credible list. So I re-ran across **all six fine-tunable lines**
+(K562/HCT116 from z-matrices; Melanoma/RPE1/HepG2/Jurkat from the improved pseudobulk), requiring reproducibility in **≥3 of 6 lines**
+with the same sign, plus a permutation chance control.
 
-Two hard limits made it under-deliver: (1) **"unexplained by *our* knowledge base" ≠ novel** — the single-line lists are dominated
-by *annotation gaps* (HSPA5→UPR chaperones SDF2L1/HSP90B1/PDIA4 is textbook; GATA1→many is just untabulated erythroid targets);
-(2) **HCT116's compressed z cripples the reproducibility filter.**
+**Result: 332 effects reproduce in ≥3 of 6 lines vs ~0 expected by chance** — permuting knockout labels leaves essentially *zero*
+3-line agreements, so the reproducible set is *massively* above chance (real, non-random). Two honest qualifiers: most are weak
+(median |z| 0.68; only 10 reach |z|≥2), and the strong ones still include known stress leaking as annotation gaps (HSPA5→HYOU1/CRELD2
+= textbook UPR; PSMA3/PSMB5→HSPA1B = proteasome→HSP70).
 
-**The real path** (now feasible): require reproducibility across **≥3 deep, well-normalized screens** — we now have six fine-tunable
-lines (`scperturb_finetune`), so re-running this with proper pseudobulk across them is the honest way to get a credible list — and
-denoise against a *complete* interactome (STRING/OmniPath), not our partial tables. The output `novel_links_candidates.csv` is
-**speculative per-line leads** requiring literature triage + independent validation — hypothesis *generation* on measured data, not
-validated discovery. Honest answer to "find novel things to send researchers": **not yet from two lines; it needs more deep,
-well-normalized cell lines.** (`novel_links.py` → novel_links.json + novel_links_candidates.csv.)
+**The credible, possibly-novel signal is *complex-convergence* — a moved gene hit reproducibly by many distinct subunits of one
+machine** (a whole complex agreeing is real, not noise):
+
+```
+moved gene   ← # distinct reproducible KOs      interpretation
+PPP1R10      ← 9  (EXOSC2/3/4/5/8/9, DIS3, MTREX)   RNA exosome → PPP1R10 mRNA as a surveillance substrate
+RASSF1       ← 7  (UPF1, UPF2, SMG7, KPNB1, …)      NMD factors → RASSF1 as an NMD substrate
+MTHFD2L      ← 5  (ZFC3H1, ZC3H3, EXOSC…)           PAXT/nuclear exosome → MTHFD2L substrate
+CRELD2/HYOU1 ← 4  (HSPA5, DERL2, CALR, …)           known UPR program (validates the method)
+HSPA1B       ← 3  (PSMA3, PSMB5, …)                 known proteasome→HSP70 (validates the method)
+```
+
+The RNA-decay-machinery → specific-mRNA-up hypotheses (**exosome→PPP1R10, NMD→RASSF1, PAXT→MTHFD2L**) are internally consistent and
+directly testable (measure the mRNA's stability on knockout). That the method *also* re-derives the known UPR and proteotoxic
+programs is a validation that the convergence signal is real.
+
+**Deliverable for researchers:** prioritize the complex-convergent targets (especially **exosome→PPP1R10**), then the strong
+reproducible pairs after a STRING/OmniPath check to drop known stress. Full ranked list: `novel_links_candidates.csv`. Honest
+framing: this is hypothesis *generation* on measured multi-line data, not validated discovery — most raw hits are weak or
+known-stress, **convergence is the filter that makes it credible**, and a complete interactome would sharpen it further. But unlike
+the 2-line version, **this is the version worth a researcher's time, led by the convergent targets.** (`novel_links.py` →
+novel_links.json + novel_links_candidates.csv.)
 
 ---
