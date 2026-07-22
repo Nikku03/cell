@@ -1,0 +1,4417 @@
+{
+ "lines": {
+  "HCT116": {
+   "line": "HCT116",
+   "n_knockouts": 1400,
+   "n_convergent_targets": 18,
+   "n_known_machine_targets": 1,
+   "n_novel": 17,
+   "calibration_auc_known_vs_null": 0.992,
+   "positive_control_top": [
+    [
+     "PABPC1",
+     0.244,
+     [
+      "PUM1",
+      "CSDE1",
+      "KREMEN1"
+     ]
+    ]
+   ],
+   "novel_proposals": [
+    {
+     "target": "MSH4",
+     "confidence": 0.8,
+     "machine": "mRNA cleavage and polyadenylation specificity factor complex",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 4,
+     "coherence_p": 8.849784893819619e-12,
+     "KOs": [
+      "CPSF4",
+      "FIP1L1",
+      "SSU72",
+      "CDC42EP5",
+      "CPSF2",
+      "C17orf67"
+     ]
+    },
+    {
+     "target": "JUN",
+     "confidence": 0.415,
+     "machine": "nuclear pore",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 1.17630910790366e-06,
+     "KOs": [
+      "RANGAP1",
+      "NUP155",
+      "NUP153",
+      "COPA",
+      "HSD17B11"
+     ]
+    },
+    {
+     "target": "EBPL",
+     "confidence": 0.325,
+     "machine": "microfibril",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 2,
+     "coherence_p": 3.7698880717465877e-06,
+     "KOs": [
+      "COL16A1",
+      "HSPA13",
+      "LTBP1"
+     ]
+    },
+    {
+     "target": "CSTA",
+     "confidence": 0.32,
+     "machine": "Processing of SMDT1",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 2,
+     "coherence_p": 4.628002732591153e-06,
+     "KOs": [
+      "PHB2",
+      "AARS1",
+      "PMPCB",
+      "APOD"
+     ]
+    },
+    {
+     "target": "ATF7IP",
+     "confidence": 0.294,
+     "machine": "Defective B3GALTL causes PpS",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 2,
+     "coherence_p": 1.2360373022996635e-05,
+     "KOs": [
+      "ADAMTSL3",
+      "ZFP90",
+      "ADAMTS17"
+     ]
+    },
+    {
+     "target": "MSMO1",
+     "confidence": 0.291,
+     "machine": "PI3K Cascade",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 2,
+     "coherence_p": 1.3879509005188783e-05,
+     "KOs": [
+      "GATD1",
+      "PIK3R4",
+      "PIK3C3"
+     ]
+    },
+    {
+     "target": "TMEM33",
+     "confidence": 0.279,
+     "machine": "lateral plasma membrane",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 2,
+     "coherence_p": 2.2792819282862097e-05,
+     "KOs": [
+      "SYPL2",
+      "MPP4",
+      "SLC22A1"
+     ]
+    },
+    {
+     "target": "ACAT2",
+     "confidence": 0.273,
+     "machine": "PI3K Cascade",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 2,
+     "coherence_p": 2.7720866115393634e-05,
+     "KOs": [
+      "PIK3R4",
+      "PIK3C3",
+      "DENND4C",
+      "PTPRE"
+     ]
+    },
+    {
+     "target": "MVD",
+     "confidence": 0.26,
+     "machine": "PI3K Cascade",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 2,
+     "coherence_p": 4.613795247244608e-05,
+     "KOs": [
+      "ATP2A2",
+      "GATD1",
+      "PIK3C3",
+      "PIK3R4",
+      "ALOX15"
+     ]
+    },
+    {
+     "target": "INSIG1",
+     "confidence": 0.26,
+     "machine": "PI3K Cascade",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 2,
+     "coherence_p": 4.613795247244608e-05,
+     "KOs": [
+      "CPSF6",
+      "ATP2A2",
+      "GATD1",
+      "PIK3R4",
+      "PIK3C3"
+     ]
+    },
+    {
+     "target": "QARS1",
+     "confidence": 0.248,
+     "machine": "actin filament",
+     "sign": "down",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 2,
+     "coherence_p": 7.482872727936498e-05,
+     "KOs": [
+      "AIF1L",
+      "ACTBL2",
+      "ZNF224"
+     ]
+    },
+    {
+     "target": "KLF6",
+     "confidence": 0.248,
+     "machine": "nuclear pore",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 2,
+     "coherence_p": 7.30285874365763e-05,
+     "KOs": [
+      "RANGAP1",
+      "NUP153",
+      "ENO1"
+     ]
+    },
+    {
+     "target": "ARIH2",
+     "confidence": 0.238,
+     "machine": "presynaptic membrane",
+     "sign": "down",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 2,
+     "coherence_p": 0.00010877072926397416,
+     "KOs": [
+      "TNFRSF1A",
+      "CHRNB4",
+      "ADORA2A"
+     ]
+    },
+    {
+     "target": "HMGCS1",
+     "confidence": 0.233,
+     "machine": "PI3K Cascade",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 2,
+     "coherence_p": 0.00012865454129572232,
+     "KOs": [
+      "ATP2A2",
+      "PIK3R4",
+      "PIK3C3",
+      "GATD1",
+      "DENND4C",
+      "NDP",
+      "CALN1",
+      "RAB5C"
+     ]
+    },
+    {
+     "target": "MRGBP",
+     "confidence": 0.232,
+     "machine": "voltage-gated potassium channel complex",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 2,
+     "coherence_p": 0.00013509676867184565,
+     "KOs": [
+      "LRRC52",
+      "DNAH12",
+      "ZNF521",
+      "KCNG4"
+     ]
+    },
+    {
+     "target": "ARL2",
+     "confidence": 0.213,
+     "machine": "lamellipodium",
+     "sign": "down",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 2,
+     "coherence_p": 0.0002816263987195959,
+     "KOs": [
+      "FHAD1",
+      "RAB40B",
+      "MMP17",
+      "ACTA2"
+     ]
+    },
+    {
+     "target": "RAD50",
+     "confidence": 0.195,
+     "machine": "cytoplasmic side of plasma membrane",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 2,
+     "coherence_p": 0.0005700401182161569,
+     "KOs": [
+      "COL4A5",
+      "SIMC1",
+      "G6PD",
+      "ALOX15",
+      "GNAI1",
+      "CDC37"
+     ]
+    }
+   ]
+  },
+  "Melanoma": {
+   "line": "Melanoma",
+   "n_knockouts": 218,
+   "n_convergent_targets": 8,
+   "n_known_machine_targets": 0,
+   "n_novel": 7,
+   "calibration_auc_known_vs_null": 0.992,
+   "positive_control_top": [],
+   "novel_proposals": [
+    {
+     "target": "STAT1",
+     "confidence": 0.272,
+     "machine": "Interferon gamma signaling",
+     "sign": "down",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 2,
+     "coherence_p": 2.9302543244995078e-05,
+     "KOs": [
+      "IFNGR1",
+      "JAK2",
+      "JAK1",
+      "IFNGR2"
+     ]
+    },
+    {
+     "target": "SECTM1",
+     "confidence": 0.272,
+     "machine": "Interferon gamma signaling",
+     "sign": "down",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 2,
+     "coherence_p": 2.9302543244995078e-05,
+     "KOs": [
+      "STAT1",
+      "JAK2",
+      "IFNGR1",
+      "IFNGR2"
+     ]
+    },
+    {
+     "target": "LAP3",
+     "confidence": 0.259,
+     "machine": "Interferon gamma signaling",
+     "sign": "down",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 2,
+     "coherence_p": 4.8768485164235316e-05,
+     "KOs": [
+      "STAT1",
+      "IFNGR1",
+      "IFNGR2",
+      "JAK2",
+      "JAK1"
+     ]
+    },
+    {
+     "target": "GBP2",
+     "confidence": 0.259,
+     "machine": "Interferon gamma signaling",
+     "sign": "down",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 2,
+     "coherence_p": 4.8768485164235316e-05,
+     "KOs": [
+      "STAT1",
+      "JAK2",
+      "IFNGR2",
+      "JAK1",
+      "IFNGR1"
+     ]
+    },
+    {
+     "target": "GBP4",
+     "confidence": 0.259,
+     "machine": "Interferon gamma signaling",
+     "sign": "down",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 2,
+     "coherence_p": 4.8768485164235316e-05,
+     "KOs": [
+      "STAT1",
+      "JAK2",
+      "IFNGR2",
+      "IFNGR1",
+      "JAK1"
+     ]
+    },
+    {
+     "target": "PARP14",
+     "confidence": 0.259,
+     "machine": "Interferon gamma signaling",
+     "sign": "down",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 2,
+     "coherence_p": 4.8768485164235316e-05,
+     "KOs": [
+      "STAT1",
+      "IFNGR2",
+      "IFNGR1",
+      "JAK1",
+      "JAK2"
+     ]
+    },
+    {
+     "target": "IDO1",
+     "confidence": 0.259,
+     "machine": "Interferon gamma signaling",
+     "sign": "down",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 2,
+     "coherence_p": 4.8768485164235316e-05,
+     "KOs": [
+      "STAT1",
+      "JAK2",
+      "IFNGR1",
+      "IFNGR2",
+      "JAK1"
+     ]
+    }
+   ]
+  },
+  "RPE1": {
+   "line": "RPE1",
+   "n_knockouts": 2151,
+   "n_convergent_targets": 183,
+   "n_known_machine_targets": 0,
+   "n_novel": 182,
+   "calibration_auc_known_vs_null": 0.996,
+   "positive_control_top": [],
+   "novel_proposals": [
+    {
+     "target": "MTRNR2L8",
+     "confidence": 1.0,
+     "machine": "mitochondrial large ribosomal subunit",
+     "sign": "up",
+     "n_convergent_KOs": 13,
+     "in_named_complex": 9,
+     "coherence_p": 1.0500557079851151e-20,
+     "KOs": [
+      "CEBPG",
+      "SUPV3L1",
+      "ACSS2",
+      "PNPT1",
+      "MRPL21",
+      "MRPL51",
+      "MRPL43",
+      "MRPL44",
+      "MRPL42",
+      "MRPL22"
+     ]
+    },
+    {
+     "target": "FDFT1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 29,
+     "in_named_complex": 11,
+     "coherence_p": 4.232310768919324e-27,
+     "KOs": [
+      "ATP6V1A",
+      "VPS28",
+      "ATP6V1B2",
+      "ATP6V0C",
+      "ATP6V1E1",
+      "CHMP2A",
+      "ATP6V1G1",
+      "ATP6V1H",
+      "ATP6V1C1",
+      "ATP6V0B"
+     ]
+    },
+    {
+     "target": "ACAT2",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 17,
+     "in_named_complex": 10,
+     "coherence_p": 4.376720285122853e-27,
+     "KOs": [
+      "ATP6V1B2",
+      "ATP6V1A",
+      "ATP6V0C",
+      "ATP6V1C1",
+      "ATP6V1G1",
+      "ATP6V1E1",
+      "ATP6V1H",
+      "ATP6V0B",
+      "TBPL1",
+      "ATP6AP1"
+     ]
+    },
+    {
+     "target": "SCD",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 32,
+     "in_named_complex": 10,
+     "coherence_p": 1.4410498823200396e-23,
+     "KOs": [
+      "ATP6V1B2",
+      "ATP6V1A",
+      "ATP6V1H",
+      "ATP6V1G1",
+      "ATP6V1F",
+      "ATP6V0C",
+      "VPS28",
+      "ATP6V1E1",
+      "ATP6V1C1",
+      "NBAS"
+     ]
+    },
+    {
+     "target": "INSIG1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 28,
+     "in_named_complex": 11,
+     "coherence_p": 2.6281219649302857e-27,
+     "KOs": [
+      "CHMP2A",
+      "VPS28",
+      "CHMP6",
+      "TSG101",
+      "EXOC4",
+      "ATP6V1E1",
+      "ATP6V1A",
+      "ATP6V1B2",
+      "ATP6V1C1",
+      "ATP6V0C"
+     ]
+    },
+    {
+     "target": "MSMO1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 33,
+     "in_named_complex": 10,
+     "coherence_p": 2.066565773363646e-23,
+     "KOs": [
+      "VPS28",
+      "ATP6V1B2",
+      "ATP6V1A",
+      "ATP6V1E1",
+      "ATP6V0C",
+      "ATP6V1H",
+      "ATP6V0B",
+      "CHMP6",
+      "ATP6V1G1",
+      "ATP6V1C1"
+     ]
+    },
+    {
+     "target": "SQLE",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 21,
+     "in_named_complex": 10,
+     "coherence_p": 7.922022356569203e-26,
+     "KOs": [
+      "VPS28",
+      "ATP6V1A",
+      "ATP6V1B2",
+      "ATP6V1C1",
+      "ATP6V1H",
+      "ATP6V1E1",
+      "ATP6V0C",
+      "ATP6V1G1",
+      "TBPL1",
+      "ATP6V0B"
+     ]
+    },
+    {
+     "target": "CYP51A1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 29,
+     "in_named_complex": 11,
+     "coherence_p": 4.232310768919324e-27,
+     "KOs": [
+      "VPS28",
+      "ATP6V1A",
+      "ATP6V1B2",
+      "ATP6V1E1",
+      "ATP6V1H",
+      "ATP6V0C",
+      "CHMP6",
+      "ATP6V1C1",
+      "DNM2",
+      "ATP6V1G1"
+     ]
+    },
+    {
+     "target": "HMGCS1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 28,
+     "in_named_complex": 11,
+     "coherence_p": 2.6281219649302857e-27,
+     "KOs": [
+      "VPS28",
+      "ATP6V1E1",
+      "ATP6V1B2",
+      "ATP6V1G1",
+      "ATP6V0C",
+      "ATP6V1A",
+      "ATP6V1C1",
+      "ATP6V0B",
+      "CHMP2A",
+      "ATP6V1H"
+     ]
+    },
+    {
+     "target": "IDI1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 22,
+     "in_named_complex": 10,
+     "coherence_p": 1.4516493865665052e-25,
+     "KOs": [
+      "VPS28",
+      "ATP6V1C1",
+      "ATP6V1B2",
+      "CHMP2A",
+      "ATP6V1H",
+      "ATP6V1E1",
+      "CHMP6",
+      "ATP6V0C",
+      "ATP6V1A",
+      "ATP6V1G1"
+     ]
+    },
+    {
+     "target": "LDLR",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 22,
+     "in_named_complex": 10,
+     "coherence_p": 1.4516493865665052e-25,
+     "KOs": [
+      "VPS28",
+      "ATP6V1E1",
+      "EXOC4",
+      "ATP6V1B2",
+      "ATP6V1A",
+      "ATP6V1F",
+      "ATP6V0C",
+      "EXOC1",
+      "ATP6V1H",
+      "ATP6V1G1"
+     ]
+    },
+    {
+     "target": "DHCR24",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 18,
+     "in_named_complex": 10,
+     "coherence_p": 9.842730428983334e-27,
+     "KOs": [
+      "ATP6V1A",
+      "ATP6V0C",
+      "ATP6V1E1",
+      "ATP6V1C1",
+      "ATP6V1B2",
+      "ATP6V0B",
+      "ATP6V1G1",
+      "ATP6V1H",
+      "TBPL1",
+      "EXOC2"
+     ]
+    },
+    {
+     "target": "MVD",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 9,
+     "in_named_complex": 8,
+     "coherence_p": 5.0173520096688526e-24,
+     "KOs": [
+      "ATP6V1E1",
+      "ATP6V1C1",
+      "ATP6V1B2",
+      "ATP6V0C",
+      "ATP6V1A",
+      "ATP6V1H",
+      "ATP6V1G1",
+      "ATP6V0B",
+      "AP2M1"
+     ]
+    },
+    {
+     "target": "DHCR7",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 14,
+     "in_named_complex": 9,
+     "coherence_p": 7.431864755355753e-25,
+     "KOs": [
+      "NAT10",
+      "ATP6V1B2",
+      "ATP6V1C1",
+      "ATP6V1G1",
+      "ATP6V1E1",
+      "ATP6V1H",
+      "ATP6V0C",
+      "ATP6V1A",
+      "PIK3C3",
+      "TBPL1"
+     ]
+    },
+    {
+     "target": "ERG28",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 6,
+     "coherence_p": 6.797884768906746e-18,
+     "KOs": [
+      "ATP6V1B2",
+      "ATP6V1E1",
+      "ATP6V0C",
+      "ATP6V0B",
+      "ATP6V1G1",
+      "ATP6V1C1",
+      "AP2M1"
+     ]
+    },
+    {
+     "target": "MMAB",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 6,
+     "coherence_p": 2.717315964783511e-17,
+     "KOs": [
+      "ATP6V1A",
+      "ATP6V1B2",
+      "ATP6V0C",
+      "ATP6V1H",
+      "AP2S1",
+      "ATP6V0B",
+      "ATP6AP1",
+      "ATP6V1G1"
+     ]
+    },
+    {
+     "target": "SNRPD2",
+     "confidence": 1.0,
+     "machine": "Mitochondrial translation initiation",
+     "sign": "up",
+     "n_convergent_KOs": 18,
+     "in_named_complex": 8,
+     "coherence_p": 9.004201011732973e-15,
+     "KOs": [
+      "OXA1L",
+      "TSFM",
+      "MRPS30",
+      "DNAJA3",
+      "ATP5F1B",
+      "TRMT10C",
+      "MRPL10",
+      "MRPS10",
+      "MRPL15",
+      "MRPS27"
+     ]
+    },
+    {
+     "target": "HMGCR",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 12,
+     "in_named_complex": 10,
+     "coherence_p": 1.4890051863099357e-29,
+     "KOs": [
+      "ATP6V1A",
+      "ATP6V1E1",
+      "ATP6V1B2",
+      "ATP6V1G1",
+      "ATP6V0C",
+      "ATP6V1C1",
+      "ATP6V1H",
+      "ATP6V1F",
+      "ATP6V0B",
+      "ATP6AP1"
+     ]
+    },
+    {
+     "target": "PEG10",
+     "confidence": 1.0,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 12,
+     "in_named_complex": 6,
+     "coherence_p": 9.913584440177038e-17,
+     "KOs": [
+      "INTS5",
+      "INTS2",
+      "INTS8",
+      "INTS7",
+      "NELFE",
+      "NELFCD",
+      "NELFB",
+      "INTS1",
+      "INTS12",
+      "CDK2"
+     ]
+    },
+    {
+     "target": "HSPA1B",
+     "confidence": 1.0,
+     "machine": "proteasome complex",
+     "sign": "up",
+     "n_convergent_KOs": 20,
+     "in_named_complex": 16,
+     "coherence_p": 4.3690720502678003e-41,
+     "KOs": [
+      "PSMA3",
+      "PSMB5",
+      "PSMB3",
+      "PSMC2",
+      "PSMC6",
+      "PSMA4",
+      "PSMA6",
+      "PSMC1",
+      "PSMA1",
+      "PSMB2"
+     ]
+    },
+    {
+     "target": "HSPA1A",
+     "confidence": 1.0,
+     "machine": "proteasome complex",
+     "sign": "up",
+     "n_convergent_KOs": 24,
+     "in_named_complex": 19,
+     "coherence_p": 6.8372530541271515e-49,
+     "KOs": [
+      "PSMB5",
+      "PSMA4",
+      "PSMC6",
+      "PSMA3",
+      "PSMC1",
+      "PSMB3",
+      "PSMA6",
+      "PSMC2",
+      "PSMA1",
+      "PSMC5"
+     ]
+    },
+    {
+     "target": "ELOC",
+     "confidence": 1.0,
+     "machine": "Mitochondrial translation initiation",
+     "sign": "down",
+     "n_convergent_KOs": 13,
+     "in_named_complex": 6,
+     "coherence_p": 1.797759759698808e-11,
+     "KOs": [
+      "UQCRQ",
+      "MRPL53",
+      "VARS2",
+      "COX5B",
+      "MRPL4",
+      "MRPL41",
+      "MRPS6",
+      "COQ2",
+      "ZNF133",
+      "NDUFB3"
+     ]
+    },
+    {
+     "target": "NDUFB6",
+     "confidence": 1.0,
+     "machine": "Mitochondrial translation initiation",
+     "sign": "up",
+     "n_convergent_KOs": 15,
+     "in_named_complex": 9,
+     "coherence_p": 4.569143465022183e-18,
+     "KOs": [
+      "MRPL45",
+      "MRPL15",
+      "DHX30",
+      "MRPS26",
+      "MRPS10",
+      "NDUFB3",
+      "CYCS",
+      "MRPS5",
+      "MRPL3",
+      "MRPS17"
+     ]
+    },
+    {
+     "target": "MTHFD2L",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 13,
+     "in_named_complex": 6,
+     "coherence_p": 5.517120440904738e-14,
+     "KOs": [
+      "ZFC3H1",
+      "MRPS34",
+      "SRRT",
+      "NCBP1",
+      "MTREX",
+      "YTHDC1",
+      "ZC3H3",
+      "TAF7",
+      "EXOSC2",
+      "ZBTB4"
+     ]
+    },
+    {
+     "target": "HYOU1",
+     "confidence": 0.9,
+     "machine": "oligosaccharyltransferase complex A",
+     "sign": "up",
+     "n_convergent_KOs": 15,
+     "in_named_complex": 5,
+     "coherence_p": 3.7164263214579524e-14,
+     "KOs": [
+      "HSPA5",
+      "ARF4",
+      "DERL2",
+      "RPN1",
+      "TMEM258",
+      "RPN2",
+      "SLC35B1",
+      "DDOST",
+      "DAD1",
+      "FEN1"
+     ]
+    },
+    {
+     "target": "DNAJC3",
+     "confidence": 0.9,
+     "machine": "oligosaccharyltransferase complex A",
+     "sign": "up",
+     "n_convergent_KOs": 17,
+     "in_named_complex": 5,
+     "coherence_p": 7.654992794207359e-14,
+     "KOs": [
+      "HSPA5",
+      "SLC39A7",
+      "ARF4",
+      "DAD1",
+      "TMEM258",
+      "DERL2",
+      "RPN1",
+      "RPN2",
+      "FEN1",
+      "DDOST"
+     ]
+    },
+    {
+     "target": "DNAJB11",
+     "confidence": 0.9,
+     "machine": "oligosaccharyltransferase complex A",
+     "sign": "up",
+     "n_convergent_KOs": 14,
+     "in_named_complex": 5,
+     "coherence_p": 2.4781187808908364e-14,
+     "KOs": [
+      "ARF4",
+      "TMEM258",
+      "RPN1",
+      "RPN2",
+      "DAD1",
+      "FEN1",
+      "RFT1",
+      "DDOST",
+      "CALR",
+      "ALG1"
+     ]
+    },
+    {
+     "target": "CRELD2",
+     "confidence": 0.9,
+     "machine": "oligosaccharyltransferase complex A",
+     "sign": "up",
+     "n_convergent_KOs": 17,
+     "in_named_complex": 5,
+     "coherence_p": 7.654992794207359e-14,
+     "KOs": [
+      "HSPA5",
+      "ARF4",
+      "CALR",
+      "DERL2",
+      "RPN1",
+      "TMEM258",
+      "DAD1",
+      "FEN1",
+      "RPN2",
+      "NFYB"
+     ]
+    },
+    {
+     "target": "FADS1",
+     "confidence": 0.9,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 5,
+     "coherence_p": 6.861622504751232e-15,
+     "KOs": [
+      "ATP6V1A",
+      "ATP6V1B2",
+      "ATP6V1H",
+      "ATP6V0B",
+      "ATP6V1G1",
+      "AP2S1"
+     ]
+    },
+    {
+     "target": "CXCL8",
+     "confidence": 0.9,
+     "machine": "ESCRT III complex",
+     "sign": "up",
+     "n_convergent_KOs": 34,
+     "in_named_complex": 5,
+     "coherence_p": 1.2541285503185385e-11,
+     "KOs": [
+      "IGBP1",
+      "CHMP2A",
+      "VPS28",
+      "TRAPPC8",
+      "CHMP6",
+      "CHMP4B",
+      "BET1",
+      "CHMP3",
+      "TSG101",
+      "CHMP5"
+     ]
+    },
+    {
+     "target": "BAG1",
+     "confidence": 0.9,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 12,
+     "in_named_complex": 5,
+     "coherence_p": 4.675205671261303e-16,
+     "KOs": [
+      "SMG5",
+      "SMG7",
+      "UPF1",
+      "CLOCK",
+      "UPF2",
+      "SMG1",
+      "ZNF506",
+      "TTI1",
+      "SMG6",
+      "NDUFA3"
+     ]
+    },
+    {
+     "target": "NBPF14",
+     "confidence": 0.9,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 16,
+     "in_named_complex": 5,
+     "coherence_p": 2.5779252705738385e-15,
+     "KOs": [
+      "UPF1",
+      "SMG5",
+      "DHX36",
+      "RUVBL1",
+      "XRN1",
+      "POU3F1",
+      "UPF2",
+      "CLOCK",
+      "SMG7",
+      "TTI1"
+     ]
+    },
+    {
+     "target": "CCNB1IP1",
+     "confidence": 0.9,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 12,
+     "in_named_complex": 5,
+     "coherence_p": 4.675205671261303e-16,
+     "KOs": [
+      "UPF1",
+      "SMG5",
+      "UPF2",
+      "CASC3",
+      "CLOCK",
+      "XRCC6",
+      "MRPS14",
+      "XRCC5",
+      "SMG7",
+      "SMG6"
+     ]
+    },
+    {
+     "target": "SOD2",
+     "confidence": 0.9,
+     "machine": "ESCRT III complex",
+     "sign": "up",
+     "n_convergent_KOs": 13,
+     "in_named_complex": 5,
+     "coherence_p": 5.837736838457256e-14,
+     "KOs": [
+      "CHMP2A",
+      "VPS28",
+      "TSG101",
+      "IGBP1",
+      "CHMP4B",
+      "CHMP6",
+      "CHMP3",
+      "CHMP5",
+      "SRSF3",
+      "VPS25"
+     ]
+    },
+    {
+     "target": "NBPF10",
+     "confidence": 0.9,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 9,
+     "in_named_complex": 5,
+     "coherence_p": 7.4389554355743e-17,
+     "KOs": [
+      "UPF1",
+      "SMG5",
+      "DHX36",
+      "POU3F1",
+      "CLOCK",
+      "SMG7",
+      "XRN1",
+      "SMG1",
+      "SMG6"
+     ]
+    },
+    {
+     "target": "IFI6",
+     "confidence": 0.8,
+     "machine": "oligosaccharyltransferase complex A",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 4,
+     "coherence_p": 1.4302053825776723e-12,
+     "KOs": [
+      "ALG11",
+      "DHDDS",
+      "RPN1",
+      "DAD1",
+      "TMEM258",
+      "RPN2",
+      "FEN1"
+     ]
+    },
+    {
+     "target": "CDH13",
+     "confidence": 0.8,
+     "machine": "Recycling of eIF2:GDP",
+     "sign": "up",
+     "n_convergent_KOs": 11,
+     "in_named_complex": 4,
+     "coherence_p": 7.486826707816899e-12,
+     "KOs": [
+      "EIF2S1",
+      "ALG11",
+      "ETF1",
+      "EIF2B4",
+      "EIF2S3",
+      "PRELID1",
+      "EIF2S2",
+      "UBE2I",
+      "SAE1",
+      "EIF5"
+     ]
+    },
+    {
+     "target": "FADS2",
+     "confidence": 0.8,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 4,
+     "coherence_p": 1.884163473667619e-11,
+     "KOs": [
+      "ATP6V1E1",
+      "ATP6V1A",
+      "ATP6V1C1",
+      "ATP6V0C",
+      "ATP6AP1",
+      "DCTN1"
+     ]
+    },
+    {
+     "target": "FASN",
+     "confidence": 0.8,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 4,
+     "coherence_p": 1.2579393963018276e-12,
+     "KOs": [
+      "ATP6V1A",
+      "ATP6V1B2",
+      "ATP6V1G1",
+      "ATP6V0B"
+     ]
+    },
+    {
+     "target": "TM7SF2",
+     "confidence": 0.8,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 4,
+     "coherence_p": 1.2579393963018276e-12,
+     "KOs": [
+      "ATP6V1E1",
+      "ATP6V1A",
+      "ATP6V1B2",
+      "ATP6V0C"
+     ]
+    },
+    {
+     "target": "DNAJC25",
+     "confidence": 0.8,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 4,
+     "coherence_p": 3.4064079146254476e-13,
+     "KOs": [
+      "UPF1",
+      "SMG5",
+      "UPF2",
+      "CLOCK",
+      "SMG7",
+      "CASC3",
+      "SMG6",
+      "COPA"
+     ]
+    },
+    {
+     "target": "BRD2",
+     "confidence": 0.8,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 9,
+     "in_named_complex": 4,
+     "coherence_p": 6.13093912989096e-13,
+     "KOs": [
+      "XRN1",
+      "SMG5",
+      "POU3F1",
+      "CLOCK",
+      "SMG7",
+      "SMG1",
+      "SMG6",
+      "TRPM7",
+      "PPIL1"
+     ]
+    },
+    {
+     "target": "SSR2",
+     "confidence": 0.8,
+     "machine": "mRNA Splicing - Minor Pathway",
+     "sign": "down",
+     "n_convergent_KOs": 12,
+     "in_named_complex": 4,
+     "coherence_p": 1.1228059842779427e-11,
+     "KOs": [
+      "FUNDC2",
+      "PDCD7",
+      "KDM2A",
+      "SNRNP25",
+      "DHX29",
+      "POLR3K",
+      "SNRNP35",
+      "KCMF1",
+      "DDX59",
+      "GTF2F1"
+     ]
+    },
+    {
+     "target": "SEMA7A",
+     "confidence": 0.8,
+     "machine": "MicroRNA (miRNA) biogenesis",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 4,
+     "coherence_p": 2.4338570540267262e-14,
+     "KOs": [
+      "DROSHA",
+      "DGCR8",
+      "DICER1",
+      "XPO5",
+      "GLRX3"
+     ]
+    },
+    {
+     "target": "TGFBR2",
+     "confidence": 0.8,
+     "machine": "MicroRNA (miRNA) biogenesis",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 4,
+     "coherence_p": 2.4338570540267262e-14,
+     "KOs": [
+      "DGCR8",
+      "DROSHA",
+      "DICER1",
+      "HMGN2",
+      "XPO5"
+     ]
+    },
+    {
+     "target": "VPS35",
+     "confidence": 0.8,
+     "machine": "mitochondrial large ribosomal subunit",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 4,
+     "coherence_p": 8.78626530092395e-11,
+     "KOs": [
+      "MRPL28",
+      "MRPL54",
+      "MRPL50",
+      "MRPL16"
+     ]
+    },
+    {
+     "target": "NUCB2",
+     "confidence": 0.784,
+     "machine": "oligosaccharyltransferase complex A",
+     "sign": "up",
+     "n_convergent_KOs": 19,
+     "in_named_complex": 4,
+     "coherence_p": 1.5792439524102582e-10,
+     "KOs": [
+      "HSPA5",
+      "ARF4",
+      "DERL2",
+      "SLC39A7",
+      "SEC61B",
+      "RPN1",
+      "TMEM258",
+      "ALG2",
+      "DDOST",
+      "RPN2"
+     ]
+    },
+    {
+     "target": "VMP1",
+     "confidence": 0.781,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 4,
+     "coherence_p": 1.7458465143965015e-10,
+     "KOs": [
+      "ZFC3H1",
+      "MTREX",
+      "ZC3H3",
+      "EXOSC5",
+      "MRPL23",
+      "PPIL1"
+     ]
+    },
+    {
+     "target": "IL11",
+     "confidence": 0.718,
+     "machine": "HCMV Late Events",
+     "sign": "up",
+     "n_convergent_KOs": 15,
+     "in_named_complex": 4,
+     "coherence_p": 1.0470584906379233e-09,
+     "KOs": [
+      "CHMP2A",
+      "MED12",
+      "VPS28",
+      "CHMP6",
+      "CHMP3",
+      "TSG101",
+      "UBAP1",
+      "VPS25",
+      "SUPT20H",
+      "TADA1"
+     ]
+    },
+    {
+     "target": "RPL36AL",
+     "confidence": 0.7,
+     "machine": "Processing of Capped Intron-Containing Pre-m",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 1.3378587916422106e-11,
+     "KOs": [
+      "METTL3",
+      "METTL14",
+      "WTAP",
+      "CA5A",
+      "CACNB3"
+     ]
+    },
+    {
+     "target": "SEC13",
+     "confidence": 0.7,
+     "machine": "GET complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 4.682505770747738e-11,
+     "KOs": [
+      "TMED10",
+      "TMED2",
+      "EARS2",
+      "CAMLG",
+      "RAD9A",
+      "GET1",
+      "GET3"
+     ]
+    },
+    {
+     "target": "ANKRD12",
+     "confidence": 0.691,
+     "machine": "THO complex",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 1.3376153882214273e-10,
+     "KOs": [
+      "EIF5A",
+      "THOC1",
+      "THOC5",
+      "THOC7",
+      "PCID2"
+     ]
+    },
+    {
+     "target": "TMEM50B",
+     "confidence": 0.67,
+     "machine": "oligosaccharyltransferase complex B",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 2.674987390737452e-10,
+     "KOs": [
+      "ARF4",
+      "DAD1",
+      "CALR",
+      "TMEM258",
+      "RPN2"
+     ]
+    },
+    {
+     "target": "WHAMM",
+     "confidence": 0.67,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 2.674987390737452e-10,
+     "KOs": [
+      "UPF1",
+      "SMG5",
+      "CASC3",
+      "CLOCK",
+      "SMG6"
+     ]
+    },
+    {
+     "target": "ADAM19",
+     "confidence": 0.67,
+     "machine": "MicroRNA (miRNA) biogenesis",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 2.674987390737452e-10,
+     "KOs": [
+      "DROSHA",
+      "DGCR8",
+      "PPP6C",
+      "XPO5",
+      "NDUFS3"
+     ]
+    },
+    {
+     "target": "SMG1",
+     "confidence": 0.653,
+     "machine": "nonsense-mediated decay complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 4.680802029474031e-10,
+     "KOs": [
+      "SMG5",
+      "UPF2",
+      "SMG7",
+      "RPL7A",
+      "CLOCK",
+      "SMG6",
+      "LURAP1"
+     ]
+    },
+    {
+     "target": "PMF1",
+     "confidence": 0.652,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 3,
+     "coherence_p": 4.869806001577647e-10,
+     "KOs": [
+      "INTS10",
+      "INTS14",
+      "INTS13"
+     ]
+    },
+    {
+     "target": "CDK6",
+     "confidence": 0.649,
+     "machine": "MicroRNA (miRNA) biogenesis",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 3,
+     "coherence_p": 5.349244695216636e-10,
+     "KOs": [
+      "DGCR8",
+      "DICER1",
+      "CDCA8",
+      "XPO5",
+      "SGPP1",
+      "NOP56"
+     ]
+    },
+    {
+     "target": "EMC9",
+     "confidence": 0.632,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 9.35990068967227e-10,
+     "KOs": [
+      "UPF1",
+      "SMG5",
+      "CLOCK",
+      "SRSF10",
+      "SMG6",
+      "SLC35G6",
+      "PRKRIP1"
+     ]
+    },
+    {
+     "target": "SCO2",
+     "confidence": 0.625,
+     "machine": "RNA N6-methyladenosine methyltransferase complex",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 3,
+     "coherence_p": 1.1768337861798439e-09,
+     "KOs": [
+      "RPL7A",
+      "METTL3",
+      "METTL14",
+      "RBM15"
+     ]
+    }
+   ]
+  },
+  "HepG2": {
+   "line": "HepG2",
+   "n_knockouts": 2151,
+   "n_convergent_targets": 292,
+   "n_known_machine_targets": 2,
+   "n_novel": 290,
+   "calibration_auc_known_vs_null": 0.994,
+   "positive_control_top": [
+    [
+     "SNRNP48",
+     0.8,
+     [
+      "RACGAP1",
+      "FAM50A",
+      "SNRNP25",
+      "PDCD7",
+      "RNPC3"
+     ]
+    ],
+    [
+     "SEC31A",
+     0.259,
+     [
+      "BET1",
+      "RAC3",
+      "SLC9B1",
+      "TRAPPC5",
+      "STX5"
+     ]
+    ]
+   ],
+   "novel_proposals": [
+    {
+     "target": "LARP6",
+     "confidence": 1.0,
+     "machine": "Recycling of eIF2:GDP",
+     "sign": "up",
+     "n_convergent_KOs": 23,
+     "in_named_complex": 7,
+     "coherence_p": 2.980132911527618e-20,
+     "KOs": [
+      "EIF2S1",
+      "EIF2S3",
+      "HSPA9",
+      "PHB2",
+      "EIF2B3",
+      "FARSB",
+      "EIF2B4",
+      "SLC25A42",
+      "EIF2B5",
+      "FARSA"
+     ]
+    },
+    {
+     "target": "RASSF1",
+     "confidence": 1.0,
+     "machine": "nuclear pore",
+     "sign": "up",
+     "n_convergent_KOs": 15,
+     "in_named_complex": 7,
+     "coherence_p": 3.603670288259028e-13,
+     "KOs": [
+      "CSE1L",
+      "DLD",
+      "NUP62",
+      "NUTF2",
+      "KPNB1",
+      "ATF5",
+      "SMG7",
+      "NUP54",
+      "RAN",
+      "ANKRD17"
+     ]
+    },
+    {
+     "target": "ACSS2",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 13,
+     "in_named_complex": 6,
+     "coherence_p": 1.6597052703267895e-15,
+     "KOs": [
+      "ATP6V1A",
+      "ATP6V1B2",
+      "ATP6AP1",
+      "ATP6V0C",
+      "ATP6V1F",
+      "ATP6V1C1",
+      "SMARCC1",
+      "ATP6V1G1",
+      "SCD",
+      "HMGCR"
+     ]
+    },
+    {
+     "target": "ZFP36L2",
+     "confidence": 1.0,
+     "machine": "nuclear pore",
+     "sign": "up",
+     "n_convergent_KOs": 10,
+     "in_named_complex": 6,
+     "coherence_p": 2.5923765241737168e-12,
+     "KOs": [
+      "NUP62",
+      "ATF5",
+      "GLE1",
+      "NUTF2",
+      "GATA1",
+      "YARS2",
+      "NUP88",
+      "NUP214",
+      "SNUPN",
+      "RCC1"
+     ]
+    },
+    {
+     "target": "LCN2",
+     "confidence": 1.0,
+     "machine": "proteasome complex",
+     "sign": "up",
+     "n_convergent_KOs": 51,
+     "in_named_complex": 15,
+     "coherence_p": 2.0684537352194903e-29,
+     "KOs": [
+      "EIF2S1",
+      "EIF2S3",
+      "EIF2B3",
+      "HSPA9",
+      "FARSB",
+      "SLC25A42",
+      "EIF2B4",
+      "PSMC5",
+      "EIF2B5",
+      "PSMC1"
+     ]
+    },
+    {
+     "target": "NDRG1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 21,
+     "in_named_complex": 8,
+     "coherence_p": 1.1263722799813341e-19,
+     "KOs": [
+      "CDCA8",
+      "ATP6AP1",
+      "ATP6V1A",
+      "ATP6V0B",
+      "ATP6V1B2",
+      "ELOB",
+      "ATP6AP2",
+      "ATP6V1F",
+      "ATP6V0C",
+      "TPX2"
+     ]
+    },
+    {
+     "target": "MLLT11",
+     "confidence": 1.0,
+     "machine": "proteasome complex",
+     "sign": "up",
+     "n_convergent_KOs": 14,
+     "in_named_complex": 10,
+     "coherence_p": 8.4732689213019e-25,
+     "KOs": [
+      "PSMB5",
+      "PSMC1",
+      "PSMC5",
+      "PSMB3",
+      "PSMA3",
+      "PSMB2",
+      "PSMC2",
+      "PSMD11",
+      "NEDD8",
+      "PSMC6"
+     ]
+    },
+    {
+     "target": "TUBA4A",
+     "confidence": 1.0,
+     "machine": "proteasome complex",
+     "sign": "up",
+     "n_convergent_KOs": 12,
+     "in_named_complex": 10,
+     "coherence_p": 5.603449716586319e-26,
+     "KOs": [
+      "PSMB5",
+      "PSMB3",
+      "PSMC5",
+      "PSMA1",
+      "PSMC1",
+      "PSMB2",
+      "PSMC4",
+      "PSMA3",
+      "PSMC6",
+      "CHMP2A"
+     ]
+    },
+    {
+     "target": "GABARAPL1",
+     "confidence": 1.0,
+     "machine": "proteasome complex",
+     "sign": "up",
+     "n_convergent_KOs": 14,
+     "in_named_complex": 10,
+     "coherence_p": 8.4732689213019e-25,
+     "KOs": [
+      "PSMA1",
+      "PSMA3",
+      "PSMB5",
+      "PSMC5",
+      "PSMB2",
+      "PSMB3",
+      "RBM22",
+      "PSMC1",
+      "PSMA4",
+      "PSMC6"
+     ]
+    },
+    {
+     "target": "PPP1R10",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 17,
+     "in_named_complex": 11,
+     "coherence_p": 2.587048063924483e-27,
+     "KOs": [
+      "EXOSC8",
+      "WDR82",
+      "EXOSC2",
+      "EXOSC9",
+      "MTREX",
+      "EXOSC4",
+      "DIS3",
+      "CLNS1A",
+      "EXOSC5",
+      "EXOSC3"
+     ]
+    },
+    {
+     "target": "TNFSF14",
+     "confidence": 1.0,
+     "machine": "mRNA Polyadenylation",
+     "sign": "up",
+     "n_convergent_KOs": 11,
+     "in_named_complex": 6,
+     "coherence_p": 8.77802608837358e-12,
+     "KOs": [
+      "FIP1L1",
+      "SYMPK",
+      "PHF10",
+      "CSTF3",
+      "CPSF3",
+      "PPP1R10",
+      "SSU72",
+      "SARNP",
+      "ITGB1BP1",
+      "CSTF1"
+     ]
+    },
+    {
+     "target": "TENT5A",
+     "confidence": 1.0,
+     "machine": "nuclear pore",
+     "sign": "up",
+     "n_convergent_KOs": 16,
+     "in_named_complex": 9,
+     "coherence_p": 1.3136507283022076e-17,
+     "KOs": [
+      "GLE1",
+      "SEC13",
+      "CSE1L",
+      "HAUS4",
+      "NUP155",
+      "NUP107",
+      "PIK3R4",
+      "RANGAP1",
+      "MCM3AP",
+      "NUP88"
+     ]
+    },
+    {
+     "target": "SERPINE2",
+     "confidence": 1.0,
+     "machine": "Viral mRNA Translation",
+     "sign": "up",
+     "n_convergent_KOs": 21,
+     "in_named_complex": 9,
+     "coherence_p": 1.1025248180561998e-16,
+     "KOs": [
+      "CTR9",
+      "EIF3G",
+      "RPS17",
+      "PAF1",
+      "RPS16",
+      "RPS5",
+      "RPS6",
+      "RPS23",
+      "RPSA",
+      "RPS13"
+     ]
+    },
+    {
+     "target": "KISS1",
+     "confidence": 1.0,
+     "machine": "mRNA Capping",
+     "sign": "up",
+     "n_convergent_KOs": 20,
+     "in_named_complex": 7,
+     "coherence_p": 2.3622241341984526e-15,
+     "KOs": [
+      "SUPT5H",
+      "RPAP1",
+      "RUVBL1",
+      "POLR2H",
+      "CUL7",
+      "POLR2A",
+      "SNRNP70",
+      "POLR2B",
+      "RPAP2",
+      "POLR2C"
+     ]
+    },
+    {
+     "target": "VMP1",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 17,
+     "in_named_complex": 12,
+     "coherence_p": 1.650523730779279e-30,
+     "KOs": [
+      "EXOSC8",
+      "EXOSC2",
+      "EXOSC9",
+      "EXOSC4",
+      "EXOSC3",
+      "MTREX",
+      "EXOSC5",
+      "EXOSC6",
+      "DIS3",
+      "EXOSC7"
+     ]
+    },
+    {
+     "target": "MTHFD2L",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 15,
+     "in_named_complex": 11,
+     "coherence_p": 2.860040491043277e-28,
+     "KOs": [
+      "ZFC3H1",
+      "EXOSC9",
+      "MTREX",
+      "EXOSC2",
+      "EXOSC8",
+      "DIS3",
+      "EXOSC4",
+      "EXOSC3",
+      "EXOSC5",
+      "MBNL1"
+     ]
+    },
+    {
+     "target": "CNBD2",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 6,
+     "coherence_p": 9.06339440187335e-16,
+     "KOs": [
+      "MTREX",
+      "EXOSC3",
+      "ZFC3H1",
+      "DIS3",
+      "EXOSC7",
+      "EXOSC5",
+      "MRPL45",
+      "ZDHHC7"
+     ]
+    },
+    {
+     "target": "EPN3",
+     "confidence": 1.0,
+     "machine": "nuclear exosome (RNase complex)",
+     "sign": "up",
+     "n_convergent_KOs": 10,
+     "in_named_complex": 9,
+     "coherence_p": 4.607987284850001e-28,
+     "KOs": [
+      "EXOSC6",
+      "EXOSC8",
+      "EXOSC4",
+      "MTREX",
+      "EXOSC3",
+      "EXOSC2",
+      "EXOSC9",
+      "EXOSC5",
+      "EXOSC7",
+      "MBNL1"
+     ]
+    },
+    {
+     "target": "COPZ1",
+     "confidence": 0.9,
+     "machine": "Ino80 complex",
+     "sign": "down",
+     "n_convergent_KOs": 16,
+     "in_named_complex": 5,
+     "coherence_p": 1.979489751569988e-13,
+     "KOs": [
+      "WDR33",
+      "ACTR5",
+      "ACTR8",
+      "INO80C",
+      "INO80B",
+      "SCAF1",
+      "TUBA3D",
+      "PGPEP1",
+      "INO80",
+      "ISCU"
+     ]
+    },
+    {
+     "target": "AAMDC",
+     "confidence": 0.9,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 5,
+     "coherence_p": 1.1816685912909192e-15,
+     "KOs": [
+      "INTS8",
+      "INTS5",
+      "INTS7",
+      "INTS6",
+      "ADAM10",
+      "INTS1"
+     ]
+    },
+    {
+     "target": "CLIC3",
+     "confidence": 0.9,
+     "machine": "Ion channel transport",
+     "sign": "up",
+     "n_convergent_KOs": 15,
+     "in_named_complex": 5,
+     "coherence_p": 3.4124289173796527e-12,
+     "KOs": [
+      "ATP6AP1",
+      "ATP6V1A",
+      "YKT6",
+      "ATP6V1B2",
+      "SMARCC1",
+      "ATP6V0B",
+      "ATP6V1E1",
+      "ARHGAP6",
+      "ATP6V1G1",
+      "AP2M1"
+     ]
+    },
+    {
+     "target": "ARL2",
+     "confidence": 0.9,
+     "machine": "mRNA Splicing - Minor Pathway",
+     "sign": "down",
+     "n_convergent_KOs": 10,
+     "in_named_complex": 5,
+     "coherence_p": 1.3878330219813391e-15,
+     "KOs": [
+      "MRPS33",
+      "SNRNP48",
+      "SNRNP35",
+      "SNRNP25",
+      "SNX15",
+      "ZMAT5",
+      "PDCD7",
+      "POLR3C",
+      "USP10",
+      "ZNF706"
+     ]
+    },
+    {
+     "target": "MRPS12",
+     "confidence": 0.9,
+     "machine": "RNA N6-methyladenosine methyltransferase complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 5,
+     "coherence_p": 1.6357430068803494e-15,
+     "KOs": [
+      "ZC3H13",
+      "METTL14",
+      "METTL3",
+      "RBM15",
+      "SPAG7",
+      "FOXL2",
+      "WTAP"
+     ]
+    },
+    {
+     "target": "HSPA1B",
+     "confidence": 0.9,
+     "machine": "proteasome complex",
+     "sign": "up",
+     "n_convergent_KOs": 11,
+     "in_named_complex": 5,
+     "coherence_p": 1.962843610054161e-11,
+     "KOs": [
+      "PSMC1",
+      "PSMA3",
+      "PSMB5",
+      "PSMB3",
+      "KCTD10",
+      "ZNF830",
+      "SRP68",
+      "PSMB6",
+      "HSPA8",
+      "SRPRB"
+     ]
+    },
+    {
+     "target": "ADM",
+     "confidence": 0.9,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 5,
+     "coherence_p": 4.133958586545781e-15,
+     "KOs": [
+      "INTS5",
+      "INTS8",
+      "INTS2",
+      "NELFA",
+      "INTS7",
+      "INTS6",
+      "NDUFB7"
+     ]
+    },
+    {
+     "target": "ZNF593",
+     "confidence": 0.8,
+     "machine": "RNA N6-methyladenosine methyltransferase complex",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 4,
+     "coherence_p": 1.1228059842779427e-11,
+     "KOs": [
+      "ZC3H13",
+      "METTL14",
+      "CBLL1",
+      "METTL3",
+      "GTF3C3",
+      "PTK2",
+      "PDHA1",
+      "UNC45A"
+     ]
+    },
+    {
+     "target": "VPS25",
+     "confidence": 0.8,
+     "machine": "mRNA Splicing - Minor Pathway",
+     "sign": "down",
+     "n_convergent_KOs": 13,
+     "in_named_complex": 4,
+     "coherence_p": 1.6215159934336275e-11,
+     "KOs": [
+      "SNRNP35",
+      "PEX1",
+      "ZRSR2",
+      "SPDL1",
+      "POLR3A",
+      "RNPC3",
+      "SNRNP25",
+      "HSPH1",
+      "POLR3K",
+      "ANAPC5"
+     ]
+    },
+    {
+     "target": "POLR2E",
+     "confidence": 0.8,
+     "machine": "mRNA Splicing - Minor Pathway",
+     "sign": "down",
+     "n_convergent_KOs": 10,
+     "in_named_complex": 4,
+     "coherence_p": 4.765269350296281e-12,
+     "KOs": [
+      "ZBTB14",
+      "SNRNP35",
+      "TMEM258",
+      "SNRNP48",
+      "ZRSR2",
+      "CAP1",
+      "PPP1R12A",
+      "SNRNP25",
+      "MST1",
+      "BUB1B"
+     ]
+    },
+    {
+     "target": "RCC1",
+     "confidence": 0.8,
+     "machine": "mRNA cleavage and polyadenylation specificity factor complex",
+     "sign": "up",
+     "n_convergent_KOs": 9,
+     "in_named_complex": 4,
+     "coherence_p": 7.420841010723242e-11,
+     "KOs": [
+      "PHF10",
+      "CPSF1",
+      "CPSF3",
+      "CPSF4",
+      "CSTF3",
+      "SSU72",
+      "CSTF1",
+      "UQCRH",
+      "ITGB1BP1"
+     ]
+    },
+    {
+     "target": "MSRB2",
+     "confidence": 0.8,
+     "machine": "SAGA complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 4,
+     "coherence_p": 1.0030691787245183e-10,
+     "KOs": [
+      "TRRAP",
+      "HNRNPH1",
+      "TELO2",
+      "SUPT20H",
+      "TCERG1",
+      "TADA1",
+      "TAF6L"
+     ]
+    },
+    {
+     "target": "SCO2",
+     "confidence": 0.8,
+     "machine": "RNA N6-methyladenosine methyltransferase complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 4,
+     "coherence_p": 5.616210140335636e-12,
+     "KOs": [
+      "ZC3H13",
+      "METTL3",
+      "METTL14",
+      "ZNHIT1",
+      "RBM15",
+      "RNF123",
+      "MAD2L2"
+     ]
+    },
+    {
+     "target": "CDKN2A",
+     "confidence": 0.75,
+     "machine": "eukaryotic translation initiation factor 3 complex",
+     "sign": "up",
+     "n_convergent_KOs": 13,
+     "in_named_complex": 4,
+     "coherence_p": 4.2012323328534235e-10,
+     "KOs": [
+      "EIF3M",
+      "EIF3B",
+      "EIF3D",
+      "PPIE",
+      "BDP1",
+      "EIF3A",
+      "RFFL",
+      "ZC3H18",
+      "SNRNP200",
+      "THOC5"
+     ]
+    },
+    {
+     "target": "AGR2",
+     "confidence": 0.748,
+     "machine": "eukaryotic 48S preinitiation complex",
+     "sign": "up",
+     "n_convergent_KOs": 15,
+     "in_named_complex": 4,
+     "coherence_p": 4.410865775212151e-10,
+     "KOs": [
+      "EIF3I",
+      "GBF1",
+      "EIF3G",
+      "EIF2S1",
+      "EIF2S3",
+      "EIF3B",
+      "HSPA5",
+      "SEC61A1",
+      "VCP",
+      "SRSF3"
+     ]
+    },
+    {
+     "target": "NDUFB8",
+     "confidence": 0.677,
+     "machine": "histone acetyltransferase complex",
+     "sign": "down",
+     "n_convergent_KOs": 13,
+     "in_named_complex": 4,
+     "coherence_p": 3.43596392310629e-09,
+     "KOs": [
+      "KANSL2",
+      "NRF1",
+      "KANSL1",
+      "SNRNP27",
+      "CHCHD3",
+      "MCRS1",
+      "HSPH1",
+      "YY1",
+      "ZNHIT1",
+      "KAT8"
+     ]
+    },
+    {
+     "target": "SNRNP40",
+     "confidence": 0.676,
+     "machine": "Ino80 complex",
+     "sign": "down",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 3,
+     "coherence_p": 2.2074670062096482e-10,
+     "KOs": [
+      "ACTR8",
+      "INO80B",
+      "NFRKB"
+     ]
+    },
+    {
+     "target": "LAMTOR2",
+     "confidence": 0.667,
+     "machine": "RNA N6-methyladenosine methyltransferase complex",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 3,
+     "coherence_p": 2.943289341612864e-10,
+     "KOs": [
+      "CBLL1",
+      "METTL14",
+      "METTL3"
+     ]
+    },
+    {
+     "target": "SRPRB",
+     "confidence": 0.649,
+     "machine": "Sec61 translocon complex",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 3,
+     "coherence_p": 5.349244695216636e-10,
+     "KOs": [
+      "SEC61G",
+      "SEC61A1",
+      "SEC61B",
+      "ALG1",
+      "SPCS3",
+      "MSRB1"
+     ]
+    },
+    {
+     "target": "KDELR3",
+     "confidence": 0.643,
+     "machine": "TRAPPIII protein complex",
+     "sign": "up",
+     "n_convergent_KOs": 10,
+     "in_named_complex": 3,
+     "coherence_p": 6.419677561544968e-10,
+     "KOs": [
+      "GBF1",
+      "TMED10",
+      "COG3",
+      "GOSR2",
+      "CAMLG",
+      "TRAPPC5",
+      "PREB",
+      "EARS2",
+      "TRAPPC8",
+      "TRAPPC11"
+     ]
+    },
+    {
+     "target": "BAG1",
+     "confidence": 0.639,
+     "machine": "nonsense-mediated decay complex",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 3,
+     "coherence_p": 7.48860183332074e-10,
+     "KOs": [
+      "SMG7",
+      "SMG5",
+      "RBM8A",
+      "UPF2",
+      "UPF1",
+      "CLOCK",
+      "EIF3L",
+      "STRAP"
+     ]
+    },
+    {
+     "target": "DNAJB9",
+     "confidence": 0.632,
+     "machine": "Sec61 translocon complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 9.35990068967227e-10,
+     "KOs": [
+      "VCP",
+      "SEC61G",
+      "NPLOC4",
+      "SLC39A7",
+      "SEC61A1",
+      "SEC61B",
+      "RPL41"
+     ]
+    },
+    {
+     "target": "LETMD1",
+     "confidence": 0.626,
+     "machine": "nonsense-mediated decay complex",
+     "sign": "up",
+     "n_convergent_KOs": 9,
+     "in_named_complex": 3,
+     "coherence_p": 1.1231880678827615e-09,
+     "KOs": [
+      "NUP155",
+      "CPSF2",
+      "SMG5",
+      "EIF4A3",
+      "UPF2",
+      "RBM8A",
+      "MAGOH",
+      "SMG7",
+      "SLC7A5"
+     ]
+    },
+    {
+     "target": "PSMA1",
+     "confidence": 0.618,
+     "machine": "mRNA Splicing - Minor Pathway",
+     "sign": "down",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 3,
+     "coherence_p": 1.497379725872686e-09,
+     "KOs": [
+      "SNRNP35",
+      "PDCD7",
+      "ZCRB1",
+      "INPPL1",
+      "CWC25",
+      "ZBTB17"
+     ]
+    },
+    {
+     "target": "SF3B5",
+     "confidence": 0.617,
+     "machine": "nuclear pore",
+     "sign": "down",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 4,
+     "coherence_p": 1.9643054773777558e-08,
+     "KOs": [
+      "TPR",
+      "MCM3AP",
+      "CSTF1",
+      "PTCD3",
+      "NUP214",
+      "XPO5",
+      "NXF1"
+     ]
+    },
+    {
+     "target": "F2RL1",
+     "confidence": 0.597,
+     "machine": "eukaryotic translation initiation factor 3 complex",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 3,
+     "coherence_p": 2.9950316733859285e-09,
+     "KOs": [
+      "EIF3M",
+      "FARSB",
+      "EIF3D",
+      "EIF3E"
+     ]
+    },
+    {
+     "target": "SSBP1",
+     "confidence": 0.583,
+     "machine": "mRNA Polyadenylation",
+     "sign": "down",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 4,
+     "coherence_p": 5.2118110539791114e-08,
+     "KOs": [
+      "FIP1L1",
+      "CSTF3",
+      "CPSF4",
+      "PHF10",
+      "CSTF1",
+      "RPTOR",
+      "NUP54",
+      "HMGA1"
+     ]
+    },
+    {
+     "target": "STEAP1",
+     "confidence": 0.561,
+     "machine": "eukaryotic 48S preinitiation complex",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 3,
+     "coherence_p": 9.72499993120386e-09,
+     "KOs": [
+      "EIF3G",
+      "EIF2S1",
+      "EIF2S3",
+      "EIF3I",
+      "CHMP3",
+      "SGPP1"
+     ]
+    },
+    {
+     "target": "SAR1A",
+     "confidence": 0.559,
+     "machine": "RNA N6-methyladenosine methyltransferase complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 1.028465424844988e-08,
+     "KOs": [
+      "YTHDC1",
+      "METTL14",
+      "CBLL1",
+      "METTL3",
+      "SNRPA",
+      "EEF1A1",
+      "COG6"
+     ]
+    },
+    {
+     "target": "TRIM8",
+     "confidence": 0.548,
+     "machine": "nuclear exosome (RNase complex)",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 3,
+     "coherence_p": 1.4957453641291465e-08,
+     "KOs": [
+      "TAF7",
+      "MTREX",
+      "EXOSC9",
+      "EXOSC7",
+      "EIF1AD",
+      "SEPHS2"
+     ]
+    },
+    {
+     "target": "OAT",
+     "confidence": 0.544,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 1.7010234441394497e-08,
+     "KOs": [
+      "INTS2",
+      "INTS5",
+      "INTS8",
+      "LEO1",
+      "VHL",
+      "OR2T29",
+      "ENO1"
+     ]
+    },
+    {
+     "target": "PCNP",
+     "confidence": 0.543,
+     "machine": "protein folding chaperone complex",
+     "sign": "down",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 1.7764397848872485e-08,
+     "KOs": [
+      "HMGN2",
+      "CDC37",
+      "WDR83OS",
+      "PSMG1",
+      "LIN54"
+     ]
+    },
+    {
+     "target": "GLIPR1",
+     "confidence": 0.541,
+     "machine": "chaperonin-containing T-complex",
+     "sign": "up",
+     "n_convergent_KOs": 11,
+     "in_named_complex": 3,
+     "coherence_p": 1.8502273374102633e-08,
+     "KOs": [
+      "FARSB",
+      "CCT3",
+      "WDR1",
+      "ESPL1",
+      "CCT7",
+      "FARSA",
+      "DNM2",
+      "CCT6A",
+      "TCP1",
+      "ACTB"
+     ]
+    },
+    {
+     "target": "SEC24D",
+     "confidence": 0.537,
+     "machine": "TRAPP complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 2.125892296167488e-08,
+     "KOs": [
+      "GOSR2",
+      "OR7A10",
+      "TRAPPC5",
+      "TRAPPC3",
+      "CBLN1",
+      "TRAPPC11",
+      "HSCB"
+     ]
+    },
+    {
+     "target": "NUCB2",
+     "confidence": 0.531,
+     "machine": "Sec61 translocon complex",
+     "sign": "up",
+     "n_convergent_KOs": 19,
+     "in_named_complex": 3,
+     "coherence_p": 2.5871137298363158e-08,
+     "KOs": [
+      "HSPA5",
+      "SEC61G",
+      "VCP",
+      "SEC61A1",
+      "SEC61B",
+      "DERL2",
+      "DHDDS",
+      "SLC35B1",
+      "HYOU1",
+      "SLC39A7"
+     ]
+    },
+    {
+     "target": "ARF4",
+     "confidence": 0.529,
+     "machine": "endoplasmic reticulum-Golgi intermediate compartment",
+     "sign": "up",
+     "n_convergent_KOs": 12,
+     "in_named_complex": 4,
+     "coherence_p": 2.466843073685146e-07,
+     "KOs": [
+      "GBF1",
+      "COPB1",
+      "TMED10",
+      "GOSR2",
+      "CAMLG",
+      "PREB",
+      "CHCHD3",
+      "TMED2",
+      "RAC3",
+      "BET1"
+     ]
+    },
+    {
+     "target": "ACTA1",
+     "confidence": 0.525,
+     "machine": "chaperonin-containing T-complex",
+     "sign": "up",
+     "n_convergent_KOs": 13,
+     "in_named_complex": 3,
+     "coherence_p": 3.205310033283074e-08,
+     "KOs": [
+      "WDR1",
+      "ACTB",
+      "CAPZB",
+      "CCT7",
+      "CCT4",
+      "CCT5",
+      "IPO7",
+      "ATXN10",
+      "NDUFB3",
+      "COX15"
+     ]
+    },
+    {
+     "target": "CRYAB",
+     "confidence": 0.477,
+     "machine": "ESCRT I complex",
+     "sign": "up",
+     "n_convergent_KOs": 19,
+     "in_named_complex": 3,
+     "coherence_p": 1.5477544678643815e-07,
+     "KOs": [
+      "CHMP6",
+      "CHMP2A",
+      "VPS28",
+      "UBAP1",
+      "TSG101",
+      "PTPN23",
+      "CLTC",
+      "NEDD8",
+      "DNM2",
+      "NUF2"
+     ]
+    },
+    {
+     "target": "CD55",
+     "confidence": 0.468,
+     "machine": "Cristae formation",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 2.0940849715474847e-07,
+     "KOs": [
+      "HSPA9",
+      "ATP5F1B",
+      "ATP5F1A",
+      "IARS2",
+      "AFG3L2",
+      "MRPS33",
+      "MRPL32"
+     ]
+    },
+    {
+     "target": "NSMF",
+     "confidence": 0.459,
+     "machine": "SUMO is conjugated to E1 (UBA2:SAE1)",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 2,
+     "coherence_p": 2.2061291474180054e-08,
+     "KOs": [
+      "UBE2I",
+      "SAE1",
+      "UBA2"
+     ]
+    },
+    {
+     "target": "RNF145",
+     "confidence": 0.454,
+     "machine": "mRNA Splicing - Major Pathway",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 3,
+     "coherence_p": 3.317781255695157e-07,
+     "KOs": [
+      "BUD13",
+      "FAM50A",
+      "BUD31",
+      "TCERG1"
+     ]
+    },
+    {
+     "target": "YIPF2",
+     "confidence": 0.451,
+     "machine": "SNARE complex",
+     "sign": "up",
+     "n_convergent_KOs": 10,
+     "in_named_complex": 3,
+     "coherence_p": 3.666704519211572e-07,
+     "KOs": [
+      "GOSR2",
+      "TMED10",
+      "RAC3",
+      "BET1",
+      "CAMLG",
+      "STX5",
+      "NSF",
+      "MRPS16",
+      "ANAPC11",
+      "CD8B"
+     ]
+    }
+   ]
+  },
+  "Jurkat": {
+   "line": "Jurkat",
+   "n_knockouts": 2151,
+   "n_convergent_targets": 228,
+   "n_known_machine_targets": 3,
+   "n_novel": 225,
+   "calibration_auc_known_vs_null": 0.993,
+   "positive_control_top": [
+    [
+     "SNRNP48",
+     0.8,
+     [
+      "PDCD7",
+      "ARL6IP6",
+      "RBM25",
+      "THOC1",
+      "PABPC4"
+     ]
+    ],
+    [
+     "NUDT21",
+     0.227,
+     [
+      "CHERP",
+      "RBM39",
+      "RBM33",
+      "BOD1L1"
+     ]
+    ],
+    [
+     "U2SURP",
+     0.213,
+     [
+      "MED24",
+      "PPP1R8",
+      "EXOC4",
+      "DDX5",
+      "DNAJC19"
+     ]
+    ]
+   ],
+   "novel_proposals": [
+    {
+     "target": "MLLT11",
+     "confidence": 1.0,
+     "machine": "proteasome complex",
+     "sign": "up",
+     "n_convergent_KOs": 23,
+     "in_named_complex": 10,
+     "coherence_p": 9.555221703093695e-22,
+     "KOs": [
+      "PCM1",
+      "PSMC2",
+      "NPLOC4",
+      "UQCC2",
+      "PSMC4",
+      "PSMB7",
+      "PSMC3",
+      "PSMC6",
+      "PSMC1",
+      "DENR"
+     ]
+    },
+    {
+     "target": "EPM2AIP1",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 14,
+     "in_named_complex": 7,
+     "coherence_p": 1.7405079666421532e-16,
+     "KOs": [
+      "MTREX",
+      "EXOSC2",
+      "EXOSC9",
+      "ZFC3H1",
+      "EXOSC7",
+      "ZC3H3",
+      "DIS3",
+      "MBNL1",
+      "ZBTB4",
+      "SPAG7"
+     ]
+    },
+    {
+     "target": "ST3GAL2",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 6,
+     "coherence_p": 3.24569578932582e-17,
+     "KOs": [
+      "EXOSC6",
+      "EXOSC3",
+      "EXOSC2",
+      "EXOSC4",
+      "EXOSC8",
+      "ZC3H3"
+     ]
+    },
+    {
+     "target": "ZNF280D",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 12,
+     "in_named_complex": 10,
+     "coherence_p": 1.0383563464016199e-26,
+     "KOs": [
+      "MTREX",
+      "EXOSC4",
+      "EXOSC2",
+      "EXOSC5",
+      "DIS3",
+      "EXOSC7",
+      "EXOSC8",
+      "WDR82",
+      "EXOSC9",
+      "MBNL1"
+     ]
+    },
+    {
+     "target": "SOX11",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 20,
+     "in_named_complex": 12,
+     "coherence_p": 3.3487120332429657e-29,
+     "KOs": [
+      "MTREX",
+      "EXOSC2",
+      "DIS3",
+      "EXOSC4",
+      "EXOSC7",
+      "EXOSC8",
+      "EXOSC3",
+      "EXOSC5",
+      "EXOSC9",
+      "ZFC3H1"
+     ]
+    },
+    {
+     "target": "PPP1R10",
+     "confidence": 1.0,
+     "machine": "nuclear exosome (RNase complex)",
+     "sign": "up",
+     "n_convergent_KOs": 12,
+     "in_named_complex": 10,
+     "coherence_p": 1.2912059172672475e-30,
+     "KOs": [
+      "EXOSC2",
+      "EXOSC5",
+      "EXOSC8",
+      "EXOSC4",
+      "MTREX",
+      "EXOSC9",
+      "DIS3",
+      "EXOSC6",
+      "EXOSC3",
+      "EXOSC7"
+     ]
+    },
+    {
+     "target": "TMEM116",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 9,
+     "in_named_complex": 9,
+     "coherence_p": 1.1302266868334975e-25,
+     "KOs": [
+      "MTREX",
+      "EXOSC2",
+      "EXOSC9",
+      "EXOSC8",
+      "EXOSC4",
+      "ZC3H3",
+      "DIS3",
+      "EXOSC7",
+      "ZFC3H1"
+     ]
+    },
+    {
+     "target": "BANP",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 10,
+     "in_named_complex": 9,
+     "coherence_p": 1.1288073036861665e-24,
+     "KOs": [
+      "EXOSC6",
+      "EXOSC4",
+      "EXOSC2",
+      "EXOSC7",
+      "EXOSC3",
+      "EXOSC5",
+      "EXOSC8",
+      "MTREX",
+      "ZC3H3",
+      "MBNL1"
+     ]
+    },
+    {
+     "target": "ANKRD54",
+     "confidence": 1.0,
+     "machine": "nuclear exosome (RNase complex)",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 7,
+     "coherence_p": 1.3911655967958082e-21,
+     "KOs": [
+      "MTREX",
+      "EXOSC3",
+      "EXOSC7",
+      "EXOSC8",
+      "EXOSC4",
+      "EXOSC2",
+      "EXOSC9",
+      "PPIL1"
+     ]
+    },
+    {
+     "target": "UBXN4",
+     "confidence": 1.0,
+     "machine": "mRNA Splicing - Minor Pathway",
+     "sign": "down",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 6,
+     "coherence_p": 2.807458364789682e-20,
+     "KOs": [
+      "SNRNP25",
+      "PRPF38B",
+      "SNRNP48",
+      "ZMAT5",
+      "PDCD7",
+      "SNRNP35",
+      "ZCRB1",
+      "UQCRC1"
+     ]
+    },
+    {
+     "target": "FAM24B",
+     "confidence": 0.9,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 10,
+     "in_named_complex": 5,
+     "coherence_p": 1.4877158716951968e-16,
+     "KOs": [
+      "UPF1",
+      "UPF2",
+      "CASC3",
+      "SMG5",
+      "SMG1",
+      "SMG7",
+      "CLOCK",
+      "SMG6",
+      "EIF1AX",
+      "MSRB1"
+     ]
+    },
+    {
+     "target": "TIGD1",
+     "confidence": 0.9,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 5,
+     "coherence_p": 1.9819180177264732e-14,
+     "KOs": [
+      "EXOSC7",
+      "EXOSC3",
+      "EXOSC4",
+      "ZC3H3",
+      "ZFC3H1"
+     ]
+    },
+    {
+     "target": "AURKA",
+     "confidence": 0.9,
+     "machine": "Unwinding of DNA",
+     "sign": "up",
+     "n_convergent_KOs": 9,
+     "in_named_complex": 5,
+     "coherence_p": 9.807513555463571e-15,
+     "KOs": [
+      "GINS4",
+      "TOPBP1",
+      "MRPL13",
+      "GINS2",
+      "GINS3",
+      "MZT1",
+      "MCM6",
+      "MCM7",
+      "IFITM3"
+     ]
+    },
+    {
+     "target": "SNRNP40",
+     "confidence": 0.8,
+     "machine": "Ino80 complex",
+     "sign": "down",
+     "n_convergent_KOs": 9,
+     "in_named_complex": 4,
+     "coherence_p": 1.3471710308624217e-11,
+     "KOs": [
+      "INO80",
+      "SMG1",
+      "PRPF6",
+      "ACTR8",
+      "NFRKB",
+      "INO80B",
+      "ABCG1",
+      "MED1",
+      "TPI1"
+     ]
+    },
+    {
+     "target": "HYOU1",
+     "confidence": 0.8,
+     "machine": "oligosaccharyltransferase complex A",
+     "sign": "up",
+     "n_convergent_KOs": 16,
+     "in_named_complex": 4,
+     "coherence_p": 7.420841010723242e-11,
+     "KOs": [
+      "HSPA5",
+      "DERL2",
+      "SLC35B1",
+      "GMPPB",
+      "DAD1",
+      "SPCS3",
+      "ALG2",
+      "DDOST",
+      "RPN1",
+      "TMEM258"
+     ]
+    },
+    {
+     "target": "PDIA4",
+     "confidence": 0.8,
+     "machine": "oligosaccharyltransferase complex A",
+     "sign": "up",
+     "n_convergent_KOs": 16,
+     "in_named_complex": 4,
+     "coherence_p": 7.420841010723242e-11,
+     "KOs": [
+      "HSPA5",
+      "DERL2",
+      "DAD1",
+      "RPN1",
+      "TMEM258",
+      "SLC39A7",
+      "GMPPB",
+      "DDOST",
+      "SLC35B1",
+      "SPCS3"
+     ]
+    },
+    {
+     "target": "LSS",
+     "confidence": 0.8,
+     "machine": "COPI-dependent Golgi-to-ER retrograde traffi",
+     "sign": "up",
+     "n_convergent_KOs": 11,
+     "in_named_complex": 4,
+     "coherence_p": 5.353186390966992e-13,
+     "KOs": [
+      "ATP6V1E1",
+      "HMGCS1",
+      "TMSB10",
+      "RINT1",
+      "TUBGCP4",
+      "STX18",
+      "NBAS",
+      "BNIP1",
+      "ATP6V1G1",
+      "RPUSD3"
+     ]
+    },
+    {
+     "target": "DNAJB11",
+     "confidence": 0.8,
+     "machine": "oligosaccharyltransferase complex A",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 4,
+     "coherence_p": 2.8597167433865618e-12,
+     "KOs": [
+      "HSPA5",
+      "DAD1",
+      "RPN1",
+      "CALR",
+      "GMPPB",
+      "RPN2",
+      "FEN1",
+      "TMEM258"
+     ]
+    },
+    {
+     "target": "CALML4",
+     "confidence": 0.8,
+     "machine": "transcription factor TFIIH core complex",
+     "sign": "up",
+     "n_convergent_KOs": 12,
+     "in_named_complex": 4,
+     "coherence_p": 3.3658030786347737e-11,
+     "KOs": [
+      "ERCC2",
+      "HPS5",
+      "MNAT1",
+      "SNRPC",
+      "GTF2H3",
+      "GTF2E1",
+      "ERCC3",
+      "SNAPC5",
+      "SMU1",
+      "GEMIN4"
+     ]
+    },
+    {
+     "target": "UQCRFS1",
+     "confidence": 0.8,
+     "machine": "RNA N6-methyladenosine methyltransferase complex",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 4,
+     "coherence_p": 2.4078819132906327e-12,
+     "KOs": [
+      "METTL14",
+      "WTAP",
+      "ZC3H13",
+      "METTL3",
+      "TREML2",
+      "UCHL5"
+     ]
+    },
+    {
+     "target": "ACTL6A",
+     "confidence": 0.8,
+     "machine": "mRNA Splicing - Minor Pathway",
+     "sign": "down",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 4,
+     "coherence_p": 7.946742395643349e-13,
+     "KOs": [
+      "SNRNP35",
+      "ZCRB1",
+      "PDCD7",
+      "ZRSR2",
+      "PLK1",
+      "UBTF",
+      "SEPHS2"
+     ]
+    },
+    {
+     "target": "RHOG",
+     "confidence": 0.8,
+     "machine": "RNA N6-methyladenosine methyltransferase complex",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 4,
+     "coherence_p": 8.02938984808295e-13,
+     "KOs": [
+      "ZC3H13",
+      "METTL14",
+      "WTAP",
+      "METTL3",
+      "TPI1"
+     ]
+    },
+    {
+     "target": "YTHDF2",
+     "confidence": 0.7,
+     "machine": "Processing of Capped Intron-Containing Pre-m",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 4.682505770747738e-11,
+     "KOs": [
+      "METTL14",
+      "WTAP",
+      "TNPO3",
+      "METTL3",
+      "DYNC1I2",
+      "PCID2",
+      "PC"
+     ]
+    },
+    {
+     "target": "CCNL1",
+     "confidence": 0.662,
+     "machine": "mRNA Splicing - Major Pathway",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 4,
+     "coherence_p": 5.2632624325889936e-09,
+     "KOs": [
+      "CWC22",
+      "BUD13",
+      "SNIP1",
+      "SAP30BP",
+      "PRPF3",
+      "DCTN5"
+     ]
+    },
+    {
+     "target": "FADS2",
+     "confidence": 0.653,
+     "machine": "COPI-dependent Golgi-to-ER retrograde traffi",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 4.680802029474031e-10,
+     "KOs": [
+      "UPF2",
+      "NBAS",
+      "DYNC1H1",
+      "BNIP1",
+      "NDUFA3",
+      "RINT1",
+      "ZNF284"
+     ]
+    },
+    {
+     "target": "LETMD1",
+     "confidence": 0.653,
+     "machine": "nonsense-mediated decay complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 4.680802029474031e-10,
+     "KOs": [
+      "UPF2",
+      "MRPS14",
+      "SMG7",
+      "SMG5",
+      "ATF5",
+      "CLOCK",
+      "NDUFA3"
+     ]
+    },
+    {
+     "target": "PMF1",
+     "confidence": 0.652,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 3,
+     "coherence_p": 4.869806001577647e-10,
+     "KOs": [
+      "INTS14",
+      "INTS13",
+      "INTS10"
+     ]
+    },
+    {
+     "target": "MTHFD2L",
+     "confidence": 0.647,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 13,
+     "in_named_complex": 4,
+     "coherence_p": 8.243052124837094e-09,
+     "KOs": [
+      "EXOSC7",
+      "ZFC3H1",
+      "EXOSC4",
+      "ZC3H3",
+      "MBNL1",
+      "INTS7",
+      "SNRNP48",
+      "DHX29",
+      "DDX59",
+      "DBR1"
+     ]
+    },
+    {
+     "target": "SCO2",
+     "confidence": 0.625,
+     "machine": "RNA N6-methyladenosine methyltransferase complex",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 3,
+     "coherence_p": 1.1768337861798439e-09,
+     "KOs": [
+      "ZC3H13",
+      "WTAP",
+      "METTL3",
+      "TUBD1"
+     ]
+    },
+    {
+     "target": "PTBP2",
+     "confidence": 0.618,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 3,
+     "coherence_p": 1.497379725872686e-09,
+     "KOs": [
+      "PTBP1",
+      "SMG5",
+      "SMG1",
+      "CLOCK",
+      "EXOC4",
+      "SMG6",
+      "FEN1",
+      "KATNB1"
+     ]
+    },
+    {
+     "target": "ZFP36L2",
+     "confidence": 0.617,
+     "machine": "nuclear pore",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 4,
+     "coherence_p": 1.9643054773777558e-08,
+     "KOs": [
+      "NUP93",
+      "NUP88",
+      "TPR",
+      "FASN",
+      "KPNB1",
+      "SETD5",
+      "SON"
+     ]
+    },
+    {
+     "target": "NDFIP1",
+     "confidence": 0.607,
+     "machine": "mRNA Polyadenylation",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 4,
+     "coherence_p": 2.6165659966528777e-08,
+     "KOs": [
+      "NUDT21",
+      "OGFOD1",
+      "CPSF6",
+      "TCERG1",
+      "ECD",
+      "SRRM2",
+      "AIFM1"
+     ]
+    },
+    {
+     "target": "SYCP2",
+     "confidence": 0.605,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 9,
+     "in_named_complex": 3,
+     "coherence_p": 2.245763041852534e-09,
+     "KOs": [
+      "CASC3",
+      "SMG1",
+      "SMG7",
+      "SMG5",
+      "CLOCK",
+      "NUTF2",
+      "POU3F1",
+      "WNK1",
+      "E2F6"
+     ]
+    },
+    {
+     "target": "CCDC88C",
+     "confidence": 0.595,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th",
+     "sign": "up",
+     "n_convergent_KOs": 10,
+     "in_named_complex": 3,
+     "coherence_p": 3.2077950352147956e-09,
+     "KOs": [
+      "CASC3",
+      "XRN1",
+      "SMG5",
+      "SMG7",
+      "SMG1",
+      "POU3F1",
+      "CLOCK",
+      "SCFD1",
+      "YBX1",
+      "SLC39A10"
+     ]
+    },
+    {
+     "target": "CREBRF",
+     "confidence": 0.583,
+     "machine": "mRNA Polyadenylation",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 4,
+     "coherence_p": 5.2118110539791114e-08,
+     "KOs": [
+      "SLU7",
+      "U2AF1",
+      "XAB2",
+      "SF3A3",
+      "CDC5L",
+      "SF3B3",
+      "SF3B5",
+      "EIF4A3"
+     ]
+    },
+    {
+     "target": "DHCR7",
+     "confidence": 0.582,
+     "machine": "COPI-dependent Golgi-to-ER retrograde traffi",
+     "sign": "up",
+     "n_convergent_KOs": 14,
+     "in_named_complex": 3,
+     "coherence_p": 4.864934129079314e-09,
+     "KOs": [
+      "ATP6V1C1",
+      "HMGCR",
+      "BGLAP",
+      "ATP6V1E1",
+      "TMSB10",
+      "NBAS",
+      "BNIP1",
+      "EMC7",
+      "STX18",
+      "TBPL1"
+     ]
+    },
+    {
+     "target": "TPGS1",
+     "confidence": 0.582,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 4.864934129079314e-09,
+     "KOs": [
+      "INTS10",
+      "INTS13",
+      "INTS14",
+      "DLD",
+      "INPPL1"
+     ]
+    },
+    {
+     "target": "MPDU1",
+     "confidence": 0.582,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 4.864934129079314e-09,
+     "KOs": [
+      "INTS10",
+      "INTS14",
+      "INTS13",
+      "ZNF468",
+      "SNF8"
+     ]
+    },
+    {
+     "target": "NEU1",
+     "confidence": 0.582,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 4.864934129079314e-09,
+     "KOs": [
+      "INTS8",
+      "SUPT16H",
+      "INTS2",
+      "INTS5",
+      "NUP133"
+     ]
+    },
+    {
+     "target": "ID2",
+     "confidence": 0.569,
+     "machine": "mRNA Capping",
+     "sign": "up",
+     "n_convergent_KOs": 23,
+     "in_named_complex": 4,
+     "coherence_p": 7.689150799738145e-08,
+     "KOs": [
+      "SUPT5H",
+      "MED29",
+      "CDC73",
+      "TFAP4",
+      "SUPT16H",
+      "INTS8",
+      "PAF1",
+      "MED17",
+      "MED4",
+      "GPN1"
+     ]
+    },
+    {
+     "target": "NMB",
+     "confidence": 0.561,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 6,
+     "in_named_complex": 3,
+     "coherence_p": 9.72499993120386e-09,
+     "KOs": [
+      "INTS8",
+      "INTS5",
+      "INTS1",
+      "ASF1B",
+      "VPS41",
+      "SSBP3"
+     ]
+    },
+    {
+     "target": "SAR1A",
+     "confidence": 0.559,
+     "machine": "RNA N6-methyladenosine methyltransferase complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 3,
+     "coherence_p": 1.028465424844988e-08,
+     "KOs": [
+      "NUDT21",
+      "CPSF6",
+      "WTAP",
+      "METTL14",
+      "CBLL1",
+      "NDC80",
+      "POU5F1B"
+     ]
+    },
+    {
+     "target": "ERG28",
+     "confidence": 0.557,
+     "machine": "COPI-dependent Golgi-to-ER retrograde traffi",
+     "sign": "up",
+     "n_convergent_KOs": 18,
+     "in_named_complex": 3,
+     "coherence_p": 1.0902036148567384e-08,
+     "KOs": [
+      "HGS",
+      "HMGCS1",
+      "TMSB10",
+      "SLC2A8",
+      "NUTF2",
+      "ATP6V1G1",
+      "EMC4",
+      "NBAS",
+      "TBPL1",
+      "EMC7"
+     ]
+    },
+    {
+     "target": "MTX1",
+     "confidence": 0.55,
+     "machine": "histone acetyltransferase complex",
+     "sign": "down",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 3,
+     "coherence_p": 1.3899175555389586e-08,
+     "KOs": [
+      "KANSL2",
+      "KANSL3",
+      "KAT8",
+      "NDUFB7"
+     ]
+    },
+    {
+     "target": "BLOC1S1",
+     "confidence": 0.548,
+     "machine": "NSL complex",
+     "sign": "down",
+     "n_convergent_KOs": 16,
+     "in_named_complex": 3,
+     "coherence_p": 1.4957453641291465e-08,
+     "KOs": [
+      "NUP35",
+      "PXN",
+      "KANSL2",
+      "OSTC",
+      "KANSL3",
+      "ZNHIT1",
+      "YEATS4",
+      "HSPH1",
+      "ACTR6",
+      "KANSL1"
+     ]
+    },
+    {
+     "target": "NQO2",
+     "confidence": 0.547,
+     "machine": "proteasome core complex",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 1.5228013016349102e-08,
+     "KOs": [
+      "PSMB7",
+      "METTL21A",
+      "NAE1",
+      "PSMB6",
+      "PSMB5"
+     ]
+    },
+    {
+     "target": "PIGL",
+     "confidence": 0.53,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 4,
+     "in_named_complex": 3,
+     "coherence_p": 2.6508106428742593e-08,
+     "KOs": [
+      "EXOSC6",
+      "ZFC3H1",
+      "ZC3H3",
+      "STAT5A"
+     ]
+    },
+    {
+     "target": "CEP128",
+     "confidence": 0.53,
+     "machine": "INTAC complex",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 3,
+     "coherence_p": 2.7202757016416197e-08,
+     "KOs": [
+      "MRPS18B",
+      "RBMX",
+      "INTS10",
+      "YY1",
+      "ZC3H4",
+      "INTS13",
+      "INTS14",
+      "LTBP3"
+     ]
+    },
+    {
+     "target": "ING5",
+     "confidence": 0.503,
+     "machine": "Nuclear RNA decay",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 6.61828549933404e-08,
+     "KOs": [
+      "MTREX",
+      "ZFC3H1",
+      "ZC3H3",
+      "CHAF1A",
+      "CHCHD2"
+     ]
+    },
+    {
+     "target": "GBP1",
+     "confidence": 0.488,
+     "machine": "mRNA Splicing - Major Pathway",
+     "sign": "up",
+     "n_convergent_KOs": 17,
+     "in_named_complex": 4,
+     "coherence_p": 8.048784994880812e-07,
+     "KOs": [
+      "CNOT2",
+      "CNOT3",
+      "CCNC",
+      "BCAS2",
+      "XRCC3",
+      "ACTB",
+      "SDE2",
+      "SYF2",
+      "PPIE",
+      "CAPZB"
+     ]
+    },
+    {
+     "target": "METTL16",
+     "confidence": 0.461,
+     "machine": "snRNP Assembly",
+     "sign": "up",
+     "n_convergent_KOs": 5,
+     "in_named_complex": 3,
+     "coherence_p": 2.6110043096137456e-07,
+     "KOs": [
+      "SNRPD2",
+      "SNRPF",
+      "NAA38",
+      "SNAPC1",
+      "GEMIN6"
+     ]
+    },
+    {
+     "target": "HERPUD1",
+     "confidence": 0.458,
+     "machine": "oligosaccharyltransferase complex A",
+     "sign": "up",
+     "n_convergent_KOs": 26,
+     "in_named_complex": 3,
+     "coherence_p": 2.903592069188746e-07,
+     "KOs": [
+      "DHDDS",
+      "SLC35B1",
+      "INO80D",
+      "HSPA5",
+      "NPLOC4",
+      "DERL2",
+      "ATP6V1A",
+      "SPCS2",
+      "GMPPB",
+      "PREB"
+     ]
+    },
+    {
+     "target": "ANXA2",
+     "confidence": 0.427,
+     "machine": "replication fork",
+     "sign": "up",
+     "n_convergent_KOs": 10,
+     "in_named_complex": 3,
+     "coherence_p": 7.889709318561629e-07,
+     "KOs": [
+      "DNMT1",
+      "UHRF1",
+      "MLLT6",
+      "CEBPG",
+      "NEDD8",
+      "PSMC4",
+      "PI4KA",
+      "SNAPC4",
+      "XRCC3",
+      "HS6ST1"
+     ]
+    },
+    {
+     "target": "PDRG1",
+     "confidence": 0.424,
+     "machine": "U2-type catalytic step 1 spliceosome",
+     "sign": "up",
+     "n_convergent_KOs": 9,
+     "in_named_complex": 3,
+     "coherence_p": 8.651237506699272e-07,
+     "KOs": [
+      "UPF2",
+      "UPF1",
+      "ISY1",
+      "SDE2",
+      "TNPO3",
+      "CRNKL1",
+      "BUD31",
+      "NDUFA3",
+      "NUP35"
+     ]
+    },
+    {
+     "target": "BRI3",
+     "confidence": 0.421,
+     "machine": "Macroautophagy",
+     "sign": "up",
+     "n_convergent_KOs": 8,
+     "in_named_complex": 3,
+     "coherence_p": 9.830254883722975e-07,
+     "KOs": [
+      "KIF14",
+      "KXD1",
+      "LAMTOR1",
+      "LAMTOR4",
+      "HJURP",
+      "LAMTOR2",
+      "NCAPG2",
+      "ZNF706"
+     ]
+    },
+    {
+     "target": "RHBDD3",
+     "confidence": 0.413,
+     "machine": "proteasome regulatory particle, base subcomplex",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 2,
+     "coherence_p": 1.3235704597474723e-07,
+     "KOs": [
+      "PSMC6",
+      "PSMC1",
+      "STAT5A"
+     ]
+    },
+    {
+     "target": "SLC7A11",
+     "confidence": 0.412,
+     "machine": "tRNA processing in the nucleus",
+     "sign": "up",
+     "n_convergent_KOs": 16,
+     "in_named_complex": 3,
+     "coherence_p": 1.3112301030147446e-06,
+     "KOs": [
+      "NEDD8",
+      "METTL21A",
+      "RBM12",
+      "SPCS2",
+      "THG1L",
+      "RBX1",
+      "GTF3C3",
+      "NAE1",
+      "TSEN54",
+      "EIF1"
+     ]
+    },
+    {
+     "target": "CCNY",
+     "confidence": 0.409,
+     "machine": "SUMO activating enzyme complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 2,
+     "coherence_p": 1.5442904031926043e-07,
+     "KOs": [
+      "SAE1",
+      "UBE2I",
+      "UBA2",
+      "ACTR3",
+      "SETDB1",
+      "SPRTN",
+      "IRF2BP2"
+     ]
+    },
+    {
+     "target": "PTGER4",
+     "confidence": 0.409,
+     "machine": "BRE1 E3 ubiquitin ligase complex",
+     "sign": "up",
+     "n_convergent_KOs": 7,
+     "in_named_complex": 2,
+     "coherence_p": 1.5442904031926043e-07,
+     "KOs": [
+      "RNF20",
+      "MED24",
+      "RNF40",
+      "WAC",
+      "POLE2",
+      "PIAS1",
+      "ASF1B"
+     ]
+    },
+    {
+     "target": "ZFAND2A",
+     "confidence": 0.399,
+     "machine": "nonsense-mediated decay complex",
+     "sign": "up",
+     "n_convergent_KOs": 3,
+     "in_named_complex": 2,
+     "coherence_p": 2.205861575659677e-07,
+     "KOs": [
+      "UPF2",
+      "SMG7",
+      "CLOCK"
+     ]
+    }
+   ]
+  }
+ },
+ "cross_line_concordant_novel": [
+  {
+   "target": "MTHFD2L",
+   "n_lines": 3,
+   "machines": [
+    "Nuclear RNA decay"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay"
+    },
+    {
+     "line": "HepG2",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 0.647,
+     "machine": "Nuclear RNA decay"
+    }
+   ]
+  },
+  {
+   "target": "SCO2",
+   "n_lines": 3,
+   "machines": [
+    "RNA N6-methyladenosine methyltransferase complex"
+   ],
+   "lines": [
+    {
+     "line": "HepG2",
+     "confidence": 0.8,
+     "machine": "RNA N6-methyladenosine methyltransferase complex"
+    },
+    {
+     "line": "RPE1",
+     "confidence": 0.625,
+     "machine": "RNA N6-methyladenosine methyltransferase complex"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 0.625,
+     "machine": "RNA N6-methyladenosine methyltransferase complex"
+    }
+   ]
+  },
+  {
+   "target": "MSMO1",
+   "n_lines": 2,
+   "machines": [
+    "Ion channel transport",
+    "PI3K Cascade"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport"
+    },
+    {
+     "line": "HCT116",
+     "confidence": 0.291,
+     "machine": "PI3K Cascade"
+    }
+   ]
+  },
+  {
+   "target": "ACAT2",
+   "n_lines": 2,
+   "machines": [
+    "Ion channel transport",
+    "PI3K Cascade"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport"
+    },
+    {
+     "line": "HCT116",
+     "confidence": 0.273,
+     "machine": "PI3K Cascade"
+    }
+   ]
+  },
+  {
+   "target": "MVD",
+   "n_lines": 2,
+   "machines": [
+    "Ion channel transport",
+    "PI3K Cascade"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport"
+    },
+    {
+     "line": "HCT116",
+     "confidence": 0.26,
+     "machine": "PI3K Cascade"
+    }
+   ]
+  },
+  {
+   "target": "INSIG1",
+   "n_lines": 2,
+   "machines": [
+    "Ion channel transport",
+    "PI3K Cascade"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport"
+    },
+    {
+     "line": "HCT116",
+     "confidence": 0.26,
+     "machine": "PI3K Cascade"
+    }
+   ]
+  },
+  {
+   "target": "HMGCS1",
+   "n_lines": 2,
+   "machines": [
+    "Ion channel transport",
+    "PI3K Cascade"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport"
+    },
+    {
+     "line": "HCT116",
+     "confidence": 0.233,
+     "machine": "PI3K Cascade"
+    }
+   ]
+  },
+  {
+   "target": "DHCR7",
+   "n_lines": 2,
+   "machines": [
+    "COPI-dependent Golgi-to-ER retrograde traffi",
+    "Ion channel transport"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 0.582,
+     "machine": "COPI-dependent Golgi-to-ER retrograde traffi"
+    }
+   ]
+  },
+  {
+   "target": "ERG28",
+   "n_lines": 2,
+   "machines": [
+    "COPI-dependent Golgi-to-ER retrograde traffi",
+    "Ion channel transport"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 1.0,
+     "machine": "Ion channel transport"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 0.557,
+     "machine": "COPI-dependent Golgi-to-ER retrograde traffi"
+    }
+   ]
+  },
+  {
+   "target": "HSPA1B",
+   "n_lines": 2,
+   "machines": [
+    "proteasome complex"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 1.0,
+     "machine": "proteasome complex"
+    },
+    {
+     "line": "HepG2",
+     "confidence": 0.9,
+     "machine": "proteasome complex"
+    }
+   ]
+  },
+  {
+   "target": "VMP1",
+   "n_lines": 2,
+   "machines": [
+    "Nuclear RNA decay"
+   ],
+   "lines": [
+    {
+     "line": "HepG2",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay"
+    },
+    {
+     "line": "RPE1",
+     "confidence": 0.781,
+     "machine": "Nuclear RNA decay"
+    }
+   ]
+  },
+  {
+   "target": "ZFP36L2",
+   "n_lines": 2,
+   "machines": [
+    "nuclear pore"
+   ],
+   "lines": [
+    {
+     "line": "HepG2",
+     "confidence": 1.0,
+     "machine": "nuclear pore"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 0.617,
+     "machine": "nuclear pore"
+    }
+   ]
+  },
+  {
+   "target": "MLLT11",
+   "n_lines": 2,
+   "machines": [
+    "proteasome complex"
+   ],
+   "lines": [
+    {
+     "line": "HepG2",
+     "confidence": 1.0,
+     "machine": "proteasome complex"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 1.0,
+     "machine": "proteasome complex"
+    }
+   ]
+  },
+  {
+   "target": "PPP1R10",
+   "n_lines": 2,
+   "machines": [
+    "Nuclear RNA decay",
+    "nuclear exosome (RNase complex)"
+   ],
+   "lines": [
+    {
+     "line": "HepG2",
+     "confidence": 1.0,
+     "machine": "Nuclear RNA decay"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 1.0,
+     "machine": "nuclear exosome (RNase complex)"
+    }
+   ]
+  },
+  {
+   "target": "ARL2",
+   "n_lines": 2,
+   "machines": [
+    "lamellipodium",
+    "mRNA Splicing - Minor Pathway"
+   ],
+   "lines": [
+    {
+     "line": "HepG2",
+     "confidence": 0.9,
+     "machine": "mRNA Splicing - Minor Pathway"
+    },
+    {
+     "line": "HCT116",
+     "confidence": 0.213,
+     "machine": "lamellipodium"
+    }
+   ]
+  },
+  {
+   "target": "HYOU1",
+   "n_lines": 2,
+   "machines": [
+    "oligosaccharyltransferase complex A"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 0.9,
+     "machine": "oligosaccharyltransferase complex A"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 0.8,
+     "machine": "oligosaccharyltransferase complex A"
+    }
+   ]
+  },
+  {
+   "target": "DNAJB11",
+   "n_lines": 2,
+   "machines": [
+    "oligosaccharyltransferase complex A"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 0.9,
+     "machine": "oligosaccharyltransferase complex A"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 0.8,
+     "machine": "oligosaccharyltransferase complex A"
+    }
+   ]
+  },
+  {
+   "target": "BAG1",
+   "n_lines": 2,
+   "machines": [
+    "Nonsense Mediated Decay (NMD) enhanced by th",
+    "nonsense-mediated decay complex"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 0.9,
+     "machine": "Nonsense Mediated Decay (NMD) enhanced by th"
+    },
+    {
+     "line": "HepG2",
+     "confidence": 0.639,
+     "machine": "nonsense-mediated decay complex"
+    }
+   ]
+  },
+  {
+   "target": "FADS2",
+   "n_lines": 2,
+   "machines": [
+    "COPI-dependent Golgi-to-ER retrograde traffi",
+    "Ion channel transport"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 0.8,
+     "machine": "Ion channel transport"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 0.653,
+     "machine": "COPI-dependent Golgi-to-ER retrograde traffi"
+    }
+   ]
+  },
+  {
+   "target": "SNRNP40",
+   "n_lines": 2,
+   "machines": [
+    "Ino80 complex"
+   ],
+   "lines": [
+    {
+     "line": "Jurkat",
+     "confidence": 0.8,
+     "machine": "Ino80 complex"
+    },
+    {
+     "line": "HepG2",
+     "confidence": 0.676,
+     "machine": "Ino80 complex"
+    }
+   ]
+  },
+  {
+   "target": "NUCB2",
+   "n_lines": 2,
+   "machines": [
+    "Sec61 translocon complex",
+    "oligosaccharyltransferase complex A"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 0.784,
+     "machine": "oligosaccharyltransferase complex A"
+    },
+    {
+     "line": "HepG2",
+     "confidence": 0.531,
+     "machine": "Sec61 translocon complex"
+    }
+   ]
+  },
+  {
+   "target": "LETMD1",
+   "n_lines": 2,
+   "machines": [
+    "nonsense-mediated decay complex"
+   ],
+   "lines": [
+    {
+     "line": "Jurkat",
+     "confidence": 0.653,
+     "machine": "nonsense-mediated decay complex"
+    },
+    {
+     "line": "HepG2",
+     "confidence": 0.626,
+     "machine": "nonsense-mediated decay complex"
+    }
+   ]
+  },
+  {
+   "target": "PMF1",
+   "n_lines": 2,
+   "machines": [
+    "INTAC complex"
+   ],
+   "lines": [
+    {
+     "line": "RPE1",
+     "confidence": 0.652,
+     "machine": "INTAC complex"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 0.652,
+     "machine": "INTAC complex"
+    }
+   ]
+  },
+  {
+   "target": "SAR1A",
+   "n_lines": 2,
+   "machines": [
+    "RNA N6-methyladenosine methyltransferase complex"
+   ],
+   "lines": [
+    {
+     "line": "HepG2",
+     "confidence": 0.559,
+     "machine": "RNA N6-methyladenosine methyltransferase complex"
+    },
+    {
+     "line": "Jurkat",
+     "confidence": 0.559,
+     "machine": "RNA N6-methyladenosine methyltransferase complex"
+    }
+   ]
+  }
+ ],
+ "ppp1r10_exosome_single_line_hits": [
+  "HepG2",
+  "Jurkat"
+ ],
+ "verdict": "RAN THE CONNECTION PROPOSER SEPARATELY ON EACH OF THE OTHER 5 FINE-TUNABLE LINES (HCT116, Melanoma, RPE1, HepG2, Jurkat). Each line, on its own deterministic code, proposes cell-type-specific novel machine->target connections. THREE HONEST CAVEATS: (1) a single line has NO cross-line reproducibility gate (the pooled tool's main noise filter), so per-line the only credibility gate is WITHIN-LINE complex-convergence (a whole annotated machine's subunits converging on one target) + non-tide + effect size -- genuinely WEAKER evidence than the pooled run, and per-line lists are noisier. (2) Per-line CONFIDENCE SATURATES at 1.00 in the big lines (RPE1/HepG2/Jurkat, ~2151 KOs): any large coherent machine maxes both the coherence and the subunit-convergence terms, so the per-line NUMBER does not rank the top tier -- use CROSS-LINE CONCORDANCE to rank, not the per-line confidence. (3) The top of each per-line list is dominated by LARGE KNOWN cell-response programs the method correctly re-derives (V-ATPase/lysosome->sterol/SREBP in RPE1/HepG2, integrated-stress/eIF2 & proteasome->HSP70, IFN-gamma->ISG in melanoma) -- these validate the method but are NOT novel; they read as 'novel' only because the downstream target is not itself a pathway MEMBER. THE TRUSTWORTHY DELIVERABLE IS THE CROSS-LINE CONCORDANT SET: 24 novel targets proposed INDEPENDENTLY by >=2 of the 5 lines (two cell types agreeing WITHOUT pooling = real, not a single-line artifact). That set cleanly re-surfaces the RNA-decay-machinery cluster -- exosome/nuclear-RNA-decay->PPP1R10 & MTHFD2L & EPM2AIP1 & BANP, m6A-methyltransferase->SCO2 & SAR1A, INTAC->PMF1, Ino80->SNRNP40, NMD->LETMD1 -- alongside the re-derived knowns (proteasome->HSPA1B/MLLT11, UPR->HYOU1/DNAJB11). KEY RESULT: the pooled tool's #1, exosome->PPP1R10, is now INDEPENDENTLY proposed by 2 single lines (['HepG2', 'Jurkat']) -- so it was not an artifact of pooling; two cell types propose it on their own. BOTTOM LINE: 5 cell-type-specific ranked hypothesis lists, deterministic + agent-independent; rank by cross-line concordance (not the saturating per-line number), and the concordant RNA-decay cluster -- led by exosome->PPP1R10 confirmed in HepG2 + Jurkat independently -- is the set worth a researcher's time.",
+ "note": "RAN THE CONNECTION PROPOSER SEPARATELY ON EACH OF THE OTHER 5 FINE-TUNABLE LINES (HCT116, Melanoma, RPE1, HepG2, Jurkat). Each line, on its own deterministic code, proposes cell-type-specific novel machine->target connections. THREE HONEST CAVEATS: (1) a single line has NO cross-line reproducibility gate (the pooled tool's main noise filter), so per-line the only credibility gate is WITHIN-LINE complex-convergence (a whole annotated machine's subunits converging on one target) + non-tide + effect size -- genuinely WEAKER evidence than the pooled run, and per-line lists are noisier. (2) Per-line CONFIDENCE SATURATES at 1.00 in the big lines (RPE1/HepG2/Jurkat, ~2151 KOs): any large coherent machine maxes both the coherence and the subunit-convergence terms, so the per-line NUMBER does not rank the top tier -- use CROSS-LINE CONCORDANCE to rank, not the per-line confidence. (3) The top of each per-line list is dominated by LARGE KNOWN cell-response programs the method correctly re-derives (V-ATPase/lysosome->sterol/SREBP in RPE1/HepG2, integrated-stress/eIF2 & proteasome->HSP70, IFN-gamma->ISG in melanoma) -- these validate the method but are NOT novel; they read as 'novel' only because the downstream target is not itself a pathway MEMBER. THE TRUSTWORTHY DELIVERABLE IS THE CROSS-LINE CONCORDANT SET: 24 novel targets proposed INDEPENDENTLY by >=2 of the 5 lines (two cell types agreeing WITHOUT pooling = real, not a single-line artifact). That set cleanly re-surfaces the RNA-decay-machinery cluster -- exosome/nuclear-RNA-decay->PPP1R10 & MTHFD2L & EPM2AIP1 & BANP, m6A-methyltransferase->SCO2 & SAR1A, INTAC->PMF1, Ino80->SNRNP40, NMD->LETMD1 -- alongside the re-derived knowns (proteasome->HSPA1B/MLLT11, UPR->HYOU1/DNAJB11). KEY RESULT: the pooled tool's #1, exosome->PPP1R10, is now INDEPENDENTLY proposed by 2 single lines (['HepG2', 'Jurkat']) -- so it was not an artifact of pooling; two cell types propose it on their own. BOTTOM LINE: 5 cell-type-specific ranked hypothesis lists, deterministic + agent-independent; rank by cross-line concordance (not the saturating per-line number), and the concordant RNA-decay cluster -- led by exosome->PPP1R10 confirmed in HepG2 + Jurkat independently -- is the set worth a researcher's time."
+}

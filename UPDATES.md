@@ -5923,3 +5923,48 @@ eyeballed a table" becomes "the software proposes X ← machine, confidence Y." 
 scores and ranks the convergences; a reasoner still owns choosing *which* high-confidence proposal to chase and reasoning out *why*
 (the mechanism, the literature novelty, the experiment). (`connection_proposer.py` → connection_proposer.json +
 connection_proposer_candidates.csv.)
+
+### Per-line: run it on the other 5 cell lines (`connection_proposer_perline.py`)
+
+The pooled proposer above blends all six lines. Running it **separately on each of the other five** fine-tunable lines (HCT116,
+Melanoma, RPE1, HepG2, Jurkat) asks a different question: *what novel machine→target connection does each cell type propose on its
+own?* — cell-type-specific hypotheses, still deterministic code, no LLM in the score.
+
+**Honest method difference, stated up front.** A single line has **no cross-line reproducibility gate** — the pooled tool's main
+noise filter. So per-line the only credibility gate is *within-line complex-convergence*: a target must be hit, same sign, by ≥3
+distinct knockouts that together form an annotated machine (CORUM/Reactome/GO, ≤120 members), plus non-tide + effect-size filters.
+That is **genuinely weaker, noisier evidence** than the pooled run. Three consequences I surface rather than hide:
+
+1. **Confidence saturates at 1.00** in the big lines (RPE1/HepG2/Jurkat, ~2151 KOs) — any large coherent machine maxes both the
+   coherence and subunit-convergence terms, so the per-line *number* cannot rank the top tier. **Rank by cross-line concordance, not
+   the per-line confidence.**
+2. **The top of each per-line list is dominated by large *known* response programs** the method correctly re-derives — V-ATPase /
+   lysosome → sterol/SREBP (SQLE, HMGCS1, MSMO1, DHCR7…) in RPE1/HepG2, integrated-stress/eIF2 & proteasome→HSP70, IFN-γ→ISG
+   (STAT1, GBP2, IDO1…) in melanoma. These *validate* the method but are **not novel**; they read "novel" only because the downstream
+   target isn't itself a pathway *member*.
+3. Per-line calibration (confidence separates real machine-convergences from a random-gene null) holds — **AUC 0.99+ in every line**.
+
+**The trustworthy deliverable is the cross-line concordant set** — 24 novel targets proposed *independently* by ≥2 of the 5 lines
+(two cell types agreeing *without* pooling is real, not a single-line artifact). It cleanly re-surfaces the RNA-decay-machinery
+cluster and separates it from the per-line program noise:
+
+```
+target      lines  machine                    per-line confidence
+PPP1R10       2     nuclear exosome (RNase)    HepG2:1.00, Jurkat:1.00     ← pooled tool's #1, now confirmed unaided
+MTHFD2L       3     nuclear RNA decay          RPE1:1.00, HepG2:1.00, Jurkat:0.65
+SCO2          3     m6A methyltransferase      HepG2:0.80, RPE1:0.62, Jurkat:0.62
+SAR1A         2     m6A methyltransferase      HepG2:0.56, Jurkat:0.56
+PMF1          2     INTAC complex              RPE1:0.65, Jurkat:0.65
+SNRNP40       2     Ino80 complex              Jurkat:0.80, HepG2:0.68
+LETMD1 / BAG1 2     nonsense-mediated decay    Jurkat / RPE1 / HepG2
+VMP1 / BANP   2     nuclear RNA decay          HepG2 / RPE1 / Jurkat
+HYOU1         2     OST / ER (UPR)             RPE1:0.90, Jurkat:0.80   (re-derived known)
+HSPA1B/MLLT11 2     proteasome complex         RPE1 / HepG2 / Jurkat    (re-derived known)
+```
+
+**Key result.** The pooled tool's #1, **exosome→PPP1R10**, is now **independently proposed by HepG2 *and* Jurkat on their own**
+(confidence 1.00 each) — so it was **not** an artifact of the cross-line pooling; two cell types propose it unaided. That is the
+strongest cross-line confirmation of the exosome→PPP1R10 hypothesis so far. Bottom line: five cell-type-specific ranked hypothesis
+lists (`connection_proposer_perline_candidates.csv`, 204 rows), and a 24-target cross-line-concordant set — led by exosome→PPP1R10 —
+as the part worth a researcher's time. (`connection_proposer_perline.py` → connection_proposer_perline.json +
+connection_proposer_perline_candidates.csv.)
