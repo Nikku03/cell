@@ -6105,3 +6105,38 @@ multi-alteration cancer genotype.**
 *unmeasured* knockout's *specific* response is only weakly within reach from priors today — **but it looks crackable with a better
 model, not fundamental**, for the single-KO / within-cell-type case. That's the most actionable read of the wall so far, and it points
 the next move squarely at *learning perturbation similarity from data instead of trusting the graph*. (`wall_test.py` → wall_test.json.)
+
+---
+
+## Would NEXUS/interactome propagation predict the far field? An edge-type test (and a self-correction) (`wall_edgetype.py`)
+
+Proposal: treat a knockout as node-deletion, use NEXUS to quantify how each partner's interaction weakens, and propagate that
+*magnitude* through the PPI/complex network to predict the knockout's effect. To test it I decomposed the wall_test neighbor-transfer
+model by **edge type** on the same held-out specific-mover task (K562, tide removed), **coverage-matched** — each edge type scored only
+on the knockouts it actually covers, vs the tide null on those same knockouts:
+
+```
+edge type                     recall@50   tide-null   lift   coverage
+PHYS (PPI+complex+pathway)      0.439        0.256     1.71×   321/378
+REG  (TRRUST regulon)           0.183        0.215     0.85×    20/378   ← too sparse to rank
+COMB (phys + regulon)           0.435        0.256     1.70×   326/378
+ORACLE* (profile sim, peeks)    0.617        0.260     2.37×   378/378
+```
+
+**Self-correction, stated plainly:** I told you going in that the physical interactome would be ~chance and this was blocked. **That
+was wrong.** The physical/complex network *does* carry a modest specific signal (**1.71×** the null). And the first pass reported the
+regulon at 0.011 — that was a **coverage artifact** (only 20/378 knockouts have a regulon neighbor in this KO set; "no neighbor →
+predicts zero"), **not** evidence the regulon fails. I fixed the comparison to be coverage-matched before concluding anything.
+
+**But note *how* the physical graph helps — this is the crux for your idea.** It works as a **similarity prior**: knockouts of
+complex-mates / interactors produce *similar downstream programs*, so their measured profiles transfer. That is consistent with
+`pathway_ko_verify`'s 0.0× — two complex members do **not** move each *other's* mRNA (edge-level transmission is zero), yet knocking
+out either yields a *similar* program (positive transfer). Different statements, both true.
+
+**So the honest consequence for NEXUS-propagation:**
+1. Your instinct that interactome structure is informative is **partially vindicated** — but the signal is *similarity*, and it's
+   *already* the ~1.4–1.7× wall_test model. A NEXUS ΔΔG-magnitude cascade layered on top would have to **beat unweighted
+   physical-similarity** — an untested, separate claim, and one that needs per-edge ΔΔG we mostly lack at genome scale.
+2. NEXUS's clean win stays **protein/functional** consequence (which complexes destabilize) — a *different readout* from mRNA.
+3. The oracle head-room (0.62) says the biggest lever is a **learned** perturbation similarity, into which structural/interaction
+   magnitude enters as **one feature** — the honest way to point NEXUS at the wall. (`wall_edgetype.py` → wall_edgetype.json.)
