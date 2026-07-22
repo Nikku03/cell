@@ -6216,3 +6216,32 @@ mRNA far field and **not** the wall. It validates the premise with a complex-mem
 per-pair NEXUS interface energies (structures fetched per pair — the heavy part) is the now-justified next step, deferred until the
 premise held. It did (71× over the honest control). So: yes, NEXUS *can* be advanced to the knockout case — for obligate
 destabilization, as a protein-level coupling predictor. (`nexus_ko.py` → nexus_ko.json.)
+
+### Structural refinement — does physical contact sharpen it? (`nexus_ko_struct.py`)
+
+The honest next step is the interface *energy*. **Feasibility, stated plainly:** the only cached structures are monomers (the ΔΔG
+benchmark), there are no complex co-structures, and AlphaFold-Multimer needs GPU we don't have here — so I did **not** run real
+per-pair interface energies. What *is* scalable and genuinely structural is **direct physical contact**: two proteins joined by a
+binary PPI actually touch, whereas co-complex-only partners may be distal in a big assembly. So the question becomes: does adding
+physical-contact structure sharpen the obligate co-dependency prediction beyond the essentiality proxy?
+
+```
+Predict the DepMap co-dependency edge among 15,599 complex pairs (5-fold CV AUC):
+  essentiality only     0.496   ← ~chance: "both essential" does NOT tell you which pairs co-depend
+  structure only        0.605   ← direct contact + compactness + shared-complex count carries it
+  combined              0.583   ← adding chance-level essentiality slightly hurts
+
+Stratified (controls for "both essential"):
+  both-essential   direct-contact 0.165  vs  co-complex-only 0.051   → 3.2×
+  not-both-ess     direct-contact 0.144  vs  co-complex-only 0.034   → 4.2×
+```
+
+**Two honest takeaways.** First, this *corrects* the nexus_ko story: the obligate co-dependency was **not** driven by "both essential"
+(that's chance, AUC 0.496) — it's driven by **structural contact.** Within each essentiality stratum, a direct physical interface
+raises co-dependency **3–4×** over co-complex-only. Second, even the *crude binary-contact* proxy carries the whole signal (AUC 0.605),
+which is exactly the axis a real interface **energy** (buried area / ΔΔG from a complex co-structure) would extend — so the
+structure-generation cost is now justified, not speculative.
+
+**Bound unchanged:** still the protein-level "which complexes break" readout, validated against co-dependency — not the mRNA far field,
+not the wall. The advance is a **structure-refined obligate score** (physical contact is the whole signal; essentiality is chance), not
+full interface ΔΔG, which needs complex structures we can't generate in this environment. (`nexus_ko_struct.py` → nexus_ko_struct.json.)
