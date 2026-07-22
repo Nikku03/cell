@@ -6245,3 +6245,28 @@ structure-generation cost is now justified, not speculative.
 **Bound unchanged:** still the protein-level "which complexes break" readout, validated against co-dependency — not the mRNA far field,
 not the wall. The advance is a **structure-refined obligate score** (physical contact is the whole signal; essentiality is chance), not
 full interface ΔΔG, which needs complex structures we can't generate in this environment. (`nexus_ko_struct.py` → nexus_ko_struct.json.)
+
+### Fetch real structures + a GPU notebook for the rest (`nexus_ko_fetch.py`, `nexus_ko_afmultimer.ipynb`)
+
+Instead of *computing* interfaces, **fetch** them. The RCSB gene-name text search turned out to be disabled (HTTP 400), so the robust
+route is UniProt cross-refs: **gene → accession → {PDB id: chains} → the PDB entries present in *both* → download → interface = residues
+of A's chains within 5 Å of B's chains** (restricted to each protein's own chains, so it's the *A–B* interface even inside a big
+assembly).
+
+**Fetch succeeded: 34/55** top obligate pairs got a real, pair-specific measured interface — e.g. TSC1–TSC2 (200 res), CBFB–RUNX1
+(332), RNASEH2B–RNASEH2C (216), SDHA–SDHB (127), SDHA–SDHC (3, they barely touch).
+
+**But the science is an honest negative on this axis:** interface **size** vs DepMap co-dependency is **Spearman 0.188, p=0.287
+(n=34)** — not significant (large- vs small-interface median co-dependency 0.727 vs 0.694). So *crude residue-count* does **not**
+predict co-dependency beyond the fact that the pair contacts at all — consistent with `nexus_ko_struct`, where binary **contact**
+carried the 3–4× signal but **size** among contacting pairs added little. Residue-count is a poor stand-in for interface *energy*.
+
+**The GPU step — shipped as a notebook.** `nexus_ko_afmultimer.ipynb` (Colab, GPU; all 55 pairs embedded, self-contained) does the
+honest next thing: **AlphaFold-Multimer (ColabFold)** predicts the complex for the 21 pairs with no solved structure (plus
+with-structure pairs for validation), then **PRODIGY** computes a real binding **energy ΔG** (not size) alongside AF's ipTM /
+interface-PAE, and correlates **energy** vs co-dependency. That's the open question this turn couldn't answer in-sandbox: does interface
+*strength* — not mere contact — sharpen the obligate prediction? Run it and hand the output JSON back.
+
+**What this turn settled:** fetching real structures is feasible and done; **interface size is not enough**; **interface energy** is the
+still-open, now-GPU-ready question. Bound unchanged: protein-level "which complexes break," not the mRNA far field, not the wall.
+(`nexus_ko_fetch.py` → nexus_ko_fetch.json; `nexus_ko_afmultimer.ipynb`.)

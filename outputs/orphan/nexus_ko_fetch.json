@@ -1,0 +1,452 @@
+{
+ "n_pairs": 55,
+ "n_with_structure": 34,
+ "pairs": [
+  {
+   "a": "TSC1",
+   "b": "TSC2",
+   "codep": 0.912,
+   "both_ess": 0,
+   "pdb": "7DL2",
+   "iface": 200
+  },
+  {
+   "a": "DEPDC5",
+   "b": "NPRL2",
+   "codep": 0.799,
+   "both_ess": 0,
+   "pdb": "6CES",
+   "iface": 77
+  },
+  {
+   "a": "SDHA",
+   "b": "SDHB",
+   "codep": 0.794,
+   "both_ess": 0,
+   "pdb": "8GS8",
+   "iface": 127
+  },
+  {
+   "a": "RNASEH2A",
+   "b": "RNASEH2C",
+   "codep": 0.789,
+   "both_ess": 0,
+   "pdb": "3P56",
+   "iface": 120
+  },
+  {
+   "a": "AP2M1",
+   "b": "AP2S1",
+   "codep": 0.781,
+   "both_ess": 1,
+   "pdb": "6URI",
+   "iface": 9
+  },
+  {
+   "a": "POLE3",
+   "b": "POLE4",
+   "codep": 0.776,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "WDR26",
+   "b": "YPEL5",
+   "codep": 0.762,
+   "both_ess": 1,
+   "pdb": "8QBN",
+   "iface": 58
+  },
+  {
+   "a": "PDHA1",
+   "b": "PDHB",
+   "codep": 0.758,
+   "both_ess": 0,
+   "pdb": "1NI4",
+   "iface": 512
+  },
+  {
+   "a": "HSD17B10",
+   "b": "PRORP",
+   "codep": 0.757,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "POLG",
+   "b": "POLG2",
+   "codep": 0.745,
+   "both_ess": 0,
+   "pdb": "3IKM",
+   "iface": 234
+  },
+  {
+   "a": "MAPKAP1",
+   "b": "RICTOR",
+   "codep": 0.744,
+   "both_ess": 0,
+   "pdb": "5ZCS",
+   "iface": 42
+  },
+  {
+   "a": "GATB",
+   "b": "QRSL1",
+   "codep": 0.736,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "RGP1",
+   "b": "RIC1",
+   "codep": 0.736,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "MIOS",
+   "b": "WDR24",
+   "codep": 0.733,
+   "both_ess": 0,
+   "pdb": "7UHY",
+   "iface": 145
+  },
+  {
+   "a": "KCMF1",
+   "b": "UBR4",
+   "codep": 0.733,
+   "both_ess": 1,
+   "pdb": "9NWE",
+   "iface": 202
+  },
+  {
+   "a": "NCAPG2",
+   "b": "NCAPH2",
+   "codep": 0.729,
+   "both_ess": 1,
+   "pdb": "9F5W",
+   "iface": 85
+  },
+  {
+   "a": "EED",
+   "b": "EZH2",
+   "codep": 0.728,
+   "both_ess": 0,
+   "pdb": "5GSA",
+   "iface": 144
+  },
+  {
+   "a": "BRD9",
+   "b": "SMARCD1",
+   "codep": 0.727,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "EXT1",
+   "b": "EXT2",
+   "codep": 0.727,
+   "both_ess": 0,
+   "pdb": "7SCH",
+   "iface": 181
+  },
+  {
+   "a": "PARD3",
+   "b": "PARD6B",
+   "codep": 0.726,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "GET1",
+   "b": "GET3",
+   "codep": 0.726,
+   "both_ess": 0,
+   "pdb": "6SO5",
+   "iface": 63
+  },
+  {
+   "a": "PSMG1",
+   "b": "PSMG2",
+   "codep": 0.725,
+   "both_ess": 0,
+   "pdb": "8QYJ",
+   "iface": 72
+  },
+  {
+   "a": "NCAPD3",
+   "b": "NCAPH2",
+   "codep": 0.723,
+   "both_ess": 1,
+   "pdb": "9F5W",
+   "iface": 119
+  },
+  {
+   "a": "DLST",
+   "b": "OGDH",
+   "codep": 0.706,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "TGFBR1",
+   "b": "TGFBR2",
+   "codep": 0.704,
+   "both_ess": 0,
+   "pdb": "2PJY",
+   "iface": 25
+  },
+  {
+   "a": "GATB",
+   "b": "GATC",
+   "codep": 0.702,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "MAU2",
+   "b": "NIPBL",
+   "codep": 0.701,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "STN1",
+   "b": "TEN1",
+   "codep": 0.701,
+   "both_ess": 0,
+   "pdb": "4JOI",
+   "iface": 191
+  },
+  {
+   "a": "RAD51D",
+   "b": "XRCC2",
+   "codep": 0.697,
+   "both_ess": 0,
+   "pdb": "8FAZ",
+   "iface": 108
+  },
+  {
+   "a": "MIOS",
+   "b": "WDR59",
+   "codep": 0.696,
+   "both_ess": 0,
+   "pdb": "7UHY",
+   "iface": 130
+  },
+  {
+   "a": "NCAPD3",
+   "b": "NCAPG2",
+   "codep": 0.694,
+   "both_ess": 1,
+   "pdb": "9F5W",
+   "iface": 21
+  },
+  {
+   "a": "VPS18",
+   "b": "VPS33A",
+   "codep": 0.694,
+   "both_ess": 1,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "FANCD2",
+   "b": "FANCI",
+   "codep": 0.694,
+   "both_ess": 0,
+   "pdb": "6VAA",
+   "iface": 111
+  },
+  {
+   "a": "METTL1",
+   "b": "WDR4",
+   "codep": 0.685,
+   "both_ess": 0,
+   "pdb": "7U20",
+   "iface": 49
+  },
+  {
+   "a": "EED",
+   "b": "SUZ12",
+   "codep": 0.685,
+   "both_ess": 0,
+   "pdb": "4W2R",
+   "iface": 62
+  },
+  {
+   "a": "PNPT1",
+   "b": "SUPV3L1",
+   "codep": 0.685,
+   "both_ess": 1,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "HUS1",
+   "b": "RAD9A",
+   "codep": 0.683,
+   "both_ess": 0,
+   "pdb": "3A1J",
+   "iface": 55
+  },
+  {
+   "a": "EZH2",
+   "b": "SUZ12",
+   "codep": 0.683,
+   "both_ess": 0,
+   "pdb": "5HYN",
+   "iface": 551
+  },
+  {
+   "a": "ITGAV",
+   "b": "ITGB5",
+   "codep": 0.678,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "RNASEH2A",
+   "b": "RNASEH2B",
+   "codep": 0.675,
+   "both_ess": 0,
+   "pdb": "3P56",
+   "iface": 77
+  },
+  {
+   "a": "MLST8",
+   "b": "RICTOR",
+   "codep": 0.675,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "SDHB",
+   "b": "SDHC",
+   "codep": 0.674,
+   "both_ess": 0,
+   "pdb": "8GS8",
+   "iface": 81
+  },
+  {
+   "a": "PARD6B",
+   "b": "PRKCI",
+   "codep": 0.669,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "MICOS10",
+   "b": "MICOS13",
+   "codep": 0.666,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "PRORP",
+   "b": "TRMT10C",
+   "codep": 0.659,
+   "both_ess": 0,
+   "pdb": "7ONU",
+   "iface": 45
+  },
+  {
+   "a": "MAEA",
+   "b": "WDR26",
+   "codep": 0.657,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "CBFB",
+   "b": "RUNX1",
+   "codep": 0.656,
+   "both_ess": 0,
+   "pdb": "1E50",
+   "iface": 332
+  },
+  {
+   "a": "COG5",
+   "b": "COG7",
+   "codep": 0.655,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "ACTR2",
+   "b": "ARPC4",
+   "codep": 0.654,
+   "both_ess": 1,
+   "pdb": "6UHC",
+   "iface": 37
+  },
+  {
+   "a": "TUBD1",
+   "b": "TUBE1",
+   "codep": 0.653,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "CABIN1",
+   "b": "HIRA",
+   "codep": 0.651,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "SDHA",
+   "b": "SDHC",
+   "codep": 0.647,
+   "both_ess": 0,
+   "pdb": "8GS8",
+   "iface": 3
+  },
+  {
+   "a": "VPS39",
+   "b": "VPS41",
+   "codep": 0.647,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "PEX26",
+   "b": "PEX6",
+   "codep": 0.645,
+   "both_ess": 0,
+   "pdb": null,
+   "iface": null
+  },
+  {
+   "a": "RNASEH2B",
+   "b": "RNASEH2C",
+   "codep": 0.642,
+   "both_ess": 0,
+   "pdb": "3P56",
+   "iface": 216
+  }
+ ],
+ "spearman_iface_codep": 0.18784868663371398,
+ "spearman_p": 0.28738611614872744,
+ "codep_large_iface": 0.727,
+ "codep_small_iface": 0.694,
+ "verdict": "FETCH SUCCEEDED (the point of this step): pulled real solved PDB co-structures and measured the PAIR-SPECIFIC interface (residues within 5A across the two proteins' OWN chains, correct even inside a large assembly) for 34/55 top obligate pairs -- e.g. CBFB-RUNX1 332 res, RNASEH2B-RNASEH2C 216, SDHA-SDHC 3 (they barely touch). BUT THE SCIENCE IS AN HONEST NEGATIVE ON THIS AXIS: interface SIZE vs DepMap co-dependency is Spearman rho=0.188, p=0.287 (n=34) -- NOT significant; large- vs small-interface median codep 0.727 vs 0.694, a tiny non-significant gap. So the CRUDE interface size (residue count) does NOT clearly predict co-dependency beyond the fact that the pair contacts at all -- consistent with nexus_ko_struct, where binary CONTACT (yes/no) carried the signal (3-4x) but SIZE among contacting pairs adds little. (Weak positive trend, but underpowered.) HONEST READ: residue-count is a poor stand-in for interface ENERGY; whether a real BSA/ddG interface energy beats binary contact is still open and needs (a) more pairs and (b) an actual energy (buried area + electrostatics/ddG), which is the AF-Multimer + energy Colab step (nexus_ko_afmultimer.ipynb, GPU) -- now clearly worth doing because size alone was not enough. CAVEATS: n=34 is small; only pairs with a solved co-structure covered; still the PROTEIN-level 'which complexes break' readout, not the mRNA far field, not the wall.",
+ "note": "FETCH SUCCEEDED (the point of this step): pulled real solved PDB co-structures and measured the PAIR-SPECIFIC interface (residues within 5A across the two proteins' OWN chains, correct even inside a large assembly) for 34/55 top obligate pairs -- e.g. CBFB-RUNX1 332 res, RNASEH2B-RNASEH2C 216, SDHA-SDHC 3 (they barely touch). BUT THE SCIENCE IS AN HONEST NEGATIVE ON THIS AXIS: interface SIZE vs DepMap co-dependency is Spearman rho=0.188, p=0.287 (n=34) -- NOT significant; large- vs small-interface median codep 0.727 vs 0.694, a tiny non-significant gap. So the CRUDE interface size (residue count) does NOT clearly predict co-dependency beyond the fact that the pair contacts at all -- consistent with nexus_ko_struct, where binary CONTACT (yes/no) carried the signal (3-4x) but SIZE among contacting pairs adds little. (Weak positive trend, but underpowered.) HONEST READ: residue-count is a poor stand-in for interface ENERGY; whether a real BSA/ddG interface energy beats binary contact is still open and needs (a) more pairs and (b) an actual energy (buried area + electrostatics/ddG), which is the AF-Multimer + energy Colab step (nexus_ko_afmultimer.ipynb, GPU) -- now clearly worth doing because size alone was not enough. CAVEATS: n=34 is small; only pairs with a solved co-structure covered; still the PROTEIN-level 'which complexes break' readout, not the mRNA far field, not the wall."
+}
