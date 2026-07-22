@@ -83,3 +83,4 @@ data/hgnc.txt
 
 # large regenerable reference chromosome (UCSC; refetch via colab/fetch_invivo.py)
 outputs/orphan/invivo/*.fa
+outputs/orphan/llm_reasoner_cache/

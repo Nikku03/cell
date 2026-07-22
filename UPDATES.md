@@ -5968,3 +5968,49 @@ strongest cross-line confirmation of the exosome→PPP1R10 hypothesis so far. Bo
 lists (`connection_proposer_perline_candidates.csv`, 204 rows), and a 24-target cross-line-concordant set — led by exosome→PPP1R10 —
 as the part worth a researcher's time. (`connection_proposer_perline.py` → connection_proposer_perline.json +
 connection_proposer_perline_candidates.csv.)
+
+---
+
+## Integrating an LLM reasoner so both sides get better — cheaply (`llm_reasoner.py`)
+
+The deterministic scorer encodes *one* opinionated analysis. The honest generalization is an **LLM reasoner** on top — but the goal
+is an integration where the LLM **hallucinates less** *and* the deterministic model **performs better**, on a real budget (~$10 of
+OpenAI credit). The design is a **distillation loop**, not "an LLM reads the output":
+
+```
+[deterministic scorer]  →  [PubMed grounding]  →  [GPT-5.x adjudication]  →  [distill back]
+ connection_proposer        NCBI eutils (FREE)     the $ part (bounded)      scorer_feedback.json
+ free, high recall          retrieves evidence     structured verdict        FREE, permanent
+```
+
+**LLM hallucinates less — five *enforced* constraints, not polite requests:**
+1. **Grounded** — it reasons only over PubMed abstracts the tool retrieves (NCBI E-utilities, free), never its own memory.
+2. **Anchored** — the scorer's hard numbers (hypergeometric coherence *p*, cross-line reproducibility, #convergent KOs) are handed
+   in as ground truth it is told it *may not contradict*. It interprets them; it never invents them.
+3. **Cited** — every claim must cite a PMID *from the provided set*; if none supports it, it must answer "no support."
+4. **Refuted** — it must produce a genuine counter-argument (this is an artifact / already-known) before any verdict.
+5. **Structured** — output is a fixed JSON schema; there's no free-form paragraph for confabulation to hide in.
+
+**Model performs better — the cheap, permanent half.** The LLM's verdicts are distilled into `scorer_feedback.json`: a
+known-stress-target blocklist, the machines repeatedly judged known programs, and per-machine reliability priors. The deterministic
+scorer reads that file on its *next* run to auto-down-rank re-derived-known programs (UPR, proteasome→HSP70, V-ATPase→sterol) and
+recalibrate confidence. **You spend the $10 once to label the candidates; the free scorer inherits that judgement forever** —
+expensive reasoning compiled into a cheap deterministic rule.
+
+**Budget guardrails for the $10.** Shortlist only (cross-line-concordant + top pooled-novel, deduped, capped by `--n`); it prints a
+**cost estimate** and refuses to spend without `--go`; it disk-caches every response so re-runs are free. Measured cost on
+gpt-5.5-tier pricing: **~$0.25 for 18 candidates, ~$0.55 for 40** — well inside $10, with room for many high-effort runs. The tool is
+model-agnostic (`OPENAI_MODEL` env), and pointing `OPENAI_BASE_URL` at OpenRouter runs DeepSeek R1 or Qwen 3 through the *same* code.
+
+**Tested end-to-end here with a deterministic `--mock` adjudicator** (no key, no spend). The mock's own mistake is the argument for
+the LLM: it mislabels the sterol/SREBP program (DHCR7 as "novel" because its machine string is "proton-transporting ATPase," not the
+keyword "Ion channel transport") — the exact keyword-brittleness a real LLM removes by *knowing* that V-ATPase knockouts driving
+cholesterol-biosynthesis genes is the classic SREBP program. In the mock run the RNA-decay cluster (PPP1R10, MTHFD2L, SCO2, SNRNP40,
+LETMD1, VMP1, BAG1) ranks top and the known programs (HYOU1, HSPA1B, DNAJB11) sink with a `known-stress` flag.
+
+**To run for real:** `OPENAI_API_KEY=… OPENAI_MODEL=gpt-5.5 python colab/llm_reasoner.py --go --effort medium`
+
+**Honest bound (unchanged).** This does **not** break the wall or improve the model's *predictive* accuracy — the knockout-specific
+far field is data-limited, not reasoning-limited. What improves is (a) the *precision and trust* of the hypothesis shortlist and
+(b) the scorer's *ranking* via distilled labels. The reasoner replaces the *agent* as interpreter; the code still owns the score.
+(`llm_reasoner.py` → llm_reasoner.json + scorer_feedback.json.)
