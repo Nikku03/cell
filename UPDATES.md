@@ -6060,3 +6060,48 @@ on the **literature (0 PubMed co-mentions)**, not our sparse graph; graph-absenc
 **Every added edge is falsifiable:** measure the target mRNA's half-life on the machine knockout — a direct substrate's half-life
 should drop. Not a whole-network completion; a real, local, testable one, led again by **exosome→PPP1R10**.
 (`network_complete.py` → network_completion.json.)
+
+---
+
+## Is the wall solved inside a data-rich cell type? The decisive test (`wall_test.py`)
+
+"Isn't the wall solved for the cell types where we have enough KO data?" — the right way to settle that is to *measure* it, not argue.
+On K562 (1,400 measured knockouts) I ran leave-one-knockout-out prediction, scored **two ways** — on **all movers** (the tide counts)
+and on the **knockout-specific far field** (tide removed) — for four predictors: **random** (floor), **tide baseline** (rank genes by
+global mover-frequency = *the same forecast for everyone* = the "no specific prediction" null), **model** (network-neighbor transfer —
+predict a knockout from the measured profiles of its PPI/complex/pathway/regulon neighbors, i.e. *predict from priors without measuring
+it*), and an **oracle\*** (an optimistic upper bound *allowed to peek* at the held-out knockout to pick its 10 nearest measured ones).
+
+**Specific-mover recall (tide removed), robust across top-K:**
+
+```
+predictor    @20     @50     @100
+RANDOM      0.002   0.007   0.014
+TIDE null   0.133   0.260   0.403
+MODEL(nbr)  0.253   0.375   0.474      ← 1.44× the null; wins in 218/378 knockouts
+ORACLE*     0.458   0.617   0.716      ← 2.37× the null
+```
+
+**The three-part honest answer:**
+
+1. **The tide is solved cheaply.** On all movers, even the same-forecast-for-everyone tide baseline scores 0.28 — "enough KO data"
+   buys the generic stress signature. That's climatology, exactly as we'd said.
+2. **The specific far field is *not* solved.** Knockout identity, via priors, gives only a **modest 1.44× edge** over the null and
+   still **misses ~60%** of each knockout's specific movers. The wall is *lowered*, not solved — not something you'd deploy as a
+   virtual assay.
+3. **The key result — and an honest update to my own pessimism.** The oracle, allowed to find *truly* similar measured knockouts,
+   reaches **0.62 — decisively above the model.** That means the specific signal **does exist** in the measured single-KO mRNA data and
+   **is shared across similar knockouts.** So for this case — a single knockout, inside a data-rich cell type — the wall is **not
+   information-theoretically irreducible**; it's a **modeling / similarity-representation gap**. Our curated graph under-reaches the
+   sharing; a *learned, data-driven* similarity could close much of the 0.38 → 0.62 head-room. I'd been leaning "the wall may be a data
+   limit" — for this specific case, the data says otherwise, and I'll take the more hopeful, measured answer over my prior.
+
+**Caveats I'm keeping honest about:** the oracle *peeks* (mildly circular), so 0.62 is a ceiling, not a deployable number; the
+profiles are top-250 movers/KO on a compressed control-relative z-scale in **one** readout (steady-state mRNA); and this says **nothing
+yet** about the cases the virtual wet lab actually needs — **combinations, mutations, drugs, cross-cell-type transfer, or a real
+multi-alteration cancer genotype.**
+
+**Bottom line:** a data-rich cell type gives you a solved tide plus a lookup table for knockouts you already ran. Predicting an
+*unmeasured* knockout's *specific* response is only weakly within reach from priors today — **but it looks crackable with a better
+model, not fundamental**, for the single-KO / within-cell-type case. That's the most actionable read of the wall so far, and it points
+the next move squarely at *learning perturbation similarity from data instead of trusting the graph*. (`wall_test.py` → wall_test.json.)
