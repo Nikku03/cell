@@ -6322,3 +6322,49 @@ transmission (the strict per-edge mRNA verdict stays `pathway_ko_verify`'s ~0×)
 interface-energy branch was low-value: it was re-deriving a quantitative shade of the physical/complex edge the typed atlas already
 gives us for free (and even crude interface size was null). This is the same idea, pointed at an open question instead of a redundant
 one — and it lands. (`typed_edges_ko.py` → typed_edges_ko.json.)
+
+## "Can we advance NEXUS to solve the wall?" — the one bridge, tested and controlled (`nexus_wall.py`)
+
+Direct answer to the question. First, the thing that decides it: **NEXUS-KO and the wall live on two different layers.** NEXUS-KO
+predicts a *protein-level* consequence (which obligate complex partners co-fail; validated on DepMap co-dependency, 38–53×
+essentiality-matched). The wall is the *mRNA far field* (which transcripts move) — carried by the **regulatory** layer. NEXUS-KO's own
+verdict says it in writing: "NOT the mRNA far field and NOT the wall." So as-built it does not touch the wall.
+
+There is exactly **one** physically principled bridge — a **two-hop composition** the one-hop `wall_test` MODEL cannot reach by
+construction:
+
+> KO(A) —physical/obligate→ destabilize protein B —B is a TF→ B's regulatory targets move in mRNA
+
+If A physically stabilizes a transcription factor B, then KO(A) lowers B's *protein* and dysregulates B's *targets* at the mRNA level.
+Those targets sit **two hops** from A (physical then regulatory), so a one-hop neighbor model misses them structurally. I tested it on
+`wall_test`'s **exact** held-out protocol (K562, leave-one-KO-out, τ=1.0, tide removed, recall@K over the non-tide universe), with the
+one-hop MODEL and the profile-ORACLE flanking it.
+
+**Result — a clean, controlled honest negative:**
+
+| predictor (recall@50, specific movers, where the path fires) | value |
+|---|---|
+| TIDE-null | 0.285 |
+| MODEL (one-hop) | 0.379 |
+| NEXUS-2HOP (pure topology) | **0.009** — at the random floor (0.007) |
+| NEXUS-2HOP (measured obligate-TF profile transfer) | 0.293 |
+| COMBO = MODEL + obligate-TF transfer | 0.416 |
+| **CTRL = MODEL + *random* physical-partner subset** | **0.419** |
+| ORACLE* (peeks) | 0.610 |
+
+Three findings, in order: (1) the two-hop path is **sparse** — a physical partner of the knockout is a TF-with-targets for only a
+subset of KOs. (2) The **pure-topology** forward prediction (score gene T by ∑ over physical partners B of A of [obligate weight]×[B
+regulates T], no peeking at measured data) is **at the random floor** — the mechanistic target-set is *not* the specific movers. (3)
+Giving the idea its strongest form — a *measured* profile transfer reweighted toward the obligate-TF partners, fused with the one-hop
+model — gave COMBO-prof 0.416 vs MODEL 0.379, an apparent **+0.037**. That looked like a win.
+
+**The control killed it.** Fusing the model with a *random* equal-size physical-partner subset scores **0.419 — as high or higher.** So
+the +0.037 is the generic effect of re-emphasizing *any* neighbor subset via z-score fusion, **not** the NEXUS obligate-TF selection.
+Attributing it to NEXUS would have been exactly the overstatement this project guards against — the control caught it before commit.
+
+**Net: no.** NEXUS does not advance to solve the wall. The one physically principled bridge is both sparse and, where it fires, does not
+beat the existing one-hop model once the random-subset control is in place. NEXUS's value stays on its own **protein co-dependency**
+layer (where it's validated); the mRNA wall stays a **similarity-representation gap** (`wall_test`: model 0.38 → oracle 0.62), and the
+two layers are genuinely distinct. One honest incidental, *not* a NEXUS result: the random-physical-partner fusion (0.419) edges the
+uniform one-hop MODEL (0.379), hinting `wall_test`'s MODEL could be modestly improved by upweighting **physical-partner** neighbors over
+pathway/regulon co-members — a small neighbor-weighting tweak, still far under the oracle. (`nexus_wall.py` → nexus_wall.json.)
