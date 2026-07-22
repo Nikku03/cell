@@ -6291,3 +6291,34 @@ it; the per-file endpoints 404.)
 The interface-size result held on the larger fetched set (**n=38, Spearman 0.17, p=0.32** — still not significant). The Colab notebook
 now predicts **only the 17 unfetchable pairs** (≈1 h on an L4), so almost all of the structural work came for free from fetching.
 (`nexus_ko_fetch.py` → nexus_ko_fetch.json; `nexus_ko_afmultimer.ipynb`.)
+
+---
+
+## Use the typed-interaction atlas we already have (`typed_edges_ko.py`)
+
+Instead of computing interface energies to learn *what one protein does to another*, we already have it: the `cell_complete.json`
+typed edges — `sig` (signed signaling, "A activates/inhibits B", SIGNOR/OmniPath-style), `reg` (TF→target), `lr` (ligand→receptor),
+`nichenet` (ligand→targets), `complex` (co-membership). (`ptm` turned out to be per-protein modification-site counts, not a directed
+kinase→substrate edge, so `sig` is the directed "what A does to B" atlas.) So the honest question: **does each typed edge predict a
+knockout consequence** — in mRNA (K562: does KO of A *specifically* move B?) and in protein co-dependency (DepMap)?
+
+```
+edge type   mRNA enr    codep enr (essentiality-matched)
+reg           4.7×        2×  (1.8×)     ← transcriptional transmitter
+sig           4.0×       35×  (53×)      ← signaling: strong PROTEIN coupling, beyond essentiality
+complex      21.8×*     281×  (38×)      ← physical: strong PROTEIN coupling
+lr            0×          0×  (0×)
+nichenet      0×          1×  (0.5×)
+```
+
+**The clean readout is co-dependency** (not tide-confounded), and it answers the question: **yes — the typed `sig` (signaling) edge adds
+a real knockout-consequence signal**, at **53× essentiality-matched**, the *same class as complexes*, using data we already had. Its
+mRNA signal is weak; the transcriptional transmitter is `reg` (4.7× specific, matching `pathway_ko_verify`'s ~6×). The `complex` mRNA
+`21.8×*` is flagged — even after tide removal it's threshold-sensitive coordinated-feedback co-movement, **not** clean specific
+transmission (the strict per-edge mRNA verdict stays `pathway_ko_verify`'s ~0×).
+
+**What it settles:** the two knockout-consequence layers are carried by **different typed edges** — **regulatory → mRNA far field**,
+**physical/signaling → protein co-dependency** — and the atlas *already encodes both*. Which is exactly why the AF-Multimer
+interface-energy branch was low-value: it was re-deriving a quantitative shade of the physical/complex edge the typed atlas already
+gives us for free (and even crude interface size was null). This is the same idea, pointed at an open question instead of a redundant
+one — and it lands. (`typed_edges_ko.py` → typed_edges_ko.json.)
