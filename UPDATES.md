@@ -6173,3 +6173,46 @@ wall_test/wall_edgetype (their PHYS came from PPI + pathway) — fixed here. (2)
 signal is real and shared (oracle 0.62), but so far only reachable from *measured* neighbors — static features and the curated graph
 both plateau at ~0.37–0.40. **The open problem is the representation, not more annotation engineering.** (`wall_learnsim.py` →
 wall_learnsim.json.)
+
+---
+
+## Advancing NEXUS to the knockout case — the one form that validates (`nexus_ko.py`)
+
+A knockout doesn't *mutate* a partner, so NEXUS's mutation-ΔΔG is the wrong operation in general. But there is one physically-clean,
+NEXUS-shaped sub-problem: **obligate-subunit destabilization** — if B only folds inside a complex with A, then knocking out A
+destabilizes and degrades B. NEXUS's interface-energy machinery is exactly the tool for "does B need A to be stable." And the effect is
+**post-translational** — B's *protein* is degraded while B's *mRNA* is unchanged — so the correct ground truth is **not** mRNA but
+**protein-level co-dependency** (DepMap).
+
+I validated the *premise* before building the heavy per-pair structural pipeline, using complex co-membership as the structural signal
+and — the control that matters — comparing against **essentiality-matched** random pairs, because complex partners are often both
+essential and "both essential → correlated dependency" would otherwise fake the result.
+
+```
+[A] protein-level coupling — DepMap co-dependency (fraction of pairs that are top co-dependency partners)
+    complex partners            0.142
+    random pairs                0.0005     → 285×
+    essentiality-MATCHED random 0.0020     → 71× over the honest control   ← coupling is STRUCTURAL, not just "both essential"
+
+[B] same partners, mRNA cross-coupling (Perturb-seq K562)
+    complex partners  0.003   vs random 0.000   → ~invisible in mRNA (post-translational; explains the earlier 0.0×)
+
+[C] obligate grading
+    both core-essential 0.159  >  not 0.133      small complex(≤4) 0.164  >  big(>10) 0.109
+```
+
+**What this establishes:** structural complex partners are **71× more co-dependent** than essentiality-matched random pairs — so the
+obligate-destabilization coupling is *real and structural* — while being **~invisible in mRNA**, which both confirms the effect is
+post-translational *and resolves the old puzzle* (the complex→mRNA 0.0× from `pathway_ko_verify` wasn't "no effect," it was the right
+effect in the wrong readout). The obligate gradient is there too (both-essential and small-complex partners couple most) — exactly what
+a real NEXUS interface-energy score would sharpen.
+
+**Deliverable:** `nexus_ko_partners(gene)` returns the ranked obligate partners predicted to co-fail at the protein level, validated
+against co-dependency — and it's right on the knowns: **EXOSC2 → EXOSC5/7/4/6/3** (the exosome), **PSMB5 → PSMB6/7** (proteasome),
+**SMAD4 → SMAD1**.
+
+**Honest bounds:** this is the **protein-level "which complexes break"** readout — a real, checkable knockout consequence — **not** the
+mRNA far field and **not** the wall. It validates the premise with a complex-membership + essentiality *proxy*; computing actual
+per-pair NEXUS interface energies (structures fetched per pair — the heavy part) is the now-justified next step, deferred until the
+premise held. It did (71× over the honest control). So: yes, NEXUS *can* be advanced to the knockout case — for obligate
+destabilization, as a protein-level coupling predictor. (`nexus_ko.py` → nexus_ko.json.)
