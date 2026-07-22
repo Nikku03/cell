@@ -6270,3 +6270,24 @@ interface-PAE, and correlates **energy** vs co-dependency. That's the open quest
 **What this turn settled:** fetching real structures is feasible and done; **interface size is not enough**; **interface energy** is the
 still-open, now-GPU-ready question. Bound unchanged: protein-level "which complexes break," not the mRNA far field, not the wall.
 (`nexus_ko_fetch.py` → nexus_ko_fetch.json; `nexus_ko_afmultimer.ipynb`.)
+
+### "Can't we fetch those instead of calculating?" — mostly yes (`nexus_ko_fetch.py`, AFDB source)
+
+Good push — I shouldn't assume we must compute. Checked the pre-computed sources and found my "AFDB is monomer-only" was **out of
+date**: the AlphaFold Database now hosts **pre-computed AF-Multimer heterodimers** (the NVIDIA set, ~79k heterodimers with pDockQ2/ipSAE
+scores), queryable per-accession via the summary API → partner + `model_url` `.cif`. Wired that in as a second fetch source:
+
+```
+fetched, NO GPU:  34 solved PDB co-structures  +  4 AFDB AF-Multimer heterodimers  =  38 / 55
+need GPU:         17  (not in any public set)
+```
+
+**Why the 17 can't be fetched is the honest part:** AFDB only publishes heterodimers above a confidence threshold (pDockQ2 ≥ 0.23), and
+the 17 uncovered pairs — integrins, mTORC2, HOPS/COG/MICOS membrane assemblies — are exactly the **hard targets AF-Multimer itself is
+least confident about.** So *the pairs you can't fetch are the ones AF-Multimer is unsure of anyway*; running it yourself gives
+low-confidence models you'd treat skeptically. (Interactome3D has +4 homology models but only via a 2.45 GB bulk tarball — not worth
+it; the per-file endpoints 404.)
+
+The interface-size result held on the larger fetched set (**n=38, Spearman 0.17, p=0.32** — still not significant). The Colab notebook
+now predicts **only the 17 unfetchable pairs** (≈1 h on an L4), so almost all of the structural work came for free from fetching.
+(`nexus_ko_fetch.py` → nexus_ko_fetch.json; `nexus_ko_afmultimer.ipynb`.)

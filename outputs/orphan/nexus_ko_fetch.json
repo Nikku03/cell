@@ -1,6 +1,8 @@
 {
  "n_pairs": 55,
- "n_with_structure": 34,
+ "n_with_structure": 38,
+ "n_pdb": 34,
+ "n_afmultimer": 4,
  "pairs": [
   {
    "a": "TSC1",
@@ -8,7 +10,8 @@
    "codep": 0.912,
    "both_ess": 0,
    "pdb": "7DL2",
-   "iface": 200
+   "iface": 200,
+   "source": "PDB"
   },
   {
    "a": "DEPDC5",
@@ -16,7 +19,8 @@
    "codep": 0.799,
    "both_ess": 0,
    "pdb": "6CES",
-   "iface": 77
+   "iface": 77,
+   "source": "PDB"
   },
   {
    "a": "SDHA",
@@ -24,7 +28,8 @@
    "codep": 0.794,
    "both_ess": 0,
    "pdb": "8GS8",
-   "iface": 127
+   "iface": 127,
+   "source": "PDB"
   },
   {
    "a": "RNASEH2A",
@@ -32,7 +37,8 @@
    "codep": 0.789,
    "both_ess": 0,
    "pdb": "3P56",
-   "iface": 120
+   "iface": 120,
+   "source": "PDB"
   },
   {
    "a": "AP2M1",
@@ -40,15 +46,17 @@
    "codep": 0.781,
    "both_ess": 1,
    "pdb": "6URI",
-   "iface": 9
+   "iface": 9,
+   "source": "PDB"
   },
   {
    "a": "POLE3",
    "b": "POLE4",
    "codep": 0.776,
    "both_ess": 0,
-   "pdb": null,
-   "iface": null
+   "pdb": "AF-0000000203705504",
+   "iface": 109,
+   "source": "AF-Multimer(AFDB)"
   },
   {
    "a": "WDR26",
@@ -56,7 +64,8 @@
    "codep": 0.762,
    "both_ess": 1,
    "pdb": "8QBN",
-   "iface": 58
+   "iface": 58,
+   "source": "PDB"
   },
   {
    "a": "PDHA1",
@@ -64,7 +73,8 @@
    "codep": 0.758,
    "both_ess": 0,
    "pdb": "1NI4",
-   "iface": 512
+   "iface": 512,
+   "source": "PDB"
   },
   {
    "a": "HSD17B10",
@@ -72,7 +82,8 @@
    "codep": 0.757,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "POLG",
@@ -80,7 +91,8 @@
    "codep": 0.745,
    "both_ess": 0,
    "pdb": "3IKM",
-   "iface": 234
+   "iface": 234,
+   "source": "PDB"
   },
   {
    "a": "MAPKAP1",
@@ -88,15 +100,17 @@
    "codep": 0.744,
    "both_ess": 0,
    "pdb": "5ZCS",
-   "iface": 42
+   "iface": 42,
+   "source": "PDB"
   },
   {
    "a": "GATB",
    "b": "QRSL1",
    "codep": 0.736,
    "both_ess": 0,
-   "pdb": null,
-   "iface": null
+   "pdb": "AF-0000000210489125",
+   "iface": 89,
+   "source": "AF-Multimer(AFDB)"
   },
   {
    "a": "RGP1",
@@ -104,7 +118,8 @@
    "codep": 0.736,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "MIOS",
@@ -112,7 +127,8 @@
    "codep": 0.733,
    "both_ess": 0,
    "pdb": "7UHY",
-   "iface": 145
+   "iface": 145,
+   "source": "PDB"
   },
   {
    "a": "KCMF1",
@@ -120,7 +136,8 @@
    "codep": 0.733,
    "both_ess": 1,
    "pdb": "9NWE",
-   "iface": 202
+   "iface": 202,
+   "source": "PDB"
   },
   {
    "a": "NCAPG2",
@@ -128,7 +145,8 @@
    "codep": 0.729,
    "both_ess": 1,
    "pdb": "9F5W",
-   "iface": 85
+   "iface": 85,
+   "source": "PDB"
   },
   {
    "a": "EED",
@@ -136,7 +154,8 @@
    "codep": 0.728,
    "both_ess": 0,
    "pdb": "5GSA",
-   "iface": 144
+   "iface": 144,
+   "source": "PDB"
   },
   {
    "a": "BRD9",
@@ -144,7 +163,8 @@
    "codep": 0.727,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "EXT1",
@@ -152,7 +172,8 @@
    "codep": 0.727,
    "both_ess": 0,
    "pdb": "7SCH",
-   "iface": 181
+   "iface": 181,
+   "source": "PDB"
   },
   {
    "a": "PARD3",
@@ -160,7 +181,8 @@
    "codep": 0.726,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "GET1",
@@ -168,7 +190,8 @@
    "codep": 0.726,
    "both_ess": 0,
    "pdb": "6SO5",
-   "iface": 63
+   "iface": 63,
+   "source": "PDB"
   },
   {
    "a": "PSMG1",
@@ -176,7 +199,8 @@
    "codep": 0.725,
    "both_ess": 0,
    "pdb": "8QYJ",
-   "iface": 72
+   "iface": 72,
+   "source": "PDB"
   },
   {
    "a": "NCAPD3",
@@ -184,7 +208,8 @@
    "codep": 0.723,
    "both_ess": 1,
    "pdb": "9F5W",
-   "iface": 119
+   "iface": 119,
+   "source": "PDB"
   },
   {
    "a": "DLST",
@@ -192,7 +217,8 @@
    "codep": 0.706,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "TGFBR1",
@@ -200,15 +226,17 @@
    "codep": 0.704,
    "both_ess": 0,
    "pdb": "2PJY",
-   "iface": 25
+   "iface": 25,
+   "source": "PDB"
   },
   {
    "a": "GATB",
    "b": "GATC",
    "codep": 0.702,
    "both_ess": 0,
-   "pdb": null,
-   "iface": null
+   "pdb": "AF-0000000203794375",
+   "iface": 102,
+   "source": "AF-Multimer(AFDB)"
   },
   {
    "a": "MAU2",
@@ -216,7 +244,8 @@
    "codep": 0.701,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "STN1",
@@ -224,7 +253,8 @@
    "codep": 0.701,
    "both_ess": 0,
    "pdb": "4JOI",
-   "iface": 191
+   "iface": 191,
+   "source": "PDB"
   },
   {
    "a": "RAD51D",
@@ -232,7 +262,8 @@
    "codep": 0.697,
    "both_ess": 0,
    "pdb": "8FAZ",
-   "iface": 108
+   "iface": 108,
+   "source": "PDB"
   },
   {
    "a": "MIOS",
@@ -240,7 +271,8 @@
    "codep": 0.696,
    "both_ess": 0,
    "pdb": "7UHY",
-   "iface": 130
+   "iface": 130,
+   "source": "PDB"
   },
   {
    "a": "NCAPD3",
@@ -248,7 +280,8 @@
    "codep": 0.694,
    "both_ess": 1,
    "pdb": "9F5W",
-   "iface": 21
+   "iface": 21,
+   "source": "PDB"
   },
   {
    "a": "VPS18",
@@ -256,7 +289,8 @@
    "codep": 0.694,
    "both_ess": 1,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "FANCD2",
@@ -264,7 +298,8 @@
    "codep": 0.694,
    "both_ess": 0,
    "pdb": "6VAA",
-   "iface": 111
+   "iface": 111,
+   "source": "PDB"
   },
   {
    "a": "METTL1",
@@ -272,7 +307,8 @@
    "codep": 0.685,
    "both_ess": 0,
    "pdb": "7U20",
-   "iface": 49
+   "iface": 49,
+   "source": "PDB"
   },
   {
    "a": "EED",
@@ -280,7 +316,8 @@
    "codep": 0.685,
    "both_ess": 0,
    "pdb": "4W2R",
-   "iface": 62
+   "iface": 62,
+   "source": "PDB"
   },
   {
    "a": "PNPT1",
@@ -288,7 +325,8 @@
    "codep": 0.685,
    "both_ess": 1,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "HUS1",
@@ -296,7 +334,8 @@
    "codep": 0.683,
    "both_ess": 0,
    "pdb": "3A1J",
-   "iface": 55
+   "iface": 55,
+   "source": "PDB"
   },
   {
    "a": "EZH2",
@@ -304,7 +343,8 @@
    "codep": 0.683,
    "both_ess": 0,
    "pdb": "5HYN",
-   "iface": 551
+   "iface": 551,
+   "source": "PDB"
   },
   {
    "a": "ITGAV",
@@ -312,7 +352,8 @@
    "codep": 0.678,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "RNASEH2A",
@@ -320,7 +361,8 @@
    "codep": 0.675,
    "both_ess": 0,
    "pdb": "3P56",
-   "iface": 77
+   "iface": 77,
+   "source": "PDB"
   },
   {
    "a": "MLST8",
@@ -328,7 +370,8 @@
    "codep": 0.675,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "SDHB",
@@ -336,7 +379,8 @@
    "codep": 0.674,
    "both_ess": 0,
    "pdb": "8GS8",
-   "iface": 81
+   "iface": 81,
+   "source": "PDB"
   },
   {
    "a": "PARD6B",
@@ -344,7 +388,8 @@
    "codep": 0.669,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "MICOS10",
@@ -352,7 +397,8 @@
    "codep": 0.666,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "PRORP",
@@ -360,7 +406,8 @@
    "codep": 0.659,
    "both_ess": 0,
    "pdb": "7ONU",
-   "iface": 45
+   "iface": 45,
+   "source": "PDB"
   },
   {
    "a": "MAEA",
@@ -368,7 +415,8 @@
    "codep": 0.657,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "CBFB",
@@ -376,7 +424,8 @@
    "codep": 0.656,
    "both_ess": 0,
    "pdb": "1E50",
-   "iface": 332
+   "iface": 332,
+   "source": "PDB"
   },
   {
    "a": "COG5",
@@ -384,7 +433,8 @@
    "codep": 0.655,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "ACTR2",
@@ -392,15 +442,17 @@
    "codep": 0.654,
    "both_ess": 1,
    "pdb": "6UHC",
-   "iface": 37
+   "iface": 37,
+   "source": "PDB"
   },
   {
    "a": "TUBD1",
    "b": "TUBE1",
    "codep": 0.653,
    "both_ess": 0,
-   "pdb": null,
-   "iface": null
+   "pdb": "AF-0000000211872185",
+   "iface": 117,
+   "source": "AF-Multimer(AFDB)"
   },
   {
    "a": "CABIN1",
@@ -408,7 +460,8 @@
    "codep": 0.651,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "SDHA",
@@ -416,7 +469,8 @@
    "codep": 0.647,
    "both_ess": 0,
    "pdb": "8GS8",
-   "iface": 3
+   "iface": 3,
+   "source": "PDB"
   },
   {
    "a": "VPS39",
@@ -424,7 +478,8 @@
    "codep": 0.647,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "PEX26",
@@ -432,7 +487,8 @@
    "codep": 0.645,
    "both_ess": 0,
    "pdb": null,
-   "iface": null
+   "iface": null,
+   "source": null
   },
   {
    "a": "RNASEH2B",
@@ -440,13 +496,14 @@
    "codep": 0.642,
    "both_ess": 0,
    "pdb": "3P56",
-   "iface": 216
+   "iface": 216,
+   "source": "PDB"
   }
  ],
- "spearman_iface_codep": 0.18784868663371398,
- "spearman_p": 0.28738611614872744,
+ "spearman_iface_codep": 0.1673507383140495,
+ "spearman_p": 0.3152519253355344,
  "codep_large_iface": 0.727,
- "codep_small_iface": 0.694,
- "verdict": "FETCH SUCCEEDED (the point of this step): pulled real solved PDB co-structures and measured the PAIR-SPECIFIC interface (residues within 5A across the two proteins' OWN chains, correct even inside a large assembly) for 34/55 top obligate pairs -- e.g. CBFB-RUNX1 332 res, RNASEH2B-RNASEH2C 216, SDHA-SDHC 3 (they barely touch). BUT THE SCIENCE IS AN HONEST NEGATIVE ON THIS AXIS: interface SIZE vs DepMap co-dependency is Spearman rho=0.188, p=0.287 (n=34) -- NOT significant; large- vs small-interface median codep 0.727 vs 0.694, a tiny non-significant gap. So the CRUDE interface size (residue count) does NOT clearly predict co-dependency beyond the fact that the pair contacts at all -- consistent with nexus_ko_struct, where binary CONTACT (yes/no) carried the signal (3-4x) but SIZE among contacting pairs adds little. (Weak positive trend, but underpowered.) HONEST READ: residue-count is a poor stand-in for interface ENERGY; whether a real BSA/ddG interface energy beats binary contact is still open and needs (a) more pairs and (b) an actual energy (buried area + electrostatics/ddG), which is the AF-Multimer + energy Colab step (nexus_ko_afmultimer.ipynb, GPU) -- now clearly worth doing because size alone was not enough. CAVEATS: n=34 is small; only pairs with a solved co-structure covered; still the PROTEIN-level 'which complexes break' readout, not the mRNA far field, not the wall.",
- "note": "FETCH SUCCEEDED (the point of this step): pulled real solved PDB co-structures and measured the PAIR-SPECIFIC interface (residues within 5A across the two proteins' OWN chains, correct even inside a large assembly) for 34/55 top obligate pairs -- e.g. CBFB-RUNX1 332 res, RNASEH2B-RNASEH2C 216, SDHA-SDHC 3 (they barely touch). BUT THE SCIENCE IS AN HONEST NEGATIVE ON THIS AXIS: interface SIZE vs DepMap co-dependency is Spearman rho=0.188, p=0.287 (n=34) -- NOT significant; large- vs small-interface median codep 0.727 vs 0.694, a tiny non-significant gap. So the CRUDE interface size (residue count) does NOT clearly predict co-dependency beyond the fact that the pair contacts at all -- consistent with nexus_ko_struct, where binary CONTACT (yes/no) carried the signal (3-4x) but SIZE among contacting pairs adds little. (Weak positive trend, but underpowered.) HONEST READ: residue-count is a poor stand-in for interface ENERGY; whether a real BSA/ddG interface energy beats binary contact is still open and needs (a) more pairs and (b) an actual energy (buried area + electrostatics/ddG), which is the AF-Multimer + energy Colab step (nexus_ko_afmultimer.ipynb, GPU) -- now clearly worth doing because size alone was not enough. CAVEATS: n=34 is small; only pairs with a solved co-structure covered; still the PROTEIN-level 'which complexes break' readout, not the mRNA far field, not the wall."
+ "codep_small_iface": 0.702,
+ "verdict": "FETCH SUCCEEDED (the point of this step): pulled real structures from TWO sources -- 34 solved PDB co-structures + 4 AFDB pre-computed AF-Multimer heterodimers (NVIDIA set; NO GPU) -- and measured the PAIR-SPECIFIC interface (residues within 5A across the two proteins' OWN chains, correct even inside a large assembly) for 38/55 top obligate pairs; 17 remain (not in any pre-computed set = AF-Multimer's own low-confidence tail, e.g. integrins/mTORC2/HOPS/COG/MICOS membrane assemblies -> those genuinely need the GPU notebook). BUT THE SCIENCE IS AN HONEST NEGATIVE ON THIS AXIS: interface SIZE vs DepMap co-dependency is Spearman rho=0.167, p=0.315 (n=38) -- NOT significant; large- vs small-interface median codep 0.727 vs 0.702, a tiny non-significant gap. So the CRUDE interface size (residue count) does NOT clearly predict co-dependency beyond the fact that the pair contacts at all -- consistent with nexus_ko_struct, where binary CONTACT (yes/no) carried the signal (3-4x) but SIZE among contacting pairs adds little. (Weak positive trend, but underpowered.) HONEST READ: residue-count is a poor stand-in for interface ENERGY; whether a real BSA/ddG interface energy beats binary contact is still open and needs (a) more pairs and (b) an actual energy (buried area + electrostatics/ddG), which is the AF-Multimer + energy Colab step (nexus_ko_afmultimer.ipynb, GPU) -- now clearly worth doing because size alone was not enough. CAVEATS: n=38 is small; only pairs with a FETCHABLE structure (solved PDB or AFDB AF-Multimer) covered, the 17 uncovered are AF-Multimer's low-confidence tail (must be predicted, GPU); still the PROTEIN-level 'which complexes break' readout, not the mRNA far field, not the wall.",
+ "note": "FETCH SUCCEEDED (the point of this step): pulled real structures from TWO sources -- 34 solved PDB co-structures + 4 AFDB pre-computed AF-Multimer heterodimers (NVIDIA set; NO GPU) -- and measured the PAIR-SPECIFIC interface (residues within 5A across the two proteins' OWN chains, correct even inside a large assembly) for 38/55 top obligate pairs; 17 remain (not in any pre-computed set = AF-Multimer's own low-confidence tail, e.g. integrins/mTORC2/HOPS/COG/MICOS membrane assemblies -> those genuinely need the GPU notebook). BUT THE SCIENCE IS AN HONEST NEGATIVE ON THIS AXIS: interface SIZE vs DepMap co-dependency is Spearman rho=0.167, p=0.315 (n=38) -- NOT significant; large- vs small-interface median codep 0.727 vs 0.702, a tiny non-significant gap. So the CRUDE interface size (residue count) does NOT clearly predict co-dependency beyond the fact that the pair contacts at all -- consistent with nexus_ko_struct, where binary CONTACT (yes/no) carried the signal (3-4x) but SIZE among contacting pairs adds little. (Weak positive trend, but underpowered.) HONEST READ: residue-count is a poor stand-in for interface ENERGY; whether a real BSA/ddG interface energy beats binary contact is still open and needs (a) more pairs and (b) an actual energy (buried area + electrostatics/ddG), which is the AF-Multimer + energy Colab step (nexus_ko_afmultimer.ipynb, GPU) -- now clearly worth doing because size alone was not enough. CAVEATS: n=38 is small; only pairs with a FETCHABLE structure (solved PDB or AFDB AF-Multimer) covered, the 17 uncovered are AF-Multimer's low-confidence tail (must be predicted, GPU); still the PROTEIN-level 'which complexes break' readout, not the mRNA far field, not the wall."
 }
