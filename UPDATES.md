@@ -6140,3 +6140,36 @@ out either yields a *similar* program (positive transfer). Different statements,
 2. NEXUS's clean win stays **protein/functional** consequence (which complexes destabilize) — a *different readout* from mRNA.
 3. The oracle head-room (0.62) says the biggest lever is a **learned** perturbation similarity, into which structural/interaction
    magnitude enters as **one feature** — the honest way to point NEXUS at the wall. (`wall_edgetype.py` → wall_edgetype.json.)
+
+---
+
+## Learning the similarity from features — an honest negative (`wall_learnsim.py`)
+
+wall_test's oracle said the specific signal is *there and shared*; the fixed graph reaches ~0.37 and the oracle ~0.62. The obvious
+next move: **learn** which knockouts behave alike from gene *features*, without peeking at the held-out knockout's profile, and close
+that head-room. I trained a gradient-boosted regressor to predict true profile similarity S(x,y) from 14 pair-features — shared
+complexes (fixing the index-key bug), GO-BP/CC/MF, pathway, shared/Jaccard PPI-neighborhood, direct-PPI, and gaps in
+dependency/LOEUF/degree, same compartment/process, both-TF — then transferred the top-10 predicted-similar *training* knockouts.
+
+```
+K562, 126 held-out knockouts — specific-mover recall@50 (tide removed)
+TIDE null            0.241
+PHYS graph (fixed)   0.373
+LEARNED similarity   0.398     <- +0.025 over the graph; 10% of the head-room closed
+ORACLE* (ceiling)    0.616
+```
+
+**This is a negative-ish result and I'm reporting it as one.** The learned annotation-similarity **barely beats the fixed graph**
+(+0.025). Hand-crafted static annotation features add almost nothing over the raw physical neighborhood for predicting which
+knockouts *behave* alike — the large oracle head-room is real but **not reachable from these annotations.**
+
+**What it rules in and out.** It rules *out* "just engineer more annotation features" as the path to the oracle. It points to a richer
+**representation** — learned gene embeddings, sequence/structure (ESM), or ultimately measured co-perturbation profiles (which *is* the
+oracle: you need measured neighbors). And it sets an explicit, high bar for the proposed **NEXUS structural-magnitude feature**: it has
+to beat 0.398 with genuinely *orthogonal* behavioral signal, because annotation features already plateau near the graph.
+
+**Two honest byproducts:** (1) this exposed that `gene2cplx` is keyed by index-strings, so the complex feature was silently broken in
+wall_test/wall_edgetype (their PHYS came from PPI + pathway) — fixed here. (2) Net state of the within-cell-type wall: the specific
+signal is real and shared (oracle 0.62), but so far only reachable from *measured* neighbors — static features and the curated graph
+both plateau at ~0.37–0.40. **The open problem is the representation, not more annotation engineering.** (`wall_learnsim.py` →
+wall_learnsim.json.)
