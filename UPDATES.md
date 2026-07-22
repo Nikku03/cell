@@ -6014,3 +6014,49 @@ LETMD1, VMP1, BAG1) ranks top and the known programs (HYOU1, HSPA1B, DNAJB11) si
 far field is data-limited, not reasoning-limited. What improves is (a) the *precision and trust* of the hypothesis shortlist and
 (b) the scorer's *ranking* via distilled labels. The reasoner replaces the *agent* as interpreter; the code still owns the score.
 (`llm_reasoner.py` → llm_reasoner.json + scorer_feedback.json.)
+
+---
+
+## Can it complete the network itself? — being its LLM (`network_complete.py`)
+
+The scorer surfaces convergent *missing-edge candidates* but can't decide which to **add** to the graph, give them a
+mechanism/direction/type, or reject the ones that are really known-stress. That's the LLM-reasoner's job — so this time the reasoner
+was **Opus 4.8 in the loop**, grounding each mechanism class in **live PubMed** before adjudicating.
+
+**Headline, honest:** **No**, it cannot complete "the network" — ~19k genes, millions of possible edges, and the wall means the
+knockout-specific far field is mostly unpredictable, so the software only ever sees edges backed by a *measured convergent signal*.
+But **yes** to one thin, mechanistically-**legible layer**: with the reasoner in the loop it completes **11 RNA-surveillance / decay /
+attenuation substrate edges** — all 11 **undocumented in PubMed (0 co-mentions)** — each a typed, directed edge grounded in a real
+mechanism class:
+
+```
+conf  PMco  source (machine)        relation                target      grounding PMIDs
+0.72   0    RNA_exosome             degrades_mRNA           PPP1R10     32710631,28017589,31530651,32187185
+0.62   0    NMD                     degrades_mRNA           LETMD1      (EJC/NMD paradigm — anchored, no fabricated PMID)
+0.60   0    PAXT_nuclear_exosome    degrades_mRNA           MTHFD2L     32710631,28017589,32187185
+0.60   0    m6A_writer              marks_mRNA_for_decay    SCO2        41672172,42384087
+0.56   0    PAXT_nuclear_exosome    degrades_mRNA           EPM2AIP1
+0.55   0    PAXT_nuclear_exosome    degrades_mRNA           BANP
+0.52   0    m6A_writer              marks_mRNA_for_decay    SAR1A
+0.50   0    NMD                     degrades_mRNA           BAG1
+0.48   0    Integrator              attenuates_transcription MPDU1      32800671,37995689,31530651
+0.42   0    PAXT_nuclear_exosome    degrades_mRNA           VMP1        (flagged: autophagy gene — could be stress)
+0.40   0    RNA_exosome             degrades_mRNA           ANKRD54     (weakest: only 3 converging KOs)
+```
+
+**Why only this layer — a first-principles reason.** Knock out a *degrader* and its *substrates* accumulate cleanly and specifically
+(reverse-direction logic); knock out a signaling or metabolic node and the effect scatters into the unpredictable far field. That's
+why *every* addable edge lands in the RNA-surveillance layer and none elsewhere. The completion is real but **local**.
+
+**The reasoner earned its slot** — it did what a keyword rule can't:
+- **Overruled** the deterministic/mock "novel" flag on **DHCR7 & HMGCR** (the V-ATPase→SREBP/sterol program) and **SOD2** (the
+  ESCRT→oxidative-stress program) — known biology mislabelled as novel.
+- **Held back** SNRNP40 (Ino80) and ACTL6A (minor spliceosome), where the convergence is real but the mechanism isn't clean.
+
+**An honesty fix a positive control caught.** I first claimed the edges were "missing from our graph." The control failed — our graph
+doesn't even contain the `EXOSC2–EXOSC3` co-complex edge, so graph-absence is *necessary but not sufficient*. Novelty therefore rests
+on the **literature (0 PubMed co-mentions)**, not our sparse graph; graph-absence is reported only as a secondary check.
+
+**Every added edge is falsifiable:** measure the target mRNA's half-life on the machine knockout — a direct substrate's half-life
+should drop. Not a whole-network completion; a real, local, testable one, led again by **exosome→PPP1R10**.
+(`network_complete.py` → network_completion.json.)
