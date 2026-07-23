@@ -1,0 +1,30 @@
+{
+ "cell_type": "K562",
+ "n_test": 126,
+ "K": 50,
+ "recall_specific": {
+  "tide": 0.24144188619753768,
+  "phys": 0.37318363546095956,
+  "learned": 0.3981225222229939,
+  "phys+learned": 0.4271872126380375,
+  "tide+phys+learned": 0.44696818181411047,
+  "union_neighbours": 0.3734917403818172,
+  "oracle": 0.6156297395493888
+ },
+ "control_shuffled_phys_plus_learned": 0.3306143488143328,
+ "complementarity_over_control": 0.09657286382370467,
+ "best_single": {
+  "name": "learned",
+  "recall": 0.3981225222229939
+ },
+ "best_ensemble": {
+  "name": "tide+phys+learned",
+  "recall": 0.44696818181411047
+ },
+ "ensemble_gain_over_best_single": 0.048845659591116586,
+ "headroom_closed_best_single": 0.41872186556020685,
+ "headroom_closed_best_ensemble": 0.5492596667035986,
+ "ensemble_helps": true,
+ "verdict": "COMBINING THE THREE NO-PEEK PREDICTORS (K562, 126 held-out KOs, tide-removed specific-mover recall@50). Singles: TIDE 0.241, PHYS 0.373, LEARNED 0.398. Ensembles: PHYS+LEARNED 0.427, TIDE+PHYS+LEARNED 0.447, UNION-neighbours 0.373. ORACLE* ceiling 0.616. DECISIVE: best ensemble (tide+phys+learned) 0.447 vs best single (learned) 0.398 = +0.049. REAL (if modest) ENSEMBLE GAIN, and it SURVIVES THE CONTROL: fusing phys+learned 0.427 beats the shuffled-phys control 0.331 (+0.097), so the gain is genuine KO-specific COMPLEMENTARITY -- phys and learned select partly different behavioural neighbours and catch different specific movers -- not the generic z-fusion re-weighting that fooled nexus_wall. Combining closes more of the graph->oracle head-room (42% -> 55%) and is worth keeping as the deployed no-peek predictor. It does NOT reach the oracle -- the predictors still miss the same hard neighbours the oracle finds by peeking, so a genuinely orthogonal signal is still needed for the rest of the head-room. (Deployable no-peek number stays ~0.40; oracle ceiling ~0.62.) Same protocol as wall_learnsim; single cell type, single steady-state-mRNA readout.",
+ "note": "COMBINING THE THREE NO-PEEK PREDICTORS (K562, 126 held-out KOs, tide-removed specific-mover recall@50). Singles: TIDE 0.241, PHYS 0.373, LEARNED 0.398. Ensembles: PHYS+LEARNED 0.427, TIDE+PHYS+LEARNED 0.447, UNION-neighbours 0.373. ORACLE* ceiling 0.616. DECISIVE: best ensemble (tide+phys+learned) 0.447 vs best single (learned) 0.398 = +0.049. REAL (if modest) ENSEMBLE GAIN, and it SURVIVES THE CONTROL: fusing phys+learned 0.427 beats the shuffled-phys control 0.331 (+0.097), so the gain is genuine KO-specific COMPLEMENTARITY -- phys and learned select partly different behavioural neighbours and catch different specific movers -- not the generic z-fusion re-weighting that fooled nexus_wall. Combining closes more of the graph->oracle head-room (42% -> 55%) and is worth keeping as the deployed no-peek predictor. It does NOT reach the oracle -- the predictors still miss the same hard neighbours the oracle finds by peeking, so a genuinely orthogonal signal is still needed for the rest of the head-room. (Deployable no-peek number stays ~0.40; oracle ceiling ~0.62.) Same protocol as wall_learnsim; single cell type, single steady-state-mRNA readout."
+}

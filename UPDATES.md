@@ -6451,3 +6451,32 @@ spot-checking famous edges over-sells by ~0.04 AUC, quantified rather than hand-
 engine — including the state-dependent one — earns belief only by **beating the tide (~0.26) on held-out specific movers** *and* **passing
 random (not cherry-picked) edge spot-checks**. If something clears that bar, we'll know rather than hope. (`eval_harness.py` →
 eval_harness.json.)
+
+## Combining tide + neighbour + learned — a real, control-confirmed ensemble gain (`wall_combine.py`)
+
+The question: *why not combine all three no-peek predictors?* Answer, measured on the same leakage-controlled protocol as `wall_learnsim`
+(126 held-out K562 knockouts, tide-removed specific-mover recall@50): **yes, it helps — and this time it survives the control that killed
+`nexus_wall`.**
+
+| predictor | recall@50 |
+|---|---|
+| tide | 0.241 |
+| phys (graph neighbours) | 0.373 |
+| learned similarity | 0.398 *(best single)* |
+| **phys + learned** | **0.427** |
+| **tide + phys + learned** | **0.447** *(best ensemble)* |
+| union-neighbours | 0.373 *(neighbour-union doesn't help — the z-fusion does)* |
+| ORACLE* (peeks) | 0.616 |
+
+Best ensemble **0.447** vs best single **0.398** = **+0.049**, closing **42% → 55%** of the tide→oracle head-room.
+
+**The control that makes it real.** A modest +0.049 is exactly the shape that fooled `nexus_wall` (a z-fusion that turned out to be
+generic re-weighting). So I ran the same shuffle control: fuse `learned` with a **wrong knockout's** `phys`. It scores **0.331 — below
+learned alone** (misaligned phys just adds noise), while the correctly-aligned `phys+learned` is **0.427**. That **+0.097 over the
+control** means the gain is genuine **KO-specific complementarity** — phys and learned pick partly *different* behavioural neighbours and
+catch *different* specific movers — not fusion mechanics. Clean positive.
+
+**Honest bound.** It still does **not** reach the oracle (0.62): the ensemble misses the same hard neighbours the oracle finds by peeking,
+so ~45% of the head-room stays open. Three correlated annotation/graph views combine to a real but bounded gain; the rest needs a
+genuinely *orthogonal* signal (measured co-perturbation, or a learned embedding) — not a fourth view of the same graph. Deployable no-peek
+number moves ~0.40 → ~0.45. Deterministic. (`wall_combine.py` → wall_combine.json.)
