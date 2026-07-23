@@ -6368,3 +6368,51 @@ layer (where it's validated); the mRNA wall stays a **similarity-representation 
 two layers are genuinely distinct. One honest incidental, *not* a NEXUS result: the random-physical-partner fusion (0.419) edges the
 uniform one-hop MODEL (0.379), hinting `wall_test`'s MODEL could be modestly improved by upweighting **physical-partner** neighbors over
 pathway/regulon co-members — a small neighbor-weighting tweak, still far under the oracle. (`nexus_wall.py` → nexus_wall.json.)
+
+## `cascade(protein)` — the real metabolic chain reaction, by genome-scale FBA (`cascade.py`)
+
+The knockout far-field question, answered on the substrate where it's actually *computable*. We first measured that the **mRNA**
+cascade is a wall — a knockout's specific movers are 3.5× enriched in its *own* pathway, ~1.3× (≈ random) in directly connected pathways,
+and **gone by two hops**. So the transcriptome can't carry your "6 connected pathways → and further" chain reaction. The **metabolic**
+network can, because it flows through shared *molecules* under mass balance, not statistical echoes.
+
+`cascade.py` runs real **genome-scale Flux Balance Analysis** on Human-GEM (cobra + the cached 42 MB model — 12,931 reactions, 8,461
+metabolites, 2,848 enzymes — entirely in-sandbox, no download). Remove an enzyme → its reactions lose capacity → the metabolites it made
+can't be produced → every reaction that consumes them must rebalance → the wave propagates. FBA enforces mass balance, so the flux
+changes **are** the chain reaction, with a magnitude at every step.
+
+**Validation (the honest anchor) — FBA lethality vs DepMap dependency, 2,526 enzymes in both:**
+
+| | value |
+|---|---|
+| DepMap-essential base rate | 9.3% |
+| **P(DepMap-essential \| FBA-lethal)** | **81.5% → 8.76× precision-lift** |
+| Spearman(FBA growth, dependency) | −0.07 (p=4e-4) |
+
+When FBA calls a knockout lethal, real cells depend on that enzyme **81% of the time** (vs a 9.3% base). The Spearman is weak but
+*correctly signed* — FBA growth is bimodal (reroute-or-die), so the discriminative power is in the **binary lethal call**, not the graded
+value. Stated honestly, and consistent with `ecflux`'s recall ~0.27: FBA lethality is **high-precision, moderate-recall**.
+
+**Reach — the cascade genuinely spreads:** a knockout's flux wave reaches a median of **141 reactions across 18 pathways, 6 metabolite-hops
+out.** A real multi-hop cascade — the opposite of the 1-hop mRNA wall.
+
+**Worked demo — knock out `AARS1` (FBA-lethal, DepMap-essential):** growth → **0.00**, and **646 reactions across 48 pathways** collapse:
+
+```
+Glycolysis / Gluconeogenesis   flux 5543   Oxidative phosphorylation  flux 2626
+Pentose phosphate pathway      flux 4000   Purine metabolism          flux 2116
+TCA cycle                      flux 4000   Val/Leu/Ile metabolism     flux 2000
+```
+
+The whole central-carbon network, with magnitudes and hop distances — the chain reaction, made concrete.
+
+**`cascade(protein)` returns:** `growth_retained` (does the cell live / how slowed), the enzyme's own reactions, every downstream reaction
+ranked by \|Δflux\| with its subsystem **and its metabolite-hop distance from the knockout site**, and a pathway roll-up — the connected
+pathways that lit up, i.e. your "6 other pathways" answer.
+
+**Honest method caveat:** for a *non-lethal* (reroutable) knockout, the pFBA(WT)→pFBA(KO) flux difference can include alternate-optima
+reshuffling (the LP has degenerate solutions), so the per-reaction cascade of a reroutable enzyme is *indicative, not exact*. The
+reliable, non-degenerate signals are (a) growth impact, (b) the DepMap-anchored essentiality validation, and (c) the cascade of a
+**lethal** knockout (forced collapse, not reshuffle) — which is why the demo is drawn from the FBA-lethal set. **Scope:** steady-state flux
+*redistribution* (not a time-course); glucose-limited aerobic medium; the **metabolic layer only** — it says nothing about the
+signaling/transcription far field, which stays the wall. Built on the validated `ecflux` substrate. (`cascade.py` → cascade.json.)
