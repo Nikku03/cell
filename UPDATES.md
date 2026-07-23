@@ -6416,3 +6416,38 @@ reliable, non-degenerate signals are (a) growth impact, (b) the DepMap-anchored 
 **lethal** knockout (forced collapse, not reshuffle) — which is why the demo is drawn from the FBA-lethal set. **Scope:** steady-state flux
 *redistribution* (not a time-course); glucose-limited aerobic medium; the **metabolic layer only** — it says nothing about the
 signaling/transcription far field, which stays the wall. Built on the validated `ecflux` substrate. (`cascade.py` → cascade.json.)
+
+## `eval_harness` — the non-foolable bench that makes "if it matches the phenotype, it works" a rigorous claim (`eval_harness.py`)
+
+The argument on the table: *even if we can't validate each of 600k state-dependent edges, if the aggregate matches the phenotype it
+probably works, and we can spot-check a few.* That's sound in principle — but two specific things make the naive version self-fooling
+here, so I built the bench that closes both.
+
+**Trap 1 — the tide.** ~70% of the raw far field is the generic stress response every strong perturbation shares. The tide-null — one
+fixed forecast, *zero* knockout-specific information — already scores **recall@50 = 0.26**. So a predictor can ace aggregate recall while
+getting every specific edge wrong. The bench's headline metric is therefore **tide-removed, specific-mover recall on held-out
+knockouts**, shown next to the inflated all-mover number and a **tide-alignment** diagnostic. A predictor *passes only by beating the
+tide-null* — reproducing the tide earns nothing.
+
+**Trap 2 — the spot-check is biased.** The edges that *have* ground truth are the famous, well-studied ones. So the edge test scores a
+**random** sample *and* a **well-studied** (high-publication) sample and reports the **selection-bias gap**.
+
+Two pluggable contracts — `predictor(ko)->{gene:score}` and `edge_predictor(a,b)->float` — so a tensor-field engine, a network walk, or
+an LLM all get judged the same way. Every run is flanked by fixed references:
+
+| reference | specific recall @50 |
+|---|---|
+| RANDOM | 0.007 |
+| **TIDE-null (the bar to beat)** | **0.260** |
+| NEIGHBOR model | 0.435 (lift 1.67×, 49% of headroom) |
+| ORACLE* (peeks) | 0.617 |
+
+**Self-calibration passed** — the bench is only trustworthy if it reproduces known numbers, and it does: scoring the *tide predictor*
+returns exactly 0.260 (= the tide-null, tide-alignment 1.00), and the neighbor model lands strictly between tide and oracle. The edge
+test on a structure/contact reference showed random-sample AUC 0.523 vs studied-sample 0.565 — a **+0.042 selection-bias gap**, i.e.
+spot-checking famous edges over-sells by ~0.04 AUC, quantified rather than hand-waved. Deterministic (per-KO index seeds).
+
+**Usage:** `from eval_harness import Harness; H = Harness(); H.score_system(my_predictor); H.score_edges(my_edge_predictor)`. Now any
+engine — including the state-dependent one — earns belief only by **beating the tide (~0.26) on held-out specific movers** *and* **passing
+random (not cherry-picked) edge spot-checks**. If something clears that bar, we'll know rather than hope. (`eval_harness.py` →
+eval_harness.json.)
