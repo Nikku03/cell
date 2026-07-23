@@ -6592,3 +6592,31 @@ complex-partner set — that part was right), but a knockout's *full* co-failure
 low and full-set prediction is only moderate. Net: useful as a ranked, controlled **shortlist** (~2× base, controls pass) — better-behaved
 than the mRNA far field, but not a slam dunk. The measured co-dependency data itself stays the best predictor of co-dependency; structural
 priors are a partial stand-in. Deterministic. (`protein_ko_effect.py` → protein_ko_effect.json.)
+
+## The domain-gated propagation — built exactly as specified, honest negative (`domain_propagate.py`)
+
+The precise algorithm requested: knock out A, and at each downstream PPI use **domains** as the "which part binds what" gate to decide
+whether the *next* interaction can still form, propagating the disruption and attenuating. Built it end to end: a DDI prior (335,609
+domain-pairs scored by interaction enrichment), domain-slot assignment (each edge → the partner's best-matching domain), the propagation
+tool, and the decisive test.
+
+**The decisive test** — the *sharp* version of `competitive_codep` (which used the crude "never co-complex" proxy and was null): for a hub
+B, are **same-domain-slot** partner pairs (competitive, mutually exclusive) co-dependency-*depleted* vs **different-slot** (simultaneous)?
+
+| | co-dependency median |
+|---|---|
+| same-slot (competitive) | 0.009 |
+| different-slot (simultaneous) | 0.007 |
+| MWU depletion p | **1.0** |
+| shuffle control | real gap −0.002 vs shuffled 0.000 |
+
+**Honest negative.** The two are identical; the domain gate carries no competition signal. The cause is visible in the counts — 73% of
+pairs collapse to "same-slot" because generic high-enrichment domains attract every partner, so the DDI-inferred slot is too coarse to
+resolve which site a partner actually uses. The `propagate_ko(A)` tool runs (SDHB → 18 PPIs at layer 1, 3 obligate-disrupted → 25 at layer
+2), but the **gate** that decides "can the next PPI still form" is unreliable from inferred domains.
+
+**This is now definitive across four builds.** `nexus_wall` (two-hop), `tensorfield_cascade`, `competitive_codep`, and now
+`domain_propagate` all reach the *same* block: the per-edge "which part binds what" rule needs **residue-level interfaces**
+(GPU AlphaFold-Multimer / Interactome3D), and no annotation proxy — co-complex membership, DDI-inferred domain slots — substitutes for it.
+There's also a readout caveat: co-dependency (fitness) may not even be where competition shows up. The algorithm is sound; the data to gate
+it isn't here, and that gap is precisely the GPU frontier. (`domain_propagate.py` → domain_propagate.json.)
