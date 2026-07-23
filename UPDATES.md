@@ -6763,3 +6763,23 @@ Head-room closed jumps to **67%** of the tide→oracle gap (from 45% for the MLP
 **representation/data-limited** — DepMap + network + essentiality don't carry the rest. The mechanism: attention over a knockout's real
 interaction context finds response-similar training knockouts far better than the gene's own DepMap profile alone. Single cell type,
 steady-state mRNA, magnitude target, CPU, deterministic per split. (`transformer_ko.py`.)
+
+## `transformer_ko2` — improving the transformer, and an honest wash (`transformer_ko2.py`)
+
+Asked to push the 0.49 transformer higher, I built four principled upgrades — **CLS cross-attention pooling**, an **InfoNCE/distillation
+objective** (distilling each knockout's true response-neighbour distribution into the embedding), **val-tuned similarity-weighted top-K
+transfer**, and a **val-tuned hybrid** with raw DepMap cosine — with v1 re-trained in the same split as the apples-to-apples baseline,
+across 3 splits.
+
+| | recall@50 (3-split mean ± sd) |
+|---|---|
+| v1 transformer (baseline) | 0.476 ± 0.034 |
+| v2 (CLS + distillation + weighted/hybrid) | 0.483 ± 0.046 |
+| **v2 − v1** | **+0.007 ± 0.022** (per split: +0.038, −0.013, −0.004) |
+| oracle | 0.607 ± 0.032 |
+
+**Honest wash.** The encouraging first-split +0.037 was noise; across three splits the sophisticated objective/pooling/readout do **not**
+reliably beat plain mean-pool + cosine-MSE + mean-of-10. This confirms the `cross_line_ceiling` reading directly: **the gap to the oracle is
+representation/data-limited, not a readout or objective problem** — you cannot optimize the loss or architecture past what the
+DepMap+network representation supports. It's a necessary negative: it rules out "we just needed a better objective" before spending compute
+on heavier feature engineering. (`transformer_ko2.py`.)
