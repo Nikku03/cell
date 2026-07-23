@@ -6801,3 +6801,30 @@ Shipped as a **runnable Colab notebook** (`transformer_ko4.ipynb`): clone the re
 layers (AF-Multimer, ΔΔG). The honest frame is unchanged all session: spatial gating — like v2's objective upgrades and v3's edge-bias —
 helps the model *route within* the reproducible signal but does not break the ~0.62 retrieval ceiling; that needs transient (2–12h) kinetics
 data, which isn't available here. (`transformer_ko4.py`, `transformer_ko4.ipynb`.)
+
+## `transformer_ko3` + `transformer_ko4` results — the ablation and spatial gating, measured (both honest)
+
+**v3 ablation** (physics edge-features #1 + Graphormer edge-bias #2 on the v2 base, 3 splits):
+
+| model | recall@50 (mean ± sd) | vs base |
+|---|---|---|
+| base | 0.474 ± 0.037 | — |
+| **+edge-bias (#2)** | **0.493 ± 0.045** | **+0.019** (+0.028/+0.021/+0.007, every split) |
+| +edge-feats (#1) | 0.456 ± 0.051 | −0.019 (hurt) |
+| +full | 0.480 ± 0.034 | +0.006 (wash) |
+
+Attribution: **edge-bias is the only lift** (+0.019, positive on all 3 splits) — topology was *not fully* latent in the network-SVD. But
+edge-*features* **hurt** (−0.019, redundant noise), and the full model is a wash. The honest brake: the **shuffled-edge-type control is
+ambiguous** (+full − shuffled = +0.008 ± 0.016, one split negative), so the edge-bias gain does *not* cleanly beat a permuted-topology bias
+— it may be generic regularization rather than confirmed real-topology routing. So fix #2 is a small, control-uncertain positive; fix #1 is
+negative.
+
+**v4 spatial gating** (GO compartment on the v3-full base, 3-split Colab GPU run): base 0.487 ± 0.025 vs +spatial-bias 0.495 ± 0.017 =
+**+0.007, not stable** (per split −0.014/+0.017/+0.018; +spatial-mask slightly negative). A wash, as predicted — compartment is already
+latent in the network-SVD, and the ceiling is data-limited.
+
+**Synthesis across v2/v3/v4:** every architectural lever — the InfoNCE/pooling upgrades (v2 wash), the physics edge-features (v3, hurt), the
+Graphormer edge-bias (v3, +0.019 but control-uncertain), the spatial gate (v4 wash) — is marginal-to-null and stays bounded by the ~0.61
+retrieval oracle. The one large, control-*confirmed* gain in the whole arc was the **interaction-context tokens themselves** (the transformer
+over a knockout's real partners: real-vs-random +0.335). The consistent message: added features help the model *route within* the
+reproducible signal; they do not break the ceiling, which is set by the 96h buffered, ~85%-context-specific readout — not by the model.
