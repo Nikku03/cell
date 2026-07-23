@@ -6669,3 +6669,25 @@ EXOSC9's PF00013 domain.
 co-dependency proxy and structural calls appear only where 3did covers the edge. The competition/far-field claims stay unvalidated (their
 readout is the wall, proven in `iface_gate`), but the tracer is the concrete, staged, real-data walk of a knockout's structural blast
 radius. (`trace_ko.py`.)
+
+## `trace_farfield` — the tracer's coverage and its accuracy against the mRNA far field (`trace_farfield.py`)
+
+The honest answer to *"coverage and accuracy in far field?"* for the `trace_ko` cascade — measured two ways, genome-sampled (2,500
+knockouts) and against the held-out eval harness.
+
+**Coverage.** The structural cascade propagates *past* its direct partners for only **9%** of proteins — the other 91% have no obligate
+partner to destabilize, so the "cascade" is just the one-hop PPI neighbourhood (depth histogram: 1,921 stop at stage 1, 91 reach 2, 122
+reach 3). And of *all* cascade edge-calls, only **2%** carry a real fetched 3did interface; the other 98% are the co-dependency/complex
+proxy (3did covers 4,158 of the ~191k interactome edges). So the tracer is *broad but mostly proxy* — the structural half is thin.
+
+**Accuracy in the mRNA far field.** The decisive test: plug the tracer's affected-protein set into the eval harness as a predictor of a
+knockout's held-out, tide-removed mRNA movers. Specific-mover recall@50 = **0.035**, versus the TIDE-null **0.260** and the oracle ceiling
+**0.617** — it **fails the bar** (0.14× the tide-null; worse than just reproducing generic stress). The protein-structural blast radius does
+**not** coincide with the transcriptional far field, exactly as the layer separation predicts: the tracer names which *proteins* are
+destabilized — a post-translational, mRNA-invisible event — while the transcriptional far field is carried by the regulatory layer the
+cascade never touches.
+
+**Bottom line:** `trace_ko` is honest and useful as a **protein-complex-disassembly explainer** (it reproduces Complex II from SDHB, the
+RNA exosome from EXOSC2), but it must **not** be read as an mRNA-response predictor — measured, it sits at tide-null. Coverage is high as a
+protein tracer, thin as structure (~2% real interfaces); far-field mRNA accuracy is ~null. This closes the "does the structural cascade
+reach the far field?" question with a number. (`trace_farfield.py`.)

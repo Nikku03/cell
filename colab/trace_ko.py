@@ -61,6 +61,31 @@ class Tracer:
         return (b in self.codep.get(upstream, set()) or upstream in self.codep.get(b, set())) and \
                bool(self.gcplx.get(upstream, set()) & self.gcplx.get(b, set()))
 
+    def affected(self, protein, max_depth=3):
+        """non-printing API: return {gene_name: stage} of proteins the KO structurally reaches (destabilised + their surviving partners),
+        plus (n_structural, n_unknown) edge-call counts. Used to measure coverage + far-field accuracy."""
+        a = self.idx.get(protein)
+        if a is None:
+            return {}, (0, 0)
+        dead = {a}; frontier = {a}; aff = {}; nstruct = nunk = 0
+        for depth in range(max_depth):
+            nxt = {}
+            for x in sorted(frontier):
+                for b in self.ppi.get(x, ()):
+                    if b in dead or b in nxt:
+                        continue
+                    if self.slot(x, b) is not None:
+                        nstruct += 1
+                    else:
+                        nunk += 1
+                    aff.setdefault(self.names[b], depth + 1)
+                    if self.obligate(x, b):
+                        nxt[b] = x
+            if not nxt:
+                break
+            dead |= set(nxt); frontier = set(nxt)
+        return aff, (nstruct, nunk)
+
     def trace(self, protein, max_depth=4, fanout=4):
         a = self.idx.get(protein)
         if a is None:
