@@ -6533,3 +6533,35 @@ alternatives don't co-depend" signature)? — is a clean **no**: +0.005, p=1.0. 
 what we have, exactly as the scout found (the interface-overlap ingredient is absent). A real test needs residue-level interface overlap —
 Interactome3D or an AF-Multimer + interface-energy GPU run this environment lacks. Protein co-dependency layer only; the mRNA far field
 stays the wall. Deterministic. (`competitive_codep.py` → competitive_codep.json.)
+
+## The interface-resolved knowledge layer — every protein defined, honestly (`interactome_layer.py`)
+
+The ask: a network where every protein (small or big) has its function and structure defined; every complex knows its members and how
+they assemble and what parts interact; complexes interact with other complexes; and when a subunit is removed you know what it was
+responsible for, whether it or its companions bind elsewhere, and whether it can bind alone — added as a layer on the existing network.
+
+A 7-scout + architect workflow inventoried every data facet, designed the schema, and produced an honest **FILLED / PARTIAL / GAP**
+coverage map. The build (`interactome_layer.py`) is a pure **additive overlay** — keyed by `gene_idx` / `complex_idx` into
+`cell_complete.json`, never mutating it — and it is **self-describing**: every capability reports its status, so an *"unknown"* is never
+read as a measured zero.
+
+**What got built:** 16,492 protein nodes (function + structure summary), 2,039 complexes (members, intra-contacts proxy), **18,435 typed
+"what A does to B" edges** (signed activate/inhibit + E3→substrate + ligand→receptor), **39,130 complex–complex edges** (member-disjoint,
+PPI-bridging support ≥2), and — the genuinely new at-scale piece — **knockout-consequence records for all 3,256 complex-member genes**
+(obligate partners that co-fail, machines disrupted, orphaned co-subunits, interactions severed, binds-elsewhere, a functional
+can-bind-alone proxy), where the demo files had only ever shown 2–3 hubs.
+
+**The honest coverage map — the real deliverable:**
+
+| status | capabilities |
+|---|---|
+| **FILLED** | complex membership (100% of curated set), abundance (97%), domains (99%), process/compartment (100%), KO binds-elsewhere |
+| **PARTIAL** | GO (99.5%, names not IDs), dark-gene prediction (30%), druggable (26%), typed edge direction/sign (**only ~3% of 191k PPI**), complex–complex, intra-complex contacts, KO "responsible-for" |
+| **GAP** (GPU/Interactome3D-gated, marked not faked) | genome-wide 3D structure & pLDDT, intrinsic disorder, per-gene molecular mechanism, **interaction mechanism** (SIGNOR has it but strips it on save — re-derivable), **residue-level interface identities** (only 38 pairs, size-only), complex stoichiometry/assembly-order, inter-subunit interface residues, structural "can it bind alone" |
+
+So the **annotation half** of the vision lands at 70–99% and is fully additive; the **atomic/residue/mechanism half** sits honestly at
+~0–2% and is named precisely as the GPU frontier — the exact same wall the competitive-binding and NEXUS-far-field tests hit. The value is
+that the layer makes that boundary **queryable**: `describe_protein("PSMB5")`, `knockout_consequence("PSMB5")` → obligate PSMB6/PSMB7
+co-fail, 12 complexes disrupted, 47 PPI severed, can-bind-alone proxy 0.63. Deterministic; 11.8 MB. Two cheap no-GPU upgrades it exposes:
+re-parse SIGNOR to keep the stripped mechanism/residue, and re-materialize the discarded interface residue identities from the 38 cached
+structures. (`interactome_layer.py` → interactome_layer.json.)
