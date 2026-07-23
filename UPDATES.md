@@ -6691,3 +6691,41 @@ cascade never touches.
 RNA exosome from EXOSC2), but it must **not** be read as an mRNA-response predictor — measured, it sits at tide-null. Coverage is high as a
 protein tracer, thin as structure (~2% real interfaces); far-field mRNA accuracy is ~null. This closes the "does the structural cascade
 reach the far field?" question with a number. (`trace_farfield.py`.)
+
+## `neural_ko` — a deep neural network for the far field, and the honest lesson about *how* to be deep (`neural_ko.py`)
+
+The brief: drop the classical methods, build a DNN. Built a torch net that maps a knockout's **DepMap dependency profile** (1150-d — a
+functional embedding covering 99% of both perturbed and target genes) to its tide-removed mRNA response over 7223 genes, scored on the
+**same** held-out K562 bench (specific-mover recall@50) across **3 random splits** (mean ± sd), against the same references.
+
+The decisive finding is that the *framing* matters more than the depth:
+
+| model | recall@50 (3-split mean ± sd) |
+|---|---|
+| TIDE-null (floor) | 0.249 ± 0.012 |
+| DEEP regression (naive \|z\|) | **0.211 ± 0.011** — *below the floor* |
+| DEEP regression, feature-shuffle (control) | 0.199 ± 0.011 — *identical → collapse confirmed* |
+| DEEP residual regression | 0.332 ± 0.015 |
+| classical raw-cosine transfer | 0.359 ± 0.037 |
+| DEEP metric-learning (DepMap only) | 0.383 ± 0.023 |
+| **DEEP metric-learning FUSED (+network)** | **0.412 ± 0.035** |
+| ORACLE (retrieval ceiling) | 0.607 ± 0.032 |
+
+1. **A regression net collapses to the mean.** Encoder→bottleneck→7223-decoder trained with MSE on a sparse magnitude target has one
+   dominant optimum: predict which genes *generally* move — the tide. It lands *below* the tide-null (0.211), and the feature-shuffle
+   control matches it exactly (0.199), proving it stopped using gene identity. This reproduces the single-cell field's known, humbling
+   result that regression nets don't beat simple baselines on unseen perturbations.
+2. **The right deep frame is learned retrieval.** The thing that works on this problem *is* retrieval (transfer a behavioural neighbour's
+   response). Classical retrieval uses *raw* DepMap cosine (0.359); the oracle uses *true-response* similarity (0.607). So the net's job is
+   to **learn a similarity closer to the true one** — a metric-learning embedding (cosine ≈ tide-removed response similarity). On DepMap
+   alone that's a tie with raw cosine (0.383).
+3. **Fusing orthogonal views in the learned metric is where depth pays off.** Adding a PPI/complex/pathway network-SVD view and learning
+   the metric over both — the deep analog of the classical `wall_combine` ensemble — reaches **0.412**, beating classical raw-cosine by
+   **+0.053 ± 0.009 (positive on every split)** and the single-view metric by +0.030, closing ~45% of the tide→oracle head-room.
+
+**Honest scope:** a deep net *does* earn its place here — but only as a **learned multi-view retrieval metric**, never as a regressor
+(regression averages the specific signal away). The win is stable across splits and control-clean. It beats the in-split classical
+single-view transfer and the linear map; it does **not** re-implement or beat the full 4-way classical ensemble (~0.47 on a different
+split) — it's the two-view learned analog landing in the same ballpark. And the remaining 0.41→0.61 gap to the oracle is
+**representation/data-limited** (DepMap + network don't carry the rest), not model-class-limited — more capacity won't close it; better
+features or more perturbations would. (`neural_ko.py`.)
