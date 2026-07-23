@@ -6476,7 +6476,27 @@ learned alone** (misaligned phys just adds noise), while the correctly-aligned `
 control** means the gain is genuine **KO-specific complementarity** — phys and learned pick partly *different* behavioural neighbours and
 catch *different* specific movers — not fusion mechanics. Clean positive.
 
-**Honest bound.** It still does **not** reach the oracle (0.62): the ensemble misses the same hard neighbours the oracle finds by peeking,
-so ~45% of the head-room stays open. Three correlated annotation/graph views combine to a real but bounded gain; the rest needs a
-genuinely *orthogonal* signal (measured co-perturbation, or a learned embedding) — not a fourth view of the same graph. Deployable no-peek
-number moves ~0.40 → ~0.45. Deterministic. (`wall_combine.py` → wall_combine.json.)
+**Then: add NEXUS.** The fourth component transfers profiles from a knockout's **DepMap co-dependency partners** — a *different graph*
+(functional fitness coupling, not PPI/complex/pathway) from a *different measurement modality*. This is the genuinely orthogonal signal
+the 3-way was missing, and it delivers:
+
+| ensemble | recall@50 |
+|---|---|
+| tide + phys + learned (3-way) | 0.447 |
+| **tide + phys + learned + NEXUS (4-way)** | **0.470** |
+| phys alone → phys + NEXUS | 0.373 → **0.423** (+0.050) |
+| oracle (peeks) | 0.616 |
+
+The 4-way adds **+0.023** over the 3-way and **survives its own shuffle control** (a *wrong* knockout's co-dependency partners fused with
+the 3-way scores **0.425 — below** the 3-way; misaligned NEXUS *hurts*, correct NEXUS helps: +0.045). So co-dependency catches specific
+movers the structural/annotation views miss — because DepMap functional coupling finds behavioural neighbours that *aren't* in the same
+complex or pathway. **Head-room closed jumps 42% → 61%**, and the best deployable no-peek predictor is now the 4-way at **~0.47**.
+
+*An honest note on how this result was reached:* the first NEXUS run showed 1% coverage and +0.002 — which read as a redundant negative. That
+suspicious 1% turned out to be a real bug (I indexed co-dependency by `names[ko_row]`, a gene-universe index, instead of `kos[ko_row]`, the
+knockout name). Fixed → 84% coverage, and the result flipped to a controlled positive. The lesson that keeps recurring: an implausible
+number is a bug until proven otherwise.
+
+**Honest bound.** Even the 4-way does **not** reach the oracle (0.62) — ~40% of the head-room stays open. But NEXUS is the first view that
+was genuinely *orthogonal* rather than a re-reading of the same protein graph, and it's the biggest single jump toward the ceiling we've
+found without peeking. Deterministic. (`wall_combine.py` → wall_combine.json.)

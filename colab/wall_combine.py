@@ -49,6 +49,18 @@ def main():
     # ---- features (identical to wall_learnsim) ----
     D = json.load(open(OUT / "cell_complete.json"))
     names = [g["name"] for g in D["genes"]]; info = {g["name"]: g for g in D["genes"]}
+    # NEXUS view: co-dependency partners (DepMap) keyed by KO name -- a DIFFERENT graph than PPI/complex/pathway, the honest 'NEXUS'
+    # signal to fuse. codep keys are gene-universe index-strings; map to KO rows.
+    codep_partners = collections.defaultdict(set)
+    for k, lst in D.get("codep", {}).items():
+        if not k.isdigit() or int(k) >= len(names):
+            continue
+        a = names[int(k)]
+        for j, _s in lst:
+            if isinstance(j, int) and j < len(names):
+                b = names[j]
+                if a in ki and b in ki:
+                    codep_partners[a].add(ki[b]); codep_partners[b].add(ki[a])
     go = D.get("go", {})
     cplx = {}
     for k, cs in (D.get("gene2cplx", {}) or {}).items():
@@ -123,7 +135,9 @@ def main():
 
     # pass 1: compute and store each test KO's component score vectors + truth
     test_list = sorted(test)
-    Sp, Sl, So, SPEC = {}, {}, {}, {}
+    Sp, Sl, So, Sn, SPEC = {}, {}, {}, {}, {}
+    kx_train = trainset
+    n_nexus_cov = 0
     for xi in test_list:
         SPEC[xi] = set(j for j in np.where(A[xi] >= TAU)[0].tolist() if ~tide[j])
         pn = phys_nb[xi]
@@ -132,6 +146,12 @@ def main():
         Sl[xi] = A[ltop].mean(0)
         pnset = set(pn) | set(int(t) for t in ltop)
         So[xi] = A[sorted(pnset)].mean(0) if pnset else np.zeros(nG)   # union neighbours
+        # NEXUS: transfer from x's co-dependency partners that are TRAIN knockouts (no peeking, no leakage).
+        # xi is a KO ROW index -> the KO's gene name is kos[xi] (NOT names[xi], which is a gene-universe index).
+        cn = [p for p in codep_partners.get(kos[xi], ()) if p in kx_train and p != xi]
+        Sn[xi] = A[cn].mean(0) if cn else np.zeros(nG)
+        if cn:
+            n_nexus_cov += 1
     # CONTROL: pair each KO's LEARNED with a DIFFERENT KO's PHYS (misaligned) -- same fusion mechanics, KO-specific alignment broken.
     shuf = list(test_list); rs = np.random.RandomState(1); rs.shuffle(shuf)
     shuf_of = {xi: shuf[(i + 1) % len(shuf)] if shuf[i] == xi else shuf[i] for i, xi in enumerate(test_list)}
@@ -140,40 +160,58 @@ def main():
     for xi in test_list:
         spec = SPEC[xi]; s_tide = mover_freq
         st = S[xi, train]; otop = train[np.argsort(-st)[:N_NEI]]; s_oracle = A[otop].mean(0)
-        preds = {"tide": s_tide, "phys": Sp[xi], "learned": Sl[xi], "oracle": s_oracle,
+        preds = {"tide": s_tide, "phys": Sp[xi], "learned": Sl[xi], "nexus": Sn[xi], "oracle": s_oracle,
                  "phys+learned": z(Sp[xi]) + z(Sl[xi]),
                  "tide+phys+learned": z(s_tide) + z(Sp[xi]) + z(Sl[xi]),
+                 "phys+nexus": z(Sp[xi]) + z(Sn[xi]),
+                 "tide+phys+learned+nexus": z(s_tide) + z(Sp[xi]) + z(Sl[xi]) + z(Sn[xi]),
                  "union_neighbours": So[xi],
-                 "CTRL_shufphys+learned": z(Sp[shuf_of[xi]]) + z(Sl[xi])}      # misaligned-phys control
+                 "CTRL_shufphys+learned": z(Sp[shuf_of[xi]]) + z(Sl[xi]),          # misaligned-phys control
+                 "CTRL_shufnexus+3way": z(s_tide) + z(Sp[xi]) + z(Sl[xi]) + z(Sn[shuf_of[xi]])}  # misaligned-nexus control
         for nm, s in preds.items():
             out[nm].append(rec(s, spec))
     m = {k: float(np.mean(v)) for k, v in out.items()}
-    singles = {k: m[k] for k in ["tide", "phys", "learned"]}
-    combos = {k: m[k] for k in ["phys+learned", "tide+phys+learned", "union_neighbours"]}
+    singles = {k: m[k] for k in ["tide", "phys", "learned", "nexus"]}
+    combos = {k: m[k] for k in ["phys+learned", "tide+phys+learned", "phys+nexus",
+                                "tide+phys+learned+nexus", "union_neighbours"]}
     best_single_name = max(singles, key=singles.get); best_single = singles[best_single_name]
     best_combo_name = max(combos, key=combos.get); best_combo = combos[best_combo_name]
     print(f"\nHeld-out TEST knockouts ({len(out['tide'])}). Specific-mover recall@{K} (tide removed):\n")
-    for nm in ["tide", "phys", "learned", "phys+learned", "tide+phys+learned", "union_neighbours", "oracle"]:
+    for nm in ["tide", "phys", "learned", "nexus", "phys+learned", "tide+phys+learned", "phys+nexus",
+               "tide+phys+learned+nexus", "union_neighbours", "oracle"]:
         tag = "  <- best single" if nm == best_single_name else ("  <- best ensemble" if nm == best_combo_name else
               ("  (ceiling, peeks)" if nm == "oracle" else ""))
-        print(f"   {nm:22s} {m[nm]:.3f}{tag}")
+        print(f"   {nm:24s} {m[nm]:.3f}{tag}")
     ctrl = m["CTRL_shufphys+learned"]
-    print(f"   {'CTRL shuf-phys+learn':22s} {ctrl:.3f}  <- CONTROL: phys from a WRONG KO fused with learned (breaks alignment)")
+    ctrl_nexus = m["CTRL_shufnexus+3way"]
+    print(f"   {'CTRL shuf-phys+learn':24s} {ctrl:.3f}  <- CONTROL for phys (wrong-KO phys fused with learned)")
+    print(f"   {'CTRL shuf-nexus+3way':24s} {ctrl_nexus:.3f}  <- CONTROL for nexus (wrong-KO nexus fused with the 3-way)")
     gain = best_combo - best_single
     closed_single = (best_single - m["tide"]) / max(m["oracle"] - m["tide"], 1e-9)
     closed_combo = (best_combo - m["tide"]) / max(m["oracle"] - m["tide"], 1e-9)
     real_complementarity = m["phys+learned"] - ctrl        # real fusion gain beyond generic z-fusion mechanics
+    # THE NEXUS QUESTION: does adding the co-dependency (NEXUS) view add ANYTHING orthogonal to tide+phys+learned?
+    nexus_over_3way = m["tide+phys+learned+nexus"] - m["tide+phys+learned"]
+    nexus_over_phys = m["phys+nexus"] - m["phys"]
+    nexus_vs_ctrl = m["tide+phys+learned+nexus"] - ctrl_nexus     # >0 and 4way>3way => nexus adds REAL KO-specific signal
+    nexus_cov = n_nexus_cov / max(len(test), 1)
     print(f"\n   best ensemble ({best_combo_name}) {best_combo:.3f}  vs best single ({best_single_name}) {best_single:.3f}  = {gain:+.3f}")
-    print(f"   COMPLEMENTARITY CHECK: phys+learned {m['phys+learned']:.3f} vs shuffled-phys control {ctrl:.3f} = {real_complementarity:+.3f}  "
-          f"(>0 => the gain is REAL KO-specific complementarity, not z-fusion mechanics)")
+    print(f"   phys+learned complementarity vs shuffled-phys control: {real_complementarity:+.3f}")
+    print(f"\n   NEXUS (co-dependency view) coverage of test KOs: {nexus_cov:.0%}")
+    print(f"   does NEXUS add?  4-way {m['tide+phys+learned+nexus']:.3f} vs 3-way {m['tide+phys+learned']:.3f} = {nexus_over_3way:+.3f}"
+          f"   |  phys+nexus {m['phys+nexus']:.3f} vs phys {m['phys']:.3f} = {nexus_over_phys:+.3f}")
+    print(f"   NEXUS control: 4-way {m['tide+phys+learned+nexus']:.3f} vs shuffled-nexus {ctrl_nexus:.3f} = {nexus_vs_ctrl:+.3f}")
     print(f"   head-room (tide->oracle) closed:  best single {closed_single*100:.0f}%  ->  best ensemble {closed_combo*100:.0f}%")
 
-    real_gain = gain >= 0.02 and real_complementarity >= 0.02      # must beat best single AND the shuffled-phys control
+    real_gain = gain >= 0.02 and real_complementarity >= 0.02
     tide_helps = m["tide+phys+learned"] > m["phys+learned"] + 0.005
+    nexus_adds = nexus_over_3way >= 0.01 and nexus_vs_ctrl >= 0.01   # must add over the 3-way AND beat the shuffled-nexus control
     verdict = (
-        f"COMBINING THE THREE NO-PEEK PREDICTORS (K562, {len(test)} held-out KOs, tide-removed specific-mover recall@{K}). Singles: "
-        f"TIDE {m['tide']:.3f}, PHYS {m['phys']:.3f}, LEARNED {m['learned']:.3f}. Ensembles: PHYS+LEARNED {m['phys+learned']:.3f}, "
-        f"TIDE+PHYS+LEARNED {m['tide+phys+learned']:.3f}, UNION-neighbours {m['union_neighbours']:.3f}. ORACLE* ceiling {m['oracle']:.3f}. "
+        f"COMBINING THE NO-PEEK PREDICTORS (tide, phys-graph, learned-similarity, + the NEXUS co-dependency view); K562, {len(test)} "
+        f"held-out KOs, tide-removed specific-mover recall@{K}. Singles: TIDE {m['tide']:.3f}, PHYS {m['phys']:.3f}, LEARNED "
+        f"{m['learned']:.3f}, NEXUS {m['nexus']:.3f}. Ensembles: PHYS+LEARNED {m['phys+learned']:.3f}, TIDE+PHYS+LEARNED "
+        f"{m['tide+phys+learned']:.3f}, +NEXUS (4-way) {m['tide+phys+learned+nexus']:.3f}, UNION-neighbours {m['union_neighbours']:.3f}. "
+        f"ORACLE* ceiling {m['oracle']:.3f}. "
         f"DECISIVE: best ensemble ({best_combo_name}) {best_combo:.3f} vs best single ({best_single_name}) {best_single:.3f} = "
         f"{gain:+.3f}. "
         + (f"REAL (if modest) ENSEMBLE GAIN, and it SURVIVES THE CONTROL: fusing phys+learned {m['phys+learned']:.3f} beats the "
@@ -193,13 +231,27 @@ def main():
            "neighbours the oracle finds by peeking. This is the same lesson as wall_learnsim -- the gap is a REPRESENTATION gap (you need "
            "a genuinely orthogonal signal, e.g. measured co-perturbation or a learned embedding), not something an ensemble of correlated "
            "annotation/graph views can close.")
-        + f" (Deployable no-peek number stays ~{best_single:.2f}; oracle ceiling ~{m['oracle']:.2f}.) Same protocol as wall_learnsim; "
+        + f" THE NEXUS QUESTION (does adding the co-dependency view add anything ORTHOGONAL, the high bar wall_learnsim set): NEXUS alone "
+        f"scores {m['nexus']:.3f} (covers {nexus_cov:.0%} of test KOs); 4-way tide+phys+learned+NEXUS {m['tide+phys+learned+nexus']:.3f} vs "
+        f"3-way {m['tide+phys+learned']:.3f} = {nexus_over_3way:+.3f}, and the shuffled-nexus control is {ctrl_nexus:.3f} "
+        f"({nexus_vs_ctrl:+.3f}). "
+        + ("NEXUS ADDS REAL ORTHOGONAL SIGNAL: it lifts the ensemble beyond the 3-way AND beats its own shuffle control, so the "
+           "co-dependency graph catches specific movers the PPI/complex/pathway + annotation views miss -- the first genuinely "
+           "orthogonal view we've added." if nexus_adds else
+           "NEXUS DOES NOT ADD (honest negative): the co-dependency view is REDUNDANT with the physical graph -- co-dependency partners "
+           "are largely the same complex/physical partners phys already uses, so fusing it moves the ensemble by "
+           f"{nexus_over_3way:+.3f} (and phys+nexus barely moves phys, {nexus_over_phys:+.3f}). It is NOT the orthogonal signal the "
+           "oracle head-room needs; it re-reads the physical layer the ensemble already has. This is exactly wall_learnsim's warning: a "
+           "fourth view of the same protein-graph saturates, not extends.")
+        + f" (Deployable no-peek number ~{best_single:.2f}; oracle ceiling ~{m['oracle']:.2f}.) Same protocol as wall_learnsim; "
         "single cell type, single steady-state-mRNA readout.")
     print(f"\nVERDICT: {verdict}")
     js = {"cell_type": "K562", "n_test": len(test), "K": K,
-          "recall_specific": {k: m[k] for k in ["tide", "phys", "learned", "phys+learned", "tide+phys+learned",
-                                                 "union_neighbours", "oracle"]},
+          "recall_specific": {k: m[k] for k in ["tide", "phys", "learned", "nexus", "phys+learned", "tide+phys+learned",
+                                                 "phys+nexus", "tide+phys+learned+nexus", "union_neighbours", "oracle"]},
           "control_shuffled_phys_plus_learned": ctrl, "complementarity_over_control": real_complementarity,
+          "nexus_coverage": nexus_cov, "nexus_over_3way": nexus_over_3way, "nexus_over_phys": nexus_over_phys,
+          "control_shuffled_nexus": ctrl_nexus, "nexus_over_control": nexus_vs_ctrl, "nexus_adds": bool(nexus_adds),
           "best_single": {"name": best_single_name, "recall": best_single},
           "best_ensemble": {"name": best_combo_name, "recall": best_combo},
           "ensemble_gain_over_best_single": gain, "headroom_closed_best_single": closed_single,
