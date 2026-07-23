@@ -6500,3 +6500,36 @@ number is a bug until proven otherwise.
 **Honest bound.** Even the 4-way does **not** reach the oracle (0.62) — ~40% of the head-room stays open. But NEXUS is the first view that
 was genuinely *orthogonal* rather than a re-reading of the same protein graph, and it's the biggest single jump toward the ceiling we've
 found without peeking. Deterministic. (`wall_combine.py` → wall_combine.json.)
+
+## Competitive / mutually-exclusive binding — the "removing A frees B to bind C" idea, scoped and tested (`competitive_codep.py`)
+
+The proposal: removing protein A doesn't just delete an edge — B loses its partner, changes conformation, and that **opens or closes a new
+interaction downstream** (competitive binding: A and C used the same site on B, so losing A unmasks B–C). Propagate that "new PPI combo"
+cascade until it reaches the observed far-field change. A parallel scout-and-synthesize workflow (3 read-only agents + adversarial
+synthesis) mapped it against our data and prior results, and the honest verdict is a **split**:
+
+- **The full multi-hop cascade to the mRNA far field is blocked — and already refuted.** `nexus_wall` ran the only physically-principled
+  bridge (physical → regulatory) and it sits at the random floor on tide-removed movers; its apparent +0.037 died under the shuffle
+  control. More hops only compound sparsity. This isn't an open question.
+- **The competition *caller* is blocked at scale.** The ingredient it hinges on — residue-level interface *overlap* (does A and C bind the
+  *same* site on B?) — doesn't exist in our data: only a 3-residue VHL demo, `nexus_ko_fetch` kept interface *sizes* but discarded the
+  residue *identities*, no Interactome3D, and every shared-hub co-structure we have is a cooperative (simultaneous) complex — zero
+  competitive positives to even detect.
+
+**What was testable — and the result.** One hop, at the protein co-dependency layer (not the mRNA wall): do candidate-competitive partner
+pairs of a shared hub carry a co-dependency signature? Measured on DepMap dependency-profile cosine, 30k pairs/class:
+
+| group | median co-dependency | frac anti-correlated |
+|---|---|---|
+| simultaneous (co-complex) | 0.146 | 12% |
+| **candidate-competitive** (never co-complex) | **0.007** | **45%** |
+| random (essentiality-matched) | 0.002 | 49% |
+
+The simultaneous→competitive gap (+0.139) is real but **collapses to +0.000 under label-shuffle** — it's the trivial co-complex effect
+(`nexus_ko`'s 71×), not competition. The decisive test — are competitive pairs *depleted* below matched random (the real "functional
+alternatives don't co-depend" signature)? — is a clean **no**: +0.005, p=1.0. Candidate-competitive partners behave like unrelated genes.
+
+**Honest negative, correctly bounded.** This doesn't disprove the biophysics — it shows the mechanism isn't *callable or measurable* with
+what we have, exactly as the scout found (the interface-overlap ingredient is absent). A real test needs residue-level interface overlap —
+Interactome3D or an AF-Multimer + interface-energy GPU run this environment lacks. Protein co-dependency layer only; the mRNA far field
+stays the wall. Deterministic. (`competitive_codep.py` → competitive_codep.json.)
