@@ -25,8 +25,9 @@ OUT = Path("outputs/orphan")
 M_PART = 32                     # max partners per knockout (self + up to 32)
 
 
-def build_context(H, have):
-    """Build, for every knockout, its token set (self + prioritised partners) and a global gene-feature matrix the tokens index into."""
+def build_context(H, have, return_gtok=False):
+    """Build, for every knockout, its token set (self + prioritised partners) and a global gene-feature matrix the tokens index into.
+    return_gtok=True also returns Gtok (the token-gene name list, indexed by tok_idx) so callers can recover token gene identities."""
     dv = np.load(OUT / "depmap_vecs.npz", allow_pickle=True)
     syms = list(dv["syms"]); Z = dv["Z"].astype(np.float32); srow = {s: i for i, s in enumerate(syms)}
     D = json.load(open(OUT / "cell_complete.json"))
@@ -122,6 +123,8 @@ def build_context(H, have):
     npart = tok_mask.sum(1) - 1
     print(f"context: {len(Gtok)} token genes; partners/KO median {int(np.median(npart))} (mean {npart.mean():.1f}, "
           f"{int((npart == 0).sum())} KOs isolated)")
+    if return_gtok:
+        return Fg, tok_idx, tok_role, tok_mask, Gtok
     return Fg, tok_idx, tok_role, tok_mask
 
 
