@@ -6783,3 +6783,21 @@ reliably beat plain mean-pool + cosine-MSE + mean-of-10. This confirms the `cros
 representation/data-limited, not a readout or objective problem** — you cannot optimize the loss or architecture past what the
 DepMap+network representation supports. It's a necessary negative: it rules out "we just needed a better objective" before spending compute
 on heavier feature engineering. (`transformer_ko2.py`.)
+
+## `transformer_ko4` — spatial gating + a runnable Colab/GPU notebook (`transformer_ko4.py`, `transformer_ko4.ipynb`)
+
+v4 adds the user's **Layer D (spatial gating)** — the one biophysical layer left with real data at scale: **GO cellular compartment** (12
+classes, 100% coverage). Two complexes can't interact if they're in different organelles, so we add a per-token compartment one-hot and a
+**same-compartment term in the Graphormer attention** — either a soft learned bias, or a hard mask (`−∞` when compartments are disjoint, i.e.
+"if P(co-localization)=0 the attention is 0"). Ablated on the v3-full base (edge-features + edge-bias always on): none / +spatial-bias /
++spatial-mask, with the wrong-KO identity control. GPU-enabled for Colab, with a `V4_SMOKE` fast-path.
+
+**Smoke-validated** (seed 0, CPU): base v3-full **0.435** vs +spatial-mask **0.438** = **+0.002** — marginal/flat, exactly as predicted. GO
+compartment is already largely latent in the network-SVD (which is an SVD of the very complex/PPI graph that respects compartments), and the
+readout ceiling is data-limited, not localization-limited. The identity shuffle collapses to 0.098, so the model is knockout-specific.
+
+Shipped as a **runnable Colab notebook** (`transformer_ko4.ipynb`): clone the repo → mount Google Drive for the three gitignored artifacts
+(`cell_complete.json`, `depmap_vecs.npz`, `nlz_K562.pkl`) → GPU run of the full 3-split ablation. It's a base to extend toward the GPU-gated
+layers (AF-Multimer, ΔΔG). The honest frame is unchanged all session: spatial gating — like v2's objective upgrades and v3's edge-bias —
+helps the model *route within* the reproducible signal but does not break the ~0.62 retrieval ceiling; that needs transient (2–12h) kinetics
+data, which isn't available here. (`transformer_ko4.py`, `transformer_ko4.ipynb`.)
