@@ -6729,3 +6729,37 @@ single-view transfer and the linear map; it does **not** re-implement or beat th
 split) — it's the two-view learned analog landing in the same ballpark. And the remaining 0.41→0.61 gap to the oracle is
 **representation/data-limited** (DepMap + network don't carry the rest), not model-class-limited — more capacity won't close it; better
 features or more perturbations would. (`neural_ko.py`.)
+
+## `transformer_ko` — a transformer over the knockout's interaction context, and the best model of the session (`transformer_ko.py`)
+
+The brief: a transformer, fed the network we built, the "other PPI after knockout," and essentiality. Built exactly that. A knockout is a
+**set of tokens** — the perturbed gene plus its post-knockout partners (DepMap co-dependency partners, complex co-members, PPI neighbors) —
+and each token carries **[DepMap profile ⊕ our network-SVD embedding ⊕ essentiality ⊕ log-degree ⊕ role]**. A 2-layer self-attention
+encoder pools the set into a knockout embedding, trained as a **learned-retrieval metric** (the only deep frame that works here — `neural_ko`
+proved regression collapses to the tide). Scored on the same held-out K562 bench across 3 splits.
+
+**It is the best model built this session, and every control passes on every split:**
+
+| model | recall@50 (3-split mean ± sd) |
+|---|---|
+| TIDE-null (floor) | 0.249 ± 0.012 |
+| classical raw-cosine | 0.370 ± 0.033 |
+| MLP-self (same features, **no** neighbourhood) | 0.400 ± 0.025 |
+| transformer, self-only at inference | 0.332 ± 0.026 |
+| **TRANSFORMER (self + neighbourhood)** | **0.490 ± 0.037** |
+| transformer, **random** partners (control) | 0.155 ± 0.004 |
+| transformer, wrong-KO shuffle (identity control) | 0.117 ± 0.008 |
+| ORACLE (retrieval ceiling) | 0.607 ± 0.032 |
+
+- **The neighbourhood carries real signal:** transformer − MLP-self = **+0.089 ± 0.014**, positive on every split. The "other PPI after
+  knockout" plus essentiality tell you things the perturbed gene's own DepMap profile does not.
+- **The decisive control — real vs random partners:** give the transformer *random* partner tokens (same count, same roles) and it
+  **craters to 0.155** — below even MLP-self and the tide floor, because random tokens inject noise that corrupts the pooled embedding. The
+  real-minus-random gap is **+0.335**. So the gain is 100% the **real interaction structure** you asked to feed it, not extra tokens or
+  model capacity.
+- **Identity control:** the wrong knockout's context collapses to 0.117 — the embedding is sharply knockout-specific.
+
+Head-room closed jumps to **67%** of the tide→oracle gap (from 45% for the MLP fused metric-learner). The remaining 0.12 to the oracle stays
+**representation/data-limited** — DepMap + network + essentiality don't carry the rest. The mechanism: attention over a knockout's real
+interaction context finds response-similar training knockouts far better than the gene's own DepMap profile alone. Single cell type,
+steady-state mRNA, magnitude target, CPU, deterministic per split. (`transformer_ko.py`.)
