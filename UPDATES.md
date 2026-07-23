@@ -6565,3 +6565,30 @@ that the layer makes that boundary **queryable**: `describe_protein("PSMB5")`, `
 co-fail, 12 complexes disrupted, 47 PPI severed, can-bind-alone proxy 0.63. Deterministic; 11.8 MB. Two cheap no-GPU upgrades it exposes:
 re-parse SIGNOR to keep the stripped mechanism/residue, and re-materialize the discarded interface residue identities from the 38 cached
 structures. (`interactome_layer.py` → interactome_layer.json.)
+
+## The protein-knockout-effect predictor — real but modest, and it corrects an overstatement (`protein_ko_effect.py`)
+
+"Try the protein knockout effect directly, not mRNA." So we built the predictor on the reliable layer: given a held-out knockout, predict
+which proteins **co-fail** (its top-10 DepMap co-dependency partners) from structural/network priors alone — validated cross-modality
+against co-dependency, with essentiality and label-shuffle controls.
+
+| held-out ROC-AUC (separate a KO's true co-failers from non-partners) | |
+|---|---|
+| **ensemble (all priors)** | **0.604** |
+| complex-only / PPI-only | 0.514 / 0.526 |
+| essentiality-only (guard) | 0.530 (≈ chance) |
+| ensemble, not-both-essential | 0.580 |
+| label-shuffle control | 0.473 (collapses ✓) |
+| precision@3 | 0.485 (≈ **2×** the 0.24 base rate) |
+
+**It's real** — beats every single prior, survives the shuffle, holds beyond shared essentiality, and ranks true co-failers ~2× above
+base. **But it's modest, and it corrects my earlier "the protein layer is reliable, ship it."** The humbling number is the candidate-pool
+recall: **only ~5% of a knockout's true co-failers have a direct structural link** (complex/PPI/signaling) to it. Co-dependency is
+dominated by *functional* coupling — shared pathway/process — that physical structure barely captures, so the ensemble leans on the soft
+pathway/domain features and lands at 0.60, not the high number I implied.
+
+**Reconciliation with nexus_ko's 71×:** a structural partner *is* very likely co-dependent (high **precision** on the small, obvious
+complex-partner set — that part was right), but a knockout's *full* co-failure set is mostly non-structural, so **recall** from priors is
+low and full-set prediction is only moderate. Net: useful as a ranked, controlled **shortlist** (~2× base, controls pass) — better-behaved
+than the mRNA far field, but not a slam dunk. The measured co-dependency data itself stays the best predictor of co-dependency; structural
+priors are a partial stand-in. Deterministic. (`protein_ko_effect.py` → protein_ko_effect.json.)
