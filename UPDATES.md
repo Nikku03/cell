@@ -6620,3 +6620,31 @@ resolve which site a partner actually uses. The `propagate_ko(A)` tool runs (SDH
 (GPU AlphaFold-Multimer / Interactome3D), and no annotation proxy — co-complex membership, DDI-inferred domain slots — substitutes for it.
 There's also a readout caveat: co-dependency (fitness) may not even be where competition shows up. The algorithm is sound; the data to gate
 it isn't here, and that gap is precisely the GPU frontier. (`domain_propagate.py` → domain_propagate.json.)
+
+## Fetch-first fork: real structural interfaces (3did) — the gate is now callable, and the block is proven to be the readout (`iface_gate.py`)
+
+You chose fork 1 — fetch real interfaces to make the domain gate work — with "fetch, not compute." So I fetched (no GPU): **3did**
+(20,636 real PDB domain-domain interfaces) + the **InterPro→Pfam** bridge (`interpro.xml`). That gives a *structure-validated* "which
+domain of B interfaces which partner" call for **4,158 PPI edges** — exactly the ingredient my co-occurrence proxy lacked.
+
+**The fetch worked, and it made the gate callable and well-powered** — 1,052 hubs with ≥2 structurally-callable partners, 22,983
+same-slot vs 7,621 different-slot pairs. No longer underpowered. Which finally lets us tell the two possible blocks apart. And the answer
+is decisive:
+
+| structure-validated same-slot vs different-slot | co-dependency |
+|---|---|
+| same-slot (same-site competitor) | 0.029 |
+| different-slot (simultaneous) | 0.019 |
+| depletion p | **1.0** (same is *higher*, not depleted) |
+| shuffle control | real −0.010 vs shuffled 0.000 |
+
+**Even with real structural interfaces, the competition signature is absent in co-dependency.** So the block was **not** the noisy domain
+proxy — it's the **readout**. Co-dependency (fitness) doesn't carry same-site competition: same-domain partners are often paralogs /
+functionally-similar proteins, which are *co-dependent* (hence *higher*, not lower). This is the exact conclusion `competitive_codep`
+reached — now **proven with fetched real interfaces** instead of blamed on proxy noise. Validating competition needs a **binding** readout
+(a wet-lab experiment), and even residue-level interfaces wouldn't change that — the readout, not the interface resolution, is the wall.
+
+**Concrete win regardless:** 4,158 PPI edges now carry a fetched, structure-validated domain-domain interface (`domA`/`domB`/`n_pdb`),
+upgrading the interactome layer's `edge.interface_residues` GAP toward PARTIAL for those edges — real "which part interacts" data, fetched
+not computed. Parsed resources persisted (`3did_ddi.json`, `prot_pfam.json`); raw downloads git-ignored. (`iface_gate.py` →
+iface_gate.json.)

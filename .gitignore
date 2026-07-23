@@ -85,3 +85,4 @@ data/hgnc.txt
 outputs/orphan/invivo/*.fa
 outputs/orphan/llm_reasoner_cache/
 outputs/orphan/pdb_complexes/
+data_fetch/
