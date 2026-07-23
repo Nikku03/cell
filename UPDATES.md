@@ -6648,3 +6648,24 @@ reached — now **proven with fetched real interfaces** instead of blamed on pro
 upgrading the interactome layer's `edge.interface_residues` GAP toward PARTIAL for those edges — real "which part interacts" data, fetched
 not computed. Parsed resources persisted (`3did_ddi.json`, `prot_pfam.json`); raw downloads git-ignored. (`iface_gate.py` →
 iface_gate.json.)
+
+## `trace_ko` — the step-by-step knockout tracer, on real fetched data (`trace_ko.py`)
+
+The requested tool: knock out a protein, then walk the network stage by stage and, at each downstream PPI, report its function, whether
+the partner can still act without the lost protein, and propagate until the effect attenuates. Built on everything assembled this session —
+obligate destabilization (DepMap co-dependency + complex), the fetched **3did** structural interfaces ("which domain binds what"), and
+per-protein function from the interactome layer — with an **honest confidence tag at every step**: STRUCTURAL (real 3did), OBLIGATE
+(co-dependency proxy), or UNKNOWN (no fetched interface).
+
+At each edge the logic is exactly the user's flow: if the partner is **obligate** on the lost protein it is destabilized → *"same case,
+one stage further"* → propagate; otherwise it **survives**, loses only that one interface (named by its 3did domain where covered), and
+keeps its other interactions. The walk attenuates when nothing else is destabilized.
+
+Worked examples reproduce known biology: `trace_ko("SDHB")` → SDHA/SDHC/SDHD destabilized (Complex II collapse), then their partners
+survive; `trace_ko("EXOSC2")` → the RNA exosome disassembles ring-wide (EXOSC3/4/5/6, then EXOSC9/EXOSC7), with a structural 3did call on
+EXOSC9's PF00013 domain.
+
+**Honest framing:** this is a mechanistic **tracer / explanation aid**, not a validated predictor — the propagation rests on the
+co-dependency proxy and structural calls appear only where 3did covers the edge. The competition/far-field claims stay unvalidated (their
+readout is the wall, proven in `iface_gate`), but the tracer is the concrete, staged, real-data walk of a knockout's structural blast
+radius. (`trace_ko.py`.)
