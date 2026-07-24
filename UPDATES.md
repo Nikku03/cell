@@ -7096,3 +7096,26 @@ under-credited, **and** a measured hard-data floor (74% of the target does not r
 unlike protein folding where the answer is in the sequence). The untested escalation that would give the algorithmic argument its strongest shot
 is the **"MSA analog"**: a rich cell-state input (baseline transcriptome / chromatin / responses to other perturbations) — AF2's leap came mostly
 from exploiting the MSA, and our DepMap+network inputs may be the analog of a single sequence with no MSA. Deterministic. (`end_to_end_ranker.py`.)
+
+## `network_attribution` — strengthen the network + attribute non-PPI movers to regulation: sound logic, but 90% is unannotated (`network_attribution.py`)
+
+Tests the scheme: union PPI + complex + pathway edges to strengthen the network, then attribute any mover with no physical path to TF regulation
+(protein→DNA). Held-out K562 specific movers, 378 knockouts:
+
+| attribution of specific movers | share |
+|---|---|
+| PHYSICAL (PPI + complex neighbour of KO) | 6.4% |
+| REGULATORY (TF→target, direct or via a PPI-touched TF) | 4.1% |
+| EITHER (combined network explains) | **10.0%** |
+| NEITHER (unexplained) | **90.0%** |
+| *inference test:* non-physical movers that are TF-regulated | 4.0% vs 2.1% base = **1.85×** |
+
+**The scheme is structurally sound — and the key inference carries real signal:** movers with no physical path to the knockout are **1.85×**
+enriched for known TF regulation vs a random gene, so "no PPI ⇒ regulatory" is not arbitrary. **But the combined network explains only ~10% of
+the specific response; 90% is connected to the knockout by *no annotated edge* (physical or regulatory).** The limit is **edge COVERAGE**, not the
+physical-vs-regulatory distinction: curated PPI + TRRUST/SIGNOR contain only the well-studied canonical edges, while the knockout-specific
+response is dominated by non-canonical, indirect, context-dependent relationships no current database annotates. This reframes the wall as a
+**knowledge-completeness** problem rather than pure noise — consistent with `error_localization` (the missed movers are real, 6.2× reproducible):
+the response *is* mechanistic and flows through real edges, but ~90% of those edges are simply not in our networks. Strengthening the network
+correctly attributes the explainable ~10%; it cannot reveal the unannotated majority — and the Perturb-seq response is itself the only thing that
+*measures* those missing edges (which is why they don't generalise to held-out knockouts). Deterministic. (`network_attribution.py`.)
