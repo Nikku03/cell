@@ -7046,3 +7046,25 @@ simulation** — and propagating to convergence over-diffuses to network hubs (e
 knockout-specific response is not a function of the static wiring diagram** — mechanistic simulation is the right idea in principle but requires
 a quantitative dynamical cell model that does not yet exist for human K562; on the networks we have, retrieval (0.62) beats propagation (<0.06).
 Deterministic. (`mechanistic_propagate.py`.)
+
+## `mechanistic_hybrid` — route TF knockouts through the regulatory network + combine with retrieval: no gain, and TFs are the HARDEST class (`mechanistic_hybrid.py`)
+
+The refinement: a TF knockout acts through TF→target regulation (the transcriptional graph we have), a pathway protein does not — so route TFs
+to regulatory propagation, everything else to retrieval, then blend. 3 splits, held-out K562:
+
+| | specific recall@50 |
+|---|---|
+| retrieval, ALL knockouts | 0.349 |
+| retrieval, **TF knockouts** | **0.226** (below the 0.260 tide-null!) |
+| retrieval, **non-TF knockouts** | **0.387** |
+| regulatory propagation alone, on TFs | 0.030 |
+| **hybrid (route TF→blend), overall** | **0.349** = retrieval (**+0.000**, β tuned to 0.15) |
+
+**Two findings, both against the intuition:** (1) **TF knockouts are the *least* predictable class**, not the most — 0.226 vs 0.387 for non-TF,
+and *below* the do-nothing tide-null. (2) The regulatory propagation on TFs (0.030) is far below retrieval (0.226), so blending it in adds
+nothing (hybrid = retrieval). **Why the reasonable idea fails:** the regulatory network names a TF's *canonical/generic* targets — which are the
+**tide** (genes that move under many perturbations), already captured by retrieval and discarded by the tide-removed metric. The
+TF-knockout-*specific* residue is the **non-canonical** secondary/compensatory/context-dependent response that no static regulatory network
+encodes. And because a TF hits many genes, its response is the **broadest and most idiosyncratic** — exactly the hardest kind (error_localization:
+recall falls with breadth). So combining + type-routing is sound in principle but adds nothing on this data — the same wall from a new angle:
+**the network holds generic wiring, and the knockout-specific response is not in it.** Deterministic. (`mechanistic_hybrid.py`.)
