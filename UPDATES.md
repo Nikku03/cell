@@ -7247,3 +7247,29 @@ biggest ChIP compendia (TFLink) — gets past ~10% of the tide-removed specific 
 generic/tide movers we remove; the knockout-**specific** response is non-canonical and in **no** database — it can only be *measured*, per
 knockout, not looked up. Reconfirms this project's own binding-vs-regulation result (a TF binds thousands, functionally regulates few) at the
 scale of the entire ChIP corpus. Deterministic. (`tflink_coverage.py`.)
+
+## `shared_dependency` — utility-hub knockouts: the idea explains the TIDE, not the specific residue (`shared_dependency.py`)
+
+The zoom-out: some knockouts aren't specific regulators — they break a SHARED function many proteins need (transporter, ATP/energy enzyme,
+kinase, ribosome). Their response should be co-dependency-driven and/or generic. Tested on K562 with DepMap co-dependency (shared fitness =
+shared function) used as an explanation edge for the first time:
+
+| KO class | n | tide-fraction (how generic) | specific movers via co-dependency (enrichment) | via regulatory |
+|---|---|---|---|---|
+| ribosome/translation | 63 | **37%** | 0.3% (13.1×) | 0% |
+| kinase/phosphatase | 5 | 36% | 0% | 0% |
+| transporter | 2 | 28% | 0% | 0% |
+| mito/energy | 7 | 23% | 0% | 0% |
+| proteostasis | 20 | 11% | 1.0% (4.7×) | 0% |
+| TF/regulator | 72 | 21% | 0% | 0.3% |
+
+**Two honest halves.** (1) **The user is right about the generic part:** utility-hub KOs — especially ribosome/translation (37%) and kinase (36%)
+— give a *more tide-dominated* (generic) response than TF/regulator KOs (21%). Losing a shared utility triggers the common stress program. This
+gives the **tide a mechanistic identity**: it isn't noise, it's the *shared-dependency-loss response* every core-utility knockout shares — exactly
+what this idea predicts. (2) **But it does not touch the specific ceiling:** co-dependency (shared-function) edges explain the tide-removed
+SPECIFIC movers at high *enrichment* (ribosome 13×) but ~**0–1% coverage** — a precise but negligible channel, because co-essential sets are tiny
+(~6–12 partners). Hub-ness by co-dependency degree vs tide-fraction is uncorrelated (Spearman −0.06) — it's the functional *type* (ribosome/kinase)
+that's generic, not raw connectivity. **Reading:** the shared-dependency mechanism explains the ~generic part of the response (the tide we remove),
+reframing what the tide *is*, but the knockout-SPECIFIC residue — even for utility hubs — stays the idiosyncratic part no shared-function edge
+names. Consistent with the whole arc: the generic response is mechanistic and shared; the specific response is private and uncatalogued.
+Deterministic. (`shared_dependency.py`.)
