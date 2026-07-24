@@ -7022,3 +7022,27 @@ model, held-out K562:
 the rest. Honest abstention on exactly the broad/private knockouts that `denoise_test` showed are the non-reproducing part. This is the
 deployable endpoint at the ceiling: high precision on the subset it's sure about, and it says when it doesn't know. Deterministic.
 (`calibrate_selective.py`.)
+
+## `mechanistic_propagate` — "knock the protein out of the network and simulate the end": below the do-nothing baseline (`mechanistic_propagate.py`)
+
+Tests the mechanistic alternative to statistical retrieval: remove the gene, propagate the knockout to steady state on the network, read where
+it lands. Two networks, propagated to convergence, held-out K562 scorable KOs:
+
+| method (propagate to steady state) | SPECIFIC recall@50 | all-mover recall@50 |
+|---|---|---|
+| TIDE-null (no mechanism at all) | 0.260 | — |
+| A) undirected PPI (physical protein binding) | **0.055** | 0.068 |
+| B) directed signed regulatory (TRRUST + SIGNOR) | **0.022** | 0.017 |
+| directed, shuffled edges (control) | 0.002 | — |
+| ORACLE* (find a similar measured KO) | 0.617 | — |
+
+**Both propagations score far BELOW the do-nothing tide-null (0.26) on the specific response** — the mechanistic approach on the networks we
+have is worse than a constant baseline. Three structural reasons: (1) the **PPI graph is physical binding**, but an mRNA change is a
+**transcriptional** effect — wrong graph; (2) even the directed regulatory graph encodes only **generic** "X regulates Y" edges, so propagating
+them reproduces the **generic cascade** every strong KO shares (the tide) — exactly what the metric removes; (3) a true simulation needs
+**quantitative dynamics** (rates, signs, thresholds, feedback, cell-specific active state) we don't have, so propagation is **reachability, not
+simulation** — and propagating to convergence over-diffuses to network hubs (even the all-mover/generic recall collapses to ~0.07). This matches
+`transformer_causal` (the directed near-field tracer traces the generic cascade, fails on the specific residue). Conclusion: **the
+knockout-specific response is not a function of the static wiring diagram** — mechanistic simulation is the right idea in principle but requires
+a quantitative dynamical cell model that does not yet exist for human K562; on the networks we have, retrieval (0.62) beats propagation (<0.06).
+Deterministic. (`mechanistic_propagate.py`.)
