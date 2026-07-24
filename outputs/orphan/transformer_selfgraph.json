@@ -1,0 +1,42 @@
+{
+ "curated": {
+  "recall": 0.4621,
+  "sd": 0.0374,
+  "per_seed": [
+   0.4877,
+   0.4893,
+   0.4093
+  ]
+ },
+ "knn_depmap": {
+  "recall": 0.3404,
+  "sd": 0.0492,
+  "per_seed": [
+   0.4007,
+   0.2801,
+   0.3404
+  ]
+ },
+ "random": {
+  "recall": 0.1401,
+  "sd": 0.0294,
+  "per_seed": [
+   0.1753,
+   0.1414,
+   0.1035
+  ]
+ },
+ "self_only": {
+  "recall": 0.3624,
+  "sd": 0.0267,
+  "per_seed": [
+   0.3836,
+   0.379,
+   0.3248
+  ]
+ },
+ "oracle": 0.607,
+ "knn_minus_curated": -0.1217,
+ "verdict": "SELF-GRAPH (transformer_selfgraph.py): can the transformer build its own graph from data instead of the curated PPI/complex/codep one? Same metric-encoder, DepMap-only node features, only the token-NEIGHBOURHOOD source varies. 3 splits, held-out K562. curated 0.462 | knn_depmap 0.340 | random 0.140 | self_only 0.362 | oracle 0.607. knn_depmap - curated = -0.122. The curated graph BEATS the self-made kNN graph -- literature PPI/complex edges carry value beyond DepMap similarity. (random 0.140 and self_only 0.362 bound how much the neighbourhood matters at all.) Bounded by the ~0.62 oracle. Deterministic.",
+ "note": "SELF-GRAPH (transformer_selfgraph.py): can the transformer build its own graph from data instead of the curated PPI/complex/codep one? Same metric-encoder, DepMap-only node features, only the token-NEIGHBOURHOOD source varies. 3 splits, held-out K562. curated 0.462 | knn_depmap 0.340 | random 0.140 | self_only 0.362 | oracle 0.607. knn_depmap - curated = -0.122. The curated graph BEATS the self-made kNN graph -- literature PPI/complex edges carry value beyond DepMap similarity. (random 0.140 and self_only 0.362 bound how much the neighbourhood matters at all.) Bounded by the ~0.62 oracle. Deterministic."
+}

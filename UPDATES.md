@@ -6851,3 +6851,22 @@ retrieval. This **contradicted the single-seed CPU smoke** (+0.011) — one more
 answer is negative. Conclusion: the regulatory layer is conceptually the right modality but doesn't help on *this* KO panel — reconfirming
 the bottleneck is data (thin regulatory coverage + the ~85%-context-specific far field), not the feature set. The best model stays v5
 (multi-line data + retrieval), bounded by the ~0.62 oracle. (`transformer_ko6.py`.)
+
+## `transformer_selfgraph` — can the model build its own graph? No. (`transformer_selfgraph.py`)
+
+Direct test of "let it make its own graph, it can use any data available." Same metric-encoder, identical DepMap-only node features; the
+*only* thing that varies is where each knockout's token-neighbourhood comes from. Four graph modes, 3 splits, held-out K562:
+
+| graph source | recall@50 (mean ± sd) | vs curated |
+|---|---|---|
+| curated (PPI/complex/codep) | 0.462 ± 0.037 | — |
+| self_only (no partners, just the KO token) | 0.362 ± 0.027 | −0.100 |
+| knn_depmap (model's own DepMap-similarity kNN) | 0.340 ± 0.049 | **−0.122** |
+| random partners | 0.140 ± 0.029 | −0.322 |
+
+**Verdict: the model's own similarity graph is WORSE than curated, and worse than no graph at all.** Building neighbourhoods from DepMap
+kNN (grouping genes the model already thinks are similar) *homogenizes* the embeddings — it blurs the specificity retrieval depends on, so it
+lands *below* self_only (feeding the KO alone). The curated literature PPI/complex/co-dependency edges carry real value beyond DepMap
+similarity: they give each knockout a *distinctive* partner fingerprint the model cannot reconstruct from behavioural similarity alone.
+random (0.140) and self_only (0.362) bracket how much the neighbourhood matters. Deterministic. This closes the "make its own graph" thread:
+curated structure > self-made structure > no structure > noise. (`transformer_selfgraph.py`.)
