@@ -7343,3 +7343,24 @@ as required dissolves almost all the "named" chains from `case_study` — the sp
 state-changes through the curated wiring; most of that wiring is **silent** here (and, for GATA1, partly sign-flipped). And this is an **abundance**
 audit — silent intermediates could still act through activity/PTM mRNA cannot see, exactly the unmeasured layer the ceiling lives in. Deterministic;
 GATA1 + all scorable KOs; sign convention and code independently verified. (`hop_accountability.py`.)
+
+## `backup_pathway` — the user's rebuttal: a silent intermediate may be a backup/buffer, not a broken link
+
+Fair challenge to `hop_accountability`: I labelled `GATA1 ⊣ MYC ⇒ LTB` "broken" because MYC's mRNA never moved — but that's too strong if the cell
+has a **backup**. A flat intermediate can mean three things, only one of which is "the link is fake." Tested all three (K562):
+
+- **(1) Network backup (rerouting through the known graph):** of 1,404 movers whose *shortest* chain broke, only **22 (2%)** are reached by some
+  other all-confirmed route. So redundant routing *within the curated wiring* rescues little.
+- **(2) Buffering (the level is defended):** the SILENT intermediates are the **essential** genes (essentiality 0.28 vs **0.00** for confirmed
+  ones) and move in only **0.2% of all 1,400 KOs vs 1.4%** for confirmed intermediates. **MYC is the poster child: essentiality = 1.00, and its
+  mRNA moves in just 0.1% of every knockout in the panel.** Its level is held constant no matter what you remove — so "MYC flat" is *not* evidence
+  MYC was untouched; its activity can change while its level is defended.
+- **(3) Real link, just didn't fire here:** for the broken A→m pairs, in the *other* knockouts where A actually *did* move, the target m moves
+  **12.6% of the time vs a 1.4% baseline** (and **0%** for random pairs) — a ~9× enrichment. So many of these links are **genuinely real**; they
+  simply didn't fire in this KO because the intermediate stayed flat.
+
+**Conclusion — the user is right that "broken" overstates it.** A silent intermediate is **UNCONFIRMED, not disproven**: some endpoints reroute,
+the silent intermediates are disproportionately essential/buffered (level defended, activity possibly changed), and the links are real but dormant
+in this particular knockout. What survives from `hop_accountability` is narrower and still holds: *from mRNA abundance alone we cannot trace the
+specific response as a chain of confirmed state-changes* — precisely because backups, buffering, and activity-level effects are invisible to this
+readout. The fix is a readout that sees **activity** (phospho / degron / nascent RNA), **not a better wiring diagram**. Deterministic. (`backup_pathway.py`.)
