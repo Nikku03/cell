@@ -7205,3 +7205,22 @@ opposite reasons:** RENGE has an acute-ish KO but a **day-scale** readout (too s
 **chronic** CRISPRi perturbation (already steady state). The decisive experiment — **acute fast degron (dTAG, protein gone in ~1–2 h) + dense
 hours-scale + deep nascent capture** — combines fast perturbation and fast readout, and does not exist as clean public data. That is the precise,
 measured statement of the one experiment that could still move the wall. (`perturbsci_kinetics.py`, GSE218566.)
+
+## `edge_recovery` — is the missing 90% the uncurated targets of TF (& cofactor) knockouts? Right instinct, ~10% coverage ceiling (`edge_recovery.py`)
+
+The user's constructive idea (incl. TF cofactors): the unexplained response is uncurated TF/cofactor regulation. Partitioned K562 scorable KOs
+with the broadest curated regulatory net (TRRUST + 60k SIGNOR/CollecTRI):
+
+| class | n | % movers explained | via TF regulon |
+|---|---|---|---|
+| TF (has own regulon) | 91 | 10.1% | 8.3% |
+| TF-cofactor (physically touches a TF) | 277 | 10.3% | 2.8% |
+| neither | 10 | 0.0% | 0.0% |
+
+**Instinct validated, but coverage-bounded.** 97% of knockouts (368/378) are TFs or TF-cofactors — so nearly the entire response *does* run
+through the transcriptional/regulatory layer, and that's why TF/cofactor KOs reach ~10% while "neither" KOs get 0%. **But ~10% is the ceiling:**
+even with the KO's full curated regulon (TF) or its partner-TFs' regulons (cofactor route: KO a coactivator → disrupt its TFs → their targets
+move), ~90% of the specific response stays unexplained. So the missing edges are *real regulatory biology* (the cofactor route is genuine) but
+they are **not in any regulatory database** — curated regulons are ~10% complete for the specific response. Getting them requires either MAKING
+them from the perturbation data (circular; the generalizable slice IS the ~0.47 the model already reaches) or MEASURING them (independent
+TF-binding / ChIP for these TFs in K562). Deterministic. (`edge_recovery.py`.)
