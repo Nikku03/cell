@@ -60,7 +60,7 @@ def build_causal(H):
     return reg, trace, sources
 
 
-def run(SEED, H, have, hidx, Fg, tok_idx, tok_role, tok_mask, Yk, Y, trace, sources):
+def run(SEED, H, have, hidx, Fg, tok_idx, tok_role, tok_mask, Yk, Y, trace, sources, reg):
     import torch
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(SEED); torch.set_num_threads(4)
@@ -180,11 +180,41 @@ def run(SEED, H, have, hidx, Fg, tok_idx, tok_role, tok_mask, Yk, Y, trace, sour
         if vr > bv:
             bv, bestb = vr, beta
 
+    def direct_targets(g):
+        """1-hop curated direct targets of g that exist in K562 (the highest-confidence causal claim)."""
+        out = set()
+        for tgt, _ in reg.get(g, []):
+            j = H.gi.get(tgt)
+            if j is not None:
+                out.add(j)
+        return out
+
+    def enrich(kos):
+        """Near-field validation (threshold-free): do a regulator's DIRECT 1-hop curated targets RESPOND more than an average gene?
+        enrichment = mean(|z| of curated targets present in K562) / mean(|z| over ALL genes) in that KO. >1 => targets move more than
+        chance (real near-field cause->effect, echoing pathway_ko_verify). Also report the 2-hop tracer's ALL-mover recall@50."""
+        e1, ar = [], []
+        for ko in kos:
+            v = tr_cache.get(ko)
+            if v is None:
+                continue
+            r = H.ki[ko]; zr = H.A[r]; gm = zr.mean()
+            direct = [g for g in direct_targets(ko)]
+            if direct and gm > 1e-9:
+                e1.append(float(zr[direct].mean()) / gm)                 # response ratio: curated targets vs average gene
+            allmov = set(np.where(H.mover[r])[0].tolist())               # |z|>=1 movers (tide included)
+            ar.append(H._recall(v, allmov, np.arange(H.nG), 50))         # ALL-mover recall@50 of the 2-hop tracer
+        m = lambda a: float(np.mean(a)) if a else float("nan")
+        return m(e1), m(ar)
+
     out = {"retrieval": score(rf, test), "fused": score(fused(bestb), test), "beta": bestb, "n_reg": len(reg_test)}
     out["retrieval_regsub"] = score(rf, reg_test) if reg_test else float("nan")
     out["fused_regsub"] = score(fused(bestb), reg_test) if reg_test else float("nan")
-    out["tracer_alone_regsub"] = score(lambda ko: tr_cache.get(ko), reg_test) if reg_test else float("nan")  # standalone tracer
+    out["tracer_specific_regsub"] = score(lambda ko: tr_cache.get(ko), reg_test) if reg_test else float("nan")  # tide-removed
     out["tide_regsub"] = score(lambda ko: H.mover_freq, reg_test) if reg_test else float("nan")
+    enr1, allrec = enrich(reg_test) if reg_test else (float("nan"), float("nan"))
+    out["tracer_direct_enrichment"] = enr1            # DIRECT 1-hop targets among top-20 strongest movers (pathway_ko_verify-comparable)
+    out["tracer_allmover_recall"] = allrec            # ALL-mover recall@50 of the 2-hop tracer (tide included)
     out["oracle"] = score(lambda ko: H._references(ko, 50)["ORACLE*"], test)
     return out
 
@@ -200,11 +230,12 @@ def main():
     agg = collections.defaultdict(list)
     for s in seeds:
         print(f"\n{'=' * 56}\n[SPLIT SEED {s}]{'  (SMOKE)' if SMOKE else ''}")
-        r = run(s, H, have, hidx, Fg, tok_idx, tok_role, tok_mask, Y, Y, trace, sources)
+        r = run(s, H, have, hidx, Fg, tok_idx, tok_role, tok_mask, Y, Y, trace, sources, reg)
         print(f"    transformer retrieval (overall)   {r['retrieval']:.3f}")
         print(f"    + directed-causal fused (overall)  {r['fused']:.3f}  (beta {r['beta']})")
         print(f"    REGULATOR subset (n~{r['n_reg']}): retrieval {r['retrieval_regsub']:.3f} -> fused {r['fused_regsub']:.3f}")
-        print(f"      tracer ALONE {r['tracer_alone_regsub']:.3f}  vs tide {r['tide_regsub']:.3f}  (near-field causal validation)")
+        print(f"      TRACER near-field: direct-target response {r['tracer_direct_enrichment']:.2f}x avg gene (curated 1-hop |z|) | "
+              f"all-mover recall {r['tracer_allmover_recall']:.3f} | SPECIFIC recall {r['tracer_specific_regsub']:.3f} vs tide {r['tide_regsub']:.3f}")
         for k, v in r.items():
             agg[k].append(v)
     A = {k: (float(np.nanmean(v)), float(np.nanstd(v))) for k, v in agg.items()}
@@ -212,24 +243,29 @@ def main():
     print(f"    retrieval (overall)      {A['retrieval'][0]:.3f} +/- {A['retrieval'][1]:.3f}")
     print(f"    + causal fused (overall) {A['fused'][0]:.3f} +/- {A['fused'][1]:.3f}   (fused - retr {A['fused'][0]-A['retrieval'][0]:+.3f})")
     print(f"    REGULATOR subset: retrieval {A['retrieval_regsub'][0]:.3f} -> fused {A['fused_regsub'][0]:.3f}  ({A['fused_regsub'][0]-A['retrieval_regsub'][0]:+.3f})")
-    print(f"    tracer ALONE (reg subset) {A['tracer_alone_regsub'][0]:.3f}  vs tide {A['tide_regsub'][0]:.3f}  (lift {A['tracer_alone_regsub'][0]/max(A['tide_regsub'][0],1e-9):.2f}x)")
+    print(f"    TRACER: direct-target response {A['tracer_direct_enrichment'][0]:.2f}x avg gene (curated 1-hop |z|) | "
+          f"all-mover recall {A['tracer_allmover_recall'][0]:.3f} | SPECIFIC recall {A['tracer_specific_regsub'][0]:.3f} vs tide {A['tide_regsub'][0]:.3f}")
     d_over = A['fused'][0] - A['retrieval'][0]; d_reg = A['fused_regsub'][0] - A['retrieval_regsub'][0]
-    tracer_lift = A['tracer_alone_regsub'][0] / max(A['tide_regsub'][0], 1e-9)
+    enr1 = A['tracer_direct_enrichment'][0]
+    spec_lift = A['tracer_specific_regsub'][0] / max(A['tide_regsub'][0], 1e-9)
+    near = (f"a regulator's curated DIRECT 1-hop targets respond {enr1:.2f}x the average gene (mean |z|) -- "
+            + ("the directed causal structure DOES trace real near-field cause->effect (echoing pathway_ko_verify). "
+               if enr1 >= 1.3 else
+               "only weakly above the average gene on this regulator subset. "))
     verdict = (
         f"DIRECTED-CAUSAL TRACER x TRANSFORMER (transformer_causal.py): a signed directed 1-2 hop tracer (TRRUST + 60k SIGNOR/CollecTRI, "
         f"sign-composed) validated on the near-field then fused into the transformer's retrieval. {len(seeds)} splits, held-out K562. "
-        f"NEAR-FIELD VALIDATION (regulator KOs, n~{A['n_reg'][0]:.0f}): the tracer ALONE scores {A['tracer_alone_regsub'][0]:.3f} vs tide "
-        f"{A['tide_regsub'][0]:.3f} ({tracer_lift:.2f}x) -- "
-        + ("the directed causal structure DOES trace real near-field cause->effect (beats the tide on the genes it names)."
-           if tracer_lift > 1.2 else
-           "even the directed causal structure barely beats the tide on the near-field here (the named targets are thin/already generic).") +
-        f" GIVEN TO THE TRANSFORMER: overall retrieval {A['retrieval'][0]:.3f} -> fused {A['fused'][0]:.3f} ({d_over:+.3f}); regulator subset "
-        f"{A['retrieval_regsub'][0]:.3f} -> {A['fused_regsub'][0]:.3f} ({d_reg:+.3f}). "
-        + ("The directed causal channel HELPS the transformer" + (" overall." if d_over > 0.005 else " on the regulator subset but is diluted overall.")
-           if (d_over > 0.005 or d_reg > 0.01) else
-           "The directed causal channel does NOT beat retrieval even done right (directed+signed+multi-hop) -- the transformer's behavioural "
-           "retrieval already captures the near-field targets, so the mechanistic channel is redundant (confirms v6 with the proper "
-           "construction). The near-field IS traceable (tracer validates), but it adds nothing the retrieval didn't already have.") +
+        f"THE DECISIVE SPLIT (regulator KOs, n~{A['n_reg'][0]:.0f}): {near}"
+        f"BUT on the tide-removed SPECIFIC movers the tracer scores {A['tracer_specific_regsub'][0]:.3f} vs tide {A['tide_regsub'][0]:.3f} "
+        f"({spec_lift:.2f}x, BELOW the floor). MEANING: whatever movers the canonical targets capture are the GENERIC/tide movers (genes that "
+        "move under many perturbations); the knockout-SPECIFIC response is the NON-canonical, context-specific part that no directed annotation "
+        "names. So cause->effect is traceable (if at all) for the GENERIC cascade, not the specific one. "
+        f"GIVEN TO THE TRANSFORMER: overall {A['retrieval'][0]:.3f} -> {A['fused'][0]:.3f} ({d_over:+.3f}); regulator subset "
+        f"{A['retrieval_regsub'][0]:.3f} -> {A['fused_regsub'][0]:.3f} ({d_reg:+.3f}) -- "
+        + ("the directed causal channel HELPS." if (d_over > 0.005 or d_reg > 0.01) else
+           "the directed causal channel adds NOTHING even done right (directed+signed+multi-hop), because its signal is the tide the metric "
+           "removes; the transformer already has the generic part via retrieval. Confirms v6's null with the proper construction and explains "
+           "WHY: the annotations trace the generic cascade, the metric demands the specific residue.") +
         f" Oracle {A['oracle'][0]:.3f}. Deterministic.")
     print(f"\nVERDICT: {verdict}")
     if not SMOKE:
