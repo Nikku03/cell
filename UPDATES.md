@@ -6914,3 +6914,24 @@ cell lines (Door 3 below the tide floor). This is the training-free proof behind
 model breaks 0.62, because the signal isn't there to be modelled. The only honest levers left are (a) a **modest** encoder bump chasing the
 +0.012 reachability headroom, or (b) a **calibrated selective-prediction** wrapper that reports which predictions to trust. Deterministic; no
 training. (`ceiling_cartography.py`.)
+
+## `transformer_graphnet` — build ON the curated graph: the wiring is a wash (`transformer_graphnet.py`)
+
+"Build on the existing network graph rather than making a new one." The current encoder uses the curated graph only to pick a KO's partner
+tokens, then a set-transformer treats them as an unordered **bag** — it never uses *which partner wires to which*. This tests that one
+untested lever: message-passing hard-masked to a KO's real within-neighbourhood edges (typed complex/codep/PPI + a CLS global node) vs the
+bag-of-partners baseline, with a shuffled-wiring control. 3 seeds, held-out K562:
+
+| arm | recall@50 (mean ± sd) | vs base |
+|---|---|---|
+| base (set-transformer / bag of partners) | 0.486 ± 0.037 | — |
+| graph-real (masked to the real curated wiring) | 0.490 ± 0.032 | **+0.004 ± 0.005** (per-seed −0.002/+0.004/+0.010) |
+| graph-shuf (masked to shuffled wiring, same density) | 0.484 ± 0.040 | +0.005 real−shuf (± 0.008) |
+
+**Honest wash.** The wiring adds **+0.004** over the bag-of-partners (straddles zero across seeds), and the real wiring is
+**indistinguishable from random wiring of the same density** (+0.005 ± 0.008). Conclusion: *a knockout is well-described as a **bag** of its
+curated partners* — which-connects-to-which carries nothing the set-transformer didn't already get. This is exactly what
+`ceiling_cartography` predicted (all doors shut; only +0.012 encoder headroom): building on the graph's **wiring** is a wash because the
+partner **set** already carries the reproducible signal, and the ceiling is the **data**, not the graph representation. The one confirmed
+graph win in the whole arc remains the partner *set* itself (real-vs-random partners +0.335); the *topology within* that set is latent in the
+node features. Deterministic. (`transformer_graphnet.py`.)
