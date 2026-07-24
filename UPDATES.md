@@ -7224,3 +7224,26 @@ move), ~90% of the specific response stays unexplained. So the missing edges are
 they are **not in any regulatory database** — curated regulons are ~10% complete for the specific response. Getting them requires either MAKING
 them from the perturbation data (circular; the generalizable slice IS the ~0.47 the model already reaches) or MEASURING them (independent
 TF-binding / ChIP for these TFs in K562). Deterministic. (`edge_recovery.py`.)
+
+## `tflink_coverage` — does a bigger ChIP-curated network beat 10%? Raw yes (73%), real no (`tflink_coverage.py`)
+
+Direct test of "get the researcher-curated TF regulation from ChIP+perturbation and see if it beats our 10%." First finding: our network
+**already contains CollecTRI** (45,499 edges) + SIGNOR (14,604) + TRRUST (9,396) — CollecTRI *is* the gold-standard integration of ChIP +
+perturbation + literature across 12 resources, so the best curated functional regulon is already inside the 10%. Then we fetched the largest
+ChIP-based curation available — **TFLink** (GTRD + ReMap ChIP-seq compendia + TRRUST; 781 relevant TFs, median **2,816** targets each). K562
+scorable KOs, coverage of tide-removed SPECIFIC movers:
+
+| network | coverage of specific movers | mover vs non-mover enrichment |
+|---|---|---|
+| OURS (CollecTRI+SIGNOR+TRRUST+PPI) | 10.0% | — |
+| **TFLink** (GTRD+ReMap ChIP + TRRUST) | **72.6%** | **1.26×** |
+| combined | 73.6% | — |
+
+**The 73% is an illusion — the binding-≠-regulation trap, quantified.** TFLink "covers" 73% of the specific movers, but covers them only
+**1.26×** more than *non-movers* — because each TF in GTRD/ReMap ChIP is bound to ~2,800 promoters, it covers nearly *everything*. As a predictor
+it would emit ~58% of non-movers as false positives. So with real specificity, **no researcher-curated network — not CollecTRI (ours), not the
+biggest ChIP compendia (TFLink) — gets past ~10% of the tide-removed specific response.** This is the decisive confirmation that the ceiling is
+**not a gap in our particular databases**: curated regulation (literature *or* ChIP) encodes **canonical** targets, which are exactly the
+generic/tide movers we remove; the knockout-**specific** response is non-canonical and in **no** database — it can only be *measured*, per
+knockout, not looked up. Reconfirms this project's own binding-vs-regulation result (a TF binds thousands, functionally regulates few) at the
+scale of the entire ChIP corpus. Deterministic. (`tflink_coverage.py`.)
