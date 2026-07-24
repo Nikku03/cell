@@ -7142,3 +7142,24 @@ missing ingredient is exactly the one intuited as "time flows / non-reversible r
 have — and the directed layer we do have (regulatory) is canonical-only (mechanistic_propagate: 0.022). So the honest conclusion: closing this
 needs a *directed, time-resolved* interactome (a time-course readout + directional edges), not more hops on the static undirected graph. Deterministic.
 (`multi_hop_chain.py`.)
+
+## `directed_chain` — put arrows on the edges: direction RESTORES discrimination (concept validated); new limit is directed-edge coverage (`directed_chain.py`)
+
+The fix for the small-world collapse: follow DIRECTED chains (arrows/time-order) so a cascade flows downstream instead of fanning out. Directed
+layer = SIGNOR signed signaling + TRRUST (avg out-degree 14.3, 57,696 directed edges). Held-out K562, forward BFS from each knockout:
+
+| within k hops | % movers | % non-movers | discrimination | (undirected was) |
+|---|---|---|---|---|
+| ≤1 | 0.2% | 0.1% | 2.96× | — |
+| ≤2 | 6.1% | 2.2% | 2.69× | 1.63× |
+| ≤3 | 23.9% | 14.0% | **1.71×** | **1.02× (collapsed)** |
+| ≤4 | 40.3% | 26.6% | 1.52× | 1.01× |
+
+**Direction WORKS: at 3 hops directed chains still discriminate 1.71× where undirected collapsed to 1.0×** — a directed cascade does not explode
+to the whole cell, exactly as intuited. **But the bottleneck moves from "undirected explosion" to "directed-edge COVERAGE":** only 24% of
+knockouts are even directed sources (have outgoing arrows), only 40% of a knockout's movers are directionally reachable within 4 hops, and
+directed-closeness recall is 0.016 vs tide 0.226 — coverage-starved. So the concept is validated but the curated directed edges (SIGNOR/TRRUST)
+are canonical and sparse. The complex-assembly-order idea is the right KIND of data (it would add directed edges) but isn't in any database at
+scale. **Convergence:** the mechanism side (direction/time-order restores specificity) and the data side (a denoised, trajectory-resolved readout)
+meet at the same answer — a **time-course readout** would let you order genes by *when* they move and thereby infer the directed cascade
+empirically, densifying the directed interactome the arrows-on-edges idea needs. Deterministic. (`directed_chain.py`.)
