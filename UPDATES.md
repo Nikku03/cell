@@ -7315,3 +7315,27 @@ signed direct targets, only **1 (12%)** even moved the *direction* the curated a
 the trail goes cold (e.g. `LST1` has *no known upstream regulator in any database*). **One knockout reproduces the whole-dataset ~10% ceiling**:
 the specific response is, gene-for-gene, either unreached or reachable only by non-discriminating walks — uncatalogued not because we picked the
 wrong database, but because those edges are in none of them. Deterministic; single knockout, fully printed. (`case_study.py`.)
+
+## `hop_accountability` — a hop only counts if the intermediate actually changed (and the right way)
+
+The user's correction to `case_study`: don't hop for the sake of reaching — at every intermediate you must **establish what changed** (degraded,
+lost function, magnitude shift) and whether **the protein is still working the way it was supposed to, or that changed**. We have the measured
+state of every gene in each knockout (signed z), so every hop is auditable. Sign logic: the KO removes the source (level → down); an activation
+edge passes the driver's direction, a repression edge flips it, so predicted direction at a node = (source down) × ∏(edge signs), propagating each
+confirmed intermediate's **observed** sign. Each hop is labelled **CONFIRMED** (|z|≥1, predicted direction), **WRONG_DIR** (moved the opposite way),
+**SILENT** (|z|<1 — inert, or an activity/PTM change mRNA can't see), or **DIR_UNKNOWN**.
+
+**GATA1 detail:** of 233 specific movers, only **5 (2%)** have a shortest curated chain that is *fully confirmed*; **137 break at a SILENT
+intermediate** — e.g. `GATA1 ⊣ MYC ⇒ LTB` is a real graph path, but MYC's mRNA is flat, so it never fired. Allowing *any* confirmed path lifts it
+to **27/233 (12%)**, **+3.2σ** above a sign-flip null — real signal, but small.
+
+**The headline is the aggregate direct-target audit** (71 scorable KOs that are signed regulators; 396 unique signed KO→target pairs): only
+**3% of a knockout's own annotated direct targets even change** (|z|≥1) — **97% are transcriptionally SILENT** — and of the few that move, only
+**17% go the annotated direction**; **83% move the *opposite* way**. In K562 the wiring's **sign has flipped** vs the database: GATA1's curated
+"activation" targets (FCER1G/HLA-E/TIMP1) *rise* when GATA1 is removed, because here GATA1 represses that myeloid program (the one matching edge is
+the repression GATA1⊣SPI1 → SPI1 up). This is broad, not GATA1-only (SSRP1 0/48 targets moved, NRF1 1/45, CHEK1 0/24). Operative chains reach just
+**0.2%** of specific movers pooled (2.6× a sign-flip null); co-movement across the 1400 KO profiles supports coupling only weakly (3.1× a
+matched-random partner). **Meaning:** demanding that each intermediate's state actually changed as required dissolves almost all the "named" chains
+from `case_study` — the specific response is *not* a traceable cascade of confirmed state-changes through the curated wiring; most of that wiring is
+silent or sign-flipped here. And this is an **abundance** audit — silent intermediates could still act through activity/PTM mRNA cannot see, exactly
+the unmeasured layer the ceiling lives in. Deterministic; GATA1 + all scorable KOs. (`hop_accountability.py`.)
