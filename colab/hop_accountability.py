@@ -204,11 +204,13 @@ def main():
     # ===================== PART B: aggregate over all scorable KOs =====================
     # (1) direct-target accountability (deduped unique signed pairs): do a KO's own direct targets even move, and the right way?
     dir_conf = dir_wrong = dir_silent = dir_tot = 0
+    reg_kos = 0; gata1_moved = gata1_wrong = 0                     # how many scorable KOs even HAVE signed targets; GATA1's share
     for ko in H.scorable:
         zz = H.M[H.ki[ko]]
-        for tgt, e in sreg.get(ko, {}).items():
-            if e == 0 or tgt not in gi:
-                continue
+        pairs = [(t, e) for t, e in sreg.get(ko, {}).items() if e != 0 and t in gi]
+        if pairs:
+            reg_kos += 1
+        for tgt, e in pairs:
             dir_tot += 1; zt = zz[gi[tgt]]
             if abs(zt) < THR:
                 dir_silent += 1
@@ -216,6 +218,8 @@ def main():
                 dir_conf += 1
             else:
                 dir_wrong += 1
+                gata1_wrong += (ko == "GATA1")
+            gata1_moved += (ko == "GATA1" and abs(zt) >= THR)
     dir_moved = dir_conf + dir_wrong
 
     # (2) operative-reach of specific movers, pooled, vs pooled sign-flip null
@@ -249,24 +253,31 @@ def main():
                 A = par2[m][0]
                 if A in gi:
                     med_pairs.append((gi[A], i))
-    rng = np.random.RandomState(7)
     real_c = [corr(a, m) for a, m in med_pairs]
-    null_c = [corr(a, int(rng.randint(H.nG))) for a, m in med_pairs]     # same intermediate, random partner
     med_real = float(np.mean(real_c)) if real_c else float("nan")
-    med_null = float(np.mean(null_c)) if null_c else float("nan")
+    # MATCHED null: re-pair the SAME A-pool with the SAME m-pool at random (controls for both A- and m- activity, so the lift is
+    # coupling-specific, not an activity mismatch). 200 permutations.
+    m_pool = [m for _a, m in med_pairs]
+    perm_means = []
+    for s in range(200):
+        pr = np.random.RandomState(s).permutation(len(m_pool))
+        perm_means.append(float(np.mean([corr(a, m_pool[pr[k]]) for k, (a, _m) in enumerate(med_pairs)])))
+    med_null = float(np.mean(perm_means)) if perm_means else float("nan")
+    med_null_sd = float(np.std(perm_means)) if perm_means else float("nan")
+    med_z = (med_real - med_null) / max(med_null_sd, 1e-9) if perm_means else float("nan")
 
     print("\n" + "=" * 104)
-    print(f"AGGREGATE over all {len(H.scorable)} scorable K562 knockouts:")
+    print(f"AGGREGATE (of the {len(H.scorable)} scorable K562 KOs, {reg_kos} are annotated signed regulators with measurable targets):")
     print("=" * 104)
-    print(f"  (1) DIRECT-target accountability ({dir_tot} unique annotated signed KO->target pairs, target measured):")
+    print(f"  (1) DIRECT-target accountability ({dir_tot} unique signed KO->target pairs from those {reg_kos} regulators):")
     print(f"        moved at all (|z|>=1):        {dir_moved:5d}  ({dir_moved/dir_tot*100:.0f}%)   <- {100-dir_moved/dir_tot*100:.0f}% are SILENT")
-    print(f"          of those, CONFIRMED dir:    {dir_conf:5d}  ({dir_conf/max(dir_moved,1)*100:.0f}% of movers)")
-    print(f"          of those, WRONG direction:  {dir_wrong:5d}  ({dir_wrong/max(dir_moved,1)*100:.0f}% of movers)")
+    print(f"          of those {dir_moved} movers, CONFIRMED dir: {dir_conf}   WRONG dir: {dir_wrong}   "
+          f"(small n; {gata1_moved} of the {dir_moved} movers and {gata1_wrong} of the {dir_wrong} wrong are GATA1 alone)")
     print(f"  (2) OPERATIVE-reach of specific movers (all-confirmed chains): {op_spec}/{tot_spec} "
           f"({op_spec/tot_spec*100:.1f}%)  vs sign-flip null {op_null_mean:.0f} ({op_null_mean/tot_spec*100:.1f}%) "
           f"= {op_spec/max(op_null_mean,1e-9):.1f}x")
-    print(f"  (3) CO-MOVEMENT mediation ({len(med_pairs)} 2-hop A->m pairs): |corr(A,m)| across 1400 KOs "
-          f"{med_real:.3f} vs matched-random partner {med_null:.3f} = {med_real/max(med_null,1e-9):.1f}x")
+    print(f"  (3) CO-MOVEMENT coupling ({len(med_pairs)} 2-hop A->m pairs): |corr(A,m)| across 1400 KOs "
+          f"{med_real:.3f} vs pairing-permuted null {med_null:.3f}+/-{med_null_sd:.3f} = {med_real/max(med_null,1e-9):.2f}x (z={med_z:.1f})")
 
     op_frac = op_spec / tot_spec
     lift = op_frac / (op_null_mean / tot_spec) if op_null_mean > 0 else float("inf")
@@ -275,22 +286,25 @@ def main():
         f"HOP ACCOUNTABILITY (hop_accountability.py): the user's correction -- a hop only carries causation if the intermediate ACTUALLY "
         f"CHANGED the required way, not merely 'was reachable'. Auditing every hop's measured abundance change AND direction. "
         f"GATA1 detail: of {len(spec_idx)} specific movers, only {n_operative} ({n_operative/len(spec_idx)*100:.0f}%) have a shortest chain that is "
-        f"fully confirmed; the rest break, {break_reason.most_common(1)[0][1] if break_reason else 0} of them at a SILENT intermediate that "
+        f"fully confirmed; the rest break, {break_reason.get('SILENT', 0)} of them at a SILENT intermediate that "
         f"didn't change at all (e.g. GATA1==represses==>MYC but MYC's mRNA is flat, so GATA1->MYC->LTB never actually fired). Allowing ANY "
         f"confirmed path, operative reach is {spec_reached}/{len(spec_idx)} ({spec_reached/len(spec_idx)*100:.0f}%), "
         f"{(spec_reached-null_mean)/max(null_sd,1e-9):+.1f}sigma above the sign-flip null -- so the confirmed agreement that exists is real, but small. "
-        f"THE HEADLINE is the aggregate direct-target audit ({dir_tot} unique signed KO->target pairs): only {dir_moved/dir_tot*100:.0f}% of a "
-        f"knockout's OWN annotated direct targets even change (|z|>=1) -- {100-dir_moved/dir_tot*100:.0f}% are transcriptionally SILENT in the KO -- "
-        f"and of the few that move, only {dir_conf/max(dir_moved,1)*100:.0f}% go the annotated activation/repression direction; "
-        f"{dir_wrong/max(dir_moved,1)*100:.0f}% go the OPPOSITE way (in K562 the wiring's SIGN has flipped vs the database -- e.g. GATA1's curated "
-        "'activation' targets rise when GATA1 is removed, because in this context GATA1 represses that myeloid program). So 'the protein that was "
-        "supposed to work one way' mostly (a) doesn't respond, or (b) responds the other way. Operative chains reach just "
-        f"{op_frac*100:.1f}% of specific movers ({lift:.1f}x the null), and co-movement supports coupling only weakly ({med_lift:.1f}x). "
+        f"THE HEADLINE is the aggregate direct-target audit: across the {reg_kos} scorable KOs that are annotated signed regulators ({dir_tot} unique "
+        f"signed KO->target pairs), only {dir_moved} ({dir_moved/dir_tot*100:.0f}%) of a knockout's OWN direct targets even change (|z|>=1) -- "
+        f"{100-dir_moved/dir_tot*100:.0f}% are transcriptionally SILENT. That near-total SILENCE is the robust, general result (SSRP1 0/48 targets "
+        f"moved, NRF1 1/45, CHEK1 0/24). Of the {dir_moved} that DO move, {dir_conf} match the annotated direction and {dir_wrong} go the opposite "
+        f"way -- but that direction split is small-n and NOT general: {gata1_wrong} of the {dir_wrong} wrong-direction cases are GATA1 alone, whose "
+        "curated 'activation' targets (FCER1G/HLA-E/TIMP1) rise on KO because in K562 GATA1 represses that myeloid program; for the other "
+        "regulators the targets are simply silent, not sign-flipped. So 'the protein that was supposed to work one way' overwhelmingly (a) doesn't "
+        f"respond at the mRNA level; only occasionally (b) responds the other way (a real but GATA1-specific de-repression). Operative chains reach "
+        f"just {op_frac*100:.1f}% of specific movers ({lift:.1f}x the null), and co-movement supports coupling only weakly ({med_lift:.2f}x a "
+        f"pairing-permuted null, z={med_z:.1f}). "
         "MEANING: the hop critique is decisive -- demanding that each intermediate's state actually changed as required dissolves almost all the "
         "'named' chains from case_study; what survives is a small, direction-confirmed core. The knockout-specific response is not a traceable "
-        "cascade of confirmed state-changes through the curated wiring -- most of that wiring is silent or sign-flipped here. This is an ABUNDANCE "
-        "audit; silent intermediates could still act through activity/PTM mRNA cannot see -- exactly the unmeasured layer the ceiling lives in. "
-        "Deterministic; GATA1 detailed + all scorable KOs.")
+        "cascade of confirmed state-changes through the curated wiring -- most of that wiring is SILENT here (and, for GATA1, partly sign-flipped). "
+        "This is an ABUNDANCE audit; silent intermediates could still act through activity/PTM mRNA cannot see -- exactly the unmeasured layer the "
+        "ceiling lives in. Deterministic; GATA1 detailed + all scorable KOs.")
     print("\nVERDICT: " + verdict)
 
     json.dump({
@@ -299,14 +313,14 @@ def main():
         "gata1_operative_reach": spec_reached, "gata1_operative_frac": round(spec_reached / len(spec_idx), 4),
         "gata1_null_mean": round(null_mean, 2), "gata1_null_sd": round(null_sd, 2),
         "gata1_sigma": round((spec_reached - null_mean) / max(null_sd, 1e-9), 2), "break_reasons": dict(break_reason),
-        "direct_signed_pairs": dir_tot, "direct_moved": dir_moved, "direct_moved_frac": round(dir_moved / dir_tot, 4),
-        "direct_confirmed": dir_conf, "direct_wrong": dir_wrong,
-        "direct_confirmed_frac_of_movers": round(dir_conf / max(dir_moved, 1), 4),
-        "direct_wrong_frac_of_movers": round(dir_wrong / max(dir_moved, 1), 4),
+        "n_signed_regulator_kos": reg_kos, "direct_signed_pairs": dir_tot, "direct_moved": dir_moved,
+        "direct_moved_frac": round(dir_moved / dir_tot, 4), "direct_confirmed": dir_conf, "direct_wrong": dir_wrong,
+        "direct_wrong_gata1_share": [int(gata1_wrong), dir_wrong], "direct_moved_gata1_share": [int(gata1_moved), dir_moved],
         "operative_reach_specific_frac": round(op_frac, 4), "operative_null_frac": round(op_null_mean / tot_spec, 4),
         "operative_over_null": round(lift, 3),
-        "comovement_real": round(med_real, 4), "comovement_null": round(med_null, 4), "comovement_lift": round(med_lift, 3),
-        "comovement_n_pairs": len(med_pairs), "verdict": verdict, "note": verdict,
+        "comovement_real": round(med_real, 4), "comovement_null_permuted": round(med_null, 4),
+        "comovement_lift": round(med_lift, 3), "comovement_z": round(med_z, 2), "comovement_n_pairs": len(med_pairs),
+        "verdict": verdict, "note": verdict,
     }, open(OUT / "hop_accountability.json", "w"), indent=1)
     print("\n  -> outputs/orphan/hop_accountability.json")
 
