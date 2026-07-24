@@ -7296,3 +7296,22 @@ artifact of the huge non-enriched metabolic-enzyme category; only **~15%** sit i
 **Reading:** the idea labels a real but *narrow* slice — the translation-machinery response (a known growth/stress program) accounts for ~1 in 7
 specific movers — but the broad tRNA/pol/transporter/catalyst/coenzyme machinery hypothesis does not hold; those move at chance. The specific
 residue is not, in general, "the cell's machines" — it stays idiosyncratic. Deterministic. (`functional_category.py`.)
+
+## `case_study` — one knockout, gene-by-gene: how many can we actually name, and how?
+
+The zoom-in, on **GATA1** (master erythroid TF, a real held-out K562 KO): take its measured "last photo" and go gene-by-gene — how many
+specific movers can we **name a mechanism for**, *how* does the knockout affect each, and how many are still **unknown**? The `last photo` was
+**250** moved genes (|z|≥1); **17** are the generic tide (removed), leaving **233 GATA1-specific** movers a mechanism must explain.
+
+**Attempted naming** (any curated directed/physical path within 4 hops): 230/233 = **99%** — which sounds like a solution and is exactly the
+trap. Tiering by hop depth (and the built-in **honesty guard**) dismantles it: only **9** movers are 1-hop (direct target / physical partner),
+**107** are 2-hop, **114** need 3–4-hop chains, and **3** have *no curated path at all*. The guard measures whether "reachable within N hops"
+actually *discriminates* movers from non-movers: at **1 hop it's 3.6×** (real specificity), but by **3–4 hops it collapses to ~1.0×** — the
+small-world graph reaches specific movers and random non-movers equally, so those 114 long chains are **connectivity, not explanation**.
+Honestly, only **~9/233 (~4%)** are specifically named — and that canonical regulon is mostly the *tide* we already removed. Worse, of the 8
+signed direct targets, only **1 (12%)** even moved the *direction* the curated activation/repression sign predicts — "an edge exists" is not
+"we predicted the effect." For the named ones the module prints the full mechanism chain with the **function of every protein on the path**
+(e.g. `GATA1 —represses→ MYC —activates→ LTB`); for the unknowns it tries to build the transcription-rooted pathway and reports exactly where
+the trail goes cold (e.g. `LST1` has *no known upstream regulator in any database*). **One knockout reproduces the whole-dataset ~10% ceiling**:
+the specific response is, gene-for-gene, either unreached or reachable only by non-discriminating walks — uncatalogued not because we picked the
+wrong database, but because those edges are in none of them. Deterministic; single knockout, fully printed. (`case_study.py`.)
