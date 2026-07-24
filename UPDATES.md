@@ -7119,3 +7119,26 @@ response is dominated by non-canonical, indirect, context-dependent relationship
 the response *is* mechanistic and flows through real edges, but ~90% of those edges are simply not in our networks. Strengthening the network
 correctly attributes the explainable ~10%; it cannot reveal the unannotated majority — and the Perturb-seq response is itself the only thing that
 *measures* those missing edges (which is why they don't generalise to held-out knockouts). Deterministic. (`network_attribution.py`.)
+
+## `multi_hop_chain` — chains of PPI, not just direct: coverage explodes but discrimination collapses; the missing ingredient is DIRECTION/TIME (`multi_hop_chain.py`)
+
+Refinement: the knockout→end-state response is multi-step, so follow CHAINS of physical interactions (PPI + complex), not just direct neighbours.
+375 held-out K562 knockouts, shortest-path hops over the 14,292-protein physical interactome (avg degree 27):
+
+| within k hops | % movers | % non-movers | discrimination |
+|---|---|---|---|
+| ≤1 (direct) | 6.4% | 1.0% | **6.3×** |
+| ≤2 | 32.9% | 20.2% | 1.63× |
+| ≤3 | 83.7% | 81.8% | **1.02×** |
+| ≤4 | 96.5% | 95.6% | 1.01× |
+
+median hop-distance to movers 2.79 vs 3.04 to random; closeness predictor (rank by 1/(1+dist)) recall@50 **0.030 vs tide 0.260**.
+
+**Coverage grows with hops (6%→97%) exactly as hoped — but so does coverage of NON-movers (1%→96%): the small-world trap.** Direct PPI (1 hop) is
+strongly discriminative (**6.3×**) but reaches only 6% of movers; by 3 hops nearly *every* gene is reachable, so a chain hits the true movers and
+a huge mass of non-movers alike and discrimination collapses to 1.0×. Ranking by chain-closeness scores 0.030, far below the tide-null. **The
+cascade IS multi-step (correct intuition), but adding hops to an UNDIRECTED interactome trades a coverage gap for a specificity collapse.** The
+missing ingredient is exactly the one intuited as "time flows / non-reversible reaction": **DIRECTION / time-order**, which physical PPI does not
+have — and the directed layer we do have (regulatory) is canonical-only (mechanistic_propagate: 0.022). So the honest conclusion: closing this
+needs a *directed, time-resolved* interactome (a time-course readout + directional edges), not more hops on the static undirected graph. Deterministic.
+(`multi_hop_chain.py`.)
