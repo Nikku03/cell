@@ -6994,3 +6994,31 @@ sharpen the weak-but-real private movers, and separate the 74% non-reproducing i
 which cross-line data alone cannot. The unresolved question replicates would answer: how much of that 74% is recoverable cell-specific biology
 vs unrecoverable noise. (Raw counts are not in-repo; a proper multi-guide re-aggregation would require fetching the raw Perturb-seq.)
 Deterministic. (`denoise_test.py`.)
+
+## `calibrate_selective` — the honest win at the ceiling: report which predictions to trust (`calibrate_selective.py`)
+
+At a data ceiling you can't raise recall, but the errors are *systematic* (error_localization/denoise_test: easy KOs are focused+shared, hard
+KOs are broad+private), so confidence is predictable from signals that never peek at the truth. A selective-prediction wrapper on the retrieval
+model, held-out K562:
+
+**Per-KO** (confidence = retrieval margin × neighbour agreement) — abstain on the low-confidence knockouts:
+
+| coverage (KOs answered) | recall@50 |
+|---|---|
+| 100% (answer all) | 0.40 |
+| top 75% | 0.45 |
+| top 50% | 0.52 |
+| **top 25% most-confident** | **0.68** |
+
+**Per-gene** (confidence = neighbour consensus) — split each top-50 list into trustworthy vs speculative:
+
+| neighbour consensus | precision | share of picks |
+|---|---|---|
+| ≥0.3 (consensus-backed, ~1 name per 50) | **0.87** | ~2% |
+| <0.3 (speculative) | 0.18 | ~98% |
+
+**Reading.** No new model, no new data — this converts a flat ~0.5 recall into a *calibrated* tool: it answers "I can call this knockout" vs
+"measure this one" (top-quartile KOs hit 0.68), and on each list it flags the ~1 consensus-backed name that is ~0.87-precise against ~0.18 for
+the rest. Honest abstention on exactly the broad/private knockouts that `denoise_test` showed are the non-reproducing part. This is the
+deployable endpoint at the ceiling: high precision on the subset it's sure about, and it says when it doesn't know. Deterministic.
+(`calibrate_selective.py`.)
