@@ -6828,3 +6828,26 @@ Graphormer edge-bias (v3, +0.019 but control-uncertain), the spatial gate (v4 wa
 retrieval oracle. The one large, control-*confirmed* gain in the whole arc was the **interaction-context tokens themselves** (the transformer
 over a knockout's real partners: real-vs-random +0.335). The consistent message: added features help the model *route within* the
 reproducible signal; they do not break the ceiling, which is set by the 96h buffered, ~85%-context-specific readout — not by the model.
+
+## `transformer_ko6` — the mRNA/regulatory layer, an honest negative (`transformer_ko6.py`)
+
+The right-layer idea (Perturb-seq reads mRNA, so add same-layer regulatory data): v5 metric encoder + regulatory token features
+(is-TF, in/out-degree from TRRUST + 60k SIGNOR/CollecTRI + K562 ChIP = 4,048 sources / 124k edges) + a direct TF→target channel. 3-seed
+held-out K562:
+
+| model | recall@50 (mean ± sd) | vs v5 |
+|---|---|---|
+| v5 (no reg) | 0.484 ± 0.020 | — |
+| +reg-features | 0.464 ± 0.011 | **−0.021** (worse on all 3 seeds) |
+| +reg-features +direct-channel | 0.464 ± 0.011 | −0.021 |
+| TF-KO subset (n≈20–25): mean → fused | 0.342 → 0.342 | +0.000 |
+
+**Honest negative.** The regulatory *features* consistently hurt (−0.021), and the direct TF→target *channel* is dead — validation tuned
+its weight β to 0 on every seed, and on the TF-KO subset (where it should fire) fused = mean exactly. Mechanism: (1) the three regulatory
+scalars appended per token *dilute* the DepMap/network features that actually carry the signal, and a 2-layer encoder can't ignore the added
+noise; (2) the channel is null because coverage is thin (median 2 measured targets per source) and those curated targets are already captured
+by retrieval or sit in the tide — so known TF→target edges do **not** predict tide-removed *specific* movers better than behavioural
+retrieval. This **contradicted the single-seed CPU smoke** (+0.011) — one more case where a 1-seed number was noise and the honest 3-seed
+answer is negative. Conclusion: the regulatory layer is conceptually the right modality but doesn't help on *this* KO panel — reconfirming
+the bottleneck is data (thin regulatory coverage + the ~85%-context-specific far field), not the feature set. The best model stays v5
+(multi-line data + retrieval), bounded by the ~0.62 oracle. (`transformer_ko6.py`.)
