@@ -7447,3 +7447,30 @@ of the hints we hold reconstructs it, because those hints encode the *shared* re
 measurement** that physically contains the specific signal (the activity/nascent layer — e.g. Perturb-ATAC), not more hints over the same
 steady-state mRNA. Deterministic; behavioural base is co-dep retrieval so the absolute number is a lower bound on a full transformer, but the
 decisive comparisons (vs best-single, vs shuffle, vs oracle, and CAUSAL≈0) are base-independent. (`multimodal_stack.py`.)
+
+## `activity_target` — testing the user's pivot: make chromatin activity the target, not mRNA
+
+The user's strong argument: I proved the mechanistic signal survives in chromatin while mRNA buffers it, so I should **invert the model** and predict
+the **chromatin-activity** z-scores, not the buffered mRNA. Correct instinct — but only a real asset if the chromatin target is *more predictable from
+generalizable inputs* than mRNA; otherwise inverting the model moves the target but not the wall. Tested on the **16** K562 knockouts with BOTH
+readouts (Perturb-seq mRNA + Spear-ATAC chromatin) and a DepMap co-dependency input.
+
+**Decisive test — does a generalizable input (co-dependency similarity) predict the target's similarity structure?**
+- co-dep → **chromatin** target: r = **+0.010** (shuffle null 0.072 — i.e. at noise)
+- co-dep → **mRNA** target: r = **−0.015**
+- chromatin vs mRNA agreement: r = **−0.045** (the two readouts don't even agree on which knockouts are similar)
+- nearest-neighbour transfer: chromatin **+0.082** vs mRNA **+0.019** (both tiny; n=16)
+
+**Reading:** at this resolution the chromatin target is **about as private/unpredictable-from-inputs as mRNA** — no evidence that inverting the target
+escapes the representation gap. Two honest caveats *on this test itself*: (1) **n=16**, and (2) the overlap is dominated by *general/basal* factors
+(TBP, GTF2B, CDC5L, HSPA5, TFDP1, ZNF407…) — exactly the knockouts where `perturb_atac` showed chromatin activity **doesn't** move — so it is
+underpowered *and* biased against the factors where chromatin carries signal. So this is "cannot confirm the pivot helps," not a clean refutation.
+
+**The deeper point this sharpens: there are TWO distinct walls, and the pivot only addresses one.** (a) *Buffering* — mRNA is a lossy READOUT (the
+user's real point; genuine). (b) *Representation gap* — we cannot specify what makes a knockout's response **specific** from generalizable features
+(`multimodal_stack`: the oracle gap). Swapping the OUTPUT from mRNA to chromatin fixes (a) but not (b); the specific signal still lives only in the
+knockout's own measured profile — now a chromatin one. And two operational blockers bound the pivot regardless: **label scarcity** (~36 TF ATAC
+knockdowns vs 1400 mRNA — no general model trainable) and **readout narrowness** (chromVAR moved for 4/25 TFs, family-level, blind to the
+metabolic/structural majority). **Both the target-pivot and the continuous-field (NEXUS) idea converge on the same lever: a scaled activity-layer
+measurement (genome-wide Perturb-ATAC / nascent / phospho) — which does not yet exist. That measurement is the asset; without it the pivot can't be
+trained and the field can't be validated.** Deterministic; small n, stated. (`activity_target.py`.)
