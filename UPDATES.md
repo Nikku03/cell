@@ -7414,3 +7414,36 @@ whole-cell mRNA readout the competitive direction doesn't register — consisten
 the random floor; `competitive_codep`: co-dependency competition null). So structure gives us the *cooperative* wiring, not the regulatory sign.
 **Honest caveat:** "never co-crystallised" conflates true competitors with not-yet-solved pairs; the ideal — residue-level interface overlap
 (per-structure interfaces / AF-Multimer) — needs the structures the Interactome3D file server wouldn't bulk-serve this session. Deterministic. (`interface_sign.py`.)
+
+## `multimodal_stack` — the capstone: give a learned combiner ALL the channels, does it beat ~0.5?
+
+The user's capstone: stop hand-coding each mechanism; hand a **learned combiner every channel we built** and let it discover the weights.
+Channels, each a per-KO predicted score vector (retrieval channels use TRAIN knockouts only, no leakage): **BEHAV** (DepMap co-dependency
+retrieval), **GRAPH** (PPI/complex/regulon neighbour retrieval), **CAUSAL** (directed TRRUST+SIGNOR/CollecTRI tracer), **STRUCT** (complex
+co-member transfer — the `interface_sign` cooperative channel), **TIDE**. A greedy combiner learns non-negative weights on a validation split
+(maximising tide-removed specific recall@50), scored on held-out TEST over **all** scorable KOs (fixed denominator, so different coverage is
+comparable). 3 seeds.
+
+| | recall@50 | coverage |
+|---|---|---|
+| BEHAV (co-dep retrieval) | ~0.36 | 100% |
+| GRAPH (graph-neighbour) | ~0.35 | ~82% |
+| STRUCT (complex transfer) | ~0.37 | ~68% |
+| CAUSAL (directed tracer) | **~0.01** | ~27% |
+| TIDE | ~0.26 | 100% |
+| **FUSED (learned, all)** | **0.486 ± 0.015** | — |
+| best single / shuffle-mech / oracle | 0.363 / 0.196 / **0.622** | — |
+
+**Answer: giving the model everything lands at ~0.49 — the same ~0.5 ceiling; it does not break past it.** The fusion beats any single channel
+(+0.12) and the shuffle-mechanistic control (+0.29), so the channels do carry real KO-specific signal — but for two honest reasons it can't exceed
+the ceiling: **(1)** BEHAV, GRAPH and STRUCT are all *retrieval* (transfer related knockouts' responses); fusing them only buys complementary
+**coverage**, and every retrieval channel is bounded by the same **oracle (0.62)**. **(2)** The one channel that *isn't* retrieval — CAUSAL, the
+directed mechanistic tracer that could in principle exceed retrieval — is **essentially empty on the specific residue (~0.01)**, the same null
+`transformer_causal` found, now confirmed inside the full learned stack.
+
+So the ceiling is **not a feature-combination gap** a bigger multimodal model would close — it is a **retrieval / similarity-representation gap**:
+the knockout-specific signal exists only in the true held-out neighbour's own measured profile (why the oracle reaches 0.62), and no combination
+of the hints we hold reconstructs it, because those hints encode the *shared* response, not the *private* one. The lever remains a **new
+measurement** that physically contains the specific signal (the activity/nascent layer — e.g. Perturb-ATAC), not more hints over the same
+steady-state mRNA. Deterministic; behavioural base is co-dep retrieval so the absolute number is a lower bound on a full transformer, but the
+decisive comparisons (vs best-single, vs shuffle, vs oracle, and CAUSAL≈0) are base-independent. (`multimodal_stack.py`.)
