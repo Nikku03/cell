@@ -1,0 +1,31 @@
+{
+ "n_coop": 1464,
+ "n_comp": 969,
+ "resp_corr": {
+  "coop": [
+   0.2788
+  ],
+  "comp": [
+   0.115
+  ],
+  "random": [
+   0.0278
+  ]
+ },
+ "coop_vs_comp_gap": 0.1638,
+ "gap_shuffle_sigma": 16.04,
+ "comp_lt_random_p": 1.0,
+ "coop_gt_comp_p": 4.014327116304999e-70,
+ "codep": {
+  "coop": 0.1619,
+  "comp": 0.0514,
+  "random": 0.0104
+ },
+ "moves": {
+  "coop": 0.0326,
+  "comp": 0.0099
+ },
+ "competition_signal_detected": false,
+ "verdict": "INTERFACE-SIGN (interface_sign.py): the user's structural idea tested at the resolution real data allows -- use Interactome3D EXPERIMENTAL complexes to call whether two partners of a hub bind SIMULTANEOUSLY (share a PDB -> distinct sites, cooperative) or are MUTUALLY EXCLUSIVE (structurally resolved but never co-occur -> same site, competitive), then test the DIRECTIONAL prediction on measured perturbation coupling. 1464 cooperative and 969 candidate-competitive KO-partner pairs. mRNA response-correlation: cooperative +0.279 vs competitive +0.115 vs random +0.028. Cooperative pairs ARE more positively coupled than competitive (gap +0.164, 16.0 sigma over label-shuffle) -- but competitive pairs are NOT depleted below the random baseline (comp +0.115 vs random +0.028, p=1.0e+00) -- the competition-specific ANTI-coupling the hypothesis predicts is not detectable. The cooperative>competitive gap that exists is mostly the trivial obligate-complex co-movement (co-crystallised partners co-depend), not a competition signal. READING: structure cleanly separates simultaneous from exclusive binding, and the SIGN idea is biophysically right, but at the whole-cell mRNA readout the competitive (mutual-exclusivity) direction leaves little measurable trace -- consistent with the prior walls (nexus_wall: physical->regulatory two-hop at the random floor; competitive_codep: co-dependency competition null with the topology proxy). The cooperative (obligate-complex) direction is real but largely the trivial co-dependence of co-complex members. HONEST CAVEAT: 'never co-crystallised' conflates true competitors with not-yet-solved pairs; a residue-level interface-overlap call (Interactome3D per-structure interfaces / AF-Multimer) is the ideal the file server would not bulk-serve this session. Deterministic.",
+ "note": "INTERFACE-SIGN (interface_sign.py): the user's structural idea tested at the resolution real data allows -- use Interactome3D EXPERIMENTAL complexes to call whether two partners of a hub bind SIMULTANEOUSLY (share a PDB -> distinct sites, cooperative) or are MUTUALLY EXCLUSIVE (structurally resolved but never co-occur -> same site, competitive), then test the DIRECTIONAL prediction on measured perturbation coupling. 1464 cooperative and 969 candidate-competitive KO-partner pairs. mRNA response-correlation: cooperative +0.279 vs competitive +0.115 vs random +0.028. Cooperative pairs ARE more positively coupled than competitive (gap +0.164, 16.0 sigma over label-shuffle) -- but competitive pairs are NOT depleted below the random baseline (comp +0.115 vs random +0.028, p=1.0e+00) -- the competition-specific ANTI-coupling the hypothesis predicts is not detectable. The cooperative>competitive gap that exists is mostly the trivial obligate-complex co-movement (co-crystallised partners co-depend), not a competition signal. READING: structure cleanly separates simultaneous from exclusive binding, and the SIGN idea is biophysically right, but at the whole-cell mRNA readout the competitive (mutual-exclusivity) direction leaves little measurable trace -- consistent with the prior walls (nexus_wall: physical->regulatory two-hop at the random floor; competitive_codep: co-dependency competition null with the topology proxy). The cooperative (obligate-complex) direction is real but largely the trivial co-dependence of co-complex members. HONEST CAVEAT: 'never co-crystallised' conflates true competitors with not-yet-solved pairs; a residue-level interface-overlap call (Interactome3D per-structure interfaces / AF-Multimer) is the ideal the file server would not bulk-serve this session. Deterministic."
+}

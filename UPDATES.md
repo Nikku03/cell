@@ -7387,3 +7387,30 @@ activity*, independent of that TF's mRNA level. Compared it to our Perturb-seq m
 lives in the **activity** layer, and chromatin exposes it for the factors that shape accessibility. Honest caveats: chromVAR motifs are family-level
 (shared by related TFs, so this is binding-site-family activity, not single-protein proof); the screen covers ~36 K562 TFs, not the genome; and it's
 a different experiment from our Perturb-seq (matched at the level of "same TF knocked down in K562"). Deterministic. (`perturb_atac.py`, `extract_spatac.py`.)
+
+## `interface_sign` — can structure supply the activation/repression sign? (the user's PPI-ordering idea)
+
+The user's idea: if partner A must bind hub B before B can bind C, then A gates the B–C interaction — so *structure* could hand us the
+activation/repression **sign** that `hop_accountability` showed is missing (and mostly wrong) in curated databases. Tested at the resolution real
+data allows. Fetched **Interactome3D** (experimental human PDB complexes) and labelled every shared-hub partner pair of two knocked-out genes:
+**cooperative** if some single PDB holds hub B with A *and* C (they co-bind → distinct sites), **candidate-competitive** if B–A and B–C are each
+structurally resolved but **never co-occur** in a PDB (mutually exclusive → same site). Then tested the directional prediction on measured data.
+
+Result across **1464 cooperative + 969 competitive** KO-partner pairs — the structural label *does* carry coupling signal, but only half the idea
+survives:
+
+| readout | cooperative | competitive | random |
+|---|---|---|---|
+| mRNA response-corr | **+0.279** | +0.115 | +0.028 |
+| DepMap co-dependency | +0.162 | +0.051 | +0.010 |
+
+- **Cooperative works:** co-binding (obligate-complex) partners have strongly correlated knockout effects — **+16σ** over a label-shuffle. Structure
+  predicts that two proteins in one machine move together. (Real, though partly the trivial co-dependence of co-complex members.)
+- **The competition/sign direction fails:** competitive pairs are *not* anti-correlated — +0.115 is still **above** random (+0.028), depletion
+  p=1.0. The "remove A → frees B → enhances C → opposite of removing C" sign the hypothesis predicts leaves **no measurable mRNA trace.**
+
+**Reading:** structure cleanly separates simultaneous from mutually-exclusive binding, and the sign idea is biophysically sound, but at the
+whole-cell mRNA readout the competitive direction doesn't register — consistent with the prior walls (`nexus_wall`: physical→regulatory two-hop at
+the random floor; `competitive_codep`: co-dependency competition null). So structure gives us the *cooperative* wiring, not the regulatory sign.
+**Honest caveat:** "never co-crystallised" conflates true competitors with not-yet-solved pairs; the ideal — residue-level interface overlap
+(per-structure interfaces / AF-Multimer) — needs the structures the Interactome3D file server wouldn't bulk-serve this session. Deterministic. (`interface_sign.py`.)
