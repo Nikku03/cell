@@ -6870,3 +6870,29 @@ lands *below* self_only (feeding the KO alone). The curated literature PPI/compl
 similarity: they give each knockout a *distinctive* partner fingerprint the model cannot reconstruct from behavioural similarity alone.
 random (0.140) and self_only (0.362) bracket how much the neighbourhood matters. Deterministic. This closes the "make its own graph" thread:
 curated structure > self-made structure > no structure > noise. (`transformer_selfgraph.py`.)
+
+## `transformer_causal` — the directed causal tracer, given to the transformer: an explanatory null (`transformer_causal.py`)
+
+"buold it and give it to transformer." A deterministic **signed, directed** 1-2 hop tracer (TRRUST signed TF→target + 60k SIGNOR/CollecTRI
+causal edges, sign-composed with attenuation) → per-gene |net directed influence|, validated on the near-field then **fused into the v5
+retrieval encoder** (z-fusion, β tuned on validation regulators). 3 seeds, held-out K562:
+
+| measure (regulator KOs, n≈25) | value | reading |
+|---|---|---|
+| curated DIRECT 1-hop target response | **1.64× avg gene** (mean \|z\|) | directed causality IS real in the near-field (echoes pathway_ko_verify's 6× on strongest movers) |
+| tracer on tide-removed **specific** movers | **0.024 vs tide 0.218** (0.11×) | fails — below the tide floor |
+| fused into transformer (overall) | 0.461 → 0.461 (**+0.000**) | β tuned to 0 |
+| fused, regulator subset | 0.352 → 0.352 (**+0.000**) | adds nothing even where it should fire |
+
+**An explanatory null — the most informative one in the arc.** Done *right* (directed + signed + multi-hop, not v6's undirected binary
+channel), the directed causal channel still adds **exactly nothing** (β→0 on every seed). The tracer measurement explains *why*: a regulator's
+canonical direct targets **do** respond (1.64× the average gene), but those are the **generic/tide** movers — genes that move under many
+perturbations. Once the tide is removed to isolate the **knockout-specific** residue, the tracer scores *below* the null (0.024 vs 0.218),
+because the specific movers are exactly the **non-canonical, context-specific** genes no directed annotation names. So cause→effect is
+traceable for the *generic cascade* but not for the *specific residue the metric demands*. This confirms v6's null with the proper
+construction and pins the mechanism: annotations trace the generic causality; the specific response is unannotated context. Bounded by the
+~0.61 oracle. Deterministic. (`transformer_causal.py`.)
+
+**Where the whole "make its own network / trace cause-and-effect" thread lands:** curated structure beats self-made structure beats no
+structure (self-graph); directed near-field causality is real but is the tide, not the specific residue (causal). Both point the same way —
+the ceiling is the **data/readout** (context-specificity + no time axis + buffered 96 h snapshot), not the graph or the tracer.
