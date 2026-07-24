@@ -7364,3 +7364,26 @@ the silent intermediates are disproportionately essential/buffered (level defend
 in this particular knockout. What survives from `hop_accountability` is narrower and still holds: *from mRNA abundance alone we cannot trace the
 specific response as a chain of confirmed state-changes* — precisely because backups, buffering, and activity-level effects are invisible to this
 readout. The fix is a readout that sees **activity** (phospho / degron / nascent RNA), **not a better wiring diagram**. Deterministic. (`backup_pathway.py`.)
+
+## `perturb_atac` — measuring ACTIVITY, not abundance: chromatin sees what mRNA misses
+
+Acting on the user's "so how do we measure the activity then?" — fetched **Spear-ATAC** (GSE168851; K562 CRISPRi + single-cell ATAC, 36 TF
+knockdowns incl. GATA1/NRF1/KLF1/NFE2) and used **chromVAR motif activity** (how open a TF's binding sites are) as a direct read of *regulatory
+activity*, independent of that TF's mRNA level. Compared it to our Perturb-seq mRNA of the same knockdowns. (`extract_spatac.py` converts the R
+`SummarizedExperiment` → npz; `perturb_atac.py` runs the tests.)
+
+- **TEST A (validation, with an honest limit):** knocking a TF down drops its **own** motif activity for **4/25** TFs — and the 4 are exactly the
+  **sequence-specific lineage TFs** whose activity *is* chromatin accessibility: **GATA1 −2.35z, NFE2 −1.13z, KLF1 −0.89z, FOSL1 −0.84z**. General/
+  basal factors (TBP, POLR1D, MYC/MAX, CTCF, YY1) show ~nothing. So chromatin-activity is a **real but selective** readout — it sees accessibility-
+  shaping factors, not the whole proteome.
+- **TEST B (the payoff):** in the GATA1 knockdown, of 227 TFs measured in both layers, **67 are chromatin-ACTIVE while mRNA-SILENT.** The erythroid
+  master complex — **GATA1, TAL1, GATA2** — loses ~**−2.4z** of binding-site activity, and myeloid factors **RUNX1/JUNB/JUND** *gain* activity, all
+  while their mRNA sat perfectly flat (z≈0). This is the buffering the user predicted: abundance defended, activity changed.
+- **TEST C:** GATA1's mRNA-silent chain intermediates — GATA2, TAL1, RUNX1, NFE2, GFI1B, STAT1, KLF1, WT1 — are nearly all **chromatin-active**
+  despite flat mRNA. The "silent intermediates" from `hop_accountability` were active after all. **MYC** (the poster child of the "broken"
+  GATA1→MYC→LTB chain): mRNA flat, MYC-family motif activity Δ=**−0.25z** (modest but real) — it did change.
+
+**Conclusion:** an independent modality confirms it directly — *silent in mRNA ≠ untouched*. The regulatory signal the mRNA-only ceiling can't see
+lives in the **activity** layer, and chromatin exposes it for the factors that shape accessibility. Honest caveats: chromVAR motifs are family-level
+(shared by related TFs, so this is binding-site-family activity, not single-protein proof); the screen covers ~36 K562 TFs, not the genome; and it's
+a different experiment from our Perturb-seq (matched at the level of "same TF knocked down in K562"). Deterministic. (`perturb_atac.py`, `extract_spatac.py`.)
