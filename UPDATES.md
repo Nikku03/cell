@@ -6896,3 +6896,21 @@ construction and pins the mechanism: annotations trace the generic causality; th
 **Where the whole "make its own network / trace cause-and-effect" thread lands:** curated structure beats self-made structure beats no
 structure (self-graph); directed near-field causality is real but is the tide, not the specific residue (causal). Both point the same way —
 the ceiling is the **data/readout** (context-specificity + no time axis + buffered 96 h snapshot), not the graph or the tracer.
+
+## `ceiling_cartography` — is any door past 0.62 open? No. Training-free proof the ceiling is DATA. (`ceiling_cartography.py`)
+
+Before building a heavier v7, a training-free test of whether *any* structurally-distinct path can exceed the ~0.62 retrieval oracle. Three
+doors, each with a falsifying control. 3 splits, held-out K562:
+
+| door | measure | result |
+|---|---|---|
+| **1 · reachability** (better neighbour selection) | best-input retrieval **0.512** vs train-oracle **0.597** = 86% reachable; encoder-headroom over v5 **+0.012** | **no clean algo headroom** — inputs already reach 86% of the reachable ceiling; a better encoder buys ~0.01 |
+| **2 · generation** (emit a mover no neighbour carries) | NMF program-basis ceiling **0.679 > 0.62**, KO-specific (loading-shuffle collapses to 0.130) — *but* inputs predict the true loadings at only **0.246** (< v5 ~0.50) | **open-in-principle, shut-in-practice** — the higher ceiling is real but unrealizable; a decoder would score *below* current retrieval |
+| **3 · cross-line** (use the KO's own other-line measurement) | same-KO cross-line transfer **0.183** vs same-subset K562 oracle **0.607**; below the 0.25 marginal floor; wrong-KO control 0.034 | **shut** — the K562-specific residue does **not** transfer across lines |
+
+**Verdict: all three doors shut → 0.62 is confirmed a DATA ceiling.** The knockout-specific residue is idiosyncratic (unreachable from
+inputs beyond 86%), not low-rank-compositional in a way inputs can predict (Door 2's loadings are unpredictable), and non-transferring across
+cell lines (Door 3 below the tide floor). This is the training-free proof behind the whole v2→v6 wash: no heavier *retrieval or generation*
+model breaks 0.62, because the signal isn't there to be modelled. The only honest levers left are (a) a **modest** encoder bump chasing the
++0.012 reachability headroom, or (b) a **calibrated selective-prediction** wrapper that reports which predictions to trust. Deterministic; no
+training. (`ceiling_cartography.py`.)
