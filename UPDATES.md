@@ -6935,3 +6935,38 @@ curated partners* — which-connects-to-which carries nothing the set-transforme
 partner **set** already carries the reproducible signal, and the ceiling is the **data**, not the graph representation. The one confirmed
 graph win in the whole arc remains the partner *set* itself (real-vs-random partners +0.335); the *topology within* that set is latent in the
 node features. Deterministic. (`transformer_graphnet.py`.)
+## `error_localization` — where the error lives, and the missed signal is REAL (`error_localization.py`)
+
+Error analysis to localise the ~half of specific movers the retrieval model misses, then the decisive test of whether the missed part is
+signal or noise (which decides whether better DATA could ever help).
+
+**(A) The pattern is universal (K562/RPE1/HepG2/Jurkat).** Recall is set by mover **commonness**, not strength:
+
+| axis | recall |
+|---|---|
+| PRIVATE movers (gene moves in <0.5% of KOs — the single-KO response) | **~0.03** |
+| shared movers (moves in >2% of KOs — near the tide edge) | **~0.49** |
+| weak (|z| 1–1.5) vs strong (|z| >1.5) | 0.24 vs 0.38 (magnitude matters far less) |
+
+And the false positives are commonly-moving genes (move in ~2% of KOs vs 0.2% background) — the model **defaults to the usual suspects**
+when the KO-specific signal isn't retrievable. So it gets the *shared, retrievable* response and misses the *private, single-KO* response —
+exactly the tide-removed specific signal the metric rewards.
+
+**(B) DECISIVE — the missed private movers are REAL biology, not noise.** With no within-line replicates, the best independent measurement is
+the *same KO in another cell line*. Cross-line reproducibility rises monotonically with |z|, and even the rarest private movers reproduce far
+above chance:
+
+| K562 mover |z| | reproduces in another line's same KO | vs base 0.8% | enrichment |
+|---|---|---|---|
+| 1.0–1.5 | 11.0% | | **13.3×** |
+| 1.5–2.0 | 15.0% | | 17.4× |
+| 2.0–3.0 | 18.6% | | 23.0× |
+| 3.0+ | 26.2% | | 31.8× |
+| **rare PRIVATE (freq<0.5%, recall~0.03)** | **5.1%** | | **6.2×** (n=13,945) |
+
+**Conclusion — this changes the diagnosis.** The wall is *not* that the target is noise: the private response the model can't reach is
+**genuine, reproducible biology** (6.2× cross-line for even the rarest movers; monotone in |z|). It's unreachable by *retrieval* because no
+neighbour KO carries it, and it sits near the single-measurement noise floor. So the one **data** lever that would actually move the 0.62
+ceiling is **within-line replicates** — averaging up the weak-but-real private response and separating real cell-specific signal from noise —
+**not** more KOs, more cell lines, or a better model (all of which the arc already showed wash). This is the first affirmative, measured
+statement of *what data would help and why*. Deterministic. (`error_localization.py`.)
