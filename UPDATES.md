@@ -7273,3 +7273,26 @@ that's generic, not raw connectivity. **Reading:** the shared-dependency mechani
 reframing what the tide *is*, but the knockout-SPECIFIC residue — even for utility hubs — stays the idiosyncratic part no shared-function edge
 names. Consistent with the whole arc: the generic response is mechanistic and shared; the specific response is private and uncatalogued.
 Deterministic. (`shared_dependency.py`.)
+
+## `functional_category` — are the unexplained movers the cell's machinery (tRNA/pol/transporter/enzyme/coenzyme)? Mostly no — only translation (`functional_category.py`)
+
+The zoom-out: maybe the specific movers aren't random but are functional MACHINERY, lettable by which machine they belong to. Enrichment of the
+14,551 pooled K562 tide-removed specific movers across machinery categories (symbol-family sets + metab_reactions enzymes):
+
+| category | % of genome | % of specific movers | enrichment |
+|---|---|---|---|
+| **ribosome / translation** | 3.1% | 14.0% | **4.5×** |
+| **coenzyme biosynthesis** | 0.3% | 1.0% | 3.6× |
+| metabolic enzyme | 18.3% | 17.9% | **0.98× (chance)** |
+| transporter / channel | 2.7% | 2.9% | 1.08× |
+| RNA polymerase / transcription | 1.6% | 1.5% | 0.91× |
+| aminoacyl-tRNA / import / nuclear-transport / DNA-pol | — | — | 0.2–0.6× (depleted) |
+
+**Honest answer: mostly no.** Of the 10 machinery categories, only **2** are genuinely enriched — **ribosome/translation (4.5×)** and coenzyme
+biosynthesis (3.6×, tiny). The big ones the hypothesis named — **metabolic enzymes (0.98×), transporters (1.08×), polymerase (0.91×)** — sit at
+**background**: they're 18%/3%/2% of the genome and appear among movers at exactly their chance rate. The naive "35% fall in some machine" is an
+artifact of the huge non-enriched metabolic-enzyme category; only **~15%** sit in a *genuinely-enriched* machine, and that is almost entirely the
+**translation module**. KO-to-KO category-profile correlation is low (+0.15), so what enrichment exists is somewhat knockout-specific.
+**Reading:** the idea labels a real but *narrow* slice — the translation-machinery response (a known growth/stress program) accounts for ~1 in 7
+specific movers — but the broad tRNA/pol/transporter/catalyst/coenzyme machinery hypothesis does not hold; those move at chance. The specific
+residue is not, in general, "the cell's machines" — it stays idiosyncratic. Deterministic. (`functional_category.py`.)
