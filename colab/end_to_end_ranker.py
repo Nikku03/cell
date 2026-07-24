@@ -119,16 +119,24 @@ def run(SEED, H, have, hidx, Fg, tok_idx, tok_role, tok_mask, X):
         model.load_state_dict(bstate)
     sc_test, _ = mean_recall(H, test, predict, 50)
 
-    # retrieval + references on the SAME split for a fair comparison
+    # retrieval baselines on the SAME split. CRUCIAL: a MATCHED-INPUT baseline (retrieval over the SAME context features the learned ranker
+    # sees), else 'learned beats retrieval' is confounded by the learned ranker simply having richer inputs than a DepMap-only kNN.
     Xn = X / (np.linalg.norm(X, axis=1, keepdims=True) + 1e-9)
+    CP = np.zeros((len(have), Fg.shape[1]), np.float32)
+    for r in range(len(have)):
+        m = tok_mask[r] > 0.5; CP[r] = Fg[tok_idx[r][m]].mean(0)          # context-pooled features (== the learned encoder's inputs)
+    CPn = CP / (np.linalg.norm(CP, axis=1, keepdims=True) + 1e-9)
     tr_rows = np.array([hidx[k] for k in tr_all if k not in val_set])
     Ymag = np.stack([H.A[H.ki[k]] for k in have])
-    def retr(ko):
-        i = hidx[ko]; sim = Xn[tr_rows] @ Xn[i]; return Ymag[tr_rows[np.argsort(-sim)[:10]]].mean(0)
-    sc_retr, _ = mean_recall(H, test, retr, 50)
+    def retr_of(R):
+        def f(ko):
+            i = hidx[ko]; sim = R[tr_rows] @ R[i]; return Ymag[tr_rows[np.argsort(-sim)[:10]]].mean(0)
+        return f
+    sc_retr, _ = mean_recall(H, test, retr_of(Xn), 50)                    # DepMap-only kNN (weak-input baseline)
+    sc_retr_ctx, _ = mean_recall(H, test, retr_of(CPn), 50)              # MATCHED-input retrieval (the fair baseline)
     sc_tide, _ = mean_recall(H, test, lambda ko: H.mover_freq, 50)
     sc_orc, _ = mean_recall(H, test, lambda ko: H._references(ko, 50)["ORACLE*"], 50)
-    return {"learned": sc_test, "retrieval": sc_retr, "tide": sc_tide, "oracle": sc_orc}
+    return {"learned": sc_test, "retrieval_depmap": sc_retr, "retrieval_matched": sc_retr_ctx, "tide": sc_tide, "oracle": sc_orc}
 
 
 def main():
@@ -136,36 +144,43 @@ def main():
     have, X, Y = build_xy(H); hidx = {k: i for i, k in enumerate(have)}
     Fg, tok_idx, tok_role, tok_mask = build_context(H, have)
     seeds = [0] if SMOKE else [0, 1, 2]
-    agg = {k: [] for k in ["learned", "retrieval", "tide", "oracle"]}
+    agg = {k: [] for k in ["learned", "retrieval_depmap", "retrieval_matched", "tide", "oracle"]}
     for s in seeds:
         print(f"\n{'='*56}\n[SPLIT SEED {s}]{'  (SMOKE)' if SMOKE else ''}")
         r = run(s, H, have, hidx, Fg, tok_idx, tok_role, tok_mask, X)
         for k in agg:
             agg[k].append(r[k])
-        print(f"    LEARNED end-to-end ranker  {r['learned']:.3f}")
-        print(f"    retrieval (template)       {r['retrieval']:.3f}")
+        print(f"    LEARNED end-to-end ranker            {r['learned']:.3f}")
+        print(f"    retrieval, DepMap-only (weak input)  {r['retrieval_depmap']:.3f}")
+        print(f"    retrieval, MATCHED context inputs    {r['retrieval_matched']:.3f}   <- the fair baseline")
         print(f"    tide {r['tide']:.3f}   oracle {r['oracle']:.3f}")
     A = {k: (float(np.mean(v)), float(np.std(v))) for k, v in agg.items()}
-    d = A["learned"][0] - A["retrieval"][0]; d_orc = A["learned"][0] - A["oracle"][0]
+    d_weak = A["learned"][0] - A["retrieval_depmap"][0]
+    d_fair = A["learned"][0] - A["retrieval_matched"][0]      # THE honest comparison: same inputs, learned objective vs retrieval
+    d_orc = A["learned"][0] - A["oracle"][0]
     print(f"\n{'='*56}\nSTABILITY across {len(seeds)} split(s):")
-    for k in ["learned", "retrieval", "tide", "oracle"]:
-        print(f"    {k:12s} {A[k][0]:.3f} +/- {A[k][1]:.3f}")
-    print(f"    learned - retrieval {d:+.3f}   learned - oracle {d_orc:+.3f}")
+    for k in ["learned", "retrieval_depmap", "retrieval_matched", "tide", "oracle"]:
+        print(f"    {k:20s} {A[k][0]:.3f} +/- {A[k][1]:.3f}")
+    print(f"    learned - retrieval(DepMap-only) {d_weak:+.3f}   learned - retrieval(MATCHED inputs) {d_fair:+.3f}   learned - oracle {d_orc:+.3f}")
     verdict = (
         f"END-TO-END LEARNED RANKER (end_to_end_ranker.py): the AlphaFold challenge -- does a real learned FUNCTION (encoder(KO).gene-embedding, "
-        f"sampled-softmax ranking loss), not retrieval, beat the retrieval ceiling on the same data? {len(seeds)} splits, held-out K562. "
-        f"Learned {A['learned'][0]:.3f} vs retrieval {A['retrieval'][0]:.3f} ({d:+.3f}) vs oracle {A['oracle'][0]:.3f} (tide {A['tide'][0]:.3f}). "
-        + ("The learned function BEATS retrieval -- the wall was (at least partly) ALGORITHMIC; the data-ceiling claim was premature and the "
-           "proper training objective extracts signal retrieval could not." if d > 0.02 else
-           "The learned end-to-end ranker does NOT beat retrieval on these inputs -- built with the proper ranking objective (not neural_ko's "
-           "collapse-prone MSE), a non-retrieval learned function still lands at the retrieval level. Combined with the measured 74% cross-line "
-           "non-reproducing target, this is now EARNED evidence (strong extractor, not a weak probe) that the residual is data-limited on the "
-           "current readout -- not proof no algorithm ever helps, but the AlphaFold-style end-to-end leap did not materialise here.")
-        + f" (learned vs oracle {d_orc:+.3f}.) Deterministic.")
+        f"sampled-softmax ranking loss), not retrieval, beat retrieval on the same data? {len(seeds)} splits, held-out K562. "
+        f"Learned {A['learned'][0]:.3f}. Against a DepMap-only kNN it appears to WIN ({d_weak:+.3f}) -- but that is a CONFOUND: the learned "
+        f"ranker uses richer context features. Against retrieval on the SAME context inputs (the fair baseline) it scores {d_fair:+.3f} "
+        f"(learned {A['learned'][0]:.3f} vs matched retrieval {A['retrieval_matched'][0]:.3f}); oracle {A['oracle'][0]:.3f}, tide {A['tide'][0]:.3f}. "
+        + ("Even the fair comparison shows the learned function BEATS matched retrieval -- the wall is (partly) ALGORITHMIC." if d_fair > 0.02 else
+           "So on a FAIR (matched-input) comparison the learned end-to-end function does NOT beat retrieval -- retrieval on the same features is "
+           "as good or better. This is the honest test the AlphaFold challenge demanded, run with a real strong extractor (proper ranking loss, "
+           "not neural_ko's collapse-prone MSE): a non-retrieval learned function still does not exceed retrieval here. IMPORTANT CORRECTION "
+           "though -- the matched retrieval (~0.47) is well above the DepMap-kNN (~0.37) used as a reference in some earlier probes, so those "
+           "weak probes DID understate the reachable level; the fair ceiling is ~0.47-0.49, near v5 and climbing toward the 0.61 oracle. The leap "
+           "past retrieval did not materialise, but the reachable bar is higher than the weakest baselines implied.")
+        + " Deterministic.")
     print(f"\nVERDICT: {verdict}")
     if not SMOKE:
-        json.dump({k: [round(A[k][0], 4), round(A[k][1], 4)] for k in A} | {"learned_minus_retrieval": round(d, 4),
-                  "verdict": verdict, "note": verdict}, open(OUT / "end_to_end_ranker.json", "w"), indent=1)
+        json.dump({k: [round(A[k][0], 4), round(A[k][1], 4)] for k in A} |
+                  {"learned_minus_retrieval_matched": round(d_fair, 4), "learned_minus_retrieval_depmap": round(d_weak, 4),
+                   "verdict": verdict, "note": verdict}, open(OUT / "end_to_end_ranker.json", "w"), indent=1)
         print("\n  -> outputs/orphan/end_to_end_ranker.json")
     else:
         print("\n[SMOKE OK]")

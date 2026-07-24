@@ -7068,3 +7068,31 @@ TF-knockout-*specific* residue is the **non-canonical** secondary/compensatory/c
 encodes. And because a TF hits many genes, its response is the **broadest and most idiosyncratic** — exactly the hardest kind (error_localization:
 recall falls with breadth). So combining + type-routing is sound in principle but adds nothing on this data — the same wall from a new angle:
 **the network holds generic wiring, and the knockout-specific response is not in it.** Deterministic. (`mechanistic_hybrid.py`.)
+
+## `end_to_end_ranker` — the AlphaFold challenge, tested honestly: a learned function does NOT beat retrieval on fair footing (`end_to_end_ranker.py`)
+
+Prompted by the fair objection that "it's a data problem" is too easy and weak probes underestimate (AF1 70% → AF2 90% on the *same* data). So
+we stopped asserting and built the strong extractor everything prior lacked: a real end-to-end **learned function** — a scorer s(KO,gene) =
+encoder(KO)·gene-embedding trained with a **sampled-softmax ranking loss** (not retrieval, not `neural_ko`'s collapse-prone MSE). 3 splits,
+held-out K562:
+
+| method (same splits) | specific recall@50 |
+|---|---|
+| tide-null | 0.249 |
+| retrieval, DepMap-only kNN (weak-input baseline) | 0.370 |
+| **learned end-to-end ranker** | **0.410** |
+| **retrieval, MATCHED context inputs** (fair baseline) | **0.471** |
+| oracle | 0.607 |
+
+**The honest result — and a caught overclaim.** Against the DepMap-only kNN the learned ranker "wins" +0.040, and the first auto-verdict said
+"the wall was algorithmic." That was a **confound**: the learned ranker uses richer context features than a DepMap-only kNN. Give retrieval the
+**same** inputs and retrieval wins, **0.471 vs 0.410 (−0.061)**. So a genuine end-to-end learned function, tested fairly, does **not** exceed
+retrieval here — the AlphaFold-style leap did not materialise, now shown with a strong extractor rather than a weak probe.
+
+**But the objection was partly right, and this corrects the record:** the *matched* retrieval (~0.47) sits well above the DepMap-kNN (~0.37)
+that was used as the retrieval reference in some earlier probes — so those weak probes **did** understate the reachable level. The fair ceiling is
+~0.47–0.49 (near v5), climbing toward the 0.61 oracle. Synthesis: it is **both** — real representational headroom that weak baselines
+under-credited, **and** a measured hard-data floor (74% of the target does not reproduce cross-line, so that part is not a function of any input,
+unlike protein folding where the answer is in the sequence). The untested escalation that would give the algorithmic argument its strongest shot
+is the **"MSA analog"**: a rich cell-state input (baseline transcriptome / chromatin / responses to other perturbations) — AF2's leap came mostly
+from exploiting the MSA, and our DepMap+network inputs may be the analog of a single sequence with no MSA. Deterministic. (`end_to_end_ranker.py`.)
