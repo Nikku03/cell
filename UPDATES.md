@@ -7163,3 +7163,22 @@ are canonical and sparse. The complex-assembly-order idea is the right KIND of d
 scale. **Convergence:** the mechanism side (direction/time-order restores specificity) and the data side (a denoised, trajectory-resolved readout)
 meet at the same answer — a **time-course readout** would let you order genes by *when* they move and thereby infer the directed cascade
 empirically, densifying the directed interactome the arrows-on-edges idea needs. Deterministic. (`directed_chain.py`.)
+
+## `temporal_order` — is time-order = arrow direction? On real time-course KO data: right idea, wrong timescale (`temporal_order.py`)
+
+The user's idea tested directly on real time-course knockout data (RENGE / GSE213069, 23 pluripotency-TF CRISPR KOs, day2..day5), with the
+directed layer = SIGNOR+TRRUST:
+
+| test | result | reading |
+|---|---|---|
+| **TEST 1** — on directed edge A→B (both move), does A move *before* B? | **37.3%** aligned vs **33.6%** shuffled-timing (n=150 pairs) | time-order does **not** recover the arrow at day resolution — barely above the shuffle baseline |
+| **TEST 2** — seed day2 movers, propagate 2 directed hops, predict the NEW day5 movers | **3.99×** over base (precision 0.65% vs 0.08%) | early movers → late cascade carries a **faint but real** forward signal |
+
+**Honest, mixed verdict.** TEST 2's 4× enrichment says forward directed propagation from early movers does anticipate the developing cascade —
+the mechanism/direction idea has a flicker of signal. But TEST 1 says day-scale timing does **not** order genes within the cascade: at day2 a
+CRISPR-KO's protein has been depleting for *days*, so the cascade is already mixed and "which gene moved first" is lost. This is exactly the
+caveat the prior `renge_timecourse` verdict flagged, now tested on the *ordering* itself. **Conclusion: the idea (time-order = direction) is
+sound and the data TYPE is right, but the RESOLUTION is wrong** — day-scale CRISPR-KO is too coarse. The decisive experiment is a **fast**
+readout that timestamps transcription directly: **PerturbSci-Kinetics** (4sU nascent-RNA labelling, Nat. Biotechnol. 2023) or a **dTAG degron**
+hours-scale course — which separate newly-made from pre-existing transcripts and expose the ordering the day-scale endpoint buries. That 4sU
+nascent dataset is the concrete next data source to fetch. Deterministic. (`temporal_order.py`.)
