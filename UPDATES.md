@@ -6970,3 +6970,27 @@ neighbour KO carries it, and it sits near the single-measurement noise floor. So
 ceiling is **within-line replicates** — averaging up the weak-but-real private response and separating real cell-specific signal from noise —
 **not** more KOs, more cell lines, or a better model (all of which the arc already showed wash). This is the first affirmative, measured
 statement of *what data would help and why*. Deterministic. (`error_localization.py`.)
+## `denoise_test` — would replicates raise the ceiling? Mostly yes: the target is noise-limited (`denoise_test.py`)
+
+Follow-on to `error_localization` (the missed movers are real, 6.2× cross-line reproducible). This asks whether **denoising the target** — what
+within-line replicates buy — would raise the achievable ceiling, by scoring only against the cross-line CONFIRMED-REAL part of each K562
+response. 111 paired held-out K562 KOs (measured in ≥1 other line):
+
+| target | MODEL recall@50 | ORACLE recall@50 |
+|---|---|---|
+| full (all specific movers) | 0.40 | 0.65 |
+| **repro** (denoised — confirmed real in ≥1 other line) | **0.53** (+0.12) | **0.75** (+0.10) |
+
+- Only **26%** of a typical K562 response is cross-line confirmed-real; the other **74% is non-reproducing** (measurement noise OR genuinely
+  cell-specific — cross-line can't separate these; only *within-line* replicates can).
+- The model's **misses are 79% non-reproducing** and its hits are enriched for confirmed-real (35% vs 26% base) — i.e., **it already extracts
+  the reproducible signal and mostly misses the unconfirmable part.**
+- Consensus-target oracle 0.57 < single-line 0.66 — averaging *across lines* removes the cell-specific component (and shrinks magnitudes), so
+  cross-line pooling is **not** a clean denoiser; only same-line replicates are.
+
+**Reading.** The 0.62 ceiling is set largely by **target noise**: restricting to the confirmed-real subset lifts both the model (+0.12) and the
+oracle (+0.10), and the errors concentrate in the non-reproducing part. So **within-line replicates are a worthwhile data lever** — they would
+sharpen the weak-but-real private movers, and separate the 74% non-reproducing into "noise (drop it)" vs "cell-specific-real (predict it)",
+which cross-line data alone cannot. The unresolved question replicates would answer: how much of that 74% is recoverable cell-specific biology
+vs unrecoverable noise. (Raw counts are not in-repo; a proper multi-guide re-aggregation would require fetching the raw Perturb-seq.)
+Deterministic. (`denoise_test.py`.)
