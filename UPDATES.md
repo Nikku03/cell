@@ -7474,3 +7474,34 @@ knockdowns vs 1400 mRNA — no general model trainable) and **readout narrowness
 metabolic/structural majority). **Both the target-pivot and the continuous-field (NEXUS) idea converge on the same lever: a scaled activity-layer
 measurement (genome-wide Perturb-ATAC / nascent / phospho) — which does not yet exist. That measurement is the asset; without it the pivot can't be
 trained and the field can't be validated.** Deterministic; small n, stated. (`activity_target.py`.)
+
+## `capability_card` — the plain answer: what can the model do, and with what accuracy?
+
+Not one number — a **precision/coverage curve**, because the honest capability is *calibrated triage*, not *universal predictor*. Held-out K562,
+226 KO-evaluations, 2 seeds. Input: a gene never seen in training. Output: a ranked list of genes predicted to change.
+
+**A) Full coverage.** A typical held-out knockout has a median of **20** specific movers to find.
+
+| k | precision@k | recall@k | in plain terms |
+|---|---|---|---|
+| 10 | **46.7%** | 21.5% | ~5 of 10 named genes are real specific movers |
+| 50 | **27.0%** | **48.9%** | ~14 of 50 named genes are real |
+| 100 | 18.6% | 60.1% | ~19 of 100 named genes are real |
+
+vs TIDE-null recall@50 **25.2%**, ORACLE* **62.5%**.
+
+**B) Selective mode** — confidence = retrieval margin × neighbour **agreement** (no truth leakage). Letting it abstain is the single biggest
+accuracy lever: **25% coverage → 62.1% recall / 34.3% precision**, vs 48.9% / 27.0% at full coverage. *(Methodological note: agreement is the
+load-bearing half. An earlier draft of this card used margin alone and the curve was flat — 51% vs 49%. "Are my neighbours near?" predicts almost
+nothing; "**do my neighbours agree?**" is what predicts accuracy. This reproduces `calibrate_selective`'s finding on a different base model.)*
+
+**C) Per-gene confidence** — precision among top-50 predictions by neighbour consensus: ≥0.2 → **52.8%**, ≥0.3 → **67.0%**, ≥0.7 → **79.2%**
+(n=24). This is the deployable shortlist you would actually take to the bench.
+
+**D) Idiosyncrasy bound** — copying the single most-similar *real* knockout out of 1400 (peeking) recovers only **63.0%** of a KO's specific
+movers. So **~37% of the specific response is shared with NO other knockout in the panel.** That is a property of the biology + measurement noise,
+not of the architecture — and it is the tightest statement of why retrieval-class models cap where they do.
+
+**Two structural limits:** (1) the model scores **magnitude only** — it does not predict up vs down, and `hop_accountability` showed curated
+direction is unreliable in this context, so **direction is an unsolved dimension, not a tuning gap**; (2) the idiosyncrasy bound above.
+Deterministic. (`capability_card.py`.)
