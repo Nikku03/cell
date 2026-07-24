@@ -7182,3 +7182,26 @@ sound and the data TYPE is right, but the RESOLUTION is wrong** — day-scale CR
 readout that timestamps transcription directly: **PerturbSci-Kinetics** (4sU nascent-RNA labelling, Nat. Biotechnol. 2023) or a **dTAG degron**
 hours-scale course — which separate newly-made from pre-existing transcripts and expose the ordering the day-scale endpoint buries. That 4sU
 nascent dataset is the concrete next data source to fetch. Deterministic. (`temporal_order.py`.)
+
+## `perturbsci_kinetics` — the fast/nascent readout, fetched and tested: doesn't out-resolve the endpoint, because the perturbation is chronic (`perturbsci_kinetics.py`)
+
+The one un-run experiment: fetched **PerturbSci-Kinetics** (GSE218566, HEK293 CRISPRi, 197 knockdowns, ~98k cells) — real 4sU **nascent** vs
+**whole/total** RNA — to test whether a *fast/direct* readout recovers the direction a steady-state endpoint buries.
+
+| test | nascent | whole |
+|---|---|---|
+| self-knockdown logFC | −0.341 | −0.334 (near-equal) |
+| direct-target enrichment, fixed threshold | 1.94× | 27.0× |
+| **direct-target enrichment, depth-matched top-100** | **1.92×** | **22.1×** |
+| movers per KO (fixed threshold) | 1,138 | 125 |
+
+**Honest result: the nascent readout does NOT out-resolve the total here** — even matched for depth (top-100 by |logFC|), nascent (1.92×) is far
+below whole (22.1×) on direct-target enrichment. Two things are going on, and both are informative: (1) the fixed-threshold "nascent 1.9× vs
+whole 27×" is partly a **depth confound** (nascent is ~18% of counts → 1,138 noisy movers/KO vs 125 → signal drowned at a fixed cutoff), which
+the top-100 test removes — but the gap survives; (2) the deeper reason is that **CRISPRi is CHRONIC** — self-knockdown is equal in nascent and
+whole (−0.34 vs −0.33), meaning both pools are already at repressed **steady state**, so "nascent" here captures the current transcription rate of
+a *fully-developed* cascade, not an acute early window. **The thesis is not refuted, but neither available time-course dataset can confirm it, for
+opposite reasons:** RENGE has an acute-ish KO but a **day-scale** readout (too slow); PerturbSci-Kinetics has a **fast nascent** readout but a
+**chronic** CRISPRi perturbation (already steady state). The decisive experiment — **acute fast degron (dTAG, protein gone in ~1–2 h) + dense
+hours-scale + deep nascent capture** — combines fast perturbation and fast readout, and does not exist as clean public data. That is the precise,
+measured statement of the one experiment that could still move the wall. (`perturbsci_kinetics.py`, GSE218566.)
