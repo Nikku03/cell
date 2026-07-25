@@ -8119,3 +8119,64 @@ baseline on held-out knockouts.
 **But state the information difference honestly:** the graph model had only *topology*, whereas this uses the **measured response profiles** of
 the test source's neighbours. That is strictly more information, so it is not a like-for-like win over the graph — it is evidence that measured
 neighbour responses carry what graph topology does not.
+
+## Program cold start: predicting a knockout nobody has ever performed (colab/program_coldstart.py)
+
+`program_factorization` beat the no-network baseline (0.350 vs 0.114) but only by averaging the **measured response profiles of the test gene's
+neighbours**. That is more information than a graph carries, it fails entirely for a gene whose partners were never perturbed, and it bakes in the
+assumption that effects stay local — which the programs themselves contradict (component 1 is translation, and it moves ribosomal transcripts
+cell-wide with no spatial relationship to the ribosome). This test removes the neighbour crutch completely:
+
+    response(s)  ~=  mu  +  P_hat(s) @ G      G, mu fitted on TRAIN responses only
+                            ^-- from the gene's OWN annotation + start state
+
+Start state is real: `control_expr` (the gene's unperturbed level in K562 control cells) and control-cell mean/sd/CV/Gini from the Replogle GWPS
+file, covering 336/337 sources. An earlier draft used mean |z| across knockouts as an "expression proxy" — that is a perturbation quantity and
+would have contradicted the premise of the test; it was replaced before the first reported run.
+
+### Result — 326 held-out sources, 3 seeds x 5 splits, mean recall@50 per source
+
+| model / reference | recall@50 | across-seed spread |
+|---|---|---|
+| annotation + complex identity | **0.348** | 0.332 / 0.339 / 0.374 |
+| gene-intrinsic only (no complex) | 0.249 | ±0.012 |
+| no complex, no DepMap (never perturbed by any assay) | 0.252 | ±0.012 |
+| [ref] 1-NN annotation retrieval | 0.291 | ±0.017 |
+| [ref] tide-null (no model at all) | 0.129 | ±0.006 |
+| [ref] mean response only (mu, same for every gene) | 0.073 | ±0.002 |
+| [ctrl] **prediction scored against a DIFFERENT source** | **0.080** | ±0.005 |
+| [ref] random | 0.007 | ±0.001 |
+
+**The mismatched-source control is what makes this real.** Each source's prediction was scored against a different held-out source's truth, keeping
+the truth set and recall denominator fixed and swapping only the prediction. A model that had merely learned "which non-tide genes tend to move"
+would lose nothing; this one collapses 0.348 → 0.080 (paired p=2.6e-38). The predictions are specific to the knockout in question.
+
+Secondary controls: +0.270 over mu-only (p=6.6e-38, so the content is gene-specific, not the shared stress response), +0.214 over the tide-null
+(p=4.8e-28), +0.055 over 1-NN annotation retrieval (p=2.5e-09).
+
+### What this does and does not claim
+
+- Complex identity carries a large share: 0.348 with, 0.249 without (p=8.5e-20). No partner's *measured profile* is read at prediction time, but the
+  regressor learned each complex's loadings from that complex's **train members** — so complex membership is a curated partner relation used through
+  supervision. **The honest partner-free number is 0.249.** It still clears the tide-null by +0.117 (p=1.0e-14).
+- Dropping DepMap essentiality and dependency fraction as well — those are knockout measurements of the test gene, viability rather than
+  transcriptome, but perturbations — changes nothing: 0.252. So the result does not depend on the gene having been knocked out before.
+- 1-NN annotation retrieval reaches 0.291 on its own. Simply copying the measured profile of the most annotation-similar train gene gets most of the
+  way; the program decomposition is worth +0.055 on top, not the whole effect.
+- This is the uncensored setup (|z|>=4.2, TIDE_FRAC=0.05, MINSRC=20, in-setup tide-null 0.129). **Not comparable** to harness-setup numbers such as
+  0.26/0.49.
+
+### Method fixes applied before the reported numbers
+
+- Categorical vocabularies (complexes, domains, processes, compartments) are fitted on **train sources only**; building them over all sources let the
+  choice of feature columns depend on the held-out genes.
+- Significance is tested on one value per **unique source** (326), not the 1,475 split-level observations — a source lands in the test half of several
+  splits, so treating those as independent is pseudo-replication.
+- Reported over 3 seeds; a single seed's split is not evidence.
+- The auto-verdict originally asserted that the mu-only predictor also beats the tide-null. It does not (0.073 vs 0.129); the branch was written
+  before the run and the claim was corrected rather than published.
+
+**Verdict: cold start works.** A gene that has never been Perturb-seq'd, whose partners have never been Perturb-seq'd, can be given a knockout
+prediction at 0.348 recall@50 from annotation and control-cell expression alone — 0.249 if you refuse it any curated partner relation at all —
+against a 0.129 no-model baseline. This is the first thing in the project that predicts perturbation responses without needing perturbation data
+about anything nearby.
