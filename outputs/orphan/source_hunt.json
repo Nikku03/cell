@@ -1,0 +1,116 @@
+{
+ "disk_free_gb": 2.53,
+ "probes": [
+  {
+   "gap": "G1 rate ground truth",
+   "name": "Wachutka 2019 TT-seq K562 synthesis rates",
+   "gives": "synthesis [1/cell/min] per gene, measured by TT-seq in K562 -- an INDEPENDENT estimate of the exact quantity this project derives as RPKM*k_deg",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6548502/supplementaryFiles",
+   "status": 200,
+   "bytes": null,
+   "reachable": true
+  },
+  {
+   "gap": "G1 rate ground truth",
+   "name": "Blumberg 2021 PRO-seq+RNA-seq stability",
+   "gives": "PRO-seq-derived stability; supplement is PDF only, no machine-readable rate table",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7885420/supplementaryFiles",
+   "status": 200,
+   "bytes": null,
+   "reachable": true
+  },
+  {
+   "gap": "G1 rate ground truth",
+   "name": "ENCODE nascent-transcription experiments",
+   "gives": "PRO-cap/PRO-seq experiment index; raw signal only, needs alignment to become a rate",
+   "url": "https://www.encodeproject.org/search/?type=Experiment&assay_title=PRO-cap&format=json&limit=1",
+   "status": 405,
+   "bytes": null,
+   "reachable": false
+  },
+  {
+   "gap": "G2 knockdown titration",
+   "name": "Jost 2020 attenuated-guide CRISPRi titration (Nat Biotech)",
+   "gives": "mismatched sgRNAs giving graded knockdown of the SAME gene -- exactly what G2 needs",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7065968/supplementaryFiles",
+   "status": 404,
+   "bytes": null,
+   "reachable": false
+  },
+  {
+   "gap": "G2 knockdown titration",
+   "name": "Jost 2020 GEO series (raw)",
+   "gives": "the same study's GEO deposit; RAW tar is 1.3 GB of sequencing data, not a phenotype table",
+   "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE132nnn/GSE132078/suppl/filelist.txt",
+   "status": 403,
+   "bytes": null,
+   "reachable": false
+  },
+  {
+   "gap": "G3 TF magnitude beta",
+   "name": "KnockTF (TF knockdown -> target fold-change)",
+   "gives": "TF-knockdown differential expression with fold-changes; magnitude but not kinetics",
+   "url": "http://www.licpathway.net/KnockTF/download.php",
+   "status": 200,
+   "bytes": null,
+   "reachable": true
+  },
+  {
+   "gap": "G4 enhancer links",
+   "name": "ABC Nasser 2021 all predictions, 131 cell types",
+   "gives": "ABC enhancer-gene links across 131 cell types; extends nexus_txn's L3 beyond K562",
+   "url": "https://mitra.stanford.edu/engreitz/oak/public/Nasser2021/AllPredictions.AvgHiC.ABC0.015.minus150.ForABCPaperV3.txt.gz",
+   "status": 206,
+   "bytes": 340552375,
+   "reachable": true
+  },
+  {
+   "gap": "G4 enhancer links",
+   "name": "ReMap 2022 regulatory atlas",
+   "gives": "non-redundant TF binding peaks across studies",
+   "url": "https://remap.univ-amu.fr/storage/remap2022/hg38/MACS2/remap2022_nr_macs2_hg38_v1_0.bed.gz",
+   "status": 206,
+   "bytes": 1456682065,
+   "reachable": true
+  }
+ ],
+ "fetched": [
+  {
+   "name": "Wachutka 2019 TT-seq K562 synthesis rates",
+   "status": "extracted",
+   "file": "wachutka_synthesis.tsv",
+   "rows": 9427,
+   "columns": [
+    "gene_id",
+    "salmon major isoform transcript id",
+    "synthesis [1/cell/min]",
+    "mean donor-bond and acceptor-bond half-life time [min]",
+    "junction half-life [min]"
+   ]
+  },
+  {
+   "name": "Blumberg 2021 PRO-seq+RNA-seq stability",
+   "status": "fetched, no machine-readable rate table",
+   "files": []
+  },
+  {
+   "name": "Jost 2020 attenuated-guide CRISPRi titration (Nat Biotech)",
+   "status": "HTTP 404 -- publisher deposited no supplementary files in PMC"
+  }
+ ],
+ "geo_inventory": {
+  "G1 nascent rate": {
+   "PRO-seq": 1458,
+   "TT-seq": 1790,
+   "SLAM-seq": 755
+  },
+  "G2 titration": {
+   "CRISPRi": "failed: HTTPError"
+  },
+  "G3 acute depletion": {
+   "degron": 8389
+  }
+ },
+ "verdict": "SOURCE HUNT for the three gaps this project cannot close on its own. G1 IS CLOSED, and it is the one that mattered most: Wachutka et al. 2019 (eLife, K562 TT-seq) publish a per-gene 'synthesis [1/cell/min]' column for 9426 genes -- a DIRECT measurement of the quantity this project has only ever derived as RPKM*k_deg. Two independent estimates of the same physical rate make the noise ceiling measurable for the first time, which decides whether the R2 shortfall is weak features or a noisy target. That test is rate_ground_truth.py. G2 IS NOT CLOSED by a download. The Jost 2020 attenuated-guide titration is the right dataset and the paper is open, but Nature deposited no machine-readable supplement in PMC and the publisher's own supplementary host returns AccessDenied; the GEO deposit is 1.3 GB of raw sequencing, which is not a phenotype table and would need the full analysis rebuilt. So the knockdown-depth threshold stays unanswered, and the reason is now specific -- not 'no such data exists' but 'the processed table is not publicly downloadable'. G3 IS NOT CLOSED either, for a different reason: degron/dTAG series exist in quantity, but each is one TF in one cell line with its own processing, so building a beta from them is a multi-study reanalysis, not a fetch. WHAT WAS PROBED: concrete files, not landing pages, with a 2 KB range request so a multi-GB archive costs 2 KB to check. Europe PMC's supplementaryFiles endpoint works where the publishers' own links return AccessDenied, which is how G1 was found at all. Deterministic given the sources' availability.",
+ "note": "SOURCE HUNT for the three gaps this project cannot close on its own. G1 IS CLOSED, and it is the one that mattered most: Wachutka et al. 2019 (eLife, K562 TT-seq) publish a per-gene 'synthesis [1/cell/min]' column for 9426 genes -- a DIRECT measurement of the quantity this project has only ever derived as RPKM*k_deg. Two independent estimates of the same physical rate make the noise ceiling measurable for the first time, which decides whether the R2 shortfall is weak features or a noisy target. That test is rate_ground_truth.py. G2 IS NOT CLOSED by a download. The Jost 2020 attenuated-guide titration is the right dataset and the paper is open, but Nature deposited no machine-readable supplement in PMC and the publisher's own supplementary host returns AccessDenied; the GEO deposit is 1.3 GB of raw sequencing, which is not a phenotype table and would need the full analysis rebuilt. So the knockdown-depth threshold stays unanswered, and the reason is now specific -- not 'no such data exists' but 'the processed table is not publicly downloadable'. G3 IS NOT CLOSED either, for a different reason: degron/dTAG series exist in quantity, but each is one TF in one cell line with its own processing, so building a beta from them is a multi-study reanalysis, not a fetch. WHAT WAS PROBED: concrete files, not landing pages, with a 2 KB range request so a multi-GB archive costs 2 KB to check. Europe PMC's supplementaryFiles endpoint works where the publishers' own links return AccessDenied, which is how G1 was found at all. Deterministic given the sources' availability."
+}

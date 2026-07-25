@@ -9042,3 +9042,84 @@ lines**; every prediction on the 222 CATLAS primary cell types is **extrapolatio
 available data can check**. R² ≥ 0.90 on primary tissue is therefore not a claim that can be tested with public data
 today — not because the model is weak, but because the ground truth to score it against does not exist for those cell
 types.
+
+---
+
+## Somebody else's data, hunted for the three gaps we cannot close (colab/source_hunt.py)
+
+Three questions here are **unanswerable** with what is on disk — not imprecise, unanswerable — and no modelling trick
+fixes any of them. So the question became: has somebody else already collected it?
+
+| gap | what's missing | verdict |
+|---|---|---|
+| **G1** rate ground truth | every rate here is *derived* (`k_syn = RPKM × k_deg`), never checked against a direct measurement | **CLOSED** |
+| **G2** knockdown-depth threshold | `knockdown_dose.py` failed honestly (Spearman −0.063); needs the *same* gene at graded depths | still open |
+| **G3** the TF magnitude term β | `nexus_txn` refused to fit β with nothing to fit it against | still open |
+
+Probes hit **concrete files, not landing pages**, with a 2 KB range request so a multi-GB archive costs 2 KB to check.
+Two URLs were wrong on the first pass: Springer's own supplementary host returns `AccessDenied` from its GCS bucket for
+*both* papers tried. **Europe PMC's `supplementaryFiles` endpoint works where the publishers' own links do not**, and
+that is the only reason G1 was found at all.
+
+**G1 closed.** Wachutka et al. 2019 (eLife, K562 TT-seq) publish a per-gene `synthesis [1/cell/min]` column for
+**9,426 genes** — a direct measurement of the exact quantity this project has only ever derived.
+
+**G2 not closed, and the reason is now specific.** Jost et al. 2020's attenuated-guide CRISPRi titration is precisely
+the right dataset, but Nature deposited **no machine-readable supplement in PMC** (HTTP 404) and the GEO deposit is
+1.3 GB of raw sequencing, not a phenotype table. So it is *"the processed table is not publicly downloadable"*, not
+*"no such data exists"*.
+
+**G3 not closed, for a different reason.** GEO holds **8,389** human degron/dTAG series — quantity is not the problem.
+Each is one TF in one cell line with its own processing, so building β from them is a multi-study reanalysis, not a fetch.
+
+Inventory, for scale: PRO-seq 1,458 · TT-seq 1,790 · SLAM-seq 755 human GEO series. Priced but not bought, against a
+2.5 GB disk allowance: **ABC Nasser 2021, 341 MB** (131 cell types) and **ReMap 2022, 1,457 MB**.
+
+## The rate target agrees with a direct measurement at r = 0.36 (colab/rate_ground_truth.py)
+
+With two independent estimates of one physical quantity, the question `txn_rate_model` and `nexus_txn` could never
+answer becomes answerable: are the **features** too weak, or is the **target** too noisy?
+
+**They barely agree. r = 0.361, ρ = 0.347, on 7,462 shared genes — 13% shared variance.**
+
+| control | result | reading |
+|---|---|---|
+| cross-cell-line | derived HEK293T vs measured K562 = **0.372**; paired diff **−0.018 [−0.035, +0.001]** | a **tie**, not a loss |
+| do derived rates differ by line at all? | K562 vs others r = **0.57–0.73** | yes — so the control *can* discriminate |
+| partial out log RPKM | r = **0.294** (was 0.361) | agreement is not just shared abundance |
+| RPKM alone vs measured | **0.225** vs 0.361 | multiplying by `k_deg` **does** help (+0.135) |
+
+Matching the right cell line buys nothing: the shared signal is what the two *kinds* of estimate carry in common, not
+K562-specific transcription.
+
+**Two things were read wrong on the first pass and are corrected here.** The OLS slope of 0.32 is *not* a compressed
+dynamic range — slope = r × SD-ratio, the SD ratio is **0.88** (near-identical spread), and the slope is pure
+r-attenuation. And the cross-line control was first written up as a *loss* on a 0.011 gap smaller than its own error bar.
+
+### The ceiling, and why it should not be quoted
+
+Under truth-plus-independent-error, `r(derived, measured) = √(rel₁·rel₂)`, so equal reliabilities put each at **0.36** —
+a model predicting the *true* rate perfectly would still score only R² = 0.36 against either. On that reading
+`nexus_txn`'s 0.200 is 55% of what is achievable.
+
+**But the model fails its own prediction.** Averaging two z-scored estimates must raise reliability to
+`2·rel/(1+rel) = 0.53`, requiring R² = **0.261** against the consensus. Refitting the identical 24-feature stack on the
+same 6,605 genes:
+
+| target | r | R² |
+|---|---|---|
+| derived `RPKM × k_deg` | 0.429 | **0.184** |
+| measured TT-seq | 0.414 | 0.171 |
+| consensus of both | 0.418 | **0.174** — predicted 0.261, off by 33% |
+
+Averaging bought nothing. The likelier reading is that these are **not two noisy views of one quantity**: TT-seq
+synthesis is nascent output attributed to a major isoform; `RPKM × k_deg` is a steady-state whole-gene balance.
+
+**Caveats that cut against the ceiling, not for it.** Shared error (same genome annotation, same mappability and
+multi-isoform problems) *inflates* apparent agreement, so 0.36 is an **upper bound** on reliability. Wachutka's rate is
+per *major isoform*; ours is whole-gene. The comparison is log-scale only — different units (RPKM/hour vs
+molecules/cell/min) make absolute fold-error comparison meaningless.
+
+**What is unambiguous:** the target two modules have been fitting agrees with a direct measurement of the same quantity
+at **r = 0.361**. Whatever the right ceiling is, **R² = 0.90 against the derived rate would not mean the true
+transcription rate had been predicted.**
