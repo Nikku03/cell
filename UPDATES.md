@@ -8599,3 +8599,39 @@ trafficking rules — not observed. Only the first is data from this experiment,
 
 264 of 621 movers are drawn (strongest by |z|, plus every transporter and every cascade TF); all 621 with full journeys are in the JSON.
 Runs for any knockout: `python colab/ko_cell_map.py <GENE> && python colab/ko_cell_html.py <GENE>`.
+
+### Did the knockout hit the transporters' production and maturation machinery? (colab/transport_machinery.py)
+
+153 of the 621 GATA1 movers are transport proteins. Asked whether the genes that **make** and **mature** them also moved. Each pipeline
+stage tested for enrichment against the measured background (621/8,533 = 7.3% of testable genes moved) with a hypergeometric test.
+
+| stage | machinery set | in panel | moved | rate | enrich | p | up/down |
+|---|---|---|---|---|---|---|---|
+| MAKE | **ribosome (large)** | 44 | **27** | **61.4%** | **8.4×** | 2.3e-20 | 0/27 |
+| MAKE | **ribosome (small)** | 30 | **18** | **60.0%** | **8.2×** | 9.8e-14 | 1/17 |
+| MAKE | translation init/elong | 62 | 6 | 9.7% | 1.3× | 0.30 | 1/5 |
+| MAKE | Pol II core | 14 | 1 | 7.1% | 1.0× | 0.65 | 1/0 |
+| MAKE | spliceosome | 55 | 1 | 1.8% | 0.3× | 0.98 | 0/1 |
+| MAKE | mRNA export | 31 | **0** | 0% | 0× | 1.0 | — |
+| MATURE | **SRP + Sec61 translocon** | 23 | **0** | **0%** | **0×** | 1.0 | — |
+| MATURE | N-glycosylation (OST) | 25 | 1 | 4.0% | 0.6× | 0.85 | 1/0 |
+| MATURE | ER chaperones / folding | 37 | 1 | 2.7% | 0.4× | 0.94 | 1/0 |
+| MATURE | ERAD / quality control | 11 | 3 | 27.3% | 3.8× | 0.041 | 3/0 |
+| MOVE | **SNARE / vesicle fusion** | 42 | 7 | 16.7% | 2.3× | 0.030 | 7/0 |
+| MOVE | Golgi glycosyltransferases | 33 | 5 | 15.2% | 2.1× | 0.088 | 5/0 |
+| MOVE | COPII / ER exit | 12 | **0** | 0% | 0× | 1.0 | — |
+| MOVE | COPI / retrograde | 20 | 1 | 5.0% | 0.7× | 0.78 | 1/0 |
+
+**Stage totals:** MAKE 55/307 = 17.9%, **2.46× background, p=2.3e-10** · MATURE 5/96 = 5.2%, **0.72× background, p=0.84 (not enriched)** ·
+MOVE 20/175 = 11.4%, 1.57× background, p=0.029.
+
+**Answer.** The knockout hit **production**, not maturation. The ribosome is gutted — 45 of 74 ribosomal protein genes moved, ~8× background,
+and **44 of 45 went DOWN**. Meanwhile the entire ER maturation apparatus is untouched: **0/23 translocon, 0/12 COPII, 1/25 glycosylation,
+1/37 chaperones.** Delivery is mildly perturbed downstream (SNAREs 2.3×, all up; Golgi glycosyltransferases 2.1×, all up).
+
+So: transporter transcripts change and the capacity to *translate* them collapses, but the machinery that folds, glycosylates and exports
+them is intact. Whatever is wrong with transporters in this cell is a **supply** problem, not a **processing** problem.
+
+**The limit, stated plainly.** Perturb-seq measures mRNA. It cannot show a protein's structure, folding state, glycans, or whether a
+transporter actually transports. Structure, maturation state and function are **not observed here**. What is observed is whether the
+transcripts encoding each pipeline step changed — a statement about *capacity*, inferred, not about function, measured.
