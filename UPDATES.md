@@ -8573,3 +8573,29 @@ score 0.428 on complex members and 0.143 on everything else.
 
 Full JSON with all 621 movers and each one's complete journey: `outputs/orphan/ko_dossier_GATA1.json` (1.4 MB). Runs for any knockout:
 `python colab/ko_dossier.py <GENE>`.
+
+### Spatial cell map (colab/ko_cell_map.py + colab/ko_cell_html.py)
+
+The 621 GATA1 movers laid into an empty cell: each placed in its annotated compartment, transporters ringed, PPI edges drawn between
+placed genes, and a click-through tracing each protein's journey with its **molecular state at every hop**.
+
+**Where they landed.** cytoplasm 170, nucleus 119, **unannotated 75**, plasma membrane 61, cytoskeleton 41, membrane 35, mitochondrion 33,
+ER 21, Golgi 20, lysosome 18, extracellular 15, endosome 9, peroxisome 4.
+
+**Transporters: 153 of 621.** They concentrate where transport happens rather than spreading evenly — plasma membrane 39, membrane 25,
+ER 18, Golgi 18, cytoplasm 14, cytoskeleton 13, mitochondrion 10. Consistent with the knockout remodelling the cell's interface with its
+surroundings, not one pathway.
+
+**Origin and transport state.** Every protein-coding gene starts at a chromosomal locus and passes through the same first two hops —
+`chromatin locus → hnRNA` (transcription) → `hnRNA → mRNA` (cap/splice/polyA) → `nuclear pore → mRNA` (export) — then diverges by
+destination: free ribosome for cytosolic/nuclear/mitochondrial/peroxisomal products (protein state, with TOM/TIM or NLS or PTS1 import
+after), or SRP-mediated co-translational entry to the ER for the secretory branch (nascent protein → COPII vesicle → Golgi → secretory
+vesicle → PM or exocytosis). The state label is the point: the same gene is hnRNA, then mRNA, then protein, and "which compartment it is in"
+means something different at each stage.
+
+**Three kinds of claim, kept visually distinct on the page.** That a gene *moved* and by how much is **measured** (Perturb-seq, |z|≥4.2,
+tide-masked). Where its protein *ends up* is **curated annotation**. The *route* is **inferred** from that destination by canonical
+trafficking rules — not observed. Only the first is data from this experiment, and the page says so rather than blending the three.
+
+264 of 621 movers are drawn (strongest by |z|, plus every transporter and every cascade TF); all 621 with full journeys are in the JSON.
+Runs for any knockout: `python colab/ko_cell_map.py <GENE> && python colab/ko_cell_html.py <GENE>`.
