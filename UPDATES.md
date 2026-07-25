@@ -7879,3 +7879,81 @@ continuous and can break ties a single binary profile cannot, which hands the co
 defined from source knockouts at a **fixed** threshold, decoupled from the per-TF scorability cut — when the two were conflated, loosening
 scorability silently redefined "specific" and manufactured a significant-looking experiment-count confound (ρ=+0.37, p=0.035) that vanished once
 they were separated.
+
+---
+
+## Completing the network: merging the curated graph with the measured knockout edges
+
+The obvious response to "94% of measured edges are in no database" is: **fine — put them in.** Take the curated network, take every
+knockout and the genes it moves, map the measured effects onto the graph, and see what the completed object looks like. That is
+`complete_network.py`. The merged graph is emitted as `completed_network.json`: **15,483 nodes and 271,708 typed edges** —
+57,696 curated regulatory (signed), 192,784 curated physical, 8,726 measured-specific and 12,502 measured-tide, each with provenance.
+
+Building it is easy. The entire difficulty is that **mapping effects onto a dense graph is trivially easy to fake** — an earlier case
+study here found 230 of 233 targets "reachable" within 4 hops while discrimination against random targets fell to 1.02×. So every
+route is scored against a **degree-matched decoy** looked up in the same BFS: a route only counts if the real target is *closer* than
+a matched random gene.
+
+### Where the network stops explaining
+
+| route class | real | decoy | ratio |
+|---|---|---|---|
+| direct curated edge | 172 | 67 | **2.57×** |
+| via 1 intermediate | 1,439 | 1,420 | 1.01× |
+| via 2 intermediates | 4,006 | 4,312 | 0.93× |
+| via 3 intermediates | 555 | 565 | 0.98× |
+| unroutable | 2,554 | 2,362 | 1.08× |
+
+**Direct edges are genuinely enriched; by two intermediates the routes are indistinguishable from a random walk.** On the regulatory
+layer one intermediate still carries signal (1.73×). This is the quantitative version of why the long explanatory chains this project
+kept building dissolved under test: *the completed network can be trusted about one hop out.*
+
+The two layers separate sharply, and in opposite directions:
+
+- **Regulatory layer** — reaches only **8%** of measured edges, but real targets are closer than decoys in **56.9%** of decisive pairs (p=3.1e-05). Meaningful, tiny coverage.
+- **Combined layer (+PPI)** — reaches **71%**, but real targets are closer in **49.1%** (p=0.2). **At chance.** That 71% is graph density, not explanation.
+
+The layer that routes almost everything routes it meaninglessly; the layer that routes meaningfully covers almost nothing. (The physical
+layer is genuine PPI — only 1% of its 192,784 edges come from complex clique-expansion, so this is not an expansion artifact.)
+
+### Sign: untestable, and that is itself the finding
+
+Only **7 of 8,726** specific measured edges have a *signed* curated counterpart at all. The activator/repressor logic cannot be scored
+here — the curated regulatory layer barely intersects the knockouts usable as sources. (A rate over 7 events is not a measurement, so
+no number is reported.)
+
+### Does completing it help? No.
+
+The only non-circular test: split **sources** 70/30, build the completion from train sources only, score held-out specific-mover
+recall@50.
+
+| | recall@50 |
+|---|---|
+| random ranking | 0.009 |
+| curated network alone | 0.029 |
+| curated + measured completion | 0.033 (+0.004) |
+| *tide-null (reference)* | *0.26* |
+| *best model in this project (reference)* | *0.49* |
+
+The gain helps on 3/99 held-out sources and hurts on 0 — paired Wilcoxon **p=0.11**, not distinguishable from noise. And the scale
+settles it regardless: graph routing over the completed network is **~15× worse** than what already works. **Completing the network and
+walking it is not a route to prediction.**
+
+### The joints — the one part worth keeping
+
+Genes carrying routing load, z-scored against 5 decoy replicates: **regulatory 11 of 56 scoreable genes reach z≥2 (chance ~1); combined
+98 of 545 (chance ~12)** — both ~8× enrichment. This looks like it contradicts the at-chance routing above, and it does not: distance
+asks whether a target is *closer*, joints ask which intermediates the routes *pass through*. A knockout's real targets are a coherent
+set, so their routes **converge** on shared intermediates far more than independently-drawn decoys, even at identical distances.
+Convergence is a property of the target set, not proof that the curated path is the mechanism.
+
+What makes the list worth keeping is its composition. The top regulatory joints are **RUNX1, MYB, HHEX, GATA3, CEBPA** — haematopoietic
+transcription factors exactly appropriate to K562 — and **almost none were themselves knocked out in this panel**. That is
+`screen_design`'s conclusion reached from the opposite direction. Full ranked table in `completed_network_joints.csv`.
+
+*Three fixes during the build, each of which changed a number:* hop-ranking left hundreds of genes tied in the first tier and broke ties
+**alphabetically**, silently deciding the value metric (replaced with degree-normalised diffusion, which is also the reading most
+favourable to the curated graph); the joints table was z-scored against a **single** decoy draw, so genes whose replicates happened to
+agree got sd=0 and z=±∞ — 100% of the saved top-30 rows were this degenerate case at 1–3 routes (fixed with 5 replicates, a Poisson
+variance floor, and a ≥5-route filter applied *before* storage rather than only to the printed view); and the sign section reported
+"14% agreement" from 7 events until an untestable floor was added.
