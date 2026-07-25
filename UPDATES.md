@@ -8884,3 +8884,42 @@ RPE1 is on disk**, so depth in %-remaining units is **K562-only**; the cross-lin
 **Whole-body framing.** The annotation model carries 200 cell types. What transfers everywhere: **function, complexes, PPI, domains** —
 cell-type-independent. What does not: **which genes are expressed, what is essential, and the response itself** — all cell-type-specific.
 So identity cards generalise across the body; response predictions do not, and must be refit per cell type.
+
+## Transcription rate, computed at last, and an equation for it (colab/txn_rate_model.py)
+
+**The rate was directly computable and nobody had computed it.** RNAdecayCafe carries steady-state abundance *and* measured decay constant
+per gene per cell line. At steady state `d[mRNA]/dt = k_syn − k_deg·[mRNA] = 0`, so:
+
+    k_syn = RPKM × k_deg        RPKM per hour
+
+**88,695 gene-celltype pairs, 8 cell lines with annotation overlap** (13 in the raw file). K562: median **3.42 RPKM/h**, spanning **4.6
+orders of magnitude**.
+
+### The equation, nested, scored on held-out genes
+
+| layer | K562 R² | HEK293T | Calu3 | MCF7 | MDAMB |
+|---|---|---|---|---|---|
+| promoter only | 0.157 | 0.203 | 0.200 | 0.186 | 0.131 |
+| + gene class | 0.207 | 0.309 | 0.235 | 0.205 | 0.168 |
+| **+ how many TFs** | **0.216** | 0.310 | 0.240 | 0.213 | 0.175 |
+| + WHICH TFs (ridge) | **0.153** | 0.304 | 0.189 | 0.177 | 0.138 |
+| **+ WHICH TFs (GBM)** | **0.322** | **0.427** | **0.322** | **0.302** | **0.262** |
+
+Expression, protein abundance and every level-carrying feature are **excluded** — `k_syn` is built from abundance and would otherwise be
+trivially predictable.
+
+### TF identity does NOT help — it hurts
+
+**Knowing how many TFs regulate a gene: R²=0.216. Adding which of 1,213 specific TFs: R²=0.153. A loss of −0.063.** The same pattern holds
+in 4 of 5 cell lines. This is the dilution failure mode for the third time in this project: 1,213 sparse indicator columns against ~7k
+training genes adds variance faster than signal, and ridge cannot absorb it. GBM on the identical features reaches 0.322, so the information
+is not absent — the linear model cannot use it in that form.
+
+**Best honest result: R² ≈ 0.32 in K562, 0.43 in HEK293T, from promoter structure + gene class + regulatory wiring, on held-out genes.**
+
+### What this is not
+
+**It is not "TF X boosts gene Y by Z-fold."** No TF is manipulated anywhere in this data. The cell lines differ in thousands of ways at
+once, so the TF layer measures *association* between wiring and rate, not the causal effect of any single factor. Getting the causal number
+needs a TF induction series with nascent-RNA readout (GRO-seq/PRO-seq/TT-seq across an induction time-course) — that dataset is not on disk,
+and no amount of modelling substitutes for it.
