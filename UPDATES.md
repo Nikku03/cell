@@ -8980,3 +8980,65 @@ Disk is a **fixed per-session allowance, now at 3.0 GB free (93% used)**. ChIP-A
 (~2–4 GB) would exhaust it and kill the session. They are recorded with URLs and sizes so spending the disk is an
 explicit decision, not an accident. The per-experiment ChIP-Atlas endpoint (`eachData/bed05/{srx}.05.bed`) allows
 fetching only the K-562 TF experiments actually needed, which is the affordable route.
+
+## CATLAS is reachable, and it reveals a structural problem with the blueprint
+
+URL supplied by the user: `https://decoder-genetics.wustl.edu/catlasv1/humanenhancer/data/` — **200, live**, and it
+contains more than expected: `cCRE_hg38.tsv.gz` (11.4 MB), `cCRE_by_cell_type/` (binary matrix, cCREs, celltypes),
+`Cell_ontology.tsv` (**223 cell types**), and — the find — **`ABC_scores/`, per-cell-type enhancer→gene links for 110
+cell types**, ~11.4 MB each.
+
+**`ABC_scores/` is a real-data replacement for blueprint Step 2.** The Orca/Akita synthetic Micro-C exists to identify
+which distal enhancers touch a promoter. CATLAS already ships that, measured, per cell type. No CNN, no weights, no
+Micro-C.
+
+### But CATLAS cannot be used for training, and this is structural
+
+**CATLAS covers 222 PRIMARY human cell types. Our transcription-rate ground truth covers only CANCER LINES. The overlap
+is exactly zero.**
+
+| searched | found in CATLAS |
+|---|---|
+| K562, HEK293, HepG2, MCF7, HeLa, Jurkat, MOLM, Calu | **NONE** |
+
+CATLAS is Acinar, Adipocyte, Astrocyte, Alveolar Type 1/2, BBB Endothelial… `k_syn = RPKM × k_deg` is available for
+K562, HEK293T, MV411, MDAMB, Calu3, MCF7, MOLM13/14, BC1, HeLa, U2OS, CH22, Nalm6.
+
+**There is no cell type where both the ATAC mask and the rate ground truth exist.** So CATLAS is a *deployment* target,
+never a training set.
+
+### Training ATAC must come from ENCODE, and it is thin
+
+| ENCODE ATAC-seq | experiments |
+|---|---|
+| K562 | **64** |
+| HepG2 | 2 |
+| MCF-7 | 1 |
+| HEK293 | **0** |
+| HeLa-S3 | **0** |
+
+**Only K562 is well covered.** The blueprint's "train on K562, HepG2 and MCF7" is really *train on K562*, with n=2 and
+n=1 for the others and nothing for HEK293 or HeLa. A cell-type-transfer model cannot be fitted, let alone validated, on
+one-and-a-bit cell types.
+
+### And nascent-RNA rate data is largely absent from ENCODE
+
+| assay | experiments |
+|---|---|
+| 4sU-seq | **0** |
+| TT-seq | **0** |
+| GRO-seq | **0** |
+| PRO-seq | 22 |
+| long-read RNA-seq | 441 |
+
+The blueprint's plan to "filter the ENCODE matrix for RNA half-life or 4sU-seq" returns **nothing** — those facets do
+not exist there. The RNAdecayCafe SLAM-seq table already on disk (13 cell lines) is the better source and is already in
+use.
+
+### Consequence, stated plainly
+
+The architecture is not refuted, but its validation story is. A model can be **trained and validated only within cancer
+lines**; every prediction on the 222 CATLAS primary cell types is **extrapolation across a domain shift that no
+available data can check**. R² ≥ 0.90 on primary tissue is therefore not a claim that can be tested with public data
+today — not because the model is weak, but because the ground truth to score it against does not exist for those cell
+types.
