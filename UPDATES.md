@@ -7981,3 +7981,63 @@ variance floor, and a ≥5-route filter applied *before* storage rather than onl
 real targets** — real targets exclude tide genes and self, decoys did not, and the top bucket a real target can occupy is ~49% tide
 genes, which are hub-like and therefore artificially close in the graph. Fixing that (decoys restricted to non-tide genes, and never the
 source or one of its own targets) *strengthened* both routing conclusions and flipped the value gain from p=0.11 to p=0.018.
+
+---
+
+## Why the signal dies after one hop — convergence, not chains
+
+`complete_network` established the cliff but not the cause, and the candidate causes imply *different* repairs. `multihop_diagnosis.py`
+separates them, on the **continuous** response with no threshold anywhere, controlled by **within-gene standardisation** (a gene's response to
+this knockout vs that same gene's average response across all other knockouts — hubness, expression and responsiveness cancel exactly),
+clustered at the source level.
+
+### The average says the signal dies — and binarising was not the culprit
+
+| hop | cumulative reach | within-gene effect | p |
+|---|---|---|---|
+| 1 | 0.9% | **+0.108** | 2.8e-06 |
+| 2 | 18% | +0.012 | 0.38 |
+| 3 | 71% | +0.004 | 0.74 |
+| 4 | 79% | +0.005 | 0.72 |
+
+The mean hop-2 effect is near zero on the raw scale too, so the |z|≥4.2 mover threshold is not what hid it — my "we threw it away" hypothesis
+was wrong. A hop-4 ball also covers 79% of measured genes, so a reachability-based score is arithmetically incapable of discriminating
+regardless of the biology.
+
+### But the average is the wrong statistic
+
+Split hop-2 targets by **how many shortest paths reach them**:
+
+| converging paths | effect | p |
+|---|---|---|
+| 1 | +0.004 | 0.77 |
+| 2 | +0.010 | 0.47 |
+| 4 | +0.033 | 0.06 |
+| 8 | +0.081 | 2.5e-04 |
+| 16 | **+0.121** | 4.1e-06 |
+| 32+ | **+0.122** | 9.3e-04 |
+
+**At 16+ converging paths the hop-2 effect is 112% of the direct-edge effect.** A single chain transmits nothing detectable; many parallel
+routes transmit as much as a direct edge.
+
+The obvious confound — that many-path targets are simply high-degree targets — does not hold. Stratifying by the target's own degree, the
+gradient **rises in 6/6 degree strata** (at target degree 2^7: −0.005 at one path, **+0.195** at 32 paths).
+
+**The mechanism is convergence, not chains.** This is why this project's chain reasoning kept dissolving: *a chain is exactly the single-path
+case*, the regime that carries no signal. It buys one hop only — at hop 3 the path-count gradient is flat.
+
+### A propagation route the regulatory graph does not contain
+
+Knocking out a complex subunit moves its partners' mRNAs by **+0.137 (p=7.7e-04, 213 sources)** — comparable to a direct regulatory edge
+(+0.108), encoded by **no TF-regulation edge**. Subunit co-destabilisation is real and missing from the graph.
+
+Edge-type composition is *underpowered rather than answered*: reg→reg largest (+0.142) but 36 sources, p=0.10; phys→phys +0.012, phys→reg
++0.022, reg→phys +0.052 — none individually significant.
+
+### What to do
+
+1. **Score by convergent path count**, not reachability or shortest-path membership.
+2. **Cap propagation at two hops** — hop 3 is dead even at high multiplicity.
+3. **Add complex co-membership as a first-class edge type.**
+
+Not yet built or tested against the 0.143 tide-null the current graph loses to.
