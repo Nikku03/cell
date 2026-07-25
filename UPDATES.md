@@ -8739,3 +8739,37 @@ The response is two superimposed things with opposite structure: a **tightly-wir
 **diffuse programme gained** (533 genes, zero wiring). Any model treating movers as one homogeneous set — every model built here — is
 averaging over two phenomena that need different mechanisms. That is also why complex membership predicted well for some genes and not
 others: it only describes one of the two halves.
+
+### Does the down/up asymmetry generalise? Yes — but the effect is 35× smaller than first reported (colab/direction_general.py)
+
+Two problems with the GATA1 result had to be removed before building on it: **n=1**, and **a null that was too weak**. The 115× used
+*uniformly* drawn gene sets, but the DOWN group is largely ribosomal proteins and ribosomal proteins are PPI hubs — so any set of them looks
+wired against a uniform null. Re-tested across all knockouts with ≥10 movers in both directions, against a **degree-matched** null (permuted
+sets drawn from the same log2-degree bins), 400 permutations each.
+
+**GATA1 under the honest null:**
+
+| | uniform null (reported before) | degree-matched null |
+|---|---|---|
+| DOWN | 1,130 vs 9.8 = **115.3×** | 1,130 vs 346.5 = **3.26×** |
+| UP | 369 vs 363 = **1.02× (chance)** | 369 vs 196.6 = **1.88×** |
+
+**Most of the 115× was hubness.** The real effect is 3.26×, and the UP group is *not* at chance either — it is 1.88×, which the weak null
+had hidden entirely. Both numbers in the original report were wrong in opposite directions.
+
+**Across 86 knockouts:**
+
+| | median fold | individually significant |
+|---|---|---|
+| DOWN | **3.29×** | 84.9% |
+| UP | **1.75×** | 50.0% |
+
+**DOWN exceeds UP in 77.9% of knockouts, paired p=3.6e-08.**
+
+**The asymmetry is real and general — it just isn't the chasm the first measurement implied.** Down-regulated sets are about 1.9× more
+internally wired than up-regulated sets of matched degree, consistently across knockouts, not 100× more. The corrected statement: *both*
+groups carry some physical coherence; the down half carries roughly twice as much, and is individually significant in 85% of knockouts
+against 50%.
+
+That still supports splitting the model by direction, but on a much more modest expected gain than "one machine versus no machine" would
+have promised. It also stands as the second time today that a passing gate concealed a weak null — the first was cross-cell-line pooling.
