@@ -7908,20 +7908,28 @@ a matched random gene.
 intermediate still carries signal (1.32×). This is the quantitative version of why the long explanatory chains this project kept building
 dissolved under test: *the completed network can be trusted about one hop out.*
 
-Both layers beat chance once the null is matched properly (see below):
+Neither layer's routing survives a properly clustered test:
 
-| layer | reaches | real closer than decoy | p | distance-driven |
-|---|---|---|---|---|
-| Regulatory | 8% of measured edges | 55.8% | 3.4e-07 | 75% |
-| Combined (+PPI) | 71% | 53.1% | 1.6e-12 | 97% |
+| layer | reaches | per-source effect | t | p | ties |
+|---|---|---|---|---|---|
+| Regulatory | 8% of measured edges | −0.0001 | −0.05 | **0.956** | 96% |
+| Combined (+PPI) | 71% | +0.0227 | +2.18 | **0.030** | 71% |
 
-**The null's covariate decided this, and I got it wrong first.** The first version bucketed decoys on *mover-frequency* and called it
-degree-matched. Mover-frequency correlates with curated-graph degree at ρ≈0.01 — it matches nothing relevant to a claim about graph
-*distance*. Under it the combined layer came out at chance (50.2%, p=0.82) and the module was about to conclude that PPI-layer routing
-explains nothing. Matching on log2(in-degree in the routing layer) × mover-frequency — and *printing a balance table* rather than asserting
-the match (real in-degree 68.4 vs decoy 68.5; reachable 70.7% vs 70.9%) — reverses it. Each result is also decomposed into pairs settled by
-true distance versus by one side simply being unreachable, because a comparison dominated by the latter is an annotation-coverage result
-wearing a distance result's clothes.
+**I made two statistical mistakes here, in opposite directions, and both are now reported in the module rather than quietly fixed.**
+
+1. **The null didn't match the covariate the claim was about.** The first version bucketed decoys on *mover-frequency* and called it
+   degree-matched — but mover-frequency correlates with curated-graph degree at ρ≈0.01. Under that null the combined layer read "at chance",
+   and I reported to the user that PPI routing "explains nothing". Buckets are now log2(in-degree in the routing layer) × mover-frequency, with
+   the match **verified by a printed balance table** rather than asserted.
+2. **Then I over-corrected.** Having fixed (1), I counted all 5 decoys per target as independent Bernoulli trials. That multiplied n fivefold
+   and the p-value by **four orders of magnitude while the effect size did not move** (53.0% → 53.1%; p 2.5e-3 → 1.6e-12). The 5 decoys of one
+   target share the same real distance, and a source's ~26 targets come out of one BFS tree. Each target is now reduced to a single statistic,
+   averaged within source, and tested **across sources** (t-test + cluster bootstrap). The naive binomial is still printed, labelled wrong, so
+   the size of the inflation stays visible.
+
+The outcome matches neither earlier version: **the regulatory layer — which I twice called the meaningful one — is at chance (p=0.96), and the
+combined layer clears the bar only marginally (p=0.03, effect +0.023).** Note also that 71–96% of comparisons are **ties**, so the headline
+percentages are computed over a minority of the data.
 
 ### Sign: untestable, and that is itself the finding
 

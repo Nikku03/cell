@@ -10,12 +10,22 @@ while the discrimination against random targets fell from 3.63x to 1.02x. A path
 module is scored against a DEGREE-MATCHED NULL: for each source, the same BFS is used to look up hop distance to its real targets AND to matched
 decoys. An explanation only counts if the real target is reachably CLOSER than its decoy.
 
-AND THE NULL MUST BE MATCHED ON THE COVARIATE THE CLAIM IS ABOUT. The first version of this module bucketed decoys on mover-frequency and called
-that degree-matched; it is not, since mover-frequency correlates with curated-graph degree at rho~0.01. Under that null the combined layer came out
-"at chance" and the module was about to conclude that PPI-layer routing explains nothing. Matching instead on log2(in-degree in the routing layer)
-crossed with mover-frequency -- and verifying the match with a printed balance table rather than asserting it -- reverses that: both layers beat
-chance. Every routing result below is additionally decomposed into pairs settled by true DISTANCE versus pairs settled merely by one side being
-unreachable, because a comparison dominated by the latter is an annotation-coverage result wearing a distance result's clothes.
+TWO STATISTICAL MISTAKES WERE MADE HERE BEFORE THIS VERSION, IN OPPOSITE DIRECTIONS, AND BOTH ARE WORTH KEEPING IN VIEW.
+
+  (1) THE NULL MUST MATCH THE COVARIATE THE CLAIM IS ABOUT. The first version bucketed decoys on mover-frequency and called that degree-matched.
+      It is not: mover-frequency correlates with curated-graph degree at rho~0.01. Since the claim is "the real target is CLOSER IN THE GRAPH",
+      the decoy must match the target's GRAPH DEGREE. Buckets are now log2(in-degree in the routing layer) x mover-frequency, and the match is
+      VERIFIED by a printed balance table rather than asserted.
+  (2) REPLICATES AND TARGETS ARE NOT INDEPENDENT TRIALS. Fixing (1) and then counting all NDECOY decoys of every target as separate Bernoulli
+      trials multiplied n fivefold and the p-value by four orders of magnitude WITHOUT moving the effect size -- manufactured significance. The
+      NDECOY decoys of one target are compared against the SAME real distance, and a source's ~26 targets come out of ONE BFS tree. Each target is
+      therefore reduced to a single statistic, averaged within source, and tested ACROSS SOURCES (t-test + cluster bootstrap). The naive binomial
+      is still printed, labelled wrong, so the size of the inflation stays visible.
+
+The outcome is not what either earlier version claimed: on the properly-matched, properly-clustered test the REGULATORY layer sits at chance while
+the COMBINED layer clears it only marginally. Every routing result is also decomposed into pairs settled by true DISTANCE versus pairs settled
+merely by one side being unreachable, and the TIE fraction is reported, because a "% of decisive comparisons" computed over a few percent of the
+data is easy to over-read.
 
 WHAT IT PRODUCES:
   PART 1  MERGE     -- one typed graph: curated-regulatory (signed), curated-physical, and measured-directed edges, each with provenance.
@@ -150,12 +160,12 @@ def main():
     # Decoys are also restricted to non-tide genes (real targets are non-tide) and, per draw, may not be the source or
     # one of that source's own targets.
     def make_buckets(adj_for_layer, directed):
+        # For an undirected layer each edge already appears in BOTH adjacency lists, so counting the reverse again
+        # double-counts and the printed balance table reads ~2x the true in-degree.
         indeg = collections.Counter()
         for u, vs in adj_for_layer.items():
             for v in vs:
                 indeg[v] += 1
-                if not directed:
-                    indeg[u] += 1
         b = collections.defaultdict(list)
         for j, g in enumerate(genes):
             # Decoys must come from the same population as real targets: non-tide AND actually movable. Without the
@@ -183,6 +193,11 @@ def main():
         # balance diagnostics + decomposition of what actually decides each decisive pair
         bal_rd, bal_dd = [], []
         dec_unreach = dec_dist = 0
+        # CLUSTER-AWARE BOOKKEEPING. The 5 decoys of one target are compared against the SAME real hop distance, so they
+        # are not independent trials; and the ~26 targets of one source all come out of ONE BFS tree. Counting
+        # target x replicate as iid Bernoulli inflates n fivefold and the p-value by orders of magnitude without moving
+        # the effect size at all. So each target is reduced to ONE statistic and the test is run at the SOURCE level.
+        per_source = collections.defaultdict(list)
         for s in sorted(sources):
             if s not in adj and s not in reg:
                 pass
@@ -206,6 +221,7 @@ def main():
                 # degree-matched decoys for this target: replicate 0 drives the hop comparison, all replicates feed the joint null
                 bkey = (min(int(mover_freq[gidx[t2]] * 100) // 2, 25), int(np.log2(indeg.get(t2, 0) + 1)))
                 pool = buckets.get(bkey) or buckets.get((bkey[0], max(bkey[1] - 1, 0))) or genes
+                t_close = t_far = 0
                 for rep in range(NDECOY):
                     d = None
                     for _try in range(20):
@@ -228,20 +244,38 @@ def main():
                         else:
                             dec_dist += 1
                     if h < hd:
-                        closer += 1
+                        closer += 1; t_close += 1
                     elif h == hd:
                         same += 1
                     else:
-                        farther += 1
+                        farther += 1; t_far += 1
                     if 2 <= hd <= MAXHOP:
                         c = par.get(d)
                         while c is not None and c != s:
                             joint_reps[lname][rep][c] += 1
                             c = par.get(c)
+                per_source[s].append((t_close - t_far) / float(NDECOY))
         tot = sum(hops_real.values())
-        from scipy.stats import binomtest
+        from scipy.stats import binomtest, ttest_1samp
         dec_n = closer + farther
-        pcloser = binomtest(closer, dec_n, 0.5).pvalue if dec_n else float("nan")
+        # The naive binomial over target x replicate is reported ONLY to show how badly it misleads; it is not the test.
+        p_naive = binomtest(closer, dec_n, 0.5).pvalue if dec_n else float("nan")
+        # THE ACTUAL TEST: reduce each target to one statistic, average within source, test across sources.
+        src_means = np.array([np.mean(v) for s2, v in sorted(per_source.items()) if v])
+        n_src = len(src_means)
+        if n_src > 2:
+            tt = ttest_1samp(src_means, 0.0)
+            t_stat, pcloser = float(tt.statistic), float(tt.pvalue)
+        else:
+            t_stat, pcloser = float("nan"), float("nan")
+        # cluster bootstrap over SOURCES for a CI on the pooled closer-fraction
+        boot = []
+        src_keys = [s2 for s2, v in sorted(per_source.items()) if v]
+        for _ in range(2000):
+            pick = RNG.randint(0, n_src, n_src) if n_src else []
+            vals = np.concatenate([per_source[src_keys[q]] for q in pick]) if n_src else np.array([0.0])
+            boot.append(float(np.mean(vals)))
+        lo_b, hi_b = (float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))) if boot else (np.nan, np.nan)
         reach = tot - hops_real.get(99, 0)
         reach_null = tot - hops_null.get(99, 0)
         mrd, mdd = float(np.mean(bal_rd)) if bal_rd else 0.0, float(np.mean(bal_dd)) if bal_dd else 0.0
@@ -249,6 +283,9 @@ def main():
         layers[lname] = {"hops_real": dict(hops_real), "hops_null": dict(hops_null), "n": tot,
                          "closer": closer, "same": same, "farther": farther,
                          "closer_frac": round(closer / max(dec_n, 1), 4), "closer_p": float(pcloser),
+                         "p_naive_pseudoreplicated": float(p_naive), "n_source_clusters": int(n_src),
+                         "cluster_t": float(t_stat), "cluster_mean": round(float(np.mean(src_means)) if n_src else 0.0, 5), "cluster_boot_ci": [round(lo_b, 4), round(hi_b, 4)],
+                         "tie_frac": round(same / max(closer + same + farther, 1), 4),
                          "reachable": reach, "reachable_frac": round(reach / max(tot, 1), 4),
                          "reachable_null": reach_null, "reachable_null_frac": round(reach_null / max(tot, 1), 4),
                          "mean_degree_real": round(mrd, 1), "mean_degree_decoy": round(mdd, 1),
@@ -261,10 +298,14 @@ def main():
             en = (rr / max(nn, 1)) if nn else float("inf")
             print(f"    {lab:>6s} {rr:>9,d} {nn:>9,d} {en:>11.2f}x")
         print(f"    reachable within {MAXHOP} hops: {reach:,}/{tot:,} ({100*reach/max(tot,1):.0f}%)")
-        print(f"    real target strictly CLOSER than its matched decoy: {closer:,}/{dec_n:,} decisive pairs "
-              f"({100*closer/max(dec_n,1):.1f}%; ties {same:,}; binomial p={pcloser:.2g})"
-              + ("  <- ROUTING IS AT CHANCE, the reachability above is graph density" if pcloser > 0.05 or closer <= dec_n / 2 else
-                 "  <- routing beats chance"))
+        print(f"    real target strictly CLOSER than its matched decoy: {closer:,}/{dec_n:,} decisive comparisons "
+              f"({100*closer/max(dec_n,1):.1f}%; {100*same/max(closer+same+farther,1):.0f}% of all comparisons are TIES)")
+        print(f"    naive binomial over target x replicate: p={p_naive:.2g}  <- WRONG, pseudo-replicated: the {NDECOY} decoys "
+              f"of a target share one real distance and a source's targets share one BFS tree")
+        print(f"    CLUSTERED at the source level ({n_src} sources): mean per-source (closer-farther)/rep = "
+              f"{np.mean(src_means):+.4f}, t={t_stat:+.2f}, p={pcloser:.3g}; cluster-bootstrap 95% CI "
+              f"[{lo_b:+.4f},{hi_b:+.4f}]"
+              + ("  <- NOT significant once clustering is respected" if not (pcloser < 0.05) else "  <- survives clustering"))
         print(f"    NULL BALANCE (check the match, do not trust the word 'matched'): mean in-degree real {mrd:.1f} vs decoy {mdd:.1f}; "
               f"reachable-at-all real {100*reach/max(tot,1):.1f}% vs decoy {100*reach_null/max(tot,1):.1f}%")
         print(f"    what decides a pair: REACHABILITY (one side unreachable) {dec_unreach:,} vs true DISTANCE "
@@ -507,8 +548,9 @@ def main():
             tn.append(len(set(tide_rank) & truth) / min(len(truth), K_RECALL))
     m_tide = float(np.mean(tn))
     print(f"    tide-null RECOMPUTED IN THIS SETUP       {m_tide:.3f}   (the familiar 0.26 is the harness setup, not this one)")
-    print(f"    completion helps {nbetter} held-out sources across all splits, hurts {nworse}; median paired Wilcoxon "
-          f"p={p_gain:.2g}"
+    n_eval = sum(r["n"] for r in split_rows)
+    print(f"    completion helps {nbetter}/{n_eval} held-out source-evaluations across all {NSPLIT} splits, hurts {nworse}; "
+          f"median paired Wilcoxon p={p_gain:.2g}"
           + ("  <- the gain is small and its significance is NOT stable across splits" if nsig < NSPLIT else
              "  <- significant in every split"))
 
@@ -536,32 +578,31 @@ def main():
         "THAT 71% IS NOT THE RESULT, AND READING IT AS ONE WOULD BE THE WHOLE MISTAKE. The curated graph is dense enough to reach almost anything, "
         "so every route was scored against a DEGREE-MATCHED DECOY looked up in the same BFS, over all {} decoy replicates: ".format(NDECOY)
         + "; ".join(
-            f"{ln} layer reaches only {100*d['reachable_frac']:.0f}% of measured edges but the real target is strictly closer than its decoy in "
-            f"{100*d['closer_frac']:.1f}% of decisive pairs (p={d['closer_p']:.2g})"
-            if d["closer_p"] < 0.05 and d["closer_frac"] > 0.5 else
-            f"{ln} layer reaches {100*d['reachable_frac']:.0f}% of measured edges but the real target is closer than its decoy in only "
-            f"{100*d['closer_frac']:.1f}% of decisive pairs (p={d['closer_p']:.2g}) -- AT CHANCE, so that reachability is graph density and "
-            "explains nothing"
+            f"{ln} layer reaches {100*d['reachable_frac']:.0f}% of measured edges; clustered at the source level its per-source effect is "
+            f"{d['cluster_mean']:+.4f} (t={d['cluster_t']:+.2f}, p={d['closer_p']:.3g}, bootstrap CI "
+            f"[{d['cluster_boot_ci'][0]:+.4f},{d['cluster_boot_ci'][1]:+.4f}])"
+            + (" -- SURVIVES clustering, marginally" if d["closer_p"] < 0.05 else " -- AT CHANCE once clustering is respected")
             for ln, d in layers.items())
-        + ". THE NULL'S COVARIATE DECIDED THIS AND I GOT IT WRONG FIRST TIME: an earlier version bucketed decoys on mover-frequency alone and "
-        "called it degree-matched. Mover-frequency correlates with curated-graph degree at rho~0.01, so it matched nothing relevant to a claim "
-        "about graph DISTANCE, and under it the combined layer came out at chance (50.2%, p=0.82) -- a false negative I was about to publish. "
-        f"Matching on log2(in-degree in the routing layer) x mover-frequency brings the balance to mean in-degree "
-        f"{layers['COMBINED']['mean_degree_real']:.0f} vs {layers['COMBINED']['mean_degree_decoy']:.0f} and reachable-at-all "
-        f"{100*layers['COMBINED']['reachable_frac']:.0f}% vs {100*layers['COMBINED']['reachable_null_frac']:.0f}%, and the combined layer then "
-        f"beats chance. Both layers do. The decomposition also matters: "
-        + "; ".join(f"{ln} {100*d['decided_by_distance']/max(d['decided_by_distance']+d['decided_by_reachability'],1):.0f}% of decisive pairs are "
-                    "settled by true distance rather than by one side simply being unreachable" for ln, d in layers.items())
+        + ". I MADE TWO STATISTICAL MISTAKES HERE, IN OPPOSITE DIRECTIONS, AND BOTH ARE REPORTED RATHER THAN QUIETLY FIXED. First the null was "
+        "bucketed on mover-frequency and called degree-matched, which it is not (rho~0.01 with graph degree); under it the combined layer read "
+        "'at chance' and this module was about to conclude PPI routing explains nothing. Then, having fixed that, counting all "
+        + str(NDECOY) + " decoys per target as independent trials multiplied n fivefold and the p-value by four orders of magnitude WITHOUT moving "
+        "the effect size -- the naive binomial still printed above (" + ", ".join(f"{ln} p={d['p_naive_pseudoreplicated']:.2g}" for ln, d in layers.items())
+        + ") is exactly that inflation, kept visible on purpose. Reduced to one statistic per target and tested across sources, the honest answer is "
+        "that the layer I twice called meaningful is the one at chance. Note also how much of the comparison is TIES ("
+        + ", ".join(f"{ln} {100*d['tie_frac']:.0f}%" for ln, d in layers.items())
+        + "), so the headline percentages are computed over a minority of the data"
         + ". THE DEPTH PROFILE SAYS WHERE THE NETWORK STOPS EXPLAINING, and it is the single most useful number here: enrichment over "
-        "matched decoys by route length is "
+        "matched decoys by route length (single-replicate view) is "
         + ", ".join(f"{lab} {(layers['COMBINED']['hops_real'].get(h,0)/max(layers['COMBINED']['hops_null'].get(h,1),1)):.2f}x"
                     for h, lab in ((1, "direct"), (2, "1 intermediate"), (3, "2 intermediates"), (4, "3 intermediates")))
         + " on the combined layer (and "
         + ", ".join(f"{lab} {(layers['REGULATORY']['hops_real'].get(h,0)/max(layers['REGULATORY']['hops_null'].get(h,1),1)):.2f}x"
                     for h, lab in ((1, "direct"), (2, "1 intermediate")))
-        + " on the regulatory layer). Direct curated edges are genuinely enriched among measured effects, one regulatory intermediate still carries "
-        "signal, and BY TWO INTERMEDIATES THE ROUTES ARE INDISTINGUISHABLE FROM A RANDOM WALK. So the network can be completed, but it can only be "
-        "TRUSTED one hop out -- which is why the long explanatory chains this project kept constructing dissolved under test. "
+        + " on the regulatory layer). Read it against the clustered tests above, not on its own: the only enrichment that is both sizeable and on the "
+        "layer that survives clustering is the DIRECT edge on the combined layer; everything at two or more intermediates is indistinguishable from "
+        "a random walk on both layers. So the network can be completed, but it can only be TRUSTED at the direct edge -- which is why the long "
+        "explanatory chains this project kept constructing dissolved under test. "
         + (f"SIGN: UNTESTABLE -- only {signed_tot} of {len(spec):,} specific measured edges have a signed curated counterpart at all, so the "
            "activator/repressor logic cannot be scored here; the curated regulatory layer barely intersects the knockouts usable as sources. "
            if not sign_testable else
@@ -569,9 +610,11 @@ def main():
            f"{100*prior:.0f}% majority-direction baseline. ")
         + f"VALUE, the only non-circular test: sources split 70/30, completion built from TRAIN sources only, held-out specific-mover recall@"
         f"{K_RECALL} is {mc:.3f} for the curated network alone and {mp:.3f} for the completed network ({mp-mc:+.3f}; random {mr:.3f}). "
-        + (f"That gain is NOT distinguishable from noise -- it helps on {nbetter}/{len(rc)} held-out sources and hurts on {nworse} "
-           f"(paired Wilcoxon p={p_gain:.2g}). " if not (p_gain < 0.05) else
-           f"The gain is significant (helps {nbetter}/{len(rc)}, hurts {nworse}, paired Wilcoxon p={p_gain:.2g}). ")
+        + (f"That gain is NOT distinguishable from noise -- across all {NSPLIT} splits it helps {nbetter}/{n_eval} held-out "
+           f"source-evaluations and hurts {nworse}, significant in {nsig}/{NSPLIT} splits (median paired Wilcoxon "
+           f"p={p_gain:.2g}); note p<0.05 is barely reachable at these tiny non-tied counts, so this is partly a power "
+           "floor rather than a clean negative. " if not (p_gain < 0.05) else
+           f"The gain is significant (helps {nbetter}/{n_eval}, hurts {nworse}, median paired Wilcoxon p={p_gain:.2g}). ")
         + f"AND THE SCALE SETTLES IT, AGAINST A REFERENCE COMPUTED IN THIS SETUP RATHER THAN AN IMPORTED ONE: quoting this project's familiar "
         f"{REF_TIDE_HARNESS:.2f} tide-null and {REF_BEST_HARNESS:.2f} best-model here would be a cross-metric comparison, since those come from the "
         f"harness (pkl, TAU=1.0) and this module scores the uncensored parquet at |z|>={T:.1f} with a different tide definition. Recomputed on "
