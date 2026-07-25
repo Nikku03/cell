@@ -8635,3 +8635,61 @@ them is intact. Whatever is wrong with transporters in this cell is a **supply**
 **The limit, stated plainly.** Perturb-seq measures mRNA. It cannot show a protein's structure, folding state, glycans, or whether a
 transporter actually transports. Structure, maturation state and function are **not observed here**. What is observed is whether the
 transcripts encoding each pipeline step changed — a statement about *capacity*, inferred, not about function, measured.
+
+## Starting from the gene, not the response: identity cards + a genome-wide coverage audit (colab/gene_identity.py)
+
+Every model in this project began at the response. The prior question was skipped: **what IS this gene, what machinery does it work in,
+and if it is a TF, what does it control and what do those targets do?** That is answerable from annotation alone. The real question is
+whether it can be answered for the *whole cell* or only for a well-studied corner.
+
+### A caught inflation, first
+
+The first version of this audit reported **100% function coverage genome-wide**. That was wrong. It counted as knowledge:
+- `proc == "other"` — the catch-all bucket, **4,302 genes = 26% of the genome**
+- generic GO terms — "protein binding", "metal ion binding", "ATP binding" — **1,843 genes have nothing else**
+
+Both are placeholders. With them excluded, informative GO molecular function drops **94.9% → 83.5%**, and process **100% → 73.9%**. Every
+downstream composite and the whole TF-chain result moved. The strict definitions are now used in the card and the audit alike.
+
+### Coverage, strictly counted
+
+| field | all 16,492 genes | measured in Perturb-seq (7,223) | knocked out, ≥20 movers (305) |
+|---|---|---|---|
+| compartment | 100% | 100% | 100% |
+| process (excl. "other") | 73.9% | 68.9% | 82.0% |
+| GO mol. function (any) | 94.9% | 97.3% | 100% |
+| **GO mol. function (informative)** | **83.5%** | 84.3% | 87.2% |
+| Reactome pathway | 62.8% | 69.7% | 93.4% |
+| **in a curated complex** | **19.7%** | 32.8% | **81.6%** |
+| any PPI partner | 86.3% | 96.2% | 99.7% |
+| catalyses a reaction | 15.5% | 18.3% | 7.9% |
+| PTM sites | 51.1% | 71.3% | 86.9% |
+| is annotated a TF | 7.8% | 8.9% | 8.5% |
+
+**The three questions, composited:**
+
+| | all genes | measured | knocked out |
+|---|---|---|---|
+| function known | 94.4% | 94.2% | 95.4% |
+| machinery known | 86.7% | 96.3% | 99.7% |
+| **BOTH** | **82.1%** | 90.9% | 95.1% |
+| + pathway | 56.7% | 66.8% | 89.8% |
+| **STRICT (informative fn + complex + pathway)** | **14.9%** | 24.8% | **69.5%** |
+
+### The answer
+
+**Yes for the basic question, no for the deep one.** Function and machinery can be stated for **82% of the genome** — that is enough to
+build identity cards cell-wide. But the *strict* version, where a gene has an informative function AND a named complex AND a pathway, holds
+for only **14.9% genome-wide**.
+
+**And the sampling bias is the finding: 19.7% of all genes are in a curated complex, versus 81.6% of the genes we actually knock out.**
+The experimental set is 4× better annotated than the genome it is drawn from. Any coverage figure measured on knocked-out genes
+**overstates what is known about the cell by a large factor** — which is exactly why the pointwise model looked reasonable at 0.428 on
+complex members and collapsed to 0.143 outside them.
+
+### The TF chain
+
+1,283 of 1,285 annotated TFs have ≥1 curated target; median regulon **92** genes; the median TF has **96.5%** of its targets carrying a
+known function, and **99.5%** of TFs have a regulon ≥80% annotated. So for TFs the chain *does* hold — a regulon can be described, not just
+counted. GATA1: 883 targets, 840 (95%) with a known function, profiled as 235 "other", 191 transcription, 136 transport/uptake, 112
+signalling; localised 261 nucleus, 231 cytoplasm, 109 plasma membrane.
