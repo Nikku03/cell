@@ -8377,3 +8377,54 @@ duplicate guides).
 being the reproducibility ceiling of this target rather than a biological limit — i.e. the oracle may already be saturating the noise
 floor. If so, 0.35 is about 60% of the achievable maximum and the headroom is roughly 0.22, not 0.65. This is a hypothesis from a numerical
 coincidence, not a measurement, and it needs a direct test before anyone relies on it.
+
+## Attacking the annotation-coverage ceiling (colab/coldstart_coverage.py)
+
+The diagnosis said the model is an annotation lookup: 0.428 on genes in a curated complex, 0.143 on genes in none. The one-hot complex block
+is the model's strongest feature and it is all zeros for an uncurated gene.
+
+**Fixable in principle?** Checked before building. The best-possible-copy oracle — highest recall from copying some other measured knockout's
+profile, partner chosen by peeking, so a **ceiling not a predictor** — reaches **0.698** on no-complex genes vs **0.730** on complex members,
+at equal truth-set size (median 30 vs 36) and strength (median |z| 4.97 vs 4.96). A predicting profile exists in the data.
+
+Added two all-gene blocks from data already in `cell_complete.json`: **GO terms** (16,412 genes annotated vs 3,257 with a complex) and
+**soft complex affinity** (mean similarity to a complex's members over PPI / co-expression / co-dependency, so uncurated genes still land in
+complex space; a gene never scores affinity to itself).
+
+| config | dims | ALL | in complex | NO complex |
+|---|---|---|---|---|
+| baseline | 175 | 0.3498 | 0.4276 | 0.1425 |
+| +dense(raw) | 580 | 0.3434 | 0.4084 | 0.1705 |
+| **+dense(PCA)** | **195** | **0.3711** | **0.4505** | 0.1596 |
+| +dense(PCA,gated) | 196 | 0.3575 | 0.4373 | 0.1450 |
+| +dense(PCA,gated)-noDepMap | 194 | 0.3621 | 0.4402 | 0.1543 |
+| [ref] tide-null | – | 0.1163 | 0.1155 | 0.1184 |
+
+Paired on **one value per unique source**, Bonferroni x4 configurations:
+
+| config | no-complex Δ | bonf p | ALL Δ | bonf p |
+|---|---|---|---|---|
+| +dense(raw) | +0.0365 | 0.336 | −0.0003 | 1.0 |
+| **+dense(PCA)** | +0.0156 | 0.228 | **+0.0222** | **0.002** |
+| +dense(PCA,gated) | +0.0091 | 1.0 | +0.0091 | 0.612 |
+| +dense(PCA,gated)-noDepMap | +0.0192 | 1.0 | +0.0144 | 0.076 |
+
+### A real improvement, for the wrong reason
+
+**Raw addition made the model worse** (−0.0003 overall): 580 features against 235 training samples dilutes. Uncurated genes gained +0.037 but
+complex members lost more. **Compressing the same information to 20 PCs** (train-only fit) removes the dilution and gives
+**0.3498 → 0.3711, +0.0222, Bonferroni p=0.002 on 218 unique sources.** That is the first genuine improvement to this model.
+
+### But the coverage hypothesis is refuted
+
+1. **The gain is not where the deficit is.** Complex members +0.0229; uncurated genes +0.0171 (bonf p=0.228, not significant). The
+   already-well-annotated genes gained *at least as much* as the ones with no annotation.
+2. **Gating kills it.** Restricting the compressed block so only uncurated genes can use it — exactly what the coverage story predicts should
+   work best — drops the no-complex gain to +0.0091 (p=0.876) and halves the overall gain.
+
+So GO and similarity affinity are **not** filling a hole for uncurated genes; they are extra information for *every* gene. What was actually
+limiting the model was **feature dimensionality against 235 training samples**, not annotation coverage.
+
+**The original problem is untouched: 0.160 vs 0.451, a gap of 0.291, essentially unchanged.** Whatever those genes need, it is not GO terms
+or network-similarity affinity. The oracle still says a predicting profile exists for them at 0.698, so this is a statement about these
+features, not about those genes.
