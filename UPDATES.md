@@ -7590,3 +7590,41 @@ ACTIVITY-CHANGED, 9 ACTIVITY-UNCHANGED, 4 CONTRADICTED, 4 MOVED-UNSIGNED, 1 ABUN
 changed vs 9 unchanged** — where we can look at all, changed function with a held-constant level is about as common as no change, and invisible
 to abundance either way. Route labels carry a tie-break disclosure (GATA1 has 33 physical partners; 1, SPI1, is a specific mover but is booked
 under DIRECT because a curated regulatory edge also exists — so "physical 0" is bookkeeping, not biology). (`case_report.py`.)
+
+## `recover_chains` — attacking the verification gap: what actually blocks it
+
+`case_report` verified only a handful of curated chains end to end. Its own audit said why: **82% of failed hops lacked a MEASUREMENT**, only 4
+failed because the annotation was wrong. So this module attacks both with data already in hand, then diagnoses what's left.
+
+**Fix 1 — uncensored expression.** The harness pickle stores only the top ~250 genes per knockout (96.5% zeros). A **dense** matrix of the *same*
+experiment exists locally: 1971 KOs × 8563 genes, 0% zeros, **100% sign agreement** with the pickle, spearman 0.90, scale ≈3.8×. Threshold
+calibrated against the 1337 knockouts where the pickle is *not* truncated, so "moved" means the same thing in both (|z|≥4.2 ≡ pickle |z|≥1.0).
+At full resolution GATA1 has **637 movers, not 250** — the pickle was showing ~39% of the response. *(I nearly reported "4526 vs 250" before
+calibrating; that was the wrong threshold.)*
+
+**Fix 2 — signs learned from data, not databases.** Databases give no direction for most edges and are wrong most of the time when they do.
+Replaced with a measured causal sign where possible (what does removing X actually do to Y, from X's own knockout row), falling back to
+cross-knockout correlation, always with the target knockout held out.
+
+**Recovery ladder (chains verified end to end, every hop confirmed):**
+
+| regime | verified | sign-testable hops correct |
+|---|---|---|
+| censored data + database signs | 2/545 (0.4%) | 6% |
+| **uncensored** data + database signs | 3/545 (0.6%) | 21% |
+| **uncensored + learned signs** | **9/545 (1.7%)** | **48%** |
+
+Per-hop sign accuracy improves a lot (6% → 48%), and better data + learned signs together take verified chains 2 → 9. But that's still ~2%.
+
+**The binding constraint — and this is the real answer.** To verify `GATA1 → X → Y` you must know what removing **X** does. Of the **308 distinct
+intermediate proteins** on GATA1's chains:
+- **48 (16%)** were themselves knocked out in this experiment
+- **8 (3%)** had a knockout strong enough to read
+
+**For ~97% of intermediates, that experiment was never run.** And the panel is mostly null anyway: **1634/1971 (83%) of profiled knockouts move
+fewer than 20 genes (median 1)**; only 3% move ≥100. Most knockouts carry no signal to propagate.
+
+**Conclusion (actionable):** the route from a handful of verified chains to most of them is **not** cleverer analysis of this dataset, and **not**
+primarily an activity readout — it is **perturbing the intermediates**. A targeted screen over the few hundred proteins sitting on the chains,
+with verified depletion (since most current knockdowns are null), makes every hop directly checkable by measurement instead of inferable by
+annotation. That is a few-hundred-gene screen chosen *by the graph*, not a genome-wide one chosen at random. (`recover_chains.py`.)
