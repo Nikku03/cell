@@ -8834,3 +8834,53 @@ literal sense the question asked — an up-regulated product binding and inhibit
 **The down group is 67% essential against a 16.8% background — 4× enriched — and the most dosage-constrained set of the three.** So the genes
 being lost are exactly the ones that cannot tolerate being lost. That identifies *which* genes a drop matters for; it still does not say how
 far a drop may go before function fails, and nothing here can.
+
+## How far down is "down"? (colab/shutdown_depth.py)
+
+**A correction to an earlier claim.** This project said magnitude wasn't really available — z is in SD units and the first-order conversion
+`1 + z·CV` broke outside a narrow range, so fold-changes were withheld. **That was a limitation of the z-score parquet, not of the data.**
+The Replogle genome-wide matrix is **relative expression, (perturbed/control) − 1**: centred at 0, sd 0.105, **floored at −1** because a gene
+cannot lose more than all of it, long positive tail to +18.7, only 0.003% below −1. So:
+
+    fraction remaining = 1 + x      x = −1.00 → fully off     x = −0.50 → half left
+
+No modelling required. Magnitude was there the whole time.
+
+**A bug this caught.** `var/gene_name` is an int16 code array with categories at `var/__categories/gene_name`. My first version decoded the
+codes directly, turning every symbol into a number string (`"3595"` instead of `LINC01409`) and silently emptying every lookup. It surfaced
+**only because the positive control returned zero entries** — the run would otherwise have produced plausible-looking garbage. An assertion
+now guards it.
+
+### Depth of down-regulation — 3,179 calls across 336 knockouts
+
+| band | n | share |
+|---|---|---|
+| **fully off (≤5% left)** | **1,651** | **51.9%** |
+| severe (5–25% left) | 596 | 18.7% |
+| strong (25–50% left) | 552 | 17.4% |
+| moderate (50–75% left) | 276 | 8.7% |
+| mild (>75% left) | 79 | 2.5% |
+
+**Median 3.1% remaining. 51.9% are essentially switched OFF; 88.0% lost at least half.** Down-regulation here is not a dimmer — it is
+mostly a switch.
+
+**The asymmetry with UP is large and real:** induction is median **1.79×**, only 36.6% exceed 2×, **1.1% exceed 5×**. This knockout
+**switches things off hard and turns things up gently.**
+
+**Positive control:** the CRISPRi-targeted genes themselves retain median **37.9%** — knockdown, as expected, which validates the mapping.
+
+**Selection effect, stated:** these are genes already selected at |z|≥4.2, so this is the depth distribution *of strongly-called movers*, not
+of every gene the knockout touches. It is also why down targets look deeper (3.1%) than the targeted genes (37.9%) — the targeted set is
+unselected, the down set is a distribution tail.
+
+**Still unavailable:** this is mRNA *abundance*, not transcription *rate*, and nothing here says how far a gene may fall before function
+fails. Depth is measurable; tolerance is not.
+
+### Beyond K562
+
+RPE1: 855 knockouts with ≥20 movers, median down-z **−4.48** vs K562's **−4.77** — the same shape. But **no relative-expression matrix for
+RPE1 is on disk**, so depth in %-remaining units is **K562-only**; the cross-line claim is limited to the z distribution.
+
+**Whole-body framing.** The annotation model carries 200 cell types. What transfers everywhere: **function, complexes, PPI, domains** —
+cell-type-independent. What does not: **which genes are expressed, what is essential, and the response itself** — all cell-type-specific.
+So identity cards generalise across the body; response predictions do not, and must be refit per cell type.
