@@ -8428,3 +8428,60 @@ limiting the model was **feature dimensionality against 235 training samples**, 
 **The original problem is untouched: 0.160 vs 0.451, a gap of 0.291, essentially unchanged.** Whatever those genes need, it is not GO terms
 or network-similarity affinity. The oracle still says a predicting profile exists for them at 0.698, so this is a statement about these
 features, not about those genes.
+
+## Reframe: knockout prediction as RETRIEVAL, not regression (colab/pair_retrieval.py)
+
+The pointwise framing gives 337 training examples for an ~8,533-dim output, and the learning curve, alpha sweep and dilution result all
+agree it is variance-limited. Asked instead as "do these two knockouts behave alike?", the **same** data gives **27,495 labelled pairs**
+per split with a one-dimensional target. No new data.
+
+Pipeline: learn `sim_hat(a,b)` from annotation-only pair features on pairs whose *both* members are train sources → score a held-out gene
+against every train source → predict its response as the similarity-weighted average of the top-K train sources' measured profiles → rank
+by |z|, recall@50. Splits are **source-disjoint**, so no training pair shares a gene with a test pair.
+
+### Result
+
+| method | ALL | in complex | no complex |
+|---|---|---|---|
+| **learned metric K=3** | **0.4047** | **0.4620** | **0.2523** |
+| pointwise ridge + dense(PCA), same splits | 0.3685 | 0.4528 | 0.1440 |
+| [ctrl] cosine metric K=3 | 0.1789 | 0.2048 | 0.1100 |
+| [ref] tide-null | 0.1163 | 0.1155 | 0.1184 |
+| [ref] uniform average of all train (= mu) | 0.0755 | 0.0812 | 0.0602 |
+| [ref] random | 0.0047 | 0.0055 | 0.0028 |
+| *[oracle] true similarity K=5* | *0.5480* | *0.5487* | *0.5462* |
+| *[oracle] best single copy* | *0.6317* | *0.6390* | *0.6125* |
+
+Paired on 218 unique sources:
+
+| comparison | Δ | p |
+|---|---|---|
+| learned vs **pointwise** (identical splits) | **+0.0409** | **0.0055** |
+| learned vs pointwise, **no-complex** | **+0.1210** | **0.0072** |
+| learned vs cosine metric | +0.2258 | 1.3e-22 |
+| learned vs cosine, no-complex | +0.1441 | 0.0036 |
+| learned vs tide-null | +0.2869 | 1.6e-24 |
+
+Held-out pair similarity is genuinely predictable: **Spearman 0.599, top-decile AUC 0.859**, source-disjoint (the earlier 0.828 was
+in-sample and optimistic).
+
+### What this establishes
+
+1. **The reframe works.** +0.041 over the best pointwise model, paired, same splits, p=0.0055. Best result in the project on this metric.
+2. **Learning the metric is doing the work, not retrieval alone.** The cosine control on identical features and identical
+   retrieve-and-average machinery reaches only 0.179. +0.226, p=1.3e-22.
+3. **It moves the stratum nothing else could.** Uncurated genes 0.144 → 0.252 (+0.121, p=0.0072) after GO terms, soft complex affinity and
+   gating all failed. Mechanism as predicted: those genes have no complex but do have PPI neighbours and GO terms, features the pointwise
+   ridge could only dilute.
+4. **Real retrieval, not mean-reversion.** K sweep peaks at K=3 and decays to 0.266 at K=50; the uniform average over all train sources is
+   0.0755.
+
+### Corrections to earlier statements
+
+- I said this path could "roughly double where we are, ~0.70". **Wrong.** 0.70 was the best-single-copy oracle, which picks the ideal partner
+  by peeking. The realistic ceiling for retrieval is the **true-similarity oracle at 0.548** — retrieval must find partners blind and
+  averaging pulls toward the mean. 0.405 is **74% of that ceiling**, not 58% of 0.70.
+- K=3 was selected by inspecting the sweep, so the headline carries mild selection optimism. The cosine and pointwise margins are large
+  enough to survive it; a pre-registered K would be cleaner.
+- The first run compared against a **hardcoded** 0.3711 from another script. Rebuilt inside this script on identical splits it is 0.3685,
+  and the margin is now a paired test rather than a comparison against a constant.
