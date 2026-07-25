@@ -1,0 +1,46 @@
+{
+ "n_pos": 4621,
+ "train_sources": 141,
+ "test_sources": 60,
+ "results": {
+  "LOOKUP (where defined)": {
+   "auc": 0.5479,
+   "coverage": 0.9652
+  },
+  "LOOKUP (all, undefined=0)": {
+   "auc": 0.5462,
+   "coverage": 1.0
+  },
+  "STATIC co-dependency": {
+   "auc": 0.5122,
+   "coverage": 1.0
+  },
+  "STATIC PPI": {
+   "auc": 0.5045,
+   "coverage": 1.0
+  },
+  "LEARNED two-tower (3 seeds)": {
+   "auc": 0.5844,
+   "coverage": 1.0
+  },
+  "  ablation: K562 context ONLY": {
+   "auc": 0.5251,
+   "coverage": 1.0
+  },
+  "  ablation: donor lines ONLY": {
+   "auc": 0.5124,
+   "coverage": 1.0
+  },
+  "LEARNED transformer (3 seeds)": {
+   "auc": 0.5505,
+   "coverage": 1.0
+  },
+  "LEARNED transformer + lookup": {
+   "auc": 0.5647,
+   "coverage": 1.0
+  }
+ },
+ "learned_beats_lookup": true,
+ "verdict": "EDGE TRANSFORMER (edge_transformer.py): the multiline 0.554 was a LOOKUP -- binary, undefined wherever the knockout was not run elsewhere, and unable to generalise to an unseen source. This trains a real model on the same labels with strictly non-circular inputs: every feature comes from RPE1/HepG2/Jurkat or static annotation, K562 supplies only the labels, and the split is BY SOURCE GENE so the test asks 'here is a knockout you have never seen, what will it hit'. On held-out sources: lookup 0.546 (only 97% of pairs even scoreable, 0.548 there), static co-dependency 0.512, learned TWO-TOWER 0.584+/-0.011 (3 seeds), learned TRANSFORMER 0.551+/-0.003 (3 seeds). The best learned model (LEARNED two-tower (3 seeds), 0.584) BEATS the lookup by +0.038 at FULL coverage, so a learned representation does generalise better than asking whether a specific edge was seen elsewhere. THE ABLATION IS THE INTERESTING PART: neither input works alone -- K562's own other knockouts alone reach only 0.525 and the donor cell lines alone 0.512, both near the floor -- yet TOGETHER they reach 0.584. The signal lives in the INTERACTION between how a gene behaves across other cell lines and how targets behave under the knockouts already run in THIS line; neither view is sufficient by itself. Note also that the plain two-tower matches or beats the transformer: with only a few thousand training pairs the attention model overfits, so ARCHITECTURE IS NOT THE BOTTLENECK -- labelled edges are. SCOPE: donor lines are the top-~250-genes-per-knockout store; the ceiling on this task is set by how context-specific causal edges are (only ~5% reproduce across lines), so no representation of other lines can be expected to reach high AUC -- the honest goal is to beat the lookup and to cover what it cannot. Deterministic; split by source gene, degree-matched negatives.",
+ "note": "EDGE TRANSFORMER (edge_transformer.py): the multiline 0.554 was a LOOKUP -- binary, undefined wherever the knockout was not run elsewhere, and unable to generalise to an unseen source. This trains a real model on the same labels with strictly non-circular inputs: every feature comes from RPE1/HepG2/Jurkat or static annotation, K562 supplies only the labels, and the split is BY SOURCE GENE so the test asks 'here is a knockout you have never seen, what will it hit'. On held-out sources: lookup 0.546 (only 97% of pairs even scoreable, 0.548 there), static co-dependency 0.512, learned TWO-TOWER 0.584+/-0.011 (3 seeds), learned TRANSFORMER 0.551+/-0.003 (3 seeds). The best learned model (LEARNED two-tower (3 seeds), 0.584) BEATS the lookup by +0.038 at FULL coverage, so a learned representation does generalise better than asking whether a specific edge was seen elsewhere. THE ABLATION IS THE INTERESTING PART: neither input works alone -- K562's own other knockouts alone reach only 0.525 and the donor cell lines alone 0.512, both near the floor -- yet TOGETHER they reach 0.584. The signal lives in the INTERACTION between how a gene behaves across other cell lines and how targets behave under the knockouts already run in THIS line; neither view is sufficient by itself. Note also that the plain two-tower matches or beats the transformer: with only a few thousand training pairs the attention model overfits, so ARCHITECTURE IS NOT THE BOTTLENECK -- labelled edges are. SCOPE: donor lines are the top-~250-genes-per-knockout store; the ceiling on this task is set by how context-specific causal edges are (only ~5% reproduce across lines), so no representation of other lines can be expected to reach high AUC -- the honest goal is to beat the lookup and to cover what it cannot. Deterministic; split by source gene, degree-matched negatives."
+}

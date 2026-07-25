@@ -7700,3 +7700,37 @@ best.
 Cell lines are not replicates of one wiring diagram — they share a small conserved essential core and are otherwise privately wired. The specific
 wiring has to be measured **in the context you care about**. *(Scope: top-~250-genes-per-knockout store for all lines, truncation binding for only
 9–24 knockouts each; all lines treated identically so the comparison is fair.)* (`multiline_network.py`.)
+
+## `edge_transformer` — replacing the lookup with a real model, and what the ablation reveals
+
+The multiline 0.554 was a **lookup**, not a model: binary, undefined wherever that knockout wasn't run elsewhere, unable to generalise to an
+unseen source. This trains an actual model on the same labels, and puts the long-idle transformer on a task it suits.
+
+**Setup (strictly non-circular).** Predict whether a knockout-**specific** causal edge A→B exists in K562. Every input feature comes from
+RPE1/HepG2/Jurkat, from static annotation, or from K562's **train-split** knockouts — K562's test sources supply only labels. Genes get two
+descriptions learned from elsewhere: an **OUT-profile** (what removing it does in donor lines) and an **IN-profile** (how it responds across
+donor knockouts), plus a **K562 line-context** built only from train-split sources. **Split by SOURCE GENE**, so the test asks the question that
+matters: *here is a knockout the model has never seen — what will it hit?* Degree-matched negatives throughout.
+
+| method | coverage | AUC |
+|---|---|---|
+| LOOKUP (where defined) | 97% | 0.548 |
+| LOOKUP (all, undefined=0) | 100% | 0.546 |
+| static co-dependency | 100% | 0.512 |
+| static PPI | 100% | 0.505 |
+| **LEARNED two-tower (3 seeds)** | **100%** | **0.584 ± 0.011** |
+| ↳ ablation: K562 context ONLY | 100% | 0.525 |
+| ↳ ablation: donor lines ONLY | 100% | 0.512 |
+| LEARNED transformer (3 seeds) | 100% | 0.551 ± 0.003 |
+
+**The learned model beats the lookup by +0.038 at full coverage** — a real margin against 3-seed noise of ±0.011.
+
+**The ablation is the finding.** Neither input works alone: K562's own other knockouts reach only **0.525**, the donor cell lines only **0.512** —
+both near the floor. Together they reach **0.584**. The signal lives in the **interaction** between how a gene behaves across other cell lines and
+how targets behave under the knockouts already run in *this* line. Neither view is sufficient by itself, which is why the single-source lookup and
+the static features both stall.
+
+**And the transformer loses to the two-tower** (0.551 vs 0.584). With only ~6,400 training pairs the attention model overfits. **Architecture is
+not the bottleneck — labelled edges are.** That is the honest answer to "we have a transformer sitting unused": the task is now well-posed for it,
+but it will not pay off until there are far more measured edges to train on. Scaling the *screen* unlocks the model; scaling the model does not
+unlock the screen. (`edge_transformer.py`.)
