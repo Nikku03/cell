@@ -7928,7 +7928,7 @@ wearing a distance result's clothes.
 Only **7 of 8,726** specific measured edges have a *signed* curated counterpart at all. The activator/repressor logic cannot be scored here.
 (A rate over 7 events is not a measurement, so no number is reported.)
 
-### Does completing it help? Directionally yes, negligibly.
+### Does completing it help? Directionally yes, negligibly — and it loses to using no network at all.
 
 Non-circular test: split **sources** 70/30, build the completion from train sources only, score held-out specific-mover recall@50 — repeated
 over **5 independent splits**, because a single split gave p=0.11, p=0.018 and p=0.078 on three different RNG streams.
@@ -7936,17 +7936,18 @@ over **5 independent splits**, because a single split gave p=0.11, p=0.018 and p
 | | recall@50 |
 |---|---|
 | random ranking | 0.007 |
-| curated network alone | 0.028 |
-| curated + measured completion | **0.034** (+0.006 mean, range +0.002 to +0.009) |
+| curated network alone | 0.025 |
+| curated + measured completion | **0.030** (+0.006 mean, range +0.003 to +0.008) |
+| **tide-null, recomputed in this setup** | **0.143** |
 
-Significant in **2/5 splits**; helps 21 held-out sources across all splits and hurts 2. So the direction is reliable and the magnitude is
-negligible.
+The gain is **directionally reliable** — helps 19 held-out sources across all splits, hurts **0** — but significant in **0/5** splits (median
+paired Wilcoxon p=0.12).
 
-**And the scale settles it against a reference computed in *this* setup.** Quoting this project's familiar 0.26 tide-null and 0.49 best-model
-here would be a cross-metric comparison — those come from the harness (pkl, TAU=1.0), while this module scores the uncensored parquet at
-|z|≥4.2 with a different tide definition. Recomputed on exactly these sources: simply ranking genes by how often they move under *any*
-knockout — using no network at all — beats the completed network several times over. **Completing the network and walking it is not a route
-to prediction.**
+**And the scale settles it, against a reference computed in *this* setup.** Quoting this project's familiar 0.26 tide-null and 0.49
+best-model here would be a cross-metric comparison: those come from the harness (pkl, TAU=1.0), while this module scores the uncensored
+parquet at |z|≥4.2 with a different tide definition. Recomputed on exactly these sources, the tide-null — ranking genes by how often they move
+under *any* knockout, **using no network at all** — scores **0.143**, roughly **5× better than the completed network**. **Completing the
+network and walking it is not a route to prediction; here it is worse than ignoring the network entirely.**
 
 ### The joints — count is real, names are not
 
