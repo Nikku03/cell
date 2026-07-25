@@ -8923,3 +8923,23 @@ is not absent — the linear model cannot use it in that form.
 once, so the TF layer measures *association* between wiring and rate, not the causal effect of any single factor. Getting the causal number
 needs a TF induction series with nascent-RNA readout (GRO-seq/PRO-seq/TT-seq across an induction time-course) — that dataset is not on disk,
 and no amount of modelling substitutes for it.
+
+### Transcription-rate accuracy in interpretable units (outputs/orphan/txn_rate_accuracy.json)
+
+R² is not an intuitive accuracy, so the same held-out predictions expressed as fold-error:
+
+| cell line | n | r | R² | typical fold error | within 2× | within 3× | within 5× | **null within 2×** |
+|---|---|---|---|---|---|---|---|---|
+| K562 | 7,631 | 0.571 | 0.326 | **2.36×** | **60.2%** | 80.7% | 94.1% | 51.8% |
+| HEK293T | 11,657 | 0.660 | 0.436 | 3.07× | 51.8% | 71.8% | 86.0% | 40.3% |
+| Calu3 | 9,842 | 0.569 | 0.323 | 3.09× | 49.5% | 70.0% | 86.0% | 40.3% |
+| MCF7 | 9,401 | 0.554 | 0.307 | 3.39× | 43.5% | 64.1% | 82.1% | 35.2% |
+| MDAMB | 9,829 | 0.509 | 0.260 | 3.95× | 39.7% | 58.6% | 76.5% | 34.6% |
+
+**The honest headline: predictions land within 2-fold of the true rate 40–60% of the time, within 5-fold 77–94%.**
+
+**The null column is essential and deflates this considerably.** Always predicting the median rate already lands within
+2× for 35–52% of genes, because the rate distribution is concentrated. So the model's real gain over knowing nothing is
+**+8 to +12 percentage points** on within-2× accuracy — K562 60.2% vs 51.8% null, HEK293T 51.8% vs 40.3%.
+
+That is the number to quote, not R²=0.33 and not "60% accurate".
