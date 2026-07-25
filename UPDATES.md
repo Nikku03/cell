@@ -7660,3 +7660,43 @@ weakly but **cannot reconstruct the causal graph** — consistent with the 98% n
 
 **Reading:** the measured knockout graph is hub-dominated, one-way, largely absent from every database, and not predictable from the static
 features we hold. It is the map worth building, and — on this evidence — it has to be *measured*, not inferred. (`infer_network.py`.)
+
+## `multiline_network` — does the measured causal graph transfer between cell lines?
+
+`infer_network` showed K562's measured causal graph is 94% absent from databases and not predictable from static features (AUC 0.54). The obvious
+next question: **is the missing predictor simply another measured cell line?** Built the same graph in every line with usable knockouts.
+
+| line | knockouts | usable sources | all edges | specific edges |
+|---|---|---|---|---|
+| K562 | 1400 | 247 | 16,572 | 7,048 |
+| RPE1 | 2151 | 793 | 60,233 | 12,998 |
+| HepG2 | 2151 | 455 | 38,492 | 11,068 |
+| Jurkat | 2151 | 173 | 11,083 | 5,117 |
+
+**Conservation is low.** Pairwise reproduction of a specific edge in another line, counting only edges *testable* there (donor knockout was also
+run, target measured): **4.7%–13.1%**, best RPE1→HepG2. Only **1,091 edges (4.6%)** of the 23,645 testable elsewhere appear in **2+ lines**. The
+large majority of measured causal edges are **context-private**, not conserved wiring.
+
+**The transfer test — the practical payoff, and it's a negative.** Same K562 positives and the same degree-matched negatives used for the static
+features:
+
+| predictor | coverage | AUC |
+|---|---|---|
+| static: DepMap co-dependency | 100% | 0.509 |
+| static: PPI edge | 100% | 0.506 |
+| measured: RPE1 | 64% | 0.534 |
+| measured: HepG2 | 57% | 0.540 |
+| measured: Jurkat | 29% | 0.536 |
+| **measured: all other lines pooled** | 78% | **0.554** |
+
+A measured donor line beats annotation — but only barely, and **both sit near the 0.5 floor**. **Neither a database nor another cell line predicts
+a specific causal edge.**
+
+**What does conserve** is a weak tendency, not a clean split: conserved edges have slightly higher source essentiality (0.97 vs 0.93) and target
+in-degree (5.3 vs 4.6) than K562-private ones. The transferable part is the **essential core** — which is also the part databases already cover
+best.
+
+**Practical consequence:** you cannot buy the causal map of your cell line by measuring a different one, any more than by consulting a database.
+Cell lines are not replicates of one wiring diagram — they share a small conserved essential core and are otherwise privately wired. The specific
+wiring has to be measured **in the context you care about**. *(Scope: top-~250-genes-per-knockout store for all lines, truncation binding for only
+9–24 knockouts each; all lines treated identically so the comparison is fair.)* (`multiline_network.py`.)
