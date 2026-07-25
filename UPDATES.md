@@ -8520,3 +8520,56 @@ z-scoring before use. `hct116.h5ad` is 17,768 x 16,380. Note a design constraint
 measured profiles, so other-line sources cannot simply be pooled as retrieval candidates without cell-type conditioning. The clean use is to
 train the *similarity model* on pairs drawn from all lines while keeping retrieval over K562 profiles only — which targets exactly the stage
 the audit says is limiting.
+
+## Knockout dossier: GATA1 in K562, every mover with its full journey (colab/ko_dossier.py)
+
+Not a predictor and not an evaluation — an assembly. Take a knockout actually performed in K562, take the genes that actually moved, and
+attach every annotation layer in the project to each one, following a protein from gene through transcription, translation, modification,
+transport, interaction and reaction to its functional end state.
+
+**GATA1** — chrX:48786589, nucleus, TF, LOEUF 0.321, 325 papers, 0.423 ppm, 17 PTM sites (Phospho/Acetyl), 33 PPI partners, 78 enhancers,
+no CpG island, 40 upstream TFs, **880 curated targets**. Reactome: *Factors involved in megakaryocyte development and platelet production*.
+
+### The measured effect vs the database
+
+**621 specific movers (533 up, 88 down).** Of GATA1's 880 curated TF→target edges, **76 moved — 8.6%.** And only **76/621 = 12.2%** of the
+movers are curated direct targets.
+
+That is the ChIP-vs-Perturb-seq result again, in one gene: **88% of what a knockout actually does is not in the curated regulon**, and 91% of
+the curated regulon does not move. "Direct" here labels *database evidence*, not mechanism.
+
+The direction skew is stark: **533 up vs 88 down.** Knocking out the master erythroid TF in an erythroleukemia line de-represses a large
+myeloid/inflammatory program — LTB (z=187), LST1 (102), CTSC (79), CFD, AIF1, FCER1G, HLA-C — rather than simply losing GATA1 targets.
+
+### Interconnection among the 621 movers
+
+| | |
+|---|---|
+| PPI edges among movers | **1,588** |
+| complexes with ≥2 movers | 15 — top are 60S ribosome (24), 60S variants (23, 22), 40S (17) |
+| shared pathways | Viral mRNA Translation (39), Neutrophil degranulation (22), RHOA GTPase cycle (15) |
+| compartments | cytoplasm 170, nucleus 119, unknown 75, plasma membrane 61 |
+| **TF cascade** | 15 movers are themselves TFs regulating other movers: **SPI1 → 242**, JUN → 97, MEF2A → 72, CEBPD → 72, REL → 70 |
+
+The SPI1 cascade is the mechanistic story the aggregate models keep missing: GATA1 loss releases SPI1 (PU.1), its classic antagonist, and
+SPI1 alone regulates 242 of the other movers. That is a **single second-order hop explaining ~39% of the response** — exactly the structure
+that hop-1/hop-2 averaging washed out and that program factorisation absorbs into one component without naming it.
+
+### Annotation coverage over the movers — the gaps are part of the picture
+
+| layer | coverage |
+|---|---|
+| compartment / process / abundance | 87.9% |
+| GO terms / any known regulator | 87.6% |
+| any PPI | 85.2% |
+| PTM | 65.5% |
+| **in a curated complex** | **25.6%** |
+| **Reactome pathway** | **25.6%** |
+| metabolic reaction | 15.8% |
+
+Only a quarter of the movers sit in a curated complex or a Reactome pathway. The "whole journey" is complete for localisation, abundance and
+interaction, and **broken at the pathway step for three quarters of them** — which is the same coverage wall that made the pointwise model
+score 0.428 on complex members and 0.143 on everything else.
+
+Full JSON with all 621 movers and each one's complete journey: `outputs/orphan/ko_dossier_GATA1.json` (1.4 MB). Runs for any knockout:
+`python colab/ko_dossier.py <GENE>`.
