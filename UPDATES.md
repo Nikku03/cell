@@ -7628,3 +7628,35 @@ fewer than 20 genes (median 1)**; only 3% move ≥100. Most knockouts carry no s
 primarily an activity readout — it is **perturbing the intermediates**. A targeted screen over the few hundred proteins sitting on the chains,
 with verified depletion (since most current knockdowns are null), makes every hop directly checkable by measurement instead of inferable by
 annotation. That is a few-hundred-gene screen chosen *by the graph*, not a genome-wide one chosen at random. (`recover_chains.py`.)
+
+## `infer_network` — build the network FROM the knockout data, then ask what predicts it
+
+The inversion: every earlier module used annotation as the map and perturbation as the test. Here the perturbation data IS the map. Each row is a
+real intervention ("remove A, watch everything"), so a large |z[A,B]| is a **directed, signed, measured causal edge** — a better primitive than
+any curated edge.
+
+**Build.** Of 1971 knockouts only **337 (17%)** move ≥20 genes and can carry an edge at all; the rest are null. Those yield **21,228 measured
+directed edges** (median out-degree 42). Splitting off generic targets: **12,502 (59%) point at 325 "tide" genes** (EEF1A1, RPS27, TPT1, RPLP1,
+RPS9 — the shared stress program), leaving **8,726 knockout-SPECIFIC causal edges**.
+
+**Pattern.**
+- **Hub-dominated:** top sources are GATA1 (637), SUPT6H (421), AQR (389), INTS2 (310), MED9 (272) — one master TF plus transcription/splicing
+  machinery. The top 10% of sources carry **32%** of all edges.
+- **One-way, not mutual:** of 2,610 edges whose target is *itself* a usable knockout, only **140 (5.4%)** are mirrored back. Measured causation is
+  overwhelmingly directional — feedback loops are the exception, not the rule.
+- **Almost disjoint from the databases:** in curated regulatory **0.07%**, PPI **5.94%**, complex **1.36%** → **94.0% of measured causal edges
+  appear in NO database we hold.** *Confound checked:* this is not a tide artifact — the **specific** edges are **98.0% novel**, the tide edges
+  91.2%. Databases capture the generic stress program *better* than specific causation. **This is why every annotation-first approach in this
+  project stalled: the curated interactome and the measured causal graph are nearly different objects.**
+
+**How each edge can be verified** (random sample of 4,000): curated support 5.8%, reciprocal 0.6%, **reproduces in another cell line 21.6%**
+(32% of those testable). **75.5% of edges have zero independent confirmation**, 21.2% have one, 3.3% have two or more. So the measured graph
+supports a *graded* confidence rather than a binary edge — and cross-line reproduction is by far the most available check.
+
+**Can we draw it without Perturb-seq? Essentially no.** Trained a classifier to recognise measured specific edges from non-perturbation features
+only (DepMap co-dependency, PPI, complex, pathway, essentiality, TF status, curated regulation), against **degree-matched negatives** so "hubs are
+hubs" can't win it: **AUC 0.542** combined; best single feature co-dependency **0.506**; every other feature ≈0.50. Static data can rank candidates
+weakly but **cannot reconstruct the causal graph** — consistent with the 98% novelty.
+
+**Reading:** the measured knockout graph is hub-dominated, one-way, largely absent from every database, and not predictable from the static
+features we hold. It is the map worth building, and — on this evidence — it has to be *measured*, not inferred. (`infer_network.py`.)
