@@ -8280,3 +8280,42 @@ alpha-dependent: at alpha=10 it is +0.052 at n=40 and closes by n~160.
 **Verdict on the transformer question: no trained-from-scratch high-capacity model at 337 knockouts. Use a pretrained transformer as a
 frozen feature extractor (ESM-2 embeddings) instead — that adds features without fitting parameters, and it attacks the
 annotation→loading map, which is where the measurement says the bottleneck now is.**
+
+### Leave-one-out: the closest legitimate approach to "one program per source"
+
+A 70/30 split caps the rank at 234 regardless of the K requested. LOO does not — holding out one gene leaves 336 train rows, ceiling 335.
+It is also the realistic deployment setting: every knockout already measured is training data, and the held-out gene is the next one.
+
+| K | a=1 | a=10 | a=100 | a=1000 |
+|---|---|---|---|---|
+| 20 | 0.3370 | 0.3369 | 0.3364 | 0.2731 |
+| **50** | 0.3543 | **0.3572** | 0.3546 | 0.2939 |
+| 100 | 0.3492 | 0.3478 | 0.3481 | 0.2973 |
+| 200 | 0.3347 | 0.3453 | 0.3493 | 0.2913 |
+| 335 (full rank) | 0.3323 | 0.3368 | 0.3442 | 0.2981 |
+
+Partner-free (gene-intrinsic, a=10): K=50 0.2398. References: tide-null 0.1096, mu-only 0.0700, mismatched-source 0.0735 at K=50. n=322.
+
+**Predictions were recorded before this run. Scorecard: 3 hits, 2 misses.**
+
+| prediction | outcome |
+|---|---|
+| 0.36–0.38 at a=10, K=50 | **miss** — 0.3572, just under |
+| best alpha shifts down from 100 | **hit** — a=10 now best |
+| K=335 still loses to K=50 | **hit** — 0.3368 vs 0.3572 |
+| …by a similar or smaller margin | **miss** — gap GREW, +0.011 → +0.020 |
+| mismatch control stays 0.07–0.08 | **hit** — 0.0735 |
+| tide-null unchanged at ~0.126 | **miss** — 0.1096 (mask built on 336 rows, not 235) |
+
+The rank-gap miss has a clean explanation: LOO offers 335 components instead of 234, so full rank admits *more* noise directions. More
+available components makes truncation matter more, not less.
+
+### This is a caution on the +0.069/doubling extrapolation
+
+LOO adds 43% training rows = 0.52 doublings. The learning curve predicts +0.036; **observed +0.016, about 45% of predicted.**
+
+That is a genuine warning against the ~0.417 projection for doubling to 664 sources. It is not decisive, because the two evaluations are
+not on the same scale — the LOO tide mask is built on 336 rows rather than 235 and the tide-null moved 0.1226 → 0.1096, so truth sets and
+candidate pools differ. Measured against its own null, LOO is *better* (3.26x its tide-null vs 2.78x for the split). But the honest
+summary is that the one semi-independent check on the extrapolation came in **below** the fit line, and the threshold experiment should be
+run rather than trusted in advance.
