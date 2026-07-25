@@ -8180,3 +8180,46 @@ Secondary controls: +0.270 over mu-only (p=6.6e-38, so the content is gene-speci
 prediction at 0.348 recall@50 from annotation and control-cell expression alone — 0.249 if you refuse it any curated partner relation at all —
 against a 0.129 no-model baseline. This is the first thing in the project that predicts perturbation responses without needing perturbation data
 about anything nearby.
+
+### Follow-up: how many programs? (K sweep, and why K=337 is not a thing you can ask for)
+
+Asked to try 337 components — one per source — instead of 50.
+
+**K=337 is unreachable under held-out evaluation.** A 70/30 split leaves 235 training knockouts, and centring costs one degree
+of freedom, so the train response matrix has rank 234. `np.linalg.svd` returns the extra rows with singular values ~1e-14; any
+K above 234 is silently the identical model. The script now clips K to the available rank and says so.
+
+Ridge is separable per output column, so the sweep is fit once at full rank and truncated — exactly equal to refitting at each K.
+
+| K | annotation + complex | gene-intrinsic only | no complex, no DepMap |
+|---|---|---|---|
+| 5 | 0.2497 | 0.2072 | 0.2092 |
+| 20 | 0.3357 | 0.2510 | 0.2519 |
+| **50** | **0.3411** | 0.2503 | 0.2538 |
+| 100 | 0.3339 | 0.2462 | 0.2484 |
+| 200 | 0.3288 | 0.2407 | 0.2427 |
+| 234 (full rank) | 0.3299 | 0.2398 | 0.2421 |
+
+K=234 *is* ridge regression straight onto the response matrix with no factorization at all, so this doubles as a test of whether
+the low-rank step earns its keep.
+
+**The alpha confound, and the correction it forced.** The first reading was "more programs hurt, so low-rank structure is a real
+regulariser." That claim is only about rank if it survives retuning the penalty — high components have small singular values and
+are noisier, so a fixed alpha=10 may simply be under-regularising them. Sweeping alpha x K:
+
+| alpha | K=5 | K=20 | K=50 | K=100 | K=200 | K=234 |
+|---|---|---|---|---|---|---|
+| 1 | 0.2437 | 0.3277 | 0.3377 | 0.3257 | 0.3166 | 0.3146 |
+| 10 | 0.2497 | 0.3357 | 0.3411 | 0.3339 | 0.3288 | 0.3299 |
+| **100** | 0.2483 | 0.3416 | **0.3476** | 0.3458 | 0.3432 | 0.3421 |
+| 1000 | 0.1985 | 0.2780 | 0.2841 | 0.2830 | 0.2834 | 0.2844 |
+
+The whole surface lifts at alpha=100, and truncation's advantage shrinks from **+0.0112 (p=1.7e-05)** at the pre-set alpha to
+**+0.0061 (p=0.0105)** at the best alpha for full rank. Still nominally significant, but half the size and well inside the
+across-seed spread of +-0.016. So the honest version is: **low-rank structure is at best a weak regulariser, and roughly half of
+the apparent "50 is the right number" was a penalty that was too small.** The stronger claim was written first and cut.
+
+Both K and alpha were chosen by looking at the evaluation, so the grid best (0.3476) is an optimistic ceiling; headline numbers
+stay at the pre-set alpha=10.
+
+**Practical answer: K anywhere from 20 to 100 is equivalent. Only K=5 is clearly too few.** The exact value does not matter.

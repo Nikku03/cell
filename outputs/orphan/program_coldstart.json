@@ -1,76 +1,301 @@
 {
  "threshold": 4.200000000000003,
- "n_programs": 50,
+ "k_sweep": [
+  5,
+  20,
+  50,
+  100,
+  200,
+  234
+ ],
+ "k_requested": [
+  5,
+  20,
+  50,
+  100,
+  200,
+  337
+ ],
+ "rank_ceiling": 234,
+ "k_best": 50,
+ "p_kmax_vs_k50": 1.7217343216156485e-05,
  "n_splits": 5,
- "n_unique_sources": 326,
+ "n_unique_sources": 325,
  "table": [
   {
-   "model": "annotation + complex identity",
-   "recall50": 0.3482,
-   "recall50_per_source": 0.3421,
-   "n_obs": 1475,
-   "n_sources": 326
+   "model": "annotation + complex identity | K=5",
+   "recall50": 0.2498,
+   "recall50_per_source": 0.248,
+   "seed_sd": 0.0154,
+   "n_obs": 1471,
+   "n_sources": 325
   },
   {
-   "model": "gene-intrinsic only (no complex)",
-   "recall50": 0.2494,
-   "recall50_per_source": 0.2433,
-   "n_obs": 1475,
-   "n_sources": 326
+   "model": "annotation + complex identity | K=20",
+   "recall50": 0.3357,
+   "recall50_per_source": 0.3353,
+   "seed_sd": 0.0178,
+   "n_obs": 1471,
+   "n_sources": 325
   },
   {
-   "model": "no complex, no DepMap (never perturbed at all)",
-   "recall50": 0.2524,
-   "recall50_per_source": 0.2456,
-   "n_obs": 1475,
-   "n_sources": 326
+   "model": "annotation + complex identity | K=50",
+   "recall50": 0.3411,
+   "recall50_per_source": 0.3382,
+   "seed_sd": 0.0162,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "annotation + complex identity | K=100",
+   "recall50": 0.334,
+   "recall50_per_source": 0.332,
+   "seed_sd": 0.017,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "annotation + complex identity | K=200",
+   "recall50": 0.3288,
+   "recall50_per_source": 0.3244,
+   "seed_sd": 0.014,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "annotation + complex identity | K=234",
+   "recall50": 0.3299,
+   "recall50_per_source": 0.3259,
+   "seed_sd": 0.0158,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "gene-intrinsic only (no complex) | K=5",
+   "recall50": 0.2072,
+   "recall50_per_source": 0.205,
+   "seed_sd": 0.0134,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "gene-intrinsic only (no complex) | K=20",
+   "recall50": 0.251,
+   "recall50_per_source": 0.2466,
+   "seed_sd": 0.0097,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "gene-intrinsic only (no complex) | K=50",
+   "recall50": 0.2503,
+   "recall50_per_source": 0.2461,
+   "seed_sd": 0.0113,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "gene-intrinsic only (no complex) | K=100",
+   "recall50": 0.2463,
+   "recall50_per_source": 0.2411,
+   "seed_sd": 0.0139,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "gene-intrinsic only (no complex) | K=200",
+   "recall50": 0.2408,
+   "recall50_per_source": 0.2367,
+   "seed_sd": 0.013,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "gene-intrinsic only (no complex) | K=234",
+   "recall50": 0.2399,
+   "recall50_per_source": 0.2349,
+   "seed_sd": 0.0141,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "no complex, no DepMap (never perturbed at all) | K=5",
+   "recall50": 0.2092,
+   "recall50_per_source": 0.2057,
+   "seed_sd": 0.0115,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "no complex, no DepMap (never perturbed at all) | K=20",
+   "recall50": 0.2519,
+   "recall50_per_source": 0.2473,
+   "seed_sd": 0.0091,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "no complex, no DepMap (never perturbed at all) | K=50",
+   "recall50": 0.2538,
+   "recall50_per_source": 0.2487,
+   "seed_sd": 0.0125,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "no complex, no DepMap (never perturbed at all) | K=100",
+   "recall50": 0.2485,
+   "recall50_per_source": 0.2427,
+   "seed_sd": 0.0118,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "no complex, no DepMap (never perturbed at all) | K=200",
+   "recall50": 0.2427,
+   "recall50_per_source": 0.2382,
+   "seed_sd": 0.012,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "no complex, no DepMap (never perturbed at all) | K=234",
+   "recall50": 0.2422,
+   "recall50_per_source": 0.2376,
+   "seed_sd": 0.012,
+   "n_obs": 1471,
+   "n_sources": 325
   },
   {
    "model": "[ref] mean response only (mu, no gene-specific term)",
-   "recall50": 0.0731,
-   "recall50_per_source": 0.0719,
-   "n_obs": 1475,
-   "n_sources": 326
+   "recall50": 0.0694,
+   "recall50_per_source": 0.0718,
+   "seed_sd": 0.0015,
+   "n_obs": 1471,
+   "n_sources": 325
   },
   {
    "model": "[ref] 1-NN annotation retrieval",
-   "recall50": 0.291,
-   "recall50_per_source": 0.287,
-   "n_obs": 1475,
-   "n_sources": 326
+   "recall50": 0.2848,
+   "recall50_per_source": 0.2876,
+   "seed_sd": 0.0188,
+   "n_obs": 1471,
+   "n_sources": 325
   },
   {
    "model": "[ref] tide-null (no model at all)",
-   "recall50": 0.1289,
-   "recall50_per_source": 0.1282,
-   "n_obs": 1475,
-   "n_sources": 326
+   "recall50": 0.1227,
+   "recall50_per_source": 0.1263,
+   "seed_sd": 0.0089,
+   "n_obs": 1471,
+   "n_sources": 325
   },
   {
    "model": "[ref] random",
-   "recall50": 0.0072,
-   "recall50_per_source": 0.0071,
-   "n_obs": 1475,
-   "n_sources": 326
+   "recall50": 0.0073,
+   "recall50_per_source": 0.0069,
+   "seed_sd": 0.0007,
+   "n_obs": 1471,
+   "n_sources": 325
   },
   {
-   "model": "[ctrl] model prediction scored against a DIFFERENT source",
-   "recall50": 0.0795,
-   "recall50_per_source": 0.079,
-   "n_obs": 1475,
-   "n_sources": 326
+   "model": "[ctrl] model prediction scored against a DIFFERENT source | K=5",
+   "recall50": 0.0781,
+   "recall50_per_source": 0.0769,
+   "seed_sd": 0.0038,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "[ctrl] model prediction scored against a DIFFERENT source | K=20",
+   "recall50": 0.0764,
+   "recall50_per_source": 0.0761,
+   "seed_sd": 0.0053,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "[ctrl] model prediction scored against a DIFFERENT source | K=50",
+   "recall50": 0.0701,
+   "recall50_per_source": 0.0698,
+   "seed_sd": 0.0024,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "[ctrl] model prediction scored against a DIFFERENT source | K=100",
+   "recall50": 0.0757,
+   "recall50_per_source": 0.0757,
+   "seed_sd": 0.0045,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "[ctrl] model prediction scored against a DIFFERENT source | K=200",
+   "recall50": 0.0789,
+   "recall50_per_source": 0.0796,
+   "seed_sd": 0.0041,
+   "n_obs": 1471,
+   "n_sources": 325
+  },
+  {
+   "model": "[ctrl] model prediction scored against a DIFFERENT source | K=234",
+   "recall50": 0.0628,
+   "recall50_per_source": 0.0637,
+   "seed_sd": 0.002,
+   "n_obs": 1471,
+   "n_sources": 325
   }
  ],
- "p_vs_mu_only": 6.567621811055575e-38,
- "p_vs_tide": 4.75062644689874e-28,
- "p_vs_1nn": 2.492430722409798e-09,
- "p_complex_ablation": 8.524390642196234e-20,
- "p_nodepmap_vs_tide": 1.0287602780678274e-14,
- "p_matched_vs_mismatched": 2.6344853991219705e-38,
+ "p_vs_mu_only": 6.6683151111728924e-37,
+ "p_vs_tide": 6.551387829185213e-27,
+ "p_vs_1nn": 1.5674316422860116e-08,
+ "p_complex_ablation": 2.8164674882096696e-17,
+ "p_nodepmap_vs_tide": 4.799520010817751e-13,
+ "p_matched_vs_mismatched": 6.070875567068283e-38,
  "gene_specific_signal": true,
  "beats_tide_null": true,
  "complex_carries": true,
  "nodepmap_works": true,
- "verdict": "PROGRAM COLD START (program_coldstart.py): predicting what a knockout will do to a gene NOBODY HAS KNOCKED OUT, using no perturbation data about it or any of its partners -- only annotation and measured start state (expression in K562 control cells). This removes the crutch in program_factorization, which reached 0.350 only by averaging the MEASURED profiles of the test gene's neighbours and which cannot fire at all when those partners were never perturbed. It also drops the assumption that effects stay local: the programs are global by construction (component 1 is translation and moves ribosomal transcripts cell-wide), so predicting the PROGRAM predicts distal effects automatically. Target is 50 program loadings -- two to three orders of magnitude smaller than the targets that defeated earlier annotation-only attempts (annotation_prior ranked 8k genes at recall@50 0.125 against a 0.272 tide; infer_network predicted 8,726 edges at AUC 0.542). RESULT on 326 held-out sources (mean recall@50 per source): annotation+complex 0.3421, gene-intrinsic only 0.2433, no-complex-no-DepMap 0.2456, mu-only (the average knockout response, same for every gene) 0.0719, 1-NN annotation retrieval 0.2870, tide-null 0.1282, random 0.0071. THE DECISIVE CONTROL is scoring each source's prediction against a DIFFERENT held-out source's truth (same truth set and denominator, only the prediction swapped): that collapses to 0.0790 against 0.3421 matched (paired p=2.63e-38), so the model is picking genes specific to the knockout in question, not a generically-plausible non-tide gene set that would overlap any knockout's movers. Second, the model minus mu-only, because the reconstruction is mu + P_hat @ G and mu is shared by every gene, so only the difference is gene-specific: the gene-specific term is REAL, worth +0.2703 over mu-only (paired p=6.57e-38). Annotation and start state do carry knockout-specific information. It also clears the tide-null by +0.2139 (p=4.75e-28). Complex identity carries a large share (0.3421 with, 0.2433 without, p=8.52e-20). That is consistent with the components literally being complexes, but it is also the honesty limit of the 'no neighbours' claim: no partner's MEASURED profile is read at prediction time, yet the regressor learned each complex's loadings from that complex's TRAIN members, so complex identity is a curated partner relation used through supervision. The partner-free number is the gene-intrinsic one. Dropping DepMap essentiality as well -- so the gene has been perturbed by no assay at all, not even a viability screen -- gives 0.2456 vs tide-null 0.1282 (p=1.03e-14), so the result does not depend on having already knocked the gene out. Note the 1-NN retrieval baseline at 0.2870: simply copying the measured profile of the most annotation-similar train gene gets most of the way, so the program decomposition is worth +0.0551 over it (p=2.49e-09). Stable across seeds: 0.3316 / 0.3394 / 0.3739 over 3 independent seeds of 5 splits each. Deterministic; programs, mu, feature vocabularies, scaling, regressor and tide mask all fitted on train sources only; the test gene's own response is used only as truth and no neighbour response is used anywhere. Significance tested on 326 unique sources, not the 1475 split-level observations, since a source can be held out in several splits.",
- "note": "PROGRAM COLD START (program_coldstart.py): predicting what a knockout will do to a gene NOBODY HAS KNOCKED OUT, using no perturbation data about it or any of its partners -- only annotation and measured start state (expression in K562 control cells). This removes the crutch in program_factorization, which reached 0.350 only by averaging the MEASURED profiles of the test gene's neighbours and which cannot fire at all when those partners were never perturbed. It also drops the assumption that effects stay local: the programs are global by construction (component 1 is translation and moves ribosomal transcripts cell-wide), so predicting the PROGRAM predicts distal effects automatically. Target is 50 program loadings -- two to three orders of magnitude smaller than the targets that defeated earlier annotation-only attempts (annotation_prior ranked 8k genes at recall@50 0.125 against a 0.272 tide; infer_network predicted 8,726 edges at AUC 0.542). RESULT on 326 held-out sources (mean recall@50 per source): annotation+complex 0.3421, gene-intrinsic only 0.2433, no-complex-no-DepMap 0.2456, mu-only (the average knockout response, same for every gene) 0.0719, 1-NN annotation retrieval 0.2870, tide-null 0.1282, random 0.0071. THE DECISIVE CONTROL is scoring each source's prediction against a DIFFERENT held-out source's truth (same truth set and denominator, only the prediction swapped): that collapses to 0.0790 against 0.3421 matched (paired p=2.63e-38), so the model is picking genes specific to the knockout in question, not a generically-plausible non-tide gene set that would overlap any knockout's movers. Second, the model minus mu-only, because the reconstruction is mu + P_hat @ G and mu is shared by every gene, so only the difference is gene-specific: the gene-specific term is REAL, worth +0.2703 over mu-only (paired p=6.57e-38). Annotation and start state do carry knockout-specific information. It also clears the tide-null by +0.2139 (p=4.75e-28). Complex identity carries a large share (0.3421 with, 0.2433 without, p=8.52e-20). That is consistent with the components literally being complexes, but it is also the honesty limit of the 'no neighbours' claim: no partner's MEASURED profile is read at prediction time, yet the regressor learned each complex's loadings from that complex's TRAIN members, so complex identity is a curated partner relation used through supervision. The partner-free number is the gene-intrinsic one. Dropping DepMap essentiality as well -- so the gene has been perturbed by no assay at all, not even a viability screen -- gives 0.2456 vs tide-null 0.1282 (p=1.03e-14), so the result does not depend on having already knocked the gene out. Note the 1-NN retrieval baseline at 0.2870: simply copying the measured profile of the most annotation-similar train gene gets most of the way, so the program decomposition is worth +0.0551 over it (p=2.49e-09). Stable across seeds: 0.3316 / 0.3394 / 0.3739 over 3 independent seeds of 5 splits each. Deterministic; programs, mu, feature vocabularies, scaling, regressor and tide mask all fitted on train sources only; the test gene's own response is used only as truth and no neighbour response is used anywhere. Significance tested on 326 unique sources, not the 1475 split-level observations, since a source can be held out in several splits."
+ "alpha_sweep": [
+  1.0,
+  10.0,
+  100.0,
+  1000.0
+ ],
+ "grid": {
+  "a=1.0_K=5": 0.2437,
+  "a=1.0_K=20": 0.3277,
+  "a=1.0_K=50": 0.3377,
+  "a=1.0_K=100": 0.3257,
+  "a=1.0_K=200": 0.3166,
+  "a=1.0_K=234": 0.3146,
+  "a=10.0_K=5": 0.2497,
+  "a=10.0_K=20": 0.3357,
+  "a=10.0_K=50": 0.3411,
+  "a=10.0_K=100": 0.3339,
+  "a=10.0_K=200": 0.3288,
+  "a=10.0_K=234": 0.3299,
+  "a=100.0_K=5": 0.2483,
+  "a=100.0_K=20": 0.3416,
+  "a=100.0_K=50": 0.3476,
+  "a=100.0_K=100": 0.3458,
+  "a=100.0_K=200": 0.3432,
+  "a=100.0_K=234": 0.3421,
+  "a=1000.0_K=5": 0.1985,
+  "a=1000.0_K=20": 0.278,
+  "a=1000.0_K=50": 0.2841,
+  "a=1000.0_K=100": 0.283,
+  "a=1000.0_K=200": 0.2834,
+  "a=1000.0_K=234": 0.2844
+ },
+ "rank_helps_after_retuning_alpha": true,
+ "p_rank_after_retuning": 0.010475497216418984,
+ "best_grid_cell": {
+  "alpha": 100.0,
+  "K": 50,
+  "recall50": 0.3476
+ },
+ "verdict": "PROGRAM COLD START (program_coldstart.py): predicting what a knockout will do to a gene NOBODY HAS KNOCKED OUT, using no perturbation data about it or any of its partners -- only annotation and measured start state (expression in K562 control cells). This removes the crutch in program_factorization, which reached 0.350 only by averaging the MEASURED profiles of the test gene's neighbours and which cannot fire at all when those partners were never perturbed. It also drops the assumption that effects stay local: the programs are global by construction (component 1 is translation and moves ribosomal transcripts cell-wide), so predicting the PROGRAM predicts distal effects automatically. Target is K program loadings (K swept over [5, 20, 50, 100, 200, 234]) -- one to three orders of magnitude smaller than the targets that defeated earlier annotation-only attempts (annotation_prior ranked 8k genes at recall@50 0.125 against a 0.272 tide; infer_network predicted 8,726 edges at AUC 0.542). RESULT at the best rank K=50, on 325 held-out sources (mean recall@50 per source): annotation+complex 0.3382, gene-intrinsic only 0.2461, no-complex-no-DepMap 0.2487, mu-only (the average knockout response, same for every gene) 0.0718, 1-NN annotation retrieval 0.2876, tide-null 0.1263, random 0.0069. THE DECISIVE CONTROL is scoring each source's prediction against a DIFFERENT held-out source's truth (same truth set and denominator, only the prediction swapped): that collapses to 0.0698 against 0.3382 matched (paired p=6.07e-38), so the model is picking genes specific to the knockout in question, not a generically-plausible non-tide gene set that would overlap any knockout's movers. Second, the model minus mu-only, because the reconstruction is mu + P_hat @ G and mu is shared by every gene, so only the difference is gene-specific: the gene-specific term is REAL, worth +0.2664 over mu-only (paired p=6.67e-37). Annotation and start state do carry knockout-specific information. It also clears the tide-null by +0.2119 (p=6.55e-27). Complex identity carries a large share (0.3382 with, 0.2461 without, p=2.82e-17). That is consistent with the components literally being complexes, but it is also the honesty limit of the 'no neighbours' claim: no partner's MEASURED profile is read at prediction time, yet the regressor learned each complex's loadings from that complex's TRAIN members, so complex identity is a curated partner relation used through supervision. The partner-free number is the gene-intrinsic one. Dropping DepMap essentiality as well -- so the gene has been perturbed by no assay at all, not even a viability screen -- gives 0.2487 vs tide-null 0.1263 (p=4.8e-13), so the result does not depend on having already knocked the gene out. Note the 1-NN retrieval baseline at 0.2876: simply copying the measured profile of the most annotation-similar train gene gets most of the way, so the program decomposition is worth +0.0506 over it (p=1.57e-08). HOW MANY PROGRAMS: K was swept over [5, 20, 50, 100, 200, 234]. The requested K=337 (one program per source) is UNREACHABLE under held-out evaluation -- a 70/30 split leaves 235 train rows and centring costs one degree of freedom, so the train response matrix has rank 234 and every K above it is literally the same model (numpy returns the extra rows with ~zero singular value). Within the reachable range more programs do not help and mildly hurt: at the pre-set alpha=10, K=50 scores 0.3382 against 0.3259 at full rank K=234 (paired p=1.72e-05), where full rank means ridge straight onto the response matrix with no truncation at all. BUT most of that gap is not about rank. Sweeping the ridge penalty as well shows the whole surface shifts up at alpha=100, and there the advantage of truncation shrinks to +0.0061 (K=50 0.3431 vs full rank 0.3371, paired p=0.0105) -- still nominally significant but roughly half the untuned gap and well inside the across-seed spread, so low-rank structure is at best a weak regulariser and truncation was largely standing in for a penalty that was too small. The curve is flat-topped from K=20 to K=100 and only K=5 is clearly too few (0.2497); the practical answer is that K anywhere in the tens is fine and the exact value does not matter. Both K and alpha were chosen by looking at the evaluation, so the grid best (0.3476 at alpha=100, K=50) is an optimistic ceiling; the headline numbers above use the pre-set alpha=10. Stable across seeds: 0.3183 / 0.3496 / 0.3552 over 3 independent seeds of 5 splits each. Deterministic; programs, mu, feature vocabularies, scaling, regressor and tide mask all fitted on train sources only; the test gene's own response is used only as truth and no neighbour response is used anywhere. Significance tested on 325 unique sources, not the 1471 split-level observations, since a source can be held out in several splits.",
+ "note": "PROGRAM COLD START (program_coldstart.py): predicting what a knockout will do to a gene NOBODY HAS KNOCKED OUT, using no perturbation data about it or any of its partners -- only annotation and measured start state (expression in K562 control cells). This removes the crutch in program_factorization, which reached 0.350 only by averaging the MEASURED profiles of the test gene's neighbours and which cannot fire at all when those partners were never perturbed. It also drops the assumption that effects stay local: the programs are global by construction (component 1 is translation and moves ribosomal transcripts cell-wide), so predicting the PROGRAM predicts distal effects automatically. Target is K program loadings (K swept over [5, 20, 50, 100, 200, 234]) -- one to three orders of magnitude smaller than the targets that defeated earlier annotation-only attempts (annotation_prior ranked 8k genes at recall@50 0.125 against a 0.272 tide; infer_network predicted 8,726 edges at AUC 0.542). RESULT at the best rank K=50, on 325 held-out sources (mean recall@50 per source): annotation+complex 0.3382, gene-intrinsic only 0.2461, no-complex-no-DepMap 0.2487, mu-only (the average knockout response, same for every gene) 0.0718, 1-NN annotation retrieval 0.2876, tide-null 0.1263, random 0.0069. THE DECISIVE CONTROL is scoring each source's prediction against a DIFFERENT held-out source's truth (same truth set and denominator, only the prediction swapped): that collapses to 0.0698 against 0.3382 matched (paired p=6.07e-38), so the model is picking genes specific to the knockout in question, not a generically-plausible non-tide gene set that would overlap any knockout's movers. Second, the model minus mu-only, because the reconstruction is mu + P_hat @ G and mu is shared by every gene, so only the difference is gene-specific: the gene-specific term is REAL, worth +0.2664 over mu-only (paired p=6.67e-37). Annotation and start state do carry knockout-specific information. It also clears the tide-null by +0.2119 (p=6.55e-27). Complex identity carries a large share (0.3382 with, 0.2461 without, p=2.82e-17). That is consistent with the components literally being complexes, but it is also the honesty limit of the 'no neighbours' claim: no partner's MEASURED profile is read at prediction time, yet the regressor learned each complex's loadings from that complex's TRAIN members, so complex identity is a curated partner relation used through supervision. The partner-free number is the gene-intrinsic one. Dropping DepMap essentiality as well -- so the gene has been perturbed by no assay at all, not even a viability screen -- gives 0.2487 vs tide-null 0.1263 (p=4.8e-13), so the result does not depend on having already knocked the gene out. Note the 1-NN retrieval baseline at 0.2876: simply copying the measured profile of the most annotation-similar train gene gets most of the way, so the program decomposition is worth +0.0506 over it (p=1.57e-08). HOW MANY PROGRAMS: K was swept over [5, 20, 50, 100, 200, 234]. The requested K=337 (one program per source) is UNREACHABLE under held-out evaluation -- a 70/30 split leaves 235 train rows and centring costs one degree of freedom, so the train response matrix has rank 234 and every K above it is literally the same model (numpy returns the extra rows with ~zero singular value). Within the reachable range more programs do not help and mildly hurt: at the pre-set alpha=10, K=50 scores 0.3382 against 0.3259 at full rank K=234 (paired p=1.72e-05), where full rank means ridge straight onto the response matrix with no truncation at all. BUT most of that gap is not about rank. Sweeping the ridge penalty as well shows the whole surface shifts up at alpha=100, and there the advantage of truncation shrinks to +0.0061 (K=50 0.3431 vs full rank 0.3371, paired p=0.0105) -- still nominally significant but roughly half the untuned gap and well inside the across-seed spread, so low-rank structure is at best a weak regulariser and truncation was largely standing in for a penalty that was too small. The curve is flat-topped from K=20 to K=100 and only K=5 is clearly too few (0.2497); the practical answer is that K anywhere in the tens is fine and the exact value does not matter. Both K and alpha were chosen by looking at the evaluation, so the grid best (0.3476 at alpha=100, K=50) is an optimistic ceiling; the headline numbers above use the pre-set alpha=10. Stable across seeds: 0.3183 / 0.3496 / 0.3552 over 3 independent seeds of 5 splits each. Deterministic; programs, mu, feature vocabularies, scaling, regressor and tide mask all fitted on train sources only; the test gene's own response is used only as truth and no neighbour response is used anywhere. Significance tested on 325 unique sources, not the 1471 split-level observations, since a source can be held out in several splits."
 }
