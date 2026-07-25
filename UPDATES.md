@@ -7734,3 +7734,32 @@ the static features both stall.
 not the bottleneck — labelled edges are.** That is the honest answer to "we have a transformer sitting unused": the task is now well-posed for it,
 but it will not pay off until there are far more measured edges to train on. Scaling the *screen* unlocks the model; scaling the model does not
 unlock the screen. (`edge_transformer.py`.)
+
+## `screen_design` — the targeted screen, specified rather than gestured at
+
+"Perturb the intermediates" is a wet-lab action, but choosing *which* genes is fully determined by data in hand. Auditing the **25 strongest K562
+knockouts**, this ranks every intermediate by how much chain verification it unlocks.
+
+**1,372 distinct intermediate proteins carry chain-load** (a measured specific mover routes through them on a shortest curated chain), and
+**1,284 (94%) have no effective knockout in any existing panel.** That gap is the experiment.
+
+**The load is concentrated, which makes this affordable:**
+- top **119** genes cover **50%** of all currently-unverifiable chain load
+- top **497** cover **80%**
+- top **837** cover **90%**
+
+So it is a **~120–500 gene screen**, chosen by the measured graph rather than by annotation — not a genome-wide one. Highest-value targets:
+CAPZB (136 chains, 17 hubs), CCNC, CCNH, TP53, CDK7, REL, MYC, CDK9, SP1, HDAC1.
+
+Each row records why it was picked: chains unlocked, hub knockouts served, whether the route is **regulatory** (the layer the honesty guard showed
+retains discrimination at depth, vs the physical layer which is at chance), TF status, essentiality, and **whether the gene is even detectable as a
+readout target** — several high-rank picks (TP53, ESR1, AR, CD44) are *not* measurable in this readout, which is a real design constraint rather
+than an oversight. Full ranked list: `outputs/orphan/screen_design.csv`. (`screen_design.py`.)
+
+## `build_uncensored` + `reliability_ceiling` — in progress
+
+`build_uncensored.py` rebuilds dense knockout z-score matrices for RPE1/HepG2/Jurkat from raw single-cell counts (all cross-line results so far
+used the top-250-per-knockout store; uncensoring K562 had revealed 637 movers where it showed 250). Control σ is estimated **at matched cell
+depth**, so a 72-cell knockout is not scored against a 500-cell noise model. `reliability_ceiling.py` runs the replicate experiment
+computationally — splitting each knockout's cells into two halves as independent replicates to measure test-retest reliability, whose square root
+bounds any predictor's correlation with the measurement. Results to follow.
