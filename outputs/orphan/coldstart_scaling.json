@@ -1,0 +1,77 @@
+{
+ "threshold": 4.200000000000003,
+ "n_train": [
+  40,
+  80,
+  120,
+  160,
+  200,
+  235
+ ],
+ "alphas": [
+  10.0,
+  100.0
+ ],
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "curve": {
+  "FULL a=10.0 n=40": 0.173,
+  "FULL a=100.0 n=40": 0.1753,
+  "REGR a=10.0 n=40": 0.2246,
+  "REGR a=100.0 n=40": 0.2023,
+  "FULL a=10.0 n=80": 0.2577,
+  "FULL a=100.0 n=80": 0.2484,
+  "REGR a=10.0 n=80": 0.2942,
+  "REGR a=100.0 n=80": 0.2829,
+  "FULL a=10.0 n=120": 0.285,
+  "FULL a=100.0 n=120": 0.28,
+  "REGR a=10.0 n=120": 0.3081,
+  "REGR a=100.0 n=120": 0.3105,
+  "FULL a=10.0 n=160": 0.3192,
+  "FULL a=100.0 n=160": 0.3128,
+  "REGR a=10.0 n=160": 0.3243,
+  "REGR a=100.0 n=160": 0.3297,
+  "FULL a=10.0 n=200": 0.3404,
+  "FULL a=100.0 n=200": 0.3453,
+  "REGR a=10.0 n=200": 0.3343,
+  "REGR a=100.0 n=200": 0.3438,
+  "FULL a=10.0 n=235": 0.3369,
+  "FULL a=100.0 n=235": 0.3476,
+  "REGR a=10.0 n=235": 0.3369,
+  "REGR a=100.0 n=235": 0.3476
+ },
+ "summary": {
+  "FULL a=10.0": {
+   "final": 0.3369,
+   "last_step": -0.0035,
+   "total_gain": 0.164,
+   "frac_of_gain_in_last_step": -0.021
+  },
+  "FULL a=100.0": {
+   "final": 0.3476,
+   "last_step": 0.0023,
+   "total_gain": 0.1723,
+   "frac_of_gain_in_last_step": 0.013
+  },
+  "REGR a=10.0": {
+   "final": 0.3369,
+   "last_step": 0.0027,
+   "total_gain": 0.1123,
+   "frac_of_gain_in_last_step": 0.024
+  },
+  "REGR a=100.0": {
+   "final": 0.3476,
+   "last_step": 0.0038,
+   "total_gain": 0.1452,
+   "frac_of_gain_in_last_step": 0.026
+  }
+ },
+ "still_climbing": false,
+ "verdict": "COLD-START SCALING (coldstart_scaling.py): a learning curve to decide whether the cold-start model is limited by DATA or by MODEL CAPACITY -- i.e. whether it is worth training a transformer or other high-capacity model on this task. Held-out test set fixed within each split; training set grown from 40 to 235 knockouts over 5 seeds. FULL curve (everything rebuilt from the subset: programs, mu, tide, vocabularies, ridge) at alpha=100 runs 0.1753 -> 0.3476, and the final step from 200 to 235 knockouts is still worth +0.0023. THE CURVE HAS FLATTENED: extra training knockouts have stopped paying, so the limitation is no longer sample size and additional capacity or richer features become the sensible next move. The REGRESSOR curve holds the program basis, mu, tide mask and vocabularies fixed at the full training half and subsamples only the ridge's rows, which localises the shortage: a REGRESSOR curve that is much flatter than FULL means the missing ingredient is the program basis (more knockouts to define the response space) rather than the annotation-to-loading map. Deterministic.",
+ "note": "COLD-START SCALING (coldstart_scaling.py): a learning curve to decide whether the cold-start model is limited by DATA or by MODEL CAPACITY -- i.e. whether it is worth training a transformer or other high-capacity model on this task. Held-out test set fixed within each split; training set grown from 40 to 235 knockouts over 5 seeds. FULL curve (everything rebuilt from the subset: programs, mu, tide, vocabularies, ridge) at alpha=100 runs 0.1753 -> 0.3476, and the final step from 200 to 235 knockouts is still worth +0.0023. THE CURVE HAS FLATTENED: extra training knockouts have stopped paying, so the limitation is no longer sample size and additional capacity or richer features become the sensible next move. The REGRESSOR curve holds the program basis, mu, tide mask and vocabularies fixed at the full training half and subsamples only the ridge's rows, which localises the shortage: a REGRESSOR curve that is much flatter than FULL means the missing ingredient is the program basis (more knockouts to define the response space) rather than the annotation-to-loading map. Deterministic."
+}
