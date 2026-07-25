@@ -220,7 +220,11 @@ class CellKernel:
         L.append(f"    complexes {len(D.get('complexes',{})):,}  (cover {len(D.get('gene2cplx',{})):,} genes)")
         L.append(f"    metabolism: {len(enz):,} enzymes mapped to reactions")
         L.append("  ── QUANTITATIVE / PHARMA ──────────────────────────────────────")
-        L.append(line("protein abundance (copies)", len(D.get("ppm", {}) or {})))
+        # NOT copies, and NOT K562. 'ppm' is PaxDb WHOLE-ORGANISM integrated abundance in molar parts-per-million:
+        # its top entries are the plasma secretome (ALB 19929, APOA2 31361, TTR 19096, ORM1 22835, RBP4 24443) while
+        # HBB/HBG1/HBG2/HBA1/HBA2 -- the haemoglobins that define this erythroleukemia line -- carry no value at all,
+        # and GATA1 sits at 0.42. Converting it to copies/cell would put ~1e7 albumin molecules in a K562 cell.
+        L.append(line("protein abundance (PaxDb whole-organism ppm, NOT K562 copies)", len(D.get("ppm", {}) or {})))
         L.append(line("cell-type expression", len(D.get("emask", {}) or {})))
         L.append(f"    drugs {len(D.get('drugs',{})):,}")
         L.append("  ── INTERVENTIONAL (the debugger — CAUSAL) ─────────────────────")

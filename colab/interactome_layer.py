@@ -169,7 +169,7 @@ def build():
         "node.function_go": {"status": "PARTIAL", "pct": pct("node.go"), "note": "GO term names (not IDs); ~93-99% of genes"},
         "node.process_compartment": {"status": "FILLED", "pct": pct("node.proc"), "note": "100% but 12 coarse categories"},
         "node.domains": {"status": "FILLED", "pct": pct("node.domains"), "note": "InterPro domain architecture"},
-        "node.abundance": {"status": "FILLED", "pct": pct("node.abundance"), "note": "ppm proxy for copies/cell"},
+        "node.abundance": {"status": "FILLED", "pct": pct("node.abundance"), "note": "PaxDb whole-organism ppm; NOT copies/cell and NOT K562-specific"},
         "node.dark_prediction": {"status": "PARTIAL", "pct": pct("node.dark_pred"), "note": "process-level, dark genes only"},
         "node.druggable": {"status": "PARTIAL", "pct": pct("node.druggable"), "note": "absence != undruggable"},
         "node.structure_3d": {"status": "GAP", "pct": 0.0, "note": "no genome-wide AlphaFold; GPU-gated"},

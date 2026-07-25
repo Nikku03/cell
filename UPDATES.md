@@ -9123,3 +9123,122 @@ molecules/cell/min) make absolute fold-error comparison meaningless.
 **What is unambiguous:** the target two modules have been fitting agrees with a direct measurement of the same quantity
 at **r = 0.361**. Whatever the right ceiling is, **R² = 0.90 against the derived rate would not mean the true
 transcription rate had been predicted.**
+
+---
+
+## A Markov chain and a Monte Carlo for "which genes are out of the game" — both lose to the gene itself
+
+Two builds, plus a prior-art sweep that changed the design before either was written.
+
+### First, the question answers itself, and the answer is small
+
+"Out of the game" = significantly down (z ≤ −4.2, tide-masked) **and** at or below 5% of control remaining.
+
+| | |
+|---|---|
+| genes driven out of the game per knockout | **median 0**, mean 1.15 |
+| knockouts doing it to ≥5 genes | **6%** |
+| base rate over (knockout, gene) pairs | **1.65 × 10⁻⁴** |
+| **the knockdowns themselves** | **median 42.8% of control still present**; only **21%** reach ≤5% |
+
+**A single knockout almost never drives another gene fully out of the game.** And the CRISPRi "knockouts" are mostly
+partial knockdowns — which is why the chain below is seeded with each knockout's *measured* depth rather than a unit
+impulse.
+
+### What the prior-art sweep found before anything was built
+
+A plain random walk would have been a **rerun**. `cascade_all` already put RWR (α=0.3, 40 iters) into an XGBoost:
+the whole G-specific layer — regulatory edge, sign, TRRUST regulon, signalling, **RWR**, PPI, co-expression, reaction —
+scored **AUPRC 0.0661 against a 0.0625 base rate. Lift 1.06. Chance.** All the power sat in `J_movefreq`, generic
+responsiveness (importance 0.783 vs RWR's 0.030).
+
+Across ~20 attempts in this repo, **no multi-hop or diffusion model has ever beaten a one-hop baseline** — `multi_hop_chain`
+6.3× → 1.02× over hops 1–3, `complete_network` 1.83× → 0.98× at two intermediates, `mechanistic_propagate` 0.055 against
+a 0.26 tide-null (propagating *to convergence* is 5× worse than predicting nothing).
+
+The one multi-hop result that survived: `multihop_diagnosis` found hop-2 dead on average (+0.012, p=0.38) but **alive at
+high path multiplicity** — +0.1213, **112% of the direct-edge effect**, with hop-3 flat. So the chain was built as a
+**truncated path-count aggregator** (the k-th matrix power counts weighted k-paths), depth swept, never converged.
+
+### `markov_outofgame.py` — six modifications, all forced by the data
+
+Propagates **loss of transcriptional drive** (1 − fraction remaining — literally what the Replogle matrix stores);
+seeded with the **measured** knockdown; **signed**; **truncated at K steps** with K swept; aggregates **path
+multiplicity**; run on **two graphs**, because **91% of the regulatory edges (558,005 of 612,133) carry no sign**.
+
+| model | AUPRC | lift |
+|---|---|---|
+| chain | 0.0012 | 7.0× |
+| one-hop | 0.0011 | 6.8× |
+| **generic responsiveness** | **0.0217** | **131.8×** |
+| sign-shuffled | 0.0007 | 4.0× |
+| seed-shuffled | 0.0005 | 3.1× |
+
+precision@10: chain **0.001** vs the null's **0.098**.
+
+Paired across folds (a claim needs |diff| > 2 SE, **three** outcomes — an earlier version printed "not significant"
+next to a nine-sigma *defeat* because it only tested the winning direction):
+
+| comparison | diff | verdict |
+|---|---|---|
+| chain − generic | **−0.02059 ± 0.00221** | **WORSE (9σ)** |
+| chain − one-hop | +0.00003 ± 0.00001 | BETTER, but +2% of the chain's own score |
+| chain − sign-shuffled | +0.00049 ± 0.00032 | indistinguishable |
+| chain − seed-shuffled | +0.00063 ± 0.00057 | indistinguishable |
+
+**Edge sign carries no detectable information. The chain is not demonstrably knockout-specific** — seeding it at a
+*random* gene scores the same, so it ranks well-connected genes rather than responding to which gene was hit.
+
+**And the graph is part of the problem.** The dense unsigned bulk gives **median out-degree 329** — one step already
+touches a large slice of the graph, so there is no locality for a path method to exploit. Signed-only (54,128 edges,
+**median out-degree 6**) scores ~3× better and was pre-registered by all 5 folds: carrying the unsigned 91% was
+*actively harmful*.
+
+### `mc_outofgame.py` — proving the appealing Monte Carlo is decorative, then building the other one
+
+**Part A.** A molecular-noise simulation (birth–death mRNA/protein → fraction of cells below a functional threshold)
+**cannot out-rank its own mean**: `P(copies < threshold)` is monotone in the mean, and every ranking metric here is
+invariant under monotone transforms. Measured, not asserted:
+
+| Spearman | |
+|---|---|
+| MC probability vs mean copies | **−0.9904** |
+| MC probability vs deterministic `rem × level` | **−0.9904** |
+| MC at threshold 3 vs MC at threshold 12 | **+0.9812** |
+
+It is also bounded by a *losing* quantity — `rem × level` scores **+0.110** against mover count while **expression level
+alone scores +0.146**; depth alone is **−0.063**, and its sign **flips to +0.132** once expression is partialled out, so
+the marginal depth effect was **confounded, not weak**. And the parameters aren't there: only `k_mdeg` is measured,
+`k_syn` agrees with direct TT-seq at **r = 0.361**, **no human protein degradation rate is on disk at all**, `k_transl`
+is non-identifiable from steady state, and bursting can't be fitted — the only candidate variance field has a **Fano
+factor of 0.012**, below the 1.0 any birth–death process must exceed.
+
+**Part B** samples the real unknowns (edge existence, the unsigned signs, depth, damping, knockdown depth).
+
+A reporting trap had to be disarmed: the raw MC is miscalibrated **by construction** — its sampled call rate sits 1–2
+orders of magnitude above the base rate, so raw Brier (6.38e-02) measures *my knob*, not the method. Matched one-for-one
+on calibration:
+
+| model | Brier | AUPRC |
+|---|---|---|
+| MC + 1-param calibration | 2.375e-04 | 0.0003 |
+| Platt-scaled deterministic | 2.375e-04 | 0.0003 |
+| **generic responsiveness** | 2.322e-04 | **0.0336** |
+| predict the base rate | 2.375e-04 | — |
+
+**Sampling bought nothing** 60 replicates didn't give that a one-parameter squashing function already had.
+
+### The finding both modules reach independently
+
+**Which genes get switched off is mostly a property of the GENE, not of the knockout.** Two different methods, two
+different metrics, same 9σ / 112× defeat by a prior that only knows how often each gene is *ever* driven out.
+
+### Defect found in the repo's own fields (verified directly, not taken on report)
+
+`cell_complete.json['ppm']` is labelled "protein abundance (copies)" in `cellos.py` and "ppm proxy for copies/cell" in
+`interactome_layer.py`. It is **neither copies nor K562**: it is PaxDb *whole-organism* abundance whose top entries are
+the **plasma secretome** — ALB 19,929, APOA2 31,361, TTR 19,096, ORM1 22,835, RBP4 24,443 — while **HBB, HBG1, HBG2,
+HBA1, HBA2 carry no value at all** and GATA1 sits at **0.423**. Converting it to copies/cell would put ~10⁷ albumin
+molecules in an erythroleukemia cell. `abund` is not protein either — it is a 0–15 integer scale over mRNA maxima across
+200 cell types, topped by IGKC, LALBA, INS, GCG, CSN2. **Both labels corrected; 20 modules consume these fields and any
+protein-dosage number built on them is measuring blood plasma.**

@@ -59,7 +59,11 @@ def brier(p, y):
 
 def ece(p, y, nbin=12):
     """Expected calibration error over QUANTILE bins -- equal-width bins are useless when nearly every prediction
-    sits near zero, which is the case at a 1.6e-04 base rate."""
+    sits near zero, which is the case at a 1.6e-04 base rate.
+
+    Returns nan when the predictor is so concentrated that fewer than three distinct quantile edges exist. That is a
+    PROPERTY OF THE PREDICTOR, not a failure, and it must be reported as such: an earlier version printed a bare
+    'nan' next to a rival's 0.2514 as though the rival had lost."""
     qs = np.unique(np.quantile(p, np.linspace(0, 1, nbin + 1)))
     if len(qs) < 3:
         return float("nan"), []
@@ -73,6 +77,10 @@ def ece(p, y, nbin=12):
         tot += m.mean() * abs(pm - ym)
         curve.append({"bin": k, "n": int(m.sum()), "pred": pm, "obs": ym})
     return float(tot), curve
+
+
+def fmt(x):
+    return "n/a (too concentrated to bin)" if not np.isfinite(x) else f"{x:.4f}"
 
 
 def auprc(scores, labels):
@@ -218,30 +226,46 @@ def main():
         lr = LogisticRegression(max_iter=400).fit(Sdet[tr].ravel().reshape(-1, 1), Y[tr].ravel().astype(int))
         Pplatt = lr.predict_proba(Sdet[te].ravel().reshape(-1, 1))[:, 1]
         pmc = Pmc[te].ravel()
+        # THE RAW MC IS MISCALIBRATED BY CONSTRUCTION AND THAT IS MY KNOB, NOT THE METHOD'S FAULT. Each replicate
+        # calls positive above a sampled quantile drawn from 10^-3.2..10^-2.2, i.e. a call rate one to two orders of
+        # magnitude ABOVE the 2.4e-04 base rate, so the averaged probabilities sit near 6e-02 and Brier is dominated
+        # by that prior. Comparing raw MC against a PLATT-SCALED rival would be measuring my threshold prior, not
+        # whether sampling helps. So the MC gets the same one-parameter calibration its rival gets, fitted on train.
+        lrm = LogisticRegression(max_iter=400).fit(Pmc[tr].ravel().reshape(-1, 1), Y[tr].ravel().astype(int))
+        pmc_cal = lrm.predict_proba(Pmc[te].ravel().reshape(-1, 1))[:, 1]
+        e_cal, _ = ece(pmc_cal, yte)
         e_mc, curve = ece(pmc, yte); e_pl, _ = ece(Pplatt, yte); e_gen, _ = ece(Pgen, yte)
         rows.append({"fold": fi, "n_pos": int(yte.sum()),
-                     "brier_mc": brier(pmc, yte), "brier_platt": brier(Pplatt, yte),
+                     "brier_mc": brier(pmc, yte), "brier_mc_calibrated": brier(pmc_cal, yte),
+                     "brier_platt": brier(Pplatt, yte),
                      "brier_generic": brier(Pgen, yte), "brier_base": brier(np.full_like(yte, yte.mean()), yte),
-                     "ece_mc": e_mc, "ece_platt": e_pl, "ece_generic": e_gen,
-                     "auprc_mc": auprc(pmc, yte.astype(int)), "auprc_platt": auprc(Pplatt, yte.astype(int)),
+                     "ece_mc": e_mc, "ece_mc_calibrated": e_cal, "ece_platt": e_pl, "ece_generic": e_gen,
+                     "auprc_mc": auprc(pmc, yte.astype(int)),
+                     "auprc_mc_calibrated": auprc(pmc_cal, yte.astype(int)),
+                     "auprc_platt": auprc(Pplatt, yte.astype(int)),
                      "auprc_generic": auprc(Pgen, yte.astype(int)),
                      "curve": curve if fi == 0 else None})
         print(f"    fold {fi}: Brier MC {rows[-1]['brier_mc']:.3e}  Platt {rows[-1]['brier_platt']:.3e}  "
               f"generic {rows[-1]['brier_generic']:.3e}", flush=True)
 
     agg = {k: float(np.mean([r[k] for r in rows])) for k in
-           ["brier_mc", "brier_platt", "brier_generic", "brier_base", "ece_mc", "ece_platt", "ece_generic",
-            "auprc_mc", "auprc_platt", "auprc_generic"]}
+           ["brier_mc", "brier_mc_calibrated", "brier_platt", "brier_generic", "brier_base",
+            "ece_mc", "ece_mc_calibrated", "ece_platt", "ece_generic",
+            "auprc_mc", "auprc_mc_calibrated", "auprc_platt", "auprc_generic"]}
     print(f"\n  HELD-OUT ({K} knockouts, 5 folds). Lower Brier/ECE better; higher AUPRC better.")
     print(f"    {'model':28s} {'Brier':>11s} {'ECE':>9s} {'AUPRC':>9s}")
-    for lab, b, e, ap in [("Monte Carlo over unknowns", "brier_mc", "ece_mc", "auprc_mc"),
+    for lab, b, e, ap in [("MC raw (uncalibrated)", "brier_mc", "ece_mc", "auprc_mc"),
+                          ("MC + same 1-param calibration", "brier_mc_calibrated", "ece_mc_calibrated",
+                           "auprc_mc_calibrated"),
                           ("Platt-scaled deterministic", "brier_platt", "ece_platt", "auprc_platt"),
                           ("generic responsiveness", "brier_generic", "ece_generic", "auprc_generic")]:
-        print(f"    {lab:28s} {agg[b]:11.4e} {agg[e]:9.4f} {agg[ap]:9.4f}")
-    print(f"    {'predict the base rate':28s} {agg['brier_base']:11.4e} {'-':>9s} {'-':>9s}")
+        print(f"    {lab:30s} {agg[b]:11.4e} {fmt(agg[e]):>28s} {agg[ap]:9.4f}")
+    print(f"    {'predict the base rate':30s} {agg['brier_base']:11.4e} {'-':>28s} {'-':>9s}")
+    print(f"\n    ECE is n/a where a predictor is too concentrated for 3 distinct quantile edges -- a property of")
+    print(f"    that predictor, not a loss. AUPRC is threshold-free and is the comparison that means something here.")
 
-    mc_beats_platt = agg["brier_mc"] < agg["brier_platt"]
-    mc_beats_generic = agg["brier_mc"] < agg["brier_generic"]
+    mc_beats_platt = agg["brier_mc_calibrated"] < agg["brier_platt"]
+    mc_beats_generic = agg["auprc_mc_calibrated"] > agg["auprc_generic"]
 
     verdict = (
         "MONTE CARLO FOR 'OUT OF THE GAME', built only where sampling can add something. "
@@ -261,15 +285,23 @@ def main():
         "variance field has a Fano factor of 0.012 -- below the 1.0 any birth-death process must exceed. "
         "PART B builds the version that can pay: sampling over which edges are real, the sign of the unsigned 91%, the "
         "propagation depth, the damping, and the true knockdown depth, turning a point prediction into a probability. "
-        f"RESULT on held-out knockouts: Brier {agg['brier_mc']:.3e} for the Monte Carlo versus {agg['brier_platt']:.3e} "
-        f"for a Platt-scaled deterministic chain and {agg['brier_generic']:.3e} for generic responsiveness; ECE "
-        f"{agg['ece_mc']:.4f} / {agg['ece_platt']:.4f} / {agg['ece_generic']:.4f}; AUPRC {agg['auprc_mc']:.4f} / "
-        f"{agg['auprc_platt']:.4f} / {agg['auprc_generic']:.4f}. "
-        + ("SAMPLING EARNS ITS COST on calibration: the Monte Carlo beats simply Platt-scaling the deterministic score, "
-           "so the uncertainty was not already implicit in the point estimate. " if mc_beats_platt else
-           "SAMPLING DOES NOT EARN ITS COST: Platt-scaling the single deterministic chain calibrates as well or better, "
-           "so the uncertainty the Monte Carlo samples over was already implicit in the point estimate and the "
-           "replicates bought nothing a one-parameter squashing function did not. ")
+        f"A REPORTING TRAP HAD TO BE DISARMED FIRST: the raw MC is miscalibrated BY CONSTRUCTION, because each replicate "
+        f"calls positive above a sampled quantile drawn from 10^-3.2..10^-2.2 -- a call rate one to two orders of "
+        f"magnitude above the {float(Y.mean()):.1e} base rate -- so its raw Brier ({agg['brier_mc']:.3e}) measures that "
+        f"threshold prior, which is my knob, and not whether sampling helps. Giving the MC the SAME one-parameter "
+        f"calibration its rival gets makes the comparison like-for-like. "
+        f"RESULT on held-out knockouts: Brier {agg['brier_mc_calibrated']:.3e} for the calibrated Monte Carlo versus "
+        f"{agg['brier_platt']:.3e} for the Platt-scaled deterministic chain and {agg['brier_generic']:.3e} for generic "
+        f"responsiveness (predicting the base rate alone scores {agg['brier_base']:.3e}, so Brier barely separates "
+        f"anything at this sparsity). The threshold-free comparison is the informative one: AUPRC "
+        f"{agg['auprc_mc_calibrated']:.4f} for the MC, {agg['auprc_platt']:.4f} for the deterministic chain, and "
+        f"{agg['auprc_generic']:.4f} for generic responsiveness. "
+        + ("SAMPLING EARNS ITS COST on calibration: even matched one-for-one on post-hoc calibration, the Monte Carlo "
+           "beats the deterministic chain, so the uncertainty was not already implicit in the point estimate. "
+           if mc_beats_platt else
+           "SAMPLING DOES NOT EARN ITS COST: matched one-for-one on calibration, the single deterministic chain does as "
+           "well or better, so the uncertainty the Monte Carlo samples over was already implicit in the point estimate "
+           "and 60 replicates bought nothing a one-parameter squashing function did not. ")
         + ("It also beats generic responsiveness, a hard baseline because that null is calibrated by construction. "
            if mc_beats_generic else
            "It does NOT beat generic responsiveness -- the per-gene rate of being driven out of the game, fitted on "
