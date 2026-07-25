@@ -8223,3 +8223,60 @@ Both K and alpha were chosen by looking at the evaluation, so the grid best (0.3
 stay at the pre-set alpha=10.
 
 **Practical answer: K anywhere from 20 to 100 is equivalent. Only K=5 is clearly too few.** The exact value does not matter.
+
+## Is cold start limited by data or by model capacity? (colab/coldstart_scaling.py)
+
+Asked whether to train a transformer on this task. That is not a matter of taste — a learning curve settles it. Training set grown
+from 40 to 235 knockouts against a **fixed** held-out test set, 5 seeds.
+
+| n_train | FULL a=10 | FULL a=100 | REGR a=10 | REGR a=100 |
+|---|---|---|---|---|
+| 40 | 0.1730 | 0.1753 | 0.2246 | 0.2023 |
+| 80 | 0.2577 | 0.2484 | 0.2942 | 0.2829 |
+| 120 | 0.2850 | 0.2800 | 0.3081 | 0.3105 |
+| 160 | 0.3192 | 0.3128 | 0.3243 | 0.3297 |
+| 200 | 0.3404 | 0.3453 | 0.3343 | 0.3438 |
+| 235 | 0.3369 | 0.3476 | 0.3369 | 0.3476 |
+
+FULL rebuilds everything from the subset (programs, mu, tide, vocabularies, ridge) — what you would actually have after running fewer
+experiments. REGR pins the basis at the full training half and subsamples only the ridge rows, which localises the shortage.
+
+### A mistake this script made about itself, and the fix
+
+The first version judged saturation from the **raw last step** (200→235, +0.0023) and printed "THE CURVE HAS FLATTENED" — reversing the
+conclusion the script exists to reach. But 200→235 is only **0.23 doublings** while 40→80 is a full one. A learning curve must be read
+on log-x. Per doubling:
+
+| step | doublings | per doubling (a=100) |
+|---|---|---|
+| 40→80 | 1.00 | +0.073 |
+| 80→120 | 0.58 | +0.054 |
+| 120→160 | 0.42 | +0.079 |
+| 160→200 | 0.32 | +0.101 |
+| 200→235 | 0.23 | +0.010 |
+
+**Log-linear fit: +0.0692 per doubling, R² = 0.993**, against an across-seed SE of ±0.0159 on a single point. The last two segments
+(+0.101, +0.010) straddle the fit line — noise on short steps, not a plateau. The verdict logic now requires the fitted slope to exceed
+2x the single-point noise before declaring saturation in **either** direction.
+
+### Conclusion: data-limited, not capacity-limited
+
+The curve has not flattened, so the binding constraint is the **number of measured knockouts**. Adding parameters would add variance in a
+regime that already prefers *more* regularisation (alpha=100 beats alpha=10) and where a zero-parameter 1-NN retrieval reaches 0.288
+against the ridge's 0.341. Supporting evidence: the response matrix has participation ratio **21.6** — about 21 distinguishable knockout
+behaviours — and the K sweep is flat from 20 to 100.
+
+**Prediction (falsifiable):** lowering the mover threshold from >=20 to >=5 takes 337 sources to 664, one doubling, predicted worth about
++0.069 → **~0.417**. Extrapolation from six points; a direction, not a promise.
+
+### Where the shortage is
+
+REGR minus FULL (the value of already having the full program basis) at alpha=100: +0.027 at n=40, +0.035 at 80, +0.030 at 120, +0.017 at
+160, -0.002 at 200, 0.000 at 235. So **below ~200 knockouts the missing ingredient is the program basis itself** — too few measured
+responses to define the response space — and **above it the limit shifts to the annotation→loading map**. We are past that crossover,
+which is the argument for better gene features (protein sequence embeddings) rather than more model capacity. Note the gap is
+alpha-dependent: at alpha=10 it is +0.052 at n=40 and closes by n~160.
+
+**Verdict on the transformer question: no trained-from-scratch high-capacity model at 337 knockouts. Use a pretrained transformer as a
+frozen feature extractor (ESM-2 embeddings) instead — that adds features without fitting parameters, and it attacks the
+annotation→loading map, which is where the measurement says the bottleneck now is.**
