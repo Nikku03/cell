@@ -8693,3 +8693,49 @@ complex members and collapsed to 0.143 outside them.
 known function, and **99.5%** of TFs have a regulon ≥80% annotated. So for TFs the chain *does* hold — a regulon can be described, not just
 counted. GATA1: 883 targets, 840 (95%) with a known function, profiled as 235 "other", 191 transcription, 136 transport/uptake, 112
 signalling; localised 261 nucleus, 231 cytoplasm, 109 plasma membrane.
+
+## Split the movers by direction, then ask what machine each group is (colab/direction_split.py)
+
+**Yes, we have direction.** The values are signed z-scores. Every model in this project discarded that by ranking on |z| and never once
+checked the sign. Splitting on it is the sharpest single cut made so far.
+
+**GATA1: 88 DOWN, 533 UP.** Every count below is compared against **2,000 size-matched random gene sets** from the same panel, because both
+PPI density and complex co-membership scale with set size and with how well-studied the genes are — and movers are biased towards
+well-studied genes.
+
+### The two groups are completely different objects
+
+| | DOWN (88) | UP (533) |
+|---|---|---|
+| internal PPI edges | **1,130** vs 9.8 expected | 369 vs 363 expected |
+| | **115× enriched, p≈0** | **1.02×, p=0.43 — exactly chance** |
+| complexes with ≥2 members | 6 vs 2.6 expected (2.3×, p=0.12) | 35 vs 55 expected (0.64×, p=0.90) |
+| top complexes | **60S ribosome ×24, 40S ×17** | Arp2/3 variants ×5 |
+| processes | **translation 45**, transcription 11 | other 127, transport 76, transcription 72 |
+| compartments | cytoplasm 55, nucleus 12 | cytoplasm 115, nucleus 107, PM 60 |
+| top functions | **structural constituent of ribosome** | protein kinase activity, TF activity |
+| PPI hubs within group | RPS3A, RPS2, RPS19, RPS16 (~50 edges each) | YWHAZ 23, ACTG1 21, ACTB 20 |
+
+**The DOWN group is one machine.** 115× more internally wired than chance, 45 of 88 are translation, and the hubs are ribosomal proteins
+each connected to ~50 other members of the same group. That is the ribosome being coordinately lost — a physical module coming apart.
+
+**The UP group is not a machine at all.** Internal wiring is *exactly* what random sets give (1.02×, p=0.43) and complex co-membership is
+*below* chance (0.64×). 533 genes going up together, with no physical coherence — a broad transcriptional programme released, not a
+structure gained. Kinases and TFs, spread across every compartment.
+
+### The knocked-out gene itself
+
+GATA1: **0 curated complexes**, 33 PPI partners (24 measured). Only **2 partners moved** — 8.3% against a 7.3% background, **p=0.69, not
+enriched at all**. Both went UP: **SPI1** and **TLE5**.
+
+That is a genuinely informative negative. GATA1's physical interactome is essentially untouched — the protein's direct binding partners are
+not what carries the response. But the two that did move are exactly the mechanistically loaded ones: SPI1 (PU.1) is GATA1's classic
+antagonist and alone regulates 242 of the movers, and TLE5 is a transcriptional co-repressor. **The signal runs through a released
+antagonist, not through the interactome.**
+
+### Why this matters for the modelling
+
+The response is two superimposed things with opposite structure: a **tightly-wired module lost** (ribosome, 88 genes, 115× wired) and a
+**diffuse programme gained** (533 genes, zero wiring). Any model treating movers as one homogeneous set — every model built here — is
+averaging over two phenomena that need different mechanisms. That is also why complex membership predicted well for some genes and not
+others: it only describes one of the two halves.
