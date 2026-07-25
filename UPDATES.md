@@ -7505,3 +7505,44 @@ not of the architecture — and it is the tightest statement of why retrieval-cl
 **Two structural limits:** (1) the model scores **magnitude only** — it does not predict up vs down, and `hop_accountability` showed curated
 direction is unreliable in this context, so **direction is an unsolved dimension, not a tuning gap**; (2) the idiosyncrasy bound above.
 Deterministic. (`capability_card.py`.)
+
+## `improve_v2` + `predictor_v2` — improving the model: recall is saturated, so add capability
+
+Acting on "how can we improve it": four evidence-motivated recall levers, A/B'd against the `multimodal_stack` baseline (0.489 ± 0.011 specific
+recall@50, oracle 0.622), same splits, 3 seeds, hyper-params tuned on validation only.
+
+| lever | recall@50 | Δ | seeds beating baseline |
+|---|---|---|---|
+| I1 similarity-weighted retrieval | 0.490 ± 0.011 | +0.001 | 3/3 |
+| I2 rank fusion (RRF) | 0.486 ± 0.012 | −0.004 | 1/3 |
+| I3 agreement-gated weights | 0.478 ± 0.008 | −0.011 | 1/3 |
+| I5 similarity-**level** fusion | 0.492 ± 0.012 | +0.003 | 3/3 |
+| ALL combined | 0.466 ± 0.009 | −0.023 | 0/3 |
+
+**No recall lever clears a real margin.** Even the architectural one (I5 — fusing at the *similarity* level to retrieve one better neighbour set,
+rather than averaging channel outputs) gives +0.003. This confirms `ceiling_cartography` at the engineering level: retrieval is bounded by **which
+knockouts exist to retrieve**, not by how their outputs are combined. Stacking all levers is actively *worse* (−0.023) — they interfere.
+
+**The real gain is a NEW CAPABILITY: direction.** The model scored magnitude only and could not say up-vs-down. A sign head (signed neighbour
+average) calls direction correctly on **96.2%** of correctly-retrieved movers. The decisive control matters here: **a per-gene direction prior**
+(each gene's usual direction, learned from train KOs, needing no knockout-specific information) already achieves **91.9%** — so *most* of that
+accuracy is genes having preferred directions. But the head still adds real knockout-specific signal: it beats the prior by **+4.3 points**, and
+where the two disagree (10% of hits) **the head is right 68.9%** of the time. Notable against `hop_accountability`, where curated annotation got
+direction *wrong* on most moved targets — retrieval recovers direction that databases get backwards.
+
+**`predictor_v2.py`** packages this as a deployable predictor: ranked → **signed** → **calibrated**, leave-one-out by construction (the query is
+excluded from its own retrieval pool, so an in-panel gene is scored exactly as an unseen one). Calibration is **measured, not asserted** —
+observed precision by confidence band on held-out KOs:
+
+| band | n predictions | observed precision |
+|---|---|---|
+| very high (≥0.7) | 24 | **79.2%** |
+| high (≥0.5) | 203 | 67.0% |
+| moderate (≥0.3) | 735 | 66.7% |
+| low (≥0.2) | 1144 | 40.7% |
+| very low | 9194 | 21.1% |
+
+So the deliverable is a **bench-ready shortlist**: instead of a top-50 at 27% precision, the moderate-and-above bands run at ~67–79%. The demo is
+honest about variance — GATA1's shortlist hit 5/10 (band claims 67%; n=10 per-KO variance), direction right on 4/5 true hits; NRF1 shortlisted only
+1 gene and got it wrong, an example of a knockout the model should mostly decline to answer. **Honest bound:** none of this moves the ceiling
+(oracle 0.62); it makes the existing signal *usable* and explicit about where it is weak. (`improve_v2.py`, `predictor_v2.py`.)
