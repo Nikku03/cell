@@ -1,0 +1,36 @@
+{
+ "knockout": "GATA1",
+ "moved": 250,
+ "tide": 17,
+ "specific": 233,
+ "named": 230,
+ "unknown": 3,
+ "routes": {
+  "CHAIN-2hop": 55,
+  "UNKNOWN": 3,
+  "CHAIN-3hop": 112,
+  "COFACTOR": 52,
+  "DIRECT": 9,
+  "CHAIN-4hop": 2
+ },
+ "operative_chains": 17,
+ "n_intermediates": 157,
+ "intermediate_states": {
+  "ACTIVITY-UNCHANGED": 14,
+  "ACTIVITY-CHANGED": 16,
+  "UNTESTED": 100,
+  "ABUNDANCE-CHANGED": 3,
+  "DEFENDED-UNTESTABLE": 20,
+  "ABUNDANCE-CONTRADICTED": 4
+ },
+ "activity_testable": 32,
+ "ko_chromatin_activity": -2.599278211593628,
+ "discrimination_by_hop": {
+  "1": 3.63,
+  "2": 1.31,
+  "3": 1.03,
+  "4": 1.02
+ },
+ "verdict": "CASE REPORT (GATA1, K562; case_report.py): one knockout end-to-end, establishing what CHANGED at every hop rather than merely traversing it. LAST PHOTO: 250 genes moved -- 17 generic tide + 233 GATA1-specific; the knocked-out protein's own chromatin activity is -2.60z, so its regulatory function is measurably lost. NAMING: 230/233 reachable by a curated chain within 4 hops, 3 unreachable -- but reachability alone is worthless: discrimination between real movers and non-movers collapses from 3.6x at 1 hop to 1.0x at 4 hops, so long chains are connectivity, not mechanism. THE PER-HOP STATE AUDIT over 157 distinct intermediate proteins: 3 actually changed ABUNDANCE as their edge requires; 4 changed the OPPOSITE way (in this cell those proteins are NOT working as annotated); 16 kept a flat mRNA but show CHANGED CHROMATIN ACTIVITY -- function altered with level held constant, i.e. loss-of-function invisible to abundance; 14 were tested on BOTH layers and showed no change (the strongest evidence a link did not fire); and 120 could not be tested at all. THE COVERAGE CAVEAT IS DECISIVE: only 32/157 intermediates even have a chromVAR motif, so the activity layer could only be interrogated for a minority -- the large 'cannot tell' class is a limit of the DATA, not a biological finding. Only 17/230 named chains are operative end to end (every protein on them demonstrably changed). MEANING: a pathway drawn through this graph is mostly a claim about connectivity; demand that each protein on it actually changed -- in level or in measured activity -- and most chains do not survive, a few are contradicted outright, and the largest class is simply untestable with an abundance readout. That is precisely where a genome-wide activity readout is required. (Self-audit corrections applied: 1-hop targets no longer auto-pass as operative, and 'defended' now requires essentiality -- an earlier rule counting rarely-moving genes captured 93.5% of the genome and was vacuous.) Deterministic.",
+ "note": "CASE REPORT (GATA1, K562; case_report.py): one knockout end-to-end, establishing what CHANGED at every hop rather than merely traversing it. LAST PHOTO: 250 genes moved -- 17 generic tide + 233 GATA1-specific; the knocked-out protein's own chromatin activity is -2.60z, so its regulatory function is measurably lost. NAMING: 230/233 reachable by a curated chain within 4 hops, 3 unreachable -- but reachability alone is worthless: discrimination between real movers and non-movers collapses from 3.6x at 1 hop to 1.0x at 4 hops, so long chains are connectivity, not mechanism. THE PER-HOP STATE AUDIT over 157 distinct intermediate proteins: 3 actually changed ABUNDANCE as their edge requires; 4 changed the OPPOSITE way (in this cell those proteins are NOT working as annotated); 16 kept a flat mRNA but show CHANGED CHROMATIN ACTIVITY -- function altered with level held constant, i.e. loss-of-function invisible to abundance; 14 were tested on BOTH layers and showed no change (the strongest evidence a link did not fire); and 120 could not be tested at all. THE COVERAGE CAVEAT IS DECISIVE: only 32/157 intermediates even have a chromVAR motif, so the activity layer could only be interrogated for a minority -- the large 'cannot tell' class is a limit of the DATA, not a biological finding. Only 17/230 named chains are operative end to end (every protein on them demonstrably changed). MEANING: a pathway drawn through this graph is mostly a claim about connectivity; demand that each protein on it actually changed -- in level or in measured activity -- and most chains do not survive, a few are contradicted outright, and the largest class is simply untestable with an abundance readout. That is precisely where a genome-wide activity readout is required. (Self-audit corrections applied: 1-hop targets no longer auto-pass as operative, and 'defended' now requires essentiality -- an earlier rule counting rarely-moving genes captured 93.5% of the genome and was vacuous.) Deterministic."
+}

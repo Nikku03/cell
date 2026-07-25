@@ -7546,3 +7546,39 @@ So the deliverable is a **bench-ready shortlist**: instead of a top-50 at 27% pr
 honest about variance — GATA1's shortlist hit 5/10 (band claims 67%; n=10 per-KO variance), direction right on 4/5 true hits; NRF1 shortlisted only
 1 gene and got it wrong, an example of a knockout the model should mostly decline to answer. **Honest bound:** none of this moves the ceiling
 (oracle 0.62); it makes the existing signal *usable* and explicit about where it is weak. (`improve_v2.py`, `predictor_v2.py`.)
+
+## `case_report` — one knockout end to end: naming, and what actually CHANGED at every hop
+
+Fuses `case_study` (naming), `hop_accountability` (per-hop audit) and `perturb_atac` (activity) into a single narrative for ONE knockout, built
+to answer the demand: *don't hop just to arrive — establish at every hop what changed, and whether the protein is still working as it should.*
+
+**GATA1 in K562.** Last photo: **250 genes moved** = 17 generic tide + **233 GATA1-specific**. The knocked-out protein's own chromatin motif
+activity is **−2.60z** — its regulatory function is measurably gone, confirmed independently of mRNA.
+
+**Naming:** 230/233 reachable within 4 hops, 3 unreachable (9 direct, 0 physical, 52 cofactor, 55 2-hop, 112 3-hop, 2 4-hop). But the honesty
+guard kills that headline: discrimination between real movers and non-movers collapses **3.63× (1 hop) → 1.31× (2) → 1.03× (3) → 1.02× (4)**. By
+3 hops the graph reaches movers and random non-movers equally, so "230 named" is connectivity, not mechanism.
+
+**The per-hop state audit — 158 distinct intermediate proteins:**
+
+| what changed | n | meaning |
+|---|---|---|
+| ABUNDANCE-CHANGED | **3** | level moved as the edge requires |
+| ABUNDANCE-CONTRADICTED | 4 | moved the *opposite* way — not working as annotated (e.g. HDAC1 z=+2.1) |
+| **ACTIVITY-CHANGED** | **16** | mRNA flat but chromatin activity shifted — **function altered, level held constant** (RUNX1 +1.16z, BACH1 +0.63z, WT1 +0.37z) |
+| ACTIVITY-UNCHANGED | 14 | tested on *both* layers, nothing — strongest evidence a link truly didn't fire |
+| DEFENDED-UNTESTABLE + UNTESTED | 121 | no motif readout — cannot conclude |
+
+**Only 17/230 named chains are operative end to end.** Example: `GATA1 ⊣ MYC → LTB` — LTB moved +40.5 but MYC is essential with no motif readout,
+so the chain is *untestable*, not confirmed. `GATA1 → STAT1 → EGLN3` — EGLN3 moved **opposite** to its annotation.
+
+**Coverage caveat is decisive:** only **32/158** intermediates have a chromVAR motif, so the activity layer could be interrogated for a minority.
+The large "cannot tell" class is a limit of the **data**, not a biological finding.
+
+**Unknowns:** all 3 (LST1, STK10, DNAJC4) have **zero** curated upstream regulators *and* zero PPI partners (verified directly) — a
+transcription-rooted pathway cannot even start.
+
+**Two self-audit corrections applied before shipping:** (a) 1-hop direct targets were auto-passing as "operative" because only intermediates were
+checked — a direct target that moved *backwards* counted as a working chain; fixing it dropped operative chains **38 → 17**. (b) The original
+"defended/buffered" rule (essential OR moves in <0.4% of KOs) captured **93.5% of the genome** — vacuous, since the median gene moves in 0% of
+knockouts; now requires essentiality, and "tested and unchanged" is separated from "never testable". (`case_report.py`.)
