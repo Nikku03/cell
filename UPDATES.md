@@ -8773,3 +8773,64 @@ against 50%.
 
 That still supports splitting the model by direction, but on a much more modest expected gain than "one machine versus no machine" would
 have promised. It also stands as the second time today that a passing gate concealed a weak null — the first was cross-cell-line pooling.
+
+## TF cascade, magnitudes, competition and dosage for GATA1 (colab/tf_cascade.py)
+
+### The three methods for "transcription rate", judged not blended
+
+**1. Perturb-seq z alone — cannot give a rate.** It is steady-state mRNA *abundance*. At steady state [mRNA] = k_syn/k_deg, so z=−5 is
+equally consistent with less synthesis or faster decay.
+
+**2. Abundance × measured decay rate — the one that works, with a named weakness.** RNAdecayCafe gives **measured K562 k_deg for 10,802
+genes**. Since [mRNA]=k_syn/k_deg, Δk_syn/k_syn = Δ[mRNA]/[mRNA] **provided k_deg is unchanged** — and that assumption is specifically
+violated here, because collapsing the ribosome perturbs NMD and co-translational decay. Half-lives are reported per gene: median **4.8 h**,
+83 movers short-lived (<2 h, abundance tracks synthesis fast), **120 long-lived (>8 h, abundance lags and understates the rate change).**
+
+**3. NEXUS — the wrong tool, not used.** It scores how much a *point mutation* impairs a protein via folding × binding, then moves the
+direct regulon by sign×(a−1). For a full knockout activity is zero by construction — it tells you nothing the knockout doesn't already state.
+Its own recorded note says it "does NOT predict the genome-wide cascade", and its GATA1 demo scores ΔΔG=3.0 kcal/mol as "near-neutral,
+activity 0.999" — that is about a *mutant*, not a null.
+
+**Fold-change conversion, and a correction.** `fold ≈ 1 + z·CV` is a first-order expansion. Applied at z=+102 it returned "64×", which is
+extrapolation far outside its range, and it mixes two normalisations that may not share a scale. It is now emitted **only where |z·CV| ≤ 1**
+— **144 of 400** qualify; the other 256 get no number rather than a fake one.
+
+### The cascade — and why 53% coverage is not as good as it sounds
+
+| level | genes | moved | rate | expected | fold | p |
+|---|---|---|---|---|---|---|
+| L1 direct targets | 607 | 76 | 12.5% | 21.1 | **3.60×** | 0.028 |
+| L2 via moved TF targets | 1,953 | 208 | 10.7% | 140.5 | 1.48× | 0.030 |
+| L3 via moved L2 TFs | 588 | 46 | 7.8% | 56.1 | **0.82× — below chance** | 0.90 |
+
+13 direct targets are themselves TFs that moved. The full cascade **covers 330/621 = 53.1% of movers — but touches 3,148 genes to do it, a
+precision of 10.5% against a 7.3% background.** Most of that coverage is bought by casting a wide net. **The regulatory cascade is
+informative at one hop, weak at two, and worse than chance at three.**
+
+### Competition / displacement — 78 candidates
+
+| up gene | z | binds down genes | regulates down genes |
+|---|---|---|---|
+| SPI1 | +9.6 | 0 | **19** |
+| REL | +5.3 | 1 (EIF5A) | 11 |
+| JUN | +5.4 | 2 (HMGA1, MIF) | 6 |
+| **PDCD4** | +7.6 | **5 (EIF4A1, NPM1, RPL11)** | 0 |
+| KTN1 | +11.2 | 6 (NPM1, RPL11, RPL19) | 0 |
+| MRPS6 | +8.0 | 5 (RPL11, RPL23A, RPL35) | 0 |
+
+**PDCD4 is a textbook hit:** it is a known eIF4A inhibitor, it goes UP, and it binds EIF4A1 which goes DOWN. That is competition in the
+literal sense the question asked — an up-regulated product binding and inhibiting a down-regulated one.
+
+### Dosage — the threshold question, answered as far as the data allows
+
+**There is no transcription-rate threshold anywhere in this data.** What exists are dosage proxies, and they are striking:
+
+| group | n | essential | median LOEUF |
+|---|---|---|---|
+| **DOWN** | 88 | **67.0%** | **0.481** |
+| UP | 533 | 4.3% | 0.540 |
+| panel | 8,533 | 16.8% | 0.620 |
+
+**The down group is 67% essential against a 16.8% background — 4× enriched — and the most dosage-constrained set of the three.** So the genes
+being lost are exactly the ones that cannot tolerate being lost. That identifies *which* genes a drop matters for; it still does not say how
+far a drop may go before function fails, and nothing here can.
