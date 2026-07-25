@@ -8041,3 +8041,43 @@ Edge-type composition is *underpowered rather than answered*: reg→reg largest 
 3. **Add complex co-membership as a first-class edge type.**
 
 Not yet built or tested against the 0.143 tide-null the current graph loses to.
+
+---
+
+## Is a single-gene knockout actually a multi-protein knockout?
+
+The idea: removing gene A removes A's protein, and that protein was holding things up. So the cell doesn't experience "A is gone" — it
+experiences the simultaneous loss of A *and* the dysregulation of everything A was acting on. A single-gene knockout is functionally a
+**set**-knockout, which would mean the chain framing was mis-specified from the start.
+
+Directly testable, because **1,971 genes were each knocked out individually**: if the set view is right, A's profile should be reconstructable
+from its neighbours' individually-measured profiles. Scored on within-gene standardised **signed** profiles over non-tide genes, so a shared
+stress response cannot manufacture correlation; one number per source.
+
+**Scope limit, stated first.** The TF-regulon form of the idea *cannot* be tested on this panel: curated regulon members that were themselves
+knocked out number **median 0** per source, reaching 3+ for only **9 of 337** sources. What is testable is the interaction neighbourhood —
+physical/complex partners, **median 39** knocked out per source.
+
+| predictor | correlation with A's real profile |
+|---|---|
+| **the SET (mean of neighbours)** | **0.488** |
+| single: graph-chosen member | 0.364 (p=2.2e-24) |
+| single: random member | 0.210 (p=3.1e-48) |
+| size-matched random set | 0.057 (p=1.2e-46) |
+| *[ceiling] oracle best member* | *0.525* |
+
+**The set genuinely composes** — it reconstructs A far better than any single neighbour you could actually have picked in advance, and lands
+within 7% of an oracle that peeks at the answer.
+
+**A comparator error I nearly published.** My first version used "best single member" as the headline baseline — but that member is selected *by
+correlating with A*, i.e. by peeking. It is an oracle, not a predictor. Scored that way the honest set "loses" (−0.037) and the module would have
+reported that composition fails. It is a ceiling, not a baseline.
+
+**Additivity** (fixed source set, so the curve is not survivorship): 1 member → 0.275, 2 → 0.287, 4 → 0.295, 8 → 0.339, 16 → 0.412, 32 → 0.471.
+Monotone — the signature the set view predicts and a single-dominant-partner explanation does not.
+
+**And without using the graph at all:** ranking every other knockout by profile similarity to A, **19.2 of the top 50 are curated neighbours vs
+1.61 expected — 11.9× enrichment.** A knockout measurably resembles the knockouts of the proteins it works with.
+
+This is the mechanism behind the convergence finding: hop-2 targets hit by many paths are targets hit by many members of the effectively-perturbed
+set. Convergence and set-knockout are the same phenomenon seen from two directions.
