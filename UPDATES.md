@@ -8943,3 +8943,40 @@ R² is not an intuitive accuracy, so the same held-out predictions expressed as 
 **+8 to +12 percentage points** on within-2× accuracy — K562 60.2% vs 51.8% null, HEK293T 51.8% vs 40.3%.
 
 That is the number to quote, not R²=0.33 and not "60% accurate".
+
+## NEXUS blueprint: reachability tested, small resources fetched (colab/fetch_tf_resources.py)
+
+**A third of my first reachability test was wrong.** Four of twelve URLs returned 404 because the URL was wrong, not
+because the resource was blocked — AlphaFold needs `model_v6` (v4 retired), Lambert lives at
+`humantfs.ccbr.utoronto.ca`, ChIP-Atlas needs the full file path, KnockTF answers at `licpathway.net` while its v2 host
+returns 502. Everything below was retested with corrected URLs before being called unreachable.
+
+### Reachable (verified 200)
+
+| resource | status |
+|---|---|
+| JASPAR (both hosts) | ✅ **879 motifs fetched** |
+| HOCOMOCO v11 | ✅ **401 motifs fetched** |
+| Lambert TF list | ✅ **1,639 true TFs fetched** |
+| ChIP-Atlas | ✅ **197,044 hg38 experiments, 6,906 in K-562** |
+| UniProt REST | ✅ |
+| AlphaFold DB (`model_v6`) | ✅ |
+| ENCODE portal search | ✅ |
+| GEO FTP | ✅ |
+| DepMap API | ✅ |
+| KnockTF (licpathway host) | ✅ |
+| **CATLAS** | ❌ 404 on every path tried — needs current download URL |
+
+### Fetched now (small, ~1.1 MB of the useful part)
+
+`lambert_tf_symbols.json` (1,639 TFs) · `jaspar_core_vert.meme` · `hocomoco11_human.meme` ·
+`chipatlas_experiments.tab`
+
+**Step 1 of the pipeline — "filter knockouts to verified TFs" — is now unblocked.**
+
+### Deliberately NOT fetched
+
+Disk is a **fixed per-session allowance, now at 3.0 GB free (93% used)**. ChIP-Atlas all-peaks (~5 GB) and CATLAS cCREs
+(~2–4 GB) would exhaust it and kill the session. They are recorded with URLs and sizes so spending the disk is an
+explicit decision, not an accident. The per-experiment ChIP-Atlas endpoint (`eachData/bed05/{srx}.05.bed`) allows
+fetching only the K-562 TF experiments actually needed, which is the affordable route.
