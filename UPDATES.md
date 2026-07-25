@@ -8081,3 +8081,41 @@ Monotone — the signature the set view predicts and a single-dominant-partner e
 
 This is the mechanism behind the convergence finding: hop-2 targets hit by many paths are targets hit by many members of the effectively-perturbed
 set. Convergence and set-knockout are the same phenomenon seen from two directions.
+
+---
+
+## Replacing the network with a factorization — and what actually did the work
+
+Four independent results all pointed away from pairwise edges and toward modules: complex partners co-move (+0.137), neighbour **sets**
+reconstruct a profile (r=0.49), convergent paths beat single paths, and an SVD of the response matrix shows ~20 effective dimensions whose top
+components *are* complexes. So `program_factorization.py` drops the graph for two matrices:
+
+`response ≈ P (knockouts × programs) @ G (programs × genes)`
+
+The non-circular part: a held-out knockout has no loadings by definition, so they're **predicted from its neighbours' loadings** — the
+set-knockout result applied in program space. `G` is fitted on train rows only, neighbours are restricted to train sources, and even the tide
+mask is computed from train only. 5 splits, one value per held-out source.
+
+| model | recall@50 | profile r |
+|---|---|---|
+| K=5 | 0.219 | 0.464 |
+| K=10 | 0.299 | 0.494 |
+| K=20 | 0.327 | **0.507** |
+| K=50 | 0.346 | 0.507 |
+| K=200 | 0.349 | 0.500 |
+| **full rank (= plain neighbour averaging)** | **0.350** | 0.499 |
+| *[ref] tide-null (no network)* | *0.114* | — |
+| *[ref] random* | *0.005* | — |
+
+**The factorization is not what does the work.** Truncation never beats full rank on recall (0.349 vs 0.350, p=0.64). The programs are a good
+*description* of the data without being a better *predictor*. The one place truncation helps is overall profile shape — r peaks around K=20–50
+and decays slightly at full rank, consistent with the tail directions being noise — but the top-50 ranking is set by high-variance genes the
+leading components already capture, so denoising buys nothing there.
+
+**What does clear the bar the graph could not:** the completed network scored 0.031 where its tide-null scored 0.143 — worse than ignoring the
+network entirely. This scores **0.350 against a tide-null of 0.114 (p=1.6e-33)**, the first representation in this project to beat the no-network
+baseline on held-out knockouts.
+
+**But state the information difference honestly:** the graph model had only *topology*, whereas this uses the **measured response profiles** of
+the test source's neighbours. That is strictly more information, so it is not a like-for-like win over the graph — it is evidence that measured
+neighbour responses carry what graph topology does not.
