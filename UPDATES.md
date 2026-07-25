@@ -7804,3 +7804,78 @@ genes cover half the unverifiable chain load.
 
 **Net: the priority list collapses from four levers to two** — depth (#5) and the targeted intermediate screen (#4). The other two were testable
 and failed.
+
+---
+
+## Non-Perturb-seq data sources: scored, not listed
+
+The obvious next question after "the measured graph is 94% novel" is **what other data could draw it**. Rather than propose sources
+speculatively, every additional data type in the repository was scored on the *same* task with the *same* protocol as `infer_network` — K562
+measured knockout-**specific** edges as positives, **degree-matched** non-edges as negatives — so every number is directly comparable to that
+~0.51 static-feature baseline.
+
+### The genomic hypothesis (`altdata_sources.py`) — not supported, and one near-miss worth recording
+
+The hypothesis was that measured edges might be **genomic** in origin (same locus, same topological domain, readthrough, shared enhancer) rather
+than pathway-based — plausible precisely because no pathway database contains them.
+
+| source | scorable pairs | fires | AUC | 95% CI |
+|---|---|---|---|---|
+| same chromosome | 12,445 | 578 | 0.500 | [0.496, 0.503] |
+| genomic distance \| same chr | 578 | 578 | 0.527 | [0.480, 0.569] |
+| same subcellular compartment | 12,463 | 3,369 | 0.499 | [0.492, 0.508] |
+| shared Reactome pathways | 8,552 | 4,188 | **0.523** | [0.512, 0.533] |
+| same TAD \| both assigned | 3,815 | **4** | — | *untestable* |
+| domain–domain interaction | 12,437 | **0** | — | *untestable* |
+| *[control] target publications* | 17,452 | 13,361 | 0.503 | [0.494, 0.511] |
+| **all testable combined** | | | **0.518** | |
+
+**The methodological point matters more than the result.** The first version of this module returned exactly 0.500 for same-TAD, domain–domain
+interaction and genomic proximity, and I nearly banked that as a clean negative. It was not one — **those features never fired**. Our per-gene
+domain annotation is InterPro keyed by gene index while 3did's vocabulary is Pfam accessions, so they share **1** identifier and no DDI can ever
+match; and the K562 domain calls have a 170 kb median size covering only 50% of genes, so almost no gene *pair* can share one. A feature that
+cannot fire is **untestable, not refuted**. The module now reports coverage before AUC, marks dead features untestable, scores distance and
+same-TAD *conditionally* on the subset where they are defined, and bootstraps a CI on every estimate.
+
+With that fixed: genome position and compartment are flat, and shared pathway membership is **statistically real but useless** (CI excludes 0.5;
+positive pairs average 1.99 shared pathways vs 1.25 for matched non-edges). The publication-count control sits at 0.503, so no popularity
+artifact is inflating any of it. **The genomic hypothesis is not supported where it can be tested**, and same-TAD needs finer contact data before
+it can be tested at all.
+
+### ChIP-seq vs Perturb-seq (`chip_vs_perturb.py`) — the strongest alternative-data test available, and it fails
+
+ChIP-seq is *the* standard way regulatory networks are drawn without perturbation data. Here it gets near-ideal conditions: **25 scorable
+transcription factors that were both ChIP-seq'd in K562 (ChIP-Atlas, uniform hg38 reprocessing) and knocked out in K562**, 1,031 positives. Same
+cell line, same factors, measured binding on one side and measured response on the other.
+
+**The control decides it.** ChIP peaks concentrate at active promoters, so *any* TF's peaks predict *any* TF's response — a promoter-activity
+artifact that would masquerade as regulatory signal. Permuting which binding profile belongs to which TF (a derangement) holds positives,
+negatives and marginal binding rates fixed and isolates the factor-specific component:
+
+| | AUC |
+|---|---|
+| own-TF binding (pooled) | 0.507 |
+| TF-permuted null | 0.498 ± 0.010 (p = 0.224) |
+| own-TF binding (per-factor mean) | 0.516 |
+| one other TF's binding, granularity-matched | 0.497 (own wins 15/25, Wilcoxon p = 0.17) |
+
+Both statistics agree, and the magnitude is the point: any factor-specific signal is worth **~0.01–0.02 AUC** over a promoter-activity baseline
+that is itself barely above chance, and neither test can distinguish it from zero. Neither binding breadth (ρ=+0.03) nor experiments per factor
+(ρ=+0.11) explains the per-TF AUC.
+
+**The sharpest version of the result:** pooling the *other* 115 factors' binding into a single promoter-activity score predicts a TF's own
+knockout response **better than that TF's own peaks do** (0.529 vs 0.516). Knowing which promoters are generally occupied beats knowing where this
+particular factor sits.
+
+The forward rates are the practical statement: **of the genes a TF binds, 0.7% move when that TF is knocked out; of the genes that move, 36% are
+bound** (vs 33% of degree-matched non-movers). So binding is **neither sufficient nor necessary** — most of what a knockout does is not routed
+through that factor's own promoter occupancy.
+
+**This is the mechanism behind the 94% novelty.** Curated regulatory databases are largely built from binding, and binding is not regulation. No
+amount of further curation was ever going to close the gap.
+
+*Two design notes, both of which changed the answer:* the other-TF control must be **granularity-matched** (a mean over 115 binary profiles is
+continuous and can break ties a single binary profile cannot, which hands the control an unearned AUC advantage); and the tide mask must be
+defined from source knockouts at a **fixed** threshold, decoupled from the per-TF scorability cut — when the two were conflated, loosening
+scorability silently redefined "specific" and manufactured a significant-looking experiment-count confound (ρ=+0.37, p=0.035) that vanished once
+they were separated.

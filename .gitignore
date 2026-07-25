@@ -86,3 +86,6 @@ outputs/orphan/invivo/*.fa
 outputs/orphan/llm_reasoner_cache/
 outputs/orphan/pdb_complexes/
 data_fetch/
+
+# ChIP-Atlas K562 peak sets (~190 MB) - regenerate with colab/fetch_chipatlas.py
+outputs/orphan/invivo/chipatlas/
