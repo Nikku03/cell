@@ -7763,3 +7763,44 @@ used the top-250-per-knockout store; uncensoring K562 had revealed 637 movers wh
 depth**, so a 72-cell knockout is not scored against a 500-cell noise model. `reliability_ceiling.py` runs the replicate experiment
 computationally — splitting each knockout's cells into two halves as independent replicates to measure test-retest reliability, whose square root
 bounds any predictor's correlation with the measurement. Results to follow.
+
+## Testing my own recommendations — two of four were wrong
+
+I proposed four levers. Testing them changed the list substantially.
+
+**#1 uncensored donor data — FALSE LEAD.** Rebuilt dense z-score matrices for RPE1/HepG2/Jurkat from raw single-cell counts (`build_uncensored.py`),
+with control σ estimated at matched cell depth. Validation against the existing pkl: r=0.943, **100% sign agreement**, but my z-scores ran **11.6×
+inflated** (control resampling captures sampling noise only, not biological variance) — uncalibrated this would have manufactured a fake 10× gain.
+After calibrating per line against the pkl, the uncensored matrices yield **fewer** usable sources (0.37–0.50×), not more. The reason was
+measurable all along: truncation binds for only **9–24 knockouts per line**, because donor knockouts mostly move far fewer than 250 genes. The
+rebuild is still worth keeping (properly depth-calibrated), but it buys no new signal.
+
+**#3 better perturbations — LARGELY FALSE LEAD, and it refutes my own claim.** I argued the 83% null rate was mostly *failed knockdown* and that
+guide QC was the biggest cheap multiplier. CRISPRi lowers the target's own transcript, so this is directly checkable (`knockdown_efficiency.py`):
+**86–88% of knockouts show a clear self-knockdown** (median self-z −8 to −9). Among **NULL** knockouts specifically, **83–88% were successfully
+silenced anyway** — the gene was switched off and the cell did not care. Those are **genuinely dispensable genes, not reagent failures**, and no
+guide QC recovers them. Only ~15% lack a clear knockdown. **The reason most of the genome yields no transcriptional response is biology
+(dispensability and buffering), not technique.**
+
+**#5 depth/replicates — REAL, and now quantified.** Ran the replicate experiment computationally (`reliability_ceiling.py`): split each knockout's
+cells into two halves as independent replicates. RPE1, 783 knockouts: split-half **r=0.386**, Spearman-Brown full-depth **r=0.557**, attenuation
+ceiling **√r = 0.75**. The answer is a **gradient in depth**, which is the actionable part:
+
+| cells/KO | n | split-half r | implied full-depth r |
+|---|---|---|---|
+| 100–150 | 409 | 0.382 | 0.55 |
+| 250–400 | 71 | 0.456 | 0.63 |
+| 700–1200 | 11 | 0.663 | 0.80 |
+| 1200+ | 7 | **0.799** | **0.89** |
+
+Current screens sit at the **low end** — reliability roughly **doubles with ~10× the cells**. Part of what this project called unpredictable
+biology is an under-powered measurement. But noise is not the whole story either: √r ≈ 0.75 at present depth is still comfortably above what any
+model here achieves, so **both** an under-powered measurement **and** genuine biological specificity are in play. *(Honest oddity: mover-overlap
+falls with depth (74%→50%) while profile correlation rises — a threshold artifact, since deeper knockouts cross the mover bar with many marginal
+genes. It cautions against using mover-overlap as the reliability metric.)*
+
+**#4 perturb the intermediates — STANDS.** See `screen_design`: 94% of chain intermediates have no effective knockout anywhere, and the top 119
+genes cover half the unverifiable chain load.
+
+**Net: the priority list collapses from four levers to two** — depth (#5) and the targeted intermediate screen (#4). The other two were testable
+and failed.
