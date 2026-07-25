@@ -7944,8 +7944,8 @@ over **5 independent splits**, because a single split gave p=0.11, p=0.018 and p
 | | recall@50 |
 |---|---|
 | random ranking | 0.007 |
-| curated network alone | 0.025 |
-| curated + measured completion | **0.030** (+0.006 mean, range +0.003 to +0.008) |
+| curated network alone | 0.024 |
+| curated + measured completion | **0.031** (+0.007 mean, range +0.006 to +0.010) |
 | **tide-null, recomputed in this setup** | **0.143** |
 
 The gain is **directionally reliable** — helps 19 held-out sources across all splits, hurts **0** — but significant in **0/5** splits (median
