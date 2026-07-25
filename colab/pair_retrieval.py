@@ -47,6 +47,8 @@ KRETR = (1, 3, 5, 10, 25, 50)     # how many retrieved neighbours to average; la
 
 def main():
     from sklearn.ensemble import HistGradientBoostingRegressor
+    from sklearn.linear_model import Ridge
+    from sklearn.decomposition import PCA
     from sklearn.metrics import roc_auc_score
     from scipy.stats import wilcoxon, spearmanr
     H = Harness("K562")
@@ -158,6 +160,51 @@ def main():
         x = [num(g, k) for k in PTF] + [np.log1p(float(ctrl_expr.get(g, 0.0)))]
         return x
 
+    # ---- the POINTWISE model, rebuilt here so the head-to-head is on IDENTICAL splits and can be tested paired.
+    # This is program_coldstart + the dense(PCA) block that won in coldstart_coverage (0.3711 there).
+    MAXC = MAXCOMPLEX
+    cmem = collections.defaultdict(set)
+    for cid, mem in D["complexes"].items():
+        mm = {names[x] for x in mem if isinstance(x, int) and x < N}
+        if 2 <= len(mm) <= MAXC:
+            cmem[cid] = mm
+    go_flat = {g: {f"{b}:{t}" for b, ts in d.items() for t in ts} for g, d in go_of.items()}
+    NUMP = ["ess", "loeuf", "tf", "ppi", "npath", "ndis", "cpg", "pubs", "dark", "conf", "enh", "dep_frac"]
+
+    def pointwise_X(train):
+        def vocab(get, mn):
+            c = collections.Counter()
+            for s in train:
+                c.update(get(s))
+            return sorted(k for k, v in c.items() if v >= mn)
+        v_comp = vocab(lambda s: comps.get(s, ()), 2); v_dom = vocab(lambda s: doms.get(s, ()), 3)
+        v_proc = vocab(lambda s: [(info.get(s, {}) or {}).get("proc") or "?"], 3)
+        v_loc = vocab(lambda s: [(info.get(s, {}) or {}).get("comp") or "?"], 3)
+        v_go = vocab(lambda s: go_flat.get(s, ()), 4)
+        trset = set(train)
+        v_soft = [c for c in sorted(cmem) if len(cmem[c] & trset) >= 3]
+        def base(s):
+            x = [num(s, k) for k in NUMP]
+            x.append(np.log1p(float(ctrl_expr.get(s, 0.0)))); x.append(1.0 if s in ctrl_expr else 0.0)
+            x += [1.0 if (info.get(s, {}) or {}).get("proc") == p else 0.0 for p in v_proc]
+            x += [1.0 if (info.get(s, {}) or {}).get("comp") == p else 0.0 for p in v_loc]
+            dl = doms.get(s, set()); x += [1.0 if d in dl else 0.0 for d in v_dom]
+            cl = comps.get(s, set()); x += [1.0 if c in cl else 0.0 for c in v_comp]
+            return x
+        def dense(s):
+            gs = go_flat.get(s, set())
+            d2 = [1.0 if t in gs else 0.0 for t in v_go]
+            na = ppi.get(s, set())
+            for c in v_soft:
+                mb = cmem[c] - {s}
+                if not mb:
+                    d2 += [0.0, 0.0, 0.0]; continue
+                d2.append(len(na & mb) / len(mb) if na else 0.0)
+                d2.append(float(np.mean([coex.get(s, {}).get(m, 0.0) for m in mb])))
+                d2.append(float(np.mean([codep.get(s, {}).get(m, 0.0) for m in mb])))
+            return d2
+        return (np.array([base(s) for s in sources], float), np.array([dense(s) for s in sources], float))
+
     print(f"K562: |z|>={T:.1f} | {len(sources)} sources "
           f"({sum(1 for s in sources if comps.get(s))} in a curated complex, {sum(1 for s in sources if not comps.get(s))} in none)")
     print(f"pair features: {len(PAIRF)}   |   pairs available at 70% train: {int(0.7*len(sources))*(int(0.7*len(sources))-1)//2}")
@@ -215,6 +262,17 @@ def main():
             res[(lbl, "all")].append(v); persrc[lbl][s].append(v)
             res[(lbl, "in_complex" if comps.get(s) else "no_complex")].append(v)
 
+        # ---- pointwise comparator on the SAME split ----
+        Bp, Dp = pointwise_X(train)
+        tr_i = [sidx[s] for s in train]
+        pca = PCA(n_components=min(20, len(train) - 1, Dp.shape[1]), random_state=0).fit(Dp[tr_i])
+        Xpw = np.hstack([Bp, pca.transform(Dp)])
+        mp = Xpw[tr_i].mean(0); sdp = Xpw[tr_i].std(0) + 1e-9
+        Mtr = Z[tr_rows][:, keep].astype(np.float64)
+        mu = Mtr.mean(0); _, _, Vt = np.linalg.svd(Mtr - mu, full_matrices=False)
+        Gk = Vt[:50]
+        Ppw = Ridge(alpha=10.0).fit((Xpw[tr_i] - mp) / sdp, (Mtr - mu) @ Gk.T)
+
         # ---- 2-4. retrieve and average ----
         held_true, held_pred = [], []
         for s in test:
@@ -232,6 +290,8 @@ def main():
                     w = np.clip(sc[o], 0, None)
                     w = w / w.sum() if w.sum() > 0 else np.full(K, 1.0 / K)
                     rec(f"{lbl} K={K}", s, score(w @ TRP[o], s))
+            rec("[pointwise] ridge on programs +dense(PCA)", s,
+                score(mu + Ppw.predict(((Xpw[sidx[s]] - mp) / sdp)[None, :])[0] @ Gk, s))
             rec("[ref] uniform average of all train (= mu)", s, score(TRP.mean(0), s))
             rec("[ref] tide-null", s, score(tr_rank[keep], s))
             rec("[ref] random", s, score(rng.rand(len(keep)), s))
@@ -247,7 +307,8 @@ def main():
     print(f"\n  {'method':44s} {'ALL':>8s} {'in cplx':>9s} {'no cplx':>9s}")
     tab = []
     order = ([f"learned metric K={K}" for K in KRETR] + [f"[ctrl] cosine metric K={K}" for K in KRETR]
-             + ["[ref] uniform average of all train (= mu)", "[ref] tide-null", "[ref] random"]
+             + ["[pointwise] ridge on programs +dense(PCA)",
+                "[ref] uniform average of all train (= mu)", "[ref] tide-null", "[ref] random"]
              + [f"[oracle] true similarity K={K}" for K in KRETR] + ["[oracle] best single copy"])
     for lbl in order:
         a = res[(lbl, "all")]
@@ -270,15 +331,20 @@ def main():
     p_c = float(wilcoxon(lv, cv).pvalue); p_t = float(wilcoxon(lv, tv).pvalue)
     ksn, lvn = bysrc(L, True); _, cvn = bysrc(C, True)
     p_cn = float(wilcoxon(lvn, cvn).pvalue) if np.any(lvn != cvn) else 1.0
-    POINTWISE = 0.3711     # best pointwise model, +dense(PCA), same splits/metric (coldstart_coverage.py)
+    _, pw = bysrc("[pointwise] ridge on programs +dense(PCA)")
+    _, pwn = bysrc("[pointwise] ridge on programs +dense(PCA)", True)
+    POINTWISE = float(pw.mean())
+    p_pw = float(wilcoxon(lv, pw).pvalue)
+    p_pwn = float(wilcoxon(lvn, pwn).pvalue) if np.any(lvn != pwn) else 1.0
     print(f"\n  best K = {bestK}   (paired tests on {len(ks)} unique sources)")
     print(f"  learned vs cosine metric      {lv.mean()-cv.mean():+.4f}  p={p_c:.3g}")
     print(f"  learned vs tide-null          {lv.mean()-tv.mean():+.4f}  p={p_t:.3g}")
     print(f"  learned vs cosine, NO-COMPLEX {lvn.mean()-cvn.mean():+.4f}  p={p_cn:.3g}  (n={len(ksn)})")
-    print(f"  best POINTWISE model for reference: {POINTWISE:.4f}")
+    print(f"  learned vs POINTWISE (same splits, PAIRED)  {lv.mean()-pw.mean():+.4f}  p={p_pw:.3g}")
+    print(f"  learned vs POINTWISE, NO-COMPLEX            {lvn.mean()-pwn.mean():+.4f}  p={p_pwn:.3g}  (n={len(ksn)})")
 
     learn_wins = bool(lv.mean() > cv.mean() and p_c < 0.05)
-    beats_pointwise = bool(lv.mean() > POINTWISE)
+    beats_pointwise = bool(lv.mean() > POINTWISE and p_pw < 0.05)
     nc_l = float(np.mean(res[(L, "no_complex")])); ic_l = float(np.mean(res[(L, "in_complex")]))
     orc = float(np.mean(res[(f"[oracle] true similarity K={bestK}", "all")]))
 
@@ -294,7 +360,9 @@ def main():
         f"RESULT at the best K={bestK}: {lv.mean():.4f} overall ({ic_l:.4f} in a curated complex, {nc_l:.4f} in none), against the best "
         f"POINTWISE model at {POINTWISE:.4f}, tide-null {float(np.mean(res[('[ref] tide-null','all')])):.4f} and random "
         f"{float(np.mean(res[('[ref] random','all')])):.4f}. "
-        + (f"It beats the pointwise model. " if beats_pointwise else
+        + (f"It BEATS the pointwise model head-to-head on identical splits by {lv.mean()-pw.mean():+.4f} (paired p={p_pw:.3g} on "
+           f"{len(ks)} unique sources), and on the uncurated genes the pointwise model fails by {lvn.mean()-pwn.mean():+.4f} "
+           f"(p={p_pwn:.3g}, n={len(ksn)}). " if beats_pointwise else
            f"It does NOT beat the pointwise model ({lv.mean():.4f} vs {POINTWISE:.4f}), so the reframe does not pay off in recall even though "
            "the pair problem is well-posed. ")
         + "THE CONTROL THAT DECIDES WHETHER LEARNING MATTERS is the identical retrieve-and-average pipeline driven by a fixed cosine metric "
@@ -315,7 +383,7 @@ def main():
                "learned_vs_cosine": round(float(lv.mean() - cv.mean()), 4), "p_vs_cosine": p_c,
                "p_vs_cosine_no_complex": p_cn, "p_vs_tide": p_t,
                "learning_beats_cosine": learn_wins, "beats_pointwise": beats_pointwise,
-               "pointwise_reference": POINTWISE, "verdict": verdict, "note": verdict},
+               "pointwise_reference": round(POINTWISE, 4), "p_vs_pointwise": p_pw, "p_vs_pointwise_no_complex": p_pwn, "verdict": verdict, "note": verdict},
               open(OUT / "pair_retrieval.json", "w"), indent=1)
     print("\n  -> outputs/orphan/pair_retrieval.json")
 
