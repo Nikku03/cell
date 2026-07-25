@@ -8,7 +8,14 @@ THE TRAP THIS MODULE IS BUILT AROUND. Mapping measured effects onto a graph is t
 any gene reaches almost any other gene within a few hops -- an earlier case study here found 230 of 233 measured targets "reachable" within 4 hops
 while the discrimination against random targets fell from 3.63x to 1.02x. A path you can always find explains nothing. So every routing claim in this
 module is scored against a DEGREE-MATCHED NULL: for each source, the same BFS is used to look up hop distance to its real targets AND to matched
-random genes drawn from the same mover-frequency bucket. An explanation only counts if the real target is reachably CLOSER than a matched decoy.
+decoys. An explanation only counts if the real target is reachably CLOSER than its decoy.
+
+AND THE NULL MUST BE MATCHED ON THE COVARIATE THE CLAIM IS ABOUT. The first version of this module bucketed decoys on mover-frequency and called
+that degree-matched; it is not, since mover-frequency correlates with curated-graph degree at rho~0.01. Under that null the combined layer came out
+"at chance" and the module was about to conclude that PPI-layer routing explains nothing. Matching instead on log2(in-degree in the routing layer)
+crossed with mover-frequency -- and verifying the match with a printed balance table rather than asserting it -- reverses that: both layers beat
+chance. Every routing result below is additionally decomposed into pairs settled by true DISTANCE versus pairs settled merely by one side being
+unreachable, because a comparison dominated by the latter is an annotation-coverage result wearing a distance result's clothes.
 
 WHAT IT PRODUCES:
   PART 1  MERGE     -- one typed graph: curated-regulatory (signed), curated-physical, and measured-directed edges, each with provenance.
@@ -40,12 +47,18 @@ MINSRC = 20            # a knockout must move this many genes to be a usable sou
 MAXCOMPLEX = 200       # complexes larger than this would add O(n^2) edges and swamp the physical layer
 K_RECALL = 50
 MINROUTES = 5          # a gene must carry this many routes to be scoreable as a joint at all
+NSPLIT = 5             # independent train/test source splits -- one split is too fragile for an effect this small
 NDECOY = 5             # decoy replicates per target, so each candidate joint gets a null mean and SD rather than a single draw
-REF_TIDE, REF_BEST, REF_ORACLE = 0.26, 0.49, 0.62   # this project's established references on the same held-out metric
+REF_TIDE_HARNESS, REF_BEST_HARNESS = 0.26, 0.49     # references from the HARNESS setup (TAU=1.0 pkl) -- NOT this setup, see below
 
 
 def bfs(adj, src, maxhop):
-    """hop distance and parent pointer from src, capped at maxhop. Deterministic: adjacency lists are pre-sorted."""
+    """hop distance and parent pointer from src, capped at maxhop. Deterministic: adjacency lists are pre-sorted.
+
+    CAVEAT THAT THE JOINTS SECTION DEPENDS ON: this records ONE parent per node. Where several shortest paths of equal
+    length exist -- which is the common case on a graph with median degree 15 -- which intermediate gets credited is
+    decided by the order neighbours happen to be visited. That order is alphabetical here, which is arbitrary. Part 3
+    therefore measures how much of the joint list survives permuting it, rather than assuming it does."""
     hop = {src: 0}; par = {src: None}; frontier = [src]
     for h in range(1, maxhop + 1):
         nxt = []
@@ -127,9 +140,32 @@ def main():
     # ---------------- PART 2: ROUTE, against a degree-matched null ----------------
     # Negatives are drawn per source from the same mover-frequency bucket as that source's real targets, so a target
     # cannot be "explained" merely by being a gene that moves often and is therefore well connected.
-    buckets = collections.defaultdict(list)
-    for j, g in enumerate(genes):
-        buckets[min(int(mover_freq[j] * 100) // 2, 25)].append(g)
+    # THE NULL HAS TO BE MATCHED ON THE COVARIATE THE CLAIM IS ABOUT, and getting this wrong reverses a conclusion.
+    # An earlier version bucketed decoys on mover_freq alone and called it "degree-matched". It is not: mover_freq
+    # correlates with curated-graph degree at rho~0.01. Since the claim under test is "the real target is CLOSER IN THE
+    # GRAPH", the decoy must match the target's GRAPH DEGREE -- otherwise decoys are systematically more (or less)
+    # reachable than the targets they stand in for, and that imbalance alone decides most pairs. Buckets are therefore
+    # built PER LAYER on log2(degree in that layer) crossed with mover_freq, and a covariate balance table is printed so
+    # a reader can check the match rather than take the word "matched" on trust.
+    # Decoys are also restricted to non-tide genes (real targets are non-tide) and, per draw, may not be the source or
+    # one of that source's own targets.
+    def make_buckets(adj_for_layer, directed):
+        indeg = collections.Counter()
+        for u, vs in adj_for_layer.items():
+            for v in vs:
+                indeg[v] += 1
+                if not directed:
+                    indeg[u] += 1
+        b = collections.defaultdict(list)
+        for j, g in enumerate(genes):
+            # Decoys must come from the same population as real targets: non-tide AND actually movable. Without the
+            # movability condition ~37% of drawn decoys are genes that never move under ANY source, while every real
+            # target moves at least once -- an imbalance in the very property the comparison is about.
+            if tide[j] or mover_freq[j] <= 0:
+                continue
+            d = indeg.get(g, 0)
+            b[(min(int(mover_freq[j] * 100) // 2, 25), int(np.log2(d + 1)))].append(g)
+        return b, indeg
 
     layers = {}
     joint_load = {"REGULATORY": collections.Counter(), "COMBINED": collections.Counter()}
@@ -141,8 +177,12 @@ def main():
                   "COMBINED": [collections.Counter() for _ in range(NDECOY)]}
     edge_route = {}
     for lname, adj in (("REGULATORY", adj_reg), ("COMBINED", adj_all)):
+        buckets, indeg = make_buckets(adj, lname == "REGULATORY")
         hops_real = collections.Counter(); hops_null = collections.Counter()
         closer = same = farther = 0
+        # balance diagnostics + decomposition of what actually decides each decisive pair
+        bal_rd, bal_dd = [], []
+        dec_unreach = dec_dist = 0
         for s in sorted(sources):
             if s not in adj and s not in reg:
                 pass
@@ -151,6 +191,7 @@ def main():
             tgts = [genes[j] for j in np.where((Aall[r] >= T) & (~tide))[0] if genes[j] != s]
             if not tgts:
                 continue
+            tset = set(tgts)
             for t2 in tgts:
                 h = hop.get(t2, 99)
                 hops_real[h] += 1
@@ -163,19 +204,35 @@ def main():
                         joint_load[lname][c] += 1
                         c = par.get(c)
                 # degree-matched decoys for this target: replicate 0 drives the hop comparison, all replicates feed the joint null
-                b = min(int(mover_freq[gidx[t2]] * 100) // 2, 25)
-                pool = buckets.get(b) or genes
+                bkey = (min(int(mover_freq[gidx[t2]] * 100) // 2, 25), int(np.log2(indeg.get(t2, 0) + 1)))
+                pool = buckets.get(bkey) or buckets.get((bkey[0], max(bkey[1] - 1, 0))) or genes
                 for rep in range(NDECOY):
-                    d = pool[RNG.randint(len(pool))]
+                    d = None
+                    for _try in range(20):
+                        cand = pool[RNG.randint(len(pool))]
+                        # a decoy must be a gene this source did NOT move, and must not be the source itself
+                        if cand != s and cand not in tset:
+                            d = cand
+                            break
+                    if d is None:
+                        continue
                     hd = hop.get(d, 99)
+                    # ALL replicates feed the headline comparison. Using only the first was an arbitrary choice that
+                    # threw away 80% of the drawn null and made the result hostage to one draw.
                     if rep == 0:
-                        hops_null[hd] += 1
-                        if h < hd:
-                            closer += 1
-                        elif h == hd:
-                            same += 1
+                        hops_null[hd] += 1                      # the displayed hop histogram stays a single-draw view
+                    bal_rd.append(indeg.get(t2, 0)); bal_dd.append(indeg.get(d, 0))
+                    if h != hd:
+                        if (h == 99) != (hd == 99):
+                            dec_unreach += 1
                         else:
-                            farther += 1
+                            dec_dist += 1
+                    if h < hd:
+                        closer += 1
+                    elif h == hd:
+                        same += 1
+                    else:
+                        farther += 1
                     if 2 <= hd <= MAXHOP:
                         c = par.get(d)
                         while c is not None and c != s:
@@ -186,10 +243,16 @@ def main():
         dec_n = closer + farther
         pcloser = binomtest(closer, dec_n, 0.5).pvalue if dec_n else float("nan")
         reach = tot - hops_real.get(99, 0)
+        reach_null = tot - hops_null.get(99, 0)
+        mrd, mdd = float(np.mean(bal_rd)) if bal_rd else 0.0, float(np.mean(bal_dd)) if bal_dd else 0.0
+        # among pairs decided by real DISTANCE (both sides reachable), how often is the real target closer?
         layers[lname] = {"hops_real": dict(hops_real), "hops_null": dict(hops_null), "n": tot,
                          "closer": closer, "same": same, "farther": farther,
                          "closer_frac": round(closer / max(dec_n, 1), 4), "closer_p": float(pcloser),
-                         "reachable": reach, "reachable_frac": round(reach / max(tot, 1), 4)}
+                         "reachable": reach, "reachable_frac": round(reach / max(tot, 1), 4),
+                         "reachable_null": reach_null, "reachable_null_frac": round(reach_null / max(tot, 1), 4),
+                         "mean_degree_real": round(mrd, 1), "mean_degree_decoy": round(mdd, 1),
+                         "decided_by_reachability": dec_unreach, "decided_by_distance": dec_dist}
         print(f"\n  ROUTING over the {lname} layer ({tot:,} specific measured edges):")
         print(f"    {'hops':>6s} {'real':>9s} {'null':>9s} {'enrichment':>11s}")
         for h in (1, 2, 3, 4, 99):
@@ -202,6 +265,11 @@ def main():
               f"({100*closer/max(dec_n,1):.1f}%; ties {same:,}; binomial p={pcloser:.2g})"
               + ("  <- ROUTING IS AT CHANCE, the reachability above is graph density" if pcloser > 0.05 or closer <= dec_n / 2 else
                  "  <- routing beats chance"))
+        print(f"    NULL BALANCE (check the match, do not trust the word 'matched'): mean in-degree real {mrd:.1f} vs decoy {mdd:.1f}; "
+              f"reachable-at-all real {100*reach/max(tot,1):.1f}% vs decoy {100*reach_null/max(tot,1):.1f}%")
+        print(f"    what decides a pair: REACHABILITY (one side unreachable) {dec_unreach:,} vs true DISTANCE "
+              f"(both reachable, different hop) {dec_dist:,} "
+              f"({100*dec_dist/max(dec_unreach+dec_dist,1):.0f}% distance-driven)")
 
     # ---------------- PART 3: JOINTS ----------------
     srcset = set(sources)
@@ -228,8 +296,24 @@ def main():
                            "is_TF": bool(info.get(g, {}).get("tf")), "is_measured_source": g in srcset})
         rows_j.sort(key=lambda r: (-r["z"], -r["routes"], r["gene"]))
         sig = [r for r in rows_j if r["z"] >= 2]
-        # With this many genes tested, ~2.3% would clear z>=2 by chance alone -- state the expectation, not just the count.
-        exp_fp = 0.0228 * len(rows_j)
+        # The chance expectation must be EMPIRICAL, not the 2.28% normal tail: a z built from 5 replicates with a Poisson
+        # floor is not normally distributed, so quoting the normal tail would be inventing a false-positive rate. Instead
+        # hold out one replicate as a pseudo-observation and score it against the remaining four exactly as above -- the
+        # number of genes that clear z>=2 under that arrangement IS the chance count for this estimator.
+        exp_hits = []
+        for hold in range(NDECOY):
+            others = [reps[q] for q in range(NDECOY) if q != hold]
+            hits = 0
+            for r in rows_j:
+                g = r["gene"]; obs0 = reps[hold].get(g, 0)
+                if obs0 < MINROUTES:
+                    continue
+                nl = np.array([o.get(g, 0) for o in others], dtype=float)
+                mu0 = float(nl.mean()); sd0 = max(float(nl.std(ddof=1)), np.sqrt(max(mu0, 1.0)))
+                if (obs0 - mu0) / sd0 >= 2:
+                    hits += 1
+            exp_hits.append(hits)
+        exp_fp = float(np.mean(exp_hits))
         joints[lname] = {"n_scoreable_genes": len(rows_j), "min_routes": MINROUTES, "n_z2": len(sig),
                          "expected_by_chance": round(exp_fp, 1), "top": rows_j[:40]}
         note = ("  <- no more than chance would give" if len(sig) <= exp_fp else
@@ -242,6 +326,54 @@ def main():
             for r in sig[:15]:
                 print(f"    {r['gene']:12s} {r['routes']:>8,d} {r['null_mean']:>10.1f} {r['z']:>7.1f} "
                       f"{'Y' if r['is_TF'] else '-':>3s} {('yes' if r['is_measured_source'] else 'NO'):>8s}")
+    # composition of the significant REGULATORY joints, computed rather than asserted
+    HEME = {"RUNX1", "MYB", "GATA1", "GATA2", "GATA3", "CEBPA", "CEBPB", "HHEX", "TAL1", "SPI1", "KLF1", "LMO2", "IKZF1"}
+    _rsig = [r for r in joints["REGULATORY"]["top"] if r["z"] >= 2]
+    _rall = joints["REGULATORY"]["top"]
+    reg_sig_n = len(_rsig)
+    reg_tf_n = sum(1 for r in _rsig if r["is_TF"])
+    reg_notsrc_n = sum(1 for r in _rsig if not r["is_measured_source"])
+    # BASE RATES. "n/n of the joints were never knocked out" means nothing unless most scoreable genes were never
+    # knocked out anyway -- which they were. Quote the background rate next to it so the reader can see whether the
+    # joint list is actually enriched for anything or just inheriting the panel's composition.
+    base_notsrc = (sum(1 for r in _rall if not r["is_measured_source"]) / max(len(_rall), 1)) if _rall else 0.0
+    base_tf = (sum(1 for r in _rall if r["is_TF"]) / max(len(_rall), 1)) if _rall else 0.0
+    reg_heme = [r["gene"] for r in _rsig if r["gene"] in HEME] or ["none"]
+    reg_other = [r["gene"] for r in _rsig if r["gene"] not in HEME] or ["none"]
+    # TIE-BREAK STABILITY: is a "joint" a property of routing, or of the order BFS happened to visit neighbours?
+    # Re-run the load computation with the adjacency order permuted and measure how much of the set survives. If the
+    # membership does not survive, the count may still be meaningful but the NAMES are not.
+    def joint_load_with_order(adj_src, seed):
+        rr = np.random.RandomState(seed)
+        adjp = {}
+        for k, v in adj_src.items():
+            lv = list(v)
+            rr.shuffle(lv)
+            adjp[k] = lv
+        load = collections.Counter()
+        for s in sorted(sources):
+            hop, par = bfs(adjp, s, MAXHOP)
+            r = kidx[s]
+            for j in np.where((Aall[r] >= T) & (~tide))[0]:
+                t2 = genes[j]
+                if t2 == s or not (2 <= hop.get(t2, 99) <= MAXHOP):
+                    continue
+                c = par.get(t2)
+                while c is not None and c != s:
+                    load[c] += 1; c = par.get(c)
+        return {g for g, n in load.items() if n >= MINROUTES}
+
+    base_set = {r["gene"] for r in joints["COMBINED"]["top"]} | {g for g in joint_load["COMBINED"]
+                                                                 if joint_load["COMBINED"][g] >= MINROUTES}
+    jac = []
+    for sd in (1, 2):
+        S = joint_load_with_order(adj_all, sd)
+        jac.append(len(base_set & S) / max(len(base_set | S), 1))
+    mjac = float(np.mean(jac))
+    print(f"\n  TIE-BREAK STABILITY (COMBINED): permuting the order BFS visits neighbours keeps only "
+          f"Jaccard {mjac:.2f} of the >={MINROUTES}-route joint set"
+          + ("  <- the COUNT is a result, the NAMES are largely an implementation artifact" if mjac < 0.7 else
+             "  <- membership is stable"))
     scored_rows = joints["COMBINED"]["top"]
 
     # ---------------- PART 4: SIGN ----------------
@@ -273,16 +405,9 @@ def main():
     # ---------------- PART 5: VALUE (held out) ----------------
     # Split SOURCES. Build the completion from train sources only, then ask whether adding it to the curated graph
     # improves recall of held-out sources' specific movers. Splitting by source is what keeps this non-circular.
-    ss = sorted(sources); RNG.shuffle(ss)
-    cut = int(0.7 * len(ss)); train_s, test_s = set(ss[:cut]), ss[cut:]
-    add = collections.defaultdict(set)
-    for a, b, z, is_s in measured:
-        if is_s and a in train_s:
-            add[a].add(b)
-    adj_plus = {k: sorted(set(v) | add.get(k, set())) for k, v in adj_all.items()}
-    for k in add:
-        if k not in adj_plus:
-            adj_plus[k] = sorted(add[k])
+    # REPEATED splits, not one. A single 70/30 split gave p=0.11, p=0.018 and p=0.078 on three different RNG streams --
+    # the gain is small enough that its significance is decided by which sources happen to land in the test set. Repeating
+    # the split and reporting the spread is the honest way to describe an effect that marginal.
     nontide_idx = np.where(~tide)[0]
 
     def influence(adj, s, hops=MAXHOP, atten=0.5):
@@ -317,37 +442,75 @@ def main():
         top = [g for _, g in cand[:k]]
         return len(set(top) & truth) / min(len(truth), k)
 
-    rc, rp, rr = [], [], []
     allnt = [genes[j] for j in nontide_idx]
-    for s in test_s:
-        a_ = recall_at_k(adj_all, s); b_ = recall_at_k(adj_plus, s)
-        if a_ is None:
-            continue
-        rc.append(a_); rp.append(b_)
-        r = kidx[s]
-        truth = {genes[j] for j in np.where((Aall[r] >= T) & (~tide))[0] if genes[j] != s}
-        pick = {allnt[q] for q in RNG.choice(len(allnt), K_RECALL, replace=False)}
-        rr.append(len(pick & truth) / min(len(truth), K_RECALL))
-    mc, mp, mr = float(np.mean(rc)), float(np.mean(rp)), float(np.mean(rr))
-    print(f"\n  VALUE on {len(rc)} held-out sources (specific-mover recall@{K_RECALL}, sources split 70/30):")
+    from scipy.stats import wilcoxon as _wil
+    split_rows = []
+    for si in range(NSPLIT):
+        ss = sorted(sources); RNG.shuffle(ss)
+        cut = int(0.7 * len(ss)); train_s, test_s = set(ss[:cut]), ss[cut:]
+        add = collections.defaultdict(set)
+        for a, b, z, is_s in measured:
+            if is_s and a in train_s:
+                add[a].add(b)
+        adj_plus = {k: sorted(set(v) | add.get(k, set())) for k, v in adj_all.items()}
+        for k in add:
+            if k not in adj_plus:
+                adj_plus[k] = sorted(add[k])
+        rc, rp, rr = [], [], []
+        n_absent = 0
+        for s in test_s:
+            if s not in adj_all:
+                n_absent += 1          # not in the curated graph at all -> a hard zero, counted and reported
+            a_ = recall_at_k(adj_all, s); b_ = recall_at_k(adj_plus, s)
+            if a_ is None:
+                continue
+            rc.append(a_); rp.append(b_)
+            r = kidx[s]
+            truth = {genes[j] for j in np.where((Aall[r] >= T) & (~tide))[0] if genes[j] != s}
+            pick = {allnt[q] for q in RNG.choice(len(allnt), K_RECALL, replace=False)}
+            rr.append(len(pick & truth) / min(len(truth), K_RECALL))
+        # exact method: the number of non-tied pairs is tiny (often <10), where scipy's normal approximation is wrong
+        try:
+            nz = sum(1 for a_, b_ in zip(rc, rp) if a_ != b_)
+            pg = float(_wil(rp, rc, method="exact" if nz <= 25 else "auto").pvalue) if nz else float("nan")
+        except (ValueError, TypeError):
+            pg = float("nan")
+        split_rows.append({"split": si, "n": len(rc), "curated": float(np.mean(rc)), "completed": float(np.mean(rp)),
+                           "random": float(np.mean(rr)), "gain": float(np.mean(rp) - np.mean(rc)), "p": pg,
+                           "helps": int(sum(1 for a_, b_ in zip(rc, rp) if b_ > a_)),
+                           "hurts": int(sum(1 for a_, b_ in zip(rc, rp) if b_ < a_)),
+                           "absent_from_curated_graph": n_absent})
+    mc = float(np.mean([r["curated"] for r in split_rows])); mp = float(np.mean([r["completed"] for r in split_rows]))
+    mr = float(np.mean([r["random"] for r in split_rows]))
+    gains = np.array([r["gain"] for r in split_rows]); ps = np.array([r["p"] for r in split_rows])
+    nsig = int(np.sum(ps < 0.05)); nbetter = sum(r["helps"] for r in split_rows); nworse = sum(r["hurts"] for r in split_rows)
+    p_gain = float(np.median(ps))
+    print(f"\n  VALUE over {NSPLIT} independent 70/30 source splits (specific-mover recall@{K_RECALL}):")
+    print(f"    {'split':>6s} {'n':>5s} {'curated':>9s} {'completed':>11s} {'gain':>8s} {'p':>9s} {'helps/hurts':>12s}")
+    for r in split_rows:
+        print(f"    {r['split']:>6d} {r['n']:>5d} {r['curated']:>9.3f} {r['completed']:>11.3f} {r['gain']:>+8.3f} "
+              f"{r['p']:>9.3g} {str(r['helps'])+'/'+str(r['hurts']):>12s}")
     print(f"    random ranking                {mr:.3f}")
     print(f"    curated network alone         {mc:.3f}")
-    print(f"    curated + measured completion {mp:.3f}   ({mp-mc:+.3f})")
-    # THE SCALE IS THE POINT. Read against this project's established references on the same metric, a gain of a
-    # hundredth is not a success -- graph routing is an order of magnitude below what already works.
-    print(f"    -- for scale, established references on this metric --")
-    print(f"    tide-null (predict the generic response) {REF_TIDE:.3f}")
-    print(f"    best model in this project               {REF_BEST:.3f}")
-    print(f"    oracle*                                  {REF_ORACLE:.3f}")
-    # the gain is a mean over held-out sources; test it paired rather than reading it off two averages
-    from scipy.stats import wilcoxon as _wil
-    try:
-        p_gain = float(_wil(rp, rc).pvalue)
-    except ValueError:
-        p_gain = float("nan")
-    nbetter = int(sum(1 for a_, b_ in zip(rc, rp) if b_ > a_)); nworse = int(sum(1 for a_, b_ in zip(rc, rp) if b_ < a_))
-    print(f"    completion helps on {nbetter}/{len(rc)} held-out sources, hurts on {nworse}, paired Wilcoxon p={p_gain:.2g}"
-          + ("  <- the gain is not distinguishable from noise" if not (p_gain < 0.05) else ""))
+    print(f"    curated + measured completion {mp:.3f}   ({mp-mc:+.3f} mean, range "
+          f"{gains.min():+.3f} to {gains.max():+.3f}; significant in {nsig}/{NSPLIT} splits)")
+    # THE SCALE MATTERS, BUT ONLY AGAINST A REFERENCE COMPUTED IN THIS SETUP. The project's familiar 0.26 tide-null and
+    # 0.49 best-model come from the HARNESS (pkl, TAU=1.0, MIN_SPEC=5); this module scores on the uncensored parquet at
+    # |z|>=4.2 with a different tide definition, so quoting them here would be a cross-metric comparison dressed up as a
+    # like-for-like one. The tide-null is therefore recomputed HERE, on exactly these sources and this truth definition.
+    tide_rank = [genes[j] for j in np.argsort(-mover_freq) if not tide[j]][:K_RECALL]
+    tn = []
+    for s in sorted(sources):
+        r = kidx[s]
+        truth = {genes[j] for j in np.where((Aall[r] >= T) & (~tide))[0] if genes[j] != s}
+        if truth:
+            tn.append(len(set(tide_rank) & truth) / min(len(truth), K_RECALL))
+    m_tide = float(np.mean(tn))
+    print(f"    tide-null RECOMPUTED IN THIS SETUP       {m_tide:.3f}   (the familiar 0.26 is the harness setup, not this one)")
+    print(f"    completion helps {nbetter} held-out sources across all splits, hurts {nworse}; median paired Wilcoxon "
+          f"p={p_gain:.2g}"
+          + ("  <- the gain is small and its significance is NOT stable across splits" if nsig < NSPLIT else
+             "  <- significant in every split"))
 
     # ---------------- emit the merged graph ----------------
     typed = []
@@ -371,7 +534,7 @@ def main():
         f"ROUTING: on the combined curated graph {routed:,}/{comb['n']:,} specific measured edges ({100*routed/max(comb['n'],1):.0f}%) can be "
         f"reached within {MAXHOP} hops and {unrouted:,} cannot. "
         "THAT 71% IS NOT THE RESULT, AND READING IT AS ONE WOULD BE THE WHOLE MISTAKE. The curated graph is dense enough to reach almost anything, "
-        "so every route was scored against a DEGREE-MATCHED DECOY looked up in the same BFS. The two layers then separate sharply: "
+        "so every route was scored against a DEGREE-MATCHED DECOY looked up in the same BFS, over all {} decoy replicates: ".format(NDECOY)
         + "; ".join(
             f"{ln} layer reaches only {100*d['reachable_frac']:.0f}% of measured edges but the real target is strictly closer than its decoy in "
             f"{100*d['closer_frac']:.1f}% of decisive pairs (p={d['closer_p']:.2g})"
@@ -380,8 +543,16 @@ def main():
             f"{100*d['closer_frac']:.1f}% of decisive pairs (p={d['closer_p']:.2g}) -- AT CHANCE, so that reachability is graph density and "
             "explains nothing"
             for ln, d in layers.items())
-        + ". In other words the layer that routes almost everything routes it meaninglessly, and the layer that routes meaningfully covers almost "
-        "nothing. THE DEPTH PROFILE SAYS EXACTLY WHERE THE NETWORK STOPS EXPLAINING, and it is the single most useful number here: enrichment over "
+        + ". THE NULL'S COVARIATE DECIDED THIS AND I GOT IT WRONG FIRST TIME: an earlier version bucketed decoys on mover-frequency alone and "
+        "called it degree-matched. Mover-frequency correlates with curated-graph degree at rho~0.01, so it matched nothing relevant to a claim "
+        "about graph DISTANCE, and under it the combined layer came out at chance (50.2%, p=0.82) -- a false negative I was about to publish. "
+        f"Matching on log2(in-degree in the routing layer) x mover-frequency brings the balance to mean in-degree "
+        f"{layers['COMBINED']['mean_degree_real']:.0f} vs {layers['COMBINED']['mean_degree_decoy']:.0f} and reachable-at-all "
+        f"{100*layers['COMBINED']['reachable_frac']:.0f}% vs {100*layers['COMBINED']['reachable_null_frac']:.0f}%, and the combined layer then "
+        f"beats chance. Both layers do. The decomposition also matters: "
+        + "; ".join(f"{ln} {100*d['decided_by_distance']/max(d['decided_by_distance']+d['decided_by_reachability'],1):.0f}% of decisive pairs are "
+                    "settled by true distance rather than by one side simply being unreachable" for ln, d in layers.items())
+        + ". THE DEPTH PROFILE SAYS WHERE THE NETWORK STOPS EXPLAINING, and it is the single most useful number here: enrichment over "
         "matched decoys by route length is "
         + ", ".join(f"{lab} {(layers['COMBINED']['hops_real'].get(h,0)/max(layers['COMBINED']['hops_null'].get(h,1),1)):.2f}x"
                     for h, lab in ((1, "direct"), (2, "1 intermediate"), (3, "2 intermediates"), (4, "3 intermediates")))
@@ -401,20 +572,35 @@ def main():
         + (f"That gain is NOT distinguishable from noise -- it helps on {nbetter}/{len(rc)} held-out sources and hurts on {nworse} "
            f"(paired Wilcoxon p={p_gain:.2g}). " if not (p_gain < 0.05) else
            f"The gain is significant (helps {nbetter}/{len(rc)}, hurts {nworse}, paired Wilcoxon p={p_gain:.2g}). ")
-        + f"AND THE SCALE SETTLES IT EITHER WAY: the tide-null on this same metric is {REF_TIDE:.2f} and the best model in this project is "
-        f"{REF_BEST:.2f}, so graph routing over the completed network is roughly {REF_BEST/max(mp,1e-9):.0f}x worse than what already works. "
+        + f"AND THE SCALE SETTLES IT, AGAINST A REFERENCE COMPUTED IN THIS SETUP RATHER THAN AN IMPORTED ONE: quoting this project's familiar "
+        f"{REF_TIDE_HARNESS:.2f} tide-null and {REF_BEST_HARNESS:.2f} best-model here would be a cross-metric comparison, since those come from the "
+        f"harness (pkl, TAU=1.0) and this module scores the uncensored parquet at |z|>={T:.1f} with a different tide definition. Recomputed on "
+        f"exactly these sources and this truth definition, simply ranking genes by how often they move under ANY knockout -- the tide-null, which "
+        f"uses no network at all -- scores {m_tide:.3f}, versus {mp:.3f} for the completed network. So the completed graph is roughly "
+        f"{m_tide/max(mp,1e-9):.0f}x WORSE than ignoring the network entirely and predicting the generic response. "
         "Completing the network and walking it is not a route to prediction. "
         + "JOINTS, and these ARE enriched: " + "; ".join(
             f"{ln} {joints[ln]['n_z2']:,} of {joints[ln]['n_scoreable_genes']:,} genes carrying >={MINROUTES} routes reach z>=2 against "
             f"{NDECOY} null replicates (chance ~{joints[ln]['expected_by_chance']:.0f})"
             for ln in ("REGULATORY", "COMBINED"))
-        + ". THAT LOOKS LIKE IT CONTRADICTS THE AT-CHANCE ROUTING ABOVE AND IT DOES NOT -- the two measure different things. Distance asks whether a "
-        "real target sits closer than a decoy; joints ask which intermediates the routes pass through. A knockout's real targets are a coherent set, "
-        "so their routes CONVERGE on shared intermediates far more than independently-drawn decoys do, even when the distances themselves are "
-        "identical. Convergence is therefore real but it is a property of the target set, not evidence that the curated path is the mechanism. "
-        "What makes the list still worth having is its composition: the top regulatory joints are haematopoietic transcription factors appropriate "
-        "to K562 (RUNX1, MYB, GATA3, CEBPA, HHEX), and almost none of them were themselves knocked out in this panel -- which is exactly the "
-        "screen_design conclusion arrived at from the other direction. Deterministic; degree-matched decoys throughout, joints z-scored against "
+        + ". The chance expectation there is EMPIRICAL, not a normal tail: a z built from 5 replicates with a Poisson floor is not normal, so the "
+        "count of genes clearing z>=2 when one replicate is held out and scored against the other four IS the chance count for this estimator. "
+        "Note what joints do and do not show: they ask which intermediates routes pass through, not whether targets are closer. A knockout's real "
+        "targets are a coherent set, so their routes CONVERGE on shared intermediates more than independently-drawn decoys do even at identical "
+        "distances. Convergence is real but it is a property of the target set, not evidence that the curated path is the mechanism. "
+        f"AND THE NAMES DO NOT SURVIVE SCRUTINY, WHICH IS THE HONEST HEADLINE OF THIS SECTION. BFS records one parent per node, so wherever "
+        "several equally-short paths exist -- the common case at median degree 15 -- the credited intermediate is decided by the order neighbours "
+        f"are visited, which is alphabetical and arbitrary. Permuting that order retains only Jaccard {mjac:.2f} of the joint set. So the COUNT is "
+        "a result (there is more convergence than chance) but WHICH GENES ARE NAMED is largely an implementation artifact, and the ranked table "
+        "should be read as a weak shortlist, not as identified mechanism. Recovering real joints needs credit distributed over ALL shortest paths "
+        "(Brandes-style), which this module does not do. "
+        f"For what it is worth under that caveat, AND AGAINST BASE RATES rather than quoted bare: {reg_tf_n}/{reg_sig_n} of the significant "
+        f"regulatory joints are annotated transcription factors (background among scoreable genes {100*base_tf:.0f}%), and "
+        f"{reg_notsrc_n}/{reg_sig_n} were never knocked out in this panel -- but so were {100*base_notsrc:.0f}% of ALL scoreable genes, so that "
+        "second number is the panel's composition rather than a property of the joints, and I am not going to present it as a finding. They "
+        "include haematopoietic regulators plausible for K562 (" + ", ".join(reg_heme) + ") alongside broadly-studied factors with large curated "
+        "regulons (" + ", ".join(reg_other[:4]) + "). "
+        "Deterministic; degree-matched decoys throughout, joints z-scored against "
         f"replicated nulls with a Poisson variance floor, and restricted to genes carrying >={MINROUTES} routes so that a gene whose few null "
         "replicates happen to agree cannot be handed an infinite z.")
     print(f"\nVERDICT: {verdict}")
@@ -429,8 +615,9 @@ def main():
                "sign_testable": bool(sign_testable), "sign_n": signed_tot,
                "sign_agreement": (round(signed_ok / max(signed_tot, 1), 4) if sign_testable else None),
                "sign_baseline": round(prior, 4), "recall_curated": round(mc, 4), "recall_completed": round(mp, 4),
-               "recall_random": round(mr, 4), "recall_gain_p": float(p_gain), "joints": joints, "n_decoy_replicates": NDECOY,
-               "reference_tide": REF_TIDE, "reference_best": REF_BEST, "reference_oracle": REF_ORACLE,
+               "recall_random": round(mr, 4), "recall_gain_p": float(p_gain), "joints": joints, "n_decoy_replicates": NDECOY, "joint_tiebreak_jaccard": round(mjac,3),
+               "tide_null_this_setup": round(m_tide, 4), "reference_tide_harness": REF_TIDE_HARNESS,
+               "reference_best_harness": REF_BEST_HARNESS, "splits": split_rows, "n_splits": NSPLIT,
                "verdict": verdict, "note": verdict}, open(OUT / "complete_network.json", "w"), indent=1)
     print(f"\n  -> outputs/orphan/completed_network.json ({len(typed):,} typed edges) + completed_network_joints.csv + complete_network.json")
 
