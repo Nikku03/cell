@@ -7547,38 +7547,46 @@ honest about variance — GATA1's shortlist hit 5/10 (band claims 67%; n=10 per-
 1 gene and got it wrong, an example of a knockout the model should mostly decline to answer. **Honest bound:** none of this moves the ceiling
 (oracle 0.62); it makes the existing signal *usable* and explicit about where it is weak. (`improve_v2.py`, `predictor_v2.py`.)
 
-## `case_report` — one knockout end to end: naming, and what actually CHANGED at every hop
+## `case_report` — one knockout end to end (CORRECTED after adversarial review)
 
-Fuses `case_study` (naming), `hop_accountability` (per-hop audit) and `perturb_atac` (activity) into a single narrative for ONE knockout, built
-to answer the demand: *don't hop just to arrive — establish at every hop what changed, and whether the protein is still working as it should.*
+Fuses naming + per-hop state audit + activity layer into one narrative for ONE knockout, to answer: *don't hop just to arrive — establish at
+every hop what changed, and whether the protein is still working as it should.* **A 4-lens adversarial review found five errors in the first
+version; all are fixed and the corrected numbers are below.** The first version's headline figures should not be used.
 
-**GATA1 in K562.** Last photo: **250 genes moved** = 17 generic tide + **233 GATA1-specific**. The knocked-out protein's own chromatin motif
-activity is **−2.60z** — its regulatory function is measurably gone, confirmed independently of mRNA.
+**Correction 1 — the readout is TRUNCATED (invalidates a headline).** The K562 store is not a dense matrix: it keeps only the top ~250 genes per
+knockout (96.5% exact zeros). For **9 of 1400** knockouts the cap binds, and GATA1 is one — its 250th gene sits at **|z|=1.531**, so a threshold
+of 1.0 is *unreachable*. "250 genes moved" was the **storage cap, not a measurement**. Now reported as **≥250 moved at an effective threshold of
+1.53**, all counts flagged as lower bounds. Genes absent from the readout get their own state (`NO-EXPRESSION-DATA`) instead of being coerced to z=0 —
+61 of 162 intermediates were in that category and had been silently scored as "flat".
 
-**Naming:** 230/233 reachable within 4 hops, 3 unreachable (9 direct, 0 physical, 52 cofactor, 55 2-hop, 112 3-hop, 2 4-hop). But the honesty
-guard kills that headline: discrimination between real movers and non-movers collapses **3.63× (1 hop) → 1.31× (2) → 1.03× (3) → 1.02× (4)**. By
-3 hops the graph reaches movers and random non-movers equally, so "230 named" is connectivity, not mechanism.
+**Correction 2 — unsigned hops were unfalsifiable auto-passes.** Physical edges (and sign-conflicted regulatory ones) carry no direction, but the
+code returned "ABUNDANCE-CHANGED (level moved as required)" — nothing was required. **207 of 230 endpoints** were such auto-passes. Split out as
+`ABUNDANCE-MOVED-UNSIGNED` and excluded from confirmations. **The honest sign result: of the 23 endpoints where a direction was actually
+predicted, 15 (65%) moved the WRONG way** — when the annotation is testable, contradiction is the *majority* outcome, not the exception.
 
-**The per-hop state audit — 158 distinct intermediate proteins:**
+**Correction 3 — the guard's conclusion was wrong, and the truth is more interesting.** Pooled discrimination collapses 3.63×→1.02× across hops,
+which I attributed to chain *length*. Decomposed by edge type, that's false:
 
-| what changed | n | meaning |
-|---|---|---|
-| ABUNDANCE-CHANGED | **3** | level moved as the edge requires |
-| ABUNDANCE-CONTRADICTED | 4 | moved the *opposite* way — not working as annotated (e.g. HDAC1 z=+2.1) |
-| **ACTIVITY-CHANGED** | **16** | mRNA flat but chromatin activity shifted — **function altered, level held constant** (RUNX1 +1.16z, BACH1 +0.63z, WT1 +0.37z) |
-| ACTIVITY-UNCHANGED | 14 | tested on *both* layers, nothing — strongest evidence a link truly didn't fire |
-| DEFENDED-UNTESTABLE + UNTESTED | 121 | no motif readout — cannot conclude |
+| layer | 1 hop | 2 hops | 3 hops | 4 hops |
+|---|---|---|---|---|
+| combined | 3.63× | 1.31× | 1.03× | 1.02× |
+| **regulatory only** | **4.71×** | **2.18×** | **1.52×** | **1.47×** |
+| physical only | 1.24× | 1.16× | 0.98× | 1.02× |
 
-**Only 17/230 named chains are operative end to end.** Example: `GATA1 ⊣ MYC → LTB` — LTB moved +40.5 but MYC is essential with no motif readout,
-so the chain is *untestable*, not confirmed. `GATA1 → STAT1 → EGLN3` — EGLN3 moved **opposite** to its annotation.
+**Curated regulatory chains keep real discrimination even at 4 hops; the physical interactome is at chance at *every* depth including hop 1.** It
+isn't length that destroys meaning — it's mixing in an uninformative physical layer.
 
-**Coverage caveat is decisive:** only **32/158** intermediates have a chromVAR motif, so the activity layer could be interrogated for a minority.
-The large "cannot tell" class is a limit of the **data**, not a biological finding.
+**Correction 4 — ACTIVITY-CHANGED discarded its own measurement.** The label fires on a measured chromVAR shift, then propagated the model's
+*predicted* sign instead of the measured one; 27 of 37 disagreed. Now propagates `sign(chromVAR)`. Direction is also destroyed (`drive=None`)
+rather than inherited across a directionless hop (98 stale-carry events previously).
 
-**Unknowns:** all 3 (LST1, STK10, DNAJC4) have **zero** curated upstream regulators *and* zero PPI partners (verified directly) — a
-transcription-rooted pathway cannot even start.
+**Correction 5 — not deterministic.** Graph built from string *sets* → BFS parent choice varied with Python's per-process hash seed (155–159
+intermediates across runs). All iteration now sorted; verified identical across `PYTHONHASHSEED` 0/1/2.
 
-**Two self-audit corrections applied before shipping:** (a) 1-hop direct targets were auto-passing as "operative" because only intermediates were
-checked — a direct target that moved *backwards* counted as a working chain; fixing it dropped operative chains **38 → 17**. (b) The original
-"defended/buffered" rule (essential OR moves in <0.4% of KOs) captured **93.5% of the genome** — vacuous, since the median gene moves in 0% of
-knockouts; now requires essentiality, and "tested and unchanged" is separated from "never testable". (`case_report.py`.)
+**Corrected results (GATA1/K562).** ≥250 moved = 17 tide + 233 specific; GATA1's own chromatin activity **−2.60z** (function measurably lost).
+230/233 reachable in 4 hops, 3 unknown — but of 162 intermediates: **61 NO-EXPRESSION-DATA, 51 UNTESTED, 21 DEFENDED-UNTESTABLE, 11
+ACTIVITY-CHANGED, 9 ACTIVITY-UNCHANGED, 4 CONTRADICTED, 4 MOVED-UNSIGNED, 1 ABUNDANCE-CHANGED.** **Only 7/230 chains are operative end to end**
+(was reported as 38, then 17). Activity coverage: just 30/162 intermediates have a motif; of the 20 that could get an activity verdict, **11
+changed vs 9 unchanged** — where we can look at all, changed function with a held-constant level is about as common as no change, and invisible
+to abundance either way. Route labels carry a tie-break disclosure (GATA1 has 33 physical partners; 1, SPI1, is a specific mover but is booked
+under DIRECT because a curated regulatory edge also exists — so "physical 0" is bookkeeping, not biology). (`case_report.py`.)
