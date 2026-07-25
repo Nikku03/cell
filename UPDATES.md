@@ -8485,3 +8485,38 @@ in-sample and optimistic).
   enough to survive it; a pre-registered K would be cleaner.
 - The first run compared against a **hardcoded** 0.3711 from another script. Rebuilt inside this script on identical splits it is 0.3685,
   and the margin is now a paired test rather than a comparison against a constant.
+
+### Audit: pre-registered K, and where the remaining gap lives (colab/pair_retrieval_audit.py)
+
+**Pre-registered K.** Selecting K on an inner split carved out of TRAIN only, then applying it blind to the outer test, gives **0.3848**
+against the test-selected 0.4047. **Selection optimism was +0.0199** — real, and now removed. The nested procedure chose different K per
+seed (K*=[5,1,3]), which is itself informative: the optimal K is unstable, so the K=3 peak was partly noise.
+
+**0.3848 is the honest headline.** It still beats the pointwise model (0.3685) but by +0.016 rather than +0.041, and that margin has not been
+tested paired at the pre-registered K.
+
+**Decomposing the 0.3848 → 0.5480 gap.** Retrieval ranks train sources, then averages the top-K. Those need different fixes:
+
+| | recall@50 |
+|---|---|
+| learned rank + learned weights (K=3) | 0.4047 |
+| learned rank + **oracle weights** (same retrieved set) | 0.4224 |
+| **oracle rank** + oracle weights | 0.5480 |
+
+Perfect weighting of the current retrieved set recovers only **+0.0177 of the 0.1433 gap = 12%** (p=1.1e-06). **88% is ranking.**
+
+**Ranking quality directly:** the genuinely most-similar train source lands at **median rank 10** of ~235, and is in the top 10 only **50%**
+of the time, top 25 **66%**.
+
+**So the binding constraint is retrieval quality, not the combination rule.** Better weighting buys almost nothing; finding better partners
+is worth the bulk of the gap. Effort belongs in the similarity model and its features — not in how the retrieved profiles are blended. This
+also refines the earlier conclusion: metric learning beat cosine by +0.226, but the metric is still only getting the best partner into the
+top 10 half the time.
+
+### Other cell lines: format check
+
+`rpe1.h5ad` (247,914 x 8,749) and `nadig_jurkat.h5ad` (262,956 x 8,882) are **per-cell**, not pseudobulk — they need aggregation and
+z-scoring before use. `hct116.h5ad` is 17,768 x 16,380. Note a design constraint: retrieval predicts a K562 profile by averaging **K562**
+measured profiles, so other-line sources cannot simply be pooled as retrieval candidates without cell-type conditioning. The clean use is to
+train the *similarity model* on pairs drawn from all lines while keeping retrieval over K562 profiles only — which targets exactly the stage
+the audit says is limiting.
