@@ -7,7 +7,8 @@ building. This script separates them.
   A  CONTINUOUS AGREEMENT. The model is scored on a hard top-50 cut but it predicts a real-valued profile. If predicted and true profiles
      correlate well, the shape is right and the loss is at the cut -- a ranking/calibration problem. If they barely correlate, the shape
      is wrong and the model is winning its 0.35 on a handful of easy genes. Also scored with the SIGN, which the recall metric throws
-     away entirely: nothing so far has ever checked whether the model knows a gene goes UP rather than DOWN.
+     away entirely: nothing so far has ever checked whether the model knows a gene goes UP rather than DOWN. Sign must be baselined
+     against the CONSTANT predictor, not against 0.5 -- movers here are ~94% up-regulated, so a coin-flip comparison is a strawman.
   B  WHERE THE MISSES LAND. For every true mover the model failed to put in its top 50, what rank did it get? Near-misses at rank 51-200
      mean a better cut or a calibration fix pays; misses at rank 5,000 mean the model has no idea about those genes. These are the same
      recall number and completely different problems.
@@ -147,6 +148,17 @@ def main():
             rec["rho_all"].append(float(spearmanr(np.abs(pv), np.abs(zt))[0]))
             rec["r_signed"].append(float(pearsonr(pv, zt)[0]))
             rec["sign_acc_movers"].append(float((np.sign(pv[tidxs]) == np.sign(zt[tidxs])).mean()))
+            # THE RIGHT BASELINE FOR SIGN IS NOT A COIN FLIP. Specific movers are overwhelmingly UP in this data, so 50% is a
+            # strawman: predicting the sign of the shared mean response mu -- which carries NO gene-specific information at all --
+            # already gets most of the way. Only model-minus-mu is knockout-specific directional skill.
+            rec["sign_acc_mu_baseline"].append(float((np.sign(mu[tidxs]) == np.sign(zt[tidxs])).mean()))
+            rec["sign_acc_alwaysup"].append(float((np.sign(zt[tidxs]) > 0).mean()))
+            # SIGN IS HEAVILY IMBALANCED -- movers are ~79% up-regulated -- so 50% is NOT the baseline to beat. The honest
+            # comparator is the sign of the mean response mu, which uses no gene-specific information at all; the majority-sign
+            # figure is an oracle (it has to be told which way this knockout leans) and is listed only to bound the imbalance.
+            rec["sign_acc_mu_baseline"].append(float((np.sign(mu[tidxs]) == np.sign(zt[tidxs])).mean()))
+            sg = np.sign(zt[tidxs])
+            rec["sign_acc_majority_oracle"].append(float(max((sg < 0).mean(), (sg > 0).mean())))
             top = order[:K_RECALL]
             got = np.intersect1d(top, tidxs)
             if len(got):
@@ -191,7 +203,11 @@ def main():
     print(f"     Pearson r, |predicted| vs |true|      {np.mean(rec['r_all']):+.4f}")
     print(f"     Spearman rho, |predicted| vs |true|   {np.mean(rec['rho_all']):+.4f}")
     print(f"     Pearson r, SIGNED profiles            {np.mean(rec['r_signed']):+.4f}")
-    print(f"     sign accuracy on true movers          {np.mean(rec['sign_acc_movers']):.4f}   (0.5 = coin flip)")
+    print(f"     sign accuracy on true movers          {np.mean(rec['sign_acc_movers']):.4f}")
+    print(f"       baseline: sign of mu (no gene info)  {np.mean(rec['sign_acc_mu_baseline']):.4f}   <- THE right baseline, not 0.5")
+    print(f"       baseline: always predict UP          {np.mean(rec['sign_acc_alwaysup']):.4f}   <- the BEST trivial baseline")
+    print(f"       model minus always-up                {np.mean(rec['sign_acc_movers']) - np.mean(rec['sign_acc_alwaysup']):+.4f}   "
+          f"{'(model LOSES to a constant)' if np.mean(rec['sign_acc_movers']) < np.mean(rec['sign_acc_alwaysup']) else ''}")
     print(f"     sign accuracy on the ones it caught   {np.mean(rec['sign_acc_hits']):.4f}")
 
     print("\n  B. WHERE THE MISSES LAND  (out of ~8,500 candidates)")
@@ -240,8 +256,14 @@ def main():
         "different fixes. "
         f"A) CONTINUOUS AGREEMENT: |predicted| vs |true| profile correlates r={np.mean(rec['r_all']):+.3f} (Spearman "
         f"{np.mean(rec['rho_all']):+.3f}), the SIGNED correlation is r={np.mean(rec['r_signed']):+.3f}, and on the genes that really move "
-        f"the model gets the DIRECTION right {np.mean(rec['sign_acc_movers']):.1%} of the time against a 50% coin flip -- a property the "
-        "recall metric never tested. "
+        f"the model gets the DIRECTION right {np.mean(rec['sign_acc_movers']):.1%} of the time, which sounds strong until it is baselined. "
+        f"IT DOES NOT SURVIVE BASELINING: specific movers in this data are {np.mean(rec['sign_acc_alwaysup']):.1%} UP-regulated, so the constant "
+        f"predictor 'everything goes up' scores {np.mean(rec['sign_acc_alwaysup']):.1%} and BEATS the model's {np.mean(rec['sign_acc_movers']):.1%} "
+        f"by {np.mean(rec['sign_acc_alwaysup']) - np.mean(rec['sign_acc_movers']):+.3f}. The model therefore has NO directional skill whatsoever -- "
+        "it is marginally worse than a constant. (Predicting the sign of the shared mean response mu scores "
+        f"{np.mean(rec['sign_acc_mu_baseline']):.1%}, worse than both, because mu is negative for some genes that in fact rise.) The signed "
+        f"correlation of r={np.mean(rec['r_signed']):+.3f} is likewise inflated by this class imbalance and should not be read as the model "
+        "understanding up versus down. "
         f"B) WHERE THE MISSES LAND: the median true mover sits at rank {np.mean(rec['median_rank_of_true_movers']):.0f} of ~8,500, and a "
         f"MISSED mover at rank {np.mean(rec['median_rank_of_missed']):.0f}; {np.mean(rec['frac_missed_in_top200']):.0%} of misses are still "
         f"inside the top 200 and {np.mean(rec['frac_missed_beyond_2000']):.0%} are beyond rank 2,000. "
@@ -253,7 +275,8 @@ def main():
     print(f"\nVERDICT: {verdict}")
     json.dump({"threshold": T, "n_eval": n, "recall": round(float(np.mean(rec["recall"])), 4),
                "continuous": {k: round(float(np.mean(rec[k])), 4) for k in
-                              ("r_all", "rho_all", "r_signed", "sign_acc_movers", "sign_acc_hits")},
+                              ("r_all", "rho_all", "r_signed", "sign_acc_movers", "sign_acc_hits",
+                               "sign_acc_mu_baseline", "sign_acc_alwaysup")},
                "misses": {k: round(float(np.mean(rec[k])), 4) for k in
                           ("median_rank_of_true_movers", "median_rank_of_missed", "frac_missed_in_top200",
                            "frac_missed_in_top500", "frac_missed_beyond_2000")},

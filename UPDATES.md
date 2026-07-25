@@ -8319,3 +8319,61 @@ not on the same scale — the LOO tide mask is built on 336 rows rather than 235
 candidate pools differ. Measured against its own null, LOO is *better* (3.26x its tide-null vs 2.78x for the split). But the honest
 summary is that the one semi-independent check on the extrapolation came in **below** the fit line, and the threshold experiment should be
 run rather than trusted in advance.
+
+## What the 0.35 is actually made of (colab/coldstart_diagnose.py)
+
+recall@50 on a set binarised at |z|>=4.2 was the only thing ever measured about this model. It cannot distinguish a ranking problem from a
+comprehension problem. Decomposed over 293 held-out knockout evaluations, 3 seeds, same splits/tide/model as program_coldstart.py.
+
+### A. Direction — a negative result, and a caught overstatement
+
+| | |
+|---|---|
+| model sign accuracy on true movers | 0.9343 |
+| baseline: **always predict UP** | **0.9432** |
+| baseline: sign of the mean response mu | 0.8625 |
+| **model minus always-up** | **−0.0089** |
+
+The first version of this script printed "0.9343 (0.5 = coin flip)" and I nearly reported 93% directional accuracy as a headline finding.
+**0.5 is a strawman**: specific movers here are 94.3% up-regulated, so the constant predictor "everything goes up" beats the model. The
+model has **no directional skill at all** — it is marginally worse than a constant. The signed correlation r=+0.544 is inflated by the same
+class imbalance and must not be read as understanding up-vs-down.
+
+### B. Where the misses land — mostly near-misses
+
+Median true mover ranks **749** of ~8,500 candidates; a *missed* mover ranks 970. **35%** of misses sit in the top 200, **55%** in the top
+500, and only **23%** beyond rank 2,000. So for most missed genes the model does hold real information and loses at the cut — a ranking and
+calibration problem, not blindness. The 23% beyond rank 2,000 are the genuinely not-understood tail.
+
+### C. Breadth is not predicted at all
+
+Spearman(predicted response scale, true number of movers) = **+0.066**. Knockouts range from a handful of movers to 621 and the model gives
+essentially everyone an average-sized response. A two-stage predict-breadth-then-shape model is the obvious untried fix.
+
+### D. The model is an annotation lookup, not a biology learner
+
+| stratum | n | recall@50 |
+|---|---|---|
+| **in a curated complex** | 213 | **0.4276** |
+| **not in any complex** | 80 | **0.1425** |
+| essential | 244 | 0.3795 |
+| non-essential | 49 | 0.2020 |
+| process: translation | 92 | 0.5029 |
+| process: transcription | 89 | 0.3482 |
+| process: other | 50 | 0.2120 |
+| process: unknown | 29 | 0.1614 |
+
+**This is the most important finding in the whole diagnosis.** For genes outside curated complexes the model scores 0.143 against a
+tide-null of 0.11 — essentially nothing. The headline 0.35 is carried by well-annotated, essential, translation-machinery genes. The model
+has learned *where the curation is*, not how the cell works, which is exactly why it does not improve: the annotation is the ceiling.
+
+### E. The target itself is only ~58% stable
+
+Shifting the threshold by +-0.4 gives Jaccard **0.592** (at 3.8) and **0.573** (at 4.6) against the truth set actually used. Roughly 42% of
+the truth set churns under a trivial threshold change. This is a *lower* bound on target noise, not a replicate estimate (the data has no
+duplicate guides).
+
+**Note the coincidence: the complex-mate oracle reaches 0.575 and the threshold-churn Jaccard is 0.58.** That is consistent with ~0.58
+being the reproducibility ceiling of this target rather than a biological limit — i.e. the oracle may already be saturating the noise
+floor. If so, 0.35 is about 60% of the achievable maximum and the headroom is roughly 0.22, not 0.65. This is a hypothesis from a numerical
+coincidence, not a measurement, and it needs a direct test before anyone relies on it.
