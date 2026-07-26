@@ -128,12 +128,19 @@ def load_ppi():
 # ----------------------------------------------------------------------------------------------------------------
 # scoring
 # ----------------------------------------------------------------------------------------------------------------
-def score(cnt, label, gt, deg, n_ppi, drop=frozenset()):
+def score(cnt, label, gt, deg, n_ppi, blocks=None, drop=frozenset(), nboot=2000, seed=0):
     """Resolve a Counter of ordered votes per edge into arrows, then score against gt with a matched degree control.
 
     An edge is only oriented when every vote agrees. Edges with votes both ways are counted as ambiguous and
     discarded rather than resolved by majority -- a majority vote here would silently convert a genuine two-way
     relation (which the curated sources show is common for TF feedback pairs) into a confident single arrow.
+
+    THE BINOMIAL INTERVAL IS THE WRONG INTERVAL HERE, AND NOT BY A LITTLE. These rules emit arrows in BLOCKS: one
+    assembly reaction whose output complex gains k subunits emits |sub-complex| x k arrows that all point the same
+    way and are all right or all wrong together. A single ribosomal step emits thousands. Treating those as
+    independent Bernoulli draws overstates the effective sample size by roughly the mean block size, so a naive
+    +/- sqrt(p(1-p)/n) can be off by an order of magnitude. The fix is to resample BLOCKS (reactions), not edges.
+    Both intervals are printed so the size of the correction is visible rather than hidden.
     """
     orient = {k: v.most_common(1)[0][0] for k, v in cnt.items() if len(v) == 1}
     if drop:
@@ -144,16 +151,38 @@ def score(cnt, label, gt, deg, n_ppi, drop=frozenset()):
     acc = sum(1 for k, d in test if gt[k] == d) / n if n else float("nan")
     se = float(np.sqrt(acc * (1 - acc) / n)) if n else float("nan")
     dacc = (sum(1 for k, _ in test if deg.get(gt[k][0], 0) < deg.get(gt[k][1], 0)) / n) if n else float("nan")
+
+    lo = hi = float("nan")
+    nblk = 0
+    if n and blocks:
+        by_blk = collections.defaultdict(list)
+        for k, d in test:
+            for b in blocks.get(k, ("?",)):
+                by_blk[b].append(1 if gt[k] == d else 0)
+        keys = list(by_blk)
+        nblk = len(keys)
+        if nblk >= 2:
+            rng = np.random.default_rng(seed)
+            draws = np.empty(nboot)
+            for i in range(nboot):
+                pick = rng.integers(0, nblk, nblk)
+                hits = [h for j in pick for h in by_blk[keys[j]]]
+                draws[i] = np.mean(hits) if hits else np.nan
+            lo, hi = (float(x) for x in np.nanpercentile(draws, [2.5, 97.5]))
+
     print(f"\n  {label}")
     print(f"    oriented   {len(orient):>7,}  ({len(orient)/n_ppi:.2%} of interactome)   ambiguous {amb:,}")
     if n >= 30:
-        print(f"    vs SIGNOR  n={n:<6,} acc {acc:.4f} +/- {se:.4f}   matched-degree {dacc:.4f}   "
-              f"delta {acc-dacc:+.4f}")
+        print(f"    vs SIGNOR  n={n:<6,} acc {acc:.4f}   matched-degree {dacc:.4f}   delta {acc-dacc:+.4f}")
+        print(f"      naive binomial +/- {se:.4f}"
+              + (f"   |   CLUSTER bootstrap over {nblk:,} reactions: [{lo:.4f}, {hi:.4f}]"
+                 if nblk >= 2 else "   |   no block map, cluster CI unavailable"))
     elif n:
         print(f"    vs SIGNOR  n={n:<6,} acc {acc:.4f}   UNMEASURABLE (n<30), reported for completeness only")
     else:
         print(f"    vs SIGNOR  no overlap at all -- this rule orients edges SIGNOR has no opinion on")
     return {"orient": orient, "amb": amb, "n": n, "acc": acc, "se": se, "deg": dacc,
+            "n_blocks": nblk, "boot_lo": lo, "boot_hi": hi,
             "n_oriented": len(orient), "frac": len(orient) / n_ppi}
 
 
@@ -188,9 +217,13 @@ def main():
                 s |= pe2sym.get(d["pe"], set())
         return s, s_au
 
-    def add(cnt, a, b):
+    blocks = collections.defaultdict(set)   # edge -> reactions that voted on it, for the cluster bootstrap
+
+    def add(cnt, a, b, blk=None):
         if a != b and b in edge_of.get(a, ()):
             cnt[frozenset((a, b))][(a, b)] += 1
+            if blk is not None:
+                blocks[frozenset((a, b))].add(blk)
             return True
         return False
 
@@ -217,10 +250,10 @@ def main():
                 band = "2-4" if len(og) <= 4 else ("5-9" if len(og) <= 9 else ("10-19" if len(og) <= 19 else "20+"))
                 for a in ig:
                     for b in added:
-                        if add(asm, a, b):
+                        if add(asm, a, b, r):
                             size_band[band] += 1
                             if len(og) <= 9:
-                                add(asm_small, a, b)
+                                add(asm_small, a, b, r)
 
     # ------------------------------------------------------------------------------------------------------------
     # RULE 1b -- ASSEMBLY ORDER FROM NESTING.  Complex X contains sub-complex Y => members(Y) precede members(X)-Y.
@@ -237,7 +270,7 @@ def main():
             if len(kg) >= 1 and kg < xg and len(xg - kg) <= 6:
                 for a in kg:
                     for b in xg - kg:
-                        add(nest, a, b)
+                        add(nest, a, b, x)
 
     # ------------------------------------------------------------------------------------------------------------
     # RULE 2 -- TRANSPORT.  A gene whose leaf entity appears on the input side in one compartment and on the output
@@ -275,7 +308,7 @@ def main():
             cargo_seen[g] += 1
         for a in cat:
             for b in moved:
-                if add(tr, a, b):
+                if add(tr, a, b, r):
                     src_count[a] += 1
 
     # ------------------------------------------------------------------------------------------------------------
@@ -312,7 +345,7 @@ def main():
                 k_syms, _ = catalysts(r1)
                 for k in k_syms:
                     for t in t_syms:
-                        if add(mt, k, t):
+                        if add(mt, k, t, r2):
                             n_chain += 1
 
     # ------------------------------------------------------------------------------------------------------------
@@ -320,14 +353,14 @@ def main():
     # ------------------------------------------------------------------------------------------------------------
     n_ppi = len(ppi)
     R = {}
-    R["ASSEMBLY-rxn"] = score(asm, "ASSEMBLY ORDER (from assembly reactions)", gt, deg, n_ppi)
-    R["ASSEMBLY-small"] = score(asm_small, "ASSEMBLY ORDER (complexes of <=9 subunits only)", gt, deg, n_ppi)
-    R["ASSEMBLY-nest"] = score(nest, "ASSEMBLY ORDER (from complex nesting)", gt, deg, n_ppi)
-    R["TRANSPORT"] = score(tr, "TRANSPORT (transporter -> cargo)", gt, deg, n_ppi)
+    R["ASSEMBLY-rxn"] = score(asm, "ASSEMBLY ORDER (from assembly reactions)", gt, deg, n_ppi, blocks)
+    R["ASSEMBLY-small"] = score(asm_small, "ASSEMBLY ORDER (complexes of <=9 subunits only)", gt, deg, n_ppi, blocks)
+    R["ASSEMBLY-nest"] = score(nest, "ASSEMBLY ORDER (from complex nesting)", gt, deg, n_ppi, blocks)
+    R["TRANSPORT"] = score(tr, "TRANSPORT (transporter -> cargo)", gt, deg, n_ppi, blocks)
     hubs = frozenset(g for g, _ in src_count.most_common(10))
-    R["TRANSPORT-nohub"] = score(tr, f"TRANSPORT excluding top-10 source hubs {sorted(hubs)}", gt, deg, n_ppi,
+    R["TRANSPORT-nohub"] = score(tr, f"TRANSPORT excluding top-10 source hubs {sorted(hubs)}", gt, deg, n_ppi, blocks,
                                  drop=hubs)
-    R["MOD-THEN-TRANSPORT"] = score(mt, "MODIFIER -> TRANSPORTER (same cargo, consecutive)", gt, deg, n_ppi)
+    R["MOD-THEN-TRANSPORT"] = score(mt, "MODIFIER -> TRANSPORTER (same cargo, consecutive)", gt, deg, n_ppi, blocks)
 
     # ---- confound reporting ----
     print(f"\n  CONFOUND CHECKS")
