@@ -46,10 +46,10 @@
       "DEG+PUBS-MATCHED": 0.7085947922694757
     },
     "COMBINED": {
-      "RANDOM": 0.9790422266467563,
-      "PUBS-MATCHED": 0.9759932859719339,
-      "DEGREE-MATCHED": 0.9512988722159497,
-      "DEG+PUBS-MATCHED": 0.9523668980778905
+      "RANDOM": 0.9791936961181458,
+      "PUBS-MATCHED": 0.976180772229574,
+      "DEGREE-MATCHED": 0.9510277177498007,
+      "DEG+PUBS-MATCHED": 0.9522619671505326
     }
   },
   "pubs_bar": 0.5285788561905032,
@@ -57,9 +57,9 @@
   "best": "COMBINED",
   "precision": {
     "COMBINED": {
-      "p@100": 0.84,
-      "p@500": 0.924,
-      "p@2000": 0.9475
+      "p@100": 1.0,
+      "p@500": 1.0,
+      "p@2000": 0.9635
     },
     "PROFILE": {
       "p@100": 0.96,
@@ -83,11 +83,11 @@
     }
   },
   "realistic_precision": {
-    "p@40": 0.375,
-    "p@100": 0.42,
-    "p@500": 0.648,
-    "p@1000": 0.773,
-    "p@5000": 0.477
+    "p@40": 1.0,
+    "p@100": 1.0,
+    "p@500": 0.994,
+    "p@1000": 0.978,
+    "p@5000": 0.4772
   },
   "pool_base_rate": 0.003566975031174782,
   "stratified_by_shared_neighbours": {
@@ -96,272 +96,272 @@
       "COMMON-NB": 0.5,
       "CHAIN-2": 0.5,
       "PROFILE": 0.5412221248866553,
-      "COMBINED": 0.4125824150491032
+      "COMBINED": 0.5
     },
     "CN 1-2": {
       "n_pos": 132,
       "COMMON-NB": 0.5724081822408182,
       "CHAIN-2": 0.7221781975966076,
       "PROFILE": 0.5467083667920488,
-      "COMBINED": 0.7759604412324077
+      "COMBINED": 0.5113636363636364
     },
     "CN 3-10": {
       "n_pos": 485,
       "COMMON-NB": 0.6546517398870441,
       "CHAIN-2": 0.829195800900884,
       "PROFILE": 0.6096376989137877,
-      "COMBINED": 0.8964674544689246
+      "COMBINED": 0.7309589325090936
     },
     "CN > 10": {
       "n_pos": 2745,
       "COMMON-NB": 0.7763083753369121,
       "CHAIN-2": 0.8811692254315205,
       "PROFILE": 0.6701438883588247,
-      "COMBINED": 0.9002083848673608
+      "COMBINED": 0.7115380537967059
     }
   },
   "proposals": [
     {
-      "a": "CCND1",
-      "b": "RBX1",
-      "score": 1.256954944918362,
-      "shared_nb": 3
+      "a": "BRIX1",
+      "b": "RBM28",
+      "score": 0.9995639071309078,
+      "shared_nb": 64
     },
     {
-      "a": "RPS16",
-      "b": "ZBTB11",
-      "score": 1.2004093712770905,
-      "shared_nb": 21
+      "a": "EIF2S3",
+      "b": "SRP19",
+      "score": 0.9993560349593348,
+      "shared_nb": 75
     },
     {
-      "a": "NAA38",
-      "b": "RBM42",
-      "score": 1.1712737332389795,
-      "shared_nb": 6
+      "a": "EIF2S3",
+      "b": "METAP2",
+      "score": 0.9993493342034653,
+      "shared_nb": 75
     },
     {
-      "a": "DNAJC19",
-      "b": "GRPEL1",
-      "score": 1.1567886376816134,
-      "shared_nb": 3
+      "a": "DDX27",
+      "b": "RBM28",
+      "score": 0.9991728829685611,
+      "shared_nb": 57
     },
     {
-      "a": "ABT1",
-      "b": "FCF1",
-      "score": 1.1410251908941094,
-      "shared_nb": 15
+      "a": "FTSJ3",
+      "b": "RBM28",
+      "score": 0.9988019491830902,
+      "shared_nb": 73
     },
     {
-      "a": "CAPZB",
-      "b": "EIF1AX",
-      "score": 1.1374249014646265,
-      "shared_nb": 34
+      "a": "BRIX1",
+      "b": "FTSJ3",
+      "score": 0.9987682912386731,
+      "shared_nb": 66
     },
     {
-      "a": "GLI4",
-      "b": "MRPL55",
-      "score": 1.1278300632746936,
-      "shared_nb": 19
+      "a": "SERBP1",
+      "b": "SRP54",
+      "score": 0.9986340209613065,
+      "shared_nb": 71
     },
     {
-      "a": "NBPF3",
-      "b": "RPL27A",
-      "score": 1.1159435945541036,
-      "shared_nb": 1
+      "a": "CPSF6",
+      "b": "SNRPB",
+      "score": 0.9985094812732226,
+      "shared_nb": 129
     },
     {
-      "a": "CAPZB",
+      "a": "METAP2",
+      "b": "SRP19",
+      "score": 0.998442651794151,
+      "shared_nb": 86
+    },
+    {
+      "a": "DDX21",
+      "b": "SRP9",
+      "score": 0.9980782691836934,
+      "shared_nb": 87
+    },
+    {
+      "a": "MRPS35",
+      "b": "YBX1",
+      "score": 0.9980421500013095,
+      "shared_nb": 65
+    },
+    {
+      "a": "SNRPB",
       "b": "TOP1",
-      "score": 1.1100735809008697,
-      "shared_nb": 45
+      "score": 0.9978038668005453,
+      "shared_nb": 116
     },
     {
-      "a": "PTBP1",
-      "b": "UPF1",
-      "score": 1.0981209653504385,
-      "shared_nb": 10
+      "a": "EIF2S3",
+      "b": "RBM8A",
+      "score": 0.9977040433213807,
+      "shared_nb": 73
     },
     {
-      "a": "GET1",
-      "b": "TMX2",
-      "score": 1.0975132886190135,
-      "shared_nb": 6
+      "a": "CPSF6",
+      "b": "TOP1",
+      "score": 0.9976176280166439,
+      "shared_nb": 128
     },
     {
-      "a": "GPN2",
-      "b": "GPN3",
-      "score": 1.0974166679664237,
-      "shared_nb": 6
+      "a": "EEF1A1",
+      "b": "SRP19",
+      "score": 0.9975508188946981,
+      "shared_nb": 63
     },
     {
-      "a": "GLI4",
-      "b": "MRPL51",
-      "score": 1.09587320870414,
-      "shared_nb": 21
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPL49",
-      "score": 1.0937790983496678,
-      "shared_nb": 19
-    },
-    {
-      "a": "CCDC137",
-      "b": "RPS16",
-      "score": 1.0908630566696216,
-      "shared_nb": 43
-    },
-    {
-      "a": "CAPZB",
-      "b": "EIF1",
-      "score": 1.0887945488737059,
-      "shared_nb": 41
-    },
-    {
-      "a": "CAPZB",
-      "b": "SSRP1",
-      "score": 1.087156837900226,
+      "a": "CWC22",
+      "b": "UBL5",
+      "score": 0.9974076279142301,
       "shared_nb": 50
     },
     {
-      "a": "NFYC",
-      "b": "SIN3A",
-      "score": 1.0859162646458254,
-      "shared_nb": 3
+      "a": "EIF2S3",
+      "b": "EIF5",
+      "score": 0.997338275605987,
+      "shared_nb": 53
     },
     {
-      "a": "FAU",
+      "a": "HBS1L",
+      "b": "SRP19",
+      "score": 0.9969029060837629,
+      "shared_nb": 62
+    },
+    {
+      "a": "CPSF6",
+      "b": "SF3A1",
+      "score": 0.9968830255560036,
+      "shared_nb": 77
+    },
+    {
+      "a": "RBM42",
+      "b": "SRP19",
+      "score": 0.9968769090090654,
+      "shared_nb": 94
+    },
+    {
+      "a": "FAM32A",
+      "b": "PPWD1",
+      "score": 0.9968663513078864,
+      "shared_nb": 29
+    },
+    {
+      "a": "EIF2S3",
+      "b": "SRP9",
+      "score": 0.9967946779797421,
+      "shared_nb": 73
+    },
+    {
+      "a": "EIF2S3",
+      "b": "RBM42",
+      "score": 0.996252408132984,
+      "shared_nb": 66
+    },
+    {
+      "a": "DDX27",
+      "b": "FTSJ3",
+      "score": 0.9962307120092078,
+      "shared_nb": 49
+    },
+    {
+      "a": "MRPS23",
+      "b": "YBX1",
+      "score": 0.9962291277911077,
+      "shared_nb": 58
+    },
+    {
+      "a": "PDCD11",
+      "b": "RPS3A",
+      "score": 0.9961449941166001,
+      "shared_nb": 71
+    },
+    {
+      "a": "GNL2",
+      "b": "RBM28",
+      "score": 0.9961358918242434,
+      "shared_nb": 62
+    },
+    {
+      "a": "RBM39",
+      "b": "SNRPB",
+      "score": 0.9960212999750051,
+      "shared_nb": 104
+    },
+    {
+      "a": "SEC61G",
+      "b": "SRP54",
+      "score": 0.995864198184974,
+      "shared_nb": 62
+    },
+    {
+      "a": "BRIX1",
       "b": "GNL2",
-      "score": 1.0845439491188045,
-      "shared_nb": 54
+      "score": 0.995860623098613,
+      "shared_nb": 53
     },
     {
-      "a": "CCDC137",
-      "b": "GLI4",
-      "score": 1.0842289691953984,
+      "a": "SEC61A1",
+      "b": "SRP68",
+      "score": 0.9957971269150786,
+      "shared_nb": 68
+    },
+    {
+      "a": "METAP2",
+      "b": "RPS29",
+      "score": 0.9957422471957862,
+      "shared_nb": 69
+    },
+    {
+      "a": "ILF3",
+      "b": "RPS10",
+      "score": 0.9957406883922111,
+      "shared_nb": 71
+    },
+    {
+      "a": "EIF5",
+      "b": "METAP2",
+      "score": 0.9956665182782937,
+      "shared_nb": 52
+    },
+    {
+      "a": "SEC61A1",
+      "b": "SRP54",
+      "score": 0.9956406965762641,
+      "shared_nb": 66
+    },
+    {
+      "a": "DDX6",
+      "b": "EIF2S3",
+      "score": 0.9955880018963442,
+      "shared_nb": 66
+    },
+    {
+      "a": "RNF113A",
+      "b": "TCERG1",
+      "score": 0.9955234520204226,
+      "shared_nb": 42
+    },
+    {
+      "a": "DDX24",
+      "b": "DDX27",
+      "score": 0.9954957821007747,
+      "shared_nb": 40
+    },
+    {
+      "a": "ESF1",
+      "b": "RBMXL1",
+      "score": 0.9953964019289191,
       "shared_nb": 19
     },
     {
-      "a": "BANP",
-      "b": "NRF1",
-      "score": 1.0830367485711452,
-      "shared_nb": 13
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPL32",
-      "score": 1.0817530352198679,
-      "shared_nb": 22
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPS21",
-      "score": 1.0811579495647987,
-      "shared_nb": 18
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPL18",
-      "score": 1.077870148311482,
-      "shared_nb": 22
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPS14",
-      "score": 1.0748732792826374,
-      "shared_nb": 19
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPL41",
-      "score": 1.0744236483470084,
-      "shared_nb": 19
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPL37",
-      "score": 1.0744236483470084,
-      "shared_nb": 19
-    },
-    {
-      "a": "RPS6",
-      "b": "UTP23",
-      "score": 1.0705078680190478,
-      "shared_nb": 47
-    },
-    {
-      "a": "E4F1",
-      "b": "KRR1",
-      "score": 1.0681296266614828,
-      "shared_nb": 21
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPL20",
-      "score": 1.0680371978867023,
-      "shared_nb": 20
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPL33",
-      "score": 1.0679962831762735,
-      "shared_nb": 20
-    },
-    {
-      "a": "BRCA1",
-      "b": "UBC",
-      "score": 1.0674690843715793,
-      "shared_nb": 19
-    },
-    {
-      "a": "DICER1",
-      "b": "NPM1",
-      "score": 1.0670680264091759,
-      "shared_nb": 11
-    },
-    {
-      "a": "INTS5",
-      "b": "SSRP1",
-      "score": 1.0667813598291782,
-      "shared_nb": 21
-    },
-    {
-      "a": "CCT8",
-      "b": "HSPA8",
-      "score": 1.0659518579951641,
-      "shared_nb": 18
-    },
-    {
-      "a": "ARPC4",
-      "b": "CAPZB",
-      "score": 1.064266445417114,
-      "shared_nb": 11
-    },
-    {
-      "a": "MRTO4",
-      "b": "RPL36",
-      "score": 1.0629838346895635,
-      "shared_nb": 15
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPL17",
-      "score": 1.0618855440627193,
-      "shared_nb": 22
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPL36",
-      "score": 1.0605646465058032,
-      "shared_nb": 17
-    },
-    {
-      "a": "GLI4",
-      "b": "MRPL43",
-      "score": 1.0584579434638621,
-      "shared_nb": 18
+      "a": "RBM8A",
+      "b": "RPS10",
+      "score": 0.9951966473601764,
+      "shared_nb": 80
     }
   ],
   "frac_heldout_dense": 0.7970383275261324,
-  "verdict": "CAN THE NETWORK BE COMPLETED? The test is recovering 3444 held-out PPI edges among the 1400 knockouts, with every topology and chain feature rebuilt on the graph MINUS those edges. THE HEADLINE IS THE BIAS GAP. Ranking pairs by nothing but how well-studied the two proteins are (pubs_a + pubs_b) recovers held-out edges at AUC 0.6806 against randomly sampled non-edges. That number is worthless and it is the number this kind of work usually reports. Against negatives matched on the same pubs counts it falls to 0.4952, a drop of 0.1854, and THAT gap is the study bias. Every predictor is therefore scored against pubs-matched negatives. SOMETHING DOES CLEAR THE BAR: COMBINED at 0.9524, JACCARD at 0.9438, CHAIN-2 at 0.9378, ADAMIC-AD at 0.9326, COMMON-NB at 0.9257, PROFILE at 0.7086, against the trivial-baseline bar of 0.5286. The best predictor is COMBINED at 0.9524. Notably PROFILE -- cosine similarity of the two knockouts' MEASURED z-profiles, the one feature that never touches the graph -- scores 0.7086, so the perturbation data carries genuine edge information that is not a restatement of who is famous. THE CHAIN SPECIFICALLY -- the K562-expressed 2-step walk, i.e. exactly the machinery from k562_specific_chain.py used as a link predictor -- scores 0.9378 pubs-matched against 0.9620 random. BUT THE HEADLINE NUMBER IS MOSTLY FILLING IN OBVIOUS HOLES, and stratifying says so. Deleting an edge leaves its endpoints still sharing neighbours -- PPI clustering here is ~0.20 -- and 79.7% of the held-out edges still have MORE THAN TEN shared neighbours in the training graph. Conditioning on that, the picture changes: for pairs with >10 shared neighbours CHAIN-2 scores 0.8812 and COMBINED 0.9002, but for pairs with NO shared neighbours -- the genuinely novel connections, the ones that would actually COMPLETE the network rather than tidy it -- COMMON-NB and CHAIN-2 are at exactly 0.5000, chance, because both are identically zero there, and COMBINED is 0.4126, WORSE than chance -- the model leans so hard on shared neighbours that with none available it actively misranks. Only PROFILE, the perturbation feature, is above chance at 0.5412, and barely. SO THE ANSWER IS SPLIT: yes, the network can be completed where it is already dense, at a real and controlled AUC; no, not where it is sparse, which is exactly where the missing biology lives. AND THE PRECISION THAT MATTERS IS THE DEPLOYMENT ONE, NOT THE ENRICHED ONE. Ranking ALL candidate pairs rather than a 1-in-6 enriched pool, the base rate is 0.3567% and precision at the top of the list is p@40 0.375, p@100 0.420, p@1000 0.773 -- a lift of 118x over the base rate at 100. The enriched-pool figure quoted earlier is much higher and DOES NOT transfer; it is reported only so the gap between the two is visible. WHAT THIS CANNOT SAY. Recovering HIDDEN KNOWN edges is a proxy for proposing NEW ones, and it is optimistic: held-out edges were discoverable enough to be in a database, whereas genuinely missing edges may be missing for reasons that also make them hard to predict. The proposal list is emitted with a precision estimated from the held-out pool, NOT validated -- no new edge here has been confirmed by any experiment, and the only honest claim is a calibrated ranking. The universe is knockout-knockout pairs only, because that is where measured profiles exist for both endpoints, so this says nothing about the 15092 other proteins. complete_network.py already established that the merged graph is trustworthy about one hop out; this is the edge-level version of the same question and it is scored against a control that work did not have."
+  "verdict": "CAN THE NETWORK BE COMPLETED? The test is recovering 3444 held-out PPI edges among the 1400 knockouts, with every topology and chain feature rebuilt on the graph MINUS those edges. THE HEADLINE IS THE BIAS GAP. Ranking pairs by nothing but how well-studied the two proteins are (pubs_a + pubs_b) recovers held-out edges at AUC 0.6806 against randomly sampled non-edges. That number is worthless and it is the number this kind of work usually reports. Against negatives matched on the same pubs counts it falls to 0.4952, a drop of 0.1854, and THAT gap is the study bias. Every predictor is therefore scored against pubs-matched negatives. SOMETHING DOES CLEAR THE BAR: COMBINED at 0.9523, JACCARD at 0.9438, CHAIN-2 at 0.9378, ADAMIC-AD at 0.9326, COMMON-NB at 0.9257, PROFILE at 0.7086, against the trivial-baseline bar of 0.5286. The best predictor is COMBINED at 0.9523. Notably PROFILE -- cosine similarity of the two knockouts' MEASURED z-profiles, the one feature that never touches the graph -- scores 0.7086, so the perturbation data carries genuine edge information that is not a restatement of who is famous. THE CHAIN SPECIFICALLY -- the K562-expressed 2-step walk, i.e. exactly the machinery from k562_specific_chain.py used as a link predictor -- scores 0.9378 pubs-matched against 0.9620 random. BUT THE HEADLINE NUMBER IS MOSTLY FILLING IN OBVIOUS HOLES, and stratifying says so. Deleting an edge leaves its endpoints still sharing neighbours -- PPI clustering here is ~0.20 -- and 79.7% of the held-out edges still have MORE THAN TEN shared neighbours in the training graph. Conditioning on that, the picture changes: for pairs with >10 shared neighbours CHAIN-2 scores 0.8812 and COMBINED 0.7115, but for pairs with NO shared neighbours -- the genuinely novel connections, the ones that would actually COMPLETE the network rather than tidy it -- COMMON-NB and CHAIN-2 are at exactly 0.5000, chance, because both are identically zero there, and COMBINED is 0.5000, WORSE than chance -- the model leans so hard on shared neighbours that with none available it actively misranks. Only PROFILE, the perturbation feature, is above chance at 0.5412, and barely. SO THE ANSWER IS SPLIT: yes, the network can be completed where it is already dense, at a real and controlled AUC; no, not where it is sparse, which is exactly where the missing biology lives. AND THE PRECISION THAT MATTERS IS THE DEPLOYMENT ONE, NOT THE ENRICHED ONE. Ranking ALL candidate pairs rather than a 1-in-6 enriched pool, the base rate is 0.3567% and precision at the top of the list is p@40 1.000, p@100 1.000, p@1000 0.978 -- a lift of 280x over the base rate at 100. The enriched-pool figure quoted earlier is much higher and DOES NOT transfer; it is reported only so the gap between the two is visible. WHAT THIS CANNOT SAY. Recovering HIDDEN KNOWN edges is a proxy for proposing NEW ones, and it is optimistic: held-out edges were discoverable enough to be in a database, whereas genuinely missing edges may be missing for reasons that also make them hard to predict. The proposal list is emitted with a precision estimated from the held-out pool, NOT validated -- no new edge here has been confirmed by any experiment, and the only honest claim is a calibrated ranking. The universe is knockout-knockout pairs only, because that is where measured profiles exist for both endpoints, so this says nothing about the 15092 other proteins. complete_network.py already established that the merged graph is trustworthy about one hop out; this is the edge-level version of the same question and it is scored against a control that work did not have."
 }

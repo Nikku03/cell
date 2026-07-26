@@ -10419,3 +10419,79 @@ The universe is knockout–knockout pairs, so this says nothing about the 15,092
 and those are disproportionately the poorly-connected ones this was meant to help. GO evidence codes are not retained
 in this dataset, so interaction-derived (IPI) annotations cannot be filtered out and the SUSPECT tier cannot be fully
 cleaned. CN=0 holds 82 positives. One cell line, one split.
+
+---
+
+## `colab/perturb_precision.py` — Perturb-seq as edge evidence, and a CORRECTION to `link_completion.py`
+
+### First, the correction, because it invalidates numbers I reported
+
+`link_completion.py` fitted **`HistGradientBoostingRegressor` to a 0/1 label**. Squared loss on a binary target
+rank-orders badly at the extreme top of a heavily imbalanced pool. Isolated by holding features and negatives fixed
+and swapping only the learner:
+
+| training negatives | learner | p@100 | p@1000 |
+|---|---|---|---|
+| pubs-matched | regressor | 0.600 | 0.835 |
+| pubs-matched | **classifier** | 0.990 | 0.950 |
+| joint deg+pubs | regressor | 0.600 | 0.897 |
+| joint deg+pubs | **classifier** | **1.000** | 0.950 |
+
+The negative-sampling scheme barely matters; **the loss function was the whole effect.** Corrected deployment
+precision over all 965,524 candidates at a 0.357% base rate:
+
+| | old (regressor) | **corrected (classifier)** |
+|---|---|---|
+| p@40 | 0.375 | **1.000** (280× lift) |
+| p@100 | 0.420 | **1.000** |
+| p@500 | 0.648 | 0.994 |
+| p@1000 | 0.773 | 0.978 |
+
+**Two claims are WITHDRAWN:** that "precision rises with depth, so the top of the ranking is the least reliable
+part" — an artefact of the loss; and that "roughly 15 of the 40 proposals would be real". The classifier also fixes
+the below-chance pathology at CN=0 (0.4126 → 0.5000).
+
+### Perturb-seq, used properly
+
+The previous module's only perturbation feature was a whole-profile cosine, discarding the most direct signal in the
+dataset. Measured before building:
+
+| | PPI edges | random pairs | ratio |
+|---|---|---|---|
+| mean \|z\| of B under KO of A | 0.109 | 0.019 | **5.7×** |
+| either direction moves >1σ | 5.99% | 0.49% | **12.2×** |
+| both directions move >1σ | 0.256% | 0.000% | — |
+
+1,296/1,400 knockouts are themselves measured genes, so this was computable all along. Added: EFF-MAX/MIN, RECIP,
+EITHER, RANK-BEST, SPEC-SHARED/JAC, PROFILE-SPEC, plus an explicit AVAIL indicator so the 104 off-panel knockouts
+aren't read as "no effect".
+
+| arm | AUC | **CN=0** | CN1-2 | CN3-10 | CN>10 | p@100 | p@1000 |
+|---|---|---|---|---|---|---|---|
+| TOPO | 0.9579 | 0.500 | 0.794 | 0.908 | 0.927 | 0.990 | 0.943 |
+| +SPATIAL | 0.9609 | 0.614 | 0.797 | 0.910 | 0.929 | 1.000 | 0.963 |
+| +PERTURB | 0.9612 | 0.598 | 0.807 | 0.911 | 0.930 | 1.000 | 0.937 |
+| **+SPAT+PERT** | **0.9631** | **0.672 ± 0.029** | 0.811 | 0.914 | 0.932 | 1.000 | 0.955 |
+| PERTURB-ONLY | 0.7631 | 0.550 | 0.550 | 0.596 | 0.675 | 0.750 | 0.298 |
+| SPAT+PERT *(no graph)* | 0.8496 | 0.626 | 0.625 | 0.723 | 0.792 | 0.990 | 0.542 |
+
+**Perturb-seq adds +0.058 on top of spatial in the sparse regime: 0.500 → 0.614 → 0.672.** Best sparse-regime result
+in the session. And Perturb-seq alone, with no graph and no annotation, reaches p@100 = 0.750.
+
+### The sparse regime is still unusable, and this is the important number
+
+At CN=0 the base rate is **0.0108%** — about 1 real edge per 9,200 pairs. Precision there:
+
+| arm | p@100 at CN=0 |
+|---|---|
+| every arm | **0.000–0.010** |
+
+**AUC 0.672 at a 1-in-9,200 base rate yields essentially nothing.** The signal is real and four SE above chance, but
+it does not convert into usable predictions. That gap between "statistically above chance" and "precise enough to
+act on" is the honest state of sparse-regime completion.
+
+### Limits
+
+"Knocking out A changes B's mRNA" is **functional** coupling being used to predict a **physical** edge — a strong
+effect through three intermediates counts identically to a direct contact. Pool is knockout–knockout pairs; a
+held-out "true" edge is one already in a database. One cell line, one split.

@@ -59,7 +59,7 @@ from pathlib import Path
 import h5py
 import numpy as np
 from scipy import sparse
-from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import roc_auc_score
 
 OUT = Path("outputs/orphan")
@@ -240,8 +240,15 @@ def main():
     tr_neg = sample_neg(tr_pos, pbin, 4)
     Xtr = np.stack([np.r_[vec(M_, tr_pos), vec(M_, tr_neg)] for M_ in FEATS.values()], 1)
     ytr = np.r_[np.ones(len(tr_pos)), np.zeros(len(tr_neg))]
-    gbm = HistGradientBoostingRegressor(max_iter=300, learning_rate=0.06, max_depth=4,
-                                        min_samples_leaf=40, random_state=0).fit(Xtr, ytr)
+    # A CLASSIFIER, NOT A REGRESSOR. An earlier version fitted HistGradientBoostingRegressor to the 0/1 label.
+    # Squared loss on a binary target rank-orders badly at the extreme top of a heavily imbalanced pool, and that
+    # single choice -- not the features, not the negative sampling -- produced the depressed deployment precision
+    # first reported here (p@100 0.420) and the strange "precision rises with depth" pattern that came with it.
+    # Isolated by holding features and negatives fixed and swapping only the learner: regressor 0.600, classifier
+    # 0.990 at p@100. The earlier reading that "the top of the ranking is the least reliable part" was an artefact
+    # of the loss function and is WITHDRAWN.
+    gbm = HistGradientBoostingClassifier(max_iter=300, learning_rate=0.06, max_depth=4,
+                                         min_samples_leaf=40, random_state=0).fit(Xtr, ytr)
 
     print(f"\n  AUC FOR RECOVERING {len(pos)} HELD-OUT PPI EDGES")
     print(f"    {'predictor':13s} {'RANDOM':>9s} {'PUBS-M':>9s} {'DEG-M':>9s} {'DEG+PUBS-M':>11s}   bias gap")
@@ -252,7 +259,7 @@ def main():
             if nm == "COMBINED":
                 Xp = np.stack([vec(m2, pos) for m2 in FEATS.values()], 1)
                 Xn = np.stack([vec(m2, negs) for m2 in FEATS.values()], 1)
-                sc = np.r_[gbm.predict(Xp), gbm.predict(Xn)]
+                sc = np.r_[gbm.predict_proba(Xp)[:, 1], gbm.predict_proba(Xn)[:, 1]]
             else:
                 sc = np.r_[vec(M_, pos), vec(M_, negs)]
             yy = np.r_[np.ones(len(pos)), np.zeros(len(negs))]
@@ -276,7 +283,7 @@ def main():
     prec = {}
     for nm in [best, "PROFILE", "COMMON-NB", "CHAIN-2", "PREF-ATT"]:
         if nm == "COMBINED":
-            sc = gbm.predict(np.stack([vec(m2, allp) for m2 in FEATS.values()], 1))
+            sc = gbm.predict_proba(np.stack([vec(m2, allp) for m2 in FEATS.values()], 1))[:, 1]
         else:
             sc = vec(FEATS[nm], allp)
         o = np.argsort(-sc)
@@ -330,7 +337,7 @@ def main():
     is_trainedge = np.isin(code_all, code_tr)
     keep_pool = ~is_trainedge                      # train edges are already known; they are not candidates
     Xall = np.stack([m2[iu_all][keep_pool] for m2 in FEATS.values()], 1)
-    sc_full = gbm.predict(Xall)
+    sc_full = gbm.predict_proba(Xall)[:, 1]
     y_full = is_pos[keep_pool]
     base = float(y_full.mean())
     o = np.argsort(-sc_full)
@@ -346,7 +353,7 @@ def main():
           f"so it OVERSTATES real precision and must not be quoted as a discovery rate")
 
     # ---- the deliverable: unrecorded pairs the best predictor ranks highest ----
-    scoreM = (gbm.predict(np.stack([m2.ravel() for m2 in FEATS.values()], 1)).reshape(nK, nK)
+    scoreM = (gbm.predict_proba(np.stack([m2.ravel() for m2 in FEATS.values()], 1))[:, 1].reshape(nK, nK)
               if best == "COMBINED" else FEATS[best])
     cand = []
     iu = np.triu_indices(nK, 1)
