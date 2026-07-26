@@ -65,6 +65,8 @@ UA = {"User-Agent": "Mozilla/5.0 (compatible; cell-network-research/1.0)"}
 BATCH = 20              # measured silent cap on the bulk endpoint: posting 25/50/150 ids all return 20
 MAXDEPTH = 8            # complex nesting is a few levels deep; this is a runaway guard, not a real limit
 CACHE = Path(SP) / "catalyst_arrows_cache.json"     # NOT catalysts.json -- another process writes that name
+P1 = Path(SP) / "car_pass1_reactions.json"          # per-pass caches so a crash late in the fetch is cheap
+P2 = Path(SP) / "car_pass2_catalysts.json"
 
 
 def post(ids, tries=4):
@@ -79,6 +81,17 @@ def post(ids, tries=4):
             if t == tries - 1:
                 return None
             time.sleep(2 ** t)
+    return None
+
+
+def ref(x):
+    """Key for an entity reference. Reactome's JSON is not uniform: the same field comes back sometimes as a nested
+    object with a stId, sometimes as a bare integer dbId. Both are accepted as ids by the bulk endpoint, so both are
+    usable as keys -- as long as the entity map is later keyed by BOTH, which fetch() does."""
+    if isinstance(x, dict):
+        return x.get("stId") or (str(x["dbId"]) if x.get("dbId") else None)
+    if isinstance(x, int):
+        return str(x)
     return None
 
 
@@ -113,11 +126,20 @@ def fetch():
             return
         rx[sid] = {
             "cat": o.get("category"),
-            "in": [e["stId"] for e in (o.get("input") or []) if isinstance(e, dict) and e.get("stId")],
-            "out": [e["stId"] for e in (o.get("output") or []) if isinstance(e, dict) and e.get("stId")],
-            "ca": [c["dbId"] for c in (o.get("catalystActivity") or []) if isinstance(c, dict) and c.get("dbId")],
+            "in": [k for k in (ref(e) for e in (o.get("input") or [])) if k],
+            "out": [k for k in (ref(e) for e in (o.get("output") or [])) if k],
+            "ca": [c["dbId"] if isinstance(c, dict) else c
+                   for c in (o.get("catalystActivity") or [])
+                   if isinstance(c, int) or (isinstance(c, dict) and c.get("dbId"))],
         }
-    bulk(rxn, h1, "rxn")
+    # EACH PASS IS CACHED SEPARATELY. Pass 1 is ~780 requests and 13 minutes; a crash in pass 2 or 3 used to throw
+    # all of it away, which is how a schema surprise turns into an hour of refetching.
+    if P1.exists():
+        rx = json.loads(P1.read_text())
+        print(f"  reusing {P1.name}: {len(rx):,} reactions", flush=True)
+    else:
+        bulk(rxn, h1, "rxn")
+        P1.write_text(json.dumps(rx))
     ncat = sum(1 for v in rx.values() if v["ca"])
     print(f"  {len(rx):,} reactions retrieved, {ncat:,} with a catalyst", flush=True)
 
@@ -129,10 +151,14 @@ def fetch():
     def h2(o):
         if not o.get("dbId"):
             return
-        pe = o.get("physicalEntity") or {}
-        au = [u["stId"] for u in (o.get("activeUnit") or []) if isinstance(u, dict) and u.get("stId")]
-        ca[str(o["dbId"])] = {"pe": pe.get("stId"), "au": au}
-    bulk(allca, h2, "ca")
+        au = [k for k in (ref(u) for u in (o.get("activeUnit") or [])) if k]
+        ca[str(o["dbId"])] = {"pe": ref(o.get("physicalEntity")), "au": au}
+    if P2.exists():
+        ca = json.loads(P2.read_text())
+        print(f"  reusing {P2.name}: {len(ca):,} catalyst activities", flush=True)
+    else:
+        bulk(allca, h2, "ca")
+        P2.write_text(json.dumps(ca))
     nau = sum(1 for v in ca.values() if v["au"])
     print(f"  {len(ca):,} resolved, {nau:,} have an explicit activeUnit", flush=True)
 
@@ -156,22 +182,27 @@ def fetch():
                         # handler would make the name local to it and raise UnboundLocalError
 
         def h3(o):
-            sid = o.get("stId")
-            if not sid:
+            # KEY BY BOTH stId AND dbId. Reactome refers to the same entity by either, depending on the field, so a
+            # map keyed only by stId silently misses every reference that arrived as a bare integer.
+            keys = [k for k in (o.get("stId"), str(o["dbId"]) if o.get("dbId") else None) if k]
+            if not keys:
                 return
-            ref = o.get("referenceEntity") or {}
-            gn = ref.get("geneName") or []
+            re_ = o.get("referenceEntity")
+            gn = (re_.get("geneName") if isinstance(re_, dict) else None) or []
             if gn:
-                gene[sid] = gn if isinstance(gn, list) else [gn]
+                for k in keys:
+                    gene[k] = gn if isinstance(gn, list) else [gn]
             # EntitySet hasCandidate is deliberately NOT followed: candidates are Reactome's explicit
             # "might be this one" annotation, and expanding them would manufacture arrows from uncertainty.
             kids = []
-            for k in ("hasComponent", "hasMember"):
-                for c in (o.get(k) or []):
-                    if isinstance(c, dict) and c.get("stId"):
-                        kids.append(c["stId"])
+            for f in ("hasComponent", "hasMember"):
+                for c in (o.get(f) or []):
+                    k = ref(c)
+                    if k:
+                        kids.append(k)
             if kids:
-                comp[sid] = kids
+                for k in keys:
+                    comp[k] = kids
                 nxt.update(kids)
         bulk(todo, h3, f"pe{depth}")
         need = nxt
