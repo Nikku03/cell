@@ -10667,3 +10667,60 @@ unambiguous direction for **3,164 of 191,447 edges (1.7%)**, and only **95** of 
 and measured. Kinase–substrate assays, **time-resolved** perturbation (which protein moves *first*), and
 degron/rapid-depletion all measure direction directly. Co-expression, co-dependency, abundance and topology do not —
 and no quantity of them ever will, because none of them is asymmetric in time.
+
+---
+
+## `colab/pathway_order.py` — pathway order would orient 40% of the interactome, and we threw the order away
+
+A pathway is a **sequence**, so a PPI edge inside one inherits an arrow. That's a genuinely causal source of
+direction, unlike topology (which `edge_direction.py` showed is provably just degree).
+
+### Coverage
+
+| | |
+|---|---|
+| Reactome pathways | **2,792** |
+| genes covered | **10,489 (63.6%** of the proteome) |
+| per-gene `path` label | 10,352 genes (62.8%), 1,222 distinct pathways |
+| pathway sizes | median 14, mean 42.8, max 3,328 |
+| **PPI edges with both ends in a shared pathway** | **77,257 / 191,447 = 40.4%** |
+
+**That 40.4% is the reach of the idea — 24× more edges than the 3,164 (1.7%) SIGNOR can orient today.**
+
+### But the order isn't in our copy
+
+**All 2,792 of 2,792 pathway member lists are stored sorted by gene index.** Sorted-by-index is the signature of a
+set written out of a dictionary, not a sequence. We hold *membership* — these genes are in this pathway — and
+nothing about which comes first.
+
+Reactome **does** publish the ordering, as preceding/following event relations between reactions. It was dropped when
+pathways were flattened to gene lists. **This is a recoverable loss, not a missing measurement**, and that
+distinction is the point.
+
+### Where order did survive, it works
+
+`reaction_network.json` holds `catalysis_precedes` — **45,635 directed pairs** from metabolic reaction sequence. It
+reaches only 255 PPI edges (0.133%) and overlaps SIGNOR on **17**:
+
+| rule | accuracy |
+|---|---|
+| degree / Markov chain | 0.5664 ± 0.0126 |
+| **catalysis order** | **0.7059 ± 0.1105** (95% CI [0.48, 0.93]) |
+| TF annotation | 0.7647 ± 0.0265 |
+
+**The interval does not exclude chance** — 17 edges establish nothing. This is a reason to fetch the data, not a
+claim the method is validated. Metabolic order and curated signalling direction are independent sources, so the
+agreement is at least not circular.
+
+### The action
+
+**Re-fetch Reactome retaining reaction-level preceding/following relations instead of flattening to gene sets.** That
+would take the orientable fraction of the interactome from **1.7% toward 40%** — the largest single improvement
+identified in this session, requiring no new experiment, only not discarding a field we already download.
+
+### Limits
+
+40.4% is a bound on **reach, not accuracy**: two proteins can share a pathway without the pathway ordering *them*
+specifically, and a 3,328-gene pathway contains many such pairs. Feedback loops have no linear order at all — prior
+work here (`pathway_tier`) found only **47%** of pathway-membership genes get a trustworthy tier, 3% sit in feedback
+modules, and **50% have no directed context**. Realistic yield is well under the ceiling.

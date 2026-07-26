@@ -1,0 +1,20 @@
+{
+  "pathways": 2792,
+  "genes_covered": 10489,
+  "frac_proteome": 0.6360053359204463,
+  "labelled_genes": 10352,
+  "ppi_edges": 191447,
+  "ppi_in_shared_pathway": 77257,
+  "frac_ppi_in_shared_pathway": 0.4035424947896807,
+  "lists_sorted": 2792,
+  "order_present": false,
+  "catalysis_pairs": 45635,
+  "ppi_touched_by_order": 466,
+  "ppi_orientable_by_order": 255,
+  "signor_directed": 3164,
+  "overlap_tested": 17,
+  "accuracy": 0.7058823529411765,
+  "se": 0.11051016901502637,
+  "clears_chance": false,
+  "verdict": "CAN PATHWAY ORDER ORIENT PPI EDGES? THE IDEA IS RIGHT AND THE REACH IS LARGE: 77,257 of 191,447 PPI edges (40.4%) have both endpoints inside a shared Reactome pathway, against the 3,164 (1.7%) that SIGNOR can orient today. That is a 24x larger target, and unlike topology it is a genuinely causal source -- a pathway is a sequence, so an edge inside one inherits an arrow. BUT THE ORDER IS NOT IN OUR COPY OF THE DATA. All 2,792 of 2,792 pathway member lists are stored SORTED BY GENE INDEX, which is the signature of a set written out of a dictionary rather than a sequence. We hold MEMBERSHIP -- these genes are in this pathway -- and nothing about which comes first. Reactome does publish the ordering, as preceding/following event relations between reactions; it was dropped when pathways were flattened to gene lists. This is a recoverable loss, not a missing measurement, and that distinction is the useful part of this result. WHERE ORDER DID SURVIVE, IT WORKS. reaction_network.json's catalysis_precedes holds 45,635 directed pairs from metabolic reaction sequence. It reaches only 255 PPI edges (0.133%) and overlaps SIGNOR on just 17, but on those it gets the arrow right 70.6% of the time (95% CI [0.48, 0.93]), against 50% chance and against 56.6% for the degree rule that a Markov chain reduces to. THE INTERVAL DOES NOT EXCLUDE CHANCE at this sample size -- 17 edges cannot establish anything, and this is a reason to fetch the data, not a claim that the method is validated. THE ACTION THIS IMPLIES is narrow and concrete: re-fetch Reactome with the reaction-level preceding/following relations retained instead of flattening pathways to gene sets. That would take the orientable fraction of the interactome from 1.7% to a potential 40% -- by far the largest single improvement identified in this session, and it requires no new experiment, only not discarding a field we already download. WHAT THIS CANNOT SAY. 40.4% is an upper bound on reach, not on accuracy: two proteins can share a pathway without the pathway implying an order between them specifically, and large pathways (max 3328 genes) will contain many such pairs. Feedback loops have no linear order at all -- prior work here (pathway_tier) found only 47% of pathway-membership genes get a trustworthy tier, 3% sit in feedback modules and 50% have no directed context -- so the realistic yield is well under the 40.4% ceiling."
+}
