@@ -92,9 +92,18 @@ def main():
             print(f"  {prov:16s} {len(es):8,} {len(es)/total:9.2%} {'-':>10s} {'-':>17s}")
             stats[prov] = {"n": len(es), "frac": len(es) / total}
             continue
-        # check against SIGNOR, and for the signor tier itself against reg (a different, independent source)
-        key = reg_dir if prov == "signor" else sig_dir
-        keyname = "reg" if prov == "signor" else "SIGNOR"
+        # THE SIGNOR TIER CANNOT BE AUDITED FROM WITHIN ITS OWN TIER. An earlier version checked it against `reg`
+        # restricted to the signor TIER of the built network -- i.e. only edges where pathway_order happened to be
+        # silent -- and got 0.4405, which it reported as "below chance". That was a selection artefact: across ALL
+        # 2,876 edges the two curated sources both orient, they agree 0.7830. The tier-restricted comparison is
+        # dropped and the full one is reported separately below.
+        key = sig_dir
+        keyname = "SIGNOR"
+        if prov == "signor":
+            print(f"  {prov:16s} {len(es):8,} {len(es)/total:9.2%} {'(is the key)':>10s} {'curated':>17s}")
+            stats[prov] = {"n": len(es), "frac": len(es) / total, "checkable": 0,
+                           "checkable_frac": 0.0, "acc": 1.0, "se": 0.0, "against": "curated"}
+            continue
         chk = [(a, b) for a, b in es if frozenset((a, b)) in key]
         good = sum(1 for a, b in chk if key[frozenset((a, b))] == (a, b))
         p, se = ci(good, len(chk))
@@ -111,7 +120,10 @@ def main():
     exp = 0.0
     for prov in ["signor", "pathway_order", "tf_prior"]:
         s_ = stats[prov]
-        rate = 1.0 if prov == "signor" else s_["acc"]
+        # tf_prior has NO SIGNOR-checkable edges by construction, so its rate is taken from the earlier
+        # measurement on the 255 edges where a curated direction and a TF/non-TF difference coexisted. That is a
+        # biased sample and the number is carried forward with that label, not as a property of the tier.
+        rate = 1.0 if prov == "signor" else (s_["acc"] if s_["acc"] == s_["acc"] else 0.7647)
         e_ = s_["n"] * rate
         exp += e_
         print(f"    {prov:16s} {s_['n']:8,} x {rate:.3f} = {e_:9,.0f}")
@@ -130,14 +142,33 @@ def main():
         ag = sum(1 for k in common if d1[k] == d2[k])
         p, se = ci(ag, len(common))
         print(f"    {n1:14s} vs {n2:8s} n={len(common):5,}  agree {p:.4f} +/- {se:.4f}")
-    # tf_prior checked against BOTH curated sources
+    # tf_prior vs reg looks like strong validation and is NOT: `reg` edges are TF->target BY DEFINITION and
+    # tf_prior predicts TF->non-TF, so the two agree almost by construction. Measured: 835 of the 923 overlapping
+    # reg edges (90.5%) have a TF as their source. Reported with that caveat attached rather than as evidence.
     tfp = {frozenset((a, b)): (a, b) for a, b in tier.get("tf_prior", [])}
-    for n2, d2 in [("SIGNOR", sig_dir), ("reg", reg_dir)]:
-        common = set(tfp) & set(d2)
-        if common:
-            ag = sum(1 for k in common if tfp[k] == d2[k])
-            p, se = ci(ag, len(common))
-            print(f"    {'tf_prior':14s} vs {n2:8s} n={len(common):5,}  agree {p:.4f} +/- {se:.4f}")
+    common = set(tfp) & set(reg_dir)
+    if common:
+        ag = sum(1 for k in common if tfp[k] == reg_dir[k])
+        p, se = ci(ag, len(common))
+        srctf = sum(1 for k in common if tf.get(reg_dir[k][0], 0) == 1)
+        print(f"    {'tf_prior':14s} vs {'reg':8s} n={len(common):5,}  agree {p:.4f} +/- {se:.4f}"
+              f"   <- CIRCULAR: {srctf/len(common):.0%} of these reg edges have a TF as source")
+
+    # ---- DO THE TWO CURATED SOURCES AGREE WITH EACH OTHER? the realistic ceiling for any predictor ----
+    both = set(sig_dir) & set(reg_dir)
+    agree = sum(1 for k in both if sig_dir[k] == reg_dir[k])
+    pc, sec = ci(agree, len(both))
+    disagree = [k for k in both if sig_dir[k] != reg_dir[k]]
+    tf_involved = sum(1 for k in disagree if tf.get(list(k)[0], 0) + tf.get(list(k)[1], 0) > 0)
+    print(f"\n  THE CEILING: do the two CURATED sources agree with each other?")
+    print(f"    edges both orient {len(both):,}   agreement {pc:.4f} +/- {sec:.4f}")
+    print(f"    of {len(disagree):,} disagreements, {tf_involved:,} ({tf_involved/max(len(disagree),1):.0%}) "
+          f"involve a transcription factor")
+    for k in disagree[:4]:
+        print(f"       SIGNOR {sig_dir[k][0]}->{sig_dir[k][1]:14s}  reg {reg_dir[k][0]}->{reg_dir[k][1]}")
+    print(f"    -> these are not errors. A kinase can act ON a TF while that TF transcriptionally regulates the")
+    print(f"       kinase's gene. Protein-level direction and transcriptional direction are DIFFERENT relations")
+    print(f"       and can legitimately oppose, so {pc:.0%} is the realistic ceiling for any single arrow.")
 
     tfs = stats["tf_prior"]
     verdict = (
@@ -150,18 +181,28 @@ def main():
         f"sequence and are right {stats['pathway_order']['acc']:.1%} of the time against independently curated "
         f"SIGNOR -- so roughly one in three of those arrows is BACKWARDS. "
         f"THE REMAINING {tfs['n']:,} ({tfs['frac']:.1%}) ARE A HEURISTIC -- 'the transcription factor points at the "
-        f"non-TF' -- and this is where the honest answer gets uncomfortable. It measures {tfs['acc']:.1%} on the "
-        f"{tfs['checkable']:,} of its edges a curated source can check, which is {tfs['checkable_frac']:.1%} of the "
-        f"tier. The other {100*(1-tfs['checkable_frac']):.1f}% are unvalidatable BY CONSTRUCTION: the heuristic is "
-        f"applied exactly where the curated sources are silent, so the edges where it is used are precisely the "
-        f"edges where it cannot be checked. Its measured rate comes from a biased sample -- TF pairs well studied "
-        f"enough to be curated -- and assuming it transfers is an assumption, not a result. "
+        f"non-TF' -- and this is where the honest answer gets uncomfortable. SIGNOR can check EXACTLY ZERO of its "
+        f"{tfs['n']:,} edges, and not by accident: the heuristic is applied only where the curated tiers are "
+        f"silent, so the edges it is used on are precisely the edges nothing can check. Its 76.5% comes from a "
+        f"different set -- the 255 edges that happened to have both a curated direction and a TF/non-TF difference "
+        f"-- i.e. from well-studied TF pairs, and assuming that rate transfers to 23,097 unstudied ones is an "
+        f"assumption, not a result. Its 90.5% agreement with `reg` looks like corroboration and is not: `reg` edges "
+        f"are TF->target BY DEFINITION and this heuristic predicts TF->non-TF, so 90% of those reg edges have a TF "
+        f"as their source and the agreement is close to definitional. "
         f"TAKING EACH TIER AT ITS OWN MEASURED RATE, about {exp:,.0f} arrows are right and {ndir-exp:,.0f} are "
         f"wrong: {exp/total:.2%} of the network is directed AND probably correct, against the {ndir/total:.2%} "
         f"headline. THE DEFENSIBLE SUMMARY IS THEREFORE: about 1.5% of the interactome has a curated arrow, about "
         f"another 1.8% has a pathway-derived arrow that is right about two thirds of the time, and roughly 12% has a "
         f"guess that is probably right about three quarters of the time but cannot be checked where it matters. "
         f"85% has no direction at all. "
+        f"AND THERE IS A CEILING NOBODY CAN EXCEED, which is the most important thing this audit found: the two "
+        f"CURATED sources agree with each other only {pc:.1%} of the time on the {len(both):,} edges both orient, "
+        f"and {tf_involved/max(len(disagree),1):.0%} of the disagreements involve a transcription factor. Those are "
+        f"not curation errors. SIGNOR says HSP90AA1 acts on AR; reg says AR transcriptionally regulates HSP90AA1. "
+        f"BOTH ARE TRUE. Protein-level direction and transcriptional direction are different relations on the same "
+        f"pair and routinely oppose, because that is what a feedback loop IS. So 'the direction of a PPI edge' is "
+        f"not a single well-defined property, and {pc:.0%} is the realistic ceiling for any single arrow -- our "
+        f"pathway-order tier at {stats['pathway_order']['acc']:.1%} should be read against that, not against 100%. "
         f"WHAT WOULD MAKE US SURE. Nothing in this pipeline: every tier is annotation or heuristic, and the "
         f"agreement between tiers is bounded by the weakest curation underneath both. Direction is a causal claim "
         f"and only a time-resolved or interventional measurement -- kinase-substrate assays, degron depletion with a "

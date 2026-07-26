@@ -10845,3 +10845,62 @@ Entity flow is a **weaker** claim than precedingEvent: sharing an entity means o
 that it does so in these cells at this time — and the two reactions may occupy compartments where neither protein is
 present. The hub cap is blunt: removing promiscuous entities by count also drops genuinely informative ones like
 ubiquitin. And an arrow between reactions still isn't proof the two proteins touch in that order.
+
+---
+
+## `colab/direction_audit.py` — how much of the network is directed, and how much of that is trustworthy
+
+The build reported **15.34% directed**. That number is true and, alone, misleading — it pools a curated tier with two
+predicted tiers whose error rates differ hugely, and one of them is applied precisely where nothing can check it.
+
+| tier | edges | % of PPI | checkable | accuracy |
+|---|---|---|---|---|
+| **signor** (curated) | 2,831 | **1.48%** | *is the answer key* | curated |
+| **pathway_order** (Reactome sequence) | 3,444 | **1.80%** | 333 | **0.6547 ± 0.0261** vs SIGNOR |
+| **tf_prior** (heuristic) | 23,097 | **12.06%** | **0** | — |
+| undirected | 162,075 | 84.66% | | |
+| **TOTAL DIRECTED** | **29,372** | **15.34%** | | |
+
+**Expected correct: 22,748 — so 11.88% of the interactome is directed *and probably right*, and 6,624 asserted
+arrows (22.6%) are expected to be wrong.**
+
+### The tf_prior tier cannot be validated, by construction
+
+SIGNOR can check **exactly zero** of its 23,097 edges — not by accident. The heuristic is applied *only where the
+curated tiers are silent*, so the edges it's used on are precisely the ones nothing can check. Its 76.5% came from a
+different set (255 edges that happened to have both a curated direction and a TF/non-TF difference) — i.e. from
+**well-studied** TF pairs. Assuming that transfers to 23,097 unstudied ones is an assumption, not a result.
+
+Its **90.5% agreement with `reg` looks like corroboration and is not**: `reg` edges are TF→target *by definition* and
+this heuristic predicts TF→non-TF. Measured: **835 of 923 (90.5%)** of those reg edges have a TF as source. The
+agreement is near-definitional.
+
+### A correction inside this module
+
+A first version audited the signor tier against `reg` *restricted to that tier* — i.e. only edges where
+pathway_order happened to be silent — got **0.4405**, and reported it as "below chance". That was a selection
+artefact. Across **all 2,876** edges both curated sources orient, they agree **0.7830 ± 0.0077**.
+
+### The ceiling nobody can exceed — the most important finding here
+
+The two **curated** sources agree only **78.3%** of the time, and **98% of the 624 disagreements involve a
+transcription factor**:
+
+```
+SIGNOR  HIPK2 → PML          reg  PML → HIPK2
+SIGNOR  PRKACA → ESR1        reg  ESR1 → PRKACA
+SIGNOR  PRKCZ → SP1          reg  SP1 → PRKCZ
+```
+
+**These are not curation errors — both are true.** A kinase acts *on* a transcription factor while that TF
+transcriptionally regulates the kinase's gene. Protein-level direction and transcriptional direction are **different
+relations on the same pair**, and they routinely oppose, because that is what a feedback loop *is*.
+
+So **"the direction of a PPI edge" is not a single well-defined property.** 78% is the realistic ceiling for any
+single arrow, and our pathway-order tier at 65.5% should be read against *that*, not against 100%.
+
+### What would make us sure
+
+Nothing in this pipeline. Every tier is annotation or heuristic, and agreement between tiers is bounded by the
+weakest curation underneath both. Direction is a causal claim; only a time-resolved or interventional measurement —
+kinase–substrate assays, degron depletion with a time course — can settle it per edge.
