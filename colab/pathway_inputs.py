@@ -150,7 +150,7 @@ def main():
     # ---- WHAT DOES A PATHWAY NEED? entry points and their preparatory step ----
     has_prec = set(prec)
     entry = [r for r in rxn if r not in has_prec and r in io]
-    prepared = 0
+    prepared = genuine = selfprep = 0
     prep_examples = []
     for r in entry:
         ins = [e for e in io[r].get("in", []) if touched.get(e, 0) <= best_h]
@@ -158,33 +158,53 @@ def main():
         for e in ins:
             ups |= prod.get(e, set())
         ups.discard(r)
-        if ups:
-            prepared += 1
-            if len(prep_examples) < 6 and r2s.get(r):
-                u = next(iter(ups))
-                prep_examples.append((sorted(r2s[r])[:2], sorted(r2s.get(u, {"?"}))[:2]))
+        if not ups:
+            continue
+        prepared += 1
+        # SELF-PREPARATION IS NOT PREPARATION. A first pass counted every entry reaction with an upstream producer
+        # and reported 23.4%, but a quarter of those are the SAME protein being modified or complexed with itself
+        # ("MYF5/MYF6 prepares MYF5/MYF6"). Only an upstream reaction contributing a gene the entry reaction does
+        # not already contain is a real preparatory step by something else.
+        tg = r2s.get(r, set())
+        up_genes = set()
+        for u in ups:
+            up_genes |= r2s.get(u, set())
+        if up_genes - tg:
+            genuine += 1
+            if len(prep_examples) < 6:
+                prep_examples.append((sorted(tg)[:3], sorted(up_genes - tg)[:3]))
+        else:
+            selfprep += 1
     print(f"\n  PATHWAY ENTRY POINTS -- reactions with NO precedingEvent")
-    print(f"    entry reactions                       {len(entry):,}")
-    print(f"    ...whose inputs ARE produced elsewhere {prepared:,} ({prepared/max(len(entry),1):.1%})")
-    print(f"    -> that many pathway starts have a preparatory step that precedingEvent never linked")
-    for tgt, src in prep_examples[:4]:
-        print(f"       {'/'.join(src):24s} prepares  {'/'.join(tgt)}")
+    print(f"    entry reactions                          {len(entry):,}")
+    print(f"    ...whose inputs ARE produced elsewhere    {prepared:,} ({prepared/max(len(entry),1):.1%})")
+    print(f"       of which by a DIFFERENT gene (genuine) {genuine:,} ({genuine/max(prepared,1):.1%} of those, "
+          f"{genuine/max(len(entry),1):.1%} of all entry reactions)")
+    print(f"       pure self-preparation, discounted      {selfprep:,} ({selfprep/max(prepared,1):.1%})")
+    print(f"    genuine examples (upstream genes -> entry-reaction genes):")
+    for tgt, src in prep_examples[:5]:
+        print(f"       {'/'.join(src):34s} prepares  {'/'.join(tgt)}")
 
     verdict = (
         f"WHAT A PATHWAY NEEDS BEFORE IT STARTS. Reactome's precedingEvent is largely within-pathway, so it never "
         f"connects a pathway's first reaction to whatever produced the protein that reaction consumes. Entity flow "
         f"does: output(A) meeting input(B) means A prepares B, across pathway boundaries. Of {len(entry):,} "
-        f"reactions with NO precedingEvent -- the pathway entry points -- {prepared:,} "
-        f"({prepared/max(len(entry),1):.1%}) have inputs that ARE produced by another reaction. That is the "
-        f"preparatory step one back, and precedingEvent alone was blind to all of it. "
+        f"reactions with NO precedingEvent -- the pathway entry points -- {prepared:,} have inputs produced by another "
+        f"reaction, BUT {selfprep:,} of those ({selfprep/max(prepared,1):.0%}) are the same protein being modified "
+        f"or complexed with ITSELF, which is not preparation by anything. Discounting those leaves {genuine:,} "
+        f"({genuine/max(len(entry),1):.1%} of entry reactions) with a genuine upstream step contributed by a "
+        f"DIFFERENT gene -- and precedingEvent was blind to all of them. "
         f"THE CURRENCY-MOLECULE TRAP IS THE WHOLE DIFFICULTY AND IT IS SWEPT RATHER THAN GUESSED: ATP and water are "
         f"touched by thousands of reactions, and joining on them declares that everything precedes everything. "
         f"Across hub caps " + ", ".join(f"{h} ({sweep[h]['oriented']:,} edges, {sweep[h]['acc']:.3f})"
                                         for h in HUB_SWEEP) + f", the cap was set to {best_h}. "
         f"ON THE DIRECTED NETWORK: precedingEvent alone orients {len(o_prec):,} PPI edges at {a_prec:.4f}; entity "
         f"flow alone orients {len(o_flow):,} at {a_flow:.4f}; together {len(o_both):,} at {a_both:.4f} "
-        f"+/- {s_both:.4f}, adding {new:,} edges precedingEvent could not reach. Chance is 0.500 and the Markov "
-        f"chain, which is provably the degree rule, scores 0.5664 on this same task. "
+        f"+/- {s_both:.4f}. SO ENTITY FLOW SHOULD NOT BE MERGED INTO THE ORIENTATION: it is barely above the "
+        f"0.5664 the degree rule gets, it is well below precedingEvent's {a_prec:.4f}, and combining them DILUTES "
+        f"the result to {a_both:.4f} while adding only {new:,} edges. The two uses come apart -- entity flow answers "
+        f"'what does this pathway need' well and 'which way does this edge point' badly -- and the directed network "
+        f"therefore keeps precedingEvent as its pathway-order tier. "
         f"WHAT THIS CANNOT SAY. Entity flow is a claim about the CURATED pathway, not about K562 -- and it is a "
         f"weaker claim than precedingEvent, because sharing an entity means one reaction can supply another, not "
         f"that it does so in these cells at this time. Two reactions can also exchange an entity in a compartment "
@@ -193,7 +213,7 @@ def main():
         f"still not proof that the two PROTEINS touch in that order.")
     print(f"\nVERDICT: {verdict}")
 
-    json.dump({"entities": len(touched), "entry_reactions": len(entry), "entry_with_preparation": prepared,
+    json.dump({"entities": len(touched), "entry_reactions": len(entry), "entry_with_preparation": prepared, "genuine_preparation": genuine, "self_preparation": selfprep,
                "hub_cap": best_h, "sweep": sweep,
                "preceding_only": {"oriented": len(o_prec), "n": len(t_prec), "acc": a_prec, "se": s_prec},
                "flow_only": {"oriented": len(o_flow), "n": len(t_flow), "acc": a_flow, "se": s_flow},

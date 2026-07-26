@@ -10786,3 +10786,62 @@ before B", not "in K562 today". Proteins in the same reaction have no order rela
 relation between *reactions* does not guarantee the two participants physically touch in that order — the arrow is a
 claim about pathway sequence, not about direct causation between that specific pair. 25,090 edges are
 precedence-linked both ways (feedback cycles) and are recorded as bidirectional rather than forced.
+
+---
+
+## `colab/fetch_reaction_io.py` + `colab/pathway_inputs.py` — what a pathway needs before it can start
+
+A pathway doesn't begin spontaneously: its first reaction consumes a protein that had to be translated, folded,
+modified and trafficked first, and those preparatory reactions sit in **other** pathways — so `precedingEvent`,
+which is largely within-pathway, never links them. Reactome records the link implicitly as **entity flow**:
+
+```
+output(reaction A) ∩ input(reaction B) ≠ ∅   ⇒   A prepares B
+```
+
+Fetched input/output for all 16,173 reactions (**15,593 have them**) in 6.1 min at 2.22 req/s, zero failures.
+
+### The currency-molecule trap, swept rather than guessed
+
+ATP is consumed by thousands of reactions and produced by thousands more. Joining on it declares that everything
+precedes everything — and it fails *silently*, producing a huge confident-looking graph. Measured: the most
+promiscuous entity touches **1,453 reactions**. The guard is data-driven (drop entities above a reaction-count
+threshold) and the threshold is swept:
+
+| hub cap | reaction links | PPI oriented | accuracy |
+|---|---|---|---|
+| **5** | 9,809 | 2,819 | **0.5818** |
+| 10 | 13,670 | 3,670 | 0.5693 |
+| 25 | 19,371 | 3,936 | 0.5470 |
+| 200 | 59,794 | 4,426 | 0.5657 |
+
+### The two uses come apart — and that's the result
+
+| source | PPI oriented | accuracy |
+|---|---|---|
+| **precedingEvent only** | 3,444 | **0.6547 ± 0.0261** |
+| entity flow only | 2,819 | 0.5818 ± 0.0333 |
+| both combined | 3,530 | 0.6238 ± 0.0271 |
+
+**Entity flow must NOT be merged into the orientation.** It is barely above the 0.5664 the degree rule gets, well
+below precedingEvent, and combining them **dilutes** the result while adding only 86 edges. The directed network
+keeps `precedingEvent` as its pathway-order tier.
+
+### But for the question actually asked, it works
+
+Of **4,832** pathway entry reactions (no `precedingEvent` at all), 1,129 have inputs produced by another reaction.
+
+**A first pass reported that 23.4% as the answer — and it was wrong.** 292 of those (26%) are the *same protein*
+being modified or complexed with itself ("MYF5/MYF6 prepares MYF5/MYF6"), which is not preparation by anything.
+Discounting them leaves **837 (17.3% of entry reactions)** with a genuine upstream step contributed by a
+**different** gene — invisible to `precedingEvent`.
+
+Genuine examples: `P4HB → IL12A/IL12B` (disulphide isomerase preparing the IL-12 heterodimer), `NGF → NGF(19-241)/NGFR`
+(pro-NGF processed before receptor binding), `PLA2G15 → 4xPalmC-CD36`, `MTAP → APRT variants`.
+
+### Limits
+
+Entity flow is a **weaker** claim than precedingEvent: sharing an entity means one reaction *can* supply another, not
+that it does so in these cells at this time — and the two reactions may occupy compartments where neither protein is
+present. The hub cap is blunt: removing promiscuous entities by count also drops genuinely informative ones like
+ubiquitin. And an arrow between reactions still isn't proof the two proteins touch in that order.
