@@ -22,8 +22,14 @@ same fact seen from opposite sides.
 
 WHY THIS BEATS THE CATALYST ROUTE IT REPLACES. It recovers kinase -> substrate WITHOUT needing the catalystActivity
 annotation, which requires a second resolution fetch and is present on only a minority of reactions. It therefore
-reaches several times as many edges. Where a catalyst annotation does exist, the two agree almost perfectly, which
-is the strongest available evidence that this is reading catalysis rather than noise.
+reaches several times as many edges.
+
+THE STATED MECHANISM IS ITSELF A FALSIFIABLE PREDICTION, AND THIS MODULE TESTS IT RATHER THAN ASSERTING IT. The claim
+is that the unchanged partner IS the enzyme. If that is true, then wherever Reactome independently annotates a
+catalyst for the same reaction, that catalyst should land on the UNCHANGED side, never the transformed side. The
+measured agreement rate is printed below. A low rate would not change the accuracy figures, but it would mean the
+rule works for some reason other than the one given here -- which is worth knowing, so the number is reported
+whether or not it is flattering.
 
 MEASURED, WITH THE CONTROLS THIS PROJECT REQUIRES -- the degree rule computed ON THE SAME EDGES (because a walk's
 direction on an undirected graph is provably the degree ratio), and a cluster bootstrap over REACTIONS (because one
@@ -216,6 +222,53 @@ def main():
         print(f"    {k:<9} adds {R[k]['new_edges']:>7,} edges not already directed; "
               f"overlaps {len(both):,}" + (f", agreeing {ag:.1%}" if both else ""))
 
+    # ---- DOES THIS RULE ACTUALLY READ CATALYSIS, OR ONLY CORRELATE WITH IT? ----
+    # The mechanistic claim is that the unchanged partner in a modification reaction IS the enzyme. If so, then
+    # wherever Reactome independently annotates a catalyst, the catalyst should be the unchanged partner. That is a
+    # falsifiable prediction and it is checked here rather than asserted. Low agreement would mean the rule works for
+    # some other reason and the stated mechanism is wrong -- which would matter even though accuracy is unaffected.
+    CAT = SP / "catalyst_arrows_cache.json"
+    cat_agree = None
+    if CAT.exists():
+        F = json.loads(CAT.read_text())
+        rx, ca = F["rx"], F["ca"]
+        same = diff = norule = 0
+        for r, v in rx.items():
+            if not v.get("ca") or r not in io:
+                continue
+            cs = set()
+            for c in v["ca"]:
+                d = ca.get(str(c))
+                if not d:
+                    continue
+                src = d["au"] or ([d["pe"]] if d["pe"] else [])
+                for x in src:
+                    cs |= {g for g in (gene_of(l) for l in leaves(x)) if g}
+            if not cs:
+                continue
+            pin, pout = collections.defaultdict(set), collections.defaultdict(set)
+            for side, acc in (("in", pin), ("out", pout)):
+                for pe in io[r].get(side, []):
+                    for lf in leaves(pe):
+                        g = gene_of(lf)
+                        if g:
+                            acc[g].add(lf)
+            tr = {g for g in pin if g in pout and pin[g] != pout[g]}
+            un = {g for g in pin if g in pout and pin[g] == pout[g]}
+            if not tr:
+                norule += 1
+                continue
+            # the annotated catalyst should sit on the UNCHANGED side, not the transformed side
+            same += len(cs & un) > 0
+            diff += (len(cs & un) == 0) and (len(cs & tr) > 0)
+        tot = same + diff
+        cat_agree = same / tot if tot else float("nan")
+        print(f"\n  MECHANISM CHECK -- is the unchanged partner really the enzyme?")
+        print(f"    reactions with an annotated catalyst AND a transformed set: {tot:,}")
+        print(f"    catalyst is on the UNCHANGED side (rule's claim): {same:,}  ({cat_agree:.1%})")
+        print(f"    catalyst is on the TRANSFORMED side (contradicts): {diff:,}")
+        print(f"    reactions with a catalyst but nothing transformed (rule stays silent): {norule:,}")
+
     a = R["ALL"]
     verdict = (
         f"THE QUESTION WAS WRONG, NOT THE DATA. Four modules concluded that a Reactome reaction cannot orient a PPI "
@@ -246,7 +299,7 @@ def main():
 
     json.dump({"n_ppi": n_ppi, "n_gt": len(gt), "reactions_firing": n_fire, "reactions_silent": n_none,
                "results": {k: {kk: vv for kk, vv in R[k].items() if kk != "orient"} for k in kinds},
-               "verdict": verdict,
+               "catalyst_side_agreement": cat_agree, "verdict": verdict,
                "edges": {k: [[d[0], d[1]] for d in R[k]["orient"].values()] for k in kinds}},
               open(OUT / "transformed_partner_arrows.json", "w"))
     print(f"\n  -> {OUT/'transformed_partner_arrows.json'}")
