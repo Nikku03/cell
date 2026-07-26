@@ -10230,3 +10230,75 @@ panel is itself an expression-based selection — so the criterion is circular t
 knockouts are not in the expressed set and get an all-zero score row in the pruned arms. Five splits, one cell line.
 (FULL-DAMP is 0.4809 here vs 0.4768 elsewhere because the cw grid now includes 0.1, the optimum found in
 `complex_weight.py`.)
+
+---
+
+## `colab/link_completion.py` — can the network be completed? Yes where it's dense, no where it's sparse
+
+Everything else here runs the network **forward** (graph → predict knockout effects). This runs it **backward**: hold
+out 20% of the PPI edges among the 1400 knockouts, rebuild every feature on the remaining graph, and try to recover
+them. Adds to prior work rather than repeating it — `connection_proposer.py` scores machine→target *convergences*
+(explicitly "not P(true edge)") and `complete_network.py` showed the merged graph is trustworthy one hop out.
+**Nobody had tested edge recovery against a study-bias control.**
+
+### Study bias is the whole problem, and it is large
+
+A PPI database records interactions somebody looked for; `pubs` runs 0 → 11,630. Ranking pairs by nothing but how
+well-studied the two proteins are recovers held-out edges at **AUC 0.6806** against random non-edges — and **0.4952**
+against negatives matched on pubs and degree. **That 0.185 gap is pure study bias**, and it is the number this kind
+of work usually reports.
+
+Pubs-matching *alone* is not enough, which the module measures rather than assumes: such a negative set still has
+mean log-degree 7.56 vs the positives' 9.07. Preferential attachment (pure degree) scores **0.80** under pubs-matching
+and **0.53** under the joint control. So the bar is the joint control, set at the better trivial baseline.
+
+| predictor | RANDOM | PUBS-M | DEG-M | **DEG+PUBS-M** | bias gap |
+|---|---|---|---|---|---|
+| PUBS | 0.6806 | 0.4986 | 0.4976 | **0.4952** | +0.185 |
+| PREF-ATT | 0.8608 | 0.8049 | 0.5194 | **0.5286** | +0.332 |
+| COMMON-NB | 0.9748 | 0.9666 | 0.9231 | **0.9257** | +0.049 |
+| JACCARD | 0.9734 | 0.9670 | 0.9430 | **0.9438** | +0.030 |
+| ADAMIC-AD | 0.9765 | 0.9692 | 0.9299 | **0.9326** | +0.044 |
+| **CHAIN-2** | 0.9620 | 0.9546 | 0.9372 | **0.9378** | +0.024 |
+| PROFILE | 0.7332 | 0.7171 | 0.7172 | **0.7086** | +0.025 |
+| COMBINED | 0.9790 | 0.9760 | 0.9513 | **0.9524** | +0.027 |
+
+Two results worth naming: **CHAIN-2 — the K562-expressed 2-step walk used as a link predictor — beats plain
+common-neighbours** (0.9378 vs 0.9257), so the walk is better than the topology statistic it is built from. And
+**PROFILE (0.7086), which never touches the graph at all**, shows the perturbation data carries genuine independent
+edge information.
+
+### But the headline is mostly filling in obvious holes
+
+Deleting an edge leaves its endpoints still sharing neighbours (PPI clustering ~0.20). **79.7% of held-out edges
+still have >10 shared neighbours**; only 2.4% have none. Conditioning on that:
+
+| stratum | n | COMMON-NB | CHAIN-2 | PROFILE | COMBINED |
+|---|---|---|---|---|---|
+| **CN = 0** | 82 | 0.5000 | 0.5000 | 0.5412 | **0.4126** |
+| CN 1–2 | 132 | 0.5724 | 0.7222 | 0.5467 | 0.7760 |
+| CN 3–10 | 485 | 0.6547 | 0.8292 | 0.6096 | 0.8965 |
+| CN > 10 | 2745 | 0.7763 | 0.8812 | 0.6701 | 0.9002 |
+
+For pairs with **no** shared neighbours — the genuinely novel connections, the ones that would actually *complete*
+the network rather than tidy it — common-neighbours and the chain are at exactly **chance** (both are identically
+zero there), and **COMBINED is 0.4126, worse than chance**: the model leans so hard on shared neighbours that with
+none available it actively misranks. Only PROFILE is above chance (0.5412), barely.
+
+**The answer is split: yes where the network is already dense, no where it is sparse — which is exactly where the
+missing biology lives.**
+
+### The proposal list
+
+Top-40 unrecorded pairs are emitted with their shared-neighbour count and a regime flag. **32/40 are completions of
+already-dense neighbourhoods; 8/40 sit in the sparse regime where the method is not reliable.** Chemically plausible
+ones include `GPN2–GPN3` (paralogous GPN GTPases that heterodimerise), `DNAJC19–GRPEL1` (mitochondrial import
+chaperones), `ABT1–FCF1` (ribosome biogenesis), `RPS16–ZBTB11` (ZBTB11 is a known regulator of ribosome biogenesis).
+Others look like hub artifacts (`GLI4` pairing with three different MRPLs).
+
+### Limits
+
+Recovering *hidden known* edges is an optimistic proxy for proposing *new* ones — held-out edges were discoverable
+enough to enter a database. No proposed edge has been experimentally confirmed; the only claim is a calibrated
+ranking. The universe is knockout–knockout pairs only (where both endpoints have measured profiles), so this says
+nothing about the other 15,092 proteins.

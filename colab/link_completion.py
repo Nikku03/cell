@@ -18,11 +18,18 @@ proteins are recorded as interacting far more often than two obscure ones, wheth
 predictor that has silently learned "both endpoints are well studied" scores beautifully against randomly sampled
 non-edges and has discovered nothing. So every number here is reported against THREE negative sets:
 
-    RANDOM        uniformly sampled non-edges                       -- the inflated number everyone quotes
-    DEGREE-MATCHED  negatives matched on both endpoints' degree     -- removes hubs-attract-hubs
-    PUBS-MATCHED    negatives matched on both endpoints' pubs count -- removes famous-attracts-famous
+    RANDOM             uniformly sampled non-edges                  -- the inflated number everyone quotes
+    PUBS-MATCHED       matched on both endpoints' pubs count        -- removes famous-attracts-famous
+    DEGREE-MATCHED     matched on both endpoints' degree            -- removes hubs-attract-hubs
+    DEG+PUBS-MATCHED   matched on BOTH, jointly                     -- THE BAR
 
-The gap between the first and the last IS the study bias, and it is reported as a headline rather than buried.
+AND PUBS-MATCHING ALONE IS NOT ENOUGH, which the module measures rather than assumes: a pubs-matched negative set
+still has mean log-degree 7.56 against the positives' 9.07, so anything able to read degree still scores. The proof
+is preferential attachment, which is nothing but degree: 0.80 AUC under pubs-matching, 0.52 under degree-matching.
+So the bar is the JOINT control, and it is set at the better of the two trivial baselines (PUBS, PREF-ATT) rather
+than at PUBS alone -- otherwise a predictor could clear the bar by being a slightly better degree detector.
+
+The gap between RANDOM and the joint control IS the study bias, and it is reported as a headline rather than buried.
 
 THE SPLIT. 20% of the PPI edges among the 1400 knockouts are held out. Every topology and chain feature is rebuilt on
 the REMAINING graph only -- if a held-out edge were still present when computing common neighbours, the task would be
@@ -30,8 +37,8 @@ to predict an edge from itself. The universe is KO-KO pairs (1400 choose 2 = 979
 perturbation profiles exist for BOTH endpoints, which is what makes the perturbation features computable at all.
 
 PREDICTORS, weakest-and-most-suspicious first:
-    PUBS        pubs_a * pubs_b                     -- pure study bias. The bar. If nothing beats it, we are done.
-    PREF-ATT    deg_a * deg_b                       -- preferential attachment, pure degree
+    PUBS        pubs_a + pubs_b (in logs)            -- pure study bias. A trivial baseline that sets the bar.
+    PREF-ATT    deg_a + deg_b (in logs)             -- preferential attachment, pure degree. The other bar.
     COMMON-NB   |N(a) & N(b)| on the training graph
     JACCARD     |N(a) & N(b)| / |N(a) | N(b)|
     ADAMIC-AD   sum over shared neighbours of 1/log(deg)
@@ -41,7 +48,7 @@ PREDICTORS, weakest-and-most-suspicious first:
                 only feature here that does not come from the graph at all
     COMBINED    a GBM over all of the above, trained on TRAIN edges only
 
-THE DELIVERABLE, if and only if something clears the pubs-matched bar: a ranked list of high-scoring pairs that are
+THE DELIVERABLE, if and only if something clears the joint-matched bar: a ranked list of high-scoring pairs that are
 NOT recorded as edges, with a precision estimate taken from the held-out calibration rather than asserted.
 """
 import collections
@@ -205,10 +212,17 @@ def main():
             out.append(p)
         return out
 
+    # JOINT degree-AND-pubs bins. Matching on pubs ALONE is not enough and the diagnostic below shows why: a
+    # pubs-matched negative set still has mean log-degree 7.56 against the positives' 9.07, so anything that can read
+    # degree still scores. Preferential attachment gets 0.80 under pubs-matching and 0.52 under degree-matching,
+    # which is the proof. The joint bin is the honest bar.
+    jbin = np.array([f"{d}|{p}" for d, p in zip(bins(degk, 8), bins(pubk, 8))])
+
     pos = sorted(held)
     NEG = {"RANDOM": sample_rand(pos, 1),
+           "PUBS-MATCHED": sample_neg(pos, pbin, 3),
            "DEGREE-MATCHED": sample_neg(pos, dbin, 2),
-           "PUBS-MATCHED": sample_neg(pos, pbin, 3)}
+           "DEG+PUBS-MATCHED": sample_neg(pos, jbin, 5)}
     for k, v in NEG.items():
         aa = np.array([p[0] for p in v]); bb = np.array([p[1] for p in v])
         pa_ = np.array([p[0] for p in pos]); pb_ = np.array([p[1] for p in pos])
@@ -230,7 +244,7 @@ def main():
                                         min_samples_leaf=40, random_state=0).fit(Xtr, ytr)
 
     print(f"\n  AUC FOR RECOVERING {len(pos)} HELD-OUT PPI EDGES")
-    print(f"    {'predictor':13s} {'vs RANDOM':>10s} {'vs DEG-M':>10s} {'vs PUBS-M':>10s}   bias gap")
+    print(f"    {'predictor':13s} {'RANDOM':>9s} {'PUBS-M':>9s} {'DEG-M':>9s} {'DEG+PUBS-M':>11s}   bias gap")
     res = {}
     for nm, M_ in list(FEATS.items()) + [("COMBINED", None)]:
         row = {}
@@ -244,22 +258,23 @@ def main():
             yy = np.r_[np.ones(len(pos)), np.zeros(len(negs))]
             row[negname] = float(roc_auc_score(yy, sc))
         res[nm] = row
-        print(f"    {nm:13s} {row['RANDOM']:10.4f} {row['DEGREE-MATCHED']:10.4f} {row['PUBS-MATCHED']:10.4f}   "
-              f"{row['RANDOM']-row['PUBS-MATCHED']:+.4f}")
+        print(f"    {nm:13s} {row['RANDOM']:9.4f} {row['PUBS-MATCHED']:9.4f} {row['DEGREE-MATCHED']:9.4f} "
+              f"{row['DEG+PUBS-MATCHED']:11.4f}   {row['RANDOM']-row['DEG+PUBS-MATCHED']:+.4f}")
 
-    pubs_bar = res["PUBS"]["PUBS-MATCHED"]
-    winners = {k: v["PUBS-MATCHED"] for k, v in res.items()
-               if k != "PUBS" and v["PUBS-MATCHED"] > pubs_bar + 0.02}
-    best = max(res, key=lambda k: res[k]["PUBS-MATCHED"])
-    print(f"\n  the bar is PUBS under pubs-matched negatives: {pubs_bar:.4f}")
+    BAR = "DEG+PUBS-MATCHED"
+    pubs_bar = max(res["PUBS"][BAR], res["PREF-ATT"][BAR])
+    winners = {k: v[BAR] for k, v in res.items()
+               if k not in ("PUBS", "PREF-ATT") and v[BAR] > pubs_bar + 0.02}
+    best = max(res, key=lambda k: res[k][BAR])
+    print(f"\n  the bar is the better of PUBS / PREF-ATT under {BAR} negatives: {pubs_bar:.4f}")
     print(f"  clearing it by >0.02: {', '.join(f'{k} {v:.4f}' for k, v in sorted(winners.items(), key=lambda t:-t[1])) or 'NOTHING'}")
 
     # ---- precision at the top, which is what "propose new connections" actually needs ----
-    print(f"\n  PRECISION AMONG TOP-RANKED PAIRS (pubs-matched pool: {len(pos)} true, {len(NEG['PUBS-MATCHED'])} false)")
-    allp = pos + NEG["PUBS-MATCHED"]
-    ytrue = np.r_[np.ones(len(pos)), np.zeros(len(NEG["PUBS-MATCHED"]))]
+    print(f"\n  PRECISION AMONG TOP-RANKED PAIRS ({BAR} pool: {len(pos)} true, {len(NEG[BAR])} false)")
+    allp = pos + NEG[BAR]
+    ytrue = np.r_[np.ones(len(pos)), np.zeros(len(NEG[BAR]))]
     prec = {}
-    for nm in [best, "PROFILE", "COMMON-NB", "CHAIN-2", "PUBS"]:
+    for nm in [best, "PROFILE", "COMMON-NB", "CHAIN-2", "PREF-ATT"]:
         if nm == "COMBINED":
             sc = gbm.predict(np.stack([vec(m2, allp) for m2 in FEATS.values()], 1))
         else:
@@ -268,6 +283,38 @@ def main():
         prec[nm] = {f"p@{k}": float(ytrue[o[:k]].mean()) for k in (100, 500, 2000)}
         print(f"    {nm:13s} " + "  ".join(f"p@{k}={prec[nm][f'p@{k}']:.3f}" for k in (100, 500, 2000))
               + f"   (base rate {ytrue.mean():.3f})")
+
+    # ---- HOW MUCH OF THIS IS JUST FILLING IN OBVIOUS HOLES? ----
+    # Deleting edge A-B leaves A and B still sharing neighbours (PPI clustering is ~0.20), so a common-neighbour
+    # method can recover it without knowing anything new. The edges that matter for COMPLETING a network are the ones
+    # whose endpoints are NOT already densely co-connected. Stratify the held-out positives by their training-graph
+    # common-neighbour count and re-score inside each stratum, with negatives drawn from the same stratum.
+    cnp = vec(CN, pos)
+    cnn = vec(CN, NEG[BAR])
+    print(f"\n  STRATIFIED BY SHARED NEIGHBOURS IN THE TRAINING GRAPH (are we only filling obvious holes?)")
+    print(f"    {'stratum':14s} {'n_pos':>6s} {'COMMON-NB':>10s} {'CHAIN-2':>9s} {'PROFILE':>9s} {'COMBINED':>9s}")
+    strata = [(0, 0, "CN = 0"), (1, 2, "CN 1-2"), (3, 10, "CN 3-10"), (11, 10 ** 9, "CN > 10")]
+    strat_res = {}
+    Xp_all = np.stack([vec(m2, pos) for m2 in FEATS.values()], 1)
+    Xn_all = np.stack([vec(m2, NEG[BAR]) for m2 in FEATS.values()], 1)
+    gp, gn = gbm.predict(Xp_all), gbm.predict(Xn_all)
+    for lo, hi, lab in strata:
+        mp = (cnp >= lo) & (cnp <= hi); mn = (cnn >= lo) & (cnn <= hi)
+        if mp.sum() < 30 or mn.sum() < 30:
+            print(f"    {lab:14s} {int(mp.sum()):6d}   too few to score")
+            continue
+        yy = np.r_[np.ones(int(mp.sum())), np.zeros(int(mn.sum()))]
+        row = {}
+        for nm2 in ["COMMON-NB", "CHAIN-2", "PROFILE"]:
+            sc2 = np.r_[vec(FEATS[nm2], pos)[mp], vec(FEATS[nm2], NEG[BAR])[mn]]
+            row[nm2] = float(roc_auc_score(yy, sc2)) if len(np.unique(sc2)) > 1 else 0.5
+        row["COMBINED"] = float(roc_auc_score(yy, np.r_[gp[mp], gn[mn]]))
+        strat_res[lab] = {"n_pos": int(mp.sum()), **row}
+        print(f"    {lab:14s} {int(mp.sum()):6d} {row['COMMON-NB']:10.4f} {row['CHAIN-2']:9.4f} "
+              f"{row['PROFILE']:9.4f} {row['COMBINED']:9.4f}")
+    frac_easy = float((cnp > 10).mean())
+    print(f"    -> {frac_easy:.1%} of held-out edges have >10 shared neighbours already; "
+          f"{float((cnp == 0).mean()):.1%} have none")
 
     # ---- the deliverable: unrecorded pairs the best predictor ranks highest ----
     scoreM = (gbm.predict(np.stack([m2.ravel() for m2 in FEATS.values()], 1)).reshape(nK, nK)
@@ -280,12 +327,17 @@ def main():
         a, b = int(iu[0][t]), int(iu[1][t])
         if (a, b) in edgeset:
             continue
-        cand.append((kos[a], kos[b], float(sc_all[t])))
+        cand.append((kos[a], kos[b], float(sc_all[t]), int(CN[a, b])))
         if len(cand) >= TOPN:
             break
     print(f"\n  TOP {TOPN} UNRECORDED PAIRS by {best} (these are PROPOSALS, precision estimated above):")
-    for a, b, s in cand[:15]:
-        print(f"    {a:10s} -- {b:10s}  {s:.4f}")
+    print(f"    {'gene A':10s}    {'gene B':10s}  {'score':>7s}  {'sharedNb':>8s}  regime")
+    for a, b, s_, c_ in cand[:15]:
+        print(f"    {a:10s} -- {b:10s}  {s_:7.4f}  {c_:8d}  "
+              f"{'OBVIOUS (dense neighbourhood)' if c_ > 10 else 'sparse -- but see the stratified table'}")
+    n_novel = sum(1 for _, _, _, c_ in cand if c_ <= 10)
+    print(f"    -> {n_novel}/{len(cand)} of the proposals sit in the sparse regime where this method is "
+          f"NOT reliable; the rest are completions of already-dense neighbourhoods")
 
     cleared = bool(winners)
     verdict = (
@@ -294,21 +346,35 @@ def main():
         f"THE HEADLINE IS THE BIAS GAP. Ranking pairs by nothing but how well-studied the two proteins are "
         f"(pubs_a + pubs_b) recovers held-out edges at AUC {res['PUBS']['RANDOM']:.4f} against randomly sampled "
         f"non-edges. That number is worthless and it is the number this kind of work usually reports. Against "
-        f"negatives matched on the same pubs counts it falls to {res['PUBS']['PUBS-MATCHED']:.4f}, a drop of "
-        f"{res['PUBS']['RANDOM']-res['PUBS']['PUBS-MATCHED']:.4f}, and THAT gap is the study bias. Every predictor "
+        f"negatives matched on the same pubs counts it falls to {res['PUBS'][BAR]:.4f}, a drop of "
+        f"{res['PUBS']['RANDOM']-res['PUBS'][BAR]:.4f}, and THAT gap is the study bias. Every predictor "
         f"is therefore scored against pubs-matched negatives. "
         + (f"SOMETHING DOES CLEAR THE BAR: {', '.join(f'{k} at {v:.4f}' for k, v in sorted(winners.items(), key=lambda t: -t[1]))}, "
-           f"against the pubs bar of {pubs_bar:.4f}. The best single predictor is {best} at "
-           f"{res[best]['PUBS-MATCHED']:.4f}. Notably PROFILE -- cosine similarity of the two knockouts' MEASURED "
+           f"against the trivial-baseline bar of {pubs_bar:.4f}. The best predictor is {best} at "
+           f"{res[best][BAR]:.4f}. Notably PROFILE -- cosine similarity of the two knockouts' MEASURED "
            f"z-profiles, the one feature that never touches the graph -- scores "
-           f"{res['PROFILE']['PUBS-MATCHED']:.4f}, so the perturbation data carries genuine edge information that "
+           f"{res['PROFILE'][BAR]:.4f}, so the perturbation data carries genuine edge information that "
            f"is not a restatement of who is famous. " if cleared else
            f"NOTHING CLEARS THE BAR BY MORE THAN 0.02. The best predictor under pubs-matched negatives is {best} at "
-           f"{res[best]['PUBS-MATCHED']:.4f} against the pubs bar's {pubs_bar:.4f}. On this evidence the apparent "
+           f"{res[best][BAR]:.4f} against the trivial bar's {pubs_bar:.4f}. On this evidence the apparent "
            f"ability to complete the network is mostly an ability to recognise well-studied protein pairs. ")
         + f"THE CHAIN SPECIFICALLY -- the K562-expressed 2-step walk, i.e. exactly the machinery from "
-        f"k562_specific_chain.py used as a link predictor -- scores {res['CHAIN-2']['PUBS-MATCHED']:.4f} pubs-matched "
+        f"k562_specific_chain.py used as a link predictor -- scores {res['CHAIN-2'][BAR]:.4f} pubs-matched "
         f"against {res['CHAIN-2']['RANDOM']:.4f} random. "
+        f"BUT THE HEADLINE NUMBER IS MOSTLY FILLING IN OBVIOUS HOLES, and stratifying says so. Deleting an edge "
+        f"leaves its endpoints still sharing neighbours -- PPI clustering here is ~0.20 -- and "
+        f"{frac_easy:.1%} of the held-out edges still have MORE THAN TEN shared neighbours in the training graph. "
+        f"Conditioning on that, the picture changes: for pairs with >10 shared neighbours CHAIN-2 scores "
+        f"{strat_res.get('CN > 10', {}).get('CHAIN-2', float('nan')):.4f} and COMBINED "
+        f"{strat_res.get('CN > 10', {}).get('COMBINED', float('nan')):.4f}, but for pairs with NO shared neighbours "
+        f"-- the genuinely novel connections, the ones that would actually COMPLETE the network rather than tidy it "
+        f"-- COMMON-NB and CHAIN-2 are at exactly {strat_res.get('CN = 0', {}).get('CHAIN-2', float('nan')):.4f}, "
+        f"chance, because both are identically zero there, and COMBINED is "
+        f"{strat_res.get('CN = 0', {}).get('COMBINED', float('nan')):.4f}, WORSE than chance -- the model leans so "
+        f"hard on shared neighbours that with none available it actively misranks. Only PROFILE, the perturbation "
+        f"feature, is above chance at {strat_res.get('CN = 0', {}).get('PROFILE', float('nan')):.4f}, and barely. "
+        f"SO THE ANSWER IS SPLIT: yes, the network can be completed where it is already dense, at a real and "
+        f"controlled AUC; no, not where it is sparse, which is exactly where the missing biology lives. "
         f"WHAT THIS CANNOT SAY. Recovering HIDDEN KNOWN edges is a proxy for proposing NEW ones, and it is optimistic: "
         f"held-out edges were discoverable enough to be in a database, whereas genuinely missing edges may be missing "
         f"for reasons that also make them hard to predict. The proposal list is emitted with a precision estimated "
@@ -322,7 +388,8 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump({"n_heldout": len(pos), "n_train_edges": len(trainE), "ko_pairs": nK * (nK - 1) // 2,
                "auc": res, "pubs_bar": pubs_bar, "cleared": cleared, "best": best,
-               "precision": prec, "proposals": [{"a": a, "b": b, "score": s} for a, b, s in cand],
+               "precision": prec, "stratified_by_shared_neighbours": strat_res, "proposals": [{"a": a, "b": b, "score": s_, "shared_nb": c_} for a, b, s_, c_ in cand],
+               "frac_heldout_dense": frac_easy,
                "verdict": verdict}, open(OUT / "link_completion.json", "w"), indent=2)
     print(f"\n  -> {OUT/'link_completion.json'}")
 
