@@ -97,7 +97,10 @@ def main():
                         C_pairs.add((x, y))
     P_e = np.array(sorted(P_pairs), dtype=np.int32)
     C_e = np.array(sorted(C_pairs), dtype=np.int32)
-    print(f"real protein chain: {len(P_e)} PPI pairs, {len(C_e)} complex pairs, {N} nodes", flush=True)
+    # NOTE the complex count differs from the 38,504 reported by protein_chain_combine: that figure counted ORDERED
+    # pairs and re-counted a pair once per complex it appears in. This is the deduplicated undirected count.
+    print(f"real protein chain: {len(P_e)} PPI pairs, {len(C_e)} unique complex pairs "
+          f"(protein_chain_combine's 38,504 was ordered and duplicated across complexes), {N} nodes", flush=True)
 
     konode = np.array([nidx.get(k, -1) for k in kos]); have = konode >= 0
     scor = np.array([i for i in range(nK) if spec_n[i] >= MIN_SPEC and have[i]])
@@ -241,6 +244,10 @@ def main():
     cplx_only, _ = score_graph(chain_scores(build_PT(np.zeros((0, 2), np.int32), C_e, 1.0), steps, damp)) \
         if len(C_e) else (float("nan"), None)
     print(f"\n  LAYER ABLATION: PPI only {ppi_only:.4f} | complex only {cplx_only:.4f} | both {real_score:.4f}")
+    print(f"    -> NULL C ({results['C_complex_only_rewired']['mean']:.4f}) must be compared to PPI-ONLY "
+          f"({ppi_only:.4f}), not to the full graph: rewiring a redundant layer still scores low, because random")
+    print(f"       edges inject noise. Complex layer redundant given PPI? "
+          f"{'YES' if abs(ppi_only - real_score) < 0.01 else 'no'}")
 
     # ---------------- split by whether the knockout HAS complex edges ----------------
     strata = {}
@@ -286,7 +293,11 @@ def main():
     B = results["B_degree_preserving"]; Aa = results["A_binomial"]; Cc = results["C_complex_only_rewired"]
     beats_bin = real_score > Aa["mean"] + 2 * Aa["sd"]
     beats_deg = real_score > B["mean"] + 2 * B["sd"]
-    cplx_matters = real_score > Cc["mean"] + 2 * Cc["sd"]
+    # THE RIGHT CONTRAST FOR NULL C IS PPI-ONLY, NOT THE FULL GRAPH. Rewiring a layer that contributes nothing will
+    # still score below the full graph, because random edges inject noise -- so comparing NULL C to the full graph
+    # would credit the complex layer for damage done by its own corruption.
+    cplx_matters = ppi_only < Cc["mean"] - 2 * Cc["sd"]
+    cplx_redundant = abs(ppi_only - real_score) < 0.01
 
     verdict = (
         f"IS THE PROTEIN CHAIN WIRING, OR JUST DEGREE? The prompt for this was a fair objection to a number I reported: "
@@ -313,11 +324,16 @@ def main():
            f"knockouts by HUBNESS, not by biology, and the earlier gain should be read that way. ")
         + (f"It also clears the binomial null comfortably ({Aa['z']:+.1f} sd), as any working method must. "
            if beats_bin else f"It does not even clear the BINOMIAL null ({Aa['z']:+.1f} sd), which is disqualifying. ")
-        + (f"Rewiring ONLY the complex layer costs {real_score-Cc['mean']:+.4f} ({Cc['z']:+.1f} sd), so that layer "
-           f"carries genuine information beyond PPI. " if cplx_matters else
-           f"Rewiring ONLY the complex layer costs {real_score-Cc['mean']:+.4f} ({Cc['z']:+.1f} sd) -- within noise, so "
-           f"the complex layer's specific wiring is NOT what helps, even though weighting it up did. ")
-        + f"LAYER ABLATION: PPI alone {ppi_only:.4f}, complex alone {cplx_only:.4f}, both {real_score:.4f}. "
+        + f"NOW THE CORRECTION, AND IT OVERTURNS WHAT THIS PROJECT CREDITED FOR THE GAIN. The layer ablation reads: "
+        f"PPI alone {ppi_only:.4f}, complex alone {cplx_only:.4f}, BOTH {real_score:.4f}. PPI ALONE IS AS GOOD AS BOTH "
+        f"({ppi_only:.4f} versus {real_score:.4f}) -- the complex co-membership layer, which the previous module called "
+        f"'the new ingredient' and whose weight the pre-registered config set to 2x PPI, ADDS NOTHING once PPI is "
+        f"present. NULL C must be read against PPI-ONLY, not against the full graph: rewiring the complex layer scores "
+        f"{Cc['mean']:.4f}, which is BELOW PPI-only's {ppi_only:.4f}, so what NULL C shows is that INJECTING WRONG "
+        f"complex edges actively harms, NOT that real complex edges help. Those are different claims and conflating "
+        f"them would have turned a redundancy into a discovery. The honest attribution is that the working ingredient "
+        f"is the TWO-STEP WALK ON PPI; the complex layer's apparent benefit in the earlier train-set sweep "
+        f"(0.4909 without, 0.4996 with) did not replicate here. "
         + "".join(f"Knockouts {lab}: n={d['n']}, recall {d['recall']:.4f}. " for lab, d in strata.items())
         + f"BY PPI DEGREE QUARTILE: " + ", ".join(f"{lab} {d['recall']:.3f} (n={d['n']})" for lab, d in bydeg.items())
         + f". WHAT BOUNDS THIS: stub matching preserves degree exactly only before cleanup; dropping self-loops and "
@@ -339,7 +355,9 @@ def main():
                                                     "both": real_score},
                "by_complex_presence": strata, "by_ppi_degree_quartile": bydeg,
                "beats_binomial": bool(beats_bin), "beats_degree_preserving": bool(beats_deg),
-               "complex_wiring_matters": bool(cplx_matters),
+               "complex_wiring_matters_over_ppi_only": bool(cplx_matters),
+               "complex_layer_redundant_given_ppi": bool(cplx_redundant),
+               "null_C_vs_ppi_only": float(Cc["mean"] - ppi_only),
                "verdict": verdict, "note": verdict}, open(OUT / "graph_null.json", "w"), indent=1)
     print("\n  -> outputs/orphan/graph_null.json")
 

@@ -9391,3 +9391,73 @@ saturation predicts.
 regime a wet-lab follow-up could act on. Restricting to high-mover knockouts selects the strongest, most pleiotropic
 perturbations, which are *not* representative: the median knockout has **1** specific mover and is invisible in these
 strata.
+---
+
+## Binomial and degree-preserving nulls: the wiring is real, but the complex layer was never the ingredient (colab/graph_null.py)
+
+Prompted by a fair objection: **"99% of knockouts are a node in the protein chain" says nothing about whether those
+nodes have edges.** Measuring properly:
+
+| layer | median degree among the 378 scorable KOs | zero-degree |
+|---|---|---|
+| PPI | **74** | 3 (1%) |
+| **complex co-membership** | **6** | **97 (26%)** |
+
+The complex layer — credited as "the new ingredient" and weighted **2× above PPI** by the pre-registered config — is
+**absent for a quarter of knockouts**. The 99% figure concealed that.
+
+### Three Monte Carlo nulls, 20 resampled graphs each, identical pipeline
+
+| | recall@50 | z |
+|---|---|---|
+| **REAL protein chain** | **0.4725** | — |
+| NULL A binomial (edge count matched, degree + wiring destroyed) | 0.1274 ± 0.0081 | +42.4 |
+| **NULL B degree-preserving** (every node keeps its exact degree) | **0.1516 ± 0.0070** | **+46.1** |
+| NULL C complex layer rewired, real PPI kept | 0.3616 ± 0.0089 | +12.5 |
+
+**The wiring is real.** Holding hubness *exactly* fixed and randomising only who-binds-whom collapses the chain from
+0.4725 to 0.1516. This is the control the repo's own history demanded — a PPI enrichment once read 35× against a
+uniform null and collapsed against a degree-matched one — and it passes by 46 sd. Note also that NULL B (0.1516) barely
+exceeds NULL A (0.1274): **degree structure alone buys almost nothing**; nearly all the signal is in the specific partners.
+
+### The correction: the complex layer adds nothing
+
+| ablation | recall@50 |
+|---|---|
+| **PPI only** | **0.4729** |
+| complex only | 0.4005 |
+| both | 0.4725 |
+
+**PPI alone equals both.** The complex layer is redundant given PPI, and last turn's attribution was wrong.
+
+**NULL C must be read against PPI-only, not the full graph.** Rewiring the complex layer scores 0.3616, *below*
+PPI-only's 0.4729 — so what NULL C shows is that **injecting wrong complex edges actively harms**, not that real complex
+edges help. Conflating those two would have turned a redundancy into a discovery. The complex layer's apparent benefit
+in the earlier train-set sweep (0.4909 → 0.4996) **did not replicate**.
+
+**The working ingredient is the two-step walk on PPI.**
+
+### Where the performance actually sits
+
+| stratum | n | recall@50 |
+|---|---|---|
+| has complex edges | 281 | 0.5212 |
+| ZERO complex edges | 97 | 0.3304 |
+| PPI degree Q1 | 103 | 0.382 |
+| Q2 | 88 | 0.435 |
+| Q3 | 95 | 0.543 |
+| Q4 | 92 | 0.549 |
+
+Performance rises with degree — but NULL B shows that is *not* hubness doing the work, since degree-matched random
+graphs score 0.15. The "has complex edges" split is confounded with degree (genes in curated complexes are better
+studied), so it should not be read as a complex-layer effect.
+
+### Bounds
+
+Stub matching preserves degree exactly only *before* cleanup; dropping self-loops and duplicate pairs retained **99.1%**
+of edges, which slightly lowers null degrees and biases toward the real graph — so the NULL B win is an **upper bound**
+on the wiring effect. Degree-preserving rewiring cannot destroy coarse component structure or the fact that a knockout
+gene is its own node; those are shared between real and null. With R=20 the smallest attainable empirical p is 0.048.
+
+**Bookkeeping fix:** `protein_chain_combine` reported 38,504 complex edges; that counted *ordered* pairs and re-counted
+pairs shared across complexes. The deduplicated undirected count is **13,576**.
