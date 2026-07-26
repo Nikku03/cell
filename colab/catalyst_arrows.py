@@ -478,6 +478,13 @@ def main():
         f"{{substrate, ATP}}, output = {{phospho-substrate, ADP}} and the kinase as a CATALYST, so input->output "
         f"yields substrate -> phospho-substrate (the same protein) and never recovers kinase -> substrate, which is "
         f"the arrow SIGNOR actually records. "
+        f"TWO CLAIMS IN AN EARLIER DRAFT OF THIS FILE ARE CORRECTED BY ITS OWN NUMBERS. First, preferring "
+        f"activeUnit was said to be what makes the rule work; measured, AU scores BELOW ALL "
+        f"({U['acc']:.4f} vs {A['acc']:.4f}), so naming the active subunit narrows coverage without improving "
+        f"accuracy except when combined with a single-protein output. Second, 0.783 was described as a "
+        f"'curated-vs-curated ceiling'; it is not a ceiling and that description is withdrawn -- it was the "
+        f"agreement rate between two specific sources over shared edges, where disagreement is dominated by TF "
+        f"pairs whose two arrows are both true. "
         f"TWO DATA FACTS HAD TO BE PROBED, AND EITHER WOULD HAVE WRECKED THIS SILENTLY. First, the catalyst entity "
         f"is usually the whole ENZYME:SUBSTRATE complex, so expanding it fires both directions at once and the edge "
         f"cancels to 'ambiguous'; Reactome's `activeUnit` names the subunit that actually acts, and preferring it is "
@@ -500,9 +507,10 @@ def main():
            f"It does not clearly clear the global precedence rule's 0.6547 at this sample size. ")
         + f"It orients {uniq:,} edges the global rule does not, so the two are complementary rather than redundant. "
         f"WHAT THIS CANNOT SAY. Reactome describes canonical human biology, not K562. Reactome and SIGNOR curators "
-        f"read overlapping literature, so agreement between them is not fully independent validation. And the "
-        f"ceiling remains 78%: 'the direction of a PPI edge' is not single-valued, because protein-level and "
-        f"transcriptional direction on the same pair legitimately oppose.")
+        f"read overlapping literature, so agreement between them is not fully independent validation. And 'the "
+        f"direction of a PPI edge' is not single-valued, because protein-level and "
+        f"transcriptional direction on the same pair legitimately oppose. Coverage, not accuracy, remains the "
+        f"binding constraint.")
     print(f"\nVERDICT: {verdict}")
 
     json.dump({"strata": {n: {k: v for k, v in r.items() if k != "orient"} | {"n_oriented": len(r["orient"])}
