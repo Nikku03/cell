@@ -54,6 +54,7 @@ could be selecting edges where degree already happens to work.
 import collections
 import json
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -67,9 +68,20 @@ MAXDEPTH = 8            # complex nesting is a few levels deep; this is a runawa
 CACHE = Path(SP) / "catalyst_arrows_cache.json"     # NOT catalysts.json -- another process writes that name
 P1 = Path(SP) / "car_pass1_reactions.json"          # per-pass caches so a crash late in the fetch is cheap
 P2 = Path(SP) / "car_pass2_catalysts.json"
+PAUSE = 0.4             # deliberate inter-request delay. Reactome 429s under sustained load, and a fetch that
+                        # trips the limiter spends longer in backoff than the delay ever costs.
 
 
-def post(ids, tries=4):
+def post(ids, tries=8):
+    """POST a batch, treating HTTP 429 as "slow down" rather than as a failure to shrug off.
+
+    THE BUG THIS REPLACES WAS THE DANGEROUS KIND. The old version retried four times on 1-8s backoff and then
+    returned None, and the caller did `if not d: continue` -- so a rate-limited batch was skipped SILENTLY. Reactome
+    does start returning 429 under sustained load (confirmed: a direct probe during a long fetch returned 429), so
+    the fetch would "finish" with an unknown fraction of reactions simply absent, and every downstream count would be
+    confidently wrong with nothing to indicate it. A crash would have been better. Now 429 gets a long,
+    Retry-After-aware backoff, and any batch that still fails is counted and surfaced by the caller.
+    """
     for t in range(tries):
         try:
             req = urllib.request.Request("https://reactome.org/ContentService/data/query/ids",
@@ -77,6 +89,13 @@ def post(ids, tries=4):
                                          headers=dict(UA, **{"Content-Type": "text/plain"}))
             with urllib.request.urlopen(req, timeout=120) as r:
                 return json.loads(r.read().decode())
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                time.sleep(float(e.headers.get("Retry-After") or 0) or min(120, 15 * (t + 1)))
+                continue
+            if t == tries - 1:
+                return None
+            time.sleep(2 ** t)
         except Exception:
             if t == tries - 1:
                 return None
@@ -96,18 +115,29 @@ def ref(x):
 
 
 def bulk(ids, handle, label):
-    """POST ids in batches of 20, calling handle(obj) on each returned object."""
+    """POST ids in batches of 20, calling handle(obj) on each returned object.
+
+    Returns the number of batches that failed outright, and the caller refuses to cache a pass that lost any. A
+    fetch that quietly drops batches is worse than one that crashes, because the resulting numbers look finished.
+    """
     ids = list(ids)
     t0 = time.time()
+    failed = 0
     for i in range(0, len(ids), BATCH):
         d = post(ids[i:i + BATCH])
         if not d:
+            failed += 1
             continue
         for o in d:
             handle(o)
+        if PAUSE:
+            time.sleep(PAUSE)
         if (i // BATCH) % 200 == 0:
             print(f"    {label} {i//BATCH}/{len(ids)//BATCH}  "
-                  f"({(i//BATCH+1)/max(time.time()-t0,1):.2f} req/s)", flush=True)
+                  f"({(i//BATCH+1)/max(time.time()-t0,1):.2f} req/s, {failed} failed)", flush=True)
+    if failed:
+        print(f"    !! {label}: {failed} batches FAILED after retries -- DATA IS INCOMPLETE", flush=True)
+    return failed
 
 
 def fetch():
@@ -138,7 +168,9 @@ def fetch():
         rx = json.loads(P1.read_text())
         print(f"  reusing {P1.name}: {len(rx):,} reactions", flush=True)
     else:
-        bulk(rxn, h1, "rxn")
+        if bulk(rxn, h1, "rxn"):
+            raise SystemExit("pass 1 lost batches to rate limiting -- refusing to cache a partial fetch. Re-run; "
+                             "completed passes are reused, so this costs nothing already paid for.")
         P1.write_text(json.dumps(rx))
     ncat = sum(1 for v in rx.values() if v["ca"])
     print(f"  {len(rx):,} reactions retrieved, {ncat:,} with a catalyst", flush=True)
@@ -157,7 +189,8 @@ def fetch():
         ca = json.loads(P2.read_text())
         print(f"  reusing {P2.name}: {len(ca):,} catalyst activities", flush=True)
     else:
-        bulk(allca, h2, "ca")
+        if bulk(allca, h2, "ca"):
+            raise SystemExit("pass 2 lost batches to rate limiting -- refusing to cache a partial fetch.")
         P2.write_text(json.dumps(ca))
     nau = sum(1 for v in ca.values() if v["au"])
     print(f"  {len(ca):,} resolved, {nau:,} have an explicit activeUnit", flush=True)
@@ -204,7 +237,8 @@ def fetch():
                 for k in keys:
                     comp[k] = kids
                 nxt.update(kids)
-        bulk(todo, h3, f"pe{depth}")
+        if bulk(todo, h3, f"pe{depth}"):
+            raise SystemExit(f"pass 3.{depth} lost batches to rate limiting -- refusing to cache a partial fetch.")
         need = nxt
         depth += 1
 
