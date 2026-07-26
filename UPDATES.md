@@ -10358,3 +10358,64 @@ deployment you rank *every* candidate pair, where the base rate is **0.357%**. R
 **Edges added to the network: 0.** 40 proposals emitted, none written, none experimentally confirmed. The network
 has **191,447 edges over 16,492 proteins — 0.14% density**, with **2,262 proteins (13.7%) having zero recorded
 interactions** and 32% having fewer than five. It is nowhere near complete, and nothing here changed that.
+
+---
+
+## `colab/evidence_completion.py` — spatial data DOES rescue the sparse regime, and it's the least circular tier
+
+The open failure from `link_completion.py`: topology recovers edges well where the graph is dense and **at chance**
+where it is sparse (CN=0: chain 0.500, combined 0.413). Fix attempt: add every non-topology layer we have —
+subcellular localisation, GO cellular-component, pathway, process, co-expression, DepMap co-dependency, Perturb-seq
+profile similarity, synthetic lethality, abundance, genomic position, shared upstream regulators.
+
+**Complexes are EXCLUDED outright**, not merely flagged: 92.8% of within-complex pairs are already edges, so
+predicting an edge from co-complex membership is predicting the edge from the edge.
+
+### AUC by arm, stratified by how connected the pair already is (bootstrap SE)
+
+| arm | pooled | **CN = 0** | CN 1–2 | CN 3–10 | CN > 10 |
+|---|---|---|---|---|---|
+| TOPO | 0.9579 | **0.500 ± 0.000** | 0.794 ± 0.023 | 0.908 ± 0.007 | 0.927 ± 0.004 |
+| **+SPATIAL** | 0.9609 | **0.614 ± 0.029** | 0.797 ± 0.021 | 0.910 ± 0.007 | 0.929 ± 0.004 |
+| +PATHWAY | 0.9596 | 0.532 ± 0.024 | 0.797 ± 0.022 | 0.911 ± 0.007 | 0.930 ± 0.003 |
+| +MEASURED | 0.9599 | 0.530 ± 0.036 | 0.806 ± 0.022 | 0.909 ± 0.007 | 0.929 ± 0.004 |
+| +ALL-CLEAN | 0.9621 | 0.609 ± 0.033 | 0.814 ± 0.020 | 0.911 ± 0.007 | 0.933 ± 0.004 |
+| **CLEAN-ONLY** *(no graph input at all)* | 0.8741 | **0.631 ± 0.033** | 0.641 ± 0.029 | 0.750 ± 0.014 | 0.827 ± 0.006 |
+
+**The pooled column proves nothing** — adding features always raises it, and 79.7% of held-out edges sit in the dense
+stratum where topology already worked. **The CN=0 column is the test, and it moves: 0.500 → 0.631**, four standard
+errors above chance on 82 positives. This is the first thing in the session that works where the graph is blind.
+
+**CLEAN-ONLY beats every arm that includes topology at CN=0** (0.631 vs 0.609). Same pathology as before: the
+topology features are identically zero there, and a model given them still tries to use them.
+
+### The circularity check — and it points the right way
+
+Fraction of each source's top-decile pairs that are *already* recorded edges (base rate **1.758%**):
+
+| near-clean | | moderate | | suspect | |
+|---|---|---|---|---|---|
+| ABUND-DIFF | 0.97% | SAME-COMP | 3.76% | CODEP-IND | 26.5% |
+| REG-SHARED | 1.50% | SAME-PROC | 5.61% | CODEP | 44.1% |
+| TSS-DIST | 1.57% | GOC-SHARED | 7.30% | GOP-SHARED | 48.9% |
+| SAME-CHR | 1.82% | GOC-JAC | 8.43% | SAME-PATH | 52.9% |
+| REG-JAC | 1.90% | PROFILE | 11.1% | GOP-JAC | **64.9%** |
+| | | COEXPR | 21.7% | | |
+
+**The tier that rescues CN=0 is the least circular one.** SPATIAL (+0.114 at CN=0) is built from SAME-COMP 3.76%,
+SAME-CHR 1.82%, TSS-DIST 1.57%, GOC 7–8% — all at or near the base rate. Meanwhile PATHWAY, by far the most circular
+(SAME-PATH 52.9%, GOP-JAC 64.9%), buys almost nothing at CN=0 (+0.032). **That is the opposite of what leakage would
+produce**, and it is the strongest argument that the spatial gain is real: if the effect were circularity, the
+circular features would be the ones carrying it.
+
+### But 0.63 is not a solved problem
+
+At a deployment base rate of ~0.36%, AUC 0.63 gives poor precision at the top of a ranking. It is a real signal, not
+a usable placement tool. Localisation tells you two proteins *could* meet; it does not tell you they do.
+
+### Limits
+
+The universe is knockout–knockout pairs, so this says nothing about the 15,092 proteins without perturbation data —
+and those are disproportionately the poorly-connected ones this was meant to help. GO evidence codes are not retained
+in this dataset, so interaction-derived (IPI) annotations cannot be filtered out and the SUSPECT tier cannot be fully
+cleaned. CN=0 holds 82 positives. One cell line, one split.

@@ -308,15 +308,29 @@ def main():
         row = {"pooled": float(roc_auc_score(np.r_[np.ones(len(pos)), np.zeros(len(neg))], np.r_[sp_, sn_]))}
         for lo, hi, lab in strata:
             mp = (cnp >= lo) & (cnp <= hi); mn = (cnn >= lo) & (cnn <= hi)
-            row[lab] = (float(roc_auc_score(np.r_[np.ones(int(mp.sum())), np.zeros(int(mn.sum()))],
-                                            np.r_[sp_[mp], sn_[mn]]))
-                        if mp.sum() >= 30 and mn.sum() >= 30 else float("nan"))
+            if mp.sum() >= 30 and mn.sum() >= 30:
+                yv = np.r_[np.ones(int(mp.sum())), np.zeros(int(mn.sum()))]
+                sv = np.r_[sp_[mp], sn_[mn]]
+                row[lab] = float(roc_auc_score(yv, sv))
+                # CN=0 holds only ~82 positives, so a point estimate there is not enough to claim "above chance".
+                # Stratified bootstrap over positives and negatives separately, preserving the class ratio.
+                br = np.random.RandomState(11)
+                ip, inn = np.where(yv == 1)[0], np.where(yv == 0)[0]
+                bs = [roc_auc_score(yv[idx], sv[idx]) for idx in
+                      (np.r_[br.choice(ip, len(ip)), br.choice(inn, len(inn))] for _ in range(400))]
+                row[lab + "_se"] = float(np.std(bs))
+                row[lab + "_n"] = int(mp.sum())
+            else:
+                row[lab] = float("nan")
         res[arm] = row
-        print(f"    {arm:13s} {row['pooled']:8.4f} " + " ".join(f"{row[l]:9.4f}" for _, _, l in strata))
+        print(f"    {arm:13s} {row['pooled']:8.4f} " +
+              " ".join(f"{row[l]:.3f}+-{row.get(l+'_se', float('nan')):.3f}" for _, _, l in strata))
 
     z0 = "CN = 0"
     base, best_sparse = res["TOPO"][z0], max(res, key=lambda a: (res[a][z0] if res[a][z0] == res[a][z0] else -1))
-    rescued = res[best_sparse][z0] > 0.60 and res[best_sparse][z0] > base + 0.05
+    se0 = res[best_sparse].get(z0 + "_se", float("nan"))
+    n0 = res[best_sparse].get(z0 + "_n", 0)
+    rescued = res[best_sparse][z0] - 2 * se0 > 0.5
     clean0 = res["CLEAN-ONLY"][z0]
 
     verdict = (
@@ -332,14 +346,15 @@ def main():
         f"{res['+ALL-CLEAN']['pooled']:.4f}. Adding features to a model always does that, and 79.7% of the held-out "
         f"edges live in the dense stratum where topology already worked. THE TEST IS THE CN=0 COLUMN. "
         + (f"AND IT IS RESCUED: {best_sparse} reaches {res[best_sparse][z0]:.4f} there against topology's "
-           f"{base:.4f}. Critically CLEAN-ONLY -- the non-topology features with NO graph input at all -- scores "
+           f"{base:.4f}, and it clears chance by more than two standard errors "
+           f"({res[best_sparse][z0]:.4f} +/- {se0:.4f} on {n0} positives). Critically CLEAN-ONLY -- the non-topology features with NO graph input at all -- scores "
            f"{clean0:.4f}, and that is the arm that matters, because every topology feature is identically zero in "
            f"this stratum so only a graph-free predictor can carry information here. "
            if rescued else
            f"AND IT IS NOT RESCUED. The best arm in that stratum is {best_sparse} at {res[best_sparse][z0]:.4f}, "
            f"against topology's {base:.4f}. CLEAN-ONLY -- every non-topology feature, with no graph input at all, "
            f"which is the only kind of predictor that CAN carry information where topology is identically zero -- "
-           f"scores {clean0:.4f}. Adding localisation, pathways, co-expression, co-dependency, genetic interactions "
+           f"scores {clean0:.4f} (+/- {res['CLEAN-ONLY'].get(z0+'_se', float('nan')):.4f}). Adding localisation, pathways, co-expression, co-dependency, genetic interactions "
            f"and regulatory context does not let us place a protein that has no recorded neighbours. ")
         + f"THE CIRCULARITY CHECK is reported per source: the fraction of each source's top-decile pairs that are "
         f"ALREADY recorded edges, against a base rate of {len(ko_edges)/(nK*(nK-1)/2):.3%}. Anything far above that "
