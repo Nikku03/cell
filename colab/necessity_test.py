@@ -31,6 +31,7 @@ evidence against the necessity model. Precision on the genes the model DOES cove
 it is reported separately from anything computed over all genes.
 """
 import json
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
@@ -99,10 +100,19 @@ def main():
         name = list(ids)[0] if isinstance(ids, (frozenset, set)) else str(ids)
         ratio[name] = float(g) / wt if wt else 0.0
 
-    # Human-GEM genes are Ensembl ids; DepMap is symbols. fbc:label carries the symbol.
+    # ENSEMBL -> SYMBOL MUST BE PARSED FROM THE SBML, NOT READ OFF COBRA. Human-GEM stores the gene symbol in
+    # `fbc:label`, and cobra does not surface it: every model.genes[i].name comes back as the empty string, so
+    # `g.name or g.id` silently yields the Ensembl id for all 2,848 genes and NOTHING matches DepMap. The guard
+    # below caught it as "no gene overlap" rather than letting it through as a zero result.
     ens2sym = {}
-    for g in model.genes:
-        ens2sym[g.id] = (g.name or g.id)
+    for _ev, _el in ET.iterparse(str(GEM), events=("end",)):
+        if _el.tag.split("}")[-1] == "geneProduct":
+            _f = "{http://www.sbml.org/sbml/level3/version1/fbc/version2}"
+            _i, _l = _el.get(_f + "id"), _el.get(_f + "label")
+            if _i and _l:
+                ens2sym[_i] = _l
+            _el.clear()
+    print(f"  ensembl->symbol from fbc:label: {len(ens2sym):,}", flush=True)
     depmap = load_depmap()
     print(f"  DepMap: {len(depmap):,} genes with a mean effect", flush=True)
 
