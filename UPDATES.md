@@ -10042,3 +10042,83 @@ It also bounds an earlier claim of mine. I wrote that a global `cw` "cannot reac
 the per-protein shift has SD 0.137. That remains true **as algebra** — a scalar cannot reproduce a per-protein,
 size-dependent shift exactly. What is now measured is that **the part it cannot reach is worth nothing**: the global
 component captures the entire effect, and the per-protein residual buys no more than noise.
+
+---
+
+## `colab/ulam_branching.py` — Ulam's method applied to perturbation spread, and it does not work here
+
+**The idea.** Ulam's Monte Carlo did *not* predict neutron output without measurement — it consumed measured
+cross-sections and produced an emergent macroscopic quantity (the multiplication factor *k*) that had no closed
+form. His neutron problem is a branching process. The mapping: neutron → perturbed gene; fission → a perturbed gene
+perturbing its PPI partners; cross-section → P(partner moves | gene knocked out), fittable on TRAIN; *k* → R₀;
+neutrons out → number of specific movers, measured and holdable-out.
+
+### Two claims this module made and now withdraws
+
+**1. The "evidence for branching" was permutation-invariant.** I offered the response-size distribution as support:
+mean 10.8, median 1, max 246, 689/1400 exact zeros, top 10% holding 75.7% of movers, Fano 91.3, log-log slope −1.41
+against critical Galton-Watson's −1.5. Permute each knockout's z-scores **within its own non-tide columns** and the
+count above threshold cannot change — so every one of those statistics is preserved. Measured: **all seven are
+bit-identical.** They are functions of the per-knockout marginal and carry **zero bits about topology**. A heavy tail
+is consistent with branching and equally consistent with anything else producing heavy-tailed responses.
+
+**2. "#P-completeness justifies Monte Carlo" is false at the depths used.** At depth ≤2 the paths s→t are the direct
+edge plus 2-paths through each common neighbour, and any two of those are **edge-disjoint**, hence independent:
+
+```
+P(reach within 2 hops) = 1 − (1 − p_st) · Π_x (1 − p_sx · p_xt)      exactly
+```
+
+At depth 3 the correction is tiny *and monotone*, so it cannot reorder anything. There was never a quantity here
+without a closed form. That was my argument for trying MC and it was wrong.
+
+**What survives** is the cross-section, because it contrasts partners against non-partners and the permutation
+destroys it: P(PPI partner moves | KO) = 0.0094 vs 0.0015 background, **6.26×**. But that is against a *flat*
+background; degree- and frequency-matched it is much smaller, and the flat figure should not be quoted alone.
+
+**R₀ is a range, not a number.** Naive `p·⟨k⟩` = 0.25; the correct excess-degree form `p·(⟨k²⟩/⟨k⟩−1)` = **0.72**
+(equivalently p/p_c = 0.72). But both assume a locally tree-like graph, and PPI clustering is ~0.20 against ~0.002
+for a degree-matched random graph, making the configuration-model figure an upper bound of unknown tightness.
+Estimators span ~0.56–1.25, which **straddles 1**. The sub- versus supercritical question is not answerable from this
+data, and my earlier flat assertion of "subcritical" overstated it.
+
+### What was measured
+
+**Per-gene MC is statistically infeasible** (pre-registered, run before any performance number). Two independent runs
+at 3,000 replicates agree with each other at Spearman **0.276** — the estimator does not reproduce *itself* — while
+agreeing with the cheap linear walk at 0.419. So the MC-vs-linear disagreement is sampling noise, not nonlinearity.
+At reachability probabilities ~1e-4, most genes are hit zero or one times.
+
+**Blast radius (the neutron-count analogue), 5-fold CV over all 1400 knockouts:**
+
+| predictor | Spearman | AUC(zero) |
+|---|---|---|
+| train mean | −0.0401 | 0.477 |
+| PPI degree | 0.3135 | 0.660 |
+| essentiality | 0.4286 | 0.719 |
+| **node-GBM** | **0.4325** | 0.716 |
+| mean-field cascade alone | 0.3171 | 0.670 |
+| node-GBM + cascade | 0.4120 | 0.705 |
+| node-GBM + cascade + MC moments | 0.3957 | 0.697 |
+
+**The cascade makes prediction worse** (−0.0204), and the MC moments worse again (−0.0163). A branching simulation
+that cannot beat degree-plus-essentiality in a GBM has demonstrated nothing beyond restating degree.
+
+### Honest accounting
+
+This is the **third** Monte Carlo in this repo to fail to earn its cost, and the three failed *differently*: the
+first two were rank-decorative; this one is unaffordable at per-gene resolution and unhelpful at aggregate
+resolution. The verdict logic was also fixed — an earlier version printed "MC moments carry rank information the
+mean does not" directly above a gain of **−0.0163**, keying off a correlation technicality rather than the gain.
+That is the win-only-test bug, now hit three times; it now keys off the gain.
+
+### Bounds and caveats
+
+Only 674 of 15,183 specific movers (**4.4%**) are direct PPI partners of the knocked-out gene, so a cascade on this
+graph could never explain *which* genes move — only *how many*. The cross-section is measured at hop 1 from a
+destroyed gene and applied at hops 2–3 where the source is merely perturbed (the same assumption Ulam made reusing
+one cross-section per collision, but far less safe here, and it biases R₀ upward). CRISPRi knockdown is partial
+(median 42.8% transcript remaining). **Unverified but flagged:** an adversarial review measured a GBM on nine assay
+covariates (cell counts, UMI depth, mitopercent, …) predicting response size at Spearman ~0.67 — far above anything
+here — which would make blast radius largely a technical property of the experiment rather than a network quantity.
+I did not verify this locally and it should be checked before any blast-radius number is relied on.
