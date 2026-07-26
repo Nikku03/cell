@@ -170,8 +170,13 @@ def main():
         "PPI+RXN+REG-SIGNED": ["PPI", "RXN", "REG-SIGNED"],
         "ALL": ["PPI", "RXN", "REG-ALL", "REG-SIGNED"],
         "PPI+RXN+REG-SIGNED-SHUF": ["PPI", "RXN", "SHUF"],
+        # THE CONTROL THE FIRST RUN WAS MISSING. It shuffled REG-SIGNED but not RXN, so the only BETTER result --
+        # PPI+RXN at +0.0089 -- had no matched control and could not be attributed to reaction biology rather than
+        # to simply adding 1.6M more arcs. This arm shuffles RXN itself, preserving arc count and source degree.
+        "PPI+RXN-SHUF": ["PPI", "RXN-SHUF"],
     }
     LAYERS["SHUF"] = shuffled(LAYERS["REG-SIGNED"])
+    LAYERS["RXN-SHUF"] = shuffled(LAYERS["RXN"])
 
     DIRECT, SIM = {}, {}
     for arm, ls in ARMS.items():
