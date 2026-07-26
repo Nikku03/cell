@@ -32,6 +32,13 @@ THE TWO NEW COMPONENTS:
             genuinely pay: neighbour SELECTION is a discrete choice that a point estimate makes brittle, unlike the
             monotone probability in mc_outofgame that sampling could not improve.
 
+A CORRECTION THAT LANDED AFTER THIS MODULE FIRST RAN, AND WHICH CHANGES WHAT IT MEASURES. An exhaustive audit of
+cell_complete found that the PPI adjacency was being built in integer index space and read in gene-name space, so it
+was empty: 0 of 1,400 knockouts had a PPI neighbour, versus 1,371 once mapped through names[]. That silently emptied
+three of LEARNED's fourteen features and stripped PPI out of PHYS entirely, leaving MARKOV-P as the only component
+able to see the physical graph -- which is exactly the comparison this module was built to make. The construction is
+fixed above and the numbers below are the post-fix ones; the pre-fix run is preserved in git history.
+
 THE CONTROL THAT DECIDES IT. wall_combine already caught a fusion that looked like a gain and was only generic
 z-fusion re-weighting. So each new component is also fused in a SHUFFLED form -- same score distribution, knockout
 labels permuted. If shuffled-MARKOV lifts the ensemble as much as real MARKOV, the gain is fusion arithmetic, not the
@@ -190,9 +197,23 @@ def main():
            "path": {k: ([info.get(k, {}).get("path")] if info.get(k, {}).get("path") else []) for k in kos}}
     Msp = {n_: onehot(d, kos) for n_, d in per.items()}
     shared = {n_: np.asarray((m @ m.T).todense(), dtype=np.float32) for n_, m in Msp.items()}
+    # THE INDEX-SPACE BUG, FOUND BY AN EXHAUSTIVE DATA AUDIT AND VERIFIED BEFORE FIXING. cell_complete's 'ppi'
+    # endpoints are INTEGER indices into genes[], but `kos` holds gene NAME strings, so the shipped
+    # `nbset[e[0]].add(e[1])` keyed by int was then looked up as `nbset.get(<name>)` and returned EMPTY for
+    # 1400/1400 knockouts. Measured: 0 KO-KO PPI edges recovered by the shipped code, 34,440 by this one.
+    # Consequence of the old behaviour: shared_ppi_nbr / jaccard_ppi_nbr / is_direct_ppi were IDENTICALLY ZERO,
+    # and phys_adj reduced to complex-OR-pathway -- so the component labelled "PHYS (PPI|complex|pathway)"
+    # contained no PPI at all, while MARKOV-P (which indexes the graph by integer node) was the ONLY component
+    # that could see it. Every PHYS/LEARNED number produced before this fix is affected.
     nbset = collections.defaultdict(set)
     for e in D.get("ppi", []):
-        nbset[e[0]].add(e[1]); nbset[e[1]].add(e[0])
+        try:
+            a_, b_ = int(e[0]), int(e[1])
+        except (TypeError, ValueError, IndexError):
+            continue
+        if 0 <= a_ < len(names) and 0 <= b_ < len(names) and a_ != b_:
+            na_, nb_ = names[a_], names[b_]
+            nbset[na_].add(nb_); nbset[nb_].add(na_)
     NBcols = {}; rr = []; cc = []
     for i_, k in enumerate(kos):
         for g in nbset.get(k, ()):
