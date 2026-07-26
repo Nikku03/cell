@@ -26,7 +26,11 @@ from pathlib import Path
 
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 CS = "https://reactome.org/ContentService"
-BATCH = 150
+# THE BULK ENDPOINT SILENTLY CAPS AT 20 RESULTS, whatever you send it. Measured directly: posting 20/25/50/150 ids
+# returns 20/20/20/20 objects with no error and no indication of truncation. A batch of 150 therefore looked like it
+# worked while discarding 87% of each request -- the first full run retrieved 2,160 of 16,173 reactions and reported
+# success. Batch size is pinned to the measured cap.
+BATCH = 20
 OUTF = Path(SP) / "reactome_order.json"
 
 
@@ -98,7 +102,7 @@ def main():
             ps = [p.get("stId") for p in pv if isinstance(p, dict) and p.get("stId")]
             if ps:
                 prec[sid] = ps
-        if (i // BATCH) % 10 == 0:
+        if (i // BATCH) % 100 == 0:
             print(f"  batch {i//BATCH}: {got} objects, {len(prec)} with preceding", flush=True)
     print(f"retrieved {got}/{len(ids)} reaction objects; {len(prec)} have a precedingEvent", flush=True)
 
