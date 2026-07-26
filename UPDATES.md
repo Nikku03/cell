@@ -10302,3 +10302,59 @@ Recovering *hidden known* edges is an optimistic proxy for proposing *new* ones 
 enough to enter a database. No proposed edge has been experimentally confirmed; the only claim is a calibrated
 ranking. The universe is knockout–knockout pairs only (where both endpoints have measured profiles), so this says
 nothing about the other 15,092 proteins.
+
+---
+
+## `colab/self_completion.py` — can the network complete itself? No, it collapses inward
+
+Feed the 2-step K562 chain's own predictions back into the graph, recompute, repeat. 6 rounds × 500 edges.
+
+| round | added | true | precision | mean shared-nb of additions | AUC on remaining |
+|---|---|---|---|---|---|
+| 1 | 500 | 222 | **0.444** | **10.9** | 0.9595 |
+| 2 | 500 | 148 | 0.296 | 14.5 | 0.9575 |
+| 3 | 500 | 154 | 0.308 | 18.8 | 0.9557 |
+| 4 | 500 | 223 | 0.446 | 32.5 | 0.9519 |
+| 5 | 500 | 174 | 0.348 | 28.0 | 0.9491 |
+| 6 | 500 | 153 | **0.306** | **26.7** | 0.9465 |
+
+**Totals — and the control settles it:**
+
+| arm | true / added | precision | held-out recovered |
+|---|---|---|---|
+| FEEDBACK (6 rounds) | 1074 / 3000 | 0.358 | 31.2% |
+| **ONE-SHOT (rank once, take 3000)** | **1187 / 3000** | **0.396** | **34.5%** |
+
+**Iterating is worse than not iterating** — the feedback loop costs **−113** true edges. Recomputing the chain on
+the augmented graph is re-reading structure it already had.
+
+**And the self-confirmation signature is measured, not speculated:** the mean shared-neighbour count of each round's
+additions climbs **10.9 → 26.7**. Every round adds edges in denser territory than the last, because the previous
+round's additions manufactured the shared neighbours that justify them. The graph gets more confident about the part
+it already knew. Precision decays 0.444 → 0.306 in step with it.
+
+---
+
+## Deployment-realistic precision — a correction to `link_completion.py`
+
+The `p@100 = 0.84` reported earlier was measured in a pool artificially enriched to 1 true edge per 5 false. In
+deployment you rank *every* candidate pair, where the base rate is **0.357%**. Re-measured over all ~965k pairs:
+
+| | precision | true in top-k | lift |
+|---|---|---|---|
+| p@40 | 0.375 | 15 | 105× |
+| p@100 | 0.420 | 42 | 118× |
+| p@500 | 0.648 | 324 | 182× |
+| p@1000 | 0.773 | 773 | 217× |
+| p@5000 | 0.477 | 2385 | 134× |
+
+**The enriched figure overstates real precision by 2×** and must not be quoted as a discovery rate.
+
+**And precision RISES with depth** (p@40 0.375 < p@100 0.420 < p@1000 0.773). The very top of the ranking is the
+*least* reliable part — so the top-40 proposal list is the worst slice of it, at roughly **15 of 40 correct**.
+
+### The bottom line on "did we complete the network"
+
+**Edges added to the network: 0.** 40 proposals emitted, none written, none experimentally confirmed. The network
+has **191,447 edges over 16,492 proteins — 0.14% density**, with **2,262 proteins (13.7%) having zero recorded
+interactions** and 32% having fewer than five. It is nowhere near complete, and nothing here changed that.
