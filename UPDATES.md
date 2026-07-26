@@ -9914,3 +9914,84 @@ credit. **Levels here are not the headline levels:** this is a lean rebuild (14 
 scored top-10), so every component sits below its `protein_chain_combine` twin. Both arms share that identical lean
 pipeline and differ only in the wiring, so the broken-vs-fixed *deltas* are the measurement; the absolute values are
 not the published ones.
+
+---
+
+## `colab/interaction_states.py` — interactions as Markov states, and why every version ties
+
+The incumbent chain has one kind of state: a **protein**. Interactions are edges between states. This asks what
+happens if an **interaction** becomes a first-class state, so the walk runs protein → interaction → protein.
+
+### The first question is whether this *can* differ, and for pairwise interactions it provably cannot
+
+With `B` the protein×interaction incidence, the composed kernel is `P_bip = D⁻¹ B Dc⁻¹ Bᵀ`. For a pairwise
+interaction (k=2) that sends ½ back to the sender and ½ to the partner, so summing over a protein's interactions:
+
+```
+P_bip  =  ½I + ½P_node          (the LAZY node walk)
+```
+
+Verified numerically: `max |P_bip − lazy| = 1.1e-16`. **All 191,447 PPI interactions in this dataset are pairwise.**
+So on the PPI layer the idea is the incumbent up to laziness — which is a reason to *measure* it, not skip it.
+
+### Where it genuinely differs is complexes, and no global parameter can reach it
+
+The incumbent **clique-expands** a complex: size-k becomes k(k−1) edges, so a member emits `cw·(k−1)` into the complex
+layer. As a hyperedge **state** it emits `cw` once. Measured: **38,408 clique edges from 5,385 memberships, a 7.1×
+inflation quadratic in size.** The complex layer's share of a protein's outgoing mass shifts by mean +0.128, max
++0.714 (RPL41: 0.811 → 0.097). The incumbent sweeps `cw`, but that rescales every protein together, and this shift has
+**SD 0.137 across proteins** because it scales with each protein's own complex sizes. A global scalar cannot produce a
+per-protein size-dependent reweighting — so this is a genuinely different chain, not a reparameterisation.
+
+### Results — six state spaces, one identical evaluation path
+
+| arm | states | score | vs NODE | verdict |
+|---|---|---|---|---|
+| **NODE** | proteins; complexes clique-expanded | **0.4768** | reference | reproduces incumbent 0.4763 |
+| BIP-PW | + pairwise PPI interactions | 0.4800 | +0.0032 ± 0.0031 | indistinguishable |
+| HYPER | + complex hyperedges | 0.4798 | +0.0030 ± 0.0026 | indistinguishable |
+| BIP-FULL | + all interactions *(the literal ask)* | 0.4814 | +0.0046 ± 0.0023 | indistinguishable |
+| BIP-NS | de-lazied (no return to sender) | 0.4808 | +0.0040 ± 0.0026 | indistinguishable |
+| LINE-NB | interactions only, non-backtracking | 0.4812 | +0.0045 ± 0.0027 | indistinguishable |
+| UNION(NODE, BIP-FULL) | z-sum of both rankings | 0.4783 | +0.0016 ± 0.0019 | indistinguishable |
+| HYPER-SHUF *(control)* | complex membership shuffled, sizes kept | 0.4729 | −0.0038 ± 0.0031 | indistinguishable |
+| HYPER-REWIRE *(control)* | PPI rewired too | 0.1703 | −0.3064 ± 0.0123 | WORSE |
+| SIZE-MATCHED *(control)* | neighbours by response magnitude | 0.1802 | −0.2966 ± 0.0132 | WORSE |
+
+### Five positive arms are one observation, not five
+
+The arms agree with NODE at mean row-wise Spearman **≥ 0.997** — they are the same predictor in different
+coordinates. A conservative per-split test over 5 genuinely independent units agrees with the pooled bootstrap
+(BIP-FULL +0.0046 ± 0.0022, t=2.11, 4/5 splits positive, indistinguishable). And the **union lands *between* its
+parents** (0.4783 vs 0.4768 and 0.4814) — the signature of two views of one predictor, which is the same lesson
+`redundancy_check` drew about the ensemble.
+
+### Each arm failed for its own reason
+
+- **BIP-PW** — pairwise interactions make the bipartite walk the lazy node walk. A theorem, not a measurement.
+- **HYPER / BIP-FULL** — clique-expansion and hyperedge states differ *only* in how they weight the complex layer, and
+  **that layer's content is inert**: shuffling which proteins belong to which complex, preserving every complex size
+  and every protein's complex count, costs −0.0038 (indistinguishable). This independently reproduces `graph_null`'s
+  finding that PPI-only equals PPI-plus-complexes. The PPI layer is the opposite — rewiring it collapses the chain to
+  0.1703.
+- **LINE-NB** — the one genuinely new mechanism (non-backtracking is not any reweighting of the node walk). It ties
+  too, which says backtracking is not what limits a chain **truncated at 2 steps**, since a 2-step walk barely has
+  room to backtrack.
+
+### Two sensitivity defects caught by checking against the incumbent
+
+A first run scored NODE at 0.3342 against the incumbent's published 0.4763. The gap was mine, not the method's:
+**(1)** the profile readout averaged *signed* z-scores, letting an up-regulated gene in one neighbour cancel a
+down-regulated one in another — the incumbent takes `np.abs` first; **(2)** the neighbour pool was the scorable
+subset (378) rather than all non-test knockouts (~1274). Only 378 knockouts are valid *targets* (they need ≥5 specific
+movers), but all 1400 are valid *sources*. Both defects hit every arm equally, but both compress the between-arm
+differences the experiment exists to detect. After fixing, NODE reproduces the incumbent to 0.0005.
+
+### Limits
+
+Five splits of one cell line. The 630 pooled evaluations are not independent (378 scorable knockouts each appear in
+~1.7 test sets), which is why the per-split test is reported alongside and believed where they might disagree. The
+response-size control is deliberately privileged — it reads the test knockout's measured response magnitude, which no
+chain arm may see — so beating it means something and losing to it would not be automatically damning. Truncation at
+1–3 steps is load-bearing throughout: the stationary distribution of any of these undirected walks is degree/2|E|,
+which has no dependence on the start node, so a converged chain would provably carry no perturbation signal.
