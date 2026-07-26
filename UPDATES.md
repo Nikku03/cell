@@ -10904,3 +10904,65 @@ single arrow, and our pathway-order tier at 65.5% should be read against *that*,
 Nothing in this pipeline. Every tier is annotation or heuristic, and agreement between tiers is bounded by the
 weakest curation underneath both. Direction is a causal claim; only a time-resolved or interventional measurement —
 kinase–substrate assays, degron depletion with a time course — can settle it per edge.
+
+---
+
+## `colab/curated_directed.py` — the curated-only directed network, tiered by corroboration
+
+The TF heuristic is **dropped entirely** — 23,097 edges no curated source could check even in principle. What's left
+traces to a database record. Four curated sources, scoped to PPI edges:
+
+| source | directed pairs on PPI edges |
+|---|---|
+| SIGNOR-signalling | 3,164 |
+| reg-transcription | 2,507 |
+| Reactome-order (`precedingEvent`) | 53,624 |
+| **Reactome-prepares** (output→input, the preparation step) | 50,133 |
+
+### Result
+
+| tier | edges | % of PPI |
+|---|---|---|
+| **CONFIRMED** — ≥2 independent sources agree | **1,777** | **0.93%** |
+| SINGLE — one source, uncontradicted | 7,120 | 3.72% |
+| FEEDBACK — two sources point opposite ways | 507 | 0.26% |
+| SOURCE-AMBIGUOUS — a source contradicts *itself* | 23,725 | 12.39% |
+| **usable arrows** | **8,897** | **4.65%** |
+| no source at all | 158,318 | 82.70% |
+
+### Two bugs found by the output being impossible
+
+1. **SINGLE came out at 321% of the network.** SIGNOR and `reg` weren't scoped to PPI edges, so 610,256 TF→target
+   pairs that aren't protein interactions flooded in. Every source is now restricted to the graph being oriented.
+2. **23,725 edges silently vanished.** Edges where every touching source gave *both* directions were `continue`d
+   past and counted nowhere. They're now their own tier — Reactome genuinely records both A-before-B and
+   B-before-A for them — and the tiers are asserted to partition the edge set.
+
+### The result that should temper this: corroboration was not shown to buy confidence
+
+Leave-one-source-out — hold a source out of the confirmation, then check the arrow against it:
+
+| held-out | CONFIRMED | SINGLE |
+|---|---|---|
+| Reactome-order | 0.523 ± 0.054 (n=86) | 0.523 ± 0.013 |
+| Reactome-prepares | 0.479 ± 0.072 (n=48) | 0.523 ± 0.013 |
+
+**Both sit on the 0.500 chance line, and CONFIRMED is not ahead of SINGLE.** The samples are small and the intervals
+straddle chance, so this is **underpowered rather than refuted** — and the only sources with enough held-out overlap
+are the two Reactome-derived ones, the weakest of the four. But the honest consequence is clear: **"CONFIRMED" here
+records that two sources agree, and must not be read as a demonstrated accuracy.**
+
+### Honest bottom line
+
+**4.65% of the interactome has a curated arrow. 0.93% has one that two independent sources agree on.** That is far
+below the 15.34% headline, and the difference is entirely the heuristic tier that could never be checked.
+
+The FEEDBACK tier is kept rather than resolved: 98% of such conflicts involve a TF, where a kinase acts on a TF while
+that TF regulates the kinase's gene — both arrows real. Forcing one would destroy information and inflate coverage.
+
+### Limits
+
+Curated ≠ true in K562: Reactome and SIGNOR describe canonical human biology, not this cell line. `Reactome-prepares`
+is the weakest source — sharing an entity means one reaction *can* supply another, not that it does — and the
+currency-molecule cap drops informative hubs like ubiquitin along with ATP. A precedence relation between reactions
+still doesn't prove the two proteins touch in that order.

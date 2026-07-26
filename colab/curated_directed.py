@@ -77,10 +77,14 @@ def main():
                 continue
             if 0 <= s_ < N and 0 <= t_ < N and s_ != t_:
                 S.add((names[s_], names[t_]))
-        # keep only unambiguous ones: recorded one way and not the other
-        return {(a, b) for a, b in S if (b, a) not in S}
+        # RESTRICT TO PPI EDGES. Without this, `reg` alone contributes 610,256 TF->target pairs that are not
+        # protein interactions at all, and the tier counts come out at 321% of the network -- which is what the
+        # first run printed. Every source must be scoped to the graph being oriented.
+        return {(a, b) for a, b in S if (b, a) not in S and b in edge_of.get(a, ())}
 
     SRC = {"SIGNOR-signalling": curated("sig"), "reg-transcription": curated("reg")}
+    for k_, v_ in SRC.items():
+        print(f"  {k_}: {len(v_):,} directed gene pairs on PPI edges", flush=True)
 
     # ---- Reactome: pathway order and preparation ----
     C = json.loads((Path(SP) / "reactome_order.json").read_text())
@@ -145,6 +149,12 @@ def main():
     confirmed_pairs, single_pairs = [], []
     for k, vs in vote.items():
         if not vs:
+            # EVERY SOURCE THAT TOUCHED THIS EDGE GAVE BOTH DIRECTIONS. That is a source contradicting ITSELF --
+            # Reactome lists reactions where A precedes B and others where B precedes A -- so the edge has no
+            # usable arrow. An earlier version dropped these silently and 23,725 edges disappeared from the
+            # accounting; they are now their own tier so the tiers sum to the number of edges any source touched.
+            tiers["SOURCE-AMBIGUOUS"] += 1
+            out_edges.append([tuple(k)[0], tuple(k)[1], "SOURCE-AMBIGUOUS", []])
             continue
         dirs = collections.Counter(vs.values())
         if len(dirs) == 1 and len(vs) >= 2:
@@ -164,10 +174,12 @@ def main():
 
     ndir = tiers["CONFIRMED"] + tiers["SINGLE"]
     print(f"\n  CURATED-ONLY DIRECTED NETWORK (the TF heuristic is dropped entirely)")
-    for t in ["CONFIRMED", "SINGLE", "FEEDBACK"]:
+    for t in ["CONFIRMED", "SINGLE", "FEEDBACK", "SOURCE-AMBIGUOUS"]:
         print(f"    {t:12s} {tiers[t]:7,}  {tiers[t]/len(pe):6.2%} of PPI")
     print(f"    {'-> usable arrows':12s} {ndir:7,}  {ndir/len(pe):6.2%}")
-    print(f"    {'undirected':12s} {len(pe)-len(vote):7,}  {(len(pe)-len(vote))/len(pe):6.2%}")
+    touched_n = sum(tiers.values())
+    print(f"    {'no source':12s} {len(pe)-touched_n:7,}  {(len(pe)-touched_n)/len(pe):6.2%}")
+    assert touched_n + (len(pe) - touched_n) == len(pe), "tiers must partition the edge set"
 
     # ---- LEAVE-ONE-SOURCE-OUT: does corroboration actually buy confidence? ----
     print(f"\n  LEAVE-ONE-SOURCE-OUT VALIDATION -- is a CONFIRMED arrow better than a SINGLE one?")
@@ -201,11 +213,18 @@ def main():
         f"feeding the input of another -- the step that supplies a pathway with the protein its first reaction "
         f"consumes), and curated TF->target regulation. "
         f"OF THOSE, {tiers['CONFIRMED']:,} ARE CONFIRMED BY TWO OR MORE INDEPENDENT SOURCES ({tiers['CONFIRMED']/len(pe):.2%} "
-        f"of the interactome) and {tiers['SINGLE']:,} rest on one source alone. "
-        + (f"AND CORROBORATION IS WORTH SOMETHING, tested by leave-one-source-out: hold a source out of the "
-           f"confirmation and check the surviving agreement against it. CONFIRMED arrows score {conf_acc:.3f} on "
-           f"average against a held-out source, SINGLE arrows {sing_acc:.3f}, with CONFIRMED ahead in {better} of "
-           f"{len(valid)} held-out sources. " if valid else
+        f"of the interactome) and {tiers['SINGLE']:,} rest on one source alone. A further "
+        f"{tiers['SOURCE-AMBIGUOUS']:,} edges are touched by a source that contradicts ITSELF -- Reactome records "
+        f"both A-before-B and B-before-A for them -- and get no arrow; an earlier version dropped those silently "
+        f"and lost them from the accounting entirely. "
+        + (f"BUT CORROBORATION WAS NOT SHOWN TO BUY CONFIDENCE, and this is the result that should temper the "
+           f"whole exercise. Leave-one-source-out -- hold a source out of the confirmation, then check the arrow "
+           f"against it -- gives CONFIRMED {conf_acc:.3f} and SINGLE {sing_acc:.3f}, both essentially at the 0.500 "
+           f"chance line, with CONFIRMED ahead in {better} of {len(valid)} tests. The samples are small (n=86 and "
+           f"n=48) and their intervals straddle chance, so the honest reading is UNDERPOWERED rather than refuted; "
+           f"and the only sources with enough held-out overlap to test are the two Reactome-derived ones, which are "
+           f"the weakest of the four. What it does mean is that 'CONFIRMED' here records agreement between two "
+           f"sources, and must NOT be read as a demonstrated accuracy. " if valid else
            "Leave-one-source-out could not be run: too few arrows survive holding a source out. ")
         + f"THE FEEDBACK TIER IS NOT A FAILURE AND IS THE REASON THIS IS TIERED AT ALL. {tiers['FEEDBACK']:,} edges "
         f"have two curated sources pointing OPPOSITE ways, and the audit showed 98% of such conflicts involve a "
