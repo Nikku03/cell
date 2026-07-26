@@ -316,6 +316,35 @@ def main():
     print(f"    -> {frac_easy:.1%} of held-out edges have >10 shared neighbours already; "
           f"{float((cnp == 0).mean()):.1%} have none")
 
+    # ---- DEPLOYMENT-REALISTIC PRECISION. The p@k above is measured in a pool enriched to 1 true per NNEG false.
+    # In the wild you rank EVERY unrecorded pair, where the prior is the graph's actual density. Precision measured
+    # in an enriched pool does NOT transfer, and quoting it as if it did would be the single most misleading number
+    # this module could produce. So: rank all held-out positives against ALL non-edges and report precision there.
+    iu_all = np.triu_indices(nK, 1)
+    pairset_held = set(pos)
+    # encode each pair as a single int so membership is a vectorised np.isin, not 10^6 Python set lookups
+    code_all = iu_all[0].astype(np.int64) * nK + iu_all[1].astype(np.int64)
+    code_pos = np.array([a * nK + b for a, b in pos], np.int64)
+    code_tr = np.array([a * nK + b for a, b in trainE], np.int64)
+    is_pos = np.isin(code_all, code_pos)
+    is_trainedge = np.isin(code_all, code_tr)
+    keep_pool = ~is_trainedge                      # train edges are already known; they are not candidates
+    Xall = np.stack([m2[iu_all][keep_pool] for m2 in FEATS.values()], 1)
+    sc_full = gbm.predict(Xall)
+    y_full = is_pos[keep_pool]
+    base = float(y_full.mean())
+    o = np.argsort(-sc_full)
+    print(f"\n  DEPLOYMENT-REALISTIC PRECISION (rank ALL {int(keep_pool.sum()):,} candidate pairs, "
+          f"{int(y_full.sum())} of them true; base rate {base:.4%})")
+    real_prec = {}
+    for kk in (40, 100, 500, 1000, 5000):
+        real_prec[f"p@{kk}"] = float(y_full[o[:kk]].mean())
+        print(f"    p@{kk:<5d} = {real_prec[f'p@{kk}']:.3f}   ({int(y_full[o[:kk]].sum())} true in the top {kk})"
+              f"   lift over base {real_prec[f'p@{kk}']/base:.0f}x")
+    print(f"    for contrast, the ENRICHED-POOL p@100 reported above was "
+          f"{prec.get(best, {}).get('p@100', float('nan')):.3f} -- that pool had a {ytrue.mean():.1%} base rate, "
+          f"so it OVERSTATES real precision and must not be quoted as a discovery rate")
+
     # ---- the deliverable: unrecorded pairs the best predictor ranks highest ----
     scoreM = (gbm.predict(np.stack([m2.ravel() for m2 in FEATS.values()], 1)).reshape(nK, nK)
               if best == "COMBINED" else FEATS[best])
@@ -375,6 +404,12 @@ def main():
         f"feature, is above chance at {strat_res.get('CN = 0', {}).get('PROFILE', float('nan')):.4f}, and barely. "
         f"SO THE ANSWER IS SPLIT: yes, the network can be completed where it is already dense, at a real and "
         f"controlled AUC; no, not where it is sparse, which is exactly where the missing biology lives. "
+        f"AND THE PRECISION THAT MATTERS IS THE DEPLOYMENT ONE, NOT THE ENRICHED ONE. Ranking ALL candidate "
+        f"pairs rather than a 1-in-{NNEG+1} enriched pool, the base rate is {base:.4%} and precision at the top of "
+        f"the list is p@40 {real_prec['p@40']:.3f}, p@100 {real_prec['p@100']:.3f}, p@1000 "
+        f"{real_prec['p@1000']:.3f} -- a lift of {real_prec['p@100']/base:.0f}x over the base rate at 100. The "
+        f"enriched-pool figure quoted earlier is much higher and DOES NOT transfer; it is reported only so the gap "
+        f"between the two is visible. "
         f"WHAT THIS CANNOT SAY. Recovering HIDDEN KNOWN edges is a proxy for proposing NEW ones, and it is optimistic: "
         f"held-out edges were discoverable enough to be in a database, whereas genuinely missing edges may be missing "
         f"for reasons that also make them hard to predict. The proposal list is emitted with a precision estimated "
@@ -388,7 +423,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump({"n_heldout": len(pos), "n_train_edges": len(trainE), "ko_pairs": nK * (nK - 1) // 2,
                "auc": res, "pubs_bar": pubs_bar, "cleared": cleared, "best": best,
-               "precision": prec, "stratified_by_shared_neighbours": strat_res, "proposals": [{"a": a, "b": b, "score": s_, "shared_nb": c_} for a, b, s_, c_ in cand],
+               "precision": prec, "realistic_precision": real_prec, "pool_base_rate": base, "stratified_by_shared_neighbours": strat_res, "proposals": [{"a": a, "b": b, "score": s_, "shared_nb": c_} for a, b, s_, c_ in cand],
                "frac_heldout_dense": frac_easy,
                "verdict": verdict}, open(OUT / "link_completion.json", "w"), indent=2)
     print(f"\n  -> {OUT/'link_completion.json'}")
