@@ -9735,3 +9735,57 @@ footprint was handed a narrower neighbourhood than its comparator. Widening it i
 
 The audit separately confirmed the construction is **not** an oracle: the test knockout's own response never enters the
 nomination, and no existing ensemble component uses measured causal-target overlap.
+
+---
+
+## Kitchen sink: show it everything, and the ladder goes flat after one rung (colab/kitchen_sink.py)
+
+Every component so far was deliberately narrow so attribution stayed clean — which left the obvious objection, *"it
+keeps losing because you keep blindfolding it,"* untested. This tests it. Architecture unchanged (learned neighbour
+retrieval); **only the feature set varies**, cumulatively, from 14 features to 55.
+
+### The ladder (5 splits; tide 0.2681, oracle 0.5822)
+
+| rung | n feat | real | noise-matched twin | head-room |
+|---|---|---|---|---|
+| L1 static pairs | 14 | 0.4348 ± 0.0200 | — | 53% |
+| **L2 +DepMap/SVD** | 17 | **0.4625 ± 0.0244** | 0.4350 ± 0.0219 | 62% |
+| L3 +Markov walks | 21 | 0.4626 ± 0.0233 | 0.4567 ± 0.0236 | 62% |
+| L4 +causal footprint | 22 | 0.4623 ± 0.0243 | 0.4629 ± 0.0223 | 62% |
+| L5 +everything | 55 | 0.4629 ± 0.0267 | 0.4644 ± 0.0251 | 62% |
+
+| step | vs rung below | vs its noise twin |
+|---|---|---|
+| **L2 +DepMap/SVD** | **+0.0277 ± 0.0026 BETTER** | **+0.0276 ± 0.0044 BETTER** |
+| L3 +Markov walks | +0.0001 ± 0.0027 indistinguishable | +0.0059 ± 0.0031 indistinguishable |
+| L4 +causal footprint | −0.0003 ± 0.0026 indistinguishable | −0.0006 ± 0.0022 indistinguishable |
+| L5 +everything | +0.0006 ± 0.0045 indistinguishable | −0.0015 ± 0.0052 indistinguishable |
+
+### It rises once, then goes flat
+
+The full ladder gain (**+0.0281 ± 0.0041**) is real — and it is **entirely one rung**. Only L2 clears both its
+predecessor *and* its noise-matched twin. Going from **17 features to 55** — adding Markov walks, the measured causal
+footprint, and every remaining per-gene scalar and GO overlap — moves the score by **+0.0004**.
+
+The noise-matched control is what makes that readable: at L3–L5 the real ladder and the random ladder move together, so
+what little happens is **capacity, not content**.
+
+### The generalist loses to the committee
+
+**Best single model seeing everything: 0.4629. The ensemble of deliberately narrow specialists: 0.5173.**
+
+A model handed every leak-free signal in the project lands **0.054 below** four narrow models voting. Whatever the
+components carry, it is not accessible to one learner over these features at this sample size.
+
+### What it says about the oracle gap
+
+The oracle picks neighbours by peeking and reaches 0.582; a model shown everything reaches 0.463. **The gap is not
+explained by having withheld data from the model.** Either the identity of the right neighbours is not determined by
+any static or measured property we hold, or ~250 training knockouts is too few to learn the mapping — and a ladder that
+flattens after one rung points at the first.
+
+### What this cannot separate
+
+The effective sample is ~250 independent **knockouts** per split, not the ~60,000 pairs. So this cannot distinguish
+*"the information is absent"* from *"the information is present but unlearnable at this size."* One cell line, five
+splits sharing the same data.

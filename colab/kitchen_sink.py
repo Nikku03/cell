@@ -349,8 +349,15 @@ def main():
         f"set varies, cumulatively, from 14 static pairwise features up to {nfeat_seen[LADDER[-1]]}. "
         f"RESULT ({NSPLIT} splits, tide {tide_m:.4f}, oracle {orc:.4f}): "
         + ", ".join(f"{nm} {agg[nm + ' [real]'][0]:.4f}" for nm in LADDER) + ". "
-        + (f"SEEING EVERYTHING DOES HELP: the full stack beats the 14-feature baseline by {full[0]:+.4f} +- "
-           f"{full[1]:.4f}, with real gains at {gains}. " if everything_helps else
+        + (f"THE LADDER RISES ONCE AND THEN GOES FLAT, AND THE DISTINCTION MATTERS. The full stack beats the "
+           f"14-feature baseline by {full[0]:+.4f} +- {full[1]:.4f}, which is real -- but it is ENTIRELY ONE RUNG: "
+           f"the only significant step is {gains}, worth {steps[gains[0]]['vs_below'][0]:+.4f} +- "
+           f"{steps[gains[0]]['vs_below'][1]:.4f}, and every rung after it is indistinguishable from the rung below "
+           f"AND from its own noise-matched twin. Going from {nfeat_seen[LADDER[1]]} features to "
+           f"{nfeat_seen[LADDER[-1]]} -- adding Markov walks, the measured causal footprint, and every remaining "
+           f"per-gene scalar and GO overlap -- moves the score by {agg[LADDER[-1]+' [real]'][0]-agg[LADDER[1]+' [real]'][0]:+.4f}. "
+           f"So 'show it everything' buys one thing (a learned gene representation) and then nothing at all. "
+           if everything_helps else
            f"SEEING EVERYTHING DOES NOT HELP: the full stack differs from the 14-feature baseline by {full[0]:+.4f} "
            f"+- {full[1]:.4f} ({full[2]}), and "
            + (f"only {gains} produced a real step up the ladder. " if gains else
