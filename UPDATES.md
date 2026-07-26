@@ -9596,3 +9596,61 @@ Half the readout genes are spent breaking the circularity, so similarities are c
 7,223 and are **not comparable to `markov_bridge`'s numbers**. Response similarity shows a shared route, not an
 ordering — it cannot separate an intermediate from a co-regulator. And "measured" means *reproducible in this screen*,
 not *mechanistically verified*: the causal graph is itself thresholded response data.
+
+---
+
+## Transformer × Markov walk: the walk does not transfer into the encoder (colab/transformer_markov.py)
+
+Honest negative on the headline question, with a sharp positive underneath it.
+
+### Why this is not a ninth transformer rerun
+
+The **architecture** is exhausted and was deliberately left untouched: `transformer_graphnet` got **+0.004** from
+message-passing over curated wiring (+0.005 vs *shuffled* wiring — indistinguishable), `transformer_selfgraph` found a
+self-built kNN graph **loses** to curated (0.340 vs 0.462), `transformer_ko6` found regulatory features **hurt**
+(−0.021), and `ceiling_cartography` put remaining encoder head-room near **+0.012**.
+
+What was new is a specific reason to doubt the **input**: graphnet's "wiring adds nothing" was measured on the
+**curated** graph, which this session showed is **94% disjoint** from measured causality. So only the *partner source*
+varied — identical encoder, features, training, splits, and one shared feature matrix over the union token universe.
+
+### Result (3 seeds; tide-null 0.249, oracle 0.607)
+
+| partner source | recall@50 | sd | head-room closed |
+|---|---|---|---|
+| curated | **0.4784** | 0.0316 | 64% |
+| markov walk | 0.4695 | 0.0246 | 62% |
+| union | 0.4756 | 0.0384 | 63% |
+| **markov_rewired** (control) | **0.1584** | 0.0138 | −25% |
+
+| paired | |
+|---|---|
+| markov − curated | −0.0089 ± 0.0059 **indistinguishable** |
+| union − curated | −0.0028 ± 0.0049 **indistinguishable** |
+| markov − rewired control | **+0.3111 ± 0.0097 BETTER** |
+
+### The negative
+
+**The walk does not transfer into the transformer.** As a standalone retrieval scorer it beat every hand-built
+component (0.4763 in `protein_chain_combine`); inside the encoder it is indistinguishable from the curated partner
+list. `transformer_graphnet`'s finding therefore **stands and generalises**: for this encoder a knockout is well
+described as a *bag of partners*, and it does not much matter which sensible graph supplies them — the encoder was
+already extracting that information from the curated bag.
+
+### The positive, and the distinction that matters
+
+The rewired control **collapses to 0.158**, a +0.311 gap. So the tokens are chosen by **real wiring, not degree** — the
+neighbourhood matters enormously *in whether it is real*, and hardly at all *in which real graph it comes from*.
+
+That resolves an apparent conflict with `transformer_graphnet`. Two different manipulations:
+- **shuffling connections *among* a fixed partner set** → no effect (+0.005): a bag, not a graph
+- **changing *which genes are partners at all*** → catastrophic (−0.311)
+
+Both statements are true and they are consistent.
+
+### Not tested here
+
+This is the **walk** neighbourhood, not the **measured-causal** one that won in `bridge_measured` (+0.3587). Feeding
+that into the transformer would require rebuilding the token context per split to avoid leaking response data into the
+tokens — the obvious follow-up, not done here. Three seeds is a small paired sample; differences below ~0.01 are not
+resolvable.
