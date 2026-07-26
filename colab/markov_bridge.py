@@ -199,7 +199,7 @@ def main():
     def evaluate(SCmat, label, exclude_movers=False):
         """For each knockout, take its top intermediates among CHECKABLE knockouts and ask whether their
         MEASURED responses resemble the source's, against degree-matched controls."""
-        hit, ctl, npairs, frac_mover = [], [], 0, []
+        hit, ctl, npairs, frac_mover, zero_frac = [], [], 0, [], []
         for c, xi in enumerate(scor):
             v = SCmat[cnode, c].astype(np.float64).copy()
             self_pos = np.where(checkable == xi)[0]
@@ -210,8 +210,11 @@ def main():
                 for q, kq in enumerate(checkable):
                     if gi.get(kos[kq], -1) in mvset:
                         v[q] = -np.inf
-            top = np.argsort(-v)[:TOPM]
-            top = [q for q in top if np.isfinite(v[q]) and v[q] > 0]
+            raw = np.argsort(-v)[:TOPM]
+            # HOW MANY NOMINATIONS ARE REAL? A bridge score of exactly 0 means the ranking fell through to
+            # arbitrary tie-breaking -- the method found nothing and the slot is padding, not a prediction.
+            zero_frac.append(float(np.mean([1.0 if (not np.isfinite(v[q]) or v[q] <= 0) else 0.0 for q in raw])))
+            top = [q for q in raw if np.isfinite(v[q]) and v[q] > 0]
             if not top:
                 continue
             mvset = set(np.where((A[xi] >= TAU) & nontide)[0].tolist())
@@ -236,7 +239,8 @@ def main():
                 "delta": float(d.mean()) if len(d) else float("nan"),
                 "se": float(d.std(ddof=1) / np.sqrt(len(d))) if len(d) > 1 else float("nan"),
                 "wilcoxon_p": p,
-                "frac_intermediates_that_are_movers": float(np.mean(frac_mover)) if frac_mover else float("nan")}
+                "frac_intermediates_that_are_movers": float(np.mean(frac_mover)) if frac_mover else float("nan"),
+                "frac_top_slots_empty": float(np.mean(zero_frac)) if zero_frac else float("nan")}
 
     End_bin = endpoint_matrix("binary")
     print(f"\n  T SWEEP (bridge, binary endpoint)", flush=True)
@@ -269,6 +273,8 @@ def main():
     res["exclude_movers"] = r
     print(f"    {'bridge, excluding mover-intermediates':38s} delta {r['delta']:+.4f} +- {r['se']:.4f}", flush=True)
 
+    b = res["bridge"]; f_ = res["forward"]; bk = res["backward"]
+
     # ---------- rewired-graph null ----------
     print(f"\n  REWIRED-GRAPH NULL ({NREWIRE} degree-preserving replicates)", flush=True)
     def degree_preserving(pairs, rs):
@@ -276,22 +282,29 @@ def main():
         h = stubs.reshape(-1, 2); keep = h[:, 0] != h[:, 1]
         e = np.stack([np.minimum(h[keep, 0], h[keep, 1]), np.maximum(h[keep, 0], h[keep, 1])], 1)
         return np.unique(e, axis=0)
-    nullvals = []
+    nullvals = []; nullfwd = []
     rs = np.random.RandomState(1)
     for rep in range(NREWIRE):
         Pn = make_P(degree_preserving(P_e, rs))
         perm = rs.permutation(len(R_src))
         Rn = rownorm(R_src, R_dst[perm], np.ones(len(R_src), np.float32))
         rr = evaluate(bridge_scores(Pn, Rn, bestT, End_bin), f"rewired {rep}")
-        nullvals.append(rr["delta"])
+        rf = evaluate(bridge_scores(Pn, Rn, bestT, End_bin, mode="forward"), f"rewired-fwd {rep}")
+        nullvals.append(rr["delta"]); nullfwd.append(rf["delta"])
         if (rep + 1) % 5 == 0:
             print(f"    replicate {rep+1}/{NREWIRE}: delta {rr['delta']:+.4f}", flush=True)
     nullvals = np.array(nullvals)
     real_delta = res["bridge"]["delta"]
     nz = float((real_delta - nullvals.mean()) / nullvals.std(ddof=1)) if nullvals.std(ddof=1) > 1e-12 else float("inf")
     p_emp = (int((nullvals >= real_delta).sum()) + 1) / (NREWIRE + 1)
+    nullfwd = np.array(nullfwd)
+    nzf = float((f_["delta"] - nullfwd.mean()) / nullfwd.std(ddof=1)) if nullfwd.std(ddof=1) > 1e-12 else float("inf")
     res["rewired_null"] = {"mean": float(nullvals.mean()), "sd": float(nullvals.std(ddof=1)),
-                           "z": nz, "p_empirical": p_emp, "values": [float(x) for x in nullvals]}
+                           "z": nz, "p_empirical": p_emp, "values": [float(x) for x in nullvals],
+                           "forward_only_null_mean": float(nullfwd.mean()),
+                           "forward_only_null_sd": float(nullfwd.std(ddof=1)), "forward_only_z": nzf}
+    print(f"    forward-only vs its own rewired null: real {f_['delta']:+.4f} vs "
+          f"{nullfwd.mean():+.4f} +- {nullfwd.std(ddof=1):.4f}, z={nzf:+.1f}", flush=True)
     print(f"    null delta {nullvals.mean():+.4f} +- {nullvals.std(ddof=1):.4f}   real {real_delta:+.4f}   "
           f"z={nz:+.1f}   p<={p_emp:.3f}", flush=True)
 
@@ -316,8 +329,12 @@ def main():
                       f"PPI degree {d_['ppi_degree']}")
             break
 
-    b = res["bridge"]; f_ = res["forward"]; bk = res["backward"]
-    beats_forward = b["delta"] > f_["delta"] + 2 * max(b["se"], f_["se"])
+    # THREE outcomes, not two. An earlier module in this project printed "not significant" next to a nine-sigma
+    # defeat because it only tested the winning direction; the same bug reappeared here on the first run.
+    _sep = 2 * np.hypot(b["se"], f_["se"])
+    fwd_cmp = ("bridge BETTER" if b["delta"] - f_["delta"] > _sep else
+               "forward-only BETTER" if f_["delta"] - b["delta"] > _sep else "indistinguishable")
+    beats_forward = fwd_cmp == "bridge BETTER"
     beats_null = real_delta > nullvals.mean() + 2 * nullvals.std(ddof=1)
     works = b["delta"] > 2 * b["se"] and beats_null
 
@@ -340,10 +357,19 @@ def main():
            f"backward-only {bk['delta']:+.4f} +- {bk['se']:.4f}, so removing the measured endpoint costs "
            f"{b['delta']-f_['delta']:+.4f}. That is the whole thesis of this module and it survives. "
            if beats_forward else
-           f"BUT THE TWO-SIDED CONDITIONING IS NOT WHAT DOES IT: forward-only scores {f_['delta']:+.4f} +- "
-           f"{f_['se']:.4f}, which is not distinguishable from the bridge's {b['delta']:+.4f}. Conditioning on the "
-           f"measured endpoint adds nothing over simply walking forward from the knockout, so the bridge framing is "
-           f"not earning its keep even where the underlying signal is real. ")
+           (f"THE TWO-SIDED CONDITIONING ACTIVELY HURTS. Forward-only scores {f_['delta']:+.4f} +- {f_['se']:.4f} "
+            f"against the bridge's {b['delta']:+.4f} +- {b['se']:.4f} -- forward-only is SIGNIFICANTLY BETTER, by "
+            f"{f_['delta']-b['delta']:+.4f}. Multiplying by backward reachability NARROWS the candidate set to "
+            f"neighbours that also regulate the measured movers, and that narrowing costs accuracy. The likeliest "
+            f"reason is visible in the inputs: the backward term is the only place the REGULATORY layer enters, and "
+            f"91% of those 612,133 edges carry no sign and were never cell-type filtered, so conditioning through "
+            f"them injects more noise than constraint. The bridge framing does NOT earn its keep. "
+            if fwd_cmp == "forward-only BETTER" else
+            f"The two-sided conditioning is not what does it: forward-only scores {f_['delta']:+.4f} +- {f_['se']:.4f} "
+            f"against the bridge's {b['delta']:+.4f}, indistinguishable. ")
+           + f"And at T={bestT} forward-only reduces to the DIRECT PPI NEIGHBOURS of the knocked-out gene, which is "
+           f"the one-hop signal this project already had -- PHYS scores 0.40 in the ensemble harness -- so what "
+           f"survives here is a re-derivation of the known result, not a new one. ")
         + (f"It clears the degree-preserving REWIRED-GRAPH null ({nullvals.mean():+.4f} +- {nullvals.std(ddof=1):.4f}, "
            f"z={nz:+.1f}), so the routes follow real wiring rather than being forced by the conditioning. "
            if beats_null else
@@ -351,7 +377,13 @@ def main():
            f"z={nz:+.1f}) -- randomising who-binds-whom while holding every degree fixed reproduces the result, which "
            f"means the bridge is nominating well-connected genes rather than genuine intermediates. A bridge ALWAYS "
            f"returns a path, and this is what that failure mode looks like when it happens. ")
-        + f"Excluding intermediates that are themselves movers of the source gives {res['exclude_movers']['delta']:+.4f}, "
+        + f"AND THE BRIDGE SCORE IS NEARLY EMPTY: {b['frac_top_slots_empty']:.0%} of its top-{TOPM} slots have a score "
+        f"of exactly zero, meaning the ranking fell through to arbitrary tie-breaking and those slots are padding "
+        f"rather than predictions. The GATA1 example shows it plainly -- one real nomination (MED1, a known erythroid "
+        f"GATA1 coactivator, at 0.0476) followed by four ties at 0.0000. The T sweep is also not a clean comparison: "
+        f"T=2 nominates anything at all for only 212 of {len(scor)} sources while T=3 and T=4 reach 367 and 375, so "
+        f"the depths are scored on different populations and T was picked on the smallest and easiest of them. "
+        f"Excluding intermediates that are themselves movers of the source gives {res['exclude_movers']['delta']:+.4f}, "
         f"and {b['frac_intermediates_that_are_movers']:.0%} of nominated intermediates are themselves movers. "
         f"ON THE TIME CLAIM that prompted this: only half survives. There is no calibration between a Markov step and "
         f"an hour, so T stays a swept topological parameter. The usable part would have been de-attenuating slow mRNAs "
@@ -372,7 +404,7 @@ def main():
                "readout_hours": READOUT_H,
                "n_genes_below_99pct_equilibrated": int((eqfrac < 0.99).sum()),
                "results": res, "example_GATA1": example,
-               "bridge_beats_forward_only": bool(beats_forward), "beats_rewired_null": bool(beats_null),
+               "bridge_vs_forward_only": fwd_cmp, "bridge_beats_forward_only": bool(beats_forward), "beats_rewired_null": bool(beats_null),
                "works": bool(works), "verdict": verdict, "note": verdict},
               open(OUT / "markov_bridge.json", "w"), indent=1)
     print("\n  -> outputs/orphan/markov_bridge.json")

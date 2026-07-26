@@ -9461,3 +9461,76 @@ gene is its own node; those are shared between real and null. With R=20 the smal
 
 **Bookkeeping fix:** `protein_chain_combine` reported 38,504 complex edges; that counted *ordered* pairs and re-counted
 pairs shared across complexes. The deduplicated undirected count is **13,576**.
+
+---
+
+## Markov bridge: infer the route, not the endpoint — well-posed, and it loses to one hop (colab/markov_bridge.py)
+
+The reframe was good and the math is right. The result is negative, with one real positive inside it.
+
+### Why the reframe was worth trying
+
+Every previous network attempt was **one-sided**: propagate forward, predict what moves. That fails arithmetically —
+reachability covers 84% of movers *and* 82% of non-movers by hop 3, and the stationary distribution of a walk on an
+undirected graph is exactly `degree/2|E|`, which **forgets the seed entirely**. A bridge conditions on **both** ends
+(Doob h-transform):
+
+```
+π_k(j) ∝ [forward from KO](j) × [backward from the MEASURED movers](j)
+```
+
+Path is **typed**: PPI hops in the middle, one **regulatory** hop at the end — a walk using PPI for the last step would
+be claiming that binding a protein changes its mRNA.
+
+### What made this testable where prediction never was
+
+An inferred intermediate is a **falsifiable claim with ground truth already collected**: if X really lies on the route
+from knockout G, then **knocking out X should reproduce part of G's signature** — and the screen holds ~1,400 measured
+knockouts. Test: response similarity of nominated intermediates vs **degree-matched** knockouts.
+
+### Result
+
+| arm | delta vs degree-matched |
+|---|---|
+| **BRIDGE (both ends)** | +0.0950 ± 0.0123 |
+| **forward-only** | **+0.1354 ± 0.0080** |
+| backward-only | +0.0118 ± 0.0024 |
+| bridge, \|z\|-weighted endpoint | +0.1052 |
+| bridge, de-attenuated by k_deg | +0.1017 |
+
+**The two-sided conditioning actively hurts.** Forward-only is significantly *better*, by +0.0404. Multiplying by
+backward reachability narrows to neighbours that also regulate the measured movers, and that narrowing costs accuracy —
+most likely because the backward term is the **only** place the regulatory layer enters, and **91% of those 612,133
+edges carry no sign** and were never cell-type filtered. Conditioning through them injects more noise than constraint.
+
+And at T=2, forward-only reduces to the **direct PPI neighbours** — the one-hop signal this project already had
+(PHYS = 0.40). So what survives is a re-derivation, not a new result.
+
+### The bridge score is nearly empty
+
+**64% of its top-5 slots score exactly zero** — the ranking falls through to arbitrary tie-breaking, so those slots are
+padding, not predictions. GATA1 shows it plainly:
+
+| intermediate | bridge score | response-similarity to GATA1 |
+|---|---|---|
+| **MED1** | 0.0476 | **+0.160** |
+| RBMX | 0.0000 | +0.057 |
+| RFC5 / RFC4 / RFC3 | 0.0000 | ~+0.058 |
+
+One real nomination — **MED1, a known erythroid GATA1 coactivator** — followed by four ties.
+
+The T sweep was also not a clean comparison: T=2 nominates anything at all for only **212 of 378** sources while T=3/T=4
+reach 367/375, so the depths were scored on **different populations** and T was picked on the smallest.
+
+### The positive inside it
+
+Both arms clear the **degree-preserving rewired-graph null** decisively — bridge z=+14.9, forward-only **z=+29.7**
+against a null centred at −0.001. So the one-hop PPI neighbour signal is real wiring, not hubness, confirmed a second
+way on a second metric.
+
+### The time claim, settled with arithmetic
+
+Only half survives. There is no calibration between a Markov step and an hour, so T stays topological. The usable half
+would have been de-attenuating slow mRNAs — but at the ~192 h readout the median K562 half-life is **3.47 h** and only
+**198 of 10,802** genes sit below 99% equilibrated. **The snapshot IS the steady state for 98% of genes.** Run anyway:
++0.1017 vs +0.1052. It changes nothing, exactly as predicted.
