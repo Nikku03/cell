@@ -83,37 +83,40 @@ def main():
           f"before constraining -- the downloaded model has no medium", flush=True)
 
     def open_medium(mdl, carbon_lb):
-        """Close every uptake, then reopen a defined minimal medium. Returns the glucose exchange actually used."""
-        for r in mdl.reactions:
-            if r.boundary:
-                r.lower_bound = 0.0
-        want = {"glucose": carbon_lb, "O2": -1000.0, "H2O": -1000.0, "Pi": -1000.0, "H+": -1000.0,
-                "NH3": -1000.0, "sulfate": -1000.0, "Fe2+": -1000.0, "Na+": -1000.0, "K+": -1000.0,
-                "Cl-": -1000.0, "Ca2+": -1000.0}
-        aa = ["alanine", "arginine", "asparagine", "aspartate", "cysteine", "glutamate", "glutamine", "glycine",
-              "histidine", "isoleucine", "leucine", "lysine", "methionine", "phenylalanine", "proline", "serine",
-              "threonine", "tryptophan", "tyrosine", "valine"]
-        for a in aa:
-            want[a] = -1.0
-        opened, glc = 0, None
+        """Restrict the CARBON SOURCE only, leaving inorganics open.
+
+        HAND-BUILDING A MINIMAL MEDIUM DOES NOT WORK HERE, AND THE ATTEMPT IS INSTRUCTIVE. A previous version closed
+        every uptake and reopened glucose plus O2, water, ions and the 20 amino acids -- 31 exchanges. The model
+        produced ZERO growth on it, in both conditions. That is not a bug in the model: human cells are auxotrophic
+        for far more than amino acids (cholesterol, essential fatty acids, choline, inositol, several vitamins and
+        nucleoside precursors), and a genome-scale human biomass reaction demands all of them. Guessing that list is
+        how a plausible-looking medium silently becomes an infeasible one.
+
+        So the manipulation is narrowed to what it actually needs to be: close only the CARBON-CONTAINING uptakes,
+        identified from each metabolite's chemical formula rather than from its name, and reopen glucose at the
+        bound being varied. Inorganic uptakes (O2, water, phosphate, ions) stay open. That makes glucose the sole
+        carbon source, which is a real and binding constraint, without requiring a complete nutritional model.
+        """
+        opened, glc, closed = 0, None, 0
         for r in mdl.reactions:
             if not r.boundary:
                 continue
-            names = {(m.name or "").strip() for m in r.metabolites}
-            for target, lb in want.items():
-                if target in names:
-                    r.lower_bound = lb
-                    opened += 1
-                    if target == "glucose":
-                        glc = r.id
-                    break
-        return opened, glc
+            has_c = any("C" in (m.formula or "") for m in r.metabolites)
+            if has_c and r.lower_bound < 0:
+                r.lower_bound = 0.0
+                closed += 1
+        for r in mdl.reactions:
+            if r.boundary and any((m.name or "").strip() == "glucose" for m in r.metabolites):
+                r.lower_bound = carbon_lb
+                opened += 1
+                glc = r.id
+        return (opened, glc, closed)
 
     results = {}
     for cond, carbon in (("glucose-rich", -10.0), ("glucose-limited", -1.0)):
         with model:
-            n_open, glc = open_medium(model, carbon)
-            print(f"  {cond}: reopened {n_open} uptakes, glucose exchange {glc} at lb={carbon}", flush=True)
+            n_open, glc, n_closed = open_medium(model, carbon)
+            print(f"  {cond}: closed {n_closed} carbon uptakes, reopened glucose ({glc}) at lb={carbon}", flush=True)
             s = model.optimize()
             if s.status != "optimal" or not s.objective_value or s.objective_value < 1e-9:
                 print(f"  {cond}: no growth on this medium ({s.status}, obj={s.objective_value}) -- skipped rather "
@@ -146,8 +149,12 @@ def main():
         print(f"    FLIPS sign between the two conditions        : {len(flip):,}")
         print(f"    undetermined when rich, determined when limited: {len(gained):,}")
 
+    if not results:
+        raise SystemExit("no condition produced a growing model -- refusing to write a verdict. An earlier version "
+                         "still emitted one, and it read '0/5,725 (0.0%) determined', which looks like a "
+                         "measurement of zero rather than the absence of a measurement.")
     tot = len(rev)
-    det = results.get("rich", {}).get("counts", {})
+    det = next(iter(results.values()))["counts"]
     d = det.get("forward", 0) + det.get("reverse", 0)
     verdict = (
         f"THE METABOLIC HALF IS SOLVABLE PER CONDITION, BUT NOT UNIQUELY, AND THAT DISTINCTION IS THE ANSWER. "
