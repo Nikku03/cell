@@ -68,7 +68,7 @@ MAXDEPTH = 8            # complex nesting is a few levels deep; this is a runawa
 CACHE = Path(SP) / "catalyst_arrows_cache.json"     # NOT catalysts.json -- another process writes that name
 P1 = Path(SP) / "car_pass1_reactions.json"          # per-pass caches so a crash late in the fetch is cheap
 P2 = Path(SP) / "car_pass2_catalysts.json"
-PAUSE = 0.4             # deliberate inter-request delay. Reactome 429s under sustained load, and a fetch that
+PAUSE = 1.2             # deliberate inter-request delay. Reactome 429s under sustained load, and a fetch that
                         # trips the limiter spends longer in backoff than the delay ever costs.
 
 
@@ -114,13 +114,19 @@ def ref(x):
     return None
 
 
-def bulk(ids, handle, label):
+def bulk(ids, handle, label, ckpt=None, state=None, done=None, on_save=None):
     """POST ids in batches of 20, calling handle(obj) on each returned object.
 
-    Returns the number of batches that failed outright, and the caller refuses to cache a pass that lost any. A
-    fetch that quietly drops batches is worse than one that crashes, because the resulting numbers look finished.
+    CHECKPOINTED, BECAUSE THE HOST THROTTLES AND THE FETCH IS LONGER THAN THE PATIENCE OF ANY ONE RUN. Reactome
+    starts returning 429 under sustained load, which drops throughput to ~0.2 req/s -- an hour for one pass. Without
+    checkpointing every interruption restarts from zero, which is how a fetch never finishes. Ids already recorded in
+    `done` are skipped, and progress is flushed to `ckpt` periodically, so re-running converges on a complete fetch
+    across as many restarts as it takes.
+
+    Returns the number of batches that failed outright. The caller refuses to declare a pass complete if any failed:
+    a fetch that quietly drops batches is worse than one that crashes, because the numbers look finished.
     """
-    ids = list(ids)
+    ids = [i for i in ids if not done or str(i) not in done]
     t0 = time.time()
     failed = 0
     for i in range(0, len(ids), BATCH):
@@ -132,11 +138,24 @@ def bulk(ids, handle, label):
             handle(o)
         if PAUSE:
             time.sleep(PAUSE)
-        if (i // BATCH) % 200 == 0:
+        if (i // BATCH) % 50 == 0 and i:
+            if on_save is not None:
+                on_save()
+            elif ckpt is not None and state is not None:
+                ckpt.write_text(json.dumps(state))
+        if (i // BATCH) % 100 == 0:
+            el = time.time() - t0
+            rate = (i // BATCH + 1) / max(el, 1)
+            left = (len(ids) - i) / BATCH / max(rate, 1e-6) / 60
             print(f"    {label} {i//BATCH}/{len(ids)//BATCH}  "
-                  f"({(i//BATCH+1)/max(time.time()-t0,1):.2f} req/s, {failed} failed)", flush=True)
+                  f"({rate:.2f} req/s, {failed} failed, ~{left:.0f} min left)", flush=True)
+    if on_save is not None:
+        on_save()
+    elif ckpt is not None and state is not None:
+        ckpt.write_text(json.dumps(state))
     if failed:
-        print(f"    !! {label}: {failed} batches FAILED after retries -- DATA IS INCOMPLETE", flush=True)
+        print(f"    !! {label}: {failed} batches FAILED after retries -- pass is INCOMPLETE, re-run to resume",
+              flush=True)
     return failed
 
 
@@ -166,11 +185,12 @@ def fetch():
     # all of it away, which is how a schema surprise turns into an hour of refetching.
     if P1.exists():
         rx = json.loads(P1.read_text())
-        print(f"  reusing {P1.name}: {len(rx):,} reactions", flush=True)
-    else:
-        if bulk(rxn, h1, "rxn"):
-            raise SystemExit("pass 1 lost batches to rate limiting -- refusing to cache a partial fetch. Re-run; "
-                             "completed passes are reused, so this costs nothing already paid for.")
+        print(f"  resuming from {P1.name}: {len(rx):,}/{len(rxn):,} reactions already fetched", flush=True)
+    if len(rx) < len(rxn):
+        if bulk(rxn, h1, "rxn", ckpt=P1, state=rx, done=set(rx)):
+            P1.write_text(json.dumps(rx))
+            raise SystemExit(f"pass 1 incomplete ({len(rx):,}/{len(rxn):,}) -- progress saved. Re-run to resume; "
+                             "already-fetched ids are skipped.")
         P1.write_text(json.dumps(rx))
     ncat = sum(1 for v in rx.values() if v["ca"])
     print(f"  {len(rx):,} reactions retrieved, {ncat:,} with a catalyst", flush=True)
@@ -187,10 +207,11 @@ def fetch():
         ca[str(o["dbId"])] = {"pe": ref(o.get("physicalEntity")), "au": au}
     if P2.exists():
         ca = json.loads(P2.read_text())
-        print(f"  reusing {P2.name}: {len(ca):,} catalyst activities", flush=True)
-    else:
-        if bulk(allca, h2, "ca"):
-            raise SystemExit("pass 2 lost batches to rate limiting -- refusing to cache a partial fetch.")
+        print(f"  resuming from {P2.name}: {len(ca):,}/{len(allca):,} activities already fetched", flush=True)
+    if len(ca) < len(allca):
+        if bulk(allca, h2, "ca", ckpt=P2, state=ca, done=set(ca)):
+            P2.write_text(json.dumps(ca))
+            raise SystemExit(f"pass 2 incomplete ({len(ca):,}/{len(allca):,}) -- progress saved, re-run to resume.")
         P2.write_text(json.dumps(ca))
     nau = sum(1 for v in ca.values() if v["au"])
     print(f"  {len(ca):,} resolved, {nau:,} have an explicit activeUnit", flush=True)
@@ -203,13 +224,22 @@ def fetch():
         if v["pe"]:
             need.add(v["pe"])
         need |= set(v["au"])
-    gene, comp, seen = {}, {}, set()
+    # pass 3 checkpoint holds the union of what has been expanded so far, keyed by entity id
+    P3 = Path(SP) / "car_pass3_entities.json"
+    if P3.exists():
+        _p3 = json.loads(P3.read_text())
+        gene, comp, seen = _p3["gene"], _p3["comp"], set(_p3["seen"])
+        print(f"  resuming from {P3.name}: {len(seen):,} entities already expanded", flush=True)
+    else:
+        gene, comp, seen = {}, {}, set()
     depth = 0
     while need and depth < MAXDEPTH:
         todo = sorted(need - seen)
         if not todo:
             break
-        seen |= set(todo)
+        # `seen` IS UPDATED FROM WHAT ACTUALLY ARRIVED, not from what was requested. Marking the whole batch seen
+        # up front is correct only if the fetch never fails -- and under 429 throttling it does, so a resume would
+        # skip entities that were never retrieved and silently leave holes in the complex expansion.
         print(f"pass 3.{depth}: expanding {len(todo):,} entities", flush=True)
         nxt = set()     # accumulate with .update(), never `|=` -- augmented assignment inside the nested
                         # handler would make the name local to it and raise UnboundLocalError
@@ -220,6 +250,7 @@ def fetch():
             keys = [k for k in (o.get("stId"), str(o["dbId"]) if o.get("dbId") else None) if k]
             if not keys:
                 return
+            seen.update(keys)       # retrieved, therefore genuinely done
             re_ = o.get("referenceEntity")
             gn = (re_.get("geneName") if isinstance(re_, dict) else None) or []
             if gn:
@@ -237,8 +268,17 @@ def fetch():
                 for k in keys:
                     comp[k] = kids
                 nxt.update(kids)
-        if bulk(todo, h3, f"pe{depth}"):
-            raise SystemExit(f"pass 3.{depth} lost batches to rate limiting -- refusing to cache a partial fetch.")
+        st = {"gene": gene, "comp": comp, "seen": []}
+
+        def save():
+            st["seen"] = sorted(seen)
+            P3.write_text(json.dumps(st))
+
+        failed = bulk(todo, h3, f"pe{depth}", ckpt=P3, state=st, done=seen, on_save=save)
+        save()
+        if failed:
+            raise SystemExit(f"pass 3.{depth} incomplete ({len(seen):,} entities expanded) -- progress saved, "
+                             "re-run to resume.")
         need = nxt
         depth += 1
 
