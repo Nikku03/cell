@@ -10615,3 +10615,55 @@ fixed. The genome-wide set is not a random 8× enlargement — it is a less cura
 may be individually weaker, which would bend the curve down. The extrapolation is 9× beyond the largest measured
 point, exactly the move this repo has been sceptical of all session; it is a go/no-go for rebuilding on gwps.h5ad,
 not a claim. And past ~0.61 no amount of pool growth helps — only a different readout.
+
+---
+
+## `colab/edge_direction.py` — can a Markov chain orient PPI edges? No, provably, and it's the same rule as degree
+
+### The theorem, then the measurement
+
+On an **undirected** graph the walk's kernel is `P[a,b] = w/deg(a)`, so `P[a,b] > P[b,a]` exactly when
+`deg(a) < deg(b)` — **and nothing else**. Any "flow direction" the chain reports is a pure degree ratio. Symmetric
+input cannot yield asymmetric output except through the normalisation, and the normalisation *is* degree.
+
+Measured rather than asserted: across **189,440 edges, CHAIN and DEGREE agree at exactly 1.000000.** They are the
+same rule.
+
+### Direction accuracy on 3,164 SIGNOR-directed PPI edges (chance = 0.500)
+
+Rule orientation fitted on a training half, scored on the held-out half, so the sign isn't chosen after seeing the answer.
+
+| rule | test acc | decided | |
+|---|---|---|---|
+| CHAIN | 0.5664 ± 0.0126 | 1559 | above chance, barely |
+| DEGREE | 0.5664 ± 0.0126 | 1559 | *identical to CHAIN* |
+| **TF** | **0.7647 ± 0.0265** | 255 | above chance |
+| ABUNDANCE | 0.5475 ± 0.0127 | 1580 | above chance, barely |
+
+On the `reg` set (TF→target regulation — a *different relation*, reported separately): CHAIN/DEGREE drop to 0.5201
+(**not** distinguishable from chance) while **TF reaches 0.9151**. A one-bit biological annotation beats the entire
+chain apparatus by 20–40 points.
+
+### Perturb-seq is the right idea and has no coverage
+
+The only genuinely directional measurement we hold — knock out A, watch B, then reverse — **had an opinion about
+only 5 of 48 test edges.** A zero means *neither* knockout detectably moved the other protein's transcript, so
+there's no readout at all.
+
+Across all **16,870** KO–KO PPI edges with both ends measured:
+
+| | |
+|---|---|
+| at least one direction shows any effect | **25.4%** |
+| exactly one direction does (orientable) | **22.7%** |
+
+**The limit is coverage, not accuracy.** The average signal is real (0.109 vs 0.019 for random pairs) but an average
+over 17,000 edges orients none of them individually.
+
+### What would actually orient these edges
+
+Direction is a **causal** claim, and the library holds almost no causal measurement at protein level: SIGNOR gives an
+unambiguous direction for **3,164 of 191,447 edges (1.7%)**, and only **95** of those have both endpoints knocked out
+and measured. Kinase–substrate assays, **time-resolved** perturbation (which protein moves *first*), and
+degron/rapid-depletion all measure direction directly. Co-expression, co-dependency, abundance and topology do not —
+and no quantity of them ever will, because none of them is asymmetric in time.

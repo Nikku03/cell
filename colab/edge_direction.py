@@ -158,9 +158,14 @@ def main():
             orient = 1.0 if (trs > 0).sum() >= (trs < 0).sum() else -1.0
             tes = np.array([fn(s_, t_) for s_, t_ in te]) * orient
             dec = tes != 0
+            # THE UNDECIDED COUNT IS A RESULT, NOT A GAP. A rule that returns 0 has no opinion about that edge. For
+            # PERTURB a zero means NEITHER knockout detectably moved the other protein's transcript -- the z-matrix
+            # stores only significant movers -- so there is no directional readout for that pair at all. Reporting
+            # this as "n/a" and moving on would hide the actual limitation, which is coverage rather than accuracy.
             if dec.sum() < 10:
-                print(f"    {nm:11s} {'n/a':>9s} {'':>7s} {'':>7s} {int(dec.sum()):8d}")
-                out[nm] = None
+                print(f"    {nm:11s} {'UNDECIDED':>9s} {'':>7s} {'':>7s} {int(dec.sum()):8d}"
+                      f"   only {dec.sum()}/{len(tes)} edges get any opinion -- coverage, not accuracy, is the limit")
+                out[nm] = {"acc": None, "decided": int(dec.sum()), "total": int(len(tes))}
                 continue
             correct = (tes[dec] > 0).astype(float)
             acc = float(correct.mean())
@@ -181,6 +186,18 @@ def main():
     best_sig = max((k for k in res["SIGNOR"] if res["SIGNOR"][k]),
                    key=lambda k: res["SIGNOR"][k]["acc"])
     pp = res["PERTURB"].get("PERTURB")
+    pp_dec = pp.get("decided") if pp else 0
+    pp_tot = pp.get("total") if pp else 0
+    # how often is a directional readout available AT ALL, across every KO-KO PPI edge?
+    kn = set(nidx[k] for k in kos if k in nidx)
+    kk = [(a, b) for a, b in pe if a in kn and b in kn]
+    both = [(effect(a, b), effect(b, a)) for a, b in kk]
+    both = [(x, y) for x, y in both if x is not None and y is not None]
+    anyeff = float(np.mean([(x > 0) or (y > 0) for x, y in both])) if both else 0.0
+    asym = float(np.mean([(x > 0) != (y > 0) for x, y in both])) if both else 0.0
+    print(f"\n  DIRECTIONAL COVERAGE across all {len(both):,} KO-KO PPI edges with both ends measured:")
+    print(f"    at least one direction shows any effect : {anyeff:.2%}")
+    print(f"    exactly one direction does (asymmetric) : {asym:.2%}   <- the only edges orientable this way")
     verdict = (
         f"CAN A MARKOV CHAIN ORIENT PPI EDGES? NO, AND NOT FOR WANT OF TUNING. On an undirected graph the walk's "
         f"kernel is P[a,b] = 1/deg(a), so sign(P[a,b] - P[b,a]) equals sign(deg(b) - deg(a)) IDENTICALLY. Measured "
@@ -192,15 +209,13 @@ def main():
         f"{res['SIGNOR']['DEGREE']['acc']:.4f} +/- {res['SIGNOR']['DEGREE']['se']:.4f} against a 0.500 chance "
         f"baseline, with the orientation of the rule fitted on a training half so the sign is not chosen after "
         f"seeing the answer. The best non-Perturb-seq rule is {best_sig} at {res['SIGNOR'][best_sig]['acc']:.4f}. "
-        + (f"THE ONE GENUINELY DIRECTIONAL MEASUREMENT WE HOLD IS PERTURB-SEQ -- knock out A and watch B, then the "
-           f"reverse -- and on the {res['PERTURB']['PERTURB']['n']} edges where it is computable in both directions "
-           f"it scores {pp['acc']:.4f} +/- {pp['se']:.4f}. "
-           + ("That clears chance and is the only arm here that does, which matters because it is also the only arm "
-              "carrying information the graph does not already contain. " if pp['acc'] - 2 * pp['se'] > 0.5 else
-              "That does NOT clear chance at this sample size. The honest reading is that the idea is sound and the "
-              "test is underpowered, not that the idea is refuted: at n of this size the binomial standard error is "
-              "about 5 points, so only an effect of roughly 10 points or more could have been detected. ")
-           if pp else "")
+        + f"THE ONE GENUINELY DIRECTIONAL MEASUREMENT WE HOLD IS PERTURB-SEQ -- knock out A, watch B, then the "
+        f"reverse -- AND IT TURNS OUT TO BE UNUSABLE HERE FOR A REASON WORTH STATING: it has an opinion about only "
+        f"{pp_dec} of {pp_tot} test edges. A zero means NEITHER knockout detectably moved the other protein's "
+        f"transcript, so there is no readout at all, and across ALL {len(both):,} knockout-knockout PPI edges with "
+        f"both ends measured, only {anyeff:.1%} show any effect in either direction and only {asym:.1%} are "
+        f"asymmetric enough to orient. The limit is COVERAGE, not accuracy. The average signal is real -- 0.109 "
+        f"against 0.019 for random pairs -- but averages over 17,000 edges do not orient any particular one. "
         + f"WHAT WOULD ACTUALLY ORIENT THESE EDGES. Direction is a causal claim, and the library holds almost no "
         f"causal measurement at the protein level: SIGNOR gives an unambiguous direction for {len(SETS['sig'])} of "
         f"{len(pe):,} PPI edges (1.7%), and only {len(pset)} of those have both endpoints knocked out and measured. "
