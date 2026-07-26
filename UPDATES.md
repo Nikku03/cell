@@ -10118,7 +10118,51 @@ Only 674 of 15,183 specific movers (**4.4%**) are direct PPI partners of the kno
 graph could never explain *which* genes move — only *how many*. The cross-section is measured at hop 1 from a
 destroyed gene and applied at hops 2–3 where the source is merely perturbed (the same assumption Ulam made reusing
 one cross-section per collision, but far less safe here, and it biases R₀ upward). CRISPRi knockdown is partial
-(median 42.8% transcript remaining). **Unverified but flagged:** an adversarial review measured a GBM on nine assay
-covariates (cell counts, UMI depth, mitopercent, …) predicting response size at Spearman ~0.67 — far above anything
-here — which would make blast radius largely a technical property of the experiment rather than a network quantity.
-I did not verify this locally and it should be checked before any blast-radius number is relied on.
+(median 42.8% transcript remaining). **Now verified — see `colab/assay_confound.py` below.**
+
+---
+
+## `colab/assay_confound.py` — blast radius is substantially a property of the experiment, not the network
+
+`ulam_branching.py` compared a branching cascade against a ladder of **biological** baselines and the cascade lost.
+But the whole ladder was biology, and it never asked the prior question: how much of the target is **technical**? An
+adversarial review claimed "most of it". Verified here, and it is worse than claimed.
+
+`k562.h5ad` carries per-perturbation assay covariates. Joining on the parsed gene symbol (the raw obs index is
+`10023_ZC3H18_P1P2_ENSG…`, so the symbol is field 1 — joining on the raw index matches **0**/1400, on the symbol
+**1400**/1400), 5-fold CV, identical target:
+
+| model | Spearman |
+|---|---|
+| **assay-only GBM (9 covariates, no biology at all)** | **0.6881** |
+| NODE-GBM — degree, essentiality, LOEUF, TF, complexes | 0.4325 |
+| essentiality alone | 0.4286 |
+| mean-field branching cascade | 0.3171 |
+| PPI degree alone | 0.3135 |
+
+| single covariate | Spearman |
+|---|---|
+| UMI_count_unfiltered | **−0.4272** |
+| z_gemgroup_UMI | −0.3923 |
+| control_expr | +0.1839 |
+
+**A model that knows only how deeply each perturbation was sequenced beats every biological model built here**, and
+sequencing depth *alone* (−0.4272) beats PPI degree and nearly matches the full node-GBM. This does not rescue the
+branching cascade — it lost to the biological baselines too — but it removes most of the meaning from the target the
+cascade lost on.
+
+### Six obs columns are the label in disguise and are excluded, not used as baselines
+
+`anderson_darling_counts` (+0.674), `mean_leverage_score` (+0.759), `mann_whitney_counts` (+0.651), `TE_ratio`
+(+0.619), `energy_test_p_value` (−0.492), `std_leverage_score` (+0.325) are Replogle's own perturbation-*effect*
+statistics computed from the same expression matrix as the target. They are restatements of the answer. A ladder
+including them would measure nothing.
+
+### The caveat that cuts the other way
+
+The covariates are **post-treatment** — measured from the same cells that produce the readout. A large biological
+response could itself depress UMI counts (sick cells, lower library complexity), in which case conditioning on them
+**over-controls** and discards real signal. The negative sign is the tell: *more* sequencing goes with *fewer* called
+movers, which is not naive detection power. Not resolvable from this data. The defensible claim is that response size
+is **not identified** as a network quantity — not that it is definitely an artefact. Also, `fold_expr`, `pct_expr`
+and `cnv_score_z` are all-NaN on these rows, so the "nine covariates" are effectively six.
