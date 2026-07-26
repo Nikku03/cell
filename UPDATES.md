@@ -9995,3 +9995,50 @@ response-size control is deliberately privileged — it reads the test knockout'
 chain arm may see — so beating it means something and losing to it would not be automatically damning. Truncation at
 1–3 steps is load-bearing throughout: the stationary distribution of any of these undirected walks is degree/2|E|,
 which has no dependence on the start node, so a converged chain would provably carry no perturbation signal.
+
+---
+
+## `colab/complex_weight.py` — REFINEMENT to the interaction-state result: it is the same size as one mis-tuned scalar
+
+An adversarial review of `interaction_states.py` raised a checkable objection. Every interaction-state arm moved in
+the **same direction** — reducing how much of a protein's outgoing mass is routed through the complex layer — and the
+incumbent already has a scalar for exactly that, `cw`. Its grid samples `cw` at only `{0.0, 1.0, 2.0}`. If the
+optimum sits between 0 and 1, that grid **straddles** it, and the whole interaction-state line is a
+reparameterisation of a mis-tuned float. Measured rather than argued: same harness, same splits, same
+pre-registration, only the `cw` grid is finer.
+
+**The objection is half right, and the half that is right is the important half.**
+
+| cw | score | vs cw=2.0 | |
+|---|---|---|---|
+| 0.0 | 0.4736 | −0.0021 ± 0.0028 | indistinguishable |
+| 0.05 | 0.4791 | +0.0034 ± 0.0027 | indistinguishable |
+| **0.1** | **0.4822** | **+0.0065 ± 0.0024** | **BETTER** |
+| 0.2 | 0.4808 | +0.0051 ± 0.0021 | BETTER |
+| 0.5 | 0.4804 | +0.0048 ± 0.0019 | BETTER |
+| 1.0 | 0.4768 | +0.0012 ± 0.0014 | indistinguishable |
+| 2.0 | 0.4757 | reference | |
+
+The curve has a **real interior optimum at cw≈0.1** that the incumbent grid straddles, and 0.4822 is above every
+interaction-state arm (best was BIP-FULL at 0.4814). **The complex layer is over-weighted in the incumbent.**
+
+**But that number is read off the test set and nobody can collect it.** Pre-registered on TRAIN — the only honest
+procedure, and the one the incumbent uses — the fine grid scores 0.4799 against the incumbent grid's 0.4768:
+**+0.0031 ± 0.0020, indistinguishable.** Pre-registration on 200 train knockouts cannot reliably locate the optimum;
+it picks cw=0.1 on one split and cw=0.35 on another. *The peak is real; our ability to find it blind is not.*
+
+### What this changes about the interaction-state conclusion
+
+Down-weighting the complex layer with **one scalar**: +0.0031 ± 0.0020. Promoting interactions to **first-class
+Markov states**: +0.0046 ± 0.0023. Same size, neither significant. So the consistent positive tilt shared by all six
+interaction-state arms has a simpler available explanation than "hyperedges are a better representation of a
+complex" — every one of those state spaces incidentally reduces the complex layer's effective weight, and one number
+gets you the same place.
+
+This **sharpens rather than overturns** `interaction_states.py`, whose headline — all state spaces tie — stands. What
+it removes is the temptation to read the consistent positive sign as evidence for hyperedge structure.
+
+It also bounds an earlier claim of mine. I wrote that a global `cw` "cannot reach" the hyperedge reweighting because
+the per-protein shift has SD 0.137. That remains true **as algebra** — a scalar cannot reproduce a per-protein,
+size-dependent shift exactly. What is now measured is that **the part it cannot reach is worth nothing**: the global
+component captures the entire effect, and the per-protein residual buys no more than noise.
