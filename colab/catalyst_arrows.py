@@ -226,10 +226,31 @@ def fetch():
         need |= set(v["au"])
     # pass 3 checkpoint holds the union of what has been expanded so far, keyed by entity id
     P3 = Path(SP) / "car_pass3_entities.json"
+    ETREE = Path(SP) / "entity_tree.json"
     if P3.exists():
         _p3 = json.loads(P3.read_text())
         gene, comp, seen = _p3["gene"], _p3["comp"], set(_p3["seen"])
         print(f"  resuming from {P3.name}: {len(seen):,} entities already expanded", flush=True)
+    elif ETREE.exists():
+        # SEED FROM THE EXISTING ENTITY TREE INSTEAD OF REFETCHING IT. entity_tree.json holds 54,310 entities with
+        # their components and UniProt refs -- strictly more than this pass would retrieve, from the same endpoint.
+        # Re-fetching them under a 429-throttled ~0.3 req/s would cost roughly an hour to obtain data already on
+        # disk. Whatever it does not cover still gets fetched below, so this is a head start, not a substitution.
+        _t = json.loads(ETREE.read_text())
+        _u2g = {}
+        for _line in (Path(SP) / "reactome/up2gene.tsv").read_text().splitlines():
+            _p = _line.split("\t")
+            if len(_p) >= 2 and _p[0] and _p[1]:
+                _u2g[_p[0]] = _p[1]
+        gene, comp, seen = {}, {}, set(_t)
+        for k, d in _t.items():
+            g = _u2g.get(d.get("up"))
+            if g:
+                gene[k] = [g]
+            if d.get("kids"):
+                comp[k] = d["kids"]
+        print(f"  seeded pass 3 from {ETREE.name}: {len(seen):,} entities, {len(gene):,} gene-mapped, "
+              f"{len(comp):,} with components", flush=True)
     else:
         gene, comp, seen = {}, {}, set()
     depth = 0
