@@ -9314,3 +9314,80 @@ within-split paired differences are load-bearing.**
 And this is 5 splits of *one cell line*, so the paired SE understates true uncertainty; multi-line pooling has already
 **failed once** here (`pair_retrieval_multi`, p=0.00028). The oracle gap does not close — it still finds specific movers
 the protein chain misses.
+
+---
+
+## recall@300/500 on the complete-case subset — the metric saturates, but the gain survives (colab/recall_depth.py)
+
+### First: are recall@300 and @500 answerable as asked? No.
+
+Measured before building anything. Across all 1,400 K562 knockouts:
+
+| specific movers per knockout | |
+|---|---|
+| median | **1** |
+| p90 | 28 |
+| p99 | 210 |
+| **maximum** | **246** |
+
+**Not one knockout has 300 specific movers**, let alone 500. At K≥300 every knockout's entire truth set fits inside the
+returned list, so recall@K stops asking *"can you rank the right genes first"* and starts asking *"are they anywhere in
+your top 300 of 7,180."*
+
+**The saturation is visible in the tables, not just argued:** the do-nothing TIDE baseline climbs from **0.244 at K=50 to
+0.770 at K=500** — by K=500 a model that knows nothing about which gene was hit already recovers three-quarters of the
+truth. And MARKOV-P's *standalone* contribution decays in step: it closes **66% of the tide-to-oracle head-room at K=50
+but only 7% at K=500**.
+
+### "Full data range" defined rather than assumed
+
+COMPLETE-CASE = every component genuinely has data, not abstaining, so no component is credited on knockouts it declines
+to answer:
+
+| requirement | coverage of the 378 scorable KOs |
+|---|---|
+| protein-chain node | 375 (99%) |
+| codep partner (NEXUS) | 339 (90%) |
+| physical neighbour (PHYS) | 352 (93%) |
+| **all three** | **315 (83%)** |
+
+Crossed with mover strata: **315** at ≥5, **163** at ≥20, **68** at ≥50.
+
+### The sweep (complete-case, ≥5 movers, mean of 5 splits)
+
+| model | R@50 | R@100 | R@200 | R@300 | R@500 |
+|---|---|---|---|---|---|
+| RANDOM | 0.006 | 0.012 | 0.025 | 0.042 | 0.071 |
+| TIDE | 0.244 | 0.381 | 0.561 | 0.656 | **0.770** |
+| PHYS | 0.436 | 0.542 | 0.640 | 0.686 | 0.742 |
+| LEARNED | 0.451 | 0.550 | 0.645 | 0.698 | 0.752 |
+| **MARKOV-P** | **0.478** | **0.581** | **0.676** | **0.728** | 0.777 |
+| 4-way | 0.494 | 0.617 | 0.719 | 0.769 | 0.814 |
+| **4-way + MARKOV-P** | **0.513** | **0.631** | **0.735** | **0.781** | **0.827** |
+| ORACLE* | 0.600 | 0.702 | 0.792 | 0.831 | 0.869 |
+
+**Head-room closed** (the normalised view, since raw recall *must* rise with K):
+
+| | K=50 | K=100 | K=200 | K=300 | K=500 |
+|---|---|---|---|---|---|
+| 4-way | 70% | 74% | 69% | 65% | 45% |
+| 4-way + MARKOV-P | **76%** | **78%** | **75%** | **72%** | 57% |
+| MARKOV-P alone | 66% | 62% | 50% | 41% | **7%** |
+
+### The paired gain survives at every depth and every stratum
+
+| stratum | K=50 | K=100 | K=200 | K=300 | K=500 |
+|---|---|---|---|---|---|
+| ≥5 movers | +0.0195±0.0051 | +0.0138±0.0031 | +0.0153±0.0036 | +0.0122±0.0025 | +0.0122±0.0021 |
+| ≥20 movers | +0.0209±0.0024 | +0.0168±0.0025 | +0.0136±0.0017 | +0.0139±0.0018 | +0.0112±0.0018 |
+| ≥50 movers | +0.0133±0.0042 | +0.0141±0.0025 | +0.0165±0.0028 | +0.0155±0.0017 | +0.0131±0.0014 |
+
+**All 15 cells significant, and the label-shuffled twin is negative in all 15.** But the gain shrinks with K exactly as
+saturation predicts.
+
+### The honest summary
+
+**The protein chain is a top-of-list method.** Its value is in ranking the first few dozen genes — which is also the only
+regime a wet-lab follow-up could act on. Restricting to high-mover knockouts selects the strongest, most pleiotropic
+perturbations, which are *not* representative: the median knockout has **1** specific mover and is invisible in these
+strata.
