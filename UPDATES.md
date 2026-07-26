@@ -10966,3 +10966,255 @@ Curated ≠ true in K562: Reactome and SIGNOR describe canonical human biology, 
 is the weakest source — sharing an entity means one reaction *can* supply another, not that it does — and the
 currency-molecule cap drops informative hubs like ubiquitin along with ATP. A precedence relation between reactions
 still doesn't prove the two proteins touch in that order.
+
+---
+
+# Session: from a protein-protein graph to a typed reaction network
+
+Everything below is one day's work. The through-line: **the interactome was never the right object**, and most of
+the difficulty in the preceding sessions came from asking a protein-protein graph questions only a reaction can
+answer. Coverage numbers throughout are against 191,447 PPI edges / 14,230 genes unless stated.
+
+## Part 1 — orienting PPI edges, which mostly failed, and then didn't
+
+### Within a reaction, a binding has no direction
+
+Measured before building anything: of the **36,415** PPI edges (19.02%) whose endpoints share a Reactome reaction,
+only **95** split across input and output; **1,593** are BOTH inputs. Reactome says the same thing in its own
+vocabulary — the `category` breakdown of reactions containing a PPI edge is
+`{binding: 4288, transition: 2473, omitted: 697, dissociation: 327}`. A binding step is `A + B -> AB`; both partners
+go in, and nothing inside that step says which came first.
+
+### The question was wrong, not the data
+
+The error was treating the large "appears on both sides" bucket as ambiguity. **Reactome mints a new entity id for
+every modified form**, so in a phosphorylation the SUBSTRATE appears on both sides as two different entities while
+the KINASE appears as the same entity twice. Comparing leaf-entity sets per gene separates the acted-upon from the
+actor:
+
+| rule | edges | n | accuracy | matched degree | cluster bootstrap |
+|---|---:|---:|---:|---:|---|
+| unchanged → transformed (ALL) | 3,822 | 657 | **0.8326 ± 0.0146** | 0.5373 | [0.811, 0.866] |
+| ...chemical modification only | 3,128 | 618 | **0.8495 ± 0.0144** | 0.5340 | [0.820, 0.879] |
+| ...translocation only | 900 | 86 | 0.6860 ± 0.0500 | 0.5465 | [0.622, 0.804] |
+| catalyst → output (ALL) | 6,014 | 495 | 0.8242 ± 0.0171 | 0.5535 | — |
+| catalyst → output (activeUnit + single-protein output) | 221 | 68 | 0.8824 ± 0.0391 | 0.5000 | — |
+
+Reference points: chance 0.500, degree rule 0.5664, global precedence 0.6547. The degree baseline is computed **on
+each rule's own edges**; the interval is a **cluster bootstrap over reactions**, because one reaction emits many
+arrows that are right or wrong together and a binomial CI over edges is off by roughly the mean block size.
+
+**The stated mechanism is only ~71% true.** The rule claims the unchanged partner IS the enzyme. Of 1,026 reactions
+with both an annotated catalyst and a transformed set, the catalyst is on the unchanged side in **733 (71.4%)** and
+on the transformed side in 293. A good approximation, not an identity — and measured only because the assertion was
+removed from the docstring first.
+
+### Three arrow sources proposed and rejected on evidence
+
+- **Transport (transporter → cargo): 0.382** — below chance, replicated independently against the full SIGNOR
+  release (21 agree / 34 contradict). Contradictions are dominated by **phosphorylation (39)**: transporters are
+  regulatory *targets* more often than SIGNOR records them as sources. Reactome also doesn't model it as claimed —
+  only ~10% of translocation reactions have any catalyst; the transporter is an **input**.
+- **Assembly order:** nesting is a curation convention, not assembly order. GRB2:GAB1 is nested inside the EGFR
+  complex but flat in the MET complex — same biology, opposite claim. The rule's accuracy is just P(the enzyme
+  happened to be on the pre-formed side).
+- **Modifier → transporter chains:** not independently supported.
+
+### Coverage, honestly
+
+| source | edges | % of PPI | quality |
+|---|---:|---:|---|
+| `tf_prior` | 23,097 | 12.06% | heuristic, **validated on zero edges**; 98.7% of it fires where no reaction-derived arrow exists |
+| transformed_partner | 3,822 | 2.00% | 0.8326 |
+| catalyst | 3,603 | 1.88% | 0.8242 |
+| pathway_order | 3,444 | 1.80% | 0.6547 |
+| signor | 2,831 | 1.48% | ground truth |
+| **evidence-backed union** | **11,647** | **6.08%** | up from 3.28% |
+
+Of the interactome: **~82%** of edges are in no curated reaction; **16.24%** are in binding steps that provably carry
+no direction; **~2%** is what reactions can orient.
+
+### The Markov chain on the directed network: honest negative
+
+| arm | recall@50 | vs UNDIR |
+|---|---:|---|
+| UNDIR (incumbent) | 0.4736 | reference |
+| DIR (measured arrows) | 0.4679 | −0.0056 ± 0.0023 WORSE |
+| DIR-REV (every arrow flipped) | 0.4712 | indistinguishable |
+| DIR-SHUF (random edges, random arrows) | 0.4772 | +0.0036 ± 0.0016 |
+
+**Reversing every arrow costs nothing** (−0.0033 ± 0.0028), so any difference from UNDIR is one-way-ness, not
+correctness. First hypothesis for why DIR < DIR-SHUF — arrows sit on high-degree edges — was **tested and refuted**
+(arrow-bearing edges have 0.84× the median endpoint-degree). What is true: arrows *cluster on particular nodes*
+(ETF1 77/97 edges made one-way, RPS27A 102/393), and concentrated constraint distorts a walk more than the same
+number of one-way edges spread thin.
+
+## Part 2 — the reaction network
+
+**28,528 typed steps**: Reactome 15,597 (signalling) + Human-GEM 12,931 (metabolism, 8,461 metabolites, 2,848
+enzymes). Gene overlap between the two sources is only **10.7%**, so the union is close to a sum.
+
+- **66.1% of typed participant slots are non-protein** — invisible to a protein-protein graph
+- **10,610 genes** with ≥1 reaction, **1,752 of them absent from the PPI network**
+- **58,659** protein–metabolite relations
+- energy and by-products are **kept and tagged `currency`**, not dropped — a model that cannot say a step spends ATP
+  is missing the point of the step
+
+### Spatial assignment
+
+| | steps | |
+|---|---:|---:|
+| LOCAL (one compartment) | 17,741 | 62.2% |
+| SPANNING (transport/membrane) | 10,747 | 37.7% |
+| UNKNOWN | 40 | 0.1% |
+
+The compartment pairs *are* the transport map: cytosol↔extracellular 3,368, cytosol↔plasma membrane 2,181,
+cytosol↔ER 829, cytosol↔nucleus 755, cytosol↔mitochondrion 744. Reactome's 123 compartment strings and Human-GEM's
+9 codes were harmonised into a coarse canonical set; unmapped strings are **reported (0.3%), not absorbed**.
+
+Validated against MitoCarta 3.0 (experimental: MS across 14 tissues, GFP, targeting signals): **precision 0.941**
+on 528 genes called mitochondrial, **recall 0.627** of the 793 MitoCarta genes in the network.
+
+### Pathway → pathway links
+
+**3,435** ordered links across 2,332 resolved pathways, from boundary entity flow. Validated on two targets that
+did not build them:
+
+- `precedingEvent`: **62.4% forward** on links vs **46.1%** on size-matched random pairs
+- K562 Perturb-seq: forward **+0.0129 ± 0.0006**, **REVERSED +0.0024** — forward is 5× reversed, which is what makes
+  the direction meaningful rather than just "these pathways are related"
+
+Strict gene-disjointness selects **zero** links, necessarily: a protein hand-off *manufactures* gene overlap.
+
+## Part 3 — necessity, and conceding an argument
+
+The claim under test: knowing *who acts on whom* is unnecessary bookkeeping — a reaction needs its substrates and its
+catalyst, lose any one and it stops. **That is correct for knockout propagation**, and the catalyst→substrate arrows
+above are a *lossy projection* of a reaction onto a protein-protein graph, needed only because the model was a graph.
+
+Tested against DepMap (1,150 lines × 18,443 genes), 2,784 overlapping genes:
+
+| | AUC |
+|---|---:|
+| NECESSITY (FBA gene deletion) | **0.6409** |
+| control: reaction count only | 0.3489 |
+| control: shuffled necessity | 0.4979 |
+
+Hard call: **precision 0.802, recall 0.258**. Low recall pre-registered as expected (DepMap essentiality is
+ribosome/spliceosome/proteasome-dominated; a metabolic model has none of it). Note the connectivity control is
+**below chance** — promiscuous metabolic genes sit in redundant branches, so "touches many reactions" is an
+*anti*-predictor of essentiality.
+
+## Part 4 — the dark proteome, placed and tested
+
+- **4,806/4,993 (96.3%)** dark genes carry a curated UniProt subcellular location; 4,786 map to a compartment
+- Where it lives: other membrane 1,951, nucleus 1,754, cytosol 1,579, extracellular 614, cytoskeleton 487
+- **489 of the 520** pathway-predicted dark genes were absent from the reaction network entirely
+
+Two independent tests, both with **size-matched** controls (a 1,230-gene pathway agrees with everything):
+
+| pathway | n | location Δ | co-essentiality Δ |
+|---|---:|---:|---:|
+| **Generic Transcription Pathway** | 242 | +0.0255 | +0.0012 |
+| Viral mRNA Translation | 77 | +0.2278 | +0.0278 |
+| mRNA Polyadenylation | 25 | +0.2615 | +0.0054 |
+| Mitochondrial translation initiation | 13 | **+0.3669** | **+0.3054** |
+
+Overall: location +0.1071 ± 0.0118, co-essentiality +0.0179 ± 0.0032, 301/482 positive, corr(predictor confidence,
+measured support) = +0.2912.
+
+**The 245 placements into Generic Transcription Pathway — 47% of all 520 — are supported by neither test**, and
+**134 are actively contradicted by location** (AIFM3, ANGEL2 mitochondrial → a nuclear transcription pathway).
+Honest tally: **~275 defensible placements, not 520.**
+
+## Part 5 — why mitochondrial modules are special: the genome, not the compartment
+
+Co-essentiality tightness above size-matched random sets, across 1,867 pathways: mitochondrial pathways take ranks
+**1, 2, 3, 4, 5**; median rank **30/1,867 (top 2%**, chance 50%).
+
+Two explanations, opposite predictions:
+
+| | mean delta |
+|---|---:|
+| mitochondrion | **+0.1624** |
+| nucleus | +0.0367 |
+| peroxisome | +0.0297 |
+| lysosome | +0.0240 |
+| cytosol | +0.0232 |
+
+Peroxisome and lysosome are equally membrane-bounded and sit at cytosol level, so **isolation alone does not do it**.
+MitoCarta's `Mitochondrial central dogma` branch holds compartment fixed and separates the two:
+
+| | n | delta |
+|---|---:|---:|
+| central dogma (serves the separate genome) | 227 | **+0.2822** |
+| other mitochondrial (OXPHOS, metabolism, transport) | 873 | **+0.0242** |
+
+Sub-mitochondrial gradient agrees: Matrix +0.0692, inner membrane +0.0601, outer membrane +0.0048.
+
+**Zero of the 13 mtDNA-encoded genes are in DepMap** — CRISPR does not edit mtDNA — so this is measured entirely on
+*nuclear-encoded* machinery. The nuclear genome maintains a dedicated, non-redundant apparatus for the mitochondrial
+one, and that apparatus fails as a unit.
+
+## Part 6 — six silent bugs, and four withdrawn claims
+
+Every one of these produced a plausible number from a broken join:
+
+1. **Rate-limited batches dropped silently.** Reactome 429s under load; `post()` returned `None` and `bulk()` did
+   `if not d: continue`. A fetch would "finish" with an unknown fraction of reactions absent. Now: backoff, failures
+   counted, and each pass **refuses to cache** if it lost anything.
+2. **`fbc:listOfGeneProducts` appears AFTER `</listOfReactions>`** (line 557,588 vs 557,580), so resolving enzyme
+   refs inline gave **all 12,931 metabolic reactions zero catalysts** with no error.
+3. **cobra drops `fbc:label`** — every `gene.name` is `""`, so Ensembl→symbol resolved to Ensembl ids and nothing
+   matched DepMap. The module's guard caught it as "no gene overlap" and refused to report.
+4. **Reactome refers to entities by stId *or* bare dbId.** 1,319 distinct ids fill **46,450 participant slots**
+   (they are the currency species). The supplementary fetch swallowed every failure and wrote `{}`, so the census
+   reported 46% of slots as type `OTHER` — a join gap dressed as a modelling decision. Now labelled `UNRESOLVED`.
+5. **Human-GEM ships with no medium** — all 1,660 exchanges at `lb = −1000`, hence growth 124.87 against real rates
+   of 0.05–2/h. The "condition comparison" returned byte-identical counts and **zero sign flips**, which reads as a
+   finding and was a failed manipulation.
+6. **A verdict rendered with no measurement**: `0/5,725 (0.0%) determined`. The absence of a measurement formatted as
+   a measurement of zero. Now refuses to emit anything.
+
+**Withdrawn:**
+
+- **0.783 was never a "ceiling."** It is the agreement rate between two specific curated sources over shared edges,
+  where disagreement is dominated by TF pairs whose two arrows are both true. `unchanged → transformed` exceeds it.
+- **"activeUnit is what makes the catalyst rule work."** Measured, AU scores **below** ALL (0.7296 vs 0.8242).
+- **"The catalyst tier adds ~0 new coverage."** Projected 4.85%, actual **6.08%** — the projection wrongly assumed
+  catalyst edges were a subset of transformed-partner edges; catalyst→output also fires where nothing is transformed.
+- **"The two rules agree almost perfectly" (98.5%, from a subagent report).** Measured here: **71.4%**.
+
+Two agent claims were also checked and **rejected**: that the `[compartment]` suffix cannot be regexed off a display
+name (mine is greedy and end-anchored and parses all 31,108 correctly), and that no SIGNOR data was in the repo
+(17,432 `sig` edges).
+
+## Part 7 — flux direction: unanswered, and left that way
+
+Human-GEM curates step order for **none** of its 12,931 reactions; 7,206 are irreversible, 5,725 reversible. On the
+unconstrained model, FVA at 90% of optimum gives **39.8% determined / 49.8% genuinely undetermined / 10.4% blocked**
+— so even swimming in every nutrient, half the reversible reactions have a sign the optimum does not pin down.
+
+The condition-dependence test **did not run**. A hand-built minimal medium (glucose + O₂ + ions + 20 amino acids)
+gave zero growth — human cells are auxotrophic for far more — and closing carbon uptakes to make glucose the sole
+carbon source also gave zero growth (8.15e-12). Rather than keep engineering a medium until something grew, this is
+recorded as **unanswered**.
+
+## Where the graph stands
+
+| | before | after |
+|---|---:|---:|
+| PPI edges | 191,447 | 191,447 |
+| PPI genes | 14,230 | 14,230 |
+| edges with evidence-backed direction | 6,275 (3.28%) | **11,647 (6.08%)** |
+| typed reaction steps | 0 | **28,528** |
+| ...located | 0 | 28,488 |
+| genes reachable via reactions | 0 | **10,610** (1,752 not in PPI) |
+| metabolites as nodes | 0 | **10,990** |
+| protein–metabolite relations | 0 | **58,659** |
+| pathway → pathway links | 0 | **3,435** |
+| **total nodes** | **14,230** | **26,972** |
+
+**Zero new PPI edges were added.** Direction roughly doubled, entirely by asking a better question of the same data.
+The structural change is the type system: one node type and one edge type became reactions with typed
+inputs/outputs/catalysts, metabolites, compartments and currency tagging.
