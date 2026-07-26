@@ -14,17 +14,41 @@ THE MAPPING ONTO THIS DATASET:
     multiplication factor k ->  the perturbation R0
     neutrons out            ->  the number of specific movers, which we measure and can hold out
 
-THE DATA SUPPORTS THE BRANCHING PREMISE, measured before anything was built:
-    response size: mean 10.8, median 1, max 246, and 689/1400 knockouts have EXACTLY ZERO
-    top 10% of knockouts hold 75.7% of all movers;  Fano factor var/mean = 91.3  (Poisson would be 1.0)
-    log-log slope of the size distribution = -1.41   (critical Galton-Watson predicts about -1.5)
-    first-hop cross-section p = 674/71654 = 0.0094 against a 0.0015 background -> 6.26x enrichment
+A CLAIM THIS MODULE ORIGINALLY MADE AND NOW WITHDRAWS. The first version of this file offered the shape of the
+response-size distribution as evidence for branching: mean 10.8, median 1, max 246, 689/1400 exact zeros, top 10% of
+knockouts holding 75.7% of movers, Fano 91.3, log-log slope -1.41 against critical Galton-Watson's -1.5. An
+adversarial review pointed out that these are all functions of the PER-KNOCKOUT MARGINAL, and the check is trivial:
+permute each knockout's z-scores WITHIN its own non-tide columns and the number exceeding TAU cannot change, so
+every one of those statistics is preserved exactly. Measured, and they are bit-identical to 1e-9 (section A below).
 
-R0 IS 0.72, NOT 0.57, AND THE CORRECTION MATTERS. The naive p*<k> = 0.0094*26.9 = 0.25 is the wrong formula for a
-branching process on a network: a node reached BY an edge is size-biased, so the right quantity is the EXCESS degree
-<k^2>/<k> - 1 = 76.2, giving R0 = 0.72. The percolation threshold is p_c = <k>/(<k^2>-<k>) = 0.01312, so
-p/p_c = 0.72. The process is SUBCRITICAL but not far from critical -- which is precisely the regime where cascades
-are heavy-tailed, extinction is common, and mean-field intuitions are least reliable.
+    THEY CARRY ZERO BITS ABOUT TOPOLOGY. A heavy tail is consistent with branching and equally consistent with any
+    mechanism that produces heavy-tailed response sizes. They are NOT evidence for a network process and are no
+    longer presented as such.
+
+What survives as genuinely topological is the cross-section itself, because it contrasts PARTNERS against
+NON-partners: P(PPI partner is a specific mover | gene knocked out) = 674/71654 = 0.0094 against a 0.0015
+background, 6.26x. That comparison is destroyed by the permutation, so it is real -- though see the caveat below,
+because 6.26x against a flat background is not 6.26x against a degree- and frequency-matched one.
+
+R0 IS A RANGE, NOT A NUMBER, AND THE EARLIER SINGLE FIGURE WAS OVERCONFIDENT. The naive p*<k> = 0.25 is the wrong
+formula: a node reached BY an edge is size-biased, so the branching number uses the EXCESS degree <k^2>/<k> - 1 =
+76.2, giving 0.72, and equivalently p/p_c = 0.72 with p_c = <k>/(<k^2>-<k>) = 0.01312. But that formula assumes a
+LOCALLY TREE-LIKE graph, and this one is not: PPI clustering is ~0.20 against ~0.002 for a degree-matched random
+graph, and triangles make a configuration-model R0 an UPPER BOUND of unknown tightness. Different estimators of the
+same quantity span roughly 0.56 to 1.25 here, which straddles 1. THE SUB- VERSUS SUPER-CRITICAL QUESTION IS NOT
+ANSWERABLE FROM THIS DATA, and any statement that the process "is subcritical" overstates what was measured.
+
+A SECOND WITHDRAWN CLAIM: "#P-COMPLETENESS JUSTIFIES MONTE CARLO HERE." It does not, and the refutation is a proof
+rather than a measurement. At depth <= 2 the paths from s to t are the direct edge (s,t) plus the 2-paths s-x-t over
+common neighbours x. Any two of those share NO edge -- the direct edge uses (s,t); the path through x uses (s,x) and
+(x,t); the path through y uses (s,y),(y,t) with y != x. Edge-disjoint paths are independent, so
+
+    P(t reachable from s within 2 hops) = 1 - (1 - p_st) * PROD_x (1 - p_sx * p_xt)     EXACTLY
+
+Two-terminal reliability IS #P-complete in general, but not on the truncated neighbourhood this repo actually uses,
+and at depth 3 the multi-path correction is not only tiny but MONOTONE (roughly 1 - exp(-U) in the mean-field sum U),
+so it cannot reorder anything. Monte Carlo was therefore never estimating a quantity without a closed form. That was
+the argument for trying it and the argument was wrong.
 
 THE PRE-REGISTERED FEASIBILITY TEST, RUN AND REPORTED BEFORE ANY PERFORMANCE NUMBER. Two previous Monte Carlos in
 this repo failed by being rank-decorative (measured Spearman -0.9904 against their own mean), so a third one has to
@@ -150,6 +174,31 @@ def main():
     for i in range(nK):
         if have[i]:
             nbrs[i] = Adj.indices[Adj.indptr[konode[i]]:Adj.indptr[konode[i] + 1]]
+    # ---- A. THE PERMUTATION CONTROL, run first because it decides what may be CALLED evidence ----
+    # Shuffle each knockout's z-scores WITHIN its own non-tide columns. The count above TAU cannot change, so every
+    # statistic that is a function of the response-size marginal survives untouched. Anything that survives this is
+    # not evidence about topology, no matter how branching-shaped it looks.
+    ntc = np.where(~tide_all)[0]
+    prng = np.random.RandomState(0); Ap = A.copy()
+    for i in range(nK):
+        Ap[i, ntc] = Ap[i, ntc][prng.permutation(len(ntc))]
+    size_perm = ((Ap >= TAU) & (~tide_all)).sum(1)
+
+    def shape_stats(s):
+        nz = s[s > 0]
+        h, e = np.histogram(nz, bins=np.logspace(0, np.log10(nz.max() + 1), 18))
+        c = (e[:-1] + e[1:]) / 2; m = h > 0
+        return {"mean": float(s.mean()), "median": float(np.median(s)), "max": float(s.max()),
+                "zeros": float((s == 0).sum()), "fano": float(s.var() / s.mean()),
+                "top10pct": float(np.sort(s)[::-1][:len(s) // 10].sum() / s.sum()),
+                "slope": float(np.polyfit(np.log(c[m]), np.log(h[m] / np.diff(e)[m]), 1)[0])}
+    sreal, sperm = shape_stats(size_all), shape_stats(size_perm)
+    perm_invariant = all(abs(sreal[k] - sperm[k]) < 1e-9 for k in sreal)
+    print(f"\nA. PERMUTATION CONTROL -- which 'branching evidence' survives shuffling z WITHIN each knockout?")
+    for k in sreal:
+        print(f"   {k:9s} real {sreal[k]:11.4f}   permuted {sperm[k]:11.4f}   "
+              f"{'IDENTICAL -> carries NO topology' if abs(sreal[k]-sperm[k]) < 1e-9 else 'differs'}")
+
     hits = tot = 0
     for i in range(nK):
         if i not in nbrs:
@@ -325,27 +374,45 @@ def main():
     sd_vs_mean = float(spearmanr(mc_sd[ok], mc_mean[ok]).statistic)
     p0_vs_mean = float(spearmanr(mc_p0[ok], mc_mean[ok]).statistic)
     mc_gain = res["NODE-GBM+MF+MC"]["spearman"] - res["NODE-GBM+MF"]["spearman"]
-    mc_decorative = abs(sd_vs_mean) > 0.99 and abs(p0_vs_mean) > 0.99
+    # THE VERDICT IS THE GAIN, NOT THE CORRELATION. An earlier version keyed this purely off whether the MC moments
+    # were monotone in the mean, and so printed "carry rank information the mean does not" directly above a gain of
+    # -0.0163. That is the win-only-test bug this repo has now hit three times. A negative gain is a LOSS and is
+    # reported as one whatever the correlations say.
+    mc_helps = mc_gain > 0.005
+    mc_decorative = (not mc_helps) or (abs(sd_vs_mean) > 0.99 and abs(p0_vs_mean) > 0.99)
     print(f"\nE. DOES MONTE CARLO EARN ITS COST ON TOP OF THE ANALYTIC MEAN-FIELD?")
     print(f"   Spearman(MC cascade SD, MC cascade mean)      = {sd_vs_mean:+.4f}")
     print(f"   Spearman(MC P(zero), MC cascade mean)         = {p0_vs_mean:+.4f}")
     print(f"   held-out gain from adding the MC moments      = {mc_gain:+.4f}")
-    print(f"   -> {'MC moments are monotone in the mean: DECORATIVE' if mc_decorative else 'MC moments carry rank information the mean does not'}")
+    print(f"   -> {'MC moments do not pay for themselves' if mc_decorative else 'MC moments earn their cost'}"
+          f"  (gain {mc_gain:+.4f}; the gain decides, not the correlation)")
 
     best_base = max(["TRAIN-MEAN", "DEGREE", "ESSENTIALITY", "NODE-GBM"], key=lambda n: res[n]["spearman"])
     mf_gain = res["NODE-GBM+MF"]["spearman"] - res["NODE-GBM"]["spearman"]
 
     verdict = (
-        f"ULAM'S METHOD APPLIED TO PERTURBATION SPREAD. The premise checks out: the response-size distribution is "
-        f"heavy-tailed (log-log slope -1.41 against critical Galton-Watson's -1.5), massively over-dispersed "
-        f"(Fano 91.3 where Poisson is 1.0), and 689/1400 knockouts have exactly zero specific movers, which is what "
-        f"extinction looks like. The cross-section is real and measurable: P(PPI partner moves | gene knocked out) "
-        f"= {p_hat0:.5f} against a {spec_all.mean():.5f} background, {p_hat0/spec_all.mean():.2f}x enrichment. "
-        f"THE MULTIPLICATION FACTOR IS R0 = {p_hat0*excess:.2f}, SUBCRITICAL, and the formula matters: the naive "
-        f"p*<k> gives {p_hat0*kk.mean():.2f}, but a node reached BY an edge is size-biased, so the correct branching "
-        f"number uses the EXCESS degree <k^2>/<k>-1 = {excess:.1f}. Equivalently p/p_c = {p_hat0/p_c:.2f}. "
-        f"Subcritical-but-near-critical is exactly the regime that produces heavy tails and frequent extinction, so "
-        f"the model and the observed distribution agree on the qualitative picture. "
+        f"ULAM'S METHOD APPLIED TO PERTURBATION SPREAD, AND IT DOES NOT WORK HERE. Two claims this module originally "
+        f"made are WITHDRAWN, both refuted by checks that cost minutes. FIRST, the response-size distribution was "
+        f"offered as evidence for branching -- heavy tail, Fano 91.3, log-log slope -1.41 against critical "
+        f"Galton-Watson's -1.5, 689/1400 exact zeros. Permuting each knockout's z-scores WITHIN its own non-tide "
+        f"columns leaves the count above threshold unchanged by construction, and measured, all seven statistics are "
+        f"{'BIT-IDENTICAL' if perm_invariant else 'NOT identical'} under that permutation. They are functions of the "
+        f"per-knockout marginal and carry ZERO bits about topology. A heavy tail is consistent with branching and "
+        f"equally consistent with anything else that makes heavy-tailed responses. SECOND, Monte Carlo was justified "
+        f"on the grounds that two-terminal reliability is #P-complete. It is -- in general, and not here: at depth 2 "
+        f"the direct edge and each 2-path through a common neighbour are EDGE-DISJOINT, hence independent, so "
+        f"P(reach) = 1 - (1-p_st) * prod_x (1 - p_sx p_xt) exactly, and at depth 3 the correction is both tiny and "
+        f"monotone, so it cannot reorder. There was never a quantity here without a closed form. "
+        f"WHAT SURVIVES IS THE CROSS-SECTION, because it contrasts partners against non-partners and the permutation "
+        f"destroys it: P(PPI partner moves | gene knocked out) = {p_hat0:.5f} against {spec_all.mean():.5f}, "
+        f"{p_hat0/spec_all.mean():.2f}x. That is measured against a FLAT background, and against a degree- and "
+        f"move-frequency-matched background the enrichment is much smaller; the flat number should not be quoted "
+        f"alone. R0 IS A RANGE AND NOT A NUMBER: the naive p*<k> gives {p_hat0*kk.mean():.2f}, the excess-degree "
+        f"formula {p_hat0*excess:.2f} (p/p_c = {p_hat0/p_c:.2f}), and both assume a locally tree-like graph that "
+        f"this one is not -- PPI clustering is ~0.20 against ~0.002 for a degree-matched random graph, so the "
+        f"configuration-model figure is an upper bound of unknown tightness. Estimators span roughly 0.56 to 1.25, "
+        f"which straddles 1, so THE SUB- VERSUS SUPERCRITICAL QUESTION IS NOT ANSWERABLE FROM THIS DATA and the "
+        f"earlier flat assertion of 'subcritical' overstated it. "
         + (f"MONTE CARLO IS NOT USABLE AT PER-GENE RESOLUTION HERE, AND THIS WAS TESTED FIRST, BEFORE ANY "
            f"PERFORMANCE NUMBER. Two independent runs at {R_FEAS} replicates agree with each other at Spearman "
            f"{rep_r:.3f} -- the estimator does not reproduce ITSELF -- while agreeing with the cheap linear walk at "
@@ -371,12 +438,16 @@ def main():
            f"that is the honest reading of {mf_gain:+.4f}. " if mf_gain <= 0.01 else
            f"THE CASCADE FEATURE ADDS {mf_gain:+.4f} OVER THE NODE FEATURES IT IS BUILT FROM, which is the only "
            f"comparison that isolates the branching structure from the degree it is computed on. ")
-        + (f"AND THE MC MOMENTS ADD {mc_gain:+.4f} ON TOP, with the cascade SD correlating with the cascade mean at "
-           f"{sd_vs_mean:+.3f} and P(zero) at {p0_vs_mean:+.3f} -- "
-           + ("both essentially perfect, so the higher moments are monotone functions of the mean and carry no "
-              "rank information the mean did not already have. That is the third strike for sampling in this repo. "
-              if mc_decorative else
-              "not perfectly monotone, so they are not merely the mean in disguise. ")) +
+        + (f"AND THE MC MOMENTS ADD {mc_gain:+.4f} ON TOP -- "
+           + (f"a LOSS, so sampling does not pay for itself here either. The cascade SD tracks the cascade mean at "
+              f"{sd_vs_mean:+.3f} and P(zero) at {p0_vs_mean:+.3f}; those are not quite the perfect monotonicity "
+              f"that would make them the mean in disguise, but near-monotone features that cost a 600-replicate "
+              f"simulation and then REDUCE held-out accuracy are not a finding to defend on a technicality. This is "
+              f"the third Monte Carlo in this repo to fail to earn its cost, and the three failed differently: the "
+              f"first two were rank-decorative, this one is unaffordable at per-gene resolution and unhelpful at "
+              f"aggregate resolution. " if not mc_helps else
+              f"a gain, and the moments are not monotone in the mean (SD {sd_vs_mean:+.3f}, P(zero) "
+              f"{p0_vs_mean:+.3f}), so sampling bought something the closed form did not. ")) +
         f"WHAT THIS CANNOT SAY. Only 674 of 15,183 specific movers (4.4%) are direct PPI partners of the knocked-out "
         f"gene, so a cascade on this graph could never have explained WHICH genes move -- it was only ever testable "
         f"on HOW MANY, which is why blast radius is the target. The cross-section is measured at hop 1, from a gene "
