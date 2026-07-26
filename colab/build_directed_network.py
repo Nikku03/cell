@@ -43,7 +43,11 @@ OUT = Path("outputs/orphan")
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 UA = {"User-Agent": "Mozilla/5.0 (compatible; cell-network-research/1.0)"}
 MAXP_SWEEP = [10, 25, 50, 100]
-MAXP = 25
+# SWEPT, NOT GUESSED. Coverage rises steeply with the cap while accuracy does not fall: 10 -> 1,325 edges at 0.639,
+# 25 -> 1,989 at 0.624, 50 -> 2,725 at 0.641, 100 -> 3,444 at 0.655. The cap exists to stop one precedence relation
+# between two 200-protein complexes manufacturing 40,000 orderings, but the fear that large reactions would poison
+# accuracy is not borne out at 100, so 100 is used: it dominates 25 on both axes.
+MAXP = 100
 
 
 def symbol_reactions():

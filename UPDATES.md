@@ -10724,3 +10724,65 @@ identified in this session, requiring no new experiment, only not discarding a f
 specifically, and a 3,328-gene pathway contains many such pairs. Feedback loops have no linear order at all — prior
 work here (`pathway_tier`) found only **47%** of pathway-membership genes get a trustworthy tier, 3% sit in feedback
 modules, and **50% have no directed context**. Realistic yield is well under the ceiling.
+
+---
+
+## `colab/fetch_reactome_order.py` + `colab/build_directed_network.py` — the directed network, built
+
+`pathway_order.py` found that the Reactome ordering had been discarded when pathways were flattened to gene sets.
+These two modules fetch it back and use it.
+
+### Fetching it — three silent failures, each diagnosed rather than retried
+
+1. **403 from urllib while curl got 200 on the same URL.** Not the egress proxy — its `recentRelayFailures` was
+   empty and curl reached the host. Reactome filters on User-Agent. Confirmed by sending both side by side:
+   default urllib **403**, browser-style **200**.
+2. **The paginated schema endpoint returned 25 ids regardless of `page`/`offset`.** Abandoned it — the
+   gene→reaction mapping already names every reaction containing a gene (16,173), which is exactly the set needed.
+3. **The bulk `/data/query/ids` endpoint silently caps at 20 results.** Measured: posting 20/25/50/150 ids returns
+   20/20/20/20, no error, no truncation flag. A batch of 150 *looked* like it worked while discarding 87% of every
+   request — the first "successful" run retrieved 2,160 of 16,173 and reported completion.
+
+**Final fetch: 16,173/16,173 reactions, 0 failures.** Rate measured live: **0.44 s/request, 2.26 req/s**, ~45
+reactions/s, ~6 min total — sequential, single connection, no parallelism, ≤4 retries with 1s/2s/4s backoff.
+**10,761 reactions carry a `precedingEvent`.**
+
+### The directed network
+
+Composition: *reaction R1 precedes R2, gene A in R1, gene B in R2 ⇒ A precedes B*, restricted to pairs that are
+actual PPI edges, oriented only when unambiguous.
+
+| provenance | edges | share |
+|---|---|---|
+| pathway_order (Reactome sequence) | 3,444 | 1.80% |
+| signor | 2,831 | 1.48% |
+| tf_prior *(heuristic, tier 2)* | 23,097 | 12.06% |
+| **undirected** | 162,075 | 84.66% |
+| **TOTAL DIRECTED** | **29,372** | **15.34%** — was 1.7% |
+| bidirectional (feedback, no linear order) | 25,090 | |
+
+**Accuracy against SIGNOR — an independently curated source — is 65.5% ± 2.6% on 333 edges both can orient**
+(chance 0.500). For comparison on the same task: Markov chain / degree **0.5664**, abundance 0.5475, TF annotation
+0.7647.
+
+The participant cap was swept, not assumed: 10 → 1,325 edges @ 0.639; 25 → 1,989 @ 0.624; 50 → 2,725 @ 0.641;
+100 → 3,444 @ 0.655. Accuracy does *not* degrade with larger reactions, so 100 is used — it dominates 25 on both axes.
+
+### The honest accounting: 40.4% was an upper bound, 1.8% is the delivery
+
+`pathway_order.py` measured that 40.4% of PPI edges have both ends in a shared pathway and called that the reach.
+**The realised figure from pathway order is 1.8%.** Sharing a pathway does not imply a precedence relation between
+the two specific reactions those proteins sit in — most co-pathway pairs are in the *same* reaction (which cannot
+order them) or in reactions with no ordering between them. **The 40.4% was a ceiling on where to look, not a
+forecast, and reporting it as a forecast would have been wrong.**
+
+Most of the 15.34% is the **TF prior**, a heuristic — labelled tier 2 in the output so it can be filtered out.
+Pathway order contributed 3,444 genuinely-curated arrows, roughly doubling what SIGNOR alone provides.
+
+### Limits
+
+Reactome curates a **canonical** pathway, not this cell line: an arrow means "in the curated human pathway A acts
+before B", not "in K562 today". Proteins in the same reaction have no order relative to each other. A precedence
+relation between *reactions* does not guarantee the two participants physically touch in that order — the arrow is a
+claim about pathway sequence, not about direct causation between that specific pair. 25,090 edges are
+precedence-linked both ways (feedback cycles) and are recorded as bidirectional rather than forced.
