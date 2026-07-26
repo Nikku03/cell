@@ -71,18 +71,53 @@ def main():
         raise SystemExit("model does not grow out of the box -- refusing to report direction from an infeasible "
                          "or zero-growth solution")
 
+    # THE MODEL SHIPS WITH NO MEDIUM AT ALL, AND THAT INVALIDATES ANY "CONDITION" APPLIED ON TOP OF IT.
+    # All 1,660 exchange reactions have lower_bound = -1000, i.e. every nutrient in the database is freely
+    # available, which is why wild-type growth comes out at ~125 (real biomass rates are 0.05-2 per hour). An
+    # earlier version of this file constrained glucose uptake and compared conditions; the two runs returned
+    # byte-identical FVA counts and ZERO sign flips, which looked like a finding ("direction is condition
+    # independent") and was actually a failed manipulation: capping one uptake changes nothing while 1,659 others
+    # are open. Conditions are therefore imposed by CLOSING the medium first and reopening a defined set.
+    ex = [r for r in model.reactions if r.boundary]
+    print(f"  {len(ex):,} exchange reactions, {sum(1 for r in ex if r.lower_bound < 0):,} allowing uptake "
+          f"before constraining -- the downloaded model has no medium", flush=True)
+
+    def open_medium(mdl, carbon_lb):
+        """Close every uptake, then reopen a defined minimal medium. Returns the glucose exchange actually used."""
+        for r in mdl.reactions:
+            if r.boundary:
+                r.lower_bound = 0.0
+        want = {"glucose": carbon_lb, "O2": -1000.0, "H2O": -1000.0, "Pi": -1000.0, "H+": -1000.0,
+                "NH3": -1000.0, "sulfate": -1000.0, "Fe2+": -1000.0, "Na+": -1000.0, "K+": -1000.0,
+                "Cl-": -1000.0, "Ca2+": -1000.0}
+        aa = ["alanine", "arginine", "asparagine", "aspartate", "cysteine", "glutamate", "glutamine", "glycine",
+              "histidine", "isoleucine", "leucine", "lysine", "methionine", "phenylalanine", "proline", "serine",
+              "threonine", "tryptophan", "tyrosine", "valine"]
+        for a in aa:
+            want[a] = -1.0
+        opened, glc = 0, None
+        for r in mdl.reactions:
+            if not r.boundary:
+                continue
+            names = {(m.name or "").strip() for m in r.metabolites}
+            for target, lb in want.items():
+                if target in names:
+                    r.lower_bound = lb
+                    opened += 1
+                    if target == "glucose":
+                        glc = r.id
+                    break
+        return opened, glc
+
     results = {}
-    for cond, scale in (("rich", 1.0), ("glucose-limited", 0.1)):
+    for cond, carbon in (("glucose-rich", -10.0), ("glucose-limited", -1.0)):
         with model:
-            if scale != 1.0:
-                # Constrain glucose uptake. Exchange lower bounds are negative (uptake), so scaling toward zero
-                # tightens them. Only glucose is touched, so any difference is attributable to that one change.
-                for r in model.reactions:
-                    if r.id.startswith("MAR") and "glc" in (r.name or "").lower() and r.lower_bound < 0:
-                        r.lower_bound = r.lower_bound * scale
+            n_open, glc = open_medium(model, carbon)
+            print(f"  {cond}: reopened {n_open} uptakes, glucose exchange {glc} at lb={carbon}", flush=True)
             s = model.optimize()
-            if s.status != "optimal":
-                print(f"  {cond}: infeasible, skipped")
+            if s.status != "optimal" or not s.objective_value or s.objective_value < 1e-9:
+                print(f"  {cond}: no growth on this medium ({s.status}, obj={s.objective_value}) -- skipped rather "
+                      f"than reporting directions from a dead model")
                 continue
             print(f"  {cond} optimum: {s.objective_value:.4f}; running FVA on {len(rev):,} reversible "
                   f"reactions at {FRAC:.0%} of optimum ...", flush=True)
