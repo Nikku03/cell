@@ -6,8 +6,8 @@
   "RANDOM": 0.007340227225269613,
   "TIDE": 0.2670929329168469,
   "NEXUS": 0.3232550450921279,
-  "PHYS": 0.4028032951981445,
-  "LEARNED": 0.4524807930644972,
+  "PHYS": 0.4486714273375643,
+  "LEARNED": 0.4691284175414129,
   "MARKOV-P": 0.47625390614328833,
   "MARKOV-P-shuf": 0.1292120755077163,
   "MC-P": 0.45802429815263934,
@@ -18,8 +18,8 @@
   "RANDOM": 0.0017841356668345254,
   "TIDE": 0.013986820766995004,
   "NEXUS": 0.02785815089333038,
-  "PHYS": 0.03358896133285895,
-  "LEARNED": 0.03968935241846989,
+  "PHYS": 0.034521815719099944,
+  "LEARNED": 0.025339071637879112,
   "MARKOV-P": 0.03909803523072084,
   "MARKOV-P-shuf": 0.009336084560192087,
   "MC-P": 0.03806527900188575,
@@ -27,40 +27,40 @@
   "ORACLE*": 0.025043528808278377
  },
  "ensembles": {
-  "PHYS+LEARNED": 0.46606135458157827,
-  "TIDE+PHYS+LEARNED": 0.47922755252285054,
-  "4-way (the 0.470 ensemble)": 0.4994504242002889,
-  "4-way + MARKOV-P": 0.5173298633156853,
-  "4-way + MARKOV-P-shuf": 0.4692021240172023,
-  "4-way + MC-P": 0.5081677824702531,
-  "4-way + MC-P-shuf": 0.47178419947812705,
-  "5-way + both": 0.5148537085787398
+  "PHYS+LEARNED": 0.478338206207217,
+  "TIDE+PHYS+LEARNED": 0.4801662074125761,
+  "4-way (the 0.470 ensemble)": 0.4949978389732407,
+  "4-way + MARKOV-P": 0.5067830833501599,
+  "4-way + MARKOV-P-shuf": 0.46513233238377766,
+  "4-way + MC-P": 0.5013514598266059,
+  "4-way + MC-P-shuf": 0.46666350108966553,
+  "5-way + both": 0.5073010262906996
  },
  "n_splits": 5,
  "paired_vs_4way": {
   "markov": {
-   "mean_diff": 0.01787943911539639,
-   "se": 0.002704277330247515,
+   "mean_diff": 0.01178524437691919,
+   "se": 0.002880384870747719,
    "verdict": "BETTER"
   },
   "markov_shuffled": {
-   "mean_diff": -0.030248300183086642,
-   "se": 0.00195969135438582,
+   "mean_diff": -0.02986550658946303,
+   "se": 0.004248948489567726,
    "verdict": "WORSE"
   },
   "mc": {
-   "mean_diff": 0.008717358269964181,
-   "se": 0.002978955306055757,
-   "verdict": "BETTER"
+   "mean_diff": 0.006353620853365216,
+   "se": 0.003687149678080746,
+   "verdict": "indistinguishable"
   },
   "mc_shuffled": {
-   "mean_diff": -0.02766622472216177,
-   "se": 0.003455418617331053,
+   "mean_diff": -0.02833433788357508,
+   "se": 0.0038016616585120158,
    "verdict": "WORSE"
   },
   "both": {
-   "mean_diff": 0.015403284378450944,
-   "se": 0.005287992869718514,
+   "mean_diff": 0.012303187317458908,
+   "se": 0.0037788192401444036,
    "verdict": "BETTER"
   }
  },
@@ -97,15 +97,15 @@
   ]
  ],
  "gains_vs_4way": {
-  "markov": 0.01787943911539639,
-  "markov_shuffled": -0.030248300183086642,
-  "mc": 0.008717358269964181,
-  "mc_shuffled": -0.02766622472216177
+  "markov": 0.01178524437691919,
+  "markov_shuffled": -0.02986550658946303,
+  "mc": 0.006353620853365216,
+  "mc_shuffled": -0.02833433788357508
  },
  "markov_real": true,
- "mc_real": true,
+ "mc_real": false,
  "n_ppi_edges": 191447,
  "n_complex_edges": 38504,
- "verdict": "MARKOV CHAIN AND MONTE CARLO ON THE PROTEIN CHAIN, FUSED INTO THE 0.470 ENSEMBLE. Setup discipline first: the 0.348 figure belongs to the UNCENSORED setup (tide-null ~0.11-0.13) and the ~0.47-0.49 figure to the HARNESS setup (tide-null 0.26, oracle 0.62); mixing them is meaningless, so everything here runs in the harness setup and self-calibrates against it -- measured tide 0.267, oracle 0.609, in range. THE CHAIN IS A NEIGHBOUR SELECTOR, NOT A DIFFUSION, because ranking genes by walk score is a twice-measured dead end here: mechanistic_propagate scored 0.055 against the 0.26 null and markov_outofgame lost to a gene-identity prior by nine sigma. What works in this harness is neighbour transfer, so the walk chooses which TRAIN knockouts to average. THE NEW INGREDIENT is complex co-membership as a FIRST-CLASS EDGE -- multihop_diagnosis measured it at +0.1369 (p=7.7e-04), on par with the direct regulatory edge, and flagged it as never built. ALL NUMBERS ARE MEANED OVER 5 INDEPENDENT KNOCKOUT SPLITS, because a +0.02 gain on one split is not a result. SINGLES: TIDE 0.2671, NEXUS 0.3233, PHYS 0.4028, LEARNED 0.4525, MARKOV-P 0.4763, MC-P 0.4580, ORACLE* 0.6092 -- so the protein chain ALONE outscores every previously built single component, including the learned-similarity model, and lands near the full 4-way ensemble. ENSEMBLES: the 4-way baseline lands at 0.4995 here -- the documented figure for it is 0.470, which a single seed-0 split reproduces exactly; the 5-split mean sits higher because split-to-split spread is +-0.034, so 0.470 and 0.4995 are the same number measured twice, and only the WITHIN-split paired differences below are load-bearing. Adding MARKOV-P gives 0.5173 (paired +0.0179 +- 0.0027, BETTER), adding MC-P gives 0.5082 (paired +0.0087 +- 0.0030, BETTER), both together 0.5149 (paired +0.0154 +- 0.0053, BETTER). NOTE THAT STACKING BOTH IS NOT THE BEST OPTION: MC-P helps on its own but DILUTES when added on top of MARKOV-P (0.5149 versus 0.5173), which is what you would expect from two views of the SAME walk -- MC-P is that walk resampled -- so the honest recommendation is the 4-way + MARKOV-P, not the 5-way. AND IT SURVIVES THE SHUFFLED CONTROL: label-permuted versions add only -0.0302 (MARKOV-P) and -0.0277 (MC-P), so the gain is knockout-specific protein-chain information, not fusion arithmetic. Best configuration overall: 4-way + MARKOV-P at 0.5173, against the oracle ceiling of 0.6092 -- so the ensemble now closes 73% of the tide-to-oracle head-room, against 68% before. The chain configuration was PRE-REGISTERED on each split's training knockouts, never on its test set (modal pick: steps=2, damping=0.5, complex weight=2.0). WHAT THIS CANNOT SAY: 5 splits of one cell line's knockouts share the same underlying data, so the paired SE understates true uncertainty and this is not a cross-cell-line result -- multi-line pooling has already FAILED once in this project (pair_retrieval_multi degraded ranking, p=0.00028). The gain also does not close the oracle gap: the oracle still finds specific movers the protein chain misses. Complexes larger than 60 members are dropped as annotation buckets rather than machines, which is a judgement call that was not swept. And MARKOV-P and MC-P are highly correlated by construction -- MC-P is the same walk resampled -- so their individual contributions are not separable, only their joint one. Deterministic given seed 0.",
- "note": "MARKOV CHAIN AND MONTE CARLO ON THE PROTEIN CHAIN, FUSED INTO THE 0.470 ENSEMBLE. Setup discipline first: the 0.348 figure belongs to the UNCENSORED setup (tide-null ~0.11-0.13) and the ~0.47-0.49 figure to the HARNESS setup (tide-null 0.26, oracle 0.62); mixing them is meaningless, so everything here runs in the harness setup and self-calibrates against it -- measured tide 0.267, oracle 0.609, in range. THE CHAIN IS A NEIGHBOUR SELECTOR, NOT A DIFFUSION, because ranking genes by walk score is a twice-measured dead end here: mechanistic_propagate scored 0.055 against the 0.26 null and markov_outofgame lost to a gene-identity prior by nine sigma. What works in this harness is neighbour transfer, so the walk chooses which TRAIN knockouts to average. THE NEW INGREDIENT is complex co-membership as a FIRST-CLASS EDGE -- multihop_diagnosis measured it at +0.1369 (p=7.7e-04), on par with the direct regulatory edge, and flagged it as never built. ALL NUMBERS ARE MEANED OVER 5 INDEPENDENT KNOCKOUT SPLITS, because a +0.02 gain on one split is not a result. SINGLES: TIDE 0.2671, NEXUS 0.3233, PHYS 0.4028, LEARNED 0.4525, MARKOV-P 0.4763, MC-P 0.4580, ORACLE* 0.6092 -- so the protein chain ALONE outscores every previously built single component, including the learned-similarity model, and lands near the full 4-way ensemble. ENSEMBLES: the 4-way baseline lands at 0.4995 here -- the documented figure for it is 0.470, which a single seed-0 split reproduces exactly; the 5-split mean sits higher because split-to-split spread is +-0.034, so 0.470 and 0.4995 are the same number measured twice, and only the WITHIN-split paired differences below are load-bearing. Adding MARKOV-P gives 0.5173 (paired +0.0179 +- 0.0027, BETTER), adding MC-P gives 0.5082 (paired +0.0087 +- 0.0030, BETTER), both together 0.5149 (paired +0.0154 +- 0.0053, BETTER). NOTE THAT STACKING BOTH IS NOT THE BEST OPTION: MC-P helps on its own but DILUTES when added on top of MARKOV-P (0.5149 versus 0.5173), which is what you would expect from two views of the SAME walk -- MC-P is that walk resampled -- so the honest recommendation is the 4-way + MARKOV-P, not the 5-way. AND IT SURVIVES THE SHUFFLED CONTROL: label-permuted versions add only -0.0302 (MARKOV-P) and -0.0277 (MC-P), so the gain is knockout-specific protein-chain information, not fusion arithmetic. Best configuration overall: 4-way + MARKOV-P at 0.5173, against the oracle ceiling of 0.6092 -- so the ensemble now closes 73% of the tide-to-oracle head-room, against 68% before. The chain configuration was PRE-REGISTERED on each split's training knockouts, never on its test set (modal pick: steps=2, damping=0.5, complex weight=2.0). WHAT THIS CANNOT SAY: 5 splits of one cell line's knockouts share the same underlying data, so the paired SE understates true uncertainty and this is not a cross-cell-line result -- multi-line pooling has already FAILED once in this project (pair_retrieval_multi degraded ranking, p=0.00028). The gain also does not close the oracle gap: the oracle still finds specific movers the protein chain misses. Complexes larger than 60 members are dropped as annotation buckets rather than machines, which is a judgement call that was not swept. And MARKOV-P and MC-P are highly correlated by construction -- MC-P is the same walk resampled -- so their individual contributions are not separable, only their joint one. Deterministic given seed 0."
+ "verdict": "MARKOV CHAIN AND MONTE CARLO ON THE PROTEIN CHAIN, FUSED INTO THE 0.470 ENSEMBLE. Setup discipline first: the 0.348 figure belongs to the UNCENSORED setup (tide-null ~0.11-0.13) and the ~0.47-0.49 figure to the HARNESS setup (tide-null 0.26, oracle 0.62); mixing them is meaningless, so everything here runs in the harness setup and self-calibrates against it -- measured tide 0.267, oracle 0.609, in range. THE CHAIN IS A NEIGHBOUR SELECTOR, NOT A DIFFUSION, because ranking genes by walk score is a twice-measured dead end here: mechanistic_propagate scored 0.055 against the 0.26 null and markov_outofgame lost to a gene-identity prior by nine sigma. What works in this harness is neighbour transfer, so the walk chooses which TRAIN knockouts to average. THE NEW INGREDIENT is complex co-membership as a FIRST-CLASS EDGE -- multihop_diagnosis measured it at +0.1369 (p=7.7e-04), on par with the direct regulatory edge, and flagged it as never built. ALL NUMBERS ARE MEANED OVER 5 INDEPENDENT KNOCKOUT SPLITS, because a +0.02 gain on one split is not a result. SINGLES: TIDE 0.2671, NEXUS 0.3233, PHYS 0.4487, LEARNED 0.4691, MARKOV-P 0.4763, MC-P 0.4580, ORACLE* 0.6092 -- so the protein chain ALONE outscores every previously built single component, including the learned-similarity model, and lands near the full 4-way ensemble. ENSEMBLES: the 4-way baseline lands at 0.4950 here -- the documented figure for it is 0.470, which a single seed-0 split reproduces exactly; the 5-split mean sits higher because split-to-split spread is +-0.023, so 0.470 and 0.4950 are the same number measured twice, and only the WITHIN-split paired differences below are load-bearing. Adding MARKOV-P gives 0.5068 (paired +0.0118 +- 0.0029, BETTER), adding MC-P gives 0.5014 (paired +0.0064 +- 0.0037, indistinguishable), both together 0.5073 (paired +0.0123 +- 0.0038, BETTER). NOTE THAT STACKING BOTH IS NOT THE BEST OPTION: MC-P helps on its own but DILUTES when added on top of MARKOV-P (0.5073 versus 0.5068), which is what you would expect from two views of the SAME walk -- MC-P is that walk resampled -- so the honest recommendation is the 4-way + MARKOV-P, not the 5-way. AND IT SURVIVES THE SHUFFLED CONTROL: label-permuted versions add only -0.0299 (MARKOV-P) and -0.0283 (MC-P), so the gain is knockout-specific protein-chain information, not fusion arithmetic. Best configuration overall: 5-way + both at 0.5073, against the oracle ceiling of 0.6092 -- so the ensemble now closes 70% of the tide-to-oracle head-room, against 67% before. The chain configuration was PRE-REGISTERED on each split's training knockouts, never on its test set (modal pick: steps=2, damping=0.5, complex weight=2.0). WHAT THIS CANNOT SAY: 5 splits of one cell line's knockouts share the same underlying data, so the paired SE understates true uncertainty and this is not a cross-cell-line result -- multi-line pooling has already FAILED once in this project (pair_retrieval_multi degraded ranking, p=0.00028). The gain also does not close the oracle gap: the oracle still finds specific movers the protein chain misses. Complexes larger than 60 members are dropped as annotation buckets rather than machines, which is a judgement call that was not swept. And MARKOV-P and MC-P are highly correlated by construction -- MC-P is the same walk resampled -- so their individual contributions are not separable, only their joint one. Deterministic given seed 0.",
+ "note": "MARKOV CHAIN AND MONTE CARLO ON THE PROTEIN CHAIN, FUSED INTO THE 0.470 ENSEMBLE. Setup discipline first: the 0.348 figure belongs to the UNCENSORED setup (tide-null ~0.11-0.13) and the ~0.47-0.49 figure to the HARNESS setup (tide-null 0.26, oracle 0.62); mixing them is meaningless, so everything here runs in the harness setup and self-calibrates against it -- measured tide 0.267, oracle 0.609, in range. THE CHAIN IS A NEIGHBOUR SELECTOR, NOT A DIFFUSION, because ranking genes by walk score is a twice-measured dead end here: mechanistic_propagate scored 0.055 against the 0.26 null and markov_outofgame lost to a gene-identity prior by nine sigma. What works in this harness is neighbour transfer, so the walk chooses which TRAIN knockouts to average. THE NEW INGREDIENT is complex co-membership as a FIRST-CLASS EDGE -- multihop_diagnosis measured it at +0.1369 (p=7.7e-04), on par with the direct regulatory edge, and flagged it as never built. ALL NUMBERS ARE MEANED OVER 5 INDEPENDENT KNOCKOUT SPLITS, because a +0.02 gain on one split is not a result. SINGLES: TIDE 0.2671, NEXUS 0.3233, PHYS 0.4487, LEARNED 0.4691, MARKOV-P 0.4763, MC-P 0.4580, ORACLE* 0.6092 -- so the protein chain ALONE outscores every previously built single component, including the learned-similarity model, and lands near the full 4-way ensemble. ENSEMBLES: the 4-way baseline lands at 0.4950 here -- the documented figure for it is 0.470, which a single seed-0 split reproduces exactly; the 5-split mean sits higher because split-to-split spread is +-0.023, so 0.470 and 0.4950 are the same number measured twice, and only the WITHIN-split paired differences below are load-bearing. Adding MARKOV-P gives 0.5068 (paired +0.0118 +- 0.0029, BETTER), adding MC-P gives 0.5014 (paired +0.0064 +- 0.0037, indistinguishable), both together 0.5073 (paired +0.0123 +- 0.0038, BETTER). NOTE THAT STACKING BOTH IS NOT THE BEST OPTION: MC-P helps on its own but DILUTES when added on top of MARKOV-P (0.5073 versus 0.5068), which is what you would expect from two views of the SAME walk -- MC-P is that walk resampled -- so the honest recommendation is the 4-way + MARKOV-P, not the 5-way. AND IT SURVIVES THE SHUFFLED CONTROL: label-permuted versions add only -0.0299 (MARKOV-P) and -0.0283 (MC-P), so the gain is knockout-specific protein-chain information, not fusion arithmetic. Best configuration overall: 5-way + both at 0.5073, against the oracle ceiling of 0.6092 -- so the ensemble now closes 70% of the tide-to-oracle head-room, against 67% before. The chain configuration was PRE-REGISTERED on each split's training knockouts, never on its test set (modal pick: steps=2, damping=0.5, complex weight=2.0). WHAT THIS CANNOT SAY: 5 splits of one cell line's knockouts share the same underlying data, so the paired SE understates true uncertainty and this is not a cross-cell-line result -- multi-line pooling has already FAILED once in this project (pair_retrieval_multi degraded ranking, p=0.00028). The gain also does not close the oracle gap: the oracle still finds specific movers the protein chain misses. Complexes larger than 60 members are dropped as annotation buckets rather than machines, which is a judgement call that was not swept. And MARKOV-P and MC-P are highly correlated by construction -- MC-P is the same walk resampled -- so their individual contributions are not separable, only their joint one. Deterministic given seed 0."
 }

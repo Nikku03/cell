@@ -9789,3 +9789,66 @@ flattens after one rung points at the first.
 The effective sample is ~250 independent **knockouts** per split, not the ~60,000 pairs. So this cannot distinguish
 *"the information is absent"* from *"the information is present but unlearnable at this size."* One cell line, five
 splits sharing the same data.
+
+---
+
+## CORRECTION: the PPI graph was never wired in. Headline drops 0.5173 → 0.5068, and one claim is withdrawn
+
+An exhaustive data audit found that `cell_complete['ppi']` endpoints are **integer indices into `genes[]`**, but the
+adjacency was built keyed by int and then **looked up with gene-name strings**. Verified before touching anything:
+
+| | KO with ≥1 PPI neighbour | KO–KO PPI edges recovered |
+|---|---|---|
+| shipped construction | **0 / 1400** | **0** |
+| mapped through `names[]` | **1371 / 1400** | **34,440** |
+
+**The PPI graph was empty everywhere it was read by name.** Consequences: `shared_ppi_nbr`, `jaccard_ppi_nbr` and
+`is_direct_ppi` were **identically zero** in LEARNED, and `phys_adj` reduced to complex-OR-pathway — so the component
+labelled **"PHYS (PPI | complex | pathway)" contained no PPI**.
+
+**MARKOV-P was unaffected**, because it indexes the graph by integer node. Which means it was the *only* component that
+could see the physical graph at all — precisely the comparison the module was built to make.
+
+### Before → after (5 splits, same seeds, only the wiring changed)
+
+| | before | after |
+|---|---|---|
+| PHYS | 0.4028 | **0.4487** |
+| LEARNED | 0.4525 | **0.4691** |
+| MARKOV-P | 0.4763 | 0.4763 *(unchanged, as predicted)* |
+| 4-way | 0.4995 | 0.4950 |
+| **4-way + MARKOV-P** | **0.5173** | **0.5068** |
+| head-room closed | 73% | 70% |
+
+| marginal contribution | before | after |
+|---|---|---|
+| **+ MARKOV-P** | +0.0179 ± 0.0027 BETTER | **+0.0118 ± 0.0029 BETTER** |
+| **+ MC-P** | +0.0087 ± 0.0030 BETTER | **+0.0064 ± 0.0037 — indistinguishable** |
+
+### What changes, stated plainly
+
+**MARKOV-P's contribution shrinks by a third** once PHYS can actually see PPI. It survives — still significant, still
+beating its shuffled twin by −0.0299 — but a meaningful part of its apparent edge was that its rivals were blindfolded.
+
+**The MC-P claim is withdrawn.** It was reported as a real ensemble gain; against a correctly-wired baseline it is
+indistinguishable from zero. Sampling now fails to earn its cost in **all three** places it was tried.
+
+**The headline is 0.5068, not 0.5173.**
+
+### Scope: what is fixed and what still carries the defect
+
+Fixed and re-run: `protein_chain_combine.py`.
+
+**Still carries the same bug, numbers affected in the same direction:** `wall_learnsim.py`, `wall_combine.py`,
+`recall_depth.py`, and `eval_harness.py` (whose NEIGHBOR reference accepts 0 of 191,447 PPI edges and additionally
+loads 3,076 dead index-string keys into `self.nb`). Their PHYS/LEARNED-derived numbers are understated. The
+oracle and tide references are unaffected — they never touch PPI.
+
+**Unaffected and verified:** `markov_bridge`, `bridge_measured`, `graph_null`, `causal_footprint`, `kitchen_sink` and
+`transformer_markov` all map names→indices before reading the graph.
+
+### Why this was found only now
+
+Every module reproduced its expected number, so nothing looked wrong. A dead feature does not throw — it returns zeros,
+the model routes around it, and the score lands close enough to the documented value to pass a self-calibration check.
+The audit that caught it was a full enumeration of what each key *contains*, run against what each module *reads*.
