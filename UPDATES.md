@@ -9242,3 +9242,75 @@ HBA1, HBA2 carry no value at all** and GATA1 sits at **0.423**. Converting it to
 molecules in an erythroleukemia cell. `abund` is not protein either — it is a 0–15 integer scale over mRNA maxima across
 200 cell types, topped by IGKC, LALBA, INS, GCG, CSN2. **Both labels corrected; 20 modules consume these fields and any
 protein-dosage number built on them is measuring blood plasma.**
+---
+
+## The protein chain: a Markov walk that beats every single component, and lifts the ensemble past 0.51
+
+The first genuinely positive result in this line of work. Same harness, same components, one new graph.
+
+### Setup discipline first
+
+**0.348 and 0.49 live in different setups and must never be mixed.** 0.348 is `program_coldstart` in the *uncensored*
+setup (tide-null ~0.11–0.13); ~0.47–0.49 is the *harness* setup (tide-null 0.26, oracle 0.62). Everything here runs in
+the harness setup and self-calibrates against it: **measured tide 0.267, oracle 0.609** — both in range.
+
+### Why it is a neighbour selector and not a diffusion
+
+Ranking genes by walk score is a **twice-measured dead end** here: `mechanistic_propagate` scored 0.055 against the 0.26
+null, and `markov_outofgame` (previous entry) lost to a gene-identity prior by nine sigma. What works in this harness is
+*neighbour transfer* — PHYS scores 0.40 by averaging graph neighbours' measured profiles. So the walk is used to **choose
+which train knockouts to average**, not to predict genes.
+
+### The new ingredient: complex co-membership as a first-class edge
+
+`multihop_diagnosis` measured it at **+0.1369 (p=7.7e-04)** — on par with the direct regulatory edge — and UPDATES.md
+recorded that it was *"not yet built or tested."* Now built: 191,447 PPI edges + **38,504 complex co-membership edges**
+from 1,840 complexes (>60 members dropped as annotation buckets). The pre-registered config picks **complex weight 2.0**,
+i.e. it weights complex co-membership *twice* as heavily as physical binding.
+
+### Singles (mean over 5 independent knockout splits)
+
+| component | recall@50 |
+|---|---|
+| RANDOM | 0.0073 |
+| TIDE | 0.2671 |
+| NEXUS | 0.3233 |
+| PHYS | 0.4028 |
+| LEARNED | 0.4525 |
+| **MARKOV-P** | **0.4763** |
+| MC-P | 0.4580 |
+| MARKOV-P shuffled | 0.1292 |
+| ORACLE* | 0.6092 |
+
+**The protein chain alone outscores every previously built single component** — including the learned-similarity model —
+and lands near the full 4-way *ensemble*.
+
+### Ensembles, and the paired test that decides it
+
+| ensemble | recall@50 | paired vs 4-way |
+|---|---|---|
+| 4-way (the 0.470 ensemble) | 0.4995 | — |
+| **4-way + MARKOV-P** | **0.5173** | **+0.0179 ± 0.0027 BETTER** |
+| 4-way + MC-P | 0.5082 | +0.0087 ± 0.0030 BETTER |
+| 5-way + both | 0.5149 | +0.0154 ± 0.0053 BETTER |
+| 4-way + MARKOV-P **shuffled** | 0.4692 | **−0.0302 ± 0.0020 WORSE** |
+| 4-way + MC-P **shuffled** | 0.4718 | −0.0277 ± 0.0035 WORSE |
+
+**It survives the shuffled control** — the exact test `wall_combine` says decides it, having once caught a "gain" that
+was only generic z-fusion re-weighting. Permuting knockout labels while keeping the score distribution identical
+*hurts* by −0.03.
+
+**Stacking both is not the best option.** MC-P helps alone but **dilutes on top of MARKOV-P** (0.5149 vs 0.5173) — exactly
+what two views of the *same walk* would do. The honest recommendation is **4-way + MARKOV-P**.
+
+**Head-room: 68% → 73%** of the tide-to-oracle gap now closed.
+
+### Two things stated so the numbers aren't over-read
+
+The 4-way baseline lands at **0.4995** here while its documented figure is **0.470** — a single seed-0 split reproduces
+0.4701 exactly, and split-to-split spread is **±0.034**, so these are the same number measured twice. **Only the
+within-split paired differences are load-bearing.**
+
+And this is 5 splits of *one cell line*, so the paired SE understates true uncertainty; multi-line pooling has already
+**failed once** here (`pair_retrieval_multi`, p=0.00028). The oracle gap does not close — it still finds specific movers
+the protein chain misses.
