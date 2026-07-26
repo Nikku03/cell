@@ -45,6 +45,7 @@ OUT = Path("outputs/orphan")
 SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
 CACHE = SP / "catalyst_arrows_cache.json"           # written by catalyst_arrows.py: rx, ca, gene, comp
 PECOMP = SP / "pe_compartment.json"                 # leaf PE -> compartment, parsed from NCBI2Reactome_PE_Reactions
+MAXPROD = 50    # an entity produced by more than this many reactions is treated as currency (ATP, ADP, H2O, Pi)
 
 
 # ----------------------------------------------------------------------------------------------------------------
@@ -242,24 +243,32 @@ def main():
     # RULE 2 -- TRANSPORT.  A gene whose leaf entity appears on the input side in one compartment and on the output
     # side in another has been translocated. The reaction's catalyst is the transporter; transporter -> cargo.
     # ------------------------------------------------------------------------------------------------------------
+    def moved_genes(r):
+        """Genes present on both sides of reaction r but reaching a compartment they were not already in.
+
+        Compartment comes from the LEAF entity, not the enclosing complex, which is what makes this work: the cargo
+        of a nuclear import is buried inside a cargo:importin complex, and only the leaf carries "[cytosol]" on the
+        input side and "[nucleoplasm]" on the output side.
+        """
+        gin, gout = collections.defaultdict(set), collections.defaultdict(set)
+        for side, acc in (("in", gin), ("out", gout)):
+            for p in rx[r][side]:
+                for lf in pe2leaf.get(p, ()):
+                    c = pecomp.get(lf)
+                    if c:
+                        for g in gene.get(lf, ()):
+                            acc[g].add(c)
+        return {g for g in gin if g in gout and gout[g] - gin[g]}
+
     tr = collections.defaultdict(collections.Counter)
     cargo_seen, n_transport_rx = collections.Counter(), 0
     src_count = collections.Counter()
-    for r, v in rx.items():
-        gin, gout = collections.defaultdict(set), collections.defaultdict(set)
-        for p in v["in"]:
-            for lf in pe2leaf.get(p, ()):
-                for g in gene.get(lf, ()):
-                    if lf in pecomp:
-                        gin[g].add(pecomp[lf])
-        for p in v["out"]:
-            for lf in pe2leaf.get(p, ()):
-                for g in gene.get(lf, ()):
-                    if lf in pecomp:
-                        gout[g].add(pecomp[lf])
-        moved = {g for g in gin if g in gout and gout[g] - gin[g]}
+    transport_rx = set()
+    for r in rx:
+        moved = moved_genes(r)
         if not moved:
             continue
+        transport_rx.add(r)
         n_transport_rx += 1
         cat, _ = catalysts(r)
         for g in moved:
@@ -275,27 +284,23 @@ def main():
     # Entity flow is used rather than precedingEvent, deliberately: precedingEvent already backs the 0.6547 rule and
     # reusing it here would make this a re-slicing of an existing source rather than new evidence.
     # ------------------------------------------------------------------------------------------------------------
+    # THE CURRENCY-MOLECULE TRAP, WHICH THIS RULE WALKS STRAIGHT INTO IF UNGUARDED. Linking R1 to R2 through a
+    # shared entity is the classic way to build a dense, confident-looking, meaningless network: ATP is an output of
+    # thousands of reactions and an input to most transport reactions, so joining on it would declare that every
+    # kinase acts before every transporter. The guard is data-driven rather than a hand-written blacklist -- count
+    # how many distinct reactions produce each entity and drop the promiscuous ones -- and the cap is swept so its
+    # effect is visible rather than assumed.
     producers = collections.defaultdict(set)
     for r, v in rx.items():
         for p in v["out"]:
             producers[p].add(r)
+    prod_n = {p: len(s) for p, s in producers.items()}
+    hot = sorted(prod_n.values(), reverse=True)[:5]
+    print(f"\n  entity promiscuity: most-produced entities appear as output of {hot} reactions; "
+          f"cap MAXPROD={MAXPROD}")
+    producers = {p: s for p, s in producers.items() if len(s) <= MAXPROD}
     mt = collections.defaultdict(collections.Counter)
     n_chain = 0
-    transport_rx = set()
-    for r, v in rx.items():
-        gin, gout = collections.defaultdict(set), collections.defaultdict(set)
-        for p in v["in"]:
-            for lf in pe2leaf.get(p, ()):
-                for g in gene.get(lf, ()):
-                    if lf in pecomp:
-                        gin[g].add(pecomp[lf])
-        for p in v["out"]:
-            for lf in pe2leaf.get(p, ()):
-                for g in gene.get(lf, ()):
-                    if lf in pecomp:
-                        gout[g].add(pecomp[lf])
-        if any(g in gout and gout[g] - gin[g] for g in gin):
-            transport_rx.add(r)
     for r2 in transport_rx:
         t_syms, _ = catalysts(r2)
         if not t_syms:
