@@ -10538,3 +10538,26 @@ from `comp` for the rest — not independent of either. `reg`'s signed subset dr
 `causal_reg.tsv` component derives signs from Perturb-seq, making it a double-dip with PROFILE. And the CN=0 stratum
 has **82 positives**, so its bootstrap SE is ±0.03: nothing below ~0.56 is distinguishable from chance, and two
 features within 0.06 of each other are not distinguishable from one another.
+
+### Dense DepMap added — works alone, adds nothing to the stack
+
+| arm | AUC | **CN=0** | p@100 (pool) | p@100 at CN=0 |
+|---|---|---|---|---|
+| TOPO | 0.9579 | 0.500 | 0.990 | 0.000 |
+| +SPATIAL | 0.9609 | 0.614 | 1.000 | 0.000 |
+| +PERTURB | 0.9612 | 0.598 | 1.000 | 0.010 |
+| **+DEPMAP** *(dense, new)* | 0.9591 | **0.594** | 1.000 | 0.000 |
+| +SPAT+PERT | 0.9631 | 0.672 | 1.000 | 0.000 |
+| **+SPAT+PERT+DEP** | **0.9634** | **0.676 ± 0.028** | 1.000 | 0.000 |
+| ALL (no graph) | 0.8546 | 0.620 | 0.990 | **0.020** |
+
+**Dense DepMap alone lifts CN=0 from 0.500 to 0.594** — comparable to spatial, and it comes from a completely
+different measurement (CRISPR fitness across 1,150 cell lines). But stacked on spatial+Perturb-seq it adds
+**+0.004**, well inside the ±0.028 SE. **That is the fourth time this session** a new source has worked in isolation
+and contributed nothing to the ensemble — the same redundancy pattern `redundancy_check.py` established at the
+start: independent-looking evidence converges on the same pairs.
+
+**Sparse-regime precision is still ~zero.** The best is `ALL(no graph)` at p@100 = 0.020 — 2 correct in 100. Against
+a 0.0108% base rate that is a **185× lift**, and it is still 2 out of 100. Four independent evidence types stacked
+(localisation, genomic position, Perturb-seq, DepMap) move CN=0 from chance to 0.676 AUC and produce essentially no
+usable predictions.
