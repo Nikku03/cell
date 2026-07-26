@@ -14,26 +14,42 @@ MEASURED FIRST, BEFORE BUILDING ANYTHING, and it reshapes the whole idea:
 
 WITHIN A REACTION, AN INTERACTION HAS NO DIRECTION. That is not a data gap, it is what a binding event is: the
 reaction is A + B -> AB, so A and B are both INPUTS and they are peers. Asking which of two binding partners comes
-"first" inside the step where they bind is asking a question the step does not answer. The 95 that do split are the
-exception, not the rule.
+"first" inside the step where they bind is asking a question the step does not answer. Reactome says so in its own
+vocabulary -- reactions carry a `category` field, and the value for these is literally "binding". This module counts
+that breakdown rather than asserting it.
 
 SO THE RELATION THAT CARRIES DIRECTION IS CATALYSIS, NOT CONSUMPTION. In a phosphorylation reaction Reactome
 records input = {substrate, ATP}, output = {phospho-substrate, ADP}, and the KINASE as a CATALYST -- not an input.
 An input->output rule therefore yields substrate -> phospho-substrate, which is the same protein, and never recovers
 kinase -> substrate, which is exactly the arrow SIGNOR records. Catalyst -> output is the relation that matches.
 
-That requires a second resolution hop: the bulk endpoint returns each CatalystActivity object with a dbId but WITHOUT
-its physicalEntity, so the activities have to be resolved separately. This module does both hops and then measures,
-against independently curated SIGNOR:
+THREE THINGS ABOUT THE DATA HAD TO BE ESTABLISHED BY PROBING, AND EACH ONE WOULD HAVE SILENTLY WRECKED THE RESULT.
 
-    coverage   how many PPI edges catalyst->output can orient at all
-    accuracy   how often it agrees with SIGNOR, against 0.500 chance, the 0.5664 the degree rule gets, and the
-               0.6547 the existing global precedence rule gets
-    overlap    whether it orients the SAME edges as the global rule or different ones
+1. THE BULK ENDPOINT DOES CARRY catalystActivity -- an earlier version of this module concluded it did not. The probe
+   used R-HSA-109639, which is a `binding` reaction and genuinely HAS no catalyst, so `catalystActivity: null` was
+   read as "the field is never returned". Checking a reaction that actually has a catalyst (R-HSA-8848436, "PTK6
+   phosphorylates CDKN1B") shows the field present in the bulk response. The lesson is that a null on one record is
+   not evidence about a schema.
 
-If catalyst->output is high-precision and low-coverage it should be a separate, higher tier rather than merged --
-the pattern established in pathway_inputs.py, where entity flow answered one question well and another badly and
-merging the two diluted the good answer.
+2. THE CATALYST IS USUALLY THE WHOLE ENZYME:SUBSTRATE COMPLEX, NOT THE ENZYME. For R-HSA-8848436 the
+   catalystActivity's physicalEntity is `p-Y342-PTK6:CDKN1B:(CDK4:CCND1,(CDK2:CCNE1))` -- which CONTAINS the
+   substrate CDKN1B. Expanding it and firing catalyst->output would emit PTK6->CDKN1B and CDKN1B->PTK6 together, so
+   the edge would come out ambiguous and be discarded: the signal cancels itself. Reactome solves this with
+   `activeUnit`, which here is exactly `p-Y342-PTK6`. Preferring activeUnit over physicalEntity is what makes the
+   rule mean "the enzyme acted on the product" instead of "these things were in a complex together".
+   This also kills the filter an earlier draft had -- "require that the catalyst is not itself an input". In this
+   canonical idiom the catalyst complex IS an input, so that filter would have thrown away the true positives.
+
+3. THE EXISTING sym2pe.json IS THE WRONG MAP AND WOULD HAVE FAILED QUIETLY. Its keys are Reactome DISPLAY NAMES, not
+   gene symbols -- `p-Y342-PTK6` is a key, distinct from `PTK6` -- so every modified protein form would have missed
+   the PPI gene index. And no entity in it maps to more than one gene, meaning complexes are never expanded, so any
+   complex input or output contributes nothing. This module builds its own map by recursively expanding
+   `hasComponent`/`hasMember` down to EntityWithAccessionedSequence and reading `referenceEntity.geneName`, which is
+   the authoritative UniProt symbol.
+
+WHAT IS MEASURED, against independently curated SIGNOR, with the degree rule computed ON THE SAME EDGES as the
+control -- because a random walk's direction on an undirected graph is provably the degree ratio, and an annotation
+could be selecting edges where degree already happens to work.
 """
 import collections
 import json
@@ -46,8 +62,9 @@ import numpy as np
 OUT = Path("outputs/orphan")
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 UA = {"User-Agent": "Mozilla/5.0 (compatible; cell-network-research/1.0)"}
-BATCH = 20              # measured silent cap on the bulk endpoint
-CACHE = Path(SP) / "catalysts.json"
+BATCH = 20              # measured silent cap on the bulk endpoint: posting 25/50/150 ids all return 20
+MAXDEPTH = 8            # complex nesting is a few levels deep; this is a runaway guard, not a real limit
+CACHE = Path(SP) / "catalyst_arrows_cache.json"     # NOT catalysts.json -- another process writes that name
 
 
 def post(ids, tries=4):
@@ -65,56 +82,160 @@ def post(ids, tries=4):
     return None
 
 
-def fetch_catalysts():
+def bulk(ids, handle, label):
+    """POST ids in batches of 20, calling handle(obj) on each returned object."""
+    ids = list(ids)
+    t0 = time.time()
+    for i in range(0, len(ids), BATCH):
+        d = post(ids[i:i + BATCH])
+        if not d:
+            continue
+        for o in d:
+            handle(o)
+        if (i // BATCH) % 200 == 0:
+            print(f"    {label} {i//BATCH}/{len(ids)//BATCH}  "
+                  f"({(i//BATCH+1)/max(time.time()-t0,1):.2f} req/s)", flush=True)
+
+
+def fetch():
     if CACHE.exists():
         return json.loads(CACHE.read_text())
     cls = json.loads((Path(SP) / "reaction_io.json").read_text())["className"]
     rxn = sorted(k for k, v in cls.items() if v == "Reaction")
-    print(f"pass 1: collecting catalystActivity ids from {len(rxn):,} reactions", flush=True)
-    r2ca, t0 = {}, time.time()
-    for i in range(0, len(rxn), BATCH):
-        d = post(rxn[i:i + BATCH])
-        if not d:
-            continue
-        for o in d:
-            ca = [c.get("dbId") for c in (o.get("catalystActivity") or []) if isinstance(c, dict) and c.get("dbId")]
-            if ca:
-                r2ca[o["stId"]] = ca
-        if (i // BATCH) % 200 == 0:
-            print(f"  {i//BATCH}/{len(rxn)//BATCH}  {len(r2ca)} reactions with a catalyst "
-                  f"({(i//BATCH+1)/max(time.time()-t0,1):.2f} req/s)", flush=True)
-    allca = sorted({c for v in r2ca.values() for c in v})
-    print(f"pass 2: resolving {len(allca):,} CatalystActivity objects to physical entities", flush=True)
-    ca2pe = {}
-    for i in range(0, len(allca), BATCH):
-        d = post(allca[i:i + BATCH])
-        if not d:
-            continue
-        for o in d:
-            pe = o.get("physicalEntity") or {}
-            if o.get("dbId") and pe.get("stId"):
-                ca2pe[str(o["dbId"])] = pe["stId"]
-        if (i // BATCH) % 200 == 0:
-            print(f"  {i//BATCH}/{len(allca)//BATCH}  {len(ca2pe)} resolved", flush=True)
-    out = {"r2ca": r2ca, "ca2pe": ca2pe}
+
+    # pass 1 -- reactions: category, inputs, outputs, catalystActivity dbIds
+    print(f"pass 1: {len(rxn):,} reactions -> category + catalystActivity", flush=True)
+    rx = {}
+
+    def h1(o):
+        sid = o.get("stId")
+        if not sid:
+            return
+        rx[sid] = {
+            "cat": o.get("category"),
+            "in": [e["stId"] for e in (o.get("input") or []) if isinstance(e, dict) and e.get("stId")],
+            "out": [e["stId"] for e in (o.get("output") or []) if isinstance(e, dict) and e.get("stId")],
+            "ca": [c["dbId"] for c in (o.get("catalystActivity") or []) if isinstance(c, dict) and c.get("dbId")],
+        }
+    bulk(rxn, h1, "rxn")
+    ncat = sum(1 for v in rx.values() if v["ca"])
+    print(f"  {len(rx):,} reactions retrieved, {ncat:,} with a catalyst", flush=True)
+
+    # pass 2 -- CatalystActivity -> physicalEntity and (preferably) activeUnit
+    allca = sorted({c for v in rx.values() for c in v["ca"]})
+    print(f"pass 2: {len(allca):,} CatalystActivity objects -> physicalEntity / activeUnit", flush=True)
+    ca = {}
+
+    def h2(o):
+        if not o.get("dbId"):
+            return
+        pe = o.get("physicalEntity") or {}
+        au = [u["stId"] for u in (o.get("activeUnit") or []) if isinstance(u, dict) and u.get("stId")]
+        ca[str(o["dbId"])] = {"pe": pe.get("stId"), "au": au}
+    bulk(allca, h2, "ca")
+    nau = sum(1 for v in ca.values() if v["au"])
+    print(f"  {len(ca):,} resolved, {nau:,} have an explicit activeUnit", flush=True)
+
+    # pass 3 -- recursively expand every physical entity to gene symbols
+    need = set()
+    for v in rx.values():
+        need |= set(v["in"]) | set(v["out"])
+    for v in ca.values():
+        if v["pe"]:
+            need.add(v["pe"])
+        need |= set(v["au"])
+    gene, comp, seen = {}, {}, set()
+    depth = 0
+    while need and depth < MAXDEPTH:
+        todo = sorted(need - seen)
+        if not todo:
+            break
+        seen |= set(todo)
+        print(f"pass 3.{depth}: expanding {len(todo):,} entities", flush=True)
+        nxt = set()     # accumulate with .update(), never `|=` -- augmented assignment inside the nested
+                        # handler would make the name local to it and raise UnboundLocalError
+
+        def h3(o):
+            sid = o.get("stId")
+            if not sid:
+                return
+            ref = o.get("referenceEntity") or {}
+            gn = ref.get("geneName") or []
+            if gn:
+                gene[sid] = gn if isinstance(gn, list) else [gn]
+            # EntitySet hasCandidate is deliberately NOT followed: candidates are Reactome's explicit
+            # "might be this one" annotation, and expanding them would manufacture arrows from uncertainty.
+            kids = []
+            for k in ("hasComponent", "hasMember"):
+                for c in (o.get(k) or []):
+                    if isinstance(c, dict) and c.get("stId"):
+                        kids.append(c["stId"])
+            if kids:
+                comp[sid] = kids
+                nxt.update(kids)
+        bulk(todo, h3, f"pe{depth}")
+        need = nxt
+        depth += 1
+
+    out = {"rx": rx, "ca": ca, "gene": gene, "comp": comp}
     CACHE.write_text(json.dumps(out))
     print(f"  cached -> {CACHE} ({CACHE.stat().st_size/1e6:.1f} MB)", flush=True)
     return out
 
 
-def main():
-    CA = fetch_catalysts()
-    r2ca, ca2pe = CA["r2ca"], CA["ca2pe"]
-    io = json.loads((Path(SP) / "reaction_io.json").read_text())["io"]
-    s2p = {k: set(v) for k, v in json.loads((Path(SP) / "sym2pe.json").read_text()).items()}
-    pe2s = collections.defaultdict(set)
-    for s, ps in s2p.items():
-        for p in ps:
-            pe2s[p].add(s)
-    print(f"\n{len(r2ca):,} reactions with a catalyst; {len(ca2pe):,} catalyst entities resolved", flush=True)
+def build_pe2sym(gene, comp):
+    """PE stId -> set of gene symbols, resolving complexes/sets through their components."""
+    memo = {}
 
+    def resolve(pe, stack=()):
+        if pe in memo:
+            return memo[pe]
+        if pe in stack:            # cycle guard; Reactome complexes are a DAG but do not assume it
+            return set()
+        s = set(gene.get(pe, ()))
+        for c in comp.get(pe, ()):
+            s |= resolve(c, stack + (pe,))
+        memo[pe] = s
+        return s
+
+    for pe in list(gene) + list(comp):
+        resolve(pe)
+    return memo
+
+
+def evaluate(cnt, label, gt, deg, n_ppi):
+    orient = {k: v.most_common(1)[0][0] for k, v in cnt.items() if len(v) == 1}
+    amb = len(cnt) - len(orient)
+    test = [(k, orient[k]) for k in orient if k in gt]
+    n = len(test)
+    acc = sum(1 for k, d in test if gt[k] == d) / n if n else float("nan")
+    se = float(np.sqrt(acc * (1 - acc) / n)) if n else float("nan")
+    # MATCHED CONTROL: point from the low-degree protein to the high-degree one, on exactly these edges.
+    dacc = (sum(1 for k, _ in test if deg.get(gt[k][0], 0) < deg.get(gt[k][1], 0)) / n) if n else float("nan")
+    print(f"\n  {label}")
+    print(f"    PPI edges oriented        {len(orient):,}  ({len(orient)/n_ppi:.2%} of the interactome)")
+    print(f"    ambiguous (both ways)     {amb:,}")
+    print(f"    checkable against SIGNOR  {n:,}")
+    if n:
+        print(f"    accuracy                  {acc:.4f} +/- {se:.4f}   (chance 0.500)")
+        print(f"    MATCHED degree baseline   {dacc:.4f}          <- same edges, degree rule")
+        print(f"    delta over degree         {acc - dacc:+.4f}")
+    return {"orient": orient, "amb": amb, "n": n, "acc": acc, "se": se, "deg": dacc}
+
+
+def main():
+    F = fetch()
+    rx, ca, gene, comp = F["rx"], F["ca"], F["gene"], F["comp"]
+    pe2sym = build_pe2sym(gene, comp)
+    nmulti = sum(1 for v in pe2sym.values() if len(v) > 1)
+    print(f"\n{len(pe2sym):,} physical entities mapped to genes; {nmulti:,} map to >1 gene (complexes/sets)")
+    print(f"{sum(1 for v in rx.values() if v['ca']):,} of {len(rx):,} reactions have a catalyst; "
+          f"{sum(1 for v in ca.values() if v['au']):,} catalyst activities name an activeUnit", flush=True)
+
+    # ---- PPI edges and the SIGNOR ground truth ----
     D = json.load(open(OUT / "cell_complete.json"))
-    names = [g["name"] for g in D["genes"]]; N = len(names)
+    names = [g["name"] for g in D["genes"]]
+    N = len(names)
     ppi = set()
     for e in D.get("ppi", []):
         try:
@@ -125,7 +246,8 @@ def main():
             ppi.add((names[min(a, b)], names[max(a, b)]))
     edge_of = collections.defaultdict(set)
     for a, b in ppi:
-        edge_of[a].add(b); edge_of[b].add(a)
+        edge_of[a].add(b)
+        edge_of[b].add(a)
     S = set()
     for e in D.get("sig", []) or []:
         try:
@@ -134,58 +256,89 @@ def main():
             continue
         if 0 <= s_ < N and 0 <= t_ < N and s_ != t_:
             S.add((names[s_], names[t_]))
+    # ground truth = SIGNOR pairs that are PPI edges AND unambiguous (no reciprocal arrow)
     gt = {frozenset(p): p for p in S if (p[1], p[0]) not in S and p[1] in edge_of.get(p[0], ())}
+    deg = {g: len(v) for g, v in edge_of.items()}
     print(f"PPI edges {len(ppi):,}; SIGNOR-orientable {len(gt):,}", flush=True)
 
-    # ---- catalyst -> output, restricted to pairs that are PPI edges ----
-    arrows = collections.defaultdict(collections.Counter)
-    for r, cas in r2ca.items():
-        d = io.get(r)
-        if not d:
+    # ---- Reactome's own verdict on whether a shared reaction can carry direction ----
+    cats = collections.Counter()
+    for r, v in rx.items():
+        syms = set()
+        for p in v["in"] + v["out"]:
+            syms |= pe2sym.get(p, set())
+        if any(b in edge_of.get(a, ()) for a in syms for b in syms if a != b):
+            cats[v["cat"] or "none"] += 1
+    print(f"\n  reaction `category` among reactions containing at least one PPI edge: "
+          f"{dict(cats.most_common())}")
+
+    # ---- catalyst -> output on PPI edges ----
+    # ALL   catalyst entity = activeUnit when Reactome names one, else the whole catalyst physicalEntity
+    # AU    only reactions where an activeUnit IS named -- Reactome pinned which subunit acts, so the arrow
+    #       means "this enzyme acted", not "these proteins were in a complex together"
+    # AUMONO  AU, and the output entity is a single protein rather than a complex. When the output is a complex,
+    #       the naive rule fires catalyst -> EVERY member of it, including subunits the enzyme never touched.
+    arrows, au_arrows, aumono = (collections.defaultdict(collections.Counter) for _ in range(3))
+    n_out_single = n_out_complex = 0
+    for r, v in rx.items():
+        if not v["ca"]:
             continue
-        cat_syms = set()
-        for c in cas:
-            p = ca2pe.get(str(c))
-            if p:
-                cat_syms |= pe2s.get(p, set())
+        cat_syms, cat_syms_au = set(), set()
+        for c in v["ca"]:
+            d = ca.get(str(c))
+            if not d:
+                continue
+            if d["au"]:
+                s = set().union(*(pe2sym.get(u, set()) for u in d["au"]))
+                cat_syms |= s
+                cat_syms_au |= s
+            elif d["pe"]:
+                cat_syms |= pe2sym.get(d["pe"], set())
         if not cat_syms:
             continue
-        out_syms = set()
-        for p in d.get("out", []):
-            out_syms |= pe2s.get(p, set())
-        for a in cat_syms:
-            nb = edge_of.get(a)
-            if not nb:
+        for p in v["out"]:
+            syms = pe2sym.get(p, set())
+            if not syms:
                 continue
-            for b in out_syms:
-                if a != b and b in nb:
+            single = len(syms) == 1
+            n_out_single += single
+            n_out_complex += not single
+            for a in cat_syms:
+                nb = edge_of.get(a)
+                if not nb:
+                    continue
+                for b in syms:
+                    if a == b or b not in nb:
+                        continue
                     arrows[frozenset((a, b))][(a, b)] += 1
+                    if a in cat_syms_au:
+                        au_arrows[frozenset((a, b))][(a, b)] += 1
+                        if single:
+                            aumono[frozenset((a, b))][(a, b)] += 1
 
-    oriented = {k: v.most_common(1)[0][0] for k, v in arrows.items() if len(v) == 1}
-    ambiguous = len(arrows) - len(oriented)
-    test = [(k, oriented[k]) for k in oriented if k in gt]
-    good = sum(1 for k, d in test if gt[k] == d)
-    acc = good / len(test) if test else float("nan")
-    se = float(np.sqrt(acc * (1 - acc) / len(test))) if test else float("nan")
+    A = evaluate(arrows, "CATALYST -> OUTPUT  (ALL)", gt, deg, len(ppi))
+    U = evaluate(au_arrows, "CATALYST -> OUTPUT  (AU: Reactome names the active subunit)", gt, deg, len(ppi))
+    M = evaluate(aumono, "CATALYST -> OUTPUT  (AU + output is a single protein)", gt, deg, len(ppi))
+    print(f"\n    output entities seen: {n_out_single:,} single-protein, {n_out_complex:,} complex/multi-gene")
+    print(f"      reference points: degree/Markov 0.5664 | global precedence 0.6547 | curated-vs-curated 0.783")
 
-    print(f"\n  CATALYST -> OUTPUT")
-    print(f"    PPI edges oriented        {len(oriented):,}  ({len(oriented)/len(ppi):.2%} of the interactome)")
-    print(f"    ambiguous (both ways)     {ambiguous:,}")
-    print(f"    checkable against SIGNOR  {len(test):,}")
-    if test:
-        print(f"    accuracy                  {acc:.4f} +/- {se:.4f}   (chance 0.500)")
-        print(f"      degree/Markov rule 0.5664 | global precedence 0.6547 | curated-vs-curated ceiling 0.783")
-
-    # does it orient DIFFERENT edges than the global precedence rule?
+    # ---- does it orient DIFFERENT edges than the global precedence rule? ----
     DN = json.load(open(OUT / "directed_network.json"))
     po = {frozenset((a, b)): (a, b) for a, b, p, t in DN["edges"] if p == "pathway_order"}
+    oriented = A["orient"]
     both = set(oriented) & set(po)
     agree = sum(1 for k in both if oriented[k] == po[k]) if both else 0
+    uniq = len(set(oriented) - set(po))
     print(f"\n    overlap with the global pathway_order rule: {len(both):,} edges"
           + (f", agreeing {agree/len(both):.1%}" if both else ""))
-    print(f"    edges catalyst->output orients that pathway_order does NOT: {len(set(oriented)-set(po)):,}")
+    print(f"    edges catalyst->output orients that pathway_order does NOT: {uniq:,}")
 
-    better = acc == acc and acc - 2 * se > 0.6547
+    # THE VERDICT KEYS OFF THE MATCHED CONTROL, not off beating a number measured on a different edge set.
+    usable = [(n, r) for n, r in (("ALL", A), ("AU", U), ("AU+MONO", M)) if r["n"] >= 30]
+    best_name, best = max(usable, key=lambda x: x[1]["acc"] - 2 * x[1]["se"]) if usable else ("ALL", A)
+    beats_deg = bool(usable) and best["acc"] - 2 * best["se"] > best["deg"]
+    beats_glob = bool(usable) and best["acc"] - 2 * best["se"] > 0.6547
+
     verdict = (
         f"WITHIN-REACTION ARROWS: THE PREMISE WAS RIGHT, THE FIRST RULE WAS WRONG, AND THE FIX IS CATALYSIS. "
         f"Orienting {{A,B}} from the reaction where A and B ACTUALLY interact is a better question than the global "
@@ -193,34 +346,45 @@ def main():
         f"an input, B is an output -- reaches almost nothing: of the 36,415 PPI edges (19.02%) whose endpoints share "
         f"a reaction, only 95 split across input and output, while 1,593 are BOTH INPUTS. That is not a gap in the "
         f"data, it is what binding IS: the reaction is A + B -> AB, both partners go in, and inside the step where "
-        f"two proteins bind, neither comes first. "
+        f"two proteins bind, neither comes first. Reactome agrees in its own vocabulary -- the `category` breakdown "
+        f"of reactions containing a PPI edge is {dict(cats.most_common(4))}. "
         f"THE RELATION THAT CARRIES DIRECTION IS CATALYSIS. In a phosphorylation Reactome records input = "
         f"{{substrate, ATP}}, output = {{phospho-substrate, ADP}} and the kinase as a CATALYST, so input->output "
         f"yields substrate -> phospho-substrate (the same protein) and never recovers kinase -> substrate, which is "
-        f"the arrow SIGNOR actually records. Resolving catalysts took a second hop, because the bulk endpoint "
-        f"returns CatalystActivity objects without their physicalEntity. "
-        f"MEASURED: catalyst->output orients {len(oriented):,} PPI edges ({len(oriented)/len(ppi):.2%}), "
-        f"{ambiguous:,} more are ambiguous, and on the {len(test):,} checkable against SIGNOR it is "
-        f"{acc:.4f} +/- {se:.4f}. "
-        + (f"THAT BEATS THE GLOBAL PRECEDENCE RULE'S 0.6547 and the degree rule's 0.5664, and it is close to the "
-           f"0.783 ceiling set by how much the two curated sources agree with each other -- so this is about as "
-           f"good as an annotation-derived arrow can be. " if better else
-           f"That does NOT clearly beat the global precedence rule's 0.6547 at this sample size, so it earns a "
-           f"place as a separate high-specificity tier rather than a replacement. ")
-        + f"It orients {len(set(oriented)-set(po)):,} edges the global rule does not, so the two are complementary "
-        f"rather than redundant. "
-        f"WHAT THIS CANNOT SAY. Catalyst->output is the enzyme acting on its product, which is a causal claim, but "
-        f"the OUTPUT is often a complex and the arrow is then drawn to every protein in it, not only the one that "
-        f"was modified. Reactome describes canonical human biology, not K562. And the ceiling remains 78%: "
-        f"'the direction of a PPI edge' is not single-valued, because protein-level and transcriptional direction "
-        f"on the same pair legitimately oppose.")
+        f"the arrow SIGNOR actually records. "
+        f"TWO DATA FACTS HAD TO BE PROBED, AND EITHER WOULD HAVE WRECKED THIS SILENTLY. First, the catalyst entity "
+        f"is usually the whole ENZYME:SUBSTRATE complex, so expanding it fires both directions at once and the edge "
+        f"cancels to 'ambiguous'; Reactome's `activeUnit` names the subunit that actually acts, and preferring it is "
+        f"what makes the rule mean 'the enzyme acted on the product'. Second, the existing sym2pe map is keyed by "
+        f"DISPLAY NAME ('p-Y342-PTK6', not 'PTK6') and never expands complexes, so it was rebuilt here by recursing "
+        f"through hasComponent/hasMember to UniProt geneName. "
+        f"MEASURED: ALL orients {len(A['orient']):,} PPI edges ({len(A['orient'])/len(ppi):.2%}) at "
+        f"{A['acc']:.4f} +/- {A['se']:.4f} on n={A['n']:,}; AU {len(U['orient']):,} edges at {U['acc']:.4f} +/- "
+        f"{U['se']:.4f} on n={U['n']:,}; AU+MONO {len(M['orient']):,} edges at {M['acc']:.4f} +/- {M['se']:.4f} on "
+        f"n={M['n']:,}. "
+        f"THE CONTROL THAT DECIDES IT is the degree rule ON THE SAME EDGES, because a random walk's direction on an "
+        f"undirected graph is provably the degree ratio and the annotation could simply be selecting edges where "
+        f"degree already works: {A['deg']:.4f} / {U['deg']:.4f} / {M['deg']:.4f} respectively. "
+        + (f"The best stratum, {best_name}, is {best['acc']:.4f} against a matched {best['deg']:.4f}, so catalysis "
+           f"carries direction the graph's own shape does not. " if beats_deg else
+           f"The best stratum, {best_name}, is {best['acc']:.4f} against a matched degree baseline of "
+           f"{best['deg']:.4f}, and the gap is inside two standard errors -- so on this evidence catalyst->output is "
+           f"NOT shown to beat simply pointing from the low-degree protein to the high-degree one. ")
+        + (f"It also clears the global precedence rule's 0.6547. " if beats_glob else
+           f"It does not clearly clear the global precedence rule's 0.6547 at this sample size. ")
+        + f"It orients {uniq:,} edges the global rule does not, so the two are complementary rather than redundant. "
+        f"WHAT THIS CANNOT SAY. Reactome describes canonical human biology, not K562. Reactome and SIGNOR curators "
+        f"read overlapping literature, so agreement between them is not fully independent validation. And the "
+        f"ceiling remains 78%: 'the direction of a PPI edge' is not single-valued, because protein-level and "
+        f"transcriptional direction on the same pair legitimately oppose.")
     print(f"\nVERDICT: {verdict}")
 
-    json.dump({"oriented": len(oriented), "frac": len(oriented) / len(ppi), "ambiguous": ambiguous,
-               "n_test": len(test), "accuracy": acc, "se": se,
-               "overlap_with_pathway_order": len(both), "unique": len(set(oriented) - set(po)),
-               "verdict": verdict,
-               "edges": [[d[0], d[1]] for d in oriented.values()]},
+    json.dump({"strata": {n: {k: v for k, v in r.items() if k != "orient"} | {"n_oriented": len(r["orient"])}
+                          for n, r in (("ALL", A), ("AU", U), ("AU+MONO", M))},
+               "n_ppi": len(ppi), "n_gt": len(gt), "categories": dict(cats),
+               "best": best_name, "beats_degree": beats_deg,
+               "overlap_with_pathway_order": len(both), "unique": uniq, "verdict": verdict,
+               "edges": [[d[0], d[1]] for d in U["orient"].values()]},
               open(OUT / "catalyst_arrows.json", "w"))
     print(f"\n  -> {OUT/'catalyst_arrows.json'}")
 
