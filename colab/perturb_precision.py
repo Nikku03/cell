@@ -139,6 +139,28 @@ def main():
         ("TSS-DIST", (np.log1p(np.abs(tss[:, None] - tss[None, :])) * samechr).astype(np.float32)),
     ])
 
+    # ---------------- DENSE DepMap co-dependency ----------------
+    # A provenance audit found outputs/orphan/depmap_vecs.npz: the FULL Chronos gene-effect matrix, 18,443 genes x
+    # 1,150 cell lines, already per-gene standardised, 98.9% knockout coverage and no NaNs. Every module up to now
+    # used cell_complete's `codep` instead, which stores only each gene's TOP-8 partners -- so it is undefined for
+    # almost every pair and structurally cannot help in the sparse regime, which is the regime we care about. A
+    # dense cosine is defined for EVERY pair. Provenance is clean: CRISPR fitness across cell lines, no interaction
+    # assay anywhere in the chain.
+    dv = np.load(OUT / "depmap_vecs.npz", allow_pickle=True)
+    dsym = {s_: i for i, s_ in enumerate(dv["syms"].tolist())}
+    Vd = np.zeros((nK, dv["Z"].shape[1]), np.float32)
+    dep_ok = np.zeros(nK, np.float32)
+    for i, k in enumerate(kos):
+        if k in dsym:
+            Vd[i] = dv["Z"][dsym[k]]; dep_ok[i] = 1.0
+    Vd /= (np.linalg.norm(Vd, axis=1, keepdims=True) + 1e-9)
+    DENSE_CODEP = (Vd @ Vd.T).astype(np.float32)
+    DEPMAP = collections.OrderedDict([
+        ("DENSE-CODEP", DENSE_CODEP),
+        ("DEP-AVAIL", np.minimum(dep_ok[:, None], dep_ok[None, :]).astype(np.float32)),
+    ])
+    print(f"  dense DepMap: {int(dep_ok.sum())}/{nK} knockouts covered", flush=True)
+
     # ---------------- PERTURB-SEQ, properly ----------------
     # E[i, j] = |z| of knockout j's OWN GENE measured under knockout i. Undefined when j's gene is not on the panel;
     # encoded as 0 with an explicit availability indicator so the model cannot read "not measured" as "no effect".
@@ -172,6 +194,9 @@ def main():
         ("AVAIL", np.minimum(avail, avail.T)), ("RANK-BEST", RANKBEST),
         ("SPEC-SHARED", SPSH), ("SPEC-JAC", SPJC), ("PROFILE", PROF), ("PROFILE-SPEC", PROFS),
     ])
+    # `sl` is DROPPED on audit evidence, not on a hunch: it fires on 14 of 979,300 KO-KO pairs and on 0 of the
+    # 3,444 held-out edges (0 of 82 at CN=0), so it cannot move any number -- and it is a thresholded subset of
+    # codep, so counting it as a second independent source would have been double-counting.
     print(f"features: TOPO {len(TOPO)}, SPATIAL {len(SPATIAL)}, PERTURB {len(PERTURB)}", flush=True)
 
     def merge(*ds):
@@ -184,6 +209,9 @@ def main():
         ("TOPO", TOPO), ("+SPATIAL", merge(TOPO, SPATIAL)), ("+PERTURB", merge(TOPO, PERTURB)),
         ("+SPAT+PERT", merge(TOPO, SPATIAL, PERTURB)),
         ("PERTURB-ONLY", PERTURB), ("SPAT+PERT(no graph)", merge(SPATIAL, PERTURB)),
+        ("+DEPMAP", merge(TOPO, DEPMAP)),
+        ("+SPAT+PERT+DEP", merge(TOPO, SPATIAL, PERTURB, DEPMAP)),
+        ("ALL(no graph)", merge(SPATIAL, PERTURB, DEPMAP)),
     ])
 
     # ---------------- negatives: joint degree+pubs matched ----------------

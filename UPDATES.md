@@ -10495,3 +10495,46 @@ act on" is the honest state of sparse-regime completion.
 "Knocking out A changes B's mRNA" is **functional** coupling being used to predict a **physical** edge — a strong
 effect through three intermediates counts identically to a direct contact. Pool is knockout–knockout pairs; a
 held-out "true" edge is one already in a database. One cell line, one split.
+
+---
+
+## Evidence provenance audit — which sources are circular, verified against the build code
+
+A parallel audit traced each evidence layer in `cell_complete.json` back to how it was actually built, to determine
+which are safe for PPI link prediction. Findings that change what we use:
+
+### EXCLUDED as circular — with the specific reason
+
+| source | why |
+|---|---|
+| `complexes` / `gene2cplx` | Complex Portal; the **plurality evidence class is ECO:0000353, "physical interaction evidence"** (43.7%). **97.1% of within-complex KO×KO pairs are already `ppi` edges.** Also fires on 1 of 82 CN=0 positives — useless even if clean. |
+| `sig` (SIGNOR) | 29.4% of its KO-KO pairs are already edges (139× chance). Contains `EFFECT="form complex"` / `MECHANISM="binding"` rows, and the MECHANISM column was discarded at load so they can't be filtered out. |
+| `lr` | a curated physical-interaction list under a different name. |
+| `nichenet` | regulatory potential propagated over a **PPI-derived** signaling network. Fires on 0 of 82 CN=0 positives. |
+| **`go["F"]`** | **73.2% of genes carry the literal term "protein binding" (GO:0005515)**, and for 1,414 genes the F list is *exactly* that. GO:0005515 is annotated almost entirely from IPI evidence — so any F-derived feature, even a bare "has an F annotation" indicator, partly encodes *that a PPI experiment was run*. We already used only C and P; this confirms that was right rather than lucky. |
+
+### MEASURED-DEAD — clean provenance, empirically unusable
+
+- **`loops3d`** — GM12878 HiCCUPS loops (wrong cell line), and the loader stored only the partner anchor's bin start,
+  discarding the gene's own anchor and the resolution. Reconstruction yields **2 KO-KO pairs out of 979,300**; 0 of 82
+  CN=0 positives have both ends annotated. Unusable as a pairwise feature.
+- **`emask`** — coverage runs the *wrong* way (both ends annotated for 18.3% of CN=0 positives vs 26.0% of negatives);
+  CN=0 AUC **0.451**.
+- **`sl`** — a thresholded subset of `codep`, not an independent source, and fires on **0 of 3,444** held-out edges
+  (0 of 82 at CN=0). **Dropped from `perturb_precision.py` on this evidence.**
+
+### The actionable find: a dense DepMap matrix we were not using
+
+`outputs/orphan/depmap_vecs.npz` holds the **full Chronos gene-effect matrix, 18,443 genes × 1,150 cell lines**,
+already per-gene standardised — **98.9% knockout coverage, zero NaNs** (verified). Every module until now used
+`cell_complete["codep"]` instead, which stores only each gene's **top-8** partners, so it is undefined for almost
+every pair and *structurally cannot help in the sparse regime*, which is the regime that matters. Provenance is
+clean: CRISPR fitness across cell lines, no interaction assay in the chain. Added as `DENSE-CODEP`.
+
+### Caveats the audit itself flags
+
+`ppm` is PaxDb **whole-organism**, not K562-specific. `proc` is derived from Reactome names for 62.8% of genes and
+from `comp` for the rest — not independent of either. `reg`'s signed subset draws on IntAct/SIGNOR and its
+`causal_reg.tsv` component derives signs from Perturb-seq, making it a double-dip with PROFILE. And the CN=0 stratum
+has **82 positives**, so its bootstrap SE is ±0.03: nothing below ~0.56 is distinguishable from chance, and two
+features within 0.06 of each other are not distinguishable from one another.
