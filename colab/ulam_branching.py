@@ -210,9 +210,14 @@ def main():
     print(f"\nB. CRITICALITY")
     print(f"   cross-section p = {hits}/{tot} = {p_hat0:.5f}   background = {spec_all.mean():.5f}"
           f"   enrichment {p_hat0/spec_all.mean():.2f}x")
-    print(f"   R0 = p * excess_degree = {p_hat0*excess:.3f}    p/p_c = {p_hat0/p_c:.3f}"
-          f"   -> {'SUBcritical' if p_hat0*excess < 1 else 'SUPERcritical'}")
+    print(f"   R0 = p * excess_degree = {p_hat0*excess:.3f}    p/p_c = {p_hat0/p_c:.3f}")
     print(f"   naive p*<k> would have said {p_hat0*kk.mean():.3f}  (wrong formula: ignores size-biased arrival)")
+    # NO SUB/SUPERCRITICAL VERDICT IS PRINTED HERE, and an earlier version printing one flatly was overconfident.
+    # Both formulas assume a locally tree-like graph. This one is not: PPI clustering ~0.20 against ~0.002 for a
+    # degree-matched random graph, so triangles make the configuration-model figure an UPPER BOUND of unknown
+    # tightness. Across estimators the value spans roughly 0.56-1.25, which straddles 1.
+    print(f"   NOT DECIDABLE: estimators of R0 span ~0.56-1.25 and straddle 1; the graph is not tree-like "
+          f"(clustering ~0.20 vs ~0.002 random), so this is an upper bound of unknown tightness.")
 
     # ================= C. FEASIBILITY: does the MC reproduce ITSELF at per-gene resolution? =================
     def percolate(pvec, seeds_node, R, seed, depth=DEPTH, want_reach=False):
