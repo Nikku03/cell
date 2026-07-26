@@ -227,12 +227,17 @@ def main():
            f"comparator it is {vs_phys[0]:+.4f} +- {vs_phys[1]:.4f} ({vs_phys[2]}), so crossing to the transcriptional "
            f"layer via measured causality adds something beyond simply averaging protein partners. It closes "
            f"{(rm-tide_m)/max(orc-tide_m,1e-9):.0%} of the tide-to-oracle gap with no peeking at all. " if works else
-           f"IT DOES NOT CLEAR ITS CONTROLS: {vs_tide[0]:+.4f} +- {vs_tide[1]:.4f} against the tide-null and "
-           f"{vs_rs[0]:+.4f} +- {vs_rs[1]:.4f} against a RESPONSE-SIZE-MATCHED control. Overlap with a measured "
-           f"downstream footprint structurally favours big responders, and once that is matched away the signal does "
-           f"not survive. So the measured causal edges that were decisive when BOTH endpoints were known do not "
-           f"transfer into a blind neighbour selector -- the asymmetry between route inference and prediction is the "
-           f"finding, not a technicality. ")
+           f"THE OUTCOME SPLITS IN TWO AND BOTH HALVES MATTER. It DOES carry genuine knockout-specific information: "
+           f"{vs_shuf[0]:+.4f} +- {vs_shuf[1]:.4f} over its label-shuffled twin and {vs_rs[0]:+.4f} +- {vs_rs[1]:.4f} "
+           f"over a RESPONSE-SIZE-MATCHED control, so this is not the big-responder artifact it structurally could "
+           f"have been. BUT IT IS STILL NOT USEFUL: it scores {vs_tide[0]:+.4f} +- {vs_tide[1]:.4f} against the "
+           f"tide-null, i.e. BELOW the do-nothing baseline, and {vs_phys[0]:+.4f} +- {vs_phys[1]:.4f} against simply "
+           f"averaging the knocked-out gene's PPI partners. Real signal that loses to predicting nothing is still a "
+           f"negative. THE SHAPE OF THE FAILURE IS THE FINDING: the same measured causal edges are decisive when BOTH "
+           f"endpoints are known (bridge_measured, +0.3587) and worse than useless when only the start is known. "
+           f"Route inference and prediction are not the same problem, and an edge set can be excellent at one while "
+           f"contributing nothing to the other -- which also means bridge_measured's number must never be quoted as "
+           f"predictive performance. ")
         + (f"THE MONTE CARLO EARNS ITS COST HERE ({mc_det[0]:+.4f} +- {mc_det[1]:.4f}), which is a real difference "
            f"from mc_outofgame: there the sampled quantity only rescaled one score monotonically and was provably "
            f"rank-equivalent to its own mean, whereas sampling TAU changes WHICH EDGES EXIST and can reorder "

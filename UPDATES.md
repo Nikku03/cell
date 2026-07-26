@@ -9654,3 +9654,70 @@ This is the **walk** neighbourhood, not the **measured-causal** one that won in 
 that into the transformer would require rebuilding the token context per split to avoid leaking response data into the
 tokens — the obvious follow-up, not done here. Three seeds is a small paired sample; differences below ~0.01 are not
 resolvable.
+
+---
+
+## Causal footprint: measured edges are decisive for routes and useless for prediction (colab/causal_footprint.py)
+
+The asymmetry is the finding.
+
+### The trap this module exists to avoid
+
+`bridge_measured` scored **+0.3587** with measured causal edges — but it **conditions on the test knockout's measured
+movers**. That is fine for *route inference*, where both endpoints are known by construction, and **fatal for
+prediction**, because the thing it conditions on is exactly what a predictor must output. Carrying that number into the
+harness would have been the easiest available way to fake a result here. It was not carried.
+
+### The non-circular version
+
+For held-out knockout g and candidate **train** knockout A:
+
+- **N(g)** = PPI neighbourhood of g — *static graph only, g's response never touched*
+- **T(A)** = the genes A actually moved — *A is a train knockout, so this is training data*
+- score = cosine-normalised, inverse-frequency-weighted overlap of N(g) and T(A)
+
+Aimed straight at the **oracle gap**: the oracle reaches 0.570 only by *peeking* to choose neighbours, so the
+information exists and choosing blind is the entire problem.
+
+### Result (5 splits)
+
+| | recall@50 |
+|---|---|
+| ORACLE* | 0.5703 |
+| **PPI-neighbour comparator** | **0.3842** |
+| TIDE-null | 0.2686 |
+| **CAUSAL-FOOTPRINT** | **0.2575** |
+| CAUSAL-FOOTPRINT-MC | 0.2087 |
+| response-size-matched control | 0.1684 |
+| label-shuffled | 0.1366 |
+
+| paired | |
+|---|---|
+| vs label-shuffled | **+0.1209 ± 0.0047 BETTER** |
+| vs response-size-matched | **+0.0891 ± 0.0084 BETTER** |
+| vs tide-null | **−0.0111 ± 0.0038 WORSE** |
+| vs PPI-neighbour comparator | **−0.1267 ± 0.0067 WORSE** |
+| MC vs deterministic | **−0.0488 ± 0.0040 WORSE** |
+
+### Both halves matter
+
+**It carries genuine knockout-specific information** — +0.12 over its label-shuffled twin and +0.089 over a
+response-size-matched control. So it is *not* the big-responder artifact it structurally could have been.
+
+**And it is still not useful** — it lands *below* the do-nothing tide-null and far below simply averaging the knocked-out
+gene's PPI partners. Real signal that loses to predicting nothing is still a negative.
+
+### The shape of the failure is the result
+
+The **same measured causal edges** are decisive when **both endpoints are known** (+0.3587) and worse than useless when
+**only the start is known** (−0.0111 vs tide). Route inference and prediction are not the same problem, and an edge set
+can be excellent at one while contributing nothing to the other.
+
+**Consequence for bookkeeping: `bridge_measured`'s +0.3587 must never be quoted as predictive performance.**
+
+### Monte Carlo, second strike
+
+Sampling the edge-calling threshold **changes which edges exist** — so unlike `mc_outofgame`, where sampling was
+provably rank-equivalent to its own mean, it genuinely *could* have reordered the ranking. It simply doesn't
+(−0.0488 ± 0.0040). That is the second independent demonstration that Monte Carlo adds nothing here beyond the point
+estimate, and the first where the mechanism was not arithmetically ruled out in advance.
