@@ -30,10 +30,17 @@ BATCH = 150
 OUTF = Path(SP) / "reactome_order.json"
 
 
+# Reactome rejects urllib's default User-Agent with a 403 while serving the identical URL to curl. That is a
+# destination-side UA filter, NOT the session's egress proxy: the proxy status endpoint reported an empty
+# recentRelayFailures list, and curl reached the same host fine. Verified by sending the two UAs side by side --
+# default urllib 403, browser-style 200. So a UA is set here rather than the request being retried blindly.
+UA = {"User-Agent": "Mozilla/5.0 (compatible; cell-network-research/1.0)"}
+
+
 def get(url, data=None, tries=4):
     for t in range(tries):
         try:
-            req = urllib.request.Request(url, data=data)
+            req = urllib.request.Request(url, data=data, headers=dict(UA))
             if data:
                 req.add_header("Content-Type", "text/plain")
             with urllib.request.urlopen(req, timeout=120) as r:
@@ -92,7 +99,7 @@ def main():
     g2r = {}
     print(f"streaming {url} ...", flush=True)
     try:
-        with urllib.request.urlopen(url, timeout=600) as r:
+        with urllib.request.urlopen(urllib.request.Request(url, headers=dict(UA)), timeout=900) as r:
             nl = 0
             for raw in r:
                 nl += 1
