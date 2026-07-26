@@ -9534,3 +9534,65 @@ Only half survives. There is no calibration between a Markov step and an hour, s
 would have been de-attenuating slow mRNAs — but at the ~192 h readout the median K562 half-life is **3.47 h** and only
 **198 of 10,802** genes sit below 99% equilibrated. **The snapshot IS the steady state for 98% of genes.** Run anyway:
 +0.1017 vs +0.1052. It changes nothing, exactly as predicted.
+
+---
+
+## Bridge with a MEASURED last hop: the map was the problem, and swapping it doubles the effect (colab/bridge_measured.py)
+
+`markov_bridge` failed and the diagnosis blamed one component: its final hop ran on the **curated** regulatory layer —
+612,133 edges, 91% unsigned, and per `infer_network` **94% disjoint** from the causal edges actually measured in this
+cell line. So the last hop was rebuilt from measured causality (*knocking out A moved B ⟹ A→B*), keeping PPI for the
+middle because that layer is confirmed real (z=+29.7 against a degree-preserving null).
+
+### The circularity, and how it was broken
+
+A measured edge exists *because* knocking out A moved B. Nominating A for overlapping with the source's response, then
+testing that same overlap, is **one measurement counted twice** — it would have produced a large, entirely fake effect.
+
+**Disjoint gene split.** Readout genes cut in half: **half A** defines the causal edges *and* the conditioning endpoint;
+**half B** scores response similarity, and nothing else. Knockouts split too, so the graph comes from train sources and
+is tested on held-out ones. Both splits are required.
+
+### Result, 5 splits
+
+| arm | delta (degree-matched) | similarity | coverage |
+|---|---|---|---|
+| **measured last hop** | **+0.3395 ± 0.0069** | 0.4566 | 79% |
+| curated last hop | +0.1497 ± 0.0203 | 0.2557 | 35% |
+| forward-only PPI | +0.1869 ± 0.0117 | 0.2924 | 90% |
+
+| paired | |
+|---|---|
+| measured vs curated | **+0.1898 ± 0.0206 BETTER** |
+| measured vs forward-only | **+0.1526 ± 0.0089 BETTER** |
+
+**The bridge's failure really was the map, not the method.** And this is the first time in this project that
+conditioning on the measured endpoint has earned its place — every prior attempt lost to plain one-hop PPI.
+
+### The control that decides it
+
+Degree-matching is **not sufficient** here: the measured causal graph only carries edges from knockouts that moved many
+genes, so this arm structurally nominates **big responders**, whose profiles correlate for generic reasons.
+
+Re-scored against controls matched on **number of specific movers**:
+
+| arm | delta (response-size-matched) |
+|---|---|
+| **measured last hop** | **+0.3587 ± 0.0077** |
+| forward-only PPI | +0.1985 ± 0.0127 |
+| curated last hop | +0.1508 ± 0.0205 |
+
+paired measured vs forward-only: **+0.1601 ± 0.0082 BETTER**. **It survives.**
+
+### A wrong expectation, recorded rather than dropped
+
+This module was written expecting the measured graph to be **too sparse to walk** — only 337 of 1,971 knockouts carry
+edges. That was wrong. It nominates candidates for **79%** of test knockouts, more than double the curated layer's
+**35%**. The measured causal layer is both more accurate *and* better-covering than the curated one.
+
+### Bounds
+
+Half the readout genes are spent breaking the circularity, so similarities are computed on ~3,600 genes rather than
+7,223 and are **not comparable to `markov_bridge`'s numbers**. Response similarity shows a shared route, not an
+ordering — it cannot separate an intermediate from a co-regulator. And "measured" means *reproducible in this screen*,
+not *mechanistically verified*: the causal graph is itself thresholded response data.

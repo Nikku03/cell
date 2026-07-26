@@ -157,33 +157,43 @@ def main():
         # --- candidates are TRAIN knockouts (their responses are the held-out check) ---
         cand_ko = train
         cnode = konode[cand_ko]
-        rank_of = np.empty(len(cand_ko), int)
-        rank_of[np.argsort(pdeg[cnode])] = np.arange(len(cand_ko))
-        order_deg = np.argsort(pdeg[cnode])
+        # TWO control pools. Degree-matching is not enough here: the MEASURED causal graph only carries edges from
+        # knockouts that moved many genes, so this arm structurally nominates BIG RESPONDERS -- and big responders
+        # have correlated profiles for generic reasons. A control matched on PPI degree would not remove that, so a
+        # control matched on NUMBER OF SPECIFIC MOVERS is added, and it is the one that decides whether the effect
+        # is real.
+        pools = {}
+        for lab, key in [("degree", pdeg[cnode]), ("response_size", spec_n[cand_ko].astype(float))]:
+            o = np.argsort(key); r = np.empty(len(cand_ko), int); r[o] = np.arange(len(cand_ko))
+            pools[lab] = (o, r)
 
         for nm, S_ in SC.items():
-            hit, ctl, ncov = [], [], 0
+            hit, ncov = [], 0
+            ctls = {lab: [] for lab in pools}
             for c, xi in enumerate(test):
                 v = S_[cnode, c].astype(np.float64)
                 top = [q for q in np.argsort(-v)[:TOPM] if v[q] > 0]
                 if not top:
                     continue
                 ncov += 1
-                hs = [SIMB[xi, cand_ko[q]] for q in top]
-                cs = []
-                for q in top:
-                    r = rank_of[q]; lo, hi = max(0, r - 40), min(len(cand_ko), r + 40)
-                    pool = [z_ for z_ in order_deg[lo:hi] if z_ != q]
-                    if pool:
-                        cs.extend([SIMB[xi, cand_ko[d]] for d in
-                                   srng.choice(pool, size=min(4, len(pool)), replace=False)])
-                if not cs:
-                    continue
-                hit.append(float(np.mean(hs))); ctl.append(float(np.mean(cs)))
-            hit = np.array(hit); ctl = np.array(ctl)
-            results[nm].append(float((hit - ctl).mean()) if len(hit) else np.nan)
-            results[nm + "_sim"].append(float(hit.mean()) if len(hit) else np.nan)
-            results[nm + "_ctl"].append(float(ctl.mean()) if len(ctl) else np.nan)
+                hit.append(float(np.mean([SIMB[xi, cand_ko[q]] for q in top])))
+                for lab, (o, r) in pools.items():
+                    cs = []
+                    for q in top:
+                        rk = r[q]; lo, hi = max(0, rk - 40), min(len(cand_ko), rk + 40)
+                        pool = [z_ for z_ in o[lo:hi] if z_ != q]
+                        if pool:
+                            cs.extend([SIMB[xi, cand_ko[d]] for d in
+                                       srng.choice(pool, size=min(4, len(pool)), replace=False)])
+                    ctls[lab].append(float(np.mean(cs)) if cs else np.nan)
+            hit = np.array(hit)
+            for lab in pools:
+                cv = np.array(ctls[lab], float)
+                ok = np.isfinite(hit) & np.isfinite(cv)
+                key = nm if lab == "degree" else f"{nm}__vs_{lab}"
+                results[key].append(float((hit[ok] - cv[ok]).mean()) if ok.sum() else np.nan)
+                results[key + "_sim"].append(float(hit[ok].mean()) if ok.sum() else np.nan)
+                results[key + "_ctl"].append(float(cv[ok].mean()) if ok.sum() else np.nan)
             cover[nm].append(ncov / max(len(test), 1))
         print(f"  split {sp}: measured graph {n_meas_edges} edges from {n_meas_src} sources | "
               f"coverage measured {cover['measured_last_hop'][-1]:.0%} curated "
@@ -210,10 +220,21 @@ def main():
     summ = {}
     for nm in ["measured_last_hop", "curated_last_hop", "forward_only"]:
         m, se = agg(nm)
+        cv = cover[nm]
         summ[nm] = {"delta": m, "se": se, "sim": float(np.nanmean(results[nm + "_sim"])),
-                    "ctl": float(np.nanmean(results[nm + "_ctl"])), "coverage": float(np.mean(cover[nm]))}
+                    "ctl": float(np.nanmean(results[nm + "_ctl"])), "coverage": float(np.mean(cv))}
         print(f"    {nm:22s} {m:+.4f} +- {se:.4f} {summ[nm]['sim']:>11.4f} {summ[nm]['ctl']:>9.4f} "
               f"{summ[nm]['coverage']:>8.0%}")
+    print(f"\n  THE CONTROL THAT DECIDES IT -- matched on RESPONSE SIZE, not PPI degree, because the measured")
+    print(f"  causal graph structurally nominates knockouts that moved many genes:")
+    print(f"    {'arm':22s} {'delta':>18s} {'control sim':>12s}")
+    for nm in ["measured_last_hop", "curated_last_hop", "forward_only"]:
+        k = f"{nm}__vs_response_size"
+        m2, se2 = agg(k)
+        summ[nm]["delta_vs_response_size"] = m2
+        summ[nm]["se_vs_response_size"] = se2
+        summ[nm]["ctl_response_size"] = float(np.nanmean(results[k + "_ctl"]))
+        print(f"    {nm:22s} {m2:+.4f} +- {se2:.4f} {summ[nm]['ctl_response_size']:>12.4f}")
 
     def cmp(a, b):
         d = np.array(results[a], float) - np.array(results[b], float)
@@ -223,6 +244,9 @@ def main():
         return float(d.mean()), float(se), v
     mc = cmp("measured_last_hop", "curated_last_hop")
     mf = cmp("measured_last_hop", "forward_only")
+    mf_rs = cmp("measured_last_hop__vs_response_size", "forward_only__vs_response_size")
+    survives_rs = summ["measured_last_hop"]["delta_vs_response_size"] > \
+        2 * summ["measured_last_hop"]["se_vs_response_size"]
     print(f"\n  PAIRED ACROSS SPLITS")
     print(f"    measured vs curated last hop  {mc[0]:+.4f} +- {mc[1]:.4f}   {mc[2]}")
     print(f"    measured vs forward-only PPI  {mf[0]:+.4f} +- {mf[1]:.4f}   {mf[2]}")
@@ -260,10 +284,26 @@ def main():
            f"from the knocked-out gene remains the best route-finder available here, and every attempt to sharpen it "
            f"by conditioning on where the response actually landed has now failed with BOTH a curated and a measured "
            f"regulatory map. That is the stronger negative: the problem is not map quality. ")
-        + f"COVERAGE IS THE STRUCTURAL LIMIT and is reported rather than averaged away: the measured causal graph has "
-        f"few usable sources, so it can nominate anything at all for only {m_['coverage']:.0%} of test knockouts "
-        f"against the curated layer's {c_['coverage']:.0%}. An accurate map you cannot walk on buys less than an "
-        f"inaccurate one you can. "
+        + (f"AND IT SURVIVES THE CONTROL THAT MATTERS MOST. Matching controls on PPI degree is NOT sufficient here, "
+           f"because the measured causal graph only carries edges from knockouts that moved many genes, so this arm "
+           f"structurally nominates BIG RESPONDERS, whose profiles correlate for generic reasons. Re-scored against "
+           f"controls matched on NUMBER OF SPECIFIC MOVERS, the measured arm still gives "
+           f"{summ['measured_last_hop']['delta_vs_response_size']:+.4f} +- "
+           f"{summ['measured_last_hop']['se_vs_response_size']:.4f}, versus "
+           f"{summ['forward_only']['delta_vs_response_size']:+.4f} for forward-only "
+           f"(paired {mf_rs[0]:+.4f} +- {mf_rs[1]:.4f}, {mf_rs[2]}). " if survives_rs else
+           f"BUT IT DOES NOT SURVIVE THE CONTROL THAT MATTERS MOST. The measured causal graph only carries edges from "
+           f"knockouts that moved many genes, so this arm structurally nominates BIG RESPONDERS, whose profiles "
+           f"correlate for generic reasons, and matching controls on PPI degree does not remove that. Re-scored "
+           f"against controls matched on NUMBER OF SPECIFIC MOVERS the measured arm collapses to "
+           f"{summ['measured_last_hop']['delta_vs_response_size']:+.4f} +- "
+           f"{summ['measured_last_hop']['se_vs_response_size']:.4f}, so the headline was a response-size artifact. ")
+        + f"COVERAGE WAS EXPECTED TO BE THE STRUCTURAL LIMIT AND IS NOT -- this module was written expecting the "
+        f"measured graph to be too sparse to walk, and the data contradicts that. It nominates candidates for "
+        f"{m_['coverage']:.0%} of test knockouts, more than DOUBLE the curated layer's {c_['coverage']:.0%}, though "
+        f"still short of forward-only PPI's {f_['coverage']:.0%}. So the measured causal layer is both more accurate "
+        f"AND better-covering than the curated one; the pre-written worry that an accurate map might be unwalkable "
+        f"does not apply here and is recorded as a wrong expectation rather than quietly dropped. "
         f"WHAT THIS CANNOT SAY: half the readout genes are spent on breaking the circularity, so every similarity here "
         f"is measured on ~3,600 genes rather than 7,223 and the numbers are not comparable to markov_bridge's. "
         f"Response similarity shows a shared route, not an ordering -- it cannot separate an intermediate from a "
@@ -276,6 +316,8 @@ def main():
                           "measured_vs_forward": {"mean": mf[0], "se": mf[1], "verdict": mf[2]}},
                "per_split": {k: v for k, v in results.items()}, "coverage": {k: v for k, v in cover.items()},
                "example_GATA1": example, "fixes_bridge": bool(fixes_bridge), "beats_forward": bool(beats_fwd),
+               "survives_response_size_control": bool(survives_rs),
+               "paired_vs_forward_response_size_matched": {"mean": mf_rs[0], "se": mf_rs[1], "verdict": mf_rs[2]},
                "verdict": verdict, "note": verdict}, open(OUT / "bridge_measured.json", "w"), indent=1)
     print("\n  -> outputs/orphan/bridge_measured.json")
 
