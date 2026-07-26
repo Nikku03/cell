@@ -34,7 +34,13 @@ than assumed.
 THE CONFOUND THAT WOULD FAKE THIS. T(A) is large exactly when A is a big responder, and big responders have correlated
 profiles for generic reasons. A degree-matched control does NOT remove that -- bridge_measured needed a
 RESPONSE-SIZE-matched control for the same reason, and that is the comparison treated as decisive here. Also run:
-label-shuffled, the tide-null, and a PPI-neighbour comparator."""
+label-shuffled, the tide-null, and a PPI-neighbour comparator.
+
+TWO LIMITS AN ADVERSARIAL AUDIT FLAGGED, RECORDED RATHER THAN PATCHED AWAY. (i) N(g) here is PPI-ONLY, whereas the
+PHYS component that scores ~0.40 in the ensemble uses PPI OR complex OR pathway -- so this construction was handed a
+NARROWER neighbourhood than its comparator, and widening it is an untested variant. (ii) The PPI-neighbour comparator
+takes the first ten partner-knockouts in gene-name order with no ranking whatsoever; that is an arbitrary baseline,
+but arbitrary in the direction that makes the negative stronger, since even it wins by 0.127."""
 import json, pickle, collections
 from pathlib import Path
 import numpy as np
@@ -146,8 +152,12 @@ def main():
             cand = train[keep]
             rows["CAUSAL-FOOTPRINT"][int(xi)] = prof(cand[np.argsort(-Rdet[c, keep])[:N_NEI]])
             rows["CAUSAL-FOOTPRINT-MC"][int(xi)] = prof(cand[np.argsort(-Rmc[c, keep])[:N_NEI]])
+            # DELIBERATELY UNRANKED: the first N_NEI PPI-partner knockouts in gene-name order, no scoring at all.
+            # An adversarial audit flagged this as an arbitrary baseline, and it is -- but it is arbitrary in the
+            # direction that makes the negative STRONGER, not weaker: even this beat the footprint by 0.127, so
+            # ranking it properly could only widen the gap. Left unranked, and labelled, rather than quietly improved.
             nb_ko = [t for t in cand if NBR[xi, node2gene.get(konode[t], 0)] > 0]
-            rows["PPI-neighbour comparator"][int(xi)] = prof(nb_ko[:N_NEI])
+            rows["PPI-neighbour comparator (unranked)"][int(xi)] = prof(nb_ko[:N_NEI])
             rows["TIDE"][int(xi)] = mover_freq
             sim = S[xi].copy(); sim[xi] = -np.inf
             mk = np.full(nK, -np.inf, np.float32); mk[train] = 0.0
@@ -181,7 +191,7 @@ def main():
 
     agg = {nm: (float(np.mean(v)), float(np.std(v))) for nm, v in per.items()}
     print(f"\n  CAUSAL FOOTPRINT IN THE HARNESS ({NSPLIT} splits, tide-removed specific recall@{K})")
-    for nm in ["TIDE", "CAUSAL-FOOTPRINT-shuf", "CAUSAL-FOOTPRINT resp-size-matched", "PPI-neighbour comparator",
+    for nm in ["TIDE", "CAUSAL-FOOTPRINT-shuf", "CAUSAL-FOOTPRINT resp-size-matched", "PPI-neighbour comparator (unranked)",
                "CAUSAL-FOOTPRINT", "CAUSAL-FOOTPRINT-MC", "ORACLE*"]:
         if nm in agg:
             print(f"    {nm:36s} {agg[nm][0]:.4f} +- {agg[nm][1]:.4f}")
@@ -194,7 +204,7 @@ def main():
     vs_tide = paired("CAUSAL-FOOTPRINT", "TIDE")
     vs_rs = paired("CAUSAL-FOOTPRINT", "CAUSAL-FOOTPRINT resp-size-matched")
     vs_shuf = paired("CAUSAL-FOOTPRINT", "CAUSAL-FOOTPRINT-shuf")
-    vs_phys = paired("CAUSAL-FOOTPRINT", "PPI-neighbour comparator")
+    vs_phys = paired("CAUSAL-FOOTPRINT", "PPI-neighbour comparator (unranked)")
     mc_det = paired("CAUSAL-FOOTPRINT-MC", "CAUSAL-FOOTPRINT")
     print(f"\n  PAIRED ACROSS SPLITS (a claim needs |diff| > 2 SE)")
     for lab, cc in [("vs tide-null", vs_tide), ("vs response-size-matched", vs_rs),

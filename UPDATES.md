@@ -9684,7 +9684,7 @@ information exists and choosing blind is the entire problem.
 | | recall@50 |
 |---|---|
 | ORACLE* | 0.5703 |
-| **PPI-neighbour comparator** | **0.3842** |
+| **PPI-neighbour comparator** (unranked) | **0.3842** |
 | TIDE-null | 0.2686 |
 | **CAUSAL-FOOTPRINT** | **0.2575** |
 | CAUSAL-FOOTPRINT-MC | 0.2087 |
@@ -9721,3 +9721,17 @@ Sampling the edge-calling threshold **changes which edges exist** — so unlike 
 provably rank-equivalent to its own mean, it genuinely *could* have reordered the ranking. It simply doesn't
 (−0.0488 ± 0.0040). That is the second independent demonstration that Monte Carlo adds nothing here beyond the point
 estimate, and the first where the mechanism was not arithmetically ruled out in advance.
+
+### Two limits an adversarial audit flagged
+
+**The PPI comparator is unranked** — it takes the first ten partner-knockouts in gene-name order, no scoring. That is
+an arbitrary baseline, but arbitrary in the direction that makes this negative *stronger*: even an unranked selection
+beat the footprint by 0.127, so ranking it properly could only widen the gap. Left unranked and labelled rather than
+quietly improved.
+
+**N(g) is PPI-only**, while the PHYS component it is compared against uses PPI **or** complex **or** pathway. So the
+footprint was handed a narrower neighbourhood than its comparator. Widening it is an untested variant — though at a
+0.127 deficit, a modest broadening is unlikely to close it.
+
+The audit separately confirmed the construction is **not** an oracle: the test knockout's own response never enters the
+nomination, and no existing ensemble component uses measured causal-target overlap.
