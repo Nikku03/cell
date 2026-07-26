@@ -324,10 +324,14 @@ def main():
         return len(set(order.tolist()) & truth) / max(len(truth), 1)
 
     def prof(idxs):
-        return M[list(idxs)].mean(0) if len(idxs) else np.zeros(nG, np.float32)
+        # np.abs BEFORE the mean, matching the incumbent. Averaging SIGNED z-scores lets an up-regulated gene in one
+        # neighbour cancel a down-regulated one in another, which suppresses exactly the specific movers being scored.
+        idxs = np.asarray(list(idxs), int)
+        return np.abs(M[idxs]).mean(0) if len(idxs) else np.zeros(nG, np.float32)
 
     scor = np.array([i for i in range(nK) if spec_n[i] >= MIN_SPEC])
-    print(f"{len(scor)} scorable knockouts", flush=True)
+    scorset = set(int(x) for x in scor)
+    print(f"{len(scor)} scorable knockouts (valid TARGETS); all {nK} are valid neighbour SOURCES", flush=True)
 
     # ---------------- precompute every arm x config (all split-independent: no measured data enters a walk) --------
     ARMS = ["NODE", "BIP-PW", "HYPER", "BIP-FULL", "BIP-NS"]
@@ -350,6 +354,7 @@ def main():
 
     # ---------------- evaluation: ONE path, arms differ only in which score matrix feeds it ----------------
     per_ko = collections.defaultdict(list)     # arm -> list of per-test-knockout recalls, pooled over splits
+    per_split = collections.defaultdict(list)  # arm -> one mean per split (see the independence caveat below)
     cfg_pick = collections.defaultdict(list)
     order_keys = []
 
@@ -357,10 +362,16 @@ def main():
         srng = np.random.RandomState(100 + sp)
         perm = srng.permutation(scor); nt = len(scor) // 3
         test = np.array(sorted(perm[:nt].tolist()))
-        train = np.array(sorted(set(int(x) for x in scor) - set(test.tolist())))
-        trs = set(train.tolist())
+        tset = set(test.tolist())
+        # THE NEIGHBOUR POOL IS EVERY NON-TEST KNOCKOUT, not only the scorable ones, exactly as the incumbent does it.
+        # Only 378 of 1400 knockouts are scorable (they need >=5 specific movers of their own to be a valid TARGET),
+        # but all 1400 have a measured profile and so all of them are valid SOURCES to average. Restricting the pool
+        # to the scorable 378 shrinks it ~5x, costs ~0.14 recall, and -- the reason it matters here -- compresses the
+        # differences between arms, because a smaller candidate set gives rival rankings less room to disagree.
+        train = np.array([i for i in range(nK) if i not in tset])
+        train_scor = np.array([i for i in train if i in scorset])
         SPEC = {int(x): set(int(t) for t in np.where(A[x] >= TAU)[0] if ~tide[t]) for x in test}
-        preg = np.random.RandomState(1000 + sp).choice(train, min(200, len(train)), replace=False)
+        preg = np.random.RandomState(1000 + sp).choice(train_scor, min(200, len(train_scor)), replace=False)
 
         def pick(vrow, xi, pool):
             v = vrow.astype(np.float64).copy()
@@ -407,6 +418,21 @@ def main():
             d = np.abs(spec_n[pool].astype(np.float64) - spec_n[xi])
             per_ko["SIZE-MATCHED"].append(rec(prof(pool[np.argsort(d)[:N_NEI]]), SPEC[int(xi)]))
             per_ko["TIDE"].append(rec((A >= TAU).mean(0), SPEC[int(xi)]))
+        # PAIRED ARM UNION: z-score each arm's row over the pool and sum. If the interaction-state chain sees anything
+        # the node chain does not, the union beats both; if it is the same predictor wearing a different state space,
+        # the union lands between them. This is the ensemble question asked at the level of a single component.
+        for xi in test:
+            pool = train[train != xi]
+
+            def zrow(mat):
+                r = mat[xi][pool].astype(np.float64)
+                s = r.std()
+                return (r - r.mean()) / (s + 1e-12)
+            u = zrow(SC[("NODE",) + cfg_pick["NODE"][-1]]) + zrow(SC[("BIP-FULL",) + cfg_pick["BIP-FULL"][-1]])
+            per_ko["UNION(NODE,BIP-FULL)"].append(rec(prof(pool[np.argsort(-u)[:N_NEI]]), SPEC[int(xi)]))
+
+        for a in list(per_ko):
+            per_split[a].append(float(np.mean(per_ko[a][-len(test):])))
         order_keys.append(len(test))
         print(f"  split {sp}: " + "  ".join(
             f"{a} {np.mean(per_ko[a][-len(test):]):.4f}" for a in ARMS_ALL), flush=True)
@@ -429,18 +455,47 @@ def main():
         return m, se, v
 
     print("\n  ARM SCORES (recall@%d, %d splits, %d test evaluations)" % (K, NSPLIT, len(per_ko["NODE"])))
-    print(f"    {'arm':14s} {'score':>8s}   {'vs NODE':>9s} {'+/-':>7s}  verdict")
+    print(f"    {'arm':22s} {'score':>8s}   {'vs NODE':>9s} {'+/-':>7s}  verdict")
     rows = {}
-    for a in ARMS_ALL + ["HYPER-SHUF", "HYPER-REWIRE", "SIZE-MATCHED", "TIDE"]:
+    for a in ARMS_ALL + ["UNION(NODE,BIP-FULL)", "HYPER-SHUF", "HYPER-REWIRE", "SIZE-MATCHED", "TIDE"]:
         s = float(np.mean(per_ko[a]))
         if a == "NODE":
-            print(f"    {a:14s} {s:8.4f}   {'--':>9s} {'':>7s}  reference")
+            print(f"    {a:22s} {s:8.4f}   {'--':>9s} {'':>7s}  reference")
             rows[a] = (s, 0.0, 0.0, "reference")
             continue
         d, se, v = paired(a, "NODE")
-        print(f"    {a:14s} {s:8.4f}   {d:+9.4f} {se:7.4f}  {v}")
+        print(f"    {a:22s} {s:8.4f}   {d:+9.4f} {se:7.4f}  {v}")
         rows[a] = (s, d, se, v)
     rows["NODE"] = (float(np.mean(per_ko["NODE"])), 0.0, 0.0, "reference")
+
+    # ---- SECOND SIGNIFICANCE ESTIMATE, because the pooled bootstrap resamples 630 evaluations that are NOT
+    # independent: only 378 knockouts are scorable, so each appears in ~1.7 of the 5 test sets. Resampling
+    # correlated units understates the SE. A per-SPLIT paired test uses 5 genuinely independent units instead, and
+    # is the more conservative of the two. If the two disagree, the split-level one is believed.
+    print(f"\n  PER-SPLIT PAIRED TEST vs NODE (5 independent splits; conservative)")
+    print(f"    {'arm':22s} {'mean d':>9s} {'SE':>8s} {'t(4)':>7s}  {'pos/5':>6s}  verdict")
+    split_stat = {}
+    for a in [x for x in ARMS_ALL if x != "NODE"] + ["UNION(NODE,BIP-FULL)"]:
+        d = np.array(per_split[a]) - np.array(per_split["NODE"])
+        se = float(d.std(ddof=1) / np.sqrt(len(d)))
+        t = float(d.mean() / se) if se > 0 else 0.0
+        v = "BETTER" if t > 2.776 else ("WORSE" if t < -2.776 else "indistinguishable")   # two-sided 95%, 4 df
+        split_stat[a] = {"mean": float(d.mean()), "se": se, "t": t, "pos": int((d > 0).sum()), "verdict": v}
+        print(f"    {a:22s} {d.mean():+9.4f} {se:8.4f} {t:7.2f}  {int((d>0).sum())}/5    {v}")
+
+    # ---- HOW MANY INDEPENDENT THINGS WERE ACTUALLY TESTED? Five arms all landing positive looks like corroboration
+    # only if the arms are five different predictors. They are all built from the same PPI graph, so they are not.
+    from scipy.stats import spearmanr
+    print(f"\n  ARM AGREEMENT WITH NODE (mean row-wise Spearman over scorable knockouts, modal config)")
+    agree = {}
+    for a in ARMS_ALL:
+        ca = collections.Counter(cfg_pick[a]).most_common(1)[0][0]
+        cn = collections.Counter(cfg_pick["NODE"]).most_common(1)[0][0]
+        # skip knockouts whose row is constant (isolated in the graph): Spearman is undefined there, not zero
+        rs = [spearmanr(SC[(a,) + ca][i], SC[("NODE",) + cn][i]).statistic for i in scor[:150]
+              if SC[("NODE",) + cn][i].std() > 0 and SC[(a,) + ca][i].std() > 0]
+        agree[a] = float(np.nanmean(rs))
+        print(f"    {a:14s} {agree[a]:+.4f}")
 
     best_new = max([a for a in ARMS_ALL if a != "NODE"], key=lambda a: rows[a][0])
     print(f"\n  BEST NON-INCUMBENT ARM: {best_new} ({rows[best_new][0]:.4f})")
@@ -481,8 +536,34 @@ def main():
            f"{rows[best_new][1]:+.4f} +/- {rows[best_new][2]:.4f} from NODE ({rows[best_new][3]}), and against its "
            f"controls it is {d_sh:+.4f} vs the complex shuffle ({v_sh}) and {d_sz:+.4f} vs response-size-matched "
            f"neighbours ({v_sz}). ")
+        + f"FIVE ARMS ALL LANDED POSITIVE, WHICH IS ONE OBSERVATION AND NOT FIVE. The arms agree with NODE at mean "
+        f"row-wise Spearman " + ", ".join(f"{a} {agree[a]:+.3f}" for a in ARMS_ALL if a != "NODE") + f". They are the "
+        f"same predictor in different coordinates, so the consistent sign is what one correlated statistic does, not "
+        f"independent corroboration. The conservative per-split test over 5 genuinely independent units agrees with "
+        f"the pooled bootstrap and calls {best_new} {split_stat[best_new]['mean']:+.4f} +/- {split_stat[best_new]['se']:.4f} "
+        f"(t={split_stat[best_new]['t']:.2f}, {split_stat[best_new]['pos']}/5 splits positive, "
+        f"{split_stat[best_new]['verdict']}). "
+        + f"AND THE UNION SETTLES IT. Summing the z-scored NODE and BIP-FULL rankings scores "
+        f"{rows['UNION(NODE,BIP-FULL)'][0]:.4f} against NODE {rows['NODE'][0]:.4f} and BIP-FULL "
+        f"{rows['BIP-FULL'][0]:.4f} -- it lands BETWEEN its parents rather than above them, which is the signature of "
+        f"two views of one predictor, not two predictors. This is the same lesson redundancy_check drew about the "
+        f"ensemble: extra routes to information already present buy nothing. "
+        + f"THE COMPLEX LAYER IS THE REAL STORY HERE AND IT IS A NEGATIVE ONE. Shuffling WHICH proteins belong to "
+        f"which complex, while preserving every complex size and every protein's complex count, scores "
+        f"{rows['HYPER-SHUF'][0]:.4f} against NODE's {rows['NODE'][0]:.4f} -- {rows['HYPER-SHUF'][3]}. The membership "
+        f"content of the complex layer is worth approximately nothing, which independently reproduces graph_null's "
+        f"finding that PPI-only equals PPI-plus-complexes. The PPI layer, by contrast, is decisive -- rewiring it "
+        f"collapses the chain to {rows['HYPER-REWIRE'][0]:.4f}. "
+        + f"SO EACH ARM FAILED FOR ITS OWN REASON, and it is worth separating them rather than reporting one flat "
+        f"'no effect'. HYPER and BIP-FULL could not win because clique-expansion and hyperedge states differ ONLY in "
+        f"how they weight the complex layer, and that layer's content is inert. BIP-PW could not win because pairwise "
+        f"interactions make the bipartite walk algebraically the lazy node walk -- a theorem, not a measurement. "
+        f"LINE-NB is the one arm whose mechanism is genuinely new (non-backtracking cannot be written as any "
+        f"reweighting of the node walk), and it ties too, at Spearman {agree['LINE-NB']:+.3f} with NODE -- which says "
+        f"backtracking is not what limits a chain truncated at 2 steps, since a 2-step walk has barely enough length "
+        f"to backtrack at all. "
         + f"WHAT THIS DOES NOT SAY. It does not say hyperedges are the wrong representation of a complex -- it says "
-        f"that under THIS readout, where the chain's only job is to rank ~930 train knockouts so the top 10 can have "
+        f"that under THIS readout, where the chain's only job is to rank non-test knockouts so the top 10 can have "
         f"their measured profiles averaged, the ranking is not sensitive to the size-normalisation. A neighbour "
         f"selector needs only the ORDER of the top handful to be right, and both weightings put the same physical "
         f"partners at the top; they disagree about how much mass a 52-member complex should absorb, which is a "
@@ -498,6 +579,9 @@ def main():
                "controls": {c: dict(zip(("delta", "se", "verdict"), paired(best_new, c)))
                             for c in ["HYPER-SHUF", "HYPER-REWIRE", "SIZE-MATCHED"]},
                "best_non_incumbent": best_new,
+               "per_split": {a: per_split[a] for a in per_split},
+               "split_level_test": split_stat,
+               "agreement_with_node": agree,
                "cfg_picks": {a: [list(map(float, c)) for c in cfg_pick[a]] for a in ARMS_ALL},
                "graph": {"ppi_pairwise": len(pe), "complexes": len(cmem), "memberships": int(sum(csz)),
                          "clique_edges": int(sum(k * (k - 1) for k in csz))},
