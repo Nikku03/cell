@@ -53,25 +53,33 @@ def get(url, data=None, tries=4):
     return None
 
 
+def fetch_gene2reaction():
+    """NCBI gene id -> set of reaction stIds, streamed and filtered to human."""
+    url = "https://reactome.org/download/current/NCBI2Reactome_PE_Reactions.txt"
+    g2r = {}
+    print(f"streaming {url} ...", flush=True)
+    with urllib.request.urlopen(urllib.request.Request(url, headers=dict(UA)), timeout=900) as r:
+        nl = 0
+        for raw in r:
+            nl += 1
+            p = raw.decode("utf-8", "replace").rstrip("\n").split("\t")
+            if len(p) < 8 or "Homo sapiens" not in p[-1]:
+                continue
+            rx = [x for x in p if x.startswith("R-HSA-")]
+            if rx:
+                g2r.setdefault(p[0], set()).add(rx[-1])   # last R-HSA field is the reaction; earlier is the entity
+        print(f"  read {nl:,} lines", flush=True)
+    return {k: sorted(v) for k, v in g2r.items()}
+
+
 def main():
-    # ---- 1. every human reaction id ----
-    n = get(f"{CS}/data/schema/ReactionLikeEvent/count?species=9606")
-    total = int(n) if n else 0
-    print(f"human ReactionLikeEvents: {total}", flush=True)
-    ids, page, per = [], 1, 2000
-    while True:
-        chunk = get(f"{CS}/data/schema/ReactionLikeEvent?species=9606&page={page}&offset={per}")
-        if not chunk:
-            break
-        ids += [c["stId"] for c in chunk if "stId" in c]
-        print(f"  page {page}: {len(chunk)} (running {len(ids)})", flush=True)
-        if len(chunk) < per:
-            break
-        page += 1
-        if page > 40:
-            break
-    ids = sorted(set(ids))
-    print(f"collected {len(ids)} reaction ids", flush=True)
+    # ---- 1. gene -> reaction membership FIRST, and take the reaction ids from it ----
+    # The /data/schema paginated endpoint returned only 25 ids regardless of page/offset, so it is not used. The
+    # gene-to-reaction mapping already names every reaction that contains a gene -- which is exactly the set we
+    # care about, and nothing is lost by ignoring reactions with no gene participant.
+    g2r = fetch_gene2reaction()
+    ids = sorted({r for v in g2r.values() for r in v})
+    print(f"gene->reaction gave {len(g2r):,} genes and {len(ids):,} distinct reactions", flush=True)
 
     # ---- 2. preceding-event relations, batched ----
     prec = {}
@@ -94,34 +102,10 @@ def main():
             print(f"  batch {i//BATCH}: {got} objects, {len(prec)} with preceding", flush=True)
     print(f"retrieved {got}/{len(ids)} reaction objects; {len(prec)} have a precedingEvent", flush=True)
 
-    # ---- 3. gene -> reaction membership, streamed and filtered to human ----
-    url = "https://reactome.org/download/current/NCBI2Reactome_PE_Reactions.txt"
-    g2r = {}
-    print(f"streaming {url} ...", flush=True)
-    try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=dict(UA)), timeout=900) as r:
-            nl = 0
-            for raw in r:
-                nl += 1
-                p = raw.decode("utf-8", "replace").rstrip("\n").split("\t")
-                if len(p) < 8 or "Homo sapiens" not in p[-1]:
-                    continue
-                gid = p[0]
-                rxn = next((x for x in p if x.startswith("R-HSA-")and "-" in x), None)
-                # the reaction stId is the LAST R-HSA field on the line; the earlier one is the physical entity
-                rx = [x for x in p if x.startswith("R-HSA-")]
-                if not rx:
-                    continue
-                rxn = rx[-1]
-                g2r.setdefault(gid, set()).add(rxn)
-            print(f"  read {nl:,} lines", flush=True)
-    except Exception as e:
-        print(f"  mapping fetch FAILED: {e}", flush=True)
-
     out = {"reaction_ids": len(ids), "retrieved": got,
            "preceding": {k: v for k, v in prec.items()},
-           "gene2reaction": {k: sorted(v) for k, v in g2r.items()},
-           "complete": got >= 0.9 * len(ids) and len(g2r) > 1000}
+           "gene2reaction": g2r,
+           "complete": bool(got >= 0.9 * len(ids) and len(g2r) > 1000)}
     OUTF.write_text(json.dumps(out))
     print(f"\n  reactions with preceding: {len(prec):,}")
     print(f"  genes with reaction membership: {len(g2r):,}")
