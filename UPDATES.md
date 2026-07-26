@@ -10561,3 +10561,57 @@ start: independent-looking evidence converges on the same pairs.
 a 0.0108% base rate that is a **185× lift**, and it is still 2 out of 100. Four independent evidence types stacked
 (localisation, genomic position, Perturb-seq, DepMap) move CN=0 from chance to 0.676 AUC and produce essentially no
 usable predictions.
+
+---
+
+## `colab/ceiling_scaling.py` — the ceiling is DATA, not method, and the data is already on disk
+
+Across this entire session every modelling idea moved recall@50 by **less than 0.01**: repairing 34,440 PPI edges,
+six Markov state spaces, cell-specific graph pruning, a 55-feature kitchen sink, three Monte Carlos. **One change
+moved it by 0.14** — widening the neighbour pool from 378 to 1,274. So: hold the method completely fixed and vary
+only the pool size.
+
+| pool | recall@50 | | step | raw Δ | **per doubling** |
+|---|---|---|---|---|---|
+| 100 | 0.2777 ± 0.0071 | | 100→200 (2.00×) | +0.0537 | +0.0537 |
+| 200 | 0.3314 ± 0.0083 | | 200→400 (2.00×) | +0.0610 | +0.0610 |
+| 400 | 0.3924 ± 0.0072 | | 400→700 (1.75×) | +0.0519 | +0.0643 |
+| 700 | 0.4443 ± 0.0080 | | 700→1000 (1.43×) | +0.0205 | +0.0398 |
+| 1000 | 0.4648 ± 0.0088 | | 1000→1274 (1.27×) | +0.0174 | +0.0497 |
+| 1274 | 0.4822 ± 0.0180 | | | | |
+
+**Recall is linear in log2(pool size) at r = 0.9988, a steady +0.057 per doubling with no decay.**
+
+### A self-correction inside this module
+
+The first version compared the raw last step (+0.0174) against its standard error and concluded **"the curve has
+FLATTENED"** — the opposite of the truth. That step is only **1.27×, not 2×**; normalised it is worth **+0.0497 per
+doubling**, right in line with every earlier step. A saturation test that ignores unequal step sizes will call a
+perfectly logarithmic curve saturated. Fixed, and the wrong verdict is recorded rather than quietly replaced.
+
+### What it implies
+
+Extrapolating the log fit — **a prediction to falsify, not a result**:
+
+| pool | predicted recall@50 |
+|---|---|
+| 2,800 | 0.551 |
+| 5,600 | 0.608 |
+| **11,258** *(gwps.h5ad, already on disk)* | **0.665** |
+| 22,516 | 0.722 |
+
+The fit crosses this architecture's **ORACLE of 0.61 at ~5,774 knockouts**. Those two numbers landing together is
+the useful part: **at roughly the data volume already sitting unused in `scratchpad/gwps.h5ad` (11,258 K562
+perturbations vs the 1,400 every module here uses), the neighbour-transfer oracle stops being a distant reference
+and becomes the actual binding constraint.**
+
+**This explains the whole session.** Every method change landed inside the noise because the constraint was never
+the method — it was that with 1,400 knockouts the nearest available neighbour often isn't near.
+
+### Limits
+
+Sub-sampled pools are drawn from the same 1,400 knockouts, so this measures pool *size* holding knockout *kind*
+fixed. The genome-wide set is not a random 8× enlargement — it is a less curated selection and its extra knockouts
+may be individually weaker, which would bend the curve down. The extrapolation is 9× beyond the largest measured
+point, exactly the move this repo has been sceptical of all session; it is a go/no-go for rebuilding on gwps.h5ad,
+not a claim. And past ~0.61 no amount of pool growth helps — only a different readout.

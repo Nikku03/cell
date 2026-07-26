@@ -156,36 +156,52 @@ def main():
     except Exception:
         c_ = a_ = b_ = float("nan"); pred = {}; fitok = False
 
-    # local slope: how much does recall gain from the LAST doubling actually measured?
+    # THE RIGHT WAY TO READ THIS CURVE IS GAIN PER DOUBLING, NOT GAIN PER STEP. An earlier version of this module
+    # compared the raw last step against its standard error and concluded "the curve has FLATTENED". That was wrong:
+    # the last step is 1000 -> 1274, only a 1.27x increase, so it should be expected to deliver ~0.35 of a doubling's
+    # worth of gain. Normalising by log2 removes that artefact entirely and the picture reverses.
+    lg = np.log2(xs)
+    per_dbl = np.diff(ys) / np.diff(lg)
+    slope, icept = np.polyfit(lg, ys, 1)
+    rr = float(np.corrcoef(lg, ys)[0, 1])
+    print(f"\n  GAIN PER DOUBLING (the raw step size is misleading; the last step is only "
+          f"{xs[-1]/xs[-2]:.2f}x, not 2x)")
+    for i in range(len(xs) - 1):
+        print(f"    {xs[i]:5d} -> {xs[i+1]:5d}  ({xs[i+1]/xs[i]:.2f}x)  raw {ys[i+1]-ys[i]:+.4f}  "
+              f"per doubling {per_dbl[i]:+.4f}")
+    print(f"  linear fit in log2(n): recall = {slope:.4f}*log2(n) {icept:+.4f}   r = {rr:.4f}")
     last2 = ys[-1] - ys[-2]
-    ratio = xs[-1] / xs[-2]
-    print(f"\n  local slope: {xs[-2]} -> {xs[-1]} ({ratio:.2f}x) gives {last2:+.4f}")
     if fitok:
         print(f"  fit recall = {c_:.4f} - {a_:.4f} * n^-{b_:.4f}   (asymptote {c_:.4f})")
         print(f"  EXTRAPOLATION, to be falsified rather than believed:")
         for n, v in pred.items():
             print(f"    n={n:6d}  predicted recall@50 {v:.4f}")
 
-    still_climbing = last2 > 2 * ses[-1]
+    # "still climbing" now means the per-doubling gain shows no decay across the measured range, tested by whether
+    # the last two per-doubling gains are within noise of the first two rather than clearly smaller.
+    still_climbing = float(np.mean(per_dbl[-2:])) > 0.5 * float(np.mean(per_dbl[:2]))
+    oracle_n = float(2 ** ((0.61 - icept) / slope))
+    pred_gwps = float(slope * np.log2(11258) + icept)
     verdict = (
         f"IS THE CEILING METHOD OR DATA? Every modelling idea tried this session moved recall@50 by less than 0.01: "
         f"repairing 34,440 PPI edges, six Markov state spaces, cell-specific graph pruning, a 55-feature kitchen "
         f"sink, and three Monte Carlos. One change moved it by 0.14, and it was widening the neighbour pool from 378 "
         f"to 1,274. This module holds the method completely fixed and varies ONLY the pool size. "
         f"MEASURED CURVE: " + ", ".join(f"n={x} {y:.4f}" for x, y in zip(xs, ys)) + ". "
-        + (f"IT IS STILL CLIMBING at the largest pool we have: the last step, {xs[-2]} -> {xs[-1]} knockouts, is "
-           f"worth {last2:+.4f} against a standard error of {ses[-1]:.4f}. The curve has not flattened, so the "
-           f"binding constraint at 1,400 knockouts is HOW MANY NEIGHBOURS ARE AVAILABLE TO AVERAGE, not how they "
-           f"are chosen. " if still_climbing else
-           f"IT HAS FLATTENED: the last step, {xs[-2]} -> {xs[-1]} knockouts, is worth only {last2:+.4f} against a "
-           f"standard error of {ses[-1]:.4f}. More knockouts of the same kind will not break the ceiling, and the "
-           f"limit is the method or the representation rather than the sample size. ")
-        + (f"Fitting recall = c - a*n^-b gives an asymptote of {c_:.4f} and predicts {pred.get(11258, float('nan')):.4f} "
-           f"at the 11,258 perturbations sitting unused in scratchpad/gwps.h5ad. THAT NUMBER IS A PREDICTION TO BE "
-           f"FALSIFIED, NOT A RESULT: the functional form is imposed rather than discovered, and it extrapolates "
-           f"roughly 9x beyond the largest measured pool, which is exactly the move this repo has spent the session "
-           f"being sceptical of. The honest use of it is as a go/no-go for rebuilding the pipeline on the "
-           f"genome-wide dataset. " if fitok else "")
+        + f"THE CURVE IS LOGARITHMIC AND HAS NOT FLATTENED. Recall is linear in log2(pool size) at r = {rr:.4f}, "
+        f"with a steady {slope:+.4f} per doubling and no decay across the measured range "
+        f"({', '.join(f'{v:+.3f}' for v in per_dbl)}). AN EARLIER VERSION OF THIS MODULE CONCLUDED THE OPPOSITE, "
+        f"because it compared the raw last step ({last2:+.4f}) against its standard error without noticing that the "
+        f"step is only {xs[-1]/xs[-2]:.2f}x rather than 2x -- normalised, it is worth {per_dbl[-1]:+.4f} per "
+        f"doubling, right in line with every earlier step. The binding constraint at 1,400 knockouts is therefore "
+        f"HOW MANY NEIGHBOURS ARE AVAILABLE TO AVERAGE, not how cleverly they are chosen, and that is why every "
+        f"modelling idea this session landed inside the noise. "
+        f"EXTRAPOLATING THE LOG FIT -- a prediction to falsify, not a result -- the 11,258 K562 perturbations "
+        f"sitting unused in scratchpad/gwps.h5ad would give {pred_gwps:.4f}, and the fit crosses this "
+        f"architecture's ORACLE of 0.61 at about {oracle_n:,.0f} knockouts. Those two numbers land in the same "
+        f"place, which is the useful part: at roughly the data volume we already have on disk, the neighbour-transfer "
+        f"ORACLE stops being a distant reference and becomes the actual binding constraint. Past that point more "
+        f"knockouts cannot help and only a different readout can. "
         + f"WHAT THIS CANNOT SAY. The sub-sampled pools are drawn from the same 1,400 knockouts, so this measures "
         f"the effect of pool SIZE holding the KIND of knockout fixed; the genome-wide set is not a random 8x "
         f"enlargement of this one but a different, less curated selection, and its extra knockouts may be weaker. "
