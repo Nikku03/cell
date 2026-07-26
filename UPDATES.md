@@ -9852,3 +9852,65 @@ oracle and tide references are unaffected — they never touch PPI.
 Every module reproduced its expected number, so nothing looked wrong. A dead feature does not throw — it returns zeros,
 the model routes around it, and the score lands close enough to the documented value to pass a self-calibration check.
 The audit that caught it was a full enumeration of what each key *contains*, run against what each module *reads*.
+
+---
+
+## `colab/redundancy_check.py` — why fixing the PPI graph helped the parts and not the whole
+
+The PPI fix improved every component that touches the physical graph, and left the ensemble flat
+(headline 0.5173 → 0.5068). That combination — better parts, no better whole — is the thing that needed explaining,
+so it was turned into three falsifiable predictions rather than an assertion. The hypothesis: an ensemble is paid in
+**complementarity, not component quality**. Before the fix MARKOV-P was the *only* component that could see the
+physical graph, so it carried the entire PPI signal alone and everything it contributed was unique. After the fix
+PHYS and LEARNED read the same graph — so all three improve individually while becoming **more redundant with each
+other**.
+
+Both wirings are built side by side (`nb_broken` keyed by int and read by name, i.e. always empty; `nb_fixed` keyed by
+name) and run through an identical pipeline over the same five splits. MARKOV-P is the control: it indexes by integer
+node, never had the bug, and scores 0.4381 in both arms.
+
+| component | broken | fixed | delta |
+|---|---|---|---|
+| TIDE | 0.2671 | 0.2671 | +0.0000 |
+| NEXUS | 0.2632 | 0.2632 | +0.0000 |
+| PHYS | 0.3602 | 0.4140 | **+0.0538** |
+| LEARNED | 0.4068 | 0.4289 | **+0.0221** |
+| MARKOV-P | 0.4381 | 0.4381 | +0.0000 |
+| **full 5-way** | **0.4720** | **0.4709** | **−0.0012** |
+
+### All three predictions hold
+
+| pair | corr broken | corr fixed | Δcorr | jac broken | jac fixed | Δjac |
+|---|---|---|---|---|---|---|
+| PHYS vs MARKOV-P | 0.626 | 0.681 | **+0.055** | 0.439 | 0.521 | **+0.082** |
+| LEARNED vs MARKOV-P | 0.587 | 0.646 | **+0.059** | 0.432 | 0.499 | **+0.066** |
+| PHYS vs LEARNED | 0.674 | 0.621 | −0.053 | 0.482 | 0.477 | −0.005 |
+| NEXUS vs MARKOV-P *(control)* | 0.392 | 0.392 | +0.000 | 0.261 | 0.261 | +0.000 |
+
+P3, drop-one from the 5-way: MARKOV-P's unique contribution falls **+0.0114 → +0.0084**, and PHYS's falls
++0.0125 → +0.0068. The two components reading the restored graph are the two that lose standing.
+
+### The confound, and the internal control that kills it
+
+A rise in correlation is exactly what "better predictors resemble other good predictors" would produce, which would
+make P1 vacuous. The discriminator was already in the table: **PHYS and LEARNED both improved, yet corr(PHYS, LEARNED)
+fell −0.053.** Rising quality cannot produce a rise in one pair and a fall in another. A newly *shared input* can — and
+the pairs that rise are exactly the two that now read the graph MARKOV-P was already reading. The untouched control
+pair moves +0.000.
+
+### What it means
+
+The PPI information was never *missing* from the ensemble; it was entering through **one door instead of three**.
+Fixing the bug opened the other two doors into the same room. This is consistent with `kitchen_sink`, where 55
+features scored the same as 17: the ensemble was already extracting what the physical graph has to offer, through
+whichever component could reach it. That is a **stronger statement about the ceiling than the bug was**, because it
+says the limit is not access to the graph.
+
+### Limits
+
+Five splits of one cell line, so the −0.0012 ensemble move is within split noise — the claim is that it did not
+*improve*, not that it got worse. Drop-one attribution holds the other four components fixed and so understates shared
+credit. **Levels here are not the headline levels:** this is a lean rebuild (14 features, PHYS unranked rather than a
+scored top-10), so every component sits below its `protein_chain_combine` twin. Both arms share that identical lean
+pipeline and differ only in the wiring, so the broken-vs-fixed *deltas* are the measurement; the absolute values are
+not the published ones.

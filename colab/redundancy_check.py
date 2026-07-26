@@ -304,7 +304,20 @@ def main():
            f"ensemble loses when it is dropped -- falls {p3['MARKOV-P']['broken']:+.4f} -> "
            f"{p3['MARKOV-P']['fixed']:+.4f} ({dmark:+.4f}). So the PPI information was never MISSING from the "
            f"ensemble; it was entering through ONE door instead of three. Fixing the bug opened the other two doors "
-           f"into the same room. " if redundancy else
+           f"into the same room. "
+           # THE OBVIOUS CONFOUND, AND THE INTERNAL CONTROL THAT KILLS IT. A rise in correlation is exactly what you
+           # would expect from nothing more than "PHYS got better, and better predictors resemble other good
+           # predictors" -- which would make P1 vacuous. The discriminator is already in the table: PHYS and LEARNED
+           # BOTH improved, yet corr(PHYS, LEARNED) FELL. Generic quality does not explain a rise in one pair and a
+           # fall in another; a newly SHARED input does, and MARKOV-P is the component holding that input.
+           f"THE OBVIOUS OBJECTION IS THAT BETTER PREDICTORS SIMPLY CORRELATE MORE WITH EVERYTHING, which would make "
+           f"the correlation rise vacuous. The table refutes that: PHYS and LEARNED both improved, and yet "
+           f"corr(PHYS, LEARNED) MOVED {p1['PHYS-LEARNED']['corr_fixed'] - p1['PHYS-LEARNED']['corr_broken']:+.3f} "
+           f"({p1['PHYS-LEARNED']['corr_broken']:.3f} -> {p1['PHYS-LEARNED']['corr_fixed']:.3f}). Rising quality "
+           f"cannot produce a rise in one pair and a fall in another; a newly SHARED INPUT can, and the pairs that "
+           f"rise are exactly the two that now read the same physical graph MARKOV-P was already reading "
+           f"(NEXUS vs MARKOV-P, the untouched control pair, moves "
+           f"{p1['NEXUS-MARKOV-P']['corr_fixed'] - p1['NEXUS-MARKOV-P']['corr_broken']:+.3f}). " if redundancy else
            f"THE REDUNDANCY STORY DOES NOT HOLD as stated: corr(PHYS, MARKOV-P) moves {dcorr:+.3f}, top-{K} overlap "
            f"{djac:+.3f}, and MARKOV-P's unique contribution {dmark:+.4f}. At least one prediction fails, so the "
            f"ensemble's behaviour needs a different explanation -- most plausibly split noise, in which case the "
@@ -318,7 +331,16 @@ def main():
         f"WHAT THIS CANNOT SAY: five splits of one cell line, so the ensemble difference of "
         f"{ef-eb:+.4f} is itself within split-to-split noise and should not be read as a real degradation -- the "
         f"claim here is that it did not IMPROVE, not that it got worse. Drop-one attribution assumes the other four "
-        f"components are held fixed, which understates shared credit. Deterministic given the fixed seeds.")
+        f"components are held fixed, which understates shared credit. "
+        # LEVELS ARE NOT COMPARABLE TO THE HEADLINE MODULE, ONLY DELTAS ARE. This is a deliberately lean rebuild --
+        # 14 features where protein_chain_combine has more, PHYS taking ALL adjacent knockouts unranked rather than a
+        # scored top-10 -- so every component here sits below its headline twin (MARKOV-P 0.4381 vs 0.4763). That is
+        # expected and harmless: both arms run through the IDENTICAL lean pipeline and differ ONLY in the wiring, so
+        # the broken-vs-fixed deltas are clean even though the absolute numbers are not the published ones.
+        f"AND THE LEVELS HERE ARE NOT THE HEADLINE LEVELS: this is a lean rebuild (14 features, PHYS unranked), so "
+        f"every component scores below its protein_chain_combine twin. Both arms share that identical lean pipeline "
+        f"and differ ONLY in the PPI wiring, so the broken-vs-fixed DELTAS are the measurement and the absolute "
+        f"values are not. Deterministic given the fixed seeds.")
     print(f"\nVERDICT: {verdict}")
 
     json.dump({"n_splits": NSPLIT,
