@@ -133,6 +133,25 @@ def main():
           f"{int((spec_n >= MIN_SPEC).sum())} scorable, of which "
           f"{int((ko_expressed & (spec_n >= MIN_SPEC)).sum())} expressed", flush=True)
 
+    # ---- WHY PRUNING MIGHT CHANGE NOTHING: is the walk already avoiding the ghosts? ----
+    # Deleting nodes the walk never visits is free but pointless. Measure where the mass actually goes BEFORE
+    # pruning, because that number decides whether a null result is "expression does not matter" (interesting and
+    # probably wrong) or "the walk was already confined to expressed protein" (an explanation).
+    G0 = sparse.coo_matrix((np.ones(2 * len(pe), np.float32), (np.r_[pa, pb], np.r_[pb, pa])), shape=(N, N)).tocsr()
+    mag0 = np.asarray(G0.sum(1)).ravel(); inv0 = np.zeros(N, np.float32)
+    nz0 = mag0 > 0; inv0[nz0] = 1.0 / mag0[nz0]
+    PT0 = (sparse.diags(inv0) @ G0).T.tocsr()
+    sd = konode[have]
+    X0 = np.zeros((N, len(sd)), np.float32); X0[sd, np.arange(len(sd))] = 1.0
+    cur0 = X0; mass_on_expr = {}
+    for s in (1, 2, 3):
+        cur0 = PT0 @ cur0
+        t = cur0.sum(0)
+        mass_on_expr[s] = float(np.mean(cur0[expressed].sum(0) / np.maximum(t, 1e-12)))
+        print(f"   step {s}: {mass_on_expr[s]:.1%} of the walk's mass is already on EXPRESSED nodes "
+              f"(uniform over nodes would be {expressed.mean():.1%})", flush=True)
+    print(f"   knockout nodes themselves are {expressed[sd].mean():.1%} expressed", flush=True)
+
     rng = np.random.RandomState(0)
 
     def rand_keep(seed, n_keep):
@@ -322,6 +341,12 @@ def main():
         f"{best_step[0]} at {best_step[1]:.4f}, against the damped incumbent's {rows['FULL-DAMP'][0]:.4f}. "
         f"THE HEADLINE: K562-pruned scores {rows['K562-DAMP'][0]:.4f} against the full graph's "
         f"{rows['FULL-DAMP'][0]:.4f}, {d_k:+.4f} +/- {se_k:.4f} ({v_k}). "
+        + f"AND THE REASON THE NULL IS A NULL IS MEASURED, NOT GUESSED: on the UNPRUNED graph the walk already puts "
+        f"{mass_on_expr[1]:.1%} / {mass_on_expr[2]:.1%} / {mass_on_expr[3]:.1%} of its mass on expressed nodes at "
+        f"steps 1/2/3, against {expressed.mean():.1%} if mass were spread uniformly over nodes -- and the knockout "
+        f"seeds are themselves {expressed[sd].mean():.1%} expressed. The chain was ALREADY effectively confined to "
+        f"the protein K562 makes, so deleting the ghosts is free but cannot add anything. That is a much more useful "
+        f"statement than 'expression does not matter', which is what the flat delta on its own would suggest. "
         + (f"AND THE BIOLOGY IS WHAT DOES IT, not the shrinking: against a uniformly random prune to the SAME node "
            f"count it is {ctrl['RAND-PRUNE-DAMP'][0]:+.4f} ({ctrl['RAND-PRUNE-DAMP'][2]}), and against a random prune "
            f"MATCHED ON THE DEGREE DISTRIBUTION -- the control that matters, because expressed genes are better "

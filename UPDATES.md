@@ -10166,3 +10166,67 @@ response could itself depress UMI counts (sick cells, lower library complexity),
 movers, which is not naive detection power. Not resolvable from this data. The defensible claim is that response size
 is **not identified** as a network quantity — not that it is definitely an artefact. Also, `fold_expr`, `pct_expr`
 and `cnv_score_z` are all-NaN on these rows, so the "nine covariates" are effectively six.
+---
+
+## `colab/k562_specific_chain.py` — a cell-specific, memoryless, step-by-step chain
+
+Every chain in this repo so far walked the **generic** human PPI graph. Only **7,223 of its 16,492 proteins (43.8%)
+are expressed in K562** — 9,269 nodes are ghosts, and every path through one is fictional. This deletes them, and
+reports the memoryless chain **one step at a time** instead of as a damped sum.
+
+Source of "expressed": the K562 Perturb-seq panel itself (measured), **not** `emask` in `cell_complete.json` — that
+is a cell-type *marker* mask flagging only 634 genes for erythroid progenitor (8.5%), i.e. specificity, not presence.
+**Trap worth recording:** `var/gene_name` in the h5ad is an anndata categorical — integer *codes* into
+`var/__categories/gene_name`. Decoding the codes as names silently gives **0%** overlap with the network instead of
+43.8%, and reports a clean-looking failure rather than an error.
+
+### Each step alone — never run before, because every previous number blended them
+
+| graph | step 1 | step 2 | step 3 |
+|---|---|---|---|
+| FULL | 0.4607 | **0.4773** | 0.4646 |
+| K562 | 0.4551 | 0.4766 | 0.4557 |
+| RAND-PRUNE | 0.2223 | 0.2288 | 0.2234 |
+| DEG-PRUNE | 0.3606 | 0.3670 | 0.3619 |
+| K562-EXPR | 0.4364 | 0.4381 | 0.4019 |
+| EXPR-SHUF | 0.4513 | 0.4447 | 0.4278 |
+
+**Step 2 alone (0.4773) is within 0.004 of the full damped chain (0.4809).** Two hops is the whole model; steps 1
+and 3 add essentially nothing on top.
+
+### Damped sums
+
+| arm | score | vs FULL | |
+|---|---|---|---|
+| FULL-DAMP | 0.4809 | reference | reproduces the incumbent |
+| **K562-DAMP** | **0.4792** | −0.0017 ± 0.0039 | **indistinguishable** |
+| RAND-PRUNE-DAMP | 0.2221 | −0.2588 ± 0.0132 | WORSE |
+| DEG-PRUNE-DAMP | 0.3636 | −0.1173 ± 0.0100 | WORSE |
+| K562-EXPR-DAMP | 0.4417 | −0.0392 ± 0.0053 | WORSE |
+| EXPR-SHUF-DAMP | 0.4567 | −0.0242 ± 0.0056 | WORSE |
+
+### Three findings
+
+**1. Deleting 56% of the nodes and half the edges costs nothing** (−0.0017 ± 0.0039) — and the *reason* is measured,
+not guessed. On the unpruned graph the walk already puts **77.3% / 76.8% / 73.3%** of its mass on expressed nodes at
+steps 1/2/3 against 43.8% under uniform spread, and the knockout seeds are **92.6%** expressed. The chain was already
+confined to the protein K562 makes. That is far more informative than "expression doesn't matter", which is what the
+flat delta alone would suggest.
+
+**2. But the expressed set is the *right* set.** Against a uniformly random prune of the same node count, K562 is
+**+0.2571**; against a **degree-matched** random prune — the control that matters, since expressed genes are better
+studied and therefore higher-degree — it is **+0.1156**, both BETTER. Remove the wrong half and the model collapses
+to near the tide null.
+
+**3. Abundance weighting actively hurts, and hurts worse than shuffled abundance** (0.4417 vs 0.4567,
+**−0.0150, WORSE**). Real expression is *anti*-informative here, which makes mechanistic sense: weighting transitions
+toward abundant targets steers the walk into ribosomal and housekeeping protein — exactly the tide the metric
+removes.
+
+### Limits
+
+"Expressed" is defined by presence in the K562 panel, which conflates *not expressed* with *not measured*, and the
+panel is itself an expression-based selection — so the criterion is circular to an unknown degree. 104/1400
+knockouts are not in the expressed set and get an all-zero score row in the pruned arms. Five splits, one cell line.
+(FULL-DAMP is 0.4809 here vs 0.4768 elsewhere because the cw grid now includes 0.1, the optimum found in
+`complex_weight.py`.)
