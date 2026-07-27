@@ -246,15 +246,24 @@ def fetch_entities(seed):
     return cache, failed
 
 
-def entity_rule(sid, cache, depth=0):
-    """Turn an entity id into an and/or rule over gene symbols."""
+def entity_rule(sid, cache, depth=0, seen=None):
+    """Turn an entity id into an and/or rule over gene symbols.
+
+    DEPTH AND CYCLES. Reactome complexes nest much deeper than first assumed -- the closure over 4,434 seeds
+    reached 19,882 records with 11,228 of them Complexes averaging 3.57 children, i.e. complexes inside complexes
+    inside complexes. A depth cap of 8 silently truncated those to None, which reads as "no rule" and would have
+    dropped exactly the largest assemblies this is meant to resolve. The cap is now 24, and a `seen` set makes the
+    walk safe against a self-referential entity rather than relying on the cap to stop it.
+    """
+    seen = set() if seen is None else seen
     rec = cache.get(sid)
-    if not rec or depth > 8:
+    if not rec or depth > 24 or sid in seen:
         return None
+    seen = seen | {sid}
     cls = rec.get("cls")
     if rec.get("gene"):
         return ("gene", rec["gene"])
-    kids = [entity_rule(k, cache, depth + 1) for k in rec.get("kids", [])]
+    kids = [entity_rule(k, cache, depth + 1, seen) for k in rec.get("kids", [])]
     kids = [k for k in kids if k]
     if not kids:
         return None
