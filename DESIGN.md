@@ -1,5 +1,12 @@
 # Design for a cell model that actually works
 
+> **STATUS — all seven buildable items have now been built and scored against their own pre-registered tests.
+> Three passed, four failed, and the failures are more informative than the passes. Section 10 holds the results
+> table and the corrections; the original design reasoning below is left intact, with `MEASURED:` notes marking
+> every claim the measurements changed. The single biggest correction: §3 named quantity "the single
+> highest-value missing piece" and it is not — see §10.**
+
+
 Every design decision below is justified by a number measured in this project, and every component has an
 acceptance test it must pass before it is believed. Where the honest answer is "this cannot be built with data that
 exists", that is stated rather than designed around.
@@ -111,6 +118,22 @@ sequence-wide. This is the most tractable large win available and is **not block
 **Acceptance test:** FBA recall must rise from 0.203 without precision falling below 0.6. If enzyme capacity
 constraints don't recover missed essentials, the hypothesis that quantity is the blocker is wrong.
 
+> **MEASURED: the hypothesis is wrong.** `colab/ec_capacity.py` built exactly this -- real DLKcat kcat, GPR-aware
+> capacity (isozymes add, complexes take the min), ceilings recomputed per deletion, one global scale fitted to
+> the measured 24 h doubling time. Recall did not move: 0.203 -> 0.203, not one lethal call changed, AUC fell
+> 0.676 -> 0.594, and permuting the quantities reproduced it exactly.
+>
+> `colab/kapp.py` then measured WHY, and the answer is not kcat accuracy. Of 1,651 reactions carrying a ceiling,
+> **1,578 carry no flux at all** at the optimum; 5 are at their ceiling; 19 are within two orders of it. A
+> ceiling on an unused reaction constrains nothing however accurate its kcat, so improving in-vitro kcat
+> (log10 RMSE ~1.0) to proteome-calibrated k_app (~0.4) cannot move a bound sitting six orders above the flux.
+> Bayesian shrinkage of the kcat spread confirmed it: lambda 0 and lambda 0.25 both leave exactly 5 reactions
+> at a ceiling.
+>
+> The defect is the CONSTRAINT'S SHAPE, not its parameters. Per-reaction ceilings do not couple reactions.
+> `colab/gecko.py` tests the constraint that does -- a shared proteome budget, sum(v_i/kcat_i) <= P_total, where
+> every reaction competes for one pool and kcat acts as a PRICE rather than a limit.
+
 ---
 
 ## 4. Predict magnitude before content — and be allowed to say "nothing"
@@ -136,6 +159,18 @@ responsive genes are one-off; these need *different predictors* and currently sh
 **Acceptance test:** calibration. Among perturbations the model says are silent, ≥90% must really have <5 movers.
 A model that abstains correctly is more useful than one that guesses.
 
+> **MEASURED: passes the letter, fails the spirit.** `colab/abstain.py`, 24 a priori features, two-way hash split
+> run both ways. On the pre-registered label (<5 movers) the base rate is 0.835, so the 90% bar sits 6.5 points
+> above answering "nothing" every time; 90% precision holds to 82.1% coverage -- a near-free pass. On the honest
+> label (exactly zero movers, base rate 0.578, which is what this section's own 58.2% refers to) precision at
+> 50% coverage is 0.764 and the 90% bar is unreachable at any usable coverage. AUC 0.753 vs shuffled 0.487; lift
+> over always-silent +0.187 with both folds' CI excluding zero. Real information, no certification of inertness.
+>
+> **This section's claim that cascade breadth is the feature to use is wrong.** Cascade breadth is validated at
+> z = -6.88 for a different question and is at CHANCE here: AUC 0.5016 alone, as are n_stops, n_rxn, n_buffered
+> and n_redundant. What carries the gate is DepMap dependency (0.769 alone) -- but not only that: dropping both
+> DepMap columns still leaves AUC 0.721, and dropping expression too leaves 0.689.
+
 ---
 
 ## 5. The regulation layer must be rebuilt, and this is the real blocker
@@ -158,6 +193,17 @@ which is exactly the decomposition §4 requires. The two designs depend on each 
 
 **Acceptance test:** a regulon derived this way must predict held-out TF knockouts better than the ChIP layer,
 which is a low bar (chance), and better than the shared core alone, which is not.
+
+> **MEASURED: clears the low bar by 80x, loses the real one.** `colab/regulon.py`, 439 held-out perturbations,
+> transfer from network neighbours' regulons (never the gene's own measurement). Residual+neighbours 0.2308 vs
+> ChIP 0.0029 -- and ChIP returns nothing at all for 384 of 439. But frequency scores 0.3502 and wins by 0.119
+> with a CI nowhere near zero.
+>
+> The informative part is which arm wins. Transfer on the RAW matrix beats frequency (+0.0292, CI excludes zero);
+> transfer on the residual loses badly. Removing the shared core removes exactly what this metric rewards,
+> because the metric asks "name the genes that moved" and the genes that move are mostly the shared core.
+> Build 3 showed the specific arm is real (permutation z +93). Build 4 shows it is real and not what the
+> benchmark scores. **The benchmark credits predicting DAMAGE, not predicting WHICH GENE was damaged.**
 
 ---
 
@@ -202,8 +248,82 @@ The harness is therefore not a nicety. Required properties:
 | 6 | **layered solver with time constants** | needs §1, §4 | mRNA becomes an output of mechanism rather than a lookup |
 | 7 | measurement-noise ceiling | **blocked** — the screen's only replicates are its weak tail | without it we cannot say how much residual error is even reducible |
 
+**MEASURED (see §10):** 1 FAIL, 2 PARTIAL, 3 PASS, 4 FAIL, 5 PASS (4 of 5 tests). Two further items were added
+in response to what the failures showed: `kapp.py` (in-vivo apparent turnover — FAIL, and predicted in advance by
+its own diagnostic) and `gecko.py` (shared proteome budget — the coupling that item 1 lacked).
+
 Items 1–5 are buildable now with data that exists. Item 7 is genuinely blocked and bounds how well anything can be
 known to work.
+
+---
+
+## 10. What happened when it was built — measured outcomes
+
+Every item was implemented and scored against the acceptance test written for it *before* the run. Nothing below
+was scored twice with a different bar.
+
+| # | component | module | verdict | the number that decided it |
+|---|---|---|---|---|
+| 1 | enzyme-capacity constraints | `ec_capacity.py` | **FAIL** | recall 0.203 → 0.203, AUC 0.676 → 0.594, shuffled quantities identical |
+| 2 | magnitude-first abstention | `abstain.py` | **PARTIAL** | passes on the <5-mover label (base rate 0.835); fails on the zero-mover label (0.764 at 50% coverage) |
+| 3 | shared-core / specific-arm split | `decompose.py` | **PASS** | residual complex-partner coherence +0.0708, permutation z +93.4, permuted-membership control z +1.5 |
+| 4 | interventional regulon | `regulon.py` | **FAIL** | 0.2308 vs ChIP 0.0029 (clears), vs frequency 0.3502 (loses, CI [−0.148, −0.092]) |
+| 5 | state vector + operator algebra | `cell_state.py` | **PASS (4/5 tests)** | T1–T4 pass; T5 fails — epistasis is exactly 0.00000 for real and control SL pairs alike |
+| 7 | in-vivo k_app / kcat tuning | `kapp.py` | **FAIL, predicted in advance** | 1,578 of 1,651 ceilinged reactions carry no flux; 5 are at a ceiling |
+
+### The three findings that matter more than the verdicts
+
+**1. Quantity was not the blocker, and the reason is structural.** §3's argument was that `BUFFERED` needed to
+become a number. It became a number and nothing happened. `kapp.py` shows why: per-reaction ceilings do not
+couple reactions, so a ceiling on an unused reaction is inert regardless of its kcat. This is not an argument
+against enzyme constraints — it is an argument against *this* enzyme constraint. The coupling version (a shared
+proteome budget, where kcat is a price rather than a limit) is `gecko.py`.
+
+**2. The benchmark rewards predicting damage, not predicting which gene was damaged.** Builds 3 and 4 together
+are conclusive. The specific arm is real: complex partners leave similar residuals at permutation z +93, with a
+flat permuted-membership control. But it retains only **20%** of the raw functional coherence (+0.0708 of
++0.3561), and on the mover-recall benchmark the residual *loses* to frequency while the raw matrix *beats* it.
+Every score this project has published on that benchmark — including the ones it is proudest of — is
+substantially a measurement of how well a method reproduces the shared stress core.
+
+**3. Calibrating to the real doubling time makes the model bottleneck-dominated.** One fact explains four
+separate results. Fitting the enzyme ceiling to 24 h doubling leaves growth set by a single limiting step, and
+therefore: build 1's essentiality ranking flattens (AUC 0.676 → 0.594); nutrients stop mattering (O2 or glucose
+withdrawal moves growth <0.1%, and the LP becomes degenerate); only 1 of 80 genes behind active ceilings is
+dose-sensitive (GARS1, exactly linear in remaining abundance); and epistasis vanishes entirely, because
+knockouts are lethal or neutral and combinations are exactly multiplicative.
+
+### Corrections to claims made in this document
+
+- **§3 "the single highest-value missing piece"** — wrong. kcat was obtained (362 EC numbers, 2,437 human
+  records) and applied correctly, and it moved nothing.
+- **§4 "Stage 1 is learnable from … cascade breadth (validated, z = −6.88)"** — wrong. Cascade breadth is at
+  chance for this task (AUC 0.5016), as are every other ablation-derived feature. Validated for one question
+  does not mean informative for another.
+- **§4's 58.2% and its acceptance test disagree.** The motivating statistic counts *zero*-mover perturbations;
+  the test says "<5 movers", whose base rate is 83.5%. Both are now reported, and the honest one fails.
+- **§0's "313 genes carry 63.2% of all mover-calls"** counts mover-*calls*; by variance the shared core is
+  37.4% of the held-out response at k=20. The two are not interchangeable and were being used as if they were.
+- **§1's acceptance test is met** — `cell_state.py` runs a knockout and a nutrient withdrawal through one
+  `solve()`, reproducing `cell_sim.py`'s independently measured 87.7% anaerobic growth, with lactate *yield*
+  rising 25.23 → 27.06 per unit biomass. Warburg must be scored as yield: raw export falls under anaerobiosis
+  simply because the cell grows less, which reads as the wrong direction.
+
+### Bugs found, all silent, all caught by asserting join sizes
+
+- the donor/test split in build 3 was the parity of a *padding zero* for any gene symbol under 8 characters,
+  producing a 5,027 / 93 "half" split. Visible only because a downstream module printed its test-set size.
+- `cell_complete`'s `coexpr` values are `[index, correlation]` pairs, not bare indices — read as ints they gave
+  a silently empty co-expression layer.
+- build 1's first version anchored viability to 5% of *unconstrained* growth — a 2-minute doubling time already
+  on record as a ~700× error — and rejected the correct answer on that basis.
+- build 1's first version imposed a **static** ceiling and called `single_gene_deletion`, which asks the GPR only
+  whether a reaction survives, never how much capacity survivors have left. The ceilings never moved.
+- `pfba()`'s `objective_value` is minimised total flux, not growth; printing it as growth put a number three
+  orders of magnitude wrong on screen.
+- `kapp.py`'s first utilisation report clipped zero-flux reactions to 1e-30 and reported a "median 30 orders
+  below ceiling", which is the clip, not a measurement. The real statement is that the median capacity reaction
+  carries no flux at all.
 
 ---
 

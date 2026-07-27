@@ -119,23 +119,30 @@ def main():
         if lim > 0:
             u[rid] = v / lim
     uu = np.array([v for v in u.values() if np.isfinite(v)])
-    lu = np.log10(np.clip(uu, 1e-30, None))
+    used = uu[uu > 0]                       # reactions that carry ANY flux -- the only ones with a real ratio
     print("\n" + "=" * 88)
     print("A. HOW FAR FROM BINDING IS THE NETWORK?  utilisation u = |flux| / ceiling, at the calibrated scale")
     print("=" * 88)
     print(f"  {len(uu):,} capacity reactions, of which {carrying:,} carry any flux at the pFBA optimum")
-    for q in (50, 75, 90, 95, 99):
-        print(f"    p{q:<2d} utilisation  {np.percentile(uu, q):.3e}   (log10 {np.percentile(lu, q):+.2f})")
+    print(f"  {len(uu)-len(used):,} carry NO flux at all. Their utilisation is 0, not a small number: the")
+    print(f"  distance from their ceiling is undefined, and percentiles over them are meaningless. Everything")
+    print(f"  below is computed over the {len(used):,} reactions that are actually used.")
+    if len(used):
+        lu = np.log10(used)
+        for q in (10, 25, 50, 75, 90):
+            print(f"    p{q:<2d} utilisation  {np.percentile(used, q):.3e}   (log10 {np.percentile(lu, q):+.2f})")
+        med_gap = float(-np.median(lu))
+        print(f"\n  MEDIAN USED reaction sits {med_gap:.1f} orders of magnitude below its ceiling.")
+    else:
+        med_gap = float("nan")
     for thr in (0.9, 0.5, 0.1, 0.01):
-        print(f"    reactions with u >= {thr:<5g}: {int((uu >= thr).sum()):>5,}  "
-              f"({100*(uu >= thr).mean():.2f}%)")
-    med_gap = float(-np.median(lu))
-    print(f"\n  MEDIAN capacity reaction sits {med_gap:.1f} orders of magnitude BELOW its ceiling.")
-    print(f"  A kcat error of a factor of 10 is 1.0 order. Re-estimating kcat can only make a reaction bind if")
-    print(f"  the correction exceeds its gap, so tuning can reach at most the reactions inside ~1-2 orders.")
-    within = int((lu >= -2).sum())
-    print(f"  reactions within 2 orders of binding (the reachable set for any realistic kcat correction): "
-          f"{within:,} of {len(uu):,} ({100*within/max(len(uu),1):.2f}%)")
+        print(f"    reactions with u >= {thr:<5g}: {int((uu >= thr).sum()):>5,} of {len(uu):,}")
+    within = int((uu >= 0.01).sum())
+    print(f"\n  A kcat error of a factor of 10 is 1.0 order, so re-estimating kcat can only make a reaction bind")
+    print(f"  if the correction exceeds its gap. The REACHABLE SET for any realistic correction -- reactions")
+    print(f"  already within 2 orders of their ceiling -- is {within:,} of {len(uu):,} capacity reactions, and")
+    print(f"  {within:,} of the {len(m.reactions):,} reactions in the model.")
+    print(f"  A ceiling on a reaction that carries no flux cannot constrain anything however accurate its kcat.")
 
     # ================= B. SHRINKAGE SWEEP =================
     print("\n" + "=" * 88)
@@ -210,11 +217,13 @@ def main():
     print(f"  ceiling, and only {within:,} reactions ({100*within/max(len(uu),1):.2f}%) are within the 2 orders")
     print(f"  that any realistic kcat correction could close.")
 
-    json.dump({"utilisation": {"n": int(len(uu)), "n_carrying_flux": carrying,
-                               "median_orders_below_ceiling": med_gap,
-                               "percentiles": {str(q): float(np.percentile(uu, q)) for q in (50, 75, 90, 95, 99)},
-                               "n_within_2_orders": within,
-                               "frac_ge": {str(t): float((uu >= t).mean()) for t in (0.9, 0.5, 0.1, 0.01)}},
+    json.dump({"utilisation": {"n_capacity": int(len(uu)), "n_carrying_flux": carrying,
+                               "n_zero_flux": int(len(uu) - len(used)),
+                               "median_orders_below_ceiling_among_USED": med_gap,
+                               "percentiles_among_USED": ({str(q): float(np.percentile(used, q))
+                                                           for q in (10, 25, 50, 75, 90)} if len(used) else {}),
+                               "n_within_2_orders": within, "n_model_reactions": len(m.reactions),
+                               "n_ge": {str(t): int((uu >= t).sum()) for t in (0.9, 0.5, 0.1, 0.01)}},
                "baseline": base, "sweep": rows, "passed": passed},
               open(OUT / "kapp.json", "w"), indent=1)
     print(f"\n  -> {OUT/'kapp.json'}")
