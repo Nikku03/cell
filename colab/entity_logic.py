@@ -48,6 +48,12 @@ API = "https://reactome.org/ContentService/data/query/ids"
 RXCACHE = OUT / "entity_logic_rxn_cache.json"
 FBC = "{http://www.sbml.org/sbml/level3/version1/fbc/version2}"
 BATCH = 20        # the bulk endpoint SILENTLY caps at 20 results; asking for more loses the remainder without error
+# REACTOME REJECTS THE DEFAULT PYTHON USER-AGENT WITH 403. Measured directly: identical POST with no UA -> 403
+# Forbidden, with any ordinary UA -> 200 and 8,082 bytes; curl to the same host through the same proxy also returns
+# 200, so the host is permitted and this is user-agent filtering, not an egress-policy denial. catalyst_arrows.py
+# already sets this header. Omitting it here cost a 30-minute run that retried every batch six times, wrote no
+# checkpoint, and produced nothing.
+UA = {"User-Agent": "Mozilla/5.0 (compatible; cell-network-research/1.0)"}
 
 AND_CLASSES = {"Complex"}
 OR_CLASSES = {"DefinedSet", "CandidateSet", "EntitySet", "OpenSet"}
@@ -134,12 +140,35 @@ def _relabel(r, label):
 # ---------------------------------------------------------------------------------------------------------------
 # REACTOME
 # ---------------------------------------------------------------------------------------------------------------
+def ref(x):
+    """Key for an entity reference. Reactome's JSON is NOT uniform: the same field comes back sometimes as a nested
+    object with a stId, sometimes as a bare integer dbId. Measured on a 5-record sample of hasComponent: 7 dicts
+    and 1 int. This exact non-uniformity was found and fixed in catalyst_arrows.py earlier and not carried over,
+    which crashed this module with 'int object has no attribute get'."""
+    if isinstance(x, dict):
+        return x.get("stId") or (str(x["dbId"]) if x.get("dbId") else None)
+    if isinstance(x, int):
+        return str(x)
+    return None
+
+
+_seen_err = set()
+
+
 def post(ids, tries=6):
+    """Fetch a batch. Returns [] for "nothing there", None for FAILED -- never conflates the two.
+
+    Errors are PRINTED ONCE per kind rather than silently retried. The previous version caught every exception and
+    slept, so a 403 on every single request was indistinguishable from a slow network: the run sat for half an
+    hour, retried 1,148 reactions six times each, and wrote nothing. A retry loop that cannot say what it is
+    retrying is the same silent-failure pattern this project has now hit four times.
+    """
     body = ",".join(ids).encode()
     for t in range(tries):
         try:
             rq = urllib.request.Request(API, data=body,
-                                        headers={"Content-Type": "text/plain", "Accept": "application/json"})
+                                        headers=dict(UA, **{"Content-Type": "text/plain",
+                                                            "Accept": "application/json"}))
             with urllib.request.urlopen(rq, timeout=120) as r:
                 return json.loads(r.read().decode())
         except urllib.error.HTTPError as e:
@@ -148,10 +177,19 @@ def post(ids, tries=6):
                 continue
             if e.code in (404, 400):
                 return []
+            if e.code not in _seen_err:
+                _seen_err.add(e.code)
+                print(f"    HTTP {e.code} from the ContentService -- reported, not silently retried")
+            if e.code in (403, 407):
+                return None          # a filter or policy denial: retrying cannot help, so fail fast and loudly
             time.sleep(2 * (t + 1))
-        except Exception:
+        except Exception as e:
+            k = type(e).__name__
+            if k not in _seen_err:
+                _seen_err.add(k)
+                print(f"    {k}: {str(e)[:120]}")
             time.sleep(2 * (t + 1))
-    return None          # None means FAILED, distinct from [] meaning "nothing there" -- never conflate the two
+    return None
 
 
 def fetch_entities(seed):
@@ -180,14 +218,19 @@ def fetch_entities(seed):
                 kids = []
                 for f in ("hasComponent", "hasMember", "hasCandidate"):
                     for c in rec.get(f) or []:
-                        k = c.get("stId") or (str(c["dbId"]) if c.get("dbId") else None)
+                        k = ref(c)
                         if k:
                             kids.append(k)
-                cache[sid] = {"cls": rec.get("schemaClass"), "kids": kids,
+                rec_out = {"cls": rec.get("schemaClass"), "kids": kids,
                               "gene": (rec.get("referenceEntity") or {}).get("geneName", [None])[0]
                               if isinstance((rec.get("referenceEntity") or {}).get("geneName"), list)
                               else (rec.get("referenceEntity") or {}).get("geneName"),
                               "name": (rec.get("displayName") or "")[:80]}
+                # keyed by BOTH ids: children arrive as stIds in some records and bare dbIds in others, so a
+                # single-key cache misses on exactly the records that motivated ref()
+                cache[sid] = rec_out
+                if rec.get("dbId"):
+                    cache[str(rec["dbId"])] = rec_out
                 got_any.add(sid)
             if i and i % (BATCH * 40) == 0:
                 json.dump(cache, open(CACHE, "w"))
@@ -268,30 +311,45 @@ def main():
     print(f"\nREACTOME: {len(want_rxn):,} multi-catalyst reactions need their catalyst entity")
     rc = json.loads(RXCACHE.read_text()) if RXCACHE.exists() else {}
     todo = [r for r in want_rxn if r not in rc]
+    # HOP 1: reaction -> CatalystActivity dbIds. The bulk endpoint returns a SHALLOW catalystActivity carrying only
+    # dbId/displayName/className/schemaClass -- physicalEntity and activeUnit are NOT in it. Reading them straight
+    # off the reaction record recovered the catalyst entity for 0 of 1,148 reactions while looking like success.
+    ca_of = {}
     for i in range(0, len(todo), BATCH):
         d = post(todo[i:i + BATCH])
         if d is None:
             continue
         for rec in d:
             sid = rec.get("stId") or str(rec.get("dbId"))
-            ents = []
-            for ca in rec.get("catalystActivity") or []:
-                for f in ("activeUnit", "physicalEntity"):
-                    v = ca.get(f)
-                    vs = v if isinstance(v, list) else ([v] if v else [])
-                    for x in vs:
-                        k = (x.get("stId") or str(x.get("dbId"))) if isinstance(x, dict) else (
-                            str(x) if isinstance(x, int) else None)
-                        if k:
-                            ents.append(k)
-                    if vs:
-                        break          # activeUnit is the catalytic part; prefer it over the whole complex
-            rc[sid] = ents
+            ca_of[sid] = [str(c["dbId"]) for c in (rec.get("catalystActivity") or [])
+                          if isinstance(c, dict) and c.get("dbId")]
         if i and i % (BATCH * 40) == 0:
-            json.dump(rc, open(RXCACHE, "w"))
-            print(f"    reactions {i:,}/{len(todo):,}")
+            print(f"    hop1 reactions {i:,}/{len(todo):,}")
+    allca = sorted({c for v in ca_of.values() for c in v})
+    print(f"  hop 1: {len(allca):,} CatalystActivity records referenced by {len(ca_of):,} reactions")
+    # HOP 2: CatalystActivity -> physicalEntity / activeUnit
+    ca_ent = {}
+    for i in range(0, len(allca), BATCH):
+        d = post(allca[i:i + BATCH])
+        if d is None:
+            continue
+        for rec in d:
+            cid = str(rec.get("dbId"))
+            ents = []
+            for f in ("activeUnit", "physicalEntity"):
+                v = rec.get(f)
+                vs = v if isinstance(v, list) else ([v] if v else [])
+                got = [ref(x) for x in vs]
+                got = [g for g in got if g]
+                if got:
+                    ents = got          # activeUnit is the catalytic part; prefer it over the whole complex
+                    break
+            ca_ent[cid] = ents
+        if i and i % (BATCH * 40) == 0:
+            print(f"    hop2 activities {i:,}/{len(allca):,}")
+    for sid, cids in ca_of.items():
+        rc[sid] = sorted({e for c in cids for e in ca_ent.get(c, [])})
     json.dump(rc, open(RXCACHE, "w"))
-    got = sum(1 for r in want_rxn if rc.get(r))
     print(f"  catalyst entity recovered for {got:,}/{len(want_rxn):,} reactions")
 
     # entity closure: catalyst entities + every COMPLEX participant carrying >4 genes (the paralogue-inside-complex
