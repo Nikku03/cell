@@ -339,10 +339,10 @@ def main():
             for f in ("activeUnit", "physicalEntity"):
                 v = rec.get(f)
                 vs = v if isinstance(v, list) else ([v] if v else [])
-                got = [ref(x) for x in vs]
-                got = [g for g in got if g]
-                if got:
-                    ents = got          # activeUnit is the catalytic part; prefer it over the whole complex
+                refs = [ref(x) for x in vs]
+                refs = [r_ for r_ in refs if r_]
+                if refs:
+                    ents = refs         # activeUnit is the catalytic part; prefer it over the whole complex
                     break
             ca_ent[cid] = ents
         if i and i % (BATCH * 10) == 0:
@@ -350,7 +350,8 @@ def main():
     for sid, cids in ca_of.items():
         rc[sid] = sorted({e for c in cids for e in ca_ent.get(c, [])})
     json.dump(rc, open(RXCACHE, "w"))
-    print(f"  catalyst entity recovered for {got:,}/{len(want_rxn):,} reactions")
+    n_res = sum(1 for r in want_rxn if rc.get(r))
+    print(f"  catalyst entity recovered for {n_res:,}/{len(want_rxn):,} reactions")
 
     # entity closure: catalyst entities + every COMPLEX participant carrying >4 genes (the paralogue-inside-complex
     # problem, item 3)
