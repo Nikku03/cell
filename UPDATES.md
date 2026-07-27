@@ -12075,3 +12075,39 @@ and the tell is a growth rate that is absurd rather than merely wrong.
 next". **Metabolism only** — 12,931 of the project's 28,528 reactions carry stoichiometry; the 15,597 Reactome
 signalling steps have none, so they cannot enter a mass-balance model at all and the regulatory government is
 absent. **No kinetics** — flux is bounded, not rate-derived, so it cannot say a route is too slow.
+
+## Accuracy against real K562: measured
+
+Every one of the model's 2,848 genes deleted in silico and compared against DepMap CRISPR fitness for **K562's own
+row (ACH-000551)**, not a cross-line average. The model has never seen DepMap.
+
+| | genes | real DepMap mean |
+|---|---:|---:|
+| model says **LETHAL** (<50% of wild-type growth) | 86 | **−1.1112** |
+| model says TOLERATED | 2,655 | −0.1287 |
+| **separation** | | **−0.9825** |
+
+    AUC ranking real-essential genes (DepMap < -0.5) : 0.6558      (0.5 = coin flip)
+    lethal-call precision                            : 0.733  vs 0.113 base rate = 6.48x
+    recall                                           : 0.203
+    real-essential among model genes                 : 310/2,741 (11.3%)
+
+**When it says a gene is lethal, it is right 73% of the time against an 11% base rate — a 6.5× enrichment.** The 86
+genes it flags have a mean DepMap score of −1.11, which is around the median of known core-essential genes. That is
+a real, held-out prediction from stoichiometry alone.
+
+**But it catches only 20% of what actually kills K562.** The model is conservative: it calls 86 of 2,741 genes
+lethal (3%) and misses four-fifths of the true essentials. AUC 0.6558 sits inside the published range for
+genome-scale human GEMs (~0.6–0.75) — better than chance, well short of reliable.
+
+**The misses are informative and point at the same gap as everything else this session.** FBA declares a gene
+tolerated whenever *any* alternative route exists, which is exactly the BUFFERED-vs-sufficient distinction the
+reaction ablation ran into: "an alternative is annotated" is not "enough flux gets through". Without enzyme
+abundance, turnover numbers, or regulation, a route that carries 1% of the needed flux looks identical to one that
+carries all of it. That is why the model under-calls lethality rather than over-calling it.
+
+## So how accurate is it, in one line
+
+Directionally right about **which** genes matter and about the shape of K562's metabolism (Warburg, glycolytic
+dominance, correct anaerobic shift); quantitatively wrong about **rates** by orders of magnitude; and it finds
+one-fifth of what actually kills the cell, with three-quarters of its lethal calls correct.
