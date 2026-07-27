@@ -11368,3 +11368,80 @@ Two defects fixed along the way, both silent: the reaction-class sampler used an
 so class counts moved by ~80 reactions between runs of identical code; and the first `combined` variant dropped the
 incumbent's layer-2–5 fallback, making it not a superset and its comparison uninterpretable (PHF5A fell from 12
 predictions to 1 for that reason alone, which is not an ablation effect).
+
+---
+
+# Lesion report: reactions affected → pathway and step → what each affected protein does
+
+`colab/lesion_report.py` · `outputs/orphan/lesion_report.json`
+
+Per knockout, in the order asked for: which reactions break, where each sits in its pathway, and what every
+affected protein does and acts on. Building it exposed four modelling errors in the ablation it reads from — all
+found by looking at rendered output, none visible in any summary statistic.
+
+## 1. Reactome DefinedSets are alternatives, and were being treated as required
+
+`UBE2D1,UBE2D2,UBE2D3`, `Small Maf family members` (MAFF/MAFG/MAFK), `JAK1, JAK2, (TYK2)` are **alternatives** —
+the entity survives while any member is present. The code attributed the whole entity's loss to each member
+separately, so every one looked like a single point of failure. 3,550 participant slots are multi-gene sets.
+
+This is why **RPS27A came out as the widest cascade in the network**: ubiquitin is carried by RPS27A/UBA52/UBB/UBC,
+and every ubiquitin-charged E2 entity was being blamed on each of them alone. Fixed in `reaction_ablation.py`,
+`multilayer_ablation.py` and `lesion_report.py`. Genes with a direct lesion: **6,992 → 5,282**.
+
+## 2. Paralogue families still hide inside complexes, so claims are now tiered
+
+After the fix, H2AX replaced RPS27A at the top — the same failure one level down. A nucleosome is a complex whose
+H2A slot accepts any of a dozen paralogues; flattened to a gene list, all of them look required. Resolving it needs
+the entity tree, which is not in this repo. So the claim is tiered instead of guessed:
+
+    HIGH      9,844   sole catalyst, or a single-protein substrate -- nothing to flatten
+    MEDIUM    2,101   small complex (<=4 genes), plausibly all required
+    LOW       6,355   large complex (>4 genes), a paralogue family may be masquerading as components
+    AMBIGUOUS 29,645  one of several annotated catalysts -- see below
+
+3,595 of 5,282 genes have at least one HIGH-confidence lesion.
+
+## 3. "Two catalysts" does not mean redundant — and a PPI test for it failed
+
+`len(catalysts) > 1 → REDUNDANT` conflates *two alternative enzymes* with *two subunits of one enzyme*. PMPCA and
+PMPCB are the mitochondrial processing peptidase, an obligate heterodimer, and were silently discarded as
+redundant. 5,556 reactions (19.5%) have more than one catalyst.
+
+**A PPI-based fix was tried and rejected.** Idea: catalysts that physically interact are subunits, those that don't
+are alternatives. Checked against known cases first — it fails in both directions. CYP2C8/CYP2C9, UGT1A1/UGT1A4 and
+MAFF/MAFG (all genuine alternatives, the last literally a DefinedSet) all carry PPI edges; CUL1/SKP1, an obligate
+complex, carries none. Paralogues attract spurious interactions, so the signal is anti-correlated with what is
+needed. Recorded so the idea is not retried. What would resolve it: the schemaClass of the CatalystActivity's
+physicalEntity, one field per reaction from Reactome.
+
+## 4. Derived pathway and step, with the fabrications removed
+
+Reactome's reaction→pathway table is not in this repo, so both are derived, and the first two attempts were wrong:
+
+- **Smallest-pathway-wins** let a 5-gene pathway covering half a reaction beat a 60-gene one covering all of it.
+  Ubiquitin steps came back as "Maturation of protein E"; a VHL/HIF step as "Inactivation of CSF3 signaling".
+  Now ranked by how much of the reaction the pathway explains, then by specificity.
+- **One shared gene was enough to place a reaction.** It never is — every gene is in many pathways — so a
+  methionyl-tRNA charging step came back as "Platelet degranulation" and another as "Aggregated β-amyloid
+  interacts with fibrinogen". Now ≥2 shared genes are required. Coverage falls **69.9% → 43.7%**; the rest are
+  reported unassigned, which is the truthful answer.
+- **Step index unrolled cycles.** A capped longest-path relaxation reported "step 80 of 82" for a mutually-feeding
+  ubiquitination cluster — that 80 was the iteration where relaxation was cut off, not a position. Now computed on
+  the SCC condensation: reactions in a cycle share one step and are flagged. Reactions in cycles **9,672 → 3,367**,
+  median pathway length **9 → 3** steps.
+
+Compartment tags were added to participant names, without which an antiport reads `glycine + valine → glycine +
+valine`. SLC7A5 (LAT1) now renders as `glycine[c] + methionine[e] → glycine[e] + methionine[c]` across 145
+HIGH-confidence sole-catalyst exchanges.
+
+Function text falls back from the dark-gene table (4,993 genes only — KARS1 and every other well-studied protein
+was coming back blank) to the structured fields in `cell_complete.json`, labelled as fields rather than dressed up
+as prose. "Acts on" is taken from the substrates and products of reactions the protein actually catalyses, not from
+any description.
+
+One more distinction that was being reported wrongly: a gene absent from the reaction network entirely was given
+the same message as a gene whose every reaction is buffered. PMPCB appears in **zero** reactions — Reactome
+annotates the processing peptidase through PMPCA only — and the report now says so rather than asserting buffering.
+
+10,610 of the network's genes appear in at least one reaction.

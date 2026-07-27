@@ -200,9 +200,20 @@ def main():
 
     # ---- DEFECT 3: is the removed thing something a genetic perturbation can remove? ----
     def addressable(role, p):
-        """A knockout removes GENE PRODUCTS. A catalyst always qualifies; an input qualifies only if it carries
-        genes (a protein, complex or defined set). A metabolite does not -- you cannot CRISPR oxygen."""
-        return role == "CATALYST" or bool(p.get("genes"))
+        """A knockout removes GENE PRODUCTS. A catalyst always qualifies; an input qualifies only if some single
+        gene knockout would actually remove it. A metabolite does not -- you cannot CRISPR oxygen.
+
+        A REACTOME DefinedSet IS NOT A COMPLEX. `UBE2D1,UBE2D2,UBE2D3`, `Small Maf family members`
+        (MAFF/MAFG/MAFK), `JAK1, JAK2, (TYK2)` are ALTERNATIVES: the entity survives while any one member is
+        present, so knocking out a single member does not remove it. Treating each member as a single point of
+        failure is how RPS27A came out as the widest cascade in the network -- ubiquitin is carried by
+        RPS27A/UBA52/UBB/UBC, and every ubiquitin-charged E2 entity was being attributed to each of them alone.
+        A COMPLEX is the opposite: every component is required, so any one of them does remove it."""
+        if role == "CATALYST":
+            return True
+        if p.get("type") == "SET":
+            return len(p.get("genes") or []) == 1
+        return bool(p.get("genes"))
 
     rows = []
     verdict_n = collections.Counter()

@@ -107,6 +107,8 @@ def consequences(steps, corrected):
                 continue                                # buffered: another reaction makes it
             if corrected and not p["genes"]:
                 continue                                # a small molecule: no knockout can remove it
+            if corrected and p["type"] == "SET" and len(p["genes"]) > 1:
+                continue                                # DefinedSet = alternatives, not required components
             breakers |= set(p["genes"]) if p["genes"] else {p["name"]}
         if not breakers:
             continue
