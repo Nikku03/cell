@@ -200,6 +200,26 @@ def report(m, sol, title, topn=10):
             "exports": [[list(r.metabolites)[0].name or r.id, float(v)] for v, r in exp[:20]]}
 
 
+def ensembl_to_symbol():
+    """ENSG -> HGNC symbol, parsed from the SBML because COBRA DISCARDS IT.
+
+    cobra reads fbc:geneProduct but drops fbc:label, so every model gene arrives with id "ENSG00000000419" and
+    name "". DepMap is keyed by symbol. Joining the two without this map gives ZERO genes in common -- which is
+    what the first run of this validation produced, and it is the same cobra defect this project already hit once
+    when Ensembl ids reached DepMap and matched nothing.
+    """
+    import re
+    out = {}
+    pat = re.compile(r'fbc:id="([^"]+)"\s+fbc:label="([^"]+)"')
+    with open(SBML) as f:
+        for line in f:
+            if "fbc:geneProduct " in line:
+                mt = pat.search(line)
+                if mt:
+                    out[mt.group(1)] = mt.group(2)
+    return out
+
+
 def depmap_k562():
     """DepMap CRISPR gene effect for K562 SPECIFICALLY (ACH-000551), not a cross-line average.
 
@@ -238,11 +258,15 @@ def validate(m, wt_growth):
         return None
     print(f"\n{'='*94}\n4. ACCURACY vs REAL K562 -- deleting all {len(m.genes):,} model genes in silico\n{'='*94}")
     print(f"  DepMap K562 (ACH-000551) covers {len(dep):,} genes")
+    e2s = ensembl_to_symbol()
+    print(f"  Ensembl->symbol map parsed from SBML: {len(e2s):,} genes "
+          f"(cobra drops fbc:label, so this cannot come from the model object)")
     ko = single_gene_deletion(m)
     pred = {}
     for ids, val in zip(ko["ids"], ko["growth"]):
         g = list(ids)[0] if isinstance(ids, (set, frozenset)) else str(ids)
-        pred[g] = 0.0 if val is None or np.isnan(val) else float(val)
+        sym = e2s.get(g, g)
+        pred[sym] = 0.0 if val is None or np.isnan(val) else float(val)
     ratio = {g: (v / wt_growth if wt_growth > 1e-9 else 0.0) for g, v in pred.items()}
     common = [g for g in ratio if g in dep]
     print(f"  genes in both model and DepMap: {len(common):,}")
