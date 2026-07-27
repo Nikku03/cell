@@ -35,8 +35,8 @@ not binding anyway. Under a shared budget, the surviving route has to be PAID FO
 cell gives something up elsewhere -- which is the "quantity" argument of DESIGN.md sec 3 in the form that actually
 has teeth.
 
-CALIBRATION, AND THE ONE ANCHOR WE HAVE. P_total is fitted -- by bisection -- so the wild-type cell reproduces the
-MEASURED 24 h doubling time, exactly as build 1 fitted its global scale. One free parameter, one measured number,
+CALIBRATION, AND THE ONE ANCHOR WE HAVE. P_total is the MINIMAL proteome that supports the MEASURED 24 h doubling
+time -- obtained in one LP by fixing the biomass flux at mu and minimising total protein cost, not by searching. One free parameter, one measured number,
 and DepMap essentiality is never part of the fit. There is still no measured flux for K562 in this project, so
 genuine k_app = v/E calibration remains out of reach and is not claimed.
 
@@ -53,6 +53,7 @@ import json
 import sys
 from pathlib import Path
 
+import cobra
 import numpy as np
 
 OUT = Path("outputs/orphan")
@@ -110,17 +111,25 @@ def growth_with_pool(m, cost, P):
     return 0.0 if g is None or np.isnan(g) else float(g)
 
 
-def calibrate_pool(m, cost, target, lo=1e-9, hi=1e9):
-    """Growth is monotone non-decreasing in the pool size, so bisect in log space."""
-    for _ in range(80):
-        mid = float(np.sqrt(lo * hi))
-        if growth_with_pool(m, cost, mid) < target:
-            lo = mid
-        else:
-            hi = mid
-        if hi / lo < 1.0005:
-            break
-    return float(np.sqrt(lo * hi))
+def calibrate_pool(m, cost, target):
+    """The smallest proteome that supports the measured growth rate -- ONE LP, not a search.
+
+    Bisecting on P re-solves a hard LP (the pool row is dense over ~3,500 variables, which glpk's simplex handles
+    badly) once per iteration, and measured ~88 s per solve. The same answer is available directly: fix the
+    biomass flux at the measured mu and MINIMISE the total protein cost. The optimum IS the minimal pool that
+    permits that growth rate, which is exactly what the bisection was hunting for, and it is also the more
+    principled quantity -- a cell does not carry more enzyme than its growth rate requires.
+    """
+    obj = sum((m.reactions.get_by_id(rid).forward_variable
+               + m.reactions.get_by_id(rid).reverse_variable) * c for rid, c in cost.items())
+    with m:
+        bio = list(cobra.util.solver.linear_reaction_coefficients(m))[0]
+        bio.lower_bound = float(target)
+        m.objective = m.problem.Objective(obj, direction="min")
+        v = m.slim_optimize()
+    if v is None or not np.isfinite(v) or v <= 0:
+        return float("nan")
+    return float(v)
 
 
 def deletion_sweep_pool(m, model_genes, r_of_gene, cost, P, use_pool):
@@ -147,7 +156,6 @@ def deletion_sweep_pool(m, model_genes, r_of_gene, cost, P, use_pool):
 
 
 def main():
-    import cobra
     from cobra.flux_analysis import pfba
     cobra.Configuration().solver = "glpk"
     from cell_sim import set_medium, ensembl_to_symbol, depmap_k562

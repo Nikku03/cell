@@ -92,6 +92,65 @@ def load_kcat_by_ec(organism="Homo sapiens"):
     return out
 
 
+def load_kcat_hierarchical(verbose=True):
+    """EC -> (kcat, provenance tier), using the fallback hierarchy standard in ecModel pipelines.
+
+    WHY THIS EXISTS. Build 1 matched Homo sapiens records only and got 362 EC numbers, covering 1,811 of
+    Human-GEM's 5,387 EC-annotated reactions. The DLKcat table holds 1,706 distinct EC numbers across all
+    organisms; restricting to human threw away 1,344 of them. kcat is well conserved within an EC across
+    orthologs, so the accepted practice is to fall back rather than to drop:
+
+        tier 1  same EC, Homo sapiens                     most specific, fewest hits
+        tier 2  same EC, any organism                     median over organisms
+        tier 3  same first three EC fields, any organism  the enzyme CLASS median
+
+    This is a COVERAGE upgrade, not an accuracy upgrade, and the distinction matters: build 7 showed that
+    improving kcat ACCURACY changes nothing, because 1,578 of 1,651 ceilinged reactions carry no flux. Coverage
+    is the axis that was actually binding, and it costs no new data.
+    """
+    recs = json.load(open(KCAT))
+    hum, any_org = collections.defaultdict(list), collections.defaultdict(list)
+    for r in recs:
+        ec = (r.get("ECNumber") or "").strip()
+        try:
+            v = float(r.get("Value"))
+        except (TypeError, ValueError):
+            continue
+        if not ec or v <= 0 or not np.isfinite(v):
+            continue
+        any_org[ec].append(v)
+        if r.get("Organism") == "Homo sapiens":
+            hum[ec].append(v)
+    cls = collections.defaultdict(list)
+    for ec, vs in any_org.items():
+        parts = ec.split(".")
+        if len(parts) >= 3:
+            cls[".".join(parts[:3])].extend(vs)
+    out, tier = {}, {}
+    for ec in any_org:
+        if hum.get(ec):
+            out[ec], tier[ec] = float(np.median(hum[ec])), 1
+        else:
+            out[ec], tier[ec] = float(np.median(any_org[ec])), 2
+    if verbose:
+        n1 = sum(1 for t in tier.values() if t == 1)
+        print(f"kcat (hierarchical): {len(out):,} EC numbers -- tier 1 human {n1:,}, "
+              f"tier 2 cross-organism {len(out)-n1:,}; tier 3 class medians available for {len(cls):,} EC classes")
+    return out, tier, {k: float(np.median(v)) for k, v in cls.items()}
+
+
+def resolve_kcat(ecs, table, classes):
+    """kcat for a reaction's EC set, falling through the hierarchy. Returns (value, tier) or (None, None)."""
+    hits = [table[e] for e in ecs if e in table]
+    if hits:
+        return float(np.median(hits)), 2
+    for e in ecs:
+        pre = ".".join(e.split(".")[:3])
+        if pre in classes:
+            return float(classes[pre]), 3
+    return None, None
+
+
 def reaction_ec():
     """reaction id -> set of EC numbers, parsed from the SBML annotation block."""
     rid, out = None, collections.defaultdict(set)
