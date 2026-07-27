@@ -1,0 +1,48 @@
+{
+ "config": {
+  "c_m": 32,
+  "c_z": 8,
+  "n_block": 2,
+  "recycle": 2,
+  "steps": 4,
+  "use_pair": true,
+  "use_col": true,
+  "use_rxn_update": true,
+  "use_flux": true,
+  "phys": true,
+  "aux": true,
+  "shuffle_pair": false,
+  "shuffle_label": false
+ },
+ "g_crop": 128,
+ "p_ctx": 48,
+ "n_eval": 3,
+ "results": [
+  {
+   "tag": "10 frequency baseline",
+   "n_param": 0,
+   "n_test": 3,
+   "recall": 0.4887334887334887,
+   "precision": 0.16666666666666666,
+   "recalls": [
+    0.6666666666666666,
+    0.36363636363636365,
+    0.4358974358974359
+   ],
+   "seconds": 0.0
+  },
+  {
+   "tag": "0 full model",
+   "n_param": 300492,
+   "n_test": 3,
+   "recall": 0.0,
+   "precision": 0.0,
+   "recalls": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "seconds": 100.23075914382935
+  }
+ ]
+}

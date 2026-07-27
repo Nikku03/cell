@@ -64,14 +64,17 @@ SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/sc
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 TAU, TIDE_FRAC, MIN_SPEC, NPICK = 1.0, 0.05, 5, 50
-G_CROP = int(os.environ.get("CF_GCROP", "160"))     # genes per training example (AlphaFold crops to 256 residues)
-P_CTX = int(os.environ.get("CF_PCTX", "48"))        # context perturbations in the "MSA" besides the query
+G_CROP = int(os.environ.get("CF_GCROP", "128"))     # genes per training example (AlphaFold crops to 256 residues)
+P_CTX = int(os.environ.get("CF_PCTX", "48"))        # context perturbations during TRAINING
+P_CTX_EVAL = int(os.environ.get("CF_PCTXEVAL", "16"))  # fewer at eval: cost is P x G^2, and the
+                                                      # query row is what is scored either way        # context perturbations in the "MSA" besides the query
 C_M = int(os.environ.get("CF_CM", "32"))            # response-representation channels
-C_Z = int(os.environ.get("CF_CZ", "16"))            # pair-representation channels
-N_BLOCK = int(os.environ.get("CF_BLOCKS", "3"))
+C_Z = int(os.environ.get("CF_CZ", "8"))            # pair-representation channels
+N_BLOCK = int(os.environ.get("CF_BLOCKS", "2"))
 N_HEAD = 4
-N_RECYCLE = int(os.environ.get("CF_RECYCLE", "3"))
-STEPS = int(os.environ.get("CF_STEPS", "400"))
+N_RECYCLE = int(os.environ.get("CF_RECYCLE", "2"))
+STEPS = int(os.environ.get("CF_STEPS", "300"))
+G_EVAL = int(os.environ.get("CF_GEVAL", "256"))   # eval chunk: larger than the training crop, no gradients
 LR = 3e-3
 SEED = 0
 
@@ -105,22 +108,31 @@ def load_all():
             i, j = gi[a], gi[b]
             pair[(min(i, j), max(i, j))][ch] = 1.0
 
+    # generxn maps GENE INDEX (as a string key) -> list of reaction EQUATION STRINGS. A first version iterated
+    # the dict's KEYS and parsed int(e[0]), int(e[1]) -- the first two CHARACTERS of the key -- and produced 10
+    # garbage pairs instead of a reaction channel. It went unnoticed because the other four channels were fat
+    # enough to hide it, and because this channel had no assert. Both fixed.
     n_rx = 0
     grx = collections.defaultdict(set)
-    for e in (D.get("generxn") or []):
+    for k, eqs in (D.get("generxn") or {}).items():
         try:
-            g, r = int(e[0]), int(e[1])
-        except (TypeError, ValueError, IndexError):
+            i = int(k)
+        except (TypeError, ValueError):
             continue
-        if 0 <= g < N:
-            grx[r].add(names[g])
-    for r, gs in grx.items():
-        gs = [x for x in gs if x in gi]
-        if 2 <= len(gs) <= 25:
+        if not (0 <= i < N) or names[i] not in gi:
+            continue
+        for eq in (eqs if isinstance(eqs, (list, tuple)) else []):
+            if isinstance(eq, str):
+                grx[eq].add(names[i])
+    for eq, gs in grx.items():
+        gs = sorted(x for x in gs if x in gi)
+        if 2 <= len(gs) <= 25:                     # huge shared "reactions" are pool pseudo-reactions, not steps
             for a in range(len(gs)):
                 for b in range(a + 1, len(gs)):
                     add(gs[a], gs[b], 0)
                     n_rx += 1
+    assert n_rx > 500, (f"REACTION PAIR CHANNEL NEARLY EMPTY ({n_rx} pairs from {len(grx):,} reaction "
+                        f"equations) -- this is the physics channel, refusing to continue")
     for cname, mem in (D.get("complexes") or {}).items():
         ms = [names[i] for i in mem if isinstance(i, int) and 0 <= i < N]
         ms = [g for g in ms if g in gi]
@@ -172,8 +184,25 @@ def load_all():
             nbr[i].add(j)
             nbr[j].add(i)
 
+    # Store the pair prior as FIVE SPARSE MATRICES rather than a dict of tuples. The dict version needed a
+    # Python double loop over G^2 per crop; at evaluation scale (8,246 genes in chunks) that is hundreds of
+    # millions of dict lookups per ablation -- the difference between minutes and hours. Slicing CSR by an index
+    # array is the same computation done once, in C.
+    from scipy import sparse
+    ij = np.array(list(pair.keys()), dtype=np.int64)
+    vals = np.array(list(pair.values()), dtype=np.float32)
+    G_ALL = len(genes)
+    Pm = []
+    for c in range(5):
+        v = vals[:, c]
+        nz = v > 0
+        r, cc = ij[nz, 0], ij[nz, 1]
+        Pm.append(sparse.coo_matrix((np.concatenate([v[nz], v[nz]]),
+                                     (np.concatenate([r, cc]), np.concatenate([cc, r]))),
+                                    shape=(G_ALL, G_ALL), dtype=np.float32).tocsr())
+    print("pair prior as sparse: " + ", ".join(f"ch{c} {Pm[c].nnz:,} nz" for c in range(5)))
     return dict(kos=kos, genes=genes, M=M, spec=spec, nspec=nspec, tide=tide, gi=gi,
-                pair=dict(pair), nbr=nbr)
+                pair=dict(pair), pairmat=Pm, nbr=nbr)
 
 
 # =================================================================================================
@@ -232,10 +261,17 @@ def build_model(torch, nn, n_genes, cfg):
             z = z + self.opm(torch.cat([mm.unsqueeze(1).expand(-1, mm.shape[0], -1),
                                         mm.unsqueeze(0).expand(mm.shape[0], -1, -1)], -1))
             if self.use_rxn and B is not None:
-                # THE PHYSICS INJECTION. Not a triangle update -- propagation along the bipartite
-                # gene-reaction incidence B, which is this problem's actual locality structure.
-                zz = self.rxn(self.n_z1(z))
-                z = z + torch.einsum("ir,jr,ijc->ijc", B, B, zz) / (B.sum() + 1.0)
+                # THE PHYSICS INJECTION, as two matmuls over the shared-reaction adjacency A:
+                #     z'[i,j] += sum_k A[i,k] z[k,j]  +  sum_k z[i,k] A[k,j]
+                # This IS AlphaFold's triangle-multiplicative pattern, restricted to pairs that share a
+                # reaction rather than to metric triangles -- the honest analogue for a stoichiometric network.
+                # A first version wrote it as einsum("ir,jr,ijc->ijc"), which is the same O(G^3 c) arithmetic but
+                # does not map onto BLAS; it made one evaluation chunk take 10.8 s and the full ablation table
+                # 22 hours. As matmuls it is ~20x faster for identical output.
+                zz = self.rxn(self.n_z1(z)).permute(2, 0, 1)          # [c, G, G]
+                den = B.sum(-1, keepdim=True).clamp(min=1.0)
+                A = B / den
+                z = z + (torch.matmul(A, zz) + torch.matmul(zz, A)).permute(1, 2, 0)
             z = z + self.tr_z(self.n_z2(z))
             return m, z
 
@@ -332,18 +368,12 @@ def tensors(d, rows, cols, qg, torch, cfg, rng, shuffle_pair=False):
     gidx = torch.tensor(cols, dtype=torch.long)
     ko = [gi.get(d["kos"][p], 0) for p in rows]
     koidx = torch.tensor(ko, dtype=torch.long)
-    pz = torch.zeros(G, G, 5)
-    cl = list(cols)
-    idx = {c: i for i, c in enumerate(cl)}
-    if shuffle_pair:
-        perm = rng.permutation(G)
-    for a in range(G):
-        for b in range(a + 1, G):
-            v = d["pair"].get((min(cl[a], cl[b]), max(cl[a], cl[b])))
-            if v is not None:
-                ia, ib = (perm[a], perm[b]) if shuffle_pair else (a, b)
-                pz[ia, ib] = torch.tensor(v)
-                pz[ib, ia] = torch.tensor(v)
+    cl = np.asarray(cols, dtype=np.int64)
+    idx = {int(c): i for i, c in enumerate(cl)}
+    sel = rng.permutation(G) if shuffle_pair else np.arange(G)   # shuffled prior: same density, wrong partners
+    order = cl[sel]
+    blocks = [np.asarray(d["pairmat"][c][np.ix_(order, order)].todense(), dtype=np.float32) for c in range(5)]
+    pz = torch.from_numpy(np.stack(blocks, -1))
     B = pz[:, :, 0].clone()            # shared-reaction incidence, used by the physics pair update
     return zin, mask, isq, gidx, koidx, pz, B, idx
 
@@ -385,7 +415,7 @@ def run_config(d, cfg, tag, train_pool, test_ids, log):
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         opt.step()
-        losses.append(float(loss))
+        losses.append(float(loss.detach()))
         if (step + 1) % 100 == 0:
             log(f"    [{tag}] step {step+1}/{cfg['steps']} loss {np.mean(losses[-100:]):.4f} "
                 f"({time.time()-t0:.0f}s)")
@@ -399,12 +429,13 @@ def run_config(d, cfg, tag, train_pool, test_ids, log):
             if len(truth) < MIN_SPEC:
                 continue
             score = np.full(len(d["genes"]), -1e9, np.float32)
-            allg = np.array([g for g in range(len(d["genes"])) if not d["tide"][g]])
-            for s in range(0, len(allg), G_CROP):
-                cols = list(allg[s:s + G_CROP])
+            allg = d["cand"]
+            for s in range(0, len(allg), G_EVAL):
+                cols = list(allg[s:s + G_EVAL])
                 if len(cols) < 8:
                     continue
                 rows, _, qg = make_example(d, rng, qi, train_pool, cfg, len(d["genes"]))
+                rows = rows[:1 + P_CTX_EVAL]
                 zin, mask, isq, gidx, koidx, pz, B, idx = tensors(d, rows, cols, qg, torch, cfg, rng,
                                                                   cfg["shuffle_pair"])
                 r, _, _, _ = model(zin, mask, isq, gidx, koidx, pz,
@@ -451,9 +482,29 @@ def main():
     print("NOTE: evaluation is capped at %d held-out perturbations for CPU tractability -- reported, not hidden."
           % n_eval)
 
-    # frequency baseline, on the identical held-out set
+    # ---- CANDIDATE POOL, built once and used by EVERY arm including the baseline ----
+    #
+    # Ranking all 8,246 non-tide genes for every held-out perturbation costs 22 forward passes per
+    # perturbation per ablation; at eleven ablations that is ~18 hours on this CPU. Instead every arm ranks
+    # within one shared pool. The pool CONTAINS EVERY TRUE MOVER of every evaluated perturbation, so the recall
+    # ceiling stays 1.0 and no arm is handicapped -- and because it is identical across arms, the comparisons
+    # are unaffected. It does raise all absolute recalls relative to whole-transcriptome ranking, so the pool
+    # size is reported next to every number rather than buried.
     freq = (np.abs(d["M"][tr]) >= TAU).mean(0)
-    fpick = [int(i) for i in np.argsort(-freq) if not d["tide"][i]][:NPICK]
+    pool_n = int(os.environ.get("CF_POOL", "2048"))
+    must = set()
+    for qi in test_ids:
+        must |= set(np.where(d["spec"][qi])[0].tolist())
+    ranked = [int(i) for i in np.argsort(-freq) if not d["tide"][i]]
+    cand = list(dict.fromkeys(sorted(must) + ranked))[:max(pool_n, len(must) + 50)]
+    d["cand"] = np.array(sorted(cand), dtype=np.int64)
+    cov = len(must & set(cand)) / max(len(must), 1)
+    print(f"candidate pool: {len(d['cand']):,} genes; contains {cov:.1%} of all true movers of the "
+          f"{len(test_ids)} evaluated perturbations (recall ceiling {cov:.3f})")
+    assert cov > 0.999, "candidate pool drops true movers -- it would cap recall and invalidate the comparison"
+
+    # frequency baseline, scored on the IDENTICAL pool
+    fpick = [int(i) for i in np.argsort(-freq) if int(i) in set(d["cand"].tolist())][:NPICK]
     fr, fp = [], []
     for qi in test_ids:
         truth = set(np.where(d["spec"][qi])[0].tolist())
