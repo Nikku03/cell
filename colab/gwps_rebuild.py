@@ -125,6 +125,16 @@ def main():
     gi = {g: i for i, g in enumerate(genes)}
     cols = np.array([gi.get(g, -1) for g in vg])
     ok = cols >= 0
+    # TWO SYMBOLS OCCUPY TWO VAR COLUMNS EACH (TBCE, HSPA14): 8,248 columns carry 8,246 distinct names. A plain
+    # fancy-index assignment M[r, cols] = prof lets the LAST duplicate win and silently discards the other column.
+    # Averaging them is the defensible collapse, and the count vector below does it in one pass.
+    ncol = np.zeros(len(genes), np.float32)
+    np.add.at(ncol, cols[ok], 1.0)
+    ncol[ncol == 0] = 1.0
+    dupes = sorted({g for g, n_ in zip(genes, ncol) if n_ > 1})
+    if dupes:
+        print(f"  {len(dupes)} symbol(s) span multiple var columns and are averaged, not overwritten: "
+              f"{', '.join(dupes[:6])}")
     kos = sorted(bysym)
     M = np.zeros((len(kos), len(genes)), np.float32)
     for r, g in enumerate(kos):
@@ -132,7 +142,9 @@ def main():
         w = nc[idx].astype(np.float64)
         w = w / w.sum() if w.sum() > 0 else np.ones(len(idx)) / len(idx)
         prof = (X[idx] * w[:, None]).sum(0)
-        M[r, cols[ok]] = prof[ok]
+        row = np.zeros(len(genes), np.float32)
+        np.add.at(row, cols[ok], prof[ok])
+        M[r] = row / ncol
     print(f"\nmatrix {M.shape[0]:,} perturbations x {M.shape[1]:,} genes "
           f"(previous readout: 1,400 x 7,223, truncated to the top 250 per knockout)")
 
