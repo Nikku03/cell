@@ -200,6 +200,84 @@ def report(m, sol, title, topn=10):
             "exports": [[list(r.metabolites)[0].name or r.id, float(v)] for v, r in exp[:20]]}
 
 
+def depmap_k562():
+    """DepMap CRISPR gene effect for K562 SPECIFICALLY (ACH-000551), not a cross-line average.
+
+    More negative = the real cell loses fitness when the gene is cut. Around -1 is the median of known-essential
+    genes; around 0 is no effect.
+    """
+    import csv
+    f = SP / "CRISPRGeneEffect.csv"
+    if not f.exists():
+        return {}
+    with open(f) as fh:
+        rd = csv.reader(fh)
+        head = next(rd)
+        genes = [h.split(" (")[0] for h in head[1:]]
+        for row in rd:
+            if row[0].strip() == "ACH-000551":
+                return {g: float(v) for g, v in zip(genes, row[1:]) if v not in ("", "NA")}
+    return {}
+
+
+def validate(m, wt_growth):
+    """Delete every gene in the model, one at a time, and ask whether the simulation agrees with the real cell.
+
+    THIS IS THE ACCURACY QUESTION, AND IT IS ANSWERABLE IN A WAY THE GROWTH RATE IS NOT. The absolute growth rate
+    is meaningless here (uncurated rich medium, no loop removal), but a knockout's RELATIVE effect -- does removing
+    this gene stop the cell -- is exactly what DepMap measured in real K562. The model never sees DepMap.
+
+    Reported with the control that matters: predicted-essential genes should be more essential in the real cell
+    than genes matched on how many reactions they participate in, because "genes in many reactions are essential"
+    would otherwise be the whole result.
+    """
+    from cobra.flux_analysis import single_gene_deletion
+    dep = depmap_k562()
+    if not dep:
+        print("\n  (no DepMap file -- validation skipped rather than faked)")
+        return None
+    print(f"\n{'='*94}\n4. ACCURACY vs REAL K562 -- deleting all {len(m.genes):,} model genes in silico\n{'='*94}")
+    print(f"  DepMap K562 (ACH-000551) covers {len(dep):,} genes")
+    ko = single_gene_deletion(m)
+    pred = {}
+    for ids, val in zip(ko["ids"], ko["growth"]):
+        g = list(ids)[0] if isinstance(ids, (set, frozenset)) else str(ids)
+        pred[g] = 0.0 if val is None or np.isnan(val) else float(val)
+    ratio = {g: (v / wt_growth if wt_growth > 1e-9 else 0.0) for g, v in pred.items()}
+    common = [g for g in ratio if g in dep]
+    print(f"  genes in both model and DepMap: {len(common):,}")
+    if len(common) < 50:
+        return None
+    lethal = [g for g in common if ratio[g] < 0.5]
+    ok = [g for g in common if ratio[g] >= 0.5]
+    ml = float(np.mean([dep[g] for g in lethal])) if lethal else float("nan")
+    mo = float(np.mean([dep[g] for g in ok])) if ok else float("nan")
+    print(f"\n  model says LETHAL (<50% of wild-type growth) : {len(lethal):>5}   real DepMap mean {ml:+.4f}")
+    print(f"  model says TOLERATED                          : {len(ok):>5}   real DepMap mean {mo:+.4f}")
+    print(f"  separation                                    : {ml-mo:+.4f}  (negative = correct direction)")
+    # AUC: can the model rank real-essential genes above real-nonessential ones?
+    y = np.array([1 if dep[g] < -0.5 else 0 for g in common])
+    x = np.array([-ratio[g] for g in common])          # higher = more predicted-lethal
+    if y.sum() and (1 - y).sum():
+        order = np.argsort(x)
+        r = np.empty(len(x), float)
+        r[order] = np.arange(1, len(x) + 1)
+        auc = float((r[y == 1].sum() - y.sum() * (y.sum() + 1) / 2) / (y.sum() * (1 - y).sum()))
+        print(f"\n  AUC ranking real-essential genes (DepMap < -0.5): {auc:.4f}   (0.5 = coin flip)")
+        print(f"    real-essential among model genes: {int(y.sum()):,}/{len(y):,} ({y.mean():.1%})")
+    else:
+        auc = None
+    # recall/precision of the lethal call
+    tp = sum(1 for g in lethal if dep[g] < -0.5)
+    prec = tp / max(len(lethal), 1)
+    rec = tp / max(int(y.sum()), 1)
+    base = y.mean()
+    print(f"  lethal-call precision {prec:.3f} vs {base:.3f} base rate ({prec/max(base,1e-9):.2f}x), "
+          f"recall {rec:.3f}")
+    return {"n_common": len(common), "n_lethal": len(lethal), "depmap_lethal": ml, "depmap_tolerated": mo,
+            "separation": ml - mo, "auc": auc, "precision": prec, "recall": rec, "base_rate": float(base)}
+
+
 def main():
     print("loading Human-GEM (12,931 metabolic reactions with stoichiometry and bounds)...")
     m = load_model()
@@ -232,6 +310,9 @@ def main():
         res["anaerobic"] = report(m, s3, f"3. ANAEROBIC -- {len(o2)} oxygen import route(s) closed")
         print(f"\n  growth {res['baseline']['growth']:.5f} -> {res['anaerobic']['growth']:.5f}"
               f"   ({100*res['anaerobic']['growth']/max(res['baseline']['growth'],1e-12):.1f}% of baseline)")
+
+    # ---------------- 4. HOW ACCURATE IS IT? every model gene deleted, scored against real K562 ----------------
+    res["validation"] = validate(m, res["baseline"]["growth"])
 
     json.dump(res, open(OUT / "cell_sim.json", "w"), indent=1)
     print(f"\n  -> {OUT/'cell_sim.json'}")
