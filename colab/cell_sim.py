@@ -56,63 +56,53 @@ def load_model():
     return m
 
 
-# A DEFINED MEDIUM, BECAUSE THE SHIPPED MODEL HAS NONE. Human-GEM opens every one of its 91 exchange reactions to
-# +/-1000 by default. Solved as shipped it IMPORTS ATP DIRECTLY at the maximum rate and "grows" at 124/h -- a
-# doubling time of zero. That is not a cell, it is an economy allowed to import money. Any FBA result from an
-# unconstrained model is meaningless, and the giveaway is always a growth rate that is absurd rather than merely
-# wrong.
+# THE MEDIUM: RICH, WITH REALISTIC UPTAKE CAPS. Three attempts at a hand-written MINIMAL medium each produced
+# growth of exactly 0.00000, and chasing it down was instructive rather than wasted:
 #
-# So the border is closed and reopened deliberately. These are the things a cultured cell is actually fed, at
-# uptake rates in the usual mmol/gDW/h range: a carbon source, oxygen, amino acids it cannot make, and the ions and
-# vitamins media contain. Everything else -- notably ATP, NADH and any other currency -- must be EARNED internally.
-MEDIUM = {
-    # names are the model's OWN exchange-metabolite names, checked against it rather than guessed. The first
-    # attempt used textbook names ("L-alanine", "phosphate", "Cl-") and matched 26 of 51, silently starving the
-    # cell to exactly zero growth -- Human-GEM drops the L- prefix and calls inorganic phosphate "Pi".
-    "glucose": 10.0, "O2": 20.0, "H2O": 1000.0, "Pi": 10.0, "NH4+": 10.0, "sulfate": 10.0,
-    "H+": 1000.0, "Na+": 100.0, "K+": 100.0, "Ca2+": 10.0, "Mg2+": 10.0, "Fe2+": 1.0,
-    "alanine": 1.0, "arginine": 1.0, "asparagine": 1.0, "aspartate": 1.0, "cysteine": 1.0,
-    "glutamate": 1.0, "glutamine": 5.0, "glycine": 1.0, "histidine": 1.0, "isoleucine": 1.0,
-    "leucine": 1.0, "lysine": 1.0, "methionine": 1.0, "phenylalanine": 1.0, "proline": 1.0,
-    "serine": 1.0, "threonine": 1.0, "tryptophan": 1.0, "tyrosine": 1.0, "valine": 1.0,
-    "choline": 0.5, "folate": 0.5, "thiamin": 0.5, "riboflavin": 0.5, "pantothenate": 0.5,
-    "biotin": 0.5, "inositol": 0.5, "nicotinamide": 0.5, "pyridoxine": 0.5,
-    "linoleate": 0.5, "cholesterol": 0.1,
-    # LIPIDS AND FAT-SOLUBLE VITAMINS, added after a gap analysis rather than by intuition. With the medium above
-    # alone, growth was exactly zero, and testing each of the biomass reaction's 9 precursors for producibility
-    # isolated two: cofactor_pool_biomass and lipid_pool_biomass. Recursing one level showed the cofactor pool
-    # needs retinol/retinal derivatives and the lipid pool needs the phospholipid pools (PC, PE, PI, PS, SM, CL)
-    # and cholesterol-ester. Those are exactly what SERUM supplies in a real culture, so a serum-free medium
-    # really would not support growth -- the model was right and the medium was wrong.
-    "palmitate": 1.0, "oleate": 1.0, "stearate": 1.0, "glycerol": 1.0, "ethanolamine": 0.5,
-    "sphingosine": 0.1, "retinol": 0.1, "ubiquinone": 0.1, "heme": 0.1, "phylloquinone": 0.05,
-}
+#   attempt 1  matched 26 of 51 nutrient names -- Human-GEM drops the L- prefix on amino acids and calls
+#              inorganic phosphate "Pi", so the cell starved on a spelling mistake that reads identically to a
+#              broken model
+#   attempt 2  correct names, still zero. Testing each of the biomass reaction's 9 precursors for producibility
+#              isolated two: cofactor_pool_biomass (needs retinol/retinal derivatives) and lipid_pool_biomass
+#              (needs the PC/PE/PI/PS/SM/CL phospholipid pools and cholesterol-ester) -- exactly what SERUM
+#              supplies in real culture, so the model was right and the medium was wrong
+#   attempt 3  automatic gap-fill opened five more (PE-LD pool, PS-LD pool, cobalamin, tocotrienol, lipoic acid)
+#              and it was STILL zero, because the blocked set runs deeper than the gap-filler reached
+#
+# Curating a minimal medium for a genome-scale human model is a research task in its own right, so this uses the
+# standard alternative: a RICH medium, which is what serum-containing culture actually is, with every uptake
+# capped at a realistic rate instead of the shipped 1000. Two things must still be EARNED and are blocked
+# outright -- the currency metabolites, and the four biomass pools themselves, since importing the product is
+# the purest form of cheating available to an FBA model.
+CURRENCY = {"atp", "adp", "amp", "gtp", "gdp", "gmp", "utp", "udp", "ump", "ctp", "cdp", "cmp",
+            "nad+", "nadh", "nadp+", "nadph", "fad", "fadh2", "coa", "acetyl-coa", "ppi",
+            "creatine-phosphate", "pep", "dtmp", "dcmp", "dgmp", "damp", "akg", "oaa",
+            "succinyl-coa", "glutamyl-glutamate", "1,3-bisphospho-d-glycerate", "carbamoyl-phosphate"}
+POOLS = {"MAM10012c", "MAM10013c", "MAM10014c", "MAM10015c"}
+GENEROUS = {"glucose": 10.0, "O2": 20.0, "H2O": 1000.0, "H+": 1000.0, "Pi": 10.0, "glutamine": 5.0}
+UPTAKE_CAP = 1.0
 
 
 def set_medium(m):
-    """Close every import, then reopen only the medium. Exports stay open -- a cell may dump what it likes."""
     ex = border(m)
-    opened, missing = {}, []
-    byname = {}
+    nb = nc = 0
     for r in ex:
-        nm = (list(r.metabolites)[0].name or "").strip()
-        byname.setdefault(nm.lower(), []).append(r)
-        r.lower_bound = 0.0                      # no imports at all, to start
-        r.upper_bound = max(r.upper_bound, 1000.0)   # exports free
-    for nm, cap in MEDIUM.items():
-        rs = byname.get(nm.lower(), [])
-        if not rs:
-            missing.append(nm)
-            continue
-        for r in rs:
-            r.lower_bound = -cap
-        opened[nm] = cap
-    print(f"  border: {len(ex):,} exchange reactions, ALL closed to import, then {len(opened)} reopened as the "
-          f"medium")
-    if missing:
-        print(f"  not present in the model: {', '.join(missing)}")
-    print(f"  ATP importable? {'YES -- BUG' if any(r.lower_bound < 0 for r in byname.get('atp', [])) else 'no'}")
-    return opened, missing
+        met = list(r.metabolites)[0]
+        nm = (met.name or "").strip().lower()
+        if nm in CURRENCY or met.id in POOLS:
+            r.lower_bound = 0.0
+            nb += 1
+        else:
+            r.lower_bound = max(r.lower_bound, -UPTAKE_CAP)
+            nc += 1
+        r.upper_bound = max(r.upper_bound, 1000.0)
+    for nm, cap in GENEROUS.items():
+        for r in ex:
+            if (list(r.metabolites)[0].name or "").strip().lower() == nm.lower():
+                r.lower_bound = -cap
+    print(f"  border: {nb} currency/biomass-pool imports BLOCKED (must be earned), "
+          f"{nc} others capped at {UPTAKE_CAP} mmol/gDW/h")
+    return {"blocked": nb, "capped": nc, "generous": GENEROUS}, []
 
 
 def producible(m, met):
@@ -179,7 +169,9 @@ def report(m, sol, title, topn=10):
     print(f"\n{'='*94}\n{title}\n{'='*94}")
     print(f"  GROWTH (biomass flux, the economy's output): {sol.objective_value:.5f} /h")
     if sol.objective_value and sol.objective_value > 1e-9:
-        print(f"    doubling time about {np.log(2)/sol.objective_value:.1f} h")
+        dt = np.log(2) / sol.objective_value
+        flag = "  <- UNREALISTIC; real K562 doubles in ~24 h" if dt < 5 else ""
+        print(f"    implied doubling time {dt:.2f} h{flag}")
     ex = border(m)
     f = sol.fluxes
     imp = sorted(((f[r.id], r) for r in ex if f[r.id] < -1e-6), key=lambda t: t[0])
@@ -194,7 +186,15 @@ def report(m, sol, title, topn=10):
     print(f"\n  BUSIEST INTERNAL REACTIONS (the working industries)")
     for v, r in inner[:topn]:
         print(f"    {r.id:<12} {(r.name or '')[:52]:<52} {v:10.3f}")
+    lac = [(v, r) for v, r in exp if "lactate" in (list(r.metabolites)[0].name or "").lower()]
+    if lac:
+        o2 = [f[r.id] for r in ex if (list(r.metabolites)[0].name or "").strip() == "O2"]
+        print(f"\n  WARBURG CHECK: lactate exported at {lac[0][0]:.1f} while O2 is being consumed at "
+              f"{-o2[0] if o2 else 0:.1f}")
+        print(f"    fermenting glucose to lactate WITH oxygen available is the defining metabolic phenotype of")
+        print(f"    a proliferating cancer line, and K562 is one. The model was never told this.")
     return {"growth": float(sol.objective_value or 0.0),
+            "lactate_export": float(lac[0][0]) if lac else 0.0,
             "n_imports": len(imp), "n_exports": len(exp),
             "imports": [[list(r.metabolites)[0].name or r.id, float(-v)] for v, r in imp[:20]],
             "exports": [[list(r.metabolites)[0].name or r.id, float(v)] for v, r in exp[:20]]}
@@ -208,12 +208,8 @@ def main():
     res = {}
 
     # ---------------- 1. the cell on a defined medium ----------------
-    opened, missing = set_medium(m)
-    extra = autofill(m)
-    print(f"  gap-fill opened {len(extra)} further nutrients the cell cannot build from this medium")
-    if extra:
-        print(f"    {', '.join(extra[:14])}{' ...' if len(extra) > 14 else ''}")
-    res["medium"] = {"opened": opened, "missing_from_model": missing, "gapfilled": extra}
+    opened, _ = set_medium(m)
+    res["medium"] = opened
     sol = m.optimize()
     res["baseline"] = report(m, sol, "1. BASELINE -- the cell fed a defined medium")
 

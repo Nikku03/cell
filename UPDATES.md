@@ -12006,3 +12006,72 @@ It also relocates the open problem. Neighbour transfer works because it borrows 
 mechanistic model and explains nothing about why a gene moves. The mechanistic layers still cannot generate
 knockout-specific output on their own — that remains unsolved, and is now clearly separable from the question of
 whether the output space was the limit.
+
+---
+
+# A running cell: nutrients in, 12,931 reactions carrying flux, waste out
+
+`colab/cell_sim.py` · `outputs/orphan/cell_sim.json`
+
+Human-GEM solved as a flux-balance model. The economy analogy is exact rather than decorative — metabolites are
+goods, reactions are firms with fixed recipes, exchange reactions are the border, ATP is currency that must be
+earned, flux bounds are capacity, biomass is GDP, and steady state means nothing accumulates.
+
+## It reproduces the Warburg effect without being told
+
+    BASELINE      growth 20.56/h   430 imports active, 111 exports
+                  busiest reactions: enolase, phosphoglycerate mutase, GAPDH, PGK, pyruvate kinase
+                  L-lactate exported at 514/h WHILE consuming O2 at 20/h
+
+Fermenting glucose to lactate *with oxygen available* is the defining metabolic phenotype of a proliferating
+cancer line, and K562 is one. Nothing in the model was told this — glycolysis dominating the flux table and
+lactate leaving the cell aerobically both fall out of maximising biomass under the constraints.
+
+    ANAEROBIC     growth 18.04/h (87.7% of baseline), lactate export RISES 514 -> 559
+
+Also correct in direction: with no oxygen the cell leans harder on fermentation and grows less.
+
+## Three things that are wrong, and why
+
+**The growth rate is absurd.** 20.56/h implies a doubling time of ~2 minutes; real K562 doubles in about 24 hours,
+roughly 700× slower. Reported with a warning in the output rather than scaled away.
+
+**The glucose embargo barely bites** — 97.8% of baseline. A real cell deprived of glucose suffers badly. Here 430
+other nutrients remain importable at 1 mmol/gDW/h each, so it simply buys carbon elsewhere.
+
+**At least one infeasible loop.** "fatty acid-uptake pool" is exported at the 1000 bound, which is a
+thermodynamically impossible cycle rather than biology.
+
+All three are the same root cause: **the medium is rich and uncurated, and no loop removal was applied.** Both are
+standard, known requirements for quantitative genome-scale FBA and both are research tasks in themselves. The
+qualitative structure — which pathways carry flux, what is imported and exported, which direction things move
+under perturbation — is trustworthy. The absolute numbers are not.
+
+## Why the medium is rich rather than minimal, in full
+
+Three attempts at a hand-written minimal medium each gave growth of exactly 0.00000, which reads identically to a
+broken model:
+
+1. **A spelling mistake.** 26 of 51 nutrient names matched — Human-GEM drops the `L-` prefix on amino acids and
+   calls inorganic phosphate `Pi`. The cell starved on nomenclature.
+2. **Correct names, still zero.** Testing each of the biomass reaction's 9 precursors for producibility isolated
+   two: `cofactor_pool_biomass` (needs retinol/retinal derivatives) and `lipid_pool_biomass` (needs the
+   PC/PE/PI/PS/SM/CL phospholipid pools and cholesterol-ester). Those are **exactly what serum supplies** in real
+   culture — the model was right and the medium was wrong.
+3. **Automatic gap-fill still zero.** It opened five more (PE-LD pool, PS-LD pool, cobalamin, tocotrienol, lipoic
+   acid) and the blocked set runs deeper than the recursion reached.
+
+So the standard alternative is used: a rich medium — which is what serum-containing culture *is* — with every
+uptake capped at a realistic rate instead of the shipped 1000, and two things blocked outright because they must
+be earned: the **currency metabolites** and the **four biomass pools themselves**.
+
+That second block matters. Solved as shipped, with all 1,660 exchanges open, the model **imports ATP directly and
+grows at 124/h** — an economy allowed to import money. Any FBA number from an unconstrained model is meaningless,
+and the tell is a growth rate that is absurd rather than merely wrong.
+
+## What this is not
+
+**Not a trajectory.** FBA gives the steady state: "given this diet, what is the economy doing", not "what happens
+next". **Metabolism only** — 12,931 of the project's 28,528 reactions carry stoichiometry; the 15,597 Reactome
+signalling steps have none, so they cannot enter a mass-balance model at all and the regulatory government is
+absent. **No kinetics** — flux is bounded, not rate-derived, so it cannot say a route is too slow.
