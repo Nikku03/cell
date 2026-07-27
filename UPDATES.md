@@ -12254,3 +12254,115 @@ Neither method reasons about **why** a gene moves. Basis picks a mixture of prog
 but the mixture is chosen by coarse annotation-derived lesion classes (median 1 class per knockout), and the
 opposite-cohort inconsistency suggests that mapping is the weak link now — not the vocabulary. The vocabulary
 problem is closed; the lesion-class → programme mapping is the next binding constraint.
+
+---
+
+# Building DESIGN.md — all nine items, measured against pre-registered tests
+
+Every item below was implemented, then scored against an acceptance test written *before* the run. Nothing was
+scored twice against a different bar. Three passed, five failed, one is partial — and the failures carry more
+information than the passes.
+
+## The scoreboard
+
+| # | component | module | verdict | the number that decided it |
+|---|---|---|---|---|
+| 1 | enzyme-capacity constraints | `ec_capacity.py` | **FAIL** | recall 0.203 → 0.203, AUC 0.676 → 0.594, shuffled quantities identical |
+| 2 | magnitude-first abstention | `abstain.py` | **PARTIAL** | passes on `<5 movers` (base rate 0.835); fails on zero-movers (0.764 @ 50% coverage) |
+| 3 | shared-core / specific-arm | `decompose.py` | **PASS** | residual complex coherence +0.0708, permutation z **+93.4**, permuted control z +1.5 |
+| 4 | interventional regulon | `regulon.py` | **FAIL** | 0.2308 vs ChIP 0.0029 (clears); vs frequency 0.3502 (loses, CI [−0.148, −0.092]) |
+| 5 | state vector + operators | `cell_state.py` | **PASS 4/5** | T1–T4 pass; T5 finds epistasis of exactly 0.00000 |
+| 6 | layered solver | `layered.py` | **FAIL** | ordering verified (0 violations); 0.1930 vs frequency 0.3121 |
+| 7 | in-vivo k_app tuning | `kapp.py` | **FAIL** | recall 0.203 at every λ from raw in-vitro to no-information |
+| 8 | shared proteome budget | `gecko.py` | pool binds (100% used, shadow price −2.35e6) | one reaction takes 96.3% of the budget |
+| 9 | kcat coverage hierarchy | `kcat_coverage.py` | — | 1,811 → 5,158 reactions matched |
+
+## The three findings that outrank the verdicts
+
+### 1. The benchmark rewards predicting damage, not predicting which gene was damaged
+
+Builds 3 and 4 together are conclusive. The specific arm **is** real: knockouts of complex partners leave similar
+residuals at permutation z +93.4, with a permuted-membership control flat at z +1.5. But it retains only **20%**
+of the raw functional coherence (+0.0708 of +0.3561), and on the mover-recall benchmark the residual *loses* to
+frequency (0.2308 vs 0.3502) while the raw matrix *beats* it (0.3794, CI [+0.003, +0.054]).
+
+Removing the shared core removes exactly what the metric rewards, because the metric asks "name the genes that
+moved" and the genes that move are mostly the shared core. **This puts a caveat on every score this project has
+published on that benchmark, including the ones it is proudest of.**
+
+### 2. Quantity was not the blocker, and it is the constraint's *shape* that is wrong
+
+§3 of DESIGN.md called kcat "the single highest-value missing piece". It was obtained (362 human EC numbers from
+DLKcat's BRENDA+SABIO table), applied with correct GPR arithmetic (isozymes add, complexes take the min),
+recomputed per deletion, and calibrated to the measured 24 h doubling time. Nothing moved.
+
+`kapp.py` measured why, in one pFBA solve:
+
+    1,651 reactions carry a ceiling
+       73 carry ANY flux at the optimum  —  1,578 carry exactly zero
+        5 are AT their ceiling; 19 are within two orders
+
+A ceiling on an unused reaction is inert however accurate its kcat. The λ shrinkage sweep spans the whole accuracy
+axis — λ=0 is raw in-vitro, λ=1 discards individual kcat entirely — and recall is 0.203 at both ends and
+everywhere between. No ML kcat oracle (UniKP, DLKcat, KcatNet, all ~RMSE 0.8) lands outside that span.
+
+What *was* binding is **coverage**, never tested: human-only EC matching used 362 of the table's 1,706 EC numbers
+and covered 1,811 of Human-GEM's 5,387 EC-annotated reactions. A cross-organism + EC-class fallback reaches 5,158.
+
+And the shape: per-reaction ceilings do not *couple* reactions. `gecko.py`'s shared budget
+`Σ vᵢ/kcatᵢ ≤ P_total` does — and it engages where ceilings did not (pool 100% consumed, shadow price −2.35e6,
+30 reactions competing versus 5 at a ceiling). Its top consumers are all translation:
+
+    MAR05138  glycine:tRNA(Gly) ligase   96.33%   → GARS1
+    MAR05141  L-leucine:tRNA ligase       1.46%
+    MAR05132  L-arginine:tRNA ligase      1.27%
+    MAR07160  DNA polymerase              0.56%
+
+**GARS1 is the same gene build 5's dose test found independently** — the only one of 80 whose knockdown response
+is graded rather than a step, and exactly linear in remaining abundance. Two unrelated constraint formulations
+converge on the same bottleneck.
+
+### 3. Calibrating to the real doubling time makes the model bottleneck-dominated
+
+One fact explains four separate results. Fitting the enzyme ceiling to 24 h doubling leaves growth set by a single
+limiting step, and therefore: build 1's essentiality ranking flattens (AUC 0.676 → 0.594); nutrients stop
+mattering (O₂ or glucose withdrawal moves growth <0.1%, and the LP goes degenerate); 1 of 80 genes behind active
+ceilings is dose-sensitive; and epistasis vanishes entirely, because knockouts become lethal-or-neutral and
+combinations exactly multiplicative.
+
+## What passed, and what it is worth
+
+**Build 3** is the only unqualified pass and it is the load-bearing one: the core/arm decomposition is real,
+survives a magnitude-matched control and a permuted-membership control, and produces the residual matrix that
+builds 4 and 6 consume.
+
+**Build 5** passes 4 of 5. One `solve()` handles a CRISPR knockout and a nutrient withdrawal, reproducing
+`cell_sim.py`'s independently measured 87.7% anaerobic growth, with lactate **yield** rising 25.23 → 27.06 per
+unit biomass. Warburg had to be scored as yield — raw export falls under anaerobiosis simply because the cell
+grows less, which reads as the wrong direction. `drug(g, d)` equals `knockdown(g, d/(1+d))` on 160/160 probes to
+1.5e-17. The algebra is sound; what it operates on is too coarse.
+
+**Build 6** passes everything the layering itself claims — 845/845 knockouts change flux, 0 ordering violations,
+mRNA arises only through A — and beats both its shuffled control (+0.068) and a gene-annotation predictor through
+the identical regressor (+0.027). It loses to frequency, on 45 held-out perturbations, with a CI that straddles
+zero. Underpowered, not refuted.
+
+## Six silent bugs, every one caught by asserting a join size
+
+1. **The train/test split was the parity of a padding zero.** `int.from_bytes(name[:8].ljust(8,b"\0"))%2` — for
+   any symbol under 8 characters that is the pad byte. Produced a 5,027/93 "half" split. Visible only because a
+   downstream module printed its test-set size.
+2. **`coexpr` values are `[index, correlation]` pairs, not indices.** Read as ints they gave a silently empty
+   co-expression layer.
+3. **Build 1 anchored viability to 5% of *unconstrained* growth** — a 2-minute doubling time already on record as
+   a ~700× error — and rejected the correct answer on that basis.
+4. **Build 1's first version imposed a static ceiling and called `single_gene_deletion`,** which asks the GPR only
+   *whether* a reaction survives, never how much capacity survivors have left. The ceilings never moved.
+5. **`pfba()`'s `objective_value` is minimised total flux, not growth.** Printed as growth it put 23,564/h on
+   screen where the answer is 20.5576/h.
+6. **`kapp.py` reported its own clip value as a measurement** — zero-flux reactions clipped to 1e-30 gave a
+   "median 30 orders below ceiling". The honest statement is that the median capacity reaction carries no flux.
+
+Two more were performance, not correctness: a `pgrep` wait-loop that matched its own command line and never
+exited, and a pool calibration that bisected a dense-row LP at ~88 s per iteration where one LP (fix biomass at
+μ, minimise protein cost) gives the same answer exactly.
