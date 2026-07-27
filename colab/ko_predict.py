@@ -65,7 +65,11 @@ def load():
     return kos, genes, A, tide, ki, gi
 
 
-def build():
+def build(skip=0, tag=""):
+    """`skip` discards the first N round-robin picks and takes the NEXT NPICK, yielding a cohort that is DISJOINT
+    from the default one but selected by the identical rule -- same classes, same round-robin, same middle-member
+    choice, still never by effect size. That is what makes it a usable holdout: a rule tuned on the first 50 can
+    be tested on the next 50 without the selection itself changing underneath it."""
     kos, genes, A, tide, ki, gi = load()
     gset = set(genes)
     spec = {k: sorted(genes[t] for t in np.where(A[ki[k]] >= TAU)[0] if not tide[t]) for k in kos}
@@ -150,12 +154,12 @@ def build():
         byc[c].append(k)
     order = sorted(byc, key=lambda c: -len(byc[c]))
     pick, i = [], 0
-    while len(pick) < NPICK and any(byc.values()):
+    while len(pick) < NPICK + skip and any(byc.values()):
         c = order[i % len(order)]
         i += 1
         if byc[c]:
             pick.append(byc[c].pop(len(byc[c]) // 2))
-    pick = sorted(pick)
+    pick = sorted(pick[skip:])
 
     doss = {}
     for k in pick:
@@ -176,20 +180,20 @@ def build():
             "upstream_tfs": sorted(set(upstream.get(k, [])))[:12],
         }
     ans = {k: {"n": len(spec[k]), "movers": spec[k]} for k in pick}
-    json.dump(doss, open(OUT / "ko_pred_dossiers.json", "w"), indent=1)
-    json.dump(ans, open(OUT / "ko_pred_answers.json", "w"), indent=1)
+    json.dump(doss, open(OUT / f"ko_pred_dossiers{tag}.json", "w"), indent=1)
+    json.dump(ans, open(OUT / f"ko_pred_answers{tag}.json", "w"), indent=1)
     print(f"{len(pick)} knockouts selected by functional class (never by effect size):")
     for c, n in collections.Counter(cls[k] for k in pick).most_common():
         print(f"   {c:<28} {n}")
     sz = sorted(len(spec[k]) for k in pick)
     print(f"  measured movers: median {sz[len(sz)//2]}, range {sz[0]}-{sz[-1]}")
-    print(f"  -> {OUT/'ko_pred_dossiers.json'} (a priori only)")
-    print(f"  -> {OUT/'ko_pred_answers.json'} (sealed)")
+    print(f"  -> {OUT/('ko_pred_dossiers'+tag+'.json')} (a priori only)")
+    print(f"  -> {OUT/('ko_pred_answers'+tag+'.json')} (sealed)")
 
 
-def score(pred_file="outputs/orphan/ko_predictions.json"):
+def score(pred_file="outputs/orphan/ko_predictions.json", tag=""):
     kos, genes, A, tide, ki, gi = load()
-    ans = json.loads((OUT / "ko_pred_answers.json").read_text())
+    ans = json.loads((OUT / f"ko_pred_answers{tag}.json").read_text())
     preds = json.loads(Path(pred_file).read_text())
     nontide = [genes[i] for i in range(len(genes)) if not tide[i]]
     freq = collections.Counter()
@@ -247,5 +251,7 @@ if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == "score":
         score(*sys.argv[2:])
+    elif len(sys.argv) > 1 and sys.argv[1] == "holdout":
+        build(skip=NPICK, tag="_holdout")
     else:
         build()

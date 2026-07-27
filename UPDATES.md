@@ -11302,3 +11302,69 @@ fragility signal since it was built.
 Structural, not kinetic. BUFFERED means "another producer is annotated", not "the cell is fine" — the alternative
 route may carry a hundredth of the flux. That limit is exactly what the dosage bands (E₀/E_min/E_max) exist to
 address, and E_max is still unpopulated.
+
+---
+
+# Redoing the multi-layer reasoning on the corrected ablation: a negative result, caught by a holdout
+
+`colab/multilayer_ablation.py` · `colab/ko_compare.py` · `colab/ko_predict.py` (holdout cohort)
+
+The incumbent multi-layer reasoner decides which stress sensors fire by reading the **knockout gene's own
+annotation** — if the gene is mitochondrial, the mito sensor fires. That is layer 1 wearing the costume of layer 6.
+The corrected ablation should have fixed this: it knows which reactions actually stop, which products go unmade,
+and which reactions downstream starve, so the sensor could be driven by **where the damage lands** instead.
+
+It does not work. Every variant is worse than annotation-only on knockouts it was not developed on.
+
+## First: the correction makes no difference to prediction at all
+
+Run both ways — corrected currency set + cross-source bridge + addressability filter, versus the exact
+pre-correction behaviour — the consequence sets for all 50 sealed knockouts are **byte-identical**. The three
+defects are real, but they live in metabolic reactions this cohort never touches (the cohort is spliceosome,
+nucleolar, pore and polymerase subunits). The corrections stand as hygiene; they are not an improvement.
+
+## Second: the lesion-site view is blind to most of the cohort
+
+It sees a consequence for only **20/50** knockouts. Complex subunits — spliceosome, nucleolar, nuclear pore —
+appear in the network only as inputs that some other complex-formation reaction also produces, so every ablation of
+them is BUFFERED and no reaction is ever recorded as stopping. So it can only ever be a supplement.
+
+## Third: a rule that looked good on cohort 1 and died on cohort 2
+
+Of the 8 knockouts where the lesion site fired a sensor annotation missed, all 3 that gained hits (PCNA, POLE,
+RBBP5) had *no* annotation class at all, and all 5 that only added misses already had one. That suggested a rule:
+consult the lesion site only when annotation is silent. On cohort 1 it was the best variant ever measured here.
+
+`ko_predict.py build(skip=50)` continues the same round-robin selection and takes the next 50 — disjoint, selected
+by an identical rule, never used to develop anything.
+
+| variant | cohort 1 (fitted) | cohort 2 (holdout) |
+|---|---|---|
+| incumbent, annotation-only | 0.0786 | 0.0685 |
+| lesion site as fallback | **0.0838**  +3/−0  [−0.0056,+0.0173] | **0.0522**  +0/−4  **[−0.0331,−0.0037]** |
+| annotation ∪ lesion site | 0.0736  +3/−0 | 0.0494  +3/−4  **[−0.0385,−0.0035]** |
+| lesion site only | 0.0442 | 0.0358  **[−0.0491,−0.0014]** |
+| control: consequences permuted | 0.0300 | 0.0487  [−0.0433,+0.0190] |
+
+All CIs are paired bootstraps over knockouts (one resample scored under both methods), restricted to the knockouts
+both scored. On the holdout, all three ablation variants are **significantly worse** — CI entirely below zero. The
+fallback rule was better on 3 knockouts in cohort 1 and on **zero** in cohort 2.
+
+**And on the holdout the shuffled control (0.0487) beats the real lesion-site variant (0.0358).** The per-gene
+consequence identities carry no usable signal for transcriptional prediction; what little the variant achieves
+comes from the shape of its output, not from which reactions actually break.
+
+## What this retires and what survives
+
+Retired: driving sensor firing from reaction-level consequences. Three variants, one holdout, all worse.
+
+Survives: the incumbent, which now has a second independent measurement — **0.0786 on cohort 1, 0.0685 on cohort
+2** — so it replicates rather than being a cohort-1 artefact. That is the first cross-cohort number in this project.
+
+The result is consistent with what every round has found: predicting transcriptional response is nearly disjoint
+from modelling flux. The ablation is a good model of what breaks. What breaks is not what the cell transcribes.
+
+Two defects fixed along the way, both silent: the reaction-class sampler used an unsorted `[:12]` slice of a set,
+so class counts moved by ~80 reactions between runs of identical code; and the first `combined` variant dropped the
+incumbent's layer-2–5 fallback, making it not a superset and its comparison uninterpretable (PHF5A fell from 12
+predictions to 1 for that reason alone, which is not an ablation effect).

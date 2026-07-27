@@ -1,0 +1,4113 @@
+{
+ "CSE1L": {
+  "gene": "CSE1L",
+  "class": "no annotation context",
+  "protein_name": "Exportin-2",
+  "function": "Export receptor for importin-alpha. Mediates importin-alpha re-export from the nucleus to the cytoplasm after import substrates (cargos) have been released into the nucleoplasm. In the nucleus binds cooperatively to importin-alpha and to the GTPase Ran in its active GTP-bound form. Docking of this trimeric complex to the nuclear pore complex (NPC) is mediated through binding to nucleoporins. Upon transit of a nuclear export complex into the cytoplasm, disassembling of the complex and hydrolysis of Ran-GTP to Ran-GDP (induced by RANBP1 and RANGAP1, respectively) cause release of the importin-alpha from the export receptor. CSE1L/XPO2 then return to the nuclear compartment and mediate another ",
+  "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm. Nucleus. Note=Shuttles between the nucleus and the cytoplasm..",
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": [
+   "E2F4"
+  ]
+ },
+ "DBR1": {
+  "gene": "DBR1",
+  "class": "no annotation context",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "DNAJC17": {
+  "gene": "DNAJC17",
+  "class": "no annotation context",
+  "protein_name": "DnaJ homolog subfamily C member 17",
+  "function": "May negatively affect PAX8-induced thyroglobulin/TG transcription..",
+  "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm. Nucleus. Note=Predominantly nuclear..",
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": [
+   "GATA3"
+  ]
+ },
+ "DNTTIP2": {
+  "gene": "DNTTIP2",
+  "class": "no annotation context",
+  "protein_name": "Deoxynucleotidyltransferase terminal-interacting protein 2",
+  "function": "Regulates the transcriptional activity of DNTT and ESR1. May function as a chromatin remodeling protein (PubMed:12786946, PubMed:15047147). Part of the small subunit (SSU) processome, first precursor of the small eukaryotic ribosomal subunit. During the assembly of the SSU processome in the nucleolus, many ribosome biogenesis factors, an RNA chaperone and ribosomal proteins associate with the nascent pre-rRNA and work in concert to generate RNA folding, modifications, rearrangements and cleavage as well as targeted degradation of pre-ribosomal RNA by the RNA exosome (PubMed:34516797)..",
+  "uniprot_location": "SUBCELLULAR LOCATION: Nucleus. Nucleus, nucleolus.",
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": [
+   "KAT5"
+  ]
+ },
+ "GPN2": {
+  "gene": "GPN2",
+  "class": "no annotation context",
+  "protein_name": "GPN-loop GTPase 2",
+  "function": "Small GTPase involved in the correct assembly of RNA polymerase RNA polymerase II and III (RNAPII and RNAPIII) complexes, ensuring their proper nuclear import..",
+  "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm.",
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "HDAC7": {
+  "gene": "HDAC7",
+  "class": "TF (signed regulon)",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "Constitutive Signaling by NOTCH1 HD+PEST Domain Mutants",
+   "Constitutive Signaling by NOTCH1 PEST Domain Mutants",
+   "Developmental Biology",
+   "Differentiation of T cells",
+   "Differentiation of naive CD4+ T cells to T helper 2 cells (Th2 cells)",
+   "Disease",
+   "Diseases of signal transduction by growth factor receptors and second messengers",
+   "Gene expression (Transcription)"
+  ],
+  "n_pathways": 27,
+  "n_up": 1,
+  "n_down": 4,
+  "tf_targets_up": [
+   "HIF1A"
+  ],
+  "tf_targets_down": [
+   "ACTN4",
+   "MAML1",
+   "MEF2A",
+   "MEF2C"
+  ],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 5,
+  "participates_in": [
+   {
+    "id": "R-HSA-1912388",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "NICD1",
+     "RBPJ:NCOR corepressor complex"
+    ],
+    "out": [
+     "NICD1:RBPJ:SNW1",
+     "NCOR:HDAC:TBL1"
+    ]
+   },
+   {
+    "id": "R-HSA-2220982",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "RBPJ:NCOR corepressor complex",
+     "NICD1 PEST Domain Mutants"
+    ],
+    "out": [
+     "NCOR:HDAC:TBL1",
+     "NICD1 PEST domain mutants:RBPJ:SNW1"
+    ]
+   },
+   {
+    "id": "R-HSA-350058",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "RBPJ",
+     "NCOR1, NCOR2",
+     "TBL1",
+     "HDAC",
+     "SNW1"
+    ],
+    "out": [
+     "RBPJ:NCOR corepressor complex"
+    ]
+   },
+   {
+    "id": "R-HSA-6807077",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "NR2E1:(CoREST complex,ATN1,HDAC3,HDAC5,HDAC7)",
+     "PTEN gene"
+    ],
+    "out": [
+     "NR2E1:(CoREST complex,ATN1,HDAC3,HDAC5,HDAC7):PTEN Gene"
+    ]
+   },
+   {
+    "id": "R-HSA-9976117",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "PRC1:RBPJ:NCOR:GATA3 gene",
+     "MLL1 complex:MEN1",
+     "p-Y641-STAT6 dimer",
+     "p-S243-NFATC2",
+     "NICD1,2"
+    ],
+    "out": [
+     "MLL1:MEN1:p-Y641-STAT6:p-S243-NFATC2:Notch1,2 Coactivator:GATA3 gene",
+     "PRC1.4",
+     "HDAC",
+     "NCOR1, NCOR2",
+     "TBL1"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "HDAC3",
+   "HDAC2",
+   "HDAC1",
+   "HDAC5",
+   "HDAC9",
+   "HDAC8",
+   "HDAC11",
+   "SNW1",
+   "RBPJ",
+   "TBL1X",
+   "NCOR2",
+   "NCOR1"
+  ],
+  "upstream_tfs": [
+   "BCL6",
+   "MECP2",
+   "MEF2D",
+   "NFKB1",
+   "RELA",
+   "SP1",
+   "STAT1"
+  ]
+ },
+ "HINFP": {
+  "gene": "HINFP",
+  "class": "TF (signed regulon)",
+  "protein_name": "Histone H4 transcription factor",
+  "function": "Transcriptional repressor that binds to the consensus sequence 5'-CGGACGTT-3' and to the RB1 promoter. Transcriptional activator that promotes histone H4 gene transcription at the G1/S phase transition in conjunction with NPAT. Also activates transcription of the ATM and PRKDC genes. Autoregulates its expression by associating with its own promoter..",
+  "uniprot_location": "SUBCELLULAR LOCATION: Nucleus. Note=Associated with discrete nuclear foci.",
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 6,
+  "n_down": 3,
+  "tf_targets_up": [
+   "CDK2",
+   "CHKA",
+   "EIF4G1",
+   "FGFR1",
+   "NPAT",
+   "RB1"
+  ],
+  "tf_targets_down": [
+   "ACP5",
+   "MBD2",
+   "SLC7A8"
+  ],
+  "unsigned_chip_targets_FLAGGED": 471,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": [
+   "CREBBP",
+   "E2F1",
+   "EP300",
+   "SP1"
+  ]
+ },
+ "HNRNPC": {
+  "gene": "HNRNPC",
+  "class": "TF (signed regulon)",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus",
+   "cytosol",
+   "endosome"
+  ],
+  "pathways": [
+   "Dengue Virus Infection",
+   "Dengue Virus-Host Interactions",
+   "Disease",
+   "Infectious disease",
+   "Metabolism of RNA",
+   "Metabolism of proteins",
+   "Post-translational protein modification",
+   "Processing of Capped Intron-Containing Pre-mRNA"
+  ],
+  "n_pathways": 23,
+  "n_up": 0,
+  "n_down": 1,
+  "tf_targets_up": [],
+  "tf_targets_down": [
+   "MDK"
+  ],
+  "unsigned_chip_targets_FLAGGED": 357,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 4,
+  "participates_in": [
+   {
+    "id": "R-HSA-4570493",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HNRNPC",
+     "SUMO1:C93-UBE2I"
+    ],
+    "out": [
+     "UBE2I",
+     "SUMO1-K250-HNRNPC"
+    ]
+   },
+   {
+    "id": "R-HSA-72103",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "capped, methylated pre-mRNA:CBC Complex",
+     "Alternative Splicing Factors"
+    ],
+    "out": [
+     "capped, methylated pre-mRNP:CBC complex"
+    ]
+   },
+   {
+    "id": "R-HSA-9018778",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "endosome"
+    ],
+    "in": [
+     "RHOBTB1:GTP",
+     "RHOBTB1 interacting proteins"
+    ],
+    "out": [
+     "RHOBTB1:GTP:RHOBTB1 interacting proteins"
+    ]
+   },
+   {
+    "id": "R-HSA-9018787",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "endosome"
+    ],
+    "in": [
+     "RHOBTB2:GTP",
+     "RHOBTB2 interacting proteins"
+    ],
+    "out": [
+     "RHOBTB2:GTP:RHOBTB2 interacting proteins"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "RBMX",
+   "TRA2B",
+   "DBN1",
+   "SRRM1",
+   "CCT2",
+   "CUL3",
+   "MYO6",
+   "TXNL1",
+   "STK38",
+   "CCT7",
+   "SUMO1",
+   "RANBP2"
+  ],
+  "upstream_tfs": [
+   "ETS2",
+   "JUN",
+   "JUNB",
+   "JUND",
+   "TP53"
+  ]
+ },
+ "INTS9": {
+  "gene": "INTS9",
+  "class": "pathway member only",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [
+   "Gene expression (Transcription)",
+   "RNA Polymerase II Transcription",
+   "RNA polymerase II transcribes snRNA genes"
+  ],
+  "n_pathways": 3,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "MED1": {
+  "gene": "MED1",
+  "class": "TF (signed regulon)",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "Activation of gene expression by SREBF (SREBP)",
+   "Adipogenesis",
+   "BMAL1:CLOCK,NPAS2 activates circadian expression",
+   "Cellular response to chemical stress",
+   "Cellular responses to stimuli",
+   "Cellular responses to stress",
+   "Circadian clock",
+   "Cytoprotection by HMOX1"
+  ],
+  "n_pathways": 40,
+  "n_up": 3,
+  "n_down": 0,
+  "tf_targets_up": [
+   "AURKA",
+   "KRT10",
+   "THRA"
+  ],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 351,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 9,
+  "participates_in": [
+   {
+    "id": "R-HSA-212352",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "CDK8",
+     "CCNC",
+     "MED12",
+     "MED13",
+     "MED14"
+    ],
+    "out": [
+     "ARC coactivator complex"
+    ]
+   },
+   {
+    "id": "R-HSA-212380",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "MED10",
+     "MED12",
+     "MED13",
+     "MED14",
+     "MED17"
+    ],
+    "out": [
+     "TRAP coactivator complex"
+    ]
+   },
+   {
+    "id": "R-HSA-212432",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "MED10",
+     "MED12",
+     "MED13",
+     "MED14",
+     "MED17"
+    ],
+    "out": [
+     "DRIP coactivator complex"
+    ]
+   },
+   {
+    "id": "R-HSA-376419",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "NR",
+     "MED1"
+    ],
+    "out": [
+     "NR-MED1 Coactivator Complex"
+    ]
+   },
+   {
+    "id": "R-HSA-381309",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "PPARG:RXRA:Corepressor Complex",
+     "CREBBP",
+     "EP300",
+     "NCOA1",
+     "NCOA2"
+    ],
+    "out": [
+     "PPARG:Fatty Acid:RXRA:Mediator:Coactivator Complex",
+     "HDAC3",
+     "NCOR1",
+     "NCOR2",
+     "FABP4"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "MED13",
+   "MED4",
+   "MED7",
+   "MED24",
+   "MED16",
+   "MED6",
+   "MED12",
+   "MED14",
+   "MED10",
+   "MED17",
+   "MED23",
+   "CCNC"
+  ],
+  "upstream_tfs": [
+   "AR",
+   "ESR1",
+   "GATA6",
+   "NCOA1",
+   "NCOA3",
+   "NFKB1",
+   "NFKB2",
+   "NR1H4",
+   "PPARD",
+   "PPARG",
+   "RARA",
+   "REL"
+  ]
+ },
+ "MFAP1": {
+  "gene": "MFAP1",
+  "class": "pathway member only",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [
+   "Metabolism of RNA",
+   "Processing of Capped Intron-Containing Pre-mRNA",
+   "mRNA Splicing",
+   "mRNA Splicing - Major Pathway"
+  ],
+  "n_pathways": 4,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": [
+   "E2F1",
+   "E2F4",
+   "MYC"
+  ]
+ },
+ "MRGBP": {
+  "gene": "MRGBP",
+  "class": "pathway member only",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [
+   "Chromatin modifying enzymes",
+   "Chromatin organization",
+   "HATs acetylate histones"
+  ],
+  "n_pathways": 3,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "MVD": {
+  "gene": "MVD",
+  "class": "enzyme/catalyst",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "cytosol",
+   "nucleus",
+   "peroxisome"
+  ],
+  "pathways": [
+   "Activation of gene expression by SREBF (SREBP)",
+   "Asparagine N-linked glycosylation",
+   "Biosynthesis of the N-glycan precursor (dolichol lipid-linked oligosaccharide, LLO) and transfer to a nascent protein",
+   "Cholesterol biosynthesis",
+   "Lanosterol biosynthesis",
+   "Metabolism",
+   "Metabolism of lipids",
+   "Metabolism of proteins"
+  ],
+  "n_pathways": 13,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 2,
+  "catalyses": [
+   {
+    "id": "MAR00441",
+    "src": "humangem",
+    "where": [
+     "peroxisome"
+    ],
+    "in": [
+     "(R)-5-diphosphomevalonate",
+     "ATP"
+    ],
+    "out": [
+     "ADP",
+     "CO2",
+     "isopentenyl-pPP",
+     "Pi"
+    ]
+   },
+   {
+    "id": "MAR01451",
+    "src": "humangem",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "(R)-5-diphosphomevalonate"
+    ],
+    "out": [
+     "CO2",
+     "isopentenyl-pPP"
+    ]
+   }
+  ],
+  "n_participates": 1,
+  "participates_in": [
+   {
+    "id": "R-HSA-1655836",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "nucleus"
+    ],
+    "in": [
+     "MVD gene"
+    ],
+    "out": [
+     "MVD"
+    ]
+   }
+  ],
+  "reaction_partners": [],
+  "upstream_tfs": [
+   "SREBF2"
+  ]
+ },
+ "NAA38": {
+  "gene": "NAA38",
+  "class": "pathway member only",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [
+   "Intra-Golgi and retrograde Golgi-to-ER traffic",
+   "Membrane Trafficking",
+   "Retrograde transport at the Trans-Golgi-Network",
+   "Vesicle-mediated transport"
+  ],
+  "n_pathways": 4,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "NACA": {
+  "gene": "NACA",
+  "class": "pathway member only",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [
+   "Dengue Virus Genome Translation and Replication",
+   "Dengue Virus Infection",
+   "Disease",
+   "Infectious disease",
+   "Viral Infection Pathways"
+  ],
+  "n_pathways": 5,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": [
+   "JUN",
+   "MYC"
+  ]
+ },
+ "NAE1": {
+  "gene": "NAE1",
+  "class": "enzyme/catalyst",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "cytosol",
+   "extracellular"
+  ],
+  "pathways": [
+   "Metabolism of proteins",
+   "Neddylation",
+   "Post-translational protein modification"
+  ],
+  "n_pathways": 3,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 1,
+  "catalyses": [
+   {
+    "id": "MAR00190",
+    "src": "humangem",
+    "where": [
+     "cytosol",
+     "extracellular"
+    ],
+    "in": [
+     "lauric acid"
+    ],
+    "out": [
+     "lauric acid"
+    ]
+   }
+  ],
+  "n_participates": 6,
+  "participates_in": [
+   {
+    "id": "R-HSA-8951766",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "NEDD8-UBA3:NAE1:NEDD8",
+     "AcM-UBE2F"
+    ],
+    "out": [
+     "AcM-UBE2F:NEDD8-UBA3:NAE1:NEDD8"
+    ]
+   },
+   {
+    "id": "R-HSA-8951751",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "NEDD8-UBA3:NAE1:NEDD8",
+     "AcM-UBE2M"
+    ],
+    "out": [
+     "AcM-UBE2M:NEDD8-UBA3:NAE1:NEDD8"
+    ]
+   },
+   {
+    "id": "R-HSA-8951648",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "NEDD8",
+     "UBA3:NAE1"
+    ],
+    "out": [
+     "AMP",
+     "PPi",
+     "NEDD8-UBA3:NAE1"
+    ]
+   },
+   {
+    "id": "R-HSA-8951764",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "AcM-UBE2F:NEDD8-UBA3:NAE1:NEDD8"
+    ],
+    "out": [
+     "NEDD8-UBA3:NAE1",
+     "NEDD8-AcM-UBE2F"
+    ]
+   },
+   {
+    "id": "R-HSA-8951656",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "NEDD8-UBA3:NAE1",
+     "NEDD8"
+    ],
+    "out": [
+     "NEDD8-UBA3:NAE1:NEDD8",
+     "AMP",
+     "PPi"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "UBA3",
+   "NEDD8",
+   "UBE2F",
+   "UBE2M",
+   "CA5A",
+   "AP1G1"
+  ],
+  "upstream_tfs": []
+ },
+ "NAPA": {
+  "gene": "NAPA",
+  "class": "enzyme/catalyst",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "cytosol",
+   "golgi",
+   "endoplasmic reticulum"
+  ],
+  "pathways": [
+   "Asparagine N-linked glycosylation",
+   "COPI-dependent Golgi-to-ER retrograde traffic",
+   "COPI-mediated anterograde transport",
+   "COPII-mediated vesicle transport",
+   "ER to Golgi Anterograde Transport",
+   "Golgi Associated Vesicle Biogenesis",
+   "Golgi-to-ER retrograde transport",
+   "Intra-Golgi and retrograde Golgi-to-ER traffic"
+  ],
+  "n_pathways": 16,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 4,
+  "catalyses": [
+   {
+    "id": "R-HSA-6809015",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "golgi"
+    ],
+    "in": [
+     "cis-SNARE:3xSNAP:NSF hexamer"
+    ],
+    "out": [
+     "PalmC-YKT6",
+     "STX5",
+     "BET1",
+     "BET1L",
+     "GOSR1"
+    ]
+   },
+   {
+    "id": "R-HSA-6814683",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "golgi"
+    ],
+    "in": [
+     "STX6:STX16:VTI1A:VAMP4:NSF hexamer:3xSNAPs"
+    ],
+    "out": [
+     "STX16",
+     "STX6",
+     "VAMP4",
+     "VTI1A",
+     "NSF hexamer"
+    ]
+   },
+   {
+    "id": "R-HSA-6814678",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "golgi"
+    ],
+    "in": [
+     "STX10:STX16:VTI1A:VAMP3:NSF hexamer:SNAPs"
+    ],
+    "out": [
+     "STX16",
+     "VTI1A",
+     "NSF hexamer",
+     "SNAPs",
+     "5694313"
+    ]
+   },
+   {
+    "id": "R-HSA-8847638",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "golgi"
+    ],
+    "in": [
+     "STX5:PalmC-YKT6:BET1L:GOSR1:NSF hexamer:3xSNAPs"
+    ],
+    "out": [
+     "NSF hexamer",
+     "SNAPs",
+     "5694313",
+     "5694313",
+     "GOSR1"
+    ]
+   }
+  ],
+  "n_participates": 9,
+  "participates_in": [
+   {
+    "id": "R-HSA-429815",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "lysosome"
+    ],
+    "in": [
+     "NAPA",
+     "BLOC1S1",
+     "BLOC1S3",
+     "DTNBP1",
+     "BLOC1S6"
+    ],
+    "out": [
+     "BLOC-1 Complex"
+    ]
+   },
+   {
+    "id": "R-HSA-5694425",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "endoplasmic reticulum"
+    ],
+    "in": [
+     "cis-SNARE:NSF hexamer:3xSNAP"
+    ],
+    "out": [
+     "SNAPs",
+     "5694313",
+     "5694313",
+     "ER-to-ERGIC v-SNARES",
+     "BET1"
+    ]
+   },
+   {
+    "id": "R-HSA-5694423",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "endoplasmic reticulum"
+    ],
+    "in": [
+     "NSF hexamer",
+     "SNAPs",
+     "5694313",
+     "5694313",
+     "cis-SNARE"
+    ],
+    "out": [
+     "cis-SNARE:NSF hexamer:3xSNAP"
+    ]
+   },
+   {
+    "id": "R-HSA-6809014",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "golgi"
+    ],
+    "in": [
+     "cis-Golgi cis SNARE bundle",
+     "NSF hexamer",
+     "SNAPs",
+     "5694313",
+     "5694313"
+    ],
+    "out": [
+     "cis-SNARE:3xSNAP:NSF hexamer"
+    ]
+   },
+   {
+    "id": "R-HSA-6811425",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "endoplasmic reticulum"
+    ],
+    "in": [
+     "SNAPs",
+     "5694313",
+     "5694313",
+     "NSF hexamer",
+     "SEC22B:STX18:USE1L:BNIP1"
+    ],
+    "out": [
+     "SEC22B:STX18:USE1:BNIP1L:3xSNAPs:NSF hexamer"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "NSF",
+   "NAPB",
+   "NAPG",
+   "YKT6",
+   "STX5",
+   "BET1",
+   "SEC22B",
+   "GOSR2",
+   "BET1L",
+   "GOSR1",
+   "STX16",
+   "VTI1A"
+  ],
+  "upstream_tfs": [
+   "TP63"
+  ]
+ },
+ "NEDD8": {
+  "gene": "NEDD8",
+  "class": "enzyme/catalyst",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "cytosol",
+   "nucleus",
+   "plasma membrane"
+  ],
+  "pathways": [
+   "Cargo recognition for clathrin-mediated endocytosis",
+   "Clathrin-mediated endocytosis",
+   "Deubiquitination",
+   "Iron uptake and transport",
+   "Membrane Trafficking",
+   "Metabolism of proteins",
+   "Neddylation",
+   "Post-translational protein modification"
+  ],
+  "n_pathways": 15,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 1,
+  "catalyses": [
+   {
+    "id": "R-HSA-5691108",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "IREB2"
+    ],
+    "out": [
+     "Ub-K-IREB2"
+    ]
+   }
+  ],
+  "n_participates": 25,
+  "participates_in": [
+   {
+    "id": "R-HSA-4332236",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "plasma membrane"
+    ],
+    "in": [
+     "TGFBR2:CBL",
+     "NEDD8-AcM-UBE2M",
+     "4419896"
+    ],
+    "out": [
+     "CBL",
+     "AcM-UBE2M",
+     "8951627",
+     "NEDD8-K556,K567-TGFBR2"
+    ]
+   },
+   {
+    "id": "R-HSA-5690808",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "UCHL3,SENP8:NEDD8(1-88)"
+    ],
+    "out": [
+     "UCHL3,SENP8:NEDD8",
+     "NEDD8(77-81)"
+    ]
+   },
+   {
+    "id": "R-HSA-5691176",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "SKP1:CUL1:FBXL5",
+     "NEDD8"
+    ],
+    "out": [
+     "SKP1:FBXL5:CUL1:NEDD8"
+    ]
+   },
+   {
+    "id": "R-HSA-8863723",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "NEDD8-STONs:TOR1 hexamer:COP9"
+    ],
+    "out": [
+     "STON2,1",
+     "TOR1 hexamer",
+     "COP9",
+     "NEDD8(1-81)"
+    ]
+   },
+   {
+    "id": "R-HSA-8863727",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "STON2,1",
+     "NEDD8(1-81)"
+    ],
+    "out": [
+     "NEDD8-STONs"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "UBE2M",
+   "DCUN1D5",
+   "COMMD5",
+   "DCUN1D1",
+   "COMMD9",
+   "COMMD1",
+   "DCUN1D2",
+   "COMMD3",
+   "COMMD2",
+   "DCUN1D4",
+   "COMMD6",
+   "COMMD10"
+  ],
+  "upstream_tfs": [
+   "DNMT3B",
+   "EPAS1",
+   "HIF1A"
+  ]
+ },
+ "NFYC": {
+  "gene": "NFYC",
+  "class": "TF (signed regulon)",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "ATF4 activates genes in response to endoplasmic reticulum  stress",
+   "ATF6 (ATF6-alpha) activates chaperone genes",
+   "ATF6 (ATF6-alpha) activates chaperones",
+   "Activation of gene expression by SREBF (SREBP)",
+   "Cellular responses to stimuli",
+   "Cellular responses to stress",
+   "FOXO-mediated transcription",
+   "FOXO-mediated transcription of cell death genes"
+  ],
+  "n_pathways": 19,
+  "n_up": 10,
+  "n_down": 0,
+  "tf_targets_up": [
+   "CCND2",
+   "CDKN1B",
+   "FDPS",
+   "FXR2",
+   "GFI1B",
+   "HOXB7",
+   "HSPA1A",
+   "HSPA1B",
+   "LPIN1",
+   "NFYA"
+  ],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 353,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 17,
+  "participates_in": [
+   {
+    "id": "R-HSA-2065966",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "NF-Y",
+     "TM7SF2 gene",
+     "SREBP1A,1C,2 dimer"
+    ],
+    "out": [
+     "SREBP1A,1C,2:NF-Y:TM7SF2 gene"
+    ]
+   },
+   {
+    "id": "R-HSA-2426150",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "SREBP1A,1C,2 dimer",
+     "NF-Y",
+     "HMGCS1 gene"
+    ],
+    "out": [
+     "SREBP1A,1C,2:NF-Y:HMGCS1 gene"
+    ]
+   },
+   {
+    "id": "R-HSA-2426156",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "SREBP1A,2 dimer",
+     "NF-Y",
+     "SP1",
+     "PMVK gene"
+    ],
+    "out": [
+     "SREBP1A,2:NF-Y:SP1:PMVK gene"
+    ]
+   },
+   {
+    "id": "R-HSA-2426146",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "SREBP1A,1C,2 dimer",
+     "NF-Y",
+     "SP1",
+     "FDFT1 gene"
+    ],
+    "out": [
+     "SREBP1A,1C,2:NF-Y:SP1:FDFT1 gene"
+    ]
+   },
+   {
+    "id": "R-HSA-2426151",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "SREBP1A,2 dimer",
+     "SQLE gene",
+     "NF-Y"
+    ],
+    "out": [
+     "SREBP1A,2:SQLE gene"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "NFYB",
+   "NFYA",
+   "SREBF1",
+   "SREBF2",
+   "SP1",
+   "CREBBP",
+   "EP300",
+   "FOXO3",
+   "FOXO4",
+   "FOXO1"
+  ],
+  "upstream_tfs": [
+   "CEBPA",
+   "TP53",
+   "ZNF136"
+  ]
+ },
+ "NOP2": {
+  "gene": "NOP2",
+  "class": "enzyme/catalyst",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "Gene expression (Transcription)",
+   "Generic Transcription Pathway",
+   "Metabolism of RNA",
+   "RNA Polymerase II Transcription",
+   "TFAP2A acts as a transcriptional repressor during retinoic acid induced cell differentiation",
+   "Transcriptional regulation by the AP-2 (TFAP2) family of transcription factors",
+   "rRNA modification in the nucleus and cytosol",
+   "rRNA processing"
+  ],
+  "n_pathways": 9,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 1,
+  "catalyses": [
+   {
+    "id": "R-HSA-6790944",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "AdoMet",
+     "nascent pre-rRNA transcript"
+    ],
+    "out": [
+     "28S rRNA containing 5-methylC-4447",
+     "AdoHcy"
+    ]
+   }
+  ],
+  "n_participates": 1,
+  "participates_in": [
+   {
+    "id": "R-HSA-8869560",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "NOP2 gene"
+    ],
+    "out": [
+     "NOP2"
+    ]
+   }
+  ],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "PABPN1": {
+  "gene": "PABPN1",
+  "class": "reaction participant",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus",
+   "cytosol"
+  ],
+  "pathways": [
+   "Dengue Virus Infection",
+   "Dengue Virus-Host Interactions",
+   "Developmental Biology",
+   "Disease",
+   "Gene expression (Transcription)",
+   "Infectious disease",
+   "Influenza Infection",
+   "Inhibition of Host mRNA Processing and RNA Silencing"
+  ],
+  "n_pathways": 21,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 11,
+  "participates_in": [
+   {
+    "id": "R-HSA-168883",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "NS1 Homodimer",
+     "PABPN1"
+    ],
+    "out": [
+     "NS1:PAB II Complex"
+    ]
+   },
+   {
+    "id": "R-HSA-77591",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "CstF:CPSF:capped intronless pre-mRNA:CBC complex",
+     "CF I",
+     "CF II",
+     "PAPOLA",
+     "PABPN1"
+    ],
+    "out": [
+     "intronless pre-mRNA cleavage complex"
+    ]
+   },
+   {
+    "id": "R-HSA-77593",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "intronless pre-mRNA cleavage complex"
+    ],
+    "out": [
+     "Mature intronless derived mRNA complex",
+     "PAPOLA",
+     "PABPN1",
+     "CSTF heterotrimer",
+     "CF I"
+    ]
+   },
+   {
+    "id": "R-HSA-77592",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "intronless pre-mRNA cleavage complex"
+    ],
+    "out": [
+     "upstream mRNA fragment:CPSF:PAP:PABPN1 complex",
+     "downstream intronless mRNA fragment",
+     "CF I",
+     "CF II",
+     "CSTF heterotrimer"
+    ]
+   },
+   {
+    "id": "R-HSA-8849157",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Spliced mRNP",
+     "THO complex",
+     "CHTOP",
+     "POLDIP3",
+     "SARNP"
+    ],
+    "out": [
+     "Spliced mRNA:CBC:EJC:TREX"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "NCBP1",
+   "NCBP2",
+   "CSTF2T",
+   "CSTF2",
+   "CLP1",
+   "PAPOLA",
+   "SYMPK",
+   "CPSF2",
+   "WDR33",
+   "CPSF6",
+   "PCF11",
+   "CPSF4"
+  ],
+  "upstream_tfs": [
+   "ZNF700"
+  ]
+ },
+ "PAF1": {
+  "gene": "PAF1",
+  "class": "reaction participant",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "ATP-dependent chromatin remodelers",
+   "Adaptive Immune System",
+   "Affinity selection of immunoglobulins",
+   "CHD chromatin remodelers",
+   "CHD1 and CHD2 subfamily",
+   "Chromatin organization",
+   "Dengue Virus Infection",
+   "Dengue Virus-Host Interactions"
+  ],
+  "n_pathways": 24,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 352,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 13,
+  "participates_in": [
+   {
+    "id": "R-HSA-112379",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Early elongation complex with hyperphosphorylated Pol II CTD",
+     "TCEA1",
+     "FACT complex",
+     "Elongin Complex",
+     "TFIIH"
+    ],
+    "out": [
+     "Elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113411",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Processive elongation complex"
+    ],
+    "out": [
+     "Paused processive elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113414",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Processive elongation complex"
+    ],
+    "out": [
+     "Arrested processive elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113413",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Arrested processive elongation complex"
+    ],
+    "out": [
+     "Processive elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-112385",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Elongation complex",
+     "NTP"
+    ],
+    "out": [
+     "Processive elongation complex",
+     "TFIIH"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "LEO1",
+   "RTF1",
+   "CTR9",
+   "SKIC8",
+   "CDC73",
+   "POLR2C",
+   "CCNK",
+   "CTDP1",
+   "SUPT6H",
+   "POLR2A",
+   "POLR2J",
+   "POLR2H"
+  ],
+  "upstream_tfs": [
+   "KAT7",
+   "TP53"
+  ]
+ },
+ "PDCD11": {
+  "gene": "PDCD11",
+  "class": "reaction participant",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "Major pathway of rRNA processing in the nucleolus and cytosol",
+   "Metabolism of RNA",
+   "rRNA modification in the nucleus and cytosol",
+   "rRNA processing",
+   "rRNA processing in the nucleus and cytosol"
+  ],
+  "n_pathways": 5,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 1,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 4,
+  "participates_in": [
+   {
+    "id": "R-HSA-6791222",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "21S pre-rRNA:SSU processome"
+    ],
+    "out": [
+     "18SE pre-rRNA:SSU processome"
+    ]
+   },
+   {
+    "id": "R-HSA-6791227",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "47S pre-rRNA:SSU processome"
+    ],
+    "out": [
+     "45S pre-rRNA:SSU processome"
+    ]
+   },
+   {
+    "id": "R-HSA-6791228",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "45S pre-rRNA:SSU processome"
+    ],
+    "out": [
+     "30S pre-rRNA:SSU processome",
+     "32S pre-rRNA"
+    ]
+   },
+   {
+    "id": "R-HSA-6791221",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "30S pre-rRNA:SSU processome"
+    ],
+    "out": [
+     "21S pre-rRNA:SSU processome"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "DHX37",
+   "WDR43",
+   "UTP15",
+   "NOC4L",
+   "KRR1",
+   "DDX47",
+   "NOL6",
+   "RPS14",
+   "TBL3",
+   "UTP14C",
+   "SNU13",
+   "DDX49"
+  ],
+  "upstream_tfs": []
+ },
+ "PELP1": {
+  "gene": "PELP1",
+  "class": "reaction participant",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus",
+   "cytosol"
+  ],
+  "pathways": [
+   "Major pathway of rRNA processing in the nucleolus and cytosol",
+   "Metabolism of RNA",
+   "PTK6 Expression",
+   "Signal Transduction",
+   "Signaling by Non-Receptor Tyrosine Kinases",
+   "Signaling by PTK6",
+   "rRNA processing",
+   "rRNA processing in the nucleus and cytosol"
+  ],
+  "n_pathways": 8,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 3,
+  "participates_in": [
+   {
+    "id": "R-HSA-6791219",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "32S pre-rRNA:Rix1:LAS1L:NOL9:SENP3"
+    ],
+    "out": [
+     "28S rRNA:12S pre-rRNA:Rix1:LAS1L:NOL9:SENP3:PeBoW"
+    ]
+   },
+   {
+    "id": "R-HSA-6791218",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "nucleus"
+    ],
+    "in": [
+     "28S rRNA:12S pre-rRNA:Rix1:LAS1L:NOL9:SENP3:PeBoW"
+    ],
+    "out": [
+     "60S ribosomal complex"
+    ]
+   },
+   {
+    "id": "R-HSA-8856930",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "NR3C1:(ALDO,11DCORST,CORST,CORT) dimer",
+     "EPAS1",
+     "PELP1",
+     "PTK6 Gene"
+    ],
+    "out": [
+     "PTK6 Gene:EPAS1:NR3C1:Glucocorticoid ligand:PELP1"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "LAS1L",
+   "NOL9",
+   "TEX10",
+   "WDR18",
+   "SENP3",
+   "WDR12",
+   "PES1",
+   "BOP1",
+   "RPL41",
+   "RPLP2",
+   "RPL13A",
+   "RPL36"
+  ],
+  "upstream_tfs": [
+   "DACH1",
+   "ESR1",
+   "ESR2",
+   "JUN",
+   "JUNB",
+   "JUND",
+   "NFKB1",
+   "NFKB2",
+   "NR4A1",
+   "REL",
+   "RELA",
+   "RELB"
+  ]
+ },
+ "PFDN2": {
+  "gene": "PFDN2",
+  "class": "reaction participant",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "cytosol"
+  ],
+  "pathways": [
+   "Chaperonin-mediated protein folding",
+   "Cooperation of Prefoldin and TriC/CCT  in actin and tubulin folding",
+   "Metabolism of proteins",
+   "Prefoldin mediated transfer of substrate  to CCT/TriC",
+   "Protein folding"
+  ],
+  "n_pathways": 5,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 2,
+  "participates_in": [
+   {
+    "id": "R-HSA-389970",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "Prefoldin-associated actin/tubulin",
+     "CCT/TRiC:ADP"
+    ],
+    "out": [
+     "Prefoldin",
+     "actin/tubulin-bound CCT/TRiC:ADP"
+    ]
+   },
+   {
+    "id": "R-HSA-389980",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "unfolded actin/tubulin",
+     "Prefoldin"
+    ],
+    "out": [
+     "Prefoldin-associated actin/tubulin"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "TUBA1C",
+   "TUBA3C",
+   "TUBA3D",
+   "TUBA1A",
+   "TUBB1",
+   "PFDN6",
+   "PFDN5",
+   "PFDN4",
+   "PFDN1",
+   "VBP1",
+   "TUBA4A",
+   "TUBB4B"
+  ],
+  "upstream_tfs": []
+ },
+ "POLR2C": {
+  "gene": "POLR2C",
+  "class": "enzyme/catalyst",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus",
+   "extracellular",
+   "cytosol"
+  ],
+  "pathways": [
+   "Abortive elongation of HIV-1 transcript in the absence of Tat",
+   "Activation of HOX genes during differentiation",
+   "Activation of anterior HOX genes in hindbrain development during early embryogenesis",
+   "Adaptive Immune System",
+   "Affinity selection of immunoglobulins",
+   "Cell Cycle",
+   "Chromosome Maintenance",
+   "DNA Repair"
+  ],
+  "n_pathways": 83,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 18,
+  "catalyses": [
+   {
+    "id": "R-HSA-111264",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "pol II transcription complex containing 11 nucleotide long transcript",
+     "NTP"
+    ],
+    "out": [
+     "Pol II transcription complex containing transcript to +30",
+     "PPi"
+    ]
+   },
+   {
+    "id": "R-HSA-167121",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex",
+     "NTP"
+    ],
+    "out": [
+     "PPi",
+     "HIV-1 transcription complex containing 3 nucleotide long transcript"
+    ]
+   },
+   {
+    "id": "R-HSA-167136",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex containing 4 nucleotide long transcript",
+     "NTP",
+     "9757634",
+     "9757634",
+     "9757634"
+    ],
+    "out": [
+     "TFIIA",
+     "TFIID",
+     "TFIIE",
+     "PPi",
+     "HIV-1 transcription complex containing 9 nucleotide long transcript"
+    ]
+   },
+   {
+    "id": "R-HSA-167115",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex containing 11 nucleotide long transcript",
+     "NTP"
+    ],
+    "out": [
+     "PPi",
+     "HIV-1 transcription complex containing transcript to +30"
+    ]
+   },
+   {
+    "id": "R-HSA-167113",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex containing 3 nucleotide long transcript",
+     "NTP"
+    ],
+    "out": [
+     "GTF2B",
+     "PPi",
+     "HIV-1 transcription complex containing 4 nucleotide long transcript"
+    ]
+   }
+  ],
+  "n_participates": 124,
+  "participates_in": [
+   {
+    "id": "R-HSA-109639",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "TFIIH",
+     "pol II promoter:TFIID:TFIIA:TFIIB:Pol II:TFIIF:TFIIE complex"
+    ],
+    "out": [
+     "pol II closed pre-initiation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-109638",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "pol II promoter:TFIID:TFIIA:TFIIB complex",
+     "RNA Polymerase II (unphosphorylated):TFIIF complex"
+    ],
+    "out": [
+     "pol II promoter:TFIID:TFIIA:TFIIB:Pol II:TFIIF complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113409",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "DSIF:NELF:early elongation complex"
+    ],
+    "out": [
+     "Aborted early elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-112379",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Early elongation complex with hyperphosphorylated Pol II CTD",
+     "TCEA1",
+     "FACT complex",
+     "Elongin Complex",
+     "TFIIH"
+    ],
+    "out": [
+     "Elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113411",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Processive elongation complex"
+    ],
+    "out": [
+     "Paused processive elongation complex"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "POLR2A",
+   "POLR2J",
+   "POLR2H",
+   "POLR2E",
+   "POLR2D",
+   "POLR2L",
+   "POLR2I",
+   "POLR2B",
+   "POLR2K",
+   "POLR2F",
+   "POLR2G",
+   "GTF2F1"
+  ],
+  "upstream_tfs": [
+   "ATF4"
+  ]
+ },
+ "POLR2H": {
+  "gene": "POLR2H",
+  "class": "enzyme/catalyst",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus",
+   "extracellular",
+   "cytosol"
+  ],
+  "pathways": [
+   "Abortive elongation of HIV-1 transcript in the absence of Tat",
+   "Activation of HOX genes during differentiation",
+   "Activation of anterior HOX genes in hindbrain development during early embryogenesis",
+   "Adaptive Immune System",
+   "Affinity selection of immunoglobulins",
+   "B-WICH complex positively regulates rRNA expression",
+   "Cell Cycle",
+   "Chromosome Maintenance"
+  ],
+  "n_pathways": 102,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 20,
+  "catalyses": [
+   {
+    "id": "R-HSA-111264",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "pol II transcription complex containing 11 nucleotide long transcript",
+     "NTP"
+    ],
+    "out": [
+     "Pol II transcription complex containing transcript to +30",
+     "PPi"
+    ]
+   },
+   {
+    "id": "R-HSA-167121",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex",
+     "NTP"
+    ],
+    "out": [
+     "PPi",
+     "HIV-1 transcription complex containing 3 nucleotide long transcript"
+    ]
+   },
+   {
+    "id": "R-HSA-167136",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex containing 4 nucleotide long transcript",
+     "NTP",
+     "9757634",
+     "9757634",
+     "9757634"
+    ],
+    "out": [
+     "TFIIA",
+     "TFIID",
+     "TFIIE",
+     "PPi",
+     "HIV-1 transcription complex containing 9 nucleotide long transcript"
+    ]
+   },
+   {
+    "id": "R-HSA-167115",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex containing 11 nucleotide long transcript",
+     "NTP"
+    ],
+    "out": [
+     "PPi",
+     "HIV-1 transcription complex containing transcript to +30"
+    ]
+   },
+   {
+    "id": "R-HSA-167113",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex containing 3 nucleotide long transcript",
+     "NTP"
+    ],
+    "out": [
+     "GTF2B",
+     "PPi",
+     "HIV-1 transcription complex containing 4 nucleotide long transcript"
+    ]
+   }
+  ],
+  "n_participates": 151,
+  "participates_in": [
+   {
+    "id": "R-HSA-109639",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "TFIIH",
+     "pol II promoter:TFIID:TFIIA:TFIIB:Pol II:TFIIF:TFIIE complex"
+    ],
+    "out": [
+     "pol II closed pre-initiation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-109638",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "pol II promoter:TFIID:TFIIA:TFIIB complex",
+     "RNA Polymerase II (unphosphorylated):TFIIF complex"
+    ],
+    "out": [
+     "pol II promoter:TFIID:TFIIA:TFIIB:Pol II:TFIIF complex"
+    ]
+   },
+   {
+    "id": "R-HSA-112149",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "RNA Polymerase III:TFIIIB:TFIIIC:Type 2 Open Promoter Complex",
+     "elongating pre-RNA Pol III oligonucleotide"
+    ],
+    "out": [
+     "112148",
+     "released pre-RNA Pol III oligonucleotide"
+    ]
+   },
+   {
+    "id": "R-HSA-112150",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "RNA Polymerase III:TFIIIB:TFIIIC:Type 2 Promoter Complex"
+    ],
+    "out": [
+     "RNA Polymerase III:TFIIIB:TFIIIC:Type 2 Open Promoter Complex"
+    ]
+   },
+   {
+    "id": "R-HSA-112054",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "elongating pre-RNA Pol III oligonucleotide",
+     "RNA Polymerase III:TFIIIB:SNAPc:Type 3 Open Promoter Complex"
+    ],
+    "out": [
+     "112151",
+     "released pre-RNA Pol III oligonucleotide"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "POLR2E",
+   "POLR2L",
+   "POLR2K",
+   "POLR2F",
+   "POLR2C",
+   "POLR2A",
+   "POLR2J",
+   "POLR2D",
+   "POLR2I",
+   "POLR2B",
+   "POLR2G",
+   "GTF2F1"
+  ],
+  "upstream_tfs": [
+   "CBX1",
+   "STAT3"
+  ]
+ },
+ "POLR2I": {
+  "gene": "POLR2I",
+  "class": "enzyme/catalyst",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus",
+   "extracellular",
+   "cytosol"
+  ],
+  "pathways": [
+   "Abortive elongation of HIV-1 transcript in the absence of Tat",
+   "Activation of HOX genes during differentiation",
+   "Activation of anterior HOX genes in hindbrain development during early embryogenesis",
+   "Adaptive Immune System",
+   "Affinity selection of immunoglobulins",
+   "Cell Cycle",
+   "Chromosome Maintenance",
+   "DNA Repair"
+  ],
+  "n_pathways": 83,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 18,
+  "catalyses": [
+   {
+    "id": "R-HSA-111264",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "pol II transcription complex containing 11 nucleotide long transcript",
+     "NTP"
+    ],
+    "out": [
+     "Pol II transcription complex containing transcript to +30",
+     "PPi"
+    ]
+   },
+   {
+    "id": "R-HSA-167121",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex",
+     "NTP"
+    ],
+    "out": [
+     "PPi",
+     "HIV-1 transcription complex containing 3 nucleotide long transcript"
+    ]
+   },
+   {
+    "id": "R-HSA-167136",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex containing 4 nucleotide long transcript",
+     "NTP",
+     "9757634",
+     "9757634",
+     "9757634"
+    ],
+    "out": [
+     "TFIIA",
+     "TFIID",
+     "TFIIE",
+     "PPi",
+     "HIV-1 transcription complex containing 9 nucleotide long transcript"
+    ]
+   },
+   {
+    "id": "R-HSA-167115",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex containing 11 nucleotide long transcript",
+     "NTP"
+    ],
+    "out": [
+     "PPi",
+     "HIV-1 transcription complex containing transcript to +30"
+    ]
+   },
+   {
+    "id": "R-HSA-167113",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "HIV-1 transcription complex containing 3 nucleotide long transcript",
+     "NTP"
+    ],
+    "out": [
+     "GTF2B",
+     "PPi",
+     "HIV-1 transcription complex containing 4 nucleotide long transcript"
+    ]
+   }
+  ],
+  "n_participates": 124,
+  "participates_in": [
+   {
+    "id": "R-HSA-109639",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "TFIIH",
+     "pol II promoter:TFIID:TFIIA:TFIIB:Pol II:TFIIF:TFIIE complex"
+    ],
+    "out": [
+     "pol II closed pre-initiation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-109638",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "pol II promoter:TFIID:TFIIA:TFIIB complex",
+     "RNA Polymerase II (unphosphorylated):TFIIF complex"
+    ],
+    "out": [
+     "pol II promoter:TFIID:TFIIA:TFIIB:Pol II:TFIIF complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113409",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "DSIF:NELF:early elongation complex"
+    ],
+    "out": [
+     "Aborted early elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-112379",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Early elongation complex with hyperphosphorylated Pol II CTD",
+     "TCEA1",
+     "FACT complex",
+     "Elongin Complex",
+     "TFIIH"
+    ],
+    "out": [
+     "Elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113411",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Processive elongation complex"
+    ],
+    "out": [
+     "Paused processive elongation complex"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "POLR2C",
+   "POLR2A",
+   "POLR2J",
+   "POLR2H",
+   "POLR2E",
+   "POLR2D",
+   "POLR2L",
+   "POLR2B",
+   "POLR2K",
+   "POLR2F",
+   "POLR2G",
+   "GTF2F1"
+  ],
+  "upstream_tfs": []
+ },
+ "POLR3A": {
+  "gene": "POLR3A",
+  "class": "enzyme/catalyst",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus",
+   "cytosol"
+  ],
+  "pathways": [
+   "Cytosolic sensors of pathogen-associated DNA",
+   "Gene expression (Transcription)",
+   "Immune System",
+   "Innate Immune System",
+   "RNA Polymerase III Abortive And Retractive Initiation",
+   "RNA Polymerase III Chain Elongation",
+   "RNA Polymerase III Transcription",
+   "RNA Polymerase III Transcription Initiation"
+  ],
+  "n_pathways": 12,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 2,
+  "catalyses": [
+   {
+    "id": "MAR07161",
+    "src": "humangem",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "ATP",
+     "CTP",
+     "GTP",
+     "UTP"
+    ],
+    "out": [
+     "PPi",
+     "RNA"
+    ]
+   },
+   {
+    "id": "MAR07162",
+    "src": "humangem",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "RNA"
+    ],
+    "out": [
+     "CDP",
+     "GDP",
+     "UDP"
+    ]
+   }
+  ],
+  "n_participates": 18,
+  "participates_in": [
+   {
+    "id": "R-HSA-112149",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "RNA Polymerase III:TFIIIB:TFIIIC:Type 2 Open Promoter Complex",
+     "elongating pre-RNA Pol III oligonucleotide"
+    ],
+    "out": [
+     "112148",
+     "released pre-RNA Pol III oligonucleotide"
+    ]
+   },
+   {
+    "id": "R-HSA-112150",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "RNA Polymerase III:TFIIIB:TFIIIC:Type 2 Promoter Complex"
+    ],
+    "out": [
+     "RNA Polymerase III:TFIIIB:TFIIIC:Type 2 Open Promoter Complex"
+    ]
+   },
+   {
+    "id": "R-HSA-112054",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "elongating pre-RNA Pol III oligonucleotide",
+     "RNA Polymerase III:TFIIIB:SNAPc:Type 3 Open Promoter Complex"
+    ],
+    "out": [
+     "112151",
+     "released pre-RNA Pol III oligonucleotide"
+    ]
+   },
+   {
+    "id": "R-HSA-112156",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "RNA Polymerase III:TFIIIB:SNAPc:Type 3 Open Promoter Complex",
+     "NTP"
+    ],
+    "out": [
+     "112151",
+     "elongating pre-RNA Pol III oligonucleotide"
+    ]
+   },
+   {
+    "id": "R-HSA-112153",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "RNA polymerase III:TFIIIB:TFIIIC:TFIIIA:Type 1 Open Promoter Complex",
+     "NTP"
+    ],
+    "out": [
+     "112147",
+     "elongating pre-RNA Pol III oligonucleotide"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "POLR3H",
+   "POLR3G",
+   "POLR3C",
+   "POLR2K",
+   "POLR2E",
+   "POLR2H",
+   "POLR1D",
+   "POLR3B",
+   "POLR1C",
+   "POLR2F",
+   "POLR3K",
+   "POLR3GL"
+  ],
+  "upstream_tfs": [
+   "E2F1"
+  ]
+ },
+ "PPWD1": {
+  "gene": "PPWD1",
+  "class": "enzyme/catalyst",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "cytosol"
+  ],
+  "pathways": [
+   "Metabolism of RNA",
+   "Processing of Capped Intron-Containing Pre-mRNA",
+   "mRNA Splicing",
+   "mRNA Splicing - Major Pathway"
+  ],
+  "n_pathways": 4,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 1,
+  "catalyses": [
+   {
+    "id": "MAR09492",
+    "src": "humangem",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "peptidylproline-(omega=0)"
+    ],
+    "out": [
+     "peptidylproline-(omega=180)"
+    ]
+   }
+  ],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [
+   "FKBP1B",
+   "FKBP9",
+   "PPIL2",
+   "FKBP1A",
+   "FKBP11",
+   "FKBP14",
+   "PPIAL4A",
+   "PIN1",
+   "PPIL3",
+   "PPIL4",
+   "PPIAL4G",
+   "PPIL1"
+  ],
+  "upstream_tfs": []
+ },
+ "RBM25": {
+  "gene": "RBM25",
+  "class": "pathway member only",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [
+   "Metabolism of RNA",
+   "Processing of Capped Intron-Containing Pre-mRNA",
+   "mRNA 3'-end processing",
+   "mRNA Polyadenylation",
+   "mRNA Splicing",
+   "mRNA Splicing - Major Pathway"
+  ],
+  "n_pathways": 6,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 352,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": [
+   "EGR1"
+  ]
+ },
+ "RFFL": {
+  "gene": "RFFL",
+  "class": "pathway member only",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [
+   "Gene expression (Transcription)",
+   "Generic Transcription Pathway",
+   "RNA Polymerase II Transcription",
+   "Regulation of TP53 Activity",
+   "Regulation of TP53 Degradation",
+   "Regulation of TP53 Expression and Degradation",
+   "Transcriptional Regulation by TP53"
+  ],
+  "n_pathways": 7,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "RIOK2": {
+  "gene": "RIOK2",
+  "class": "reaction participant",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "cytosol",
+   "nucleus"
+  ],
+  "pathways": [
+   "Major pathway of rRNA processing in the nucleolus and cytosol",
+   "Metabolism of RNA",
+   "rRNA processing",
+   "rRNA processing in the nucleus and cytosol"
+  ],
+  "n_pathways": 4,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 1,
+  "participates_in": [
+   {
+    "id": "R-HSA-6791223",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "nucleus"
+    ],
+    "in": [
+     "18SE pre-40S particle",
+     "RIOK3"
+    ],
+    "out": [
+     "6791522",
+     "40S ribosomal complex",
+     "BYSL",
+     "LTV1",
+     "NOB1"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "RPP21",
+   "RPS29",
+   "RPS13",
+   "RPS16",
+   "RPS5",
+   "RPS15A",
+   "BYSL",
+   "RPS27",
+   "RPS14",
+   "RPP25",
+   "RPS15",
+   "RPS4X"
+  ],
+  "upstream_tfs": []
+ },
+ "RNF113A": {
+  "gene": "RNF113A",
+  "class": "pathway member only",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [
+   "Metabolism of RNA",
+   "Processing of Capped Intron-Containing Pre-mRNA",
+   "mRNA Splicing",
+   "mRNA Splicing - Major Pathway"
+  ],
+  "n_pathways": 4,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "RPAP2": {
+  "gene": "RPAP2",
+  "class": "reaction participant",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "Gene expression (Transcription)",
+   "RNA Polymerase II Transcription",
+   "RNA polymerase II transcribes snRNA genes"
+  ],
+  "n_pathways": 3,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 1,
+  "participates_in": [
+   {
+    "id": "R-HSA-6810235",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "RPAP2",
+     "RNA polymerase II (phosphoserine-5,7):Initiation factors:CDK7:snRNA gene",
+     "RPRD1A,B:RPRD1A,B",
+     "RPRD2"
+    ],
+    "out": [
+     "RPAP2:RPRD1A,B:RPRD2:RNA polymerase II (phosphoserine-5,7):Initiation factors:snRNA gene"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "POLR2C",
+   "GTF2E1",
+   "CCNK",
+   "TAF11",
+   "POLR2A",
+   "POLR2J",
+   "POLR2H",
+   "TBP",
+   "CDK9",
+   "ZNF143",
+   "SNAPC5",
+   "POU2F1"
+  ],
+  "upstream_tfs": []
+ },
+ "RPL10": {
+  "gene": "RPL10",
+  "class": "reaction participant",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "cytosol",
+   "nucleus"
+  ],
+  "pathways": [
+   "Axon guidance",
+   "Cap-dependent Translation Initiation",
+   "Cellular response to starvation",
+   "Cellular responses to stimuli",
+   "Cellular responses to stress",
+   "Developmental Biology",
+   "Disease",
+   "Eukaryotic Translation Elongation"
+  ],
+  "n_pathways": 41,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 8,
+  "participates_in": [
+   {
+    "id": "R-HSA-156826",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "60S ribosomal complex"
+    ],
+    "out": [
+     "60s ribosomal complex lacking L13a subunit",
+     "RPL13A"
+    ]
+   },
+   {
+    "id": "R-HSA-6791218",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "nucleus"
+    ],
+    "in": [
+     "28S rRNA:12S pre-rRNA:Rix1:LAS1L:NOL9:SENP3:PeBoW"
+    ],
+    "out": [
+     "60S ribosomal complex"
+    ]
+   },
+   {
+    "id": "R-HSA-9948318",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "LTN1",
+     "TCF25",
+     "NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide-Ala"
+    ],
+    "out": [
+     "LTN1:TCF25:NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide-Ala"
+    ]
+   },
+   {
+    "id": "R-HSA-9948362",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "Ub:UBE2D1",
+     "8939319",
+     "8939319",
+     "LTN1:TCF25:NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide-Ala"
+    ],
+    "out": [
+     "UBE2D1",
+     "174236",
+     "174236",
+     "LTN1:TCF25:NEMF:60S ribosomal subunit:peptidyl-tRNA with K48polyUb-nascent peptide-Ala"
+    ]
+   },
+   {
+    "id": "R-HSA-9948360",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "NEMF",
+     "60S ribosomal subunit:peptidyl-tRNA with nascent peptide"
+    ],
+    "out": [
+     "NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "RPL41",
+   "RPLP2",
+   "RPL13A",
+   "RPL22L1",
+   "RPL14",
+   "RPL32",
+   "RPL18",
+   "RPL17",
+   "RPL13",
+   "RPL24",
+   "RPL10L",
+   "RPL35A"
+  ],
+  "upstream_tfs": [
+   "ELK4",
+   "GTF2A2",
+   "LHX2",
+   "MYC",
+   "SP1",
+   "ZNF397"
+  ]
+ },
+ "RPL11": {
+  "gene": "RPL11",
+  "class": "reaction participant",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "cytosol",
+   "nucleus"
+  ],
+  "pathways": [
+   "Axon guidance",
+   "Cap-dependent Translation Initiation",
+   "Cellular response to starvation",
+   "Cellular responses to stimuli",
+   "Cellular responses to stress",
+   "Developmental Biology",
+   "Disease",
+   "Eukaryotic Translation Elongation"
+  ],
+  "n_pathways": 41,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 8,
+  "participates_in": [
+   {
+    "id": "R-HSA-156826",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "60S ribosomal complex"
+    ],
+    "out": [
+     "60s ribosomal complex lacking L13a subunit",
+     "RPL13A"
+    ]
+   },
+   {
+    "id": "R-HSA-6791218",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "nucleus"
+    ],
+    "in": [
+     "28S rRNA:12S pre-rRNA:Rix1:LAS1L:NOL9:SENP3:PeBoW"
+    ],
+    "out": [
+     "60S ribosomal complex"
+    ]
+   },
+   {
+    "id": "R-HSA-9948318",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "LTN1",
+     "TCF25",
+     "NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide-Ala"
+    ],
+    "out": [
+     "LTN1:TCF25:NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide-Ala"
+    ]
+   },
+   {
+    "id": "R-HSA-9948362",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "Ub:UBE2D1",
+     "8939319",
+     "8939319",
+     "LTN1:TCF25:NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide-Ala"
+    ],
+    "out": [
+     "UBE2D1",
+     "174236",
+     "174236",
+     "LTN1:TCF25:NEMF:60S ribosomal subunit:peptidyl-tRNA with K48polyUb-nascent peptide-Ala"
+    ]
+   },
+   {
+    "id": "R-HSA-9948360",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "NEMF",
+     "60S ribosomal subunit:peptidyl-tRNA with nascent peptide"
+    ],
+    "out": [
+     "NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "RPL41",
+   "RPLP2",
+   "RPL13A",
+   "RPL22L1",
+   "RPL14",
+   "RPL32",
+   "RPL18",
+   "RPL17",
+   "RPL13",
+   "RPL24",
+   "RPL10L",
+   "RPL35A"
+  ],
+  "upstream_tfs": [
+   "MYC",
+   "SPI1",
+   "TP53",
+   "ZZZ3"
+  ]
+ },
+ "RPL12": {
+  "gene": "RPL12",
+  "class": "reaction participant",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "cytosol",
+   "nucleus"
+  ],
+  "pathways": [
+   "Axon guidance",
+   "Cap-dependent Translation Initiation",
+   "Cellular response to starvation",
+   "Cellular responses to stimuli",
+   "Cellular responses to stress",
+   "Developmental Biology",
+   "Disease",
+   "Eukaryotic Translation Elongation"
+  ],
+  "n_pathways": 41,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 8,
+  "participates_in": [
+   {
+    "id": "R-HSA-156826",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "60S ribosomal complex"
+    ],
+    "out": [
+     "60s ribosomal complex lacking L13a subunit",
+     "RPL13A"
+    ]
+   },
+   {
+    "id": "R-HSA-6791218",
+    "src": "reactome",
+    "where": [
+     "cytosol",
+     "nucleus"
+    ],
+    "in": [
+     "28S rRNA:12S pre-rRNA:Rix1:LAS1L:NOL9:SENP3:PeBoW"
+    ],
+    "out": [
+     "60S ribosomal complex"
+    ]
+   },
+   {
+    "id": "R-HSA-9948318",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "LTN1",
+     "TCF25",
+     "NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide-Ala"
+    ],
+    "out": [
+     "LTN1:TCF25:NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide-Ala"
+    ]
+   },
+   {
+    "id": "R-HSA-9948362",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "Ub:UBE2D1",
+     "8939319",
+     "8939319",
+     "LTN1:TCF25:NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide-Ala"
+    ],
+    "out": [
+     "UBE2D1",
+     "174236",
+     "174236",
+     "LTN1:TCF25:NEMF:60S ribosomal subunit:peptidyl-tRNA with K48polyUb-nascent peptide-Ala"
+    ]
+   },
+   {
+    "id": "R-HSA-9948360",
+    "src": "reactome",
+    "where": [
+     "cytosol"
+    ],
+    "in": [
+     "NEMF",
+     "60S ribosomal subunit:peptidyl-tRNA with nascent peptide"
+    ],
+    "out": [
+     "NEMF:60S ribosomal subunit:peptidyl-tRNA with nascent peptide"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "RPL41",
+   "RPLP2",
+   "RPL13A",
+   "RPL22L1",
+   "RPL14",
+   "RPL32",
+   "RPL18",
+   "RPL17",
+   "RPL13",
+   "RPL24",
+   "RPL10L",
+   "RPL35A"
+  ],
+  "upstream_tfs": [
+   "MYC"
+  ]
+ },
+ "RUVBL2": {
+  "gene": "RUVBL2",
+  "class": "pathway member only",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [
+   "Cell Cycle",
+   "Chromatin modifying enzymes",
+   "Chromatin organization",
+   "Chromosome Maintenance",
+   "Extension of Telomeres",
+   "HATs acetylate histones",
+   "Telomere Extension By Telomerase",
+   "Telomere Maintenance"
+  ],
+  "n_pathways": 8,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 353,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": [
+   "MYC"
+  ]
+ },
+ "SART1": {
+  "gene": "SART1",
+  "class": "pathway member only",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [
+   "Metabolism of RNA",
+   "Processing of Capped Intron-Containing Pre-mRNA",
+   "mRNA Splicing",
+   "mRNA Splicing - Major Pathway"
+  ],
+  "n_pathways": 4,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "SON": {
+  "gene": "SON",
+  "class": "TF (signed regulon)",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 1,
+  "n_down": 0,
+  "tf_targets_up": [
+   "RB1"
+  ],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": [
+   "CUX1"
+  ]
+ },
+ "SRFBP1": {
+  "gene": "SRFBP1",
+  "class": "no annotation context",
+  "protein_name": "Serum response factor-binding protein 1",
+  "function": "May be involved in regulating transcriptional activation of cardiac genes during the aging process. May play a role in biosynthesis and/or processing of SLC2A4 in adipose cells (By similarity)..",
+  "uniprot_location": "SUBCELLULAR LOCATION: Cytoplasm, perinuclear region.",
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "SRSF3": {
+  "gene": "SRSF3",
+  "class": "TF (signed regulon)",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "Dengue Virus Infection",
+   "Dengue Virus-Host Interactions",
+   "Disease",
+   "Infectious disease",
+   "Metabolism of RNA",
+   "Processing of Capped Intron-Containing Pre-mRNA",
+   "Transport of Mature Transcript to Cytoplasm",
+   "Transport of Mature mRNA derived from an Intron-Containing Transcript"
+  ],
+  "n_pathways": 13,
+  "n_up": 0,
+  "n_down": 2,
+  "tf_targets_up": [],
+  "tf_targets_down": [
+   "DBI",
+   "FOXP1"
+  ],
+  "unsigned_chip_targets_FLAGGED": 348,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 3,
+  "participates_in": [
+   {
+    "id": "R-HSA-159101",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "NXF1,2:NXT1",
+     "polyadenylated, capped mRNA:CBC:EJC:TREX:SRSF proteins"
+    ],
+    "out": [
+     "DDX39B:ADP",
+     "Pi",
+     "NXF1,2:NXT1::polyadenylated, capped mRNA:CBC:EJC:TREX:SRSF proteins"
+    ]
+   },
+   {
+    "id": "R-HSA-72103",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "capped, methylated pre-mRNA:CBC Complex",
+     "Alternative Splicing Factors"
+    ],
+    "out": [
+     "capped, methylated pre-mRNP:CBC complex"
+    ]
+   },
+   {
+    "id": "R-HSA-8849157",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Spliced mRNP",
+     "THO complex",
+     "CHTOP",
+     "POLDIP3",
+     "SARNP"
+    ],
+    "out": [
+     "Spliced mRNA:CBC:EJC:TREX"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "NCBP1",
+   "SRSF5",
+   "SRSF9",
+   "SRSF7",
+   "NCBP2",
+   "SRSF2",
+   "SRSF6",
+   "SRSF4",
+   "SRSF1",
+   "SRSF11",
+   "RBM8A",
+   "CDC40"
+  ],
+  "upstream_tfs": [
+   "AHR",
+   "BCL6",
+   "CTNNB1",
+   "TCF4",
+   "TCF7L2",
+   "TP53"
+  ]
+ },
+ "SSRP1": {
+  "gene": "SSRP1",
+  "class": "TF (signed regulon)",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "ATP-dependent chromatin remodelers",
+   "Adaptive Immune System",
+   "Affinity selection of immunoglobulins",
+   "CHD chromatin remodelers",
+   "CHD1 and CHD2 subfamily",
+   "Chromatin organization",
+   "Disease",
+   "Formation of HIV elongation complex in the absence of HIV Tat"
+  ],
+  "n_pathways": 34,
+  "n_up": 48,
+  "n_down": 3,
+  "tf_targets_up": [
+   "BCL2L1",
+   "CCNB1",
+   "CCNE1",
+   "CDKN1B",
+   "CDKN1C",
+   "CHD1",
+   "CREBBP",
+   "CREBZF",
+   "EGR1",
+   "ELAVL1",
+   "FASTK",
+   "FCER1G",
+   "FGFR1",
+   "GAL",
+   "GDF15",
+   "GTF2F1",
+   "HES1",
+   "HHEX",
+   "ID1",
+   "ISYNA1",
+   "JAG2",
+   "KAT2B",
+   "KRAS",
+   "MAPK8",
+   "MDM2",
+   "MITF",
+   "MRPL41",
+   "MTF2",
+   "MYB",
+   "MYBL2",
+   "MYC",
+   "NFKBIA",
+   "NTRK1",
+   "PAK1",
+   "PCNA",
+   "PIK3R1",
+   "PML",
+   "POR",
+   "PRKCQ",
+   "PSEN1"
+  ],
+  "tf_targets_down": [
+   "DBI",
+   "RPL28",
+   "UBA52"
+  ],
+  "unsigned_chip_targets_FLAGGED": 338,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 29,
+  "participates_in": [
+   {
+    "id": "R-HSA-112379",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Early elongation complex with hyperphosphorylated Pol II CTD",
+     "TCEA1",
+     "FACT complex",
+     "Elongin Complex",
+     "TFIIH"
+    ],
+    "out": [
+     "Elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113411",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Processive elongation complex"
+    ],
+    "out": [
+     "Paused processive elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113414",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Processive elongation complex"
+    ],
+    "out": [
+     "Arrested processive elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113413",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Arrested processive elongation complex"
+    ],
+    "out": [
+     "Processive elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-112385",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Elongation complex",
+     "NTP"
+    ],
+    "out": [
+     "Processive elongation complex",
+     "TFIIH"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "SUPT16H",
+   "POLR2C",
+   "CTDP1",
+   "POLR2A",
+   "POLR2J",
+   "POLR2H",
+   "NELFB",
+   "ELL",
+   "CDK9",
+   "NELFCD",
+   "CCNT1",
+   "NELFE"
+  ],
+  "upstream_tfs": []
+ },
+ "SUPT16H": {
+  "gene": "SUPT16H",
+  "class": "TF (signed regulon)",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "ATP-dependent chromatin remodelers",
+   "Adaptive Immune System",
+   "Affinity selection of immunoglobulins",
+   "CHD chromatin remodelers",
+   "CHD1 and CHD2 subfamily",
+   "Chromatin organization",
+   "Disease",
+   "Formation of HIV elongation complex in the absence of HIV Tat"
+  ],
+  "n_pathways": 34,
+  "n_up": 1,
+  "n_down": 1,
+  "tf_targets_up": [
+   "RPL6"
+  ],
+  "tf_targets_down": [
+   "RPL28"
+  ],
+  "unsigned_chip_targets_FLAGGED": 348,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 29,
+  "participates_in": [
+   {
+    "id": "R-HSA-112379",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Early elongation complex with hyperphosphorylated Pol II CTD",
+     "TCEA1",
+     "FACT complex",
+     "Elongin Complex",
+     "TFIIH"
+    ],
+    "out": [
+     "Elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113411",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Processive elongation complex"
+    ],
+    "out": [
+     "Paused processive elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113414",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Processive elongation complex"
+    ],
+    "out": [
+     "Arrested processive elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113413",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Arrested processive elongation complex"
+    ],
+    "out": [
+     "Processive elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-112385",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Elongation complex",
+     "NTP"
+    ],
+    "out": [
+     "Processive elongation complex",
+     "TFIIH"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "SSRP1",
+   "POLR2C",
+   "CTDP1",
+   "POLR2A",
+   "POLR2J",
+   "POLR2H",
+   "NELFB",
+   "ELL",
+   "CDK9",
+   "NELFCD",
+   "CCNT1",
+   "NELFE"
+  ],
+  "upstream_tfs": []
+ },
+ "SUPT5H": {
+  "gene": "SUPT5H",
+  "class": "TF (signed regulon)",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [
+   "nucleus"
+  ],
+  "pathways": [
+   "Abortive elongation of HIV-1 transcript in the absence of Tat",
+   "Adaptive Immune System",
+   "Affinity selection of immunoglobulins",
+   "Disease",
+   "Formation of HIV elongation complex in the absence of HIV Tat",
+   "Formation of HIV-1 elongation complex containing HIV-1 Tat",
+   "Formation of RNA Pol II elongation complex",
+   "Formation of the Early Elongation Complex"
+  ],
+  "n_pathways": 36,
+  "n_up": 0,
+  "n_down": 3,
+  "tf_targets_up": [],
+  "tf_targets_down": [
+   "CD63",
+   "GNAS",
+   "RSRP1"
+  ],
+  "unsigned_chip_targets_FLAGGED": 341,
+  "n_catalyses": 2,
+  "catalyses": [
+   {
+    "id": "R-HSA-77081",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Capping complex (hydrolyzed)",
+     "GTP"
+    ],
+    "out": [
+     "Capping complex  (intermediate)",
+     "GDP"
+    ]
+   },
+   {
+    "id": "R-HSA-77083",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Capping complex  (intermediate)"
+    ],
+    "out": [
+     "Capping complex (GpppN..)"
+    ]
+   }
+  ],
+  "n_participates": 47,
+  "participates_in": [
+   {
+    "id": "R-HSA-113409",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "DSIF:NELF:early elongation complex"
+    ],
+    "out": [
+     "Aborted early elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-112379",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Early elongation complex with hyperphosphorylated Pol II CTD",
+     "TCEA1",
+     "FACT complex",
+     "Elongin Complex",
+     "TFIIH"
+    ],
+    "out": [
+     "Elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-113411",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "Processive elongation complex"
+    ],
+    "out": [
+     "Paused processive elongation complex"
+    ]
+   },
+   {
+    "id": "R-HSA-112381",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "DSIF:NELF:early elongation complex",
+     "P-TEFb complex",
+     "AFF4",
+     "EAF1",
+     "EAF2"
+    ],
+    "out": [
+     "Early elongation complex with hyperphosphorylated Pol II CTD",
+     "Cap Binding Complex (CBC)"
+    ]
+   },
+   {
+    "id": "R-HSA-112434",
+    "src": "reactome",
+    "where": [
+     "nucleus"
+    ],
+    "in": [
+     "SUPT4H1",
+     "p-SUPT5H"
+    ],
+    "out": [
+     "DSIF complex"
+    ]
+   }
+  ],
+  "reaction_partners": [
+   "POLR2C",
+   "POLR2L",
+   "POLR2A",
+   "POLR2J",
+   "POLR2H",
+   "POLR2I",
+   "POLR2B",
+   "POLR2K",
+   "POLR2E",
+   "POLR2F",
+   "GTF2F1",
+   "GTF2F2"
+  ],
+  "upstream_tfs": []
+ },
+ "TANGO6": {
+  "gene": "TANGO6",
+  "class": "no annotation context",
+  "protein_name": "Transport and Golgi organization protein 6 homolog",
+  "function": null,
+  "uniprot_location": "SUBCELLULAR LOCATION: Membrane; Single-pass membrane protein.",
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "TIMM23B": {
+  "gene": "TIMM23B",
+  "class": "no annotation context",
+  "protein_name": "Mitochondrial import inner membrane translocase subunit Tim23B",
+  "function": "May participate in the translocation of transit peptide-containing proteins across the mitochondrial inner membrane. the PAM complex (By similarity)..",
+  "uniprot_location": "SUBCELLULAR LOCATION: Mitochondrion inner membrane; Multi-pass membrane protein.",
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "UNC45A": {
+  "gene": "UNC45A",
+  "class": "no annotation context",
+  "protein_name": null,
+  "function": null,
+  "uniprot_location": null,
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ },
+ "UTP23": {
+  "gene": "UTP23",
+  "class": "no annotation context",
+  "protein_name": "rRNA-processing protein UTP23 homolog",
+  "function": "Involved in rRNA-processing and ribosome biogenesis..",
+  "uniprot_location": "SUBCELLULAR LOCATION: Nucleus, nucleolus.",
+  "compartments": [],
+  "pathways": [],
+  "n_pathways": 0,
+  "n_up": 0,
+  "n_down": 0,
+  "tf_targets_up": [],
+  "tf_targets_down": [],
+  "unsigned_chip_targets_FLAGGED": 0,
+  "n_catalyses": 0,
+  "catalyses": [],
+  "n_participates": 0,
+  "participates_in": [],
+  "reaction_partners": [],
+  "upstream_tfs": []
+ }
+}

@@ -140,8 +140,8 @@ def classify(gene, pathways, compartments, function_text):
     return hits
 
 
-def main():
-    doss = json.loads((OUT / "ko_pred_dossiers.json").read_text())
+def main(tag=""):
+    doss = json.loads((OUT / f"ko_pred_dossiers{tag}.json").read_text())
     cmap = json.loads((OUT / "consequence_map.json").read_text())
     paths = {}
     for line in (SP / "ReactomePathways.gmt").read_text().splitlines():
@@ -184,7 +184,7 @@ def main():
             "n_regulon": n_reg, "n_sensor": n_sensor,
             "predicted_genes": genes[:60],
         }
-    json.dump(preds, open(OUT / "ko_predictions_multilayer.json", "w"), indent=1)
+    json.dump(preds, open(OUT / f"ko_predictions_multilayer{tag}.json", "w"), indent=1)
     print(f"{len(preds)} multi-layer predictions")
     print("  lesion classes assigned:")
     for c, n in stats.most_common():
@@ -193,8 +193,9 @@ def main():
     print(f"  prediction size median {sz[len(sz)//2]}, empty {sum(1 for s in sz if s == 0)}")
     print(f"  p53 sensor defined but NOT used: K562 is TP53-null ({len(ABSENT_IN_K562['p53_dna_damage'])} genes "
           f"withheld)")
-    print(f"  -> {OUT/'ko_predictions_multilayer.json'}")
+    print(f"  -> {OUT/('ko_predictions_multilayer'+tag+'.json')}")
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    main(sys.argv[1] if len(sys.argv) > 1 else "")
