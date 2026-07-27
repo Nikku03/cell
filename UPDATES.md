@@ -11784,3 +11784,86 @@ One more defect found by reading the data rather than the summary: the rule buil
 returned None for anything deeper, and Reactome complexes nest complexes far past that. It would have dropped
 exactly the largest assemblies this work is about, and the failure would have read as sparse annotation. Cap raised
 to 24 with a visited-set guard.
+
+---
+
+# Rescoring every method on the genome-wide readout: the predictor does not survive it
+
+`colab/gwps_rebuild.py` · `colab/ko_predict.py` (`CELL_READOUT=gwps`, `KO_NPICK`)
+
+The rebuild existed to fix a power problem: every comparison this project ran came back "indistinguishable" on
+n ≤ 39. It fixed it. What the added power shows is that none of the methods work.
+
+## Protocol
+
+Cohorts rebuilt on the gwps readout — **200 knockouts each, disjoint**, identical class-balanced round-robin
+selection (40 per functional class in both), never by effect size. Cohort 1 median 8 movers (range 5–294), cohort 2
+median 12 (5–443). All eight predictor modules re-run; all 17 prediction files scored.
+
+## Result
+
+| cohort 1 (150–187 scored) | precision | frequency baseline | beats freq |
+|---|---:|---:|---:|
+| multilayer (the incumbent) | 0.0140 | 0.1379 | 9/150 |
+| abl_fallback | 0.0134 | 0.1382 | 9/150 |
+| abl_combined | 0.0131 | 0.1390 | 8/150 |
+| cascade | 0.0115 | 0.1273 | 6/158 |
+| mmw_uniform / walk / shuffled | 0.0112–0.0139 | ~0.107 | 6–7/187 |
+| flux map | 0.0028 | 0.1210 | 1/185 |
+
+| cohort 2 holdout | precision | frequency baseline | beats freq |
+|---|---:|---:|---:|
+| multilayer | 0.0377 | 0.1610 | 12/148 |
+| abl_fallback | 0.0332 | 0.1638 | 11/148 |
+| abl_combined | 0.0326 | 0.1588 | 11/148 |
+
+**Every method loses to the frequency baseline by 4–10×, on both cohorts, and beats it on 4–8% of knockouts.**
+
+## The control settles it
+
+Precision across different `n` is not comparable, so paired on shared knockouts:
+
+    COHORT 1   multilayer 0.0182  vs  its SHUFFLED control 0.0161   +3/-2   sign p = 1.000
+    COHORT 2   multilayer 0.0367  vs  its SHUFFLED control 0.0400   +3/-7   sign p = 0.344
+
+**The shuffled control is indistinguishable from the real method on cohort 1 and nominally better on cohort 2.**
+On this readout the multi-layer reasoner carries no measurable signal.
+
+## It is not a technical artifact
+
+Checked before concluding, because a gene-universe mismatch would produce exactly this collapse:
+
+    sensor-programme genes present in the gwps universe   85/89 (96%)   — the OLD universe had only 81/89
+    multilayer's predicted genes present                  535/597 (90%)
+    truth movers present                                  100%
+
+The predictions are being scored against genes that exist. The collapse is real.
+
+## Why the old number was higher — measured, and only partly what I assumed
+
+The incumbent scored 0.0786 on the old readout. I assumed the top-250 truncation was the cause: that it made the
+truth set a stress-enriched slice which fixed sensor programmes happen to cover. That is **half right**.
+
+    sensor-programme genes, rank within a knockout's |z| ordering of 8,246 genes:
+        median rank 3,197 · in top 250 for 8.9% of cases · uniform would be 3.0%
+
+So sensor programmes **are** ~3× enriched among the strongest movers — a real effect, just far too small to beat
+frequency. But the truncation itself explains less than expected: **99.9% of truth movers fall inside the top 250
+anyway**, because clearing |z| ≥ 1 essentially means being top-ranked. The dominant difference is therefore the
+COHORT, not the truncation: the old 1,400 knockouts were a curated strong subset yielding 39 scorable, while the
+genome-wide set yields 150 from a far more representative draw. The old number was measured on the easy tail.
+
+## What this retires
+
+**The 0.0786/0.0685 incumbent result does not generalise.** It was the best of seven methods and the only one with
+two agreeing measurements, and it does not survive a larger, un-truncated, more representative readout. It should
+not be cited as this project's predictor performance.
+
+What survives is the negative structure that was already emerging: predicting transcriptional response is nearly
+disjoint from modelling flux, and a frequency baseline that uses no biology at all remains unbeaten. The rebuild
+did not create that conclusion — it removed the sample-size excuse for doubting it.
+
+Also noted: **tide is 3 genes on this readout, not 43.** `TIDE_FRAC = 0.05` was tuned when 1,400 mostly-strong
+perturbations made ribosomal and mtDNA-OXPHOS genes move in >5% of them. Across 5,120 genome-wide perturbations
+almost nothing does, so tide-removal barely changes the truth set and the tide-null is no longer the meaningful
+bar it was designed to be. That threshold needs re-deriving, not re-running.
