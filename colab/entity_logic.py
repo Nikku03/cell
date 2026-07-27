@@ -232,7 +232,7 @@ def fetch_entities(seed):
                 if rec.get("dbId"):
                     cache[str(rec["dbId"])] = rec_out
                 got_any.add(sid)
-            if i and i % (BATCH * 40) == 0:
+            if i and i % (BATCH * 10) == 0:
                 json.dump(cache, open(CACHE, "w"))
                 print(f"    {i:,}/{len(todo):,} (checkpoint)")
         # anything requested but not returned is marked so it is not retried forever
@@ -323,7 +323,7 @@ def main():
             sid = rec.get("stId") or str(rec.get("dbId"))
             ca_of[sid] = [str(c["dbId"]) for c in (rec.get("catalystActivity") or [])
                           if isinstance(c, dict) and c.get("dbId")]
-        if i and i % (BATCH * 40) == 0:
+        if i and i % (BATCH * 10) == 0:
             print(f"    hop1 reactions {i:,}/{len(todo):,}")
     allca = sorted({c for v in ca_of.values() for c in v})
     print(f"  hop 1: {len(allca):,} CatalystActivity records referenced by {len(ca_of):,} reactions")
@@ -345,7 +345,7 @@ def main():
                     ents = got          # activeUnit is the catalytic part; prefer it over the whole complex
                     break
             ca_ent[cid] = ents
-        if i and i % (BATCH * 40) == 0:
+        if i and i % (BATCH * 10) == 0:
             print(f"    hop2 activities {i:,}/{len(allca):,}")
     for sid, cids in ca_of.items():
         rc[sid] = sorted({e for c in cids for e in ca_ent.get(c, [])})
