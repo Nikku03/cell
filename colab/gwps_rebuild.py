@@ -95,6 +95,18 @@ def load_gwps():
         else:
             vg = [x.decode() if isinstance(x, bytes) else str(x) for x in raw]
     X = f["X"][:]
+    # NON-FINITE VALUES IN THE SOURCE MATRIX. The shipped X contains infinities -- 3,437 of them across 1,157 of
+    # 5,120 perturbations and 73 genes, almost certainly a divide-by-near-zero in the upstream normalisation.
+    # They are NOT harmless: the mover test is |z| >= 1, and inf passes it, so 10.4% of all specific-mover calls
+    # and 10.7% of cohort 1's truth entries were infinities being scored as real biology. Set to zero (i.e. "no
+    # measured change") rather than dropped, so the gene and perturbation are kept and only the unusable cell is
+    # neutralised. Counted and printed, because a silent sanitisation is how the original problem got in.
+    nbad = int((~np.isfinite(X)).sum())
+    if nbad:
+        rows = int((~np.isfinite(X)).any(1).sum())
+        print(f"  NON-FINITE in source X: {nbad:,} cells across {rows:,} rows -- set to 0 (unmeasurable, "
+              f"not zero-effect); they would otherwise pass the |z|>=1 mover test")
+        X = np.where(np.isfinite(X), X, 0.0)
     p = obs["energy_test_p_value"][:]
     nc = obs["num_cells_filtered"][:]
     return X, np.array(sym), np.array(pset), np.array(vg), p, nc

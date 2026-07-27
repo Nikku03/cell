@@ -1,61 +1,169 @@
 {
- "HSF1": {
+ "GTF2A2": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 7 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 7,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "GAPDH",
+   "HMGA1",
+   "RPL10",
+   "RPL28",
+   "RPS3",
+   "RPS9",
+   "TPT1",
+   "TBP",
+   "GTF2A1",
+   "TAF11",
+   "TAF13",
+   "TAF8",
+   "TAF6",
+   "TAF9",
+   "TAF5",
+   "GTF2F2",
+   "GTF2F1",
+   "GTF2B",
+   "POLR2H"
+  ]
+ },
+ "HARS": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
+ },
+ "HDAC7": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 5 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 5,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "ACTN4",
+   "MAML1",
+   "MEF2A",
+   "MEF2C",
+   "HIF1A",
+   "HDAC2",
+   "HDAC5",
+   "HDAC3",
+   "HDAC1",
+   "NCOR1",
+   "SNW1",
+   "TBL1X",
+   "HDAC4",
+   "HDAC11",
+   "HDAC6",
+   "NCOR2",
+   "RBPJ"
+  ]
+ },
+ "HINFP": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 9 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 9,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "ACP5",
+   "MBD2",
+   "SLC7A8",
+   "CDK2",
+   "CHKA",
+   "EIF4G1",
+   "FGFR1",
+   "NPAT",
+   "RB1"
+  ]
+ },
+ "HMBOX1": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 3 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 3,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "CKLF",
+   "SOCS2",
+   "LAMP1"
+  ]
+ },
+ "HMGB3": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
+ },
+ "HNRNPC": {
+  "lesions": [
+   "translation_stress"
+  ],
+  "sensors": [
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['translation_stress']; 1 direct regulon targets + 11 sensor-programme genes",
+  "n_regulon": 1,
+  "n_sensor": 11,
+  "predicted_genes": [
+   "MDK",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "HNRNPK": {
+  "lesions": [
+   "translation_stress"
+  ],
+  "sensors": [
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['translation_stress']; 1 direct regulon targets + 11 sensor-programme genes",
+  "n_regulon": 1,
+  "n_sensor": 11,
+  "predicted_genes": [
+   "RPL17",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "HSPA8": {
   "lesions": [
    "er_stress",
-   "mito_stress",
-   "proteotoxic"
+   "proteotoxic",
+   "translation_stress"
   ],
   "sensors": [
    "er_stress: unfolded/mistranslocated protein in the ER lumen -> PERK/IRE1/ATF6 -> XBP1s, ATF4, ATF6f",
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
-   "proteotoxic: unfolded protein in the cytosol -> HSF1 trimerises and enters the nucleus"
+   "proteotoxic: unfolded protein in the cytosol -> HSF1 trimerises and enters the nucleus",
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
   ],
-  "reasoning": "lesion classes ['er_stress', 'mito_stress', 'proteotoxic']; 42 direct regulon targets + 36 sensor-programme genes",
-  "n_regulon": 42,
-  "n_sensor": 36,
+  "reasoning": "lesion classes ['er_stress', 'proteotoxic', 'translation_stress']; 0 direct regulon targets + 37 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 37,
   "predicted_genes": [
-   "DNAJB6",
-   "HMGB1",
-   "ABCB6",
-   "ATF3",
-   "ATG7",
-   "BAG3",
-   "CDKN1B",
-   "CLU",
-   "DLG1",
-   "DNAJB1",
-   "FKBP4",
-   "FOXM1",
-   "HNRNPA2B1",
-   "HSF2",
-   "HSP90AA1",
-   "HSP90AB1",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA4",
-   "HSPA8",
-   "HSPA9",
-   "HSPB1",
-   "HSPH1",
-   "ICAM1",
-   "IER5",
-   "JUN",
-   "KCNH2",
-   "KRAS",
-   "LDHA",
-   "MCL1",
-   "MICB",
-   "NFKB1",
-   "POLK",
-   "PRKACA",
-   "RELA",
-   "SERPINH1",
-   "SLC6A6",
-   "SPI1",
-   "STIP1",
-   "SUMO1",
-   "TXN",
-   "UBB",
    "HSPA5",
    "XBP1",
    "DDIT3",
@@ -73,7 +181,126 @@
    "ATF4",
    "MANF",
    "CRELD2",
-   "ATF5"
+   "HSPA1A",
+   "HSPA1B",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "HSPA9": {
+  "lesions": [
+   "er_stress",
+   "mito_stress",
+   "proteotoxic"
+  ],
+  "sensors": [
+   "er_stress: unfolded/mistranslocated protein in the ER lumen -> PERK/IRE1/ATF6 -> XBP1s, ATF4, ATF6f",
+   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
+   "proteotoxic: unfolded protein in the cytosol -> HSF1 trimerises and enters the nucleus"
+  ],
+  "reasoning": "lesion classes ['er_stress', 'mito_stress', 'proteotoxic']; 0 direct regulon targets + 43 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 43,
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "MANF",
+   "CRELD2",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "VEGFA",
+   "NUPR1",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "IARS": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
+ },
+ "IARS2": {
+  "lesions": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "sensors": [
+   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['mito_stress', 'translation_stress']; 0 direct regulon targets + 17 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 17,
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "NUPR1"
   ]
  },
  "IDH3B": {
@@ -126,16 +353,13 @@
    "IMPDH1"
   ]
  },
- "ING1": {
+ "INF2": {
   "lesions": [],
   "sensors": [],
-  "reasoning": "lesion classes none; 2 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 2,
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
   "n_sensor": 0,
-  "predicted_genes": [
-   "BAX",
-   "CASP3"
-  ]
+  "predicted_genes": []
  },
  "INPPL1": {
   "lesions": [],
@@ -144,19 +368,27 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": [
-   "NT5DC3",
-   "FIG4",
+   "MTMR8",
    "MTMR2",
+   "INPP5F",
    "CTDSPL2",
    "TNS2",
+   "NT5DC3",
    "PTPRQ",
-   "SACM1L",
-   "MTMR8",
-   "INPP5F",
    "MTMR6",
+   "SACM1L",
+   "FIG4",
    "INPP5D",
-   "MDP1"
+   "MTMR1"
   ]
+ },
+ "INTS9": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
  },
  "IP6K1": {
   "lesions": [],
@@ -166,50 +398,52 @@
   "n_sensor": 0,
   "predicted_genes": [
    "PPIP5K1",
+   "PPIP5K2",
    "IP6K2",
-   "IP6K3",
-   "PPIP5K2"
+   "IP6K3"
   ]
  },
- "ISCA2": {
+ "IPO13": {
   "lesions": [
-   "iron_low",
-   "mito_stress"
+   "export_block"
   ],
   "sensors": [
-   "iron_low: low labile iron / failed Fe-S cluster assembly -> IRP1/IRP2 bind IREs -- stabilise TFRC mRNA, block ferritin translation",
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4"
+   "export_block: mRNA retained in the nucleus, cytoplasmic mRNA falls -> reduced translational load feeds the eIF2a axis"
   ],
-  "reasoning": "lesion classes ['iron_low', 'mito_stress']; 0 direct regulon targets + 26 sensor-programme genes",
+  "reasoning": "lesion classes ['export_block']; 0 direct regulon targets + 6 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 26,
+  "n_sensor": 6,
   "predicted_genes": [
-   "TFRC",
-   "SLC11A2",
-   "STEAP3",
-   "ACO1",
-   "IREB2",
-   "FTL",
-   "FTH1",
-   "ALAS2",
-   "SLC25A37",
+   "ATF4",
+   "DDIT3",
+   "SESN2",
+   "EIF4EBP1",
+   "SLC3A2",
+   "TRIB3"
+  ]
+ },
+ "ISG20L2": {
+  "lesions": [
+   "translation_stress"
+  ],
+  "sensors": [
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 11,
+  "predicted_genes": [
    "ATF4",
    "ATF5",
    "DDIT3",
    "TRIB3",
    "SESN2",
    "MTHFD2",
-   "MTHFD2L",
    "SHMT2",
-   "CEBPB",
-   "SLC7A11",
    "SLC3A2",
+   "SLC7A11",
    "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
+   "CEBPB"
   ]
  },
  "KANSL2": {
@@ -219,14 +453,14 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": [
-   "HCFC1",
-   "MCRS1",
+   "PHF20",
    "WDR5",
+   "MCRS1",
    "KANSL3",
    "KAT8",
-   "PHF20",
-   "KANSL1",
    "OGT",
+   "KANSL1",
+   "HCFC1",
    "PHF20L1"
   ]
  },
@@ -240,17 +474,17 @@
    "FGFR1",
    "KAT2B",
    "SMARCA2",
-   "HCFC1",
-   "MCRS1",
-   "WDR5",
-   "KANSL3",
    "PHF20",
-   "KANSL1",
-   "KANSL2",
+   "WDR5",
+   "MCRS1",
+   "KANSL3",
    "OGT",
+   "KANSL1",
+   "HCFC1",
+   "KANSL2",
    "PHF20L1",
-   "EP300",
-   "CDY2B"
+   "CREBBP",
+   "KAT6A"
   ]
  },
  "KDM1A": {
@@ -277,77 +511,13 @@
    "DHCR7"
   ]
  },
- "LACTB": {
-  "lesions": [
-   "mito_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4"
-  ],
-  "reasoning": "lesion classes ['mito_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
- "LAMTOR4": {
+ "KRI1": {
   "lesions": [],
   "sensors": [],
   "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
   "n_regulon": 0,
   "n_sensor": 0,
-  "predicted_genes": [
-   "LAMTOR3",
-   "LAMTOR2",
-   "LAMTOR1",
-   "LAMTOR5",
-   "RRAGA",
-   "RRAGB",
-   "RRAGC",
-   "RRAGD",
-   "SLC38A9",
-   "MTOR",
-   "RPTOR",
-   "MLST8"
-  ]
- },
- "LAMTOR5": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": [
-   "LAMTOR3",
-   "LAMTOR2",
-   "LAMTOR1",
-   "LAMTOR4",
-   "RRAGA",
-   "RRAGB",
-   "RRAGC",
-   "RRAGD",
-   "SLC38A9",
-   "MTOR",
-   "RPTOR",
-   "MLST8"
-  ]
+  "predicted_genes": []
  },
  "LARS": {
   "lesions": [],
@@ -390,37 +560,6 @@
   ]
  },
  "LEPROTL1": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "LITAF": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 14 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 14,
-  "n_sensor": 0,
-  "predicted_genes": [
-   "BRAF",
-   "FURIN",
-   "GADD45A",
-   "HSPA5",
-   "KRT8",
-   "MAFG",
-   "MAPK1",
-   "MAPK14",
-   "MCAT",
-   "MDM2",
-   "MRPL41",
-   "MYD88",
-   "PIK3R1",
-   "VEGFA"
-  ]
- },
- "LLPH": {
   "lesions": [],
   "sensors": [],
   "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
@@ -474,14 +613,6 @@
    "NUPR1"
   ]
  },
- "LRBA": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
  "LRIF1": {
   "lesions": [],
   "sensors": [],
@@ -490,7 +621,45 @@
   "n_sensor": 0,
   "predicted_genes": []
  },
+ "LRSAM1": {
+  "lesions": [
+   "proteasome_loss"
+  ],
+  "sensors": [
+   "proteasome_loss: reduced proteasome capacity -> NFE2L1 escapes ERAD degradation -> bounce-back response"
+  ],
+  "reasoning": "lesion classes ['proteasome_loss']; 0 direct regulon targets + 17 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 17,
+  "predicted_genes": [
+   "PSMA1",
+   "PSMA3",
+   "PSMA4",
+   "PSMA5",
+   "PSMA7",
+   "PSMB1",
+   "PSMB3",
+   "PSMB4",
+   "PSMB5",
+   "PSMB6",
+   "PSMC1",
+   "PSMC2",
+   "PSMD1",
+   "PSMD2",
+   "PSMD11",
+   "POMP",
+   "NFE2L1"
+  ]
+ },
  "LSG1": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
+ },
+ "LUC7L3": {
   "lesions": [],
   "sensors": [],
   "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
@@ -537,8 +706,8 @@
   "predicted_genes": [
    "MAP2K4",
    "MAPK8",
-   "MAPK10",
    "MAPK9",
+   "MAPK10",
    "MAP3K1",
    "MAP3K7"
   ]
@@ -552,46 +721,6 @@
   "predicted_genes": []
  },
  "MARS": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "MARS2": {
-  "lesions": [
-   "mito_stress",
-   "translation_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['mito_stress', 'translation_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
- "MAST1": {
   "lesions": [],
   "sensors": [],
   "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
@@ -631,17 +760,17 @@
    "STAT5A",
    "TRRAP",
    "YBX1",
-   "MGA",
    "TFDP1",
+   "MGA",
    "E2F6",
-   "EHMT2",
    "EHMT1",
+   "EHMT2",
+   "PCGF6",
    "YAF2",
-   "L3MBTL2",
-   "RNF2",
    "CBX3",
-   "RING1",
-   "PCGF6"
+   "RNF2",
+   "L3MBTL2",
+   "RING1"
   ]
  },
  "MBNL1": {
@@ -714,18 +843,18 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": [
-   "MCM6",
    "MCM7",
+   "MCM6",
    "MCM4",
    "MCM5",
    "MCM3",
-   "ORC3",
+   "CDC6",
    "ORC5",
    "ORC4",
    "ORC2",
    "ORC6",
-   "CDC6",
-   "ORC1"
+   "ORC1",
+   "ORC3"
   ]
  },
  "MCM3": {
@@ -737,16 +866,16 @@
   "predicted_genes": [
    "MCM5",
    "MCM2",
-   "MCM6",
    "MCM7",
+   "MCM6",
    "MCM4",
-   "ORC3",
+   "CDC6",
    "ORC5",
    "ORC4",
    "ORC2",
    "ORC6",
-   "CDC6",
-   "ORC1"
+   "ORC1",
+   "ORC3"
   ]
  },
  "MCM3AP": {
@@ -764,18 +893,18 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": [
-   "MCM6",
    "MCM7",
+   "MCM6",
    "MCM2",
    "MCM5",
    "MCM3",
-   "ORC3",
+   "CDC6",
    "ORC5",
    "ORC4",
    "ORC2",
    "ORC6",
-   "CDC6",
-   "ORC1"
+   "ORC1",
+   "ORC3"
   ]
  },
  "MCM6": {
@@ -790,13 +919,13 @@
    "MCM2",
    "MCM5",
    "MCM3",
-   "ORC3",
+   "CDC6",
    "ORC5",
    "ORC4",
    "ORC2",
    "ORC6",
-   "CDC6",
-   "ORC1"
+   "ORC1",
+   "ORC3"
   ]
  },
  "MDN1": {
@@ -905,16 +1034,16 @@
    "SUMO1",
    "TPM1",
    "ZEB2",
-   "MEF2D",
    "MEF2B",
+   "MEF2D",
    "MAPK7",
    "MAPK12",
    "MAPK11",
-   "TCF4",
-   "MYF6",
+   "MYF5",
    "MYOG",
    "TCF3",
-   "TCF12"
+   "MYF6",
+   "TCF4"
   ]
  },
  "MEIS3": {
@@ -935,38 +1064,6 @@
   "n_sensor": 0,
   "predicted_genes": []
  },
- "METTL1": {
-  "lesions": [
-   "translation_stress"
-  ],
-  "sensors": [
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 11,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
-  ]
- },
- "METTL14": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
  "METTL16": {
   "lesions": [],
   "sensors": [],
@@ -974,30 +1071,6 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": []
- },
- "METTL21A": {
-  "lesions": [
-   "translation_stress"
-  ],
-  "sensors": [
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 11,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
-  ]
  },
  "MIER1": {
   "lesions": [],
@@ -1010,49 +1083,6 @@
   ]
  },
  "MIIP": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "MKNK2": {
-  "lesions": [
-   "iron_low",
-   "translation_stress"
-  ],
-  "sensors": [
-   "iron_low: low labile iron / failed Fe-S cluster assembly -> IRP1/IRP2 bind IREs -- stabilise TFRC mRNA, block ferritin translation",
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['iron_low', 'translation_stress']; 0 direct regulon targets + 20 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 20,
-  "predicted_genes": [
-   "TFRC",
-   "SLC11A2",
-   "STEAP3",
-   "ACO1",
-   "IREB2",
-   "FTL",
-   "FTH1",
-   "ALAS2",
-   "SLC25A37",
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
-  ]
- },
- "MKS1": {
   "lesions": [],
   "sensors": [],
   "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
@@ -1085,71 +1115,7 @@
    "HSPE1"
   ]
  },
- "MRPL17": {
-  "lesions": [
-   "mito_stress",
-   "translation_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['mito_stress', 'translation_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
  "MRPL19": {
-  "lesions": [
-   "mito_stress",
-   "translation_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['mito_stress', 'translation_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
- "MRPL20": {
   "lesions": [
    "mito_stress",
    "translation_stress"
@@ -1725,71 +1691,7 @@
    "NUPR1"
   ]
  },
- "MRPL50": {
-  "lesions": [
-   "mito_stress",
-   "translation_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['mito_stress', 'translation_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
  "MRPL52": {
-  "lesions": [
-   "mito_stress",
-   "translation_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['mito_stress', 'translation_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
- "MRPL54": {
   "lesions": [
    "mito_stress",
    "translation_stress"
@@ -1886,38 +1788,6 @@
   ]
  },
  "MRPS18A": {
-  "lesions": [
-   "mito_stress",
-   "translation_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['mito_stress', 'translation_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
- "MRPS2": {
   "lesions": [
    "mito_stress",
    "translation_stress"
@@ -2053,38 +1923,6 @@
   "n_sensor": 0,
   "predicted_genes": []
  },
- "MTFMT": {
-  "lesions": [
-   "mito_stress",
-   "translation_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['mito_stress', 'translation_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
  "MTHFD1": {
   "lesions": [
    "mito_stress"
@@ -2093,38 +1931,6 @@
    "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4"
   ],
   "reasoning": "lesion classes ['mito_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
- "MTIF2": {
-  "lesions": [
-   "mito_stress",
-   "translation_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4",
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['mito_stress', 'translation_stress']; 0 direct regulon targets + 17 sensor-programme genes",
   "n_regulon": 0,
   "n_sensor": 17,
   "predicted_genes": [
@@ -2355,14 +2161,14 @@
    "HSPA4",
    "HSPA5",
    "IGF1R",
-   "TAL1",
    "TCF3",
-   "GATA3",
-   "CBFB",
-   "LMO2",
-   "LDB1",
+   "TAL1",
    "LMO1",
+   "CBFB",
+   "GATA3",
+   "LDB1",
    "TCF12",
+   "LMO2",
    "SPI1",
    "FLI1"
   ]
@@ -2374,18 +2180,18 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": [
-   "POLR1G",
-   "SF3B1",
-   "POLR2H",
-   "MYO1C",
-   "DDX21",
-   "TAF1D",
    "POLR1D",
-   "POLR1A",
-   "TAF1A",
+   "POLR2H",
+   "TAF1C",
+   "POLR2E",
+   "TAF1B",
+   "DEK",
+   "POLR1F",
+   "TBP",
+   "POLR2K",
+   "POLR1G",
    "BAZ1B",
-   "POLR2L",
-   "TAF1C"
+   "TAF1D"
   ]
  },
  "MYCN": {
@@ -2466,14 +2272,6 @@
   "n_sensor": 0,
   "predicted_genes": []
  },
- "N4BP2L2": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
  "NAA20": {
   "lesions": [],
   "sensors": [],
@@ -2489,36 +2287,6 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": []
- },
- "NAA30": {
-  "lesions": [
-   "er_stress"
-  ],
-  "sensors": [
-   "er_stress: unfolded/mistranslocated protein in the ER lumen -> PERK/IRE1/ATF6 -> XBP1s, ATF4, ATF6f"
-  ],
-  "reasoning": "lesion classes ['er_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "ATF4",
-   "MANF",
-   "CRELD2"
-  ]
  },
  "NAA38": {
   "lesions": [
@@ -2598,39 +2366,6 @@
    "CEBPB"
   ]
  },
- "NAP1L1": {
-  "lesions": [
-   "export_block",
-   "proteotoxic"
-  ],
-  "sensors": [
-   "export_block: mRNA retained in the nucleus, cytoplasmic mRNA falls -> reduced translational load feeds the eIF2a axis",
-   "proteotoxic: unfolded protein in the cytosol -> HSF1 trimerises and enters the nucleus"
-  ],
-  "reasoning": "lesion classes ['export_block', 'proteotoxic']; 0 direct regulon targets + 18 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 18,
-  "predicted_genes": [
-   "ATF4",
-   "DDIT3",
-   "SESN2",
-   "EIF4EBP1",
-   "SLC3A2",
-   "TRIB3",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1"
-  ]
- },
  "NARS": {
   "lesions": [],
   "sensors": [],
@@ -2638,66 +2373,6 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": []
- },
- "NASP": {
-  "lesions": [
-   "proteotoxic"
-  ],
-  "sensors": [
-   "proteotoxic: unfolded protein in the cytosol -> HSF1 trimerises and enters the nucleus"
-  ],
-  "reasoning": "lesion classes ['proteotoxic']; 0 direct regulon targets + 12 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 12,
-  "predicted_genes": [
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1"
-  ]
- },
- "NBPF12": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "NCAM2": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "NCAPG": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": [
-   "SMC2",
-   "NCAPD2",
-   "SMC4",
-   "NCAPH",
-   "CCNB1",
-   "CCNB2",
-   "CDK1",
-   "CSNK2B",
-   "CSNK2A1",
-   "CSNK2A2"
-  ]
  },
  "NCBP1": {
   "lesions": [],
@@ -2707,16 +2382,16 @@
   "n_sensor": 0,
   "predicted_genes": [
    "NCBP2",
-   "GTF2F2",
-   "POLR2H",
-   "POLR2C",
    "GTF2F1",
-   "POLR2I",
-   "POLR2A",
+   "POLR2H",
    "POLR2B",
-   "POLR2L",
+   "POLR2E",
+   "GTF2F2",
+   "POLR2K",
    "POLR2D",
-   "POLR2J",
+   "POLR2L",
+   "POLR2I",
+   "POLR2F",
    "POLR2G"
   ]
  },
@@ -2728,16 +2403,16 @@
   "n_sensor": 0,
   "predicted_genes": [
    "NCBP1",
-   "GTF2F2",
-   "POLR2H",
-   "POLR2C",
    "GTF2F1",
-   "POLR2I",
-   "POLR2A",
+   "POLR2H",
    "POLR2B",
-   "POLR2L",
+   "POLR2E",
+   "GTF2F2",
+   "POLR2K",
    "POLR2D",
-   "POLR2J",
+   "POLR2L",
+   "POLR2I",
+   "POLR2F",
    "POLR2G"
   ]
  },
@@ -2748,11 +2423,11 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": [
-   "CYFIP1",
-   "NCKAP1L",
    "WASF2",
-   "ABI2",
    "ABI1",
+   "CYFIP1",
+   "ABI2",
+   "NCKAP1L",
    "BRK1",
    "WASF1",
    "BAIAP2",
@@ -2770,115 +2445,17 @@
   "n_sensor": 0,
   "predicted_genes": [
    "WASL",
-   "WAS",
-   "WIPF1",
-   "WIPF3",
-   "GRB2",
    "WIPF2",
-   "CDC42",
+   "WIPF1",
    "NCK1",
-   "WASF3",
-   "ARPC2",
-   "BAIAP2",
-   "ARPC3"
-  ]
- },
- "NDRG3": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "NDUFA3": {
-  "lesions": [
-   "mito_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4"
-  ],
-  "reasoning": "lesion classes ['mito_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
- "NDUFA6": {
-  "lesions": [
-   "mito_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4"
-  ],
-  "reasoning": "lesion classes ['mito_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
- "NDUFAF1": {
-  "lesions": [
-   "mito_stress"
-  ],
-  "sensors": [
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4"
-  ],
-  "reasoning": "lesion classes ['mito_stress']; 0 direct regulon targets + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
+   "CDC42",
+   "WIPF3",
+   "WAS",
+   "GRB2",
+   "NCKAP1",
+   "ARPC5",
+   "RAC1",
+   "WASF3"
   ]
  },
  "NDUFAF5": {
@@ -2969,18 +2546,48 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": [
+   "NELFE",
    "NELFB",
    "NELFCD",
-   "NELFE",
-   "GTF2F2",
-   "POLR2H",
-   "POLR2C",
    "GTF2F1",
-   "POLR2I",
-   "POLR2A",
+   "SUPT5H",
+   "POLR2H",
    "POLR2B",
-   "POLR2L",
+   "CTDP1",
+   "POLR2E",
+   "GTF2F2",
+   "POLR2K",
    "POLR2D"
+  ]
+ },
+ "NELFB": {
+  "lesions": [
+   "mito_stress"
+  ],
+  "sensors": [
+   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4"
+  ],
+  "reasoning": "lesion classes ['mito_stress']; 0 direct regulon targets + 17 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 17,
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "NUPR1"
   ]
  },
  "NELFCD": {
@@ -2991,17 +2598,38 @@
   "n_sensor": 0,
   "predicted_genes": [
    "CTNNB1",
+   "NELFE",
    "NELFB",
    "NELFA",
-   "NELFE",
-   "GTF2F2",
-   "POLR2H",
-   "POLR2C",
    "GTF2F1",
-   "POLR2I",
-   "POLR2A",
+   "SUPT5H",
+   "POLR2H",
    "POLR2B",
-   "POLR2L",
+   "CTDP1",
+   "POLR2E",
+   "GTF2F2",
+   "POLR2K",
+   "POLR2D"
+  ]
+ },
+ "NELFE": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "NELFB",
+   "NELFCD",
+   "NELFA",
+   "GTF2F1",
+   "SUPT5H",
+   "POLR2H",
+   "POLR2B",
+   "CTDP1",
+   "POLR2E",
+   "GTF2F2",
+   "POLR2K",
    "POLR2D"
   ]
  },
@@ -3013,71 +2641,18 @@
   "n_sensor": 0,
   "predicted_genes": [
    "MYC",
-   "SPRED3",
-   "SPRED1",
    "SPRED2",
+   "SPRED1",
+   "SPRED3",
    "NRAS",
-   "HRAS",
    "KRAS",
+   "HRAS",
    "RASA2",
-   "SYNGAP1",
    "RASA1",
-   "RASAL3",
-   "RASA3",
-   "RASAL2"
-  ]
- },
- "NFATC3": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 12 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 12,
-  "n_sensor": 0,
-  "predicted_genes": [
-   "B3GAT3",
-   "COX20",
-   "ATF3",
-   "CTSD",
-   "DDIT4",
-   "DNAJB6",
-   "FASTK",
-   "JUN",
-   "LMBR1",
-   "PIAS2",
-   "TNFSF10",
-   "TSC2",
-   "PPP3CB",
-   "NFATC1",
-   "NFATC2",
-   "CALM1",
-   "PPP3R1",
-   "PPP3CA"
-  ]
- },
- "NFRKB": {
-  "lesions": [
-   "translation_stress"
-  ],
-  "sensors": [
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['translation_stress']; 2 direct regulon targets + 11 sensor-programme genes",
-  "n_regulon": 2,
-  "n_sensor": 11,
-  "predicted_genes": [
-   "COPZ1",
-   "JUN",
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
+   "RASAL2",
+   "DAB2IP",
+   "RASAL1",
+   "RASA4"
   ]
  },
  "NFYC": {
@@ -3157,14 +2732,6 @@
    "CEBPB"
   ]
  },
- "NIPAL3": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
  "NIPBL": {
   "lesions": [],
   "sensors": [],
@@ -3174,15 +2741,15 @@
   "predicted_genes": [
    "PMAIP1",
    "NPM1",
-   "SMC3",
-   "STAG2",
-   "PDS5B",
-   "STAG1",
-   "SMC1A",
    "RAD21",
-   "PDS5A",
+   "STAG1",
+   "SMC3",
    "WAPL",
-   "MAU2"
+   "MAU2",
+   "PDS5B",
+   "STAG2",
+   "PDS5A",
+   "SMC1A"
   ]
  },
  "NKX6-1": {
@@ -3212,6 +2779,30 @@
   "n_sensor": 0,
   "predicted_genes": []
  },
+ "NOC4L": {
+  "lesions": [
+   "translation_stress"
+  ],
+  "sensors": [
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 11,
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
  "NOL10": {
   "lesions": [],
   "sensors": [],
@@ -3219,6 +2810,54 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": []
+ },
+ "NOL11": {
+  "lesions": [
+   "translation_stress"
+  ],
+  "sensors": [
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 11,
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "NOL6": {
+  "lesions": [
+   "translation_stress"
+  ],
+  "sensors": [
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 11,
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
  },
  "NOL8": {
   "lesions": [
@@ -3244,7 +2883,7 @@
    "CEBPB"
   ]
  },
- "NOLC1": {
+ "NOL9": {
   "lesions": [
    "translation_stress"
   ],
@@ -3269,6 +2908,30 @@
   ]
  },
  "NOP10": {
+  "lesions": [
+   "translation_stress"
+  ],
+  "sensors": [
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 11,
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "NOP14": {
   "lesions": [
    "translation_stress"
   ],
@@ -3337,86 +3000,31 @@
    "RASA1",
    "SIRT1",
    "VEGFA",
-   "RARA",
-   "NR4A1",
-   "PPARA",
-   "NR2C1",
-   "NR3C2",
-   "NR4A2",
-   "HNF4G",
-   "RXRB",
-   "NR5A2",
-   "NR1D2",
-   "RORB",
-   "NR1H3"
+   "NR4A3",
+   "NR1D1",
+   "PGR",
+   "NR1I2",
+   "ESRRB",
+   "ESR2",
+   "NR5A1",
+   "NR2F6",
+   "RXRA",
+   "AR",
+   "RORC",
+   "RORB"
   ]
  },
- "NRDE2": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "NRF1": {
+ "NRBP1": {
   "lesions": [
-   "er_stress",
-   "mito_stress"
+   "er_stress"
   ],
   "sensors": [
-   "er_stress: unfolded/mistranslocated protein in the ER lumen -> PERK/IRE1/ATF6 -> XBP1s, ATF4, ATF6f",
-   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4"
+   "er_stress: unfolded/mistranslocated protein in the ER lumen -> PERK/IRE1/ATF6 -> XBP1s, ATF4, ATF6f"
   ],
-  "reasoning": "lesion classes ['er_stress', 'mito_stress']; 45 direct regulon targets + 30 sensor-programme genes",
-  "n_regulon": 45,
-  "n_sensor": 30,
+  "reasoning": "lesion classes ['er_stress']; 0 direct regulon targets + 17 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 17,
   "predicted_genes": [
-   "BRK1",
-   "COX17",
-   "HMGB1",
-   "SLC7A11",
-   "SMAD4",
-   "ACACA",
-   "ACTB",
-   "ALAS2",
-   "ATP1A1",
-   "CAPNS1",
-   "CD47",
-   "COX6A1",
-   "CPOX",
-   "CYCS",
-   "DPYSL2",
-   "E2F1",
-   "E2F6",
-   "EHMT1",
-   "EIF2S1",
-   "EIF2S2",
-   "EIF5B",
-   "FBXW7",
-   "FMR1",
-   "FXR2",
-   "GSK3B",
-   "HPCAL1",
-   "IDE",
-   "IGF1R",
-   "IRF3",
-   "KIF1A",
-   "LPIN1",
-   "NFE2",
-   "NFE2L1",
-   "NFE2L2",
-   "NQO1",
-   "NR3C1",
-   "NRIP1",
-   "POLG",
-   "PPARGC1B",
-   "PRDX3",
-   "PRDX4",
-   "PRDX5",
-   "PRKAA1",
-   "RETREG3",
-   "RNF123",
    "HSPA5",
    "XBP1",
    "DDIT3",
@@ -3431,32 +3039,18 @@
    "CALR",
    "SSR1",
    "SEC61B",
-   "ATF4"
+   "ATF4",
+   "MANF",
+   "CRELD2"
   ]
  },
- "NSUN4": {
-  "lesions": [
-   "translation_stress"
-  ],
-  "sensors": [
-   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
-  ],
-  "reasoning": "lesion classes ['translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
+ "NRDE2": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 11,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
-  ]
+  "n_sensor": 0,
+  "predicted_genes": []
  },
  "NUDCD3": {
   "lesions": [],
@@ -3473,31 +3067,6 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": []
- },
- "NUP214": {
-  "lesions": [
-   "proteotoxic"
-  ],
-  "sensors": [
-   "proteotoxic: unfolded protein in the cytosol -> HSF1 trimerises and enters the nucleus"
-  ],
-  "reasoning": "lesion classes ['proteotoxic']; 0 direct regulon targets + 12 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 12,
-  "predicted_genes": [
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1"
-  ]
  },
  "NUP54": {
   "lesions": [
@@ -3647,45 +3216,6 @@
    "CEBPB"
   ]
  },
- "OTP": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "P2RX5": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": [
-   "P2RX4",
-   "P2RX6",
-   "P2RX7",
-   "P2RX2",
-   "P2RX1",
-   "P2RX3"
-  ]
- },
- "PACS2": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "PAICS": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
  "PAM16": {
   "lesions": [
    "mito_stress"
@@ -3723,18 +3253,18 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": [
+   "CPSF7",
+   "PCF11",
+   "CPSF3",
+   "NCBP2",
+   "CPSF2",
+   "PABPN1",
    "CSTF2",
    "CSTF1",
-   "SYMPK",
-   "NCBP2",
+   "CSTF3",
+   "WDR33",
    "NUDT21",
-   "NCBP1",
-   "CPSF3",
-   "FIP1L1",
-   "CPSF4",
-   "PABPN1",
-   "CLP1",
-   "CPSF2"
+   "CPSF1"
   ]
  },
  "PARS2": {
@@ -3791,28 +3321,6 @@
    "VCP"
   ]
  },
- "PCBP1": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 1 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 1,
-  "n_sensor": 0,
-  "predicted_genes": [
-   "PHPT1",
-   "HNRNPF",
-   "SRSF10",
-   "HNRNPK",
-   "POLR2H",
-   "SRSF8",
-   "HNRNPH2",
-   "HNRNPH1",
-   "NCBP1",
-   "HNRNPM",
-   "HNRNPA3",
-   "SRSF9",
-   "HNRNPR"
-  ]
- },
  "PCNA": {
   "lesions": [],
   "sensors": [],
@@ -3821,17 +3329,17 @@
   "n_sensor": 0,
   "predicted_genes": [
    "RPA3",
-   "RPA1",
    "RPA2",
-   "RFC4",
+   "RPA1",
    "RFC3",
-   "RFC1",
    "RFC2",
+   "RFC4",
+   "RFC1",
    "RFC5",
-   "UBC",
-   "RPS27A",
+   "UBA52",
    "UBB",
-   "UBA52"
+   "UBC",
+   "RPS27A"
   ]
  },
  "PCNX3": {
@@ -3841,6 +3349,44 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": []
+ },
+ "PDCD2": {
+  "lesions": [
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "sensors": [
+   "proteotoxic: unfolded protein in the cytosol -> HSF1 trimerises and enters the nucleus",
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['proteotoxic', 'translation_stress']; 0 direct regulon targets + 23 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 23,
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
  },
  "PDIA6": {
   "lesions": [
@@ -3926,6 +3472,14 @@
    "NUPR1"
   ]
  },
+ "PHB": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
+ },
  "PHB2": {
   "lesions": [
    "mito_stress"
@@ -3965,44 +3519,90 @@
   "n_sensor": 0,
   "predicted_genes": [
    "SMARCB1",
-   "RBM22",
-   "CDC40",
-   "CHERP",
-   "PLRG1",
-   "EFTUD2",
-   "SNRPE",
-   "SNW1",
-   "PPIE",
+   "CRNKL1",
    "GCFC2",
-   "SNRPA1",
+   "SNRPG",
+   "SNW1",
+   "SNRPB",
+   "SNRPF",
+   "SNRNP40",
    "BUD31",
-   "CTNNBL1"
+   "SNRPD3",
+   "PUF60",
+   "PPIL1",
+   "BCAS2"
   ]
  },
- "PKNOX1": {
+ "PHTF1": {
   "lesions": [],
   "sensors": [],
-  "reasoning": "lesion classes none; 6 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 6,
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
   "n_sensor": 0,
+  "predicted_genes": []
+ },
+ "PIAS4": {
+  "lesions": [
+   "export_block",
+   "translation_stress"
+  ],
+  "sensors": [
+   "export_block: mRNA retained in the nucleus, cytoplasmic mRNA falls -> reduced translational load feeds the eIF2a axis",
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['export_block', 'translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 11,
   "predicted_genes": [
-   "BCL2L1",
-   "FASN",
-   "GATA1",
-   "HOXB2",
-   "INPPL1",
-   "RNF6",
-   "H2AC6",
-   "H2AC14",
-   "H2BC12",
-   "POLR2H",
-   "H2BC5",
-   "H2BC3",
-   "DPY30",
-   "RBBP5",
-   "HOXB1",
-   "PBX1",
-   "POLR2D"
+   "ATF4",
+   "DDIT3",
+   "SESN2",
+   "EIF4EBP1",
+   "SLC3A2",
+   "TRIB3",
+   "ATF5",
+   "MTHFD2",
+   "SHMT2",
+   "SLC7A11",
+   "CEBPB"
+  ]
+ },
+ "PIBF1": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
+ },
+ "PKM": {
+  "lesions": [
+   "mito_stress"
+  ],
+  "sensors": [
+   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4"
+  ],
+  "reasoning": "lesion classes ['mito_stress']; 0 direct regulon targets + 17 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 17,
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "NUPR1"
   ]
  },
  "PMF1": {
@@ -4012,6 +3612,36 @@
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": []
+ },
+ "PMPCA": {
+  "lesions": [
+   "mito_stress"
+  ],
+  "sensors": [
+   "mito_stress: unimported/unprocessed matrix precursors, loss of membrane potential -> OMA1 cleaves DELE1 -> HRI kinase -> eIF2a-P -> ATF4"
+  ],
+  "reasoning": "lesion classes ['mito_stress']; 0 direct regulon targets + 17 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 17,
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "NUPR1"
+  ]
  },
  "PMPCB": {
   "lesions": [
@@ -4043,6 +3673,14 @@
    "NUPR1"
   ]
  },
+ "PNISR": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
+ },
  "PNPT1": {
   "lesions": [
    "mito_stress"
@@ -4073,6 +3711,99 @@
    "NUPR1"
   ]
  },
+ "POGLUT3": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
+ },
+ "POLD1": {
+  "lesions": [
+   "iron_low"
+  ],
+  "sensors": [
+   "iron_low: low labile iron / failed Fe-S cluster assembly -> IRP1/IRP2 bind IREs -- stabilise TFRC mRNA, block ferritin translation"
+  ],
+  "reasoning": "lesion classes ['iron_low']; 0 direct regulon targets + 9 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 9,
+  "predicted_genes": [
+   "TFRC",
+   "SLC11A2",
+   "STEAP3",
+   "ACO1",
+   "IREB2",
+   "FTL",
+   "FTH1",
+   "ALAS2",
+   "SLC25A37"
+  ]
+ },
+ "POLD2": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "POLD3",
+   "PCNA",
+   "POLD1",
+   "POLD4",
+   "RPA3",
+   "RPA2",
+   "RPA1",
+   "RFC5",
+   "RFC2",
+   "RFC4",
+   "RFC3",
+   "RFC1"
+  ]
+ },
+ "POLD3": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "POLD2",
+   "PCNA",
+   "POLD1",
+   "POLD4",
+   "RPA3",
+   "RPA2",
+   "RPA1",
+   "RFC5",
+   "RFC2",
+   "RFC4",
+   "RFC3",
+   "RFC1"
+  ]
+ },
+ "POLL": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "POLM",
+   "LIG4",
+   "PRKDC",
+   "NHEJ1",
+   "XRCC5",
+   "XRCC4",
+   "XRCC6",
+   "DCLRE1C",
+   "POLE",
+   "TENT4A",
+   "POLG2",
+   "POLN"
+  ]
+ },
  "POLR1A": {
   "lesions": [],
   "sensors": [],
@@ -4081,18 +3812,39 @@
   "n_sensor": 0,
   "predicted_genes": [
    "E2F1",
-   "POLR2H",
    "POLR1D",
-   "POLR2L",
-   "POLR1C",
-   "POLR1B",
-   "POLR2F",
-   "POLR2K",
-   "POLR1E",
+   "POLR2H",
    "POLR2E",
+   "POLR2K",
+   "POLR2L",
+   "POLR1E",
+   "POLR1B",
    "POLR1H",
-   "POLR1G",
-   "POLR1F"
+   "POLR2F",
+   "POLR1C",
+   "POLR1F",
+   "POLR1G"
+  ]
+ },
+ "POLR1B": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "POLR1D",
+   "POLR2H",
+   "POLR2E",
+   "POLR2K",
+   "POLR2L",
+   "POLR1E",
+   "POLR1A",
+   "POLR1H",
+   "POLR2F",
+   "POLR1C",
+   "POLR1F",
+   "POLR1G"
   ]
  },
  "POP1": {
@@ -4167,53 +3919,15 @@
    "CEBPB"
   ]
  },
- "POU3F1": {
+ "PPAN": {
   "lesions": [],
   "sensors": [],
-  "reasoning": "lesion classes none; 3 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 3,
+  "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 0,
   "n_sensor": 0,
-  "predicted_genes": [
-   "IGFBP2",
-   "CCDC6",
-   "GAL",
-   "SOX10",
-   "POU3F2",
-   "ZNF521"
-  ]
+  "predicted_genes": []
  },
- "POU4F1": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 11 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 11,
-  "n_sensor": 0,
-  "predicted_genes": [
-   "BAX",
-   "PMAIP1",
-   "BCL2L1",
-   "BRCA1",
-   "EGR1",
-   "GAL",
-   "HIPK2",
-   "HSP90AA1",
-   "HSPB1",
-   "JUP",
-   "NTRK1",
-   "TP53"
-  ]
- },
- "POU6F2": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 1 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 1,
-  "n_sensor": 0,
-  "predicted_genes": [
-   "NF1"
-  ]
- },
- "PRG2": {
+ "PPM1G": {
   "lesions": [],
   "sensors": [],
   "reasoning": "lesion classes none; 0 direct regulon targets + 0 sensor-programme genes",
@@ -4322,13 +4036,13 @@
    "BRCA1",
    "TOP3A",
    "BLM",
-   "WRN",
    "NBN",
-   "RMI1",
-   "RBBP8",
-   "EXO1",
-   "RMI2",
+   "BARD1",
    "RAD50",
+   "RMI1",
+   "BRIP1",
+   "RMI2",
+   "EXO1",
    "MRE11"
   ]
  },
@@ -4378,34 +4092,12 @@
    "DPY30",
    "KMT2C",
    "KMT2D",
-   "H2AC6",
-   "H2AC14",
-   "H2BC12",
+   "H2BC9",
    "H2BC5",
-   "H2BC3"
-  ]
- },
- "RBFOX2": {
-  "lesions": [],
-  "sensors": [],
-  "reasoning": "lesion classes none; 2 direct regulon targets + 0 sensor-programme genes",
-  "n_regulon": 2,
-  "n_sensor": 0,
-  "predicted_genes": [
-   "GSN",
-   "RPS6KA5",
-   "HNRNPF",
-   "GTF2F2",
-   "POLR2H",
-   "POLR2C",
-   "NCBP2",
-   "HNRNPH1",
-   "NCBP1",
-   "GTF2F1",
-   "POLR2I",
-   "HNRNPM",
-   "ESRP1",
-   "POLR2A"
+   "H2BC12L",
+   "H2BC15",
+   "H2AC14",
+   "H2BC17"
   ]
  },
  "RBM25": {
@@ -4510,37 +4202,56 @@
    "NUPR1"
   ]
  },
- "RNF138": {
+ "RPS19BP1": {
   "lesions": [
-   "proteasome_loss"
+   "proteotoxic"
   ],
   "sensors": [
-   "proteasome_loss: reduced proteasome capacity -> NFE2L1 escapes ERAD degradation -> bounce-back response"
+   "proteotoxic: unfolded protein in the cytosol -> HSF1 trimerises and enters the nucleus"
   ],
-  "reasoning": "lesion classes ['proteasome_loss']; 0 direct regulon targets + 17 sensor-programme genes",
+  "reasoning": "lesion classes ['proteotoxic']; 0 direct regulon targets + 12 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 17,
+  "n_sensor": 12,
   "predicted_genes": [
-   "PSMA1",
-   "PSMA3",
-   "PSMA4",
-   "PSMA5",
-   "PSMA7",
-   "PSMB1",
-   "PSMB3",
-   "PSMB4",
-   "PSMB5",
-   "PSMB6",
-   "PSMC1",
-   "PSMC2",
-   "PSMD1",
-   "PSMD2",
-   "PSMD11",
-   "POMP",
-   "NFE2L1"
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
   ]
  },
- "RPL9": {
+ "RTCB": {
+  "lesions": [
+   "translation_stress"
+  ],
+  "sensors": [
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 11,
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "RTRAF": {
   "lesions": [
    "translation_stress"
   ],
@@ -4587,6 +4298,190 @@
    "SLC7A11",
    "EIF4EBP1",
    "CEBPB"
+  ]
+ },
+ "SEC61A1": {
+  "lesions": [
+   "er_stress",
+   "translation_stress"
+  ],
+  "sensors": [
+   "er_stress: unfolded/mistranslocated protein in the ER lumen -> PERK/IRE1/ATF6 -> XBP1s, ATF4, ATF6f",
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['er_stress', 'translation_stress']; 0 direct regulon targets + 26 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 26,
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "MANF",
+   "CRELD2",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "SETDB1": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 1 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 1,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "ATF7IP2",
+   "NSD3",
+   "KMT5B",
+   "SUV39H1",
+   "SETD2",
+   "NSD1",
+   "KMT2D",
+   "SETD1A",
+   "SETD7",
+   "SETD1B",
+   "EHMT1",
+   "KMT2B",
+   "SUV39H2"
+  ]
+ },
+ "SFPQ": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 12 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 12,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "AIFM1",
+   "STAT6",
+   "ACTB",
+   "CTBP1",
+   "EPHX1",
+   "HDAC2",
+   "HSPA9",
+   "NR3C1",
+   "SIN3A",
+   "SMC3",
+   "SP1",
+   "TOP2B",
+   "PTK6"
+  ]
+ },
+ "SLC35A4": {
+  "lesions": [
+   "translation_stress"
+  ],
+  "sensors": [
+   "translation_stress: stalled/colliding ribosomes, shortage of ternary complex, uncharged tRNA -> GCN2 / ZNF598 -> eIF2a-P -> ATF4 (same output as mito, different trigger)"
+  ],
+  "reasoning": "lesion classes ['translation_stress']; 0 direct regulon targets + 11 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 11,
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "SMARCC1": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 6 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 6,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "RPL17",
+   "KLF1",
+   "KRAS",
+   "RAB18",
+   "SMARCA4",
+   "SMARCB1",
+   "SMARCD1",
+   "SMARCE1",
+   "SMARCD3",
+   "SMARCC2",
+   "SMARCD2",
+   "ARID1A",
+   "ACTL6A",
+   "SMARCA2",
+   "ARID1B",
+   "BCL7A"
+  ]
+ },
+ "SMARCE1": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 3 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 3,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "MEF2C",
+   "SMARCA4",
+   "SMARCB1",
+   "SMARCD1",
+   "SMARCC1",
+   "SMARCD3",
+   "SMARCC2",
+   "SMARCD2",
+   "ARID1A",
+   "ACTL6A",
+   "ARID1B",
+   "SMARCA2",
+   "BCL7A"
+  ]
+ },
+ "SNRNP70": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 1 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 1,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "BSG"
+  ]
+ },
+ "SOX3": {
+  "lesions": [],
+  "sensors": [],
+  "reasoning": "lesion classes none; 1 direct regulon targets + 0 sensor-programme genes",
+  "n_regulon": 1,
+  "n_sensor": 0,
+  "predicted_genes": [
+   "GMNN",
+   "SRY",
+   "SOX7",
+   "SOX9",
+   "SOX17",
+   "SOX6",
+   "SOX4",
+   "CTNNB1",
+   "SOX2"
   ]
  }
 }
