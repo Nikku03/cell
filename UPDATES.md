@@ -12111,3 +12111,79 @@ carries all of it. That is why the model under-calls lethality rather than over-
 Directionally right about **which** genes matter and about the shape of K562's metabolism (Warburg, glycolytic
 dominance, correct anaerobic shift); quantitatively wrong about **rates** by orders of magnitude; and it finds
 one-fifth of what actually kills the cell, with three-quarters of its lethal calls correct.
+
+---
+
+# CellOS v2 — the software rebuilt on what survived measurement
+
+`colab/cellos2.py` · `colab/cellos2_test.py`
+
+v1 took "biology is software" literally over a PPI graph. The metaphor was sound; most of the kernel's numbers have
+since been invalidated — not by argument, but by measuring them on better data. Everything underneath changed:
+
+| | v1 | v2 |
+|---|---|---|
+| readout | 1,400 knockouts, **top 250 genes only** | 5,120 perturbations × 8,246 genes, full |
+| reactions | PPI graph, no reaction semantics | 28,528 typed steps, in/out/catalyst |
+| logic | every gene in a reaction required | AND/OR recovered; 63.5% of large complexes hide non-required genes |
+| consequence | "participant gone = reaction gone" | STOPS / BUFFERED / REDUNDANT separated |
+| prediction | 89-gene fixed sensor menu | per-knockout over 8,246 genes |
+| metabolism | none | a running FBA cell, **AUC 0.656 vs K562** |
+
+## The design rule that makes v2 different
+
+**Every syscall prints its provenance and its measured accuracy, or states that it has none.** Most of what this
+project built failed its test, and the kernel says so at the point of use rather than in a footnote. `boot` lists
+each layer with the number it actually scored — including the retired one:
+
+    [up] prediction (multi-layer sensors)   RETIRED
+         0.0140 / 0.0377 -- 4-10x BELOW the frequency baseline, indistinguishable from its own shuffle.
+         Output ceiling 4.4% by construction: 89-gene vocabulary vs a 1,120-2,007 gene answer space.
+
+It also degrades honestly: with the ephemeral scratchpad wiped, `boot` reported **6/7 layers up** and named the
+missing one rather than crashing or silently answering from a stale file.
+
+## The test asserts claims, not absence of crashes
+
+v1's test checked that syscalls returned something. That catches crashes and nothing else. The failure mode this
+project actually suffers is worse: **a syscall that runs, prints a plausible answer, and is built on an empty
+join.** Four happened in a single day — the PPI index-space bug (0 of 191,447 edges), the shallow
+`catalystActivity` (0 of 1,148 catalysts), non-targeting controls scored as knockouts, and the FBA validation
+joining Ensembl ids against gene symbols (0 of 2,741 genes).
+
+So every assertion is written to **fail loudly on an empty intersection** rather than pass on zero rows.
+
+```
+A) syscalls run                        boot, spec, top            3/3
+B) layers contain REAL JOINED data
+   reaction network                    28,528 steps
+   ablation rows                       119,719
+   ablation separates verdicts         STOPS 40,042 / BUFFERED 34,714 / REDUNDANT 29,645 / CURRENCY 15,318
+   DepMap K562 row present             17,787 genes
+   ablation x DepMap JOIN non-empty    4,353 genes   <- a join failure reads 0 here
+C) headline claims reproduce
+   cascade breadth -> more essential   starves>=5: -0.6511 vs all -0.1851 (n=93)
+   FBA AUC beats chance                0.6558
+   FBA lethal calls enriched           precision 0.733 vs base rate 0.113
+   FBA join non-empty                  2,741 genes
+   sensor-menu ceiling still low       oracle recall 4.4% over 1,120 genes
+
+RESULT: 0 failures — all assertions hold
+```
+
+The last assertion is deliberate: it checks the **retired** predictor is still recorded as retired, so a failed
+method cannot be quietly revived by a later edit.
+
+## What the kernel can and cannot do
+
+Working syscalls: `boot`, `spec`, `top` (real K562 essentiality), `ablate GENE` (what genuinely stops, with
+BUFFERED and REDUNDANT kept apart), `kill GENE` (metabolic lethality, with its precision and recall stated),
+`strace GENE` (measured response from the genome-wide screen), `predict GENE` (the one predictor that beats the
+frequency baseline).
+
+`ablate FASN` returns 57 genuinely-stopping reactions out of 75 rows, 60 downstream reactions starved.
+`kill PMPCB` correctly reports it as essential in the real cell (−1.66) **and** states that the FBA model
+under-calls lethality, so its own agreement there is not evidence of much.
+
+That last behaviour is the point of the rebuild: the software now reports its own unreliability alongside each
+answer.
