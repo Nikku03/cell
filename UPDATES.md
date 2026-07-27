@@ -11613,3 +11613,73 @@ Three claims weaken and one flips:
 Nothing here was made to look better by a fix. Every number that moved, moved against a claim this project had
 already made — which is the expected direction when a component that was silently disabled is switched back on and
 its rivals lose the advantage of competing against a blindfolded baseline.
+
+---
+
+# E_max populated — the ceiling exists now, and the first thing it did was refute my hypothesis
+
+`colab/dosage_bands.py` · Collins et al. 2022, Zenodo record 6347673
+
+## The blocker was a URL form, not access
+
+pTriplo was recorded as blocked at Zenodo, two GitHub mirrors and the publisher supplement. It is not blocked. The
+direct-download URL form returns 403; the **API content endpoint** works:
+
+```
+https://zenodo.org/api/records/6347673/files/Collins_rCNV_2022.dosage_sensitivity_scores.tsv.gz/content
+```
+
+386 KB, 18,641 genes, `#gene / pHaplo / pTriplo`. Every earlier failure was mine, not the host's.
+
+## Coverage: the ceiling goes from 3 genes to 14,369
+
+| band | source | coverage |
+|---|---|---:|
+| E₀ baseline | PaxDb PPM | 16,015 (97.1%) |
+| E_min floor | DepMap | 15,913 (96.5%) |
+| E_min floor | gnomAD pLI / LOEUF | 15,038 (91.2%) |
+| E_min floor | **Collins pHaplo** | **14,369 (87.1%)** |
+| **E_max ceiling** | **Collins pTriplo** | **14,369 (87.1%)** |
+| E_max ceiling | ClinGen TS = 3 | **3** |
+
+At the paper's own thresholds: pHaplo ≥ 0.86 → 2,664 genes; pTriplo ≥ 0.94 → 1,396. Of those, **844 are sensitive
+in both directions** — a narrow tolerated band top and bottom — 1,820 only to loss, and 552 only to excess.
+
+**It is not a restatement of the floor.** corr(pHaplo, pTriplo) = **+0.5674** — correlated, as dosage sensitivity
+should be, but far from redundant. corr(pTriplo, DepMap effect) = **−0.1786**, which is the independence check:
+DepMap measures loss only, so a ceiling that tracked it closely would be suspect.
+
+## The prediction I stated, and its refutation
+
+The floor and the ceiling make opposite predictions about a knockout, so the split between them is testable:
+
+- pHaplo-high / pTriplo-low → losing a copy is selected against → **knockout should cost fitness**
+- pTriplo-high / pHaplo-low → only *excess* is selected against → **knockout should be well tolerated**
+
+| group | DepMap mean effect | n | Δ vs baseline |
+|---|---:|---:|---:|
+| baseline (all genes) | −0.1544 | 15,913 | — |
+| pHaplo-only (loss is the problem) | −0.2100 | 1,817 | −0.0556 |
+| both directions | −0.3287 | 842 | −0.1743 |
+| **pTriplo-only (excess is the problem)** | **−0.3194** | 551 | **−0.1650** |
+| neither | −0.1277 | 12,703 | +0.0267 |
+
+pHaplo-only **minus** pTriplo-only = **+0.1094**, bootstrap CI **[+0.0606, +0.1603]** — separated, and on the
+**wrong side**. Genes flagged triplosensitive-but-not-haploinsufficient are *more* essential in K562, not less.
+
+**"Triplosensitive but not haploinsufficient" does not mean "safe to knock out".** The interpretation is the one
+this module already documents for pLI: triplosensitive genes are typically dosage-balanced complex members and core
+regulators — exactly the class a cancer line cannot lose — while pHaplo captures developmental haploinsufficiency
+in genes K562 never needed, the same effect as the 2,251 genes that are pLI-constrained and DepMap-dispensable.
+
+So E_max is now populated, genome-scale, and independent enough of the floor to be worth carrying. But the use I
+intended for it — a flag saying loss is tolerated — is refuted, and it must not be used that way. The hypothesis is
+recorded as refuted rather than deleted.
+
+## Two robustness fixes made along the way
+
+The gnomAD and ClinGen files had been wiped from the ephemeral scratchpad by a container rollback, and their
+loaders raised rather than degrading — one missing source took down the whole report. Both re-fetched (gnomAD v2.1.1
+constraint from the public GCS bucket, ClinGen from its FTP), and all four loaders now return empty on a missing
+file so a lost source costs its own column and nothing else. Coverage is printed per source, so an empty one is
+visible rather than silent.
