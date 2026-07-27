@@ -11218,3 +11218,87 @@ recorded as **unanswered**.
 **Zero new PPI edges were added.** Direction roughly doubled, entirely by asking a better question of the same data.
 The structural change is the type system: one node type and one edge type became reactions with typed
 inputs/outputs/catalysts, metabolites, compartments and currency tagging.
+
+---
+
+# Per-reaction ablation: remove each participant, one at a time, and draw it
+
+`colab/reaction_ablation.py` · `colab/draw_ablation.py` · `outputs/orphan/reaction_ablation.json`
+
+Every reaction in the 28,528-step network was ablated participant by participant — each substrate, each cofactor,
+each catalytic enzyme removed on its own — giving **119,719 single-participant ablations**, and each one rendered as
+chemistry with the removed thing struck through.
+
+## Four outcomes, not one
+
+Every earlier consequence model in this project collapsed removal into "participant gone → reaction gone", which is
+what made cascades reach the whole cell. Separated:
+
+| | count | share |
+|---|---:|---:|
+| STOPS — nothing else supplies it, no second enzyme | 40,042 | 33.4% |
+| BUFFERED — another reaction produces this substrate | 34,714 | 29.0% |
+| REDUNDANT — a second annotated catalyst covers it | 29,645 | 24.8% |
+| BUFFERED_CURRENCY — ATP/H₂O/O₂/Pi, set by the whole of metabolism | 15,318 | 12.8% |
+
+Reactions where **every** participant is a single point of failure: 3,848 (13.6%). Fully buffered: 14,183 (50.2%).
+
+## Three defects the drawing exposed that the summary table hid
+
+The first version of this table was wrong in three ways, all inflating STOPS, and none of them visible in the
+aggregate numbers. They were found by rendering the reactions and reading them.
+
+**1. Currency was marked per source, inconsistently.** H₂O was flagged currency on 4,066 Reactome slots and *not* on
+814 Human-GEM slots; H⁺, ATP, Pi, Na⁺ likewise; O₂ was never flagged anywhere. The drawn output showed a TET
+demethylase step "starving 98 reactions" because O₂ had been removed — true chemistry, worthless as cell biology.
+Worse, 35,883 slots had been marked currency *spuriously*: the unresolved numeric entity ids were matching the
+currency test, so real substrates were being treated as free. One canonical currency set, applied by normalised name
+to both sources: **+9,129 slots newly currency, −35,883 no longer currency.**
+
+**2. The two sources do not share an id space.** Reactome entities are `R-HSA-…`, Human-GEM metabolites are
+`MAM02675m`. The intersection of the two id sets is **exactly zero** — so a metabolite produced in Human-GEM could
+never buffer a Reactome reaction consuming it. Bridged on normalised metabolite name, which recovers 15,989
+participant slots but only **193 distinct names**: the two resources genuinely name common metabolites differently.
+A partial repair, reported as one.
+
+**3. "STOPS" is not "fragile".** Measured directly: **20,201 of 20,202 INPUT/STOPS rows were species that nothing in
+the network produces.** That is not a sole-source bottleneck, it is the boundary of the model — oxygen, nutrients,
+drugs. Acetaminophen appeared as a "single point of failure starving 50 reactions". Every count is now split by
+whether the removed thing is something a genetic perturbation could remove at all:
+
+    ADDRESSABLE (a catalyst, or an input carrying genes)   51,813 / 119,719  (43.3%)
+    of the 12,838 STOPS that are addressable:
+        leave a product nothing else makes    8,737  (68.1%)
+        starve >=1 downstream reaction        3,640  (28.4%)   median 1, max 36
+
+Max cascade fell **98 → 36**. The widest cascades became FASN (59) and the aminoacyl-tRNA synthetases —
+EPRS1 (48), KARS1/MARS1 (25), AARS1/DARS1/QARS1 (24) — where before they were acetaminophen and O₂.
+
+## The validation, and what it kills
+
+DepMap mean gene effect never enters the ablation, so it is a genuine outside check. Controlled against genes
+matched on **reaction-participation count**, because "genes that starve a lot participate a lot" would otherwise
+restate "hub genes are essential".
+
+| | mean effect | n | Δ vs network |
+|---|---:|---:|---:|
+| all catalytic/participating genes | −0.1875 | 7,612 | — |
+| **sole catalyst of ≥1 reaction** | −0.1665 | 1,552 | **+0.0210** |
+| not a sole catalyst of any | −0.1929 | 6,060 | −0.0054 |
+| loss starves ≥1 reaction | −0.2558 | 581 | −0.0683 |
+| loss starves ≥5 reactions | −0.6446 | 93 | −0.4571 |
+| loss starves ≥15 reactions | −1.1760 | 27 | −0.9885 |
+
+Participation-matched control (200 draws): −0.0885 ± 0.0521. Observed for "starves ≥5": −0.4571, **z = −7.07**.
+
+**Cascade breadth is strongly predictive; the binary "is a sole catalyst" flag is worth nothing** (+0.0210 — if
+anything slightly *less* essential than average). 1,560 genes are the sole catalyst of some reaction and that fact
+alone says nothing about whether the cell needs them. Only 583 genes starve anything downstream, and how much they
+starve is what tracks fitness. This retires the sole-catalyst flag that `consequence_map.py` has been reporting as a
+fragility signal since it was built.
+
+## What is not claimed
+
+Structural, not kinetic. BUFFERED means "another producer is annotated", not "the cell is fine" — the alternative
+route may carry a hundredth of the flux. That limit is exactly what the dosage bands (E₀/E_min/E_max) exist to
+address, and E_max is still unpopulated.
