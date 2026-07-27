@@ -93,6 +93,12 @@ def load_all():
     spec = ((A >= TAU) & ~tide)
     nspec = spec.sum(1)
     gi = {g: i for i, g in enumerate(genes)}
+    # sampling weights for TRAINING negatives -- how often each gene moves at all. Tide genes are excluded
+    # from both the crop and the evaluation pool, so they are zeroed here too.
+    negp = (np.abs(M) >= TAU).mean(0).astype(np.float64)
+    negp[tide] = 0.0
+    negp = negp + 1e-4
+    negp /= negp.sum()
     print(f"readout: {len(kos):,} perturbations x {len(genes):,} genes; tide {int(tide.sum()):,}; "
           f"scorable (>={MIN_SPEC} specific movers) {int((nspec >= MIN_SPEC).sum()):,}")
 
@@ -202,7 +208,7 @@ def load_all():
                                     shape=(G_ALL, G_ALL), dtype=np.float32).tocsr())
     print("pair prior as sparse: " + ", ".join(f"ch{c} {Pm[c].nnz:,} nz" for c in range(5)))
     return dict(kos=kos, genes=genes, M=M, spec=spec, nspec=nspec, tide=tide, gi=gi,
-                pair=dict(pair), pairmat=Pm, nbr=nbr)
+                pair=dict(pair), pairmat=Pm, nbr=nbr, negp=negp)
 
 
 # =================================================================================================
@@ -349,7 +355,13 @@ def make_example(d, rng, qi, train_pool, cfg, n_genes_all):
     pool = list(pool)
     if len(pool) > G_CROP // 2:
         pool = list(rng.choice(pool, size=G_CROP // 2, replace=False))
-    rest = rng.choice(n_genes_all, size=G_CROP * 2, replace=False)
+    # NEGATIVES MUST COME FROM THE SAME DISTRIBUTION AS THE EVALUATION POOL. A first version drew them
+    # UNIFORMLY from all 8,246 genes, while evaluation ranks within a pool of the most-frequently-moved genes.
+    # That trains against the easiest possible negatives and tests against the hardest, and it is why the first
+    # full model scored recall 0.0224 against a frequency baseline of 0.2824: it had never been asked to
+    # separate a query's own movers from genes that move for everything. Frequency-weighted negatives make
+    # training and evaluation the same problem.
+    rest = rng.choice(n_genes_all, size=G_CROP * 3, replace=False, p=d["negp"])
     cols = list(dict.fromkeys(pool + [int(x) for x in rest]))[:G_CROP]
     while len(cols) < G_CROP:
         cols.append(int(rng.integers(0, n_genes_all)))
