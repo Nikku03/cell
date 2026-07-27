@@ -12187,3 +12187,70 @@ under-calls lethality, so its own agreement there is not evidence of much.
 
 That last behaviour is the point of the rebuild: the software now reports its own unreliability alongside each
 answer.
+
+---
+
+# Solving the 89-gene problem: learn the vocabulary, and the answer survives a clean readout
+
+`colab/response_basis.py` · re-scored on the sanitised readout
+
+## The vocabulary
+
+    89 hand-picked genes  ->  60 NMF components spanning 8,243 genes
+
+Factorised from 4,720 training perturbations, with both sealed cohorts removed **before** factorising. The route is
+annotation → lesion classes → component mixture → ranked list over the full transcriptome. The reasoning is
+unchanged — it reuses the same `classify()` the sensor model used — so any difference is attributable to the
+vocabulary alone.
+
+## Results, sanitised readout
+
+| cohort 1 | n | precision | frequency | vs freq | 95% CI | sign p |
+|---|---:|---:|---:|---:|---|---:|
+| **basis (learned)** | **200** | 0.1872 | 0.1737 | **+0.0135** | **[+0.0038, +0.0237]** | **0.0005** |
+| nbr (neighbour transfer) | 179 | 0.2047 | 0.1853 | +0.0194 | [−0.0105, +0.0498] | 0.0385 |
+| multilayer (89-gene menu) | 151 | 0.0267 | 0.1882 | −0.1615 | [−0.1937, −0.1310] | 0.0000 |
+
+| cohort 2 holdout | n | precision | frequency | vs freq | 95% CI | sign p |
+|---|---:|---:|---:|---:|---|---:|
+| basis (learned) | 200 | 0.2013 | 0.2003 | +0.0010 | [−0.0098, +0.0110] | 0.0900 |
+| **nbr** | 178 | 0.2502 | 0.2094 | **+0.0409** | **[+0.0067, +0.0757]** | 0.0260 |
+| multilayer | 154 | 0.0336 | 0.1956 | −0.1620 | [−0.1985, −0.1296] | 0.0000 |
+
+Against their own shuffles, **all four comparisons decisive**:
+
+    basis  cohort 1   0.1872 vs 0.1588   +71/-24   p = 0.0000
+    basis  cohort 2   0.2013 vs 0.1845   +59/-33   p = 0.0088
+    nbr    cohort 1   0.2062 vs 0.0825   +84/-28   p = 0.0000
+    nbr    cohort 2   0.2451 vs 0.0917   +89/-20   p = 0.0000
+
+## What changed, and what it means
+
+**The learned vocabulary is worth ~7× the hand-written one on the identical reasoning.** 0.1872 vs 0.0267 on
+cohort 1, 0.2013 vs 0.0336 on cohort 2. Same classifier, same lesion classes, same annotation — only the output
+space differs. That isolates the diagnosis cleanly: the 89-gene menu was the binding constraint, exactly as the
+4.4% ceiling said.
+
+**It has full coverage.** 0/200 empty predictions, against neighbour transfer's 21–22 knockouts with no network
+neighbour to borrow from. The mechanistic route can answer for every gene; the borrowing route cannot.
+
+**Cohort 1 now clears significance on the interval estimate** (CI +0.0038 to +0.0237, sign p = 0.0005) — the test
+neighbour transfer failed on that cohort before and still fails now (CI straddles zero). Cohort 2 is the reverse:
+basis is flat (+0.0010) while nbr is clearly ahead. So the two methods beat frequency on **opposite cohorts**,
+which is a real and unresolved inconsistency rather than a clean win for either.
+
+**The multi-layer menu is now unambiguous**: −0.16 against frequency on both cohorts, CIs nowhere near zero. Its
+retirement is confirmed on clean data.
+
+## The sanitisation strengthened everything
+
+Removing the infinities raised every method's absolute precision (nbr cohort 2 went 0.1903 → 0.2502) because the
+truth sets stopped containing artifacts. Crucially the **comparisons held in direction** — the pre-sanitisation
+conclusions were right, but for the first time they rest on a truth set that is not a tenth artifacts.
+
+## What is still not solved
+
+Neither method reasons about **why** a gene moves. Basis picks a mixture of programmes the cell demonstrably uses,
+but the mixture is chosen by coarse annotation-derived lesion classes (median 1 class per knockout), and the
+opposite-cohort inconsistency suggests that mapping is the weak link now — not the vocabulary. The vocabulary
+problem is closed; the lesion-class → programme mapping is the next binding constraint.

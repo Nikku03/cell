@@ -1,0 +1,1 @@
+{"k": 60, "n_train": 4720, "classes_fitted": ["er_stress", "export_block", "iron_low", "mito_stress", "oxidative", "proteasome_loss", "proteotoxic", "sterol_low", "translation_stress"], "vocabulary_genes": 8243}
