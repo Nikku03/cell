@@ -11683,3 +11683,104 @@ loaders raised rather than degrading — one missing source took down the whole 
 constraint from the public GCS bucket, ClinGen from its FTP), and all four loaders now return empty on a missing
 file so a lost source costs its own column and nothing else. Coverage is printed per source, so an empty one is
 visible rather than silent.
+
+---
+
+# Items 2 and 3 closed: recovering the AND/OR structure the network had flattened away
+
+`colab/entity_logic.py` · `outputs/orphan/entity_logic.json`
+
+The reaction network flattens every entity to a list of gene symbols, which destroys the distinction between "all
+of these are required" and "any one of these will do". Two long-standing defects were the same missing fact.
+
+## The test
+
+A gene is REQUIRED for a reaction exactly when setting that gene false, with every other gene true, makes the rule
+evaluate false. That is single-participant ablation applied to a boolean formula — the same question
+`reaction_ablation.py` asks of substrates. It handles arbitrary nesting with no special cases for "isozyme" or
+"subunit".
+
+## Item 2 — "two catalysts" does not mean redundant
+
+**Human-GEM (4,408 of 5,556 multi-catalyst reactions, 79%) needed no network at all.** The SBML carries an exact
+`fbc:geneProductAssociation` and/or tree.
+
+| | count |
+|---|---:|
+| pure alternatives (all OR) | 3,765 |
+| all required (all AND) | 580 |
+| mixed and/or | 63 |
+| **misclassified as REDUNDANT** | **643 (14.6%)** |
+
+**Reactome (1,148 reactions)** needed the entity tree — 47,704 records fetched to closure over 9 rounds.
+
+| | count |
+|---|---:|
+| alternatives (OR) | 425 |
+| **all subunits required (AND)** | **410** |
+| mixed | 311 |
+| unresolved | 2 |
+| **at least one catalyst genuinely REQUIRED** | **721 / 1,146 (62.9%)** |
+
+Nearly two-thirds of Reactome's "redundant" multi-catalyst reactions have a catalyst whose loss stops them. The
+examples are unambiguous in both directions:
+
+    ALL REQUIRED (was "redundant")     GABBR1+GABBR2 · MAD2L2+REV3L · APEX1+POLB · CALM1+CAMK4
+                                       POLR2A..POLR2L (12 subunits of RNA Pol II, every one required)
+    GENUINELY ALTERNATIVES             JAK1/JAK2/TYK2 · KCNJ10..KCNJ3 · POLD1-4/POLE/POLE2 · GNA11/GNA14/GNAQ
+
+`draw_ablation.py` previously rendered GABBR1 and GABBR2 as "redundant (1 other catalyst)". They are an obligate
+heterodimer. That output was wrong and is now right.
+
+## Item 3 — paralogue families hiding inside complexes
+
+3,937 of 3,957 large complexes (>4 genes) resolved. **3,118 (79.2%) contain at least one gene that is not
+required.** Across all of them: **72,382 gene slots, 33,037 genuinely required — 45.6%.**
+
+**Over half the gene slots in large complexes were being treated as single points of failure and are not.**
+
+| complex | genes | required |
+|---|---:|---:|
+| KRAB-ZNF / KAP Complex | 335 | **1** |
+| Ag-substrate:E3:E2:Ub | 254 | **0** |
+| E3:Ub:substrate | 221 | **0** |
+| Ligand:GPCR complexes that activate Gi | 212 | **0** |
+| Nucleosome with H3K4me2 | 28 | **1** |
+
+The nucleosome — the case that motivated the confidence tier — is 28 genes, 1 required: 27 histone paralogues each
+counted as indispensable. `G-protein beta-gamma complex` at 0 required is correct, not a failure: every slot is a
+paralogue family, so no single knockout removes it.
+
+This retires the LOW-confidence tier introduced in `lesion_report.py`. Those 6,355 lesions were not merely
+uncertain — a large majority are wrong.
+
+## The caveat, measured rather than mentioned
+
+Reactome's **CandidateSet** means "one of these, but which is uncertain". Reading it as OR is the right structural
+reading, but it is a choice, so its weight was measured:
+
+| CandidateSet read as | slots required |
+|---|---:|
+| **OR (used here)** | **33,037 / 72,382 (45.6%)** |
+| AND (alternative) | 47,557 / 72,382 (65.7%) |
+
+**32.8% of complexes (1,292/3,937) change their required-set** between the two readings. That is far more
+load-bearing than expected and is reported as the headline caveat, not a footnote. Only 1,250 of 47,704 closure
+entities are CandidateSets; everything else is Complex or DefinedSet, where AND/OR is stated by Reactome rather
+than chosen here. The honest range for item 3 is therefore **46%–66% of large-complex gene slots genuinely
+required** — and under either reading, a third to a half were wrongly counted as single points of failure.
+
+## Five failed runs, none of them the science
+
+Recorded because the pattern repeated: no `User-Agent` → 403 on every request, masked by a bare `except Exception:
+sleep` that made total failure look like a slow network (30 minutes, nothing written); the bulk endpoint returning
+a *shallow* `catalystActivity` with no `physicalEntity`, recovering 0/1,148 while reporting success; `hasComponent`
+mixing dicts and bare ints; a container restart; and a leaked loop variable in my own patch. Bugs 2 and 3 were
+already solved in `catalyst_arrows.py` — writing a fresh fetcher instead of reusing that module is what cost the
+runs. The measurement that should have come first: batches of 20 return in 0.7s, so the network was never the
+constraint.
+
+One more defect found by reading the data rather than the summary: the rule builder's depth cap of 8 silently
+returned None for anything deeper, and Reactome complexes nest complexes far past that. It would have dropped
+exactly the largest assemblies this work is about, and the failure would have read as sparse annotation. Cap raised
+to 24 with a visited-set guard.
