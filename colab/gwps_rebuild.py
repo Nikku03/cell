@@ -20,16 +20,38 @@ WHAT THIS BUILD CHANGES
                      (5,192 genes) clear p<0.05. So the honest gain over the current 1,400 is ~3.9x, not the 8x a
                      raw row count suggests. The rest would add rows that are mostly noise, and are excluded here
                      rather than counted.
-  a built-in replicate  many genes are targeted by two independent protospacer sets (P1 and P2). Those are
-                     genuine technical replicates of the same perturbation, and this file has never used them.
-                     Their agreement is measured below and is reported as its own result: it bounds how much of
-                     any predictor's error is irreducible measurement noise rather than a modelling failure.
+  a built-in replicate  RETRACTED -- the premise was wrong, and the measurement is reported as unavailable
+                     rather than as a number. See "the replicate that isn't" below.
 
 WHY THIS IS THE HIGHEST-VALUE ITEM OPEN. Every method comparison this project ran came back "indistinguishable" --
 the sealed cohorts score 39 and 37 knockouts and every confidence interval straddles zero. That is a power problem,
 not a modelling problem. It is also why this rebuild INVALIDATES rather than extends the existing comparison
 numbers: the incumbent's 0.0786/0.0685 was measured against a 1,400-gene universe and a truncated readout, so every
 method has to be re-scored to get a comparable figure. Doing that is the point.
+
+THE REPLICATE THAT ISN'T -- A RETRACTED CLAIM, KEPT VISIBLE. This file was built partly to measure a
+reproducibility ceiling from genes targeted by two independent protospacer sets. That measurement cannot be made
+here, and the reason is structural rather than statistical:
+
+    P1P2   8,866 rows   the two guides are ALREADY POOLED into one measurement -- not a replicate
+    P1/P2  1,487 rows   genuinely separate, covering 714 genes
+    non-targeting 585   negative controls
+
+The 714 split-guide genes are the WEAK tail. Median -log10(energy p) is 1.10 for P1 and 0.84 for P2 against 1.40
+for the pooled rows, with fewer cells each. Same-gene profile correlation is +0.0047 against a population-MATCHED
+null of +0.0038 -- separation +0.0009 -- and stratifying by phenotype strength shows no trend
+(-0.0033, -0.0005, +0.0094, +0.0016, -0.0052 across five strata). The energy p-value is also floored at 1e-4 for
+every group, so there is no dynamic range at the strong end to stratify into.
+
+The honest reading is NOT "the screen does not agree with itself". It is that the only genes with two independent
+measurements are the ones with nothing to reproduce: every strongly-responding perturbation was pooled into a
+single P1P2 row and has no separate replicate at all. The ceiling remains unmeasured.
+
+Two errors were made and corrected while establishing this, both of which would have produced a dramatic false
+claim. The null was first drawn from the FILTERED strong perturbations while the same-gene pairs came from the
+unfiltered split rows; strong perturbations share the generic stress response, so the null scored HIGHER than the
+replicates. And the replicate pairs were first required to BOTH clear the energy test, which cut them to 90 genes
+and conditioned the sample on the two halves agreeing.
 
 STORAGE. A dict-of-dicts over 5,192 x 8,248 would be tens of millions of Python floats. The matrix is written as a
 compressed npz (kos, genes, M) and `ko_predict.load()` prefers it when present, falling back to the old pickle.
@@ -82,43 +104,73 @@ def main():
     X, sym, pset, vg, p, nc = load_gwps()
     print(f"gwps: X {X.shape}, {len(set(sym)):,} distinct perturbed genes, {len(set(vg)):,} readout genes")
 
-    keep = np.isfinite(p) & (p < PCUT) & (nc >= MINCELLS)
-    print(f"\nquality filter (energy test p<{PCUT}, >={MINCELLS} cells)")
+    # NON-TARGETING CONTROLS ARE NOT A KNOCKOUT. 585 rows are labelled non-targeting, and 82 of them CLEAR the
+    # energy test at p<0.05 -- so an unfiltered build ingests them, collapses them into a single row under the
+    # "gene" name non-targeting, and scores predictions against a negative control. Excluded here, and their pass
+    # rate is reported instead, because it is a free calibration of the test: 18.5% of true nulls clear p<0.05,
+    # which is the false-positive rate the perturbation filter actually operates at.
+    isctrl = pset == "non-targeting"
+    ctrl_fp = float((np.isfinite(p[isctrl]) & (p[isctrl] < PCUT)).mean()) if isctrl.any() else float("nan")
+    print(f"\nnon-targeting controls: {int(isctrl.sum()):,} rows; {ctrl_fp:.1%} clear p<{PCUT} "
+          f"-- the energy test's empirical false-positive rate, and the reason they are excluded")
+    keep = np.isfinite(p) & (p < PCUT) & (nc >= MINCELLS) & ~isctrl
+    print(f"\nquality filter (energy test p<{PCUT}, >={MINCELLS} cells, controls dropped)")
     print(f"  rows kept {keep.sum():,}/{len(keep):,}; distinct genes {len(set(sym[keep])):,}")
     print(f"  dropped for no detectable phenotype : {int((np.isfinite(p) & (p >= PCUT)).sum()):,}")
     print(f"  dropped for too few cells           : {int((nc < MINCELLS).sum()):,}")
 
-    # ---- the built-in replicate: genes with two independent protospacer sets ----
+    # ---- the built-in replicate: genes whose two protospacer sets were measured SEPARATELY ----
+    # Most rows are labelled P1P2, i.e. both guides already pooled into one measurement -- those are not
+    # replicates. Only the 1,487 rows split into P1 and P2 are, covering 738 genes.
+    #
+    # The pairs are taken PRE-FILTER, deliberately. Requiring both members to clear the energy test leaves only 90
+    # genes AND conditions the sample on agreement: a gene is far more likely to have both halves significant when
+    # the two halves agree, so the surviving pairs would overstate reproducibility. The first version of this
+    # check made that mistake and reported a median correlation of +0.0017 over n=62 -- below its own
+    # different-gene control, which is the signature of a broken comparison rather than a finding.
+    split = np.isin(pset, ["P1", "P2"]) & (nc >= MINCELLS) & ~isctrl
+    pairsym = collections.defaultdict(list)
+    for i in np.where(split)[0]:
+        pairsym[sym[i]].append(i)
+    rep = {g: idx for g, idx in pairsym.items() if len(idx) > 1}
+    print(f"\nREPLICATE CHECK: {len(rep):,} genes have their two protospacer sets measured separately "
+          f"(pre-filter, so the sample is not conditioned on the two halves agreeing)")
+
     bysym = collections.defaultdict(list)
     for i in np.where(keep)[0]:
         bysym[sym[i]].append(i)
-    rep = {g: idx for g, idx in bysym.items() if len(idx) > 1}
-    print(f"\nREPLICATE CHECK: {len(rep):,} genes carry >1 independent protospacer set among kept rows")
     if rep:
         cors, jac = [], []
         rng = np.random.default_rng(0)
-        pick = sorted(rep)[:1500]
+        pick = sorted(rep)
         for g in pick:
             a, b = rep[g][0], rep[g][1]
             x, y = X[a], X[b]
-            if x.std() > 0 and y.std() > 0:
+            if np.isfinite(x).all() and np.isfinite(y).all() and x.std() > 0 and y.std() > 0:
                 cors.append(float(np.corrcoef(x, y)[0, 1]))
             sa, sb = set(np.where(np.abs(x) >= TAU)[0]), set(np.where(np.abs(y) >= TAU)[0])
             if sa or sb:
                 jac.append(len(sa & sb) / len(sa | sb))
-        # a null: the same comparison against a DIFFERENT gene's profile
+        # THE CONTROL MUST COME FROM THE SAME POPULATION AS THE COMPARISON. The first version drew its null from
+        # the FILTERED rows (perturbations that cleared the energy test) while drawing same-gene pairs from the
+        # unfiltered P1/P2 rows. Strong perturbations share the generic stress response and so correlate with each
+        # other, which made the null score HIGHER than the same-gene pairs -- and would have supported the dramatic
+        # and false claim that the screen does not agree with itself. The null here pairs a P1 row of one gene with
+        # a P2 row of a DIFFERENT gene, drawn from exactly the same rows the replicates come from.
+        p1 = [rep[g][0] for g in pick]
+        p2 = [rep[g][1] for g in pick]
         null = []
-        allk = np.where(keep)[0]
-        for _ in range(len(cors)):
-            a, b = rng.choice(allk, 2, replace=False)
-            if X[a].std() > 0 and X[b].std() > 0:
-                null.append(float(np.corrcoef(X[a], X[b])[0, 1]))
+        for t, a in enumerate(p1):
+            b = p2[(t + 1 + rng.integers(0, max(len(p2) - 1, 1))) % len(p2)]   # a different gene's second guide
+            x, y = X[a], X[b]
+            if np.isfinite(x).all() and np.isfinite(y).all() and x.std() > 0 and y.std() > 0:
+                null.append(float(np.corrcoef(x, y)[0, 1]))
         c = np.array(cors); n_ = np.array(null); j = np.array(jac)
-        print(f"  same-gene profile correlation : median {np.median(c):+.4f}  (n={len(c):,})")
-        print(f"  different-gene control        : median {np.median(n_):+.4f}  (n={len(n_):,})")
+        print(f"  same-gene, two guide sets     : median r {np.median(c):+.4f}  (n={len(c):,})")
+        print(f"  DIFFERENT genes, same rows    : median r {np.median(n_):+.4f}  (n={len(n_):,})  <- matched null")
+        print(f"  separation                    : {np.median(c) - np.median(n_):+.4f}")
         print(f"  same-gene mover-set Jaccard   : median {np.median(j):.4f}")
-        print("  -> this is the CEILING on any predictor: the screen cannot agree with itself better than this,")
-        print("     so error below this level is measurement noise, not a modelling failure")
+        print("  -> NOT a usable reproducibility ceiling. See the retraction in this file's docstring.")
 
     # ---- collapse replicates: cell-count-weighted mean, which is the right weighting for a mean of means ----
     genes = sorted({g for g in vg if g})
@@ -162,7 +214,8 @@ def main():
 
     np.savez_compressed(DEST, kos=np.array(kos), genes=np.array(genes), M=M)
     print(f"\n  -> {DEST} ({DEST.stat().st_size/1e6:.1f} MB)")
-    json.dump({"n_perturbations": len(kos), "n_genes": len(genes),
+    json.dump({"n_perturbations": len(kos), "n_genes": len(genes), "control_fp_rate": ctrl_fp,
+               "n_controls_dropped": int(isctrl.sum()),
                "n_rows_total": int(len(keep)), "n_rows_kept": int(keep.sum()),
                "n_tide": int(tide.sum()), "n_scorable": int((spec >= 5).sum()),
                "max_specific": int(spec.max()), "n_ge300": int((spec >= 300).sum()),
