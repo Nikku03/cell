@@ -11929,3 +11929,80 @@ eliminated today. It is the wrong shape.
 failure, and that arm hit 4/4 when it fired. The claim is narrower and firmer: a 89-entry menu cannot address a
 mostly-bespoke, thousands-of-genes answer space, so the fix is a per-knockout output space rather than a longer
 table.
+
+---
+
+# The fix: a per-knockout output space beats the frequency baseline — the first method here that does
+
+`colab/neighbour_transfer.py` · `outputs/orphan/ko_predictions_nbr*.json`
+
+`output_ceiling.py` showed the multi-layer model's limit is its **vocabulary**: 89 possible outputs against an
+answer space of 1,120–2,007, hard-capped at 4.4% recall even at perfect firing. So the fix had to change what the
+model may say, not how it decides.
+
+**The mechanism.** For knockout *k*, take *k*'s network neighbours — proteins it binds, complexes it belongs to,
+reactions it participates in — and transfer *their measured profiles* onto *k*. Genes ranked by how many of *k*'s
+neighbours move them. Output space becomes all 8,246 genes, weighted per knockout.
+
+**Leakage control, stricter than needed.** *k*'s own profile is never read, and **both sealed cohorts are removed
+from the donor pool wholesale** — all 400, not just *k* — because excluding only *k* would still let cohort members
+donate to each other while being scored against the same answers. Donor pool 4,720 of 5,120, median 25 donors.
+
+## Result
+
+| | cohort 1 | cohort 2 (holdout) |
+|---|---:|---:|
+| scored | 180/200 | 168/200 |
+| **neighbour transfer** | **0.1477** | **0.1903** |
+| frequency baseline | 0.1373 | 0.1581 |
+| multi-layer (89-gene menu) | 0.0143 | 0.0391 |
+| beats frequency on | 73/180 (41%) | 60/168 (36%) |
+
+**vs its own SHUFFLED control** (a knockout given a *different* knockout's neighbours):
+
+    cohort 1   0.1486 vs 0.0661   +76/-36   p = 0.0002   bootstrap +0.0821 [+0.0500, +0.1145]
+    cohort 2   0.1908 vs 0.0811   +68/-28   p = 0.0001   bootstrap +0.1105 [+0.0734, +0.1492]
+
+Both CIs exclude zero. **The signal comes from *whose* neighbours were used**, not from the shape of the output —
+which is exactly the test the multi-layer model failed.
+
+**vs the multi-layer model**, paired: 0.1473 vs 0.0143 and 0.2114 vs 0.0391 — roughly **10× and 5×**, p < 0.0001,
+CIs [+0.1047, +0.1636] and [+0.1278, +0.2228]. Changing the output space, with no change to any reasoning, is worth
+an order of magnitude.
+
+## The frequency comparison, stated precisely
+
+This is the claim that matters and it is **not** uniformly significant:
+
+    cohort 1   +0.0103   95% CI [-0.0159, +0.0366]   P(better) = 0.785   sign test p = 0.029
+    cohort 2   +0.0330   95% CI [+0.0054, +0.0614]   P(better) = 0.991   sign test p = 0.338
+
+Cohort 2's bootstrap CI excludes zero; cohort 1's does not. The two tests also disagree in opposite directions
+within each cohort — cohort 1 wins the per-knockout sign test but not the bootstrap, cohort 2 the reverse — which
+is what a real but modest effect looks like when the per-knockout distribution is skewed by a few large truth sets.
+
+**The honest statement: this is the first method in this project to beat the frequency baseline at all, and it does
+so consistently in direction on both cohorts, but the margin is small and only one cohort clears significance on
+the interval estimate.** It is not yet a decisive win over "guess the usual suspects" — it is the first thing that
+is even in the same range.
+
+Against the controls that killed everything else, though, it is decisive: 2–3× its own shuffle with CIs far from
+zero, on both cohorts.
+
+## What it costs
+
+Coverage. **20/200 and 32/200 knockouts get no prediction at all** because they have no network neighbour with a
+measured profile. The multi-layer model could always emit its menu. So this trades universal coverage for accuracy
+where it can speak, and the comparison above is paired on knockouts both methods answer.
+
+## What this says about the diagnosis
+
+The diagnosis was right, and it was the binding constraint. The reasoning layers, sensor tables, cascade logic and
+walk weighting were never the problem — swapping a fixed 89-gene menu for a per-knockout distribution, while
+changing nothing about how the model reasons, moved precision by an order of magnitude and crossed a baseline that
+seven previous methods lost to by 4–10×.
+
+It also relocates the open problem. Neighbour transfer works because it borrows *measured* answers; it is not a
+mechanistic model and explains nothing about why a gene moves. The mechanistic layers still cannot generate
+knockout-specific output on their own — that remains unsolved, and is now clearly separable from the question of
+whether the output space was the limit.
