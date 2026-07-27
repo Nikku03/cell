@@ -11266,10 +11266,13 @@ the network produces.** That is not a sole-source bottleneck, it is the boundary
 drugs. Acetaminophen appeared as a "single point of failure starving 50 reactions". Every count is now split by
 whether the removed thing is something a genetic perturbation could remove at all:
 
-    ADDRESSABLE (a catalyst, or an input carrying genes)   51,813 / 119,719  (43.3%)
-    of the 12,838 STOPS that are addressable:
-        leave a product nothing else makes    8,737  (68.1%)
-        starve >=1 downstream reaction        3,640  (28.4%)   median 1, max 36
+    ADDRESSABLE (a catalyst, or an input a single knockout could remove)   49,419 / 119,719  (41.3%)
+    of the 11,289 STOPS that are addressable:
+        leave a product nothing else makes    7,260  (64.3%)
+        starve >=1 downstream reaction        3,136  (27.8%)   median 1, max 36
+
+(These figures were first published as 43.3% / 12,838 / 8,737 / 3,640, before Reactome DefinedSets were excluded
+from "addressable" -- a multi-gene set is not removable by a single knockout. See the lesion-report section.)
 
 Max cascade fell **98 → 36**. The widest cascades became FASN (59) and the aminoacyl-tRNA synthetases —
 EPRS1 (48), KARS1/MARS1 (25), AARS1/DARS1/QARS1 (24) — where before they were acetaminophen and O₂.
@@ -11282,16 +11285,18 @@ restate "hub genes are essential".
 
 | | mean effect | n | Δ vs network |
 |---|---:|---:|---:|
-| all catalytic/participating genes | −0.1875 | 7,612 | — |
-| **sole catalyst of ≥1 reaction** | −0.1665 | 1,552 | **+0.0210** |
-| not a sole catalyst of any | −0.1929 | 6,060 | −0.0054 |
-| loss starves ≥1 reaction | −0.2558 | 581 | −0.0683 |
-| loss starves ≥5 reactions | −0.6446 | 93 | −0.4571 |
-| loss starves ≥15 reactions | −1.1760 | 27 | −0.9885 |
+| all catalytic/participating genes | −0.2012 | 6,990 | — |
+| **sole catalyst of ≥1 reaction** | −0.1665 | 1,552 | **+0.0347** |
+| not a sole catalyst of any | −0.2111 | 5,438 | −0.0099 |
+| loss starves ≥1 reaction | −0.2558 | 581 | −0.0546 |
+| loss starves ≥5 reactions | −0.6446 | 93 | −0.4434 |
+| loss starves ≥15 reactions | −1.1760 | 27 | −0.9748 |
 
-Participation-matched control (200 draws): −0.0885 ± 0.0521. Observed for "starves ≥5": −0.4571, **z = −7.07**.
+Participation-matched control (200 draws): −0.0804 ± 0.0528. Observed for "starves ≥5": −0.4434, **z = −6.88**.
+(First published as z = −7.07 over 7,612 genes; the universe shrank when DefinedSet members stopped being counted
+as addressable. The conclusion is unchanged and the sole-catalyst flag looks even more useless: +0.0347.)
 
-**Cascade breadth is strongly predictive; the binary "is a sole catalyst" flag is worth nothing** (+0.0210 — if
+**Cascade breadth is strongly predictive; the binary "is a sole catalyst" flag is worth nothing** (+0.0347 — if
 anything slightly *less* essential than average). 1,560 genes are the sole catalyst of some reaction and that fact
 alone says nothing about whether the cell needs them. Only 583 genes starve anything downstream, and how much they
 starve is what tracks fitness. This retires the sole-catalyst flag that `consequence_map.py` has been reporting as a
@@ -11341,18 +11346,27 @@ by an identical rule, never used to develop anything.
 | variant | cohort 1 (fitted) | cohort 2 (holdout) |
 |---|---|---|
 | incumbent, annotation-only | 0.0786 | 0.0685 |
-| lesion site as fallback | **0.0838**  +3/−0  [−0.0056,+0.0173] | **0.0522**  +0/−4  **[−0.0331,−0.0037]** |
-| annotation ∪ lesion site | 0.0736  +3/−0 | 0.0494  +3/−4  **[−0.0385,−0.0035]** |
-| lesion site only | 0.0442 | 0.0358  **[−0.0491,−0.0014]** |
-| control: consequences permuted | 0.0300 | 0.0487  [−0.0433,+0.0190] |
+| lesion site as fallback | 0.0785  +2/−0  [−0.0064,+0.0050] | **0.0522**  +0/−4  **[−0.0331,−0.0037]** |
+| annotation ∪ lesion site | 0.0687  +2/−0 | 0.0504  +3/−4  **[−0.0367,−0.0029]** |
+| lesion site only | 0.0351 | 0.0369  **[−0.0478,−0.0008]** |
+| control: consequences permuted | 0.0395 | 0.0393  **[−0.0565,−0.0039]** |
+
+**These replace the figures first published here, and the replacement changes the story.** On the original run the
+fallback rule scored 0.0838 against the incumbent's 0.0786 and looked like the best variant ever measured in this
+project. After DefinedSet members stopped being credited as single points of failure it scores **0.0785 — a dead
+heat**. The apparent gain was manufactured by the paralogue-attribution bug: PCNA, POLE and RBBP5 were gaining
+sensor firings from lesions they do not actually cause. The holdout had already rejected the rule; the bug fix
+removed even its home-cohort advantage. On cohort 2 all four variants are now significantly worse, the shuffled
+control included.
 
 All CIs are paired bootstraps over knockouts (one resample scored under both methods), restricted to the knockouts
 both scored. On the holdout, all three ablation variants are **significantly worse** — CI entirely below zero. The
 fallback rule was better on 3 knockouts in cohort 1 and on **zero** in cohort 2.
 
-**And on the holdout the shuffled control (0.0487) beats the real lesion-site variant (0.0358).** The per-gene
-consequence identities carry no usable signal for transcriptional prediction; what little the variant achieves
-comes from the shape of its output, not from which reactions actually break.
+**On the holdout the shuffled control and the real lesion-site variant are indistinguishable from each other**
+(0.0393 vs 0.0369, both significantly below the incumbent). The per-gene consequence identities carry no usable
+signal for transcriptional prediction; what little either achieves comes from the shape of its output, not from
+which reactions actually break.
 
 ## What this retires and what survives
 
@@ -11445,3 +11459,77 @@ the same message as a gene whose every reaction is buffered. PMPCB appears in **
 annotates the processing peptidase through PMPCA only — and the report now says so rather than asserting buffering.
 
 10,610 of the network's genes appear in at least one reaction.
+
+---
+
+# Consolidated state after the DefinedSet fix — everything re-run
+
+Every module downstream of the entity-representation fix was re-run and re-scored, because the numbers first
+published for the ablation and the multi-layer comparison were computed before it. Those sections above have been
+corrected in place, with the superseded figures named so the change is auditable rather than silent.
+
+## What the reaction layer says now
+
+| | |
+|---|---:|
+| reactions | 28,528 |
+| single-participant ablations | 119,719 |
+| STOPS / BUFFERED / REDUNDANT / BUFFERED_CURRENCY | 40,042 / 34,714 / 29,645 / 15,318 |
+| addressable by a single knockout | 49,419 (41.3%) |
+| addressable STOPS | 11,289 |
+| …leaving a product nothing else makes | 7,260 (64.3%) |
+| …starving ≥1 downstream reaction | 3,136 (27.8%), median 1, max 36 |
+| every participant a single point of failure | 3,848 reactions (13.6%) |
+| fully buffered | 14,183 reactions (50.2%) |
+| genes with a direct lesion | 5,282 (3,595 with a HIGH-confidence one) |
+| genes whose loss starves anything | 583 |
+| genes appearing in ≥1 reaction | 10,610 |
+
+Widest cascades: FASN (59), EPRS1 (48), FLT3 (25), KARS1/MARS1 (25), AARS1/DARS1/QARS1 (24).
+
+**The one validated claim in this layer**: cascade breadth predicts DepMap essentiality. Genes whose loss starves
+≥5 reactions have mean effect −0.6446 against −0.2012 network-wide, versus a participation-matched control of
+−0.0804 ± 0.0528 — **z = −6.88**. The binary "is a sole catalyst" flag predicts nothing (+0.0347, marginally *less*
+essential than average), which retires a signal `consequence_map.py` had reported since it was built.
+
+## What the prediction layer says now
+
+| method | cohort 1 | cohort 2 (holdout) | verdict |
+|---|---:|---:|---|
+| **multi-layer, annotation-only** | **0.0786** | **0.0685** | replicates; still the best |
+| lesion site as fallback | 0.0785 | 0.0522 | worse on holdout, CI excludes 0 |
+| annotation ∪ lesion site | 0.0687 | 0.0504 | worse on holdout, CI excludes 0 |
+| lesion site only | 0.0351 | 0.0369 | worse on holdout, CI excludes 0 |
+| control: consequences permuted | 0.0395 | 0.0393 | worse on holdout, CI excludes 0 |
+
+The incumbent is the only method with two independent measurements that agree. Nothing built from reaction-level
+consequences beats it, on either cohort.
+
+## The through-line across all of today
+
+Four separate corrections, and every one of them made the model *smaller*, not larger:
+
+1. currency marked inconsistently per source — 35,883 slots were spuriously currency, so real substrates were
+   treated as free; max cascade 98 → 36
+2. "STOPS" was being read as fragility when 20,201 of 20,202 rows were species nothing in the network makes
+3. DefinedSet members counted as single points of failure — RPS27A looked like the widest cascade in the cell
+   because ubiquitin has four genes
+4. pathway and step were partly fabricated — one shared gene was enough to place a reaction, and cycles were
+   unrolled into fake step numbers
+
+Each was found by rendering something and reading it, never by reading a summary table. The summary tables were
+all internally consistent and all wrong. That is the reusable lesson: aggregate statistics cannot detect an error
+in what the aggregate is *of*.
+
+## What is still open
+
+- **E_max unpopulated.** ClinGen triplosensitivity yields 3 usable genes; pTriplo (Collins 2022) is blocked at
+  Zenodo, two GitHub mirrors and the publisher supplement. Without a ceiling, dosage is one-sided.
+- **Catalyst entity class.** 5,556 reactions (19.5%) have >1 catalyst and the network cannot say whether those are
+  alternative enzymes or subunits of one enzyme. A PPI-based test was tried and rejected on known cases. One field
+  per reaction from Reactome would resolve it.
+- **Paralogue families inside complexes.** 6,355 lesions are LOW-confidence for this reason; the entity tree would
+  fix it.
+- **PPI index-space defect** in `wall_learnsim.py`, `wall_combine.py`, `recall_depth.py`, `eval_harness.py` —
+  long-standing, documented, still unfixed.
+- **`gwps.h5ad` unexploited**: 11,258 perturbations available against the 1,400 used.

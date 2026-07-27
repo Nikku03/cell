@@ -135,14 +135,14 @@
   },
   {
    "gene": "PCNA",
-   "n_pred": 45,
+   "n_pred": 37,
    "n_truth": 53,
-   "hits": 3,
-   "precision": 0.06666666666666667,
-   "recall": 0.05660377358490566,
-   "random_hits": 0.365,
-   "frequency_hits": 11,
-   "lift_vs_random": 8.219178082191782,
+   "hits": 2,
+   "precision": 0.05405405405405406,
+   "recall": 0.03773584905660377,
+   "random_hits": 0.26,
+   "frequency_hits": 9,
+   "lift_vs_random": 7.692307692307692,
    "beats_frequency": false
   },
   {
@@ -152,9 +152,9 @@
    "hits": 11,
    "precision": 0.6470588235294118,
    "recall": 0.11956521739130435,
-   "random_hits": 0.175,
+   "random_hits": 0.235,
    "frequency_hits": 7,
-   "lift_vs_random": 62.85714285714286,
+   "lift_vs_random": 46.808510638297875,
    "beats_frequency": true
   },
   {
@@ -164,7 +164,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.05,
+   "random_hits": 0.045,
    "frequency_hits": 0,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -176,7 +176,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.005,
+   "random_hits": 0.02,
    "frequency_hits": 1,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -188,9 +188,9 @@
    "hits": 7,
    "precision": 0.4375,
    "recall": 0.3684210526315789,
-   "random_hits": 0.045,
+   "random_hits": 0.04,
    "frequency_hits": 1,
-   "lift_vs_random": 155.55555555555557,
+   "lift_vs_random": 175.0,
    "beats_frequency": true
   },
   {
@@ -200,7 +200,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.035,
+   "random_hits": 0.025,
    "frequency_hits": 6,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -212,7 +212,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.01,
+   "random_hits": 0.015,
    "frequency_hits": 0,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -224,22 +224,22 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.02,
+   "random_hits": 0.015,
    "frequency_hits": 0,
    "lift_vs_random": 0.0,
    "beats_frequency": false
   },
   {
    "gene": "POLE",
-   "n_pred": 8,
+   "n_pred": 12,
    "n_truth": 17,
-   "hits": 2,
-   "precision": 0.25,
-   "recall": 0.11764705882352941,
+   "hits": 0,
+   "precision": 0.0,
+   "recall": 0.0,
    "random_hits": 0.035,
-   "frequency_hits": 1,
-   "lift_vs_random": 57.14285714285714,
-   "beats_frequency": true
+   "frequency_hits": 2,
+   "lift_vs_random": 0.0,
+   "beats_frequency": false
   },
   {
    "gene": "POLR1A",
@@ -248,7 +248,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.01,
+   "random_hits": 0.02,
    "frequency_hits": 1,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -260,7 +260,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.055,
+   "random_hits": 0.04,
    "frequency_hits": 1,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -272,7 +272,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.01,
+   "random_hits": 0.015,
    "frequency_hits": 3,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -284,7 +284,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.13,
+   "random_hits": 0.18,
    "frequency_hits": 0,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -308,7 +308,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.01,
+   "random_hits": 0.0,
    "frequency_hits": 2,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -320,7 +320,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.02,
+   "random_hits": 0.03,
    "frequency_hits": 4,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -332,22 +332,22 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.0,
+   "random_hits": 0.005,
    "frequency_hits": 0,
    "lift_vs_random": 0.0,
    "beats_frequency": false
   },
   {
    "gene": "RBBP5",
-   "n_pred": 31,
+   "n_pred": 21,
    "n_truth": 46,
-   "hits": 4,
-   "precision": 0.12903225806451613,
-   "recall": 0.08695652173913043,
-   "random_hits": 0.17,
+   "hits": 3,
+   "precision": 0.14285714285714285,
+   "recall": 0.06521739130434782,
+   "random_hits": 0.145,
    "frequency_hits": 3,
-   "lift_vs_random": 23.52941176470588,
-   "beats_frequency": true
+   "lift_vs_random": 20.689655172413794,
+   "beats_frequency": false
   },
   {
    "gene": "RBM14",
@@ -356,7 +356,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.0,
+   "random_hits": 0.005,
    "frequency_hits": 0,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -368,7 +368,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.315,
+   "random_hits": 0.395,
    "frequency_hits": 7,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -380,9 +380,9 @@
    "hits": 1,
    "precision": 0.09090909090909091,
    "recall": 0.16666666666666666,
-   "random_hits": 0.025,
+   "random_hits": 0.015,
    "frequency_hits": 0,
-   "lift_vs_random": 40.0,
+   "lift_vs_random": 66.66666666666667,
    "beats_frequency": true
   },
   {
@@ -404,9 +404,9 @@
    "hits": 4,
    "precision": 0.25,
    "recall": 0.23529411764705882,
-   "random_hits": 0.015,
+   "random_hits": 0.035,
    "frequency_hits": 0,
-   "lift_vs_random": 266.6666666666667,
+   "lift_vs_random": 114.28571428571428,
    "beats_frequency": true
   },
   {
@@ -428,9 +428,9 @@
    "hits": 1,
    "precision": 0.08333333333333333,
    "recall": 0.018867924528301886,
-   "random_hits": 0.08,
+   "random_hits": 0.105,
    "frequency_hits": 2,
-   "lift_vs_random": 12.5,
+   "lift_vs_random": 9.523809523809524,
    "beats_frequency": false
   },
   {
@@ -440,9 +440,9 @@
    "hits": 1,
    "precision": 0.038461538461538464,
    "recall": 0.004739336492890996,
-   "random_hits": 0.795,
+   "random_hits": 0.875,
    "frequency_hits": 0,
-   "lift_vs_random": 1.2578616352201257,
+   "lift_vs_random": 1.1428571428571428,
    "beats_frequency": true
   },
   {
@@ -464,17 +464,17 @@
    "hits": 1,
    "precision": 1.0,
    "recall": 0.03333333333333333,
-   "random_hits": 0.0,
+   "random_hits": 0.005,
    "frequency_hits": 0,
-   "lift_vs_random": 999999999.9999999,
+   "lift_vs_random": 200.0,
    "beats_frequency": true
   }
  ],
- "hits": 46,
- "random": 2.925,
- "frequency": 79,
- "n_pred": 549,
- "precision": 0.08378870673952642,
- "beat_frequency": 10,
+ "hits": 42,
+ "random": 3.1099999999999994,
+ "frequency": 78,
+ "n_pred": 535,
+ "precision": 0.07850467289719626,
+ "beat_frequency": 8,
  "n_scored": 39
 }

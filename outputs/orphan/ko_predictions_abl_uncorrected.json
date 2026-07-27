@@ -1,6 +1,6 @@
 {
  "GPN3": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -11,7 +11,7 @@
   "predicted_genes": []
  },
  "MMS22L": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -22,7 +22,7 @@
   "predicted_genes": []
  },
  "NIFK": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -33,7 +33,7 @@
   "predicted_genes": []
  },
  "NKAP": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -44,7 +44,7 @@
   "predicted_genes": []
  },
  "NRDE2": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -55,7 +55,7 @@
   "predicted_genes": []
  },
  "NRF1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -112,7 +112,7 @@
   ]
  },
  "NUP54": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 1,
   "n_starved": 0,
   "sensors_fired": [
@@ -140,7 +140,7 @@
   ]
  },
  "NUP62": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 1,
   "n_starved": 0,
   "sensors_fired": [
@@ -168,7 +168,7 @@
   ]
  },
  "NUP88": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -179,7 +179,7 @@
   "predicted_genes": []
  },
  "NUP98": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -190,7 +190,7 @@
   "predicted_genes": []
  },
  "OGFOD1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -201,7 +201,7 @@
   "predicted_genes": []
  },
  "OGT": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 2,
   "n_starved": 0,
   "sensors_fired": [
@@ -229,7 +229,7 @@
   ]
  },
  "OR4K1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -240,7 +240,7 @@
   "predicted_genes": []
  },
  "PAK1IP1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -251,7 +251,7 @@
   "predicted_genes": []
  },
  "PAM16": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -262,10 +262,11 @@
   "predicted_genes": []
  },
  "PCNA": {
-  "variant": "ablation",
-  "n_stopped": 7,
-  "n_starved": 7,
+  "variant": "uncorrected",
+  "n_stopped": 8,
+  "n_starved": 8,
   "sensors_fired": [
+   "iron_low",
    "proteasome_loss",
    "proteotoxic",
    "translation_stress"
@@ -273,11 +274,12 @@
   "class_weights": {
    "proteotoxic": 10,
    "translation_stress": 4,
-   "proteasome_loss": 4
+   "proteasome_loss": 4,
+   "iron_low": 2
   },
-  "reasoning": "7 reactions stop, 7 starve; those reactions classify as ['proteasome_loss', 'proteotoxic', 'translation_stress']; 0 regulon + 40 sensor-programme genes",
+  "reasoning": "8 reactions stop, 8 starve; those reactions classify as ['iron_low', 'proteasome_loss', 'proteotoxic', 'translation_stress']; 0 regulon + 49 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 40,
+  "n_sensor": 49,
   "predicted_genes": [
    "HSPA1A",
    "HSPA1B",
@@ -318,11 +320,20 @@
    "SLC3A2",
    "SLC7A11",
    "EIF4EBP1",
-   "CEBPB"
+   "CEBPB",
+   "TFRC",
+   "SLC11A2",
+   "STEAP3",
+   "ACO1",
+   "IREB2",
+   "FTL",
+   "FTH1",
+   "ALAS2",
+   "SLC25A37"
   ]
  },
  "PHB2": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -335,7 +346,7 @@
   ]
  },
  "PHF5A": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -348,7 +359,7 @@
   ]
  },
  "PIAS4": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 13,
   "n_starved": 2,
   "sensors_fired": [
@@ -420,7 +431,7 @@
   ]
  },
  "PMPCB": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -431,7 +442,7 @@
   "predicted_genes": []
  },
  "PNO1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 1,
   "n_starved": 0,
   "sensors_fired": [
@@ -475,7 +486,7 @@
   ]
  },
  "PNPT1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -486,7 +497,7 @@
   "predicted_genes": []
  },
  "POLA1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -497,18 +508,32 @@
   "predicted_genes": []
  },
  "POLE": {
-  "variant": "ablation",
-  "n_stopped": 0,
-  "n_starved": 0,
-  "sensors_fired": [],
-  "class_weights": {},
-  "reasoning": "0 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
+  "variant": "uncorrected",
+  "n_stopped": 1,
+  "n_starved": 1,
+  "sensors_fired": [
+   "iron_low"
+  ],
+  "class_weights": {
+   "iron_low": 2
+  },
+  "reasoning": "1 reactions stop, 1 starve; those reactions classify as ['iron_low']; 0 regulon + 9 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
+  "n_sensor": 9,
+  "predicted_genes": [
+   "TFRC",
+   "SLC11A2",
+   "STEAP3",
+   "ACO1",
+   "IREB2",
+   "FTL",
+   "FTH1",
+   "ALAS2",
+   "SLC25A37"
+  ]
  },
  "POLR1A": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 1,
   "n_starved": 0,
   "sensors_fired": [],
@@ -521,7 +546,7 @@
   ]
  },
  "POLR1B": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 1,
   "n_starved": 0,
   "sensors_fired": [],
@@ -532,7 +557,7 @@
   "predicted_genes": []
  },
  "POP1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -543,7 +568,7 @@
   "predicted_genes": []
  },
  "POT1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 3,
   "n_starved": 3,
   "sensors_fired": [],
@@ -554,7 +579,7 @@
   "predicted_genes": []
  },
  "PPP1R10": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -565,7 +590,7 @@
   "predicted_genes": []
  },
  "PPRC1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 3,
   "n_starved": 0,
   "sensors_fired": [
@@ -614,18 +639,18 @@
   ]
  },
  "PPY": {
-  "variant": "ablation",
-  "n_stopped": 0,
+  "variant": "uncorrected",
+  "n_stopped": 1,
   "n_starved": 0,
   "sensors_fired": [],
   "class_weights": {},
-  "reasoning": "0 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
+  "reasoning": "1 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": []
  },
  "PRPF19": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -636,7 +661,7 @@
   "predicted_genes": []
  },
  "PRPF3": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -647,7 +672,7 @@
   "predicted_genes": []
  },
  "PRPF4": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -658,7 +683,7 @@
   "predicted_genes": []
  },
  "PRPF40A": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -669,7 +694,7 @@
   "predicted_genes": []
  },
  "PWP2": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 1,
   "n_starved": 1,
   "sensors_fired": [
@@ -696,7 +721,7 @@
   ]
  },
  "RAD21": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 9,
   "n_starved": 6,
   "sensors_fired": [
@@ -725,20 +750,22 @@
   ]
  },
  "RBBP5": {
-  "variant": "ablation",
-  "n_stopped": 2,
-  "n_starved": 2,
+  "variant": "uncorrected",
+  "n_stopped": 15,
+  "n_starved": 13,
   "sensors_fired": [
    "iron_low",
+   "sterol_low",
    "translation_stress"
   ],
   "class_weights": {
    "translation_stress": 2,
-   "iron_low": 2
+   "iron_low": 2,
+   "sterol_low": 1
   },
-  "reasoning": "2 reactions stop, 2 starve; those reactions classify as ['iron_low', 'translation_stress']; 2 regulon + 20 sensor-programme genes",
+  "reasoning": "15 reactions stop, 13 starve; those reactions classify as ['iron_low', 'sterol_low', 'translation_stress']; 2 regulon + 30 sensor-programme genes",
   "n_regulon": 2,
-  "n_sensor": 20,
+  "n_sensor": 30,
   "predicted_genes": [
    "MEF2C",
    "HMGA1",
@@ -761,11 +788,21 @@
    "SLC3A2",
    "SLC7A11",
    "EIF4EBP1",
-   "CEBPB"
+   "CEBPB",
+   "HMGCR",
+   "HMGCS1",
+   "LDLR",
+   "SQLE",
+   "FDFT1",
+   "IDI1",
+   "MVD",
+   "INSIG1",
+   "SREBF2",
+   "DHCR7"
   ]
  },
  "RBM14": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 1,
   "n_starved": 0,
   "sensors_fired": [],
@@ -776,7 +813,7 @@
   "predicted_genes": []
  },
  "RBM22": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -787,7 +824,7 @@
   "predicted_genes": []
  },
  "RBM8A": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 2,
   "n_starved": 1,
   "sensors_fired": [
@@ -816,7 +853,7 @@
   ]
  },
  "RCL1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 1,
   "n_starved": 1,
   "sensors_fired": [
@@ -843,7 +880,7 @@
   ]
  },
  "ROMO1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -854,7 +891,7 @@
   "predicted_genes": []
  },
  "RPAP1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -865,7 +902,7 @@
   "predicted_genes": []
  },
  "RRP12": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -876,7 +913,7 @@
   "predicted_genes": []
  },
  "RUVBL1": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 4,
   "n_starved": 1,
   "sensors_fired": [
@@ -904,7 +941,7 @@
   ]
  },
  "SEC62": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -915,7 +952,7 @@
   "predicted_genes": []
  },
  "SFPQ": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 2,
   "n_starved": 0,
   "sensors_fired": [],
@@ -939,7 +976,7 @@
   ]
  },
  "SLC7A6OS": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
@@ -950,7 +987,7 @@
   "predicted_genes": []
  },
  "SNRNP70": {
-  "variant": "ablation",
+  "variant": "uncorrected",
   "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],

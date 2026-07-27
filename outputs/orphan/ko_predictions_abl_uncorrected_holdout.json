@@ -363,9 +363,9 @@
    "translation_stress"
   ],
   "class_weights": {
-   "translation_stress": 1,
+   "proteasome_loss": 1,
    "iron_low": 1,
-   "proteasome_loss": 1
+   "translation_stress": 1
   },
   "reasoning": "1 reactions stop, 0 starve; those reactions classify as ['iron_low', 'proteasome_loss', 'translation_stress']; 0 regulon + 37 sensor-programme genes",
   "n_regulon": 0,
@@ -490,8 +490,8 @@
    "sterol_low"
   ],
   "class_weights": {
-   "sterol_low": 17,
-   "proteotoxic": 17
+   "proteotoxic": 17,
+   "sterol_low": 17
   },
   "reasoning": "16 reactions stop, 1 starve; those reactions classify as ['proteotoxic', 'sterol_low']; 10 regulon + 20 sensor-programme genes",
   "n_regulon": 10,

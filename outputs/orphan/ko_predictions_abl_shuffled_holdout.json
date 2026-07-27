@@ -56,34 +56,51 @@
  },
  "HDAC7": {
   "variant": "shuffled",
-  "n_stopped": 1,
-  "n_starved": 0,
+  "n_stopped": 21,
+  "n_starved": 4,
   "sensors_fired": [
-   "translation_stress"
+   "iron_low",
+   "proteasome_loss"
   ],
   "class_weights": {
-   "translation_stress": 1
+   "iron_low": 5,
+   "proteasome_loss": 2
   },
-  "reasoning": "1 reactions stop, 0 starve; those reactions classify as ['translation_stress']; 5 regulon + 11 sensor-programme genes",
+  "reasoning": "21 reactions stop, 4 starve; those reactions classify as ['iron_low', 'proteasome_loss']; 5 regulon + 26 sensor-programme genes",
   "n_regulon": 5,
-  "n_sensor": 11,
+  "n_sensor": 26,
   "predicted_genes": [
    "ACTN4",
    "MAML1",
    "MEF2A",
    "MEF2C",
    "HIF1A",
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
+   "TFRC",
+   "SLC11A2",
+   "STEAP3",
+   "ACO1",
+   "IREB2",
+   "FTL",
+   "FTH1",
+   "ALAS2",
+   "SLC25A37",
+   "PSMA1",
+   "PSMA3",
+   "PSMA4",
+   "PSMA5",
+   "PSMA7",
+   "PSMB1",
+   "PSMB3",
+   "PSMB4",
+   "PSMB5",
+   "PSMB6",
+   "PSMC1",
+   "PSMC2",
+   "PSMD1",
+   "PSMD2",
+   "PSMD11",
+   "POMP",
+   "NFE2L1"
   ]
  },
  "HINFP": {
@@ -109,11 +126,11 @@
  },
  "HNRNPC": {
   "variant": "shuffled",
-  "n_stopped": 6,
-  "n_starved": 3,
+  "n_stopped": 2,
+  "n_starved": 1,
   "sensors_fired": [],
   "class_weights": {},
-  "reasoning": "6 reactions stop, 3 starve; those reactions classify as nothing; 1 regulon + 0 sensor-programme genes",
+  "reasoning": "2 reactions stop, 1 starve; those reactions classify as nothing; 1 regulon + 0 sensor-programme genes",
   "n_regulon": 1,
   "n_sensor": 0,
   "predicted_genes": [
@@ -133,41 +150,24 @@
  },
  "MED1": {
   "variant": "shuffled",
-  "n_stopped": 4,
-  "n_starved": 1,
+  "n_stopped": 1,
+  "n_starved": 0,
   "sensors_fired": [
-   "er_stress",
    "translation_stress"
   ],
   "class_weights": {
-   "er_stress": 5,
    "translation_stress": 1
   },
-  "reasoning": "4 reactions stop, 1 starve; those reactions classify as ['er_stress', 'translation_stress']; 3 regulon + 26 sensor-programme genes",
+  "reasoning": "1 reactions stop, 0 starve; those reactions classify as ['translation_stress']; 3 regulon + 11 sensor-programme genes",
   "n_regulon": 3,
-  "n_sensor": 26,
+  "n_sensor": 11,
   "predicted_genes": [
    "AURKA",
    "KRT10",
    "THRA",
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
    "ATF4",
-   "MANF",
-   "CRELD2",
    "ATF5",
+   "DDIT3",
    "TRIB3",
    "SESN2",
    "MTHFD2",
@@ -202,36 +202,14 @@
  },
  "MVD": {
   "variant": "shuffled",
-  "n_stopped": 1,
-  "n_starved": 2,
-  "sensors_fired": [
-   "mito_stress"
-  ],
-  "class_weights": {
-   "mito_stress": 3
-  },
-  "reasoning": "1 reactions stop, 2 starve; those reactions classify as ['mito_stress']; 0 regulon + 17 sensor-programme genes",
+  "n_stopped": 5,
+  "n_starved": 0,
+  "sensors_fired": [],
+  "class_weights": {},
+  "reasoning": "5 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
+  "n_sensor": 0,
+  "predicted_genes": []
  },
  "NAA38": {
   "variant": "shuffled",
@@ -257,85 +235,64 @@
  },
  "NAE1": {
   "variant": "shuffled",
-  "n_stopped": 5,
-  "n_starved": 4,
-  "sensors_fired": [],
-  "class_weights": {},
-  "reasoning": "5 reactions stop, 4 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
+  "n_stopped": 3,
+  "n_starved": 0,
+  "sensors_fired": [
+   "proteasome_loss"
+  ],
+  "class_weights": {
+   "proteasome_loss": 1
+  },
+  "reasoning": "3 reactions stop, 0 starve; those reactions classify as ['proteasome_loss']; 0 regulon + 17 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
+  "n_sensor": 17,
+  "predicted_genes": [
+   "PSMA1",
+   "PSMA3",
+   "PSMA4",
+   "PSMA5",
+   "PSMA7",
+   "PSMB1",
+   "PSMB3",
+   "PSMB4",
+   "PSMB5",
+   "PSMB6",
+   "PSMC1",
+   "PSMC2",
+   "PSMD1",
+   "PSMD2",
+   "PSMD11",
+   "POMP",
+   "NFE2L1"
+  ]
  },
  "NAPA": {
   "variant": "shuffled",
   "n_stopped": 1,
-  "n_starved": 0,
-  "sensors_fired": [
-   "mito_stress",
-   "translation_stress"
-  ],
-  "class_weights": {
-   "translation_stress": 1,
-   "mito_stress": 1
-  },
-  "reasoning": "1 reactions stop, 0 starve; those reactions classify as ['mito_stress', 'translation_stress']; 0 regulon + 17 sensor-programme genes",
+  "n_starved": 1,
+  "sensors_fired": [],
+  "class_weights": {},
+  "reasoning": "1 reactions stop, 1 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
+  "n_sensor": 0,
+  "predicted_genes": []
  },
  "NEDD8": {
   "variant": "shuffled",
-  "n_stopped": 14,
-  "n_starved": 7,
+  "n_stopped": 1,
+  "n_starved": 1,
   "sensors_fired": [
-   "er_stress",
    "proteotoxic",
    "translation_stress"
   ],
   "class_weights": {
-   "er_stress": 10,
-   "proteotoxic": 1,
-   "translation_stress": 1
+   "translation_stress": 1,
+   "proteotoxic": 1
   },
-  "reasoning": "14 reactions stop, 7 starve; those reactions classify as ['er_stress', 'proteotoxic', 'translation_stress']; 0 regulon + 38 sensor-programme genes",
+  "reasoning": "1 reactions stop, 1 starve; those reactions classify as ['proteotoxic', 'translation_stress']; 0 regulon + 23 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 38,
+  "n_sensor": 23,
   "predicted_genes": [
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "ATF4",
-   "MANF",
-   "CRELD2",
    "HSPA1A",
    "HSPA1B",
    "HSPA8",
@@ -348,7 +305,9 @@
    "HSPB1",
    "HSPD1",
    "HSPE1",
+   "ATF4",
    "ATF5",
+   "DDIT3",
    "TRIB3",
    "SESN2",
    "MTHFD2",
@@ -361,13 +320,17 @@
  },
  "NFYC": {
   "variant": "shuffled",
-  "n_stopped": 3,
-  "n_starved": 0,
-  "sensors_fired": [],
-  "class_weights": {},
-  "reasoning": "3 reactions stop, 0 starve; those reactions classify as nothing; 10 regulon + 0 sensor-programme genes",
+  "n_stopped": 2,
+  "n_starved": 2,
+  "sensors_fired": [
+   "er_stress"
+  ],
+  "class_weights": {
+   "er_stress": 4
+  },
+  "reasoning": "2 reactions stop, 2 starve; those reactions classify as ['er_stress']; 10 regulon + 17 sensor-programme genes",
   "n_regulon": 10,
-  "n_sensor": 0,
+  "n_sensor": 17,
   "predicted_genes": [
    "CCND2",
    "CDKN1B",
@@ -378,7 +341,24 @@
    "HSPA1A",
    "HSPA1B",
    "LPIN1",
-   "NFYA"
+   "NFYA",
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "MANF",
+   "CRELD2"
   ]
  },
  "NOP2": {
@@ -386,22 +366,14 @@
   "n_stopped": 1,
   "n_starved": 0,
   "sensors_fired": [
-   "er_stress",
-   "export_block",
-   "iron_low",
-   "sterol_low",
-   "translation_stress"
+   "er_stress"
   ],
   "class_weights": {
-   "translation_stress": 1,
-   "iron_low": 1,
-   "export_block": 1,
-   "sterol_low": 1,
    "er_stress": 1
   },
-  "reasoning": "1 reactions stop, 0 starve; those reactions classify as ['er_stress', 'export_block', 'iron_low', 'sterol_low', 'translation_stress']; 0 regulon + 45 sensor-programme genes",
+  "reasoning": "1 reactions stop, 0 starve; those reactions classify as ['er_stress']; 0 regulon + 17 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 45,
+  "n_sensor": 17,
   "predicted_genes": [
    "HSPA5",
    "XBP1",
@@ -419,11 +391,25 @@
    "SEC61B",
    "ATF4",
    "MANF",
-   "CRELD2",
-   "SESN2",
-   "EIF4EBP1",
-   "SLC3A2",
-   "TRIB3",
+   "CRELD2"
+  ]
+ },
+ "PABPN1": {
+  "variant": "shuffled",
+  "n_stopped": 21,
+  "n_starved": 9,
+  "sensors_fired": [
+   "iron_low",
+   "translation_stress"
+  ],
+  "class_weights": {
+   "iron_low": 2,
+   "translation_stress": 2
+  },
+  "reasoning": "21 reactions stop, 9 starve; those reactions classify as ['iron_low', 'translation_stress']; 0 regulon + 20 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 20,
+  "predicted_genes": [
    "TFRC",
    "SLC11A2",
    "STEAP3",
@@ -433,33 +419,18 @@
    "FTH1",
    "ALAS2",
    "SLC25A37",
-   "HMGCR",
-   "HMGCS1",
-   "LDLR",
-   "SQLE",
-   "FDFT1",
-   "IDI1",
-   "MVD",
-   "INSIG1",
-   "SREBF2",
-   "DHCR7",
+   "ATF4",
    "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
    "MTHFD2",
    "SHMT2",
+   "SLC3A2",
    "SLC7A11",
+   "EIF4EBP1",
    "CEBPB"
   ]
- },
- "PABPN1": {
-  "variant": "shuffled",
-  "n_stopped": 1,
-  "n_starved": 0,
-  "sensors_fired": [],
-  "class_weights": {},
-  "reasoning": "1 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
  },
  "PAF1": {
   "variant": "shuffled",
@@ -474,150 +445,53 @@
  },
  "PDCD11": {
   "variant": "shuffled",
-  "n_stopped": 5,
-  "n_starved": 3,
+  "n_stopped": 1,
+  "n_starved": 0,
   "sensors_fired": [
-   "proteotoxic"
+   "er_stress"
   ],
   "class_weights": {
-   "proteotoxic": 6
+   "er_stress": 1
   },
-  "reasoning": "5 reactions stop, 3 starve; those reactions classify as ['proteotoxic']; 0 regulon + 12 sensor-programme genes",
+  "reasoning": "1 reactions stop, 0 starve; those reactions classify as ['er_stress']; 0 regulon + 17 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 12,
+  "n_sensor": 17,
   "predicted_genes": [
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1"
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "MANF",
+   "CRELD2"
   ]
  },
  "PELP1": {
   "variant": "shuffled",
-  "n_stopped": 1,
-  "n_starved": 0,
-  "sensors_fired": [],
-  "class_weights": {},
-  "reasoning": "1 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "PFDN2": {
-  "variant": "shuffled",
-  "n_stopped": 0,
-  "n_starved": 0,
-  "sensors_fired": [],
-  "class_weights": {},
-  "reasoning": "0 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "POLR2C": {
-  "variant": "shuffled",
-  "n_stopped": 3,
-  "n_starved": 0,
+  "n_stopped": 2,
+  "n_starved": 1,
   "sensors_fired": [
-   "mito_stress"
-  ],
-  "class_weights": {
-   "mito_stress": 3
-  },
-  "reasoning": "3 reactions stop, 0 starve; those reactions classify as ['mito_stress']; 0 regulon + 17 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 17,
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "MTHFD2L",
-   "SHMT2",
-   "CEBPB",
-   "SLC7A11",
-   "SLC3A2",
-   "EIF4EBP1",
-   "GDF15",
-   "CTH",
-   "XBP1",
-   "VEGFA",
-   "NUPR1"
-  ]
- },
- "POLR2H": {
-  "variant": "shuffled",
-  "n_stopped": 3,
-  "n_starved": 0,
-  "sensors_fired": [
-   "iron_low"
-  ],
-  "class_weights": {
-   "iron_low": 3
-  },
-  "reasoning": "3 reactions stop, 0 starve; those reactions classify as ['iron_low']; 0 regulon + 9 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 9,
-  "predicted_genes": [
-   "TFRC",
-   "SLC11A2",
-   "STEAP3",
-   "ACO1",
-   "IREB2",
-   "FTL",
-   "FTH1",
-   "ALAS2",
-   "SLC25A37"
-  ]
- },
- "POLR2I": {
-  "variant": "shuffled",
-  "n_stopped": 1,
-  "n_starved": 0,
-  "sensors_fired": [],
-  "class_weights": {},
-  "reasoning": "1 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
-  "n_regulon": 0,
-  "n_sensor": 0,
-  "predicted_genes": []
- },
- "POLR3A": {
-  "variant": "shuffled",
-  "n_stopped": 7,
-  "n_starved": 3,
-  "sensors_fired": [
-   "iron_low",
    "proteasome_loss",
    "translation_stress"
   ],
   "class_weights": {
-   "iron_low": 8,
-   "translation_stress": 2,
-   "proteasome_loss": 2
+   "proteasome_loss": 2,
+   "translation_stress": 2
   },
-  "reasoning": "7 reactions stop, 3 starve; those reactions classify as ['iron_low', 'proteasome_loss', 'translation_stress']; 0 regulon + 37 sensor-programme genes",
+  "reasoning": "2 reactions stop, 1 starve; those reactions classify as ['proteasome_loss', 'translation_stress']; 0 regulon + 28 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 37,
+  "n_sensor": 28,
   "predicted_genes": [
-   "TFRC",
-   "SLC11A2",
-   "STEAP3",
-   "ACO1",
-   "IREB2",
-   "FTL",
-   "FTH1",
-   "ALAS2",
-   "SLC25A37",
    "PSMA1",
    "PSMA3",
    "PSMA4",
@@ -646,6 +520,138 @@
    "SLC7A11",
    "EIF4EBP1",
    "CEBPB"
+  ]
+ },
+ "PFDN2": {
+  "variant": "shuffled",
+  "n_stopped": 0,
+  "n_starved": 0,
+  "sensors_fired": [],
+  "class_weights": {},
+  "reasoning": "0 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
+ },
+ "POLR2C": {
+  "variant": "shuffled",
+  "n_stopped": 8,
+  "n_starved": 3,
+  "sensors_fired": [
+   "er_stress",
+   "mito_stress"
+  ],
+  "class_weights": {
+   "er_stress": 4,
+   "mito_stress": 1
+  },
+  "reasoning": "8 reactions stop, 3 starve; those reactions classify as ['er_stress', 'mito_stress']; 0 regulon + 31 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 31,
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "MANF",
+   "CRELD2",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "VEGFA",
+   "NUPR1"
+  ]
+ },
+ "POLR2H": {
+  "variant": "shuffled",
+  "n_stopped": 2,
+  "n_starved": 1,
+  "sensors_fired": [],
+  "class_weights": {},
+  "reasoning": "2 reactions stop, 1 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 0,
+  "predicted_genes": []
+ },
+ "POLR2I": {
+  "variant": "shuffled",
+  "n_stopped": 2,
+  "n_starved": 0,
+  "sensors_fired": [
+   "er_stress"
+  ],
+  "class_weights": {
+   "er_stress": 1
+  },
+  "reasoning": "2 reactions stop, 0 starve; those reactions classify as ['er_stress']; 0 regulon + 17 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 17,
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "MANF",
+   "CRELD2"
+  ]
+ },
+ "POLR3A": {
+  "variant": "shuffled",
+  "n_stopped": 1,
+  "n_starved": 1,
+  "sensors_fired": [
+   "proteotoxic"
+  ],
+  "class_weights": {
+   "proteotoxic": 2
+  },
+  "reasoning": "1 reactions stop, 1 starve; those reactions classify as ['proteotoxic']; 0 regulon + 12 sensor-programme genes",
+  "n_regulon": 0,
+  "n_sensor": 12,
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
   ]
  },
  "PPWD1": {
@@ -684,45 +690,30 @@
  "RIOK2": {
   "variant": "shuffled",
   "n_stopped": 2,
-  "n_starved": 0,
+  "n_starved": 1,
   "sensors_fired": [
-   "er_stress",
+   "export_block",
    "translation_stress"
   ],
   "class_weights": {
-   "translation_stress": 2,
-   "er_stress": 1
+   "export_block": 1,
+   "translation_stress": 1
   },
-  "reasoning": "2 reactions stop, 0 starve; those reactions classify as ['er_stress', 'translation_stress']; 0 regulon + 26 sensor-programme genes",
+  "reasoning": "2 reactions stop, 1 starve; those reactions classify as ['export_block', 'translation_stress']; 0 regulon + 11 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 26,
+  "n_sensor": 11,
   "predicted_genes": [
    "ATF4",
-   "ATF5",
    "DDIT3",
-   "TRIB3",
    "SESN2",
+   "EIF4EBP1",
+   "SLC3A2",
+   "TRIB3",
+   "ATF5",
    "MTHFD2",
    "SHMT2",
-   "SLC3A2",
    "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB",
-   "HSPA5",
-   "XBP1",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "MANF",
-   "CRELD2"
+   "CEBPB"
   ]
  },
  "RNF113A": {
@@ -828,44 +819,27 @@
  },
  "SRSF3": {
   "variant": "shuffled",
-  "n_stopped": 3,
-  "n_starved": 6,
-  "sensors_fired": [
-   "iron_low"
-  ],
-  "class_weights": {
-   "iron_low": 5
-  },
-  "reasoning": "3 reactions stop, 6 starve; those reactions classify as ['iron_low']; 2 regulon + 9 sensor-programme genes",
+  "n_stopped": 2,
+  "n_starved": 0,
+  "sensors_fired": [],
+  "class_weights": {},
+  "reasoning": "2 reactions stop, 0 starve; those reactions classify as nothing; 2 regulon + 0 sensor-programme genes",
   "n_regulon": 2,
-  "n_sensor": 9,
+  "n_sensor": 0,
   "predicted_genes": [
    "DBI",
-   "FOXP1",
-   "TFRC",
-   "SLC11A2",
-   "STEAP3",
-   "ACO1",
-   "IREB2",
-   "FTL",
-   "FTH1",
-   "ALAS2",
-   "SLC25A37"
+   "FOXP1"
   ]
  },
  "SSRP1": {
   "variant": "shuffled",
-  "n_stopped": 3,
-  "n_starved": 0,
-  "sensors_fired": [
-   "er_stress"
-  ],
-  "class_weights": {
-   "er_stress": 1
-  },
-  "reasoning": "3 reactions stop, 0 starve; those reactions classify as ['er_stress']; 43 regulon + 17 sensor-programme genes",
+  "n_stopped": 2,
+  "n_starved": 1,
+  "sensors_fired": [],
+  "class_weights": {},
+  "reasoning": "2 reactions stop, 1 starve; those reactions classify as nothing; 43 regulon + 0 sensor-programme genes",
   "n_regulon": 43,
-  "n_sensor": 17,
+  "n_sensor": 0,
   "predicted_genes": [
    "DBI",
    "RPL28",
@@ -909,47 +883,51 @@
    "PML",
    "POR",
    "PRKCQ",
-   "PSEN1",
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "ATF4",
-   "MANF",
-   "CRELD2"
+   "PSEN1"
   ]
  },
  "SUPT16H": {
   "variant": "shuffled",
-  "n_stopped": 3,
-  "n_starved": 0,
-  "sensors_fired": [],
-  "class_weights": {},
-  "reasoning": "3 reactions stop, 0 starve; those reactions classify as nothing; 2 regulon + 0 sensor-programme genes",
+  "n_stopped": 1,
+  "n_starved": 1,
+  "sensors_fired": [
+   "mito_stress"
+  ],
+  "class_weights": {
+   "mito_stress": 2
+  },
+  "reasoning": "1 reactions stop, 1 starve; those reactions classify as ['mito_stress']; 2 regulon + 17 sensor-programme genes",
   "n_regulon": 2,
-  "n_sensor": 0,
+  "n_sensor": 17,
   "predicted_genes": [
    "RPL28",
-   "RPL6"
+   "RPL6",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "NUPR1"
   ]
  },
  "SUPT5H": {
   "variant": "shuffled",
-  "n_stopped": 4,
-  "n_starved": 1,
+  "n_stopped": 2,
+  "n_starved": 0,
   "sensors_fired": [],
   "class_weights": {},
-  "reasoning": "4 reactions stop, 1 starve; those reactions classify as nothing; 3 regulon + 0 sensor-programme genes",
+  "reasoning": "2 reactions stop, 0 starve; those reactions classify as nothing; 3 regulon + 0 sensor-programme genes",
   "n_regulon": 3,
   "n_sensor": 0,
   "predicted_genes": [

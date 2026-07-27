@@ -389,23 +389,21 @@
  },
  "PCNA": {
   "variant": "fallback",
-  "n_stopped": 8,
-  "n_starved": 8,
+  "n_stopped": 7,
+  "n_starved": 7,
   "sensors_fired": [
-   "iron_low",
    "proteasome_loss",
    "proteotoxic",
    "translation_stress"
   ],
   "class_weights": {
    "proteotoxic": 10,
-   "proteasome_loss": 4,
    "translation_stress": 4,
-   "iron_low": 2
+   "proteasome_loss": 4
   },
-  "reasoning": "8 reactions stop, 8 starve; those reactions classify as ['iron_low', 'proteasome_loss', 'proteotoxic', 'translation_stress']; 0 regulon + 49 sensor-programme genes",
+  "reasoning": "7 reactions stop, 7 starve; those reactions classify as ['proteasome_loss', 'proteotoxic', 'translation_stress']; 0 regulon + 40 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 49,
+  "n_sensor": 40,
   "predicted_genes": [
    "HSPA1A",
    "HSPA1B",
@@ -446,16 +444,7 @@
    "SLC3A2",
    "SLC7A11",
    "EIF4EBP1",
-   "CEBPB",
-   "TFRC",
-   "SLC11A2",
-   "STEAP3",
-   "ACO1",
-   "IREB2",
-   "FTL",
-   "FTH1",
-   "ALAS2",
-   "SLC25A37"
+   "CEBPB"
   ]
  },
  "PHB2": {
@@ -585,8 +574,8 @@
    "translation_stress"
   ],
   "class_weights": {
-   "er_stress": 1,
-   "translation_stress": 1
+   "translation_stress": 1,
+   "er_stress": 1
   },
   "reasoning": "1 reactions stop, 0 starve; those reactions classify as ['translation_stress']; 0 regulon + 11 sensor-programme genes",
   "n_regulon": 0,
@@ -662,27 +651,26 @@
  },
  "POLE": {
   "variant": "fallback",
-  "n_stopped": 1,
-  "n_starved": 1,
-  "sensors_fired": [
-   "iron_low"
-  ],
-  "class_weights": {
-   "iron_low": 2
-  },
-  "reasoning": "1 reactions stop, 1 starve; those reactions classify as ['iron_low']; 0 regulon + 9 sensor-programme genes",
+  "n_stopped": 0,
+  "n_starved": 0,
+  "sensors_fired": [],
+  "class_weights": {},
+  "reasoning": "0 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
   "n_regulon": 0,
-  "n_sensor": 9,
+  "n_sensor": 0,
   "predicted_genes": [
-   "TFRC",
-   "SLC11A2",
-   "STEAP3",
-   "ACO1",
-   "IREB2",
-   "FTL",
-   "FTH1",
-   "ALAS2",
-   "SLC25A37"
+   "POLE3",
+   "POLE2",
+   "POLE4",
+   "POLD3",
+   "POLD4",
+   "RFC5",
+   "POLD1",
+   "POLD2",
+   "PCNA",
+   "RPA1",
+   "RFC3",
+   "RFC1"
   ]
  },
  "POLR1A": {
@@ -830,11 +818,11 @@
  },
  "PPY": {
   "variant": "fallback",
-  "n_stopped": 1,
+  "n_stopped": 0,
   "n_starved": 0,
   "sensors_fired": [],
   "class_weights": {},
-  "reasoning": "1 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
+  "reasoning": "0 reactions stop, 0 starve; those reactions classify as nothing; 0 regulon + 0 sensor-programme genes",
   "n_regulon": 0,
   "n_sensor": 0,
   "predicted_genes": [
@@ -960,21 +948,19 @@
  },
  "RBBP5": {
   "variant": "fallback",
-  "n_stopped": 15,
-  "n_starved": 13,
+  "n_stopped": 2,
+  "n_starved": 2,
   "sensors_fired": [
    "iron_low",
-   "sterol_low",
    "translation_stress"
   ],
   "class_weights": {
-   "iron_low": 2,
    "translation_stress": 2,
-   "sterol_low": 1
+   "iron_low": 2
   },
-  "reasoning": "15 reactions stop, 13 starve; those reactions classify as ['iron_low', 'sterol_low', 'translation_stress']; 2 regulon + 30 sensor-programme genes",
+  "reasoning": "2 reactions stop, 2 starve; those reactions classify as ['iron_low', 'translation_stress']; 2 regulon + 20 sensor-programme genes",
   "n_regulon": 2,
-  "n_sensor": 30,
+  "n_sensor": 20,
   "predicted_genes": [
    "MEF2C",
    "HMGA1",
@@ -997,17 +983,7 @@
    "SLC3A2",
    "SLC7A11",
    "EIF4EBP1",
-   "CEBPB",
-   "HMGCR",
-   "HMGCS1",
-   "LDLR",
-   "SQLE",
-   "FDFT1",
-   "IDI1",
-   "MVD",
-   "INSIG1",
-   "SREBF2",
-   "DHCR7"
+   "CEBPB"
   ]
  },
  "RBM14": {
@@ -1055,8 +1031,8 @@
    "translation_stress"
   ],
   "class_weights": {
-   "export_block": 2,
-   "translation_stress": 2
+   "translation_stress": 2,
+   "export_block": 2
   },
   "reasoning": "2 reactions stop, 1 starve; those reactions classify as ['translation_stress']; 0 regulon + 11 sensor-programme genes",
   "n_regulon": 0,

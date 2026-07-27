@@ -167,17 +167,16 @@
  },
  "HNRNPC": {
   "variant": "fallback",
-  "n_stopped": 4,
-  "n_starved": 1,
+  "n_stopped": 1,
+  "n_starved": 0,
   "sensors_fired": [
    "translation_stress"
   ],
   "class_weights": {
-   "translation_stress": 4,
-   "proteotoxic": 3,
-   "proteasome_loss": 2
+   "proteotoxic": 1,
+   "translation_stress": 1
   },
-  "reasoning": "4 reactions stop, 1 starve; those reactions classify as ['translation_stress']; 1 regulon + 11 sensor-programme genes",
+  "reasoning": "1 reactions stop, 0 starve; those reactions classify as ['translation_stress']; 1 regulon + 11 sensor-programme genes",
   "n_regulon": 1,
   "n_sensor": 11,
   "predicted_genes": [
@@ -208,18 +207,18 @@
  },
  "MED1": {
   "variant": "fallback",
-  "n_stopped": 8,
+  "n_stopped": 7,
   "n_starved": 3,
   "sensors_fired": [
    "sterol_low"
   ],
   "class_weights": {
-   "sterol_low": 10,
-   "proteotoxic": 4,
-   "iron_low": 2,
+   "sterol_low": 9,
+   "proteotoxic": 3,
+   "iron_low": 1,
    "mito_stress": 1
   },
-  "reasoning": "8 reactions stop, 3 starve; those reactions classify as ['sterol_low']; 3 regulon + 10 sensor-programme genes",
+  "reasoning": "7 reactions stop, 3 starve; those reactions classify as ['sterol_low']; 3 regulon + 10 sensor-programme genes",
   "n_regulon": 3,
   "n_sensor": 10,
   "predicted_genes": [
@@ -378,9 +377,9 @@
    "translation_stress"
   ],
   "class_weights": {
-   "translation_stress": 1,
+   "proteasome_loss": 1,
    "iron_low": 1,
-   "proteasome_loss": 1
+   "translation_stress": 1
   },
   "reasoning": "1 reactions stop, 0 starve; those reactions classify as ['translation_stress']; 0 regulon + 11 sensor-programme genes",
   "n_regulon": 0,
@@ -444,17 +443,17 @@
  },
  "NEDD8": {
   "variant": "fallback",
-  "n_stopped": 3,
-  "n_starved": 3,
+  "n_stopped": 2,
+  "n_starved": 2,
   "sensors_fired": [
    "iron_low",
    "translation_stress"
   ],
   "class_weights": {
-   "translation_stress": 6,
-   "iron_low": 4
+   "translation_stress": 4,
+   "iron_low": 2
   },
-  "reasoning": "3 reactions stop, 3 starve; those reactions classify as ['iron_low', 'translation_stress']; 0 regulon + 20 sensor-programme genes",
+  "reasoning": "2 reactions stop, 2 starve; those reactions classify as ['iron_low', 'translation_stress']; 0 regulon + 20 sensor-programme genes",
   "n_regulon": 0,
   "n_sensor": 20,
   "predicted_genes": [
@@ -489,8 +488,8 @@
    "sterol_low"
   ],
   "class_weights": {
-   "sterol_low": 17,
-   "proteotoxic": 17
+   "proteotoxic": 17,
+   "sterol_low": 17
   },
   "reasoning": "16 reactions stop, 1 starve; those reactions classify as ['proteotoxic', 'sterol_low']; 10 regulon + 20 sensor-programme genes",
   "n_regulon": 10,
@@ -1078,16 +1077,16 @@
  },
  "SRSF3": {
   "variant": "fallback",
-  "n_stopped": 3,
-  "n_starved": 2,
+  "n_stopped": 2,
+  "n_starved": 1,
   "sensors_fired": [
    "export_block"
   ],
   "class_weights": {
-   "translation_stress": 3,
-   "export_block": 2
+   "export_block": 2,
+   "translation_stress": 2
   },
-  "reasoning": "3 reactions stop, 2 starve; those reactions classify as ['export_block']; 2 regulon + 6 sensor-programme genes",
+  "reasoning": "2 reactions stop, 1 starve; those reactions classify as ['export_block']; 2 regulon + 6 sensor-programme genes",
   "n_regulon": 2,
   "n_sensor": 6,
   "predicted_genes": [

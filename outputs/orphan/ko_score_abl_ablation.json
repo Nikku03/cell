@@ -51,14 +51,14 @@
   },
   {
    "gene": "PCNA",
-   "n_pred": 45,
+   "n_pred": 37,
    "n_truth": 53,
-   "hits": 3,
-   "precision": 0.06666666666666667,
-   "recall": 0.05660377358490566,
-   "random_hits": 0.34,
-   "frequency_hits": 11,
-   "lift_vs_random": 8.823529411764705,
+   "hits": 2,
+   "precision": 0.05405405405405406,
+   "recall": 0.03773584905660377,
+   "random_hits": 0.26,
+   "frequency_hits": 9,
+   "lift_vs_random": 7.692307692307692,
    "beats_frequency": false
   },
   {
@@ -68,7 +68,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.005,
+   "random_hits": 0.015,
    "frequency_hits": 0,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -92,7 +92,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.025,
+   "random_hits": 0.03,
    "frequency_hits": 3,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -110,25 +110,13 @@
    "beats_frequency": false
   },
   {
-   "gene": "POLE",
-   "n_pred": 8,
-   "n_truth": 17,
-   "hits": 2,
-   "precision": 0.25,
-   "recall": 0.11764705882352941,
-   "random_hits": 0.0,
-   "frequency_hits": 1,
-   "lift_vs_random": 1999999999.9999998,
-   "beats_frequency": true
-  },
-  {
    "gene": "POLR1A",
    "n_pred": 1,
    "n_truth": 11,
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.005,
+   "random_hits": 0.0,
    "frequency_hits": 0,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -140,7 +128,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.13,
+   "random_hits": 0.085,
    "frequency_hits": 13,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -152,7 +140,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.01,
+   "random_hits": 0.015,
    "frequency_hits": 4,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -164,22 +152,22 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.01,
+   "random_hits": 0.005,
    "frequency_hits": 0,
    "lift_vs_random": 0.0,
    "beats_frequency": false
   },
   {
    "gene": "RBBP5",
-   "n_pred": 31,
+   "n_pred": 21,
    "n_truth": 46,
-   "hits": 4,
-   "precision": 0.12903225806451613,
-   "recall": 0.08695652173913043,
-   "random_hits": 0.225,
+   "hits": 3,
+   "precision": 0.14285714285714285,
+   "recall": 0.06521739130434782,
+   "random_hits": 0.135,
    "frequency_hits": 3,
-   "lift_vs_random": 17.77777777777778,
-   "beats_frequency": true
+   "lift_vs_random": 22.22222222222222,
+   "beats_frequency": false
   },
   {
    "gene": "RBM8A",
@@ -188,9 +176,9 @@
    "hits": 1,
    "precision": 0.09090909090909091,
    "recall": 0.16666666666666666,
-   "random_hits": 0.01,
+   "random_hits": 0.005,
    "frequency_hits": 0,
-   "lift_vs_random": 100.0,
+   "lift_vs_random": 200.0,
    "beats_frequency": true
   },
   {
@@ -212,9 +200,9 @@
    "hits": 1,
    "precision": 0.08333333333333333,
    "recall": 0.018867924528301886,
-   "random_hits": 0.135,
+   "random_hits": 0.065,
    "frequency_hits": 2,
-   "lift_vs_random": 7.4074074074074066,
+   "lift_vs_random": 15.384615384615383,
    "beats_frequency": false
   },
   {
@@ -224,7 +212,7 @@
    "hits": 0,
    "precision": 0.0,
    "recall": 0.0,
-   "random_hits": 0.145,
+   "random_hits": 0.125,
    "frequency_hits": 5,
    "lift_vs_random": 0.0,
    "beats_frequency": false
@@ -236,17 +224,17 @@
    "hits": 1,
    "precision": 1.0,
    "recall": 0.03333333333333333,
-   "random_hits": 0.0,
+   "random_hits": 0.01,
    "frequency_hits": 0,
-   "lift_vs_random": 999999999.9999999,
+   "lift_vs_random": 100.0,
    "beats_frequency": true
   }
  ],
- "hits": 15,
- "random": 1.355,
- "frequency": 63,
- "n_pred": 339,
- "precision": 0.04424778761061947,
- "beat_frequency": 5,
- "n_scored": 20
+ "hits": 11,
+ "random": 1.065,
+ "frequency": 60,
+ "n_pred": 313,
+ "precision": 0.03514376996805112,
+ "beat_frequency": 3,
+ "n_scored": 19
 }
