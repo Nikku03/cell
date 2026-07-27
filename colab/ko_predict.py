@@ -40,6 +40,7 @@ uniform random draw from the transcriptome:
 """
 import collections
 import json
+import os
 import pickle
 from pathlib import Path
 
@@ -51,6 +52,27 @@ TAU, TIDE_FRAC, MIN_SPEC, NPICK = 1.0, 0.05, 5, 50
 
 
 def load():
+    """The readout matrix. Two possible sources, and which one is used is an EXPLICIT choice, never automatic.
+
+    The default stays nlz_K562.pkl: 1,400 knockouts, each stored as its TOP 250 GENES ONLY -- 3.0% of the
+    transcriptome, everything else recorded as exactly zero. Every number this project has published was measured
+    against that file, so silently preferring a richer source the moment it appears on disk would make old and new
+    results look comparable when they are not.
+
+    Set CELL_READOUT=gwps to use the genome-wide rebuild instead (full 8,248-gene profiles over ~5,200 perturbations
+    that clear Replogle's energy test). That switch INVALIDATES rather than extends every published comparison
+    number and must be paired with re-scoring all methods -- which is the point of using it.
+    """
+    if os.environ.get("CELL_READOUT", "").lower() == "gwps":
+        z = np.load(SP / "nlz_K562_gwps.npz", allow_pickle=True)
+        kos, genes, M = list(z["kos"]), list(z["genes"]), z["M"]
+        ki = {k: i for i, k in enumerate(kos)}
+        gi = {g: i for i, g in enumerate(genes)}
+        A = np.abs(M)
+        tide = (A >= TAU).mean(0) >= TIDE_FRAC
+        print(f"  [readout=gwps] {len(kos):,} perturbations x {len(genes):,} genes; "
+              f"tide {int(tide.sum()):,}")
+        return kos, genes, A, tide, ki, gi
     KO = pickle.load(open(SP / "nlz_K562.pkl", "rb"))
     kos = sorted(KO)
     genes = sorted({g for v in KO.values() for g in v})
