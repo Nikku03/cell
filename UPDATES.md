@@ -11867,3 +11867,65 @@ Also noted: **tide is 3 genes on this readout, not 43.** `TIDE_FRAC = 0.05` was 
 perturbations made ribosomal and mtDNA-OXPHOS genes move in >5% of them. Across 5,120 genome-wide perturbations
 almost nothing does, so tide-removal barely changes the truth set and the tide-null is no longer the meaningful
 bar it was designed to be. That threshold needs re-deriving, not re-running.
+
+---
+
+# Why the predictor fails: the architecture's own ceiling is 4.4%
+
+`colab/output_ceiling.py` · `outputs/orphan/output_ceiling.json`
+
+After the genome-wide rescoring showed every method 4–10× below a no-biology baseline and indistinguishable from
+its own shuffle, the natural next move is to improve the reasoning. This measures whether that could help. It
+cannot.
+
+The multi-layer model emits genes from a **fixed menu**: nine hand-written sensor programmes, **89 genes total**.
+So it has a hard ceiling independent of how well it reasons. The oracle — fire every sensor correctly on every
+knockout, never make a mistake — is:
+
+| | cohort 1 | cohort 2 |
+|---|---:|---:|
+| knockouts | 200 | 200 |
+| distinct genes that actually move | 1,120 | 2,007 |
+| model's entire output vocabulary | 89 | 89 |
+| …of which ever move at all | **34** | **41** |
+| **ORACLE recall** | **4.4%** | **3.7%** |
+| oracle precision | 0.0085 | — |
+
+**This bounds the architecture, not the implementation.** The deployed model is already near it. Better firing
+logic cannot close the gap because the gap is not in the firing.
+
+Three checks, each answering a specific objection:
+
+- *"the vocabulary is small but well chosen"* — the **best possible list of the same 89 genes**, picked with the
+  answers in hand, reaches **39.8%** (cohort 2: 28.7%). The chosen 89 are **~9× worse than 89 genes could be**.
+  Small *and* badly chosen: 55 of them never move at all.
+- *"responses share a common stress programme"* — **57% of moved genes move for exactly one knockout**
+  (cohort 2: 50%). Over half the signal is bespoke. A fixed menu cannot represent that however well it is fired.
+- *"the sensor genes are at least the right kind of gene"* — only 34 of 89 ever move.
+
+## What is structurally missing, in order of how binding it is
+
+1. **A per-knockout output space.** The model picks from a menu; real responses are largely specific. This is the
+   binding constraint and everything below is secondary to it.
+2. **The one mechanism that could produce specific output is broken.** TF→target regulation is the natural route —
+   knock out a TF, its targets move — but 91% of that layer is unsigned ChIP binding, and binding was measured
+   against real regulation *in this same cell line* and overlapped **at chance** (fold 0.96, p=0.68). That is why
+   the direct-regulon layer produced 1 hit in 39 earlier.
+3. **Direction is unknown for ~94% of edges** (6.08% evidence-backed). Effects cannot be propagated along an
+   undirected graph, and a walk provably cannot recover direction — its opinion is identically the degree ratio.
+4. **No quantities.** BUFFERED means "an alternative is annotated", not "enough flux". Without abundance and
+   turnover, a lesion cannot be told from an absorbed one.
+
+## The part that works, which localises the gap
+
+Cascade breadth predicts DepMap essentiality at **z = −6.88** against a participation-matched control. The flux
+model can say **whether the cell is in trouble**. It cannot say **what the cell transcribes about it**.
+
+The missing link is specifically flux → transcription, and that link is currently a lookup table with 89 entries
+against an answer space of thousands. This is not a tuning problem or a data-volume problem — both were tested and
+eliminated today. It is the wrong shape.
+
+**What this does not say:** the sensor biology is not wrong. ATF4 really is downstream of mitochondrial import
+failure, and that arm hit 4/4 when it fired. The claim is narrower and firmer: a 89-entry menu cannot address a
+mostly-bespoke, thousands-of-genes answer space, so the fix is a per-knockout output space rather than a longer
+table.

@@ -1,0 +1,1 @@
+{"n_knockouts": 200, "n_mover_calls": 6854, "answer_space": 2007, "vocab": 89, "vocab_that_moves": 41, "oracle_recall": 0.03662095126933178, "oracle_precision": 0.014101123595505617, "best_same_size_recall": 0.2868398015757222, "frac_genes_moving_once": 0.4982561036372696}
