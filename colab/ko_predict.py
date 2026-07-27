@@ -48,7 +48,12 @@ import numpy as np
 
 OUT = Path("outputs/orphan")
 SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
-TAU, TIDE_FRAC, MIN_SPEC, NPICK = 1.0, 0.05, 5, 50
+TAU, TIDE_FRAC, MIN_SPEC = 1.0, 0.05, 5
+# Cohort size. 50 was set by the old readout, which had only 378 scorable knockouts and could not support more
+# without exhausting the smaller functional classes. The gwps readout has 1,110, so KO_NPICK lets the cohort grow
+# to match -- which is the entire reason for rebuilding: every comparison this project ran came back
+# "indistinguishable" on n<=39, and that is a power problem rather than a modelling one.
+NPICK = int(os.environ.get("KO_NPICK", "50"))
 
 
 def load():

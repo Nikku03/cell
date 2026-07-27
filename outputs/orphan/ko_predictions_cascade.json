@@ -1,14 +1,823 @@
 {
- "GPN3": {
-  "reasoning": "cascade over 1 proteins; modes {}; sensors ['export_block']",
+ "HSF1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['er_stress', 'mito_stress', 'proteotoxic']",
   "n_disabled": 1,
   "modes": {},
   "sensors": [
-   "export_block"
+   "er_stress",
+   "mito_stress",
+   "proteotoxic"
+  ],
+  "n_own_regulon": 104,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 33,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ABCB1",
+   "ABCB6",
+   "ATF3",
+   "ATG7",
+   "BACE1",
+   "BAG3",
+   "CDKN1A",
+   "CDKN1B",
+   "CLU",
+   "CRYAB",
+   "CSF1R",
+   "CSF2",
+   "CSF3",
+   "CXCL1",
+   "CXCL2",
+   "CXCL3",
+   "CXCL5",
+   "CXCL8",
+   "CYLC1",
+   "DLG1",
+   "DNAJB1",
+   "DNAJB6",
+   "ERBB2",
+   "EYA1",
+   "FAS",
+   "FASLG",
+   "FKBP4",
+   "FLT1",
+   "FOS",
+   "FOXM1",
+   "FUT4",
+   "GAST",
+   "GUCA2B",
+   "HLA-G",
+   "HMGB1",
+   "HNRNPA2B1",
+   "HOPX",
+   "HSD17B6",
+   "HSF2",
+   "HSP90AA1",
+   "HSP90AA2P",
+   "HSP90AB1",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA4",
+   "HSPA8",
+   "HSPA9",
+   "HSPB1",
+   "HSPB2",
+   "HSPH1",
+   "HYPK",
+   "ICAM1",
+   "IER5",
+   "IL10",
+   "IL1B",
+   "IL6",
+   "INS",
+   "JUN",
+   "KCNA5",
+   "KCNH2"
+  ]
+ },
+ "IDH3B": {
+  "reasoning": "cascade over 15 proteins; modes {'ORPHANED': 2, '@mito': 3, 'STARVED': 5, 'STRANDED': 27, '@er': 1}; sensors ['er_stress', 'mito_stress', 'translation_stress']",
+  "n_disabled": 15,
+  "modes": {
+   "ORPHANED": 2,
+   "@mito": 3,
+   "STARVED": 5,
+   "STRANDED": 27,
+   "@er": 1
+  },
+  "sensors": [
+   "er_stress",
+   "mito_stress",
+   "translation_stress"
   ],
   "n_own_regulon": 0,
   "n_downstream_tf_regulon": 0,
-  "n_sensor": 6,
+  "n_sensor": 28,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   },
+   {
+    "depth": 2,
+    "n_frontier": 2,
+    "n_disabled": 10
+   },
+   {
+    "depth": 3,
+    "n_frontier": 5,
+    "n_disabled": 15
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "VEGFA"
+  ]
+ },
+ "IMPA2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "IMPDH2": {
+  "reasoning": "cascade over 5 proteins; modes {'UNSIGNALLED': 4}; sensors []",
+  "n_disabled": 5,
+  "modes": {
+   "UNSIGNALLED": 4
+  },
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 5
+   }
+  ],
+  "predicted_genes": [
+   "CCND1",
+   "CDKN1A",
+   "CDKN1B",
+   "MKI67"
+  ]
+ },
+ "ING1": {
+  "reasoning": "cascade over 166 proteins; modes {'UNSIGNALLED': 59, 'ORPHANED': 116, 'STARVED': 35}; sensors ['proteotoxic', 'translation_stress']",
+  "n_disabled": 166,
+  "modes": {
+   "UNSIGNALLED": 59,
+   "ORPHANED": 116,
+   "STARVED": 35
+  },
+  "sensors": [
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 5,
+  "n_downstream_tf_regulon": 171,
+  "n_sensor": 22,
+  "downstream_tfs_disabled": [
+   "ARID4A",
+   "ARID4B",
+   "BPTF",
+   "CHD4",
+   "GATAD2A",
+   "GATAD2B",
+   "HCFC1",
+   "HDAC1",
+   "HDAC2",
+   "ING2",
+   "KAT8",
+   "MBD2",
+   "MBD3",
+   "MCRS1",
+   "MTA1",
+   "MTA2",
+   "MTA3",
+   "OGT",
+   "PHF20",
+   "RBBP7"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 22
+   },
+   {
+    "depth": 2,
+    "n_frontier": 15,
+    "n_disabled": 111
+   },
+   {
+    "depth": 3,
+    "n_frontier": 24,
+    "n_disabled": 166
+   }
+  ],
+  "predicted_genes": [
+   "AFP",
+   "BAX",
+   "CASP3",
+   "CDKN1A",
+   "TP53",
+   "BRMS1",
+   "DLST",
+   "RB1",
+   "RUNX2",
+   "SIN3A",
+   "ACTG2",
+   "AKT1",
+   "ALB",
+   "GSK3B",
+   "HOXB3",
+   "HOXB5",
+   "HOXB6",
+   "HOXB8",
+   "IGF1",
+   "IGF1R",
+   "IGF2",
+   "PTGS2",
+   "SLC25A39",
+   "ABCB1",
+   "ADAM10",
+   "ALOX15",
+   "APOC3",
+   "AR",
+   "BAMBI",
+   "BCL2A1",
+   "BIRC3",
+   "BIRC5",
+   "BRCA2",
+   "CCND1",
+   "CCND2",
+   "CD1D",
+   "CD44",
+   "CD82",
+   "ALOX5",
+   "APAF1",
+   "BMP7",
+   "CCNE1",
+   "CDH1",
+   "COL1A2",
+   "CXCL8",
+   "DNMT1",
+   "HMGA1",
+   "KLF4",
+   "MUC5AC",
+   "SNAI2",
+   "SP1",
+   "TGFBR2",
+   "BCL2",
+   "MMP13",
+   "IFNB1",
+   "MIA2",
+   "AGT",
+   "E2F1",
+   "FGG",
+   "FOXP3"
+  ]
+ },
+ "INPPL1": {
+  "reasoning": "cascade over 3 proteins; modes {'UNSIGNALLED': 2}; sensors []",
+  "n_disabled": 3,
+  "modes": {
+   "UNSIGNALLED": 2
+  },
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   }
+  ],
+  "predicted_genes": [
+   "AKT1",
+   "MAPK8IP1"
+  ]
+ },
+ "IP6K1": {
+  "reasoning": "cascade over 7 proteins; modes {'STARVED': 6}; sensors ['translation_stress']",
+  "n_disabled": 7,
+  "modes": {
+   "STARVED": 6
+  },
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 7
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "ISCA2": {
+  "reasoning": "cascade over 39 proteins; modes {'STARVED': 8, 'STRANDED': 16, '@mito': 25, 'UNSIGNALLED': 2, 'ORPHANED': 24}; sensors ['er_stress', 'iron_low', 'mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 39,
+  "modes": {
+   "STARVED": 8,
+   "STRANDED": 16,
+   "@mito": 25,
+   "UNSIGNALLED": 2,
+   "ORPHANED": 24
+  },
+  "sensors": [
+   "er_stress",
+   "iron_low",
+   "mito_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 49,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 19
+   },
+   {
+    "depth": 2,
+    "n_frontier": 10,
+    "n_disabled": 38
+   },
+   {
+    "depth": 3,
+    "n_frontier": 18,
+    "n_disabled": 39
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "TFRC",
+   "SLC11A2",
+   "STEAP3",
+   "ACO1",
+   "IREB2",
+   "FTL",
+   "FTH1",
+   "ALAS2",
+   "SLC25A37",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "VEGFA",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "KANSL2": {
+  "reasoning": "cascade over 243 proteins; modes {'ORPHANED': 172, 'UNSIGNALLED': 76, 'STARVED': 43}; sensors ['proteotoxic', 'translation_stress']",
+  "n_disabled": 243,
+  "modes": {
+   "ORPHANED": 172,
+   "UNSIGNALLED": 76,
+   "STARVED": 43
+  },
+  "sensors": [
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 175,
+  "n_sensor": 23,
+  "downstream_tfs_disabled": [
+   "ARID4A",
+   "ARID4B",
+   "CXXC1",
+   "DR1",
+   "HCFC1",
+   "HDAC1",
+   "HDAC2",
+   "ING1",
+   "ING2",
+   "KAT2A",
+   "KAT2B",
+   "KAT8",
+   "KMT2A",
+   "KMT2B",
+   "MCRS1",
+   "MEN1",
+   "NFRKB",
+   "OGT",
+   "PHF20",
+   "RBBP5"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 9
+   },
+   {
+    "depth": 2,
+    "n_frontier": 8,
+    "n_disabled": 74
+   },
+   {
+    "depth": 3,
+    "n_frontier": 55,
+    "n_disabled": 243
+   }
+  ],
+  "predicted_genes": [
+   "CCNA2",
+   "CDC6",
+   "CDK1",
+   "COX7C",
+   "E2F1",
+   "E2F4",
+   "MMACHC",
+   "PDX1",
+   "BCL2",
+   "FGFR1",
+   "KAT2B",
+   "SMARCA2",
+   "KLF6",
+   "RPL15",
+   "RPS24",
+   "CDKN2A",
+   "CIITA",
+   "CYP11A1",
+   "GH1",
+   "GPS2",
+   "HLA-E",
+   "KRAS",
+   "PGK1",
+   "POU1F1",
+   "SREK1",
+   "TGFB1I1",
+   "ABCB1",
+   "ABCC3",
+   "ADAM10",
+   "AFF1",
+   "AKT1",
+   "ANKRD2",
+   "APC",
+   "ASB2",
+   "ASXL1",
+   "ASXL2",
+   "ATAD2",
+   "ATM",
+   "AVP",
+   "BCL11A",
+   "CASP8",
+   "CDKN1B",
+   "GAST",
+   "JUND",
+   "TERT",
+   "HMGA1",
+   "MEF2C",
+   "GHRHR",
+   "HHAT",
+   "HOXC10",
+   "HOXC13",
+   "HOXC6",
+   "HRH4",
+   "KMT2D",
+   "ME2",
+   "MMP9",
+   "NFKBIA",
+   "PCNA",
+   "PRMT5",
+   "PRMT7"
+  ]
+ },
+ "KAT8": {
+  "reasoning": "cascade over 243 proteins; modes {'UNSIGNALLED': 76, 'ORPHANED': 172, 'STARVED': 43}; sensors ['proteotoxic', 'translation_stress']",
+  "n_disabled": 243,
+  "modes": {
+   "UNSIGNALLED": 76,
+   "ORPHANED": 172,
+   "STARVED": 43
+  },
+  "sensors": [
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 4,
+  "n_downstream_tf_regulon": 171,
+  "n_sensor": 23,
+  "downstream_tfs_disabled": [
+   "ARID4A",
+   "ARID4B",
+   "CXXC1",
+   "DR1",
+   "HCFC1",
+   "HDAC1",
+   "HDAC2",
+   "ING1",
+   "ING2",
+   "KAT2A",
+   "KAT2B",
+   "KMT2A",
+   "KMT2B",
+   "MCRS1",
+   "MEN1",
+   "NFRKB",
+   "OGT",
+   "PHF20",
+   "RBBP5",
+   "RBBP7"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 13
+   },
+   {
+    "depth": 2,
+    "n_frontier": 11,
+    "n_disabled": 76
+   },
+   {
+    "depth": 3,
+    "n_frontier": 52,
+    "n_disabled": 243
+   }
+  ],
+  "predicted_genes": [
+   "BCL2",
+   "FGFR1",
+   "KAT2B",
+   "SMARCA2",
+   "CCNA2",
+   "CDC6",
+   "CDK1",
+   "COX7C",
+   "E2F1",
+   "E2F4",
+   "MMACHC",
+   "PDX1",
+   "KLF6",
+   "RPL15",
+   "RPS24",
+   "CDKN2A",
+   "CIITA",
+   "CYP11A1",
+   "GH1",
+   "GPS2",
+   "HLA-E",
+   "KRAS",
+   "PGK1",
+   "POU1F1",
+   "SREK1",
+   "TGFB1I1",
+   "ABCB1",
+   "ABCC3",
+   "ADAM10",
+   "AFF1",
+   "AKT1",
+   "ANKRD2",
+   "APC",
+   "ASB2",
+   "ASXL1",
+   "ASXL2",
+   "ATAD2",
+   "ATM",
+   "AVP",
+   "BCL11A",
+   "CASP8",
+   "CDKN1B",
+   "GAST",
+   "JUND",
+   "TERT",
+   "HMGA1",
+   "MEF2C",
+   "GHRHR",
+   "HHAT",
+   "HOXC10",
+   "HOXC13",
+   "HOXC6",
+   "HRH4",
+   "KMT2D",
+   "ME2",
+   "MMP9",
+   "NFKBIA",
+   "PCNA",
+   "PRMT5",
+   "PRMT7"
+  ]
+ },
+ "KDM1A": {
+  "reasoning": "cascade over 128 proteins; modes {'UNSIGNALLED': 56, 'ORPHANED': 68, 'STARVED': 35}; sensors ['proteotoxic', 'sterol_low', 'translation_stress']",
+  "n_disabled": 128,
+  "modes": {
+   "UNSIGNALLED": 56,
+   "ORPHANED": 68,
+   "STARVED": 35
+  },
+  "sensors": [
+   "proteotoxic",
+   "sterol_low",
+   "translation_stress"
+  ],
+  "n_own_regulon": 1,
+  "n_downstream_tf_regulon": 155,
+  "n_sensor": 33,
+  "downstream_tfs_disabled": [
+   "ARID4A",
+   "ARID4B",
+   "CHD4",
+   "GATAD2A",
+   "GATAD2B",
+   "HDAC1",
+   "HDAC2",
+   "ING1",
+   "ING2",
+   "MBD2",
+   "MBD3",
+   "MTA1",
+   "MTA2",
+   "MTA3",
+   "OGT",
+   "RBBP7",
+   "RCOR1",
+   "RCOR2",
+   "SAP30",
+   "SIN3A"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 7
+   },
+   {
+    "depth": 2,
+    "n_frontier": 5,
+    "n_disabled": 61
+   },
+   {
+    "depth": 3,
+    "n_frontier": 26,
+    "n_disabled": 128
+   }
+  ],
+  "predicted_genes": [
+   "GSN",
+   "ABCB1",
+   "ADAM10",
+   "ALOX15",
+   "APOC3",
+   "AR",
+   "BAMBI",
+   "BCL2A1",
+   "BIRC3",
+   "BIRC5",
+   "BRCA2",
+   "CCND1",
+   "CCND2",
+   "CD1D",
+   "CD44",
+   "CD82",
+   "BDNF",
+   "CSF2RB",
+   "SCN2A",
+   "ALOX5",
+   "APAF1",
+   "BMP7",
+   "CCNE1",
+   "CDH1",
+   "COL1A2",
+   "CXCL8",
+   "DNMT1",
+   "HMGA1",
+   "KLF4",
+   "MUC5AC",
+   "SNAI2",
+   "SP1",
+   "TGFBR2",
+   "APC",
+   "CBX5",
+   "CDKN2B",
+   "CKM",
+   "CTNNA1",
+   "GFI1B",
+   "HLA-E",
+   "HSPA4",
+   "MYC",
+   "NACC1",
+   "SCN1A",
+   "SLC8A1",
+   "SUB1",
+   "SUMO1",
+   "BCL11A",
+   "CD79A",
+   "KCTD16",
+   "RNF8",
+   "WT1",
+   "RSRP1",
+   "SHC1",
+   "ACOT13",
+   "ADGRB1",
+   "APP",
+   "AURKB",
+   "BCL2",
+   "BCOR"
+  ]
+ },
+ "LACTB": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
   "downstream_tfs_disabled": [],
   "trace": [
    {
@@ -19,11 +828,1628 @@
   ],
   "predicted_genes": [
    "ATF4",
+   "ATF5",
    "DDIT3",
+   "TRIB3",
    "SESN2",
-   "EIF4EBP1",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
    "SLC3A2",
-   "TRIB3"
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "LAMTOR4": {
+  "reasoning": "cascade over 93 proteins; modes {'STRANDED': 49, 'UNSIGNALLED': 30, 'ORPHANED': 10, 'STARVED': 23, 'UNRECEIVED': 1}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 93,
+  "modes": {
+   "STRANDED": 49,
+   "UNSIGNALLED": 30,
+   "ORPHANED": 10,
+   "STARVED": 23,
+   "UNRECEIVED": 1
+  },
+  "sensors": [
+   "er_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 36,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 23
+   },
+   {
+    "depth": 2,
+    "n_frontier": 22,
+    "n_disabled": 88
+   },
+   {
+    "depth": 3,
+    "n_frontier": 20,
+    "n_disabled": 93
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "LAMTOR5": {
+  "reasoning": "cascade over 93 proteins; modes {'UNSIGNALLED': 30, 'STRANDED': 49, 'ORPHANED': 10, 'STARVED': 23, 'UNRECEIVED': 1}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 93,
+  "modes": {
+   "UNSIGNALLED": 30,
+   "STRANDED": 49,
+   "ORPHANED": 10,
+   "STARVED": 23,
+   "UNRECEIVED": 1
+  },
+  "sensors": [
+   "er_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 36,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 25
+   },
+   {
+    "depth": 2,
+    "n_frontier": 22,
+    "n_disabled": 88
+   },
+   {
+    "depth": 3,
+    "n_frontier": 20,
+    "n_disabled": 93
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "LARS": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "LDB1": {
+  "reasoning": "cascade over 2 proteins; modes {'UNSIGNALLED': 1}; sensors ['er_stress']",
+  "n_disabled": 2,
+  "modes": {
+   "UNSIGNALLED": 1
+  },
+  "sensors": [
+   "er_stress"
+  ],
+  "n_own_regulon": 3,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 15,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   }
+  ],
+  "predicted_genes": [
+   "BMP7",
+   "NFE2",
+   "TCF3",
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4"
+  ]
+ },
+ "LEPROTL1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "LITAF": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 24,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ACHE",
+   "APOA2",
+   "BRAF",
+   "CCL2",
+   "CXCL12",
+   "FGF10",
+   "FURIN",
+   "GADD45A",
+   "GAP43",
+   "HSPA5",
+   "KRT8",
+   "MAFG",
+   "MAPK1",
+   "MAPK14",
+   "MCAT",
+   "MDM2",
+   "MLANA",
+   "MRPL41",
+   "MYD88",
+   "PIK3R1",
+   "TNF",
+   "TNFSF15",
+   "TP53",
+   "VEGFA"
+  ]
+ },
+ "LLPH": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "LONP1": {
+  "reasoning": "cascade over 2 proteins; modes {'UNSIGNALLED': 1, '@mito': 1}; sensors ['er_stress', 'mito_stress']",
+  "n_disabled": 2,
+  "modes": {
+   "UNSIGNALLED": 1,
+   "@mito": 1
+  },
+  "sensors": [
+   "er_stress",
+   "mito_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 28,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "VEGFA"
+  ]
+ },
+ "LRBA": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "LRIF1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "LSG1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "LYL1": {
+  "reasoning": "cascade over 4 proteins; modes {'UNSIGNALLED': 3}; sensors []",
+  "n_disabled": 4,
+  "modes": {
+   "UNSIGNALLED": 3
+  },
+  "sensors": [],
+  "n_own_regulon": 18,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 4
+   }
+  ],
+  "predicted_genes": [
+   "ANGPT2",
+   "BRCA1",
+   "CCND3",
+   "CD164",
+   "CD4",
+   "CREB1",
+   "ERG",
+   "FLT1",
+   "GFI1",
+   "ID1",
+   "LMO2",
+   "MEF2C",
+   "NFKB1",
+   "NKX3-1",
+   "STMN1",
+   "TAL1",
+   "TRMT1",
+   "TYROBP"
+  ]
+ },
+ "MAK16": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "MAP2K7": {
+  "reasoning": "cascade over 6 proteins; modes {'UNSIGNALLED': 5}; sensors []",
+  "n_disabled": 6,
+  "modes": {
+   "UNSIGNALLED": 5
+  },
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 6
+   }
+  ],
+  "predicted_genes": [
+   "FADD",
+   "IRS1",
+   "MAPK10",
+   "MAPK8",
+   "MAPK9"
+  ]
+ },
+ "MAPRE3": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "MARS": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "MARS2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MAST1": {
+  "reasoning": "cascade over 2 proteins; modes {'UNSIGNALLED': 1}; sensors []",
+  "n_disabled": 2,
+  "modes": {
+   "UNSIGNALLED": 1
+  },
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   }
+  ],
+  "predicted_genes": [
+   "PTEN"
+  ]
+ },
+ "MAX": {
+  "reasoning": "cascade over 19 proteins; modes {'UNSIGNALLED': 13, 'ORPHANED': 5}; sensors ['proteotoxic']",
+  "n_disabled": 19,
+  "modes": {
+   "UNSIGNALLED": 13,
+   "ORPHANED": 5
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 48,
+  "n_downstream_tf_regulon": 29,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [
+   "MLX",
+   "MXD1",
+   "MYCN"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 10
+   },
+   {
+    "depth": 2,
+    "n_frontier": 2,
+    "n_disabled": 17
+   },
+   {
+    "depth": 3,
+    "n_frontier": 1,
+    "n_disabled": 19
+   }
+  ],
+  "predicted_genes": [
+   "BRD7",
+   "CCNB1",
+   "CCND1",
+   "CCND2",
+   "CD80",
+   "CDKN1B",
+   "CEBPA",
+   "CEBPD",
+   "CHI3L1",
+   "CSF3R",
+   "CXCR4",
+   "DDIT3",
+   "DDR2",
+   "FASLG",
+   "FMR1",
+   "GADD45A",
+   "GNG3",
+   "GPT",
+   "HNRNPU",
+   "ID2",
+   "IL6",
+   "MAPK1",
+   "MLXIPL",
+   "MXD1",
+   "MYC",
+   "MYCT1",
+   "NDRG1",
+   "NPRL3",
+   "NRP1",
+   "OPRK1",
+   "PAX3",
+   "PDLIM7",
+   "PPIG",
+   "PTK2",
+   "PTMA",
+   "PTPA",
+   "RUNX1",
+   "SERPINE1",
+   "SIN3A",
+   "SLC25A1",
+   "STAT5A",
+   "TCEAL7",
+   "TERT",
+   "THBS1",
+   "TP53",
+   "TRRAP",
+   "UGT1A1",
+   "YBX1",
+   "AKT1",
+   "APOC3",
+   "CDH1",
+   "CSF3",
+   "DSPP",
+   "HSPA4",
+   "IGHMBP2",
+   "INS",
+   "MAD1L1",
+   "MAP2K1",
+   "ABCB1",
+   "ABCC1"
+  ]
+ },
+ "MBNL1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "MBTPS2": {
+  "reasoning": "cascade over 4 proteins; modes {'UNSIGNALLED': 3}; sensors ['proteotoxic']",
+  "n_disabled": 4,
+  "modes": {
+   "UNSIGNALLED": 3
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 4
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MCEE": {
+  "reasoning": "cascade over 1 proteins; modes {'@mito': 1}; sensors ['mito_stress']",
+  "n_disabled": 1,
+  "modes": {
+   "@mito": 1
+  },
+  "sensors": [
+   "mito_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MCM2": {
+  "reasoning": "cascade over 6 proteins; modes {'ORPHANED': 5}; sensors ['proteotoxic']",
+  "n_disabled": 6,
+  "modes": {
+   "ORPHANED": 5
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 6
+   },
+   {
+    "depth": 2,
+    "n_frontier": 5,
+    "n_disabled": 6
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MCM3": {
+  "reasoning": "cascade over 6 proteins; modes {'ORPHANED': 5}; sensors ['proteotoxic']",
+  "n_disabled": 6,
+  "modes": {
+   "ORPHANED": 5
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 6
+   },
+   {
+    "depth": 2,
+    "n_frontier": 5,
+    "n_disabled": 6
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MCM3AP": {
+  "reasoning": "cascade over 112 proteins; modes {'ORPHANED': 111, 'UNSIGNALLED': 19, '@mito': 1}; sensors ['mito_stress', 'proteotoxic']",
+  "n_disabled": 112,
+  "modes": {
+   "ORPHANED": 111,
+   "UNSIGNALLED": 19,
+   "@mito": 1
+  },
+  "sensors": [
+   "mito_stress",
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 19,
+  "n_sensor": 28,
+  "downstream_tfs_disabled": [
+   "ATXN7L3",
+   "KAT2A",
+   "SUPT20H",
+   "SUPT3H",
+   "TAF12",
+   "TAF2",
+   "TAF4",
+   "TAF5",
+   "TRRAP",
+   "XPC"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 5
+   },
+   {
+    "depth": 2,
+    "n_frontier": 4,
+    "n_disabled": 29
+   },
+   {
+    "depth": 3,
+    "n_frontier": 24,
+    "n_disabled": 112
+   }
+  ],
+  "predicted_genes": [
+   "TUBB",
+   "PPARGC1A",
+   "NEDD4L",
+   "ATF7",
+   "RPL28",
+   "RPL34",
+   "RPL6",
+   "RPS3",
+   "CDKN1A",
+   "CCND2",
+   "MITF",
+   "AKR1C1",
+   "CGRRF1",
+   "CYP2C9",
+   "LTF",
+   "MAPK14",
+   "CPD",
+   "KIN",
+   "RNF111",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MCM4": {
+  "reasoning": "cascade over 6 proteins; modes {'ORPHANED': 5}; sensors ['proteotoxic']",
+  "n_disabled": 6,
+  "modes": {
+   "ORPHANED": 5
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 6
+   },
+   {
+    "depth": 2,
+    "n_frontier": 5,
+    "n_disabled": 6
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MCM6": {
+  "reasoning": "cascade over 6 proteins; modes {'ORPHANED': 5}; sensors ['proteotoxic']",
+  "n_disabled": 6,
+  "modes": {
+   "ORPHANED": 5
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 6
+   },
+   {
+    "depth": 2,
+    "n_frontier": 5,
+    "n_disabled": 6
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MDN1": {
+  "reasoning": "cascade over 7 proteins; modes {'UNSIGNALLED': 1, 'ORPHANED': 5}; sensors ['proteotoxic', 'translation_stress']",
+  "n_disabled": 7,
+  "modes": {
+   "UNSIGNALLED": 1,
+   "ORPHANED": 5
+  },
+  "sensors": [
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 23,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 7
+   },
+   {
+    "depth": 2,
+    "n_frontier": 5,
+    "n_disabled": 7
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "MED1": {
+  "reasoning": "cascade over 26 proteins; modes {'ORPHANED': 25}; sensors ['proteotoxic', 'sterol_low']",
+  "n_disabled": 26,
+  "modes": {
+   "ORPHANED": 25
+  },
+  "sensors": [
+   "proteotoxic",
+   "sterol_low"
+  ],
+  "n_own_regulon": 16,
+  "n_downstream_tf_regulon": 5,
+  "n_sensor": 22,
+  "downstream_tfs_disabled": [
+   "MED15",
+   "MED23",
+   "MED26"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 26
+   },
+   {
+    "depth": 2,
+    "n_frontier": 25,
+    "n_disabled": 26
+   }
+  ],
+  "predicted_genes": [
+   "ANKRD37",
+   "AR",
+   "AURKA",
+   "CRABP2",
+   "FLG",
+   "GREB1",
+   "IRF8",
+   "IVL",
+   "KRT1",
+   "KRT10",
+   "LORICRIN",
+   "RARB",
+   "STC2",
+   "SULT2A1",
+   "THRA",
+   "VDR",
+   "NCF2",
+   "KISS1",
+   "TXNIP",
+   "GAPDH",
+   "RPL28",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "HMGCR",
+   "HMGCS1",
+   "LDLR",
+   "SQLE",
+   "FDFT1",
+   "IDI1",
+   "MVD",
+   "INSIG1",
+   "SREBF2",
+   "DHCR7"
+  ]
+ },
+ "MEF2A": {
+  "reasoning": "cascade over 7 proteins; modes {'UNSIGNALLED': 6}; sensors []",
+  "n_disabled": 7,
+  "modes": {
+   "UNSIGNALLED": 6
+  },
+  "sensors": [],
+  "n_own_regulon": 120,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 7
+   }
+  ],
+  "predicted_genes": [
+   "ABRA",
+   "ACTA2",
+   "ACTG2",
+   "ADK",
+   "AGTR1",
+   "AKT1",
+   "AKT2",
+   "ALDOA",
+   "ART1",
+   "ASPH",
+   "ATF3",
+   "ATP2A2",
+   "ATP6V1B2",
+   "ATXN1",
+   "AVP",
+   "BARX2",
+   "BCO1",
+   "BDNF",
+   "BMP2",
+   "BPIFA4P",
+   "CABIN1",
+   "CALM1",
+   "CAMK2A",
+   "CAMK4",
+   "CD14",
+   "CD44",
+   "CDK5",
+   "CKM",
+   "CLCA1",
+   "COL1A1",
+   "COX6A1",
+   "COX7A1",
+   "CPOX",
+   "CPT1A",
+   "CPT1B",
+   "DBH",
+   "DES",
+   "DIO2",
+   "DMD",
+   "EGR2",
+   "FASTK",
+   "FGF16",
+   "FGFR1",
+   "FOXO3",
+   "GABRB3",
+   "GNRH1",
+   "GRIN1",
+   "GSK3B",
+   "HCN4",
+   "HDAC9",
+   "HLA-E",
+   "HP",
+   "IL10",
+   "IL1RN",
+   "IL2",
+   "IL6",
+   "JCHAIN",
+   "JPH2",
+   "JUN",
+   "KLF2"
+  ]
+ },
+ "MEIS3": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 3,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "PDK1",
+   "SHH",
+   "TSHZ1"
+  ]
+ },
+ "METAP2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "METTL1": {
+  "reasoning": "cascade over 2 proteins; modes {'ORPHANED': 1}; sensors ['translation_stress']",
+  "n_disabled": 2,
+  "modes": {
+   "ORPHANED": 1
+  },
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   },
+   {
+    "depth": 2,
+    "n_frontier": 1,
+    "n_disabled": 2
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "METTL14": {
+  "reasoning": "cascade over 5 proteins; modes {'ORPHANED': 1, 'UNSIGNALLED': 3}; sensors []",
+  "n_disabled": 5,
+  "modes": {
+   "ORPHANED": 1,
+   "UNSIGNALLED": 3
+  },
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   },
+   {
+    "depth": 2,
+    "n_frontier": 1,
+    "n_disabled": 5
+   }
+  ],
+  "predicted_genes": [
+   "EGFR",
+   "METTL3",
+   "USP13",
+   "WWTR1"
+  ]
+ },
+ "METTL16": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "METTL21A": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "MIER1": {
+  "reasoning": "cascade over 123 proteins; modes {'ORPHANED': 60, 'UNSIGNALLED': 54, 'STARVED': 35}; sensors ['proteotoxic', 'translation_stress']",
+  "n_disabled": 123,
+  "modes": {
+   "ORPHANED": 60,
+   "UNSIGNALLED": 54,
+   "STARVED": 35
+  },
+  "sensors": [
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 2,
+  "n_downstream_tf_regulon": 138,
+  "n_sensor": 23,
+  "downstream_tfs_disabled": [
+   "ARID4A",
+   "ARID4B",
+   "CHD4",
+   "GATAD2A",
+   "GATAD2B",
+   "HDAC1",
+   "HDAC2",
+   "ING1",
+   "ING2",
+   "MBD2",
+   "MBD3",
+   "MTA1",
+   "MTA2",
+   "MTA3",
+   "OGT",
+   "RBBP7",
+   "SAP30",
+   "SIN3A",
+   "SIN3B",
+   "TET1"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   },
+   {
+    "depth": 2,
+    "n_frontier": 2,
+    "n_disabled": 55
+   },
+   {
+    "depth": 3,
+    "n_frontier": 26,
+    "n_disabled": 123
+   }
+  ],
+  "predicted_genes": [
+   "APOF",
+   "MDK",
+   "ALOX5",
+   "APAF1",
+   "BMP7",
+   "CCNE1",
+   "CD1D",
+   "CDH1",
+   "COL1A2",
+   "CXCL8",
+   "DNMT1",
+   "HMGA1",
+   "KLF4",
+   "MUC5AC",
+   "SNAI2",
+   "SP1",
+   "TGFBR2",
+   "ABCB1",
+   "ADAM10",
+   "ALOX15",
+   "APOC3",
+   "AR",
+   "BAMBI",
+   "BCL2A1",
+   "BIRC3",
+   "BIRC5",
+   "BRCA2",
+   "CCND1",
+   "CCND2",
+   "CD44",
+   "CD82",
+   "BCL11A",
+   "CD79A",
+   "KCTD16",
+   "RNF8",
+   "WT1",
+   "RSRP1",
+   "SHC1",
+   "ACOT13",
+   "ADGRB1",
+   "APP",
+   "AURKB",
+   "BCL2",
+   "BCOR",
+   "BMI1",
+   "BRCA1",
+   "CD24",
+   "CD4",
+   "CD70",
+   "CD74",
+   "BCAS3",
+   "BCL2L1",
+   "BLOC1S1",
+   "BMAL1",
+   "CDKN1A",
+   "CDKN2A",
+   "CLOCK",
+   "COP1",
+   "CRY1",
+   "CXCL1"
+  ]
+ },
+ "MIIP": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "MKNK2": {
+  "reasoning": "cascade over 2 proteins; modes {'UNSIGNALLED': 1}; sensors ['iron_low', 'translation_stress']",
+  "n_disabled": 2,
+  "modes": {
+   "UNSIGNALLED": 1
+  },
+  "sensors": [
+   "iron_low",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 20,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   }
+  ],
+  "predicted_genes": [
+   "TFRC",
+   "SLC11A2",
+   "STEAP3",
+   "ACO1",
+   "IREB2",
+   "FTL",
+   "FTH1",
+   "ALAS2",
+   "SLC25A37",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "MKS1": {
+  "reasoning": "cascade over 14 proteins; modes {'ORPHANED': 13}; sensors ['proteotoxic']",
+  "n_disabled": 14,
+  "modes": {
+   "ORPHANED": 13
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 14
+   },
+   {
+    "depth": 2,
+    "n_frontier": 13,
+    "n_disabled": 14
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
   ]
  },
  "MMS22L": {
@@ -59,6 +2485,3468 @@
    "HSPE1"
   ]
  },
+ "MRPL17": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL19": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL20": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL21": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL22": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL24": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL27": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL3": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL33": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL34": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL35": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL36": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL37": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL39": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL4": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL41": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL42": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL43": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL44": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL49": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL50": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL52": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL54": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPL55": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPS14": {
+  "reasoning": "cascade over 30 proteins; modes {'ORPHANED': 29}; sensors ['mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 30,
+  "modes": {
+   "ORPHANED": 29
+  },
+  "sensors": [
+   "mito_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 28,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 26
+   },
+   {
+    "depth": 2,
+    "n_frontier": 25,
+    "n_disabled": 30
+   },
+   {
+    "depth": 3,
+    "n_frontier": 4,
+    "n_disabled": 30
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MRPS18A": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPS2": {
+  "reasoning": "cascade over 30 proteins; modes {'ORPHANED': 29}; sensors ['mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 30,
+  "modes": {
+   "ORPHANED": 29
+  },
+  "sensors": [
+   "mito_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 28,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 26
+   },
+   {
+    "depth": 2,
+    "n_frontier": 25,
+    "n_disabled": 30
+   },
+   {
+    "depth": 3,
+    "n_frontier": 4,
+    "n_disabled": 30
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MRPS27": {
+  "reasoning": "cascade over 30 proteins; modes {'ORPHANED': 29}; sensors ['mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 30,
+  "modes": {
+   "ORPHANED": 29
+  },
+  "sensors": [
+   "mito_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 28,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 26
+   },
+   {
+    "depth": 2,
+    "n_frontier": 25,
+    "n_disabled": 30
+   },
+   {
+    "depth": 3,
+    "n_frontier": 4,
+    "n_disabled": 30
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MRPS30": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MRPS34": {
+  "reasoning": "cascade over 30 proteins; modes {'ORPHANED': 29}; sensors ['mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 30,
+  "modes": {
+   "ORPHANED": 29
+  },
+  "sensors": [
+   "mito_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 28,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 26
+   },
+   {
+    "depth": 2,
+    "n_frontier": 25,
+    "n_disabled": 30
+   },
+   {
+    "depth": 3,
+    "n_frontier": 4,
+    "n_disabled": 30
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MTBP": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "MTFMT": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MTHFD1": {
+  "reasoning": "cascade over 4 proteins; modes {'STARVED': 3, '@mito': 1}; sensors ['mito_stress']",
+  "n_disabled": 4,
+  "modes": {
+   "STARVED": 3,
+   "@mito": 1
+  },
+  "sensors": [
+   "mito_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 4
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MTIF2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MTOR": {
+  "reasoning": "cascade over 151 proteins; modes {'STARVED': 73, 'UNSIGNALLED': 65, 'STRANDED': 7, 'ORPHANED': 10}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 151,
+  "modes": {
+   "STARVED": 73,
+   "UNSIGNALLED": 65,
+   "STRANDED": 7,
+   "ORPHANED": 10
+  },
+  "sensors": [
+   "er_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 36,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 54
+   },
+   {
+    "depth": 2,
+    "n_frontier": 7,
+    "n_disabled": 121
+   },
+   {
+    "depth": 3,
+    "n_frontier": 4,
+    "n_disabled": 151
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "MTPAP": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "MTREX": {
+  "reasoning": "cascade over 105 proteins; modes {'STARVED': 54, 'STRANDED': 55, 'ORPHANED': 16, '@er': 4, 'UNSIGNALLED': 6, '@mito': 2}; sensors ['er_stress', 'mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 105,
+  "modes": {
+   "STARVED": 54,
+   "STRANDED": 55,
+   "ORPHANED": 16,
+   "@er": 4,
+   "UNSIGNALLED": 6,
+   "@mito": 2
+  },
+  "sensors": [
+   "er_stress",
+   "mito_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 40,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 14
+   },
+   {
+    "depth": 2,
+    "n_frontier": 12,
+    "n_disabled": 94
+   },
+   {
+    "depth": 3,
+    "n_frontier": 33,
+    "n_disabled": 105
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "VEGFA",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "MVD": {
+  "reasoning": "cascade over 5 proteins; modes {'UNSIGNALLED': 4}; sensors ['er_stress', 'sterol_low', 'translation_stress']",
+  "n_disabled": 5,
+  "modes": {
+   "UNSIGNALLED": 4
+  },
+  "sensors": [
+   "er_stress",
+   "sterol_low",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 33,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 5
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "HMGCR",
+   "HMGCS1",
+   "LDLR",
+   "SQLE",
+   "FDFT1",
+   "IDI1",
+   "INSIG1",
+   "SREBF2",
+   "DHCR7",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "MXRA8": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "MYB": {
+  "reasoning": "cascade over 46 proteins; modes {'UNSIGNALLED': 35, 'ORPHANED': 11}; sensors ['proteotoxic']",
+  "n_disabled": 46,
+  "modes": {
+   "UNSIGNALLED": 35,
+   "ORPHANED": 11
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 198,
+  "n_downstream_tf_regulon": 43,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [
+   "ATF3",
+   "CEBPA",
+   "CEBPB",
+   "DDIT3"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   },
+   {
+    "depth": 2,
+    "n_frontier": 1,
+    "n_disabled": 26
+   },
+   {
+    "depth": 3,
+    "n_frontier": 3,
+    "n_disabled": 46
+   }
+  ],
+  "predicted_genes": [
+   "ACOT11",
+   "ACTA2",
+   "ACTG2",
+   "ADA",
+   "ADIPOQ",
+   "ADRA1D",
+   "AKT1",
+   "ALOX5",
+   "AMY2A",
+   "ANK1",
+   "ANPEP",
+   "AR",
+   "ATP2B1",
+   "ATP2B4",
+   "ATP9B",
+   "AXIN2",
+   "B2M",
+   "BCL2",
+   "BCL2L1",
+   "BCL2L11",
+   "BRCA1",
+   "CA1",
+   "CASP8AP2",
+   "CCNA1",
+   "CCNB1",
+   "CCND1",
+   "CCND3",
+   "CD1D",
+   "CD34",
+   "CD4",
+   "CD74",
+   "CD86",
+   "CD8A",
+   "CDH1",
+   "CDK1",
+   "CDK6",
+   "CDKN1A",
+   "CDKN1B",
+   "CDKN2A",
+   "CDKN2B",
+   "CEBPA",
+   "CEBPB",
+   "CHD7",
+   "CLEC4G",
+   "CLU",
+   "CNOT9",
+   "COL1A1",
+   "COL1A2",
+   "CREBBP",
+   "CS",
+   "CSF2",
+   "CSF3R",
+   "CTSD",
+   "CTSG",
+   "CXCL12",
+   "CXCR4",
+   "DHRS2",
+   "DUSP6",
+   "EBP",
+   "EGF"
+  ]
+ },
+ "MYBBP1A": {
+  "reasoning": "cascade over 247 proteins; modes {'ORPHANED': 153, 'UNSIGNALLED': 19, 'STRANDED': 62, 'STARVED': 58}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 247,
+  "modes": {
+   "ORPHANED": 153,
+   "UNSIGNALLED": 19,
+   "STRANDED": 62,
+   "STARVED": 58
+  },
+  "sensors": [
+   "er_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 1,
+  "n_downstream_tf_regulon": 26,
+  "n_sensor": 36,
+  "downstream_tfs_disabled": [
+   "DDX21",
+   "DEK",
+   "PHF5A",
+   "SMARCA5",
+   "SNRNP70"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 8
+   },
+   {
+    "depth": 2,
+    "n_frontier": 7,
+    "n_disabled": 56
+   },
+   {
+    "depth": 3,
+    "n_frontier": 40,
+    "n_disabled": 247
+   }
+  ],
+  "predicted_genes": [
+   "SFTPB",
+   "RPL15",
+   "RPL17",
+   "BCL2",
+   "PRDX5",
+   "ADH1B",
+   "ANAPC11",
+   "BMP4",
+   "CASR",
+   "CCND1",
+   "CDT1",
+   "CECR2",
+   "CHD1",
+   "CREBBP",
+   "CRYAA",
+   "DNAH8",
+   "IL2",
+   "IL3",
+   "INO80",
+   "OGA",
+   "CD79A",
+   "CSF1",
+   "GJA1",
+   "IGHE",
+   "MYH6",
+   "SMARCB1",
+   "BSG",
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2"
+  ]
+ },
+ "MYCN": {
+  "reasoning": "cascade over 17 proteins; modes {'UNSIGNALLED': 13, 'ORPHANED': 3}; sensors ['proteotoxic', 'translation_stress']",
+  "n_disabled": 17,
+  "modes": {
+   "UNSIGNALLED": 13,
+   "ORPHANED": 3
+  },
+  "sensors": [
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 158,
+  "n_downstream_tf_regulon": 22,
+  "n_sensor": 21,
+  "downstream_tfs_disabled": [
+   "MAX",
+   "MXD1"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 7
+   },
+   {
+    "depth": 2,
+    "n_frontier": 1,
+    "n_disabled": 15
+   },
+   {
+    "depth": 3,
+    "n_frontier": 1,
+    "n_disabled": 17
+   }
+  ],
+  "predicted_genes": [
+   "ABCB1",
+   "ABCC1",
+   "ABCC3",
+   "ACOT4",
+   "AKAP10",
+   "ANO2",
+   "APBB3",
+   "APEX1",
+   "ARID1A",
+   "ASCL1",
+   "BAX",
+   "BBC3",
+   "BDNF",
+   "BIN1",
+   "BIRC5",
+   "BIRC7",
+   "BMI1",
+   "BRD4",
+   "BTC",
+   "CALN1",
+   "CAV1",
+   "CBX8",
+   "CCL2",
+   "CCND1",
+   "CCND2",
+   "CCNE1",
+   "CCNG2",
+   "CD44",
+   "CDH5",
+   "CDK6",
+   "CDKL5",
+   "CDKN1A",
+   "CDKN1B",
+   "CIITA",
+   "CLU",
+   "COL11A1",
+   "CRABP2",
+   "CREB5",
+   "CTSD",
+   "DBH",
+   "DDB1",
+   "DFFA",
+   "DKK1",
+   "DKK3",
+   "DST",
+   "DUSP8",
+   "EFNB3",
+   "EGFR",
+   "ENPP2",
+   "EOMES",
+   "FASLG",
+   "FGFRL1",
+   "FSCN1",
+   "FZD7",
+   "GALNT14",
+   "GATA1",
+   "GRHL1",
+   "GRIN2A",
+   "HAND2",
+   "HDAC2"
+  ]
+ },
+ "MZT2B": {
+  "reasoning": "cascade over 310 proteins; modes {'ORPHANED': 107, 'STARVED': 86, 'STRANDED': 89, 'UNSIGNALLED': 69, '@er': 2, '@mito': 1}; sensors ['er_stress', 'mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 310,
+  "modes": {
+   "ORPHANED": 107,
+   "STARVED": 86,
+   "STRANDED": 89,
+   "UNSIGNALLED": 69,
+   "@er": 2,
+   "@mito": 1
+  },
+  "sensors": [
+   "er_stress",
+   "mito_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 44,
+  "n_sensor": 40,
+  "downstream_tfs_disabled": [
+   "ARID1A",
+   "ARRB1",
+   "DMAP1",
+   "EP400",
+   "KAT5",
+   "RUVBL1",
+   "SMARCA2",
+   "SMARCB1",
+   "SMARCC1",
+   "SMARCC2",
+   "TRRAP",
+   "YEATS4"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 10
+   },
+   {
+    "depth": 2,
+    "n_frontier": 9,
+    "n_disabled": 67
+   },
+   {
+    "depth": 3,
+    "n_frontier": 32,
+    "n_disabled": 310
+   }
+  ],
+  "predicted_genes": [
+   "CEP63",
+   "SLC11A2",
+   "ATM",
+   "BAX",
+   "CDH1",
+   "CDKN1A",
+   "DNMT1",
+   "STAT3",
+   "ABL1",
+   "ACTL6A",
+   "APOC3",
+   "AR",
+   "BIRC2",
+   "BMP4",
+   "CD4",
+   "CD44",
+   "CD82",
+   "CDK1",
+   "CLASP1",
+   "COL2A1",
+   "CREBBP",
+   "CSF2",
+   "GAPDH",
+   "TP53",
+   "CCND2",
+   "MITF",
+   "BMP10",
+   "IL10",
+   "SMAD3",
+   "SMARCA1",
+   "SMARCA2",
+   "DIP2A",
+   "CDKN2A",
+   "CSF1",
+   "GLI1",
+   "PTCH1",
+   "KLF1",
+   "KLK3",
+   "KRAS",
+   "OPRM1",
+   "RAB18",
+   "RPL17",
+   "SMARCA4",
+   "SMARCB1",
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "ATF5"
+  ]
+ },
+ "N4BP2L2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NAA20": {
+  "reasoning": "cascade over 2 proteins; modes {'ORPHANED': 1}; sensors []",
+  "n_disabled": 2,
+  "modes": {
+   "ORPHANED": 1
+  },
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   },
+   {
+    "depth": 2,
+    "n_frontier": 1,
+    "n_disabled": 2
+   }
+  ],
+  "predicted_genes": [
+   "NAA25"
+  ]
+ },
+ "NAA25": {
+  "reasoning": "cascade over 2 proteins; modes {'ORPHANED': 1}; sensors []",
+  "n_disabled": 2,
+  "modes": {
+   "ORPHANED": 1
+  },
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   },
+   {
+    "depth": 2,
+    "n_frontier": 1,
+    "n_disabled": 2
+   }
+  ],
+  "predicted_genes": [
+   "NAA20"
+  ]
+ },
+ "NAA30": {
+  "reasoning": "cascade over 3 proteins; modes {'ORPHANED': 2}; sensors ['er_stress']",
+  "n_disabled": 3,
+  "modes": {
+   "ORPHANED": 2
+  },
+  "sensors": [
+   "er_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 15,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   },
+   {
+    "depth": 2,
+    "n_frontier": 2,
+    "n_disabled": 3
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4"
+  ]
+ },
+ "NAA38": {
+  "reasoning": "cascade over 3 proteins; modes {'ORPHANED': 2}; sensors ['er_stress']",
+  "n_disabled": 3,
+  "modes": {
+   "ORPHANED": 2
+  },
+  "sensors": [
+   "er_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 15,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   },
+   {
+    "depth": 2,
+    "n_frontier": 2,
+    "n_disabled": 3
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4"
+  ]
+ },
+ "NACA": {
+  "reasoning": "cascade over 11 proteins; modes {'ORPHANED': 1, 'UNSIGNALLED': 9}; sensors ['translation_stress']",
+  "n_disabled": 11,
+  "modes": {
+   "ORPHANED": 1,
+   "UNSIGNALLED": 9
+  },
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 8,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [
+   "BTF3"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   },
+   {
+    "depth": 2,
+    "n_frontier": 1,
+    "n_disabled": 11
+   }
+  ],
+  "predicted_genes": [
+   "ABL2",
+   "ATM",
+   "EPHB2",
+   "HPSE2",
+   "MADCAM1",
+   "NFKB1",
+   "RRAS2",
+   "SSPN",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "NAE1": {
+  "reasoning": "cascade over 10 proteins; modes {'STRANDED': 3, '@mito': 2, 'ORPHANED': 12}; sensors ['er_stress', 'mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 10,
+  "modes": {
+   "STRANDED": 3,
+   "@mito": 2,
+   "ORPHANED": 12
+  },
+  "sensors": [
+   "er_stress",
+   "mito_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 40,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   },
+   {
+    "depth": 2,
+    "n_frontier": 2,
+    "n_disabled": 10
+   },
+   {
+    "depth": 3,
+    "n_frontier": 7,
+    "n_disabled": 10
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "VEGFA",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "NAP1L1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['export_block', 'proteotoxic']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "export_block",
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 18,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "DDIT3",
+   "SESN2",
+   "EIF4EBP1",
+   "SLC3A2",
+   "TRIB3",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "NARS": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NASP": {
+  "reasoning": "cascade over 74 proteins; modes {'UNSIGNALLED': 36, 'ORPHANED': 52}; sensors ['proteotoxic']",
+  "n_disabled": 74,
+  "modes": {
+   "UNSIGNALLED": 36,
+   "ORPHANED": 52
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 99,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [
+   "BPTF",
+   "CHD4",
+   "GATAD2A",
+   "GATAD2B",
+   "HDAC1",
+   "HDAC2",
+   "MBD2",
+   "MBD3",
+   "MTA1",
+   "MTA2",
+   "MTA3",
+   "RBBP7",
+   "SMARCA1"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 6
+   },
+   {
+    "depth": 2,
+    "n_frontier": 4,
+    "n_disabled": 23
+   },
+   {
+    "depth": 3,
+    "n_frontier": 15,
+    "n_disabled": 74
+   }
+  ],
+  "predicted_genes": [
+   "CDH1",
+   "EN1",
+   "EN2",
+   "HOXC8",
+   "MAZ",
+   "ACOT8",
+   "BGLAP",
+   "BIN1",
+   "BRCA1",
+   "CD44",
+   "CDKN1C",
+   "CDKN2A",
+   "CEBPB",
+   "CECR2",
+   "CHD1",
+   "CLC",
+   "CREBBP",
+   "CRYAB",
+   "DNAH8",
+   "BCL11A",
+   "CD79A",
+   "KCTD16",
+   "RNF8",
+   "WT1",
+   "RSRP1",
+   "SHC1",
+   "ABCB1",
+   "ADAM10",
+   "ALOX15",
+   "APOC3",
+   "AR",
+   "BAMBI",
+   "BCL2A1",
+   "BIRC3",
+   "BIRC5",
+   "BRCA2",
+   "CCND1",
+   "CCND2",
+   "CD1D",
+   "CD82",
+   "ALOX5",
+   "APAF1",
+   "BMP7",
+   "CCNE1",
+   "COL1A2",
+   "CXCL8",
+   "DNMT1",
+   "HMGA1",
+   "KLF4",
+   "MUC5AC",
+   "SNAI2",
+   "SP1",
+   "TGFBR2",
+   "ACOT13",
+   "ADGRB1",
+   "APP",
+   "AURKB",
+   "BCL2",
+   "BCOR",
+   "BMI1"
+  ]
+ },
+ "NBPF12": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NCAM2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NCAPG": {
+  "reasoning": "cascade over 9 proteins; modes {'ORPHANED': 7, 'UNSIGNALLED': 1}; sensors ['proteotoxic']",
+  "n_disabled": 9,
+  "modes": {
+   "ORPHANED": 7,
+   "UNSIGNALLED": 1
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 5
+   },
+   {
+    "depth": 2,
+    "n_frontier": 4,
+    "n_disabled": 8
+   },
+   {
+    "depth": 3,
+    "n_frontier": 3,
+    "n_disabled": 9
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "NCBP1": {
+  "reasoning": "cascade over 23 proteins; modes {'UNSIGNALLED': 1, 'ORPHANED': 30}; sensors ['proteotoxic']",
+  "n_disabled": 23,
+  "modes": {
+   "UNSIGNALLED": 1,
+   "ORPHANED": 30
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 1,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [
+   "ZC3H11A"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 4
+   },
+   {
+    "depth": 2,
+    "n_frontier": 2,
+    "n_disabled": 20
+   },
+   {
+    "depth": 3,
+    "n_frontier": 16,
+    "n_disabled": 23
+   }
+  ],
+  "predicted_genes": [
+   "RSRP1",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "NCBP2": {
+  "reasoning": "cascade over 20 proteins; modes {'ORPHANED': 27, 'UNSIGNALLED': 1}; sensors ['proteotoxic']",
+  "n_disabled": 20,
+  "modes": {
+   "ORPHANED": 27,
+   "UNSIGNALLED": 1
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   },
+   {
+    "depth": 2,
+    "n_frontier": 1,
+    "n_disabled": 4
+   },
+   {
+    "depth": 3,
+    "n_frontier": 1,
+    "n_disabled": 20
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "NCKAP1": {
+  "reasoning": "cascade over 2 proteins; modes {'UNSIGNALLED': 1}; sensors []",
+  "n_disabled": 2,
+  "modes": {
+   "UNSIGNALLED": 1
+  },
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   }
+  ],
+  "predicted_genes": [
+   "NHS"
+  ]
+ },
+ "NCKIPSD": {
+  "reasoning": "cascade over 2 proteins; modes {'UNSIGNALLED': 1}; sensors []",
+  "n_disabled": 2,
+  "modes": {
+   "UNSIGNALLED": 1
+  },
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   }
+  ],
+  "predicted_genes": [
+   "NCK1"
+  ]
+ },
+ "NDRG3": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NDUFA3": {
+  "reasoning": "cascade over 1 proteins; modes {'@mito': 1}; sensors ['mito_stress']",
+  "n_disabled": 1,
+  "modes": {
+   "@mito": 1
+  },
+  "sensors": [
+   "mito_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "NDUFA6": {
+  "reasoning": "cascade over 1 proteins; modes {'@mito': 1}; sensors ['mito_stress']",
+  "n_disabled": 1,
+  "modes": {
+   "@mito": 1
+  },
+  "sensors": [
+   "mito_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "NDUFAF1": {
+  "reasoning": "cascade over 7 proteins; modes {'ORPHANED': 5, '@mito': 1, 'UNSIGNALLED': 1}; sensors ['mito_stress', 'proteotoxic']",
+  "n_disabled": 7,
+  "modes": {
+   "ORPHANED": 5,
+   "@mito": 1,
+   "UNSIGNALLED": 1
+  },
+  "sensors": [
+   "mito_stress",
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 28,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 6
+   },
+   {
+    "depth": 2,
+    "n_frontier": 5,
+    "n_disabled": 7
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "NDUFAF5": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "NEDD1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NEDD8": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['iron_low', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "iron_low",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 20,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "TFRC",
+   "SLC11A2",
+   "STEAP3",
+   "ACO1",
+   "IREB2",
+   "FTL",
+   "FTH1",
+   "ALAS2",
+   "SLC25A37",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "NEDD8-MDP1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NELFA": {
+  "reasoning": "cascade over 4 proteins; modes {'ORPHANED': 3}; sensors ['proteotoxic']",
+  "n_disabled": 4,
+  "modes": {
+   "ORPHANED": 3
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 4,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [
+   "NELFB",
+   "NELFCD"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 4
+   },
+   {
+    "depth": 2,
+    "n_frontier": 3,
+    "n_disabled": 4
+   }
+  ],
+  "predicted_genes": [
+   "TFF1",
+   "CCND1",
+   "CDKN1A",
+   "CTNNB1",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "NELFCD": {
+  "reasoning": "cascade over 4 proteins; modes {'ORPHANED': 3}; sensors ['proteotoxic']",
+  "n_disabled": 4,
+  "modes": {
+   "ORPHANED": 3
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 3,
+  "n_downstream_tf_regulon": 1,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [
+   "NELFB"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 4
+   },
+   {
+    "depth": 2,
+    "n_frontier": 3,
+    "n_disabled": 4
+   }
+  ],
+  "predicted_genes": [
+   "CCND1",
+   "CDKN1A",
+   "CTNNB1",
+   "TFF1",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "NF1": {
+  "reasoning": "cascade over 211 proteins; modes {'UNSIGNALLED': 68, 'STRANDED': 84, 'STARVED': 76, 'ORPHANED': 4, '@er': 1}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 211,
+  "modes": {
+   "UNSIGNALLED": 68,
+   "STRANDED": 84,
+   "STARVED": 76,
+   "ORPHANED": 4,
+   "@er": 1
+  },
+  "sensors": [
+   "er_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 5,
+  "n_downstream_tf_regulon": 2,
+  "n_sensor": 36,
+  "downstream_tfs_disabled": [
+   "ARRB1"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 26
+   },
+   {
+    "depth": 2,
+    "n_frontier": 13,
+    "n_disabled": 84
+   },
+   {
+    "depth": 3,
+    "n_frontier": 17,
+    "n_disabled": 211
+   }
+  ],
+  "predicted_genes": [
+   "AFP",
+   "FOS",
+   "MYC",
+   "PLAT",
+   "TP53",
+   "CEP63",
+   "SLC11A2",
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA6",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "NFATC3": {
+  "reasoning": "cascade over 6 proteins; modes {'UNSIGNALLED': 5}; sensors []",
+  "n_disabled": 6,
+  "modes": {
+   "UNSIGNALLED": 5
+  },
+  "sensors": [],
+  "n_own_regulon": 42,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 6
+   }
+  ],
+  "predicted_genes": [
+   "ABCA3",
+   "ACHE",
+   "ADRA1D",
+   "ATF3",
+   "B3GAT3",
+   "CD40LG",
+   "CDH1",
+   "COX20",
+   "CR2",
+   "CTSD",
+   "CXCL13",
+   "CXCR5",
+   "DDIT4",
+   "DNAJB6",
+   "EDN1",
+   "FASLG",
+   "FASTK",
+   "FCER2",
+   "FOS",
+   "GC",
+   "GHRH",
+   "GPC6",
+   "IFNG",
+   "IL2",
+   "IL5",
+   "IL6",
+   "JUN",
+   "KCNB1",
+   "KCNC1",
+   "LMBR1",
+   "MUC2",
+   "MYOCD",
+   "MYOG",
+   "PIAS2",
+   "PTGS2",
+   "RHD",
+   "SFTPD",
+   "TFF1",
+   "TNF",
+   "TNFSF10",
+   "TNFSF11",
+   "TSC2"
+  ]
+ },
+ "NFRKB": {
+  "reasoning": "cascade over 222 proteins; modes {'ORPHANED': 169, 'STARVED': 59, 'UNSIGNALLED': 33, 'STRANDED': 25}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 222,
+  "modes": {
+   "ORPHANED": 169,
+   "STARVED": 59,
+   "UNSIGNALLED": 33,
+   "STRANDED": 25
+  },
+  "sensors": [
+   "er_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 2,
+  "n_downstream_tf_regulon": 71,
+  "n_sensor": 36,
+  "downstream_tfs_disabled": [
+   "ARID1A",
+   "DMAP1",
+   "EP400",
+   "HCFC1",
+   "KAT5",
+   "KAT8",
+   "MCRS1",
+   "OGT",
+   "PHF20",
+   "RUVBL1",
+   "SMARCA2",
+   "SRCAP",
+   "TFPT",
+   "TRRAP",
+   "YEATS4",
+   "YY1"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 15
+   },
+   {
+    "depth": 2,
+    "n_frontier": 14,
+    "n_disabled": 71
+   },
+   {
+    "depth": 3,
+    "n_frontier": 31,
+    "n_disabled": 222
+   }
+  ],
+  "predicted_genes": [
+   "COPZ1",
+   "JUN",
+   "KLF6",
+   "RPL15",
+   "GAPDH",
+   "TP53",
+   "EAF2",
+   "ACP5",
+   "ACTA1",
+   "ACTA2",
+   "ACTC1",
+   "ACTR5",
+   "ADA",
+   "ADORA2A",
+   "AFG1L",
+   "ALG12",
+   "AMELX",
+   "AMELY",
+   "APBB1",
+   "APC",
+   "APH1A",
+   "AR",
+   "ATM",
+   "BAX",
+   "CDH1",
+   "CDKN1A",
+   "DNMT1",
+   "STAT3",
+   "KLK3",
+   "PCK2",
+   "ABL1",
+   "ACTL6A",
+   "APOC3",
+   "BIRC2",
+   "BMP4",
+   "CD4",
+   "CD44",
+   "CD82",
+   "CDK1",
+   "CLASP1",
+   "COL2A1",
+   "CREBBP",
+   "CSF2",
+   "CCND2",
+   "MITF",
+   "BMP10",
+   "IL10",
+   "SMAD3",
+   "SMARCA1",
+   "SMARCA2",
+   "DIP2A",
+   "CCNA2",
+   "CDC6",
+   "COX7C",
+   "E2F1",
+   "E2F4",
+   "MMACHC",
+   "PDX1",
+   "BCL2",
+   "FGFR1"
+  ]
+ },
+ "NFYC": {
+  "reasoning": "cascade over 9 proteins; modes {'UNSIGNALLED': 6, 'ORPHANED': 2}; sensors ['proteotoxic', 'sterol_low']",
+  "n_disabled": 9,
+  "modes": {
+   "UNSIGNALLED": 6,
+   "ORPHANED": 2
+  },
+  "sensors": [
+   "proteotoxic",
+   "sterol_low"
+  ],
+  "n_own_regulon": 21,
+  "n_downstream_tf_regulon": 22,
+  "n_sensor": 20,
+  "downstream_tfs_disabled": [
+   "NFYA",
+   "NFYB"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 6
+   },
+   {
+    "depth": 2,
+    "n_frontier": 2,
+    "n_disabled": 9
+   }
+  ],
+  "predicted_genes": [
+   "ABCB1",
+   "CCND2",
+   "CDKN1B",
+   "COL1A2",
+   "FAS",
+   "FDPS",
+   "FOS",
+   "FXR2",
+   "GCH1",
+   "GFI1B",
+   "HOXB7",
+   "HSPA1A",
+   "HSPA1B",
+   "IL10",
+   "LPIN1",
+   "NFYA",
+   "NR3C2",
+   "SCNN1A",
+   "SOX18",
+   "SOX3",
+   "TNFSF11",
+   "ACLY",
+   "ACSBG1",
+   "ACTB",
+   "ADIPOQ",
+   "AKR1C1",
+   "AMELX",
+   "ASF1A",
+   "ASF1B",
+   "AURKA",
+   "BMAL1",
+   "BRCA1",
+   "CASP1",
+   "CBS",
+   "CCNB1",
+   "ABI3",
+   "ABO",
+   "CD74",
+   "CDC25B",
+   "CIITA",
+   "COL11A1",
+   "COL5A3",
+   "CYC1",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "HMGCR",
+   "HMGCS1",
+   "LDLR",
+   "SQLE",
+   "FDFT1",
+   "IDI1",
+   "MVD"
+  ]
+ },
  "NIFK": {
   "reasoning": "cascade over 1 proteins; modes {}; sensors []",
   "n_disabled": 1,
@@ -77,7 +5965,39 @@
   ],
   "predicted_genes": []
  },
- "NKAP": {
+ "NIP7": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "NIPAL3": {
   "reasoning": "cascade over 1 proteins; modes {}; sensors []",
   "n_disabled": 1,
   "modes": {},
@@ -94,6 +6014,319 @@
    }
   ],
   "predicted_genes": []
+ },
+ "NIPBL": {
+  "reasoning": "cascade over 2 proteins; modes {'ORPHANED': 1}; sensors []",
+  "n_disabled": 2,
+  "modes": {
+   "ORPHANED": 1
+  },
+  "sensors": [],
+  "n_own_regulon": 2,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 2
+   },
+   {
+    "depth": 2,
+    "n_frontier": 1,
+    "n_disabled": 2
+   }
+  ],
+  "predicted_genes": [
+   "NPM1",
+   "PMAIP1"
+  ]
+ },
+ "NKX6-1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 19,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ARX",
+   "BLK",
+   "CCNE1",
+   "DNER",
+   "E2F1",
+   "GCG",
+   "GLP1R",
+   "HNF1A",
+   "IAPP",
+   "IL6",
+   "INS",
+   "MAFA",
+   "OLIG2",
+   "PC",
+   "PCSK1",
+   "PDX1",
+   "SLC2A2",
+   "UGT1A1",
+   "WNT1"
+  ]
+ },
+ "NLE1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NOC3L": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NOL10": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NOL8": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "NOLC1": {
+  "reasoning": "cascade over 13 proteins; modes {'ORPHANED': 2, 'UNSIGNALLED': 10}; sensors ['translation_stress']",
+  "n_disabled": 13,
+  "modes": {
+   "ORPHANED": 2,
+   "UNSIGNALLED": 10
+  },
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   },
+   {
+    "depth": 2,
+    "n_frontier": 2,
+    "n_disabled": 13
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "NOP10": {
+  "reasoning": "cascade over 13 proteins; modes {'UNSIGNALLED': 1, 'STARVED': 22}; sensors ['translation_stress']",
+  "n_disabled": 13,
+  "modes": {
+   "UNSIGNALLED": 1,
+   "STARVED": 22
+  },
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 13
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "NOP16": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NOP2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "NR2E1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 17,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATCAY",
+   "CDKN1A",
+   "DCX",
+   "EGF",
+   "FABP7",
+   "GFAP",
+   "KDM1A",
+   "PAX2",
+   "PLCE1",
+   "PTEN",
+   "RAF1",
+   "RASA1",
+   "SHH",
+   "SIRT1",
+   "TGFA",
+   "VEGFA",
+   "WNT2"
+  ]
  },
  "NRDE2": {
   "reasoning": "cascade over 1 proteins; modes {}; sensors []",
@@ -197,121 +6430,90 @@
    "NOS3"
   ]
  },
- "NUP54": {
-  "reasoning": "cascade over 268 proteins; modes {'STARVED': 94, 'STRANDED': 106, 'ORPHANED': 20, '@er': 8, 'UNMODIFIED': 54, 'UNSIGNALLED': 23}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 268,
+ "NSUN4": {
+  "reasoning": "cascade over 2 proteins; modes {'ORPHANED': 1}; sensors ['translation_stress']",
+  "n_disabled": 2,
   "modes": {
-   "STARVED": 94,
-   "STRANDED": 106,
-   "ORPHANED": 20,
-   "@er": 8,
-   "UNMODIFIED": 54,
-   "UNSIGNALLED": 23
+   "ORPHANED": 1
   },
   "sensors": [
-   "er_stress",
-   "proteotoxic",
    "translation_stress"
   ],
   "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 40,
-  "n_sensor": 35,
-  "downstream_tfs_disabled": [
-   "HDAC4",
-   "SMAD3",
-   "SMAD4",
-   "SP100"
-  ],
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
   "trace": [
    {
     "depth": 1,
     "n_frontier": 1,
-    "n_disabled": 51
+    "n_disabled": 2
    },
    {
     "depth": 2,
-    "n_frontier": 25,
-    "n_disabled": 86
-   },
-   {
-    "depth": 3,
-    "n_frontier": 35,
-    "n_disabled": 268
+    "n_frontier": 1,
+    "n_disabled": 2
    }
   ],
   "predicted_genes": [
-   "ACHE",
-   "ACTA1",
-   "ACTA2",
-   "ACTG2",
-   "AGTR1",
-   "AHR",
-   "ALPI",
-   "ANGPTL2",
-   "ANGPTL4",
-   "ANKRD1",
-   "APOB",
-   "APOC3",
-   "APP",
-   "AR",
-   "AREG",
-   "AGR2",
-   "ATOH8",
-   "AXIN2",
-   "BAMBI",
-   "BAX",
-   "BBC3",
-   "BCL2",
-   "ETS1",
-   "MMP1",
-   "PLAU",
    "ATF4",
-   "CA9",
-   "CDKN1A",
-   "CDKN2A",
-   "HDAC3",
-   "HOXB13",
-   "IL10",
-   "IL5",
-   "JUN",
-   "KLF4",
-   "MEF2A",
-   "MMP13",
-   "PTGES",
-   "PTGS2",
-   "PTPA",
-   "HSPA5",
-   "XBP1",
+   "ATF5",
    "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1"
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
   ]
  },
- "NUP62": {
-  "reasoning": "cascade over 354 proteins; modes {'STARVED': 119, 'UNMODIFIED': 54, 'STRANDED': 131, 'ORPHANED': 56, '@er': 8, 'UNSIGNALLED': 24}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 354,
+ "NUDCD3": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NUFIP1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "NUP214": {
+  "reasoning": "cascade over 417 proteins; modes {'UNSIGNALLED': 91, 'STARVED': 141, 'STRANDED': 211, 'ORPHANED': 40, '@er': 15}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 417,
   "modes": {
-   "STARVED": 119,
-   "UNMODIFIED": 54,
-   "STRANDED": 131,
-   "ORPHANED": 56,
-   "@er": 8,
-   "UNSIGNALLED": 24
+   "UNSIGNALLED": 91,
+   "STARVED": 141,
+   "STRANDED": 211,
+   "ORPHANED": 40,
+   "@er": 15
   },
   "sensors": [
    "er_stress",
@@ -319,12 +6521,14 @@
    "translation_stress"
   ],
   "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 40,
-  "n_sensor": 35,
+  "n_downstream_tf_regulon": 56,
+  "n_sensor": 34,
   "downstream_tfs_disabled": [
+   "BCL11A",
    "HDAC4",
-   "SMAD3",
-   "SMAD4",
+   "MDM2",
+   "NPM1",
+   "PML",
    "SP100"
   ],
   "trace": [
@@ -335,38 +6539,16 @@
    },
    {
     "depth": 2,
-    "n_frontier": 27,
-    "n_disabled": 99
+    "n_frontier": 25,
+    "n_disabled": 182
    },
    {
     "depth": 3,
-    "n_frontier": 46,
-    "n_disabled": 354
+    "n_frontier": 60,
+    "n_disabled": 417
    }
   ],
   "predicted_genes": [
-   "ACHE",
-   "ACTA1",
-   "ACTA2",
-   "ACTG2",
-   "AGTR1",
-   "AHR",
-   "ALPI",
-   "ANGPTL2",
-   "ANGPTL4",
-   "ANKRD1",
-   "APOB",
-   "APOC3",
-   "APP",
-   "AR",
-   "AREG",
-   "AGR2",
-   "ATOH8",
-   "AXIN2",
-   "BAMBI",
-   "BAX",
-   "BBC3",
-   "BCL2",
    "ETS1",
    "MMP1",
    "PLAU",
@@ -385,38 +6567,271 @@
    "PTGES",
    "PTGS2",
    "PTPA",
+   "DNMT3A",
+   "BAX",
+   "CASP3",
+   "CCND1",
+   "CCNT1",
+   "CREM",
+   "EAF2",
+   "EGFR",
+   "EP300",
+   "FLT3",
+   "GRIP1",
+   "HCK",
+   "HIPK2",
+   "IFNB1",
+   "NR4A1",
+   "ATF5",
+   "BRD4",
+   "DNMT1",
+   "ELF4",
+   "HOXA9",
+   "MDM2",
+   "PTPN6",
+   "RPL3",
+   "TAF1A",
+   "USP7",
+   "ASB2",
+   "BCL2",
+   "CD34",
+   "COL4A2",
+   "DCC",
+   "EBF1",
+   "FRZB",
+   "GATA1",
+   "ID3",
+   "MAP1B",
+   "PAX5",
+   "SIRT1",
+   "TCF4",
    "HSPA5",
    "XBP1",
    "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1"
+   "HERPUD1"
+  ]
+ },
+ "NUP54": {
+  "reasoning": "cascade over 417 proteins; modes {'STARVED': 141, 'STRANDED': 211, 'UNSIGNALLED': 91, 'ORPHANED': 40, '@er': 15}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 417,
+  "modes": {
+   "STARVED": 141,
+   "STRANDED": 211,
+   "UNSIGNALLED": 91,
+   "ORPHANED": 40,
+   "@er": 15
+  },
+  "sensors": [
+   "er_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 56,
+  "n_sensor": 34,
+  "downstream_tfs_disabled": [
+   "BCL11A",
+   "HDAC4",
+   "MDM2",
+   "NPM1",
+   "PML",
+   "SP100"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 51
+   },
+   {
+    "depth": 2,
+    "n_frontier": 25,
+    "n_disabled": 182
+   },
+   {
+    "depth": 3,
+    "n_frontier": 60,
+    "n_disabled": 417
+   }
+  ],
+  "predicted_genes": [
+   "ETS1",
+   "MMP1",
+   "PLAU",
+   "ATF4",
+   "CA9",
+   "CDKN1A",
+   "CDKN2A",
+   "HDAC3",
+   "HOXB13",
+   "IL10",
+   "IL5",
+   "JUN",
+   "KLF4",
+   "MEF2A",
+   "MMP13",
+   "PTGES",
+   "PTGS2",
+   "PTPA",
+   "DNMT3A",
+   "BAX",
+   "CASP3",
+   "CCND1",
+   "CCNT1",
+   "CREM",
+   "EAF2",
+   "EGFR",
+   "EP300",
+   "FLT3",
+   "GRIP1",
+   "HCK",
+   "HIPK2",
+   "IFNB1",
+   "NR4A1",
+   "ATF5",
+   "BRD4",
+   "DNMT1",
+   "ELF4",
+   "HOXA9",
+   "MDM2",
+   "PTPN6",
+   "RPL3",
+   "TAF1A",
+   "USP7",
+   "ASB2",
+   "BCL2",
+   "CD34",
+   "COL4A2",
+   "DCC",
+   "EBF1",
+   "FRZB",
+   "GATA1",
+   "ID3",
+   "MAP1B",
+   "PAX5",
+   "SIRT1",
+   "TCF4",
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1"
+  ]
+ },
+ "NUP62": {
+  "reasoning": "cascade over 417 proteins; modes {'UNSIGNALLED': 91, 'STARVED': 141, 'STRANDED': 211, 'ORPHANED': 40, '@er': 15}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 417,
+  "modes": {
+   "UNSIGNALLED": 91,
+   "STARVED": 141,
+   "STRANDED": 211,
+   "ORPHANED": 40,
+   "@er": 15
+  },
+  "sensors": [
+   "er_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 56,
+  "n_sensor": 34,
+  "downstream_tfs_disabled": [
+   "BCL11A",
+   "HDAC4",
+   "MDM2",
+   "NPM1",
+   "PML",
+   "SP100"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 53
+   },
+   {
+    "depth": 2,
+    "n_frontier": 25,
+    "n_disabled": 182
+   },
+   {
+    "depth": 3,
+    "n_frontier": 60,
+    "n_disabled": 417
+   }
+  ],
+  "predicted_genes": [
+   "ETS1",
+   "MMP1",
+   "PLAU",
+   "ATF4",
+   "CA9",
+   "CDKN1A",
+   "CDKN2A",
+   "HDAC3",
+   "HOXB13",
+   "IL10",
+   "IL5",
+   "JUN",
+   "KLF4",
+   "MEF2A",
+   "MMP13",
+   "PTGES",
+   "PTGS2",
+   "PTPA",
+   "DNMT3A",
+   "BAX",
+   "CASP3",
+   "CCND1",
+   "CCNT1",
+   "CREM",
+   "EAF2",
+   "EGFR",
+   "EP300",
+   "FLT3",
+   "GRIP1",
+   "HCK",
+   "HIPK2",
+   "IFNB1",
+   "NR4A1",
+   "ATF5",
+   "BRD4",
+   "DNMT1",
+   "ELF4",
+   "HOXA9",
+   "MDM2",
+   "PTPN6",
+   "RPL3",
+   "TAF1A",
+   "USP7",
+   "ASB2",
+   "BCL2",
+   "CD34",
+   "COL4A2",
+   "DCC",
+   "EBF1",
+   "FRZB",
+   "GATA1",
+   "ID3",
+   "MAP1B",
+   "PAX5",
+   "SIRT1",
+   "TCF4",
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1"
   ]
  },
  "NUP88": {
-  "reasoning": "cascade over 268 proteins; modes {'STARVED': 94, 'STRANDED': 106, 'ORPHANED': 20, '@er': 8, 'UNMODIFIED': 54, 'UNSIGNALLED': 23}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 268,
+  "reasoning": "cascade over 417 proteins; modes {'STARVED': 141, 'STRANDED': 211, 'UNSIGNALLED': 91, 'ORPHANED': 40, '@er': 15}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 417,
   "modes": {
-   "STARVED": 94,
-   "STRANDED": 106,
-   "ORPHANED": 20,
-   "@er": 8,
-   "UNMODIFIED": 54,
-   "UNSIGNALLED": 23
+   "STARVED": 141,
+   "STRANDED": 211,
+   "UNSIGNALLED": 91,
+   "ORPHANED": 40,
+   "@er": 15
   },
   "sensors": [
    "er_stress",
@@ -424,12 +6839,14 @@
    "translation_stress"
   ],
   "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 40,
-  "n_sensor": 35,
+  "n_downstream_tf_regulon": 56,
+  "n_sensor": 34,
   "downstream_tfs_disabled": [
+   "BCL11A",
    "HDAC4",
-   "SMAD3",
-   "SMAD4",
+   "MDM2",
+   "NPM1",
+   "PML",
    "SP100"
   ],
   "trace": [
@@ -441,37 +6858,15 @@
    {
     "depth": 2,
     "n_frontier": 25,
-    "n_disabled": 86
+    "n_disabled": 182
    },
    {
     "depth": 3,
-    "n_frontier": 35,
-    "n_disabled": 268
+    "n_frontier": 60,
+    "n_disabled": 417
    }
   ],
   "predicted_genes": [
-   "ACHE",
-   "ACTA1",
-   "ACTA2",
-   "ACTG2",
-   "AGTR1",
-   "AHR",
-   "ALPI",
-   "ANGPTL2",
-   "ANGPTL4",
-   "ANKRD1",
-   "APOB",
-   "APOC3",
-   "APP",
-   "AR",
-   "AREG",
-   "AGR2",
-   "ATOH8",
-   "AXIN2",
-   "BAMBI",
-   "BAX",
-   "BBC3",
-   "BCL2",
    "ETS1",
    "MMP1",
    "PLAU",
@@ -490,131 +6885,80 @@
    "PTGES",
    "PTGS2",
    "PTPA",
+   "DNMT3A",
+   "BAX",
+   "CASP3",
+   "CCND1",
+   "CCNT1",
+   "CREM",
+   "EAF2",
+   "EGFR",
+   "EP300",
+   "FLT3",
+   "GRIP1",
+   "HCK",
+   "HIPK2",
+   "IFNB1",
+   "NR4A1",
+   "ATF5",
+   "BRD4",
+   "DNMT1",
+   "ELF4",
+   "HOXA9",
+   "MDM2",
+   "PTPN6",
+   "RPL3",
+   "TAF1A",
+   "USP7",
+   "ASB2",
+   "BCL2",
+   "CD34",
+   "COL4A2",
+   "DCC",
+   "EBF1",
+   "FRZB",
+   "GATA1",
+   "ID3",
+   "MAP1B",
+   "PAX5",
+   "SIRT1",
+   "TCF4",
    "HSPA5",
    "XBP1",
    "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1"
+   "HERPUD1"
   ]
  },
- "NUP98": {
-  "reasoning": "cascade over 268 proteins; modes {'STARVED': 94, 'STRANDED': 106, 'ORPHANED': 20, '@er': 8, 'UNMODIFIED': 54, 'UNSIGNALLED': 23}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 268,
-  "modes": {
-   "STARVED": 94,
-   "STRANDED": 106,
-   "ORPHANED": 20,
-   "@er": 8,
-   "UNMODIFIED": 54,
-   "UNSIGNALLED": 23
-  },
+ "NVL": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
   "sensors": [
-   "er_stress",
-   "proteotoxic",
    "translation_stress"
   ],
   "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 40,
-  "n_sensor": 35,
-  "downstream_tfs_disabled": [
-   "HDAC4",
-   "SMAD3",
-   "SMAD4",
-   "SP100"
-  ],
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
   "trace": [
    {
     "depth": 1,
     "n_frontier": 1,
-    "n_disabled": 51
-   },
-   {
-    "depth": 2,
-    "n_frontier": 25,
-    "n_disabled": 86
-   },
-   {
-    "depth": 3,
-    "n_frontier": 35,
-    "n_disabled": 268
+    "n_disabled": 1
    }
   ],
   "predicted_genes": [
-   "ACHE",
-   "ACTA1",
-   "ACTA2",
-   "ACTG2",
-   "AGTR1",
-   "AHR",
-   "ALPI",
-   "ANGPTL2",
-   "ANGPTL4",
-   "ANKRD1",
-   "APOB",
-   "APOC3",
-   "APP",
-   "AR",
-   "AREG",
-   "AGR2",
-   "ATOH8",
-   "AXIN2",
-   "BAMBI",
-   "BAX",
-   "BBC3",
-   "BCL2",
-   "ETS1",
-   "MMP1",
-   "PLAU",
    "ATF4",
-   "CA9",
-   "CDKN1A",
-   "CDKN2A",
-   "HDAC3",
-   "HOXB13",
-   "IL10",
-   "IL5",
-   "JUN",
-   "KLF4",
-   "MEF2A",
-   "MMP13",
-   "PTGES",
-   "PTGS2",
-   "PTPA",
-   "HSPA5",
-   "XBP1",
+   "ATF5",
    "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1"
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
   ]
  },
  "OGFOD1": {
@@ -650,46 +6994,41 @@
   ]
  },
  "OGT": {
-  "reasoning": "cascade over 447 proteins; modes {'UNMODIFIED': 58, 'ORPHANED': 183, 'UNSIGNALLED': 176, 'STARVED': 47, '@er': 1, 'STRANDED': 32, 'UNRECEIVED': 1}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 447,
+  "reasoning": "cascade over 253 proteins; modes {'UNSIGNALLED': 85, 'ORPHANED': 171, 'STARVED': 44}; sensors ['proteotoxic', 'translation_stress']",
+  "n_disabled": 253,
   "modes": {
-   "UNMODIFIED": 58,
-   "ORPHANED": 183,
-   "UNSIGNALLED": 176,
-   "STARVED": 47,
-   "@er": 1,
-   "STRANDED": 32,
-   "UNRECEIVED": 1
+   "UNSIGNALLED": 85,
+   "ORPHANED": 171,
+   "STARVED": 44
   },
   "sensors": [
-   "er_stress",
    "proteotoxic",
    "translation_stress"
   ],
   "n_own_regulon": 1,
-  "n_downstream_tf_regulon": 324,
-  "n_sensor": 32,
+  "n_downstream_tf_regulon": 242,
+  "n_sensor": 22,
   "downstream_tfs_disabled": [
    "ARID4A",
    "ARID4B",
-   "CEBPA",
-   "CREB3",
+   "BPTF",
+   "CHD4",
    "CXXC1",
-   "DNMT1",
    "DR1",
-   "EGR1",
-   "ESR1",
-   "FLI1",
-   "FOXO3",
-   "GLI1",
+   "GATAD2A",
+   "GATAD2B",
    "HCFC1",
    "HDAC1",
    "HDAC2",
-   "HES1",
    "ING1",
    "ING2",
    "KAT2A",
-   "KAT2B"
+   "KAT2B",
+   "KAT8",
+   "KMT2A",
+   "KMT2B",
+   "MBD2",
+   "MBD3"
   ],
   "trace": [
    {
@@ -699,40 +7038,17 @@
    },
    {
     "depth": 2,
-    "n_frontier": 31,
-    "n_disabled": 184
+    "n_frontier": 24,
+    "n_disabled": 152
    },
    {
     "depth": 3,
-    "n_frontier": 60,
-    "n_disabled": 447
+    "n_frontier": 53,
+    "n_disabled": 253
    }
   ],
   "predicted_genes": [
    "RPS24",
-   "BAX",
-   "BMP4",
-   "FSTL3",
-   "SFN",
-   "SOX5",
-   "SOX6",
-   "SOX9",
-   "TEAD1",
-   "WWC1",
-   "APOBEC3A",
-   "APOBEC3C",
-   "FOXP3",
-   "HOXA7",
-   "HOXA9",
-   "IL1B",
-   "KDM1A",
-   "KEAP1",
-   "PRM1",
-   "PTEN",
-   "SLIT2",
-   "TET2",
-   "TET3",
-   "ZNF382",
    "CCNA2",
    "CDC6",
    "CDK1",
@@ -768,13 +7084,60 @@
    "ALB",
    "GSK3B",
    "HOXB3",
-   "HOXB5"
+   "HOXB5",
+   "HOXB6",
+   "HOXB8",
+   "IGF1",
+   "IGF1R",
+   "IGF2",
+   "PTGS2",
+   "SLC25A39",
+   "ABCB1",
+   "ADAM10",
+   "ALOX15",
+   "APOC3",
+   "AR",
+   "BAMBI",
+   "BCL2A1",
+   "BIRC3",
+   "BIRC5",
+   "BRCA2",
+   "CCND1",
+   "CCND2",
+   "CD1D",
+   "CD44",
+   "CD82",
+   "ALOX5"
   ]
  },
- "OR4K1": {
-  "reasoning": "cascade over 1 proteins; modes {}; sensors ['er_stress']",
+ "OTP": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
   "n_disabled": 1,
   "modes": {},
+  "sensors": [],
+  "n_own_regulon": 2,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "SLC6A3",
+   "TH"
+  ]
+ },
+ "P2RX5": {
+  "reasoning": "cascade over 8 proteins; modes {'STRANDED': 6, 'UNSIGNALLED': 1}; sensors ['er_stress']",
+  "n_disabled": 8,
+  "modes": {
+   "STRANDED": 6,
+   "UNSIGNALLED": 1
+  },
   "sensors": [
    "er_stress"
   ],
@@ -786,7 +7149,12 @@
    {
     "depth": 1,
     "n_frontier": 1,
-    "n_disabled": 1
+    "n_disabled": 7
+   },
+   {
+    "depth": 2,
+    "n_frontier": 6,
+    "n_disabled": 8
    }
   ],
   "predicted_genes": [
@@ -807,7 +7175,25 @@
    "ATF4"
   ]
  },
- "PAK1IP1": {
+ "PACS2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "PAICS": {
   "reasoning": "cascade over 1 proteins; modes {}; sensors []",
   "n_disabled": 1,
   "modes": {},
@@ -826,23 +7212,20 @@
   "predicted_genes": []
  },
  "PAM16": {
-  "reasoning": "cascade over 50 proteins; modes {'ORPHANED': 28, '@mito': 11, 'UNMODIFIED': 8, 'STRANDED': 25, 'STARVED': 3}; sensors ['er_stress', 'mito_stress', 'proteotoxic']",
-  "n_disabled": 50,
+  "reasoning": "cascade over 15 proteins; modes {'ORPHANED': 22, '@mito': 11, 'UNSIGNALLED': 2}; sensors ['mito_stress', 'proteotoxic']",
+  "n_disabled": 15,
   "modes": {
-   "ORPHANED": 28,
+   "ORPHANED": 22,
    "@mito": 11,
-   "UNMODIFIED": 8,
-   "STRANDED": 25,
-   "STARVED": 3
+   "UNSIGNALLED": 2
   },
   "sensors": [
-   "er_stress",
    "mito_stress",
    "proteotoxic"
   ],
   "n_own_regulon": 0,
   "n_downstream_tf_regulon": 0,
-  "n_sensor": 40,
+  "n_sensor": 28,
   "downstream_tfs_disabled": [],
   "trace": [
    {
@@ -854,30 +7237,12 @@
     "depth": 2,
     "n_frontier": 12,
     "n_disabled": 15
-   },
-   {
-    "depth": 3,
-    "n_frontier": 2,
-    "n_disabled": 50
    }
   ],
   "predicted_genes": [
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
    "ATF4",
    "ATF5",
+   "DDIT3",
    "TRIB3",
    "SESN2",
    "MTHFD2",
@@ -889,6 +7254,7 @@
    "EIF4EBP1",
    "GDF15",
    "CTH",
+   "XBP1",
    "VEGFA",
    "HSPA1A",
    "HSPA1B",
@@ -904,11 +7270,147 @@
    "HSPE1"
   ]
  },
+ "PAPOLA": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "PARS2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "PAX1": {
+  "reasoning": "cascade over 3 proteins; modes {'UNSIGNALLED': 2}; sensors []",
+  "n_disabled": 3,
+  "modes": {
+   "UNSIGNALLED": 2
+  },
+  "sensors": [],
+  "n_own_regulon": 6,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   }
+  ],
+  "predicted_genes": [
+   "EYA1",
+   "NKX2-2",
+   "NKX3-2",
+   "PDGFRA",
+   "TGFB3",
+   "VHL"
+  ]
+ },
+ "PBX2": {
+  "reasoning": "cascade over 3 proteins; modes {'UNSIGNALLED': 2}; sensors []",
+  "n_disabled": 3,
+  "modes": {
+   "UNSIGNALLED": 2
+  },
+  "sensors": [],
+  "n_own_regulon": 12,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   }
+  ],
+  "predicted_genes": [
+   "ALDH1A2",
+   "CCL2",
+   "EMX2",
+   "EPHA8",
+   "FGF8",
+   "FMO3",
+   "MEIS1",
+   "PF4",
+   "PKNOX1",
+   "RHOA",
+   "UGT2B17",
+   "VCP"
+  ]
+ },
+ "PCBP1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 1,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "PHPT1"
+  ]
+ },
  "PCNA": {
-  "reasoning": "cascade over 2 proteins; modes {'UNMODIFIED': 1}; sensors []",
+  "reasoning": "cascade over 2 proteins; modes {'UNSIGNALLED': 1}; sensors []",
   "n_disabled": 2,
   "modes": {
-   "UNMODIFIED": 1
+   "UNSIGNALLED": 1
   },
   "sensors": [],
   "n_own_regulon": 0,
@@ -920,23 +7422,133 @@
     "depth": 1,
     "n_frontier": 1,
     "n_disabled": 2
-   },
-   {
-    "depth": 2,
-    "n_frontier": 1,
-    "n_disabled": 2
    }
   ],
   "predicted_genes": [
    "NCR2"
   ]
  },
+ "PCNX3": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
+ "PDIA6": {
+  "reasoning": "cascade over 3 proteins; modes {'UNSIGNALLED': 2}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 3,
+  "modes": {
+   "UNSIGNALLED": 2
+  },
+  "sensors": [
+   "er_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 35,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   }
+  ],
+  "predicted_genes": [
+   "HSPA5",
+   "XBP1",
+   "DDIT3",
+   "HERPUD1",
+   "SEL1L",
+   "EDEM1",
+   "DNAJB9",
+   "DNAJB11",
+   "PDIA3",
+   "CANX",
+   "CALR",
+   "SSR1",
+   "SEC61B",
+   "ATF4",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "ATF5",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "PET117": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
  "PHB2": {
-  "reasoning": "cascade over 4 proteins; modes {'ORPHANED': 1, 'UNSIGNALLED': 2}; sensors ['mito_stress']",
+  "reasoning": "cascade over 4 proteins; modes {'UNSIGNALLED': 2, 'ORPHANED': 1}; sensors ['mito_stress']",
   "n_disabled": 4,
   "modes": {
-   "ORPHANED": 1,
-   "UNSIGNALLED": 2
+   "UNSIGNALLED": 2,
+   "ORPHANED": 1
   },
   "sensors": [
    "mito_stress"
@@ -982,13 +7594,12 @@
   ]
  },
  "PHF5A": {
-  "reasoning": "cascade over 205 proteins; modes {'ORPHANED': 199, 'UNSIGNALLED': 17, 'STRANDED': 12, 'UNMODIFIED': 10, '@mito': 1}; sensors ['er_stress', 'mito_stress', 'proteotoxic']",
+  "reasoning": "cascade over 205 proteins; modes {'ORPHANED': 199, 'UNSIGNALLED': 27, 'STRANDED': 12, '@mito': 1}; sensors ['er_stress', 'mito_stress', 'proteotoxic']",
   "n_disabled": 205,
   "modes": {
    "ORPHANED": 199,
-   "UNSIGNALLED": 17,
+   "UNSIGNALLED": 27,
    "STRANDED": 12,
-   "UNMODIFIED": 10,
    "@mito": 1
   },
   "sensors": [
@@ -1095,132 +7706,94 @@
    "XBP1"
   ]
  },
- "PIAS4": {
-  "reasoning": "cascade over 328 proteins; modes {'STARVED': 97, 'UNMODIFIED': 80, 'ORPHANED': 30, 'UNSIGNALLED': 69, 'STRANDED': 80, '@er': 1}; sensors ['er_stress', 'export_block', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 328,
+ "PKNOX1": {
+  "reasoning": "cascade over 6 proteins; modes {'UNSIGNALLED': 5}; sensors []",
+  "n_disabled": 6,
   "modes": {
-   "STARVED": 97,
-   "UNMODIFIED": 80,
-   "ORPHANED": 30,
-   "UNSIGNALLED": 69,
-   "STRANDED": 80,
-   "@er": 1
+   "UNSIGNALLED": 5
   },
-  "sensors": [
-   "er_stress",
-   "export_block",
-   "proteotoxic",
-   "translation_stress"
-  ],
-  "n_own_regulon": 2,
-  "n_downstream_tf_regulon": 174,
-  "n_sensor": 35,
-  "downstream_tfs_disabled": [
-   "CIITA",
-   "IRF2",
-   "IRF7",
-   "IRF9",
-   "NKX2-1",
-   "RELA",
-   "SMAD1",
-   "SMAD2",
-   "SMAD3",
-   "SMAD4",
-   "STAT1",
-   "STAT2",
-   "STAT3",
-   "STAT4",
-   "STAT5A",
-   "STAT5B",
-   "TBX21",
-   "TP53BP1"
-  ],
+  "sensors": [],
+  "n_own_regulon": 21,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
   "trace": [
    {
     "depth": 1,
     "n_frontier": 1,
-    "n_disabled": 31
-   },
-   {
-    "depth": 2,
-    "n_frontier": 5,
-    "n_disabled": 109
-   },
-   {
-    "depth": 3,
-    "n_frontier": 40,
-    "n_disabled": 328
+    "n_disabled": 6
    }
   ],
   "predicted_genes": [
-   "MUC1",
-   "VDR",
-   "ACHE",
-   "ACTA1",
-   "ACTA2",
-   "ACTG2",
-   "AGTR1",
-   "AHR",
-   "ALPI",
-   "ANGPTL2",
-   "ANGPTL4",
-   "ANKRD1",
-   "APOB",
-   "APOC3",
-   "APP",
-   "AR",
-   "AREG",
-   "AGR2",
-   "ATOH8",
-   "AXIN2",
-   "BAMBI",
-   "BAX",
-   "BBC3",
-   "BCL2",
-   "BRCA1",
-   "A2M",
-   "ABCA1",
-   "ABCB1",
-   "ABCC8",
-   "ABCG2",
-   "ABL1",
-   "ACAT1",
-   "ACE2",
-   "ACKR3",
-   "ACOD1",
-   "ACSL1",
-   "ACSL4",
-   "ADA",
-   "ADAMTS12",
-   "ACAN",
-   "ALPP",
-   "ATF3",
-   "BGLAP",
-   "BIRC5",
-   "ABCA3",
-   "ADCYAP1",
-   "AFP",
-   "AGER",
-   "APRT",
-   "BMP4",
-   "BTK",
-   "CALCA",
-   "CCL11",
-   "CCNB1",
-   "CEBPA",
-   "CHRNA2",
-   "CHRNA7",
-   "CIP2A",
-   "DAXX",
-   "ACVR1"
+   "ALDH1A2",
+   "BCL2L1",
+   "CCL2",
+   "FABP7",
+   "FASN",
+   "GATA1",
+   "HOXB1",
+   "HOXB2",
+   "IL10",
+   "INPPL1",
+   "MEIS1",
+   "NR5A1",
+   "PAX3",
+   "PF4",
+   "PGK2",
+   "PTPN6",
+   "REN",
+   "RNF6",
+   "SMAD3",
+   "SYP",
+   "UGT2B17"
+  ]
+ },
+ "PMF1": {
+  "reasoning": "cascade over 4 proteins; modes {'ORPHANED': 3}; sensors ['proteotoxic']",
+  "n_disabled": 4,
+  "modes": {
+   "ORPHANED": 3
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 12,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 4
+   },
+   {
+    "depth": 2,
+    "n_frontier": 3,
+    "n_disabled": 4
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
   ]
  },
  "PMPCB": {
-  "reasoning": "cascade over 3 proteins; modes {'ORPHANED': 1, 'UNSIGNALLED': 1}; sensors ['mito_stress']",
+  "reasoning": "cascade over 3 proteins; modes {'UNSIGNALLED': 1, 'ORPHANED': 1}; sensors ['mito_stress']",
   "n_disabled": 3,
   "modes": {
-   "ORPHANED": 1,
-   "UNSIGNALLED": 1
+   "UNSIGNALLED": 1,
+   "ORPHANED": 1
   },
   "sensors": [
    "mito_stress"
@@ -1258,85 +7831,6 @@
    "CTH",
    "XBP1",
    "VEGFA"
-  ]
- },
- "PNO1": {
-  "reasoning": "cascade over 191 proteins; modes {'ORPHANED': 124, 'UNSIGNALLED': 5, 'STARVED': 65, 'UNMODIFIED': 6, 'STRANDED': 25}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 191,
-  "modes": {
-   "ORPHANED": 124,
-   "UNSIGNALLED": 5,
-   "STARVED": 65,
-   "UNMODIFIED": 6,
-   "STRANDED": 25
-  },
-  "sensors": [
-   "er_stress",
-   "proteotoxic",
-   "translation_stress"
-  ],
-  "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 2,
-  "n_sensor": 36,
-  "downstream_tfs_disabled": [
-   "AATF"
-  ],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 25
-   },
-   {
-    "depth": 2,
-    "n_frontier": 24,
-    "n_disabled": 57
-   },
-   {
-    "depth": 3,
-    "n_frontier": 27,
-    "n_disabled": 191
-   }
-  ],
-  "predicted_genes": [
-   "BAX",
-   "MYC",
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "ATF4",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1",
-   "ATF5",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
   ]
  },
  "PNPT1": {
@@ -1383,17 +7877,16 @@
    "VEGFA"
   ]
  },
- "POLA1": {
-  "reasoning": "cascade over 25 proteins; modes {'ORPHANED': 1, 'STARVED': 27}; sensors ['translation_stress']",
-  "n_disabled": 25,
+ "POLR1A": {
+  "reasoning": "cascade over 26 proteins; modes {'STARVED': 25}; sensors ['translation_stress']",
+  "n_disabled": 26,
   "modes": {
-   "ORPHANED": 1,
-   "STARVED": 27
+   "STARVED": 25
   },
   "sensors": [
    "translation_stress"
   ],
-  "n_own_regulon": 0,
+  "n_own_regulon": 1,
   "n_downstream_tf_regulon": 0,
   "n_sensor": 11,
   "downstream_tfs_disabled": [],
@@ -1401,199 +7894,11 @@
    {
     "depth": 1,
     "n_frontier": 1,
-    "n_disabled": 23
-   },
-   {
-    "depth": 2,
-    "n_frontier": 1,
-    "n_disabled": 25
-   }
-  ],
-  "predicted_genes": [
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
-  ]
- },
- "POLE": {
-  "reasoning": "cascade over 10 proteins; modes {'ORPHANED': 9}; sensors ['proteotoxic']",
-  "n_disabled": 10,
-  "modes": {
-   "ORPHANED": 9
-  },
-  "sensors": [
-   "proteotoxic"
-  ],
-  "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 15,
-  "n_sensor": 12,
-  "downstream_tfs_disabled": [
-   "SMARCA5"
-  ],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 4
-   },
-   {
-    "depth": 2,
-    "n_frontier": 3,
-    "n_disabled": 7
-   },
-   {
-    "depth": 3,
-    "n_frontier": 3,
-    "n_disabled": 10
-   }
-  ],
-  "predicted_genes": [
-   "ADH1B",
-   "ANAPC11",
-   "BMP4",
-   "CASR",
-   "CCND1",
-   "CDT1",
-   "CECR2",
-   "CHD1",
-   "CREBBP",
-   "CRYAA",
-   "DNAH8",
-   "IL2",
-   "IL3",
-   "INO80",
-   "OGA",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1"
-  ]
- },
- "POLR1A": {
-  "reasoning": "cascade over 51 proteins; modes {'ORPHANED': 46, 'STARVED': 18, 'UNSIGNALLED': 2}; sensors ['proteotoxic', 'translation_stress']",
-  "n_disabled": 51,
-  "modes": {
-   "ORPHANED": 46,
-   "STARVED": 18,
-   "UNSIGNALLED": 2
-  },
-  "sensors": [
-   "proteotoxic",
-   "translation_stress"
-  ],
-  "n_own_regulon": 1,
-  "n_downstream_tf_regulon": 0,
-  "n_sensor": 23,
-  "downstream_tfs_disabled": [],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 30
-   },
-   {
-    "depth": 2,
-    "n_frontier": 11,
-    "n_disabled": 51
-   },
-   {
-    "depth": 3,
-    "n_frontier": 19,
-    "n_disabled": 51
+    "n_disabled": 26
    }
   ],
   "predicted_genes": [
    "E2F1",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1",
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
-  ]
- },
- "POLR1B": {
-  "reasoning": "cascade over 51 proteins; modes {'ORPHANED': 46, 'STARVED': 18, 'UNSIGNALLED': 2}; sensors ['proteotoxic', 'translation_stress']",
-  "n_disabled": 51,
-  "modes": {
-   "ORPHANED": 46,
-   "STARVED": 18,
-   "UNSIGNALLED": 2
-  },
-  "sensors": [
-   "proteotoxic",
-   "translation_stress"
-  ],
-  "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 1,
-  "n_sensor": 23,
-  "downstream_tfs_disabled": [
-   "POLR1A"
-  ],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 30
-   },
-   {
-    "depth": 2,
-    "n_frontier": 11,
-    "n_disabled": 51
-   },
-   {
-    "depth": 3,
-    "n_frontier": 19,
-    "n_disabled": 51
-   }
-  ],
-  "predicted_genes": [
-   "E2F1",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1",
    "ATF4",
    "ATF5",
    "DDIT3",
@@ -1659,49 +7964,33 @@
    "CEBPB"
   ]
  },
- "POT1": {
-  "reasoning": "cascade over 13 proteins; modes {'ORPHANED': 6, 'UNSIGNALLED': 5, 'UNMODIFIED': 1}; sensors ['proteotoxic']",
-  "n_disabled": 13,
+ "POP4": {
+  "reasoning": "cascade over 11 proteins; modes {'ORPHANED': 18}; sensors ['proteotoxic', 'translation_stress']",
+  "n_disabled": 11,
   "modes": {
-   "ORPHANED": 6,
-   "UNSIGNALLED": 5,
-   "UNMODIFIED": 1
+   "ORPHANED": 18
   },
   "sensors": [
-   "proteotoxic"
+   "proteotoxic",
+   "translation_stress"
   ],
   "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 7,
-  "n_sensor": 12,
-  "downstream_tfs_disabled": [
-   "TERF1",
-   "TERF2"
-  ],
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 23,
+  "downstream_tfs_disabled": [],
   "trace": [
    {
     "depth": 1,
     "n_frontier": 1,
-    "n_disabled": 10
+    "n_disabled": 11
    },
    {
     "depth": 2,
-    "n_frontier": 5,
-    "n_disabled": 12
-   },
-   {
-    "depth": 3,
-    "n_frontier": 1,
-    "n_disabled": 13
+    "n_frontier": 10,
+    "n_disabled": 11
    }
   ],
   "predicted_genes": [
-   "DCAF16",
-   "HK1",
-   "STIM1",
-   "TNKS",
-   "ICAM1",
-   "NOS3",
-   "SOX2",
    "HSPA1A",
    "HSPA1B",
    "HSPA8",
@@ -1713,10 +8002,191 @@
    "CHORDC1",
    "HSPB1",
    "HSPD1",
-   "HSPE1"
+   "HSPE1",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
   ]
  },
- "PPP1R10": {
+ "POP5": {
+  "reasoning": "cascade over 11 proteins; modes {'ORPHANED': 18}; sensors ['proteotoxic', 'translation_stress']",
+  "n_disabled": 11,
+  "modes": {
+   "ORPHANED": 18
+  },
+  "sensors": [
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 23,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 11
+   },
+   {
+    "depth": 2,
+    "n_frontier": 10,
+    "n_disabled": 11
+   }
+  ],
+  "predicted_genes": [
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "POU3F1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 25,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "CCDC6",
+   "CHRNA2",
+   "CHRNA3",
+   "CNTF",
+   "CXCR4",
+   "DHH",
+   "EGR2",
+   "FABP7",
+   "GAL",
+   "GDNF",
+   "GNRH1",
+   "IGFBP2",
+   "IL6",
+   "IVL",
+   "KRT14",
+   "LORICRIN",
+   "MBP",
+   "MMP19",
+   "MMP9",
+   "MPZ",
+   "OXT",
+   "SOX2",
+   "SSTR1",
+   "WNT1",
+   "ZFP42"
+  ]
+ },
+ "POU4F1": {
+  "reasoning": "cascade over 3 proteins; modes {'UNSIGNALLED': 2}; sensors []",
+  "n_disabled": 3,
+  "modes": {
+   "UNSIGNALLED": 2
+  },
+  "sensors": [],
+  "n_own_regulon": 30,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 3
+   }
+  ],
+  "predicted_genes": [
+   "BAX",
+   "BCL2",
+   "BCL2L1",
+   "BRCA1",
+   "CDKN1A",
+   "EGR1",
+   "GAL",
+   "HIPK2",
+   "HPSE",
+   "HSP90AA1",
+   "HSPB1",
+   "IL2",
+   "JUP",
+   "NGF",
+   "NOS2",
+   "NTRK1",
+   "NTRK2",
+   "PMAIP1",
+   "POMC",
+   "POU4F2",
+   "POU4F3",
+   "PRND",
+   "PRPH2",
+   "RIT2",
+   "SCN9A",
+   "SGPL1",
+   "SNAP25",
+   "TH",
+   "TP53",
+   "WNT1"
+  ]
+ },
+ "POU6F2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 4,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "CDKN2A",
+   "CYP19A1",
+   "NF1",
+   "TYR"
+  ]
+ },
+ "PRG2": {
   "reasoning": "cascade over 1 proteins; modes {}; sensors []",
   "n_disabled": 1,
   "modes": {},
@@ -1734,22 +8204,38 @@
   ],
   "predicted_genes": []
  },
- "PPRC1": {
-  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress']",
-  "n_disabled": 1,
-  "modes": {},
+ "PRORP": {
+  "reasoning": "cascade over 8 proteins; modes {'ORPHANED': 4, 'STARVED': 15, '@mito': 1}; sensors ['mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 8,
+  "modes": {
+   "ORPHANED": 4,
+   "STARVED": 15,
+   "@mito": 1
+  },
   "sensors": [
-   "mito_stress"
+   "mito_stress",
+   "proteotoxic",
+   "translation_stress"
   ],
   "n_own_regulon": 0,
   "n_downstream_tf_regulon": 0,
-  "n_sensor": 16,
+  "n_sensor": 28,
   "downstream_tfs_disabled": [],
   "trace": [
    {
     "depth": 1,
     "n_frontier": 1,
-    "n_disabled": 1
+    "n_disabled": 3
+   },
+   {
+    "depth": 2,
+    "n_frontier": 2,
+    "n_disabled": 8
+   },
+   {
+    "depth": 3,
+    "n_frontier": 2,
+    "n_disabled": 8
    }
   ],
   "predicted_genes": [
@@ -1768,98 +8254,7 @@
    "GDF15",
    "CTH",
    "XBP1",
-   "VEGFA"
-  ]
- },
- "PPY": {
-  "reasoning": "cascade over 5 proteins; modes {'UNSIGNALLED': 1, 'UNRECEIVED': 3}; sensors []",
-  "n_disabled": 5,
-  "modes": {
-   "UNSIGNALLED": 1,
-   "UNRECEIVED": 3
-  },
-  "sensors": [],
-  "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 0,
-  "n_sensor": 0,
-  "downstream_tfs_disabled": [],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 5
-   }
-  ],
-  "predicted_genes": [
-   "NPY1R",
-   "NPY2R",
-   "NPY4R",
-   "NPY5R"
-  ]
- },
- "PRPF19": {
-  "reasoning": "cascade over 173 proteins; modes {'ORPHANED': 125, 'UNSIGNALLED': 5, 'UNMODIFIED': 23, 'STRANDED': 51, 'STARVED': 18, '@er': 2}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 173,
-  "modes": {
-   "ORPHANED": 125,
-   "UNSIGNALLED": 5,
-   "UNMODIFIED": 23,
-   "STRANDED": 51,
-   "STARVED": 18,
-   "@er": 2
-  },
-  "sensors": [
-   "er_stress",
-   "proteotoxic",
-   "translation_stress"
-  ],
-  "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 6,
-  "n_sensor": 36,
-  "downstream_tfs_disabled": [
-   "CDC5L",
-   "SNW1",
-   "ZNF830"
-  ],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 25
-   },
-   {
-    "depth": 2,
-    "n_frontier": 21,
-    "n_disabled": 107
-   },
-   {
-    "depth": 3,
-    "n_frontier": 60,
-    "n_disabled": 173
-   }
-  ],
-  "predicted_genes": [
-   "PLRG1",
-   "AR",
-   "HES1",
-   "RARB",
-   "VDR",
-   "CAMSAP2",
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "ATF4",
+   "VEGFA",
    "HSPA1A",
    "HSPA1B",
    "HSPA8",
@@ -1871,25 +8266,15 @@
    "CHORDC1",
    "HSPB1",
    "HSPD1",
-   "HSPE1",
-   "ATF5",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
+   "HSPE1"
   ]
  },
- "PRPF3": {
-  "reasoning": "cascade over 149 proteins; modes {'ORPHANED': 167, 'UNSIGNALLED': 4, 'UNMODIFIED': 2}; sensors ['proteotoxic']",
-  "n_disabled": 149,
+ "PRPF31": {
+  "reasoning": "cascade over 128 proteins; modes {'ORPHANED': 143, 'UNSIGNALLED': 6}; sensors ['proteotoxic']",
+  "n_disabled": 128,
   "modes": {
-   "ORPHANED": 167,
-   "UNSIGNALLED": 4,
-   "UNMODIFIED": 2
+   "ORPHANED": 143,
+   "UNSIGNALLED": 6
   },
   "sensors": [
    "proteotoxic"
@@ -1907,20 +8292,25 @@
    {
     "depth": 1,
     "n_frontier": 1,
-    "n_disabled": 25
+    "n_disabled": 26
    },
    {
     "depth": 2,
-    "n_frontier": 24,
-    "n_disabled": 83
+    "n_frontier": 25,
+    "n_disabled": 79
    },
    {
     "depth": 3,
-    "n_frontier": 58,
-    "n_disabled": 149
+    "n_frontier": 53,
+    "n_disabled": 128
    }
   ],
   "predicted_genes": [
+   "PLRG1",
+   "AR",
+   "HES1",
+   "RARB",
+   "VDR",
    "CD79A",
    "CSF1",
    "GJA1",
@@ -1928,11 +8318,6 @@
    "MYH6",
    "SMARCB1",
    "BSG",
-   "PLRG1",
-   "AR",
-   "HES1",
-   "RARB",
-   "VDR",
    "HSPA1A",
    "HSPA1B",
    "HSPA8",
@@ -1947,13 +8332,30 @@
    "HSPE1"
   ]
  },
+ "PRPF38A": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": []
+ },
  "PRPF4": {
-  "reasoning": "cascade over 149 proteins; modes {'ORPHANED': 167, 'UNSIGNALLED': 4, 'UNMODIFIED': 2}; sensors ['proteotoxic']",
+  "reasoning": "cascade over 149 proteins; modes {'ORPHANED': 167, 'UNSIGNALLED': 6}; sensors ['proteotoxic']",
   "n_disabled": 149,
   "modes": {
    "ORPHANED": 167,
-   "UNSIGNALLED": 4,
-   "UNMODIFIED": 2
+   "UNSIGNALLED": 6
   },
   "sensors": [
    "proteotoxic"
@@ -2029,64 +8431,30 @@
   ],
   "predicted_genes": []
  },
- "PWP2": {
-  "reasoning": "cascade over 6 proteins; modes {'ORPHANED': 5}; sensors ['proteotoxic', 'translation_stress']",
-  "n_disabled": 6,
-  "modes": {
-   "ORPHANED": 5
-  },
-  "sensors": [
-   "proteotoxic",
-   "translation_stress"
-  ],
+ "PTGR2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
   "n_own_regulon": 0,
   "n_downstream_tf_regulon": 0,
-  "n_sensor": 23,
+  "n_sensor": 0,
   "downstream_tfs_disabled": [],
   "trace": [
    {
     "depth": 1,
     "n_frontier": 1,
-    "n_disabled": 6
-   },
-   {
-    "depth": 2,
-    "n_frontier": 5,
-    "n_disabled": 6
+    "n_disabled": 1
    }
   ],
-  "predicted_genes": [
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1",
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
-  ]
+  "predicted_genes": []
  },
  "RAD21": {
-  "reasoning": "cascade over 19 proteins; modes {'ORPHANED': 11, 'UNSIGNALLED': 10}; sensors ['proteotoxic', 'translation_stress']",
+  "reasoning": "cascade over 19 proteins; modes {'UNSIGNALLED': 10, 'ORPHANED': 11}; sensors ['proteotoxic', 'translation_stress']",
   "n_disabled": 19,
   "modes": {
-   "ORPHANED": 11,
-   "UNSIGNALLED": 10
+   "UNSIGNALLED": 10,
+   "ORPHANED": 11
   },
   "sensors": [
    "proteotoxic",
@@ -2143,45 +8511,167 @@
    "CEBPB"
   ]
  },
- "RBBP5": {
-  "reasoning": "cascade over 257 proteins; modes {'ORPHANED': 125, 'UNMODIFIED': 54, 'UNSIGNALLED': 87, 'STRANDED': 16, 'STARVED': 3, 'UNRECEIVED': 1}; sensors ['er_stress', 'proteotoxic']",
-  "n_disabled": 257,
+ "RAD51": {
+  "reasoning": "cascade over 60 proteins; modes {'STARVED': 30, 'UNSIGNALLED': 19, 'ORPHANED': 13, '@mito': 1}; sensors ['mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 60,
   "modes": {
-   "ORPHANED": 125,
-   "UNMODIFIED": 54,
-   "UNSIGNALLED": 87,
-   "STRANDED": 16,
-   "STARVED": 3,
-   "UNRECEIVED": 1
+   "STARVED": 30,
+   "UNSIGNALLED": 19,
+   "ORPHANED": 13,
+   "@mito": 1
   },
   "sensors": [
-   "er_stress",
+   "mito_stress",
+   "proteotoxic",
+   "translation_stress"
+  ],
+  "n_own_regulon": 1,
+  "n_downstream_tf_regulon": 20,
+  "n_sensor": 28,
+  "downstream_tfs_disabled": [
+   "BARD1",
+   "BRCA1",
+   "PALB2"
+  ],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 31
+   },
+   {
+    "depth": 2,
+    "n_frontier": 4,
+    "n_disabled": 58
+   },
+   {
+    "depth": 3,
+    "n_frontier": 6,
+    "n_disabled": 60
+   }
+  ],
+  "predicted_genes": [
+   "SP1",
+   "ESR1",
+   "AREG",
+   "ASPM",
+   "ATM",
+   "BACH1",
+   "BARD1",
+   "BRCA2",
+   "CASR",
+   "CCNB1",
+   "CCND1",
+   "CDH3",
+   "CDKN1A",
+   "CDKN1B",
+   "CTSD",
+   "CXCL1",
+   "CYP19A1",
+   "DCTN5",
+   "KLF6",
+   "NBR1",
+   "RPS6KC1",
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA",
+   "HSPA1A",
+   "HSPA1B",
+   "HSPA8",
+   "DNAJB1",
+   "DNAJA1",
+   "HSPH1",
+   "BAG3",
+   "AHSA1",
+   "CHORDC1",
+   "HSPB1",
+   "HSPD1",
+   "HSPE1"
+  ]
+ },
+ "RARS2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress', 'translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "mito_stress",
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 16,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
+  ]
+ },
+ "RBBP5": {
+  "reasoning": "cascade over 153 proteins; modes {'ORPHANED': 123, 'UNSIGNALLED': 54}; sensors ['proteotoxic']",
+  "n_disabled": 153,
+  "modes": {
+   "ORPHANED": 123,
+   "UNSIGNALLED": 54
+  },
+  "sensors": [
    "proteotoxic"
   ],
   "n_own_regulon": 2,
-  "n_downstream_tf_regulon": 354,
-  "n_sensor": 25,
+  "n_downstream_tf_regulon": 123,
+  "n_sensor": 12,
   "downstream_tfs_disabled": [
-   "CREB3",
    "CXXC1",
    "DR1",
-   "ELF4",
-   "ELK3",
-   "ERG",
-   "ETS2",
-   "ETV6",
-   "FLI1",
-   "GATA3",
    "HCFC1",
-   "HOXA1",
-   "HOXA10",
-   "HOXA11",
-   "HOXA13",
-   "HOXA5",
-   "HOXA7",
-   "HOXC11",
-   "HOXC13",
-   "HOXC4"
+   "JUND",
+   "KAT2A",
+   "KAT2B",
+   "KAT8",
+   "KMT2A",
+   "KMT2B",
+   "KMT2C",
+   "KMT2D",
+   "MCRS1",
+   "MEN1",
+   "NCOA6",
+   "OGT",
+   "PHF20",
+   "TADA2A",
+   "ZZZ3"
   ],
   "trace": [
    {
@@ -2196,8 +8686,8 @@
    },
    {
     "depth": 3,
-    "n_frontier": 50,
-    "n_disabled": 257
+    "n_frontier": 25,
+    "n_disabled": 153
    }
   ],
   "predicted_genes": [
@@ -2263,12 +8753,12 @@
    "CCNA1"
   ]
  },
- "RBM14": {
+ "RBFOX2": {
   "reasoning": "cascade over 1 proteins; modes {}; sensors []",
   "n_disabled": 1,
   "modes": {},
   "sensors": [],
-  "n_own_regulon": 0,
+  "n_own_regulon": 3,
   "n_downstream_tf_regulon": 0,
   "n_sensor": 0,
   "downstream_tfs_disabled": [],
@@ -2279,36 +8769,82 @@
     "n_disabled": 1
    }
   ],
-  "predicted_genes": []
+  "predicted_genes": [
+   "ESR1",
+   "GSN",
+   "RPS6KA5"
+  ]
  },
- "RBM22": {
-  "reasoning": "cascade over 232 proteins; modes {'ORPHANED': 151, 'UNSIGNALLED': 7, 'UNMODIFIED': 33, 'STRANDED': 46, 'STARVED': 28, 'UNRECEIVED': 7}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 232,
-  "modes": {
-   "ORPHANED": 151,
-   "UNSIGNALLED": 7,
-   "UNMODIFIED": 33,
-   "STRANDED": 46,
-   "STARVED": 28,
-   "UNRECEIVED": 7
-  },
+ "RBM25": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [],
+  "n_own_regulon": 1,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 0,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "GSN"
+  ]
+ },
+ "RBM28": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
   "sensors": [
-   "er_stress",
-   "proteotoxic",
    "translation_stress"
   ],
   "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 50,
-  "n_sensor": 36,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 1
+   }
+  ],
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
+ },
+ "RBM42": {
+  "reasoning": "cascade over 128 proteins; modes {'ORPHANED': 143, 'UNSIGNALLED': 6}; sensors ['proteotoxic']",
+  "n_disabled": 128,
+  "modes": {
+   "ORPHANED": 143,
+   "UNSIGNALLED": 6
+  },
+  "sensors": [
+   "proteotoxic"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 12,
+  "n_sensor": 12,
   "downstream_tfs_disabled": [
-   "BCLAF1",
    "CDC5L",
-   "NCOR2",
-   "NOTCH1",
    "PHF5A",
    "SNRNP70",
-   "SNW1",
-   "ZNF830"
+   "SNW1"
   ],
   "trace": [
    {
@@ -2319,12 +8855,12 @@
    {
     "depth": 2,
     "n_frontier": 25,
-    "n_disabled": 88
+    "n_disabled": 79
    },
    {
     "depth": 3,
-    "n_frontier": 59,
-    "n_disabled": 232
+    "n_frontier": 53,
+    "n_disabled": 128
    }
   ],
   "predicted_genes": [
@@ -2333,7 +8869,6 @@
    "HES1",
    "RARB",
    "VDR",
-   "CAMSAP2",
    "CD79A",
    "CSF1",
    "GJA1",
@@ -2341,90 +8876,6 @@
    "MYH6",
    "SMARCB1",
    "BSG",
-   "ABCA1",
-   "ACHE",
-   "AKT1",
-   "ALG3",
-   "APP",
-   "BCOR",
-   "CCNB1",
-   "CCND1",
-   "CCR4",
-   "CDKN1A",
-   "CDKN2B",
-   "CHEK2",
-   "CIC",
-   "CNOT2",
-   "ACTA2",
-   "ADAM19",
-   "ASCL1",
-   "BCL11B",
-   "BCL2",
-   "BGLAP",
-   "BMP10",
-   "BMP2",
-   "CASP3",
-   "CD44",
-   "CD8A",
-   "CDH2",
-   "CDH5",
-   "COL1A1",
-   "AZIN1",
-   "EPHB2",
-   "ERCC3",
-   "HPSE2",
-   "IRAG1",
-   "MADCAM1",
-   "RRAS2",
-   "SIRT1",
-   "TP53",
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3"
-  ]
- },
- "RBM8A": {
-  "reasoning": "cascade over 23 proteins; modes {'ORPHANED': 37}; sensors ['proteotoxic', 'translation_stress']",
-  "n_disabled": 23,
-  "modes": {
-   "ORPHANED": 37
-  },
-  "sensors": [
-   "proteotoxic",
-   "translation_stress"
-  ],
-  "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 1,
-  "n_sensor": 23,
-  "downstream_tfs_disabled": [
-   "ZC3H11A"
-  ],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 6
-   },
-   {
-    "depth": 2,
-    "n_frontier": 5,
-    "n_disabled": 22
-   },
-   {
-    "depth": 3,
-    "n_frontier": 16,
-    "n_disabled": 23
-   }
-  ],
-  "predicted_genes": [
-   "RSRP1",
    "HSPA1A",
    "HSPA1B",
    "HSPA8",
@@ -2436,152 +8887,31 @@
    "CHORDC1",
    "HSPB1",
    "HSPD1",
-   "HSPE1",
-   "ATF4",
-   "ATF5",
-   "DDIT3",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
+   "HSPE1"
   ]
  },
- "RCL1": {
-  "reasoning": "cascade over 191 proteins; modes {'ORPHANED': 124, 'UNSIGNALLED': 5, 'STARVED': 65, 'UNMODIFIED': 6, 'STRANDED': 25}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 191,
-  "modes": {
-   "ORPHANED": 124,
-   "UNSIGNALLED": 5,
-   "STARVED": 65,
-   "UNMODIFIED": 6,
-   "STRANDED": 25
-  },
+ "REXO2": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress']",
+  "n_disabled": 1,
+  "modes": {},
   "sensors": [
-   "er_stress",
-   "proteotoxic",
-   "translation_stress"
-  ],
-  "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 2,
-  "n_sensor": 36,
-  "downstream_tfs_disabled": [
-   "AATF"
-  ],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 25
-   },
-   {
-    "depth": 2,
-    "n_frontier": 24,
-    "n_disabled": 57
-   },
-   {
-    "depth": 3,
-    "n_frontier": 27,
-    "n_disabled": 191
-   }
-  ],
-  "predicted_genes": [
-   "BAX",
-   "MYC",
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "ATF4",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1",
-   "ATF5",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
-  ]
- },
- "ROMO1": {
-  "reasoning": "cascade over 50 proteins; modes {'ORPHANED': 28, '@mito': 11, 'UNMODIFIED': 8, 'STRANDED': 25, 'STARVED': 3}; sensors ['er_stress', 'mito_stress', 'proteotoxic']",
-  "n_disabled": 50,
-  "modes": {
-   "ORPHANED": 28,
-   "@mito": 11,
-   "UNMODIFIED": 8,
-   "STRANDED": 25,
-   "STARVED": 3
-  },
-  "sensors": [
-   "er_stress",
-   "mito_stress",
-   "proteotoxic"
+   "mito_stress"
   ],
   "n_own_regulon": 0,
   "n_downstream_tf_regulon": 0,
-  "n_sensor": 40,
+  "n_sensor": 16,
   "downstream_tfs_disabled": [],
   "trace": [
    {
     "depth": 1,
     "n_frontier": 1,
-    "n_disabled": 13
-   },
-   {
-    "depth": 2,
-    "n_frontier": 12,
-    "n_disabled": 15
-   },
-   {
-    "depth": 3,
-    "n_frontier": 2,
-    "n_disabled": 50
+    "n_disabled": 1
    }
   ],
   "predicted_genes": [
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
    "ATF4",
    "ATF5",
+   "DDIT3",
    "TRIB3",
    "SESN2",
    "MTHFD2",
@@ -2593,31 +8923,20 @@
    "EIF4EBP1",
    "GDF15",
    "CTH",
-   "VEGFA",
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1"
+   "XBP1",
+   "VEGFA"
   ]
  },
- "RPAP1": {
-  "reasoning": "cascade over 1 proteins; modes {}; sensors ['proteotoxic']",
+ "RNASEH1": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['mito_stress']",
   "n_disabled": 1,
   "modes": {},
   "sensors": [
-   "proteotoxic"
+   "mito_stress"
   ],
   "n_own_regulon": 0,
   "n_downstream_tf_regulon": 0,
-  "n_sensor": 12,
+  "n_sensor": 16,
   "downstream_tfs_disabled": [],
   "trace": [
    {
@@ -2627,28 +8946,74 @@
    }
   ],
   "predicted_genes": [
-   "HSPA1A",
-   "HSPA1B",
-   "HSPA8",
-   "DNAJB1",
-   "DNAJA1",
-   "HSPH1",
-   "BAG3",
-   "AHSA1",
-   "CHORDC1",
-   "HSPB1",
-   "HSPD1",
-   "HSPE1"
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "MTHFD2L",
+   "SHMT2",
+   "CEBPB",
+   "SLC7A11",
+   "SLC3A2",
+   "EIF4EBP1",
+   "GDF15",
+   "CTH",
+   "XBP1",
+   "VEGFA"
   ]
  },
- "RRP12": {
-  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
-  "n_disabled": 1,
-  "modes": {},
-  "sensors": [],
+ "RNF138": {
+  "reasoning": "cascade over 4 proteins; modes {'UNSIGNALLED': 3}; sensors ['proteasome_loss']",
+  "n_disabled": 4,
+  "modes": {
+   "UNSIGNALLED": 3
+  },
+  "sensors": [
+   "proteasome_loss"
+  ],
   "n_own_regulon": 0,
   "n_downstream_tf_regulon": 0,
-  "n_sensor": 0,
+  "n_sensor": 17,
+  "downstream_tfs_disabled": [],
+  "trace": [
+   {
+    "depth": 1,
+    "n_frontier": 1,
+    "n_disabled": 4
+   }
+  ],
+  "predicted_genes": [
+   "PSMA1",
+   "PSMA3",
+   "PSMA4",
+   "PSMA5",
+   "PSMA7",
+   "PSMB1",
+   "PSMB3",
+   "PSMB4",
+   "PSMB5",
+   "PSMB6",
+   "PSMC1",
+   "PSMC2",
+   "PSMD1",
+   "PSMD2",
+   "PSMD11",
+   "POMP",
+   "NFE2L1"
+  ]
+ },
+ "RPL9": {
+  "reasoning": "cascade over 1 proteins; modes {}; sensors ['translation_stress']",
+  "n_disabled": 1,
+  "modes": {},
+  "sensors": [
+   "translation_stress"
+  ],
+  "n_own_regulon": 0,
+  "n_downstream_tf_regulon": 0,
+  "n_sensor": 11,
   "downstream_tfs_disabled": [],
   "trace": [
    {
@@ -2657,31 +9022,44 @@
     "n_disabled": 1
    }
   ],
-  "predicted_genes": []
+  "predicted_genes": [
+   "ATF4",
+   "ATF5",
+   "DDIT3",
+   "TRIB3",
+   "SESN2",
+   "MTHFD2",
+   "SHMT2",
+   "SLC3A2",
+   "SLC7A11",
+   "EIF4EBP1",
+   "CEBPB"
+  ]
  },
  "RUVBL1": {
-  "reasoning": "cascade over 501 proteins; modes {'ORPHANED': 175, 'UNMODIFIED': 91, 'STRANDED': 174, 'UNSIGNALLED': 75, 'STARVED': 70, 'UNRECEIVED': 1, '@er': 1}; sensors ['er_stress', 'proteotoxic', 'translation_stress']",
-  "n_disabled": 501,
+  "reasoning": "cascade over 393 proteins; modes {'ORPHANED': 166, 'STARVED': 95, 'UNSIGNALLED': 107, 'STRANDED': 87, '@er': 2, '@mito': 1}; sensors ['er_stress', 'mito_stress', 'proteotoxic', 'translation_stress']",
+  "n_disabled": 393,
   "modes": {
-   "ORPHANED": 175,
-   "UNMODIFIED": 91,
-   "STRANDED": 174,
-   "UNSIGNALLED": 75,
-   "STARVED": 70,
-   "UNRECEIVED": 1,
-   "@er": 1
+   "ORPHANED": 166,
+   "STARVED": 95,
+   "UNSIGNALLED": 107,
+   "STRANDED": 87,
+   "@er": 2,
+   "@mito": 1
   },
   "sensors": [
    "er_stress",
+   "mito_stress",
    "proteotoxic",
    "translation_stress"
   ],
   "n_own_regulon": 2,
-  "n_downstream_tf_regulon": 128,
-  "n_sensor": 36,
+  "n_downstream_tf_regulon": 102,
+  "n_sensor": 39,
   "downstream_tfs_disabled": [
    "ARID1A",
    "ARID2",
+   "ARRB1",
    "BRD7",
    "DMAP1",
    "EP400",
@@ -2693,13 +9071,12 @@
    "OGT",
    "PBRM1",
    "PHF20",
-   "SMAD2",
-   "SMAD3",
-   "SMAD7",
    "SMARCA2",
    "SMARCA4",
    "SMARCB1",
-   "SMARCC1"
+   "SMARCC1",
+   "SMARCC2",
+   "SMARCD3"
   ],
   "trace": [
    {
@@ -2710,12 +9087,12 @@
    {
     "depth": 2,
     "n_frontier": 22,
-    "n_disabled": 140
+    "n_disabled": 123
    },
    {
     "depth": 3,
-    "n_frontier": 60,
-    "n_disabled": 501
+    "n_frontier": 46,
+    "n_disabled": 393
    }
   ],
   "predicted_genes": [
@@ -2779,252 +9156,6 @@
    "OPRM1",
    "RAB18",
    "RPL17"
-  ]
- },
- "SEC62": {
-  "reasoning": "cascade over 1 proteins; modes {}; sensors ['er_stress', 'translation_stress']",
-  "n_disabled": 1,
-  "modes": {},
-  "sensors": [
-   "er_stress",
-   "translation_stress"
-  ],
-  "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 0,
-  "n_sensor": 24,
-  "downstream_tfs_disabled": [],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 1
-   }
-  ],
-  "predicted_genes": [
-   "HSPA5",
-   "XBP1",
-   "DDIT3",
-   "HERPUD1",
-   "SEL1L",
-   "EDEM1",
-   "DNAJB9",
-   "DNAJB11",
-   "PDIA6",
-   "PDIA3",
-   "CANX",
-   "CALR",
-   "SSR1",
-   "SEC61B",
-   "ATF4",
-   "ATF5",
-   "TRIB3",
-   "SESN2",
-   "MTHFD2",
-   "SHMT2",
-   "SLC3A2",
-   "SLC7A11",
-   "EIF4EBP1",
-   "CEBPB"
-  ]
- },
- "SFPQ": {
-  "reasoning": "cascade over 5 proteins; modes {'ORPHANED': 2, 'UNSIGNALLED': 2}; sensors []",
-  "n_disabled": 5,
-  "modes": {
-   "ORPHANED": 2,
-   "UNSIGNALLED": 2
-  },
-  "sensors": [],
-  "n_own_regulon": 29,
-  "n_downstream_tf_regulon": 10,
-  "n_sensor": 0,
-  "downstream_tfs_disabled": [
-   "NONO"
-  ],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 5
-   },
-   {
-    "depth": 2,
-    "n_frontier": 2,
-    "n_disabled": 5
-   }
-  ],
-  "predicted_genes": [
-   "ACTB",
-   "ADARB2",
-   "AIFM1",
-   "AR",
-   "CTBP1",
-   "CXCL8",
-   "CYP11A1",
-   "CYP17A1",
-   "CYP2B6",
-   "DNAAF4",
-   "EPHX1",
-   "GJA1",
-   "HDAC2",
-   "HSPA9",
-   "IGF1",
-   "NR3C1",
-   "PER1",
-   "PGR",
-   "PPARGC1A",
-   "PRL",
-   "PTGS2",
-   "PTPRC",
-   "RBP4",
-   "SIN3A",
-   "SMC3",
-   "SP1",
-   "STAT6",
-   "TH",
-   "TOP2B",
-   "BANF1",
-   "BIRC5",
-   "COL2A1",
-   "HTT",
-   "IL27",
-   "KLK3",
-   "MIA",
-   "NOS3",
-   "OCLN",
-   "POU5F1"
-  ]
- },
- "SLC7A6OS": {
-  "reasoning": "cascade over 1 proteins; modes {}; sensors []",
-  "n_disabled": 1,
-  "modes": {},
-  "sensors": [],
-  "n_own_regulon": 0,
-  "n_downstream_tf_regulon": 0,
-  "n_sensor": 0,
-  "downstream_tfs_disabled": [],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 1
-   }
-  ],
-  "predicted_genes": []
- },
- "SNRNP70": {
-  "reasoning": "cascade over 205 proteins; modes {'ORPHANED': 199, 'UNSIGNALLED': 17, 'STRANDED': 12, 'UNMODIFIED': 10, '@mito': 1}; sensors ['er_stress', 'mito_stress', 'proteotoxic']",
-  "n_disabled": 205,
-  "modes": {
-   "ORPHANED": 199,
-   "UNSIGNALLED": 17,
-   "STRANDED": 12,
-   "UNMODIFIED": 10,
-   "@mito": 1
-  },
-  "sensors": [
-   "er_stress",
-   "mito_stress",
-   "proteotoxic"
-  ],
-  "n_own_regulon": 1,
-  "n_downstream_tf_regulon": 57,
-  "n_sensor": 40,
-  "downstream_tfs_disabled": [
-   "ATXN7L3",
-   "CDC5L",
-   "DDX21",
-   "DEK",
-   "KAT2A",
-   "KAT2B",
-   "MYBBP1A",
-   "PHF5A",
-   "SMARCA5",
-   "SNW1",
-   "SUPT20H",
-   "SUPT3H",
-   "TAF12",
-   "TRRAP"
-  ],
-  "trace": [
-   {
-    "depth": 1,
-    "n_frontier": 1,
-    "n_disabled": 22
-   },
-   {
-    "depth": 2,
-    "n_frontier": 21,
-    "n_disabled": 97
-   },
-   {
-    "depth": 3,
-    "n_frontier": 60,
-    "n_disabled": 205
-   }
-  ],
-  "predicted_genes": [
-   "BSG",
-   "CD79A",
-   "CSF1",
-   "GJA1",
-   "IGHE",
-   "MYH6",
-   "SMARCB1",
-   "RPL15",
-   "RPL17",
-   "BCL2",
-   "PRDX5",
-   "SFTPB",
-   "ADH1B",
-   "ANAPC11",
-   "BMP4",
-   "CASR",
-   "CCND1",
-   "CDT1",
-   "CECR2",
-   "CHD1",
-   "CREBBP",
-   "CRYAA",
-   "DNAH8",
-   "IL2",
-   "IL3",
-   "INO80",
-   "OGA",
-   "TUBB",
-   "PPARGC1A",
-   "AKR1C1",
-   "CGRRF1",
-   "CYP2C9",
-   "LTF",
-   "MAPK14",
-   "NEDD4L",
-   "ATF7",
-   "CCND2",
-   "MITF",
-   "AZIN1",
-   "CDK2",
-   "CDKN1A",
-   "CDKN1B",
-   "CLOCK",
-   "CYP1B1",
-   "FOXP3",
-   "INVS",
-   "IRF7",
-   "LIN28A",
-   "NPAS2",
-   "RB1",
-   "SMAD4",
-   "TP73",
-   "YY1",
-   "PLRG1",
-   "AR",
-   "HES1",
-   "RARB",
-   "VDR",
-   "HSPA5",
-   "XBP1"
   ]
  }
 }
