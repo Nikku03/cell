@@ -47,6 +47,7 @@ similarity exceeds magnitude-matched pairs with a permutation z >= 3, AND the ef
 rather than shrinking to nothing. If it does not, build 4's premise is refuted and that is the finding.
 """
 import collections
+import hashlib
 import json
 from pathlib import Path
 
@@ -164,9 +165,13 @@ def main():
     ki = {k: i for i, k in enumerate(kos)}
     n = M.shape[0]
     rng = np.random.default_rng(0)
-    tr = np.array([hash(k) % 2 == 0 for k in kos])          # deterministic within a run; both halves are used
-    tr = np.array([int.from_bytes(k.encode()[:8].ljust(8, b"\0"), "big") % 2 == 0 for k in kos])
+    # md5 of the symbol, matching abstain.py. A first version used the big-endian value of the null-padded
+    # 8-byte prefix mod 2, which is the parity of the LAST of those bytes -- and since almost every gene symbol
+    # is shorter than 8 characters, that byte was the padding zero. The result was a 5,027 / 93 "half" split
+    # that only became visible when a downstream file printed its test-set size.
+    tr = np.array([int(hashlib.md5(k.encode()).hexdigest(), 16) % 2 == 0 for k in kos])
     print(f"split: {int(tr.sum()):,} train / {int((~tr).sum()):,} test perturbations")
+    assert 0.4 < tr.mean() < 0.6, f"split is not a half ({tr.mean():.3f}) -- refusing to continue"
 
     # ---- B: how much of the response is shared, measured on held-out perturbations ----
     print("\nB. held-out share of squared response carried by a core fitted on the OTHER half:")
