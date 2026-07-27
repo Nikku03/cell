@@ -163,8 +163,20 @@ def main():
     shared = {n_: np.asarray((m @ m.T).todense(), dtype=np.float32) for n_, m in
               {n_: onehot(d, kos) for n_, d in per.items()}.items()}
     nbset = collections.defaultdict(set)
+    # THE INDEX-SPACE BUG. cell_complete's 'ppi' endpoints are INTEGER INDICES into genes[], but `kos` holds gene
+    # NAME strings. The shipped code keyed nbset by the raw integer and then looked it up by name, so
+    # nbset.get(<name>) returned EMPTY for every knockout: 0 of 16,492 gene names resolved against a 14,230-key
+    # table, and 0 of 191,447 edges were ever seen. shared_ppi_nbr / jaccard_ppi_nbr / is_direct_ppi were
+    # identically zero, and phys_adj silently degraded to complex-OR-pathway -- so the component labelled
+    # "PHYS (PPI|complex|pathway)" contained no PPI at all. Fixed the same way as protein_chain_combine.py.
     for e in D.get("ppi", []):
-        nbset[e[0]].add(e[1]); nbset[e[1]].add(e[0])
+        try:
+            a_, b_ = int(e[0]), int(e[1])
+        except (TypeError, ValueError, IndexError):
+            continue
+        if 0 <= a_ < len(names) and 0 <= b_ < len(names) and a_ != b_:
+            nbset[names[a_]].add(names[b_])
+            nbset[names[b_]].add(names[a_])
     NBc = {}; rr = []; cc = []
     for i_, k in enumerate(kos):
         for g in nbset.get(k, ()):

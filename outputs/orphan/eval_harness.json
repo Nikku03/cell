@@ -32,36 +32,36 @@
   "NEIGHBOR": {
    "label": "NEIGHBOR model (ref)",
    "n_scored": 378,
-   "coverage": 0.8624338624338624,
-   "specific_recall": 0.4348,
-   "all_mover_recall": 0.4321,
+   "coverage": 0.9576719576719577,
+   "specific_recall": 0.4566,
+   "all_mover_recall": 0.4427,
    "tide_null": 0.2603,
    "oracle_ceiling": 0.6168,
    "random_floor": 0.0061,
-   "lift_over_tide": 1.67,
-   "tide_alignment": 0.546,
+   "lift_over_tide": 1.755,
+   "tide_alignment": 0.658,
    "PASSES_bar": true,
-   "headroom_used": 0.489
+   "headroom_used": 0.551
   }
  },
  "edge_card": {
   "label": "structure/contact (ref)",
   "truth": "codep",
   "random": {
-   "auc": 0.523,
+   "auc": 0.529,
    "n_pos": 1500
   },
   "studied": {
-   "auc": 0.565,
+   "auc": 0.586,
    "n_pos": 1500
   },
-  "selection_bias_gap": 0.042
+  "selection_bias_gap": 0.057
  },
  "the_bar": {
   "metric": "specific-mover recall @50, tide removed, held-out",
   "tide_null_to_beat": 0.2603,
   "oracle_ceiling": 0.6168
  },
- "verdict": "eval_harness -- the honest, non-foolable bench for ANY knockout far-field predictor, built to defeat the two ways 'it matches the phenotype' misleads on this problem. SYSTEM test: held-out specific-mover recall with the TIDE REMOVED (the real target), flanked every run by RANDOM 0.006 < TIDE-null 0.260 < NEIGHBOR model 0.435 < ORACLE* 0.617; a predictor PASSES only by beating the TIDE-null on tide-removed movers, so reproducing the generic stress response (~70% of the raw phenotype) earns nothing -- and the all-mover recall + tide-alignment diagnostic expose any predictor that is secretly just the tide. EDGE test: component spot-check vs ground-truth edges scored on a RANDOM sample AND a WELL-STUDIED (high-publication) sample, reporting the selection-bias gap (structure/contact ref: random AUC 0.523 vs studied 0.565, gap 0.042) -- because the edges that HAVE ground truth are the famous ones, so 'we can only check a few' is only honest if the few are sampled at random. SELF-CALIBRATION PASSED: the TIDE reference reproduces the tide-null and the NEIGHBOR model sits strictly between the tide-null and the oracle, so the bench is calibrated and trustworthy. USAGE: from eval_harness import Harness; H=Harness(); H.score_system(my_predictor); H.score_edges(my_edge_predictor). The bar to beat is the TIDE-null (~0.26) on tide-removed specific movers, not raw recall. This makes 'if it matches the phenotype it works' a rigorous claim instead of a hopeful one: an engine only earns belief by beating the tide on held-out specific movers AND passing random (not cherry-picked) edge spot-checks.",
- "note": "eval_harness -- the honest, non-foolable bench for ANY knockout far-field predictor, built to defeat the two ways 'it matches the phenotype' misleads on this problem. SYSTEM test: held-out specific-mover recall with the TIDE REMOVED (the real target), flanked every run by RANDOM 0.006 < TIDE-null 0.260 < NEIGHBOR model 0.435 < ORACLE* 0.617; a predictor PASSES only by beating the TIDE-null on tide-removed movers, so reproducing the generic stress response (~70% of the raw phenotype) earns nothing -- and the all-mover recall + tide-alignment diagnostic expose any predictor that is secretly just the tide. EDGE test: component spot-check vs ground-truth edges scored on a RANDOM sample AND a WELL-STUDIED (high-publication) sample, reporting the selection-bias gap (structure/contact ref: random AUC 0.523 vs studied 0.565, gap 0.042) -- because the edges that HAVE ground truth are the famous ones, so 'we can only check a few' is only honest if the few are sampled at random. SELF-CALIBRATION PASSED: the TIDE reference reproduces the tide-null and the NEIGHBOR model sits strictly between the tide-null and the oracle, so the bench is calibrated and trustworthy. USAGE: from eval_harness import Harness; H=Harness(); H.score_system(my_predictor); H.score_edges(my_edge_predictor). The bar to beat is the TIDE-null (~0.26) on tide-removed specific movers, not raw recall. This makes 'if it matches the phenotype it works' a rigorous claim instead of a hopeful one: an engine only earns belief by beating the tide on held-out specific movers AND passing random (not cherry-picked) edge spot-checks."
+ "verdict": "eval_harness -- the honest, non-foolable bench for ANY knockout far-field predictor, built to defeat the two ways 'it matches the phenotype' misleads on this problem. SYSTEM test: held-out specific-mover recall with the TIDE REMOVED (the real target), flanked every run by RANDOM 0.006 < TIDE-null 0.260 < NEIGHBOR model 0.457 < ORACLE* 0.617; a predictor PASSES only by beating the TIDE-null on tide-removed movers, so reproducing the generic stress response (~70% of the raw phenotype) earns nothing -- and the all-mover recall + tide-alignment diagnostic expose any predictor that is secretly just the tide. EDGE test: component spot-check vs ground-truth edges scored on a RANDOM sample AND a WELL-STUDIED (high-publication) sample, reporting the selection-bias gap (structure/contact ref: random AUC 0.529 vs studied 0.586, gap 0.057) -- because the edges that HAVE ground truth are the famous ones, so 'we can only check a few' is only honest if the few are sampled at random. SELF-CALIBRATION PASSED: the TIDE reference reproduces the tide-null and the NEIGHBOR model sits strictly between the tide-null and the oracle, so the bench is calibrated and trustworthy. USAGE: from eval_harness import Harness; H=Harness(); H.score_system(my_predictor); H.score_edges(my_edge_predictor). The bar to beat is the TIDE-null (~0.26) on tide-removed specific movers, not raw recall. This makes 'if it matches the phenotype it works' a rigorous claim instead of a hopeful one: an engine only earns belief by beating the tide on held-out specific movers AND passing random (not cherry-picked) edge spot-checks.",
+ "note": "eval_harness -- the honest, non-foolable bench for ANY knockout far-field predictor, built to defeat the two ways 'it matches the phenotype' misleads on this problem. SYSTEM test: held-out specific-mover recall with the TIDE REMOVED (the real target), flanked every run by RANDOM 0.006 < TIDE-null 0.260 < NEIGHBOR model 0.457 < ORACLE* 0.617; a predictor PASSES only by beating the TIDE-null on tide-removed movers, so reproducing the generic stress response (~70% of the raw phenotype) earns nothing -- and the all-mover recall + tide-alignment diagnostic expose any predictor that is secretly just the tide. EDGE test: component spot-check vs ground-truth edges scored on a RANDOM sample AND a WELL-STUDIED (high-publication) sample, reporting the selection-bias gap (structure/contact ref: random AUC 0.529 vs studied 0.586, gap 0.057) -- because the edges that HAVE ground truth are the famous ones, so 'we can only check a few' is only honest if the few are sampled at random. SELF-CALIBRATION PASSED: the TIDE reference reproduces the tide-null and the NEIGHBOR model sits strictly between the tide-null and the oracle, so the bench is calibrated and trustworthy. USAGE: from eval_harness import Harness; H=Harness(); H.score_system(my_predictor); H.score_edges(my_edge_predictor). The bar to beat is the TIDE-null (~0.26) on tide-removed specific movers, not raw recall. This makes 'if it matches the phenotype it works' a rigorous claim instead of a hopeful one: an engine only earns belief by beating the tide on held-out specific movers AND passing random (not cherry-picked) edge spot-checks."
 }

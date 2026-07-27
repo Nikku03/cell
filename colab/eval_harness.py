@@ -74,9 +74,22 @@ class Harness:
         D = json.load(open(OUT / "cell_complete.json"))
         info = {g["name"]: g for g in D["genes"]}
         nb = collections.defaultdict(set)
+        # THE INDEX-SPACE BUG, in its eval_harness form. 'ppi' endpoints are INTEGER INDICES into genes[] while
+        # `idx` is a set of gene NAME strings, so `e[0] in idx` was False for every edge and this loop accepted
+        # 0 of 191,447. The NEIGHBOR reference model was therefore built from complex + pathway + regulon only,
+        # with no PPI in it at all, despite being described as including PPI.
+        allnames = [g["name"] for g in D["genes"]]
         for e in D.get("ppi", []):
-            if e[0] in idx and e[1] in idx:
-                nb[e[0]].add(e[1]); nb[e[1]].add(e[0])
+            try:
+                a_, b_ = int(e[0]), int(e[1])
+            except (TypeError, ValueError, IndexError):
+                continue
+            if not (0 <= a_ < len(allnames) and 0 <= b_ < len(allnames)) or a_ == b_:
+                continue
+            na_, nb_ = allnames[a_], allnames[b_]
+            if na_ in idx and nb_ in idx:
+                nb[na_].add(nb_)
+                nb[nb_].add(na_)
         cplx = collections.defaultdict(set)
         for g, cs in (D.get("gene2cplx", {}) or {}).items():
             for c in (cs if isinstance(cs, (list, set, tuple)) else [cs]) if cs else []:

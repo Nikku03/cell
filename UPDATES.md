@@ -6154,10 +6154,15 @@ dependency/LOEUF/degree, same compartment/process, both-TF — then transferred 
 ```
 K562, 126 held-out knockouts — specific-mover recall@50 (tide removed)
 TIDE null            0.241
-PHYS graph (fixed)   0.373
-LEARNED similarity   0.398     <- +0.025 over the graph; 10% of the head-room closed
+PHYS graph           0.421     <- was 0.373 before the PPI index-space fix
+LEARNED similarity   0.428     <- was 0.398; now only +0.008 over the graph, 4% of head-room closed
 ORACLE* (ceiling)    0.616
 ```
+
+**Corrected after the PPI index-space fix.** PHYS was reading an empty neighbour table, so it was competing
+blindfolded. With PPI actually wired in, it gains +0.048 and the learned model gains only +0.030 — so the
+learned-over-graph margin collapses from **+0.025 to +0.008**, and head-room closed from 10% to 4%.
+**The negative result gets stronger, not weaker.**
 
 **This is a negative-ish result and I'm reporting it as one.** The learned annotation-similarity **barely beats the fixed graph**
 (+0.025). Hand-crafted static annotation features add almost nothing over the raw physical neighborhood for predicting which
@@ -6166,7 +6171,7 @@ knockouts *behave* alike — the large oracle head-room is real but **not reacha
 **What it rules in and out.** It rules *out* "just engineer more annotation features" as the path to the oracle. It points to a richer
 **representation** — learned gene embeddings, sequence/structure (ESM), or ultimately measured co-perturbation profiles (which *is* the
 oracle: you need measured neighbors). And it sets an explicit, high bar for the proposed **NEXUS structural-magnitude feature**: it has
-to beat 0.398 with genuinely *orthogonal* behavioral signal, because annotation features already plateau near the graph.
+to beat **0.428** with genuinely *orthogonal* behavioral signal, because annotation features already plateau near the graph.
 
 **Two honest byproducts:** (1) this exposed that `gene2cplx` is keyed by index-strings, so the complex feature was silently broken in
 wall_test/wall_edgetype (their PHYS came from PPI + pathway) — fixed here. (2) Net state of the within-cell-type wall: the specific
@@ -6439,7 +6444,7 @@ an LLM all get judged the same way. Every run is flanked by fixed references:
 |---|---|
 | RANDOM | 0.007 |
 | **TIDE-null (the bar to beat)** | **0.260** |
-| NEIGHBOR model | 0.435 (lift 1.67×, 49% of headroom) |
+| NEIGHBOR model | 0.457 (lift 1.75×, 55% of headroom) — was 0.435 / 1.67× / 49% before the PPI index-space fix, when the reference accepted 0 of 191,447 edges |
 | ORACLE* (peeks) | 0.617 |
 
 **Self-calibration passed** — the bench is only trustworthy if it reproduces known numbers, and it does: scoring the *tide predictor*
@@ -6461,18 +6466,19 @@ The question: *why not combine all three no-peek predictors?* Answer, measured o
 | predictor | recall@50 |
 |---|---|
 | tide | 0.241 |
-| phys (graph neighbours) | 0.373 |
-| learned similarity | 0.398 *(best single)* |
-| **phys + learned** | **0.427** |
-| **tide + phys + learned** | **0.447** *(best ensemble)* |
-| union-neighbours | 0.373 *(neighbour-union doesn't help — the z-fusion does)* |
+| phys (graph neighbours) | 0.421 *(was 0.373)* |
+| learned similarity | 0.428 *(was 0.398; best single)* |
+| **phys + learned** | **0.452** *(was 0.427)* |
+| **tide + phys + learned** | **0.464** *(was 0.447)* |
+| union-neighbours | 0.425 *(was 0.373)* |
 | ORACLE* (peeks) | 0.616 |
 
-Best ensemble **0.447** vs best single **0.398** = **+0.049**, closing **42% → 55%** of the tide→oracle head-room.
+Best 3-way **0.464** vs best single **0.428** = **+0.036**, closing **50% → 62%** of the tide→oracle head-room.
+All figures corrected after the PPI index-space fix; the "was" values are what this section originally reported.
 
 **The control that makes it real.** A modest +0.049 is exactly the shape that fooled `nexus_wall` (a z-fusion that turned out to be
-generic re-weighting). So I ran the same shuffle control: fuse `learned` with a **wrong knockout's** `phys`. It scores **0.331 — below
-learned alone** (misaligned phys just adds noise), while the correctly-aligned `phys+learned` is **0.427**. That **+0.097 over the
+generic re-weighting). So I ran the same shuffle control: fuse `learned` with a **wrong knockout's** `phys`. It scores **0.377 — below
+learned alone** (misaligned phys just adds noise), while the correctly-aligned `phys+learned` is **0.452**. That **+0.076 over the
 control** means the gain is genuine **KO-specific complementarity** — phys and learned pick partly *different* behavioural neighbours and
 catch *different* specific movers — not fusion mechanics. Clean positive.
 
@@ -6482,15 +6488,17 @@ the 3-way was missing, and it delivers:
 
 | ensemble | recall@50 |
 |---|---|
-| tide + phys + learned (3-way) | 0.447 |
-| **tide + phys + learned + NEXUS (4-way)** | **0.470** |
-| phys alone → phys + NEXUS | 0.373 → **0.423** (+0.050) |
+| tide + phys + learned (3-way) | 0.464 *(was 0.447)* |
+| **tide + phys + learned + NEXUS (4-way)** | **0.475** *(was 0.470)* |
+| phys alone → phys + NEXUS | 0.421 → **0.443** (+0.022; was 0.373 → 0.423, +0.050) |
 | oracle (peeks) | 0.616 |
 
-The 4-way adds **+0.023** over the 3-way and **survives its own shuffle control** (a *wrong* knockout's co-dependency partners fused with
-the 3-way scores **0.425 — below** the 3-way; misaligned NEXUS *hurts*, correct NEXUS helps: +0.045). So co-dependency catches specific
-movers the structural/annotation views miss — because DepMap functional coupling finds behavioural neighbours that *aren't* in the same
-complex or pathway. **Head-room closed jumps 42% → 61%**, and the best deployable no-peek predictor is now the 4-way at **~0.47**.
+**NEXUS's marginal contribution more than halves once its rivals can see PPI: +0.023 → +0.012 over the 3-way, and
+its lift over PHYS alone falls from +0.050 to +0.022.** It still *survives its own shuffle control* (4-way 0.475 vs
+shuffled-NEXUS 0.435, +0.040), so co-dependency remains a genuinely orthogonal view — but a substantial part of its
+apparent edge was that the structural view it was being compared against had no PPI in it. This is the same
+correction MARKOV-P took in `protein_chain_combine.py`, for the same reason.
+**Head-room closed 50% → 62%**, best deployable no-peek predictor the 4-way at **~0.475**.
 
 *An honest note on how this result was reached:* the first NEXUS run showed 1% coverage and +0.002 — which read as a redundant negative. That
 suspicious 1% turned out to be a real bug (I indexed co-dependency by `names[ko_row]`, a gene-universe index, instead of `kos[ko_row]`, the
@@ -9355,12 +9363,14 @@ Crossed with mover strata: **315** at ≥5, **163** at ≥20, **68** at ≥50.
 
 ### The sweep (complete-case, ≥5 movers, mean of 5 splits)
 
+*(PPI index-space fix applied; PHYS and LEARNED rise, the ensemble gain shrinks.)*
+
 | model | R@50 | R@100 | R@200 | R@300 | R@500 |
 |---|---|---|---|---|---|
-| RANDOM | 0.006 | 0.012 | 0.025 | 0.042 | 0.071 |
-| TIDE | 0.244 | 0.381 | 0.561 | 0.656 | **0.770** |
-| PHYS | 0.436 | 0.542 | 0.640 | 0.686 | 0.742 |
-| LEARNED | 0.451 | 0.550 | 0.645 | 0.698 | 0.752 |
+| RANDOM | 0.006 | 0.012 | 0.026 | 0.043 | 0.071 |
+| TIDE | 0.250 | 0.388 | 0.566 | 0.662 | **0.771** |
+| PHYS | 0.448 *(was 0.436)* | 0.554 | 0.665 | 0.715 | 0.777 |
+| LEARNED | 0.467 *(was 0.451)* | 0.562 | 0.659 | 0.708 | 0.759 |
 | **MARKOV-P** | **0.478** | **0.581** | **0.676** | **0.728** | 0.777 |
 | 4-way | 0.494 | 0.617 | 0.719 | 0.769 | 0.814 |
 | **4-way + MARKOV-P** | **0.513** | **0.631** | **0.735** | **0.781** | **0.827** |
@@ -9378,12 +9388,14 @@ Crossed with mover strata: **315** at ≥5, **163** at ≥20, **68** at ≥50.
 
 | stratum | K=50 | K=100 | K=200 | K=300 | K=500 |
 |---|---|---|---|---|---|
-| ≥5 movers | +0.0195±0.0051 | +0.0138±0.0031 | +0.0153±0.0036 | +0.0122±0.0025 | +0.0122±0.0021 |
-| ≥20 movers | +0.0209±0.0024 | +0.0168±0.0025 | +0.0136±0.0017 | +0.0139±0.0018 | +0.0112±0.0018 |
-| ≥50 movers | +0.0133±0.0042 | +0.0141±0.0025 | +0.0165±0.0028 | +0.0155±0.0017 | +0.0131±0.0014 |
+| ≥5 movers | +0.0137±0.0010 | +0.0091±0.0018 | +0.0096±0.0011 | +0.0059±0.0013 | **+0.0023±0.0018** |
+| ≥20 movers | +0.0163±0.0015 | +0.0102±0.0018 | +0.0090±0.0006 | +0.0085±0.0011 | +0.0057±0.0020 |
+| ≥50 movers | +0.0129±0.0034 | +0.0129±0.0025 | +0.0147±0.0024 | +0.0152±0.0021 | +0.0105±0.0018 |
 
-**All 15 cells significant, and the label-shuffled twin is negative in all 15.** But the gain shrinks with K exactly as
-saturation predicts.
+**Corrected: 14 of 15 cells significant, not 15.** With PPI wired into PHYS, the ≥5-movers K=500 cell falls to
++0.0023±0.0018 and is now **indistinguishable from zero** — the one place where saturation plus a correctly-wired
+baseline leaves nothing for the protein chain to add. The label-shuffled twin is still negative in all 15. Every
+gain is smaller than first reported, and shrinks with K exactly as saturation predicts.
 
 ### The honest summary
 
@@ -9839,9 +9851,9 @@ indistinguishable from zero. Sampling now fails to earn its cost in **all three*
 
 Fixed and re-run: `protein_chain_combine.py`.
 
-**Still carries the same bug, numbers affected in the same direction:** `wall_learnsim.py`, `wall_combine.py`,
-`recall_depth.py`, and `eval_harness.py` (whose NEIGHBOR reference accepts 0 of 191,447 PPI edges and additionally
-loads 3,076 dead index-string keys into `self.nb`). Their PHYS/LEARNED-derived numbers are understated. The
+**~~Still carries the same bug~~ — ALL FOUR NOW FIXED AND RE-RUN:** `wall_learnsim.py`, `wall_combine.py`,
+`recall_depth.py`, and `eval_harness.py` (whose NEIGHBOR reference accepted 0 of 191,447 PPI edges). Every section
+above has been corrected with the superseded values named. See "Closing the PPI index-space defect" at the end. The
 oracle and tide references are unaffected — they never touch PPI.
 
 **Unaffected and verified:** `markov_bridge`, `bridge_measured`, `graph_null`, `causal_footprint`, `kitchen_sink` and
@@ -11530,6 +11542,74 @@ in what the aggregate is *of*.
   per reaction from Reactome would resolve it.
 - **Paralogue families inside complexes.** 6,355 lesions are LOW-confidence for this reason; the entity tree would
   fix it.
-- **PPI index-space defect** in `wall_learnsim.py`, `wall_combine.py`, `recall_depth.py`, `eval_harness.py` —
-  long-standing, documented, still unfixed.
+- ~~**PPI index-space defect** in `wall_learnsim.py`, `wall_combine.py`, `recall_depth.py`, `eval_harness.py`~~ —
+  **fixed and all four re-run**; see the closing section.
 - **`gwps.h5ad` unexploited**: 11,258 perturbations available against the 1,400 used.
+
+---
+
+# Closing the PPI index-space defect — the last four modules
+
+`colab/wall_learnsim.py` · `colab/wall_combine.py` · `colab/recall_depth.py` · `colab/eval_harness.py`
+
+The defect was found and fixed in `protein_chain_combine.py` some time ago; four modules were documented as still
+carrying it and were never repaired. They are now fixed and re-run, and every section above has been corrected with
+the superseded values named.
+
+## The bug, measured before and after
+
+`cell_complete.json`'s `ppi` endpoints are **integer indices into `genes[]`**. All four modules keyed the neighbour
+table by the raw endpoint and then looked it up by gene *name*:
+
+```python
+for e in D.get("ppi", []):
+    nbset[e[0]].add(e[1]); nbset[e[1]].add(e[0])   # keys are ints: 7513, 10468, ...
+...
+for g in nbset.get(k, ()):                          # k is a NAME: "M6PR"
+```
+
+Measured directly: the broken table has 14,230 keys and **0 of 16,492 gene names resolve against it**. `eval_harness`
+failed differently — `if e[0] in idx` tests an int against a set of name strings, so it accepted **0 of 191,447
+edges** while describing its reference model as "PPI + complex/pathway + regulon".
+
+A dead feature does not throw. It returns zeros, the model routes around it, and the score lands close enough to the
+documented value to pass a self-calibration check.
+
+## What changed
+
+| | before | after |
+|---|---:|---:|
+| **wall_learnsim** PHYS graph | 0.373 | **0.421** |
+| **wall_learnsim** LEARNED | 0.398 | **0.428** |
+| learned − phys margin | +0.025 | **+0.008** |
+| head-room closed by learning | 10% | **4%** |
+| **wall_combine** phys+learned | 0.427 | **0.452** |
+| **wall_combine** 3-way | 0.447 | **0.464** |
+| **wall_combine** 4-way (+NEXUS) | 0.470 | **0.475** |
+| NEXUS marginal over 3-way | +0.023 | **+0.012** |
+| NEXUS lift over PHYS alone | +0.050 | **+0.022** |
+| phys+learned vs shuffled-phys control | +0.097 | +0.076 |
+| **recall_depth** PHYS @K=50 | 0.436 | **0.448** |
+| **recall_depth** significant cells | 15/15 | **14/15** |
+| **eval_harness** NEIGHBOR reference | 0.435 (49% head-room) | **0.457 (55%)** |
+
+## What it costs the story, which is the point
+
+Three claims weaken and one flips:
+
+- **The learned-similarity negative gets stronger.** Annotation features beat a correctly-wired graph by +0.008, not
+  +0.025. "More feature engineering is not the path" was right and is now more right.
+- **NEXUS's orthogonality claim shrinks by more than half** (+0.023 → +0.012 over the 3-way, +0.050 → +0.022 over
+  PHYS). It still beats its own shuffle control (+0.040) so the claim survives — but a large part of its apparent
+  edge was that the structural view it was measured against contained no PPI. Identical in shape to the correction
+  MARKOV-P took in `protein_chain_combine.py`.
+- **"All 15 cells significant" is now 14 of 15.** The ≥5-movers K=500 cell falls to +0.0023±0.0018,
+  indistinguishable from zero — where metric saturation and a correctly-wired baseline together leave the protein
+  chain nothing to add. The shuffled twin is still negative in all 15.
+- **The bench itself was mis-calibrated.** `eval_harness` is the harness other work is scored against, and its
+  NEIGHBOR reference was 0.435 when it should have been 0.457. Every "beats/loses to the reference" judgement made
+  through it was made against a bar set 0.022 too low.
+
+Nothing here was made to look better by a fix. Every number that moved, moved against a claim this project had
+already made — which is the expected direction when a component that was silently disabled is switched back on and
+its rivals lose the advantage of competing against a blindfolded baseline.

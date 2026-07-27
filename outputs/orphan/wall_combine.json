@@ -4,36 +4,36 @@
  "K": 50,
  "recall_specific": {
   "tide": 0.24144188619753768,
-  "phys": 0.37318363546095956,
-  "learned": 0.3981225222229939,
+  "phys": 0.4205213951718911,
+  "learned": 0.42813148334420636,
   "nexus": 0.2759851749458603,
-  "phys+learned": 0.4271872126380375,
-  "tide+phys+learned": 0.44696818181411047,
-  "phys+nexus": 0.422732198722447,
-  "tide+phys+learned+nexus": 0.4700640753795615,
-  "union_neighbours": 0.3734917403818172,
+  "phys+learned": 0.45232318003635574,
+  "tide+phys+learned": 0.4635082825286447,
+  "phys+nexus": 0.4428849874044845,
+  "tide+phys+learned+nexus": 0.47529848594041013,
+  "union_neighbours": 0.42499091547910883,
   "oracle": 0.6156297395493888
  },
- "control_shuffled_phys_plus_learned": 0.3306143488143328,
- "complementarity_over_control": 0.09657286382370467,
+ "control_shuffled_phys_plus_learned": 0.37654689597580243,
+ "complementarity_over_control": 0.07577628406055331,
  "nexus_coverage": 0.8412698412698413,
- "nexus_over_3way": 0.023095893565451053,
- "nexus_over_phys": 0.04954856326148743,
- "control_shuffled_nexus": 0.4253809969900155,
- "nexus_over_control": 0.044683078389545994,
+ "nexus_over_3way": 0.011790203411765454,
+ "nexus_over_phys": 0.022363592232593432,
+ "control_shuffled_nexus": 0.435140033820064,
+ "nexus_over_control": 0.04015845212034613,
  "nexus_adds": true,
  "best_single": {
   "name": "learned",
-  "recall": 0.3981225222229939
+  "recall": 0.42813148334420636
  },
  "best_ensemble": {
   "name": "tide+phys+learned+nexus",
-  "recall": 0.4700640753795615
+  "recall": 0.47529848594041013
  },
- "ensemble_gain_over_best_single": 0.07194155315656764,
- "headroom_closed_best_single": 0.41872186556020685,
- "headroom_closed_best_ensemble": 0.6109823906203845,
+ "ensemble_gain_over_best_single": 0.047167002596203766,
+ "headroom_closed_best_single": 0.49891944774359986,
+ "headroom_closed_best_ensemble": 0.6249711145032163,
  "ensemble_helps": true,
- "verdict": "COMBINING THE NO-PEEK PREDICTORS (tide, phys-graph, learned-similarity, + the NEXUS co-dependency view); K562, 126 held-out KOs, tide-removed specific-mover recall@50. Singles: TIDE 0.241, PHYS 0.373, LEARNED 0.398, NEXUS 0.276. Ensembles: PHYS+LEARNED 0.427, TIDE+PHYS+LEARNED 0.447, +NEXUS (4-way) 0.470, UNION-neighbours 0.373. ORACLE* ceiling 0.616. DECISIVE: best ensemble (tide+phys+learned+nexus) 0.470 vs best single (learned) 0.398 = +0.072. REAL (if modest) ENSEMBLE GAIN, and it SURVIVES THE CONTROL: fusing phys+learned 0.427 beats the shuffled-phys control 0.331 (+0.097), so the gain is genuine KO-specific COMPLEMENTARITY -- phys and learned select partly different behavioural neighbours and catch different specific movers -- not the generic z-fusion re-weighting that fooled nexus_wall. Combining closes more of the graph->oracle head-room (42% -> 61%) and is worth keeping as the deployed no-peek predictor. It does NOT reach the oracle -- the predictors still miss the same hard neighbours the oracle finds by peeking, so a genuinely orthogonal signal is still needed for the rest of the head-room. THE NEXUS QUESTION (does adding the co-dependency view add anything ORTHOGONAL, the high bar wall_learnsim set): NEXUS alone scores 0.276 (covers 84% of test KOs); 4-way tide+phys+learned+NEXUS 0.470 vs 3-way 0.447 = +0.023, and the shuffled-nexus control is 0.425 (+0.045). NEXUS ADDS REAL ORTHOGONAL SIGNAL: it lifts the ensemble beyond the 3-way AND beats its own shuffle control, so the co-dependency graph catches specific movers the PPI/complex/pathway + annotation views miss -- the first genuinely orthogonal view we've added. (Deployable no-peek number ~0.40; oracle ceiling ~0.62.) Same protocol as wall_learnsim; single cell type, single steady-state-mRNA readout.",
- "note": "COMBINING THE NO-PEEK PREDICTORS (tide, phys-graph, learned-similarity, + the NEXUS co-dependency view); K562, 126 held-out KOs, tide-removed specific-mover recall@50. Singles: TIDE 0.241, PHYS 0.373, LEARNED 0.398, NEXUS 0.276. Ensembles: PHYS+LEARNED 0.427, TIDE+PHYS+LEARNED 0.447, +NEXUS (4-way) 0.470, UNION-neighbours 0.373. ORACLE* ceiling 0.616. DECISIVE: best ensemble (tide+phys+learned+nexus) 0.470 vs best single (learned) 0.398 = +0.072. REAL (if modest) ENSEMBLE GAIN, and it SURVIVES THE CONTROL: fusing phys+learned 0.427 beats the shuffled-phys control 0.331 (+0.097), so the gain is genuine KO-specific COMPLEMENTARITY -- phys and learned select partly different behavioural neighbours and catch different specific movers -- not the generic z-fusion re-weighting that fooled nexus_wall. Combining closes more of the graph->oracle head-room (42% -> 61%) and is worth keeping as the deployed no-peek predictor. It does NOT reach the oracle -- the predictors still miss the same hard neighbours the oracle finds by peeking, so a genuinely orthogonal signal is still needed for the rest of the head-room. THE NEXUS QUESTION (does adding the co-dependency view add anything ORTHOGONAL, the high bar wall_learnsim set): NEXUS alone scores 0.276 (covers 84% of test KOs); 4-way tide+phys+learned+NEXUS 0.470 vs 3-way 0.447 = +0.023, and the shuffled-nexus control is 0.425 (+0.045). NEXUS ADDS REAL ORTHOGONAL SIGNAL: it lifts the ensemble beyond the 3-way AND beats its own shuffle control, so the co-dependency graph catches specific movers the PPI/complex/pathway + annotation views miss -- the first genuinely orthogonal view we've added. (Deployable no-peek number ~0.40; oracle ceiling ~0.62.) Same protocol as wall_learnsim; single cell type, single steady-state-mRNA readout."
+ "verdict": "COMBINING THE NO-PEEK PREDICTORS (tide, phys-graph, learned-similarity, + the NEXUS co-dependency view); K562, 126 held-out KOs, tide-removed specific-mover recall@50. Singles: TIDE 0.241, PHYS 0.421, LEARNED 0.428, NEXUS 0.276. Ensembles: PHYS+LEARNED 0.452, TIDE+PHYS+LEARNED 0.464, +NEXUS (4-way) 0.475, UNION-neighbours 0.425. ORACLE* ceiling 0.616. DECISIVE: best ensemble (tide+phys+learned+nexus) 0.475 vs best single (learned) 0.428 = +0.047. REAL (if modest) ENSEMBLE GAIN, and it SURVIVES THE CONTROL: fusing phys+learned 0.452 beats the shuffled-phys control 0.377 (+0.076), so the gain is genuine KO-specific COMPLEMENTARITY -- phys and learned select partly different behavioural neighbours and catch different specific movers -- not the generic z-fusion re-weighting that fooled nexus_wall. Combining closes more of the graph->oracle head-room (50% -> 62%) and is worth keeping as the deployed no-peek predictor. It does NOT reach the oracle -- the predictors still miss the same hard neighbours the oracle finds by peeking, so a genuinely orthogonal signal is still needed for the rest of the head-room. THE NEXUS QUESTION (does adding the co-dependency view add anything ORTHOGONAL, the high bar wall_learnsim set): NEXUS alone scores 0.276 (covers 84% of test KOs); 4-way tide+phys+learned+NEXUS 0.475 vs 3-way 0.464 = +0.012, and the shuffled-nexus control is 0.435 (+0.040). NEXUS ADDS REAL ORTHOGONAL SIGNAL: it lifts the ensemble beyond the 3-way AND beats its own shuffle control, so the co-dependency graph catches specific movers the PPI/complex/pathway + annotation views miss -- the first genuinely orthogonal view we've added. (Deployable no-peek number ~0.43; oracle ceiling ~0.62.) Same protocol as wall_learnsim; single cell type, single steady-state-mRNA readout.",
+ "note": "COMBINING THE NO-PEEK PREDICTORS (tide, phys-graph, learned-similarity, + the NEXUS co-dependency view); K562, 126 held-out KOs, tide-removed specific-mover recall@50. Singles: TIDE 0.241, PHYS 0.421, LEARNED 0.428, NEXUS 0.276. Ensembles: PHYS+LEARNED 0.452, TIDE+PHYS+LEARNED 0.464, +NEXUS (4-way) 0.475, UNION-neighbours 0.425. ORACLE* ceiling 0.616. DECISIVE: best ensemble (tide+phys+learned+nexus) 0.475 vs best single (learned) 0.428 = +0.047. REAL (if modest) ENSEMBLE GAIN, and it SURVIVES THE CONTROL: fusing phys+learned 0.452 beats the shuffled-phys control 0.377 (+0.076), so the gain is genuine KO-specific COMPLEMENTARITY -- phys and learned select partly different behavioural neighbours and catch different specific movers -- not the generic z-fusion re-weighting that fooled nexus_wall. Combining closes more of the graph->oracle head-room (50% -> 62%) and is worth keeping as the deployed no-peek predictor. It does NOT reach the oracle -- the predictors still miss the same hard neighbours the oracle finds by peeking, so a genuinely orthogonal signal is still needed for the rest of the head-room. THE NEXUS QUESTION (does adding the co-dependency view add anything ORTHOGONAL, the high bar wall_learnsim set): NEXUS alone scores 0.276 (covers 84% of test KOs); 4-way tide+phys+learned+NEXUS 0.475 vs 3-way 0.464 = +0.012, and the shuffled-nexus control is 0.435 (+0.040). NEXUS ADDS REAL ORTHOGONAL SIGNAL: it lifts the ensemble beyond the 3-way AND beats its own shuffle control, so the co-dependency graph catches specific movers the PPI/complex/pathway + annotation views miss -- the first genuinely orthogonal view we've added. (Deployable no-peek number ~0.43; oracle ceiling ~0.62.) Same protocol as wall_learnsim; single cell type, single steady-state-mRNA readout."
 }
