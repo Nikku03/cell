@@ -232,9 +232,15 @@ def score(pred_file="outputs/orphan/ko_predictions.json"):
         flag = "  <-- beats freq" if r["beats_frequency"] else ""
         print(f"    {r['gene']:<10} {r['hits']:>3}/{r['n_pred']:<3} of {r['n_truth']:<4} truth   "
               f"freq {r['frequency_hits']:<3} rand {r['random_hits']:.1f}{flag}")
-    json.dump({"rows": rows, "hits": H, "random": R, "frequency": F, "n_pred": P},
-              open(OUT / "ko_prediction_score.json", "w"), indent=1)
-    print(f"\n  -> {OUT/'ko_prediction_score.json'}")
+    # ONE SCORE FILE PER PREDICTION FILE. A single fixed output path meant each scoring run silently clobbered
+    # the previous one, so the four methods could not be compared after the fact and an earlier analysis was run
+    # against a stale file without noticing.
+    tag = Path(pred_file).stem.replace("ko_predictions", "").strip("_") or "base"
+    outp = OUT / f"ko_score_{tag}.json"
+    json.dump({"method": tag, "rows": rows, "hits": H, "random": R, "frequency": F, "n_pred": P,
+               "precision": H / P, "beat_frequency": sum(1 for r in rows if r["beats_frequency"]),
+               "n_scored": len(rows)}, open(outp, "w"), indent=1)
+    print(f"\n  -> {outp}")
 
 
 if __name__ == "__main__":
