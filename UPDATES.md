@@ -12816,3 +12816,67 @@ Isozyme partners reaching exactly zero movers is consistent with buffering, and 
 
 **To answer the AND/OR question properly you would need a metabolism-focused screen**, not a genome-wide one
 where 89.5% of knocked-out genes are absent from the metabolic model.
+
+---
+
+# The issue is MODALITY, not completeness — and it points to the first result that beats the baseline
+
+`colab/coverage_gap.py`. The objection was fair: the cell model holds ~99% of genes, all proteins, PPI,
+complexes, half the pathways. So why does the network reach 4.79% of a knockout's movers?
+
+## Node coverage and pair coverage are different claims
+
+| | |
+|---|---:|
+| genes in the readout | 8,246 |
+| genes with ≥1 network edge | 6,999 (**84.9%**) ← node coverage |
+| possible gene pairs | 33,994,135 |
+| pairs carrying an edge | 165,004 (**0.485%**) ← pair coverage |
+
+Having a row for every gene is node completeness. Prediction needs the *specific pair* — knocked-out gene,
+gene whose mRNA moved — to be one of the 0.5% that has an edge.
+
+## The real answer: the databases describe a different relation
+
+Same (knockout → mover) pairs, same 337 held-out perturbations:
+
+| source | set size | coverage | precision |
+|---|---:|---:|---:|
+| PPI | 67 | 0.0482 | 0.0214 |
+| co-expression | 25 | 0.0046 | 0.0126 |
+| complex | 6 | 0.0005 | 0.0075 |
+| signed regulation | 2 | 0.0018 | 0.0111 |
+| reaction | 1 | 0.0001 | 0.0030 |
+| ALL curated edges | 93 | 0.0517 | 0.0175 |
+| GO/pathway co-membership | 1,777 | 0.2325 | 0.0059 |
+| **same gene, OTHER cell line** | **73** | **0.2544** | **0.1564** |
+
+Cross-cell-line co-response, at a *smaller* set size than the curated union (73 vs 93), gets **5× the
+coverage and 9× the precision**. Size-matched by random truncation to 92 genes: **0.2192 vs 0.0517, a 4.2×
+advantage.**
+
+A PPI network records who physically touches whom. Perturb-seq records whose mRNA changes when you break
+something. **Those are different relations.** The databases are not incomplete — they answer a different
+question. Adding more edges of that kind cannot close it.
+
+And note: cross-line precision **0.1564** clears the specification derived in `network_requirement.py`
+(precision ≥ 0.1051 inside the reported 50). It is the first relation measured here that does.
+
+## First result in this project to beat the frequency baseline
+
+Cross-line alone *loses* (0.3218 vs 0.3689) — it is not a replacement. But it covers **15.7%** of the movers
+frequency misses entirely, so the two are complementary. Combining them, with the weight tuned on **290
+training perturbations** and applied once to **337 held-out**:
+
+| | recall@50 |
+|---|---:|
+| frequency baseline | 0.3689 |
+| **frequency + 0.35 × cross-line** | **0.3902** [0.3653, 0.4163] |
+| **difference** | **+0.0213 [+0.0108, +0.0317]** ✓ |
+
+**The CI excludes zero.** Robustness: positive at every weight from 0.02 to 0.5, train-chosen 0.35 sitting
+near the peak — a plateau, not a knife-edge.
+
+Caveats stated: this applies to the 80.4% of perturbations whose knocked-out gene was also screened in
+another line; the other-line readouts are top-250 truncated; and +0.0213 on 0.3689 is a 5.8% relative gain,
+real but small.
