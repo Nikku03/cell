@@ -12994,3 +12994,58 @@ control, and is orthogonal to 311 measured TF-occupancy features.
 simulation, no polymer dynamics. The next question is whether a *predicted contact map* (C.Origami/Orca) or
 an analytic Rouse-with-loops model beats **0.663**, not whether it beats 0.608. The bar just moved up by the
 cheapest possible method, which is exactly what a gate is for.
+
+---
+
+# Analytic Rouse-with-loops vs the 0.663 bar: the physics is real, and redundant
+
+`colab/rouse_gate.py`. Stage 3 of the 4D plan — Langevin polymer dynamics, ~1 GPU-day per region — computes
+one thing the readout can use: the equilibrium contact probability. For a Gaussian chain with harmonic
+crosslinks that is available in **closed form** from the network's Kirchhoff matrix:
+
+```
+L = graph Laplacian(backbone bonds + cohesin loop bonds)
+<R_ij²> = (3kT/k)(L⁺_ii + L⁺_jj − 2L⁺_ij)      P_contact ~ <R²>^(−3/2)
+```
+
+Solved as one sparse `L x = e_i − e_j` per pair (the Laplacian is tridiagonal plus a few loop bonds, and only
+one pair is needed per window, so no pseudo-inverse). Loops join consecutive CTCF anchors, stiffness scaled by
+the weaker peak; next-nearest anchors at reduced weight for nesting. 10,211/10,331 pairs solved exactly.
+
+This is **topological**, unlike the previous gate's boundary count: a loop straddling both E and P pulls them
+together even with anchors outside the segment; a loop anchored between them pushes apart. Counting expresses
+neither.
+
+| arm | AUPRC |
+|---|---:|
+| epi + TF identity (311) | 0.6076 |
+| **+ CTCF-count contact — the bar** | **0.6632** |
+| + ROUSE only | 0.6107 |
+| + ROUSE + CTCF-count | 0.6681 |
+| + ROUSE [shuffled CTCF] | 0.5976 |
+
+- Rouse beats its shuffled anchors by **+0.0131** — the physics is real
+- Rouse alone reaches **0.6107**, far below the boundary count's 0.6632
+- Rouse *on top of* the bar adds **+0.0049**
+
+Median log₁₀(⟨R²⟩/ideal) = **−1.093** real vs −0.981 shuffled: loops do compact pairs ~12× below a loop-free
+chain, and real anchors compact more than random ones. The model is behaving correctly. It just isn't buying
+anything.
+
+**Not a parameter-tuning failure.** Swept loop stiffness over 60× and bead resolution over 5×:
+
+| K_loop | 0.5 | 1 | 3 | 10 | 30 |
+|---|---:|---:|---:|---:|---:|
+| Rouse only | 0.6134 | 0.6134 | 0.6107 | 0.6134 | 0.6101 |
+| Rouse + count | 0.6681 | 0.6686 | 0.6681 | 0.6695 | 0.6680 |
+
+Bead 2 kb → 0.6160 / 0.6655; bead 10 kb → 0.6118 / 0.6639. Flat everywhere.
+
+## Verdict: do not build Stages 2–3
+
+The full polymer engine's job is to compute ⟨R²⟩ better than this closed form does. Even a *perfect* ⟨R²⟩
+is bounded by what ⟨R²⟩ is worth here, and ⟨R²⟩ is worth **+0.0049** on top of counting CTCF peaks between
+two coordinates. That is ~10⁴–10⁵ GPU-hours chasing a quantity a bisect over a BED file already captures.
+
+**Keep:** the CTCF-count contact feature. Production model goes **0.608 → 0.663**, controlled and replicated.
+**Drop:** KMC extrusion and Langevin dynamics.
