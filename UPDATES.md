@@ -12511,3 +12511,64 @@ group cannot have converged.
 | 40 | 0.078 |
 | 200 | 0.035 |
 | 439 | **0.023** |
+
+---
+
+# Two pivot tests: is there an operating point where the signal is big enough?
+
+`colab/pivot_tests.py`. The audit showed the network's signal is real (2–4× frequency-matched lift) but sits
+on a ~1% base rate, so it cannot fill 50 slots from 8,246. That is a statement about the *operating point*,
+not about the network. Two smaller questions, tested.
+
+## Test 1 — shortlist ranking: NEGATIVE
+
+Rank one true mover against 19 decoys, decoys matched on the **exact** number of training perturbations the
+gene moves — which forces the frequency control to 0.5000 by construction.
+
+| | network AUC | frequency AUC (control) |
+|---|---:|---:|
+| exact-frequency-matched decoys | **0.5080** [0.5053, 0.5107] | **0.5000** ✓ |
+| random decoys | 0.5154 [0.5134, 0.5176] | 0.8965 |
+
+The CI excludes 0.5, so the specific signal is real — and it is **+0.008 AUC**. Negligible. The mechanism is
+visible directly: in **84.7%** of shortlists the knocked-out gene has no network edge to *any* candidate. The
+network is not too weak to rank; it is usually absent.
+
+Caveat stated: 52.9% of draws were skipped because too few genes share the most-moved genes' exact frequency
+to match against, so this measures the mid-frequency regime.
+
+**Two earlier versions of this control FAILED their own sanity check** — 20 quantile bins gave frequency
+AUC 0.7316, a ±60 rank window gave 0.6104. Bins are too coarse for a steep distribution; the rank window is
+asymmetric for the most-moved genes, so their decoys skew low. Either would have reported the frequency prior
+as network specificity. The printed control AUC is what caught it.
+
+## Test 2 — responsive or silent: POSITIVE
+
+Predict whether a knockout produces ≥5 specific movers, from properties of the knocked-out gene only (no
+feature touches the query's own response row). Same md5 split.
+
+| feature set | held-out AUC |
+|---|---:|
+| all features | 0.7903 [0.7677, 0.8127] |
+| all except literature count | 0.7812 [0.7543, 0.8041] |
+| **DepMap essentiality only** | **0.7613** [0.7314, 0.7890] |
+| network degree only | 0.6706 [0.6372, 0.7014] |
+| LOEUF constraint only | 0.5282 [0.4978, 0.5615] |
+| **shuffled labels (floor)** | **0.5008** [0.4658, 0.5324] ✓ |
+
+Screen-design view, base rate 17.4%:
+
+| assay budget | hit rate | enrichment |
+|---|---:|---:|
+| top 5% | **59.6%** | 3.44× |
+| top 10% | 53.3% | 3.07× |
+| top 20% | 47.4% | 2.73× |
+
+**But the honest attribution: it is DepMap, not the network, and not this project's machinery.** Paired
+bootstrap on the same held-out rows:
+
+- all-except-pubs − DepMap-only: **+0.0199 [−0.0065, +0.0437]** — not distinguishable from zero
+- DepMap+network − DepMap-only: **−0.0007 [−0.0253, +0.0252]** — not distinguishable from zero
+
+So a single public column (DepMap dependency) does essentially all the work. The result is useful and it
+replicates against a proper floor, but nothing built here is required to obtain it.
