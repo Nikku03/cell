@@ -12572,3 +12572,66 @@ bootstrap on the same held-out rows:
 
 So a single public column (DepMap dependency) does essentially all the work. The result is useful and it
 replicates against a proper floor, but nothing built here is required to obtain it.
+
+---
+
+# What the network would actually need — a specification, not a wish
+
+`colab/network_requirement.py`. "Too sparse" is not actionable. This turns it into numbers.
+
+## The ceiling: no model using this graph can exceed 0.0478
+
+Under **perfect ranking within the current edges** — an oracle that puts every reachable true mover first —
+network recall@50 is **0.0478**, against a frequency baseline of **0.3502**.
+
+| | |
+|---|---:|
+| actual network-only recall@50 | 0.0284 |
+| **ceiling under perfect ranking** | **0.0478** |
+| lost to imperfect ranking | 0.0195 |
+| **lost to movers the graph cannot reach** | **0.9522 — 98% of the shortfall** |
+
+That settles the architecture question. Better attention, better embeddings, more training — all of it
+competes for the 0.0195 that ranking can recover, inside a ceiling seven times below the baseline.
+
+## Why: the graph does not reach the answer
+
+| | |
+|---|---:|
+| KO gene has ≥1 network edge | 86.8% of held-out perturbations |
+| genes that ever move, present in the graph | 82.5% |
+| neighbours per KO gene | median 71 |
+| **coverage — true movers reachable at all** | **mean 0.0479, median 0.0000** |
+| perturbations with ZERO reachable movers | **66.7%** |
+
+For the **median** knockout the graph reaches **none** of its true movers. Node coverage is fine (83–87%);
+it is the *edges between the right nodes* that are missing. By channel, only PPI contributes materially
+(coverage 0.0437); reaction, complex and signed-reg are ~0.0004–0.0019.
+
+## The specification
+
+The report is capped at 50 genes, and that cap decides everything:
+
+| | |
+|---|---:|
+| true movers needed in the pick | 5.3 of 50 |
+| **required precision inside the top 50** | **0.1051** |
+| observed precision | 0.0163 |
+| **gap** | **6.4×** |
+
+Equivalently: reach must rise from 0.0479 to 0.35 — **7.3×** — and then rank into 50 slots.
+
+**Adding edges at the current precision does not help.** A first version of this analysis tabulated "322
+edges/gene needed" and was wrong: it assumed all 322 could be reported. With 322 neighbours at precision
+0.0163, a 50-gene pick contains 0.8 movers — recall 0.05, not 0.35. Past ~50/precision, extra edges dilute.
+Only higher precision or genuinely new reach moves this.
+
+## What could supply it
+
+Reach cannot be improved by reweighting what is already there. Two candidate sources:
+
+- **co-response measured in K562 itself** — dense, and **circular**: it is the readout being predicted
+- **co-response in the other five lines** (RPE1, HepG2, Jurkat, HCT116, Melanoma) — dense, and legitimate:
+  a different experiment, the same biology. Files already on disk.
+
+The second is the only remaining lever that changes *reach* rather than ranking.
