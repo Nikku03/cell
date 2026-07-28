@@ -363,7 +363,7 @@ nb = {"cells": CELLS, "metadata": {"accelerator": "GPU",
                                    "language_info": {"name": "python"}},
       "nbformat": 4, "nbformat_minor": 0}
 
-out = Path("colab/cellformer_gpu.ipynb")
+out = Path("colab/cellformer_colab_gpu.ipynb")
 out.write_text(json.dumps(nb, indent=1))
 print(f"wrote {out} -- {len(CELLS)} cells "
       f"({sum(1 for c in CELLS if c['cell_type']=='code')} code, "
