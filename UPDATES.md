@@ -12935,3 +12935,62 @@ one most likely to be quoted. Sources are now excluded by cell line.
 caught by printing the tide count per line.
 
 Melanoma (frangieh) is skipped — sparse CSC needs a different reader. 249 perturbations, recorded as skipped.
+
+---
+
+# Phase 0 gate: loop-aware contact moves the regulation model 0.608 → 0.663. GO.
+
+`colab/contact_gate.py`. The 4D chromatin plan exists to produce **one scalar per element-gene pair**. Before
+spending 10⁴–10⁵ GPU-hours on KMC + Langevin dynamics, test whether a *cheap* loop-aware contact estimate moves
+the production model at all.
+
+CTCF is already one of the 311 TFs, so "does CTCF bind the element" is in the 0.608 model. What was never
+there is **CTCF between the element and the promoter** — the actual loop-domain physics, and the entire content
+of Stages 1–2 collapsed into features costing seconds.
+
+Protocol identical to the 0.608 run: GroupKFold by chromosome, same XGBoost settings, 3 seeds, label-shuffle
+control. 10,331 pairs, 569 positives, base rate 5.5%. TSS joined on **(element, gene)** — 100% matched.
+
+| arm | AUPRC |
+|---|---:|
+| distance | 0.3935 |
+| epigenetics (8) | 0.5185 |
+| epi + TF identity (311) — *the production model* | **0.6076** ✓ reproduces 0.608 |
+| **epi + TF + CONTACT** | **0.6632** |
+| epi + TF + contact SHUFFLED | 0.6048 |
+| CONTACT only | 0.4390 |
+| label-shuffle control | 0.0664 (base rate 0.055) |
+
+**+0.0556 over the production model; +0.0584 over its own shuffled-CTCF twin.**
+
+The shuffled control is what makes this real. CTCF clusters in gene-dense accessible regions — exactly where
+CRISPR positives live — so *any* genomic count between two points correlates with the label. Relocating peaks
+within their chromosome (preserving count and signal distribution) drops it to 0.6048, i.e. **below** the
+no-contact model. The gain is *where the boundaries are*, not how many things lie between.
+
+## Group ablation — and why drop-one inverted the answer
+
+| group | with real CTCF | vs identity | shuffled twin | real − shuffled |
+|---|---:|---:|---:|---:|
+| **BETWEEN (insulation)** | **0.6589** | **+0.0514** | 0.6130 | **+0.0459** |
+| NEAR (anchor proximity) | 0.6206 | +0.0131 | 0.6021 | +0.0185 |
+
+Insulation carries the result. **Drop-one said the opposite** — removing any single feature *improved* the
+score (+0.004 to +0.0065) except `ctcf_near_tss`, which reads as "only promoter-CTCF-proximity matters, the
+insulation features are noise". That is a redundancy artifact: the three BETWEEN features are mutually
+correlated, so dropping any one costs nothing because the other two cover it. **Correlated features must be
+ablated as a group or the conclusion inverts.** Reported because the drop-one table would have been published
+as a finding.
+
+Also checked: dropping `contact_insul` (the only feature containing log₁₀(d)) gives 0.6646 — slightly *better*
+than the full set. The gain is not distance re-encoded.
+
+## What this licenses, and what it does not
+
+**Licenses:** a better contact model is worth building. The insulation term is real, survives its shuffled
+control, and is orthogonal to 311 measured TF-occupancy features.
+
+**Does not license:** Stages 2–3 as drawn. This was achieved with a bisect over a BED file — no extrusion
+simulation, no polymer dynamics. The next question is whether a *predicted contact map* (C.Origami/Orca) or
+an analytic Rouse-with-loops model beats **0.663**, not whether it beats 0.608. The bar just moved up by the
+cheapest possible method, which is exactly what a gate is for.
