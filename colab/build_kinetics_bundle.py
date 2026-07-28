@@ -6,19 +6,24 @@ because it had been committed. The lesson is the same one the readout taught an 
 are not storage. This writes the DERIVED table the models actually consume, which is three orders of magnitude
 smaller than the sources it came from, and puts it in git.
 
-WHAT GOES IN, and why each tier is where it is. The tiers are ordered by MEASURED accuracy from
-kcat_headtohead.py -- 915 common labels, leave-one-out, so no source saw its own answer:
+WHAT GOES IN, and why each tier is where it is. The tiers are ordered by MEASURED accuracy, leave-one-out, so
+no source ever saw its own answer. Two label sets, because a fold-error figure without its subset is not a
+figure -- this project already made that mistake once, comparing CatPred's n=950 against a null's n=2,437:
 
-    tier 1  human-EC median      2.62x median fold error   <- best, but only where human measurements exist
-    tier 2  CatPred              8.38x                     <- 2,549 genes, real signal over the null
-    tier 3  any-organism EC      (coverage fallback)
-    tier 4  global median       14.23x                     <- the null; better than dropping the reaction
+                              915 common labels    full human set
+                              (every contender)    (leave-one-out)
+    tier 1  human-EC median         2.62x              2.80x      <- best, where human measurements exist
+    tier 2  CatPred                 8.38x                --       <- 2,549 genes, real signal over the null
+    tier 3  any-organism EC           --                 --       <- coverage fallback
+    tier 4  global median          14.23x              9.25x      <- the null; still beats dropping the reaction
 
     NOT ecHumanGEM (66x, bias +1.71) and NOT EC-max (41x, bias +1.61). Both are kcat_MAX -- upper bounds by
     design, not estimators -- and using them as point estimates inflates every ceiling by ~1.7 log units.
 
-Tiers 1 and 3 need dlkcat.tsv, which is currently missing. The bundle records which tiers were available at
-build time rather than silently producing a thinner table that looks the same.
+Tiers 1 and 3 come from colab/data/ec_kcat_medians.json.gz, reproduced by build_ec_medians.py after the
+rollback destroyed the raw table, and verified identical to the original by a derived count rather than by
+its download URL. The bundle records which tiers were available at build time rather than silently producing
+a thinner table that looks the same.
 """
 import collections
 import gzip
@@ -83,28 +88,26 @@ def main():
     print(f"CatPred layer: {len(cat):,} genes with kcat, {len(km):,} with Km")
     assert len(cat) > 500, "CATPRED LAYER TOO SMALL -- refusing to build"
 
-    # --- tiers 1 and 3: human / any-organism EC medians, only if dlkcat survived ---
-    ec_hum, ec_all, gmed, have_dlkcat = {}, {}, None, (SP / "dlkcat.tsv").exists()
-    if have_dlkcat:
-        recs = json.load(open(SP / "dlkcat.tsv"))
-        hum, allo = collections.defaultdict(list), collections.defaultdict(list)
-        for r in recs:
-            ec = (r.get("ECNumber") or "").strip()
-            try:
-                v = float(r.get("Value"))
-            except (TypeError, ValueError):
-                continue
-            if not ec or v <= 0 or not np.isfinite(v):
-                continue
-            allo[ec].append(v)
-            if r.get("Organism") == "Homo sapiens":
-                hum[ec].append(v)
-        ec_hum = {e: float(np.median(v)) for e, v in hum.items()}
-        ec_all = {e: float(np.median(v)) for e, v in allo.items()}
-        gmed = float(np.median([x for v in hum.values() for x in v]))
-        print(f"dlkcat: human-EC {len(ec_hum):,}, any-organism EC {len(ec_all):,}, global median {gmed:.3g}")
+    # --- tiers 1 and 3: human / any-organism EC medians ---
+    # Read the COMMITTED derived file, not the scratchpad raw. build_ec_medians.py reproduced the raw table
+    # and verified its identity (human record count == 2,437, the count kcat_headtohead.py measured on), then
+    # wrote the 0.03 MB of statistics actually consumed. Reading the committed file is what makes this build
+    # survive a rollback; reading scratchpad is what made tiers 1 and 3 vanish the first time.
+    ECMED = Path(__file__).resolve().parent / "data" / "ec_kcat_medians.json.gz"
+    ec_hum, ec_all, gmed, have_ec = {}, {}, None, ECMED.exists()
+    if have_ec:
+        em = json.load(gzip.open(ECMED, "rt"))
+        ec_hum = em["ec_human_median_per_s"]
+        ec_all = em["ec_all_median_per_s"]
+        gmed = float(em["global_median_per_s"])
+        assert len(ec_hum) > 200 and len(ec_all) > 1000, (
+            f"EC MEDIAN FILE TOO THIN (human {len(ec_hum)}, all {len(ec_all)}) -- refusing to build tiers "
+            "1/3 from a truncated table")
+        print(f"EC medians (committed): human-EC {len(ec_hum):,}, any-organism EC {len(ec_all):,}, "
+              f"global median {gmed:.3g} /s")
     else:
-        print("dlkcat.tsv MISSING -- tiers 1 and 3 unavailable; bundle records this rather than hiding it")
+        print(f"{ECMED} MISSING -- tiers 1 and 3 unavailable; run build_ec_medians.py. The bundle records "
+              "this rather than hiding it behind a thinner table that looks the same.")
         gmed = float(np.median(list(cat.values())))
 
     # --- assemble reaction -> kcat by the measured hierarchy ---
@@ -120,17 +123,17 @@ def main():
         ecs = r2ec.get(rid, set())
         v = [ec_hum[e] for e in ecs if e in ec_hum]
         if v:
-            table[rid], t = float(np.median(v)), "1_human_EC_2.62x"
+            table[rid], t = float(np.median(v)), "1_human_EC"
         else:
             cg = [cat[e2s.get(g, g)] for g in r2g.get(rid, ()) if e2s.get(g, g) in cat]
             if cg:
-                table[rid], t = float(np.median(cg)), "2_catpred_8.38x"
+                table[rid], t = float(np.median(cg)), "2_catpred"
             else:
                 v2 = [ec_all[e] for e in ecs if e in ec_all]
                 if v2:
                     table[rid], t = float(np.median(v2)), "3_any_organism_EC"
                 else:
-                    table[rid], t = gmed, "4_global_median_14.2x"
+                    table[rid], t = gmed, "4_global_median"
         rtier[rid] = t
         tier_count[t] += 1
     print(f"\nreaction -> kcat for {len(table):,} reactions: {dict(sorted(tier_count.items()))}")
@@ -148,12 +151,17 @@ def main():
         "reaction_genes": {k: sorted(v) for k, v in r2g.items()},
         "reaction_ec": {k: sorted(v) for k, v in r2ec.items()},
         "provenance": {
-            "hierarchy": ["1 human-EC median (2.62x)", "2 CatPred (8.38x)", "3 any-organism EC",
-                          "4 global median (14.2x)"],
-            "accuracy_source": "kcat_headtohead.py, 915 common labels, leave-one-out",
+            # Tier keys carry NO fold-error number: those depend on the label subset, and a number in a
+            # key gets quoted without its subset. The figures live here, each with its labels.
+            "hierarchy": ["1 human-EC median", "2 CatPred", "3 any-organism EC", "4 global median"],
+            "accuracy_common_subset": {"source": "kcat_headtohead.py, 915 labels covered by every contender",
+                                       "1_human_EC": "2.62x", "2_catpred": "8.38x",
+                                       "4_global_median": "14.23x"},
+            "accuracy_full_human_set": {"source": "build_ec_medians.py leave-one-out, 2,337 records",
+                                        "1_human_EC": "2.80x", "4_global_median": "9.25x"},
             "excluded": {"ecHumanGEM": "66.3x, bias +1.71 -- kcat_MAX, an upper bound not an estimator",
                          "EC-max": "40.7x, bias +1.61 -- same reason"},
-            "dlkcat_available_at_build": bool(have_dlkcat),
+            "ec_medians_available_at_build": bool(have_ec),
             "global_median_kcat_per_s": gmed,
             "tier_counts": dict(tier_count),
         },
