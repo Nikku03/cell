@@ -12701,3 +12701,58 @@ The routes are laid out. They lead nowhere. The graph's one genuine contribution
 ~2× over chance on a ~1% base rate, and the earlier specification stands: **6.4× more precision, or 7.3× more
 reach, at one hop.** Multi-hop propagation cannot supply it — measured, on five independent cell lines, against
 a control that holds degree fixed.
+
+---
+
+# Functional cascade: KO → TF targets → what those proteins do → chain
+
+`colab/functional_cascade.py`. A genuinely different hypothesis from `route_map.py`: that propagation runs
+through shared **function** rather than through graph edges. Two genes with no interaction can sit in the same
+complex, pathway, or GO process, so edge-following would miss a job-level mechanism entirely.
+
+Annotation: 5,764 GO terms (median size 4), 54 pathways, 858 complexes, weighted **1/|term|** so a 5-gene
+complex outweighs a 5,000-gene GO bucket. TF network: 22,305 directed edges.
+
+## It fails at step one, structurally
+
+**Only 29 of 419 held-out knockouts (6.9%) are transcription factors at all.** A TF-first chain has no first
+step for the other 93%. That is a hard cap on the whole idea, and it is visible before any scoring.
+
+## Results
+
+| arm | recall@50 |
+|---|---:|
+| **frequency baseline** | **0.3516** |
+| function of the KO gene only | 0.0093 |
+| full chain, 2 rounds (TF + function) | 0.0087 |
+| TF targets only (1 step) | 0.0017 |
+| KO → TF targets → their function | 0.0017 |
+
+Every arm is 38–200× below the baseline, and *worse* than direct network edges (0.0284) or the best routing
+arm (0.0458). Adding the functional layer made it worse, not better.
+
+## The control that settles it
+
+Degree-preserving annotation shuffle — every gene keeps its exact number of terms, every term keeps its exact
+number of genes, only *which gene has which term* is randomised:
+
+| arm | real | shuffled | paired difference |
+|---|---:|---:|---|
+| function only | 0.0093 | 0.0086 | **+0.0007 [−0.0035, +0.0050]** |
+| KO → TF → function | 0.0017 | 0.0021 | −0.0005 [−0.0012, +0.0001] |
+| full chain, 2 rounds | 0.0087 | 0.0079 | **+0.0007 [−0.0031, +0.0048]** |
+
+**Not one arm is distinguishable from random annotation.** Real GO/pathway/complex membership performs exactly
+as well as a fake annotation with the same size structure. The cascade is measuring how many categories a gene
+belongs to — which tracks how well studied it is — and not biology.
+
+## Three independent hypotheses, three matched controls, same answer
+
+| test | control | result |
+|---|---|---|
+| shortlist ranking | exact frequency matching (control = 0.5000) | AUC 0.5080 |
+| multi-hop routing | degree-preserving rewiring | real = random beyond 1 hop, 5/5 cell lines |
+| functional cascade | degree-preserving annotation shuffle | real = random at every step |
+
+The signal in this data is local and small: direct partners, ~2× over chance on a ~1% base rate. It does not
+propagate along edges, and it does not propagate along function.
