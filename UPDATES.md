@@ -13133,3 +13133,65 @@ Two things follow, both previously unstated:
 - **Measured contact was never tried.** The entire chromatin arc tried to *predict* contact while K562
   Micro-C sits public on ENCODE/4DN. `abc_score` at 0.2376 suggests it runs on a power-law distance
   estimate, not a real map. That is the untested measurement, and it is cheaper than everything above.
+
+---
+
+# Where this actually stands vs the published state of the art — verified, and a correction
+
+I previously said our 0.663 "sits below ENCODE-rE2G's ~0.7 and the gap is mundane feature engineering."
+That was wrong in the direction that matters, and it was based on a recalled number I flagged but did not
+check. Checked now.
+
+## The benchmark is not *like* theirs. It **is** theirs.
+
+`outputs/orphan/invivo/crispr_egpairs.tsv` carries the EPCrisprBenchmark schema exactly — `ValidConnection`,
+`PowerAtEffectSize25/10/15/20/50`, `Significant`, `Reference`:
+
+| | our file | ENCODE benchmark (Gschwind et al.) |
+|---|---:|---:|
+| element–gene pairs | 10,412 | 10,411 |
+| positives | **569** | — |
+| base rate | **0.0546** | — |
+| sources | Gasperini 5,355 · Fulco 3,501 · Schraivogel 1,306 | the same three harmonised studies |
+
+Our feature table keeps 10,331 of those pairs and **all 569 positives** (base rate 0.0551). So AUPRC is
+directly comparable — same pairs, same labels, same base rate.
+
+## The comparison
+
+| model | AUPRC | notes |
+|---|---:|---|
+| distance to TSS | 0.3956 | ours, measured |
+| ABC — **our** `abc_score` | 0.2376 | ours, measured |
+| ABC — **theirs** (DNase + averaged ENCODE **Hi-C**) | 0.56 | published |
+| **ENCODE-rE2G** | **0.66** | published, the state of the art |
+| ours: epi + TF identity | 0.6050 | |
+| ours: + CTCF contact | 0.6573 | |
+| **ours: + contact + competition** | **0.6795** | |
+
+**We are at or slightly above the published model, on its own benchmark.** That is a materially different
+statement from the one made a day ago, and it was available for the cost of one web search.
+
+## Four caveats that keep this honest
+
+1. **CV protocol differs.** Theirs is hold-one-chromosome-out; ours is 5-fold chromosome-grouped × 5 seeds.
+   Close, not identical.
+2. **Different input budgets.** We feed 311 measured K562 TF ChIP tracks. rE2G-Extended uses 47 features
+   including cell-type-specific ENCODE Hi-C and ChIA-PET, which we do not have. Neither is a subset of the
+   other, so this is not a clean architecture comparison.
+3. **Neither number is out-of-sample.** Both models are trained on this benchmark. 0.6795 is honest
+   cross-validated performance, not generalisation to a new cell type.
+4. **0.66 is quoted from search snippets.** The Nature version is paywalled and the bioRxiv PDF returned
+   403, so the primary text was not read. Whether rE2G-**Extended** scores above 0.66 is UNVERIFIED, and
+   if it does, the ranking above may change.
+
+## What this re-prices
+
+- **The ABC gap is now quantified.** Their ABC scores 0.56 with measured Hi-C; ours scores 0.2376 without.
+  That ~0.32 is the clearest evidence yet that measured contact — never once loaded in this project — is
+  worth far more than any of the contact *simulation* built for it.
+- **One more cheap feature is named in the literature**: adding whether a gene is ubiquitously expressed
+  improved ABC by **+0.044** AUPRC. We do not have it. That is larger than everything the 4D chromatin arc
+  produced, and it is one column.
+- **The chromatin simulation arc is harder to justify, not easier.** Its best contribution was +0.005 while
+  two features named in a paper are worth +0.044 and +0.028.
