@@ -12434,3 +12434,80 @@ all held-out perturbations, and more than one seed.
 - **`r["tag"][0] in "1356"` matched the frequency baseline**, because `"10 frequency baseline"[0]` is
   `"1"`. It never fired only because frequency outscored the full model; had the model won, the
   baseline would have been reported as a costly ablation of itself.
+
+---
+
+# Audit: why the pair representation is inert, measured without a model
+
+`colab/audit_cellformer.py`. Six sections, run directly on the readout and the model's own pair store.
+Three defects in the audit's first draft were found and fixed before the numbers below were trusted:
+it re-implemented the network parsing and disagreed with the model on every channel (complexes came
+out EMPTY); its "ceiling" ranked genes by raw count when the metric is a mean of ratios, producing a
+ceiling the baseline exceeded; and it combined frequency with raw adjacency counts on incompatible
+scales, which reported the network "destroying" frequency when it was measuring a missing scale factor.
+
+## The task has almost no headroom above a fixed gene set
+
+| quantity | value |
+|---|---:|
+| best possible perturbation-INDEPENDENT predictor (best fixed 50, fitted on test) | **0.3792** |
+| frequency baseline (fitted on train only) | 0.3502 |
+| frequency as a fraction of that ceiling | **92.3%** |
+| median Jaccard between held-out truth sets | 0.0086 |
+
+The exact optimum is computable, not approximable: recall here is a mean of `|picked ∩ truth_q|/|truth_q|`,
+which is *additive* in the picked genes, so the best fixed set is the top 50 by `Σ_q [g moves q]/|truth_q|`.
+
+Frequency already captures 92% of everything any perturbation-independent method can do. So the entire
+prize for modelling *which gene was knocked out* is the sliver above 0.3792 — while the truth sets it
+would have to distinguish are nearly disjoint (median Jaccard 0.0086) and 40.6% of ever-moved genes move
+for exactly one perturbation.
+
+## The network carries real signal that is far too weak for this metric
+
+Frequency-matched controls throughout, because hubs are also frequently-moved genes.
+
+| channel | P(mover \| KO neighbour) | matched control | lift | co-movement lift |
+|---|---:|---:|---:|---:|
+| PPI | 0.0291 | 0.0137 | **2.13×** | 4.24× |
+| signed-reg | 0.0265 | 0.0067 | **3.93×** | 1.02× |
+| complex | 0.0037 | 0.0017 | 2.14× | 3.97× |
+| coexpr | 0.0084 | 0.0048 | 1.74× | 3.64× |
+| reaction | 0.0041 | ~0 | n too small (483) | 4.74× |
+
+**The signal is real and survives frequency matching.** It is also useless here:
+
+| predictor | recall |
+|---|---:|
+| frequency | 0.3502 |
+| network only | **0.0246** |
+| frequency + w·network, best w over a swept grid | 0.3505, gain **+0.0003 [−0.0007, +0.0013]** |
+
+A 2–4× lift on a base rate near 1% still leaves ~97% of a KO's network neighbours as non-movers. The
+frequency prior's top 50 operate at a far higher hit rate, so enrichment of that size cannot compete for
+50 slots. **Ablations 1 and 2 are explained: there is nothing for the pair channel to add.**
+
+## The model is mostly a lookup table, and barely trained
+
+| | |
+|---|---:|
+| total parameters | 300,492 |
+| in gene embeddings | 263,872 (**87.8%**), 32 per gene |
+| in the transformer blocks | 31,376 (10.4%) |
+| training budget of the ablation table | 1,500 steps, batch 1 |
+| times each training perturbation is seen AS THE QUERY | **0.59** |
+
+Most training perturbations are never the query even once, while 88% of capacity sits in per-gene
+embeddings that must be learned from the perturbations that happen to move each gene — and 40.6% of moved
+genes appear in exactly one. The architecture is being judged at a budget where its dominant parameter
+group cannot have converged.
+
+## Noise
+
+439 held-out scorable perturbations exist. The table was read on 40.
+
+| n | 95% CI half-width |
+|---:|---:|
+| 40 | 0.078 |
+| 200 | 0.035 |
+| 439 | **0.023** |
