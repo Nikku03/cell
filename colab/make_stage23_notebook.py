@@ -38,8 +38,10 @@ CELLS = [
        "| mRNA decay | **R² 0.3266** | `halflife.py`, 69 sequence features vs SLAM-seq |",
        "",
        "The analytic Rouse model already scored **0.6107–0.6162** against that 0.663 — real physics, beaten",
-       "by counting. Stage 2+3 exists to check whether excluded volume, non-equilibrium motor loading, and",
-       "P(d<d_c) rather than ⟨R²⟩ change that. It is a fair shot at a bar that has already been set high."),
+       "by counting. Stage 2+3 exists to check whether excluded volume, non-equilibrium motor loading, and a",
+       "distribution-shape observable rather than ⟨R²⟩ change that. (The observable is ⟨d⁻³⟩, not the hard",
+       "threshold P(d<d_c) originally planned — that turned out to be a rare event, median exactly 0.00000",
+       "even with a properly relaxed chain. See section 4.) It is a fair shot at a bar already set high."),
 
     md("## 1. GPU check"),
     code("import subprocess",
