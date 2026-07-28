@@ -12635,3 +12635,69 @@ Reach cannot be improved by reweighting what is already there. Two candidate sou
   a different experiment, the same biology. Files already on disk.
 
 The second is the only remaining lever that changes *reach* rather than ranking.
+
+---
+
+# Routing: the network has paths, and the paths are empty
+
+`colab/route_map.py`. Every earlier measurement used DIRECT edges only, which would miss a real multi-step
+mechanism (knock out a kinase → it changes a TF → the TF changes its targets). So: shortest paths from each
+knocked-out gene to every gene, over the interaction network **plus** the TF networks (TRRUST 795 TFs,
+`tf_core`, ChIP-derived edges), on **all six readouts**.
+
+*(`k562_tf_chip.json` was deliberately skipped — it holds ENCODE accessions and download links, not edges.
+Including it would have contributed zero edges while looking like a TF layer had been added.)*
+
+## 1. Paths exist — trivially, and that is the problem
+
+Fraction of the genome within 3 steps of the knocked-out gene: **68.9% – 96.4%** depending on cell line.
+Almost everything reaches almost everything. "A route exists" is small-world topology, not evidence.
+
+## 2. All the biology is at one hop. Beyond that the network is random.
+
+P(gene is a specific mover) by hop distance, real graph vs a **degree-preserving rewiring** — a
+configuration-model shuffle that keeps every node's degree exactly and destroys which pairs are joined:
+
+| readout | graph | d=1 | d=2 | d=3 | d=4 |
+|---|---|---:|---:|---:|---:|
+| K562-gwps | real | **0.0200** | 0.0036 | 0.0059 | 0.0087 |
+| K562-gwps | rewired | 0.0078 | 0.0044 | 0.0034 | 0.0047 |
+| RPE1 | real | **0.0164** | 0.0047 | 0.0040 | 0.0117 |
+| RPE1 | rewired | 0.0088 | 0.0052 | 0.0033 | 0.0087 |
+| HepG2 | real | **0.0227** | 0.0055 | 0.0046 | 0.0000 |
+| HepG2 | rewired | 0.0101 | 0.0059 | 0.0043 | 0.0046 |
+| Jurkat | real | **0.0165** | 0.0042 | 0.0042 | 0.0000 |
+| Jurkat | rewired | 0.0092 | 0.0046 | 0.0035 | 0.0042 |
+| K562 | real | **0.0194** | 0.0054 | 0.0077 | 0.0138 |
+| K562 | rewired | 0.0080 | 0.0059 | 0.0056 | 0.0301 |
+
+At **d=1** the real graph is 1.8–2.6× its rewired twin, in all five lines. At **d=2** it is *equal or slightly
+worse* — in 5 of 5 lines. At d≥3 it is noise.
+
+**Following a path two steps tells you nothing a random graph with the same degrees would not.**
+
+## 3. "Paths beat one hop" is a topology artifact
+
+Path scoring (2^−d) does beat 1-hop scoring — K562-gwps 0.0458 vs 0.0262. But the **rewired** graph shows a
+*larger* gain: 0.0287 vs 0.0090. The improvement comes from breaking ties by distance-to-hubs, not from
+mechanism.
+
+## 4. Adding TF networks helps, and does not come close
+
+| readout | interaction | + TF | TF only | rewired | frequency |
+|---|---:|---:|---:|---:|---:|
+| K562-gwps | 0.0367 | **0.0458** | 0.0220 | 0.0287 | **0.3516** |
+| Jurkat | 0.0270 | **0.0666** | 0.0096 | 0.0210 | **0.4461** |
+| K562 | 0.0294 | **0.0370** | 0.0049 | 0.0108 | **0.2274** |
+| RPE1 | 0.0204 | **0.0260** | 0.0047 | 0.0123 | **0.1941** |
+| HepG2 | 0.0136 | **0.0187** | 0.0018 | 0.0094 | **0.1930** |
+
+TF edges add real signal (+25–150% over interaction alone) and the union beats its rewired control in every
+line. The best result reaches **15% of the frequency baseline**.
+
+## Conclusion
+
+The routes are laid out. They lead nowhere. The graph's one genuine contribution is its direct edges, worth
+~2× over chance on a ~1% base rate, and the earlier specification stands: **6.4× more precision, or 7.3× more
+reach, at one hop.** Multi-hop propagation cannot supply it — measured, on five independent cell lines, against
+a control that holds degree fixed.
