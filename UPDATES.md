@@ -12756,3 +12756,63 @@ belongs to — which tracks how well studied it is — and not biology.
 
 The signal in this data is local and small: direct partners, ~2× over chance on a ~1% base rate. It does not
 propagate along edges, and it does not propagate along function.
+
+---
+
+# GPR logic (AND/OR): the right correction, on a channel too small to carry it
+
+`colab/gpr_logic.py`. Every prior analysis here — including my own routing and cascade tests — treated the
+`reaction` channel as an undirected "these two genes share a reaction" edge. That is biologically incoherent
+and incoherent in a *cancelling* way:
+
+- **a OR b** — isozymes. Knock out `a`, `b` still runs the reaction. **Nothing should propagate.**
+- **a AND b** — subunits of one complex. Knock out `a`, the reaction stops. **Everything should propagate.**
+
+Build 1's GPR arithmetic applied to response data: a gene is *essential* to a reaction if setting it alone to
+False turns the rule False, *redundant* otherwise.
+
+## The correction is real, and the channel is dominated by the buffered case
+
+| | |
+|---|---:|
+| multi-gene reactions, pure AND (every gene essential) | 580 |
+| **multi-gene reactions, pure OR (no gene essential)** | **3,765** |
+
+So ~87% of multi-gene reaction edges are the case where **nothing should propagate**. The naive channel was
+mostly wiring together genes that buffer each other.
+
+## But it cannot be measured on this data
+
+| | |
+|---|---:|
+| held-out scorable perturbations | 419 |
+| KO gene appears in Human-GEM | **44 (10.5%)** |
+| KO gene breaks ≥1 reaction | **26 (6.2%)** |
+
+Pooled over all 783 scorable perturbations, the total number of observed mover-hits among reaction partners is
+**2 (AND), 3 (OR), 5 (any)**. The apparent lifts (2.11×, 2.26×, 1.52×) are ratios of single-digit counts.
+*(A first version drew one matched control per pair, leaving the control on 2–5 expected hits too; it swung
+13× between arms and produced LIFT 0.50× / 3.00× / 5.00× — pure noise. Averaging 40 draws per pair fixed the
+control side, and exposed that the observed side has the same problem.)*
+
+**This is unmeasurable, not negative** — a different verdict from the routing and cascade tests, which had
+power and returned real nulls.
+
+## What *is* solid, and settles it anyway
+
+Coverage does not depend on the statistics:
+
+| arm | genes named | coverage of true movers | precision |
+|---|---:|---:|---:|
+| GPR-aware (broken reactions only) | 9.5 | **0.0015** | 0.0015 |
+| naive (any shared reaction) | 13.2 | 0.0015 | 0.0011 |
+| isozyme partners (buffered) | 2.2 | **0.0000** | 0.0000 |
+
+A reaction rule names about ten genes and reaches **0.15%** of a knockout's movers — against PPI's 0.0437 and
+a frequency baseline of 0.3843 on this same subset. **Even with perfect gate logic, this channel cannot
+matter.** The gate correction is right and it is applied to something two orders of magnitude too small.
+
+Isozyme partners reaching exactly zero movers is consistent with buffering, and n is far too small to call it.
+
+**To answer the AND/OR question properly you would need a metabolism-focused screen**, not a genome-wide one
+where 89.5% of knocked-out genes are absent from the metabolic model.
