@@ -44,6 +44,7 @@ BEAD = 5_000          # bp per bead; 5 kb keeps a 4 Mb window at 800 beads
 FLANK = 300_000       # context beyond the E..P span so loops straddling the pair are represented
 MAXSPAN = 4_000_000   # cap so a handful of very distant pairs cannot dominate runtime
 K_LOOP = 3.0          # loop-bond stiffness relative to the backbone (cohesin bridge vs one Kuhn segment)
+LP = 1_000            # chromatin persistence length in bp (~1-3 kb, ~30-50 nm); 0 disables bending
 
 
 def loop_bonds(anchors, sigs, n_beads, off):
@@ -62,6 +63,36 @@ def loop_bonds(anchors, sigs, n_beads, off):
             if 0 <= u < n_beads and 0 <= v < n_beads and u != v:
                 out.append((u, v, K_LOOP * w * min(sigs[i], sigs[i + gap])))
     return out
+
+
+def bending(n, kappa):
+    """Quadratic curvature penalty -- the SEMIFLEXIBLE GAUSSIAN CHAIN, which keeps the closed form.
+
+    A true worm-like chain uses U = K(1 - cos theta), a three-body NON-quadratic term. Add it and the
+    Boltzmann distribution stops being multivariate Gaussian, <R^2> no longer follows from an inverse
+    Laplacian, and the only route left is GPU Langevin -- i.e. the expensive path.
+
+    The quadratic curvature penalty (kappa/2) * sum |r_{i+1} - 2 r_i + r_{i-1}|^2 is the harmonic
+    approximation to that bending energy. It penalises the SAME thing -- sharp local kinks -- while staying
+    quadratic in the coordinates, so the whole model remains Gaussian and solvable in closed form. The
+    operator is D2^T D2, the discrete biharmonic, pentadiagonal with stencil [1,-4,6,-4,1]: one extra
+    diagonal, no extra asymptotic cost.
+
+    kappa = L_p / a reproduces the standard bending modulus K_bend = kT * L_p / a. It also self-disables
+    correctly: at a = 5 kb with L_p = 1 kb, kappa = 0.2 and the chain is nearly free, which is right --
+    beads longer than the persistence length ARE freely jointed. The stiffness only switches on when the
+    resolution goes below the Kuhn length, which is exactly where the naive model breaks.
+    """
+    if kappa <= 0 or n < 3:
+        return sparse.csr_matrix((n, n))
+    r, c, v = [], [], []
+    for i in range(1, n - 1):
+        for dj, w in ((-1, 1.0), (0, -2.0), (1, 1.0)):
+            r.append(i - 1)
+            c.append(i + dj)
+            v.append(w)
+    D2 = sparse.coo_matrix((v, (r, c)), shape=(n - 2, n)).tocsr()
+    return (D2.T @ D2) * kappa
 
 
 def r2_pair(chrom, e, t, ctcf, norm):
@@ -88,7 +119,7 @@ def r2_pair(chrom, e, t, ctcf, norm):
         vals += [-k, -k]
     A = sparse.coo_matrix((vals, (rows, cols)), shape=(n, n)).tocsr()
     deg = -np.asarray(A.sum(1)).ravel()
-    L = (sparse.diags(deg) + A).tolil()
+    L = (sparse.diags(deg) + A + bending(n, LP / BEAD if LP else 0.0)).tolil()
     L[0, 0] += 1.0                               # ground one bead: the RHS is orthogonal to constants
 
     i = min(max((e - off) // BEAD, 0), n - 1)
