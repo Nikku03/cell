@@ -1,0 +1,18 @@
+{
+ "base_rate": 0.0550769528603233,
+ "n_pairs": 10331,
+ "n_positives": 569,
+ "identity": 0.6050020469159778,
+ "contact": 0.6573372875993357,
+ "competition": 0.6371038134407796,
+ "both": 0.6794791673481569,
+ "competition_shuffled": 0.651710401461029,
+ "delta_contact": 0.05233524068335797,
+ "delta_competition": 0.03210176652480188,
+ "delta_both": 0.07447712043217916,
+ "pct_additive": 88.20435836691026,
+ "delta_on_top_of_bar": 0.022141879748821182,
+ "delta_control_on_top_of_bar": -0.005626886138306797,
+ "net_of_control": 0.02776876588712798,
+ "sign_consistent": true
+}

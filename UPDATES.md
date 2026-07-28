@@ -13088,3 +13088,48 @@ objection answered rather than dismissed: **⟨R²⟩ is worth ~+0.004 on top of
 coordinates, and no amount of making ⟨R²⟩ more correct raises that ceiling.** Stages 2–3 were built anyway
 (`colab/extrude.py`) to test the one thing the closed form cannot express — non-equilibrium loading and
 `P(d < d_c)` rather than `⟨R²⟩^(−3/2)`. That is a genuinely different quantity, and it is the last shot.
+
+---
+
+# Competition features: +0.028 net of control, from six lines of groupby
+
+`colab/competition.py`. Every feature in the CRISPR table is **absolute** — this element's ATAC, this
+element's H3K27ac, this element's distance. None says *"this is the 3rd-closest of 40 candidates competing
+for this gene"*. That relative framing is the whole reason ABC has a denominator.
+
+| arm | AUPRC |
+|---|---:|
+| epi + TF identity | 0.6050 |
+| + CTCF contact — the bar | 0.6573 |
+| + COMPETITION only (no contact at all) | 0.6371 |
+| **+ both** | **0.6795** |
+| + competition SHUFFLED (control) | 0.6517 |
+
+- competition on top of the bar **+0.0221**, shuffled control **−0.0056**, **net +0.0278**, sign consistent
+  across all 5 fold assignments
+- contact +0.0523 and competition +0.0321 combine to +0.0745 — **88% additive**, so they answer different
+  questions: *can these loci meet* vs *is this the element that matters for this gene*
+
+**Drop-one would have missed it entirely.** Removing any single feature costs +0.0003 to +0.0031 — nothing.
+The block carries the gain. Same correlated-feature trap that once inverted the contact result.
+
+## The comparison that matters
+
+| approach | cost | gain over the CTCF count |
+|---|---|---:|
+| analytic Rouse-with-loops | closed form, minutes | +0.005 |
+| stiffness sweep, 200 bp–1 kb | ~20 min | +0.000 to +0.004 |
+| KMC extrusion + Langevin | GPU-hours | underpowered at 400 pairs |
+| **competition features** | **milliseconds** | **+0.028** |
+
+**And it is a rediscovery, not a discovery.** ENCODE-rE2G — the ENCODE4 supervised model for this exact
+task — already carries features of this kind. That locates the remaining gap to the published incumbent in
+*engineered features nobody added*, not in architecture and not in physics.
+
+Two things follow, both previously unstated:
+
+- **rE2G cannot benchmark these pairs.** It was trained on this benchmark; scoring it here measures
+  memorisation. A real comparison needs a held-out biosample.
+- **Measured contact was never tried.** The entire chromatin arc tried to *predict* contact while K562
+  Micro-C sits public on ENCODE/4DN. `abc_score` at 0.2376 suggests it runs on a power-law distance
+  estimate, not a real map. That is the untested measurement, and it is cheaper than everything above.
