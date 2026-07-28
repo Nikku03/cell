@@ -130,9 +130,25 @@ def load_all():
     print(f"readout: {len(kos):,} perturbations x {len(genes):,} genes; tide {int(tide.sum()):,}; "
           f"scorable (>={MIN_SPEC} specific movers) {int((nspec >= MIN_SPEC).sum()):,}")
 
-    D = json.load(open(OUT / "cell_complete.json"))
-    names = [g["name"] for g in D["genes"]]
+    # The network comes from a 3.7 MB bundle SHIPPED IN THE REPO in preference to the 37 MB
+    # cell_complete.json. That is not just convenience: the copy on Drive is 26.4 MB -- a different, older
+    # build -- and silently loading it would change the pair prior with no visible symptom. Shipping the exact
+    # bundle the results were produced from removes a version mismatch this project cannot otherwise detect.
+    bundle = Path(__file__).resolve().parent / "data" / "net_bundle.json.gz"
+    if bundle.exists():
+        import gzip
+        D = json.load(gzip.open(bundle, "rt"))
+        names = D["names"]
+        print(f"network: repo bundle {bundle.name} ({bundle.stat().st_size/1e6:.1f} MB)")
+    else:
+        D = json.load(open(OUT / "cell_complete.json"))
+        names = [g["name"] for g in D["genes"]]
+        print(f"network: cell_complete.json fallback ({(OUT/'cell_complete.json').stat().st_size/1e6:.1f} MB)")
     N = len(names)
+    for k, lo in (("generxn", 1000), ("complexes", 500), ("ppi", 10000), ("coexpr", 1000), ("reg", 10000)):
+        got = len(D.get(k) or ())
+        assert got >= lo, f"network field '{k}' has {got} entries, expected >= {lo} -- wrong or truncated build"
+
 
     # ---- pair-representation channels, each from a MEASURED relation, each asserted non-empty ----
     pair = collections.defaultdict(lambda: np.zeros(5, np.float32))
