@@ -3,8 +3,8 @@
 WHAT WAS LOST AND WHY IT MATTERS. dlkcat.tsv (despite the name, JSON) held DLKcat's BRENDA+SABIO-RK
 compilation: 17,010 kcat records with EC number, organism and value. It supplied two things nothing else
 could -- the LABELS that kcat_headtohead.py scored every kcat source against, and tiers 1 and 3 of the
-capacity hierarchy (human-EC median, 2.62x median fold error; any-organism EC median). Without it the
-kinetics bundle falls back to CatPred at 8.38x for 7,592 of 8,184 reactions.
+capacity hierarchy (human-EC median; any-organism EC median). Without it the kinetics bundle falls back to
+CatPred for 7,592 of 8,184 reactions. With it restored, 1,811 reactions move to the human-EC tier.
 
 THE REPRODUCTION IS VERIFIED, NOT ASSUMED. Re-fetching a file from a URL proves nothing about whether it is
 the file the earlier measurements used -- upstream repositories change. The check that actually binds:
@@ -16,13 +16,23 @@ WHAT THIS WRITES, and why it is not the raw file. The raw table is 11.7 MB, most
 Smiles strings this project never reads. Committing that to survive the next rollback would be storing 11 MB
 to use 60 KB of it. This writes the DERIVED statistics plus the stripped records needed to REDERIVE them:
 
-    ec_human_median    EC -> median kcat over Homo sapiens records      tier 1, 2.62x measured
+    ec_human_median    EC -> median kcat over Homo sapiens records      tier 1
     ec_all_median      EC -> median over every organism                 tier 3, coverage fallback
     ec_all_max         EC -> max over every organism                    ECMpy's rule; kept to DOCUMENT the
                                                                         exclusion, not to use -- 40.7x, bias
                                                                         +1.61, an upper bound not an estimator
-    global_median      one number for every enzyme                      tier 4, the null, 14.23x
-    human_records      (EC, organism, value) triples, no sequences      so leave-one-out can be re-run
+    global_median      one number for every enzyme                      tier 4, the null
+    human_records      (EC, value) pairs, no sequences                  so leave-one-out can be re-run
+
+ACCURACY DEPENDS ON THE LABEL SET, so both are recorded and neither is quoted alone:
+
+                        915 common labels     full human set (leave-one-out here)
+    human-EC median          2.62x                  2.80x   over 2,337 records, 262 ECs
+    global-median null      14.23x                  9.25x
+
+The pairs are not in conflict -- kcat_headtohead.py scored on the labels EVERY contender covered, this file
+scores on every human EC with >=2 records. Quoting a figure without its subset is the error this project
+already made once, comparing CatPred's n=950 against a null's n=2,437.
 
 LEAVE-ONE-OUT IS THE POINT OF KEEPING human_records. EC medians are computed FROM these labels, so scoring
 them without removing the record being predicted lets the predictor see its own answer. kcat_headtohead.py
@@ -31,6 +41,7 @@ was written to avoid exactly that; keeping the records keeps that check reproduc
 """
 import collections
 import gzip
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -45,6 +56,7 @@ DEST = Path("colab/data/ec_kcat_medians.json.gz")
 # upstream changed and every accuracy figure derived from these labels needs re-measuring before reuse.
 EXPECT_HUMAN = 2437
 EXPECT_TOTAL = 17010
+EXPECT_SHA = "7dd69e66772febcf5c6a485760146ed502fb570f9a76e3c646f41e2cd07ffbe5"
 
 
 def valid(rec):
@@ -89,8 +101,16 @@ def main():
         f"{RAW} missing. Re-fetch with:\n"
         "  curl -sSL -o dlkcat_raw.json https://raw.githubusercontent.com/SysBioChalmers/DLKcat/"
         "master/DeeplearningApproach/Data/database/Kcat_combination_0918.json")
-    recs = json.load(open(RAW))
+    blob = RAW.read_bytes()
+    sha = hashlib.sha256(blob).hexdigest()
+    recs = json.loads(blob)
     print(f"raw records: {len(recs):,}  (expected {EXPECT_TOTAL:,})")
+    print(f"source sha256: {sha}")
+    if sha != EXPECT_SHA:
+        # Not fatal: upstream may legitimately republish. The binding check is the derived human count
+        # below, which is what the accuracy figures were actually measured against.
+        print(f"  NOTE: differs from the fetch this project verified ({EXPECT_SHA[:16]}...). "
+              "The human-count assert below is the check that matters.")
 
     units = collections.Counter(r.get("Unit") for r in recs)
     assert set(units) == {"s^(-1)"}, f"MIXED UNITS {dict(units)} -- medians across units are meaningless"
