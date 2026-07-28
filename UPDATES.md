@@ -13049,3 +13049,42 @@ two coordinates. That is ~10⁴–10⁵ GPU-hours chasing a quantity a bisect ov
 
 **Keep:** the CTCF-count contact feature. Production model goes **0.608 → 0.663**, controlled and replicated.
 **Drop:** KMC extrusion and Langevin dynamics.
+
+---
+
+# Bead resolution and chain stiffness: the sub-Kuhn artifact is real, and it changes nothing
+
+`colab/rouse_gate.py`, extended with a quadratic bending term. The Rouse result above used 5 kb beads. Two
+objections to that, both correct:
+
+1. **Chromatin's Kuhn length is ~1–3 kb.** A 5 kb bead averages over the stiffness it is meant to model.
+2. **A freely-jointed chain at 200 bp/bead is physically wrong.** Below the persistence length the chain
+   cannot bend freely, so a pure Rouse model at that resolution is modelling a floppier polymer than DNA is.
+
+The fix that preserves the closed form is a **semiflexible Gaussian chain** — a quadratic curvature penalty
+`(κ/2)Σ|r_{i+1} − 2r_i + r_{i−1}|²`, which is `D2ᵀD2` (pentadiagonal, stencil `[1,−4,6,−4,1]`) added to the
+Laplacian, with `κ = L_p/a`. True Kratky–Porod `K(1−cosθ)` is three-body and non-quadratic; it would destroy
+the analytic solution and force the very Langevin engine this gate exists to avoid.
+
+| bead | L_p (bp) | κ | Rouse only | shuffled anchors | real − shuf | + CTCF-count | vs bar 0.6632 | log₁₀ compaction |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1000 | — | 0 | 0.6162 | 0.6032 | **+0.0131** | **0.6674** | **+0.0042** | −1.380 |
+| 1000 | 1000 | 1 | 0.6120 | 0.6013 | +0.0107 | 0.6658 | +0.0026 | −1.421 |
+| 200 | — | 0 | 0.6114 | 0.6039 | **+0.0075** | 0.6669 | +0.0038 | −1.495 |
+| 200 | 1000 | 5 | 0.6153 | 0.6015 | **+0.0137** | 0.6637 | +0.0005 | −1.526 |
+
+**The predicted artifact showed up and the predicted fix repaired it.** At 200 bp with no stiffness the
+real-vs-shuffled separation halves (+0.0131 → +0.0075): a freely-jointed chain at sub-Kuhn resolution washes
+out anchor identity. Adding κ=5 at the same resolution restores it to +0.0137, the largest separation in the
+sweep. That is the physics behaving exactly as the theory says it should.
+
+**And it buys nothing.** The arm with the *best* physics (200 bp, κ=5) has the *worst* margin over the bar
+(+0.0005). The best combined arm is still the coarse, unstiffened one. Compaction deepens monotonically with
+resolution and stiffness (−1.38 → −1.53) — the model is more realistic at every step — while the readout is
+flat to within noise.
+
+This is the same verdict as before, now established across two decades of bead size and with the stiffness
+objection answered rather than dismissed: **⟨R²⟩ is worth ~+0.004 on top of counting CTCF peaks between two
+coordinates, and no amount of making ⟨R²⟩ more correct raises that ceiling.** Stages 2–3 were built anyway
+(`colab/extrude.py`) to test the one thing the closed form cannot express — non-equilibrium loading and
+`P(d < d_c)` rather than `⟨R²⟩^(−3/2)`. That is a genuinely different quantity, and it is the last shot.
