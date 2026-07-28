@@ -30,7 +30,7 @@ from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 os.environ.setdefault("CF_GCROP", "96")
 os.environ.setdefault("CF_PCTX", "48")
@@ -46,6 +46,10 @@ def main():
     import torch.nn as nn
     import cellformer_af as CF
 
+    dev = CF.set_device()
+    print(f"device: {dev}"
+          + (f"  ({torch.cuda.get_device_name(0)}, "
+             f"{torch.cuda.get_device_properties(0).total_memory/1e9:.1f} GB)" if dev.type == "cuda" else ""))
     d = CF.load_all()
     kos = d["kos"]
     tr = np.array([int(hashlib.md5(k.encode()).hexdigest(), 16) % 2 == 0 for k in kos])
@@ -72,7 +76,7 @@ def main():
     cfg = dict(CF.BASE)
     torch.manual_seed(0)
     rng = np.random.default_rng(0)
-    model = CF.build_model(torch, nn, len(d["genes"]), cfg)
+    model = CF.build_model(torch, nn, len(d["genes"]), cfg).to(dev)
     print(f"model: {sum(p.numel() for p in model.parameters()):,} parameters, "
           f"G_CROP={CF.G_CROP} P_CTX={CF.P_CTX} blocks={cfg['n_block']} recycle={cfg['recycle']}\n",
           flush=True)
@@ -96,7 +100,7 @@ def main():
                     zin, mask, isq, gidx, koidx, pz, B, idx = CF.tensors(d, rows, cols, qg, torch, cfg,
                                                                          rng, False)
                     r, _, _, _ = model(zin, mask, isq, gidx, koidx, pz, B, cfg["recycle"])
-                    score[cols] = r[0].numpy()
+                    score[cols] = r[0].detach().cpu().numpy()
                 pick = [int(i) for i in np.argsort(-score)[:CF.NPICK]]
                 recs.append(len(set(pick) & truth) / len(truth))
         model.train()
@@ -107,10 +111,10 @@ def main():
         qi = int(rng.choice(pool))
         rows, cols, qg = CF.make_example(d, rng, qi, pool, cfg, len(d["genes"]))
         zin, mask, isq, gidx, koidx, pz, B, idx = CF.tensors(d, rows, cols, qg, torch, cfg, rng, False)
-        y = torch.tensor(d["spec"][np.ix_(rows, cols)].astype(np.float32))
+        y = torch.tensor(d["spec"][np.ix_(rows, cols)].astype(np.float32), device=dev)
         r, c, p, cap = model(zin, mask, isq, gidx, koidx, pz, B, cfg["recycle"])
         loss = bce(r[0], y[0]) + 0.3 * bce(r[1:], y[1:])
-        nsp = torch.tensor((d["nspec"][rows] >= CF.MIN_SPEC).astype(np.float32))
+        nsp = torch.tensor((d["nspec"][rows] >= CF.MIN_SPEC).astype(np.float32), device=dev)
         loss = loss + 0.2 * bce(c, nsp)
         co = (y.t() @ y > 0).float()
         loss = loss + 0.2 * bce(p, co)

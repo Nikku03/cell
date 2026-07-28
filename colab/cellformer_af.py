@@ -59,8 +59,9 @@ from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH",
+                         "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 TAU, TIDE_FRAC, MIN_SPEC, NPICK = 1.0, 0.05, 5, 50
@@ -77,6 +78,33 @@ STEPS = int(os.environ.get("CF_STEPS", "300"))
 G_EVAL = int(os.environ.get("CF_GEVAL", "256"))   # eval chunk: larger than the training crop, no gradients
 LR = 3e-3
 SEED = 0
+
+# ---- device. The module was written CPU-only; these three lines and the .to(DEVICE) calls below are what
+# let the identical code run on a Colab GPU, where the crop can be 256 genes (AlphaFold's own training crop)
+# instead of the 96 a CPU tolerates. DEVICE is resolved once so every tensor is created in the right place
+# rather than moved after the fact.
+def _pick_device():
+    import torch
+    want = os.environ.get("CF_DEVICE", "auto").lower()
+    if want == "cpu":
+        return torch.device("cpu")
+    if want in ("cuda", "gpu") or (want == "auto" and torch.cuda.is_available()):
+        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    return torch.device("cpu")
+
+
+DEVICE = None          # set by main()/callers via set_device()
+USE_AMP = os.environ.get("CF_AMP", "1") == "1"
+
+
+def set_device(dev=None):
+    global DEVICE
+    import torch
+    DEVICE = torch.device(dev) if dev is not None else _pick_device()
+    if DEVICE.type == "cuda":
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
+    return DEVICE
 
 
 # =================================================================================================
@@ -371,21 +399,22 @@ def make_example(d, rng, qi, train_pool, cfg, n_genes_all):
 def tensors(d, rows, cols, qg, torch, cfg, rng, shuffle_pair=False):
     M, gi = d["M"], d["gi"]
     P, G = len(rows), len(cols)
-    zin = torch.tensor(M[np.ix_(rows, cols)], dtype=torch.float32)
-    mask = torch.ones(P, G)
+    dev = DEVICE if DEVICE is not None else torch.device("cpu")
+    zin = torch.tensor(M[np.ix_(rows, cols)], dtype=torch.float32, device=dev)
+    mask = torch.ones(P, G, device=dev)
     zin[0] = 0.0                       # THE QUERY'S RESPONSE IS NEVER SHOWN
     mask[0] = 0.0
-    isq = torch.zeros(P)
+    isq = torch.zeros(P, device=dev)
     isq[0] = 1.0
-    gidx = torch.tensor(cols, dtype=torch.long)
+    gidx = torch.tensor(cols, dtype=torch.long, device=dev)
     ko = [gi.get(d["kos"][p], 0) for p in rows]
-    koidx = torch.tensor(ko, dtype=torch.long)
+    koidx = torch.tensor(ko, dtype=torch.long, device=dev)
     cl = np.asarray(cols, dtype=np.int64)
     idx = {int(c): i for i, c in enumerate(cl)}
     sel = rng.permutation(G) if shuffle_pair else np.arange(G)   # shuffled prior: same density, wrong partners
     order = cl[sel]
     blocks = [np.asarray(d["pairmat"][c][np.ix_(order, order)].todense(), dtype=np.float32) for c in range(5)]
-    pz = torch.from_numpy(np.stack(blocks, -1))
+    pz = torch.from_numpy(np.stack(blocks, -1)).to(dev)
     B = pz[:, :, 0].clone()            # shared-reaction incidence, used by the physics pair update
     return zin, mask, isq, gidx, koidx, pz, B, idx
 
@@ -396,7 +425,9 @@ def run_config(d, cfg, tag, train_pool, test_ids, log):
     torch.manual_seed(SEED)
     rng = np.random.default_rng(SEED)
     n_genes_all = len(d["genes"])
-    model = build_model(torch, nn, n_genes_all, cfg)
+    if DEVICE is None:
+        set_device()
+    model = build_model(torch, nn, n_genes_all, cfg).to(DEVICE)
     nparam = sum(p.numel() for p in model.parameters())
     opt = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=1e-4)
     bce = nn.BCEWithLogitsLoss()
@@ -407,7 +438,7 @@ def run_config(d, cfg, tag, train_pool, test_ids, log):
         rows, cols, qg = make_example(d, rng, qi, train_pool, cfg, n_genes_all)
         zin, mask, isq, gidx, koidx, pz, B, idx = tensors(d, rows, cols, qg, torch, cfg, rng,
                                                           cfg["shuffle_pair"])
-        y = torch.tensor(d["spec"][np.ix_(rows, cols)].astype(np.float32))
+        y = torch.tensor(d["spec"][np.ix_(rows, cols)].astype(np.float32), device=DEVICE)
         if cfg["shuffle_label"]:
             y = y[:, torch.randperm(y.shape[1])]
         resp, conf, pair, cap = model(zin, mask, isq, gidx, koidx, pz, B if cfg["use_rxn_update"] else None,
@@ -415,7 +446,7 @@ def run_config(d, cfg, tag, train_pool, test_ids, log):
         loss = bce(resp[0], y[0])                                  # the query row is what is scored
         if cfg["aux"]:
             loss = loss + 0.3 * bce(resp[1:], y[1:])
-            nsp = torch.tensor((d["nspec"][rows] >= MIN_SPEC).astype(np.float32))
+            nsp = torch.tensor((d["nspec"][rows] >= MIN_SPEC).astype(np.float32), device=DEVICE)
             loss = loss + 0.2 * bce(conf, nsp)
             co = (y.t() @ y > 0).float()
             loss = loss + 0.2 * bce(pair, co)
@@ -452,7 +483,7 @@ def run_config(d, cfg, tag, train_pool, test_ids, log):
                                                                   cfg["shuffle_pair"])
                 r, _, _, _ = model(zin, mask, isq, gidx, koidx, pz,
                                    B if cfg["use_rxn_update"] else None, cfg["recycle"])
-                score[cols] = r[0].numpy()
+                score[cols] = r[0].detach().cpu().numpy()
             pick = [int(i) for i in np.argsort(-score)[:NPICK]]
             recs.append(len(set(pick) & truth) / len(truth))
             precs.append(len(set(pick) & truth) / NPICK)
