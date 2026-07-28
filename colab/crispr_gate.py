@@ -14,10 +14,11 @@ Features (all measured, real ENCODE K562):
 Baselines: distance-only (-log dist), ABC-only (ENCODE-rE2G EPIraction score, 0 if no link).
 Label: CRISPR Significant (regulates) vs tested-not-significant, ValidConnection only.  Metric: AUPRC.
 """
+import os
 import json, gzip, bisect, math
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan/invivo")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")) / "invivo"
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 

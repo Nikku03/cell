@@ -19,12 +19,13 @@ Four levers, each motivated by a measured weakness, each tested on the SAME spli
 
 Held-out K562, tide-removed specific recall@50, 3 seeds, retrieval pools exclude held-out KOs, hyper-params tuned on a validation split only.
 Reports per-lever deltas with seed spread, plus the combined best. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 W0 = {"BEHAV": 0.35, "GRAPH": 0.25, "STRUCT": 1.5, "TIDE": 0.25}      # multimodal_stack's learned weights = the baseline
 NEI = 10
 K = 50

@@ -16,10 +16,11 @@ dense meaningless network.
 """
 import collections
 import json
+import os
 import sys
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 MARK = {"STOPS": "STOPS    ", "REDUNDANT": "redundant", "BUFFERED": "buffered ",
         "BUFFERED_CURRENCY": "currency "}
 

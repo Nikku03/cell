@@ -10,9 +10,10 @@ that knocking PTEN down makes proliferation WORSE — only measured intervention
 -> measured_cause_validation.json
 """
 import json
+import os
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 DRIVERS = {"CDK1", "BUB1", "AURKA", "MCM6", "RRM2", "PLK1", "MYBL2", "MYC", "CCNB1",
            "E2F1", "FOXM1", "CDK6", "CDC20", "TYMS", "MDM2"}       # proliferation drivers: KD reverses
 SUPPRESSORS = {"PTEN", "RB1", "TP53BP1"}                           # tumor suppressors: KD worsens -> protector

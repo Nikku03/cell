@@ -50,12 +50,13 @@ import collections
 import csv
 import hashlib
 import json
+import os
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TAU, TIDE_FRAC, MIN_SPEC = 1.0, 0.05, 5
 TARGET_PRECISION = 0.90          # pre-registered in DESIGN.md sec 4
 MIN_COVERAGE = 0.10              # and a pass must abstain on at least this share, or it is a dodge

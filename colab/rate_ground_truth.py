@@ -31,13 +31,14 @@ THEN THE THING THAT ACTUALLY MATTERS: refit the identical nexus_txn feature stac
 SAME genes, and against a consensus of the two. If R2 rises against the measured target, the derived target was the
 bottleneck. If it rises against the consensus above both singles, measurement noise was capping the fit and the
 features are better than they looked. If nothing moves, the features are the bottleneck and no target swap saves them."""
+import os
 import json, collections, gzip
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 NSPLIT = 5
 PROM = 2000
 

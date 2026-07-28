@@ -8,12 +8,13 @@ HONEST SCOPE: the EDGES are measured (PPI); the PLACEMENT is a hypothesis (gold 
 PPI-only lead). Vertical = observed compartment. A descriptive near-field map that slots each unknown next to the
 machinery it physically touches -- a hypothesis to test, not a proven annotation or a phenotype predictor.
 """
+import os
 import json, html, collections
 from pathlib import Path
 import connect as C
 import pathway_graph as pg
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 VIZ = Path("viz")
 NCORROB, NPPI, MAXLINK = 12, 3, 3                                # orphans shown: corroborated / ppi-only / links each
 

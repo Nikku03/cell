@@ -10,9 +10,10 @@ proven directional signal hand-off); the downward arrow marks the TEXTBOOK casca
 not something derived from the edges. A descriptive near-field map -- who touches whom and where -- not a phenotype
 predictor.
 """
+import os
 import json, html, collections, math
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 VIZ = Path("viz")
 
 PATHWAYS = ["PI3K Cascade", "Signaling by EGFR", "MAP2K and MAPK activation",

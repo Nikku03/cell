@@ -6,10 +6,11 @@ click-through that traces any gene's journey from its chromosomal locus through 
 
 The honesty line the page must carry: the DESTINATION is curated annotation, the ROUTE is canonical inference from that destination, and
 the movement itself is what was measured. Those three are visually distinguished rather than blended."""
+import os
 import json, sys, hashlib
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # compartment -> (centre x, centre y, radius x, radius y) in the 1040x720 viewBox, plus its colour token
 REGIONS = {

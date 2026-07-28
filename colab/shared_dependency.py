@@ -10,13 +10,14 @@ Tests, K562 held-out specific movers:
      tide literally the shared-dependency response every hub knockout shares?
 Co-dependency (shared fitness dependency = shared function) is used as an EXPLANATION edge for the first time. Enrichment vs non-movers guards
 the 'covers everything' trap. Deterministic."""
+import os
 import json, collections, re
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 FAM = [
     ("transporter", re.compile(r"^(SLC\d|ABC[A-G]|ATP\d|ATP1[AB]|SLC)")),

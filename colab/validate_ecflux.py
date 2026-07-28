@@ -11,9 +11,10 @@ import json, sys, numpy as np
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import ecflux
+import os
 from cobra.flux_analysis import pfba
 
-OUT = Path("outputs/orphan"); OUT.mkdir(parents=True, exist_ok=True)
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")); OUT.mkdir(parents=True, exist_ok=True)
 CELL = "outputs/orphan/cell_complete.json"
 
 

@@ -46,8 +46,8 @@ from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TAU, TIDE_FRAC, MIN_SPEC = 1.0, 0.05, 5
 # Cohort size. 50 was set by the old readout, which had only 378 scorable knockouts and could not support more
 # without exhausting the smaller functional classes. The gwps readout has 1,110, so KO_NPICK lets the cohort grow

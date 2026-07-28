@@ -33,13 +33,14 @@ import collections
 import csv
 import gzip
 import json
+import os
 import re
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 GNOMAD = SP / "gnomad_constraint.txt.bgz"
 CLINGEN = SP / "ClinGen_gene_curation_list_GRCh38.tsv"
 DEPMAP = SP / "CRISPRGeneEffect.csv"

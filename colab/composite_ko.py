@@ -30,6 +30,7 @@ set-knockout of its interaction neighbourhood) IS testable, on the physical laye
 Everything is scored on WITHIN-GENE standardised signed response (a gene's signed z for this knockout minus that gene's mean signed z across all
 knockouts, over its own SD), so a shared generic stress response cannot manufacture correlation. Tide genes are excluded. Each source contributes
 exactly one number. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
@@ -37,8 +38,8 @@ import pandas as pd
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 RNG = np.random.RandomState(0)
 TIDE_FRAC = 0.05
 MINSRC = 20

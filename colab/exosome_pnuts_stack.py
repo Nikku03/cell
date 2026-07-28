@@ -11,9 +11,10 @@ through our own full stack, to see what the model + NEXUS say about it. Three qu
       dependencies -- the context in which this autoregulatory loop would matter.
 """
 import json
+import os
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 EXO = ["EXOSC2", "EXOSC3", "EXOSC4", "EXOSC5", "EXOSC8", "EXOSC9", "DIS3", "MTREX"]
 TARGET = "PPP1R10"
 

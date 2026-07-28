@@ -29,10 +29,11 @@ win the race) should show MORE polymerase (Pol II ChIP) and MORE transcription (
 bound motif sites, pooling several TFs. Whatever it shows is reported — including the known paradox that many FUNCTIONAL
 enhancers deliberately use LOW-affinity sites (so affinity may predict productivity only weakly).
 """
+import os
 import json, math
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan/invivo")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")) / "invivo"
 
 # literature-anchored, ORDER-OF-MAGNITUDE (the model output is relative, not absolute):
 TAU_MAX = 12.0        # residence time (s) of a max-affinity/consensus specific site (SMT: specific TF binding ~ seconds)

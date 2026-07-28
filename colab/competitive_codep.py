@@ -18,11 +18,12 @@ Readout: co-dependency(A,C) = cosine of DepMap dependency profiles (depmap_vecs.
 essentiality(dep-decile)-matched random. Controls: essentiality stratification + label-shuffle. HONEST CAVEAT up front: "never
 co-complex" is a NOISY proxy for "same-site competitor", so a null refutes the *detectable-at-this-proxy* version, not the biophysics.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from scipy.stats import mannwhitneyu
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 RNG = np.random.RandomState(0)
 MAXPAIRS = 30000
 

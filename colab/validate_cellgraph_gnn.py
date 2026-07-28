@@ -2,13 +2,14 @@
 
 Honest head-to-head on the SAME leakage-free link-prediction benchmark, across relations. Adopt only where
 the learned encoder actually beats the fixed one. Result is CPU/GPU-identical (GPU only speeds training)."""
+import os
 import json, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from cellgraph import load_model, node_features, build_adj
 import cellgraph_gnn as gnn
 
-OUT = Path("outputs/orphan"); OUT.mkdir(parents=True, exist_ok=True)
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")); OUT.mkdir(parents=True, exist_ok=True)
 EPOCHS = int(sys.argv[1]) if len(sys.argv) > 1 else 200
 
 

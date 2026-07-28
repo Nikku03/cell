@@ -53,6 +53,7 @@ could be selecting edges where degree already happens to work.
 """
 import collections
 import json
+import os
 import time
 import urllib.error
 import urllib.request
@@ -60,7 +61,7 @@ from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 UA = {"User-Agent": "Mozilla/5.0 (compatible; cell-network-research/1.0)"}
 BATCH = 20              # measured silent cap on the bulk endpoint: posting 25/50/150 ids all return 20

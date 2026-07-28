@@ -39,14 +39,15 @@ MIN_SPEC=5, N_NEI=10, 5 splits, paired bootstrap, hyperparameters chosen on TRAI
 """
 import collections
 import json
+import os
 import pickle
 from pathlib import Path
 
 import numpy as np
 from scipy import sparse
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TAU, K, MIN_SPEC, TIDE_FRAC, N_NEI, NSPLIT, NBOOT = 1.0, 50, 5, 0.05, 10, 5, 2000
 DAMP = [(1, 1.0), (2, 0.5), (3, 0.5)]
 

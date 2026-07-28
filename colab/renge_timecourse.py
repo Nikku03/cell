@@ -11,10 +11,11 @@ dominated by DIRECT targets (the regulon) before the cascade develops. So the te
   C. self-KO control        the knocked-out gene itself should drop early (sanity that KO assignment + timing work).
 Honest scope: hiPSC (not K562), ~23 TFs (small for held-out), 4 days (coarse). It tests the PRINCIPLE, not a K562 number.
 """
+import os
 import json, tarfile, gzip, io, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 RG = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/renge")
 
 

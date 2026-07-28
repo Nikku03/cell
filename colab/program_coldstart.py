@@ -42,14 +42,15 @@ number for a gene no assay has ever perturbed.
 PROTOCOL. Sources split 70/30 x NSPLIT, repeated over SEEDS independent seeds. Programs, mu, feature vocabularies, feature scaling, the regressor and
 the tide mask are all fitted on TRAIN only. The test gene's own response is used solely as truth, and no neighbour's response is used at any point.
 Significance is tested on one value per UNIQUE source, since a source can be held out in several splits. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 RNG = np.random.RandomState(0)
 TIDE_FRAC = 0.05
 MINSRC = 20

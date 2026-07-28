@@ -23,14 +23,15 @@ building. This script separates them.
      replicate estimate -- there are no duplicate guides in the data -- but threshold churn is a lower bound on target instability.
 
 Model, splits, tide mask and controls are identical to program_coldstart.py so the numbers are comparable. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TIDE_FRAC = 0.05
 MINSRC = 20
 MAXCOMPLEX = 200

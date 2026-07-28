@@ -14,11 +14,12 @@ WHAT THIS FETCHES -- only the small files whose absence blocks a concrete next s
 WHAT IT DELIBERATELY DOES NOT FETCH: the multi-GB ATAC and peak archives. Disk here is a fixed per-session allowance
 and was recently at 4.1 GB free; pulling a genome-wide peak atlas would exhaust it and break the session. Those are
 listed with their URLs and sizes so the decision to spend the disk is explicit rather than accidental."""
+import os
 import json, sys, urllib.request, gzip, io
 from pathlib import Path
 
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
-OUT = Path("outputs/orphan")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 SMALL = [
     ("lambert_tfs.csv", "http://humantfs.ccbr.utoronto.ca/download/v_1.01/DatabaseExtract_v_1.01.csv",

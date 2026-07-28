@@ -21,13 +21,14 @@ Also: Spearman(annotation score, real mf) per line -- does annotation actually p
 Honest expectation going in: annotation is a GENERIC propensity, so it should behave like a generic/transfer prior, well above
 random but below the target's own perturbation-learned tide. The measurement is HOW MUCH of the ceiling annotation recovers.
 """
+import os
 import json, collections, math
 from pathlib import Path
 import numpy as np
 from scipy.stats import spearmanr
 from sklearn.linear_model import LogisticRegression
 import fullstack_multicell as mc
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 N_PANEL = 60
 FEATN = 8
 

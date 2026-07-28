@@ -10,7 +10,7 @@ from scipy.stats import pearsonr
 from sklearn.ensemble import HistGradientBoostingRegressor
 import ddg_predictor as ddg
 
-OUT = Path("outputs/orphan"); OUT.mkdir(parents=True, exist_ok=True)
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")); OUT.mkdir(parents=True, exist_ok=True)
 REPO = ddg.REPO
 
 

@@ -13,12 +13,13 @@ Reports, on held-out K562 knockouts (the model never sees the test KO's own prof
   E) DIRECTION         -- the model scores MAGNITUDE; we report what fraction of its correct hits it could also sign, if asked (it cannot:
                           documented gap, not an estimate).
 Deterministic; 2 seeds, 30% held out, retrieval pools exclude held-out KOs."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 W = {"BEHAV": 0.35, "GRAPH": 0.25, "STRUCT": 1.5, "TIDE": 0.25}       # weights learned in multimodal_stack (seed-averaged)
 
 

@@ -14,11 +14,12 @@ fixed (non-learned) propagation; for 16k nodes it is fast, strong, and fully rep
 Round 1: features + adjacency + embeddings + held-out link-prediction AUC (the foundation + first metric).
 """
 import json
+import os
 import numpy as np
 from pathlib import Path
 from scipy import sparse
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 CC = OUT / "cell_complete.json"
 
 NUM_FIELDS = ["loeuf", "tf", "ppi", "ndis", "npath", "cpg", "enh", "dep_frac", "dark", "pubs", "ess"]

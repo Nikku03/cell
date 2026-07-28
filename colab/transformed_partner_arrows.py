@@ -54,13 +54,14 @@ source into a stronger one diluted the stronger one.
 """
 import collections
 import json
+import os
 import re
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TREE = SP / "entity_tree.json"          # PE -> {sc, cls, nm, kids, up}: the recursive Reactome entity tree
 UP2G = SP / "reactome/up2gene.tsv"      # UniProt accession -> gene symbol
 RXIO = SP / "reaction_io.json"          # reaction -> top-level input/output physical entities

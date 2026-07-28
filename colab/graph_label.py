@@ -15,9 +15,10 @@ causal signal. So the labeled graph is the right SUBSTRATE for representation / 
 honest about not composing to phenotype.
   build() -> the labeled graph ; stats() -> outputs/orphan/graph_label.json ; neighbors(g) -> a gene's typed edges
 """
+import os
 import json, itertools, collections
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 MAXPATH = 50                                                     # skip pathways bigger than this (generic hubs)
 RELATIONS = ("ppi", "path", "lit")
 

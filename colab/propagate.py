@@ -18,8 +18,9 @@ exist (epigenetic gating via invivo_gate's chromatin tracks; PTM/ncRNA fields in
 and chromatin layers are TODO -- each is its own hard problem (e.g. SpliceAI-class splicing prediction).
 """
 import json
+import os
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def _load():

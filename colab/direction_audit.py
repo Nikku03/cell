@@ -29,11 +29,12 @@ WHAT IS COMPUTED:
 """
 import collections
 import json
+import os
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def ci(k, n):

@@ -34,11 +34,12 @@ TWO THINGS ARE INFERRED AND MUST NOT BE READ AS CURATED:
 """
 import collections
 import json
+import os
 import sys
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 MAXPART = 60
 MINFRAC = 0.5      # a pathway must contain at least this fraction of a reaction's genes to claim it
 MAXPWGENES = 600   # pathways bigger than this are containers ("Metabolism", "Immune System"), never a step index

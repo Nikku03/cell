@@ -10,12 +10,13 @@ The literal test: shortest-path hop distance from the knockout over the physical
 Honest note on 'time flows / irreversible': physical PPI is UNDIRECTED, so a chain is symmetric and explodes; real directionality/time-ordering
 lives in the signalling/regulatory layer (tested separately in mechanistic_propagate). This tests the PPI-chain idea as asked and measures whether
 multi-hop physical reachability discriminates movers at all. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 MAXD = 4
 
 

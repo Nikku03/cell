@@ -11,11 +11,12 @@ Feature blocks (each an enrichment vector, L2-normalised, then concatenated so e
 Plus, for context, the raw mRNA-content view (Jaccard of the full expressed-gene SETS) which is the most direct fingerprint but
 cannot go in the gene-split (half-A and half-B genes are disjoint, so identity can't bridge halves) -- reported separately.
 """
+import os
 import json, collections, math
 from pathlib import Path
 import numpy as np
 import celltype_coherence as C
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def enrich_matrix(ctg_half, gterms, universe, vocab, vidx, ct):

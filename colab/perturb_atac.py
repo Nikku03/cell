@@ -13,14 +13,15 @@ SAME knockdowns, to answer: does chromatin see the regulatory action that mRNA a
 Honest caveat: a chromVAR motif is FAMILY-level (many TFs share a binding motif), so 'MYC-motif activity' is E-box-family activity, not proof it
 is MYC specifically; still, it is an activity-layer signal invisible to mRNA abundance. Deterministic. Needs scratchpad/spatac/*_motif_pb.npz
 (run extract_spatac.py first)."""
+import os
 import json, re, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/spatac")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")) / "spatac"
 DELTA = 0.25          # |mean chromVAR-z shift| that counts as an activity change
 TSTAT = 5.0           # two-sample significance (thousands of cells -> use effect size DELTA as the real bar)
 TAU = 1.0             # |mRNA z| >= 1 == "moved"

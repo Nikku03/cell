@@ -26,10 +26,11 @@ Also honest: steady-state FBA gives FLUXES and shadow prices, not concentration-
 dynamic FBA / kinetics (kcat,Km) we only partially have; we report the steady-state signature (reroute + limiting metabolites),
 which is what mass-balance actually licenses.
 """
+import os
 import json, re
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 GEM = f"{SP}/HumanGEM.xml"
 

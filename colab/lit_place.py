@@ -15,9 +15,10 @@ chance, right pathway in the top-5 about 1 in 5 times) — a hypothesis GENERATO
 a confident annotation and NOT a phenotype predictor. IDF down-weights promiscuous hub genes (a gene co-mentioned with
 everyone, like TP53, carries little specific pathway signal).
 """
+import os
 import json, re, collections, math
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # gene symbols that are also common English / lab words — excluded from case-sensitive abstract matching to cut false hits
 STOP = {"SET", "MET", "CAD", "CAT", "REST", "ACHE", "FAT", "MAX", "PIGS", "CAMP", "COIL", "DDT", "GAN", "WARS", "MARS",

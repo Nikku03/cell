@@ -10,10 +10,11 @@ Test (cascade_all held-out protocol, GroupKFold by knockout):
 Prediction from everything so far: it recovers the near-field (distance-1 = the regulon) but the specific far-field stays ~chance,
 because the real edge 'travel times' (transmission coefficients) are unmeasured, and the far-field is a flood (the tide), not a route.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def _weighted_graph(idx, names):

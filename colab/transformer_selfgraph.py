@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from neural_ko import build_xy, mean_recall
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 M_PART = 32
 SMOKE = bool(os.environ.get("SG_SMOKE"))
 

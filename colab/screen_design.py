@@ -11,6 +11,7 @@ one unlocks:
    measurable     whether X is even detected in the expression readout (an undetected gene cannot be read out as a target either)
 The output is a CSV-style table, ordered by unlocked chain-load, restricted to genes that are NOT already effectively perturbed -- i.e. exactly
 the experiment that does not yet exist. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
@@ -18,8 +19,8 @@ import pandas as pd
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 MAXHOP, TIDE_FRAC = 4, 0.05
 TOPHUBS = 25          # audit the strongest knockouts, which is where verifiable chains actually exist
 

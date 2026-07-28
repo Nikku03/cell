@@ -23,13 +23,14 @@ all-confirmed chain (each intermediate demonstrably changed the required way) vs
 Honest scope: Perturb-seq measures mRNA ABUNDANCE (a proxy for how much protein is made), NOT whether the protein is active. We audit abundance
 change at every hop; we cannot see disintegration/PTM/activity directly, and say so. Also: ~79% of the panel's knockouts are near-silent, so a
 KO's specific response is carried by a minority of strong perturbations. GATA1 detailed + aggregate over all scorable KOs. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 KO = "GATA1"
 MAXHOP = 4
 THR = 1.0                    # |z| >= 1 == "changed" (the harness mover bar)

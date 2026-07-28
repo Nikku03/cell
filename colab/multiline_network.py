@@ -19,12 +19,13 @@ MEASURED LINE.
 
 Honest scope: these per-line matrices are the top-~250-genes-per-knockout store, so the very strongest hubs are truncated (binding for only
 9-24 knockouts per line); all lines are treated identically so comparisons are fair. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 RNG = np.random.RandomState(0)
 LINES = ["K562", "RPE1", "HepG2", "Jurkat"]
 THR = 1.0

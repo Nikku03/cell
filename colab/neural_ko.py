@@ -20,10 +20,11 @@ ceiling). Controls: LINEAR on identical features (deep-vs-linear), and a FEATURE
 Deterministic: RandomState(0), torch.manual_seed(0), single-thread.
 """
 import json
+import os
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def build_xy(H):

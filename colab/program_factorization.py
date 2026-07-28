@@ -24,14 +24,15 @@ PROTOCOL. Sources split 70/30, repeated NSPLIT times. G is fitted on TRAIN rows 
 computed from TRAIN sources only, so the definition of a 'specific mover' never sees the test set. Each test source contributes one number.
 Scored on BOTH metrics this project uses: specific-mover recall@50 (comparable to the 0.143 tide-null recomputed in this setup) and profile
 correlation (comparable to the 0.49 from composite_ko). Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 RNG = np.random.RandomState(0)
 TIDE_FRAC = 0.05
 MINSRC = 20

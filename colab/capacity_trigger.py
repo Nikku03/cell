@@ -14,10 +14,11 @@ Metabolic subset: sole-catalyst status (from Human-GEM GPRs) -- the low-redundan
 Honest confound flagged: n_movers is partly technical (stronger KO / better-covered gene -> more movers detected), so a positive
 result is necessary-not-sufficient; we report the association and the confound together.
 """
+import os
 import json, csv, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 

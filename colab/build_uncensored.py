@@ -18,8 +18,9 @@ import sys, json, collections
 from pathlib import Path
 import numpy as np
 import h5py
+import os
 
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 FILES = {"RPE1": "rpe1.h5ad", "HepG2": "nadig_hepg2.h5ad", "Jurkat": "nadig_jurkat.h5ad"}
 MINCELL = 50
 NBOOT = 30          # control pseudobulks per depth bin

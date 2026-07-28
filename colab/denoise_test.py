@@ -13,12 +13,13 @@ Report model & oracle recall@50 against full vs repro, and where the model's hit
 ceiling is set by target NOISE, so replicates would raise it. Also a consensus-target oracle (multi-line mean) as a second denoising angle.
 Deterministic; no training."""
 import json
+import os
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from neural_ko import build_xy
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 OTHER = ["RPE1", "HepG2", "Jurkat"]
 K = 50
 

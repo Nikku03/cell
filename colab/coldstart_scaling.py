@@ -16,14 +16,15 @@ TWO CURVES, because they answer different questions:
             FULL localises the limitation: if REGRESSOR is much flatter, the shortage is in the program basis, not in the annotation->loading map.
 
 Test set is held fixed across every training size within a split, so the curves are directly comparable. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TIDE_FRAC = 0.05
 MINSRC = 20
 MAXCOMPLEX = 200

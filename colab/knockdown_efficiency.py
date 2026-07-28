@@ -9,12 +9,13 @@ in its own row, whether or not anything else responded.
 The decisive split: among NULL knockouts, how many nonetheless show a clear self-knockdown? Those are genes that were successfully silenced and
 the cell simply did not care -- genuinely DISPENSABLE, not recoverable by better reagents. Only the remainder (silenced poorly or not at all) are
 addressable by guide QC, and that fraction is the honest size of the "better perturbations" lever. Deterministic."""
+import os
 import json, sys
 from pathlib import Path
 import numpy as np
 
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
-OUT = Path("outputs/orphan")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 KD = -4.0          # self-z at or below this counts as a clear knockdown
 MINMOV = 20
 

@@ -21,12 +21,13 @@ MODELS COMPARED on identical folds:
    TRANSFORMER     tokens = [source, target, + the genes the source actually hits in other lines]; self-attention over that set, pooled to a
                    score. This lets the model reason over a source's observed causal signature rather than a single vector.
 The honest question is whether a learned model beats the lookup AND covers the pairs the lookup cannot. Deterministic (fixed seeds)."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 LINES = ["RPE1", "HepG2", "Jurkat"]          # donors; K562 is the held-out target line
 THR, MINOUT, TIDE_FRAC = 1.0, 20, 0.05
 DIM = 64

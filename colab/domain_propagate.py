@@ -15,11 +15,12 @@ Two pieces:
   (3) propagate_ko(A) -- the tool: multi-hop gated cascade highlighting the PPIs a knockout affects directly and indirectly, with each
       downstream edge tagged unaffected / disrupted(obligate) / freed(same-slot competition), attenuating when nothing new is disrupted.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from scipy.stats import mannwhitneyu
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 RNG = np.random.RandomState(0)
 MAXDOM = 15          # cap domains/protein for pair enumeration (drop the 285-domain outliers' tail)
 MINOCC = 3           # a domain must appear on >= this many PPI proteins for a stable enrichment

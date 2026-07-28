@@ -19,9 +19,10 @@ import sys, json, collections
 from pathlib import Path
 import numpy as np
 import h5py
+import os
 
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
-OUT = Path("outputs/orphan")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 FILES = {"RPE1": "rpe1.h5ad", "HepG2": "nadig_hepg2.h5ad", "Jurkat": "nadig_jurkat.h5ad"}
 MINCELL = 100          # need enough cells that each half is still meaningful
 CHUNK = 20000

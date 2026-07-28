@@ -24,11 +24,12 @@ fast) — kinetics is the model's acknowledged wall. Output is a ranked, wet-lab
 hypothesis, not a validated cure.
 """
 import json
+import os
 import random
 from collections import defaultdict
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 MAXIT = 100
 
 

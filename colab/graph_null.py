@@ -40,13 +40,14 @@ the honest reading is that a real-graph win over NULL B is an upper bound on the
 retention is measured and reported rather than assumed. Degree-preserving rewiring also cannot destroy the fact that a
 knockout gene is its own node, nor the coarse connected-component structure, so those remain shared between real and
 null and are not what is being tested."""
+import os
 import json, pickle, collections
 from pathlib import Path
 import numpy as np
 from scipy import sparse
 from sklearn.ensemble import HistGradientBoostingRegressor
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU, K, MIN_SPEC, TIDE_FRAC, N_NEI = 1.0, 50, 5, 0.05, 10
 NSPLIT = 5

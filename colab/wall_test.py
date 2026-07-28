@@ -22,10 +22,11 @@ Decisive read: if MODEL >> RANDOM/TIDE on SPECIFIC movers -> the specific far fi
 the cell type. If MODEL ~ RANDOM on specific movers -> the wall stands even here; 'enough KO data' bought only the tide + a lookup
 table for the knockouts you already ran, not prediction of the specific response.
 """
+import os
 import json, pickle, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU = 1.0          # |z| >= TAU = a mover (top ~5% of effects on this compressed control-relative z-scale; p95(|z|)=1.04)
 TIDE_FRAC = 0.05   # a gene moving in >=5% of knockouts = tide (generic)

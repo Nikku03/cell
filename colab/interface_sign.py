@@ -18,13 +18,14 @@ Readouts (both measured): (1) Perturb-seq mRNA response correlation over tide-re
 label-shuffle + degree/essentiality-agnostic random pairs. HONEST CAVEAT stated up front: "never co-occur in a PDB" is confounded by
 "not yet co-crystallised" (absence of evidence), so a null refutes the detectable-at-this-resolution version, not the biophysics; residue-level
 interface overlap (the ideal) needs the per-structure interface the Interactome3D file server would not bulk-serve this session. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/i3d")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")) / "i3d"
 TAU = 1.0
 
 

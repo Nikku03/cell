@@ -7,9 +7,10 @@ future change must not turn a PASS into a FAIL. It does not run new experiments 
 result JSONs and asserts the numbers still clear their bars. -> recovery_scorecard.json
 """
 import json
+import os
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def _load(name):

@@ -11,10 +11,11 @@ avg_log_kdeg per gene. FEATURES: GENCODE v46 pc_transcripts (headers give CDS/UT
 gene. Codon optimality is learned IN-FOLD (61-codon composition as features) so there is no CSC leakage. CV is GroupKFold by
 chromosome (paralog-safe). Reported vs baselines (mean / 3'UTR-length-only / codon-only) and the Saluki ceiling.
 """
+import os
 import gzip, json, re, subprocess
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SCR = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/rnadecay")
 GENCODE = SCR / "pc.fa.gz"
 KDEG = SCR / "AvgKdegs.csv"

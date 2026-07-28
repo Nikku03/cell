@@ -13,13 +13,14 @@ different things, and only one of them is 'the link is fake':
 
 If (1)/(2)/(3) carry real signal, then 'broken' overstates it: the honest label is UNCONFIRMED (the mRNA can't see the route), not DISPROVEN.
 This module measures all three, with the GATA1->MYC->LTB example spotlighted, then re-states the conclusion honestly. Deterministic; K562."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 THR = 1.0
 
 

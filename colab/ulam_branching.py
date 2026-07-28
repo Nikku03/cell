@@ -91,6 +91,7 @@ would make a size-prediction result meaningless.
 """
 import collections
 import json
+import os
 import pickle
 from pathlib import Path
 
@@ -100,7 +101,7 @@ from scipy.stats import spearmanr
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.metrics import roc_auc_score
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU, TIDE_FRAC = 1.0, 0.05
 NFOLD = 5

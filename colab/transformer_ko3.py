@@ -19,13 +19,14 @@ real-vs-random partners (structure), wrong-KO shuffle (identity). Metric: held-o
 deterministic per split. Honest expectation: edge-bias is the likelier winner; edge-features may be partly redundant with role+network-SVD;
 lands ~0.50-0.55, NOT past the ~0.62 retrieval ceiling (that needs transient-kinetics data, unavailable here).
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from neural_ko import build_xy, mean_recall
 from transformer_ko import build_context
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 N_ET = 6                         # none, self, complex, codep, ppi, cls
 CLS_T = 5
 

@@ -36,13 +36,14 @@ Reference points, fixed: chance 0.500 | degree rule 0.5664 | global precedence 0
 """
 import collections
 import json
+import os
 import re
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 CACHE = SP / "catalyst_arrows_cache.json"           # written by catalyst_arrows.py: rx, ca, gene, comp
 PECOMP = SP / "pe_compartment.json"                 # leaf PE -> compartment, parsed from NCBI2Reactome_PE_Reactions
 MAXPROD = 50    # an entity produced by more than this many reactions is treated as currency (ATP, ADP, H2O, Pi)

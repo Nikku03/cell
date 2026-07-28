@@ -22,9 +22,10 @@ HONEST BOUNDARY: this converts an in-vitro sequence preference into an in-vivo B
 ChIP, how much each gate helps. It does NOT thereby predict which genes MOVE on knockout (the regulation/dynamics wall this
 project keeps hitting) — binding != regulation. It answers "does the TF physically land here, in this cell", well.
 """
+import os
 import json, os
 from pathlib import Path
-OUT = Path("outputs/orphan/invivo")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")) / "invivo"
 NT = {"A": 0, "C": 1, "G": 2, "T": 3}
 
 

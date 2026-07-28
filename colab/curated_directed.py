@@ -35,11 +35,12 @@ arrows than for SINGLE ones. If it is not, corroboration is not buying confidenc
 """
 import collections
 import json
+import os
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 HUB = 5          # reaction-count cap for currency molecules, chosen by sweep in pathway_inputs.py
 MAXP = 100       # participants-per-reaction cap, chosen by sweep in build_directed_network.py

@@ -27,9 +27,10 @@ They are predicted as "no coherent programme" -- a broad low-information guess -
 frequency baseline.
 """
 import json
+import os
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # ---------------------------------------------------------------------------------------------------------------
 # Signature panels. Each is a transcriptional programme with a named trigger, not a list of "related genes".

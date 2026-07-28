@@ -7,11 +7,12 @@ cells per perturbation, wider z dynamic range) vs the shallow genome-wide screen
 better-powered z -> more REAL movers per knockout. We also sweep the mover threshold to trace precision@10 as the mover set gets
 richer. Same full-stack ranker as predict10 (mechanism tiers + leave-one-out responsiveness prior), scored the same way.
 """
+import os
 import json, collections, h5py
 from pathlib import Path
 import numpy as np
 import predict10 as p10
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 

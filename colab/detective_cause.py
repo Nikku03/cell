@@ -17,12 +17,13 @@ VERDICT = CONSENSUS (mean rank-percentile across witnesses). We test whether con
 witness, whether the network-only consensus (generative+regulon, NO genetics) recovers drivers that
 correlation buried, and whether the true culprit rises. -> detective_cause_validation.json
 """
+import os
 import gzip, json, math
 from collections import defaultdict
 from pathlib import Path
 from statistics import median
 
-OUT = Path("outputs/orphan"); OUT.mkdir(parents=True, exist_ok=True)
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")); OUT.mkdir(parents=True, exist_ok=True)
 CC_CANDIDATES = [OUT / "cell_complete.json",
                  Path("/root/.claude/uploads/0f039315-b3a9-52ac-8187-9fae0d726994/9cee48b8-cell_complete_6.json.gz")]
 

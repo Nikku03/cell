@@ -16,8 +16,9 @@ decap/recap homeostasis pool. What IS first-principles: the provenance gate, the
 hub-vs-modifier essentiality calls (validated here).
 """
 import json
+import os
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # worker -> (role, predicted class). Class is derived from obligatory-role logic, NOT from the essentiality it is tested against.
 WORKERS = {

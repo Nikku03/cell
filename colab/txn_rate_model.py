@@ -29,13 +29,14 @@ gene class, and regulatory wiring -- none of which contains the answer.
 WHAT THIS DOES AND DOES NOT SETTLE. It gives the normal rate and an equation for it. It does NOT give "TF X boosts gene Y by Z-fold",
 because the cell lines differ in thousands of ways at once and no TF is being individually manipulated -- the TF-identity layer measures
 whether regulatory wiring carries rate information, not the causal effect of any single factor."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 MIN_TF_GENES = 25          # a TF needs this many regulated genes before it gets its own indicator column
 NSPLIT = 5
 

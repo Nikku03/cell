@@ -8,11 +8,12 @@ identification, out of all 200 cell types:
   same data). We report EXACT top-1 / top-3 / top-5 identification accuracy (chance = 1/200 = 0.5%), plus the softer
   same-lineage accuracy, for gene-FUNCTION (GO Biological Process) and protein-TYPE (GO Molecular Function).
 """
+import os
 import json, collections, math
 from pathlib import Path
 import numpy as np
 import celltype_coherence as C
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def profiles(ctg_half, gterms, gfreq, gtot, vocab, vidx, ct):

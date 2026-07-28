@@ -36,13 +36,14 @@ assignment built from Reactome and Human-GEM annotation -- a check that assignme
 import collections
 import csv
 import json
+import os
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 MITO = SP / "Human.MitoCarta3.0.xls"
 DEPMAP = SP / "CRISPRGeneEffect.csv"
 MIN_LINES, MAX_PAIRS, NRAND = 200, 800, 20

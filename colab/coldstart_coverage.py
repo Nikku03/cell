@@ -26,14 +26,15 @@ one. The ablation from program_coldstart is kept: every configuration is also ru
 
 THE METRIC THAT MATTERS HERE IS NOT THE HEADLINE. It is recall on the NO-COMPLEX stratum. A configuration that lifts the average by lifting
 already-good complex members has done nothing about the actual problem, so both strata are always reported separately."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TIDE_FRAC = 0.05
 MINSRC = 20
 MAXCOMPLEX = 200

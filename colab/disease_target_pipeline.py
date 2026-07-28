@@ -18,11 +18,12 @@ Signed influence propagation (not threshold-Boolean): a gene with dozens of acti
 by net-positive flow, avoiding the majority-vote pathology of {-1,+1} threshold updates on a dense network.
 Honest scope: TOPOLOGICAL (which node, which direction), not kinetic. Layers 1-2 here -> psoriasis_target_layer12.json.
 """
+import os
 import gzip, json
 from collections import defaultdict
 from pathlib import Path
 
-OUT = Path("outputs/orphan"); OUT.mkdir(parents=True, exist_ok=True)
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")); OUT.mkdir(parents=True, exist_ok=True)
 # portable model locator: Colab/committed path first, then this session's upload (gz ok).
 CC_CANDIDATES = [
     OUT / "cell_complete.json",

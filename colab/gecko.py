@@ -50,14 +50,15 @@ active at the optimum, nothing has been imposed and the result was determined be
 """
 import collections
 import json
+import os
 import sys
 from pathlib import Path
 
 import cobra
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from ec_capacity import (K562_DOUBLING_H, LETHAL_THR, cap_of, gpr_alive, gpr_tree,   # noqa: E402

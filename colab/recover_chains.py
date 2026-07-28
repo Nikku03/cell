@@ -16,6 +16,7 @@ We then re-run the identical per-hop audit and report a RECOVERY LADDER: how man
 signs, (b) uncensored data + database signs, (c) uncensored data + empirical signs. Each step's contribution is separated, and the empirical
 sign is scored against the database sign head-to-head on the endpoints where BOTH make a claim -- the honest test of whether learned signs are
 actually better. Deterministic (sorted iteration, GATA1 excluded from its own sign learning)."""
+import os
 import json, sys, collections
 from pathlib import Path
 import numpy as np
@@ -23,8 +24,8 @@ import pandas as pd
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 MAXHOP = 4
 TIDE_FRAC = 0.05
 MINCORR = 0.15          # below this we abstain rather than assert an empirical sign

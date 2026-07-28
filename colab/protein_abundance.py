@@ -14,10 +14,11 @@ Chromosome-GroupKFold, ridge + XGBoost. Reports mRNA-only vs +translation vs +de
 HONEST: this is the mechanism test (does translation+turnover add signal over mRNA?); absolute protein concentration in a given
 state still needs measured proteomics -- which we have (ppm), so downstream layers USE the measurement, not the prediction.
 """
+import os
 import json, csv
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SCR = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/rnadecay")
 
 CODON_TABLE = {}

@@ -8,13 +8,14 @@ graph). Test: follow DIRECTED (forward-only) chains from each knockout and ask t
   C) directed-closeness recall@50 vs tide.
 If direction restores discrimination but coverage is low, the concept is right and the limit is directed-edge COVERAGE (canonical only).
 Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 MAXD = 4
 
 

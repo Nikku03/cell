@@ -29,12 +29,13 @@ exchange fluxes are supplied. So "solvable for any condition" is true in the sen
 self-consistent answer, and false in the sense that the answer is a consequence of assumptions you chose.
 """
 import json
+import os
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 GEM = SP / "HumanGEM.xml"
 FRAC = 0.90             # hold the objective at >=90% of optimum, the standard FVA setting
 TOL = 1e-9

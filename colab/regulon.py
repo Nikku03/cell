@@ -38,12 +38,13 @@ has beaten seven mechanistic methods in this project already.
 """
 import collections
 import json
+import os
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TAU, TIDE_FRAC, MIN_SPEC, NPICK = 1.0, 0.05, 5, 50
 
 

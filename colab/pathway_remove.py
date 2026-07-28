@@ -8,10 +8,11 @@ its measured PPI edges; complex-mates that lose a subunit are co-essential ~1000
 transcriptional cascade — the graph predicts a knockout's real movers at only ~3% recall (4x enriched, misses ~97%), so
 the ripple is deliberately not drawn. Usage: python3 colab/pathway_remove.py [GENE]   (default PPP2R1A).
 """
+import os
 import json, html, sys, collections
 from pathlib import Path
 import pathway_graph as pg
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 VIZ = Path("viz")
 
 

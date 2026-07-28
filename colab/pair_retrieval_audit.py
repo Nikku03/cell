@@ -16,14 +16,15 @@ pair_retrieval reached 0.4047 against a true-similarity ceiling of 0.5480, but t
                  no amount of clever weighting will help.
 
 Same data, splits, tide mask, features and metric as pair_retrieval.py, so every number here is comparable to it. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TIDE_FRAC = 0.05
 MINSRC = 20
 MAXCOMPLEX = 200

@@ -9,13 +9,14 @@ OR a TF that the KO physically touches regulates it), or NEITHER (unexplained by
 For each held-out scorable K562 knockout we classify its tide-removed SPECIFIC movers and report coverage + whether the NON-physical movers are
 really enriched for regulation (the user's key inference), against a random-gene base rate. Deterministic; measures how much of the response the
 combined network mechanistically explains."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def main():

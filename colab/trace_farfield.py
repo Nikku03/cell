@@ -7,12 +7,13 @@ Two numbers the user asked for:
               (K562 Perturb-seq, held-out, tide removed) and score it against the honest bar (beat the TIDE-null 0.26; oracle ceiling 0.62).
               This tests DIRECTLY whether the protein-structural blast radius coincides with the transcriptional far field.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from trace_ko import Tracer
 from eval_harness import Harness
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def main():

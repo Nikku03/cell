@@ -12,10 +12,11 @@ Label: J moves under G (|z|>2). Model: gradient-boosted trees, GroupKFold BY KNO
 Reported vs baselines: J-mover-frequency prior alone, RWR alone, regulon alone -- so we see whether combining everything adds
 G-SPECIFIC cascade signal over "predict the usually-responsive genes." Honest: this is the measured far-field wall's fair test.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 

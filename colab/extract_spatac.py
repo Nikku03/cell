@@ -7,10 +7,11 @@ import sys, warnings, collections
 from pathlib import Path
 import numpy as np
 warnings.filterwarnings("ignore")
+import os
 import rdata
 from scipy.sparse import csc_matrix
 
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/spatac")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")) / "spatac"
 
 
 def target_of(sg):

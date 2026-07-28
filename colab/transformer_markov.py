@@ -32,6 +32,7 @@ CHOICE and cannot be confounded by different feature scaling.
 NO LEAKAGE BY CONSTRUCTION: the walk uses only the static PPI graph. Unlike the measured causal graph that won in
 bridge_measured, it touches no response data at all, so it needs no train/test partitioning of edges and cannot leak
 the labels it is scored against."""
+import os
 import json, collections, sys
 from pathlib import Path
 import numpy as np
@@ -40,7 +41,7 @@ from eval_harness import Harness
 from neural_ko import build_xy
 import transformer_ko as TK
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 M_PART = TK.M_PART
 SEEDS = [0, 1, 2]
 WALK_STEPS, WALK_DAMP = 2, 0.5          # the configuration pre-registered by protein_chain_combine

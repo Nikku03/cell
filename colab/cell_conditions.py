@@ -15,10 +15,11 @@ curated condition-TFs (major stress/signal axes, not all); still "regulated-by" 
 NOTE the data experiment: better regulons help condition inference but DON'T break the which-targets-move wall (best 2.7x,
 ~0.6% recall). A hypothesis generator for what turns a pathway on, not a proven trigger.
 """
+import os
 import json, collections, math
 from pathlib import Path
 from scipy.stats import hypergeom
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # condition-responsive TF -> the human-readable stimulus it reports (curated; expandable). Deliberately the transient
 # STRESS/SIGNAL axes — NOT broad proliferation TFs (MYC/E2F1), whose targets are the constitutive growth machinery and

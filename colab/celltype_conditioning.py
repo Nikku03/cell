@@ -19,10 +19,11 @@ HONEST SCOPE (validated in validate_celltype_conditioning.py):
   that conditioning beats the global predictors.
 """
 import json
+import os
 from collections import defaultdict
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 CC = OUT / "cell_complete.json"
 
 

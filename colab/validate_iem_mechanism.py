@@ -14,11 +14,12 @@ a random-pair baseline. -> iem_mechanism_validation.json
 
 Reads outputs/orphan/metab_reactions.json (generxn + names, from the model) — or cell_complete.json on Colab.
 """
+import os
 import json, re, random
 from pathlib import Path
 from statistics import mean, median
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 ARROW = "→"
 
 # (gene, [biomarker synonyms], disease) — accumulating substrate, from clinical biochemistry, fixed a priori.

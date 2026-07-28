@@ -22,10 +22,11 @@ predict the transcriptome). It annotates measured states and enables the REVERSE
 itself break the forward far-field wall -- the per-edge transmission coefficient is still unmeasured. What it genuinely fixes:
 activity != abundance, wherever an expression signature exists.
 """
+import os
 import json, csv, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 

@@ -34,14 +34,15 @@ protein-level and correctly withheld from the prediction.
 """
 import collections
 import json
+import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from multilayer_reason import SENSORS as MLSENSORS, classify as ml_classify
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 MAXDEPTH = 3
 MAXCPLX = 30          # orphaning is a stoichiometry argument; it does not apply to a 90-subunit machine
 MAXFANOUT = 25        # per role per round, so one hub cannot flood the cascade

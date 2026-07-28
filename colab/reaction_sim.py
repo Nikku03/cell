@@ -17,10 +17,11 @@ This is the honest test of the blueprint's central promise (gating makes the res
 gating raises precision of the possible set modestly; magnitude beats boolean at depth; neither breaks the far field -- the win is a
 cleaner, mutation-addressable, near-field-accurate Operational Interactome, and the far-field magnitude stays a measurement gap.
 """
+import os
 import json, csv, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 MAX_HOPS = 3
 ATT = 0.5          # per-hop attenuation (magnitude mode)

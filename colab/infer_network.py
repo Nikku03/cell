@@ -18,6 +18,7 @@ directed, signed, MEASURED causal edge. That is a better primitive than any cura
                             which signal carries it.
 
 Deterministic (fixed seeds, sorted iteration)."""
+import os
 import json, collections, sys
 from pathlib import Path
 import numpy as np
@@ -25,8 +26,8 @@ import pandas as pd
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 RNG = np.random.RandomState(0)
 MAXPOS = 20000
 

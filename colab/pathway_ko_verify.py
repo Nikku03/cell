@@ -8,10 +8,11 @@ structure. Two aims:
      through that pathway's members (which move, which our edges connected) -- the interpretable, few-case view of KO -> structure.
 Uses the Perturb-seq we have (K562 gwps) as the ground truth; edges from the labelled cell graph; pathways from Reactome.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def _load():

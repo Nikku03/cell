@@ -24,7 +24,7 @@ flux units. This is the metabolic layer only -- it says nothing about the signal
 import os, json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 MODEL_PATH = "HumanGEM.xml"
 GLC, O2 = "MAR09034", "MAR09048"
 _CACHE = {}

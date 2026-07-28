@@ -20,7 +20,7 @@ from eval_harness import Harness
 from neural_ko import build_xy, mean_recall
 from transformer_ko import build_context
 from transformer_ko3 import build_edges, N_ET, CLS_T
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 COMPS = ['nucleus', 'cytoplasm', 'plasma membrane', 'membrane', 'extracellular', 'mitochondrion',
          'ER', 'cytoskeleton', 'Golgi', 'endosome', 'lysosome', 'peroxisome']
 NC = len(COMPS)

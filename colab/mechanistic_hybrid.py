@@ -9,6 +9,7 @@ Tests, held-out K562, 3 splits:
   - on TF knockouts, does the regulatory-propagation add anything to retrieval (val-tuned blend), or does retrieval already dominate?
   - does the routed hybrid beat retrieval overall?
 Deterministic; no training (DepMap-retrieval + fixed regulatory propagation)."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
@@ -16,7 +17,7 @@ from eval_harness import Harness
 from neural_ko import build_xy
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 K = 50
 
 

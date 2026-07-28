@@ -13,11 +13,12 @@ Panels:
 Also report COVERAGE = fraction of each held-out KO's true (full-transcriptome) movers that the panel even contains -- i.e. how much
 of the real response a cheap readout throws away.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import fullstack_multicell as mc
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SIZES = [300, 500, 1000, 2000]
 
 

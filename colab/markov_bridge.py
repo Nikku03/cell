@@ -46,13 +46,14 @@ their new steady state and appear attenuated, so the endpoint could be de-attenu
 GWPS readout, the median K562 mRNA has a 3.47 h half-life and is equilibrated to 1.000; only 198 genes of 10,802 sit
 below 99% equilibrated. The snapshot IS the steady state for 98% of genes, so de-attenuation is very nearly a no-op.
 It is run anyway as an arm, on that 198-gene slow tail, rather than assumed away."""
+import os
 import json, pickle, collections
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from scipy import sparse
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU, TIDE_FRAC, MIN_SPEC = 1.0, 0.05, 5
 TS = [2, 3, 4]              # total steps: (T-1) PPI hops then 1 regulatory hop

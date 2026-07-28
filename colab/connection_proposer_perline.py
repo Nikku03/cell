@@ -15,13 +15,14 @@ subunit_convergence = (# converging knockouts that land inside the named machine
 confidence separate REAL machine convergences (Y is itself a subunit of the machine = a known subunit-KO->co-subunit response) from a
 random-gene-set null (AUC). The number is deterministic code, no LLM in the loop -- the point of the whole exercise.
 """
+import os
 import json, collections, math, csv
 from pathlib import Path
 import numpy as np
 from sklearn.metrics import roc_auc_score
 import novel_links as nl
 from connection_proposer import best_complex, mine_all, MIN_CONV
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 LINES_OTHER = [L for L in nl.LINES if L[0] != "K562"]   # HCT116, Melanoma, RPE1, HepG2, Jurkat
 
 

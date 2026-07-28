@@ -21,8 +21,9 @@ import json, collections, csv, pickle, os
 from pathlib import Path
 import numpy as np
 import h5py
+import os
 import scperturb_finetune as scf
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TOP_KEEP = 250        # genes kept per KO by |z| (scale-free capture of strong tail)
 TOP_PER_KO = 25       # a KO's strongest movers treated as candidate specific effects

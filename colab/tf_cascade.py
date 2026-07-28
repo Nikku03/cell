@@ -31,13 +31,14 @@ WHAT ELSE IS ASKED AND WHAT THE DATA SUPPORTS:
                 drop may go. Reported as proxies and labelled as such.
   VALIDATION    the point of the exercise: what fraction of the measured movers does the cascade explain, against a degree-matched random
                 network null, level by level."""
+import os
 import json, collections, sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 T = 4.2
 TIDE_FRAC = 0.05
 NPERM = 500

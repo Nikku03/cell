@@ -29,10 +29,11 @@ perturbation fails to detect it. Genuine buffering surely exists in general but 
 HONEST: 'regulated' mixes direct+indirect effects; 'bound' depends on the peak->gene assignment (promoter window + ABC).
 Perturb-seq power caps which TFs are testable (only GATA1 well-powered here). Real data throughout; the gap is measured, not asserted.
 """
+import os
 import json, gzip, bisect
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan/invivo")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")) / "invivo"
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 

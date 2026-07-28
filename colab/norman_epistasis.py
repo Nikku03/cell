@@ -16,10 +16,11 @@ Tests (the honest fork):
                 If held-out epistasis r > 0 meaningfully -> the buffering coefficient is REAL and LEARNABLE from this data type =
                 the wall is addressable with combinatorial data. If ~0 -> even this kind is noise-dominated at pseudobulk depth.
 """
+import os
 import json, collections, re
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 H5 = f"{SP}/norman2019.h5ad"
 

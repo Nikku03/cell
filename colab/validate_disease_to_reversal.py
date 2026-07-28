@@ -19,6 +19,7 @@ Tests:
 
 -> prints a summary and writes outputs/orphan/disease_to_reversal_validation.json
 """
+import os
 import json, random
 from pathlib import Path
 from statistics import mean, pstdev
@@ -26,7 +27,7 @@ from statistics import mean, pstdev
 from disease_to_reversal import (build_incoming, settle, active, hamming,
                                   transition_setdiff, control_drivers, disease_to_reversal)
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 # ---------------------------------------------------------------------------

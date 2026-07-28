@@ -13,12 +13,13 @@ recall of the CANDIDATE POOL (how many true co-failers the priors even reach). C
 PPI-only) so the ensemble must beat the best single prior; (2) essentiality guard -- report AUC among not-both-essential pairs so it is not
 just 'both essential'; (3) label-shuffle -> AUC must collapse to ~0.5. Deterministic (seeds fixed).
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import roc_auc_score
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 TOPK = 10          # A's top-K DepMap co-dependency partners = its true "co-failure set"
 NEG_PER = 15       # sampled non-partner negatives per query
 RNG = np.random.RandomState(0)

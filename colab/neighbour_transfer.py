@@ -35,8 +35,8 @@ from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TAU = 1.0
 NPRED = int(os.environ.get("NT_NPRED", "20"))     # comparable to the other methods' median prediction size
 MAXNBR = 25                                       # donors per knockout, by graph degree order

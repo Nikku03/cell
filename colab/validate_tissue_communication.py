@@ -9,10 +9,11 @@ ligand-receptor pairs), so recovery must be far above chance.
 Reads outputs/orphan/tissue_channels.json (compact, from the tissue build) or tissue_model.json.
 -> tissue_communication_validation.json
 """
+import os
 import json, random
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # (ligand, receptor, sender substring, receiver substring) — '' = any cell.  Fixed a priori from biology.
 AXES = [

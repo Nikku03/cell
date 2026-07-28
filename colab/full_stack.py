@@ -7,10 +7,11 @@ knockouts (not the biggest-8 panel, which understated recall). Three resolutions
   IDENTITY   -- the specific distal gene: precision@10 (predict10_deep.json), the walled per-gene number, for context.
 Uses the cached NMF+classifier state from reason_modules (no re-run) and consolidates the committed magnitude/identity numbers.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 STATE = f"{SP}/reason_modules_state.json"
 BUDGET = 100

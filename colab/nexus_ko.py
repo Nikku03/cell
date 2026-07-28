@@ -19,10 +19,11 @@ interface energies enter next.
 HONEST BOUND stated up front: this predicts a PROTEIN-LEVEL KO consequence (which obligate partners co-fail), NOT the mRNA far field and
 NOT the wall. It is the 'which complexes break' readout, now with a real validation target.
 """
+import os
 import json, pickle, collections, math
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 

@@ -22,8 +22,9 @@ Also limited to the ~479 pairs with a measured composite motif. A real, data-gro
 reasoning, not a de-novo complex-formation predictor.
 """
 import json
+import os
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def _consensus(pwm):

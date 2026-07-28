@@ -20,8 +20,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import h5py
+import os
 
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 SRC = SP / "rpe1.h5ad"
 DST = SP / "rpe1_ko_zscores.parquet"
 CHUNK = 8000

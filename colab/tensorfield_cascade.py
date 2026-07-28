@@ -25,10 +25,11 @@ If the tensor field mechanism lands at the same ~chance as RWR mechanism, a rich
 signal the scalar walk missed -> the wall is INFORMATIONAL (missing transmission coefficients), not the propagator. HONEST caveat:
 equivariance is over a manufactured (not physical) geometry, so this tests richer geometric/tensor propagation, not physical E(3).
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def _adjacency():

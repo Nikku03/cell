@@ -33,12 +33,13 @@ should sit near the top rather than being a one-off.
 import collections
 import csv
 import json
+import os
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 GMT = SP / "ReactomePathways.gmt"
 DEPMAP = SP / "CRISPRGeneEffect.csv"
 MIN_LINES, MIN_SET, MAX_SET, NRAND = 200, 8, 400, 30

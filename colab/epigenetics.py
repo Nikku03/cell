@@ -17,9 +17,10 @@ HYSTERETIC (losing one writer often does nothing -- surviving marks re-propagate
 and methylation-vs-H3K27me3 context choice. So: a real static-state + first-order-writer engine, honestly bounded before the wall.
 """
 import json
+import os
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 MK = OUT / "invivo/marks"
 SCR = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/rnadecay")
 MARKS = ["h3k4me3", "h3k4me1", "h3k27ac", "h3k27me3", "h3k9me3", "dnase"]

@@ -16,8 +16,9 @@ extrinsic sensor needs a KNOWN protein interface; folding ΔΔG is general. So: 
 honestly bounded at the direct regulon.
 """
 import json
+import os
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def tf_activity(ddg_fold, ddg_bind, inhibitory=False):

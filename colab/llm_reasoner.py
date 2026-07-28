@@ -33,7 +33,7 @@ import os, sys, json, time, hashlib, argparse, collections, re
 from pathlib import Path
 import requests
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 CACHE = OUT / "llm_reasoner_cache"
 EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 OPENAI_BASE = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")

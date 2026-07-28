@@ -9,9 +9,10 @@ clears an honest bar, well above its random baseline:
 -> cellgraph_validation.json
 """
 import json
+import os
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def validate():

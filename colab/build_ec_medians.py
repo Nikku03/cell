@@ -43,12 +43,13 @@ import collections
 import gzip
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
 import numpy as np
 
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 RAW = SP / "dlkcat_raw.json"
 DEST = Path("colab/data/ec_kcat_medians.json.gz")
 

@@ -51,6 +51,7 @@ every non-test knockout. Profiles are averaged as abs-then-mean. Configs are pre
 """
 import collections
 import json
+import os
 import pickle
 from pathlib import Path
 
@@ -58,7 +59,7 @@ import h5py
 import numpy as np
 from scipy import sparse
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU, K, MIN_SPEC, TIDE_FRAC, N_NEI, NSPLIT = 1.0, 50, 5, 0.05, 10, 5
 CW_GRID = [0.0, 0.1, 1.0]

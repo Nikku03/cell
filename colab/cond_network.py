@@ -10,10 +10,11 @@ Then propagate a knockout by WEIGHTED random walk on the CONDITIONED graph and a
 does the enriched conditional-dynamic network add G-SPECIFIC transmission over the plain binary graph, or does it (like every
 prior graph-enrichment) only refine the generic axis? Honest, measured.
 """
+import os
 import json, csv, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 

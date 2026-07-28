@@ -33,14 +33,15 @@ Two details of that control decide whether it is fair, and both were got wrong o
 
 Reported: pooled AUC with its permutation null, per-TF AUC against both controls, and the raw forward/reverse rates -- of genes bound, how many
 move; of genes that move, how many are bound. Deterministic."""
+import os
 import json, gzip, collections, sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 CHIP = OUT / "invivo" / "chipatlas"
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 RNG = np.random.RandomState(0)
 TIDE_FRAC = 0.05
 WIN = 5000          # peak centre within +-5kb of TSS counts as binding (the standard promoter-assignment window)

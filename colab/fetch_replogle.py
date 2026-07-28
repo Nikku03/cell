@@ -6,10 +6,11 @@ each as a sparse {gene: z} dict (genes with |z|>=0.5, capped 400/KO) matching ou
 
 (Norman was also on HF but is CRISPR-ACTIVATION -- wrong direction for a knockout model -- so it is intentionally NOT used.)
 """
+import os
 import pickle
 from pathlib import Path
 import numpy as np
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 URL = "https://huggingface.co/datasets/nicolas-lynn/replogle-perturb/resolve/main/k562ess/perturbation_zscores.parquet"
 
 

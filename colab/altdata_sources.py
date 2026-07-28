@@ -25,13 +25,14 @@ SOURCES SCORED (all independent of perturbation data):
    literature co-study bias control        publication counts -- included ONLY to show what a popularity artifact would look like
 Protocol identical to infer_network: K562 knockout-SPECIFIC measured edges as positives, DEGREE-MATCHED non-edges as negatives, so nothing can be
 won by hub-ness. Deterministic."""
+import os
 import json, gzip, collections
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 RNG = np.random.RandomState(0)
 TIDE_FRAC = 0.05
 MINFIRE = 30       # a binary feature firing on fewer pairs than this is untestable, not refuted

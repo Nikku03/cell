@@ -32,10 +32,11 @@ consequence map should be judged on whether it extends that to other lesion clas
 """
 import collections
 import json
+import os
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 MAXDEPTH = 2            # second order only; closure reaches the whole network through central metabolism
 MAXPART = 60            # a step with more participants than this is a machine, not a step
 TOPN = 40               # cap on each recorded list, so one gene cannot produce a megabyte of map

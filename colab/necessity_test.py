@@ -31,13 +31,14 @@ evidence against the necessity model. Precision on the genes the model DOES cove
 it is reported separately from anything computed over all genes.
 """
 import json
+import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 GEM = SP / "HumanGEM.xml"
 DEPMAP = SP / "CRISPRGeneEffect.csv"
 ESS_CUT = -0.5          # DepMap convention: gene effect below this is a real fitness cost

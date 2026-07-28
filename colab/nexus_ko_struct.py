@@ -13,13 +13,14 @@ structural features (direct-PPI contact, complex compactness = 1/size, shared-co
 over essentiality-only, physical-interface information sharpens the obligate prediction -- exactly the direction a per-pair interface
 energy would extend. Cross-validated AUC + an essentiality-stratified contingency table so the gain is not just 'both essential.'
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import roc_auc_score
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def main():

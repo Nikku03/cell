@@ -11,9 +11,10 @@ an "unknown" as a measured zero. The annotation half (function 92-99%, complex m
 complex members) is near-complete; the ATOMIC half (genome-wide 3D structure, intrinsic disorder, residue-level interface identities,
 persisted interaction mechanism, structural monomer stability) is ~0-2% and GPU/Interactome3D-gated -- marked GAP, not faked.
 """
+import os
 import json, collections
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def _load(fn):

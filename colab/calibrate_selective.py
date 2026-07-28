@@ -12,12 +12,13 @@ the non-reproducing part. So confidence is PREDICTABLE from signals that never p
 All confidence signals are computed from inputs/retrieval only (no leakage). Held-out K562, reports the selective-prediction curves + a
 verdict on how much precision/recall a confidence threshold buys. Deterministic; DepMap-retrieval stand-in for the v5 encoder."""
 import json
+import os
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from neural_ko import build_xy
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 K = 50
 NEI = 10
 

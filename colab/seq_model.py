@@ -13,9 +13,10 @@ Why the bar is subtle: the 0.608 GBM uses MEASURED ChIP for all 311 TFs; this mo
 AUPRC, with a label-shuffle control. Real ENCODE K562 data; CPU-trained.
 """
 import json
+import os
 import numpy as np
 from pathlib import Path
-OUT = Path("outputs/orphan/invivo")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")) / "invivo"
 NT = {"A": 0, "C": 1, "G": 2, "T": 3}
 TAB = ["log_dist", "atac_enh", "h3k27ac_enh", "polr2a_enh", "procap_enh", "promoter_atac", "promoter_polii", "gene_expr"]
 

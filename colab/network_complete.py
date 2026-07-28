@@ -19,8 +19,9 @@ whereas knocking out a signaling/metabolic node scatters into the unpredictable 
 every added edge is a falsifiable experiment (measure the target mRNA half-life on the machine knockout).
 """
 import json
+import os
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # mechanism-class grounding: PMIDs actually retrieved via PubMed this session (NMD anchored by paradigm, flagged)
 CLASS_PMIDS = {

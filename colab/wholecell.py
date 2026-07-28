@@ -13,10 +13,11 @@ Reports: (1) each hand-off's held-out r, (2) the ORACLE ceiling (perfect measure
 The MUTATION arm (NEXUS mutation -> network propagation) is separate and reported honestly: near-field validated (regulon 9.2x),
 far-field is the measured wall. This module is the steady-state abundance chain -- the part that composes.
 """
+import os
 import json, csv
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SCR = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/rnadecay")
 
 

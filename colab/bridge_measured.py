@@ -31,12 +31,13 @@ all -- is reported as a first-class number rather than hidden in an average.
 
 THE COMPARISON IS THREE-WAY, all scored identically on half B: measured last hop, curated last hop (the arm that
 failed), and forward-only PPI (the arm that beat the bridge at +0.1354 and is the one to beat)."""
+import os
 import json, pickle, collections
 from pathlib import Path
 import numpy as np
 from scipy import sparse
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU, TIDE_FRAC, MIN_SPEC = 1.0, 0.05, 5
 TOPM = 5

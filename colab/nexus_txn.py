@@ -28,13 +28,14 @@ THE TRANSFER TEST IS THE ONE THAT MATTERS. The whole cross-cell-type claim rests
 modalities exist generalising to cells where only ATAC exists. There is no cell type with both CATLAS ATAC and rate
 data, so that exact claim is untestable; the closest honest proxy is train on K562, predict MCF7 and HEK293T. If
 transfer collapses, no ATAC mask rescues it and the 222-cell-type deployment claim has no support."""
+import os
 import json, collections, gzip, sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 NSPLIT = 5
 PROM = 2000          # bp around the TSS counted as promoter
 

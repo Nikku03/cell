@@ -43,13 +43,14 @@ THE CONTROL THAT DECIDES IT. wall_combine already caught a fusion that looked li
 z-fusion re-weighting. So each new component is also fused in a SHUFFLED form -- same score distribution, knockout
 labels permuted. If shuffled-MARKOV lifts the ensemble as much as real MARKOV, the gain is fusion arithmetic, not the
 protein chain, and it is reported as such."""
+import os
 import json, pickle, collections
 from pathlib import Path
 import numpy as np
 from scipy import sparse
 from sklearn.ensemble import HistGradientBoostingRegressor
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU, K, MIN_SPEC, TIDE_FRAC, N_NEI = 1.0, 50, 5, 0.05, 10
 MC_REP = 40

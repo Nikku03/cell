@@ -11,10 +11,11 @@ or abstain)? Coverage is not one number -- it splits by the KIND of answer:
 The honest point measured here: high-confidence delivery tracks how STRONG the knockout is; most weak knockouts get only the generic
 forecast, and even the confident calls are the climatology genes.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 

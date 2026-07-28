@@ -11,10 +11,11 @@ different factors' peaks came from different peak-callers.
 
 Usage: python fetch_chipatlas.py            (writes outputs/orphan/invivo/chipatlas/<TF>__<SRX>.bed)
 Idempotent: existing non-empty files are kept, so an interrupted run can simply be re-run."""
+import os
 import json, subprocess, sys, collections
 from pathlib import Path
 
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 DEST = Path("outputs/orphan/invivo/chipatlas")
 META_URL = "https://chip-atlas.dbcls.jp/data/metadata/experimentList.tab"
 PEAK_URL = "https://chip-atlas.dbcls.jp/data/hg38/eachData/bed05/{srx}.05.bed"

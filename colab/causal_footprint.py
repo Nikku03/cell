@@ -41,11 +41,12 @@ PHYS component that scores ~0.40 in the ensemble uses PPI OR complex OR pathway 
 NARROWER neighbourhood than its comparator, and widening it is an untested variant. (ii) The PPI-neighbour comparator
 takes the first ten partner-knockouts in gene-name order with no ranking whatsoever; that is an arbitrary baseline,
 but arbitrary in the direction that makes the negative stronger, since even it wins by 0.127."""
+import os
 import json, pickle, collections
 from pathlib import Path
 import numpy as np
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU, K, MIN_SPEC, TIDE_FRAC, N_NEI = 1.0, 50, 5, 0.05, 10
 NSPLIT = 5

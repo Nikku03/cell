@@ -10,6 +10,7 @@ Uses the RENGE time-course (GSE213069, 23 pluripotency-TF CRISPR KOs, day2..day5
           appear by day5 (weren't moving at day2) -- vs base rate. This is the mechanistic payoff of time: use the early state + direction to
           forecast the developing cascade.
 Honest scope: day-scale CRISPR-KO (coarse; protein depletes over days), 23 TFs. Tests the PRINCIPLE. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
@@ -17,7 +18,7 @@ from eval_harness import Harness
 from transformer_causal import build_causal
 from renge_timecourse import responses
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 DAYS = ["day2", "day3", "day4", "day5"]
 THR = 0.25
 

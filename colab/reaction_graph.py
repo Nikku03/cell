@@ -17,10 +17,11 @@ Three tests vs K562 Perturb-seq (mRNA ground truth), plus the readout-mismatch c
 Plus a G-specific-vs-generic decomposition control (is any enrichment specific, or the responsiveness prior re-entering?) and the
 coverage accounting (how much of the 612k-noise / 191k-flat-PPI graph this typed core replaces).
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 SIGNOR = f"{SP}/rxn/signor_human.tsv"
 CPORTAL = f"{SP}/rxn/complexportal_9606.tsv"

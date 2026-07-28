@@ -11,10 +11,11 @@ Druggability logic (family -> modality -> can we achieve the required direction)
 
 Reads outputs/orphan/psoriasis_target_layer12.json -> writes psoriasis_target_layer3.json + final call.
 """
+import os
 import json, urllib.request, urllib.parse
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 UA = {"User-Agent": "Mozilla/5.0 (cell-model research)"}
 
 

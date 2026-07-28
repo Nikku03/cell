@@ -16,9 +16,10 @@ concentration (the same context wall this project keeps hitting). So this is the
 regulatory variant strengthen or weaken a TF's site" — variant interpretation — not for "the TF binds here and turns this
 gene on in this cell".
 """
+import os
 import json, math
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 COMP = str.maketrans("ACGT", "TGCA")
 
 

@@ -16,10 +16,11 @@ arbitrary pick. You get: the compartment PROFILE of a pathway (how many of its p
 per-layer gene lists (depth-ordered outside->in for readability only, NOT a claimed flow). Curated/observed annotations,
 not a phenotype predictor.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # the depth axis (outside -> in). A protein is placed in EVERY listed compartment that maps here (multi-membership).
 DEPTH = {"Secreted": 0, "Extracellular": 0, "Extracellular space": 0,

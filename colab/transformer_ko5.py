@@ -22,7 +22,7 @@ from eval_harness import Harness
 from neural_ko import build_xy, mean_recall
 from transformer_ko import build_context
 from transformer_ko3 import build_edges, N_ET
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 ALL_SRC = ["K562", "RPE1", "HepG2", "Jurkat", "HCT116", "Melanoma", "Replogle"]
 TIDE_FRAC = 0.05

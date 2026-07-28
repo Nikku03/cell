@@ -16,12 +16,13 @@ mean, and score specific-mover recall@50 -- head-to-head with the tide null, the
 oracle, all transferring from TRAIN knockouts only for a fair comparison. NEXUS/structural interaction magnitude is exactly the kind of
 extra FEATURE this frame is built to absorb next; here we first establish what the annotation features alone buy.
 """
+import os
 import json, pickle, collections
 from pathlib import Path
 import numpy as np
 from scipy import sparse
 from sklearn.ensemble import HistGradientBoostingRegressor
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU, K, MIN_SPEC, TIDE_FRAC, N_NEI = 1.0, 50, 5, 0.05, 10
 

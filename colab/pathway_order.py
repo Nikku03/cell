@@ -36,11 +36,12 @@ here is "the idea deserves the upstream data re-fetched", not "the idea is prove
 """
 import collections
 import json
+import os
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def main():

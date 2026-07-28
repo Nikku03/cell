@@ -36,6 +36,7 @@ an improvement. Both outcomes are recorded as found.
 """
 import collections
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -46,8 +47,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from multilayer_reason import SENSORS, classify
 from reaction_ablation import CURRENCY, norm
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 MAXPART = 60
 MINFIRE = 1        # a sensor fires when at least this many broken reactions classify into it. Absolute, not a
                    # quantile: the top-quartile rule used by markov_multilayer guarantees 25% firing by

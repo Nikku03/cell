@@ -23,10 +23,11 @@ Predictor contracts (both pluggable, both may return None to abstain):
 main() runs the built-in reference predictors to (a) demonstrate the API and (b) SELF-CALIBRATE -- the bench must reproduce the known
 numbers (tide ~0.26, network model ~0.37, oracle ~0.62) or it is not trustworthy. Deterministic (RandomState(0), sorted iteration).
 """
+import os
 import json, pickle, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU = 1.0
 TIDE_FRAC = 0.05

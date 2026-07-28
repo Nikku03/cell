@@ -29,6 +29,7 @@ THREE CONTROLS, because a weighting scheme is easy to fool:
 """
 import collections
 import json
+import os
 import pickle
 import sys
 from pathlib import Path
@@ -39,8 +40,8 @@ from scipy import sparse
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from multilayer_reason import SENSORS, classify
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 NSTEP, DAMP = 3, 0.5
 TOPMASS = 300         # proteins retained per knockout; the tail is numerically irrelevant and slows nothing down
 FIRE_Q = 0.75         # a sensor fires when its mass share is in the top quartile ACROSS knockouts -- a relative

@@ -19,9 +19,10 @@ HONEST BOUNDARY: ChIP occupancy is a population proxy for residence-time x conce
 (no genome-wide dwell-time data exists). And the CRISPR elements are already accessibility-preselected, so this measures the
 MARGINAL value of the productivity signal on top of open chromatin — the right test for the user's thesis. All real K562 data.
 """
+import os
 import json, gzip, bisect
 from pathlib import Path
-OUT = Path("outputs/orphan/invivo")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan")) / "invivo"
 M = OUT / "marks"
 MARKS = ["dnase", "h3k27ac", "polr2a", "polr2s5", "procap_bi"]
 

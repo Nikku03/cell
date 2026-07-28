@@ -58,15 +58,20 @@ compressed npz (kos, genes, M) and `ko_predict.load()` prefers it when present, 
 """
 import collections
 import json
+import os
 import pickle
 from pathlib import Path
 
 import h5py
 import numpy as np
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
-GWPS = SP / "gwps.h5ad"
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
+# CELL_GWPS points straight at the source, wherever it lives. On Drive the file is named
+# perturbseq_gwps_bulk.h5ad, not gwps.h5ad, and it is 375 MB -- copying it into scratch just to satisfy a
+# hardcoded filename costs minutes and a duplicate of the largest file in the project. Reading it in place
+# is the same operation without the copy. Falls back to the conventional scratch name.
+GWPS = Path(os.environ["CELL_GWPS"]) if os.environ.get("CELL_GWPS") else SP / "gwps.h5ad"
 DEST = SP / "nlz_K562_gwps.npz"
 
 PCUT = 0.05        # Replogle's energy test: did this perturbation change anything at all
@@ -75,6 +80,15 @@ TAU, TIDE_FRAC = 1.0, 0.05     # unchanged from the existing harness, so the com
 
 
 def load_gwps():
+    # The failure this replaces was an h5py FileNotFoundError naming a sandbox path the caller never chose:
+    # the notebook had ALREADY located the file on Drive and set CELL_SCRATCH, but this module read a
+    # hardcoded constant. Say which path was tried and which knob changes it.
+    assert GWPS.exists(), (
+        f"readout not found at {GWPS}\n"
+        f"  CELL_GWPS   = {os.environ.get('CELL_GWPS') or '(unset)'}   <- set this to the .h5ad directly\n"
+        f"  CELL_SCRATCH= {os.environ.get('CELL_SCRATCH') or '(unset)'} <- or place gwps.h5ad in this dir\n"
+        "  On Drive the file is usually named perturbseq_gwps_bulk.h5ad, not gwps.h5ad.")
+    print(f"reading readout: {GWPS} ({GWPS.stat().st_size/1e6:.0f} MB)")
     f = h5py.File(GWPS, "r")
     obs = f["obs"]
     var = f["var"]

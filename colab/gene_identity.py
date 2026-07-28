@@ -21,13 +21,14 @@ actually knocked out, since those populations are biased towards well-studied ge
 
 For TFs the audit goes one step further and asks the CHAIN question: for a TF with known targets, what fraction of those targets have a
 known function? A regulon of 900 genes is worthless if nobody knows what 600 of them do."""
+import os
 import json, collections, sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 
 
 def load():

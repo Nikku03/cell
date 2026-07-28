@@ -13,10 +13,11 @@ steady-state models never had. It does NOT give the TRANSMISSION half (WHICH gen
 wall). Honest split: measured response-time spectrum + validated IEG prediction + a TIME-RESOLVED near-field readout (regulon 9.2x
 * when each direct target moves), all real; the far-field 'which genes' remains the wall.
 """
+import os
 import json, csv, math
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 # canonical immediate-early genes -- built to respond fast, so they SHOULD have short half-lives

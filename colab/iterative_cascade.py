@@ -11,10 +11,11 @@ At each step we score the NEW predictions against the measured Perturb-seq: prec
 base, SIGN accuracy (does predicted up/down match), how many are carriers, and cumulative recall. Run over all TF knockouts that
 have a curated regulon; plus one interpretable per-step layout (GATA1).
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def _load():

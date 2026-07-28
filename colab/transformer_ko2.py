@@ -15,12 +15,13 @@ Scored on the same held-out K562 bench (tide-removed specific-mover recall@50), 
 the SAME split as the in-run baseline (apples-to-apples gap) + the wrong-KO gene-identity control. Deterministic per split. CPU.
 """
 import json
+import os
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from neural_ko import build_xy, mean_recall
 from transformer_ko import build_context
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def run(SEED, H, have, Y, hidx, Fg, tok_idx, tok_role, tok_mask):

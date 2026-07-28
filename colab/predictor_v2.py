@@ -11,12 +11,13 @@ So this class answers a knockout query with a RANKED, SIGNED, CALIBRATED list in
 Leave-one-out by construction: the queried knockout is excluded from its own retrieval pool, so a query for a gene already in the panel is
 scored exactly as an unseen gene would be. The expected_precision attached to each prediction is not asserted -- calibrate() MEASURES it on
 held-out knockouts and the demo prints observed-vs-claimed so the numbers are auditable. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 W0 = {"BEHAV": 0.35, "GRAPH": 0.25, "STRUCT": 1.5, "TIDE": 0.25}
 NEI, K = 10, 50
 BINS = [(0.7, "very high"), (0.5, "high"), (0.3, "moderate"), (0.2, "low"), (0.0, "very low")]

@@ -25,16 +25,17 @@ membership, which is much weaker. So a large fraction of the 50 will be predicte
 should be reported per knockout rather than averaged away.
 """
 import json
+import os
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def main():
     cmap = json.loads((OUT / "consequence_map.json").read_text())
     doss = json.loads((OUT / "ko_pred_dossiers.json").read_text())
     paths = {}
-    SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+    SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
     for line in (SP / "ReactomePathways.gmt").read_text().splitlines():
         p = line.split("\t")
         if len(p) > 3:

@@ -41,6 +41,7 @@ WHAT IT PRODUCES:
                        scored. Anything else would be circular, since the completion is built from the very edges it would be scored on.
 
 Deterministic (fixed seed, sorted iteration). Usage: python complete_network.py"""
+import os
 import json, collections, sys
 from pathlib import Path
 import numpy as np
@@ -48,8 +49,8 @@ import pandas as pd
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 RNG = np.random.RandomState(0)
 MAXHOP = 4
 TIDE_FRAC = 0.05

@@ -19,13 +19,14 @@ HONESTY GUARD (the multi-hop trap): a directed+physical graph is small-world, so
 many NON-movers. We report, per hop depth, the fraction of specific MOVERS reachable vs the fraction of NON-movers reachable; when that ratio
 collapses to ~1x the long chains stop being explanations and become mere connectivity. So "named" is only honest for the short, specific hops.
 Deterministic; single knockout, fully printed."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 KO = "GATA1"
 MAXHOP = 4
 

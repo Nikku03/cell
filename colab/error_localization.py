@@ -16,12 +16,13 @@ better DATA could ever help:
 Deterministic. Emits the localisation + the reproducibility curve + a verdict on whether the missed signal is real (=> replicates would help)
 or noise (=> it cannot be modelled from this readout at all)."""
 import json
+import os
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from neural_ko import build_xy
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 LINES_A = ["K562", "RPE1", "HepG2", "Jurkat"]
 LINES_B = ["RPE1", "HepG2", "Jurkat"]
 ZBINS = [(1.0, 1.5), (1.5, 2.0), (2.0, 3.0), (3.0, 99.0)]

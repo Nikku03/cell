@@ -7,13 +7,14 @@ and see if that predicts which genes actually change. Two networks, propagated t
 Scored on tide-removed SPECIFIC movers (the real target) AND all-movers (the generic cascade), vs the tide-null, with a shuffled-edge control.
 This is the mechanistic alternative to statistical retrieval; it settles whether 'simulate the network to the end' beats 'find a similar
 measured knockout'. No learning; deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 K = 50
 
 

@@ -15,13 +15,14 @@ HONEST BLOCKERS stated up front, independent of the result: (1) LABEL SCARCITY -
 so a *general* knockout->activity model cannot be trained on this; (2) READOUT NARROWNESS -- chromVAR activity only moved for 4/25 sequence-specific
 TFs (perturb_atac), and motifs are family-level, so 'chromatin activity' is a target only for accessibility-shaping TFs, not the metabolic/structural
 majority. This module measures whether the pivot is even DIRECTIONALLY sound on the overlap; the blockers bound how far it can go. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/spatac")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")) / "spatac"
 
 
 def pear(a, b):

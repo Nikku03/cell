@@ -13,9 +13,10 @@ Decision at each edge B->(next C): if B is OBLIGATE on the upstream loss -> B di
 (if the 3did slot for C differs from the lost slot the interface is independent = high confidence; if same slot, removing the upstream
 partner FREES that site; if no interface data, UNKNOWN). Attenuates when nothing new is disrupted -> the end of the reachable cascade.
 """
+import os
 import json, collections
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def _load():

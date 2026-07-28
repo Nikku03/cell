@@ -15,9 +15,10 @@ links ARE textbook (DNA Repair-Replication-Cell Cycle; Signalling-Development; V
 which is the sanity check. A map of who-shares-and-touches-whom across the cell, not a wiring diagram of control, and not
 a phenotype predictor. Dark / orphan genes are NOT here (they have no pathway -- that's what connect/orphan_network do).
 """
+import os
 import json, html, math, collections, itertools
 from pathlib import Path
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 VIZ = Path("viz")
 
 # top-level Reactome systems (roots present in our data), grouped by super-category and ORDERED around the circle so

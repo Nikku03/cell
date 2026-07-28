@@ -22,6 +22,7 @@ means 'very unlikely to be a fluke and looks like real coherent biology', not 'p
 mechanism -- that still needs a reasoner/experiment. What it DOES do: turn 'an agent eyeballed a table' into 'the software ranks
 candidates with a calibrated number'.
 """
+import os
 import json, collections, pickle, os, math, csv
 from pathlib import Path
 import numpy as np
@@ -30,7 +31,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import roc_auc_score
 import novel_links as nl
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 MIN_CONV = 3          # a target must be hit by >=3 distinct reproducible knockouts to be a 'machine' convergence
 TOP_PER_KO = 25
 MF_FRAC = 0.05

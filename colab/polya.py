@@ -12,10 +12,11 @@ The chosen 3'UTR then fixes its miRNA-seed + ARE load, which feeds the mRNA-deca
 repressive sites -> more stable). This module scores sites, reports the cell's measured APA bias, and VALIDATES the recognition
 model against real transcript 3' ends fetched from Ensembl (AAUAAA is enriched ~21 nt upstream of the annotated cleavage site).
 """
+import os
 import json, re
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 ENSEMBL = "https://rest.ensembl.org"
 
 # hexamer tiers (DNA/cDNA alphabet; AAUAAA == AATAAA). Canonical + the common single-nt variants (Tian & Manley 2017).

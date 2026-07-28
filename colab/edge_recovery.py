@@ -6,13 +6,14 @@ If 'is it a TF' is the key, TF knockouts should have a much higher explained fra
 should be recoverable. If TF and non-TF are both ~10% explained, the regulons are simply too incomplete -- the missing edges are not in ANY
 database and can only be MADE from the perturbation data itself (which is circular / doesn't generalize -- the established wall).
 Deterministic; K562 held-out specific movers."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def main():

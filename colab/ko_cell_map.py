@@ -17,10 +17,11 @@ Every route shares the same first two hops because every protein-coding gene doe
     chromatin locus --transcription--> hnRNA --splice/cap/polyA--> mRNA --nuclear pore export--> mRNA (cytosol)
 and then diverges by destination. The state label on each hop is the point: a gene's product is hnRNA, then mRNA, then protein, and the
 compartment it is "in" means something different at each stage."""
+import os
 import json, collections, sys
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # canonical route to each destination. (location, state, event)
 BASE = [("nucleus", "hnRNA", "transcribed at locus"),

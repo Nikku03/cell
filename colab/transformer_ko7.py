@@ -18,7 +18,7 @@ import numpy as np
 from eval_harness import Harness
 from neural_ko import build_xy, mean_recall, spec_recall
 from transformer_ko import build_context
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SMOKE = bool(os.environ.get("V7_SMOKE"))
 
 

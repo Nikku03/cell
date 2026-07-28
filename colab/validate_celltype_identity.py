@@ -11,11 +11,12 @@ genes would drop functional drivers and must NOT be done.
 Reads outputs/orphan/celltype_mask.json (ctnames + emask, from the Phase-1 export) — or cell_complete.json on Colab.
 -> celltype_identity_validation.json
 """
+import os
 import json, random
 from pathlib import Path
 from statistics import median
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 LINEAGE = {
     "cardiac":     ["cardi", "myocyte", "myoblast", "endocardial"],

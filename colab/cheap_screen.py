@@ -11,11 +11,12 @@ A-PRIORI selection strategies (all usable before any experiment, since they use 
 We learn the tide prior from ONLY those n knockouts, fit the forecast, and measure held-out top-10 deployment. If a smart strategy
 reaches the plateau at far fewer knockouts than random, the minimal screen -- and its cost -- shrinks accordingly.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import fullstack_multicell as mc
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SIZES = [20, 30, 50, 100, 200, 400]
 
 

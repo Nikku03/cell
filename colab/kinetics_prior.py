@@ -9,10 +9,11 @@ Steady-state note: at steady state the fold-change [mRNA]_new/[mRNA]_old = k_syn
 NOT set the response amplitude at true steady state. Any link to responsiveness therefore reflects (a) measurement before slow
 genes equilibrate, and/or (b) short-lived genes being genuinely more sensitive/regulated. We just measure the association.
 """
+import os
 import json, csv, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 

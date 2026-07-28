@@ -10,10 +10,11 @@ Rank = (tier, prior_within_tier); take the top 10. We also run a PRIOR-ONLY base
 Scored: how many of the 10 actually move (precision@10), and of those, how many got the direction right (sign). Reported for an
 interpretable panel AND aggregated honestly over ALL knockouts (no cherry-picking).
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def _load():

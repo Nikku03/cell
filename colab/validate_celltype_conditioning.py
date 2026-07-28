@@ -7,11 +7,12 @@ above background and near-zero in unrelated lineages. That is what makes cell-ty
 It ALSO measures and records, without gating on them, the honest negatives — the versions of conditioning that
 do NOT robustly beat the global model — so the capability's scope is documented, not oversold. -> outputs/orphan/celltype_conditioning_validation.json
 """
+import os
 import json, random, statistics as st
 from pathlib import Path
 from celltype_conditioning import CellTypeConditioner, _popcount
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # EXTERNAL canonical markers (textbook lineage markers, NOT derived from the model) + their cell-type name.
 PANEL = [

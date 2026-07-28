@@ -38,6 +38,7 @@ beat every arm that included topology (0.609).
 """
 import collections
 import json
+import os
 import pickle
 from pathlib import Path
 
@@ -47,7 +48,7 @@ from scipy import sparse
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import roc_auc_score
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 HOLDOUT, SEED, NNEG, TAU, TIDE_FRAC = 0.20, 0, 5, 1.0, 0.05
 

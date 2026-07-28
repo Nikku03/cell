@@ -19,10 +19,11 @@ HONEST: still a DESCRIPTIVE near-field triangulation. The corroborated pathway i
 proven annotation; the transport carrier is a flagged hypothesis; none of this is a phenotype predictor. It tells you the
 most-likely process + physical context + where it happens + what might move it — a starting mechanism to test.
 """
+import os
 import json, collections, math
 from pathlib import Path
 import lit_place as lp
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 TRANSPORT_PROC = {"transport/uptake", "trafficking/secretion"}
 
 

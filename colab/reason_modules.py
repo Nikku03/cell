@@ -17,10 +17,11 @@ Strict held-out protocol:
 The honest question: at the module level, does reasoning finally ADD -- or does the mechanical classifier / the plain tide already
 capture everything?
 """
+import os
 import sys, json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 STATE = f"{SP}/reason_modules_state.json"
 NMODULES = 15

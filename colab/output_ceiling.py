@@ -32,10 +32,11 @@ thousands of genes and largely knockout-specific. The fix is a per-knockout outp
 """
 import collections
 import json
+import os
 import sys
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def main(tag=""):

@@ -20,10 +20,11 @@ THE HONESTY GATE (leave-one-TF-out): predict the held-out TF's functional target
 If MECHANISM does not beat PRIOR for held-out TFs, the model only relearned 'responsive genes' -- the far-field wall again, and
 we say so. If it does, we have learned TF-specific functional targeting that generalizes, and the expanded regulon is real.
 """
+import os
 import json, gzip, bisect, math, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 INV = OUT / "invivo"
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TFS = ["GATA1", "GATA2", "KLF1", "MAX", "MYC", "RUNX1", "SPI1", "TAL1"]

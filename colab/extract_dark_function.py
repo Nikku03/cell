@@ -10,10 +10,11 @@ location + keywords, with an honest evidence tier read off the ECO codes:
 
 Checkpointed. -> outputs/orphan/dark_function_table.json  (+ .tsv)  the annotation layer to overlay the model.
 """
+import os
 import json, re, time, urllib.request, urllib.parse
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 CKPT = OUT / "dark_function_ckpt.json"
 ECO_EXP = "ECO:0000269"
 ECO_SIM = "ECO:0000250"

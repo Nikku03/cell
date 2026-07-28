@@ -25,13 +25,14 @@ THE PIPELINE, STEP BY STEP, each as its own gene set:
                    lysosomal M6P targeting                   -> is it addressed correctly
 Each set is tested for enrichment against the measured background with a hypergeometric test, because with 621 of 8,533 genes moving
 (7.3%) any large gene set will contain some movers by chance. Only enrichment above that background is evidence."""
+import os
 import json, collections, sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 T = 4.2
 TIDE_FRAC = 0.05
 

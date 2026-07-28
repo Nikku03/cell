@@ -24,11 +24,12 @@ Markov chain / degree 0.5664, abundance 0.5475, precedingEvent-only pathway orde
 """
 import collections
 import json
+import os
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 HUB_SWEEP = [5, 10, 25, 50, 200]
 MAXP = 100

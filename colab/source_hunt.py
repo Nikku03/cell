@@ -21,11 +21,12 @@ archive is a decision, not a detail; anything expensive is reported with its pri
 REACHABILITY IS TESTED, NOT ASSUMED. The previous pass at this got a third of its URLs wrong the first time. Two more
 were wrong here: Springer's own supplementary host returns AccessDenied from its GCS bucket for both papers tried, so
 the Europe PMC supplementaryFiles endpoint is used instead, and it works where the publisher's own link does not."""
+import os
 import json, sys, time, urllib.request, urllib.error, zipfile, gzip, io
 from pathlib import Path
 
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
-OUT = Path("outputs/orphan")
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36"}
 
 # ---- candidate sources, one row per (gap, concrete artefact). "probe" is a real file or API, never a landing page. ----

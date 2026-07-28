@@ -18,12 +18,13 @@ cell-cycle tide, and (b) a DIFFERENT lineage (retinal epithelium) from K562/HCT1
 de-cancering with lineage change. We therefore measure only the EFFECT and its DIRECTION, and report both, not a validated
 normal-cell recovery.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from scipy.stats import spearmanr
 import fullstack_multicell as mc
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 DRIVERS = {
     "K562":  {"onco": ["MYC", "ABL1", "BCR", "GATA1"], "tsg": ["TP53"]},   # BCR-ABL + MYC amp; TP53-null

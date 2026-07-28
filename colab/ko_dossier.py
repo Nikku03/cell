@@ -22,13 +22,14 @@ the picture, and this project has already shown (0.428 vs 0.143 by complex membe
 DIRECT vs INDIRECT is the one inferential claim here and it is a claim about the DATABASE, not about the cell: "direct" means a curated
 TF->target edge exists, which the ChIP-vs-Perturb-seq work in this repo showed is a weak guide to actual regulation (0.7% of bound genes
 move). It is labelled as database evidence, not as mechanism."""
+import os
 import json, collections, sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 T = 4.2
 TIDE_FRAC = 0.05
 DETAIL_N = 40          # movers given the full journey treatment in the readable output; all of them go into the JSON

@@ -11,11 +11,12 @@ simultaneously (co-dependent). Does the STRUCTURE-validated slot recover the com
 DepMap co-dependency. Controls: essentiality guard + slot-shuffle. Also emits the fetched structure-validated interface annotation for the
 interactome layer (upgrading its edge.interface_residues GAP toward PARTIAL for these 8,228 edges).
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from scipy.stats import mannwhitneyu
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 RNG = np.random.RandomState(0)
 
 

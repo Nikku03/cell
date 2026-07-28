@@ -8,12 +8,13 @@ Tests, K562 tide-removed SPECIFIC movers:
   B) SPECIFICITY: is the category signature KO-SPECIFIC (different knockouts hit different machines) or GENERIC (every knockout's movers hit the
      same machines -- i.e., just another tide-like signature that labels the response type, not the knockout)?
 Deterministic. Categories by gene-symbol family (robust, annotation-free) + metabolic enzymes from metab_reactions."""
+import os
 import json, collections, re
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 CATS = {
     "aminoacyl_tRNA": re.compile(r"^([A-Z]{1,3}ARS2?$)|^(TARS|WARS|YARS|VARS|SARS|RARS|QARS|PARS|NARS|MARS|LARS|KARS|IARS|HARS|GARS|FARS|EPRS|DARS|CARS|AARS)"),

@@ -18,10 +18,11 @@ NEXUS-magnitude-weighted walk over it cannot predict the mRNA response (weightin
 far field travels through the regulon, not the interactome -- so the mechanistically-honest propagation is KO -> disrupted regulator ->
 REGULON -> mRNA, not KO -> PPI/complex magnitude cascade.
 """
+import os
 import json, pickle, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 TAU, K, MIN_SPEC, TIDE_FRAC, N_NEI = 1.0, 50, 5, 0.05, 10
 

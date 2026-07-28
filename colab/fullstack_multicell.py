@@ -11,9 +11,10 @@ import json, collections
 from pathlib import Path
 import numpy as np
 import h5py
+import os
 import fullstack_run as fr
 import reproduce_rpe1 as rr
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 N_PANEL = 60
 CAP = 1300          # cap KOs per line for tractability

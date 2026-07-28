@@ -4,14 +4,15 @@ specific movers past our 10% (CollecTRI+SIGNOR+TRRUST)? And -- crucially -- is a
 For K562 scorable KOs (TF or TF-cofactor), we measure how much of the tide-removed SPECIFIC response each network explains, PLUS the
 enrichment (mover-coverage / non-mover-coverage) -- because a network that 'covers' movers only by also covering everything is worthless.
 Deterministic."""
+import os
 import json, gzip, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 
 
 def main():

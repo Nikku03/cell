@@ -4,11 +4,12 @@ works (fullstack_multicell), but is it cheap? For K562 and HCT116 we vary the nu
 plateaus by a few hundred KOs, a new cell type needs only a modest perturb-seq screen to be covered -> scaling to many cell types
 (and, by extension, the cell types that make up a tissue) is realistic. If it keeps climbing, each cell type is expensive.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import fullstack_multicell as mc
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 TRAIN_SIZES = [50, 100, 200, 400, 800]
 
 

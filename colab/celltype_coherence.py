@@ -15,10 +15,11 @@ Tests:
      per-cell-type proteomes.)
   Q4 3D (honest/K562-only): do K562-expressed genes co-localise in K562 Hi-C TADs more than expected? (limited -- one cell line.)
 """
+import os
 import json, collections, math
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 LINEAGE = [

@@ -10,11 +10,12 @@ Honest scope (see check in this session): this validates the MECHANISM->INTERVEN
 driver, find the druggable bottleneck + direction), NOT autonomous driver discovery. Reads the cascade
 machinery from disease_target_pipeline.py. -> disease_target_validation.json
 """
+import os
 import gzip, json, random
 from pathlib import Path
 from disease_target_pipeline import load, cascade_subgraph, propagate
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 # apex = known upstream driver; readout = pathogenic effectors; pathway = candidate space (immunology, not
 # the answer); known_targets = real approved/late-stage drug targets; the required direction is 'disable'.

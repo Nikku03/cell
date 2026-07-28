@@ -25,9 +25,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import h5py
+import os
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 T = 4.2
 TIDE_FRAC = 0.05
 BANDS = [(0.0, 0.05), (0.05, 0.15), (0.15, 0.25), (0.25, 0.40), (0.40, 0.60), (0.60, 0.80), (0.80, 1.20)]

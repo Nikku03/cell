@@ -18,13 +18,14 @@ not have shown that.
 """
 import collections
 import json
+import os
 import sys
 from math import comb
 from pathlib import Path
 
 import numpy as np
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 NBOOT = 4000
 
 COHORTS = {

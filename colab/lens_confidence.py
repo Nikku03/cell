@@ -18,10 +18,11 @@ threshold is >=2, matching the repo's existing consensus finding. -> lens_confid
 `load_lens_sets()` adapts to cell_complete.json (Colab); the utility itself is data-agnostic.
 """
 import json
+import os
 from collections import defaultdict
 from pathlib import Path
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 LENS_KEYS = ("ppi", "reg", "sig", "codep")
 
 

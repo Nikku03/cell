@@ -20,14 +20,15 @@ Everything else -- splits, tide mask, features, retrieval, metric -- is identica
 split as in pair_retrieval_audit.py, so the headline is directly comparable to the honest 0.3848. The reported outcome is not only recall:
 because the audit localised the problem to ranking, RANKING QUALITY (where the true best partner lands) is reported for both metrics, and
 that is the number this experiment is really about. Deterministic."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from eval_harness import Harness
 
-OUT = Path("outputs/orphan")
-SP = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
+SP = Path(os.environ.get("CELL_SCRATCH", "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
 TIDE_FRAC = 0.05
 MINSRC = 20
 MAXCOMPLEX = 200

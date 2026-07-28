@@ -12,13 +12,14 @@ held-out TEST split. 3 seeds. DECISIVE CONTROLS: (1) best SINGLE channel (does f
 (permute the KO->vector map of GRAPH/CAUSAL/STRUCT so they keep their marginal statistics but lose KO-specificity -- if the learned fusion does
 not beat this, the mechanistic 'hints' add no knockout-specific signal beyond behavioural similarity); flanked by TIDE-null and ORACLE*.
 Deterministic (fixed seeds, sorted iteration)."""
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 
 def main():

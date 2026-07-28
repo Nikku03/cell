@@ -25,7 +25,7 @@ from eval_harness import Harness
 from neural_ko import build_xy
 from transformer_ko import build_context
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 SMOKE = bool(os.environ.get("CC_SMOKE"))
 V5_REF = 0.50            # current best model (v5) held-out specific recall@50, for interpreting the encoder-headroom gap

@@ -28,13 +28,14 @@ the curated regulatory layer keeps real discrimination at depth, while the physi
 
 Route labels: reg and phys edges are both sorted and reg is tried first, so reg/phys ties resolve to reg; the tie-break and the overlap are
 printed rather than presented as biology. Deterministic (all graph iteration sorted). Usage: python case_report.py [KNOCKOUT]"""
+import os
 import json, sys, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from transformer_causal import build_causal
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SPA = Path("/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/spatac")
 MAXHOP = 4
 THR = 1.0          # nominal |z| threshold; raised per-KO if the readout is censored above it

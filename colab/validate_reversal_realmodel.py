@@ -22,6 +22,7 @@ privilege for the recipe, (i) actually reaches B, (ii) ranks the recipe factors 
 (enrichment), and (iii) with what minimality. It is topological, not kinetic; a recovered factor is a
 model-consistent hypothesis, not proof.
 """
+import os
 import json, random
 from pathlib import Path
 from statistics import mean
@@ -29,7 +30,7 @@ from statistics import mean
 from disease_to_reversal import (build_incoming, settle, active, control_drivers, transition_setdiff,
                                   bootstrap_stability, flag_by_stability)
 
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 
 RECIPES = {
     "iPSC":       ["POU5F1", "SOX2", "KLF4", "MYC"],

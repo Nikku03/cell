@@ -16,12 +16,13 @@ THE HONEST BAR: does attention over the post-KO interaction neighbourhood + esse
 (the previous best, ~0.41)? Controls: MLP-self baseline (same features, no neighbourhood), transformer-self-only at inference (remove the
 neighbourhood), and a wrong-KO shuffle (gene-identity control). Deterministic (torch.manual_seed + RandomState per split). CPU.
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
 from eval_harness import Harness
 from neural_ko import build_xy, spec_recall, mean_recall
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 M_PART = 32                     # max partners per knockout (self + up to 32)
 
 

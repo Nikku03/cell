@@ -11,10 +11,11 @@ If it stays FLAT at chance while only the prior grows -> H2 (single-KO steady-st
 
 Sparse machinery only (no dense NxN transition matrix -> no OOM; no torch).
 """
+import os
 import json, collections
 from pathlib import Path
 import numpy as np
-OUT = Path("outputs/orphan")
+OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"
 
 
