@@ -109,7 +109,12 @@ def export_signature():
     held-out variance. So the comparison is export-vs-export similarity against RIBI-vs-RIBI similarity and
     against export-vs-RIBI: a signature specific to export must beat BOTH, not merely exceed zero.
     """
-    z = np.load(SP / "nlz_K562_gwps.npz", allow_pickle=True)
+    p = SP / "nlz_K562_gwps.npz"
+    if not p.exists():
+        print(f"  SKIPPED: {p} absent. This is the K562 genome-wide Perturb-seq profile matrix; without "
+              "it there is nothing to measure a signature on.")
+        return None
+    z = np.load(p, allow_pickle=True)
     kos = [str(x) for x in z["kos"]]
     M = np.asarray(z["M"], np.float32)
     idx = {k: i for i, k in enumerate(kos)}

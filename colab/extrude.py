@@ -49,8 +49,11 @@ K_LOAD = 2e-4          # per bead per second
 BEAD_KB = 2.0          # 2 kb/bead: at chromatin's ~1-3 kb persistence length this is the regime where the
                        # Gaussian assumption is defensible AND the sweep found its optimum
 D_CONTACT = 2.0        # contact threshold in bead radii (~45 nm at 2 kb/bead)
-N_REPLICA = 64
-N_STEPS = 3000
+# Overridable so the run can be sized to the machine. The defaults are the intended production values;
+# a smoke test drops them, and dropping them is a real loss of sampling, not a free speed-up -- the
+# contact frequency is estimated from N_REPLICA x (N_STEPS/20) samples, so halving either widens its error.
+N_REPLICA = int(os.environ.get("EXT_REPLICA", "64"))
+N_STEPS = int(os.environ.get("EXT_STEPS", "3000"))
 DT = 0.01
 
 
@@ -100,9 +103,15 @@ def langevin_contact(n_beads, confs, i, j, torch, device, n_steps=N_STEPS, kappa
     """
     g = torch.Generator(device=device).manual_seed(seed)
     B = len(confs)
-    r = torch.zeros(B, n_beads, 3, device=device)
-    r[:, :, 0] = torch.arange(n_beads, device=device, dtype=torch.float32)[None, :]
-    r += 0.1 * torch.randn(r.shape, device=device, generator=g)
+    # INITIALISE AS AN EQUILIBRATED GAUSSIAN COIL, NOT A ROD.
+    # A straight rod of N beads needs the slowest Rouse mode, tau ~ N^2/pi^2 in these units, to collapse:
+    # for N=500 that is ~25,000 time units, and 3000 steps at DT=0.01 is 30. The simulation would never
+    # leave its initial condition, every pair would sit at its full contour separation, and the contact
+    # frequency would be exactly zero -- which is what a smoke test produced. A random walk is already at
+    # the Gaussian chain's equilibrium size (<R_ij^2> = |i-j|), so only local structure and the loop
+    # constraints have to relax, and those are fast modes.
+    r = torch.randn(B, n_beads, 3, device=device, generator=g).cumsum(1)
+    r = r - r.mean(1, keepdim=True)
     mx = max((len(c) for c in confs), default=0)
     if mx:
         li = torch.zeros(B, mx, dtype=torch.long, device=device)
@@ -114,6 +123,8 @@ def langevin_contact(n_beads, confs, i, j, torch, device, n_steps=N_STEPS, kappa
                 lj[b, :len(c)] = torch.as_tensor(c[:, 1], device=device)
                 lm[b, :len(c)] = 1.0
     hits = 0.0
+    inv3 = 0.0
+    dsum = 0.0
     nsamp = 0
     for s in range(n_steps):
         F = torch.zeros_like(r)
@@ -141,10 +152,20 @@ def langevin_contact(n_beads, confs, i, j, torch, device, n_steps=N_STEPS, kappa
         F += (dv / dist[..., None] * rep[..., None]).sum(2) * 2.0
         r = r + F * DT + (2 * DT) ** 0.5 * torch.randn(r.shape, device=device, generator=g)
         if s >= n_steps // 2 and s % 10 == 0:
-            dij = (r[:, i] - r[:, j]).norm(dim=-1)
+            dij = (r[:, i] - r[:, j]).norm(dim=-1).clamp_min(1e-3)
             hits += float((dij < D_CONTACT).float().sum())
+            inv3 += float((dij ** -3).sum())          # smooth contact proxy, see below
+            dsum += float(dij.sum())
             nsamp += B
-    return hits / max(nsamp, 1)
+    # TWO observables, because the hard one is a rare event. P(d < d_c) for a pair 500 beads apart is
+    # ~1e-3, so 64 replicas x 150 samples yields ~10 hits and an estimate dominated by shot noise. The
+    # standard polymer contact proxy <d^-3> uses every sample, is dominated by the same close
+    # configurations, and -- unlike the analytic <R^2>^(-3/2) this is meant to improve on -- is sensitive
+    # to the SHAPE of the distance distribution rather than just its second moment. That sensitivity is
+    # the entire reason to run a simulation instead of solving the Gaussian model, so it is the feature.
+    return {"p_hard": hits / max(nsamp, 1),
+            "inv3": inv3 / max(nsamp, 1),
+            "mean_d": dsum / max(nsamp, 1)}
 
 
 def main():
@@ -184,14 +205,23 @@ def main():
     sel = np.random.default_rng(0).choice(len(rows), min(NSUB, len(rows)), replace=False)
     print(f"  simulating {len(sel):,} of {len(rows):,} pairs ({N_REPLICA} replicas x {N_STEPS} steps each)")
 
-    sim = np.full(len(rows), np.nan)
+    sim = np.full(len(rows), np.nan)          # <d^-3>, the feature
+    hard = np.full(len(rows), np.nan)         # P(d < d_c), reported for honesty about the rare event
+    mdist = np.full(len(rows), np.nan)
+    sepb = np.full(len(rows), np.nan)         # contour separation in beads, for the relaxation check
     t0 = time.time()
+    every = max(1, len(sel) // 40)          # ~40 progress lines whatever EXT_NSUB is
+    skipped = 0
     for c, k in enumerate(sel):
         chrom, e, t = rows[k]
         lo, hi = (e, t) if e <= t else (t, e)
         off = max(lo - 200_000, 0)
         n = int((hi + 200_000 - off) / (BEAD_KB * 1000)) + 1
         if n < 8 or n > 1200:
+            # >1200 beads = pairs separated by more than ~2 Mb. Skipped for cost, which narrows the
+            # simulated subset toward closer pairs. Every arm is scored on that same subset, so the
+            # comparison stays fair -- but the count is reported rather than swallowed.
+            skipped += 1
             continue
         a, v = ctcf.get(chrom, (np.array([]), np.array([])))
         l, rr = bisect.bisect_left(a, off), bisect.bisect_right(a, off + n * BEAD_KB * 1000)
@@ -207,14 +237,34 @@ def main():
         j = min(max(int((t - off) / (BEAD_KB * 1000)), 0), n - 1)
         if i == j:
             continue
-        sim[k] = langevin_contact(n, confs, i, j, torch, dev, seed=int(k))
-        if c % 100 == 0:
-            print(f"    {c}/{len(sel)}  {time.time()-t0:.0f}s  mean loops/conf "
-                  f"{np.mean([len(x) for x in confs]):.1f}", flush=True)
+        o = langevin_contact(n, confs, i, j, torch, dev, seed=int(k))
+        sim[k], hard[k], mdist[k] = o["inv3"], o["p_hard"], o["mean_d"]
+        sepb[k] = abs(i - j)
+        if c % every == 0:
+            dt = time.time() - t0
+            eta = dt / max(c, 1) * (len(sel) - c)
+            print(f"    {c}/{len(sel)}  {dt:.0f}s elapsed, ~{eta/60:.1f} min left  "
+                  f"({n} beads, mean loops/conf {np.mean([len(x) for x in confs]):.1f})", flush=True)
     el = time.time() - t0
     ok = np.isfinite(sim)
-    print(f"  simulated {ok.sum():,} pairs in {el/60:.1f} min "
-          f"({el/max(ok.sum(),1)*1000:.0f} ms/pair); contact freq median {np.nanmedian(sim):.4f}")
+    print(f"  simulated {ok.sum():,} pairs in {el/60:.1f} min ({el/max(ok.sum(),1)*1000:.0f} ms/pair)")
+    print(f"  skipped {skipped:,} pairs as out of bead range (<8 or >1200 beads, i.e. >~2 Mb apart)")
+    print(f"  median <d^-3> {np.nanmedian(sim):.3e} | median P(d<{D_CONTACT}) {np.nanmedian(hard):.5f} "
+          f"| median <d> {np.nanmedian(mdist):.2f} beads")
+    # THE CHAIN MUST BE A COIL, NOT A ROD. For a Gaussian chain <d> = sqrt(8/3pi)*sqrt(s) ~ 0.92*sqrt(s)
+    # for a contour separation of s beads; loops and excluded volume push the ratio down and up
+    # respectively, but not by an order of magnitude. An unrelaxed rod gives <d> ~ s, i.e. a ratio of
+    # sqrt(s) -- which for typical s here is 15-30, unmistakable. This is the check that would have
+    # caught the straight-line initialisation immediately.
+    ratio = np.nanmedian(mdist[ok] / np.sqrt(np.maximum(sepb[ok], 1)))
+    print(f"  <d>/sqrt(separation) = {ratio:.2f}  (Gaussian coil ~0.92; an unrelaxed rod gives sqrt(s), "
+          f"tens) -- {'coil, relaxed' if ratio < 3 else 'NOT RELAXED'}")
+    if ratio >= 3:
+        raise SystemExit("chain never relaxed to a coil -- the contact numbers would be the initial "
+                         "condition, not the physics. Raise EXT_STEPS or check initialisation.")
+    if not np.isfinite(np.nanmedian(sim)) or np.nanmedian(sim) <= 0:
+        raise SystemExit("every pair returned zero contact proxy -- the chain is not relaxed; do not "
+                         "interpret the arms below")
 
     # score on the simulated subset only -- comparing a subset arm to a full-set number would be meaningless
     sub = np.where(ok)[0]
@@ -228,24 +278,106 @@ def main():
     y = df["crispr_hit"].values[sub]
     ch = df["chromosome"].values[sub]
     Xa = np.hstack([df[base].values[sub], tfmat])
-    S = np.log10(np.clip(sim[sub], 1e-4, None))[:, None]
+    S = np.log10(np.clip(sim[sub], 1e-12, None))[:, None]
+    # <d> is the simulation's version of the quantity the ANALYTIC model already gave (a second moment).
+    # Scoring it alongside <d^-3> is what separates "simulation beats the closed form" from "shape
+    # sensitivity beats the second moment" -- without this arm the two are confounded.
+    Dm = np.log10(np.clip(mdist[sub], 1e-6, None))[:, None]
 
-    def sc(X):
-        return float(np.mean([_cv_auprc(X, y, _seeded_folds(ch, s)) for s in (0, 1, 2)]))
+    SEEDS = (0, 1, 2, 3, 4)
+
+    def per_seed(X):
+        """AUPRC for EACH fold seed, kept separate so deltas can be paired seed-by-seed.
+
+        Averaging first and subtracting after throws away the pairing and with it the only cheap
+        uncertainty available here. A +0.03 mean that flips sign across fold assignments is noise, and
+        collapsing to one number makes that indistinguishable from a real effect.
+        """
+        v = [_cv_auprc(X, y, _seeded_folds(ch, s)) for s in SEEDS]
+        v = [x for x in v if np.isfinite(x)]
+        if not v:
+            raise SystemExit(f"AUPRC undefined on {len(y)} pairs with {int(y.sum())} positives -- every "
+                             "chromosome fold had fewer than 3 positives. Raise EXT_NSUB; do NOT read a "
+                             "verdict off this run.")
+        return np.array(v)
+
+    A_id, A_cnt = per_seed(Xa), per_seed(np.hstack([Xa, Cr]))
+    A_dm, A_sim = per_seed(np.hstack([Xa, Dm])), per_seed(np.hstack([Xa, S]))
+    A_both = per_seed(np.hstack([Xa, Cr, S]))
+
+    # THE CONTROL, drawn MORE THAN ONCE. Shuffling the simulated values across pairs destroys the
+    # pair-specific physics while keeping the column's marginal distribution and whatever extra capacity
+    # a 10th numeric feature gives XGBoost. A SINGLE shuffle is one realisation of a noisy quantity --
+    # the identical mistake that once put a GPR control on 2-5 hits and produced "lifts" of 0.5x/3x/5x
+    # that were pure sampling noise. N_SHUF independent draws x len(SEEDS) fold assignments gives the
+    # control a mean AND a standard error, so the real gain can be required to exceed the control's own
+    # scatter rather than merely its point estimate.
+    N_SHUF = 5
+    shuf_deltas = []
+    for sd in range(N_SHUF):
+        Ssh = S[np.random.default_rng(sd).permutation(len(S))]
+        shuf_deltas.append(per_seed(np.hstack([Xa, Cr, Ssh])) - A_cnt)
+    shuf_deltas = np.concatenate(shuf_deltas)
+    A_shuf = A_cnt + shuf_deltas.mean()
+
+    def sc(a):
+        return float(np.mean(a))
 
     res = {"n_simulated": int(ok.sum()), "minutes": el / 60, "device": str(dev),
-           "identity": sc(Xa), "count_contact": sc(np.hstack([Xa, Cr])),
-           "SIM_only": sc(np.hstack([Xa, S])), "SIM_plus_count": sc(np.hstack([Xa, Cr, S]))}
-    print("\n  (all arms scored on the SAME simulated subset, so they are comparable to each other)")
-    for k_, v_ in res.items():
-        if isinstance(v_, float) and k_ not in ("minutes",):
-            print(f"    {k_:22s} AUPRC {v_:.4f}")
-    d1 = res["SIM_plus_count"] - res["count_contact"]
-    print(f"\n  SIM + count MINUS count-only : {d1:+.4f}")
-    res["delta_vs_count"] = d1
-    res["verdict"] = ("GO -- the simulation adds signal beyond counting CTCF peaks." if d1 >= 0.01 else
-                      "NO-GO -- full extrusion + Langevin does not beat a bisect over a BED file.")
-    print(f"  VERDICT: {res['verdict']}")
+           "median_inv3": float(np.nanmedian(sim)), "median_p_hard": float(np.nanmedian(hard)),
+           "coil_ratio": float(ratio), "n_positives": int(y.sum()),
+           "identity": sc(A_id), "count_contact": sc(A_cnt), "mean_dist_only": sc(A_dm),
+           "SIM_only": sc(A_sim), "SIM_plus_count": sc(A_both),
+           "SIM_shuffled_plus_count": sc(A_shuf)}
+    print("\n  (all arms scored on the SAME simulated subset, so they are comparable to each other;")
+    print("   they are NOT comparable to the full-set 0.663 -- count_contact below IS that bar, resc"
+          "ored here)")
+    for k_ in ("identity", "count_contact", "mean_dist_only", "SIM_only",
+               "SIM_plus_count", "SIM_shuffled_plus_count"):
+        print(f"    {k_:24s} AUPRC {res[k_]:.4f}")
+
+    def paired(a, b, label, note):
+        d = a - b
+        print(f"  {label:34s} {d.mean():+.4f}  [per-seed {' '.join(f'{x:+.3f}' for x in d)}]  {note}")
+        return d
+
+    print(f"\n  paired seed-by-seed deltas over {len(SEEDS)} chromosome-fold assignments:")
+    d1 = paired(A_both, A_cnt, "SIM + count MINUS count", "<- does simulating beat counting")
+    d2 = paired(A_sim, A_dm, "<d^-3> MINUS <d>", "<- shape vs 2nd moment")
+    print(f"  {'SHUFFLED-SIM + count MINUS count':34s} {shuf_deltas.mean():+.4f}  "
+          f"[{N_SHUF} draws x {len(SEEDS)} seeds, sd {shuf_deltas.std(ddof=1):.4f}, "
+          f"range {shuf_deltas.min():+.3f}..{shuf_deltas.max():+.3f}]  <- CONTROL")
+
+    net = d1.mean() - shuf_deltas.mean()
+    # Standard error of the DIFFERENCE of two means, which is what "net" is.
+    se = float(np.sqrt(d1.var(ddof=1) / len(d1) + shuf_deltas.var(ddof=1) / len(shuf_deltas)))
+    consistent = bool(np.all(np.sign(d1) == np.sign(d1.mean())))
+    print(f"\n  real MINUS shuffled control : {net:+.4f} +/- {se:.4f} (1 se)   z = {net/max(se,1e-9):+.2f}")
+    print(f"  sign consistent across all {len(d1)} fold assignments: {consistent}")
+    res.update({"delta_vs_count": float(d1.mean()), "delta_vs_count_per_seed": d1.tolist(),
+                "delta_shuffled_control": float(shuf_deltas.mean()),
+                "delta_shuffled_control_sd": float(shuf_deltas.std(ddof=1)),
+                "delta_net_of_control": float(net), "delta_net_se": se,
+                "delta_shape_vs_moment": float(d2.mean()), "sign_consistent": consistent})
+    # A GO needs all of: a gain worth having, a gain that SURVIVES the shuffled control, a gain larger
+    # than the noise in that comparison, and a sign that does not flip with the fold assignment. Every
+    # one of those has, on its own, produced a false positive somewhere in this project.
+    if net >= 0.01 and net > 2 * se and consistent:
+        res["verdict"] = ("GO -- the simulation adds signal beyond counting CTCF peaks, and the gain "
+                          "survives a shuffled-simulation control by more than 2 se.")
+    elif d1.mean() >= 0.01 and net < 0.01:
+        res["verdict"] = (f"NO-GO -- the +{d1.mean():.4f} gain is largely reproduced by the SHUFFLED "
+                          f"control (+{shuf_deltas.mean():.4f}), so most of it is an extra-column "
+                          "effect, not physics.")
+    elif net >= 0.01 and net <= 2 * se:
+        res["verdict"] = (f"UNDERPOWERED -- net {net:+.4f} but 1 se is {se:.4f}, so this run cannot "
+                          "tell the effect from the control's own scatter. Raise EXT_NSUB and re-run.")
+    elif not consistent:
+        res["verdict"] = (f"INCONCLUSIVE -- mean gain {d1.mean():+.4f} but the sign flips across fold "
+                          "assignments. Raise EXT_NSUB and re-run.")
+    else:
+        res["verdict"] = "NO-GO -- full extrusion + Langevin does not beat a bisect over a BED file."
+    print(f"\n  VERDICT: {res['verdict']}")
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump(res, open(OUT / "extrude_gate.json", "w"), indent=1)
     print(f"\n  -> {OUT/'extrude_gate.json'}")
