@@ -12366,3 +12366,71 @@ zero. Underpowered, not refuted.
 Two more were performance, not correctness: a `pgrep` wait-loop that matched its own command line and never
 exited, and a pool calibration that bisected a dense-row LP at ~88 s per iteration where one LP (fix biomass at
 μ, minimise protein cost) gives the same answer exactly.
+
+---
+
+# Cellformer on an A100: the ablation table, and why the full model lost to its own ablations
+
+The eleven-row table pre-registered in `CELLFORMER.md` ran. It did not produce the outcome the
+interpretation rule anticipated, and the honest reading is worth stating precisely.
+
+## What ran
+
+| # | arm | recall | vs frequency (paired CI) |
+|---|---|---:|---|
+| 10 | frequency baseline | **0.3980** | — |
+| 8 | no auxiliary heads | 0.2401 | −0.1579 [−0.2039, −0.1127] |
+| 7 | no column attention | 0.2238 | −0.1742 [−0.2326, −0.1171] |
+| 5 | no flux module | 0.2047 | −0.1934 [−0.2642, −0.1260] |
+| 1 | no pair representation | 0.1899 | −0.2081 [−0.2930, −0.1275] |
+| 3 | no reaction-graph update | 0.1476 | −0.2504 [−0.3265, −0.1755] |
+| 0 | **full model** | **0.1266** | −0.2714 [−0.3528, −0.1905] |
+| 2 | pair repr SHUFFLED | 0.1245 | −0.2735 [−0.3459, −0.2027] |
+| 4 | no recycling | 0.1120 | −0.2860 [−0.3644, −0.2127] |
+| 6 | no physical loss | 0.0852 | −0.3128 [−0.3971, −0.2330] |
+| 9 | SHUFFLED labels | 0.0357 | −0.3623 [−0.4478, −0.2785] |
+
+## What is established
+
+1. **The pre-registered criterion FAILS.** Every arm loses to frequency with a CI excluding zero.
+   No configuration of this architecture is competitive with naming the globally most-moved genes.
+2. **The harness is sound.** Shuffled labels collapse to 0.0357, a sixth of the full model and an
+   eleventh of frequency. The floor behaves.
+3. **The full model is beaten by five of its own ablations**, and it sits *second-worst* among the
+   non-shuffled arms. Removing components improves held-out recall. That is the signature of parts
+   that add optimisation burden without adding signal — not of a working inductive bias.
+4. **The pair representation contributes nothing.** Shuffling it (0.1245) is indistinguishable from
+   keeping it (0.1266); removing it entirely (0.1899) is *better* than either. A prior that costs
+   accuracy and whose shuffled version scores the same is not encoding the biology it was built from.
+
+## What is NOT established, and the confound that matters
+
+The table ran at `CF_STEPS=1500`. The learning curve, on the same model, measured:
+
+    step  600   recall 0.1573
+    step 1500   recall 0.0890   <- the table's budget, and the curve's WORST checkpoint
+    step 3000   recall 0.2531
+
+So every arm was trained to the single worst-measured point, in the steepest and noisiest part of
+the curve, where the model reaches 22% of baseline against 64% at step 3000. The full model's 0.1266
+is consistent with that. **The ranking between arms is therefore a ranking of undertrained models**,
+and cannot yet be attributed to architecture.
+
+Two further limits, stated rather than discovered later: every arm is a **single seed** (`SEED = 0`),
+and eval used **40 held-out perturbations**, where the measured 95% CI half-width on recall is 0.070
+against 0.021 at the full 419.
+
+The pre-registered interpretation rule covered "beats the baseline but the biology is inert". It did
+not anticipate the full model losing to its own ablations, so that sentence does not apply and is not
+being stretched to fit. The decisive re-run is the same table at a budget past the curve's plateau,
+all held-out perturbations, and more than one seed.
+
+## Two bugs found in the analysis code while reading this
+
+- **`delta_vs_full` was reported with no CI** and judged against a hardcoded `-0.005`, so the table
+  could not distinguish a real architectural cost from run-to-run noise — and had no way at all to
+  express the outcome that actually occurred, an ablation scoring *above* the full model. Now a paired
+  bootstrap CI, with a `HELPS-TO-REMOVE` marker.
+- **`r["tag"][0] in "1356"` matched the frequency baseline**, because `"10 frequency baseline"[0]` is
+  `"1"`. It never fired only because frequency outscored the full model; had the model won, the
+  baseline would have been reported as a costly ablation of itself.

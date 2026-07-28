@@ -588,31 +588,59 @@ def main():
 
     full = next(r for r in results if r["tag"].startswith("0 "))
     rngb = np.random.default_rng(0)
-    print("\n" + "=" * 92)
-    print(f"{'ablation':30s} {'recall':>8s} {'prec':>7s} {'vs full':>9s} {'vs frequency (paired CI)':>28s}")
-    for r in results:
-        a, b = np.array(r["recalls"]), np.array(base_freq["recalls"])
+
+    def paired_ci(a, b, nboot=4000):
+        """Paired bootstrap CI of mean(a - b) over the SAME perturbations."""
+        a, b = np.asarray(a, float), np.asarray(b, float)
         n = min(len(a), len(b))
-        dfq = a[:n] - b[:n]
-        bs = np.array([dfq[rngb.integers(0, n, n)].mean() for _ in range(4000)])
-        lo, hi = np.percentile(bs, [2.5, 97.5])
-        dfull = r["recall"] - full["recall"]
-        tail = "" if r["tag"] == base_freq["tag"] else f"  {dfq.mean():+.4f} [{lo:+.4f},{hi:+.4f}]"
-        print(f"{r['tag']:30s} {r['recall']:>8.4f} {r['precision']:>7.4f} {dfull:>+9.4f}{tail:>28s}")
-        r["delta_vs_frequency"] = float(dfq.mean())
-        r["ci"] = [float(lo), float(hi)]
-        r["delta_vs_full"] = float(dfull)
-    print("=" * 92)
+        dd = a[:n] - b[:n]
+        bs = np.array([dd[rngb.integers(0, n, n)].mean() for _ in range(nboot)])
+        return float(dd.mean()), float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))
+
+    print("\n" + "=" * 116)
+    print(f"{'ablation':30s} {'recall':>8s} {'prec':>7s} "
+          f"{'vs full model (paired CI)':>30s} {'vs frequency (paired CI)':>30s}")
+    for r in results:
+        dfq, flo, fhi = paired_ci(r["recalls"], base_freq["recalls"])
+        # vs the FULL MODEL, with a CI. The previous version reported this difference as a bare number
+        # and then judged it against a hardcoded -0.005, so it could not tell a real architectural cost
+        # from run-to-run noise -- and had no way at all to express the outcome that actually occurred
+        # here, which is ablations scoring ABOVE the full model.
+        dfu, ulo, uhi = paired_ci(r["recalls"], full["recalls"])
+        ftail = "" if r["tag"] == base_freq["tag"] else f"{dfq:+.4f} [{flo:+.4f},{fhi:+.4f}]"
+        utail = "" if r["tag"] == full["tag"] else f"{dfu:+.4f} [{ulo:+.4f},{uhi:+.4f}]"
+        mark = "  HELPS-TO-REMOVE" if (ulo > 0 and r["tag"] not in (full["tag"], base_freq["tag"])) else ""
+        print(f"{r['tag']:30s} {r['recall']:>8.4f} {r['precision']:>7.4f} {utail:>30s} {ftail:>30s}{mark}")
+        r["delta_vs_frequency"], r["ci"] = dfq, [flo, fhi]
+        r["delta_vs_full"], r["ci_vs_full"] = dfu, [ulo, uhi]
+    print("=" * 116)
+
     beats = full["ci"][0] > 0
-    costly = [r["tag"] for r in results if r["tag"][0] in "1356" and r["delta_vs_full"] < -0.005]
+    # Explicit prefixes. The old test was `r["tag"][0] in "1356"`, and "10 frequency baseline"[0] == "1",
+    # so the BASELINE was inside the candidate set for "architectural ablations that cost accuracy". It
+    # never fired only because frequency happened to outscore the full model; had the full model won, the
+    # baseline would have been reported as a costly ablation of itself.
+    ARCH = ("1 ", "3 ", "5 ", "6 ")
+    costly = [r["tag"] for r in results if r["tag"].startswith(ARCH) and r["ci_vs_full"][1] < 0]
+    helped = [r["tag"] for r in results
+              if r["tag"] not in (full["tag"], base_freq["tag"]) and r["ci_vs_full"][0] > 0]
+
     print(f"\nPRE-REGISTERED CRITERION: the full model must beat frequency with a CI excluding zero.")
     print(f"  full {full['recall']:.4f} vs frequency {base_freq['recall']:.4f}, "
           f"CI [{full['ci'][0]:+.4f}, {full['ci'][1]:+.4f}]  ->  {'PASS' if beats else 'FAIL'}")
-    print(f"  architectural ablations that cost accuracy: {costly if costly else 'NONE'}")
+    print(f"  architectural ablations that COST accuracy (CI excludes zero): {costly if costly else 'NONE'}")
+    print(f"  ablations that IMPROVE on the full model (CI excludes zero):   {helped if helped else 'NONE'}")
     if beats and not costly:
         print("  A transformer with capacity beat the baseline; none of its biology mattered.")
+    if helped:
+        # The pre-registered rule covers "wins, but the biology is inert". It did not anticipate the full
+        # model losing to its own ablations. Stating it plainly rather than leaving it to be inferred.
+        print("\n  NOTE: the full model is beaten by its own ablations listed above. Removing components")
+        print("  IMPROVES held-out recall, which is the signature of components that add optimisation")
+        print("  burden without adding signal at this training budget -- not of a working inductive bias.")
     json.dump({"config": BASE, "g_crop": G_CROP, "p_ctx": P_CTX, "n_eval": len(test_ids),
-               "beats_frequency": bool(beats), "costly_ablations": costly, "results": results},
+               "steps": STEPS, "seed": SEED, "beats_frequency": bool(beats),
+               "costly_ablations": costly, "ablations_beating_full": helped, "results": results},
               open(OUT / "cellformer_af.json", "w"), indent=1)
     print(f"\n  -> {OUT/'cellformer_af.json'}")
 
