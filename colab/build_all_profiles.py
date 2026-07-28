@@ -58,14 +58,33 @@ def cat(h, key):
 
 
 def var_names(h):
+    """Gene SYMBOLS, across three different AnnData encodings.
+
+    THE THIRD ENCODING IS THE ONE THAT BIT. gwps.h5ad and k562.h5ad store gene_name as a dataset of INTEGER
+    CODES with the strings in a sibling `var/__categories` group -- the pre-0.8 AnnData layout. Reading that
+    dataset directly returns 3595, 3591, 4546, which stringify into perfectly plausible-looking "gene names".
+    The build then succeeded, the per-line mover counts were correct, and every cross-line join silently
+    returned nothing: K562's coverage came out 0.0014 where the earlier measurement was 0.2544, while the
+    three lines sharing the modern layout matched each other fine. gwps_rebuild.py already handled this
+    branch; not replicating it here is what produced the discrepancy.
+
+    An integer-looking result is therefore rejected rather than returned.
+    """
     v = h["var"]
-    for k in ("gene_name", "gene_symbol", "_index", "index"):
-        if k in v:
-            d = v[k]
-            if isinstance(d, h5py.Group):
-                cats = [x.decode() if isinstance(x, bytes) else str(x) for x in d["categories"][:]]
-                return np.array([cats[c] if 0 <= c < len(cats) else "?" for c in d["codes"][:]])
-            return np.array([x.decode() if isinstance(x, bytes) else str(x) for x in d[:]])
+    for k in ("gene_name", "gene_symbol"):
+        if k not in v:
+            continue
+        d = v[k]
+        if isinstance(d, h5py.Group):                       # modern categorical
+            cats = [x.decode() if isinstance(x, bytes) else str(x) for x in d["categories"][:]]
+            return np.array([cats[c] if 0 <= c < len(cats) else "?" for c in d["codes"][:]])
+        raw = d[:]
+        if raw.dtype.kind in "iu":                          # legacy: codes + var/__categories
+            if "__categories" in v and k in v["__categories"]:
+                cats = [x.decode() if isinstance(x, bytes) else str(x) for x in v["__categories"][k][:]]
+                return np.array([cats[c] if 0 <= c < len(cats) else "?" for c in raw])
+            raise KeyError(f"var/{k} is integer codes but var/__categories/{k} is absent")
+        return np.array([x.decode() if isinstance(x, bytes) else str(x) for x in raw])
     idx = v.attrs.get("_index")
     if idx is not None:
         k = idx.decode() if isinstance(idx, bytes) else idx
@@ -230,6 +249,18 @@ def main():
                       if res[name] else 0}
         del M
 
+    # NAMESPACE ASSERT. The whole point of these files is that they JOIN, so a build that produces
+    # non-overlapping identifier spaces is worthless even when every per-line count looks right. Require
+    # every line to share a substantial gene vocabulary with the largest one.
+    ref = max(res, key=lambda k: len(res[k]))
+    refg = {g for v in res[ref].values() for g in v}
+    for k in res:
+        gg = {g for v in res[k].values() for g in v}
+        ov = len(gg & refg) / max(min(len(gg), len(refg)), 1)
+        print(f"    namespace overlap {k:12s} vs {ref}: {100*ov:.1f}%")
+        assert k == ref or ov > 0.2, (
+            f"{k} shares only {100*ov:.1f}% of its gene vocabulary with {ref} -- different identifier "
+            "spaces, the cross-line join would silently return nothing")
     DEST.parent.mkdir(parents=True, exist_ok=True)
     with gzip.open(DEST, "wt") as f:
         json.dump({"tau": TAU, "tide_frac": TIDE_FRAC, "min_cells": MINCELLS,

@@ -12880,3 +12880,58 @@ near the peak — a plateau, not a knife-edge.
 Caveats stated: this applies to the 80.4% of perturbations whose knocked-out gene was also screened in
 another line; the other-line readouts are top-250 truncated; and +0.0213 on 0.3689 is a 5.8% relative gain,
 real but small.
+
+---
+
+# All six cell lines, full profiles: cross-line transfer beats the baseline 6/6
+
+`colab/build_all_profiles.py` + `colab/cross_line_all.py`. The earlier K562 result used top-250-truncated
+sources and one target line. This rebuilds every line at full width from the h5ad sources and runs each as the
+target, predicted from the others.
+
+| line | knockouts | source |
+|---|---:|---|
+| K562-gwps | 5,218 | already per-perturbation z |
+| K562-ess | 1,652 | already z |
+| **HCT116** | **17,768** | already per-perturbation |
+| RPE1 | 2,122 | pseudobulked from 247,914 cells |
+| HepG2 | 2,010 | pseudobulked from 145,473 cells |
+| Jurkat | 2,201 | pseudobulked from 262,956 cells |
+
+Stringency is calibrated per line so the same *fraction* of cells (0.073%) is called a mover — a nominal z of
+1 means different things in a shipped z-score, a MAD-standardised pseudobulk, and a log-ratio matrix.
+
+## Result — same-cell-line sources excluded
+
+| target | held-out | coverage | w | frequency | combined | delta |
+|---|---:|---:|---:|---:|---:|---|
+| K562-gwps | 419 | 0.1569 | 0.1 | 0.3514 | 0.3862 | **+0.0348 [+0.0247, +0.0446]** |
+| K562-ess | 190 | 0.2307 | 0.1 | 0.3290 | 0.3810 | **+0.0521 [+0.0267, +0.0777]** |
+| HCT116 | 618 | 0.0833 | 0.1 | 0.1949 | 0.2362 | **+0.0413 [+0.0295, +0.0542]** |
+| RPE1 | 160 | 0.2189 | 0.1 | 0.2358 | 0.3100 | **+0.0742 [+0.0457, +0.1033]** |
+| HepG2 | 180 | 0.2177 | 0.1 | 0.2440 | 0.3172 | **+0.0732 [+0.0518, +0.0953]** |
+| Jurkat | 132 | 0.1938 | 0.05 | 0.1963 | 0.2609 | **+0.0646 [+0.0399, +0.0914]** |
+
+**6/6 beat their own frequency baseline with a CI excluding zero.** Weight tuned per line on that line's
+training half and applied once.
+
+Full profiles matter: K562's gain went from **+0.0213** (truncated sources) to **+0.0348** strict / **+0.0880**
+with the K562-ess source included. The truncation was suppressing the effect, as predicted.
+
+## Three defects caught, one of them the worst kind
+
+**A silent join failure that produced a plausible answer.** `gwps.h5ad` and `k562.h5ad` store `gene_name` as
+integer codes with strings in a legacy `var/__categories` group. Read directly it returns `3595, 3591, 4546`,
+which stringify into convincing "gene names". Per-line mover counts were all correct; every cross-line join
+returned nothing. K562 coverage read **0.0014** where the earlier measurement was 0.2544, while the three
+lines sharing the modern layout matched each other fine and looked healthy. Now there is a namespace assert:
+every line must share >20% of its gene vocabulary with the largest (observed: 72–81%).
+
+**Same-cell-line leakage.** K562-gwps and K562-ess are both K562. Letting them predict each other measures
+screen reproducibility, not transfer — and it produced **+0.2509**, the largest number in the table and the
+one most likely to be quoted. Sources are now excluded by cell line.
+
+**Re-standardising an already-z source** marked every gene as tide (8,248/8,248) and yielded zero movers;
+caught by printing the tide count per line.
+
+Melanoma (frangieh) is skipped — sparse CSC needs a different reader. 249 perturbations, recorded as skipped.
