@@ -13341,3 +13341,71 @@ the actual measurement, sums to roughly zero beyond the bisect.
 benchmark at the same base rate. The four caveats from the previous section still stand unchanged — CV
 protocol differs, input budgets differ, neither number is out-of-sample, and 0.66 comes from search snippets
 because the primary text was paywalled.
+
+---
+
+# Does 3D structure rescue FALSE NEGATIVES? No — the misses are *depleted* for contact
+
+`colab/fn_rescue.py`. The aggregate Hi-C result (−0.003) does not by itself refute a subgroup claim: if 3D
+contact rescued a set of distal true positives while slightly hurting elsewhere, the mean would look flat
+and the rescue would still be real. So the claim gets its own test.
+
+This uses **measured** ENCODE K562 intact Hi-C, so the answer is a ceiling. No simulated structure can carry
+information the measurement lacks.
+
+## Recall at a fixed shortlist budget — false negatives are what is not captured
+
+| top-K | recall base | recall +3D | positives gained | FN base → +3D |
+|---:|---:|---:|---:|---|
+| 100 | 0.1722 | 0.1722 | 0 | 471 → 471 |
+| 300 | 0.4464 | 0.4517 | +3 | 315 → 312 |
+| 500 | 0.5905 | 0.5975 | **+4** | 233 → 229 |
+| 750 | 0.7153 | 0.7135 | −1 | 162 → 163 |
+| 1,500 | 0.8172 | 0.8137 | −2 | 104 → 106 |
+
+Best case **+4 positives out of 569**, and it reverses at larger budgets.
+
+## The mechanism the claim requires is absent
+
+For 3D to rescue misses, the false negatives must be *enriched* for contact relative to what the model
+already finds. They are the opposite:
+
+| | count | with a measured connecting loop |
+|---|---:|---:|
+| positives the model **misses** (outside top-500) | 233 | **108 (46.4%)** |
+| positives the model **finds** (inside top-500) | 336 | **230 (68.5%)** |
+| **negatives** outside top-500 that also have a loop | 1,623 | — |
+
+The misses are **depleted** for loops, not enriched. The model is already finding the loop-connected pairs —
+that is *why* it finds them. And promoting "has a loop" would raise **1,623 negatives to rescue 108
+positives**: fifteen false positives bought per false negative fixed.
+
+This is a statement about the data, not about our model. It does not depend on architecture, features or
+tuning.
+
+## The distal band: suggestive, then gone under a proper control
+
+An uncontrolled pass over four distance bins showed 250 kb–1 Mb at **+0.0157** — the largest subgroup effect
+anywhere, and in the direction the claim predicts. That is also exactly the shape of a multiple-comparisons
+artifact, so it was re-tested with 8 paired fold seeds and a position-shuffled control:
+
+| | value |
+|---|---:|
+| base (250 kb–1 Mb, 5,953 pairs, 83 positives) | 0.1567 |
+| + measured 3D | 0.1598 |
+| delta | **+0.0031** |
+| shuffled control | −0.0065 |
+| **net of control** | **+0.0097 ± 0.0065, z = +1.49** |
+| **sign consistent across seeds** | **NO** — per-seed −0.011 to +0.029 |
+
+The +0.0157 shrank to +0.0031 once seeds went from 3 to 8. Net is positive but the sign flips across fold
+assignments, which is the same "not established" verdict the extrusion gate returned.
+
+Of the 76 positives missed in that band, **5 have a measured loop.** Five pairs is the entire addressable
+population of the rescue hypothesis in its best band.
+
+## Verdict
+
+The false-negative claim fails for a reason stronger than a small effect size: **the required mechanism runs
+backwards in the data.** Missed positives have fewer measured 3D contacts than found ones. There is a hint
+of a distal effect at 250 kb–1 Mb that does not survive its control, and it addresses five pairs.
