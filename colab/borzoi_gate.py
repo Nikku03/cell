@@ -44,9 +44,35 @@ SEQLEN = 524_288                  # Borzoi input
 HALF = SEQLEN // 2
 OUT_BINS, BIN_BP = 6_144, 32      # Borzoi output: 196,608 bp centred
 MODEL_ID = os.environ.get("BORZOI_MODEL", "johahi/borzoi-replicate-0")
+TARGETS_URL = ("https://raw.githubusercontent.com/calico/borzoi/main/examples/"
+               "targets_human.txt")
 NSUB = int(os.environ.get("BORZOI_NSUB", "0"))     # 0 = all addressable pairs
 SEEDS = (0, 1, 2, 3, 4)
 BASES = {"A": 0, "C": 1, "G": 2, "T": 3}
+_DIAG = []          # one-time output-layout report
+
+
+def k562_rna_tracks():
+    """Indices of Borzoi's K562 RNA tracks. Averaging all 7,611 outputs mixes DNase, ChIP, CAGE and RNA
+    across every cell type in the training set, which dilutes a K562 expression readout with signal from
+    tissues the benchmark has nothing to do with. Falls back to all tracks, loudly, if the targets file
+    cannot be fetched."""
+    import csv, urllib.request
+    p = SP / "borzoi_targets_human.txt"
+    if not p.exists():
+        try:
+            urllib.request.urlretrieve(TARGETS_URL, p)
+        except Exception as e:
+            print(f"  WARNING: could not fetch targets ({type(e).__name__}); averaging ALL tracks")
+            return None
+    rows = list(csv.DictReader(open(p), delimiter="\t"))
+    idx = [i for i, r in enumerate(rows)
+           if "K562" in (r.get("description") or "") and "RNA" in (r.get("description") or "")]
+    if not idx:
+        print("  WARNING: no K562 RNA tracks matched; averaging ALL tracks")
+        return None
+    print(f"  using {len(idx)} K562 RNA tracks of {len(rows)}")
+    return idx
 
 
 def load_pairs():
@@ -124,6 +150,9 @@ def main():
     from borzoi_pytorch import Borzoi
     model = Borzoi.from_pretrained(MODEL_ID).to(dev).eval()
     print(f"  model {MODEL_ID} on {dev}")
+    TRACKS = k562_rna_tracks()
+    if TRACKS is not None:
+        TRACKS = torch.tensor(TRACKS, device=dev)
 
     tb = py2bit.open(str(TWOBIT))
     by_gene = {}
@@ -142,20 +171,30 @@ def main():
                 continue
             # TSS sits at the centre of the cropped output; read a small window of bins around it
             c = OUT_BINS // 2
-            def express(batch, _seen=[]):
+            def express(batch):
                 o = model(torch.tensor(np.stack(batch), device=dev))
-                if not _seen:
-                    # THE ONE PART THAT COULD NOT BE TESTED WITHOUT A GPU. Everything else in this file was
-                    # validated on CPU: window centring (TSS offset 0), one-hot cleanliness, masking span,
-                    # the mirror control. The model's output layout was not. Print it once so a wrong
-                    # orientation or an unexpected shape is visible immediately rather than producing
-                    # plausible numbers from the wrong axis.
-                    print(f"    [borzoi output shape {tuple(o.shape)}; reading bins "
-                          f"{c-4}:{c+4} of axis {'1' if o.shape[1] > o.shape[2] else '2'}]", flush=True)
-                    _seen.append(1)
-                if o.ndim == 3 and o.shape[1] < o.shape[2]:
+                # IDENTIFY THE BIN AXIS BY SIZE-MATCHING OUT_BINS, NOT BY COMPARING THE TWO AXES.
+                # Borzoi human returns (batch, 7611 tracks, 6144 bins). The first version transposed on
+                # `shape[1] < shape[2]`, which is FALSE here because 7611 > 6144 -- so it sliced TRACKS
+                # 3068:3076 and averaged over the entire 196 kb window instead of reading all tracks at
+                # the eight bins around the TSS. Deleting 500 bp out of 524 kb barely moves a window-wide
+                # average, which is why the first run returned a median log2 drop of +0.00048 and a null.
+                bax = 1 if o.shape[1] == OUT_BINS else (2 if o.shape[2] == OUT_BINS else None)
+                assert bax is not None, (
+                    f"cannot find the {OUT_BINS}-bin axis in Borzoi output {tuple(o.shape)}; "
+                    "do not interpret any result from this run")
+                if not _DIAG:                       # module-level, so this prints ONCE for the whole run
+                    _DIAG.append(1)                 # (the previous version reset it per gene: 1,226 lines)
+                    print(f"    [output {tuple(o.shape)} -> bins are axis {bax}; reading bins "
+                          f"{c-4}:{c+4}, averaging "
+                          f"{'the selected K562 RNA tracks' if TRACKS is not None else 'ALL tracks'}]",
+                          flush=True)
+                if bax == 2:
                     o = o.transpose(1, 2)                  # -> (B, bins, tracks)
-                return o[:, c - 4:c + 4, :].mean((1, 2)).float().cpu().numpy()
+                o = o[:, c - 4:c + 4, :]                   # eight bins centred on the TSS
+                if TRACKS is not None:
+                    o = o[:, :, TRACKS]                    # K562 RNA tracks only
+                return o.mean((1, 2)).float().cpu().numpy()
 
             base = express([ref])[0]
             batch, tags = [], []
