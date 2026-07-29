@@ -13477,3 +13477,62 @@ closed.** Not underpowered, not unresolved — answered.
   measured on 180,000 cells and committed.
 - `mrna_decay.json` reproduced the sandbox numbers exactly (solver error 5.6e-15, export signature +0.0234,
   z = +7.36), confirming determinism across machines.
+
+---
+
+# The data-scarce test: the chromatin verdict WAS K562-specific — but the conclusion about simulation is not
+
+`colab/data_scarce.py`. Every negative in the contact ledger was measured on a model carrying 311 measured
+K562 TF ChIP tracks. K562 is ENCODE Tier 1; no new cell line and no patient tissue has that. The objection:
+if the TF tracks are what made contact redundant, the verdict reads "contact is redundant *in K562*" and the
+programme is alive for every cell type anyone actually works on.
+
+**Pre-registered criterion, fixed before running:** a falling baseline proves nothing — of course it falls.
+The objection is right only if the contact DELTA GROWS as tiers are stripped.
+
+| tier | baseline | +CTCF count | Δ | + measured Hi-C | Δ |
+|---|---:|---:|---:|---:|---:|
+| **A** distance + ATAC only | 0.4052 | 0.5045 | **+0.0993** | 0.4307 | **+0.0254** |
+| **B** + full epigenetics | 0.5217 | 0.6048 | +0.0831 | 0.5231 | +0.0014 |
+| **C** + 311 TF ChIP tracks | 0.6050 | 0.6573 | +0.0523 | 0.5997 | **−0.0053** |
+
+Both deltas grow monotonically as data is removed. Measured Hi-C goes from **−0.0053** in K562 to **+0.0254**
+in the data-scarce regime — from actively unhelpful to worth about as much as the competition-feature block.
+**The objection is upheld: the chromatin verdict was conditional on K562's TF compendium.**
+
+## What it does not license
+
+The prediction attached to the objection was that the baseline falls to ~0.55–0.58 and 3D pulls it back
+toward 0.65+. Neither half holds. The baseline falls to **0.4052**, far worse than predicted, and measured
+Hi-C lifts it to **0.4307** — nowhere near 0.65.
+
+And in the regime where contact matters *most*, the cheap proxy still beats the measurement by ~4×:
+
+- tier A, CTCF-count: **+0.0993** → 0.5045
+- tier A, measured Hi-C loops: **+0.0254** → 0.4307
+
+That inverts a framing used earlier in this file. Measured Hi-C is **not** the ceiling for contact
+information. Counting CTCF peaks between two coordinates beats the called loops at every tier, and by the
+widest margin exactly where contact is most valuable. The reason is mechanical: CTCF density along the
+interval is a continuous measure of insulation, while loop calls are sparse, thresholded point interactions.
+Insulation is what the readout wants.
+
+## Net effect on the programme
+
+| question | answer |
+|---|---|
+| does contact information matter outside K562? | **yes** — +0.0254 measured, +0.0993 via CTCF counting |
+| should we simulate polymers to get it? | **no** — a simulation approximates measured Hi-C, whose value (+0.0254) is already exceeded by a bisect over a CTCF BED file (+0.0993) |
+| is the K562 ledger wrong? | **no, but it was conditional**, and the condition was load-bearing |
+
+If you have only ATAC in a new cell type, the correct next experiment is **one CTCF ChIP track**, not a Hi-C
+library and not a polymer engine. That is one of the cheapest assays available and it is worth four times
+what the expensive measurement is.
+
+## On the "stochastic sampling penalty" diagnosis
+
+Also tested and not supported. The proposal was that Monte Carlo variance degraded a crisp 1D dataset. But
+the shuffled control carries identical marginals and identical MC noise, and it scored **+0.0049 against the
+real simulation's +0.0022** — noise cannot explain a deficit the equally-noisy control does not share. The
+noiseless arms agree: analytic Rouse +0.005, measured Hi-C −0.003. Removing the sampling noise does not
+reveal a hidden effect, because there is no hidden effect to reveal in K562.
