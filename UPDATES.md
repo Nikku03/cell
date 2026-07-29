@@ -13621,3 +13621,74 @@ not capacity-limited. Adjusted for the artifact the model is doing about **0.59�
 233 missed positives are indistinguishable in effect size from the 336 it finds — meaning the information
 that separates them is simply not in ATAC, H3K27ac, PolII, PROcap, 311 TF ChIP tracks, CTCF counts,
 competition or ubiquitous expression.
+
+---
+
+# What separates the 233 missed positives: they are the 2nd/3rd/4th enhancer of multi-enhancer genes
+
+`colab/missed.py`. Comparing missed positives to FOUND positives is circular — the model ranks by those
+features, so everything looks significant and none of it is actionable. The non-circular test compares each
+missed positive to **negatives the model scores the same**. Anything that differs there is signal the model
+has and is not using. 339 features tested, Bonferroni threshold p < 1.47e-04.
+
+**36 of 339 survive.** The top two are the features added specifically because the table cannot express them:
+
+| feature | p | missed | score-matched negative |
+|---|---:|---:|---:|
+| **other real enhancers for the same gene** | **3.6e-19** | **2.53** | **1.09** |
+| **other genes the same element regulates** | 1.1e-09 | 0.43 | 0.16 |
+| H3K27ac at the element | 9.1e-08 | 12.05 | 8.47 |
+| measured Hi-C loop enrichment | 8.7e-07 | 0.87 | 0.57 |
+| measured Hi-C connecting loop | 2.7e-06 | 0.46 | 0.31 |
+| PolII at the element | 1.3e-06 | 10.72 | 7.47 |
+| TF:RUNX1, TF:RELA, TF:SMAD1, TF:ZNF639 | ~1e-06 | — | ~2× enriched |
+
+**The misses do not look like negatives.** At identical model score they are more acetylated, more
+PolII-loaded, more loop-connected and more TF-bound than the negatives they sit among. They are obviously
+real enhancers. The model is ranking them low anyway.
+
+## Why it ranks them low — and it is our own doing
+
+From the circular comparison, which is diagnostic even though it cannot be used as evidence:
+
+| | missed | found |
+|---|---:|---:|
+| `COMP:dist_rank` | **13.4** | **1.6** |
+| `CTCF:ctcf_between` | 11.1 | 1.0 |
+| `log_dist` | 5.04 | 4.22 |
+
+**Found positives are the NEAREST candidate for their gene. Missed positives are roughly 13th.** The
+competition block — worth +0.0278 and one of the best additions in this project — encodes "the top-ranked
+candidate is the one that matters." That is right on average and wrong for exactly this class: a gene with
+five real enhancers has four that are not rank 1.
+
+So the model has learned *one enhancer per gene*, and biology is multi-enhancer.
+
+## The obvious fix does not work
+
+If the problem is that ranks and shares are scale-free — a gene with ten strong candidates looks identical
+to one with a single strong candidate after normalisation — then restoring the absolute scale should help.
+Added five gene-level neighbourhood features (total candidate activity, count of strong candidates, median
+activity, total H3K27ac, count of high-H3K27ac candidates):
+
+| arm | AUPRC |
+|---|---:|
+| full stack | 0.6881 |
+| + multi-enhancer neighbourhood | 0.6862 |
+| + shuffled control | 0.6874 |
+
+**Net −0.0012 ± 0.0042, z = −0.29.** No gain. A gene-level feature shifts every candidate for that gene
+equally, so it cannot rank *within* the gene — and ranking within the gene is the whole problem.
+
+## What this means
+
+The ceiling is not diffuse. It is one identifiable failure mode: **secondary enhancers of multi-enhancer
+genes**, 233 pairs that are visibly real by every activity measure and that the model down-ranks because
+they are not the closest candidate. Fixing it needs a model that can assign several positives per gene
+rather than one — a structured or set-level prediction, not another column.
+
+A note on Hi-C, for consistency with the earlier null: measured loop features DO survive Bonferroni here
+(missed positives are loop-connected 0.46 vs 0.31). That does not contradict the −0.003 aggregate result.
+The information about these 233 pairs is genuinely present in Hi-C; using it globally promotes 1,623
+loop-carrying negatives at the same time, and the trade is net negative. Present but unprofitable, which is
+a different statement from absent.
