@@ -13409,3 +13409,71 @@ population of the rescue hypothesis in its best band.
 The false-negative claim fails for a reason stronger than a small effect size: **the required mechanism runs
 backwards in the data.** Missed positives have fewer measured 3D contacts than found ones. There is a hint
 of a distal effect at 250 kb–1 Mb that does not survive its control, and it addresses five pairs.
+
+---
+
+# Stage 2+3 at scale on an A100: the control beat the simulation, and shape equals moment to 4 decimals
+
+2,984 pairs, 14 minutes on an A100, `EXT_NSUB=3000 EXT_STEPS=1200 EXT_REPLICA=32`. Result in
+`outputs/orphan/colab_runs/extrude_gate_a100_3000.json`. 7.5× the pairs of the sandbox smoke run.
+
+Sanity checks first, because they are what make the null trustworthy: `coil_ratio` **1.468** — the chain
+relaxed to a coil, slightly swollen by excluded volume, exactly as it should. `median_p_hard` **0.0** — the
+hard contact threshold is still a rare event at this scale, confirming the switch to ⟨d⁻³⟩ was necessary
+rather than cosmetic.
+
+| arm | AUPRC |
+|---|---:|
+| identity | 0.6170 |
+| count_contact (the bar, rescored on this subset) | 0.6757 |
+| mean_dist_only ⟨d⟩ | 0.6259 |
+| SIM_only ⟨d⁻³⟩ | 0.6259 |
+| SIM + count | 0.6779 |
+| **SHUFFLED SIM + count** | **0.6806** |
+
+**The shuffled simulation outscored the real one.**
+
+- on top of the bar: **+0.0022**, per-seed −0.007, −0.005, +0.014, −0.004, +0.014 — sign flips
+- shuffled control: **+0.0049**
+- **net of control: −0.0027 ± 0.0052**
+
+## The decisive number is `delta_shape_vs_moment` = **+0.0000416**
+
+⟨d⁻³⟩ scores 0.62594; ⟨d⟩ scores 0.62589. Identical to four decimal places.
+
+This was the **entire remaining scientific justification for Stage 3.** The argument for running Langevin
+dynamics rather than the analytic Gaussian model was that the observable is P(d < d_c), not ⟨R²⟩, and the two
+differ when the distance distribution is skewed. At 2,984 pairs on real chromatin, they do not differ. The
+distribution's shape carries no information its second moment does not already carry — and the second moment
+is what the closed form gives for free in 94 seconds of sparse linear algebra.
+
+## A defect in my own verdict ladder
+
+The script printed *"INCONCLUSIVE — raise EXT_NSUB and re-run."* That is wrong advice and the fault is in the
+branch ordering: `not consistent` was tested before the sign of `net`. When the shuffled control beats the
+real simulation, more pairs buy a better-measured zero, not a result. Fixed — `net <= 0` is now the first
+branch and returns NO-GO with the reason. The run above would have sent the user back for more A100 time on
+a question already answered.
+
+## The contact ledger, complete
+
+| approach | value on top of counting CTCF peaks |
+|---|---:|
+| analytic Rouse-with-loops | +0.005 |
+| + bending stiffness, best-physics arm | +0.0005 |
+| **KMC extrusion + Langevin, 2,984 pairs, A100** | **−0.0027 ± 0.0052** |
+| measured Hi-C, intact assay | −0.0031 ± 0.0030 |
+| measured Hi-C, in-situ assay | −0.0012 ± 0.0021 |
+| false-negative rescue | mechanism runs backwards |
+
+Six independent attempts, every one at or below zero, including the actual measurement and the full
+simulation the measurement was supposed to be too expensive to replace. **The 4D chromatin programme is
+closed.** Not underpowered, not unresolved — answered.
+
+## Also from this run
+
+- `cellcycle.json` came back `{"lines": {}}` — the three single-cell h5ads were absent from Drive, and the
+  module skipped with a message instead of crashing. Working as designed; those results were already
+  measured on 180,000 cells and committed.
+- `mrna_decay.json` reproduced the sandbox numbers exactly (solver error 5.6e-15, export signature +0.0234,
+  z = +7.36), confirming determinism across machines.

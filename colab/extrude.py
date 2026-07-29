@@ -362,14 +362,23 @@ def main():
     # A GO needs all of: a gain worth having, a gain that SURVIVES the shuffled control, a gain larger
     # than the noise in that comparison, and a sign that does not flip with the fold assignment. Every
     # one of those has, on its own, produced a false positive somewhere in this project.
-    if net >= 0.01 and net > 2 * se and consistent:
+    # A NEGATIVE NET IS ALREADY AN ANSWER, and must be tested BEFORE sign-consistency. The first version
+    # of this ladder checked `not consistent` before looking at the sign of net, so a run whose SHUFFLED
+    # control outscored the real simulation came back "INCONCLUSIVE -- raise EXT_NSUB and re-run". That
+    # is bad advice: when the control wins, more samples buy a better-measured zero, not a result. The
+    # 2,984-pair A100 run hit exactly this branch and would have sent the user back for more compute.
+    if net <= 0:
+        res["verdict"] = (f"NO-GO -- the shuffled control ({shuf_deltas.mean():+.4f}) matched or beat the "
+                          f"real simulation ({d1.mean():+.4f}); net {net:+.4f}. The simulation carries no "
+                          "pair-specific information. More pairs would not change this.")
+    elif net >= 0.01 and net > 2 * se and consistent:
         res["verdict"] = ("GO -- the simulation adds signal beyond counting CTCF peaks, and the gain "
                           "survives a shuffled-simulation control by more than 2 se.")
     elif d1.mean() >= 0.01 and net < 0.01:
         res["verdict"] = (f"NO-GO -- the +{d1.mean():.4f} gain is largely reproduced by the SHUFFLED "
                           f"control (+{shuf_deltas.mean():.4f}), so most of it is an extra-column "
                           "effect, not physics.")
-    elif net >= 0.01 and net <= 2 * se:
+    elif net <= 2 * se:
         res["verdict"] = (f"UNDERPOWERED -- net {net:+.4f} but 1 se is {se:.4f}, so this run cannot "
                           "tell the effect from the control's own scatter. Raise EXT_NSUB and re-run.")
     elif not consistent:
