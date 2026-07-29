@@ -13195,3 +13195,82 @@ statement from the one made a day ago, and it was available for the cost of one 
   produced, and it is one column.
 - **The chromatin simulation arc is harder to justify, not easier.** Its best contribution was +0.005 while
   two features named in a paper are worth +0.044 and +0.028.
+
+---
+
+# Measured Hi-C against the 0.663 bar: the measurement adds nothing, and that refutes my own prediction
+
+`colab/hic_gate.py`. Having established that predicting 3D contact was worth ~+0.005 (analytic Rouse) to
++0.010 ± 0.008 (full extrusion + Langevin, underpowered), the obvious move was to stop predicting and use
+the measurement. K562 is an ENCODE Tier 1 line; its Hi-C is public. **I predicted this would be the single
+biggest available win.** It is not.
+
+## What was used
+
+ENCODE K562, GRCh38, so no liftover. The `.hic` matrices are 2–36 GB against 5.4 GB of free disk, so this
+uses the **loop, contact-domain and stripe calls derived from them** — which are the features the
+simulation was reaching for anyway:
+
+| feature | what the simulation was computing instead |
+|---|---|
+| a called loop connecting element and promoter | the entire output of KMC extrusion |
+| observed contacts / donut-expected of that loop | ⟨d⁻³⟩ from Langevin dynamics |
+| same contact domain (TAD) | "insulation" |
+| domain boundaries between them | `ctcf_between`, which carried +0.0514 |
+
+Two independent assays, because "measured" is not one number: **intact** Hi-C (ENCSR479XDG, 47,592
+intra-chromosomal loops, 4,904 domains) and **in situ** Hi-C (ENCSR545YBD, 8,800 loops).
+
+## The raw signal is strong. The added value is zero.
+
+| | intact | in situ |
+|---|---:|---:|
+| pairs with a connecting loop | 2,069 (20.0%) | 430 (4.2%) |
+| hit rate **with** a loop | **0.1634** | 0.1233 |
+| hit rate **without** | 0.0280 | 0.0521 |
+| raw enrichment | **5.8×** | 2.4× |
+
+| arm | AUPRC |
+|---|---:|
+| epi + TF identity | 0.6050 |
+| **+ CTCF count — the bar** | **0.6573** |
+| + Hi-C intact only (no CTCF) | 0.5997 |
+| + Hi-C intact + CTCF | 0.6554 |
+| + Hi-C in situ + CTCF | 0.6580 |
+
+- intact: on top of the bar **−0.0019**, shuffled control **+0.0012**, **net −0.0031 ± 0.0030, z = −1.06**
+- in situ: on top of the bar **+0.0007**, shuffled control **+0.0019**, **net −0.0012 ± 0.0021, z = −0.55**
+
+Both indistinguishable from zero, both slightly negative, replicated across assays differing 5× in loop
+depth.
+
+**The `Hi-C only` arm is the tell: 0.5997, BELOW the 0.6050 identity model that contains no contact feature
+at all.** The loop features are not merely redundant with CTCF counting — they are redundant with
+`log_dist`, which the identity model already has. A called loop is mostly a statement that two loci are
+close, and closeness was already in the model.
+
+## The correction
+
+I told the user that measured contact was the biggest available win, and priced it from the published ABC
+gap: their ABC (DNase + averaged ENCODE Hi-C) scores 0.56, ours without Hi-C scores 0.2376, so the ~0.32
+looked like the value of the measurement. **That inference is now directly refuted.** Whatever separates
+their ABC from ours — activity definition, normalisation, the ABC denominator — it is not the contact data.
+I reasoned instead of testing, and the test disagrees.
+
+## What this closes
+
+| approach to contact | value on top of counting CTCF peaks |
+|---|---:|
+| analytic Rouse-with-loops | +0.005 |
+| + bending stiffness, best-physics arm | +0.0005 |
+| full KMC extrusion + batched Langevin | +0.010 ± 0.008 (underpowered) |
+| **measured Hi-C loops + domains** | **−0.003 ± 0.003** |
+
+The ceiling on contact information for this task is not a modelling limitation. **Measured contact, from
+the deepest available assay, does not beat a bisect over a CTCF BED file.** Every remaining reason to build
+a better contact model for enhancer–gene prediction in K562 is now gone.
+
+**Honest limit:** these are thresholded loop and domain *calls*, not the continuous contact matrix. The
+raw matrix at the exact bin pair is untested, blocked by disk rather than by argument. Given that a 5.8×
+raw enrichment survives to exactly zero added value, a continuous version changing the verdict would be
+surprising — but it has not been ruled out.
