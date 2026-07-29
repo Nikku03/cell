@@ -13536,3 +13536,88 @@ the shuffled control carries identical marginals and identical MC noise, and it 
 real simulation's +0.0022** — noise cannot explain a deficit the equally-noisy control does not share. The
 noiseless arms agree: analytic Rouse +0.005, measured Hi-C −0.003. Removing the sampling noise does not
 reveal a hidden effect, because there is no hidden effect to reveal in K562.
+
+---
+
+# Why 0.6881 and not more? About 0.09 of it is benchmark construction, and the rest is a feature ceiling
+
+`colab/ceiling.py`. Four candidate explanations, each with a test that separates it from the others.
+
+## [1] ~0.09 of the score is not biology
+
+The benchmark retains a pair as a testable NEGATIVE only where the screen had power to detect an effect,
+but retains a SIGNIFICANT pair regardless of nominal power. The consequence is exact: **of the 166 pairs
+with `PowerAtEffectSize25` < 0.8, all 166 are positives.** Low power implies positive by construction.
+
+Dropping them takes AUPRC 0.6749 → 0.5427. That alone proves nothing — it removes 166 of 569 positives, so
+the base rate falls 0.0551 → 0.0396 and AUPRC is base-rate bound. The control removes **166 random
+positives**, matching the base-rate change exactly:
+
+| | AUPRC | base rate |
+|---|---:|---:|
+| all pairs | 0.6749 | 0.0551 |
+| drop the 166 **low-power** pairs | **0.5427** | 0.0396 |
+| drop 166 **random** positives (20 draws) | **0.6308 ± 0.0097** | 0.0396 |
+
+**Excess: −0.0881, or 9.1 sd.** That stratum carries ~0.09 of AUPRC beyond its arithmetic share. It is 1.6%
+of the data and ~13% of the score, and the model can identify it because low power tracks low expression,
+which is a feature we supply.
+
+This is a property of the benchmark file, not of our model — and the file is the same one ENCODE-rE2G is
+evaluated on, so the stratum sits in their evaluation too. Whether their model exploits it as heavily
+depends on their feature set, which I have not tested. It will not transfer to a screen with a different
+power profile.
+
+## [2] Marginal biology: REFUTED
+
+The obvious story — "the misses are the weak effects near the detection threshold" — is wrong:
+
+| | n | median abs(EffectSize) |
+|---|---:|---:|
+| positives found (top-500) | 336 | 0.0978 |
+| positives missed | 233 | **0.1005** |
+
+Ratio 0.97×. **The misses are if anything slightly stronger.** The model is not failing on marginal biology;
+it fails on effects the same size as ones it catches. Those 233 are genuinely unpredictable from these
+features, not intrinsically undetectable.
+
+## [3] Data volume: SATURATED
+
+| training pairs | AUPRC |
+|---|---:|
+| 25% (2,066) | 0.6452 |
+| 50% (4,132) | 0.6682 |
+| 75% (6,198) | 0.6599 |
+| 100% (8,264) | 0.6712 |
+
+Flat and non-monotonic past 50%. **More CRISPR data will not help.** That closes the most expensive possible
+next step.
+
+## [4] Where the loss sits — the aggregate is base-rate bound
+
+| distance | pairs | positives | base rate | AUPRC | lift |
+|---|---:|---:|---:|---:|---:|
+| <50 kb | 990 | 339 | 0.3424 | **0.8375** | 2.4× |
+| 50–250 kb | 2,813 | 140 | 0.0498 | 0.5431 | 10.9× |
+| 250 kb–1 Mb | 5,953 | 83 | 0.0139 | 0.1685 | 12.1× |
+| >1 Mb | 575 | 7 | 0.0122 | **0.0197** | **1.6×** |
+
+The lift is roughly constant at 10–12× through the middle, so the model is not relatively worse at
+distance — but AUPRC is bounded by base rate, and **82.6% of pairs live where the base rate is 1–5%.** The
+aggregate is a weighted mix dominated by being excellent (0.8375) on the 990 close pairs that hold 60% of
+all positives.
+
+Beyond 1 Mb there is no signal at all: 1.6× lift on 575 pairs and 7 positives.
+
+## Train/held-out gap
+
+0.9573 train vs 0.6749 held-out, gap **+0.2824**. The model memorises heavily. But since the learning curve
+is flat, capacity and regularisation are not the binding constraint either.
+
+## The answer
+
+Roughly: **0.09 construction artifact + a hard feature ceiling.** Not data-limited, not effect-size-limited,
+not capacity-limited. Adjusted for the artifact the model is doing about **0.59–0.63** on biology, and the
+233 missed positives are indistinguishable in effect size from the 336 it finds — meaning the information
+that separates them is simply not in ATAC, H3K27ac, PolII, PROcap, 311 TF ChIP tracks, CTCF counts,
+competition or ubiquitous expression.
