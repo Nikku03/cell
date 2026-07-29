@@ -13274,3 +13274,70 @@ a better contact model for enhancer–gene prediction in K562 is now gone.
 raw matrix at the exact bin pair is untested, blocked by disk rather than by argument. Given that a 5.8×
 raw enrichment survives to exactly zero added value, a continuous version changing the verdict would be
 surprising — but it has not been ruled out.
+
+---
+
+# Ubiquitous expression: one binary column, +0.0095 net of control, z = +4.15
+
+`colab/ubiquitous.py`. The rE2G paper reports that adding whether a gene is ubiquitously expressed improves
+ABC by +0.044 AUPRC. Source is `reference/UbiquitouslyExpressedGenes.txt` from the ABC repository — the same
+847-gene list the published model uses, so this reproduces the feature rather than inventing a proxy. The
+count is asserted so upstream drift cannot silently change the result.
+
+**It is a NEGATIVE predictor, which is why it is not redundant with anything else in the table.** Housekeeping
+genes run off strong constitutive promoters and are comparatively enhancer-independent, so perturbing a
+nearby element is less likely to move them:
+
+| | pairs | positives | hit rate |
+|---|---:|---:|---:|
+| targets a ubiquitous gene | 2,680 (25.9%) | 39 | **0.0146** |
+| does not | 7,651 | 530 | **0.0693** |
+
+**4.76× lower.** Every other feature in the model pushes candidates up; this one pushes them down.
+
+## The control is at the GENE level, not the pair level
+
+Permuting the flag across the 10,331 pairs would destroy the fact that it is a property of a gene — and
+every gene's pairs share an outcome tendency, so that control would be far too weak. The permutation here
+reassigns the flag to a random set of 430 of the 2,146 distinct genes, preserving how many genes carry it
+and the pair-count distribution behind them. It asks: is it *this* set of genes, or merely *some*
+gene-level label?
+
+It matters. The shuffled control is **+0.0030**, not zero — a random gene-level label does help slightly.
+
+| arm | AUPRC |
+|---|---:|
+| epi + TF identity | 0.6050 |
+| + CTCF count — the bar | 0.6573 |
+| + ubiquitous | 0.6698 |
+| + competition | 0.6795 |
+| **+ competition + ubiquitous** | **0.6881** |
+
+- on top of the bar **+0.0125**, control **+0.0030**, **net +0.0095 ± 0.0023, z = +4.15**, sign consistent
+  across all five fold assignments
+- on top of *competition* **+0.0086** vs +0.0125 on the bar alone — essentially independent of it
+- full stack over the bar: **+0.0307**
+
+**We did not reproduce +0.044, and should not claim to.** The paper adds this to ABC; we add it to a 0.6573
+model that already has 311 TF ChIP tracks, CTCF-between and competition features. Diminishing returns on a
+stronger base is the expected result, and +0.0095 net at z = +4.15 is the honest figure.
+
+## The pattern, now unambiguous
+
+| what was added | cost to build | value on top of counting |
+|---|---|---:|
+| CTCF count between (set the bar) | a bisect over a BED file | +0.052 over identity |
+| competition (rank/share within gene) | six lines of groupby | **+0.0278** |
+| ubiquitous expression | one binary column from an 847-gene text file | **+0.0095** |
+| analytic Rouse-with-loops | a sparse Laplacian solve per pair | +0.005 |
+| bending stiffness, best-physics arm | a resolution sweep | +0.0005 |
+| KMC extrusion + batched Langevin | GPU-hours | +0.010 ± 0.008 (underpowered) |
+| **measured Hi-C loops + domains** | an ENCODE download | **−0.003 ± 0.003** |
+
+Three cheap features are worth ~+0.09 between them. Everything in the contact-modelling column, including
+the actual measurement, sums to roughly zero beyond the bisect.
+
+**Where this leaves the model: 0.6881**, against a published ENCODE-rE2G figure of 0.66 on the same 10,411-pair
+benchmark at the same base rate. The four caveats from the previous section still stand unchanged — CV
+protocol differs, input budgets differ, neither number is out-of-sample, and 0.66 comes from search snippets
+because the primary text was paywalled.
