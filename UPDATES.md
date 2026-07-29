@@ -13829,3 +13829,53 @@ measure.
 Model unchanged at **0.6881**. Nothing from the sequence direction survived, which leaves the ceiling where
 `ceiling.py` put it: ~0.09 of the score is benchmark construction, and the rest is a feature ceiling that
 neither 3D structure nor pretrained sequence grammar moves.
+
+---
+
+# Cross-cell-type: contact is NOT worthless. The K562 null was conditional, and the condition broke.
+
+`colab/crosscell_eg.py`, on the 7-cell-type atlas from `expand_cells.py`. Two designs, because they answer
+different questions: **POOLED** (chromosome-grouped folds over all cell types; the model has seen every test
+cell type) and **LOCO** (leave-one-cell-type-out; the model has never seen it). Features are peak-derived
+for every cell type including K562, so train and test share one space.
+
+| | base | + contact | delta |
+|---|---:|---:|---:|
+| **POOLED** (14,659 pairs, 813 positives) | 0.5040 | 0.5380 | **+0.0340** |
+
+| LOCO test cell | pairs | positives | base rate | base | + contact | delta |
+|---|---:|---:|---:|---:|---:|---:|
+| HCT116 | 396 | 40 | 0.1010 | 0.2955 | 0.3729 | **+0.0774** |
+| K562 | 12,274 | 717 | 0.0584 | 0.3377 | 0.4149 | **+0.0771** |
+| WTC11 | 1,921 | 35 | 0.0182 | 0.2476 | 0.2532 | +0.0056 |
+| GM12878 | 68 | 21 | 0.3088 | 0.8964 | 0.8374 | −0.0590 |
+| **mean** | | | | **0.4443** | | **+0.0253** |
+
+**Transfer penalty (pooled − LOCO) = +0.0597** — the cost of the test cell type being novel, which pooled CV
+structurally cannot show, and which this project had never measured.
+
+## The correction
+
+The contact ledger said ~0: analytic Rouse +0.005, extrusion −0.0027, measured Hi-C −0.0031. Every one of
+those was measured inside K562 **with 311 TF ChIP tracks in the model**. In the peak-only feature space that
+any other cell type actually has, contact is worth **+0.034 pooled and +0.077 in LOCO on two of four cell
+types**. `data_scarce.py` predicted exactly this by stripping features from K562 as a proxy; this confirms it
+on real held-out cell types with real CRISPR labels.
+
+So the honest form of the earlier verdict is narrower than how it was written: **contact adds nothing once
+you already have K562's TF compendium**, and that is a statement about K562, not about contact.
+
+## What it does not license
+
+The absolute numbers are far below 0.6881 and not comparable to it. Pooled base is 0.5040 and K562's own
+LOCO base is 0.3377, against 0.6881 with the full K562 feature set — the peak-derived space is much weaker
+than 311 TF tracks plus signal values. This is a different and poorer regime, not a better model.
+
+GM12878's −0.0590 rests on 68 pairs and 21 positives and should not be read as evidence of anything. WTC11's
++0.0056 is ~0 on the largest held-out block (1,921 pairs, but only 35 positives at base rate 0.0182).
+
+Jurkat was skipped: loops present, no 1D tracks, 2 released ENCODE experiments total.
+
+**Still unseparated:** the contact block is five features together — `ctcf_between`, `ctcf_between_sig`,
+`ctcf_elem_hit`, `ctcf_tss_hit`, `loop_connects`. Whether the gain comes from counting CTCF peaks (cheap) or
+from measured Hi-C loops (expensive) decides the practical recommendation, and is not yet answered.
