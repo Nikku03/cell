@@ -142,8 +142,17 @@ def main():
                 continue
             # TSS sits at the centre of the cropped output; read a small window of bins around it
             c = OUT_BINS // 2
-            def express(batch):
+            def express(batch, _seen=[]):
                 o = model(torch.tensor(np.stack(batch), device=dev))
+                if not _seen:
+                    # THE ONE PART THAT COULD NOT BE TESTED WITHOUT A GPU. Everything else in this file was
+                    # validated on CPU: window centring (TSS offset 0), one-hot cleanliness, masking span,
+                    # the mirror control. The model's output layout was not. Print it once so a wrong
+                    # orientation or an unexpected shape is visible immediately rather than producing
+                    # plausible numbers from the wrong axis.
+                    print(f"    [borzoi output shape {tuple(o.shape)}; reading bins "
+                          f"{c-4}:{c+4} of axis {'1' if o.shape[1] > o.shape[2] else '2'}]", flush=True)
+                    _seen.append(1)
                 if o.ndim == 3 and o.shape[1] < o.shape[2]:
                     o = o.transpose(1, 2)                  # -> (B, bins, tracks)
                 return o[:, c - 4:c + 4, :].mean((1, 2)).float().cpu().numpy()
