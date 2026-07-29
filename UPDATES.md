@@ -13770,3 +13770,62 @@ predictions (single AUPRC over all folds at once), which is what a rank-adjustin
 other figure in this file uses *mean of per-fold* AUPRC. On the pooled estimator the full stack is 0.6676;
 on the per-fold estimator it is 0.6881. The gain should not simply be added to 0.6881 without re-measuring
 on the same estimator.
+
+---
+
+# Borzoi in-silico deletion: the best sequence result in this project, and still below the bar
+
+`colab/borzoi_gate.py`. The last of the four levers, and the only one not already in the model or already
+failed. For each gene Borzoi predicts K562 RNA from 524 kb centred on the TSS; deleting a candidate
+element's sequence and predicting again gives its predicted contribution -- the CRISPRi experiment in
+silico, as one scalar per pair.
+
+**The first run was invalid and the diagnostic caught it.** Borzoi returns `(batch, 7611 tracks, 6144 bins)`.
+The transpose heuristic was `shape[1] < shape[2]`, false here because 7611 > 6144, so it sliced *tracks*
+3068:3076 averaged over the whole 196 kb window instead of all tracks at the TSS. Deleting 500 bp out of
+524 kb barely moves a window-wide average, which is exactly why it produced a null. The one-time shape
+print, added specifically because the output layout was the one thing untestable without a GPU, reported a
+bin index on an axis of size 7611 -- self-contradicting, and that is what surfaced it.
+
+Corrected: bin axis found by size-matching 6,144, and 94 **K562 RNA** tracks selected from Borzoi's targets
+file rather than averaging all 7,611 (which mixes DNase, ChIP and CAGE across every training cell type).
+
+| arm | AUPRC |
+|---|---:|
+| full stack, rescored on the 3,953-pair subset | 0.7743 |
+| **+ Borzoi deletion** | **0.7787** |
+| + shuffled-delta control | 0.7733 |
+| + (real − sham) deletion | 0.7783 |
+
+- on top of the stack **+0.0044**, shuffled control **−0.0010**, **net +0.0054 ± 0.0033, z = +1.63**
+- sign consistent across seeds: **no**
+- the broken run gave net +0.0021 ± 0.0023 — fixing the axis roughly **2.6×**'d the effect
+
+## Verdict: NO-GO, and not for want of power
+
+Net **+0.0054** against a pre-registered threshold of **+0.01**. This is not an underpowered measurement
+that more seeds would resolve — even with zero standard error it would not clear the bar, because the
+effect, if real, is about **half the size declared worth having** before the run. That distinction matters:
+"too small to care about" is a different finding from "too noisy to see".
+
+## A mechanistic flag against taking the +0.0054 at face value
+
+Median predicted log₂ drop: **real +0.00006, sham +0.00010.** The real deletion moves the prediction
+*less* than deleting an arbitrary equal-sized span at the same distance on the other side of the TSS. Both
+are at the noise floor. Borzoi is known to under-weight distal enhancer contributions relative to promoter
+sequence, and this looks like that: the model's deletion response at these distances is essentially flat,
+so whatever ranking signal the classifier extracts is not obviously the enhancer function we intended to
+measure.
+
+## The four levers, closed
+
+| lever | status |
+|---|---|
+| eRNA / nascent transcription | **already in** — `procap_enh` and `polr2a_enh` are base features, and both survive Bonferroni in the missed-positive analysis |
+| sequence grammar (frozen Borzoi) | **tested: +0.0054 ± 0.0033, below the 0.01 bar** |
+| multi-enhancer competition | **already in** — the same formula, worth +0.0278; its side-effect needed the gene-max fix (+0.0047, z=+5.71) |
+| data-scarce regime | **tested and upheld** — CTCF's value grows +0.052 → +0.0993 when the 311 TF tracks come off |
+
+Model unchanged at **0.6881**. Nothing from the sequence direction survived, which leaves the ceiling where
+`ceiling.py` put it: ~0.09 of the score is benchmark construction, and the rest is a feature ceiling that
+neither 3D structure nor pretrained sequence grammar moves.
