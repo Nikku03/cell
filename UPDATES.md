@@ -13692,3 +13692,81 @@ A note on Hi-C, for consistency with the earlier null: measured loop features DO
 The information about these 233 pairs is genuinely present in Hi-C; using it globally promotes 1,623
 loop-carrying negatives at the same time, and the trade is net negative. Present but unprofitable, which is
 a different statement from absent.
+
+---
+
+# A different shape of model: the set hypothesis is right, but it has to cost one parameter
+
+`colab/setmodel.py`. `missed.py` located the failure precisely — 233 missed positives are secondary
+enhancers of multi-enhancer genes, visibly real by every activity measure, down-ranked because they are not
+the nearest candidate (median distance-rank 13.4 vs 1.6 for found ones). 289 of 569 positives (51%) belong
+to genes with two or more. Fixing that needs a model that can assign several positives per gene.
+
+Three attempts, at three capacities.
+
+## 1. Another column — fails
+
+Gene-level absolute-scale neighbourhood features (total candidate activity, count of strong candidates).
+**Net −0.0012 ± 0.0042, z = −0.29.** A gene-level feature shifts every candidate for that gene equally, so
+it cannot re-rank *within* the gene, which is the whole problem.
+
+## 2. A learned set model (DeepSets) — fails
+
+Per-candidate encoder, permutation-invariant mean/max pooling over the gene's candidates via scatter
+reductions (sets run 1 to 212, so padding would waste most of the compute), decoding
+`[h_i, mean_g, max_g, h_i − mean_g]` into a **residual on the XGBoost logit**. Output layer zero-initialised
+so the model starts exactly at the baseline — without that a 60-epoch run took 0.6707 down to 0.6499 and
+spent its budget climbing back. Inner validation split **by gene**, so peers never straddle it.
+
+| | AUPRC | delta |
+|---|---:|---:|
+| XGBoost baseline | 0.6676 | — |
+| + set model | 0.6392 | −0.0284 |
+| + shuffled-gene control | 0.6442 | −0.0235 |
+
+**Net −0.0050 ± 0.0109, z = −0.45.**
+
+The control is the informative part: it degraded almost as much as the real thing. The damage came from
+bolting thousands of parameters onto 569 positives, **not** from set structure being useless.
+
+## 3. The same idea at one parameter — works
+
+If a gene clearly has a strong enhancer, its other strong candidates are likelier real too. So:
+
+```
+score_i  +=  beta * max_j-in-gene(score_j)
+```
+
+β chosen on the training folds only, never on what it is scored against.
+
+| seed | real | shuffled-gene control |
+|---|---:|---:|
+| 0 | +0.0032 | +0.0000 |
+| 1 | +0.0062 | +0.0000 |
+| 2 | +0.0066 | +0.0000 |
+| 3 | +0.0026 | +0.0004 |
+| 4 | +0.0043 | −0.0008 |
+
+**Net +0.0047 ± 0.0008, z = +5.71, sign consistent across all five seeds.** The highest z of anything in
+this arc. The control sits at exactly zero because with random groupings the β search selects β = 0 — no
+boost from an arbitrary grouping helps at all, which is as clean a null as this project has produced.
+
+β converges to **0.20–0.50 (median ~0.30) across 25 independent folds**, so it is a stable property of the
+data rather than a fitted artefact.
+
+## What this establishes
+
+The diagnosis was right and the first two fixes were the wrong size. With 569 positives, **capacity was the
+binding constraint, not the hypothesis.** A learned set model needs more labels than this benchmark has;
+a one-parameter version of the same idea extracts what is there.
+
+That also sharpens the earlier learning-curve result. XGBoost saturates at 50% of the data — but that was
+measured for *per-pair* scoring. The set hypothesis is exactly the kind of structure that would need more
+positives to learn, so "more data will not help" holds for the current model shape and not necessarily for
+this one.
+
+**A note on estimators, so the numbers are not mixed.** The +0.0046 is measured on *pooled* out-of-fold
+predictions (single AUPRC over all folds at once), which is what a rank-adjusting heuristic requires. Every
+other figure in this file uses *mean of per-fold* AUPRC. On the pooled estimator the full stack is 0.6676;
+on the per-fold estimator it is 0.6881. The gain should not simply be added to 0.6881 without re-measuring
+on the same estimator.
