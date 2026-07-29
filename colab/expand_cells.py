@@ -53,9 +53,21 @@ CRISPR_BASE = ("https://raw.githubusercontent.com/EngreitzLab/CRISPR_comparison/
 HELDOUT = "EPCrisprBenchmark_combined_data.heldout_5_cell_types.GRCh38.tsv.gz"
 TRAINING = "EPCrisprBenchmark_combined_data.training_K562.GRCh38.tsv.gz"
 
-# ENCODE biosample term names. Jurkat is included for completeness but has almost nothing released, and
-# 75 pairs would not support a conclusion anyway -- it is reported as absent rather than silently dropped.
-CELLS = ["K562", "GM12878", "HCT116", "WTC11", "Jurkat"]
+# ENCODE biosample term names, which are not the names people use. "H1-hESC" returns 0 experiments and
+# "H1" returns 204; "Jurkat clone E6-1" returns 0 and "Jurkat" returns 2. Getting these wrong looks
+# identical to a cell type having no data, so each was checked against the portal rather than assumed.
+#
+#   K562     the training cell type: 311 TF ChIP tracks, PRO-cap, CRISPRi ground truth
+#   GM12878  the data-scarce transfer test, and ultra-deep Hi-C
+#   HCT116   held-out CRISPR pairs (396 / 40 positives)
+#   WTC11    the largest held-out CRISPR block (1,921 / 35), plus Micro-C
+#   H1       developmental; no CRISPR pairs, so it can extend the atlas but cannot validate
+#   A549     dexamethasone time-course -- for condition-dependence, not for E-G validation
+#   MCF-7    estrogen time-course -- likewise
+#
+# Jurkat is dropped: 2 released experiments total, and its 75 CRISPR pairs could not support a
+# conclusion regardless. Recorded here rather than silently omitted.
+CELLS = ["K562", "GM12878", "HCT116", "WTC11", "H1", "A549", "MCF-7"]
 
 ASSAYS = [
     ("accessibility", "assay_title=DNase-seq"),
@@ -66,10 +78,21 @@ ASSAYS = [
 ]
 
 
-def api(path):
-    req = urllib.request.Request(API + path, headers={"Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=120) as fh:
-        return json.load(fh)
+def api(path, tries=4):
+    """Retry with backoff. The first pass over five cell types lost WTC11's CTCF to a URLError and all of
+    Jurkat to HTTPErrors -- transient rate-limiting that is indistinguishable, in the output, from a cell
+    type genuinely lacking the assay. A missing assay must be a fact about the portal, not about how hard
+    we happened to hit it."""
+    import time
+    for k in range(tries):
+        try:
+            req = urllib.request.Request(API + path, headers={"Accept": "application/json"})
+            with urllib.request.urlopen(req, timeout=120) as fh:
+                return json.load(fh)
+        except Exception:
+            if k == tries - 1:
+                raise
+            time.sleep(2 ** k)
 
 
 def best_peak_file(cell, query):
@@ -109,25 +132,25 @@ def best_peak_file(cell, query):
 
 
 def hic_loops(cell):
-    """bedpe loop calls from any released Hi-C experiment for this cell type."""
+    """bedpe loop calls, queried on the FILE endpoint rather than by walking experiments.
+
+    The first version paged through the first 15 Hi-C experiments and looked inside each. GM12878 has 85
+    Hi-C experiments and 19 released GRCh38 loop files, and the walk reached none of them -- it reported
+    ABSENT for a cell type with some of the deepest Hi-C in existence. Asking the file index directly is
+    one request instead of fifteen and cannot miss files that sit past the page boundary.
+    """
     try:
-        d = api(f"/search/?type=Experiment&biosample_ontology.term_name={urllib.parse.quote(cell)}"
-                f"&assay_slims=3D+chromatin+structure&status=released&format=json&limit=15")
+        d = api(f"/search/?type=File&file_format=bedpe&output_type=loops&assembly=GRCh38"
+                f"&status=released&biosample_ontology.term_name={urllib.parse.quote(cell)}"
+                f"&format=json&limit=50&field=accession&field=href&field=file_size")
     except Exception as e:
         return None, f"query failed: {type(e).__name__}"
-    for g in d.get("@graph", []):
-        try:
-            exp = api(g["@id"] + "?format=json")
-        except Exception:
-            continue
-        cand = [f for f in exp.get("files", [])
-                if f.get("file_format") == "bedpe" and f.get("output_type") == "loops"
-                and f.get("assembly") == "GRCh38" and f.get("status") == "released"]
-        if cand:
-            f = max(cand, key=lambda x: x.get("file_size") or 0)
-            return {"accession": f["accession"], "href": f.get("href"),
-                    "output_type": "loops", "size": f.get("file_size") or 0}, None
-    return None, "no GRCh38 bedpe loops found"
+    cand = [f for f in d.get("@graph", []) if f.get("href")]
+    if not cand:
+        return None, "no GRCh38 bedpe loops found"
+    f = max(cand, key=lambda x: x.get("file_size") or 0)      # deepest = most loops called
+    return {"accession": f["accession"], "href": f["href"],
+            "output_type": "loops", "size": f.get("file_size") or 0}, None
 
 
 def fetch(url, path):
