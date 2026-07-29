@@ -153,12 +153,28 @@ def hic_loops(cell):
             "output_type": "loops", "size": f.get("file_size") or 0}, None
 
 
-def fetch(url, path):
+def fetch(url, path, expect=None):
+    """Cache by CONTENT, not by name.
+
+    The first version returned 'cached' whenever the path existed. Paths are named by assay
+    (hic_loops.bedpe.gz), so when the improved file query resolved a DEEPER Hi-C file for K562 --
+    ENCFF953LXY at 16.7 MB instead of ENCFF598CLH at 3.0 MB -- the stale 3 MB file was kept and the
+    manifest recorded the accession that was never downloaded. Every downstream number would have been
+    computed on one file while claiming another: the silent-mismatch failure this project keeps hitting.
+
+    `expect` is ENCODE's own file_size. A mismatch beyond 1% re-fetches.
+    """
     if path.exists() and path.stat().st_size > 0:
-        return path.stat().st_size, "cached"
+        got = path.stat().st_size
+        if expect is None or abs(got - expect) <= max(1024, 0.01 * expect):
+            return got, "cached"
+        path.unlink()          # stale: resolver picked a different file than the one on disk
     path.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(["curl", "-sSL", "-o", str(path), url], check=False)
-    return (path.stat().st_size if path.exists() else 0), "fetched"
+    got = path.stat().st_size if path.exists() else 0
+    if expect and abs(got - expect) > max(1024, 0.01 * expect):
+        return got, f"SIZE MISMATCH got {got} expected {expect}"
+    return got, "fetched"
 
 
 def main():
@@ -204,7 +220,7 @@ def main():
                 if not info:
                     continue
                 ext = ".bedpe.gz" if name == "hic_loops" else ".bed.gz"
-                n, how = fetch(API + info["href"], DEST / cell / f"{name}{ext}")
+                n, how = fetch(API + info["href"], DEST / cell / f"{name}{ext}", info.get("size"))
                 info["path"] = str(DEST / cell / f"{name}{ext}")
                 print(f"    {how:8s} {cell:8s} {name:20s} {n/1e6:6.1f} MB")
 
