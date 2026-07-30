@@ -14118,3 +14118,104 @@ So: the +0.27 is mostly *how well this gene was measured*. High-confidence PPI d
 complex buffering predicts, so coupling is not purely an assay property — but 1% shrinkage cannot correct a
 protein count. **Perturb-seq mRNA can be given a per-node confidence weight on the network. It cannot be
 converted into a protein count**, and describing it as one would be an overstatement of a factor of ~20.
+
+---
+
+# Orthogonal validation — do network edges predict PROTEIN, or only mRNA?
+
+`colab/protein_orthogonal.py` · `outputs/orphan/protein_orthogonal.json`
+
+## What this tests, and why it is the half of the proposal worth keeping
+
+Protein counts cannot be written onto the network's nodes — the CPTAC gate above settled that the mRNA→protein
+correction is a per-node *weight*, not a *correction*. What survives is the inverse: use protein as an
+**independent check on edges derived from mRNA**. An edge that predicts a transcript change but not a protein
+change describes something that does not reach the protein layer.
+
+Papalexi ECCITE-seq: 24 knockouts resolvable in the network × 4 ADT proteins in the *same* cells, barcode
+join asserted exact at 20,729/20,729.
+
+## Design decisions that determine whether the number means anything
+
+- **The 2 diagonal cells are excluded.** The network holds no self-loops, so it cannot predict "knock out
+  CD86 → CD86 protein falls", and the effect is guaranteed. Scoring them would hand the network two free wins
+  it never claimed. They are used only as the positive control.
+- **Edge classes stay separate, and two are declared untestable.** reg 11/94, ppi 6/94, **sig 2/94**,
+  **coexpr 1/94**. Pooling to reach power would be manufacturing it — and coexpression, the class that would
+  most sharply test "does an mRNA-derived edge reach protein", is the one with a single cell.
+- **The null is real control cells at matched n**: 9 NT guides, 2,386 NT cells, resampled to each knockout's
+  own cell count.
+- **The p-value permutes at the knockout level.** 94 cells are 24 knockouts × 4 proteins; a Mann-Whitney over
+  17 vs 77 would treat them as independent and be anticonservative. Both are printed.
+- **Global perturbation strength is measured per knockout**, because the confound is real:
+  strength vs |protein z| is **Spearman +0.468 (p 2e-06)**.
+- **`MARCH8` is `MARCHF8`** in the network's gene universe — without the alias the knockout is silently
+  dropped and the universe shrinks 24→23 with no warning.
+
+## Positive control — the readout responds
+
+| knockout | protein | protein lfc | z |
+|---|---|---:|---:|
+| CD86 | CD86 | −0.4928 | −16.13 |
+| PDCD1LG2 | PD-L2 | −0.2661 | −10.77 |
+
+2/2. So a null on the network arms is not a dead assay.
+
+## Magnitude and path distance — null, and underpowered
+
+| arm | edge | no-edge | diff | permuted p |
+|---|---:|---:|---:|---:|
+| protein, reg | 5.071 | 5.128 | −0.057 | 0.476 |
+| mRNA, reg | 3.915 | 2.638 | +1.276 | 0.172 |
+
+Path distance over reg+sig (74/94 cells reachable; 12 at 1 hop, 40 at 2, 22 at 3) predicts nothing:
+Spearman +0.010 for protein, +0.039 for mRNA. Only d ≥ 0.90 was detectable at 11 vs 83, so these say nothing
+either way, and the power table is printed before the result for that reason.
+
+**Direct adjacency was the wrong granularity and the data said so:** the three strongest perturbations are
+IFNGR2, JAK2 and IFNGR1 — the canonical IFN-γ→PD-L1 axis — and none has a direct edge to any of the four
+proteins. Correctly so for a TF→target graph, since they act through STAT1. That is why the path-distance arm
+exists; it just also came back null.
+
+## Direction — the informative result
+
+| knockout | protein | sign | protein lfc | protein z | mRNA lfc | predicted? |
+|---|---|---:|---:|---:|---:|---|
+| CMTM6 | PD-L1 | +1 | −0.2902 | −16.38 | +0.0938 | protein ✓ / mRNA ✗ |
+| IRF1 | PD-L1 | +1 | −0.2180 | −13.79 | −0.2200 | both ✓ |
+| POU2F2 | PD-L2 | +1 | −0.0461 | −1.79 | −0.0464 | both ✓ |
+| SMAD4 | CD366 | +1 | +0.0296 | +0.96 | −1.2452 | protein ✗ / mRNA ✓ |
+| SPI1 | CD86 | +1 | +0.0672 | +0.70 | −0.0535 | protein ✗ / mRNA ✓ |
+| STAT1 | CD86 | +1 | +0.4181 | +10.12 | −0.7385 | protein ✗ / mRNA ✓ |
+| STAT1 | PD-L1 | +1 | −0.4876 | −22.43 | −2.0672 | both ✓ |
+| STAT1 | PD-L2 | +1 | +0.0491 | +1.64 | −1.6853 | protein ✗ / mRNA ✓ |
+| STAT3 | PD-L1 | +1 | +0.0402 | +1.93 | +0.2091 | both ✗ |
+| STAT5A | CD86 | +1 | +0.0098 | +0.36 | −0.0653 | protein ✗ / mRNA ✓ |
+
+**mRNA direction 8/10 (p 0.055). Protein direction 4/10 (p 0.828).** Same 10 edges, so the comparison is
+internally controlled — and two separate binomials cannot say the rates *differ*. Only the discordant pairs
+carry that: **exact McNemar on 6 discordant edges (1 protein-only, 5 mRNA-only), p 0.109.**
+
+## Verdict: suggestive, not established
+
+The pattern is edges stopping at the transcript — the network's signs transfer to mRNA and not to protein —
+and protein is not the quiet arm: the positive control fires at z −16, **40% of cells move at |z|>3**, and
+STAT1→PD-L1 reaches z −22.4. But 6 discordant edges give McNemar p 0.109. **This dataset cannot establish
+it.** Four proteins is the binding constraint, not the analysis.
+
+Two flaws worth recording because each one changed a printed conclusion:
+
+1. `CLASSES["any"]` returned the int `0` for a no-edge row (`False or False or 0 or 0` → `0`), so numpy built
+   an int64 array and `y[m]` became **integer indexing instead of boolean masking** — the "any" row reported a
+   mean |z| *below* that of its own `reg` subset. Caught by the arms contradicting each other.
+2. The verdict first gated on median |protein z| < 2 and called the readout "too quiet" at 1.61. Wrong: a low
+   median is what a correct experiment gives when most (knockout, protein) pairs are true nulls. Mean |z| is
+   5.12 against that median — a right-skewed mostly-null grid, the expected shape.
+
+Also fixed: the null cache was keyed on `id(vals)`, but `A[tags.index(tag)]` builds a fresh array per call, so
+a recycled id could make two proteins at the same cell count share a null; and the permutation reshaped 3-row
+patterns onto 4-row blocks, inventing an edge the network never asserted.
+
+**What would settle it:** Frangieh Perturb-CITE-seq (~20 proteins) would take the signed-edge count from 10 to
+roughly 50 and the discordant pairs from 6 to ~30, which is where McNemar starts to resolve. It needs
+interactive auth (Broad SCP1064) this session does not have; `frangieh.h5ad` on disk is RNA-only.
