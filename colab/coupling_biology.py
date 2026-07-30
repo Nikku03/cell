@@ -286,6 +286,24 @@ def main():
         R["direction"][n] = {"spearman": float(rv), "p": float(pv), "expected": exp, "verdict": verdict}
 
     # ---- what this licenses ----
+    # THE EFFECT SIZE IS THE RAW HELD-OUT R2, NOT R2 MINUS SHUFFLED. An earlier version of this ladder
+    # branched on the shuffle-adjusted net, which is backwards: the tree scores -0.0345 on a shuffled
+    # residual, so subtracting that CREDITS the model for how badly it overfits noise. A positive
+    # out-of-sample R2 is already evidence on its own; the shuffled arm establishes significance, and the
+    # raw value is the size. Reading net here turned +0.023 into +0.057 and moved the verdict a whole rung.
+    raw = R["residual"]["clean biology (PPI + Reactome)"]["r2"]
+    lin_r2 = R["residual"]["clean_linear_r2"]
+    sd0 = res.std()
+    sd1 = sd0 * np.sqrt(max(1 - raw, 0))
+    print(f"\n  WHAT {raw:+.4f} OF RESIDUAL VARIANCE IS WORTH IN THE UNITS THAT MATTER")
+    print(f"    residual spread before biology {sd0:.4f} rho units -> after {sd1:.4f}; "
+          f"shrinkage {100*(1-sd1/sd0):.2f}%")
+    print(f"    tree {raw:+.4f} vs ridge floor {lin_r2:+.4f}: the effect is somewhere in that band, and "
+          f"the tree end is the one that also scores {R['residual']['clean biology (PPI + Reactome)']['shuffled']:+.4f} on noise")
+    R["residual"]["res_sd_before"] = float(sd0)
+    R["residual"]["res_sd_after"] = float(sd1)
+    R["effect_size_read"] = "raw held-out R2 of the clean block; shuffled arm used only for significance"
+    net = raw
     print("\n" + "=" * 100)
     if net < 0.005:
         R["verdict"] = ("CONFIDENCE ONLY -- the clean biology block adds nothing measurability does not "
@@ -293,16 +311,18 @@ def main():
                         "how tightly its protein tracks its mRNA. Usable as a per-node weight on "
                         "Perturb-seq readings; NOT usable as a per-node correction, and must not be "
                         "described as one.")
-    elif net < 0.02:
-        R["verdict"] = (f"MOSTLY CONFIDENCE -- the clean block carries a real but small residual signal "
-                        f"({net:+.4f}), and study bias makes even that an upper bound. Enough to say "
-                        f"coupling is not purely an assay property, far too little to correct a protein "
-                        f"count from. Per-node weight, with a caveat.")
+    elif net < 0.05:
+        R["verdict"] = (f"MOSTLY CONFIDENCE -- the clean block explains {100*net:.1f}% of the "
+                        f"measurability residual (ridge floor {100*lin_r2:.1f}%), which shrinks the "
+                        f"residual spread from {sd0:.4f} to {sd1:.4f} rho units. The direction of "
+                        f"high-confidence PPI degree is negative as complex buffering predicts, so this is "
+                        f"not nothing -- but it is far too small to correct a protein count from, and study "
+                        f"bias makes even this an upper bound. Use as a per-node WEIGHT, not a correction.")
     else:
-        R["verdict"] = (f"BIOLOGY PRESENT -- the clean block predicts {net:+.4f} of the measurability "
-                        f"residual, so per-gene coupling is partly structural and a per-node correction "
-                        f"has a basis. Study bias still makes this an upper bound, and the size has to be "
-                        f"checked against the correction actually needed.")
+        R["verdict"] = (f"BIOLOGY PRESENT -- the clean block explains {100*net:.1f}% of the measurability "
+                        f"residual, enough that per-gene coupling is partly structural and a per-node "
+                        f"correction has a basis. Study bias still makes this an upper bound, and the size "
+                        f"has to be checked against the correction actually needed.")
     print(f"  VERDICT: {R['verdict']}")
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump(R, open(OUT / "coupling_biology.json", "w"), indent=1, default=float)
