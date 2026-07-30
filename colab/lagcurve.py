@@ -61,35 +61,60 @@ MIN_TPM = float(os.environ.get("LC_MINTPM", 1.0))
 
 
 def load_rna():
-    """featureCounts tables -> TPM per timepoint, plus gene coordinates from the same file."""
+    """TPM per timepoint plus gene coordinates. Handles BOTH formats present in this series.
+
+    ENCODE mixes quantification pipelines here: 15 of the 16 files are featureCounts
+    (Geneid/Chr/Start/End/Strand/Length/count) and one is RSEM
+    (gene_id/transcript_id(s)/length/effective_length/expected_count/TPM/...). Assuming one format made the
+    parser read an RSEM effective_length as a genomic Start and abort. Coordinates come only from the
+    featureCounts files, since RSEM carries none.
+    """
     out, coords = {}, {}
     for fn in sorted(glob.glob(str(D / "rna_t*.tsv"))):
         t = float(re.search(r"rna_t([\d.]+)\.tsv", fn).group(1))
-        gid, cnt, ln = [], [], []
+        hdr, rows = None, []
         with open(fn) as fh:
             for line in fh:
                 if line.startswith("#"):
                     continue
                 f = line.rstrip("\n").split("\t")
-                if f[0] == "Geneid":
+                if hdr is None:
+                    hdr = f
                     continue
+                rows.append(f)
+        if not hdr:
+            continue
+        if hdr[0] == "Geneid":                      # featureCounts
+            gid, cnt, ln = [], [], []
+            for f in rows:
                 try:
-                    c = float(f[6])
-                    L = float(f[5])
+                    c, L = float(f[6]), max(float(f[5]), 1.0)
                 except (IndexError, ValueError):
                     continue
                 g = f[0].split(".")[0]
-                gid.append(g); cnt.append(c); ln.append(max(L, 1.0))
+                gid.append(g); cnt.append(c); ln.append(L)
                 if g not in coords:
-                    ch = f[1].split(";")[0]
-                    st = min(int(x) for x in f[2].split(";"))
-                    en = max(int(x) for x in f[3].split(";"))
-                    strand = f[4].split(";")[0]
-                    coords[g] = (ch, en if strand == "-" else st)
-        cnt, ln = np.array(cnt), np.array(ln)
-        rate = cnt / ln
-        tpm = 1e6 * rate / max(rate.sum(), 1e-9)
-        out[t] = dict(zip(gid, tpm))
+                    try:
+                        ch = f[1].split(";")[0]
+                        st = min(int(x) for x in f[2].split(";"))
+                        en = max(int(x) for x in f[3].split(";"))
+                        strand = f[4].split(";")[0]
+                        coords[g] = (ch, en if strand == "-" else st)
+                    except (IndexError, ValueError):
+                        pass
+            rate = np.array(cnt) / np.array(ln)
+            out[t] = dict(zip(gid, 1e6 * rate / max(rate.sum(), 1e-9)))
+        elif "TPM" in hdr:                          # RSEM
+            j = hdr.index("TPM")
+            d = {}
+            for f in rows:
+                try:
+                    d[f[0].split(".")[0]] = float(f[j])
+                except (IndexError, ValueError):
+                    continue
+            out[t] = d
+        else:
+            print(f"    skipping {Path(fn).name}: unrecognised header {hdr[:4]}")
     return out, coords
 
 
