@@ -14632,3 +14632,77 @@ circularity. That is the honest next version, not a different model.
 **Stage 2 (Multiome Perturb-seq) and Stage 3 (time-resolved 3D) are not attempted.** Stage 1 was supposed to
 establish that the epigenetics→transcription link is forecastable before causal perturbation or dynamic
 contact were layered on top. It did not, so those stages would be building on an unmeasured foundation.
+
+---
+
+# Why Stage 1 failed — diagnosed, and the null survives
+
+`colab/dynamic_diagnose.py` · `outputs/orphan/dynamic_diagnose.json`
+
+Stage 1 concluded accessibility does not lead expression. That had to be checked, because the **static**
+version of the same question works: activity features add +0.0390 pooled AUPRC and the model beats the
+distance floor at R@1 0.697 vs 0.651. Accessibility demonstrably carries enhancer–gene information. So either
+the dynamic question is genuinely different, or Stage 1 was built wrong. Two candidate defects, both testable.
+
+## Defect 1 — Stage 1's "linked enhancer" was not a link. Real, and it didn't matter.
+
+Stage 1 chose the **most variable distal peak within ±250 kb** as "the linked enhancer". That is an arbitrary
+peak selected by variance. Its headline control — linked vs distance-matched random — therefore compared one
+arbitrary peak against another and was **guaranteed to return zero**, which it did (−0.0000). That number said
+nothing about real enhancer–gene pairs.
+
+Retested against the benchmark's CRISPR-validated positives, where perturbing the element measurably changed
+the gene. **569 of 820 matched** into the multiome (141 genes absent, 76 elements not peaks there):
+
+| arm | R² predicting Δlog RNA | gain over AR |
+|---|---:|---:|
+| AR floor (RNA at t) | +0.0473 | — |
+| + validated enhancer ATAC(t) | +0.0435 | **−0.0038** |
+| + distance-matched random peak | +0.0469 | −0.0005 |
+| **validated − random** | | **−0.0034** |
+
+Note the AR floor is +0.0473 here against +0.0008 on the heuristic set — validated-link genes *are* more
+dynamically predictable, which is a sanity check that the link set is real. Accessibility still adds nothing.
+
+## Defect 2 — the noise floor, measured. Stage 1 had power.
+
+Splitting each pseudotime bin into two disjoint halves gives the sampling-noise delta directly:
+
+| | sd |
+|---|---:|
+| same-bin delta (pure noise) | 0.0675 |
+| adjacent-bin delta (signal + noise) | 0.0870 |
+| **reliability = 1 − noise_var/signal_var** | **+0.3991** |
+
+**40% of the between-bin change is real signal**, so the ceiling on R² for this target is ≈0.40 and Stage 1
+measured +0.0005. This was not a power failure. Had reliability come back near zero, Stage 1's verdict would
+have had to be *withdrawn* rather than softened — opposite conclusions from the same numbers, which is why the
+diagnostic ran before any interpretation.
+
+## So why did it fail?
+
+Not power, and not the link definition. The remaining explanations are structural, and the third is the
+interesting one:
+
+1. **Pseudotime bins are not a causal sequence.** Cells at bin *t* do not become the cells at bin *t+1* —
+   they are different cells from one snapshot. There is no actual temporal precedence to detect, and no
+   feature can fix that.
+2. **The bin is too coarse for the lag.** ATAC and RNA changes in real time courses are often minutes apart;
+   a bin spanning a stretch of differentiation cannot resolve a lead–lag finer than itself.
+3. **Accessibility is largely permissive and pre-established.** Many enhancers are already open before their
+   gene turns on. Accessibility can therefore be a genuine *requirement* for regulation while being a poor
+   *predictor of change* — which is exactly the pattern across the two experiments: it predicts **whether** a
+   link exists (static, +0.0390) and not **when** the gene moves (dynamic, −0.0034).
+
+That third reading is the same shape as this project's CTCF result: **CTCF defines opportunity, activity
+determines function; accessibility defines the permissive space, and something unmeasured — TF activity,
+signalling — sets the timing.** Two independent experiments arriving at the same architecture is worth more
+than either alone.
+
+## What this licenses
+
+Stage 1's conclusion stands, for a better reason than it was originally reached. It does **not** license
+"epigenetics does not drive transcription" — it licenses the narrower and more useful claim that *pseudotime
+over a differentiation snapshot cannot establish temporal precedence between accessibility and expression*.
+Testing the claim properly needs actual clock time, which the A549 dexamethasone series has and this dataset
+does not.
