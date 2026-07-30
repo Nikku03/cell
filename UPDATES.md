@@ -15624,3 +15624,70 @@ of the finding is the inverse of what was being looked for: **a static regulator
 shape of a gene's response; time-resolved occupancy adds nothing beyond it.** For the cell object that is
 actionable — the GR site map is worth carrying as a per-gene volatility annotation — but it is not a dynamic
 layer, and Stage 1 remains unsupported.
+
+---
+
+# The evidence model is not missing — it is structurally impossible in the current schema
+
+Prompted by an architectural critique: *layers are being built before the decision they must improve is
+defined; curated edges are stored as if they were evidence; modules are validated in isolation rather than
+end-to-end.* Before arguing, I audited the actual representation.
+
+```
+reg   612,133 edges   every one a 3-tuple [source, target, sign]
+                      sign = 0 for 558,005 of them — 91.2% carry no sign at all
+                      (+1: 46,448   −1: 7,680)
+ppi   191,447 edges   bare 2-tuples [a, b] — STRING confidence dropped entirely
+sig    17,432 edges   3-tuples
+top-level provenance keys: []      gene-level: only `ess_src`, `conf`
+```
+
+This is worse than "provenance exists in parts". **There is no field an edge could carry evidence in.** No
+source, no assay type, no cell type, no perturbational-vs-observational flag, no replication count, no
+context. Tiering curated / observational / perturbational / replicated-causal is not a refactor that has been
+deferred — it cannot be expressed. And 91.2% of the regulatory layer has no sign, so most of it could not
+participate in quantitative propagation even if it were licensed to.
+
+The corollary matters for how previous entries in this file should be read: when a module "used the
+regulatory layer", it used an unweighted, 91%-unsigned, provenance-free edge list. Coverage of 612k edges was
+never a statement about evidence.
+
+## What is being built in response
+
+`colab/chain_benchmark.py` — one bounded task, one admission ladder, one machine-readable gate.
+
+**The task.** In K562, given a single-gene CRISPRi perturbation of gene P, predict the transcriptional
+response of every measured gene G. Replogle's genome-wide Perturb-seq supplies 11,258 perturbations × 8,248
+measured genes in exactly this cell type; 9,385 × 6,685 join the gene universe.
+
+**What the task deliberately is not.** The chain worth having is
+`perturbation → ΔRNA → Δprotein → Δcomplex → Δflux → phenotype`. The Δprotein arrow **cannot be validated
+today** — there is no K562 perturbation proteomics at this scale, on disk or published. Writing the full
+chain down and then scoring only its first arrow would repeat the benchmark-scope error exactly. So this
+validates **arrow one**, says so, and protein enters only as a static attribute, never as a measured change.
+
+**The ladder.** A layer is admitted only after clearing every nuisance rung: gene responsiveness →
+perturbation strength → abundance → genomic distance → detection power → co-expression.
+
+**Two design points that decide whether the harness is honest.**
+
+- Folds are grouped by *perturbed gene*, so a perturbation is never in training and test at once. The
+  consequence: **the row effect cannot be looked up for a held-out perturbation** — it must be predicted from
+  P's attributes. A harness that computes two-way fixed effects on the full matrix and then splits is leaking
+  the single largest term in the matrix.
+- The control is **degree-matched** (configuration-model stub rewiring), not uniform rewiring. Uniform
+  rewiring destroys the degree sequence, so "P is a hub" — a real and strong predictor — would vanish along
+  with "P regulates G", and every layer would clear the bar against it.
+
+**The output is a gate, not a score.** `layer_admission.json` records, per layer, whether it is licensed to
+influence a quantitative prediction *on this task*. A rejected layer is not deleted; it stays available for
+lookup and reasoning, and is recorded as not licensed to move a number. The file is meant to be read by the
+model, not only by a person.
+
+Results are pending — the run is 61 model fits over 3.0M sampled (perturbation, gene) pairs. Partial ladder,
+recorded here because it already reframes the task: global mean −0.0000, gene responsiveness +0.0001,
++ perturbation strength 0.0066, + abundance 0.0127, + genomic distance 0.0151. Gene responsiveness adds
+almost nothing to *signed* log fold change while moving AUPRC 0.272 → 0.286, which is the expected signature
+of a magnitude feature against a signed target: **the sign is the hard part, and nothing in the nuisance
+ladder can supply it.** That is precisely what makes this a fair test of the network layers, since a directed
+signed edge is the only thing that could.
