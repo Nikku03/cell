@@ -204,15 +204,52 @@ def main():
         a, b = n[m1].mean(), n[m0].mean()
         return np.nan if b <= 0 else float(np.log2((a + 1e-12) / (b + 1e-12)))
 
+    # ---- directed path distance, because direct edges ask the wrong question ----
+    # The three strongest perturbations here are IFNGR2, JAK2 and IFNGR1 -- the canonical IFN-gamma -> PD-L1
+    # axis -- and none of them has a DIRECT edge to any of the four proteins. That is correct for a TF->target
+    # graph: they act through STAT1. But the claim being tested is propagation, so the granularity has to be
+    # path length, not adjacency. It also fixes the power problem: distance is defined for nearly every cell,
+    # turning an 11-vs-83 comparison into a rank correlation over all 94.
+    adj = {}
+    for (s, t) in list(reg) + list(sig):
+        adj.setdefault(s, set()).add(t)
+    dist = {}
+    MAXD = 3
+    prot_idx = {gi[g] for g in TAG2GENE.values() if g in gi}
+    for k in resolved:
+        s0 = gi[ALIAS.get(k, k)]
+        seen = {s0: 0}
+        frontier = [s0]
+        for depth in range(1, MAXD + 1):
+            nxt = []
+            for u in frontier:
+                for v in adj.get(u, ()):
+                    if v not in seen:
+                        seen[v] = depth
+                        nxt.append(v)
+            frontier = nxt
+            if not frontier:
+                break
+        for ti in prot_idx:
+            if ti in seen and ti != s0:
+                dist[(s0, ti)] = seen[ti]
+    print(f"\n  DIRECTED PATH DISTANCE over reg+sig, capped at {MAXD} hops "
+          f"({len(dist)} of {len(resolved)*len(prot_idx)} source-target pairs reachable)")
+
     ntidx = np.where(ntmask)[0]
     rng = np.random.default_rng(0)
     nullcache = {}
 
-    def zscore(vals, denom, sel):
-        """Effect for this knockout, in sd of a null drawn from real NT cells at the same n."""
+    def zscore(vals, denom, sel, key_name):
+        """Effect for this knockout, in sd of a null drawn from real NT cells at the same n.
+
+        Keyed on an explicit readout NAME, never on id(vals): `A[tags.index(tag)]` builds a fresh array on
+        every call, so CPython is free to reuse the id of a collected one and two different proteins at the
+        same cell count would silently share a null distribution.
+        """
         obs = norm_lfc(vals, denom, sel, ntmask)
         n = int(sel.sum())
-        key = (id(vals), n)
+        key = (key_name, n)
         if key not in nullcache:
             draws = []
             for _ in range(NULL_DRAWS):
@@ -238,22 +275,25 @@ def main():
             ti = gi[gene]
             if si == ti:
                 continue                     # diagonal: no self-loop to test, effect guaranteed
-            pz, plfc = zscore(A[tags.index(tag)], adt_tot, sel)
-            mz, mlfc = zscore(cols[gene], tot, sel)
+            pz, plfc = zscore(A[tags.index(tag)], adt_tot, sel, f"prot:{tag}")
+            mz, mlfc = zscore(cols[gene], tot, sel, f"rna:{gene}")
             rsign = reg.get((si, ti)); ssign = sig.get((si, ti))
             rows.append({"ko": k, "tag": tag, "gene": gene, "n_cells": int(sel.sum()),
                          "prot_z": pz, "prot_lfc": plfc, "mrna_z": mz, "mrna_lfc": mlfc,
-                         "strength": ko_str[k],
+                         "strength": ko_str[k], "dist": dist.get((si, ti), 99),
                          "reg": rsign, "sig": ssign,
                          "ppi": int((si, ti) in ppi), "coexpr": int((si, ti) in co)})
     print(f"\n  {len(rows)} testable off-diagonal (knockout, protein) cells")
 
-    CLASSES = {"reg": lambda r: r["reg"] is not None,
-               "sig": lambda r: r["sig"] is not None,
+    # every predicate is wrapped in bool(). Without it, `False or False or 0 or 0` evaluates to the int 0,
+    # numpy builds an int64 array, and y[m] silently becomes INTEGER indexing instead of boolean masking --
+    # which made the "any" row report a mean |z| lower than that of its own reg subset.
+    CLASSES = {"reg": lambda r: bool(r["reg"] is not None),
+               "sig": lambda r: bool(r["sig"] is not None),
                "ppi": lambda r: bool(r["ppi"]),
                "coexpr": lambda r: bool(r["coexpr"]),
-               "any": lambda r: (r["reg"] is not None or r["sig"] is not None
-                                 or r["ppi"] or r["coexpr"])}
+               "any": lambda r: bool(r["reg"] is not None or r["sig"] is not None
+                                     or r["ppi"] or r["coexpr"])}
     counts = {c: sum(1 for r in rows if f(r)) for c, f in CLASSES.items()}
     print("  edge coverage per class:")
     for c, n in counts.items():
@@ -283,23 +323,27 @@ def main():
     def perm_test(mask, y, seed=0):
         """Permute which knockout carries which edge-pattern; keep the measurement fixed.
 
-        Row permutation and not cell permutation: each knockout contributes 4 correlated cells, and
+        Row permutation and not cell permutation: each knockout contributes up to 4 correlated cells, and
         shuffling cells independently would break that structure and understate the p-value.
+
+        Patterns are swapped only between knockouts with the SAME number of cells. Two knockouts here have 3
+        rather than 4 (their diagonal cell was removed), and reshaping a 3-pattern onto a 4-row block would
+        duplicate an element -- inventing an edge that the network never asserted.
         """
         pat = {k: mask[kos_arr == k] for k in uk}
+        bylen = {}
+        for k in uk:
+            bylen.setdefault(len(pat[k]), []).append(k)
         obs = y[mask].mean() - y[~mask].mean() if mask.any() and (~mask).any() else np.nan
         g = np.random.default_rng(seed)
         hits = 0
         for _ in range(N_PERM):
-            pk = g.permutation(len(uk))
             m = np.zeros(len(y), bool)
-            for a, b in zip(uk, pk):
-                sl = kos_arr == a
-                src = pat[uk[b]]
-                m[sl] = src[:sl.sum()] if len(src) >= sl.sum() else np.resize(src, sl.sum())
-            if m.any() and (~m).any():
-                if (y[m].mean() - y[~m].mean()) >= obs:
-                    hits += 1
+            for L, ks in bylen.items():
+                for a, b in zip(ks, g.permutation(len(ks))):
+                    m[kos_arr == a] = pat[ks[b]]
+            if m.any() and (~m).any() and (y[m].mean() - y[~m].mean()) >= obs:
+                hits += 1
         return obs, (hits + 1) / (N_PERM + 1)
 
     for arm, key in (("PROTEIN -- the independent modality", "prot_z"),
@@ -329,6 +373,61 @@ def main():
                                         "partial_rho": float(pr[0]), "partial_p": float(pr[1])}
         print("    ^ MWU treats 94 cells as independent; they are 24 knockouts x 4 proteins, so the "
               "permuted p is the one to read")
+
+    # ---- path distance: the properly-powered arm, and the one that matches the propagation claim ----
+    dv = np.array([r["dist"] for r in rows], float)
+    reach = dv < 90
+    print(f"\n  PATH-DISTANCE ARM ({int(reach.sum())}/{len(rows)} cells reachable within {MAXD} hops; "
+          f"distances {dict(zip(*[list(x) for x in np.unique(dv[reach], return_counts=True)]))})")
+    R["distance"] = {"n_reachable": int(reach.sum()),
+                     "hist": {str(int(k)): int(v) for k, v in zip(*np.unique(dv[reach],
+                                                                            return_counts=True))}}
+
+    def perm_rho(x, y, kos, seed=0):
+        """Spearman with a knockout-level permutation null: shuffle the DISTANCE ROWS between knockouts.
+
+        Distance is a property of the knockout-protein pair, so the exchangeable unit under the null is
+        still the knockout, and patterns are swapped only between knockouts contributing the same number of
+        rows. `kos` is passed explicitly rather than read from the enclosing scope: this arm drops
+        unreachable cells, so its knockout list is a subset of the outer one and a closure would silently
+        build empty patterns for the knockouts that dropped out.
+        """
+        obs = stats.spearmanr(x, y)[0]
+        uks = list(dict.fromkeys(kos))
+        pat = {k: x[kos == k] for k in uks}
+        bylen = {}
+        for k in uks:
+            bylen.setdefault(len(pat[k]), []).append(k)
+        g = np.random.default_rng(seed)
+        hits = 0
+        for _ in range(N_PERM):
+            xp = np.empty_like(x)
+            for ks in bylen.values():
+                for a, b in zip(ks, g.permutation(len(ks))):
+                    xp[kos == a] = pat[ks[b]]
+            if abs(stats.spearmanr(xp, y)[0]) >= abs(obs):
+                hits += 1
+        return obs, (hits + 1) / (N_PERM + 1)
+
+    if reach.sum() >= 20:
+        print(f"    {'readout':10s} {'Spearman(dist,|z|)':>19s} {'perm p':>9s}"
+              f"{'partial | strength':>21s}   expected NEGATIVE: closer -> bigger effect")
+        st_r = np.array([r["strength"] for r in rows])[reach]
+        rs = stats.rankdata(st_r)
+
+        def resid(v):
+            return v - np.polyval(np.polyfit(rs, v, 1), rs)
+        x = dv[reach]
+        ko_r = kos_arr[reach]
+        for arm, key in (("protein", "prot_z"), ("mRNA", "mrna_z")):
+            y = np.abs(np.array([r[key] for r in rows]))[reach]
+            pr = stats.spearmanr(resid(stats.rankdata(x)), resid(stats.rankdata(y)))
+            rho, pp2 = perm_rho(x, y, ko_r, seed=11)
+            print(f"    {arm:10s} {rho:+19.3f} {pp2:9.4f}{pr[0]:+15.3f} (p {pr[1]:.3f})")
+            R["distance"][arm] = {"spearman": float(rho), "perm_p": float(pp2),
+                                  "partial_rho": float(pr[0]), "partial_p": float(pr[1])}
+    else:
+        print(f"    only {int(reach.sum())} cells reachable -- not enough to correlate; arm skipped")
 
     # ---- the confound, checked directly ----
     ys = np.abs(np.array([r["prot_z"] for r in rows]))
