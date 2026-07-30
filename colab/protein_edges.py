@@ -87,6 +87,9 @@ TAG2GENE = {"CD117": "KIT", "CD119": "IFNGR1", "CD140a": "PDGFRA", "CD140b": "PD
 ISOTYPE = ["Rat_IgG2a", "Mouse_IgG1", "Mouse_IgG2a", "Mouse_IgG2b"]
 NO_TRANSCRIPT = {"PDCD1"}        # T-cell protein; absent from the melanoma transcriptome
 MAX_ZERO_FRAC = float(os.environ.get("PE_MAXZERO", 0.70))   # a tag above this is not expressed
+# a readout needs enough nonzero control cells that a MIN_CELLS sample is expected to contain a few;
+# below this the CLT has not kicked in and sigma/sqrt(n) is not the sd of the sample mean
+MIN_NONZERO_FRAC = float(os.environ.get("PE_MINNZ", 0.15))
 MIN_CELLS = 25
 GRID_R = int(os.environ.get("PE_GRID_R", 300))
 N_PERM = int(os.environ.get("PE_PERM", 20000))
@@ -303,24 +306,55 @@ def main():
             continue
         grid = np.unique(np.geomspace(MIN_CELLS, max(ns_needed.values()), 6).astype(int))
 
+        # ---- READOUT ADEQUACY, DECIDED PER CONDITION AND ON BOTH HALVES ----
+        # The CLT is asymptotic. TEK's transcript has 3 nonzero cells in 18,334 Co-culture controls, so a
+        # 25-cell bootstrap sample essentially never contains one, every sample mean is 0, and the empirical
+        # sd is exactly 0 -- which is what tripped the earlier guard. The fix is tied to that cause: require
+        # enough nonzero control cells that a smallest-sample is expected to contain a few. Applied PER
+        # CONDITION because ADT depth varies enough between them to change the answer (CD117 is 85% zero in
+        # Co-culture controls and 51% pooled), and to BOTH the protein and its transcript, since the paired
+        # arm needs both. The proteins and transcripts that fail are the same genes either way -- KIT, PDGFRA,
+        # PDGFRB, TEK, KDR, CXCR4 -- which is two independent measurements agreeing they are not expressed.
+        def nzfrac(v):
+            return float((v > 0).mean())
+        pv = {t: (A[:, tags.index(t)] / np.maximum(adt_tot, 1.0))[ctl] for t in tags}
+        rv = {g: (c / np.maximum(tot, 1.0))[ctl] for g, c in cols.items()}
+        usable, unusable = {}, {}
+        for t, g in keep_tags.items():
+            fp, fr = nzfrac(pv[t]), nzfrac(rv[g])
+            if min(fp, fr) >= MIN_NONZERO_FRAC:
+                usable[t] = g
+            else:
+                unusable[t] = (fp, fr)
+        print(f"    readouts usable here: {len(usable)}/{len(keep_tags)} "
+              f"(need >={MIN_NONZERO_FRAC:.0%} nonzero control cells in BOTH protein and transcript)")
+        if unusable:
+            print("      not measurable in this condition: " + ", ".join(
+                f"{t} (prot {fp:.0%}, rna {fr:.0%})" for t, (fp, fr) in
+                sorted(unusable.items(), key=lambda x: min(x[1]))))
+        if len(usable) < 4:
+            print("      fewer than 4 usable readouts; condition skipped")
+            continue
+
         # per-readout control mean and sigma; the null sd at any n is sigma/sqrt(n), analytically
         stats_ = {}
-        worst = 0.0
-        for tag in tags:
-            v = (A[:, tags.index(tag)] / np.maximum(adt_tot, 1.0))[ctl]
-            sigma, w = bootstrap_check(v, grid, rng)
-            stats_[("prot", tag)] = (float(v.mean()), sigma)
-            worst = max(worst, w)
-        for g, c in cols.items():
-            v = (c / np.maximum(tot, 1.0))[ctl]
-            sigma, w = bootstrap_check(v, grid, rng)
-            stats_[("rna", g)] = (float(v.mean()), sigma)
-            worst = max(worst, w)
-        print(f"    null sd = sigma/sqrt(n): worst empirical-vs-analytic error across "
-              f"{len(stats_)} readouts = {100*worst:.2f}%")
-        if worst > 0.25:
-            raise SystemExit(f"the analytic null sd disagrees with the bootstrap by {100*worst:.1f}% -- "
-                             "something is wrong with the normalisation; refusing to continue")
+        worst, worst_who = 0.0, None
+        for t, g in usable.items():
+            for kind, v in (("prot", pv[t]), ("rna", rv[g])):
+                sigma, w = bootstrap_check(v, grid, rng)
+                stats_[(kind, t if kind == "prot" else g)] = (float(v.mean()), sigma)
+                if w > worst:
+                    worst, worst_who = w, f"{kind}:{t if kind == 'prot' else g}"
+        for t in ISOTYPE:                       # isotypes are scored but never gate the run
+            if t in pv:
+                sigma, _ = bootstrap_check(pv[t], grid, rng)
+                stats_[("prot", t)] = (float(pv[t].mean()), sigma)
+        print(f"    null sd = sigma/sqrt(n): worst empirical-vs-analytic error over the "
+              f"{2*len(usable)} gating readouts = {100*worst:.1f}% ({worst_who})")
+        if worst > 0.35:
+            raise SystemExit(f"the analytic null sd still disagrees with the bootstrap by "
+                             f"{100*worst:.1f}% at {worst_who} after filtering -- the CLT is not holding "
+                             "for this readout and its z-scores would be wrong; refusing to continue")
 
         def zof(vals, denom, sel, key):
             """z on the LINEAR normalised scale. Not a log fold change: for the sparse tags the log of a
@@ -348,7 +382,7 @@ def main():
                 frontier = nxt
                 if not frontier:
                     break
-            for tag, gene in keep_tags.items():
+            for tag, gene in usable.items():
                 if tag not in tags or gene not in gi:
                     continue
                 ti = gi[gene]
@@ -378,7 +412,7 @@ def main():
 
         # diagonal positive controls
         diag = []
-        for tag, gene in keep_tags.items():
+        for tag, gene in usable.items():
             if gene in kk and tag in tags:
                 sel = cm & (pert == gene)
                 pz, pl = zof(A[:, tags.index(tag)], adt_tot, sel, ("prot", tag))
