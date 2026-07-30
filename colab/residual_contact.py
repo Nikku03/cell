@@ -43,8 +43,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 OUT = Path(os.environ.get("CELL_OUT", "outputs/orphan"))
 SP = Path(os.environ.get("CELL_SCRATCH",
                          "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad"))
-COOL = SP / "hic" / "k562_5kb.cool"
-RES = 5000
+RES = int(os.environ.get("RC_RES", 25000))
+COOL = SP / "hic" / f"k562_{RES//1000}kb.cool"
 SEEDS = (0, 1, 2, 3, 4)
 CELL = "K562"
 
@@ -115,6 +115,15 @@ def main():
         raise SystemExit("contact missing for >20% of pairs -- the bin lookup is wrong somewhere and no "
                          "verdict from this run should be believed")
     obs = np.where(got, obs, 0.0)
+    # ZERO-INFLATION IS THE LIMIT ON THIS FEATURE, so it is measured and printed rather than discovered
+    # later. At 5 kb, 65.1% of K562 pairs had zero contacts and the zero rate ran from 0% under 10 kb to
+    # 89% beyond 1 Mb -- so the "residual" was largely presence/absence of any read, which is depth times
+    # distance, and cannot be detrended out of a mostly-zero variable.
+    zf = float((obs == 0).mean())
+    print(f"  zero-contact fraction at {RES//1000} kb: {zf:.3f}")
+    if zf > 0.4:
+        print(f"    ** {100*zf:.0f}% of pairs have no contact at this resolution; the residual is then "
+              f"mostly an indicator of whether any read was seen, and a coarser bin is the right fix")
     lo = np.log1p(obs)
     dist = d["dist"][idx]
     ld = np.log10(dist)
@@ -208,17 +217,32 @@ def main():
     dr = r1["r1"] - b["r1"]
     shm = sh["mrr"] - b["mrr"]
     pv = r1["dmrr_sign_p"]
+    R["zero_fraction"] = zf
+    R["resolution_bp"] = RES
     R["residual_arm"] = {"d_pooled": dp, "d_r1": dr, "d_mrr": dm, "sign_p": pv,
                          "shuffled_d_mrr": shm, "resid_vs_distance_spearman": rho_res}
-    if dm > 0.005 and pv < 0.05:
+    margin_mrr, margin_r1 = dm - shm, dr - (sh["r1"] - b["r1"])
+    R["residual_arm"]["margin_over_shuffled_mrr"] = margin_mrr
+    R["residual_arm"]["margin_over_shuffled_r1"] = margin_r1
+    print(f"    margin over shuffled: R@1 {margin_r1:+.4f}   MRR {margin_mrr:+.4f}")
+    if dm > 0.005 and pv < 0.05 and margin_mrr > 0.005 and zf < 0.4:
         v = (f"QUANTITATIVE CONTACT HELPS THE RANKING, AND ONLY THE RANKING. Residual contact adds "
              f"{dp:+.4f} pooled AUPRC -- nothing -- but {dr:+.4f} R@1 and {dm:+.4f} MRR with a paired "
              f"per-group sign test at p {pv:.4g}, against a shuffled-contact control of {shm:+.4f} MRR. "
              f"So the earlier 'Hi-C adds nothing' was an artefact of the BINARY called-loop feature, which "
              f"a loop caller had already collapsed against distance and CTCF. It was also invisible to "
              f"pooled AUPRC, which is the case for the ranking metric in one number. "
-             f"Caveat: the residual still tracks distance at Spearman {rho_res:+.3f}, and this is K562 "
-             f"only (87% of positives, but not a cross-cell-type claim).")
+             f"Caveat: the residual still tracks distance at Spearman {rho_res:+.3f}, {100*zf:.0f}% of "
+             f"pairs have zero contact, and this is K562 only (87% of positives, not a cross-cell-type "
+             f"claim).")
+    elif dm > 0.005 and pv < 0.05:
+        v = (f"SUGGESTIVE, NOT ESTABLISHED. Residual contact adds {dr:+.4f} R@1 and {dm:+.4f} MRR "
+             f"(sign test p {pv:.3g}) -- but the SHUFFLED contact control adds {sh['r1']-b['r1']:+.4f} R@1 "
+             f"and {shm:+.4f} MRR, leaving a margin of only {margin_r1:+.4f}/{margin_mrr:+.4f}. With "
+             f"{100*zf:.0f}% of pairs at zero contact and the residual still tracking distance at "
+             f"{rho_res:+.3f}, that margin is not enough to call it. What it DOES establish is that the "
+             f"binary called-loop test was the wrong instrument, and that any real effect is invisible to "
+             f"pooled AUPRC ({dp:+.4f}) while showing up only in ranking.")
     elif dp > 0.01 and dm > 0.005:
         v = (f"QUANTITATIVE CONTACT ADDS SOMETHING -- pooled {dp:+.4f}, MRR {dm:+.4f} on top of a model that "
              f"already has CTCF. The binary called-loop test that concluded otherwise was measuring a "
