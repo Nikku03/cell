@@ -26,6 +26,22 @@ and well connected), so "+both beats measurability" would not separate the two. 
 alone, take the held-out RESIDUAL, and predict THAT from biology alone. Residual R2 above its own shuffled
 control is information measurability does not contain, and cannot be re-explained as depth.
 
+THE RESIDUAL MUST COME FROM THE STRONGEST MEASUREMENT FIT AVAILABLE. A first version of this module fit
+measurability with ridge, which reached R2 +0.0967 where the gate's boosted tree reaches +0.2695 on the same
+columns. Biology then "predicted the residual" -- but a residual that large still contains the nonlinear
+measurability structure ridge could not reach, so biology may simply have been proxying it. The
+measurability arm therefore uses the gate's own XGBoost settings, so what is left over is as close to
+measurement-free as this data allows.
+
+PROTEIN LENGTH IS QUARANTINED, NOT USED. Shotgun proteomics quantifies a protein from its peptides, and a
+longer protein yields more of them, so length raises quantification quality directly. It is a measurement
+feature wearing biology's clothes, and it is reported separately for exactly that reason -- if the residual
+signal lives in length, the honest verdict is confidence, not correction.
+
+STUDY BIAS IS THE LIMIT OF EVEN THE CLEAN BLOCK. STRING degree and Reactome membership both grow with how
+much a gene has been studied, and well-studied genes tend to be better quantified. This cannot be removed
+with the data here, so it is stated: the clean-block residual is an UPPER bound on structural coupling.
+
 DIRECTION IS REPORTED, because a mechanism makes a signed prediction and a fit does not. If complex
 membership buffers protein against mRNA, PPI degree must correlate NEGATIVELY with the residual. A positive
 correlation would falsify the mechanism while still raising R2, and that distinction is the whole point.
@@ -110,23 +126,24 @@ def reactome_features():
 
 
 def held_out(F, t, seeds=SEEDS, ret_pred=False):
-    """Ridge held-out R2 over random 80/20 splits, standardised inside each fold.
+    """Held-out R2 over random 80/20 splits, using the gate's own XGBoost settings.
 
-    Ridge and not a tree: the point is to ask whether a linear combination of these features carries
-    information, and a boosted tree on 5-8 columns can fit interactions that make direction unreadable.
+    The settings are copied from `mrna_protein_gate.py` deliberately and not tuned here: the residual this
+    produces has to be the residual of the model whose +0.2695 is the thing under interrogation. Tuning
+    either arm separately would make the comparison between them meaningless.
     Predictions are returned for the residual construction, so every residual is out-of-sample.
     """
-    from sklearn.linear_model import RidgeCV
     from sklearn.metrics import r2_score
+    import xgboost as xgb
     r2s, pred, seen = [], np.full(len(t), np.nan), np.zeros(len(t), bool)
     for s in seeds:
         rng = np.random.default_rng(s)
         idx = rng.permutation(len(t))
         cut = int(0.8 * len(t))
         tr, te = idx[:cut], idx[cut:]
-        mu, sd = F[tr].mean(0), F[tr].std(0) + 1e-9
-        m = RidgeCV(alphas=np.logspace(-2, 4, 25)).fit((F[tr] - mu) / sd, t[tr])
-        p = m.predict((F[te] - mu) / sd)
+        m = xgb.XGBRegressor(max_depth=4, n_estimators=300, learning_rate=0.05, subsample=0.8,
+                             colsample_bytree=0.8, reg_lambda=2.0, n_jobs=4).fit(F[tr], t[tr])
+        p = m.predict(F[te])
         r2s.append(r2_score(t[te], p))
         pred[te] = np.where(seen[te], pred[te], p)      # first fold to hold a gene out owns it
         seen[te] = True
@@ -170,37 +187,52 @@ def main():
         raise SystemExit("PPI degree still missing for most genes -- the join failed again, and no "
                          "verdict from this run should be believed")
 
-    R = {"n_genes": len(genes), "meas_features": MEAS, "bio_features": bnames, "bio_coverage": cov}
+    # protein length is separated out here, not dropped: shotgun MS quantifies a protein from its peptides,
+    # so length is partly quantification quality. Keeping it in "biology" would let a measurement effect
+    # be reported as structure.
+    CLEAN = [i for i, n in enumerate(bnames) if n != "log_protein_size"]
+    SIZE = [bnames.index("log_protein_size")]
+    R = {"n_genes": len(genes), "meas_features": MEAS, "bio_features": bnames, "bio_coverage": cov,
+         "clean_block": [bnames[i] for i in CLEAN], "quarantined": ["log_protein_size"]}
 
     # ---- arms ----
-    print("\n  HELD-OUT R2 PREDICTING rho (ridge, 5 random 80/20 splits)")
+    print("\n  HELD-OUT R2 PREDICTING rho (the gate's own XGBoost, 5 random 80/20 splits)")
     rng = np.random.default_rng(7)
-    arms = {"measurability only": M, "biology only": B, "both": np.hstack([M, B])}
+    arms = {"measurability only": M, "biology (clean)": B[:, CLEAN], "protein length only": B[:, SIZE],
+            "meas + clean biology": np.hstack([M, B[:, CLEAN]]), "everything": np.hstack([M, B])}
     for tag, X in arms.items():
         r2, per = held_out(X, rho)
         sh = np.mean([held_out(X, rho[rng.permutation(len(rho))], seeds=(0, 1, 2))[0] for _ in range(3)])
         R[tag] = {"r2": r2, "shuffled": float(sh), "net": float(r2 - sh)}
-        print(f"    {tag:20s} R2 {r2:+.4f}   shuffled {sh:+.4f}   net {r2-sh:+.4f}")
-    gain = R["both"]["r2"] - R["measurability only"]["r2"]
-    R["bio_over_meas"] = float(gain)
-    print(f"    biology ON TOP of measurability {gain:+.4f}"
-          f"   <- inflated by shared variance; the residual test below is the honest one")
+        print(f"    {tag:22s} R2 {r2:+.4f}   shuffled {sh:+.4f}   net {r2-sh:+.4f}")
+    mb = R["measurability only"]["r2"]
+    print(f"\n    clean biology ON TOP of measurability {R['meas + clean biology']['r2']-mb:+.4f}")
+    print(f"    everything    ON TOP of measurability {R['everything']['r2']-mb:+.4f}")
+    print("    ^ both inflated by shared variance; the residual test below is the honest one")
+    R["clean_over_meas"] = float(R["meas + clean biology"]["r2"] - mb)
+    R["all_over_meas"] = float(R["everything"]["r2"] - mb)
 
-    # ---- the deciding test: predict the out-of-sample measurability residual from biology alone ----
-    print("\n  RESIDUAL TEST -- fit measurability, then predict what it got wrong, from biology alone")
+    # ---- the deciding test: predict the out-of-sample measurability residual ----
+    print("\n  RESIDUAL TEST -- fit measurability at full strength, then predict what it got wrong")
     _, pm, seen = held_out(M, rho, ret_pred=True)
     ok = seen & np.isfinite(pm)
     res = rho[ok] - pm[ok]
-    print(f"    {int(ok.sum()):,} genes held out at least once; residual sd {res.std():.4f}")
-    rr, per = held_out(B[ok], res)
-    rsh = [held_out(B[ok], res[np.random.default_rng(100 + i).permutation(len(res))],
-                    seeds=(0, 1, 2))[0] for i in range(5)]
-    net = rr - float(np.mean(rsh))
-    print(f"    residual R2 from biology alone : {rr:+.4f}  [{' '.join(f'{x:+.3f}' for x in per)}]")
-    print(f"    shuffled-residual control      : {np.mean(rsh):+.4f} +/- {np.std(rsh):.4f}")
-    print(f"    NET                            : {net:+.4f}")
-    R["residual"] = {"n": int(ok.sum()), "r2": rr, "shuffled": float(np.mean(rsh)),
-                     "shuffled_sd": float(np.std(rsh)), "net": float(net)}
+    print(f"    {int(ok.sum()):,} genes held out at least once; residual sd {res.std():.4f} "
+          f"(rho sd {rho.std():.4f})")
+    R["residual"] = {"n": int(ok.sum()), "sd": float(res.std())}
+    blocks = {"clean biology (PPI + Reactome)": B[np.ix_(ok, CLEAN)],
+              "protein length alone": B[np.ix_(ok, SIZE)],
+              "all five together": B[ok]}
+    for tag, Xb in blocks.items():
+        rr, per = held_out(Xb, res)
+        rsh = [held_out(Xb, res[np.random.default_rng(100 + i).permutation(len(res))],
+                        seeds=(0, 1, 2))[0] for i in range(3)]
+        net = rr - float(np.mean(rsh))
+        print(f"    {tag:32s} R2 {rr:+.4f}   shuffled {np.mean(rsh):+.4f}   NET {net:+.4f}"
+              f"   [{' '.join(f'{x:+.3f}' for x in per)}]")
+        R["residual"][tag] = {"r2": rr, "shuffled": float(np.mean(rsh)), "net": float(net)}
+    net = R["residual"]["clean biology (PPI + Reactome)"]["net"]
+    print("    ^ the verdict below is read off the CLEAN block; protein length is a measurement feature")
 
     # ---- direction, per feature, against the residual ----
     print("\n  DIRECTION vs the measurability residual (Spearman; a mechanism predicts a sign)")
@@ -226,18 +258,21 @@ def main():
     # ---- what this licenses ----
     print("\n" + "=" * 100)
     if net < 0.005:
-        R["verdict"] = ("CONFIDENCE ONLY -- biology adds nothing measurability does not already contain, "
-                        "so the predictor estimates how well a gene was quantified, not how tightly its "
-                        "protein tracks its mRNA. Usable as a per-node weight on Perturb-seq readings; "
-                        "NOT usable as a per-node correction, and must not be described as one.")
+        R["verdict"] = ("CONFIDENCE ONLY -- the clean biology block adds nothing measurability does not "
+                        "already contain, so the predictor estimates how well a gene was quantified, not "
+                        "how tightly its protein tracks its mRNA. Usable as a per-node weight on "
+                        "Perturb-seq readings; NOT usable as a per-node correction, and must not be "
+                        "described as one.")
     elif net < 0.02:
-        R["verdict"] = (f"MOSTLY CONFIDENCE -- biology carries a real but small residual signal "
-                        f"({net:+.4f}). Enough to say coupling is not purely an assay property, far too "
-                        f"little to correct a protein count from. Per-node weight, with a caveat.")
+        R["verdict"] = (f"MOSTLY CONFIDENCE -- the clean block carries a real but small residual signal "
+                        f"({net:+.4f}), and study bias makes even that an upper bound. Enough to say "
+                        f"coupling is not purely an assay property, far too little to correct a protein "
+                        f"count from. Per-node weight, with a caveat.")
     else:
-        R["verdict"] = (f"BIOLOGY PRESENT -- biology predicts {net:+.4f} of the measurability residual, "
-                        f"so per-gene coupling is partly structural and a per-node correction has a basis. "
-                        f"Its size still has to be checked against the correction actually needed.")
+        R["verdict"] = (f"BIOLOGY PRESENT -- the clean block predicts {net:+.4f} of the measurability "
+                        f"residual, so per-gene coupling is partly structural and a per-node correction "
+                        f"has a basis. Study bias still makes this an upper bound, and the size has to be "
+                        f"checked against the correction actually needed.")
     print(f"  VERDICT: {R['verdict']}")
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump(R, open(OUT / "coupling_biology.json", "w"), indent=1, default=float)
