@@ -183,25 +183,42 @@ def main():
             f"peak-derived R@1 {sm['r1']:.4f} does not beat the distance floor {REF['dist_r1']:.4f}; "
             "writing this layer would ship something no better than genomic coordinates, so it is refused")
 
-    # ---- CALIBRATION: score -> out-of-fold empirical precision ----
-    print(f"\n  CALIBRATION -- mapping score to held-out precision (never in-sample)")
-    order = np.argsort(-oof)
-    ys = yu[order]
-    prec = np.cumsum(ys) / np.arange(1, len(ys) + 1)
+    # ---- CALIBRATION, PER DISTANCE STRATUM ----
+    # A single global curve is wrong here and would ship an overstated layer. The benchmark's candidates are
+    # DISTAL-heavy (63.5% beyond 250 kb, 1.9% under 10 kb) while genome-wide candidates within a 250 kb
+    # window are PROXIMAL-heavy (22% under 10 kb, 65% at 10-100 kb). Proximal pairs score high on distance
+    # whether or not they are real, so a distal-calibrated precision applied to them overstates the layer.
+    # Precision is therefore calibrated inside distance strata, and a stratum the benchmark cannot support
+    # emits NO edges rather than edges carrying an unsupported number.
+    STRATA = [(0, 10_000, "<10 kb"), (10_000, 100_000, "10-100 kb"), (100_000, WINDOW, "100-250 kb")]
+    MIN_SUPPORT = 150
+    du = 10 ** Xu[:, 0]
+    print(f"\n  CALIBRATION -- per distance stratum, out-of-fold (never in-sample)")
+    print(f"    benchmark candidate composition vs the genome-wide window:")
     thr = np.linspace(0.05, 0.95, 19)
-    calib = []
-    for t in thr:
-        m = oof >= t
-        calib.append((float(t), float(yu[m].mean()) if m.sum() >= 20 else None, int(m.sum())))
-    print(f"    {'score>=':>8s} {'n':>7s} {'precision':>10s}")
-    for t, p, n in calib:
-        if p is not None:
-            print(f"    {t:8.2f} {n:7,d} {p:10.4f}")
-    keep_thr = next((t for t, p, n in calib if p is not None and p >= MIN_PRECISION), None)
-    if keep_thr is None:
-        raise SystemExit(f"no score threshold reaches precision {MIN_PRECISION}; refusing to write a layer "
-                         "whose edges cannot be given an honest precision")
-    print(f"    -> writing edges at score >= {keep_thr:.2f} (precision >= {MIN_PRECISION})")
+    calib = {}
+    for lo, hi, lab in STRATA:
+        sm_ = (du >= lo) & (du < hi)
+        npos = int(yu[sm_].sum())
+        print(f"    {lab:12s} benchmark n={int(sm_.sum()):5,d} pos={npos:4d} "
+              f"base rate {yu[sm_].mean() if sm_.sum() else 0:.4f}", end="")
+        if sm_.sum() < MIN_SUPPORT or npos < 15:
+            print("   <- TOO THIN; this stratum will emit no edges")
+            calib[lab] = None
+            continue
+        curve = []
+        for t in thr:
+            m = sm_ & (oof >= t)
+            if m.sum() >= 20:
+                curve.append((float(t), float(yu[m].mean()), int(m.sum())))
+        keep = next((t for t, pr_, _ in curve if pr_ >= MIN_PRECISION), None)
+        calib[lab] = {"curve": curve, "threshold": keep}
+        print(f"   -> threshold {keep if keep is not None else float('nan'):.2f} "
+              f"for precision >= {MIN_PRECISION}"
+              if keep is not None else "   <- never reaches the precision floor; emits no edges")
+    if all(v is None or v.get("threshold") is None for v in calib.values()):
+        raise SystemExit("no distance stratum can be calibrated to the precision floor; refusing to write "
+                         "a layer whose edges cannot be given an honest precision")
 
     # ---- final model on all usable benchmark pairs, then score genome-wide candidates ----
     import xgboost as xgb
@@ -245,27 +262,38 @@ def main():
             continue
         Xc = featurise(cand, peaks[cell])
         sc = mdl.predict_proba(Xc)[:, 1]
-        m = sc >= keep_thr
-        prec_of = {t: p for t, p, _ in calib if p is not None}
-        for i in np.where(m)[0]:
-            chrom, mid, t_, (g, _c) = cand[i]
-            pr = max((p for t, p in prec_of.items() if sc[i] >= t), default=MIN_PRECISION)
-            edges.append({"cell": cell, "chrom": chrom, "elem": mid, "gene": g,
-                          "dist": int(abs(mid - t_)), "score": round(float(sc[i]), 4),
-                          "precision": round(float(pr), 3), "model": MODEL_ID})
-        per_cell[cell] = {"candidates": len(cand), "edges": int(m.sum()),
-                          "frac_kept": float(m.mean())}
-        print(f"    {cell:9s} {len(cand):>9,} candidates -> {int(m.sum()):>7,} edges "
-              f"({100*m.mean():.2f}%)")
+        dc = np.array([abs(c[1] - c[2]) for c in cand], float)
+        kept = 0
+        for lo, hi, lab in STRATA:
+            cal = calib.get(lab)
+            if cal is None or cal.get("threshold") is None:
+                continue
+            prec_of = {t: pr_ for t, pr_, _ in cal["curve"]}
+            m = (dc >= lo) & (dc < hi) & (sc >= cal["threshold"])
+            for i in np.where(m)[0]:
+                chrom, mid, t_, (g, _c) = cand[i]
+                pr = max((pr_ for t, pr_ in prec_of.items() if sc[i] >= t), default=MIN_PRECISION)
+                edges.append({"cell": cell, "chrom": chrom, "elem": mid, "gene": g,
+                              "dist": int(abs(mid - t_)), "band": lab,
+                              "score": round(float(sc[i]), 4),
+                              "precision": round(float(pr), 3), "model": MODEL_ID})
+            kept += int(m.sum())
+        per_cell[cell] = {"candidates": len(cand), "edges": kept,
+                          "frac_kept": kept / max(len(cand), 1)}
+        print(f"    {cell:9s} {len(cand):>9,} candidates -> {kept:>7,} edges "
+              f"({100*kept/max(len(cand),1):.2f}%)")
 
     layer = {
         "model": MODEL_ID,
         "n_edges": len(edges),
-        "score_threshold": keep_thr,
         "min_precision": MIN_PRECISION,
+        "calibration_is_per_distance_stratum": True,
+        "strata_thresholds": {lab: (calib[lab]["threshold"] if calib.get(lab) else None)
+                              for _lo, _hi, lab in STRATA},
         "features": FEATNAMES,
         "window_bp": WINDOW,
-        "calibration": [{"score": t, "precision": p, "n": n} for t, p, n in calib if p is not None],
+        "calibration": {lab: (calib[lab]["curve"] if calib.get(lab) else None)
+                        for _lo, _hi, lab in STRATA},
         "measured_accuracy": {
             "pooled_auprc_peak_features": float(np.mean(ap)),
             "within_gene_recall_at_1": sm["r1"], "within_gene_mrr": sm["mrr"],
@@ -282,7 +310,12 @@ def main():
             "POLARITY is deliberately absent: 19.4% of validated pairs are positive-effect, and both "
             "candidate mechanisms (silencer, indirect-via-neighbour) are measured out",
             "quantitative Hi-C adds +0.0042 MRR (p 0.26) over CTCF, so these edges encode no measured 3D",
-            "scored only for cell types with a full ENCODE peak panel"],
+            "scored only for cell types with a full ENCODE peak panel",
+            "precision is calibrated WITHIN distance strata because the benchmark is distal-heavy "
+            "(63.5% beyond 250 kb, 1.9% under 10 kb) while genome-wide candidates in a 250 kb window are "
+            "proximal-heavy; a single global curve overstated precision on proximal edges",
+            "strata the benchmark cannot support emit no edges at all rather than edges carrying an "
+            "unsupported precision"],
         "per_cell": per_cell,
         "edges": edges}
     LAYER.parent.mkdir(parents=True, exist_ok=True)
