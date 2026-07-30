@@ -15814,3 +15814,69 @@ The positional-key convention is now declared rather than implicit: `cell_index`
 stored explicitly.
 
 `unknown` is representable. A zero that means "lookup failed" is not.
+
+---
+
+# Overnight, block B — `reg_perturb_k562`: the first regulatory layer that carries a sign, and transfers
+
+`colab/causal_reg.py` → `outputs/orphan/causal_reg.json`, `scratchpad/cell_reg_perturb.json.gz`
+
+The layer this sits beside, `reg`, is 612,133 curated triples with no evidence field and `sign = 0` on 91.2%
+of them. Against the bounded K562 task it added **−0.0002** held-out R², below its own degree-matched control.
+The ladder stalls at R² 0.0151 for the same reason: **nothing in it supplies a sign.**
+
+An intervention does. Replogle's genome-scale Perturb-seq measures what happened to B when A was knocked
+down, with an effect size and a direction.
+
+**The circularity that had to be avoided.** The admission benchmark's task *is* Replogle K562. A layer derived
+from that matrix and scored on it would be reporting its own training data. So the layer is built on K562 and
+validated on **RPE1** — Replogle's second arm, 247,914 cells, 2,394 perturbations, 11,485 non-targeting
+controls. Same assay, same lab, different biology.
+
+**Edges** are per-gene robust z of log fold change, |z| ≥ 5 — so an edge means *B moved more than B usually
+moves*, not *B moved*. That is deliberately the quantity the benchmark's gene-responsiveness rung already
+spends itself on, so an edge is not re-selling a rung the ladder has. **537,376 edges** written.
+
+## Transfer to RPE1
+
+2,119 shared perturbations × 7,094 shared genes = **15,032,186 testable pairs**, 216,233 of them K562 edges.
+
+| | n | mean \|z\| in RPE1 | frac \|z\|>2 |
+|---|---:|---:|---:|
+| K562 edge | 216,233 | **1.5517** | 0.2523 |
+| matched on RPE1 strength × responsiveness | 216,233 | 1.1856 | 0.1715 |
+
+Ratio **1.309×**, p ≈ 0.
+
+## Sign — and why 0.5 is the wrong null
+
+Both cell lines share a stress/proliferation axis: knock down anything essential and a stereotyped set of
+genes moves the same way in both. That alone produces sign agreement with no gene-specific regulation. So
+agreement is measured against permutations that each destroy one thing:
+
+| arm | agrees | \|z\|≥2 subset |
+|---|---:|---:|
+| **K562 edge → RPE1, same pair** | **0.6719** | **0.8248** |
+| swapped source (different perturbation, matched strength) | 0.5217 | 0.5108 |
+| swapped target (different gene, matched responsiveness) | 0.4906 | 0.4432 |
+
+The shared axis is real but **small — it buys 2.2 points**. The edge buys **+15.0 points** over it, and
+**+31.4** on the conditioned subset (82.5% vs 51.1%). Swapped-target sits at chance, which is the sanity check
+on the other control.
+
+This is the first regulatory evidence in the model with a direction that survives a change of cell type.
+
+## Recorded limits
+
+CRISPRi knocks **down**, not out, so a missing edge may be incomplete knockdown rather than absent
+regulation · **direct and indirect are not separated** — an edge is a causal consequence of perturbing the
+source, not evidence the source binds the target (ENCODE K562 TF ChIP is the intended discriminator, block C)
+· only 8,248 genes are measured, so absence of an edge to an unmeasured gene is not evidence · transfer is
+tested on RPE1 only, and edges outside the shared set are **untested rather than validated** · z is a
+within-experiment quantity and is not comparable across datasets without renormalisation.
+
+`reg` is **not overwritten**. A curated edge and a perturbational edge are different epistemic objects, and
+merging them is what produced a 612k-edge layer that cannot move a number.
+
+Every join in this module went through the block-A registry with a declared rate: K562 genes 99.8%, RPE1 genes
+99.8%, K562 perturbations 92.5%, RPE1 perturbations 97.0%.
