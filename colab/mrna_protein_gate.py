@@ -169,7 +169,11 @@ def main():
     print(f"  features: {names}   PPI degrees found for "
           f"{int((F[:,5]>0).sum()):,}/{len(genes):,} genes; ubiquitous flag on {int(F[:,6].sum()):,}")
 
-    np.savez(OUT / "_mpg_cache.npz", F=F, rho=rho, names=np.array(names))
+    # gene symbols are cached too: without them no external per-gene annotation can be joined on,
+    # and the first cache written here omitted them, which is exactly why the biology arm was empty.
+    np.savez(OUT / "_mpg_cache.npz", F=F, rho=rho, names=np.array(names),
+             genes=np.array(genes), rho_sd=np.array([np.std([v["rho"] for v in merged[g]])
+                                                     for g in genes]), n_cohorts=nco)
 
     # ---- the gate: predict rho out-of-sample ----
     print("\n  PREDICTING per-gene rho, held-out (5 random 80/20 splits)")
