@@ -263,18 +263,33 @@ def main():
             sc.append(r2_score(y[te], m.predict((X[te] - mu) / sd)))
         return float(np.mean(sc)) if sc else np.nan
 
-    # contemporaneous: does ATAC(t) explain RNA(t) at all? (the state-marker arm)
-    Xc, yc, chc = [], [], []
-    for ti in range(T):
-        Xc.append(np.column_stack([LL[:, ti], LRnd[:, ti]]))
-        yc.append(LR[:, ti]); chc.append(chrom)
-    Xc, yc, chc = np.vstack(Xc), np.concatenate(yc), np.concatenate(chc)
-    r2_none = loco_r2(np.zeros((len(yc), 1)), yc, chc)
-    r2_cont = loco_r2(Xc[:, :1], yc, chc)
-    d_cont = r2_cont - r2_none
-    print(f"\n  CONTEMPORANEOUS: ATAC(t) -> RNA(t)   R2 {r2_cont:+.4f} vs intercept {r2_none:+.4f}"
-          f"   dR2 {d_cont:+.4f}")
-    print(f"    ^ if this is large while the lagged gains below are ~0, accessibility is a STATE MARKER")
+    # CONTEMPORANEOUS, MEASURED WITHIN GENE ACROSS TIME. A first version pooled genes and regressed log RNA
+    # on one distal peak's signal held out by chromosome; both that arm and its intercept-only baseline
+    # returned NEGATIVE held-out R2 (-0.0193 vs -0.0192), because a single distal peak cannot predict the
+    # absolute expression level of genes on a chromosome it never saw. The number was uninterpretable and
+    # the forecast advantage built on it was meaningless.
+    #
+    # "State marker" means: within a gene, does accessibility track expression as time moves? That is a
+    # per-gene correlation across the 11 timepoints, and the matched non-GR peak is the control.
+    def within_gene_corr(A):
+        out = []
+        for gi in range(len(LR)):
+            a, b = A[gi], LR[gi]
+            if a.std() > 0 and b.std() > 0:
+                out.append(float(np.corrcoef(a, b)[0, 1]))
+        return np.array(out)
+    c_link = within_gene_corr(LL)
+    c_rand = within_gene_corr(LRnd)
+    d_cont = float(np.mean(c_link ** 2)) - float(np.mean(c_rand ** 2))
+    from scipy import stats as _s
+    pw = _s.wilcoxon(c_link[:min(len(c_link), len(c_rand))] ** 2,
+                     c_rand[:min(len(c_link), len(c_rand))] ** 2).pvalue if len(c_link) > 20 else np.nan
+    print(f"\n  CONTEMPORANEOUS, within gene across the {T} timepoints ({len(c_link):,} genes)")
+    print(f"    GR-bound peak   mean r {np.mean(c_link):+.4f}   mean r2 {np.mean(c_link**2):.4f}")
+    print(f"    matched non-GR  mean r {np.mean(c_rand):+.4f}   mean r2 {np.mean(c_rand**2):.4f}")
+    print(f"    difference in mean r2: {d_cont:+.4f}   (paired Wilcoxon p {pw:.3g})")
+    print(f"    ^ if this is clearly positive while the lagged gains below are ~0, accessibility is a "
+          f"STATE MARKER and not a forecasting variable")
 
     lags = sorted({round(shared[j] - shared[i], 2)
                    for i in range(T) for j in range(i + 1, T)})
@@ -312,7 +327,11 @@ def main():
     # direction, at the lag with the largest link gain
     best_tau = max(curve, key=lambda k: curve[k]["link_gain"]) if curve else None
     R = {"shared_timepoints": shared, "n_genes": int(len(LR)), "gr_peaks": int(ngr),
-         "contemporaneous_gain": d_cont, "curve": curve, "best_tau": best_tau,
+         "contemporaneous_within_gene_r2_gain": d_cont,
+         "contemporaneous_link_mean_r": float(np.mean(c_link)),
+         "contemporaneous_rand_mean_r": float(np.mean(c_rand)),
+         "contemporaneous_wilcoxon_p": float(pw) if np.isfinite(pw) else None,
+         "curve": curve, "best_tau": best_tau,
          "window": WINDOW, "min_tpm": MIN_TPM,
          "caveat": "one replicate per timepoint in most of this series; no replicate variance estimable"}
     if best_tau:
@@ -361,16 +380,18 @@ def main():
                  f"non-GR peak and {best['link_gain']-best['permuted_gain']:+.4f} over permuted time, but the "
                  f"lag curve is not clearly peaked (best {best['link_gain']:+.4f} vs median "
                  f"{np.median(gains):+.4f}), so a specific temporal window is not established.")
-        elif d_cont > 0.02 and max(gains) < 0.01:
-            v = (f"ACCESSIBILITY IS A STATE MARKER, NOT A FORECASTER. It explains CURRENT expression "
-                 f"({d_cont:+.4f} dR2 contemporaneous) but adds at most {max(gains):+.4f} to future change at "
-                 f"ANY lag, with forecast advantage {best['forecast_adv']:+.4f}. This is the distinction the "
-                 f"pseudotime design could not draw, and it is the same conclusion by a sharper route: "
-                 f"accessibility marks where regulation is possible, not when it happens.")
+        elif d_cont > 0.01 and max(gains) < 0.01:
+            v = (f"ACCESSIBILITY IS A STATE MARKER, NOT A FORECASTER. Within a gene across 11 timepoints its "
+                 f"GR-bound enhancer tracks expression better than a matched non-GR peak "
+                 f"(mean r2 difference {d_cont:+.4f}, Wilcoxon p {pw:.3g}), yet it adds at most "
+                 f"{max(gains):+.4f} to FUTURE change at any lag. This is the distinction the pseudotime "
+                 f"design could not draw: accessibility marks where regulation is possible, not when it "
+                 f"happens.")
         else:
             v = (f"NULL ACROSS ALL LAGS. Best gain {best['link_gain']:+.4f} at tau={best_tau} h, "
                  f"link-minus-random {best['link_minus_rand']:+.4f}, permuted-time gain "
-                 f"{best['permuted_gain']:+.4f}, contemporaneous {d_cont:+.4f}. Real elapsed time, GR-bound "
+                 f"{best['permuted_gain']:+.4f}, within-gene contemporaneous advantage {d_cont:+.4f}. "
+                 f"Real elapsed time, GR-bound "
                  f"prespecified links and a full lag curve reproduce the pseudotime null, which removes "
                  f"temporal resolution and link quality as explanations for it.")
     R["verdict"] = v
