@@ -15936,3 +15936,68 @@ repeated draw is not optional.
 **What this buys the model.** Causal edges can now be tiered by directness, and the tier is validated rather
 than assumed: `direct` edges carry both a larger and a more reliably-signed effect in a cell type they were
 not built from.
+
+---
+
+# Overnight, block D — K562-matched protein, and a hard number for the arrow the chain cannot measure
+
+`colab/k562_protein.py` → `outputs/orphan/k562_protein.json`, `scratchpad/cell_k562_protein.json.gz`
+
+The cell object's `ppm` is 16,015 genes of protein abundance of unstated provenance — a generic human
+consensus, not a measurement of the cell being modelled. It has been the abundance covariate in **every
+matched analysis in this project**, including the one where abundance proved the strongest confound
+(p 6e−31). PaxDb carries `9606-iBAQ_K562_Geiger_2012`: **7,031 proteins measured in K562 itself** — priority 1
+in the dataset map, not the PaxDb fallback tier. Registry join via symbol, 98.4%, recorded `via=symbol`
+because that is the weakest namespace the source file supports.
+
+## Q1 — how wrong was generic?
+
+Rank correlation **0.655** over 6,205 shared genes. Spearman is the fair statistic here and Pearson is not:
+`ppm` is parts-per-million from an integrated consensus, iBAQ is an intensity-based within-sample measure, so
+a Pearson-on-logs (0.518) is penalised by the unit mismatch on top of any real disagreement. Leading with the
+Pearson R² would have overstated the case.
+
+Broad ordering roughly right, detail materially wrong: **25% of genes shift more than a quarter of the
+abundance range**, and the disagreement is *structured*, not random —
+
+- most **over**-stated by generic: `CFB`, `H2BC14`, `H2AC20`, `CRYAB`, `H2AC12`, `H2AC14` — histones
+- most **under**-stated by generic: `ALG13`, `CCDC14`, `EP300`, `TCF3`, `BRAP`, `TAF8` — regulatory proteins
+
+Under-stating EP300 and TCF3 in a cell where they are being used as regulators is exactly the kind of error
+that matters.
+
+## Q2 — mRNA explains 16% of protein level in K562
+
+r 0.399 (Spearman 0.501) over 5,874 genes with both measured in this cell type. Consistent with the
+literature range for a single cell type.
+
+This is a bound on the chain's missing arrow. `perturbation → ΔRNA → Δprotein → … → phenotype` cannot be
+validated because no K562 perturbation proteomics exists at this scale, but the static relationship says a
+model that sees only ΔRNA is working with **at most ~16%** of protein — and that is generous, since a delta
+is harder to predict than a level.
+
+## Q3 — coverage is not missing at random
+
+37.7% of genes measured, and steeply abundance-dependent:
+
+| generic-abundance quintile | n | fraction measured in K562 |
+|---|---:|---:|
+| q0 (lowest) | 3,889 | **0.022** |
+| q1 | 3,156 | 0.133 |
+| q2 | 3,145 | 0.418 |
+| q3 | 3,151 | 0.650 |
+| q4 (highest) | 3,151 | **0.746** |
+
+Measured genes carry mean dep_frac **0.236** against **0.017** for unmeasured (MWU p ≈ 0). So the measured set
+is enriched for essential, abundant proteins. **Absence is unknown, never zero** — and that is how it is
+stored.
+
+## Recorded limits
+
+One study, one lab, one growth condition, with medium/density/passage unrecorded · iBAQ is a within-sample
+relative measure and is not comparable across datasets without renormalisation · joined by gene symbol, the
+weakest key the file offers · measured in **unperturbed** K562, so it is a *state*, not a response — it says
+nothing about how protein moves after a perturbation, which is the arrow actually missing.
+
+Generic and K562-measured values are stored as **separate fields with a `measured` flag**. Nothing is
+substituted silently.
