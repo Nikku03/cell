@@ -11,7 +11,10 @@ WHAT THE QUANTITY LOOKS LIKE, checked before any model:
 
     820 significant pairs, |EffectSize| quartiles 0.0735 / 0.1165 / 0.2292
     159 of 820 (19.4%) have EffectSize > 0 -- silencing the element RAISES the gene, i.e. it is REPRESSIVE
-    |EffectSize| vs power       Spearman -0.058   (so magnitude is not a detection-power artefact)
+    |EffectSize| vs power       Spearman -0.058   (MARGINALLY weak -- but see below: the power
+                                                  ARM reaches R2 +0.0881 while every biological
+                                                  arm is net-negative, so the marginal
+                                                  correlation badly understated the confound)
     |EffectSize| vs distance    Spearman -0.120   (closer elements act slightly harder, weakly)
 
 THREE QUESTIONS

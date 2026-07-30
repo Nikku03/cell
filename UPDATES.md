@@ -14820,3 +14820,85 @@ multiome and real-time stimulus response — with prespecified controls, and bot
 test is the one that does not depend on observational forecasting at all: **Stage 2, do(ATAC_e ↓) → ΔRNA_g.**
 Observational predictability is neither necessary nor sufficient for perturbational causality, so a null here
 does not predict a null there.
+
+---
+
+# Stage 2 — do(enhancer) → ΔRNA, on the `EffectSize` column this project never used
+
+`colab/effectsize.py` · `outputs/orphan/effectsize.json`
+
+Observational predictability is neither necessary nor sufficient for perturbational causality, so the two
+observational nulls do not settle the causal question. The perturbation was already on disk: the benchmark
+ships **`EffectSize`**, the measured change in the gene when the element is silenced. Every result in this
+project until now discarded it and used only the binary `Significant` flag.
+
+**820 causal pairs.** |EffectSize| quartiles 0.0735 / 0.1165 / 0.2292. And **159 of 820 (19.4%) are
+repressive** — silencing the element *raises* the gene. The binary label erases that subclass entirely.
+
+## 1. Magnitude is not predictable from biology — but is from detection power
+
+| arm | R² | permuted | net |
+|---|---:|---:|---:|
+| distance only | −0.0112 | −0.0025 | −0.0087 |
+| +activity | −0.0098 | −0.0027 | −0.0071 |
+| +CTCF | −0.0097 | −0.0037 | −0.0060 |
+| +competition (full) | −0.0116 | −0.0013 | −0.0103 |
+| **CTRL +power as feature** | **+0.0881** | −0.0047 | **+0.0928** |
+
+**Every biological arm is net-negative.** The only arm that predicts effect magnitude is the one containing
+detection power — a technical variable. So in this benchmark, *how hard an enhancer appears to act is
+substantially a function of how well the experiment could see it*, and regulatory features carry no
+independent information about magnitude.
+
+**The marginal correlation of |EffectSize| with power is only −0.058**, so this was invisible until the arm was
+run. That vindicates including it: the earlier mRNA–protein gate was nearly derailed by exactly this kind of
+unexamined assay-quality confound, and a docstring line in this module asserting "magnitude is not a
+detection-power artefact" on the strength of that −0.058 has been corrected, since the run disproved it.
+
+## 2. Sign IS predictable — the first solid positive in several rounds
+
+| arm | AUPRC | AUROC | permuted AUPRC |
+|---|---:|---:|---:|
+| distance only | 0.5152 | 0.8038 | 0.1865 |
+| +activity | 0.6339 | 0.8583 | 0.1775 |
+| **+CTCF** | **0.6507** | **0.8584** | 0.1737 |
+| +competition (full) | 0.6274 | 0.8548 | 0.1826 |
+
+Against a base rate of 0.194 that is a **3.36× lift**, AUROC 0.858, permuted control 0.174. **Activating and
+repressive elements are distinguishable.** Note that calling everything activating scores 80.6% "accuracy" and
+is useless, which is why this is reported as AUPRC against the base rate.
+
+This is a real subclass with a real signal, and it exists only because the quantitative column was used. Worth
+saying plainly: of everything tested in the last several rounds — differential activity, pair compatibility,
+residual Hi-C, sequence embeddings, polymer simulation, pseudotime forecasting, real-time lag curves — this is
+the one that cleared its controls decisively.
+
+## 3. The edge-finder does not rank strength
+
+The existence classifier's own out-of-fold score vs |EffectSize| on the same pairs:
+
+| | n | Spearman | p |
+|---|---:|---:|---:|
+| pooled | 820 | +0.0863 | 0.014 |
+| GM12878 | 21 | +0.6558 | 0.001 |
+| WTC11 | 35 | +0.4759 | 0.004 |
+| HCT116 | 40 | +0.1043 | 0.52 |
+| **K562** | **717** | **+0.0488** | **0.19** |
+
+The pooled significance is carried by two cell types with n = 21 and n = 35. Where the sample is large, there
+is no ranking ability. **The model finds edges without ordering them by how hard they act** — which is the
+specific limitation that had been argued about the ABC formulation, now measured rather than asserted.
+
+## What Stage 2 changes
+
+The causal question is not a null. It splits:
+
+- **existence** — predictable (the whole project so far)
+- **sign** — predictable, 3.36× lift, and previously invisible
+- **magnitude** — not predictable from biology, and confounded by detection power in this benchmark
+
+That last point is a **benchmark-construction finding**, not a model failure, and it means quantitative
+effect-size prediction cannot be honestly benchmarked on EPCrispr as it stands without conditioning on power.
+
+n = 820 with chromosome-held-out folds, so all of this is a small-sample result and each number is reported
+beside its permuted control.
