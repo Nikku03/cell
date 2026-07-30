@@ -15325,3 +15325,74 @@ The directional test first called any non-matching trend "OPPOSITE", turning *no
 gradient* — a materially stronger and different claim, and it drove the verdict to CONTRADICTED. OPPOSITE is
 now reserved for a trend that actually runs the other way. The corrected reading is "unsupported", not
 "refuted", and the distinction matters for what the hypothesis is still allowed to claim.
+
+---
+
+# The competition block audited — it is mostly group-size leakage, and it broke the shipped layer
+
+`colab/competition_audit.py` · `outputs/orphan/competition_audit.json`
+
+Competition was the largest leave-one-out block in every distance stratum (+0.0620 to +0.1142 AUROC), bigger
+than element activity, promoter occupancy and CTCF combined, and had never been audited. Four threats tested;
+three fired.
+
+## 1. Group-size leakage — confirmed
+
+`n_candidates` **alone** scores **AUROC 0.2733** (|0.2733 − 0.5| = 0.227, strongly informative and inverted).
+Group size vs group positive *rate*: Spearman −0.0716, p 4e-4. This is arithmetic, not biology — a group with
+1 candidate and 1 positive has rate 1.0; a group with 50 candidates and 1 positive has rate 0.02. The feature
+tells the model the per-group base rate.
+
+## 2. The gain vanishes exactly where competition becomes meaningful
+
+| groups with ≥ n candidates | pairs | positives | competition worth |
+|---|---:|---:|---:|
+| ≥1 | 14,659 | 813 | +0.0836 |
+| ≥2 | 13,683 | 581 | +0.0812 |
+| ≥3 | 12,875 | 469 | +0.0623 |
+| **≥5** | 11,527 | 348 | **−0.0068** |
+
+In groups with five or more candidates — the only ones where "competition" is a coherent concept — the block
+is worth **nothing**. The entire gain comes from small groups, i.e. from group size.
+
+## 3. Only 16% of the gain is actually ordering
+
+| | AUPRC |
+|---|---:|
+| real competition | 0.5322 |
+| shuffled **within** group (ordering destroyed, marginals kept) | 0.5186 |
+| shuffled **across** groups (everything destroyed) | 0.4432 |
+| no block at all | 0.4486 |
+
+Destroying the within-group ordering costs only **−0.0135**. The other **+0.0700** survives having the
+ordering destroyed — so it is group-level information, not competition between elements.
+
+## 4. The shipped edge layer is defective — this is the serious one
+
+Every competition feature is defined relative to a candidate set. The benchmark's is *"elements someone chose
+to test"*; `eg_layer.py`'s genome-wide scoring is *"every accessible peak in a 250 kb window"*. The features
+move enormously between the two:
+
+| feature | benchmark median | genome-wide median | median shift |
+|---|---:|---:|---:|
+| n_candidates | 19 | 44 | 35 |
+| dist_rank | 8 | 33 | 23 |
+| dist_excess | 0.000 | 0.512 | 0.526 |
+
+Both definitions work when training and scoring **match** (0.5322 and 0.5198). But the shipped layer trains on
+one and scores the other:
+
+**TRAIN benchmark → SCORE genome-wide: AUPRC 0.4120, a −0.1201 collapse** — larger than the entire competition
+gain, and *below* the no-competition baseline of 0.4486.
+
+So `cell_eg_edges.json.gz` as pushed carries scores from a model applied to a feature distribution it never
+saw. **Its calibrated precisions are not trustworthy and the layer must be rebuilt.** The composition check I
+ran before shipping caught the *distance* mismatch and led to per-stratum calibration; it did not catch this
+one, because the competition features are not a function of distance and nothing in the pipeline compared
+their distributions across the two candidate definitions.
+
+## What this retracts
+
+The **+0.0278 competition gain** recorded when the block was first built is mostly group-size leakage, not
+enhancer competition. The earlier reading — "which enhancer wins is governed by its rivals for the same
+promoter" — is **not supported**: at ≥5 candidates, rivals carry nothing.
