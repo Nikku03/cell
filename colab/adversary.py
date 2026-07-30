@@ -13,14 +13,19 @@ and neither has been:
     promoter and its candidate enhancers, WHICH one regulates it. That is a ranking problem inside a gene, and
     a global average-precision can look strong while the within-gene ranking is near random.
 
-THE LEAKAGE QUESTION, SETTLED RATHER THAN ASSERTED. A reasonable objection is that gene identity leaks: if a
-gene appears in training and test, a model can memorise its positive rate, and `missed.py` found
-`other_positives_same_gene` to be the strongest single discriminator of missed positives (p 3.6e-19). But a
-gene has ONE TSS on ONE chromosome, so chromosome-grouped folds are automatically gene-disjoint -- the
-objection is already answered by the existing CV scheme. Rather than assert that, this module demonstrates it:
-gene identity is offered as a feature under BOTH random folds and chromosome folds. Under random folds it
-should help (that is leakage). Under chromosome folds it should do nothing. If it helps under chromosome
-folds, something is wrong with the fold construction and every number this project has reported is suspect.
+THE LEAKAGE QUESTION IS MEASURED, NOT INFERRED FROM A GAIN. A reasonable objection is that gene identity
+leaks: if a gene appears in training and test, a model can memorise its positive rate, and `missed.py` found
+`other_positives_same_gene` to be the strongest single discriminator of missed positives (p 3.6e-19). The
+check is direct -- count genes that appear in more than one fold. Result: 0 of 2,344 under chromosome
+grouping, 1,291 (55%) under random. So gene-level memorisation is impossible under the CV scheme already in
+use.
+
+A first version of this module instead inferred leakage from the fact that gene identity still bought +0.0209
+under chromosome folds, and printed that every number in the project was suspect. That inference was invalid.
+A gain does not imply memorisation: the alphabetical gene index correlates with per-gene positive rate at
+Spearman -0.118, because gene families cluster alphabetically (HLA-*, RPL*, HIST*) and share regulatory
+architecture. It is an uninterpretable proxy that does not belong in a real model, and it is not a validity
+threat.
 
 WHAT THIS MODULE DOES NOT CLAIM. It does not test whether Hi-C helps, whether activity features help, or
 whether the model is good. It establishes the FLOOR that any biological claim has to clear, and the metric
@@ -191,23 +196,56 @@ def main():
         R[scheme]["gene_identity_gain"] = float(gl)
         print(f"    gene identity adds {gl:+.4f}")
 
-    # ---- the leakage verdict ----
+    # ---- the leakage verdict, MEASURED not inferred ----
+    # A first version inferred leakage from the fact that gene identity still bought +0.0209 under
+    # chromosome folds. That inference is invalid: a gain does not imply memorisation, and the question
+    # "can a test gene have been seen in training" is directly checkable. So it is checked.
+    from scipy import stats as _st
+    gsym = np.array([r["measuredGeneSymbol"] for r in rows])
+    span = {}
+    for scheme, f in (("chromosome-grouped", folds_chrom(ch, 0)), ("random", folds_random(len(y), 0))):
+        d = {}
+        for g_, f_ in zip(gsym, f):
+            d.setdefault(g_, set()).add(int(f_))
+        span[scheme] = sum(1 for v in d.values() if len(v) > 1)
+    ngene = len(set(gsym))
     lc = R["chromosome-grouped"]["gene_identity_gain"]
     lr = R["random"]["gene_identity_gain"]
-    print("\n  LEAKAGE AUDIT -- does gene identity buy anything it should not?")
-    print(f"    under random folds        {lr:+.4f}   <- a gene can appear in train and test; "
-          f"memorising its positive rate is possible")
-    print(f"    under chromosome folds    {lc:+.4f}   <- a gene has one TSS on one chromosome, so folds "
-          f"are gene-disjoint by construction")
-    if lc > 0.01:
-        print("    ** WARNING: gene identity helps even under chromosome folds. The folds are not "
-              "gene-disjoint and every number this project reports is suspect.")
-        R["leakage_verdict"] = "FAIL -- chromosome folds are not gene-disjoint"
+    print("\n  LEAKAGE AUDIT -- measured directly: can a test gene have been seen in training?")
+    print(f"    genes spanning >1 fold, chromosome-grouped: {span['chromosome-grouped']:,}/{ngene:,} "
+          f"({100*span['chromosome-grouped']/ngene:.2f}%)")
+    print(f"    genes spanning >1 fold, random:             {span['random']:,}/{ngene:,} "
+          f"({100*span['random']/ngene:.2f}%)")
+    ok = span["chromosome-grouped"] == 0
+    # if the folds are clean, the residual gain from gene identity is a proxy effect, not memorisation.
+    # Alphabetical index clusters gene families (HLA-*, RPL*, HIST*), which share regulatory architecture.
+    pr = {}
+    for g_, y_ in zip(gsym, y):
+        pr.setdefault(g_, []).append(y_)
+    rate = np.array([np.mean(pr[g_]) for g_ in gsym])
+    rho = float(_st.spearmanr(gid.ravel(), rate)[0])
+    if not ok:
+        R["leakage_verdict"] = (f"FAIL -- {span['chromosome-grouped']} genes span folds under "
+                                f"chromosome grouping; the folds are not gene-disjoint")
     else:
-        R["leakage_verdict"] = (f"PASS -- gene identity is worth {lc:+.4f} under chromosome folds "
-                                f"against {lr:+.4f} under random folds, so the existing CV scheme "
-                                f"already blocks gene-level memorisation")
+        R["leakage_verdict"] = (
+            f"PASS -- 0 of {ngene:,} genes span a chromosome-grouped fold, against "
+            f"{span['random']:,} ({100*span['random']/ngene:.0f}%) under random folds. Gene-level "
+            f"memorisation is impossible under the CV scheme this project already uses. Gene identity "
+            f"still buys {lc:+.4f} there, but that is not leakage: the alphabetical index correlates with "
+            f"per-gene positive rate at Spearman {rho:+.3f} because gene families cluster alphabetically "
+            f"and share regulatory architecture. It is an uninterpretable proxy and does not belong in a "
+            f"real model, but it does not threaten validity.")
+    R["gene_fold_span"] = span
+    R["gene_index_vs_positive_rate_spearman"] = rho
     print(f"    -> {R['leakage_verdict']}")
+    print(f"\n  FOLD CONSTRUCTION IS WORTH MORE THAN MOST FEATURES: coordinates-only AUPRC is "
+          f"{R['random']['coordinates only']['auprc']:.4f} under random folds and "
+          f"{R['chromosome-grouped']['coordinates only']['auprc']:.4f} under chromosome folds -- "
+          f"a {R['random']['coordinates only']['auprc']-R['chromosome-grouped']['coordinates only']['auprc']:+.4f} "
+          f"inflation from the split alone, with no change in features.")
+    R["random_fold_inflation"] = float(R["random"]["coordinates only"]["auprc"]
+                                       - R["chromosome-grouped"]["coordinates only"]["auprc"])
 
     # ---- the floor ----
     floor = R["chromosome-grouped"]["coordinates only"]
