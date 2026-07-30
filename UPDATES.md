@@ -14570,3 +14570,65 @@ rounds — sequence embeddings +0.0054 (z 1.63), polymer simulation NO-GO agains
 the pattern is consistent: **the model's remaining headroom is not in features.** It is in the 279 evaluable
 gene groups, the 87% K562 concentration of positives, and the 243 underpowered positives. Those are label
 problems, and no feature fixes them.
+
+---
+
+# Stage 1 of the dynamic model — accessibility does not forecast expression change
+
+`colab/dynamic_stage1.py` · `outputs/orphan/dynamic_stage1.json`
+
+## Data obtained
+
+NeurIPS 2021 BMMC multiome (GSE194122, 2.9 GB gz → 3.1 GB h5ad): **69,249 cells with 13,431 genes and
+116,490 ATAC peaks measured in the SAME cells**, 22 cell types, 10 donors, 4 sites, and both
+`ATAC_pseudotime_order` and `GEX_pseudotime_order`. Same-cell pairing is what makes this a real test rather
+than a cross-dataset join. (Required freeing ~5 GB — the container hit 97% disk; the pip/HF cache and the raw
+`.hic` files went, since the coolers were already built.)
+
+## The single most instructive number
+
+Same data, same features, same folds — only the target changes:
+
+| target | autoregressive floor R² | gain from accessibility |
+|---|---:|---:|
+| **level** log RNA(t+1) | **0.8867** | +0.0000 |
+| **delta** log RNA(t+1) − log RNA(t) | **0.0008** | +0.0005 |
+
+Predicting the *level* gives R² 0.887 and looks like a triumph; it is almost entirely RNA(t) predicting
+itself, because adjacent pseudotime bins are nearly identical (delta sd 0.083 vs level sd 0.264). Predicting
+the *change* — the quantity a dynamic model actually claims to know — leaves R² **0.0013 total**. A first
+version of this module predicted the level and would have reported a meaningless 0.887.
+
+## All three controls fire
+
+| control | result |
+|---|---|
+| autoregressive floor | delta R² 0.0008 → accessibility reaches 0.0013. **0.1% of variance.** |
+| **linked vs distance-matched random peak** | **−0.0000** — the linked enhancer does *exactly* as well as a random peak the same distance away |
+| direction asymmetry | **+0.0002** (forward +0.0004, reverse +0.0002) — no ordering |
+
+The linked-minus-random number is the one that matters: whatever tiny predictability exists is **regional
+co-accessibility, not a specific enhancer–gene link**. Without that control, +0.0005 might have been written
+up as a dynamic signal.
+
+Both orderings agree. `GEX_pseudotime_order` is derived *from expression*, so ordering by it and predicting
+future expression is partly definitional — `ATAC_pseudotime_order` was used for the verdict and the GEX
+ordering kept as a labelled comparison. They give the same answer.
+
+## Verdict
+
+**No temporal ordering, and no enhancer specificity, at this resolution.** Accessibility predicts future
+expression change no better than a random nearby peak, and no better than expression predicts future
+accessibility. On this trajectory the two modalities move together rather than one leading.
+
+## Limits, stated
+
+Pseudotime is not time — one snapshot of differentiation, so t is trajectory position, not a clock. Only
+**5 of 10 donors** cleared the per-bin cell minimum, so the donor-held-out CV has 5 folds. Pseudobulk at 20
+bins per donor may simply be too coarse to see a lead–lag that exists at minutes; a real stimulus time course
+(the A549 dexamethasone series) has actual clock time and would test the same claim without pseudotime's
+circularity. That is the honest next version, not a different model.
+
+**Stage 2 (Multiome Perturb-seq) and Stage 3 (time-resolved 3D) are not attempted.** Stage 1 was supposed to
+establish that the epigenetics→transcription link is forecastable before causal perturbation or dynamic
+contact were layered on top. It did not, so those stages would be building on an unmeasured foundation.
