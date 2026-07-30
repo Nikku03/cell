@@ -193,10 +193,18 @@ def main():
     print("    non-zero fraction: " + ", ".join(f"{nm} {f:.2f}" for nm, f in nz))
 
     BASE = np.hstack([d["D"], d["A"], d["C"], d["P"]])
+    # the cell-ID arm is the control that decides how to READ a pooled gain: if adding a bare cell-type
+    # index buys as much as the differential block, the block is encoding cell identity, not specificity.
+    cellid = np.array([sorted(set(ct)).index(c) for c in ct], float).reshape(-1, 1)
+    compat = DF[:, [dnames.index("ep_spearman_xcell"), dnames.index("ep_sign_concord")]]
+    diffonly = DF[:, [j for j, nm in enumerate(dnames)
+                      if nm not in ("ep_spearman_xcell", "ep_sign_concord")]]
     ARMS = {"M3 baseline": BASE,
-            "M4 +differential": np.hstack([BASE, DF]),
-            "M4b differential only": np.hstack([d["D"], DF]),
-            "M4c +shuffled differential": None}
+            "M4 +differential": np.hstack([BASE, diffonly]),
+            "M4-compat +LevelA only": np.hstack([BASE, compat]),
+            "M4 +diff +compat": np.hstack([BASE, DF]),
+            "CTRL +cell-type ID": np.hstack([BASE, cellid]),
+            "CTRL +shuffled diff": None}
     groups = groups_of(key, y)
     print(f"  {len(groups)} evaluable gene groups\n")
 
@@ -207,7 +215,7 @@ def main():
     base_per, dist_per = None, None
     rng = np.random.default_rng(0)
     for aname in ARMS:
-        if aname == "M4c +shuffled differential":
+        if aname == "CTRL +shuffled diff":
             X = np.hstack([BASE, DF[rng.permutation(n)]])
         else:
             X = ARMS[aname]
@@ -269,9 +277,8 @@ def main():
     # ---- defer-to-distance gate ----
     # threshold picked INSIDE the training folds; choosing it on all data would be fitting the test set
     print(f"\n  DEFER-TO-DISTANCE GATE -- blend toward distance when the nearest candidate is unambiguous")
-    best = "M4 +differential" if R["arms"]["M4 +differential"]["mrr"] >= R["arms"]["M3 baseline"]["mrr"] \
-        else "M3 baseline"
-    Xb = np.hstack([BASE, DF]) if best == "M4 +differential" else BASE
+    best = "M3 baseline"          # gate the BASELINE: the differential block is not carrying ranking
+    Xb = BASE
     gate_rows = []
     for s in SEEDS:
         f = folds_chrom(ch, s)
@@ -299,16 +306,37 @@ def main():
                  "d_r1": gs["r1"] - bs["r1"], "d_mrr": gs["mrr"] - bs["mrr"]}
 
     print("\n" + "=" * 100)
-    m4, m3 = R["arms"]["M4 +differential"], R["arms"]["M3 baseline"]
-    sh = R["arms"]["M4c +shuffled differential"]
-    real = m4["mrr"] - m3["mrr"]
-    fake = sh["mrr"] - m3["mrr"]
-    print(f"  differential over baseline: MRR {real:+.4f}, shuffled control {fake:+.4f}, "
-          f"net {real-fake:+.4f}")
-    R["verdict"] = (f"differential MRR {real:+.4f} vs shuffled {fake:+.4f} (net {real-fake:+.4f}); "
-                    f"LOCO macro {R.get('loco', {}).get('macro_delta', float('nan')):+.4f}; "
-                    f"defer gate {R['gate']['d_r1']:+.4f} R@1")
-    print(f"  {R['verdict']}")
+    m3 = R["arms"]["M3 baseline"]
+    m4 = R["arms"]["M4 +differential"]
+    cm = R["arms"]["M4-compat +LevelA only"]
+    cid = R["arms"]["CTRL +cell-type ID"]
+    sh = R["arms"]["CTRL +shuffled diff"]
+    lm = R.get("loco", {}).get("macro_delta", float("nan"))
+    # THE EFFECT SIZE IS THE RAW DELTA vs baseline, not delta-minus-shuffled. Shuffling a 12-column block
+    # DEGRADES the model, so subtracting it credits the block for damage its shuffled twin does. That trap
+    # already inflated one verdict in this project by a factor of two.
+    print(f"\n  RAW DELTAS vs M3 baseline (the effect size), ranking first:")
+    for nm, a in (("+differential", m4), ("+Level A compat", cm), ("+cell-type ID", cid),
+                  ("+shuffled diff", sh)):
+        print(f"    {nm:18s} pooled {a['pooled_auprc']-m3['pooled_auprc']:+.4f}   "
+              f"R@1 {a['r1']-m3['r1']:+.4f}   MRR {a['mrr']-m3['mrr']:+.4f}")
+    print(f"    LOCO macro (differential) {lm:+.4f}")
+    dpool = m4["pooled_auprc"] - m3["pooled_auprc"]
+    cpool = cid["pooled_auprc"] - m3["pooled_auprc"]
+    if m4["mrr"] - m3["mrr"] < 0.005 and lm < 0:
+        R["verdict"] = (
+            f"DIFFERENTIAL FEATURES REJECTED. Pooled AUPRC rises {dpool:+.4f} but ranking does not move "
+            f"(MRR {m4['mrr']-m3['mrr']:+.4f}, R@1 {m4['r1']-m3['r1']:+.4f}) and LOCO macro FALLS {lm:+.4f}. "
+            f"A bare cell-type index buys {cpool:+.4f} pooled on its own, so the pooled gain is consistent "
+            f"with encoding cell identity rather than cell specificity. Pooled-up / transfer-down is the "
+            f"signature of fitting the cell, and ranking is the metric that matters.")
+    else:
+        R["verdict"] = (f"differential: pooled {dpool:+.4f}, MRR {m4['mrr']-m3['mrr']:+.4f}, "
+                        f"LOCO {lm:+.4f}; cell-ID control {cpool:+.4f} pooled")
+    R["raw_deltas"] = {nm: {"pooled": a["pooled_auprc"]-m3["pooled_auprc"],
+                            "r1": a["r1"]-m3["r1"], "mrr": a["mrr"]-m3["mrr"]}
+                       for nm, a in (("differential", m4), ("compat", cm), ("cellid", cid), ("shuf", sh))}
+    print(f"\n  {R['verdict']}")
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump(R, open(OUT / "differential.json", "w"), indent=1, default=float)
     print(f"\n  -> {OUT/'differential.json'}")
