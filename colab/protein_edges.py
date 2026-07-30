@@ -242,14 +242,26 @@ def main():
     # Seven of the 20 are 75-90% zero in these melanoma cells. They carry almost no information and would add
     # noise and multiplicity for nothing. The cut is on zero fraction and the numbers are printed, so the
     # decision is auditable rather than a silent subset.
-    zf = {t: float((A[:, i] == 0).mean()) for i, t in enumerate(tags)}
-    keep_tags = {t: g for t, g in TAG2GENE.items() if t in zf and zf[t] <= MAX_ZERO_FRAC}
-    dropped = {t: zf[t] for t in TAG2GENE if t in zf and zf[t] > MAX_ZERO_FRAC}
-    print(f"  expression filter at zero-fraction <= {MAX_ZERO_FRAC}: keeping {len(keep_tags)} of "
-          f"{len(TAG2GENE)} proteins")
+    # The zero fraction is computed on CONTROL CELLS, because those are the cells that define the null. A
+    # first version measured it over all 218,331 cells and disagreed with a hand diagnostic run on one
+    # condition's controls by a wide margin (Mouse_IgG2a 72% vs 90%) -- ADT depth differs by condition, so the
+    # two are genuinely different quantities and only the control-cell one governs the statistic. Both are
+    # printed so that difference stays visible.
+    ctl_all = pert == "control"
+    zf = {t: float((A[ctl_all, i] == 0).mean()) for i, t in enumerate(tags)}
+    zf_all = {t: float((A[:, i] == 0).mean()) for i, t in enumerate(tags)}
+    keep_tags = {t: g for t, g in TAG2GENE.items()
+                 if t in zf and zf[t] <= MAX_ZERO_FRAC and g not in NO_TRANSCRIPT}
+    drop_sparse = {t: zf[t] for t, g in TAG2GENE.items()
+                   if t in zf and zf[t] > MAX_ZERO_FRAC and g not in NO_TRANSCRIPT}
+    print(f"  expression filter at control-cell zero-fraction <= {MAX_ZERO_FRAC}: keeping "
+          f"{len(keep_tags)} of {len(TAG2GENE)} proteins")
     print("    dropped as not expressed: "
-          + ", ".join(f"{t} {100*z:.0f}%" for t, z in sorted(dropped.items(), key=lambda x: -x[1])))
-    print("    isotype controls (expected to be sparse -- they bind nothing): "
+          + (", ".join(f"{t} {100*z:.0f}% (all cells {100*zf_all[t]:.0f}%)"
+                       for t, z in sorted(drop_sparse.items(), key=lambda x: -x[1])) or "none"))
+    print(f"    dropped for having no transcript: {sorted(NO_TRANSCRIPT)} "
+          f"(PD-1 is a T-cell protein; nothing to pair against)")
+    print("    isotype controls, kept deliberately (sparse is CORRECT -- they bind nothing): "
           + ", ".join(f"{t} {100*zf[t]:.0f}%" for t in ISOTYPE if t in zf))
     missing_tx = [g for g in keep_tags.values() if g not in cols]
     assert not missing_tx, f"kept proteins with no transcript: {missing_tx}"
