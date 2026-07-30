@@ -50,7 +50,7 @@ TRACKS = ["accessibility", "h3k27ac", "ctcf", "polr2a"]
 WINDOW = int(os.environ.get("EG_WINDOW", 250_000))
 FLANK = 500
 MIN_PRECISION = float(os.environ.get("EG_MINPREC", 0.30))
-MODEL_ID = "eg-peakfeat-v1"
+MODEL_ID = "eg-peakfeat-v2-nocompetition"
 
 
 def load_peaks(cell, assay):
@@ -90,14 +90,24 @@ def sig_at(pk, ch, lo, hi):
     return float(sg[j:i][m].sum()) if m.any() else 0.0
 
 
+# COMPETITION FEATURES ARE EXCLUDED, and that is a correction rather than a simplification.
+# `competition_audit.py` found three things. n_candidates alone scores AUROC 0.2733, so it encodes the
+# per-group base rate -- arithmetic, not biology. The block's whole gain disappears where competition is a
+# coherent idea at all: +0.0836 over all groups but -0.0068 restricted to groups with >=5 candidates. And
+# decisively for this module, the features are defined RELATIVE TO A CANDIDATE SET: the benchmark's is
+# "elements someone chose to test", this module's genome-wide set is "every accessible peak in a 250 kb
+# window", and medians move from 19 to 44 (n_candidates), 8 to 33 (dist_rank), 0.000 to 0.512 (dist_excess).
+# Training on one and scoring the other -- which the first version of this layer did -- cost -0.1201 AUPRC
+# and landed BELOW the no-competition baseline. A feature that cannot be computed the same way at training
+# and at inference does not belong in a shipped layer.
 FEATNAMES = (["log_dist"]
-             + [f"elem_{t}" for t in TRACKS] + [f"tss_{t}" for t in TRACKS]
-             + ["n_candidates", "dist_rank", "activity_rank", "activity_share", "dist_excess"])
+             + [f"elem_{t}" for t in TRACKS] + [f"tss_{t}" for t in TRACKS])
 
 
 def featurise(pairs, peaks):
-    """pairs = list of (chrom, elem_mid, tss, gene_key). Peak-derived only, so the same code path serves
-    both the benchmark rows and any new locus -- which is the point."""
+    """pairs = list of (chrom, elem_mid, tss, gene_key). Peak-derived and CANDIDATE-SET INDEPENDENT, so the
+    same code path gives the same value for a pair whether it is scored inside the benchmark or genome-wide
+    -- which is what the first version got wrong."""
     n = len(pairs)
     F = np.zeros((n, 1 + 2 * len(TRACKS)))
     for i, (ch, mid, tss, _k) in enumerate(pairs):
@@ -105,22 +115,7 @@ def featurise(pairs, peaks):
         for j, t in enumerate(TRACKS):
             F[i, 1 + j] = np.log1p(sig_at(peaks.get(t), ch, mid - FLANK, mid + FLANK))
             F[i, 1 + len(TRACKS) + j] = np.log1p(sig_at(peaks.get(t), ch, tss - FLANK, tss + FLANK))
-    # competition, within (gene) group
-    grp = {}
-    for i, (_c, _m, _t, k) in enumerate(pairs):
-        grp.setdefault(k, []).append(i)
-    C = np.zeros((n, 5))
-    act = F[:, 1] + F[:, 1 + TRACKS.index("h3k27ac")]
-    for k, idx in grp.items():
-        idx = np.array(idx)
-        d = 10 ** F[idx, 0]
-        a = act[idx]
-        C[idx, 0] = len(idx)
-        C[idx, 1] = np.argsort(np.argsort(d)) + 1
-        C[idx, 2] = np.argsort(np.argsort(-a)) + 1
-        C[idx, 3] = a / max(a.sum(), 1e-9)
-        C[idx, 4] = F[idx, 0] - np.median(F[idx, 0])
-    return np.hstack([F, C])
+    return F
 
 
 def main():
@@ -170,7 +165,9 @@ def main():
     per = {k: {m: float(np.mean([pp[k][m] for pp in pers])) for m in ("r1", "r3", "mrr", "rank", "nrank", "ap")}
            for k in groups}
     sm = summarise(per)
-    REF = {"pooled_auprc": 0.5372, "r1": 0.697, "mrr": 0.791, "dist_r1": 0.6509}
+    # v1 reference kept so the cost of dropping competition is visible rather than quietly absorbed
+    REF = {"pooled_auprc": 0.5372, "r1": 0.697, "mrr": 0.791, "dist_r1": 0.6509,
+           "v1_peak_auprc_with_competition": 0.5322}
     print(f"    peak-derived   pooled AUPRC {np.mean(ap):.4f}   R@1 {sm['r1']:.4f}   MRR {sm['mrr']:.4f}"
           f"   ({len(groups)} groups)")
     print(f"    benchmark-col  pooled AUPRC {REF['pooled_auprc']:.4f}   R@1 {REF['r1']:.4f}   "
@@ -178,6 +175,9 @@ def main():
     print(f"    distance floor R@1 {REF['dist_r1']:.4f}")
     cost_r1 = sm["r1"] - REF["r1"]
     print(f"    cost of using peak-derived features: R@1 {cost_r1:+.4f}")
+    print(f"    v1 (with competition, but computed inconsistently) pooled AUPRC "
+          f"{REF['v1_peak_auprc_with_competition']:.4f}; v2 drops that block because it could not be "
+          f"computed the same way at training and inference")
     if sm["r1"] <= REF["dist_r1"]:
         raise SystemExit(
             f"peak-derived R@1 {sm['r1']:.4f} does not beat the distance floor {REF['dist_r1']:.4f}; "
@@ -311,6 +311,10 @@ def main():
             "candidate mechanisms (silencer, indirect-via-neighbour) are measured out",
             "quantitative Hi-C adds +0.0042 MRR (p 0.26) over CTCF, so these edges encode no measured 3D",
             "scored only for cell types with a full ENCODE peak panel",
+            "competition features are EXCLUDED: n_candidates alone scores AUROC 0.2733 (per-group base-rate "
+            "leakage), the block is worth -0.0068 restricted to groups with >=5 candidates, and it is "
+            "defined relative to a candidate set so training on the benchmark's and scoring genome-wide "
+            "cost -0.1201 AUPRC in v1 of this layer",
             "precision is calibrated WITHIN distance strata because the benchmark is distal-heavy "
             "(63.5% beyond 250 kb, 1.9% under 10 kb) while genome-wide candidates in a 250 kb window are "
             "proximal-heavy; a single global curve overstated precision on proximal edges",
