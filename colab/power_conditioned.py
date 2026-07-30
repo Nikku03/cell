@@ -144,6 +144,24 @@ def main():
     R["protocols"]["P3 rank-in-stratum"] = arm(X, rk, ch, "biology on within-stratum rank")
     R["protocols"]["P3 rank-in-stratum"]["rank_vs_power"] = float(stats.spearmanr(rk, pw)[0])
 
+    # ---- THE CONTROL THAT SEPARATES RANKING FROM POWER-CONDITIONING ----
+    # P3 ranks WITHIN a power stratum, so it changes two things at once: it removes power AND it replaces a
+    # heavy-tailed target (|EffectSize| reaches 4.21) with a uniform one. R2 on a uniform target is far easier
+    # to push positive, because squared error on the raw target is dominated by a few extreme values. So a
+    # GLOBAL rank -- ranking with no stratification at all, which conditions on nothing -- isolates which of
+    # the two is responsible. If global rank scores like P3, the gain is the transform, not the protocol.
+    print(f"\n  CONTROL: GLOBAL RANK (no stratification, conditions on nothing)")
+    grk = stats.rankdata(ae) / len(ae)
+    R["control_global_rank"] = arm(X, grk, ch, "biology on global rank of |EffectSize|")
+    R["control_global_rank"]["rank_vs_power"] = float(stats.spearmanr(grk, pw)[0])
+    print(f"        global-rank vs power Spearman "
+          f"{R['control_global_rank']['rank_vs_power']:+.4f}")
+    p3 = R["protocols"]["P3 rank-in-stratum"]["net"]
+    gap = p3 - R["control_global_rank"]["net"]
+    print(f"        P3 {p3:+.4f} vs global rank {R['control_global_rank']['net']:+.4f}  ->  "
+          f"power-conditioning itself contributes {gap:+.4f}")
+    R["rank_transform_vs_conditioning"] = gap
+
     # ---- does adding power still help under each protocol? the check that the fix worked ----
     print(f"\n  DID THE FIX WORK? adding power back should now buy ~nothing")
     for nm, t in (("P2 residualised", resid), ("P3 rank-in-stratum", rk)):
@@ -154,12 +172,27 @@ def main():
 
     # ---- verdict ----
     print("\n" + "=" * 100)
-    best = max(R["protocols"], key=lambda k: R["protocols"][k].get("macro_net",
-                                                                   R["protocols"][k].get("net", -9)))
-    bv = R["protocols"][best]
-    bn = bv.get("macro_net", bv.get("net"))
+    # THE VERDICT REQUIRES AGREEMENT, NOT A MAXIMUM. Three protocols target the same underlying question;
+    # taking the best of them is the same error as reading a control arm as a result, which this project has
+    # made three times. If they disagree, the answer is unstable and that is what gets reported.
+    nets = {k: v.get("macro_net", v.get("net")) for k, v in R["protocols"].items()}
+    best = max(nets, key=lambda k: nets[k])
+    bn = nets[best]
+    agree = sum(1 for v in nets.values() if v > 0.02)
     leak = max([abs(R["protocols"][k].get("power_still_adds", 0)) for k in R["protocols"]] or [0])
-    if bn > 0.02:
+    gap = R.get("rank_transform_vs_conditioning", 0.0)
+    print(f"  protocol agreement: " + ", ".join(f"{k} {v:+.4f}" for k, v in nets.items()))
+    if agree < 2:
+        v = (f"UNSTABLE ACROSS PROTOCOLS -- NOT BENCHMARKABLE AS THINGS STAND. Only {agree} of "
+             f"{len(nets)} power-conditioning protocols give a positive net "
+             f"({', '.join(f'{k} {x:+.4f}' for k, x in nets.items())}), so they disagree about whether "
+             f"anything survives. And the one that is positive, {best}, gains mostly from replacing a "
+             f"heavy-tailed target with a uniform one rather than from removing power: a GLOBAL rank, which "
+             f"conditions on nothing, scores {R['control_global_rank']['net']:+.4f}, leaving only "
+             f"{gap:+.4f} attributable to the conditioning itself. The recommendation is therefore the "
+             f"rank-based target for VARIANCE reasons, with power-conditioning on top, and a measured floor "
+             f"near zero for biology -- not a claim that magnitude has become predictable.")
+    elif bn > 0.02:
         v = (f"MAGNITUDE IS BENCHMARKABLE ONCE POWER IS CONDITIONED OUT. Best protocol {best} gives net "
              f"{bn:+.4f} where the raw target gave {R['naive']['net']:+.4f}, and power adds at most "
              f"{leak:+.4f} on top. So the earlier null was partly a confound artefact and this protocol is "
