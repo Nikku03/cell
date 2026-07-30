@@ -131,16 +131,22 @@ def main():
         v = h["var"]
         ik = v.attrs.get("_index", "_index")
         ik = ik.decode() if isinstance(ik, bytes) else ik
-        ens = [x.decode().split(".")[0] if isinstance(x, bytes) else str(x).split(".")[0]
-               for x in v[ik][:]]
+        # var/_index is `gene_symbol`, which holds SYMBOLS where known and Ensembl ids as a fallback
+        # (960 of 13,135). Reading the index as Ensembl gave 5.4% coordinate coverage and the wrong
+        # conclusion that the file had no symbols -- a diagnosis made from a 5-row sample that happened to
+        # be unnamed lncRNAs. Both columns are read explicitly instead: ensembl_id for coordinates (98.1%
+        # coverage), gene_symbol for matching the TSS targets.
+        ens = [(x.decode() if isinstance(x, bytes) else str(x)).split(".")[0]
+               for x in v["ensembl_id"][:]]
+        sym = [x.decode() if isinstance(x, bytes) else str(x) for x in v["gene_symbol"][:]]
         # the TSS tokens live in obs["gene"], NOT obs["perturbation"] -- the latter names the same
         # perturbations without the _TSS suffix, and reading it matched zero targets on the first run
         pert = cat(h["obs"], "gene")
         X = h["X"]
         ncell, ngene = tuple(X.attrs["shape"])
         indptr = X["indptr"][:]
-        print(f"  {ncell:,} cells x {ngene:,} genes; var ids look like {ens[:2]} (Ensembl; this file "
-              f"has no symbols -- var/gene_symbol is mislabelled and also holds Ensembl)")
+        print(f"  {ncell:,} cells x {ngene:,} genes; "
+              f"{sum(1 for x in sym if not x.startswith('ENSG')):,} columns carry a real symbol")
 
         ecoord = ensembl_coords()
         cov = sum(1 for e in ens if e in ecoord) / len(ens)
@@ -149,29 +155,13 @@ def main():
         if cov < 0.5:
             raise SystemExit(f"only {100*cov:.1f}% of expression columns have coordinates; "
                              "neighbour distances would be defined for too few genes")
-        e2i = {e: i for i, e in enumerate(ens) if e not in ()}
-        # target symbol -> expression column, matched by COORDINATE (no symbol table exists here)
-        bysite = {}
-        for e, (c, t) in ecoord.items():
-            if e in e2i:
-                bysite.setdefault(c, []).append((t, e))
-        for c in bysite:
-            bysite[c].sort()
+        s2i = {}
+        for i, x in enumerate(sym):
+            if x and not x.startswith("ENSG") and x not in s2i:
+                s2i[x] = i
+
         def sym_to_col(symbol):
-            if symbol not in pos:
-                return None
-            c, t = pos[symbol]
-            arr = bysite.get(c) or bysite.get(c.replace("chr", "")) or bysite.get("chr" + c)
-            if not arr:
-                return None
-            ts = np.array([a[0] for a in arr])
-            j = int(np.searchsorted(ts, t))
-            best, bi = None, None
-            for k in range(max(0, j - 3), min(len(arr), j + 3)):
-                dd = abs(int(arr[k][0]) - t)
-                if best is None or dd < best:
-                    best, bi = dd, arr[k][1]
-            return e2i[bi] if (best is not None and best <= 2000) else None
+            return s2i.get(symbol)
 
         # targets: SYMBOL_TSS tokens
         targ = {}
