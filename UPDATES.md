@@ -15396,3 +15396,37 @@ their distributions across the two candidate definitions.
 The **+0.0278 competition gain** recorded when the block was first built is mostly group-size leakage, not
 enhancer competition. The earlier reading — "which enhancer wins is governed by its rivals for the same
 promoter" — is **not supported**: at ≥5 candidates, rivals carry nothing.
+
+## The layer rebuilt: v2, without competition
+
+`eg-peakfeat-v2-nocompetition`. The block was removed because it could not be computed identically at training
+and inference — not because it was small.
+
+| | v1 (competition, inconsistently computed) | **v2 (candidate-set independent)** |
+|---|---:|---:|
+| pooled AUPRC | 0.5322 | **0.4486** |
+| within-gene R@1 | 0.6800 | **0.6749** |
+| MRR | 0.7741 | **0.7785** |
+| distance floor R@1 | 0.6509 | 0.6509 |
+| edges written | 393,936 | **452,330** |
+
+Still clear of the distance floor, but the margin is now **+0.024 R@1**, not +0.029.
+
+**The distal stratum now emits nothing.** Without the leaky block, 100–250 kb never reaches the 0.30 precision
+floor, so it writes **0 edges** where v1 wrote 6,096:
+
+| band | v1 edges | v2 edges | v2 median precision |
+|---|---:|---:|---:|
+| <10 kb | 84,380 | 84,382 | 0.759 |
+| 10–100 kb | 303,460 | 367,948 | 0.416 |
+| **100–250 kb** | **6,096** | **0** | — |
+
+That is the honest consequence and worth stating plainly: **the distal edges v1 shipped were riding a leaky
+feature.** From occupancy alone, this model cannot reach 30% precision on distal pairs at all. 452,330 edges
+across 16,252 genes, 48.7% at precision ≥ 0.50 — a larger, better-calibrated, strictly short-range layer that
+no longer claims the one thing that would have been most valuable.
+
+Two process notes. The pre-ship composition check compared *distance* distributions and produced per-stratum
+calibration; it did not compare the competition features' distributions across candidate definitions, which is
+why the defect shipped. And v1's numbers are kept in the module's printed reference so the cost of the removal
+stays visible rather than being quietly absorbed.
