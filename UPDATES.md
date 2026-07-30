@@ -15530,3 +15530,97 @@ and absent for the rest (unassigned, not spontaneous); no flux is computed — `
 metabolic core heavily buffered, with open exchanges masking most single deletions; and the validation label
 is the cell object's own annotation, so this measures **transfer between two layers**, not agreement with an
 external gold standard.
+
+---
+
+# Stage 1, third attempt: a real driver, a real clock — and occupancy still tells you *which* genes, not *when*
+
+`colab/fetch_gr_timecourse.py` + `colab/gr_dynamics.py` → `outputs/orphan/gr_dynamics.json`
+
+Stage 1 of the dynamic model had come back null twice — on pseudotime (Δ R² 0.0013) and on real clock time
+(21 lags, permuted time equally good). Neither was a power failure (reliability +0.3991) nor a link-quality
+failure (validated links −0.0034). The remaining excuse was that **nothing was driving those systems**: an
+unperturbed population sits at steady state, and a steady state has no transient to explain.
+
+ENCODE's A549 dexamethasone series removes that excuse completely. Dexamethasone activates the glucocorticoid
+receptor, which enters the nucleus in minutes and binds thousands of sites, and ENCODE measured NR3C1
+occupancy and polyA RNA **on the same sixteen-point grid (5 min → 12 h) in the same cell line**, plus EP300,
+JUN, JUNB, FOSL2, CEBPB, CTCF and RAD21.
+
+- 9,660 expressed genes, 144,900 (gene, interval) rows over 15 intervals
+- **Replicate reliability of the change: r = 0.601 raw, 0.560 demeaned** — the target is measurable
+- Every arm carries interval identity + gene history, so occupancy must explain within-interval, across-gene
+  variation; the strict target additionally removes each gene's mean change
+
+## The answer
+
+| arm (11-point panel, gene+interval-demeaned change) | held-out R² | vs history |
+|---|---:|---:|
+| interval identity only | −0.0008 | |
+| + gene history | 0.1029 | |
+| **+ NR3C1 occupancy** | 0.1097 | **+0.0068** |
+| + NR3C1 **[static — one constant per gene, no time resolution]** | 0.1124 | **+0.0095** |
+| + NR3C1 [per-timepoint quantile-normalised] | 0.1128 | +0.0099 |
+| permuted time | 0.1090 | +0.0061 |
+| swapped genes | 0.1009 | −0.0020 |
+
+**A constant per-gene vector beats the time-resolved series (139% of it).** Destroying the time axis costs
+almost nothing; destroying gene identity destroys everything. Split by half, the occupancy *level* carries
++0.0067 and the occupancy *change* +0.0013.
+
+Every target behaves the same way — `[static]` ≥ time-resolved for all eight, without exception.
+
+The static signal **is** GR-specific, though: NR3C1 static +0.0095 against CTCF +0.0020, RAD21 +0.0020,
+CEBPB +0.0004. So the GR site map genuinely identifies which genes have volatile trajectories — it just says
+nothing about when they move.
+
+**The sign test is null too.** Top-decile GR gainers went up 50.2% of the time against 49.0% for genes with no
+GR change (Fisher p 0.167). The direction was fixed in advance and did not appear.
+
+## JUN, and why the biggest number in the table had to be controlled
+
+JUN scored +0.0675 on the 16-point panel — twenty times anything else. Running JUN through the *same*
+controls as GR settled it: **permuted time reached +0.0737 at its maximum draw, exceeding the real +0.0675**,
+and the static arm recovered +0.0605. A within-panel window split (same genes, same features, same
+processing) localised it: +0.0797 over early intervals against +0.0230 over late ones. So JUN's effect is a
+static AP-1 site density interacting with time — plausibly the immediate-early response — not occupancy
+dynamics. Controlling only the prespecified driver would have left the largest effect in the table
+unexamined, which is exactly where a confound hides.
+
+## Six defects fixed before the numbers were believed
+
+1. **Two labs on one time axis.** Tim Reddy's lab ran the full 16-point course; Richard Myers' lab contributed
+   legacy ENCODE2 experiments **at 60 minutes only** — five RNA and four NR3C1. Averaging them in puts a batch
+   effect at exactly one timepoint, corrupting the two intervals either side of it. One lab is now pinned.
+2. **Replicate composition changes between timepoints** — t=5 averages replicates {1,3}, t=30 {1,2,3,4}, t=300
+   {2,3,4}; 4 of 15 intervals cross a change. Differencing timepoint *means* across such a boundary subtracts
+   one set of culture batches from another and leaves a gene-specific offset in the target. Now differenced
+   **within each replicate** and then averaged, which cancels each batch's offset exactly. This alone moved
+   JUN from +0.0752 to +0.0675.
+3. **Mixed quantification formats under one `output_type`.** Every experiment carries both an RSEM run against
+   GENCODE V29 (has TPM) and the original featureCounts run against V22 (raw counts, with a
+   `# Program:featureCounts` line where the header should be). This is the same trap that once had this
+   project reading RSEM's `effective_length` of 93.00 as a genomic coordinate. V29 is now pinned and asserted
+   uniform.
+4. **Peak counts swing up to 7.5×** across the course for one target (NR3C1 40,657 → 5,391; JUN 15,306 →
+   58,693), confounding occupancy with assay sensitivity. A per-timepoint quantile-normalised arm now runs
+   alongside, making depth irrelevant by construction. It does not change the conclusion.
+5. **Panel mismatch.** NR3C1/EP300/JUN have 16 timepoints; CTCF, RAD21 and the rest start at 30 min. Scoring a
+   target on timepoints it lacks feeds the model a column that is zero early and nonzero late — a disguised
+   clock. Two panels now, each an intersection of its own targets' timepoints, and never compared across.
+6. **The fetcher's preference list fell through silently**, so a timepoint missing conservative-IDR peaks would
+   have received pseudoreplicated peaks on a different signal scale — the exact thing the docstring forbade.
+   Stating the rule was not the same as checking it; it is now an assertion.
+
+**And one I nearly shipped.** The first verdict read "OCCUPANCY DYNAMICS PREDICT EXPRESSION DYNAMICS" off
++0.0068 against a +0.0066 permutation control — a 0.0002 margin. Permuting the time axis of a nearly-constant
+series gives back nearly the same series, so a permutation test *cannot* separate "which genes" from "when".
+The static arm can, and it is what the verdict now reads first.
+
+## What this means for the whole-cell model
+
+Three well-controlled nulls now say the same thing, and the third had every excuse removed. The usable version
+of the finding is the inverse of what was being looked for: **a static regulatory annotation predicts the
+shape of a gene's response; time-resolved occupancy adds nothing beyond it.** For the cell object that is
+actionable — the GR site map is worth carrying as a per-gene volatility annotation — but it is not a dynamic
+layer, and Stage 1 remains unsupported.
