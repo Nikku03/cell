@@ -1,0 +1,91 @@
+{
+ "task": "K562-CRISPRi-single-gene -> dRNA of all measured genes",
+ "generated_by": "colab/chain_benchmark.py",
+ "meaning": "layers listed under `rejected` remain available for lookup and reasoning but are NOT licensed to influence a quantitative prediction on this task",
+ "ladder_r2": 0.015058159511848856,
+ "admitted": [],
+ "rejected": [
+  "regulatory",
+  "signalling",
+  "PPI",
+  "co-dependency",
+  "complex co-member"
+ ],
+ "untestable": [],
+ "per_layer": {
+  "regulatory": {
+   "n_edges": 610256,
+   "hit_rate": 0.006524108350276947,
+   "r2": 0.014882861354718613,
+   "delta": -0.00017529815713024366,
+   "control_delta_max": -0.00011214455697972081,
+   "verdict": "REJECTED"
+  },
+  "signalling": {
+   "n_edges": 17432,
+   "hit_rate": 0.00012200825585750863,
+   "r2": 0.014948753901118939,
+   "delta": -0.00010940561072991795,
+   "control_delta_max": -5.92070241735021e-05,
+   "verdict": "REJECTED"
+  },
+  "PPI": {
+   "n_edges": 191447,
+   "hit_rate": 0.0016034417785704136,
+   "r2": 0.015056247302740022,
+   "delta": -1.912209108834162e-06,
+   "control_delta_max": -8.307913495642083e-05,
+   "verdict": "REJECTED"
+  },
+  "co-dependency": {
+   "n_edges": 76749,
+   "hit_rate": 0.0004416965530253947,
+   "r2": 0.014969252503379993,
+   "delta": -8.890700846886368e-05,
+   "control_delta_max": -6.720465004028675e-05,
+   "verdict": "REJECTED"
+  },
+  "complex co-member": {
+   "n_edges": 5771,
+   "hit_rate": 0.0003866928454954177,
+   "r2": 0.01564772392316549,
+   "delta": 0.0005895644113166343,
+   "control_delta_max": 0.00031411081424215226,
+   "verdict": "REJECTED"
+  }
+ },
+ "direct_magnitude": {
+  "regulatory": {
+   "n": 349075,
+   "mean_abs_lfc_edge": 0.0789644867181778,
+   "mean_abs_lfc_matched": 0.07734841108322144,
+   "ratio": 1.0208934545516968,
+   "p": 0.003253769129514694,
+   "testable": true
+  },
+  "signalling": {
+   "n": 6715,
+   "mean_abs_lfc_edge": 0.08212002366781235,
+   "mean_abs_lfc_matched": 0.0799010694026947,
+   "ratio": 1.027771234512329,
+   "p": 0.9866411089897156,
+   "testable": true
+  },
+  "PPI": {
+   "n": 94368,
+   "mean_abs_lfc_edge": 0.12120820581912994,
+   "mean_abs_lfc_matched": 0.10034602880477905,
+   "ratio": 1.2079023122787476,
+   "p": 0.0,
+   "testable": true
+  },
+  "co-dependency": {
+   "n": 25845,
+   "mean_abs_lfc_edge": 0.09251493960618973,
+   "mean_abs_lfc_matched": 0.08647607266902924,
+   "ratio": 1.0698328018188477,
+   "p": 1.7397862393409014e-05,
+   "testable": true
+  }
+ }
+}

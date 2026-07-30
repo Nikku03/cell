@@ -152,6 +152,87 @@ def fit_oof(X, y, folds):
     return p
 
 
+def direct_test(report):
+    """DOES THE LAYER CARRY INFORMATION AT ALL? A power check on the admission verdicts.
+
+    The admission test adds each layer as one binary column to a boosted tree over 3M rows. Hit rates here
+    are 0.04%-0.65%, so that column is very sparse, and "the layer carries nothing" and "the harness could not
+    use what the layer carries" would both produce a rejection. They are completely different claims and this
+    project has been caught conflating them before.
+
+    So the same question is asked directly and at full power, with no model in the way: are pairs joined by an
+    edge more responsive than pairs matched on perturbation strength decile x gene responsiveness decile?
+    Matching on those two is what makes it a fair question -- both are already in the ladder, so an elevation
+    that survives them is information the ladder does not already have. The readout is |log fold change|,
+    i.e. MAGNITUDE, because that is the only thing an unsigned undirected edge could predict.
+    """
+    import h5py
+    import pandas as pd
+    from scipy import stats
+    with h5py.File(GWPS, "r") as f:
+        X = f["X"][:]
+        pert = [s.decode() if isinstance(s, bytes) else str(s) for s in f["obs"]["gene_transcript"][:]]
+        gid = [(s.decode() if isinstance(s, bytes) else str(s)).split(".")[0] for s in f["var"]["gene_id"][:]]
+    psym = np.array([p.split("_")[1] if len(p.split("_")) > 2 else p for p in pert])
+    im = pd.read_parquet(ROOT / "outputs/orphan/id_map.parquet")
+    e2s = {str(a).split(".")[0]: str(b) for a, b in zip(im["ensembl"], im["symbol"]) if isinstance(a, str)}
+    gsym = np.array([e2s.get(g, "") for g in gid])
+    d = json.load(gzip.open(NET, "rt"))
+    idx = {g["name"]: i for i, g in enumerate(d["genes"])}
+    LAY = {"regulatory": [(e[0], e[1]) for e in d["reg"]],
+           "signalling": [(e[0], e[1]) for e in d["sig"]],
+           "PPI": [(e[0], e[1]) for e in d["ppi"]],
+           "co-dependency": [(int(a), b) for a, v in (d.get("codep") or {}).items() for b, _s in v]}
+    del d
+
+    pk = np.array([i for i, s in enumerate(psym) if s in idx])
+    gk = np.array([j for j, s in enumerate(gsym) if s in idx])
+    pi = np.array([idx[psym[i]] for i in pk])
+    gj = np.array([idx[gsym[j]] for j in gk])
+    A = np.abs(X[np.ix_(pk, gk)])
+    A[~np.isfinite(A)] = np.nan
+    rq = np.digitize(np.nanmean(A, 1), np.nanquantile(np.nanmean(A, 1), np.linspace(.1, .9, 9)))
+    cq = np.digitize(np.nanmean(A, 0), np.nanquantile(np.nanmean(A, 0), np.linspace(.1, .9, 9)))
+    p2r = {p: r for r, p in enumerate(pi)}
+    g2c = {g: c for c, g in enumerate(gj)}
+
+    report(f"\n  DIRECT TEST -- do edge pairs respond more than pairs matched on "
+           f"perturbation strength x gene responsiveness?")
+    report(f"    {'layer':16s} {'edge pairs':>11s} {'mean|lfc|':>10s} {'matched':>10s} {'ratio':>7s} "
+           f"{'p':>10s}")
+    out = {}
+    for lname, pairs in LAY.items():
+        ii = [(p2r[a], g2c[b]) for a, b in ((int(x), int(y)) for x, y in pairs)
+              if a in p2r and b in g2c]
+        if len(ii) < 50:
+            report(f"    {lname:16s} {len(ii):>11,d}   too few joined pairs")
+            out[lname] = {"n": len(ii), "testable": False}
+            continue
+        r = np.array([x for x, _y in ii])
+        c = np.array([y for _x, y in ii])
+        v = A[r, c]
+        ok = np.isfinite(v)
+        r, c, v = r[ok], c[ok], v[ok]
+        rng = np.random.default_rng(0)
+        key = {}
+        for i in range(len(r)):
+            key.setdefault((rq[r[i]], cq[c[i]]), []).append(i)
+        nulls = []
+        for (aa, bb), grp in key.items():
+            rr, cc = np.where(rq == aa)[0], np.where(cq == bb)[0]
+            if len(rr) and len(cc):
+                s = A[rng.choice(rr, len(grp)), rng.choice(cc, len(grp))]
+                nulls.append(s[np.isfinite(s)])
+        nl = np.concatenate(nulls)
+        p = float(stats.mannwhitneyu(v, nl, alternative="two-sided")[1])
+        report(f"    {lname:16s} {len(v):>11,d} {v.mean():10.5f} {nl.mean():10.5f} "
+               f"{v.mean()/nl.mean():7.3f} {p:10.2e}")
+        out[lname] = {"n": int(len(v)), "mean_abs_lfc_edge": float(v.mean()),
+                      "mean_abs_lfc_matched": float(nl.mean()),
+                      "ratio": float(v.mean() / nl.mean()), "p": p, "testable": True}
+    return out
+
+
 def main():
     from sklearn.metrics import average_precision_score
     log = []
@@ -338,19 +419,34 @@ def main():
                               "control_delta_max": float(cd), "control_deltas": [float(c - prev) for c in cv],
                               "verdict": "ADMITTED" if ok else "REJECTED"}
 
+    R["direct"] = direct_test(report)
+
     # ---- the gate ----
     adm = [k for k, v in R["layers"].items() if v.get("verdict") == "ADMITTED"]
     rej = [k for k, v in R["layers"].items() if v.get("verdict") == "REJECTED"]
     unt = [k for k, v in R["layers"].items() if v.get("verdict") == "UNTESTABLE"]
     report("\n" + "=" * 100)
+    # REJECTED IS NOT THE SAME AS EMPTY, and the direct test is what keeps the two apart. Reporting "0 of 5
+    # admitted" alone would assert that these layers carry nothing, which the direct test shows is false.
+    car = [(k, v) for k, v in (R.get("direct") or {}).items()
+           if v.get("testable") and v["p"] < 0.05 and v["ratio"] > 1.0]
+    car.sort(key=lambda kv: -kv[1]["ratio"])
+    dtxt = ("" if not car else
+            " But rejected does not mean empty: asked directly, at full power and with no model in the way, "
+            + ", ".join(f"{k} pairs respond {100*(v['ratio']-1):.1f}% more strongly than pairs matched on "
+                        f"perturbation strength x gene responsiveness (p {v['p']:.1e})" for k, v in car[:2])
+            + ". The layers carry MAGNITUDE information -- which is the only thing an unsigned undirected "
+              "edge could carry -- and it is largely redundant with the responsiveness and abundance terms "
+              "already in the ladder. What none of them supplies is DIRECTION, which is also the term the "
+              "ladder cannot reach, and which is why it tops out where it does.")
     v = (f"On `{TASK}`, {len(adm)} of {len(R['layers'])} layers clear the nuisance ladder and their own "
          f"degree-matched control. ADMITTED for quantitative propagation on this task: "
          f"{adm or 'none'}. REJECTED (available for reasoning, not licensed to move a number): {rej or 'none'}"
          + (f". UNTESTABLE on this task: {unt}" if unt else ".")
          + f" The ladder itself reaches R2 {prev:.4f}, and the single largest term is gene responsiveness -- "
-           f"which is an attribute of the READOUT, not of the network. This is arrow one of the chain only: "
-           f"perturbation -> dRNA. The dprotein arrow is not validated here and no K562 perturbation "
-           f"proteomics exists at this scale to validate it with.")
+           f"which is an attribute of the READOUT, not of the network." + dtxt
+         + f" This is arrow one of the chain only: perturbation -> dRNA. The dprotein arrow is not validated "
+           f"here and no K562 perturbation proteomics exists at this scale to validate it with.")
     R["verdict"] = v
     report(f"  VERDICT: {v}")
     OUT.mkdir(parents=True, exist_ok=True)
@@ -358,13 +454,31 @@ def main():
     gate = {"task": TASK, "generated_by": "colab/chain_benchmark.py",
             "meaning": "layers listed under `rejected` remain available for lookup and reasoning but are "
                        "NOT licensed to influence a quantitative prediction on this task",
+            "rejected_is_not_empty": "`direct_magnitude` records what each layer carries when asked "
+                                     "directly, without a model in the way. A layer can be rejected for "
+                                     "this task and still carry real information -- see PPI.",
             "ladder_r2": prev, "admitted": adm, "rejected": rej, "untestable": unt,
             "per_layer": {k: {kk: vv for kk, vv in val.items() if kk != "control_deltas"}
-                          for k, val in R["layers"].items()}}
+                          for k, val in R["layers"].items()},
+            "direct_magnitude": R.get("direct")}
     json.dump(gate, open(OUT / "layer_admission.json", "w"), indent=1, default=float)
     report(f"\n  -> {OUT/'chain_benchmark.json'}")
     report(f"  -> {OUT/'layer_admission.json'}   (the gate, meant to be read by the model)")
 
 
+def merge_direct():
+    """Run only the direct test and fold it into an existing result, so the power check can be added to a
+    completed run without repeating 61 model fits. The admission numbers are untouched."""
+    R = json.load(open(OUT / "chain_benchmark.json"))
+    gate = json.load(open(OUT / "layer_admission.json"))
+    R["direct"] = gate["direct_magnitude"] = direct_test(print)
+    json.dump(R, open(OUT / "chain_benchmark.json", "w"), indent=1, default=float)
+    json.dump(gate, open(OUT / "layer_admission.json", "w"), indent=1, default=float)
+    print(f"\n  merged into {OUT/'chain_benchmark.json'} and {OUT/'layer_admission.json'}")
+
+
 if __name__ == "__main__":
-    main()
+    if "--direct" in sys.argv:
+        merge_direct()
+    else:
+        main()

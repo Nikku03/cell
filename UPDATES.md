@@ -15691,3 +15691,87 @@ almost nothing to *signed* log fold change while moving AUPRC 0.272 → 0.286, w
 of a magnitude feature against a signed target: **the sign is the hard part, and nothing in the nuisance
 ladder can supply it.** That is precisely what makes this a fair test of the network layers, since a directed
 signed edge is the only thing that could.
+
+---
+
+# The admission gate, run: 0 of 5 layers licensed — and why that is not the same as "empty"
+
+`colab/chain_benchmark.py` → `outputs/orphan/chain_benchmark.json`, `outputs/orphan/layer_admission.json`
+
+Task: **in K562, given a single-gene CRISPRi perturbation of gene P, predict the transcriptional response of
+every measured gene G.** Replogle genome-wide Perturb-seq, 9,385 perturbations × 6,685 measured genes joined
+to the universe, 3.0M sampled (perturbation, gene) pairs, folds grouped by perturbed gene.
+
+## The nuisance ladder
+
+| rung | R² | AUPRC | Δ |
+|---|---:|---:|---:|
+| 0 global mean | −0.0000 | 0.2720 | |
+| 1 gene responsiveness | 0.0001 | 0.2856 | +0.0001 |
+| 2 + perturbation strength | 0.0066 | 0.3386 | +0.0066 |
+| 3 + abundance | 0.0127 | 0.3360 | +0.0061 |
+| 4 + genomic distance | 0.0151 | 0.3369 | +0.0024 |
+| 5 + detection power | 0.0149 | 0.3364 | −0.0001 |
+| 6 + co-expression | 0.0151 | 0.3369 | +0.0002 |
+
+Gene responsiveness moves AUPRC 0.272 → 0.286 while adding +0.0001 to R². That is the signature of a
+magnitude feature scored against a signed target, and it sets up the whole result: **the sign is the hard
+part, and nothing in the ladder can supply it.**
+
+## Layer admission
+
+| layer | edges | hit rate | R² | Δ | ctrl Δ | verdict |
+|---|---:|---:|---:|---:|---:|---|
+| regulatory | 610,256 | 0.652% | 0.0149 | −0.0002 | −0.0001 | REJECTED |
+| signalling | 17,432 | 0.012% | 0.0149 | −0.0001 | −0.0001 | REJECTED |
+| PPI | 191,447 | 0.160% | 0.0151 | −0.0000 | −0.0001 | REJECTED |
+| co-dependency | 76,749 | 0.044% | 0.0150 | −0.0001 | −0.0001 | REJECTED |
+| complex co-member | 5,771 | 0.039% | 0.0156 | +0.0006 | +0.0003 | REJECTED |
+
+**0 of 5.** 819,135 edges across the three largest layers add −0.0002, −0.0001 and −0.0000, each at or below
+its own degree-matched control. Two failed differently and it is worth keeping them apart: co-dependency sits
+*at* its control (no signal), while complex co-membership **beat** its control (+0.0006 vs +0.0003) and failed
+only the effect-size floor of 0.001.
+
+Note the hit rates. For 99.3% of the decisions this task asks, the largest layer in the model is silent — and
+where it does speak, 91.2% of the time it carries `sign = 0`.
+
+## The power check that keeps "rejected" from becoming an overstatement
+
+Hit rates of 0.04–0.65% mean each layer enters as a very sparse binary column, and *"the layer carries
+nothing"* and *"the harness could not use what the layer carries"* would both produce a rejection. Those are
+different claims. So the same question was asked directly, at full power, with no model in the way: are
+edge-joined pairs more responsive than pairs matched on perturbation-strength × gene-responsiveness decile?
+
+| layer | edge pairs | mean \|lfc\| edge | matched | ratio | p |
+|---|---:|---:|---:|---:|---:|
+| **PPI** | 94,368 | 0.12121 | 0.10035 | **1.208** | ~0 |
+| co-dependency | 25,845 | 0.09251 | 0.08648 | 1.070 | 1.7e−05 |
+| regulatory | 349,075 | 0.07896 | 0.07735 | 1.021 | 3.3e−03 |
+| signalling | 6,715 | 0.08212 | 0.07990 | 1.028 | 0.99 |
+
+**The layers do carry information.** Physically interacting pairs respond 20.8% more strongly than matched
+non-interacting pairs. Reporting "0 of 5 admitted" on its own would have asserted something false.
+
+Both statements hold, and they do not conflict:
+
+- The layers carry **magnitude** information — *these two are related, so expect movement*. That is the only
+  thing an unsigned undirected edge could carry.
+- They do **not** improve prediction of a specific gene's signed response, because magnitude is already what
+  gene responsiveness and perturbation strength supply, and the layers are largely redundant with them. The
+  regulatory layer's own elevation is 2.1%, which is why 610,256 edges move R² by −0.0002.
+
+What none of them supplies is **direction** — the same term the ladder cannot reach, and the reason it tops
+out at R² 0.0151. A signed, directed, context-qualified edge is the only object that would close the gap, and
+91.2% of the regulatory layer has no sign at all.
+
+## What the gate file is for
+
+`layer_admission.json` is written to be read by the model, not only by a person. It records per layer: edge
+count, hit rate, Δ, control Δ, verdict, **and** the direct-magnitude result — so a rejected layer is on record
+as *not licensed to move a number on this task* while its real, measured content stays visible. It carries an
+explicit `rejected_is_not_empty` note pointing at PPI.
+
+Scope, restated because it is easy to lose: this is **arrow one** of
+`perturbation → ΔRNA → Δprotein → Δcomplex → Δflux → phenotype`. The Δprotein arrow is not validated here and
+cannot be — no K562 perturbation proteomics exists at this scale.
