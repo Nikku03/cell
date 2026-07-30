@@ -157,23 +157,43 @@ def main():
         if m.sum() >= 20:
             rr = stats.spearmanr(ps[m], ae[m])
             print(f"      {c:9s} n={int(m.sum()):4d}  Spearman {rr[0]:+.4f} (p {rr[1]:.3g})")
+    per_ct = {}
+    for c in sorted(set(d["ct"][sig])):
+        m = d["ct"][sig] == c
+        if m.sum() >= 20:
+            rr = stats.spearmanr(ps[m], ae[m])
+            per_ct[c] = {"n": int(m.sum()), "spearman": float(rr[0]), "p": float(rr[1])}
     R["classifier_ranks_strength"] = {"spearman": float(r_all[0]), "p": float(r_all[1]),
-                                      "n": int(len(ps))}
+                                      "n": int(len(ps)), "per_cell_type": per_ct}
 
     # ---- verdict ----
     print("\n" + "=" * 100)
-    best = max(R["magnitude"], key=lambda k: R["magnitude"][k]["net"])
-    mb = R["magnitude"][best]
+    # READ MAGNITUDE OFF THE BIOLOGICAL ARMS ONLY. The power arm is a CONTROL: a first version took the max
+    # net across all arms, which selected "+power as feature" (R2 +0.0881) and printed "magnitude is partly
+    # predictable". That is the control winning, which means the opposite -- magnitude is predictable from a
+    # technical variable and not from biology. Exactly the error this project has caught three times before.
+    bio = {k: v for k, v in R["magnitude"].items() if not k.startswith("CTRL")}
+    best = max(bio, key=lambda k: bio[k]["net"])
+    mb = bio[best]
+    pw_arm = R["magnitude"].get("CTRL +power as feature", {})
     sb = max(R["sign"], key=lambda k: R["sign"][k]["auprc"])
     sv = R["sign"][sb]
     lift = sv["auprc"] / max(sv["base_rate"], 1e-9)
     parts = []
     if mb["net"] > 0.02:
-        parts.append(f"MAGNITUDE IS PARTLY PREDICTABLE ({best}: R2 {mb['r2']:+.4f} vs permuted "
+        parts.append(f"MAGNITUDE IS PARTLY PREDICTABLE FROM BIOLOGY ({best}: R2 {mb['r2']:+.4f} vs permuted "
                      f"{mb['permuted']:+.4f}, Spearman {mb['spearman']:+.4f})")
     else:
-        parts.append(f"MAGNITUDE IS NOT PREDICTABLE (best {best}: R2 {mb['r2']:+.4f} vs permuted "
-                     f"{mb['permuted']:+.4f}, net {mb['net']:+.4f})")
+        extra = ""
+        if pw_arm.get("net", 0) > 0.02:
+            extra = (f" -- but adding DETECTION POWER as a feature reaches R2 {pw_arm['r2']:+.4f} "
+                     f"(net {pw_arm['net']:+.4f}), so effect magnitude in this benchmark is predictable "
+                     f"from a technical variable and not from regulatory biology. The marginal correlation "
+                     f"of |EffectSize| with power is only {R['abs_effect_vs_power_spearman']:+.3f}, so this "
+                     f"would have been missed without the arm")
+        parts.append(f"MAGNITUDE IS NOT PREDICTABLE FROM BIOLOGY (every biological arm is net-negative; best "
+                     f"{best} R2 {mb['r2']:+.4f} vs permuted {mb['permuted']:+.4f}, net {mb['net']:+.4f})"
+                     + extra)
     if sv["auprc"] > 1.3 * sv["base_rate"]:
         parts.append(f"SIGN IS PARTLY PREDICTABLE ({sb}: AUPRC {sv['auprc']:.4f} vs base rate "
                      f"{sv['base_rate']:.3f}, {lift:.2f}x lift, AUROC {sv['auroc']:.4f})")
@@ -181,11 +201,18 @@ def main():
         parts.append(f"SIGN IS NOT PREDICTABLE (best AUPRC {sv['auprc']:.4f} against a base rate of "
                      f"{sv['base_rate']:.3f}, only {lift:.2f}x)")
     cr = R["classifier_ranks_strength"]
-    if cr["p"] < 0.05 and abs(cr["spearman"]) > 0.1:
+    big = max(cr["per_cell_type"], key=lambda c: cr["per_cell_type"][c]["n"]) \
+        if cr.get("per_cell_type") else None
+    bigd = cr["per_cell_type"][big] if big else None
+    if bigd and bigd["p"] >= 0.05:
+        parts.append(f"the edge-finder does NOT rank strength where the sample is large: pooled Spearman "
+                     f"{cr['spearman']:+.4f} (p {cr['p']:.3g}) is carried by small cell types, while in "
+                     f"{big} (n={bigd['n']}) it is {bigd['spearman']:+.4f} (p {bigd['p']:.3g})")
+    elif cr["p"] < 0.05 and abs(cr["spearman"]) > 0.1:
         parts.append(f"the edge-finder DOES rank strength (Spearman {cr['spearman']:+.4f}, p {cr['p']:.3g})")
     else:
         parts.append(f"the edge-finder does NOT rank strength (Spearman {cr['spearman']:+.4f}, "
-                     f"p {cr['p']:.3g}) -- it finds edges without ordering them by how hard they act")
+                     f"p {cr['p']:.3g})")
     R["verdict"] = ". ".join(parts) + (f". n={int(sig.sum())} causal pairs, so this is a small-sample "
                                        f"result and 19.4% of those elements are repressive, a subclass the "
                                        f"binary label erases entirely.")
