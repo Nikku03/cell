@@ -169,6 +169,8 @@ def main():
     print(f"  features: {names}   PPI degrees found for "
           f"{int((F[:,5]>0).sum()):,}/{len(genes):,} genes; ubiquitous flag on {int(F[:,6].sum()):,}")
 
+    np.savez(OUT / "_mpg_cache.npz", F=F, rho=rho, names=np.array(names))
+
     # ---- the gate: predict rho out-of-sample ----
     print("\n  PREDICTING per-gene rho, held-out (5 random 80/20 splits)")
     real, ctrl = [], []
@@ -215,3 +217,83 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def attribution():
+    """WHICH FEATURE CARRIES THE +0.27? The caveat that decides how to read the verdict.
+
+    The full model used five usable features -- protein mean/sd, mRNA mean/sd, n_samples -- because PPI
+    degree and the ubiquitous flag came back empty (0 of 11,636 genes matched). All five are abundance or
+    variance quantities, and highly abundant proteins are simply MEASURED better by mass spectrometry. So
+    the +0.27 could be "we can predict which genes are well quantified" rather than "we can predict which
+    genes have biologically tight mRNA-protein coupling". Those imply very different things for the
+    network: the first gives a per-node CONFIDENCE, the second a per-node CORRECTION.
+
+    Single-feature and leave-one-out held-out R2 separates them.
+    """
+    import numpy as np
+    from sklearn.metrics import r2_score
+    import xgboost as xgb
+    import json as _json
+
+    print("\n" + "=" * 100)
+    print("ATTRIBUTION -- is the +0.27 biology or assay quality?")
+    print("=" * 100)
+    cache = OUT / "_mpg_cache.npz"
+    if not cache.exists():
+        print("  (no cached matrix; run main() first)")
+        return
+    z = np.load(cache, allow_pickle=True)
+    F, rho, names = z["F"], z["rho"], list(z["names"])
+
+    def held(cols):
+        sc = []
+        for s in SEEDS:
+            rng = np.random.default_rng(s)
+            idx = rng.permutation(len(rho))
+            cut = int(0.8 * len(idx))
+            tr, te = idx[:cut], idx[cut:]
+            m = xgb.XGBRegressor(max_depth=4, n_estimators=300, learning_rate=0.05, subsample=0.8,
+                                 colsample_bytree=0.8, reg_lambda=2.0, n_jobs=4)
+            m.fit(F[np.ix_(tr, cols)], rho[tr])
+            sc.append(r2_score(rho[te], m.predict(F[np.ix_(te, cols)])))
+        return float(np.mean(sc))
+
+    allc = list(range(F.shape[1]))
+    full = held(allc)
+    print(f"  all features            R2 {full:+.4f}")
+    print("\n  single feature alone:")
+    singles = {}
+    for i, n in enumerate(names):
+        if F[:, i].std() == 0:
+            print(f"    {n:16s} constant, skipped")
+            continue
+        singles[n] = held([i])
+        print(f"    {n:16s} R2 {singles[n]:+.4f}")
+    print("\n  leave-one-out:")
+    for i, n in enumerate(names):
+        if F[:, i].std() == 0:
+            continue
+        cols = [j for j in allc if j != i]
+        print(f"    without {n:16s} R2 {held(cols):+.4f}")
+    best = max(singles, key=singles.get) if singles else None
+    if best:
+        frac = singles[best] / full if full > 0 else float("nan")
+        print(f"\n  best single feature: {best} at {singles[best]:+.4f} = {100*frac:.0f}% of the full "
+              f"{full:+.4f}")
+        verdict = ("ASSAY QUALITY -- abundance alone reproduces most of the signal, so this is a per-node "
+                   "CONFIDENCE (where mRNA is trustworthy), not a per-node CORRECTION."
+                   if best.startswith("prot") and frac > 0.6 else
+                   "MIXED -- no single abundance feature reproduces the fit, so some of it is structure "
+                   "beyond measurement depth.")
+        print(f"  READING: {verdict}")
+        p = OUT / "mrna_protein_gate.json"
+        d = _json.load(open(p)) if p.exists() else {}
+        d["attribution"] = {"full_r2": full, "singles": singles, "best": best,
+                            "best_frac_of_full": float(frac), "reading": verdict}
+        _json.dump(d, open(p, "w"), indent=1)
+        print(f"  -> updated {p}")
+
+
+if __name__ == "__main__" and os.environ.get("MPG_ATTRIB") == "1":
+    attribution()
