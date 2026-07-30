@@ -15268,3 +15268,60 @@ Each edge carries model id, band, score and per-stratum precision. The layer car
 distance floor to judge it against, the +0.0597 LOCO transfer penalty, and the fact that 717 of 820 training
 positives are K562 — so non-K562 edges are extrapolation. Written as a **sidecar** keyed on (cell, elem, gene),
 not an in-place edit, so it can be versioned or dropped without touching the 612k regulatory edges.
+
+---
+
+# Short-range mechanism: is it occupancy rather than contact?
+
+`colab/shortrange_mechanism.py` · `outputs/orphan/shortrange_mechanism.json`
+
+## The biophysics, corrected — the premise is wrong, the conclusion survives
+
+The claim is usually put as "at short range DNA cannot bend enough to loop". Against the worm-like chain that
+is not what limits these pairs:
+
+| | |
+|---|---|
+| persistence length | ~147 bp (50 nm at 0.34 nm/bp) |
+| bending-limited regime | below ~500 bp, where the J-factor collapses |
+| the layer's `<10 kb` edges | **median 3,269 bp = 22 persistence lengths** |
+| fraction below 500 bp | **0.00%** |
+
+At 1–10 kb DNA is a flexible polymer and bends freely. **But the conclusion survives by the opposite
+argument:** contact probability falls roughly as s^−3/2, so at short separation contact is *high* and therefore
+**not rate-limiting**. Everything nearby is already touching, so a contact feature cannot discriminate a real
+pair from a neighbouring non-pair — only occupancy can. Same prediction, sounder reason.
+
+## The test — leave-one-block-out ΔAUROC per distance stratum
+
+AUROC not AUPRC, because the strata base rates span 14× (0.572 at <10 kb vs 0.041 at 100–250 kb) and AUPRC
+moves with base rate, which would make cross-stratum comparison meaningless.
+
+| block | <10 kb | 10–100 kb | 100–250 kb | >250 kb | trend | predicted |
+|---|---:|---:|---:|---:|---|---|
+| distance | +0.0060 | +0.0268 | +0.0065 | −0.0060 | flat | — |
+| element activity | +0.0039 | +0.0033 | +0.0154 | +0.0124 | rises | — |
+| **element Pol II** | −0.0023 | +0.0028 | −0.0004 | −0.0079 | flat | falls — **unsupported** |
+| **promoter (TSS side)** | **+0.0309** | +0.0015 | −0.0146 | +0.0262 | flat | falls — unsupported |
+| **CTCF (contact proxy)** | +0.0082 | −0.0015 | −0.0018 | +0.0101 | flat | rises — unsupported |
+| **competition** | +0.0620 | +0.0592 | **+0.1142** | +0.0709 | rises | — |
+
+## Verdict: not supported, but not contradicted — there is no gradient
+
+No predicted block varies monotonically with distance, so this data cannot distinguish a short-range occupancy
+mechanism from a distance-independent one. Three specifics worth keeping:
+
+1. **The promoter block does contribute most at <10 kb** (+0.0309, its largest of any stratum) — the TF half of
+   the hypothesis, directionally consistent even though the gradient isn't monotonic.
+2. **Element Pol II contributes essentially nothing at any distance** (−0.0023, +0.0028, −0.0004, −0.0079). The
+   polymerase-allocation half is specifically unsupported.
+3. **The largest block everywhere is competition** (+0.059 to +0.114) — which is neither occupancy nor contact.
+   Which enhancer wins is governed by its rivals for the same promoter, more than by anything measured at the
+   element or the promoter itself.
+
+## One labelling bug, fixed
+
+The directional test first called any non-matching trend "OPPOSITE", turning *no gradient* into *reversed
+gradient* — a materially stronger and different claim, and it drove the verdict to CONTRADICTED. OPPOSITE is
+now reserved for a trend that actually runs the other way. The corrected reading is "unsupported", not
+"refuted", and the distinction matters for what the hypothesis is still allowed to claim.
