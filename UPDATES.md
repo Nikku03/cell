@@ -15430,3 +15430,103 @@ Two process notes. The pre-ship composition check compared *distance* distributi
 calibration; it did not compare the competition features' distributions across candidate definitions, which is
 why the defect shipped. And v1's numbers are kept in the module's printed reference so the cost of the removal
 stays visible rather than being quietly absorbed.
+
+---
+
+# The metabolic layer: Human-GEM wired into the cell object, and what it can actually predict
+
+`colab/metabolic_layer.py` → `outputs/orphan/metabolic_layer.json`
+
+The cell object held **31 hand-curated reactions** (`{'enz': 'HK1', 'sub': 'glucose', 'prod': 'glucose-6-P'}`)
+while `HumanGEM.xml` — 43 MB, 12,931 reactions, 8,461 metabolites, 2,848 gene products — sat beside the
+repository unused. Prior work had *parsed* it (`reaction_network.json` counted it, `entity_logic.json`
+recovered GPR trees, `metabridge` built an FBA pipeline) but none of it was ever written into the cell. The
+same failure mode the enhancer–gene thread was in: built, measured, never connected.
+
+The whole-model audit found the cell's weakness is **not missing layers but untested ones**, so the layer is
+written only alongside a prediction it was not built from.
+
+## The prespecified test
+
+Human-GEM knows which genes can catalyse each reaction and whether they are alternatives (OR) or all required
+(AND). That yields a claim with its direction fixed in advance:
+
+> a gene that is the **sole or required** catalyst of some reaction should be **more essential** than a gene
+> whose reactions all have isozymes
+
+Essentiality is not part of Human-GEM. The label is the cell object's DepMap-derived `dep_frac`.
+
+## Result
+
+**2,568/2,848** Human-GEM catalysts (90.2%) join the gene universe; **2,527** carry measured essentiality.
+
+| | n | mean dep_frac | frac > 0.5 |
+|---|---:|---:|---:|
+| sole/required catalyst | 997 | **0.1674** | 0.1505 |
+| has isozymes only | 1,530 | 0.0677 | 0.0556 |
+
+Raw difference **+0.0997** (MWU p 2.1e-18). Nuisance controls: PPI degree is already balanced (p 0.86), but
+abundance (p 6e-31), publications (p 5e-13) and reaction count (p 4e-07) are not.
+
+| matched on | n | dep_frac difference | draws p<0.05 |
+|---|---:|---:|---:|
+| PPI degree × reactions × abundance | 1,786 | **+0.0810** | 100% of 20 |
+| … × publications | 1,616 | +0.0845 | 100% of 20 |
+
+**81% of the raw difference survives matching**, and adding publications does not shrink it, so this is not
+study effort.
+
+## The dose curve is where it gets interesting — and it is not monotone
+
+| required for | n | mean dep_frac |
+|---|---:|---:|
+| 0 reactions | 1,530 | 0.0677 |
+| 1 | 497 | **0.2129** |
+| 2 | 180 | **0.2436** |
+| 3–5 | 166 | 0.0612 |
+| 6+ | 154 | 0.0462 |
+
+It rises, then collapses back to baseline. Matching each sub-class against the *same* required-for-nothing
+group:
+
+| sub-class | n | dep_frac difference | draws p<0.05 |
+|---|---:|---:|---:|
+| required for 1–2 | 1,252 | **+0.1090** | 100% |
+| required for 3+ | 602 | +0.0207 | **35%** |
+
+**The effect is entirely carried by genes required for 1–2 reactions.** For genes required for 3+ it is not
+detectable — *not detectable, not reversed*: +0.0207 is positive, it simply does not hold across draws.
+
+Why the turnover: the high-count genes sit in **replicated reaction families** — 31% transport reactions, 11%
+fatty-acid oxidation — where the count reflects how the model enumerates transport per metabolite and
+β-oxidation per acyl-chain length, not how many distinct jobs the gene holds. Being required for more
+reactions *in a stoichiometric model* does not make a gene more necessary *in a cell*.
+
+## Four defects caught before the result was believed
+
+1. **`(A and B) or (C and D)` was marking all four genes required.** The first version flagged any gene under
+   an AND operator, when either complex alone suffices. Since the required class *is* the independent
+   variable, this was not cosmetic — it inflated the class from 39.5% to 55.0%. Replaced with exact evaluation
+   (knock out one gene, re-evaluate the tree). Fixing it *raised* the surviving fraction from 56% to 81%.
+2. **`ess` is exactly `dep_frac > 0.5`** — verified, no exceptions either way. Reporting both would have been
+   one measurement reported twice and the agreement called corroboration. `dep_frac` is primary; the binary is
+   labelled as a thresholding of it.
+3. **531 genes carry `ess_src='model1'`** — another model's prediction, with no `dep_frac`. Validating a layer
+   against a model's output tests agreement between models. Excluded.
+4. **`abund`/`ppm` are keyed by gene index, not symbol.** Looked up by symbol they return `None` for every
+   gene, and the abundance control would have run as a column of zeros — passing silently, the worst way for a
+   control to fail. Abundance turned out to be the *strongest* raw confound (p 6e-31).
+
+A fifth, caught in the write-up rather than the code: the first verdict called the 3+ result "reversed"
+because +0.0207 cleared an absolute-value threshold. That is the same *flat-is-not-opposite* error corrected
+earlier in `shortrange_mechanism.py`. Sign and significance are now read together.
+
+## What the layer is, and what it is not
+
+12,931 reactions with stoichiometry, reversibility, compartments and subsystems, plus gene→reaction and
+required-catalyst maps, replacing 31 hand-curated entries. Recorded limits: Human-GEM is a **generic** human
+model, so a reaction present here may be inactive in any given cell type; GPRs are exact for 7,782 reactions
+and absent for the rest (unassigned, not spontaneous); no flux is computed — `metabridge` already found the
+metabolic core heavily buffered, with open exchanges masking most single deletions; and the validation label
+is the cell object's own annotation, so this measures **transfer between two layers**, not agreement with an
+external gold standard.
