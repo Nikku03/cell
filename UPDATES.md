@@ -14902,3 +14902,87 @@ effect-size prediction cannot be honestly benchmarked on EPCrispr as it stands w
 
 n = 820 with chromosome-held-out folds, so all of this is a small-sample result and each number is reported
 beside its permuted control.
+
+---
+
+# Polarity stress-tested against power and locus leakage — survives, but shrinks by 2.5×
+
+`colab/polarity_stress.py` · `outputs/orphan/polarity_stress.json`
+
+The polarity result (AUPRC 0.6507 vs 0.194 base rate, AUROC 0.8584) was called the one thing in several rounds
+that cleared its controls decisively, which made it the result most worth attacking.
+
+## Threat 1 — detection power: CLEARED
+
+| arm (chromosome folds) | AUPRC | AUROC |
+|---|---:|---:|
+| **power only** | 0.2302 | 0.5777 |
+| distance only | 0.5152 | 0.8038 |
+| full biology | 0.6274 | 0.8548 |
+| full + power | 0.6358 | 0.8564 |
+
+Power alone reaches 1.19× the base rate at AUROC 0.578 — not a predictor. Adding it to full biology moves
+AUPRC by +0.008. Repressive elements *do* differ in power (median 1.00 vs 0.95, MWU p 0.0105) and in
+|EffectSize| (0.094 vs 0.124, p 0.0012), but neither is doing the work.
+
+## Threat 2 — locus leakage and effective n: CLEARED
+
+The 159 repressive calls are **not** concentrated: they span 145 distinct elements, 123 genes and 99 1-Mb loci
+— 1.10, 1.29 and 1.61 pairs per cluster. And the result does not degrade under stricter splits; it slightly
+improves:
+
+| split | full-biology AUPRC | AUROC |
+|---|---:|---:|
+| chromosome | 0.6274 | 0.8548 |
+| element-held-out | 0.6684 | 0.8741 |
+| gene-held-out | 0.6421 | 0.8681 |
+| 1-Mb locus-held-out | 0.6327 | 0.8542 |
+
+**Cluster permutations**, which preserve a confound and destroy only element-specific signal:
+
+| permutation stratum | permuted AUPRC | z of real (0.6338) |
+|---|---:|---:|
+| unrestricted (the original control) | 0.1936 ± 0.0157 | **+28.01** |
+| within power decile | 0.2095 ± 0.0236 | +18.00 |
+| **within gene** | 0.5453 ± 0.0170 | **+5.22** |
+| **within cell × distance decile** | 0.4901 ± 0.0405 | **+3.55** |
+
+Note how badly the original unrestricted permutation flattered the result: z +28 versus +3.55 once distance
+and cell type are held fixed. The signal survives, but the honest z is an order of magnitude smaller.
+
+## Threat 3 — geometry: this is where the result actually shrinks
+
+**Repressive elements sit at a median 332 kb from their TSS; activating ones at 32 kb** — a 10× difference,
+MWU p = 7.7e-38. Distance alone therefore supplies **82% of the headline AUPRC** (0.5152 of 0.6274).
+
+The decisive test is the matched subsample — repressive and activating equalised on power, |EffectSize| and
+distance, with residual balance verified (MWU p 0.97, 0.63, 0.40):
+
+| arm on 276 matched pairs (base rate 0.500) | AUPRC | AUROC |
+|---|---:|---:|
+| distance only | 0.4897 | **0.4722** — chance, as it must be |
+| **full biology** | **0.6622** | **0.6497** (permutation p **0.0323**) |
+
+Distance-only collapses to chance once distance is matched, which validates the matching. **Full biology
+retains AUROC 0.6497 at permutation p 0.032** — real, but 1.32× lift rather than 3.36×.
+
+Cell type is not the explanation: within K562 alone (717 pairs, gene-held-out) it holds at 3.37× lift, AUROC
+0.8597. Worth noting WTC11 is 57.1% repressive against K562's 17.9%, so the cell-type spread is large and the
+K562-only check mattered.
+
+## Revised claim
+
+The earlier phrasing — "activating and repressive elements are distinguishable, AUROC 0.858" — **overstates
+it**. The defensible version:
+
+> Repressive elements are predominantly **distal** (median 332 kb vs 32 kb), and most of the apparent polarity
+> discrimination is that geometry. After matching on distance, power and effect size, regulatory features still
+> separate the two classes at **AUROC 0.6497 (permutation p 0.032, n = 276 balanced pairs)** — a real but
+> modest residual signal, and the honest cluster-permutation z is **+3.55**, not +28.
+
+It survives every leakage and power attack. It is simply 2.5× smaller than the headline, and the largest single
+fact about repressive elements is where they are, not what they look like.
+
+One process note: the module's docstring listed a K562-only cell-type control that the first version described
+without implementing, and reported the matched-subsample AUROC as a bare number with nothing establishing it
+was above chance. Both were added rather than left as prose.
