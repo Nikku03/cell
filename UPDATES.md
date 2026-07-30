@@ -14386,3 +14386,87 @@ CALLS and a TAD bedpe, never a contact matrix.** No `.hic`, `.mcool` or `.cool` 
 point. So the honest statement is narrower than the one recorded: *a binary called-loop feature adds nothing
 on top of CTCF counting*. Whether quantitative contact does is untested. The recommendation to buy CTCF ChIP
 rather than Hi-C still follows from cost, but it no longer follows from evidence about quantitative contact.
+
+---
+
+# Within-gene ranking of the existing model — the target every later feature is judged against
+
+`colab/ranking_gate.py` · `outputs/orphan/ranking_gate.json`
+
+Run before any feature development, so later experiments are measured against an established target rather
+than a moving one.
+
+## The three power regimes collapse — and the asymmetry runs the opposite way
+
+| power (at effect size 25) | pairs | positives | % positive |
+|---|---:|---:|---:|
+| < 0.8 | 243 | **243** | **100%** |
+| ≥ 0.8 | 14,491 | 577 | 4.0% |
+
+**All 13,914 negatives are already adequately powered.** That is forced by construction: a pair is only
+*called* negative when the test had power to detect an effect and found none. So a "strict negatives" regime
+is identical to the inclusive one, and weighting negatives by power multiplies almost everything by ~1.
+
+The real asymmetry is the reverse of the proposal: **243 of 820 positives (30%) are underpowered.** So the
+regime that means something is strict *positives*. Also `measuredGeneUbiquitousExpressed` is an empty column
+in this release, which is why the 847-gene ubiquitous list had to be built externally.
+
+## Features now come from the benchmark's own columns
+
+The TSV ships quantitative `DHS.RPM/percentile`, `H3K27ac.RPM/percentile`, `H3K4me1.RPM`, `H3K27me3.RPM`,
+`CTCF.RPM` per pair per cell type — what ENCODE-rE2G is scored on. Using them removes a class of my own
+approximation error (peak-overlap and distance-to-peak proxies for signal) and adds H3K4me1 and repressive
+H3K27me3, both of which were on the missing-feature list and were in the file all along.
+
+**This is a leaner model than the 0.6881 one** — no Pol II, no per-cell-type peak features, no ubiquitous
+flag, no gene-max boost — so its pooled 0.5372 is not comparable to 0.6881 and is not presented as such.
+
+## Ranking results, inclusive regime (279 evaluable gene groups)
+
+| arm | pooled | LOCO macro | R@1 | R@3 | MRR | Rescue@1 | Break@1 | paired ΔMRR p |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| M0 distance | 0.3416 | 0.4148 | 0.651 | 0.824 | 0.756 | — | — | — |
+| M1 +activity | 0.4565 | 0.5183 | 0.685 | 0.862 | 0.790 | 0.241 | 0.079 | 0.0059 |
+| M2 +CTCF | 0.4664 | 0.4848 | 0.692 | 0.862 | 0.791 | 0.268 | 0.082 | 0.0067 |
+| M3 +competition | 0.5372 | 0.5837 | **0.697** | 0.854 | **0.791** | **0.295** | 0.089 | 0.0284 |
+
+Biology rescues **29.5%** of the groups distance gets wrong and breaks **8.9%** of the ones it gets right —
+about 3.3:1 — with a paired per-group sign test at p 0.028.
+
+## The difficulty strata — the critique's prediction, confirmed and sharper
+
+| stratum | groups | MRR distance → model | R@1 distance → model |
+|---|---:|---|---|
+| easy (positive is nearest) | 122 | 0.973 → 0.920 (**−0.053**) | 0.951 → 0.861 (**−0.090**) |
+| medium (rank 2–3) | 83 | 0.767 → 0.835 (+0.068) | 0.602 → 0.747 (**+0.145**) |
+| hard (rank 4+) | 74 | 0.428 → 0.542 (+0.114) | 0.270 → 0.378 (+0.108) |
+
+**The model is actively worse than distance where distance is already nearly right**, and much better where
+it is not. A +0.046 headline R@1 gain is the average of −0.090 and +0.145. That is immediately actionable: a
+gate that defers to distance when the nearest candidate is close enough should recover most of the easy-group
+loss without touching the hard-group gain.
+
+## Strict positives makes the task harder, and the biology matter more
+
+| | R@1 distance | R@1 model | gain | hard-stratum R@1 gain |
+|---|---:|---:|---:|---:|
+| inclusive (820 pos) | 0.651 | 0.697 | +0.046 | +0.108 |
+| strict positives (577 pos) | 0.596 | 0.655 | **+0.059** | **+0.188** |
+
+Removing the 243 underpowered positives lowers *every* arm, so those positives were the comparatively easy
+ones. But the model's advantage over distance **grows** — and nearly doubles in the hard stratum. On the
+positives where the experiment was well powered, biology matters more, which argues the gain is signal rather
+than fitted noise.
+
+## One discrepancy, flagged not smoothed
+
+M2 (+CTCF) *lowers* LOCO macro in the inclusive regime (0.5183 → 0.4848) while raising pooled AUPRC — the
+classic signature of fitting cell-type identity. In the strict regime it goes the other way (0.4924 →
+0.5025). With 21–40 positives outside K562 this is likely noise, but it does not reproduce the earlier
++0.0774 LOCO contact gain, which was measured on a different feature set. Unresolved.
+
+## The target
+
+**Distance floor R@1 0.6509 / MRR 0.7561. Current model R@1 0.6968 / MRR 0.7910, Rescue@1 0.2948,
+Break@1 0.0890.** Every subsequent feature is judged against these, on the 279 evaluable groups, with the
+group count stated as part of the metric.
