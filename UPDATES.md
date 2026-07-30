@@ -14219,3 +14219,97 @@ patterns onto 4-row blocks, inventing an edge the network never asserted.
 **What would settle it:** Frangieh Perturb-CITE-seq (~20 proteins) would take the signed-edge count from 10 to
 roughly 50 and the discordant pairs from 6 to ~30, which is where McNemar starts to resolve. It needs
 interactive auth (Broad SCP1064) this session does not have; `frangieh.h5ad` on disk is RNA-only.
+
+---
+
+# Orthogonal validation at scale — the 4-protein result does not survive
+
+`colab/protein_edges.py` · `outputs/orphan/protein_edges.json` · supersedes the `protein_orthogonal.py` entry
+above (kept, not rewritten, so the two can be compared)
+
+## The Broad login was never needed
+
+The previous entry closed by saying Frangieh Perturb-CITE-seq would settle this and required Broad SCP1064
+auth. That was wrong. scPerturb publishes it on **open Zenodo (record 13350497)** as separate RNA and protein
+h5ad files. The RNA half was **already on disk** — `frangieh.h5ad`, 1,458.9 MB, byte-matching the Zenodo
+file — so only the **24.7 MB protein half** needed fetching.
+
+| | Papalexi (previous) | Frangieh (this) |
+|---|---:|---:|
+| cells | 20,729 | **218,331** |
+| real proteins | 4 | 20 (18 after filtering) |
+| perturbations ≥25 cells | 24 | **246** |
+| control cells | 2,386 | **57,605** |
+| diagonal positive controls | 2 | **10** |
+| conditions | 1 | **3** |
+| signed edges | 10 | **42** |
+
+## The result: signs do not predict direction, in either modality
+
+| condition | signed edges | protein direction | mRNA direction | McNemar |
+|---|---:|---:|---:|---:|
+| Co-culture | 40 | 21/40 = 52.5% (p 0.44) | 19/40 = 47.5% (p 0.68) | 0.77 |
+| Control | 40 | 23/40 = 57.5% (p 0.21) | 22/40 = 55.0% (p 0.32) | 0.67 |
+| IFN-γ | 41 | 22/41 = 53.7% (p 0.38) | 23/41 = 56.1% (p 0.27) | 0.50 |
+
+Pooling those 121 cells as independent trials would be wrong — the same 42 edges are measured three times —
+so **each edge votes once** by majority across conditions:
+
+- **protein direction 20/42 = 47.6%** (binomial p 0.678)
+- **mRNA direction 23/42 = 54.8%** (binomial p 0.322)
+
+Both at chance. **This overturns the 4-protein finding, where mRNA direction looked right 8/10 (p 0.055).**
+That was ten edges, and it did not replicate at 42.
+
+## Why this is a real null and not a power failure
+
+Three independent lines, and the third is the one that matters:
+
+1. **Positive controls fire hard.** 6/7, 6/7, 6/8 self-knockouts drop their own protein at z < −2, with
+   magnitudes to **CD44 z −47**, CD47 z −28, IFNGR1 z −18.
+2. **Measured technical false-positive rate.** The four isotype antibodies bind nothing, so the whole
+   pipeline run on them gives a real FPR: **1.1% / 0.0% / 0.7%**, against real-protein movement of
+   6.6% / 3.4% / 4.5% — roughly 6× higher. The pipeline is not manufacturing movement.
+3. **The measurement replicates.** Over the 39 edges measurable in all three conditions, the measured protein
+   sign is identical in all three for **22/39 = 56.4%**, against 25% by chance (**p 2.9e-05**).
+
+That third number is what separates two opposite readings of the same 47.6%. The measurement is reliable;
+the network's signs disagree with it.
+
+## A structural mismatch, not just an accuracy gap
+
+17 of 39 edges flip measured sign between conditions — and in this system that is very likely **real
+condition-specific biology**, since Frangieh's entire design is that immune-evasion responses appear under
+IFN-γ and T-cell co-culture and not at baseline. But **the network's signs are condition-independent**. A
+single static sign per edge cannot be correct in a system where the true direction depends on context. The
+problem is not that the signs are slightly off; it is that they encode a kind of claim the biology does not
+support.
+
+## Four methodological failures, each caught by a guard rather than by inspection
+
+Every one of these would have produced publishable-looking numbers:
+
+1. **Log fold change was the wrong statistic.** The 1/√n null-scaling guard aborted the run (worst R² −15.4).
+   Cause was real, not a bug: 7 proteins and all 4 isotypes are 75–90% zero, so a 25-cell bootstrap sample
+   can be almost all zeros, the mean approaches 0, and **log2 explodes** (sd 7.83 at n=25 for CD140a).
+   Replaced with a difference of means on the linear scale.
+2. **Only proteins were filtered for expression, not transcripts.** TEK's transcript has **3 nonzero cells in
+   18,334** controls. Adequacy now requires ≥15% nonzero in *both* halves, decided *per condition* — ADT depth
+   varies enough between conditions to flip the answer (CD117 is 85% zero in Co-culture controls, 51% pooled).
+   The genes that fail are the same on both measurements — KIT, PDGFRA, PDGFRB, TEK, KDR, CXCR4 — two
+   independent measurements agreeing they are not expressed in melanoma.
+3. **The analytic null sd σ/√n was also wrong.** It aborted at CD172a with 56% error. These readouts are
+   **heavy-tailed**: σ is driven by a few extreme cells a 25-cell sample usually misses, so the true sd sits
+   *below* σ/√n and the analytic form would have **inflated** those z-scores. The sd is now bootstrapped and
+   log-log interpolated, assuming nothing about shape.
+4. **A positive control passed on a sign with no magnitude** — HLA-A at z −0.03 counted as "protein falls".
+   Controls now require z < −2.
+
+Also fixed: an isotype ratio that printed **33860045.1x** when the isotype rate was exactly 0.
+
+## Limits, stated
+
+42 signed edges is far better than 10 but still modest. One cell line, one melanoma patient model, one
+network. `sig` and `coexpr` edge classes remain too sparse to test separately. The magnitude and
+path-distance arms are still null at a resolution that only admitted large effects — as in the 4-protein
+run, that is a limit of the test, not a fact about the network.
