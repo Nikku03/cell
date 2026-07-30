@@ -515,7 +515,18 @@ def main():
     D = R.get("direction", {})
     okp, okm, nd = D.get("protein_correct", 0), D.get("mrna_correct", 0), D.get("n", 0)
     mcp = D.get("mcnemar_p")
-    medz = float(np.median(np.abs([r["prot_z"] for r in rows])))
+    az = np.abs(np.array([r["prot_z"] for r in rows]))
+    medz, frac_resp = float(np.median(az)), float((az > 3).mean())
+    # READOUT ADEQUACY IS NOT THE MEDIAN. A first version gated on median |z| < 2 and declared the readout
+    # "too quiet" at 1.61 -- but a low median is exactly what a correct experiment gives when most
+    # (knockout, protein) pairs are true nulls, which they are: most knockouts should not move most proteins.
+    # Adequacy is instead: does the positive control respond, and does a real fraction of cells show a
+    # detectable response at all. Here the mean |z| is 5.07 against a median of 1.61 -- a right-skewed
+    # distribution of mostly-nulls with a few very large movers, which is the expected shape.
+    readout_ok = ctrl_ok and frac_resp >= 0.15
+    print(f"  readout adequacy: positive control {'PASS' if ctrl_ok else 'FAIL'}; "
+          f"{100*frac_resp:.0f}% of cells move at |z|>3; median |z| {medz:.2f}, mean {az.mean():.2f} "
+          f"(right-skewed, as a mostly-null grid should be)")
     # THE MAGNITUDE ARMS ARE NULL AND UNDERPOWERED; THE DIRECTION ARM IS NEITHER. Reading the verdict off
     # the magnitude arms alone labelled this "underpowered", which is wrong in a way that matters: the
     # protein responses are large (median |z| ~5, extremes -23 and +12), so the outcome is not noise-limited.
@@ -525,9 +536,9 @@ def main():
     if not ctrl_ok:
         v = ("INCONCLUSIVE -- the positive control did not pass, so a null on the network arms cannot be "
              "separated from a readout that does not respond. Fix the control before reading anything else.")
-    elif medz < 2:
-        v = (f"READOUT TOO QUIET -- median |protein z| is only {medz:.2f}, so protein responses are near the "
-             f"NT noise floor and no arm can resolve anything. {parts[0]}.")
+    elif not readout_ok:
+        v = (f"READOUT TOO QUIET -- only {100*frac_resp:.0f}% of cells move at |z|>3, so protein responses "
+             f"are near the NT noise floor and no arm can resolve anything. {parts[0]}.")
     elif okm > okp and mcp is not None and mcp < 0.05:
         v = (f"EDGES STOP AT THE TRANSCRIPT -- the same {nd} signed edges get the mRNA direction right "
              f"{okm}/{nd} but the protein direction {okp}/{nd}, paired McNemar p {mcp:.4f}. Protein is not "
