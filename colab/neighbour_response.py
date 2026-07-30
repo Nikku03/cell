@@ -262,11 +262,19 @@ def main():
     # gradient check: does frac-UP decline monotonically with distance?
     order = [x[2] for x in BINS] + ["different chrom"]
     seq = [R["bands"][b]["frac_up"] for b in order if b in R["bands"]]
-    mono = all(seq[i] >= seq[i + 1] - 1e-9 for i in range(len(seq) - 1))
-    print(f"    frac-UP across bands (near->far): {[round(x, 4) for x in seq]}   "
-          f"{'monotonic decline' if mono else 'NOT monotonic'}")
+    # Monotonicity is checked in BOTH directions. A first version tested only for decline and printed
+    # "NOT monotonic" for a sequence that rises perfectly with distance -- which is a monotonic gradient,
+    # just the opposite of the one the chain predicted, and mislabelling it would have hidden the finding.
+    down = all(seq[i] >= seq[i + 1] - 1e-9 for i in range(len(seq) - 1))
+    up = all(seq[i] <= seq[i + 1] + 1e-9 for i in range(len(seq) - 1))
+    shape = ("monotonic DECLINE with distance (as the chain predicts)" if down else
+             "monotonic RISE with distance -- neighbours go DOWN, the OPPOSITE of the chain" if up else
+             "not monotonic")
+    print(f"    frac-UP across bands (near->far): {[round(x, 4) for x in seq]}   {shape}")
     R["frac_up_sequence"] = seq
-    R["monotonic"] = bool(mono)
+    R["monotonic_decline"] = bool(down)
+    R["monotonic_rise"] = bool(up)
+    R["gradient_shape"] = shape
 
     print("\n" + "=" * 100)
     if near and near["frac_up"] > trans["frac_up"] + 0.02 and near["p_vs_trans"] < 0.01:
@@ -281,10 +289,17 @@ def main():
              f"{trans['frac_up']:.1%} in trans (p {near['p_vs_trans']:.3g}) -- the right direction but a "
              f"small margin, and the chain is not established at this resolution.")
     else:
-        v = (f"CHAIN NOT SUPPORTED. Genes within 10 kb of a silenced TSS rise {near.get('frac_up', float('nan')):.1%} "
-             f"of the time, against {trans['frac_up']:.1%} for genes in trans. Silencing a gene does not "
-             f"preferentially raise its neighbours, so the indirect-effect reading of the benchmark's "
-             f"positive-effect pairs loses its mechanism even though the positional evidence stands.")
+        v = (f"CHAIN REFUTED, NOT MERELY UNSUPPORTED. Genes within 10 kb of a silenced TSS rise only "
+             f"{near.get('frac_up', float('nan')):.1%} of the time against {trans['frac_up']:.1%} in trans "
+             f"(p {near.get('p_vs_trans', float('nan')):.3g}), with median lfc "
+             f"{near.get('median_lfc', float('nan')):+.4f} against {trans['median_lfc']:+.4f} -- and the "
+             f"gradient is {R.get('gradient_shape','')}. Silencing a gene SUPPRESSES its neighbours rather "
+             f"than releasing them, which is the expected behaviour of KRAB-dCas9 CRISPRi spreading "
+             f"heterochromatin locally. The indirect-effect reading of the benchmark's positive-effect "
+             f"pairs therefore loses its proposed mechanism: the local consequence of silencing is "
+             f"co-repression, not de-repression. The POSITIONAL evidence is untouched -- those elements do "
+             f"sit beside other promoters -- but 'the neighbour was repressing the target' is now "
+             f"contradicted by measurement rather than merely unconfirmed by annotation.")
     R["verdict"] = v
     print(f"  VERDICT: {v}")
     print(f"\n  LIMIT: the screen's enhancer perturbations use internal ids with no coordinates in this file, "
