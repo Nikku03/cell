@@ -119,6 +119,12 @@ def load_rna():
 
 
 def load_peaks(pattern):
+    """Per-chromosome sorted (starts, ends, signal) ARRAYS.
+
+    Built once as arrays, not returned as tuple lists. The first version returned lists and every sig_at call
+    rebuilt a numpy array of all starts on the chromosome -- O(peaks) per lookup across ~330k lookups, with
+    1.3M GR peaks loaded, which made the run effectively non-terminating.
+    """
     by = {}
     for fn in sorted(glob.glob(str(D / pattern))):
         with gzip.open(fn, "rt") as fh:
@@ -130,9 +136,12 @@ def load_peaks(pattern):
                     by.setdefault(f[0], []).append((int(f[1]), int(f[2]), float(f[6])))
                 except ValueError:
                     continue
-    for c in by:
-        by[c].sort()
-    return by
+    out = {}
+    for c, v in by.items():
+        v.sort()
+        out[c] = (np.array([x[0] for x in v]), np.array([x[1] for x in v]),
+                  np.array([x[2] for x in v]))
+    return out
 
 
 def load_dnase():
@@ -144,19 +153,28 @@ def load_dnase():
 
 
 def sig_at(pk, ch, lo, hi):
+    """Summed signal of peaks overlapping [lo, hi], vectorised over a bounded slice."""
     if ch not in pk:
         return 0.0
-    arr = pk[ch]
-    s = np.array([a[0] for a in arr])
-    i = np.searchsorted(s, hi)
+    st, en, sg = pk[ch]
+    i = int(np.searchsorted(st, hi))
     if i == 0:
         return 0.0
-    j = max(0, i - 300)
-    tot = 0.0
-    for a, b, v in arr[j:i]:
-        if b >= lo:
-            tot += v
-    return tot
+    j = max(0, i - 400)
+    m = en[j:i] >= lo
+    return float(sg[j:i][m].sum()) if m.any() else 0.0
+
+
+def overlaps(pk, ch, lo, hi):
+    """Is there any peak overlapping [lo, hi]."""
+    if ch not in pk:
+        return False
+    st, en, _ = pk[ch]
+    i = int(np.searchsorted(st, hi))
+    if i == 0:
+        return False
+    j = max(0, i - 400)
+    return bool((en[j:i] >= lo).any())
 
 
 def main():
@@ -177,7 +195,7 @@ def main():
         raise SystemExit("fewer than 5 shared timepoints; a lag curve is not estimable")
 
     gr = load_peaks("gr_*.bed.gz")
-    ngr = sum(len(v) for v in gr.values())
+    ngr = sum(len(v[0]) for v in gr.values())
     print(f"  GR (NR3C1) ChIP peaks: {ngr:,} over {len(gr)} contigs")
 
     # candidate enhancers per gene: GR-bound (prespecified LINKED) and a distance-matched non-GR peak
@@ -187,29 +205,22 @@ def main():
     for g, (ch, tss) in coords.items():
         if g not in rna[t0] or rna[t0][g] < MIN_TPM:
             continue
-        cand = base_pk.get(ch)
-        if not cand:
+        if ch not in base_pk:
             continue
-        near = [(a, b, v) for a, b, v in cand
-                if abs((a + b) // 2 - tss) <= WINDOW and abs((a + b) // 2 - tss) > PROM_EXCL]
-        if len(near) < 2:
+        bst, ben, bsg = base_pk[ch]
+        mid = (bst + ben) // 2
+        d_all = np.abs(mid - tss)
+        sel = np.where((d_all <= WINDOW) & (d_all > PROM_EXCL))[0]
+        if len(sel) < 2:
             continue
-        grc = gr.get(ch, [])
-        gr_s = np.array([x[0] for x in grc]) if grc else np.array([])
-
-        def is_gr(a, b):
-            if not len(gr_s):
-                return False
-            i = np.searchsorted(gr_s, b)
-            j = max(0, i - 60)
-            return any(bb >= a for aa, bb, _ in grc[j:i])
-        bound = [(a, b) for a, b, v in near if is_gr(a, b)]
+        near = [(int(bst[k]), int(ben[k]), float(bsg[k])) for k in sel]
+        bound = [(a, b) for a, b, v in near if overlaps(gr, ch, a, b)]
         if not bound:
             continue
         la, lb = bound[0]
         d = abs((la + lb) // 2 - tss)
         pool = [(a, b) for a, b, v in near
-                if not is_gr(a, b) and 0.5 * d <= abs((a + b) // 2 - tss) <= 2 * d]
+                if not overlaps(gr, ch, a, b) and 0.5 * d <= abs((a + b) // 2 - tss) <= 2 * d]
         if not pool:
             continue
         genes.append((g, ch, tss))
