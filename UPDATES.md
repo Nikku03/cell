@@ -14470,3 +14470,103 @@ classic signature of fitting cell-type identity. In the strict regime it goes th
 **Distance floor R@1 0.6509 / MRR 0.7561. Current model R@1 0.6968 / MRR 0.7910, Rescue@1 0.2948,
 Break@1 0.0890.** Every subsequent feature is judged against these, on the 279 evaluable groups, with the
 group count stated as part of the metric.
+
+---
+
+# The planned experiments, all run: differential activity, pair compatibility, defer gate, residual Hi-C
+
+`colab/differential.py`, `colab/residual_contact.py` · `outputs/orphan/differential.json`,
+`outputs/orphan/residual_contact.json`
+
+All judged against the target `ranking_gate.py` fixed: distance floor R@1 0.6509 / MRR 0.7561, current model
+R@1 0.6968 / MRR 0.7910, on 279 evaluable gene groups.
+
+## Datasets obtained
+
+| priority | dataset | status |
+|---|---|---|
+| ⭐⭐⭐⭐☆ | Continuous Hi-C matrices | **obtained** — K562 ENCFF026LJG (in situ Hi-C, hg38, 311 MB) → 5 kb and 25 kb coolers via `hic2cool` |
+| ⭐⭐⭐⭐☆ | ENCODE CRISPR E-G atlas | **already the benchmark** — EPCrisprBenchmark *is* the ENCODE CRISPR atlas; no larger release exists |
+| ⭐⭐⭐⭐⭐ | Cross-cell-type multiome | **not obtained** — but the 7-cell-type ENCODE peak panel served the differential experiment, which came back negative, so multiome would be re-testing a rejected hypothesis with better data rather than opening a new one |
+
+ENCODE's `.hic` files run 349–931 GB for K562; the 311 MB one is a usable exception. `hic-straw` will not
+build here, so the route was `hic2cool` → `cooler`, both pure Python.
+
+## Differential cross-cell-type activity — REJECTED
+
+**0 of 5,638 elements appear in more than one cell type**, so differentials cannot come from the benchmark's
+own per-cell-type columns — every element has exactly one measurement. All 14,734 elements and TSSs were
+re-measured across 7 ENCODE cell types (accessibility, H3K27ac, CTCF, Pol II) to make the difference
+definable at all.
+
+| arm | pooled | R@1 | MRR | LOCO macro |
+|---|---:|---:|---:|---:|
+| M3 baseline | 0.5372 | 0.697 | 0.791 | 0.5064 |
+| +differential | **+0.0390** | −0.0014 | +0.0016 | **−0.0227** |
+| +Level A compatibility | +0.0063 | **−0.0172** | **−0.0115** | — |
+| CTRL +cell-type ID | +0.0117 | −0.0100 | −0.0033 | — |
+| CTRL +shuffled differential | −0.0094 | −0.0136 | −0.0092 | — |
+
+Pooled AUPRC rises **+0.0390** while ranking does not move and **LOCO macro falls −0.0227** (K562 −0.048,
+WTC11 −0.036, HCT116 −0.031, GM12878 +0.025). A bare cell-type index buys +0.0117 pooled on its own.
+Pooled-up / transfer-down is the signature of encoding cell *identity* rather than cell *specificity*.
+
+**Level A pair compatibility** — cross-cell enhancer–promoter Spearman and sign concordance — is worse than
+useless: **−0.0172 R@1, −0.0115 MRR**, paired sign test p 0.99. Levels B and C are not attempted; they were
+conditional on A showing something.
+
+LOCO safety was enforced strictly: the held-out cell is dropped from every median and every correlation for
+every row, not just its own.
+
+## Defer-to-distance gate — the only positive
+
+The strata showed the model is worse than distance where the positive is nearest. A gate blending toward
+distance when the nearest candidate is >3× closer than the runner-up, with the threshold chosen inside
+training folds:
+
+**R@1 0.6968 → 0.7018 (+0.0050), MRR 0.7910 → 0.7954 (+0.0044).** Small, but it is the only thing in this
+round that improved the decision, and it costs nothing.
+
+## Residual continuous Hi-C — the fair test, and it confirms the original conclusion
+
+This is the test that was owed after the earlier claim was weakened. Contact read for **12,274/12,274**
+K562 pairs (87% of all benchmark positives).
+
+**Resolution decided the answer, and the 5 kb version was an artefact:**
+
+| | 5 kb | 25 kb |
+|---|---:|---:|
+| zero-contact fraction | **0.651** | 0.183 |
+| residual vs distance (Spearman) | +0.161 | **−0.017** |
+| R@1 gain | +0.0112 | +0.0032 |
+| MRR gain | +0.0083 | +0.0042 |
+| paired sign test p | 0.036 | **0.260** |
+| margin over shuffled contact (MRR) | +0.0030 | +0.0043 |
+
+At 5 kb, 65% of pairs have zero contacts and the zero rate runs from 0% under 10 kb to 89% beyond 1 Mb — so
+the "residual" was largely an indicator of whether any read was seen, which is depth × distance, and cannot
+be detrended out of a mostly-zero variable (it kept ρ +0.161 with distance after a 100-bin detrend). At 25 kb
+the residual is properly decorrelated (**ρ −0.017**) and **the effect disappears**.
+
+**Verdict: quantitative contact adds +0.0010 pooled and +0.0042 MRR (p 0.260) on top of CTCF.** The fair test
+agrees with the binary one. Weakening the earlier claim was still correct — the binary called-loop feature
+*was* the wrong instrument — but the conclusion it supported survives contact matrices, at the resolution
+where the residual is clean. **Buy CTCF ChIP, not Hi-C**, now on evidence about quantitative contact rather
+than only cost.
+
+## Two failures caught by asserts rather than by inspection
+
+1. The cooler names chromosomes `1,2,3…` while the benchmark uses `chr1,chr2,…`. The first run read **0 of
+   12,274** contacts. Without the asserted read-fraction the residual would have been a column of zeros and
+   the arm would have reported a clean null for entirely the wrong reason.
+2. The first differential verdict read "net vs shuffled" as +0.0092 MRR — positive only because shuffling a
+   12-column block *degrades* the model, so subtracting it credits the block for damage its shuffled twin
+   does. Same trap that inflated the coupling verdict by 2×. Raw delta is +0.0016.
+
+## Where this leaves the E-G model
+
+Four new feature families tested this round; three rejected, one marginal gate kept. Combined with earlier
+rounds — sequence embeddings +0.0054 (z 1.63), polymer simulation NO-GO against a control that beat it —
+the pattern is consistent: **the model's remaining headroom is not in features.** It is in the 279 evaluable
+gene groups, the 87% K562 concentration of positives, and the 243 underpowered positives. Those are label
+problems, and no feature fixes them.
