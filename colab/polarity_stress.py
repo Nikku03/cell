@@ -208,6 +208,33 @@ def main():
     else:
         print("      too few matched pairs to score")
 
+    # ---- [F] within K562 alone, since it is 717 of 820 and WTC11 is 57% repressive vs K562's 18% ----
+    # The docstring promised this check; an earlier version described it without implementing it.
+    print("\n  [F] WITHIN K562 ALONE (717 pairs) -- removes cell type as an explanation")
+    k = ct == "K562"
+    R["k562_only"] = {"n": int(k.sum()), "base_rate": float(rep[k].mean())}
+    for tag, X in (("distance only", d["D"][sig]), ("full biology", BASE)):
+        ap, au = score(X[k], rep[k], None, folder=folds_by, key=gene[k], seeds=(0, 1, 2))
+        print(f"    {tag:16s} AUPRC {ap:.4f} (base {rep[k].mean():.4f}, "
+              f"{ap/max(rep[k].mean(),1e-9):.2f}x)  AUROC {au:.4f}   [gene-held-out]")
+        R["k562_only"][tag] = {"auprc": ap, "auroc": au, "lift": ap / max(rep[k].mean(), 1e-9)}
+
+    # ---- [G] permutation p-value on the matched-subsample AUROC ----
+    if len(keep) >= 100 and "full biology" in R["matched"]:
+        print("\n  [G] IS THE MATCHED-SUBSAMPLE RESULT ABOVE CHANCE? label permutation on the matched set")
+        obs = R["matched"]["full biology"]["auroc"]
+        Xm, tm, chm = BASE[keep], rep[keep], ch[keep]
+        null = []
+        for i in range(30):
+            tp = tm[np.random.default_rng(900 + i).permutation(len(tm))]
+            null.append(score(Xm, tp, None, folder=folds_by, key=chm, seeds=(0,))[1])
+        mu, sd = float(np.mean(null)), float(np.std(null))
+        z = (obs - mu) / max(sd, 1e-9)
+        pv = (sum(1 for v in null if v >= obs) + 1) / (len(null) + 1)
+        print(f"    observed AUROC {obs:.4f}; permuted {mu:.4f} +/- {sd:.4f}; z {z:+.2f}; p {pv:.3g}")
+        R["matched"]["auroc_perm"] = {"observed": obs, "null_mean": mu, "null_sd": sd,
+                                      "z": z, "p": float(pv)}
+
     # ---- verdict ----
     print("\n" + "=" * 100)
     strict = min(R["arms"]["full biology"][s]["auprc"] for s in SPLITS)
@@ -232,8 +259,16 @@ def main():
                      (" (survives)" if zg > 3 else " (DOES NOT survive -- the signal is gene-level, "
                       "not element-level)"))
     if mfull:
+        pv = R["matched"].get("auroc_perm", {})
+        extra = (f", permutation p {pv['p']:.3g}" if pv else "")
         parts.append(f"after matching on power, |effect| and distance the lift falls to "
-                     f"{mfull['lift']:.2f}x (AUPRC {mfull['auprc']:.4f}, AUROC {mfull['auroc']:.4f})")
+                     f"{mfull['lift']:.2f}x (AUPRC {mfull['auprc']:.4f}, AUROC {mfull['auroc']:.4f}"
+                     f"{extra}), and DISTANCE-ONLY collapses to chance on that matched set "
+                     f"(AUROC {R['matched'].get('distance only', {}).get('auroc', float('nan')):.4f})")
+    k5 = R.get("k562_only", {}).get("full biology", {})
+    if k5:
+        parts.append(f"within K562 alone under gene-held-out folds it holds at {k5['lift']:.2f}x "
+                     f"(AUROC {k5['auroc']:.4f}), so cell type is not the explanation")
     R["verdict"] = ". ".join(parts) + "."
     print(f"  VERDICT: {R['verdict']}")
     OUT.mkdir(parents=True, exist_ok=True)
