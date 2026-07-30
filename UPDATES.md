@@ -15133,3 +15133,56 @@ observed rather than inferred. Perturb-seq at these loci would do it directly, a
 (402 of the 820 pairs) is Perturb-seq — its full expression matrices, not the summarised E–G table, would let
 N's change be read off the same cells. That is a concrete next step with a specific dataset, and it is the only
 version of this test with the power to succeed.
+
+---
+
+# The chain is refuted by measurement — silencing a gene SUPPRESSES its neighbours
+
+`colab/neighbour_response.py` · `outputs/orphan/neighbour_response.json`
+
+`neighbour_repressor.py` could not test the chain's last step — only 26% of genes carry any signed outgoing
+edge, so it reported no power rather than a result. Gasperini's at-scale Perturb-seq (207,324 K562 cells,
+13,135 genes) makes it observable: 381 perturbations target a gene's **own TSS**, so the causal step can be
+watched instead of inferred.
+
+**329 of 335 usable targets pass the positive control** (their own transcript falls). 4,240,152
+(silenced gene, other gene) observations.
+
+| distance from the silenced TSS | n | frac UP | median lfc | p vs trans |
+|---|---:|---:|---:|---:|
+| **<10 kb** | 146 | **0.2945** | **−0.0752** | **9.4e-10** |
+| 10–100 kb | 658 | 0.4331 | −0.0172 | 0.026 |
+| 100 kb–1 Mb | 4,758 | 0.4439 | −0.0142 | 0.014 |
+| >1 Mb same chrom | 224,824 | 0.4633 | −0.0093 | 0.46 |
+| different chromosome | 4,009,766 | 0.4651 | −0.0090 | — |
+
+**A perfectly monotonic gradient, inverted relative to the hypothesis.** Neighbours of a silenced gene go
+DOWN, 8× more strongly at <10 kb than in trans — the expected behaviour of KRAB-dCas9 spreading heterochromatin
+locally.
+
+## What this does to the mechanism
+
+The chain was: CRISPRi hits a site beside neighbour N → N falls → the measured gene rises because N repressed
+it. **The local consequence of silencing is co-repression, not de-repression**, so the chain is now
+*contradicted by measurement* rather than merely unconfirmed by annotation. A stronger negative than the
+previous one.
+
+**The positional evidence is untouched** — positive-effect elements really do sit beside other promoters
+(14.1 kb vs 58.9 kb; within 2 kb, 12.6% vs 2.1%), really are non-enhancers, and CTCF and polycomb really are
+excluded. What is gone is the explanation for *why*.
+
+And CRISPRi spreading cannot be substituted as the explanation: spreading makes nearby genes **fall**, while
+these pairs are defined by the measured gene **rising**. So both the silencer reading and the
+indirect-neighbour reading are now out, and the phenomenon is **unexplained**.
+
+## One reporting bug worth recording
+
+The monotonicity check tested only for *decline* and printed "NOT monotonic" for a sequence that rises
+perfectly with distance. The gradient is monotonic — just inverted relative to the prediction — and the
+mislabel would have buried the finding as noise. Both directions are now tested and named.
+
+## Limit
+
+The screen's enhancer perturbations use internal ids (`chrN.NNNN`) with no coordinates in the file, so the 402
+Gasperini benchmark pairs are not re-scored here. This measures the mechanism, not those pairs; re-scoring them
+needs Gasperini's guide-coordinate supplementary table.
