@@ -13879,3 +13879,65 @@ Jurkat was skipped: loops present, no 1D tracks, 2 released ENCODE experiments t
 **Still unseparated:** the contact block is five features together — `ctcf_between`, `ctcf_between_sig`,
 `ctcf_elem_hit`, `ctcf_tss_hit`, `loop_connects`. Whether the gain comes from counting CTCF peaks (cheap) or
 from measured Hi-C loops (expensive) decides the practical recommendation, and is not yet answered.
+
+---
+
+# Decomposed: CTCF counting is the whole of "contact". Measured Hi-C adds nothing, in any regime.
+
+`colab/contact_decompose.py`. The +0.0340 cross-cell-type contact gain was five features at once, differing
+in cost by orders of magnitude. Group-ablated, because the four CTCF features are near-duplicates and
+drop-one would have said none of them matters.
+
+Loop coverage first, so a null for Hi-C cannot be confused with absent Hi-C: **GM12878 0.779, WTC11 0.488,
+HCT116 0.480, K562 0.385** of pairs have a connecting called loop. The loops are there.
+
+| POOLED | AUPRC | over base |
+|---|---:|---:|
+| base | 0.5040 | — |
+| **+ CTCF only** (4 features) | **0.5406** | **+0.0366** |
+| + Hi-C loop only (1 feature) | 0.5029 | −0.0011 |
+| + both | 0.5380 | +0.0340 |
+| **Hi-C ON TOP OF CTCF** | | **−0.0026** |
+
+| LOCO test cell | positives | base | +CTCF | +Hi-C | +both | Hi-C \| CTCF |
+|---|---:|---:|---:|---:|---:|---:|
+| GM12878 | 21 | 0.8964 | 0.8605 | 0.9071 | 0.8374 | −0.0230 |
+| HCT116 | 40 | 0.2955 | **0.4134** | 0.3046 | 0.3729 | −0.0406 |
+| K562 | 717 | 0.3377 | 0.4036 | 0.3556 | 0.4149 | +0.0113 |
+| WTC11 | 35 | 0.2476 | 0.2314 | 0.2637 | 0.2532 | +0.0218 |
+| **MEAN** | | **0.4443** | **0.4772** | 0.4578 | 0.4696 | **−0.0076** |
+
+- CTCF alone over base: **+0.0366 pooled, +0.0329 LOCO**
+- Hi-C alone over base: −0.0011 pooled, +0.0134 LOCO — so it carries a little signal by itself
+- **Hi-C on top of CTCF: −0.0026 pooled, −0.0076 LOCO** — entirely subsumed, and slightly harmful
+
+In pooled, `+both` (0.5380) scores *below* `+CTCF only` (0.5406): once CTCF is present the loop column is a
+noise feature. Drop-one agrees from the other direction — removing `loop_connects` **improves** the score by
++0.0038.
+
+## The unified statement
+
+This reconciles every contact result in the project into one sentence. Counting CTCF peaks between two
+coordinates is the entire value of "contact" for enhancer-gene prediction, in every regime tested, and
+nothing that measures or simulates 3D structure improves on it:
+
+| approach | value on top of CTCF counting |
+|---|---:|
+| analytic Rouse-with-loops (K562) | +0.005 |
+| bending stiffness, best-physics arm (K562) | +0.0005 |
+| KMC extrusion + Langevin, A100 (K562) | −0.0027 ± 0.0052 |
+| measured Hi-C, intact (K562) | −0.0031 ± 0.0030 |
+| measured Hi-C, in-situ (K562) | −0.0012 ± 0.0021 |
+| **measured Hi-C loops (pooled, 4 cell types)** | **−0.0026** |
+| **measured Hi-C loops (LOCO, unseen cell type)** | **−0.0076** |
+
+Seven independent tests across two feature regimes and four cell types. Every one at or below zero.
+
+## The actionable answer
+
+**For a new cell type: buy one CTCF ChIP track. Do not buy Hi-C.** CTCF-count is worth +0.033 to +0.037
+where contact matters; Hi-C on top is worth −0.003 to −0.008. That is a three-orders-of-magnitude cost
+difference for a negative return.
+
+The earlier framing -- "even at tier A the BED bisect beats the Hi-C library 4x" -- was directionally right
+but understated. It is not 4x better. Hi-C adds *nothing at all* once the bisect has been done.
