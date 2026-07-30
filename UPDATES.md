@@ -14986,3 +14986,96 @@ fact about repressive elements is where they are, not what they look like.
 One process note: the module's docstring listed a K562-only cell-type control that the first version described
 without implementing, and reported the matched-subsample AUROC as a bare number with nothing establishing it
 was above chance. Both were added rather than left as prose.
+
+---
+
+# The distal-specific mechanism — it is not a silencer, it is an indirect effect
+
+`colab/distal_mechanism.py` · `outputs/orphan/distal_mechanism.json`
+
+## Two artifact checks, both of which changed how the evidence reads
+
+**`direct_rate_negative` correlates with log10 distance at Spearman −0.9996.** It is distance relabelled, and
+its apparent class separation (p 7.13e-38) is numerically the *same p-value* as distance's because it is the
+same fact. Excluded from every arm rather than counted as independent support.
+**`indirect_rate_negative` correlates at only +0.137** while still separating the classes, so it is genuine
+independent information and is tested.
+
+**Not a batch effect.** The repressive fraction ranges 8% to 61% across ten screens, so this was a live
+explanation for the whole finding. It replicates *within* screen in **7 of 8** well-powered ones:
+
+| screen | n | repressive | ρ(log dist, repressive) | p |
+|---|---:|---:|---:|---:|
+| Gasperini2019 | 402 | 42 | +0.410 | 9.1e-18 |
+| Nasser2021 | 147 | 36 | +0.486 | 4.5e-10 |
+| WTC11_DC_TAP | 35 | 20 | +0.669 | 1.1e-05 |
+| K562_DC_TAP | 31 | 19 | +0.481 | 0.0061 |
+| Xie | 48 | 6 | +0.441 | 0.0017 |
+| Klann | 33 | 12 | +0.417 | 0.016 |
+| Morris | 51 | 16 | +0.376 | 0.0065 |
+| HCT116 | 40 | 6 | +0.006 | 0.97 (null) |
+
+## Four mechanisms, directions fixed in advance, tested with distance matched (276 pairs, residual p 0.404)
+
+| mechanism | feature | predicted | repressive | activating | p | verdict |
+|---|---|---|---:|---:|---:|---|
+| **M1 insulator** | CTCF.RPM | higher | 0.8666 | 0.8666 | 0.84 | **no difference** |
+| **M1 insulator** | CTCF_peak_overlap | higher | 0 | 0 | 0.073 | **no difference** |
+| **M2 polycomb** | H3K27me3.RPM | higher | 0.2473 | 0.2463 | 0.72 | **no difference** |
+| M3 not-an-enhancer | H3K27ac.RPM | lower | 3.574 | 9.362 | 6.2e-08 | **as predicted** |
+| M3 not-an-enhancer | DHS.RPM | lower | 4.21 | 9.363 | 4.4e-06 | **as predicted** |
+| M3 not-an-enhancer | H3K4me1.RPM | lower | 1.725 | 3.144 | 1.3e-08 | **as predicted** |
+| M4 indirect | indirect_rate_negative | higher | 0.00254 | 0.00047 | 7.7e-04 | **as predicted** |
+| M4 indirect | dist to nearest non-target TSS | lower | **14.1 kb** | **58.9 kb** | 4.3e-10 | **as predicted** |
+
+**The insulator hypothesis fails.** That is worth stating plainly because the raw `elementChromatinCategory`
+looked like strong support — "CTCF element" is 70.6% repressive against 13.4% for "High H3K27ac". But CTCF
+elements have a median distance of 166 kb, so that enrichment was distance-confounded. With distance matched,
+CTCF is *identical* between the classes. Polycomb fails the same way.
+
+## Which block carries the residual (matched set, base rate 0.500)
+
+| block | AUPRC | AUROC | permuted AUROC |
+|---|---:|---:|---:|
+| CTCF only (M1) | 0.4761 | 0.4673 | 0.4897 |
+| H3K27me3 only (M2) | 0.5654 | 0.4900 | 0.5149 |
+| **activity only (M3)** | 0.6844 | **0.6731** | 0.4637 |
+| **indirect only (M4)** | 0.6405 | **0.6705** | 0.4910 |
+| chromatin category | 0.6190 | 0.5906 | 0.4723 |
+| **all four blocks** | 0.7160 | **0.7019** | 0.4669 |
+
+M3 and M4 each independently reach ≈0.67; together 0.70. CTCF and polycomb contribute nothing.
+
+## The mechanism, concretely
+
+Repressive elements are **not enhancers** (2.6× less H3K27ac, 2.2× less DHS, 1.8× less H3K4me1) and they sit
+**next to other genes**:
+
+| proximity to a NON-target TSS | repressive | activating | ratio |
+|---|---:|---:|---:|
+| within 2 kb | **12.6%** | 2.1% | **5.9×** |
+| within 5 kb | 27.7% | 8.6% | 3.2× |
+| within 10 kb | 42.8% | 16.9% | 2.5× |
+
+That is the signature of an **indirect effect**: CRISPRi at a distal site lands on or beside a *different*
+gene's promoter, lowers that gene, and the measured gene rises because the neighbour was repressing it. Not a
+silencer acting on the target.
+
+Note this is not geometrically inevitable — being far from your target does put you nearer *some* gene, but
+the comparison is made at **matched target distance** (residual p 0.404), so within equal distance repressive
+elements are still 4× closer to another promoter.
+
+## What this does to the polarity claim
+
+The claim has to change again, and it becomes more useful rather than less:
+
+> The 19.4% of validated pairs with a positive effect are largely **not silencers**. They are predominantly
+> non-enhancer elements sitting near a different gene's promoter — the signature of an indirect effect through
+> a neighbouring gene. Their distal position (332 kb vs 32 kb) follows from that. Insulator disruption and
+> polycomb silencing, the two mechanisms one would expect, are both **excluded** once distance is matched
+> (CTCF identical, p 0.84; H3K27me3 identical, p 0.72).
+
+So the residual AUROC 0.65 that survived the stress test is real, and it is now identified: it is detecting
+**likely-indirect effects**, which is a benchmark-QC capability rather than a discovery of repressive biology.
+That is a smaller biological claim and a more immediately usable one — these pairs are candidates for
+exclusion or re-annotation, not examples of silencers.
