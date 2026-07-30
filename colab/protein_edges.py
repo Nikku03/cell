@@ -39,12 +39,28 @@ PDCD1 (CD279) IS DROPPED FROM THE PAIRED ARM. PD-1 is a T-cell protein and its t
 melanoma transcriptome, so there is no mRNA to compare it against. It is kept in the protein-only arms and
 its absence is stated rather than silently compared to a zero vector.
 
-THE NULL IS A BOOTSTRAP OVER REAL CONTROL CELLS, ON AN n-GRID. Drawing a fresh null for each of ~246 distinct
-cell counts x 24 tags x 3 conditions is not affordable, so the null is computed at a geometric grid of n and
-its sd fitted to a/sqrt(n) -- the scaling a sample mean must follow. The fit quality is REPORTED, not
-assumed: if sd does not go as 1/sqrt(n), the interpolation is wrong and the z-scores with it. Sampling is
-with replacement, which omits the finite-population correction and so overstates the null sd by ~4% at the
-largest n -- conservative, in the direction that shrinks z rather than inflating it.
+THE STATISTIC IS A DIFFERENCE OF MEANS, NOT A LOG FOLD CHANGE, AND THAT WAS FORCED BY THE DATA. A first
+version scored log2 fold change and checked that the null sd went as 1/sqrt(n). The check FAILED and aborted
+the run (worst R2 -15.4), which turned out to be a real property rather than a bug: the 24 tags split into
+two groups. Thirteen proteins are well measured (0-65% zeros, fitted exponent -0.47 to -0.52, R2 0.987-0.998
+-- textbook). Seven proteins and all four isotype controls are 75-90% zero, and there a 25-cell bootstrap
+sample can be almost all zeros, so the mean approaches zero and LOG2 OF IT EXPLODES: sd 7.83 at n=25 for
+CD140a. The mean itself is perfectly well behaved; only the log is not.
+
+So the null needs no fitted law at all. The sd of a sample mean is exactly sigma/sqrt(n) by the CLT for any
+distribution with finite variance, zero-inflated included, so z = (mean_KO - mean_control) / (sigma/sqrt(n))
+is analytic. The grid, the interpolation and the whole failure mode disappear. A bootstrap check is still run
+at a few n and the analytic-vs-empirical agreement is printed, because an assumption that is merely correct
+in theory should still be shown to hold in the data.
+
+SEVEN PROTEINS ARE EXCLUDED FOR NOT BEING EXPRESSED. CD117, CD140a, CD140b, CD184, CD202b, CD309 and CD279
+are 75-90% zero in these melanoma cells and carry almost no information; including them would add noise and
+multiplicity for nothing. Their zero fractions are printed. Thirteen proteins remain -- still more than three
+times the four that limited the earlier result -- and every one of them has a transcript, so PDCD1 now drops
+out on independent grounds as well, which is a consistency check rather than a coincidence.
+
+THE ISOTYPE CONTROLS BEING 82-90% ZERO IS CORRECT, not a defect: they are supposed to bind nothing. They are
+scored on the same linear scale, where their sparsity is harmless.
 
 THE P-VALUE STILL PERMUTES AT THE KNOCKOUT LEVEL, because a knockout contributes up to 20 correlated cells.
 """
@@ -70,6 +86,7 @@ TAG2GENE = {"CD117": "KIT", "CD119": "IFNGR1", "CD140a": "PDGFRA", "CD140b": "PD
             "CD9": "CD9", "CD279": "PDCD1"}
 ISOTYPE = ["Rat_IgG2a", "Mouse_IgG1", "Mouse_IgG2a", "Mouse_IgG2b"]
 NO_TRANSCRIPT = {"PDCD1"}        # T-cell protein; absent from the melanoma transcriptome
+MAX_ZERO_FRAC = float(os.environ.get("PE_MAXZERO", 0.70))   # a tag above this is not expressed
 MIN_CELLS = 25
 GRID_R = int(os.environ.get("PE_GRID_R", 300))
 N_PERM = int(os.environ.get("PE_PERM", 20000))
@@ -167,23 +184,21 @@ def global_strength(G):
     return (np.abs(z) > 3).sum(1).astype(float)
 
 
-def null_model(v, base, ns, rng):
-    """Null lfc distribution for a subsample of n control cells, at a grid of n, plus the sd fit.
+def bootstrap_check(v, ns, rng):
+    """Confirm empirically that sd(sample mean) = sigma/sqrt(n), and return the worst relative error.
 
-    Returns (interp_mu, interp_sd, fit_r2). sd of a mean must go as 1/sqrt(n); the fit's R2 is returned so a
-    caller can refuse to interpret z-scores built on a scaling that does not hold.
+    The identity is exact by the CLT for any finite-variance distribution, so this is not establishing the
+    null -- it is showing that the implementation and the data agree with it, which an assumption that is
+    only true in theory still owes the reader.
     """
-    mus, sds = [], []
+    sigma = float(v.std())
+    worst = 0.0
     for n in ns:
         idx = rng.integers(0, len(v), size=(GRID_R, int(n)))
-        m = v[idx].mean(1)
-        lf = np.log2((m + 1e-12) / (base + 1e-12))
-        mus.append(lf.mean()); sds.append(lf.std() + 1e-12)
-    mus, sds = np.array(mus), np.array(sds)
-    a = float(np.mean(sds * np.sqrt(ns)))          # sd ~ a / sqrt(n)
-    pred = a / np.sqrt(ns)
-    ss = 1 - ((sds - pred) ** 2).sum() / max(((sds - sds.mean()) ** 2).sum(), 1e-30)
-    return mus, sds, a, float(ss)
+        emp = float(v[idx].mean(1).std())
+        pred = sigma / np.sqrt(n)
+        worst = max(worst, abs(emp - pred) / max(pred, 1e-30))
+    return sigma, worst
 
 
 def main():
@@ -222,6 +237,24 @@ def main():
           f"transcripts found for {len(cols)}/{len(TAG2GENE)-len(NO_TRANSCRIPT)} "
           f"(PDCD1 absent by biology, dropped from the paired arm)")
     adt_tot = A.sum(1)
+
+    # ---- expression filter: drop tags the cells do not express ----
+    # Seven of the 20 are 75-90% zero in these melanoma cells. They carry almost no information and would add
+    # noise and multiplicity for nothing. The cut is on zero fraction and the numbers are printed, so the
+    # decision is auditable rather than a silent subset.
+    zf = {t: float((A[:, i] == 0).mean()) for i, t in enumerate(tags)}
+    keep_tags = {t: g for t, g in TAG2GENE.items() if t in zf and zf[t] <= MAX_ZERO_FRAC}
+    dropped = {t: zf[t] for t in TAG2GENE if t in zf and zf[t] > MAX_ZERO_FRAC}
+    print(f"  expression filter at zero-fraction <= {MAX_ZERO_FRAC}: keeping {len(keep_tags)} of "
+          f"{len(TAG2GENE)} proteins")
+    print("    dropped as not expressed: "
+          + ", ".join(f"{t} {100*z:.0f}%" for t, z in sorted(dropped.items(), key=lambda x: -x[1])))
+    print("    isotype controls (expected to be sparse -- they bind nothing): "
+          + ", ".join(f"{t} {100*zf[t]:.0f}%" for t in ISOTYPE if t in zf))
+    missing_tx = [g for g in keep_tags.values() if g not in cols]
+    assert not missing_tx, f"kept proteins with no transcript: {missing_tx}"
+    print(f"    all {len(keep_tags)} kept proteins have a transcript, so the paired arm loses nothing")
+
     conds = sorted(set(cond))
     kos = sorted({p for p in set(pert) if p != "control"})
     resolved = [k for k in kos if k in gi]
@@ -256,34 +289,37 @@ def main():
         if not kk:
             print("    no knockout reaches the cell minimum; condition skipped")
             continue
-        grid = np.unique(np.geomspace(MIN_CELLS, max(ns_needed.values()), 12).astype(int))
+        grid = np.unique(np.geomspace(MIN_CELLS, max(ns_needed.values()), 6).astype(int))
 
-        # null per readout
-        nulls, fits = {}, {}
+        # per-readout control mean and sigma; the null sd at any n is sigma/sqrt(n), analytically
+        stats_ = {}
+        worst = 0.0
         for tag in tags:
             v = (A[:, tags.index(tag)] / np.maximum(adt_tot, 1.0))[ctl]
-            mus, sds, a, r2 = null_model(v, v.mean(), grid, rng)
-            nulls[("prot", tag)] = (grid, mus, a)
-            fits[("prot", tag)] = r2
+            sigma, w = bootstrap_check(v, grid, rng)
+            stats_[("prot", tag)] = (float(v.mean()), sigma)
+            worst = max(worst, w)
         for g, c in cols.items():
             v = (c / np.maximum(tot, 1.0))[ctl]
-            mus, sds, a, r2 = null_model(v, v.mean(), grid, rng)
-            nulls[("rna", g)] = (grid, mus, a)
-            fits[("rna", g)] = r2
-        worst = min(fits.values())
-        print(f"    null sd ~ a/sqrt(n) fit: worst R2 across {len(fits)} readouts = {worst:.4f}")
-        if worst < 0.9:
-            raise SystemExit(f"the 1/sqrt(n) null scaling does not hold (worst R2 {worst:.3f}); "
-                             "z-scores built on it would be wrong -- refusing to continue")
+            sigma, w = bootstrap_check(v, grid, rng)
+            stats_[("rna", g)] = (float(v.mean()), sigma)
+            worst = max(worst, w)
+        print(f"    null sd = sigma/sqrt(n): worst empirical-vs-analytic error across "
+              f"{len(stats_)} readouts = {100*worst:.2f}%")
+        if worst > 0.25:
+            raise SystemExit(f"the analytic null sd disagrees with the bootstrap by {100*worst:.1f}% -- "
+                             "something is wrong with the normalisation; refusing to continue")
 
         def zof(vals, denom, sel, key):
-            grid_, mus_, a_ = nulls[key]
+            """z on the LINEAR normalised scale. Not a log fold change: for the sparse tags the log of a
+            near-zero mean is not asymptotically normal, which is what broke the first version."""
+            base, sigma = stats_[key]
             n = int(sel.sum())
             vv = vals / np.maximum(denom, 1.0)
-            obs = float(np.log2((vv[sel].mean() + 1e-12) / (vv[ctl].mean() + 1e-12)))
-            mu = float(np.interp(n, grid_, mus_))
-            sd = a_ / np.sqrt(max(n, 1))
-            return (obs - mu) / sd, obs
+            obs = float(vv[sel].mean())
+            z = (obs - base) / max(sigma / np.sqrt(max(n, 1)), 1e-30)
+            rel = (obs - base) / base if base > 0 else np.nan     # for reporting only
+            return z, rel
 
         rows = []
         for k in kk:
@@ -300,7 +336,7 @@ def main():
                 frontier = nxt
                 if not frontier:
                     break
-            for tag, gene in TAG2GENE.items():
+            for tag, gene in keep_tags.items():
                 if tag not in tags or gene not in gi:
                     continue
                 ti = gi[gene]
@@ -312,8 +348,8 @@ def main():
                 else:
                     mz, ml = np.nan, np.nan
                 rows.append({"cond": cnd, "ko": k, "tag": tag, "gene": gene,
-                             "n_cells": int(sel.sum()), "prot_z": pz, "prot_lfc": pl,
-                             "mrna_z": mz, "mrna_lfc": ml, "strength": ko_str[k],
+                             "n_cells": int(sel.sum()), "prot_z": pz, "prot_rel": pl,
+                             "mrna_z": mz, "mrna_rel": ml, "strength": ko_str[k],
                              "dist": seen.get(ti, 99), "reg": reg.get((si, ti)),
                              "sig": sig.get((si, ti)), "ppi": int((si, ti) in ppi)})
             for tag in ISOTYPE:
@@ -321,8 +357,8 @@ def main():
                     continue
                 pz, pl = zof(A[:, tags.index(tag)], adt_tot, sel, ("prot", tag))
                 rows.append({"cond": cnd, "ko": k, "tag": tag, "gene": None,
-                             "n_cells": int(sel.sum()), "prot_z": pz, "prot_lfc": pl,
-                             "mrna_z": np.nan, "mrna_lfc": np.nan, "strength": ko_str[k],
+                             "n_cells": int(sel.sum()), "prot_z": pz, "prot_rel": pl,
+                             "mrna_z": np.nan, "mrna_rel": np.nan, "strength": ko_str[k],
                              "dist": 99, "reg": None, "sig": None, "ppi": 0, "isotype": True})
         allrows += rows
         real = [r for r in rows if not r.get("isotype")]
@@ -330,11 +366,11 @@ def main():
 
         # diagonal positive controls
         diag = []
-        for tag, gene in TAG2GENE.items():
+        for tag, gene in keep_tags.items():
             if gene in kk and tag in tags:
                 sel = cm & (pert == gene)
                 pz, pl = zof(A[:, tags.index(tag)], adt_tot, sel, ("prot", tag))
-                diag.append({"gene": gene, "tag": tag, "lfc": pl, "z": pz, "ok": bool(pl < 0)})
+                diag.append({"gene": gene, "tag": tag, "rel": pl, "z": pz, "ok": bool(pz < 0)})
         nok = sum(d["ok"] for d in diag)
         print(f"    POSITIVE CONTROLS (own gene knocked out): {nok}/{len(diag)} lower their own protein"
               + ("" if not diag else "   " + ", ".join(
@@ -355,7 +391,7 @@ def main():
 
         # ---- direction, the arm that carried the 4-protein result ----
         signed = [r for r in real if (r["reg"] not in (None, 0)) or (r["sig"] not in (None, 0))]
-        paired = [r for r in signed if np.isfinite(r["mrna_lfc"])]
+        paired = [r for r in signed if np.isfinite(r["mrna_z"])]
         print(f"    signed edges: {len(signed)} ({len(paired)} with a transcript to pair against)")
         cr["n_signed"] = len(signed); cr["n_paired"] = len(paired)
         if len(paired) >= 8:
@@ -363,8 +399,10 @@ def main():
             for r in paired:
                 s = r["reg"] if r["reg"] not in (None, 0) else r["sig"]
                 want = s > 0
-                hp.append(bool((r["prot_lfc"] < 0) == want))
-                hm.append(bool((r["mrna_lfc"] < 0) == want))
+                # sign read off z: z is (mean_KO - mean_control) over a POSITIVE sd, so its sign
+                # is the sign of the change. No log involved, so sparse tags stay valid.
+                hp.append(bool((r["prot_z"] < 0) == want))
+                hm.append(bool((r["mrna_z"] < 0) == want))
             okp, okm, n = sum(hp), sum(hm), len(paired)
             bp = stats.binomtest(okp, n, 0.5, alternative="greater").pvalue
             bm = stats.binomtest(okm, n, 0.5, alternative="greater").pvalue
