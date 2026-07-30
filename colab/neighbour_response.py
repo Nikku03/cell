@@ -65,7 +65,7 @@ def cat(o, k):
 
 
 def gene_coords():
-    """chrom and TSS per gene symbol, and an Ensembl->symbol map, from the project's own annotation."""
+    """chrom and TSS per gene SYMBOL, from the project's own annotation."""
     import gzip
     d = json.load(gzip.open(SP / "cell_complete.json.gz", "rt"))
     pos = {}
@@ -76,6 +76,45 @@ def gene_coords():
             continue
     del d
     return pos
+
+
+def ensembl_coords():
+    """chrom and TSS per ENSEMBL id, taken from the A549 featureCounts tables.
+
+    Needed because this h5ad has no gene symbols at all: both `var/ensembl_id` and `var/gene_symbol` hold
+    Ensembl ids, the latter mislabelled. A first version searched var for a symbol column, found
+    `gene_symbol`, and silently used Ensembl ids as symbols -- which matched zero targets. The featureCounts
+    tables carry Geneid (Ensembl) with Chr/Start/End/Strand, so they give coordinates directly and no
+    symbol mapping is required for the neighbour distances.
+    """
+    import glob
+    out = {}
+    for fn in sorted(glob.glob(str(SP / "a549" / "rna_t*.tsv")))[:3]:
+        hdr = None
+        with open(fn) as fh:
+            for line in fh:
+                if line.startswith("#"):
+                    continue
+                f = line.rstrip("\n").split("\t")
+                if hdr is None:
+                    hdr = f
+                    if hdr[0] != "Geneid":
+                        break
+                    continue
+                g = f[0].split(".")[0]
+                if g in out:
+                    continue
+                try:
+                    ch = f[1].split(";")[0]
+                    st = min(int(x) for x in f[2].split(";"))
+                    en = max(int(x) for x in f[3].split(";"))
+                    out[g] = (ch, en if f[4].split(";")[0] == "-" else st)
+                except (IndexError, ValueError):
+                    continue
+    if len(out) < 5000:
+        raise SystemExit(f"only {len(out)} Ensembl coordinates recovered from the A549 featureCounts "
+                         "tables; neighbour distances cannot be computed")
+    return out
 
 
 def main():
@@ -92,51 +131,56 @@ def main():
         v = h["var"]
         ik = v.attrs.get("_index", "_index")
         ik = ik.decode() if isinstance(ik, bytes) else ik
-        ens = [x.decode() if isinstance(x, bytes) else str(x) for x in v[ik][:]]
-        sym = None
-        for c in ("gene_symbol", "symbol", "gene_name", "features"):
-            if c in v:
-                sym = [x.decode() if isinstance(x, bytes) else str(x) for x in v[c][:]]
-                break
-        pert = cat(h["obs"], "perturbation")
+        ens = [x.decode().split(".")[0] if isinstance(x, bytes) else str(x).split(".")[0]
+               for x in v[ik][:]]
+        # the TSS tokens live in obs["gene"], NOT obs["perturbation"] -- the latter names the same
+        # perturbations without the _TSS suffix, and reading it matched zero targets on the first run
+        pert = cat(h["obs"], "gene")
         X = h["X"]
         ncell, ngene = tuple(X.attrs["shape"])
         indptr = X["indptr"][:]
-        print(f"  {ncell:,} cells x {ngene:,} genes; var ids look like {ens[:2]}"
-              + (f"; symbols available ({sym[:2]})" if sym else "; NO symbol column in var"))
+        print(f"  {ncell:,} cells x {ngene:,} genes; var ids look like {ens[:2]} (Ensembl; this file "
+              f"has no symbols -- var/gene_symbol is mislabelled and also holds Ensembl)")
 
-        # var is Ensembl; map to symbols via the annotation's own coordinates keyed by symbol.
-        # Without a symbol column the only route is an Ensembl->symbol table, so build it from the
-        # perturbation tokens that ARE symbols and fail loudly if coverage is poor.
-        if sym is None:
-            import gzip as _g
-            dd = json.load(_g.open(SP / "cell_complete.json.gz", "rt"))
-            e2s = {}
-            for g in dd["genes"]:
-                for k in ("ensembl", "ensg", "ensembl_id"):
-                    if g.get(k):
-                        e2s[str(g[k]).split(".")[0]] = g["name"]
-            del dd
-            sym = [e2s.get(e.split(".")[0], "") for e in ens]
-            cov = sum(1 for s in sym if s) / len(sym)
-            print(f"  Ensembl->symbol coverage from annotation: {100*cov:.1f}%")
-            if cov < 0.3:
-                raise SystemExit(
-                    "cannot map the expression matrix's Ensembl ids to gene symbols "
-                    f"(coverage {100*cov:.1f}%), so neighbour distances cannot be computed and no result "
-                    "from this run would be interpretable")
-        s2i = {}
-        for i, s in enumerate(sym):
-            if s and s not in s2i:
-                s2i[s] = i
+        ecoord = ensembl_coords()
+        cov = sum(1 for e in ens if e in ecoord) / len(ens)
+        print(f"  Ensembl coordinates from A549 featureCounts: {len(ecoord):,} genes; "
+              f"covering {100*cov:.1f}% of this matrix")
+        if cov < 0.5:
+            raise SystemExit(f"only {100*cov:.1f}% of expression columns have coordinates; "
+                             "neighbour distances would be defined for too few genes")
+        e2i = {e: i for i, e in enumerate(ens) if e not in ()}
+        # target symbol -> expression column, matched by COORDINATE (no symbol table exists here)
+        bysite = {}
+        for e, (c, t) in ecoord.items():
+            if e in e2i:
+                bysite.setdefault(c, []).append((t, e))
+        for c in bysite:
+            bysite[c].sort()
+        def sym_to_col(symbol):
+            if symbol not in pos:
+                return None
+            c, t = pos[symbol]
+            arr = bysite.get(c) or bysite.get(c.replace("chr", "")) or bysite.get("chr" + c)
+            if not arr:
+                return None
+            ts = np.array([a[0] for a in arr])
+            j = int(np.searchsorted(ts, t))
+            best, bi = None, None
+            for k in range(max(0, j - 3), min(len(arr), j + 3)):
+                dd = abs(int(arr[k][0]) - t)
+                if best is None or dd < best:
+                    best, bi = dd, arr[k][1]
+            return e2i[bi] if (best is not None and best <= 2000) else None
 
         # targets: SYMBOL_TSS tokens
         targ = {}
         for ci, p in enumerate(pert):
             for m in re.finditer(r"([A-Za-z0-9\-]+)_TSS", p):
                 targ.setdefault(m.group(1), []).append(ci)
+        tcol = {t: sym_to_col(t) for t in targ}
         usable = {t: np.array(c) for t, c in targ.items()
-                  if len(c) >= MIN_CELLS and t in s2i and t in pos}
+                  if len(c) >= MIN_CELLS and tcol.get(t) is not None and t in pos}
         print(f"  {len(targ)} TSS-targeted genes; {len(usable)} with >={MIN_CELLS} cells, a coordinate "
               f"and an expression column")
         if len(usable) < 20:
@@ -177,15 +221,16 @@ def main():
         outm = (SUMALL - SUMW[j]) / max(grand - totw[j], 1.0)
         lfc = np.log2((inm + 1e-9) / (outm + 1e-9))
         # POSITIVE CONTROL: the target's own transcript must fall
-        own = lfc[s2i[t]]
+        own = lfc[tcol[t]]
         if not (own < -0.05):
             continue
         okpc += 1
         ch0, tss0 = pos[t]
-        for g, gi_ in s2i.items():
-            if g == t or g not in pos:
+        for gi_, e in enumerate(ens):
+            if e not in ecoord or gi_ == tcol[t]:
                 continue
-            ch1, tss1 = pos[g]
+            ch1, tss1 = ecoord[e]
+            g = e
             if ch1 != ch0:
                 band = "different chrom"
                 dd = np.inf
