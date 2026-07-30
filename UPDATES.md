@@ -15880,3 +15880,59 @@ merging them is what produced a 612k-edge layer that cannot move a number.
 
 Every join in this module went through the block-A registry with a declared rate: K562 genes 99.8%, RPE1 genes
 99.8%, K562 perturbations 92.5%, RPE1 perturbations 97.0%.
+
+---
+
+# Overnight, block C — bound × causal: most regulation is downstream, and directness is worth a tier
+
+`colab/bound_causal.py` → `outputs/orphan/bound_causal.json`
+
+Block B's recorded limit was blunt: a perturbational edge is a causal *consequence* of knocking down the
+source, not evidence the source acts on the target. ENCODE has 776 released K562 TF ChIP experiments over 526
+targets; **396 of those targets also carry a Replogle perturbation**, and 392 have a GRCh38
+conservative-IDR file (4 dropped for lacking the pinned output type, not back-filled).
+
+## The 2×2, over 392 TFs × 7,031 genes
+
+| | count | |
+|---|---:|---|
+| **DIRECT** (bound + causal) | 9,118 | 31.6% of causal edges |
+| **INDIRECT** (causal, unbound) | 19,702 | 68.4% |
+| bound but **not** causal | 679,276 | occupancy without regulation |
+
+**Two-thirds of what a TF knockdown does transcriptionally is downstream, not direct.** Binding is enriched at
+causal targets — 1.27× over a 24.98% background, p 8e−143 — but that background is high by construction: the
+median promoter here carries peaks from **~96 of 392 TFs**, so "bound" is a weak statement on a busy promoter.
+The bottom-left cell is not noise; occupancy without regulation is well-measured, and this project found it
+once before comparing GATA1 ChIP against Perturb-seq.
+
+## The prespecified test: does directness predict transfer to RPE1?
+
+Signed in advance — a direct edge is one protein at one promoter and should survive a change of cell type,
+while an indirect edge is the end of a chain whose intermediate steps are themselves cell-type dependent.
+
+Matched on |z_K562| × TFs-per-promoter, **20 draws**:
+
+| class | mean \|z\| in RPE1 | sign agrees |
+|---|---:|---:|
+| direct | **1.6294** | **0.6953** |
+| indirect | 1.3838 | 0.6560 |
+
+Magnitude median p 7.7e−08, **100% of draws p<0.05**. Sign **+3.9 points**, median p 0.0018, **100% of draws
+p<0.05**. Residual imbalance after matching: |z| p 0.967, TFs-per-promoter p 0.698.
+
+Both halves hold. The sign effect is **reliable but modest** — 3.9 points — and worth stating that way rather
+than as a large one.
+
+## The correction that mattered
+
+The first run matched on **quartiles** of TFs-per-promoter and got sign +3.0 points at p 0.0148 from a
+**single draw**, with residual imbalance in promoter busyness at **p 0.037** — the exact confound the match
+existed to remove. With a median of ~96 TFs per promoter, quartiles are far too coarse. Deciles plus 20 draws
+cleaned the residual (p 0.698) and the sign effect came out *stronger* and reliable (+3.9 points, 100% of
+draws), not weaker. A single matched draw has now been read as a result three times in this project; the
+repeated draw is not optional.
+
+**What this buys the model.** Causal edges can now be tiered by directness, and the tier is validated rather
+than assumed: `direct` edges carry both a larger and a more reliably-signed effect in a cell type they were
+not built from.
