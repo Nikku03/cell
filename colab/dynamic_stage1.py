@@ -255,6 +255,15 @@ def main():
                 sc.append(r2_score(b[te], m.predict((A[te] - mu) / sd)))
             return float(np.mean(sc)) if sc else np.nan
 
+        # THE TARGET IS THE CHANGE, NOT THE LEVEL. A first version predicted log RNA(t+1) and the
+        # autoregressive floor reached R2 0.887 while every accessibility arm added +0.0000 -- but that is
+        # mostly an artefact of predicting a level: adjacent pseudotime bins are nearly identical, so the
+        # level is almost fully determined by the previous level and there is little left to explain.
+        # Predicting the log fold change removes that, and it is the quantity a dynamic model is actually
+        # claiming to know. Predictors stay strictly at time t, so this remains a forecast.
+        y_delta = Ly[:, 0] - L[:, 0]
+        print(f"    delta target: sd {y_delta.std():.4f}, "
+              f"vs level sd {Ly[:, 0].std():.4f}  (ratio {y_delta.std()/max(Ly[:,0].std(),1e-9):.3f})")
         y_next_rna = Ly[:, 0]
         ARMS = {
             "AR floor: rna_t": [0],
@@ -263,21 +272,29 @@ def main():
             "CTRL + RANDOM dist-matched peak": [0, 1, 3],
             "+ linked AND random": [0, 1, 2, 3],
         }
-        print(f"\n    predicting RNA_g(t+1), held out by donor")
-        print(f"      {'arm':34s} {'R2':>8s} {'gain over AR':>13s}")
-        base = None
         rr = {}
-        for tag, cols in ARMS.items():
-            r2 = loco_r2(cols, y_next_rna)
-            if base is None:
-                base = r2
-            print(f"      {tag:34s} {r2:8.4f} {r2-base:+13.4f}")
-            rr[tag] = {"r2": r2, "gain_over_ar": r2 - base}
+        for tname, targ in (("LEVEL log RNA(t+1)", y_next_rna), ("DELTA log RNA(t+1)-log RNA(t)", y_delta)):
+            print(f"\n    predicting {tname}, held out by donor")
+            print(f"      {'arm':34s} {'R2':>8s} {'gain over AR':>13s}")
+            base = None
+            sub = {}
+            for tag, cols in ARMS.items():
+                r2 = loco_r2(cols, targ)
+                if base is None:
+                    base = r2
+                print(f"      {tag:34s} {r2:8.4f} {r2-base:+13.4f}")
+                sub[tag] = {"r2": r2, "gain_over_ar": r2 - base}
+            rr[tname] = sub
+        # the verdict reads the DELTA target; the level target is kept as the labelled comparison that
+        # shows why it was the wrong question
+        for tag in ARMS:
+            rr[tag] = rr["DELTA log RNA(t+1)-log RNA(t)"][tag]
 
         # DIRECTION: same machinery, swapped roles
-        r_fwd = loco_r2([0, 1, 2], y_next_rna) - loco_r2([0], y_next_rna)
-        y_next_atac = Ly[:, 1]
-        r_rev = loco_r2([2, 0], y_next_atac) - loco_r2([2], y_next_atac)
+        # direction on the CHANGE in each modality, for the same reason
+        r_fwd = loco_r2([0, 1, 2], y_delta) - loco_r2([0], y_delta)
+        y_datac = Ly[:, 1] - L[:, 2]
+        r_rev = loco_r2([2, 0], y_datac) - loco_r2([2], y_datac)
         print(f"\n    DIRECTION TEST")
         print(f"      ATAC_link(t) adds to RNA(t+1) beyond RNA(t) : {r_fwd:+.4f}")
         print(f"      RNA(t) adds to ATAC_link(t+1) beyond ATAC(t): {r_rev:+.4f}")
