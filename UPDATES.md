@@ -14762,3 +14762,61 @@ The test to run, specified before seeing results so the analysis cannot drift:
 - **Genome-wide AND a prespecified responsive-locus set**, both reported. Most genes do not respond to
   dexamethasone, so a genome-wide test dilutes a real effect; defining the subset biologically *before*
   evaluation is not cherry-picking, and reporting both is what makes it auditable.
+
+## Result: null across all 21 lags, with real elapsed time
+
+11 shared timepoints, **14,158 genes** each with a GR-bound distal DNase peak, a distance-matched non-GR peak,
+baseline TPM ≥ 1, and complete RNA across all timepoints. 1,306,843 GR ChIP peaks. Held out by chromosome.
+
+| | best value | at |
+|---|---:|---|
+| link gain over autoregressive floor | **+0.0008** | τ = 10 h |
+| link − distance-matched random | +0.0003 | τ = 10 h |
+| **permuted-time gain** | **+0.0007** | τ = 10 h |
+| direction asymmetry | +0.0007 | τ = 10 h |
+| within-gene contemporaneous advantage | +0.0019 (Wilcoxon p 0.232) | — |
+
+**The lag curve is flat.** Across τ ∈ {0.5 … 11.5 h} the link gain never exceeds +0.0008, is negative at 12 of
+21 lags, and link-minus-random is negative at 11 of 21. Critically, **permuted time does as well as real time**
+(+0.0007 vs +0.0008 at the best lag) — the ordering carries nothing. There is no specific temporal window,
+which was the prespecified signature of a genuine lead–lag.
+
+The autoregressive floor itself is real but modest (R² 0.0006–0.0577 depending on lag), so the target is not
+degenerate; accessibility simply adds nothing to it.
+
+**Accessibility is not even a clear state marker here.** Within a gene across 11 timepoints, its GR-bound
+enhancer tracks expression barely better than a matched non-GR peak (mean r² 0.0901 vs 0.0882, difference
++0.0019, **p 0.232**). So the "state marker, not forecaster" reading is *not* supported either — at this
+resolution DNase signal at a single distal peak carries little information about the gene in either role.
+
+## What this closes, and what it does not
+
+**Removed as explanations for the pseudotime null:** temporal resolution (real clock time, 21 lags), link
+quality (GR ChIP, the direct dexamethasone effector, rather than variance-chosen peaks), lag misspecification
+(the whole curve was scanned), and outcome-based gene selection (the set was prespecified by GR binding plus
+baseline expression).
+
+**Still open:** one replicate per timepoint in most of this series, so no replicate variance is estimable and
+transient effects between sampled points are invisible. Bulk DNase averages over the population, so a strong
+response in a subpopulation is diluted. And a single distal peak per gene is a thin representation of a
+regulatory neighbourhood.
+
+## Two implementation failures worth recording
+
+1. **The contemporaneous arm was broken in the first run** and would have been reported as a meaningful
+   −0.0001. It pooled genes and regressed log RNA on one distal peak's signal held out by chromosome; both it
+   and its *intercept-only* baseline returned negative held-out R² (−0.0193 vs −0.0192), because a single
+   distal peak cannot predict absolute expression of genes on an unseen chromosome. Rebuilt as a within-gene
+   correlation across time, which is what "state marker" actually means.
+2. **An O(peaks-per-lookup) hot spot made the run non-terminating** — `sig_at` rebuilt a numpy array of every
+   peak start on the chromosome on each of ~330k calls, against 1.3M GR peaks. Also: ENCODE mixes
+   quantification pipelines in this one series, so 15 files are featureCounts and one is RSEM; assuming a
+   single format made the parser read an RSEM `effective_length` of 93.00 as a genomic start coordinate.
+
+## Where this leaves the dynamic question
+
+Per the revised staging: **Stage 3 stays paused.** The observational route has now been tested twice — pseudotime
+multiome and real-time stimulus response — with prespecified controls, and both are null. The decisive remaining
+test is the one that does not depend on observational forecasting at all: **Stage 2, do(ATAC_e ↓) → ΔRNA_g.**
+Observational predictability is neither necessary nor sufficient for perturbational causality, so a null here
+does not predict a null there.
