@@ -62,7 +62,12 @@ STRING_INFO = SP / "protein" / "9606.protein.info.v12.0.txt.gz"
 STRING_LINKS = SP / "protein" / "9606.protein.links.v12.0.txt.gz"
 REACTOME = SP / "ReactomePathways.gmt"
 SEEDS = (0, 1, 2, 3, 4)
-MEAS = ["prot_mean", "prot_sd", "rna_mean", "rna_sd", "n_samples"]
+# n_cohorts belongs here and was missing from the gate's own feature list. The pooled rho is a MEAN over
+# however many cohorts measured the gene, so a 3-cohort gene has a less noisy target than a 1-cohort gene,
+# and a tree can read that directly. It also correlates with STRING degree at Spearman +0.177 (p 4e-82) --
+# well-connected genes are detected in more cohorts -- so leaving it out would let the biology block proxy
+# it and be credited for a measurement effect.
+MEAS = ["prot_mean", "prot_sd", "rna_mean", "rna_sd", "n_samples", "n_cohorts"]
 
 
 def string_features():
@@ -166,9 +171,15 @@ def main():
                          "so external annotation can be joined on")
     F0, rho, mnames = z["F"], z["rho"], [str(x) for x in z["names"]]
     genes = [str(g) for g in z["genes"]]
-    keep = [mnames.index(n) for n in MEAS]
-    M = F0[:, keep]
+    cols = []
+    for n in MEAS:
+        cols.append(F0[:, mnames.index(n)] if n in mnames else z[n].astype(float))
+    M = np.column_stack(cols)
     print(f"  {len(genes):,} genes with a pooled rho; measurability block = {MEAS}")
+    print(f"  cohorts per gene: " + ", ".join(
+        f"{int(k)}->{int(v)}" for k, v in zip(*np.unique(z["n_cohorts"], return_counts=True))))
+    # rho_sd is deliberately NOT a control: it is the spread of the very quantity being predicted, so
+    # conditioning on it would be conditioning on the target.
 
     d700, d900, size = string_features()
     npath, biggest = reactome_features()
@@ -233,6 +244,25 @@ def main():
         R["residual"][tag] = {"r2": rr, "shuffled": float(np.mean(rsh)), "net": float(net)}
     net = R["residual"]["clean biology (PPI + Reactome)"]["net"]
     print("    ^ the verdict below is read off the CLEAN block; protein length is a measurement feature")
+
+    # LINEAR SANITY CHECK. The largest marginal Spearman in the clean block is ~0.05, which alone explains
+    # R2 ~0.002. If the tree reports ten times that, the claim rests on interactions among four features --
+    # possible, but it is also what an overfit looks like, so the linear number is printed beside it.
+    from sklearn.linear_model import RidgeCV
+    from sklearn.metrics import r2_score
+    Xb = B[np.ix_(ok, CLEAN)]
+    lin = []
+    for s in SEEDS:
+        idx = np.random.default_rng(s).permutation(len(res))
+        cut = int(0.8 * len(res))
+        tr, te = idx[:cut], idx[cut:]
+        mu, sd = Xb[tr].mean(0), Xb[tr].std(0) + 1e-9
+        m = RidgeCV(alphas=np.logspace(-2, 4, 25)).fit((Xb[tr] - mu) / sd, res[tr])
+        lin.append(r2_score(res[te], m.predict((Xb[te] - mu) / sd)))
+    print(f"    linear (ridge) on the same clean block: R2 {np.mean(lin):+.4f}"
+          f"   [{' '.join(f'{x:+.3f}' for x in lin)}]")
+    print("    ^ ridge cannot overfit 4 columns, so a positive value here is the floor on the effect")
+    R["residual"]["clean_linear_r2"] = float(np.mean(lin))
 
     # ---- direction, per feature, against the residual ----
     print("\n  DIRECTION vs the measurability residual (Spearman; a mechanism predicts a sign)")
