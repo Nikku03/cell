@@ -283,6 +283,28 @@ def main():
                          "strength": ko_str[k], "dist": dist.get((si, ti), 99),
                          "reg": rsign, "sig": ssign,
                          "ppi": int((si, ti) in ppi), "coexpr": int((si, ti) in co)})
+    # ---- POSITIVE CONTROL: the diagonal cells, excluded from the test but essential to interpreting it ----
+    # A 4-of-10 direction rate could mean the network's signs are wrong OR that the ADT readout does not
+    # respond at all. These two cells separate those: knock out the gene, its own protein must fall. They are
+    # excluded from the network test (no self-loop to predict) and used only here.
+    print("\n  POSITIVE CONTROL -- knock out the gene, does its OWN protein fall?")
+    diag = []
+    for tag, gene in TAG2GENE.items():
+        if gene not in cols or tag not in tags or gene not in {ALIAS.get(k, k) for k in resolved}:
+            continue
+        ko = next(k for k in resolved if ALIAS.get(k, k) == gene)
+        sel = np.array([guide_target(g) == ko for g in gid])
+        pz, plfc = zscore(A[tags.index(tag)], adt_tot, sel, f"prot:{tag}")
+        mz, mlfc = zscore(cols[gene], tot, sel, f"rna:{gene}")
+        ok = plfc < 0
+        print(f"    {ko:10s} -> {tag:7s} protein lfc {plfc:+.4f} (z {pz:+7.2f})   "
+              f"mRNA lfc {mlfc:+.4f}   {'FALLS as it must' if ok else 'DOES NOT FALL'}")
+        diag.append({"ko": ko, "tag": tag, "prot_lfc": plfc, "prot_z": pz, "mrna_lfc": mlfc, "ok": bool(ok)})
+    ctrl_ok = all(d["ok"] for d in diag) and len(diag) >= 2
+    print(f"    -> readout {'RESPONDS' if ctrl_ok else 'QUESTIONABLE'}: {sum(d['ok'] for d in diag)}"
+          f"/{len(diag)} self-knockouts lower their own protein"
+          + ("" if ctrl_ok else "   <- a null below may be the assay, not the network"))
+
     print(f"\n  {len(rows)} testable off-diagonal (knockout, protein) cells")
 
     # every predicate is wrapped in bool(). Without it, `False or False or 0 or 0` evaluates to the int 0,
@@ -377,8 +399,9 @@ def main():
     # ---- path distance: the properly-powered arm, and the one that matches the propagation claim ----
     dv = np.array([r["dist"] for r in rows], float)
     reach = dv < 90
+    hist = {int(k): int(v) for k, v in zip(*np.unique(dv[reach], return_counts=True))}
     print(f"\n  PATH-DISTANCE ARM ({int(reach.sum())}/{len(rows)} cells reachable within {MAXD} hops; "
-          f"distances {dict(zip(*[list(x) for x in np.unique(dv[reach], return_counts=True)]))})")
+          + ", ".join(f"{k} hop{'s' if k > 1 else ''}: {v}" for k, v in sorted(hist.items())) + ")")
     R["distance"] = {"n_reachable": int(reach.sum()),
                      "hist": {str(int(k)): int(v) for k, v in zip(*np.unique(dv[reach],
                                                                             return_counts=True))}}
@@ -452,12 +475,14 @@ def main():
         print(f"    {'KO':10s} {'protein':8s} {'sign':>5s} {'prot lfc':>9s} {'prot z':>8s} "
               f"{'mRNA lfc':>9s}   as predicted?")
         okp = okm = 0
+        hitp, hitm = [], []
         for r in sorted(signed, key=lambda x: x["ko"]):
             s = r["reg"] if r["reg"] not in (None, 0) else r["sig"]
             want_dn = s > 0
-            gp = (r["prot_lfc"] < 0) == want_dn
-            gm = (r["mrna_lfc"] < 0) == want_dn
+            gp = bool((r["prot_lfc"] < 0) == want_dn)
+            gm = bool((r["mrna_lfc"] < 0) == want_dn)
             okp += gp; okm += gm
+            hitp.append(gp); hitm.append(gm)
             print(f"    {r['ko']:10s} {r['tag']:8s} {s:+5d} {r['prot_lfc']:+9.4f} "
                   f"{r['prot_z']:+8.2f} {r['mrna_lfc']:+9.4f}   "
                   f"{'protein YES' if gp else 'protein no '} / {'mRNA YES' if gm else 'mRNA no'}")
@@ -466,35 +491,67 @@ def main():
         bm = stats.binomtest(okm, n, 0.5, alternative="greater")
         print(f"    protein direction correct {okp}/{n}  exact binomial p {bp.pvalue:.4f}")
         print(f"    mRNA    direction correct {okm}/{n}  exact binomial p {bm.pvalue:.4f}")
+        # PAIRED, because the two rates come from the SAME edges. Two independent binomials cannot say the
+        # rates DIFFER; only the discordant pairs carry that information, so this is an exact McNemar.
+        b = sum(1 for p, m in zip(hitp, hitm) if p and not m)      # protein right, mRNA wrong
+        c = sum(1 for p, m in zip(hitp, hitm) if m and not p)      # mRNA right, protein wrong
+        mc = stats.binomtest(b, b + c, 0.5, alternative="less") if b + c else None
+        if mc:
+            print(f"    PAIRED exact McNemar on the {b+c} discordant edges "
+                  f"({b} protein-only, {c} mRNA-only): p {mc.pvalue:.4f}")
+            print(f"    ^ the same {n} edges score both arms, so two separate binomials cannot say the rates "
+                  f"DIFFER -- only the discordant pairs carry that, and there are {b+c} of them")
+        else:
+            print("    no discordant edges -- the two arms agree everywhere")
         R["direction"] = {"n": n, "protein_correct": int(okp), "protein_p": float(bp.pvalue),
-                          "mrna_correct": int(okm), "mrna_p": float(bm.pvalue)}
+                          "mrna_correct": int(okm), "mrna_p": float(bm.pvalue),
+                          "discordant_protein_only": int(b), "discordant_mrna_only": int(c),
+                          "mcnemar_p": float(mc.pvalue) if mc else None}
 
     # ---- verdict ----
     print("\n" + "=" * 100)
     pp = R.get("prot_z", {}).get("reg", {}).get("perm_p", 1.0)
     mp = R.get("mrna_z", {}).get("reg", {}).get("perm_p", 1.0)
-    pd_ = R.get("prot_z", {}).get("reg", {}).get("diff", 0.0)
-    md = R.get("mrna_z", {}).get("reg", {}).get("diff", 0.0)
-    dirp = R.get("direction", {}).get("protein_p", 1.0)
-    if pp < 0.05 and dirp < 0.05:
-        v = (f"EDGES REACH PROTEIN -- regulatory edges predict protein movement (diff {pd_:+.3f}, "
-             f"permuted p {pp:.4f}) and their signs are right (p {dirp:.4f}). On four proteins, so this "
-             f"is a consistency check that passed, not a proteome-wide validation.")
-    elif pp < 0.05:
-        v = (f"MAGNITUDE ONLY -- edges predict THAT the protein moves (diff {pd_:+.3f}, p {pp:.4f}) but "
-             f"not reliably which way (direction p {dirp:.4f}). Usable to rank blast radius, not to "
-             f"predict the sign of a response.")
-    elif mp < 0.05 and pp >= 0.05:
-        v = (f"EDGES STOP AT THE TRANSCRIPT -- they predict mRNA movement (diff {md:+.3f}, p {mp:.4f}) but "
-             f"not protein movement (diff {pd_:+.3f}, p {pp:.4f}). The honest reading of an mRNA-derived "
-             f"network: its edges describe transcript changes that do not demonstrably reach protein. "
-             f"With 11 edge cells this is underpowered for anything but a large effect, so it is evidence "
-             f"of absence only to the extent the power table above allows.")
+    D = R.get("direction", {})
+    okp, okm, nd = D.get("protein_correct", 0), D.get("mrna_correct", 0), D.get("n", 0)
+    mcp = D.get("mcnemar_p")
+    medz = float(np.median(np.abs([r["prot_z"] for r in rows])))
+    # THE MAGNITUDE ARMS ARE NULL AND UNDERPOWERED; THE DIRECTION ARM IS NEITHER. Reading the verdict off
+    # the magnitude arms alone labelled this "underpowered", which is wrong in a way that matters: the
+    # protein responses are large (median |z| ~5, extremes -23 and +12), so the outcome is not noise-limited.
+    # What fails is the SIGN. Those are different findings and the ladder now distinguishes them.
+    parts = [f"magnitude and path-distance arms are NULL and underpowered (reg protein p {pp:.3f}, "
+             f"mRNA p {mp:.3f}; only d>=0.90 was detectable), so they say nothing either way"]
+    if not ctrl_ok:
+        v = ("INCONCLUSIVE -- the positive control did not pass, so a null on the network arms cannot be "
+             "separated from a readout that does not respond. Fix the control before reading anything else.")
+    elif medz < 2:
+        v = (f"READOUT TOO QUIET -- median |protein z| is only {medz:.2f}, so protein responses are near the "
+             f"NT noise floor and no arm can resolve anything. {parts[0]}.")
+    elif okm > okp and mcp is not None and mcp < 0.05:
+        v = (f"EDGES STOP AT THE TRANSCRIPT -- the same {nd} signed edges get the mRNA direction right "
+             f"{okm}/{nd} but the protein direction {okp}/{nd}, paired McNemar p {mcp:.4f}. Protein is not "
+             f"the quiet arm: median |z| {medz:.2f}, extremes past 20. So the network's signs describe "
+             f"transcript changes that do not carry to protein. {parts[0]}.")
+    elif okm > okp:
+        v = (f"SUGGESTIVE, NOT ESTABLISHED -- the same {nd} signed edges get the mRNA direction right "
+             f"{okm}/{nd} (p {D.get('mrna_p', 1):.3f}) but the protein direction only {okp}/{nd} "
+             f"(p {D.get('protein_p', 1):.3f}), and protein is not the quiet arm (median |z| {medz:.2f}). "
+             f"That is the pattern of edges stopping at the transcript, but the paired test has only "
+             f"{D.get('discordant_protein_only',0)+D.get('discordant_mrna_only',0)} discordant edges "
+             f"(McNemar p {mcp:.3f}), so this dataset cannot establish it. Four proteins is the binding "
+             f"constraint, not the analysis. {parts[0]}.")
+    elif okp >= okm and D.get("protein_p", 1) < 0.05:
+        v = (f"SIGNS REACH PROTEIN -- {okp}/{nd} signed edges move the protein the predicted way "
+             f"(p {D.get('protein_p', 1):.4f}), at least as often as they move the transcript ({okm}/{nd}). "
+             f"On four proteins, so this is a consistency check that passed, not a validation. {parts[0]}.")
     else:
-        v = (f"UNDERPOWERED -- neither arm separates (protein p {pp:.4f}, mRNA p {mp:.4f}). With 11 "
-             f"regulatory-edge cells out of 94 and only large effects detectable, this is a null result "
-             f"about the test's resolution, not about the network. It should not be quoted either way.")
+        v = (f"NO SIGNAL IN EITHER MODALITY -- signed edges get protein {okp}/{nd} and mRNA {okm}/{nd}, "
+             f"both at chance. {parts[0]}. Nothing here supports or undermines the network.")
     R["verdict"] = v
+    R["median_abs_prot_z"] = medz
+    R["positive_control_passed"] = bool(ctrl_ok)
+    R["positive_control"] = diag
     print(f"  VERDICT: {v}")
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump(R, open(OUT / "protein_orthogonal.json", "w"), indent=1, default=float)
