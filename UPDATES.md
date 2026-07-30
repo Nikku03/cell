@@ -13941,3 +13941,67 @@ difference for a negative return.
 
 The earlier framing -- "even at tier A the BED bisect beats the Hi-C library 4x" -- was directionally right
 but understated. It is not 4x better. Hi-C adds *nothing at all* once the bisect has been done.
+
+---
+
+# mRNA response vs protein response: the average hides everything. It is molecule-specific.
+
+`colab/mrna_vs_protein.py`, on Papalexi ECCITE-seq (already on disk): 20,729 THP-1 cells, 107 guides, and
+four antibody-derived tags measured in the same cells as the full transcriptome.
+
+**The premise being tested was not the one usually quoted.** R² ≈ 0.30–0.40 is for *static abundance across
+genes*. What a perturbation model needs is narrower: when a knockout moves a gene's mRNA, does its protein
+move too? Those can diverge in either direction, and no literature figure answers it.
+
+## The join, which a naive version would have silently botched
+
+| join | agreement |
+|---|---:|
+| raw barcodes | **0 / 20,729** — ADT carries an `l1..l8` lane prefix |
+| strip prefix only | 20,441 / 20,729 (98.61%) — *looks fine* |
+| normalise both conventions (prefix + 10x `-N` suffix) | **20,729 / 20,729 (100.00%)** |
+
+The `-N` suffix was added by the h5ad producer to disambiguate barcodes seen in more than one lane. The
+98.61% version would have produced entirely plausible numbers from 288 mismatched cells. The guide matrix
+shares the ADT column order exactly, and the script asserts on the join rather than warning.
+
+## [1] Direct effect — the positive control
+
+| tag | gene | guides | cells | mRNA lfc | protein lfc |
+|---|---|---:|---:|---:|---:|
+| CD86 | CD86 | 4 | 1,197 | **−0.2720** | **−0.4928** |
+| PDL2 | PDCD1LG2 | 4 | 617 | **−0.0919** | **−0.2661** |
+| PDL1 | CD274 | 0 | 0 | not targeted in this library |
+| CD366 | HAVCR2 | 0 | 0 | not targeted in this library |
+
+Both testable knockouts drop both readouts, protein more than mRNA. Guides work, join is sound.
+
+## [2] Response correlation — the actual question
+
+| tag | gene | guides | Pearson r | R² | Spearman | shuffled \|r\| |
+|---|---|---:|---:|---:|---:|---:|
+| **PDL1** | **CD274** | 91 | **+0.8990** | **0.8081** | +0.7040 | 0.077 ± 0.056 |
+| CD86 | CD86 | 91 | +0.3227 | 0.1042 | +0.1044 | 0.072 ± 0.074 |
+| CD366 | HAVCR2 | 91 | −0.2448 | 0.0599 | −0.1314 | 0.077 ± 0.062 |
+| PDL2 | PDCD1LG2 | 91 | −0.1584 | 0.0251 | −0.1905 | 0.080 ± 0.069 |
+
+**Mean R² = 0.2493 — and the mean is the least informative number here.** The distribution is not centred on
+0.25; it is one molecule at 0.81 and three between 0.03 and 0.10. For PD-L1, mRNA response predicts protein
+response almost perfectly. For its own paralog PD-L2, in the same cells under the same guides, it predicts
+nothing.
+
+That paralog contrast is the finding. Same family, same pathway, opposite answer — so **there is no
+cell-wide correction factor, and you cannot know in advance which regime a given protein is in.** Averaging
+to R² ≈ 0.25 and applying it uniformly would be wrong for every one of the four.
+
+## Limits, stated
+
+Four proteins. Two of the four had no direct-effect test because the library did not target them. The two
+negative correlations sit 1.1 sd (PD-L2) and 2.4 sd (CD366) from the shuffled control, so CD366's may be a
+weak real anti-correlation and PD-L2's may be noise. This is a four-point result, not a proteome-wide one.
+
+**Frangieh Perturb-CITE-seq would widen it to ~20 proteins**, but the accession quoted in the roadmap
+(GSE168620) is a 10x technology dataset, not Frangieh, and GSE160244 is a drug-treatment DGE series. The
+right source is the Broad Single Cell Portal (SCP1064), which needs interactive auth this session does not
+have. `frangieh.h5ad` on disk is RNA-only -- `obsm` and `layers` are both empty -- so its ADT panel is not
+locally available.
