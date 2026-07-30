@@ -15186,3 +15186,85 @@ mislabel would have buried the finding as noise. Both directions are now tested 
 The screen's enhancer perturbations use internal ids (`chrN.NNNN`) with no coordinates in the file, so the 402
 Gasperini benchmark pairs are not re-scored here. This measures the mechanism, not those pairs; re-scoring them
 needs Gasperini's guide-coordinate supplementary table.
+
+---
+
+# The E–G model is now written into the cell as a scored edge layer
+
+`colab/eg_layer.py` · `outputs/orphan/eg_layer.json` · `scratchpad/cell_eg_edges.json.gz`
+
+The cell object carried 612,133 regulatory edges and 191,447 PPI but **no enhancer–gene layer** — genes held
+an `enh` count and `loops3d` held 767 entries. The entire E–G thread lived in modules and JSON and contributed
+nothing to the cell. This connects it.
+
+## Feature-set decision, and why it mattered
+
+The best benchmark model uses the TSV's own `DHS.RPM` / `H3K27ac.RPM` / `CTCF.RPM` columns, which exist **only
+for the 14,734 benchmark pairs**. Scoring a new locus needs features computable anywhere. Training on RPM
+columns and scoring with peak-derived features would be a distribution shift that **no existing test in this
+project would catch**, because every test scores the benchmark pairs.
+
+So the model is trained on peak-derived features end to end, and the cost is measured rather than assumed:
+
+| | pooled AUPRC | R@1 | MRR |
+|---|---:|---:|---:|
+| benchmark-column model | 0.5372 | 0.6970 | 0.7910 |
+| **peak-derived (shippable)** | **0.5322** | **0.6800** | **0.7741** |
+| distance-only floor | — | 0.6509 | 0.7561 |
+
+**Cost of portability: −0.0170 R@1**, still clear of the distance floor. The module refuses to write the layer
+if it isn't.
+
+## The flaw that per-stratum calibration caught
+
+The first run wrote 354,687 edges using a single global precision curve. That was wrong, and the composition
+check shows why:
+
+| distance | genome-wide candidates | benchmark (where precision was calibrated) |
+|---|---:|---:|
+| <10 kb | 22.0% | **1.9%** |
+| 10–100 kb | 64.8% | 15.4% |
+| >250 kb | 0% | **63.5%** |
+
+The benchmark is distal-heavy; the genome-wide window is proximal-heavy. Proximal pairs score high on distance
+whether or not they are real, so a distal-calibrated curve **overstates precision on every proximal edge**.
+
+Calibrating within strata revealed the true scale of the problem — **the base rate varies 14×**:
+
+| stratum | benchmark n | positives | base rate | score threshold for precision ≥ 0.30 |
+|---|---:|---:|---:|---:|
+| <10 kb | 297 | 170 | **0.5724** | 0.05 |
+| 10–100 kb | 2,185 | 364 | 0.1666 | 0.35 |
+| 100–250 kb | 2,778 | 114 | **0.0410** | 0.70 |
+
+A stratum the benchmark cannot support (<150 pairs or <15 positives, or one that never reaches the floor)
+now emits **no edges at all** rather than edges carrying an unsupported number.
+
+## What was written
+
+**393,936 edges** across GM12878, HCT116, K562, WTC11 — 16,284 genes covered, 5.4 MB.
+
+| band | edges | share | median precision |
+|---|---:|---:|---:|
+| <10 kb | 84,380 | 21.4% | 0.770 |
+| 10–100 kb | 303,460 | 77.0% | 0.418 |
+| **100–250 kb** | **6,096** | **1.5%** | 0.324 |
+
+38.1% of edges carry precision ≥ 0.50. **The layer is overwhelmingly short-range** — only 6,096 edges (1.5%)
+are distal, and those are the hard, interesting ones. That is an honest limitation, not a headline: much of
+this layer is promoter-proximal and close to trivial, and its value is concentrated in a small distal tail.
+
+## What is deliberately absent
+
+- **Effect magnitude** — not predictable from biology here and confounded with detection power (R² +0.0881 from
+  power alone, every biological arm net-negative).
+- **Polarity** — 19.4% of validated pairs are positive-effect and *both* candidate mechanisms are measured out.
+- **Any 3D contact term** — quantitative Hi-C adds +0.0042 MRR (p 0.26) over CTCF, so these edges encode no
+  measured 3D.
+
+## Provenance travels with the layer
+
+Each edge carries model id, band, score and per-stratum precision. The layer carries measured accuracy, the
+distance floor to judge it against, the +0.0597 LOCO transfer penalty, and the fact that 717 of 820 training
+positives are K562 — so non-K562 edges are extrapolation. Written as a **sidecar** keyed on (cell, elem, gene),
+not an in-place edit, so it can be versioned or dropped without touching the 612k regulatory edges.

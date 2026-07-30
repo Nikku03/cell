@@ -1,0 +1,353 @@
+{
+ "model": "eg-peakfeat-v1",
+ "n_edges": 393936,
+ "min_precision": 0.3,
+ "calibration_is_per_distance_stratum": true,
+ "strata_thresholds": {
+  "<10 kb": 0.05,
+  "10-100 kb": 0.35,
+  "100-250 kb": 0.7
+ },
+ "features": [
+  "log_dist",
+  "elem_accessibility",
+  "elem_h3k27ac",
+  "elem_ctcf",
+  "elem_polr2a",
+  "tss_accessibility",
+  "tss_h3k27ac",
+  "tss_ctcf",
+  "tss_polr2a",
+  "n_candidates",
+  "dist_rank",
+  "activity_rank",
+  "activity_share",
+  "dist_excess"
+ ],
+ "window_bp": 250000,
+ "calibration": {
+  "<10 kb": [
+   [
+    0.05,
+    0.5743243243243243,
+    296
+   ],
+   [
+    0.1,
+    0.5714285714285714,
+    294
+   ],
+   [
+    0.15,
+    0.5813148788927336,
+    289
+   ],
+   [
+    0.2,
+    0.5859649122807018,
+    285
+   ],
+   [
+    0.25,
+    0.5886524822695035,
+    282
+   ],
+   [
+    0.3,
+    0.6036363636363636,
+    275
+   ],
+   [
+    0.35,
+    0.6096654275092936,
+    269
+   ],
+   [
+    0.39999999999999997,
+    0.6212121212121212,
+    264
+   ],
+   [
+    0.44999999999999996,
+    0.640625,
+    256
+   ],
+   [
+    0.49999999999999994,
+    0.6533864541832669,
+    251
+   ],
+   [
+    0.5499999999999999,
+    0.6721311475409836,
+    244
+   ],
+   [
+    0.6,
+    0.6820083682008368,
+    239
+   ],
+   [
+    0.65,
+    0.7012987012987013,
+    231
+   ],
+   [
+    0.7,
+    0.7239819004524887,
+    221
+   ],
+   [
+    0.75,
+    0.7348837209302326,
+    215
+   ],
+   [
+    0.7999999999999999,
+    0.7704081632653061,
+    196
+   ],
+   [
+    0.85,
+    0.8,
+    180
+   ],
+   [
+    0.9,
+    0.8355263157894737,
+    152
+   ],
+   [
+    0.95,
+    0.8918918918918919,
+    111
+   ]
+  ],
+  "10-100 kb": [
+   [
+    0.05,
+    0.18334179786693752,
+    1969
+   ],
+   [
+    0.1,
+    0.20359628770301624,
+    1724
+   ],
+   [
+    0.15,
+    0.22354497354497355,
+    1512
+   ],
+   [
+    0.2,
+    0.24811463046757165,
+    1326
+   ],
+   [
+    0.25,
+    0.27411167512690354,
+    1182
+   ],
+   [
+    0.3,
+    0.2919369786839666,
+    1079
+   ],
+   [
+    0.35,
+    0.31785345717234265,
+    969
+   ],
+   [
+    0.39999999999999997,
+    0.34782608695652173,
+    874
+   ],
+   [
+    0.44999999999999996,
+    0.36888331242158096,
+    797
+   ],
+   [
+    0.49999999999999994,
+    0.3897849462365591,
+    744
+   ],
+   [
+    0.5499999999999999,
+    0.4177583697234352,
+    687
+   ],
+   [
+    0.6,
+    0.4478330658105939,
+    623
+   ],
+   [
+    0.65,
+    0.46760070052539404,
+    571
+   ],
+   [
+    0.7,
+    0.4912621359223301,
+    515
+   ],
+   [
+    0.75,
+    0.5300668151447662,
+    449
+   ],
+   [
+    0.7999999999999999,
+    0.5785340314136126,
+    382
+   ],
+   [
+    0.85,
+    0.6105919003115264,
+    321
+   ],
+   [
+    0.9,
+    0.6865079365079365,
+    252
+   ],
+   [
+    0.95,
+    0.7884615384615384,
+    156
+   ]
+  ],
+  "100-250 kb": [
+   [
+    0.05,
+    0.05052935514918191,
+    2078
+   ],
+   [
+    0.1,
+    0.07221006564551423,
+    1371
+   ],
+   [
+    0.15,
+    0.08687258687258688,
+    1036
+   ],
+   [
+    0.2,
+    0.09610705596107055,
+    822
+   ],
+   [
+    0.25,
+    0.10876132930513595,
+    662
+   ],
+   [
+    0.3,
+    0.12686567164179105,
+    536
+   ],
+   [
+    0.35,
+    0.13990825688073394,
+    436
+   ],
+   [
+    0.39999999999999997,
+    0.15669515669515668,
+    351
+   ],
+   [
+    0.44999999999999996,
+    0.1696113074204947,
+    283
+   ],
+   [
+    0.49999999999999994,
+    0.18777292576419213,
+    229
+   ],
+   [
+    0.5499999999999999,
+    0.21390374331550802,
+    187
+   ],
+   [
+    0.6,
+    0.2360248447204969,
+    161
+   ],
+   [
+    0.65,
+    0.26865671641791045,
+    134
+   ],
+   [
+    0.7,
+    0.32038834951456313,
+    103
+   ],
+   [
+    0.75,
+    0.32432432432432434,
+    74
+   ],
+   [
+    0.7999999999999999,
+    0.36666666666666664,
+    60
+   ],
+   [
+    0.85,
+    0.4146341463414634,
+    41
+   ]
+  ]
+ },
+ "measured_accuracy": {
+  "pooled_auprc_peak_features": 0.5321596042506795,
+  "within_gene_recall_at_1": 0.68,
+  "within_gene_mrr": 0.7741481356005223,
+  "n_evaluable_groups": 275,
+  "distance_only_floor_r1": 0.6509,
+  "benchmark_column_model_r1": 0.697,
+  "cost_of_peak_features_r1": -0.016999999999999904
+ },
+ "limits": [
+  "717 of 820 training positives are K562, so non-K562 edges are extrapolation",
+  "cross-cell-type transfer penalty measured at +0.0597 AUPRC (pooled minus LOCO)",
+  "distance alone reaches R@1 0.6509; judge these edges against that floor, not against zero",
+  "effect MAGNITUDE is deliberately absent: not predictable from biology in this benchmark and confounded with detection power (R2 +0.0881 from power alone)",
+  "POLARITY is deliberately absent: 19.4% of validated pairs are positive-effect, and both candidate mechanisms (silencer, indirect-via-neighbour) are measured out",
+  "quantitative Hi-C adds +0.0042 MRR (p 0.26) over CTCF, so these edges encode no measured 3D",
+  "scored only for cell types with a full ENCODE peak panel",
+  "precision is calibrated WITHIN distance strata because the benchmark is distal-heavy (63.5% beyond 250 kb, 1.9% under 10 kb) while genome-wide candidates in a 250 kb window are proximal-heavy; a single global curve overstated precision on proximal edges",
+  "strata the benchmark cannot support emit no edges at all rather than edges carrying an unsupported precision"
+ ],
+ "per_cell": {
+  "GM12878": {
+   "candidates": 300214,
+   "edges": 81501,
+   "frac_kept": 0.2714763468725642
+  },
+  "HCT116": {
+   "candidates": 529165,
+   "edges": 122377,
+   "frac_kept": 0.231264350438899
+  },
+  "K562": {
+   "candidates": 389703,
+   "edges": 95136,
+   "frac_kept": 0.24412437163686193
+  },
+  "WTC11": {
+   "candidates": 481237,
+   "edges": 94922,
+   "frac_kept": 0.19724584768004122
+  }
+ }
+}
