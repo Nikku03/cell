@@ -120,19 +120,29 @@ def main():
     ld = np.log10(dist)
 
     # expected from the data itself, per distance decile, so no external expected-model is assumed
-    bins = np.quantile(ld, np.linspace(0, 1, 21))
-    bi = np.clip(np.digitize(ld, bins[1:-1]), 0, 19)
+    # 100 quantile bins, and a within-bin linear detrend on top. 20 bins left the residual correlated with
+    # distance at Spearman +0.181, which means it was still partly re-supplying the one feature the model
+    # already has -- and any gain would then be uninterpretable.
+    NB = 100
+    bins = np.quantile(ld, np.linspace(0, 1, NB + 1))
+    bi = np.clip(np.digitize(ld, bins[1:-1]), 0, NB - 1)
     exp = np.zeros_like(lo)
-    for b in range(20):
+    for b in range(NB):
         m = bi == b
-        if m.any():
+        if m.sum() >= 8 and ld[m].std() > 0:
+            k, c0 = np.polyfit(ld[m], lo[m], 1)
+            exp[m] = k * ld[m] + c0
+        elif m.any():
             exp[m] = lo[m].mean()
     resid = lo - exp
     ooe = np.where(exp > 0, lo / np.maximum(exp, 1e-9), 0.0)
     print(f"  log1p(contact): median {np.median(lo):.3f}; residual sd {resid.std():.3f}")
+    rho_res = float(stats.spearmanr(resid, ld)[0])
     print(f"  Spearman(raw contact, distance) {stats.spearmanr(lo, ld)[0]:+.3f}   "
-          f"Spearman(residual, distance) {stats.spearmanr(resid, ld)[0]:+.3f}"
-          f"   <- residual must be near zero, or it is still carrying distance")
+          f"Spearman(residual, distance) {rho_res:+.3f}")
+    if abs(rho_res) > 0.08:
+        print(f"    ** residual still tracks distance at {rho_res:+.3f}; part of any gain below may be "
+              f"distance re-entering the model, and the number should be read with that in mind")
 
     key = [d["key"][i] for i in idx]
     grank = np.zeros(len(idx))
@@ -190,9 +200,26 @@ def main():
     for nm, a in (("+residual", r1), ("+all 4", r4), ("+shuffled", sh)):
         print(f"    {nm:12s} pooled {a['pooled_auprc']-b['pooled_auprc']:+.4f}   "
               f"R@1 {a['r1']-b['r1']:+.4f}   MRR {a['mrr']-b['mrr']:+.4f}")
-    dp = r4["pooled_auprc"] - b["pooled_auprc"]
-    dm = r4["mrr"] - b["mrr"]
-    if dp > 0.01 and dm > 0.005:
+    # read the RESIDUAL arm: it is the construction this module exists to test, and the 4-feature arm mixes
+    # it with raw log-contact, which is mostly distance. Ranking is weighted over pooled AUPRC because
+    # ranking_gate.py established pooled AUPRC answers a question nobody asks.
+    dp = r1["pooled_auprc"] - b["pooled_auprc"]
+    dm = r1["mrr"] - b["mrr"]
+    dr = r1["r1"] - b["r1"]
+    shm = sh["mrr"] - b["mrr"]
+    pv = r1["dmrr_sign_p"]
+    R["residual_arm"] = {"d_pooled": dp, "d_r1": dr, "d_mrr": dm, "sign_p": pv,
+                         "shuffled_d_mrr": shm, "resid_vs_distance_spearman": rho_res}
+    if dm > 0.005 and pv < 0.05:
+        v = (f"QUANTITATIVE CONTACT HELPS THE RANKING, AND ONLY THE RANKING. Residual contact adds "
+             f"{dp:+.4f} pooled AUPRC -- nothing -- but {dr:+.4f} R@1 and {dm:+.4f} MRR with a paired "
+             f"per-group sign test at p {pv:.4g}, against a shuffled-contact control of {shm:+.4f} MRR. "
+             f"So the earlier 'Hi-C adds nothing' was an artefact of the BINARY called-loop feature, which "
+             f"a loop caller had already collapsed against distance and CTCF. It was also invisible to "
+             f"pooled AUPRC, which is the case for the ranking metric in one number. "
+             f"Caveat: the residual still tracks distance at Spearman {rho_res:+.3f}, and this is K562 "
+             f"only (87% of positives, but not a cross-cell-type claim).")
+    elif dp > 0.01 and dm > 0.005:
         v = (f"QUANTITATIVE CONTACT ADDS SOMETHING -- pooled {dp:+.4f}, MRR {dm:+.4f} on top of a model that "
              f"already has CTCF. The binary called-loop test that concluded otherwise was measuring a "
              f"feature a loop caller had already collapsed.")
