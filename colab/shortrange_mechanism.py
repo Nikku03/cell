@@ -149,8 +149,17 @@ def main():
             rho = stats.spearmanr(range(len(seq)), seq)[0] if len(seq) > 2 else np.nan
             trend = "rises" if rho > 0.5 else "falls" if rho < -0.5 else "flat"
             pr = PRED[b]
-            verd = ("as predicted" if pr.startswith(trend) else
-                    "-- " if pr == "no prediction" else "OPPOSITE")
+            # FLAT IS NOT OPPOSITE. A first version labelled any non-matching trend "OPPOSITE", which turned
+            # "no gradient" into "reversed gradient" -- a materially stronger and different claim. OPPOSITE is
+            # now reserved for a trend that actually runs the other way.
+            if pr == "no prediction":
+                verd = "--"
+            elif pr.startswith(trend):
+                verd = "as predicted"
+            elif trend == "flat":
+                verd = "no gradient (unsupported)"
+            else:
+                verd = "OPPOSITE"
             print(f"    {b:22s} " + "".join(f"{v:+13.4f}" for v in seq)
                   + f"   {trend:6s}  {pr}: {verd}")
             R["directional"][b] = {"sequence": seq, "spearman_vs_distance": float(rho),
@@ -163,6 +172,10 @@ def main():
     pol = dd.get("element Pol II", {})
     ok = [k for k, v in dd.items() if v.get("verdict") == "as predicted"]
     bad = [k for k, v in dd.items() if v.get("verdict") == "OPPOSITE"]
+    flat = [k for k, v in dd.items() if v.get("verdict") == "no gradient (unsupported)"]
+    # what actually carries the short-range stratum, regardless of the prediction
+    sr = R["strata"].get("<10 kb", {}).get("drop", {})
+    top = sorted(sr, key=lambda k: -sr[k])[:2] if sr else []
     if ctcf.get("trend") == "rises" and (prom.get("trend") == "falls" or pol.get("trend") == "falls"):
         v = (f"SUPPORTED. CTCF contributes {ctcf['trend']} with distance "
              f"(Spearman {ctcf['spearman_vs_distance']:+.2f}) while promoter/Pol II occupancy contributes "
@@ -172,6 +185,17 @@ def main():
     elif bad:
         v = (f"CONTRADICTED for {bad}. The signed predictions were fixed in advance and these went the "
              f"other way, so the occupancy-at-short-range picture is not supported as stated.")
+    elif flat and not bad:
+        v = (f"NOT SUPPORTED, BUT NOT CONTRADICTED EITHER -- no gradient. None of the predicted blocks "
+             f"varies monotonically with distance (CTCF {ctcf.get('trend')}, promoter {prom.get('trend')}, "
+             f"Pol II {pol.get('trend')}), so the data does not distinguish a short-range occupancy "
+             f"mechanism from a distance-independent one. Two specifics worth keeping: the promoter block "
+             f"contributes most in the <10 kb stratum "
+             f"({sr.get('promoter (TSS side)', float('nan')):+.4f}, its largest of any stratum), which is "
+             f"the TF half of the hypothesis; while element Pol II contributes essentially nothing at any "
+             f"distance ({', '.join(f'{x:+.4f}' for x in pol.get('sequence', []))}), so the "
+             f"polymerase-allocation half is specifically unsupported. The largest block everywhere is "
+             f"{top[0] if top else 'n/a'}, which is neither occupancy nor contact.")
     else:
         v = (f"NO CLEAR GRADIENT. No block's contribution varies monotonically with distance "
              f"(CTCF {ctcf.get('trend')}, promoter {prom.get('trend')}, Pol II {pol.get('trend')}), so this "
