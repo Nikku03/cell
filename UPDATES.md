@@ -15079,3 +15079,57 @@ So the residual AUROC 0.65 that survived the stress test is real, and it is now 
 **likely-indirect effects**, which is a benchmark-QC capability rather than a discovery of repressive biology.
 That is a smaller biological claim and a more immediately usable one — these pairs are candidates for
 exclusion or re-annotation, not examples of silencers.
+
+---
+
+# Are the neighbouring genes repressors? — the chain does not close
+
+`colab/neighbour_repressor.py` · `outputs/orphan/neighbour_repressor.json`
+
+The mechanism result implies a falsifiable chain: CRISPRi hits an element beside neighbour N → N goes down →
+the measured gene G goes up → **therefore N must repress G**. Tested on the distance-matched set (276 pairs,
+residual log-distance p 0.404) and on the prespecified subset where the neighbour is within 10 kb.
+
+| neighbour property | repressive | activating | p |
+|---|---:|---:|---:|
+| GO "negative regulation of transcription" | 0.109 | 0.058 | 0.19 |
+| **is a TF** | **0.203** | **0.101** | **0.029** |
+| fraction of outgoing edges negative | 0.026 | 0.143 | 0.25 |
+| publications | 70.5 | 54 | 0.15 |
+| **NEGATIVE edge neighbour→target** | **1/120** | **0/122** | **0.50** |
+| positive edge neighbour→target | 0/120 | 0/122 | 1.00 |
+
+Publication-matched (242 pairs, residual p 0.766): GO-repressor p 0.463, negative-fraction p 0.105. So the
+one nominal hit — neighbours are 2× more likely to be TFs (p 0.029) — is directionally consistent with the
+mechanism but does not survive as evidence for *repression* specifically, since TFs act in both directions.
+
+## Why it fails, and it is not biology
+
+**Only 4,320 of 16,492 genes (26%) carry even one signed outgoing edge.** The decisive arm asks for a specific
+N→G edge, and it found **1 of 120** among repressive pairs and **0 of 122** among activating — with *zero*
+positive edges either way. The annotation simply does not contain N→G edges for these pairs, in any direction.
+A test whose positive arm can only ever fire once has no power, and that is a coverage fact rather than a
+result about enhancers.
+
+The `frac negative out` arm points the *wrong* way (0.026 vs 0.143) but at p 0.25, on medians that are mostly
+0 — another symptom of the same sparsity rather than counter-evidence.
+
+## What stands and what does not
+
+**Stands** — the positional evidence, which is strong and multiply controlled: repressive-effect elements are
+non-enhancers (H3K27ac 3.57 vs 9.36, DHS 4.21 vs 9.36, H3K4me1 1.73 vs 3.14) sitting far closer to a
+non-target promoter (14.1 kb vs 58.9 kb, p 4.3e-10; within 2 kb, 12.6% vs 2.1%, 5.9×), replicating in 7 of 8
+screens, with CTCF and polycomb excluded at matched distance.
+
+**Does not stand** — the causal reading that the neighbour represses the target. That remains a hypothesis
+consistent with the positional data and **unconfirmed**, and the honest reason is that the available signed
+regulatory annotation cannot test it.
+
+## What would actually close it
+
+Not more annotation mining — the coverage ceiling is the binding constraint. It needs the neighbour's *measured*
+response: a screen where silencing the element is accompanied by a transcriptome readout, so N's own change is
+observed rather than inferred. Perturb-seq at these loci would do it directly, and the Gasperini screen
+(402 of the 820 pairs) is Perturb-seq — its full expression matrices, not the summarised E–G table, would let
+N's change be read off the same cells. That is a concrete next step with a specific dataset, and it is the only
+version of this test with the power to succeed.
