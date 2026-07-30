@@ -1,0 +1,88 @@
+{
+ "n_pairs": 14734,
+ "n_pos": 820,
+ "base_rate": 0.055653590335278946,
+ "features": [
+  "chrom_idx",
+  "elem_mid",
+  "tss",
+  "elem_width",
+  "log_dist",
+  "is_downstream",
+  "celltype_idx"
+ ],
+ "n_groups": 2406,
+ "chromosome-grouped": {
+  "distance only": {
+   "auprc": 0.3305174926674195,
+   "auprc_sd": 0.005974574353076357,
+   "recall_at_1": 0.646594982078853,
+   "mrr": 0.7521213547976033,
+   "macro_ap": 0.7211771858987361,
+   "n_groups_used": 279,
+   "n_groups_skipped": 2127
+  },
+  "coordinates only": {
+   "auprc": 0.33619688429281813,
+   "auprc_sd": 0.007727181167680681,
+   "recall_at_1": 0.643010752688172,
+   "mrr": 0.7479753192837433,
+   "macro_ap": 0.7195098727003135,
+   "n_groups_used": 279,
+   "n_groups_skipped": 2127
+  },
+  "coordinates + gene identity": {
+   "auprc": 0.3570544058270634,
+   "auprc_sd": 0.003594040056394061,
+   "recall_at_1": 0.6351254480286739,
+   "mrr": 0.7446267677535852,
+   "macro_ap": 0.714015085099222,
+   "n_groups_used": 279,
+   "n_groups_skipped": 2127
+  },
+  "gene_identity_gain": 0.02085752153424525
+ },
+ "random": {
+  "distance only": {
+   "auprc": 0.33960502254255764,
+   "auprc_sd": 0.002573469250240138,
+   "recall_at_1": 0.6329749103942651,
+   "mrr": 0.7423677174476384,
+   "macro_ap": 0.7160423452918734,
+   "n_groups_used": 279,
+   "n_groups_skipped": 2127
+  },
+  "coordinates only": {
+   "auprc": 0.4575260437898784,
+   "auprc_sd": 0.0049986075639478,
+   "recall_at_1": 0.6172043010752688,
+   "mrr": 0.7312379638267955,
+   "macro_ap": 0.7005620743533865,
+   "n_groups_used": 279,
+   "n_groups_skipped": 2127
+  },
+  "coordinates + gene identity": {
+   "auprc": 0.48433933092673953,
+   "auprc_sd": 0.0017587787351219825,
+   "recall_at_1": 0.603584229390681,
+   "mrr": 0.7173649506734775,
+   "macro_ap": 0.6868197319229407,
+   "n_groups_used": 279,
+   "n_groups_skipped": 2127
+  },
+  "gene_identity_gain": 0.026813287136861153
+ },
+ "leakage_verdict": "PASS -- 0 of 2,344 genes span a chromosome-grouped fold, against 1,291 (55%) under random folds. Gene-level memorisation is impossible under the CV scheme this project already uses. Gene identity still buys +0.0209 there, but that is not leakage: the alphabetical index correlates with per-gene positive rate at Spearman -0.118 because gene families cluster alphabetically and share regulatory architecture. It is an uninterpretable proxy and does not belong in a real model, but it does not threaten validity.",
+ "gene_fold_span": {
+  "chromosome-grouped": 0,
+  "random": 1291
+ },
+ "gene_index_vs_positive_rate_spearman": -0.1178218361432401,
+ "random_fold_inflation": 0.12132915949706025,
+ "floor": {
+  "auprc": 0.33619688429281813,
+  "recall_at_1": 0.643010752688172,
+  "mrr": 0.7479753192837433,
+  "biology_headroom_vs_0.6881": 0.3519031157071819
+ }
+}

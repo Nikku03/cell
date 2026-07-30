@@ -14313,3 +14313,76 @@ Also fixed: an isotype ratio that printed **33860045.1x** when the isotype rate 
 network. `sig` and `coexpr` edge classes remain too sparse to test separately. The magnitude and
 path-distance arms are still null at a resolution that only admitted large effects — as in the 4-protein
 run, that is a limit of the test, not a fact about the network.
+
+---
+
+# What does 0.6881 actually beat? — coordinate-only adversary, within-gene ranking, leakage audit
+
+`colab/adversary.py` · `outputs/orphan/adversary.json`
+
+Built in response to a critique arguing the model may be re-encoding genomic position and that global AUPRC
+answers the wrong question. Three controls, run before adding any new feature.
+
+## 1. The coordinate-only floor — the model clears it
+
+An adversary with **no assay data of any kind**: chromosome index, element midpoint, TSS position, element
+width, log distance, orientation, cell-type index.
+
+| arm (chromosome-grouped folds) | pooled AUPRC | Recall@1 | MRR | macro AP |
+|---|---:|---:|---:|---:|
+| distance only | 0.3305 | 0.6466 | 0.7521 | 0.7212 |
+| all coordinates | 0.3362 | 0.6430 | 0.7480 | 0.7195 |
+| coordinates + gene identity | 0.3571 | 0.6351 | 0.7446 | 0.7140 |
+
+**Floor 0.3362 against the model's 0.6881, so the biology is worth +0.3519.** The model is not a restatement
+of genomic position. Coordinates add only +0.0057 over distance alone.
+
+## 2. Within-gene ranking — the critique's best methodological point, and it lands
+
+Global AUPRC can be won by ordering distance strata. The question anyone actually has is per gene: given this
+promoter and its candidates, which enhancer regulates it.
+
+**Distance alone already gets Recall@1 = 0.6466 and MRR = 0.7521.** On the question that matters, the naive
+baseline is at 65%, far stronger relative to its pooled AUPRC of 0.33. Pooled AUPRC and within-gene ranking
+are not the same difficulty, and this project has only ever reported the former.
+
+**Severe caveat, stated rather than buried:** only **279 of 2,406** (gene, cell type) groups are usable — the
+other 2,127 have no positive or fewer than 2 candidates. The ranking metric rests on 279 genes.
+
+## 3. Leakage — measured, and it passes
+
+| | genes spanning >1 fold |
+|---|---:|
+| chromosome-grouped folds | **0 / 2,344 (0.00%)** |
+| random folds | 1,291 / 2,344 (55.08%) |
+
+A gene has one TSS on one chromosome, so the CV scheme already in use makes gene-level memorisation
+impossible. Gene identity still buys +0.0209 there, but that is **not** leakage: the alphabetical index
+correlates with per-gene positive rate at Spearman **−0.118**, because gene families cluster alphabetically
+(HLA-\*, RPL\*, HIST\*) and share regulatory architecture. Uninterpretable proxy; does not belong in a model;
+not a validity threat.
+
+**A first version of this module got this wrong** — it inferred leakage from the +0.0209 gain and printed that
+every number in the project was suspect. A gain does not imply memorisation, and the question is directly
+checkable. It is now checked.
+
+## 4. Fold construction is worth more than most features in this project
+
+Coordinates-only AUPRC is **0.4575 under random folds and 0.3362 under chromosome-grouped folds** — a
+**+0.1213 inflation from the split alone**, with no change in features. Larger than every feature gain this
+project has recorded (competition +0.0278, CTCF +0.0366, ubiquitous +0.0095). Anyone comparing E-G models
+across papers with different split conventions is mostly comparing split conventions.
+
+## Correction: "Hi-C adds nothing on top of CTCF" is weaker than stated
+
+The `contact_decompose.py` entry concluded CTCF counting is the whole of contact and measured Hi-C adds
+−0.0026/−0.0076. That was measured with **`loop_connects`, a binary called-loop indicator**. A loop caller
+already folds in distance, CTCF and coverage before thresholding, so a binary loop call is close to
+*designed* to be redundant with CTCF features. The fair test is residual contact —
+log C_obs − E[log C | distance, CTCF, coverage] — plus observed/expected and contact rank.
+
+**That test has never been run here, and cannot be with what is on disk: this project has only ever had loop
+CALLS and a TAD bedpe, never a contact matrix.** No `.hic`, `.mcool` or `.cool` file has been present at any
+point. So the honest statement is narrower than the one recorded: *a binary called-loop feature adds nothing
+on top of CTCF counting*. Whether quantitative contact does is untested. The recommendation to buy CTCF ChIP
+rather than Hi-C still follows from cost, but it no longer follows from evidence about quantitative contact.
