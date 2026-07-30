@@ -14005,3 +14005,116 @@ weak real anti-correlation and PD-L2's may be noise. This is a four-point result
 right source is the Broad Single Cell Portal (SCP1064), which needs interactive auth this session does not
 have. `frangieh.h5ad` on disk is RNA-only -- `obsm` and `layers` are both empty -- so its ADT panel is not
 locally available.
+
+---
+
+# Is the mRNA→protein gap predictable per gene? — CPTAC, and what the answer licenses
+
+`colab/mrna_protein_gate.py`, `colab/coupling_biology.py` · `outputs/orphan/mrna_protein_gate.json`,
+`outputs/orphan/coupling_biology.json`
+
+## Why this gate exists
+
+The proposal on the table is to lay proteomics onto the network per knockout — which knockout moves which
+part of the network, by how much, and how a TF's effect on transcription becomes a change in protein count.
+The blocking fact is that **CRISPR-paired proteomics does not exist at proteome scale**: Perturb-CITE-seq
+gives 4–200 targeted proteins, single-cell MS reaches 2,000–6,000 but is not paired with pooled CRISPR at
+scale. So the architecture's only available substitute is to take Perturb-seq mRNA and correct it toward
+protein — and that requires the correction to be *predictable per gene*, which is what is tested here.
+
+## The data, and the check that comes first
+
+CPTAC, matched per-tumour RNA-seq and mass-spec proteomics from the same samples. Per gene, Spearman rho
+between mRNA and protein across tumours.
+
+| cohort | genes | paired samples | median rho | frac rho>0.5 | frac rho<0 |
+|---|---:|---:|---:|---:|---:|
+| BRCA | 9,869 | 121 | +0.451 | 0.423 | 0.030 |
+| CCRCC | 9,544 | 185 | +0.470 | 0.462 | 0.079 |
+| LUAD | 10,826 | 211 | +0.427 | 0.400 | 0.079 |
+| pooled | 11,636 | — | +0.439 | — | — |
+
+**Reproducibility is tested before predictability**, because a per-gene rho that does not replicate cannot be
+predicted by anything. Cohort-to-cohort rho-of-rho **+0.505**, mean within-gene sd 0.133. Real but not
+tight — a gene's coupling is a property of the gene *and* of the tumour type.
+
+## The gate: predictable, at +0.27
+
+| | held-out R² |
+|---|---:|
+| predicting per-gene rho | **+0.2695** [+0.238 +0.289 +0.262 +0.268 +0.290] |
+| shuffled-target control | −0.0228 |
+
+## The catch, and the pass that found it
+
+**Every feature in that model is a property of the measurement, not of the protein** — prot_mean, prot_sd,
+rna_mean, rna_sd, n_samples. The PPI-degree and ubiquitous columns matched **0 of 11,636 genes** and
+contributed nothing. rho is a correlation, so it is bounded above by dynamic range: a gene that barely varies
+across tumours cannot show agreement even if its mRNA and protein track perfectly. So +0.27 might be
+*"we can predict which genes were well quantified"* — a per-node **confidence** — rather than *"we can
+predict which genes have tight coupling"* — a per-node **correction**. Those license completely different
+things. Attribution ruled out a one-variable artefact (best single feature rna_sd at 23% of the fit) and
+ruled in nothing.
+
+## Separating the two — real biology features, and three flaws fixed on the way
+
+STRING v12 (473,860 edges at score ≥ 700; 89.8% of genes get a degree) and Reactome membership. The deciding
+test is **not** joint R²: biology correlates with abundance, so "both beats measurability" separates nothing.
+Instead — fit measurability, take the out-of-sample **residual**, predict that from biology alone.
+
+Three things had to be corrected before the number meant anything:
+
+1. **The residual came from a fit less than half as strong.** Ridge reached R² +0.0967 where the gate's tree
+   reaches +0.2761 on the same columns, so the leftover still held nonlinear measurability structure that
+   biology could proxy. Now uses the gate's own XGBoost settings.
+2. **Protein length is a measurement feature in disguise.** Shotgun MS quantifies a protein from its
+   peptides, and a longer protein yields more, so length raises quantification quality directly. It carried
+   the strongest residual association (+0.1004, p 8e-19) — in the direction **opposite** to the
+   translation-limitation mechanism. Quarantined out of the biology block.
+3. **`n_cohorts` was controlled by neither.** The pooled rho is a mean over however many cohorts measured the
+   gene, so a 3-cohort target is less noisy than a 1-cohort one, and it correlates with STRING degree at
+   +0.177 (p 4e-82). Added to the measurability block.
+
+| arm | held-out R² predicting rho |
+|---|---:|
+| measurability only | +0.2761 |
+| clean biology only (PPI + Reactome) | +0.0476 |
+| protein length only | +0.0040 |
+| measurability + clean biology | +0.3034 |
+| everything | +0.3231 |
+
+**Residual test** (7,764 genes held out at least once; residual sd 0.1950 rho units):
+
+| predicting the measurability residual from | held-out R² | ridge floor |
+|---|---:|---:|
+| clean biology (PPI + Reactome) | **+0.0227** | +0.0046 |
+| protein length alone | +0.0033 | — |
+
+## A fourth flaw, in the verdict itself
+
+The verdict ladder originally branched on `net = R² − shuffled`. That is backwards here: the tree scores
+**−0.0345** on a shuffled residual, so subtracting it *credits the model for how badly it overfits noise*.
+Reading net turned +0.0227 into +0.0572 and moved the verdict a full rung. A positive out-of-sample R² is
+already evidence on its own — the raw value is the size, the shuffled arm only establishes significance.
+
+## Direction — because a mechanism makes a signed prediction and a fit does not
+
+| feature | Spearman vs residual | p | mechanism |
+|---|---:|---:|---|
+| log_ppi_degree_900 | **−0.0306** | 7.0e-03 | negative if complex members are buffered — **as predicted** |
+| log_ppi_degree_700 | −0.0118 | 0.30 | as predicted, not significant |
+| log_pathway_partners | +0.0458 | 5.4e-05 | no prediction |
+| log_n_pathways | +0.0093 | 0.41 | no prediction |
+| log_protein_size | +0.1004 | 7.5e-19 | **opposite** to translation-limitation — consistent with peptide count |
+
+## Verdict: a per-node WEIGHT, not a per-node correction
+
+Per-gene mRNA–protein coupling **is** predictable (+0.2695, control −0.0228), but the clean biology block
+explains only **2.3% of the measurability residual** (ridge floor 0.5%), shrinking residual spread from
+0.1950 to 0.1928 rho units — **1.14%**. Study bias makes even that an upper bound, since STRING degree and
+Reactome membership both grow with how much a gene has been studied.
+
+So: the +0.27 is mostly *how well this gene was measured*. High-confidence PPI degree does point the way
+complex buffering predicts, so coupling is not purely an assay property — but 1% shrinkage cannot correct a
+protein count. **Perturb-seq mRNA can be given a per-node confidence weight on the network. It cannot be
+converted into a protein count**, and describing it as one would be an overstatement of a factor of ~20.
