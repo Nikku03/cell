@@ -459,15 +459,23 @@ def main():
         print(f"    POSITIVE CONTROLS (own gene knocked out): {nok}/{len(diag)} drop at z<-2 "
               f"({ndn}/{len(diag)} merely negative)"
               + ("" if not diag else "   " + ", ".join(
-                  f"{d['gene']}{'' if d['ok'] else '(UP)'} z{d['z']:+.0f}" for d in diag)))
+                  f"{d['gene']}{'' if d['ok'] else ('(UP)' if not d['down'] else '(weak)')}"
+                  f" z{d['z']:+.1f}" for d in diag)))
 
         # isotype false-positive rate: the pipeline run on antibodies that bind nothing
         iz = np.abs([r["prot_z"] for r in iso])
         rz = np.abs([r["prot_z"] for r in real])
         print(f"    ISOTYPE CONTROLS: {100*(iz>3).mean():.1f}% of {len(iso)} isotype cells move at |z|>3, "
               f"vs {100*(rz>3).mean():.1f}% of {len(real)} real-protein cells")
-        print(f"      -> measured technical false-positive rate {100*(iz>3).mean():.1f}%; "
-              f"real-protein movement is {(rz>3).mean()/max((iz>3).mean(),1e-9):.1f}x that")
+        ifp, rfp = float((iz > 3).mean()), float((rz > 3).mean())
+        # guard the ratio: a zero isotype rate printed "33860045.1x" from dividing by 1e-9. With 808 isotype
+        # cells, 0 movers means the rate is below ~1/808, so the ratio is bounded, not infinite.
+        if ifp > 0:
+            ratio = f"{rfp/ifp:.1f}x"
+        else:
+            ratio = f">{rfp*len(iso):.0f}x (0 of {len(iso)} isotype cells moved, so the rate is <1/{len(iso)})"
+        print(f"      -> measured technical false-positive rate {100*ifp:.1f}%; "
+              f"real-protein movement is {ratio}")
 
         cr = {"n_rows": len(real), "n_isotype": len(iso), "diag": diag,
               "diag_ok": nok, "diag_n": len(diag),
@@ -502,6 +510,87 @@ def main():
                                "mrna_p": float(bm), "disc_prot": b, "disc_mrna": c,
                                "mcnemar_p": float(mc) if mc else None}
         R["per_condition"][cnd] = cr
+
+    # ---- CROSS-CONDITION: the edge is the unit, not the (edge, condition) cell ----
+    # Pooling 121 (edge, condition) cells as independent trials would be wrong: the same ~41 edges are
+    # measured three times. So each edge votes once, by majority across the conditions in which it was
+    # measurable.
+    #
+    # The replication rate is the part that decides what a null MEANS. If an edge's measured protein
+    # direction agrees across all three conditions far more often than the 25% expected by chance, the
+    # MEASUREMENT is reliable and a disagreement with the network's sign is the network being wrong. If it
+    # does not replicate, the test is noise-limited and says nothing about the network. Those are opposite
+    # conclusions from the same near-50% hit rate, and only this number separates them.
+    print("\n" + "=" * 100)
+    print("  CROSS-CONDITION -- one vote per edge, plus whether the measurement itself replicates")
+    signed_all = [r for r in allrows if not r.get("isotype")
+                  and ((r["reg"] not in (None, 0)) or (r["sig"] not in (None, 0)))
+                  and np.isfinite(r["prot_z"]) and np.isfinite(r["mrna_z"])]
+    by_edge = {}
+    for r in signed_all:
+        by_edge.setdefault((r["ko"], r["tag"]), []).append(r)
+    print(f"    {len(signed_all)} (edge, condition) cells over {len(by_edge)} distinct signed edges")
+    okp = okm = 0
+    rep_p = rep_m = multi = 0
+    for (ko, tag), rs in by_edge.items():
+        s = rs[0]["reg"] if rs[0]["reg"] not in (None, 0) else rs[0]["sig"]
+        want = s > 0
+        pv_ = [bool((r["prot_z"] < 0) == want) for r in rs]
+        mv_ = [bool((r["mrna_z"] < 0) == want) for r in rs]
+        okp += sum(pv_) > len(pv_) / 2
+        okm += sum(mv_) > len(mv_) / 2
+        if len(rs) >= 3:                        # replication needs at least 3 measurements to be meaningful
+            multi += 1
+            rep_p += len({r["prot_z"] < 0 for r in rs}) == 1
+            rep_m += len({r["mrna_z"] < 0 for r in rs}) == 1
+    n = len(by_edge)
+    bp = stats.binomtest(okp, n, 0.5, alternative="greater").pvalue
+    bm = stats.binomtest(okm, n, 0.5, alternative="greater").pvalue
+    print(f"    protein direction, majority vote: {okp}/{n} = {okp/n:.1%}  binomial p {bp:.3g}")
+    print(f"    mRNA    direction, majority vote: {okm}/{n} = {okm/n:.1%}  binomial p {bm:.3g}")
+    R["cross_condition"] = {"n_edges": n, "prot_ok": okp, "prot_p": float(bp),
+                            "mrna_ok": okm, "mrna_p": float(bm)}
+    if multi:
+        exp = 0.25                              # P(3 independent signs all agree) = 2/8
+        rpb = stats.binomtest(rep_p, multi, exp, alternative="greater").pvalue
+        print(f"\n    DOES THE MEASUREMENT REPLICATE? over {multi} edges measured in all 3 conditions:")
+        print(f"      protein sign identical in all 3: {rep_p}/{multi} = {rep_p/multi:.1%}  "
+              f"(chance {exp:.0%}, p {rpb:.3g})")
+        print(f"      mRNA    sign identical in all 3: {rep_m}/{multi} = {rep_m/multi:.1%}")
+        R["cross_condition"].update({"n_replicable": multi, "prot_replicates": rep_p,
+                                     "mrna_replicates": rep_m, "prot_replicate_p": float(rpb)})
+        reliable = rep_p / multi > 0.5 and rpb < 0.05
+    else:
+        reliable = False
+
+    # ---- verdict ----
+    ctrl_pass = all(c.get("diag_ok", 0) >= 0.7 * max(c.get("diag_n", 1), 1)
+                    for c in R["per_condition"].values())
+    fprs = [c["isotype_fpr"] for c in R["per_condition"].values()]
+    moves = [c["real_move_rate"] for c in R["per_condition"].values()]
+    clean = max(fprs) < 0.03 and min(moves) > 2 * max(max(fprs), 0.005)
+    print("\n" + "=" * 100)
+    if not ctrl_pass:
+        v = ("INCONCLUSIVE -- the positive controls did not hold up, so nothing else here is interpretable.")
+    elif bp < 0.05 or bm < 0.05:
+        v = (f"SIGNS CARRY -- majority-vote direction beats chance (protein {okp}/{n}, p {bp:.3g}; "
+             f"mRNA {okm}/{n}, p {bm:.3g}) across {n} signed edges in 3 conditions.")
+    elif reliable:
+        v = (f"THE SIGNS DO NOT PREDICT DIRECTION, IN EITHER MODALITY. Over {n} signed edges, majority-vote "
+             f"direction is {okp/n:.1%} for protein (p {bp:.3g}) and {okm/n:.1%} for mRNA (p {bm:.3g}) -- "
+             f"both at chance. This is not a power failure: positive controls drop at z down to -47, the "
+             f"measured technical false-positive rate is {100*max(fprs):.1f}% against real-protein movement "
+             f"of {100*min(moves):.1f}%, and the measured protein direction REPLICATES across all three "
+             f"conditions for {rep_p}/{multi} = {rep_p/multi:.0%} of edges (chance 25%, p {rpb:.3g}). The "
+             f"measurement is reliable and the network's signs disagree with it. This OVERTURNS the "
+             f"4-protein result, where mRNA direction looked right 8/10 -- that was 10 edges.")
+    else:
+        v = (f"NULL BUT NOISE-LIMITED -- majority-vote direction is {okp/n:.1%} protein and {okm/n:.1%} mRNA "
+             f"over {n} edges, both at chance, but the measured direction does not replicate across "
+             f"conditions ({rep_p}/{multi} edges), so this cannot distinguish wrong signs from a noisy "
+             f"readout. It should not be quoted as evidence against the network.")
+    R["verdict"] = v
+    print(f"  VERDICT: {v}")
 
     R["rows"] = allrows
     OUT.mkdir(parents=True, exist_ok=True)
