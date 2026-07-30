@@ -59,12 +59,20 @@ def contact_for(rows, idx):
     import cooler
     c = cooler.Cooler(str(COOL))
     chroms = set(c.chromnames)
+    # This .hic names chromosomes 1,2,3... while the benchmark uses chr1,chr2,... A silent mismatch reads
+    # zero contacts for every pair, which is exactly what happened on the first run and is why the read
+    # fraction is asserted rather than assumed.
+    def cname(ch):
+        if ch in chroms:
+            return ch
+        alt = ch[3:] if ch.startswith("chr") else "chr" + ch
+        return alt if alt in chroms else None
     obs = np.full(len(idx), np.nan)
     by = {}
     for k, i in enumerate(idx):
         r = rows[i]
-        ch = r["chrom"]
-        if ch not in chroms:
+        ch = cname(r["chrom"])
+        if ch is None:
             continue
         b1 = (int(r["chromStart"]) + int(r["chromEnd"])) // 2 // RES
         b2 = int(float(r["startTSS"])) // RES
