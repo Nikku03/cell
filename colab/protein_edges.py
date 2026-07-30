@@ -53,11 +53,14 @@ is analytic. The grid, the interpolation and the whole failure mode disappear. A
 at a few n and the analytic-vs-empirical agreement is printed, because an assumption that is merely correct
 in theory should still be shown to hold in the data.
 
-SEVEN PROTEINS ARE EXCLUDED FOR NOT BEING EXPRESSED. CD117, CD140a, CD140b, CD184, CD202b, CD309 and CD279
-are 75-90% zero in these melanoma cells and carry almost no information; including them would add noise and
-multiplicity for nothing. Their zero fractions are printed. Thirteen proteins remain -- still more than three
-times the four that limited the earlier result -- and every one of them has a transcript, so PDCD1 now drops
-out on independent grounds as well, which is a consistency check rather than a coincidence.
+READOUT ADEQUACY IS DECIDED PER CONDITION AND ON BOTH HALVES. A readout needs enough nonzero control cells
+that a smallest-sample is expected to contain a few; below that the CLT has not engaged. This is checked
+separately in each condition, because ADT depth differs enough between them to change the answer -- CD117 is
+85% zero in Co-culture controls and 51% pooled -- and on the protein AND its transcript, since the paired arm
+needs both. An earlier version filtered only proteins, leaving transcripts with as few as 3 nonzero cells in
+18,334. Typically 11 of 18 proteins survive per condition. The genes that fail are the same on both
+measurements -- KIT, PDGFRA, PDGFRB, TEK, KDR, CXCR4 -- so protein and transcript independently agree they are
+not expressed in melanoma, which is a consistency check rather than a coincidence.
 
 THE ISOTYPE CONTROLS BEING 82-90% ZERO IS CORRECT, not a defect: they are supposed to bind nothing. They are
 scored on the same linear scale, where their sparsity is harmless.
@@ -187,21 +190,39 @@ def global_strength(G):
     return (np.abs(z) > 3).sum(1).astype(float)
 
 
-def bootstrap_check(v, ns, rng):
-    """Confirm empirically that sd(sample mean) = sigma/sqrt(n), and return the worst relative error.
+def null_sd_curve(v, ns, rng):
+    """MEASURE sd(sample mean) at a grid of n instead of assuming sigma/sqrt(n).
 
-    The identity is exact by the CLT for any finite-variance distribution, so this is not establishing the
-    null -- it is showing that the implementation and the data agree with it, which an assumption that is
-    only true in theory still owes the reader.
+    The analytic form was tried and abandoned for a real reason. sigma/sqrt(n) is exact only asymptotically,
+    and these readouts are heavy-tailed: sigma is driven by a few extreme cells that a 25-cell sample usually
+    misses, so the true sd of the sample mean sits well BELOW sigma/sqrt(n) -- 59% below for CD172a in the
+    Control condition, which aborted an earlier run. Using the analytic value there would have inflated every
+    z-score for that readout.
+
+    So the sd is bootstrapped and interpolated in log-log, which assumes nothing about the distribution's
+    shape: on the linear scale sd(mean) is smooth and monotone decreasing in n, and unlike the log-fold-change
+    version there is no near-zero mean to blow up. The deviation from the analytic form is returned as a
+    DIAGNOSTIC of tail weight -- informative, not fatal.
     """
     sigma = float(v.std())
-    worst = 0.0
+    sds, dev = [], 0.0
     for n in ns:
         idx = rng.integers(0, len(v), size=(GRID_R, int(n)))
         emp = float(v[idx].mean(1).std())
+        sds.append(emp)
         pred = sigma / np.sqrt(n)
-        worst = max(worst, abs(emp - pred) / max(pred, 1e-30))
-    return sigma, worst
+        if pred > 0:
+            dev = max(dev, abs(emp - pred) / pred)
+    return float(v.mean()), np.array(sds), dev
+
+
+def interp_sd(ns, sds, n):
+    """Log-log interpolation of the measured sd curve, clamped to the grid ends."""
+    n = max(int(n), 1)
+    ok = sds > 0
+    if ok.sum() < 2:
+        return np.nan
+    return float(np.exp(np.interp(np.log(n), np.log(np.asarray(ns)[ok]), np.log(sds[ok]))))
 
 
 def main():
@@ -336,34 +357,47 @@ def main():
             print("      fewer than 4 usable readouts; condition skipped")
             continue
 
-        # per-readout control mean and sigma; the null sd at any n is sigma/sqrt(n), analytically
+        # per-readout control mean and MEASURED sd curve; no functional form assumed
         stats_ = {}
-        worst, worst_who = 0.0, None
+        worst, worst_who, drop_zero = 0.0, None, []
         for t, g in usable.items():
             for kind, v in (("prot", pv[t]), ("rna", rv[g])):
-                sigma, w = bootstrap_check(v, grid, rng)
-                stats_[(kind, t if kind == "prot" else g)] = (float(v.mean()), sigma)
-                if w > worst:
-                    worst, worst_who = w, f"{kind}:{t if kind == 'prot' else g}"
+                base, sds, dev = null_sd_curve(v, grid, rng)
+                nm = t if kind == "prot" else g
+                if (sds > 0).sum() < 2:
+                    drop_zero.append(f"{kind}:{nm}")
+                    continue
+                stats_[(kind, nm)] = (base, sds)
+                if dev > worst:
+                    worst, worst_who = dev, f"{kind}:{nm}"
         for t in ISOTYPE:                       # isotypes are scored but never gate the run
             if t in pv:
-                sigma, _ = bootstrap_check(pv[t], grid, rng)
-                stats_[("prot", t)] = (float(pv[t].mean()), sigma)
-        print(f"    null sd = sigma/sqrt(n): worst empirical-vs-analytic error over the "
-              f"{2*len(usable)} gating readouts = {100*worst:.1f}% ({worst_who})")
-        if worst > 0.35:
-            raise SystemExit(f"the analytic null sd still disagrees with the bootstrap by "
-                             f"{100*worst:.1f}% at {worst_who} after filtering -- the CLT is not holding "
-                             "for this readout and its z-scores would be wrong; refusing to continue")
+                base, sds, _ = null_sd_curve(pv[t], grid, rng)
+                if (sds > 0).sum() >= 2:
+                    stats_[("prot", t)] = (base, sds)
+        if drop_zero:
+            usable = {t: g for t, g in usable.items()
+                      if ("prot", t) in stats_ and ("rna", g) in stats_}
+            print(f"      dropped for a degenerate null (sd 0 at almost every n): {drop_zero}")
+        print(f"    null sd MEASURED by bootstrap and log-log interpolated; largest deviation from the "
+              f"analytic sigma/sqrt(n) = {100*worst:.0f}% ({worst_who})")
+        print(f"      ^ a diagnostic of tail weight, not an error: heavy tails put the true sd of a small "
+              f"sample mean BELOW sigma/sqrt(n), and using the analytic form would inflate those z")
+        if len(usable) < 4:
+            print("      fewer than 4 usable readouts after the null check; condition skipped")
+            continue
 
         def zof(vals, denom, sel, key):
-            """z on the LINEAR normalised scale. Not a log fold change: for the sparse tags the log of a
-            near-zero mean is not asymptotically normal, which is what broke the first version."""
-            base, sigma = stats_[key]
-            n = int(sel.sum())
+            """z on the LINEAR normalised scale against the measured null sd at this n.
+
+            Linear and not a log fold change: for sparse tags the log of a near-zero mean is not
+            asymptotically normal. Measured sd and not sigma/sqrt(n): these readouts are heavy-tailed.
+            """
+            base, sds = stats_[key]
             vv = vals / np.maximum(denom, 1.0)
             obs = float(vv[sel].mean())
-            z = (obs - base) / max(sigma / np.sqrt(max(n, 1)), 1e-30)
+            sd = interp_sd(grid, sds, int(sel.sum()))
+            z = (obs - base) / max(sd, 1e-30) if np.isfinite(sd) else np.nan
             rel = (obs - base) / base if base > 0 else np.nan     # for reporting only
             return z, rel
 
@@ -416,9 +450,14 @@ def main():
             if gene in kk and tag in tags:
                 sel = cm & (pert == gene)
                 pz, pl = zof(A[:, tags.index(tag)], adt_tot, sel, ("prot", tag))
-                diag.append({"gene": gene, "tag": tag, "rel": pl, "z": pz, "ok": bool(pz < 0)})
+                # a real drop, not merely a negative sign: HLA-A came through at z -0.03 and was counted
+                # as a passing control, which is a sign test on noise.
+                diag.append({"gene": gene, "tag": tag, "rel": pl, "z": pz,
+                             "ok": bool(pz < -2), "down": bool(pz < 0)})
         nok = sum(d["ok"] for d in diag)
-        print(f"    POSITIVE CONTROLS (own gene knocked out): {nok}/{len(diag)} lower their own protein"
+        ndn = sum(d["down"] for d in diag)
+        print(f"    POSITIVE CONTROLS (own gene knocked out): {nok}/{len(diag)} drop at z<-2 "
+              f"({ndn}/{len(diag)} merely negative)"
               + ("" if not diag else "   " + ", ".join(
                   f"{d['gene']}{'' if d['ok'] else '(UP)'} z{d['z']:+.0f}" for d in diag)))
 
