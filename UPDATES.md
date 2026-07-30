@@ -14706,3 +14706,59 @@ Stage 1's conclusion stands, for a better reason than it was originally reached.
 over a differentiation snapshot cannot establish temporal precedence between accessibility and expression*.
 Testing the claim properly needs actual clock time, which the A549 dexamethasone series has and this dataset
 does not.
+
+---
+
+# Correction: "the constraint is labels, not features" was an overstatement
+
+That phrasing appeared in the differential-features entry above and in session commentary. It claims more than
+the experiments support. The defensible version:
+
+> Across the current static perturbation benchmark and the pseudotime multiome experiment, feature enrichment
+> has produced little robust incremental signal. The remaining bottleneck appears to be the **observational
+> design**: sparse causal labels, uncertain enhancer assignments, and insufficient temporal resolution.
+
+The difference matters. The dynamic null is consistent with a label problem, but equally with **temporal design
+problems** that no label fixes: pseudotime rather than elapsed time, coarse pseudobulk bins, heterogeneous
+differentiation rates between donors, a wrong assumed lag, noisy enhancer assignments, transient effects
+averaged away, and donor/lineage mixing. Attributing it to labels alone quietly rules out the fixable half.
+
+**Two further revisions to what was recorded:**
+
+1. **Stage 3 (dynamic contact) is paused, not cancelled** — pending a real-time repeat of Stage 1.
+2. **Stage 2 (perturbation) is NOT dependent on Stage 1 succeeding**, which the earlier entry wrongly implied
+   by saying those stages "would be building on an unmeasured foundation." A perturbation asks a strictly
+   stronger question — do(ATAC_e ↓) → ΔRNA_g — and **observational predictability is neither necessary nor
+   sufficient for perturbational causality.** Natural accessibility variation can carry no forecast value while
+   induced enhancer repression still has a causal effect. Stage 2 stands as an independent causal test.
+
+---
+
+# Stage 1 with real clock time — the A549 dexamethasone lag curve (data secured)
+
+The pseudotime null cannot distinguish "accessibility does not lead" from "pseudotime cannot resolve a lead".
+Real elapsed time can. ENCODE's A549 + 100 nM dexamethasone series, resolved:
+
+| assay | dex experiments | timepoints |
+|---|---:|---|
+| polyA RNA-seq | 21 | 5, 10, 15, 20, 25 min; 0.5, 1, 2, 3, 4, 5, 6, 10, 12 h |
+| DNase-seq | 11 | 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12 h |
+| ATAC-seq | 4 | 1, 4, 8, 12 h |
+
+**Nine timepoints where accessibility and expression are both measured** — enough for a lag curve rather than
+a single t→t+1 transition, which was the pseudotime test's core design limitation.
+
+The test to run, specified before seeing results so the analysis cannot drift:
+
+- **Lag curve ΔR²(τ)** over τ ∈ {0.5, 1, 2, 3, 4, 6, 10 h}. A real lead–lag must show a *specific temporal
+  window*, not a uniform tiny gain at every lag — a flat curve is itself a null and a peaked one is not.
+- **Forecast advantage(τ) = ΔR²_lagged(τ) − ΔR²_contemporaneous.** If accessibility explains only *current*
+  expression and not future change, it is a state marker, not a forecasting variable. This distinction is
+  invisible to the pseudotime design.
+- **Permuted-time control** — shuffle the time labels. Retains every distribution and destroys only the
+  ordering.
+- **Linked vs distance-matched random**, with "linked" prespecified as GR-bound (NR3C1 ChIP) enhancers rather
+  than chosen by variance — the defect that invalidated the pseudotime version of this control.
+- **Genome-wide AND a prespecified responsive-locus set**, both reported. Most genes do not respond to
+  dexamethasone, so a genome-wide test dilutes a real effect; defining the subset biologically *before*
+  evaluation is not cherry-picking, and reporting both is what makes it auditable.
