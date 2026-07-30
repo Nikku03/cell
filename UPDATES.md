@@ -15775,3 +15775,42 @@ explicit `rejected_is_not_empty` note pointing at PPI.
 Scope, restated because it is easy to lose: this is **arrow one** of
 `perturbation → ΔRNA → Δprotein → Δcomplex → Δflux → phenotype`. The Δprotein arrow is not validated here and
 cannot be — no K562 perturbation proteomics exists at this scale.
+
+---
+
+# Overnight, block A — the entity registry: a join that cannot fail silently
+
+`colab/entity_registry.py` → `outputs/orphan/entity_registry.json`, `scratchpad/entity_registry.json.gz`
+
+Item 17 of the dataset map is not a dataset, and it goes first: if ten datasets are fetched and joined by
+symbol, the `ppm` bug is reproduced ten times. This project's join failures have all been **silent** rather
+than loud:
+
+- `ppm`/`abund` are keyed by gene **index**, not symbol. Looked up by symbol they return `None` for every
+  gene — the abundance control in `metabolic_layer.py` would have run as a column of zeros and *passed*.
+  Abundance then turned out to be the strongest confound in that analysis (p 6e−31).
+- STRING symbols were never cached in `_mpg_cache.npz`, so a PPI join matched 0/11,636 and reported it as a
+  legitimate zero.
+- A doubled URL prefix produced a 404 that was read as "this resource has no data".
+
+**172,539 entities** (86,431 genes, 86,108 proteins), **489,113 alias keys** across ensembl / symbol / entrez
+/ refseq / uniprot. Typed ids (`gene:ENSG…`, `protein:P04217`) so a protein accession and a gene id cannot
+collide. 16,472 of the cell object's genes map to Ensembl; **20 carry only a symbol and are recorded as
+`unmapped` rather than dropped.**
+
+The rule the module enforces is narrow and absolute: **a join must declare its expected rate, and raises below
+it.** Self-test:
+
+```
+cell genes by symbol      16,492/16,492 (100.0%)   OK
+ppm keys as symbols            0/2,000 (  0.0%)   raises JoinError  <- the historical bug
+ppm keys via cell_index    2,000/2,000 (100.0%)   the correct route
+```
+
+The positional-key convention is now declared rather than implicit: `cell_index` maps the integer keys used by
+`ppm`, `abund`, `coexpr`, `codep`, `gene2cplx`, `model4`, `cellcycle`, `drugs`, `generxn`, `emask` and
+`darkfn` to entity ids. Symbols remain **display aliases only**, and any join that must use them is recorded
+`via=symbol` so the weaker provenance stays visible downstream. Assembly is part of a coordinate: GRCh38 is
+stored explicitly.
+
+`unknown` is representable. A zero that means "lookup failed" is not.
