@@ -260,27 +260,44 @@ def main():
     report(f"  {'vs random partners':42s} {rnd:+.4f}")
 
     report("\n" + "=" * 100)
+    # THE THRESHOLD IS NOT ONE SEED SPREAD. The first version fired "THE SIGN IS USED" on +0.0049 against a
+    # 0.0022 spread -- about two sd -- while the shuffled-sign arm retained 94% of the signed arm's gain over
+    # unsigned context. A control that reproduces almost all of an effect is the finding, not a footnote. The
+    # bar is now: the sign must clear THREE seed spreads AND account for at least a quarter of the
+    # signed-over-unsigned gain, so a marginal margin cannot be read as decisive.
     tol = max(a["signed"]["sd"], a["shuffled_sign"]["sd"])
-    if shuf > tol and sgn > 0:
-        v = (f"THE SIGN IS USED. Attention over signed context beats the same context with permuted signs by "
-             f"{shuf:+.4f}, above the {tol:.4f} seed spread, and beats unsigned context by {sgn:+.4f}. "
-             f"Since the shuffled arm has identical partners, token count and magnitudes, the only thing "
-             f"separating them is direction. Context itself is worth {ctx:+.4f} over the MLP bar while the "
-             f"architecture alone is worth {arch:+.4f} -- consistent with the earlier finding that a "
-             f"transformer here is a device for reading interaction context, not a better approximator.")
-    elif ctx > tol:
+    share = shuf / sgn if sgn > 1e-9 else 0.0
+    R["deltas"]["sign_share_of_signed_gain"] = float(share)
+    beats_mlp = a["signed"]["score"] - a["mlp"]["score"]
+    R["deltas"]["best_transformer_minus_mlp"] = float(beats_mlp)
+    if shuf > 3 * tol and share > 0.25:
+        v = (f"THE SIGN IS USED. Signed context beats the SAME partners with permuted signs by {shuf:+.4f}, "
+             f"more than three times the {tol:.4f} seed spread, and that margin is "
+             f"{100*share:.0f}% of the signed-over-unsigned gain. Since the shuffled arm holds partners, "
+             f"token count and magnitudes fixed, direction is the only thing separating them.")
+    elif sgn > 3 * tol:
+        v = (f"THE PARTNERS ARE USED; THE SIGN IS NOT. Swapping unsigned context for the perturbational "
+             f"layer's partners is worth {sgn:+.4f}, but PERMUTING THE SIGNS of those same partners costs "
+             f"only {shuf:+.4f} -- the shuffled arm retains {100*(1-share):.0f}% of the gain. So what the "
+             f"model uses is WHICH genes a knockout is linked to and how strongly, not which way it moves "
+             f"them. Partner identity is worth {rnd:+.4f} against random partners of the same count, which "
+             f"is where nearly all of the signal lives. "
+             f"AND THE ARCHITECTURE IS A NET LOSS ON THIS TASK: the best transformer arm sits "
+             f"{beats_mlp:+.4f} against a plain MLP on the perturbed gene's own features, and the "
+             f"self-only transformer is {arch:+.4f} behind it. That reproduces the earlier finding here -- "
+             f"a transformer is a device for reading interaction context, and where a tabular baseline "
+             f"already encodes what matters it does not earn its place.")
+    elif ctx > 3 * tol:
         v = (f"CONTEXT YES, SIGN NO. Attention over interaction context beats the MLP bar by {ctx:+.4f}, "
-             f"reproducing the earlier result on a cell line the edges were not built from. But signed "
-             f"context beats PERMUTED-sign context by only {shuf:+.4f} against a seed spread of {tol:.4f}, "
-             f"so the extra number is carrying capacity rather than direction. The architecture alone is "
-             f"worth {arch:+.4f}. A signed layer helps a model that can use signs; nothing here shows this "
-             f"one does.")
+             f"but signed context beats permuted-sign context by only {shuf:+.4f} against a {tol:.4f} seed "
+             f"spread. The extra number carries capacity, not direction.")
     else:
-        v = (f"NEITHER CONTEXT NOR SIGN SEPARATES on this task. Context is worth {ctx:+.4f} over the MLP "
-             f"bar and sign {shuf:+.4f} over shuffled signs, both inside the {tol:.4f} seed spread. Note "
-             f"this is a HARDER setting than the earlier K562 result: the target is a different cell line "
-             f"from the one the edges were built on, and RPE1 profile similarity carries a measured "
-             f"reliability ceiling of about 0.48.")
+        v = (f"NEITHER CONTEXT NOR SIGN SEPARATES USEFULLY. Context is worth {ctx:+.4f} over the MLP bar, "
+             f"the sign {shuf:+.4f} over shuffled signs ({100*share:.0f}% of the signed-over-unsigned gain), "
+             f"and the best transformer arm sits {beats_mlp:+.4f} against the MLP. Partner identity is the "
+             f"one thing that clearly matters ({rnd:+.4f} against random partners). Note this is a HARDER "
+             f"setting than the earlier K562 result: the edges were built on a different cell line, and "
+             f"RPE1 profile similarity carries a measured reliability ceiling near 0.48.")
     R["verdict"] = v
     report(f"  VERDICT: {v}")
     OUT.mkdir(parents=True, exist_ok=True)

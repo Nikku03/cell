@@ -1,0 +1,85 @@
+{
+ "task": "predict RPE1 perturbation profile similarity; edges are K562-derived so this is out-of-sample",
+ "max_tokens": 16,
+ "dim": 64,
+ "epochs": 60,
+ "folds": 5,
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "arms": {
+  "mlp": {
+   "label": "MLP, own features (the bar)",
+   "score": 0.14548197342097657,
+   "sd": 0.018309270394109112,
+   "per_seed": [
+    0.15737440988534587,
+    0.1594548801633636,
+    0.11961663021422024
+   ]
+  },
+  "self": {
+   "label": "transformer, self-only",
+   "score": 0.0504751211792989,
+   "sd": 0.002416910451352764,
+   "per_seed": [
+    0.04835665609740756,
+    0.04921136782545471,
+    0.05385733961503444
+   ]
+  },
+  "unsigned": {
+   "label": "transformer + UNSIGNED context",
+   "score": 0.075627491439427,
+   "sd": 0.007154557759357284,
+   "per_seed": [
+    0.06826318431774492,
+    0.07330075320883708,
+    0.08531853679169898
+   ]
+  },
+  "signed": {
+   "label": "transformer + SIGNED context",
+   "score": 0.12773771116505805,
+   "sd": 0.0021948408613557237,
+   "per_seed": [
+    0.1278786008932126,
+    0.12498191675699391,
+    0.13035261584496766
+   ]
+  },
+  "shuffled_sign": {
+   "label": "transformer + shuffled signs (control)",
+   "score": 0.12280385316921631,
+   "sd": 0.0003796296455839715,
+   "per_seed": [
+    0.12285198279072636,
+    0.12231671098224939,
+    0.12324286573467318
+   ]
+  },
+  "random": {
+   "label": "transformer + random partners (control)",
+   "score": 0.010525600896206128,
+   "sd": 0.004970308009575764,
+   "per_seed": [
+    0.005803894639263655,
+    0.00837701280846862,
+    0.01739589524088611
+   ]
+  }
+ },
+ "deltas": {
+  "architecture_alone": -0.09500685224167768,
+  "context_over_mlp": -0.06985448198154957,
+  "sign_over_unsigned": 0.052110219725631055,
+  "sign_over_shuffled": 0.004933857995841742,
+  "over_random_partners": 0.11721211026885192,
+  "sign_share_of_signed_gain": 0.09468119731252952,
+  "best_transformer_minus_mlp": -0.01774426225591852
+ },
+ "verdict": "THE PARTNERS ARE USED; THE SIGN IS NOT. Swapping unsigned context for the perturbational layer's partners is worth +0.0521, but PERMUTING THE SIGNS of those same partners costs only +0.0049 -- the shuffled arm retains 91% of the gain. What the model uses is WHICH genes a knockout is linked to and how strongly, not which way it moves them. Partner identity is worth +0.1172 against random partners of the same count, which is where nearly all the signal lives. AND THE ARCHITECTURE IS A NET LOSS ON THIS TASK: the best transformer arm sits -0.0177 against a plain MLP on the perturbed gene's own features, and the self-only transformer is -0.0950 behind it.",
+ "verdict_correction": "The first run's verdict read 'THE SIGN IS USED' from +0.0049 against a 0.0022 seed spread while the shuffled-sign control retained 94% of the effect. No measurement changed; only its reading was wrong, and the module's threshold now requires three seed spreads AND a quarter of the signed-over-unsigned gain before the sign can be called used."
+}
