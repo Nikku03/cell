@@ -515,6 +515,9 @@ def main():
             continue
         col, li = column(mn)
         pcol = line_col(li, panel=True)
+        ach = rna["broad"].get(mn) if rna else None
+        ri = rna["idx"].get(ach) if (rna and ach) else None
+        rcol = rna_col(ri) if ri is not None else {}
         # ONE gene set for every arm: perturbed AND quantified in this line AND in K-562 AND generic > 0
         genes = sorted(set(tgt) & set(col) & set(k562_col) & set(generic))
         y = np.array([tgt[e] for e in genes])
@@ -522,7 +525,8 @@ def main():
                 "k562_procan": np.array([k562_col[e] for e in genes]),
                 "generic_ppm": np.log10(np.array([generic[e] for e in genes])),
                 "paxdb_k562": np.array([np.log10(pax[e]) if e in pax else np.nan for e in genes]),
-                "cellspecific_panelz": np.array([pcol.get(e, np.nan) for e in genes])}
+                "cellspecific_panelz": np.array([pcol.get(e, np.nan) for e in genes]),
+                "cellspecific_rna_z": np.array([rcol.get(e, np.nan) for e in genes])}
         report(f"\n    {cell:8s} ProCan '{mn}' ({tis[li]}), {n_det[li]:,} proteins quantified   "
                f"[{prov}]")
         report(f"      perturbed genes joined {st_s['rate']:.1%}; common gene set for every arm: "
