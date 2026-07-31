@@ -349,6 +349,89 @@ def main():
     strat_excess = float(np.mean(s_bio) - np.mean(s_ctrl))
     report(f"     -> with power held fixed, biology beats its own rewired control by {strat_excess:+.4f}")
 
+    # ---- 4. the same question on a sample where the biology block has rows to work with ----
+    #
+    # WHY THIS SECTION EXISTS. Sections 1 and 3 sample uniformly over the 92M grid, where a randomly drawn
+    # (perturbation, gene) pair is a PPI edge 0.23% of the time and a curated regulatory edge 0.45% of the
+    # time. A block that is switched on for under one row in a hundred cannot contribute much held-out R2
+    # whatever the biology is worth, so a null there is partly a fact about the sampling design. That is the
+    # same failure this project has recorded elsewhere as a lookup that matches nothing: an arm with no rows
+    # is not a measurement.
+    #
+    # The enriched sample is built by ENUMERATING edges into the grid rather than by drawing and filtering,
+    # so every connected pair that exists is available, plus an equal number of unconnected pairs. The
+    # composition is declared rather than inherited, and the R2 values below are about THIS sample and are
+    # not comparable to section 1's.
+    report(f"\n  4. THE SAME QUESTION ON AN ENRICHED SAMPLE (connected pairs enumerated, not sampled)")
+    pidx = {}
+    for k, ssym in enumerate(psym):
+        j = idx.get(ssym, -1)
+        if j >= 0:
+            pidx.setdefault(j, []).append(k)
+    gidx = {}
+    for k, ssym in enumerate(gname):
+        j = idx.get(ssym, -1)
+        if j >= 0:
+            gidx.setdefault(j, []).append(k)
+
+    conn = set()
+    for src, edges_ in (("ppi", ppi), ("reg", reg), ("codep", sorted(codep))):
+        for a, b in edges_:
+            for u, v in ((a, b), (b, a)) if src != "reg" else ((a, b),):
+                for kp in pidx.get(u, ())[:1]:
+                    for kg in gidx.get(v, ())[:1]:
+                        conn.add((kp, kg))
+        report(f"     after {src}: {len(conn):,} distinct connected (perturbation, gene) cells")
+    conn = np.array(sorted(conn))
+    if len(conn) < 5000:
+        report(f"     only {len(conn):,} connected pairs land in the grid; the enriched arm is skipped "
+               f"rather than run on a sample too small to carry it")
+        enr = {"status": "skipped", "n_connected": int(len(conn))}
+    else:
+        rr = np.random.default_rng(31)
+        take = rr.permutation(len(conn))[:min(len(conn), N_PAIRS // 2)]
+        cp, cg = conn[take, 0], conn[take, 1]
+        up = rr.integers(0, nP, len(take) * 2)
+        ug_ = rr.integers(0, nG, len(take) * 2)
+        connset = set(map(tuple, conn.tolist()))
+        keepu = [i for i in range(len(up)) if (int(up[i]), int(ug_[i])) not in connset][:len(take)]
+        ep = np.concatenate([cp, up[keepu]])
+        eg = np.concatenate([cg, ug_[keepu]])
+        ey = A[ep, eg]
+        fin_e = np.isfinite(ey)
+        ep, eg, ey = ep[fin_e], eg[fin_e], ey[fin_e]
+        eloo = (tot[eg] - ey) / np.maximum(cnt[eg] - 1, 1)
+        ENU = np.nan_to_num(np.column_stack([
+            var["mean"][eg], var["std"][eg], var["cv"][eg], var["clean_mean"][eg], var["clean_std"][eg],
+            obs["num_cells_filtered"][ep], obs["UMI_count_unfiltered"][ep], obs["mitopercent"][ep],
+            obs["z_gemgroup_UMI"][ep], obs["fold_expr"][ep], obs["pct_expr"][ep], eloo]).astype(np.float32))
+        EBIO = pair_features(ep, eg, idx_of_p, idx_of_g, ppi_set, codep, g2c, reg_set, deg_ppi, None)
+        egroups = psym[ep]
+        rates_e = {n: float(EBIO[:, k].mean()) for k, n in enumerate(bio_names[:4])}
+        report(f"     enriched sample: {len(ey):,} pairs, hit rates " +
+               ", ".join(f"{n} {100*v:.1f}%" for n, v in rates_e.items()))
+        e_nu = [cv_r2(ENU, ey, egroups, sd_) for sd_ in range(N_SEEDS)]
+        e_both = [cv_r2(np.hstack([ENU, EBIO]), ey, egroups, sd_) for sd_ in range(N_SEEDS)]
+        e_ctrl = []
+        for r in range(N_REWIRE):
+            rr2 = np.random.default_rng(2900 + r)
+            EBIOr = pair_features(ep, eg, idx_of_p, idx_of_g, rewire(ppi, len(idx), rr2),
+                                  rewire(sorted(codep), len(idx), rr2) if codep else set(), g2c,
+                                  rewire(reg, len(idx), rr2) if reg else set(), deg_ppi, None)
+            e_ctrl.append(cv_r2(np.hstack([ENU, EBIOr]), ey, egroups, 0) - float(np.mean(e_nu)))
+        e_delta = float(np.mean(e_both) - np.mean(e_nu))
+        e_cm = float(np.mean(e_ctrl))
+        e_sd = max(float(np.std(e_both)), float(np.std(e_nu)), float(np.std(e_ctrl)))
+        report(f"     nuisance only        R2 {np.mean(e_nu):+.4f} (sd {np.std(e_nu):.4f})")
+        report(f"     nuisance + biology   R2 {np.mean(e_both):+.4f} (sd {np.std(e_both):.4f})")
+        report(f"     biology adds {e_delta:+.4f}; degree-matched control adds {e_cm:+.4f}; "
+               f"excess {e_delta-e_cm:+.4f} against a bar of {3*e_sd:.4f}")
+        enr = {"status": "run", "n_connected_available": int(len(conn)), "n_pairs": int(len(ey)),
+               "hit_rates": rates_e, "nuisance_r2": float(np.mean(e_nu)),
+               "both_r2": float(np.mean(e_both)), "delta": e_delta, "control_mean": e_cm,
+               "excess": e_delta - e_cm, "bar": 3 * e_sd,
+               "clears": bool(e_delta - e_cm > 3 * e_sd)}
+
     # ---- verdict ----
     #
     # THE BAR, FIXED BEFORE THE NUMBERS. Beating a rewired control by less than three seed spreads is a tie,
@@ -356,8 +439,12 @@ def main():
     # fifth-decimal difference at its own noise floor, and both were withdrawn.
     bar = 3 * max(seed_sd, cs, 1e-6)
     excess = delta - cm
-    reopened = bool(excess > bar and strat_excess > 3 * max(float(np.std(s_bio)), float(np.std(s_ctrl)),
-                                                            1e-6))
+    # A NEAR MISS IS NOT AN ABSENCE. Both arms must clear, and the enriched arm counts when it ran --
+    # reopening on the strength of the one sample where the block had rows would be selecting the arm that
+    # agreed. Failing to clear is reported as NOT DETECTED, never as reversed or absent.
+    reopened = bool(excess > bar
+                    and strat_excess > 3 * max(float(np.std(s_bio)), float(np.std(s_ctrl)), 1e-6)
+                    and (enr.get("clears", True)))
     verdict = (
         f"{'THE ENTRY REOPENS' if reopened else 'THE NULL HOLDS, AND NOW HOLDS UNDER A FAR STRONGER TEST'}. "
         f"Registry entry `dyn-magnitude` was measured on 820 enhancer-gene pairs with detection power "
@@ -369,16 +456,28 @@ def main():
         f"{res['nuisance + biology']['r2']:+.4f}, a gain of {delta:+.4f}. Its own degree-matched rewiring "
         f"gains {cm:+.4f}, so the partner-specific excess is {excess:+.4f} against a bar of {bar:.4f} "
         f"(three seed spreads). "
-        f"Inside power strata -- the reopens_if condition approximated by conditioning, since no assay here "
-        f"has uniform detection power -- biology reaches {np.mean(s_bio):+.4f} on the within-cell residual "
-        f"against {np.mean(s_ctrl):+.4f} for the rewired control. "
-        + (f"Both arms clear their controls, so magnitude carries partner-specific biological information "
+        f"Holding power fixed -- 20 quantile bins of the power model's own out-of-fold prediction, which "
+        f"remove {100*removed:.1f}% of the variance in |lfc|, the reopens_if condition approximated by "
+        f"conditioning since no assay here has uniform detection power -- biology reaches "
+        f"{np.mean(s_bio):+.4f} on the within-bin residual against {np.mean(s_ctrl):+.4f} for the rewired "
+        f"control, i.e. BELOW it. (The binning is not perfect: the nuisance block still recovers "
+        f"{np.mean(s_nu):+.4f} on that residual, so some power gradient survives inside a bin.) "
+        + (f"On an ENRICHED sample built by enumerating connected pairs rather than sampling them -- "
+           f"{enr['n_pairs']:,} pairs at {100*enr['hit_rates']['PPI edge']:.0f}% PPI density instead of "
+           f"0.2%, because a block switched on for one row in four hundred cannot contribute much R2 "
+           f"whatever the biology is worth -- biology adds {enr['delta']:+.4f} against a rewired control "
+           f"of {enr['control_mean']:+.4f}, an excess of {enr['excess']:+.4f} against a bar of "
+           f"{enr['bar']:.4f}: {'CLEARS' if enr['clears'] else 'does not clear'}. "
+           if enr.get("status") == "run" else "")
+        + (f"All arms clear their controls, so magnitude carries partner-specific biological information "
            f"that survives a properly-modelled power block. The entry moves from `null` to `bounded`: the "
            f"enhancer measurement stands as measured, and the general claim does not."
            if reopened else
-           f"Neither arm clears its control by the margin set in advance. The entry stands, and it now "
-           f"stands on {len(y):,} pairs and a modelled power block rather than on 820 pairs and one "
-           f"covariate.")
+           f"Not every arm clears its control by the margin set in advance, and the entry therefore "
+           f"stands -- as NOT DETECTED rather than as absent, since the uniform-sample excess "
+           f"{excess:+.4f} sits under its {bar:.4f} bar rather than at zero. What has changed is what it "
+           f"stands on: {len(y):,} pairs and a twelve-feature power block, plus a sample built so the "
+           f"biology block has rows, rather than 820 pairs and one covariate.")
         + f" WHAT THIS IS NOT: this is gene knockdown -> transcriptome, not enhancer silencing -> gene. It "
           f"tests the same general claim in a different system and it neither confirms nor overturns the "
           f"n=820 enhancer result, which was measured on its own data and stays as it is.")
@@ -394,6 +493,7 @@ def main():
          "arms": res, "biology_gain": delta, "seed_sd": seed_sd,
          "degree_matched_control": {"mean_gain": cm, "sd": cs, "per_draw": ctrl, "n_draws": N_REWIRE},
          "partner_specific_excess": excess, "bar": bar,
+         "enriched": enr,
          "stratified": {"conditioning": "quantile bins of the nuisance model's out-of-fold "
                                         "prediction, replacing a 6x6x6 covariate grid that removed only "
                                         "0.5% of the variance",
@@ -417,9 +517,11 @@ def main():
              "knockdown efficacy (fold_expr, pct_expr) is a property of the perturbation, so including it "
              "as nuisance removes real biology about which genes are easy to knock down. Also conservative, "
              "also a reason the biology gain is a lower bound",
-             "the pair-level biology features are sparse -- a randomly drawn (perturbation, gene) pair is "
-             "almost never a PPI edge -- so the block is carried by a small fraction of rows and its R2 "
-             "contribution is bounded by that fraction whatever the biology is worth",
+             "the pair-level biology features are sparse in the uniform sample -- a randomly drawn "
+             "(perturbation, gene) pair is a PPI edge 0.23% of the time -- so sections 1 and 3 bound the "
+             "block's possible R2 contribution by that rate whatever the biology is worth. Section 4 "
+             "exists because of this and reports on a sample built to remove it; its R2 values describe "
+             "that sample and are not comparable to section 1's",
              "the rewiring permutes ONE endpoint of each edge. That preserves the degree sequence on the "
              "source side and the degree distribution on the target side, not every node's degree exactly. "
              "The degree features themselves are held at their real values in both arms, so the control "
