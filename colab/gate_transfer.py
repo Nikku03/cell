@@ -167,9 +167,18 @@ def main():
     report(f"  pair table: {npair:,} cells sampled from {len(pk)*len(gk):,} ({ndrop:,} non-finite dropped)")
     report(f"  target sd {y.std():.4f}; {100*np.mean(np.abs(y) > RESPOND_Z):.2f}% exceed |lfc| {RESPOND_Z}")
 
+    # FOLDS MUST BE RE-DRAWN PER SEED, NOT RELABELLED. The first version used (fold_of[g] + s) % 5, which
+    # maps group k to group (k+s)%5 -- the SAME partition with rotated labels. Cross-validation over an
+    # identical partition returns identical out-of-fold predictions, so the seed-to-seed sd came out 0.0000
+    # and a rule using it as a margin was multiplying by nothing. Each seed now draws its own partition.
     upert = np.unique(P)
-    fold_of = {g: i % 5 for i, g in enumerate(np.random.default_rng(7).permutation(upert))}
-    folds = np.array([fold_of[g] for g in P])
+
+    def folds_for(seed):
+        a = np.random.default_rng(1000 + seed).permutation(len(upert))
+        m = {g: int(a[i]) % 5 for i, g in enumerate(upert)}
+        return np.array([m[g] for g in P])
+
+    folds = folds_for(0)
     report(f"  folds grouped by perturbed gene: {len(upert):,} perturbations across 5 folds")
 
     # ---- ladder, rebuilt for RPE1 ----
@@ -224,7 +233,7 @@ def main():
     for lname, LX in LADDER:
         sc, ap = [], []
         for s in SEEDS:
-            f = np.array([(fold_of[g] + s) % 5 for g in P])
+            f = folds_for(s)
             p = fit_oof(LX, y, f)
             sc.append(r2(y, p))
             ap.append(average_precision_score(resp_bin, np.abs(p)))
@@ -289,11 +298,9 @@ def main():
             report(f"    {lname:20s} {nedge:10,d} {0.0:9.5f}   no sampled pair carries an edge -- untestable")
             R["layers"][lname] = {"n_edges": int(nedge), "hit_rate": 0.0, "verdict": "UNTESTABLE"}
             continue
-        sc = [r2(y, fit_oof(np.column_stack([base_X, feat]), y, np.array([(fold_of[g] + s) % 5 for g in P])))
-              for s in SEEDS]
+        sc = [r2(y, fit_oof(np.column_stack([base_X, feat]), y, folds_for(s))) for s in SEEDS]
         v, sd = float(np.mean(sc)), float(np.std(sc))
-        cv = [r2(y, fit_oof(np.column_stack([base_X, cf]), y, np.array([fold_of[g] for g in P])))
-              for cf in ctrls]
+        cv = [r2(y, fit_oof(np.column_stack([base_X, cf]), y, folds_for(0))) for cf in ctrls]
         dl, cd = v - prev, float(np.max(cv)) - prev
         # A MARGIN OVER THE CONTROL, NOT MERELY `>`. The first run of this gate admitted `regulatory` on
         # delta +0.0015 against control +0.0015 -- identical at printed precision, separated somewhere in the
@@ -301,11 +308,15 @@ def main():
         # sparse binary column to this ladder buys; that is the noise floor, not a null a layer can beat by
         # a hair. The layer must now exceed its strongest control by more than its own seed-to-seed
         # variability, so an admission cannot rest on a difference smaller than the run-to-run wobble.
-        ok = bool(dl > 0.001 and dl > cd + sd)
+        # Clear the strongest control AND mean+2sd of the control distribution, plus the layer's own
+        # seed spread. One control's max is a single draw; the distribution is the null.
+        cdel = np.array([c - prev for c in cv])
+        thresh = max(float(cdel.max()), float(cdel.mean() + 2 * cdel.std())) + sd
+        ok = bool(dl > 0.001 and dl > thresh)
         report(f"    {lname:20s} {nedge:10,d} {hits:9.5f} {v:9.4f} {dl:+9.4f} {cd:+9.4f} {sd:8.4f} "
                f"{'ADMITTED' if ok else 'REJECTED':>10s}")
         R["layers"][lname] = {"n_edges": int(nedge), "hit_rate": hits, "r2": v, "delta": float(dl),
-                              "seed_sd": sd, "margin_required": float(cd + sd),
+                              "seed_sd": sd, "margin_required": float(thresh),
                               "control_delta_max": float(cd),
                               "control_deltas": [float(c - prev) for c in cv],
                               "n_controls": len(ctrls),
