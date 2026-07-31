@@ -390,7 +390,7 @@ def main():
                           and tb.get("ratio_sd") is not None
                           and tb["ratio_sd"] < 0.25 * abs(tb["ratio"] - 1.0))
     verdict = (
-        f"THE ENDPOINT RESCUES THIS LAYER AND THE COMPARTMENT GATE DOES NOT. "
+        f"{'THE ENDPOINT RESCUES THIS LAYER AND THE COMPARTMENT GATE DOES NOT' if specific else 'NEITHER THE ENDPOINT NOR THE COMPARTMENT GATE RESCUES THIS LAYER, AND THE ENDPOINT COMES CLOSEST'}. "
         + (f"On CO-DEPENDENCY across {Z.shape[0]:,} DepMap lines -- a readout that does not pass through "
            f"transcription -- all {a_all['n']:,} kinase/enzyme->substrate pairs sit at "
            f"{a_all['ratio']:.3f}x their own decile-matched control "
@@ -402,13 +402,25 @@ def main():
            f"On co-dependency the full pair set reaches "
            f"{(a_all or {}).get('ratio', float('nan')):.3f}x its matched control, which does not clear "
            f"the 1.05x bar, so the readout change does not rescue the layer either. ")
-        + (f"SPECIFICITY: {R['codependency']['n_entangled_with_ppi_or_complex']:,} of {len(both):,} pairs "
-           f"are ALSO a PPI edge or co-complex, and PPI already predicts co-dependency in this project. "
-           f"Removing them leaves {a_clean['n']:,} pairs at {a_clean['ratio']:.3f}x "
-           f"({100*a_clean['frac_draws_below_observed']:.0f}% of draws below observed), so the enrichment "
-           f"{'survives and is not simply the PPI layer wearing a phosphorylation label' if specific else 'does NOT survive and is the PPI layer wearing a phosphorylation label'}. "
-           if a_clean else "SPECIFICITY: the PPI/co-complex-excluded arm fell below the size floor and is "
-                           "reported as unavailable rather than as a number. ")
+        + (f"SPECIFICITY, AND IT IS WHERE THE RESCUE GOES: "
+           f"{R['codependency']['n_entangled_with_ppi_or_complex']:,} of {len(both):,} pairs "
+           f"({100*R['codependency']['n_entangled_with_ppi_or_complex']/max(len(both),1):.0f}%) are ALSO a "
+           f"PPI edge or co-complex, and PPI already predicts co-dependency in this project at 1.208x on "
+           f"the fast test. Removing them leaves {a_clean['n']:,} pairs at {a_clean['ratio']:.3f}x, so "
+           f"{100*(1 - (a_clean['ratio']-1)/max(a_all['ratio']-1, 1e-9)):.0f}% of the excess over 1.0 is "
+           f"carried by that {100*R['codependency']['n_entangled_with_ppi_or_complex']/max(len(both),1):.0f}% "
+           f"of pairs. "
+           + (f"What remains is still consistently above its own control "
+              f"({100*a_clean['frac_draws_below_observed']:.0f}% of {a_clean['n_draws']} draws below "
+              f"observed) but sits under this project's own 1.05x bar for an interesting ratio, so the "
+              f"honest reading is that the enzyme->substrate relation adds little once physical "
+              f"association is accounted for: this is largely the PPI and complex layers wearing a "
+              f"phosphorylation label, which is the same category of error as `sl` wearing a synthetic "
+              f"lethality label. " if not specific else
+              f"That still clears the 1.05x bar, so the enzyme->substrate relation carries something "
+              f"beyond physical association. ")
+           if (a_clean and a_all) else "SPECIFICITY: the PPI/co-complex-excluded arm fell below the size "
+                                       "floor and is reported as unavailable rather than as a number. ")
         + (f"GATING: shared-compartment pairs reach {a_shared['ratio']:.3f}x and disjoint pairs "
            f"{a_disj['ratio']:.3f}x, a gap of {gapv:+.3f}x. Permuting compartment IDENTITY across genes "
            f"while preserving how many compartments each gene has gives {shm:+.3f}x (sd {shs:.3f}, "
