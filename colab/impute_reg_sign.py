@@ -5,33 +5,60 @@ already have one and essentially NOT imputable for the ones that do not, and the
 than statistical. Three measurements, in the order they were made:
 
   1  THE CONVENTION IS REAL AND STRONG. On the 20,118 curated edges that DO carry a sign and are testable in
-     Replogle K562, the curated sign predicts the measured perturbational sign at +13.6 points over a
-     strength-matched swapped-source control (rising to +20.7 on the |z| >= 3 subset). Curated sign carries
-     direction. So the layer's signed 8.8% is worth something and the question "can the other 91.2% be
-     filled in" is worth asking.
-  2  THE LOOKUP ROUTE IS CLOSED BY CONSTRUCTION, AT EXACTLY ZERO EDGES. CollecTRI covers 43,000 of the
-     54,128 signed edges and 0 of the 558,005 unsigned ones. The signed subset IS CollecTRI/TRRUST. The
+     Replogle K562, the curated sign predicts the measured perturbational sign at +17.6 points over a
+     strength-matched swapped-source control, rising to +23.4 on the |z| >= 3 subset (70.9% against 47.5%,
+     20 of 20 control draws won). Curated sign carries direction. So the layer's signed 8.8% is worth
+     something and the question "can the other 91.2% be filled in" is worth asking.
+  2  THE LOOKUP ROUTE IS CLOSED BY CONSTRUCTION, AT EXACTLY ZERO EDGES. CollecTRI and TRRUST cover
+     43,348 of the 54,128 signed edges and 0 of the 558,005 unsigned ones. The signed subset IS CollecTRI/TRRUST. The
      unsigned subset came from somewhere else -- its top sources are CTCF, ETS1, TFAP2C, STAT1 with
      4,000-5,000 targets each, which is the shape of a ChIP/motif compendium, not of a curated
      activation/repression statement. So an imputation cannot be a join; it has to generalise across a
      provenance boundary.
-  3  THERE IS A PER-SOURCE DIRECTION EFFECT TO IMPUTE, AND THE CURATED LAYER DOES NOT KNOW IT. Split each
-     source's unsigned targets in half, estimate that source's measured direction bias on one half and
-     predict the other: +7.6 points over the swapped-source control. That is the CEILING on any source-level
-     imputation. But the curated activator fraction of a source correlates with that measured bias at
-     Spearman +0.009 (p = 0.91, n = 149 sources). The signal exists; the annotation does not see it.
+  3  THE PER-SOURCE DIRECTION EFFECT IS REAL AND IS NOT REGULATORY. Split each source's unsigned targets
+     in half, estimate that source's measured direction bias on one half and predict the other, and you
+     beat the swapped-source control by several points. The first version of this module called that the
+     CEILING on source-level imputation and pointed at TF sequence features as the way to reach it. It ran
+     the wrong control. Estimate the same source's direction bias from genes that are NOT curated targets
+     of it at all -- same perturbation row, every curated target of that source excluded -- and it predicts
+     the held-out TRUE targets at least as well. The quantity being recovered is a global up/down shift of
+     that one CRISPRi row (normalisation, stress, growth arrest), not the TF's regulatory logic. There is
+     no ceiling for a sequence feature to reach, because there is nothing about the TF in it. That the
+     curated activator fraction correlates with it at Spearman +0.010 (p = 0.9) is not a missed
+     opportunity.
+
+  4  SO THE MODEL LANDS ON THE NULL, AND ON A PAIRED CONTROL IT LANDS THERE CLEANLY. Held out by source
+     gene, a gradient-boosted model on source/edge/target-annotation features reaches about 60% raw
+     accuracy against a 59.6% majority-class baseline. The first version scored it against a control that
+     lived on different rows and got -0.7 points (decile), +1.4 (nearest-neighbour) and -1.4 (joint), and
+     concluded that the control's construction moved the answer by as much as the effect was worth. Paired,
+     all three constructions are negative and they agree; the +1.4 was the row-set defect, not the match.
+     A degree-matched rewiring of every graph the features touch reproduces whatever is left. 0 of 558,005
+     edges are signed.
 
 WHAT IS MEASURED, AND AGAINST WHAT CONTROL, BEFORE ANY NUMBER APPEARS.
 
   QUANTITY      For a curated edge (source S, target T), the sign of T's response to knocking S down:
                 sign(robust z) where z = (lfc - median over perturbations) / (1.4826 * MAD), per gene column
                 -- the identical construction used by colab/causal_reg.py, reused rather than re-derived.
-  CONTROL       SWAPPED SOURCE. Keep the target T and the model's predicted sign; read the measured sign at
-                a DIFFERENT perturbation S' drawn from the same perturbation-strength DECILE. 0.5 is the
-                wrong null: a shared stress/proliferation axis gives every target a preferred direction under
-                any perturbation, so sign agreement sits away from 0.5 with no edge at all. The number that
-                means anything is agreement MINUS the swapped-source arm, over 20 draws, reported with the
-                fraction of draws the edge arm won.
+  CONTROL       SWAPPED SOURCE, SCORED ON THE SAME ROWS. Keep the target T and the model's predicted sign;
+                read the measured sign at a DIFFERENT perturbation S' drawn from the same
+                perturbation-strength DECILE. 0.5 is the wrong null: a shared stress/proliferation axis
+                gives every target a preferred direction under any perturbation, so sign agreement sits
+                away from 0.5 with no edge at all. The number that means anything is agreement MINUS the
+                swapped-source arm, over 20 draws, with the fraction of draws the edge arm won.
+                AND THE CONTROL MUST BE READ ON THE SAME ROWS AS THE ARM, WHICH THE FIRST VERSION OF THIS
+                MODULE DID NOT DO AND WHICH CHANGED ITS ANSWER. The control is conditioned on
+                |z_swapped| >= 2 so that it is selected on outcome magnitude exactly as the edge arm is.
+                That condition keeps only ~22% of the arm's rows, and the ones it keeps are targets that
+                also respond strongly to unrelated perturbations -- stress and proliferation genes, whose
+                direction is much more consistent than average. Scoring the arm on all 29,136 of its rows
+                against a control living on 6,300 easier ones is not a comparison: the arm's own accuracy
+                on the control's rows is 0.5741, not 0.5962. Every increment below is therefore reported
+                twice, UNPAIRED (the incumbent construction, kept so the numbers stay comparable to
+                colab/causal_reg.py and colab/reliable_edges.py, which have the same defect) and PAIRED
+                (both arms on the same rows, draw by draw). The PAIRED number governs every decision.
+                It reverses the sign of the one positive increment the first version reported.
   SECOND        LABEL SHUFFLE. Measured signs permuted; the whole pipeline rerun. This establishes
   CONTROL       significance, never effect size -- the effect size reported is always the RAW held-out
                 agreement, never a difference from a shuffle.
@@ -59,14 +86,21 @@ THE CIRCULARITY, WHICH IS THE WHOLE DIFFICULTY, AND HOW IT IS SOLVED.
     the module reports the pairwise co-assignment rate between seeds (~1/K if the partitions differ, 1.0 if
     somebody rotated fold labels, which gives an sd of 0.0000 and means nothing).
 
-THE DECISION THRESHOLD, FIXED BEFORE THE NUMBERS. The imputation is declared USABLE only if all four hold:
+THE DECISION THRESHOLD, FIXED BEFORE THE NUMBERS AND UNCHANGED BY THE REVISION. The imputation is
+declared USABLE only if all four hold, all increments PAIRED and taking the STRICTEST of the three matched
+constructions:
     (a) K562 held-out-source agreement exceeds its swapped-source control by >= 3.0 points, in >= 18 of 20
         control draws;
-    (b) the same increment on RPE1 is > 0 with >= 18 of 20 draws won;
-    (c) the source+edge arm -- which contains NO K562 measurement in its features -- carries the increment,
+    (b) the same increment on RPE1 is > 0 with >= 18 of 20 draws won, AND the rank increment (AUC against a
+        swapped-source AUC) is > 0 -- because the labelled class prior FLIPS between the cell lines (32%
+        positive in RPE1 against 60% in K562), so an RPE1 accuracy thresholded at 0.5 in K562 sits below
+        the RPE1 majority baseline however well the model ranks, and measures the flip rather than transfer;
+    (c) arm B0 -- which contains NO K562 measurement of any kind in its features -- carries the increment,
         not the target-direction arm;
     (d) a degree-matched rewiring of every graph the features touch destroys at least half the increment.
-Anything short of all four is reported as a NULL, and the null is the deliverable.
+An edge may be signed only inside a confidence bin whose held-out accuracy is >= 0.65 AND whose PAIRED
+increment over the swapped-source control is >= +0.05. Anything short of all four is reported as a NULL,
+and the null is the deliverable.
 
 SAMPLING, AND WHAT IT EXCLUDES. Nothing is subsampled on the edge side: all 612,133 curated triples are
 carried, all 360,946 that join K562 are used. What IS excluded is genes: K562 measures 8,248 genes and RPE1
@@ -305,7 +339,13 @@ def edge_features(G, si, ti, ann, coexpr_corr, gene_stat, prefix_only=None):
     src_*     source-level, from curation and annotation only -- no perturbation measurement anywhere
     edge_*    pair-level: DepMap cross-line co-expression, PPI, shared complex, reciprocal edge, regulon
               overlap, NicheNet
-    tgtann_*  target ANNOTATION and K562 expression level -- no direction information
+    tgtann_*  target ANNOTATION only -- curated degrees and gene-level flags, nothing measured
+    tgtk562_* the target's K562 EXPRESSION LEVEL and CV. These carry no direction information, but they
+              ARE K562 measurements and they are computed over the whole matrix INCLUDING the held-out
+              fold's perturbations. The first version of this module put them inside the arm it then
+              described as having "no K562 measurement anywhere in its features", which was false. They
+              now have their own prefix so that arm B0 below can be exactly that claim and arm B (which
+              keeps them) can be compared against it.
     tgtdir_*  the K562-derived target DIRECTION bias. This is the confound; it is filled in by the caller
               leave-fold-out and lives in its own arm.
     """
@@ -351,8 +391,8 @@ def edge_features(G, si, ti, ann, coexpr_corr, gene_stat, prefix_only=None):
     add("tgtann_ppideg", np.log1p(G.ppideg[ti]))
     for k in ("tf", "ess", "loeuf", "dep_frac", "npath", "cpg", "enh"):
         add(f"tgtann_{k}", ann[k][ti])
-    add("tgtann_k562_mean", gene_stat[0])
-    add("tgtann_k562_cv", gene_stat[1])
+    add("tgtk562_mean", gene_stat[0])
+    add("tgtk562_cv", gene_stat[1])
     M = np.vstack(F).T
     return M, names
 
@@ -374,9 +414,9 @@ class Swap:
                     here are comparable to it
         NEAREST     the replacement is drawn from the +/- 150 perturbations nearest in strength RANK, which
                     drives the residual imbalance ON STRENGTH to ~0
-        JOINT       strength decile x library-size decile. The nearest-neighbour arm fixes strength and
-                    leaves UMI count imbalanced at |SMD| 0.22, because a strong perturbation is not the
-                    same thing as a deeply sequenced one. This arm matches both.
+        JOINT       strength decile x library-size decile. The nearest-neighbour arm fixes strength (|SMD|
+                    0.25 -> 0.07) and leaves UMI count imbalanced at 0.23, because a strong perturbation is
+                    not the same thing as a deeply sequenced one. This arm matches both.
 
     All three are reported. Reporting the loose one alone would have been the mistake; reporting only a
     tight one would have hidden that the incumbent construction has this defect. Where they disagree the
@@ -446,20 +486,43 @@ class Swap:
         self.last_self = int((alt == rows).sum())
         return alt
 
-    def agree(self, rows, cols, pred, seeds, cond=None, mode="decile"):
-        """Mean agreement of `pred` with the measured sign at a swapped source, one value per seed.
+    def agree(self, rows, cols, pred, seeds, zreal=None, cond=None, mode="decile"):
+        """Agreement of `pred` with the measured sign at a swapped source -- UNPAIRED and PAIRED.
 
         `cond` conditions the control identically to the edge arm: selecting the edge arm on |z| >= t
         conditions on the outcome and inflates agreement, so the control must be selected the same way.
+
+        AND CONDITIONING THE CONTROL THAT WAY MOVES IT ONTO DIFFERENT ROWS, WHICH IS A DEFECT THIS
+        MODULE ORIGINALLY HAD AND AN ADVERSARIAL RE-READ CAUGHT. The edge arm is scored on every row
+        with |z_real| >= t. Requiring |z_swapped| >= t on the same rows keeps only ~22% of them: the
+        rows that survive are the ones whose TARGET also responds strongly to an unrelated
+        perturbation, i.e. stress/proliferation-responsive genes, whose direction is far more
+        consistent than average. The control was therefore being measured on an easier population than
+        the arm it controls, and the two numbers were not comparable. Measured on the control's own
+        rows the arm drops from 0.5962 to 0.5741 -- 2.2 points, which is THREE TIMES the effect being
+        argued about.
+
+        So both are returned:
+            UNPAIRED  arm on all its rows vs control on the rows where the swapped source also
+                      responds strongly. This is the construction colab/causal_reg.py and
+                      colab/reliable_edges.py use, kept so the numbers stay comparable to them.
+            PAIRED    arm and control on the SAME rows, draw by draw. This is the honest comparison
+                      and it is the one that governs every decision below.
+        `zreal` is the measured z at the real source; without it only the unpaired arm is available.
         """
-        out = []
+        sw, armp = [], []
         for s in seeds:
             z2 = self.Z[self.draw(rows, s, mode), cols]
             f = np.isfinite(z2)
             if cond is not None:
                 f &= np.abs(z2) >= cond
-            out.append(float((np.sign(z2) == pred)[f].mean()) if f.sum() > 20 else float("nan"))
-        return np.array(out)
+            ok = f.sum() > 20
+            sw.append(float((np.sign(z2) == pred)[f].mean()) if ok else float("nan"))
+            if zreal is None:
+                armp.append(float("nan"))
+            else:
+                armp.append(float((np.sign(zreal) == pred)[f].mean()) if ok else float("nan"))
+        return np.array(sw), np.array(armp)
 
     def imbalance(self, rows, seeds, mode="decile"):
         """Standardised mean difference per covariate between the real and the swapped sources.
@@ -475,6 +538,39 @@ class Swap:
             rep[k] = {"real": float(np.nanmean(a)), "swapped": float(np.nanmean(b)),
                       "smd": float((np.nanmean(a) - np.nanmean(b)) / max(sd, 1e-9))}
         return rep
+
+
+MODES = (("decile", ""), ("nn", "_nn"), ("joint", "_joint"))
+SFX = ("", "_nn", "_joint")
+SWAP_KEYS = ([f"swap{s}" for s in SFX] + [f"swap_sd{s}" for s in SFX] +
+             [f"increment{s}" for s in SFX] + [f"frac_draws_won{s}" for s in SFX] +
+             [f"arm_on_control_rows{s}" for s in SFX] + [f"increment_paired{s}" for s in SFX] +
+             [f"frac_draws_won_paired{s}" for s in SFX] +
+             ["increment_paired_strictest", "frac_draws_won_paired_strictest",
+              "increment_strictest", "frac_draws_won_strictest"])
+
+
+def swap_block(sw_obj, rows, cols, pred, zreal, seeds, cond, ag_all):
+    """Every swapped-source statistic, for all three matched constructions, UNPAIRED and PAIRED.
+
+    One helper rather than four copies of the same loop, because the paired columns were added after
+    the fact and a copy that was missed would silently report the old, non-comparable number.
+    """
+    out = {}
+    for mode, sfx in MODES:
+        sw, armp = sw_obj.agree(rows, cols, pred, seeds, zreal=zreal, cond=cond, mode=mode)
+        out[f"swap{sfx}"] = float(np.nanmean(sw))
+        out[f"swap_sd{sfx}"] = float(np.nanstd(sw))
+        out[f"increment{sfx}"] = ag_all - float(np.nanmean(sw))
+        out[f"frac_draws_won{sfx}"] = float(np.mean(ag_all > sw))
+        out[f"arm_on_control_rows{sfx}"] = float(np.nanmean(armp))
+        out[f"increment_paired{sfx}"] = float(np.nanmean(armp - sw))
+        out[f"frac_draws_won_paired{sfx}"] = float(np.mean(armp > sw))
+    out["increment_paired_strictest"] = min(out[f"increment_paired{s}"] for s in SFX)
+    out["frac_draws_won_paired_strictest"] = min(out[f"frac_draws_won_paired{s}"] for s in SFX)
+    out["increment_strictest"] = min(out[f"increment{s}"] for s in SFX)
+    out["frac_draws_won_strictest"] = min(out[f"frac_draws_won{s}"] for s in SFX)
+    return out
 
 
 def fit_predict(Xtr, ytr, Xte, seed):
@@ -519,10 +615,13 @@ def main():
     report("IMPUTE THE SIGN OF THE 558,005 UNSIGNED CURATED REGULATORY EDGES")
     report("=" * 104)
     report(f"  DECISION THRESHOLD, FIXED BEFORE ANY NUMBER: usable only if the K562 held-out-source "
-           f"increment\n  over the swapped-source control is >= {MIN_INCREMENT:+.3f} in >= "
-           f"{MIN_WIN_FRAC:.0%} of {N_CTRL} draws, RPE1 increment > 0 on the same terms,\n  the increment "
-           f"is carried by the arm with NO K562 measurement in its features, and a degree-matched\n  "
-           f"rewiring destroys >= {MAX_REWIRE_SURVIVAL:.0%} of it.")
+           f"PAIRED increment\n  over the swapped-source control is >= {MIN_INCREMENT:+.3f} in >= "
+           f"{MIN_WIN_FRAC:.0%} of {N_CTRL} draws, RPE1 paired increment > 0 on the same terms AND its "
+           f"rank\n  increment > 0, the increment is carried by the arm with NO K562 measurement of any "
+           f"kind in its\n  features, and a degree-matched rewiring destroys >= "
+           f"{MAX_REWIRE_SURVIVAL:.0%} of it. PAIRED means the arm and\n  its control are scored on the "
+           f"SAME rows; an edge may be signed only inside a confidence bin at\n  accuracy >= "
+           f"{SIGN_MIN_ACC:.2f} with a PAIRED increment >= {SIGN_MIN_INC:+.2f}.")
     for p in (GWPS, NET, EXPR):
         if not p.exists():
             raise SystemExit(f"absent: {p}")
@@ -631,24 +730,24 @@ def main():
     fin = np.isfinite(z_s)
     r_s, c_s, z_s, cur_s = r_s[fin], c_s[fin], z_s[fin], sg[sgn_mask][fin]
     conv = []
-    report(f"     {'subset':>14s} {'n':>8s} {'agree':>8s} {'swap':>8s} {'incr':>9s} {'won':>5s} "
-           f"{'swapNN':>8s} {'incrNN':>9s} {'wonNN':>6s}")
+    report(f"     The HEADLINE row is |z| >= 0, i.e. every signed testable edge. The |z| >= 2 and |z| >= 3\n"
+           f"     rows condition on the outcome magnitude and are reported as SELECTED SUBSETS with their "
+           f"own n --\n     the first version of this module quoted the |z| >= 3 accuracy next to the "
+           f"|z| >= 0 count, which\n     attached a 1,011-edge number to a 20,118-edge claim.")
+    report(f"     {'subset':>14s} {'n':>8s} {'agree':>8s} | {'swap':>8s} {'incrUNP':>9s} {'won':>5s} | "
+           f"{'armOnCtl':>9s} {'incrPAIR':>9s} {'won':>5s}")
     for thr in (0.0, 2.0, 3.0):
         k = np.abs(z_s) >= thr
         pr = -cur_s[k]
         ag = float((np.sign(z_s[k]) == pr).mean())
-        row = {"z_min": thr, "n": int(k.sum()), "agree": ag}
-        for mode, sfx in (("decile", ""), ("nn", "_nn"), ("joint", "_joint")):
-            sw = SW.agree(r_s[k], c_s[k], pr, range(700, 700 + N_CTRL),
-                          cond=(thr if thr > 0 else None), mode=mode)
-            row[f"swap{sfx}"] = float(np.nanmean(sw))
-            row[f"swap_sd{sfx}"] = float(np.nanstd(sw))
-            row[f"increment{sfx}"] = ag - float(np.nanmean(sw))
-            row[f"frac_draws_won{sfx}"] = float(np.mean(ag > sw))
+        row = {"z_min": thr, "n": int(k.sum()), "agree": ag, "selected_subset": bool(thr > 0)}
+        row.update(swap_block(SW, r_s[k], c_s[k], pr, z_s[k], range(700, 700 + N_CTRL),
+                              (thr if thr > 0 else None), ag))
         conv.append(row)
-        report(f"     {'|z| >= ' + f'{thr:g}':>14s} {int(k.sum()):8,d} {ag:8.4f} {row['swap']:8.4f} "
-               f"{row['increment']:+9.4f} {row['frac_draws_won']:5.2f} {row['swap_nn']:8.4f} "
-               f"{row['increment_nn']:+9.4f} {row['frac_draws_won_nn']:6.2f}")
+        report(f"     {'|z| >= ' + f'{thr:g}':>14s} {int(k.sum()):8,d} {ag:8.4f} | {row['swap']:8.4f} "
+               f"{row['increment']:+9.4f} {row['frac_draws_won']:5.2f} | "
+               f"{row['arm_on_control_rows']:9.4f} {row['increment_paired']:+9.4f} "
+               f"{row['frac_draws_won_paired']:5.2f}")
 
     report(f"\n     ...AND WHY THE OBVIOUS ROUTE IS CLOSED. If the unsigned edges were the same objects as "
            f"the signed\n     ones, the sign could simply be looked up in an external signed resource.")
@@ -681,8 +780,15 @@ def main():
     # ------------------------------------------------------------------ 2. the ceiling
     report(f"\n  2. THE CEILING -- how much is there for ANY source-level feature to find?")
     report(f"     Split each source's unsigned targets in half; estimate the source's measured direction "
-           f"bias on\n     one half, predict the other. No annotation can beat this, because this IS the "
-           f"quantity an annotation\n     would have to recover. Its control is the same swapped-source arm.")
+           f"bias on\n     one half, predict the other. Its control is the same swapped-source arm.")
+    report(f"     AND THE CONTROL THAT DECIDES WHAT THIS MEASURES IS A SECOND ARM THE FIRST VERSION OF THIS\n"
+           f"     MODULE DID NOT RUN: estimate the same source's direction bias from genes that are NOT "
+           f"curated\n     targets of it at all -- same perturbation row, every curated target of that "
+           f"source excluded --\n     and use THAT to predict its held-out true targets. If the non-target "
+           f"arm does as well, the\n     'source-level signal' is a global up/down shift of that one CRISPRi "
+           f"row (normalisation, stress,\n     growth arrest), not regulatory specificity, and no sequence "
+           f"feature of the TF could ever recover\n     it, because it is a property of the experiment "
+           f"rather than of the TF.")
     uns = testable & (sg == 0)
     r_u, c_u, s_u = ri[uns], ci[uns], reg[uns, 0]
     z_u = Zk[r_u, c_u]
@@ -693,29 +799,66 @@ def main():
            f"over {len(set(s_u.tolist())):,} source genes")
     rng = np.random.default_rng(7)
     half = rng.random(len(z_u)) < 0.5
+    # every curated target of a source, so the non-target arm can exclude all of them
+    tset_all = collections.defaultdict(set)
+    for a_, b_ in zip(reg[:, 0], ci):
+        if b_ >= 0:
+            tset_all[int(a_)].add(int(b_))
+    row_of_src = {}
+    for s_, r_ in zip(s_u, r_u):
+        row_of_src.setdefault(int(s_), int(r_))
     ceil = []
+    strong_lab = np.abs(z_u) >= Z_LAB
+    bias = collections.defaultdict(list)
+    for s, z in zip(s_u[half & strong_lab], z_u[half & strong_lab]):
+        bias[int(s)].append(np.sign(z))
+    bs = {k: float(np.mean(v)) for k, v in bias.items() if len(v) >= 10}
+    # ...and the same quantity estimated off NON-targets of the same source, matched in count
+    rgnt = np.random.default_rng(11)
+    bs_nt = {}
+    for s, rw in row_of_src.items():
+        if s not in bs:
+            continue
+        zz = Zk[rw]
+        ok = np.isfinite(zz) & (np.abs(zz) >= Z_LAB)
+        ok[list(tset_all[s])] = False        # exclude EVERY curated target of this source, signed or not
+        idx = np.where(ok)[0]
+        if len(idx) < 10:
+            continue
+        pick = rgnt.choice(idx, min(len(idx), max(10, len(bias[s]))), replace=False)
+        bs_nt[s] = float(np.mean(np.sign(zz[pick])))
+    report(f"     per-source direction bias estimated from {len(bs):,} sources' true targets and from "
+           f"{len(bs_nt):,}\n     sources' NON-targets (same row, all curated targets removed)")
     for thr in (0.0, 2.0):
         strong = np.abs(z_u) >= max(thr, 1e-9)
-        bias = collections.defaultdict(list)
-        for s, z in zip(s_u[half & (np.abs(z_u) >= Z_LAB)], z_u[half & (np.abs(z_u) >= Z_LAB)]):
-            bias[int(s)].append(np.sign(z))
-        bs = {k: float(np.mean(v)) for k, v in bias.items() if len(v) >= 10}
-        has = np.array([int(s) in bs for s in s_u])
-        sub = (~half) & strong & has
-        pr = np.array([1 if bs[int(s)] > 0 else -1 for s in s_u[sub]])
-        ag = float((np.sign(z_u[sub]) == pr).mean())
-        row = {"z_min": thr, "n": int(sub.sum()), "n_sources": len(bs), "agree": ag}
-        for mode, sfx in (("decile", ""), ("nn", "_nn"), ("joint", "_joint")):
-            sw = SW.agree(r_u[sub], c_u[sub], pr, range(800, 800 + N_CTRL),
-                          cond=(thr if thr > 0 else None), mode=mode)
-            row[f"swap{sfx}"] = float(np.nanmean(sw))
-            row[f"increment{sfx}"] = ag - float(np.nanmean(sw))
-            row[f"frac_draws_won{sfx}"] = float(np.mean(ag > sw))
-        ceil.append(row)
-        report(f"     |z| >= {thr:g}: n {int(sub.sum()):7,d} over {len(bs):4,d} sources  agree {ag:.4f}  "
-               f"swap {row['swap']:.4f}  CEILING INCREMENT {row['increment']:+.4f}  "
-               f"(nearest-neighbour control {row['swap_nn']:.4f}, {row['increment_nn']:+.4f}, "
-               f"{row['frac_draws_won_nn']:.0%} of draws won)")
+        for tname, table in (("TRUE-target half", bs), ("NON-target genes", bs_nt)):
+            has = np.array([int(s) in table for s in s_u])
+            sub = (~half) & strong & has
+            pr = np.array([1 if table[int(s)] > 0 else -1 for s in s_u[sub]])
+            ag = float((np.sign(z_u[sub]) == pr).mean())
+            row = {"z_min": thr, "estimated_from": tname, "n": int(sub.sum()),
+                   "n_sources": len(table), "agree": ag}
+            row.update(swap_block(SW, r_u[sub], c_u[sub], pr, z_u[sub], range(800, 800 + N_CTRL),
+                                  (thr if thr > 0 else None), ag))
+            ceil.append(row)
+            report(f"     |z| >= {thr:g}  {tname:17s} n {int(sub.sum()):7,d} over {len(table):4,d} sources"
+                   f"  agree {ag:.4f}  swap {row['swap']:.4f}  incrUNPAIRED {row['increment']:+.4f}  "
+                   f"incrPAIRED {row['increment_paired']:+.4f} ({row['frac_draws_won_paired']:.0%} won)")
+    c2t = [c for c in ceil if c["z_min"] == 2.0 and c["estimated_from"] == "TRUE-target half"][0]
+    c2n = [c for c in ceil if c["z_min"] == 2.0 and c["estimated_from"] == "NON-target genes"][0]
+    ceil_reproduced = (c2n["increment_paired"] / c2t["increment_paired"]
+                       if c2t["increment_paired"] > 1e-9 else float("nan"))
+    ceiling_is_row_global = bool(ceil_reproduced >= 0.75)
+    report(f"     -> the NON-TARGET arm reaches {c2n['increment_paired']:+.4f} against the true-target "
+           f"arm's {c2t['increment_paired']:+.4f}: it reproduces {100*ceil_reproduced:.0f}% of the "
+           f"'ceiling'\n        while knowing NOTHING about which genes the source regulates. At most "
+           f"{100*(c2t['increment_paired']-c2n['increment_paired']):.1f} of the "
+           f"{100*c2t['increment_paired']:.1f} points is target-specific.")
+    report(f"     -> THE CEILING IS A GLOBAL PROPERTY OF THE PERTURBATION ROW, NOT SOURCE-LEVEL "
+           f"REGULATORY SIGNAL."
+           if ceiling_is_row_global else
+           f"     -> the true-target arm exceeds the non-target arm, so some of the ceiling is "
+           f"target-specific.")
 
     # does any annotation see that bias? the crux, measured at source level
     strong_u = np.abs(z_u) >= Z_LAB
@@ -748,6 +891,12 @@ def main():
            f" edges (1,066 lines)")
     gs = (gmean[c_u], gcv[c_u])
     M, fnames = edge_features(G, reg[idx_u, 0], reg[idx_u, 1], ann, co_u, gs)
+    af_cov_edges = float(np.isfinite(G.act_frac[reg[idx_u, 0]]).mean())
+    af_cov_src = float(np.isfinite(G.act_frac[np.unique(reg[idx_u, 0])]).mean())
+    report(f"     src_act_frac -- the one feature with any prior claim to informativeness -- is FINITE ON "
+           f"ONLY\n     {100*af_cov_edges:.1f}% of these edges and {100*af_cov_src:.1f}% of their source "
+           f"genes (a source needs >= {MIN_SIGNED} signed\n     curated edges before it has one). The "
+           f"first version of this module asserted 86.4% in its limits; it is not.")
     report(f"     {M.shape[1]} features: "
            f"{sum(n.startswith('src_') for n in fnames)} src, "
            f"{sum(n.startswith('edge_') for n in fnames)} edge, "
@@ -778,9 +927,15 @@ def main():
     if coassign > 0.5:
         raise SystemExit("CV seeds are not drawing different partitions")
 
+    # B0 is the arm the verdict is allowed to describe as containing no K562 measurement of any kind.
+    # B keeps the target's K562 expression level and CV -- no direction information, but a measurement,
+    # and one computed over the held-out fold's rows as well. Both are run so the difference is visible
+    # rather than asserted.
     ARMS = {"A target-direction only (K562)": ("tgtdir_",),
-            "B source+edge (no K562 in feats)": ("src_", "edge_", "tgtann_"),
-            "C full": ("src_", "edge_", "tgtann_", "tgtdir_")}
+            "B0 source+edge, ZERO K562 feats": ("src_", "edge_", "tgtann_"),
+            "B  +target K562 expr level": ("src_", "edge_", "tgtann_", "tgtk562_"),
+            "C full": ("src_", "edge_", "tgtann_", "tgtk562_", "tgtdir_")}
+    ARM_B = "B0 source+edge, ZERO K562 feats"
 
     def run_cv(Mx, fnamesx, fmap, seed, shuffle=False, arms=None, predict_scope=None):
         """One CV pass. Returns an out-of-fold probability per arm.
@@ -832,12 +987,7 @@ def main():
         out = {"tag": tag, "n": int(m.sum()), "accuracy": ag, "auc": a,
                "majority_baseline": float(max((np.sign(zvec[m]) > 0).mean(),
                                               (np.sign(zvec[m]) < 0).mean()))}
-        for mode, sfx in (("decile", ""), ("nn", "_nn"), ("joint", "_joint")):
-            sw = sw_obj.agree(rows[m], cols[m], pr, seeds0, cond=Z_LAB, mode=mode)
-            out[f"swap{sfx}"] = float(np.nanmean(sw))
-            out[f"swap_sd{sfx}"] = float(np.nanstd(sw))
-            out[f"increment{sfx}"] = ag - float(np.nanmean(sw))
-            out[f"frac_draws_won{sfx}"] = float(np.mean(ag > sw))
+        out.update(swap_block(sw_obj, rows[m], cols[m], pr, zvec[m], seeds0, Z_LAB, ag))
         return out
 
     res_k562 = collections.defaultdict(list)
@@ -850,23 +1000,35 @@ def main():
                                                                                  2000 + 50 * seed + N_CTRL)))
     report(f"\n     K562, held-out SOURCE GENES, labels |z| >= {Z_LAB:g} "
            f"(mean over {len(SEEDS)} genuinely different partitions)")
-    report(f"     {'arm':34s} {'n':>7s} {'acc':>7s} {'AUC':>6s} {'major':>6s} | {'swapDec':>7s} "
-           f"{'incr':>8s} {'won':>4s} | {'swapNN':>7s} {'incrNN':>8s} {'won':>4s} | {'swapJnt':>7s} "
-           f"{'incrJnt':>8s} {'won':>4s}")
+    report(f"     UNPAIRED = arm on all its rows vs control on the ~22% of them where the swapped source "
+           f"also\n     responds strongly (the incumbent construction). PAIRED = both on the SAME rows. "
+           f"The paired\n     columns are the honest ones and they govern the decision.")
+    report(f"     {'arm':34s} {'n':>7s} {'acc':>7s} {'AUC':>6s} {'major':>6s} | {'incrUdec':>8s} "
+           f"{'incrUnn':>8s} {'incrUjnt':>8s} | {'armOnCtl':>8s} {'incrPdec':>8s} {'incrPnn':>8s} "
+           f"{'incrPjnt':>8s} {'wonP':>5s}")
     k562_summary = {}
     for aname, rs in res_k562.items():
         s = {k: float(np.mean([r[k] for r in rs])) for k in
-             ("accuracy", "auc", "majority_baseline", "swap", "swap_sd", "increment", "frac_draws_won",
-              "swap_nn", "swap_sd_nn", "increment_nn", "frac_draws_won_nn",
-              "swap_joint", "swap_sd_joint", "increment_joint", "frac_draws_won_joint")}
+             ["accuracy", "auc", "majority_baseline"] + SWAP_KEYS}
         s["accuracy_sd_over_seeds"] = float(np.std([r["accuracy"] for r in rs]))
         s["n"] = int(np.mean([r["n"] for r in rs]))
         k562_summary[aname] = s
         report(f"     {aname:34s} {s['n']:7,d} {s['accuracy']:7.4f} {s['auc']:6.3f} "
-               f"{s['majority_baseline']:6.3f} | {s['swap']:7.4f} {s['increment']:+8.4f} "
-               f"{s['frac_draws_won']:4.2f} | {s['swap_nn']:7.4f} {s['increment_nn']:+8.4f} "
-               f"{s['frac_draws_won_nn']:4.2f} | {s['swap_joint']:7.4f} {s['increment_joint']:+8.4f} "
-               f"{s['frac_draws_won_joint']:4.2f}")
+               f"{s['majority_baseline']:6.3f} | {s['increment']:+8.4f} {s['increment_nn']:+8.4f} "
+               f"{s['increment_joint']:+8.4f} | {s['arm_on_control_rows']:8.4f} "
+               f"{s['increment_paired']:+8.4f} {s['increment_paired_nn']:+8.4f} "
+               f"{s['increment_paired_joint']:+8.4f} {s['frac_draws_won_paired_strictest']:5.2f}")
+    # how much of the arm's row set the control's own conditioning actually keeps -- the size of the
+    # defect that pairing removes, stated as a number rather than asserted
+    _z2 = SW.Z[SW.draw(r_u[lab], 2000, "decile"), c_u[lab]]
+    frac_ctrl_rows = float((np.isfinite(_z2) & (np.abs(_z2) >= Z_LAB)).mean())
+    report(f"     the |z| >= {Z_LAB:g} condition on the control keeps {100*frac_ctrl_rows:.1f}% of the "
+           f"arm's {int(lab.sum()):,} rows; the arm and its\n     control were being scored on those "
+           f"different populations, which is what the paired columns fix.")
+    report(f"     the arm's own accuracy falls from {k562_summary[ARM_B]['accuracy']:.4f} on all its rows "
+           f"to {k562_summary[ARM_B]['arm_on_control_rows']:.4f} on the control's rows:\n     that "
+           f"{k562_summary[ARM_B]['accuracy']-k562_summary[ARM_B]['arm_on_control_rows']:.4f} gap is the "
+           f"whole reason the unpaired nearest-neighbour increment looked positive.")
     report(f"     seed-to-seed sd of accuracy (different partitions, not rotated fold labels): " +
            ", ".join(f"{a.split()[0]} {k562_summary[a]['accuracy_sd_over_seeds']:.4f}"
                      for a in k562_summary))
@@ -898,8 +1060,10 @@ def main():
                f"({'ok, < 0.10' if w < 0.10 else 'RESIDUAL IMBALANCE PRESENT'})")
     report(f"       The decile match leaves the control WEAKER in strength than the arm it controls, which "
            f"would\n       flatter the edge arm. The nearest-neighbour match fixes strength and leaves "
-           f"library size behind.\n       The joint match is the one to read; where the three disagree the "
-           f"STRICTEST increment governs.")
+           f"library size behind;\n       the joint match fixes both and leaves mitochondrial fraction. "
+           f"The strictest increment governs. But note\n       which defect actually mattered: matching "
+           f"moves the unpaired increment by ~2 points and PAIRING moves\n       it by ~2 points in the "
+           f"other direction, and it is pairing that removes the only positive number here.")
 
     # ------------------------------------------------------------------ 4. label shuffle
     report(f"\n  4. LABEL-SHUFFLED ARM (significance only -- the effect size above is the RAW held-out "
@@ -909,12 +1073,13 @@ def main():
         o = run_cv(M, fnames, fmap, seed, shuffle=True, arms={"C full": ARMS["C full"]})
         shuf.append(score(o["C full"], lab, SW, r_u, c_u, z_u, "shuffled",
                           range(3000 + 50 * seed, 3000 + 50 * seed + N_CTRL)))
-    sh = {k: float(np.mean([r[k] for r in shuf])) for k in ("accuracy", "auc", "increment")}
+    sh = {k: float(np.mean([r[k] for r in shuf])) for k in ["accuracy", "auc"] + SWAP_KEYS}
     report(f"     labels permuted, full pipeline rerun: acc {sh['accuracy']:.4f}  AUC {sh['auc']:.4f}  "
-           f"incr {sh['increment']:+.4f}")
+           f"incrUNPAIRED {sh['increment']:+.4f}  incrPAIRED {sh['increment_paired']:+.4f}")
     real_c = k562_summary["C full"]
     report(f"     real full arm:                       acc {real_c['accuracy']:.4f}  "
-           f"AUC {real_c['auc']:.4f}  incr {real_c['increment']:+.4f}")
+           f"AUC {real_c['auc']:.4f}  incrUNPAIRED {real_c['increment']:+.4f}  "
+           f"incrPAIRED {real_c['increment_paired']:+.4f}")
 
     # ------------------------------------------------------------------ 5. degree-matched rewiring
     report(f"\n  5. DEGREE-MATCHED REWIRING ({N_REWIRE} configuration-model draws, one CV seed)")
@@ -926,34 +1091,36 @@ def main():
         Gr = G.rewired(500 + j)
         Mr, fnr = edge_features(Gr, reg[idx_u, 0], reg[idx_u, 1], ann, co_u, gs)
         o = run_cv(Mr, fnr, fmaps[0], SEEDS[0], predict_scope=lab,
-                   arms={"B source+edge (no K562 in feats)": ARMS["B source+edge (no K562 in feats)"]})
-        rew.append(score(o["B source+edge (no K562 in feats)"], lab, SW, r_u, c_u, z_u, f"rewire{j}",
+                   arms={ARM_B: ARMS[ARM_B]})
+        rew.append(score(o[ARM_B], lab, SW, r_u, c_u, z_u, f"rewire{j}",
                          range(4000 + 30 * j, 4000 + 30 * j + 5)))
         if j % 5 == 0:
             report(f"       rewiring {j+1}/{N_REWIRE}: acc {rew[-1]['accuracy']:.4f} "
                    f"incr {rew[-1]['increment']:+.4f}")
     rw_acc = float(np.mean([r["accuracy"] for r in rew]))
-    rw_inc = float(np.mean([r["increment"] for r in rew]))
-    rw_sd = float(np.std([r["increment"] for r in rew]))
-    armB = k562_summary["B source+edge (no K562 in feats)"]
-    beat = float(np.mean([armB["increment"] > r["increment"] for r in rew]))
+    rw_inc = float(np.mean([r["increment_paired"] for r in rew]))
+    rw_sd = float(np.std([r["increment_paired"] for r in rew]))
+    rw_inc_unp = float(np.mean([r["increment"] for r in rew]))
+    armB = k562_summary[ARM_B]
+    beat = float(np.mean([armB["increment_paired"] > r["increment_paired"] for r in rew]))
     beat_acc = float(np.mean([armB["accuracy"] > r["accuracy"] for r in rew]))
     # A RATIO IS ONLY READABLE WHEN THERE IS AN EFFECT TO DIVIDE. If the real increment is <= 0 there is
     # nothing for the rewiring to destroy and "survival 2.21" would be an artefact of a negative
     # denominator, not a result.
-    surv = rw_inc / armB["increment"] if armB["increment"] > 1e-9 else float("nan")
-    report(f"     real arm B      : acc {armB['accuracy']:.4f}  incr {armB['increment']:+.4f}")
-    report(f"     degree-matched  : acc {rw_acc:.4f}  incr {rw_inc:+.4f} (sd {rw_sd:.4f}) over "
-           f"{N_REWIRE} rewirings")
-    report(f"     the real wiring beats the degree-matched control on increment in {beat:.0%} of "
-           f"rewirings, on accuracy in {beat_acc:.0%}")
+    surv = rw_inc / armB["increment_paired"] if armB["increment_paired"] > 1e-9 else float("nan")
+    report(f"     real arm B0     : acc {armB['accuracy']:.4f}  incrPAIRED "
+           f"{armB['increment_paired']:+.4f}")
+    report(f"     degree-matched  : acc {rw_acc:.4f}  incrPAIRED {rw_inc:+.4f} (sd {rw_sd:.4f}) over "
+           f"{N_REWIRE} rewirings  [unpaired {rw_inc_unp:+.4f}]")
+    report(f"     the real wiring beats the degree-matched control on the paired increment in {beat:.0%} "
+           f"of\n     rewirings, on accuracy in {beat_acc:.0%}")
     if np.isfinite(surv):
         report(f"     fraction of the real increment the degree-matched control already reproduces: "
                f"{surv:.2f}")
     else:
-        report(f"     survival ratio NOT COMPUTED: the real increment is {armB['increment']:+.4f}, so "
-               f"there is no effect for a\n     rewiring to destroy. Degree is not the explanation for a "
-               f"result that does not exist.")
+        report(f"     survival ratio NOT COMPUTED: the real paired increment is "
+               f"{armB['increment_paired']:+.4f}, so there is no\n     effect for a rewiring to destroy. "
+               f"Degree is not the explanation for a result that does not exist.")
 
     # ------------------------------------------------------------------ 6. RPE1 transfer
     report(f"\n  6. TRANSFER TO RPE1 -- a cell line no layer in this project was built from")
@@ -981,9 +1148,22 @@ def main():
     SWr = Swap(Zr, {"rpe1_ncells": rn.astype(float)}, report, "RPE1", joint_cov="rpe1_ncells")
     lab_r = okr & np.isfinite(zr) & (np.abs(zr) >= Z_LAB)
     report(f"    of those, {int(lab_r.sum()):,} have |RPE1 z| >= {Z_LAB:g}")
+    # THE CLASS PRIOR FLIPS BETWEEN THE TWO CELL LINES AND THAT BREAKS AN ACCURACY READOUT. Among K562
+    # rows with |z| >= 2, 59.6% are positive; among RPE1 rows with |z| >= 2 only 32.4% are, so the RPE1
+    # majority class is the OPPOSITE one. A model thresholded at p = 0.5 in K562 therefore scores far
+    # BELOW the RPE1 majority baseline no matter how good its ranking is, and the first version of this
+    # module reported those sub-baseline accuracies (0.34-0.40) and their increments as if they measured
+    # transfer. They do not: they measure the prior flip. The baseline is now printed next to them, and
+    # a RANK readout that a prior shift cannot touch (AUC against a swapped-source AUC) is reported
+    # alongside, because AUC is invariant to exactly the shift that destroys the accuracy.
+    frac_pos_r = float((np.sign(zr[lab_r]) > 0).mean())
+    report(f"    CLASS PRIOR: {100*frac_pos_r:.1f}% of RPE1 labelled rows are POSITIVE against "
+           f"{100*y[lab].mean():.1f}% in K562 --\n    the majority class FLIPS, so an accuracy "
+           f"thresholded at 0.5 in K562 is not a transfer measurement here.")
     rpe1_summary = {}
-    report(f"     {'arm':34s} {'n':>7s} {'acc':>7s} {'AUC':>6s} | {'swapDec':>7s} {'incr':>8s} "
-           f"{'won':>4s} | {'incrNN':>8s} {'won':>4s} | {'incrJnt':>8s} {'won':>4s}")
+    report(f"     {'arm':34s} {'n':>7s} {'acc':>7s} {'major':>6s} {'AUC':>6s} {'swapAUC':>7s} "
+           f"{'dAUC':>7s} | {'incrUdec':>8s} {'incrPdec':>8s} {'incrPnn':>8s} {'incrPjnt':>8s} "
+           f"{'wonP':>5s}")
     for aname in ARMS:
         rs = []
         for seed in SEEDS:
@@ -995,27 +1175,38 @@ def main():
                    "auc": auc((np.sign(zr[m]) > 0).astype(int), p[m]),
                    "majority_baseline": float(max((np.sign(zr[m]) > 0).mean(),
                                                   (np.sign(zr[m]) < 0).mean()))}
-            for mode, sfx in (("decile", ""), ("nn", "_nn"), ("joint", "_joint")):
-                sw = SWr.agree(rr[m], rc[m], pr, range(6000 + 40 * seed, 6000 + 40 * seed + N_CTRL),
-                               cond=Z_LAB, mode=mode)
-                row[f"swap{sfx}"] = float(np.nanmean(sw))
-                row[f"swap_sd{sfx}"] = float(np.nanstd(sw))
-                row[f"increment{sfx}"] = ag - float(np.nanmean(sw))
-                row[f"frac_draws_won{sfx}"] = float(np.mean(ag > sw))
+            # the rank readout and its OWN matched control: same probabilities, but the label is the
+            # sign measured at a strength-matched DIFFERENT perturbation of the same target
+            sa = []
+            for sd_ in range(6000 + 40 * seed, 6000 + 40 * seed + N_CTRL):
+                z2 = Zr[SWr.draw(rr[m], sd_, "decile"), rc[m]]
+                f2 = np.isfinite(z2) & (np.abs(z2) >= Z_LAB)
+                if f2.sum() > 20:
+                    sa.append(auc((np.sign(z2[f2]) > 0).astype(int), p[m][f2]))
+            row["swap_auc"] = float(np.nanmean(sa)) if sa else float("nan")
+            row["swap_auc_sd"] = float(np.nanstd(sa)) if sa else float("nan")
+            row["auc_increment"] = row["auc"] - row["swap_auc"]
+            row["frac_auc_draws_won"] = float(np.mean(row["auc"] > np.array(sa))) if sa else float("nan")
+            row.update(swap_block(SWr, rr[m], rc[m], pr, zr[m],
+                                  range(6000 + 40 * seed, 6000 + 40 * seed + N_CTRL), Z_LAB, ag))
             rs.append(row)
         s = {k: float(np.mean([r[k] for r in rs])) for k in
-             ("accuracy", "auc", "majority_baseline", "swap", "swap_sd", "increment", "frac_draws_won",
-              "swap_nn", "swap_sd_nn", "increment_nn", "frac_draws_won_nn",
-              "swap_joint", "swap_sd_joint", "increment_joint", "frac_draws_won_joint")}
+             ["accuracy", "auc", "majority_baseline", "swap_auc", "swap_auc_sd", "auc_increment",
+              "frac_auc_draws_won"] + SWAP_KEYS}
         s["n"] = int(np.mean([r["n"] for r in rs]))
         # SIGN AND SIGNIFICANCE ARE READ TOGETHER. An increment smaller than twice the draw-to-draw spread
         # of its own control is NOT DETECTED, whichever way it points -- it is never "reversed".
-        s["detected"] = bool(abs(s["increment"]) > 2 * max(s["swap_sd"], 1e-9))
+        s["detected"] = bool(abs(s["increment_paired"]) > 2 * max(s["swap_sd"], 1e-9))
+        s["auc_detected"] = bool(abs(s["auc_increment"]) > 2 * max(s["swap_auc_sd"], 1e-9))
         rpe1_summary[aname] = s
-        report(f"     {aname:34s} {s['n']:7,d} {s['accuracy']:7.4f} {s['auc']:6.3f} | "
-               f"{s['swap']:7.4f} {s['increment']:+8.4f} {s['frac_draws_won']:4.2f} | "
-               f"{s['increment_nn']:+8.4f} {s['frac_draws_won_nn']:4.2f} | "
-               f"{s['increment_joint']:+8.4f} {s['frac_draws_won_joint']:4.2f}")
+        report(f"     {aname:34s} {s['n']:7,d} {s['accuracy']:7.4f} {s['majority_baseline']:6.3f} "
+               f"{s['auc']:6.3f} {s['swap_auc']:7.3f} {s['auc_increment']:+7.3f} | "
+               f"{s['increment']:+8.4f} {s['increment_paired']:+8.4f} "
+               f"{s['increment_paired_nn']:+8.4f} {s['increment_paired_joint']:+8.4f} "
+               f"{s['frac_draws_won_paired_strictest']:5.2f}")
+    report(f"     every arm's accuracy sits BELOW the RPE1 majority baseline of "
+           f"{rpe1_summary[ARM_B]['majority_baseline']:.3f}; read the AUC columns, not\n     the accuracy "
+           f"columns, for whether anything transfers.")
     imb_r = SWr.imbalance(rr[lab_r], list(range(6000, 6000 + N_CTRL)), mode="decile")
     imb_rn = SWr.imbalance(rr[lab_r], list(range(6000, 6000 + N_CTRL)), mode="nn")
     imb_rj = SWr.imbalance(rr[lab_r], list(range(6000, 6000 + N_CTRL)), mode="joint")
@@ -1027,11 +1218,13 @@ def main():
     # ------------------------------------------------------------------ 7. how many edges can be signed
     report(f"\n  7. HOW MANY OF THE {int((sg == 0).sum()):,} UNSIGNED EDGES CAN BE SIGNED?")
     report(f"     Rule stated in advance: an edge may be signed only if its out-of-fold confidence bin "
-           f"reaches\n     held-out accuracy >= {SIGN_MIN_ACC:.2f} AND an increment over the swapped-source "
-           f"control >= {SIGN_MIN_INC:+.2f} inside that\n     same bin. Accuracy alone is not enough: an "
-           f"accuracy the swapped source also achieves is the target's\n     preferred direction, not the "
-           f"edge's.")
-    best_arm = max(k562_summary, key=lambda a: k562_summary[a]["increment"])
+           f"reaches\n     held-out accuracy >= {SIGN_MIN_ACC:.2f} AND a PAIRED increment over the "
+           f"swapped-source control >= {SIGN_MIN_INC:+.2f} inside\n     that same bin. Accuracy alone is "
+           f"not enough: an accuracy the swapped source also achieves is the\n     target's preferred "
+           f"direction, not the edge's. The unpaired increment is printed beside it and is\n     the "
+           f"LOOSER of the two here -- signing on it would have been the easier rule, and nothing passes "
+           f"either.")
+    best_arm = max(k562_summary, key=lambda a: k562_summary[a]["increment_paired"])
     p_best = np.nanmean(np.vstack([oof_by_seed[s][best_arm] for s in SEEDS]), axis=0)
     conf = np.abs(p_best - 0.5)
     bins = []
@@ -1044,15 +1237,18 @@ def main():
             continue
         pr = np.where(p_best[m] > 0.5, 1, -1)
         ag = float((np.sign(z_u[m]) == pr).mean())
-        sw = SW.agree(r_u[m], c_u[m], pr, range(7000, 7000 + N_CTRL), cond=Z_LAB)
-        bins.append({"conf_lo": float(lo), "conf_hi": float(hi), "n": int(m.sum()), "accuracy": ag,
-                     "swap": float(np.nanmean(sw)), "increment": ag - float(np.nanmean(sw))})
-    report(f"     {'conf bin':>16s} {'n':>8s} {'held-out acc':>13s} {'swap':>8s} {'incr':>8s} {'usable':>7s}")
+        b = {"conf_lo": float(lo), "conf_hi": float(hi), "n": int(m.sum()), "accuracy": ag}
+        b.update(swap_block(SW, r_u[m], c_u[m], pr, z_u[m], range(7000, 7000 + N_CTRL), Z_LAB, ag))
+        bins.append(b)
+    report(f"     {'conf bin':>16s} {'n':>8s} {'held-out acc':>13s} {'swap':>8s} {'incrUNP':>8s} "
+           f"{'incrPAIR':>9s} {'usable':>7s}")
     for b in bins:
-        use = b["accuracy"] >= SIGN_MIN_ACC and b["increment"] >= SIGN_MIN_INC
+        # the SIGNING rule reads the PAIRED increment, i.e. the strict one. Reading the unpaired
+        # increment here would let a bin qualify because its control was measured on other rows.
+        use = b["accuracy"] >= SIGN_MIN_ACC and b["increment_paired"] >= SIGN_MIN_INC
         b["usable"] = bool(use)
         report(f"     {b['conf_lo']:.3f}-{b['conf_hi']:.3f}    {b['n']:8,d} {b['accuracy']:13.4f} "
-               f"{b['swap']:8.4f} {b['increment']:+8.4f} {str(use):>7s}")
+               f"{b['swap']:8.4f} {b['increment']:+8.4f} {b['increment_paired']:+9.4f} {str(use):>7s}")
     usable = [b for b in bins if b["usable"]]
     if usable:
         cut = min(b["conf_lo"] for b in usable)
@@ -1088,115 +1284,153 @@ def main():
         report(f"     confidence cut {cut:.3f} -> {n_signable:,} of {len(allu):,} unsigned edges signable "
                f"at an expected error rate of {exp_err:.3f}")
     else:
-        report(f"     NO confidence bin reaches accuracy {SIGN_MIN_ACC:.2f} with an increment "
+        report(f"     NO confidence bin reaches accuracy {SIGN_MIN_ACC:.2f} with a paired increment "
                f"{SIGN_MIN_INC:+.2f} over the swapped-source\n     control. 0 of "
                f"{int((sg == 0).sum()):,} edges may be signed under the rule set before the run.")
 
     # ------------------------------------------------------------------ 8. verdict
-    rpB = rpe1_summary["B source+edge (no K562 in feats)"]
+    rpB = rpe1_summary[ARM_B]
     armA = k562_summary["A target-direction only (K562)"]
     # Where the two control constructions disagree the STRICTER (lower) increment governs, so that adding
     # the tighter control after the imbalance audit can only make the bar harder, never easier.
-    inc_k = min(armB["increment"], armB["increment_nn"], armB["increment_joint"])
-    won_k = min(armB["frac_draws_won"], armB["frac_draws_won_nn"], armB["frac_draws_won_joint"])
-    inc_r = min(rpB["increment"], rpB["increment_nn"], rpB["increment_joint"])
-    won_r = min(rpB["frac_draws_won"], rpB["frac_draws_won_nn"], rpB["frac_draws_won_joint"])
+    # PAIRED and STRICTEST-OF-THREE. Adding a control construction can only make the bar harder.
+    inc_k = armB["increment_paired_strictest"]
+    won_k = armB["frac_draws_won_paired_strictest"]
+    inc_r = rpB["increment_paired_strictest"]
+    won_r = rpB["frac_draws_won_paired_strictest"]
     ok_a = bool(inc_k >= MIN_INCREMENT and won_k >= MIN_WIN_FRAC)
-    ok_b = bool(inc_r > 0 and won_r >= MIN_WIN_FRAC)
-    ok_c = bool(armB["increment"] >= armA["increment"])
+    # (b) is now read on the RANK readout as well, because the RPE1 accuracy is destroyed by the class
+    # prior flipping between cell lines and an accuracy increment there measures the flip, not transfer.
+    ok_b = bool(inc_r > 0 and won_r >= MIN_WIN_FRAC and rpB["auc_increment"] > 0)
+    ok_c = bool(armB["increment_paired"] >= armA["increment_paired"])
     ok_d = bool(np.isfinite(surv) and surv <= MAX_REWIRE_SURVIVAL)
     passed = bool(ok_a and ok_b and ok_c and ok_d)
     report(f"\n  8. DECISION against the threshold fixed before the run "
-           f"(STRICTEST of the three control constructions)")
-    report(f"     (a) K562 increment >= {MIN_INCREMENT:+.3f} in >= {MIN_WIN_FRAC:.0%} of draws: "
-           f"{inc_k:+.4f}, {won_k:.0%} -> {ok_a}")
-    report(f"     (b) RPE1 increment > 0 on the same terms: {inc_r:+.4f}, {won_r:.0%} -> {ok_b}")
-    report(f"     (c) carried by the no-K562-features arm, not the target-direction arm: "
-           f"{armB['increment']:+.4f} vs {armA['increment']:+.4f} -> {ok_c}")
+           f"(PAIRED, STRICTEST of the three control constructions)")
+    report(f"     (a) K562 paired increment >= {MIN_INCREMENT:+.3f} in >= {MIN_WIN_FRAC:.0%} of draws: "
+           f"{inc_k:+.4f}, {won_k:.0%} -> {ok_a}    [unpaired, for comparison: "
+           f"{armB['increment_strictest']:+.4f}]")
+    report(f"     (b) RPE1 paired increment > 0 on the same terms AND rank transfer > 0: "
+           f"{inc_r:+.4f}, {won_r:.0%}, dAUC {rpB['auc_increment']:+.3f} -> {ok_b}")
+    report(f"     (c) carried by the zero-K562-features arm, not the target-direction arm: "
+           f"{armB['increment_paired']:+.4f} vs {armA['increment_paired']:+.4f} -> {ok_c}")
     report(f"     (d) degree-matched rewiring destroys >= {MAX_REWIRE_SURVIVAL:.0%} of it: "
            f"survival {surv:.2f} -> {ok_d}")
 
-    cbest = max(conv, key=lambda c: c["increment"])
-    ceil2 = [c for c in ceil if c["z_min"] == 2.0][0]
+    conv0 = conv[0]                                    # |z| >= 0: EVERY signed testable edge
+    cbest = max([c for c in conv if c["z_min"] > 0], key=lambda c: c["increment_paired"])
+    ceil2 = c2t
     af_rho = crux.get("curated_act_frac", {}).get("spearman", float("nan"))
     af_p = crux.get("curated_act_frac", {}).get("p", float("nan"))
     core = (
-        f"On the {conv[0]['n']:,} curated edges that ALREADY carry a sign, that sign predicts the measured "
-        f"K562 perturbational sign at {100*cbest['agree']:.1f}% against {100*cbest['swap']:.1f}% for a "
-        f"strength-matched swapped source ({100*cbest['increment']:+.1f} points at |z| >= "
-        f"{cbest['z_min']:g}, {cbest['frac_draws_won']:.0%} of {N_CTRL} draws won), so direction is a real "
-        f"property of a curated edge and the question was worth asking. It cannot be answered by lookup: "
-        f"CollecTRI and TRRUST cover {lookup['signed_edges_covered']:,} of the {int((sg != 0).sum()):,} "
-        f"SIGNED edges and {lookup['unsigned_edges_covered']:,} of the {int((sg == 0).sum()):,} unsigned "
-        f"ones -- the signed subset IS those resources, and the unsigned subset is a different, "
-        f"ChIP/motif-shaped compendium. And the thing that would have to be imputed does exist: estimating "
-        f"a source's measured direction bias on half its unsigned targets predicts the other half at "
-        f"{100*ceil2['increment']:+.1f} points over the same control, which is the ceiling for any "
-        f"source-level feature. The curated layer simply does not know it -- a source's curated activator "
-        f"fraction correlates with its measured direction bias at Spearman {af_rho:+.3f} (p {af_p:.2g}).")
+        f"On ALL {conv0['n']:,} curated edges that already carry a sign, that sign predicts the measured "
+        f"K562 perturbational sign at {100*conv0['agree']:.1f}% against {100*conv0['swap']:.1f}% for a "
+        f"strength-matched swapped source measured on the SAME rows -- {100*conv0['increment_paired']:+.1f} "
+        f"points, {conv0['frac_draws_won_paired']:.0%} of {N_CTRL} draws won. On the "
+        f"{cbest['n']:,}-edge subset selected post hoc at |z| >= {cbest['z_min']:g} it is "
+        f"{100*cbest['agree']:.1f}% against {100*cbest['arm_on_control_rows']:.1f}% on the control's rows, "
+        f"{100*cbest['increment_paired']:+.1f} points -- NOT the {100*cbest['increment']:+.1f} the unpaired "
+        f"comparison reports, and that subset number belongs to {cbest['n']:,} edges, not to "
+        f"{conv0['n']:,}. Direction is a real property of a curated edge; it is worth about half what an "
+        f"unpaired control makes it look like. It cannot be answered by lookup: CollecTRI and TRRUST cover "
+        f"{lookup['signed_edges_covered']:,} of the {int((sg != 0).sum()):,} SIGNED edges and "
+        f"{lookup['unsigned_edges_covered']:,} of the {int((sg == 0).sum()):,} unsigned ones -- the signed "
+        f"subset IS those resources, and the unsigned subset is a different, ChIP/motif-shaped compendium. "
+        f"AND THE 'CEILING' THAT THE FIRST VERSION OF THIS MODULE OFFERED AS THE REASON TO TRY HARDER IS "
+        f"NOT REGULATORY SIGNAL AT ALL. Estimating a source's measured direction bias on half its unsigned "
+        f"targets predicts the other half at {100*c2t['increment_paired']:+.1f} points over the same "
+        f"control -- but estimating that bias from genes that are NOT curated targets of the source, same "
+        f"perturbation row, every curated target excluded, predicts those same held-out true targets at "
+        f"{100*c2n['increment_paired']:+.1f} points -- {100*ceil_reproduced:.0f}% of it, from a control "
+        f"that knows nothing about which genes the source regulates, leaving at most "
+        f"{100*(c2t['increment_paired']-c2n['increment_paired']):.1f} points that is target-specific. What "
+        f"looked like a source-level ceiling for a future sequence feature to reach is a global up/down "
+        f"shift of one CRISPRi row -- normalisation, stress, growth arrest -- and no property of the TF "
+        f"could predict it, because it is a property of the experiment. That the curated activator "
+        f"fraction correlates with it at Spearman {af_rho:+.3f} (p {af_p:.2g}) is therefore not a missed "
+        f"opportunity; there was nothing there to see.")
     controls = (
-        f"CONTROLS, ALL FOUR OF THEM. (i) The target-direction arm -- the confound -- reaches "
-        f"{100*armA['accuracy']:.1f}% raw accuracy on held-out TFs while its increment over the swapped "
-        f"source is {100*armA['increment']:+.1f} points, which is exactly why 0.5 is the wrong null and why "
-        f"a raw accuracy near 60% here means nothing. (ii) Label-shuffled, whole pipeline rerun: acc "
-        f"{sh['accuracy']:.4f}, incr {sh['increment']:+.4f}, against the real full arm's "
-        f"{real_c['accuracy']:.4f} / {real_c['increment']:+.4f}. (iii) Degree-matched configuration-model "
-        f"rewiring, {N_REWIRE} draws with source out-degree and target in-degree preserved EXACTLY, leaves "
-        f"the source+edge arm at incr {rw_inc:+.4f} against the real {armB['increment']:+.4f}; the real "
-        f"wiring beats the rewired control in {beat:.0%} of draws on increment and {beat_acc:.0%} on "
-        f"accuracy, so the little the features do carry is degree and not connectivity. (iv) THE MATCHED "
-        f"CONTROL ITSELF FAILED ITS OWN AUDIT AND HAD TO BE TIGHTENED TWICE, AND THAT IS THE MOST USEFUL "
-        f"THING HERE. Matching the swapped source on perturbation-strength DECILE left a standardised mean "
-        f"difference of {worst:.2f} in strength -- curated sources are TFs and sit at the top of whatever "
-        f"decile they land in, so the control was systematically WEAKER than the arm it controls. A "
-        f"nearest-neighbour-in-strength arm fixes that and still leaves library size at |SMD| "
-        f"{worst_nn:.2f}, so a joint strength x library-size decile arm was added, worst |SMD| "
-        f"{worst_j:.2f}. The K562 increment moves {armB['increment']:+.4f} (decile) -> "
-        f"{armB['increment_nn']:+.4f} (nearest) -> {armB['increment_joint']:+.4f} (joint), and RPE1 "
-        f"{rpB['increment']:+.4f} -> {rpB['increment_nn']:+.4f} -> {rpB['increment_joint']:+.4f}. THE "
-        f"CONTROL'S CONSTRUCTION MOVES THE ANSWER BY AS MUCH AS THE EFFECT IS WORTH, which is itself the "
-        f"reason to call this a null rather than a small positive: the strictest arm governs every decision "
-        f"above. The decile-matched control that colab/causal_reg.py and colab/reliable_edges.py both use "
-        f"has this same defect and is worth re-auditing there, where the reported increments are large "
-        f"enough that a 1-2 point shift would not overturn them but should be stated.")
+        f"CONTROLS, FIVE OF THEM, AND THE FIFTH REWROTE THE OTHER FOUR. (i) PAIRING. The swapped-source "
+        f"control is conditioned on |z| >= {Z_LAB:g} exactly as the edge arm is -- correctly, because "
+        f"selecting on outcome magnitude inflates agreement -- but that condition moves the control onto "
+        f"DIFFERENT ROWS: only ~{100*frac_ctrl_rows:.0f}% of the arm's rows survive it, and the survivors "
+        f"are targets that also respond strongly to unrelated perturbations, whose direction is far more "
+        f"consistent. Measured on the control's own rows the arm scores "
+        f"{armB['arm_on_control_rows']:.4f} rather than {armB['accuracy']:.4f}. Every increment is "
+        f"therefore reported twice, and the paired one governs: arm B0 moves from "
+        f"{armB['increment']:+.4f} (unpaired decile) / {armB['increment_nn']:+.4f} (unpaired nearest) to "
+        f"{armB['increment_paired']:+.4f} / {armB['increment_paired_nn']:+.4f} paired. The nearest-neighbour "
+        f"POSITIVE increment that made the three constructions look like they straddled zero was an "
+        f"artefact of the unequal row sets; paired, all three are negative and the answer is the same "
+        f"whichever match is used. (ii) The target-direction arm -- the confound -- reaches "
+        f"{100*armA['accuracy']:.1f}% raw accuracy on held-out TFs at a paired increment of "
+        f"{100*armA['increment_paired']:+.1f} points, which is why 0.5 is the wrong null and why a raw "
+        f"accuracy near 60% here means nothing. (iii) Label-shuffled, whole pipeline rerun: acc "
+        f"{sh['accuracy']:.4f}, AUC {sh['auc']:.4f}, paired incr {sh['increment_paired']:+.4f}, against the "
+        f"real full arm's {real_c['accuracy']:.4f} / {real_c['auc']:.4f} / "
+        f"{real_c['increment_paired']:+.4f}. (iv) Degree-matched configuration-model rewiring, "
+        f"{N_REWIRE} draws with source out-degree and target in-degree preserved EXACTLY, leaves the "
+        f"source+edge arm at paired incr {rw_inc:+.4f} against the real {armB['increment_paired']:+.4f}; "
+        f"the real wiring beats the rewired control in {beat:.0%} of draws on increment and "
+        f"{beat_acc:.0%} on accuracy, so the little the features do carry is degree, not connectivity. "
+        f"(v) The matched control still fails its own imbalance audit: strength |SMD| {worst:.2f} under a "
+        f"decile match (curated sources are TFs and sit at the top of whatever decile they land in), "
+        f"{worst_nn:.2f} under nearest-neighbour-in-strength, {worst_j:.2f} under a joint strength x "
+        f"library-size match, with mitochondrial fraction stuck near 0.19 under all three. Those "
+        f"tightenings are why three constructions are reported; PAIRING, not matching, turned out to be "
+        f"what moved the answer. colab/causal_reg.py and colab/reliable_edges.py use the unpaired "
+        f"decile-matched construction and should be re-audited for the same row-set defect -- their "
+        f"increments are large enough that a 2-point shift would not overturn them, but it should be "
+        f"stated.")
     if passed:
         verdict = (
             f"THE SIGN OF AN UNSIGNED CURATED EDGE IS IMPUTABLE, AT {n_signable:,} EDGES. Held out by "
-            f"SOURCE GENE so no TF is in both train and test, a model on source, edge and target-annotation "
-            f"features with no K562 measurement in it reaches {100*armB['accuracy']:.1f}% accuracy "
-            f"(AUC {armB['auc']:.3f}) against {100*armB['swap']:.1f}% for a strength-matched swapped source "
-            f"-- {100*armB['increment']:+.1f} points, {armB['frac_draws_won']:.0%} of {N_CTRL} draws won -- "
-            f"and transfers to RPE1 at {100*rpe1_summary['B source+edge (no K562 in feats)']['increment']:+.1f}"
-            f" points. {n_signable:,} of the {int((sg == 0).sum()):,} unsigned edges clear the "
-            f"confidence cut set in advance, at an expected error rate of {exp_err:.3f}. " + core + " " +
-            controls)
+            f"SOURCE GENE so no TF is in both train and test, an arm containing no K562 measurement of any "
+            f"kind reaches {100*armB['accuracy']:.1f}% raw accuracy (AUC {armB['auc']:.3f}) against "
+            f"{100*armB['arm_on_control_rows']:.1f}% for a strength-matched swapped source on the same "
+            f"rows -- {100*armB['increment_paired']:+.1f} points, "
+            f"{armB['frac_draws_won_paired']:.0%} of {N_CTRL} draws won -- and transfers to RPE1 at "
+            f"dAUC {rpB['auc_increment']:+.3f}. {n_signable:,} of the {int((sg == 0).sum()):,} unsigned "
+            f"edges clear the confidence cut set in advance, at an expected error rate of {exp_err:.3f}. "
+            + core + " " + controls)
     else:
-        rp_read = ("not detected" if not rpB["detected"] else
-                   "below its own control by more than twice the control's spread")
         verdict = (
             f"NULL: THE {int((sg == 0).sum()):,} UNSIGNED EDGES CANNOT BE SIGNED FROM WHAT THE CURATED "
-            f"LAYER KNOWS, AND THE REASON IS PROVENANCE RATHER THAN STATISTICS. Held out by SOURCE GENE so "
-            f"no TF is in both train and test, the arm with no K562 measurement anywhere in its features "
-            f"reaches {100*armB['accuracy']:.1f}% raw accuracy (AUC {armB['auc']:.3f}, majority-class "
-            f"baseline {100*armB['majority_baseline']:.1f}%) against {100*armB['swap']:.1f}% for a "
-            f"strength-matched swapped source -- an increment of {100*armB['increment']:+.1f} points "
-            f"against the {100*MIN_INCREMENT:+.1f} required, {armB['frac_draws_won']:.0%} of {N_CTRL} draws "
-            f"won, {100*armB['increment_nn']:+.1f} points against the nearest-neighbour control and "
-            f"{100*armB['increment_joint']:+.1f} against the joint strength x library-size control -- three "
-            f"constructions of the same control that straddle zero and none of which reaches the bar. On "
-            f"RPE1 the increment is {100*rpB['increment']:+.1f} points ({rp_read}). "
-            f"0 of the {int((sg == 0).sum()):,} unsigned edges reach a confidence bin that is both "
-            f"{SIGN_MIN_ACC:.0%} accurate and {SIGN_MIN_INC:+.2f} above its own swapped-source control, so "
-            f"none are signed and the layer written is empty by construction. " + core + " " + controls +
-            " WHAT TO DO INSTEAD, AND IT IS NOT NOTHING. The measured layer already answers this for the "
-            f"edges it can reach: colab/causal_reg.py carries a K562 perturbational sign for every "
-            f"(perturbation, gene) pair it measures, at +15.0 points of RPE1 sign transfer, and "
+            f"LAYER KNOWS, AND ON A CORRECTED CONTROL THE NULL IS CLEANER THAN THE FIRST VERSION OF THIS "
+            f"MODULE REPORTED. Held out by SOURCE GENE so no TF is in both train and test, the arm "
+            f"containing NO K562 measurement of any kind (arm B0) reaches {100*armB['accuracy']:.1f}% raw "
+            f"held-out accuracy (AUC {armB['auc']:.3f}) against a majority-class baseline of "
+            f"{100*armB['majority_baseline']:.1f}%. Against a strength-matched swapped source measured on "
+            f"THE SAME ROWS it is {100*armB['increment_paired']:+.1f} points (decile), "
+            f"{100*armB['increment_paired_nn']:+.1f} (nearest-neighbour), "
+            f"{100*armB['increment_paired_joint']:+.1f} (joint strength x library size), winning "
+            f"{armB['frac_draws_won_paired_strictest']:.0%} of {N_CTRL} draws at worst, against the "
+            f"{100*MIN_INCREMENT:+.1f} required. ALL THREE ARE NEGATIVE. The first version reported "
+            f"{100*armB['increment_nn']:+.1f} for the nearest-neighbour arm and concluded that 'the "
+            f"control's construction moves the answer by as much as the effect is worth'; that positive "
+            f"number was an artefact of scoring the arm and its control on different rows, and once they "
+            f"are scored on the same rows the three constructions agree. On RPE1 the rank transfer is "
+            f"dAUC {rpB['auc_increment']:+.3f} against a swapped-source AUC of {rpB['swap_auc']:.3f} "
+            f"({'detected' if rpB['auc_detected'] else 'not detected'}); the RPE1 ACCURACY of "
+            f"{100*rpB['accuracy']:.1f}% is not a transfer measurement at all, because the labelled class "
+            f"prior flips between the lines ({100*frac_pos_r:.1f}% positive in RPE1 against "
+            f"{100*y[lab].mean():.1f}% in K562) and every arm sits below the RPE1 majority baseline of "
+            f"{100*rpB['majority_baseline']:.1f}%. 0 of the {int((sg == 0).sum()):,} unsigned edges reach a "
+            f"confidence bin that is both {SIGN_MIN_ACC:.0%} accurate and {SIGN_MIN_INC:+.2f} above its own "
+            f"swapped-source control on the same rows, so none are signed and the layer written is empty "
+            f"by construction. " + core + " " + controls +
+            " WHAT TO DO INSTEAD, AND IT IS NARROWER THAN THE FIRST VERSION CLAIMED. The measured layer "
+            f"already answers this for the edges it can reach: colab/causal_reg.py carries a K562 "
+            f"perturbational sign for every (perturbation, gene) pair it measures, and "
             f"{int(testable.sum()):,} of the {len(reg):,} curated triples ({100*testable.mean():.0f}%) fall "
             f"inside that matrix -- {int(uns.sum()):,} of them currently unsigned. Signing a curated edge "
             f"is a measurement problem, not an inference problem, and the honest coverage statement for "
-            f"this project is {100*testable.mean():.0f}% by measurement and 0% by imputation. The route "
-            f"that would extend it is more perturbation atlases, not more features: the unsigned edges "
-            f"whose source is never perturbed anywhere are the ones that stay dark.")
+            f"this project is {100*testable.mean():.0f}% by measurement and 0% by imputation. The first "
+            f"version pointed at sequence-level features and a '+7.6 point source-level ceiling' as the "
+            f"obvious next attempt; the non-target control above removes that motivation, because the "
+            f"ceiling is a property of the perturbation row and not of the TF. The route that would extend "
+            f"coverage is more perturbation atlases: the unsigned edges whose source is never perturbed "
+            f"anywhere are the ones that stay dark.")
     report("\n" + "=" * 104)
     report(f"  VERDICT: {verdict}")
 
@@ -1204,6 +1438,9 @@ def main():
          "question": "can the sign of the 558,005 unsigned curated regulatory edges be imputed, validated "
                      "where it cannot be circular?",
          "decision_threshold_fixed_before_run": {
+             "increments_are_PAIRED": "the arm and its swapped-source control are scored on the SAME "
+                                      "rows; the unpaired construction is reported alongside for "
+                                      "comparability with colab/causal_reg.py but governs nothing",
              "min_increment_over_swapped_source_k562": MIN_INCREMENT,
              "min_fraction_of_control_draws_won": MIN_WIN_FRAC,
              "rpe1_increment_must_be_positive": True,
@@ -1228,8 +1465,10 @@ def main():
          "degree_matched_rewiring": {"n_rewirings": N_REWIRE, "kind": "configuration model; reg target+sign "
                                      "stubs permuted (out-degree and in-degree exact), ppi stub list "
                                      "permuted and re-paired, coexpr and complex incidence permuted",
-                                     "mean_accuracy": rw_acc, "mean_increment": rw_inc, "sd": rw_sd,
-                                     "real_increment": armB["increment"],
+                                     "mean_accuracy": rw_acc, "mean_increment_paired": rw_inc,
+                                     "mean_increment_unpaired": rw_inc_unp, "sd": rw_sd,
+                                     "real_increment_paired": armB["increment_paired"],
+                                     "real_increment_unpaired": armB["increment"],
                                      "real_accuracy": armB["accuracy"],
                                      "fraction_of_effect_reproduced_by_degree_matched_control": surv,
                                      "fraction_of_rewirings_the_real_features_beat_on_increment": beat,
@@ -1246,11 +1485,26 @@ def main():
                           "worst_abs_smd_rpe1_nn": max(abs(v["smd"]) for v in imb_rn.values()),
                           "worst_abs_smd_rpe1_joint": max(abs(v["smd"]) for v in imb_rj.values())},
          "worst_abs_smd": worst,
+         "paired_vs_unpaired": {
+             "fraction_of_arm_rows_the_control_condition_keeps": frac_ctrl_rows,
+             "arm_accuracy_on_its_own_rows": armB["accuracy"],
+             "arm_accuracy_on_the_controls_rows": armB["arm_on_control_rows"],
+             "why": "conditioning the control on |z|>=2 moves it onto stress-responsive targets whose "
+                    "direction is more consistent; scoring the arm on all its rows against a control on "
+                    "that subset is not a comparison. The paired columns fix it and reverse the sign of "
+                    "the nearest-neighbour increment."},
+         "ceiling_is_a_row_global_bias_not_source_signal": ceiling_is_row_global,
+         "ceiling_fraction_reproduced_by_non_target_control": ceil_reproduced,
+         "src_act_frac_coverage": {"fraction_of_scored_edges": af_cov_edges,
+                                   "fraction_of_source_genes": af_cov_src},
+         "rpe1_class_prior": {"frac_positive_rpe1": frac_pos_r, "frac_positive_k562": float(y[lab].mean()),
+                              "note": "the majority class FLIPS between the lines, so the RPE1 accuracy "
+                                      "readout measures the flip and not transfer; read the AUC columns"},
          "confidence_bins": bins,
          "signable": {"n_edges_signed": n_signable, "confidence_cut": cut,
                       "expected_error_rate": exp_err,
                       "n_unsigned_total": int((sg == 0).sum())},
-         "criteria": {"a_k562_increment": bool(ok_a), "b_rpe1_increment": bool(ok_b),
+         "criteria": {"a_k562_increment_paired": bool(ok_a), "b_rpe1_increment_and_rank": bool(ok_b),
                       "c_carried_by_no_k562_arm": bool(ok_c), "d_rewiring_destroys_it": bool(ok_d)},
          "passed": passed,
          "limits": [
@@ -1260,16 +1514,22 @@ def main():
              "the label is a K562 CRISPRi response, which is a causal consequence of knocking the source "
              "down and not evidence the source acts on the target. An indirect edge with a consistent sign "
              "is scored as a correct sign here",
-             "the ceiling in section 2 is estimated from a random split of each source's targets, so it "
-             "shares the source's perturbation row between the two halves; it bounds source-level "
-             "imputation optimistically",
+             "THE 'CEILING' IN SECTION 2 IS NOT SOURCE-LEVEL REGULATORY SIGNAL. Both halves come from the "
+             "SAME perturbation row, so any global up/down shift of that row transfers between them "
+             "perfectly. The non-target control added here settles it: a source's direction bias estimated "
+             "from genes that are NOT its curated targets predicts its held-out true targets at least as "
+             "well as the bias estimated from its own targets. The quantity is a property of the "
+             "experiment, not of the TF, and no sequence feature could recover it",
              "training labels are restricted to |z| >= 2, which conditions on the outcome magnitude. Every "
              "control arm is conditioned identically, but the population being predicted is 'edges whose "
              "target responds strongly', not all edges",
-             "the source+edge arm's features are dominated by ONE informative quantity, the curated "
-             "activator fraction, and that is available on only 86.4% of unsigned edges and rests on the "
-             "signed 8.8% whose provenance (CollecTRI/TRRUST) differs from the unsigned 91.2%. A null here "
-             "is a null about THIS feature set, not a proof that no feature set could work",
+             f"the source+edge arm rests on ONE quantity with any prior claim to informativeness, the "
+             f"curated activator fraction, and it is finite on only {100*af_cov_edges:.1f}% of the scored "
+             f"edges and {100*af_cov_src:.1f}% of their source genes -- NOT the 86.4% an earlier version of "
+             f"this module asserted -- and it is derived from the signed 8.8% whose provenance "
+             f"(CollecTRI/TRRUST) differs from the unsigned 91.2%. Its values are also nearly degenerate "
+             f"(interquartile range about 0.78-0.92). A null here is a null about THIS feature set on THIS "
+             f"coverage, not a proof that no feature set could work",
              "the DepMap cross-line co-expression feature is not a graph and therefore has no rewiring "
              "control of its own; its only control is the swapped-source measurement arm",
              "the rewiring control runs at one CV seed rather than three, and the configuration model can "
@@ -1291,10 +1551,25 @@ def main():
              "matched on, and a perturbation that stresses cells is both a strong perturbation and a "
              "high-mito one, so some of what the swapped-source control removes is stress rather than "
              "source identity",
-             "THE NEAREST-NEIGHBOUR SWAPPED-SOURCE ARM WAS ADDED AFTER THE FIRST RUN, when the decile "
-             "arm's own imbalance audit came back at |SMD| 0.25 on perturbation strength. It is a "
-             "tightening rather than a loosening and the stricter of the two increments governs every "
-             "decision, but it was not pre-registered and it is reported as a post-hoc control",
+             "THE PAIRED SCORING, THE NON-TARGET CEILING CONTROL, ARM B0, THE RPE1 RANK READOUT AND THE "
+             "NEAREST-NEIGHBOUR AND JOINT SWAPPED-SOURCE ARMS WERE ALL ADDED AFTER THE FIRST RUN, in "
+             "response to an adversarial re-read of this module. Every one of them is a tightening rather "
+             "than a loosening and the strictest number governs every decision, but none was pre-registered "
+             "and they are reported as post-hoc controls. The decision threshold itself was not changed",
+             "THE UNPAIRED INCREMENT IS STILL REPORTED because colab/causal_reg.py and "
+             "colab/reliable_edges.py use that construction and the numbers have to stay comparable to "
+             "theirs. It should not be read as an effect size here, and those two modules carry the same "
+             "row-set defect and should be re-audited",
+             "the paired comparison restricts both arms to the rows where the swapped source ALSO responds "
+             "at |z| >= 2, which is a stress-responsive subset of targets. It is the right comparison "
+             "because both arms are measured there, but it is a narrower population than the arm's full "
+             "row set, and the arm's raw accuracy on its own full row set is reported separately as the "
+             "effect size",
+             "the RPE1 ACCURACY numbers cannot measure transfer, because the labelled class prior flips "
+             "between the lines (32% positive in RPE1 against 60% in K562) and a model thresholded at 0.5 "
+             "in K562 lands below the RPE1 majority baseline regardless of how well it ranks. Criterion "
+             "(b) therefore also requires a positive rank increment, and the AUC columns are the ones to "
+             "read. Only 13.4% of unsigned curated edges are RPE1-testable, so it stays a thin test",
              "a null on this feature set is not a proof that sign is unpredictable. Sequence-level "
              "features that were not available here -- the source's DNA-binding domain family, its "
              "cofactor complexes from a proteomics resource, promoter motif orientation at the target -- "

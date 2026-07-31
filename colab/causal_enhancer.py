@@ -1197,8 +1197,11 @@ def main():
              f"({sw2['frac_draws_real_beats_swap']:.0%}). The model is reading WHICH TFs sit on the element, "
              f"not how busy it is and not which gene it is pointed at.")
     elif not passes_inc:
-        v = (f"THE ELEMENT'S TF SET PAYS, BUT AS A COUNT, NOT AS A CAUSAL IDENTITY -- the causality "
-             f"weighting is NOT DETECTED over an occupancy-count baseline. {head}. Read as a ladder: "
+        v = (f"NEITHER WHICH TFs NOR HOW MANY -- TF CAUSALITY IS NOT DETECTED OVER AN OCCUPANCY-COUNT "
+             f"BASELINE, AND THE OCCUPANCY COUNT DOES NOT CLEAR THE SAME BAR EITHER. Of the four rungs of "
+             f"the ladder only ACCESSIBILITY clears the threshold this module fixed before seeing any "
+             f"number, and the element's TF set -- counted or weighted by causality -- is sub-threshold "
+             f"both ways. {head}. Read as a ladder: "
              f"accessibility adds {res['distance+accessibility']['auprc_mean'] - res['distance_only']['auprc_mean']:+.4f} "
              f"to distance, the raw number of bound TFs adds a further "
              f"{res['dist+acc+TFoccupancy']['auprc_mean'] - res['distance+accessibility']['auprc_mean']:+.4f}, "
