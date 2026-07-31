@@ -508,7 +508,6 @@ def main():
            f"{nself} self-knockdown diagonal entries zeroed")
 
     Zp = Zsub[:, gene_idx].T.astype(np.float32)               # (n_pairs x n_tf), gene side
-    Bp = B[:, el_idx].T                                       # (n_pairs x n_tf), element side
 
     # gene-only background over ALL profiled TFs (no element information whatsoever)
     g_mean_abs_full = np.abs(Zsub).mean(0)
@@ -519,7 +518,6 @@ def main():
 
     dhs = np.array([float(r["DHS.RPM"] or 0) for r in rows])
     dhs_pct = np.array([float(r["DHS.percentile"] or 0) for r in rows])
-    width = (een - est)[el_idx].astype(np.float64)
 
     # an independent accessibility measure, from the K562 ATAC narrowPeak already on disk, so the
     # accessibility arm is not resting on one pipeline's column
@@ -650,9 +648,32 @@ def main():
     inc = res[FULL]["auprc_mean"] - res[best_base]["auprc_mean"]
     per_seed_win = [int(res[FULL]["auprc_per_seed"][i] - res[best_base]["auprc_per_seed"][i]
                         >= MIN_INCREMENT) for i in range(len(SEEDS))]
+
+    # THE LADDER, because a single "increment over the best baseline" hides which rung actually pays. Each
+    # rung adds ONE thing to the rung above it, so the difference between two adjacent rungs is the price of
+    # that one thing and nothing else.
+    ladder = [("distance only", "distance_only"),
+              ("+ accessibility", "distance+accessibility"),
+              ("+ TF occupancy COUNT (no causality)", "dist+acc+TFoccupancy"),
+              ("+ TF CAUSALITY weights", FULL),
+              ("+ gene responsiveness", "FULL+gene")]
+    report(f"    THE LADDER -- each rung adds one thing to the rung above it:")
+    prev = None
+    ladder_out = []
+    for lbl, arm in ladder:
+        a = res[arm]["auprc_mean"]
+        d = "" if prev is None else f"   {a - prev:+.4f}"
+        report(f"      {lbl:38s} {a:.4f}{d}")
+        ladder_out.append({"rung": lbl, "arm": arm, "auprc": a,
+                           "delta_over_previous_rung": None if prev is None else float(a - prev)})
+        prev = a
+    inc_over_distacc = res[FULL]["auprc_mean"] - res["distance+accessibility"]["auprc_mean"]
+    inc_over_occ = res[FULL]["auprc_mean"] - res["dist+acc+TFoccupancy"]["auprc_mean"]
     report(f"    BEST BASELINE: {best_base} at {res[best_base]['auprc_mean']:.4f}")
     report(f"    INCREMENT of {FULL} over it: {inc:+.4f} AUPRC "
            f"(>= {MIN_INCREMENT:.3f} in {sum(per_seed_win)}/{len(SEEDS)} partitions)")
+    report(f"    for contrast, over distance+accessibility alone: {inc_over_distacc:+.4f} -- the gap between "
+           f"these two numbers IS the raw count of bound TFs, which needs no Perturb-seq at all")
 
     # ---- 5. THE ELEMENT SWAP -----------------------------------------------------------------------------
     report(f"\n  5  ELEMENT SWAP -- keep the gene, replace the element with a decile-matched decoy")
@@ -688,9 +709,19 @@ def main():
             out[tgt] = pick
         return out, nfail
 
-    def run_swap(bins, label, model_arms):
+    def run_swap(bins, label, model_arms, keep_dist=False):
         """One donor draw is shared by every arm evaluated on it, and NO model is refitted -- the fold models
-        from section 4 are re-used and shown the swapped features."""
+        from section 4 are re-used and shown the swapped features.
+
+        keep_dist=False is the swap as specified: the decoy brings its OWN distance, decile-matched to the
+        real one. That has a cost which only became visible in the numbers and is reported rather than
+        hidden -- decile matching preserves the distance DISTRIBUTION but destroys the within-decile
+        distance of each individual pair, and within-decile distance is genuinely predictive. So an arm
+        containing a distance feature will lose AUPRC under the swap for a reason that has nothing to do
+        with the element. keep_dist=True repeats the swap with the REAL distance retained, swapping only the
+        element-derived features (accessibility, occupancy, TF causality). That variant is POST HOC -- it was
+        added after seeing the first result -- and is labelled as such everywhere it appears.
+        """
         arms = list(model_arms)
         aupr = {a: [] for a in arms}
         imb = {"log10_dist": [], "dhs_pct": [], "n_tf_bound": []}
@@ -700,8 +731,9 @@ def main():
             rng = np.random.default_rng(5000 + d)
             j, nf = swap_indices(bins, rng)
             nfail_tot += nf
-            sw = blocks(el_idx[j], dist[j])
-            for cov, a_, b_ in (("log10_dist", np.log10(dist), np.log10(dist[j])),
+            sw = blocks(el_idx[j], dist if keep_dist else dist[j])
+            for cov, a_, b_ in (("log10_dist", np.log10(dist),
+                                 np.log10(dist if keep_dist else dist[j])),
                                 ("dhs_pct", el_dhspct[el_idx], el_dhspct[el_idx[j]]),
                                 ("n_tf_bound", nbound_el[el_idx].astype(float),
                                  nbound_el[el_idx[j]].astype(float))):
@@ -724,6 +756,7 @@ def main():
             real_a = res[arm]["auprc_mean"]
             frac = float(np.mean([real_a > a for a in v]))
             o = {"label": label, "model_arm": arm, "draws": SWAP_DRAWS,
+                 "real_distance_retained": bool(keep_dist),
                  "EFFECT_raw_real_auprc": real_a,
                  "swapped_auprc_mean": float(np.mean(v)), "swapped_auprc_sd": float(np.std(v)),
                  "swapped_auprc_min": float(np.min(v)), "swapped_auprc_max": float(np.max(v)),
@@ -743,15 +776,24 @@ def main():
 
     bins_da = np.array([f"{a}|{b}" for a, b in zip(dq, aq)])
     bins_dan = np.array([f"{a}|{b}|{c}" for a, b, c in zip(dq, aq, nq)])
-    s_da = run_swap(bins_da, "SWAP matched on distance decile x accessibility decile",
-                    [FULL, "TFcausality_only"])
-    s_dg = run_swap(bins_dan, "SWAP additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
-                    [FULL, "TFcausality_only"])
+    ARMS_SWAPPED = [FULL, "TFcausality_only"]
+    s_da = run_swap(bins_da, "PRESPECIFIED SWAP -- distance decile x accessibility decile, decoy brings its "
+                    "own distance", ARMS_SWAPPED)
+    s_dg = run_swap(bins_dan, "PRESPECIFIED SWAP -- additionally matched on n-TFs-bound decile "
+                    "(DEGREE-MATCHED), decoy brings its own distance", ARMS_SWAPPED)
+    k_da = run_swap(bins_da, "POST HOC element-only swap -- same decoys, REAL distance retained "
+                    "(isolates the element from the distance)", ARMS_SWAPPED, keep_dist=True)
+    k_dg = run_swap(bins_dan, "POST HOC element-only swap, DEGREE-MATCHED decoys, REAL distance retained",
+                    ARMS_SWAPPED, keep_dist=True)
     swaps = {
         "distance_x_accessibility": s_da[FULL],
         "degree_matched": s_dg[FULL],
         "distance_x_accessibility_TFCarm": s_da["TFcausality_only"],
         "degree_matched_TFCarm": s_dg["TFcausality_only"],
+        "element_only_distance_x_accessibility": k_da[FULL],
+        "element_only_degree_matched": k_dg[FULL],
+        "element_only_distance_x_accessibility_TFCarm": k_da["TFcausality_only"],
+        "element_only_degree_matched_TFCarm": k_dg["TFcausality_only"],
     }
 
     # ---- 6. what the increment is, sanity-checked against the arms it must beat --------------------------
@@ -767,6 +809,28 @@ def main():
     report(f"    (iii) beats the DEGREE-matched swap in >= {MIN_SWAP_FRAC:.0%} of draws: "
            f"{'PASS' if passes_deg else 'FAIL'}  "
            f"({swaps['degree_matched']['frac_draws_real_beats_swap']:.0%})")
+    report(f"    gates (ii) and (iii) are PRESPECIFIED and both pass on the full model, but they are LENIENT "
+           f"and saying so is part of")
+    report(f"    the result: a decile-matched decoy carries the decile of the real distance, not the real "
+           f"distance, so any arm with a")
+    report(f"    distance feature loses AUPRC under the swap for a reason that is not about the element. "
+           f"The two sharper readings:")
+    e1 = swaps["element_only_distance_x_accessibility"]
+    e2 = swaps["element_only_degree_matched"]
+    t2 = swaps["degree_matched_TFCarm"]
+    t2e = swaps["element_only_degree_matched_TFCarm"]
+    report(f"      element-only swap (real distance kept), FULL model: real {e1['EFFECT_raw_real_auprc']:.4f} "
+           f"vs decoy {e1['swapped_auprc_mean']:.4f} "
+           f"({e1['frac_of_real_reproduced_by_swap']:.0%} reproduced, real wins "
+           f"{e1['frac_draws_real_beats_swap']:.0%}); degree-matched "
+           f"{e2['swapped_auprc_mean']:.4f} ({e2['frac_of_real_reproduced_by_swap']:.0%}, real wins "
+           f"{e2['frac_draws_real_beats_swap']:.0%})")
+    report(f"      TF-causality-only arm (no distance feature at all), DEGREE-matched decoy: real "
+           f"{t2['EFFECT_raw_real_auprc']:.4f} vs decoy {t2['swapped_auprc_mean']:.4f} "
+           f"({t2['frac_of_real_reproduced_by_swap']:.0%} reproduced, real wins "
+           f"{t2['frac_draws_real_beats_swap']:.0%} of {SWAP_DRAWS} draws)")
+    tf_identity_survives = (t2["frac_draws_real_beats_swap"] >= MIN_SWAP_FRAC and
+                            t2e["frac_draws_real_beats_swap"] >= MIN_SWAP_FRAC)
 
     # a descriptive cross-check, not a claim: are positives bound by more CAUSAL TFs than negatives, matched
     # on distance x accessibility deciles? 20 draws, raw rates reported.
@@ -808,12 +872,16 @@ def main():
     rf = res[FULL]["auprc_mean"]
     sw1 = swaps["distance_x_accessibility"]
     sw2 = swaps["degree_matched"]
-    head = (f"On {len(y):,} powered distal K562 CRISPR pairs at a {base_rate:.4f} positive base rate, "
-            f"chromosome-held-out AUPRC is {res['distance_only']['auprc_mean']:.4f} for distance alone, "
+    head = (f"On {len(y):,} powered distal K562 CRISPR pairs at a {base_rate:.4f} positive base rate "
+            f"({int(y.sum())} positives), chromosome-held-out AUPRC is "
+            f"{res['distance_only']['auprc_mean']:.4f} for distance alone "
+            f"({res['distance_only']['auprc_mean']/base_rate:.1f}x the base rate), "
             f"{res['accessibility_only']['auprc_mean']:.4f} for accessibility alone, "
             f"{res['gene_responsiveness_only']['auprc_mean']:.4f} for gene responsiveness with no element "
-            f"information at all, and {rf:.4f} for distance + accessibility + TF causality over "
-            f"{len(tfs)} TFs")
+            f"information at all, {res['distance+accessibility']['auprc_mean']:.4f} for distance + "
+            f"accessibility, {res['dist+acc+TFoccupancy']['auprc_mean']:.4f} once the raw COUNT of the "
+            f"{len(tfs)} profiled TFs bound at the element is added, and {rf:.4f} once those TFs are "
+            f"WEIGHTED by their Perturb-seq causality for the gene")
     if passes_inc and passes_swap and passes_deg:
         v = (f"TF CAUSALITY AT THE ELEMENT IS A REAL INCREMENT. {head}. That is {inc:+.4f} AUPRC over the "
              f"best baseline ({best_base}, {rb:.4f}), held in {sum(per_seed_win)}/{len(SEEDS)} chromosome "
