@@ -16250,3 +16250,72 @@ Two further controls hold:
 
 Neither control is allowed to be crowned "best challenger" — a safeguard that can win a ranking becomes a
 result.
+
+---
+
+# Synthetic lethality, actually built — the method works, the layer does not
+
+`fix_sl.py` said this could not be built because DepMap's portal is behind a verification challenge. That was
+one host, not the source: `depmap_codep.py` in this same repository was already fetching the identical release
+from **figshare** with md5s asserted, and it was open the whole time. This is the layer built from that route.
+
+**The question, and why it needs two data types.** Co-dependency asks whether A and B are needed by the same
+lines. Synthetic lethality asks the opposite-signed question — is A needed *more* where B is broken — which
+requires a per-line state for B that is not itself a dependency measurement. Without that, the question
+collapses back into co-dependency, which is exactly how `sl` came to hold 1,256 positively-correlated pairs.
+
+Deficiency = bottom decile of the gene's own expression **and** ≥1 log2 below its median. Statistic = Welch *t*
+of gene effect, deficient vs intact, over 1,066 lines × 29 lineages. Null = deficiency labels permuted **within
+lineage** — a global shuffle would credit every lineage-restricted gene with a genetic interaction it doesn't
+have. Threshold = permutation FDR over a grid of cuts, because 48M pairs are scanned.
+
+## The benchmark, scored outside the scan's own filters
+
+| | |
+|---|---|
+| known pairs, median percentile | **2.38%** |
+| random pairs, median percentile | 50.03% |
+| enrichment | **21×** |
+| Mann-Whitney p | **5.2 × 10⁻⁸** |
+| in the top 1% / top 5% | **7/20** and **12/20** |
+
+RPP25→RPP25L is **rank 3 of 47,798,592**. MTAP→PRMT5 is top 0.18%. ASF1A→ASF1B 0.39%, STAG2→STAG1 0.47%,
+COPS7B→COPS7A 0.70%, VPS4B→VPS4A 0.77%, SMARCA4→SMARCA2 0.07%.
+
+**Reporting only cut-passing would have thrown almost all of this away.** The first verdict said "1 of 4 known
+pairs pass the FDR cut" and called the recovery too weak. But the cut is set for a *discovery* set where
+thousands of false positives are worthless; the benchmark asks whether the statistic ranks known pairs near
+the top, and a pair at percentile 0.4% supports the method while failing a cut placed far below it. Those are
+different questions and the verdict now states them separately.
+
+## The layer is still not promoted
+
+Five pairs at 5% FDR (t ≤ −16.5), and **100% of them point at 4 dependency genes** (NAMPT ×2, FAM50A, RPP25L,
+INTS6). That shape is a cell-state marker, not five independent genetic interactions, and a within-lineage
+null over 29 coarse Oncotree lineages cannot remove a programme that cuts across them. The concentration is
+reported as a number and the promotion test refuses a layer that concentrates.
+
+**Sign check:** the 1,256 co-requirement pairs give 1,797 testable orientations (each pair is tried both ways)
+at mean *t* **+0.515** against +0.004 overall — the opposite side of zero, independently confirming the rename.
+
+## What limits it is measurable, and it is not the statistic
+
+Only **4 of 20** published pairs have a deficient gene this panel ever *silences* (gap ≥ 2 log2). The other 16
+are lost by copy number or mutation at gaps of 0.7–1.2 log2. **Copy number is in the same figshare release**
+and is the obvious next step.
+
+## Three errors of my own, all in how the result was graded
+
+1. **The dependency filter kept genes essential in 1–60% of lines**, reasoning that a pan-essential gene
+   cannot have its essentiality modulated. MTAP→PRMT5 is the counterexample: PRMT5 is essential in **96%** of
+   lines and is the canonical SL target for exactly that reason. Now filtered on *variance* of gene effect.
+2. **The benchmark was graded by the scan's own filters** and came back 1/20 testable — "1/1 recovered" would
+   have shipped as a pass. Every known pair is now scored directly from the unfiltered matrices.
+3. **The reachable/unreachable split was my prior about mechanism, presented as a property of the data.** I
+   classified 17 pairs as reachable by an expression-based call; measured, only 2 are. The split is now
+   computed from each gene's own expression gap.
+
+**And the benchmark is not clean.** Both filters were revised *after* seeing it fail. Neither revision chased
+a score — each fixed an identified error — but the benchmark still informed the method, so **21× is
+optimistic** and a fresh set of published pairs is the honest test. The 20 pairs are also a convenience set
+assembled by recall, not a curated resource with inclusion criteria.

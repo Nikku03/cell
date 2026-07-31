@@ -629,8 +629,18 @@ def main():
              "a pair passing here is a statistical association across a cell-line panel, not a "
              "demonstrated genetic interaction. The known-pair benchmark is what connects the two, and it "
              "covers 20 pairs",
-             "A is restricted to genes essential in 1-60% of lines. A synthetic lethality whose dependency "
-             "gene is pan-essential is real biology and is outside this scan by construction"],
+             "THE BENCHMARK IS NOT CLEAN. Both candidate filters were revised AFTER seeing the first run's "
+             "benchmark come back nearly empty -- the dependency side moved from an essentiality window to "
+             "a variance cut, and deficiency moved from an absolute to a relative call. Neither revision "
+             "was a search for a higher score: each fixed an identified error, with MTAP -> PRMT5 as the "
+             "explicit counterexample to the essentiality window. But the benchmark still informed the "
+             "method, so the 21x enrichment is an optimistic estimate and a fresh set of published pairs "
+             "would be the honest test",
+             "the 20 published pairs were assembled from the paralog-lethality literature by recall, not "
+             "from a curated resource with inclusion criteria. They are a convenience set",
+             "the A side is bounded by sd(gene effect) >= 0.15 for compute rather than for science; "
+             "sd >= 0.10 would admit 14,536 genes. Pairs whose dependency gene falls between those cuts "
+             "are outside the scan and their absence from the layer means nothing"],
          "method_works": works, "layer_promoted": good,
          "verdict": verdict, "log": log}
     OUT.mkdir(parents=True, exist_ok=True)
