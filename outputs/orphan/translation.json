@@ -91,6 +91,16 @@
    "label": "K562 iBAQ proteome (symbol)"
   }
  },
+ "ratio_is_inverse_mrna": {
+  "corr_ratio_logmrna": -0.874936959058096,
+  "corr_ratio_logprotein": 0.09196070723774646,
+  "spearman_ratio_logmrna": -0.8218999900571309,
+  "spearman_ratio_logprotein": -0.0076001441107123365,
+  "sd_log_mrna": 0.48430357284142406,
+  "sd_log_protein": 0.23551559713006792,
+  "n_ribosomal_top_decile": 2,
+  "n_ribosomal_bottom_decile": 69
+ },
  "ratio": {
   "n": 5857,
   "median": 2.431261918903564,
@@ -109,8 +119,26 @@
   "heldout_r2": 0.23640463835202175,
   "heldout_spearman": 0.4013193277995049,
   "heldout_r2_no_length_features": 0.09430688771658968,
-  "shuffled_null_r2_mean": -0.04558266980398219,
-  "shuffled_null_r2_max": -0.03824012011521338,
+  "length_features_dropped": [
+   "log_cds_len",
+   "log_tx_len",
+   "n_cds_exons",
+   "n_exons"
+  ],
+  "null_all_features": {
+   "mean": -0.04558266980398219,
+   "sd": 0.006017886203141769,
+   "max": -0.03824012011521338,
+   "p": 0.047619047619047616,
+   "z": 46.858198815522016
+  },
+  "null_length_dropped": {
+   "mean": -0.04357845809623547,
+   "sd": 0.005924785364171033,
+   "max": -0.03192814253060283,
+   "p": 0.047619047619047616,
+   "z": 23.272631384532428
+  },
   "p": 0.047619047619047616,
   "top_univariate": [
    [
@@ -145,6 +173,9 @@
     "log_utr5_len",
     0.06947719861949057
    ]
+  ],
+  "constant_features": [
+   "is_protein_coding"
   ]
  },
  "downstream_protein_prediction": {
@@ -152,12 +183,27 @@
   "r2_mrna_only": 0.16710453728542396,
   "r2_sequence_only": 0.07504425491570532,
   "r2_mrna_plus_sequence": 0.23534942133699333,
-  "shuffled_null_r2_mean": 0.14286583129959562,
+  "r2_mrna_plus_sequence_no_length": 0.19843403877568,
+  "null_mrna_plus_shuffled": {
+   "mean": -0.04659946289351567,
+   "sd": 0.006680081574020125,
+   "max": -0.03622579029010642,
+   "p": 0.047619047619047616,
+   "z": 42.20740137770952
+  },
+  "null_mrna_plus_shuffled_no_length": {
+   "mean": -0.04608714401328436,
+   "sd": 0.006833288010117545,
+   "max": -0.0314726470672102,
+   "p": 0.047619047619047616,
+   "z": 35.78382506736434
+  },
   "p": 0.047619047619047616
  },
  "fast_test": {
   "measured_ratio_similarity": {
    "label": "arm1  shared translational regime (measured ratio)",
+   "n_bins": 10,
    "n_linked_total": 3584172,
    "n_linked_used": 300000,
    "n_draws": 24,
@@ -167,23 +213,34 @@
    "p_median": 0.7006683945655823,
    "frac_draws_p05": 0.0,
    "residual_pert_p": 0.940344882508119,
-   "residual_gene_p": 0.4440128393471241
+   "residual_gene_p": 0.4440128393471241,
+   "match_ok": true
   },
   "translation_apparatus_x_high_ratio": {
    "label": "arm2  translation apparatus perturbed x high-ratio gene",
+   "n_bins": 20,
    "n_linked_total": 195090,
    "n_linked_used": 195090,
    "n_draws": 24,
    "mean_linked_absz": 1.1059093475341797,
-   "mean_matched_absz": 1.208362340927124,
-   "ratio": 0.9152158871293068,
+   "mean_matched_absz": 1.2108893344799678,
+   "ratio": 0.913306305805842,
    "p_median": 0.0,
    "frac_draws_p05": 1.0,
-   "residual_pert_p": 0.30165941702822846,
-   "residual_gene_p": 3.716856349456066e-05
+   "residual_pert_p": 0.002666036205482669,
+   "residual_gene_p": 0.17306269891560078,
+   "decile_match_failed": {
+    "ratio": 0.9152158871293068,
+    "p_median": 0.0,
+    "frac_draws_p05": 1.0,
+    "residual_pert_p": 0.30165941702822846,
+    "residual_gene_p": 3.716856349456066e-05
+   },
+   "match_ok": false
   },
   "predicted_ratio_similarity": {
    "label": "arm3  shared translational regime (predicted ratio)",
+   "n_bins": 10,
    "n_linked_total": 8443905,
    "n_linked_used": 300000,
    "n_draws": 24,
@@ -193,7 +250,8 @@
    "p_median": 0.3993828147649765,
    "frac_draws_p05": 0.125,
    "residual_pert_p": 0.9245261152585348,
-   "residual_gene_p": 0.22310191641251245
+   "residual_gene_p": 0.22310191641251245,
+   "match_ok": true
   }
  },
  "coverage": {
@@ -204,6 +262,7 @@
   "mean_ratio_high_mrna_quintile": 1.8523061618830534
  },
  "limits": [
+  "THE RATIO IS DOMINATED BY ITS DENOMINATOR. It correlates -0.87 with log mRNA and +0.09 with log protein, because log mRNA varies about twice as much as log iBAQ protein over these genes. Ranking genes by this ratio very largely ranks them by inverse expression, so it is NOT a usable translation multiplier and any analysis keyed on it inherits that. The protein-level prediction in `downstream_protein_prediction` deliberately does not route through the ratio and is the result that survives",
   "NOT ribosome profiling. ENCODE has no Ribo-seq for K562 or for any biosample; this is a steady-state protein/mRNA ratio, which confounds translation rate with protein degradation rate and cannot separate them",
   "two assays, two normalisations: iBAQ is a within-sample intensity divided by the number of theoretically observable peptides, Perturb-seq mean is a normalised UMI mean. Their ratio has no absolute units and is comparable only within this table",
   "LEFT-CENSORED and the censoring is expression-dependent: the ratio exists only where mass spectrometry detected the protein, so genes with genuinely low protein per mRNA are preferentially missing and every statistic here is computed on a biased sample",
@@ -213,5 +272,5 @@
   "predicted ratios inherit the training set's censoring and are extrapolations for any gene whose protein was never detected",
   "one cell line, one proteomics study, one growth condition"
  ],
- "verdict": "ENCODE HAS NO RIBOSOME PROFILING -- not for K562, not for any biosample: the assay_title facet was read live and carries 67 titles, none of them ribosome-profiling. The direct measurement of translation efficiency is unavailable from this source, so what follows is a steady-state protein-per-mRNA ratio and is not the same quantity. That ratio spans 1.4 log10 (24x) across 5,857 genes, so the multiplier is large enough to matter. It is predictable at chromosome-held-out R2 0.236 (null -0.046, p 0.0476) -- BUT dropping the length features collapses it to 0.094, so most of what is being predicted is protein length, and iBAQ already divides by the number of theoretically observable peptides. That is the mass spectrometry's normalisation coming back out, not demonstrated translation biology. On the decision that matters, predicting K562 protein level, mRNA alone reaches held-out R2 0.167 and mRNA plus sequence reaches 0.235 (+0.068, shuffled-feature null 0.143, p 0.0476); sequence alone reaches 0.075. On the fast test it marks nothing: arm1 0.999x, arm2 0.915x, arm3 1.001x against matched controls, all below the ~1.05 bar that PPI (1.208x) and co-dependency (1.070x) clear. That is the expected result stated in advance rather than a disappointment -- the fast test scores PAIRS and this is a PER-GENE layer, whose value if any lies on the mRNA->protein axis that Perturb-seq cannot see at all. The binding constraint is not the model, it is the measurement: only 71% of GWPS genes have a K562 protein value and missingness is strongly expression-dependent (p 1.62e-181), so the ratio is left-censored exactly where it would be most informative."
+ "verdict": "ENCODE HAS NO RIBOSOME PROFILING -- not for K562, not for any biosample: the assay_title facet was read live and carries 67 titles, none of them ribosome-profiling. The direct measurement of translation efficiency is unavailable from this source, so what follows is a steady-state protein-per-mRNA ratio and is not the same quantity. That ratio spans 1.4 log10 (24x) across 5,857 genes, which looks like a multiplier worth having -- and it is not one. It correlates -0.875 with log mRNA and +0.092 with log protein: log mRNA varies 2.1x more than log iBAQ protein here, so the difference of the two logs inherits the denominator and the quantity is 77% inverse expression. Its bottom decile holds 69 ribosomal proteins against 2 in the top -- it is sorting genes by how much mRNA they have. AN EMPIRICAL PROTEIN-PER-mRNA RATIO IS THEREFORE NOT A USABLE STAND-IN FOR TRANSLATION EFFICIENCY, and that is the single most important thing this module establishes. It IS predictable from sequence and annotation alone: chromosome-held-out R2 0.236 (Spearman 0.401) against a shuffled-feature null of -0.046 (max -0.038 over 20 shuffles, 47 null SDs, p 0.0476). But 60% of that is LENGTH: dropping cds/transcript length and exon counts takes it to 0.094, and the strongest single correlate is log CDS length (+0.278 Spearman). iBAQ divides intensity by the number of theoretically observable peptides and short proteins are the ones mass spectrometry misses, so the length term is entangled with the assay's own normalisation and must not be read as translation biology. What survives the ablation is still real (R2 0.094 vs null max -0.032, 23 null SDs). The arm that does NOT route through the ratio is the one that survives. On the decision that matters -- predicting K562 protein level -- mRNA alone reaches held-out R2 0.167, mRNA plus sequence 0.235 (+0.068, i.e. 41% relative, against a mRNA-plus-shuffled-features null of -0.047, 42 null SDs), and sequence alone 0.075. With the length features dropped the combined arm still reaches 0.198 (+0.031 over mRNA alone), so the ceiling does move on non-length sequence features and not only on the assay artefact. On the fast test it marks no ELEVATED pairs: arm1 0.999x, arm2 0.913x, arm3 1.001x against matched controls, none of them above the ~1.05 bar that PPI (1.208x) and co-dependency (1.070x) clear. That is the result stated in advance rather than a disappointment -- the fast test scores PAIRS and this is a PER-GENE layer, whose value if any lies on the mRNA->protein axis that Perturb-seq cannot see at all. Arm2 sits at 0.913x, a depletion rather than an enrichment -- and since its 'high ratio' genes are largely low-mRNA genes, it would not have been a translation result even had it held -- but its residual imbalance (0.0027/0.17) leaves it uninterpretable rather than reversed. The binding constraint is not the model, it is the measurement: only 71% of GWPS genes have a K562 protein value and missingness is strongly expression-dependent (p 1.62e-181), so the ratio is left-censored exactly where it would be most informative."
 }

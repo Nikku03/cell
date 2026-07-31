@@ -16,14 +16,24 @@ in either. If ENCODE ever adds one this module fails loudly instead of quietly c
 WHAT IS MEASURABLE INSTEAD, AND WHY IT IS WORTH MEASURING. K562 iBAQ protein (Geiger 2012, via PaxDb) against
 K562 Perturb-seq mean expression (Replogle GWPS `var/mean`) gives an empirical per-gene protein-per-mRNA
 ratio. That ratio is NOT translation efficiency -- it is translation divided by protein degradation, in steady
-state, measured by two assays with different biases. But it is the multiplier the chain actually needs, and
-the question that decides whether it is usable is:
+state, measured by two assays with different biases. It is nonetheless the shape of the multiplier the chain
+needs, and the question that would decide whether it is usable is:
 
     IS THE RATIO PREDICTABLE FROM SEQUENCE AND ANNOTATION ALONE?
 
-Predictable means a usable multiplier: for the ~10,000 genes with no K562 proteomics, a model could supply
-one. Unpredictable bounds what the chain can ever do: the RNA->protein step would then be carrying
+The first thing the module checks, before any of that, is whether the ratio is a quantity of its own at
+all. A difference of two logs inherits whichever term varies more, and here log mRNA varies about twice as
+much as log iBAQ protein -- so the "ratio" correlates -0.87 with log mRNA and +0.09 with log protein, and
+ranking genes by it very largely ranks them by inverse expression. That is why the downstream test below
+is built to predict PROTEIN LEVEL directly from mRNA plus sequence rather than to predict the ratio: an
+arm that routes through the ratio would be measuring expression under another name.
+
+Predictable would mean a usable multiplier: for the ~10,000 genes with no K562 proteomics, a model could
+supply one. Unpredictable would bound what the chain can ever do: the RNA->protein step would then carry
 gene-specific information that no amount of sequence modelling recovers, and 15.9% + noise is the ceiling.
+Both questions are answered below, but neither rescues the ratio itself -- the denominator problem above
+is prior to them, and it is the reason the module's usable output is a protein-level model rather than a
+translation-efficiency table.
 
 WHAT WOULD FALSIFY EACH DIRECTION.
   A CLAIM OF PREDICTABILITY dies if held-out R2 does not exceed the shuffled-feature null, or if it survives
@@ -548,8 +558,17 @@ def matched_test(*a, **kw):
         if R2:
             R2["decile_match_failed"] = {k: R[k] for k in ("ratio", "p_median", "frac_draws_p05",
                                                            "residual_pert_p", "residual_gene_p")}
+            w2 = min(R2["residual_pert_p"], R2["residual_gene_p"])
+            R2["match_ok"] = bool(w2 >= 0.01)
+            if not R2["match_ok"]:
+                report(f"      still imbalanced at p {w2:.3g} on 20 bins -- the linked set is too extreme "
+                       f"on this covariate to match, so THIS ARM'S RATIO IS NOT INTERPRETABLE and is "
+                       f"reported only to show that it was tried")
             return R2
         R["match_failed_and_could_not_escalate"] = True
+        R["match_ok"] = False
+        return R
+    R["match_ok"] = True
     return R
 
 
@@ -673,6 +692,29 @@ def main():
     r_lin = float(np.corrcoef(lr, lp)[0, 1])
     report(f"      mRNA vs protein: r {r_lin:.4f}, R2 {r_lin**2:.4f}  "
            f"(k562_protein.py reported R2 0.1594 on 5,874 genes)")
+
+    # THE FIRST THING TO ASK OF A RATIO IS WHETHER IT IS A QUANTITY OF ITS OWN. A difference of two logs
+    # inherits whichever term varies more, and nothing guarantees that is the numerator. If the ratio
+    # turns out to track the mRNA denominator, then ranking genes by "translation efficiency" ranks them
+    # by inverse expression and every downstream use of it is measuring expression under another name.
+    r_tr_rna = float(np.corrcoef(TR, lr)[0, 1])
+    r_tr_prot = float(np.corrcoef(TR, lp)[0, 1])
+    sr_tr_rna = float(stats.spearmanr(TR, lr)[0])
+    sr_tr_prot = float(stats.spearmanr(TR, lp)[0])
+    report(f"      IS THIS RATIO A QUANTITY OF ITS OWN, OR INVERSE mRNA?")
+    report(f"        corr(ratio, log mRNA)     {r_tr_rna:+.4f}  (Spearman {sr_tr_rna:+.4f})")
+    report(f"        corr(ratio, log protein)  {r_tr_prot:+.4f}  (Spearman {sr_tr_prot:+.4f})")
+    report(f"        sd(log mRNA) {lr.std():.3f} vs sd(log protein) {lp.std():.3f} -- the denominator "
+           f"varies {lr.std()/lp.std():.1f}x more than the numerator, so the difference inherits it")
+    report(f"        -> the ratio explains {100*r_tr_rna**2:.0f}% of log mRNA and "
+           f"{100*r_tr_prot**2:.0f}% of log protein. It is very largely inverse expression.")
+    hiq, loq = float(np.quantile(TR, .9)), float(np.quantile(TR, .1))
+    top_s = [sym_of.get(e, e) for e, t in zip(tr_ens, TR) if t >= hiq]
+    bot_s = [sym_of.get(e, e) for e, t in zip(tr_ens, TR) if t <= loq]
+    nrp = lambda ns: sum(1 for n in ns if re.match(r"^RP[LS]\d", n or ""))
+    report(f"        top ratio decile {len(top_s)} genes, {nrp(top_s)} ribosomal proteins; bottom decile "
+           f"{len(bot_s)} genes, {nrp(bot_s)} ribosomal proteins -- the bottom decile is where the "
+           f"most abundant mRNAs sit, which is what an inverse-mRNA quantity looks like")
     assert abs(r_lin ** 2 - 0.1594) < 0.05, \
         f"the mRNA->protein R2 does not reproduce the pinned 15.9%: got {r_lin**2:.4f}"
 
@@ -712,6 +754,9 @@ def main():
     imp.sort(key=lambda x: -abs(x[1]))
     report(f"      strongest univariate Spearman vs ratio: " +
            ", ".join(f"{f} {r:+.3f}" for f, r in imp[:6]))
+    report(f"      NOTE: the target is {100*r_tr_rna**2:.0f}% inverse log mRNA, so this R2 is mostly the "
+           f"predictability of EXPRESSION from sequence, not of translation. Q4 does not route through "
+           f"the ratio and is the arm that survives this.")
     if const:
         report(f"      constant on this gene set, carrying nothing: {const}")
 
@@ -873,6 +918,12 @@ def main():
         "ratio_measured": {e: float(tr_of[e]) for e in tr_ens},
         "ratio_predicted": {e: float(v) for e, v in pred_of.items()},
         "limits": [
+            "THE RATIO IS DOMINATED BY ITS DENOMINATOR. It correlates -0.87 with log mRNA and +0.09 with "
+            "log protein, because log mRNA varies about twice as much as log iBAQ protein over these "
+            "genes. Ranking genes by this ratio very largely ranks them by inverse expression, so it is "
+            "NOT a usable translation multiplier and any analysis keyed on it inherits that. The "
+            "protein-level prediction in `downstream_protein_prediction` deliberately does not route "
+            "through the ratio and is the result that survives",
             "NOT ribosome profiling. ENCODE has no Ribo-seq for K562 or for any biosample; this is a "
             "steady-state protein/mRNA ratio, which confounds translation rate with protein degradation "
             "rate and cannot separate them",
@@ -901,6 +952,12 @@ def main():
          "encode_probe": enc,
          "rna_source": RNA_SOURCE, "protein_source": PROT_SOURCE,
          "annotation": layer["annotation"], "join": layer["join"],
+         "ratio_is_inverse_mrna": {"corr_ratio_logmrna": r_tr_rna, "corr_ratio_logprotein": r_tr_prot,
+                                   "spearman_ratio_logmrna": sr_tr_rna,
+                                   "spearman_ratio_logprotein": sr_tr_prot,
+                                   "sd_log_mrna": float(lr.std()), "sd_log_protein": float(lp.std()),
+                                   "n_ribosomal_top_decile": nrp(top_s),
+                                   "n_ribosomal_bottom_decile": nrp(bot_s)},
          "ratio": {"n": len(tr_ens), "median": float(np.median(TR)),
                    "iqr": [float(np.percentile(TR, 25)), float(np.percentile(TR, 75))],
                    "span_5_95_log10": float(np.percentile(TR, 95) - np.percentile(TR, 5)),
@@ -941,8 +998,15 @@ def main():
             f"this source, so what follows is a steady-state protein-per-mRNA ratio and is not the same "
             f"quantity. ")
     p1 = (f"That ratio spans {np.percentile(TR,95)-np.percentile(TR,5):.1f} log10 "
-          f"({10**(np.percentile(TR,95)-np.percentile(TR,5)):.0f}x) across {len(tr_ens):,} genes, so the "
-          f"multiplier is large enough to matter. ")
+          f"({10**(np.percentile(TR,95)-np.percentile(TR,5)):.0f}x) across {len(tr_ens):,} genes, which "
+          f"looks like a multiplier worth having -- and it is not one. It correlates {r_tr_rna:+.3f} "
+          f"with log mRNA and {r_tr_prot:+.3f} with log protein: log mRNA varies "
+          f"{lr.std()/lp.std():.1f}x more than log iBAQ protein here, so the difference of the two logs "
+          f"inherits the denominator and the quantity is {100*r_tr_rna**2:.0f}% inverse expression. Its "
+          f"bottom decile holds {nrp(bot_s)} ribosomal proteins against {nrp(top_s)} in the top -- it is "
+          f"sorting genes by how much mRNA they have. AN EMPIRICAL PROTEIN-PER-mRNA RATIO IS THEREFORE "
+          f"NOT A USABLE STAND-IN FOR TRANSLATION EFFICIENCY, and that is the single most important "
+          f"thing this module establishes. ")
     if pred_ok:
         p2 = (f"It IS predictable from sequence and annotation alone: chromosome-held-out R2 {r2_tr:.3f} "
               f"(Spearman {sp_tr:.3f}) against a shuffled-feature null of {n_full['mean']:.3f} "
@@ -958,7 +1022,8 @@ def main():
     else:
         p2 = (f"It is NOT predictable from sequence and annotation: chromosome-held-out R2 {r2_tr:.3f} "
               f"against a shuffled-feature null of {n_full['mean']:.3f} (max {n_full['max']:.3f}). ")
-    p3 = (f"On the decision that matters -- predicting K562 protein level -- mRNA alone reaches held-out "
+    p3 = (f"The arm that does NOT route through the ratio is the one that survives. On the decision that "
+          f"matters -- predicting K562 protein level -- mRNA alone reaches held-out "
           f"R2 {r2_rna:.3f}, mRNA plus sequence {r2_both:.3f} "
           f"({'+' if gain >= 0 else ''}{gain:.3f}, i.e. {100*gain/max(r2_rna,1e-9):.0f}% relative, "
           f"against a mRNA-plus-shuffled-features null of {nb['mean']:.3f}, {nb['z']:.0f} null SDs), and "
@@ -987,10 +1052,13 @@ def main():
                    f"{d['p_median']:.3g}, {100*d['frac_draws_p05']:.0f}% of draws p<0.05, residuals "
                    f"{d['residual_pert_p']:.2g}/{d['residual_gene_p']:.2g}). Knocking down the "
                    f"translation apparatus moves high-protein-per-mRNA genes LESS than matched genes, "
-                   f"not more. Signed and significant is a finding, not a non-detection, and it is the "
-                   f"opposite of what a naive translation layer would predict. ")
+                   f"not more. Signed and significant is a finding, not a non-detection. Read it "
+                   f"cautiously: those 'high ratio' genes are largely LOW-mRNA genes, so the arm is at "
+                   f"least as much about expression level as about translation. ")
         elif a2 and a2["ratio"] <= 0.95:
-            p4 += (f"Arm2 sits at {a2['ratio']:.3f}x, a depletion rather than an enrichment, but its "
+            p4 += (f"Arm2 sits at {a2['ratio']:.3f}x, a depletion rather than an enrichment -- and since "
+                   f"its 'high ratio' genes are largely low-mRNA genes, it would not have been a "
+                   f"translation result even had it held -- but its "
                    f"residual imbalance ({a2['residual_pert_p']:.2g}/{a2['residual_gene_p']:.2g}) leaves "
                    f"it uninterpretable rather than reversed. ")
     p5 = (f"The binding constraint is not the model, it is the measurement: only "
