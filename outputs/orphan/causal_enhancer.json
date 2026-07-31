@@ -190,8 +190,43 @@
    "lift_over_base_rate": 9.07898986379404
   }
  },
+ "positive_base_rate_for_every_auprc_above": 0.03958423559982677,
+ "ladder": [
+  {
+   "rung": "distance only",
+   "arm": "distance_only",
+   "auprc": 0.27859166143205827,
+   "delta_over_previous_rung": null
+  },
+  {
+   "rung": "+ accessibility",
+   "arm": "distance+accessibility",
+   "auprc": 0.3438285616276284,
+   "delta_over_previous_rung": 0.06523690019557016
+  },
+  {
+   "rung": "+ TF occupancy COUNT (no causality)",
+   "arm": "dist+acc+TFoccupancy",
+   "auprc": 0.35240976928763496,
+   "delta_over_previous_rung": 0.008581207660006529
+  },
+  {
+   "rung": "+ TF CAUSALITY weights",
+   "arm": "FULL_dist+acc+TFcausality",
+   "auprc": 0.3586922250485385,
+   "delta_over_previous_rung": 0.006282455760903527
+  },
+  {
+   "rung": "+ gene responsiveness",
+   "arm": "FULL+gene",
+   "auprc": 0.35938487377686246,
+   "delta_over_previous_rung": 0.0006926487283239746
+  }
+ ],
  "best_baseline": "dist+acc+TFoccupancy",
  "increment_over_best_baseline": 0.006282455760903527,
+ "increment_over_distance_plus_accessibility": 0.014863663420910056,
+ "increment_over_distance_accessibility_TFoccupancy": 0.006282455760903527,
  "increment_per_seed_passes": [
   1,
   0,
@@ -201,22 +236,24 @@
  ],
  "element_swap": {
   "distance_x_accessibility": {
-   "label": "SWAP matched on distance decile x accessibility decile",
+   "label": "SWAP A -- decoy matched on distance decile x accessibility decile",
    "model_arm": "FULL_dist+acc+TFcausality",
    "draws": 20,
+   "distance_mode": "decoy_distance",
+   "prespecified": true,
    "EFFECT_raw_real_auprc": 0.3586922250485385,
-   "swapped_auprc_mean": 0.2345694694614333,
-   "swapped_auprc_sd": 0.010644086311998896,
-   "swapped_auprc_min": 0.2148499891724779,
+   "swapped_auprc_mean": 0.2345708072433479,
+   "swapped_auprc_sd": 0.010644437223037751,
+   "swapped_auprc_min": 0.2148497468681057,
    "swapped_auprc_max": 0.2524865430660233,
    "frac_draws_real_beats_swap": 1.0,
-   "delta_real_minus_swap": 0.12412275558710517,
-   "frac_of_real_reproduced_by_swap": 0.6539574963736423,
+   "delta_real_minus_swap": 0.12412141780519059,
+   "frac_of_real_reproduced_by_swap": 0.653961225983099,
    "n_pairs_without_valid_donor_per_draw": 0,
-   "residual_imbalance_real_minus_swap": {
-    "log10_dist": 0.0008423981641034306,
-    "dhs_pct": -0.00038305292737460527,
-    "n_tf_bound": -0.3897661325249061
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.0008429638100744263,
+    "dhs_pct": -0.0003830404394516873,
+    "n_tf_bound": -0.3898397574707701
    },
    "residual_imbalance_max_abs": {
     "log10_dist": 0.0035366285936921926,
@@ -224,57 +261,61 @@
     "n_tf_bound": 0.9258553486357783
    },
    "residual_imbalance_mean_mannwhitney_p": {
-    "log10_dist": 0.9467814227282997,
-    "dhs_pct": 0.9642901856286719,
-    "n_tf_bound": 0.5407666019025353
+    "log10_dist": 0.9467553701312434,
+    "dhs_pct": 0.9641691360961774,
+    "n_tf_bound": 0.5406606326653481
    }
   },
   "degree_matched": {
-   "label": "SWAP additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+   "label": "SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
    "model_arm": "FULL_dist+acc+TFcausality",
    "draws": 20,
+   "distance_mode": "decoy_distance",
+   "prespecified": true,
    "EFFECT_raw_real_auprc": 0.3586922250485385,
-   "swapped_auprc_mean": 0.25619331265458667,
-   "swapped_auprc_sd": 0.010151882188282614,
-   "swapped_auprc_min": 0.23960584911923033,
-   "swapped_auprc_max": 0.27799785422634055,
+   "swapped_auprc_mean": 0.2559701875132925,
+   "swapped_auprc_sd": 0.009991995865068368,
+   "swapped_auprc_min": 0.23968006787150334,
+   "swapped_auprc_max": 0.2788596821550067,
    "frac_draws_real_beats_swap": 1.0,
-   "delta_real_minus_swap": 0.10249891239395181,
-   "frac_of_real_reproduced_by_swap": 0.7142427261140617,
+   "delta_real_minus_swap": 0.102722037535246,
+   "frac_of_real_reproduced_by_swap": 0.7136206743222673,
    "n_pairs_without_valid_donor_per_draw": 265,
-   "residual_imbalance_real_minus_swap": {
-    "log10_dist": 0.0020228263047223473,
-    "dhs_pct": 0.00019959926457890353,
-    "n_tf_bound": -0.09006063230836255
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.002013465820931648,
+    "dhs_pct": 0.00019334575154899558,
+    "n_tf_bound": -0.09053269813772431
    },
    "residual_imbalance_max_abs": {
-    "log10_dist": 0.005020710877124301,
-    "dhs_pct": 0.0009380941192610459,
-    "n_tf_bound": 0.2595928973581678
+    "log10_dist": 0.005084411876913997,
+    "dhs_pct": 0.0009252032077007311,
+    "n_tf_bound": 0.25881333910783866
    },
    "residual_imbalance_mean_mannwhitney_p": {
-    "log10_dist": 0.9024246914311164,
-    "dhs_pct": 0.9531253087062158,
-    "n_tf_bound": 0.8923821260610554
+    "log10_dist": 0.9031038237281119,
+    "dhs_pct": 0.9544796198704368,
+    "n_tf_bound": 0.8921026657664729
    }
   },
   "distance_x_accessibility_TFCarm": {
-   "label": "SWAP matched on distance decile x accessibility decile",
+   "label": "SWAP A -- decoy matched on distance decile x accessibility decile",
    "model_arm": "TFcausality_only",
    "draws": 20,
+   "distance_mode": "decoy_distance",
+   "prespecified": true,
    "EFFECT_raw_real_auprc": 0.09588108316899391,
-   "swapped_auprc_mean": 0.08773019553682629,
-   "swapped_auprc_sd": 0.004465762592788147,
+   "swapped_auprc_mean": 0.08773027056619978,
+   "swapped_auprc_sd": 0.004465573257396098,
    "swapped_auprc_min": 0.08043742586055273,
    "swapped_auprc_max": 0.09674586813480142,
    "frac_draws_real_beats_swap": 0.9,
-   "delta_real_minus_swap": 0.00815088763216762,
-   "frac_of_real_reproduced_by_swap": 0.9149896166921542,
+   "delta_real_minus_swap": 0.008150812602794127,
+   "frac_of_real_reproduced_by_swap": 0.9149903992174554,
    "n_pairs_without_valid_donor_per_draw": 0,
-   "residual_imbalance_real_minus_swap": {
-    "log10_dist": 0.0008423981641034306,
-    "dhs_pct": -0.00038305292737460527,
-    "n_tf_bound": -0.3897661325249061
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.0008429638100744263,
+    "dhs_pct": -0.0003830404394516873,
+    "n_tf_bound": -0.3898397574707701
    },
    "residual_imbalance_max_abs": {
     "log10_dist": 0.0035366285936921926,
@@ -282,38 +323,164 @@
     "n_tf_bound": 0.9258553486357783
    },
    "residual_imbalance_mean_mannwhitney_p": {
-    "log10_dist": 0.9467814227282997,
-    "dhs_pct": 0.9642901856286719,
-    "n_tf_bound": 0.5407666019025353
+    "log10_dist": 0.9467553701312434,
+    "dhs_pct": 0.9641691360961774,
+    "n_tf_bound": 0.5406606326653481
    }
   },
   "degree_matched_TFCarm": {
-   "label": "SWAP additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+   "label": "SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
    "model_arm": "TFcausality_only",
    "draws": 20,
+   "distance_mode": "decoy_distance",
+   "prespecified": true,
    "EFFECT_raw_real_auprc": 0.09588108316899391,
-   "swapped_auprc_mean": 0.1038292359793741,
-   "swapped_auprc_sd": 0.0034723573415988062,
-   "swapped_auprc_min": 0.09756809031322997,
-   "swapped_auprc_max": 0.1119754955518312,
+   "swapped_auprc_mean": 0.10364360179442475,
+   "swapped_auprc_sd": 0.003480565641355138,
+   "swapped_auprc_min": 0.09732329201148042,
+   "swapped_auprc_max": 0.11180378658362917,
    "frac_draws_real_beats_swap": 0.0,
-   "delta_real_minus_swap": -0.007948152810380194,
-   "frac_of_real_reproduced_by_swap": 1.0828959430544947,
+   "delta_real_minus_swap": -0.007762518625430842,
+   "frac_of_real_reproduced_by_swap": 1.0809598553632225,
    "n_pairs_without_valid_donor_per_draw": 265,
-   "residual_imbalance_real_minus_swap": {
-    "log10_dist": 0.0020228263047223473,
-    "dhs_pct": 0.00019959926457890353,
-    "n_tf_bound": -0.09006063230836255
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.002013465820931648,
+    "dhs_pct": 0.00019334575154899558,
+    "n_tf_bound": -0.09053269813772431
    },
    "residual_imbalance_max_abs": {
-    "log10_dist": 0.005020710877124301,
-    "dhs_pct": 0.0009380941192610459,
-    "n_tf_bound": 0.2595928973581678
+    "log10_dist": 0.005084411876913997,
+    "dhs_pct": 0.0009252032077007311,
+    "n_tf_bound": 0.25881333910783866
    },
    "residual_imbalance_mean_mannwhitney_p": {
-    "log10_dist": 0.9024246914311164,
-    "dhs_pct": 0.9531253087062158,
-    "n_tf_bound": 0.8923821260610554
+    "log10_dist": 0.9031038237281119,
+    "dhs_pct": 0.9544796198704368,
+    "n_tf_bound": 0.8921026657664729
+   }
+  },
+  "element_only_distance_x_accessibility": {
+   "label": "SWAP A -- decoy matched on distance decile x accessibility decile",
+   "model_arm": "FULL_dist+acc+TFcausality",
+   "draws": 20,
+   "distance_mode": "real_distance",
+   "prespecified": false,
+   "EFFECT_raw_real_auprc": 0.3586922250485385,
+   "swapped_auprc_mean": 0.33461278988499166,
+   "swapped_auprc_sd": 0.00967568528431212,
+   "swapped_auprc_min": 0.31675457176790145,
+   "swapped_auprc_max": 0.3530776300378137,
+   "frac_draws_real_beats_swap": 1.0,
+   "delta_real_minus_swap": 0.024079435163546825,
+   "frac_of_real_reproduced_by_swap": 0.932868812084543,
+   "n_pairs_without_valid_donor_per_draw": 0,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.0008429638100744263,
+    "dhs_pct": -0.0003830404394516873,
+    "n_tf_bound": -0.3898397574707701
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.0035366285936921926,
+    "dhs_pct": 0.0012734144251345114,
+    "n_tf_bound": 0.9258553486357783
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9467553701312434,
+    "dhs_pct": 0.9641691360961774,
+    "n_tf_bound": 0.5406606326653481
+   }
+  },
+  "element_only_degree_matched": {
+   "label": "SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+   "model_arm": "FULL_dist+acc+TFcausality",
+   "draws": 20,
+   "distance_mode": "real_distance",
+   "prespecified": false,
+   "EFFECT_raw_real_auprc": 0.3586922250485385,
+   "swapped_auprc_mean": 0.3589226173058463,
+   "swapped_auprc_sd": 0.007613841111545307,
+   "swapped_auprc_min": 0.3429407978846798,
+   "swapped_auprc_max": 0.381200164491548,
+   "frac_draws_real_beats_swap": 0.45,
+   "delta_real_minus_swap": -0.00023039225730780988,
+   "frac_of_real_reproduced_by_swap": 1.0006423118239505,
+   "n_pairs_without_valid_donor_per_draw": 265,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.002013465820931648,
+    "dhs_pct": 0.00019334575154899558,
+    "n_tf_bound": -0.09053269813772431
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.005084411876913997,
+    "dhs_pct": 0.0009252032077007311,
+    "n_tf_bound": 0.25881333910783866
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9031038237281119,
+    "dhs_pct": 0.9544796198704368,
+    "n_tf_bound": 0.8921026657664729
+   }
+  },
+  "element_only_distance_x_accessibility_TFCarm": {
+   "label": "SWAP A -- decoy matched on distance decile x accessibility decile",
+   "model_arm": "TFcausality_only",
+   "draws": 20,
+   "distance_mode": "real_distance",
+   "prespecified": false,
+   "EFFECT_raw_real_auprc": 0.09588108316899391,
+   "swapped_auprc_mean": 0.08773027056619978,
+   "swapped_auprc_sd": 0.004465573257396098,
+   "swapped_auprc_min": 0.08043742586055273,
+   "swapped_auprc_max": 0.09674586813480142,
+   "frac_draws_real_beats_swap": 0.9,
+   "delta_real_minus_swap": 0.008150812602794127,
+   "frac_of_real_reproduced_by_swap": 0.9149903992174554,
+   "n_pairs_without_valid_donor_per_draw": 0,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.0008429638100744263,
+    "dhs_pct": -0.0003830404394516873,
+    "n_tf_bound": -0.3898397574707701
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.0035366285936921926,
+    "dhs_pct": 0.0012734144251345114,
+    "n_tf_bound": 0.9258553486357783
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9467553701312434,
+    "dhs_pct": 0.9641691360961774,
+    "n_tf_bound": 0.5406606326653481
+   }
+  },
+  "element_only_degree_matched_TFCarm": {
+   "label": "SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+   "model_arm": "TFcausality_only",
+   "draws": 20,
+   "distance_mode": "real_distance",
+   "prespecified": false,
+   "EFFECT_raw_real_auprc": 0.09588108316899391,
+   "swapped_auprc_mean": 0.10364360179442475,
+   "swapped_auprc_sd": 0.003480565641355138,
+   "swapped_auprc_min": 0.09732329201148042,
+   "swapped_auprc_max": 0.11180378658362917,
+   "frac_draws_real_beats_swap": 0.0,
+   "delta_real_minus_swap": -0.007762518625430842,
+   "frac_of_real_reproduced_by_swap": 1.0809598553632225,
+   "n_pairs_without_valid_donor_per_draw": 265,
+   "residual_imbalance_real_minus_decoy": {
+    "log10_dist": 0.002013465820931648,
+    "dhs_pct": 0.00019334575154899558,
+    "n_tf_bound": -0.09053269813772431
+   },
+   "residual_imbalance_max_abs": {
+    "log10_dist": 0.005084411876913997,
+    "dhs_pct": 0.0009252032077007311,
+    "n_tf_bound": 0.25881333910783866
+   },
+   "residual_imbalance_mean_mannwhitney_p": {
+    "log10_dist": 0.9031038237281119,
+    "dhs_pct": 0.9544796198704368,
+    "n_tf_bound": 0.8921026657664729
    }
   }
  },
@@ -325,12 +492,18 @@
   "frac_draws_p_lt_0.05": 1.0,
   "median_p": 0.001692920883048434
  },
- "gates": {
+ "gates_prespecified": {
   "increment": false,
   "element_swap": true,
   "degree_matched_swap": true
  },
- "verdict": "NO INCREMENT FROM TF CAUSALITY OVER DISTANCE AND ACCESSIBILITY -- NOT DETECTED. On 11,545 powered distal K562 CRISPR pairs at a 0.0396 positive base rate, chromosome-held-out AUPRC is 0.2786 for distance alone, 0.0829 for accessibility alone, 0.0744 for gene responsiveness with no element information at all, and 0.3587 for distance + accessibility + TF causality over 507 TFs. The full model is +0.0063 AUPRC against the best baseline (dist+acc+TFoccupancy, 0.3524), clearing the prespecified 0.010 bar in only 2/5 chromosome partitions. Weighting an element's bound TFs by whether those TFs are causal for the gene in Perturb-seq does not add to what distance and accessibility already say. The element swap is reported anyway and is consistent: a decile-matched decoy element reproduces 65% of the full model's AUPRC (0.2346 vs 0.3587, real winning 100% of 20 draws), which is what a model that reads the gene and the distance rather than the element looks like. This is a null and the project commits it.",
+ "diagnostics_post_hoc": {
+  "note": "added after the first run, when the prespecified swap turned out to also coarsen distance to its decile; reported so the prespecified gates are not read as stronger than they are",
+  "tf_identity_survives_degree_matched_swap_on_TFcausality_arm": false,
+  "element_only_swap_full_model_frac_reproduced": 0.932868812084543,
+  "element_only_degree_matched_full_model_frac_reproduced": 1.0006423118239505
+ },
+ "verdict": "THE ELEMENT'S TF SET PAYS, BUT AS A COUNT, NOT AS A CAUSAL IDENTITY -- the causality weighting is NOT DETECTED over an occupancy-count baseline. On 11,545 powered distal K562 CRISPR pairs at a 0.0396 positive base rate (457 positives), chromosome-held-out AUPRC is 0.2786 for distance alone (7.0x the base rate), 0.0829 for accessibility alone, 0.0744 for gene responsiveness with no element information at all, 0.3438 for distance + accessibility, 0.3524 once the raw COUNT of the 507 profiled TFs bound at the element is added, and 0.3587 once those TFs are WEIGHTED by their Perturb-seq causality for the gene. Read as a ladder: accessibility adds +0.0652 to distance, the raw number of bound TFs adds a further +0.0086, and weighting those TFs by whether their knockdown actually moves the gene adds only +0.0063 on top -- below the prespecified 0.010 bar and clearing it in 2/5 chromosome partitions. Against the two baselines the question named, TF causality does add (+0.0149 over distance+accessibility, +0.0801 over distance alone), but 58% of that increment is bought by counting TFs, which needs no Perturb-seq. The DEGREE-MATCHED element swap says the same thing in the sharpest form available here: on the TF-causality-only arm, which has no distance feature to lose, a decoy element carrying the same NUMBER of bound TFs but a DIFFERENT TF SET scores 0.1036 against the real element's 0.0959 -- 108% of it, with the real element winning 0% of 20 draws -- and the decoy landing slightly ABOVE the real element is NOT read as a reversal; it is what no pair-specific signal looks like, the real TF-identity features being replaced by a smoother draw from the same distribution. WHICH transcription factors sit on a distal element, weighted by their causal effect on the gene, is not shown here to matter; HOW MANY sit on it does. The prespecified swap gates (ii) and (iii) both pass on the full model (100% and 100%), but they are lenient by construction -- a decile-matched decoy carries the decile of the distance and not the distance, and the full model has a distance feature to lose; with the real distance retained the same decoys still cost the full model only -0% of its AUPRC (0.3589). One real thing survives all of it and is reported as descriptive rather than predictive: positives carry 1.70 bound-and-causal TFs against 1.31 for distance- and accessibility-matched negatives (1.30x, p<0.05 in 100% of 20 draws) -- a real association that a model already holding distance, accessibility and TF count cannot convert into ranking power. This is a null on the headline question and the project commits it.",
  "limits": [
   "same cell line on both sides. TF->gene causality is Replogle K562 Perturb-seq and the ground truth is CRISPRi enhancer perturbation in K562. The experiments differ (gene knockdown vs element silencing, different labs and libraries), so this is not scoring a K562 layer on K562 Perturb-seq, but 'which genes move easily in K562' is shared between them. That nuisance is what the gene-responsiveness-only arm (0.0744 AUPRC with NO element information) measures and what the element swap removes. There is no RPE1 enhancer-CRISPR benchmark to escape to.",
   "the benchmark's K562 arm is EIGHT screens with different libraries, distance ranges and hit rates. Dataset is NOT a matching key here (the swap matches on distance and accessibility deciles), so a decoy can come from a different screen than its target pair. Distance decile absorbs most of that because the screens differ mainly in distance range, but not all of it.",
@@ -339,6 +512,9 @@
   "occupancy is binary at ELEMENT_PAD=250 bp around the tested element. Peak strength is discarded, so a marginal peak and a summit-in-the-middle peak count the same.",
   "'causal' is |robust z| >= 5.0 in a pseudobulk knockdown. It is a CONSEQUENCE of removing the TF, direct or not -- bound_causal.py's own finding is that only ~12% of causal edges are bound at the promoter, so most of these weights are downstream effects that happen to be attached to a TF that also sits at this element.",
   "the swap donor pool is the benchmark's own 4,362 elements. That is deliberate (a decoy that is a real tested candidate is a harder control than a random genomic window) but it means the control asks 'is THIS element better than ANOTHER TESTED element', not 'better than random DNA'.",
+  "THE PRESPECIFIED SWAP GATES ARE LENIENT, AND THIS WEAKENS THE PART OF THE RESULT THAT PASSED. A decile-matched decoy carries the DECILE of the real distance, not the real distance, so any arm holding a distance feature loses within-decile resolution under the swap and its AUPRC falls for a reason unrelated to the element. Gates (ii) and (iii) pass on the full model largely for that reason. The element-only variants (real distance retained) and the TF-causality-only arm are reported alongside and are the sharper reads; they were added AFTER seeing the first result and are labelled post hoc in the JSON.",
+  "the degree-matched swap has 265 pairs per draw (2.3%) whose distance x accessibility x n-TF-bound decile cell held no valid donor; those pairs keep their own element, which biases that control TOWARD the real elements, i.e. makes it conservative.",
+  "the causality weights are aggregates over the bound TF set (count, max, mean, top-5, signed mean, and two gene-background-subtracted terms). A per-TF model that learned which INDIVIDUAL TFs matter is not fitted here: with 457 positives over 507 TFs it would be fitting noise, and that is a real ceiling on this design rather than a claim that no such signal exists.",
   "pairs below PowerAtEffectSize25 0.8 are excluded, not counted as negatives, because not-detected is not not-linked. 234 pairs are dropped that way.",
   "AUPRC is pooled over out-of-fold predictions within a seed. Folds are whole chromosomes, so fold sizes are uneven and a single large chromosome carries disproportionate weight in every partition.",
   "a decoy element is required to be on a different chromosome from the gene, which removes the risk that the decoy genuinely regulates the gene but also means the swap changes chromosome-level context (replication timing, compartment) along with the element.",
@@ -364,11 +540,7 @@
   "\n  2  TF OCCUPANCY AT THE ELEMENTS -- ENCODE K562 ChIP crossed with Replogle perturbations",
   "    ENCODE: 1,169 released K562 'conservative IDR thresholded peaks' TF ChIP files over 519 TF targets",
   "    JOIN ENCODE K562 ChIP target -> Replogle perturbation: 507/519 (97.7%), expected >= 85%",
-  "      occupancy 100/507 TFs",
-  "      occupancy 200/507 TFs",
-  "      occupancy 300/507 TFs",
-  "      occupancy 400/507 TFs",
-  "      occupancy 500/507 TFs",
+  "    occupancy matrix from cache: 507 TFs x 4,362 elements",
   "    occupancy: 507 TFs x 4,362 elements, 10.7% of cells bound; TFs per element median 36 (IQR 12-80), 74 elements carry no profiled TF at all",
   "\n  3  FEATURES",
   "    TF->gene causal weights: 507 TFs x 8,248 genes, robust z, 406 self-knockdown diagonal entries zeroed",
@@ -386,28 +558,44 @@
   "    TFcausality_only             AUPRC 0.0959 +/- 0.0054  (2.42x the 0.0396 base rate, 10 features)",
   "    FULL_dist+acc+TFcausality    AUPRC 0.3587 +/- 0.0074  (9.06x the 0.0396 base rate, 16 features)",
   "    FULL+gene                    AUPRC 0.3594 +/- 0.0077  (9.08x the 0.0396 base rate, 20 features)",
+  "    THE LADDER -- each rung adds one thing to the rung above it:",
+  "      distance only                          0.2786",
+  "      + accessibility                        0.3438   +0.0652",
+  "      + TF occupancy COUNT (no causality)    0.3524   +0.0086",
+  "      + TF CAUSALITY weights                 0.3587   +0.0063",
+  "      + gene responsiveness                  0.3594   +0.0007",
   "    BEST BASELINE: dist+acc+TFoccupancy at 0.3524",
   "    INCREMENT of FULL_dist+acc+TFcausality over it: +0.0063 AUPRC (>= 0.010 in 2/5 partitions)",
+  "    for contrast, over distance+accessibility alone: +0.0149 -- the gap between these two numbers IS the raw count of bound TFs, which needs no Perturb-seq at all",
   "\n  5  ELEMENT SWAP -- keep the gene, replace the element with a decile-matched decoy",
   "    matching on DECILES, not quartiles: distance decile x accessibility (DHS percentile) decile; the degree-matched variant adds the n-TFs-bound decile",
-  "    SWAP matched on distance decile x accessibility decile",
-  "      residual imbalance (real - swapped): {'log10_dist': 0.0008, 'dhs_pct': -0.0004, 'n_tf_bound': -0.3898}   mean Mann-Whitney p per covariate: {'log10_dist': 0.947, 'dhs_pct': 0.964, 'n_tf_bound': 0.541}",
+  "    SWAP A -- decoy matched on distance decile x accessibility decile",
+  "      residual imbalance (real - decoy): {'log10_dist': 0.0008, 'dhs_pct': -0.0004, 'n_tf_bound': -0.3898}   mean Mann-Whitney p per covariate: {'log10_dist': 0.947, 'dhs_pct': 0.964, 'n_tf_bound': 0.541}",
   "      0 pairs per draw had no valid donor in their decile cell and kept their own element (they make the control CONSERVATIVE, not liberal)",
-  "      [FULL_dist+acc+TFcausality] real 0.3587   swapped 0.2346 +/- 0.0106 (range 0.2148-0.2525);  real beats the decoy in 100% of 20 draws; the decoy reproduces 65% of the real AUPRC",
-  "      [TFcausality_only] real 0.0959   swapped 0.0877 +/- 0.0045 (range 0.0804-0.0967);  real beats the decoy in 90% of 20 draws; the decoy reproduces 91% of the real AUPRC",
-  "    SWAP additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
-  "      residual imbalance (real - swapped): {'log10_dist': 0.002, 'dhs_pct': 0.0002, 'n_tf_bound': -0.0901}   mean Mann-Whitney p per covariate: {'log10_dist': 0.902, 'dhs_pct': 0.953, 'n_tf_bound': 0.892}",
+  "      [PRESPEC decoy_distance  FULL_dist+acc+TFcausality] real 0.3587   swapped 0.2346 +/- 0.0106 (range 0.2148-0.2525);  real beats the decoy in 100% of 20 draws; the decoy reproduces 65% of the real AUPRC",
+  "      [PRESPEC decoy_distance  TFcausality_only] real 0.0959   swapped 0.0877 +/- 0.0045 (range 0.0804-0.0967);  real beats the decoy in 90% of 20 draws; the decoy reproduces 91% of the real AUPRC",
+  "      [POSTHOC real_distance   FULL_dist+acc+TFcausality] real 0.3587   swapped 0.3346 +/- 0.0097 (range 0.3168-0.3531);  real beats the decoy in 100% of 20 draws; the decoy reproduces 93% of the real AUPRC",
+  "      [POSTHOC real_distance   TFcausality_only] real 0.0959   swapped 0.0877 +/- 0.0045 (range 0.0804-0.0967);  real beats the decoy in 90% of 20 draws; the decoy reproduces 91% of the real AUPRC",
+  "    SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+  "      residual imbalance (real - decoy): {'log10_dist': 0.002, 'dhs_pct': 0.0002, 'n_tf_bound': -0.0905}   mean Mann-Whitney p per covariate: {'log10_dist': 0.903, 'dhs_pct': 0.954, 'n_tf_bound': 0.892}",
   "      265 pairs per draw had no valid donor in their decile cell and kept their own element (they make the control CONSERVATIVE, not liberal)",
-  "      [FULL_dist+acc+TFcausality] real 0.3587   swapped 0.2562 +/- 0.0102 (range 0.2396-0.2780);  real beats the decoy in 100% of 20 draws; the decoy reproduces 71% of the real AUPRC",
-  "      [TFcausality_only] real 0.0959   swapped 0.1038 +/- 0.0035 (range 0.0976-0.1120);  real beats the decoy in 0% of 20 draws; the decoy reproduces 108% of the real AUPRC",
+  "      [PRESPEC decoy_distance  FULL_dist+acc+TFcausality] real 0.3587   swapped 0.2560 +/- 0.0100 (range 0.2397-0.2789);  real beats the decoy in 100% of 20 draws; the decoy reproduces 71% of the real AUPRC",
+  "      [PRESPEC decoy_distance  TFcausality_only] real 0.0959   swapped 0.1036 +/- 0.0035 (range 0.0973-0.1118);  real beats the decoy in 0% of 20 draws; the decoy reproduces 108% of the real AUPRC",
+  "      [POSTHOC real_distance   FULL_dist+acc+TFcausality] real 0.3587   swapped 0.3589 +/- 0.0076 (range 0.3429-0.3812);  real beats the decoy in 45% of 20 draws; the decoy reproduces 100% of the real AUPRC",
+  "      [POSTHOC real_distance   TFcausality_only] real 0.0959   swapped 0.1036 +/- 0.0035 (range 0.0973-0.1118);  real beats the decoy in 0% of 20 draws; the decoy reproduces 108% of the real AUPRC",
   "\n  6  READING THE THREE THINGS TOGETHER",
   "    (i)   increment >= 0.010 in >= 4/5 partitions: FAIL  (+0.0063, 2/5)",
   "    (ii)  beats the distance x accessibility swap in >= 90% of draws: PASS  (100%)",
   "    (iii) beats the DEGREE-matched swap in >= 90% of draws: PASS  (100%)",
+  "    gates (ii) and (iii) are PRESPECIFIED and both pass on the full model, but they are LENIENT and saying so is part of",
+  "    the result: a decile-matched decoy carries the decile of the real distance, not the real distance, so any arm with a",
+  "    distance feature loses AUPRC under the swap for a reason that is not about the element. The two sharper readings:",
+  "      element-only swap (real distance kept), FULL model: real 0.3587 vs decoy 0.3346 (93% reproduced, real wins 100%); degree-matched 0.3589 (100%, real wins 45%)",
+  "      TF-causality-only arm (no distance feature at all), DEGREE-matched decoy: real 0.0959 vs decoy 0.1036 (108% reproduced, real wins 0% of 20 draws)",
   "\n    descriptive cross-check: TFs bound AND causal at the element, positives vs matched negatives",
   "      positives 1.70 causal-and-bound TFs vs matched negatives 1.31 (1.30x), p<0.05 in 100% of 20 draws (median p 0.00169)",
   "\n========================================================================================================",
-  "VERDICT: NO INCREMENT FROM TF CAUSALITY OVER DISTANCE AND ACCESSIBILITY -- NOT DETECTED. On 11,545 powered distal K562 CRISPR pairs at a 0.0396 positive base rate, chromosome-held-out AUPRC is 0.2786 for distance alone, 0.0829 for accessibility alone, 0.0744 for gene responsiveness with no element information at all, and 0.3587 for distance + accessibility + TF causality over 507 TFs. The full model is +0.0063 AUPRC against the best baseline (dist+acc+TFoccupancy, 0.3524), clearing the prespecified 0.010 bar in only 2/5 chromosome partitions. Weighting an element's bound TFs by whether those TFs are causal for the gene in Perturb-seq does not add to what distance and accessibility already say. The element swap is reported anyway and is consistent: a decile-matched decoy element reproduces 65% of the full model's AUPRC (0.2346 vs 0.3587, real winning 100% of 20 draws), which is what a model that reads the gene and the distance rather than the element looks like. This is a null and the project commits it.",
+  "VERDICT: THE ELEMENT'S TF SET PAYS, BUT AS A COUNT, NOT AS A CAUSAL IDENTITY -- the causality weighting is NOT DETECTED over an occupancy-count baseline. On 11,545 powered distal K562 CRISPR pairs at a 0.0396 positive base rate (457 positives), chromosome-held-out AUPRC is 0.2786 for distance alone (7.0x the base rate), 0.0829 for accessibility alone, 0.0744 for gene responsiveness with no element information at all, 0.3438 for distance + accessibility, 0.3524 once the raw COUNT of the 507 profiled TFs bound at the element is added, and 0.3587 once those TFs are WEIGHTED by their Perturb-seq causality for the gene. Read as a ladder: accessibility adds +0.0652 to distance, the raw number of bound TFs adds a further +0.0086, and weighting those TFs by whether their knockdown actually moves the gene adds only +0.0063 on top -- below the prespecified 0.010 bar and clearing it in 2/5 chromosome partitions. Against the two baselines the question named, TF causality does add (+0.0149 over distance+accessibility, +0.0801 over distance alone), but 58% of that increment is bought by counting TFs, which needs no Perturb-seq. The DEGREE-MATCHED element swap says the same thing in the sharpest form available here: on the TF-causality-only arm, which has no distance feature to lose, a decoy element carrying the same NUMBER of bound TFs but a DIFFERENT TF SET scores 0.1036 against the real element's 0.0959 -- 108% of it, with the real element winning 0% of 20 draws -- and the decoy landing slightly ABOVE the real element is NOT read as a reversal; it is what no pair-specific signal looks like, the real TF-identity features being replaced by a smoother draw from the same distribution. WHICH transcription factors sit on a distal element, weighted by their causal effect on the gene, is not shown here to matter; HOW MANY sit on it does. The prespecified swap gates (ii) and (iii) both pass on the full model (100% and 100%), but they are lenient by construction -- a decile-matched decoy carries the decile of the distance and not the distance, and the full model has a distance feature to lose; with the real distance retained the same decoys still cost the full model only -0% of its AUPRC (0.3589). One real thing survives all of it and is reported as descriptive rather than predictive: positives carry 1.70 bound-and-causal TFs against 1.31 for distance- and accessibility-matched negatives (1.30x, p<0.05 in 100% of 20 draws) -- a real association that a model already holding distance, accessibility and TF count cannot convert into ranking power. This is a null on the headline question and the project commits it.",
   "========================================================================================================"
  ]
 }

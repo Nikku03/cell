@@ -849,6 +849,18 @@ def main():
            f"{t2['frac_draws_real_beats_swap']:.0%} of {SWAP_DRAWS} draws)")
     tf_identity_survives = (t2["frac_draws_real_beats_swap"] >= MIN_SWAP_FRAC and
                             t2e["frac_draws_real_beats_swap"] >= MIN_SWAP_FRAC)
+    # INTERNAL CONSISTENCY CHECK, not a result: the TF-causality-only arm holds NO distance feature, so its
+    # two distance modes are shown identical inputs and MUST return identical AUPRC. If they ever diverge,
+    # the swap machinery is leaking distance into an arm that should not have it, and every swap number in
+    # this module would be suspect.
+    swap_machinery_ok = abs(t2["swapped_auprc_mean"] - t2e["swapped_auprc_mean"]) < 1e-12
+    report(f"    consistency check: the TF-causality-only arm has no distance feature, so its "
+           f"decoy-distance and real-distance swaps must be identical -- "
+           f"{t2['swapped_auprc_mean']:.6f} vs {t2e['swapped_auprc_mean']:.6f} "
+           f"({'OK' if swap_machinery_ok else 'MISMATCH -- swap machinery is leaking distance'})")
+    if not swap_machinery_ok:
+        raise SystemExit("swap machinery leaks distance into a distance-free arm; every swap number here "
+                         "would be unsound")
     # A decoy landing ABOVE the real element is not a reversal and must not be written as one: sign and
     # significance are read together, and "the decoy is better" is not a claim this design can support.
     above = (" -- and the decoy landing slightly ABOVE the real element is NOT read as a reversal; it is "
@@ -938,9 +950,12 @@ def main():
              f"and (iii) both pass on the full model ({sw1['frac_draws_real_beats_swap']:.0%} and "
              f"{sw2['frac_draws_real_beats_swap']:.0%}), but they are lenient by construction -- a "
              f"decile-matched decoy carries the decile of the distance and not the distance, and the full "
-             f"model has a distance feature to lose; with the real distance retained the same decoys still "
-             f"cost the full model only {1 - e2['frac_of_real_reproduced_by_swap']:.0%} of its AUPRC "
-             f"({e2['swapped_auprc_mean']:.4f}). One real thing survives all of it and is reported as "
+             f"model has a distance feature to lose. Hold the real distance and swap only the element, and "
+             f"the same degree-matched decoys reproduce "
+             f"{e2['frac_of_real_reproduced_by_swap']:.0%} of the full model's AUPRC "
+             f"({e2['swapped_auprc_mean']:.4f} against {rf:.4f}), with the real element winning "
+             f"{e2['frac_draws_real_beats_swap']:.0%} of {SWAP_DRAWS} draws -- a coin flip. One real thing "
+             f"survives all of it and is reported as "
              f"descriptive rather than predictive: positives carry "
              f"{cross.get('EFFECT_raw_positives_mean_n_causal_bound_TFs', float('nan')):.2f} bound-and-causal "
              f"TFs against {cross.get('matched_negatives_mean', float('nan')):.2f} for distance- and "
@@ -1082,6 +1097,7 @@ def main():
                     "distance to its decile; reported so the prespecified gates are not read as stronger "
                     "than they are",
             "tf_identity_survives_degree_matched_swap_on_TFcausality_arm": bool(tf_identity_survives),
+            "swap_machinery_consistency_check_passed": bool(swap_machinery_ok),
             "element_only_swap_full_model_frac_reproduced":
                 swaps["element_only_distance_x_accessibility"]["frac_of_real_reproduced_by_swap"],
             "element_only_degree_matched_full_model_frac_reproduced":

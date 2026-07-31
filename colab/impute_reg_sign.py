@@ -1100,23 +1100,30 @@ def main():
             f"confidence cut set in advance, at an expected error rate of {exp_err:.3f}. " + core + " " +
             controls)
     else:
+        rp_read = ("not detected" if not rpB["detected"] else
+                   "below its own control by more than twice the control's spread")
         verdict = (
-            f"NULL: THE 558,005 UNSIGNED EDGES CANNOT BE SIGNED FROM WHAT THE CURATED LAYER KNOWS, AND THE "
-            f"REASON IS PROVENANCE RATHER THAN STATISTICS. Held out by SOURCE GENE, the arm with no K562 "
-            f"measurement in its features reaches {100*armB['accuracy']:.1f}% accuracy "
-            f"(AUC {armB['auc']:.3f}) against {100*armB['swap']:.1f}% for a strength-matched swapped source "
-            f"-- an increment of {100*armB['increment']:+.1f} points against the "
-            f"{100*MIN_INCREMENT:+.1f} required, {armB['frac_draws_won']:.0%} of {N_CTRL} draws won -- and "
-            f"on RPE1 {100*rpe1_summary['B source+edge (no K562 in feats)']['increment']:+.1f} points. "
+            f"NULL: THE {int((sg == 0).sum()):,} UNSIGNED EDGES CANNOT BE SIGNED FROM WHAT THE CURATED "
+            f"LAYER KNOWS, AND THE REASON IS PROVENANCE RATHER THAN STATISTICS. Held out by SOURCE GENE so "
+            f"no TF is in both train and test, the arm with no K562 measurement anywhere in its features "
+            f"reaches {100*armB['accuracy']:.1f}% raw accuracy (AUC {armB['auc']:.3f}, majority-class "
+            f"baseline {100*armB['majority_baseline']:.1f}%) against {100*armB['swap']:.1f}% for a "
+            f"strength-matched swapped source -- an increment of {100*armB['increment']:+.1f} points "
+            f"against the {100*MIN_INCREMENT:+.1f} required, {armB['frac_draws_won']:.0%} of {N_CTRL} draws "
+            f"won, and {100*armB['increment_nn']:+.1f} points against the tighter nearest-neighbour "
+            f"control. On RPE1 the increment is {100*rpB['increment']:+.1f} points ({rp_read}). "
             f"0 of the {int((sg == 0).sum()):,} unsigned edges reach a confidence bin that is both "
             f"{SIGN_MIN_ACC:.0%} accurate and {SIGN_MIN_INC:+.2f} above its own swapped-source control, so "
-            f"none are signed. " + core + " " + controls + " "
-            f"WHAT THIS IS GOOD FOR. The measured layer is the answer for these edges: "
-            f"colab/causal_reg.py already carries a K562 perturbational sign for every "
+            f"none are signed and the layer written is empty by construction. " + core + " " + controls +
+            " WHAT TO DO INSTEAD, AND IT IS NOT NOTHING. The measured layer already answers this for the "
+            f"edges it can reach: colab/causal_reg.py carries a K562 perturbational sign for every "
             f"(perturbation, gene) pair it measures, at +15.0 points of RPE1 sign transfer, and "
-            f"{int(testable.sum()):,} of the {len(reg):,} curated triples fall inside that matrix. Signing "
-            f"a curated edge is a measurement problem, not an inference problem, and the honest coverage "
-            f"statement is {100*testable.mean():.0f}% by measurement and 0% by imputation.")
+            f"{int(testable.sum()):,} of the {len(reg):,} curated triples ({100*testable.mean():.0f}%) fall "
+            f"inside that matrix -- {int(uns.sum()):,} of them currently unsigned. Signing a curated edge "
+            f"is a measurement problem, not an inference problem, and the honest coverage statement for "
+            f"this project is {100*testable.mean():.0f}% by measurement and 0% by imputation. The route "
+            f"that would extend it is more perturbation atlases, not more features: the unsigned edges "
+            f"whose source is never perturbed anywhere are the ones that stay dark.")
     report("\n" + "=" * 104)
     report(f"  VERDICT: {verdict}")
 
@@ -1150,9 +1157,18 @@ def main():
                                      "permuted and re-paired, coexpr and complex incidence permuted",
                                      "mean_accuracy": rw_acc, "mean_increment": rw_inc, "sd": rw_sd,
                                      "real_increment": armB["increment"],
+                                     "real_accuracy": armB["accuracy"],
                                      "fraction_of_effect_reproduced_by_degree_matched_control": surv,
-                                     "fraction_of_rewirings_the_real_features_beat": beat},
-         "swap_control_residual_imbalance": imb, "worst_abs_smd": worst,
+                                     "fraction_of_rewirings_the_real_features_beat_on_increment": beat,
+                                     "fraction_of_rewirings_the_real_features_beat_on_accuracy": beat_acc},
+         "swap_control": {"constructions": ["decile: strength decile, as colab/causal_reg.py",
+                                            "nn: +/-150 nearest in strength rank, added after the decile "
+                                            "arm failed its own imbalance audit"],
+                          "residual_imbalance_k562": imb, "worst_abs_smd_decile": worst,
+                          "worst_abs_smd_nn": worst_nn,
+                          "worst_abs_smd_rpe1_decile": max(abs(v["smd"]) for v in imb_r.values()),
+                          "worst_abs_smd_rpe1_nn": max(abs(v["smd"]) for v in imb_rn.values())},
+         "worst_abs_smd": worst,
          "confidence_bins": bins,
          "signable": {"n_edges_signed": n_signable, "confidence_cut": cut,
                       "expected_error_rate": exp_err,
@@ -1188,7 +1204,19 @@ def main():
              "sources are held out but TARGETS are not: a target gene appears in both training and test "
              "folds. That is deliberate -- the target-direction confound is what the swapped-source "
              "control removes -- but it means a target-specific model could still leak, which is why arm A "
-             "is reported separately rather than folded into arm C"],
+             "is reported separately rather than folded into arm C",
+             "THE NEAREST-NEIGHBOUR SWAPPED-SOURCE ARM WAS ADDED AFTER THE FIRST RUN, when the decile "
+             "arm's own imbalance audit came back at |SMD| 0.25 on perturbation strength. It is a "
+             "tightening rather than a loosening and the stricter of the two increments governs every "
+             "decision, but it was not pre-registered and it is reported as a post-hoc control",
+             "a null on this feature set is not a proof that sign is unpredictable. Sequence-level "
+             "features that were not available here -- the source's DNA-binding domain family, its "
+             "cofactor complexes from a proteomics resource, promoter motif orientation at the target -- "
+             "are the obvious next attempt, and the ceiling measurement says there is up to +7 points of "
+             "source-level signal for them to reach",
+             "the imputation is scored against a PERTURBATIONAL sign, which is what a whole-cell model "
+             "needs but is not the same object as the curated activation/repression statement. An edge "
+             "whose curated sign is right and whose K562 response is buffered scores as an error here"],
          "verdict": verdict, "log": log}
 
     layer = {"model": "reg-sign-imputed-v1",
