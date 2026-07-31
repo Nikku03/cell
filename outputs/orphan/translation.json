@@ -1,0 +1,217 @@
+{
+ "model": "translation-v1",
+ "direct_source_available": false,
+ "encode_probe": {
+  "n_titles_k562": 51,
+  "n_titles_portal": 67,
+  "n_experiments_k562": 2406,
+  "riboseq_titles_k562": [],
+  "riboseq_titles_portal": [],
+  "k562_assay_titles": [
+   "5C",
+   "ATAC-seq",
+   "Bru-seq",
+   "BruChase-seq",
+   "BruUV-seq",
+   "CAGE",
+   "CRISPR RNA-seq",
+   "CRISPRi RNA-seq",
+   "ChIA-PET",
+   "Control ChIP-seq",
+   "Control eCLIP",
+   "DNA-PET",
+   "DNAme array",
+   "DNase-seq",
+   "FAIRE-seq",
+   "GM DNase-seq",
+   "GRO-cap",
+   "Histone ChIP-seq",
+   "MNase-seq",
+   "MRE-seq",
+   "MS-MS",
+   "MeDIP-seq",
+   "PRO-cap",
+   "RAMPAGE",
+   "RIP-chip",
+   "RIP-seq",
+   "RNA microarray",
+   "RNA-PET",
+   "RRBS",
+   "Repli-seq",
+   "TF ChIP-seq",
+   "WGBS",
+   "WGS",
+   "capture Hi-C",
+   "eCLIP",
+   "genotyping array",
+   "iCLIP",
+   "icLASER",
+   "icSHAPE",
+   "in situ Hi-C",
+   "intact Hi-C",
+   "long read RNA-seq",
+   "microRNA counts",
+   "microRNA-seq",
+   "polyA minus RNA-seq",
+   "polyA plus RNA-seq",
+   "shRNA RNA-seq",
+   "siRNA RNA-seq",
+   "small RNA-seq",
+   "snATAC-seq",
+   "total RNA-seq"
+  ]
+ },
+ "rna_source": "Replogle et al. 2022 genome-wide Perturb-seq (K562 CRISPRi), var/mean",
+ "protein_source": "PaxDb 9606-iBAQ_K562_Geiger_2012 (Geiger et al., Mol Cell Proteomics 2012)",
+ "annotation": {
+  "ensembl_release": 116,
+  "assembly": "GRCh38",
+  "transcript_rule": "MANE_Select > Ensembl_canonical > longest CDS"
+ },
+ "join": {
+  "rna": {
+   "joined": 8232,
+   "of": 8248,
+   "rate": 0.9980601357904947,
+   "via": "ensembl",
+   "label": "GWPS measured genes (ENSG)"
+  },
+  "perturbation": {
+   "joined": 10646,
+   "of": 10656,
+   "rate": 0.9990615615615616,
+   "via": "ensembl",
+   "label": "GWPS perturbations (ENSG)"
+  },
+  "protein": {
+   "joined": 6917,
+   "of": 7031,
+   "rate": 0.9837860901720951,
+   "via": "symbol",
+   "label": "K562 iBAQ proteome (symbol)"
+  }
+ },
+ "ratio": {
+  "n": 5857,
+  "median": 2.431261918903564,
+  "iqr": [
+   2.1469804184464616,
+   2.690129812437534
+  ],
+  "span_5_95_log10": 1.3814955919670224,
+  "mrna_protein_r": 0.4017251314375915,
+  "mrna_protein_r2": 0.16138308122855013
+ },
+ "predictability": {
+  "n_genes": 5856,
+  "n_features": 18,
+  "cv": "GroupKFold(5) by chromosome",
+  "heldout_r2": 0.23640463835202175,
+  "heldout_spearman": 0.4013193277995049,
+  "heldout_r2_no_length_features": 0.09430688771658968,
+  "shuffled_null_r2_mean": -0.04558266980398219,
+  "shuffled_null_r2_max": -0.03824012011521338,
+  "p": 0.047619047619047616,
+  "top_univariate": [
+   [
+    "log_cds_len",
+    0.27834262035984064
+   ],
+   [
+    "n_exons",
+    0.22085246746117193
+   ],
+   [
+    "n_cds_exons",
+    0.21763383256971483
+   ],
+   [
+    "log_tx_len",
+    0.21201689689341788
+   ],
+   [
+    "log_utr3_len",
+    0.1250389339907102
+   ],
+   [
+    "gc_cds",
+    0.07337723004633125
+   ],
+   [
+    "has_utr5",
+    0.06968566571547347
+   ],
+   [
+    "log_utr5_len",
+    0.06947719861949057
+   ]
+  ]
+ },
+ "downstream_protein_prediction": {
+  "n_genes": 5856,
+  "r2_mrna_only": 0.16710453728542396,
+  "r2_sequence_only": 0.07504425491570532,
+  "r2_mrna_plus_sequence": 0.23534942133699333,
+  "shuffled_null_r2_mean": 0.14286583129959562,
+  "p": 0.047619047619047616
+ },
+ "fast_test": {
+  "measured_ratio_similarity": {
+   "label": "arm1  shared translational regime (measured ratio)",
+   "n_linked_total": 3584172,
+   "n_linked_used": 300000,
+   "n_draws": 24,
+   "mean_linked_absz": 0.9330588579177856,
+   "mean_matched_absz": 0.9336003934343656,
+   "ratio": 0.9994226470589638,
+   "p_median": 0.7006683945655823,
+   "frac_draws_p05": 0.0,
+   "residual_pert_p": 0.940344882508119,
+   "residual_gene_p": 0.4440128393471241
+  },
+  "translation_apparatus_x_high_ratio": {
+   "label": "arm2  translation apparatus perturbed x high-ratio gene",
+   "n_linked_total": 195090,
+   "n_linked_used": 195090,
+   "n_draws": 24,
+   "mean_linked_absz": 1.1059093475341797,
+   "mean_matched_absz": 1.208362340927124,
+   "ratio": 0.9152158871293068,
+   "p_median": 0.0,
+   "frac_draws_p05": 1.0,
+   "residual_pert_p": 0.30165941702822846,
+   "residual_gene_p": 3.716856349456066e-05
+  },
+  "predicted_ratio_similarity": {
+   "label": "arm3  shared translational regime (predicted ratio)",
+   "n_linked_total": 8443905,
+   "n_linked_used": 300000,
+   "n_draws": 24,
+   "mean_linked_absz": 0.8951116800308228,
+   "mean_matched_absz": 0.8942038789391518,
+   "ratio": 1.001017488539219,
+   "p_median": 0.3993828147649765,
+   "frac_draws_p05": 0.125,
+   "residual_pert_p": 0.9245261152585348,
+   "residual_gene_p": 0.22310191641251245
+  }
+ },
+ "coverage": {
+  "n_gwps_genes": 8248,
+  "frac_with_protein": 0.7101115421920465,
+  "expression_dependent_p": 1.619471976859977e-181,
+  "mean_ratio_low_mrna_quintile": 2.8266906805314744,
+  "mean_ratio_high_mrna_quintile": 1.8523061618830534
+ },
+ "limits": [
+  "NOT ribosome profiling. ENCODE has no Ribo-seq for K562 or for any biosample; this is a steady-state protein/mRNA ratio, which confounds translation rate with protein degradation rate and cannot separate them",
+  "two assays, two normalisations: iBAQ is a within-sample intensity divided by the number of theoretically observable peptides, Perturb-seq mean is a normalised UMI mean. Their ratio has no absolute units and is comparable only within this table",
+  "LEFT-CENSORED and the censoring is expression-dependent: the ratio exists only where mass spectrometry detected the protein, so genes with genuinely low protein per mRNA are preferentially missing and every statistic here is computed on a biased sample",
+  "the protein table joins by GENE SYMBOL, the weakest namespace in the registry; the mRNA and perturbation tables join by ENSG",
+  "restricted to the 8,248 genes GWPS measures, which are the expressed and well-detected ones, so the ratio is unknown for most of the genome",
+  "measured in unperturbed K562 -- a STATE, not a response. It says nothing about how the protein/mRNA ratio moves after a perturbation, which is what the chain's missing arrow actually requires",
+  "predicted ratios inherit the training set's censoring and are extrapolations for any gene whose protein was never detected",
+  "one cell line, one proteomics study, one growth condition"
+ ],
+ "verdict": "ENCODE HAS NO RIBOSOME PROFILING -- not for K562, not for any biosample: the assay_title facet was read live and carries 67 titles, none of them ribosome-profiling. The direct measurement of translation efficiency is unavailable from this source, so what follows is a steady-state protein-per-mRNA ratio and is not the same quantity. That ratio spans 1.4 log10 (24x) across 5,857 genes, so the multiplier is large enough to matter. It is predictable at chromosome-held-out R2 0.236 (null -0.046, p 0.0476) -- BUT dropping the length features collapses it to 0.094, so most of what is being predicted is protein length, and iBAQ already divides by the number of theoretically observable peptides. That is the mass spectrometry's normalisation coming back out, not demonstrated translation biology. On the decision that matters, predicting K562 protein level, mRNA alone reaches held-out R2 0.167 and mRNA plus sequence reaches 0.235 (+0.068, shuffled-feature null 0.143, p 0.0476); sequence alone reaches 0.075. On the fast test it marks nothing: arm1 0.999x, arm2 0.915x, arm3 1.001x against matched controls, all below the ~1.05 bar that PPI (1.208x) and co-dependency (1.070x) clear. That is the expected result stated in advance rather than a disappointment -- the fast test scores PAIRS and this is a PER-GENE layer, whose value if any lies on the mRNA->protein axis that Perturb-seq cannot see at all. The binding constraint is not the model, it is the measurement: only 71% of GWPS genes have a K562 protein value and missingness is strongly expression-dependent (p 1.62e-181), so the ratio is left-censored exactly where it would be most informative."
+}
