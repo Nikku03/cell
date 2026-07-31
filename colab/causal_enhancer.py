@@ -3,15 +3,19 @@ CAUSAL for the gene in Perturb-seq, predict a CRISPR-validated enhancer-gene lin
 better than accessibility?
 
 WHAT IS BEING COMBINED, AND WHY THAT COMBINATION IS THE INTERESTING ONE.
-`screen_ccre.py` established the element side: 1,063,878 SCREEN cCREs, of which 340k are K562-accessible, and
-the number that qualifies every E-G claim in this project -- 66.8% of experimentally VALIDATED K562 E-G links
-sit at a distance the current E-G layer cannot express. It also showed that K562 cCRE overlap carries only a
-weak candidate-filter signal. `bound_causal.py` established the TF side: 392 TFs (507 here, after a re-fetch
-of the ENCODE K562 conservative-IDR set) that have BOTH a K562 ChIP occupancy track AND a genome-scale
-Perturb-seq perturbation, split into DIRECT / INDIRECT / bound-not-causal tiers, with the finding that only
-12% of causal edges are bound at the promoter and that occupancy predicts transfer MAGNITUDE but not SIGN.
+`screen_ccre.py` established the element side: 1,063,878 SCREEN cCREs of which 151,858 are K562-accessible,
+the benchmark having tested 3.89% of them; the number that qualifies every E-G claim in this project (31.5%
+of experimentally VALIDATED K562 E-G links sit at a distance the current E-G layer cannot express); and one
+predictive fact -- overlapping a K562-accessible cCRE raises the validated-positive rate to 0.0428 against a
+matched 0.0171, a 2.51x lift, so element ANNOTATION carries signal but is far from sufficient.
+`bound_causal.py` established the TF side: 392 TFs (507 here, after a re-fetch of the ENCODE K562
+conservative-IDR set) with BOTH a K562 ChIP occupancy track AND a genome-scale Perturb-seq perturbation,
+split into DIRECT / INDIRECT / bound-not-causal tiers, finding that 31.6% of causal edges are bound at the
+promoter against a 25.0% background (1.27x) and that directness predicts transfer to RPE1 on both magnitude
+and sign. Both modules worked at PROMOTERS or on ANNOTATION; neither asked what a distal element's TF set
+buys.
 
-Neither module ever crossed occupancy with causality AT A DISTAL ELEMENT. That is the natural next object:
+Crossing occupancy with causality AT A DISTAL ELEMENT is the natural next object:
 an enhancer is not "a peak", it is a place where particular proteins sit, and the proteins that sit there
 should be the ones whose removal moves the gene. Distance and accessibility are the two features every
 enhancer-gene predictor already has, and they are known to be strong. So the question is not "does TF
@@ -40,7 +44,13 @@ WHAT IS MEASURED, AND AGAINST WHAT CONTROL, BEFORE ANY NUMBER.
              with a DIFFERENT element matched on distance-to-TSS decile and accessibility decile, then score
              the swapped pair with the model trained on real pairs. If the decoy scores as well as the real
              element, the model is reading the gene and the distance and the element is decoration. Drawn 20
-             times.
+             times. ONE THING THIS CONTROL DOES THAT ONLY THE NUMBERS REVEALED, recorded here rather than
+             buried: a decile-matched decoy carries the DECILE of the real distance, not the real distance,
+             so an arm holding a distance feature loses within-decile resolution and drops for a reason that
+             is not about the element. Every swap is therefore ALSO run in an element-only variant that
+             retains the real distance and swaps only the element-derived features. That variant is POST HOC
+             and is labelled as such in the output; the prespecified gates are still scored on the
+             prespecified swap.
   CONTROL 5  THE DEGREE-MATCHED ELEMENT SWAP. Elements differ in how many TFs sit on them, and a decoy drawn
              only on distance and accessibility can carry a systematically different TF count, which would
              move every TF-causality feature for a reason that has nothing to do with TF identity. So the
@@ -705,25 +715,34 @@ def main():
                     break
                 pick[bad] = v[rng.integers(0, len(v), size=int(bad.sum()))]
             bad = (ech[el_idx[pick]] == chrTSS[tgt]) | (el_idx[pick] == el_idx[tgt])
+            # a pair that could not be given a legal decoy KEEPS ITS OWN ELEMENT rather than accepting an
+            # illegal one. That biases the control toward the real elements, i.e. it can only make the real
+            # side look better, so a real side that still fails to win is failing against a lenient control.
+            pick[bad] = tgt[bad]
             nfail += int(bad.sum())
             out[tgt] = pick
         return out, nfail
 
-    def run_swap(bins, label, model_arms, keep_dist=False):
-        """One donor draw is shared by every arm evaluated on it, and NO model is refitted -- the fold models
-        from section 4 are re-used and shown the swapped features.
+    def run_swap(bins, label, model_arms):
+        """One donor draw is shared by every arm AND by both distance modes, and NO model is refitted -- the
+        fold models from section 4 are re-used and shown the swapped features.
 
-        keep_dist=False is the swap as specified: the decoy brings its OWN distance, decile-matched to the
-        real one. That has a cost which only became visible in the numbers and is reported rather than
-        hidden -- decile matching preserves the distance DISTRIBUTION but destroys the within-decile
-        distance of each individual pair, and within-decile distance is genuinely predictive. So an arm
-        containing a distance feature will lose AUPRC under the swap for a reason that has nothing to do
-        with the element. keep_dist=True repeats the swap with the REAL distance retained, swapping only the
-        element-derived features (accessibility, occupancy, TF causality). That variant is POST HOC -- it was
-        added after seeing the first result -- and is labelled as such everywhere it appears.
+        TWO DISTANCE MODES, from the SAME donors:
+          'decoy_distance'  the swap as specified: the decoy brings its OWN distance, decile-matched to the
+                            real one. This has a cost that only became visible in the numbers and is
+                            reported rather than hidden -- decile matching preserves the distance
+                            DISTRIBUTION but destroys the within-decile distance of each individual pair,
+                            and within-decile distance is genuinely predictive, so an arm containing a
+                            distance feature loses AUPRC for a reason that is not about the element.
+          'real_distance'   POST HOC, added after the first run: the same decoys with the REAL distance
+                            retained, so only the element-derived features (accessibility, occupancy, TF
+                            causality) are swapped. Labelled post hoc everywhere it appears.
+        Sharing the donors between the two modes is not just cheaper, it is the right comparison: the two
+        differ ONLY in whether the distance came along.
         """
         arms = list(model_arms)
-        aupr = {a: [] for a in arms}
+        MODES = ("decoy_distance", "real_distance")
+        aupr = {(m, a): [] for m in MODES for a in arms}
         imb = {"log10_dist": [], "dhs_pct": [], "n_tf_bound": []}
         pv = {"log10_dist": [], "dhs_pct": [], "n_tf_bound": []}
         nfail_tot = 0
@@ -731,69 +750,68 @@ def main():
             rng = np.random.default_rng(5000 + d)
             j, nf = swap_indices(bins, rng)
             nfail_tot += nf
-            sw = blocks(el_idx[j], dist if keep_dist else dist[j])
-            for cov, a_, b_ in (("log10_dist", np.log10(dist),
-                                 np.log10(dist if keep_dist else dist[j])),
+            sw = blocks(el_idx[j], dist[j])
+            swk = dict(sw); swk["DIST"] = {"log10_dist": np.log10(dist)}   # same decoys, real distance
+            for cov, a_, b_ in (("log10_dist", np.log10(dist), np.log10(dist[j])),
                                 ("dhs_pct", el_dhspct[el_idx], el_dhspct[el_idx[j]]),
                                 ("n_tf_bound", nbound_el[el_idx].astype(float),
                                  nbound_el[el_idx[j]].astype(float))):
                 imb[cov].append(float(np.mean(a_) - np.mean(b_)))
                 pv[cov].append(float(stats.mannwhitneyu(a_, b_, alternative="two-sided")[1]))
-            for arm in arms:
-                Fs = mat(sw, ARMS[arm])
-                aupr[arm].append(float(np.mean([score_oof(MODELS[arm][s], Fs, y, folds[s])
-                                                for s in SEEDS])))
+            for mode, bl in (("decoy_distance", sw), ("real_distance", swk)):
+                for arm in arms:
+                    Fs = mat(bl, ARMS[arm])
+                    aupr[(mode, arm)].append(float(np.mean([score_oof(MODELS[arm][s], Fs, y, folds[s])
+                                                            for s in SEEDS])))
         out = {}
         report(f"    {label}")
-        report(f"      residual imbalance (real - swapped): "
+        report(f"      residual imbalance (real - decoy): "
                f"{ {k: round(float(np.mean(v)), 4) for k, v in imb.items()} }   "
                f"mean Mann-Whitney p per covariate: "
                f"{ {k: float(f'{np.mean(v):.3g}') for k, v in pv.items()} }")
         report(f"      {nfail_tot / SWAP_DRAWS:,.0f} pairs per draw had no valid donor in their decile cell "
                f"and kept their own element (they make the control CONSERVATIVE, not liberal)")
-        for arm in arms:
-            v = aupr[arm]
-            real_a = res[arm]["auprc_mean"]
-            frac = float(np.mean([real_a > a for a in v]))
-            o = {"label": label, "model_arm": arm, "draws": SWAP_DRAWS,
-                 "real_distance_retained": bool(keep_dist),
-                 "EFFECT_raw_real_auprc": real_a,
-                 "swapped_auprc_mean": float(np.mean(v)), "swapped_auprc_sd": float(np.std(v)),
-                 "swapped_auprc_min": float(np.min(v)), "swapped_auprc_max": float(np.max(v)),
-                 "frac_draws_real_beats_swap": frac,
-                 "delta_real_minus_swap": real_a - float(np.mean(v)),
-                 "frac_of_real_reproduced_by_swap": float(np.mean(v)) / max(real_a, 1e-12),
-                 "n_pairs_without_valid_donor_per_draw": int(nfail_tot / SWAP_DRAWS),
-                 "residual_imbalance_real_minus_swap": {k: float(np.mean(x)) for k, x in imb.items()},
-                 "residual_imbalance_max_abs": {k: float(np.max(np.abs(x))) for k, x in imb.items()},
-                 "residual_imbalance_mean_mannwhitney_p": {k: float(np.mean(x)) for k, x in pv.items()}}
-            report(f"      [{arm}] real {real_a:.4f}   swapped {np.mean(v):.4f} +/- {np.std(v):.4f} "
-                   f"(range {np.min(v):.4f}-{np.max(v):.4f});  real beats the decoy in {frac:.0%} of "
-                   f"{SWAP_DRAWS} draws; the decoy reproduces "
-                   f"{o['frac_of_real_reproduced_by_swap']:.0%} of the real AUPRC")
-            out[arm] = o
+        for mode in MODES:
+            for arm in arms:
+                v = aupr[(mode, arm)]
+                real_a = res[arm]["auprc_mean"]
+                frac = float(np.mean([real_a > a for a in v]))
+                o = {"label": label, "model_arm": arm, "draws": SWAP_DRAWS, "distance_mode": mode,
+                     "prespecified": mode == "decoy_distance",
+                     "EFFECT_raw_real_auprc": real_a,
+                     "swapped_auprc_mean": float(np.mean(v)), "swapped_auprc_sd": float(np.std(v)),
+                     "swapped_auprc_min": float(np.min(v)), "swapped_auprc_max": float(np.max(v)),
+                     "frac_draws_real_beats_swap": frac,
+                     "delta_real_minus_swap": real_a - float(np.mean(v)),
+                     "frac_of_real_reproduced_by_swap": float(np.mean(v)) / max(real_a, 1e-12),
+                     "n_pairs_without_valid_donor_per_draw": int(nfail_tot / SWAP_DRAWS),
+                     "residual_imbalance_real_minus_decoy": {k: float(np.mean(x)) for k, x in imb.items()},
+                     "residual_imbalance_max_abs": {k: float(np.max(np.abs(x))) for k, x in imb.items()},
+                     "residual_imbalance_mean_mannwhitney_p": {k: float(np.mean(x)) for k, x in pv.items()}}
+                tag = "PRESPEC" if mode == "decoy_distance" else "POSTHOC"
+                report(f"      [{tag} {mode:15s} {arm}] real {real_a:.4f}   swapped {np.mean(v):.4f} "
+                       f"+/- {np.std(v):.4f} (range {np.min(v):.4f}-{np.max(v):.4f});  real beats the decoy "
+                       f"in {frac:.0%} of {SWAP_DRAWS} draws; the decoy reproduces "
+                       f"{o['frac_of_real_reproduced_by_swap']:.0%} of the real AUPRC")
+                out[(mode, arm)] = o
         return out
 
     bins_da = np.array([f"{a}|{b}" for a, b in zip(dq, aq)])
     bins_dan = np.array([f"{a}|{b}|{c}" for a, b, c in zip(dq, aq, nq)])
     ARMS_SWAPPED = [FULL, "TFcausality_only"]
-    s_da = run_swap(bins_da, "PRESPECIFIED SWAP -- distance decile x accessibility decile, decoy brings its "
-                    "own distance", ARMS_SWAPPED)
-    s_dg = run_swap(bins_dan, "PRESPECIFIED SWAP -- additionally matched on n-TFs-bound decile "
-                    "(DEGREE-MATCHED), decoy brings its own distance", ARMS_SWAPPED)
-    k_da = run_swap(bins_da, "POST HOC element-only swap -- same decoys, REAL distance retained "
-                    "(isolates the element from the distance)", ARMS_SWAPPED, keep_dist=True)
-    k_dg = run_swap(bins_dan, "POST HOC element-only swap, DEGREE-MATCHED decoys, REAL distance retained",
-                    ARMS_SWAPPED, keep_dist=True)
+    TFC = "TFcausality_only"
+    s_da = run_swap(bins_da, "SWAP A -- decoy matched on distance decile x accessibility decile", ARMS_SWAPPED)
+    s_dg = run_swap(bins_dan, "SWAP B -- decoy additionally matched on n-TFs-bound decile (DEGREE-MATCHED)",
+                    ARMS_SWAPPED)
     swaps = {
-        "distance_x_accessibility": s_da[FULL],
-        "degree_matched": s_dg[FULL],
-        "distance_x_accessibility_TFCarm": s_da["TFcausality_only"],
-        "degree_matched_TFCarm": s_dg["TFcausality_only"],
-        "element_only_distance_x_accessibility": k_da[FULL],
-        "element_only_degree_matched": k_dg[FULL],
-        "element_only_distance_x_accessibility_TFCarm": k_da["TFcausality_only"],
-        "element_only_degree_matched_TFCarm": k_dg["TFcausality_only"],
+        "distance_x_accessibility": s_da[("decoy_distance", FULL)],
+        "degree_matched": s_dg[("decoy_distance", FULL)],
+        "distance_x_accessibility_TFCarm": s_da[("decoy_distance", TFC)],
+        "degree_matched_TFCarm": s_dg[("decoy_distance", TFC)],
+        "element_only_distance_x_accessibility": s_da[("real_distance", FULL)],
+        "element_only_degree_matched": s_dg[("real_distance", FULL)],
+        "element_only_distance_x_accessibility_TFCarm": s_da[("real_distance", TFC)],
+        "element_only_degree_matched_TFCarm": s_dg[("real_distance", TFC)],
     }
 
     # ---- 6. what the increment is, sanity-checked against the arms it must beat --------------------------
@@ -831,6 +849,12 @@ def main():
            f"{t2['frac_draws_real_beats_swap']:.0%} of {SWAP_DRAWS} draws)")
     tf_identity_survives = (t2["frac_draws_real_beats_swap"] >= MIN_SWAP_FRAC and
                             t2e["frac_draws_real_beats_swap"] >= MIN_SWAP_FRAC)
+    # A decoy landing ABOVE the real element is not a reversal and must not be written as one: sign and
+    # significance are read together, and "the decoy is better" is not a claim this design can support.
+    above = (" -- and the decoy landing slightly ABOVE the real element is NOT read as a reversal; it is "
+             "what no pair-specific signal looks like, the real TF-identity features being replaced by a "
+             "smoother draw from the same distribution"
+             if t2["swapped_auprc_mean"] > t2["EFFECT_raw_real_auprc"] else "")
 
     # a descriptive cross-check, not a claim: are positives bound by more CAUSAL TFs than negatives, matched
     # on distance x accessibility deciles? 20 draws, raw rates reported.
@@ -892,17 +916,39 @@ def main():
              f"({sw2['frac_draws_real_beats_swap']:.0%}). The model is reading WHICH TFs sit on the element, "
              f"not how busy it is and not which gene it is pointed at.")
     elif not passes_inc:
-        v = (f"NO INCREMENT FROM TF CAUSALITY OVER DISTANCE AND ACCESSIBILITY -- NOT DETECTED. {head}. The "
-             f"full model is {inc:+.4f} AUPRC against the best baseline ({best_base}, {rb:.4f}), clearing "
-             f"the prespecified {MIN_INCREMENT:.3f} bar in only {sum(per_seed_win)}/{len(SEEDS)} chromosome "
-             f"partitions. Weighting an element's bound TFs by whether those TFs are causal for the gene in "
-             f"Perturb-seq does not add to what distance and accessibility already say. The element swap is "
-             f"reported anyway and is consistent: a decile-matched decoy element reproduces "
-             f"{sw1['frac_of_real_reproduced_by_swap']:.0%} of the full model's AUPRC "
-             f"({sw1['swapped_auprc_mean']:.4f} vs {rf:.4f}, real winning "
-             f"{sw1['frac_draws_real_beats_swap']:.0%} of {SWAP_DRAWS} draws), which is what a model that "
-             f"reads the gene and the distance rather than the element looks like. This is a null and the "
-             f"project commits it.")
+        v = (f"THE ELEMENT'S TF SET PAYS, BUT AS A COUNT, NOT AS A CAUSAL IDENTITY -- the causality "
+             f"weighting is NOT DETECTED over an occupancy-count baseline. {head}. Read as a ladder: "
+             f"accessibility adds {res['distance+accessibility']['auprc_mean'] - res['distance_only']['auprc_mean']:+.4f} "
+             f"to distance, the raw number of bound TFs adds a further "
+             f"{res['dist+acc+TFoccupancy']['auprc_mean'] - res['distance+accessibility']['auprc_mean']:+.4f}, "
+             f"and weighting those TFs by whether their knockdown actually moves the gene adds only "
+             f"{inc_over_occ:+.4f} on top -- below the prespecified {MIN_INCREMENT:.3f} bar and clearing it "
+             f"in {sum(per_seed_win)}/{len(SEEDS)} chromosome partitions. Against the two baselines the "
+             f"question named, TF causality does add ({inc_over_distacc:+.4f} over distance+accessibility, "
+             f"{rf - res['distance_only']['auprc_mean']:+.4f} over distance alone), but "
+             f"{100*(1 - inc_over_occ/max(inc_over_distacc,1e-9)):.0f}% of that increment is bought by "
+             f"counting TFs, which needs no Perturb-seq. The DEGREE-MATCHED element swap says the same thing "
+             f"in the sharpest form available here: on the TF-causality-only arm, which has no distance "
+             f"feature to lose, a decoy element carrying the same NUMBER of bound TFs but a DIFFERENT TF SET "
+             f"scores {t2['swapped_auprc_mean']:.4f} against the real element's "
+             f"{t2['EFFECT_raw_real_auprc']:.4f} -- {t2['frac_of_real_reproduced_by_swap']:.0%} of it, with "
+             f"the real element winning {t2['frac_draws_real_beats_swap']:.0%} of {SWAP_DRAWS} draws{above}. "
+             f"WHICH transcription factors sit on a distal element, weighted by their causal effect on the "
+             f"gene, is not shown here to matter; HOW MANY sit on it does. The prespecified swap gates (ii) "
+             f"and (iii) both pass on the full model ({sw1['frac_draws_real_beats_swap']:.0%} and "
+             f"{sw2['frac_draws_real_beats_swap']:.0%}), but they are lenient by construction -- a "
+             f"decile-matched decoy carries the decile of the distance and not the distance, and the full "
+             f"model has a distance feature to lose; with the real distance retained the same decoys still "
+             f"cost the full model only {1 - e2['frac_of_real_reproduced_by_swap']:.0%} of its AUPRC "
+             f"({e2['swapped_auprc_mean']:.4f}). One real thing survives all of it and is reported as "
+             f"descriptive rather than predictive: positives carry "
+             f"{cross.get('EFFECT_raw_positives_mean_n_causal_bound_TFs', float('nan')):.2f} bound-and-causal "
+             f"TFs against {cross.get('matched_negatives_mean', float('nan')):.2f} for distance- and "
+             f"accessibility-matched negatives "
+             f"({cross.get('ratio', float('nan')):.2f}x, p<0.05 in "
+             f"{100*cross.get('frac_draws_p_lt_0.05', 0):.0f}% of {cross.get('n_draws', 0)} draws) -- a real "
+             f"association that a model already holding distance, accessibility and TF count cannot convert "
+             f"into ranking power. This is a null on the headline question and the project commits it.")
     elif not passes_swap:
         v = (f"THE INCREMENT IS REAL BUT THE ELEMENT IS NOT DOING THE WORK -- the model reads the gene and "
              f"the distance. {head}, an increment of {inc:+.4f} over {best_base} ({rb:.4f}). But replacing "
@@ -947,12 +993,27 @@ def main():
         f"occupancy is binary at ELEMENT_PAD={ELEMENT_PAD} bp around the tested element. Peak strength is "
         f"discarded, so a marginal peak and a summit-in-the-middle peak count the same.",
         f"'causal' is |robust z| >= {Z_EDGE} in a pseudobulk knockdown. It is a CONSEQUENCE of removing the "
-        f"TF, direct or not -- bound_causal.py's own finding is that only ~12% of causal edges are bound at "
-        f"the promoter, so most of these weights are downstream effects that happen to be attached to a TF "
-        f"that also sits at this element.",
+        f"TF, direct or not -- bound_causal.py's own finding is that only 31.6% of causal edges are bound at "
+        f"the promoter at all, so most of these weights are downstream effects that happen to be attached to "
+        f"a TF that also sits at this element.",
         f"the swap donor pool is the benchmark's own {len(uel):,} elements. That is deliberate (a decoy that "
         f"is a real tested candidate is a harder control than a random genomic window) but it means the "
         f"control asks 'is THIS element better than ANOTHER TESTED element', not 'better than random DNA'.",
+        f"THE PRESPECIFIED SWAP GATES ARE LENIENT, AND THIS WEAKENS THE PART OF THE RESULT THAT PASSED. A "
+        f"decile-matched decoy carries the DECILE of the real distance, not the real distance, so any arm "
+        f"holding a distance feature loses within-decile resolution under the swap and its AUPRC falls for a "
+        f"reason unrelated to the element. Gates (ii) and (iii) pass on the full model largely for that "
+        f"reason. The element-only variants (real distance retained) and the TF-causality-only arm are "
+        f"reported alongside and are the sharper reads; they were added AFTER seeing the first result and "
+        f"are labelled post hoc in the JSON.",
+        f"the degree-matched swap has {swaps['degree_matched']['n_pairs_without_valid_donor_per_draw']:,} "
+        f"pairs per draw ({100*swaps['degree_matched']['n_pairs_without_valid_donor_per_draw']/len(y):.1f}%) "
+        f"whose distance x accessibility x n-TF-bound decile cell held no valid donor; those pairs keep "
+        f"their own element, which biases that control TOWARD the real elements, i.e. makes it conservative.",
+        f"the causality weights are aggregates over the bound TF set (count, max, mean, top-5, signed mean, "
+        f"and two gene-background-subtracted terms). A per-TF model that learned which INDIVIDUAL TFs matter "
+        f"is not fitted here: with {int(y.sum())} positives over {len(tfs)} TFs it would be fitting noise, "
+        f"and that is a real ceiling on this design rather than a claim that no such signal exists.",
         f"pairs below {POWER_COL} {MIN_POWER} are excluded, not counted as negatives, because not-detected "
         f"is not not-linked. {int((pw < MIN_POWER).sum()):,} pairs are dropped that way.",
         f"AUPRC is pooled over out-of-fold predictions within a seed. Folds are whole chromosomes, so fold "
@@ -1005,13 +1066,27 @@ def main():
                "seeds": list(SEEDS),
                "mean_frac_chromosomes_in_same_fold_across_seed_pairs": float(np.mean(pair_agree))},
         "arms_raw_auprc": res,
+        "positive_base_rate_for_every_auprc_above": base_rate,
+        "ladder": ladder_out,
         "best_baseline": best_base,
         "increment_over_best_baseline": float(inc),
+        "increment_over_distance_plus_accessibility": float(inc_over_distacc),
+        "increment_over_distance_accessibility_TFoccupancy": float(inc_over_occ),
         "increment_per_seed_passes": per_seed_win,
         "element_swap": swaps,
         "descriptive_cross_check_causal_bound_TFs": cross,
-        "gates": {"increment": bool(passes_inc), "element_swap": bool(passes_swap),
-                  "degree_matched_swap": bool(passes_deg)},
+        "gates_prespecified": {"increment": bool(passes_inc), "element_swap": bool(passes_swap),
+                               "degree_matched_swap": bool(passes_deg)},
+        "diagnostics_post_hoc": {
+            "note": "added after the first run, when the prespecified swap turned out to also coarsen "
+                    "distance to its decile; reported so the prespecified gates are not read as stronger "
+                    "than they are",
+            "tf_identity_survives_degree_matched_swap_on_TFcausality_arm": bool(tf_identity_survives),
+            "element_only_swap_full_model_frac_reproduced":
+                swaps["element_only_distance_x_accessibility"]["frac_of_real_reproduced_by_swap"],
+            "element_only_degree_matched_full_model_frac_reproduced":
+                swaps["element_only_degree_matched"]["frac_of_real_reproduced_by_swap"],
+        },
         "verdict": v,
         "limits": limits,
         "log": log,

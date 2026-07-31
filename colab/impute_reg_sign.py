@@ -361,24 +361,45 @@ def edge_features(G, si, ti, ann, coexpr_corr, gene_stat, prefix_only=None):
 class Swap:
     """The swapped-source control, and the residual-imbalance audit that says whether it matched.
 
-    Keep the target and the PREDICTED sign; read the measured sign at a different perturbation from the
-    same perturbation-strength DECILE. Deciles, not quartiles: this project has already found residual
-    imbalance that a quartile match left behind and its own rank test did not catch.
+    Keep the target and the PREDICTED sign; read the measured sign at a different perturbation of matched
+    perturbation strength. Deciles, not quartiles.
+
+    AND THE DECILE MATCH IS NOT TIGHT ENOUGH HERE, WHICH THE AUDIT CAUGHT. Curated sources are TFs, and TFs
+    sit at the TOP of whatever strength decile they land in: the first run of this module matched on deciles
+    and still left a standardised mean difference of +0.25 in perturbation strength between the real and the
+    swapped sources. A control that is systematically weaker than the arm it is controlling would flatter
+    the edge arm. So both are computed and both are reported:
+
+        DECILE      the construction colab/causal_reg.py uses, kept so the numbers are comparable to it
+        NEAREST     the replacement is drawn from the +/- 150 perturbations nearest in strength RANK,
+                    which drives the residual imbalance on strength to ~0
+
+    Reporting the loose one alone would have been the mistake; reporting only the tight one would have hidden
+    that the incumbent construction has this defect.
     """
+    NN_WINDOW = 150
 
     def __init__(self, Z, cov, report, label):
         self.Z = Z
         self.strength = np.nanmean(np.abs(Z), axis=1)
         q = np.nanquantile(self.strength, np.linspace(.1, .9, 9))
         self.dec = np.digitize(self.strength, q)
+        self.order = np.argsort(np.where(np.isfinite(self.strength), self.strength, np.inf))
+        self.rank = np.empty(len(self.strength), dtype=int)
+        self.rank[self.order] = np.arange(len(self.strength))
         self.cov = dict(cov)
         self.cov["strength"] = self.strength
         self.label = label
-        cnt = np.bincount(self.dec, minlength=10)
-        report(f"    {label}: perturbation-strength deciles, sizes {cnt.tolist()}")
+        report(f"    {label}: {len(self.strength):,} perturbations; strength deciles sized "
+               f"{np.bincount(self.dec, minlength=10).tolist()}")
 
-    def draw(self, rows, seed):
+    def draw(self, rows, seed, mode="decile"):
         r = np.random.default_rng(seed)
+        if mode == "nn":
+            n = len(self.strength)
+            off = r.integers(-self.NN_WINDOW, self.NN_WINDOW + 1, size=len(rows))
+            off = np.where(off == 0, 1, off)          # never return the source itself
+            return self.order[np.clip(self.rank[rows] + off, 0, n - 1)]
         alt = np.empty(len(rows), dtype=int)
         for q in np.unique(self.dec):
             m = self.dec[rows] == q
@@ -386,7 +407,7 @@ class Swap:
                 alt[m] = r.choice(np.where(self.dec == q)[0], int(m.sum()))
         return alt
 
-    def agree(self, rows, cols, pred, seeds, cond=None):
+    def agree(self, rows, cols, pred, seeds, cond=None, mode="decile"):
         """Mean agreement of `pred` with the measured sign at a swapped source, one value per seed.
 
         `cond` conditions the control identically to the edge arm: selecting the edge arm on |z| >= t
@@ -394,24 +415,23 @@ class Swap:
         """
         out = []
         for s in seeds:
-            alt = self.draw(rows, s)
-            z2 = self.Z[alt, cols]
+            z2 = self.Z[self.draw(rows, s, mode), cols]
             f = np.isfinite(z2)
             if cond is not None:
                 f &= np.abs(z2) >= cond
             out.append(float((np.sign(z2) == pred)[f].mean()) if f.sum() > 20 else float("nan"))
         return np.array(out)
 
-    def imbalance(self, rows, seeds):
+    def imbalance(self, rows, seeds, mode="decile"):
         """Standardised mean difference per covariate between the real and the swapped sources.
 
-        Rule 3 says match on deciles AND check for residual imbalance per covariate. This is that check;
-        it is reported whatever it says.
+        Rule 3 says match on deciles AND check for residual imbalance per covariate. This is that check,
+        reported whatever it says -- it is what forced the nearest-neighbour arm above into existence.
         """
         rep = {}
         for k, v in self.cov.items():
             a = v[rows]
-            b = np.concatenate([v[self.draw(rows, s)] for s in seeds[:5]])
+            b = np.concatenate([v[self.draw(rows, s, mode)] for s in seeds[:5]])
             sd = np.nanstd(np.concatenate([a, b]))
             rep[k] = {"real": float(np.nanmean(a)), "swapped": float(np.nanmean(b)),
                       "smd": float((np.nanmean(a) - np.nanmean(b)) / max(sd, 1e-9))}
@@ -564,18 +584,24 @@ def main():
     fin = np.isfinite(z_s)
     r_s, c_s, z_s, cur_s = r_s[fin], c_s[fin], z_s[fin], sg[sgn_mask][fin]
     conv = []
-    report(f"     {'subset':>14s} {'n':>8s} {'agree':>8s} {'swap ctrl':>10s} {'incr':>9s} {'won':>6s}")
+    report(f"     {'subset':>14s} {'n':>8s} {'agree':>8s} {'swap':>8s} {'incr':>9s} {'won':>5s} "
+           f"{'swapNN':>8s} {'incrNN':>9s} {'wonNN':>6s}")
     for thr in (0.0, 2.0, 3.0):
         k = np.abs(z_s) >= thr
         pr = -cur_s[k]
         ag = float((np.sign(z_s[k]) == pr).mean())
-        sw = SW.agree(r_s[k], c_s[k], pr, range(700, 700 + N_CTRL), cond=(thr if thr > 0 else None))
-        won = float(np.mean(ag > sw))
-        conv.append({"z_min": thr, "n": int(k.sum()), "agree": ag, "swap": float(np.nanmean(sw)),
-                     "swap_sd": float(np.nanstd(sw)), "increment": ag - float(np.nanmean(sw)),
-                     "frac_draws_won": won})
-        report(f"     {'|z| >= ' + f'{thr:g}':>14s} {int(k.sum()):8,d} {ag:8.4f} "
-               f"{np.nanmean(sw):10.4f} {ag-np.nanmean(sw):+9.4f} {won:6.2f}")
+        row = {"z_min": thr, "n": int(k.sum()), "agree": ag}
+        for mode, sfx in (("decile", ""), ("nn", "_nn")):
+            sw = SW.agree(r_s[k], c_s[k], pr, range(700, 700 + N_CTRL),
+                          cond=(thr if thr > 0 else None), mode=mode)
+            row[f"swap{sfx}"] = float(np.nanmean(sw))
+            row[f"swap_sd{sfx}"] = float(np.nanstd(sw))
+            row[f"increment{sfx}"] = ag - float(np.nanmean(sw))
+            row[f"frac_draws_won{sfx}"] = float(np.mean(ag > sw))
+        conv.append(row)
+        report(f"     {'|z| >= ' + f'{thr:g}':>14s} {int(k.sum()):8,d} {ag:8.4f} {row['swap']:8.4f} "
+               f"{row['increment']:+9.4f} {row['frac_draws_won']:5.2f} {row['swap_nn']:8.4f} "
+               f"{row['increment_nn']:+9.4f} {row['frac_draws_won_nn']:6.2f}")
 
     report(f"\n     ...AND WHY THE OBVIOUS ROUTE IS CLOSED. If the unsigned edges were the same objects as "
            f"the signed\n     ones, the sign could simply be looked up in an external signed resource.")
@@ -631,12 +657,18 @@ def main():
         sub = (~half) & strong & has
         pr = np.array([1 if bs[int(s)] > 0 else -1 for s in s_u[sub]])
         ag = float((np.sign(z_u[sub]) == pr).mean())
-        sw = SW.agree(r_u[sub], c_u[sub], pr, range(800, 800 + N_CTRL), cond=(thr if thr > 0 else None))
-        ceil.append({"z_min": thr, "n": int(sub.sum()), "n_sources": len(bs), "agree": ag,
-                     "swap": float(np.nanmean(sw)), "increment": ag - float(np.nanmean(sw)),
-                     "frac_draws_won": float(np.mean(ag > sw))})
+        row = {"z_min": thr, "n": int(sub.sum()), "n_sources": len(bs), "agree": ag}
+        for mode, sfx in (("decile", ""), ("nn", "_nn")):
+            sw = SW.agree(r_u[sub], c_u[sub], pr, range(800, 800 + N_CTRL),
+                          cond=(thr if thr > 0 else None), mode=mode)
+            row[f"swap{sfx}"] = float(np.nanmean(sw))
+            row[f"increment{sfx}"] = ag - float(np.nanmean(sw))
+            row[f"frac_draws_won{sfx}"] = float(np.mean(ag > sw))
+        ceil.append(row)
         report(f"     |z| >= {thr:g}: n {int(sub.sum()):7,d} over {len(bs):4,d} sources  agree {ag:.4f}  "
-               f"swap {np.nanmean(sw):.4f}  CEILING INCREMENT {ag-np.nanmean(sw):+.4f}")
+               f"swap {row['swap']:.4f}  CEILING INCREMENT {row['increment']:+.4f}  "
+               f"(nearest-neighbour control {row['swap_nn']:.4f}, {row['increment_nn']:+.4f}, "
+               f"{row['frac_draws_won_nn']:.0%} of draws won)")
 
     # does any annotation see that bias? the crux, measured at source level
     strong_u = np.abs(z_u) >= Z_LAB
@@ -745,16 +777,21 @@ def main():
         return oof
 
     def score(oof_p, mask, sw_obj, rows, cols, zvec, tag, seeds0):
-        """RAW held-out agreement (never a difference from a shuffle) plus its swapped-source control."""
+        """RAW held-out agreement -- never a difference from a shuffle -- plus both swapped-source arms."""
         m = mask & np.isfinite(oof_p)
         pr = np.where(oof_p[m] > 0.5, 1, -1)
         ag = float((np.sign(zvec[m]) == pr).mean())
         a = auc((np.sign(zvec[m]) > 0).astype(int), oof_p[m])
-        sw = sw_obj.agree(rows[m], cols[m], pr, seeds0, cond=Z_LAB)
-        return {"tag": tag, "n": int(m.sum()), "accuracy": ag, "auc": a,
-                "swap": float(np.nanmean(sw)), "swap_sd": float(np.nanstd(sw)),
-                "increment": ag - float(np.nanmean(sw)),
-                "frac_draws_won": float(np.mean(ag > sw))}
+        out = {"tag": tag, "n": int(m.sum()), "accuracy": ag, "auc": a,
+               "majority_baseline": float(max((np.sign(zvec[m]) > 0).mean(),
+                                              (np.sign(zvec[m]) < 0).mean()))}
+        for mode, sfx in (("decile", ""), ("nn", "_nn")):
+            sw = sw_obj.agree(rows[m], cols[m], pr, seeds0, cond=Z_LAB, mode=mode)
+            out[f"swap{sfx}"] = float(np.nanmean(sw))
+            out[f"swap_sd{sfx}"] = float(np.nanstd(sw))
+            out[f"increment{sfx}"] = ag - float(np.nanmean(sw))
+            out[f"frac_draws_won{sfx}"] = float(np.mean(ag > sw))
+        return out
 
     res_k562 = collections.defaultdict(list)
     oof_by_seed = {}
@@ -766,29 +803,42 @@ def main():
                                                                                  2000 + 50 * seed + N_CTRL)))
     report(f"\n     K562, held-out SOURCE GENES, labels |z| >= {Z_LAB:g} "
            f"(mean over {len(SEEDS)} genuinely different partitions)")
-    report(f"     {'arm':34s} {'n':>8s} {'acc':>7s} {'AUC':>7s} {'swap':>7s} {'incr':>8s} {'won':>6s}")
+    report(f"     {'arm':34s} {'n':>8s} {'acc':>7s} {'AUC':>7s} {'major':>7s} {'swap':>7s} {'incr':>8s} "
+           f"{'won':>5s} {'swapNN':>7s} {'incrNN':>8s} {'wonNN':>6s}")
     k562_summary = {}
     for aname, rs in res_k562.items():
         s = {k: float(np.mean([r[k] for r in rs])) for k in
-             ("accuracy", "auc", "swap", "increment", "frac_draws_won")}
+             ("accuracy", "auc", "majority_baseline", "swap", "swap_sd", "increment", "frac_draws_won",
+              "swap_nn", "swap_sd_nn", "increment_nn", "frac_draws_won_nn")}
         s["accuracy_sd_over_seeds"] = float(np.std([r["accuracy"] for r in rs]))
         s["n"] = int(np.mean([r["n"] for r in rs]))
         k562_summary[aname] = s
-        report(f"     {aname:34s} {s['n']:8,d} {s['accuracy']:7.4f} {s['auc']:7.4f} {s['swap']:7.4f} "
-               f"{s['increment']:+8.4f} {s['frac_draws_won']:6.2f}")
-    report(f"     seed-to-seed sd of accuracy: " +
+        report(f"     {aname:34s} {s['n']:8,d} {s['accuracy']:7.4f} {s['auc']:7.4f} "
+               f"{s['majority_baseline']:7.4f} {s['swap']:7.4f} {s['increment']:+8.4f} "
+               f"{s['frac_draws_won']:5.2f} {s['swap_nn']:7.4f} {s['increment_nn']:+8.4f} "
+               f"{s['frac_draws_won_nn']:6.2f}")
+    report(f"     seed-to-seed sd of accuracy (different partitions, not rotated fold labels): " +
            ", ".join(f"{a.split()[0]} {k562_summary[a]['accuracy_sd_over_seeds']:.4f}"
                      for a in k562_summary))
 
-    # residual imbalance of the swapped-source match
-    imb = SW.imbalance(r_u[lab], list(range(2000, 2000 + N_CTRL)))
-    report(f"\n     RESIDUAL IMBALANCE of the decile-matched swap (standardised mean difference per "
-           f"covariate)")
-    for k, v in imb.items():
-        report(f"       {k:24s} real {v['real']:12.4f}  swapped {v['swapped']:12.4f}  SMD {v['smd']:+.4f}")
-    worst = max(abs(v["smd"]) for v in imb.values())
-    report(f"       worst |SMD| {worst:.4f} "
-           f"({'acceptable, < 0.10' if worst < 0.10 else 'RESIDUAL IMBALANCE PRESENT'})")
+    # residual imbalance of both swapped-source matches
+    imb = {m: SW.imbalance(r_u[lab], list(range(2000, 2000 + N_CTRL)), mode=m) for m in ("decile", "nn")}
+    report(f"\n     RESIDUAL IMBALANCE per covariate (standardised mean difference, real vs swapped source)")
+    report(f"       {'covariate':24s} {'real':>12s} {'swap decile':>13s} {'SMD':>8s} {'swap NN':>13s} "
+           f"{'SMD':>8s}")
+    for k in imb["decile"]:
+        d, n_ = imb["decile"][k], imb["nn"][k]
+        report(f"       {k:24s} {d['real']:12.4f} {d['swapped']:13.4f} {d['smd']:+8.4f} "
+               f"{n_['swapped']:13.4f} {n_['smd']:+8.4f}")
+    worst = max(abs(v["smd"]) for v in imb["decile"].values())
+    worst_nn = max(abs(v["smd"]) for v in imb["nn"].values())
+    report(f"       worst |SMD|: decile {worst:.4f} "
+           f"({'ok' if worst < 0.10 else 'RESIDUAL IMBALANCE PRESENT'}), "
+           f"nearest-neighbour {worst_nn:.4f} "
+           f"({'ok' if worst_nn < 0.10 else 'RESIDUAL IMBALANCE PRESENT'})")
+    report(f"       the decile match leaves the control WEAKER than the arm it controls, which would "
+           f"flatter the edge\n       arm; the nearest-neighbour arm above is the one to read when the two "
+           f"disagree")
 
     # ------------------------------------------------------------------ 4. label shuffle
     report(f"\n  4. LABEL-SHUFFLED ARM (significance only -- the effect size above is the RAW held-out "
@@ -825,13 +875,24 @@ def main():
     rw_inc = float(np.mean([r["increment"] for r in rew]))
     rw_sd = float(np.std([r["increment"] for r in rew]))
     armB = k562_summary["B source+edge (no K562 in feats)"]
-    surv = rw_inc / armB["increment"] if abs(armB["increment"]) > 1e-9 else float("nan")
     beat = float(np.mean([armB["increment"] > r["increment"] for r in rew]))
+    beat_acc = float(np.mean([armB["accuracy"] > r["accuracy"] for r in rew]))
+    # A RATIO IS ONLY READABLE WHEN THERE IS AN EFFECT TO DIVIDE. If the real increment is <= 0 there is
+    # nothing for the rewiring to destroy and "survival 2.21" would be an artefact of a negative
+    # denominator, not a result.
+    surv = rw_inc / armB["increment"] if armB["increment"] > 1e-9 else float("nan")
     report(f"     real arm B      : acc {armB['accuracy']:.4f}  incr {armB['increment']:+.4f}")
     report(f"     degree-matched  : acc {rw_acc:.4f}  incr {rw_inc:+.4f} (sd {rw_sd:.4f}) over "
-           f"{N_REWIRE} rewirings; real beats {beat:.0%} of them")
-    report(f"     fraction of the real increment the degree-matched control already reproduces: "
-           f"{surv:.2f}")
+           f"{N_REWIRE} rewirings")
+    report(f"     the real wiring beats the degree-matched control on increment in {beat:.0%} of "
+           f"rewirings, on accuracy in {beat_acc:.0%}")
+    if np.isfinite(surv):
+        report(f"     fraction of the real increment the degree-matched control already reproduces: "
+               f"{surv:.2f}")
+    else:
+        report(f"     survival ratio NOT COMPUTED: the real increment is {armB['increment']:+.4f}, so "
+               f"there is no effect for a\n     rewiring to destroy. Degree is not the explanation for a "
+               f"result that does not exist.")
 
     # ------------------------------------------------------------------ 6. RPE1 transfer
     report(f"\n  6. TRANSFER TO RPE1 -- a cell line no layer in this project was built from")
@@ -860,7 +921,8 @@ def main():
     lab_r = okr & np.isfinite(zr) & (np.abs(zr) >= Z_LAB)
     report(f"    of those, {int(lab_r.sum()):,} have |RPE1 z| >= {Z_LAB:g}")
     rpe1_summary = {}
-    report(f"     {'arm':34s} {'n':>8s} {'acc':>7s} {'AUC':>7s} {'swap':>7s} {'incr':>8s} {'won':>6s}")
+    report(f"     {'arm':34s} {'n':>8s} {'acc':>7s} {'AUC':>7s} {'swap':>7s} {'sd':>6s} {'incr':>8s} "
+           f"{'won':>5s} {'incrNN':>8s} {'wonNN':>6s}")
     for aname in ARMS:
         rs = []
         for seed in SEEDS:
@@ -868,18 +930,34 @@ def main():
             m = lab_r & np.isfinite(p)
             pr = np.where(p[m] > 0.5, 1, -1)
             ag = float((np.sign(zr[m]) == pr).mean())
-            a = auc((np.sign(zr[m]) > 0).astype(int), p[m])
-            sw = SWr.agree(rr[m], rc[m], pr, range(6000 + 40 * seed, 6000 + 40 * seed + N_CTRL),
-                           cond=Z_LAB)
-            rs.append({"n": int(m.sum()), "accuracy": ag, "auc": a, "swap": float(np.nanmean(sw)),
-                       "increment": ag - float(np.nanmean(sw)),
-                       "frac_draws_won": float(np.mean(ag > sw))})
+            row = {"n": int(m.sum()), "accuracy": ag,
+                   "auc": auc((np.sign(zr[m]) > 0).astype(int), p[m]),
+                   "majority_baseline": float(max((np.sign(zr[m]) > 0).mean(),
+                                                  (np.sign(zr[m]) < 0).mean()))}
+            for mode, sfx in (("decile", ""), ("nn", "_nn")):
+                sw = SWr.agree(rr[m], rc[m], pr, range(6000 + 40 * seed, 6000 + 40 * seed + N_CTRL),
+                               cond=Z_LAB, mode=mode)
+                row[f"swap{sfx}"] = float(np.nanmean(sw))
+                row[f"swap_sd{sfx}"] = float(np.nanstd(sw))
+                row[f"increment{sfx}"] = ag - float(np.nanmean(sw))
+                row[f"frac_draws_won{sfx}"] = float(np.mean(ag > sw))
+            rs.append(row)
         s = {k: float(np.mean([r[k] for r in rs])) for k in
-             ("accuracy", "auc", "swap", "increment", "frac_draws_won")}
+             ("accuracy", "auc", "majority_baseline", "swap", "swap_sd", "increment", "frac_draws_won",
+              "swap_nn", "swap_sd_nn", "increment_nn", "frac_draws_won_nn")}
         s["n"] = int(np.mean([r["n"] for r in rs]))
+        # SIGN AND SIGNIFICANCE ARE READ TOGETHER. An increment smaller than twice the draw-to-draw spread
+        # of its own control is NOT DETECTED, whichever way it points -- it is never "reversed".
+        s["detected"] = bool(abs(s["increment"]) > 2 * max(s["swap_sd"], 1e-9))
         rpe1_summary[aname] = s
         report(f"     {aname:34s} {s['n']:8,d} {s['accuracy']:7.4f} {s['auc']:7.4f} {s['swap']:7.4f} "
-               f"{s['increment']:+8.4f} {s['frac_draws_won']:6.2f}")
+               f"{s['swap_sd']:6.4f} {s['increment']:+8.4f} {s['frac_draws_won']:5.2f} "
+               f"{s['increment_nn']:+8.4f} {s['frac_draws_won_nn']:6.2f}")
+    imb_r = SWr.imbalance(rr[lab_r], list(range(6000, 6000 + N_CTRL)), mode="decile")
+    imb_rn = SWr.imbalance(rr[lab_r], list(range(6000, 6000 + N_CTRL)), mode="nn")
+    report(f"     RPE1 swap residual imbalance, worst |SMD|: decile "
+           f"{max(abs(v['smd']) for v in imb_r.values()):.4f}, nearest-neighbour "
+           f"{max(abs(v['smd']) for v in imb_rn.values()):.4f}")
 
     # ------------------------------------------------------------------ 7. how many edges can be signed
     report(f"\n  7. HOW MANY OF THE {int((sg == 0).sum()):,} UNSIGNED EDGES CAN BE SIGNED?")
@@ -950,21 +1028,26 @@ def main():
                f"{int((sg == 0).sum()):,} edges may be signed under the rule set before the run.")
 
     # ------------------------------------------------------------------ 8. verdict
-    ok_a = armB["increment"] >= MIN_INCREMENT and armB["frac_draws_won"] >= MIN_WIN_FRAC
-    ok_b = rpe1_summary["B source+edge (no K562 in feats)"]["increment"] > 0 and \
-        rpe1_summary["B source+edge (no K562 in feats)"]["frac_draws_won"] >= MIN_WIN_FRAC
-    ok_c = armB["increment"] >= k562_summary["A target-direction only (K562)"]["increment"]
-    ok_d = (surv <= MAX_REWIRE_SURVIVAL) if np.isfinite(surv) else False
+    rpB = rpe1_summary["B source+edge (no K562 in feats)"]
+    armA = k562_summary["A target-direction only (K562)"]
+    # Where the two control constructions disagree the STRICTER (lower) increment governs, so that adding
+    # the tighter control after the imbalance audit can only make the bar harder, never easier.
+    inc_k = min(armB["increment"], armB["increment_nn"])
+    won_k = min(armB["frac_draws_won"], armB["frac_draws_won_nn"])
+    inc_r = min(rpB["increment"], rpB["increment_nn"])
+    won_r = min(rpB["frac_draws_won"], rpB["frac_draws_won_nn"])
+    ok_a = bool(inc_k >= MIN_INCREMENT and won_k >= MIN_WIN_FRAC)
+    ok_b = bool(inc_r > 0 and won_r >= MIN_WIN_FRAC)
+    ok_c = bool(armB["increment"] >= armA["increment"])
+    ok_d = bool(np.isfinite(surv) and surv <= MAX_REWIRE_SURVIVAL)
     passed = bool(ok_a and ok_b and ok_c and ok_d)
-    report(f"\n  8. DECISION against the threshold fixed before the run")
+    report(f"\n  8. DECISION against the threshold fixed before the run "
+           f"(stricter of the two control constructions)")
     report(f"     (a) K562 increment >= {MIN_INCREMENT:+.3f} in >= {MIN_WIN_FRAC:.0%} of draws: "
-           f"{armB['increment']:+.4f}, {armB['frac_draws_won']:.0%} -> {ok_a}")
-    report(f"     (b) RPE1 increment > 0 on the same terms: "
-           f"{rpe1_summary['B source+edge (no K562 in feats)']['increment']:+.4f}, "
-           f"{rpe1_summary['B source+edge (no K562 in feats)']['frac_draws_won']:.0%} -> {ok_b}")
+           f"{inc_k:+.4f}, {won_k:.0%} -> {ok_a}")
+    report(f"     (b) RPE1 increment > 0 on the same terms: {inc_r:+.4f}, {won_r:.0%} -> {ok_b}")
     report(f"     (c) carried by the no-K562-features arm, not the target-direction arm: "
-           f"{armB['increment']:+.4f} vs "
-           f"{k562_summary['A target-direction only (K562)']['increment']:+.4f} -> {ok_c}")
+           f"{armB['increment']:+.4f} vs {armA['increment']:+.4f} -> {ok_c}")
     report(f"     (d) degree-matched rewiring destroys >= {MAX_REWIRE_SURVIVAL:.0%} of it: "
            f"survival {surv:.2f} -> {ok_d}")
 
@@ -972,7 +1055,6 @@ def main():
     ceil2 = [c for c in ceil if c["z_min"] == 2.0][0]
     af_rho = crux.get("curated_act_frac", {}).get("spearman", float("nan"))
     af_p = crux.get("curated_act_frac", {}).get("p", float("nan"))
-    armA = k562_summary["A target-direction only (K562)"]
     core = (
         f"On the {conv[0]['n']:,} curated edges that ALREADY carry a sign, that sign predicts the measured "
         f"K562 perturbational sign at {100*cbest['agree']:.1f}% against {100*cbest['swap']:.1f}% for a "
@@ -988,14 +1070,24 @@ def main():
         f"source-level feature. The curated layer simply does not know it -- a source's curated activator "
         f"fraction correlates with its measured direction bias at Spearman {af_rho:+.3f} (p {af_p:.2g}).")
     controls = (
-        f"CONTROLS. The target-direction arm -- the confound -- reaches {100*armA['accuracy']:.1f}% raw "
-        f"accuracy and an increment of {100*armA['increment']:+.1f} points, which is the whole reason 0.5 "
-        f"is the wrong null. Label-shuffled: acc {sh['accuracy']:.4f}, incr {sh['increment']:+.4f}. "
-        f"Degree-matched configuration-model rewiring ({N_REWIRE} draws, source out-degree and target "
-        f"in-degree preserved exactly) leaves the source+edge arm at incr {rw_inc:+.4f} against the real "
-        f"{armB['increment']:+.4f}, so the rewired control reproduces {surv:.0%} of it and the real "
-        f"features beat only {beat:.0%} of rewirings. Worst residual |SMD| across matched covariates "
-        f"{worst:.3f}.")
+        f"CONTROLS, ALL FOUR OF THEM. (i) The target-direction arm -- the confound -- reaches "
+        f"{100*armA['accuracy']:.1f}% raw accuracy on held-out TFs while its increment over the swapped "
+        f"source is {100*armA['increment']:+.1f} points, which is exactly why 0.5 is the wrong null and why "
+        f"a raw accuracy near 60% here means nothing. (ii) Label-shuffled, whole pipeline rerun: acc "
+        f"{sh['accuracy']:.4f}, incr {sh['increment']:+.4f}, against the real full arm's "
+        f"{real_c['accuracy']:.4f} / {real_c['increment']:+.4f}. (iii) Degree-matched configuration-model "
+        f"rewiring, {N_REWIRE} draws with source out-degree and target in-degree preserved EXACTLY, leaves "
+        f"the source+edge arm at incr {rw_inc:+.4f} against the real {armB['increment']:+.4f}; the real "
+        f"wiring beats the rewired control in {beat:.0%} of draws on increment and {beat_acc:.0%} on "
+        f"accuracy, so the little the features do carry is degree and not connectivity. (iv) THE MATCHED "
+        f"CONTROL ITSELF FAILED ITS OWN AUDIT AND HAD TO BE TIGHTENED: matching the swapped source on "
+        f"perturbation-strength DECILE left a standardised mean difference of {worst:.2f} in strength "
+        f"(curated sources are TFs and sit at the top of whatever decile they land in), so a "
+        f"nearest-neighbour-in-strength arm was added, which brings the worst |SMD| to {worst_nn:.2f}. It "
+        f"moves the K562 increment {armB['increment']:+.4f} -> {armB['increment_nn']:+.4f} and the RPE1 "
+        f"increment {rpB['increment']:+.4f} -> {rpB['increment_nn']:+.4f}; the stricter of the two governs "
+        f"every decision above. The same defect is present in the decile-matched control that "
+        f"colab/causal_reg.py and colab/reliable_edges.py both use, and it is worth checking there.")
     if passed:
         verdict = (
             f"THE SIGN OF AN UNSIGNED CURATED EDGE IS IMPUTABLE, AT {n_signable:,} EDGES. Held out by "
