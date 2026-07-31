@@ -370,16 +370,22 @@ class Swap:
     swapped sources. A control that is systematically weaker than the arm it is controlling would flatter
     the edge arm. So both are computed and both are reported:
 
-        DECILE      the construction colab/causal_reg.py uses, kept so the numbers are comparable to it
-        NEAREST     the replacement is drawn from the +/- 150 perturbations nearest in strength RANK,
-                    which drives the residual imbalance on strength to ~0
+        DECILE      strength decile only -- the construction colab/causal_reg.py uses, kept so the numbers
+                    here are comparable to it
+        NEAREST     the replacement is drawn from the +/- 150 perturbations nearest in strength RANK, which
+                    drives the residual imbalance ON STRENGTH to ~0
+        JOINT       strength decile x library-size decile. The nearest-neighbour arm fixes strength and
+                    leaves UMI count imbalanced at |SMD| 0.22, because a strong perturbation is not the
+                    same thing as a deeply sequenced one. This arm matches both.
 
-    Reporting the loose one alone would have been the mistake; reporting only the tight one would have hidden
-    that the incumbent construction has this defect.
+    All three are reported. Reporting the loose one alone would have been the mistake; reporting only a
+    tight one would have hidden that the incumbent construction has this defect. Where they disagree the
+    STRICTEST increment governs the decision.
     """
     NN_WINDOW = 150
+    MIN_POOL = 20     # a matched cell smaller than this cannot supply a distinct replacement
 
-    def __init__(self, Z, cov, report, label):
+    def __init__(self, Z, cov, report, label, joint_cov=None):
         self.Z = Z
         self.strength = np.nanmean(np.abs(Z), axis=1)
         q = np.nanquantile(self.strength, np.linspace(.1, .9, 9))
@@ -390,8 +396,17 @@ class Swap:
         self.cov = dict(cov)
         self.cov["strength"] = self.strength
         self.label = label
+        jc = self.cov.get(joint_cov)
+        if jc is None:
+            self.joint = self.dec
+        else:
+            d2 = np.digitize(jc, np.nanquantile(jc, np.linspace(.1, .9, 9)))
+            self.joint = self.dec * 10 + d2
+        self.joint_cov = joint_cov
+        sizes = np.bincount(self.joint)
         report(f"    {label}: {len(self.strength):,} perturbations; strength deciles sized "
-               f"{np.bincount(self.dec, minlength=10).tolist()}")
+               f"{np.bincount(self.dec, minlength=10).tolist()}; joint strength x {joint_cov} cells "
+               f"{int((sizes > 0).sum())} (min occupied {int(sizes[sizes > 0].min())})")
 
     def draw(self, rows, seed, mode="decile"):
         r = np.random.default_rng(seed)
@@ -399,12 +414,36 @@ class Swap:
             n = len(self.strength)
             off = r.integers(-self.NN_WINDOW, self.NN_WINDOW + 1, size=len(rows))
             off = np.where(off == 0, 1, off)          # never return the source itself
-            return self.order[np.clip(self.rank[rows] + off, 0, n - 1)]
+            alt = self.order[np.clip(self.rank[rows] + off, 0, n - 1)]
+            self.last_thin, self.last_self = 0, int((alt == rows).sum())
+            return alt
+        # TWO WAYS A MATCHED DRAW CAN QUIETLY BECOME THE ARM IT IS CONTROLLING, both closed here.
+        #   THIN CELLS. The joint strength x library-size grid has 79 occupied cells and the smallest holds
+        #   3 perturbations (17 of 11,258 sit in cells below 20). Drawing "a different source" from a cell
+        #   of size 1 returns the source itself and the control becomes the edge arm. Rows in a thin cell
+        #   fall back to the coarser strength decile, and the fallback count is recorded.
+        #   SELF-DRAWS. Even a large pool can return the row itself. Those are redrawn.
+        # Neither is a big number, and neither is allowed to be silent: a control that is accidentally the
+        # treatment inflates the control and would make a real effect look like a null.
+        key = self.joint if mode == "joint" else self.dec
+        cnt = np.bincount(key, minlength=int(key.max()) + 1)
         alt = np.empty(len(rows), dtype=int)
-        for q in np.unique(self.dec):
-            m = self.dec[rows] == q
-            if m.any():
+        thin = cnt[key[rows]] < self.MIN_POOL
+        for q in np.unique(key[rows][~thin]):
+            m = (key[rows] == q) & ~thin
+            alt[m] = r.choice(np.where(key == q)[0], int(m.sum()))
+        for q in np.unique(self.dec[rows][thin]):
+            m = thin & (self.dec[rows] == q)
+            alt[m] = r.choice(np.where(self.dec == q)[0], int(m.sum()))
+        for _ in range(3):
+            same = alt == rows
+            if not same.any():
+                break
+            for q in np.unique(self.dec[rows][same]):
+                m = same & (self.dec[rows] == q)
                 alt[m] = r.choice(np.where(self.dec == q)[0], int(m.sum()))
+        self.last_thin = int(thin.sum())
+        self.last_self = int((alt == rows).sum())
         return alt
 
     def agree(self, rows, cols, pred, seeds, cond=None, mode="decile"):
@@ -439,9 +478,17 @@ class Swap:
 
 
 def fit_predict(Xtr, ytr, Xte, seed):
+    """One gradient-boosted fit, IDENTICAL hyperparameters everywhere.
+
+    Deliberately small trees. This machine has 4 cores and is shared, and 160 fits have to finish -- but
+    the capacity is not what limits the answer: at a held-out AUC of 0.54 the model is signal-limited, not
+    capacity-limited, and a larger booster only fits the training fold's noise harder. Every arm, every
+    control and every rewiring uses these same settings, so no comparison here is between a big model and
+    a small one.
+    """
     from sklearn.ensemble import HistGradientBoostingClassifier
-    m = HistGradientBoostingClassifier(max_iter=150, learning_rate=0.08, max_depth=6,
-                                       min_samples_leaf=40, l2_regularization=1.0,
+    m = HistGradientBoostingClassifier(max_iter=80, learning_rate=0.12, max_depth=4,
+                                       min_samples_leaf=80, l2_regularization=1.0,
                                        random_state=seed, early_stopping=False)
     m.fit(Xtr, ytr)
     return m.predict_proba(Xte)[:, 1], m
@@ -577,7 +624,7 @@ def main():
     report(f"\n  1. IS THERE A CONVENTION TO IMPUTE? (curated sign vs the measured perturbational sign)")
     report(f"     Under CRISPRi, knocking down an ACTIVATOR should LOWER its target, so the prediction is\n"
            f"     measured sign = -(curated sign). Read against the swapped-source control, not against 0.5.")
-    SW = Swap(Zk, cov, report, "K562")
+    SW = Swap(Zk, cov, report, "K562", joint_cov="UMI_count_unfiltered")
     sgn_mask = testable & (sg != 0)
     r_s, c_s = ri[sgn_mask], ci[sgn_mask]
     z_s = Zk[r_s, c_s]
@@ -591,7 +638,7 @@ def main():
         pr = -cur_s[k]
         ag = float((np.sign(z_s[k]) == pr).mean())
         row = {"z_min": thr, "n": int(k.sum()), "agree": ag}
-        for mode, sfx in (("decile", ""), ("nn", "_nn")):
+        for mode, sfx in (("decile", ""), ("nn", "_nn"), ("joint", "_joint")):
             sw = SW.agree(r_s[k], c_s[k], pr, range(700, 700 + N_CTRL),
                           cond=(thr if thr > 0 else None), mode=mode)
             row[f"swap{sfx}"] = float(np.nanmean(sw))
@@ -658,7 +705,7 @@ def main():
         pr = np.array([1 if bs[int(s)] > 0 else -1 for s in s_u[sub]])
         ag = float((np.sign(z_u[sub]) == pr).mean())
         row = {"z_min": thr, "n": int(sub.sum()), "n_sources": len(bs), "agree": ag}
-        for mode, sfx in (("decile", ""), ("nn", "_nn")):
+        for mode, sfx in (("decile", ""), ("nn", "_nn"), ("joint", "_joint")):
             sw = SW.agree(r_u[sub], c_u[sub], pr, range(800, 800 + N_CTRL),
                           cond=(thr if thr > 0 else None), mode=mode)
             row[f"swap{sfx}"] = float(np.nanmean(sw))
@@ -785,7 +832,7 @@ def main():
         out = {"tag": tag, "n": int(m.sum()), "accuracy": ag, "auc": a,
                "majority_baseline": float(max((np.sign(zvec[m]) > 0).mean(),
                                               (np.sign(zvec[m]) < 0).mean()))}
-        for mode, sfx in (("decile", ""), ("nn", "_nn")):
+        for mode, sfx in (("decile", ""), ("nn", "_nn"), ("joint", "_joint")):
             sw = sw_obj.agree(rows[m], cols[m], pr, seeds0, cond=Z_LAB, mode=mode)
             out[f"swap{sfx}"] = float(np.nanmean(sw))
             out[f"swap_sd{sfx}"] = float(np.nanstd(sw))
@@ -803,42 +850,56 @@ def main():
                                                                                  2000 + 50 * seed + N_CTRL)))
     report(f"\n     K562, held-out SOURCE GENES, labels |z| >= {Z_LAB:g} "
            f"(mean over {len(SEEDS)} genuinely different partitions)")
-    report(f"     {'arm':34s} {'n':>8s} {'acc':>7s} {'AUC':>7s} {'major':>7s} {'swap':>7s} {'incr':>8s} "
-           f"{'won':>5s} {'swapNN':>7s} {'incrNN':>8s} {'wonNN':>6s}")
+    report(f"     {'arm':34s} {'n':>7s} {'acc':>7s} {'AUC':>6s} {'major':>6s} | {'swapDec':>7s} "
+           f"{'incr':>8s} {'won':>4s} | {'swapNN':>7s} {'incrNN':>8s} {'won':>4s} | {'swapJnt':>7s} "
+           f"{'incrJnt':>8s} {'won':>4s}")
     k562_summary = {}
     for aname, rs in res_k562.items():
         s = {k: float(np.mean([r[k] for r in rs])) for k in
              ("accuracy", "auc", "majority_baseline", "swap", "swap_sd", "increment", "frac_draws_won",
-              "swap_nn", "swap_sd_nn", "increment_nn", "frac_draws_won_nn")}
+              "swap_nn", "swap_sd_nn", "increment_nn", "frac_draws_won_nn",
+              "swap_joint", "swap_sd_joint", "increment_joint", "frac_draws_won_joint")}
         s["accuracy_sd_over_seeds"] = float(np.std([r["accuracy"] for r in rs]))
         s["n"] = int(np.mean([r["n"] for r in rs]))
         k562_summary[aname] = s
-        report(f"     {aname:34s} {s['n']:8,d} {s['accuracy']:7.4f} {s['auc']:7.4f} "
-               f"{s['majority_baseline']:7.4f} {s['swap']:7.4f} {s['increment']:+8.4f} "
-               f"{s['frac_draws_won']:5.2f} {s['swap_nn']:7.4f} {s['increment_nn']:+8.4f} "
-               f"{s['frac_draws_won_nn']:6.2f}")
+        report(f"     {aname:34s} {s['n']:7,d} {s['accuracy']:7.4f} {s['auc']:6.3f} "
+               f"{s['majority_baseline']:6.3f} | {s['swap']:7.4f} {s['increment']:+8.4f} "
+               f"{s['frac_draws_won']:4.2f} | {s['swap_nn']:7.4f} {s['increment_nn']:+8.4f} "
+               f"{s['frac_draws_won_nn']:4.2f} | {s['swap_joint']:7.4f} {s['increment_joint']:+8.4f} "
+               f"{s['frac_draws_won_joint']:4.2f}")
     report(f"     seed-to-seed sd of accuracy (different partitions, not rotated fold labels): " +
            ", ".join(f"{a.split()[0]} {k562_summary[a]['accuracy_sd_over_seeds']:.4f}"
                      for a in k562_summary))
 
     # residual imbalance of both swapped-source matches
-    imb = {m: SW.imbalance(r_u[lab], list(range(2000, 2000 + N_CTRL)), mode=m) for m in ("decile", "nn")}
-    report(f"\n     RESIDUAL IMBALANCE per covariate (standardised mean difference, real vs swapped source)")
-    report(f"       {'covariate':24s} {'real':>12s} {'swap decile':>13s} {'SMD':>8s} {'swap NN':>13s} "
-           f"{'SMD':>8s}")
+    imb = {m: SW.imbalance(r_u[lab], list(range(2000, 2000 + N_CTRL)), mode=m)
+           for m in ("decile", "nn", "joint")}
+    report(f"\n     RESIDUAL IMBALANCE per covariate (standardised mean difference, real vs swapped "
+           f"source) -- rule 3's check")
+    report(f"       {'covariate':22s} {'real':>12s} | {'decile':>11s} {'SMD':>7s} | {'NN':>11s} "
+           f"{'SMD':>7s} | {'joint':>11s} {'SMD':>7s}")
     for k in imb["decile"]:
-        d, n_ = imb["decile"][k], imb["nn"][k]
-        report(f"       {k:24s} {d['real']:12.4f} {d['swapped']:13.4f} {d['smd']:+8.4f} "
-               f"{n_['swapped']:13.4f} {n_['smd']:+8.4f}")
+        d, n_, j_ = imb["decile"][k], imb["nn"][k], imb["joint"][k]
+        report(f"       {k:22s} {d['real']:12.4f} | {d['swapped']:11.4f} {d['smd']:+7.3f} | "
+               f"{n_['swapped']:11.4f} {n_['smd']:+7.3f} | {j_['swapped']:11.4f} {j_['smd']:+7.3f}")
     worst = max(abs(v["smd"]) for v in imb["decile"].values())
     worst_nn = max(abs(v["smd"]) for v in imb["nn"].values())
-    report(f"       worst |SMD|: decile {worst:.4f} "
-           f"({'ok' if worst < 0.10 else 'RESIDUAL IMBALANCE PRESENT'}), "
-           f"nearest-neighbour {worst_nn:.4f} "
-           f"({'ok' if worst_nn < 0.10 else 'RESIDUAL IMBALANCE PRESENT'})")
-    report(f"       the decile match leaves the control WEAKER than the arm it controls, which would "
-           f"flatter the edge\n       arm; the nearest-neighbour arm above is the one to read when the two "
-           f"disagree")
+    worst_j = max(abs(v["smd"]) for v in imb["joint"].values())
+    draw_audit = {}
+    for m_ in ("decile", "nn", "joint"):
+        SW.draw(r_u[lab], 2000, m_)
+        draw_audit[m_] = {"rows": int(lab.sum()), "fell_back_to_strength_decile": SW.last_thin,
+                          "drew_the_source_itself": SW.last_self}
+    report(f"       draw audit (one draw, {int(lab.sum()):,} rows): " +
+           "; ".join(f"{k} thin-cell fallbacks {v['fell_back_to_strength_decile']:,}, self-draws "
+                     f"{v['drew_the_source_itself']:,}" for k, v in draw_audit.items()))
+    for nm, w in (("decile", worst), ("nearest-neighbour", worst_nn), ("joint", worst_j)):
+        report(f"       worst |SMD| {nm:18s} {w:.4f} "
+               f"({'ok, < 0.10' if w < 0.10 else 'RESIDUAL IMBALANCE PRESENT'})")
+    report(f"       The decile match leaves the control WEAKER in strength than the arm it controls, which "
+           f"would\n       flatter the edge arm. The nearest-neighbour match fixes strength and leaves "
+           f"library size behind.\n       The joint match is the one to read; where the three disagree the "
+           f"STRICTEST increment governs.")
 
     # ------------------------------------------------------------------ 4. label shuffle
     report(f"\n  4. LABEL-SHUFFLED ARM (significance only -- the effect size above is the RAW held-out "
@@ -917,12 +978,12 @@ def main():
            f"({100*rate_r:.1f}%)")
     if okr.sum() < 2000:
         raise SystemExit("too few RPE1-testable edges to score transfer")
-    SWr = Swap(Zr, {"rpe1_ncells": rn.astype(float)}, report, "RPE1")
+    SWr = Swap(Zr, {"rpe1_ncells": rn.astype(float)}, report, "RPE1", joint_cov="rpe1_ncells")
     lab_r = okr & np.isfinite(zr) & (np.abs(zr) >= Z_LAB)
     report(f"    of those, {int(lab_r.sum()):,} have |RPE1 z| >= {Z_LAB:g}")
     rpe1_summary = {}
-    report(f"     {'arm':34s} {'n':>8s} {'acc':>7s} {'AUC':>7s} {'swap':>7s} {'sd':>6s} {'incr':>8s} "
-           f"{'won':>5s} {'incrNN':>8s} {'wonNN':>6s}")
+    report(f"     {'arm':34s} {'n':>7s} {'acc':>7s} {'AUC':>6s} | {'swapDec':>7s} {'incr':>8s} "
+           f"{'won':>4s} | {'incrNN':>8s} {'won':>4s} | {'incrJnt':>8s} {'won':>4s}")
     for aname in ARMS:
         rs = []
         for seed in SEEDS:
@@ -934,7 +995,7 @@ def main():
                    "auc": auc((np.sign(zr[m]) > 0).astype(int), p[m]),
                    "majority_baseline": float(max((np.sign(zr[m]) > 0).mean(),
                                                   (np.sign(zr[m]) < 0).mean()))}
-            for mode, sfx in (("decile", ""), ("nn", "_nn")):
+            for mode, sfx in (("decile", ""), ("nn", "_nn"), ("joint", "_joint")):
                 sw = SWr.agree(rr[m], rc[m], pr, range(6000 + 40 * seed, 6000 + 40 * seed + N_CTRL),
                                cond=Z_LAB, mode=mode)
                 row[f"swap{sfx}"] = float(np.nanmean(sw))
@@ -944,20 +1005,24 @@ def main():
             rs.append(row)
         s = {k: float(np.mean([r[k] for r in rs])) for k in
              ("accuracy", "auc", "majority_baseline", "swap", "swap_sd", "increment", "frac_draws_won",
-              "swap_nn", "swap_sd_nn", "increment_nn", "frac_draws_won_nn")}
+              "swap_nn", "swap_sd_nn", "increment_nn", "frac_draws_won_nn",
+              "swap_joint", "swap_sd_joint", "increment_joint", "frac_draws_won_joint")}
         s["n"] = int(np.mean([r["n"] for r in rs]))
         # SIGN AND SIGNIFICANCE ARE READ TOGETHER. An increment smaller than twice the draw-to-draw spread
         # of its own control is NOT DETECTED, whichever way it points -- it is never "reversed".
         s["detected"] = bool(abs(s["increment"]) > 2 * max(s["swap_sd"], 1e-9))
         rpe1_summary[aname] = s
-        report(f"     {aname:34s} {s['n']:8,d} {s['accuracy']:7.4f} {s['auc']:7.4f} {s['swap']:7.4f} "
-               f"{s['swap_sd']:6.4f} {s['increment']:+8.4f} {s['frac_draws_won']:5.2f} "
-               f"{s['increment_nn']:+8.4f} {s['frac_draws_won_nn']:6.2f}")
+        report(f"     {aname:34s} {s['n']:7,d} {s['accuracy']:7.4f} {s['auc']:6.3f} | "
+               f"{s['swap']:7.4f} {s['increment']:+8.4f} {s['frac_draws_won']:4.2f} | "
+               f"{s['increment_nn']:+8.4f} {s['frac_draws_won_nn']:4.2f} | "
+               f"{s['increment_joint']:+8.4f} {s['frac_draws_won_joint']:4.2f}")
     imb_r = SWr.imbalance(rr[lab_r], list(range(6000, 6000 + N_CTRL)), mode="decile")
     imb_rn = SWr.imbalance(rr[lab_r], list(range(6000, 6000 + N_CTRL)), mode="nn")
+    imb_rj = SWr.imbalance(rr[lab_r], list(range(6000, 6000 + N_CTRL)), mode="joint")
     report(f"     RPE1 swap residual imbalance, worst |SMD|: decile "
            f"{max(abs(v['smd']) for v in imb_r.values()):.4f}, nearest-neighbour "
-           f"{max(abs(v['smd']) for v in imb_rn.values()):.4f}")
+           f"{max(abs(v['smd']) for v in imb_rn.values()):.4f}, joint "
+           f"{max(abs(v['smd']) for v in imb_rj.values()):.4f}")
 
     # ------------------------------------------------------------------ 7. how many edges can be signed
     report(f"\n  7. HOW MANY OF THE {int((sg == 0).sum()):,} UNSIGNED EDGES CAN BE SIGNED?")
@@ -1032,17 +1097,17 @@ def main():
     armA = k562_summary["A target-direction only (K562)"]
     # Where the two control constructions disagree the STRICTER (lower) increment governs, so that adding
     # the tighter control after the imbalance audit can only make the bar harder, never easier.
-    inc_k = min(armB["increment"], armB["increment_nn"])
-    won_k = min(armB["frac_draws_won"], armB["frac_draws_won_nn"])
-    inc_r = min(rpB["increment"], rpB["increment_nn"])
-    won_r = min(rpB["frac_draws_won"], rpB["frac_draws_won_nn"])
+    inc_k = min(armB["increment"], armB["increment_nn"], armB["increment_joint"])
+    won_k = min(armB["frac_draws_won"], armB["frac_draws_won_nn"], armB["frac_draws_won_joint"])
+    inc_r = min(rpB["increment"], rpB["increment_nn"], rpB["increment_joint"])
+    won_r = min(rpB["frac_draws_won"], rpB["frac_draws_won_nn"], rpB["frac_draws_won_joint"])
     ok_a = bool(inc_k >= MIN_INCREMENT and won_k >= MIN_WIN_FRAC)
     ok_b = bool(inc_r > 0 and won_r >= MIN_WIN_FRAC)
     ok_c = bool(armB["increment"] >= armA["increment"])
     ok_d = bool(np.isfinite(surv) and surv <= MAX_REWIRE_SURVIVAL)
     passed = bool(ok_a and ok_b and ok_c and ok_d)
     report(f"\n  8. DECISION against the threshold fixed before the run "
-           f"(stricter of the two control constructions)")
+           f"(STRICTEST of the three control constructions)")
     report(f"     (a) K562 increment >= {MIN_INCREMENT:+.3f} in >= {MIN_WIN_FRAC:.0%} of draws: "
            f"{inc_k:+.4f}, {won_k:.0%} -> {ok_a}")
     report(f"     (b) RPE1 increment > 0 on the same terms: {inc_r:+.4f}, {won_r:.0%} -> {ok_b}")
@@ -1080,14 +1145,20 @@ def main():
         f"the source+edge arm at incr {rw_inc:+.4f} against the real {armB['increment']:+.4f}; the real "
         f"wiring beats the rewired control in {beat:.0%} of draws on increment and {beat_acc:.0%} on "
         f"accuracy, so the little the features do carry is degree and not connectivity. (iv) THE MATCHED "
-        f"CONTROL ITSELF FAILED ITS OWN AUDIT AND HAD TO BE TIGHTENED: matching the swapped source on "
-        f"perturbation-strength DECILE left a standardised mean difference of {worst:.2f} in strength "
-        f"(curated sources are TFs and sit at the top of whatever decile they land in), so a "
-        f"nearest-neighbour-in-strength arm was added, which brings the worst |SMD| to {worst_nn:.2f}. It "
-        f"moves the K562 increment {armB['increment']:+.4f} -> {armB['increment_nn']:+.4f} and the RPE1 "
-        f"increment {rpB['increment']:+.4f} -> {rpB['increment_nn']:+.4f}; the stricter of the two governs "
-        f"every decision above. The same defect is present in the decile-matched control that "
-        f"colab/causal_reg.py and colab/reliable_edges.py both use, and it is worth checking there.")
+        f"CONTROL ITSELF FAILED ITS OWN AUDIT AND HAD TO BE TIGHTENED TWICE, AND THAT IS THE MOST USEFUL "
+        f"THING HERE. Matching the swapped source on perturbation-strength DECILE left a standardised mean "
+        f"difference of {worst:.2f} in strength -- curated sources are TFs and sit at the top of whatever "
+        f"decile they land in, so the control was systematically WEAKER than the arm it controls. A "
+        f"nearest-neighbour-in-strength arm fixes that and still leaves library size at |SMD| "
+        f"{worst_nn:.2f}, so a joint strength x library-size decile arm was added, worst |SMD| "
+        f"{worst_j:.2f}. The K562 increment moves {armB['increment']:+.4f} (decile) -> "
+        f"{armB['increment_nn']:+.4f} (nearest) -> {armB['increment_joint']:+.4f} (joint), and RPE1 "
+        f"{rpB['increment']:+.4f} -> {rpB['increment_nn']:+.4f} -> {rpB['increment_joint']:+.4f}. THE "
+        f"CONTROL'S CONSTRUCTION MOVES THE ANSWER BY AS MUCH AS THE EFFECT IS WORTH, which is itself the "
+        f"reason to call this a null rather than a small positive: the strictest arm governs every decision "
+        f"above. The decile-matched control that colab/causal_reg.py and colab/reliable_edges.py both use "
+        f"has this same defect and is worth re-auditing there, where the reported increments are large "
+        f"enough that a 1-2 point shift would not overturn them but should be stated.")
     if passed:
         verdict = (
             f"THE SIGN OF AN UNSIGNED CURATED EDGE IS IMPUTABLE, AT {n_signable:,} EDGES. Held out by "
@@ -1110,8 +1181,10 @@ def main():
             f"baseline {100*armB['majority_baseline']:.1f}%) against {100*armB['swap']:.1f}% for a "
             f"strength-matched swapped source -- an increment of {100*armB['increment']:+.1f} points "
             f"against the {100*MIN_INCREMENT:+.1f} required, {armB['frac_draws_won']:.0%} of {N_CTRL} draws "
-            f"won, and {100*armB['increment_nn']:+.1f} points against the tighter nearest-neighbour "
-            f"control. On RPE1 the increment is {100*rpB['increment']:+.1f} points ({rp_read}). "
+            f"won, {100*armB['increment_nn']:+.1f} points against the nearest-neighbour control and "
+            f"{100*armB['increment_joint']:+.1f} against the joint strength x library-size control -- three "
+            f"constructions of the same control that straddle zero and none of which reaches the bar. On "
+            f"RPE1 the increment is {100*rpB['increment']:+.1f} points ({rp_read}). "
             f"0 of the {int((sg == 0).sum()):,} unsigned edges reach a confidence bin that is both "
             f"{SIGN_MIN_ACC:.0%} accurate and {SIGN_MIN_INC:+.2f} above its own swapped-source control, so "
             f"none are signed and the layer written is empty by construction. " + core + " " + controls +
@@ -1163,11 +1236,15 @@ def main():
                                      "fraction_of_rewirings_the_real_features_beat_on_accuracy": beat_acc},
          "swap_control": {"constructions": ["decile: strength decile, as colab/causal_reg.py",
                                             "nn: +/-150 nearest in strength rank, added after the decile "
-                                            "arm failed its own imbalance audit"],
+                                            "arm failed its own imbalance audit",
+                                            "joint: strength decile x library-size decile, added after the "
+                                            "nn arm still left UMI count imbalanced"],
                           "residual_imbalance_k562": imb, "worst_abs_smd_decile": worst,
                           "worst_abs_smd_nn": worst_nn,
+                          "worst_abs_smd_joint": worst_j, "draw_audit": draw_audit,
                           "worst_abs_smd_rpe1_decile": max(abs(v["smd"]) for v in imb_r.values()),
-                          "worst_abs_smd_rpe1_nn": max(abs(v["smd"]) for v in imb_rn.values())},
+                          "worst_abs_smd_rpe1_nn": max(abs(v["smd"]) for v in imb_rn.values()),
+                          "worst_abs_smd_rpe1_joint": max(abs(v["smd"]) for v in imb_rj.values())},
          "worst_abs_smd": worst,
          "confidence_bins": bins,
          "signable": {"n_edges_signed": n_signable, "confidence_cut": cut,
@@ -1205,6 +1282,15 @@ def main():
              "folds. That is deliberate -- the target-direction confound is what the swapped-source "
              "control removes -- but it means a target-specific model could still leak, which is why arm A "
              "is reported separately rather than folded into arm C",
+             "the JOINT swapped-source arm is worse balanced on RPE1 than the plain decile arm, because "
+             "RPE1 has only 2,122 perturbations and the strength x cell-count grid leaves thin cells that "
+             "fall back to the coarser match. On RPE1 the decile and nearest-neighbour arms are the "
+             "trustworthy ones; the joint arm is reported because the decision takes the strictest of the "
+             "three and a badly-matched arm can only make the bar harder",
+             "mitochondrial fraction stays imbalanced at |SMD| ~0.19 under ALL THREE matches. It is not "
+             "matched on, and a perturbation that stresses cells is both a strong perturbation and a "
+             "high-mito one, so some of what the swapped-source control removes is stress rather than "
+             "source identity",
              "THE NEAREST-NEIGHBOUR SWAPPED-SOURCE ARM WAS ADDED AFTER THE FIRST RUN, when the decile "
              "arm's own imbalance audit came back at |SMD| 0.25 on perturbation strength. It is a "
              "tightening rather than a loosening and the stricter of the two increments governs every "

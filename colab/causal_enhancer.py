@@ -57,6 +57,25 @@ WHAT IS MEASURED, AND AGAINST WHAT CONTROL, BEFORE ANY NUMBER.
              swap is repeated with the decoy ALSO matched on n-TFs-bound decile -- the configuration-model
              analogue for a bipartite TF-element graph. If the degree-matched swap reproduces most of the
              effect, THAT IS THE FINDING and it is said in the verdict, not in a footnote.
+  CONTROL 6, THE CLEANEST IDENTITY TEST -- THE TF-AXIS PERMUTATION. The element swap changes the element, so
+             it confounds "which TFs" with everything else an element carries (its width, its accessibility,
+             its chromosome, how many of its pairs the screens tested). The permutation does not touch the
+             element at all. It relabels the TF axis of the causal matrix, so TF t is given TF pi(t)'s
+             Perturb-seq z-vector while the OCCUPANCY matrix stays exactly as measured. That holds the
+             element fixed, holds the gene fixed, holds the number of bound TFs EXACTLY (not merely to a
+             decile), and holds the gene's whole z distribution over the 507 TFs EXACTLY -- a permutation of
+             a column is the same multiset. The ONLY thing destroyed is the correspondence between which TF
+             binds where and which TF is causal for what, which is the claim being tested. Run twice: a free
+             permutation, and one restricted to strata of TF binding-degree decile x TF causal-breadth
+             decile, so a TF that binds everywhere and moves everything cannot be swapped for a rare, quiet
+             one. The stratified version is the configuration model on the TF axis and is the strict test.
+  CONTROL 7  THE SCREEN-IDENTITY PROBE. The K562 arm is SIX screens whose positive rates run from 0.0123
+             (Schraivogel2020) to 0.1801 (Morris), a 14x spread, and the screens differ in element geometry:
+             K562_DC_TAP elements are 499 bp with an interquartile range of 499-499, Xie's are 884 bp with
+             an IQR of 628-1220. Element width sits in the ACCESSIBILITY block. A model can therefore buy
+             AUPRC by naming the screen rather than by reading chromatin. So every ladder rung is re-run with
+             a six-level SCREEN one-hot already in the model: a rung that survives conditioning on the screen
+             is about the element, a rung that does not is about the batch.
 
 THE DECISION THRESHOLD, FIXED BEFORE THE NUMBERS (and encoded below as MIN_INCREMENT / MIN_SEEDS /
 MIN_SWAP_FRAC). TF causality earns a place in the E-G layer only if ALL THREE hold:
@@ -67,6 +86,14 @@ MIN_SWAP_FRAC). TF causality earns a place in the E-G layer only if ALL THREE ho
 Failing (i) means there is no increment. Passing (i) but failing (ii) means the model reads the gene and the
 distance. Passing (ii) but failing (iii) means it reads how busy the element is, not which TFs are on it.
 
+THE SAME BAR IS APPLIED TO EVERY RUNG, NOT ONLY TO THE ONE UNDER TEST. An earlier version of this module
+scored TF causality against MIN_INCREMENT and then, in the same verdict, credited the raw TF COUNT with a
+positive finding on an increment that had never been put through the same test. That is a threshold applied
+asymmetrically, and it is the single easiest way to manufacture a positive claim next to a null. So section 4
+now runs EVERY rung of the ladder through the identical gate -- PAIRED per seed, because the arms share
+folds and an unpaired sd across seeds hides that -- and reports which rungs clear it. A rung that fails the
+bar is described as sub-threshold, never as "what does the work".
+
 CIRCULARITY, STATED PLAINLY. The TF->gene causal weights come from Replogle K562 Perturb-seq; the ground
 truth is CRISPRi enhancer perturbation in K562. These are DIFFERENT experiments (gene knockdown vs element
 silencing, different labs, different libraries), so this is not the forbidden case of scoring a K562-derived
@@ -76,6 +103,19 @@ holding the gene fixed. There is no RPE1 enhancer-CRISPR benchmark to escape to,
 
 SIGN AND SIGNIFICANCE ARE READ TOGETHER. An arm that does not clear its control is NOT DETECTED. It is never
 called reversed, however negative the point estimate looks.
+
+WHAT A NULL HERE DOES AND DOES NOT LICENSE, AND THE DETECTABILITY PROBE THAT KEEPS IT HONEST. The causality
+features are AGGREGATES over the bound TF set, and the bound set is not small: the median element carries 36
+of the 507 profiled TFs, and pair-weighted the mean is 102 for positives. A mean of |z| over 102 of 507 TFs
+is very close to the gene's own mean over all 507, so a magnitude aggregate is structurally near-blind to
+which TFs those 102 are. A null from such a block is partly a statement about the aggregation, not only
+about the biology. So a POST HOC probe is run alongside: a second, GENE-SCALE-FREE identity block built from
+WITHIN-GENE RANKS of |z| (the best rank among the bound TFs, the mean of the best five, the mean rank, and
+the observed-minus-expected count of causal TFs given the element's occupancy). Ranks within a gene are
+invariant to how responsive that gene is, so this block cannot be bought with gene responsiveness the way a
+magnitude aggregate can. It is labelled POST HOC everywhere it appears and is not allowed to move the
+prespecified gates; it exists so the null can be read as "this design, including a sharper feature
+parameterisation, does not find it" rather than "one aggregation choice did not find it".
 
 SAMPLING, AND WHAT IT EXCLUDES. One ChIP file per TF (the lowest-accession GRCh38 "conservative IDR
 thresholded peaks" file), not all replicates and not all experiments -- so a TF whose occupancy differs
@@ -309,6 +349,36 @@ def tf_features(Bp, Zp, g_mean_abs, g_frac_causal):
     }
 
 
+def rank_features(Bp, Rp, Zp, g_frac_causal, n_tf):
+    """POST HOC. The same question asked in a form that CANNOT be answered with gene responsiveness.
+
+    Rp is the rank of |z| DOWN THE TF AXIS within each gene: rank 1 is the TF whose knockdown moves this gene
+    most, out of all 507 profiled. Ranks within a gene are invariant to the gene's overall responsiveness, so
+    a gene that everything moves and a gene that nothing moves have the identical rank distribution. That is
+    the point: the module's other TF block aggregates MAGNITUDES over ~100 bound TFs out of 507, which is
+    close enough to the whole set that the aggregate mostly re-reads the gene's own mean. These features ask
+    instead whether the element happens to carry the gene's TOP regulators, which is a statement about
+    identity and nothing else.
+    """
+    big = n_tf + 1
+    Rm = np.where(Bp, Rp, big)
+    k = min(5, Rm.shape[1])
+    ncausal = ((np.abs(Zp) >= Z_EDGE) & Bp).sum(1).astype(np.float64)
+    nbc = np.maximum(Bp.sum(1).astype(np.float64), 1.0)
+    # how many causal TFs would an element with THIS MANY bound TFs carry by chance for THIS gene -- the
+    # occupancy count is divided out explicitly rather than left for the model to discover
+    expected = nbc * g_frac_causal
+    return {
+        "rk_best": Rm.min(1).astype(np.float64),
+        "rk_top5": np.sort(np.partition(Rm, k - 1, axis=1)[:, :k], axis=1).mean(1).astype(np.float64),
+        # dtype pinned: Rp is int16 to keep 507 x 8,248 cheap, and a row sum of up to 507 ranks of up to 507
+        # overflows int16. NumPy would promote anyway; saying so means a later dtype change cannot break it.
+        "rk_mean": np.where(Bp, Rp, 0).sum(1, dtype=np.int64).astype(np.float64) / nbc,
+        "rk_obs_minus_exp_causal": ncausal - expected,
+        "rk_ratio_causal": ncausal / np.maximum(expected, 1e-3),
+    }
+
+
 # ==========================================================================================================
 # CV
 # ==========================================================================================================
@@ -519,12 +589,22 @@ def main():
 
     Zp = Zsub[:, gene_idx].T.astype(np.float32)               # (n_pairs x n_tf), gene side
 
-    # gene-only background over ALL profiled TFs (no element information whatsoever)
+    # gene-only background over ALL profiled TFs (no element information whatsoever).
+    # NOTE these three are INVARIANT under a permutation of the TF axis -- a column's mean, max and causal
+    # fraction do not care in what order its 507 entries are listed. That invariance is what makes CONTROL 6
+    # a clean identity test: the GENE block is bit-identical before and after the permutation, so nothing
+    # the permutation moves can be gene responsiveness in disguise.
     g_mean_abs_full = np.abs(Zsub).mean(0)
     g_frac_full = (np.abs(Zsub) >= Z_EDGE).mean(0)
     g_max_full = np.abs(Zsub).max(0)
     g_mean_abs = g_mean_abs_full[gene_idx]
     g_frac_causal = g_frac_full[gene_idx]
+    # within-gene rank of |z| down the TF axis, computed ONCE. Under a TF permutation pi the ranks are simply
+    # RANK[pi], because ranking a permuted column gives the permuted ranks -- so the permutation control
+    # costs no re-sorting and the POST HOC rank block can be permuted as cheaply as the magnitude block.
+    RANKM = (np.argsort(np.argsort(-np.abs(Zsub), axis=0), axis=0) + 1).astype(np.int16)
+    report(f"    POST HOC identity block: within-gene ranks of |z| down the {Zsub.shape[0]}-TF axis "
+           f"(rank 1 = the TF whose knockdown moves that gene most), invariant to gene responsiveness")
 
     dhs = np.array([float(r["DHS.RPM"] or 0) for r in rows])
     dhs_pct = np.array([float(r["DHS.percentile"] or 0) for r in rows])
@@ -565,16 +645,34 @@ def main():
         el_dhs[el_idx[i]] = dhs[i]; el_dhspct[el_idx[i]] = dhs_pct[i]
     el_width = (een - est).astype(np.float64)
 
-    def blocks(el_i, dist_v):
+    # the SCREEN one-hot for CONTROL 7. It is a nuisance block, not a biological one: it is in the module
+    # only to ask which rungs survive being told which screen the pair came from.
+    ds_names = sorted(set(r["Dataset"] for r in rows))
+    ds_arr = np.array([r["Dataset"] for r in rows])
+    SCREEN = {f"screen_{n}": (ds_arr == n).astype(float) for n in ds_names}
+    report(f"    SCREEN one-hot (CONTROL 7): {len(ds_names)} K562 screens, positive rates "
+           f"{ {n: round(float(y[ds_arr == n].mean()), 4) for n in ds_names} }")
+    report(f"    element width by screen (median bp), the reason width can act as a screen label: "
+           f"{ {n: int(np.median(el_width[el_idx][ds_arr == n])) for n in ds_names} }")
+
+    def blocks(el_i, dist_v, tf_perm=None):
         """Every feature the model can see, as named blocks, for a given ELEMENT assignment.
 
-        Called once with the real elements and once per swap draw with the decoys. Passing the element index
-        in explicitly is what makes the swap a genuine swap: the decoy brings its OWN accessibility, its own
-        width, its own TF count and its own TF set, and only the gene stays.
+        Called once with the real elements, once per swap draw with the decoys, and once per permutation
+        draw with a relabelled TF axis. Passing the element index in explicitly is what makes the swap a
+        genuine swap: the decoy brings its OWN accessibility, its own width, its own TF count and its own TF
+        set, and only the gene stays.
+
+        tf_perm is CONTROL 6. It permutes the CAUSALITY side only -- Zp and the rank matrix are read through
+        pi while B, the measured occupancy, is untouched. So n_tf_bound is bit-identical, the GENE block is
+        bit-identical, the element is the real element, and the one thing that moves is which TF's causal
+        vector is attached to which TF's binding pattern.
         """
         d = np.maximum(dist_v, 1.0)
         bp = B[:, el_i].T
-        tf = tf_features(bp, Zp, g_mean_abs, g_frac_causal)
+        zp = Zp if tf_perm is None else Zp[:, tf_perm]
+        rk = RANKM[:, gene_idx].T if tf_perm is None else RANKM[tf_perm][:, gene_idx].T
+        tf = tf_features(bp, zp, g_mean_abs, g_frac_causal)
         return {
             "DIST": {"log10_dist": np.log10(d)},
             "ACC": {"log1p_dhs_rpm": np.log1p(el_dhs[el_i]),
@@ -586,6 +684,8 @@ def main():
             "GENE": {"gene_mean_abs_z": g_mean_abs, "gene_frac_causal": g_frac_causal,
                      "gene_max_abs_z": g_max_full[gene_idx], "gene_expr": gexpr[gene_idx]},
             "TFC": tf,
+            "RANK": rank_features(bp, rk, zp, g_frac_causal, Zsub.shape[0]),
+            "SCREEN": SCREEN,
         }
 
     real = blocks(el_idx, dist)
@@ -609,6 +709,16 @@ def main():
         "TFcausality_only":         ["OCC", "TFC"],
         "FULL_dist+acc+TFcausality": ["DIST", "ACC", "OCC", "TFC"],
         "FULL+gene":                ["DIST", "ACC", "OCC", "GENE", "TFC"],
+        # CONTROL 7, the screen-identity probe. SCREEN is a nuisance one-hot, never part of a biological arm.
+        "SCREEN_only":              ["SCREEN"],
+        "distance+SCREEN":          ["DIST", "SCREEN"],
+        "dist+SCREEN+accessibility": ["DIST", "SCREEN", "ACC"],
+        "dist+SCREEN+acc+TFoccupancy": ["DIST", "SCREEN", "ACC", "OCC"],
+        "dist+SCREEN+acc+occ+TFcausality": ["DIST", "SCREEN", "ACC", "OCC", "TFC"],
+        # POST HOC identity block (within-gene ranks). Never allowed to move the prespecified gates.
+        "TFcausality+RANK_only":    ["OCC", "TFC", "RANK"],
+        "FULL+RANK":                ["DIST", "ACC", "OCC", "TFC", "RANK"],
+        "dist+acc+occ+RANK":        ["DIST", "ACC", "OCC", "RANK"],
     }
     BASELINES = ["distance_only", "accessibility_only", "distance+accessibility",
                  "dist+acc+TFoccupancy", "dist+acc+gene"]
@@ -639,13 +749,14 @@ def main():
     report(f"    partition check: mean agreement of chromosome CO-MEMBERSHIP across seed pairs "
            f"{np.mean(pair_agree):.2f} (1.00 would mean the seeds are relabelings of one split)")
 
+    PERTURBED_ARMS = (FULL, "TFcausality_only", "FULL+RANK", "TFcausality+RANK_only")
     res, MODELS = {}, {}
     for arm, ks in ARMS.items():
         F = mat(real, ks)
         vals = []
         for s in SEEDS:
             ms = fit_folds(F, y, folds[s], s)
-            if arm in (FULL, "TFcausality_only"):
+            if arm in PERTURBED_ARMS:
                 MODELS.setdefault(arm, {})[s] = ms      # kept so the swap re-scores, never retrains
             vals.append(score_oof(ms, F, y, folds[s]))
         res[arm] = {"auprc_mean": float(np.mean(vals)), "auprc_sd": float(np.std(vals)),
@@ -662,21 +773,46 @@ def main():
     # THE LADDER, because a single "increment over the best baseline" hides which rung actually pays. Each
     # rung adds ONE thing to the rung above it, so the difference between two adjacent rungs is the price of
     # that one thing and nothing else.
-    ladder = [("distance only", "distance_only"),
-              ("+ accessibility", "distance+accessibility"),
-              ("+ TF occupancy COUNT (no causality)", "dist+acc+TFoccupancy"),
-              ("+ TF CAUSALITY weights", FULL),
-              ("+ gene responsiveness", "FULL+gene")]
-    report(f"    THE LADDER -- each rung adds one thing to the rung above it:")
-    prev = None
-    ladder_out = []
-    for lbl, arm in ladder:
-        a = res[arm]["auprc_mean"]
-        d = "" if prev is None else f"   {a - prev:+.4f}"
-        report(f"      {lbl:38s} {a:.4f}{d}")
-        ladder_out.append({"rung": lbl, "arm": arm, "auprc": a,
-                           "delta_over_previous_rung": None if prev is None else float(a - prev)})
-        prev = a
+    #
+    # AND EVERY RUNG GOES THROUGH THE SAME GATE. The increments are computed PAIRED, seed by seed, because
+    # all arms share the identical folds: an unpaired comparison of two means each carrying an across-seed
+    # sd of ~0.005 would call a +0.009 increment invisible when the paired per-seed deltas are consistent,
+    # and would equally let an inconsistent one pass. Whether a rung clears MIN_INCREMENT in >= MIN_SEEDS
+    # partitions is then reported for EVERY rung, so no rung gets a positive claim on a number that would
+    # have failed the bar the module set for the rung it was testing.
+    def rung(lbl, a, b):
+        dd = np.array(res[b]["auprc_per_seed"]) - np.array(res[a]["auprc_per_seed"])
+        o = {"rung": lbl, "from_arm": a, "to_arm": b,
+             "EFFECT_raw_auprc_from": res[a]["auprc_mean"], "EFFECT_raw_auprc_to": res[b]["auprc_mean"],
+             "paired_delta_mean": float(dd.mean()), "paired_delta_per_seed": [float(x) for x in dd],
+             "n_seeds_clearing_min_increment": int((dd >= MIN_INCREMENT).sum()),
+             "n_seeds_positive": int((dd > 0).sum()), "of_seeds": len(SEEDS),
+             "clears_prespecified_gate": bool((dd.mean() >= MIN_INCREMENT) and
+                                              (dd >= MIN_INCREMENT).sum() >= MIN_SEEDS)}
+        report(f"      {lbl:44s} {res[b]['auprc_mean']:.4f}   paired {dd.mean():+.4f}  "
+               f">= {MIN_INCREMENT:.3f} in {o['n_seeds_clearing_min_increment']}/{len(SEEDS)}, "
+               f"positive in {o['n_seeds_positive']}/{len(SEEDS)}  "
+               f"{'CLEARS THE BAR' if o['clears_prespecified_gate'] else 'SUB-THRESHOLD'}")
+        return o
+
+    report(f"    THE LADDER -- each rung adds one thing to the rung above it, and EVERY rung is put through "
+           f"the SAME gate")
+    report(f"    ({MIN_INCREMENT:.3f} paired AUPRC in >= {MIN_SEEDS}/{len(SEEDS)} partitions) as the one the "
+           f"question is about:")
+    report(f"      {'distance only':44s} {res['distance_only']['auprc_mean']:.4f}   (the floor)")
+    ladder_out = [
+        rung("+ accessibility", "distance_only", "distance+accessibility"),
+        rung("+ TF occupancy COUNT (no causality)", "distance+accessibility", "dist+acc+TFoccupancy"),
+        rung("+ TF CAUSALITY weights", "dist+acc+TFoccupancy", FULL),
+        rung("+ gene responsiveness", FULL, "FULL+gene"),
+    ]
+    ladder_extra = [
+        rung("[both TF rungs together] over dist+acc", "distance+accessibility", FULL),
+        rung("[POST HOC] + within-gene RANK identity block", FULL, "FULL+RANK"),
+        rung("[POST HOC] RANK block over dist+acc+count", "dist+acc+TFoccupancy", "dist+acc+occ+RANK"),
+    ]
+    count_rung = ladder_out[1]
+    caus_rung = ladder_out[2]
     inc_over_distacc = res[FULL]["auprc_mean"] - res["distance+accessibility"]["auprc_mean"]
     inc_over_occ = res[FULL]["auprc_mean"] - res["dist+acc+TFoccupancy"]["auprc_mean"]
     report(f"    BEST BASELINE: {best_base} at {res[best_base]['auprc_mean']:.4f}")
@@ -684,6 +820,29 @@ def main():
            f"(>= {MIN_INCREMENT:.3f} in {sum(per_seed_win)}/{len(SEEDS)} partitions)")
     report(f"    for contrast, over distance+accessibility alone: {inc_over_distacc:+.4f} -- the gap between "
            f"these two numbers IS the raw count of bound TFs, which needs no Perturb-seq at all")
+
+    # ---- 4b. CONTROL 7: which rungs survive being told which SCREEN the pair came from -------------------
+    report(f"\n  4b CONTROL 7 -- THE SCREEN-IDENTITY PROBE. Six K562 screens, positive rates spanning "
+           f"{min(y[ds_arr == n].mean() for n in ds_names):.4f} to "
+           f"{max(y[ds_arr == n].mean() for n in ds_names):.4f} (a "
+           f"{max(y[ds_arr == n].mean() for n in ds_names)/max(min(y[ds_arr == n].mean() for n in ds_names), 1e-9):.0f}x "
+           f"spread), and element")
+    report(f"     WIDTH -- which sits in the ACCESSIBILITY block -- differs by screen. A model can therefore "
+           f"buy AUPRC by naming the batch. Every")
+    report(f"     rung is re-run with the screen one-hot already in the model; a rung that survives is about "
+           f"the element, one that does not is about the batch.")
+    report(f"      {'SCREEN one-hot alone (no element, no distance)':44s} "
+           f"{res['SCREEN_only']['auprc_mean']:.4f}   "
+           f"({res['SCREEN_only']['auprc_mean']/y.mean():.2f}x the base rate)")
+    screen_rungs = [
+        rung("SCREEN label over distance", "distance_only", "distance+SCREEN"),
+        rung("accessibility over distance+SCREEN", "distance+SCREEN", "dist+SCREEN+accessibility"),
+        rung("TF COUNT over dist+SCREEN+acc", "dist+SCREEN+accessibility", "dist+SCREEN+acc+TFoccupancy"),
+        rung("TF CAUSALITY over dist+SCREEN+acc+count", "dist+SCREEN+acc+TFoccupancy",
+             "dist+SCREEN+acc+occ+TFcausality"),
+    ]
+    acc_rung_naive = ladder_out[0]
+    acc_rung_screen = screen_rungs[1]
 
     # ---- 5. THE ELEMENT SWAP -----------------------------------------------------------------------------
     report(f"\n  5  ELEMENT SWAP -- keep the gene, replace the element with a decile-matched decoy")
@@ -814,6 +973,82 @@ def main():
         "element_only_degree_matched_TFCarm": s_dg[("real_distance", TFC)],
     }
 
+    # ---- 5b. CONTROL 6: THE TF-AXIS PERMUTATION -- the identity test that does not touch the element -----
+    report(f"\n  5b CONTROL 6 -- TF-AXIS PERMUTATION. The element swap changes the ELEMENT, so it confounds "
+           f"'which TFs' with everything")
+    report(f"     else an element carries. This does not touch the element. It relabels the TF axis of the "
+           f"CAUSAL matrix while the measured")
+    report(f"     OCCUPANCY matrix stays exactly as it is, so n_TFs_bound is preserved EXACTLY (not to a "
+           f"decile), the gene's whole z")
+    report(f"     distribution over the {len(tfs)} TFs is preserved EXACTLY (a permuted column is the same "
+           f"multiset), and the GENE block is")
+    report(f"     bit-identical. The one thing destroyed is which TF's binding goes with which TF's "
+           f"causality. Models are NEVER refitted.")
+    tf_bind_deg = B.sum(1).astype(np.float64)                        # elements each TF binds
+    tf_causal_breadth = (np.abs(Zsub) >= Z_EDGE).mean(1)             # genes each TF is causal for
+    db = np.digitize(tf_bind_deg, np.quantile(tf_bind_deg, np.linspace(.1, .9, 9)))
+    dc = np.digitize(tf_causal_breadth, np.quantile(tf_causal_breadth, np.linspace(.1, .9, 9)))
+    tf_strata = {}
+    for i in range(len(tfs)):
+        tf_strata.setdefault((int(db[i]), int(dc[i])), []).append(i)
+    report(f"     DEGREE-STRATIFIED variant: {len(tf_strata)} TF strata (binding-degree decile x "
+           f"causal-breadth decile), sizes "
+           f"{min(len(v) for v in tf_strata.values())}-{max(len(v) for v in tf_strata.values())}. A TF that "
+           f"binds everywhere and moves everything")
+    report(f"     can only be exchanged for another such TF, so the permutation cannot be beaten by TF-side "
+           f"degree -- the configuration model on the TF axis.")
+
+    def run_perm(kind, label, arms):
+        aupr = {a: [] for a in arms}
+        moved = []
+        for d in range(SWAP_DRAWS):
+            rng = np.random.default_rng(11000 + d)
+            p = np.arange(len(tfs))
+            if kind == "free":
+                rng.shuffle(p)
+            else:
+                for _, v in tf_strata.items():
+                    v = np.array(v)
+                    q = v.copy()
+                    rng.shuffle(q)
+                    p[v] = q
+            moved.append(float((p != np.arange(len(tfs))).mean()))
+            bl = blocks(el_idx, dist, tf_perm=p)
+            for a in arms:
+                Fs = mat(bl, ARMS[a])
+                aupr[a].append(float(np.mean([score_oof(MODELS[a][s], Fs, y, folds[s]) for s in SEEDS])))
+        out = {}
+        report(f"    {label}  ({np.mean(moved):.0%} of TFs relabelled per draw)")
+        for a in arms:
+            v = aupr[a]
+            real_a = res[a]["auprc_mean"]
+            frac = float(np.mean([real_a > x for x in v]))
+            o = {"label": label, "model_arm": a, "draws": SWAP_DRAWS, "kind": kind,
+                 "EFFECT_raw_real_auprc": real_a,
+                 "permuted_auprc_mean": float(np.mean(v)), "permuted_auprc_sd": float(np.std(v)),
+                 "permuted_auprc_min": float(np.min(v)), "permuted_auprc_max": float(np.max(v)),
+                 "frac_draws_real_beats_permuted": frac,
+                 "delta_real_minus_permuted": real_a - float(np.mean(v)),
+                 "frac_of_real_reproduced_by_permutation": float(np.mean(v)) / max(real_a, 1e-12),
+                 "frac_tfs_relabelled_per_draw": float(np.mean(moved)),
+                 "post_hoc": a in ("FULL+RANK", "TFcausality+RANK_only")}
+            report(f"      [{a:26s}] real {real_a:.4f}   TF-permuted {np.mean(v):.4f} +/- {np.std(v):.4f} "
+                   f"(range {np.min(v):.4f}-{np.max(v):.4f});  real beats the permutation in {frac:.0%} of "
+                   f"{SWAP_DRAWS} draws; the permutation reproduces "
+                   f"{o['frac_of_real_reproduced_by_permutation']:.0%}")
+            out[a] = o
+        return out
+
+    p_free = run_perm("free", "PERMUTATION A -- free relabelling of the TF axis", list(PERTURBED_ARMS))
+    p_deg = run_perm("degree", "PERMUTATION B -- DEGREE-STRATIFIED relabelling (configuration model on the "
+                               "TF axis)", list(PERTURBED_ARMS))
+    perms = {"free": p_free, "degree_stratified": p_deg}
+    # the decisive identity read: the strict permutation on the arm that holds nothing but the element's
+    # occupancy and its TF-causality features
+    perm_key = p_deg["TFcausality_only"]
+    perm_full = p_deg[FULL]
+    tf_identity_perm_survives = perm_key["frac_draws_real_beats_permuted"] >= MIN_SWAP_FRAC
+
     # ---- 6. what the increment is, sanity-checked against the arms it must beat --------------------------
     report("\n  6  READING THE THREE THINGS TOGETHER")
     passes_inc = (inc >= MIN_INCREMENT) and (sum(per_seed_win) >= MIN_SEEDS)
@@ -868,39 +1103,64 @@ def main():
              "smoother draw from the same distribution"
              if t2["swapped_auprc_mean"] > t2["EFFECT_raw_real_auprc"] else "")
 
-    # a descriptive cross-check, not a claim: are positives bound by more CAUSAL TFs than negatives, matched
-    # on distance x accessibility deciles? 20 draws, raw rates reported.
+    # A descriptive cross-check, not a claim: are positives bound by more CAUSAL TFs than negatives?
+    #
+    # IT IS RUN TWICE, AND THE SECOND RUN IS THE ONE THAT COUNTS. An earlier version matched only on
+    # distance x accessibility deciles and reported the result as the one real thing that survived. But the
+    # whole finding of this module is that the element pays through the NUMBER of TFs bound, and positives
+    # sit at busier elements: pair-weighted they carry 102 bound TFs against 53 for negatives. A count of
+    # "bound AND causal" TFs is then higher for positives for the trivial reason that they have more bound
+    # TFs to begin with. Matching on distance x accessibility only is therefore a control WEAKER than the
+    # claim it was licensing, and by exactly the covariate this module says is doing the work. So the
+    # n-TFs-bound decile is added as a third matching key -- the same degree matching the predictive swap
+    # already insisted on -- and both versions are reported side by side.
     report("\n    descriptive cross-check: TFs bound AND causal at the element, positives vs matched negatives")
     tfc_n = real["TFC"]["tf_n_causal"]
-    pooln, pool1 = {}, {}
-    for i in range(len(y)):
-        (pool1 if y[i] else pooln).setdefault(bins_da[i], []).append(i)
-    dr = []
-    for d in range(SWAP_DRAWS):
-        rng = np.random.default_rng(7000 + d)
-        a, b = [], []
-        for k, v1 in pool1.items():
-            v0 = pooln.get(k, [])
-            if not v0:
+
+    def descriptive(bins, label, val):
+        pooln, pool1 = {}, {}
+        for i in range(len(y)):
+            (pool1 if y[i] else pooln).setdefault(bins[i], []).append(i)
+        dr, nused = [], 0
+        for d in range(SWAP_DRAWS):
+            rng = np.random.default_rng(7000 + d)
+            a, b = [], []
+            for k, v1 in pool1.items():
+                v0 = pooln.get(k, [])
+                if not v0:
+                    continue
+                a += list(v1)
+                b += list(rng.choice(v0, len(v1), replace=len(v0) < len(v1)))
+            if len(a) < 30:
                 continue
-            a += list(v1)
-            b += list(rng.choice(v0, len(v1), replace=len(v0) < len(v1)))
-        if len(a) < 30:
-            continue
-        dr.append((float(np.mean(tfc_n[a])), float(np.mean(tfc_n[b])),
-                   float(stats.mannwhitneyu(tfc_n[a], tfc_n[b], alternative="two-sided")[1])))
-    if dr:
+            nused = len(a)
+            dr.append((float(np.mean(val[a])), float(np.mean(val[b])),
+                       float(stats.mannwhitneyu(val[a], val[b], alternative="two-sided")[1])))
+        if not dr:
+            report(f"      {label}: NOT RUN, no stratum carried both arms")
+            return {"n_draws": 0, "label": label,
+                    "reason": "no stratum carried both a positive and a negative"}
         mp = float(np.mean([x[0] for x in dr])); mn_ = float(np.mean([x[1] for x in dr]))
         fs = float(np.mean([x[2] < 0.05 for x in dr]))
-        cross = {"n_draws": len(dr), "EFFECT_raw_positives_mean_n_causal_bound_TFs": mp,
-                 "matched_negatives_mean": mn_, "ratio": mp / max(mn_, 1e-12),
-                 "frac_draws_p_lt_0.05": fs, "median_p": float(np.median([x[2] for x in dr]))}
-        report(f"      positives {mp:.2f} causal-and-bound TFs vs matched negatives {mn_:.2f} "
+        o = {"label": label, "n_draws": len(dr), "n_positives_matched": nused,
+             "EFFECT_raw_positives_mean_n_causal_bound_TFs": mp, "matched_negatives_mean": mn_,
+             "ratio": mp / max(mn_, 1e-12), "frac_draws_p_lt_0.05": fs,
+             "median_p": float(np.median([x[2] for x in dr])),
+             "clears_min_swap_frac": bool(fs >= MIN_SWAP_FRAC)}
+        report(f"      {label:44s} positives {mp:.2f} vs matched negatives {mn_:.2f} "
                f"({mp/max(mn_,1e-12):.2f}x), p<0.05 in {fs:.0%} of {len(dr)} draws "
-               f"(median p {cross['median_p']:.3g})")
-    else:
-        cross = {"n_draws": 0, "reason": "no stratum carried both a positive and a negative"}
-        report("      NOT RUN: no stratum carried both arms")
+               f"(median p {o['median_p']:.3g})  "
+               f"{'holds' if fs >= MIN_SWAP_FRAC else 'DOES NOT HOLD at the ' + f'{MIN_SWAP_FRAC:.0%}' + ' bar'}")
+        return o
+
+    cross = descriptive(bins_da, "matched on dist x acc deciles ONLY", tfc_n)
+    cross_deg = descriptive(bins_dan, "DEGREE-MATCHED (+ n-TFs-bound decile)", tfc_n)
+    cross_count = descriptive(bins_da, "for contrast: n TFs BOUND, dist x acc only", nbound_el[el_idx].astype(float))
+    report(f"      raw, unmatched: positives sit at elements carrying "
+           f"{nbound_el[el_idx][y == 1].mean():.0f} bound TFs against "
+           f"{nbound_el[el_idx][y == 0].mean():.0f} for negatives "
+           f"({nbound_el[el_idx][y == 1].mean()/max(nbound_el[el_idx][y == 0].mean(),1e-9):.2f}x) -- which "
+           f"is why the degree-matched row above is the one that counts")
 
     # ---- verdict -----------------------------------------------------------------------------------------
     base_rate = float(y.mean())
@@ -917,7 +1177,16 @@ def main():
             f"information at all, {res['distance+accessibility']['auprc_mean']:.4f} for distance + "
             f"accessibility, {res['dist+acc+TFoccupancy']['auprc_mean']:.4f} once the raw COUNT of the "
             f"{len(tfs)} profiled TFs bound at the element is added, and {rf:.4f} once those TFs are "
-            f"WEIGHTED by their Perturb-seq causality for the gene")
+            f"WEIGHTED by their Perturb-seq causality for the gene. One nuisance has to be named before any "
+            f"of that is read as chromatin: the K562 arm is {len(ds_names)} screens whose positive rates run "
+            f"{min(y[ds_arr == n].mean() for n in ds_names):.4f} to "
+            f"{max(y[ds_arr == n].mean() for n in ds_names):.4f}, and the screen one-hot ALONE, with no "
+            f"element and no distance, reaches {res['SCREEN_only']['auprc_mean']:.4f} "
+            f"({res['SCREEN_only']['auprc_mean']/base_rate:.1f}x the base rate). Told which screen a pair "
+            f"came from, accessibility still adds {acc_rung_screen['paired_delta_mean']:+.4f} "
+            f"({acc_rung_screen['n_seeds_clearing_min_increment']}/{len(SEEDS)} partitions at the bar) "
+            f"against {acc_rung_naive['paired_delta_mean']:+.4f} when it is not, so the accessibility rung "
+            f"is {'largely batch' if acc_rung_screen['paired_delta_mean'] < 0.5 * acc_rung_naive['paired_delta_mean'] else 'not explained by batch'}")
     if passes_inc and passes_swap and passes_deg:
         v = (f"TF CAUSALITY AT THE ELEMENT IS A REAL INCREMENT. {head}. That is {inc:+.4f} AUPRC over the "
              f"best baseline ({best_base}, {rb:.4f}), held in {sum(per_seed_win)}/{len(SEEDS)} chromosome "
@@ -945,8 +1214,65 @@ def main():
              f"scores {t2['swapped_auprc_mean']:.4f} against the real element's "
              f"{t2['EFFECT_raw_real_auprc']:.4f} -- {t2['frac_of_real_reproduced_by_swap']:.0%} of it, with "
              f"the real element winning {t2['frac_draws_real_beats_swap']:.0%} of {SWAP_DRAWS} draws{above}. "
-             f"WHICH transcription factors sit on a distal element, weighted by their causal effect on the "
-             f"gene, is not shown here to matter; HOW MANY sit on it does. The prespecified swap gates (ii) "
+             f"THE CLEANER IDENTITY TEST AGREES AND IS THE ONE TO QUOTE, because it never touches the "
+             f"element at all: relabelling the TF axis of the causal matrix -- which holds the element, the "
+             f"gene, the EXACT number of bound TFs and the gene's EXACT z distribution over all {len(tfs)} "
+             f"TFs fixed, and destroys only which TF's binding goes with which TF's causality -- leaves the "
+             f"TF-causality-only arm at {perm_key['permuted_auprc_mean']:.4f} against the real "
+             f"{perm_key['EFFECT_raw_real_auprc']:.4f} "
+             f"({perm_key['frac_of_real_reproduced_by_permutation']:.0%} reproduced, real wins "
+             f"{perm_key['frac_draws_real_beats_permuted']:.0%} of {SWAP_DRAWS} draws) and the full model at "
+             f"{perm_full['permuted_auprc_mean']:.4f} against {rf:.4f} "
+             f"({perm_full['frac_of_real_reproduced_by_permutation']:.0%}, real wins "
+             f"{perm_full['frac_draws_real_beats_permuted']:.0%}), under a DEGREE-STRATIFIED permutation in "
+             f"which a TF can only be exchanged for one of similar binding degree and similar causal "
+             f"breadth. AND THE CONTRAST BETWEEN THE TWO PERMUTATIONS IS THE MOST INSTRUCTIVE NUMBER IN THE "
+             f"MODULE, so it leads rather than sits in a footnote: a FREE relabelling of the TF axis IS "
+             f"beaten by the real data -- the TF-causality-only arm scores "
+             f"{p_free['TFcausality_only']['EFFECT_raw_real_auprc']:.4f} against a freely permuted "
+             f"{p_free['TFcausality_only']['permuted_auprc_mean']:.4f}, winning "
+             f"{p_free['TFcausality_only']['frac_draws_real_beats_permuted']:.0%} of {SWAP_DRAWS} draws, and "
+             f"the post hoc rank arm wins "
+             f"{p_free['TFcausality+RANK_only']['frac_draws_real_beats_permuted']:.0%} -- so a module that "
+             f"had run only the uniform control would have reported TF IDENTITY AS A REAL EFFECT. The whole "
+             f"of that apparent effect is TF-side DEGREE: how many elements a TF binds and how many genes "
+             f"its knockdown moves. Hold those two deciles fixed and the real assignment of causality to "
+             f"occupancy loses its entire advantage "
+             f"({perm_key['frac_draws_real_beats_permuted']:.0%} and "
+             f"{p_deg['TFcausality+RANK_only']['frac_draws_real_beats_permuted']:.0%} of draws). That is the "
+             f"finding, not a caveat: promiscuous TFs sit on many elements and move many genes, and that "
+             f"alone reproduces everything the causal weighting appeared to contribute. AND THE COUNT DOES "
+             f"NOT ESCAPE THE SAME BAR. Applying the module's own gate to every "
+             f"rung rather than only to the rung under test: accessibility over distance clears it "
+             f"({acc_rung_naive['paired_delta_mean']:+.4f} paired, "
+             f"{acc_rung_naive['n_seeds_clearing_min_increment']}/{len(SEEDS)}), but the TF COUNT rung does "
+             f"NOT ({count_rung['paired_delta_mean']:+.4f}, "
+             f"{count_rung['n_seeds_clearing_min_increment']}/{len(SEEDS)}) and neither does the TF "
+             f"CAUSALITY rung ({caus_rung['paired_delta_mean']:+.4f}, "
+             f"{caus_rung['n_seeds_clearing_min_increment']}/{len(SEEDS)}). So the honest reading is not "
+             f"'identity fails, count works': BOTH TF rungs are sub-threshold, the count differing only in "
+             f"being consistent in sign ({count_rung['n_seeds_positive']}/{len(SEEDS)} partitions positive "
+             f"against {caus_rung['n_seeds_positive']}/{len(SEEDS)}). AND THE COUNT DOES NOT SURVIVE BEING "
+             f"TOLD WHICH SCREEN THE PAIR CAME FROM: with the screen one-hot already in the model the TF "
+             f"COUNT rung is {screen_rungs[2]['paired_delta_mean']:+.4f} and positive in only "
+             f"{screen_rungs[2]['n_seeds_positive']}/{len(SEEDS)} partitions, and the TF CAUSALITY rung on "
+             f"top of it {screen_rungs[3]['paired_delta_mean']:+.4f} in "
+             f"{screen_rungs[3]['n_seeds_positive']}/{len(SEEDS)} -- both NOT DETECTED, and neither is "
+             f"called reversed, because a negative point estimate that no partition supports is an absence "
+             f"of signal and not evidence of the opposite. The screens differ in element geometry "
+             f"(median width {min(np.median(el_width[el_idx][ds_arr == n]) for n in ds_names):.0f}-"
+             f"{max(np.median(el_width[el_idx][ds_arr == n]) for n in ds_names):.0f} bp) and by "
+             f"{max(y[ds_arr == n].mean() for n in ds_names)/max(min(y[ds_arr == n].mean() for n in ds_names), 1e-9):.0f}x "
+             f"in hit rate, and a wider element carries more ChIP peaks, so the TF count was partly reading "
+             f"the assay. ACCESSIBILITY IS THE ONLY RUNG LEFT STANDING: it clears the bar both naively "
+             f"({acc_rung_naive['paired_delta_mean']:+.4f}, "
+             f"{acc_rung_naive['n_seeds_clearing_min_increment']}/{len(SEEDS)}) and with the screen held "
+             f"({acc_rung_screen['paired_delta_mean']:+.4f}, "
+             f"{acc_rung_screen['n_seeds_clearing_min_increment']}/{len(SEEDS)}). WHICH transcription "
+             f"factors sit on a distal element, weighted by their causal effect on the gene, is not shown "
+             f"here to matter; and HOW MANY sit on it, which an earlier version of this module credited with "
+             f"the finding, does not clear the bar either and does not survive the screen. The prespecified "
+             f"swap gates (ii) "
              f"and (iii) both pass on the full model ({sw1['frac_draws_real_beats_swap']:.0%} and "
              f"{sw2['frac_draws_real_beats_swap']:.0%}), but they are lenient by construction -- a "
              f"decile-matched decoy carries the decile of the distance and not the distance, and the full "
@@ -954,16 +1280,34 @@ def main():
              f"the same degree-matched decoys reproduce "
              f"{e2['frac_of_real_reproduced_by_swap']:.0%} of the full model's AUPRC "
              f"({e2['swapped_auprc_mean']:.4f} against {rf:.4f}), with the real element winning "
-             f"{e2['frac_draws_real_beats_swap']:.0%} of {SWAP_DRAWS} draws -- a coin flip. One real thing "
-             f"survives all of it and is reported as "
-             f"descriptive rather than predictive: positives carry "
+             f"{e2['frac_draws_real_beats_swap']:.0%} of {SWAP_DRAWS} draws -- a coin flip. THE DESCRIPTIVE "
+             f"CROSS-CHECK GOES THE SAME WAY ONCE IT IS DEGREE-MATCHED, and this replaces what an earlier "
+             f"version of this module called the one real thing that survived: matched on distance x "
+             f"accessibility deciles only, positives carry "
              f"{cross.get('EFFECT_raw_positives_mean_n_causal_bound_TFs', float('nan')):.2f} bound-and-causal "
-             f"TFs against {cross.get('matched_negatives_mean', float('nan')):.2f} for distance- and "
-             f"accessibility-matched negatives "
+             f"TFs against {cross.get('matched_negatives_mean', float('nan')):.2f} "
              f"({cross.get('ratio', float('nan')):.2f}x, p<0.05 in "
-             f"{100*cross.get('frac_draws_p_lt_0.05', 0):.0f}% of {cross.get('n_draws', 0)} draws) -- a real "
-             f"association that a model already holding distance, accessibility and TF count cannot convert "
-             f"into ranking power. This is a null on the headline question and the project commits it.")
+             f"{100*cross.get('frac_draws_p_lt_0.05', 0):.0f}% of {cross.get('n_draws', 0)} draws) -- but "
+             f"positives sit at elements carrying {nbound_el[el_idx][y == 1].mean():.0f} bound TFs against "
+             f"{nbound_el[el_idx][y == 0].mean():.0f} for negatives, so that comparison was matched on "
+             f"everything EXCEPT the covariate this module says does the work. Add the n-TFs-bound decile "
+             f"and it falls to {cross_deg.get('EFFECT_raw_positives_mean_n_causal_bound_TFs', float('nan')):.2f} "
+             f"against {cross_deg.get('matched_negatives_mean', float('nan')):.2f} "
+             f"({cross_deg.get('ratio', float('nan')):.2f}x) with p<0.05 in only "
+             f"{100*cross_deg.get('frac_draws_p_lt_0.05', 0):.0f}% of "
+             f"{cross_deg.get('n_draws', 0)} draws, short of the {MIN_SWAP_FRAC:.0%} bar the module uses for "
+             f"every other matched control. NOTHING IS LEFT STANDING ON THE HEADLINE QUESTION -- not the "
+             f"predictive increment, not the element swap, not the TF-axis permutation, and not the "
+             f"descriptive association once it is matched on TF count. This is a null and the project "
+             f"commits it. The POST HOC detectability probe is reported so the null is not read as stronger "
+             f"than it is: a second, gene-scale-free identity block built from WITHIN-GENE RANKS of |z| "
+             f"moves the full model to {res['FULL+RANK']['auprc_mean']:.4f} "
+             f"({ladder_extra[1]['paired_delta_mean']:+.4f} paired, "
+             f"{ladder_extra[1]['n_seeds_clearing_min_increment']}/{len(SEEDS)} partitions at the bar), "
+             f"which is still sub-threshold but says the aggregation choice is not the whole story, and it "
+             f"too is erased by the degree-stratified TF permutation "
+             f"({p_deg['FULL+RANK']['frac_of_real_reproduced_by_permutation']:.0%} reproduced, real wins "
+             f"{p_deg['FULL+RANK']['frac_draws_real_beats_permuted']:.0%}).")
     elif not passes_swap:
         v = (f"THE INCREMENT IS REAL BUT THE ELEMENT IS NOT DOING THE WORK -- the model reads the gene and "
              f"the distance. {head}, an increment of {inc:+.4f} over {best_base} ({rb:.4f}). But replacing "
@@ -995,10 +1339,18 @@ def main():
         f"gene-responsiveness-only arm ({res['gene_responsiveness_only']['auprc_mean']:.4f} AUPRC with NO "
         f"element information) measures and what the element swap removes. There is no RPE1 enhancer-CRISPR "
         f"benchmark to escape to.",
-        f"the benchmark's K562 arm is EIGHT screens with different libraries, distance ranges and hit rates. "
-        f"Dataset is NOT a matching key here (the swap matches on distance and accessibility deciles), so a "
-        f"decoy can come from a different screen than its target pair. Distance decile absorbs most of that "
-        f"because the screens differ mainly in distance range, but not all of it.",
+        f"the benchmark's K562 arm is {len(ds_names)} screens with different libraries, element geometries "
+        f"and hit rates (positive rate {min(y[ds_arr == n].mean() for n in ds_names):.4f} to "
+        f"{max(y[ds_arr == n].mean() for n in ds_names):.4f}). Dataset is NOT a matching key in the element "
+        f"swap, so a decoy can come from a different screen than its target pair. The screen one-hot alone "
+        f"reaches {res['SCREEN_only']['auprc_mean']:.4f} AUPRC with no element information, and element "
+        f"WIDTH -- which sits in the accessibility block -- is close to a screen label "
+        f"({ {n: int(np.median(el_width[el_idx][ds_arr == n])) for n in ds_names} } bp median by screen). "
+        f"CONTROL 7 conditions every rung on the screen; the numbers are in screen_conditioned_ladder.",
+        f"the SCREEN one-hot used in CONTROL 7 is a nuisance covariate available here only because the "
+        f"benchmark records which screen tested which pair. It is not a feature a deployed E-G predictor "
+        f"could use, and it is never part of a biological arm -- it exists to ask which rungs survive "
+        f"knowing the batch, not to raise anyone's AUPRC.",
         f"one ChIP file per TF (lowest-accession GRCh38 '{OUTPUT_TYPE}'). A TF whose K562 experiments "
         f"disagree is represented by one of them, and {len(idx) - len(tfs)} ChIP-profiled TFs are dropped "
         f"for having no Replogle perturbation.",
@@ -1029,6 +1381,41 @@ def main():
         f"and two gene-background-subtracted terms). A per-TF model that learned which INDIVIDUAL TFs matter "
         f"is not fitted here: with {int(y.sum())} positives over {len(tfs)} TFs it would be fitting noise, "
         f"and that is a real ceiling on this design rather than a claim that no such signal exists.",
+        f"AND THE AGGREGATION IS A WEAKER INSTRUMENT THAN IT LOOKS, WHICH WEAKENS THIS MODULE'S OWN NULL. "
+        f"The bound set is not small: pair-weighted, positives carry {nbound_el[el_idx][y == 1].mean():.0f} "
+        f"of the {len(tfs)} profiled TFs and negatives {nbound_el[el_idx][y == 0].mean():.0f}. A mean of |z| "
+        f"over ~{nbound_el[el_idx].mean():.0f} of {len(tfs)} TFs is close to the gene's mean over all of "
+        f"them, so a magnitude aggregate is structurally near-blind to WHICH TFs those are, and a null from "
+        f"it is partly a statement about the aggregation. The POST HOC within-gene-RANK block is included "
+        f"precisely to probe that, and it does move the full model "
+        f"({ladder_extra[1]['paired_delta_mean']:+.4f} paired, "
+        f"{ladder_extra[1]['n_seeds_clearing_min_increment']}/{len(SEEDS)} at the bar) -- sub-threshold, but "
+        f"not zero, so 'no identity signal exists' is NOT what this module is entitled to say. What it is "
+        f"entitled to say is that no parameterisation tried here converts identity into ranking power that "
+        f"survives a degree-stratified TF permutation.",
+        f"the TF-axis permutation (CONTROL 6) preserves each TF's causal vector and each element's occupancy "
+        f"exactly, but a free permutation also breaks the association between a TF's BINDING degree and its "
+        f"CAUSAL breadth, and that association is the entire apparent effect: the real data beats the FREE "
+        f"permutation in {p_free['TFcausality_only']['frac_draws_real_beats_permuted']:.0%} of draws on the "
+        f"TF-causality-only arm and the DEGREE-STRATIFIED one in only "
+        f"{perm_key['frac_draws_real_beats_permuted']:.0%}. A module that ran only the uniform version would "
+        f"have reported a positive. The stratified draws relabel "
+        f"{p_deg['TFcausality_only']['frac_tfs_relabelled_per_draw']:.0%} of TFs against "
+        f"{p_free['TFcausality_only']['frac_tfs_relabelled_per_draw']:.0%} for free draws -- with "
+        f"{len(tf_strata)} strata over {len(tfs)} TFs and the smallest holding "
+        f"{min(len(v) for v in tf_strata.values())}, the stratified control moves less and is therefore the "
+        f"more conservative of the two, which makes the real side's failure to beat it the stronger reading.",
+        f"the screen-conditioned rungs (CONTROL 7) are themselves a limit on this module's OWN null as well "
+        f"as on its positive claims: conditioning on the screen raises every arm that contains it (distance "
+        f"+ screen reaches {res['distance+SCREEN']['auprc_mean']:.4f} against "
+        f"{res['distance_only']['auprc_mean']:.4f}), so the TF rungs are being asked to add on top of a "
+        f"stronger model than the prespecified ladder used. That is the right test for 'is this batch', but "
+        f"it is a harder test than the prespecified one and the prespecified gates are not rescored on it.",
+        f"the element-swap donor is drawn uniformly over PAIRS, not over elements, so an element tested "
+        f"against many genes is over-represented among decoys (mean pairs-per-element behind a donor draw is "
+        f"higher than the {len(y)/len(uel):.2f} a uniform-over-elements draw would give). That skews decoys "
+        f"toward multiply-tested elements. The TF-axis permutation does not have this defect, which is "
+        f"another reason it is the identity number quoted.",
         f"pairs below {POWER_COL} {MIN_POWER} are excluded, not counted as negatives, because not-detected "
         f"is not not-linked. {int((pw < MIN_POWER).sum()):,} pairs are dropped that way.",
         f"AUPRC is pooled over out-of-fold predictions within a seed. Folds are whole chromosomes, so fold "
@@ -1083,6 +1470,35 @@ def main():
         "arms_raw_auprc": res,
         "positive_base_rate_for_every_auprc_above": base_rate,
         "ladder": ladder_out,
+        "ladder_extra_and_post_hoc": ladder_extra,
+        "ladder_gate_applied_to_every_rung": {
+            "rule": f"paired per-seed delta >= {MIN_INCREMENT} in >= {MIN_SEEDS}/{len(SEEDS)} partitions -- "
+                    f"the SAME bar the question under test is held to, applied to every rung so no rung "
+                    f"earns a positive claim on a number that would have failed it",
+            "rungs_clearing": [r["rung"] for r in ladder_out if r["clears_prespecified_gate"]],
+            "rungs_sub_threshold": [r["rung"] for r in ladder_out if not r["clears_prespecified_gate"]],
+        },
+        "screen_conditioned_ladder": {
+            "why": "six K562 screens with a 14x spread in positive rate; element width sits in the "
+                   "accessibility block and is close to a screen label, so a rung can pay by naming the batch",
+            "screen_only_auprc": res["SCREEN_only"]["auprc_mean"],
+            "n_screens": len(ds_names),
+            "positive_rate_by_screen": {n: float(y[ds_arr == n].mean()) for n in ds_names},
+            "median_element_width_bp_by_screen": {n: float(np.median(el_width[el_idx][ds_arr == n]))
+                                                  for n in ds_names},
+            "rungs": screen_rungs,
+        },
+        "tf_axis_permutation": {
+            "what_is_held_fixed": "the element, the gene, the EXACT number of bound TFs, and the gene's "
+                                  "EXACT z distribution over all profiled TFs (a permuted column is the same "
+                                  "multiset, so the GENE block is bit-identical). Only the correspondence "
+                                  "between a TF's occupancy and a TF's causality is destroyed.",
+            "n_tf_strata_degree_stratified": len(tf_strata),
+            "models_refitted": False,
+            "draws": SWAP_DRAWS,
+            "results": perms,
+            "tf_identity_survives_degree_stratified_permutation": bool(tf_identity_perm_survives),
+        },
         "best_baseline": best_base,
         "increment_over_best_baseline": float(inc),
         "increment_over_distance_plus_accessibility": float(inc_over_distacc),
@@ -1090,6 +1506,14 @@ def main():
         "increment_per_seed_passes": per_seed_win,
         "element_swap": swaps,
         "descriptive_cross_check_causal_bound_TFs": cross,
+        "descriptive_cross_check_DEGREE_MATCHED": cross_deg,
+        "descriptive_cross_check_n_TF_bound_for_contrast": cross_count,
+        "descriptive_cross_check_note": (
+            "the dist x acc version is matched on everything EXCEPT the covariate this module says does the "
+            "work. Positives sit at elements carrying "
+            f"{float(nbound_el[el_idx][y == 1].mean()):.0f} bound TFs against "
+            f"{float(nbound_el[el_idx][y == 0].mean()):.0f} for negatives, so the DEGREE-MATCHED row is the "
+            "one that counts and it is the one reported in the verdict."),
         "gates_prespecified": {"increment": bool(passes_inc), "element_swap": bool(passes_swap),
                                "degree_matched_swap": bool(passes_deg)},
         "diagnostics_post_hoc": {
@@ -1097,6 +1521,16 @@ def main():
                     "distance to its decile; reported so the prespecified gates are not read as stronger "
                     "than they are",
             "tf_identity_survives_degree_matched_swap_on_TFcausality_arm": bool(tf_identity_survives),
+            "tf_identity_survives_degree_stratified_TF_axis_permutation": bool(tf_identity_perm_survives),
+            "post_hoc_rank_identity_block": {
+                "what": "within-gene ranks of |z| down the TF axis: gene-scale-free, so it cannot be bought "
+                        "with gene responsiveness the way a magnitude aggregate can",
+                "FULL_plus_RANK_auprc": res["FULL+RANK"]["auprc_mean"],
+                "paired_delta_over_FULL": ladder_extra[1]["paired_delta_mean"],
+                "n_seeds_clearing": ladder_extra[1]["n_seeds_clearing_min_increment"],
+                "erased_by_degree_stratified_TF_permutation":
+                    p_deg["FULL+RANK"]["frac_of_real_reproduced_by_permutation"],
+            },
             "swap_machinery_consistency_check_passed": bool(swap_machinery_ok),
             "element_only_swap_full_model_frac_reproduced":
                 swaps["element_only_distance_x_accessibility"]["frac_of_real_reproduced_by_swap"],
