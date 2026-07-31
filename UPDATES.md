@@ -16138,3 +16138,115 @@ Two defects:
 
 The module now carries a **void check**: if no arm reaches 0.55 held-out fidelity it reports `TEST VOID` and
 refuses to compare curvatures, because comparing two failed embeddings is comparing two failures.
+
+---
+
+# Recovering from a container restart, and what it cost
+
+The container was reclaimed mid-session and the clone came back at an older commit. Three things were lost:
+an unpushed commit, an uncommitted reviewer revision of `colab/environment.py`, and every scratchpad file
+under `prot/`, `depmap/` and `entity_registry.json.gz`. The session transcript survived, so `colab/fix_sl.py`
+was recovered verbatim from the `Write` call that created it; the `environment.py` revision was reconstructed
+from a diff that was still in context and then **verified by rerunning the module** — it reproduces 53/126
+recorded slots, matching the run that was lost. Nothing was reconstructed from memory alone.
+
+The practical rule this leaves: **push after every module, not after every group of them.**
+
+---
+
+# `sl` is co-requirement, not synthetic lethality — and then synthetic lethality, actually built
+
+## The diagnosis
+
+Every one of the cell object's 1,256 `sl` scores is **positive** (0.401–0.912) and the top pair is
+**TSC1/TSC2** — two subunits of one complex, the textbook opposite of a synthetic-lethal pair. Recomputing
+co-dependency from DepMap gene effect over 1,150 lines reproduces the stored scores at **Spearman 0.972**,
+which identifies what the layer is rather than guessing.
+
+| check | result |
+|---|---|
+| provenance (recomputed co-dependency vs stored) | Spearman **0.972**, 100% positive |
+| co-complex vs degree-matched null, **wide** pool (all 16,492 genes) | 0.160 vs 0.0017 = **93.5×** |
+| co-complex vs degree-matched null, **strict** pool (the layer's own 921 genes) | 0.160 vs 0.0084 = **19.1×**, 0/20 draws ≥ observed |
+| already in `codep` | **100%** |
+| already in PPI / co-complex | 30% / 16% |
+| in none of the three | **0%** |
+
+The two pools are both reported because the wide one is too easy: `sl` genes are well-studied,
+complex-forming genes, so an arbitrary-gene null hands the arm a large ratio for the *composition* of the
+pool alone. **19.1× is the number to quote.** And the redundancy line is what decides what to build next —
+the layer added a name, not information.
+
+**A broken arm reported as broken.** The first version read a CORUM cache that is not on disk (the scratchpad
+holds a `corum.txt` that is a saved 404 page). An empty membership map would have printed "observed 0.0000,
+null 0.0000" — a lookup that resolves nothing, dressed as a biological zero, and contradicted by the
+redundancy check on the same pairs. It now reads the cell object's own `gene2cplx`, keyed by the same gene
+index as `sl`, and still refuses to emit a zero when nothing resolves.
+
+## The claim I got wrong
+
+`fix_sl.py` concluded that real synthetic lethality **could not be built** because DepMap's portal answers
+every download endpoint with a verification challenge. The challenge is real. The conclusion was not: this
+project's own `colab/depmap_codep.py` fetches the same release from **figshare** (doi
+10.25452/figshare.plus.25880521.v1) with md5s asserted against figshare's manifest, and that route was open
+the whole time. I checked one host and reported an external blocker for something already reachable by a
+route in this repository. `fix_sl.py` and its JSON now carry the supersession explicitly.
+
+---
+
+# Reliability-weighted edges: the hypothesis is refuted, and a different rule wins anyway
+
+`reg_perturb_k562` calls a pair an edge at **|robust z| ≥ 5**, and that threshold carries the project's best
+transfer result (+15.0 points of sign agreement on RPE1). The measurement-power module found sign replication
+*within* one cell line peaks at |z| ≥ 3 (74.0%) and falls to 68.9% at |z| ≥ 5 — which says the extreme tail
+is enriched for something other than large real effects. This module was built to act on that.
+
+## Section 1 refutes it
+
+| \|z\| bin | n | cells/pert | gene expr | agree | swap | **increment** |
+|---|---:|---:|---:|---:|---:|---:|
+| 2–3 | 1,241,840 | 125 | 1.99 | 0.5749 | 0.5101 | **+0.0648** |
+| 3–4 | 467,702 | 104 | 2.90 | 0.6029 | 0.5165 | +0.0863 |
+| 4–5 | 200,113 | 94 | 4.05 | 0.6246 | 0.5196 | +0.1050 |
+| 5–7 | 143,033 | 89 | 5.82 | 0.6530 | 0.5201 | +0.1329 |
+| 7–10 | 52,435 | 86 | 9.16 | 0.6919 | 0.5186 | +0.1733 |
+| ≥10 | 20,806 | 89 | 14.09 | 0.7507 | 0.5251 | **+0.2256** |
+
+**The extreme tail transfers best, not worst** (Spearman(|z|, increment) = +1.00). A within-cell-line
+replication finding does not carry to between-cell-line transfer, where the shared-axis control removes much
+of what the within-line comparison leaves in. Half the predicted mechanism is nonetheless present — the tail
+*is* enriched for low-cell perturbations (Spearman −0.83) — it is just outweighed by the tail also being
+enriched for well-expressed genes (+1.00). The refuted prediction is reported as run.
+
+## What does work, at a matched 216,274-edge budget
+
+| rule | agree | swap | increment | magnitude | overlap |
+|---|---:|---:|---:|---:|---:|
+| **\|z\| ≥ 5 (incumbent)** | 0.6719 | 0.5198 | +0.1520 | 1.314× | 100% |
+| \|lfc\|, no denominator | 0.6839 | 0.5257 | +0.1583 | 1.314× | 89% |
+| moderated z, lfc/(MAD+s0) | 0.6790 | 0.5241 | +0.1548 | 1.312× | 94% |
+| **power-weighted z** | **0.7010** | 0.5204 | **+0.1805** | **1.389×** | 70% |
+| counting-noise z, lfc/SE | 0.6717 | 0.5117 | +0.1600 | 1.302× | 27% |
+| \|z\| above a power floor | 0.6460 | 0.4984 | +0.1476 | 1.258× | 9% |
+| \|z\| band 3–8 | 0.6523 | 0.5205 | +0.1319 | 1.182× | 79% |
+| *ctrl: permuted power weight* | 0.6668 | 0.5210 | *+0.1458* | 1.301× | 81% |
+| *ctrl: ANTI-power weight* | 0.6538 | 0.5195 | *+0.1343* | 1.257× | 87% |
+
+The robust z's denominator is a per-gene *biological* spread, so a perturbation with 30 cells and one with
+600 get the same scale. Weighting |z| by `sqrt(n/(n + median n))` fixes exactly that.
+
+## The controls take 39% of it away
+
+The winning rule selects perturbations measured on **1.15× as many RPE1 cells**. Matching the swapped-source
+arm on RPE1 cell-count decile as well as strength moves the increment **+0.1805 → +0.1694** — so 39% of the
+nominal gain is better RPE1 measurement wearing the name of reliability, and **+0.0174 over the incumbent is
+what the rule actually earns** (margin fixed in advance: 0.0028).
+
+Two further controls hold:
+- the same weight *distribution* on the **wrong** perturbations gives **+0.1458**, *below* the incumbent — so
+  the shape of the weight is not doing the work, the cell counts are;
+- **inverting** the weighting gives **+0.1343**, below the incumbent as predicted before the run. A
+  directional prediction is a stronger test than a two-sided null, which cannot be failed informatively.
+
+Neither control is allowed to be crowned "best challenger" — a safeguard that can win a ranking becomes a
+result.
