@@ -16319,3 +16319,60 @@ and is the obvious next step.
 a score — each fixed an identified error — but the benchmark still informed the method, so **21× is
 optimistic** and a fresh set of published pairs is the honest test. The 20 pairs are also a convenience set
 assembled by recall, not a curated resource with inclusion criteria.
+
+---
+
+# Magnitude, deconfounded — the null holds, on 400,000 pairs instead of 820
+
+Registry entry `dyn-magnitude` says the magnitude of a perturbation's effect is not predictable from
+biological features, killed by detection power contributing +0.0881 — more than any biological block. It was
+measured on **820 enhancer-gene pairs with power as one feature in one arm**. Two separate things about that
+are worth revisiting: 820 pairs against ~20 features is a low-power place to conclude from, and one covariate
+is not a model of power. Finding it beats the biological arms establishes **confounding**; it does not
+establish that biology adds nothing **conditional on** power, which is what the claim asserts.
+
+The assay the entry asks for — uniform detection power across genes — does not exist in any deposit here.
+So: model power richly (12 features), and condition on it two different ways.
+
+## Three arms, three controls
+
+| arm | nuisance | +biology | biology gain | degree-matched control | excess | bar |
+|---|---:|---:|---:|---:|---:|---:|
+| uniform sample, 400k pairs | +0.1999 | +0.2013 | +0.0014 | −0.0011 | **+0.0026** | 0.0037 |
+| power held fixed (within-bin residual) | — | — | −0.0024 | −0.0017 | **−0.0007** | — |
+| **enriched sample, 400k pairs** | +0.3352 | +0.3440 | +0.0088 | **+0.0083** | **+0.0005** | 0.0047 |
+
+**Power alone explains 20% of the variance in |lfc|.** The confound the entry names is real and large.
+
+**The enriched arm is the one that matters, and it is where the control does the work.** Sections 1 and 3
+sample uniformly over the 92M grid, where a drawn pair is a PPI edge 0.23% of the time — a block switched on
+for one row in four hundred cannot contribute much R² whatever the biology is worth, so a null there is
+partly a fact about sampling. Section 4 enumerates edges into the grid instead: 17% PPI density, 30% curated
+regulation. Biology now adds a visible **+0.0088** — and its own degree-matched rewiring adds **+0.0083**.
+**94% of the gain is reproduced by a control that keeps every degree and destroys only which partner.** It is
+a hub effect, and hubs are a power story again: well-connected genes are well-studied genes are well-measured
+genes.
+
+Note also that nuisance R² rises from 0.1999 to 0.3352 on the enriched sample. Connected pairs are simply
+better measured, which is the confound restating itself.
+
+**Read as NOT DETECTED, not as absent.** The uniform-sample excess +0.0026 sits *under* its 0.0037 bar, not
+at zero. This project has twice labelled a non-significant result as reversed and now carries that in the
+registry as `err-flat-is-opposite`.
+
+## Section 3 was defective and is recorded as such
+
+The first version binned pairs on a 6×6×6 gene-expression × gene-variability × perturbation-cells grid and
+asserted that inside a cell power is nearly constant. The run reported **52 occupied cells and 0.5% of the
+variance removed** — against a power model explaining 20% of it. A conditioning that weak does not hold power
+fixed, and the sentence was not supported by the operation underneath it. It now bins on the nuisance model's
+own **out-of-fold prediction** (20 quantile bins, **17.8%** of variance removed), and prints two diagnostics
+so it can be judged rather than trusted: the variance removed, and the nuisance block's R² on the residual
+(**+0.0178** — some power gradient survives inside a bin, so the conditioning is good, not perfect). Below 5%
+removed it declares itself uninformative rather than reporting a null.
+
+## Scope
+
+This is gene knockdown → transcriptome, not enhancer silencing → gene. It tests the same general claim in a
+different system and **neither confirms nor overturns the n=820 enhancer result**, which stands as measured.
+What has changed is what the entry rests on.
