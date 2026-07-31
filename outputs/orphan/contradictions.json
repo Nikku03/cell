@@ -207,6 +207,30 @@
  ],
  "method_errors": [
   {
+   "id": "err-one-host-is-not-the-source",
+   "occurrences": 1,
+   "error": "Reporting a source as externally BLOCKED after checking one host.",
+   "why_wrong": "fix_sl.py concluded that real synthetic lethality could not be built because DepMap's portal answers every download endpoint with a verification challenge. The challenge is real and the conclusion was not: colab/depmap_codep.py in this same repository was already fetching the identical release from figshare (doi 10.25452/figshare.plus.25880521.v1) with md5s asserted, and that route was open the whole time. A blocked host is a fact about a host. A blocked SOURCE is a claim that requires checking the routes this project already uses -- which is a grep, not a research programme.",
+   "seen_in": "fix_sl.py",
+   "fixed_by": "colab/synthetic_lethal.py, which builds the layer from the open route; fix_sl.py and its JSON now carry the supersession"
+  },
+  {
+   "id": "err-filter-graded-the-benchmark",
+   "occurrences": 1,
+   "error": "Letting the analysis's own candidate filters decide which benchmark pairs are testable.",
+   "why_wrong": "synthetic_lethal.py restricted the dependency side to genes essential in 1-60% of lines, on the reasoning that a pan-essential gene cannot have its essentiality modulated. That reasoning is false and MTAP -> PRMT5 is its counterexample: PRMT5 is essential in 96% of lines and is the canonical synthetic-lethal target precisely because a broadly-required gene can be MORE required in one subgroup. The filter emptied the benchmark to 1 of 20 pairs, and '1/1 recovered' would have been reported as a pass. A benchmark that the analysis's own filters can empty measures the filters.",
+   "seen_in": "synthetic_lethal.py (first version)",
+   "fixed_by": "the dependency side is now filtered on VARIANCE of gene effect, and every benchmark pair is scored directly from the unfiltered matrices whatever the scan admits"
+  },
+  {
+   "id": "err-prior-used-as-ground-truth",
+   "occurrences": 1,
+   "error": "Splitting a benchmark by an assumed mechanism instead of a measured property.",
+   "why_wrong": "The known synthetic-lethal pairs were split in advance into 17 'reachable by an expression-based deficiency call' and 3 'mutation-driven, predicted to fail'. Measured on the panel, only 2 of the 17 have a deficient gene this data ever silences: VPS4A, MAGOH, CNOT7, ASF1A, STAG2, COPS7B, DDX3X, ENO1 and PAPSS1 have median-to-decile expression gaps of 0.7-1.2 log2 and are lost by copy number, not by silencing. The split was my prior about mechanism, presented as a property of the data, and it was used to grade a result.",
+   "seen_in": "synthetic_lethal.py (first version)",
+   "fixed_by": "the split is now computed from each gene's own expression gap and reported per pair"
+  },
+  {
    "id": "err-net-of-shuffled",
    "occurrences": 4,
    "error": "Reading `R2 - shuffled` (or AUPRC - shuffled) as an effect size.",
