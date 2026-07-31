@@ -1,5 +1,13 @@
 """WHAT THE `sl` LAYER ACTUALLY CONTAINS -- and why it is not synthetic lethality.
 
+SUPERSEDED IN ONE RESPECT, AND IT IS THE PART I GOT WRONG. This module concluded that real synthetic
+lethality could not be built because DepMap's portal answers every download endpoint with a verification
+challenge. The challenge is real; the conclusion was not. This project's own `colab/depmap_codep.py` fetches
+the same release from figshare (doi 10.25452/figshare.plus.25880521.v1) with md5s asserted against figshare's
+manifest, and that route is open. I checked one host and reported an external blocker for something already
+reachable by a route in this repository. `colab/synthetic_lethal.py` builds the layer from that route. What
+survives here unchanged is the diagnosis: `sl` is co-requirement, and the evidence below is what shows it.
+
 THE DIAGNOSIS, ARRIVED AT TWICE INDEPENDENTLY. Tonight's DepMap module reported that the cell object's `sl`
 layer is synthetic lethality mislabelled: all 1,256 pairs are POSITIVELY correlated in dependency across cell
 lines. Checked directly here rather than taken on trust -- every score lies in 0.401..0.912, none negative --
@@ -18,12 +26,15 @@ in the specific case the layer exists to serve.
 
 WHAT THIS MODULE CAN AND CANNOT DO, stated before the result rather than after.
 
-CANNOT: build real synthetic lethality. That requires a DEFICIENCY state for gene B -- bottom-decile
-expression, or a damaging mutation -- and DepMap's portal now sits behind a verification challenge. Every
-endpoint tried (`/portal/api/download/files`, `/portal/download/api/downloads`, `/portal/api/download/table`)
-returns the HTML challenge page rather than JSON. The dependency matrix already on disk contains gene EFFECT,
-which is the result of a perturbation, not the natural deficiency state SL is defined against. Substituting
-one for the other would manufacture a layer, and an unreachable source is a result rather than a licence.
+CANNOT (as originally written, and WRONG -- see the note at the top): build real synthetic lethality,
+because it requires a DEFICIENCY state for gene B and DepMap's portal sits behind a verification challenge.
+Every portal endpoint tried (`/portal/api/download/files`, `/portal/download/api/downloads`,
+`/portal/api/download/table`) does return the HTML challenge page rather than JSON, and that observation
+stands. What does not stand is treating one blocked host as a blocked source: the figshare mirror of the same
+release was open the whole time. The point that remains correct is the one about substitution -- the
+dependency matrix on disk contains gene EFFECT, which is the result of a perturbation and not the natural
+deficiency state SL is defined against, and using it as a stand-in is exactly what produced the mislabelled
+layer this module diagnoses.
 
 CAN: establish precisely what the layer IS, from data already here. If the pairs are complex co-members, the
 layer is not merely mislabelled once but twice -- it is complex co-membership wearing a co-dependency score
@@ -109,6 +120,12 @@ def main():
     R = {"n_pairs": len(pairs), "score_min": float(sc.min()), "score_max": float(sc.max()),
          "n_negative_scores": int((sc < 0).sum()),
          "blocked_sources": {u: "HTML verification challenge, not JSON" for u in BLOCKED},
+         "SUPERSEDED": {"claim": "real synthetic lethality could not be built because the deficiency-state "
+                                 "files are unreachable",
+                        "why_wrong": "only the DepMap PORTAL is challenged. The figshare mirror of the same "
+                                     "release (doi 10.25452/figshare.plus.25880521.v1) was open, and "
+                                     "colab/depmap_codep.py in this repository was already using it",
+                        "superseded_by": "colab/synthetic_lethal.py"},
          "why_sl_unbuildable": "synthetic lethality needs a DEFICIENCY state (bottom-decile expression or "
                                "damaging mutation) for the partner gene. DepMap gene EFFECT is the result "
                                "of a perturbation, not a natural deficiency, and the omics files that carry "
@@ -292,9 +309,11 @@ def main():
          f" {100*(len(pairs)-novel)/len(pairs):.0f}% of its pairs are already present in codep, PPI or the "
          f"complex layer, so it carries almost no information the model lacks -- only a wrong name. Renamed "
          f"to co-requirement rather than deleted. REAL SL REMAINS UNBUILT and the reason is external: it "
-         f"needs a deficiency state, and DepMap's portal answers every download endpoint with a "
-         f"verification challenge. Substituting gene EFFECT for deficiency would have manufactured the "
-         f"layer, which is what the original mislabelling effectively did.")
+         f"needs a deficiency state, and DepMap's PORTAL answers every download endpoint with a "
+         f"verification challenge. [SUPERSEDED: that was one host, not the source. The figshare mirror of "
+         f"the same release was open and this repository was already using it; colab/synthetic_lethal.py "
+         f"builds the layer.] What remains true is that substituting gene EFFECT for deficiency would have "
+         f"manufactured the layer, which is what the original mislabelling effectively did.")
     R["verdict"] = v
     report(f"  VERDICT: {v}")
     OUT.mkdir(parents=True, exist_ok=True)
