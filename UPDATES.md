@@ -16066,3 +16066,75 @@ admission rested on the margin.
 Admission now requires clearing the strongest control **and** mean+2sd of the control distribution, plus the
 layer's own seed spread. Five controls are an empirical null; taking only their maximum treats one draw as the
 whole distribution.
+
+---
+
+# Does hyperbolic geometry earn its place? A matched-dimension test — and a larger null underneath it
+
+`colab/hyperbolic_test.py` → `outputs/orphan/hyperbolic_test.json`
+
+Proposed: give the cell model a hyperbolic coordinate for biological hierarchy, since hyperbolic space embeds
+trees with far less distortion per dimension. That claim has **two halves that are not the same question**:
+
+- **fidelity** — does hyperbolic reconstruct the hierarchy better at matched dimension?
+- **utility** — does that buy anything downstream?
+
+The first is near-settled in the literature. The second decides whether the coordinate belongs in the model,
+and it does not follow from the first.
+
+**Setup.** GO `biological_process` from `go-basic.obo` — 24,129 terms, 4,069 with 3–500 genes, 14,511 genes,
+18,580 nodes. Both arms get identical dimension, loss, negative sampling, epochs and optimiser family; only
+the distance function differs. Terms are split 3,256/813, and the downstream test uses **33,874 gene pairs
+whose only shared annotation is a held-out term and which share no training term** — so the geometry must
+generalise to a part of the hierarchy it never saw.
+
+## Results
+
+| d | arm | fidelity (held-out `is_a`) | utility (Spearman vs co-response) |
+|---:|---|---:|---:|
+| 5 | hyperbolic | **0.6330** | −0.0059 |
+| 5 | euclidean | 0.6168 | −0.0061 |
+| 10 | hyperbolic | 0.6320 | +0.0017 |
+| 10 | euclidean | 0.6299 | +0.0011 |
+
+Responsiveness-matched at d=10, 20 draws: hyperbolic **+0.0163**, Euclidean **+0.0158**. Ontology
+shortest-path baseline, no embedding at all: **−0.0047**.
+
+**Hyperbolic's fidelity edge is real but small (+0.016 at d=5) and gone by d=10.** And every utility number —
+both arms, both dimensions, matched and unmatched — is indistinguishable from zero, with the **sign flipping
+between d=5 and d=10 in both arms**. The largest effect anywhere is |0.016| Spearman, which on 33,874 pairs
+explains about 0.03% of variance.
+
+## The finding is underneath the question asked
+
+The curvature question is moot because the thing it would encode carries almost nothing here: **GO hierarchy —
+in any geometry, or in none — barely predicts which genes co-respond to perturbation in K562.** The
+no-embedding graph-distance baseline is also ~0. This is not "hyperbolic loses to Euclidean"; it is "the
+hierarchy is not the signal for this readout".
+
+That is consistent with what the ontology *is*: a record of what has been written down about gene function,
+not a model of how a cell responds. It is also consistent with the layer results — `pubs` (publication count)
+is one of the strongest nuisance covariates in this project, and an ontology is downstream of publication.
+
+**One limit stated plainly:** the test pairs are hard by construction — they share *no* training term, so they
+are the most weakly-related pairs in the ontology. A selection permitting shared training terms would likely
+show more signal, but it would also be measuring memorisation rather than generalisation, which is the
+comparison this test exists to avoid.
+
+## The instrument was broken first, and reported a null
+
+The first run said "neither geometry separates" with fidelity **0.3351** and **0.3796** — *below* the 0.5
+chance line, meaning held-out `is_a` parents sat **farther** from their children than random terms did. That
+is a broken measurement, not a null, and it would have shipped as one.
+
+Two defects:
+
+1. **Fidelity held out `is_a` edges by TERM**, so at least one endpoint of every held-out edge had never
+   appeared in any training edge and still carried its random initialisation. Link prediction needs both
+   endpoints trained. Now 10% of `is_a` **edges** are held out while every term keeps its others.
+2. **The hierarchy was outnumbered 20:1** by gene–term annotation edges (2,297 vs 47,803), so the embedding
+   learned gene-to-term proximity and barely saw the tree — precisely the structure the hyperbolic claim is
+   about. `is_a` edges are now replicated ×15, applied identically to both arms.
+
+The module now carries a **void check**: if no arm reaches 0.55 held-out fidelity it reports `TEST VOID` and
+refuses to compare curvatures, because comparing two failed embeddings is comparing two failures.
