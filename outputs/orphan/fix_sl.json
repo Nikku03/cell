@@ -1,0 +1,48 @@
+{
+ "n_pairs": 1256,
+ "score_min": 0.401,
+ "score_max": 0.912,
+ "n_negative_scores": 0,
+ "blocked_sources": {
+  "https://depmap.org/portal/api/download/files": "HTML verification challenge, not JSON",
+  "https://depmap.org/portal/download/api/downloads": "HTML verification challenge, not JSON",
+  "https://depmap.org/portal/api/download/table": "HTML verification challenge, not JSON"
+ },
+ "why_sl_unbuildable": "synthetic lethality needs a DEFICIENCY state (bottom-decile expression or damaging mutation) for the partner gene. DepMap gene EFFECT is the result of a perturbation, not a natural deficiency, and the omics files that carry deficiency are behind the portal challenge. Substituting effect for deficiency would manufacture the layer.",
+ "provenance": {
+  "n_scorable": 1256,
+  "spearman_recomputed_vs_stored": 0.9723666033127992,
+  "frac_recomputed_positive": 1.0
+ },
+ "corum": {
+  "status": "ok",
+  "source": "cell.gene2cplx",
+  "observed": 0.16003184713375795,
+  "n_draws": 20,
+  "wide": {
+   "pool": "all genes",
+   "null_mean": 0.0017117834394904461,
+   "null_sd": 0.0008454124435348448,
+   "ratio": 93.48837209302323,
+   "z": 187.269616037704,
+   "n_draws_null_ge_obs": 0
+  },
+  "strict": {
+   "pool": "genes appearing in the sl layer",
+   "null_mean": 0.008359872611464968,
+   "null_sd": 0.002729161863216976,
+   "ratio": 19.142857142857142,
+   "z": 55.57456176069782,
+   "n_draws_null_ge_obs": 0
+  },
+  "quote": "strict"
+ },
+ "redundancy": {
+  "in_codep": 1256,
+  "in_ppi": 377,
+  "in_complex": 201,
+  "in_none": 0,
+  "of": 1256
+ },
+ "verdict": "THE LAYER IS CO-REQUIREMENT, NOT SYNTHETIC LETHALITY, AND THE TWO HAVE OPPOSITE SIGNS. All 1,256 scores are positive (0.401..0.912); synthetic lethality is a NEGATIVE relationship -- dependency on A rising where B is deficient. Recomputing co-dependency from DepMap gene effect reproduces the stored scores at Spearman 0.972, identifying what the layer is. They are 19.1x enriched for complex co-membership over a null drawn from the layer's OWN genes and matched on complex-degree (0.160 vs 0.008), so the pairs describe machines. 100% of its pairs are already present in codep, PPI or the complex layer, so it carries almost no information the model lacks -- only a wrong name. Renamed to co-requirement rather than deleted. REAL SL REMAINS UNBUILT and the reason is external: it needs a deficiency state, and DepMap's portal answers every download endpoint with a verification challenge. Substituting gene EFFECT for deficiency would have manufactured the layer, which is what the original mislabelling effectively did."
+}

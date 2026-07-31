@@ -279,7 +279,7 @@ def assert_quotes(text, spec, sid):
             missing.append(q[:70])
     if missing:
         raise AssertionError(
-            f"provenance assertion FAILED for source {sid} ({spec['id']}): {len(missing)} of "
+            f"provenance assertion FAILED for source {sid} ({spec.get('id', '?')}): {len(missing)} of "
             f"{len(spec['quotes'])} pinned quotes no longer resolve in the fetched text -- {missing}. "
             f"Either the source changed, the fetch route changed, or the quote was wrong. None of those "
             f"may be papered over: the facts keyed on this source are not verified and must not be "
@@ -289,7 +289,7 @@ def assert_quotes(text, spec, sid):
 
 # --------------------------------------------------------------------------------------------- facts
 
-def V(value, level, src=None, note=None, base=None, norm=None):
+def V(value, level, src=None, note=None, base=None, norm=None, partial=None, heterogeneous=None):
     """One variable of one dataset. `level` is stated / derived / unknown / unverified.
 
     UNKNOWN CARRIES NO VALUE. There is no code path where an unrecorded variable acquires a default.
@@ -300,6 +300,12 @@ def V(value, level, src=None, note=None, base=None, norm=None):
     exist, and just as damaging to an audit whose only product is those verdicts. Where a variable has a
     canonical form, it is written here explicitly; where it does not, `value` is compared and any match
     is exact-string.
+
+    `partial` MEANS THE SOURCE NAMED THE VARIABLE WITHOUT DETERMINING IT -- "FBS" with no percentage,
+    "DMEM" with no glucose. That is not a value and a comparison against it must return UNKNOWN, not a
+    string mismatch dressed up as a finding. `heterogeneous` means the dataset is not one condition: the
+    comparison uses the majority and says so, instead of collapsing a mixed population to a single
+    verdict that is wrong for part of it.
     """
     assert level in ("stated", "derived", "unknown", "unverified")
     d = {"value": value if level != "unknown" else None, "level": level}
@@ -311,6 +317,10 @@ def V(value, level, src=None, note=None, base=None, norm=None):
         d["base"] = base
     if norm:
         d["norm"] = norm
+    if partial:
+        d["partial"] = partial
+    if heterogeneous:
+        d["heterogeneous"] = heterogeneous
     return d
 
 
@@ -327,8 +337,10 @@ def derived_from(medium_base, var, src_note):
 UNK = "no source consulted here records it"
 
 
-def build_datasets(enc, dep, hdr_ok):
-    """The audit table. `enc` is the live ENCODE census, `dep` the DepMap Model.csv lookup."""
+def build_datasets(enc, dep, hdr_ok, only_treated):
+    """The audit table. `enc` is the live ENCODE census, `dep` the DepMap Model.csv lookup,
+    `only_treated` the TFs computed upstream to have no untreated K562 experiment -- passed in rather
+    than written as a literal, so the table cannot drift away from what the run actually measured."""
     D = {}
 
     D["replogle_k562"] = dict(
@@ -382,20 +394,25 @@ def build_datasets(enc, dep, hdr_ok):
                              f"distinct growth protocols across the whole set, from different labs"),
             "glucose": derived_from("RPMI-1640", "glucose", "encode_k562_growth"),
             "glutamine": derived_from("RPMI-1640", "glutamine", "encode_k562_growth"),
-            "serum": V("heat-inactivated FBS (percentage not recoverable from the extracted text)",
-                       "stated", "encode_k562_growth", norm="FBS, percentage unstated"),
+            "serum": V("heat-inactivated FBS, percentage not stated in the protocol", "stated",
+                       "encode_k562_growth",
+                       partial="the K562 growth protocol names FBS but gives no percentage"),
             "oxygen": V(None, "unknown", note=UNK),
             "drug": V(f"none for {enc['k562_n_exp']-enc['k562_n_treated']}/{enc['k562_n_exp']} "
                       f"experiments; {enc['k562_n_treated']} are interferon alpha/gamma treated. "
                       f"Separately {enc['k562_n_modified']}/{enc['k562_n_exp']} are on a genetically "
                       f"modified K562 -- CRISPR- or BAC-tagged -- not the parental line", "stated",
-                      "encode_api", norm="none (majority)",
+                      "encode_api", norm="none",
+                      heterogeneous=f"{enc['k562_n_treated']}/{enc['k562_n_exp']} experiments are "
+                                    f"interferon-treated; {', '.join(only_treated) or 'no TF'} "
+                                    f"has no untreated option at all",
                       note="ENCODE records treatment as a first-class field, so this one is machine-"
                            "readable; medium is not. The modification status is NOT a drug and is "
                            "reported here because it is the same kind of unrecorded-state problem"),
             "dose": V("none for the untreated majority; the interferon subset records a duration in "
                       "free-text notes and leaves `amount` unpopulated", "stated", "encode_api",
-                      norm="none (majority)"),
+                      norm="none",
+                      heterogeneous=f"the {enc['k562_n_treated']} treated experiments record no amount"),
             "time": V("no clock: steady-state occupancy, except the interferon subset", "stated",
                       "encode_api", norm="steady state"),
             "density": V(None, "unknown",
@@ -443,10 +460,11 @@ def build_datasets(enc, dep, hdr_ok):
                         note="the PaxDb file's own #link header points at doi 10.1074/mcp.M111.014050, "
                              "which is this paper; the chain from abundance to medium is complete and "
                              f"the header assertion {'passed' if hdr_ok else 'DID NOT PASS'}"),
-            "glucose": derived_from("DMEM", "glucose", "geiger"),
-            "glutamine": V(None, "unknown",
-                           note="'DMEM' alone does not determine glutamine either; the source gives no "
-                                "catalogue number"),
+            "glucose": V("DMEM, which ships at 5.5 mM and at 25 mM", "stated", "geiger",
+                         partial="'DMEM' with no catalogue number does not determine glucose, and the "
+                                 "two variants differ 4.5-fold"),
+            "glutamine": V("DMEM, which ships at 2 mM and at 4 mM", "stated", "geiger",
+                           partial="'DMEM' with no catalogue number does not determine glutamine"),
             "serum": V("10% fetal bovine serum", "stated", "geiger", norm="10% FBS"),
             "oxygen": V(None, "unknown", note=UNK),
             "drug": V("none stated", "stated", "geiger", norm="none",
@@ -556,6 +574,10 @@ def compare(a, b, D, var):
     if fa["level"] in ("unknown", "unverified") or fb["level"] in ("unknown", "unverified"):
         side = [n for n, f in ((a, fa), (b, fb)) if f["level"] in ("unknown", "unverified")]
         return "UNKNOWN", f"not recorded for {', '.join(side)}"
+    if fa.get("partial") or fb.get("partial"):
+        why = [f.get("partial") for f in (fa, fb) if f.get("partial")]
+        return "UNKNOWN", "named but not determined: " + "; ".join(why)
+    het = [f["heterogeneous"] for f in (fa, fb) if f.get("heterogeneous")]
     if var == "medium":
         ba, bb = fa.get("base"), fb.get("base")
         if ba and bb and ba != bb:
@@ -565,9 +587,10 @@ def compare(a, b, D, var):
         return "MATCHED", (f"same base formulation ({ba}) but the supplements differ, which is a "
                            f"MATCH only at the level the base determines")
     ka, kb = fa.get("norm", fa["value"]), fb.get("norm", fb["value"])
+    tail = ("  [EXCEPT: " + "; ".join(het) + "]") if het else ""
     if ka == kb:
-        return "MATCHED", str(ka)[:70]
-    return "MISMATCHED", f"{str(ka)[:46]} vs {str(kb)[:46]}"
+        return "MATCHED", str(ka)[:60] + tail
+    return "MISMATCHED", f"{str(ka)[:40]} vs {str(kb)[:40]}" + tail
 
 
 COMPARISONS = [
@@ -863,23 +886,31 @@ def main():
     report(f"       {len(clean):,} have at least one untreated, unmodified option")
 
     # ---- 4. the audit table ----
-    D = build_datasets(enc, dep, hdr_ok)
+    D = build_datasets(enc, dep, hdr_ok, all_trt)
     report(f"\n  4. AUDIT -- {len(D)} datasets x {len(VARS)} variables")
+
+    def known(f):
+        """A partially-recorded variable is NOT recorded. 'FBS' without a percentage and 'DMEM'
+        without a catalogue number name the variable without determining it, and counting them as
+        knowledge is exactly the overstatement this module exists to prevent."""
+        return f["level"] in ("stated", "derived") and not f.get("partial")
+
     report(f"     {'dataset':20s} " + " ".join(f"{v[:4]:>5s}" for v in VARS) + "   known/9")
     lv = {"stated": " S ", "derived": " d ", "unknown": " . ", "unverified": " ? "}
-    tot_known = tot = 0
+    tot_known = tot = n_partial = 0
     for k, d in D.items():
-        marks = [lv[d["vars"][v]["level"]] for v in VARS]
-        kn = sum(1 for v in VARS if d["vars"][v]["level"] in ("stated", "derived"))
+        marks = [" p " if d["vars"][v].get("partial") else lv[d["vars"][v]["level"]] for v in VARS]
+        n_partial += sum(1 for v in VARS if d["vars"][v].get("partial"))
+        kn = sum(1 for v in VARS if known(d["vars"][v]))
         tot_known += kn
         tot += len(VARS)
         report(f"     {k:20s} " + " ".join(f"{m:>5s}" for m in marks) + f"     {kn}/9")
     report(f"     S=stated (quoted+asserted)  d=derived from a named formulation  "
-           f".=UNKNOWN  ?=unverified")
+           f"p=named but NOT determined  .=UNKNOWN  ?=unverified")
     report(f"     {tot_known}/{tot} variable-slots recorded ({100*tot_known/tot:.0f}%); "
-           f"{tot-tot_known} are unknown and stay unknown")
-    n_o2 = sum(1 for d in D.values() if d["vars"]["oxygen"]["level"] in ("stated", "derived"))
-    n_den = sum(1 for d in D.values() if d["vars"]["density"]["level"] in ("stated", "derived"))
+           f"{tot-tot_known} are not, of which {n_partial} are named without being determined")
+    n_o2 = sum(1 for d in D.values() if known(d["vars"]["oxygen"]))
+    n_den = sum(1 for d in D.values() if known(d["vars"]["density"]))
     report(f"     oxygen recorded for {n_o2}/{len(D)} datasets; density for {n_den}/{len(D)}")
 
     # ---- 5. the five comparisons ----
@@ -996,15 +1027,29 @@ def main():
         "cell-line-agnostic layers (HumanGEM, CORUM, BioPlex, HPA) are marked unknown on all nine "
         "variables, which understates the problem rather than overstating it: for those the question "
         "is not what the condition was but that there is no single condition to ask about",
+        "several MISMATCHED verdicts are small in size even though they are real -- 2.05 mM against "
+        "~4.05 mM glutamine between the Replogle and ENCODE K562 cultures, for instance. This module "
+        "reports whether the conditions differ, not whether the difference is large enough to matter, "
+        "because nothing here can weigh that and pretending otherwise would be the same overreach in "
+        "the opposite direction",
+        "an ENCODE dataset is not one condition, and a single verdict for it is a simplification: the "
+        "drug and dose rows for the K562 ChIP set take the untreated majority and carry the exception "
+        "alongside, so a reader who cares about STAT1 or STAT2 specifically has to read the exception "
+        "rather than the verdict",
+        "the ordering check in section 6 has five points with medium, laboratory and modality "
+        "collinear. It can rule the simplest story out; it has no power to rule anything in, and its "
+        "means over three and two arms are descriptive, not tested",
     ]
 
     a_med = comps[0]["per_variable"]["medium"]["verdict"]
     d_med = comps[3]["per_variable"]["medium"]["verdict"]
     verdict = (
         f"EVERY CROSS-DATASET COMPARISON IN THIS PROJECT CROSSES AN ENVIRONMENT THAT WAS EITHER "
-        f"DIFFERENT OR UNRECORDED, AND NONE OF THEM SAID SO. Of {tot} dataset x variable slots, "
-        f"{tot_known} ({100*tot_known/tot:.0f}%) are recorded anywhere reachable and {tot-tot_known} are "
-        f"not; oxygen tension is unknown for all {len(D)} datasets and cell density for {len(D)-n_den}. "
+        f"DIFFERENT OR UNRECORDED, AND NONE OF THEM SAID SO. Neither Perturb-seq deposit carries a "
+        f"single one of the nine variables in obs or uns, so every fact below had to be read out of "
+        f"publication text or a protocol PDF. Of {tot} dataset x variable slots, {tot_known} "
+        f"({100*tot_known/tot:.0f}%) are recorded anywhere reachable and {tot-tot_known} are not; "
+        f"oxygen tension is unknown for all {len(D)} datasets and cell density for {len(D)-n_den}. "
         f"The two arms of the +15.0 sign-transfer result are {a_med} on medium -- K562 in RPMI-1640, "
         f"RPE1 in DMEM:F12 with 0.01 mg/mL hygromycin B -- and also differ in readout time, 8 days "
         f"against 6, both quoted from the paper and asserted here. The 15.9% mRNA -> protein ceiling is "
@@ -1015,7 +1060,7 @@ def main():
         f"{len(testable)} testable TFs ({100*len(all_mod)/max(len(testable),1):.0f}%) have no released "
         f"K562 ChIP experiment on an unmodified line at all, so for those `bound in K562` means bound in "
         f"a CRISPR- or BAC-tagged K562. The dynamics null is the best-documented comparison in the "
-        f"project -- one series, one lab, dexamethasone {enc['a549_dose']} on "
+        f"project -- one series, one lab, dexamethasone {enc['a549_dose_modal']} on "
         f"{enc['a549_n_durations']} durations, all structured portal fields -- and even there the "
         f"medium is unknown for all {enc['a549_reddy_nodoc']} experiments it used, because the only A549 "
         f"growth protocol on the portal is attached to the arm that analysis deliberately excluded. "
@@ -1060,6 +1105,7 @@ def main():
         "datasets": D,
         "coverage": {"n_datasets": len(D), "n_variables": len(VARS), "n_slots": tot,
                      "n_recorded": tot_known, "frac_recorded": tot_known / tot,
+                     "n_named_but_not_determined": n_partial,
                      "n_datasets_with_oxygen": n_o2, "n_datasets_with_density": n_den},
         "comparisons": comps,
         "ordering_check": order,

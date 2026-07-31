@@ -64,7 +64,7 @@
    "kind": "protocol PDF",
    "cite": "ENCODE biosample growth protocol 'SOP: Propagation of K562 (ATCC CCL-243)', attached to K562 ChIP biosamples. A PDF attachment, not a queryable field",
    "n_quotes_asserted": 4,
-   "chars": 24249,
+   "chars": 24247,
    "host": "www.encodeproject.org"
   },
   "encode_a549_growth": {
@@ -117,9 +117,20 @@
   "a549_reddy": 265,
   "a549_docs_lab": 16,
   "a549_reddy_nodoc": 265,
-  "a549_dose": "0.1 nM",
+  "a549_dose": "100 nM in the pinned laboratory's series; 7 distinct amounts across the whole released A549+dex set (100 nM, 1 \u03bcM, 5 nM, 0.5 nM, 1 nM, 0.1 nM, 50 nM)",
+  "a549_dose_modal": "100 nM",
+  "a549_dose_modal_frac": 0.9937888198757764,
+  "a549_amount_hist": {
+   "100 nM": 839,
+   "1 \u03bcM": 5,
+   "5 nM": 4,
+   "0.5 nM": 4,
+   "1 nM": 4,
+   "0.1 nM": 2,
+   "50 nM": 2
+  },
   "a549_n_amounts": 7,
-  "a549_n_durations": 17,
+  "a549_n_durations": 16,
   "a549_min": "5 min",
   "a549_max": "12 h"
  },
@@ -148,7 +159,7 @@
    "of": 9867,
    "rate": 0.975575149488193,
    "via": "symbol",
-   "label": "Replogle K562 perturbation symbols"
+   "label": "gwps.h5ad perturbations (causal layer absent -- WIDER set than bound_causal used)"
   }
  },
  "datasets": {
@@ -179,7 +190,8 @@
     "serum": {
      "value": "10% FBS",
      "level": "stated",
-     "source": "replogle"
+     "source": "replogle",
+     "norm": "10% FBS"
     },
     "oxygen": {
      "value": null,
@@ -189,17 +201,21 @@
     "drug": {
      "value": "none during the Perturb-seq arm; sgRNA-positive cells were FACS-sorted on GFP rather than drug-selected",
      "level": "stated",
-     "source": "replogle"
+     "source": "replogle",
+     "norm": "none"
     },
     "dose": {
-     "value": null,
-     "level": "unknown",
-     "note": "no drug in this arm"
+     "value": "none",
+     "level": "stated",
+     "source": "replogle",
+     "note": "no drug in this arm",
+     "norm": "none"
     },
     "time": {
      "value": "8 days post infection",
      "level": "stated",
-     "source": "replogle"
+     "source": "replogle",
+     "norm": "8 d"
     },
     "density": {
      "value": "250,000-1,000,000 cells/mL maintained through the screen",
@@ -235,7 +251,8 @@
     "serum": {
      "value": "10% FBS",
      "level": "stated",
-     "source": "replogle"
+     "source": "replogle",
+     "norm": "10% FBS"
     },
     "oxygen": {
      "value": null,
@@ -245,17 +262,20 @@
     "drug": {
      "value": "hygromycin B 0.01 mg/mL, continuous, in the growth medium; no puromycin selection because RPE1 is puromycin-resistant",
      "level": "stated",
-     "source": "replogle"
+     "source": "replogle",
+     "norm": "hygromycin B"
     },
     "dose": {
      "value": "0.01 mg/mL hygromycin B",
      "level": "stated",
-     "source": "replogle"
+     "source": "replogle",
+     "norm": "0.01 mg/mL hygromycin B"
     },
     "time": {
      "value": "6 days post infection",
      "level": "stated",
-     "source": "replogle"
+     "source": "replogle",
+     "norm": "6 d"
     },
     "density": {
      "value": null,
@@ -290,9 +310,10 @@
      "note": "not stated by the source; follows from the named formulation. Thermo Fisher RPMI 1640 formulation, cat 11875 (2.0 g/L D-glucose, 0.3 g/L L-glutamine)"
     },
     "serum": {
-     "value": "heat-inactivated FBS (percentage not recoverable from the extracted text)",
+     "value": "heat-inactivated FBS, percentage not stated in the protocol",
      "level": "stated",
-     "source": "encode_k562_growth"
+     "source": "encode_k562_growth",
+     "partial": "the K562 growth protocol names FBS but gives no percentage"
     },
     "oxygen": {
      "value": null,
@@ -300,20 +321,25 @@
      "note": "no source consulted here records it"
     },
     "drug": {
-     "value": "22/776 experiments are cytokine-treated (interferon alpha or gamma); the rest record no treatment. Separately 324/776 are on a genetically modified K562 -- CRISPR- or BAC-tagged -- not the parental line",
+     "value": "none for 754/776 experiments; 22 are interferon alpha/gamma treated. Separately 324/776 are on a genetically modified K562 -- CRISPR- or BAC-tagged -- not the parental line",
      "level": "stated",
      "source": "encode_api",
-     "note": "ENCODE records treatment as a first-class field, so this one is machine-readable; medium is not"
+     "note": "ENCODE records treatment as a first-class field, so this one is machine-readable; medium is not. The modification status is NOT a drug and is reported here because it is the same kind of unrecorded-state problem",
+     "norm": "none",
+     "heterogeneous": "22/776 experiments are interferon-treated; STAT1, STAT2 has no untreated option at all"
     },
     "dose": {
-     "value": "interferon experiments record a duration (30 min or 6 h) in free-text notes; amount is not populated",
+     "value": "none for the untreated majority; the interferon subset records a duration in free-text notes and leaves `amount` unpopulated",
      "level": "stated",
-     "source": "encode_api"
+     "source": "encode_api",
+     "norm": "none",
+     "heterogeneous": "the 22 treated experiments record no amount"
     },
     "time": {
-     "value": "not applicable -- these are steady-state occupancy measurements with no clock, except the interferon subset",
+     "value": "no clock: steady-state occupancy, except the interferon subset",
      "level": "stated",
-     "source": "encode_api"
+     "source": "encode_api",
+     "norm": "steady state"
     },
     "density": {
      "value": null,
@@ -331,7 +357,7 @@
     "medium": {
      "value": null,
      "level": "unknown",
-     "note": "the only A549 growth protocol on the portal (F-12K + 10% FBS + pen/strep, 5% CO2, 37 C) is attached to 16 biosamples only. All 265 experiments from the laboratory the dynamics analysis actually pinned carry NO biosample document, so the medium for the measured series is not recorded anywhere on the portal"
+     "note": "the only A549 growth protocol on the portal (F-12K + 10% FBS + pen/strep, 5% CO2, 37 C) is attached to the 16 Myers/HAIB biosamples only. All 265 experiments from the laboratory the dynamics analysis actually pinned carry NO biosample document, so the medium for the measured series is not recorded anywhere on the portal"
     },
     "glucose": {
      "value": null,
@@ -356,18 +382,22 @@
     "drug": {
      "value": "dexamethasone, a glucocorticoid receptor agonist",
      "level": "stated",
-     "source": "encode_api"
+     "source": "encode_api",
+     "norm": "dexamethasone"
     },
     "dose": {
-     "value": "0.1 nM",
+     "value": "100 nM in the pinned laboratory's series; 7 distinct amounts across the whole released A549+dex set (100 nM, 1 \u03bcM, 5 nM, 0.5 nM, 1 nM, 0.1 nM, 50 nM)",
      "level": "stated",
      "source": "encode_api",
-     "note": "a structured field on the treatment object, identical across every experiment in the series"
+     "note": "a structured field on the treatment object. Across the whole released A549+dex set there are 7 distinct amounts -- a small dose-response subset exists -- but within the laboratory the dynamics analysis pinned it is one value, 100 nM, on 99% of that laboratory's treatment records",
+     "norm": "100 nM"
     },
     "time": {
-     "value": "17 distinct exposure durations from 5 min to 12 h",
+     "value": "16 distinct exposure durations from 5 min to 12 h",
      "level": "stated",
-     "source": "encode_api"
+     "source": "encode_api",
+     "note": "a structured field on the treatment object",
+     "norm": "one shared grid"
     },
     "density": {
      "value": null,
@@ -390,19 +420,22 @@
      "base": "DMEM"
     },
     "glucose": {
-     "value": null,
-     "level": "unknown",
-     "note": "medium named as 'DMEM', which does not determine glucose -- the formulation is sold at more than one concentration"
+     "value": "DMEM, which ships at 5.5 mM and at 25 mM",
+     "level": "stated",
+     "source": "geiger",
+     "partial": "'DMEM' with no catalogue number does not determine glucose, and the two variants differ 4.5-fold"
     },
     "glutamine": {
-     "value": null,
-     "level": "unknown",
-     "note": "'DMEM' alone does not determine glutamine either; the source gives no catalogue number"
+     "value": "DMEM, which ships at 2 mM and at 4 mM",
+     "level": "stated",
+     "source": "geiger",
+     "partial": "'DMEM' with no catalogue number does not determine glutamine"
     },
     "serum": {
      "value": "10% fetal bovine serum",
      "level": "stated",
-     "source": "geiger"
+     "source": "geiger",
+     "norm": "10% FBS"
     },
     "oxygen": {
      "value": null,
@@ -413,12 +446,14 @@
      "value": "none stated",
      "level": "stated",
      "source": "geiger",
-     "note": "'antibiotics' unspecified; no perturbation -- this is an unperturbed steady-state proteome"
+     "note": "'antibiotics' unspecified; no perturbation -- this is an unperturbed steady-state proteome",
+     "norm": "none"
     },
     "dose": {
-     "value": null,
-     "level": "unknown",
-     "note": "no drug"
+     "value": "none",
+     "level": "stated",
+     "source": "geiger",
+     "norm": "none"
     },
     "time": {
      "value": null,
@@ -461,7 +496,8 @@
     "serum": {
      "value": "10% FBS for K562 per FormulationID; varies by line",
      "level": "stated",
-     "source": "depmap_model"
+     "source": "depmap_model",
+     "norm": "10% FBS"
     },
     "oxygen": {
      "value": null,
@@ -517,13 +553,15 @@
     "serum": {
      "value": "10% FBS",
      "level": "stated",
-     "source": "nadig"
+     "source": "nadig",
+     "norm": "10% FBS"
     },
     "oxygen": {
      "value": "5% CO2 at 37 C; O2 tension not stated",
      "level": "stated",
      "source": "nadig",
-     "note": "CO2 is not O2 -- this is the closest any source comes and it still leaves oxygen tension unrecorded"
+     "note": "CO2 is not O2 -- this is the closest any source comes and it still leaves oxygen tension unrecorded",
+     "norm": "5% CO2, O2 unstated"
     },
     "drug": {
      "value": null,
@@ -573,13 +611,15 @@
     "serum": {
      "value": "10% FBS",
      "level": "stated",
-     "source": "nadig"
+     "source": "nadig",
+     "norm": "10% FBS"
     },
     "oxygen": {
      "value": "5% CO2 at 37 C; O2 tension not stated",
      "level": "stated",
      "source": "nadig",
-     "note": "CO2 is not O2 -- this is the closest any source comes and it still leaves oxygen tension unrecorded"
+     "note": "CO2 is not O2 -- this is the closest any source comes and it still leaves oxygen tension unrecorded",
+     "norm": "5% CO2, O2 unstated"
     },
     "drug": {
      "value": null,
@@ -630,7 +670,8 @@
     "serum": {
      "value": "10% FBS",
      "level": "stated",
-     "source": "xaira"
+     "source": "xaira",
+     "norm": "10% FBS"
     },
     "oxygen": {
      "value": null,
@@ -686,7 +727,8 @@
     "serum": {
      "value": "10% FBS",
      "level": "stated",
-     "source": "frangieh"
+     "source": "frangieh",
+     "norm": "10% FBS"
     },
     "oxygen": {
      "value": null,
@@ -694,14 +736,16 @@
      "note": "no source consulted here records it"
     },
     "drug": {
-     "value": "the deposit carries three arms -- Control, IFN-gamma, T-cell co-culture -- and scperturb_transfer.py pins Control",
+     "value": "none in the arm this project uses. The deposit carries three -- Control, IFN-gamma stimulation, and autologous T-cell co-culture -- and scperturb_transfer.py pins Control, which is the ONE place in this project where an environmental variable was controlled rather than ignored",
      "level": "stated",
-     "source": "frangieh"
+     "source": "frangieh",
+     "norm": "none"
     },
     "dose": {
-     "value": null,
-     "level": "unknown",
-     "note": "no source consulted here records it"
+     "value": "none",
+     "level": "stated",
+     "source": "frangieh",
+     "norm": "none"
     },
     "time": {
      "value": null,
@@ -932,8 +976,9 @@
   "n_datasets": 14,
   "n_variables": 9,
   "n_slots": 126,
-  "n_recorded": 51,
-  "frac_recorded": 0.40476190476190477,
+  "n_recorded": 53,
+  "frac_recorded": 0.42063492063492064,
+  "n_named_but_not_determined": 3,
   "n_datasets_with_oxygen": 2,
   "n_datasets_with_density": 2
  },
@@ -957,7 +1002,7 @@
     },
     "glutamine": {
      "verdict": "MISMATCHED",
-     "detail": "~4.05 mM (0.3 g/L in base = 2.05 mM, plus 2 mM vs 2.5 mM"
+     "detail": "~4.05 mM (0.3 g/L in base = 2.05 mM, plu vs 2.5 mM"
     },
     "serum": {
      "verdict": "MATCHED",
@@ -969,15 +1014,15 @@
     },
     "drug": {
      "verdict": "MISMATCHED",
-     "detail": "none during the Perturb-seq arm; sgRNA-positiv vs hygromycin B 0.01 mg/mL, continuous, in the gr"
+     "detail": "none vs hygromycin B"
     },
     "dose": {
-     "verdict": "UNKNOWN",
-     "detail": "not recorded for replogle_k562"
+     "verdict": "MISMATCHED",
+     "detail": "none vs 0.01 mg/mL hygromycin B"
     },
     "time": {
      "verdict": "MISMATCHED",
-     "detail": "8 days post infection vs 6 days post infection"
+     "detail": "8 d vs 6 d"
     },
     "density": {
      "verdict": "UNKNOWN",
@@ -1005,27 +1050,27 @@
     },
     "glutamine": {
      "verdict": "MISMATCHED",
-     "detail": "~4.05 mM (0.3 g/L in base = 2.05 mM, plus 2 mM vs 2.05 mM"
+     "detail": "~4.05 mM (0.3 g/L in base = 2.05 mM, plu vs 2.05 mM"
     },
     "serum": {
-     "verdict": "MISMATCHED",
-     "detail": "10% FBS vs heat-inactivated FBS (percentage not recoverab"
+     "verdict": "UNKNOWN",
+     "detail": "named but not determined: the K562 growth protocol names FBS but gives no percentage"
     },
     "oxygen": {
      "verdict": "UNKNOWN",
      "detail": "not recorded for replogle_k562, encode_k562_chip"
     },
     "drug": {
-     "verdict": "MISMATCHED",
-     "detail": "none during the Perturb-seq arm; sgRNA-positiv vs 22/776 experiments are cytokine-treated (inter"
+     "verdict": "MATCHED",
+     "detail": "none  [EXCEPT: 22/776 experiments are interferon-treated; STAT1, STAT2 has no untreated option at all]"
     },
     "dose": {
-     "verdict": "UNKNOWN",
-     "detail": "not recorded for replogle_k562"
+     "verdict": "MATCHED",
+     "detail": "none  [EXCEPT: the 22 treated experiments record no amount]"
     },
     "time": {
      "verdict": "MISMATCHED",
-     "detail": "8 days post infection vs not applicable -- these are steady-state occup"
+     "detail": "8 d vs steady state"
     },
     "density": {
      "verdict": "UNKNOWN",
@@ -1097,27 +1142,27 @@
     },
     "glucose": {
      "verdict": "UNKNOWN",
-     "detail": "not recorded for paxdb_k562"
+     "detail": "named but not determined: 'DMEM' with no catalogue number does not determine glucose, and the two variants differ 4.5-fold"
     },
     "glutamine": {
      "verdict": "UNKNOWN",
-     "detail": "not recorded for paxdb_k562"
+     "detail": "named but not determined: 'DMEM' with no catalogue number does not determine glutamine"
     },
     "serum": {
-     "verdict": "MISMATCHED",
-     "detail": "10% FBS vs 10% fetal bovine serum"
+     "verdict": "MATCHED",
+     "detail": "10% FBS"
     },
     "oxygen": {
      "verdict": "UNKNOWN",
      "detail": "not recorded for replogle_k562, paxdb_k562"
     },
     "drug": {
-     "verdict": "MISMATCHED",
-     "detail": "none during the Perturb-seq arm; sgRNA-positiv vs none stated"
+     "verdict": "MATCHED",
+     "detail": "none"
     },
     "dose": {
-     "verdict": "UNKNOWN",
-     "detail": "not recorded for replogle_k562, paxdb_k562"
+     "verdict": "MATCHED",
+     "detail": "none"
     },
     "time": {
      "verdict": "UNKNOWN",
@@ -1125,7 +1170,7 @@
     },
     "density": {
      "verdict": "MISMATCHED",
-     "detail": "250,000-1,000,000 cells/mL maintained through  vs subconfluent"
+     "detail": "250,000-1,000,000 cells/mL maintained th vs subconfluent"
     }
    },
    "what_would_have_to_be_recorded": "the DMEM glucose concentration Geiger used, the harvest density as a number, and ideally a K562 proteome measured in RPMI on the Replogle schedule"
@@ -1144,39 +1189,39 @@
    "per_variable": {
     "medium": {
      "verdict": "MISMATCHED",
-     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+     "detail": "jurkat:MATC hepg2:MISM hct116:MATC mel:MATC rpe1:MISM"
     },
     "glucose": {
      "verdict": "MISMATCHED",
-     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+     "detail": "jurkat:MATC hepg2:MISM hct116:MATC mel:MATC rpe1:MISM"
     },
     "glutamine": {
      "verdict": "MISMATCHED",
-     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+     "detail": "jurkat:MISM hepg2:MISM hct116:MISM mel:MISM rpe1:MISM"
     },
     "serum": {
      "verdict": "MATCHED",
-     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+     "detail": "jurkat:MATC hepg2:MATC hct116:MATC mel:MATC rpe1:MATC"
     },
     "oxygen": {
      "verdict": "UNKNOWN",
-     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+     "detail": "jurkat:UNKN hepg2:UNKN hct116:UNKN mel:UNKN rpe1:UNKN"
     },
     "drug": {
      "verdict": "MISMATCHED",
-     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+     "detail": "jurkat:UNKN hepg2:UNKN hct116:UNKN mel:MATC rpe1:MISM"
     },
     "dose": {
-     "verdict": "UNKNOWN",
-     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+     "verdict": "MISMATCHED",
+     "detail": "jurkat:UNKN hepg2:UNKN hct116:UNKN mel:MATC rpe1:MISM"
     },
     "time": {
      "verdict": "MISMATCHED",
-     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+     "detail": "jurkat:UNKN hepg2:UNKN hct116:UNKN mel:UNKN rpe1:MISM"
     },
     "density": {
      "verdict": "UNKNOWN",
-     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+     "detail": "jurkat:UNKN hepg2:UNKN hct116:UNKN mel:UNKN rpe1:UNKN"
     }
    },
    "what_would_have_to_be_recorded": "perturbation-to-readout interval for the Nadig, Xaira and Frangieh arms, harvest density everywhere, and O2 everywhere"
@@ -1237,7 +1282,10 @@
   "publication methods sections describe intent. They are the best record that exists and they are still not measurements of the culture that produced the deposited data",
   "the ENCODE modification census is per TARGET, not per file: it establishes that for some TFs no unmodified experiment exists, which is exact, but it does not reconstruct which file the bound x causal module actually downloaded, because its manifest is no longer on disk",
   "oxygen tension is unknown for every dataset here without exception, and cell density for all but two. Their absence is recorded as unknown and must not be read as normoxia or as any particular density",
-  "cell-line-agnostic layers (HumanGEM, CORUM, BioPlex, HPA) are marked unknown on all nine variables, which understates the problem rather than overstating it: for those the question is not what the condition was but that there is no single condition to ask about"
+  "cell-line-agnostic layers (HumanGEM, CORUM, BioPlex, HPA) are marked unknown on all nine variables, which understates the problem rather than overstating it: for those the question is not what the condition was but that there is no single condition to ask about",
+  "several MISMATCHED verdicts are small in size even though they are real -- 2.05 mM against ~4.05 mM glutamine between the Replogle and ENCODE K562 cultures, for instance. This module reports whether the conditions differ, not whether the difference is large enough to matter, because nothing here can weigh that and pretending otherwise would be the same overreach in the opposite direction",
+  "an ENCODE dataset is not one condition, and a single verdict for it is a simplification: the drug and dose rows for the K562 ChIP set take the untreated majority and carry the exception alongside, so a reader who cares about STAT1 or STAT2 specifically has to read the exception rather than the verdict",
+  "the ordering check in section 6 has five points with medium, laboratory and modality collinear. It can rule the simplest story out; it has no power to rule anything in, and its means over three and two arms are descriptive, not tested"
  ],
- "verdict": "EVERY CROSS-DATASET COMPARISON IN THIS PROJECT CROSSES AN ENVIRONMENT THAT WAS EITHER DIFFERENT OR UNRECORDED, AND NONE OF THEM SAID SO. Of 126 dataset x variable slots, 51 (40%) are recorded anywhere reachable and 75 are not; oxygen tension is unknown for all 14 datasets and cell density for 12. The two arms of the +15.0 sign-transfer result are MISMATCHED on medium -- K562 in RPMI-1640, RPE1 in DMEM:F12 with 0.01 mg/mL hygromycin B -- and also differ in readout time, 8 days against 6, both quoted from the paper and asserted here. The 15.9% mRNA -> protein ceiling is MISMATCHED on medium in the same way: the PaxDb K562 proteome was grown in DMEM by Geiger while the transcriptome it is regressed against was grown in RPMI by Replogle, and the PaxDb file's own header points at that paper, so the mismatch was always derivable and never derived. The bound x causal tier is matched at the base-medium level but 208 of 512 testable TFs (41%) have no released K562 ChIP experiment on an unmodified line at all, so for those `bound in K562` means bound in a CRISPR- or BAC-tagged K562. The dynamics null is the best-documented comparison in the project -- one series, one lab, dexamethasone 0.1 nM on 17 durations, all structured portal fields -- and even there the medium is unknown for all 265 experiments it used, because the only A549 growth protocol on the portal is attached to the arm that analysis deliberately excluded. NONE OF THIS SHOWS ANY OF THOSE CONCLUSIONS IS WRONG, and one check argues against the simplest confound story: across the five cross-line arms, base-medium match does not track the transfer increment. What it does show is which numbers carry an unexamined assumption of environmental comparability, and that assumption is now written down, per comparison and per variable, instead of being invisible."
+ "verdict": "EVERY CROSS-DATASET COMPARISON IN THIS PROJECT CROSSES AN ENVIRONMENT THAT WAS EITHER DIFFERENT OR UNRECORDED, AND NONE OF THEM SAID SO. Neither Perturb-seq deposit carries a single one of the nine variables in obs or uns, so every fact below had to be read out of publication text or a protocol PDF. Of 126 dataset x variable slots, 53 (42%) are recorded anywhere reachable and 73 are not; oxygen tension is unknown for all 14 datasets and cell density for 12. The two arms of the +15.0 sign-transfer result are MISMATCHED on medium -- K562 in RPMI-1640, RPE1 in DMEM:F12 with 0.01 mg/mL hygromycin B -- and also differ in readout time, 8 days against 6, both quoted from the paper and asserted here. The 15.9% mRNA -> protein ceiling is MISMATCHED on medium in the same way: the PaxDb K562 proteome was grown in DMEM by Geiger while the transcriptome it is regressed against was grown in RPMI by Replogle, and the PaxDb file's own header points at that paper, so the mismatch was always derivable and never derived. The bound x causal tier is matched at the base-medium level but 208 of 512 testable TFs (41%) have no released K562 ChIP experiment on an unmodified line at all, so for those `bound in K562` means bound in a CRISPR- or BAC-tagged K562. The dynamics null is the best-documented comparison in the project -- one series, one lab, dexamethasone 100 nM on 16 durations, all structured portal fields -- and even there the medium is unknown for all 265 experiments it used, because the only A549 growth protocol on the portal is attached to the arm that analysis deliberately excluded. NONE OF THIS SHOWS ANY OF THOSE CONCLUSIONS IS WRONG, and one check argues against the simplest confound story: across the five cross-line arms, base-medium match does not track the transfer increment. What it does show is which numbers carry an unexamined assumption of environmental comparability, and that assumption is now written down, per comparison and per variable, instead of being invisible."
 }
