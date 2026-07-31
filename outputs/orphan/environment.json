@@ -1,0 +1,1243 @@
+{
+ "model": "environment-v1",
+ "purpose": "per-dataset record of the nine environmental variables, and a per-comparison verdict on whether the environments were matched, mismatched or unknown",
+ "variables": [
+  "medium",
+  "glucose",
+  "glutamine",
+  "serum",
+  "oxygen",
+  "drug",
+  "dose",
+  "time",
+  "density"
+ ],
+ "knowledge_levels": {
+  "stated": "quoted verbatim from a source that is re-fetched and asserted at run time",
+  "derived": "not stated; follows from a named catalogue formulation. Weaker than stated and kept in a separate class so it can be refused downstream",
+  "unknown": "not recorded in any source consulted. Carries no value. Never defaulted",
+  "unverified": "believed but not asserted from any fetched source; treated as unknown by every comparison"
+ },
+ "sources_verified": {
+  "replogle": {
+   "id": "PMID 35688146 / PMC9380471",
+   "kind": "publication",
+   "cite": "Replogle et al., Cell 2022, 'Mapping information-rich genotype-phenotype landscapes with genome-scale Perturb-seq'",
+   "n_quotes_asserted": 5,
+   "chars": 176328,
+   "host": "www.ebi.ac.uk"
+  },
+  "geiger": {
+   "id": "PMID 22278370 / PMC3316730",
+   "kind": "publication",
+   "cite": "Geiger et al., Mol Cell Proteomics 2012, 'Comparative proteomic analysis of eleven common cell lines' -- the deposit behind PaxDb 9606-iBAQ_K562_Geiger_2012",
+   "n_quotes_asserted": 4,
+   "chars": 48783,
+   "host": "www.ebi.ac.uk"
+  },
+  "frangieh": {
+   "id": "PMID 33649592 / PMC8376399",
+   "kind": "publication",
+   "cite": "Frangieh et al., Nat Genet 2021, 'Multimodal pooled Perturb-CITE-seq screens in patient models define mechanisms of cancer immune evasion'",
+   "n_quotes_asserted": 1,
+   "chars": 81552,
+   "host": "eutils.ncbi.nlm.nih.gov"
+  },
+  "nadig": {
+   "id": "bioRxiv 10.1101/2024.07.03.601903",
+   "kind": "preprint",
+   "cite": "Nadig et al., 'Transcriptome-wide characterization of genetic perturbations' -- the Jurkat and HepG2 Perturb-seq arms. NOT in Europe PMC full text; only the preprint server carries the methods",
+   "n_quotes_asserted": 3,
+   "chars": 90542,
+   "host": "www.biorxiv.org"
+  },
+  "xaira": {
+   "id": "bioRxiv 10.1101/2025.06.11.659105",
+   "kind": "preprint",
+   "cite": "Huang et al., 'X-Atlas/Orion: Genome-wide Perturb-seq Datasets via a Scalable Fix-Cryopreserve Platform' -- the HCT116 arm",
+   "n_quotes_asserted": 1,
+   "chars": 70691,
+   "host": "www.biorxiv.org"
+  },
+  "encode_k562_growth": {
+   "id": "ENCODE document aac59442-1653-4601-94e7-923b6b931e15",
+   "kind": "protocol PDF",
+   "cite": "ENCODE biosample growth protocol 'SOP: Propagation of K562 (ATCC CCL-243)', attached to K562 ChIP biosamples. A PDF attachment, not a queryable field",
+   "n_quotes_asserted": 4,
+   "chars": 24249,
+   "host": "www.encodeproject.org"
+  },
+  "encode_a549_growth": {
+   "id": "ENCODE document 7f983ac2-a390-4b37-b0d5-458d61b8a1a2",
+   "kind": "protocol PDF",
+   "cite": "ENCODE biosample growth protocol 'Cell Growth Protocol for A549 Cell Line' (HudsonAlpha/Caltech, 2008). Attached to the Myers A549 biosamples ONLY -- see the audit note on which experiments the dynamics analysis actually used",
+   "n_quotes_asserted": 3,
+   "chars": 5308,
+   "host": "www.encodeproject.org"
+  },
+  "paxdb_header": {
+   "id": "/tmp/claude-0/-home-user-cell/0f039315-b3a9-52ac-8187-9fae0d726994/scratchpad/prot/9606-iBAQ_K562_Geiger_2012_uniprot.txt",
+   "kind": "local file header",
+   "cite": "the PaxDb K562 file's own comment header, which names the publication the abundances came from -- the provenance chain from the number to the growth medium runs through it",
+   "n_quotes_asserted": 3,
+   "chars": 482,
+   "host": "local"
+  },
+  "depmap_model": {
+   "id": "DepMap 24Q2 Model.csv",
+   "kind": "local file",
+   "cite": "DepMap 24Q2 Public Model.csv, FormulationID column",
+   "n_quotes_asserted": 0,
+   "md5": "e5b60d1ce7636542d93f45494019eded",
+   "host": "local"
+  }
+ },
+ "sources_blocked": [],
+ "n_quotes_asserted": 24,
+ "depmap_model_status": "md5-pinned e5b60d1ce7636542d93f45494019eded",
+ "deposit_scan": {
+  "gwps.h5ad (K562 source)": {
+   "n_obs_uns_keys": 17,
+   "env_like_keys": []
+  },
+  "rpe1.h5ad (RPE1 arm)": {
+   "n_obs_uns_keys": 26,
+   "env_like_keys": []
+  }
+ },
+ "encode_census": {
+  "k562_n_exp": 776,
+  "k562_n_targets": 526,
+  "k562_n_with_docs": 448,
+  "k562_n_growth_docs": 4,
+  "k562_n_docs": 11,
+  "k562_n_treated": 22,
+  "k562_n_modified": 324,
+  "a549_n_exp": 293,
+  "a549_reddy": 265,
+  "a549_docs_lab": 16,
+  "a549_reddy_nodoc": 265,
+  "a549_dose": "0.1 nM",
+  "a549_n_amounts": 7,
+  "a549_n_durations": 17,
+  "a549_min": "5 min",
+  "a549_max": "12 h"
+ },
+ "encode_modification_exposure": {
+  "n_testable_tfs": 512,
+  "n_no_unmodified_experiment_exists": 208,
+  "frac_no_unmodified_experiment_exists": 0.40625,
+  "n_with_a_treated_experiment": 6,
+  "tfs_with_only_treated_experiments": [
+   "STAT1",
+   "STAT2"
+  ],
+  "n_with_clean_option": 301,
+  "note": "per TARGET over released K562 TF ChIP-seq. Establishes that for a large minority of TFs no unmodified-K562 experiment exists to choose; does not reconstruct which file bound_causal.py downloaded"
+ },
+ "registry_joins": {
+  "encode_chip_targets": {
+   "joined": 519,
+   "of": 526,
+   "rate": 0.9866920152091255,
+   "via": "symbol",
+   "label": "ENCODE K562 TF ChIP target labels"
+  },
+  "replogle_perturbations": {
+   "joined": 9626,
+   "of": 9867,
+   "rate": 0.975575149488193,
+   "via": "symbol",
+   "label": "Replogle K562 perturbation symbols"
+  }
+ },
+ "datasets": {
+  "replogle_k562": {
+   "label": "Replogle K562 genome-scale CRISPRi Perturb-seq",
+   "cell_line": "K562",
+   "deposit": "SCRATCH/gwps.h5ad",
+   "role": "the source of every causal edge in this project",
+   "vars": {
+    "medium": {
+     "value": "RPMI-1640 with 25 mM HEPES, 2.0 g/L NaHCO3, 0.3 g/L L-glutamine + 10% FBS + 2 mM glutamine + pen/strep",
+     "level": "stated",
+     "source": "replogle",
+     "base": "RPMI-1640"
+    },
+    "glucose": {
+     "value": "11.1 mM",
+     "level": "derived",
+     "source": "replogle",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher RPMI 1640 formulation, cat 11875 (2.0 g/L D-glucose, 0.3 g/L L-glutamine)"
+    },
+    "glutamine": {
+     "value": "~4.05 mM (0.3 g/L in base = 2.05 mM, plus 2 mM supplemented)",
+     "level": "stated",
+     "source": "replogle",
+     "note": "both components stated; the sum is arithmetic"
+    },
+    "serum": {
+     "value": "10% FBS",
+     "level": "stated",
+     "source": "replogle"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "drug": {
+     "value": "none during the Perturb-seq arm; sgRNA-positive cells were FACS-sorted on GFP rather than drug-selected",
+     "level": "stated",
+     "source": "replogle"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "no drug in this arm"
+    },
+    "time": {
+     "value": "8 days post infection",
+     "level": "stated",
+     "source": "replogle"
+    },
+    "density": {
+     "value": "250,000-1,000,000 cells/mL maintained through the screen",
+     "level": "stated",
+     "source": "replogle"
+    }
+   }
+  },
+  "replogle_rpe1": {
+   "label": "Replogle RPE1 essential-gene CRISPRi Perturb-seq",
+   "cell_line": "RPE1 (hTERT)",
+   "deposit": "SCRATCH/rpe1.h5ad",
+   "role": "the held-out arm of the +15.0 sign-transfer result",
+   "vars": {
+    "medium": {
+     "value": "DMEM:F12 + 10% FBS + 0.01 mg/mL hygromycin B + pen/strep",
+     "level": "stated",
+     "source": "replogle",
+     "base": "DMEM:F12"
+    },
+    "glucose": {
+     "value": "17.5 mM",
+     "level": "derived",
+     "source": "replogle",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher DMEM/F-12 1:1 formulation (3.151 g/L D-glucose, 0.365 g/L L-glutamine)"
+    },
+    "glutamine": {
+     "value": "2.5 mM",
+     "level": "derived",
+     "source": "replogle",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher DMEM/F-12 1:1 formulation (3.151 g/L D-glucose, 0.365 g/L L-glutamine)"
+    },
+    "serum": {
+     "value": "10% FBS",
+     "level": "stated",
+     "source": "replogle"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "drug": {
+     "value": "hygromycin B 0.01 mg/mL, continuous, in the growth medium; no puromycin selection because RPE1 is puromycin-resistant",
+     "level": "stated",
+     "source": "replogle"
+    },
+    "dose": {
+     "value": "0.01 mg/mL hygromycin B",
+     "level": "stated",
+     "source": "replogle"
+    },
+    "time": {
+     "value": "6 days post infection",
+     "level": "stated",
+     "source": "replogle"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "the stated 250,000-1,000,000 cells/mL applies to the suspension K562 arm; RPE1 is adherent and no confluence target is given"
+    }
+   }
+  },
+  "encode_k562_chip": {
+   "label": "ENCODE K562 TF ChIP-seq (776 released experiments, 526 targets)",
+   "cell_line": "K562",
+   "deposit": "ENCODE portal",
+   "role": "the `bound` half of the bound x causal directness tier",
+   "vars": {
+    "medium": {
+     "value": "RPMI-1640 (Life Technologies 11875-150) + heat-inactivated FBS + antibiotic-antimycotic, per the one K562 growth protocol on the portal",
+     "level": "stated",
+     "source": "encode_k562_growth",
+     "note": "the medium exists only as a PDF attachment; 448/776 experiments carry any biosample document at all and there are 4 distinct growth protocols across the whole set, from different labs",
+     "base": "RPMI-1640"
+    },
+    "glucose": {
+     "value": "11.1 mM",
+     "level": "derived",
+     "source": "encode_k562_growth",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher RPMI 1640 formulation, cat 11875 (2.0 g/L D-glucose, 0.3 g/L L-glutamine)"
+    },
+    "glutamine": {
+     "value": "2.05 mM",
+     "level": "derived",
+     "source": "encode_k562_growth",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher RPMI 1640 formulation, cat 11875 (2.0 g/L D-glucose, 0.3 g/L L-glutamine)"
+    },
+    "serum": {
+     "value": "heat-inactivated FBS (percentage not recoverable from the extracted text)",
+     "level": "stated",
+     "source": "encode_k562_growth"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "drug": {
+     "value": "22/776 experiments are cytokine-treated (interferon alpha or gamma); the rest record no treatment. Separately 324/776 are on a genetically modified K562 -- CRISPR- or BAC-tagged -- not the parental line",
+     "level": "stated",
+     "source": "encode_api",
+     "note": "ENCODE records treatment as a first-class field, so this one is machine-readable; medium is not"
+    },
+    "dose": {
+     "value": "interferon experiments record a duration (30 min or 6 h) in free-text notes; amount is not populated",
+     "level": "stated",
+     "source": "encode_api"
+    },
+    "time": {
+     "value": "not applicable -- these are steady-state occupancy measurements with no clock, except the interferon subset",
+     "level": "stated",
+     "source": "encode_api"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "the growth protocol gives a passaging schedule, not a harvest density, and it is not attached to most experiments"
+    }
+   }
+  },
+  "encode_a549_dex": {
+   "label": "ENCODE A549 dexamethasone time course (293 released experiments)",
+   "cell_line": "A549",
+   "deposit": "ENCODE portal",
+   "role": "the only dataset in this project with a real driver on a real clock; the dynamics null",
+   "vars": {
+    "medium": {
+     "value": null,
+     "level": "unknown",
+     "note": "the only A549 growth protocol on the portal (F-12K + 10% FBS + pen/strep, 5% CO2, 37 C) is attached to 16 biosamples only. All 265 experiments from the laboratory the dynamics analysis actually pinned carry NO biosample document, so the medium for the measured series is not recorded anywhere on the portal"
+    },
+    "glucose": {
+     "value": null,
+     "level": "unknown",
+     "note": "follows the medium"
+    },
+    "glutamine": {
+     "value": null,
+     "level": "unknown",
+     "note": "follows the medium"
+    },
+    "serum": {
+     "value": null,
+     "level": "unknown",
+     "note": "follows the medium"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "drug": {
+     "value": "dexamethasone, a glucocorticoid receptor agonist",
+     "level": "stated",
+     "source": "encode_api"
+    },
+    "dose": {
+     "value": "0.1 nM",
+     "level": "stated",
+     "source": "encode_api",
+     "note": "a structured field on the treatment object, identical across every experiment in the series"
+    },
+    "time": {
+     "value": "17 distinct exposure durations from 5 min to 12 h",
+     "level": "stated",
+     "source": "encode_api"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    }
+   }
+  },
+  "paxdb_k562": {
+   "label": "PaxDb K562 proteome (Geiger 2012 iBAQ)",
+   "cell_line": "K562",
+   "deposit": "SCRATCH/prot/9606-iBAQ_K562_Geiger_2012_uniprot.txt",
+   "role": "the protein side of the 15.9% mRNA -> protein ceiling",
+   "vars": {
+    "medium": {
+     "value": "Dulbecco's modified Eagle's medium + 10% fetal bovine serum + antibiotics",
+     "level": "stated",
+     "source": "geiger",
+     "note": "the PaxDb file's own #link header points at doi 10.1074/mcp.M111.014050, which is this paper; the chain from abundance to medium is complete and the header assertion passed",
+     "base": "DMEM"
+    },
+    "glucose": {
+     "value": null,
+     "level": "unknown",
+     "note": "medium named as 'DMEM', which does not determine glucose -- the formulation is sold at more than one concentration"
+    },
+    "glutamine": {
+     "value": null,
+     "level": "unknown",
+     "note": "'DMEM' alone does not determine glutamine either; the source gives no catalogue number"
+    },
+    "serum": {
+     "value": "10% fetal bovine serum",
+     "level": "stated",
+     "source": "geiger"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "drug": {
+     "value": "none stated",
+     "level": "stated",
+     "source": "geiger",
+     "note": "'antibiotics' unspecified; no perturbation -- this is an unperturbed steady-state proteome"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "no drug"
+    },
+    "time": {
+     "value": null,
+     "level": "unknown",
+     "note": "no clock: cells were harvested once from subconfluent culture"
+    },
+    "density": {
+     "value": "subconfluent",
+     "level": "stated",
+     "source": "geiger",
+     "note": "a qualitative statement, not a number; it is the only density record outside the Replogle K562 arm"
+    }
+   }
+  },
+  "depmap_crispr": {
+   "label": "DepMap CRISPRGeneEffect (24Q2 Public)",
+   "cell_line": "1,150+ lines incl. K562",
+   "deposit": "SCRATCH/CRISPRGeneEffect.csv",
+   "role": "the viability endpoint behind the co-dependency layer",
+   "vars": {
+    "medium": {
+     "value": "per-line, from Model.csv FormulationID -- K562 'IMDM + 10% FBS', RPE1 None, HCT116 \"McCoy's 5A + 10% FBS\", JURKAT 'RPMI + 10% FBS', HEPG2 'MEM + 10% FBS', A549 'DMEM + 10% FBS'",
+     "level": "stated",
+     "source": "depmap_model",
+     "note": "the only machine-readable per-line medium field anywhere in this project. It documents DEPMAP's own culture, not the culture of any other dataset using the same line",
+     "base": "IMDM"
+    },
+    "glucose": {
+     "value": "25.0 mM",
+     "level": "derived",
+     "source": "depmap_model",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher IMDM formulation (4.5 g/L D-glucose, 0.584 g/L L-glutamine)"
+    },
+    "glutamine": {
+     "value": "4.0 mM",
+     "level": "derived",
+     "source": "depmap_model",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher IMDM formulation (4.5 g/L D-glucose, 0.584 g/L L-glutamine)"
+    },
+    "serum": {
+     "value": "10% FBS for K562 per FormulationID; varies by line",
+     "level": "stated",
+     "source": "depmap_model"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "drug": {
+     "value": "puromycin selection after Cas9/library transduction; concentration not in the public release",
+     "level": "unverified",
+     "note": "stated in the Achilles protocol but not in any file this module fetched, so it is recorded as unverified rather than stated"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "time": {
+     "value": "21-day dropout screen (Achilles standard); not a field in the public release",
+     "level": "unverified",
+     "note": "not asserted from any fetched source"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    }
+   }
+  },
+  "nadig_jurkat": {
+   "label": "Nadig Jurkat CRISPRi Perturb-seq",
+   "cell_line": "Jurkat",
+   "deposit": "SCRATCH/jurkat",
+   "role": "a cross-cell-line transfer arm",
+   "vars": {
+    "medium": {
+     "value": "RPMI-1640 with 25 mM HEPES, 2.0 g/L NaHCO3, 0.3 g/L L-glutamine + 10% FBS + 2 mM glutamine + pen/strep",
+     "level": "stated",
+     "source": "nadig",
+     "base": "RPMI-1640"
+    },
+    "glucose": {
+     "value": "11.1 mM",
+     "level": "derived",
+     "source": "nadig",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher RPMI 1640 formulation, cat 11875 (2.0 g/L D-glucose, 0.3 g/L L-glutamine)"
+    },
+    "glutamine": {
+     "value": "2.05 mM",
+     "level": "derived",
+     "source": "nadig",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher RPMI 1640 formulation, cat 11875 (2.0 g/L D-glucose, 0.3 g/L L-glutamine)"
+    },
+    "serum": {
+     "value": "10% FBS",
+     "level": "stated",
+     "source": "nadig"
+    },
+    "oxygen": {
+     "value": "5% CO2 at 37 C; O2 tension not stated",
+     "level": "stated",
+     "source": "nadig",
+     "note": "CO2 is not O2 -- this is the closest any source comes and it still leaves oxygen tension unrecorded"
+    },
+    "drug": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "time": {
+     "value": null,
+     "level": "unknown",
+     "note": "no perturbation-to-readout interval stated in the methods text fetched here"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    }
+   }
+  },
+  "nadig_hepg2": {
+   "label": "Nadig HepG2 CRISPRi Perturb-seq",
+   "cell_line": "HepG2",
+   "deposit": "SCRATCH/hepg2",
+   "role": "a cross-cell-line transfer arm",
+   "vars": {
+    "medium": {
+     "value": "EMEM with 1.5 g/L NaHCO3, 110 mg/L sodium pyruvate, 292 mg/L L-glutamine + 10% FBS + pen/strep",
+     "level": "stated",
+     "source": "nadig",
+     "base": "EMEM"
+    },
+    "glucose": {
+     "value": "5.56 mM",
+     "level": "derived",
+     "source": "nadig",
+     "note": "not stated by the source; follows from the named formulation. Corning EMEM formulation (1.0 g/L D-glucose; 292 mg/L L-glutamine, which the source states directly)"
+    },
+    "glutamine": {
+     "value": "2 mM (292 mg/L, stated)",
+     "level": "stated",
+     "source": "nadig"
+    },
+    "serum": {
+     "value": "10% FBS",
+     "level": "stated",
+     "source": "nadig"
+    },
+    "oxygen": {
+     "value": "5% CO2 at 37 C; O2 tension not stated",
+     "level": "stated",
+     "source": "nadig",
+     "note": "CO2 is not O2 -- this is the closest any source comes and it still leaves oxygen tension unrecorded"
+    },
+    "drug": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "time": {
+     "value": null,
+     "level": "unknown",
+     "note": "no perturbation-to-readout interval stated in the methods text fetched here"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    }
+   }
+  },
+  "xaira_hct116": {
+   "label": "Xaira X-Atlas/Orion HCT116 CRISPRi Perturb-seq",
+   "cell_line": "HCT116",
+   "deposit": "SCRATCH/hct116",
+   "role": "a cross-cell-line transfer arm",
+   "vars": {
+    "medium": {
+     "value": "RPMI 1640 GlutaMAX without HEPES + 10% FBS + pen/strep",
+     "level": "stated",
+     "source": "xaira",
+     "base": "RPMI-1640"
+    },
+    "glucose": {
+     "value": "11.1 mM",
+     "level": "derived",
+     "source": "xaira",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher RPMI 1640 formulation, cat 11875 (2.0 g/L D-glucose, 0.3 g/L L-glutamine)"
+    },
+    "glutamine": {
+     "value": "2.05 mM",
+     "level": "derived",
+     "source": "xaira",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher RPMI 1640 formulation, cat 11875 (2.0 g/L D-glucose, 0.3 g/L L-glutamine)"
+    },
+    "serum": {
+     "value": "10% FBS",
+     "level": "stated",
+     "source": "xaira"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "drug": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "time": {
+     "value": null,
+     "level": "unknown",
+     "note": "no perturbation-to-readout interval stated in the methods text fetched here"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    }
+   }
+  },
+  "frangieh_mel": {
+   "label": "Frangieh patient-derived melanoma Perturb-CITE-seq",
+   "cell_line": "melanoma (patient-derived)",
+   "deposit": "SCRATCH/mel",
+   "role": "a cross-cell-line transfer arm",
+   "vars": {
+    "medium": {
+     "value": "RPMI-1640 + 10% heat-inactivated FBS + GlutaMax + 10 mM HEPES + 10 mg/L insulin + 5.5 mg/L transferrin + 6.7 ug/L sodium selenite + 55 uM 2-mercaptoethanol",
+     "level": "stated",
+     "source": "frangieh",
+     "base": "RPMI-1640"
+    },
+    "glucose": {
+     "value": "11.1 mM",
+     "level": "derived",
+     "source": "frangieh",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher RPMI 1640 formulation, cat 11875 (2.0 g/L D-glucose, 0.3 g/L L-glutamine)"
+    },
+    "glutamine": {
+     "value": "2.05 mM",
+     "level": "derived",
+     "source": "frangieh",
+     "note": "not stated by the source; follows from the named formulation. Thermo Fisher RPMI 1640 formulation, cat 11875 (2.0 g/L D-glucose, 0.3 g/L L-glutamine)"
+    },
+    "serum": {
+     "value": "10% FBS",
+     "level": "stated",
+     "source": "frangieh"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "drug": {
+     "value": "the deposit carries three arms -- Control, IFN-gamma, T-cell co-culture -- and scperturb_transfer.py pins Control",
+     "level": "stated",
+     "source": "frangieh"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    },
+    "time": {
+     "value": null,
+     "level": "unknown",
+     "note": "no perturbation-to-readout interval stated in the methods text fetched here"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "no source consulted here records it"
+    }
+   }
+  },
+  "humangem": {
+   "label": "HumanGEM metabolic reconstruction",
+   "cell_line": "not one cell line",
+   "deposit": "various",
+   "role": "cell-line-agnostic or differently-sourced reference layer",
+   "vars": {
+    "medium": {
+     "value": null,
+     "level": "unknown",
+     "note": "a consensus human reconstruction, not a measurement of any cell in any medium. Its exchange bounds ARE an environment, and they are a modelling choice, not a record of one"
+    },
+    "glucose": {
+     "value": null,
+     "level": "unknown",
+     "note": "a consensus human reconstruction, not a measurement of any cell in any medium. Its exchange bounds ARE an environment, and they are a modelling choice, not a record of one"
+    },
+    "glutamine": {
+     "value": null,
+     "level": "unknown",
+     "note": "a consensus human reconstruction, not a measurement of any cell in any medium. Its exchange bounds ARE an environment, and they are a modelling choice, not a record of one"
+    },
+    "serum": {
+     "value": null,
+     "level": "unknown",
+     "note": "a consensus human reconstruction, not a measurement of any cell in any medium. Its exchange bounds ARE an environment, and they are a modelling choice, not a record of one"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "a consensus human reconstruction, not a measurement of any cell in any medium. Its exchange bounds ARE an environment, and they are a modelling choice, not a record of one"
+    },
+    "drug": {
+     "value": null,
+     "level": "unknown",
+     "note": "a consensus human reconstruction, not a measurement of any cell in any medium. Its exchange bounds ARE an environment, and they are a modelling choice, not a record of one"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "a consensus human reconstruction, not a measurement of any cell in any medium. Its exchange bounds ARE an environment, and they are a modelling choice, not a record of one"
+    },
+    "time": {
+     "value": null,
+     "level": "unknown",
+     "note": "a consensus human reconstruction, not a measurement of any cell in any medium. Its exchange bounds ARE an environment, and they are a modelling choice, not a record of one"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "a consensus human reconstruction, not a measurement of any cell in any medium. Its exchange bounds ARE an environment, and they are a modelling choice, not a record of one"
+    }
+   }
+  },
+  "corum": {
+   "label": "CORUM protein complexes",
+   "cell_line": "not one cell line",
+   "deposit": "various",
+   "role": "cell-line-agnostic or differently-sourced reference layer",
+   "vars": {
+    "medium": {
+     "value": null,
+     "level": "unknown",
+     "note": "literature-curated across many organisms, tissues and decades; a complex has no single culture condition and the constituent papers are not condition-harmonised"
+    },
+    "glucose": {
+     "value": null,
+     "level": "unknown",
+     "note": "literature-curated across many organisms, tissues and decades; a complex has no single culture condition and the constituent papers are not condition-harmonised"
+    },
+    "glutamine": {
+     "value": null,
+     "level": "unknown",
+     "note": "literature-curated across many organisms, tissues and decades; a complex has no single culture condition and the constituent papers are not condition-harmonised"
+    },
+    "serum": {
+     "value": null,
+     "level": "unknown",
+     "note": "literature-curated across many organisms, tissues and decades; a complex has no single culture condition and the constituent papers are not condition-harmonised"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "literature-curated across many organisms, tissues and decades; a complex has no single culture condition and the constituent papers are not condition-harmonised"
+    },
+    "drug": {
+     "value": null,
+     "level": "unknown",
+     "note": "literature-curated across many organisms, tissues and decades; a complex has no single culture condition and the constituent papers are not condition-harmonised"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "literature-curated across many organisms, tissues and decades; a complex has no single culture condition and the constituent papers are not condition-harmonised"
+    },
+    "time": {
+     "value": null,
+     "level": "unknown",
+     "note": "literature-curated across many organisms, tissues and decades; a complex has no single culture condition and the constituent papers are not condition-harmonised"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "literature-curated across many organisms, tissues and decades; a complex has no single culture condition and the constituent papers are not condition-harmonised"
+    }
+   }
+  },
+  "bioplex": {
+   "label": "BioPlex interactome",
+   "cell_line": "not one cell line",
+   "deposit": "various",
+   "role": "cell-line-agnostic or differently-sourced reference layer",
+   "vars": {
+    "medium": {
+     "value": null,
+     "level": "unknown",
+     "note": "measured in HEK293T and HCT116 under bait overexpression -- a different cell AND a non-physiological expression level. Cell line is recorded per interaction; medium is not"
+    },
+    "glucose": {
+     "value": null,
+     "level": "unknown",
+     "note": "measured in HEK293T and HCT116 under bait overexpression -- a different cell AND a non-physiological expression level. Cell line is recorded per interaction; medium is not"
+    },
+    "glutamine": {
+     "value": null,
+     "level": "unknown",
+     "note": "measured in HEK293T and HCT116 under bait overexpression -- a different cell AND a non-physiological expression level. Cell line is recorded per interaction; medium is not"
+    },
+    "serum": {
+     "value": null,
+     "level": "unknown",
+     "note": "measured in HEK293T and HCT116 under bait overexpression -- a different cell AND a non-physiological expression level. Cell line is recorded per interaction; medium is not"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "measured in HEK293T and HCT116 under bait overexpression -- a different cell AND a non-physiological expression level. Cell line is recorded per interaction; medium is not"
+    },
+    "drug": {
+     "value": null,
+     "level": "unknown",
+     "note": "measured in HEK293T and HCT116 under bait overexpression -- a different cell AND a non-physiological expression level. Cell line is recorded per interaction; medium is not"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "measured in HEK293T and HCT116 under bait overexpression -- a different cell AND a non-physiological expression level. Cell line is recorded per interaction; medium is not"
+    },
+    "time": {
+     "value": null,
+     "level": "unknown",
+     "note": "measured in HEK293T and HCT116 under bait overexpression -- a different cell AND a non-physiological expression level. Cell line is recorded per interaction; medium is not"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "measured in HEK293T and HCT116 under bait overexpression -- a different cell AND a non-physiological expression level. Cell line is recorded per interaction; medium is not"
+    }
+   }
+  },
+  "hpa": {
+   "label": "Human Protein Atlas localisation",
+   "cell_line": "not one cell line",
+   "deposit": "various",
+   "role": "cell-line-agnostic or differently-sourced reference layer",
+   "vars": {
+    "medium": {
+     "value": null,
+     "level": "unknown",
+     "note": "antibody-based, across a panel of lines, curated per antigen. Cell line is recorded; the culture condition of each imaged line is not"
+    },
+    "glucose": {
+     "value": null,
+     "level": "unknown",
+     "note": "antibody-based, across a panel of lines, curated per antigen. Cell line is recorded; the culture condition of each imaged line is not"
+    },
+    "glutamine": {
+     "value": null,
+     "level": "unknown",
+     "note": "antibody-based, across a panel of lines, curated per antigen. Cell line is recorded; the culture condition of each imaged line is not"
+    },
+    "serum": {
+     "value": null,
+     "level": "unknown",
+     "note": "antibody-based, across a panel of lines, curated per antigen. Cell line is recorded; the culture condition of each imaged line is not"
+    },
+    "oxygen": {
+     "value": null,
+     "level": "unknown",
+     "note": "antibody-based, across a panel of lines, curated per antigen. Cell line is recorded; the culture condition of each imaged line is not"
+    },
+    "drug": {
+     "value": null,
+     "level": "unknown",
+     "note": "antibody-based, across a panel of lines, curated per antigen. Cell line is recorded; the culture condition of each imaged line is not"
+    },
+    "dose": {
+     "value": null,
+     "level": "unknown",
+     "note": "antibody-based, across a panel of lines, curated per antigen. Cell line is recorded; the culture condition of each imaged line is not"
+    },
+    "time": {
+     "value": null,
+     "level": "unknown",
+     "note": "antibody-based, across a panel of lines, curated per antigen. Cell line is recorded; the culture condition of each imaged line is not"
+    },
+    "density": {
+     "value": null,
+     "level": "unknown",
+     "note": "antibody-based, across a panel of lines, curated per antigen. Cell line is recorded; the culture condition of each imaged line is not"
+    }
+   }
+  }
+ },
+ "coverage": {
+  "n_datasets": 14,
+  "n_variables": 9,
+  "n_slots": 126,
+  "n_recorded": 51,
+  "frac_recorded": 0.40476190476190477,
+  "n_datasets_with_oxygen": 2,
+  "n_datasets_with_density": 2
+ },
+ "comparisons": [
+  {
+   "key": "a",
+   "claim": "K562 Perturb-seq edges evaluated on RPE1 Perturb-seq -- the +15.0 point sign transfer",
+   "overall": "MISMATCHED",
+   "arms": [
+    "replogle_k562",
+    "replogle_rpe1"
+   ],
+   "per_variable": {
+    "medium": {
+     "verdict": "MISMATCHED",
+     "detail": "RPMI-1640 vs DMEM:F12"
+    },
+    "glucose": {
+     "verdict": "MISMATCHED",
+     "detail": "11.1 mM vs 17.5 mM"
+    },
+    "glutamine": {
+     "verdict": "MISMATCHED",
+     "detail": "~4.05 mM (0.3 g/L in base = 2.05 mM, plus 2 mM vs 2.5 mM"
+    },
+    "serum": {
+     "verdict": "MATCHED",
+     "detail": "10% FBS"
+    },
+    "oxygen": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for replogle_k562, replogle_rpe1"
+    },
+    "drug": {
+     "verdict": "MISMATCHED",
+     "detail": "none during the Perturb-seq arm; sgRNA-positiv vs hygromycin B 0.01 mg/mL, continuous, in the gr"
+    },
+    "dose": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for replogle_k562"
+    },
+    "time": {
+     "verdict": "MISMATCHED",
+     "detail": "8 days post infection vs 6 days post infection"
+    },
+    "density": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for replogle_rpe1"
+    }
+   },
+   "what_would_have_to_be_recorded": "RPE1's harvest density and both arms' O2 tension; and, to make the comparison clean rather than merely documented, the same experiment run with RPE1 in DMEM:F12 and in RPMI-1640, which nobody has done"
+  },
+  {
+   "key": "b",
+   "claim": "K562 TF ChIP intersected with K562 Perturb-seq -- the bound x causal directness tier",
+   "overall": "MISMATCHED",
+   "arms": [
+    "replogle_k562",
+    "encode_k562_chip"
+   ],
+   "per_variable": {
+    "medium": {
+     "verdict": "MATCHED",
+     "detail": "same base formulation (RPMI-1640) but the supplements differ, which is a MATCH only at the level the base determines"
+    },
+    "glucose": {
+     "verdict": "MATCHED",
+     "detail": "11.1 mM"
+    },
+    "glutamine": {
+     "verdict": "MISMATCHED",
+     "detail": "~4.05 mM (0.3 g/L in base = 2.05 mM, plus 2 mM vs 2.05 mM"
+    },
+    "serum": {
+     "verdict": "MISMATCHED",
+     "detail": "10% FBS vs heat-inactivated FBS (percentage not recoverab"
+    },
+    "oxygen": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for replogle_k562, encode_k562_chip"
+    },
+    "drug": {
+     "verdict": "MISMATCHED",
+     "detail": "none during the Perturb-seq arm; sgRNA-positiv vs 22/776 experiments are cytokine-treated (inter"
+    },
+    "dose": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for replogle_k562"
+    },
+    "time": {
+     "verdict": "MISMATCHED",
+     "detail": "8 days post infection vs not applicable -- these are steady-state occup"
+    },
+    "density": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for encode_k562_chip"
+    }
+   },
+   "what_would_have_to_be_recorded": "the medium as a portal field rather than a PDF attachment, harvest density, and a per-experiment record of whether the tagged line's TF is expressed at parental levels"
+  },
+  {
+   "key": "c",
+   "claim": "A549 dexamethasone ChIP against A549 RNA on one time grid -- the dynamics null",
+   "overall": "UNKNOWN",
+   "arms": [
+    "encode_a549_dex",
+    "encode_a549_dex"
+   ],
+   "per_variable": {
+    "medium": {
+     "verdict": "UNKNOWN",
+     "detail": "unrecorded, but the ChIP and RNA arms are the same biosamples from one laboratory, so they are unknown TOGETHER rather than possibly different"
+    },
+    "glucose": {
+     "verdict": "UNKNOWN",
+     "detail": "unrecorded, but the ChIP and RNA arms are the same biosamples from one laboratory, so they are unknown TOGETHER rather than possibly different"
+    },
+    "glutamine": {
+     "verdict": "UNKNOWN",
+     "detail": "unrecorded, but the ChIP and RNA arms are the same biosamples from one laboratory, so they are unknown TOGETHER rather than possibly different"
+    },
+    "serum": {
+     "verdict": "UNKNOWN",
+     "detail": "unrecorded, but the ChIP and RNA arms are the same biosamples from one laboratory, so they are unknown TOGETHER rather than possibly different"
+    },
+    "oxygen": {
+     "verdict": "UNKNOWN",
+     "detail": "unrecorded, but the ChIP and RNA arms are the same biosamples from one laboratory, so they are unknown TOGETHER rather than possibly different"
+    },
+    "drug": {
+     "verdict": "MATCHED",
+     "detail": "one series, one protocol, one value for both readouts"
+    },
+    "dose": {
+     "verdict": "MATCHED",
+     "detail": "one series, one protocol, one value for both readouts"
+    },
+    "time": {
+     "verdict": "MATCHED",
+     "detail": "one series, one protocol, one value for both readouts"
+    },
+    "density": {
+     "verdict": "UNKNOWN",
+     "detail": "unrecorded, but the ChIP and RNA arms are the same biosamples from one laboratory, so they are unknown TOGETHER rather than possibly different"
+    }
+   },
+   "what_would_have_to_be_recorded": "the medium for the Reddy-lab biosamples, which the portal does not carry for any of the experiments that analysis used"
+  },
+  {
+   "key": "d",
+   "claim": "PaxDb K562 protein against K562 Perturb-seq mean expression -- the 15.9% mRNA -> protein ceiling",
+   "overall": "MISMATCHED",
+   "arms": [
+    "replogle_k562",
+    "paxdb_k562"
+   ],
+   "per_variable": {
+    "medium": {
+     "verdict": "MISMATCHED",
+     "detail": "RPMI-1640 vs DMEM"
+    },
+    "glucose": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for paxdb_k562"
+    },
+    "glutamine": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for paxdb_k562"
+    },
+    "serum": {
+     "verdict": "MISMATCHED",
+     "detail": "10% FBS vs 10% fetal bovine serum"
+    },
+    "oxygen": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for replogle_k562, paxdb_k562"
+    },
+    "drug": {
+     "verdict": "MISMATCHED",
+     "detail": "none during the Perturb-seq arm; sgRNA-positiv vs none stated"
+    },
+    "dose": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for replogle_k562, paxdb_k562"
+    },
+    "time": {
+     "verdict": "UNKNOWN",
+     "detail": "not recorded for paxdb_k562"
+    },
+    "density": {
+     "verdict": "MISMATCHED",
+     "detail": "250,000-1,000,000 cells/mL maintained through  vs subconfluent"
+    }
+   },
+   "what_would_have_to_be_recorded": "the DMEM glucose concentration Geiger used, the harvest density as a number, and ideally a K562 proteome measured in RPMI on the Replogle schedule"
+  },
+  {
+   "key": "e",
+   "claim": "K562-derived edges evaluated on HCT116, Jurkat, HepG2 and melanoma -- cross-cell-line transfer",
+   "overall": "MISMATCHED",
+   "arms": [
+    "nadig_jurkat",
+    "nadig_hepg2",
+    "xaira_hct116",
+    "frangieh_mel",
+    "replogle_rpe1"
+   ],
+   "per_variable": {
+    "medium": {
+     "verdict": "MISMATCHED",
+     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+    },
+    "glucose": {
+     "verdict": "MISMATCHED",
+     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+    },
+    "glutamine": {
+     "verdict": "MISMATCHED",
+     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+    },
+    "serum": {
+     "verdict": "MATCHED",
+     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+    },
+    "oxygen": {
+     "verdict": "UNKNOWN",
+     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+    },
+    "drug": {
+     "verdict": "MISMATCHED",
+     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+    },
+    "dose": {
+     "verdict": "UNKNOWN",
+     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+    },
+    "time": {
+     "verdict": "MISMATCHED",
+     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+    },
+    "density": {
+     "verdict": "UNKNOWN",
+     "detail": "worst case over nadig_jurkat, nadig_hepg2, xaira_hct116, frangieh_mel, replogle_rpe1"
+    }
+   },
+   "what_would_have_to_be_recorded": "perturbation-to-readout interval for the Nadig, Xaira and Frangieh arms, harvest density everywhere, and O2 everywhere"
+  }
+ ],
+ "ordering_check": {
+  "rows": [
+   {
+    "arm": "jurkat",
+    "increment": 21.94333913703882,
+    "base": "RPMI-1640",
+    "base_match": true,
+    "lab": "Nadig/Gilbert",
+    "modality": "CRISPRi"
+   },
+   {
+    "arm": "hepg2",
+    "increment": 18.543029757412867,
+    "base": "EMEM",
+    "base_match": false,
+    "lab": "Nadig/Gilbert",
+    "modality": "CRISPRi"
+   },
+   {
+    "arm": "rpe1",
+    "increment": 15.027055951305968,
+    "base": "DMEM:F12",
+    "base_match": false,
+    "lab": "Replogle/Weissman",
+    "modality": "CRISPRi"
+   },
+   {
+    "arm": "hct116",
+    "increment": 10.773939255994181,
+    "base": "RPMI-1640",
+    "base_match": true,
+    "lab": "Xaira X-Atlas/Orion",
+    "modality": "CRISPRi"
+   },
+   {
+    "arm": "frangieh",
+    "increment": 5.485565160658956,
+    "base": "RPMI-1640",
+    "base_match": true,
+    "lab": "Frangieh/Izar",
+    "modality": "Cas9 knockout"
+   }
+  ],
+  "mean_same_base": 12.734281184563985,
+  "mean_diff_base": 16.785042854359418,
+  "conclusion": "base-medium match does not track the transfer increment across the five arms; medium, laboratory and perturbation modality are collinear here so nothing is separable, and this neither supports nor excludes a medium effect on the level of any single estimate"
+ },
+ "limits": [
+  "this is an audit, not an experiment. It estimates no effect, so the project's rule about matched controls drawn >= 20 times does not apply and no sham matching was manufactured to satisfy it; there is nothing here to match",
+  "a MATCHED verdict means the two sources STATE the same thing, not that the two cultures were the same. Two laboratories following the same catalogue number still differ in serum lot, passage number, incubator and handling, none of which any source records",
+  "`derived` glucose and glutamine come from catalogue formulations, not from a measurement of the medium as used; supplemented serum contributes glucose and glutamine that these numbers exclude",
+  "the ENCODE growth protocols were read out of PDF attachments with a crude text extractor, so a protocol whose text does not extract would read as unknown even though the fact is on the portal; the extraction is asserted against pinned quotes, which catches a failed extraction but not a partial one",
+  "publication methods sections describe intent. They are the best record that exists and they are still not measurements of the culture that produced the deposited data",
+  "the ENCODE modification census is per TARGET, not per file: it establishes that for some TFs no unmodified experiment exists, which is exact, but it does not reconstruct which file the bound x causal module actually downloaded, because its manifest is no longer on disk",
+  "oxygen tension is unknown for every dataset here without exception, and cell density for all but two. Their absence is recorded as unknown and must not be read as normoxia or as any particular density",
+  "cell-line-agnostic layers (HumanGEM, CORUM, BioPlex, HPA) are marked unknown on all nine variables, which understates the problem rather than overstating it: for those the question is not what the condition was but that there is no single condition to ask about"
+ ],
+ "verdict": "EVERY CROSS-DATASET COMPARISON IN THIS PROJECT CROSSES AN ENVIRONMENT THAT WAS EITHER DIFFERENT OR UNRECORDED, AND NONE OF THEM SAID SO. Of 126 dataset x variable slots, 51 (40%) are recorded anywhere reachable and 75 are not; oxygen tension is unknown for all 14 datasets and cell density for 12. The two arms of the +15.0 sign-transfer result are MISMATCHED on medium -- K562 in RPMI-1640, RPE1 in DMEM:F12 with 0.01 mg/mL hygromycin B -- and also differ in readout time, 8 days against 6, both quoted from the paper and asserted here. The 15.9% mRNA -> protein ceiling is MISMATCHED on medium in the same way: the PaxDb K562 proteome was grown in DMEM by Geiger while the transcriptome it is regressed against was grown in RPMI by Replogle, and the PaxDb file's own header points at that paper, so the mismatch was always derivable and never derived. The bound x causal tier is matched at the base-medium level but 208 of 512 testable TFs (41%) have no released K562 ChIP experiment on an unmodified line at all, so for those `bound in K562` means bound in a CRISPR- or BAC-tagged K562. The dynamics null is the best-documented comparison in the project -- one series, one lab, dexamethasone 0.1 nM on 17 durations, all structured portal fields -- and even there the medium is unknown for all 265 experiments it used, because the only A549 growth protocol on the portal is attached to the arm that analysis deliberately excluded. NONE OF THIS SHOWS ANY OF THOSE CONCLUSIONS IS WRONG, and one check argues against the simplest confound story: across the five cross-line arms, base-medium match does not track the transfer increment. What it does show is which numbers carry an unexamined assumption of environmental comparability, and that assumption is now written down, per comparison and per variable, instead of being invisible."
+}
