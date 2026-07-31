@@ -16376,3 +16376,50 @@ removed it declares itself uninformative rather than reporting a null.
 This is gene knockdown → transcriptome, not enhancer silencing → gene. It tests the same general claim in a
 different system and **neither confirms nor overturns the n=820 enhancer result**, which stands as measured.
 What has changed is what the entry rests on.
+
+---
+
+# Compartment-gated kinase–substrate: the rescue fails, and the specificity control is what kills it
+
+`colab/ptm_sites.py` had already measured the enzyme→substrate layer as **null with power behind it**: 2,810
+pairs at **0.992×** a decile-matched control, 0/20 draws significant, minimum detectable ratio 1.075. So this
+was not a fresh claim — it was the one rescue worth trying. iPTMnet aggregates enzyme–substrate relations
+across experiments, tissues and assay types with no cell-type field, so a nuclear kinase and a
+mitochondrial-matrix substrate can sit in it as a literature relation that is not a K562 relation. Gating on
+shared HPA compartment should concentrate whatever signal exists.
+
+## Two endpoints, and the transcript one was flagged as wrong physics before the run
+
+A phosphorylation event has no obligation to move its substrate's own mRNA. It was run anyway for
+comparability with the published null. **Co-dependency** across the DepMap panel is the endpoint that does
+not pass through transcription.
+
+| arm | n | \|r\| | matched | ratio | draws below observed |
+|---|---:|---:|---:|---:|---:|
+| kinase–substrate, ALL | 4,205 | 0.0565 | 0.0496 | **1.139×** | 20/20 |
+| SHARED compartment | 2,794 | 0.0590 | 0.0501 | 1.180× | 20/20 |
+| DISJOINT | 1,411 | 0.0515 | 0.0484 | 1.063× | 20/20 |
+| **NOT PPI / co-complex** | 3,709 | 0.0510 | 0.0492 | **1.037×** | 20/20 |
+
+**The 1.139× looked like the readout rescuing the layer. The specificity arm is where it goes.** 516 of 4,302
+pairs (**12%**) are also a PPI edge or co-complex, and PPI already predicts co-dependency here at 1.208×.
+Removing them drops the enrichment to **1.037×** — about **three-quarters of the excess over 1.0 is carried
+by that 12%**, and what remains sits under this project's own 1.05× bar. This is largely the PPI and complex
+layers wearing a phosphorylation label, the same category of error as `sl` wearing a synthetic-lethality
+label.
+
+Note 1.037× with 20/20 draws below its control is **detected and small**, not absent.
+
+## The compartment gate is separately not detected
+
+Shared 1.180× against disjoint 1.063× is a gap of **+0.116×**. Permuting *which* compartments a gene is in
+while preserving *how many* gives **+0.022× (sd 0.052, 20 draws)**. The gap is not separated from what
+annotation depth alone produces — promiscuously annotated genes share compartments with everything and are
+also better studied. Not detected as useful, which is not the same as shown useless.
+
+## Endpoint B is uninformative, not a result
+
+The transcript arm returned **ratio 2.26 with an sd of 0.93** across draws (p_median 0.56, 0/20 draws at
+p<0.05). Its interval spans 1.0 comfortably. Printing 2.26 without the spread would have read as a large
+effect; the module now refuses to call an arm informative unless its spread is under a quarter of its
+distance from 1.0.
