@@ -82,14 +82,22 @@ def fetch_obo(report):
 def parse_obo(report):
     """term id -> (name, namespace, [is_a parents]). Obsolete terms dropped."""
     terms, cur = {}, None
+
+    def flush(c):
+        # A new [Term] header must SAVE the stanza in progress before starting the next one. The first
+        # version reset `cur` on every [Term] and only saved at EOF, so 47,000 terms parsed as 1 and every
+        # downstream count came out zero -- loudly, which is the only reason it was caught immediately.
+        if c is not None and c["id"] and not c["obs"]:
+            terms[c["id"]] = c
+
     with open(OBO) as fh:
         for line in fh:
             line = line.rstrip("\n")
             if line == "[Term]":
+                flush(cur)
                 cur = {"id": None, "name": None, "ns": None, "is_a": [], "obs": False, "alt": []}
-            elif line.startswith("[") and cur is not None:
-                if cur["id"] and not cur["obs"]:
-                    terms[cur["id"]] = cur
+            elif line.startswith("[") and line.endswith("]"):
+                flush(cur)
                 cur = None
             elif cur is not None and ":" in line:
                 k, _s, v = line.partition(": ")
@@ -105,9 +113,11 @@ def parse_obo(report):
                     cur["obs"] = True
                 elif k == "alt_id":
                     cur["alt"].append(v)
-    if cur is not None and cur["id"] and not cur["obs"]:
-        terms[cur["id"]] = cur
+    flush(cur)
     bp = {k: v for k, v in terms.items() if v["ns"] == BRANCH}
+    if len(bp) < 1000:
+        raise SystemExit(f"parsed only {len(bp)} {BRANCH} terms from {OBO} -- the OBO parse is broken, "
+                         f"not the ontology. Refusing to run a geometry comparison on an empty graph.")
     report(f"  parsed {len(terms):,} GO terms, {len(bp):,} in {BRANCH}")
     return bp
 
@@ -198,9 +208,13 @@ def train_embedding(edges, n_nodes, dim, curvature, seed, report=None):
                     gr = gr * ((1 - sq) ** 2 / 4)
                 emb -= lr * gr
                 if curvature == "hyperbolic":
+                    # Project strictly back inside the unit ball. Only points that have escaped are
+                    # rescaled; the rest are left untouched, since shrinking every point each step would
+                    # be an implicit regulariser applied to one arm and not the other.
                     nrm = emb.norm(dim=-1, keepdim=True)
-                    emb *= torch.clamp(1 - 1e-5, max=1.0) / torch.clamp(nrm, min=1 - 1e-5)
-                    emb[nrm.squeeze(-1) < 1 - 1e-5] = emb[nrm.squeeze(-1) < 1 - 1e-5]
+                    over = nrm >= 1 - 1e-5
+                    emb.mul_(torch.where(over, (1 - 1e-5) / torch.clamp(nrm, min=1e-12),
+                                         torch.ones_like(nrm)))
     return emb.detach(), dist
 
 
@@ -243,15 +257,31 @@ def main():
     report(f"  term split: {len(train_t):,} train / {len(test_t):,} test "
            f"(the embedding never sees a test term)")
 
-    isa_train, isa_test = [], []
-    for t in terms:
-        for p in bp[t]["is_a"]:
-            if p in tix:
-                (isa_train if (t in train_t and p in train_t) else isa_test).append((tix[t], tix[p]))
+    # FIDELITY HOLDS OUT EDGES; UTILITY HOLDS OUT TERMS. The first version held out is_a edges by TERM,
+    # which meant at least one endpoint of every held-out edge had never appeared in any training edge and
+    # so still carried its random initialisation. Distance to a random point is large, and both arms duly
+    # scored BELOW 0.5 -- held-out parents further away than random terms. That is a broken instrument
+    # reporting a null, and it would have been shipped as "neither geometry separates".
+    # Link prediction needs both endpoints trained, so fidelity now holds out 10% of is_a edges while every
+    # term keeps its other edges. The term split still governs the DOWNSTREAM test, where it is the right
+    # design because genes are trained and only their shared annotation is unseen.
+    all_isa = [(tix[t], tix[p]) for t in terms for p in bp[t]["is_a"] if p in tix]
+    er = np.random.default_rng(11)
+    hold = er.permutation(len(all_isa))[:max(1, len(all_isa) // 10)]
+    hold_set = set(int(i) for i in hold)
+    isa_train = [e for i, e in enumerate(all_isa) if i not in hold_set]
+    isa_test = [e for i, e in enumerate(all_isa) if i in hold_set]
     ann_train = [(gix[g], tix[t]) for g in genes for t in (gene2terms[g] & train_t)]
-    edges = isa_train + ann_train
-    report(f"  training edges: {len(isa_train):,} is_a + {len(ann_train):,} annotation = {len(edges):,}")
-    report(f"  held-out is_a edges (fidelity test): {len(isa_test):,}")
+    # THE HIERARCHY IS OUTNUMBERED 20:1 by gene-term annotation edges, so an embedding trained on the union
+    # learns gene-to-term proximity and barely sees the tree -- which is the structure the hyperbolic claim
+    # is about. is_a edges are replicated so the two edge types contribute comparably. The factor is
+    # reported, applied identically to both arms, and is a property of the experiment, not a tuning knob.
+    ISA_W = max(1, int(round(len(ann_train) / max(len(isa_train), 1))))
+    edges = isa_train * ISA_W + ann_train
+    report(f"  is_a upweight x{ISA_W} so the tree is not swamped by annotation edges "
+           f"({len(isa_train):,} is_a vs {len(ann_train):,} annotation)")
+    report(f"  training edges: {len(edges):,} total")
+    report(f"  held-out is_a edges (fidelity, both endpoints trained): {len(isa_test):,}")
 
     # ---- downstream target: co-response in Replogle K562 ----
     import h5py
@@ -392,6 +422,21 @@ def main():
         report(f"    {arm:11s} within-stratum Spearman {np.mean(vals):+.4f} "
                f"(sd {np.std(vals):.4f}, {N_DRAWS} draws)")
         R["arms"][f"{arm}_matched"] = {"spearman": float(np.mean(vals)), "sd": float(np.std(vals))}
+
+    # ---- the instrument must work before its readings mean anything ----
+    fids = [v["fidelity_auc"] for k, v in R["arms"].items() if "fidelity_auc" in v]
+    if fids and max(fids) < 0.55:
+        R["verdict"] = (f"TEST VOID -- THE EMBEDDING DID NOT LEARN THE HIERARCHY. Best held-out is_a "
+                        f"fidelity across all arms is {max(fids):.4f}, at or below the 0.5 chance line, so "
+                        f"neither embedding places a known parent closer than a random term. A comparison "
+                        f"of curvatures on top of that would be comparing two failures. Reported as void "
+                        f"rather than as a null, because a null implies the instrument worked.")
+        report("\n" + "=" * 100)
+        report(f"  VERDICT: {R['verdict']}")
+        OUT.mkdir(parents=True, exist_ok=True)
+        json.dump(R, open(OUT / "hyperbolic_test.json", "w"), indent=1, default=float)
+        report(f"\n  -> {OUT/'hyperbolic_test.json'}")
+        return
 
     # ---- verdict ----
     report("\n" + "=" * 100)
