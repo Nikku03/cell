@@ -1,0 +1,135 @@
+{
+ "model": "magnitude-deconfound-v1",
+ "reopens_registry_entry": "dyn-magnitude",
+ "target": "|log fold change| of a (perturbation, gene) pair in Replogle K562",
+ "n_pairs_sampled": 399965,
+ "n_pairs_available": 92855984,
+ "nuisance_features": [
+  "gene mean",
+  "gene sd",
+  "gene cv",
+  "gene clean mean",
+  "gene clean sd",
+  "pert cells",
+  "pert UMI",
+  "pert mito%",
+  "pert gem z",
+  "knockdown fold_expr",
+  "knockdown pct_expr",
+  "gene responsiveness (LOO)"
+ ],
+ "biology_features": [
+  "PPI edge",
+  "co-dependency",
+  "co-complex",
+  "curated regulation",
+  "PPI degree of perturbed gene",
+  "PPI degree of measured gene"
+ ],
+ "pair_feature_hit_rates": {
+  "PPI edge": 0.0023377046454697847,
+  "co-dependency": 0.0005025439895689487,
+  "co-complex": 0.00032002798980101943,
+  "curated regulation": 0.004515395034104586
+ },
+ "arms": {
+  "nuisance only": {
+   "r2": 0.19989748711506508,
+   "sd": 0.0009514193580020535,
+   "per_seed": [
+    0.20037126739163083,
+    0.1985699790880033,
+    0.20075121486556108
+   ]
+  },
+  "nuisance + biology": {
+   "r2": 0.20132222856762752,
+   "sd": 0.0012405397058294714,
+   "per_seed": [
+    0.20000516557841105,
+    0.2009770584360359,
+    0.20298446168843567
+   ]
+  },
+  "biology only": {
+   "r2": 0.004439272175183177,
+   "sd": 0.0012202874500706561,
+   "per_seed": [
+    0.0061380938233429605,
+    0.003852836534357662,
+    0.003326886167848908
+   ]
+  }
+ },
+ "biology_gain": 0.0014247414525624391,
+ "seed_sd": 0.0012405397058294714,
+ "degree_matched_control": {
+  "mean_gain": -0.0011324817538658106,
+  "sd": 0.00081092716950177,
+  "per_draw": [
+   -0.0003144653716517787,
+   -0.0013344838612853183,
+   -0.00236581996887264,
+   -0.00016564384146441902,
+   -0.0014819957260548966
+  ],
+  "n_draws": 5
+ },
+ "partner_specific_excess": 0.0025572232064282495,
+ "bar": 0.003721619117488414,
+ "stratified": {
+  "n_cells": 52,
+  "variance_removed_by_centring": 0.005245506763458252,
+  "biology_r2": 0.00364178947715433,
+  "biology_sd": 0.0013577157496115603,
+  "nuisance_r2": 0.1976699151827158,
+  "rewired_r2": 0.004892668248850892,
+  "rewired_sd": 0.00010943858333728282,
+  "excess": -0.0012508787716965625
+ },
+ "reopened": false,
+ "limits": [
+  "this is a DIFFERENT SYSTEM from the one the registry entry was measured on. It tests the general claim, not the enhancer result, and cannot overturn a measurement it did not repeat",
+  "no assay here has uniform detection power. Stratifying on expression x variability x cell count makes power nearly constant inside a cell; it does not make it constant, and any residual power gradient inside a cell is still available to the biology block",
+  "the leave-one-out responsiveness term is a nuisance covariate by placement and a biological quantity by content -- how much a gene moves is partly what the gene is. Putting it in the nuisance block is the conservative choice and it makes the biology gain a LOWER bound",
+  "knockdown efficacy (fold_expr, pct_expr) is a property of the perturbation, so including it as nuisance removes real biology about which genes are easy to knock down. Also conservative, also a reason the biology gain is a lower bound",
+  "the pair-level biology features are sparse -- a randomly drawn (perturbation, gene) pair is almost never a PPI edge -- so the block is carried by a small fraction of rows and its R2 contribution is bounded by that fraction whatever the biology is worth",
+  "the rewiring permutes ONE endpoint of each edge. That preserves the degree sequence on the source side and the degree distribution on the target side, not every node's degree exactly. The degree features themselves are held at their real values in both arms, so the control isolates adjacency, which is what it is for",
+  "400,000 pairs are sampled from 92 million. The sample is uniform over the grid, so it inherits the grid's composition rather than correcting it"
+ ],
+ "verdict": "THE NULL HOLDS, AND NOW HOLDS UNDER A FAR STRONGER TEST. Registry entry `dyn-magnitude` was measured on 820 enhancer-gene pairs with detection power entered as one feature in one arm. Retested here on 399,965 K562 knockdown (perturbation, gene) magnitudes against a twelve-feature nuisance block -- per-gene expression and variability, per-perturbation cell count, library size, mitochondrial fraction, knockdown efficacy, and a leave-one-out responsiveness term -- the nuisance block alone reaches R2 +0.1999 and adding pair-level biology moves it to +0.2013, a gain of +0.0014. Its own degree-matched rewiring gains -0.0011, so the partner-specific excess is +0.0026 against a bar of 0.0037 (three seed spreads). Inside power strata -- the reopens_if condition approximated by conditioning, since no assay here has uniform detection power -- biology reaches +0.0036 on the within-cell residual against +0.0049 for the rewired control. Neither arm clears its control by the margin set in advance. The entry stands, and it now stands on 399,965 pairs and a modelled power block rather than on 820 pairs and one covariate. WHAT THIS IS NOT: this is gene knockdown -> transcriptome, not enhancer silencing -> gene. It tests the same general claim in a different system and it neither confirms nor overturns the n=820 enhancer result, which was measured on its own data and stays as it is.",
+ "log": [
+  "====================================================================================================",
+  "MAGNITUDE, DECONFOUNDED -- retesting `dyn-magnitude` where power can be modelled, not assumed",
+  "====================================================================================================",
+  "  6,881 non-finite entries set to NaN (they are not zeros)",
+  "  K562: 11,258 perturbations x 8,248 genes = 92,855,984 magnitudes on the full grid",
+  "  cell object: 191,447 PPI, 76,749 co-dependency, 612,133 regulatory edges; symbol join 85.0%",
+  "  |lfc|: median 0.0587, 99th pct 0.3784",
+  "  sampled 399,965 finite pairs of 400,000 drawn",
+  "\n  NUISANCE BLOCK (12 features): gene mean, gene sd, gene cv, gene clean mean, gene clean sd, pert cells, pert UMI, pert mito%, pert gem z, knockdown fold_expr, knockdown pct_expr, gene responsiveness (LOO)",
+  "  BIOLOGY BLOCK (6 features): PPI edge, co-dependency, co-complex, curated regulation, PPI degree of perturbed gene, PPI degree of measured gene",
+  "    pair-feature hit rates: PPI edge 0.234%, co-dependency 0.050%, co-complex 0.032%, curated regulation 0.452%",
+  "\n  1. HELD-OUT R2, folds grouped by perturbed gene, 3 seeds x 5 folds",
+  "     nuisance only            R2 +0.1999  (seed sd 0.0010, seeds +0.2004, +0.1986, +0.2008)",
+  "     nuisance + biology       R2 +0.2013  (seed sd 0.0012, seeds +0.2000, +0.2010, +0.2030)",
+  "     biology only             R2 +0.0044  (seed sd 0.0012, seeds +0.0061, +0.0039, +0.0033)",
+  "     -> biology adds +0.0014 over the nuisance block (largest seed sd 0.0012)",
+  "\n  2. DEGREE-MATCHED REWIRING of every graph the biology block reads (5 draws)",
+  "     rewiring 1/5: biology adds -0.0003",
+  "     rewiring 2/5: biology adds -0.0013",
+  "     rewiring 3/5: biology adds -0.0024",
+  "     rewiring 4/5: biology adds -0.0002",
+  "     rewiring 5/5: biology adds -0.0015",
+  "     -> degree-matched control adds -0.0011 (sd 0.0008); the real block adds +0.0014, an excess of +0.0026",
+  "\n  3. WITHIN POWER STRATA -- gene expression x gene variability x perturbation cells, 6 bins each",
+  "     Inside a cell, detection power is nearly constant, so power cannot stand in for size. This is\n     the reopens_if condition approximated by conditioning rather than by a new assay.",
+  "     52 occupied cells; within-cell centring removes 0.5% of the variance in |lfc|",
+  "     biology on within-cell residual   R2 +0.0036 (sd 0.0014)",
+  "     nuisance on the same residual     R2 +0.1977 (sd 0.0029)",
+  "     degree-matched biology            R2 +0.0049 (sd 0.0001)",
+  "     -> inside a power cell, biology beats its own rewired control by -0.0013",
+  "\n====================================================================================================",
+  "  VERDICT: THE NULL HOLDS, AND NOW HOLDS UNDER A FAR STRONGER TEST. Registry entry `dyn-magnitude` was measured on 820 enhancer-gene pairs with detection power entered as one feature in one arm. Retested here on 399,965 K562 knockdown (perturbation, gene) magnitudes against a twelve-feature nuisance block -- per-gene expression and variability, per-perturbation cell count, library size, mitochondrial fraction, knockdown efficacy, and a leave-one-out responsiveness term -- the nuisance block alone reaches R2 +0.1999 and adding pair-level biology moves it to +0.2013, a gain of +0.0014. Its own degree-matched rewiring gains -0.0011, so the partner-specific excess is +0.0026 against a bar of 0.0037 (three seed spreads). Inside power strata -- the reopens_if condition approximated by conditioning, since no assay here has uniform detection power -- biology reaches +0.0036 on the within-cell residual against +0.0049 for the rewired control. Neither arm clears its control by the margin set in advance. The entry stands, and it now stands on 399,965 pairs and a modelled power block rather than on 820 pairs and one covariate. WHAT THIS IS NOT: this is gene knockdown -> transcriptome, not enhancer silencing -> gene. It tests the same general claim in a different system and it neither confirms nor overturns the n=820 enhancer result, which was measured on its own data and stays as it is."
+ ]
+}
