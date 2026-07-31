@@ -508,9 +508,9 @@ def main():
         Yn = Yspec / (np.linalg.norm(Yspec, axis=1, keepdims=True) + 1e-9)
         Fr, Tr, Sr, Cr, Mr = pad(feats, types, signs, confs)
         rng2 = np.random.default_rng(0)
-        fr, tr, sr, cr, mr = build_tokens(kos, codep, cplx, ppi, sig, srow, Zp, base_expr, ess, deg,
-                                          rng2, "random")
-        Frr, Trr, Srr, Crr, Mrr = pad(fr, tr, sr, cr, mr)
+        fr, tr, sr, cr = build_tokens(kos, codep, cplx, ppi, sig, srow, Zp, base_expr, ess, deg,
+                                      rng2, "random")
+        Frr, Trr, Srr, Crr, Mrr = pad(fr, tr, sr, cr)
 
         def train_eval(F, T, S, C, M, tr_idx, te_idx, use_rel_bias=True, zero_sign=False, seed=0):
             torch.manual_seed(seed)
